@@ -1,0 +1,6 @@
+; BFCore.def : Deklariert die Modulparameter für die DLL.
+
+LIBRARY      "BFCore"
+
+EXPORTS
+    ; Explizite Exporte können hier eingefügt werden.

@@ -1,0 +1,743 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#ifndef APSTUDIO_INVOKED
+#include "targetver.h"
+#endif
+#include "afxres.h"
+#include "..\\LFCommDlg\\resource.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// Neutral resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_NEU)
+#ifdef _WIN32
+LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDR_MAINFRAME           ICON                    "res\\StoreManager.ico"
+IDR_CLIPBOARD           ICON                    "res\\Clipboard_Small.ico"
+IDD_VIEWOPTIONS         ICON                    "res\\DisplayOptions_Tiny.ico"
+IDD_SORTOPTIONS         ICON                    "res\\ArrangeOptions_Tiny.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// PNG
+//
+
+IDB_ABOUTICON           PNG                     "res\\StoreManager_About.png"
+IDB_INSPECTOR           PNG                     "res\\Inspector_Grey.png"
+IDB_MULTIPLE            PNG                     "res\\Multiple.png"
+IDB_BLUEMARBLE_1024     PNG                     "res\\BlueMarble_1024.jpg"
+IDB_BLUEMARBLE_2048     PNG                     "res\\BlueMarble_2048.jpg"
+IDB_BLUEMARBLE_4096     PNG                     "res\\BlueMarble_4096.jpg"
+IDB_BLUEMARBLE_8192     PNG                     "res\\BlueMarble_8192.jpg"
+IDB_HISTORYICONS        PNG                     "res\\HistoryIcons.png"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDB_MAINBUTTON          BITMAP                  "res\\MainButton.bmp"
+IDB_APPMENU_32          BITMAP                  "res\\AppMenu_32.bmp"
+IDB_APPMENU_16          BITMAP                  "res\\AppMenu_16.bmp"
+IDB_PANEL_16            BITMAP                  "res\\Panel_16.bmp"
+IDB_CLIPBOARDBUTTON     BITMAP                  "res\\ClipboardButton.bmp"
+IDB_DESCENDING          BITMAP                  "res\\Descending_16.bmp"
+IDB_ASCENDING           BITMAP                  "res\\Ascending_16.bmp"
+IDB_RIBBONHOME_16       BITMAP                  "res\\Ribbon_Home_16.bmp"
+IDB_RIBBONHOME_32       BITMAP                  "res\\Ribbon_Home_32.bmp"
+IDB_RIBBONVIEW_16       BITMAP                  "res\\Ribbon_View_16.bmp"
+IDB_RIBBONVIEW_32       BITMAP                  "res\\Ribbon_View_32.bmp"
+IDB_RIBBONFILES_16      BITMAP                  "res\\Ribbon_Files_16.bmp"
+IDB_RIBBONFILES_32      BITMAP                  "res\\Ribbon_Files_32.bmp"
+IDB_RIBBONSTORES_16     BITMAP                  "res\\Ribbon_Stores_16.bmp"
+IDB_RIBBONSTORES_32     BITMAP                  "res\\Ribbon_Stores_32.bmp"
+IDB_RIBBONCALENDAR_32   BITMAP                  "res\\Ribbon_Calendar_32.bmp"
+IDB_RIBBONCALENDAR_16   BITMAP                  "res\\Ribbon_Calendar_16.bmp"
+IDB_RIBBONEMAIL_32      BITMAP                  "res\\Ribbon_Email_32.bmp"
+IDB_RIBBONEMAIL_16      BITMAP                  "res\\Ribbon_Email_16.bmp"
+IDB_RIBBONCONTACTS_32   BITMAP                  "res\\Ribbon_Contacts_32.bmp"
+IDB_RIBBONCONTACTS_16   BITMAP                  "res\\Ribbon_Contacts_16.bmp"
+IDB_RIBBONGLOBE_32      BITMAP                  "res\\Ribbon_Globe_32.bmp"
+IDB_RIBBONGLOBE_16      BITMAP                  "res\\Ribbon_Globe_16.bmp"
+IDB_RIBBONTRASH_32      BITMAP                  "res\\Ribbon_Trash_32.bmp"
+IDB_RIBBONTRASH_16      BITMAP                  "res\\Ribbon_Trash_16.bmp"
+IDB_RIBBONTAGCLOUD_32   BITMAP                  "res\\Ribbon_Tagcloud_32.bmp"
+IDB_RIBBONTAGCLOUD_16   BITMAP                  "res\\Ribbon_Tagcloud_16.bmp"
+ID_PANE_HISTORYWND      BITMAP                  "res\\Toolbar_History.bmp"
+ID_PANE_INSPECTORWND    BITMAP                  "res\\Toolbar_Inspector.bmp"
+ID_PANE_FILTERWND       BITMAP                  "res\\Toolbar_Filter.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 0,1,0,0
+ PRODUCTVERSION 0,1,0,0
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "000004e4"
+        BEGIN
+            VALUE "CompanyName", "liquidFOLDERS"
+            VALUE "FileVersion", "0.1"
+            VALUE "InternalName", "StoreManager"
+            VALUE "LegalCopyright", "© 2009-2010 liquidFOLDERS"
+            VALUE "LegalTrademarks", "liquidFOLDERS®"
+            VALUE "OriginalFilename", "StoreManager.exe"
+            VALUE "ProductName", "liquidFOLDERS"
+            VALUE "ProductVersion", "0.1"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x0, 1252
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDR_MAINFRAME MENU 
+BEGIN
+    MENUITEM "",                            65535
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Accelerator
+//
+
+IDR_MAINFRAME ACCELERATORS 
+BEGIN
+    VK_F1,          ID_APP_HELP,            VIRTKEY, NOINVERT
+    VK_F5,          ID_NAV_RELOAD,          VIRTKEY, NOINVERT
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Toolbar
+//
+
+ID_PANE_HISTORYWND TOOLBAR  16, 16
+BEGIN
+    BUTTON      ID_NAV_FIRST
+    BUTTON      ID_NAV_BACKONE
+    BUTTON      ID_NAV_FORWARDONE
+    BUTTON      ID_NAV_LAST
+    BUTTON      ID_NAV_RELOAD
+    SEPARATOR
+    BUTTON      ID_NAV_GOTOHISTORY
+    SEPARATOR
+    BUTTON      ID_NAV_CLEARHISTORY
+END
+
+ID_PANE_INSPECTORWND TOOLBAR  16, 16
+BEGIN
+    BUTTON      ID_INSPECTOR_TOGGLEICON
+    SEPARATOR
+    BUTTON      ID_INSPECTOR_TREEVIEW
+    BUTTON      ID_INSPECTOR_ALPHABETIC
+    SEPARATOR
+    BUTTON      ID_INSPECTOR_EXPANDALL
+    BUTTON      ID_INSPECTOR_EXPORT
+END
+
+ID_PANE_FILTERWND TOOLBAR  16, 16
+BEGIN
+    BUTTON      ID_FILTER_CLEAR
+    SEPARATOR
+    BUTTON      ID_FILTER_EDITCONDITION
+    BUTTON      ID_FILTER_REMOVECONDITION
+    SEPARATOR
+    BUTTON      ID_FILTER_SAVE
+    BUTTON      ID_FILTER_SAVEAS
+END
+
+#endif    // Neutral resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// Englisch (neutral) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_NEUTRAL
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDM_DRIVE MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "Create &new store...",        ID_STORE_NEWDRIVE
+    END
+END
+
+IDM_VIRTUAL MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "&Open",                       ID_NAV_STARTNAVIGATION
+    END
+END
+
+IDM_VIRTUAL_GLOBE MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "&Open",                       ID_NAV_STARTNAVIGATION
+        MENUITEM SEPARATOR
+        MENUITEM "Open in &Google Earth...",    ID_GLOBE_GOOGLEEARTH
+    END
+END
+
+IDM_BACK MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "&One level up",               ID_NAV_STARTNAVIGATION
+    END
+END
+
+IDM_STORE MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "&Open",                       ID_NAV_STARTNAVIGATION
+        MENUITEM SEPARATOR
+        MENUITEM "&Delete...",                  ID_STORE_DELETE
+        MENUITEM "&Rename",                     ID_STORE_RENAME
+        MENUITEM SEPARATOR
+        MENUITEM "Make de&fault store",         ID_STORE_MAKEDEFAULT
+        MENUITEM "Make &hybrid store",          ID_STORE_MAKEHYBRID
+        MENUITEM SEPARATOR
+        MENUITEM "&Statistics...",              ID_STORE_STATS
+        MENUITEM "&Backup settings...",         ID_STORE_BACKUPSELECTED
+    END
+END
+
+IDM_GLOBE MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "Zoom &in",                    ID_GLOBE_ZOOMIN
+        MENUITEM "Zoom &out",                   ID_GLOBE_ZOOMOUT
+        MENUITEM "Fit &window",                 ID_GLOBE_SCALETOFIT
+        MENUITEM SEPARATOR
+        MENUITEM "Jump to &location...",        ID_GLOBE_JUMPTOLOCATION
+        MENUITEM SEPARATOR
+        MENUITEM "Show &airport names",         ID_GLOBE_SHOWAIRPORTNAMES
+        MENUITEM "Show G&PS locations",         ID_GLOBE_SHOWGPS
+        MENUITEM "Show &hints",                 ID_GLOBE_SHOWHINTS
+    END
+END
+
+IDM_DETAILS MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "Autosize &columns",           ID_VIEW_AUTOSIZECOLUMNS
+    END
+END
+
+IDM_HISTORY MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "&Goto history...",           ID_NAV_GOTOHISTORY
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_VIEWOPTIONS DIALOGEX 0, 0, 452, 332
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Display ""%s"" as"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "",IDC_VIEWMODES,"SysListView32",LVS_SMALLICON | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | WS_BORDER | WS_GROUP | WS_TABSTOP,14,27,160,201
+    CONTROL         "",IDC_VIEWATTRIBUTES,"SysListView32",LVS_LIST | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SORTASCENDING | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_ALIGNLEFT | WS_BORDER | WS_GROUP | WS_TABSTOP,198,27,240,181
+    PUSHBUTTON      "Check &all",IDC_CHECKALL,197,215,60,14,WS_GROUP
+    PUSHBUTTON      "&Uncheck all",IDC_UNCHECKALL,266,215,60,14,WS_GROUP
+    CONTROL         "Full &row select",IDC_FULLROWSELECT,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,338,217,100,10
+    COMBOBOX        IDC_COLORCOMBO,14,267,81,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
+    CONTROL         "Show query &duration",IDC_SHOWQUERYTIMES,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,14,286,81,10
+    COMBOBOX        IDC_BACKGROUNDCOMBO,119,267,81,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
+    CONTROL         "Use in all conte&xts",IDC_GLOBALBACKGROUND,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,119,286,81,10
+    CONTROL         "Show &categories",IDC_GROUPS,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,209,254,117,10
+    CONTROL         "&Granny mode (extra large font)",IDC_GRANNYMODE,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,209,270,117,10
+    CONTROL         "&Save all changes ",IDC_ALWAYSSAVE,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,209,286,117,10
+    DEFPUSHBUTTON   "Ok",IDOK,7,311,50,14,WS_GROUP
+    PUSHBUTTON      "Cancel",IDCANCEL,65,311,50,14,WS_GROUP
+    GROUPBOX        "Views",IDC_STATIC,7,7,174,228,WS_GROUP
+    GROUPBOX        "Report settings (Details, Day calendar)",IDC_STATIC,191,7,254,228,WS_GROUP
+    GROUPBOX        "Global settings",IDC_STATIC,7,243,95,59,WS_GROUP
+    GROUPBOX        "Advanced options",IDC_STATIC,112,243,217,59,WS_GROUP
+    LTEXT           "Ribbon color:",IDC_STATIC,14,256,43,8
+    LTEXT           "Background color:",IDC_STATIC,119,256,58,8
+    LTEXT           "All views available in this context:",IDC_STATIC,14,17,160,8
+    LTEXT           "Include these attributes:",IDC_STATIC,198,17,239,8
+END
+
+IDD_SORTOPTIONS DIALOGEX 0, 0, 283, 319
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Arrange ""%s"" by"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "",IDC_SORTATTRIBUTE,"SysListView32",LVS_LIST | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SORTASCENDING | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_ALIGNLEFT | LVS_NOCOLUMNHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,14,27,255,206
+    DEFPUSHBUTTON   "Ok",IDOK,7,298,50,14,WS_GROUP
+    PUSHBUTTON      "Cancel",IDCANCEL,65,298,50,14,WS_GROUP
+    GROUPBOX        "",IDC_ATTRBOX,7,7,269,235,WS_GROUP
+    LTEXT           "All attributes available in this context:",IDC_STATIC,14,17,254,8
+    CONTROL         "Enable sub&folders",IDC_AUTODIRS,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,14,262,169,10
+    CONTROL         "&Ascending",IDC_ASCENDING,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,219,259,49,10
+    CONTROL         "&Descending",IDC_DESCENDING,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,219,272,50,10
+    GROUPBOX        "Subfolders",IDC_STATIC,7,248,181,42,WS_GROUP
+    GROUPBOX        "Sort direction",IDC_STATIC,198,248,78,42,WS_GROUP
+    CONTROL         134,IDC_STATIC,"Static",SS_BITMAP,204,259,11,10
+    CONTROL         135,IDC_STATIC,"Static",SS_BITMAP,204,272,11,10
+    LTEXT           "",IDC_SUBFOLDERHINT,14,275,169,8
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    IDD_VIEWOPTIONS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 445
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 325
+    END
+
+    IDD_SORTOPTIONS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 276
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 312
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog Info
+//
+
+IDD_VIEWOPTIONS DLGINIT
+BEGIN
+    IDC_COLORCOMBO, 0x403, 5, 0
+0x6c42, 0x6575, "\000" 
+    IDC_COLORCOMBO, 0x403, 7, 0
+0x6953, 0x766c, 0x7265, "\000" 
+    IDC_COLORCOMBO, 0x403, 6, 0
+0x6c42, 0x6361, 0x006b, 
+    IDC_COLORCOMBO, 0x403, 5, 0
+0x7141, 0x6175, "\000" 
+    IDC_BACKGROUNDCOMBO, 0x403, 6, 0
+0x6c42, 0x6361, 0x006b, 
+    IDC_BACKGROUNDCOMBO, 0x403, 7, 0
+0x6952, 0x6262, 0x6e6f, "\000" 
+    IDC_BACKGROUNDCOMBO, 0x403, 7, 0
+0x7953, 0x7473, 0x6d65, "\000" 
+    IDC_BACKGROUNDCOMBO, 0x403, 6, 0
+0x6857, 0x7469, 0x0065, 
+    0
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE 
+BEGIN
+    IDR_MAINFRAME           "StoreManager"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_APP_EXIT             "Exits the StoreManager.\nExit"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_APP_NEWVIEW          "Opens a new StoreManager window.\nNew view"
+    ID_APP_NEWCLIPBOARD     "Opens a new clipboard window where you can temporarily drop files for further use.\nNew clipboard"
+    ID_APP_CLOSE            "Closes this window.\nClose"
+    ID_APP_CLOSEOTHERS      "Closes all StoreManager windows except this one.\nClose all others"
+    ID_APP_VIEWOPTIONS      "Opens a dialog window with further display options.\nDisplay as"
+    ID_APP_SORTOPTIONS      "Opens a dialog window with further arrangement options.\nArrange by"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_VIEWGROUP1          "Automatic"
+    IDS_VIEWGROUP2          "Standard views"
+    IDS_VIEWGROUP3          "Calendar views"
+    IDS_VIEWGROUP4          "Enhanced views"
+    IDS_CONTEXTMENU_GRANNY  "&Granny mode"
+    IDS_CONTEXTMENU_VIEWOPTIONS "&Display as..."
+    IDS_CONTEXTMENU_SORTOPTIONS "&Arrange by..."
+    IDS_CONTEXTMENU_STORE_NEW "Create &new store..."
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_ITEMS_SINGULAR      "%d item"
+    IDS_ITEMS_PLURAL        "%d items"
+    IDS_SELECTED_SINGULAR   "%d item selected (%s)"
+    IDS_SELECTED_PLURAL     "%d items selected (%s)"
+    IDS_REGFILEFILTER       "Registry files"
+    IDS_TXTFILEFILTER       "Text files"
+    IDS_ATTRIBUTENOTSORTABLE "This attribute is not suitable for sorting."
+    IDS_NOITEMSSELECTED     "No items selected"
+    IDS_MULTIPLETYPESSELECTED "Multiple types (%d items)"
+    IDS_TYPE_DRIVE_SINGULAR "%d removable drive"
+    IDS_TYPE_DRIVE_PLURAL   "%d removable drives"
+    IDS_TYPE_STORE_SINGULAR "%d store"
+    IDS_TYPE_STORE_PLURAL   "%d stores"
+    IDS_TYPE_FILE_SINGULAR  "%d file"
+    IDS_TYPE_FILE_PLURAL    "%d files"
+    IDS_TYPE_VIRTUAL_SINGULAR "%d virtual folder"
+    IDS_TYPE_VIRTUAL_PLURAL "%d virtual folders"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_VATTR_DRIVELETTER   "Drive letter"
+    IDS_VATTR_LASTSEEN      "Last seen"
+    IDS_VATTR_GUID          "GUID"
+    IDS_VATTR_PATH_DAT      "Data path"
+    IDS_VATTR_PATH_IDX_MAIN "Main index path"
+    IDS_VATTR_PATH_IDX_AUX  "Aux. index path"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_VATTR_IATA_NAME     "IATA airport name"
+    IDS_VATTR_IATA_COUNTRY  "Country/territory"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_APP_VIEW_AUTOMATIC   "Lets liquidFOLDERS decide on the appropriate view mode.\nAuto"
+    ID_APP_VIEW_LARGEICONS  "Displays files as large icons, suitable for overview contexts.\nLarge icons"
+    ID_APP_VIEW_SMALLICONS  "Displays files as small icons.\nSmall icons"
+    ID_APP_VIEW_LIST        "Displays files as a list, suitable for large numbers of files.\nList"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_APP_VIEW_DETAILS     "Displays files as a report with selectable attribute columns.\nDetails"
+    ID_APP_VIEW_TILES       "Displays files as tiles, including a decent sized icon and detailed information.\nTiles"
+    ID_APP_VIEW_PREVIEW     "Displays files as preview images.\nPreview"
+    ID_APP_VIEW_CALENDAR_YEAR 
+                            "Places files on a calendar that displays all days of a whole year.\nYear"
+    ID_APP_VIEW_CALENDAR_WEEK 
+                            "Places files on a calendar that displays a whole week.\nWeek"
+    ID_APP_VIEW_CALENDAR_DAY 
+                            "Places files on a calendar the displays a single day at a time.\nDay"
+    ID_APP_VIEW_GLOBE       "Places file on a globe depening on their location attribute.\nGlobe"
+    ID_APP_VIEW_TAGCLOUD    "Displays files as tag cloud. This is the only view that can show files sorted by their tags.\nTag cloud"
+    ID_APP_VIEW_TIMELINE    "Displays files on a timeline.\nTimeline"
+    ID_VIEW_GRANNY          "Enables or disables extra large fonts in this context.\nGranny mode"
+    ID_VIEW_CATEGORIES      "Enables or disables categories in this context.\nCategories"
+    ID_VIEW_AUTODIRS        "Enables or disables subfolders in this context. This options is not available in all contexts, and always turned on for certain view modes.\nSubfolders"
+    ID_VIEW_AUTOSIZECOLUMNS "Autosize &columns"
+    ID_VIEW_SELECTALL       "Selects all items for further processing.\nSelect all (Ctrl+A)"
+    ID_VIEW_SELECTNONE      "Deselects all items.\nSelect none (Ctrl+N)"
+    ID_CONTEXT_ALWAYSSAVE   "Immediately saves all changes to the view settings of this context.\nSave all changes"
+    ID_CONTEXT_RESTORE      "Restores the view settings to the last saved state.\nRestore"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_CONTEXT_SAVENOW      "Saves the current view settings of this context.\nSave"
+    ID_CONTEXT_SAVEALL      "Saves the current view settings of all contexts.\nSave all"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_SORT_FILENAME        "Sorts the search result by file name.\nSort by file name"
+    ID_SORT_COMMENT         "Sorts the search result by comment.\nSort by comment"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_SORT_CREATIONTIME    "Sorts the search result by creation time.\nSort by creation time"
+    ID_SORT_FILETIME        "Sorts the search result by file time.\nSort by file time"
+    ID_SORT_RATING          "Sorts the search result by rating.\nSort by rating"
+    ID_SORT_LOCATIONNAME    "Sorts the search result by location name.\nSort by location name"
+    ID_SORT_LOCATIONIATA    "Sorts the search result by IATA airport code.\nSort by IATA airport code"
+    ID_SORT_LOCATIONGPS     "Sorts the search result by GPS location.\nSort by GPS location"
+    ID_SORT_HEIGHT          "Sorts the search result by height.\nSort by height"
+    ID_SORT_WIDTH           "Sorts the search result by width.\nSort by width"
+    ID_SORT_RESOLUTION      "Sorts the search result by resolution.\nSort by resolution"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_SORT_ASPECTRATIO     "Sorts the search result by aspect ratio.\nSort by aspect ratio"
+    ID_SORT_ROLL            "Sorts the search result by roll name.\nSort by roll"
+    ID_SORT_DURATION        "Sorts the search result by duration.\nSort by duration"
+    ID_SORT_ARTIST          "Sorts the search result by artist.\nSort by artist/author"
+    ID_SORT_TITLE           "Sorts the search result by title.\nSort by title"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_SORT_LANGUAGE        "Sorts the search result by language.\nSort by language"
+    ID_SORT_RECORDINGTIME   "Sorts the search result by recording time.\nSort by recording time"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_NAV_FIRST            "Returns to the first location.\nFirst"
+    ID_NAV_BACKONE          "Returns to the previous location.\nBack (Backspace)"
+    ID_NAV_FORWARDONE       "Returns to the next location.\nForward"
+    ID_NAV_LAST             "Returns to the last location.\nLast"
+    ID_NAV_RELOAD           "Reloads the current view.\nReload"
+    ID_NAV_SHOWHISTORY      "Shows the history pane.\nHistory pane"
+    ID_NAV_STORES           "Displays all stores.\nStores"
+    ID_NAV_HOME             "Opens the default store.\nDefault store"
+    ID_NAV_STARTNAVIGATION  "Opens the selected item.\nOpen"
+    ID_NAV_GOTOHISTORY      "Returns to the selected location.\nGoto history"
+    ID_NAV_CLEARHISTORY     "Removes all locations from the history except the current one.\nClear history"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_INSPECTOR_TOGGLEICON "Shows or hides the icon area.\nIcon area"
+    ID_INSPECTOR_TREEVIEW   "Shows all attributes in a tree.\nTree view"
+    ID_INSPECTOR_ALPHABETIC "Shows all attributes sorted alphabetically.\nAlphabetic view"
+    ID_INSPECTOR_EXPANDALL  "Expands all property groups.\nExpand all"
+    ID_INSPECTOR_EXPORT     "Saves the properties as a text file.\nExport properties"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_FILTER_CLEAR         "Removes all conditions from the filter.\nClear filter"
+    ID_FILTER_EDITCONDITION "Edit the selected condition.\nEdit condition"
+    ID_FILTER_REMOVECONDITION 
+                            "Removes the selected conditions from the filter.\nRemove conditions"
+    ID_FILTER_SAVE          "Saves the filter.\nSave filter"
+    ID_FILTER_SAVEAS        "Saves the filter and prompts for a file name.\nSave filter as"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_GLOBE_ZOOMIN         "Zooms into the globe.\nZoom in"
+    ID_GLOBE_ZOOMOUT        "Zooms out of the globe.\nZoom out"
+    ID_GLOBE_SCALETOFIT     "Zooms the globe to touch the sides of the containing window.\nFit to window"
+    ID_GLOBE_SAVECAMERA     "Saves the current viewpoint to the view settings of the active context.\nSave viewpoint"
+    ID_GLOBE_JUMPTOLOCATION "Centers the globe on a specific location.\nJump to location"
+    ID_GLOBE_GOOGLEEARTH    "Opens the selected places in Google Earth. Google Earth must be installed on this computer.\nOpen in Google Earth"
+    ID_GLOBE_TEXTURESIZE    "Selects the size of the 3D texture used for the earth's 3D model.\nTexture size"
+    ID_GLOBE_HQMODEL        "Selects a 3D model of the earth with greater detail, but also greater hardware requirements.\nUse high quality model"
+    ID_GLOBE_SHOWBUBBLES    "Shows or hides the details of each folder.\nShow details"
+    ID_GLOBE_SHOWAIRPORTNAMES 
+                            "Shows or hides the airport name of each folder.\nShow airport names"
+    ID_GLOBE_SHOWGPS        "Shows or hides the GPS location of each folder.\nShow GPS locations"
+    ID_GLOBE_SHOWHINTS      "Shows or hides the hint text of each folder.\nShow hints"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_TAGCLOUD_SORTNAME    "Sort tags by name.\nSort by name"
+    ID_TAGCLOUD_SORTCOUNT   "Sort tags by count.\nSort by count"
+    ID_TAGCLOUD_OMITRARE    "Removes rare tags from the search result.\nOmit rare tags"
+    ID_TAGCLOUD_USESIZE     "Shows tags in different font sizes depending on their count.\nUse font size"
+    ID_TAGCLOUD_USECOLORS   "Shows tags in different colors depending on their count.\nUse color"
+    ID_TAGCLOUD_USEOPACITY  "Shows tags in different opacities depending on their count.\nUse opacity"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_CLIP_COPY            "Copies all selected files to the Windows clipboard.\nCopy"
+    ID_CLIP_PASTE           "Imports all files from the Windows clipboard to the current store.\nPaste"
+    ID_CLIP_REMOVE          "Removes the selected files from this clipboard window.\nRemove from clipboard"
+    ID_CLIP_REMEMBERLAST    "Adds the selected files to the last clipboard window.\nLast clipboard"
+    ID_CLIP_REMEMBERNEW     "Adds the selected files to a new clipboard window.\nNew clipboard"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_FILES_SHOWINSPECTOR  "Shows the inspector pane.\nInspector pane"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_TRASH_EMPTY          "Permanently deletes all files from the trash.\nEmpty trash"
+    ID_TRASH_RESTORE        "Restores the selected files.\nRestore"
+    ID_TRASH_RESTOREALL     "Restores all files.\nRestore all"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_STORE_NEW            "Creates a new store with user-defined settings.\nCreate new store"
+    ID_STORE_NEWINTERNAL    "Creates a new internal store.\nInternal store"
+    ID_STORE_NEWDRIVE       "Creates a new external or hybrid store on the selected drive.\nExternal/hybrid store"
+    ID_STORE_DELETE         "Deletes the selected store.\nDelete"
+    ID_STORE_RENAME         "Renames the selected store.\nRename (F2)"
+    ID_STORE_MAKEDEFAULT    "Makes the selected internal store the default store.\nMake default"
+    ID_STORE_MAKEHYBRID     "Converts the selected store into a hybrid store. This enables you to search the store, even if it is not mounted.\nMake hybrid"
+    ID_STORE_STATS          "Shows statistics about the selected store.\nStatistics"
+    ID_STORE_BACKUPSELECTED "Saves the settings of the selected store to a .reg file.\nBackup settings of selected store"
+    ID_STORE_BACKUPALL      "Saves the settings of all internal stores to a .reg file.\nBackup settings of all internal stores"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_SUBFOLDERS_MANDATORY "Subfolders are mandatory for the active view."
+    IDS_SUBFOLDERS_NOTAVAIL "Subfolders are not available in this context."
+    IDS_GROUPBOX_SORT       "Sort items by this attribute"
+    IDS_GROUPBOX_GROUP      "Arrange items by this attribute"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_PANE_CAPTIONBAR      "Shows or hides the caption bar.\nCaption bar"
+    ID_PANE_FILTERWND       "Shows or hides the filter pane.\nFilter pane"
+    ID_PANE_INSPECTORWND    "Shows or hides the inspector pane.\nInspector pane"
+    ID_PANE_HISTORYWND      "Shows or hides the history pane.\nHistory pane"
+END
+
+#endif    // Englisch (neutral) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// Deutsch (Deutschland) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_DEU)
+#ifdef _WIN32
+LANGUAGE LANG_GERMAN, SUBLANG_GERMAN
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#ifndef APSTUDIO_INVOKED\r\n"
+    "#include ""targetver.h""\r\n"
+    "#endif\r\n"
+    "#include ""afxres.h""\r\n"
+    "#include ""..\\LFCommDlg\\resource.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "#define _AFX_NO_OLE_RESOURCES\r\n"
+    "#define _AFX_NO_TRACKER_RESOURCES\r\n"
+    "#define _AFX_NO_PROPERTY_RESOURCES\r\n"
+    "\r\n"
+    "#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_DEU)\r\n"
+    "LANGUAGE 7, 1\r\n"
+    "#pragma code_page(1252)\r\n"
+    "#include ""res\\StoreManager.rc2""  // Nicht mit Microsoft Visual C++ bearbeitete Ressourcen\r\n"
+    "#include ""l.DEU\\afxres.rc""          // Standardkomponenten\r\n"
+    "#if !defined(_AFXDLL)\r\n"
+    "#include ""l.DEU\\afxprint.rc""                // Ressourcen für Drucken/Seitenansicht\r\n"
+    "#include ""l.DEU\\afxribbon.rc""               // Ressourcen für MFC-Multifunktionsleiste und -Steuerleiste\r\n"
+    "#endif\r\n"
+    "#endif\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+#endif    // Deutsch (Deutschland) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+#define _AFX_NO_OLE_RESOURCES
+#define _AFX_NO_TRACKER_RESOURCES
+#define _AFX_NO_PROPERTY_RESOURCES
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_DEU)
+LANGUAGE 7, 1
+#pragma code_page(1252)
+#include "res\StoreManager.rc2"  // Nicht mit Microsoft Visual C++ bearbeitete Ressourcen
+#include "l.DEU\afxres.rc"          // Standardkomponenten
+#if !defined(_AFXDLL)
+#include "l.DEU\afxprint.rc"                // Ressourcen für Drucken/Seitenansicht
+#include "l.DEU\afxribbon.rc"               // Ressourcen für MFC-Multifunktionsleiste und -Steuerleiste
+#endif
+#endif
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

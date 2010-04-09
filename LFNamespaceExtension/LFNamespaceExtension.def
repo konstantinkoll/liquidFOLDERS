@@ -1,0 +1,10 @@
+; LFNamespaceExtension.def : Declares the module parameters for the DLL.
+
+LIBRARY      "LFNamespaceExtension"
+
+EXPORTS
+	; Explicit exports can go here
+	DllCanUnloadNow     PRIVATE
+	DllGetClassObject   PRIVATE
+	DllRegisterServer   PRIVATE
+	DllUnregisterServer PRIVATE

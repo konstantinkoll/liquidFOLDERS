@@ -1,0 +1,418 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#ifndef APSTUDIO_INVOKED
+#include "targetver.h"
+#endif
+#include "afxres.h"
+#include "..\\LFCommDlg\\resource.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// Neutral resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_NEU)
+#ifdef _WIN32
+LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDR_MAINFRAME           ICON                    "res\\Migrate.ico"
+IDI_TILE0               ICON                    "res\\Tile0.ico"
+IDI_TILE2               ICON                    "res\\Tile2.ico"
+IDI_TILE3               ICON                    "res\\Tile3.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// PNG
+//
+
+IDB_ABOUTICON           PNG                     "res\\Migrate_About.png"
+IDB_LOGO_MICRO          PNG                     "res\\Logo alpha micro.png"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDB_MAINBUTTON          BITMAP                  "res\\MainButton.bmp"
+IDB_APPMENU_32          BITMAP                  "res\\AppMenu_32.bmp"
+IDB_APPMENU_16          BITMAP                  "res\\AppMenu_16.bmp"
+IDB_PANEL_16            BITMAP                  "res\\Panel_16.bmp"
+IDB_RIBBONMIGRATE_16    BITMAP                  "res\\Ribbon_Migrate_16.bmp"
+IDB_RIBBONMIGRATE_32    BITMAP                  "res\\Ribbon_Migrate_32.bmp"
+ID_PANE_PLACESWND       BITMAP                  "res\\Toolbar_Places.bmp"
+ID_PANE_STOREWND        BITMAP                  "res\\Toolbar_Stores.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 0,1,0,0
+ PRODUCTVERSION 0,1,0,0
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "000004e4"
+        BEGIN
+            VALUE "CompanyName", "liquidFOLDERS"
+            VALUE "FileVersion", "0.1"
+            VALUE "InternalName", "Migration Wizard"
+            VALUE "LegalCopyright", "© 2009-2010 liquidFOLDERS"
+            VALUE "LegalTrademarks", "liquidFOLDERS®"
+            VALUE "OriginalFilename", "Migrate.exe"
+            VALUE "ProductName", "liquidFOLDERS"
+            VALUE "ProductVersion", "0.1"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x0, 1252
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDR_MAINFRAME MENU 
+BEGIN
+    MENUITEM "",                            65535
+END
+
+IDM_STORE MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "&Delete...",                  ID_STORE_DELETE
+        MENUITEM "&Rename",                     ID_STORE_RENAME
+        MENUITEM SEPARATOR
+        MENUITEM "Make de&fault store",         ID_STORE_MAKEDEFAULT
+        MENUITEM SEPARATOR
+        MENUITEM "&Properties...",              ID_STORE_PROPERTIES 
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Accelerator
+//
+
+IDR_MAINFRAME ACCELERATORS 
+BEGIN
+    VK_F1,          ID_APP_HELP,            VIRTKEY, NOINVERT
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Toolbar
+//
+
+ID_PANE_STOREWND TOOLBAR  16, 16
+BEGIN
+    BUTTON      ID_STORE_NEW
+    SEPARATOR
+    BUTTON      ID_STORE_DELETE
+    BUTTON      ID_STORE_RENAME
+    BUTTON      ID_STORE_MAKEDEFAULT
+    SEPARATOR
+    BUTTON      ID_STORE_PROPERTIES
+    SEPARATOR
+    BUTTON      ID_STORE_SHOWCATEGORIES
+END
+
+ID_PANE_PLACESWND TOOLBAR  16, 16
+BEGIN
+    BUTTON      ID_PLACES_HOME
+    BUTTON      ID_PLACES_COMPUTER
+    BUTTON      ID_PLACES_HOME
+    SEPARATOR
+    BUTTON      ID_PLACES_NETHOOD
+END
+
+#endif    // Neutral resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// Deutsch (neutral) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_DEU)
+#ifdef _WIN32
+LANGUAGE LANG_GERMAN, SUBLANG_NEUTRAL
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_TILE1               ICON                    "res\\Tile1_DE.ico"
+#endif    // Deutsch (neutral) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// Englisch (neutral) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_NEUTRAL
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_TILE1               ICON                    "res\\Tile1_EN.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDM_STORE MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "&Delete...",                  ID_STORE_DELETE
+        MENUITEM "&Rename",                     ID_STORE_RENAME
+        MENUITEM SEPARATOR
+        MENUITEM "Make de&fault store",         ID_STORE_MAKEDEFAULT
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE 
+BEGIN
+    IDR_MAINFRAME           "Migration Wizard"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_APP_EXIT             "Exits the Migration Wizard.\nExit"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_APP_CLOSE            "Closes this window.\nClose"
+    ID_APP_GRANNYMODE       "Enables or disables extra large fonts.\nGranny mode"
+    ID_APP_SHOWPLACES       "Shows the places pane.\nPlaces pane"
+    ID_APP_SHOWSTORES       "Shows the stores pane.\nStores pane"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_FOLDER_ADD           "Import this folder and all its subfolders.\nInclude subtree"
+    ID_FOLDER_REMOVE        "Do not import this folder and all its subfolders.\nExclude subtree"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_MIGRATE_START        "Imports all data files from the selected folders to the selected liquidFOLDERS store.\nStart migration"
+    ID_MIGRATE_DELETE       "Deletes all data files from the Windows file system that have been successfully imported. Use with caution!\nDelete imported files"
+    ID_MIGRATE_SIMULATE     "Simulates the migration process and shows a list of files that would be imported. No changes to the Windows file system nor liquidFOLDERS occur.\nSimulate migration"
+    ID_MIGRATE_SELECTEXT    "Selects the file extensions to be considered data files.\nSelect file extensions"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_PLACES_DESKTOP       "Opens the desktop as root directory for migration.\nGo to desktop"
+    ID_PLACES_COMPUTER      "Opens the computer as root directory for migration.\nGo to my computer"
+    ID_PLACES_HOME          "Opens the home directory as root directory for migration.\nGo to my files"
+    ID_PLACES_NETHOOD       "Opens the network neighborhood as root directory for migration.\nGo to network neighborhood"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_STORE_NEW            "Creates a new store with user-defined settings.\nCreate new store"
+    ID_STORE_DELETE         "Deletes the selected store.\nDelete"
+    ID_STORE_RENAME         "Renames the selected store.\nRename (F2)"
+    ID_STORE_MAKEDEFAULT    "Makes the selected internal store the default store.\nMake default"
+    ID_STORE_PROPERTIES     "View and change the attributes of the selected store\nProperties"
+    ID_STORE_SHOWCATEGORIES "Enables or disables categories in this list.\nShow categories"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_PANE_WORKFLOWWND     "Shows or hides the workflow pane.\nWorkflow pane"
+    ID_PANE_PLACESWND       "Shows or hides the places pane.\nPlaces pane"
+    ID_PANE_STOREWND        "Shows or hides the stores pane.\nStores pane"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_TILE0               "1. Select root directory"
+    IDS_TILE1               "2. Map subdirectory names"
+    IDS_TILE2               "3. Select destination store"
+    IDS_TILE3               "4. Start migration process"
+    IDS_EMPTYHINT           "The Migration Wizard allows you to bulk import files from a directory tree into a liquidFOLDERS store."
+END
+
+#endif    // Englisch (neutral) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// Spanisch (neutral) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ESP)
+#ifdef _WIN32
+LANGUAGE LANG_SPANISH, SUBLANG_NEUTRAL
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_TILE1               ICON                    "res\\Tile1_ES.ico"
+#endif    // Spanisch (neutral) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// Französisch (neutral) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_FRA)
+#ifdef _WIN32
+LANGUAGE LANG_FRENCH, SUBLANG_NEUTRAL
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_TILE1               ICON                    "res\\Tile1_FR.ico"
+#endif    // Französisch (neutral) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// Deutsch (Deutschland) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_DEU)
+#ifdef _WIN32
+LANGUAGE LANG_GERMAN, SUBLANG_GERMAN
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#ifndef APSTUDIO_INVOKED\r\n"
+    "#include ""targetver.h""\r\n"
+    "#endif\r\n"
+    "#include ""afxres.h""\r\n"
+    "#include ""..\\\\LFCommDlg\\\\resource.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "#define _AFX_NO_OLE_RESOURCES\r\n"
+    "#define _AFX_NO_TRACKER_RESOURCES\r\n"
+    "#define _AFX_NO_PROPERTY_RESOURCES\r\n"
+    "\r\n"
+    "#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_DEU)\r\n"
+    "LANGUAGE 7, 1\r\n"
+    "#pragma code_page(1252)\r\n"
+    "#include ""res\\Migrate.rc2""  // Nicht mit Microsoft Visual C++ bearbeitete Ressourcen\r\n"
+    "#include ""l.DEU\\afxres.rc""          // Standardkomponenten\r\n"
+    "#if !defined(_AFXDLL)\r\n"
+    "#include ""l.DEU\\afxprint.rc""                // Ressourcen für Drucken/Seitenansicht\r\n"
+    "#include ""l.DEU\\afxribbon.rc""               // Ressourcen für MFC-Multifunktionsleiste und -Steuerleiste\r\n"
+    "#endif\r\n"
+    "#endif\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+#endif    // Deutsch (Deutschland) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+#define _AFX_NO_OLE_RESOURCES
+#define _AFX_NO_TRACKER_RESOURCES
+#define _AFX_NO_PROPERTY_RESOURCES
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_DEU)
+LANGUAGE 7, 1
+#pragma code_page(1252)
+#include "res\Migrate.rc2"  // Nicht mit Microsoft Visual C++ bearbeitete Ressourcen
+#include "l.DEU\afxres.rc"          // Standardkomponenten
+#if !defined(_AFXDLL)
+#include "l.DEU\afxprint.rc"                // Ressourcen für Drucken/Seitenansicht
+#include "l.DEU\afxribbon.rc"               // Ressourcen für MFC-Multifunktionsleiste und -Steuerleiste
+#endif
+#endif
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

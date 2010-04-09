@@ -1,0 +1,5 @@
+Backdrop-Einfärbung für das About-Fenster:
+- GIMP "Einfärben"
+  - Farbton: 210
+  - Sättigung: 80
+  - Helligkeit: 92

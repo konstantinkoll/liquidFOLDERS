@@ -1,0 +1,328 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// Neutral resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_NEU)
+#ifdef _WIN32
+LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_FLD_Default         ICON                    "res\\FLD_Default.ico"
+IDI_FLD_ActiveX         ICON                    "res\\FLD_ActiveX.ico"
+IDI_FLD_All             ICON                    "res\\FLD_All.ico"
+IDI_FLD_Archive         ICON                    "res\\FLD_Archive.ico"
+IDI_FLD_Audio           ICON                    "res\\FLD_Audio.ico"
+IDI_FLD_Back            ICON                    "res\\FLD_Back.ico"
+IDI_FLD_Calendar        ICON                    "res\\FLD_Calendar.ico"
+IDI_FLD_Contacts        ICON                    "res\\FLD_Contacts.ico"
+IDI_FLD_Documents       ICON                    "res\\FLD_Documents.ico"
+IDI_FLD_Favorites       ICON                    "res\\FLD_Favorites.ico"
+IDI_FLD_Fonts           ICON                    "res\\FLD_Fonts.ico"
+IDI_FLD_Location        ICON                    "res\\FLD_Location.ico"
+IDI_FLD_Mail            ICON                    "res\\FLD_Mail.ico"
+IDI_FLD_Photos          ICON                    "res\\FLD_Photos.ico"
+IDI_FLD_Pictures        ICON                    "res\\FLD_Pictures.ico"
+IDI_FLD_Roll            ICON                    "res\\FLD_Roll.ico"
+IDI_FLD_Presentations   ICON                    "res\\FLD_Presentations.ico"
+IDI_FLD_Spreadsheets    ICON                    "res\\FLD_Spreadsheets.ico"
+IDI_FLD_System          ICON                    "res\\FLD_System.ico"
+IDI_FLD_Trash           ICON                    "res\\FLD_Trash.ico"
+IDI_FLD_Video           ICON                    "res\\FLD_Videos.ico"
+IDI_FLD_Web             ICON                    "res\\FLD_Web.ico"
+IDI_STORE_Empty         ICON                    "res\\Store_Empty.ico"
+IDI_STORE_Default       ICON                    "res\\Store_Default.ico"
+IDI_STORE_Full          ICON                    "res\\Store_Full.ico"
+IDI_Bag                 ICON                    "res\\Bag.ico"
+IDI_Places              ICON                    "res\\Places.ico"
+IDI_Web                 ICON                    "res\\Web.ico"
+IDI_Computer            ICON                    "res\\Computer.ico"
+IDI_DRV_Default         ICON                    "res\\DRV_Default.ico"
+IDI_DRV_System          ICON                    "res\\DRV_Windows.ico"
+IDI_DRV_Empty           ICON                    "res\\DRV_Empty.ico"
+IDI_DRV_Disconnected    ICON                    "res\\DRV_Disconnected.ico"
+IDI_DRV_Connected       ICON                    "res\\DRV_Connected.ico"
+IDI_DRV_Server          ICON                    "res\\DRV_Server.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 0,1,0,0
+ PRODUCTVERSION 0,1,0,0
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x2L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "000004e4"
+        BEGIN
+            VALUE "CompanyName", "liquidFOLDERS"
+            VALUE "FileVersion", "0.1"
+            VALUE "InternalName", "LFCore"
+            VALUE "LegalCopyright", "© 2009-2010 liquidFOLDERS"
+            VALUE "LegalTrademarks", "liquidFOLDERS®"
+            VALUE "OriginalFilename", "LFCore.dll"
+            VALUE "ProductName", "liquidFOLDERS"
+            VALUE "ProductVersion", "0.1"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x407, 1200
+    END
+END
+
+#endif    // Neutral resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// Englisch (neutral) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_NEUTRAL
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE 
+BEGIN
+    IDS_BFCategoryInternalStores "Internal stores\nThese stores reside on an internal drive, and are always available."
+    IDS_BFCategoryHybridStores "Hybrid stores\nThese stores can be searched, even when the removable drive is not connected."
+    IDS_BFCategoryExternalStores "External stores\nThese stores reside entirely on removable drives."
+    IDS_BFCategoryDrives    "Removable drives\nChoose one of these to create a new external or hybrid store."
+    IDS_BFCategoryStore     "This store"
+    IDS_BFCategoryFilters   "My filters\nThis section contains all user-defined filters for this store."
+    IDS_BFCategoryMultimediaTypes "Multimedia"
+    IDS_BFCategoryOtherTypes "Other files"
+    IDS_BFCategoryHousekeeping "Housekeeping"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_BFCategoryBasic     "Basic"
+    IDS_BFCategoryGeotagging "Geotagging"
+    IDS_BFCategoryVisual    "Visual"
+    IDS_BFCategoryPhotographic "Photos"
+    IDS_BFCategoryAudio     "Audio"
+    IDS_BFCategoryTimebased "Timebased"
+    IDS_BFCategoryBibliographic "Bibliographic"
+    IDS_BFCategoryWorkflow  "Workflow"
+    IDS_BFCategoryInternal  "Internal use"
+    IDS_BFCategoryAllFiles  "All files"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_LFContextStores     "Stores"
+    IDS_LFContextStoreHome  "Store home"
+    IDS_LFContextClipboard  "Clipboard"
+    IDS_LFContextDefault    "Default"
+    IDS_LFContextTrash      "Trash"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_BacklinkName        "Back"
+    IDS_BacklinkHint        "One level up"
+    IDS_StoreDefaultName    "New store"
+    IDS_LastSeen            "Last mounted from %s"
+    IDS_SeenOn              "Mounted on %s"
+    IDS_ErrorCaption        "Error"
+    IDS_DeleteStoreCaption  "Delete store ""%s"""
+    IDS_DeleteStoreMessage  "Do you really want to delete this store ?"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_BFErrorOk           "Query time: %d ms; cooking time: %d ms; items delivered: %d (%d after cooking)"
+    IDS_BFErrorMemoryError  "Memory error"
+    IDS_BFErrorIllegalQuery "The filter describes an illegal request."
+    IDS_BFErrorIllegalStoreDescriptor "The store settings are not valid."
+    IDS_BFErrorStoreNotFound "The selected store is not mounted or not present."
+    IDS_BFErrorDriveNotReady "Physical drive not ready!"
+    IDS_BFErrorIllegalPhysFolder "The physical folder is not accessible."
+    IDS_BFErrorRegistryError "The registry cannot be accessed."
+    IDS_BFErrorIllegalKey   "The store or file key is illegal."
+    IDS_BFErrorNoDefaultStore "There is currently no default store."
+    IDS_BFErrorTooManyStores "The maximum number of stores has already been created."
+    IDS_BFErrorStoreNotMounted "The store is currently not mounted."
+    IDS_BFErrorMutexError   "liquidFOLDERS is currently blocked by another process."
+    IDS_BFErrorIllegalAttribute "At least one of the selected items does not possesss the attribute."
+    IDS_BFErrorIllegalItemType "At least one of the selected items does not support this operation."
+    IDS_BFErrorIllegalValue "At least one of the attribute values is illegal."
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_AttrFileName        "Name"
+    IDS_AttrStoreID         "Store ID"
+    IDS_AttrFileID          "File ID"
+    IDS_AttrHint            "Hint"
+    IDS_AttrComment         "Comment"
+    IDS_AttrCreationTime    "Creation time"
+    IDS_AttrFileTime        "File time"
+    IDS_AttrFileFormat      "File format"
+    IDS_AttrFileSize        "Size"
+    IDS_AttrFlags           "Flags"
+    IDS_AttrTags            "Tags"
+    IDS_AttrRating          "Rating"
+    IDS_AttrPriority        "Priority"
+    IDS_AttrURL             "URL"
+    IDS_AttrLocationName    "Location name"
+    IDS_AttrLocationIATA    "IATA airport code"
+    IDS_AttrLocationGPS     "GPS location"
+    IDS_AttrHeight          "Height"
+    IDS_AttrWidth           "Width"
+    IDS_AttrResolution      "Resolution"
+    IDS_AttrAspectRatio     "Aspect ratio"
+    IDS_AttrVideoCodec      "Video codec"
+    IDS_AttrRoll            "Roll"
+    IDS_AttrRecordingTime   "Recording time"
+    IDS_AttrRecordingEquipment "Equipment"
+    IDS_AttrExposure        "Exposure"
+    IDS_AttrFocus           "Focus"
+    IDS_AttrAperture        "Aperture"
+    IDS_AttrChip            "Chip"
+    IDS_AttrAlbum           "Album"
+    IDS_AttrChannels        "Channels"
+    IDS_AttrSamplerate      "Sample rate"
+    IDS_AttrAudioCodec      "Audio codec"
+    IDS_AttrDuration        "Duration"
+    IDS_AttrBitrate         "Bitrate"
+    IDS_AttrArtist          "Artist or author"
+    IDS_AttrTitle           "Title"
+    IDS_AttrCopyright       "Copyright"
+    IDS_AttrISBN            "ISBN"
+    IDS_AttrLanguage        "Language"
+    IDS_AttrPages           "Page or slide count"
+    IDS_AttrSignature       "Signature"
+    IDS_AttrFrom            "From"
+    IDS_AttrTo              "To"
+    IDS_AttrResponsible     "Responsible"
+    IDS_AttrDueTime         "Due on"
+    IDS_AttrDoneTime        "Done on"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_DomainAllFiles      "All files\nAll files in this store"
+    IDS_DomainFavorites     "Favorites\nAll files which are rated"
+    IDS_DomainFilters       "Filters\nUser-defined filters"
+    IDS_DomainAllMultimediaFiles 
+                            "All multimedia files\nAll audio files, pictures, photos and videos"
+    IDS_DomainAudio         "Audio"
+    IDS_DomainPictures      "Pictures\nIncludes JPEG photos"
+    IDS_DomainPhotos        "Photos\nJPEG photos only"
+    IDS_DomainVideos        "Videos"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_DomainArchives      "Archives"
+    IDS_DomainContacts      "Contacts"
+    IDS_DomainDocuments     "Documents\nOffice documents"
+    IDS_DomainEvents        "Events and tasks"
+    IDS_DomainFonts         "Fonts"
+    IDS_DomainGeodata       "Geodata\nFlightmap itineraries, Google Earth extensions"
+    IDS_DomainMessages      "Messages"
+    IDS_DomainPresentations "Presentations"
+    IDS_DomainSpreadsheets  "Spreadsheets"
+    IDS_DomainWeb           "Web pages"
+    IDS_DomainTrash         "Trash\nFiles marked for final deletion"
+    IDS_DomainUnknown       "Unknown file formats"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_DefaultStore        "Default Store"
+END
+
+#endif    // Englisch (neutral) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// Deutsch (Deutschland) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_DEU)
+#ifdef _WIN32
+LANGUAGE LANG_GERMAN, SUBLANG_GERMAN
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+#endif    // Deutsch (Deutschland) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

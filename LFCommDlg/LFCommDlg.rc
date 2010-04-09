@@ -1,0 +1,1724 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#ifndef APSTUDIO_INVOKED
+#include "targetver.h"
+#endif
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// Neutral resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_NEU)
+#ifdef _WIN32
+LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 0,1,0,0
+ PRODUCTVERSION 0,1,0,0
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x2L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "000004e4"
+        BEGIN
+            VALUE "CompanyName", "liquidFOLDERS"
+            VALUE "FileVersion", "0.1"
+            VALUE "InternalName", "LFCommDlg"
+            VALUE "LegalCopyright", "© 2009-2010 liquidFOLDERS"
+            VALUE "LegalTrademarks", "liquidFOLDERS®"
+            VALUE "OriginalFilename", "LFCommDlg.dll"
+            VALUE "ProductName", "liquidFOLDERS"
+            VALUE "ProductVersion", "0.1"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x0, 1252
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// PNG
+//
+
+IDB_KEY                 PNG                     "res\\Key.png"
+IDB_BACKDROP            PNG                     "res\\Backdrop.png"
+IDB_LOGO                PNG                     "res\\Logo alpha tiny.png"
+IDB_LOCATIONINDICATOR_8 PNG                     "res\\LocationIndicator_8.png"
+IDB_LOCATIONINDICATOR_16 PNG                     "res\\LocationIndicator_16.png"
+IDB_EARTHMAP_1024       PNG                     "res\\Earthmap_1024.jpg"
+IDB_EARTHMAP_2048       PNG                     "res\\Earthmap_2048.jpg"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDB_RATING0             BITMAP                  "res\\Rating0.bmp"
+IDB_RATING1             BITMAP                  "res\\Rating1.bmp"
+IDB_RATING2             BITMAP                  "res\\Rating2.bmp"
+IDB_RATING3             BITMAP                  "res\\Rating3.bmp"
+IDB_RATING4             BITMAP                  "res\\Rating4.bmp"
+IDB_RATING5             BITMAP                  "res\\Rating5.bmp"
+IDB_RATING6             BITMAP                  "res\\Rating6.bmp"
+IDB_RATING7             BITMAP                  "res\\Rating7.bmp"
+IDB_RATING8             BITMAP                  "res\\Rating8.bmp"
+IDB_RATING9             BITMAP                  "res\\Rating9.bmp"
+IDB_RATING10            BITMAP                  "res\\Rating10.bmp"
+IDB_PRIORITY0           BITMAP                  "res\\Priority0.bmp"
+IDB_PRIORITY1           BITMAP                  "res\\Priority1.bmp"
+IDB_PRIORITY2           BITMAP                  "res\\Priority2.bmp"
+IDB_PRIORITY3           BITMAP                  "res\\Priority3.bmp"
+IDB_PRIORITY4           BITMAP                  "res\\Priority4.bmp"
+IDB_PRIORITY5           BITMAP                  "res\\Priority5.bmp"
+IDB_PRIORITY6           BITMAP                  "res\\Priority6.bmp"
+IDB_PRIORITY7           BITMAP                  "res\\Priority7.bmp"
+IDB_PRIORITY8           BITMAP                  "res\\Priority8.bmp"
+IDB_PRIORITY9           BITMAP                  "res\\Priority9.bmp"
+IDB_PRIORITY10          BITMAP                  "res\\Priority10.bmp"
+IDB_CANCEL              BITMAP                  "res\\Cancel_24.bmp"
+IDB_INFO                BITMAP                  "res\\Info_24.bmp"
+IDB_READY               BITMAP                  "res\\Ready_24.bmp"
+IDB_WARNING             BITMAP                  "res\\Warning_24.bmp"
+IDB_INTERNALSTORE       BITMAP                  "res\\Store_Empty_32.bmp"
+IDB_DEFAULTSTORE        BITMAP                  "res\\Store_Default_32.bmp"
+IDB_EXTERNALSTORE       BITMAP                  "res\\Bag_32.bmp"
+IDB_DELETE              BITMAP                  "res\\Delete_96.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDD_ABOUT               ICON                    "res\\About_Small.ico"
+IDD_STORENEW            ICON                    "res\\StoreNew_Tiny.ico"
+IDD_WELCOME             ICON                    "res\\Welcome_Small.ico"
+IDD_STOREDELETE         ICON                    "res\\StoreDelete_Tiny.ico"
+IDD_SELECTIATA          ICON                    "res\\Plane_Tiny.ico"
+IDD_JUMPTOIATA          ICON                    "res\\JumpToLocation_Tiny.ico"
+IDD_SELECTGPS           ICON                    "res\\LocationGPS_Tiny.ico"
+IDD_ENTERLICENSEKEY     ICON                    "res\\Key_Small.ico"
+IDD_STOREPROPERTIES     ICON                    "res\\StoreProperties_Tiny.ico"
+IDD_ITEMTEMPLATE        ICON                    "res\\Inspector_Tiny.ico"
+#endif    // Neutral resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// Deutsch (neutral) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_DEU)
+#ifdef _WIN32
+LANGUAGE LANG_GERMAN, SUBLANG_NEUTRAL
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ABOUT DIALOGEX 0, 0, 400, 279
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "Ok",IDOK,"Button",BS_OWNERDRAW | WS_GROUP | WS_TABSTOP,7,258,50,14
+    CONTROL         "Abbrechen",IDCANCEL,"Button",BS_OWNERDRAW | WS_GROUP | WS_TABSTOP,64,258,50,14
+    CONTROL         "&Automatisch",IDC_TEXTURE_AUTO,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,14,183,57,10
+    CONTROL         "&1024×1024",IDC_TEXTURE_1024,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,14,195,57,10
+    CONTROL         "&2048×2048",IDC_TEXTURE_2048,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,14,208,57,10
+    CONTROL         "&4096×4096",IDC_TEXTURE_4096,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,14,221,57,10
+    CONTROL         "&8192×4096",IDC_TEXTURE_8192,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,14,234,57,10
+    COMBOBOX        IDC_RIBBONCOLORCOMBO,94,182,128,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
+    GROUPBOX        "Globus-Textur",IDC_TEXTUREFRAME,7,170,71,80,WS_GROUP
+    GROUPBOX        "Farbschema",IDC_RIBBONCOLORFRAME,87,169,142,35,WS_GROUP
+    GROUPBOX        "StoreManager",IDC_STATIC,87,210,141,40,WS_GROUP
+    CONTROL         "Nur &eingebundene Laufwerke zeigen",IDC_DRIVES_HIDEEMPTY,
+                    "Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,94,221,128,10
+    CONTROL         "Alle &Laufwerke zeigen",IDC_DRIVES_SHOWALL,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,94,234,128,10
+    GROUPBOX        "Lizenz",IDC_RIBBONCOLORFRAME2,238,169,155,35,WS_GROUP
+    LTEXT           "Name:",IDC_NAME,245,179,141,8
+    LTEXT           "X",IDC_LICENSEKEY,245,189,141,8
+    CONTROL         "&Lizenzschlüssel eingeben...",IDC_ENTERLICENSEKEY,
+                    "Button",BS_OWNERDRAW | WS_GROUP | WS_TABSTOP,244,180,142,17
+END
+
+IDD_CHOOSEDEFAULTSTORE DIALOGEX 0, 0, 466, 210
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Standard-Store wählen"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "",IDC_STORELIST,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_ALIGNLEFT | LVS_OWNERDATA | LVS_NOSORTHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,14,27,438,147
+    DEFPUSHBUTTON   "Ok",IDOK,7,189,50,14,WS_GROUP
+    PUSHBUTTON      "Abbrechen",IDCANCEL,64,189,50,14,WS_GROUP
+    GROUPBOX        "Interne Stores",IDC_STATIC,7,7,452,176,WS_GROUP
+    LTEXT           "Nur interne Stores können als Standard-Store ausgewählt werden.",IDC_STATIC,14,16,413,8
+    PUSHBUTTON      "&Neuen Store anlegen...",IDC_NEWSTORE,364,189,95,14
+END
+
+IDD_WELCOME DIALOGEX 0, 0, 262, 212
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_APPWINDOW
+CAPTION "Willkommen bei liquidFOLDERS"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    EDITTEXT        IDC_STORENAME1,14,162,72,14,ES_AUTOHSCROLL | WS_GROUP
+    EDITTEXT        IDC_STORENAME2,94,162,72,14,ES_AUTOHSCROLL | WS_GROUP
+    EDITTEXT        IDC_STORENAME3,175,162,72,14,ES_AUTOHSCROLL | WS_GROUP
+    CONTROL         "Und los!",IDOK,"Button",BS_OWNERDRAW | WS_GROUP | WS_TABSTOP,7,191,50,14
+    CONTROL         "Nein danke.",IDCANCEL,"Button",BS_OWNERDRAW | WS_GROUP | WS_TABSTOP,64,191,50,14
+    CONTROL         "&Lizenzschlüssel eingeben...",IDC_ENTERLICENSEKEY,
+                    "Button",BS_OWNERDRAW | WS_GROUP | WS_TABSTOP,150,191,105,14
+    LTEXT           "Dies scheint der erste Start von liquidFOLDERS zu sein. liquidFOLDERS speichert alle Dateien in sog. „Stores“. Um gleich loszulegen, können Sie hier bis zu drei Stores anlegen, indem Sie deren Namen eintragen (z.B. „Meine Dateien“).",IDC_STATIC,7,101,248,36
+    GROUPBOX        "Store-Namen",IDC_STATIC,7,140,248,44,WS_GROUP
+    LTEXT           "Store 1:",IDC_STATIC,14,152,72,8
+    LTEXT           "Store 2:",IDC_STATIC,94,152,72,8
+    LTEXT           "Store 3:",IDC_STATIC,175,152,72,8
+END
+
+IDD_STOREDELETE DIALOGEX 0, 0, 296, 108
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Eingebundenen Store „%s“ löschen"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "Abbrechen",IDCANCEL,179,87,50,14,WS_GROUP
+    CONTROL         "Store &behalten",IDC_KEEP,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,82,50,62,10
+    CONTROL         "&Löschen",IDC_DELETE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,82,62,61,10
+    PUSHBUTTON      "Jetzt löschen (keine weiteren Warnungen)",IDOK,6,87,165,14,WS_DISABLED | WS_GROUP
+    CONTROL         20010,IDC_STATIC,"Static",SS_BITMAP | SS_REALSIZEIMAGE | WS_GROUP,6,7,64,59
+    LTEXT           "Soll der Store wirklich gelöscht werden?\nDa der gewählte Store zur Zeit angeschlossen ist, werden alle Dateien im Store ohne Wiederherstellungsmöglichkeit gelöscht!",IDC_STATIC,75,7,214,35
+    GROUPBOX        "Bestätigung",IDC_STATIC,74,37,74,41,WS_GROUP
+END
+
+IDD_STORENEW DIALOGEX 0, 0, 340, 252
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Neuen Store anlegen"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "&Interner Store",IDC_INTERNALSTORE,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,39,18,262,10
+    CONTROL         "&Hybrid-Store",IDC_HYBRIDSTORE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,39,49,262,10
+    CONTROL         "&Externer Store",IDC_EXTERNALSTORE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,39,72,262,10
+    CONTROL         "&Automatisch wählen",IDC_AUTODRIVE,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,14,120,113,10
+    CONTROL         "",IDC_DRIVELIST,"SysListView32",LVS_SMALLICON | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_AUTOARRANGE | LVS_ALIGNLEFT | WS_DISABLED | WS_BORDER | WS_GROUP | WS_TABSTOP,14,145,113,68
+    EDITTEXT        IDC_STORENAME,155,129,171,14,ES_AUTOHSCROLL | WS_GROUP
+    EDITTEXT        IDC_COMMENT,155,158,171,14,ES_AUTOHSCROLL | WS_GROUP
+    CONTROL         "&Standard-Store",IDC_MAKEDEFAULT,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,155,177,171,10
+    DEFPUSHBUTTON   "Ok",IDOK,6,231,50,14,WS_GROUP
+    PUSHBUTTON      "Abbrechen",IDCANCEL,63,231,50,14,WS_GROUP
+    GROUPBOX        "Store-Typ",IDC_STATIC,7,7,326,92,WS_GROUP
+    GROUPBOX        "Speicherort",IDC_STATIC,6,108,130,114,WS_GROUP
+    GROUPBOX        "Eigenschaften",IDC_STATIC,147,108,186,86,WS_GROUP
+    CONTROL         20007,IDC_INTERNALSTOREICON,"Static",SS_BITMAP | WS_GROUP,13,18,21,20,WS_EX_TRANSPARENT
+    CONTROL         20009,IDC_STATIC,"Static",SS_BITMAP | WS_GROUP,13,49,21,20
+    CONTROL         20009,IDC_STATIC,"Static",SS_BITMAP | WS_GROUP,13,72,21,20
+    LTEXT           "Laufwerk:",IDC_STATIC,14,135,113,8
+    LTEXT           "Store-Name:",IDC_STATIC,155,118,171,9
+    LTEXT           "Kommentar:",IDC_STATIC,155,148,171,9
+    CONTROL         "(Alle Dateien und der Index werden lokal auf diesem Computer gespeichert)",IDC_STATIC,
+                    "Static",SS_LEFTNOWORDWRAP | WS_GROUP,49,29,277,8
+    LTEXT           "(Alle Dateien und der Index werden extern gespeichert, mit zusätzliche Index-Kopie)",IDC_STATIC,50,60,276,8
+    LTEXT           "(Alle Dateien und der Index werden extern gespeichert)",IDC_STATIC,49,83,277,8
+    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ | WS_GROUP,13,43,313,2
+    CONTROL         20008,IDC_DEFAULTSTOREICON,"Static",SS_BITMAP | NOT WS_VISIBLE | WS_GROUP,13,18,21,20,WS_EX_TRANSPARENT
+END
+
+IDD_STORENEWDRIVE DIALOGEX 0, 0, 223, 150
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Neuen Store auf Laufwerk %c: anlegen"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    EDITTEXT        IDC_STORENAME,14,96,79,14,ES_AUTOHSCROLL | WS_GROUP
+    EDITTEXT        IDC_COMMENT,106,96,102,14,ES_AUTOHSCROLL | WS_GROUP
+    DEFPUSHBUTTON   "Ok",IDOK,6,129,50,14,WS_GROUP
+    PUSHBUTTON      "Abbrechen",IDCANCEL,63,129,50,14,WS_GROUP
+    CONTROL         "This is a dummy. KEEP!",IDC_INTERNALSTORE,"Button",BS_AUTORADIOBUTTON | NOT WS_VISIBLE | WS_DISABLED | WS_GROUP | WS_TABSTOP,125,133,91,10
+    CONTROL         "&Hybrid-Store",IDC_HYBRIDSTORE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,39,17,170,10
+    CONTROL         "&Externer Store",IDC_EXTERNALSTORE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,39,41,170,10
+    GROUPBOX        "Store-Typ",IDC_STATIC,6,7,210,61,WS_GROUP
+    GROUPBOX        "Eigenschaften",IDC_STATIC,6,75,210,45,WS_GROUP
+    CONTROL         20009,IDC_STATIC,"Static",SS_BITMAP | WS_GROUP,13,18,21,20
+    CONTROL         20009,IDC_STATIC,"Static",SS_BITMAP | WS_GROUP,13,41,21,20
+    LTEXT           "(Eine Kopie des Index wird lokal gespeichert)",IDC_STATIC,49,29,160,8
+    LTEXT           "(Durchsuchen nur möglich wenn angeschlossen)",IDC_STATIC,49,52,160,8
+    LTEXT           "Store-Name:",IDC_STATIC,14,86,71,9
+    LTEXT           "Kommentar:",IDC_STATIC,106,86,71,9
+END
+
+IDD_SELECTGPS DIALOGEX 0, 0, 444, 295
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "GPS-Koordinaten"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "Ok",IDOK,7,274,50,14,WS_GROUP
+    PUSHBUTTON      "Abbrechen",IDCANCEL,64,274,50,14,WS_GROUP
+    GROUPBOX        "Koordinaten",IDC_STATIC,7,7,430,35,WS_GROUP
+    GROUPBOX        "Karte",IDC_STATIC,7,48,430,219,WS_GROUP
+    RTEXT           "© NASA’s Earth Observatory",IDC_STATIC,119,279,318,9
+    EDITTEXT        IDC_LATITUDE,39,19,73,14,ES_AUTOHSCROLL
+    LTEXT           "Breite:",IDC_STATIC,14,21,23,8,0,WS_EX_RIGHT
+    EDITTEXT        IDC_LONGITUDE,163,19,73,14,ES_AUTOHSCROLL
+    LTEXT           "Länge:",IDC_STATIC,121,21,40,8,0,WS_EX_RIGHT
+    LTEXT           "Zum Löschen der GPS-Koordinaten müssen Breite und Länge auf 0° gesetzt werden.",IDC_STATIC,249,17,181,18
+    CONTROL         "Karte",IDC_MAP_SELECTION,"CMapSelectionCtrl",WS_GROUP,14,59,416,200
+END
+
+IDD_JUMPTOIATA DIALOGEX 0, 0, 588, 305
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Ort anzeigen"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    COMBOBOX        IDC_COUNTRY,14,18,247,30,CBS_DROPDOWNLIST | CBS_OEMCONVERT | CBS_DISABLENOSCROLL | WS_VSCROLL | WS_GROUP | WS_TABSTOP,WS_EX_TRANSPARENT
+    CONTROL         "",IDC_AIRPORTS,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_ALIGNLEFT | LVS_OWNERDATA | WS_BORDER | WS_GROUP | WS_TABSTOP,14,59,247,210
+    CONTROL         "Karte",IDC_MAP_PREVIEW,"CMapPreviewCtrl",WS_GROUP,285,19,288,239
+    DEFPUSHBUTTON   "Ok",IDOK,7,284,50,14,WS_GROUP
+    PUSHBUTTON      "Abbrechen",IDCANCEL,64,284,50,14,WS_GROUP
+    GROUPBOX        "Land/Gebiet",IDC_STATIC,7,7,261,33,WS_GROUP
+    GROUPBOX        "Flughäfen (Metropolitan-Codes sind blau dargestellt)",IDC_STATIC,7,47,261,230,WS_GROUP
+    GROUPBOX        "Vorschau",IDC_STATIC,277,7,304,270,WS_GROUP
+    CTEXT           "X",IDC_GPSLOCATION,285,259,288,15,SS_CENTERIMAGE | SS_WORDELLIPSIS
+    RTEXT           "© NASA’s Earth Observatory",IDC_STATIC,227,289,354,9
+    PUSHBUTTON      "Datenbank-Fehler melden...",IDC_REPORTERROR,121,284,115,14,WS_GROUP
+END
+
+IDD_SELECTIATA DIALOGEX 0, 0, 515, 305
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "IATA-Code"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    COMBOBOX        IDC_COUNTRY,14,18,247,30,CBS_DROPDOWNLIST | CBS_OEMCONVERT | CBS_DISABLENOSCROLL | WS_VSCROLL | WS_GROUP | WS_TABSTOP,WS_EX_TRANSPARENT
+    CONTROL         "",IDC_AIRPORTS,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_ALIGNLEFT | LVS_OWNERDATA | WS_BORDER | WS_GROUP | WS_TABSTOP,14,59,247,210
+    CONTROL         "Karte",IDC_MAP_PREVIEW,"CMapPreviewCtrl",WS_GROUP,285,19,215,202
+    CONTROL         "Orts&namen überschreiben",IDC_REPLACE_NAME,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,284,261,98,10
+    CONTROL         "&GPS-Koordniaten überschreiben",IDC_REPLACE_GPS,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,390,261,111,10
+    DEFPUSHBUTTON   "Ok",IDOK,7,284,50,14,WS_GROUP
+    PUSHBUTTON      "Abbrechen",IDCANCEL,64,284,50,14,WS_GROUP
+    GROUPBOX        "Land/Gebiet",IDC_STATIC,7,7,261,33,WS_GROUP
+    GROUPBOX        "Flughäfen (Metropolitan-Codes sind blau dargestellt)",IDC_STATIC,7,47,261,230,WS_GROUP
+    GROUPBOX        "Vorschau",IDC_STATIC,278,7,230,232,WS_GROUP
+    GROUPBOX        "Optionen",IDC_STATIC,277,247,231,30,WS_GROUP
+    CTEXT           "X",IDC_GPSLOCATION,285,221,215,15,SS_CENTERIMAGE | SS_WORDELLIPSIS
+    RTEXT           "© NASA’s Earth Observatory",IDC_STATIC,230,289,278,9
+    PUSHBUTTON      "Datenbank-Fehler melden...",IDC_REPORTERROR,121,284,115,14,WS_GROUP
+END
+
+IDD_ENTERLICENSEKEY DIALOGEX 0, 0, 320, 193
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Lizenzschlüssel eingeben"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    GROUPBOX        "Lizenz",IDC_STATIC,7,92,306,72
+    LTEXT           "Name:",IDC_STATIC,14,103,291,8
+    EDITTEXT        IDC_NAME,14,112,292,14,ES_AUTOHSCROLL | WS_GROUP
+    LTEXT           "Lizenzschlüssel:",IDC_STATIC,14,131,291,8
+    EDITTEXT        IDC_LICENSEKEY,14,140,292,14,ES_AUTOHSCROLL | WS_GROUP
+    CONTROL         "Ok",IDOK,"Button",BS_OWNERDRAW | WS_GROUP | WS_TABSTOP,7,172,50,14
+    CONTROL         "Abbrechen",IDCANCEL,"Button",BS_OWNERDRAW | WS_GROUP | WS_TABSTOP,64,172,50,14
+END
+
+IDD_STOREPROPERTIES DIALOGEX 0, 0, 355, 166
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Eigenschaften von „%s“"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    GROUPBOX        "Eigenschaften",IDC_STATIC,7,7,341,132
+    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ | WS_GROUP,14,56,329,1
+    LTEXT           "Name:",IDC_STATIC,14,18,45,8
+    EDITTEXT        IDC_STORENAME,62,16,279,14,ES_AUTOHSCROLL
+    LTEXT           "Kommentar:",IDC_STATIC,14,37,45,8
+    EDITTEXT        IDC_COMMENT,62,35,279,14,ES_AUTOHSCROLL
+    LTEXT           "Erzeugt:",IDC_STATIC,14,64,45,8
+    LTEXT           "X",IDC_CREATED,62,64,279,8,SS_ENDELLIPSIS
+    LTEXT           "Geändert:",IDC_STATIC,14,74,45,8
+    LTEXT           "X",IDC_UPDATED,62,74,279,8,SS_ENDELLIPSIS
+    LTEXT           "Eingebunden:",IDC_LASTSEENCAPTION,14,84,45,8
+    LTEXT           "X",IDC_LASTSEEN,62,84,279,8,SS_ENDELLIPSIS
+    LTEXT           "GUID:",IDC_STATIC,14,94,45,8
+    LTEXT           "X",IDC_GUID,62,94,279,8,SS_ENDELLIPSIS
+    LTEXT           "Datenpfad:",IDC_STATIC,14,104,45,8
+    LTEXT           "X",IDC_DATPATH,62,104,279,8,SS_PATHELLIPSIS
+    LTEXT           "Hauptindex:",IDC_STATIC,14,114,45,8
+    LTEXT           "X",IDC_IDXPATHMAIN,62,114,279,8,SS_PATHELLIPSIS
+    LTEXT           "Hilfsindex:",IDC_STATIC,14,124,45,8
+    LTEXT           "X",IDC_IDXPATHAUX,62,124,279,8,SS_PATHELLIPSIS
+    DEFPUSHBUTTON   "Ok",IDOK,7,145,50,14,WS_GROUP
+    PUSHBUTTON      "Abbrechen",IDCANCEL,64,145,50,14,WS_GROUP
+END
+
+IDD_ITEMTEMPLATE DIALOGEX 0, 0, 277, 338
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Attribute ergänzen"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "Inspektor",IDC_INSPECTOR,"CInspectorGrid",WS_BORDER | WS_GROUP | WS_TABSTOP,14,35,249,248
+    CONTROL         "&Alphabetisch sortieren",IDC_ALPHABETICALLY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,291,181,10
+    PUSHBUTTON      "&Zurücksetzen",IDC_RESET,204,289,59,14,WS_GROUP
+    DEFPUSHBUTTON   "Ok",IDOK,7,317,50,14,WS_GROUP
+    PUSHBUTTON      "Überspringen",IDC_SKIP,64,317,60,14,WS_GROUP
+    PUSHBUTTON      "Abbrechen",IDCANCEL,131,317,50,14,WS_GROUP
+    GROUPBOX        "Inspektor",IDC_STATIC,7,7,263,304
+    LTEXT           "Nicht vorhandene Attribute werden mit den Angaben unten ergänzt.\nFalls dies nicht gewünscht wird, klicken Sie bitte auf „Überspringen“.",IDC_STATIC,14,16,249,18
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    IDD_ABOUT, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 393
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 272
+    END
+
+    IDD_CHOOSEDEFAULTSTORE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 459
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 203
+    END
+
+    IDD_WELCOME, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 255
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 205
+    END
+
+    IDD_STOREDELETE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 289
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 101
+    END
+
+    IDD_STORENEW, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 333
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 245
+    END
+
+    IDD_STORENEWDRIVE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 216
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 143
+    END
+
+    IDD_SELECTGPS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 437
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 288
+    END
+
+    IDD_ENTERLICENSEKEY, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 313
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 186
+    END
+
+    IDD_STOREPROPERTIES, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 348
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 159
+    END
+
+    IDD_ITEMTEMPLATE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 270
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 331
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE 
+BEGIN
+    IDS_RIBBONCOLORITEMS    "Blau;Silber;Schwarz;Aquamarin"
+    IDS_HELPURL             "http://liquidFOLDERS.net/cms.php?lang=de&page=tour"
+    IDS_PURCHASEURL         "http://liquidFOLDERS.net/cms.php?lang=de&page=purchase"
+    IDS_ERROR               "Fehler"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_APP_ABOUT            "Zeigt Informationen und globale Einstellungen an.\nÜber liquidFOLDERS"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_APP_HELP             "Öffnet den Standard-Browser und zeigt eine geführte Tour durch liquidFOLDERS an.\nGeführte Tour"
+    ID_APP_SUPPORT          "Erstelle eine neue EMail an den Kundenservice.\nEMail an Kundenservice"
+    ID_APP_NEWFILEDROP      "Öffnet ein neues FileDrop-Fenster.\nFileDrop"
+    ID_APP_NEWMIGRATE       "Öffnet den Migrations-Assistenten.\nMigrations-Assistent"
+    ID_APP_NEWSTOREMANAGER  "Öffnet den StoreManager.\nStoreManager"
+    ID_APP_PROMPT           "Öffnet ein Kommandozeilenfenster.\nKommandozeile"
+    ID_APP_PURCHASE         "Öffnet den Standard-Browser und zeigt eine Seite zum Erwerb eines Lizenz-Schlüssels an.\nLizenz erwerben"
+    ID_APP_ENTERLICENSEKEY  "Öffnet ein Fenster zum Freischalten von liquidFOLDERS.\nLizenzschlüssel eingeben"
+END
+
+#endif    // Deutsch (neutral) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// Englisch (neutral) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_NEUTRAL
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ABOUT DIALOGEX 0, 0, 400, 279
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "Ok",IDOK,"Button",BS_OWNERDRAW | WS_GROUP | WS_TABSTOP,7,258,50,14
+    CONTROL         "Cancel",IDCANCEL,"Button",BS_OWNERDRAW | WS_GROUP | WS_TABSTOP,64,258,50,14
+    CONTROL         "&Automatic",IDC_TEXTURE_AUTO,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,14,183,57,10
+    CONTROL         "&1024×1024",IDC_TEXTURE_1024,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,14,195,57,10
+    CONTROL         "&2048×2048",IDC_TEXTURE_2048,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,14,208,57,10
+    CONTROL         "&4096×4096",IDC_TEXTURE_4096,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,14,221,57,10
+    CONTROL         "&8192×4096",IDC_TEXTURE_8192,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,14,234,57,10
+    COMBOBOX        IDC_RIBBONCOLORCOMBO,94,182,128,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
+    GROUPBOX        "Globe texture",IDC_TEXTUREFRAME,7,170,71,80,WS_GROUP
+    GROUPBOX        "Ribbon color",IDC_RIBBONCOLORFRAME,87,169,142,35,WS_GROUP
+    GROUPBOX        "StoreManager",IDC_STATIC,87,210,141,40,WS_GROUP
+    CONTROL         "Show &mounted drives only",IDC_DRIVES_HIDEEMPTY,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,94,221,128,10
+    CONTROL         "Show all &drives",IDC_DRIVES_SHOWALL,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,94,234,128,10
+    GROUPBOX        "License",IDC_RIBBONCOLORFRAME2,238,169,155,35,WS_GROUP
+    LTEXT           "Name:",IDC_NAME,245,179,141,8
+    LTEXT           "X",IDC_LICENSEKEY,245,189,141,8
+    CONTROL         "Enter &license key...",IDC_ENTERLICENSEKEY,"Button",BS_OWNERDRAW | WS_GROUP | WS_TABSTOP,244,180,142,17
+END
+
+IDD_WELCOME DIALOGEX 0, 0, 262, 212
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_APPWINDOW
+CAPTION "Welcome to liquidFOLDERS"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    EDITTEXT        IDC_STORENAME1,14,162,72,14,ES_AUTOHSCROLL | WS_GROUP
+    EDITTEXT        IDC_STORENAME2,94,162,72,14,ES_AUTOHSCROLL | WS_GROUP
+    EDITTEXT        IDC_STORENAME3,175,162,72,14,ES_AUTOHSCROLL | WS_GROUP
+    CONTROL         "Go ahead!",IDOK,"Button",BS_OWNERDRAW | WS_GROUP | WS_TABSTOP,7,191,50,14
+    CONTROL         "No, thanks.",IDCANCEL,"Button",BS_OWNERDRAW | WS_GROUP | WS_TABSTOP,64,191,50,14
+    CONTROL         "Enter &license key...",IDC_ENTERLICENSEKEY,"Button",BS_OWNERDRAW | WS_GROUP | WS_TABSTOP,174,191,81,14
+    LTEXT           "This seems to be the first time you run liquidFOLDERS. liquidFOLDERS keeps all your files in so-called stores. To get going, you can create up to three stores right now, by simply filling in their names below (e.g. ""Home"" and ""Work"").",IDC_STATIC,7,101,248,36
+    GROUPBOX        "Store names",IDC_STATIC,7,140,248,44,WS_GROUP
+    LTEXT           "Store 1:",IDC_STATIC,14,152,27,8
+    LTEXT           "Store 2:",IDC_STATIC,94,152,27,8
+    LTEXT           "Store 3:",IDC_STATIC,175,152,27,8
+END
+
+IDD_CHOOSEDEFAULTSTORE DIALOGEX 0, 0, 466, 210
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Choose default store"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "",IDC_STORELIST,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_ALIGNLEFT | LVS_OWNERDATA | LVS_NOSORTHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,14,27,438,147
+    DEFPUSHBUTTON   "Ok",IDOK,7,189,50,14,WS_GROUP
+    PUSHBUTTON      "Cancel",IDCANCEL,64,189,50,14,WS_GROUP
+    GROUPBOX        "Internal stores",IDC_STATIC,7,7,452,176,WS_GROUP
+    LTEXT           "Only internal stores are suitable default stores.",IDC_STATIC,14,16,413,8
+    PUSHBUTTON      "Create &new store...",IDC_NEWSTORE,374,189,85,14
+END
+
+IDD_STOREDELETE DIALOGEX 0, 0, 296, 108
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Delete mounted store ""%s"""
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "Cancel",IDCANCEL,179,87,50,14,WS_GROUP
+    CONTROL         "&Keep the store",IDC_KEEP,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,82,50,62,10
+    CONTROL         "&Delete",IDC_DELETE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,82,62,61,10
+    PUSHBUTTON      "Delete now (there will be no further warnings)",IDOK,6,87,165,14,WS_DISABLED | WS_GROUP
+    CONTROL         20010,IDC_STATIC,"Static",SS_BITMAP | SS_REALSIZEIMAGE | WS_GROUP,6,7,64,59
+    LTEXT           "Please confirm that you really want to delete the selected store.\nSince the store is currently mounted, you will lose all files inside that store without recovery option!",IDC_STATIC,75,7,214,35
+    GROUPBOX        "Confirmation",IDC_STATIC,74,37,74,41,WS_GROUP
+END
+
+IDD_STORENEW DIALOGEX 0, 0, 316, 252
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Create new store"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "&Internal store",IDC_INTERNALSTORE,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,39,18,262,10
+    CONTROL         "&Hybrid store",IDC_HYBRIDSTORE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,39,49,262,10
+    CONTROL         "&External store",IDC_EXTERNALSTORE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,39,72,262,10
+    CONTROL         "Choose &automatically",IDC_AUTODRIVE,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,14,120,90,10
+    CONTROL         "",IDC_DRIVELIST,"SysListView32",LVS_SMALLICON | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_AUTOARRANGE | LVS_ALIGNLEFT | WS_DISABLED | WS_BORDER | WS_GROUP | WS_TABSTOP,14,145,90,68
+    EDITTEXT        IDC_STORENAME,131,129,171,14,ES_AUTOHSCROLL | WS_GROUP
+    EDITTEXT        IDC_COMMENT,131,158,171,14,ES_AUTOHSCROLL | WS_GROUP
+    CONTROL         "Make &default store",IDC_MAKEDEFAULT,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,131,178,171,10
+    DEFPUSHBUTTON   "Ok",IDOK,6,231,50,14,WS_GROUP
+    PUSHBUTTON      "Cancel",IDCANCEL,63,231,50,14,WS_GROUP
+    GROUPBOX        "Store type",IDC_STATIC,6,7,303,92,WS_GROUP
+    GROUPBOX        "Store location",IDC_STATIC,6,108,106,114,WS_GROUP
+    GROUPBOX        "Properties",IDC_STATIC,123,108,186,86,WS_GROUP
+    CONTROL         20007,IDC_INTERNALSTOREICON,"Static",SS_BITMAP | WS_GROUP,13,18,21,20,WS_EX_TRANSPARENT
+    CONTROL         20009,IDC_STATIC,"Static",SS_BITMAP | WS_GROUP,13,49,21,20
+    CONTROL         20009,IDC_STATIC,"Static",SS_BITMAP | WS_GROUP,13,72,21,20
+    LTEXT           "Drive:",IDC_STATIC,14,135,90,8
+    LTEXT           "Store name:",IDC_STATIC,131,119,171,9
+    LTEXT           "Comment:",IDC_STATIC,131,148,171,9
+    CONTROL         "(All files and the index are stored locally on this computer)",IDC_STATIC,
+                    "Static",SS_LEFTNOWORDWRAP | WS_GROUP,49,29,252,8
+    LTEXT           "(All files and the index are stored externally, with a local copy of the index)",IDC_STATIC,49,60,252,8
+    LTEXT           "(All files and the index are stored externally)",IDC_STATIC,49,83,251,8
+    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ | WS_GROUP,13,43,289,2
+    CONTROL         20008,IDC_DEFAULTSTOREICON,"Static",SS_BITMAP | NOT WS_VISIBLE | WS_GROUP,13,18,21,20,WS_EX_TRANSPARENT
+END
+
+IDD_STORENEWDRIVE DIALOGEX 0, 0, 223, 150
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Create new store on drive %c:"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    EDITTEXT        IDC_STORENAME,14,96,79,14,ES_AUTOHSCROLL | WS_GROUP
+    EDITTEXT        IDC_COMMENT,106,96,102,14,ES_AUTOHSCROLL | WS_GROUP
+    DEFPUSHBUTTON   "Ok",IDOK,6,129,50,14,WS_GROUP
+    PUSHBUTTON      "Cancel",IDCANCEL,63,129,50,14,WS_GROUP
+    CONTROL         "This is a dummy. KEEP!",IDC_INTERNALSTORE,"Button",BS_AUTORADIOBUTTON | NOT WS_VISIBLE | WS_DISABLED | WS_GROUP | WS_TABSTOP,125,133,91,10
+    CONTROL         "&Hybrid store",IDC_HYBRIDSTORE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,39,17,170,10
+    CONTROL         "&External store",IDC_EXTERNALSTORE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,39,41,170,10
+    GROUPBOX        "Store type",IDC_STATIC,6,7,210,61,WS_GROUP
+    GROUPBOX        "Properties",IDC_STATIC,6,75,210,45,WS_GROUP
+    CONTROL         20009,IDC_STATIC,"Static",SS_BITMAP | WS_GROUP,13,18,21,20
+    CONTROL         20009,IDC_STATIC,"Static",SS_BITMAP | WS_GROUP,13,41,21,20
+    LTEXT           "(A local copy of the index is maintained)",IDC_STATIC,49,29,160,8
+    LTEXT           "(The store can only be searched when mounted)",IDC_STATIC,49,52,160,8
+    LTEXT           "Store name:",IDC_STATIC,14,86,71,9
+    LTEXT           "Comment:",IDC_STATIC,106,86,71,9
+END
+
+IDD_SELECTGPS DIALOGEX 0, 0, 444, 295
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Select GPS location"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "Map",IDC_MAP_SELECTION,"CMapSelectionCtrl",WS_GROUP,14,59,416,200
+    DEFPUSHBUTTON   "Ok",IDOK,7,274,50,14,WS_GROUP
+    PUSHBUTTON      "Cancel",IDCANCEL,64,274,50,14,WS_GROUP
+    GROUPBOX        "Coordinates",IDC_STATIC,7,7,430,35,WS_GROUP
+    GROUPBOX        "Map",IDC_STATIC,7,48,430,219,WS_GROUP
+    RTEXT           "© NASA’s Earth Observatory",IDC_STATIC,119,279,318,9
+    EDITTEXT        IDC_LATITUDE,46,19,73,14,ES_AUTOHSCROLL
+    LTEXT           "Latitude:",IDC_STATIC,14,21,30,8,0,WS_EX_RIGHT
+    EDITTEXT        IDC_LONGITUDE,163,19,73,14,ES_AUTOHSCROLL
+    LTEXT           "Longitude:",IDC_STATIC,121,21,40,8,0,WS_EX_RIGHT
+    LTEXT           "To remove the GPS location from the selected files, set both latitude and longitude to 0°.",IDC_STATIC,249,17,181,18
+END
+
+IDD_JUMPTOIATA DIALOGEX 0, 0, 588, 305
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Jump to location"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    COMBOBOX        IDC_COUNTRY,14,18,247,30,CBS_DROPDOWNLIST | CBS_OEMCONVERT | CBS_DISABLENOSCROLL | WS_VSCROLL | WS_GROUP | WS_TABSTOP,WS_EX_TRANSPARENT
+    CONTROL         "",IDC_AIRPORTS,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_ALIGNLEFT | LVS_OWNERDATA | WS_BORDER | WS_GROUP | WS_TABSTOP,14,59,247,210
+    CONTROL         "Map",IDC_MAP_PREVIEW,"CMapPreviewCtrl",WS_GROUP,285,19,288,239
+    DEFPUSHBUTTON   "Ok",IDOK,7,284,50,14,WS_GROUP
+    PUSHBUTTON      "Cancel",IDCANCEL,64,284,50,14,WS_GROUP
+    GROUPBOX        "Territory",IDC_STATIC,7,7,261,33,WS_GROUP
+    GROUPBOX        "Airports (metropolitan codes are printed blue)",IDC_STATIC,7,47,261,230,WS_GROUP
+    GROUPBOX        "Preview",IDC_STATIC,277,7,304,270,WS_GROUP
+    CTEXT           "X",IDC_GPSLOCATION,285,259,288,15,SS_CENTERIMAGE | SS_WORDELLIPSIS
+    RTEXT           "© NASA’s Earth Observatory",IDC_STATIC,227,289,354,9
+    PUSHBUTTON      "Report database error...",IDC_REPORTERROR,121,284,99,14,WS_GROUP
+END
+
+IDD_SELECTIATA DIALOGEX 0, 0, 515, 305
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Select IATA airport code"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    COMBOBOX        IDC_COUNTRY,14,18,247,30,CBS_DROPDOWNLIST | CBS_OEMCONVERT | CBS_DISABLENOSCROLL | WS_VSCROLL | WS_GROUP | WS_TABSTOP,WS_EX_TRANSPARENT
+    CONTROL         "",IDC_AIRPORTS,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_ALIGNLEFT | LVS_OWNERDATA | WS_BORDER | WS_GROUP | WS_TABSTOP,14,59,247,210
+    CONTROL         "Map",IDC_MAP_PREVIEW,"CMapPreviewCtrl",WS_GROUP,285,19,215,202
+    CONTROL         "Overwrite location &name",IDC_REPLACE_NAME,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,284,261,103,10
+    CONTROL         "Overwrite &GPS coordinates",IDC_REPLACE_GPS,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,401,261,100,10
+    DEFPUSHBUTTON   "Ok",IDOK,7,284,50,14,WS_GROUP
+    PUSHBUTTON      "Cancel",IDCANCEL,64,284,50,14,WS_GROUP
+    GROUPBOX        "Territory",IDC_STATIC,7,7,261,33,WS_GROUP
+    GROUPBOX        "Airports (metropolitan codes are printed blue)",IDC_STATIC,7,47,261,230,WS_GROUP
+    GROUPBOX        "Preview",IDC_STATIC,278,7,230,232,WS_GROUP
+    GROUPBOX        "Options",IDC_STATIC,277,247,231,30,WS_GROUP
+    CTEXT           "X",IDC_GPSLOCATION,285,221,215,15,SS_CENTERIMAGE | SS_WORDELLIPSIS
+    RTEXT           "© NASA’s Earth Observatory",IDC_STATIC,230,289,278,9
+    PUSHBUTTON      "Report database error...",IDC_REPORTERROR,121,284,99,14,WS_GROUP
+END
+
+IDD_ENTERLICENSEKEY DIALOGEX 0, 0, 320, 193
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Enter license key"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    GROUPBOX        "License",IDC_STATIC,7,92,306,72
+    LTEXT           "Name:",IDC_STATIC,14,103,291,8
+    EDITTEXT        IDC_NAME,14,112,292,14,ES_AUTOHSCROLL | WS_GROUP
+    LTEXT           "License key:",IDC_STATIC,14,131,291,8
+    EDITTEXT        IDC_LICENSEKEY,14,140,292,14,ES_AUTOHSCROLL | WS_GROUP
+    CONTROL         "Ok",IDOK,"Button",BS_OWNERDRAW | WS_GROUP | WS_TABSTOP,7,172,50,14
+    CONTROL         "Cancel",IDCANCEL,"Button",BS_OWNERDRAW | WS_GROUP | WS_TABSTOP,64,172,50,14
+END
+
+IDD_STOREPROPERTIES DIALOGEX 0, 0, 355, 166
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Properties of ""%s"""
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    GROUPBOX        "Properties",IDC_STATIC,7,7,341,132
+    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ | WS_GROUP,14,56,329,1
+    LTEXT           "Name:",IDC_STATIC,14,18,45,8
+    EDITTEXT        IDC_STORENAME,62,16,279,14,ES_AUTOHSCROLL
+    LTEXT           "Comment:",IDC_STATIC,14,37,45,8
+    EDITTEXT        IDC_COMMENT,62,35,279,14,ES_AUTOHSCROLL
+    LTEXT           "Created:",IDC_STATIC,14,64,45,8
+    LTEXT           "X",IDC_CREATED,62,64,279,8,SS_ENDELLIPSIS
+    LTEXT           "Updated:",IDC_STATIC,14,74,45,8
+    LTEXT           "X",IDC_UPDATED,62,74,279,8,SS_ENDELLIPSIS
+    LTEXT           "Last seen:",IDC_LASTSEENCAPTION,14,84,45,8
+    LTEXT           "X",IDC_LASTSEEN,62,84,279,8,SS_ENDELLIPSIS
+    LTEXT           "GUID:",IDC_STATIC,14,94,45,8
+    LTEXT           "X",IDC_GUID,62,94,279,8,SS_ENDELLIPSIS
+    LTEXT           "Data path:",IDC_STATIC,14,104,45,8
+    LTEXT           "X",IDC_DATPATH,62,104,279,8,SS_PATHELLIPSIS
+    LTEXT           "Main index:",IDC_STATIC,14,114,45,8
+    LTEXT           "X",IDC_IDXPATHMAIN,62,114,279,8,SS_PATHELLIPSIS
+    LTEXT           "Aux. index:",IDC_STATIC,14,124,45,8
+    LTEXT           "X",IDC_IDXPATHAUX,62,124,279,8,SS_PATHELLIPSIS
+    DEFPUSHBUTTON   "Ok",IDOK,7,145,50,14,WS_GROUP
+    PUSHBUTTON      "Cancel",IDCANCEL,64,145,50,14,WS_GROUP
+END
+
+IDD_ITEMTEMPLATE DIALOGEX 0, 0, 277, 338
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "File attributes"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "Inspector",IDC_INSPECTOR,"CInspectorGrid",WS_BORDER | WS_GROUP | WS_TABSTOP,14,35,249,248
+    CONTROL         "Sort &alphabetically",IDC_ALPHABETICALLY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,291,201,10
+    PUSHBUTTON      "&Reset",IDC_RESET,222,289,41,14,WS_GROUP
+    DEFPUSHBUTTON   "Ok",IDOK,7,317,50,14,WS_GROUP
+    PUSHBUTTON      "Skip",IDC_SKIP,64,317,50,14,WS_GROUP
+    PUSHBUTTON      "Cancel",IDCANCEL,121,317,50,14,WS_GROUP
+    GROUPBOX        "Inspector",IDC_STATIC,7,7,263,304
+    LTEXT           "Missing file attributes will be set using the values below.\nIf you don't want your files to be amended, press ""Skip"".",IDC_STATIC,14,16,249,18
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    IDD_ABOUT, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 393
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 272
+    END
+
+    IDD_WELCOME, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 255
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 205
+    END
+
+    IDD_CHOOSEDEFAULTSTORE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 459
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 203
+    END
+
+    IDD_STOREDELETE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 289
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 101
+    END
+
+    IDD_STORENEW, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 309
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 245
+    END
+
+    IDD_STORENEWDRIVE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 216
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 143
+    END
+
+    IDD_SELECTGPS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 437
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 288
+    END
+
+    IDD_ENTERLICENSEKEY, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 313
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 186
+    END
+
+    IDD_STOREPROPERTIES, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 348
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 159
+    END
+
+    IDD_ITEMTEMPLATE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 270
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 331
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE 
+BEGIN
+    IDS_RIBBONCOLORITEMS    "Blue;Silver;Black;Aqua"
+    IDS_HELPURL             "http://liquidFOLDERS.net/cms.php?lang=en&page=tour"
+    IDS_PURCHASEURL         "http://liquidFOLDERS.net/cms.php?lang=en&page=purchase"
+    IDS_ERROR               "Error"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_APP_ABOUT            "Displays liquidFOLDERS information and settings.\nAbout"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_APP_HELP             "Opens your standard browser displaying a guided tour to liquidFOLDERS.\nGuided tour"
+    ID_APP_SUPPORT          "Opens your standard mail software to contact customer support.\nContact support"
+    ID_APP_NEWFILEDROP      "Opens a new FileDrop window.\nNew FileDrop"
+    ID_APP_NEWMIGRATE       "Opens the migration wizard.\nMigrate to liquidFOLDERS"
+    ID_APP_NEWSTOREMANAGER  "Opens the StoreManager.\nNew StoreManager"
+    ID_APP_PROMPT           "Opens the Windows command prompt.\nCommand prompt"
+    ID_APP_PURCHASE         "Opens your standard browser displaying a page through which you can purchase a license key.\nPurchase license"
+    ID_APP_ENTERLICENSEKEY  "Opens a window to enter your license key.\nEnter license key"
+END
+
+#endif    // Englisch (neutral) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// Spanisch (neutral) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ESP)
+#ifdef _WIN32
+LANGUAGE LANG_SPANISH, SUBLANG_NEUTRAL
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ABOUT DIALOGEX 0, 0, 400, 279
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "Ok",IDOK,"Button",BS_OWNERDRAW | WS_GROUP | WS_TABSTOP,7,258,50,14
+    CONTROL         "Cancelar",IDCANCEL,"Button",BS_OWNERDRAW | WS_GROUP | WS_TABSTOP,64,258,50,14
+    CONTROL         "&Automática",IDC_TEXTURE_AUTO,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,14,183,57,10
+    CONTROL         "&1024×1024",IDC_TEXTURE_1024,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,14,195,57,10
+    CONTROL         "&2048×2048",IDC_TEXTURE_2048,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,14,208,57,10
+    CONTROL         "&4096×4096",IDC_TEXTURE_4096,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,14,221,57,10
+    CONTROL         "&8192×4096",IDC_TEXTURE_8192,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,14,234,57,10
+    COMBOBOX        IDC_RIBBONCOLORCOMBO,94,182,128,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
+    GROUPBOX        "Textura del globo",IDC_TEXTUREFRAME,7,170,71,80,WS_GROUP
+    GROUPBOX        "Esquema de color",IDC_RIBBONCOLORFRAME,87,169,142,35,WS_GROUP
+    GROUPBOX        "StoreManager",IDC_STATIC,87,210,141,40,WS_GROUP
+    CONTROL         "Solo platinas &encuadenadas",IDC_DRIVES_HIDEEMPTY,
+                    "Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,94,221,128,10
+    CONTROL         "Mostrar &todas las platinas",IDC_DRIVES_SHOWALL,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,94,234,128,10
+    GROUPBOX        "Licencia",IDC_RIBBONCOLORFRAME2,238,169,155,35,WS_GROUP
+    LTEXT           "Nombre:",IDC_NAME,245,179,141,8
+    LTEXT           "X",IDC_LICENSEKEY,245,189,141,8
+    CONTROL         "Dictar &licencia...",IDC_ENTERLICENSEKEY,"Button",BS_OWNERDRAW | WS_GROUP | WS_TABSTOP,244,180,142,17
+END
+
+IDD_CHOOSEDEFAULTSTORE DIALOGEX 0, 0, 466, 210
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Seleccionar store predeterminado"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "",IDC_STORELIST,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_ALIGNLEFT | LVS_OWNERDATA | LVS_NOSORTHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,14,27,438,147
+    DEFPUSHBUTTON   "Ok",IDOK,7,189,50,14,WS_GROUP
+    PUSHBUTTON      "Annuler",IDCANCEL,64,189,50,14,WS_GROUP
+    GROUPBOX        "Stores internos",IDC_STATIC,7,7,452,176,WS_GROUP
+    LTEXT           "Se puede selecionar solamente stores internos como store predeterminado.",IDC_STATIC,14,16,413,8
+    PUSHBUTTON      "Crear &nuevo store...",IDC_NEWSTORE,372,189,87,14
+END
+
+IDD_WELCOME DIALOGEX 0, 0, 262, 212
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_APPWINDOW
+CAPTION "Bienvenidos a liquidFOLDERS"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    EDITTEXT        IDC_STORENAME1,14,162,72,14,ES_AUTOHSCROLL | WS_GROUP
+    EDITTEXT        IDC_STORENAME2,94,162,72,14,ES_AUTOHSCROLL | WS_GROUP
+    EDITTEXT        IDC_STORENAME3,175,162,72,14,ES_AUTOHSCROLL | WS_GROUP
+    CONTROL         "Continuar!",IDOK,"Button",BS_OWNERDRAW | WS_GROUP | WS_TABSTOP,7,191,50,14
+    CONTROL         "No gracias.",IDCANCEL,"Button",BS_OWNERDRAW | WS_GROUP | WS_TABSTOP,64,191,50,14
+    CONTROL         "Dictar &licencia...",IDC_ENTERLICENSEKEY,"Button",BS_OWNERDRAW | WS_GROUP | WS_TABSTOP,206,191,49,14
+    LTEXT           "Parece ser que es la primera vez que ejecuta liquidFOLDERS. liquidFOLDERS mantiene todos sus archivos en los llamados stores. Para comenzar puede crear hasta 3 stores en este momento, simplemente introduciendo sus nombres a continuación.",IDC_STATIC,7,101,248,36
+    GROUPBOX        "Nombres des Store",IDC_STATIC,7,140,248,44,WS_GROUP
+    LTEXT           "Store 1:",IDC_STATIC,14,152,27,8
+    LTEXT           "Store 2:",IDC_STATIC,94,152,27,8
+    LTEXT           "Store 3:",IDC_STATIC,175,152,27,8
+END
+
+IDD_STOREDELETE DIALOGEX 0, 0, 296, 108
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Eliminar store conectado ""%s"""
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "Cancelar",IDCANCEL,179,87,50,14,WS_GROUP
+    CONTROL         "&Conservar store",IDC_KEEP,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,82,50,62,10
+    CONTROL         "&Eliminar",IDC_DELETE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,82,62,61,10
+    PUSHBUTTON      "Eliminar ahora (no habrá más avisos)",IDOK,6,87,165,14,WS_DISABLED | WS_GROUP
+    CONTROL         20010,IDC_STATIC,"Static",SS_BITMAP | SS_REALSIZEIMAGE | WS_GROUP,6,7,64,59
+    LTEXT           "Confirme si realmente desea eliminar el store seleccionado.\nDado que el store está actualmente conectado, perderá todos los archivos dentro de ese store sin opción a recuperarlos!",IDC_STATIC,75,7,214,35
+    GROUPBOX        "Confirmación",IDC_STATIC,74,37,74,41,WS_GROUP
+END
+
+IDD_STORENEW DIALOGEX 0, 0, 387, 252
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Crear nuevo store"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "Store &interno",IDC_INTERNALSTORE,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,39,18,262,10
+    CONTROL         "Store &híbrido",IDC_HYBRIDSTORE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,39,49,262,10
+    CONTROL         "Store &externo",IDC_EXTERNALSTORE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,39,72,262,10
+    CONTROL         "Elegir &automaticamente",IDC_AUTODRIVE,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,14,120,162,10
+    CONTROL         "",IDC_DRIVELIST,"SysListView32",LVS_SMALLICON | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_AUTOARRANGE | LVS_ALIGNLEFT | WS_DISABLED | WS_BORDER | WS_GROUP | WS_TABSTOP,14,145,162,68
+    EDITTEXT        IDC_STORENAME,201,129,171,14,ES_AUTOHSCROLL | WS_GROUP
+    EDITTEXT        IDC_COMMENT,201,158,171,14,ES_AUTOHSCROLL | WS_GROUP
+    CONTROL         "Store é&standar",IDC_MAKEDEFAULT,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,201,178,171,10
+    DEFPUSHBUTTON   "Ok",IDOK,6,231,50,14,WS_GROUP
+    PUSHBUTTON      "Cancelar",IDCANCEL,63,231,50,14,WS_GROUP
+    GROUPBOX        "Tipo de store",IDC_STATIC,7,7,373,92,WS_GROUP
+    GROUPBOX        "Ubicación de store",IDC_STATIC,6,108,177,114,WS_GROUP
+    GROUPBOX        "Propiedades",IDC_STATIC,194,109,186,86,WS_GROUP
+    CONTROL         20007,IDC_INTERNALSTOREICON,"Static",SS_BITMAP | WS_GROUP,13,18,21,20,WS_EX_TRANSPARENT
+    CONTROL         20009,IDC_STATIC,"Static",SS_BITMAP | WS_GROUP,13,49,21,20
+    CONTROL         20009,IDC_STATIC,"Static",SS_BITMAP | WS_GROUP,13,72,21,20
+    LTEXT           "Unidad:",IDC_STATIC,14,135,162,8
+    LTEXT           "Nombre de store:",IDC_STATIC,201,119,171,9
+    LTEXT           "Observaciones:",IDC_STATIC,201,148,171,9
+    CONTROL         "(Todos los archivos y el índice están almacenados de manera local en esta computadora)",IDC_STATIC,
+                    "Static",SS_LEFTNOWORDWRAP | WS_GROUP,49,29,324,8
+    LTEXT           "(Todos los archivos y el índice están almacenados de manera externa con una copia local del índice)",IDC_STATIC,49,60,324,8
+    LTEXT           "(Todos los archivos y el índice están almacenados de manera esterna)",IDC_STATIC,49,83,324,8
+    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ | WS_GROUP,13,43,360,2
+    CONTROL         20008,IDC_DEFAULTSTOREICON,"Static",SS_BITMAP | NOT WS_VISIBLE | WS_GROUP,13,18,21,20,WS_EX_TRANSPARENT
+END
+
+IDD_STORENEWDRIVE DIALOGEX 0, 0, 239, 151
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Crear nuevo store en unidad %c:"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    EDITTEXT        IDC_STORENAME,14,96,79,14,ES_AUTOHSCROLL | WS_GROUP
+    EDITTEXT        IDC_COMMENT,106,96,118,14,ES_AUTOHSCROLL | WS_GROUP
+    DEFPUSHBUTTON   "Ok",IDOK,6,130,50,14,WS_GROUP
+    PUSHBUTTON      "Cancelar",IDCANCEL,63,130,50,14,WS_GROUP
+    CONTROL         "This is a dummy. KEEP!",IDC_INTERNALSTORE,"Button",BS_AUTORADIOBUTTON | NOT WS_VISIBLE | WS_DISABLED | WS_GROUP | WS_TABSTOP,141,134,91,10
+    CONTROL         "&Store híbrido",IDC_HYBRIDSTORE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,39,17,170,10
+    CONTROL         "&Store externo",IDC_EXTERNALSTORE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,39,41,170,10
+    GROUPBOX        "Tipo de store",IDC_STATIC,7,7,225,61,WS_GROUP
+    GROUPBOX        "Propiedades",IDC_STATIC,7,75,225,45,WS_GROUP
+    CONTROL         20009,IDC_STATIC,"Static",SS_BITMAP | WS_GROUP,13,18,21,20
+    CONTROL         20009,IDC_STATIC,"Static",SS_BITMAP | WS_GROUP,13,41,21,20
+    LTEXT           "(Se guarda una copia local del índice)",IDC_STATIC,49,29,160,8
+    LTEXT           "(El store sólo puede ser buscado si está conectado)",IDC_STATIC,49,52,178,8
+    LTEXT           "Nombre de store:",IDC_STATIC,14,86,71,9
+    LTEXT           "Observaciones:",IDC_STATIC,106,86,71,9
+END
+
+IDD_SELECTGPS DIALOGEX 0, 0, 444, 295
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Seleccionar ubicación GPS"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "Mapa",IDC_MAP_SELECTION,"CMapSelectionCtrl",WS_GROUP,14,59,416,200
+    DEFPUSHBUTTON   "Ok",IDOK,7,274,50,14,WS_GROUP
+    PUSHBUTTON      "Cancelar",IDCANCEL,64,274,50,14,WS_GROUP
+    GROUPBOX        "Coordenadas",IDC_STATIC,7,7,430,35,WS_GROUP
+    GROUPBOX        "Mapa",IDC_STATIC,7,48,430,219,WS_GROUP
+    RTEXT           "© NASA’s Earth Observatory",IDC_STATIC,119,279,318,9
+    EDITTEXT        IDC_LATITUDE,41,19,73,14,ES_AUTOHSCROLL
+    LTEXT           "Latitud:",IDC_STATIC,14,21,25,8,0,WS_EX_RIGHT
+    EDITTEXT        IDC_LONGITUDE,163,19,73,14,ES_AUTOHSCROLL
+    LTEXT           "Longitud:",IDC_STATIC,121,21,40,8,0,WS_EX_RIGHT
+    LTEXT           "Para eliminar la ubicación GPS de los archivos seleccionados, fijar tanto latitud como longitud en 0°.",IDC_STATIC,249,17,181,18
+END
+
+IDD_JUMPTOIATA DIALOGEX 0, 0, 588, 305
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Seleccionar ubicación"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    COMBOBOX        IDC_COUNTRY,14,18,247,30,CBS_DROPDOWNLIST | CBS_OEMCONVERT | CBS_DISABLENOSCROLL | WS_VSCROLL | WS_GROUP | WS_TABSTOP,WS_EX_TRANSPARENT
+    CONTROL         "",IDC_AIRPORTS,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_ALIGNLEFT | LVS_OWNERDATA | WS_BORDER | WS_GROUP | WS_TABSTOP,14,59,247,210
+    CONTROL         "Mapa",IDC_MAP_PREVIEW,"CMapPreviewCtrl",WS_GROUP,285,19,288,239
+    DEFPUSHBUTTON   "Ok",IDOK,7,284,50,14,WS_GROUP
+    PUSHBUTTON      "Cancelar",IDCANCEL,64,284,50,14,WS_GROUP
+    GROUPBOX        "Territorio",IDC_STATIC,7,7,261,33,WS_GROUP
+    GROUPBOX        "Aeropuertos (códigos metropolitanos están en azul)",IDC_STATIC,7,47,261,230,WS_GROUP
+    GROUPBOX        "Vista previa",IDC_STATIC,277,7,304,270,WS_GROUP
+    CTEXT           "X",IDC_GPSLOCATION,285,259,288,15,SS_CENTERIMAGE | SS_WORDELLIPSIS
+    RTEXT           "© NASA’s Earth Observatory",IDC_STATIC,227,289,354,9
+    PUSHBUTTON      "Reportar error de datos...",IDC_REPORTERROR,121,284,105,14,WS_GROUP
+END
+
+IDD_SELECTIATA DIALOGEX 0, 0, 515, 305
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Seleccionar código de aeropuerto IATA"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    COMBOBOX        IDC_COUNTRY,14,18,247,30,CBS_DROPDOWNLIST | CBS_OEMCONVERT | CBS_DISABLENOSCROLL | WS_VSCROLL | WS_GROUP | WS_TABSTOP,WS_EX_TRANSPARENT
+    CONTROL         "",IDC_AIRPORTS,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_ALIGNLEFT | LVS_OWNERDATA | WS_BORDER | WS_GROUP | WS_TABSTOP,14,59,247,210
+    CONTROL         "Mapa",IDC_MAP_PREVIEW,"CMapPreviewCtrl",WS_GROUP,285,19,215,202
+    CONTROL         "Sobreponer &nombre",IDC_REPLACE_NAME,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,284,261,92,10
+    CONTROL         "Sobreponer coordenadas &GPS",IDC_REPLACE_GPS,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,382,261,119,10
+    DEFPUSHBUTTON   "Ok",IDOK,7,284,50,14,WS_GROUP
+    PUSHBUTTON      "Cancelar",IDCANCEL,64,284,50,14,WS_GROUP
+    GROUPBOX        "Territorio",IDC_STATIC,7,7,261,33,WS_GROUP
+    GROUPBOX        "Aeropuertos (códigos metropolitanos están en azul)",IDC_STATIC,7,47,261,230,WS_GROUP
+    GROUPBOX        "Vista previa",IDC_STATIC,278,7,230,232,WS_GROUP
+    GROUPBOX        "Opciones",IDC_STATIC,277,247,231,30,WS_GROUP
+    CTEXT           "X",IDC_GPSLOCATION,285,221,215,15,SS_CENTERIMAGE | SS_WORDELLIPSIS
+    RTEXT           "© NASA’s Earth Observatory",IDC_STATIC,230,289,278,9
+    PUSHBUTTON      "Reportar error de datos...",IDC_REPORTERROR,121,284,105,14,WS_GROUP
+END
+
+IDD_ENTERLICENSEKEY DIALOGEX 0, 0, 320, 193
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Dictar licencia"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    GROUPBOX        "Licencia",IDC_STATIC,7,92,306,72
+    LTEXT           "Nombre:",IDC_STATIC,14,103,291,8
+    EDITTEXT        IDC_NAME,14,112,292,14,ES_AUTOHSCROLL | WS_GROUP
+    LTEXT           "Licencia:",IDC_STATIC,14,131,291,8
+    EDITTEXT        IDC_LICENSEKEY,14,140,292,14,ES_AUTOHSCROLL | WS_GROUP
+    CONTROL         "Ok",IDOK,"Button",BS_OWNERDRAW | WS_GROUP | WS_TABSTOP,7,172,50,14
+    CONTROL         "Cancelar",IDCANCEL,"Button",BS_OWNERDRAW | WS_GROUP | WS_TABSTOP,64,172,50,14
+END
+
+IDD_STOREPROPERTIES DIALOGEX 0, 0, 365, 166
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Propiedades de ""%s"""
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    GROUPBOX        "Propiedades",IDC_STATIC,7,7,351,132
+    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ | WS_GROUP,14,56,339,1
+    LTEXT           "Nombre:",IDC_STATIC,14,18,55,8
+    EDITTEXT        IDC_STORENAME,72,16,279,14,ES_AUTOHSCROLL
+    LTEXT           "Comentarios:",IDC_STATIC,14,37,55,8
+    EDITTEXT        IDC_COMMENT,72,35,279,14,ES_AUTOHSCROLL
+    LTEXT           "Creado:",IDC_STATIC,14,64,55,8
+    LTEXT           "X",IDC_CREATED,72,64,279,8,SS_ENDELLIPSIS
+    LTEXT           "Actualizado:",IDC_STATIC,14,74,55,8
+    LTEXT           "X",IDC_UPDATED,72,74,279,8,SS_ENDELLIPSIS
+    LTEXT           "Última entrada:",IDC_LASTSEENCAPTION,14,84,55,8
+    LTEXT           "X",IDC_LASTSEEN,72,84,279,8,SS_ENDELLIPSIS
+    LTEXT           "GUID:",IDC_STATIC,14,94,55,8
+    LTEXT           "X",IDC_GUID,72,94,279,8,SS_ENDELLIPSIS
+    LTEXT           "Ruta de datos:",IDC_STATIC,14,104,55,8
+    LTEXT           "X",IDC_DATPATH,72,104,279,8,SS_PATHELLIPSIS
+    LTEXT           "Índice principal:",IDC_STATIC,14,114,55,8
+    LTEXT           "X",IDC_IDXPATHMAIN,72,114,279,8,SS_PATHELLIPSIS
+    LTEXT           "Índice auxiliar:",IDC_STATIC,14,124,55,8
+    LTEXT           "X",IDC_IDXPATHAUX,72,124,279,8,SS_PATHELLIPSIS
+    DEFPUSHBUTTON   "Ok",IDOK,7,145,50,14,WS_GROUP
+    PUSHBUTTON      "Cancelar",IDCANCEL,64,145,50,14,WS_GROUP
+END
+
+IDD_ITEMTEMPLATE DIALOGEX 0, 0, 277, 338
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Atributos de archivo"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "Inspector",IDC_INSPECTOR,"CInspectorGrid",WS_BORDER | WS_GROUP | WS_TABSTOP,14,42,249,241
+    CONTROL         "Ordenar &alfabéticamente",IDC_ALPHABETICALLY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,291,197,10
+    PUSHBUTTON      "&Restaurar",IDC_RESET,216,289,47,14,WS_GROUP
+    DEFPUSHBUTTON   "Ok",IDOK,7,317,50,14,WS_GROUP
+    PUSHBUTTON      "Omitir",IDC_SKIP,64,317,50,14,WS_GROUP
+    PUSHBUTTON      "Cancelar",IDCANCEL,121,317,50,14,WS_GROUP
+    GROUPBOX        "Inspector",IDC_STATIC,7,7,263,304
+    LTEXT           "Los atributos faltantes del archivo serán establecidos usando los valores que a continuación se enlistan. Si usted no quiere que sus archivos sean corregidos, presione ""Omitir"".",IDC_STATIC,14,16,249,26
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    IDD_ABOUT, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 369
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 272
+    END
+
+    IDD_CHOOSEDEFAULTSTORE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 459
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 203
+    END
+
+    IDD_WELCOME, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 255
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 205
+    END
+
+    IDD_STOREDELETE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 289
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 101
+    END
+
+    IDD_STORENEW, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 380
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 245
+    END
+
+    IDD_STORENEWDRIVE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 232
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 144
+    END
+
+    IDD_SELECTGPS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 437
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 288
+    END
+
+    IDD_ENTERLICENSEKEY, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 313
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 186
+    END
+
+    IDD_STOREPROPERTIES, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 358
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 159
+    END
+
+    IDD_ITEMTEMPLATE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 270
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 331
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE 
+BEGIN
+    IDS_RIBBONCOLORITEMS    "Azul;Plata;Negro;Aguamarina"
+    IDS_HELPURL             "http://liquidFOLDERS.net/cms.php?lang=es&page=tour"
+    IDS_PURCHASEURL         "http://liquidFOLDERS.net/cms.php?lang=es&page=purchase"
+    IDS_ERROR               "Error"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_APP_ABOUT            "Visualiza información y configuración de liquidFOLDERS.\nAcerca de"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_APP_HELP             "Abre su navegador estándar visualizando una visita guiada a liquidFOLDERS.\nVisita guiada"
+    ID_APP_SUPPORT          "Abre su software estándar de correo para contactar a servicio al cliente.\nContacto de servicio"
+    ID_APP_NEWFILEDROP      "Abre una ventana nueva de FileDrop.\nNuevo FileDrop"
+    ID_APP_NEWMIGRATE       "Abre el asistente de migración.\nMigrar a liquidFOLDERS"
+    ID_APP_NEWSTOREMANAGER  "Abre StoreManager.\nNuevo StoreManager"
+    ID_APP_PROMPT           "Abre el command prompt de Windows.\nCommand prompt"
+    ID_APP_PURCHASE         "Abre su navegador estándar visualizando una página a través de la cual usted puede adquirir la licencia.\nAdquirir licencia"
+    ID_APP_ENTERLICENSEKEY  "Abre una ventana para ver e ingresar su licencia.\nDictar licencia"
+END
+
+#endif    // Spanisch (neutral) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// Französisch (neutral) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_FRA)
+#ifdef _WIN32
+LANGUAGE LANG_FRENCH, SUBLANG_NEUTRAL
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ABOUT DIALOGEX 0, 0, 400, 279
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "Ok",IDOK,"Button",BS_OWNERDRAW | WS_GROUP | WS_TABSTOP,7,258,50,14
+    CONTROL         "Annuler",IDCANCEL,"Button",BS_OWNERDRAW | WS_GROUP | WS_TABSTOP,64,258,50,14
+    CONTROL         "&Automatic",IDC_TEXTURE_AUTO,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,14,183,57,10
+    CONTROL         "&1024×1024",IDC_TEXTURE_1024,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,14,195,57,10
+    CONTROL         "&2048×2048",IDC_TEXTURE_2048,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,14,208,57,10
+    CONTROL         "&4096×4096",IDC_TEXTURE_4096,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,14,221,57,10
+    CONTROL         "&8192×4096",IDC_TEXTURE_8192,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,14,234,57,10
+    COMBOBOX        IDC_RIBBONCOLORCOMBO,94,182,128,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
+    GROUPBOX        "Texture du globe",IDC_TEXTUREFRAME,7,170,71,80,WS_GROUP
+    GROUPBOX        "Schéma de couleurs",IDC_RIBBONCOLORFRAME,87,169,142,35,WS_GROUP
+    GROUPBOX        "StoreManager",IDC_STATIC,87,210,141,40,WS_GROUP
+    CONTROL         "Seulement les lecteurs &engagée",IDC_DRIVES_HIDEEMPTY,
+                    "Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,94,221,128,10
+    CONTROL         "Presenter &tous les lecteurs",IDC_DRIVES_SHOWALL,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,94,234,128,10
+    GROUPBOX        "License",IDC_RIBBONCOLORFRAME2,238,169,155,35,WS_GROUP
+    LTEXT           "Nom:",IDC_NAME,245,179,141,8
+    LTEXT           "X",IDC_LICENSEKEY,245,189,141,8
+    CONTROL         "Donner clé de &license...",IDC_ENTERLICENSEKEY,"Button",BS_OWNERDRAW | WS_GROUP | WS_TABSTOP,244,180,142,17
+END
+
+IDD_CHOOSEDEFAULTSTORE DIALOGEX 0, 0, 466, 210
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Choisissez le store standard"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "",IDC_STORELIST,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_ALIGNLEFT | LVS_OWNERDATA | LVS_NOSORTHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,14,27,438,147
+    DEFPUSHBUTTON   "Ok",IDOK,7,189,50,14,WS_GROUP
+    PUSHBUTTON      "Annuler",IDCANCEL,64,189,50,14,WS_GROUP
+    GROUPBOX        "Stores internes",IDC_STATIC,7,7,452,176,WS_GROUP
+    LTEXT           "Seulement stores internes pouvoir choisisse comme store standard.",IDC_STATIC,14,16,413,8
+    PUSHBUTTON      "Créez un &nouveau store...",IDC_NEWSTORE,356,189,103,14
+END
+
+IDD_WELCOME DIALOGEX 0, 0, 262, 212
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_APPWINDOW
+CAPTION "Bienvenu à liquidFOLDERS"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    EDITTEXT        IDC_STORENAME1,14,162,72,14,ES_AUTOHSCROLL | WS_GROUP
+    EDITTEXT        IDC_STORENAME2,94,162,72,14,ES_AUTOHSCROLL | WS_GROUP
+    EDITTEXT        IDC_STORENAME3,175,162,72,14,ES_AUTOHSCROLL | WS_GROUP
+    CONTROL         "Feu vert",IDOK,"Button",BS_OWNERDRAW | WS_GROUP | WS_TABSTOP,7,191,50,14
+    CONTROL         "Non, merci.",IDCANCEL,"Button",BS_OWNERDRAW | WS_GROUP | WS_TABSTOP,64,191,50,14
+    CONTROL         "Donner clé de &licence...",IDC_ENTERLICENSEKEY,"Button",BS_OWNERDRAW | WS_GROUP | WS_TABSTOP,164,191,91,14
+    LTEXT           "Cela semble être la première fois que vous dirigez liquidFOLDERS. liquidFOLDERS gére tous vous fichiers dans les ainsi-appelé stores. Pour recevoir le départ, vous pouvez créer jusqu'à trois stores immédiatement en remplissant leurs noms ci-dessous.",IDC_STATIC,7,101,248,36
+    GROUPBOX        "Les noms des stores",IDC_STATIC,7,140,248,44,WS_GROUP
+    LTEXT           "Store 1:",IDC_STATIC,14,152,27,8
+    LTEXT           "Store 2:",IDC_STATIC,94,152,27,8
+    LTEXT           "Store 3:",IDC_STATIC,175,152,27,8
+END
+
+IDD_STOREDELETE DIALOGEX 0, 0, 296, 108
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Effacez le store monté sur ""%s"""
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "Cancel",IDCANCEL,179,87,50,14,WS_GROUP
+    CONTROL         "&Gardez le store",IDC_KEEP,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,82,50,62,10
+    CONTROL         "&Effacez",IDC_DELETE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,82,62,61,10
+    PUSHBUTTON      "Effacez maintenant (il n'y aura aucun avertissement de plus)",IDOK,6,87,165,14,WS_DISABLED | WS_GROUP
+    CONTROL         20010,IDC_STATIC,"Static",SS_BITMAP | SS_REALSIZEIMAGE | WS_GROUP,6,7,64,59
+    LTEXT           "Confirmez s'il vous plaît que vous voulez vraiment effacer le store choisi.\nComme le store est actuellement monté, vous perdrez tous les fichiers à l'intérieur de ce store sans option de récupération!",IDC_STATIC,75,7,214,35
+    GROUPBOX        "Confirmation",IDC_STATIC,74,37,74,41,WS_GROUP
+END
+
+IDD_STORENEW DIALOGEX 0, 0, 347, 252
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Créez un nouveau store"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "Store &interne",IDC_INTERNALSTORE,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,39,18,262,10
+    CONTROL         "Store &hybride",IDC_HYBRIDSTORE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,39,49,262,10
+    CONTROL         "Store &externe",IDC_EXTERNALSTORE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,39,72,262,10
+    CONTROL         "Choisissez &automatiquement",IDC_AUTODRIVE,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,14,120,121,10
+    CONTROL         "",IDC_DRIVELIST,"SysListView32",LVS_SMALLICON | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_AUTOARRANGE | LVS_ALIGNLEFT | WS_DISABLED | WS_BORDER | WS_GROUP | WS_TABSTOP,14,145,121,68
+    EDITTEXT        IDC_STORENAME,161,129,171,14,ES_AUTOHSCROLL | WS_GROUP
+    EDITTEXT        IDC_COMMENT,161,158,171,14,ES_AUTOHSCROLL | WS_GROUP
+    CONTROL         "Faites &standard",IDC_MAKEDEFAULT,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,161,178,171,10
+    DEFPUSHBUTTON   "Ok",IDOK,6,231,50,14,WS_GROUP
+    PUSHBUTTON      "Annuler",IDCANCEL,63,231,50,14,WS_GROUP
+    GROUPBOX        "Type de store",IDC_STATIC,7,7,333,92,WS_GROUP
+    GROUPBOX        "Endroit de store",IDC_STATIC,6,108,138,114,WS_GROUP
+    GROUPBOX        "Propriétés",IDC_STATIC,154,108,186,86,WS_GROUP
+    CONTROL         20007,IDC_INTERNALSTOREICON,"Static",SS_BITMAP | WS_GROUP,13,18,21,20,WS_EX_TRANSPARENT
+    CONTROL         20009,IDC_STATIC,"Static",SS_BITMAP | WS_GROUP,13,49,21,20
+    CONTROL         20009,IDC_STATIC,"Static",SS_BITMAP | WS_GROUP,13,72,21,20
+    LTEXT           "Lecteur:",IDC_STATIC,14,135,121,8
+    LTEXT           "Nom du store:",IDC_STATIC,161,119,171,9
+    LTEXT           "Commentaire:",IDC_STATIC,161,148,171,9
+    CONTROL         "(Tous les fichiers et l'index sont conservés localement sur cet ordinateur)",IDC_STATIC,
+                    "Static",SS_LEFTNOWORDWRAP | WS_GROUP,49,29,284,8
+    LTEXT           "(Tous les fichiers sont conservés extérieurement, avec une copie locale de l'index)",IDC_STATIC,49,60,284,8
+    LTEXT           "(Tous les fichiers et l'index sont conservés extérieurement)",IDC_STATIC,49,83,284,8
+    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ | WS_GROUP,13,43,320,2
+    CONTROL         20008,IDC_DEFAULTSTOREICON,"Static",SS_BITMAP | NOT WS_VISIBLE | WS_GROUP,13,18,21,20,WS_EX_TRANSPARENT
+END
+
+IDD_STORENEWDRIVE DIALOGEX 0, 0, 234, 151
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Créez un nouveau store sur lecteur %c:"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    EDITTEXT        IDC_STORENAME,14,96,79,14,ES_AUTOHSCROLL | WS_GROUP
+    EDITTEXT        IDC_COMMENT,106,96,102,14,ES_AUTOHSCROLL | WS_GROUP
+    DEFPUSHBUTTON   "Ok",IDOK,6,130,50,14,WS_GROUP
+    PUSHBUTTON      "Annuler",IDCANCEL,63,130,50,14,WS_GROUP
+    CONTROL         "This is a dummy. KEEP!",IDC_INTERNALSTORE,"Button",BS_AUTORADIOBUTTON | NOT WS_VISIBLE | WS_DISABLED | WS_GROUP | WS_TABSTOP,136,134,91,10
+    CONTROL         "Store &hybride",IDC_HYBRIDSTORE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,39,17,170,10
+    CONTROL         "Store &externe",IDC_EXTERNALSTORE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,39,41,170,10
+    GROUPBOX        "Type de store",IDC_STATIC,7,7,219,61,WS_GROUP
+    GROUPBOX        "Propriétés",IDC_STATIC,7,75,220,45,WS_GROUP
+    CONTROL         20009,IDC_STATIC,"Static",SS_BITMAP | WS_GROUP,13,18,21,20
+    CONTROL         20009,IDC_STATIC,"Static",SS_BITMAP | WS_GROUP,13,41,21,20
+    LTEXT           "(Une copie locale de l'index est maintenue)",IDC_STATIC,49,29,172,8
+    LTEXT           "(Le store peut seulement être fouillé quand monté)",IDC_STATIC,49,52,172,8
+    LTEXT           "Nom du store:",IDC_STATIC,14,86,71,9
+    LTEXT           "Commentaire:",IDC_STATIC,106,86,71,9
+END
+
+IDD_SELECTGPS DIALOGEX 0, 0, 444, 295
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Choisissez l'endroit GPS"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "Carte",IDC_MAP_SELECTION,"CMapSelectionCtrl",WS_GROUP,14,59,416,200
+    DEFPUSHBUTTON   "Ok",IDOK,7,274,50,14,WS_GROUP
+    PUSHBUTTON      "Annuler",IDCANCEL,64,274,50,14,WS_GROUP
+    GROUPBOX        "Coordonnées",IDC_STATIC,7,7,430,35,WS_GROUP
+    GROUPBOX        "Carte",IDC_STATIC,7,48,430,219,WS_GROUP
+    RTEXT           "© NASA’s Earth Observatory",IDC_STATIC,119,279,318,9
+    EDITTEXT        IDC_LATITUDE,46,19,73,14,ES_AUTOHSCROLL
+    LTEXT           "Latitude:",IDC_STATIC,14,21,30,8,0,WS_EX_RIGHT
+    EDITTEXT        IDC_LONGITUDE,163,19,73,14,ES_AUTOHSCROLL
+    LTEXT           "Longitude:",IDC_STATIC,121,21,40,8,0,WS_EX_RIGHT
+    LTEXT           "Pour enlever l'endroit GPS des fichiers choisis, jeu tous les deux latitude et longitude à 0°.",IDC_STATIC,249,17,181,18
+END
+
+IDD_JUMPTOIATA DIALOGEX 0, 0, 588, 305
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Soyez envoyés vers l'endroit"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    COMBOBOX        IDC_COUNTRY,14,18,247,30,CBS_DROPDOWNLIST | CBS_OEMCONVERT | CBS_DISABLENOSCROLL | WS_VSCROLL | WS_GROUP | WS_TABSTOP,WS_EX_TRANSPARENT
+    CONTROL         "",IDC_AIRPORTS,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_ALIGNLEFT | LVS_OWNERDATA | WS_BORDER | WS_GROUP | WS_TABSTOP,14,59,247,210
+    CONTROL         "Carte",IDC_MAP_PREVIEW,"CMapPreviewCtrl",WS_GROUP,285,19,288,239
+    DEFPUSHBUTTON   "Ok",IDOK,7,284,50,14,WS_GROUP
+    PUSHBUTTON      "Annuler",IDCANCEL,64,284,50,14,WS_GROUP
+    GROUPBOX        "Territoire",IDC_STATIC,7,7,261,33,WS_GROUP
+    GROUPBOX        "Aéroports (les codes métropolitains sont imprimés bleus)",IDC_STATIC,7,47,261,230,WS_GROUP
+    GROUPBOX        "Aper çu",IDC_STATIC,277,7,304,270,WS_GROUP
+    CTEXT           "X",IDC_GPSLOCATION,285,259,288,15,SS_CENTERIMAGE | SS_WORDELLIPSIS
+    RTEXT           "© NASA’s Earth Observatory",IDC_STATIC,227,289,354,9
+    PUSHBUTTON      "Annoncez erreur de données...",IDC_REPORTERROR,121,284,126,14,WS_GROUP
+END
+
+IDD_SELECTIATA DIALOGEX 0, 0, 515, 305
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Choisissez le code d'aéroport IATA"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    COMBOBOX        IDC_COUNTRY,14,18,247,30,CBS_DROPDOWNLIST | CBS_OEMCONVERT | CBS_DISABLENOSCROLL | WS_VSCROLL | WS_GROUP | WS_TABSTOP,WS_EX_TRANSPARENT
+    CONTROL         "",IDC_AIRPORTS,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_ALIGNLEFT | LVS_OWNERDATA | WS_BORDER | WS_GROUP | WS_TABSTOP,14,59,247,210
+    CONTROL         "Carte",IDC_MAP_PREVIEW,"CMapPreviewCtrl",WS_GROUP,285,19,215,202
+    CONTROL         "Remplacez l'endroit &name",IDC_REPLACE_NAME,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,284,261,96,10
+    CONTROL         "Remplacez &GPS coordonnées",IDC_REPLACE_GPS,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,394,261,107,10
+    DEFPUSHBUTTON   "Ok",IDOK,7,284,50,14,WS_GROUP
+    PUSHBUTTON      "Annuler",IDCANCEL,64,284,50,14,WS_GROUP
+    GROUPBOX        "Territoire",IDC_STATIC,7,7,261,33,WS_GROUP
+    GROUPBOX        "Aéroports (les codes métropolitains sont imprimés bleus)",IDC_STATIC,7,47,261,230,WS_GROUP
+    GROUPBOX        "Aper çu",IDC_STATIC,278,7,230,232,WS_GROUP
+    GROUPBOX        "Options",IDC_STATIC,277,247,231,30,WS_GROUP
+    CTEXT           "X",IDC_GPSLOCATION,285,221,215,15,SS_CENTERIMAGE | SS_WORDELLIPSIS
+    RTEXT           "© NASA’s Earth Observatory",IDC_STATIC,230,289,278,9
+    PUSHBUTTON      "Annoncez erreur de données...",IDC_REPORTERROR,121,284,126,14,WS_GROUP
+END
+
+IDD_ENTERLICENSEKEY DIALOGEX 0, 0, 320, 193
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Donner clé de license"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    GROUPBOX        "License",IDC_STATIC,7,92,306,72
+    LTEXT           "Nom:",IDC_STATIC,14,103,291,8
+    EDITTEXT        IDC_NAME,14,112,292,14,ES_AUTOHSCROLL | WS_GROUP
+    LTEXT           "Clé de license:",IDC_STATIC,14,131,291,8
+    EDITTEXT        IDC_LICENSEKEY,14,140,292,14,ES_AUTOHSCROLL | WS_GROUP
+    CONTROL         "Ok",IDOK,"Button",BS_OWNERDRAW | WS_GROUP | WS_TABSTOP,7,172,50,14
+    CONTROL         "Annuler",IDCANCEL,"Button",BS_OWNERDRAW | WS_GROUP | WS_TABSTOP,64,172,50,14
+END
+
+IDD_STOREPROPERTIES DIALOGEX 0, 0, 365, 166
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Qualités de ""%s"""
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    GROUPBOX        "Qualités",IDC_STATIC,7,7,351,132
+    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ | WS_GROUP,14,56,339,1
+    LTEXT           "Nom du store:",IDC_STATIC,14,18,55,8
+    EDITTEXT        IDC_STORENAME,72,16,279,14,ES_AUTOHSCROLL
+    LTEXT           "Commentaire:",IDC_STATIC,14,37,55,8
+    EDITTEXT        IDC_COMMENT,72,35,279,14,ES_AUTOHSCROLL
+    LTEXT           "Produit:",IDC_STATIC,14,64,55,8
+    LTEXT           "X",IDC_CREATED,72,64,279,8,SS_ENDELLIPSIS
+    LTEXT           "Changé:",IDC_STATIC,14,74,55,8
+    LTEXT           "X",IDC_UPDATED,72,74,279,8,SS_ENDELLIPSIS
+    LTEXT           "Finalement vu:",IDC_LASTSEENCAPTION,14,84,55,8
+    LTEXT           "X",IDC_LASTSEEN,72,84,279,8,SS_ENDELLIPSIS
+    LTEXT           "GUID:",IDC_STATIC,14,94,55,8
+    LTEXT           "X",IDC_GUID,72,94,279,8,SS_ENDELLIPSIS
+    LTEXT           "Données:",IDC_STATIC,14,104,55,8
+    LTEXT           "X",IDC_DATPATH,72,104,279,8,SS_PATHELLIPSIS
+    LTEXT           "Index principal:",IDC_STATIC,14,114,55,8
+    LTEXT           "X",IDC_IDXPATHMAIN,72,114,279,8,SS_PATHELLIPSIS
+    LTEXT           "Index auxiliaire:",IDC_STATIC,14,124,55,8
+    LTEXT           "X",IDC_IDXPATHAUX,72,124,279,8,SS_PATHELLIPSIS
+    DEFPUSHBUTTON   "Ok",IDOK,7,145,50,14,WS_GROUP
+    PUSHBUTTON      "Annuler",IDCANCEL,64,145,50,14,WS_GROUP
+END
+
+IDD_ITEMTEMPLATE DIALOGEX 0, 0, 281, 338
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Qualités des fichiers"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "Inspecteur",IDC_INSPECTOR,"CInspectorGrid",WS_BORDER | WS_GROUP | WS_TABSTOP,14,35,253,248
+    CONTROL         "Classer &alphabétiquement",IDC_ALPHABETICALLY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,291,207,10
+    PUSHBUTTON      "&Vider",IDC_RESET,226,289,41,14,WS_GROUP
+    DEFPUSHBUTTON   "Ok",IDOK,7,317,50,14,WS_GROUP
+    PUSHBUTTON      "Omettre",IDC_SKIP,64,317,50,14,WS_GROUP
+    PUSHBUTTON      "Annuler",IDCANCEL,121,317,50,14,WS_GROUP
+    GROUPBOX        "Inspecteur",IDC_STATIC,7,7,267,304
+    LTEXT           "Les qualités de fichier manquants seront mis en utilisant les valeurs si-dessous.\nSi vous ne voulez pas que vos fichiers soient amendés, appuyez ""Omettre"".",IDC_STATIC,14,16,253,18
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    IDD_ABOUT, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 393
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 272
+    END
+
+    IDD_CHOOSEDEFAULTSTORE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 459
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 203
+    END
+
+    IDD_WELCOME, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 255
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 205
+    END
+
+    IDD_STOREDELETE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 289
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 101
+    END
+
+    IDD_STORENEW, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 340
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 245
+    END
+
+    IDD_STORENEWDRIVE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 227
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 144
+    END
+
+    IDD_SELECTGPS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 437
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 288
+    END
+
+    IDD_ENTERLICENSEKEY, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 313
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 186
+    END
+
+    IDD_STOREPROPERTIES, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 358
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 159
+    END
+
+    IDD_ITEMTEMPLATE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 274
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 331
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE 
+BEGIN
+    IDS_RIBBONCOLORITEMS    "Bleu;Argent;Noir;Aigue-marine"
+    IDS_HELPURL             "http://liquidFOLDERS.net/cms.php?lang=fr&page=tour"
+    IDS_PURCHASEURL         "http://liquidFOLDERS.net/cms.php?lang=fr&page=purchase"
+    IDS_ERROR               "Erreur"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_APP_ABOUT            "Montre des informations et embauches globales.\nConcernant liquidFOLDERS"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_APP_HELP             "Ouvre le standard-browser et indique un tour mené par liquidFOLDERS\nTour mené"
+    ID_APP_SUPPORT          "Produis un nouvel e-mail au service aprés-vente.\nE-mail au service aprés-vente"
+    ID_APP_NEWFILEDROP      "Ouvre une nouvelle fenêtre de FileDrop.\nFileDrop"
+    ID_APP_NEWMIGRATE       "Ouvre l'assistant de migration.\nL'assistant de migration"
+    ID_APP_NEWSTOREMANAGER  "Ouvre le StoreManager.\nStoreManager"
+    ID_APP_PROMPT           "Ouvre une fenêtre de lignes de commandement.\nLignes de commandement"
+    ID_APP_PURCHASE         "Ouvre le standard-browser avec un site pour l'acquisition d'une clé de licence.\nAcquérir une licence"
+    ID_APP_ENTERLICENSEKEY  "Ouvre une fenêtre pour la déverrouillage de liquidFOLDERS.\nDonner clé de licence"
+END
+
+#endif    // Französisch (neutral) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// Deutsch (Deutschland) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_DEU)
+#ifdef _WIN32
+LANGUAGE LANG_GERMAN, SUBLANG_GERMAN
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#ifndef APSTUDIO_INVOKED\r\n"
+    "#include ""targetver.h""\r\n"
+    "#endif\r\n"
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "#define _AFX_NO_SPLITTER_RESOURCES\r\n"
+    "#define _AFX_NO_OLE_RESOURCES\r\n"
+    "#define _AFX_NO_TRACKER_RESOURCES\r\n"
+    "#define _AFX_NO_PROPERTY_RESOURCES\r\n"
+    "\r\n"
+    "#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_DEU)\r\n"
+    "LANGUAGE 7, 1\r\n"
+    "#pragma code_page(1252)\r\n"
+    "#include ""res\\LFCommDlg.rc2""  // Nicht mit Microsoft Visual C++ bearbeitete Ressourcen\r\n"
+    "#include ""l.DEU\\afxres.rc""      // Standardkomponenten\r\n"
+    "#endif\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+#endif    // Deutsch (Deutschland) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+#define _AFX_NO_SPLITTER_RESOURCES
+#define _AFX_NO_OLE_RESOURCES
+#define _AFX_NO_TRACKER_RESOURCES
+#define _AFX_NO_PROPERTY_RESOURCES
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_DEU)
+LANGUAGE 7, 1
+#pragma code_page(1252)
+#include "res\LFCommDlg.rc2"  // Nicht mit Microsoft Visual C++ bearbeitete Ressourcen
+#include "l.DEU\afxres.rc"      // Standardkomponenten
+#endif
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

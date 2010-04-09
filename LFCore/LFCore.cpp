@@ -1,0 +1,961 @@
+// LFCore.cpp : Definiert die exportierten Funktionen für die DLL-Anwendung.
+//
+
+#include "stdafx.h"
+#include "..\\include\\LFCore.h"
+#include "liquidFOLDERS.h"
+#include "resource.h"
+#include "LFVariantData.h"
+#include "Domains.h"
+#include "License.h"
+#include "IATA.h"
+#include "Stores.h"
+#include "License.h"
+#include <iostream>
+#include <malloc.h>
+#include <winioctl.h>
+
+
+HMODULE LFCoreModuleHandle;
+LFMessageIDs LFMessages;
+
+
+// Der Inhalt dieses Segments wird über alle Instanzen von LFCore geteilt.
+// Der Zugriff muss daher über Mutex-Objekte serialisiert/synchronisiert werden.
+// Alle Variablen im Segment müssen initalisiert werden !
+
+#pragma data_seg("common_drives")
+
+unsigned int DriveTypes[26] = { DRIVE_UNKNOWN };
+
+#pragma data_seg()
+#pragma comment(linker, "/SECTION:common_drives,RWS")
+
+
+unsigned int GetDriveBus(char d)
+{
+	unsigned int res = BusTypeMaxReserved;
+
+	char szBuf[MAX_PATH] = "\\\\?\\ :";
+	szBuf[4] = d;
+	HANDLE hDevice = CreateFileA(szBuf, GENERIC_READ,
+		FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, NULL, NULL);
+
+	if (hDevice!=INVALID_HANDLE_VALUE)
+	{
+		STORAGE_DEVICE_DESCRIPTOR* pDevDesc = (STORAGE_DEVICE_DESCRIPTOR*)new BYTE[sizeof(STORAGE_DEVICE_DESCRIPTOR) + 512 - 1];
+		pDevDesc->Size = sizeof(STORAGE_DEVICE_DESCRIPTOR)+512-1;
+
+		STORAGE_PROPERTY_QUERY Query;
+		Query.PropertyId = StorageDeviceProperty;
+		Query.QueryType = PropertyStandardQuery;
+
+		DWORD dwOutBytes;
+		if (DeviceIoControl(hDevice, IOCTL_STORAGE_QUERY_PROPERTY,
+			&Query, sizeof(STORAGE_PROPERTY_QUERY), pDevDesc, pDevDesc->Size,
+			&dwOutBytes, NULL))
+			res = pDevDesc->BusType;
+
+		delete pDevDesc;
+		CloseHandle(hDevice);
+	}
+
+	return res;
+}
+
+LFCore_API unsigned int LFGetLogicalDrives(unsigned int mask)
+{
+	DWORD DrivesOnSystem = GetLogicalDrives() & ~3;
+	DWORD Index = 1;
+	char szDriveRoot[] = " :\\";
+
+	for (char cDrive='A'; cDrive<='Z'; cDrive++, Index<<=1)
+	{
+		if (!(DrivesOnSystem & Index))
+		{
+			DriveTypes[cDrive-'A'] = DRIVE_UNKNOWN;
+			continue;
+		}
+
+		unsigned int uDriveType = DriveTypes[cDrive-'A'];
+		if (uDriveType==DRIVE_UNKNOWN)
+		{
+			szDriveRoot[0] = cDrive;
+			uDriveType = GetDriveTypeA(szDriveRoot);
+
+			if (uDriveType==DRIVE_FIXED)
+				switch (GetDriveBus(cDrive))
+				{
+				case BusType1394:
+				case BusTypeUsb:
+					uDriveType = DRIVE_REMOVABLE;
+					break;
+				}
+
+			DriveTypes[cDrive-'A'] = uDriveType;
+		}
+
+		switch (uDriveType)
+		{
+		case DRIVE_FIXED:
+			if (!(mask & LFGLD_Internal))
+				DrivesOnSystem &= ~Index;
+			break;
+		case DRIVE_REMOVABLE:
+			if (!(mask & LFGLD_External))
+				DrivesOnSystem &= ~Index;
+			break;
+		case DRIVE_REMOTE:
+			if (!(mask & LFGLD_Network))
+				DrivesOnSystem &= ~Index;
+			break;
+		default:
+			DrivesOnSystem &= ~Index;
+		}
+	}
+
+	return DrivesOnSystem;
+}
+
+LFCore_API LFMessageIDs* LFGetMessageIDs()
+{
+	return &LFMessages;
+}
+
+LFCore_API bool LFIsLicensed()
+{
+	return IsLicensed();
+}
+
+
+LFCore_API LFAttributeDescriptor* LFAllocAttributeDescriptor()
+{
+	LFAttributeDescriptor* a = static_cast<LFAttributeDescriptor*>(malloc(sizeof(LFAttributeDescriptor)));
+	ZeroMemory(a, sizeof(LFAttributeDescriptor));
+	return a;
+}
+
+inline void SetRange(unsigned char &var, unsigned int ID, unsigned int lo, unsigned int hi, unsigned char val)
+{
+	if ((ID>=lo) && (ID<=hi))
+		var = val;
+}
+
+LFCore_API LFAttributeDescriptor* LFGetAttributeInfo(unsigned int ID)
+{
+	if (ID>=LFAttributeCount)
+		return NULL;
+
+	LFAttributeDescriptor* a = LFAllocAttributeDescriptor();
+	LoadString(LFCoreModuleHandle, ID+IDS_FirstAttribute, a->Name, 64);
+	a->AlwaysVisible = (ID==LFAttrFileName);
+
+	// Type and character count (where appropriate)
+	switch (ID)
+	{
+	case LFAttrStoreID:
+	case LFAttrFileID:
+		a->Type = LFTypeAnsiString;
+		a->cCharacters = LFKeySize-1;
+		break;
+	case LFAttrURL:
+	case LFAttrFrom:
+	case LFAttrTo:
+		a->Type = LFTypeAnsiString;
+		a->cCharacters = 255;
+		break;
+	case LFAttrLanguage:
+		a->Type = LFTypeAnsiString;
+		a->cCharacters = 2;
+		break;
+	case LFAttrLocationIATA:
+		a->Type = LFTypeAnsiString;
+		a->cCharacters = 3;
+		break;
+	case LFAttrISBN:
+	case LFAttrSignature:
+		a->Type = LFTypeAnsiString;
+		a->cCharacters = 31;
+		break;
+	case LFAttrVideoCodec:
+	case LFAttrAudioCodec:
+		a->Type = LFTypeFourCC;
+		break;
+	case LFAttrRating:
+	case LFAttrPriority:
+		a->Type = LFTypeRating;
+		break;
+	case LFAttrFileFormat:
+	case LFAttrChannels:
+	case LFAttrSamplerate:
+	case LFAttrBitrate:
+	case LFAttrHeight:
+	case LFAttrWidth:
+	case LFAttrPages:
+	case LFAttrResolution:
+		a->Type = LFTypeUINT;
+		break;
+	case LFAttrFileSize:
+		a->Type = LFTypeINT64;
+		break;
+	case LFAttrAperture:
+	case LFAttrFocus:
+		a->Type = LFTypeFraction;
+		break;
+	case LFAttrAspectRatio:
+		a->Type = LFTypeDouble;
+		break;
+	case LFAttrFlags:
+		a->Type = LFTypeFlags;
+		break;
+	case LFAttrLocationGPS:
+		a->Type = LFTypeGeoCoordinates;
+		break;
+	case LFAttrCreationTime:
+	case LFAttrFileTime:
+	case LFAttrRecordingTime:
+	case LFAttrDueTime:
+	case LFAttrDoneTime:
+		a->Type = LFTypeTime;
+		break;
+	case LFAttrDuration:
+		a->Type = LFTypeDuration;
+		break;
+	default:
+		a->Type = LFTypeUnicodeString;
+		a->cCharacters = (ID==LFAttrExposure) || (ID==LFAttrChip) ? 31 : 255;
+		if (ID==LFAttrHint)
+			a->RecommendedWidth = 350;
+	}
+
+	// Recommended width
+	const unsigned int rWidths[] = { 200, 200, 100, 100, 100, 120, 100, 100, 100, 150, 140, 100 };
+	if (!a->RecommendedWidth)
+		a->RecommendedWidth = rWidths[a->Type];
+
+	// Category
+	if (ID<=LFAttrRating)
+	{
+		a->Category = ((ID==LFAttrStoreID) || (ID==LFAttrFileID) || (ID==LFAttrFileFormat) || (ID==LFAttrFlags)) ? LFAttrCategoryInternal : LFAttrCategoryBasic;
+	}
+	else
+	{
+		SetRange(a->Category, ID, LFAttrLocationName, LFAttrLocationGPS, LFAttrCategoryGeotags);
+		SetRange(a->Category, ID, LFAttrHeight, LFAttrRoll, LFAttrCategoryVisual);
+		SetRange(a->Category, ID, LFAttrExposure, LFAttrChip, LFAttrCategoryPhotographic);
+		SetRange(a->Category, ID, LFAttrAlbum, LFAttrAudioCodec, LFAttrCategoryAudio);
+		SetRange(a->Category, ID, LFAttrDuration, LFAttrBitrate, LFAttrCategoryTimebased);
+		SetRange(a->Category, ID, LFAttrArtist, LFAttrSignature, LFAttrCategoryBibliographic);
+		SetRange(a->Category, ID, LFAttrFrom, LFAttrDoneTime, LFAttrCategoryWorkflow);
+		SetRange(a->Category, ID, LFAttrPriority, LFAttrPriority, LFAttrCategoryWorkflow);
+	}
+
+	// Sortable
+	a->Sortable = (a->Type!=LFTypeFlags);
+
+	// ReadOnly
+	switch (ID)
+	{
+	case LFAttrHint:
+	case LFAttrCreationTime:
+	case LFAttrFileTime:
+	case LFAttrFileSize:
+	case LFAttrHeight:
+	case LFAttrWidth:
+	case LFAttrResolution:
+	case LFAttrAspectRatio:
+	case LFAttrVideoCodec:
+	case LFAttrExposure:
+	case LFAttrFocus:
+	case LFAttrAperture:
+	case LFAttrChip:
+	case LFAttrChannels:
+	case LFAttrSamplerate:
+	case LFAttrAudioCodec:
+	case LFAttrDuration:
+	case LFAttrBitrate:
+	case LFAttrPages:
+	case LFAttrRecordingEquipment:
+		a->ReadOnly = TRUE;
+		break;
+	default:
+		a->ReadOnly = (a->Category==LFAttrCategoryInternal);
+	}
+
+	return a;
+}
+
+LFCore_API void LFFreeAttributeDescriptor(LFAttributeDescriptor* a)
+{
+	if (a)
+		free(a);
+}
+
+
+LFCore_API LFContextDescriptor* LFAllocContextDescriptor()
+{
+	LFContextDescriptor* c = static_cast<LFContextDescriptor*>(malloc(sizeof(LFContextDescriptor)));
+	ZeroMemory(c, sizeof(LFContextDescriptor));
+	return c;
+}
+
+LFCore_API LFContextDescriptor* LFGetContextInfo(unsigned int ID)
+{
+	if (ID>=LFContextCount)
+		return NULL;
+
+	LFContextDescriptor* c = LFAllocContextDescriptor();
+	LoadString(LFCoreModuleHandle, ID+IDS_FirstContext, c->Name, 64);
+	c->AllowExtendedViews = (ID>LFContextClipboard);
+	c->AllowGroups = (ID>LFContextStoreHome) && (ID!=LFContextClipboard);
+
+	c->AllowedAttributes = new BitArray(LFAttributeCount);
+	(*c->AllowedAttributes) += LFAttrFileName;
+	(*c->AllowedAttributes) += LFAttrStoreID;
+	(*c->AllowedAttributes) += LFAttrFileID;
+	(*c->AllowedAttributes) += LFAttrHint;
+
+	switch (ID)
+	{
+	case LFContextStores:
+		(*c->AllowedAttributes) += LFAttrComment;
+		(*c->AllowedAttributes) += LFAttrCreationTime;
+		(*c->AllowedAttributes) += LFAttrFileTime;
+		break;
+	case LFContextStoreHome:
+		break;
+	default:
+		for (unsigned int a=0; a<LFAttributeCount; a++)
+			(*c->AllowedAttributes) += a;
+	}
+
+	return c;
+}
+
+LFCore_API void LFFreeContextDescriptor(LFContextDescriptor* c)
+{
+	if (c)
+	{
+		if (c->AllowedAttributes)
+			delete c->AllowedAttributes;
+		free(c);
+	}
+}
+
+
+LFCore_API LFItemCategoryDescriptor* LFAllocItemCategoryDescriptor()
+{
+	LFItemCategoryDescriptor* c = static_cast<LFItemCategoryDescriptor*>(malloc(sizeof(LFItemCategoryDescriptor)));
+	ZeroMemory(c, sizeof(LFItemCategoryDescriptor));
+	return c;
+}
+
+LFCore_API LFItemCategoryDescriptor* LFGetItemCategoryInfo(unsigned int ID)
+{
+	if (ID>=LFItemCategoryCount)
+		return NULL;
+
+	wchar_t tmpStr[256+64+1];
+	LoadString(LFCoreModuleHandle, ID+IDS_FirstItemCategory, tmpStr, 256+64+1);
+	size_t sz = wcscspn(tmpStr, L"\n");
+
+	LFItemCategoryDescriptor* c = LFAllocItemCategoryDescriptor();
+	wcsncpy_s(c->Name, 64, tmpStr, sz);
+	if (sz<wcslen(tmpStr))
+		wcscpy_s(c->Hint, 256, &tmpStr[sz+1]);
+
+	return c;
+}
+
+LFCore_API void LFFreeItemCategoryDescriptor(LFItemCategoryDescriptor* c)
+{
+	if (c)
+		free(c);
+}
+
+LFCore_API LFDomainDescriptor* LFAllocDomainDescriptor()
+{
+	LFDomainDescriptor* d = static_cast<LFDomainDescriptor*>(malloc(sizeof(LFDomainDescriptor)));
+	ZeroMemory(d, sizeof(LFDomainDescriptor));
+	d->ImportantAttributes = new BitArray(65000);
+	return d;
+}
+
+LFCore_API LFDomainDescriptor* LFGetDomainInfo(unsigned int ID)
+{
+	if (ID>=LFDomainCount)
+		return NULL;
+
+	LFDomainDescriptor* d = LFAllocDomainDescriptor();
+
+	LoadString(LFCoreModuleHandle, IDS_FirstDomain+ID, d->DomainName, 256);
+	d->Hint[0] = '\0';
+
+	for (unsigned int a=0; a<wcslen(d->DomainName); a++)
+		if (d->DomainName[a]=='\n')
+		{
+			wcsncpy_s(d->Hint, 256, &d->DomainName[a+1], wcslen(d->DomainName)-a-1);
+			d->DomainName[a] = '\0';
+			break;
+		}
+
+	*(d->ImportantAttributes) += LFAttrFileName;
+	*(d->ImportantAttributes) += LFAttrHint;
+	*(d->ImportantAttributes) += LFAttrCreationTime;
+	*(d->ImportantAttributes) += LFAttrFileTime;
+	*(d->ImportantAttributes) += LFAttrRoll;
+	*(d->ImportantAttributes) += LFAttrComment;
+	*(d->ImportantAttributes) += LFAttrRating;
+	*(d->ImportantAttributes) += LFAttrPriority;
+
+	if (ID<=LFDomainFilters)
+	{
+		d->CategoryID = LFCategoryStore;
+	}
+	else
+		if (ID<=LFDomainVideos)
+		{
+			d->CategoryID = LFCategoryMultimediaTypes;
+		}
+		else
+			if ((ID==LFDomainTrash) || (ID==LFDomainUnknown))
+			{
+				d->CategoryID = LFCategoryHousekeeping;
+			}
+			else
+			{
+				d->CategoryID = LFCategoryOtherTypes;
+			}
+
+	const unsigned int Icons[LFDomainCount] = { IDI_FLD_All, IDI_FLD_Favorites, IDI_FLD_System, IDI_FLD_All,
+		IDI_FLD_Audio, IDI_FLD_Pictures, IDI_FLD_Photos, IDI_FLD_Video, IDI_FLD_Archive, IDI_FLD_Contacts,
+		IDI_FLD_Documents, IDI_FLD_Calendar, IDI_FLD_Fonts, IDI_FLD_Location, IDI_FLD_Mail, IDI_FLD_Presentations,
+		IDI_FLD_Spreadsheets, IDI_FLD_Web, IDI_FLD_Trash, IDI_FLD_Default };
+	d->IconID = Icons[ID];
+
+	switch (ID)
+	{
+	case LFDomainAllFiles:
+	case LFDomainContacts:
+	case LFDomainEvents:
+		*(d->ImportantAttributes) += LFAttrLocationName;
+		*(d->ImportantAttributes) += LFAttrLocationIATA;
+		*(d->ImportantAttributes) += LFAttrResponsible;
+		*(d->ImportantAttributes) += LFAttrDueTime;
+		*(d->ImportantAttributes) += LFAttrDoneTime;
+		break;
+	case LFDomainAllMultimediaFiles:
+		*(d->ImportantAttributes) += LFAttrLocationName;
+		*(d->ImportantAttributes) += LFAttrLocationIATA;
+		*(d->ImportantAttributes) += LFAttrArtist;
+		*(d->ImportantAttributes) += LFAttrTitle;
+		*(d->ImportantAttributes) += LFAttrAlbum;
+		*(d->ImportantAttributes) += LFAttrDuration;
+		*(d->ImportantAttributes) += LFAttrBitrate;
+		*(d->ImportantAttributes) += LFAttrRecordingTime;
+		*(d->ImportantAttributes) += LFAttrLanguage;
+		break;
+	case LFDomainAudio:
+		*(d->ImportantAttributes) += LFAttrArtist;
+		*(d->ImportantAttributes) += LFAttrTitle;
+		*(d->ImportantAttributes) += LFAttrAlbum;
+		*(d->ImportantAttributes) += LFAttrDuration;
+		*(d->ImportantAttributes) += LFAttrBitrate;
+		*(d->ImportantAttributes) += LFAttrRecordingTime;
+		break;
+	case LFDomainPictures:
+	case LFDomainPhotos:
+		*(d->ImportantAttributes) += LFAttrLocationName;
+		*(d->ImportantAttributes) += LFAttrLocationIATA;
+		*(d->ImportantAttributes) += LFAttrArtist;
+		*(d->ImportantAttributes) += LFAttrTitle;
+		*(d->ImportantAttributes) += LFAttrRecordingTime;
+		*(d->ImportantAttributes) += LFAttrLanguage;
+		break;
+	case LFDomainVideos:
+		*(d->ImportantAttributes) += LFAttrLocationName;
+		*(d->ImportantAttributes) += LFAttrLocationIATA;
+		*(d->ImportantAttributes) += LFAttrArtist;
+		*(d->ImportantAttributes) += LFAttrTitle;
+		*(d->ImportantAttributes) += LFAttrDuration;
+		*(d->ImportantAttributes) += LFAttrRecordingTime;
+		*(d->ImportantAttributes) += LFAttrLanguage;
+		break;
+	case LFDomainDocuments:
+	case LFDomainPresentations:
+	case LFDomainSpreadsheets:
+		*(d->ImportantAttributes) += LFAttrLocationName;
+		*(d->ImportantAttributes) += LFAttrLocationIATA;
+		*(d->ImportantAttributes) += LFAttrArtist;
+		*(d->ImportantAttributes) += LFAttrCopyright;
+		*(d->ImportantAttributes) += LFAttrResponsible;
+		*(d->ImportantAttributes) += LFAttrTitle;
+		*(d->ImportantAttributes) += LFAttrSignature;
+		*(d->ImportantAttributes) += LFAttrDueTime;
+		*(d->ImportantAttributes) += LFAttrDoneTime;
+		*(d->ImportantAttributes) += LFAttrLanguage;
+		break;
+	case LFDomainGeodata:
+		*(d->ImportantAttributes) += LFAttrLocationName;
+		*(d->ImportantAttributes) += LFAttrLocationIATA;
+		break;
+	}
+
+	return d;
+}
+
+LFCore_API void LFFreeDomainDescriptor(LFDomainDescriptor* d)
+{
+	if (d)
+	{
+		if (d->ImportantAttributes)
+			delete d->ImportantAttributes;
+		free(d);
+	}
+}
+
+
+LFCore_API LFItemDescriptor* LFAllocItemDescriptor()
+{
+	LFItemDescriptor* d = static_cast<LFItemDescriptor*>(malloc(sizeof(LFItemDescriptor)));
+	ZeroMemory(d, sizeof(LFItemDescriptor));
+	d->Position = -1;
+	d->RefCount = 1;
+
+	// Zeiger auf statische Attributwerte initalisieren
+	d->AttributeValues[LFAttrFileName] = &d->CoreAttributes.FileName;
+	d->AttributeValues[LFAttrStoreID] = &d->CoreAttributes.StoreID;
+	d->AttributeValues[LFAttrFileID] = &d->CoreAttributes.FileID;
+	d->AttributeValues[LFAttrComment] = &d->CoreAttributes.Comment;
+	d->AttributeValues[LFAttrHint] = &d->Hint;
+	d->AttributeValues[LFAttrCreationTime] = &d->CoreAttributes.CreationTime;
+	d->AttributeValues[LFAttrFileTime] = &d->CoreAttributes.FileTime;
+	d->AttributeValues[LFAttrFileFormat] = &d->CoreAttributes.FileFormat;
+	d->AttributeValues[LFAttrFileSize] = &d->CoreAttributes.FileSize;
+	d->AttributeValues[LFAttrFlags] = &d->CoreAttributes.Flags;
+	d->AttributeValues[LFAttrURL] = &d->CoreAttributes.URL;
+	d->AttributeValues[LFAttrTags] = &d->CoreAttributes.Tags;
+	d->AttributeValues[LFAttrRating] = &d->CoreAttributes.Rating;
+	d->AttributeValues[LFAttrPriority] = &d->CoreAttributes.Priority;
+	d->AttributeValues[LFAttrLocationName] = &d->CoreAttributes.LocationName;
+	d->AttributeValues[LFAttrLocationIATA] = &d->CoreAttributes.LocationIATA;
+	d->AttributeValues[LFAttrLocationGPS] = &d->CoreAttributes.LocationGPS;
+
+	// Für Attribute, die Unicode-Strings sind, auch die Zeiger für Unicode-String initalisieren
+	d->AttributeStrings[LFAttrFileName] = &d->CoreAttributes.FileName[0];
+	d->AttributeStrings[LFAttrComment] = &d->CoreAttributes.Comment[0];
+	d->AttributeStrings[LFAttrHint] = &d->Hint[0];
+	d->AttributeStrings[LFAttrTags] = &d->CoreAttributes.Tags[0];
+	d->AttributeStrings[LFAttrLocationName] = &d->CoreAttributes.LocationName[0];
+
+	return d;
+}
+
+LFCore_API LFItemDescriptor* LFAllocItemDescriptor(LFItemDescriptor* i)
+{
+	LFItemDescriptor* d = LFAllocItemDescriptor();
+	d->CategoryID = i->CategoryID;
+	d->CoreAttributes = i->CoreAttributes;
+	d->DeleteFlag = i->DeleteFlag;
+	wcscpy_s(d->Hint, 256, i->Hint);
+	d->IconID = i->IconID;
+	if (i->NextFilter)
+		d->NextFilter = LFAllocFilter(i->NextFilter);
+	d->Type = i->Type;
+
+	for (unsigned int a=0; a<LFAttributeCount; a++)
+	{
+		if ((a>LFLastLocalAttribute) && (i->AttributeValues[a]))
+		{
+			size_t sz = _msize(i->AttributeValues[a]);
+			d->AttributeValues[a] = malloc(sz);
+			memcpy(d->AttributeValues[a], i->AttributeValues, sz);
+		}
+		if ((i->AttributeStrings[a]) && (!d->AttributeStrings[a]))
+		{
+			size_t sz = _msize(i->AttributeStrings[a]);
+			d->AttributeStrings[a] = (wchar_t*)malloc(sz);
+			memcpy(d->AttributeStrings[a], i->AttributeStrings[a], sz);
+		}
+	}
+
+	return d;
+}
+
+LFCore_API void LFFreeItemDescriptor(LFItemDescriptor* f)
+{
+	if (f)
+	{
+		f->RefCount--;
+		if (!f->RefCount)
+		{
+			LFFreeFilter(f->NextFilter);
+			for (unsigned int a=0; a<LFAttributeCount; a++)
+				FreeAttribute(f, a);
+			free(f);
+		}
+	}
+}
+
+LFCore_API void LFGetAttributeVariantData(LFItemDescriptor* f, LFVariantData* v)
+{
+	if (f->AttributeValues[v->Attr])
+	{
+		v->IsNull = false;
+
+		switch (v->Type)
+		{
+		case LFTypeUnicodeString:
+			wcscpy_s(v->UnicodeString, 256, (wchar_t*)f->AttributeValues[v->Attr]);
+			break;
+		case LFTypeAnsiString:
+			strcpy_s(v->AnsiString, 256, (char*)f->AttributeValues[v->Attr]);
+			break;
+		case LFTypeFourCC:
+		case LFTypeUINT:
+		case LFTypeFlags:
+		case LFTypeDuration:
+			v->UINT = *(unsigned int*)f->AttributeValues[v->Attr];
+			break;
+		case LFTypeRating:
+			v->Rating = *(unsigned char*)f->AttributeValues[v->Attr];
+			break;
+		case LFTypeINT64:
+			v->INT64 = *(__int64*)f->AttributeValues[v->Attr];
+			break;
+		case LFTypeFraction:
+			v->Fraction = *(LFFraction*)f->AttributeValues[v->Attr];
+			break;
+		case LFTypeDouble:
+			v->Double = *(double*)f->AttributeValues[v->Attr];
+			break;
+		case LFTypeGeoCoordinates:
+			v->GeoCoordinates = *(LFGeoCoordinates*)f->AttributeValues[v->Attr];
+			break;
+		case LFTypeTime:
+			v->Time = *(FILETIME*)f->AttributeValues[v->Attr];
+			break;
+		}
+	}
+	else
+	{
+		LFGetNullVariantData(v, v->Type);
+	}
+}
+
+LFCore_API void LFSetAttributeVariantData(LFItemDescriptor* f, LFVariantData* v, wchar_t* ustr)
+{
+	v->IsNull = false;
+
+	switch (v->Type)
+	{
+	case LFTypeUnicodeString:
+		SetAttributeUnicodeString(f, v->Attr, v->UnicodeString);
+		break;
+	case LFTypeAnsiString:
+		SetAttributeAnsiString(f, v->Attr, v->AnsiString, ustr);
+		break;
+	case LFTypeFourCC:
+		SetAttributeFourCC(f, v->Attr, v->FourCC, ustr);
+		break;
+	case LFTypeRating:
+		SetAttributeRating(f, v->Attr, v->Rating);
+		break;
+	case LFTypeUINT:
+		SetAttributeUINT(f, v->Attr, v->UINT, ustr);
+		break;
+	case LFTypeINT64:
+		SetAttributeINT64(f, v->Attr, v->INT64, ustr);
+		break;
+	case LFTypeFraction:
+		SetAttributeFraction(f, v->Attr, v->Fraction, ustr);
+		break;
+	case LFTypeDouble:
+		SetAttributeDouble(f, v->Attr, v->Double, ustr);
+		break;
+	case LFTypeFlags:
+		SetAttributeFlags(f, v->Attr, v->Flags);
+		break;
+	case LFTypeGeoCoordinates:
+		SetAttributeGeoCoordinates(f, v->Attr, v->GeoCoordinates, ustr);
+		break;
+	case LFTypeTime:
+		SetAttributeTime(f, v->Attr, v->Time, ustr);
+		break;
+	case LFTypeDuration:
+		SetAttributeDuration(f, v->Attr, v->Duration, ustr);
+		break;
+	}
+}
+
+
+LFCore_API LFFilter* LFAllocFilter(LFFilter* f)
+{
+	LFFilter* filter = static_cast<LFFilter*>(malloc(sizeof(LFFilter)));
+	if (f)
+	{
+		memcpy(filter, f, sizeof(LFFilter));
+	}
+	else
+	{
+		ZeroMemory(filter, sizeof(LFFilter));
+		filter->Mode = LFFilterModeStores;
+		filter->Result.FilterType = LFFilterTypeDefault;
+	}
+	return filter;
+}
+
+LFCore_API void LFFreeFilter(LFFilter* f)
+{
+	if (f)
+		free(f);
+}
+
+
+LFCore_API LFSearchResult* LFAllocSearchResult(int ctx, LFSearchResult* res, BOOL AllowEmptyDrives)
+{
+	return (res==NULL) ? new LFSearchResult(ctx) : new LFSearchResult(ctx, res, AllowEmptyDrives);
+}
+
+LFCore_API void LFFreeSearchResult(LFSearchResult* res)
+{
+	if (res)
+		delete res;
+}
+
+LFCore_API BOOL LFAddItemDescriptor(LFSearchResult* res, LFItemDescriptor* i)
+{
+	return res->AddItemDescriptor(i);
+}
+
+LFCore_API void LFRemoveItemDescriptor(LFSearchResult* res, unsigned int idx)
+{
+	res->RemoveItemDescriptor(idx);
+}
+
+LFCore_API void LFRemoveFlaggedItemDescriptors(LFSearchResult* res)
+{
+	res->RemoveFlaggedItemDescriptors();
+}
+
+
+LFCore_API LFTransactionList* LFAllocTransactionList()
+{
+	return new LFTransactionList();
+}
+
+LFCore_API void LFFreeTransactionList(LFTransactionList* tl)
+{
+	if (tl)
+		delete tl;
+}
+
+LFCore_API BOOL LFAddItemDescriptor(LFTransactionList* tl, LFItemDescriptor* i, unsigned int UserData)
+{
+	return tl->AddItemDescriptor(i, UserData);
+}
+
+LFCore_API void LFRemoveEntry(LFTransactionList* tl, unsigned idx)
+{
+	tl->RemoveEntry(idx);
+}
+
+LFCore_API void LFRemoveFlaggedEntries(LFTransactionList* tl)
+{
+	tl->RemoveFlaggedEntries();
+}
+
+LFCore_API void LFRemoveErrorEntries(LFTransactionList* tl)
+{
+	tl->RemoveErrorEntries();
+}
+
+
+LFCore_API LFStoreDescriptor* LFAllocStoreDescriptor()
+{
+	LFStoreDescriptor* s = static_cast<LFStoreDescriptor*>(malloc(sizeof(LFStoreDescriptor)));
+	ZeroMemory(s, sizeof(LFStoreDescriptor));
+	return s;
+}
+
+LFCore_API void LFFreeStoreDescriptor(LFStoreDescriptor* s)
+{
+	if (s)
+		free(s);
+}
+
+
+wchar_t* LoadResourceString(unsigned int ID, unsigned int length)
+{
+	wchar_t* str = new wchar_t[length];
+	LoadString(LFCoreModuleHandle, ID, str, length);
+	return str;
+}
+
+LFCore_API wchar_t* LFGetAttrCategoryName(unsigned int ID)
+{
+	return LoadResourceString(ID+IDS_FirstAttrCategory, 64);
+}
+
+LFCore_API wchar_t* LFGetErrorText(unsigned int ID)
+{
+	return LoadResourceString(ID+IDS_FirstError, 256);
+}
+
+LFCore_API void LFErrorBox(unsigned int ID, HWND hWnd)
+{
+	if (ID>LFCancel)
+	{
+		wchar_t* msg = LFGetErrorText(ID);
+		wchar_t caption[256];
+		LoadString(LFCoreModuleHandle, IDS_ErrorCaption, caption, 256);
+
+		MessageBox(hWnd, msg, caption, MB_OK | MB_ICONERROR);
+
+		free(msg);
+	}
+}
+
+
+LFCore_API BOOL LFAttributeSortableInView(unsigned int Attr, unsigned int ViewMode)
+{
+	BOOL b = (Attr!=LFAttrLocationGPS);
+	switch (ViewMode)
+	{
+	case LFViewAutomatic:
+		b = TRUE;
+		break;
+	case LFViewCalendarYear:
+	case LFViewCalendarWeek:
+	case LFViewCalendarDay:
+	case LFViewTimeline:
+		b = ((Attr==LFAttrCreationTime) || (Attr==LFAttrFileTime) || (Attr==LFAttrRecordingTime) || (Attr==LFAttrDueTime) || (Attr==LFAttrDoneTime));
+		break;
+	case LFViewGlobe:
+		b = ((Attr==LFAttrLocationIATA) || (Attr==LFAttrLocationGPS));
+		break;
+	case LFViewTagcloud:
+		b &= (Attr!=LFAttrRating);
+		break;
+	}
+	return b;
+}
+
+
+
+// TEMP
+//
+
+#include <io.h>
+#include <malloc.h>
+#include <objbase.h>
+#include <shellapi.h>
+#include <shlobj.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+void AddLocation(LFSearchResult* res, char* loc)
+{
+	char tmpStr[8];
+	strcpy_s(tmpStr, 8, loc);
+
+	LFAirport* airport;
+	if (LFIATAGetAirportByCode(tmpStr, &airport)==true)
+	{
+		LFItemDescriptor* i = LFIATACreateFolderForAirport(airport);
+		sprintf_s(tmpStr, 8, "%d", res->m_Count+1);
+		SetAttributeAnsiString(i, LFAttrFileID, tmpStr);
+		wchar_t hint[256];
+		swprintf_s(hint, 256 , L"%d files", 10+(rand()%1000));
+		SetAttributeUnicodeString(i, LFAttrHint, hint);
+		SetAttributeRating(i, LFAttrRating, rand()%(LFMaxRating+1));
+		res->AddItemDescriptor(i);
+	}
+}
+
+//
+// TEMP
+
+
+
+
+LFCore_API LFSearchResult* LFQuery(LFFilter* filter)
+{
+	LFSearchResult* res = NULL;
+	DWORD start = GetTickCount();
+
+	if (!filter)
+	{
+		res = QueryStores();
+	}
+	else
+	{
+		// Ggf. Default Store einsetzen
+		if ((strcmp(filter->StoreID, "")==0) &&
+			((filter->Mode==LFFilterModeStoreHome) || (filter->Mode==LFFilterModeSearchInStore)))
+			if (LFDefaultStoreAvailable())
+			{
+				char* ds = LFGetDefaultStore();
+				strcpy_s(filter->StoreID, LFKeySize, ds);
+				free(ds);
+			}
+			else
+			{
+				res = new LFSearchResult(LFContextDefault);
+				res->m_LastError = LFNoDefaultStore;
+			}
+
+		// Query
+		if (!res)
+			switch (filter->Mode)
+			{
+			case LFFilterModeStores:
+				res = QueryStores(filter);
+				break;
+			case LFFilterModeStoreHome:
+				res = QueryDomains(filter);
+				break;
+			default:
+/*				res = LFAllocSearchResult(LFContextDefault);
+				res->m_RecommendedView = LFViewLargeIcons;
+				res->m_LastError = LFIllegalQuery;
+				if (wcscmp(filter->Name, L"")==0)
+					wcscpy_s(filter->Name, 256, L"?");
+				filter->Result.FilterType = LFFilterTypeIllegalRequest;*/
+
+
+
+				// TEMP
+				//
+				res = LFAllocSearchResult(LFContextDefault);
+				char loc[4];
+				for (UINT a=0; a<100; a++)
+				{
+					loc[0] = char(65+rand()%26);
+					loc[1] = char(65+rand()%26);
+					loc[2] = char(65+rand()%26);
+					loc[3] = '\0';
+					AddLocation(res, loc);
+				}
+
+				if (wcscmp(filter->Name, L"Trash")==0)
+				{
+					filter->Result.FilterType = LFFilterTypeTrash;
+					res->m_Context = LFContextTrash;
+				}
+				//
+				// TEMP
+
+
+
+			}
+
+		// Statistik
+		if ((wcscmp(filter->Name, L"")==0) && (res->m_Context!=LFContextDefault))
+			LoadString(LFCoreModuleHandle, res->m_Context+IDS_FirstContext, filter->Name, 256);
+		GetLocalTime(&filter->Result.Time);
+		filter->Result.ItemCount = res->m_Count;
+	}
+
+	res->m_QueryTime = GetTickCount()-start;
+	return res;
+}

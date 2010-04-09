@@ -1,0 +1,363 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<DOCUMENT type="Advanced Installer" CreateVersion="7.5.1" version="7.5.2" modules="enterprise" RootPath=".." Language="de">
+  <COMPONENT cid="caphyon.advinst.msicomp.ProjectOptionsComponent">
+    <ROW Name="HiddenItems" Value="SerValComponent;MsiMergeModsComponent;MsiJavaComponent;MsiExtComponent;MsiAssemblyComponent;ActSyncAppComponent;BackgroundImagesComponent;MsiEnvComponent;CPLAppletComponent;WebApplicationsComponent;MsiOdbcDataSrcComponent;SqlConnectionComponent"/>
+  </COMPONENT>
+  <COMPONENT cid="caphyon.advinst.msicomp.MsiPropsComponent">
+    <ROW Property="AI_FINDEXE_TITLE" Value="Wöhle das Installationspaket für [|ProductName]" ValueLocId="AI.Property.FindExeTitle"/>
+    <ROW Property="AI_PRODUCTNAME_ARP" Value="liquidFOLDERS"/>
+    <ROW Property="ALLUSERS" Value="2"/>
+    <ROW Property="ARPCONTACT" Value="support@liquidfolders.net"/>
+    <ROW Property="ARPNOMODIFY" MultiBuildValue="DefaultBuild:1"/>
+    <ROW Property="ARPNOREPAIR" Value="1"/>
+    <ROW Property="ARPPRODUCTICON" Value="liquidFOLDERS.exe" Type="8"/>
+    <ROW Property="ARPSYSTEMCOMPONENT" Value="1"/>
+    <ROW Property="ARPURLINFOABOUT" Value="http://liquidfolders.net/"/>
+    <ROW Property="ARPURLUPDATEINFO" Value="http://liquidfolders.net/"/>
+    <ROW Property="AppLogoIcon" Value="AppLogo.ico" Type="1" MsiKey="AppLogoIcon"/>
+    <ROW Property="Background" Value="Backdrop4.bmp" Type="1" MsiKey="Background"/>
+    <ROW Property="CTRLS" Value="2"/>
+    <ROW Property="ExclamationIcon" Value="Warning.ico" Type="1" MsiKey="ExclamationIcon"/>
+    <ROW Property="ExitBackground" Value="Backdrop3.bmp" Type="1" MsiKey="ExitBackground"/>
+    <ROW Property="FolderLogoIcon" Value="DestinationFolder.ico" Type="1" MsiKey="FolderLogoIcon"/>
+    <ROW Property="InfoIcon" Value="Info.ico" Type="1" MsiKey="InfoIcon"/>
+    <ROW Property="InstallLogoIcon" Value="Install.ico" Type="1" MsiKey="InstallLogoIcon"/>
+    <ROW Property="Manufacturer" Value="liquidFOLDERS" ValueLocId="*"/>
+    <ROW Property="OptionsLogoIcon" Value="Tools.ico" Type="1" MsiKey="OptionsLogoIcon"/>
+    <ROW Property="ProductCode" Value="1032:{4801992C-FC40-4A72-9AA3-8E7B7789E594} 1041:{ECC3421F-F9CB-4C3F-B8A2-5A80CAE0CE42} 1027:{F9F98593-D18F-4F96-A7ED-6F50459FA070} 1049:{6A2C76E8-4C76-432D-8E0A-B4BEE2778478} 1058:{1E580A4D-A593-42C0-A504-2C8E674376B9} 1035:{38A149DB-88B4-4046-85AC-49FEF21582C1} 1044:{4BC3A214-DAAE-4BE9-BB32-09DDD1A5F4A7} 2068:{66E8E917-414B-4153-BDA1-BD5E8FB32A6C} 1030:{5C8BA1DF-9218-4669-8939-988B314D352D} 1052:{DD50812D-6957-487D-885F-89EDEB83A43E} 1038:{F19B0156-7F8C-4301-A766-E717AE798651} 1033:{C25D6CCE-50B3-41DF-B908-E16CC25EFC9B} 2057:{87D871CE-63D8-4ECF-8D07-FEB2120B6C39} 1042:{2171EC5C-EB45-4783-B1CF-0046AE9BD295} 1028:{2F80EBC4-CBD4-4ED5-9396-30585538A9C4} 2052:{69AA7D6A-75DA-44BC-A800-086E9AF992D8} 1055:{E0CA2AFD-A572-4604-AEC3-92730FFBA7CE} 1050:{BA80B248-3D0D-4B32-B82A-F5E10BBC4D2D} 2074:{B350170C-6725-48F0-B06F-FF87A69F6BC3} 3098:{FE6407FC-61DA-4BE0-9890-02ACFA236E33} 1036:{9D75D749-7FAC-4CD2-8EA5-F9B8FC1B242B} 1045:{FE05A709-400C-4A4D-A512-965165812EF2} 1031:{FC68C895-BA87-443B-88C5-0F6606116E56} 1040:{BCFB6BE6-D348-4BAD-AD33-803201385B9F} 1026:{83712E46-7AB6-4ACF-B682-AC81BB82B276} 1053:{704833D2-BB16-4C5F-BD78-DF2D20898861} 1057:{8D00E4F2-A991-4FA8-B83B-74D3A58078CE} 1043:{61846CF0-27E1-43D1-8444-E273ECAF0D74} 1029:{C9E2A8AC-9247-4913-9347-CA6776354805} 1051:{835270F8-6672-41FA-AA2E-4F09E41290A2} 1060:{7F068CF5-8C16-469B-A8E7-E7672FEE6B16} 1046:{291FEF64-75A7-46BA-A8E8-4644D247743B} 2070:{E4CCAE21-3B8E-49D1-8266-5695385B65D2} " Type="16"/>
+    <ROW Property="ProductLanguage" Value="1031"/>
+    <ROW Property="ProductName" Value="liquidFOLDERS" ValueLocId="*"/>
+    <ROW Property="ProductVersion" Value="0.1"/>
+    <ROW Property="RUNAPPLICATION" Value="1" Type="4"/>
+    <ROW Property="RepairIcon" Value="Tools.ico" Type="1" MsiKey="RepairIcon"/>
+    <ROW Property="SecureCustomProperties" Value="OLDPRODUCTS;AI_NEWERPRODUCTFOUND;AI_SETUPEXEPATH;SETUPEXEDIR"/>
+    <ROW Property="UpgradeCode" Value="{1DF88754-99B0-443F-BF79-955EAB7D2FFD}"/>
+    <ROW Property="WIMinVersion" MultiBuildValue="DefaultBuild:3.01" ValueLocId="-"/>
+    <ROW Property="WaitLogoItem" Value="Hourglass.ico" Type="1" MsiKey="WaitLogoItem"/>
+    <ROW Property="WindowsFamily9X" MultiBuildValue="DefaultBuild:Windows 9x/ME" ValueLocId="-"/>
+    <ROW Property="WindowsFamilyNT64" MultiBuildValue="DefaultBuild:Windows XP/Vista/Windows7 x64" ValueLocId="-"/>
+    <ROW Property="WindowsTypeNT" MultiBuildValue="DefaultBuild:Windows XP x86" ValueLocId="-"/>
+  </COMPONENT>
+  <COMPONENT cid="caphyon.advinst.msicomp.MsiDirsComponent">
+    <ROW Directory="APPDIR" Directory_Parent="TARGETDIR" DefaultDir="APPDIR:." IsPseudoRoot="1"/>
+    <ROW Directory="ProgramMenuFolder" Directory_Parent="TARGETDIR" DefaultDir="Progra~1|ProgramMenuFolder" IsPseudoRoot="1"/>
+    <ROW Directory="SHORTCUTDIR" Directory_Parent="TARGETDIR" DefaultDir="SHORTC~1|SHORTCUTDIR" IsPseudoRoot="1"/>
+    <ROW Directory="SystemFolder" Directory_Parent="TARGETDIR" DefaultDir="System~1|SystemFolder" IsPseudoRoot="1"/>
+    <ROW Directory="TARGETDIR" DefaultDir="SourceDir"/>
+  </COMPONENT>
+  <COMPONENT cid="caphyon.advinst.msicomp.MsiCompsComponent">
+    <ROW Component="AI_CustomARPName" ComponentId="{DD5C3246-58C0-4609-98A5-C77D22F76065}" Directory_="APPDIR" Attributes="4" KeyPath="DisplayName"/>
+    <ROW Component="AI_DisableModify" ComponentId="{C0DC78FA-77DF-4F73-B4AA-18AA98E73FFB}" Directory_="APPDIR" Attributes="4" KeyPath="NoModify"/>
+    <ROW Component="AI_ExePath" ComponentId="{2F050720-4FFB-4F2A-BB07-32D0EA0AEF36}" Directory_="APPDIR" Attributes="4" KeyPath="AI_ExePath"/>
+    <ROW Component="FileDrop.exe" ComponentId="{2112C382-EC69-4377-8231-86BD5FAB6DB3}" Directory_="APPDIR" Attributes="0" KeyPath="FileDrop.exe"/>
+    <ROW Component="LFCommDlg.dll" ComponentId="{79E36DCC-424C-43F8-8B66-0B18C1199F8A}" Directory_="APPDIR" Attributes="0" KeyPath="LFCommDlg.dll"/>
+    <ROW Component="LFCore.dll" ComponentId="{6B3B9330-53CC-4DCC-A85C-B719B1D7B018}" Directory_="SystemFolder" Attributes="0" KeyPath="LFCore.dll"/>
+    <ROW Component="LFIndexing.dll" ComponentId="{13E34C44-622B-4089-A7B5-CFBDD02CCD5A}" Directory_="SystemFolder" Attributes="0" KeyPath="LFIndexing.dll"/>
+    <ROW Component="LFNamespaceExtension.dll" ComponentId="{958C10FB-58FF-4E2B-A9A7-CA1F4A13EC25}" Directory_="SystemFolder" Attributes="0" KeyPath="LFNamespaceExtension.dll"/>
+    <ROW Component="LFWatchdog.exe" ComponentId="{8B20F94F-7420-4E03-98DD-DA9A19F0C59E}" Directory_="APPDIR" Attributes="0" KeyPath="LFWatchdog.exe"/>
+    <ROW Component="Migrate.exe" ComponentId="{0D89D6BC-65FF-455A-BA9B-AFBD4F05BDE3}" Directory_="APPDIR" Attributes="0" KeyPath="Migrate.exe"/>
+    <ROW Component="SHORTCUTDIR" ComponentId="{252E79F3-5959-444B-A7EA-CD698BA212E7}" Directory_="SHORTCUTDIR" Attributes="0"/>
+    <ROW Component="StoreManager.exe" ComponentId="{CD94E9D9-3367-4F36-BB82-B2FCDDE6250E}" Directory_="APPDIR" Attributes="0" KeyPath="StoreManager.exe"/>
+    <ROW Component="Visual_C_2008_SP1" ComponentId="{E48EF50E-DCBC-42F1-AE1B-CF798B1F9753}" Directory_="APPDIR" Attributes="4" KeyPath="Visual_C_2008_SP1"/>
+  </COMPONENT>
+  <COMPONENT cid="caphyon.advinst.msicomp.MsiFeatsComponent">
+    <ROW Feature="FileDrop" Title="FileDrop" Description="FileDrop" Display="7" Level="1" Directory_="APPDIR" Attributes="0" Components="FileDrop.exe"/>
+    <ROW Feature="MigrationWizard" Title="MigrationWizard" Description="Migration Wizard" Display="9" Level="1" Directory_="APPDIR" Attributes="0" Components="Migrate.exe"/>
+    <ROW Feature="Visual_C_2008_SP1_Redistributable" Title="Visual C++ 2008 SP1 Redistributable" Description="Visual C++ 2008 SP1 Redistributable" Display="0" Level="1" Attributes="16" Components="Visual_C_2008_SP1"/>
+    <ROW Feature="liquidFOLDERS" Title="liquidFOLDERS" Description="liquidFOLDERS" Display="0" Level="1" Directory_="APPDIR" Attributes="16" Components="LFCommDlg.dll LFCore.dll LFIndexing.dll LFNamespaceExtension.dll StoreManager.exe SHORTCUTDIR AI_CustomARPName AI_ExePath AI_DisableModify LFWatchdog.exe"/>
+    <ATTRIBUTE name="CurrentFeature" value="liquidFOLDERS"/>
+  </COMPONENT>
+  <COMPONENT cid="caphyon.advinst.msicomp.MsiFilesComponent">
+    <ROW File="FileDrop.exe" Component_="FileDrop.exe" FileName="FileDrop.exe" Attributes="0" SourcePath="Release\Win32\FileDrop.exe" SelfReg="false" Sequence="5"/>
+    <ROW File="LFCommDlg.dll" Component_="LFCommDlg.dll" FileName="BFComm~1.dll|LFCommDlg.dll" Attributes="0" SourcePath="Release\Win32\LFCommDlg.dll" SelfReg="false" Sequence="1"/>
+    <ROW File="LFCore.dll" Component_="LFCore.dll" FileName="LFCore.dll" Attributes="0" SourcePath="Release\Win32\LFCore.dll" SelfReg="false" Sequence="2"/>
+    <ROW File="LFIndexing.dll" Component_="LFIndexing.dll" FileName="BFInde~1.dll|LFIndexing.dll" Attributes="0" SourcePath="Release\Win32\LFIndexing.dll" SelfReg="false" Sequence="3"/>
+    <ROW File="LFNamespaceExtension.dll" Component_="LFNamespaceExtension.dll" FileName="LFName~1.dll|LFNamespaceExtension.dll" Attributes="0" SourcePath="Release\Win32\LFNamespaceExtension.dll" SelfReg="safe" Sequence="4" DigSign="true"/>
+    <ROW File="LFWatchdog.exe" Component_="LFWatchdog.exe" FileName="BFWatc~1.exe|LFWatchdog.exe" Attributes="0" SourcePath="Release\Win32\LFWatchdog.exe" SelfReg="false" Sequence="8"/>
+    <ROW File="Migrate.exe" Component_="Migrate.exe" FileName="Migrate.exe" Attributes="0" SourcePath="Release\Win32\Migrate.exe" SelfReg="false" Sequence="6"/>
+    <ROW File="StoreManager.exe" Component_="StoreManager.exe" FileName="StoreM~1.exe|StoreManager.exe" Attributes="0" SourcePath="Release\Win32\StoreManager.exe" SelfReg="false" Sequence="7"/>
+  </COMPONENT>
+  <COMPONENT cid="caphyon.advinst.msicomp.BootstrOptComponent">
+    <ROW BootstrOptKey="GlobalOptions" GeneralOptions="b"/>
+  </COMPONENT>
+  <COMPONENT cid="caphyon.advinst.msicomp.BuildComponent">
+    <ROW BuildKey="DefaultBuild" BuildName="DefaultBuild" BuildOrder="1" BuildType="1" PackageName="liquidFOLDERS32" Languages="de;en;fr" LangOpt="1" InstallationType="4" CabsLocation="1" PackageType="1" FilesInsideExe="true" ExeIconPath="Setup\liquidFOLDERS.ico" ExtractionFolder="[AppDataFolder][|ProductName]\install" ExtUI="true" LangsDialog="true" UACExecutionLevel="2"/>
+    <ATTRIBUTE name="CurrentBuild" value="DefaultBuild"/>
+  </COMPONENT>
+  <COMPONENT cid="caphyon.advinst.msicomp.CacheComponent">
+    <ATTRIBUTE name="CacheIndex" value="setup32.txt"/>
+    <ATTRIBUTE name="Folder" value="Temp"/>
+  </COMPONENT>
+  <COMPONENT cid="caphyon.advinst.msicomp.DictionaryComponent">
+    <ROW Path="&lt;AI_DICTS&gt;ui.ail"/>
+    <ROW Path="&lt;AI_DICTS&gt;ui_de.ail"/>
+    <ROW Path="&lt;AI_DICTS&gt;ui_en.ail"/>
+    <ROW Path="&lt;AI_DICTS&gt;ui_fr.ail"/>
+    <ATTRIBUTE name="TranslateSegments" value="8116002816"/>
+  </COMPONENT>
+  <COMPONENT cid="caphyon.advinst.msicomp.FragmentComponent">
+    <ROW Fragment="CommonUI.aip" Path="&lt;AI_FRAGS&gt;CommonUI.aip"/>
+    <ROW Fragment="FolderDlg.aip" Path="&lt;AI_THEMES&gt;azure\fragments\FolderDlg.aip"/>
+    <ROW Fragment="SequenceDialogs.aip" Path="&lt;AI_THEMES&gt;azure\fragments\SequenceDialogs.aip"/>
+    <ROW Fragment="Sequences.aip" Path="&lt;AI_FRAGS&gt;Sequences.aip"/>
+    <ROW Fragment="StaticUIStrings.aip" Path="&lt;AI_FRAGS&gt;StaticUIStrings.aip"/>
+    <ROW Fragment="UI.aip" Path="&lt;AI_THEMES&gt;azure\fragments\UI.aip"/>
+    <ROW Fragment="Validation.aip" Path="&lt;AI_FRAGS&gt;Validation.aip"/>
+  </COMPONENT>
+  <COMPONENT cid="caphyon.advinst.msicomp.MsiActionTextComponent">
+    <ROW Action="AI_DeleteLzma" Description="Lösche die aus dem Archiv extrahierten Dateien" DescriptionLocId="ActionText.Description.AI_DeleteLzma" TemplateLocId="-"/>
+    <ROW Action="AI_DeleteRLzma" Description="Lösche die aus dem Archiv extrahierten Dateien" DescriptionLocId="ActionText.Description.AI_DeleteLzma" TemplateLocId="-"/>
+    <ROW Action="AI_DownloadPrereq" Description="Herunterladen der vorausgesetzten Anwendungen" Template="Download [1]{[2] vollständig}" DescriptionLocId="ActionText.Description.AI_DownloadPrereq" TemplateLocId="ActionText.Template.AI_DownloadPrereq"/>
+    <ROW Action="AI_ExtractLzma" Description="Extrahiere Dateien aus dem Archiv" DescriptionLocId="ActionText.Description.AI_ExtractLzma" TemplateLocId="-"/>
+    <ROW Action="AI_ExtractPrereq" Description="Auspacken der vorausgesetzten Anwendungen" Template="Auspacken [1]{[2] vollständig}" DescriptionLocId="ActionText.Description.AI_ExtractPrereq" TemplateLocId="ActionText.Template.AI_ExtractPrereq"/>
+    <ROW Action="AI_InstallPostPrerequisite" Description="Installiere vorausgesetzte Anwendungen" Template="Installiere [1]{[2] vollständig}" DescriptionLocId="ActionText.Description.AI_InstallPrerequisite" TemplateLocId="ActionText.Template.AI_InstallPrerequisite"/>
+    <ROW Action="AI_InstallPrerequisite" Description="Installiere vorausgesetzte Anwendungen" Template="Installiere [1]{[2] vollständig}" DescriptionLocId="ActionText.Description.AI_InstallPrerequisite" TemplateLocId="ActionText.Template.AI_InstallPrerequisite"/>
+    <ROW Action="AI_VerifyPrereq" Description="Überprüfe Voraussetzungen" Template="[1] wurde nicht korrekt installiert." DescriptionLocId="ActionText.Description.AI_VerifyPrereq" TemplateLocId="ActionText.Template.AI_VerifyPrereq"/>
+  </COMPONENT>
+  <COMPONENT cid="caphyon.advinst.msicomp.MsiAppSearchComponent">
+    <ROW Property="AI_SETUPEXEPATH" Signature_="AI_EXE_PATH_CU" Builds="DefaultBuild"/>
+    <ROW Property="AI_SETUPEXEPATH" Signature_="AI_EXE_PATH_LM" Builds="DefaultBuild"/>
+  </COMPONENT>
+  <COMPONENT cid="caphyon.advinst.msicomp.MsiBinaryComponent">
+    <ROW Name="AppLogo.ico" SourcePath="Setup\AppLogo.ico"/>
+    <ROW Name="Backdrop3.bmp" SourcePath="Setup\Backdrop3.bmp"/>
+    <ROW Name="Backdrop4.bmp" SourcePath="Setup\Backdrop4.bmp"/>
+    <ROW Name="DestinationFolder.ico" SourcePath="Setup\DestinationFolder.ico"/>
+    <ROW Name="Hourglass.ico" SourcePath="Setup\Hourglass.ico"/>
+    <ROW Name="Info.ico" SourcePath="Setup\Info.ico"/>
+    <ROW Name="Install.ico" SourcePath="Setup\Install.ico"/>
+    <ROW Name="Prereq.dll" SourcePath="&lt;AI_CUSTACTS&gt;Prereq.dll"/>
+    <ROW Name="Tools.ico" SourcePath="Setup\Tools.ico"/>
+    <ROW Name="Warning.ico" SourcePath="Setup\Warning.ico"/>
+    <ROW Name="aicustact.dll" SourcePath="&lt;AI_CUSTACTS&gt;aicustact.dll"/>
+    <ROW Name="lzmaextractor.dll" SourcePath="&lt;AI_CUSTACTS&gt;lzmaextractor.dll"/>
+    <ATTRIBUTE name="DeletedRows" value="info@repairic@background@optionslogoicon@applogoicon@exitbackground@folderlogoicon@exclamic@installlogoicon@waitlogoicon"/>
+  </COMPONENT>
+  <COMPONENT cid="caphyon.advinst.msicomp.MsiControlComponent">
+    <ROW Dialog_="FolderDlg" Control="Text" Type="Text" X="55" Y="110" Width="350" Height="40" Attributes="65539" Text="Um in das angegebene Verzeichnis zu installieren, klicken Sie bitte &quot;Weiter&quot;. Für ein alternatives Installationsverzeichnis wählen Sie bitte ein anderes Verzeichnis über &quot;Wählen&quot;." Control_Next="TitleIcon" TextLocId="Control.Text.FolderDlg#Text" MsiKey="FolderDlg#Text"/>
+    <ROW Dialog_="FolderDlg" Control="Title" Type="Text" X="55" Y="10" Width="202" Height="58" Attributes="196611" Text="Wählen Sie den Speicherort" TextStyle="TitleFont" Control_Next="Text" TextLocId="Azure.Control.Text.FolderDlg#Title" MsiKey="FolderDlg#Title"/>
+    <ROW Dialog_="AdminBrowseDlg" Control="ComboLabel" Type="Text" X="55" Y="90" Width="60" Height="11" Attributes="65539" Text="&amp;Wechseln in:" Control_Next="DirectoryCombo" TextLocId="Control.Text.AdminBrowseDlg#ComboLabel" MsiKey="AdminBrowseDlg#ComboLabel"/>
+    <ROW Dialog_="AdminBrowseDlg" Control="DirectoryCombo" Type="DirectoryCombo" X="116" Y="87" Width="233" Height="80" Attributes="458755" Property="TARGETDIR" Control_Next="Up" MsiKey="AdminBrowseDlg#DirectoryCombo"/>
+    <ROW Dialog_="AdminBrowseDlg" Control="DirectoryList" Type="DirectoryList" X="55" Y="110" Width="350" Height="170" Attributes="7" Property="TARGETDIR" Control_Next="PathLabel" MsiKey="AdminBrowseDlg#DirectoryList"/>
+    <ROW Dialog_="AdminBrowseDlg" Control="NewFolder" Type="PushButton" X="385" Y="85" Width="19" Height="19" Attributes="3670019" Text="[NewDirIcon]" Control_Next="DirectoryList" Help="Neues Verzeichnis anlegen|" HelpLocId="Control.Help.AdminBrowseDlg#NewFolder" MsiKey="AdminBrowseDlg#NewFolder"/>
+    <ROW Dialog_="AdminBrowseDlg" Control="Title" Type="Text" X="55" Y="10" Width="202" Height="58" Attributes="196611" Text="Arbeitsverzeichnis wechseln" TextStyle="TitleFont" Control_Next="Bitmap" TextLocId="Control.Text.AdminBrowseDlg#Title" MsiKey="AdminBrowseDlg#Title"/>
+    <ROW Dialog_="AdminBrowseDlg" Control="Up" Type="PushButton" X="358" Y="85" Width="19" Height="19" Attributes="3670019" Text="[UpDirIcon]" Control_Next="NewFolder" Help="Eine Ebene höher|" HelpLocId="Control.Help.AdminBrowseDlg#Up" MsiKey="AdminBrowseDlg#Up"/>
+    <ROW Dialog_="AdminInstallPointDlg" Control="Title" Type="Text" X="55" Y="10" Width="202" Height="58" Attributes="196611" Text="Wählen Sie eine Netzwerkressource für das Image von [ProductName]" TextStyle="TitleFont" Control_Next="Bitmap" TextLocId="Azure.Control.Text.AdminInstallPointDlg#Title" MsiKey="AdminInstallPointDlg#Title"/>
+    <ROW Dialog_="AdminRegistrationDlg" Control="Title" Type="Text" X="55" Y="10" Width="202" Height="58" Attributes="196611" Text="Firmeninformationen" TextStyle="TitleFont" Control_Next="Bitmap" TextLocId="Control.Text.AdminRegistrationDlg#Title" MsiKey="AdminRegistrationDlg#Title"/>
+    <ROW Dialog_="AdminWelcomeDlg" Control="Title" Type="Text" X="55" Y="10" Width="202" Height="58" Attributes="196611" Text="Willkommen beim [Wizard] von [ProductName]" TextStyle="TitleFont" Control_Next="Description" TextLocId="Control.Text.AdminWelcomeDlg#Title" MsiKey="AdminWelcomeDlg#Title"/>
+    <ROW Dialog_="BrowseDlg" Control="ComboLabel" Type="Text" X="55" Y="90" Width="60" Height="11" Attributes="65539" Text="&amp;Siehe nach:" Control_Next="DirectoryCombo" TextLocId="Control.Text.BrowseDlg#ComboLabel" MsiKey="BrowseDlg#ComboLabel"/>
+    <ROW Dialog_="BrowseDlg" Control="DirectoryCombo" Type="DirectoryCombo" X="116" Y="87" Width="233" Height="80" Attributes="393227" Property="_BrowseProperty" Control_Next="Up" MsiKey="BrowseDlg#DirectoryCombo"/>
+    <ROW Dialog_="BrowseDlg" Control="DirectoryList" Type="DirectoryList" X="55" Y="110" Width="350" Height="170" Attributes="15" Property="_BrowseProperty" Control_Next="PathLabel" MsiKey="BrowseDlg#DirectoryList"/>
+    <ROW Dialog_="BrowseDlg" Control="NewFolder" Type="PushButton" X="386" Y="85" Width="19" Height="19" Attributes="3670019" Text="[NewDirIcon]" Control_Next="DirectoryList" Help="Neues Verzeichnis anlegen|" HelpLocId="Control.Help.BrowseDlg#NewFolder" MsiKey="BrowseDlg#NewFolder"/>
+    <ROW Dialog_="BrowseDlg" Control="Up" Type="PushButton" X="359" Y="85" Width="19" Height="19" Attributes="3670019" Text="[UpDirIcon]" Control_Next="NewFolder" Help="Eine Ebene höher|" HelpLocId="Control.Help.BrowseDlg#Up" MsiKey="BrowseDlg#Up"/>
+    <ROW Dialog_="FatalError" Control="Description2" Type="Text" X="55" Y="150" Width="350" Height="20" Attributes="196611" Text="Klicken Sie auf &quot;Fertigstellen&quot; um den [Wizard] zu beenden." Control_Next="Description1" TextLocId="Control.Text.FatalError#Description2" MsiKey="FatalError#Description2"/>
+    <ROW Dialog_="FatalError" Control="Title" Type="Text" X="55" Y="10" Width="202" Height="58" Attributes="196611" Text="Der [Wizard] von [ProductName] wurde vorzeitig beendet." TextStyle="TitleFont" Control_Next="Bitmap" TextLocId="Control.Text.FatalError#Title" MsiKey="FatalError#Title"/>
+    <ROW Dialog_="FilesInUse" Control="Text" Type="Text" X="55" Y="90" Width="350" Height="40" Attributes="65539" Text="Folgende Anwendungen werden momentan benutzt, die durch das Setup verändert werden müssen. Bitte schließen Sie diese Anwendungen oder beenden Sie Setup." Control_Next="List" TextLocId="Control.Text.FilesInUse#Text" MsiKey="FilesInUse#Text"/>
+    <ROW Dialog_="MaintenanceTypeDlg" Control="ChangeButton" Type="PushButton" X="55" Y="110" Width="38" Height="38" Attributes="5767171" Text="[CustomSetupIcon]" Control_Next="RepairLabel" Help="Installation verändern|" HelpLocId="Control.Help.MaintenanceTypeDlg#ChangeButton" MsiKey="MaintenanceTypeDlg#ChangeButton"/>
+    <ROW Dialog_="MaintenanceTypeDlg" Control="ChangeLabel" Type="Text" X="110" Y="110" Width="100" Height="11" Attributes="65539" Text="&amp;Ändern" TextStyle="[DlgTitleFont]" Control_Next="ChangeButton" TextLocId="Control.Text.MaintenanceTypeDlg#ChangeLabel" MsiKey="MaintenanceTypeDlg#ChangeLabel"/>
+    <ROW Dialog_="MaintenanceTypeDlg" Control="RemoveButton" Type="PushButton" X="55" Y="228" Width="38" Height="38" Attributes="5767171" Text="[RemoveIcon]" Control_Next="Back" Help="Installation entfernen|" HelpLocId="Control.Help.MaintenanceTypeDlg#RemoveButton" MsiKey="MaintenanceTypeDlg#RemoveButton"/>
+    <ROW Dialog_="MaintenanceTypeDlg" Control="RemoveLabel" Type="Text" X="110" Y="228" Width="100" Height="11" Attributes="65539" Text="&amp;Entfernen" TextStyle="[DlgTitleFont]" Control_Next="Bitmap" TextLocId="Control.Text.MaintenanceTypeDlg#RemoveLabel" MsiKey="MaintenanceTypeDlg#RemoveLabel"/>
+    <ROW Dialog_="MaintenanceTypeDlg" Control="RepairButton" Type="PushButton" X="55" Y="169" Width="38" Height="38" Attributes="5767171" Text="[RepairIcon]" Control_Next="RemoveButton" Help="Installation reparieren|" HelpLocId="Control.Help.MaintenanceTypeDlg#RepairButton" MsiKey="MaintenanceTypeDlg#RepairButton"/>
+    <ROW Dialog_="MaintenanceTypeDlg" Control="RepairLabel" Type="Text" X="110" Y="169" Width="100" Height="11" Attributes="65539" Text="Re&amp;parieren" TextStyle="[DlgTitleFont]" Control_Next="RepairButton" TextLocId="Control.Text.MaintenanceTypeDlg#RepairLabel" MsiKey="MaintenanceTypeDlg#RepairLabel"/>
+    <ROW Dialog_="MaintenanceTypeDlg" Control="Title" Type="Text" X="55" Y="10" Width="202" Height="58" Attributes="196611" Text="Ändern der Installation von [ProductName]" TextStyle="TitleFont" Control_Next="RepairText" TextLocId="Azure.Control.Text.MaintenanceTypeDlg#Title" MsiKey="MaintenanceTypeDlg#Title"/>
+    <ROW Dialog_="MaintenanceTypeDlg" Control="RemoveCommand" Type="CommandLinkButton" X="55" Y="228" Width="297" Height="48" Attributes="6815747" Text="[RemoveIcon]" Control_Next="RepairCommand" Help="Entfernt [ProductName] von Ihrem Computer.|" HelpLocId="Azure.Control.Help.MaintenanceTypeDlg#RemoveCommand" MsiKey="MaintenanceTypeDlg#RemoveCommand" ExtType="CommandLinkButton" ExtData="Entfernen"/>
+    <ROW Dialog_="MaintenanceTypeDlg" Control="RepairCommand" Type="CommandLinkButton" X="55" Y="169" Width="297" Height="48" Attributes="6815747" Text="[RepairIcon]" Control_Next="ModifyCommand" Help="Korrigiert Fehler durch Zurücksetzen in den letzten Installationsstatus.|" HelpLocId="Azure.Control.Help.MaintenanceTypeDlg#RepairCommand" MsiKey="MaintenanceTypeDlg#RepairCommand" ExtType="CommandLinkButton" ExtData="Reparieren"/>
+    <ROW Dialog_="MaintenanceTypeDlg" Control="ModifyCommand" Type="CommandLinkButton" X="55" Y="110" Width="297" Height="48" Attributes="6815747" Text="[CustomSetupIcon]" Control_Next="RemoveLabel" Help="Ändern SIe die zu installierenden Funktionen.|" HelpLocId="Azure.Control.Help.MaintenanceTypeDlg#ModifyCommand" MsiKey="MaintenanceTypeDlg#ModifyCommand" ExtType="CommandLinkButton" ExtData="Funktion hinzufügen oder entfernen"/>
+    <ROW Dialog_="OutOfDiskDlg" Control="Text" Type="Text" X="55" Y="90" Width="350" Height="40" Attributes="65539" Text="Die gewählten Festplatten (wenn vorhanden) bieten nicht genügend Speicherplatz für die momentan ausgewählten Pakete. Löschen Sie Dateien von den ausgewählten Festplatten, oder wählen Sie weniger Pakete oder andere Speicherorte." Control_Next="TitleIcon" TextLocId="Control.Text.OutOfDiskDlg#Text" MsiKey="OutOfDiskDlg#Text"/>
+    <ROW Dialog_="OutOfDiskDlg" Control="Title" Type="Text" X="55" Y="10" Width="202" Height="58" Attributes="196611" Text="Der notwenige Speicherplatz für die Installation überschreitet den verfügbaren Speicherplatz" TextStyle="TitleFont" Control_Next="Text" TextLocId="Azure.Control.Text.OutOfDiskDlg#Title" MsiKey="OutOfDiskDlg#Title"/>
+    <ROW Dialog_="OutOfRbDiskDlg" Control="Text" Type="Text" X="55" Y="90" Width="350" Height="40" Attributes="65539" Text="Die gewählten Festplatten (wenn vorhanden) bieten nicht genügend Speicherplatz für die momentan ausgewählten Pakete. Löschen Sie Dateien von den ausgewählten Festplatten, oder wählen Sie weniger Pakete oder andere Speicherorte." Control_Next="VolumeList" TextLocId="Control.Text.OutOfRbDiskDlg#Text" MsiKey="OutOfRbDiskDlg#Text"/>
+    <ROW Dialog_="OutOfRbDiskDlg" Control="Title" Type="Text" X="55" Y="10" Width="202" Height="58" Attributes="196611" Text="Der notwenige Speicherplatz für die Installation überschreitet den verfügbaren Speicherplatz" TextStyle="TitleFont" Control_Next="TitleIcon" TextLocId="Azure.Control.Text.OutOfRbDiskDlg#Title" MsiKey="OutOfRbDiskDlg#Title"/>
+    <ROW Dialog_="OutOfRbDiskDlg" Control="OkButton" Type="PushButton" X="380" Y="330" Width="56" Height="17" Attributes="3" Text="Ok" Control_Next="Text2" TextLocId="Azure.Control.Text.OutOfRbDiskDlg#OkButton" MsiKey="OutOfRbDiskDlg#OkButton"/>
+    <ROW Dialog_="PrepareDlg" Control="Description" Type="Text" X="55" Y="130" Width="380" Height="40" Attributes="196611" Text="Bitte warten Sie während der [Wizard] die Installation vorbereitet. " Control_Next="TitleIcon" TextLocId="Azure.Control.Text.PrepareDlg#Description" MsiKey="PrepareDlg#Description"/>
+    <ROW Dialog_="PrepareDlg" Control="Title" Type="Text" X="55" Y="10" Width="202" Height="58" Attributes="196611" Text="Bereite [ProductName] [Wizard] vor" TextStyle="TitleFont" Control_Next="Description" TextLocId="Azure.Control.Text.PrepareDlg#Title" MsiKey="PrepareDlg#Title"/>
+    <ROW Dialog_="ProgressDlg" Control="Title" Type="Text" X="55" Y="10" Width="202" Height="58" Attributes="196611" Text="Installationsfortschritt" TextStyle="TitleFont" Control_Next="ProgressBar" TextLocId="Azure.Control.Text.ProgressDlg#Title" MsiKey="ProgressDlg#Title"/>
+    <ROW Dialog_="ResumeDlg" Control="Title" Type="Text" X="55" Y="10" Width="202" Height="58" Attributes="196611" Text="Wiederaufnahme von [ProductName] [Wizard]" TextStyle="TitleFont" Control_Next="Description" TextLocId="Control.Text.ResumeDlg#Title" MsiKey="ResumeDlg#Title"/>
+    <ROW Dialog_="UserExit" Control="Description2" Type="Text" X="55" Y="150" Width="350" Height="20" Attributes="196611" Text="Klicken Sie auf &quot;Fertigstellen&quot; um den [Wizard] zu beenden." Control_Next="Description1" TextLocId="Control.Text.UserExit#Description2" MsiKey="UserExit#Description2"/>
+    <ROW Dialog_="UserExit" Control="Title" Type="Text" X="55" Y="10" Width="202" Height="58" Attributes="196611" Text="Der [ProductName] [Wizard] wurde abgebrochen." TextStyle="TitleFont" Control_Next="Description2" TextLocId="Control.Text.UserExit#Title" MsiKey="UserExit#Title"/>
+    <ROW Dialog_="VerifyReadyDlg" Control="Text" Type="Text" X="55" Y="110" Width="350" Height="40" Attributes="65539" Text="Der [Wizard] ist bereit, mit der Installation zu beginnen." Control_Next="Title" TextLocId="Control.Text.VerifyReadyDlg#Text" MsiKey="VerifyReadyDlg#Text"/>
+    <ROW Dialog_="VerifyReadyDlg" Control="Title" Type="Text" X="55" Y="10" Width="202" Height="58" Attributes="196611" Text="Die Installation von [ProductName] starten" TextStyle="TitleFont" Control_Next="Bitmap" TextLocId="Azure.Control.Text.VerifyReadyDlg#Title" MsiKey="VerifyReadyDlg#Title"/>
+    <ROW Dialog_="VerifyRemoveDlg" Control="Title" Type="Text" X="55" Y="10" Width="202" Height="58" Attributes="196611" Text="Das Entfernen von [ProductName] starten" TextStyle="TitleFont" Control_Next="Text" TextLocId="Azure.Control.Text.VerifyRemoveDlg#Title" MsiKey="VerifyRemoveDlg#Title"/>
+    <ROW Dialog_="VerifyRepairDlg" Control="Title" Type="Text" X="55" Y="10" Width="202" Height="58" Attributes="196611" Text="Die Reparatur von [ProductName] starten" TextStyle="TitleFont" Control_Next="Text" TextLocId="Azure.Control.Text.VerifyRepairDlg#Title" MsiKey="VerifyRepairDlg#Title"/>
+    <ROW Dialog_="WelcomeDlg" Control="Title" Type="Text" X="55" Y="10" Width="202" Height="58" Attributes="196611" Text="Willkommen beim [Wizard]en von [ProductName]" TextStyle="TitleFont" Control_Next="Description" TextLocId="Control.Text.WelcomeDlg#Title" MsiKey="WelcomeDlg#Title"/>
+    <ROW Dialog_="PatchWelcomeDlg" Control="Title" Type="Text" X="55" Y="10" Width="202" Height="58" Attributes="196611" Text="Wilkommen zum [ProductName] Patch [Wizard]" TextStyle="TitleFont" Control_Next="Description" TextLocId="Control.Text.PatchWelcomeDlg#Title" MsiKey="PatchWelcomeDlg#Title"/>
+    <ROW Dialog_="MsiRMFilesInUse" Control="Title" Type="Text" X="55" Y="10" Width="202" Height="58" Attributes="196611" Text="Einige Dateien, die aktualisiert werden müssen, sind momentan in Benutzung" TextStyle="TitleFont" Control_Next="TitleIcon" TextLocId="Azure.Control.Text.MsiRMFilesInUse#Title" MsiKey="MsiRMFilesInUse#Title"/>
+    <ROW Dialog_="AdminWelcomeDlg" Control="Description" Type="Text" X="55" Y="130" Width="350" Height="60" Attributes="196611" Text="Der [Wizard] erstellt ein Server-Image von [ProductName] im angegebenen Netzwerkpfad. Klicken Sie auf &quot;Weiter&quot; um fortzufahren, oder auf &quot;Abbrechen&quot; um den [Wizard]en zu beenden." Control_Next="Bitmap" TextLocId="Control.Text.AdminWelcomeDlg#Description" MsiKey="AdminWelcomeDlg#Description"/>
+    <ROW Dialog_="BrowseDlg" Control="PathEdit" Type="PathEdit" X="130" Y="293" Width="275" Height="18" Attributes="11" Property="_BrowseProperty" Control_Next="OK" MsiKey="BrowseDlg#PathEdit"/>
+    <ROW Dialog_="BrowseDlg" Control="Title" Type="Text" X="55" Y="10" Width="202" Height="58" Attributes="196611" Text="Arbeitsverzeichnis wechseln" TextStyle="TitleFont" Control_Next="TitleIcon" TextLocId="Control.Text.BrowseDlg#Title" MsiKey="BrowseDlg#Title"/>
+    <ROW Dialog_="CustomizeDlg" Control="Title" Type="Text" X="55" Y="10" Width="202" Height="58" Attributes="196611" Text="Benutzerdefinierte Installation" TextStyle="TitleFont" Control_Next="TitleIcon" TextLocId="Control.Text.CustomizeDlg#Title" MsiKey="CustomizeDlg#Title"/>
+    <ROW Dialog_="CustomizeDlg" Control="Text" Type="Text" X="55" Y="90" Width="350" Height="23" Attributes="196611" Text="Entscheiden Sie, welche Funktionen von [ProductName] installiert werden sollen." Control_Next="ItemDescription" TextLocId="Azure.Control.Text.CustomizeDlg#Text" MsiKey="CustomizeDlg#Text"/>
+    <ROW Dialog_="CustomizeDlg" Control="ItemDescription" Type="Text" X="56" Y="278" Width="143" Height="30" Attributes="65539" Text="Mehrzeilige Beschreibung des derzeit ausgewählten Eintrags." Control_Next="TotalSpaceText" TextLocId="Azure.Control.Text.CustomizeDlg#ItemDescription" MsiKey="CustomizeDlg#ItemDescription"/>
+    <ROW Dialog_="CustomizeDlg" Control="TotalSpaceText" Type="Text" X="330" Y="278" Width="71" Height="11" Attributes="589827" Property="PrimaryVolumeSpaceRequired" Text="[PrimaryVolumeSpaceRequired]" Control_Next="AvailableSpaceText" TextLocId="Azure.Control.Text.CustomizeDlg#TotalSpaceText" MsiKey="CustomizeDlg#TotalSpaceText"/>
+    <ROW Dialog_="CustomizeDlg" Control="AvailableSpaceText" Type="Text" X="330" Y="288" Width="71" Height="11" Attributes="589827" Property="PrimaryVolumeSpaceAvailable" Text="[PrimaryVolumeSpaceAvailable]" Control_Next="AvailableSpaceLabel" TextLocId="Azure.Control.Text.CustomizeDlg#AvailableSpaceText" MsiKey="CustomizeDlg#AvailableSpaceText"/>
+    <ROW Dialog_="CustomizeDlg" Control="AvailableSpaceLabel" Type="Text" X="215" Y="288" Width="96" Height="11" Attributes="65539" Text="Verfügbarer Speicherplatz auf Laufwerk: " Control_Next="TotalSpaceLabel" TextLocId="Azure.Control.Text.CustomizeDlg#AvailableSpaceLabel" MsiKey="CustomizeDlg#AvailableSpaceLabel"/>
+    <ROW Dialog_="CustomizeDlg" Control="TotalSpaceLabel" Type="Text" X="215" Y="278" Width="111" Height="11" Attributes="65539" Text="Notwendiger Speicherplatz auf Laufwerk: " Control_Next="QuickSelectionTree" TextLocId="Azure.Control.Text.CustomizeDlg#TotalSpaceLabel" MsiKey="CustomizeDlg#TotalSpaceLabel"/>
+    <ROW Dialog_="CustomizeDlg" Control="QuickSelectionTree" Type="QuickSelectionTree" X="55" Y="113" Width="350" Height="161" Attributes="3" Property="_BrowseProperty" Text="QuickSelectionTree" Control_Next="Bitmap" TextLocId="-" MsiKey="CustomizeDlg#QuickSelectionTree" ExtType="QuickSelectionTree"/>
+    <ROW Dialog_="DiskCostDlg" Control="Text" Type="Text" X="55" Y="90" Width="350" Height="40" Attributes="65539" Text="Die gewählten Festplatten (wenn vorhanden) bieten nicht genügend Speicherplatz für die momentan ausgewählten Pakete. Löschen Sie Dateien von den ausgewählten Festplatten, bzw. wählen Sie weniger Pakete oder andere Speicherorte." Control_Next="TitleIcon" TextLocId="Control.Text.DiskCostDlg#Text" MsiKey="DiskCostDlg#Text"/>
+    <ROW Dialog_="DiskCostDlg" Control="Title" Type="Text" X="55" Y="10" Width="202" Height="58" Attributes="196611" Text="Es ist mehr Speicherplatz für die ausgewählten Funktionen erforderlich" TextStyle="TitleFont" Control_Next="Text" TextLocId="Azure.Control.Text.DiskCostDlg#Title" MsiKey="DiskCostDlg#Title"/>
+    <ROW Dialog_="DiskCostDlg" Control="VolumeList" Type="VolumeCostList" X="55" Y="130" Width="350" Height="180" Attributes="393223" Text="{120}{70}{70}{70}{70}" Control_Next="Title" TextLocId="Control.Text.DiskCostDlg#VolumeList" MsiKey="DiskCostDlg#VolumeList"/>
+    <ROW Dialog_="FilesInUse" Control="Title" Type="Text" X="55" Y="10" Width="202" Height="58" Attributes="196611" Text="Einige Dateien, die aktualisiert werden müssen, sind momentan in Benutzung" TextStyle="TitleFont" Control_Next="Text" TextLocId="Azure.Control.Text.FilesInUse#Title" MsiKey="FilesInUse#Title"/>
+    <ROW Dialog_="FilesInUse" Control="List" Type="ListBox" X="55" Y="130" Width="360" Height="180" Attributes="7" Property="FileInUseProcess" Control_Next="TitleIcon" MsiKey="FilesInUse#List"/>
+    <ROW Dialog_="MaintenanceWelcomeDlg" Control="Description" Type="Text" X="55" Y="130" Width="350" Height="60" Attributes="196611" Text="Mit dem [Wizard]en können Sie [ProductName] ändern, reparieren oder entfernen. Klicken Sie auf &quot;Weiter&quot; um fortzufahren, oder auf &quot;Abbrechen&quot; um den [Wizard]en zu beenden." Control_Next="Bitmap" TextLocId="Control.Text.MaintenanceWelcomeDlg#Description" MsiKey="MaintenanceWelcomeDlg#Description"/>
+    <ROW Dialog_="MaintenanceWelcomeDlg" Control="Title" Type="Text" X="55" Y="10" Width="202" Height="58" Attributes="196611" Text="Willkommen beim [Wizard]en von [ProductName]" TextStyle="TitleFont" Control_Next="Description" TextLocId="Control.Text.MaintenanceWelcomeDlg#Title" MsiKey="MaintenanceWelcomeDlg#Title"/>
+    <ROW Dialog_="OutOfDiskDlg" Control="VolumeList" Type="VolumeCostList" X="55" Y="130" Width="350" Height="180" Attributes="393223" Text="{120}{70}{70}{70}{70}" Control_Next="Title" TextLocId="Control.Text.OutOfDiskDlg#VolumeList" MsiKey="OutOfDiskDlg#VolumeList"/>
+    <ROW Dialog_="OutOfRbDiskDlg" Control="Text2" Type="Text" X="55" Y="120" Width="350" Height="40" Attributes="65539" Text="Alternativ können Sie temporäre Funktionen deaktivieren. Der Installer hat damit allerdings die Möglichkeit das System wieder vollständig herzustellen falls es während der Installation zu Komplikationen kommt. Klicken Sie &quot;Ja&quot;, wenn Sie das Risiko tragen möchten und keine temporären Dateien anlegen wollen." Control_Next="Text" TextLocId="Control.Text.OutOfRbDiskDlg#Text2" MsiKey="OutOfRbDiskDlg#Text2"/>
+    <ROW Dialog_="OutOfRbDiskDlg" Control="VolumeList" Type="VolumeCostList" X="55" Y="168" Width="350" Height="142" Attributes="4587527" Text="{120}{70}{70}{70}{70}" Control_Next="Title" TextLocId="Control.Text.OutOfRbDiskDlg#VolumeList" MsiKey="OutOfRbDiskDlg#VolumeList"/>
+    <ROW Dialog_="ProgressDlg" Control="ProgressBar" Type="ProgressBar" X="55" Y="160" Width="350" Height="14" Attributes="65537" Text="Abgeschlossen" Control_Next="Description" TextLocId="Control.Text.ProgressDlg#ProgressBar" MsiKey="ProgressDlg#ProgressBar"/>
+    <ROW Dialog_="ProgressDlg" Control="Description" Type="Text" X="55" Y="190" Width="350" Height="11" Attributes="65539" Text="Installiere [ProductName]..." Control_Next="TitleIcon" TextLocId="Azure.Control.Text.ProgressDlg#Description" MsiKey="ProgressDlg#Description"/>
+    <ROW Dialog_="ResumeDlg" Control="Description" Type="Text" X="55" Y="130" Width="350" Height="60" Attributes="196611" Text="Der [Wizard] beendet nun die Installation von [ProductName] auf Ihrem Computer. Klicken Sie auf &quot;Installieren&quot; um fortzufahren, oder auf &quot;Abbrechen&quot; um den [Wizard]en zu beenden." Control_Next="Bitmap" TextLocId="Control.Text.ResumeDlg#Description" MsiKey="ResumeDlg#Description"/>
+    <ROW Dialog_="WelcomeDlg" Control="Description" Type="Text" X="55" Y="250" Width="350" Height="60" Attributes="196611" Text="Der [Wizard] wird [ProductName] auf Ihrem Computer installieren. Klicken Sie auf &quot;Weiter&quot; um fortzufahren, oder auf &quot;Abbrechen&quot; um den [Wizard]en zu beenden." Control_Next="Bitmap" TextLocId="Control.Text.WelcomeDlg#Description" MsiKey="WelcomeDlg#Description"/>
+    <ROW Dialog_="WelcomeDlg" Control="DialogIcon" Type="Icon" X="177" Y="112" Width="96" Height="96" Attributes="1048577" Text="[AppLogoIcon]" Control_Next="Next" MsiKey="WelcomeDlg#DialogIcon"/>
+    <ROW Dialog_="PatchWelcomeDlg" Control="Description" Type="Text" X="55" Y="130" Width="350" Height="60" Attributes="196611" Text="Der [Wizard] wird den Patch für [ProductName] auf Ihrem Computer installieren. Klicken Sie auf &quot;Weiter&quot; um fortzufahren, oder auf &quot;Abbrechen&quot; um abzubrechen." Control_Next="Bitmap" TextLocId="Control.Text.PatchWelcomeDlg#Description" MsiKey="PatchWelcomeDlg#Description"/>
+    <ROW Dialog_="MsiRMFilesInUse" Control="List" Type="ListBox" X="55" Y="114" Width="350" Height="136" Attributes="7" Property="FileInUseProcess" Control_Next="Options" MsiKey="MsiRMFilesInUse#List"/>
+    <ROW Dialog_="MsiRMFilesInUse" Control="Options" Type="RadioButtonGroup" X="55" Y="265" Width="350" Height="48" Attributes="3" Property="AppsShutdownOption" Control_Next="Title" MsiKey="MsiRMFilesInUse#Options"/>
+    <ROW Dialog_="MsiRMFilesInUse" Control="Text" Type="Text" X="55" Y="90" Width="350" Height="25" Attributes="65539" Text="Die folgenden Anwendungen benützen Dateien die durch diese Installation aktualisiert werden müssen." Control_Next="List" TextLocId="Control.Text.MsiRMFilesInUse#Text" MsiKey="MsiRMFilesInUse#Text"/>
+    <ROW Dialog_="OutOfRbDiskDlg" Control="TitleIcon" Type="Icon" X="10" Y="10" Width="36" Height="36" Attributes="7340033" Text="[ExclamationIcon]" Control_Next="Bitmap"/>
+    <ROW Dialog_="OutOfDiskDlg" Control="TitleIcon" Type="Icon" X="10" Y="10" Width="36" Height="36" Attributes="7340033" Text="[ExclamationIcon]" Control_Next="Bitmap"/>
+    <ROW Dialog_="BrowseDlg" Control="TitleIcon" Type="Icon" X="10" Y="10" Width="36" Height="36" Attributes="7340033" Text="[FolderLogoIcon]" Control_Next="Bitmap"/>
+    <ROW Dialog_="DiskCostDlg" Control="TitleIcon" Type="Icon" X="10" Y="10" Width="36" Height="36" Attributes="7340033" Text="[ExclamationIcon]" Control_Next="Bitmap"/>
+    <ROW Dialog_="FilesInUse" Control="TitleIcon" Type="Icon" X="10" Y="10" Width="36" Height="36" Attributes="7340033" Text="[ExclamationIcon]" Control_Next="Bitmap"/>
+    <ROW Dialog_="MsiRMFilesInUse" Control="TitleIcon" Type="Icon" X="10" Y="10" Width="36" Height="36" Attributes="7340033" Text="[ExclamationIcon]" Control_Next="Bitmap"/>
+    <ROW Dialog_="AdminInstallPointDlg" Control="Text" Type="Text" X="55" Y="130" Width="320" Height="11" Attributes="65539" Text="&amp;Netzwerkpfad:" Control_Next="PathEdit" TextLocId="Control.Text.AdminInstallPointDlg#Text" MsiKey="AdminInstallPointDlg#Text"/>
+    <ATTRIBUTE name="FixedSizeBitmaps" value="0"/>
+  </COMPONENT>
+  <COMPONENT cid="caphyon.advinst.msicomp.MsiControlEventComponent">
+    <ROW Dialog_="FolderDlg" Control_="Back" Event="NewDialog" Argument="WelcomeDlg" Condition="AI_INSTALL" Ordering="1"/>
+    <ROW Dialog_="WelcomeDlg" Control_="Next" Event="NewDialog" Argument="FolderDlg" Condition="AI_INSTALL" Ordering="1"/>
+    <ROW Dialog_="FolderDlg" Control_="Next" Event="NewDialog" Argument="VerifyReadyDlg" Condition="AI_INSTALL" Ordering="3"/>
+    <ROW Dialog_="MaintenanceTypeDlg" Control_="Back" Event="NewDialog" Argument="MaintenanceWelcomeDlg" Condition="AI_MAINT" Ordering="1"/>
+    <ROW Dialog_="MaintenanceWelcomeDlg" Control_="Next" Event="NewDialog" Argument="MaintenanceTypeDlg" Condition="AI_MAINT" Ordering="2"/>
+    <ROW Dialog_="VerifyReadyDlg" Control_="Back" Event="NewDialog" Argument="PatchWelcomeDlg" Condition="AI_PATCH" Ordering="1"/>
+    <ROW Dialog_="PatchWelcomeDlg" Control_="Next" Event="NewDialog" Argument="VerifyReadyDlg" Condition="AI_PATCH" Ordering="3"/>
+    <ROW Dialog_="VerifyReadyDlg" Control_="Back" Event="NewDialog" Argument="FolderDlg" Condition="AI_INSTALL" Ordering="2"/>
+  </COMPONENT>
+  <COMPONENT cid="caphyon.advinst.msicomp.MsiCreateFolderComponent">
+    <ROW Directory_="SHORTCUTDIR" Component_="SHORTCUTDIR"/>
+  </COMPONENT>
+  <COMPONENT cid="caphyon.advinst.msicomp.MsiCustActComponent">
+    <ROW Action="AI_AppSearchEx" Type="1" Source="Prereq.dll" Target="DoAppSearchEx"/>
+    <ROW Action="AI_DOWNGRADE" Type="19" Target="4010"/>
+    <ROW Action="AI_DeleteCadLzma" Type="51" Source="AI_DeleteLzma" Target="[AI_SETUPEXEPATH]"/>
+    <ROW Action="AI_DeleteLzma" Type="1025" Source="lzmaextractor.dll" Target="DeleteLZMAFiles"/>
+    <ROW Action="AI_DeleteRCadLzma" Type="51" Source="AI_DeleteRLzma" Target="[AI_SETUPEXEPATH]"/>
+    <ROW Action="AI_DeleteRLzma" Type="1281" Source="lzmaextractor.dll" Target="DeleteLZMAFiles"/>
+    <ROW Action="AI_DownloadPrereq" Type="1" Source="Prereq.dll" Target="DownloadPrereq"/>
+    <ROW Action="AI_ExtractCadLzma" Type="51" Source="AI_ExtractLzma" Target="[AI_SETUPEXEPATH]"/>
+    <ROW Action="AI_ExtractLzma" Type="1025" Source="lzmaextractor.dll" Target="ExtractLZMAFiles"/>
+    <ROW Action="AI_ExtractPrereq" Type="65" Source="Prereq.dll" Target="ExtractPrereq"/>
+    <ROW Action="AI_FindExeLzma" Type="1" Source="lzmaextractor.dll" Target="FindEXE"/>
+    <ROW Action="AI_GetArpIconPath" Type="1" Source="aicustact.dll" Target="GetArpIconPath"/>
+    <ROW Action="AI_InstallPostPrerequisite" Type="1" Source="Prereq.dll" Target="InstallPostPrereq"/>
+    <ROW Action="AI_InstallPrerequisite" Type="65" Source="Prereq.dll" Target="InstallPrereq"/>
+    <ROW Action="AI_LaunchApp" Type="1" Source="aicustact.dll" Target="[#StoreManager.exe]"/>
+    <ROW Action="AI_PREPARE_UPGRADE" Type="65" Source="aicustact.dll" Target="PrepareUpgrade"/>
+    <ROW Action="AI_RESTORE_LOCATION" Type="65" Source="aicustact.dll" Target="RestoreLocation"/>
+    <ROW Action="AI_ResolveKnownFolders" Type="1" Source="aicustact.dll" Target="AI_ResolveKnownFolders"/>
+    <ROW Action="AI_RunFinishActions" Type="1" Source="aicustact.dll" Target="RunFinishActions" WithoutSeq="true"/>
+    <ROW Action="AI_STORE_LOCATION" Type="51" Source="ARPINSTALLLOCATION" Target="[APPDIR]"/>
+    <ROW Action="AI_VerifyPrereq" Type="1" Source="Prereq.dll" Target="VerifyPrereq"/>
+    <ROW Action="SET_APPDIR" Type="307" Source="APPDIR" Target="[ProgramFilesFolder][Manufacturer]\[ProductName]" MultiBuildTarget="DefaultBuild:[ProgramFilesFolder][ProductName]"/>
+    <ROW Action="SET_SHORTCUTDIR" Type="307" Source="SHORTCUTDIR" Target="[ProgramMenuFolder][ProductName]"/>
+    <ROW Action="SET_TARGETDIR_TO_APPDIR" Type="51" Source="TARGETDIR" Target="[APPDIR]"/>
+  </COMPONENT>
+  <COMPONENT cid="caphyon.advinst.msicomp.MsiDialogComponent">
+    <ROW Dialog="ExitDialog" HCentering="50" VCentering="50" Width="450" Height="360" Attributes="3" Title="[ProductName] [Setup]" Control_First="Bitmap" Control_Default="LaunchProdCheckBox" Control_Cancel="Finish" TitleLocId="Dialog.ExitDialog" MsiKey="ExitDialog"/>
+    <ROW Dialog="MaintenanceTypeDlg" HCentering="50" VCentering="50" Width="450" Height="360" Attributes="3" Title="[ProductName] [Setup]" Control_First="RemoveLabel" Control_Default="ChangeButton" Control_Cancel="Cancel" TitleLocId="Dialog.MaintenanceTypeDlg" MsiKey="MaintenanceTypeDlg"/>
+  </COMPONENT>
+  <COMPONENT cid="caphyon.advinst.msicomp.MsiIconsComponent">
+    <ROW Name="liquidFOLDERS.exe" SourcePath="Setup\liquidFOLDERS.ico" Index="0"/>
+  </COMPONENT>
+  <COMPONENT cid="caphyon.advinst.msicomp.MsiInstExSeqComponent">
+    <ROW Action="AI_DOWNGRADE" Condition="AI_NEWERPRODUCTFOUND AND (UILevel &lt;&gt; 5)" Sequence="210"/>
+    <ROW Action="AI_RESTORE_LOCATION" Condition="APPDIR=&quot;&quot;" Sequence="749"/>
+    <ROW Action="AI_STORE_LOCATION" Condition="Not Installed" Sequence="1501"/>
+    <ROW Action="AI_PREPARE_UPGRADE" Condition="AI_UPGRADE=&quot;No&quot; AND (Not Installed)" Sequence="1399"/>
+    <ROW Action="AI_ResolveKnownFolders" Sequence="52"/>
+    <ROW Action="AI_AppSearchEx" Sequence="101"/>
+    <ROW Action="AI_VerifyPrereq" Sequence="1201"/>
+    <ROW Action="AI_GetArpIconPath" Sequence="51"/>
+    <ROW Action="AI_DeleteCadLzma" Condition="SETUPEXEDIR=&quot;&quot; AND Installed AND (REMOVE&lt;&gt;&quot;ALL&quot;) AND (NOT PATCH)" Sequence="199" Builds="DefaultBuild"/>
+    <ROW Action="AI_DeleteRCadLzma" Condition="SETUPEXEDIR=&quot;&quot; AND Installed AND (REMOVE&lt;&gt;&quot;ALL&quot;) AND (NOT PATCH)" Sequence="198" Builds="DefaultBuild"/>
+    <ROW Action="AI_ExtractCadLzma" Condition="SETUPEXEDIR=&quot;&quot; AND Installed AND (REMOVE&lt;&gt;&quot;ALL&quot;) AND (NOT PATCH)" Sequence="197" Builds="DefaultBuild"/>
+    <ROW Action="AI_FindExeLzma" Condition="SETUPEXEDIR=&quot;&quot; AND Installed AND (REMOVE&lt;&gt;&quot;ALL&quot;) AND (NOT PATCH)" Sequence="196" Builds="DefaultBuild"/>
+    <ROW Action="AI_ExtractLzma" Condition="SETUPEXEDIR=&quot;&quot; AND Installed AND (REMOVE&lt;&gt;&quot;ALL&quot;) AND (NOT PATCH)" Sequence="1549" Builds="DefaultBuild"/>
+    <ROW Action="AI_DeleteRLzma" Condition="SETUPEXEDIR=&quot;&quot; AND Installed AND (REMOVE&lt;&gt;&quot;ALL&quot;) AND (NOT PATCH)" Sequence="1548" Builds="DefaultBuild"/>
+    <ROW Action="AI_DeleteLzma" Condition="SETUPEXEDIR=&quot;&quot; AND Installed AND (REMOVE&lt;&gt;&quot;ALL&quot;) AND (NOT PATCH)" Sequence="6599" Builds="DefaultBuild"/>
+  </COMPONENT>
+  <COMPONENT cid="caphyon.advinst.msicomp.MsiInstallUISequenceComponent">
+    <ROW Action="AI_RESTORE_LOCATION" Condition="APPDIR=&quot;&quot;" Sequence="749"/>
+    <ROW Action="AI_ResolveKnownFolders" Sequence="51"/>
+    <ROW Action="AI_AppSearchEx" Sequence="101"/>
+    <ROW Action="AI_InstallPrerequisite" Sequence="1283"/>
+    <ROW Action="AI_InstallPostPrerequisite" Sequence="1301"/>
+    <ROW Action="AI_ExtractPrereq" Sequence="1282"/>
+    <ROW Action="AI_DownloadPrereq" Sequence="1281"/>
+  </COMPONENT>
+  <COMPONENT cid="caphyon.advinst.msicomp.MsiLaunchConditionsComponent">
+    <ROW Condition="Version9X OR (VersionNT AND (NOT VersionNT64))" Description="[ProductName] kann nicht auf [WindowsFamilyNT64] installiert werden" DescriptionLocId="AI.LaunchCondition.NoNT64" IsPredefined="true" Builds="DefaultBuild"/>
+    <ROW Condition="Version9X OR VersionNT64 OR (VersionNT &gt;= 501)" Description="[ProductName] benötigt zur Installation mindestens [WindowsTypeNT]." DescriptionLocId="AI.LaunchCondition.NoSpecificNT" IsPredefined="true" Builds="DefaultBuild"/>
+    <ROW Condition="VersionMsi &gt;= WIMinVersion" Description="[ProductName] kann nicht auf Systemen mit Windows Installer Version kleiner als [WIMinVersion] installiert werden." DescriptionLocId="AI.LaunchCondition.WI" IsPredefined="true" Builds="DefaultBuild"/>
+    <ROW Condition="VersionNT" Description="[ProductName] kann nicht auf [WindowsFamily9X] installiert werden." DescriptionLocId="AI.LaunchCondition.No9X" IsPredefined="true" Builds="DefaultBuild"/>
+  </COMPONENT>
+  <COMPONENT cid="caphyon.advinst.msicomp.MsiRadioButtonComponent">
+    <ROW Property="AppsShutdownOption" Order="1" Value="All" X="5" Y="9" Width="341" Height="20" Text="S&amp;cliesse Anwendungen automatisch und versuche neu zu starten nach der vollständigen Installation" TextLocId="RadioButton.Text.AppsShutdownOption#1" MsiKey="AppsShutdownOption#1"/>
+    <ROW Property="AppsShutdownOption" Order="2" Value="None" X="5" Y="30" Width="341" Height="15" Text="Schliesse die Anwendungen &amp;nicht. (Ein Neustart ist erforderlich.)" TextLocId="RadioButton.Text.AppsShutdownOption#2" MsiKey="AppsShutdownOption#2"/>
+  </COMPONENT>
+  <COMPONENT cid="caphyon.advinst.msicomp.MsiRegLocatorComponent">
+    <ROW Signature_="AI_EXE_PATH_CU" Root="1" Key="Software\Caphyon\Advanced Installer\LZMA\[ProductCode]\[ProductVersion]" Name="AI_ExePath" Type="2"/>
+    <ROW Signature_="AI_EXE_PATH_LM" Root="2" Key="Software\Caphyon\Advanced Installer\LZMA\[ProductCode]\[ProductVersion]" Name="AI_ExePath" Type="2"/>
+  </COMPONENT>
+  <COMPONENT cid="caphyon.advinst.msicomp.MsiRegsComponent">
+    <ROW Registry="AI_ExePath" Root="-1" Key="Software\Caphyon\Advanced Installer\LZMA\[ProductCode]\[ProductVersion]" Name="AI_ExePath" Value="[AI_SETUPEXEPATH]" Component_="AI_ExePath"/>
+    <ROW Registry="Attributes" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}\ShellFolder" Name="Attributes" Value="#3087008004" Component_="LFNamespaceExtension.dll"/>
+    <ROW Registry="Comments" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="Comments" Component_="AI_CustomARPName"/>
+    <ROW Registry="Contact" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="Contact" Value="support@liquidfolders.net" Component_="AI_CustomARPName"/>
+    <ROW Registry="DisplayIcon" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="DisplayIcon" Value="[ARP_ICON_PATH]" Component_="AI_CustomARPName"/>
+    <ROW Registry="DisplayName" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="DisplayName" Value="liquidFOLDERS" Component_="AI_CustomARPName"/>
+    <ROW Registry="DisplayVersion" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="DisplayVersion" Value="0.1" Component_="AI_CustomARPName"/>
+    <ROW Registry="F2D914F_FE57_414F_9F88_A377C7841DA4_2" Root="2" Key="Software\Microsoft\Windows\CurrentVersion\Shell Extensions\Approved" Name="[\{]3F2D914F-FE57-414F-9F88-A377C7841DA4[\}]" Value="liquidFOLDERS" Component_="LFNamespaceExtension.dll"/>
+    <ROW Registry="HelpLink" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="HelpLink" Component_="AI_CustomARPName"/>
+    <ROW Registry="HelpTelephone" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="HelpTelephone" Component_="AI_CustomARPName"/>
+    <ROW Registry="InfoTip" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}" Name="InfoTip" Value="liquidFOLDERS stores and files" Component_="LFNamespaceExtension.dll"/>
+    <ROW Registry="ModifyPath" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="ModifyPath" Value="msiexec.exe /I [ProductCode]" Component_="AI_CustomARPName"/>
+    <ROW Registry="NoModify" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="NoModify" Value="#1" Component_="AI_DisableModify"/>
+    <ROW Registry="Publisher" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="Publisher" Value="liquidFOLDERS" Component_="AI_CustomARPName"/>
+    <ROW Registry="QueryForOverlay" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}\ShellFolder" Name="QueryForOverlay" Component_="LFNamespaceExtension.dll"/>
+    <ROW Registry="ThreadingModel" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}\InProcServer32" Name="ThreadingModel" Value="Both" Component_="LFNamespaceExtension.dll"/>
+    <ROW Registry="URLInfoAbout" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="URLInfoAbout" Value="http://liquidfolders.net/" Component_="AI_CustomARPName"/>
+    <ROW Registry="URLUpdateInfo" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="URLUpdateInfo" Value="http://liquidfolders.net/" Component_="AI_CustomARPName"/>
+    <ROW Registry="UninstallString" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="UninstallString" Value="msiexec.exe /x [ProductCode]" Component_="AI_CustomARPName"/>
+    <ROW Registry="Visual_C_2008_SP1" Root="-1" Key="Software\Caphyon\Advanced Installer\Prereqs\[ProductCode]\[ProductVersion]" Name="Visual_C_2008_SP1" Value="1" Component_="Visual_C_2008_SP1"/>
+    <ROW Registry="WantsFORPARSING" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}\ShellFolder" Name="WantsFORPARSING" Component_="LFNamespaceExtension.dll"/>
+    <ROW Registry="_" Root="0" Key="LFNamespaceExtension.RootFolder" Value="LFNamespaceExtension.RootFolder" Component_="LFNamespaceExtension.dll"/>
+    <ROW Registry="__1" Root="0" Key="LFNamespaceExtension.RootFolder\CLSID" Value="[\{]3F2D914F-FE57-414F-9F88-A377C7841DA4[\}]" Component_="LFNamespaceExtension.dll"/>
+    <ROW Registry="__2" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}" Value="liquidFOLDERS" Component_="LFNamespaceExtension.dll"/>
+    <ROW Registry="__3" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}\DefaultIcon" Value="[SystemFolder]LFCore.DLL,0" Component_="LFNamespaceExtension.dll"/>
+    <ROW Registry="__4" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}\InProcServer32" Value="[!LFNamespaceExtension.dll]" Component_="LFNamespaceExtension.dll"/>
+    <ROW Registry="__5" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}\ProgID" Value="LFNamespaceExtension.RootFolder" Component_="LFNamespaceExtension.dll"/>
+    <ROW Registry="__6" Root="2" Key="Software\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\Namespace\{3F2D914F-FE57-414F-9F88-A377C7841DA4}" Value="liquidFOLDERS" Component_="LFNamespaceExtension.dll"/>
+  </COMPONENT>
+  <COMPONENT cid="caphyon.advinst.msicomp.MsiShortsComponent">
+    <ROW Shortcut="FileDrop" Directory_="SHORTCUTDIR" Name="FileDrop" Component_="FileDrop.exe" Target="[#FileDrop.exe]" Description="FileDrop" Hotkey="0" IconIndex="0" ShowCmd="1" WkDir="APPDIR"/>
+    <ROW Shortcut="Migration_Wizard" Directory_="SHORTCUTDIR" Name="Migrat~1|Migration Wizard" Component_="Migrate.exe" Target="[#Migrate.exe]" Description="Migration Wizard" Hotkey="0" IconIndex="0" ShowCmd="1" WkDir="APPDIR"/>
+    <ROW Shortcut="StoreManager" Directory_="SHORTCUTDIR" Name="StoreM~1|StoreManager" Component_="StoreManager.exe" Target="[#StoreManager.exe]" Description="StoreManager" Hotkey="0" IconIndex="0" ShowCmd="1" WkDir="APPDIR"/>
+    <ROW Shortcut="StoreManager_1" Directory_="ProgramMenuFolder" Name="liquid~1|liquidFOLDERS" Component_="StoreManager.exe" Target="[#StoreManager.exe]" Description="StoreManager" Hotkey="0" IconIndex="0" ShowCmd="1" WkDir="APPDIR"/>
+  </COMPONENT>
+  <COMPONENT cid="caphyon.advinst.msicomp.MsiTextStyleComponent">
+    <ROW TextStyle="BlueText" FaceName="Arial" Size="12" Color="16711680" StyleBits="0" MsiKey="BlueText"/>
+    <ROW TextStyle="TitleFont" FaceName="Arial" Size="14" Color="13382400" StyleBits="0" MsiKey="TitleFont"/>
+  </COMPONENT>
+  <COMPONENT cid="caphyon.advinst.msicomp.MsiThemeComponent">
+    <ATTRIBUTE name="UsedTheme" value="azure"/>
+  </COMPONENT>
+  <COMPONENT cid="caphyon.advinst.msicomp.MsiUpgradeComponent">
+    <ROW UpgradeCode="[|UpgradeCode]" VersionMax="[|ProductVersion]" Attributes="1025" ActionProperty="OLDPRODUCTS"/>
+    <ROW UpgradeCode="[|UpgradeCode]" VersionMin="[|ProductVersion]" Attributes="2" ActionProperty="AI_NEWERPRODUCTFOUND"/>
+  </COMPONENT>
+  <COMPONENT cid="caphyon.advinst.msicomp.PreReqComponent">
+    <ROW PrereqKey="Visual_C_2008_SP1" DisplayName="Visual C++ 2008 SP1 Redistributable" SetupFileUrl="Programme\Microsoft SDKs\Windows\v6.0A\Bootstrapper\Packages\vcredist_x86\vcredist_x86.exe" Location="0" ExactSize="0" MinWin9xVer="47" MinWinNTVer="21" Operator="1" ComLine="/Q" TargetName="vcredist_x86.exe\vcredist_x86.exe" Type="1" Feature="Visual_C_2008_SP1_Redistributable"/>
+    <ATTRIBUTE name="PrereqsOrder" value="Visual_C_2008_SP1"/>
+  </COMPONENT>
+  <COMPONENT cid="caphyon.advinst.msicomp.PreReqSearchComponent">
+    <ROW SearchKey="SP" Prereq="Visual_C_2008_SP1" SearchType="9" SearchString="HKLM\SOFTWARE\Microsoft\DevDiv\VC\Servicing\9.0\RED\1033\SP" RefContent="M1" Order="1" Property="PreReqSearch"/>
+  </COMPONENT>
+</DOCUMENT>
