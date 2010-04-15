@@ -319,10 +319,6 @@
 			>
 		</File>
 		<File
-			RelativePath=".\BLUEfolders.ico"
-			>
-		</File>
-		<File
 			RelativePath=".\DestinationFolder.ico"
 			>
 		</File>
@@ -336,6 +332,10 @@
 		</File>
 		<File
 			RelativePath=".\Install.ico"
+			>
+		</File>
+		<File
+			RelativePath=".\liquidFOLDERS.ico"
 			>
 		</File>
 		<File

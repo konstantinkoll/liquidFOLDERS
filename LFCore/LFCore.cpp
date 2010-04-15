@@ -377,7 +377,7 @@ LFCore_API LFDomainDescriptor* LFAllocDomainDescriptor()
 {
 	LFDomainDescriptor* d = static_cast<LFDomainDescriptor*>(malloc(sizeof(LFDomainDescriptor)));
 	ZeroMemory(d, sizeof(LFDomainDescriptor));
-	d->ImportantAttributes = new BitArray(65000);
+	d->ImportantAttributes = new BitArray(LFAttributeCount);
 	return d;
 }
 

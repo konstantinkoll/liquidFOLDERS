@@ -81,6 +81,10 @@ public:
 	void PlayNavigateSound();
 	void PlayWarningSound();
 
+	afx_msg void OnAppNewFileDrop();
+	afx_msg void OnAppNewMigrate();
+	afx_msg void OnAppNewStoreManager();
+
 protected:
 	CString GetGlobalRegPath();
 
@@ -89,9 +93,6 @@ protected:
 	afx_msg void OnAppEnterLicenseKey();
 	afx_msg void OnAppSupport();
 	afx_msg void OnAppPrompt();
-	afx_msg void OnAppNewFileDrop();
-	afx_msg void OnAppNewMigrate();
-	afx_msg void OnAppNewStoreManager();
 	DECLARE_MESSAGE_MAP()
 
 private:

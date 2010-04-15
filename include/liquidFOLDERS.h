@@ -36,6 +36,7 @@ struct LFMessageIDs
 // Mutex objects
 
 #define LFCM_Watchdog                   "Local\\LFWatchdogMutex"
+#define LFCM_Store                      "Local\\LFCoreMutex_Store_"
 #define LFCM_Stores                     "Local\\LFCoreMutex_Stores"
 
 

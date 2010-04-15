@@ -168,6 +168,9 @@ OSVERSIONINFO osInfo;
 
 BOOL LFApplication::InitInstance()
 {
+	// Ole Initialisieren
+    AfxOleInit();
+
 	// GDI+ initalisieren
 	GdiplusStartupInput gdiplusStartupInput;
 	GdiplusStartup(&m_gdiplusToken, &gdiplusStartupInput, NULL);

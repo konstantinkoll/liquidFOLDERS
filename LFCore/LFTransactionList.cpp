@@ -22,7 +22,7 @@ LFTransactionList::~LFTransactionList()
 	}
 }
 
-BOOL LFTransactionList::AddItemDescriptor(LFItemDescriptor* i, unsigned int UserData)
+bool LFTransactionList::AddItemDescriptor(LFItemDescriptor* i, unsigned int UserData)
 {
 	if (!m_Entries)
 	{
@@ -30,7 +30,7 @@ BOOL LFTransactionList::AddItemDescriptor(LFItemDescriptor* i, unsigned int User
 		if (!m_Entries)
 		{
 			m_LastError = LFMemoryError;
-			return FALSE;
+			return false;
 		}
 		m_Allocated = LFTL_FirstAlloc;
 	}
@@ -41,7 +41,7 @@ BOOL LFTransactionList::AddItemDescriptor(LFItemDescriptor* i, unsigned int User
 		if (!m_Entries)
 		{
 			m_LastError = LFMemoryError;
-			return FALSE;
+			return false;
 		}
 		m_Allocated += LFTL_SubsequentAlloc;
 	}
@@ -51,10 +51,10 @@ BOOL LFTransactionList::AddItemDescriptor(LFItemDescriptor* i, unsigned int User
 	m_Entries[m_Count].LastError = LFOk;
 	m_Entries[m_Count++].UserData = UserData;
 
-	return TRUE;
+	return true;
 }
 
-void LFTransactionList::RemoveEntry(UINT idx)
+void LFTransactionList::RemoveEntry(unsigned int idx)
 {
 	assert(idx<m_Count);
 
@@ -66,7 +66,7 @@ void LFTransactionList::RemoveEntry(UINT idx)
 
 void LFTransactionList::RemoveFlaggedEntries()
 {
-	UINT idx = 0;
+	unsigned int idx = 0;
 	
 	while (idx<m_Count)
 	{
@@ -83,7 +83,7 @@ void LFTransactionList::RemoveFlaggedEntries()
 
 void LFTransactionList::RemoveErrorEntries()
 {
-	UINT idx = 0;
+	unsigned int idx = 0;
 	
 	while (idx<m_Count)
 	{

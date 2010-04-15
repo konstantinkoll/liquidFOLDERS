@@ -18,7 +18,7 @@ LFSearchResult::LFSearchResult(int ctx)
 	m_Allocated = 0;
 }
 
-LFSearchResult::LFSearchResult(int ctx, LFSearchResult* res, BOOL AllowEmptyDrives)
+LFSearchResult::LFSearchResult(int ctx, LFSearchResult* res, bool AllowEmptyDrives)
 {
 	m_RawCopy = false;
 	m_LastError = res->m_LastError;
@@ -35,13 +35,13 @@ LFSearchResult::LFSearchResult(int ctx, LFSearchResult* res, BOOL AllowEmptyDriv
 		{
 			memcpy(m_Files, res->m_Files, res->m_Count*sizeof(LFItemDescriptor*));
 			m_Count = res->m_Count;
-			for (UINT a=0; a<res->m_Count; a++)
+			for (unsigned int a=0; a<res->m_Count; a++)
 				m_Files[a]->RefCount++;
 		}
 		else
 		{
 			m_Count = 0;
-			for (UINT a=0; a<res->m_Count; a++)
+			for (unsigned int a=0; a<res->m_Count; a++)
 			{
 				if (((res->m_Files[a]->Type & LFTypeMask)!=LFTypeDrive) || !(res->m_Files[a]->Type & LFTypeNotMounted))
 				{
@@ -70,7 +70,7 @@ LFSearchResult::~LFSearchResult()
 	}
 }
 
-BOOL LFSearchResult::AddItemDescriptor(LFItemDescriptor* i)
+bool LFSearchResult::AddItemDescriptor(LFItemDescriptor* i)
 {
 	if (!m_Files)
 	{
@@ -78,7 +78,7 @@ BOOL LFSearchResult::AddItemDescriptor(LFItemDescriptor* i)
 		if (!m_Files)
 		{
 			m_LastError = LFMemoryError;
-			return FALSE;
+			return false;
 		}
 		m_Allocated = LFSR_FirstAlloc;
 	}
@@ -89,7 +89,7 @@ BOOL LFSearchResult::AddItemDescriptor(LFItemDescriptor* i)
 		if (!m_Files)
 		{
 			m_LastError = LFMemoryError;
-			return FALSE;
+			return false;
 		}
 		m_Allocated += LFSR_SubsequentAlloc;
 	}
@@ -98,15 +98,15 @@ BOOL LFSearchResult::AddItemDescriptor(LFItemDescriptor* i)
 		i->Position = m_Count;
 	m_Files[m_Count++] = i;
 
-	return TRUE;
+	return true;
 }
 
-BOOL LFSearchResult::AddStoreDescriptor(LFStoreDescriptor* s)
+bool LFSearchResult::AddStoreDescriptor(LFStoreDescriptor* s)
 {
 	return AddItemDescriptor(StoreDescriptor2ItemDescriptor(s));
 }
 
-void LFSearchResult::RemoveItemDescriptor(UINT idx)
+void LFSearchResult::RemoveItemDescriptor(unsigned int idx)
 {
 	assert(idx<m_Count);
 
@@ -122,7 +122,7 @@ void LFSearchResult::RemoveItemDescriptor(UINT idx)
 
 void LFSearchResult::RemoveFlaggedItemDescriptors()
 {
-	UINT idx = 0;
+	unsigned int idx = 0;
 	
 	while (idx<m_Count)
 	{

@@ -8,6 +8,7 @@
 #include <malloc.h>
 #include <objbase.h>
 #include <shellapi.h>
+#include <shlobj.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 
@@ -16,6 +17,128 @@ extern HMODULE LFCoreModuleHandle;
 extern HANDLE Mutex_Stores;
 extern LFMessageIDs LFMessages;
 
+
+DWORD CreateDir(LPCSTR lpPath)
+{
+	SECURITY_ATTRIBUTES sa;
+	SECURITY_DESCRIPTOR sd;
+	PACL pAcl = NULL;
+	DWORD cbAcl = 0;
+	DWORD dwNeeded = 0;
+	DWORD dwError = 0;
+	HANDLE hToken;
+	PTOKEN_USER ptu = NULL;
+
+	if (!OpenProcessToken(GetCurrentProcess(), TOKEN_QUERY, &hToken))
+		return GetLastError();
+
+	GetTokenInformation( hToken, TokenUser, NULL, 0, &dwNeeded);
+	if (GetLastError()!=ERROR_INSUFFICIENT_BUFFER)
+	{
+		dwError = GetLastError();
+		goto Cleanup;
+	}
+
+	ptu = (TOKEN_USER*)malloc(dwNeeded);
+	if (!GetTokenInformation(hToken, TokenUser, ptu, dwNeeded, &dwNeeded))
+	{
+		dwError = GetLastError();
+		goto Cleanup;
+	}
+
+	cbAcl = sizeof(ACL) + ((sizeof(ACCESS_ALLOWED_ACE) - sizeof(DWORD)) + GetLengthSid(ptu->User.Sid));
+	pAcl = (ACL*)malloc(cbAcl);
+
+	if (!InitializeAcl(pAcl, cbAcl, ACL_REVISION))
+	{
+		dwError = GetLastError();
+		goto Cleanup;
+	}
+
+	if (!AddAccessAllowedAce(pAcl,ACL_REVISION,GENERIC_ALL|STANDARD_RIGHTS_ALL|SPECIFIC_RIGHTS_ALL,ptu->User.Sid))
+	{
+		dwError = GetLastError();
+		goto Cleanup;
+	}
+
+	InitializeSecurityDescriptor(&sd,SECURITY_DESCRIPTOR_REVISION);
+	SetSecurityDescriptorDacl(&sd,TRUE,pAcl,FALSE);
+	SetSecurityDescriptorOwner(&sd,ptu->User.Sid,FALSE);
+	SetSecurityDescriptorGroup(&sd,NULL,FALSE); 
+	SetSecurityDescriptorSacl(&sd, FALSE,NULL,FALSE);
+
+	sa.nLength = sizeof(SECURITY_ATTRIBUTES);
+	sa.lpSecurityDescriptor = &sd;
+	sa.bInheritHandle = TRUE;
+
+	CreateDirectoryA(lpPath, &sa);
+	dwError = GetLastError();
+
+Cleanup:
+	if (ptu)
+		free(ptu);
+	if (pAcl)
+		free(pAcl);
+
+	CloseHandle(hToken);
+	return dwError;
+}
+
+void RemoveDir(LPCSTR lpPath)
+{
+	// Dateien löschen
+	char DirSpec[MAX_PATH];
+	strcpy_s(DirSpec, MAX_PATH, lpPath);
+	strcat_s(DirSpec, "*");
+
+	WIN32_FIND_DATAA FindFileData;
+	HANDLE hFind = FindFirstFileA(DirSpec, &FindFileData);
+
+	if (hFind!=INVALID_HANDLE_VALUE)
+	{
+FileFound:
+		if ((FindFileData.dwFileAttributes & (FILE_ATTRIBUTE_DIRECTORY | FILE_ATTRIBUTE_DEVICE | FILE_ATTRIBUTE_VIRTUAL))==0)
+		{
+			char fn[MAX_PATH];
+			strcpy_s(fn, MAX_PATH, lpPath);
+			strcat_s(fn, MAX_PATH, FindFileData.cFileName);
+			DeleteFileA(fn);
+		}
+
+		if (FindNextFileA(hFind, &FindFileData)!=0)
+			goto FileFound;
+
+		FindClose(hFind);
+	}
+
+	// Verzeichnis löschen
+	RemoveDirectoryA(lpPath);
+}
+
+unsigned int ValidateStoreDirectories(LFStoreDescriptor* s)
+{
+	// Store phys. anlegen
+	DWORD res = CreateDir(s->DatPath);
+		if ((res!=ERROR_SUCCESS) && (res!=ERROR_ALREADY_EXISTS))
+			return LFIllegalPhysicalPath;
+	res = CreateDir(s->IdxPathMain);
+		if ((res!=ERROR_SUCCESS) && (res!=ERROR_ALREADY_EXISTS))
+			return LFIllegalPhysicalPath;
+
+	if (s->StoreMode==LFStoreModeHybrid)
+	{
+		char tmpStr[MAX_PATH];
+		GetAutoPath(s, tmpStr);
+		res = CreateDir(tmpStr);
+		if ((res!=ERROR_SUCCESS) && (res!=ERROR_ALREADY_EXISTS))
+			return LFIllegalPhysicalPath;
+		res = CreateDir(s->IdxPathAux);
+		if ((res!=ERROR_SUCCESS) && (res!=ERROR_ALREADY_EXISTS))
+			return LFIllegalPhysicalPath;
+	}
+
+	return LFOk;
+}
 
 void AddDrives(LFSearchResult* res)
 {
@@ -117,6 +240,9 @@ LFCore_API unsigned int LFCreateStore(LFStoreDescriptor* s, BOOL MakeDefault, HW
 	// GUID generieren
 	CoCreateGuid(&s->GUID);
 
+	// Pfad ergänzen
+	AppendGUID(s, s->DatPath);
+
 	unsigned int res = ValidateStoreSettings(s);
 	if (res!=LFOk)
 		return res;
@@ -143,9 +269,7 @@ LFCore_API unsigned int LFCreateStore(LFStoreDescriptor* s, BOOL MakeDefault, HW
 
 	if (res==LFOk)
 	{
-		// Store phys. anlegen
-		// TODO
-
+		res = ValidateStoreDirectories(s);
 		SendNotifyMessage(HWND_BROADCAST, LFMessages.StoresChanged, s->StoreMode==LFStoreModeInternal ? LFMSGF_IntStores : LFMSGF_ExtHybStores , (LPARAM)hWndSource);
 	}
 
@@ -212,24 +336,36 @@ LFCore_API unsigned int LFMakeHybridStore(char* key, HWND hWndSource)
 	HANDLE StoreLock = NULL;
 	LFStoreDescriptor* slot = FindStore(key, &StoreLock);
 	if (slot)
+	{
 		if (slot->StoreMode!=LFStoreModeExternal)
 		{
 			res = LFIllegalStoreDescriptor;
+			goto Cleanup;
 		}
-		else
+
+		if (!IsStoreMounted(slot))
 		{
-			char path[MAX_PATH];
-			GetAutoPath(slot, path);
-			strcat_s(path, MAX_PATH, "INDEX\\");
-
-			// TODO: Index kopieren
-
-			slot->StoreMode = LFStoreModeHybrid;
-			strcpy_s(slot->IdxPathAux, MAX_PATH, path);
-
-			res = UpdateStore(slot);
+			res = LFIllegalStoreDescriptor;
+			goto Cleanup;
 		}
 
+		slot->StoreMode = LFStoreModeHybrid;
+		res = ValidateStoreSettings(slot);
+		if (res!=LFOk)
+			goto Cleanup;
+
+		res = UpdateStore(slot);
+		if (res!=LFOk)
+			goto Cleanup;
+
+		res = ValidateStoreDirectories(slot);
+		if (res!=LFOk)
+			goto Cleanup;
+
+		// TODO: Index kopieren
+		}
+
+Cleanup:
 	ReleaseMutexForStore(StoreLock);
 	ReleaseMutex(Mutex_Stores);
 
@@ -323,10 +459,20 @@ LFCore_API unsigned int LFDeleteStore(char* key, HWND hWndSource)
 
 		SendNotifyMessage(HWND_BROADCAST, LFMessages.StoresChanged, victim.StoreMode==LFStoreModeInternal ? LFMSGF_IntStores : LFMSGF_ExtHybStores, (LPARAM)hWndSource);
 
-		if (IsStoreMounted(&victim))
+		if (strlen(victim.IdxPathAux))
 		{
-			// TODO: Store phys. löschen (Verzeichnisse, Index), dabei nur auf victim zugreifen
+			char path[MAX_PATH];
+			GetAutoPath(&victim, path);
+
+			RemoveDir(victim.IdxPathAux);
+			RemoveDir(path);
 		}
+
+		if (strlen(victim.IdxPathMain))
+			RemoveDir(victim.IdxPathMain);
+
+		if (strlen(victim.DatPath))
+			RemoveDir(victim.DatPath);
 	}
 	else
 	{

@@ -4,6 +4,7 @@
 
 #pragma once
 #include "LFCommDlg.h"
+#include "LFDropTarget.h"
 
 
 // CFileDropDlg-Dialogfeld
@@ -23,21 +24,21 @@ protected:
 	CGdiPlusBitmapResource* abouticon;
 	CString strHint;
 	CString strAbout;
-	bool AlwaysOnTop;
-	bool SmallWindow;
-	bool liquidFOLDERSReady;
+	BOOL AlwaysOnTop;
+	BOOL SmallWindow;
+	BOOL liquidFOLDERSReady;
 	UINT_PTR TimerID;
 	HTHEME hTheme;
 	BOOL Themed;
+	CLFDropTarget m_DropTarget;
 
-	void SetTopMost(bool TopMost);
-	void SetWindowSize(bool Small);
+	void SetTopMost(BOOL TopMost);
+	void SetWindowSize(BOOL Small);
 	void UpdateStatus();
 
 	afx_msg BOOL OnInitDialog();
 	afx_msg void OnAlwaysOnTop();
 	afx_msg void OnSmallWindow();
-	afx_msg void OnStoreManager();
 	afx_msg void OnAbout();
 	afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
 	afx_msg void OnPaint();
@@ -51,8 +52,9 @@ protected:
 	afx_msg LRESULT OnNcHitTest(CPoint point);
 	afx_msg void OnClose();
 	afx_msg void OnDestroy();
-	afx_msg void OnDropFiles(HDROP);
+	//afx_msg void OnDropFiles(HDROP);
 	afx_msg void OnTimer(UINT_PTR _TimerID);
 	afx_msg void OnChooseDefaultStore();
+
 	DECLARE_MESSAGE_MAP()
 };

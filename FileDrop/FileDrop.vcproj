@@ -366,7 +366,7 @@
 	<References>
 		<ProjectReference
 			ReferencedProjectIdentifier="{D2EE8461-E7FB-44D1-9951-F63FF70477DE}"
-			RelativePathToProject=".\BFCommDlg\BFCommDlg.vcproj"
+			RelativePathToProject=".\LFCommDlg\LFCommDlg.vcproj"
 		/>
 	</References>
 	<Files>
@@ -381,6 +381,10 @@
 			</File>
 			<File
 				RelativePath=".\FileDropDlg.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\LFDropTarget.cpp"
 				>
 			</File>
 			<File
@@ -426,23 +430,15 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\include\BFCommDlg.h"
-				>
-			</File>
-			<File
-				RelativePath="..\include\BFCore.h"
-				>
-			</File>
-			<File
-				RelativePath="..\include\BLUEfolders.h"
-				>
-			</File>
-			<File
 				RelativePath=".\FileDrop.h"
 				>
 			</File>
 			<File
 				RelativePath=".\FileDropDlg.h"
+				>
+			</File>
+			<File
+				RelativePath=".\LFDropTarget.h"
 				>
 			</File>
 			<File

@@ -371,66 +371,6 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\LFAboutDlg.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\LFApplication.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\LFCaptionBar.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\LFChooseDefaultStoreDlg.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\LFCommdlg.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\LFCommDlg.def"
-				>
-			</File>
-			<File
-				RelativePath=".\LFDialog.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\LFItemTemplateDlg.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\LFLicenseDlg.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\LFSelectLocationGPSDlg.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\LFSelectLocationIATADlg.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\LFStoreDeleteDlg.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\LFStoreNewDlg.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\LFStorePropertiesDlg.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\LFWelcomeDlg.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\CAttributeProperties.cpp"
 				>
 			</File>
@@ -519,6 +459,66 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\LFAboutDlg.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\LFApplication.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\LFCaptionBar.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\LFChooseDefaultStoreDlg.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\LFCommdlg.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\LFCommDlg.def"
+				>
+			</File>
+			<File
+				RelativePath=".\LFDialog.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\LFItemTemplateDlg.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\LFLicenseDlg.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\LFSelectLocationGPSDlg.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\LFSelectLocationIATADlg.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\LFStoreDeleteDlg.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\LFStoreNewDlg.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\LFStorePropertiesDlg.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\LFWelcomeDlg.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\stdafx.cpp"
 				>
 				<FileConfiguration
@@ -560,6 +560,58 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
+			<File
+				RelativePath=".\CAttributeProperties.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CCaptionBar.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CExplorerList.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CGdiPlusBitmap.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CGlassButton.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CImageListTransparent.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CInspectorGrid.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CMapPreviewCtrl.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CMapSelectionCtrl.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CPaneList.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CPaneText.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CToolbarList.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Kitchen.h"
+				>
+			</File>
 			<File
 				RelativePath=".\LFAboutDlg.h"
 				>
@@ -621,62 +673,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\BLUEfolders.h"
-				>
-			</File>
-			<File
-				RelativePath=".\CAttributeProperties.h"
-				>
-			</File>
-			<File
-				RelativePath=".\CCaptionBar.h"
-				>
-			</File>
-			<File
-				RelativePath=".\CExplorerList.h"
-				>
-			</File>
-			<File
-				RelativePath=".\CGdiPlusBitmap.h"
-				>
-			</File>
-			<File
-				RelativePath=".\CGlassButton.h"
-				>
-			</File>
-			<File
-				RelativePath=".\CImageListTransparent.h"
-				>
-			</File>
-			<File
-				RelativePath=".\CInspectorGrid.h"
-				>
-			</File>
-			<File
-				RelativePath=".\CMapPreviewCtrl.h"
-				>
-			</File>
-			<File
-				RelativePath=".\CMapSelectionCtrl.h"
-				>
-			</File>
-			<File
-				RelativePath=".\CPaneList.h"
-				>
-			</File>
-			<File
-				RelativePath=".\CPaneText.h"
-				>
-			</File>
-			<File
-				RelativePath=".\CToolbarList.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Kitchen.h"
-				>
-			</File>
-			<File
 				RelativePath=".\Resource.h"
 				>
 			</File>
@@ -704,14 +700,6 @@
 			</File>
 			<File
 				RelativePath=".\res\Bag_32.bmp"
-				>
-			</File>
-			<File
-				RelativePath=".\LFCommDlg.rc"
-				>
-			</File>
-			<File
-				RelativePath=".\res\LFCommDlg.rc2"
 				>
 			</File>
 			<File
@@ -748,6 +736,14 @@
 			</File>
 			<File
 				RelativePath=".\res\Key_Small.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\LFCommDlg.rc"
+				>
+			</File>
+			<File
+				RelativePath=".\res\LFCommDlg.rc2"
 				>
 			</File>
 			<File

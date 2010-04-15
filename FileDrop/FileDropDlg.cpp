@@ -66,7 +66,7 @@ void DoneAero()
 // CFileDropDlg-Dialogfeld
 
 CFileDropDlg::CFileDropDlg(CWnd* pParent /*=NULL*/)
-	: CDialog(IDD_FILEDROP_DIALOG, pParent)
+	: CDialog(IDD_FILEDROP_DIALOG, pParent), m_DropTarget(this)
 {
 	m_hIcon = theApp.LoadIcon(IDR_APPLICATION);
 	dropzoneL = NULL;
@@ -90,11 +90,11 @@ BEGIN_MESSAGE_MAP(CFileDropDlg, CDialog)
 	ON_WM_NCHITTEST()
 	ON_WM_CLOSE()
 	ON_WM_DESTROY()
-	ON_WM_DROPFILES()
+	//ON_WM_DROPFILES()
 	ON_WM_TIMER()
 	ON_COMMAND(IDM_ALWAYSONTOP, OnAlwaysOnTop)
 	ON_COMMAND(IDM_SMALLWINDOW, OnSmallWindow)
-	ON_COMMAND(IDM_STOREMANAGER, OnStoreManager)
+	ON_COMMAND(IDM_STOREMANAGER, theApp.OnAppNewStoreManager)
 	ON_COMMAND(IDM_ABOUT, OnAbout)
 	ON_COMMAND(IDM_CHOOSEDEFAULTSTORE, OnChooseDefaultStore)
 END_MESSAGE_MAP()
@@ -199,10 +199,13 @@ BOOL CFileDropDlg::OnInitDialog()
 	// Timer
 	TimerID = SetTimer(IDT_UPDATESTATUS, 250, NULL);
 
+	//Initialize FileDrop
+    m_DropTarget.Register ( this );
+
 	return TRUE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird
 }
 
-void CFileDropDlg::SetTopMost(bool TopMost)
+void CFileDropDlg::SetTopMost(BOOL TopMost)
 {
 	AlwaysOnTop = TopMost;
 	SetWindowPos(TopMost ? &wndTopMost : &wndNoTopMost, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
@@ -212,7 +215,7 @@ void CFileDropDlg::SetTopMost(bool TopMost)
 		pSysMenu->CheckMenuItem(IDM_ALWAYSONTOP, MF_BYCOMMAND | (TopMost ? MF_CHECKED : MF_UNCHECKED));
 }
 
-void CFileDropDlg::SetWindowSize(bool Small)
+void CFileDropDlg::SetWindowSize(BOOL Small)
 {
 	SmallWindow = Small;
 	dropzone = Small ? dropzoneS : dropzoneL;
@@ -253,11 +256,6 @@ void CFileDropDlg::OnAlwaysOnTop()
 void CFileDropDlg::OnSmallWindow()
 {
 	SetWindowSize(!SmallWindow);
-}
-
-void CFileDropDlg::OnStoreManager()
-{
-	ShellExecute(GetSafeHwnd(), _T("open"), theApp.path + "StoreManager.exe", NULL, NULL, SW_SHOW);
 }
 
 void CFileDropDlg::OnAbout()
@@ -313,8 +311,8 @@ void CFileDropDlg::OnPaint()
 		int cyIcon = GetSystemMetrics(SM_CYICON);
 		CRect rect;
 		GetClientRect(&rect);
-		int x = (rect.Width() - cxIcon + 1) / 2;
-		int y = (rect.Height() - cyIcon + 1) / 2;
+		int x = (rect.Width()-cxIcon+1) / 2;
+		int y = (rect.Height()-cyIcon+1) / 2;
 
 		// Symbol zeichnen
 		pDC.DrawIcon(x, y, m_hIcon);
@@ -373,9 +371,8 @@ BOOL CFileDropDlg::OnEraseBkgnd(CDC* pDC)
 			LOGFONTW lf;
 			theApp.zGetThemeSysFont(hTheme, TMT_CAPTIONFONT, (LOGFONT*)&lf);
 			if (lf.lfHeight<-15) // Wichtig für große und extragroße Schriftarten
-			{
 				lf.lfHeight = -15;
-			}
+
 			HFONT titleFont = CreateFontIndirectW(&lf);
 			HGDIOBJ oldFontDc = dc.SelectObject(titleFont);
 
@@ -444,7 +441,7 @@ BOOL CFileDropDlg::OnEraseBkgnd(CDC* pDC)
 	g.SetCompositingMode(CompositingModeSourceOver);
 	int z = (int)(rect.Height()-dropzone->m_pBitmap->GetHeight()-hintHeight)>>1;
 	z = (z<0) ? 0 : z;
-	g.DrawImage(dropzone->m_pBitmap,(int)(rect.Width()-dropzone->m_pBitmap->GetWidth())>>1,z);
+	g.DrawImage(dropzone->m_pBitmap, (int)(rect.Width()-dropzone->m_pBitmap->GetWidth())>>1, z);
 
 	CGdiPlusBitmapResource* badge = (liquidFOLDERSReady ? ready : warning);
 	g.DrawImage(badge->m_pBitmap,rect.Width()-badge->m_pBitmap->GetWidth()-6,4);
@@ -571,7 +568,8 @@ void CFileDropDlg::OnDestroy()
 	CDialog::OnDestroy();
 }
 
-void CFileDropDlg::OnDropFiles(HDROP /*h*/)
+/*
+void CFileDropDlg::OnDropFiles(HDROP hDropInfo)
 {
 	UpdateStatus();
 	if (!liquidFOLDERSReady)
@@ -586,17 +584,22 @@ void CFileDropDlg::OnDropFiles(HDROP /*h*/)
 
 		LFItemTemplateDlg dlg(this, it);
 		if (dlg.DoModal()!=IDCANCEL)
+		{
+			// TODO Stephan: hier bitte HDROP ausgeben, ich baue dann daraus den Import-Aufruf nach LFCore
+
 			MessageBox(_T("Files imported to liquidFOLDERS !"));
+		}
 
 		LFFreeItemDescriptor(it);
 	}
 }
+*/
 
 void CFileDropDlg::OnTimer(UINT_PTR _TimerID)
 {
 	if (_TimerID==TimerID)
 	{
-		bool old = liquidFOLDERSReady;
+		BOOL old = liquidFOLDERSReady;
 		UpdateStatus();
 		if (old!=liquidFOLDERSReady)
 		{

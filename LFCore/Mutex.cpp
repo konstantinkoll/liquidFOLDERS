@@ -16,7 +16,7 @@ HANDLE CreateMutex(LPCSTR lpName)
 
 void InitMutex()
 {
-	Mutex_Stores = CreateMutex("liquidFOLDERS_Mutex_Stores");
+	Mutex_Stores = CreateMutex(LFCM_Stores);
 }
 
 bool GetMutex(HANDLE m)
@@ -30,7 +30,7 @@ bool GetMutex(HANDLE m)
 HANDLE GetMutexForStore(LFStoreDescriptor* s)
 {
 	char ID[MAX_PATH];
-	strcpy_s(ID, MAX_PATH, "liquidFOLDERS_Mutex_Store_");
+	strcpy_s(ID, MAX_PATH, LFCM_Store);
 	strcat_s(ID, MAX_PATH, s->StoreID);
 
 	return CreateMutexA(NULL, TRUE, ID);

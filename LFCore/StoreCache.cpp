@@ -2,6 +2,7 @@
 #include "..\\include\\LFCore.h"
 #include "LFVariantData.h"
 #include "Mutex.h"
+#include "Stores.h"
 #include "StoreCache.h"
 #include <io.h>
 #include <malloc.h>
@@ -33,6 +34,7 @@ extern HANDLE Mutex_Stores;
 extern LFMessageIDs LFMessages;
 extern unsigned int DriveTypes[26];
 
+#define AppPath "\\liquidFOLDERS\\"
 
 bool IsStoreMounted(LFStoreDescriptor* s)
 {
@@ -62,7 +64,7 @@ void AppendGUID(LFStoreDescriptor* s, char* p)
 void GetAutoPath(LFStoreDescriptor* s, char* p)
 {
 	SHGetSpecialFolderPathA(NULL, p, CSIDL_APPDATA, TRUE);
-	strcat_s(p, MAX_PATH, "\\liquidFOLDERS\\");
+	strcat_s(p, MAX_PATH, AppPath);
 	AppendGUID(s, p);
 }
 
@@ -320,24 +322,8 @@ unsigned int ValidateStoreSettings(LFStoreDescriptor* s)
 		}
 
 	// Datenpfad überprüfen (Indexpfade werden nicht gespeichert, sondern dynamisch vergeben)
-	if (s->StoreMode==LFStoreModeInternal)
-	{
-		if (s->AutoLocation)
-		{
-			GetAutoPath(s, s->DatPath);
-		}
-		else
-		{
-			//if (!FolderExists(&s->DatPath[0]))
-			//	return LFIllegalPhysicalPath;
-		}
-	}
-	else
-	{
-		//if (IsStoreMounted(s))
-			//if (!FolderExists(&s->DatPath[0]))
-			//	return LFIllegalPhysicalPath;
-	}
+	if ((s->StoreMode==LFStoreModeInternal) && (s->AutoLocation))
+		GetAutoPath(s, s->DatPath);
 
 	// Hauptindex immer als Unterverzeichnis des Stores
 	if ((s->StoreMode!=LFStoreModeHybrid) || (IsStoreMounted(s)))
@@ -423,6 +409,7 @@ void LoadRegistry()
 		if (LoadStoreSettingsFromRegistry(key, &StoreCache[StoreCount]))
 			if (ValidateStoreSettings(&StoreCache[StoreCount])==LFOk)
 			{
+				ValidateStoreDirectories(&StoreCache[StoreCount]);
 				DefaultStoreOk |= (strcmp(DefaultStore, StoreCache[StoreCount].StoreID)==0);
 				StoreCount++;
 			}
@@ -468,6 +455,12 @@ void InitStoreCache()
 		RegQueryValueExA(k, "DefaultStore", NULL, &type, (BYTE*)DefaultStore, &sz);
 		RegCloseKey(k);
 	}
+
+	// Anwendungsordner anlegen
+	char tmpStr[MAX_PATH];
+	SHGetSpecialFolderPathA(NULL, tmpStr, CSIDL_APPDATA, TRUE);
+	strcat_s(tmpStr, MAX_PATH, AppPath);
+	CreateDir(tmpStr);
 
 	// Stores aus der Registry
 	LoadRegistry();
@@ -754,6 +747,7 @@ LFCore_API void LFMountDrive(char d)
 					strncpy_s(slot->DatPath, MAX_PATH, mask, 3);
 					AppendGUID(slot, slot->DatPath);
 					ValidateStoreSettings(slot);
+					ValidateStoreDirectories(slot);
 					changeOccured = true;
 
 					// Hybrid-Stores in der Registry abspeichern, damit LastSeen aktualisiert wird

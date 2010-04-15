@@ -15,16 +15,16 @@ class LFSearchResult
 {
 public:
 	LFSearchResult(int ctx);
-	LFSearchResult(int ctx, LFSearchResult* res, BOOL AllowEmptyDrives=TRUE);
+	LFSearchResult(int ctx, LFSearchResult* res, bool AllowEmptyDrives=true);
 	virtual ~LFSearchResult();
 
-	BOOL AddItemDescriptor(LFItemDescriptor* i);
-	BOOL AddStoreDescriptor(LFStoreDescriptor* s);
+	bool AddItemDescriptor(LFItemDescriptor* i);
+	bool AddStoreDescriptor(LFStoreDescriptor* s);
 	void RemoveItemDescriptor(UINT idx);
 	void RemoveFlaggedItemDescriptors();
 
 	LFItemDescriptor** m_Files;
-	BOOL m_HasCategories;
+	bool m_HasCategories;
 	DWORD m_QueryTime;
 	unsigned int m_LastError;
 	unsigned int m_Count;

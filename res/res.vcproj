@@ -1895,42 +1895,6 @@
 			>
 		</File>
 		<File
-			RelativePath="BLUEfolders.ico"
-			>
-		</File>
-		<File
-			RelativePath=".\BlueMarble_1024.jpg"
-			>
-		</File>
-		<File
-			RelativePath=".\BlueMarble_1024.png"
-			>
-		</File>
-		<File
-			RelativePath=".\BlueMarble_2048.jpg"
-			>
-		</File>
-		<File
-			RelativePath=".\BlueMarble_2048.png"
-			>
-		</File>
-		<File
-			RelativePath=".\BlueMarble_4096.jpg"
-			>
-		</File>
-		<File
-			RelativePath=".\BlueMarble_4096.png"
-			>
-		</File>
-		<File
-			RelativePath=".\BlueMarble_8192.jpg"
-			>
-		</File>
-		<File
-			RelativePath=".\BlueMarble_8192.png"
-			>
-		</File>
-		<File
 			RelativePath="Cancel.ico"
 			>
 		</File>
@@ -2108,6 +2072,10 @@
 		</File>
 		<File
 			RelativePath=".\Key_Small.ico"
+			>
+		</File>
+		<File
+			RelativePath=".\liquidFOLDERS.ico"
 			>
 		</File>
 		<File
