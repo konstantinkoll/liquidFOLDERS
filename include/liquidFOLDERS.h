@@ -20,6 +20,7 @@ struct LFMessageIDs
 	unsigned int StoresChanged;
 	unsigned int StoreAttributesChanged;
 	unsigned int DefaultStoreChanged;
+	unsigned int DrivesChanged;
 };
 
 #define LFMSGF_IntStores                1

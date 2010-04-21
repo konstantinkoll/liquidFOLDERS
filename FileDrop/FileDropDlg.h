@@ -4,7 +4,6 @@
 
 #pragma once
 #include "LFCommDlg.h"
-#include "LFDropTarget.h"
 
 
 // CFileDropDlg-Dialogfeld
@@ -12,9 +11,10 @@
 class CFileDropDlg : public CDialog
 {
 public:
-	CFileDropDlg(CWnd* pParent = NULL);	// Standardkonstruktor
+	CFileDropDlg(CWnd* pParent = NULL);
 
 protected:
+	LFDropTarget m_DropTarget;
 	HICON m_hIcon;
 	CGdiPlusBitmapResource* dropzone;
 	CGdiPlusBitmapResource* dropzoneL;
@@ -30,7 +30,6 @@ protected:
 	UINT_PTR TimerID;
 	HTHEME hTheme;
 	BOOL Themed;
-	CLFDropTarget m_DropTarget;
 
 	void SetTopMost(BOOL TopMost);
 	void SetWindowSize(BOOL Small);
@@ -52,9 +51,7 @@ protected:
 	afx_msg LRESULT OnNcHitTest(CPoint point);
 	afx_msg void OnClose();
 	afx_msg void OnDestroy();
-	//afx_msg void OnDropFiles(HDROP);
 	afx_msg void OnTimer(UINT_PTR _TimerID);
 	afx_msg void OnChooseDefaultStore();
-
 	DECLARE_MESSAGE_MAP()
 };

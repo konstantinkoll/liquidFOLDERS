@@ -4,6 +4,7 @@
 
 #pragma once
 #include "liquidFOLDERS.h"
+#include "LFCommDlg.h"
 
 
 // CFileView
@@ -37,6 +38,7 @@ protected:
 	LFViewParameters m_ViewParameters;
 	LFViewParameters* pViewParameters;
 	LFSearchResult* result;
+	LFDropTarget m_DropTarget;
 	UINT ActiveContextID;
 	UINT RibbonColor;
 	UINT ViewID;

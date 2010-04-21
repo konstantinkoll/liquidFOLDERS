@@ -359,6 +359,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\include\liquidFOLDERS.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Resource.h"
 				>
 			</File>

@@ -206,6 +206,7 @@ BOOL CFolderItem::GetChildren(CGetChildrenEventArgs& e)
 					{
 					case LFAttrFileTime:
 					case LFAttrRecordingTime:
+					case LFAttrCreationTime:
 					case LFAttrDuration:
 					case LFAttrDueTime:
 					case LFAttrDoneTime:

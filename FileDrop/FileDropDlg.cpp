@@ -66,7 +66,7 @@ void DoneAero()
 // CFileDropDlg-Dialogfeld
 
 CFileDropDlg::CFileDropDlg(CWnd* pParent /*=NULL*/)
-	: CDialog(IDD_FILEDROP_DIALOG, pParent), m_DropTarget(this)
+	: CDialog(IDD_FILEDROP_DIALOG, pParent)
 {
 	m_hIcon = theApp.LoadIcon(IDR_APPLICATION);
 	dropzoneL = NULL;
@@ -90,7 +90,6 @@ BEGIN_MESSAGE_MAP(CFileDropDlg, CDialog)
 	ON_WM_NCHITTEST()
 	ON_WM_CLOSE()
 	ON_WM_DESTROY()
-	//ON_WM_DROPFILES()
 	ON_WM_TIMER()
 	ON_COMMAND(IDM_ALWAYSONTOP, OnAlwaysOnTop)
 	ON_COMMAND(IDM_SMALLWINDOW, OnSmallWindow)
@@ -142,7 +141,6 @@ BOOL CFileDropDlg::OnInitDialog()
 	r.left = x;
 	r.top = y;
 	MoveWindow(x, y, x+r.Width(), y+r.Height());
-
 
 	// IDM_xxx muss sich im Bereich der Systembefehle befinden.
 	ASSERT((IDM_ALWAYSONTOP & 0xFFF0) == IDM_ALWAYSONTOP);
@@ -199,8 +197,8 @@ BOOL CFileDropDlg::OnInitDialog()
 	// Timer
 	TimerID = SetTimer(IDT_UPDATESTATUS, 250, NULL);
 
-	//Initialize FileDrop
-    m_DropTarget.Register ( this );
+	// Initialize Drop
+	m_DropTarget.Register ( this );
 
 	return TRUE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird
 }
@@ -567,33 +565,6 @@ void CFileDropDlg::OnDestroy()
 
 	CDialog::OnDestroy();
 }
-
-/*
-void CFileDropDlg::OnDropFiles(HDROP hDropInfo)
-{
-	UpdateStatus();
-	if (!liquidFOLDERSReady)
-	{
-		wchar_t* tmpStr = LFGetErrorText(LFNoDefaultStore);
-		MessageBoxW(tmpStr, _T("FileDrop"), MB_ICONWARNING);
-		free(tmpStr);
-	}
-	else
-	{
-		LFItemDescriptor* it = LFAllocItemDescriptor();
-
-		LFItemTemplateDlg dlg(this, it);
-		if (dlg.DoModal()!=IDCANCEL)
-		{
-			// TODO Stephan: hier bitte HDROP ausgeben, ich baue dann daraus den Import-Aufruf nach LFCore
-
-			MessageBox(_T("Files imported to liquidFOLDERS !"));
-		}
-
-		LFFreeItemDescriptor(it);
-	}
-}
-*/
 
 void CFileDropDlg::OnTimer(UINT_PTR _TimerID)
 {

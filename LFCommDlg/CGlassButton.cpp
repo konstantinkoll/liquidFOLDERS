@@ -57,18 +57,34 @@ void CGlassButton::DrawItem(LPDRAWITEMSTRUCT lpDIS)
 
 	GraphicsPath path;
 	CreateRoundRectangle(rectBounds, 4, path);
-	Pen pen(Color(0xFF, 0xFF, 0xFF));
-	g.DrawPath(&pen, &path);
+	if (lpDIS->itemState & ODS_FOCUS)
+	{
+		Pen pen(Color(0x3C, 0x7F, 0xB1));
+		g.DrawPath(&pen, &path);
+	}
+	else
+	{
+		Pen pen(Color(0x70, 0x70, 0x70));
+		g.DrawPath(&pen, &path);
+	}
 
 	// Content
 	rectBounds.DeflateRect(1, 1);
 
 	CreateRoundRectangle(rectBounds, 2, path);
-	SolidBrush sBr(Color((lpDIS->itemState & ODS_SELECTED) ? 0xFF : 0xA0, 0x00, 0xB0, 0xFF));
-	g.FillPath(&sBr, &path);
+	if (m_Hover)
+	{
+		SolidBrush sBr(Color((lpDIS->itemState & ODS_SELECTED) ? 0x60 : 0x40, 0x00, 0x93, 0xE7));
+		g.FillPath(&sBr, &path);
+	}
+	else
+	{
+		SolidBrush sBr(Color(0x2A, 0x09, 0x09, 0x09));
+		g.FillPath(&sBr, &path);
+	}
 
 	// Glow
-	if (m_Hover || (lpDIS->itemState & ODS_FOCUS))
+	if (m_Hover)
 	{
 		g.SetClip(&path);
 		GraphicsPath brad;
@@ -77,9 +93,9 @@ void CGlassButton::DrawItem(LPDRAWITEMSTRUCT lpDIS)
 		RectF bounds;
 		brad.GetBounds(&bounds);
 		pgBr.SetCenterPoint(PointF((bounds.GetLeft()+bounds.GetRight())/2.0f, (bounds.GetTop()+bounds.GetBottom())/2.0f));
-		pgBr.SetCenterColor(Color(0xFF, 0xFF, 0xFF, 0xF0));
-		const Color cols[] = { Color(0x00, 0xFF, 0xFF, 0xF0) };
+		pgBr.SetCenterColor(Color(0x80, 0x40, 0x80, 0xFF));
 		INT cCols = 1;
+		const Color cols[] = { Color(0x00, 0x40, 0x80, 0xFF) };
 		pgBr.SetSurroundColors(cols, &cCols);
 		g.FillPath(&pgBr, &brad);
 		g.ResetClip();
@@ -89,10 +105,7 @@ void CGlassButton::DrawItem(LPDRAWITEMSTRUCT lpDIS)
 	CRect rectShine = rectBounds;
 	rectShine.bottom -= rectShine.Height()/2-1;
 
-	BYTE opacity = 0x99;
-	if (lpDIS->itemState & ODS_SELECTED)
-		opacity = (BYTE)(.4f*opacity+.5f);
-
+	BYTE opacity = (lpDIS->itemState & ODS_SELECTED) ? 0x80 : 0x99;
 	CreateRoundRectangle(rectShine, 2, path);
 	LinearGradientBrush lgBr(Rect(rectShine.left, rectShine.top, rectShine.Width(), rectShine.Height()),
 		Color(opacity, 0xFF, 0xFF, 0xFF),
@@ -112,15 +125,28 @@ void CGlassButton::DrawItem(LPDRAWITEMSTRUCT lpDIS)
 
 	// Inner border
 	CreateRoundRectangle(rectBounds, 3, path);
-	pen.SetColor(Color(0x00, 0x00, 0x00));
-	g.DrawPath(&pen, &path);
+	if (((lpDIS->itemState & ODS_FOCUS) && (!m_Hover)) || (lpDIS->itemState & ODS_SELECTED))
+	{
+		Pen pen(Color(0x2D, 0xD4, 0xFF));
+		g.DrawPath(&pen, &path);
+	}
+	else
+		if (m_Hover)
+		{
+			Pen pen(Color(0xC0, 0xFF, 0xFF));
+			g.DrawPath(&pen, &path);
+		}
+		else
+		{
+			Pen pen(Color(0xFF, 0xFF, 0xFF));
+			g.DrawPath(&pen, &path);
+		}
 
 	// Focus rect
 	if (lpDIS->itemState & ODS_FOCUS)
 	{
-		rectBounds.DeflateRect(2, 2);
-		rectBounds.right++;
-		rectBounds.bottom++;
+		rectBounds.top++;
+		rectBounds.left++;
 		dc.DrawFocusRect(rectBounds);
 	}
 
@@ -191,9 +217,9 @@ void CGlassButton::CreateBottomRadialPath(CRect rect, GraphicsPath& path)
 	path.Reset();
 
 	RectF rectF((REAL)rect.left, (REAL)rect.top, (REAL)rect.Width(), (REAL)rect.Height());
-	rectF.X -= rect.Width()*.35f;
+	//rectF.X -= rect.Width()*.35f;
 	rectF.Y -= rect.Height()*.15f;
-	rectF.Width *= 1.7f;
+	//rectF.Width *= 1.7f;
 	rectF.Height *= 2.3f;
 
 	path.AddEllipse(rectF);

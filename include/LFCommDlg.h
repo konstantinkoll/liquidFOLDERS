@@ -14,6 +14,7 @@
 #include "..\LFCommDlg\LFApplication.h"
 #include "..\LFCommDlg\LFCaptionBar.h"
 #include "..\LFCommDlg\LFChooseDefaultStoreDlg.h"
+#include "..\LFCommDlg\LFDropTarget.h"
 #include "..\LFCommDlg\LFItemTemplateDlg.h"
 #include "..\LFCommDlg\LFLicenseDlg.h"
 #include "..\LFCommDlg\LFSelectLocationGPSDlg.h"

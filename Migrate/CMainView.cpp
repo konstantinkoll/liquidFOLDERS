@@ -90,11 +90,10 @@ BOOL CMainView::PaintEmpty(CDC* pDC, Graphics* g, CRect& rect)
 	int l = logo->m_pBitmap->GetWidth();
 	int h = logo->m_pBitmap->GetHeight();
 	int x = rect.Width()-l-border-3;
-	int y = rect.Height()-h-border-2;
+	int y = rect.Height()-h-border-3;
 	if ((x>2) && (y>2))
 	{
 		g->DrawImage(logo->m_pBitmap, x, y, l, h);
-		//StatusHeight = h-border-2;
 		x -= 2+border;
 	}
 	else
@@ -132,7 +131,7 @@ void CMainView::AdjustLayout()
 	if (rectClient.Height()<=heightHdr)
 		heightHdr = 0;
 
-	m_wndHeader.SetWindowPos(NULL, rectClient.left, rectClient.top, rectClient.Width(), heightHdr, SWP_NOACTIVATE | SWP_NOZORDER);
+	//m_wndHeader.SetWindowPos(NULL, rectClient.left, rectClient.top, rectClient.Width(), heightHdr, SWP_NOACTIVATE | SWP_NOZORDER);
 	//m_wndTree.SetWindowPos(NULL, rectClient.left, rectClient.top+heightHdr, rectClient.Width(), rectClient.Height()-heightHdr, SWP_NOACTIVATE | SWP_NOZORDER);
 }
 

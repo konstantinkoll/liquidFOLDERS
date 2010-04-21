@@ -137,7 +137,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	// View erstellen
 	m_wndView.Create(this);
-	m_wndView.SetRoot(L"C:\\");
+	//m_wndView.SetRoot(L"C:\\");
 
 	return 0;
 }

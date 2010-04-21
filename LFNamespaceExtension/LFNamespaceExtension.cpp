@@ -76,7 +76,7 @@ BOOL CLFNamespaceExtensionApp::InitInstance()
 
 	COleObjectFactory::RegisterAll();
 
-	CNSEFolder::RegisterExtensionData(_T("Name:KonstantinKoll*Company:liquidFOLDERS*Email:ceo@liquidFOLDERS.net#Oo0m5Ouz+xz64KV57IinRTUvhkNojDZGjBd5MNXfwDEmgcr4baoQFMono3odGhqP"));
+	CNSEFolder::RegisterExtensionData(_T("Name:KonstantinKoll*Company:BLUefolders*Email:ceo@bluefolders.net#Oo0m5Ouz+xz64KV57IinRTUvhkNojDZGjBd5MNXfwDEmgcr4baoQFMono3odGhqP"));
 
 	return CWinApp::InitInstance();
 }

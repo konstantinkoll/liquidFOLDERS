@@ -487,6 +487,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\LFDropTarget.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\LFItemTemplateDlg.cpp"
 				>
 			</File>
@@ -560,6 +564,10 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
+			<File
+				RelativePath="..\include\BLUEfolders.h"
+				>
+			</File>
 			<File
 				RelativePath=".\CAttributeProperties.h"
 				>
@@ -638,6 +646,10 @@
 			</File>
 			<File
 				RelativePath=".\LFDialog.h"
+				>
+			</File>
+			<File
+				RelativePath=".\LFDropTarget.h"
 				>
 			</File>
 			<File

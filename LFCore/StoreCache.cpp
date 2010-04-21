@@ -762,8 +762,7 @@ LFCore_API void LFMountDrive(char d)
 
 	FindClose(hFind);
 
-	if (changeOccured)
-		SendNotifyMessage(HWND_BROADCAST, LFMessages.StoresChanged, LFMSGF_ExtHybStores, NULL);
+	SendNotifyMessage(HWND_BROADCAST, changeOccured ? LFMessages.StoresChanged : LFMessages.DrivesChanged, changeOccured ? LFMSGF_ExtHybStores : 0, NULL);
 }
 
 LFCore_API void LFUnmountDrive(char d)
@@ -798,7 +797,5 @@ LFCore_API void LFUnmountDrive(char d)
 			}
 
 	ReleaseMutex(Mutex_Stores);
-
-	if (changeOccured)
-		SendNotifyMessage(HWND_BROADCAST, LFMessages.StoresChanged, LFMSGF_ExtHybStores, NULL);
+	SendNotifyMessage(HWND_BROADCAST, changeOccured ? LFMessages.StoresChanged : LFMessages.DrivesChanged, changeOccured ? LFMSGF_ExtHybStores : 0, NULL);
 }

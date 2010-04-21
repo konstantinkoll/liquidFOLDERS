@@ -24,7 +24,7 @@ public:
 	void RemoveFlaggedItemDescriptors();
 
 	LFItemDescriptor** m_Files;
-	bool m_HasCategories;
+	BOOL m_HasCategories;
 	DWORD m_QueryTime;
 	unsigned int m_LastError;
 	unsigned int m_Count;

@@ -20,6 +20,7 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID /*lpRese
 		LFMessages.StoresChanged = RegisterWindowMessageA("liquidFOLDERS.StoresChanged");
 		LFMessages.StoreAttributesChanged = RegisterWindowMessageA("liquidFOLDERS.StoreAttributesChanged");
 		LFMessages.DefaultStoreChanged = RegisterWindowMessageA("liquidFOLDERS.DefaultStoreChanged");
+		LFMessages.DrivesChanged = RegisterWindowMessageA("liquidFOLDERS.DrivesChanged");
 
 		InitMutex();
 		InitAirportDatabase();

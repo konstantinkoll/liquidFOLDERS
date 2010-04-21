@@ -56,6 +56,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_WM_SETFOCUS()
 	ON_WM_CLOSE()
 	ON_WM_DESTROY()
+	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->DrivesChanged, OnDrivesChanged)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoresChanged, OnStoresChanged)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoreAttributesChanged, OnStoresChanged)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->DefaultStoreChanged, OnStoresChanged)
@@ -2133,6 +2134,15 @@ void CMainFrame::UpdateHistory()
 		m_wndHistory->UpdateList(m_BreadcrumbBack, ActiveFilter, m_BreadcrumbForward);
 	if (m_wndFilter)
 		m_wndFilter->UpdateList();
+}
+
+LRESULT CMainFrame::OnDrivesChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)
+{
+	if (RawFiles)
+		if (RawFiles->m_Context==LFContextStores)
+			OnNavigateReload();
+
+	return NULL;
 }
 
 LRESULT CMainFrame::OnStoresChanged(WPARAM /*wParam*/, LPARAM lParam)

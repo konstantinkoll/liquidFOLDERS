@@ -459,7 +459,7 @@ LFCore_API unsigned int LFDeleteStore(char* key, HWND hWndSource)
 
 		SendNotifyMessage(HWND_BROADCAST, LFMessages.StoresChanged, victim.StoreMode==LFStoreModeInternal ? LFMSGF_IntStores : LFMSGF_ExtHybStores, (LPARAM)hWndSource);
 
-		if (strlen(victim.IdxPathAux))
+		if (victim.IdxPathAux[0]!='\0')
 		{
 			char path[MAX_PATH];
 			GetAutoPath(&victim, path);
@@ -468,10 +468,10 @@ LFCore_API unsigned int LFDeleteStore(char* key, HWND hWndSource)
 			RemoveDir(path);
 		}
 
-		if (strlen(victim.IdxPathMain))
+		if (victim.IdxPathMain[0]!='\0')
 			RemoveDir(victim.IdxPathMain);
 
-		if (strlen(victim.DatPath))
+		if (victim.DatPath[0]!='\0')
 			RemoveDir(victim.DatPath);
 	}
 	else

@@ -174,6 +174,7 @@ protected:
 	afx_msg void OnNavigateStores();
 	afx_msg void OnNavigateHome();
 	afx_msg void OnClearHistory();
+	afx_msg LRESULT OnDrivesChanged(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnStoresChanged(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnLookChanged(WPARAM wParam, LPARAM lParam);
 	DECLARE_MESSAGE_MAP()
