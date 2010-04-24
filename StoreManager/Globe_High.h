@@ -30721,4 +30721,4 @@ static double globe_high[] = {
 0.269573349829, 0.109305074141, 
 0.0413019828847, -0.334140081748, -0.941618049943, 
 };
-static unsigned int globe_high_node_count = 15360;
+static UINT globe_high_node_count = 15360;

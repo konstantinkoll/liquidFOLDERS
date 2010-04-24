@@ -29,7 +29,7 @@ BOOL SortOptionsDlg::OnInitDialog()
 {
 	// Ggf. automatische Verzeichnisse ein- oder ausschalten
 	view->AutoDirs |= (view->Mode>LFViewTiles);
-	view->AutoDirs &= theApp.m_Contexts[context]->AllowGroups;
+	view->AutoDirs &= (theApp.m_Contexts[context]->AllowGroups==true);
 
 	CDialog::OnInitDialog();
 

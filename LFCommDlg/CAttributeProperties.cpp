@@ -134,7 +134,7 @@ void CAttributeProperty::OnDrawName(CDC* pDC, CRect rect)
 		rect.left += rect.Height();
 	rect.DeflateRect(AFX_TEXT_MARGIN, 0);
 
-	int nTextHeight = pDC->DrawText(m_strName, rect, DT_LEFT | DT_SINGLELINE | DT_VCENTER | DT_NOPREFIX | DT_END_ELLIPSIS);
+	pDC->DrawText(m_strName, rect, DT_LEFT | DT_SINGLELINE | DT_VCENTER | DT_NOPREFIX | DT_END_ELLIPSIS);
 	m_bNameIsTruncated = pDC->GetTextExtent(m_strName).cx > rect.Width();
 
 	if (clrTextOld != (COLORREF)-1)

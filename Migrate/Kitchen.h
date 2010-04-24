@@ -1,7 +1,7 @@
 
 // Sortieren eines Suchergebnisses
 
-int compare(const LFSearchResult* res, unsigned int eins, unsigned int zwei)
+int compare(const LFSearchResult* res, UINT eins, UINT zwei)
 {
 	LFItemDescriptor* d1 = res->m_Files[eins];
 	LFItemDescriptor* d2 = res->m_Files[zwei];

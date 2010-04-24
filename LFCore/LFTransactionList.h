@@ -29,7 +29,7 @@ public:
 	virtual ~LFTransactionList();
 
 	bool AddItemDescriptor(LFItemDescriptor* i, unsigned int UserData);
-	void RemoveEntry(UINT idx);
+	void RemoveEntry(unsigned int idx);
 	void RemoveFlaggedEntries();
 	void RemoveErrorEntries();
 

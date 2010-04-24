@@ -20,20 +20,32 @@ CGlassButton::~CGlassButton()
 {
 }
 
-void CGlassButton::DrawItem(LPDRAWITEMSTRUCT lpDIS)
+
+BEGIN_MESSAGE_MAP(CGlassButton, CButton)
+	ON_WM_PAINT()
+	ON_WM_ERASEBKGND()
+	ON_WM_MOUSEMOVE()
+	ON_MESSAGE(WM_MOUSELEAVE, OnMouseLeave)
+END_MESSAGE_MAP()
+
+void CGlassButton::OnPaint()
 {
-	CDC* pDC = CDC::FromHandle(lpDIS->hDC);
+	CPaintDC pDC(this);
 
 	CRect rect;
 	GetClientRect(rect);
 
 	CDC dc;
-	dc.CreateCompatibleDC(pDC);
+	dc.CreateCompatibleDC(&pDC);
 	dc.SetBkMode(TRANSPARENT);
 
 	CBitmap buffer;
-	buffer.CreateCompatibleBitmap(pDC, rect.Width(), rect.Height());
+	buffer.CreateCompatibleBitmap(&pDC, rect.Width(), rect.Height());
 	CBitmap* pOldBitmap = dc.SelectObject(&buffer);
+
+	// State
+	BOOL Focused = (GetState() & 8);
+	BOOL Selected = (GetState() & 4);
 
 	// Background
 	CRect rectWindow;
@@ -41,7 +53,7 @@ void CGlassButton::DrawItem(LPDRAWITEMSTRUCT lpDIS)
 	GetParent()->ScreenToClient(rectWindow);
 
 	CDC dcBack;
-	dcBack.CreateCompatibleDC(pDC);
+	dcBack.CreateCompatibleDC(&dc);
 	CBitmap* oldBitmap = (CBitmap*)dcBack.SelectObject(((LFDialog*)GetParent())->GetBackBuffer());
 	dc.BitBlt(0, 0, rect.Width(), rect.Height(), &dcBack, rectWindow.left, rectWindow.top, SRCCOPY);
 	dcBack.SelectObject(oldBitmap);
@@ -57,7 +69,7 @@ void CGlassButton::DrawItem(LPDRAWITEMSTRUCT lpDIS)
 
 	GraphicsPath path;
 	CreateRoundRectangle(rectBounds, 4, path);
-	if (lpDIS->itemState & ODS_FOCUS)
+	if ((Focused) || (GetStyle() & BS_DEFPUSHBUTTON))
 	{
 		Pen pen(Color(0x3C, 0x7F, 0xB1));
 		g.DrawPath(&pen, &path);
@@ -70,11 +82,10 @@ void CGlassButton::DrawItem(LPDRAWITEMSTRUCT lpDIS)
 
 	// Content
 	rectBounds.DeflateRect(1, 1);
-
 	CreateRoundRectangle(rectBounds, 2, path);
 	if (m_Hover)
 	{
-		SolidBrush sBr(Color((lpDIS->itemState & ODS_SELECTED) ? 0x60 : 0x40, 0x00, 0x93, 0xE7));
+		SolidBrush sBr(Color(Selected ? 0x60 : 0x40, 0x00, 0x93, 0xE7));
 		g.FillPath(&sBr, &path);
 	}
 	else
@@ -105,7 +116,7 @@ void CGlassButton::DrawItem(LPDRAWITEMSTRUCT lpDIS)
 	CRect rectShine = rectBounds;
 	rectShine.bottom -= rectShine.Height()/2-1;
 
-	BYTE opacity = (lpDIS->itemState & ODS_SELECTED) ? 0x80 : 0x99;
+	BYTE opacity = Selected ? 0x80 : 0x99;
 	CreateRoundRectangle(rectShine, 2, path);
 	LinearGradientBrush lgBr(Rect(rectShine.left, rectShine.top, rectShine.Width(), rectShine.Height()),
 		Color(opacity, 0xFF, 0xFF, 0xFF),
@@ -125,7 +136,7 @@ void CGlassButton::DrawItem(LPDRAWITEMSTRUCT lpDIS)
 
 	// Inner border
 	CreateRoundRectangle(rectBounds, 3, path);
-	if (((lpDIS->itemState & ODS_FOCUS) && (!m_Hover)) || (lpDIS->itemState & ODS_SELECTED))
+	if ((Focused && (!m_Hover)) || Selected || (GetStyle() & BS_DEFPUSHBUTTON))
 	{
 		Pen pen(Color(0x2D, 0xD4, 0xFF));
 		g.DrawPath(&pen, &path);
@@ -138,28 +149,21 @@ void CGlassButton::DrawItem(LPDRAWITEMSTRUCT lpDIS)
 		}
 		else
 		{
-			Pen pen(Color(0xFF, 0xFF, 0xFF));
+			Pen pen(Color(0xF0, 0xF0, 0xF0));
 			g.DrawPath(&pen, &path);
 		}
 
 	// Focus rect
-	if (lpDIS->itemState & ODS_FOCUS)
+	if (Focused)
 	{
 		rectBounds.top++;
 		rectBounds.left++;
 		dc.DrawFocusRect(rectBounds);
 	}
 
-	pDC->BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);
+	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);
 	dc.SelectObject(pOldBitmap);
 }
-
-
-BEGIN_MESSAGE_MAP(CGlassButton, CButton)
-	ON_WM_ERASEBKGND()
-	ON_WM_MOUSEMOVE()
-	ON_MESSAGE(WM_MOUSELEAVE, OnMouseLeave)
-END_MESSAGE_MAP()
 
 BOOL CGlassButton::OnEraseBkgnd(CDC* /*pDC*/)
 {

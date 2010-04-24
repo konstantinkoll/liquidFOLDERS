@@ -20,11 +20,11 @@ public:
 
 	bool AddItemDescriptor(LFItemDescriptor* i);
 	bool AddStoreDescriptor(LFStoreDescriptor* s);
-	void RemoveItemDescriptor(UINT idx);
+	void RemoveItemDescriptor(unsigned int idx);
 	void RemoveFlaggedItemDescriptors();
 
 	LFItemDescriptor** m_Files;
-	BOOL m_HasCategories;
+	bool m_HasCategories;
 	DWORD m_QueryTime;
 	unsigned int m_LastError;
 	unsigned int m_Count;

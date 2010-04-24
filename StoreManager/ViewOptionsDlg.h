@@ -5,7 +5,7 @@
 class ViewOptionsDlg : public CAttributeListDialog
 {
 public:
-	ViewOptionsDlg(CWnd* pParentWnd, unsigned int _RibbonColor, LFViewParameters* _view, int _context, LFSearchResult* files);
+	ViewOptionsDlg(CWnd* pParentWnd, UINT _RibbonColor, LFViewParameters* _view, int _context, LFSearchResult* files);
 	virtual ~ViewOptionsDlg();
 
 	UINT RibbonColor;

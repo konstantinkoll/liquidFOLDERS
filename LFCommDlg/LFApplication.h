@@ -28,6 +28,40 @@ typedef HRESULT (__stdcall *PFNGETTHEMESYSFONT)(HTHEME hTheme, int iFontID, LOGF
 typedef HRESULT (__stdcall *PFNGETTHEMESYSCOLOR)(HTHEME hTheme, int iColorID);
 
 
+// View parameters
+
+struct LFViewParameters
+{
+	UINT Mode;
+	UINT Background;
+	BOOL GrannyMode;
+	BOOL ShowCategories;
+	BOOL FullRowSelect;
+	BOOL AlwaysSave;
+	BOOL Changed;
+	int ColumnOrder[LFAttributeCount];
+	int ColumnWidth[LFAttributeCount];
+
+	UINT SortBy;
+	BOOL Descending;
+	BOOL AutoDirs;
+
+	int GlobeAngleY;
+	int GlobeAngleZ;
+	int GlobeZoom;
+	BOOL GlobeShowBubbles;
+	BOOL GlobeShowAirportNames;
+	BOOL GlobeShowGPS;
+	BOOL GlobeShowHints;
+
+	BOOL TagcloudOmitRare;
+	BOOL TagcloudAlphabetic;
+	BOOL TagcloudUseSize;
+	BOOL TagcloudUseColors;
+	BOOL TagcloudUseOpacity;
+};
+
+
 // LFApplication:
 // Siehe LFApplication.cpp für die Implementierung dieser Klasse
 //

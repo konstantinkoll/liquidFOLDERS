@@ -338,7 +338,7 @@ void CStoreManagerApp::LoadViewOptions(int context)
 	GetBinary(_T("ColumnOrder"), &m_Views[context].ColumnOrder, sizeof(m_Views[context].ColumnOrder));
 	GetBinary(_T("ColumnWidth"), &m_Views[context].ColumnWidth, sizeof(m_Views[context].ColumnWidth));
 
-	m_Views[context].AutoDirs &= m_Contexts[context]->AllowGroups;
+	m_Views[context].AutoDirs &= (m_Contexts[context]->AllowGroups==true);
 	if ((m_Views[context].Mode>LFViewTiles) && (!m_Contexts[context]->AllowExtendedViews))
 		m_Views[context].Mode = LFViewDetails;
 

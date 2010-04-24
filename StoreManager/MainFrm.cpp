@@ -1045,7 +1045,7 @@ void CMainFrame::UpdateSearchResult(BOOL SetEmpty, int FocusItem)
 		BOOL force = FALSE;
 		if ((!change) && (m_wndView) && (ActiveViewID>=LFViewLargeIcons) && (ActiveViewID<=LFViewPreview))
 		{
-			change |= (m_wndView->HasCategories()!=CookedFiles->m_HasCategories);
+			change |= (m_wndView->HasCategories()!=(CookedFiles->m_HasCategories==true));
 			force = TRUE;
 		}
 		if (change)
@@ -1959,7 +1959,7 @@ BOOL CMainFrame::OpenChildView(BOOL Force)
 	case LFViewPreview:
 		Force |= (ActiveViewID<LFViewLargeIcons) || (ActiveViewID>LFViewPreview);
 		if ((m_wndView) && (CookedFiles))
-			Force |= (m_wndView->HasCategories()!=CookedFiles->m_HasCategories);
+			Force |= (m_wndView->HasCategories()!=(CookedFiles->m_HasCategories==true));
 		if (Force)
 		{
 			pNewView = new CListView();
@@ -2105,7 +2105,7 @@ void CMainFrame::CookFiles(int recipe, int FocusItem)
 	LFSearchResult* Victim = CookedFiles;
 
 	DWORD start = GetTickCount();
-	CookedFiles = LFAllocSearchResult(recipe, RawFiles, theApp.m_AllowEmptyDrives);
+	CookedFiles = LFAllocSearchResult(recipe, RawFiles, theApp.m_AllowEmptyDrives==TRUE);
 	SortSearchResult(CookedFiles, &theApp.m_Views[recipe]);
 	if (!IsClipboard)
 		GroupSearchResult(CookedFiles, &theApp.m_Views[recipe]);

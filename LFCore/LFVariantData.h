@@ -13,6 +13,6 @@ void SetAttributeFraction(LFItemDescriptor* f, unsigned int attr, const LFFracti
 void SetAttributeDouble(LFItemDescriptor* f, unsigned int attr, double d, wchar_t* ustr=NULL);
 void SetAttributeRating(LFItemDescriptor* f, unsigned int attr, unsigned char r);
 void SetAttributeFlags(LFItemDescriptor* f, unsigned int attr, unsigned int v);
-void SetAttributeGeoCoordinates(LFItemDescriptor* f, UINT attr, const LFGeoCoordinates c, wchar_t* ustr=NULL);
-void SetAttributeTime(LFItemDescriptor* f, UINT attr, const FILETIME t, wchar_t* ustr=NULL);
-void SetAttributeDuration(LFItemDescriptor* f, UINT attr, UINT d, wchar_t* ustr=NULL);
+void SetAttributeGeoCoordinates(LFItemDescriptor* f, unsigned int attr, const LFGeoCoordinates c, wchar_t* ustr=NULL);
+void SetAttributeTime(LFItemDescriptor* f, unsigned int attr, const FILETIME t, wchar_t* ustr=NULL);
+void SetAttributeDuration(LFItemDescriptor* f, unsigned int attr, unsigned int d, wchar_t* ustr=NULL);

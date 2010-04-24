@@ -30,6 +30,8 @@ BOOL LFDropTarget::OnDrop(CWnd* /*pWnd*/, COleDataObject* pDataObject, DROPEFFEC
 		return FALSE;
 	}
 
+	// TODO: internes Format holen
+
 	// HDROP holen
 	HGLOBAL hG = pDataObject->GetGlobalData(CF_HDROP);
 	if (!hG)

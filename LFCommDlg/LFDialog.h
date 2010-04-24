@@ -5,6 +5,7 @@
 #include "CGdiPlusBitmap.h"
 #include "liquidFOLDERS.h"
 #include "CGlassButton.h"
+#include "CTransparentRadioButton.h"
 
 class AFX_EXT_CLASS LFDialog : public CDialog
 {

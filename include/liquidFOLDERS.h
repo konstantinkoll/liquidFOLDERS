@@ -55,7 +55,7 @@ struct LFMessageIDs
 
 struct LFCountry
 {
-	UINT ID;
+	unsigned int ID;
 	char Name[64];
 };
 
@@ -67,13 +67,13 @@ struct LFGeoCoordinates
 
 struct LFFraction
 {
-	UINT Num;
-	UINT Denum;
+	unsigned int Num;
+	unsigned int Denum;
 };
 
 struct LFAirport
 {
-	UINT CountryID;
+	unsigned int CountryID;
 	char Code[4];
 	char MetroCode[4];
 	char Name[64];
@@ -138,8 +138,8 @@ struct LFItemCategoryDescriptor
 struct LFContextDescriptor
 {
 	wchar_t Name[64];
-	BOOL AllowExtendedViews;
-	BOOL AllowGroups;
+	bool AllowExtendedViews;
+	bool AllowGroups;
 	BitArray* AllowedAttributes;
 };
 
@@ -334,53 +334,19 @@ struct LFDomainDescriptor
 struct LFFilterResult
 {
 	SYSTEMTIME Time;
-	UINT ItemCount;
+	unsigned int ItemCount;
 	int FilterType;
 };
 
 struct LFFilter
 {
 	wchar_t Name[256];
-	UINT Mode;
+	unsigned int Mode;
 	bool Legacy;							// If false, backlink and drives are inserted
 	bool AllowSubfolders;					// Ignored by query engine
 	LFFilterResult Result;					// Set by the query engine
 
 	char StoreID[LFKeySize];				// Valid in filter modes StoreOverview and SearchInStore
-};
-
-
-// View parameters
-
-struct LFViewParameters
-{
-	unsigned int Mode;
-	unsigned int Background;
-	BOOL GrannyMode;
-	BOOL ShowCategories;
-	BOOL FullRowSelect;
-	BOOL AlwaysSave;
-	BOOL Changed;
-	int ColumnOrder[LFAttributeCount];
-	int ColumnWidth[LFAttributeCount];
-
-	unsigned int SortBy;
-	BOOL Descending;
-	BOOL AutoDirs;
-
-	int GlobeAngleY;
-	int GlobeAngleZ;
-	int GlobeZoom;
-	BOOL GlobeShowBubbles;
-	BOOL GlobeShowAirportNames;
-	BOOL GlobeShowGPS;
-	BOOL GlobeShowHints;
-
-	BOOL TagcloudOmitRare;
-	BOOL TagcloudAlphabetic;
-	BOOL TagcloudUseSize;
-	BOOL TagcloudUseColors;
-	BOOL TagcloudUseOpacity;
 };
 
 
@@ -529,7 +495,7 @@ struct LFStoreDescriptor
 	wchar_t Comment[256];
 	int StoreMode;
 	_GUID GUID;
-	BOOL AutoLocation;
+	bool AutoLocation;
 	FILETIME CreationTime;
 	FILETIME FileTime;
 	char DatPath[MAX_PATH];

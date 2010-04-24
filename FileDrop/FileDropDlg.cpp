@@ -378,7 +378,7 @@ BOOL CFileDropDlg::OnEraseBkgnd(CDC* pDC)
 			hintHeight = rtext->bottom;
 			vtextmargin = (Glassed ? 0: (rect.Height()-dropzone->m_pBitmap->GetHeight()-hintHeight)/3);
 			delete rtext;
-			rtext = new CRect(htextmargin, rect.bottom-hintHeight-vtextmargin, rect.right-htextmargin, rect.bottom-vtextmargin);		
+			rtext = new CRect(htextmargin, rect.bottom-hintHeight-vtextmargin, rect.right-htextmargin, rect.bottom-vtextmargin);
 			if (rtext->top<0)
 			{
 				vtextmargin = 0;

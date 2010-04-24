@@ -10,6 +10,7 @@
 #include "..\LFCommDlg\CPaneList.h"
 #include "..\LFCommDlg\CPaneText.h"
 #include "..\LFCommDlg\CToolbarList.h"
+#include "..\LFCommDlg\CTransparentRadioButton.h"
 #include "..\LFCommDlg\LFAboutDlg.h"
 #include "..\LFCommDlg\LFApplication.h"
 #include "..\LFCommDlg\LFCaptionBar.h"

@@ -14,9 +14,8 @@ public:
 	CGlassButton();
 	virtual ~CGlassButton();
 
-	virtual void DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct);
-
 protected:
+	afx_msg void OnPaint();
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg LRESULT OnMouseLeave(WPARAM wParam, LPARAM lParam);

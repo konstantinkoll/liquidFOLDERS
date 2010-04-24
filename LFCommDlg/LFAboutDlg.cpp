@@ -177,6 +177,11 @@ void LFAboutDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDCANCEL, m_CancelButton);
 	DDX_Control(pDX, IDC_ENTERLICENSEKEY, m_LicenseButton);
 
+	for (UINT a=LFTextureAuto; a<=LFTexture8192; a++)
+		DDX_Control(pDX, IDC_TEXTURE_AUTO+a, m_Texture[a]);
+	DDX_Control(pDX, IDC_DRIVES_HIDEEMPTY, m_ShowDrives[0]);
+	DDX_Control(pDX, IDC_DRIVES_SHOWALL, m_ShowDrives[1]);
+
 	if (pDX->m_bSaveAndValidate)
 	{
 		for (UINT a=LFTextureAuto; a<=LFTexture8192; a++)

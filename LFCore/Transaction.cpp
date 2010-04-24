@@ -13,10 +13,10 @@ void UpdateStore(LFTransactionList* tl, unsigned int idx, LFVariantData* value, 
 	switch (value->Attr)
 	{
 	case LFAttrFileName:
-		result = LFSetStoreAttributes(tl->m_Entries[idx].Item->CoreAttributes.StoreID, value->UnicodeString, NULL, NULL, TRUE);
+		result = LFSetStoreAttributes(tl->m_Entries[idx].Item->CoreAttributes.StoreID, value->UnicodeString, NULL, NULL, true);
 		break;
 	case LFAttrComment:
-		result = LFSetStoreAttributes(tl->m_Entries[idx].Item->CoreAttributes.StoreID, NULL, value->UnicodeString, NULL, TRUE);
+		result = LFSetStoreAttributes(tl->m_Entries[idx].Item->CoreAttributes.StoreID, NULL, value->UnicodeString, NULL, true);
 		break;
 	default:
 		result = LFIllegalAttribute;

@@ -276,7 +276,7 @@ LFCore_API LFAttributeDescriptor* LFGetAttributeInfo(unsigned int ID)
 	case LFAttrBitrate:
 	case LFAttrPages:
 	case LFAttrRecordingEquipment:
-		a->ReadOnly = TRUE;
+		a->ReadOnly = true;
 		break;
 	default:
 		a->ReadOnly = (a->Category==LFAttrCategoryInternal);
@@ -712,9 +712,9 @@ LFCore_API void LFFreeFilter(LFFilter* f)
 }
 
 
-LFCore_API LFSearchResult* LFAllocSearchResult(int ctx, LFSearchResult* res, BOOL AllowEmptyDrives)
+LFCore_API LFSearchResult* LFAllocSearchResult(int ctx, LFSearchResult* res, bool AllowEmptyDrives)
 {
-	return (res==NULL) ? new LFSearchResult(ctx) : new LFSearchResult(ctx, res, AllowEmptyDrives==TRUE);
+	return (res==NULL) ? new LFSearchResult(ctx) : new LFSearchResult(ctx, res, AllowEmptyDrives);
 }
 
 LFCore_API void LFFreeSearchResult(LFSearchResult* res)
@@ -723,7 +723,7 @@ LFCore_API void LFFreeSearchResult(LFSearchResult* res)
 		delete res;
 }
 
-LFCore_API BOOL LFAddItemDescriptor(LFSearchResult* res, LFItemDescriptor* i)
+LFCore_API bool LFAddItemDescriptor(LFSearchResult* res, LFItemDescriptor* i)
 {
 	return res->AddItemDescriptor(i);
 }
@@ -750,7 +750,7 @@ LFCore_API void LFFreeTransactionList(LFTransactionList* tl)
 		delete tl;
 }
 
-LFCore_API BOOL LFAddItemDescriptor(LFTransactionList* tl, LFItemDescriptor* i, unsigned int UserData)
+LFCore_API bool LFAddItemDescriptor(LFTransactionList* tl, LFItemDescriptor* i, unsigned int UserData)
 {
 	return tl->AddItemDescriptor(i, UserData);
 }
@@ -817,13 +817,13 @@ LFCore_API void LFErrorBox(unsigned int ID, HWND hWnd)
 }
 
 
-LFCore_API BOOL LFAttributeSortableInView(unsigned int Attr, unsigned int ViewMode)
+LFCore_API bool LFAttributeSortableInView(unsigned int Attr, unsigned int ViewMode)
 {
-	BOOL b = (Attr!=LFAttrLocationGPS);
+	bool b = (Attr!=LFAttrLocationGPS);
 	switch (ViewMode)
 	{
 	case LFViewAutomatic:
-		b = TRUE;
+		b = true;
 		break;
 	case LFViewCalendarYear:
 	case LFViewCalendarWeek:
@@ -928,7 +928,7 @@ LFCore_API LFSearchResult* LFQuery(LFFilter* filter)
 				//
 				res = LFAllocSearchResult(LFContextDefault);
 				char loc[4];
-				for (UINT a=0; a<100; a++)
+				for (unsigned int a=0; a<100; a++)
 				{
 					loc[0] = char(65+rand()%26);
 					loc[1] = char(65+rand()%26);

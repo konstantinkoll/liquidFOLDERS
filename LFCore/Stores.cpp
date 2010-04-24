@@ -61,11 +61,11 @@ DWORD CreateDir(LPCSTR lpPath)
 		goto Cleanup;
 	}
 
-	InitializeSecurityDescriptor(&sd,SECURITY_DESCRIPTOR_REVISION);
-	SetSecurityDescriptorDacl(&sd,TRUE,pAcl,FALSE);
-	SetSecurityDescriptorOwner(&sd,ptu->User.Sid,FALSE);
-	SetSecurityDescriptorGroup(&sd,NULL,FALSE); 
-	SetSecurityDescriptorSacl(&sd, FALSE,NULL,FALSE);
+	InitializeSecurityDescriptor(&sd, SECURITY_DESCRIPTOR_REVISION);
+	SetSecurityDescriptorDacl(&sd, TRUE, pAcl, FALSE);
+	SetSecurityDescriptorOwner(&sd, ptu->User.Sid, FALSE);
+	SetSecurityDescriptorGroup(&sd, NULL, FALSE); 
+	SetSecurityDescriptorSacl(&sd, FALSE, NULL, FALSE);
 
 	sa.nLength = sizeof(SECURITY_ATTRIBUTES);
 	sa.lpSecurityDescriptor = &sd;
@@ -181,7 +181,7 @@ LFSearchResult* QueryStores(LFFilter* filter)
 	LFSearchResult* res = new LFSearchResult(LFContextStores);
 	res->m_RecommendedView = LFViewLargeIcons;
 	res->m_LastError = LFOk;
-	res->m_HasCategories = TRUE;
+	res->m_HasCategories = true;
 
 	if (!GetMutex(Mutex_Stores))
 	{
@@ -235,7 +235,7 @@ LFCore_API unsigned int LFGetStoreSettings(_GUID guid, LFStoreDescriptor* s)
 	return (slot ? LFOk : LFIllegalKey);
 }
 
-LFCore_API unsigned int LFCreateStore(LFStoreDescriptor* s, BOOL MakeDefault, HWND hWndSource)
+LFCore_API unsigned int LFCreateStore(LFStoreDescriptor* s, bool MakeDefault, HWND hWndSource)
 {
 	// GUID generieren
 	CoCreateGuid(&s->GUID);
@@ -276,7 +276,7 @@ LFCore_API unsigned int LFCreateStore(LFStoreDescriptor* s, BOOL MakeDefault, HW
 	return res;
 }
 
-LFCore_API unsigned int LFMakeDefaultStore(char* key, HWND hWndSource, BOOL InternalCall)
+LFCore_API unsigned int LFMakeDefaultStore(char* key, HWND hWndSource, bool InternalCall)
 {
 	if (!key)
 		return LFIllegalKey;
@@ -375,7 +375,7 @@ Cleanup:
 	return res;
 }
 
-LFCore_API unsigned int LFSetStoreAttributes(char* key, wchar_t* name, wchar_t* comment, HWND hWndSource, BOOL InternalCall)
+LFCore_API unsigned int LFSetStoreAttributes(char* key, wchar_t* name, wchar_t* comment, HWND hWndSource, bool InternalCall)
 {
 	if (!key)
 		return LFIllegalKey;
@@ -409,7 +409,7 @@ LFCore_API unsigned int LFSetStoreAttributes(char* key, wchar_t* name, wchar_t* 
 	return res;
 }
 
-LFCore_API unsigned int LFSetStoreComment(char* key, wchar_t* comment, HWND hWndSource, BOOL InternalCall)
+LFCore_API unsigned int LFSetStoreComment(char* key, wchar_t* comment, HWND hWndSource, bool InternalCall)
 {
 	if (!key)
 		return LFIllegalKey;

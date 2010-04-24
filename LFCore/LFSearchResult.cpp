@@ -11,7 +11,7 @@ LFSearchResult::LFSearchResult(int ctx)
 	m_Context = ctx;
 	m_ContextView = ctx;
 	m_RecommendedView = LFViewDetails;
-	m_HasCategories = FALSE;
+	m_HasCategories = false;
 	m_QueryTime = 0;
 	m_Files = NULL;
 	m_Count = 0;

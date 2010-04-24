@@ -68,16 +68,16 @@ void GetAutoPath(LFStoreDescriptor* s, char* p)
 	AppendGUID(s, p);
 }
 
-BOOL FolderExists(char* path)
+bool FolderExists(char* path)
 {
 	if (_access(path, 0)==0)
 	{
 		struct stat status;
 		stat(path, &status);
-		return (status.st_mode & S_IFDIR);
+		return ((status.st_mode & S_IFDIR)!=0);
 	}
 
-	return FALSE;
+	return false;
 }
 
 unsigned int GetKeyFileFromStoreDescriptor(LFStoreDescriptor* s, char* f)
@@ -224,7 +224,7 @@ unsigned int SaveStoreSettingsToRegistry(LFStoreDescriptor* s)
 			res = LFRegistryError;
 		if (RegSetValueExA(k, "FileTime", 0, REG_BINARY, (BYTE*)&s->FileTime, sizeof(FILETIME))!=ERROR_SUCCESS)
 			res = LFRegistryError;
-		if (RegSetValueExA(k, "AutoLocation", 0, REG_DWORD, (BYTE*)&s->AutoLocation, sizeof(BOOL))!=ERROR_SUCCESS)
+		if (RegSetValueExA(k, "AutoLocation", 0, REG_DWORD, (BYTE*)&s->AutoLocation, sizeof(bool))!=ERROR_SUCCESS)
 			res = LFRegistryError;
 		if ((s->StoreMode==LFStoreModeInternal) && (!s->AutoLocation))
 			if (RegSetValueExA(k, "Path", 0, REG_SZ, (BYTE*)s->DatPath, (DWORD)strlen(s->DatPath))!=ERROR_SUCCESS)
@@ -357,7 +357,7 @@ void ChooseNewDefaultStore()
 	for (unsigned int a=0; a<StoreCount; a++)
 		if ((StoreCache[a].StoreMode==LFStoreModeInternal) && (strcmp(DefaultStore, StoreCache[a].StoreID)!=0))
 		{
-			LFMakeDefaultStore(StoreCache[a].StoreID, NULL, TRUE);
+			LFMakeDefaultStore(StoreCache[a].StoreID, NULL, true);
 			found = true;
 			break;
 		}
@@ -505,7 +505,7 @@ LFItemDescriptor* StoreDescriptor2ItemDescriptor(LFStoreDescriptor* s)
 	wcscpy_s(nf->Name, 256, s->StoreName);
 
 	LFItemDescriptor* d = LFAllocItemDescriptor();
-	BOOL IsMounted = IsStoreMounted(s);
+	bool IsMounted = IsStoreMounted(s);
 
 	if (strcmp(s->StoreID, DefaultStore)==0)
 	{
@@ -577,7 +577,7 @@ LFStoreDescriptor* FindStore(_GUID guid, HANDLE* lock)
 	return NULL;
 }
 
-unsigned int UpdateStore(LFStoreDescriptor* s, BOOL MakeDefault)
+unsigned int UpdateStore(LFStoreDescriptor* s, bool MakeDefault)
 {
 	// FileTime setzen
 	SYSTEMTIME st;
@@ -612,7 +612,7 @@ unsigned int UpdateStore(LFStoreDescriptor* s, BOOL MakeDefault)
 
 	// Ggf. Store zum Default Store machen
 	if ((s->StoreMode==LFStoreModeInternal) && ((MakeDefault) || (strcmp(DefaultStore, "")==0)))
-		res = LFMakeDefaultStore(s->StoreID, NULL, TRUE);
+		res = LFMakeDefaultStore(s->StoreID, NULL, true);
 
 	return res;
 }

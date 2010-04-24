@@ -11,7 +11,7 @@
 //
 
 
-class CWatchdogApp : public CWinAppEx
+class CWatchdogApp : public LFApplication
 {
 public:
 	CWatchdogApp();

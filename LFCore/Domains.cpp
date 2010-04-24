@@ -39,7 +39,7 @@ LFSearchResult* QueryDomains(LFFilter* f)
 {
 	LFSearchResult* res = new LFSearchResult(LFContextStoreHome);
 	res->m_RecommendedView = LFViewSmallIcons;
-	res->m_HasCategories = TRUE;
+	res->m_HasCategories = true;
 
 	if (!f->Legacy)
 	{

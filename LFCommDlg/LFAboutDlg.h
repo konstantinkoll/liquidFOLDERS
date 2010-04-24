@@ -30,6 +30,8 @@ protected:
 	CGlassButton m_OkButton;
 	CGlassButton m_CancelButton;
 	CGlassButton m_LicenseButton;
+	CTransparentRadioButton m_Texture[LFTexture8192-LFTextureAuto+1];
+	CTransparentRadioButton m_ShowDrives[2];
 
 	virtual void OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect);
 	virtual void DoDataExchange(CDataExchange* pDX);

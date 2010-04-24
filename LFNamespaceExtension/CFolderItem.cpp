@@ -189,7 +189,7 @@ BOOL CFolderItem::GetChildren(CGetChildrenEventArgs& e)
 			d.Icon = IDI_FLD_All;
 			e.children->AddTail(new CFolderItem(d));
 
-			for (unsigned int a=0; a<LFAttributeCount; a++)
+			for (UINT a=0; a<LFAttributeCount; a++)
 				if (theApp.m_Domains[data.DomainID]->ImportantAttributes->IsSet(a))
 				{
 					FolderSerialization d;
@@ -254,7 +254,7 @@ BOOL CFolderItem::GetChildren(CGetChildrenEventArgs& e)
 			return FALSE;
 		}
 
-		for (unsigned int a=0; a<res->m_Count; a++)
+		for (UINT a=0; a<res->m_Count; a++)
 		{
 			LFItemDescriptor* i = res->m_Files[a];
 
@@ -634,7 +634,7 @@ BOOL CFolderItem::OnExecuteMenuItem(CExecuteMenuitemsEventArgs& e)
 		s->AutoLocation = TRUE;
 		s->StoreMode = LFStoreModeInternal;
 
-		unsigned int res = LFCreateStore(s);
+		UINT res = LFCreateStore(s);
 		if (res!=LFOk)
 		{
 			wchar_t* tmpStr = LFGetErrorText(res);
@@ -660,7 +660,7 @@ BOOL CFolderItem::OnExecuteMenuItem(CExecuteMenuitemsEventArgs& e)
 			char key[LFKeySize];
 			strcpy_s(key, LFKeySize, folder->data.StoreID);
 
-			unsigned int res;
+			UINT res;
 			if (e.menuItem->GetVerb()==_T(VERB_MAKEDEFAULTSTORE))
 			{
 				res = LFMakeDefaultStore(&key[0]);
@@ -795,7 +795,7 @@ BOOL CFolderItem::OnChangeName(CChangeNameEventArgs& e)
 	strcpy_s(key, LFKeySize, data.StoreID);
 	USES_CONVERSION;
 	LPWSTR name = T2W(e.newName);
-	unsigned int res = LFSetStoreAttributes(&key[0], name, NULL);
+	UINT res = LFSetStoreAttributes(&key[0], name, NULL);
 	if (res!=LFOk)
 	{
 		wchar_t* tmpStr = LFGetErrorText(res);

@@ -11,7 +11,7 @@ public:
 	virtual void DoDataExchange(CDataExchange* pDX);
 	void PopulateListCtrl();
 
-	BOOL makeDefault;
+	bool makeDefault;
 
 	afx_msg BOOL OnInitDialog();
 	afx_msg void OnDestroy();

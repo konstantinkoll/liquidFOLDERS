@@ -184,8 +184,8 @@ void LFStoreNewDlg::DoDataExchange(CDataExchange* pDX)
 		DDX_Radio(pDX, IDC_INTERNALSTORE, store->StoreMode);
 		if (store->StoreMode==LFStoreModeInternal)
 		{
-			DDX_Check(pDX, IDC_MAKEDEFAULT, makeDefault);
-			DDX_Check(pDX, IDC_AUTODRIVE, store->AutoLocation);
+			makeDefault = ((CButton*)GetDlgItem(IDC_MAKEDEFAULT))->GetCheck()!=0;
+			store->AutoLocation = ((CButton*)GetDlgItem(IDC_AUTODRIVE))->GetCheck()!=0;
 			if (!store->AutoLocation)
 				strcpy_s(store->DatPath, MAX_PATH, Pfad);
 		}

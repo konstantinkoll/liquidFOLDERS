@@ -120,7 +120,7 @@ void CAbstractListView::OnUpdateCommands(CCmdUI* pCmdUI)
 	case ID_VIEW_CATEGORIES:
 		b = (m_FileList.GetView()!=LV_VIEW_LIST);
 		if (result)
-			b &= result->m_HasCategories;
+			b &= (result->m_HasCategories==true);
 		pCmdUI->SetCheck(m_ViewParameters.ShowCategories);
 		break;
 	case ID_VIEW_AUTOSIZECOLUMNS:

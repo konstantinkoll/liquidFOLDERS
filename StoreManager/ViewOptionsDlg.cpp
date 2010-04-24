@@ -6,7 +6,7 @@
 // DDX
 //
 
-void DDX_ComboBox(CDataExchange* pDX_, int nIDC_, unsigned int& selection_, int offset)
+void DDX_ComboBox(CDataExchange* pDX_, int nIDC_, UINT& selection_, int offset)
 {
 	HWND hWndCtrl = pDX_->PrepareCtrl(nIDC_);
 	ASSERT(hWndCtrl);
@@ -28,7 +28,7 @@ void DDX_ComboBox(CDataExchange* pDX_, int nIDC_, unsigned int& selection_, int 
 // ViewOptionsDlg
 //
 
-ViewOptionsDlg::ViewOptionsDlg(CWnd* pParentWnd, unsigned int _RibbonColor, LFViewParameters* _view, int _context, LFSearchResult* files)
+ViewOptionsDlg::ViewOptionsDlg(CWnd* pParentWnd, UINT _RibbonColor, LFViewParameters* _view, int _context, LFSearchResult* files)
 	: CAttributeListDialog(IDD_VIEWOPTIONS, pParentWnd)
 {
 	ASSERT(_view!=NULL);

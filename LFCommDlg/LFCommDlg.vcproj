@@ -419,6 +419,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CTransparentRadioButton.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\dllmain.cpp"
 				>
 				<FileConfiguration
@@ -565,10 +569,6 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\include\BLUEfolders.h"
-				>
-			</File>
-			<File
 				RelativePath=".\CAttributeProperties.h"
 				>
 			</File>
@@ -614,6 +614,10 @@
 			</File>
 			<File
 				RelativePath=".\CToolbarList.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CTransparentRadioButton.h"
 				>
 			</File>
 			<File
@@ -682,6 +686,10 @@
 			</File>
 			<File
 				RelativePath=".\LFWelcomeDlg.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\liquidFOLDERS.h"
 				>
 			</File>
 			<File

@@ -31,7 +31,7 @@ LFCore_API unsigned int LFGetLogicalDrives(unsigned int mask=LFGLD_Both);
 // Gibt einen Zeiger auf die IDs aller registrierten Nachrichten zurück
 LFCore_API LFMessageIDs* LFGetMessageIDs();
 
-// Gibt TRUE zurück, wenn diese Installation freigeschaltet ist
+// Gibt true zurück, wenn diese Installation freigeschaltet ist
 LFCore_API bool LFIsLicensed();
 
 
@@ -143,26 +143,26 @@ LFCore_API void LFFreeFilter(LFFilter* f);
 
 
 // Neues Suchergebnis mit Kontext ctx erzeugen
-LFCore_API LFSearchResult* LFAllocSearchResult(int ctx, LFSearchResult* res=NULL, BOOL AllowEmptyDrives=TRUE);
+LFCore_API LFSearchResult* LFAllocSearchResult(int ctx, LFSearchResult* res=NULL, bool AllowEmptyDrives=true);
 
 // Existierendes LFSearchResult freigeben
 LFCore_API void LFFreeSearchResult(LFSearchResult* res);
 
 // LFItemDescriptor zum LFSearchResult hinzufügen
-LFCore_API BOOL LFAddItemDescriptor(LFSearchResult* res, LFItemDescriptor* i);
+LFCore_API bool LFAddItemDescriptor(LFSearchResult* res, LFItemDescriptor* i);
 
 // LFItemDescriptor aus LFSearchResult entfernen
 //
 // !!ACHTUNG!!
 // Die Sortierreihenfolge geht verloren, LFItemDescriptor.Position wird bei
-// LFSearchResults, die nicht "hohl" sind (m_RawCopy==TRUE), jedoch angepasst.
+// LFSearchResults, die nicht "hohl" sind (m_RawCopy==true), jedoch angepasst.
 LFCore_API void LFRemoveItemDescriptor(LFSearchResult* res, unsigned int idx);
 
 // Alle markierten LFItemDescriptor (DeleteFlag==true) aus LFSearchResult entfernen
 //
 // !!ACHTUNG!!
 // Die Sortierreihenfolge geht verloren, LFItemDescriptor.Position wird bei
-// LFSearchResults, die nicht "hohl" sind (m_RawCopy==TRUE), jedoch angepasst.
+// LFSearchResults, die nicht "hohl" sind (m_RawCopy==true), jedoch angepasst.
 LFCore_API void LFRemoveFlaggedItemDescriptors(LFSearchResult* res);
 
 
@@ -174,7 +174,7 @@ LFCore_API LFTransactionList* LFAllocTransactionList();
 LFCore_API void LFFreeTransactionList(LFTransactionList* tl);
 
 // LFItemDescriptor zur LFTransactionList hinzufügen
-LFCore_API BOOL LFAddItemDescriptor(LFTransactionList* tl, LFItemDescriptor* i, unsigned int UserData=0);
+LFCore_API bool LFAddItemDescriptor(LFTransactionList* tl, LFItemDescriptor* i, unsigned int UserData=0);
 
 // Eintrag aus LFTransactionList entfernen
 //
@@ -218,7 +218,7 @@ LFCore_API void LFErrorBox(unsigned int ID, HWND hWnd=NULL);
 
 
 // Attribut als Sortierkriterium für eine Ansicht erlaubt ?
-LFCore_API BOOL LFAttributeSortableInView(unsigned int Attr, unsigned int ViewMode);
+LFCore_API bool LFAttributeSortableInView(unsigned int Attr, unsigned int ViewMode);
 
 
 
@@ -241,7 +241,7 @@ LFCore_API unsigned int LFGetStoreSettings(_GUID guid, LFStoreDescriptor* s);
 //   - Comment: optional
 //   - StoreMode: erforderlich
 //   - AutoLocation: erforderlich
-//   - DatPath: erforderlich, wenn AutoLocation==TRUE
+//   - DatPath: erforderlich, wenn AutoLocation==true
 //   - Alle anderen Parameter werden ignoriert bzw. ausgefüllt
 // - Eingabeparameter Hybrid-Store:
 //   - StoreName: optional (wird ggf. durch Standardname ersetzt)
@@ -255,17 +255,17 @@ LFCore_API unsigned int LFGetStoreSettings(_GUID guid, LFStoreDescriptor* s);
 //   - StoreMode: erforderlich
 //   - DatPath: erforderlich
 //   - Alle anderen Parameter werden ignoriert bzw. ausgefüllt
-LFCore_API unsigned int LFCreateStore(LFStoreDescriptor* s, BOOL MakeDefault=FALSE, HWND hWndSource=NULL);
+LFCore_API unsigned int LFCreateStore(LFStoreDescriptor* s, bool MakeDefault=false, HWND hWndSource=NULL);
 
 // Macht den internen Store zum Default Store
-LFCore_API unsigned int LFMakeDefaultStore(char* key, HWND hWndSource=NULL, BOOL InternalCall=FALSE);
+LFCore_API unsigned int LFMakeDefaultStore(char* key, HWND hWndSource=NULL, bool InternalCall=false);
 
 // Macht den externen Store zum Hybrid-Store
 LFCore_API unsigned int LFMakeHybridStore(char* key, HWND hWndSource=NULL);
 
 // Setzt Namen und Kommentar eines Stores
 // Ist name oder comment NULL, so wird der jeweilige Wert nicht verändert
-LFCore_API unsigned int LFSetStoreAttributes(char* key, wchar_t* name, wchar_t* comment, HWND hWndSource=NULL, BOOL InternalCall=FALSE);
+LFCore_API unsigned int LFSetStoreAttributes(char* key, wchar_t* name, wchar_t* comment, HWND hWndSource=NULL, bool InternalCall=false);
 
 // Löscht einen bestehenden Store
 LFCore_API unsigned int LFDeleteStore(char* key, HWND hWndSource=NULL);

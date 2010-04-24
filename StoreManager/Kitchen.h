@@ -1,7 +1,7 @@
 
 // Sortieren eines Suchergebnisses
 
-int compare(const LFSearchResult* res, const LFViewParameters* vp, unsigned int eins, unsigned int zwei)
+int compare(const LFSearchResult* res, const LFViewParameters* vp, UINT eins, UINT zwei)
 {
 	ASSERT(theApp.m_Attributes[LFAttrFileName]->Type==LFTypeUnicodeString);
 	ASSERT(theApp.m_Attributes[LFAttrStoreID]->Type==LFTypeAnsiString);
