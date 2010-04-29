@@ -330,7 +330,7 @@ CMFCRibbonCheckBox* LFApplication::CommandCheckBox(UINT nID)
 
 void LFApplication::SendMail(CString Subject)
 {
-	CString URL("mailto:support@liquidFOLDERS.net");
+	CString URL("mailto:support@liquidfolders.net");
 	if (Subject!="")
 		URL += _T("?subject=")+Subject;
 	ShellExecute(m_pActiveWnd->GetSafeHwnd(), _T("open"), URL, NULL, NULL, SW_SHOW);

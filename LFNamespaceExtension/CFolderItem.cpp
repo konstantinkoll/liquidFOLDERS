@@ -460,6 +460,7 @@ BOOL CFolderItem::GetColumn(CShellColumn& column, int index)
 	column.fmt = ((theApp.m_Attributes[index]->Type >= LFTypeUINT) || (index==LFAttrStoreID) || (index==LFAttrFileID)) ? NSESCF_Right : NSESCF_Left;
 	column.categorizerType = NSECT_Alphabetical;
 	column.index = index;
+	column.defaultVisible = (index!=LFAttrStoreID) && (index!=LFAttrFileID);
 
 	switch (theApp.m_Attributes[index]->Type)
 	{

@@ -1,6 +1,6 @@
 #include "StdAfx.h"
 #include "..\\include\\LFCore.h"
-#include "LFVariantData.h"
+#include "LFItemDescriptor.h"
 #include "IATA.h"
 
 
@@ -113,16 +113,16 @@ LFCore_API LFItemDescriptor* LFIATACreateFolderForAirport(LFAirport* airport)
 	size_t sz = strlen(tmpStr2)+1;
 	wchar_t tmpStr3[256];
 	MultiByteToWideChar(CP_ACP, 0, tmpStr2, (int)sz, tmpStr3, (int)sz);
-	SetAttributeUnicodeString(i, LFAttrFileName, tmpStr3);
+	SetAttribute(i, LFAttrFileName, tmpStr3);
 
 	// Ortsname in Unicode
 	sz = strlen(tmpStr1)+1;
 	MultiByteToWideChar(CP_ACP, 0, tmpStr1, (int)sz, tmpStr3, (int)sz);
-	SetAttributeUnicodeString(i, LFAttrLocationName, tmpStr3);
+	SetAttribute(i, LFAttrLocationName, tmpStr3);
 
 	// Weitere Attribute
-	SetAttributeAnsiString(i, LFAttrLocationIATA, airport->Code);
-	SetAttributeGeoCoordinates(i, LFAttrLocationGPS, airport->Location);
+	SetAttribute(i, LFAttrLocationIATA, airport->Code);
+	SetAttribute(i, LFAttrLocationGPS, &airport->Location);
 
 	return i;
 }

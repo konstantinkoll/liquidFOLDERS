@@ -5,6 +5,7 @@
 #include "..\\include\\LFCore.h"
 #include "liquidFOLDERS.h"
 #include "resource.h"
+#include "LFItemDescriptor.h"
 #include "LFVariantData.h"
 #include "Domains.h"
 #include "License.h"
@@ -18,6 +19,7 @@
 
 HMODULE LFCoreModuleHandle;
 LFMessageIDs LFMessages;
+extern unsigned char AttrTypes[];
 
 
 // Der Inhalt dieses Segments wird über alle Instanzen von LFCore geteilt.
@@ -149,89 +151,15 @@ LFCore_API LFAttributeDescriptor* LFGetAttributeInfo(unsigned int ID)
 	LFAttributeDescriptor* a = LFAllocAttributeDescriptor();
 	LoadString(LFCoreModuleHandle, ID+IDS_FirstAttribute, a->Name, 64);
 	a->AlwaysVisible = (ID==LFAttrFileName);
+	a->Type = AttrTypes[ID];
 
 	// Type and character count (where appropriate)
-	switch (ID)
-	{
-	case LFAttrStoreID:
-	case LFAttrFileID:
-		a->Type = LFTypeAnsiString;
-		a->cCharacters = LFKeySize-1;
-		break;
-	case LFAttrURL:
-	case LFAttrFrom:
-	case LFAttrTo:
-		a->Type = LFTypeAnsiString;
-		a->cCharacters = 255;
-		break;
-	case LFAttrLanguage:
-		a->Type = LFTypeAnsiString;
-		a->cCharacters = 2;
-		break;
-	case LFAttrLocationIATA:
-		a->Type = LFTypeAnsiString;
-		a->cCharacters = 3;
-		break;
-	case LFAttrISBN:
-	case LFAttrSignature:
-		a->Type = LFTypeAnsiString;
-		a->cCharacters = 31;
-		break;
-	case LFAttrVideoCodec:
-	case LFAttrAudioCodec:
-		a->Type = LFTypeFourCC;
-		break;
-	case LFAttrRating:
-	case LFAttrPriority:
-		a->Type = LFTypeRating;
-		break;
-	case LFAttrFileFormat:
-	case LFAttrChannels:
-	case LFAttrSamplerate:
-	case LFAttrBitrate:
-	case LFAttrHeight:
-	case LFAttrWidth:
-	case LFAttrPages:
-	case LFAttrResolution:
-		a->Type = LFTypeUINT;
-		break;
-	case LFAttrFileSize:
-		a->Type = LFTypeINT64;
-		break;
-	case LFAttrAperture:
-	case LFAttrFocus:
-		a->Type = LFTypeFraction;
-		break;
-	case LFAttrAspectRatio:
-		a->Type = LFTypeDouble;
-		break;
-	case LFAttrFlags:
-		a->Type = LFTypeFlags;
-		break;
-	case LFAttrLocationGPS:
-		a->Type = LFTypeGeoCoordinates;
-		break;
-	case LFAttrCreationTime:
-	case LFAttrFileTime:
-	case LFAttrRecordingTime:
-	case LFAttrDueTime:
-	case LFAttrDoneTime:
-		a->Type = LFTypeTime;
-		break;
-	case LFAttrDuration:
-		a->Type = LFTypeDuration;
-		break;
-	default:
-		a->Type = LFTypeUnicodeString;
-		a->cCharacters = (ID==LFAttrExposure) || (ID==LFAttrChip) ? 31 : 255;
-		if (ID==LFAttrHint)
-			a->RecommendedWidth = 350;
-	}
+	if ((a->Type==LFTypeUnicodeString) || (a->Type==LFTypeAnsiString))
+		a->cCharacters = GetAttributeMaxCharacterCount(ID);
 
 	// Recommended width
 	const unsigned int rWidths[] = { 200, 200, 100, 100, 100, 120, 100, 100, 100, 150, 140, 100 };
-	if (!a->RecommendedWidth)
-		a->RecommendedWidth = rWidths[a->Type];
+	a->RecommendedWidth = (ID==LFAttrHint) ? 350 : rWidths[a->Type];
 
 	// Category
 	if (ID<=LFAttrRating)
@@ -276,6 +204,8 @@ LFCore_API LFAttributeDescriptor* LFGetAttributeInfo(unsigned int ID)
 	case LFAttrBitrate:
 	case LFAttrPages:
 	case LFAttrRecordingEquipment:
+	case LFAttrFrom:
+	case LFAttrTo:
 		a->ReadOnly = true;
 		break;
 	default:
@@ -309,7 +239,7 @@ LFCore_API LFContextDescriptor* LFGetContextInfo(unsigned int ID)
 	c->AllowExtendedViews = (ID>LFContextClipboard);
 	c->AllowGroups = (ID>LFContextStoreHome) && (ID!=LFContextClipboard);
 
-	c->AllowedAttributes = new BitArray(LFAttributeCount);
+	c->AllowedAttributes = new LFBitArray(LFAttributeCount);
 	(*c->AllowedAttributes) += LFAttrFileName;
 	(*c->AllowedAttributes) += LFAttrStoreID;
 	(*c->AllowedAttributes) += LFAttrFileID;
@@ -377,7 +307,7 @@ LFCore_API LFDomainDescriptor* LFAllocDomainDescriptor()
 {
 	LFDomainDescriptor* d = static_cast<LFDomainDescriptor*>(malloc(sizeof(LFDomainDescriptor)));
 	ZeroMemory(d, sizeof(LFDomainDescriptor));
-	d->ImportantAttributes = new BitArray(LFAttributeCount);
+	d->ImportantAttributes = new LFBitArray(LFAttributeCount);
 	return d;
 }
 
@@ -511,180 +441,6 @@ LFCore_API void LFFreeDomainDescriptor(LFDomainDescriptor* d)
 		if (d->ImportantAttributes)
 			delete d->ImportantAttributes;
 		free(d);
-	}
-}
-
-
-LFCore_API LFItemDescriptor* LFAllocItemDescriptor()
-{
-	LFItemDescriptor* d = static_cast<LFItemDescriptor*>(malloc(sizeof(LFItemDescriptor)));
-	ZeroMemory(d, sizeof(LFItemDescriptor));
-	d->Position = -1;
-	d->RefCount = 1;
-
-	// Zeiger auf statische Attributwerte initalisieren
-	d->AttributeValues[LFAttrFileName] = &d->CoreAttributes.FileName;
-	d->AttributeValues[LFAttrStoreID] = &d->CoreAttributes.StoreID;
-	d->AttributeValues[LFAttrFileID] = &d->CoreAttributes.FileID;
-	d->AttributeValues[LFAttrComment] = &d->CoreAttributes.Comment;
-	d->AttributeValues[LFAttrHint] = &d->Hint;
-	d->AttributeValues[LFAttrCreationTime] = &d->CoreAttributes.CreationTime;
-	d->AttributeValues[LFAttrFileTime] = &d->CoreAttributes.FileTime;
-	d->AttributeValues[LFAttrFileFormat] = &d->CoreAttributes.FileFormat;
-	d->AttributeValues[LFAttrFileSize] = &d->CoreAttributes.FileSize;
-	d->AttributeValues[LFAttrFlags] = &d->CoreAttributes.Flags;
-	d->AttributeValues[LFAttrURL] = &d->CoreAttributes.URL;
-	d->AttributeValues[LFAttrTags] = &d->CoreAttributes.Tags;
-	d->AttributeValues[LFAttrRating] = &d->CoreAttributes.Rating;
-	d->AttributeValues[LFAttrPriority] = &d->CoreAttributes.Priority;
-	d->AttributeValues[LFAttrLocationName] = &d->CoreAttributes.LocationName;
-	d->AttributeValues[LFAttrLocationIATA] = &d->CoreAttributes.LocationIATA;
-	d->AttributeValues[LFAttrLocationGPS] = &d->CoreAttributes.LocationGPS;
-
-	// Für Attribute, die Unicode-Strings sind, auch die Zeiger für Unicode-String initalisieren
-	d->AttributeStrings[LFAttrFileName] = &d->CoreAttributes.FileName[0];
-	d->AttributeStrings[LFAttrComment] = &d->CoreAttributes.Comment[0];
-	d->AttributeStrings[LFAttrHint] = &d->Hint[0];
-	d->AttributeStrings[LFAttrTags] = &d->CoreAttributes.Tags[0];
-	d->AttributeStrings[LFAttrLocationName] = &d->CoreAttributes.LocationName[0];
-
-	return d;
-}
-
-LFCore_API LFItemDescriptor* LFAllocItemDescriptor(LFItemDescriptor* i)
-{
-	LFItemDescriptor* d = LFAllocItemDescriptor();
-	d->CategoryID = i->CategoryID;
-	d->CoreAttributes = i->CoreAttributes;
-	d->DeleteFlag = i->DeleteFlag;
-	wcscpy_s(d->Hint, 256, i->Hint);
-	d->IconID = i->IconID;
-	if (i->NextFilter)
-		d->NextFilter = LFAllocFilter(i->NextFilter);
-	d->Type = i->Type;
-
-	for (unsigned int a=0; a<LFAttributeCount; a++)
-	{
-		if ((a>LFLastLocalAttribute) && (i->AttributeValues[a]))
-		{
-			size_t sz = _msize(i->AttributeValues[a]);
-			d->AttributeValues[a] = malloc(sz);
-			memcpy(d->AttributeValues[a], i->AttributeValues, sz);
-		}
-		if ((i->AttributeStrings[a]) && (!d->AttributeStrings[a]))
-		{
-			size_t sz = _msize(i->AttributeStrings[a]);
-			d->AttributeStrings[a] = (wchar_t*)malloc(sz);
-			memcpy(d->AttributeStrings[a], i->AttributeStrings[a], sz);
-		}
-	}
-
-	return d;
-}
-
-LFCore_API void LFFreeItemDescriptor(LFItemDescriptor* f)
-{
-	if (f)
-	{
-		f->RefCount--;
-		if (!f->RefCount)
-		{
-			LFFreeFilter(f->NextFilter);
-			for (unsigned int a=0; a<LFAttributeCount; a++)
-				FreeAttribute(f, a);
-			free(f);
-		}
-	}
-}
-
-LFCore_API void LFGetAttributeVariantData(LFItemDescriptor* f, LFVariantData* v)
-{
-	if (f->AttributeValues[v->Attr])
-	{
-		v->IsNull = false;
-
-		switch (v->Type)
-		{
-		case LFTypeUnicodeString:
-			wcscpy_s(v->UnicodeString, 256, (wchar_t*)f->AttributeValues[v->Attr]);
-			break;
-		case LFTypeAnsiString:
-			strcpy_s(v->AnsiString, 256, (char*)f->AttributeValues[v->Attr]);
-			break;
-		case LFTypeFourCC:
-		case LFTypeUINT:
-		case LFTypeFlags:
-		case LFTypeDuration:
-			v->UINT = *(unsigned int*)f->AttributeValues[v->Attr];
-			break;
-		case LFTypeRating:
-			v->Rating = *(unsigned char*)f->AttributeValues[v->Attr];
-			break;
-		case LFTypeINT64:
-			v->INT64 = *(__int64*)f->AttributeValues[v->Attr];
-			break;
-		case LFTypeFraction:
-			v->Fraction = *(LFFraction*)f->AttributeValues[v->Attr];
-			break;
-		case LFTypeDouble:
-			v->Double = *(double*)f->AttributeValues[v->Attr];
-			break;
-		case LFTypeGeoCoordinates:
-			v->GeoCoordinates = *(LFGeoCoordinates*)f->AttributeValues[v->Attr];
-			break;
-		case LFTypeTime:
-			v->Time = *(FILETIME*)f->AttributeValues[v->Attr];
-			break;
-		}
-	}
-	else
-	{
-		LFGetNullVariantData(v, v->Type);
-	}
-}
-
-LFCore_API void LFSetAttributeVariantData(LFItemDescriptor* f, LFVariantData* v, wchar_t* ustr)
-{
-	v->IsNull = false;
-
-	switch (v->Type)
-	{
-	case LFTypeUnicodeString:
-		SetAttributeUnicodeString(f, v->Attr, v->UnicodeString);
-		break;
-	case LFTypeAnsiString:
-		SetAttributeAnsiString(f, v->Attr, v->AnsiString, ustr);
-		break;
-	case LFTypeFourCC:
-		SetAttributeFourCC(f, v->Attr, v->FourCC, ustr);
-		break;
-	case LFTypeRating:
-		SetAttributeRating(f, v->Attr, v->Rating);
-		break;
-	case LFTypeUINT:
-		SetAttributeUINT(f, v->Attr, v->UINT, ustr);
-		break;
-	case LFTypeINT64:
-		SetAttributeINT64(f, v->Attr, v->INT64, ustr);
-		break;
-	case LFTypeFraction:
-		SetAttributeFraction(f, v->Attr, v->Fraction, ustr);
-		break;
-	case LFTypeDouble:
-		SetAttributeDouble(f, v->Attr, v->Double, ustr);
-		break;
-	case LFTypeFlags:
-		SetAttributeFlags(f, v->Attr, v->Flags);
-		break;
-	case LFTypeGeoCoordinates:
-		SetAttributeGeoCoordinates(f, v->Attr, v->GeoCoordinates, ustr);
-		break;
-	case LFTypeTime:
-		SetAttributeTime(f, v->Attr, v->Time, ustr);
-		break;
-	case LFTypeDuration:
-		SetAttributeDuration(f, v->Attr, v->Duration, ustr);
-		break;
 	}
 }
 
@@ -863,11 +619,12 @@ void AddLocation(LFSearchResult* res, char* loc)
 	{
 		LFItemDescriptor* i = LFIATACreateFolderForAirport(airport);
 		sprintf_s(tmpStr, 8, "%d", res->m_Count+1);
-		SetAttributeAnsiString(i, LFAttrFileID, tmpStr);
+		SetAttribute(i, LFAttrFileID, tmpStr);
 		wchar_t hint[256];
 		swprintf_s(hint, 256 , L"%d files", 10+(rand()%1000));
-		SetAttributeUnicodeString(i, LFAttrHint, hint);
-		SetAttributeRating(i, LFAttrRating, rand()%(LFMaxRating+1));
+		SetAttribute(i, LFAttrHint, hint);
+		unsigned char Rating = rand()%(LFMaxRating+1);
+		SetAttribute(i, LFAttrRating, &Rating);
 		res->AddItemDescriptor(i);
 	}
 }

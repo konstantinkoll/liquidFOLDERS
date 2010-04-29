@@ -1,6 +1,7 @@
 #include "StdAfx.h"
 #include "..\\include\\LFCore.h"
 #include "LFTransactionList.h"
+#include <assert.h>
 #include <malloc.h>
 
 LFTransactionList::LFTransactionList()

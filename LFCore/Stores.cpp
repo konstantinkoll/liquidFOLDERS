@@ -1,6 +1,6 @@
 #include "StdAfx.h"
 #include "..\\include\\LFCore.h"
-#include "LFVariantData.h"
+#include "LFItemDescriptor.h"
 #include "Mutex.h"
 #include "StoreCache.h"
 #include <io.h>
@@ -166,11 +166,11 @@ void AddDrives(LFSearchResult* res)
 				d->Type |= LFTypeGhosted | LFTypeNotMounted;
 			}
 			d->CategoryID = LFCategoryDrives;
-			SetAttributeUnicodeString(d, LFAttrFileName, sfi.szDisplayName);
+			SetAttribute(d, LFAttrFileName, sfi.szDisplayName);
 			char key[] = " :";
 			key[0] = cDrive;
-			SetAttributeAnsiString(d, LFAttrFileID, key);
-			SetAttributeUnicodeString(d, LFAttrHint, sfi.szTypeName);
+			SetAttribute(d, LFAttrFileID, key);
+			SetAttribute(d, LFAttrHint, sfi.szTypeName);
 			res->AddItemDescriptor(d);
 		}
 	}

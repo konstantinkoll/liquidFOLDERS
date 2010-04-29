@@ -337,10 +337,6 @@
 		</Configuration>
 	</Configurations>
 	<References>
-		<ProjectReference
-			ReferencedProjectIdentifier="{33AF1F94-EEF0-47B9-9006-973B1A34A552}"
-			RelativePathToProject=".\LFIndexing\LFIndexing.vcproj"
-		/>
 	</References>
 	<Files>
 		<Filter
@@ -349,19 +345,11 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\LFCore.cpp"
+				RelativePath=".\CHeapfile.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\LFSearchResult.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\LFTransactionList.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\LFVariantData.cpp"
+				RelativePath=".\CIndex.cpp"
 				>
 			</File>
 			<File
@@ -410,6 +398,34 @@
 			</File>
 			<File
 				RelativePath=".\IATA.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\IdxTables.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\LFBitArray.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\LFCore.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\LFItemDescriptor.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\LFSearchResult.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\LFTransactionList.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\LFVariantData.cpp"
 				>
 			</File>
 			<File
@@ -475,23 +491,11 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\include\LFCore.h"
+				RelativePath=".\CHeapfile.h"
 				>
 			</File>
 			<File
-				RelativePath=".\LFSearchResult.h"
-				>
-			</File>
-			<File
-				RelativePath=".\LFTransactionList.h"
-				>
-			</File>
-			<File
-				RelativePath=".\LFVariantData.h"
-				>
-			</File>
-			<File
-				RelativePath="..\include\liquidFOLDERS.h"
+				RelativePath=".\CIndex.h"
 				>
 			</File>
 			<File
@@ -511,7 +515,39 @@
 				>
 			</File>
 			<File
+				RelativePath=".\IdxTables.h"
+				>
+			</File>
+			<File
+				RelativePath=".\LFBitArray.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\LFCore.h"
+				>
+			</File>
+			<File
+				RelativePath=".\LFItemDescriptor.h"
+				>
+			</File>
+			<File
+				RelativePath=".\LFSearchResult.h"
+				>
+			</File>
+			<File
+				RelativePath=".\LFTransactionList.h"
+				>
+			</File>
+			<File
+				RelativePath=".\LFVariantData.h"
+				>
+			</File>
+			<File
 				RelativePath=".\License.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\liquidFOLDERS.h"
 				>
 			</File>
 			<File
@@ -550,14 +586,6 @@
 			>
 			<File
 				RelativePath=".\res\Bag.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\LFCore.rc"
-				>
-			</File>
-			<File
-				RelativePath=".\res\LFCore.rc2"
 				>
 			</File>
 			<File
@@ -674,6 +702,14 @@
 			</File>
 			<File
 				RelativePath=".\res\FLD_Web.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\LFCore.rc"
+				>
+			</File>
+			<File
+				RelativePath=".\res\LFCore.rc2"
 				>
 			</File>
 			<File

@@ -2,8 +2,8 @@
 //
 
 #include "stdafx.h"
-#include "LFIndexing.h"
-#include "liquidFOLDERS.h"
+#include "LFCore.h"
+#include "..\\LFCore\\CHeapfile.h"
 #include <iostream>
 
 using namespace std;
@@ -19,7 +19,7 @@ void Test_CHeapfile()
 {
 	// Create empty file - in a live system, this is done by
 	// the indexing class which employs a CHeapfile object.
-	char Filename[MAX_PATH] = "H:\\TEST.IDX";
+	char Filename[MAX_PATH] = "J:\\TEST.IDX";
 	HANDLE hFile = CreateFileA(Filename, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, 0,NULL);
 	if (hFile==INVALID_HANDLE_VALUE)
 	{
@@ -28,7 +28,7 @@ void Test_CHeapfile()
 	}
 	CloseHandle(hFile);
 
-	CHeapfile* f = new CHeapfile(Filename, sizeof(IdxData));
+	CHeapfile* f = new CHeapfile(Filename, "", sizeof(IdxData));
 
 	char Key[LFKeySize] = { 0 };
 	IdxData Buffer = { 0 };
@@ -136,7 +136,7 @@ void Test_CHeapfile()
 
 void Test_BitArray()
 {
-	BitArray a(64000);
+	LFBitArray a(64000);
 
 	cout << "Size:      " << a.m_nSize << endl;
 	cout << "Allocated: " << a.m_nTAllocated << endl;
@@ -146,8 +146,8 @@ void Test_BitArray()
 	a+=8;
 	cout << a.IsSet(0) << endl;
 
-	BitArray b(64000);
-	BitArray c=b+0;
+	LFBitArray b(64000);
+	LFBitArray c=b+0;
 
 	cout << b.IsSet(0) << endl;
 	cout << c.IsSet(0) << endl;

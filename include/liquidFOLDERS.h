@@ -8,7 +8,7 @@
 
 // BitArray
 
-#include "LFIndexing.h"
+#include "..\\LFCore\\LFBitArray.h"
 
 
 // Messages
@@ -140,7 +140,7 @@ struct LFContextDescriptor
 	wchar_t Name[64];
 	bool AllowExtendedViews;
 	bool AllowGroups;
-	BitArray* AllowedAttributes;
+	LFBitArray* AllowedAttributes;
 };
 
 
@@ -219,6 +219,7 @@ struct LFContextDescriptor
 #define LFTypeTime                     10
 #define LFTypeDuration                 11
 
+#define LFTypeCount                    12
 #define LFMaxRating                    10
 
 
@@ -231,6 +232,8 @@ struct LFVariantData
 	bool IsNull;
 	union
 	{
+		unsigned char Value;
+
 		wchar_t UnicodeString[256];
 		char AnsiString[256];
 		unsigned int FourCC;
@@ -312,7 +315,7 @@ struct LFDomainDescriptor
 	wchar_t Hint[256];
 	unsigned int IconID;
 	unsigned int CategoryID;
-	BitArray* ImportantAttributes;
+	LFBitArray* ImportantAttributes;
 };
 
 
@@ -350,10 +353,11 @@ struct LFFilter
 };
 
 
-// Attribute structures
+// Core attribute structure
 
 struct LFCoreAttributes
 {
+	// Public
 	wchar_t FileName[256];
 	char StoreID[LFKeySize];
 	char FileID[LFKeySize];
@@ -370,78 +374,10 @@ struct LFCoreAttributes
 	wchar_t LocationName[256];
 	char LocationIATA[4];
 	LFGeoCoordinates LocationGPS;
-};
 
-struct LFDocumentAttributes
-{
-	wchar_t Author[256];
-	wchar_t Copyright[256];
-	wchar_t Title[256];
-	wchar_t Responsible[256];
-	FILETIME DueTime;
-	FILETIME DoneTime;
-	char Signature[32];
-	char ISBN[32];
-	unsigned int Pages;
-	char Language[3];
-};
-
-struct LFMailAttributes
-{
-	char From[256];
-	char To[256];
-	wchar_t Subject[256];
-	char Language[3];
-};
-
-struct LFAudioAttributes
-{
-	wchar_t Artist[256];
-	wchar_t Copyright[256];
-	wchar_t Title[256];
-	wchar_t Album[256];
-	unsigned int Channels;
-	unsigned int Samplerate;
-	unsigned int Duration;
-	unsigned int Bitrate;
-	FILETIME RecordingTime;
-	char Language[3];
-};
-
-struct LFPictureAttributes
-{
-	wchar_t Artist[256];
-	wchar_t Copyright[256];
-	wchar_t Title[256];
-	wchar_t Equipment[256];
-	wchar_t Roll[256];
-	wchar_t Exposure[32];
-	unsigned int Height;
-	unsigned int Width;
-	LFFraction Aperture;
-	LFFraction Focus;
-	wchar_t Chip[32];
-	FILETIME RecordingTime;
-	char Language[3];
-};
-
-struct LFVideoAttributes
-{
-	wchar_t Artist[256];
-	wchar_t Copyright[256];
-	wchar_t Title[256];
-	wchar_t Equipment[256];
-	wchar_t Roll[256];
-	unsigned int Height;
-	unsigned int Width;
-	unsigned int AudioCodec;
-	unsigned int VideoCodec;
-	unsigned int Channels;
-	unsigned int Samplerate;
-	unsigned int Duration;
-	unsigned int Bitrate;
-	FILETIME RecordingTime;
-	char Language[3];
+	// Private
+	unsigned int SlaveID;
+	//unsigned int DomainID;
 };
 
 
@@ -465,8 +401,8 @@ struct LFVideoAttributes
 struct LFItemDescriptor
 {
 	LFFilter* NextFilter;
-	unsigned int IconID;
 	unsigned int CategoryID;
+	unsigned int IconID;
 	unsigned int Type;
 
 	LFCoreAttributes CoreAttributes;
@@ -478,6 +414,7 @@ struct LFItemDescriptor
 	int Position;
 	bool DeleteFlag;
 	unsigned int RefCount;
+	void* Slave;
 };
 
 

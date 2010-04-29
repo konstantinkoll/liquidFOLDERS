@@ -19,7 +19,7 @@ CInspectorWnd::CInspectorWnd()
 	for (UINT a=0; a<AttrCount; a++)
 	{
 		AttributeValues[a].Attr = a;
-		LFGetNullVariantData(&AttributeValues[a], a<LFAttributeCount ? theApp.m_Attributes[a]->Type : LFTypeUnicodeString);
+		LFGetNullVariantData(&AttributeValues[a]);
 	}
 }
 
@@ -70,7 +70,7 @@ void CInspectorWnd::UpdateStart(BOOL Reset)
 		for (UINT a=0; a<AttrCount; a++)
 		{
 			AttributeValues[a].Attr = a;
-			LFGetNullVariantData(&AttributeValues[a], a<LFAttributeCount ? theApp.m_Attributes[a]->Type : LFTypeUnicodeString);
+			LFGetNullVariantData(&AttributeValues[a]);
 		}
 	}
 }

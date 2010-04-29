@@ -2,6 +2,7 @@
 #include "..\\include\\LFCore.h"
 #include "LFSearchResult.h"
 #include "StoreCache.h"
+#include <assert.h>
 #include <malloc.h>
 
 LFSearchResult::LFSearchResult(int ctx)

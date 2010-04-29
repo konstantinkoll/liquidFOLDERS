@@ -194,7 +194,7 @@ int compare(const LFSearchResult* res, const LFViewParameters* vp, UINT eins, UI
 						}
 			break;
 		default:
-			assert(false);
+			ASSERT(FALSE);
 		}
 
 		// Ggf. Reihenfolge umkehren

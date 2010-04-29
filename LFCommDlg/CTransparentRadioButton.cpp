@@ -92,7 +92,7 @@ void CTransparentRadioButton::OnPaint()
 	CFont* pOldFont = (CFont*)dc.SelectStockObject(DEFAULT_GUI_FONT);
 	CString tmpStr;
 	GetWindowText(tmpStr);
-	dc.SetTextColor(IsWindowEnabled() ? 0x000000 : 0x687780);
+	dc.SetTextColor(IsWindowEnabled() ? 0x000000 : 0x7B7770);
 	const UINT textflags = DT_SINGLELINE | DT_LEFT | DT_END_ELLIPSIS | DT_VCENTER;
 	dc.DrawText(tmpStr, rectText, textflags | DT_CALCRECT);
 	rectText.OffsetRect(0, (rect.Height()-rectText.Height())/2);

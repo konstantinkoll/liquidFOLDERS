@@ -70,7 +70,6 @@ void CListView::Create(CWnd* pParentWnd, LFSearchResult* _result, UINT _ViewID)
 
 void CListView::SetSearchResult(LFSearchResult* _result)
 {
-	m_FileList.SetRedraw(FALSE);
 	m_FileList.ItemChanged = 1;
 
 	// Items
@@ -118,7 +117,6 @@ void CListView::SetSearchResult(LFSearchResult* _result)
 		m_FileList.SetHeader(TRUE);
 
 	m_FileList.ItemChanged = 0;
-	m_FileList.SetRedraw(TRUE);
 }
 
 void CListView::SetViewOptions(UINT _ViewID, BOOL Force)

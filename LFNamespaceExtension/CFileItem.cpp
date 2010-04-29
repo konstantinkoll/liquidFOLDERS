@@ -163,7 +163,7 @@ BOOL CFileItem::GetFileDescriptor(FILEDESCRIPTOR* fd)
 // in the namespace extension. Folder items should include 
 // NSEItemAttributes.Folder in the return value. Other attributes should be 
 // returned if the item supports the corresponding functionality. 
-NSEItemAttributes CFileItem::GetAttributes(NSEItemAttributes requested)
+NSEItemAttributes CFileItem::GetAttributes(NSEItemAttributes /*requested*/)
 {
 	int ret = NSEIA_CanRename
 		| NSEIA_CanDelete
@@ -172,8 +172,6 @@ NSEItemAttributes CFileItem::GetAttributes(NSEItemAttributes requested)
 		| NSEIA_FileSystem
 		| NSEIA_CanCopy;
 	return (NSEItemAttributes)ret;
-	
-	
 }
 
 int CFileItem::GetTileViewColumnIndices(UINT* indices)

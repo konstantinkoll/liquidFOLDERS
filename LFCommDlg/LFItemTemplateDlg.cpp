@@ -16,7 +16,7 @@ LFItemTemplateDlg::LFItemTemplateDlg(CWnd* pParentWnd, LFItemDescriptor* pItem)
 	for (UINT a=0; a<LFAttributeCount; a++)
 	{
 		AttributeValues[a].Attr = a;
-		LFGetNullVariantData(&AttributeValues[a], p_App->m_Attributes[a]->Type);
+		LFGetNullVariantData(&AttributeValues[a]);
 	}
 }
 
@@ -54,7 +54,7 @@ BOOL LFItemTemplateDlg::OnInitDialog()
 	for (UINT a=0; a<LFAttributeCount; a++)
 		if ((!p_App->m_Attributes[a]->ReadOnly) && (a!=LFAttrFileName))
 		{
-			switch (p_App->m_Attributes[a]->Type)
+			switch (AttributeValues[a].Type)
 			{
 			case LFTypeAnsiString:
 				pAttributes[a] = (a==LFAttrLocationIATA) ? new CAttributePropertyIATA(&AttributeValues[a], (CAttributeProperty**)&pAttributes[LFAttrLocationName], (CAttributeProperty**)&pAttributes[LFAttrLocationGPS]) : new CAttributeProperty(&AttributeValues[a]);
@@ -98,7 +98,7 @@ void LFItemTemplateDlg::OnReset()
 {
 	for (UINT a=0; a<LFAttributeCount; a++)
 	{
-		LFGetNullVariantData(&AttributeValues[a], p_App->m_Attributes[a]->Type);
+		LFGetNullVariantData(&AttributeValues[a]);
 
 		if (pAttributes[a])
 			pAttributes[a]->SetValue(_T(""), FALSE);

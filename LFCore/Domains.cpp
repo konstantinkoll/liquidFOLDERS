@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "..\\include\\LFCore.h"
-#include "LFVariantData.h"
+#include "LFItemDescriptor.h"
 #include "Domains.h"
 #include "Mutex.h"
 #include "StoreCache.h"
@@ -17,10 +17,10 @@ LFItemDescriptor* CreateDomainItem(const wchar_t* Name, const wchar_t* Hint, con
 	d->IconID = IconID;
 	d->CategoryID = CategoryID;
 	d->Type = LFTypeVirtual;
-	SetAttributeUnicodeString(d, LFAttrFileName, Name);
-	SetAttributeAnsiString(d, LFAttrStoreID, StoreID);
-	SetAttributeAnsiString(d, LFAttrFileID, FileID);
-	SetAttributeUnicodeString(d, LFAttrHint, Hint);
+	SetAttribute(d, LFAttrFileName, Name);
+	SetAttribute(d, LFAttrStoreID, StoreID);
+	SetAttribute(d, LFAttrFileID, FileID);
+	SetAttribute(d, LFAttrHint, Hint);
 
 	if (!nf)
 	{

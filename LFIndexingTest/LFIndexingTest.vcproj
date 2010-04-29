@@ -329,10 +329,6 @@
 		</Configuration>
 	</Configurations>
 	<References>
-		<ProjectReference
-			ReferencedProjectIdentifier="{33AF1F94-EEF0-47B9-9006-973B1A34A552}"
-			RelativePathToProject=".\LFIndexing\LFIndexing.vcproj"
-		/>
 	</References>
 	<Files>
 		<Filter
@@ -387,11 +383,11 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\include\LFIndexing.h"
+				RelativePath="..\include\BitArray.h"
 				>
 			</File>
 			<File
-				RelativePath="..\include\BitArray.h"
+				RelativePath="..\include\LFIndexing.h"
 				>
 			</File>
 			<File

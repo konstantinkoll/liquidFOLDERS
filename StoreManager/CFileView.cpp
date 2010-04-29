@@ -65,6 +65,7 @@ void CFileView::OnUpdateSearchResult(LFSearchResult* _result, int _FocusItem)
 		else
 		{
 			m_DropTarget.Revoke();
+			m_pDropTarget = NULL;
 		}
 
 		ActiveContextID = _result->m_ContextView;
@@ -78,6 +79,7 @@ void CFileView::OnUpdateSearchResult(LFSearchResult* _result, int _FocusItem)
 	else
 	{
 		m_DropTarget.Revoke();
+		m_pDropTarget = NULL;
 		FocusItem = -1;
 	}
 

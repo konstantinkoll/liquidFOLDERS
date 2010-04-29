@@ -60,6 +60,7 @@ void LFSelectLocationIATADlg::LoadCountry(UINT country, BOOL SelectFirst)
 	}
 	li->SetItemState(sel, LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
 	li->SetItemState(sel, LVIS_SELECTED, LVIS_SELECTED);
+	li->EnsureVisible(sel, FALSE);
 
 	li->SetRedraw(TRUE);
 	li->Invalidate();

@@ -1,6 +1,6 @@
 #include "StdAfx.h"
 #include "..\\include\\LFCore.h"
-#include "LFVariantData.h"
+#include "LFItemDescriptor.h"
 #include "Mutex.h"
 #include "Stores.h"
 #include "StoreCache.h"
@@ -513,7 +513,7 @@ LFItemDescriptor* StoreDescriptor2ItemDescriptor(LFStoreDescriptor* s)
 		d->Type |= LFTypeDefaultStore;
 		wchar_t ds[256];
 		LoadStringW(LFCoreModuleHandle, IDS_DefaultStore, ds, 256);
-		SetAttributeUnicodeString(d, LFAttrHint, ds);
+		SetAttribute(d, LFAttrHint, ds);
 	}
 	else
 	{
@@ -525,7 +525,7 @@ LFItemDescriptor* StoreDescriptor2ItemDescriptor(LFStoreDescriptor* s)
 				LoadStringW(LFCoreModuleHandle, IsMounted ? IDS_SeenOn :IDS_LastSeen, ls, 256);
 				wchar_t hint[256];
 				wsprintf(hint, ls, s->LastSeen);
-				SetAttributeUnicodeString(d, LFAttrHint, hint);
+				SetAttribute(d, LFAttrHint, hint);
 			}
 	}
 
@@ -534,12 +534,12 @@ LFItemDescriptor* StoreDescriptor2ItemDescriptor(LFStoreDescriptor* s)
 
 	d->CategoryID = s->StoreMode;
 	d->Type |= LFTypeStore;
-	SetAttributeUnicodeString(d, LFAttrFileName, s->StoreName);
-	SetAttributeUnicodeString(d, LFAttrComment, s->Comment);
-	SetAttributeAnsiString(d, LFAttrStoreID, s->StoreID);
-	SetAttributeAnsiString(d, LFAttrFileID, s->StoreID);
-	SetAttributeTime(d, LFAttrCreationTime, s->CreationTime);
-	SetAttributeTime(d, LFAttrFileTime, s->FileTime);
+	SetAttribute(d, LFAttrFileName, s->StoreName);
+	SetAttribute(d, LFAttrComment, s->Comment);
+	SetAttribute(d, LFAttrStoreID, s->StoreID);
+	SetAttribute(d, LFAttrFileID, s->StoreID);
+	SetAttribute(d, LFAttrCreationTime, &s->CreationTime);
+	SetAttribute(d, LFAttrFileTime, &s->FileTime);
 	d->NextFilter = nf;
 
 	return d;

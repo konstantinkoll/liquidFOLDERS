@@ -87,13 +87,13 @@ LFCore_API LFItemDescriptor* LFAllocItemDescriptor();
 LFCore_API LFItemDescriptor* LFAllocItemDescriptor(LFItemDescriptor* i);
 
 // Existierenden LFItemDescriptor freigeben
-LFCore_API void LFFreeItemDescriptor(LFItemDescriptor* f);
+LFCore_API void LFFreeItemDescriptor(LFItemDescriptor* i);
 
 // Attributwert holen
-LFCore_API void LFGetAttributeVariantData(LFItemDescriptor* f, LFVariantData* v);
+LFCore_API void LFGetAttributeVariantData(LFItemDescriptor* i, LFVariantData* v);
 
 // Attributwert setzen
-LFCore_API void LFSetAttributeVariantData(LFItemDescriptor* f, LFVariantData* v, wchar_t* ustr=NULL);
+LFCore_API void LFSetAttributeVariantData(LFItemDescriptor* i, LFVariantData* v, wchar_t* ustr=NULL);
 
 
 
@@ -127,10 +127,11 @@ LFCore_API void LFDurationToString(unsigned int d, wchar_t* str, size_t cCount);
 
 
 // Erzeugt eine neutrale LFVariantData-Struktur (Null-Element)
-LFCore_API void LFGetNullVariantData(LFVariantData* v, unsigned char _Type);
+// v->Attr muss gesetzt sein
+LFCore_API void LFGetNullVariantData(LFVariantData* v);
 
 // Prüft, ob ein Dateiattribut gleich einer LFVariantData-Struktur ist
-LFCore_API bool LFIsEqualToVariantData(LFItemDescriptor* f, LFVariantData* v);
+LFCore_API bool LFIsEqualToVariantData(LFItemDescriptor* i, LFVariantData* v);
 
 
 
