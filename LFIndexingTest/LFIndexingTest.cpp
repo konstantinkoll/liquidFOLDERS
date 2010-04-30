@@ -38,6 +38,8 @@ void Test_CIndex()
 		__int64 sz = a;
 		SetAttribute(i, LFAttrFileSize, &sz);
 
+		i->CoreAttributes.SlaveID = a%6;
+
 		idx->AddItem(i);
 		delete i;
 	}
