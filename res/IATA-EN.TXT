@@ -1900,8 +1900,8 @@ DUJ     Du Bois, USA;4;41*10'42"N, 78*53'55"W
 DUM     Dumai, Indonesia;4;1*36'33"N, 101*26'1"E
 DUN     Dundas, Greenland;4;76*34'1"N, 68*48'0"W
 DUQ     Duncan, Canada;4;48*44'59"N, 123*43'5"W
-DUR     Durban, South Africa;4;29*58'12"S, 30*57'2"E
-DUS NRW Duesseldorf, Germany;4;51*17'22"N, 6*46'0"E
+DUR     Durban, South Africa;5;29*36'52"S, 31*06'59"E
+DUS NRW Dusseldorf, Germany;4;51*17'22"N, 6*46'0"E
 DUT     Dutch Harbor, USA;4;53*54'1"N, 166*32'37"W
 DUX     Dumas, USA;4;35*51'29"N, 102*0'47"W
 DVA     Deva, Romania;4;45*52'59"N, 22*53'60"E
