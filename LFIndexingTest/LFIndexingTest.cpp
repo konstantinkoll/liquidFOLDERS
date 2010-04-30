@@ -3,6 +3,7 @@
 
 #include "stdafx.h"
 #include "LFCore.h"
+#include "..\\LFCore\\CIndex.h"
 #include "..\\LFCore\\CHeapfile.h"
 #include <iostream>
 
@@ -15,7 +16,64 @@ struct IdxData
 	char fill[8192];
 };
 
-void Test_CHeapfile()
+void LFCore_API SetAttribute(LFItemDescriptor* i, unsigned int attr, const void* v, bool ToString=true, wchar_t* ustr=NULL);
+
+void Test_CIndex()
+{
+	CIndex* idx;
+
+	// Add 50000 files
+	cout << endl << "Add 50000 files...";
+	DWORD start = GetTickCount();
+
+	idx = new CIndex("J:\\", "TEST1234");
+	for (UINT a=0; a<50000; a++)
+	{
+		LFItemDescriptor* i = LFAllocItemDescriptor();
+		SetAttribute(i, LFAttrFileName, L"Test file");
+		SetAttribute(i, LFAttrStoreID, L"TEST1234");
+		char Key[LFKeySize];
+		sprintf_s(Key, LFKeySize, "KEY%d", a);
+		SetAttribute(i, LFAttrFileID, Key);
+		__int64 sz = a;
+		SetAttribute(i, LFAttrFileSize, &sz);
+
+		idx->AddItem(i);
+		delete i;
+	}
+	delete idx;
+
+	cout << " " << GetTickCount()-start << " ms";
+	cin.get();
+
+	// Retrieve 50000 files
+	cout << endl << "Retrieve and verify 50000 files...";
+	start = GetTickCount();
+
+	LFFilter* f = LFAllocFilter();
+	f->Mode = LFFilterModeSearchInStore;
+	strcpy_s(f->StoreID, LFKeySize, "TEST1234");
+
+	LFSearchResult* res = LFAllocSearchResult(LFContextDefault);
+
+	idx = new CIndex("J:\\", "TEST1234");
+	idx->Retrieve(NULL, res);
+	delete idx;
+
+	for (UINT a=0; a<50000; a++)
+	{
+		char Key[LFKeySize];
+		sprintf_s(Key, LFKeySize, "KEY%d", a);
+		if (strcmp(Key, res->m_Files[a]->CoreAttributes.FileID)!=0)
+			cout << a << " ";
+	}
+
+	cout << " " << GetTickCount()-start << " ms";
+	cin.get();
+
+}
+
+/*void Test_CHeapfile()
 {
 	// Create empty file - in a live system, this is done by
 	// the indexing class which employs a CHeapfile object.
@@ -132,9 +190,9 @@ void Test_CHeapfile()
 
 	delete f;
 	cin.get();
-}
+}*/
 
-void Test_BitArray()
+/*void Test_BitArray()
 {
 	LFBitArray a(64000);
 
@@ -153,12 +211,14 @@ void Test_BitArray()
 	cout << c.IsSet(0) << endl;
 
 	cin.get();
-}
+}*/
 
 int _tmain(int /*argc*/, _TCHAR* /*argv[]*/)
 {
 	//std::cout << "##### BitArray #####" << endl;
 	//Test_BitArray();
-	std::cout << endl << endl << "##### CHeapfile #####" << endl;
-	Test_CHeapfile();
+	//std::cout << endl << endl << "##### CHeapfile #####" << endl;
+	//Test_CHeapfile();
+	std::cout << endl << endl << "##### CIndex #####" << endl;
+	Test_CIndex();
 }

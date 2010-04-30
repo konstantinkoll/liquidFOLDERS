@@ -13,7 +13,6 @@
 #include "Stores.h"
 #include "License.h"
 #include <iostream>
-#include <malloc.h>
 #include <winioctl.h>
 
 
@@ -132,7 +131,7 @@ LFCore_API bool LFIsLicensed()
 
 LFCore_API LFAttributeDescriptor* LFAllocAttributeDescriptor()
 {
-	LFAttributeDescriptor* a = static_cast<LFAttributeDescriptor*>(malloc(sizeof(LFAttributeDescriptor)));
+	LFAttributeDescriptor* a = new LFAttributeDescriptor;
 	ZeroMemory(a, sizeof(LFAttributeDescriptor));
 	return a;
 }
@@ -218,13 +217,13 @@ LFCore_API LFAttributeDescriptor* LFGetAttributeInfo(unsigned int ID)
 LFCore_API void LFFreeAttributeDescriptor(LFAttributeDescriptor* a)
 {
 	if (a)
-		free(a);
+		delete a;
 }
 
 
 LFCore_API LFContextDescriptor* LFAllocContextDescriptor()
 {
-	LFContextDescriptor* c = static_cast<LFContextDescriptor*>(malloc(sizeof(LFContextDescriptor)));
+	LFContextDescriptor* c = new LFContextDescriptor;
 	ZeroMemory(c, sizeof(LFContextDescriptor));
 	return c;
 }
@@ -268,14 +267,14 @@ LFCore_API void LFFreeContextDescriptor(LFContextDescriptor* c)
 	{
 		if (c->AllowedAttributes)
 			delete c->AllowedAttributes;
-		free(c);
+		delete c;
 	}
 }
 
 
 LFCore_API LFItemCategoryDescriptor* LFAllocItemCategoryDescriptor()
 {
-	LFItemCategoryDescriptor* c = static_cast<LFItemCategoryDescriptor*>(malloc(sizeof(LFItemCategoryDescriptor)));
+	LFItemCategoryDescriptor* c = new LFItemCategoryDescriptor;
 	ZeroMemory(c, sizeof(LFItemCategoryDescriptor));
 	return c;
 }
@@ -300,12 +299,12 @@ LFCore_API LFItemCategoryDescriptor* LFGetItemCategoryInfo(unsigned int ID)
 LFCore_API void LFFreeItemCategoryDescriptor(LFItemCategoryDescriptor* c)
 {
 	if (c)
-		free(c);
+		delete c;
 }
 
 LFCore_API LFDomainDescriptor* LFAllocDomainDescriptor()
 {
-	LFDomainDescriptor* d = static_cast<LFDomainDescriptor*>(malloc(sizeof(LFDomainDescriptor)));
+	LFDomainDescriptor* d = new LFDomainDescriptor;
 	ZeroMemory(d, sizeof(LFDomainDescriptor));
 	d->ImportantAttributes = new LFBitArray(LFAttributeCount);
 	return d;
@@ -440,14 +439,14 @@ LFCore_API void LFFreeDomainDescriptor(LFDomainDescriptor* d)
 	{
 		if (d->ImportantAttributes)
 			delete d->ImportantAttributes;
-		free(d);
+		delete d;
 	}
 }
 
 
 LFCore_API LFFilter* LFAllocFilter(LFFilter* f)
 {
-	LFFilter* filter = static_cast<LFFilter*>(malloc(sizeof(LFFilter)));
+	LFFilter* filter = new LFFilter;
 	if (f)
 	{
 		memcpy(filter, f, sizeof(LFFilter));
@@ -464,7 +463,7 @@ LFCore_API LFFilter* LFAllocFilter(LFFilter* f)
 LFCore_API void LFFreeFilter(LFFilter* f)
 {
 	if (f)
-		free(f);
+		delete f;
 }
 
 
@@ -529,7 +528,7 @@ LFCore_API void LFRemoveErrorEntries(LFTransactionList* tl)
 
 LFCore_API LFStoreDescriptor* LFAllocStoreDescriptor()
 {
-	LFStoreDescriptor* s = static_cast<LFStoreDescriptor*>(malloc(sizeof(LFStoreDescriptor)));
+	LFStoreDescriptor* s = new LFStoreDescriptor;
 	ZeroMemory(s, sizeof(LFStoreDescriptor));
 	return s;
 }
@@ -537,7 +536,7 @@ LFCore_API LFStoreDescriptor* LFAllocStoreDescriptor()
 LFCore_API void LFFreeStoreDescriptor(LFStoreDescriptor* s)
 {
 	if (s)
-		free(s);
+		delete s;
 }
 
 

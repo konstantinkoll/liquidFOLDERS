@@ -12,6 +12,7 @@ CHeapfile::CHeapfile(char* Path, char* Filename, unsigned int _ElementSize, unsi
 {
 	strcpy_s(IdxFilename, MAX_PATH, Path);
 	strcat_s(IdxFilename, MAX_PATH, Filename);
+
 	if (_KeyOffset==0)
 	{
 		_KeyOffset = _ElementSize;
@@ -19,7 +20,7 @@ CHeapfile::CHeapfile(char* Path, char* Filename, unsigned int _ElementSize, unsi
 	}
 	ElementSize = _ElementSize;
 	KeyOffset = _KeyOffset;
-	FileCount = 0;
+	ItemCount = 0;
 	hFile = INVALID_HANDLE_VALUE;
 
 	WIN32_FILE_ATTRIBUTE_DATA fileInfo;
@@ -28,7 +29,24 @@ CHeapfile::CHeapfile(char* Path, char* Filename, unsigned int _ElementSize, unsi
 		__int64 size = fileInfo.nFileSizeLow;
 		size <<= 32;
 		size |= fileInfo.nFileSizeLow;
-		FileCount = (unsigned int)(size/ElementSize);
+		ItemCount = (unsigned int)(size/ElementSize);
+
+		// TODO: Header lesen und prüfen
+		Status = HeapOk;
+	}
+	else
+	{
+		HANDLE hNewFile = CreateFileA(IdxFilename, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, 0,NULL);
+		if (hNewFile==INVALID_HANDLE_VALUE)
+		{
+			Status = HeapError;
+		}
+		else
+		{
+			// TODO: Header schreiben
+			CloseHandle(hNewFile);
+			Status = HeapCreated;
+		}
 	}
 
 	BufferSize = MaxBufferSize/ElementSize;
@@ -69,6 +87,7 @@ void CHeapfile::CloseFile()
 {
 	if (hFile!=INVALID_HANDLE_VALUE)
 	{
+		Writeback();
 		CloseHandle(hFile);
 		hFile = INVALID_HANDLE_VALUE;
 	}
@@ -98,7 +117,7 @@ bool CHeapfile::Writeback()
 
 inline void CHeapfile::ElementToBuffer(int ID)
 {
-	if (((ID>=FirstInBuffer) && (ID<=LastInBuffer)) || (ID>=FileCount))
+	if (((ID>=FirstInBuffer) && (ID<=LastInBuffer)) || (ID>=ItemCount))
 		return;
 
 	Writeback();
@@ -122,7 +141,7 @@ bool CHeapfile::FindNext(int& Next, void*& Ptr)
 
 	do
 	{
-		if (Next>=FileCount)
+		if (Next>=ItemCount)
 			return false;
 
 		ElementToBuffer(Next);
@@ -141,7 +160,7 @@ bool CHeapfile::FindKey(char* Key, int& Next, void*& Ptr)
 
 	do
 	{
-		if (Next>=FileCount)
+		if (Next>=ItemCount)
 			return false;
 
 		ElementToBuffer(Next);
@@ -161,24 +180,24 @@ void CHeapfile::Add(LFItemDescriptor* i)
 	if (FirstInBuffer==-1)
 	{
 		// Puffer unbenutzt
-		FirstInBuffer = FileCount;
-		LastInBuffer = FileCount;
+		FirstInBuffer = ItemCount;
+		LastInBuffer = ItemCount;
 	}
 	else
-		if ((LastInBuffer-FirstInBuffer+1<(int)BufferSize) && (LastInBuffer==FileCount-1))
+		if ((LastInBuffer-FirstInBuffer+1<(int)BufferSize) && (LastInBuffer==ItemCount-1))
 		{
 			// Noch Platz am Ende
-			LastInBuffer = FileCount;
+			LastInBuffer = ItemCount;
 		}
 		else
 		{
 			Writeback();
-			FirstInBuffer = FileCount;
-			LastInBuffer = FileCount;
+			FirstInBuffer = ItemCount;
+			LastInBuffer = ItemCount;
 		}
 
 	// Im RAM hinzufügen
-	char* P = (char*)Buffer+(FileCount-FirstInBuffer)*ElementSize;
+	char* P = (char*)Buffer+(ItemCount-FirstInBuffer)*ElementSize;
 	if (KeyOffset==ElementSize-LFKeySize)
 	{
 		GetFromItemDescriptor(P, i);
@@ -191,7 +210,7 @@ void CHeapfile::Add(LFItemDescriptor* i)
 	}
 
 	MakeDirty();
-	FileCount++;
+	ItemCount++;
 }
 
 void CHeapfile::Update(LFItemDescriptor* i, void* Ptr)

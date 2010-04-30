@@ -8,6 +8,10 @@
 
 #define MaxBufferSize     262144
 
+#define HeapOk            0
+#define HeapError         1
+#define HeapCreated       2
+
 class LFCore_API CHeapfile
 {
 public:
@@ -30,9 +34,11 @@ public:
 	bool Compact();
 	void MakeDirty(bool NeedsCompaction=false);
 
+	unsigned int Status;
+
 protected:
 	void* Buffer;
-	int FileCount;
+	int ItemCount;
 	int FirstInBuffer;
 	int LastInBuffer;
 	unsigned int KeyOffset;

@@ -6,4 +6,4 @@
 void AttributesToString(LFItemDescriptor* i);
 size_t GetAttributeMaxCharacterCount(unsigned int attr);
 size_t GetAttributeSize(unsigned int attr, const void* v);
-void SetAttribute(LFItemDescriptor* i, unsigned int attr, const void* v, bool ToString=true, wchar_t* ustr=NULL);
+void LFCore_API SetAttribute(LFItemDescriptor* i, unsigned int attr, const void* v, bool ToString=true, wchar_t* ustr=NULL);
