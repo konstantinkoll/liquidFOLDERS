@@ -21,13 +21,16 @@ void LFCore_API SetAttribute(LFItemDescriptor* i, unsigned int attr, const void*
 void Test_CIndex()
 {
 	CIndex* idx;
+	const UINT cnt = 10000;
+	//char Path[MAX_PATH] = "C:\\users\\root\\";
+	char Path[MAX_PATH] = "J:\\";
 
-	// Add 50000 files
-	cout << endl << "Add 50000 files...";
+	// Add files
+	cout << endl << "Add " << cnt << " files...";
 	DWORD start = GetTickCount();
 
-	idx = new CIndex("J:\\", "TEST1234");
-	for (UINT a=0; a<50000; a++)
+	idx = new CIndex(Path, "TEST1234");
+	for (UINT a=0; a<cnt; a++)
 	{
 		LFItemDescriptor* i = LFAllocItemDescriptor();
 		SetAttribute(i, LFAttrFileName, L"Test file");
@@ -45,11 +48,11 @@ void Test_CIndex()
 	}
 	delete idx;
 
-	cout << " " << GetTickCount()-start << " ms";
+	cout << " " << GetTickCount()-start << " ms for " << cnt << " files";
 	cin.get();
 
-	// Retrieve 50000 files
-	cout << endl << "Retrieve and verify 50000 files...";
+	// Retrieve files
+	cout << endl << "Retrieve and verify " << cnt << " files...";
 	start = GetTickCount();
 
 	LFFilter* f = LFAllocFilter();
@@ -58,11 +61,11 @@ void Test_CIndex()
 
 	LFSearchResult* res = LFAllocSearchResult(LFContextDefault);
 
-	idx = new CIndex("J:\\", "TEST1234");
+	idx = new CIndex(Path, "TEST1234");
 	idx->Retrieve(NULL, res);
 	delete idx;
 
-	for (UINT a=0; a<50000; a++)
+	for (UINT a=0; a<res->m_Count; a++)
 	{
 		char Key[LFKeySize];
 		sprintf_s(Key, LFKeySize, "KEY%d", a);
@@ -70,7 +73,7 @@ void Test_CIndex()
 			cout << a << " ";
 	}
 
-	cout << " " << GetTickCount()-start << " ms";
+	cout << " " << GetTickCount()-start << " ms for " << res->m_Count << " files";
 	cin.get();
 
 }

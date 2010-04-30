@@ -282,7 +282,7 @@ inline void AttributeToString(LFItemDescriptor* i, unsigned int attr)
 	}
 }
 
-inline void AttributesToString(LFItemDescriptor* i)
+void AttributesToString(LFItemDescriptor* i)
 {
 	assert(i);
 

@@ -175,7 +175,13 @@ void CIndex::Retrieve(LFFilter* f, LFSearchResult* res)
 
 		// Filter
 		// TODO
+		if (false)
+			AttributesToString(i);
 		if (true)
+		{
+			if (true)
+				AttributesToString(i);
 			res->AddItemDescriptor(i);
+		}
 	}
 }
