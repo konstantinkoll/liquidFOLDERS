@@ -33,7 +33,7 @@ void CFileList::Create(CWnd* pParentWnd, CFileView* pViewWnd, BOOL _OwnerData)
 	OwnerData = _OwnerData;
 
 	DWORD dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | LVS_SHOWSELALWAYS | LVS_AUTOARRANGE |
-		LVS_EDITLABELS | LVS_SHAREIMAGELISTS | LVS_ALIGNLEFT | LVS_REPORT;
+		LVS_EDITLABELS | LVS_SHAREIMAGELISTS | LVS_ALIGNTOP | LVS_REPORT;
 	if (pParentWnd==pViewWnd)
 		dwStyle |= WS_VISIBLE;
 	if (_OwnerData)

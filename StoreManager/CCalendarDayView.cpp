@@ -27,16 +27,15 @@ void CCalendarDayView::AdjustLayout()
 	GetClientRect(rectClient);
 
 	int heightDay = 30;
-	
+
 	m_CalendarHeaderCtrl.SetWindowPos(NULL, rectClient.left, rectClient.top, rectClient.Width(), heightDay, SWP_NOACTIVATE | SWP_NOZORDER);
 	m_FileList.SetWindowPos(NULL, rectClient.left, rectClient.top + heightDay, rectClient.Width(), rectClient.Height() - heightDay, SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
-
 void CCalendarDayView::Create(CWnd* _pParentWnd, LFSearchResult* _result)
 {
 	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, NULL, NULL, NULL);
-	
+
 	const DWORD dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN;
 	CRect rect;
 	rect.SetRectEmpty();
@@ -163,7 +162,7 @@ int CCalendarDayView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if (CFileView::OnCreate(lpCreateStruct) == -1)
 		return -1;
-	
+
 	m_CalendarHeaderCtrl.Create(this, 2);
 
 	m_FileList.Create(this, this, FALSE);

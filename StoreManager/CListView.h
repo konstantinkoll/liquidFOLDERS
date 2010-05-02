@@ -23,12 +23,9 @@ protected:
 	virtual void SetSearchResult(LFSearchResult* _result);
 	virtual CMenu* GetContextMenu();
 
-	LRESULT WindowProc(UINT message, WPARAM wParam, LPARAM lParam);
-	BOOL OnChildNotify(UINT message, WPARAM wParam, LPARAM lParam, LRESULT* pLResult);
+	void AdjustLayout();
 
-	#ifdef _DEBUG
-	void CListView::AssertValid() const
-	{
-	}
-	#endif
+	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
+	afx_msg void OnSize(UINT nType, int cx, int cy);
+	DECLARE_MESSAGE_MAP()
 };

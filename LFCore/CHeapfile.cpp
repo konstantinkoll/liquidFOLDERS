@@ -246,7 +246,7 @@ void CHeapfile::Invalidate(void* Ptr)
 
 void CHeapfile::Invalidate(char* Key, int& Next)
 {
-	assert(i);
+	assert(Key);
 
 	void* Ptr;
 

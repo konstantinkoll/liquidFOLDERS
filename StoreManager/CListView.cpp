@@ -19,53 +19,28 @@ CListView::CListView()
 
 CListView::~CListView()
 {
-	DestroyWindow();
 }
 
 void CListView::Create(CWnd* pParentWnd, LFSearchResult* _result, UINT _ViewID)
 {
-	PreSubclassWindow();
-	m_FileList.Create(pParentWnd, this, !_result->m_HasCategories);
-	m_hWnd = m_FileList.m_hWnd;
-	m_pfnSuper = m_FileList.m_pfnSuper;
+	result = _result;
 
-	if (_result->m_HasCategories)
-	{
-		LVGROUP lvg;
-		ZeroMemory(&lvg, sizeof(lvg));
-		lvg.cbSize = sizeof(lvg);
-		lvg.mask = LVGF_HEADER | LVGF_GROUPID | LVGF_ALIGN;
-		lvg.uAlign = LVGA_HEADER_LEFT;
-		if (theApp.osInfo.dwMajorVersion>=6)
-		{
-			lvg.mask |= LVGF_STATE;
-			lvg.state = LVGS_COLLAPSIBLE;
-			lvg.stateMask = 0;
-		}
+	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, NULL, NULL, NULL);
 
-		for (UINT a=0; a<LFItemCategoryCount; a++)
-		{
-			lvg.iGroupId = a;
-			lvg.pszHeader = theApp.m_ItemCategories[a]->Name;
-
-			if (theApp.osInfo.dwMajorVersion>=6)
-			{
-				lvg.pszSubtitle = theApp.m_ItemCategories[a]->Hint;
-				if (*lvg.pszSubtitle=='\0')
-				{
-					lvg.mask &= ~LVGF_SUBTITLE;
-				}
-				else
-				{
-					lvg.mask |= LVGF_SUBTITLE;
-				}
-			}
-
-			m_FileList.InsertGroup(a, &lvg);
-		}
-	}
+	const DWORD dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN;
+	CRect rect;
+	rect.SetRectEmpty();
+	CWnd::Create(className, _T(""), dwStyle, rect, pParentWnd, AFX_IDW_PANE_FIRST);
 
 	CFileView::Create(_result, _ViewID);
+}
+
+void CListView::AdjustLayout()
+{
+	CRect rectClient;
+	GetClientRect(rectClient);
+
+	m_FileList.SetWindowPos(NULL, rectClient.left, rectClient.top, rectClient.Width(), rectClient.Height(), SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
 void CListView::SetSearchResult(LFSearchResult* _result)
@@ -259,17 +234,59 @@ CMenu* CListView::GetContextMenu()
 }
 
 
-LRESULT CListView::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
+BEGIN_MESSAGE_MAP(CListView, CAbstractListView)
+	ON_WM_CREATE()
+	ON_WM_SIZE()
+END_MESSAGE_MAP()
+
+int CListView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
-	LRESULT lResult = 0;
+	if (CFileView::OnCreate(lpCreateStruct) == -1)
+		return -1;
 
-	if (!m_FileList.OnWndMsg(message, wParam, lParam, &lResult))
-		lResult = DefWindowProc(message, wParam, lParam);
+	m_FileList.Create(this, this, !result->m_HasCategories);
 
-	return lResult;
+	if (result->m_HasCategories)
+	{
+		LVGROUP lvg;
+		ZeroMemory(&lvg, sizeof(lvg));
+		lvg.cbSize = sizeof(lvg);
+		lvg.mask = LVGF_HEADER | LVGF_GROUPID | LVGF_ALIGN;
+		lvg.uAlign = LVGA_HEADER_LEFT;
+		if (theApp.osInfo.dwMajorVersion>=6)
+		{
+			lvg.mask |= LVGF_STATE;
+			lvg.state = LVGS_COLLAPSIBLE;
+			lvg.stateMask = 0;
+		}
+
+		for (UINT a=0; a<LFItemCategoryCount; a++)
+		{
+			lvg.iGroupId = a;
+			lvg.pszHeader = theApp.m_ItemCategories[a]->Name;
+
+			if (theApp.osInfo.dwMajorVersion>=6)
+			{
+				lvg.pszSubtitle = theApp.m_ItemCategories[a]->Hint;
+				if (*lvg.pszSubtitle=='\0')
+				{
+					lvg.mask &= ~LVGF_SUBTITLE;
+				}
+				else
+				{
+					lvg.mask |= LVGF_SUBTITLE;
+				}
+			}
+
+			m_FileList.InsertGroup(a, &lvg);
+		}
+	}
+
+	return 0;
 }
 
-BOOL CListView::OnChildNotify(UINT message, WPARAM wParam, LPARAM lParam, LRESULT* pLResult)
+void CListView::OnSize(UINT nType, int cx, int cy)
 {
-	return m_FileList.OnChildNotify(message, wParam, lParam, pLResult);
+	CWnd::OnSize(nType, cx, cy);
+	AdjustLayout();
 }
