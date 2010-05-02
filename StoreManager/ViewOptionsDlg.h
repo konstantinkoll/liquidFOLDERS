@@ -19,6 +19,7 @@ protected:
 	BOOL HasCategories;
 	CButton* ShowCategories;
 	CListCtrl* ShowAttributes;
+	CString BackgroundText;
 
 	afx_msg BOOL OnInitDialog();
 	afx_msg void OnViewModeChange(NMHDR* pNMHDR, LRESULT* pResult);

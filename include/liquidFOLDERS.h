@@ -97,6 +97,8 @@ struct LFAirport
 #define LFViewTagcloud                  11
 #define LFViewTimeline                  12
 
+#define LFViewCount                     13
+
 
 // Item categories
 

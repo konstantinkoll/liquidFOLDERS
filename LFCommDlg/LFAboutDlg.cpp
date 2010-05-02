@@ -64,24 +64,8 @@ BOOL LFAboutDlg::OnInitDialog()
 
 	BOOL ShowCancel = FALSE;
 
-	// Combobox für das Farbschema füllen
-	CComboBox* cbx = (CComboBox*)GetDlgItem(IDC_RIBBONCOLORCOMBO);
-	CString tmpStr;
-	ENSURE(tmpStr.LoadString(IDS_RIBBONCOLORITEMS));
-	int y;
-	do
-	{
-		y = tmpStr.Find(';');
-		if (y>=0)
-		{
-			cbx->AddString(tmpStr.Left(y));
-			tmpStr = tmpStr.Right(tmpStr.GetLength()-y-1);
-		} 
-	}
-	while (y>=0);
-	cbx->AddString(tmpStr);
-
 	// Combobox einstellen
+	CComboBox* cbx = (CComboBox*)GetDlgItem(IDC_RIBBONCOLORCOMBO);
 	if (parameters->RibbonColor==ID_VIEW_APPLOOK_OFF_2007_NONE)
 	{
 		cbx->EnableWindow(FALSE);

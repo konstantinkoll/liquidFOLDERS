@@ -31,12 +31,12 @@ public:
 	UINT m_nTextureSize;
 	UINT m_nMaxTextureSize;
 	BOOL m_ShowQueryDuration;
-	BOOL m_GlobalBackground;
 	BOOL m_GlobeHQModel;
 	BOOL m_AllowEmptyDrives;
 	list<CMainFrame*> m_listMainFrames;
 	list<CMainFrame*> m_listClipboardFrames;
 	LFViewParameters m_Views[LFContextCount];
+	UINT m_Background[LFViewCount];
 	CImageList m_Icons128;
 	CImageList m_Icons64;
 	CImageList m_Icons48;

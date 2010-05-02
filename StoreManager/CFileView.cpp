@@ -37,6 +37,9 @@ void CFileView::OnUpdateViewOptions(int _ActiveContextID, int _ViewID, BOOL Forc
 
 	if (_ViewID<0)
 		_ViewID = ViewID;
+	ASSERT(_ViewID>LFViewAutomatic);
+
+	pViewParameters->Background = theApp.m_Background[_ViewID];
 
 	if (Force || (m_ViewParameters.Background!=pViewParameters->Background))
 	{

@@ -233,8 +233,6 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndStatusBar.AddExtendedElement(pGroupViewOptions, tmpStr);
 
 	UINT dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | CBRS_FLOAT_MULTI;
-		if (!IsClipboard)
-			dwStyle |= WS_VISIBLE;
 
 	if (!IsClipboard)
 	{
@@ -265,10 +263,15 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		}
 
 		// Diese Panes standardmäßig nicht zeigen
+		m_wndFilter->ShowPane(FALSE, FALSE, FALSE);
 		m_wndHistory->ShowPane(FALSE, FALSE, FALSE);
+		TabbedPane->ShowPane(FALSE, FALSE, FALSE);
 	}
 
 	// Inspector-Pane erstellen
+	if (!IsClipboard)
+		dwStyle |= WS_VISIBLE;
+
 	tmpStr = "Inspector";
 	if (!m_wndInspector.Create(tmpStr, this, CRect(0, 0, 250, 550), TRUE, ID_PANE_INSPECTORWND, dwStyle | CBRS_RIGHT | WS_VISIBLE))
 		return -1;
@@ -368,7 +371,6 @@ void CMainFrame::OnAppViewOptions()
 		if (dlg.RibbonColor!=theApp.m_nAppLook)
 			::SendNotifyMessage(HWND_BROADCAST, theApp.p_MessageIDs->LookChanged, dlg.RibbonColor, 0);
 
-		theApp.WriteInt(_T("GlobalBackground"), theApp.m_GlobalBackground);
 		theApp.WriteInt(_T("ShowQueryDuration"), theApp.m_ShowQueryDuration);
 		theApp.SaveViewOptions(ActiveContextID);
 		theApp.OpenChildViews(ActiveContextID, TRUE);
@@ -1924,7 +1926,7 @@ void CMainFrame::ShowCaptionBar(int Icon, UINT res, int Command, LPCWSTR Button)
 
 UINT CMainFrame::SelectViewMode(UINT ViewID)
 {
-	if ((ViewID<LFViewAutomatic) || (ViewID>LFViewTimeline))
+	if ((ViewID<LFViewAutomatic) || (ViewID>=LFViewCount))
 		ViewID = LFViewAutomatic;
 	if (ViewID==LFViewAutomatic)
 		ViewID = CookedFiles->m_RecommendedView;

@@ -79,6 +79,9 @@ BOOL ViewOptionsDlg::OnInitDialog()
 	caption.Format(text, theApp.m_Contexts[context]->Name);
 	SetWindowText(caption);
 
+	// Background-Überschrift
+	GetDlgItem(IDC_BACKGROUNDTEXT)->GetWindowText(BackgroundText);
+
 	// View-Liste füllen
 	CStringW tmpStr;
 
@@ -118,7 +121,7 @@ BOOL ViewOptionsDlg::OnInitDialog()
 	ZeroMemory(&lvi, sizeof(lvi));
 	lvi.mask = LVIF_TEXT | LVIF_IMAGE | LVIF_GROUPID | LVIF_PARAM | LVIF_STATE;
 	lvi.iGroupId = 0;
-	UINT anz = (theApp.m_Contexts[context]->AllowExtendedViews) ? LFViewTimeline : (context>LFContextStoreHome) ? LFViewPreview : LFViewTiles;
+	UINT anz = (theApp.m_Contexts[context]->AllowExtendedViews) ? LFViewCount-1 : (context>LFContextStoreHome) ? LFViewPreview : LFViewTiles;
 
 	for(UINT a=LFViewAutomatic; a<=anz; a++)
 	{
@@ -186,6 +189,14 @@ void ViewOptionsDlg::OnViewModeChange(NMHDR* pNMHDR, LRESULT* pResult)
 			ShowCategories->EnableWindow(FALSE);
 		}
 
+	// Hintergrund
+	GetDlgItem(IDC_BACKGROUNDCOMBO)->EnableWindow(idx>LFViewAutomatic);
+	((CComboBox*)GetDlgItem(IDC_BACKGROUNDCOMBO))->SetCurSel(theApp.m_Background[idx]);
+	
+	CString tmpStr;
+	tmpStr.Format(BackgroundText, theApp.GetCommandName(ID_APP_VIEW_AUTOMATIC+idx));
+	GetDlgItem(IDC_BACKGROUNDTEXT)->SetWindowText(tmpStr);
+
 	*pResult = 0;
 }
 
@@ -193,9 +204,7 @@ void ViewOptionsDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CAttributeListDialog::DoDataExchange(pDX);
 	DDX_ComboBox(pDX, IDC_COLORCOMBO, RibbonColor, 1);
-	DDX_ComboBox(pDX, IDC_BACKGROUNDCOMBO, view->Background, 0);
 	DDX_Check(pDX, IDC_FULLROWSELECT, view->FullRowSelect);
-	DDX_Check(pDX, IDC_GLOBALBACKGROUND, theApp.m_GlobalBackground);
 	DDX_Check(pDX, IDC_GRANNYMODE, view->GrannyMode);
 	DDX_Check(pDX, IDC_ALWAYSSAVE, view->AlwaysSave);
 	DDX_Check(pDX, IDC_SHOWQUERYTIMES, theApp.m_ShowQueryDuration);
@@ -208,6 +217,8 @@ void ViewOptionsDlg::DoDataExchange(CDataExchange* pDX)
 		int idx = l->GetNextItem(-1, LVIS_SELECTED);
 		if (idx!=-1)
 			view->Mode = (UINT)l->GetItemData(idx);
+
+		theApp.m_Background[view->Mode] = ((CComboBox*)GetDlgItem(IDC_BACKGROUNDCOMBO))->GetCurSel();
 
 		if ((view->Mode==LFViewAutomatic) || (view->Mode==LFViewDetails) || (view->Mode==LFViewCalendarDay))
 		{
@@ -228,15 +239,6 @@ void ViewOptionsDlg::DoDataExchange(CDataExchange* pDX)
 				if ((!theApp.m_Attributes[a]->AlwaysVisible) && (!present[a]))
 					view->ColumnWidth[a] = 0;
 		}
-
-		// Hintergrund
-		if (theApp.m_GlobalBackground)
-			for (UINT a=0; a<LFContextCount; a++)
-				if (theApp.m_Views[a].Background!=view->Background)
-				{
-					theApp.m_Views[a].Background = view->Background;
-					theApp.SaveViewOptions(a, TRUE);
-				}
 	}
 }
 

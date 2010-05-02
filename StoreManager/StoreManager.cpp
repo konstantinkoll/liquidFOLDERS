@@ -78,7 +78,6 @@ BOOL CStoreManagerApp::InitInstance()
 
 	// Registry auslesen
 	m_AllowEmptyDrives = GetInt(_T("AllowEmptyDrives"), TRUE);
-	m_GlobalBackground = GetInt(_T("GlobalBackground"), 0);
 	m_GlobeHQModel = GetInt(_T("GlobeHQModel"), TRUE);
 	m_ShowQueryDuration = GetInt(_T("ShowQueryDuration"), 0);
 	m_nTextureSize = GetInt(_T("TextureSize"), 0);
@@ -87,6 +86,18 @@ BOOL CStoreManagerApp::InitInstance()
 		m_nTextureSize = 0;
 	if (m_nTextureSize>m_nMaxTextureSize)
 		m_nTextureSize = m_nMaxTextureSize;
+
+	for (UINT a=0; a<LFViewCount; a++)
+		switch (a)
+		{
+		case LFViewLargeIcons:
+		case LFViewGlobe:
+			m_Background[a] = ChildBackground_Ribbon;
+			break;
+		default:
+			m_Background[a] = ChildBackground_System;
+		}
+	GetBinary(_T("Background"), m_Background, sizeof(m_Background));
 
 	for (int a=0; a<LFContextCount; a++)
 		LoadViewOptions(a);
@@ -100,6 +111,7 @@ BOOL CStoreManagerApp::InitInstance()
 
 int CStoreManagerApp::ExitInstance()
 {
+	WriteBinary(_T("Background"), (LPBYTE)&m_Background, sizeof(m_Background));
 	WriteInt(_T("MaxTextureSize"), m_nMaxTextureSize);
 
 	return LFApplication::ExitInstance();
@@ -306,7 +318,6 @@ void CStoreManagerApp::LoadViewOptions(int context)
 	SetRegistryBase(base);
 
 	m_Views[context].Mode = GetInt(_T("Viewmode"), LFViewAutomatic);
-	m_Views[context].Background = GetInt(_T("Background"), ChildBackground_White);
 	m_Views[context].GrannyMode = GetInt(_T("GrannyMode"), FALSE);
 	m_Views[context].ShowCategories = GetInt(_T("ShowCategories"), TRUE);
 	m_Views[context].FullRowSelect = GetInt(_T("FullRowSelect"), FALSE);
@@ -355,7 +366,6 @@ void CStoreManagerApp::SaveViewOptions(int context, UINT SaveMode)
 	if ((m_Views[context].AlwaysSave) || (SaveMode==SaveMode_Force))
 	{
 		WriteInt(_T("Viewmode"), m_Views[context].Mode);
-		WriteInt(_T("Background"), m_Views[context].Background);
 		WriteInt(_T("GrannyMode"), m_Views[context].GrannyMode);
 		WriteInt(_T("ShowCategories"), m_Views[context].ShowCategories);
 		WriteInt(_T("FullRowSelect"), m_Views[context].FullRowSelect);

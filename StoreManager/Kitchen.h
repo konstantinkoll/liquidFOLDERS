@@ -18,8 +18,16 @@ int compare(const LFSearchResult* res, const LFViewParameters* vp, UINT eins, UI
 
 	// Wenn zwei Laufwerke anhand des Namens verglichen werden sollen, Laufwerksbuchstaben nehmen
 	UINT Sort = vp->SortBy;
-	if (((d1->Type & LFTypeMask)==LFTypeDrive) && ((d2->Type & LFTypeMask)==LFTypeDrive) && (Sort==LFAttrFileName) && (vp->ShowCategories) && (vp->Mode<=LFViewTiles))
-		Sort = LFAttrFileID;
+	UINT SortSecond = LFAttrFileName;
+	if (((d1->Type & LFTypeMask)==LFTypeDrive) && ((d2->Type & LFTypeMask)==LFTypeDrive) && (vp->ShowCategories) && (vp->Mode<=LFViewTiles))
+		if (Sort==LFAttrFileName)
+		{
+			Sort = LFAttrFileID;
+		}
+		else
+		{
+			SortSecond = LFAttrFileID;
+		}
 
 	// Dateien mit NULL-Werten oder leeren Strings im gewünschten Attribut hinten einsortieren
 	BOOL d1null = (d1->AttributeValues[Sort]==NULL);
@@ -205,11 +213,11 @@ int compare(const LFSearchResult* res, const LFViewParameters* vp, UINT eins, UI
 	// Dateien gleich bzgl. Attribut? Dann nach Name und notfalls FileID vergleichen für stabiles Ergebnis
 	if (cmp==0)
 	{
-		if (Sort!=LFAttrFileName)
-			cmp = _wcsicmp((wchar_t*)d1->AttributeValues[LFAttrFileName], (wchar_t*)d2->AttributeValues[LFAttrFileName]);
-		if ((cmp==0) && (Sort!=LFAttrStoreID))
+		if (Sort!=SortSecond)
+			cmp = _wcsicmp((wchar_t*)d1->AttributeValues[SortSecond], (wchar_t*)d2->AttributeValues[SortSecond]);
+		if ((cmp==0) && (Sort!=LFAttrStoreID) && (SortSecond!=LFAttrStoreID))
 			cmp = strcmp((char*)d1->AttributeValues[LFAttrStoreID], (char*)d2->AttributeValues[LFAttrStoreID]);
-		if ((cmp==0) && (Sort!=LFAttrFileID))
+		if ((cmp==0) && (Sort!=LFAttrFileID) && (SortSecond!=LFAttrFileID))
 			cmp = strcmp((char*)d1->AttributeValues[LFAttrFileID], (char*)d2->AttributeValues[LFAttrFileID]);
 	}
 
