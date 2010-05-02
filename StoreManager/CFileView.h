@@ -49,10 +49,10 @@ protected:
 	virtual BOOL IsSelected(int n);
 	virtual int ItemAtPosition(CPoint point);
 	virtual CMenu* GetContextMenu();
+
 	void AppendContextMenu(CMenu* menu);
 	void OnViewOptionsChanged(BOOL LocalSettings=FALSE);
 
-	afx_msg void OnDestroy();
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);

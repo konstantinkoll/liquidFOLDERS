@@ -71,7 +71,7 @@ void CCalendarHeaderCtrl::OnPaint()
 	CBitmap buffer;
 	buffer.CreateCompatibleBitmap(&pDC, rect.Width(), rect.Height());
 	CBitmap* pOldBitmap = dc.SelectObject(&buffer);
-	
+
 	CRect r = rect;
 	r.top = r.bottom-1;
 	dc.FillSolidRect(r, m_LineCol);
@@ -79,7 +79,7 @@ void CCalendarHeaderCtrl::OnPaint()
 	r = rect;
 	r.bottom--;
 	dc.FillSolidRect(r, m_BackCol);
-	
+
 	CFont* pOldFont = (CFont*)dc.SelectObject(&theApp.m_Fonts[TRUE][TRUE]);
 	dc.SetTextColor(m_TextCol);
 

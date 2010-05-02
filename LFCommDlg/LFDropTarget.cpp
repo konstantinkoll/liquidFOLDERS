@@ -11,6 +11,18 @@ LFDropTarget::~LFDropTarget()
 {
 }
 
+BOOL LFDropTarget::Register(CWnd* pWnd)
+{
+	if (m_hWnd!=pWnd->m_hWnd)
+	{
+		return COleDropTarget::Register(pWnd);
+	}
+	else
+	{
+		return TRUE;
+	}
+}
+
 DROPEFFECT LFDropTarget::OnDragEnter(CWnd* /*pWnd*/, COleDataObject* /*pDataObject*/, DWORD /*dwKeyState*/, CPoint /*point*/)
 {
 	return DROPEFFECT_COPY;

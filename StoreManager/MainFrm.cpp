@@ -317,19 +317,16 @@ void CMainFrame::OnDestroy()
 	{
 		m_wndFilter->DestroyWindow();
 		delete m_wndFilter;
-		m_wndFilter = NULL;
 	}
 	if (m_wndHistory)
 	{
 		m_wndHistory->DestroyWindow();
 		delete m_wndHistory;
-		m_wndHistory = NULL;
 	}
 	if (m_wndView)
 	{
 		m_wndView->DestroyWindow();
 		delete m_wndView;
-		m_wndView = NULL;
 	}
 
 	CFrameWndEx::OnDestroy();

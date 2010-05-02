@@ -110,7 +110,7 @@ void CCalendarDayView::SetViewOptions(UINT /*_ViewID*/, BOOL Force)
 		COLORREF highlight;
 		theApp.GetBackgroundColors(pViewParameters->Background, &back, &text, &highlight);
 
-		m_CalendarHeaderCtrl.SetColors(highlight, back, pViewParameters->Background==ChildBackground_Ribbon ? afxGlobalData.clrBarDkShadow : GetSysColor(COLOR_3DSHADOW));
+		m_CalendarHeaderCtrl.SetColors(highlight, back, pViewParameters->Background==ChildBackground_Ribbon ? afxGlobalData.clrBarDkShadow : 0xA0A0A0);
 		m_FileList.SetBkColor(back);
 		m_FileList.SetTextBkColor(CLR_NONE);
 		m_FileList.SetTextColor(text);
