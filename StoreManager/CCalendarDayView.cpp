@@ -27,6 +27,7 @@ void CCalendarDayView::AdjustLayout()
 	GetClientRect(rectClient);
 
 	int heightDay = 30;
+	SetNcDividerLine(heightDay);
 
 	m_CalendarHeaderCtrl.SetWindowPos(NULL, rectClient.left, rectClient.top, rectClient.Width(), heightDay, SWP_NOACTIVATE | SWP_NOZORDER);
 	m_FileList.SetWindowPos(NULL, rectClient.left, rectClient.top + heightDay, rectClient.Width(), rectClient.Height() - heightDay, SWP_NOACTIVATE | SWP_NOZORDER);
@@ -110,7 +111,7 @@ void CCalendarDayView::SetViewOptions(UINT /*_ViewID*/, BOOL Force)
 		COLORREF highlight;
 		theApp.GetBackgroundColors(pViewParameters->Background, &back, &text, &highlight);
 
-		m_CalendarHeaderCtrl.SetColors(highlight, back, pViewParameters->Background==ChildBackground_Ribbon ? afxGlobalData.clrBarDkShadow : 0xA0A0A0);
+		m_CalendarHeaderCtrl.SetColors(highlight, back, pViewParameters->Background==ChildBackground_Ribbon ? afxGlobalData.clrBarDkShadow : GetSysColor(COLOR_3DFACE+1));
 		m_FileList.SetBkColor(back);
 		m_FileList.SetTextBkColor(CLR_NONE);
 		m_FileList.SetTextColor(text);

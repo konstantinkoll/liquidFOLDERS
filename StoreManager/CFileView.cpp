@@ -17,6 +17,7 @@ CFileView::CFileView()
 	ViewID = LFViewAutomatic;
 	result = NULL;
 	FocusItem = -1;
+	NcDividerLineY = 0;
 }
 
 CFileView::~CFileView()
@@ -298,8 +299,13 @@ int CFileView::GetFontHeight(BOOL GrannyMode)
 	return lf.lfHeight;
 }
 
+void CFileView::SetNcDividerLine(int y)
+{
+	NcDividerLineY = (y>0) ? y+1 : 0;
+}
 
 BEGIN_MESSAGE_MAP(CFileView, CWnd)
+	ON_WM_NCPAINT()
 	ON_WM_LBUTTONDOWN()
 	ON_WM_LBUTTONUP()
 	ON_WM_LBUTTONDBLCLK()
@@ -312,6 +318,42 @@ BEGIN_MESSAGE_MAP(CFileView, CWnd)
 	ON_COMMAND(ID_VIEW_SELECTNONE, OnSelectNone)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_VIEW_GRANNY, ID_VIEW_SELECTNONE, OnUpdateCommands)
 END_MESSAGE_MAP()
+
+void CFileView::OnNcPaint()
+{
+	if (GetExStyle() & WS_EX_CLIENTEDGE)
+	{
+		CDC* dc = GetWindowDC();
+
+		CRect rect;
+		GetWindowRect(rect);
+
+		CBrush* pOldBrush = (CBrush*)dc->SelectStockObject(NULL_BRUSH);
+		COLORREF col = GetSysColor(COLOR_3DFACE+1);
+
+		CPen pen1(PS_SOLID, 1, col);
+		CPen* pOldPen = dc->SelectObject(&pen1);
+		dc->Rectangle(0, 0, rect.Width(), rect.Height());
+
+		COLORREF back;
+		theApp.GetBackgroundColors(pViewParameters->Background, &back);
+		CPen pen2(PS_SOLID, 1, back);
+		dc->SelectObject(&pen2);
+
+		dc->Rectangle(1, 1, rect.Width()-1, rect.Height()-1);
+
+		if (NcDividerLineY)
+		{
+			dc->SetPixel(1, NcDividerLineY, col);
+			dc->SetPixel(rect.Width()-2, NcDividerLineY, col);
+		}
+
+		dc->SelectObject(pOldPen);
+		dc->SelectObject(pOldBrush);
+
+		ReleaseDC(dc);
+	}
+}
 
 void CFileView::OnLButtonDown(UINT nFlags, CPoint point)
 {

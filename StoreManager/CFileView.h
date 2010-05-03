@@ -33,6 +33,7 @@ public:
 	void OnUpdateSearchResult(LFSearchResult* _result, int _FocusItem);
 	BOOL HandleDefaultKeys(UINT nChar, UINT nRepCnt, UINT nFlags);
 	int GetFontHeight(BOOL GrannyMode);
+	void SetNcDividerLine(int y);
 
 protected:
 	LFViewParameters m_ViewParameters;
@@ -43,6 +44,7 @@ protected:
 	UINT RibbonColor;
 	UINT ViewID;
 	int FocusItem;
+	int NcDividerLineY;
 
 	virtual void SetViewOptions(UINT _ViewID, BOOL Force);
 	virtual void SetSearchResult(LFSearchResult* _result);
@@ -53,6 +55,7 @@ protected:
 	void AppendContextMenu(CMenu* menu);
 	void OnViewOptionsChanged(BOOL LocalSettings=FALSE);
 
+	afx_msg void OnNcPaint();
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);
