@@ -5,6 +5,7 @@
 
 LFDropTarget::LFDropTarget()
 {
+	SkipTemplate = FALSE;
 }
 
 LFDropTarget::~LFDropTarget()
@@ -30,7 +31,9 @@ DROPEFFECT LFDropTarget::OnDragEnter(CWnd* /*pWnd*/, COleDataObject* /*pDataObje
 
 DROPEFFECT LFDropTarget::OnDragOver(CWnd* /*pWnd*/, COleDataObject* /*pDataObject*/, DWORD dwKeyState, CPoint /*point*/)
 {
-	return ((MK_SHIFT | MK_CONTROL) & dwKeyState) ? DROPEFFECT_MOVE : DROPEFFECT_COPY;
+	SkipTemplate = (dwKeyState & MK_SHIFT);
+
+	return (dwKeyState & MK_CONTROL) ? DROPEFFECT_MOVE : DROPEFFECT_COPY;
 }
 
 BOOL LFDropTarget::OnDrop(CWnd* /*pWnd*/, COleDataObject* pDataObject, DROPEFFECT /*dropEffect*/, CPoint /*point*/)
@@ -57,15 +60,18 @@ BOOL LFDropTarget::OnDrop(CWnd* /*pWnd*/, COleDataObject* pDataObject, DROPEFFEC
 	}
 
 	// Template füllen
-	LFItemDescriptor* it = LFAllocItemDescriptor();
-
-	LFItemTemplateDlg dlg(CWnd::FromHandle(m_hWnd), it);
-	if (dlg.DoModal()!=IDOK)
+	LFItemDescriptor* it = NULL;
+	if (!SkipTemplate)
 	{
-		GlobalUnlock(hG);
-		return FALSE;
+		it = LFAllocItemDescriptor();
+
+		LFItemTemplateDlg dlg(CWnd::FromHandle(m_hWnd), it);
+		if (dlg.DoModal()!=IDOK)
+		{
+			GlobalUnlock(hG);
+			return FALSE;
+		}
 	}
-	LFFreeItemDescriptor(it);
 
 	// Dateien durchlaufen
 	BOOL success = FALSE;
@@ -80,6 +86,7 @@ BOOL LFDropTarget::OnDrop(CWnd* /*pWnd*/, COleDataObject* pDataObject, DROPEFFEC
 		}
 
 	GlobalUnlock(hG);
+	LFFreeItemDescriptor(it);
 	return success;
 }
 

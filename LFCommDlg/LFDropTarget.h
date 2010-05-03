@@ -12,4 +12,7 @@ public:
 	virtual DROPEFFECT OnDragOver(CWnd* pWnd, COleDataObject* pDataObject, DWORD dwKeyState, CPoint point);
 	virtual BOOL OnDrop(CWnd* pWnd, COleDataObject* pDataObject, DROPEFFECT dropEffect, CPoint point);
 	virtual void OnDragLeave(CWnd* pWnd);
+
+protected:
+	BOOL SkipTemplate;
 };
