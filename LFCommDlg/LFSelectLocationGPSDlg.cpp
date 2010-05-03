@@ -31,6 +31,7 @@ BOOL LFSelectLocationGPSDlg::OnInitDialog()
 	SetIcon(hIcon, FALSE);
 	SetIcon(hIcon, TRUE);
 
+	m_Map.ModifyStyle(0, WS_BORDER);
 	m_Map.SetGeoCoordinates(*m_pCoord);
 	SetTimer(1, 500, NULL);
 

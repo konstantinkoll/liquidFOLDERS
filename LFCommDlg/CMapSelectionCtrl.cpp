@@ -79,12 +79,12 @@ void CMapSelectionCtrl::UpdateLocation(CPoint point)
 	CRect rect;
 	GetClientRect(rect);
 
-	double latitude = (((point.y-1)*180.0)/(rect.Height()-2))-90.0;
+	double latitude = (((point.y-1)*180.0)/rect.Height())-90.0;
 	if (latitude<-90.0)
 		latitude = -90.0;
 	if (latitude>90.0)
 		latitude = 90.0;
-	double longitude = (((point.x-1)*360.0)/(rect.Width()-2))-180.0;
+	double longitude = (((point.x-1)*360.0)/rect.Width())-180.0;
 	if (longitude<-180.0)
 		longitude = -180.0;
 	if (longitude>180.0)
@@ -111,6 +111,7 @@ void CMapSelectionCtrl::SendUpdateMsg()
 
 BEGIN_MESSAGE_MAP(CMapSelectionCtrl, CWnd)
 	ON_WM_ERASEBKGND()
+	ON_WM_NCPAINT()
 	ON_WM_PAINT()
 	ON_WM_LBUTTONDOWN()
 	ON_WM_MOUSEMOVE()
@@ -119,6 +120,12 @@ END_MESSAGE_MAP()
 BOOL CMapSelectionCtrl::OnEraseBkgnd(CDC* /*pDC*/)
 {
 	return TRUE;
+}
+
+void CMapSelectionCtrl::OnNcPaint()
+{
+	if (GetStyle() & WS_BORDER)
+		CMFCVisualManager::GetInstance()->OnDrawControlBorder(this);
 }
 
 void CMapSelectionCtrl::OnPaint()
@@ -138,28 +145,19 @@ void CMapSelectionCtrl::OnPaint()
 
 	Graphics g(dc.m_hDC);
 	g.SetCompositingMode(CompositingModeSourceOver);
-	g.DrawImage(Map1->m_pBitmap, 1, 1, rect.Width()-2, rect.Height()-2);
+	g.DrawImage(Map1->m_pBitmap, 0, 0, rect.Width(), rect.Height());
 
 	if (blink)
 	{
-		int cx = (int)((m_Coord.Longitude+180)*(rect.Width()-2)/360)+1;
-		int cy = (int)((m_Coord.Latitude+90)*(rect.Height()-2)/180)+1;
+		int cx = (int)((m_Coord.Longitude+180)*rect.Width()/360)+1;
+		int cy = (int)((m_Coord.Latitude+90)*rect.Height()/180)+1;
 		int h = m_Indicator->m_pBitmap->GetHeight();
 		int l = m_Indicator->m_pBitmap->GetWidth();
 		g.DrawImage(m_Indicator->m_pBitmap, cx-l/2, cy-h/2);
 	}
 
-	CPen pen(PS_SOLID, 0, GetSysColor(COLOR_3DFACE+1));
-	CPen* pOldPen = dc.SelectObject(&pen);
-	dc.MoveTo(0, 0);
-	dc.LineTo(0, rect.Height()-1);
-	dc.LineTo(rect.Width()-1, rect.Height()-1);
-	dc.LineTo(rect.Width()-1, 0);
-	dc.LineTo(0, 0);
-
 	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);
 	dc.SelectObject(pOldBitmap);
-	dc.SelectObject(pOldPen);
 }
 
 void CMapSelectionCtrl::OnLButtonDown(UINT nFlags, CPoint point)

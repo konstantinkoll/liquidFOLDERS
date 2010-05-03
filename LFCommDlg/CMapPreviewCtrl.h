@@ -28,6 +28,7 @@ protected:
 	BOOL m_FirstPathDraw;
 
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
+	afx_msg void OnNcPaint();
 	afx_msg void OnPaint();
 	DECLARE_MESSAGE_MAP()
 

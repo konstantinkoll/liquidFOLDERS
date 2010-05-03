@@ -99,6 +99,9 @@ BOOL LFSelectLocationIATADlg::OnInitDialog()
 	SetIcon(hIcon, FALSE);
 	SetIcon(hIcon, TRUE);
 
+	// Karte
+	m_Map.ModifyStyle(0, WS_BORDER);
+
 	// Combobox füllen
 	CComboBox* c = (CComboBox*)GetDlgItem(IDC_COUNTRY);
 	UINT cCount = LFIATAGetCountryCount();

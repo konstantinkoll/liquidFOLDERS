@@ -83,12 +83,19 @@ void CMapPreviewCtrl::Update(LFAirport* _Airport)
 
 BEGIN_MESSAGE_MAP(CMapPreviewCtrl, CWnd)
 	ON_WM_ERASEBKGND()
+	ON_WM_NCPAINT()
 	ON_WM_PAINT()
 END_MESSAGE_MAP()
 
 BOOL CMapPreviewCtrl::OnEraseBkgnd(CDC* /*pDC*/)
 {
 	return TRUE;
+}
+
+void CMapPreviewCtrl::OnNcPaint()
+{
+	if (GetStyle() & WS_BORDER)
+		CMFCVisualManager::GetInstance()->OnDrawControlBorder(this);
 }
 
 void CMapPreviewCtrl::OnPaint()
@@ -105,7 +112,6 @@ void CMapPreviewCtrl::OnPaint()
 	CBitmap buffer;
 	buffer.CreateCompatibleBitmap(&pDC, rect.Width(), rect.Height());
 	CBitmap* pOldBitmap = dc.SelectObject(&buffer);
-
 
 	Graphics g(dc.m_hDC);
 	g.SetCompositingMode(CompositingModeSourceOver);
@@ -175,15 +181,6 @@ void CMapPreviewCtrl::OnPaint()
 		SolidBrush brush(Color(255, 255, 255));
 		g.FillPath(&brush, &m_TextPath);
 	}
-
-	// Rahmen
-	CBrush* pOldBrush = (CBrush*)dc.SelectStockObject(NULL_BRUSH);
-	CPen penOutline;
-	penOutline.CreatePen(PS_SOLID, 1, GetSysColor(COLOR_3DFACE+1));
-	CPen* pOldPen = dc.SelectObject(&penOutline);
-	dc.Rectangle(rect);
-	dc.SelectObject(pOldBrush);
-	dc.SelectObject(pOldPen);
 
 	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);
 	dc.SelectObject(pOldBitmap);

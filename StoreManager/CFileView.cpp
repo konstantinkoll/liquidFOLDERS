@@ -323,35 +323,28 @@ void CFileView::OnNcPaint()
 {
 	if (GetExStyle() & WS_EX_CLIENTEDGE)
 	{
-		CDC* dc = GetWindowDC();
+		CWindowDC dc(this);
 
 		CRect rect;
 		GetWindowRect(rect);
 
-		CBrush* pOldBrush = (CBrush*)dc->SelectStockObject(NULL_BRUSH);
-		COLORREF col = GetSysColor(COLOR_3DFACE+1);
+		rect.bottom -= rect.top;
+		rect.right -= rect.left;
+		rect.left = rect.top = 0;
 
-		CPen pen1(PS_SOLID, 1, col);
-		CPen* pOldPen = dc->SelectObject(&pen1);
-		dc->Rectangle(0, 0, rect.Width(), rect.Height());
+		COLORREF col = GetSysColor(COLOR_3DFACE+1);
+		dc.Draw3dRect(rect, col, col);
 
 		COLORREF back;
 		theApp.GetBackgroundColors(pViewParameters->Background, &back);
-		CPen pen2(PS_SOLID, 1, back);
-		dc->SelectObject(&pen2);
-
-		dc->Rectangle(1, 1, rect.Width()-1, rect.Height()-1);
+		rect.DeflateRect(1, 1);
+		dc.Draw3dRect(rect, back, back);
 
 		if (NcDividerLineY)
 		{
-			dc->SetPixel(1, NcDividerLineY, col);
-			dc->SetPixel(rect.Width()-2, NcDividerLineY, col);
+			dc.SetPixel(1, NcDividerLineY, col);
+			dc.SetPixel(rect.Width()-2, NcDividerLineY, col);
 		}
-
-		dc->SelectObject(pOldPen);
-		dc->SelectObject(pOldBrush);
-
-		ReleaseDC(dc);
 	}
 }
 
