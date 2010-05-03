@@ -43,9 +43,12 @@ BOOL CMigrateApp::InitInstance()
 	LFApplication::InitInstance();
 
 	// Registry auslesen
+	CString oldBase = GetRegistryBase();
+	SetRegistryBase(_T("Settings"));
 	m_GrannyMode = GetInt(_T("GrannyMode"), FALSE);
 	m_DeleteImported = GetInt(_T("DeleteImported"), FALSE);
 	m_Simulate = GetInt(_T("Simulate"), FALSE);
+	SetRegistryBase(oldBase);
 
 	m_pMainWnd = new CMainFrame();
 	((CMainFrame*)m_pMainWnd)->LoadFrame(IDR_MAINFRAME, WS_OVERLAPPEDWINDOW);
@@ -58,9 +61,12 @@ BOOL CMigrateApp::InitInstance()
 
 int CMigrateApp::ExitInstance()
 {
+	CString oldBase = GetRegistryBase();
+	SetRegistryBase(_T("Settings"));
 	WriteInt(_T("GrannyMode"), m_GrannyMode);
 	WriteInt(_T("DeleteImported"), m_DeleteImported);
 	WriteInt(_T("Simulate"), m_Simulate);
+	SetRegistryBase(oldBase);
 
 	return LFApplication::ExitInstance();
 }

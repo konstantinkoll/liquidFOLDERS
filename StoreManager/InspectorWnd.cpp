@@ -42,10 +42,11 @@ void CInspectorWnd::AdjustLayout()
 
 void CInspectorWnd::SaveSettings()
 {
+	CString oldBase = theApp.GetRegistryBase();
 	theApp.SetRegistryBase(_T("Inspector"));
 	theApp.WriteInt(_T("ShowIcon"), m_ShowIcon);
 	theApp.WriteInt(_T("Alphabetic"), m_Alphabetic);
-	theApp.SetRegistryBase(_T("Workspace"));
+	theApp.SetRegistryBase(oldBase);
 }
 
 void CInspectorWnd::UpdateStart(BOOL Reset)
@@ -286,10 +287,11 @@ int CInspectorWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CDockablePane::OnCreate(lpCreateStruct) == -1)
 		return -1;
 
+	CString oldBase = theApp.GetRegistryBase();
 	theApp.SetRegistryBase(_T("Inspector"));
 	m_ShowIcon = theApp.GetInt(_T("ShowIcon"), TRUE);
 	m_Alphabetic = theApp.GetInt(_T("Alphabetic"), FALSE);
-	theApp.SetRegistryBase(_T("Workspace"));
+	theApp.SetRegistryBase(oldBase);
 
 	if (m_wndToolBar.Create(this, AFX_DEFAULT_TOOLBAR_STYLE) == -1)
 		return -1;

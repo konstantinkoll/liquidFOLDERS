@@ -77,6 +77,8 @@ BOOL CStoreManagerApp::InitInstance()
 	LFApplication::InitInstance();
 
 	// Registry auslesen
+	CString oldBase = GetRegistryBase();
+	SetRegistryBase(_T("Settings"));
 	m_AllowEmptyDrives = GetInt(_T("AllowEmptyDrives"), TRUE);
 	m_GlobeHQModel = GetInt(_T("GlobeHQModel"), TRUE);
 	m_ShowQueryDuration = GetInt(_T("ShowQueryDuration"), 0);
@@ -99,6 +101,8 @@ BOOL CStoreManagerApp::InitInstance()
 		}
 	GetBinary(_T("Background"), m_Background, sizeof(m_Background));
 
+	SetRegistryBase(oldBase);
+
 	for (int a=0; a<LFContextCount; a++)
 		LoadViewOptions(a);
 
@@ -111,8 +115,15 @@ BOOL CStoreManagerApp::InitInstance()
 
 int CStoreManagerApp::ExitInstance()
 {
-	WriteBinary(_T("Background"), (LPBYTE)&m_Background, sizeof(m_Background));
+	CString oldBase = GetRegistryBase();
+	SetRegistryBase(_T("Settings"));
+	WriteInt(_T("AllowEmptyDrives"), m_AllowEmptyDrives);
+	WriteInt(_T("GlobeHQModel"), m_GlobeHQModel);
+	WriteInt(_T("ShowQueryDuration"), m_ShowQueryDuration);
+	WriteInt(_T("TextureSize"), m_nTextureSize);
 	WriteInt(_T("MaxTextureSize"), m_nMaxTextureSize);
+	WriteBinary(_T("Background"), (LPBYTE)&m_Background, sizeof(m_Background));
+	SetRegistryBase(oldBase);
 
 	return LFApplication::ExitInstance();
 }
@@ -229,7 +240,6 @@ void CStoreManagerApp::OnAppAbout()
 		if (p.AllowEmptyDrives!=m_AllowEmptyDrives)
 		{
 			m_AllowEmptyDrives = p.AllowEmptyDrives;
-			WriteInt(_T("AllowEmptyDrives"), p.AllowEmptyDrives);
 			UpdateSortOptions(LFContextStores);
 		}
 	}
@@ -313,6 +323,7 @@ void CStoreManagerApp::GetBinary(LPCTSTR lpszEntry, void* pData, UINT size)
 
 void CStoreManagerApp::LoadViewOptions(int context)
 {
+	CString oldBase = GetRegistryBase();
 	CString base;
 	base.Format(_T("Settings\\Context%d"), context);
 	SetRegistryBase(base);
@@ -353,11 +364,12 @@ void CStoreManagerApp::LoadViewOptions(int context)
 	if ((m_Views[context].Mode>LFViewTiles) && (!m_Contexts[context]->AllowExtendedViews))
 		m_Views[context].Mode = LFViewDetails;
 
-	SetRegistryBase(_T("Workspace"));
+	SetRegistryBase(oldBase);
 }
 
 void CStoreManagerApp::SaveViewOptions(int context, UINT SaveMode)
 {
+	CString oldBase = GetRegistryBase();
 	CString base;
 	base.Format(_T("Settings\\Context%d"), context);
 	SetRegistryBase(base);
@@ -391,7 +403,7 @@ void CStoreManagerApp::SaveViewOptions(int context, UINT SaveMode)
 			m_Views[context].Changed = TRUE;
 	}
 
-	SetRegistryBase(_T("Workspace"));
+	SetRegistryBase(oldBase);
 }
 
 void CStoreManagerApp::ToggleAttribute(LFViewParameters* vp, UINT attr, int ColumnCount)

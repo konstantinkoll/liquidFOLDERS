@@ -118,15 +118,15 @@ BOOL CFileDropDlg::OnInitDialog()
 	warning->Load(IDB_BADGE_WARNING, _T("PNG"), AfxGetInstanceHandle());
 
 	// Einstellungen laden
-	SetTopMost(theApp.GetProfileInt(_T(""), _T("AlwaysOnTop"), 1)==1);
-	SetWindowSize(theApp.GetProfileInt(_T(""), _T("SmallWindow"), 0)==1);
+	SetTopMost(theApp.GetInt(_T("AlwaysOnTop"), 1)==1);
+	SetWindowSize(theApp.GetInt(_T("SmallWindow"), 0)==1);
 
 	UpdateStatus();
 
 	CRect r;
 	GetWindowRect(&r);
-	int x = theApp.GetProfileInt(_T(""), _T("X"), 10000);
-	int y = theApp.GetProfileInt(_T(""), _T("Y"), 10000);
+	int x = theApp.GetInt(_T("X"), 10000);
+	int y = theApp.GetInt(_T("Y"), 10000);
 
 	CRect d;
 	GetDesktopWindow()->GetWindowRect(&d);
@@ -540,10 +540,10 @@ void CFileDropDlg::OnClose()
 {
 	CRect r;
 	GetWindowRect(&r);
-	theApp.WriteProfileInt(_T(""), _T("AlwaysOnTop"), AlwaysOnTop);
-	theApp.WriteProfileInt(_T(""), _T("SmallWindow"), SmallWindow);
-	theApp.WriteProfileInt(_T(""), _T("X"), r.left);
-	theApp.WriteProfileInt(_T(""), _T("Y"), r.top);
+	theApp.WriteInt(_T("AlwaysOnTop"), AlwaysOnTop);
+	theApp.WriteInt(_T("SmallWindow"), SmallWindow);
+	theApp.WriteInt(_T("X"), r.left);
+	theApp.WriteInt(_T("Y"), r.top);
 	CDialog::OnClose();
 }
 

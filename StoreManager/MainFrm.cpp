@@ -371,7 +371,6 @@ void CMainFrame::OnAppViewOptions()
 		if (dlg.RibbonColor!=theApp.m_nAppLook)
 			::SendNotifyMessage(HWND_BROADCAST, theApp.p_MessageIDs->LookChanged, dlg.RibbonColor, 0);
 
-		theApp.WriteInt(_T("ShowQueryDuration"), theApp.m_ShowQueryDuration);
 		theApp.SaveViewOptions(ActiveContextID);
 		theApp.OpenChildViews(ActiveContextID, TRUE);
 	}

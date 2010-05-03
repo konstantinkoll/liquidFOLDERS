@@ -464,7 +464,6 @@ void CGlobeView::OnGoogleEarth()
 void CGlobeView::OnHQModel()
 {
 	theApp.m_GlobeHQModel = !theApp.m_GlobeHQModel;
-	theApp.WriteInt(_T("GlobeHQModel"), theApp.m_GlobeHQModel);
 	OnViewOptionsChanged();
 }
 

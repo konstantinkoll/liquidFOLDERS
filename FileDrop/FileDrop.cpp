@@ -29,6 +29,8 @@ BOOL CFileDropApp::InitInstance()
 {
 	LFApplication::InitInstance();
 
+	SetRegistryBase(_T("Settings"));
+
 	CFileDropDlg dlg;
 	dlg.DoModal();
 
