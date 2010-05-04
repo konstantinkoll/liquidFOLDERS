@@ -6,7 +6,7 @@
 // CHeapfile
 //
 
-#define MaxBufferSize     262144
+#define MaxBufferSize     1048576
 #define HeapSignature     "LFIDX"
 
 #define HeapOk            0

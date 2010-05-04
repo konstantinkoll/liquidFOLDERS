@@ -10,6 +10,8 @@ public:
 	CIndex(char* _Path, char* _StoreID);
 	~CIndex();
 
+	bool Create();
+	void Reindex(bool force=false);
 	void AddItem(LFItemDescriptor* i);
 	void Update(LFItemDescriptor* i);
 	void Update(LFTransactionList* li);
@@ -20,7 +22,7 @@ public:
 	void Retrieve(LFFilter* f, LFSearchResult* res);
 
 protected:
-	void LoadTable(unsigned int ID);
+	bool LoadTable(unsigned int ID);
 
 private:
 	CHeapfile* Tables[IdxTableCount];

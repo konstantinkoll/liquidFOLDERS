@@ -312,7 +312,6 @@ void CHeapfile::Invalidate(LFItemDescriptor* i)
 
 bool CHeapfile::Compact()
 {
-	Writeback();
 	if (!Hdr.NeedsCompaction)
 		return true;
 
@@ -324,7 +323,7 @@ bool CHeapfile::Compact()
 	if (hOutput==INVALID_HANDLE_VALUE)
 		return false;
 
-	Hdr.NeedsCompaction = HeaderNeedsWriteback = false;
+	Hdr.NeedsCompaction = false;
 
 	#define ABORT { CloseHandle(hOutput); DeleteFileA(BufFilename); return false; }
 
@@ -351,6 +350,7 @@ bool CHeapfile::Compact()
 		}
 	};
 
+	HeaderNeedsWriteback = false;
 	CloseHandle(hOutput);
 	CloseFile();
 

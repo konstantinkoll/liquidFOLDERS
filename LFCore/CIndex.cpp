@@ -20,7 +20,7 @@ CIndex::~CIndex()
 			delete Tables[a];
 }
 
-inline void CIndex::LoadTable(unsigned int ID)
+inline bool CIndex::LoadTable(unsigned int ID)
 {
 	assert(ID<IdxTableCount);
 
@@ -47,7 +47,26 @@ inline void CIndex::LoadTable(unsigned int ID)
 			break;
 		default:
 			assert(false);
+			return false;
 		}
+
+	return (Tables[ID]->Status!=HeapError);
+}
+
+bool CIndex::Create()
+{
+	bool res = true;
+
+	for (unsigned int a=0; a<IdxTableCount; a++)
+		if (!LoadTable(a))
+			res = false;
+
+	return res;
+}
+
+void CIndex::Reindex(bool force)
+{
+	// TODO
 }
 
 void CIndex::AddItem(LFItemDescriptor* i)
@@ -59,7 +78,7 @@ void CIndex::AddItem(LFItemDescriptor* i)
 	Tables[IDMaster]->Add(i);
 
 	// Slave
-	if (i->CoreAttributes.SlaveID)
+	if ((i->CoreAttributes.SlaveID) && (i->CoreAttributes.SlaveID<IdxTableCount))
 	{
 		LoadTable(i->CoreAttributes.SlaveID);
 		Tables[i->CoreAttributes.SlaveID]->Add(i);
@@ -75,7 +94,7 @@ void CIndex::Update(LFItemDescriptor* i)
 	Tables[IDMaster]->Update(i);
 
 	// Slave
-	if (i->CoreAttributes.SlaveID)
+	if ((i->CoreAttributes.SlaveID) && (i->CoreAttributes.SlaveID<IdxTableCount))
 	{
 		LoadTable(i->CoreAttributes.SlaveID);
 		Tables[i->CoreAttributes.SlaveID]->Update(i);
@@ -96,7 +115,7 @@ void CIndex::Remove(LFItemDescriptor* i)
 	Tables[IDMaster]->Invalidate(i);
 
 	// Slave
-	if (i->CoreAttributes.SlaveID)
+	if ((i->CoreAttributes.SlaveID) && (i->CoreAttributes.SlaveID<IdxTableCount))
 	{
 		LoadTable(i->CoreAttributes.SlaveID);
 		Tables[i->CoreAttributes.SlaveID]->Invalidate(i);
@@ -121,7 +140,7 @@ void CIndex::RemoveTrash()
 		if (Ptr->Flags & LFFlagTrash)
 		{
 			// Slave
-			if (Ptr->SlaveID)
+			if ((Ptr->SlaveID) && (Ptr->SlaveID<IdxTableCount))
 			{
 				LoadTable(Ptr->SlaveID);
 				Tables[Ptr->SlaveID]->Invalidate(Ptr->FileID, IDs[Ptr->SlaveID]);
@@ -147,8 +166,8 @@ void CIndex::Compact(bool ForceAllTables)
 
 void CIndex::Retrieve(LFFilter* f, LFSearchResult* res)
 {
-	assert(f);
-	assert(f->Mode>=LFFilterModeSearchInStore);
+	//assert(f);
+	//assert(f->Mode>=LFFilterModeSearchInStore);
 	assert(res);
 
 	LoadTable(IDMaster);
@@ -164,7 +183,7 @@ void CIndex::Retrieve(LFFilter* f, LFSearchResult* res)
 		Tables[IDMaster]->WriteToItemDescriptor(i, PtrM);
 
 		// Slave
-		if (PtrM->SlaveID)
+		if ((PtrM->SlaveID) && (PtrM->SlaveID<IdxTableCount))
 		{
 			LoadTable(PtrM->SlaveID);
 			void* PtrS;
