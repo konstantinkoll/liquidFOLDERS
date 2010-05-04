@@ -7,10 +7,19 @@
 //
 
 #define MaxBufferSize     262144
+#define HeapSignature     "LFIDX"
 
 #define HeapOk            0
 #define HeapError         1
 #define HeapCreated       2
+
+struct HeapfileHeader
+{
+	char ID[6];
+	unsigned int ElementSize;
+	bool NeedsCompaction;
+	unsigned char Fill[497];		// Auf 512 Byte
+};
 
 class LFCore_API CHeapfile
 {
@@ -38,17 +47,18 @@ public:
 
 protected:
 	void* Buffer;
-	int ItemCount;
+	HeapfileHeader Hdr;
 	int FirstInBuffer;
 	int LastInBuffer;
 	unsigned int KeyOffset;
-	unsigned int ElementSize;
 	unsigned int BufferSize;
+	int ItemCount;
 	bool BufferNeedsWriteback;
-	bool NeedsCompaction;
+	bool HeaderNeedsWriteback;
 
-	bool Writeback();
 	bool OpenFile();
+	bool WriteHeader();
+	bool Writeback();
 	void ElementToBuffer(int ID);
 
 private:
