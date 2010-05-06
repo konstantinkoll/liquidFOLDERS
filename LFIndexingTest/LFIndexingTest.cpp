@@ -1,6 +1,3 @@
-// LFIndexingTest.cpp : Definiert den Einstiegspunkt für die Konsolenanwendung.
-//
-
 #include "stdafx.h"
 #include "LFCore.h"
 #include "..\\LFCore\\CIndex.h"
@@ -8,22 +5,17 @@
 
 using namespace std;
 
-struct IdxData
-{
-	UINT number1;
-	UINT number2;
-	char fill[8192];
-};
-
 void LFCore_API SetAttribute(LFItemDescriptor* i, unsigned int attr, const void* v, bool ToString=true, wchar_t* ustr=NULL);
 
 void Test_CIndex()
 {
 	CIndex* idx;
-	const UINT cnt = 10000;
-	//char Path[MAX_PATH] = "C:\\users\\root\\";
-	char Path[MAX_PATH] = "J:\\";
+	const UINT cnt = 25000;
+	char Path[MAX_PATH] = "C:\\users\\root\\";
+	//char Path[MAX_PATH] = "J:\\";
 
+	cout << "Press any key to create a sample index on 25000 files";
+	cin.get();
 
 	// Add files
 	cout << endl << "Add " << cnt << " files...";

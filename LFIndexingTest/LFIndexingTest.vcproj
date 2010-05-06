@@ -383,10 +383,6 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\include\BitArray.h"
-				>
-			</File>
-			<File
 				RelativePath="..\include\LFIndexing.h"
 				>
 			</File>
