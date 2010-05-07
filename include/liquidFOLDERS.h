@@ -462,6 +462,7 @@ struct LFStoreDescriptor
 #define LFIllegalAttribute              14
 #define LFIllegalItemType               15
 #define LFIllegalValue                  16
+#define LFIndexNotCreated               17
 
 
 // Structures and classes from LFCore.DLL

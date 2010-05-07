@@ -103,6 +103,8 @@ void LFItemTemplateDlg::OnReset()
 		if (pAttributes[a])
 			pAttributes[a]->SetValue(_T(""), FALSE);
 	}
+
+	m_Inspector.SetFocus();
 }
 
 void LFItemTemplateDlg::OnSkip()

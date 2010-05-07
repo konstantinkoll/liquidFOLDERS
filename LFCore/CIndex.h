@@ -4,7 +4,7 @@
 #include "IdxTables.h"
 
 
-class LFCore_API CIndex
+class CIndex
 {
 public:
 	CIndex(char* _Path, char* _StoreID);

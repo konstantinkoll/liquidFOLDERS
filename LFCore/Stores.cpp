@@ -1,5 +1,6 @@
 #include "StdAfx.h"
 #include "..\\include\\LFCore.h"
+#include "CIndex.h"
 #include "LFItemDescriptor.h"
 #include "Mutex.h"
 #include "StoreCache.h"
@@ -140,6 +141,16 @@ unsigned int ValidateStoreDirectories(LFStoreDescriptor* s)
 	return LFOk;
 }
 
+void CreateStoreIndex(char* _Path, char* _StoreID, unsigned int &res)
+{
+	if (_Path[0]=='\0')
+		return;
+
+	CIndex idx(_Path, _StoreID);
+	if (!idx.Create())
+		res = LFIndexNotCreated;
+}
+
 void AddDrives(LFSearchResult* res)
 {
 	DWORD DrivesOnSystem = LFGetLogicalDrives(LFGLD_External);
@@ -265,12 +276,24 @@ LFCore_API unsigned int LFCreateStore(LFStoreDescriptor* s, bool MakeDefault, HW
 	// Store speichern
 	res = UpdateStore(s, MakeDefault);
 
-	ReleaseMutex(Mutex_Stores);
-
 	if (res==LFOk)
 	{
+		HANDLE StoreLock = GetMutexForStore(s);
+		ReleaseMutex(Mutex_Stores);
+
 		res = ValidateStoreDirectories(s);
+		if (res==LFOk)
+		{
+			CreateStoreIndex(s->IdxPathMain, s->StoreID, res);
+			CreateStoreIndex(s->IdxPathAux, s->StoreID, res);
+		}
+
+		ReleaseMutex(StoreLock);
 		SendNotifyMessage(HWND_BROADCAST, LFMessages.StoresChanged, s->StoreMode==LFStoreModeInternal ? LFMSGF_IntStores : LFMSGF_ExtHybStores , (LPARAM)hWndSource);
+	}
+	else
+	{
+		ReleaseMutex(Mutex_Stores);
 	}
 
 	return res;
@@ -454,7 +477,6 @@ LFCore_API unsigned int LFDeleteStore(char* key, HWND hWndSource)
 	{
 		LFStoreDescriptor victim = *slot;
 		res = DeleteStore(slot);
-		ReleaseMutexForStore(StoreLock);
 		ReleaseMutex(Mutex_Stores);
 
 		SendNotifyMessage(HWND_BROADCAST, LFMessages.StoresChanged, victim.StoreMode==LFStoreModeInternal ? LFMSGF_IntStores : LFMSGF_ExtHybStores, (LPARAM)hWndSource);
@@ -473,6 +495,8 @@ LFCore_API unsigned int LFDeleteStore(char* key, HWND hWndSource)
 
 		if (victim.DatPath[0]!='\0')
 			RemoveDir(victim.DatPath);
+
+		ReleaseMutexForStore(StoreLock);
 	}
 	else
 	{
