@@ -154,6 +154,7 @@ BEGIN
     IDS_LFContextClipboard  "Clipboard"
     IDS_LFContextDefault    "Default"
     IDS_LFContextTrash      "Trash"
+    IDS_LFContextUnknownFormats "Unknown file formats"
 END
 
 STRINGTABLE 

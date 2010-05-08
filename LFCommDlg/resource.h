@@ -113,6 +113,7 @@
 #define IDC_SKIP                        21802
 #define IDC_ALPHABETICALLY              21803
 #define IDC_RESET                       21804
+#define IDD_REGISTRY                    21900
 
 // Next default values for new objects
 // 

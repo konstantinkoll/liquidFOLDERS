@@ -24,6 +24,7 @@
 #define RibbonCategory_View_Timeline        8
 #define RibbonCategory_Stores               9
 #define RibbonCategory_Trash                10
+#define RibbonCategory_UnknownFileFormats   11
 
 #define RibbonDefaultCategory               RibbonCategory_Files
 

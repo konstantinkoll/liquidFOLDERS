@@ -1046,6 +1046,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Ribbon\FolderUnknown_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\FolderUnknown_32.png"
+				>
+			</File>
+			<File
 				RelativePath=".\Ribbon\FolderWarning_16.png"
 				>
 			</File>
@@ -1366,6 +1374,22 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Ribbon\RegisterFileFormat_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\RegisterFileFormat_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\Registry_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\Registry_32.png"
+				>
+			</File>
+			<File
 				RelativePath="Ribbon\Reload_16.png"
 				>
 			</File>
@@ -1659,6 +1683,14 @@
 			</File>
 			<File
 				RelativePath=".\Ribbon\UndeleteFile_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\Unknown_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\Unknown_32.png"
 				>
 			</File>
 			<File
@@ -2236,6 +2268,10 @@
 		</File>
 		<File
 			RelativePath="Ready_24.png"
+			>
+		</File>
+		<File
+			RelativePath=".\Registry_Tiny.ico"
 			>
 		</File>
 		<File

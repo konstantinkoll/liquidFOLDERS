@@ -1033,6 +1033,7 @@ void CMainFrame::UpdateSearchResult(BOOL SetEmpty, int FocusItem)
 		#ifndef _DEBUG
 		m_wndRibbonBar.ShowCategory(RibbonCategory_Stores, CookedFiles->m_Context==LFContextStores);
 		m_wndRibbonBar.ShowCategory(RibbonCategory_Trash, CookedFiles->m_Context==LFContextTrash);
+		m_wndRibbonBar.ShowCategory(RibbonCategory_UnknownFileFormats, CookedFiles->m_Context==LFContextUnknownFileFormats);
 		#endif
 
 		// ChildView austauschen:
@@ -1700,7 +1701,7 @@ void CMainFrame::InitializeRibbon()
 			pPanelEmail->Add(new CMFCRibbonButton(ID_APP_ABOUT, strTemp, 2, 2));
 			strTemp = "Forward All";
 			pPanelEmail->Add(new CMFCRibbonButton(ID_APP_ABOUT, strTemp, 3, 3));
-		
+
 	strTemp = "Contacts";
 	CMFCRibbonCategory* pCategoryEmailContacts = m_wndRibbonBar.AddContextCategory(strTemp, strCtx, 3, AFX_CategoryColor_Green, IDB_RIBBONCONTACTS_16, IDB_RIBBONCONTACTS_32);
 	
@@ -1722,6 +1723,19 @@ void CMainFrame::InitializeRibbon()
 
 	if (!IsClipboard)
 	{
+		strTemp = "Register";
+		strCtx = "Unknown file formats";
+		CMFCRibbonCategory* pCategoryUnknownFileFormats = m_wndRibbonBar.AddContextCategory(strTemp, strCtx, 5, AFX_CategoryColor_Green, IDB_RIBBONUNKNOWNFILEFORMATS_16, IDB_RIBBONUNKNOWNFILEFORMATS_32);
+
+			CMFCRibbonPanel* pPanelRegister = pCategoryUnknownFileFormats->AddPanel(strTemp, m_PanelImages.ExtractIcon(19));
+			pPanelRegister->EnableLaunchButton(ID_APP_ABOUT, 2);
+
+				strTemp = "Register formats";
+				pPanelRegister->Add(new CMFCRibbonButton(ID_APP_ABOUT, strTemp, 0, 0));
+				pPanelRegister->AddSeparator();
+				strTemp = "Send to customer support";
+				pPanelRegister->Add(new CMFCRibbonButton(ID_APP_ABOUT, strTemp, 1, 1));
+
 		strCtx = "View";
 		strTemp = "Calendar";
 		CMFCRibbonCategory* pCategoryCalendar = m_wndRibbonBar.AddContextCategory(strTemp, strCtx, 2, AFX_CategoryColor_Indigo, IDB_RIBBONCALENDAR_16, IDB_RIBBONCALENDAR_32);
@@ -1838,7 +1852,7 @@ void CMainFrame::InitializeRibbon()
 		CMFCRibbonCategory* pCategoryTrash = m_wndRibbonBar.AddContextCategory(strTemp, strCtx, 4, AFX_CategoryColor_Red, IDB_RIBBONTRASH_16, IDB_RIBBONTRASH_32);
 
 			CMFCRibbonPanel* pPanelDeletedFiles = pCategoryTrash->AddPanel(strTemp, m_PanelImages.ExtractIcon(14));
-	
+
 				pPanelDeletedFiles->Add(theApp.CommandButton(ID_TRASH_EMPTY, 0, 0));
 				pPanelDeletedFiles->AddSeparator();
 				pPanelDeletedFiles->Add(theApp.CommandButton(ID_TRASH_RESTORE, 1, 1));
@@ -1867,6 +1881,7 @@ void CMainFrame::InitializeRibbon()
 	m_wndRibbonBar.ShowCategory(RibbonCategory_View_Timeline);
 	m_wndRibbonBar.ShowCategory(RibbonCategory_Stores);
 	m_wndRibbonBar.ShowCategory(RibbonCategory_Trash);
+	m_wndRibbonBar.ShowCategory(RibbonCategory_UnknownFileFormats);
 	#endif
 
 	// Symbolleistenbefehle für Schnellzugriff hinzufügen

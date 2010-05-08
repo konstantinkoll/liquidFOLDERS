@@ -773,6 +773,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\Ribbon_UnknownFileFormats_16.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Ribbon_UnknownFileFormats_32.bmp"
+				>
+			</File>
+			<File
 				RelativePath=".\res\Ribbon_View_16.bmp"
 				>
 			</File>

@@ -131,8 +131,9 @@ struct LFItemCategoryDescriptor
 #define LFContextClipboard              2
 #define LFContextDefault                3
 #define LFContextTrash                  4
+#define LFContextUnknownFileFormats     5
 
-#define LFContextCount                  5
+#define LFContextCount                  6
 
 
 // Context descriptor
@@ -333,7 +334,8 @@ struct LFDomainDescriptor
 #define LFFilterTypeSubfolder           2
 #define LFFilterTypeQueryFilter         3
 #define LFFilterTypeTrash               4
-#define LFFilterTypeIllegalRequest      5
+#define LFFilterTypeUnknownFileFormats  5
+#define LFFilterTypeIllegalRequest      6
 #define LFFilterTypeDefault             -1
 
 struct LFFilterResult

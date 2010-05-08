@@ -33,8 +33,10 @@
 #define IDB_RIBBONTRASH_32              156
 #define IDB_RIBBONTAGCLOUD_16           157
 #define IDB_RIBBONTAGCLOUD_32           158
-#define IDB_INSPECTOR                   159
-#define IDB_MULTIPLE                    160
+#define IDB_RIBBONUNKNOWNFILEFORMATS_16 159
+#define IDB_RIBBONUNKNOWNFILEFORMATS_32 160
+#define IDB_INSPECTOR                   161
+#define IDB_MULTIPLE                    162
 #define IDM_DRIVE                       200
 #define IDM_STORE                       201
 #define IDM_VIRTUAL                     202

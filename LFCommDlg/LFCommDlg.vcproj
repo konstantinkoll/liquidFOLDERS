@@ -879,6 +879,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\Registry_Tiny.ico"
+				>
+			</File>
+			<File
 				RelativePath=".\res\Store_Default_32.bmp"
 				>
 			</File>

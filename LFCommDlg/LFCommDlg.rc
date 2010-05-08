@@ -129,6 +129,7 @@ IDD_SELECTGPS           ICON                    "res\\LocationGPS_Tiny.ico"
 IDD_ENTERLICENSEKEY     ICON                    "res\\Key_Small.ico"
 IDD_STOREPROPERTIES     ICON                    "res\\StoreProperties_Tiny.ico"
 IDD_ITEMTEMPLATE        ICON                    "res\\Inspector_Tiny.ico"
+IDD_REGISTRY            ICON                    "res\\Registry_Tiny.ico"
 #endif    // Neutral resources
 /////////////////////////////////////////////////////////////////////////////
 
