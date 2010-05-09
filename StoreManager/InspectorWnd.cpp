@@ -144,6 +144,13 @@ void CInspectorWnd::UpdateAdd(LFItemDescriptor* i)
 		StringFromGUID2(s.GUID, szGUID, MAX_PATH);
 		AddValueVirtual(AttrGUID, szGUID, FALSE);
 
+		wchar_t tmpStr[256];
+		LFTimeToString(s.MaintenanceTime, tmpStr, 256);
+		AddValueVirtual(AttrMaintenanceTime, tmpStr, FALSE);
+
+		LFUINTToString(s.IndexVersion, tmpStr, 256);
+		AddValueVirtual(AttrIndexVersion, tmpStr, FALSE);
+
 		if (s.StoreMode!=LFStoreModeInternal)
 			AddValueVirtual(AttrLastSeen, s.LastSeen, FALSE);
 

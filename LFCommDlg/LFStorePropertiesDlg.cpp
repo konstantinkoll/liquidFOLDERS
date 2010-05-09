@@ -83,6 +83,8 @@ LRESULT LFStorePropertiesDlg::UpdateStore(WPARAM /*wParam*/, LPARAM /*lParam*/)
 		GetDlgItem(IDC_CREATED)->SetWindowText(tmpStr);
 		LFTimeToString(store.FileTime, tmpStr, 256);
 		GetDlgItem(IDC_UPDATED)->SetWindowText(tmpStr);
+		LFTimeToString(store.MaintenanceTime, tmpStr, 256);
+		GetDlgItem(IDC_MAINTENANCE)->SetWindowText(tmpStr);
 
 		OLECHAR szGUID[MAX_PATH];
 		StringFromGUID2(store.GUID, szGUID, MAX_PATH);
@@ -102,6 +104,9 @@ LRESULT LFStorePropertiesDlg::UpdateStore(WPARAM /*wParam*/, LPARAM /*lParam*/)
 		sz = strlen(store.IdxPathAux)+1;
 		MultiByteToWideChar(CP_ACP, 0, store.IdxPathAux, (int)sz, (LPWSTR)tmpStr, (int)sz);
 		GetDlgItem(IDC_IDXPATHAUX)->SetWindowText(tmpStr);
+
+		LFUINTToString(store.IndexVersion, tmpStr, 256);
+		GetDlgItem(IDC_IDXVERSION)->SetWindowText(tmpStr);
 	}
 	else
 	{

@@ -2,6 +2,7 @@
 #pragma once
 #include "stdafx.h"
 #include "CHeapfile.h"
+#include "IdxTables.h"
 #include <assert.h>
 #include <io.h>
 #include <malloc.h>
@@ -64,10 +65,11 @@ Create:
 				KeyOffset += (Hdr.ElementSize-_ElementSize);
 
 			// Konvertierung für kleinere Tupel
-			if (Hdr.ElementSize<_ElementSize)
+			if ((Hdr.ElementSize<_ElementSize) || (Hdr.Version<IdxVersion))
 			{
 				// TODO: Konvertierung
-				assert(false);
+
+				Hdr.Version = IdxVersion;
 			}
 
 			ItemCount = (unsigned int)((size.QuadPart-sizeof(HeapfileHeader))/Hdr.ElementSize);

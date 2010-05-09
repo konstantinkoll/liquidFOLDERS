@@ -265,13 +265,17 @@ LFCore_API unsigned int LFCreateStore(LFStoreDescriptor* s, bool MakeDefault, HW
 	if (!GetMutex(Mutex_Stores))
 		return LFMutexError;
 
-	// CreateTime setzen
+	// CreateTime und MaintenanceTime setzen
 	SYSTEMTIME st;
 	GetLocalTime(&st);
 	SystemTimeToFileTime(&st, &s->CreationTime);
+	s->MaintenanceTime = s->CreationTime;
 
 	// Key generieren
 	CreateStoreKey(s->StoreID);
+
+	// Index-Version
+	s->IndexVersion = IdxVersion;
 
 	// Store speichern
 	res = UpdateStore(s, MakeDefault);

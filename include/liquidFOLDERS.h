@@ -438,6 +438,8 @@ struct LFStoreDescriptor
 	bool AutoLocation;
 	FILETIME CreationTime;
 	FILETIME FileTime;
+	FILETIME MaintenanceTime;
+	unsigned int IndexVersion;
 	char DatPath[MAX_PATH];
 	char IdxPathMain[MAX_PATH];					// Volatile
 	char IdxPathAux[MAX_PATH];					// Volatile

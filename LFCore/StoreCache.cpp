@@ -153,6 +153,13 @@ bool LoadStoreSettingsFromRegistry(char* key, LFStoreDescriptor* s)
 		sz = sizeof(s->FileTime);
 		RegQueryValueExA(k, "FileTime", 0, NULL, (BYTE*)&s->FileTime, &sz);
 
+		sz = sizeof(s->MaintenanceTime);
+		RegQueryValueExA(k, "MaintenanceTime", 0, NULL, (BYTE*)&s->MaintenanceTime, &sz);
+
+		sz = sizeof(s->IndexVersion);
+		if (RegQueryValueExA(k, "IndexVersion", 0, NULL, (BYTE*)&s->IndexVersion, &sz)!=ERROR_SUCCESS)
+			res = false;
+
 		sz = sizeof(s->AutoLocation);
 		if (RegQueryValueExA(k, "AutoLocation", 0, NULL, (BYTE*)&s->AutoLocation, &sz)!=ERROR_SUCCESS)
 			res = false;
@@ -224,7 +231,11 @@ unsigned int SaveStoreSettingsToRegistry(LFStoreDescriptor* s)
 			res = LFRegistryError;
 		if (RegSetValueExA(k, "FileTime", 0, REG_BINARY, (BYTE*)&s->FileTime, sizeof(FILETIME))!=ERROR_SUCCESS)
 			res = LFRegistryError;
+		if (RegSetValueExA(k, "MaintenanceTime", 0, REG_BINARY, (BYTE*)&s->MaintenanceTime, sizeof(FILETIME))!=ERROR_SUCCESS)
+			res = LFRegistryError;
 		if (RegSetValueExA(k, "AutoLocation", 0, REG_DWORD, (BYTE*)&s->AutoLocation, sizeof(bool))!=ERROR_SUCCESS)
+			res = LFRegistryError;
+		if (RegSetValueExA(k, "IndexVersion", 0, REG_DWORD, (BYTE*)&s->IndexVersion, sizeof(unsigned int))!=ERROR_SUCCESS)
 			res = LFRegistryError;
 		if ((s->StoreMode==LFStoreModeInternal) && (!s->AutoLocation))
 			if (RegSetValueExA(k, "Path", 0, REG_SZ, (BYTE*)s->DatPath, (DWORD)strlen(s->DatPath))!=ERROR_SUCCESS)

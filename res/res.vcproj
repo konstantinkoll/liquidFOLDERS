@@ -1534,14 +1534,6 @@
 				>
 			</File>
 			<File
-				RelativePath="Ribbon\StoreInformation_16.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\StoreInformation_32.png"
-				>
-			</File>
-			<File
 				RelativePath="Ribbon\StoreLock_16.png"
 				>
 			</File>
@@ -1587,6 +1579,14 @@
 			</File>
 			<File
 				RelativePath="Ribbon\Stores_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\StoreStats_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\StoreStats_32.png"
 				>
 			</File>
 			<File
@@ -2336,6 +2336,10 @@
 		</File>
 		<File
 			RelativePath=".\StoreProperties_Tiny.ico"
+			>
+		</File>
+		<File
+			RelativePath=".\StoreStats_Tiny.ico"
 			>
 		</File>
 		<File

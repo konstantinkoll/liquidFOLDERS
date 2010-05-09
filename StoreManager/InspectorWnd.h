@@ -27,14 +27,17 @@ public:
 //
 
 #define AttrDriveLetter             LFAttributeCount+0
-#define AttrLastSeen                LFAttributeCount+1
-#define AttrGUID                    LFAttributeCount+2
-#define AttrPathData                LFAttributeCount+3
-#define AttrPathIdxMain             LFAttributeCount+4
-#define AttrPathIdxAux              LFAttributeCount+5
-#define AttrIATAAirportName         LFAttributeCount+6
-#define AttrIATAAirportCountry      LFAttributeCount+7
-#define AttrCount                   LFAttributeCount+8
+#define AttrMaintenanceTime         LFAttributeCount+1
+#define AttrLastSeen                LFAttributeCount+2
+#define AttrGUID                    LFAttributeCount+3
+#define AttrPathData                LFAttributeCount+4
+#define AttrPathIdxMain             LFAttributeCount+5
+#define AttrPathIdxAux              LFAttributeCount+6
+#define AttrIndexVersion            LFAttributeCount+7
+#define AttrIATAAirportName         LFAttributeCount+8
+#define AttrIATAAirportCountry      LFAttributeCount+9
+
+#define AttrCount                   LFAttributeCount+10
 
 
 // CInspectorWnd

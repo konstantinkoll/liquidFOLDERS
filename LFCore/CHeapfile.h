@@ -17,8 +17,9 @@ struct HeapfileHeader
 {
 	char ID[6];
 	unsigned int ElementSize;
+	unsigned int Version;
 	bool NeedsCompaction;
-	unsigned char Fill[497];		// Auf 512 Byte
+	unsigned char Fill[493];		// Auf 512 Byte
 };
 
 class LFCore_API CHeapfile

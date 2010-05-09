@@ -469,15 +469,13 @@ END
 STRINGTABLE 
 BEGIN
     IDS_VATTR_DRIVELETTER   "Drive letter"
+    IDS_VATTR_MAINTENANCETIME "Last maintenance"
     IDS_VATTR_LASTSEEN      "Last seen"
     IDS_VATTR_GUID          "GUID"
     IDS_VATTR_PATH_DAT      "Data path"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_VATTR_PATH_IDX_MAIN "Main index path"
     IDS_VATTR_PATH_IDX_AUX  "Aux. index path"
+    IDS_VATTR_INDEXVERSION  "Index version"
     IDS_VATTR_IATA_NAME     "IATA airport name"
     IDS_VATTR_IATA_COUNTRY  "Country/territory"
 END

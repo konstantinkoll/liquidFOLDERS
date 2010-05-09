@@ -3,6 +3,12 @@
 #include "CHeapfile.h"
 
 
+// Version
+//
+
+#define IdxVersion                      1
+
+
 // Structures
 //
 
@@ -14,6 +20,7 @@
 #define IDSlaveVideos                   5
 
 #define IdxTableCount                   6
+
 
 struct LFDocumentAttributes
 {
