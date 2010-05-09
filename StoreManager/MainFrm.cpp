@@ -1834,8 +1834,8 @@ void CMainFrame::InitializeRibbon()
 				pPanelStoresInformation->Add(theApp.CommandButton(ID_STORE_PROPERTIES, 7, 7));
 				pPanelStoresInformation->Add(theApp.CommandButton(ID_STORE_STATS, 8, 8));
 				pPanelStoresInformation->AddSeparator();
-				pPanelStoresInformation->Add(theApp.CommandButton(ID_STORE_BACKUP, 9, 9));
-				//pPanelStoresInformation->Add(theApp.CommandButton(ID_STORE_BACKUP, 10, 10));
+				pPanelStoresInformation->Add(theApp.CommandButton(ID_STORE_MAINTENANCE, 9, 9));
+				pPanelStoresInformation->Add(theApp.CommandButton(ID_STORE_BACKUP, 10, 10));
 
 		strTemp = "Deleted files";
 		strCtx = "Trash";

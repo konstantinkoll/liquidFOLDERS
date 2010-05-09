@@ -653,6 +653,7 @@ BEGIN
     ID_STORE_MAKEHYBRID     "Converts the selected store into a hybrid store. This enables you to search the store, even if it is not mounted.\nMake hybrid"
     ID_STORE_PROPERTIES     "Shows the properties of the selected store.\nProperties"
     ID_STORE_STATS          "Shows statistics about the selected store.\nStatistics"
+    ID_STORE_MAINTENANCE    "Runs scheduled maintenance on all mounted stores.\nRun maintenance"
     ID_STORE_BACKUP         "Saves all settings from the registry (including the properties of all internal stores) to a .reg file.\nBackup registry"
 END
 
