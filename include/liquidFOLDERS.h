@@ -130,10 +130,9 @@ struct LFItemCategoryDescriptor
 #define LFContextStoreHome              1
 #define LFContextClipboard              2
 #define LFContextDefault                3
-#define LFContextTrash                  4
-#define LFContextUnknownFileFormats     5
+#define LFContextHousekeeping           4
 
-#define LFContextCount                  6
+#define LFContextCount                  5
 
 
 // Context descriptor

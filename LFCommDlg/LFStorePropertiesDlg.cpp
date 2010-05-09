@@ -108,6 +108,7 @@ LRESULT LFStorePropertiesDlg::UpdateStore(WPARAM /*wParam*/, LPARAM /*lParam*/)
 		edit1->EnableWindow(FALSE);
 		edit2->EnableWindow(FALSE);
 		GetDlgItem(IDOK)->EnableWindow(FALSE);
+		GetDlgItem(IDCANCEL)->SetFocus();
 	}
 
 	return NULL;

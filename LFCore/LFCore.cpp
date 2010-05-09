@@ -696,12 +696,12 @@ LFCore_API LFSearchResult* LFQuery(LFFilter* filter)
 				if (wcscmp(filter->Name, L"Trash")==0)
 				{
 					filter->Result.FilterType = LFFilterTypeTrash;
-					res->m_Context = LFContextTrash;
+					res->m_Context = LFContextHousekeeping;
 				}
 				if (wcscmp(filter->Name, L"Unknown file formats")==0)
 				{
 					filter->Result.FilterType = LFFilterTypeUnknownFileFormats;
-					res->m_Context = LFContextUnknownFileFormats;
+					res->m_Context = LFContextHousekeeping;
 				}
 				//
 				// TEMP

@@ -38,8 +38,9 @@
 #define ID_STORE_DELETE                 601
 #define ID_STORE_RENAME                 602
 #define ID_STORE_MAKEDEFAULT            603
-#define ID_STORE_PROPERTIES             604
-#define ID_STORE_SHOWCATEGORIES         605
+#define ID_STORE_MAKEHYBRID             604
+#define ID_STORE_PROPERTIES             605
+#define ID_STORE_SHOWCATEGORIES         606
 #define ID_PANE_WORKFLOWWND             700
 #define ID_PANE_PLACESWND               701
 #define ID_PANE_STOREWND                702

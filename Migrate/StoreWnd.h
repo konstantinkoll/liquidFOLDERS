@@ -54,6 +54,7 @@ protected:
 	afx_msg void OnStoreDelete();
 	afx_msg void OnStoreRename();
 	afx_msg void OnStoreMakeDefault();
+	afx_msg void OnStoreMakeHybrid();
 	afx_msg void OnStoreProperties();
 	afx_msg void OnStoreShowCategories();
 	afx_msg void OnUpdateCommands(CCmdUI* pCmdUI);

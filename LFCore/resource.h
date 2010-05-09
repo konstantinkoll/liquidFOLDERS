@@ -76,8 +76,7 @@
 #define IDS_LFContextStoreHome          2001
 #define IDS_LFContextClipboard          2002
 #define IDS_LFContextDefault            2003
-#define IDS_LFContextTrash              2004
-#define IDS_LFContextUnknownFormats     2005
+#define IDS_LFContextHousekeeping       2004
 #define IDS_FirstError                  3000
 #define IDS_LFErrorOk                   3000
 #define IDS_LFErrorMemoryError          3002

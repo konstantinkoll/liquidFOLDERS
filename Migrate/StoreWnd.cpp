@@ -101,6 +101,7 @@ BEGIN_MESSAGE_MAP(CStoreWnd, CDockablePane)
 	ON_COMMAND(ID_STORE_DELETE, OnStoreDelete)
 	ON_COMMAND(ID_STORE_RENAME, OnStoreRename)
 	ON_COMMAND(ID_STORE_MAKEDEFAULT, OnStoreMakeDefault)
+	ON_COMMAND(ID_STORE_MAKEHYBRID, OnStoreMakeHybrid)
 	ON_COMMAND(ID_STORE_PROPERTIES, OnStoreProperties)
 	ON_COMMAND(ID_STORE_SHOWCATEGORIES, OnStoreShowCategories)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_STORE_DELETE, ID_STORE_SHOWCATEGORIES, OnUpdateCommands)
@@ -261,6 +262,14 @@ void CStoreWnd::OnStoreMakeDefault()
 		LFErrorBox(LFMakeDefaultStore(result->m_Files[i]->CoreAttributes.StoreID));
 }
 
+void CStoreWnd::OnStoreMakeHybrid()
+{
+	int i = GetSelectedItem();
+
+	if (i!=-1)
+		LFErrorBox(LFMakeHybridStore(result->m_Files[i]->CoreAttributes.StoreID));
+}
+
 void CStoreWnd::OnStoreProperties()
 {
 	int i = GetSelectedItem();
@@ -302,6 +311,9 @@ void CStoreWnd::OnUpdateCommands(CCmdUI* pCmdUI)
 			b = (result->m_Files[i]->CategoryID == LFCategoryInternalStores) &&
 				((result->m_Files[i]->Type & LFTypeDefaultStore)==0);
 		break;
+	case ID_STORE_MAKEHYBRID:
+		if ((i!=-1) && (result))
+			b = (result->m_Files[i]->CategoryID == LFCategoryExternalStores);
 	}
 
 	pCmdUI->Enable(b);

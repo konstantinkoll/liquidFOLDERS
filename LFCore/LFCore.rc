@@ -153,8 +153,7 @@ BEGIN
     IDS_LFContextStoreHome  "Store home"
     IDS_LFContextClipboard  "Clipboard"
     IDS_LFContextDefault    "Default"
-    IDS_LFContextTrash      "Trash"
-    IDS_LFContextUnknownFormats "Unknown file formats"
+    IDS_LFContextHousekeeping "Housekeeping"
 END
 
 STRINGTABLE 

@@ -255,8 +255,8 @@ BEGIN
         MENUITEM "Make de&fault store",         ID_STORE_MAKEDEFAULT
         MENUITEM "Make &hybrid store",          ID_STORE_MAKEHYBRID
         MENUITEM SEPARATOR
+        MENUITEM "&Properties...",              ID_STORE_PROPERTIES
         MENUITEM "&Statistics...",              ID_STORE_STATS
-        MENUITEM "&Backup settings...",         ID_STORE_BACKUPSELECTED
     END
 END
 
@@ -653,9 +653,9 @@ BEGIN
     ID_STORE_RENAME         "Renames the selected store.\nRename (F2)"
     ID_STORE_MAKEDEFAULT    "Makes the selected internal store the default store.\nMake default"
     ID_STORE_MAKEHYBRID     "Converts the selected store into a hybrid store. This enables you to search the store, even if it is not mounted.\nMake hybrid"
+    ID_STORE_PROPERTIES     "Shows the properties of the selected store.\nProperties"
     ID_STORE_STATS          "Shows statistics about the selected store.\nStatistics"
-    ID_STORE_BACKUPSELECTED "Saves the settings of the selected store to a .reg file.\nBackup settings of selected store"
-    ID_STORE_BACKUPALL      "Saves the settings of all internal stores to a .reg file.\nBackup settings of all internal stores"
+    ID_STORE_BACKUP         "Saves all settings from the registry (including the properties of all internal stores) to a .reg file.\nBackup registry"
 END
 
 STRINGTABLE 

@@ -70,7 +70,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_PANE_CAPTIONBAR, ID_PANE_HISTORYWND, OnUpdatePaneCommands)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_CLIP_COPY, ID_CLIP_REMEMBERNEW, OnUpdateClipCommands)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_FILES_SHOWINSPECTOR, ID_FILES_SHOWINSPECTOR, OnUpdateFileCommands)
-	ON_UPDATE_COMMAND_UI_RANGE(ID_STORE_NEW, ID_STORE_BACKUPALL, OnUpdateStoreCommands)
+	ON_UPDATE_COMMAND_UI_RANGE(ID_STORE_NEW, ID_STORE_BACKUP, OnUpdateStoreCommands)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_DROP_CALENDAR, ID_DROP_RESOLUTION, OnUpdateDropCommands)
 
 	ON_COMMAND(ID_APP_CLOSE, OnClose)
@@ -114,12 +114,12 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_COMMAND(ID_STORE_NEW, OnStoreNew)
 	ON_COMMAND(ID_STORE_NEWINTERNAL, OnStoreNewInternal)
 	ON_COMMAND(ID_STORE_NEWDRIVE, OnStoreNewDrive)
-	ON_COMMAND(ID_STORE_MAKEDEFAULT, OnStoreMakeDefault)
-	ON_COMMAND(ID_STORE_MAKEHYBRID, OnStoreMakeHybrid)
 	ON_COMMAND(ID_STORE_DELETE, OnStoreDelete)
 	ON_COMMAND(ID_STORE_RENAME, OnStoreRename)
-	ON_COMMAND(ID_STORE_BACKUPSELECTED, OnStoreBackupSelected)
-	ON_COMMAND(ID_STORE_BACKUPALL, OnStoreBackupAll)
+	ON_COMMAND(ID_STORE_MAKEDEFAULT, OnStoreMakeDefault)
+	ON_COMMAND(ID_STORE_MAKEHYBRID, OnStoreMakeHybrid)
+	ON_COMMAND(ID_STORE_PROPERTIES, OnStoreProperties)
+	ON_COMMAND(ID_STORE_BACKUP, OnStoreBackup)
 END_MESSAGE_MAP()
 
 
@@ -795,22 +795,6 @@ void CMainFrame::OnStoreNewDrive()
 		ExecuteCreateStoreDlg(IDD_STORENEWDRIVE, CookedFiles->m_Files[i]->CoreAttributes.FileID[0]);
 }
 
-void CMainFrame::OnStoreMakeDefault()
-{
-	int i = GetSelectedItem();
-
-	if (i!=-1)
-		LFErrorBox(LFMakeDefaultStore(CookedFiles->m_Files[i]->CoreAttributes.StoreID));
-}
-
-void CMainFrame::OnStoreMakeHybrid()
-{
-	int i = GetSelectedItem();
-
-	if (i!=-1)
-		LFErrorBox(LFMakeHybridStore(CookedFiles->m_Files[i]->CoreAttributes.StoreID));
-}
-
 void CMainFrame::OnStoreDelete()
 {
 	int i = GetSelectedItem();
@@ -830,6 +814,22 @@ void CMainFrame::OnStoreRename()
 		m_wndView->SetFocus();
 		m_wndView->EditLabel(GetSelectedItem());
 	}
+}
+
+void CMainFrame::OnStoreMakeDefault()
+{
+	int i = GetSelectedItem();
+
+	if (i!=-1)
+		LFErrorBox(LFMakeDefaultStore(CookedFiles->m_Files[i]->CoreAttributes.StoreID));
+}
+
+void CMainFrame::OnStoreMakeHybrid()
+{
+	int i = GetSelectedItem();
+
+	if (i!=-1)
+		LFErrorBox(LFMakeHybridStore(CookedFiles->m_Files[i]->CoreAttributes.StoreID));
 }
 
 CString MakeHex(BYTE* x, UINT bCount)
@@ -853,7 +853,18 @@ void CEscape(CString &s)
 			s.Insert(a, '\\');
 }
 
-void CMainFrame::BackupStores(BOOL all)
+void CMainFrame::OnStoreProperties()
+{
+	int i = GetSelectedItem();
+
+	if (i!=-1)
+	{
+		LFStorePropertiesDlg dlg(this, CookedFiles->m_Files[i]->CoreAttributes.StoreID);
+		dlg.DoModal();
+	}
+}
+
+void CMainFrame::OnStoreBackup()
 {
 	CString tmpStr;
 	tmpStr.LoadString(IDS_REGFILEFILTER);
@@ -875,52 +886,48 @@ void CMainFrame::BackupStores(BOOL all)
 			{
 				f.WriteString(_T("Windows Registry Editor Version 5.00\n"));
 
-				int idx = GetSelectedItem();
 				for (UINT a=0; a<CookedFiles->m_Count; a++)
 				{
-					if ((all) || (a==(UINT)idx))
+					LFItemDescriptor* i = CookedFiles->m_Files[a];
+					if ((i->Type & LFTypeStore) && (i->CategoryID==LFCategoryInternalStores))
 					{
-						LFItemDescriptor* i = CookedFiles->m_Files[a];
-						if ((i->Type & LFTypeStore) && (i->CategoryID==LFCategoryInternalStores))
+						LFStoreDescriptor s;
+						if (LFGetStoreSettings(i->CoreAttributes.StoreID, &s)==LFOk)
 						{
-							LFStoreDescriptor s;
-							if (LFGetStoreSettings(i->CoreAttributes.StoreID, &s)==LFOk)
+							// Header
+							tmpStr = _T("\n[HKEY_CURRENT_USER\\Software\\liquidFOLDERS\\Stores\\");
+							tmpStr += s.StoreID;
+							f.WriteString(tmpStr+_T("]\n"));
+
+							// Name
+							tmpStr = s.StoreName;
+							CEscape(tmpStr);
+							f.WriteString(_T("\"Name\"=\"")+tmpStr+_T("\"\n"));
+
+							// Mode
+							tmpStr.Format(_T("\"Mode\"=dword:%.8x\n"), s.StoreMode);
+							f.WriteString(tmpStr);
+
+							// AutoLocation
+							tmpStr.Format(_T("\"AutoLocation\"=dword:%.8x\n"), s.AutoLocation);
+							f.WriteString(tmpStr);
+
+							if (!s.AutoLocation)
 							{
-								// Header
-								tmpStr = _T("\n[HKEY_CURRENT_USER\\Software\\liquidFOLDERS\\Stores\\");
-								tmpStr += s.StoreID;
-								f.WriteString(tmpStr+_T("]\n"));
-
-								// Name
-								tmpStr = s.StoreName;
+								// Path
+								tmpStr = s.DatPath;
 								CEscape(tmpStr);
-								f.WriteString(_T("\"Name\"=\"")+tmpStr+_T("\"\n"));
-
-								// Mode
-								tmpStr.Format(_T("\"Mode\"=dword:%.8x\n"), s.StoreMode);
-								f.WriteString(tmpStr);
-
-								// AutoLocation
-								tmpStr.Format(_T("\"AutoLocation\"=dword:%.8x\n"), s.AutoLocation);
-								f.WriteString(tmpStr);
-
-								if (!s.AutoLocation)
-								{
-									// Path
-									tmpStr = s.DatPath;
-									CEscape(tmpStr);
-									f.WriteString(_T("\"Path\"=\"")+tmpStr+_T("\"\n"));
-								}
-
-								// GUID
-								f.WriteString(_T("\"GUID\"=hex:")+MakeHex((BYTE*)&s.GUID, sizeof(s.GUID))+_T("\n"));
-
-								// CreationTime
-								f.WriteString(_T("\"CreationTime\"=hex:")+MakeHex((BYTE*)&s.CreationTime, sizeof(s.CreationTime))+_T("\n"));
-
-								// FileTime
-								f.WriteString(_T("\"FileTime\"=hex:")+MakeHex((BYTE*)&s.FileTime, sizeof(s.FileTime))+_T("\n"));
+								f.WriteString(_T("\"Path\"=\"")+tmpStr+_T("\"\n"));
 							}
+
+							// GUID
+							f.WriteString(_T("\"GUID\"=hex:")+MakeHex((BYTE*)&s.GUID, sizeof(s.GUID))+_T("\n"));
+
+							// CreationTime
+							f.WriteString(_T("\"CreationTime\"=hex:")+MakeHex((BYTE*)&s.CreationTime, sizeof(s.CreationTime))+_T("\n"));
+
+							// FileTime
+							f.WriteString(_T("\"FileTime\"=hex:")+MakeHex((BYTE*)&s.FileTime, sizeof(s.FileTime))+_T("\n"));
 						}
 					}
 				}
@@ -935,16 +942,6 @@ void CMainFrame::BackupStores(BOOL all)
 	}
 
 	delete dlg;
-}
-
-void CMainFrame::OnStoreBackupSelected()
-{
-	BackupStores();
-}
-
-void CMainFrame::OnStoreBackupAll()
-{
-	BackupStores(TRUE);
 }
 
 void CMainFrame::OnUpdateStoreCommands(CCmdUI* pCmdUI)
@@ -973,6 +970,8 @@ void CMainFrame::OnUpdateStoreCommands(CCmdUI* pCmdUI)
 				b ^= m_wndView->IsEditing();
 			break;
 		case ID_STORE_DELETE:
+		case ID_STORE_PROPERTIES:
+		case ID_STORE_STATS:
 			if (f)
 				b = (f->Type & LFTypeStore);
 			break;
@@ -985,20 +984,10 @@ void CMainFrame::OnUpdateStoreCommands(CCmdUI* pCmdUI)
 		case ID_STORE_MAKEHYBRID:
 			if (f)
 				b = (f->Type & LFTypeStore) &&
-					(f->CategoryID==LFStoreModeExternal);
+					(f->CategoryID==LFCategoryExternalStores);
 			break;
-		case ID_STORE_STATS:
-			break;
-		case ID_STORE_BACKUPSELECTED:
-			if (f)
-				b = (f->Type & LFTypeStore) &&
-					(f->CategoryID==LFStoreModeInternal);
-			break;
-		case ID_STORE_BACKUPALL:
-			for (UINT a=0; (a<CookedFiles->m_Count) && (!b); a++)
-			b |= (CookedFiles->m_Files[a]->Type & LFTypeStore) &&
-				(CookedFiles->m_Files[a]->CategoryID==LFStoreModeInternal);
-			break;
+		case ID_STORE_BACKUP:
+			b = TRUE;
 		}
 	}
 
@@ -1032,8 +1021,8 @@ void CMainFrame::UpdateSearchResult(BOOL SetEmpty, int FocusItem)
 		// Im Debug-Modus bleiben alle Kategorien sichtbar
 		#ifndef _DEBUG
 		m_wndRibbonBar.ShowCategory(RibbonCategory_Stores, CookedFiles->m_Context==LFContextStores);
-		m_wndRibbonBar.ShowCategory(RibbonCategory_Trash, CookedFiles->m_Context==LFContextTrash);
-		m_wndRibbonBar.ShowCategory(RibbonCategory_UnknownFileFormats, CookedFiles->m_Context==LFContextUnknownFileFormats);
+		m_wndRibbonBar.ShowCategory(RibbonCategory_Trash, (CookedFiles->m_Context==LFContextHousekeeping) && (ActiveFilter->Result.FilterType==LFFilterTypeTrash));
+		m_wndRibbonBar.ShowCategory(RibbonCategory_UnknownFileFormats, (CookedFiles->m_Context==LFContextHousekeeping) && (ActiveFilter->Result.FilterType==LFFilterTypeUnknownFileFormats));
 		#endif
 
 		// ChildView austauschen:
@@ -1733,7 +1722,7 @@ void CMainFrame::InitializeRibbon()
 				strTemp = "Register formats";
 				pPanelRegister->Add(new CMFCRibbonButton(ID_APP_ABOUT, strTemp, 0, 0));
 				pPanelRegister->AddSeparator();
-				strTemp = "Send to customer support";
+				strTemp = "Send registred formats to customer support";
 				pPanelRegister->Add(new CMFCRibbonButton(ID_APP_ABOUT, strTemp, 1, 1));
 
 		strCtx = "View";
@@ -1842,10 +1831,11 @@ void CMainFrame::InitializeRibbon()
 			strTemp = "Housekeeping";
 			CMFCRibbonPanel* pPanelStoresInformation = pCategoryStores->AddPanel(strTemp, m_PanelImages.ExtractIcon(12));
 
-				pPanelStoresInformation->Add(theApp.CommandButton(ID_STORE_STATS, 7, 7));
+				pPanelStoresInformation->Add(theApp.CommandButton(ID_STORE_PROPERTIES, 7, 7));
+				pPanelStoresInformation->Add(theApp.CommandButton(ID_STORE_STATS, 8, 8));
 				pPanelStoresInformation->AddSeparator();
-				pPanelStoresInformation->Add(theApp.CommandButton(ID_STORE_BACKUPSELECTED, 8));
-				pPanelStoresInformation->Add(theApp.CommandButton(ID_STORE_BACKUPALL, 9));
+				pPanelStoresInformation->Add(theApp.CommandButton(ID_STORE_BACKUP, 9, 9));
+				//pPanelStoresInformation->Add(theApp.CommandButton(ID_STORE_BACKUP, 10, 10));
 
 		strTemp = "Deleted files";
 		strCtx = "Trash";

@@ -18,13 +18,13 @@
 #define RibbonCategory_Files                2
 #define RibbonCategory_EMail_Mail           3
 #define RibbonCategory_EMail_Contacts       4
-#define RibbonCategory_View_Calendar        5
-#define RibbonCategory_View_Globe           6
-#define RibbonCategory_View_Tagcloud        7
-#define RibbonCategory_View_Timeline        8
-#define RibbonCategory_Stores               9
-#define RibbonCategory_Trash                10
-#define RibbonCategory_UnknownFileFormats   11
+#define RibbonCategory_UnknownFileFormats   5
+#define RibbonCategory_View_Calendar        6
+#define RibbonCategory_View_Globe           7
+#define RibbonCategory_View_Tagcloud        8
+#define RibbonCategory_View_Timeline        9
+#define RibbonCategory_Stores               10
+#define RibbonCategory_Trash                11
 
 #define RibbonDefaultCategory               RibbonCategory_Files
 
@@ -155,12 +155,12 @@ protected:
 	afx_msg void OnStoreNew();
 	afx_msg void OnStoreNewInternal();
 	afx_msg void OnStoreNewDrive();
-	afx_msg void OnStoreMakeDefault();
-	afx_msg void OnStoreMakeHybrid();
 	afx_msg void OnStoreDelete();
 	afx_msg void OnStoreRename();
-	afx_msg void OnStoreBackupSelected();
-	afx_msg void OnStoreBackupAll();
+	afx_msg void OnStoreMakeDefault();
+	afx_msg void OnStoreMakeHybrid();
+	afx_msg void OnStoreProperties();
+	afx_msg void OnStoreBackup();
 	afx_msg void OnUpdateStoreCommands(CCmdUI* pCmdUI);
 	afx_msg void OnChangeChildView(UINT nID);
 	afx_msg void OnUpdateSelection();

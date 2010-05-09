@@ -116,8 +116,9 @@ BEGIN
         MENUITEM "&Rename",                     ID_STORE_RENAME
         MENUITEM SEPARATOR
         MENUITEM "Make de&fault store",         ID_STORE_MAKEDEFAULT
+        MENUITEM "Make &hybrid store",          ID_STORE_MAKEHYBRID
         MENUITEM SEPARATOR
-        MENUITEM "&Properties...",              ID_STORE_PROPERTIES 
+        MENUITEM "&Properties...",              ID_STORE_PROPERTIES
     END
 END
 
@@ -145,6 +146,7 @@ BEGIN
     BUTTON      ID_STORE_DELETE
     BUTTON      ID_STORE_RENAME
     BUTTON      ID_STORE_MAKEDEFAULT
+    BUTTON      ID_STORE_MAKEHYBRID
     SEPARATOR
     BUTTON      ID_STORE_PROPERTIES
     SEPARATOR
