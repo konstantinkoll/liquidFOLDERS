@@ -48,10 +48,9 @@
 #define IDS_LFCategoryExternalStores    1002
 #define IDS_LFCategoryDrives            1003
 #define IDS_LFCategoryStore             1004
-#define IDS_LFCategoryFilters           1005
-#define IDS_LFCategoryMultimediaTypes   1006
-#define IDS_LFCategoryOtherTypes        1007
-#define IDS_LFCategoryHousekeeping      1008
+#define IDS_LFCategoryMultimediaTypes   1005
+#define IDS_LFCategoryDocuments         1006
+#define IDS_LFCategoryHousekeeping      1007
 #define IDS_FirstAttrCategory           1050
 #define IDS_LFCategoryBasic             1050
 #define IDS_LFCategoryGeotagging        1051

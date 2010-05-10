@@ -127,9 +127,8 @@ BEGIN
     IDS_LFCategoryExternalStores "External stores\nThese stores reside entirely on removable drives."
     IDS_LFCategoryDrives    "Removable drives\nChoose one of these to create a new external or hybrid store."
     IDS_LFCategoryStore     "This store"
-    IDS_LFCategoryFilters   "My filters\nThis section contains all user-defined filters for this store."
     IDS_LFCategoryMultimediaTypes "Multimedia"
-    IDS_LFCategoryOtherTypes "Other files"
+    IDS_LFCategoryDocuments  "Documents"
     IDS_LFCategoryHousekeeping "Housekeeping"
 END
 
@@ -245,16 +244,11 @@ BEGIN
     IDS_DomainAllFiles      "All files\nAll files in this store"
     IDS_DomainFavorites     "Favorites\nAll files which are rated"
     IDS_DomainFilters       "Filters\nUser-defined filters"
-    IDS_DomainAllMultimediaFiles 
-                            "All multimedia files\nAll audio files, pictures, photos and videos"
+    IDS_DomainAllMultimediaFiles "All multimedia files\nAll audio files, pictures, photos and videos"
     IDS_DomainAudio         "Audio"
     IDS_DomainPictures      "Pictures\nIncludes JPEG photos"
     IDS_DomainPhotos        "Photos\nJPEG photos only"
     IDS_DomainVideos        "Videos"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_DomainArchives      "Archives"
     IDS_DomainContacts      "Contacts"
     IDS_DomainDocuments     "Documents\nOffice documents"
@@ -266,7 +260,7 @@ BEGIN
     IDS_DomainSpreadsheets  "Spreadsheets"
     IDS_DomainWeb           "Web pages"
     IDS_DomainTrash         "Trash\nFiles marked for final deletion"
-    IDS_DomainUnknown       "Unknown file formats"
+    IDS_DomainUnknown       "Unknown file formats\nFiles which have not been assigned to any category yet"
 END
 
 STRINGTABLE 

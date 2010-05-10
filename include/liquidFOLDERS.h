@@ -107,19 +107,18 @@ struct LFAirport
 #define LFCategoryExternalStores        2
 #define LFCategoryDrives                3
 #define LFCategoryStore                 4
-#define LFCategoryFilter                5
-#define LFCategoryMultimediaTypes       6
-#define LFCategoryOtherTypes            7
-#define LFCategoryHousekeeping          8
+#define LFCategoryMultimediaTypes       5
+#define LFCategoryOtherTypes            6
+#define LFCategoryHousekeeping          7
 
-#define LFItemCategoryCount             9
+#define LFItemCategoryCount             8
 
 
 // Context descriptor
 
 struct LFItemCategoryDescriptor
 {
-	wchar_t Name[64];
+	wchar_t Name[54];
 	wchar_t Hint[256];
 };
 

@@ -317,16 +317,18 @@ LFCore_API LFDomainDescriptor* LFGetDomainInfo(unsigned int ID)
 
 	LFDomainDescriptor* d = LFAllocDomainDescriptor();
 
-	LoadString(LFCoreModuleHandle, IDS_FirstDomain+ID, d->DomainName, 256);
-	d->Hint[0] = '\0';
+	wchar_t tmpStr[256];
+	LoadString(LFCoreModuleHandle, IDS_FirstDomain+ID, tmpStr, 256);
 
-	for (unsigned int a=0; a<wcslen(d->DomainName); a++)
-		if (d->DomainName[a]=='\n')
+	for (unsigned int a=0; a<wcslen(tmpStr); a++)
+		if (tmpStr[a]=='\n')
 		{
-			wcsncpy_s(d->Hint, 256, &d->DomainName[a+1], wcslen(d->DomainName)-a-1);
-			d->DomainName[a] = '\0';
+			wcsncpy_s(d->Hint, 256, &tmpStr[a+1], wcslen(tmpStr)-a-1);
+			tmpStr[a] = '\0';
 			break;
 		}
+
+	wcscpy_s(d->DomainName, 64, tmpStr);
 
 	*(d->ImportantAttributes) += LFAttrFileName;
 	*(d->ImportantAttributes) += LFAttrHint;
