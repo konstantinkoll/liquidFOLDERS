@@ -8,9 +8,10 @@
 //
 
 #define IndexOk                        0
-#define IndexRepaired                  1
-#define IndexError                     2
-#define IndexReindexRequired           3
+#define IndexPartiallyRepaired         1
+#define IndexFullyRepaired             2
+#define IndexError                     3
+#define IndexReindexRequired           4
 
 class CIndex
 {

@@ -62,15 +62,13 @@ Create:
 				goto Create;
 
 			ItemCount = (unsigned int)((size.QuadPart-sizeof(HeapfileHeader))/Hdr.ElementSize);
-			Status = HeapOk;
+			Status = (Hdr.Version<CurIdxVersion) ? HeapMaintenanceRecommended : HeapOk;
 
 			// Anpassungen für andere Index-Versionen und Tupelgrößen
 			if (Hdr.ElementSize>_ElementSize)
 			{
 				if (KeyOffset==_ElementSize-LFKeySize)
 					KeyOffset = Hdr.ElementSize-LFKeySize;
-
-				Status = HeapMaintenanceRecommended;
 			}
 			else
 				if (Hdr.ElementSize<_ElementSize)

@@ -64,7 +64,6 @@ bool CIndex::Create()
 	bool res = true;
 
 	for (unsigned int a=0; a<IdxTableCount; a++)
-
 		if (!LoadTable(a))
 			res = false;
 
@@ -73,15 +72,44 @@ bool CIndex::Create()
 
 unsigned int CIndex::Check(bool scheduled)
 {
-	// TODO
+	bool Repaired = false;
+	bool Skipped = false;
+	unsigned int tres[IdxTableCount];
 
-//#define IndexOk                        0
-//#define IndexRepaired                  1
-//#define IndexError                     2
-//#define IndexReindexRequired           3
+	// Tabellen prüfen
+	for (unsigned int a=0; a<IdxTableCount; a++)
+		if (!LoadTable(a, &tres[a]))
+		{
+			return IndexError;
+		}
+		else
+			if (tres[a]==HeapCreated)
+				return IndexReindexRequired;
 
+	// Noch unbekannte Formate einsortieren
+	if (scheduled)
+	{
+		// TODO
+	}
 
-	return IndexOk;
+	// Kompaktieren
+	for (unsigned int a=0; a<IdxTableCount; a++)
+		switch (tres[a])
+		{
+		case HeapMaintenanceRecommended:
+			Skipped |= (!scheduled);
+		case HeapOk:
+			if (!scheduled)
+				continue;
+		case HeapMaintenanceRequired:
+			if (!Tables[a]->Compact())
+				return IndexError;
+
+			Repaired = true;
+			break;
+		}
+
+	return Repaired ? Skipped ? IndexPartiallyRepaired : IndexFullyRepaired : IndexOk;
 }
 
 void CIndex::AddItem(LFItemDescriptor* i)
