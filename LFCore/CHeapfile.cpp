@@ -111,14 +111,18 @@ void CHeapfile::GetAttribute(void* PtrDst, unsigned int offset, unsigned int att
 		EndOfTuple -= LFKeySize;
 
 	if (offset+sz<=EndOfTuple)
+	{
+		char* P = (char*)PtrDst+offset;
+
 		if (i->AttributeValues[attr])
 		{
-			memcpy_s(PtrDst, sz, i->AttributeValues[attr], sz);
+			memcpy_s(P, sz, i->AttributeValues[attr], sz);
 		}
 		else
 		{
-			ZeroMemory(PtrDst, sz);
+			ZeroMemory(P, sz);
 		}
+	}
 }
 
 void CHeapfile::GetFromItemDescriptor(void* /*PtrDst*/, LFItemDescriptor* /*f*/)
