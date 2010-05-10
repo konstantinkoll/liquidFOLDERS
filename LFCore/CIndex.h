@@ -4,6 +4,14 @@
 #include "IdxTables.h"
 
 
+// CIndex
+//
+
+#define IndexOk                        0
+#define IndexRepaired                  1
+#define IndexError                     2
+#define IndexReindexRequired           3
+
 class CIndex
 {
 public:
@@ -11,8 +19,8 @@ public:
 	~CIndex();
 
 	bool Create();
-	bool Check(bool scheduled=false);
-	void Reindex(bool force=false);
+	unsigned int Check(bool scheduled=false);
+	void Reindex();
 	void AddItem(LFItemDescriptor* i);
 	void Update(LFItemDescriptor* i);
 	void Update(LFTransactionList* li);

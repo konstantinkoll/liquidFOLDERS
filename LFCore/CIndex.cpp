@@ -71,11 +71,17 @@ bool CIndex::Create()
 	return res;
 }
 
-bool CIndex::Check(bool scheduled)
+unsigned int CIndex::Check(bool scheduled)
 {
 	// TODO
 
-	return true;
+//#define IndexOk                        0
+//#define IndexRepaired                  1
+//#define IndexError                     2
+//#define IndexReindexRequired           3
+
+
+	return IndexOk;
 }
 
 void CIndex::AddItem(LFItemDescriptor* i)
