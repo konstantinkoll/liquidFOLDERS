@@ -22,6 +22,7 @@ CHeapfile::CHeapfile(char* Path, char* Filename, unsigned int _ElementSize, unsi
 		_ElementSize += LFKeySize;
 	}
 	KeyOffset = _KeyOffset;
+	RequestedElementSize = _ElementSize;
 	ItemCount = 0;
 
 	hFile = CreateFileA(IdxFilename, GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_SEQUENTIAL_SCAN, NULL);
@@ -60,20 +61,25 @@ Create:
 			if (strcmp(Hdr.ID, HeapSignature)!=0)
 				goto Create;
 
-			// Anpassung für größere Tupel
-			if ((Hdr.ElementSize>_ElementSize) && (KeyOffset==_ElementSize-LFKeySize))
-				KeyOffset += (Hdr.ElementSize-_ElementSize);
-
-			// Konvertierung für kleinere Tupel
-			if ((Hdr.ElementSize<_ElementSize) || (Hdr.Version<IdxVersion))
-			{
-				// TODO: Konvertierung
-
-				Hdr.Version = IdxVersion;
-			}
-
 			ItemCount = (unsigned int)((size.QuadPart-sizeof(HeapfileHeader))/Hdr.ElementSize);
 			Status = HeapOk;
+
+			// Anpassungen für andere Index-Versionen und Tupelgrößen
+			if (Hdr.ElementSize>_ElementSize)
+			{
+				if (KeyOffset==_ElementSize-LFKeySize)
+					KeyOffset = Hdr.ElementSize-LFKeySize;
+
+				Status = HeapMaintenanceRecommended;
+			}
+			else
+				if (Hdr.ElementSize<_ElementSize)
+				{
+					if (KeyOffset==_ElementSize-LFKeySize)
+						KeyOffset = Hdr.ElementSize-LFKeySize;
+
+					Status = HeapMaintenanceRequired;
+				}
 		}
 	}
 
@@ -91,6 +97,28 @@ CHeapfile::~CHeapfile()
 	CloseFile();
 	if (Buffer)
 		free(Buffer);
+}
+
+void CHeapfile::GetAttribute(void* PtrDst, unsigned int offset, unsigned int attr, LFItemDescriptor* i)
+{
+	assert(PtrDst);
+	assert(attr<LFAttributeCount);
+
+	size_t sz = GetAttributeSize(attr, i->AttributeValues[attr]);
+
+	unsigned int EndOfTuple = Hdr.ElementSize;
+	if (KeyOffset==Hdr.ElementSize-LFKeySize)
+		EndOfTuple -= LFKeySize;
+
+	if (offset+sz<=EndOfTuple)
+		if (i->AttributeValues[attr])
+		{
+			memcpy_s(PtrDst, sz, i->AttributeValues[attr], sz);
+		}
+		else
+		{
+			ZeroMemory(PtrDst, sz);
+		}
 }
 
 void CHeapfile::GetFromItemDescriptor(void* /*PtrDst*/, LFItemDescriptor* /*f*/)
@@ -326,6 +354,7 @@ bool CHeapfile::Compact()
 		return false;
 
 	Hdr.NeedsCompaction = false;
+	Hdr.Version = CurIdxVersion;
 
 	#define ABORT { CloseHandle(hOutput); DeleteFileA(BufFilename); return false; }
 

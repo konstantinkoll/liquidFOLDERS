@@ -482,6 +482,11 @@ END
 
 STRINGTABLE 
 BEGIN
+    IDS_REQUIRESMAINTENANCE "This store requires scheduled maintenance."
+END
+
+STRINGTABLE 
+BEGIN
     ID_APP_VIEW_AUTOMATIC   "Lets liquidFOLDERS decide on the appropriate view mode.\nAuto"
     ID_APP_VIEW_LARGEICONS  "Displays files as large icons, suitable for overview contexts.\nLarge icons"
     ID_APP_VIEW_SMALLICONS  "Displays files as small icons.\nSmall icons"

@@ -7,6 +7,7 @@
 #include "resource.h"
 #include "LFItemDescriptor.h"
 #include "LFVariantData.h"
+#include "IdxTables.h"
 #include "Domains.h"
 #include "License.h"
 #include "IATA.h"
@@ -126,6 +127,11 @@ LFCore_API LFMessageIDs* LFGetMessageIDs()
 LFCore_API bool LFIsLicensed()
 {
 	return IsLicensed();
+}
+
+LFCore_API unsigned int LFGetIndexVersion()
+{
+	return CurIdxVersion;
 }
 
 

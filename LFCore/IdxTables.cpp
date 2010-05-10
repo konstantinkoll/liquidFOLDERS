@@ -3,24 +3,21 @@
 #include "stdafx.h"
 #include "IdxTables.h"
 #include "LFCore.h"
-#include "LFItemDescriptor.h"
 #include <assert.h>
 #include <malloc.h>
 #include <stddef.h>
 
 
-inline void GetAttribute(void* PtrDst, unsigned int attr, LFItemDescriptor* i)
+inline void ZeroCopy(void* _Dst, rsize_t _DstSize, void* _Src, rsize_t _SrcSize)
 {
-	assert(PtrDst);
-	assert(attr<LFAttributeCount);
+	memcpy_s(_Dst, _DstSize, _Src, _SrcSize);
 
-	if (i->AttributeValues[attr])
+	if (_DstSize>_SrcSize)
 	{
-		size_t sz = GetAttributeSize(attr, i->AttributeValues[attr]);
-		memcpy_s(PtrDst, sz, i->AttributeValues[attr], sz);
+		char* P = (char*)_Dst+_SrcSize;
+		ZeroMemory(P, _DstSize-_SrcSize);
 	}
 }
-
 
 // CIdxTableMaster
 //
@@ -39,7 +36,7 @@ void CIdxTableMaster::GetFromItemDescriptor(void* PtrDst, LFItemDescriptor* i)
 	assert(i);
 	assert(PtrDst);
 
-	memcpy_s(PtrDst, sizeof(LFCoreAttributes), &i->CoreAttributes, sizeof(LFCoreAttributes));
+	ZeroCopy(PtrDst, Hdr.ElementSize, &i->CoreAttributes, sizeof(LFCoreAttributes));
 }
 
 void CIdxTableMaster::WriteToItemDescriptor(LFItemDescriptor* i, void* PtrSrc)
@@ -47,7 +44,7 @@ void CIdxTableMaster::WriteToItemDescriptor(LFItemDescriptor* i, void* PtrSrc)
 	assert(i);
 	assert(PtrSrc);
 
-	memcpy_s(&i->CoreAttributes, sizeof(LFCoreAttributes), PtrSrc, sizeof(LFCoreAttributes));
+	ZeroCopy(&i->CoreAttributes, sizeof(LFCoreAttributes), PtrSrc, Hdr.ElementSize);
 }
 
 
@@ -70,22 +67,22 @@ void CIdxTableDocuments::GetFromItemDescriptor(void* PtrDst, LFItemDescriptor* i
 
 	if ((i->CoreAttributes.SlaveID==IDSlaveDocuments) && (i->Slave))
 	{
-		memcpy_s(PtrDst, sizeof(LFDocumentAttributes), i->Slave, sizeof(LFDocumentAttributes));
+		ZeroCopy(PtrDst, Hdr.ElementSize-LFKeySize, i->Slave, sizeof(LFDocumentAttributes));
 	}
 	else
 	{
 		ZeroMemory(PtrDst, sizeof(LFDocumentAttributes));
 
-		GetAttribute(((LFDocumentAttributes*)PtrDst)->Author, LFAttrArtist, i);
-		GetAttribute(((LFDocumentAttributes*)PtrDst)->Copyright, LFAttrCopyright, i);
-		GetAttribute(((LFDocumentAttributes*)PtrDst)->Title, LFAttrTitle, i);
-		GetAttribute(((LFDocumentAttributes*)PtrDst)->Responsible, LFAttrResponsible, i);
-		GetAttribute(&((LFDocumentAttributes*)PtrDst)->DueTime, LFAttrDueTime, i);
-		GetAttribute(&((LFDocumentAttributes*)PtrDst)->DoneTime, LFAttrDoneTime, i);
-		GetAttribute(((LFDocumentAttributes*)PtrDst)->Signature, LFAttrSignature, i);
-		GetAttribute(((LFDocumentAttributes*)PtrDst)->ISBN, LFAttrISBN, i);
-		GetAttribute(&((LFDocumentAttributes*)PtrDst)->Pages, LFAttrPages, i);
-		GetAttribute(((LFDocumentAttributes*)PtrDst)->Language, LFAttrLanguage, i);
+		GetAttribute(PtrDst, offsetof(LFDocumentAttributes, Author), LFAttrArtist, i);
+		GetAttribute(PtrDst, offsetof(LFDocumentAttributes, Copyright), LFAttrCopyright, i);
+		GetAttribute(PtrDst, offsetof(LFDocumentAttributes, Title), LFAttrTitle, i);
+		GetAttribute(PtrDst, offsetof(LFDocumentAttributes, Responsible), LFAttrResponsible, i);
+		GetAttribute(PtrDst, offsetof(LFDocumentAttributes, DueTime), LFAttrDueTime, i);
+		GetAttribute(PtrDst, offsetof(LFDocumentAttributes, DoneTime), LFAttrDoneTime, i);
+		GetAttribute(PtrDst, offsetof(LFDocumentAttributes, Signature), LFAttrSignature, i);
+		GetAttribute(PtrDst, offsetof(LFDocumentAttributes, ISBN), LFAttrISBN, i);
+		GetAttribute(PtrDst, offsetof(LFDocumentAttributes, Pages), LFAttrPages, i);
+		GetAttribute(PtrDst, offsetof(LFDocumentAttributes, Language), LFAttrLanguage, i);
 	}
 }
 
@@ -97,7 +94,7 @@ void CIdxTableDocuments::WriteToItemDescriptor(LFItemDescriptor* i, void* PtrSrc
 	assert(PtrSrc);
 
 	i->Slave = malloc(sizeof(LFDocumentAttributes));
-	memcpy_s(i->Slave, sizeof(LFDocumentAttributes), PtrSrc, sizeof(LFDocumentAttributes));
+	ZeroCopy(i->Slave, sizeof(LFDocumentAttributes), PtrSrc, Hdr.ElementSize-LFKeySize);
 
 	i->AttributeValues[LFAttrArtist] = ((LFDocumentAttributes*)i->Slave)->Author;
 	i->AttributeValues[LFAttrCopyright] = ((LFDocumentAttributes*)i->Slave)->Copyright;
@@ -131,19 +128,19 @@ void CIdxTableMails::GetFromItemDescriptor(void* PtrDst, LFItemDescriptor* i)
 
 	if ((i->CoreAttributes.SlaveID==IDSlaveMails) && (i->Slave))
 	{
-		memcpy_s(PtrDst, sizeof(LFMailAttributes), i->Slave, sizeof(LFMailAttributes));
+		ZeroCopy(PtrDst, Hdr.ElementSize-LFKeySize, i->Slave, sizeof(LFMailAttributes));
 	}
 	else
 	{
 		ZeroMemory(PtrDst, sizeof(LFMailAttributes));
 
-		GetAttribute(((LFMailAttributes*)PtrDst)->From, LFAttrFrom, i);
-		GetAttribute(((LFMailAttributes*)PtrDst)->To, LFAttrTo, i);
-		GetAttribute(((LFMailAttributes*)PtrDst)->Subject, LFAttrTitle, i);
-		GetAttribute(((LFMailAttributes*)PtrDst)->Language, LFAttrLanguage, i);
-		GetAttribute(((LFMailAttributes*)PtrDst)->Responsible, LFAttrResponsible, i);
-		GetAttribute(&((LFMailAttributes*)PtrDst)->DueTime, LFAttrDueTime, i);
-		GetAttribute(&((LFMailAttributes*)PtrDst)->DoneTime, LFAttrDoneTime, i);
+		GetAttribute(PtrDst, offsetof(LFMailAttributes, From), LFAttrFrom, i);
+		GetAttribute(PtrDst, offsetof(LFMailAttributes, To), LFAttrTo, i);
+		GetAttribute(PtrDst, offsetof(LFMailAttributes, Subject), LFAttrTitle, i);
+		GetAttribute(PtrDst, offsetof(LFMailAttributes, Language), LFAttrLanguage, i);
+		GetAttribute(PtrDst, offsetof(LFMailAttributes, Responsible), LFAttrResponsible, i);
+		GetAttribute(PtrDst, offsetof(LFMailAttributes, DueTime), LFAttrDueTime, i);
+		GetAttribute(PtrDst, offsetof(LFMailAttributes, DoneTime), LFAttrDoneTime, i);
 	}
 }
 
@@ -155,7 +152,7 @@ void CIdxTableMails::WriteToItemDescriptor(LFItemDescriptor* i, void* PtrSrc)
 	assert(PtrSrc);
 
 	i->Slave = malloc(sizeof(LFMailAttributes));
-	memcpy_s(i->Slave, sizeof(LFMailAttributes), PtrSrc, sizeof(LFMailAttributes));
+	ZeroCopy(i->Slave, sizeof(LFMailAttributes), PtrSrc, Hdr.ElementSize-LFKeySize);
 
 	i->AttributeValues[LFAttrFrom] = ((LFMailAttributes*)i->Slave)->From;
 	i->AttributeValues[LFAttrTo] = ((LFMailAttributes*)i->Slave)->To;
@@ -186,23 +183,23 @@ void CIdxTableAudio::GetFromItemDescriptor(void* PtrDst, LFItemDescriptor* i)
 
 	if ((i->CoreAttributes.SlaveID==IDSlaveAudio) && (i->Slave))
 	{
-		memcpy_s(PtrDst, sizeof(LFAudioAttributes), i->Slave, sizeof(LFAudioAttributes));
+		ZeroCopy(PtrDst, Hdr.ElementSize-LFKeySize, i->Slave, sizeof(LFAudioAttributes));
 	}
 	else
 	{
 		ZeroMemory(PtrDst, sizeof(LFAudioAttributes));
 
-		GetAttribute(((LFAudioAttributes*)PtrDst)->Artist, LFAttrArtist, i);
-		GetAttribute(((LFAudioAttributes*)PtrDst)->Copyright, LFAttrCopyright, i);
-		GetAttribute(((LFAudioAttributes*)PtrDst)->Title, LFAttrTitle, i);
-		GetAttribute(((LFAudioAttributes*)PtrDst)->Album, LFAttrAlbum, i);
-		GetAttribute(&((LFAudioAttributes*)PtrDst)->AudioCodec, LFAttrAudioCodec, i);
-		GetAttribute(&((LFAudioAttributes*)PtrDst)->Channels, LFAttrChannels, i);
-		GetAttribute(&((LFAudioAttributes*)PtrDst)->Samplerate, LFAttrSamplerate, i);
-		GetAttribute(&((LFAudioAttributes*)PtrDst)->Duration, LFAttrDuration, i);
-		GetAttribute(&((LFAudioAttributes*)PtrDst)->Bitrate, LFAttrBitrate, i);
-		GetAttribute(&((LFAudioAttributes*)PtrDst)->RecordingTime, LFAttrRecordingTime, i);
-		GetAttribute(((LFAudioAttributes*)PtrDst)->Language, LFAttrLanguage, i);
+		GetAttribute(PtrDst, offsetof(LFAudioAttributes, Artist), LFAttrArtist, i);
+		GetAttribute(PtrDst, offsetof(LFAudioAttributes, Copyright), LFAttrCopyright, i);
+		GetAttribute(PtrDst, offsetof(LFAudioAttributes, Title), LFAttrTitle, i);
+		GetAttribute(PtrDst, offsetof(LFAudioAttributes, Album), LFAttrAlbum, i);
+		GetAttribute(PtrDst, offsetof(LFAudioAttributes, AudioCodec), LFAttrAudioCodec, i);
+		GetAttribute(PtrDst, offsetof(LFAudioAttributes, Channels), LFAttrChannels, i);
+		GetAttribute(PtrDst, offsetof(LFAudioAttributes, Samplerate), LFAttrSamplerate, i);
+		GetAttribute(PtrDst, offsetof(LFAudioAttributes, Duration), LFAttrDuration, i);
+		GetAttribute(PtrDst, offsetof(LFAudioAttributes, Bitrate), LFAttrBitrate, i);
+		GetAttribute(PtrDst, offsetof(LFAudioAttributes, RecordingTime), LFAttrRecordingTime, i);
+		GetAttribute(PtrDst, offsetof(LFAudioAttributes, Language), LFAttrLanguage, i);
 	}
 }
 
@@ -214,7 +211,7 @@ void CIdxTableAudio::WriteToItemDescriptor(LFItemDescriptor* i, void* PtrSrc)
 	assert(PtrSrc);
 
 	i->Slave = malloc(sizeof(LFAudioAttributes));
-	memcpy_s(i->Slave, sizeof(LFAudioAttributes), PtrSrc, sizeof(LFAudioAttributes));
+	ZeroCopy(i->Slave, sizeof(LFAudioAttributes), PtrSrc, Hdr.ElementSize-LFKeySize);
 
 	i->AttributeValues[LFAttrArtist] = ((LFAudioAttributes*)i->Slave)->Artist;
 	i->AttributeValues[LFAttrCopyright] = ((LFAudioAttributes*)i->Slave)->Copyright;
@@ -249,25 +246,25 @@ void CIdxTablePictures::GetFromItemDescriptor(void* PtrDst, LFItemDescriptor* i)
 
 	if ((i->CoreAttributes.SlaveID==IDSlavePictures) && (i->Slave))
 	{
-		memcpy_s(PtrDst, sizeof(LFPictureAttributes), i->Slave, sizeof(LFPictureAttributes));
+		ZeroCopy(PtrDst, Hdr.ElementSize-LFKeySize, i->Slave, sizeof(LFPictureAttributes));
 	}
 	else
 	{
 		ZeroMemory(PtrDst, sizeof(LFPictureAttributes));
 
-		GetAttribute(((LFPictureAttributes*)PtrDst)->Artist, LFAttrArtist, i);
-		GetAttribute(((LFPictureAttributes*)PtrDst)->Copyright, LFAttrCopyright, i);
-		GetAttribute(((LFPictureAttributes*)PtrDst)->Title, LFAttrTitle, i);
-		GetAttribute(((LFPictureAttributes*)PtrDst)->Equipment, LFAttrRecordingEquipment, i);
-		GetAttribute(((LFPictureAttributes*)PtrDst)->Roll, LFAttrRoll, i);
-		GetAttribute(((LFPictureAttributes*)PtrDst)->Exposure, LFAttrExposure, i);
-		GetAttribute(&((LFPictureAttributes*)PtrDst)->Height, LFAttrHeight, i);
-		GetAttribute(&((LFPictureAttributes*)PtrDst)->Width, LFAttrWidth, i);
-		GetAttribute(&((LFPictureAttributes*)PtrDst)->Aperture, LFAttrAperture, i);
-		GetAttribute(&((LFPictureAttributes*)PtrDst)->Focus, LFAttrFocus, i);
-		GetAttribute(((LFPictureAttributes*)PtrDst)->Chip, LFAttrChip, i);
-		GetAttribute(&((LFPictureAttributes*)PtrDst)->RecordingTime, LFAttrRecordingTime, i);
-		GetAttribute(((LFPictureAttributes*)PtrDst)->Language, LFAttrLanguage, i);
+		GetAttribute(PtrDst, offsetof(LFPictureAttributes, Artist), LFAttrArtist, i);
+		GetAttribute(PtrDst, offsetof(LFPictureAttributes, Copyright), LFAttrCopyright, i);
+		GetAttribute(PtrDst, offsetof(LFPictureAttributes, Title), LFAttrTitle, i);
+		GetAttribute(PtrDst, offsetof(LFPictureAttributes, Equipment), LFAttrRecordingEquipment, i);
+		GetAttribute(PtrDst, offsetof(LFPictureAttributes, Roll), LFAttrRoll, i);
+		GetAttribute(PtrDst, offsetof(LFPictureAttributes, Exposure), LFAttrExposure, i);
+		GetAttribute(PtrDst, offsetof(LFPictureAttributes, Height), LFAttrHeight, i);
+		GetAttribute(PtrDst, offsetof(LFPictureAttributes, Width), LFAttrWidth, i);
+		GetAttribute(PtrDst, offsetof(LFPictureAttributes, Aperture), LFAttrAperture, i);
+		GetAttribute(PtrDst, offsetof(LFPictureAttributes, Focus), LFAttrFocus, i);
+		GetAttribute(PtrDst, offsetof(LFPictureAttributes, Chip), LFAttrChip, i);
+		GetAttribute(PtrDst, offsetof(LFPictureAttributes, RecordingTime), LFAttrRecordingTime, i);
+		GetAttribute(PtrDst, offsetof(LFPictureAttributes, Language), LFAttrLanguage, i);
 	}
 }
 
@@ -279,7 +276,7 @@ void CIdxTablePictures::WriteToItemDescriptor(LFItemDescriptor* i, void* PtrSrc)
 	assert(PtrSrc);
 
 	i->Slave = malloc(sizeof(LFPictureAttributes));
-	memcpy_s(i->Slave, sizeof(LFPictureAttributes), PtrSrc, sizeof(LFPictureAttributes));
+	ZeroCopy(i->Slave, sizeof(LFPictureAttributes), PtrSrc, Hdr.ElementSize-LFKeySize);
 
 	i->AttributeValues[LFAttrArtist] = ((LFPictureAttributes*)i->Slave)->Artist;
 	i->AttributeValues[LFAttrCopyright] = ((LFPictureAttributes*)i->Slave)->Copyright;
@@ -316,27 +313,27 @@ void CIdxTableVideos::GetFromItemDescriptor(void* PtrDst, LFItemDescriptor* i)
 
 	if ((i->CoreAttributes.SlaveID==IDSlaveVideos) && (i->Slave))
 	{
-		memcpy_s(PtrDst, sizeof(LFVideoAttributes), i->Slave, sizeof(LFVideoAttributes));
+		ZeroCopy(PtrDst, Hdr.ElementSize-LFKeySize, i->Slave, sizeof(LFVideoAttributes));
 	}
 	else
 	{
 		ZeroMemory(PtrDst, sizeof(LFVideoAttributes));
 
-		GetAttribute(((LFVideoAttributes*)PtrDst)->Artist, LFAttrArtist, i);
-		GetAttribute(((LFVideoAttributes*)PtrDst)->Copyright, LFAttrCopyright, i);
-		GetAttribute(((LFVideoAttributes*)PtrDst)->Title, LFAttrTitle, i);
-		GetAttribute(((LFVideoAttributes*)PtrDst)->Equipment, LFAttrRecordingEquipment, i);
-		GetAttribute(((LFVideoAttributes*)PtrDst)->Roll, LFAttrRoll, i);
-		GetAttribute(&((LFVideoAttributes*)PtrDst)->VideoCodec, LFAttrVideoCodec, i);
-		GetAttribute(&((LFVideoAttributes*)PtrDst)->VideoCodec, LFAttrVideoCodec, i);
-		GetAttribute(&((LFVideoAttributes*)PtrDst)->Height, LFAttrHeight, i);
-		GetAttribute(&((LFVideoAttributes*)PtrDst)->Width, LFAttrWidth, i);
-		GetAttribute(&((LFVideoAttributes*)PtrDst)->Channels, LFAttrChannels, i);
-		GetAttribute(&((LFVideoAttributes*)PtrDst)->Samplerate, LFAttrSamplerate, i);
-		GetAttribute(&((LFVideoAttributes*)PtrDst)->Duration, LFAttrDuration, i);
-		GetAttribute(&((LFVideoAttributes*)PtrDst)->Bitrate, LFAttrBitrate, i);
-		GetAttribute(&((LFVideoAttributes*)PtrDst)->RecordingTime, LFAttrRecordingTime, i);
-		GetAttribute(((LFVideoAttributes*)PtrDst)->Language, LFAttrLanguage, i);
+		GetAttribute(PtrDst, offsetof(LFVideoAttributes, Artist), LFAttrArtist, i);
+		GetAttribute(PtrDst, offsetof(LFVideoAttributes, Copyright), LFAttrCopyright, i);
+		GetAttribute(PtrDst, offsetof(LFVideoAttributes, Title), LFAttrTitle, i);
+		GetAttribute(PtrDst, offsetof(LFVideoAttributes, Equipment), LFAttrRecordingEquipment, i);
+		GetAttribute(PtrDst, offsetof(LFVideoAttributes, Roll), LFAttrRoll, i);
+		GetAttribute(PtrDst, offsetof(LFVideoAttributes, VideoCodec), LFAttrVideoCodec, i);
+		GetAttribute(PtrDst, offsetof(LFVideoAttributes, VideoCodec), LFAttrVideoCodec, i);
+		GetAttribute(PtrDst, offsetof(LFVideoAttributes, Height), LFAttrHeight, i);
+		GetAttribute(PtrDst, offsetof(LFVideoAttributes, Width), LFAttrWidth, i);
+		GetAttribute(PtrDst, offsetof(LFVideoAttributes, Channels), LFAttrChannels, i);
+		GetAttribute(PtrDst, offsetof(LFVideoAttributes, Samplerate), LFAttrSamplerate, i);
+		GetAttribute(PtrDst, offsetof(LFVideoAttributes, Duration), LFAttrDuration, i);
+		GetAttribute(PtrDst, offsetof(LFVideoAttributes, Bitrate), LFAttrBitrate, i);
+		GetAttribute(PtrDst, offsetof(LFVideoAttributes, RecordingTime), LFAttrRecordingTime, i);
+		GetAttribute(PtrDst, offsetof(LFVideoAttributes, Language), LFAttrLanguage, i);
 	}
 }
 
@@ -348,7 +345,7 @@ void CIdxTableVideos::WriteToItemDescriptor(LFItemDescriptor* i, void* PtrSrc)
 	assert(PtrSrc);
 
 	i->Slave = malloc(sizeof(LFVideoAttributes));
-	memcpy_s(i->Slave, sizeof(LFVideoAttributes), PtrSrc, sizeof(LFVideoAttributes));
+	ZeroCopy(i->Slave, sizeof(LFVideoAttributes), PtrSrc, Hdr.ElementSize-LFKeySize);
 
 	i->AttributeValues[LFAttrArtist] = ((LFVideoAttributes*)i->Slave)->Artist;
 	i->AttributeValues[LFAttrCopyright] = ((LFVideoAttributes*)i->Slave)->Copyright;

@@ -388,7 +388,8 @@ struct LFCoreAttributes
 #define LFTypeDefaultStore              0x0001
 #define LFTypeNotMounted                0x0002
 #define LFTypeGhosted                   0x0004
-#define LFTypeLink                      0x0008
+#define LFTypeRequiresMaintenance       0x0008
+#define LFTypeColored                   0x0010
 #define LFTypeDrive                     0x0100
 #define LFTypeStore                     0x0200
 #define LFTypeFile                      0x0400

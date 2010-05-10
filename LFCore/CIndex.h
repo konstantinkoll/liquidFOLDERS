@@ -11,6 +11,7 @@ public:
 	~CIndex();
 
 	bool Create();
+	bool Check(bool scheduled=false);
 	void Reindex(bool force=false);
 	void AddItem(LFItemDescriptor* i);
 	void Update(LFItemDescriptor* i);
@@ -22,7 +23,7 @@ public:
 	void Retrieve(LFFilter* f, LFSearchResult* res);
 
 protected:
-	bool LoadTable(unsigned int ID);
+	bool LoadTable(unsigned int ID, unsigned int* res=NULL);
 
 private:
 	CHeapfile* Tables[IdxTableCount];

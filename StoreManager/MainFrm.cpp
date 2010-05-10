@@ -1094,7 +1094,14 @@ void CMainFrame::OnUpdateSelection()
 		else
 		{
 			CString tmpStr;
-			tmpStr = CookedFiles->m_Files[i]->AttributeStrings[LFAttrHint];
+			if ((CookedFiles->m_Files[i]->Type & (LFTypeStore | LFTypeRequiresMaintenance))==(LFTypeStore | LFTypeRequiresMaintenance))
+			{
+				ENSURE(tmpStr.LoadString(IDS_REQUIRESMAINTENANCE));
+			}
+			else
+			{
+				tmpStr = CookedFiles->m_Files[i]->AttributeStrings[LFAttrHint];
+			}
 			m_sbHint->SetText(tmpStr);
 		}
 

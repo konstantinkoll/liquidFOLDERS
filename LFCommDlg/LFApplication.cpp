@@ -252,28 +252,32 @@ void LFApplication::GetBackgroundColors(UINT Background, COLORREF* back, COLORRE
 		switch (CMFCVisualManagerOffice2007::GetStyle())
 		{
 		case CMFCVisualManagerOffice2007::Office2007_Silver:
-			*back = (COLORREF)0xDDD4D0;
+			if (back)
+				*back = (COLORREF)0xDDD4D0;
 			if (text)
 				*text = (COLORREF)0x000000;
 			if (highlight)
 				*highlight = (COLORREF)0x5C534C;
 			break;
 		case CMFCVisualManagerOffice2007::Office2007_ObsidianBlack:
-			*back = (COLORREF)0x535353;
+			if (back)
+				*back = (COLORREF)0x535353;
 			if (text)
 				*text = (COLORREF)0xFFFFFF;
 			if (highlight)
 				*highlight = (COLORREF)0xFFFFFF;
 			break;
 		case CMFCVisualManagerOffice2007::Office2007_Aqua:
-			*back = (COLORREF)0xD9CAC4;
+			if (back)
+				*back = (COLORREF)0xD9CAC4;
 			if (text)
 				*text = (COLORREF)0x000000;
 			if (highlight)
 				*highlight = (COLORREF)0x6E1500;
 			break;
 		default:
-			*back = (COLORREF)0xFFDBBF;
+			if (back)
+				*back = (COLORREF)0xFFDBBF;
 			if (text)
 				*text = (COLORREF)0x000000;
 			if (highlight)
@@ -281,25 +285,28 @@ void LFApplication::GetBackgroundColors(UINT Background, COLORREF* back, COLORRE
 		}
 		break;
 	case ChildBackground_Black:
-		*back = (COLORREF)0x000000;
+		if (back)
+			*back = (COLORREF)0x000000;
 		if (text)
 			*text = (COLORREF)0xFFFFFF;
 		if (highlight)
 			*highlight = (COLORREF)0xCCFFFF;
 		break;
 	case ChildBackground_White:
-		*back = (COLORREF)0xFFFFFF;
+		if (back)
+			*back = (COLORREF)0xFFFFFF;
 		if (text)
 			*text = (COLORREF)0x000000;
 		if (highlight)
 			*highlight = (COLORREF)0x800000;
 		break;
 	default:
-		*back = GetSysColor(COLOR_WINDOW);
+		if (back)
+			*back = GetSysColor(COLOR_WINDOW);
 		if (text)
 			*text = GetSysColor(COLOR_WINDOWTEXT);
 		if (highlight)
-			*highlight = GetSysColor(COLOR_HOTLIGHT);
+			*highlight = GetSysColor(COLOR_HIGHLIGHT);
 	}
 }
 

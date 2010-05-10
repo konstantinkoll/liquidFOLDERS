@@ -6,7 +6,7 @@
 // Version
 //
 
-#define IdxVersion                      1
+#define CurIdxVersion                   1
 
 
 // Structures

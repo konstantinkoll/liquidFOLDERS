@@ -20,7 +20,7 @@ CIndex::~CIndex()
 			delete Tables[a];
 }
 
-inline bool CIndex::LoadTable(unsigned int ID)
+inline bool CIndex::LoadTable(unsigned int ID, unsigned int* res)
 {
 	assert(ID<IdxTableCount);
 
@@ -47,8 +47,14 @@ inline bool CIndex::LoadTable(unsigned int ID)
 			break;
 		default:
 			assert(false);
+
+			if (res)
+				*res = HeapError;
 			return false;
 		}
+
+	if (res)
+		*res = Tables[ID]->Status;
 
 	return (Tables[ID]->Status!=HeapError);
 }
@@ -58,15 +64,18 @@ bool CIndex::Create()
 	bool res = true;
 
 	for (unsigned int a=0; a<IdxTableCount; a++)
+
 		if (!LoadTable(a))
 			res = false;
 
 	return res;
 }
 
-void CIndex::Reindex(bool force)
+bool CIndex::Check(bool scheduled)
 {
 	// TODO
+
+	return true;
 }
 
 void CIndex::AddItem(LFItemDescriptor* i)

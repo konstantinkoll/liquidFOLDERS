@@ -275,7 +275,7 @@ LFCore_API unsigned int LFCreateStore(LFStoreDescriptor* s, bool MakeDefault, HW
 	CreateStoreKey(s->StoreID);
 
 	// Index-Version
-	s->IndexVersion = IdxVersion;
+	s->IndexVersion = CurIdxVersion;
 
 	// Store speichern
 	res = UpdateStore(s, MakeDefault);

@@ -1,6 +1,7 @@
 
 #pragma once
 #include "LFCore.h"
+#include "LFItemDescriptor.h"
 
 
 // CHeapfile
@@ -9,9 +10,11 @@
 #define MaxBufferSize     1048576
 #define HeapSignature     "LFIDX"
 
-#define HeapOk            0
-#define HeapError         1
-#define HeapCreated       2
+#define HeapOk                         0
+#define HeapError                      1
+#define HeapCreated                    2
+#define HeapMaintenanceRecommended     3
+#define HeapMaintenanceRequired        4
 
 struct HeapfileHeader
 {
@@ -31,6 +34,7 @@ public:
 	virtual void GetFromItemDescriptor(void* PtrDst, LFItemDescriptor* i);
 	virtual void WriteToItemDescriptor(LFItemDescriptor* i, void* PtrSrc);
 
+	void GetAttribute(void* PtrDst, unsigned int offset, unsigned int attr, LFItemDescriptor* i);
 	void CloseFile();
 	bool FindNext(int& Next, void*& Ptr);
 	bool FindKey(char* Key, int& Next, void*& Ptr);
@@ -45,6 +49,7 @@ public:
 	void MakeDirty(bool NeedsCompaction=false);
 
 	unsigned int Status;
+	unsigned int RequestedElementSize;
 
 protected:
 	void* Buffer;

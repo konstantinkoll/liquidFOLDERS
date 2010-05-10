@@ -1,6 +1,7 @@
 #include "StdAfx.h"
 #include "..\\include\\LFCore.h"
 #include "LFItemDescriptor.h"
+#include "IdxTables.h"
 #include "Mutex.h"
 #include "Stores.h"
 #include "StoreCache.h"
@@ -541,7 +542,13 @@ LFItemDescriptor* StoreDescriptor2ItemDescriptor(LFStoreDescriptor* s)
 	}
 
 	if (!IsMounted)
+	{
 		d->Type |= LFTypeGhosted | LFTypeNotMounted;
+	}
+	else
+		// TODO
+		if ((s->IndexVersion<CurIdxVersion) /*|| (s->MaintenanceTime<)*/)
+			d->Type |= LFTypeColored | LFTypeRequiresMaintenance;
 
 	d->CategoryID = s->StoreMode;
 	d->Type |= LFTypeStore;
