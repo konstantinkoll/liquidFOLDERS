@@ -244,11 +244,13 @@ BEGIN
     IDS_DomainAllFiles      "All files\nAll files in this store"
     IDS_DomainFavorites     "Favorites\nAll files which are rated"
     IDS_DomainFilters       "Filters\nUser-defined filters"
+    IDS_DomainTrash         "Trash\nFiles marked for final deletion"
+    IDS_DomainUnknown       "Unknown file formats\nFiles which have not been assigned to any category yet"
     IDS_DomainAllMultimediaFiles "All multimedia files\nAll audio files, pictures, photos and videos"
     IDS_DomainAudio         "Audio"
-    IDS_DomainPictures      "Pictures\nIncludes JPEG photos"
-    IDS_DomainPhotos        "Photos\nJPEG photos only"
-    IDS_DomainVideos        "Videos"
+    IDS_DomainPhotos        "Photos\nJPEG and raw photos only"
+    IDS_DomainPictures      "Pictures\nIncludes photos"
+    IDS_DomainVideos        "Videos\nIncludes game replays"
     IDS_DomainArchives      "Archives"
     IDS_DomainContacts      "Contacts"
     IDS_DomainDocuments     "Documents\nOffice documents"
@@ -259,8 +261,6 @@ BEGIN
     IDS_DomainPresentations "Presentations"
     IDS_DomainSpreadsheets  "Spreadsheets"
     IDS_DomainWeb           "Web pages"
-    IDS_DomainTrash         "Trash\nFiles marked for final deletion"
-    IDS_DomainUnknown       "Unknown file formats\nFiles which have not been assigned to any category yet"
 END
 
 STRINGTABLE 
