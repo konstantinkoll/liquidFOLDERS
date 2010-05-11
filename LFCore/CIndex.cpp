@@ -97,7 +97,7 @@ unsigned int CIndex::Check(bool scheduled)
 	// Index-Durchlauf
 	if (scheduled || Reindex)
 	{
-		// TODO
+		// TODO: registrierte Formate anpassen, ggf. neue Slaves erstellen
 	}
 
 	// Kompaktieren
