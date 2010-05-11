@@ -28,7 +28,6 @@ public:
 	void Remove(LFItemDescriptor* i);
 	void Remove(LFTransactionList* li);
 	void RemoveTrash();
-	void Compact(bool ForceAllTables);
 	void Retrieve(LFFilter* f, LFSearchResult* res);
 
 protected:

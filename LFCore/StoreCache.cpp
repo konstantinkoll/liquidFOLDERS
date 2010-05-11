@@ -421,7 +421,7 @@ void LoadRegistry()
 		if (LoadStoreSettingsFromRegistry(key, &StoreCache[StoreCount]))
 			if (ValidateStoreSettings(&StoreCache[StoreCount])==LFOk)
 			{
-				ValidateStoreDirectories(&StoreCache[StoreCount]);
+				StoreCache[StoreCount].NeedsCheck = true;
 				DefaultStoreOk |= (strcmp(DefaultStore, StoreCache[StoreCount].StoreID)==0);
 				StoreCount++;
 			}
@@ -764,8 +764,9 @@ LFCore_API void LFMountDrive(char d)
 				{
 					strncpy_s(slot->DatPath, MAX_PATH, mask, 3);
 					AppendGUID(slot, slot->DatPath);
+					slot->NeedsCheck = true;
+
 					ValidateStoreSettings(slot);
-					ValidateStoreDirectories(slot);
 					changeOccured = true;
 
 					// Hybrid-Stores in der Registry abspeichern, damit LastSeen aktualisiert wird

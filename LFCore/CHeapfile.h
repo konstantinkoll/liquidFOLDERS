@@ -62,6 +62,7 @@ protected:
 	bool BufferNeedsWriteback;
 	bool HeaderNeedsWriteback;
 
+	void AllocBuffer();
 	bool OpenFile();
 	bool WriteHeader();
 	bool Writeback();

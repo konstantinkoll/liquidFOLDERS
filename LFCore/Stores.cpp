@@ -270,6 +270,7 @@ LFCore_API unsigned int LFCreateStore(LFStoreDescriptor* s, bool MakeDefault, HW
 	GetLocalTime(&st);
 	SystemTimeToFileTime(&st, &s->CreationTime);
 	s->MaintenanceTime = s->CreationTime;
+	s->NeedsCheck = false;
 
 	// Key generieren
 	CreateStoreKey(s->StoreID);

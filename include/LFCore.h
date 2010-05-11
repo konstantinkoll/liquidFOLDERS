@@ -34,9 +34,6 @@ LFCore_API LFMessageIDs* LFGetMessageIDs();
 // Gibt true zurück, wenn diese Installation freigeschaltet ist
 LFCore_API bool LFIsLicensed();
 
-// Gibt die Index-Version zurück, die von der aktuell installieren liquidFOLDERS-Version geschrieben wird
-LFCore_API unsigned int LFGetIndexVersion();
-
 
 
 // Neuen LFAttributeDescriptor erzeugen

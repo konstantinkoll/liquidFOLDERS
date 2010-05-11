@@ -72,6 +72,7 @@ bool CIndex::Create()
 
 unsigned int CIndex::Check(bool scheduled)
 {
+	bool Reindex = false;
 	bool Repaired = false;
 	bool Skipped = false;
 	unsigned int tres[IdxTableCount];
@@ -84,10 +85,17 @@ unsigned int CIndex::Check(bool scheduled)
 		}
 		else
 			if (tres[a]==HeapCreated)
-				return IndexReindexRequired;
+				if (a==0)
+				{
+					return IndexReindexRequired;
+				}
+				else
+				{
+					Reindex = true;
+				}
 
-	// Noch unbekannte Formate einsortieren
-	if (scheduled)
+	// Index-Durchlauf
+	if (scheduled || Reindex)
 	{
 		// TODO
 	}
@@ -195,22 +203,10 @@ void CIndex::RemoveTrash()
 	}
 }
 
-void CIndex::Compact(bool ForceAllTables)
-{
-	for (unsigned int a=0; a<IdxTableCount; a++)
-	{
-		if (ForceAllTables)
-			LoadTable(a);
-
-		if (Tables[a])
-			Tables[a]->Compact();
-	}
-}
-
 void CIndex::Retrieve(LFFilter* f, LFSearchResult* res)
 {
-	//assert(f);
-	//assert(f->Mode>=LFFilterModeSearchInStore);
+	assert(f);
+	assert(f->Mode>=LFFilterModeSearchInStore);
 	assert(res);
 
 	LoadTable(IDMaster);

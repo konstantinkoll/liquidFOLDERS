@@ -81,12 +81,7 @@ Create:
 		}
 	}
 
-	BufferSize = MaxBufferSize/Hdr.ElementSize;
-	if (BufferSize<2)
-		BufferSize = 2;
-	Buffer = malloc(BufferSize*Hdr.ElementSize);
-
-	FirstInBuffer = LastInBuffer = -1;
+	AllocBuffer();
 	BufferNeedsWriteback = HeaderNeedsWriteback = false;
 }
 
@@ -131,6 +126,21 @@ void CHeapfile::GetFromItemDescriptor(void* /*PtrDst*/, LFItemDescriptor* /*f*/)
 void CHeapfile::WriteToItemDescriptor(LFItemDescriptor* /*f*/, void* /*PtrSrc*/)
 {
 	assert(false);
+}
+
+inline void CHeapfile::AllocBuffer()
+{
+	assert(Hdr.ElementSize);
+
+	if (Buffer)
+		free(Buffer);
+
+	BufferSize = MaxBufferSize/Hdr.ElementSize;
+	if (BufferSize<2)
+		BufferSize = 2;
+	Buffer = malloc(BufferSize*Hdr.ElementSize);
+
+	FirstInBuffer = LastInBuffer = -1;
 }
 
 inline bool CHeapfile::OpenFile()
@@ -355,13 +365,15 @@ bool CHeapfile::Compact()
 	if (hOutput==INVALID_HANDLE_VALUE)
 		return false;
 
-	Hdr.NeedsCompaction = false;
-	Hdr.Version = CurIdxVersion;
+	HeapfileHeader NewHdr = Hdr;
+	NewHdr.ElementSize = max(Hdr.ElementSize, RequestedElementSize);
+	NewHdr.NeedsCompaction = false;
+	NewHdr.Version = CurIdxVersion;
 
 	#define ABORT { CloseHandle(hOutput); DeleteFileA(BufFilename); return false; }
 
 	DWORD Written;
-	if (!WriteFile(hOutput, &Hdr, sizeof(HeapfileHeader), &Written, NULL))
+	if (!WriteFile(hOutput, &NewHdr, sizeof(HeapfileHeader), &Written, NULL))
 		ABORT
 	if (sizeof(HeapfileHeader)!=Written)
 		ABORT
@@ -369,6 +381,8 @@ bool CHeapfile::Compact()
 	int Next = 0;
 	void* Ptr;
 	bool res = true;
+	char* tmpBuf = (char*)malloc(NewHdr.ElementSize);
+	ZeroMemory(tmpBuf, NewHdr.ElementSize);
 
 	while (res)
 	{
@@ -376,13 +390,26 @@ bool CHeapfile::Compact()
 
 		if (res)
 		{
-			if (!WriteFile(hOutput, Ptr, Hdr.ElementSize, &Written, NULL))
+			if ((NewHdr.ElementSize>Hdr.ElementSize) && (KeyOffset==Hdr.ElementSize-LFKeySize))
+			{
+				memcpy_s(tmpBuf, NewHdr.ElementSize, Ptr, Hdr.ElementSize-LFKeySize);
+
+				char* P = (char*)Ptr+Hdr.ElementSize-LFKeySize;
+				memcpy_s(tmpBuf+NewHdr.ElementSize-LFKeySize, LFKeySize, P, LFKeySize);
+			}
+			else
+			{
+				memcpy_s(tmpBuf, NewHdr.ElementSize, Ptr, Hdr.ElementSize);
+			}
+
+			if (!WriteFile(hOutput, tmpBuf, NewHdr.ElementSize, &Written, NULL))
 				ABORT
-			if (Hdr.ElementSize!=Written)
+			if (NewHdr.ElementSize!=Written)
 				ABORT
 		}
 	};
 
+	free(tmpBuf);
 	HeaderNeedsWriteback = false;
 	CloseHandle(hOutput);
 	CloseFile();
@@ -392,6 +419,11 @@ bool CHeapfile::Compact()
 	if (!MoveFileA(BufFilename, IdxFilename))
 		return false;
 
+	if (KeyOffset==Hdr.ElementSize-LFKeySize)
+		KeyOffset = NewHdr.ElementSize-LFKeySize;
+
+	Hdr = NewHdr;
+	AllocBuffer();
 	FirstInBuffer = LastInBuffer = -1;
 	return true;
 }

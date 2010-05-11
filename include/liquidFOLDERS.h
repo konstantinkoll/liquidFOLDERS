@@ -443,6 +443,7 @@ struct LFStoreDescriptor
 	char DatPath[MAX_PATH];
 	char IdxPathMain[MAX_PATH];					// Volatile
 	char IdxPathAux[MAX_PATH];					// Volatile
+	bool NeedsCheck;							// Volatile
 };
 
 
