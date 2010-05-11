@@ -40,7 +40,7 @@ unsigned char AttrTypes[LFAttributeCount] = {
 	LFTypeUnicodeString,		// LFAttrHint
 	LFTypeTime,					// LFAttrCreationTime
 	LFTypeTime,					// LFAttrFileTime
-	LFTypeUINT,					// LFAttrFileFormat
+	LFTypeAnsiString,			// LFAttrFileFormat
 	LFTypeINT64,				// LFAttrFileSize
 	LFTypeFlags,				// LFAttrFlags
 	LFTypeAnsiString,			// LFAttrURL
@@ -340,6 +340,8 @@ size_t GetAttributeMaxCharacterCount(unsigned int attr)
 		return 2;
 	case LFAttrLocationIATA:
 		return 3;
+	case LFAttrFileFormat:
+		return 7;
 	case LFAttrExposure:
 	case LFAttrChip:
 	case LFAttrISBN:

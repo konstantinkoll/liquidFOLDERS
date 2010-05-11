@@ -366,7 +366,7 @@ struct LFCoreAttributes
 	wchar_t Comment[256];
 	FILETIME CreationTime;
 	FILETIME FileTime;
-	unsigned int FileFormat;
+	char FileFormat[7];
 	__int64 FileSize;
 	unsigned int Flags;
 	wchar_t Tags[256];
