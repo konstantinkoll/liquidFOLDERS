@@ -89,7 +89,8 @@ void CMigrateApp::OnAppAbout()
 	p.icon->Load(IDB_ABOUTICON, _T("PNG"), AfxGetInstanceHandle());
 	p.TextureSize = -1;
 	p.RibbonColor = m_nAppLook;
-	p.AllowEmptyDrives = -1;
+	p.HideEmptyDrives = -1;
+	p.HideEmptyDomains = -1;
 
 	LFAboutDlg dlg(&p, m_pActiveWnd);
 	dlg.DoModal();

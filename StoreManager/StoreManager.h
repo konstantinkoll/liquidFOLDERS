@@ -32,7 +32,8 @@ public:
 	UINT m_nMaxTextureSize;
 	BOOL m_ShowQueryDuration;
 	BOOL m_GlobeHQModel;
-	BOOL m_AllowEmptyDrives;
+	BOOL m_HideEmptyDrives;
+	BOOL m_HideEmptyDomains;
 	list<CMainFrame*> m_listMainFrames;
 	list<CMainFrame*> m_listClipboardFrames;
 	LFViewParameters m_Views[LFContextCount];
@@ -55,6 +56,7 @@ public:
 	void OpenChildViews(int context, BOOL UpdateViewOptions=FALSE);
 	void UpdateViewOptions(int context=-1);
 	void UpdateSortOptions(int context);
+	void Reload(int context);
 	void GetBinary(LPCTSTR lpszEntry, void* pData, UINT size);
 	void LoadViewOptions(int context);
 	void SaveViewOptions(int context, UINT SaveMode=SaveMode_SettingsChanged);

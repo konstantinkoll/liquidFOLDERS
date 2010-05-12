@@ -131,6 +131,7 @@ LFFilter* GetRootFilter()
 	f->Mode = LFFilterModeStores;
 	f->Options.AddBacklink = true;
 	f->Options.AddDrives = true;
+	f->HideEmptyDrives = (theApp.m_HideEmptyDrives==TRUE);
 
 	return f;
 }
@@ -2107,6 +2108,8 @@ void CMainFrame::NavigateTo(LFFilter* f, UINT NavMode, int FocusItem)
 		LFFreeSearchResult(RawFiles);
 	}
 
+	ActiveFilter->HideEmptyDrives = (theApp.m_HideEmptyDrives==TRUE);
+	ActiveFilter->HideEmptyDomains = (theApp.m_HideEmptyDomains==TRUE);
 	RawFiles = LFQuery(ActiveFilter);
 	CookFiles(((OldContext!=RawFiles->m_Context) || (ActiveContextID==-1)) ? RawFiles->m_Context : ActiveContextID, FocusItem);
 
@@ -2125,7 +2128,7 @@ void CMainFrame::CookFiles(int recipe, int FocusItem)
 	LFSearchResult* Victim = CookedFiles;
 
 	DWORD start = GetTickCount();
-	CookedFiles = LFAllocSearchResult(recipe, RawFiles, theApp.m_AllowEmptyDrives==TRUE);
+	CookedFiles = LFAllocSearchResult(recipe, RawFiles);
 	SortSearchResult(CookedFiles, &theApp.m_Views[recipe]);
 	if (!IsClipboard)
 		GroupSearchResult(CookedFiles, &theApp.m_Views[recipe]);

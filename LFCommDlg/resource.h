@@ -55,8 +55,8 @@
 #define IDC_TEXTURE_2048                21005
 #define IDC_TEXTURE_4096                21006
 #define IDC_TEXTURE_8192                21007
-#define IDC_DRIVES_HIDEEMPTY            21008
-#define IDC_DRIVES_SHOWALL              21009
+#define IDC_HIDEEMPTYDRIVES             21008
+#define IDC_HIDEEMPTYDOMAINS            21009
 #define IDS_HELPURL                     21050
 #define IDS_PURCHASEURL                 21051
 #define IDS_ERROR                       21052

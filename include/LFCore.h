@@ -144,7 +144,7 @@ LFCore_API void LFFreeFilter(LFFilter* f);
 
 
 // Neues Suchergebnis mit Kontext ctx erzeugen
-LFCore_API LFSearchResult* LFAllocSearchResult(int ctx, LFSearchResult* res=NULL, bool AllowEmptyDrives=true);
+LFCore_API LFSearchResult* LFAllocSearchResult(int ctx, LFSearchResult* res=NULL);
 
 // Existierendes LFSearchResult freigeben
 LFCore_API void LFFreeSearchResult(LFSearchResult* res);

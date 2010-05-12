@@ -25,7 +25,7 @@ LFSearchResult::LFSearchResult(int ctx)
 	m_Allocated = 0;
 }
 
-LFSearchResult::LFSearchResult(int ctx, LFSearchResult* res, bool AllowEmptyDrives)
+LFSearchResult::LFSearchResult(int ctx, LFSearchResult* res)
 {
 	m_RawCopy = false;
 	m_LastError = res->m_LastError;
@@ -38,26 +38,10 @@ LFSearchResult::LFSearchResult(int ctx, LFSearchResult* res, bool AllowEmptyDriv
 	m_Allocated = res->m_Count;
 	if (m_Files)
 	{
-		if ((AllowEmptyDrives) || (res->m_Context!=LFContextStores))
-		{
-			memcpy(m_Files, res->m_Files, res->m_Count*sizeof(LFItemDescriptor*));
-			m_Count = res->m_Count;
-			for (unsigned int a=0; a<res->m_Count; a++)
-				m_Files[a]->RefCount++;
-		}
-		else
-		{
-			m_Count = 0;
-			for (unsigned int a=0; a<res->m_Count; a++)
-			{
-				if (((res->m_Files[a]->Type & LFTypeMask)!=LFTypeDrive) || !(res->m_Files[a]->Type & LFTypeNotMounted))
-				{
-					m_Files[m_Count] = res->m_Files[a];
-					m_Files[m_Count]->RefCount++;
-					m_Count++;
-				}
-			}
-		}
+		memcpy(m_Files, res->m_Files, res->m_Count*sizeof(LFItemDescriptor*));
+		m_Count = res->m_Count;
+		for (unsigned int a=0; a<res->m_Count; a++)
+			m_Files[a]->RefCount++;
 	}
 	else
 	{
@@ -168,7 +152,7 @@ bool LFSearchResult::AddStoreDescriptor(LFStoreDescriptor* s, LFFilter* f)
 	return res;
 }
 
-void LFSearchResult::AddDrives()
+void LFSearchResult::AddDrives(LFFilter* filter)
 {
 	DWORD DrivesOnSystem = LFGetLogicalDrives(LFGLD_External);
 
@@ -182,6 +166,9 @@ void LFSearchResult::AddDrives()
 		SHFILEINFO sfi;
 		if (SHGetFileInfo(szDriveRoot, 0, &sfi, sizeof(SHFILEINFO), SHGFI_DISPLAYNAME | SHGFI_TYPENAME | SHGFI_ATTRIBUTES))
 		{
+			if ((!sfi.dwAttributes) && (filter->HideEmptyDrives))
+				continue;
+
 			LFItemDescriptor* d = LFAllocItemDescriptor();
 			d->Type = LFTypeDrive;
 			if (sfi.dwAttributes)

@@ -465,9 +465,9 @@ LFCore_API void LFFreeFilter(LFFilter* f)
 }
 
 
-LFCore_API LFSearchResult* LFAllocSearchResult(int ctx, LFSearchResult* res, bool AllowEmptyDrives)
+LFCore_API LFSearchResult* LFAllocSearchResult(int ctx, LFSearchResult* res)
 {
-	return (res==NULL) ? new LFSearchResult(ctx) : new LFSearchResult(ctx, res, AllowEmptyDrives);
+	return (res) ? new LFSearchResult(ctx, res): new LFSearchResult(ctx);
 }
 
 LFCore_API void LFFreeSearchResult(LFSearchResult* res)

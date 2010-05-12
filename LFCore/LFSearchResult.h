@@ -15,12 +15,12 @@ class LFSearchResult
 {
 public:
 	LFSearchResult(int ctx);
-	LFSearchResult(int ctx, LFSearchResult* res, bool AllowEmptyDrives=true);
+	LFSearchResult(int ctx, LFSearchResult* res);
 	virtual ~LFSearchResult();
 
 	bool AddItemDescriptor(LFItemDescriptor* i);
 	bool AddStoreDescriptor(LFStoreDescriptor* s, LFFilter* f);
-	void AddDrives();
+	void AddDrives(LFFilter* filter);
 	void AddBacklink(char* StoreID, LFFilter* f);
 	void RemoveItemDescriptor(unsigned int idx);
 	void RemoveFlaggedItemDescriptors();

@@ -79,7 +79,8 @@ BOOL CStoreManagerApp::InitInstance()
 	// Registry auslesen
 	CString oldBase = GetRegistryBase();
 	SetRegistryBase(_T("Settings"));
-	m_AllowEmptyDrives = GetInt(_T("AllowEmptyDrives"), TRUE);
+	m_HideEmptyDrives = GetInt(_T("HideEmptyDrives"), FALSE);
+	m_HideEmptyDomains = GetInt(_T("HideEmptyDomains"), FALSE);
 	m_GlobeHQModel = GetInt(_T("GlobeHQModel"), TRUE);
 	m_ShowQueryDuration = GetInt(_T("ShowQueryDuration"), 0);
 	m_nTextureSize = GetInt(_T("TextureSize"), 0);
@@ -117,7 +118,8 @@ int CStoreManagerApp::ExitInstance()
 {
 	CString oldBase = GetRegistryBase();
 	SetRegistryBase(_T("Settings"));
-	WriteInt(_T("AllowEmptyDrives"), m_AllowEmptyDrives);
+	WriteInt(_T("HideEmptyDrives"), m_HideEmptyDrives);
+	WriteInt(_T("HideEmptyDomains"), m_HideEmptyDomains);
 	WriteInt(_T("GlobeHQModel"), m_GlobeHQModel);
 	WriteInt(_T("ShowQueryDuration"), m_ShowQueryDuration);
 	WriteInt(_T("TextureSize"), m_nTextureSize);
@@ -224,7 +226,8 @@ void CStoreManagerApp::OnAppAbout()
 	p.TextureSize = m_nTextureSize;
 	p.MaxTextureSize = m_nMaxTextureSize;
 	p.RibbonColor = m_nAppLook;
-	p.AllowEmptyDrives = m_AllowEmptyDrives;
+	p.HideEmptyDrives = m_HideEmptyDrives;
+	p.HideEmptyDomains = m_HideEmptyDomains;
 
 	LFAboutDlg dlg(&p, m_pActiveWnd);
 	if (dlg.DoModal()==IDOK)
@@ -237,10 +240,17 @@ void CStoreManagerApp::OnAppAbout()
 		}
 
 		// Laufwerke
-		if (p.AllowEmptyDrives!=m_AllowEmptyDrives)
+		if (p.HideEmptyDrives!=m_HideEmptyDrives)
 		{
-			m_AllowEmptyDrives = p.AllowEmptyDrives;
-			UpdateSortOptions(LFContextStores);
+			m_HideEmptyDrives = p.HideEmptyDrives;
+			Reload(LFContextStores);
+		}
+
+		// Domains
+		if (p.HideEmptyDomains!=m_HideEmptyDomains)
+		{
+			m_HideEmptyDomains = p.HideEmptyDomains;
+			Reload(LFContextStoreHome);
 		}
 	}
 
@@ -303,6 +313,17 @@ void CStoreManagerApp::UpdateSortOptions(int context)
 	{
 		if ((*ppFrame)->ActiveContextID==context)
 			(*ppFrame)->UpdateSortOptions();
+		ppFrame++;
+	}
+}
+
+void CStoreManagerApp::Reload(int context)
+{
+	std::list<CMainFrame*>::iterator ppFrame = m_listMainFrames.begin();
+	while (ppFrame!=m_listMainFrames.end())
+	{
+		if ((*ppFrame)->ActiveContextID==context)
+			(*ppFrame)->PostMessage(WM_COMMAND, ID_NAV_RELOAD);
 		ppFrame++;
 	}
 }

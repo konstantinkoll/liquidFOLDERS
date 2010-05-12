@@ -360,12 +360,12 @@ struct LFFilter
 	unsigned int Mode;
 	LFFilterOptions Options;
 
+	bool HideEmptyDrives;					// For LFFilterModeStores
+	bool HideEmptyDomains;					// For LFFilterModeStoreHome
+	char StoreID[LFKeySize];				// For LFFilterModeStoreHome and above
+	wchar_t Searchterm[256];				// For LFFilterModeDirectoryTree and above
+
 	LFFilterResult Result;					// Set by the query engine
-
-	wchar_t Searchterm[256];
-
-	// TODO
-	char StoreID[LFKeySize];
 };
 
 

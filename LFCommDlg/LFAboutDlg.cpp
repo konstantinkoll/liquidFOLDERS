@@ -93,18 +93,25 @@ BOOL LFAboutDlg::OnInitDialog()
 		ShowCancel = TRUE;
 	}
 
-	// Radiobuttons für Laufwerke einstellen
-	CButton* HideEmpty = ((CButton*)GetDlgItem(IDC_DRIVES_HIDEEMPTY));
-	CButton* ShowAll = ((CButton*)GetDlgItem(IDC_DRIVES_SHOWALL));
-
-	if (parameters->AllowEmptyDrives==-1)
+	// Laufwerke einstellen
+	if (parameters->HideEmptyDrives==-1)
 	{
-		HideEmpty->EnableWindow(FALSE);
-		ShowAll->EnableWindow(FALSE);
+		GetDlgItem(IDC_HIDEEMPTYDRIVES)->EnableWindow(FALSE);
 	}
 	else
 	{
-		((CButton*)GetDlgItem(IDC_DRIVES_HIDEEMPTY+parameters->AllowEmptyDrives))->SetCheck(TRUE);
+		((CButton*)GetDlgItem(IDC_HIDEEMPTYDRIVES))->SetCheck(parameters->HideEmptyDrives);
+		ShowCancel = TRUE;
+	}
+
+	// Domains einstellen
+	if (parameters->HideEmptyDomains==-1)
+	{
+		GetDlgItem(IDC_HIDEEMPTYDOMAINS)->EnableWindow(FALSE);
+	}
+	else
+	{
+		((CButton*)GetDlgItem(IDC_HIDEEMPTYDOMAINS))->SetCheck(parameters->HideEmptyDomains);
 		ShowCancel = TRUE;
 	}
 
@@ -163,8 +170,8 @@ void LFAboutDlg::DoDataExchange(CDataExchange* pDX)
 
 	for (UINT a=LFTextureAuto; a<=LFTexture8192; a++)
 		DDX_Control(pDX, IDC_TEXTURE_AUTO+a, m_Texture[a]);
-	DDX_Control(pDX, IDC_DRIVES_HIDEEMPTY, m_ShowDrives[0]);
-	DDX_Control(pDX, IDC_DRIVES_SHOWALL, m_ShowDrives[1]);
+	DDX_Control(pDX, IDC_HIDEEMPTYDRIVES, m_HideEmptyDrives);
+	DDX_Control(pDX, IDC_HIDEEMPTYDOMAINS, m_HideEmptyDomains);
 
 	if (pDX->m_bSaveAndValidate)
 	{
@@ -182,6 +189,7 @@ void LFAboutDlg::DoDataExchange(CDataExchange* pDX)
 			::SendNotifyMessage(HWND_BROADCAST, LFGetMessageIDs()->LookChanged, Look, 0);
 		}
 
-		parameters->AllowEmptyDrives = ((CButton*)GetDlgItem(IDC_DRIVES_SHOWALL))->GetCheck();
+		parameters->HideEmptyDrives = ((CButton*)GetDlgItem(IDC_HIDEEMPTYDRIVES))->GetCheck();
+		parameters->HideEmptyDomains = ((CButton*)GetDlgItem(IDC_HIDEEMPTYDOMAINS))->GetCheck();
 	}
 }

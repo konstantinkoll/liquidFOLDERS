@@ -19,7 +19,7 @@ LFCore_API bool LFPassesFilter(LFItemDescriptor* i, LFFilter* filter)
 	return true;
 }
 
-LFSearchResult* QueryStores(LFFilter* f)
+LFSearchResult* QueryStores(LFFilter* filter)
 {
 	LFSearchResult* res = new LFSearchResult(LFContextStores);
 	res->m_RecommendedView = LFViewLargeIcons;
@@ -32,31 +32,31 @@ LFSearchResult* QueryStores(LFFilter* f)
 		return res;
 	}
 
-	AddStoresToSearchResult(res, f);
+	AddStoresToSearchResult(res, filter);
 	ReleaseMutex(Mutex_Stores);
 
-	if (f)
+	if (filter)
 	{
-		if (f->Options.AddDrives)
-			res->AddDrives();
+		if (filter->Options.AddDrives)
+			res->AddDrives(filter);
 
-		f->Result.FilterType = LFFilterTypeStores;
+		filter->Result.FilterType = LFFilterTypeStores;
 	}
 
 	return res;
 }
 
-LFSearchResult* QueryDomains(LFFilter* f)
+LFSearchResult* QueryDomains(LFFilter* filter)
 {
 	LFSearchResult* res = new LFSearchResult(LFContextStoreHome);
 	res->m_RecommendedView = LFViewSmallIcons;
 	res->m_HasCategories = true;
 
-	if (f->Options.AddBacklink)
+	if (filter->Options.AddBacklink)
 	{
 		LFFilter* nf = LFAllocFilter();
 		nf->Mode = LFFilterModeStores;
-		nf->Options = f->Options;
+		nf->Options = filter->Options;
 
 		res->AddBacklink("", nf);
 	}
@@ -64,7 +64,7 @@ LFSearchResult* QueryDomains(LFFilter* f)
 	CIndex* idx1;
 	CIndex* idx2;
 	HANDLE StoreLock = NULL;
-	res->m_LastError = OpenStore(&f->StoreID[0], false, idx1, idx2, NULL, &StoreLock);
+	res->m_LastError = OpenStore(&filter->StoreID[0], false, idx1, idx2, NULL, &StoreLock);
 	if (res->m_LastError==LFOk)
 	{
 		unsigned int cnt[LFDomainCount];
@@ -76,9 +76,7 @@ LFSearchResult* QueryDomains(LFFilter* f)
 		ReleaseMutexForStore(StoreLock);
 
 		for (unsigned int a=0; a<LFDomainCount; a++)
-#ifndef _DEBUG
-			if (cnt[a])
-#endif
+			if ((cnt[a]) || (!filter->HideEmptyDomains))
 			{
 				LFDomainDescriptor* d = LFGetDomainInfo(a);
 				char FileID[LFKeySize];
@@ -86,25 +84,25 @@ LFSearchResult* QueryDomains(LFFilter* f)
 
 				LFFilter* nf = LFAllocFilter();
 				nf->Mode = LFFilterModeDirectoryTree;
-				nf->Options = f->Options;
-				strcpy_s(nf->StoreID, LFKeySize, f->StoreID);
+				nf->Options = filter->Options;
+				strcpy_s(nf->StoreID, LFKeySize, filter->StoreID);
 				wcscpy_s(nf->Name, 256, d->DomainName);
 
-				res->AddItemDescriptor(AllocFolderDescriptor(d->DomainName, d->Hint, f->StoreID, FileID, d->IconID, d->CategoryID, nf));
+				res->AddItemDescriptor(AllocFolderDescriptor(d->DomainName, d->Hint, filter->StoreID, FileID, d->IconID, d->CategoryID, nf));
 				LFFreeDomainDescriptor(d);
 			}
 
-		f->Result.FilterType = LFFilterTypeStoreHome;
+		filter->Result.FilterType = LFFilterTypeStoreHome;
 	}
 	else
 	{
-		f->Result.FilterType = LFFilterTypeError;
+		filter->Result.FilterType = LFFilterTypeError;
 	}
 
 	return res;
 }
 
-LFSearchResult* QueryStore(LFFilter* f)
+LFSearchResult* QueryStore(LFFilter* filter)
 {
 	LFSearchResult* res = new LFSearchResult(LFContextDefault);
 	res->m_RecommendedView = LFViewDetails;
@@ -114,32 +112,32 @@ LFSearchResult* QueryStore(LFFilter* f)
 	CIndex* idx2;
 	LFStoreDescriptor s;
 	HANDLE StoreLock = NULL;
-	res->m_LastError = OpenStore(&f->StoreID[0], false, idx1, idx2, &s, &StoreLock);
+	res->m_LastError = OpenStore(&filter->StoreID[0], false, idx1, idx2, &s, &StoreLock);
 	if (res->m_LastError==LFOk)
 	{
-		if (f->Options.AddBacklink)
+		if ((filter->Options.AddBacklink) && (filter->Mode==LFFilterModeDirectoryTree))
 		{
 			LFFilter* nf = LFAllocFilter();
 			nf->Mode = LFFilterModeStoreHome;
-			nf->Options = f->Options;
+			nf->Options = filter->Options;
 			strcpy_s(nf->StoreID, LFKeySize, s.StoreID);
 			wcscpy_s(nf->Name, 256, s.StoreName);
 
-			res->AddBacklink(f->StoreID, nf);
+			res->AddBacklink(filter->StoreID, nf);
 		}
 
-		idx1->Retrieve(f, res);
+		idx1->Retrieve(filter, res);
 		if (idx1)
 			delete idx1;
 		if (idx2)
 			delete idx2;
 		ReleaseMutexForStore(StoreLock);
 
-		f->Result.FilterType = (f->Mode==LFFilterModeDirectoryTree) ? LFFilterTypeSubfolder : LFFilterTypeQueryFilter;
+		filter->Result.FilterType = (filter->Mode==LFFilterModeDirectoryTree) ? LFFilterTypeSubfolder : LFFilterTypeQueryFilter;
 	}
 	else
 	{
-		f->Result.FilterType = LFFilterTypeError;
+		filter->Result.FilterType = LFFilterTypeError;
 	}
 
 	return res;

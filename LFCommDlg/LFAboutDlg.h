@@ -13,7 +13,8 @@ struct LFAboutDlgParameters
 	int TextureSize;
 	int MaxTextureSize;
 	int RibbonColor;
-	int AllowEmptyDrives;
+	BOOL HideEmptyDrives;
+	BOOL HideEmptyDomains;
 
 	// Von LFAbout gesetzt
 	CString version;
@@ -31,7 +32,8 @@ protected:
 	CGlassButton m_CancelButton;
 	CGlassButton m_LicenseButton;
 	CTransparentRadioButton m_Texture[LFTexture8192-LFTextureAuto+1];
-	CTransparentRadioButton m_ShowDrives[2];
+	CTransparentRadioButton m_HideEmptyDrives;
+	CTransparentRadioButton m_HideEmptyDomains;
 
 	virtual void OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect);
 	virtual void DoDataExchange(CDataExchange* pDX);
