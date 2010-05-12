@@ -493,13 +493,17 @@ unsigned int OpenStore(LFStoreDescriptor* s, bool WriteAccess, CIndex* &Index1, 
 		case IndexReindexRequired:
 			// TODO
 		case IndexError:
+			delete idx;
 			return LFIndexError;
 		case IndexFullyRepaired:
 			s->IndexVersion = CurIdxVersion;
 
 			res = UpdateStore(s);
 			if (res!=LFOk)
+			{
+				delete idx;
 				return res;
+			}
 		}
 
 		if ((s->StoreMode==LFStoreModeHybrid) && IsStoreMounted(s))
@@ -544,7 +548,7 @@ unsigned int OpenStore(char* key, bool WriteAccess, CIndex* &Index1, CIndex* &In
 
 	unsigned int res = OpenStore(slot, WriteAccess, Index1, Index2);
 	if (res!=LFOk)
-		ReleaseMutexForStore(lock);
+		ReleaseMutexForStore(*lock);
 
 	return res;
 }

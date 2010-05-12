@@ -85,7 +85,7 @@ unsigned int CIndex::Check(bool scheduled)
 		}
 		else
 			if (tres[a]==HeapCreated)
-				if (a==0)
+				if (a==IDMaster)
 				{
 					return IndexReindexRequired;
 				}

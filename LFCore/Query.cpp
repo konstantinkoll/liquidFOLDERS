@@ -144,6 +144,12 @@ LFSearchResult* QueryStore(LFFilter* filter)
 		if (idx2)
 			delete idx2;
 		ReleaseMutexForStore(StoreLock);
+
+		// TODO: Filtericon und Result
+	}
+	else
+	{
+		// TODO: Filtericon und Result
 	}
 
 	return res;
