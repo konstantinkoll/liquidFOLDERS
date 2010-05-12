@@ -55,6 +55,8 @@ void CTransparentRadioButton::OnPaint()
 	buffer.CreateCompatibleBitmap(&pDC, rect.Width(), rect.Height());
 	CBitmap* pOldBitmap = dc.SelectObject(&buffer);
 
+	BOOL IsRadio = (GetButtonStyle()==BS_RADIOBUTTON) || (GetButtonStyle()==BS_AUTORADIOBUTTON);
+
 	// Background
 	CRect rectWindow;
 	GetWindowRect(rectWindow);
@@ -77,11 +79,11 @@ void CTransparentRadioButton::OnPaint()
 		int uiStyle = RBS_UNCHECKEDDISABLED;
 		if (IsWindowEnabled())
 			uiStyle = (GetState() & 4) ? RBS_UNCHECKEDPRESSED : m_Hover ? RBS_UNCHECKEDHOT : RBS_UNCHECKEDNORMAL;
-		p_App->zDrawThemeBackground(hTheme, dc.m_hDC, BP_RADIOBUTTON, uiStyle + (GetCheck() ? 4 : 0), rectIcon, rectIcon);
+		p_App->zDrawThemeBackground(hTheme, dc.m_hDC, IsRadio ? BP_RADIOBUTTON : BP_CHECKBOX, uiStyle + (GetCheck() ? 4 : 0), rectIcon, rectIcon);
 	}
 	else
 	{
-		UINT uiStyle = DFCS_BUTTONRADIO | (GetCheck() ? DFCS_CHECKED : 0) | (GetState() ? DFCS_PUSHED : 0) | (IsWindowEnabled() ? 0 : DFCS_INACTIVE);
+		UINT uiStyle = IsRadio ? DFCS_BUTTONRADIO : DFCS_BUTTONCHECK | (GetCheck() ? DFCS_CHECKED : 0) | (GetState() ? DFCS_PUSHED : 0) | (IsWindowEnabled() ? 0 : DFCS_INACTIVE);
 		dc.DrawFrameControl(rectIcon, DFC_BUTTON, uiStyle);
 	}
 
