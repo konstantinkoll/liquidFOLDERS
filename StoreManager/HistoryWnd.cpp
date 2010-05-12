@@ -164,7 +164,7 @@ int CHistoryWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	m_wndList.SetView(LV_VIEW_TILE);
 
-	m_Icons.CreateFromResource(IDB_HISTORYICONS, 0, 5, 32, 32);
+	m_Icons.CreateFromResource(IDB_HISTORYICONS, 0, 7, 32, 32);
 	m_wndList.SetImageList(&m_Icons, LVSIL_NORMAL);
 
 	SetRedraw(TRUE);

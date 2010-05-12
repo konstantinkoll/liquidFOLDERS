@@ -324,8 +324,9 @@ struct LFDomainDescriptor
 
 #define LFFilterModeStores              1
 #define LFFilterModeStoreHome           2
-#define LFFilterModeSearchInStore       3
-#define LFFilterModeSearchAllStores     4
+#define LFFilterModeDirectoryTree       3
+#define LFFilterModeSearchInStore       4
+#define LFFilterModeSearchAllStores     5
 
 #define LFFilterTypeStores              0
 #define LFFilterTypeStoreHome           1
@@ -334,6 +335,7 @@ struct LFDomainDescriptor
 #define LFFilterTypeTrash               4
 #define LFFilterTypeUnknownFileFormats  5
 #define LFFilterTypeIllegalRequest      6
+#define LFFilterTypeError               7
 #define LFFilterTypeDefault             -1
 
 struct LFFilterOptions
@@ -359,6 +361,8 @@ struct LFFilter
 	LFFilterOptions Options;
 
 	LFFilterResult Result;					// Set by the query engine
+
+	wchar_t Searchterm[256];
 
 	// TODO
 	char StoreID[LFKeySize];
@@ -389,7 +393,7 @@ struct LFCoreAttributes
 
 	// Private
 	unsigned int SlaveID;
-	//unsigned int DomainID;
+	unsigned int DomainID;
 };
 
 
@@ -477,6 +481,7 @@ struct LFStoreDescriptor
 #define LFIllegalValue                  16
 #define LFIndexNotCreated               17
 #define LFIndexError                    18
+#define LFIndexRepairError              19
 
 
 // Structures and classes from LFCore.DLL

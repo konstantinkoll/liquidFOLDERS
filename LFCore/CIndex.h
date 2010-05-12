@@ -29,6 +29,7 @@ public:
 	void Remove(LFTransactionList* li);
 	void RemoveTrash();
 	void Retrieve(LFFilter* f, LFSearchResult* res);
+	bool RetrieveDomains(unsigned int* cnt);
 
 protected:
 	bool LoadTable(unsigned int ID, unsigned int* res=NULL);

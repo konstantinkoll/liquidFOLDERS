@@ -2113,7 +2113,7 @@ void CMainFrame::NavigateTo(LFFilter* f, UINT NavMode, int FocusItem)
 	if (CookedFiles->m_LastError>LFCancel)
 	{
 		theApp.PlayWarningSound();
-		ShowCaptionBar(IDB_WARNING, CookedFiles->m_LastError);
+		ShowCaptionBar(ActiveFilter->Result.FilterType==LFFilterTypeError ? IDB_CANCEL : IDB_WARNING, CookedFiles->m_LastError);
 	}
 }
 

@@ -7,4 +7,4 @@ void RemoveDir(LPCSTR lpPath);
 unsigned int ValidateStoreDirectories(LFStoreDescriptor* s);
 void InitStores();
 unsigned int OpenStore(LFStoreDescriptor* s, bool WriteAccess, CIndex* &Index1, CIndex* &Index2);
-unsigned int OpenStore(char* key, bool WriteAccess, CIndex* &Index1, CIndex* &Index2, HANDLE* lock);
+unsigned int OpenStore(char* key, bool WriteAccess, CIndex* &Index1, CIndex* &Index2, LFStoreDescriptor* s, HANDLE* lock);

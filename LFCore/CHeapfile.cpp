@@ -30,15 +30,17 @@ CHeapfile::CHeapfile(char* Path, char* Filename, unsigned int _ElementSize, unsi
 	hFile = CreateFileA(IdxFilename, GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_SEQUENTIAL_SCAN, NULL);
 	if (hFile==INVALID_HANDLE_VALUE)
 	{
-Error:
-		Status = HeapError;
+		OpenStatus = HeapError;
 	}
 	else
 	{
 		LARGE_INTEGER size;
 		size.QuadPart = 0;
 		if (!GetFileSizeEx(hFile, &size))
-			goto Error;
+		{
+			OpenStatus = HeapError;
+			goto Finish;
+		}
 
 		if (size.QuadPart<sizeof(HeapfileHeader))
 		{
@@ -49,23 +51,29 @@ Create:
 			HeaderNeedsWriteback = true;
 
 			if (!WriteHeader())
-				goto Error;
-			SetEndOfFile(hFile);
+			{
+				OpenStatus = HeapCannotCreate;
+				goto Finish;
+			}
 
-			Status = HeapCreated;
+			SetEndOfFile(hFile);
+			OpenStatus = HeapCreated;
 		}
 		else
 		{
 			DWORD Read;
 			if (!ReadFile(hFile, &Hdr, sizeof(HeapfileHeader), &Read, NULL))
-				goto Error;
+			{
+				OpenStatus = HeapError;
+				goto Finish;
+			}
 			if (sizeof(HeapfileHeader)!=Read)
 				goto Create;
 			if (strcmp(Hdr.ID, HeapSignature)!=0)
 				goto Create;
 
 			ItemCount = (unsigned int)((size.QuadPart-sizeof(HeapfileHeader))/Hdr.ElementSize);
-			Status = (Hdr.Version<CurIdxVersion) ? HeapMaintenanceRecommended : HeapOk;
+			OpenStatus = (Hdr.Version<CurIdxVersion) ? HeapMaintenanceRecommended : HeapOk;
 
 			// Anpassungen für andere Index-Versionen und Tupelgrößen
 			if (Hdr.ElementSize>_ElementSize)
@@ -79,13 +87,14 @@ Create:
 					if (KeyOffset==_ElementSize-LFKeySize)
 						KeyOffset = Hdr.ElementSize-LFKeySize;
 
-					Status = HeapMaintenanceRequired;
+					OpenStatus = HeapMaintenanceRequired;
 				}
 		}
 
 		AllocBuffer();
 	}
 
+Finish:
 	BufferNeedsWriteback = HeaderNeedsWriteback = false;
 }
 
@@ -358,6 +367,9 @@ void CHeapfile::Invalidate(LFItemDescriptor* i)
 
 bool CHeapfile::Compact()
 {
+	if ((!Hdr.NeedsCompaction) && (OpenStatus!=HeapMaintenanceRequired) && (OpenStatus!=HeapMaintenanceRecommended))
+		return true;
+
 	char BufFilename[MAX_PATH];
 	strcpy_s(BufFilename, MAX_PATH, IdxFilename);
 	strcat_s(BufFilename, MAX_PATH, ".part");
@@ -423,6 +435,7 @@ bool CHeapfile::Compact()
 	if (KeyOffset==Hdr.ElementSize-LFKeySize)
 		KeyOffset = NewHdr.ElementSize-LFKeySize;
 
+	OpenStatus = HeapOk;
 	Hdr = NewHdr;
 	AllocBuffer();
 	FirstInBuffer = LastInBuffer = -1;

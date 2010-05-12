@@ -1038,6 +1038,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Ribbon\FolderError_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\FolderError_32.png"
+				>
+			</File>
+			<File
 				RelativePath=".\Ribbon\FolderRemove_16.png"
 				>
 			</File>

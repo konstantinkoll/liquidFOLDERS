@@ -19,11 +19,7 @@ LFCore_API bool LFPassesFilter(LFItemDescriptor* i, LFFilter* filter)
 	return true;
 }
 
-
-
-
-
-LFSearchResult* QueryStores(LFFilter* filter)
+LFSearchResult* QueryStores(LFFilter* f)
 {
 	LFSearchResult* res = new LFSearchResult(LFContextStores);
 	res->m_RecommendedView = LFViewLargeIcons;
@@ -36,40 +32,18 @@ LFSearchResult* QueryStores(LFFilter* filter)
 		return res;
 	}
 
-	AddStoresToSearchResult(res, filter);
+	AddStoresToSearchResult(res, f);
 	ReleaseMutex(Mutex_Stores);
 
-	if (filter)
+	if (f)
 	{
-		if (filter->Options.AddDrives)
+		if (f->Options.AddDrives)
 			res->AddDrives();
 
-		filter->Result.FilterType = LFFilterTypeStores;
+		f->Result.FilterType = LFFilterTypeStores;
 	}
 
 	return res;
-}
-
-
-
-
-
-
-LFItemDescriptor* CreateDomainItem(const wchar_t* Name, const wchar_t* Hint, const char* StoreID, const char* FileID, unsigned int IconID, unsigned int CategoryID, LFFilter* Filter)
-{
-	LFItemDescriptor* d = LFAllocItemDescriptor();
-
-	d->IconID = IconID;
-	d->CategoryID = CategoryID;
-	d->Type = LFTypeVirtual;
-	d->NextFilter = Filter;
-
-	SetAttribute(d, LFAttrFileName, Name);
-	SetAttribute(d, LFAttrStoreID, StoreID);
-	SetAttribute(d, LFAttrFileID, FileID);
-	SetAttribute(d, LFAttrHint, Hint);
-
-	return d;
 }
 
 LFSearchResult* QueryDomains(LFFilter* f)
@@ -83,82 +57,93 @@ LFSearchResult* QueryDomains(LFFilter* f)
 		LFFilter* nf = LFAllocFilter();
 		nf->Mode = LFFilterModeStores;
 		nf->Options = f->Options;
-		wchar_t BacklinkName[256];
-		LoadString(LFCoreModuleHandle, IDS_BacklinkName, BacklinkName, 256);
-		wchar_t BacklinkHint[256];
-		LoadString(LFCoreModuleHandle, IDS_BacklinkHint, BacklinkHint, 256);
-		res->AddItemDescriptor(CreateDomainItem(BacklinkName, BacklinkHint, f->StoreID, "BACK", IDI_FLD_Back, LFCategoryStore, nf));
+
+		res->AddBacklink("", nf);
 	}
 
+	CIndex* idx1;
+	CIndex* idx2;
 	HANDLE StoreLock = NULL;
-	LFStoreDescriptor* slot = FindStore(f->StoreID, &StoreLock);
-	ReleaseMutex(Mutex_Stores);
-
-	if (slot)
-	{
-		for (unsigned int a=0; a<LFDomainCount; a++)
-		{
-			LFDomainDescriptor* d = LFGetDomainInfo(a);
-			char FileID[LFKeySize];
-			sprintf_s(FileID, sizeof(FileID), "%d", a);
-
-			LFFilter* nf = LFAllocFilter();
-			nf->Mode = LFFilterModeSearchInStore;
-			nf->Options = f->Options;
-			strcpy_s(nf->StoreID, LFKeySize, f->StoreID);
-			wcscpy_s(nf->Name, 256, d->DomainName);
-
-			res->AddItemDescriptor(CreateDomainItem(d->DomainName, d->Hint, f->StoreID, FileID, d->IconID, d->CategoryID, nf));
-			LFFreeDomainDescriptor(d);
-		}
-
-		ReleaseMutexForStore(StoreLock);
-	}
-	else
-	{
-		res->m_LastError = LFIllegalKey;
-	}
-
-	f->Result.FilterType = LFFilterTypeStoreHome;
-	return res;
-}
-
-
-
-
-LFSearchResult* QueryStore(LFFilter* filter)
-{
-	LFSearchResult* res = new LFSearchResult(LFContextDefault);
-	res->m_RecommendedView = LFViewDetails;
-	res->m_LastError = LFOk;
-
-	CIndex* idx1 = NULL;
-	CIndex* idx2 = NULL;
-	HANDLE StoreLock = NULL;
-	res->m_LastError = OpenStore(&filter->StoreID[0], false, idx1, idx2, &StoreLock);
+	res->m_LastError = OpenStore(&f->StoreID[0], false, idx1, idx2, NULL, &StoreLock);
 	if (res->m_LastError==LFOk)
 	{
-		idx1->Retrieve(filter, res);
+		unsigned int cnt[LFDomainCount];
+		idx1->RetrieveDomains(cnt);
 		if (idx1)
 			delete idx1;
 		if (idx2)
 			delete idx2;
 		ReleaseMutexForStore(StoreLock);
 
-		// TODO: Filtericon und Result
+		for (unsigned int a=0; a<LFDomainCount; a++)
+#ifndef _DEBUG
+			if (cnt[a])
+#endif
+			{
+				LFDomainDescriptor* d = LFGetDomainInfo(a);
+				char FileID[LFKeySize];
+				sprintf_s(FileID, sizeof(FileID), "%d", a);
+
+				LFFilter* nf = LFAllocFilter();
+				nf->Mode = LFFilterModeDirectoryTree;
+				nf->Options = f->Options;
+				strcpy_s(nf->StoreID, LFKeySize, f->StoreID);
+				wcscpy_s(nf->Name, 256, d->DomainName);
+
+				res->AddItemDescriptor(AllocFolderDescriptor(d->DomainName, d->Hint, f->StoreID, FileID, d->IconID, d->CategoryID, nf));
+				LFFreeDomainDescriptor(d);
+			}
+
+		f->Result.FilterType = LFFilterTypeStoreHome;
 	}
 	else
 	{
-		// TODO: Filtericon und Result
+		f->Result.FilterType = LFFilterTypeError;
 	}
 
 	return res;
 }
 
+LFSearchResult* QueryStore(LFFilter* f)
+{
+	LFSearchResult* res = new LFSearchResult(LFContextDefault);
+	res->m_RecommendedView = LFViewDetails;
+	res->m_LastError = LFOk;
 
+	CIndex* idx1;
+	CIndex* idx2;
+	LFStoreDescriptor s;
+	HANDLE StoreLock = NULL;
+	res->m_LastError = OpenStore(&f->StoreID[0], false, idx1, idx2, &s, &StoreLock);
+	if (res->m_LastError==LFOk)
+	{
+		if (f->Options.AddBacklink)
+		{
+			LFFilter* nf = LFAllocFilter();
+			nf->Mode = LFFilterModeStoreHome;
+			nf->Options = f->Options;
+			strcpy_s(nf->StoreID, LFKeySize, s.StoreID);
+			wcscpy_s(nf->Name, 256, s.StoreName);
 
+			res->AddBacklink(f->StoreID, nf);
+		}
 
+		idx1->Retrieve(f, res);
+		if (idx1)
+			delete idx1;
+		if (idx2)
+			delete idx2;
+		ReleaseMutexForStore(StoreLock);
 
+		f->Result.FilterType = (f->Mode==LFFilterModeDirectoryTree) ? LFFilterTypeSubfolder : LFFilterTypeQueryFilter;
+	}
+	else
+	{
+		f->Result.FilterType = LFFilterTypeError;
+	}
+
+	return res;
+}
 
 LFCore_API LFSearchResult* LFQuery(LFFilter* filter)
 {
@@ -172,8 +157,7 @@ LFCore_API LFSearchResult* LFQuery(LFFilter* filter)
 	else
 	{
 		// Ggf. Default Store einsetzen
-		if ((strcmp(filter->StoreID, "")==0) &&
-			((filter->Mode==LFFilterModeStoreHome) || (filter->Mode==LFFilterModeSearchInStore)))
+		if ((strcmp(filter->StoreID, "")==0) && (filter->Mode>=LFFilterModeStoreHome) && (filter->Mode<=LFFilterModeSearchInStore))
 			if (LFDefaultStoreAvailable())
 			{
 				char* ds = LFGetDefaultStore();
@@ -196,8 +180,14 @@ LFCore_API LFSearchResult* LFQuery(LFFilter* filter)
 			case LFFilterModeStoreHome:
 				res = QueryDomains(filter);
 				break;
-			default:
+			case LFFilterModeDirectoryTree:
+			case LFFilterModeSearchInStore:
 				res = QueryStore(filter);
+				break;
+			default:
+				res = new LFSearchResult(LFContextDefault);
+				res->m_LastError = LFIllegalQuery;
+				filter->Result.FilterType = LFFilterTypeIllegalRequest;
 			}
 
 		// Statistik

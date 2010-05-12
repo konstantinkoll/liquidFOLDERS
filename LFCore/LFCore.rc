@@ -186,7 +186,8 @@ BEGIN
     IDS_LFErrorIllegalItemType "At least one of the selected items does not support this operation."
     IDS_LFErrorIllegalValue "At least one of the attribute values is illegal."
     IDS_LFErrorIndexNotCreated "The store index could not be created."
-    IDS_LFErrorIndexError   "The store index is damaged and could not be repaired."
+    IDS_LFErrorIndexError   "The store index is not current and requires scheduled maintenance."
+    IDS_LFErrorIndexRepairError "The store index is damaged and could not be repaired (write protected disc ?)."
 END
 
 STRINGTABLE 
@@ -251,7 +252,7 @@ BEGIN
     IDS_DomainAudio         "Audio"
     IDS_DomainPhotos        "Photos\nJPEG and raw photos only"
     IDS_DomainPictures      "Pictures\nIncludes photos"
-    IDS_DomainVideos        "Videos\nIncludes game replays"
+    IDS_DomainVideos        "Videos"
     IDS_DomainArchives      "Archives"
     IDS_DomainContacts      "Contacts"
     IDS_DomainDocuments     "Documents\nOffice documents"

@@ -54,9 +54,9 @@ inline bool CIndex::LoadTable(unsigned int ID, unsigned int* res)
 		}
 
 	if (res)
-		*res = Tables[ID]->Status;
+		*res = Tables[ID]->OpenStatus;
 
-	return (Tables[ID]->Status!=HeapError);
+	return (Tables[ID]->OpenStatus!=HeapError) && (Tables[ID]->OpenStatus!=HeapCannotCreate);
 }
 
 bool CIndex::Create()
@@ -74,25 +74,34 @@ unsigned int CIndex::Check(bool scheduled)
 {
 	bool Reindex = false;
 	bool Repaired = false;
-	bool Skipped = false;
 	unsigned int tres[IdxTableCount];
 
 	// Tabellen prüfen
 	for (unsigned int a=0; a<IdxTableCount; a++)
-		if (!LoadTable(a, &tres[a]))
+	{
+		LoadTable(a, &tres[a]);
+		switch (tres[a])
 		{
+		case HeapError:
 			return IndexError;
+		case HeapCreated:
+			if (a==IDMaster)
+				return IndexReindexRequired;
+			Reindex = true;
+			Repaired = true;
+			break;
+		case HeapCannotCreate:
+			if (a==IDMaster)
+				return IndexError;
+			break;
+		case HeapMaintenanceRequired:
+			if (!Tables[a]->Compact())
+				return IndexError;
+			tres[a] = Tables[a]->OpenStatus;
+			Repaired = true;
+			break;
 		}
-		else
-			if (tres[a]==HeapCreated)
-				if (a==IDMaster)
-				{
-					return IndexReindexRequired;
-				}
-				else
-				{
-					Reindex = true;
-				}
+	}
 
 	// Index-Durchlauf
 	if (scheduled || Reindex)
@@ -101,23 +110,23 @@ unsigned int CIndex::Check(bool scheduled)
 	}
 
 	// Kompaktieren
-	for (unsigned int a=0; a<IdxTableCount; a++)
-		switch (tres[a])
+	if (scheduled)
+		for (unsigned int a=0; a<IdxTableCount; a++)
 		{
-		case HeapMaintenanceRecommended:
-			Skipped |= (!scheduled);
-		case HeapOk:
-			if (!scheduled)
-				continue;
-		case HeapMaintenanceRequired:
 			if (!Tables[a]->Compact())
 				return IndexError;
 
-			Repaired = true;
-			break;
+			Repaired |= (tres[a]!=Tables[a]->OpenStatus);
+			tres[a] = Tables[a]->OpenStatus;
 		}
 
-	return Repaired ? Skipped ? IndexPartiallyRepaired : IndexFullyRepaired : IndexOk;
+	// Ergebnis
+	if (Repaired)
+		for (unsigned int a=0; a<IdxTableCount; a++)
+			if (tres[a]==HeapMaintenanceRecommended)
+				return IndexPartiallyRepaired;
+
+	return Repaired ? IndexFullyRepaired : IndexOk;
 }
 
 void CIndex::AddItem(LFItemDescriptor* i)
@@ -206,12 +215,12 @@ void CIndex::RemoveTrash()
 void CIndex::Retrieve(LFFilter* f, LFSearchResult* res)
 {
 	assert(f);
-	assert(f->Mode>=LFFilterModeSearchInStore);
+	assert(f->Mode>=LFFilterModeDirectoryTree);
 	assert(res);
 
 	if (!LoadTable(IDMaster))
 	{
-		res->m_LastError = LFIndexError;
+		res->m_LastError = LFIndexRepairError;
 		return;
 	}
 
@@ -234,16 +243,55 @@ void CIndex::Retrieve(LFFilter* f, LFSearchResult* res)
 				if (Tables[PtrM->SlaveID]->FindKey(PtrM->FileID, IDs[PtrM->SlaveID], PtrS))
 					Tables[PtrM->SlaveID]->WriteToItemDescriptor(i, PtrS);
 			}
+			else
+			{
+				res->m_LastError = LFIndexError;
+			}
 
 		// Filter
 		// TODO
-		if (false)
+		if (f->Searchterm[0]!=L'\0')
 			AttributesToString(i);
 		if (LFPassesFilter(i, f))
 		{
-			if (true)
+			if (f->Searchterm[0]==L'\0')
 				AttributesToString(i);
 			res->AddItemDescriptor(i);
+		}
+	}
+}
+
+bool CIndex::RetrieveDomains(unsigned int* cnt)
+{
+	if (!LoadTable(IDMaster))
+		return false;
+
+	int ID = 0;
+	LFCoreAttributes* PtrM;
+	ZeroMemory(cnt, sizeof(unsigned int)*LFDomainCount);
+
+	while (Tables[IDMaster]->FindNext(ID, (void*&)PtrM))
+	{
+		if (PtrM->Flags & LFFlagTrash)
+		{
+			cnt[LFDomainTrash]++;
+		}
+		else
+		{
+			cnt[LFDomainAllFiles]++;
+
+			if (PtrM->Rating)
+				cnt[LFDomainFavorites]++;
+			if ((PtrM->DomainID>LFDomainAllMultimediaFiles) && (PtrM->DomainID<LFDomainCount))
+			{
+				cnt[PtrM->DomainID]++;
+				if ((PtrM->DomainID>=LFDomainAudio) && (PtrM->DomainID<=LFDomainVideos))
+					cnt[LFDomainAllMultimediaFiles]++;
+			}
+			else
+			{
+				cnt[LFDomainUnknown]++;
+			}
 		}
 	}
 }

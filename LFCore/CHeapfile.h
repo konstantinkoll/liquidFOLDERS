@@ -13,8 +13,9 @@
 #define HeapOk                         0
 #define HeapError                      1
 #define HeapCreated                    2
-#define HeapMaintenanceRecommended     3
-#define HeapMaintenanceRequired        4
+#define HeapCannotCreate               3
+#define HeapMaintenanceRecommended     4
+#define HeapMaintenanceRequired        5
 
 struct HeapfileHeader
 {
@@ -48,7 +49,7 @@ public:
 	bool Compact();
 	void MakeDirty(bool NeedsCompaction=false);
 
-	unsigned int Status;
+	unsigned int OpenStatus;
 	unsigned int RequestedElementSize;
 
 protected:

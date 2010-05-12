@@ -21,6 +21,7 @@ public:
 	bool AddItemDescriptor(LFItemDescriptor* i);
 	bool AddStoreDescriptor(LFStoreDescriptor* s, LFFilter* f);
 	void AddDrives();
+	void AddBacklink(char* StoreID, LFFilter* f);
 	void RemoveItemDescriptor(unsigned int idx);
 	void RemoveFlaggedItemDescriptors();
 

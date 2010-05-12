@@ -367,10 +367,11 @@ LFCore_API unsigned int LFSetStoreAttributes(char* key, wchar_t* name, wchar_t* 
 		res = UpdateStore(slot);
 	}
 
+	unsigned int Mode = slot->StoreMode;
 	ReleaseMutex(Mutex_Stores);
 
 	if ((res==LFOk) && (!InternalCall))
-		SendMessage(HWND_BROADCAST, LFMessages.StoreAttributesChanged, slot->StoreMode==LFStoreModeInternal ? LFMSGF_IntStores : LFMSGF_ExtHybStores, (LPARAM)hWndSource);
+		SendMessage(HWND_BROADCAST, LFMessages.StoreAttributesChanged, Mode==LFStoreModeInternal ? LFMSGF_IntStores : LFMSGF_ExtHybStores, (LPARAM)hWndSource);
 
 	return res;
 }
@@ -395,10 +396,11 @@ LFCore_API unsigned int LFSetStoreComment(char* key, wchar_t* comment, HWND hWnd
 		res = UpdateStore(slot);
 	}
 
+	unsigned int Mode = slot->StoreMode;
 	ReleaseMutex(Mutex_Stores);
 
 	if ((res==LFOk) && (!InternalCall))
-		SendNotifyMessage(HWND_BROADCAST, LFMessages.StoreAttributesChanged, slot->StoreMode==LFStoreModeInternal ? LFMSGF_IntStores : LFMSGF_ExtHybStores, (LPARAM)hWndSource);
+		SendNotifyMessage(HWND_BROADCAST, LFMessages.StoreAttributesChanged, Mode==LFStoreModeInternal ? LFMSGF_IntStores : LFMSGF_ExtHybStores, (LPARAM)hWndSource);
 
 	return res;
 }
@@ -477,6 +479,8 @@ LFCore_API bool LFAskDeleteStore(LFStoreDescriptor* s, HWND hWnd)
 
 unsigned int OpenStore(LFStoreDescriptor* s, bool WriteAccess, CIndex* &Index1, CIndex* &Index2)
 {
+	Index1 = Index2 = NULL;
+
 	if (WriteAccess && !IsStoreMounted(s))
 		return LFStoreNotMounted;
 
@@ -494,7 +498,7 @@ unsigned int OpenStore(LFStoreDescriptor* s, bool WriteAccess, CIndex* &Index1, 
 			// TODO
 		case IndexError:
 			delete idx;
-			return LFIndexError;
+			return LFIndexRepairError;
 		case IndexFullyRepaired:
 			s->IndexVersion = CurIdxVersion;
 
@@ -530,8 +534,10 @@ unsigned int OpenStore(LFStoreDescriptor* s, bool WriteAccess, CIndex* &Index1, 
 	return LFOk;
 }
 
-unsigned int OpenStore(char* key, bool WriteAccess, CIndex* &Index1, CIndex* &Index2, HANDLE* lock)
+unsigned int OpenStore(char* key, bool WriteAccess, CIndex* &Index1, CIndex* &Index2, LFStoreDescriptor* s, HANDLE* lock)
 {
+	Index1 = Index2 = NULL;
+
 	if (!key)
 		return LFIllegalKey;
 	if (key[0]=='\0')
@@ -541,12 +547,18 @@ unsigned int OpenStore(char* key, bool WriteAccess, CIndex* &Index1, CIndex* &In
 		return LFMutexError;
 
 	LFStoreDescriptor* slot = FindStore(key, lock);
-	ReleaseMutex(Mutex_Stores);
-
 	if (!slot)
+	{
+		ReleaseMutex(Mutex_Stores);
 		return LFIllegalKey;
+	}
 
-	unsigned int res = OpenStore(slot, WriteAccess, Index1, Index2);
+	LFStoreDescriptor store = *slot;
+	ReleaseMutex(Mutex_Stores);
+	if (s)
+		*s = store;
+
+	unsigned int res = OpenStore(&store, WriteAccess, Index1, Index2);
 	if (res!=LFOk)
 		ReleaseMutexForStore(*lock);
 

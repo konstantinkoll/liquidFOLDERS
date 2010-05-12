@@ -206,6 +206,18 @@ void LFSearchResult::AddDrives()
 	}
 }
 
+void LFSearchResult::AddBacklink(char* StoreID, LFFilter* f)
+{
+	wchar_t BacklinkName[256];
+	LoadString(LFCoreModuleHandle, IDS_BacklinkName, BacklinkName, 256);
+	wchar_t BacklinkHint[256];
+	LoadString(LFCoreModuleHandle, IDS_BacklinkHint, BacklinkHint, 256);
+
+	LFItemDescriptor* d = AllocFolderDescriptor(BacklinkName, BacklinkHint, StoreID, "BACK", IDI_FLD_Back, LFCategoryStore, f);
+	if (!AddItemDescriptor(d))
+		delete d;
+}
+
 void LFSearchResult::RemoveItemDescriptor(unsigned int idx)
 {
 	assert(idx<m_Count);
