@@ -209,7 +209,11 @@ void CIndex::Retrieve(LFFilter* f, LFSearchResult* res)
 	assert(f->Mode>=LFFilterModeSearchInStore);
 	assert(res);
 
-	LoadTable(IDMaster);
+	if (!LoadTable(IDMaster))
+	{
+		res->m_LastError = LFIndexError;
+		return;
+	}
 
 	int IDs[IdxTableCount];
 	ZeroMemory(IDs, sizeof(IDs));
@@ -223,19 +227,19 @@ void CIndex::Retrieve(LFFilter* f, LFSearchResult* res)
 
 		// Slave
 		if ((PtrM->SlaveID) && (PtrM->SlaveID<IdxTableCount))
-		{
-			LoadTable(PtrM->SlaveID);
-			void* PtrS;
+			if (LoadTable(PtrM->SlaveID))
+			{
+				void* PtrS;
 
-			if (Tables[PtrM->SlaveID]->FindKey(PtrM->FileID, IDs[PtrM->SlaveID], PtrS))
-				Tables[PtrM->SlaveID]->WriteToItemDescriptor(i, PtrS);
-		}
+				if (Tables[PtrM->SlaveID]->FindKey(PtrM->FileID, IDs[PtrM->SlaveID], PtrS))
+					Tables[PtrM->SlaveID]->WriteToItemDescriptor(i, PtrS);
+			}
 
 		// Filter
 		// TODO
 		if (false)
 			AttributesToString(i);
-		if (true)
+		if (LFPassesFilter(i, f))
 		{
 			if (true)
 				AttributesToString(i);

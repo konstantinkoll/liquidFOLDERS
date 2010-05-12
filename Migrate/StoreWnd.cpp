@@ -60,9 +60,7 @@ void CStoreWnd::UpdateStores(BOOL FocusDefaultStore)
 		result = NULL;
 	}
 
-	LFFilter* filter = LFAllocFilter();
-	filter->Legacy = TRUE;
-	result = LFQuery(filter);
+	result = LFQuery(NULL);
 
 	SortSearchResult(result);
 
@@ -81,8 +79,6 @@ void CStoreWnd::UpdateStores(BOOL FocusDefaultStore)
 	m_wndList.SetItemState(idx, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
 	m_wndList.SetRedraw(TRUE);
 	m_wndList.SetTileSize();
-
-	LFFreeFilter(filter);
 }
 
 int CStoreWnd::GetSelectedItem()
@@ -308,12 +304,12 @@ void CStoreWnd::OnUpdateCommands(CCmdUI* pCmdUI)
 		break;
 	case ID_STORE_MAKEDEFAULT:
 		if ((i!=-1) && (result))
-			b = (result->m_Files[i]->CategoryID == LFCategoryInternalStores) &&
+			b = (result->m_Files[i]->CategoryID==LFCategoryInternalStores) &&
 				((result->m_Files[i]->Type & LFTypeDefaultStore)==0);
 		break;
 	case ID_STORE_MAKEHYBRID:
 		if ((i!=-1) && (result))
-			b = (result->m_Files[i]->CategoryID == LFCategoryExternalStores);
+			b = (result->m_Files[i]->CategoryID==LFCategoryExternalStores);
 	}
 
 	pCmdUI->Enable(b);

@@ -1,7 +1,6 @@
 #include "StdAfx.h"
 #include "..\\include\\LFCore.h"
 #include "LFItemDescriptor.h"
-#include "IdxTables.h"
 #include "Mutex.h"
 #include "Stores.h"
 #include "StoreCache.h"
@@ -30,7 +29,6 @@ LFStoreDescriptor StoreCache[MaxStores] = { 0 };
 #pragma comment(linker, "/SECTION:common_storecache,RWS")
 
 
-extern HMODULE LFCoreModuleHandle;
 extern HANDLE Mutex_Stores;
 extern LFMessageIDs LFMessages;
 extern unsigned int DriveTypes[26];
@@ -110,7 +108,7 @@ bool LoadStoreSettingsFromRegistry(char* key, LFStoreDescriptor* s)
 {
 	if (!key)
 		return false;
-	if (strcmp(key, "")==0)
+	if (key[0]=='\0')
 		return false;
 
 	bool res = false;
@@ -183,7 +181,7 @@ bool LoadStoreSettingsFromFile(char* filename, LFStoreDescriptor* s)
 {
 	if (!filename)
 		return false;
-	if (strcmp(filename, "")==0)
+	if (filename[0]=='\0')
 		return false;
 
 	HANDLE hFile = CreateFileA(filename, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_SEQUENTIAL_SCAN, NULL);
@@ -508,65 +506,17 @@ void CreateStoreKey(char* key)
 	while (!unique);
 }
 
-LFItemDescriptor* StoreDescriptor2ItemDescriptor(LFStoreDescriptor* s)
-{
-	LFFilter* nf = LFAllocFilter();
-	nf->Mode = LFFilterModeStoreHome;
-	nf->AllowSubfolders = true;
-	strcpy_s(nf->StoreID, LFKeySize, s->StoreID);
-	wcscpy_s(nf->Name, 256, s->StoreName);
 
-	LFItemDescriptor* d = LFAllocItemDescriptor();
-	bool IsMounted = IsStoreMounted(s);
-
-	if (strcmp(s->StoreID, DefaultStore)==0)
-	{
-		d->IconID = IDI_STORE_Default;
-		d->Type |= LFTypeDefaultStore;
-		wchar_t ds[256];
-		LoadStringW(LFCoreModuleHandle, IDS_DefaultStore, ds, 256);
-		SetAttribute(d, LFAttrHint, ds);
-	}
-	else
-	{
-		d->IconID = (s->StoreMode==LFStoreModeInternal ? IDI_STORE_Empty : IDI_Bag);
-		if ((s->StoreMode==LFStoreModeHybrid) || (s->StoreMode==LFStoreModeExternal))
-			if (wcscmp(s->LastSeen, L"")!=0)
-			{
-				wchar_t ls[256];
-				LoadStringW(LFCoreModuleHandle, IsMounted ? IDS_SeenOn :IDS_LastSeen, ls, 256);
-				wchar_t hint[256];
-				wsprintf(hint, ls, s->LastSeen);
-				SetAttribute(d, LFAttrHint, hint);
-			}
-	}
-
-	if (!IsMounted)
-	{
-		d->Type |= LFTypeGhosted | LFTypeNotMounted;
-	}
-	else
-		// TODO
-		if ((s->IndexVersion<CurIdxVersion) /*|| (s->MaintenanceTime<)*/)
-			d->Type |= LFTypeColored | LFTypeRequiresMaintenance;
-
-	d->CategoryID = s->StoreMode;
-	d->Type |= LFTypeStore;
-	SetAttribute(d, LFAttrFileName, s->StoreName);
-	SetAttribute(d, LFAttrComment, s->Comment);
-	SetAttribute(d, LFAttrStoreID, s->StoreID);
-	SetAttribute(d, LFAttrFileID, s->StoreID);
-	SetAttribute(d, LFAttrCreationTime, &s->CreationTime);
-	SetAttribute(d, LFAttrFileTime, &s->FileTime);
-	d->NextFilter = nf;
-
-	return d;
-}
-
-void AddStores(LFSearchResult* res)
+void AddStoresToSearchResult(LFSearchResult* res, LFFilter* filter)
 {
 	for (unsigned int a=0; a<StoreCount; a++)
-		res->AddStoreDescriptor(&StoreCache[a]);
+	{
+		if (filter)
+			if ((filter->Options.OnlyInternalStores) && (StoreCache[a].StoreMode!=LFStoreModeInternal))
+				continue;
+
+		res->AddStoreDescriptor(&StoreCache[a], filter);
+	}
 }
 
 LFStoreDescriptor* FindStore(char* key, HANDLE* lock)
@@ -625,12 +575,10 @@ unsigned int UpdateStore(LFStoreDescriptor* s, bool MakeDefault)
 		if ((res==LFOk) && (IsStoreMounted(s)))
 			res = SaveStoreSettingsToFile(s);
 
-	if (res!=LFOk)
-		return res;
-
 	// Ggf. Store zum Default Store machen
-	if ((s->StoreMode==LFStoreModeInternal) && ((MakeDefault) || (strcmp(DefaultStore, "")==0)))
-		res = LFMakeDefaultStore(s->StoreID, NULL, true);
+	if (res==LFOk)
+		if ((s->StoreMode==LFStoreModeInternal) && ((MakeDefault) || (DefaultStore[0]=='\0')))
+			res = LFMakeDefaultStore(s->StoreID, NULL, true);
 
 	return res;
 }
@@ -669,7 +617,7 @@ LFCore_API bool LFDefaultStoreAvailable()
 
 	if (GetMutex(Mutex_Stores))
 	{
-		res = (strcmp(DefaultStore, "")!=0);
+		res = (DefaultStore[0]!='\0');
 		ReleaseMutex(Mutex_Stores);
 	}
 

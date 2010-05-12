@@ -221,9 +221,6 @@ void CFileList::OnCustomDraw(NMHDR* pNMHDR, LRESULT* pResult)
 	case CDDS_ITEMPREPAINT:
 		if ((hTheme) && (GetItemState((int)lplvcd->nmcd.dwItemSpec, LVIS_SELECTED)))
 			lplvcd->nmcd.uItemState &= ~CDIS_FOCUS;
-		if (View->result->m_Files[lplvcd->nmcd.dwItemSpec]->Type & LFTypeColored)
-			theApp.GetBackgroundColors(View->m_ViewParameters.Background, NULL, NULL, &lplvcd->clrText);
-
 		*pResult = CDRF_NOTIFYSUBITEMDRAW;
 		break;
 	case CDDS_ITEMPREPAINT|CDDS_SUBITEM:

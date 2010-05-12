@@ -158,15 +158,11 @@ BOOL CFolderItem::GetChildren(CGetChildrenEventArgs& e)
 	switch (data.Level)
 	{
 	case LevelRoot:
-		f = LFAllocFilter();
-		f->Mode = LFFilterModeStores;
-		f->Legacy = true;
-		res = LFQuery(f);
+		res = LFQuery(NULL);
 		break;
 	case LevelStores:
 		f = LFAllocFilter();
 		f->Mode = LFFilterModeStoreHome;
-		f->Legacy = true;
 		strcpy(f->StoreID, (LPCTSTR)data.StoreID);
 		res = LFQuery(f);
 		break;
@@ -301,7 +297,9 @@ BOOL CFolderItem::GetChildren(CGetChildrenEventArgs& e)
 		LFFreeSearchResult(res);
 	}
 
-	LFFreeFilter(f);
+	if (f)
+		LFFreeFilter(f);
+
 	return TRUE;
 }
 

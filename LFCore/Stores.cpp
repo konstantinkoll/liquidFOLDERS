@@ -1,8 +1,8 @@
 #include "StdAfx.h"
 #include "..\\include\\LFCore.h"
-#include "CIndex.h"
 #include "LFItemDescriptor.h"
 #include "Mutex.h"
+#include "Stores.h"
 #include "StoreCache.h"
 #include <io.h>
 #include <iostream>
@@ -151,75 +151,12 @@ void CreateStoreIndex(char* _Path, char* _StoreID, unsigned int &res)
 		res = LFIndexNotCreated;
 }
 
-void AddDrives(LFSearchResult* res)
-{
-	DWORD DrivesOnSystem = LFGetLogicalDrives(LFGLD_External);
-
-	for (char cDrive='A'; cDrive<='Z'; cDrive++, DrivesOnSystem>>=1)
-	{
-		if (!(DrivesOnSystem & 1))
-			continue;
-
-		wchar_t szDriveRoot[] = L" :\\";
-		szDriveRoot[0] = cDrive;
-		SHFILEINFO sfi;
-		if (SHGetFileInfo(szDriveRoot, 0, &sfi, sizeof(SHFILEINFO), SHGFI_DISPLAYNAME | SHGFI_TYPENAME | SHGFI_ATTRIBUTES))
-		{
-			LFItemDescriptor* d = LFAllocItemDescriptor();
-			d->Type = LFTypeDrive;
-			if (sfi.dwAttributes)
-			{
-				d->IconID = IDI_DRV_Default;
-			}
-			else
-			{
-				d->IconID = IDI_DRV_Empty;
-				d->Type |= LFTypeGhosted | LFTypeNotMounted;
-			}
-			d->CategoryID = LFCategoryDrives;
-			SetAttribute(d, LFAttrFileName, sfi.szDisplayName);
-			char key[] = " :";
-			key[0] = cDrive;
-			SetAttribute(d, LFAttrFileID, key);
-			SetAttribute(d, LFAttrHint, sfi.szTypeName);
-			res->AddItemDescriptor(d);
-		}
-	}
-}
-
-LFSearchResult* QueryStores(LFFilter* filter)
-{
-	LFSearchResult* res = new LFSearchResult(LFContextStores);
-	res->m_RecommendedView = LFViewLargeIcons;
-	res->m_LastError = LFOk;
-	res->m_HasCategories = true;
-
-	if (!GetMutex(Mutex_Stores))
-	{
-		res->m_LastError = LFMutexError;
-		return res;
-	}
-
-	AddStores(res);
-	ReleaseMutex(Mutex_Stores);
-
-	if (filter)
-	{
-		if (!filter->Legacy)
-			AddDrives(res);
-
-		filter->Result.FilterType = LFFilterTypeStores;
-	}
-
-	return res;
-}
-
 
 LFCore_API unsigned int LFGetStoreSettings(char* key, LFStoreDescriptor* s)
 {
 	if (!key)
 		return LFIllegalKey;
-	if (strcmp(key, "")==0)
+	if (key[0]=='\0')
 		return LFIllegalKey;
 
 	if (!GetMutex(Mutex_Stores))
@@ -308,7 +245,7 @@ LFCore_API unsigned int LFMakeDefaultStore(char* key, HWND hWndSource, bool Inte
 {
 	if (!key)
 		return LFIllegalKey;
-	if (strcmp(key, "")==0)
+	if (key[0]=='\0')
 		return LFIllegalKey;
 
 	if (!InternalCall)
@@ -354,7 +291,7 @@ LFCore_API unsigned int LFMakeHybridStore(char* key, HWND hWndSource)
 {
 	if (!key)
 		return LFIllegalKey;
-	if (strcmp(key, "")==0)
+	if (key[0]=='\0')
 		return LFIllegalKey;
 
 	if (!GetMutex(Mutex_Stores))
@@ -391,9 +328,10 @@ LFCore_API unsigned int LFMakeHybridStore(char* key, HWND hWndSource)
 			goto Cleanup;
 
 		// TODO: Index kopieren
-		}
+	}
 
 Cleanup:
+	// TODO: effizienter
 	ReleaseMutexForStore(StoreLock);
 	ReleaseMutex(Mutex_Stores);
 
@@ -407,7 +345,7 @@ LFCore_API unsigned int LFSetStoreAttributes(char* key, wchar_t* name, wchar_t* 
 {
 	if (!key)
 		return LFIllegalKey;
-	if (strcmp(key, "")==0)
+	if (key[0]=='\0')
 		return LFIllegalKey;
 	if ((!name) && (!comment))
 		return LFOk;
@@ -441,7 +379,7 @@ LFCore_API unsigned int LFSetStoreComment(char* key, wchar_t* comment, HWND hWnd
 {
 	if (!key)
 		return LFIllegalKey;
-	if (strcmp(key, "")==0)
+	if (key[0]=='\0')
 		return LFIllegalKey;
 	if (!comment)
 		return LFIllegalValue;
@@ -469,7 +407,7 @@ LFCore_API unsigned int LFDeleteStore(char* key, HWND hWndSource)
 {
 	if (!key)
 		return LFIllegalKey;
-	if (strcmp(key, "")==0)
+	if (key[0]=='\0')
 		return LFIllegalKey;
 
 	if (!GetMutex(Mutex_Stores))
@@ -535,4 +473,78 @@ LFCore_API bool LFAskDeleteStore(LFStoreDescriptor* s, HWND hWnd)
 	LoadString(LFCoreModuleHandle, IDS_DeleteStoreMessage, msg, 256);
 
 	return MessageBox(hWnd, msg, caption, MB_YESNO | MB_DEFBUTTON2 | MB_ICONWARNING)==IDYES;
+}
+
+unsigned int OpenStore(LFStoreDescriptor* s, bool WriteAccess, CIndex* &Index1, CIndex* &Index2)
+{
+	if (WriteAccess && !IsStoreMounted(s))
+		return LFStoreNotMounted;
+
+	// Einfache Wartungsarbeiten
+	if (s->NeedsCheck)
+	{
+		unsigned int res = ValidateStoreDirectories(s);
+		if (res!=LFOk)
+			return res;
+
+		CIndex* idx = new CIndex(((s->StoreMode!=LFStoreModeHybrid) || IsStoreMounted(s)) ? s->IdxPathMain : s->IdxPathAux, s->StoreID);
+		switch (idx->Check())
+		{
+		case IndexReindexRequired:
+			// TODO
+		case IndexError:
+			return LFIndexError;
+		case IndexFullyRepaired:
+			s->IndexVersion = CurIdxVersion;
+
+			res = UpdateStore(s);
+			if (res!=LFOk)
+				return res;
+		}
+
+		if ((s->StoreMode==LFStoreModeHybrid) && IsStoreMounted(s))
+		{
+			// TODO: Copy index
+		}
+
+		s->NeedsCheck = false;
+		delete idx;
+	}
+
+	// Index öffnen
+	if (WriteAccess)
+	{
+		Index1 = new CIndex(s->IdxPathMain, s->StoreID);
+		if (s->StoreMode==LFStoreModeHybrid)
+			Index2 = new CIndex(s->IdxPathAux, s->StoreID);
+	}
+	else
+	{
+		Index1 = new CIndex(s->StoreMode==LFStoreModeHybrid ? s->IdxPathAux : s->IdxPathMain, s->StoreID);
+	}
+
+	return LFOk;
+}
+
+unsigned int OpenStore(char* key, bool WriteAccess, CIndex* &Index1, CIndex* &Index2, HANDLE* lock)
+{
+	if (!key)
+		return LFIllegalKey;
+	if (key[0]=='\0')
+		return LFIllegalKey;
+
+	if (!GetMutex(Mutex_Stores))
+		return LFMutexError;
+
+	LFStoreDescriptor* slot = FindStore(key, lock);
+	ReleaseMutex(Mutex_Stores);
+
+	if (!slot)
+		return LFIllegalKey;
+
+	unsigned int res = OpenStore(slot, WriteAccess, Index1, Index2);
+	if (res!=LFOk)
+		ReleaseMutexForStore(lock);
+
+	return res;
 }

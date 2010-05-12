@@ -125,13 +125,23 @@ END_MESSAGE_MAP()
 
 // CMainFrame-Erstellung/Zerstörung
 
+LFFilter* GetRootFilter()
+{
+	LFFilter* f = LFAllocFilter();
+	f->Mode = LFFilterModeStores;
+	f->Options.AddBacklink = true;
+	f->Options.AddDrives = true;
+
+	return f;
+}
+
 CMainFrame::CMainFrame(BOOL _IsClipboard)
 {
 	IsClipboard = _IsClipboard;
 	CaptionBarUsed = 0;
 	ActiveViewID = -1;
 	ActiveContextID = -1;
-	ActiveFilter = LFAllocFilter();
+	ActiveFilter = GetRootFilter();
 	ActiveViewParameters = &theApp.m_Views[LFContextDefault];
 	RawFiles = NULL;
 	CookedFiles = NULL;
@@ -1358,15 +1368,15 @@ void CMainFrame::OnClearHistory()
 
 void CMainFrame::OnNavigateStores()
 {
-	LFFilter* f = LFAllocFilter();
-	f->Mode = LFFilterModeStores;
-	NavigateTo(f);
+	NavigateTo(GetRootFilter());
 }
 
 void CMainFrame::OnNavigateHome()
 {
 	LFFilter* f = LFAllocFilter();
 	f->Mode = LFFilterModeStoreHome;
+	f->Options.AddBacklink = true;
+	f->Options.AddDrives = true;
 	NavigateTo(f);
 }
 

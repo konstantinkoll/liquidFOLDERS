@@ -23,7 +23,7 @@ inline void ZeroCopy(void* _Dst, rsize_t _DstSize, void* _Src, rsize_t _SrcSize)
 //
 
 CIdxTableMaster::CIdxTableMaster(char* Path, char* Filename)
-	: CHeapfile(Path, Filename, sizeof(LFCoreAttributes), offsetof(LFCoreAttributes, FileID))
+	: CHeapfile(Path, Filename, sizeof(LFCoreAttributes)+100, offsetof(LFCoreAttributes, FileID))
 {
 }
 

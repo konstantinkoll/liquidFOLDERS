@@ -19,7 +19,8 @@ public:
 	virtual ~LFSearchResult();
 
 	bool AddItemDescriptor(LFItemDescriptor* i);
-	bool AddStoreDescriptor(LFStoreDescriptor* s);
+	bool AddStoreDescriptor(LFStoreDescriptor* s, LFFilter* f);
+	void AddDrives();
 	void RemoveItemDescriptor(unsigned int idx);
 	void RemoveFlaggedItemDescriptors();
 

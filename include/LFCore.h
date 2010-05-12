@@ -227,6 +227,9 @@ LFCore_API bool LFAttributeSortableInView(unsigned int Attr, unsigned int ViewMo
 // - Ist filter==NULL, so wird eine Liste aller Stores zurückgeliefert
 LFCore_API LFSearchResult* LFQuery(LFFilter* filter);
 
+// Gleicht eine Datei mit einem Filter ab
+LFCore_API bool LFPassesFilter(LFItemDescriptor* i, LFFilter* filter);
+
 
 //
 // Stores

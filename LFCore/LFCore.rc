@@ -186,6 +186,7 @@ BEGIN
     IDS_LFErrorIllegalItemType "At least one of the selected items does not support this operation."
     IDS_LFErrorIllegalValue "At least one of the attribute values is illegal."
     IDS_LFErrorIndexNotCreated "The store index could not be created."
+    IDS_LFErrorIndexError   "The store index is damaged and could not be repaired."
 END
 
 STRINGTABLE 

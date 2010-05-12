@@ -94,6 +94,7 @@
 #define IDS_LFErrorIllegalItemType      3015
 #define IDS_LFErrorIllegalValue         3016
 #define IDS_LFErrorIndexNotCreated      3017
+#define IDS_LFErrorIndexError           3018
 #define IDS_FirstAttribute              4000
 #define IDS_AttrFileName                4000
 #define IDS_AttrStoreID                 4001

@@ -336,6 +336,15 @@ struct LFDomainDescriptor
 #define LFFilterTypeIllegalRequest      6
 #define LFFilterTypeDefault             -1
 
+struct LFFilterOptions
+{
+	bool AddBacklink;						// If true, backlink to higher levels of virtual directory tree is added
+
+	// For LFFilterModeStores
+	bool OnlyInternalStores;				// If true, only internal stores are added
+	bool AddDrives;							// If true, drives are added
+};
+
 struct LFFilterResult
 {
 	SYSTEMTIME Time;
@@ -347,11 +356,12 @@ struct LFFilter
 {
 	wchar_t Name[256];
 	unsigned int Mode;
-	bool Legacy;							// If false, backlink and drives are inserted
-	bool AllowSubfolders;					// Ignored by query engine
+	LFFilterOptions Options;
+
 	LFFilterResult Result;					// Set by the query engine
 
-	char StoreID[LFKeySize];				// Valid in filter modes StoreOverview and SearchInStore
+	// TODO
+	char StoreID[LFKeySize];
 };
 
 
@@ -366,7 +376,7 @@ struct LFCoreAttributes
 	wchar_t Comment[256];
 	FILETIME CreationTime;
 	FILETIME FileTime;
-	char FileFormat[7];
+	char FileFormat[16];
 	__int64 FileSize;
 	unsigned int Flags;
 	wchar_t Tags[256];
@@ -389,7 +399,6 @@ struct LFCoreAttributes
 #define LFTypeNotMounted                0x0002
 #define LFTypeGhosted                   0x0004
 #define LFTypeRequiresMaintenance       0x0008
-#define LFTypeColored                   0x0010
 #define LFTypeDrive                     0x0100
 #define LFTypeStore                     0x0200
 #define LFTypeFile                      0x0400
@@ -467,6 +476,7 @@ struct LFStoreDescriptor
 #define LFIllegalItemType               15
 #define LFIllegalValue                  16
 #define LFIndexNotCreated               17
+#define LFIndexError                    18
 
 
 // Structures and classes from LFCore.DLL

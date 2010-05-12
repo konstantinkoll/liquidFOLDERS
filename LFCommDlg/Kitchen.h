@@ -51,19 +51,3 @@ void SortSearchResult(LFSearchResult* res)
 		}
 	}
 }
-
-void RemoveNoninternalStores(LFSearchResult* res)
-{
-	UINT idx = 0;
-	while (idx<res->m_Count)
-	{
-		if (((res->m_Files[idx]->Type & LFTypeMask)==LFTypeStore) && (res->m_Files[idx]->CategoryID!=LFCategoryInternalStores))
-		{
-			LFRemoveItemDescriptor(res, idx);
-		}
-		else
-		{
-			idx++;
-		}
-	}
-}

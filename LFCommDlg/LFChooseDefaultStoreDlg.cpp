@@ -111,7 +111,7 @@ LRESULT LFChooseDefaultStoreDlg::UpdateStores(WPARAM wParam, LPARAM /*lParam*/)
 		m_List.SetRedraw(FALSE);
 
 		LFFilter* filter = LFAllocFilter();
-		filter->Legacy = TRUE;
+		filter->Options.OnlyInternalStores = true;
 
 		if (result)
 		{
@@ -122,7 +122,6 @@ LRESULT LFChooseDefaultStoreDlg::UpdateStores(WPARAM wParam, LPARAM /*lParam*/)
 		result = LFQuery(filter);
 		LFFreeFilter(filter);
 
-		RemoveNoninternalStores(result);
 		SortSearchResult(result);
 
 		((CButton*)GetDlgItem(IDOK))->EnableWindow(result->m_Count);

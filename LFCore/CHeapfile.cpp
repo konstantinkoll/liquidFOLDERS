@@ -11,7 +11,9 @@
 CHeapfile::CHeapfile(char* Path, char* Filename, unsigned int _ElementSize, unsigned int _KeyOffset)
 {
 	assert(sizeof(HeapfileHeader)==512);
+	assert(_ElementSize);
 	ZeroMemory(&Hdr, sizeof(HeapfileHeader));
+	Buffer = NULL;
 
 	strcpy_s(IdxFilename, MAX_PATH, Path);
 	strcat_s(IdxFilename, MAX_PATH, Filename);
@@ -43,6 +45,7 @@ Error:
 Create:
 			strcpy_s(Hdr.ID, sizeof(Hdr.ID), HeapSignature);
 			Hdr.ElementSize = _ElementSize;
+			Hdr.Version = CurIdxVersion;
 			HeaderNeedsWriteback = true;
 
 			if (!WriteHeader())
@@ -79,9 +82,10 @@ Create:
 					Status = HeapMaintenanceRequired;
 				}
 		}
+
+		AllocBuffer();
 	}
 
-	AllocBuffer();
 	BufferNeedsWriteback = HeaderNeedsWriteback = false;
 }
 
@@ -354,9 +358,6 @@ void CHeapfile::Invalidate(LFItemDescriptor* i)
 
 bool CHeapfile::Compact()
 {
-	if (!Hdr.NeedsCompaction)
-		return true;
-
 	char BufFilename[MAX_PATH];
 	strcpy_s(BufFilename, MAX_PATH, IdxFilename);
 	strcat_s(BufFilename, MAX_PATH, ".part");
@@ -366,7 +367,7 @@ bool CHeapfile::Compact()
 		return false;
 
 	HeapfileHeader NewHdr = Hdr;
-	NewHdr.ElementSize = max(Hdr.ElementSize, RequestedElementSize);
+	NewHdr.ElementSize = min(Hdr.ElementSize, RequestedElementSize);
 	NewHdr.NeedsCompaction = false;
 	NewHdr.Version = CurIdxVersion;
 

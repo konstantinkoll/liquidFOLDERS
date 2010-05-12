@@ -393,10 +393,6 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\Domains.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\IATA.cpp"
 				>
 			</File>
@@ -434,6 +430,10 @@
 			</File>
 			<File
 				RelativePath=".\Mutex.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Query.cpp"
 				>
 			</File>
 			<File
@@ -499,10 +499,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Domains.h"
-				>
-			</File>
-			<File
 				RelativePath=".\IATA.h"
 				>
 			</File>
@@ -552,6 +548,10 @@
 			</File>
 			<File
 				RelativePath=".\Mutex.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Query.h"
 				>
 			</File>
 			<File
