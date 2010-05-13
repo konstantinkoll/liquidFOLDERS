@@ -163,6 +163,7 @@ BOOL CFolderItem::GetChildren(CGetChildrenEventArgs& e)
 	case LevelStores:
 		f = LFAllocFilter();
 		f->Mode = LFFilterModeStoreHome;
+		f->HideEmptyDomains = true;
 		strcpy(f->StoreID, (LPCTSTR)data.StoreID);
 		res = LFQuery(f);
 		break;
@@ -170,14 +171,14 @@ BOOL CFolderItem::GetChildren(CGetChildrenEventArgs& e)
 		if (e.childrenType & NSECT_Folders)
 		{
 			CString sortStr;
-			BOOL bValidName = sortStr.LoadString(IDS_AttributeHint);
+			BOOL bValidName = sortStr.LoadString(IDS_AttributeComment);
 			ASSERT(bValidName);
 
 			FolderSerialization d;
 			d.Level = data.Level+2;
 			d.Type = data.Type;
 			d.DisplayName.LoadString(IDS_AllFiles);
-			d.Hint.LoadString(IDS_AllFilesHint);
+			d.Comment.LoadString(IDS_AllFilesComment);
 			d.CategoryID = LFAttrCategoryCount;
 			d.FileID = "ALL";
 			d.StoreID = data.StoreID;
@@ -233,7 +234,7 @@ BOOL CFolderItem::GetChildren(CGetChildrenEventArgs& e)
 					CString tmpStr = d.DisplayName;
 					if ((sortStr[0]=='L') && (tmpStr[0]>='A') && (tmpStr[0]<='Z') && (tmpStr[1]>'Z'))
 						tmpStr = tmpStr.MakeLower().Mid(0, 1)+tmpStr.Mid(1, tmpStr.GetLength()-1);
-					d.Hint.Format(sortStr.Mid(1, sortStr.GetLength()-1), tmpStr);
+					d.Comment.Format(sortStr.Mid(1, sortStr.GetLength()-1), tmpStr);
 
 					e.children->AddTail(new CFolderItem(d));
 				}
@@ -254,7 +255,7 @@ BOOL CFolderItem::GetChildren(CGetChildrenEventArgs& e)
 		{
 			LFItemDescriptor* i = res->m_Files[a];
 
-			if ((i->CoreAttributes.FileFormat == 0) && (e.childrenType & NSECT_Folders))
+			if ((((i->Type & LFTypeMask)==LFTypeStore) || ((i->Type & LFTypeMask)==LFTypeVirtual)) && (e.childrenType & NSECT_Folders))
 			{
 				FolderSerialization d;
 				d.Level = data.Level+1;
@@ -290,7 +291,7 @@ BOOL CFolderItem::GetChildren(CGetChildrenEventArgs& e)
 				e.children->AddTail(new CFolderItem(d));
 			}
 
-			if ((i->CoreAttributes.FileFormat != 0) && (e.childrenType & NSECT_NonFolders))
+			if (((i->Type & LFTypeMask)==LFTypeFile) && (e.childrenType & NSECT_NonFolders))
 			{
 			}
 		}
@@ -377,14 +378,14 @@ int CFolderItem::GetXPTaskPaneColumnIndices(UINT* indices)
 {
 	indices[0] = LFAttrFileName;
 	indices[1] = LFAttrCreationTime;
-	indices[2] = LFAttrHint;
+	indices[2] = LFAttrComment;
 	return 3;
 }
 
 int CFolderItem::GetTileViewColumnIndices(UINT* indices)
 {
 	indices[0] = LFAttrCreationTime;
-	indices[1] = LFAttrHint;
+	indices[1] = LFAttrComment;
 	return 2;
 }
 
@@ -392,7 +393,7 @@ int CFolderItem::GetPreviewDetailsColumnIndices(UINT* indices)
 {
 	indices[0] = LFAttrFileName;
 	indices[1] = LFAttrCreationTime;
-	indices[2] = LFAttrHint;
+	indices[2] = LFAttrComment;
 	return 3;
 }
 
@@ -443,6 +444,9 @@ BOOL CFolderItem::GetColumn(CShellColumn& column, int index)
 	{
 	case LevelRoot:
 		limit = LFAttrFileTime;
+		break;
+	case LevelStoreHome:
+		limit = LFAttrComment;
 		break;
 	case LevelAttrValue:
 		limit = LFAttributeCount;
@@ -504,13 +508,13 @@ BOOL CFolderItem::GetColumn(CShellColumn& column, int index)
 		column.pid = 13;
 		column.categorizerType = NSECT_String;
 		break;
-	case LFAttrHint:
+/*	case LFAttrHint:
 		if ((data.Level<LevelAttrValue) && (osInfo.dwMajorVersion>=6))
 		{
 			column.fmtid = GUID_FMTID_PROPERTY;
 			column.pid = 6;
 		}
-		break;
+		break;*/
 	case LFAttrComment:
 		if (data.Level==LevelAttrValue)
 		{

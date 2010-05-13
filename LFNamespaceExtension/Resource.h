@@ -3,9 +3,9 @@
 // Used by LFNamespaceExtension.RC
 //
 #define IDS_MyComputerHint              1000
-#define IDS_AttributeHint               1001
+#define IDS_AttributeComment            1001
 #define IDS_AllFiles                    1002
-#define IDS_AllFilesHint                1003
+#define IDS_AllFilesComment             1003
 #define IDS_MustNotDeleteStore          2000
 #define IDS_MENU_CreateNewStore         3000
 #define IDS_HINT_CreateNewStore         3001

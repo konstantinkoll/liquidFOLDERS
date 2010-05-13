@@ -80,9 +80,9 @@ LANGUAGE LANG_ENGLISH, SUBLANG_NEUTRAL
 STRINGTABLE 
 BEGIN
     IDS_MyComputerHint      "liquidFOLDERS stores and files"
-    IDS_AttributeHint       "LGroup files by %s"
+    IDS_AttributeComment    "LGroup files by %s"
     IDS_AllFiles            "All files"
-    IDS_AllFilesHint        "Show all files"
+    IDS_AllFilesComment     "Show all files"
 END
 
 STRINGTABLE 

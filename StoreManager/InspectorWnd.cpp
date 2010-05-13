@@ -125,6 +125,7 @@ void CInspectorWnd::UpdateAdd(LFItemDescriptor* i)
 		AddValue(i, LFAttrFileName, FALSE);
 		AddValue(i, LFAttrFileID);
 		AddValue(i, LFAttrStoreID);
+		AddValue(i, LFAttrComment, FALSE);
 		for (UINT a=LFAttrHint+1; a<LFAttributeCount; a++)
 			if (i->AttributeStrings[a])
 				AddValue(i, a, FALSE);

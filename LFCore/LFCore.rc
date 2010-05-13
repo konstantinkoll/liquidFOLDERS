@@ -158,13 +158,15 @@ END
 STRINGTABLE 
 BEGIN
     IDS_BacklinkName        "Back"
-    IDS_BacklinkHint        "One level up"
+    IDS_BacklinkComment     "One level up"
     IDS_StoreDefaultName    "New store"
     IDS_LastSeen            "Last mounted from %s"
     IDS_SeenOn              "Mounted on %s"
     IDS_ErrorCaption        "Error"
     IDS_DeleteStoreCaption  "Delete store ""%s"""
     IDS_DeleteStoreMessage  "Do you really want to delete this store ?"
+    IDS_HintSingular        "%d file"
+    IDS_HintPlural          "%d files"
 END
 
 STRINGTABLE 

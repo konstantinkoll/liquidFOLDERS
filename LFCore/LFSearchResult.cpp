@@ -197,10 +197,10 @@ void LFSearchResult::AddBacklink(char* StoreID, LFFilter* f)
 {
 	wchar_t BacklinkName[256];
 	LoadString(LFCoreModuleHandle, IDS_BacklinkName, BacklinkName, 256);
-	wchar_t BacklinkHint[256];
-	LoadString(LFCoreModuleHandle, IDS_BacklinkHint, BacklinkHint, 256);
+	wchar_t BacklinkComment[256];
+	LoadString(LFCoreModuleHandle, IDS_BacklinkComment, BacklinkComment, 256);
 
-	LFItemDescriptor* d = AllocFolderDescriptor(BacklinkName, BacklinkHint, StoreID, "BACK", IDI_FLD_Back, LFCategoryStore, f);
+	LFItemDescriptor* d = AllocFolderDescriptor(BacklinkName, BacklinkComment, NULL, StoreID, "BACK", IDI_FLD_Back, LFCategoryStore, f);
 	if (!AddItemDescriptor(d))
 		delete d;
 }

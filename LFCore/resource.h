@@ -63,13 +63,15 @@
 #define IDS_LFCategoryInternal          1058
 #define IDS_LFCategoryAllFiles          1059
 #define IDS_BacklinkName                1100
-#define IDS_BacklinkHint                1101
+#define IDS_BacklinkComment             1101
 #define IDS_StoreDefaultName            1102
 #define IDS_LastSeen                    1103
 #define IDS_SeenOn                      1104
 #define IDS_ErrorCaption                1105
 #define IDS_DeleteStoreCaption          1106
 #define IDS_DeleteStoreMessage          1107
+#define IDS_HintSingular                1108
+#define IDS_HintPlural                  1109
 #define IDS_FirstContext                2000
 #define IDS_LFContextStores             2000
 #define IDS_LFContextStoreHome          2001

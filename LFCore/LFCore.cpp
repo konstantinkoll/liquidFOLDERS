@@ -154,7 +154,17 @@ LFCore_API LFAttributeDescriptor* LFGetAttributeInfo(unsigned int ID)
 
 	// Recommended width
 	const unsigned int rWidths[] = { 200, 200, 100, 100, 100, 120, 100, 100, 100, 150, 140, 100 };
-	a->RecommendedWidth = (ID==LFAttrHint) ? 350 : rWidths[a->Type];
+	switch (ID)
+	{
+	case LFAttrComment:
+		a->RecommendedWidth = 350;
+		break;
+	case LFAttrHint:
+		a->RecommendedWidth = 100;
+		break;
+	default:
+		a->RecommendedWidth = rWidths[a->Type];
+	}
 
 	// Category
 	if (ID<=LFAttrRating)
@@ -239,14 +249,13 @@ LFCore_API LFContextDescriptor* LFGetContextInfo(unsigned int ID)
 	(*c->AllowedAttributes) += LFAttrStoreID;
 	(*c->AllowedAttributes) += LFAttrFileID;
 	(*c->AllowedAttributes) += LFAttrHint;
+	(*c->AllowedAttributes) += LFAttrComment;
 
 	switch (ID)
 	{
 	case LFContextStores:
-		(*c->AllowedAttributes) += LFAttrComment;
 		(*c->AllowedAttributes) += LFAttrCreationTime;
 		(*c->AllowedAttributes) += LFAttrFileTime;
-		break;
 	case LFContextStoreHome:
 		break;
 	default:
@@ -319,7 +328,7 @@ LFCore_API LFDomainDescriptor* LFGetDomainInfo(unsigned int ID)
 	for (unsigned int a=0; a<wcslen(tmpStr); a++)
 		if (tmpStr[a]=='\n')
 		{
-			wcsncpy_s(d->Hint, 256, &tmpStr[a+1], wcslen(tmpStr)-a-1);
+			wcsncpy_s(d->Comment, 256, &tmpStr[a+1], wcslen(tmpStr)-a-1);
 			tmpStr[a] = '\0';
 			break;
 		}

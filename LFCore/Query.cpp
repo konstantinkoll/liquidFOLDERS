@@ -61,6 +61,11 @@ LFSearchResult* QueryDomains(LFFilter* filter)
 		res->AddBacklink("", nf);
 	}
 
+	wchar_t HintSingular[256];
+	LoadString(LFCoreModuleHandle, IDS_HintSingular, HintSingular, 256);
+	wchar_t HintPlural[256];
+	LoadString(LFCoreModuleHandle, IDS_HintPlural, HintPlural, 256);
+
 	CIndex* idx1;
 	CIndex* idx2;
 	HANDLE StoreLock = NULL;
@@ -80,7 +85,9 @@ LFSearchResult* QueryDomains(LFFilter* filter)
 			{
 				LFDomainDescriptor* d = LFGetDomainInfo(a);
 				char FileID[LFKeySize];
-				sprintf_s(FileID, sizeof(FileID), "%d", a);
+				sprintf_s(FileID, LFKeySize, "%d", a);
+				wchar_t Hint[256];
+				swprintf_s(Hint, 256, cnt[a]==1 ? HintSingular : HintPlural, cnt[a]);
 
 				LFFilter* nf = LFAllocFilter();
 				nf->Mode = LFFilterModeDirectoryTree;
@@ -88,7 +95,7 @@ LFSearchResult* QueryDomains(LFFilter* filter)
 				strcpy_s(nf->StoreID, LFKeySize, filter->StoreID);
 				wcscpy_s(nf->Name, 256, d->DomainName);
 
-				res->AddItemDescriptor(AllocFolderDescriptor(d->DomainName, d->Hint, filter->StoreID, FileID, d->IconID, d->CategoryID, nf));
+				res->AddItemDescriptor(AllocFolderDescriptor(d->DomainName, d->Comment, Hint, filter->StoreID, FileID, d->IconID, d->CategoryID, nf));
 				LFFreeDomainDescriptor(d);
 			}
 
