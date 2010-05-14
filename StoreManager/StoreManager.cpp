@@ -79,8 +79,8 @@ BOOL CStoreManagerApp::InitInstance()
 	// Registry auslesen
 	CString oldBase = GetRegistryBase();
 	SetRegistryBase(_T("Settings"));
-	m_HideEmptyDrives = GetInt(_T("HideEmptyDrives"), FALSE);
-	m_HideEmptyDomains = GetInt(_T("HideEmptyDomains"), FALSE);
+	m_HideEmptyDrives = GetInt(_T("HideEmptyDrives"), TRUE);
+	m_HideEmptyDomains = GetInt(_T("HideEmptyDomains"), TRUE);
 	m_GlobeHQModel = GetInt(_T("GlobeHQModel"), TRUE);
 	m_ShowQueryDuration = GetInt(_T("ShowQueryDuration"), 0);
 	m_nTextureSize = GetInt(_T("TextureSize"), 0);
@@ -94,6 +94,8 @@ BOOL CStoreManagerApp::InitInstance()
 		switch (a)
 		{
 		case LFViewLargeIcons:
+			m_Background[a] = (osInfo.dwMajorVersion<6) ? ChildBackground_Ribbon : ChildBackground_System;
+			break;
 		case LFViewGlobe:
 			m_Background[a] = ChildBackground_Ribbon;
 			break;

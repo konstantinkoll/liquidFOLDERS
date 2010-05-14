@@ -328,10 +328,10 @@ END_INTERFACE_MAP()
 
 IMPLEMENT_IUNKNOWN(CListView, FooterCallback)
 
-STDMETHODIMP CListView::XFooterCallback::OnButtonClicked(int /*itemIndex*/, LPARAM /*lParam*/, PINT pRemoveFooter)
+STDMETHODIMP CListView::XFooterCallback::OnButtonClicked(int /*itemIndex*/, LPARAM lParam, PINT pRemoveFooter)
 {
 	METHOD_PROLOGUE(CListView, FooterCallback);
-	pThis->GetParentFrame()->PostMessage(WM_COMMAND, ID_NAV_RELOAD_SHOWALL);
+	pThis->GetParentFrame()->PostMessage(WM_COMMAND, (WPARAM)lParam);
 	*pRemoveFooter = TRUE;
 	return S_OK;
 }
