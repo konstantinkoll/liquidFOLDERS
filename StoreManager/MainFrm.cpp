@@ -99,6 +99,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_COMMAND(ID_NAV_FORWARDONE, OnNavigateForwardOne)
 	ON_COMMAND(ID_NAV_LAST, OnNavigateLast)
 	ON_COMMAND(ID_NAV_RELOAD, OnNavigateReload)
+	ON_COMMAND(ID_NAV_RELOAD_SHOWALL, OnNavigateReloadShowAll)
 	ON_COMMAND(ID_NAV_SHOWHISTORY, OnShowHistoryWnd)
 	ON_COMMAND(ID_NAV_STORES, OnNavigateStores)
 	ON_COMMAND(ID_NAV_HOME, OnNavigateHome)
@@ -1358,6 +1359,17 @@ void CMainFrame::OnNavigateReload()
 {
 	if (ActiveFilter)
 		NavigateTo(LFAllocFilter(ActiveFilter), NAVMODE_RELOAD, GetFocusItem());
+}
+
+void CMainFrame::OnNavigateReloadShowAll()
+{
+	if (ActiveFilter)
+	{
+		LFFilter* f = LFAllocFilter(ActiveFilter);
+		f->UnhideAll = true;
+
+		NavigateTo(f, NAVMODE_RELOAD, GetFocusItem());
+	}
 }
 
 void CMainFrame::OnClearHistory()

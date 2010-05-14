@@ -7,6 +7,7 @@
 #include "Resource.h"
 #include "StoreManager.h"
 #include "LFCore.h"
+#include "LFCommDlg.h"
 
 
 // CListView
@@ -32,6 +33,7 @@ void CListView::Create(CWnd* pParentWnd, LFSearchResult* _result, UINT _ViewID)
 	rect.SetRectEmpty();
 	CWnd::Create(className, _T(""), dwStyle, rect, pParentWnd, AFX_IDW_PANE_FIRST);
 
+	m_FileList.SetImageList(&theApp.m_Icons16, LVSIL_FOOTER);
 	CFileView::Create(_result, _ViewID);
 }
 
@@ -90,6 +92,33 @@ void CListView::SetSearchResult(LFSearchResult* _result)
 	// Sortierung
 	if (ViewID==LFViewDetails)
 		m_FileList.SetHeader(TRUE);
+
+	// Footer
+	if (m_FileList.SupportsFooter())
+	{
+		m_FileList.RemoveFooter();
+
+		if (_result)
+			if ((_result->m_Context==LFContextStoreHome) && (_result->m_HidingItems))
+			{
+				CString tmpStr1 = _T("?");
+				CString tmpStr2 = _T("?");
+				tmpStr1.LoadString(ID_NAV_RELOAD_SHOWALL);
+
+				int pos = tmpStr1.Find('\n');
+				if (pos!=-1)
+				{
+					tmpStr2 = tmpStr1.Mid(pos+1);
+					tmpStr1.Delete(pos, tmpStr1.GetLength()-pos);
+				}
+
+				m_FileList.SetFooterText(tmpStr1);
+				m_FileList.InsertFooterButton(0, tmpStr2, NULL, IDI_FLD_Default-1, ID_NAV_RELOAD_SHOWALL);
+				IListViewFooterCallback* i = NULL;
+				if (m_xFooterCallback.QueryInterface(IID_IListViewFooterCallback, (LPVOID*)&i)==NOERROR)
+					m_FileList.ShowFooter(i);
+			}
+	}
 
 	m_FileList.ItemChanged = 0;
 }
@@ -289,4 +318,26 @@ void CListView::OnSize(UINT nType, int cx, int cy)
 {
 	CWnd::OnSize(nType, cx, cy);
 	AdjustLayout();
+}
+
+
+BEGIN_INTERFACE_MAP(CListView, CAbstractListView)
+	INTERFACE_PART(CListView, IID_IUnknown, FooterCallback)
+	INTERFACE_PART(CListView, IID_IListViewFooterCallback, FooterCallback)
+END_INTERFACE_MAP()
+
+IMPLEMENT_IUNKNOWN(CListView, FooterCallback)
+
+STDMETHODIMP CListView::XFooterCallback::OnButtonClicked(int /*itemIndex*/, LPARAM /*lParam*/, PINT pRemoveFooter)
+{
+	METHOD_PROLOGUE(CListView, FooterCallback);
+	pThis->GetParentFrame()->PostMessage(WM_COMMAND, ID_NAV_RELOAD_SHOWALL);
+	*pRemoveFooter = TRUE;
+	return S_OK;
+}
+
+STDMETHODIMP CListView::XFooterCallback::OnDestroyButton(int /*itemIndex*/, LPARAM /*lParam*/)
+{
+	METHOD_PROLOGUE(CListView, FooterCallback);
+	return S_OK;
 }

@@ -568,6 +568,7 @@ BEGIN
     ID_NAV_FORWARDONE       "Returns to the next location.\nForward"
     ID_NAV_LAST             "Returns to the last location.\nLast"
     ID_NAV_RELOAD           "Reloads the current view.\nReload"
+    ID_NAV_RELOAD_SHOWALL   "Empty domains are not included.\nShow all"
     ID_NAV_SHOWHISTORY      "Shows the history pane.\nHistory pane"
     ID_NAV_STORES           "Displays all stores.\nStores"
     ID_NAV_HOME             "Opens the default store.\nDefault store"

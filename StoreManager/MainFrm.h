@@ -172,6 +172,7 @@ protected:
 	afx_msg void OnNavigateForwardOne();
 	afx_msg void OnNavigateLast();
 	afx_msg void OnNavigateReload();
+	afx_msg void OnNavigateReloadShowAll();
 	afx_msg void OnNavigateStores();
 	afx_msg void OnNavigateHome();
 	afx_msg void OnClearHistory();

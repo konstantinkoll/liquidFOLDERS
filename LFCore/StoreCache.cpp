@@ -513,7 +513,10 @@ void AddStoresToSearchResult(LFSearchResult* res, LFFilter* filter)
 	{
 		if (filter)
 			if ((filter->Options.OnlyInternalStores) && (StoreCache[a].StoreMode!=LFStoreModeInternal))
+			{
+				res->m_HidingItems = true;
 				continue;
+			}
 
 		res->AddStoreDescriptor(&StoreCache[a], filter);
 	}

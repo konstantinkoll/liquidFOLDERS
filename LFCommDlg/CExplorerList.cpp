@@ -13,6 +13,7 @@ CExplorerList::CExplorerList()
 	: CListCtrl()
 {
 	p_App = (LFApplication*)AfxGetApp();
+	p_FooterHandler = NULL;
 	hTheme = NULL;
 }
 
@@ -43,6 +44,9 @@ int CExplorerList::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	EnableTheming();
 
+	if (p_App->osInfo.dwMajorVersion>=6)
+		SendMessage(0x10BD, (WPARAM)&IID_IListViewFooter, (LPARAM)&p_FooterHandler);
+
 	return 0;
 }
 
@@ -65,4 +69,39 @@ LRESULT CExplorerList::OnThemeChanged()
 	}
 
 	return TRUE;
+}
+
+BOOL CExplorerList::SupportsFooter()
+{
+	return (p_FooterHandler!=NULL);
+}
+
+void CExplorerList::ShowFooter(IListViewFooterCallback* pCallbackObject)
+{
+	if (p_FooterHandler)
+		p_FooterHandler->Show(pCallbackObject);
+}
+
+void CExplorerList::RemoveFooter()
+{
+	if (p_FooterHandler)
+	{
+		BOOL Visible;
+		p_FooterHandler->IsVisible(&Visible);
+
+		if (Visible)
+			p_FooterHandler->RemoveAllButtons();
+	}
+}
+
+void CExplorerList::SetFooterText(LPCWSTR pText)
+{
+	if (p_FooterHandler)
+		p_FooterHandler->SetIntroText(pText);
+}
+
+void CExplorerList::InsertFooterButton(int insertAt, LPCWSTR pText, LPCWSTR pUnknown, UINT iconIndex, LONG lParam)
+{
+	if (p_FooterHandler)
+		p_FooterHandler->InsertButton(insertAt, pText, pUnknown, iconIndex, lParam);
 }

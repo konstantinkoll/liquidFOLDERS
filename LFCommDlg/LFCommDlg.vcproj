@@ -191,6 +191,7 @@
 			IntermediateDirectory="$(SolutionDir)\Temp\$(ProjectName)\$(ConfigurationName)\$(PlatformName)"
 			ConfigurationType="2"
 			UseOfMFC="2"
+			UseOfATL="1"
 			CharacterSet="1"
 			WholeProgramOptimization="1"
 			>
@@ -618,6 +619,10 @@
 			</File>
 			<File
 				RelativePath=".\CTransparentRadioButton.h"
+				>
+			</File>
+			<File
+				RelativePath=".\IListViewFooter.h"
 				>
 			</File>
 			<File

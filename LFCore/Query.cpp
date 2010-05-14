@@ -81,7 +81,7 @@ LFSearchResult* QueryDomains(LFFilter* filter)
 		ReleaseMutexForStore(StoreLock);
 
 		for (unsigned int a=0; a<LFDomainCount; a++)
-			if ((cnt[a]) || (!filter->HideEmptyDomains))
+			if ((cnt[a]) || (!filter->HideEmptyDomains) || (filter->UnhideAll))
 			{
 				LFDomainDescriptor* d = LFGetDomainInfo(a);
 				char FileID[LFKeySize];
@@ -97,6 +97,10 @@ LFSearchResult* QueryDomains(LFFilter* filter)
 
 				res->AddItemDescriptor(AllocFolderDescriptor(d->DomainName, d->Comment, Hint, filter->StoreID, FileID, d->IconID, d->CategoryID, nf));
 				LFFreeDomainDescriptor(d);
+			}
+			else
+			{
+				res->m_HidingItems = true;
 			}
 
 		filter->Result.FilterType = LFFilterTypeStoreHome;

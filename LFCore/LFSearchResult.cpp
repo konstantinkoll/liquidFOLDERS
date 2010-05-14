@@ -18,6 +18,7 @@ LFSearchResult::LFSearchResult(int ctx)
 	m_Context = ctx;
 	m_ContextView = ctx;
 	m_RecommendedView = LFViewDetails;
+	m_HidingItems = false;
 	m_HasCategories = false;
 	m_QueryTime = 0;
 	m_Files = NULL;
@@ -32,6 +33,7 @@ LFSearchResult::LFSearchResult(int ctx, LFSearchResult* res)
 	m_Context = res->m_Context;
 	m_ContextView = ctx;
 	m_RecommendedView = res->m_RecommendedView;
+	m_HidingItems = res->m_HidingItems;
 	m_HasCategories = res->m_HasCategories;
 	m_QueryTime = res->m_QueryTime;
 	m_Files = static_cast<LFItemDescriptor**>(_aligned_malloc(res->m_Count*sizeof(LFItemDescriptor*), LFSR_MemoryAlignment));
@@ -166,8 +168,11 @@ void LFSearchResult::AddDrives(LFFilter* filter)
 		SHFILEINFO sfi;
 		if (SHGetFileInfo(szDriveRoot, 0, &sfi, sizeof(SHFILEINFO), SHGFI_DISPLAYNAME | SHGFI_TYPENAME | SHGFI_ATTRIBUTES))
 		{
-			if ((!sfi.dwAttributes) && (filter->HideEmptyDrives))
+			if ((!sfi.dwAttributes) && (filter->HideEmptyDrives) && (!filter->UnhideAll))
+			{
+				m_HidingItems = true;
 				continue;
+			}
 
 			LFItemDescriptor* d = LFAllocItemDescriptor();
 			d->Type = LFTypeDrive;

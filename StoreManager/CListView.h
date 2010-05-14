@@ -28,4 +28,10 @@ protected:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	DECLARE_MESSAGE_MAP()
+
+	DECLARE_INTERFACE_MAP()
+	BEGIN_INTERFACE_PART(FooterCallback, IListViewFooterCallback)
+		STDMETHOD(OnButtonClicked)(int, LPARAM, PINT);
+		STDMETHOD(OnDestroyButton)(int, LPARAM);
+	END_INTERFACE_PART(FooterCallback)
 };

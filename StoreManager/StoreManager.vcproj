@@ -190,6 +190,7 @@
 			IntermediateDirectory="$(SolutionDir)\Temp\$(ProjectName)\$(ConfigurationName)\$(PlatformName)"
 			ConfigurationType="1"
 			UseOfMFC="2"
+			UseOfATL="0"
 			CharacterSet="1"
 			WholeProgramOptimization="1"
 			>

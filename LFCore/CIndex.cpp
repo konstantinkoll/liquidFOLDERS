@@ -261,10 +261,10 @@ void CIndex::Retrieve(LFFilter* f, LFSearchResult* res)
 	}
 }
 
-bool CIndex::RetrieveDomains(unsigned int* cnt)
+void CIndex::RetrieveDomains(unsigned int* cnt)
 {
 	if (!LoadTable(IDMaster))
-		return false;
+		return;
 
 	int ID = 0;
 	LFCoreAttributes* PtrM;

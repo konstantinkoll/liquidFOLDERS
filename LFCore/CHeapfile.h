@@ -32,8 +32,8 @@ public:
 	CHeapfile(char* Path, char* Filename, unsigned int _ElementSize, unsigned int _KeyOffset=0);
 	~CHeapfile();
 
-	virtual void GetFromItemDescriptor(void* PtrDst, LFItemDescriptor* i);
-	virtual void WriteToItemDescriptor(LFItemDescriptor* i, void* PtrSrc);
+	virtual void GetFromItemDescriptor(void* PtrDst, LFItemDescriptor* i) = 0;
+	virtual void WriteToItemDescriptor(LFItemDescriptor* i, void* PtrSrc) = 0;
 
 	void GetAttribute(void* PtrDst, unsigned int offset, unsigned int attr, LFItemDescriptor* i);
 	void CloseFile();

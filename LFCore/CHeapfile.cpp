@@ -131,16 +131,6 @@ void CHeapfile::GetAttribute(void* PtrDst, unsigned int offset, unsigned int att
 	}
 }
 
-void CHeapfile::GetFromItemDescriptor(void* /*PtrDst*/, LFItemDescriptor* /*f*/)
-{
-	assert(false);
-}
-
-void CHeapfile::WriteToItemDescriptor(LFItemDescriptor* /*f*/, void* /*PtrSrc*/)
-{
-	assert(false);
-}
-
 inline void CHeapfile::AllocBuffer()
 {
 	assert(Hdr.ElementSize);
