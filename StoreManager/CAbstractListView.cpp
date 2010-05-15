@@ -60,6 +60,11 @@ BOOL CAbstractListView::IsEditing()
 	return m_FileList.Editing;
 }
 
+BOOL CAbstractListView::HasCategories()
+{
+	return !m_FileList.OwnerData;
+}
+
 
 BEGIN_MESSAGE_MAP(CAbstractListView, CFileView)
 	ON_WM_SETFOCUS()

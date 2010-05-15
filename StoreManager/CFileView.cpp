@@ -137,6 +137,11 @@ BOOL CFileView::IsEditing()
 	return FALSE;
 }
 
+BOOL CFileView::HasCategories()
+{
+	return FALSE;
+}
+
 CMenu* CFileView::GetContextMenu()
 {
 	return NULL;

@@ -23,13 +23,14 @@ public:
 	CFileList();
 	virtual ~CFileList();
 
-	void Create(CFileView* pViewWnd);
+	void Create(CFileView* pViewWnd, BOOL _OwnerData);
 	int GetFontHeight();
 	void SetHeader(BOOL sorting=FALSE, BOOL selectCol=TRUE);
 	BOOL SetColumnWidth(int nCol, int cx);
 
 protected:
 	CFileView* View;
+	BOOL OwnerData;
 	BOOL Editing;
 	int LastSortBy;
 	UINT ColumnCount;

@@ -23,6 +23,7 @@ public:
 	virtual int GetNextSelectedItem(int n);
 	virtual void EditLabel(int n);
 	virtual BOOL IsEditing();
+	virtual BOOL HasCategories();
 
 	void OnUpdateCommands(CCmdUI* pCmdUI);
 
