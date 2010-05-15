@@ -40,7 +40,6 @@ void CFileList::Create(CFileView* pViewWnd, BOOL _OwnerData)
 	CRect rect;
 	rect.SetRectEmpty();
 	CExplorerList::Create(dwStyle, rect, pViewWnd, 1);
-	SetRedraw(FALSE);
 	SetExtendedStyle(FileListExtendedStyles);
 }
 

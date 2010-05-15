@@ -126,8 +126,6 @@ void CListView::SetSearchResult(LFSearchResult* _result)
 
 void CListView::SetViewOptions(UINT _ViewID, BOOL Force)
 {
-	m_FileList.SetRedraw(FALSE);
-
 	// Font
 	if (Force || (pViewParameters->GrannyMode!=m_ViewParameters.GrannyMode))
 	{
@@ -239,9 +237,6 @@ void CListView::SetViewOptions(UINT _ViewID, BOOL Force)
 		m_FileList.SetImageList(icons, LVSIL_NORMAL);
 		m_FileList.SetImageList(icons, LVSIL_SMALL);
 	}
-
-	m_FileList.SetRedraw(TRUE);
-	m_FileList.Invalidate();
 }
 
 CMenu* CListView::GetContextMenu()
