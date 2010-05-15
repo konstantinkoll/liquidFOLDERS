@@ -2,6 +2,7 @@
 #pragma once
 #include "liquidFOLDERS.h"
 #include "LFCommDlg.h"
+#include "afxshelltreectrl.h"
 
 
 // CPlacesToolBar
@@ -33,10 +34,12 @@ public:
 
 protected:
 	CPlacesToolBar m_wndToolBar;
+	CMFCShellTreeCtrl m_wndShellTree;
 
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
+	afx_msg void OnSetFocus(CWnd* pOldWnd);
 	afx_msg void OnPaint();
 	afx_msg void OnUpdateCommands(CCmdUI* pCmdUI);
 	DECLARE_MESSAGE_MAP()
