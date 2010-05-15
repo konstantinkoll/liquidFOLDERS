@@ -129,7 +129,7 @@ void CCalendarDayView::SetViewOptions(UINT /*_ViewID*/, BOOL Force)
 
 	// Categories
 	//if (Force || (pViewParameters->ShowCategories!=m_ViewParameters.ShowCategories))
-	//	m_FileList.EnableGroupView(pViewParameters->ShowCategories && (!m_FileList.OwnerData));
+	//	m_FileList.EnableGroupView(pViewParameters->ShowCategories);
 
 	// Full row select
 	if (Force || (pViewParameters->FullRowSelect!=m_ViewParameters.FullRowSelect))
@@ -166,7 +166,7 @@ int CCalendarDayView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	m_CalendarHeaderCtrl.Create(this, 2);
 
-	m_FileList.Create(this, this, FALSE);
+	m_FileList.Create(this);
 	//m_FileList.EnableGroupView(TRUE);
 
 	return 0;

@@ -1037,24 +1037,14 @@ void CMainFrame::UpdateSearchResult(BOOL SetEmpty, int FocusItem)
 		m_wndRibbonBar.ShowCategory(RibbonCategory_UnknownFileFormats, (CookedFiles->m_Context==LFContextHousekeeping) && (ActiveFilter->Result.FilterType==LFFilterTypeUnknownFileFormats));
 		#endif
 
-		// ChildView austauschen:
-		// - Wenn ein anderer Kontext mit ggf. anderen Views gewünscht wird
-		// - Wenn im Kontext die Ansicht auf "automatisch" steht
-		// - Wenn sich für die Liste das Kategorien-Flag ändert (wg. virtual mode)
-		BOOL change = (ActiveContextID!=CookedFiles->m_ContextView) || (ActiveViewID!=(int)SelectViewMode(ActiveViewParameters->Mode));
-		BOOL force = FALSE;
-		if ((!change) && (m_wndView) && (ActiveViewID>=LFViewLargeIcons) && (ActiveViewID<=LFViewPreview))
-		{
-			change |= (m_wndView->HasCategories()!=(CookedFiles->m_HasCategories==true));
-			force = TRUE;
-		}
-		if (change)
+		// ChildView austauschen ?
+		if ((ActiveContextID!=CookedFiles->m_ContextView) || (ActiveViewID!=(int)SelectViewMode(ActiveViewParameters->Mode)))
 		{
 			ActiveContextID = CookedFiles->m_ContextView;
 			ActiveViewParameters = &theApp.m_Views[ActiveContextID];
 			if (m_cbxActiveContext)
 				m_cbxActiveContext->SelectItem(ActiveContextID);
-			if (OpenChildView(force))
+			if (OpenChildView())
 				return;
 		}
 		#ifndef _DEBUG
@@ -1991,8 +1981,6 @@ BOOL CMainFrame::OpenChildView(BOOL Force)
 	case LFViewTiles:
 	case LFViewPreview:
 		Force |= (ActiveViewID<LFViewLargeIcons) || (ActiveViewID>LFViewPreview);
-		if ((m_wndView) && (CookedFiles))
-			Force |= (m_wndView->HasCategories()!=(CookedFiles->m_HasCategories==true));
 		if (Force)
 		{
 			pNewView = new CListView();

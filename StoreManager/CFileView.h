@@ -24,7 +24,6 @@ public:
 	virtual int GetNextSelectedItem(int n);
 	virtual void EditLabel(int n);							// Direkt in der Liste neuen Dateinamen setzen
 	virtual BOOL IsEditing();								// Liefert zurück ob gerade editiert wird
-	virtual BOOL HasCategories();
 	virtual void OnContextMenu(CPoint point);				// Kontextmenü für das View
 	virtual void OnItemContextMenu(int idx, CPoint point);	// Kontextmenu für ein Item
 

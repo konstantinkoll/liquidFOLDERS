@@ -34,7 +34,9 @@ void CListView::Create(CWnd* pParentWnd, LFSearchResult* _result, UINT _ViewID)
 	CWnd::Create(className, _T(""), dwStyle, rect, pParentWnd, AFX_IDW_PANE_FIRST);
 
 	m_FileList.SetImageList(&theApp.m_Icons16, LVSIL_FOOTER);
+
 	CFileView::Create(_result, _ViewID);
+	//m_FileList.CreateColumns();
 }
 
 void CListView::AdjustLayout()
@@ -50,18 +52,16 @@ void CListView::SetSearchResult(LFSearchResult* _result)
 	m_FileList.ItemChanged = 1;
 
 	// Items
-	if (m_FileList.OwnerData)
+	if (_result)
 	{
-		if (_result)
-		{
-			m_FileList.SetItemCountEx(_result->m_Count, 0);
-		}
-		else
-		{
-			m_FileList.SetItemCountEx(0, 0);
-		}
+		m_FileList.SetItemCountEx(_result->m_Count, 0);
+		m_FileList.SetItemState(FocusItem, LVIS_FOCUSED, LVIS_FOCUSED);
 	}
 	else
+	{
+		m_FileList.SetItemCountEx(0, 0);
+	}
+/*	else
 	{
 		m_FileList.DeleteAllItems();
 
@@ -87,8 +87,9 @@ void CListView::SetSearchResult(LFSearchResult* _result)
 				m_FileList.InsertItem(&lvi);
 			}
 		}
-	}
+	}*/
 
+	
 	// Sortierung
 	if (ViewID==LFViewDetails)
 		m_FileList.SetHeader(TRUE);
@@ -152,7 +153,7 @@ void CListView::SetViewOptions(UINT _ViewID, BOOL Force)
 		theApp.GetBackgroundColors(pViewParameters->Background, &back, &text, &highlight);
 
 		m_FileList.SetBkColor(back);
-		m_FileList.SetTextBkColor(CLR_NONE);
+		m_FileList.SetTextBkColor(back);
 		m_FileList.SetTextColor(text);
 
 		if (theApp.osInfo.dwMajorVersion==5)
@@ -168,7 +169,7 @@ void CListView::SetViewOptions(UINT _ViewID, BOOL Force)
 
 	// Categories
 	if (Force || (pViewParameters->ShowCategories!=m_ViewParameters.ShowCategories) || (_ViewID!=ViewID))
-		m_FileList.EnableGroupView(pViewParameters->ShowCategories && (!m_FileList.OwnerData) && (_ViewID!=LFViewList));
+		m_FileList.EnableGroupView(pViewParameters->ShowCategories && (_ViewID!=LFViewList));
 
 	// Full row select
 	if (Force || (pViewParameters->FullRowSelect!=m_ViewParameters.FullRowSelect))
@@ -193,7 +194,7 @@ void CListView::SetViewOptions(UINT _ViewID, BOOL Force)
 			tvi.cLines = 5;
 			tvi.dwFlags = LVTVIF_AUTOSIZE;
 			tvi.dwMask = LVTVIM_COLUMNS;
-			if ((theApp.osInfo.dwMajorVersion==5) && (m_FileList.OwnerData))  // Only for virtual lists on Windows XP
+			if (theApp.osInfo.dwMajorVersion==5)  // Only for Windows XP
 			{
 				tvi.dwMask |= LVTVIM_LABELMARGIN;
 				tvi.rcLabelMargin.bottom = (int)(GetFontHeight(pViewParameters->GrannyMode)*1.7);
@@ -209,10 +210,11 @@ void CListView::SetViewOptions(UINT _ViewID, BOOL Force)
 
 		ModifyStyle(LVS_ALIGNLEFT, _ViewID==LFViewList ? LVS_ALIGNLEFT : 0);
 		m_FileList.SetView(iView);
-
-		if (iView!=LV_VIEW_DETAILS)
-			m_FileList.CreateColumns();
+		m_FileList.CreateColumns();
 	}
+	else
+		if (_ViewID==LFViewDetails)
+			m_FileList.SetHeader();
 
 	// Icons
 	if (Force || (_ViewID!=ViewID) || (pViewParameters->GrannyMode!=m_ViewParameters.GrannyMode))
@@ -236,10 +238,6 @@ void CListView::SetViewOptions(UINT _ViewID, BOOL Force)
 		m_FileList.SetImageList(icons, LVSIL_NORMAL);
 		m_FileList.SetImageList(icons, LVSIL_SMALL);
 	}
-
-	// Header
-	if (_ViewID==LFViewDetails)
-		m_FileList.SetHeader();
 
 	m_FileList.SetRedraw(TRUE);
 	m_FileList.Invalidate();
@@ -273,44 +271,41 @@ int CListView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CFileView::OnCreate(lpCreateStruct) == -1)
 		return -1;
 
-	m_FileList.Create(this, this, !result->m_HasCategories);
-
-	if (result->m_HasCategories)
+	m_FileList.Create(this);
+/*
+	LVGROUP lvg;
+	ZeroMemory(&lvg, sizeof(lvg));
+	lvg.cbSize = sizeof(lvg);
+	lvg.mask = LVGF_HEADER | LVGF_GROUPID | LVGF_ALIGN;
+	lvg.uAlign = LVGA_HEADER_LEFT;
+	if (theApp.osInfo.dwMajorVersion>=6)
 	{
-		LVGROUP lvg;
-		ZeroMemory(&lvg, sizeof(lvg));
-		lvg.cbSize = sizeof(lvg);
-		lvg.mask = LVGF_HEADER | LVGF_GROUPID | LVGF_ALIGN;
-		lvg.uAlign = LVGA_HEADER_LEFT;
-		if (theApp.osInfo.dwMajorVersion>=6)
-		{
-			lvg.mask |= LVGF_STATE;
-			lvg.state = LVGS_COLLAPSIBLE;
-			lvg.stateMask = 0;
-		}
-
-		for (UINT a=0; a<LFItemCategoryCount; a++)
-		{
-			lvg.iGroupId = a;
-			lvg.pszHeader = theApp.m_ItemCategories[a]->Name;
-
-			if (theApp.osInfo.dwMajorVersion>=6)
-			{
-				lvg.pszSubtitle = theApp.m_ItemCategories[a]->Hint;
-				if (*lvg.pszSubtitle=='\0')
-				{
-					lvg.mask &= ~LVGF_SUBTITLE;
-				}
-				else
-				{
-					lvg.mask |= LVGF_SUBTITLE;
-				}
-			}
-
-			m_FileList.InsertGroup(a, &lvg);
-		}
+		lvg.mask |= LVGF_STATE;
+		lvg.state = LVGS_COLLAPSIBLE;
+		lvg.stateMask = 0;
 	}
 
+	for (UINT a=0; a<LFItemCategoryCount; a++)
+	{
+		lvg.iGroupId = a;
+		lvg.pszHeader = theApp.m_ItemCategories[a]->Name;
+
+		if (theApp.osInfo.dwMajorVersion>=6)
+		{
+			lvg.pszSubtitle = theApp.m_ItemCategories[a]->Hint;
+			if (*lvg.pszSubtitle=='\0')
+			{
+				lvg.mask &= ~LVGF_SUBTITLE;
+			}
+			else
+			{
+				lvg.mask |= LVGF_SUBTITLE;
+			}
+		}
+
+		m_FileList.InsertGroup(a, &lvg);
+	}
+*/
 	return 0;
 }
 

@@ -15,7 +15,6 @@
 CFileList::CFileList()
 	: CExplorerList()
 {
-	OwnerData = FALSE;
 	Editing = FALSE;
 	ItemChanged = 0;
 	LastSortBy = -1;
@@ -27,21 +26,16 @@ CFileList::~CFileList()
 {
 }
 
-void CFileList::Create(CWnd* pParentWnd, CFileView* pViewWnd, BOOL _OwnerData)
+void CFileList::Create(CFileView* pViewWnd)
 {
 	View = pViewWnd;
-	OwnerData = _OwnerData;
 
-	DWORD dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | LVS_SHOWSELALWAYS | LVS_AUTOARRANGE |
-		LVS_EDITLABELS | LVS_SHAREIMAGELISTS | LVS_ALIGNTOP | LVS_REPORT;
-	if (pParentWnd==pViewWnd)
-		dwStyle |= WS_VISIBLE;
-	if (_OwnerData)
-		dwStyle |= LVS_OWNERDATA;
+	DWORD dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | LVS_SHOWSELALWAYS | LVS_AUTOARRANGE | LVS_OWNERDATA |
+		LVS_EDITLABELS | LVS_SHAREIMAGELISTS | LVS_ALIGNTOP;
 
 	CRect rect;
 	rect.SetRectEmpty();
-	CExplorerList::Create(dwStyle, rect, pParentWnd, pParentWnd!=pViewWnd ? AFX_IDW_PANE_FIRST : 1);
+	CExplorerList::Create(dwStyle, rect, View, 1);
 	SetRedraw(FALSE);
 	SetExtendedStyle(FileListExtendedStyles);
 }
@@ -229,6 +223,7 @@ void CFileList::OnCustomDraw(NMHDR* pNMHDR, LRESULT* pResult)
 	case CDDS_ITEMPOSTPAINT|CDDS_SUBITEM:
 		col = lplvcd->iSubItem;
 		attr = ColumnMapping[col];
+
 		if (theApp.m_Attributes[attr]->Type==LFTypeRating)
 		{
 			CRect rect;
@@ -525,5 +520,6 @@ void CFileList::OnHeaderReorder(NMHDR* pNMHDR, LRESULT* pResult)
 void CFileList::OnSize(UINT nType, int cx, int cy)
 {
 	CExplorerList::OnSize(nType, cx, cy);
-	Invalidate();
+//	Invalidate();
+	RedrawWindow(NULL,NULL,RDW_INVALIDATE|RDW_UPDATENOW|RDW_ERASE|RDW_FRAME);
 }
