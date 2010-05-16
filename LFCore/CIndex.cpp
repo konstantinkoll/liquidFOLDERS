@@ -249,7 +249,6 @@ void CIndex::Retrieve(LFFilter* f, LFSearchResult* res)
 			}
 
 		// Filter
-		// TODO
 		if (f->Searchterm[0]!=L'\0')
 			AttributesToString(i);
 		if (LFPassesFilter(i, f))

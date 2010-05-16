@@ -10,7 +10,3 @@
 #define WIN32_LEAN_AND_MEAN             // Selten verwendete Teile der Windows-Header nicht einbinden.
 // Windows-Headerdateien:
 #include <windows.h>
-
-
-
-// TODO: Hier auf zusätzliche Header, die das Programm erfordert, verweisen.
