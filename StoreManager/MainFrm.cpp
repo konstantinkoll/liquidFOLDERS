@@ -983,7 +983,6 @@ void CMainFrame::OnUpdateStoreCommands(CCmdUI* pCmdUI)
 			break;
 		case ID_STORE_DELETE:
 		case ID_STORE_PROPERTIES:
-		case ID_STORE_STATS:
 			if (f)
 				b = (f->Type & LFTypeStore);
 			break;
@@ -1862,10 +1861,9 @@ void CMainFrame::InitializeRibbon()
 			CMFCRibbonPanel* pPanelStoresInformation = pCategoryStores->AddPanel(strTemp, m_PanelImages.ExtractIcon(12));
 
 				pPanelStoresInformation->Add(theApp.CommandButton(ID_STORE_PROPERTIES, 7, 7));
-				pPanelStoresInformation->Add(theApp.CommandButton(ID_STORE_STATS, 8, 8));
 				pPanelStoresInformation->AddSeparator();
-				pPanelStoresInformation->Add(theApp.CommandButton(ID_STORE_MAINTENANCE, 9, 9));
-				pPanelStoresInformation->Add(theApp.CommandButton(ID_STORE_BACKUP, 10, 10));
+				pPanelStoresInformation->Add(theApp.CommandButton(ID_STORE_MAINTENANCE, 8, 8));
+				pPanelStoresInformation->Add(theApp.CommandButton(ID_STORE_BACKUP, 9, 9));
 
 		strTemp = "Deleted files";
 		strCtx = "Trash";

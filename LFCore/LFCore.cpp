@@ -257,6 +257,7 @@ LFCore_API LFContextDescriptor* LFGetContextInfo(unsigned int ID)
 		(*c->AllowedAttributes) += LFAttrCreationTime;
 		(*c->AllowedAttributes) += LFAttrFileTime;
 	case LFContextStoreHome:
+		(*c->AllowedAttributes) += LFAttrFileSize;
 		break;
 	default:
 		for (unsigned int a=0; a<LFAttributeCount; a++)

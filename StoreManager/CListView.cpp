@@ -69,11 +69,11 @@ void CListView::SetSearchResult(LFSearchResult* _result)
 		if (_result)
 		{
 			// Change or append items
-			UINT puColumns[] = { 1, 2, 3 };
+			UINT puColumns[] = { 1, 2, 3, 4 };
 			LVITEM lvi;
 			ZeroMemory(&lvi, sizeof(lvi));
 			lvi.mask = LVIF_TEXT | LVIF_IMAGE | LVIF_GROUPID | LVIF_COLUMNS | LVIF_STATE;
-			lvi.cColumns = 3;
+			lvi.cColumns = 4;
 			lvi.puColumns = puColumns;
 
 			for (UINT a=0; a<_result->m_Count; a++)

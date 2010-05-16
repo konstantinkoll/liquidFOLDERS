@@ -502,7 +502,7 @@ LFCore_API LFItemDescriptor* LFAllocItemDescriptor(LFItemDescriptor* i)
 	return d;
 }
 
-LFItemDescriptor* AllocFolderDescriptor(const wchar_t* Name, const wchar_t* Comment, const wchar_t* Hint, const char* StoreID, const char* FileID, unsigned int IconID, unsigned int CategoryID, LFFilter* Filter)
+LFItemDescriptor* AllocFolderDescriptor(const wchar_t* Name, const wchar_t* Comment, const wchar_t* Hint, const char* StoreID, const char* FileID, __int64* Size, unsigned int IconID, unsigned int CategoryID, LFFilter* Filter)
 {
 	LFItemDescriptor* d = LFAllocItemDescriptor();
 
@@ -521,6 +521,8 @@ LFItemDescriptor* AllocFolderDescriptor(const wchar_t* Name, const wchar_t* Comm
 		SetAttribute(d, LFAttrComment, Comment);
 	if (Hint)
 		SetAttribute(d, LFAttrHint, Hint);
+	if (Size)
+		SetAttribute(d, LFAttrFileSize, Size);
 
 	return d;
 }

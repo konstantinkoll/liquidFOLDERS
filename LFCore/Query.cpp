@@ -72,8 +72,9 @@ LFSearchResult* QueryDomains(LFFilter* filter)
 	res->m_LastError = OpenStore(&filter->StoreID[0], false, idx1, idx2, NULL, &StoreLock);
 	if (res->m_LastError==LFOk)
 	{
-		unsigned int cnt[LFDomainCount];
-		idx1->RetrieveStats(cnt, NULL);
+		unsigned int cnt[LFDomainCount] = { 0 };
+		__int64 size[LFDomainCount] = { 0 };
+		idx1->RetrieveStats(cnt, size);
 		if (idx1)
 			delete idx1;
 		if (idx2)
@@ -94,8 +95,8 @@ LFSearchResult* QueryDomains(LFFilter* filter)
 				nf->Options = filter->Options;
 				strcpy_s(nf->StoreID, LFKeySize, filter->StoreID);
 				wcscpy_s(nf->Name, 256, d->DomainName);
+				res->AddItemDescriptor(AllocFolderDescriptor(d->DomainName, d->Comment, Hint, filter->StoreID, FileID, &size[a], d->IconID, d->CategoryID, nf));
 
-				res->AddItemDescriptor(AllocFolderDescriptor(d->DomainName, d->Comment, Hint, filter->StoreID, FileID, d->IconID, d->CategoryID, nf));
 				LFFreeDomainDescriptor(d);
 			}
 			else

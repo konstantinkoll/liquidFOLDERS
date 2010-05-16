@@ -121,6 +121,7 @@ void CFileList::CreateColumns()
 		AddColumn(LFAttrComment);
 		AddColumn(LFAttrFileTime);
 		AddColumn(LFAttrHint);
+		AddColumn(LFAttrFileSize);
 		break;
 	default:
 		AddColumn(LFAttrFileName);
@@ -184,21 +185,18 @@ void CFileList::OnGetDispInfo(NMHDR* pNMHDR, LRESULT* /*pResult*/)
 
 	if (pItem->mask & LVIF_COLUMNS)
 	{
-		pItem->cColumns = 3;
+		pItem->cColumns = 4;
 		pItem->puColumns[0] = 1;
 		pItem->puColumns[1] = 2;
 		pItem->puColumns[2] = 3;
+		pItem->puColumns[3] = 4;
 	}
 
 	if (View->result)
 	{
 		UINT attr = ColumnMapping[pItem->iSubItem];
 		if ((pItem->mask & LVIF_TEXT) && (theApp.m_Attributes[attr]->Type!=LFTypeRating))
-		{
 			pItem->pszText = (LPWSTR)View->result->m_Files[idx]->AttributeStrings[attr];
-			if (!pItem->pszText)
-				pItem->pszText = L"";
-		}
 		if (pItem->mask & LVIF_IMAGE)
 			pItem->iImage = View->result->m_Files[idx]->IconID-1;
 	}
