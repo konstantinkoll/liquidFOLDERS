@@ -260,7 +260,35 @@ void CIndex::Retrieve(LFFilter* f, LFSearchResult* res)
 	}
 }
 
-void CIndex::RetrieveDomains(unsigned int* cnt)
+inline void CountFile(LFCoreAttributes* Ptr, unsigned int* cnt, __int64* size)
+{
+	assert(Ptr);
+	#define Count(Domain) if (cnt) cnt[Domain]++; if (size) size[Domain]+=Ptr->FileSize;
+
+	if (Ptr->Flags & LFFlagTrash)
+	{
+		Count(LFDomainTrash);
+	}
+	else
+	{
+		Count(LFDomainAllFiles);
+
+		if (Ptr->Rating)
+			Count(LFDomainFavorites);
+		if ((Ptr->DomainID>LFDomainAllMultimediaFiles) && (Ptr->DomainID<LFDomainCount))
+		{
+			Count(Ptr->DomainID);
+			if ((Ptr->DomainID>=LFDomainAudio) && (Ptr->DomainID<=LFDomainVideos))
+				Count(LFDomainAllMultimediaFiles);
+		}
+		else
+		{
+			Count(LFDomainUnknown);
+		}
+	}
+}
+
+void CIndex::RetrieveStats(unsigned int* cnt, __int64* size)
 {
 	if (!LoadTable(IDMaster))
 		return;
@@ -271,26 +299,6 @@ void CIndex::RetrieveDomains(unsigned int* cnt)
 
 	while (Tables[IDMaster]->FindNext(ID, (void*&)PtrM))
 	{
-		if (PtrM->Flags & LFFlagTrash)
-		{
-			cnt[LFDomainTrash]++;
-		}
-		else
-		{
-			cnt[LFDomainAllFiles]++;
-
-			if (PtrM->Rating)
-				cnt[LFDomainFavorites]++;
-			if ((PtrM->DomainID>LFDomainAllMultimediaFiles) && (PtrM->DomainID<LFDomainCount))
-			{
-				cnt[PtrM->DomainID]++;
-				if ((PtrM->DomainID>=LFDomainAudio) && (PtrM->DomainID<=LFDomainVideos))
-					cnt[LFDomainAllMultimediaFiles]++;
-			}
-			else
-			{
-				cnt[LFDomainUnknown]++;
-			}
-		}
+		CountFile(PtrM, cnt, size);
 	}
 }

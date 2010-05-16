@@ -73,7 +73,7 @@ LFSearchResult* QueryDomains(LFFilter* filter)
 	if (res->m_LastError==LFOk)
 	{
 		unsigned int cnt[LFDomainCount];
-		idx1->RetrieveDomains(cnt);
+		idx1->RetrieveStats(cnt, NULL);
 		if (idx1)
 			delete idx1;
 		if (idx2)
