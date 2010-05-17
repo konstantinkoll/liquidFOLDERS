@@ -1,7 +1,4 @@
 
-#if !defined(AFX_LFNamespaceExtensionItem_H__7622C9A3_7250_4A9F_98AB_ED90FAF02D6B__INCLUDED_)
-#define AFX_LFNamespaceExtensionItem_H__7622C9A3_7250_4A9F_98AB_ED90FAF02D6B__INCLUDED_
-
 #pragma once
 
 class CFileItem : public CNSEItem
@@ -45,6 +42,3 @@ public:
 	int GetPreviewDetailsColumnIndices(UINT* indices);
 
 };
-
-
-#endif

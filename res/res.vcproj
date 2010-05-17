@@ -1590,14 +1590,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Ribbon\StoreStats_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\StoreStats_32.png"
-				>
-			</File>
-			<File
 				RelativePath="Ribbon\StoreUnlock_16.png"
 				>
 			</File>

@@ -445,6 +445,9 @@ BOOL CFolderItem::GetColumn(CShellColumn& column, int index)
 	case LevelRoot:
 		limit = LFAttrFileTime;
 		break;
+	case LevelStores:
+		limit = LFAttrFileSize;
+		break;
 	case LevelStoreHome:
 		limit = LFAttrComment;
 		break;

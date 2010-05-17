@@ -1,7 +1,4 @@
 
-#if !defined(AFX_LFNamespaceExtension_H__95814778_A538_4D52_82C2_619E66C87149__INCLUDED_)
-#define AFX_LFNamespaceExtension_H__95814778_A538_4D52_82C2_619E66C87149__INCLUDED_
-
 #pragma once
 #include "resource.h"
 #include "liquidFOLDERS.h"
@@ -31,5 +28,3 @@ public:
 EXTERN_C IMAGE_DOS_HEADER __ImageBase;
 extern CLFNamespaceExtensionApp theApp;
 extern OSVERSIONINFO osInfo;
-
-#endif

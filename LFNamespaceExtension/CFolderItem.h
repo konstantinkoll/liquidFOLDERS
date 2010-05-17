@@ -1,7 +1,4 @@
 
-#if !defined(AFX_LFNamespaceExtensionFolder_H__A28C0BEA_65FC_443F_BD74_69B41012EDE2__INCLUDED_)
-#define AFX_LFNamespaceExtensionFolder_H__A28C0BEA_65FC_443F_BD74_69B41012EDE2__INCLUDED_
-
 #pragma once
 #include "LFCore.h"
 
@@ -87,5 +84,3 @@ public:
 	virtual void DragDrop(CNSEDragEventArgs& e);
 	virtual BOOL OnOpen(CExecuteMenuitemsEventArgs& e);
 };
-
-#endif

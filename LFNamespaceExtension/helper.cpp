@@ -6,11 +6,6 @@
 #include "LFNamespaceExtension.h"
 #include "helper.h"
 
-#ifdef _DEBUG
-#undef THIS_FILE
-static char THIS_FILE[]=__FILE__;
-#define new DEBUG_NEW
-#endif
 
 CString PathCombineNSE(LPCTSTR path1,LPCTSTR path2)
 {
@@ -18,22 +13,6 @@ CString PathCombineNSE(LPCTSTR path1,LPCTSTR path2)
 	PathCombine(temp,path1,path2);
 	CString ret = temp;
 	return ret;
-}
-
-BOOL DirectoryExists(LPCTSTR dir)
-{
-	
-	WIN32_FIND_DATA fData;
-	HANDLE hnd = FindFirstFile(dir,&fData);
-	if(hnd==INVALID_HANDLE_VALUE)
-		return FALSE;
-	
-	FindClose(hnd);
-	
-	if((fData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)==0)
-		return FALSE;
-	
-	return TRUE;
 }
 
 BOOL FileExists(LPCTSTR dir)
@@ -52,35 +31,6 @@ BOOL FileExists(LPCTSTR dir)
 	return TRUE;
 }
 
-BOOL DirectoryHasSubDirectory(LPCTSTR dir)
-{
-	BOOL ret = FALSE;
-
-	CString pattern = PathCombineNSE(dir,_T("*.*"));
-	WIN32_FIND_DATA fd;
-	HANDLE hnd = FindFirstFile(pattern,&fd);
-	if(hnd==INVALID_HANDLE_VALUE)
-		return FALSE;
-
-	do
-	{
-		if(_tcscmp(fd.cFileName,_T("."))==0 || _tcscmp(fd.cFileName,_T(".."))==0)
-			continue;
-
-		if(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
-		{
-			ret = TRUE;
-			break;
-		}
-		
-	}while(FindNextFile(hnd,&fd)!=0);
-	
-	FindClose(hnd);
-	
-	return ret;
-
-}
-
 CString GetFileLastWriteTimeAsString(LPCTSTR path)
 {
 	WIN32_FILE_ATTRIBUTE_DATA fd = {0};
@@ -88,19 +38,6 @@ CString GetFileLastWriteTimeAsString(LPCTSTR path)
 
 	CTime t(fd.ftLastWriteTime);
 	return t.Format(_T("%m/%d/%y %I:%M %p"));
-}
-
-BOOL DeleteDirectory(LPCTSTR fullPath)
-{
-	TCHAR temp[MAX_PATH];
-	_tcscpy(temp,fullPath);
-	temp[_tcslen(fullPath)+1] = _T('\0');
-
-	SHFILEOPSTRUCT sf = {0};
-	sf.wFunc = FO_DELETE;
-	sf.pFrom = temp;
-
-	return SHFileOperation(&sf)==S_OK && !sf.fAnyOperationsAborted;
 }
 
 BOOL CopyDirectory(LPCTSTR src,LPCTSTR dst)
