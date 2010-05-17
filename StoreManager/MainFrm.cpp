@@ -933,7 +933,7 @@ void CMainFrame::OnStoreBackup()
 							}
 
 							// GUID
-							f.WriteString(_T("\"GUID\"=hex:")+MakeHex((BYTE*)&s.GUID, sizeof(s.GUID))+_T("\n"));
+							f.WriteString(_T("\"GUID\"=hex:")+MakeHex((BYTE*)&s.guid, sizeof(s.guid))+_T("\n"));
 
 							// CreationTime
 							f.WriteString(_T("\"CreationTime\"=hex:")+MakeHex((BYTE*)&s.CreationTime, sizeof(s.CreationTime))+_T("\n"));
@@ -996,6 +996,9 @@ void CMainFrame::OnUpdateStoreCommands(CCmdUI* pCmdUI)
 			if (f)
 				b = (f->Type & LFTypeStore) &&
 					(f->CategoryID==LFCategoryExternalStores);
+			break;
+		case ID_STORE_MAINTENANCE:
+			b = LFGetStoreCount();
 			break;
 		case ID_STORE_BACKUP:
 			b = TRUE;

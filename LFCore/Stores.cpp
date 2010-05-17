@@ -47,7 +47,7 @@ DWORD CreateDir(LPCSTR lpPath)
 		goto Cleanup;
 	}
 
-	cbAcl = sizeof(ACL) + ((sizeof(ACCESS_ALLOWED_ACE) - sizeof(DWORD)) + GetLengthSid(ptu->User.Sid));
+	cbAcl = sizeof(ACL)+((sizeof(ACCESS_ALLOWED_ACE)-sizeof(DWORD))+GetLengthSid(ptu->User.Sid));
 	pAcl = (ACL*)malloc(cbAcl);
 
 	if (!InitializeAcl(pAcl, cbAcl, ACL_REVISION))
@@ -56,7 +56,7 @@ DWORD CreateDir(LPCSTR lpPath)
 		goto Cleanup;
 	}
 
-	if (!AddAccessAllowedAce(pAcl,ACL_REVISION,GENERIC_ALL|STANDARD_RIGHTS_ALL|SPECIFIC_RIGHTS_ALL,ptu->User.Sid))
+	if (!AddAccessAllowedAce(pAcl, ACL_REVISION,GENERIC_ALL | STANDARD_RIGHTS_ALL | SPECIFIC_RIGHTS_ALL, ptu->User.Sid))
 	{
 		dwError = GetLastError();
 		goto Cleanup;
@@ -126,6 +126,11 @@ unsigned int ValidateStoreDirectories(LFStoreDescriptor* s)
 		if ((res!=ERROR_SUCCESS) && (res!=ERROR_ALREADY_EXISTS))
 			return LFIllegalPhysicalPath;
 
+	// Store auf externen Medien verstecken
+	if (s->StoreMode!=LFStoreModeInternal)
+		SetFileAttributesA(s->DatPath, FILE_ATTRIBUTE_HIDDEN);
+
+	// Hilfsindex anlegen
 	if (s->StoreMode==LFStoreModeHybrid)
 	{
 		char tmpStr[MAX_PATH];

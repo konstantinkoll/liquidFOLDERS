@@ -142,7 +142,7 @@ void CInspectorWnd::UpdateAdd(LFItemDescriptor* i)
 		LFGetStoreSettings(i->CoreAttributes.FileID, &s);
 
 		OLECHAR szGUID[MAX_PATH];
-		StringFromGUID2(s.GUID, szGUID, MAX_PATH);
+		StringFromGUID2(s.guid, szGUID, MAX_PATH);
 		AddValueVirtual(AttrGUID, szGUID, FALSE);
 
 		wchar_t tmpStr[256];

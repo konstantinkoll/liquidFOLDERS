@@ -16,7 +16,7 @@ LFStorePropertiesDlg::LFStorePropertiesDlg(CWnd* pParentWnd, char* _StoreID)
 {
 	if (LFGetStoreSettings(_StoreID, &store)==LFOk)
 	{
-		key = store.GUID;
+		key = store.guid;
 	}
 	else
 	{
@@ -87,7 +87,7 @@ LRESULT LFStorePropertiesDlg::UpdateStore(WPARAM /*wParam*/, LPARAM /*lParam*/)
 		GetDlgItem(IDC_MAINTENANCE)->SetWindowText(tmpStr);
 
 		OLECHAR szGUID[MAX_PATH];
-		StringFromGUID2(store.GUID, szGUID, MAX_PATH);
+		StringFromGUID2(store.guid, szGUID, MAX_PATH);
 		GetDlgItem(IDC_GUID)->SetWindowText(szGUID);
 
 		GetDlgItem(IDC_LASTSEENCAPTION)->EnableWindow(store.StoreMode!=LFStoreModeInternal);

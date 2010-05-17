@@ -3,6 +3,7 @@
 #include "CIndex.h"
 
 DWORD CreateDir(LPCSTR lpPath);
+void HideDir(LPCSTR lpPath);
 void RemoveDir(LPCSTR lpPath);
 unsigned int ValidateStoreDirectories(LFStoreDescriptor* s);
 void InitStores();
