@@ -741,7 +741,7 @@ BJN     Bajone, Mosambik;4;17*10'1"S, 37*57'0"E
 BJO     Bermejo, Bolivien;4;22*46'24"S, 64*18'46"W
 BJP     Begamganj, Bangladesch
 BJR     Bahar Dar, éthiopien;4;11*36'29"N, 37*19'18"E
-BJS     Beijing (Peking), China;4;39*55'1"N, 116*25'1"E
+BJS BJS Beijing (Peking), China
 BJU     Bajura, Nepal;4;29*30'7"N, 81*40'8"E
 BJV     Bodrum/Milas, TÅrkei;5;37*15'02"N, 27*39'51"E
 BJW     Bajawa, Indonesien;4;8*49'1"S, 120*58'59"E
@@ -5188,7 +5188,7 @@ NAT     Natal, Brasilien;4;5*54'41"S, 35*14'52"W
 NAU     Napuka, Franz.-Polynesien;4;14*10'36"S, 141*16'2"W
 NAW     Narathiwat, Thailand;4;6*31'12"N, 101*44'36"E
 NAX     Ewa, USA;4;21*18'26"N, 158*4'13"W
-NAY     Beijing (Nan Yuan Airforce Base), China;4;39*57'39"N, 116*15'24"E
+NAY BJS Beijing (Nan Yuan Airforce Base), China;4;39*57'39"N, 116*15'24"E
 NBB     Barrancominas, Kolumbien;4;3*19'59"N, 70*19'1"W
 NBC     Naberezhnyye Chelny, Russland;4;55*33'53"N, 52*5'33"E
 NBE     Dallas (Naval Airstation), USA
@@ -5885,7 +5885,7 @@ PEE     Perm, Russland;4;57*54'52"N, 56*1'16"E
 PEG     Perugia, Italien;4;43*5'45"N, 12*30'48"E
 PEH     Pehuajo, Argentinien;4;35*50'41"S, 61*51'27"W
 PEI     Pereira, Kolumbien;4;4*48'46"N, 75*44'22"W
-PEK     Beijing (Peking), China;4;40*4'48"N, 116*35'4"E
+PEK BJS Beijing (Peking), China;4;40*4'48"N, 116*35'4"E
 PEL     Pelaneng, Lesotho;4;29*7'1"S, 28*30'0"E
 PEM     Puerto Maldonado, Peru;4;12*36'49"S, 69*13'43"W
 PEN     Penang, Malaysia;4;5*17'50"N, 100*16'37"E
