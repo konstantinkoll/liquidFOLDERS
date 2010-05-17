@@ -35,6 +35,7 @@ struct FolderSerialization
 	CString AttributeValue;
 	FILETIME CreationTime;
 	FILETIME FileTime;
+	INT64 Size;
 };
 
 class CFolderItem : public CNSEFolder
@@ -46,7 +47,7 @@ public:
 	FolderSerialization data;
 
 	CFolderItem();
-	CFolderItem(FolderSerialization _data);
+	CFolderItem(FolderSerialization &_data);
 
 	virtual void GetCLSID(LPCLSID pCLSID);
 	virtual void GetExtensionTargetInfo(CExtensionTargetInfo& info);
@@ -60,8 +61,9 @@ public:
 	virtual void GetIconFileAndIndex(CGetIconFileAndIndexEventArgs& e);
 	virtual void GetInfoTip(CString& infotip);
 	virtual int GetXPTaskPaneColumnIndices(UINT* indices);
-	int GetTileViewColumnIndices(UINT* indices);
-	int GetPreviewDetailsColumnIndices(UINT* indices);
+	virtual int GetTileViewColumnIndices(UINT* indices);
+	virtual int GetPreviewDetailsColumnIndices(UINT* indices);
+	virtual int GetContentViewColumnIndices(UINT* indices);
 	virtual CCategorizer* GetCategorizer(CShellColumn &column);
 	virtual FolderThemes GetFolderTheme();
 	virtual BOOL GetColumn(CShellColumn& column,int index);

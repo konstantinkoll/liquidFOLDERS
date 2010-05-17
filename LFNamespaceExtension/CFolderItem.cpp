@@ -8,6 +8,7 @@
 #include "CCategoryCategorizer.h"
 #include "CAttributeCategorizer.h"
 #include <io.h>
+#include <shlguid.h>
 
 
 IMPLEMENT_DYNCREATE(CFolderItem, CNSEFolder)
@@ -46,12 +47,13 @@ BOOL CFolderItem::CFolderItemFactory::UpdateRegistry(BOOL bRegister)
 
 // Class CFolderItem
 
+
 CFolderItem::CFolderItem()
 {
 	data.Level = LevelRoot;
 }
 
-CFolderItem::CFolderItem(FolderSerialization _data)
+CFolderItem::CFolderItem(FolderSerialization &_data)
 {
 	data = _data;
 }
@@ -104,6 +106,7 @@ void CFolderItem::Serialize(CArchive& ar)
 	ar << data.CreationTime.dwLowDateTime;
 	ar << data.FileTime.dwHighDateTime;
 	ar << data.FileTime.dwLowDateTime;
+	ar << data.Size;
 	ar << data.DomainID;
 	ar << data.AttributeID;
 	ar << data.AttributeValue;
@@ -139,6 +142,7 @@ CNSEItem* CFolderItem::DeserializeChild(CArchive& ar)
 		ar >> d.CreationTime.dwLowDateTime;
 		ar >> d.FileTime.dwHighDateTime;
 		ar >> d.FileTime.dwLowDateTime;
+		ar >> d.Size;
 		ar >> d.DomainID;
 		ar >> d.AttributeID;
 		ar >> d.AttributeValue;
@@ -163,8 +167,8 @@ BOOL CFolderItem::GetChildren(CGetChildrenEventArgs& e)
 	case LevelStores:
 		f = LFAllocFilter();
 		f->Mode = LFFilterModeStoreHome;
-		f->HideEmptyDomains = true;
-		strcpy(f->StoreID, (LPCTSTR)data.StoreID);
+		//f->HideEmptyDomains = true;
+		strcpy_s(f->StoreID, LFKeySize, (LPCTSTR)data.StoreID);
 		res = LFQuery(f);
 		break;
 	case LevelStoreHome:
@@ -269,6 +273,7 @@ BOOL CFolderItem::GetChildren(CGetChildrenEventArgs& e)
 				d.FileID = i->CoreAttributes.FileID;
 				d.CreationTime = i->CoreAttributes.CreationTime;
 				d.FileTime = i->CoreAttributes.FileTime;
+				d.Size = i->CoreAttributes.FileSize;
 
 				switch (data.Level)
 				{
@@ -377,24 +382,47 @@ void CFolderItem::GetInfoTip(CString& infotip)
 int CFolderItem::GetXPTaskPaneColumnIndices(UINT* indices)
 {
 	indices[0] = LFAttrFileName;
-	indices[1] = LFAttrCreationTime;
-	indices[2] = LFAttrComment;
-	return 3;
+	indices[1] = LFAttrComment;
+	indices[2] = LFAttrCreationTime;
+	indices[3] = LFAttrFileTime;
+	indices[4] = LFAttrHint;
+	return 5;
 }
 
 int CFolderItem::GetTileViewColumnIndices(UINT* indices)
 {
-	indices[0] = LFAttrCreationTime;
-	indices[1] = LFAttrComment;
+	indices[0] = LFAttrComment;
+
+	switch (data.Level)
+	{
+	case LevelRoot:
+		indices[1] = LFAttrFileTime;
+		indices[2] = LFAttrHint;
+		return 3;
+	}
+
+	indices[1] = LFAttrHint;
 	return 2;
 }
 
 int CFolderItem::GetPreviewDetailsColumnIndices(UINT* indices)
 {
 	indices[0] = LFAttrFileName;
-	indices[1] = LFAttrCreationTime;
-	indices[2] = LFAttrComment;
-	return 3;
+	indices[1] = LFAttrComment;
+	indices[2] = LFAttrCreationTime;
+	indices[3] = LFAttrFileTime;
+	indices[4] = LFAttrHint;
+	return 5;
+}
+
+int CFolderItem::GetContentViewColumnIndices(UINT* indices)
+{
+	indices[0] = LFAttrFileName;
+	indices[1] = LFAttrComment;
+	indices[2] = LFAttrCreationTime;
+	indices[3] = LFAttrFileTime;
+	indices[4] = LFAttrHint;
+	return 5;
 }
 
 CCategorizer* CFolderItem::GetCategorizer(CShellColumn &column)
@@ -462,10 +490,15 @@ BOOL CFolderItem::GetColumn(CShellColumn& column, int index)
 
 	column.name = theApp.m_Attributes[index]->Name;
 	column.width = theApp.m_Attributes[index]->RecommendedWidth/7;  // Chars, not pixel
-	column.fmt = ((theApp.m_Attributes[index]->Type >= LFTypeUINT) || (index==LFAttrStoreID) || (index==LFAttrFileID)) ? NSESCF_Right : NSESCF_Left;
+	column.fmt = ((theApp.m_Attributes[index]->Type>=LFTypeUINT) || (index==LFAttrStoreID) || (index==LFAttrFileID)) ? NSESCF_Right : NSESCF_Left;
 	column.categorizerType = NSECT_Alphabetical;
 	column.index = index;
 	column.defaultVisible = (index!=LFAttrStoreID) && (index!=LFAttrFileID);
+	if (theApp.m_Attributes[index]->ShPropertyMapping.ID)
+	{
+		column.fmtid = theApp.m_Attributes[index]->ShPropertyMapping.Schema;
+		column.pid = theApp.m_Attributes[index]->ShPropertyMapping.ID;
+	}
 
 	switch (theApp.m_Attributes[index]->Type)
 	{
@@ -484,54 +517,27 @@ BOOL CFolderItem::GetColumn(CShellColumn& column, int index)
 	switch (index)
 	{
 	case LFAttrFileName:
-		column.fmtid = GUID_FMTID_NAME;
-		column.pid = 10;
 		column.state = NSECS_PreferVarCmp;
 		break;
 	case LFAttrStoreID:
+	case LFAttrArtist:
+	case LFAttrFileSize:
 		column.categorizerType = NSECT_String;
+		break;
+	case LFAttrFileID:
+		if (data.Level<LevelAttrValue)
+			column.state = NSECS_Hidden;
 		break;
 	case LFAttrFileFormat:
-		column.fmtid = GUID_FMTID_NAME;
-		column.pid = 4;
 		column.categorizerType = NSECT_String;
-		break;
-	case LFAttrFileSize:
-		column.fmtid = GUID_FMTID_NAME;
-		column.pid = 12;
-		column.categorizerType = NSECT_String;
+		if (data.Level==LevelStores)
+			column.state = NSECS_Hidden;
 		break;
 	case LFAttrCreationTime:
-		column.fmtid = GUID_FMTID_PROPERTY;
-		column.pid = 12;
-		column.categorizerType = NSECT_String;
-		break;
 	case LFAttrFileTime:
-		column.fmtid = GUID_FMTID_PROPERTY;
-		column.pid = 13;
 		column.categorizerType = NSECT_String;
-		break;
-/*	case LFAttrHint:
-		if ((data.Level<LevelAttrValue) && (osInfo.dwMajorVersion>=6))
-		{
-			column.fmtid = GUID_FMTID_PROPERTY;
-			column.pid = 6;
-		}
-		break;*/
-	case LFAttrComment:
-		if (data.Level==LevelAttrValue)
-		{
-			column.fmtid = GUID_FMTID_PROPERTY;
-			column.pid = 6;
-		}
-		break;
-	case LFAttrTitle:
-		column.fmtid = GUID_FMTID_PROPERTY;
-		column.pid = 2;
-	case LFAttrArtist:
-		column.fmtid = GUID_FMTID_PROPERTY;
-		column.pid = 4;
-		column.categorizerType = NSECT_String;
+		if (data.Level==LevelStores)
+			column.state = NSECS_Hidden;
 		break;
 	}
 
@@ -555,15 +561,26 @@ BOOL CFolderItem::GetColumnValueEx(VARIANT* value, CShellColumn& column)
 		CUtils::SetVariantCString(value, data.StoreID);
 		break;
 	case LFAttrHint:
-		CUtils::SetVariantCString(value, data.Hint);
-		break;
+		{		CString tmpStr(data.Hint);
+		CUtils::SetVariantCString(value, tmpStr);
+		break;}
 	case LFAttrComment:
 		CUtils::SetVariantCString(value, data.Comment);
 		break;
 	case LFAttrCreationTime:
 		if ((data.CreationTime.dwHighDateTime) || (data.CreationTime.dwHighDateTime))
 		{
-			CUtils::SetVariantFILETIME(value, data.CreationTime);
+			if (value->vt==VT_BSTR)
+			{
+				wchar_t tmpBuf[256];
+				LFTimeToString(data.CreationTime, tmpBuf, 256);
+				CString tmpStr(tmpBuf);
+				CUtils::SetVariantCString(value, tmpStr);
+			}
+			else
+			{
+				CUtils::SetVariantFILETIME(value, data.CreationTime);
+			}
 		}
 		else
 		{
@@ -573,11 +590,34 @@ BOOL CFolderItem::GetColumnValueEx(VARIANT* value, CShellColumn& column)
 	case LFAttrFileTime:
 		if ((data.FileTime.dwHighDateTime) || (data.FileTime.dwHighDateTime))
 		{
-			CUtils::SetVariantFILETIME(value, data.FileTime);
+			if (value->vt==VT_BSTR)
+			{
+				wchar_t tmpBuf[256];
+				LFTimeToString(data.FileTime, tmpBuf, 256);
+				CString tmpStr(tmpBuf);
+				CUtils::SetVariantCString(value, tmpStr);
+			}
+			else
+			{
+				CUtils::SetVariantFILETIME(value, data.FileTime);
+			}
 		}
 		else
 		{
 			return FALSE;
+		}
+		break;
+	case LFAttrFileSize:
+		if (value->vt==VT_BSTR)
+		{
+			wchar_t tmpBuf[256];
+			LFINT64ToString(data.Size, tmpBuf, 256);
+			CString tmpStr(tmpBuf);
+			CUtils::SetVariantCString(value, tmpStr);
+		}
+		else
+		{
+			CUtils::SetVariantINT64(value, data.Size);
 		}
 		break;
 	default:

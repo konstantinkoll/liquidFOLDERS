@@ -15,6 +15,6 @@ void InitStoreCache();
 void CreateStoreKey(char* key);
 void AddStoresToSearchResult(LFSearchResult* res, LFFilter* filter);
 LFStoreDescriptor* FindStore(char* key, HANDLE* lock=NULL);
-LFStoreDescriptor* FindStore(_GUID guid, HANDLE* lock=NULL);
+LFStoreDescriptor* FindStore(GUID guid, HANDLE* lock=NULL);
 unsigned int UpdateStore(LFStoreDescriptor* s, bool MakeDefault=false);
 unsigned int DeleteStore(LFStoreDescriptor* s);

@@ -48,7 +48,7 @@ void AppendGUID(LFStoreDescriptor* s, char* p)
 	if (s)
 	{
 		OLECHAR szGUID[MAX_PATH];
-		int ccount = StringFromGUID2(s->GUID, szGUID, MAX_PATH);
+		int ccount = StringFromGUID2(s->guid, szGUID, MAX_PATH);
 
 		if (ccount)
 		{
@@ -90,7 +90,7 @@ unsigned int GetKeyFileFromStoreDescriptor(LFStoreDescriptor* s, char* f)
 		return LFStoreNotMounted;
 
 	OLECHAR szGUID[MAX_PATH];
-	int ccount = StringFromGUID2(s->GUID, szGUID, MAX_PATH);
+	int ccount = StringFromGUID2(s->guid, szGUID, MAX_PATH);
 	if (ccount==0)
 		return LFIllegalStoreDescriptor;
 
@@ -142,8 +142,8 @@ bool LoadStoreSettingsFromRegistry(char* key, LFStoreDescriptor* s)
 			RegQueryValueExW(k, L"LastSeen", 0, NULL, (BYTE*)&s->LastSeen, &sz);
 		}
 
-		sz = sizeof(s->GUID);
-		if (RegQueryValueExA(k, "GUID", 0, NULL, (BYTE*)&s->GUID, &sz)!=ERROR_SUCCESS)
+		sz = sizeof(s->guid);
+		if (RegQueryValueExA(k, "GUID", 0, NULL, (BYTE*)&s->guid, &sz)!=ERROR_SUCCESS)
 			res = false;
 
 		sz = sizeof(s->CreationTime);
@@ -224,7 +224,7 @@ unsigned int SaveStoreSettingsToRegistry(LFStoreDescriptor* s)
 		if (s->StoreMode==LFStoreModeHybrid)
 			if (RegSetValueExW(k, L"LastSeen", 0, REG_SZ, (BYTE*)s->LastSeen, (DWORD)wcslen(s->LastSeen)*sizeof(wchar_t))!=ERROR_SUCCESS)
 				res = LFRegistryError;
-		if (RegSetValueExA(k, "GUID", 0, REG_BINARY, (BYTE*)&s->GUID, sizeof(GUID))!=ERROR_SUCCESS)
+		if (RegSetValueExA(k, "GUID", 0, REG_BINARY, (BYTE*)&s->guid, sizeof(GUID))!=ERROR_SUCCESS)
 			res = LFRegistryError;
 		if (RegSetValueExA(k, "CreationTime", 0, REG_BINARY, (BYTE*)&s->CreationTime, sizeof(FILETIME))!=ERROR_SUCCESS)
 			res = LFRegistryError;
@@ -535,10 +535,10 @@ LFStoreDescriptor* FindStore(char* key, HANDLE* lock)
 	return NULL;
 }
 
-LFStoreDescriptor* FindStore(_GUID guid, HANDLE* lock)
+LFStoreDescriptor* FindStore(GUID guid, HANDLE* lock)
 {
 	for (unsigned int a=0; a<StoreCount; a++)
-		if (StoreCache[a].GUID == guid)
+		if (StoreCache[a].guid==guid)
 		{
 			if (lock)
 				*lock = GetMutexForStore(&StoreCache[a]);
@@ -682,7 +682,7 @@ LFCore_API void LFMountDrive(char d)
 				CreateStoreKey(s->StoreID);
 
 				// Store mit der selben GUID suchen
-				LFStoreDescriptor* slot = FindStore(s->GUID);
+				LFStoreDescriptor* slot = FindStore(s->guid);
 				if (!slot)
 				{
 					// Nicht gefunden: der Store wird hier als externer Store behandelt

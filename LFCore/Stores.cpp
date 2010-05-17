@@ -170,7 +170,7 @@ LFCore_API unsigned int LFGetStoreSettings(char* key, LFStoreDescriptor* s)
 	return (slot ? LFOk : LFIllegalKey);
 }
 
-LFCore_API unsigned int LFGetStoreSettings(_GUID guid, LFStoreDescriptor* s)
+LFCore_API unsigned int LFGetStoreSettings(GUID guid, LFStoreDescriptor* s)
 {
 	if (!GetMutex(Mutex_Stores))
 		return LFMutexError;
@@ -186,7 +186,7 @@ LFCore_API unsigned int LFGetStoreSettings(_GUID guid, LFStoreDescriptor* s)
 LFCore_API unsigned int LFCreateStore(LFStoreDescriptor* s, bool MakeDefault, HWND hWndSource)
 {
 	// GUID generieren
-	CoCreateGuid(&s->GUID);
+	CoCreateGuid(&s->guid);
 
 	// Pfad ergänzen
 	AppendGUID(s, s->DatPath);

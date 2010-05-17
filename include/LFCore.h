@@ -237,7 +237,7 @@ LFCore_API bool LFPassesFilter(LFItemDescriptor* i, LFFilter* filter);
 
 // Gibt die Daten eines Stores zurück
 LFCore_API unsigned int LFGetStoreSettings(char* key, LFStoreDescriptor* s);
-LFCore_API unsigned int LFGetStoreSettings(_GUID guid, LFStoreDescriptor* s);
+LFCore_API unsigned int LFGetStoreSettings(GUID guid, LFStoreDescriptor* s);
 
 // Legt einen neuen Store an
 // - Eingabeparameter interner Store:

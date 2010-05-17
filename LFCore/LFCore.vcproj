@@ -438,6 +438,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ShellProperties.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\stdafx.cpp"
 				>
 				<FileConfiguration
@@ -557,6 +561,10 @@
 			</File>
 			<File
 				RelativePath=".\resource.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ShellProperties.h"
 				>
 			</File>
 			<File

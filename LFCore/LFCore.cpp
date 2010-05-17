@@ -8,6 +8,7 @@
 #include "IATA.h"
 #include "LFItemDescriptor.h"
 #include "License.h"
+#include "ShellProperties.h"
 #include <iostream>
 #include <winioctl.h>
 
@@ -15,6 +16,7 @@
 HMODULE LFCoreModuleHandle;
 LFMessageIDs LFMessages;
 extern unsigned char AttrTypes[];
+extern LFShellProperty AttrProperties[];
 
 
 // Der Inhalt dieses Segments wird über alle Instanzen von LFCore geteilt.
@@ -216,6 +218,9 @@ LFCore_API LFAttributeDescriptor* LFGetAttributeInfo(unsigned int ID)
 	default:
 		a->ReadOnly = (a->Category==LFAttrCategoryInternal);
 	}
+
+	// Shell property
+	a->ShPropertyMapping = AttrProperties[ID];
 
 	return a;
 }

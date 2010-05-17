@@ -266,6 +266,15 @@ struct LFVariantData
 #define LFAttrCategoryCount             9
 
 
+// Shell property
+
+struct LFShellProperty
+{
+	GUID Schema;
+	int ID;
+};
+
+
 // Attribute descriptor
 
 struct LFAttributeDescriptor
@@ -277,8 +286,8 @@ struct LFAttributeDescriptor
 	unsigned char Type;
 	unsigned char Category;
 	unsigned int RecommendedWidth;
-
 	unsigned int cCharacters;
+	LFShellProperty ShPropertyMapping;
 };
 
 
@@ -449,7 +458,7 @@ struct LFStoreDescriptor
 	wchar_t LastSeen[256];
 	wchar_t Comment[256];
 	int StoreMode;
-	_GUID GUID;
+	GUID guid;
 	bool AutoLocation;
 	FILETIME CreationTime;
 	FILETIME FileTime;
