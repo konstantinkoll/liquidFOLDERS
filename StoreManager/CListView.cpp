@@ -129,7 +129,7 @@ void CListView::SetViewOptions(UINT _ViewID, BOOL Force)
 	// Font
 	if (Force || (pViewParameters->GrannyMode!=m_ViewParameters.GrannyMode))
 	{
-		SetFont(&theApp.m_Fonts[FALSE][pViewParameters->GrannyMode]);
+		m_FileList.SetFont(&theApp.m_Fonts[FALSE][pViewParameters->GrannyMode]);
 
 		if (_ViewID==LFViewDetails)
 		{

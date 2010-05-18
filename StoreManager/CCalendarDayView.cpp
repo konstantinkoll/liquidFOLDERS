@@ -89,7 +89,7 @@ void CCalendarDayView::SetViewOptions(UINT /*_ViewID*/, BOOL Force)
 	// Font and icons
 	if (Force || (pViewParameters->GrannyMode!=m_ViewParameters.GrannyMode))
 	{
-		SetFont(&theApp.m_Fonts[FALSE][pViewParameters->GrannyMode]);
+		m_FileList.SetFont(&theApp.m_Fonts[FALSE][pViewParameters->GrannyMode]);
 
 		CHeaderCtrl * pHdrCtrl = m_FileList.GetHeaderCtrl();
 		if (pHdrCtrl)
