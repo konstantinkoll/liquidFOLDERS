@@ -38,6 +38,7 @@ protected:
 	afx_msg BOOL OnInitDialog();
 	afx_msg void OnAlwaysOnTop();
 	afx_msg void OnSmallWindow();
+	afx_msg void OnNewStoreManager();
 	afx_msg void OnAbout();
 	afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
 	afx_msg void OnPaint();

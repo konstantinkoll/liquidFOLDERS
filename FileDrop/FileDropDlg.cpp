@@ -93,7 +93,7 @@ BEGIN_MESSAGE_MAP(CFileDropDlg, CDialog)
 	ON_WM_TIMER()
 	ON_COMMAND(IDM_ALWAYSONTOP, OnAlwaysOnTop)
 	ON_COMMAND(IDM_SMALLWINDOW, OnSmallWindow)
-	ON_COMMAND(IDM_STOREMANAGER, theApp.OnAppNewStoreManager)
+	ON_COMMAND(IDM_STOREMANAGER, OnNewStoreManager)
 	ON_COMMAND(IDM_ABOUT, OnAbout)
 	ON_COMMAND(IDM_CHOOSEDEFAULTSTORE, OnChooseDefaultStore)
 END_MESSAGE_MAP()
@@ -254,6 +254,11 @@ void CFileDropDlg::OnAlwaysOnTop()
 void CFileDropDlg::OnSmallWindow()
 {
 	SetWindowSize(!SmallWindow);
+}
+
+void CFileDropDlg::OnNewStoreManager()
+{
+	theApp.OnAppNewStoreManager();
 }
 
 void CFileDropDlg::OnAbout()
@@ -520,7 +525,7 @@ void CFileDropDlg::OnNcRButtonDown(UINT /*nFlags*/, CPoint point)
 
 		// Launch StoreManager
 		ENSURE(tmpStr.LoadString(IDS_STOREMANAGER));
-		menu.AppendMenu(MF_STRING | (_access(theApp.path + "StoreManager.exe", 0)==0 ? 0 : MF_GRAYED), IDM_STOREMANAGER, tmpStr);
+		menu.AppendMenu(MF_STRING | (_access(theApp.path+"StoreManager.exe", 0)==0 ? 0 : MF_GRAYED), IDM_STOREMANAGER, tmpStr);
 
 		// About
 		ENSURE(tmpStr.LoadString(IDS_ABOUT));
