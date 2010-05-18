@@ -86,12 +86,12 @@ LRESULT OnMediaChanged(HWND /*hwnd*/, WPARAM wParam, LPARAM lParam)
 	case SHCNE_DRIVEADD:
 	case SHCNE_MEDIAINSERTED:
 		if (SHGetPathFromIDListA(shns->dwItem1, sPath))
-			LFMountDrive(sPath[0]);
+			LFErrorBox(LFMountDrive(sPath[0]));
 		break;
 	case SHCNE_MEDIAREMOVED:
 	case SHCNE_DRIVEREMOVED:
 		if (SHGetPathFromIDListA(shns->dwItem1, sPath))
-			LFUnmountDrive(sPath[0]);
+			LFErrorBox(LFUnmountDrive(sPath[0]));
 		break;
 	}
 

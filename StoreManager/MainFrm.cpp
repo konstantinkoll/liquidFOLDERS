@@ -1428,7 +1428,7 @@ void CMainFrame::OnUpdateNavCommands(CCmdUI* pCmdUI)
 		if (i!=-1)
 		{
 			b &= (CookedFiles->m_Files[i]->NextFilter!=NULL) ||
-				((CookedFiles->m_Files[i]->Type & (LFTypeNotMounted | LFTypeMask)) == LFTypeDrive);
+				((CookedFiles->m_Files[i]->Type & (LFTypeNotMounted | LFTypeMask))==LFTypeDrive);
 		}
 		else
 		{

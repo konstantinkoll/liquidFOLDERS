@@ -122,9 +122,9 @@ LFSearchResult* QueryStore(LFFilter* filter)
 
 	CIndex* idx1;
 	CIndex* idx2;
-	LFStoreDescriptor s;
+	LFStoreDescriptor* slot;
 	HANDLE StoreLock = NULL;
-	res->m_LastError = OpenStore(&filter->StoreID[0], false, idx1, idx2, &s, &StoreLock);
+	res->m_LastError = OpenStore(&filter->StoreID[0], false, idx1, idx2, &slot, &StoreLock);
 	if (res->m_LastError==LFOk)
 	{
 		if ((filter->Options.AddBacklink) && (filter->Mode==LFFilterModeDirectoryTree))
@@ -132,8 +132,8 @@ LFSearchResult* QueryStore(LFFilter* filter)
 			LFFilter* nf = LFAllocFilter();
 			nf->Mode = LFFilterModeStoreHome;
 			nf->Options = filter->Options;
-			strcpy_s(nf->StoreID, LFKeySize, s.StoreID);
-			wcscpy_s(nf->Name, 256, s.StoreName);
+			strcpy_s(nf->StoreID, LFKeySize, slot->StoreID);
+			wcscpy_s(nf->Name, 256, slot->StoreName);
 
 			res->AddBacklink(filter->StoreID, nf);
 		}

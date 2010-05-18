@@ -3,5 +3,5 @@
 
 void InitMutex();
 bool GetMutex(HANDLE m);
-HANDLE GetMutexForStore(LFStoreDescriptor* s);
+bool GetMutexForStore(LFStoreDescriptor* s, HANDLE* m);
 void ReleaseMutexForStore(HANDLE m);

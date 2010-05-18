@@ -81,7 +81,7 @@ bool FolderExists(char* path)
 
 unsigned int GetKeyFileFromStoreDescriptor(LFStoreDescriptor* s, char* f)
 {
-	if (s==NULL)
+	if (!s)
 		return LFIllegalStoreDescriptor;
 	if ((s->StoreMode!=LFStoreModeHybrid) && (s->StoreMode!=LFStoreModeExternal))
 		return LFIllegalStoreDescriptor;
@@ -198,7 +198,7 @@ bool LoadStoreSettingsFromFile(char* filename, LFStoreDescriptor* s)
 
 unsigned int SaveStoreSettingsToRegistry(LFStoreDescriptor* s)
 {
-	if (s==NULL)
+	if (!s)
 		return LFIllegalStoreDescriptor;
 	if ((s->StoreMode!=LFStoreModeInternal) && (s->StoreMode!=LFStoreModeHybrid))
 		return LFIllegalStoreDescriptor;
@@ -247,7 +247,7 @@ unsigned int SaveStoreSettingsToRegistry(LFStoreDescriptor* s)
 
 unsigned int SaveStoreSettingsToFile(LFStoreDescriptor* s)
 {
-	if (s==NULL)
+	if (!s)
 		return LFIllegalStoreDescriptor;
 	if ((s->StoreMode!=LFStoreModeHybrid) && (s->StoreMode!=LFStoreModeExternal))
 		return LFIllegalStoreDescriptor;
@@ -273,7 +273,7 @@ unsigned int SaveStoreSettingsToFile(LFStoreDescriptor* s)
 
 unsigned int DeleteStoreSettingsFromRegistry(LFStoreDescriptor* s)
 {
-	if (s==NULL)
+	if (!s)
 		return LFIllegalStoreDescriptor;
 	if ((s->StoreMode!=LFStoreModeInternal) && (s->StoreMode!=LFStoreModeHybrid))
 		return LFIllegalStoreDescriptor;
@@ -299,7 +299,7 @@ unsigned int DeleteStoreSettingsFromRegistry(LFStoreDescriptor* s)
 
 unsigned int DeleteStoreSettingsFromFile(LFStoreDescriptor* s)
 {
-	if (s==NULL)
+	if (!s)
 		return LFIllegalStoreDescriptor;
 	if ((s->StoreMode!=LFStoreModeHybrid) && (s->StoreMode!=LFStoreModeExternal))
 		return LFIllegalStoreDescriptor;
@@ -528,7 +528,7 @@ LFStoreDescriptor* FindStore(char* key, HANDLE* lock)
 		if (strcmp(StoreCache[a].StoreID, key)==0)
 		{
 			if (lock)
-				*lock = GetMutexForStore(&StoreCache[a]);
+				GetMutexForStore(&StoreCache[a], lock);
 			return &StoreCache[a];
 		}
 
@@ -541,7 +541,7 @@ LFStoreDescriptor* FindStore(GUID guid, HANDLE* lock)
 		if (StoreCache[a].guid==guid)
 		{
 			if (lock)
-				*lock = GetMutexForStore(&StoreCache[a]);
+				GetMutexForStore(&StoreCache[a], lock);
 			return &StoreCache[a];
 		}
 
@@ -557,7 +557,7 @@ unsigned int UpdateStore(LFStoreDescriptor* s, bool MakeDefault)
 
 	// Cache aktualisieren
 	LFStoreDescriptor* slot = FindStore(s->StoreID);
-	if (slot==NULL)
+	if (!slot)
 	{
 		if (StoreCount==MaxStores)
 			return LFTooManyStores;
@@ -588,27 +588,38 @@ unsigned int UpdateStore(LFStoreDescriptor* s, bool MakeDefault)
 
 unsigned int DeleteStore(LFStoreDescriptor* s)
 {
-	unsigned int res = LFOk;
-	if ((s->StoreMode==LFStoreModeInternal) || (s->StoreMode==LFStoreModeHybrid))
-		res = DeleteStoreSettingsFromRegistry(s);
-	if ((s->StoreMode==LFStoreModeHybrid) || (s->StoreMode==LFStoreModeExternal))
-		if ((res==LFOk) && (IsStoreMounted(s)))
-			res = DeleteStoreSettingsFromFile(s);
-
-	if (res!=LFOk)
-		return res;
-
-	// Ggf. ersten Store als neuen Default Store
-	if (strcmp(s->StoreID, DefaultStore)==0)
-		ChooseNewDefaultStore();
+	LFStoreDescriptor victim = *s;
 
 	// Aus dem Cache entfernen
 	for (unsigned int a=0; a<StoreCount; a++)
 		if (strcmp(StoreCache[a].StoreID, s->StoreID)==0)
 		{
-			StoreCache[a] = StoreCache[--StoreCount];
+			if (a<StoreCount-1)
+			{
+				HANDLE MoveLock;
+				if (!GetMutexForStore(&StoreCache[StoreCount-1], &MoveLock))
+					return LFMutexError;
+				StoreCache[a] = StoreCache[--StoreCount];
+				ReleaseMutexForStore(MoveLock);
+			}
+			else
+			{
+				StoreCount--;
+			}
 			break;
 		}
+
+	// Einstellungen
+	unsigned int res = LFOk;
+	if ((victim.StoreMode==LFStoreModeInternal) || (victim.StoreMode==LFStoreModeHybrid))
+		res = DeleteStoreSettingsFromRegistry(&victim);
+	if ((victim.StoreMode==LFStoreModeHybrid) || (victim.StoreMode==LFStoreModeExternal))
+		if ((res==LFOk) && (IsStoreMounted(&victim)))
+			res = DeleteStoreSettingsFromFile(&victim);
+
+	// Ggf. ersten Store als neuen Default Store
+	if ((res==LFOk) && (strcmp(s->StoreID, DefaultStore)==0))
+		ChooseNewDefaultStore();
 
 	return res;
 }
@@ -655,11 +666,12 @@ LFCore_API unsigned int LFGetStoreCount()
 }
 
 
-LFCore_API void LFMountDrive(char d)
+LFCore_API unsigned int LFMountDrive(char d)
 {
 	char mask[] = " :\\*.store";
 	mask[0] = d;
 	bool changeOccured = false;
+	unsigned int res = LFOk;
 
 	WIN32_FIND_DATAA ffd;
 	HANDLE hFind = FindFirstFileA(mask, &ffd);
@@ -667,9 +679,6 @@ LFCore_API void LFMountDrive(char d)
 	if (hFind!=INVALID_HANDLE_VALUE)
 		do
 		{
-			if (!GetMutex(Mutex_Stores))
-				continue;
-
 			// Vollständigen Dateinamen zusammensetzen
 			char f[MAX_PATH] = " :\\";
 			f[0] = d;
@@ -678,6 +687,13 @@ LFCore_API void LFMountDrive(char d)
 			LFStoreDescriptor* s = LFAllocStoreDescriptor();
 			if (LoadStoreSettingsFromFile(f, s)==true)
 			{
+				if (!GetMutex(Mutex_Stores))
+				{
+					LFFreeStoreDescriptor(s);
+					res = LFMutexError;
+					continue;
+				}
+
 				// Lokal gültigen Schlüssel eintragen
 				CreateStoreKey(s->StoreID);
 
@@ -693,6 +709,10 @@ LFCore_API void LFMountDrive(char d)
 					{
 						StoreCache[StoreCount] = *s;
 						slot = &StoreCache[StoreCount++];		// Slot zeigt auf Eintrag
+					}
+					else
+					{
+						res = LFTooManyStores;
 					}
 				}
 				else
@@ -726,28 +746,35 @@ LFCore_API void LFMountDrive(char d)
 				}
 			}
 
-			LFFreeStoreDescriptor(s);
 			ReleaseMutex(Mutex_Stores);
+			LFFreeStoreDescriptor(s);
 		} while (FindNextFileA(hFind, &ffd));
 
 	FindClose(hFind);
 
 	SendNotifyMessage(HWND_BROADCAST, changeOccured ? LFMessages.StoresChanged : LFMessages.DrivesChanged, changeOccured ? LFMSGF_ExtHybStores : 0, NULL);
+	return res;
 }
 
-LFCore_API void LFUnmountDrive(char d)
+LFCore_API unsigned int LFUnmountDrive(char d)
 {
 	if (!GetMutex(Mutex_Stores))
-		return;
+		return LFMutexError;
 
 	bool changeOccured = false;
 	DriveTypes[d-'A'] = DRIVE_UNKNOWN;
+	unsigned int res = LFOk;
 
 	for (unsigned int a=0; a<StoreCount; a++)
 		if (IsStoreMounted(&StoreCache[a]))
 			if ((StoreCache[a].DatPath[0]==d) && (StoreCache[a].StoreMode!=LFStoreModeInternal))
 			{
-				HANDLE StoreLock = GetMutexForStore(&StoreCache[a]);
+				HANDLE StoreLock;
+				if (!GetMutexForStore(&StoreCache[a], &StoreLock))
+				{
+					res = LFMutexError;
+					continue;
+				}
 
 				switch (StoreCache[a].StoreMode)
 				{
@@ -758,7 +785,23 @@ LFCore_API void LFUnmountDrive(char d)
 					changeOccured = true;
 					break;
 				case LFStoreModeExternal:
-					StoreCache[a--] = StoreCache[--StoreCount];
+					if (a<StoreCount-1)
+					{
+						HANDLE MoveLock;
+						if (!GetMutexForStore(&StoreCache[StoreCount-1], &MoveLock))
+						{
+							ReleaseMutexForStore(StoreLock);
+							res = LFMutexError;
+							continue;
+						}
+
+						StoreCache[a--] = StoreCache[--StoreCount];
+						ReleaseMutexForStore(MoveLock);
+					}
+					else
+					{
+						StoreCount--;
+					}
 					changeOccured = true;
 					break;
 				}
@@ -768,4 +811,5 @@ LFCore_API void LFUnmountDrive(char d)
 
 	ReleaseMutex(Mutex_Stores);
 	SendNotifyMessage(HWND_BROADCAST, changeOccured ? LFMessages.StoresChanged : LFMessages.DrivesChanged, changeOccured ? LFMSGF_ExtHybStores : 0, NULL);
+	return res;
 }

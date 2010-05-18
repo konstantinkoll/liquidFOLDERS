@@ -290,10 +290,10 @@ LFCore_API char* LFGetDefaultStore();
 LFCore_API unsigned int LFGetStoreCount();
 
 // Mountet alle Hybrid-Stores und externen Stores auf Laufwerk d
-LFCore_API void LFMountDrive(char d);
+LFCore_API unsigned int LFMountDrive(char d);
 
 // Unmountet alle Hybrid-Stores und externen Stores auf Laufwerk d
-LFCore_API void LFUnmountDrive(char d);
+LFCore_API unsigned int LFUnmountDrive(char d);
 
 
 

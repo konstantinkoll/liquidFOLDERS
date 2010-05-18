@@ -5,18 +5,9 @@
 HANDLE Mutex_Stores;
 
 
-HANDLE CreateMutex(LPCSTR lpName)
-{
-	HANDLE m = CreateMutexA(NULL, FALSE, lpName);
-	if (!m)
-		m = OpenMutexA(NULL, FALSE, lpName);
-
-	return m;
-}
-
 void InitMutex()
 {
-	Mutex_Stores = CreateMutex(LFCM_Stores);
+	Mutex_Stores = CreateMutexA(NULL, FALSE, LFCM_Stores);
 }
 
 bool GetMutex(HANDLE m)
@@ -27,13 +18,22 @@ bool GetMutex(HANDLE m)
 	return ((dwWaitResult==WAIT_OBJECT_0) || (dwWaitResult==WAIT_ABANDONED));
 }
 
-HANDLE GetMutexForStore(LFStoreDescriptor* s)
+bool GetMutexForStore(LFStoreDescriptor* s, HANDLE* m)
 {
 	char ID[MAX_PATH];
 	strcpy_s(ID, MAX_PATH, LFCM_Store);
 	strcat_s(ID, MAX_PATH, s->StoreID);
 
-	return CreateMutexA(NULL, TRUE, ID);
+	*m = CreateMutexA(NULL, FALSE, ID);
+
+	bool res = GetMutex(*m);
+	if (!res)
+	{
+		CloseHandle(*m);
+		*m = NULL;
+	}
+
+	return res;
 }
 
 void ReleaseMutexForStore(HANDLE m)
