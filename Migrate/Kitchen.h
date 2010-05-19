@@ -3,8 +3,8 @@
 
 int compare(const LFSearchResult* res, UINT eins, UINT zwei)
 {
-	LFItemDescriptor* d1 = res->m_Files[eins];
-	LFItemDescriptor* d2 = res->m_Files[zwei];
+	LFItemDescriptor* d1 = res->m_Items[eins];
+	LFItemDescriptor* d2 = res->m_Items[zwei];
 
 	int cmp = _wcsicmp((wchar_t*)d1->AttributeValues[LFAttrFileName], (wchar_t*)d2->AttributeValues[LFAttrFileName]);
 	if (cmp==0)
@@ -28,7 +28,7 @@ void Heap(const LFSearchResult* res, int wurzel, int anz)
 				idx++;
 		if (compare(res, wurzel, idx)<0)
 		{
-			std::swap(res->m_Files[wurzel], res->m_Files[idx]);
+			std::swap(res->m_Items[wurzel], res->m_Items[idx]);
 			wurzel = idx;
 		}
 		else
@@ -40,13 +40,13 @@ void Heap(const LFSearchResult* res, int wurzel, int anz)
 
 void SortSearchResult(LFSearchResult* res)
 {
-	if (res->m_Count>1)
+	if (res->m_ItemCount>1)
 	{
-		for (int a=res->m_Count/2-1; a>=0; a--)
-			Heap(res, a, res->m_Count);
-		for (int a=res->m_Count-1; a>0; )
+		for (int a=res->m_ItemCount/2-1; a>=0; a--)
+			Heap(res, a, res->m_ItemCount);
+		for (int a=res->m_ItemCount-1; a>0; )
 		{
-			std::swap(res->m_Files[0], res->m_Files[a]);
+			std::swap(res->m_Items[0], res->m_Items[a]);
 			Heap(res, 0, a--);
 		}
 	}

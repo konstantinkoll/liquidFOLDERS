@@ -54,7 +54,7 @@ void CStoreWnd::UpdateStores(BOOL FocusDefaultStore)
 	if (result)
 	{
 		if ((idx!=-1) && (!FocusDefaultStore))
-			strcpy_s(StoreID, LFKeySize, result->m_Files[idx]->CoreAttributes.StoreID);
+			strcpy_s(StoreID, LFKeySize, result->m_Items[idx]->CoreAttributes.StoreID);
 
 		LFFreeSearchResult(result);
 		result = NULL;
@@ -68,11 +68,11 @@ void CStoreWnd::UpdateStores(BOOL FocusDefaultStore)
 	m_wndList.DeleteAllItems();
 
 	idx = -1;
-	for (UINT a=0; a<result->m_Count; a++)
+	for (UINT a=0; a<result->m_ItemCount; a++)
 	{
-		AddStoreItem(result->m_Files[a]);
+		AddStoreItem(result->m_Items[a]);
 
-		if (((idx==-1) && (result->m_Files[a]->Type & LFTypeDefaultStore)) || (strcmp(StoreID, result->m_Files[a]->CoreAttributes.StoreID)==0))
+		if (((idx==-1) && (result->m_Items[a]->Type & LFTypeDefaultStore)) || (strcmp(StoreID, result->m_Items[a]->CoreAttributes.StoreID)==0))
 			idx = a;
 	}
 
@@ -211,7 +211,7 @@ void CStoreWnd::OnEndLabelEdit(NMHDR* pNMHDR, LRESULT* pResult)
 
 	if (name!="")
 		if (result)
-			LFErrorBox(LFSetStoreAttributes(result->m_Files[pDispInfo->item.iItem]->CoreAttributes.StoreID, name.GetBuffer(), NULL));
+			LFErrorBox(LFSetStoreAttributes(result->m_Items[pDispInfo->item.iItem]->CoreAttributes.StoreID, name.GetBuffer(), NULL));
 
 	*pResult = FALSE;
 }
@@ -233,7 +233,7 @@ void CStoreWnd::OnStoreDelete()
 
 	if (i!=-1)
 	{
-		LFItemDescriptor* store = LFAllocItemDescriptor(result->m_Files[i]);
+		LFItemDescriptor* store = LFAllocItemDescriptor(result->m_Items[i]);
 		LFErrorBox(theApp.DeleteStore(store));
 		LFFreeItemDescriptor(store);
 	}
@@ -255,7 +255,7 @@ void CStoreWnd::OnStoreMakeDefault()
 	int i = GetSelectedItem();
 
 	if (i!=-1)
-		LFErrorBox(LFMakeDefaultStore(result->m_Files[i]->CoreAttributes.StoreID));
+		LFErrorBox(LFMakeDefaultStore(result->m_Items[i]->CoreAttributes.StoreID));
 }
 
 void CStoreWnd::OnStoreMakeHybrid()
@@ -263,7 +263,7 @@ void CStoreWnd::OnStoreMakeHybrid()
 	int i = GetSelectedItem();
 
 	if (i!=-1)
-		LFErrorBox(LFMakeHybridStore(result->m_Files[i]->CoreAttributes.StoreID));
+		LFErrorBox(LFMakeHybridStore(result->m_Items[i]->CoreAttributes.StoreID));
 }
 
 void CStoreWnd::OnStoreProperties()
@@ -272,7 +272,7 @@ void CStoreWnd::OnStoreProperties()
 
 	if (i!=-1)
 	{
-		LFStorePropertiesDlg dlg(this, result->m_Files[i]->CoreAttributes.StoreID);
+		LFStorePropertiesDlg dlg(this, result->m_Items[i]->CoreAttributes.StoreID);
 		dlg.DoModal();
 	}
 }
@@ -304,12 +304,12 @@ void CStoreWnd::OnUpdateCommands(CCmdUI* pCmdUI)
 		break;
 	case ID_STORE_MAKEDEFAULT:
 		if ((i!=-1) && (result))
-			b = (result->m_Files[i]->CategoryID==LFCategoryInternalStores) &&
-				((result->m_Files[i]->Type & LFTypeDefaultStore)==0);
+			b = (result->m_Items[i]->CategoryID==LFCategoryInternalStores) &&
+				((result->m_Items[i]->Type & LFTypeDefaultStore)==0);
 		break;
 	case ID_STORE_MAKEHYBRID:
 		if ((i!=-1) && (result))
-			b = (result->m_Files[i]->CategoryID==LFCategoryExternalStores);
+			b = (result->m_Items[i]->CategoryID==LFCategoryExternalStores);
 	}
 
 	pCmdUI->Enable(b);

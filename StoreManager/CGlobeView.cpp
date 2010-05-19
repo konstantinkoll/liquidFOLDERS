@@ -141,13 +141,13 @@ void CGlobeView::SetSearchResult(LFSearchResult* _result)
 	}
 
 	if (_result)
-		if (_result->m_Count)
+		if (_result->m_ItemCount)
 		{
-			m_Locations = new Location[_result->m_Count];
+			m_Locations = new Location[_result->m_ItemCount];
 
-			for (UINT a=0; a<_result->m_Count; a++)
+			for (UINT a=0; a<_result->m_ItemCount; a++)
 			{
-				LFGeoCoordinates* c = (LFGeoCoordinates*)_result->m_Files[a]->AttributeValues[LFAttrLocationGPS];
+				LFGeoCoordinates* c = (LFGeoCoordinates*)_result->m_Items[a]->AttributeValues[LFAttrLocationGPS];
 				if (c)
 				{
 					CalculateWorldCoords(c->Latitude, c->Longitude, m_Locations[a].world);
@@ -194,7 +194,7 @@ int CGlobeView::GetNextSelectedItem(int n)
 		if (n<-1)
 			n = -1;
 
-		for (UINT a=(UINT)(n+1); a<result->m_Count; a++)
+		for (UINT a=(UINT)(n+1); a<result->m_ItemCount; a++)
 			if (m_Locations[a].selected)
 				return a;
 	}
@@ -214,7 +214,7 @@ int CGlobeView::ItemAtPosition(CPoint point)
 
 	int res = -1;
 	float alpha = 0.0f;
-	for (UINT a=0; a<result->m_Count; a++)
+	for (UINT a=0; a<result->m_ItemCount; a++)
 	{
 		if (m_Locations[a].valid)
 			if ((m_Locations[a].alpha>0.1f) && ((m_Locations[a].alpha>alpha-0.05f) || (m_Locations[a].alpha>0.75f)))
@@ -424,19 +424,19 @@ void CGlobeView::OnGoogleEarth()
 			int i = GetNextSelectedItem(-1);
 			while (i>-1)
 			{
-				LFGeoCoordinates c = result->m_Files[i]->CoreAttributes.LocationGPS;
+				LFGeoCoordinates c = result->m_Items[i]->CoreAttributes.LocationGPS;
 				if ((c.Latitude!=0) || (c.Longitude!=0))
 				{
 					f.WriteString(_T("<Placemark>\n<name>"));
-					f.WriteString(CookAttributeString(result->m_Files[i]->CoreAttributes.FileName));
+					f.WriteString(CookAttributeString(result->m_Items[i]->CoreAttributes.FileName));
 					f.WriteString(_T("</name>\n<description>"));
-					WriteGoogleAttribute(&f, result->m_Files[i], LFAttrLocationName);
-					WriteGoogleAttribute(&f, result->m_Files[i], LFAttrLocationIATA);
-					WriteGoogleAttribute(&f, result->m_Files[i], LFAttrLocationGPS);
-					WriteGoogleAttribute(&f, result->m_Files[i], LFAttrArtist);
-					WriteGoogleAttribute(&f, result->m_Files[i], LFAttrRoll);
-					WriteGoogleAttribute(&f, result->m_Files[i], LFAttrRecordingTime);
-					WriteGoogleAttribute(&f, result->m_Files[i], LFAttrComment);
+					WriteGoogleAttribute(&f, result->m_Items[i], LFAttrLocationName);
+					WriteGoogleAttribute(&f, result->m_Items[i], LFAttrLocationIATA);
+					WriteGoogleAttribute(&f, result->m_Items[i], LFAttrLocationGPS);
+					WriteGoogleAttribute(&f, result->m_Items[i], LFAttrArtist);
+					WriteGoogleAttribute(&f, result->m_Items[i], LFAttrRoll);
+					WriteGoogleAttribute(&f, result->m_Items[i], LFAttrRecordingTime);
+					WriteGoogleAttribute(&f, result->m_Items[i], LFAttrComment);
 					f.WriteString(_T("&lt;div&gt;</description>\n"));
 
 					f.WriteString(_T("<styleUrl>#C</styleUrl>\n"));
@@ -1078,7 +1078,7 @@ void CGlobeView::CalcAndDrawPoints()
 	GLdouble modelview[16];
 	glGetDoublev(GL_MODELVIEW_MATRIX, modelview);
 
-	for (UINT a=0; a<result->m_Count; a++)
+	for (UINT a=0; a<result->m_ItemCount; a++)
 		if (m_Locations[a].valid)
 		{
 			m_Locations[a].alpha = 0.0f;
@@ -1137,16 +1137,16 @@ void CGlobeView::CalcAndDrawLabel()
 
 	glEnable2D();
 
-	for (UINT a=0; a<result->m_Count; a++)
+	for (UINT a=0; a<result->m_ItemCount; a++)
 		if (m_Locations[a].valid)
 			if (m_Locations[a].alpha>0.0f)
 			{
 				// Beschriftung
-				wchar_t* caption = result->m_Files[a]->CoreAttributes.FileName;
+				wchar_t* caption = result->m_Items[a]->CoreAttributes.FileName;
 				UINT cCaption = (UINT)wcslen(caption);
 				wchar_t* subcaption = NULL;
-				wchar_t* coordinates = (m_ViewParameters.GlobeShowGPS ? result->m_Files[a]->AttributeStrings[LFAttrLocationGPS] : NULL);
-				wchar_t* hint = (m_ViewParameters.GlobeShowHints ? result->m_Files[a]->AttributeStrings[LFAttrHint] : NULL);
+				wchar_t* coordinates = (m_ViewParameters.GlobeShowGPS ? result->m_Items[a]->AttributeStrings[LFAttrLocationGPS] : NULL);
+				wchar_t* hint = (m_ViewParameters.GlobeShowHints ? result->m_Items[a]->AttributeStrings[LFAttrHint] : NULL);
 
 				// Beschriftung aufbereiten
 				switch (m_ViewParameters.SortBy)
@@ -1162,7 +1162,7 @@ void CGlobeView::CalcAndDrawLabel()
 				case LFAttrLocationGPS:
 					if ((!wcslen(caption)) || (m_ViewParameters.GlobeShowGPS))
 					{
-						caption = result->m_Files[a]->AttributeStrings[LFAttrLocationGPS];
+						caption = result->m_Items[a]->AttributeStrings[LFAttrLocationGPS];
 						cCaption = (UINT)wcslen(caption);
 						coordinates = NULL;
 					}

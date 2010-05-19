@@ -555,6 +555,28 @@ LFCore_API unsigned int LFStoreMaintenance(char* key)
 	return res;
 }
 
+LFCore_API unsigned int LFStoreMaintenance()
+{
+/*	if (!GetMutex(Mutex_Stores))
+		return LFMutexError;
+
+	HANDLE StoreLock = NULL;
+	LFStoreDescriptor* slot = FindStore(key, &StoreLock);
+	ReleaseMutex(Mutex_Stores);
+
+	if (!slot)
+		return LFIllegalKey;
+	if (!StoreLock)
+		return LFMutexError;
+
+	unsigned int res = RunMaintenance(slot, true);
+	ReleaseMutexForStore(StoreLock);
+
+	return res;*/
+
+	return LFOk;
+}
+
 unsigned int OpenStore(LFStoreDescriptor* s, bool WriteAccess, CIndex* &Index1, CIndex* &Index2)
 {
 	Index1 = Index2 = NULL;

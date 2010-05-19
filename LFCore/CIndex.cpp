@@ -279,19 +279,12 @@ void CIndex::RetrieveStats(unsigned int* cnt, __int64* size)
 		else
 		{
 			Count(LFDomainAllFiles);
-
+			if ((PtrM->DomainID>=LFDomainAudio) && (PtrM->DomainID<=LFDomainVideos))
+				Count(LFDomainAllMediaFiles);
 			if (PtrM->Rating)
 				Count(LFDomainFavorites);
-			if ((PtrM->DomainID>LFDomainAllMultimediaFiles) && (PtrM->DomainID<LFDomainCount))
-			{
-				Count(PtrM->DomainID);
-				if ((PtrM->DomainID>=LFDomainAudio) && (PtrM->DomainID<=LFDomainVideos))
-					Count(LFDomainAllMultimediaFiles);
-			}
-			else
-			{
-				Count(LFDomainUnknown);
-			}
+
+			Count(((PtrM->DomainID>=LFFirstPhysicalDomain) && (PtrM->DomainID<LFDomainCount)) ? PtrM->DomainID : LFDomainUnknown);
 		}
 	}
 }

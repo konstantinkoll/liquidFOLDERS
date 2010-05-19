@@ -25,12 +25,14 @@ public:
 	void RemoveItemDescriptor(unsigned int idx);
 	void RemoveFlaggedItemDescriptors();
 
-	LFItemDescriptor** m_Files;
+	LFItemDescriptor** m_Items;
 	bool m_HasCategories;
 	bool m_HidingItems;
 	DWORD m_QueryTime;
 	unsigned int m_LastError;
-	unsigned int m_Count;
+	unsigned int m_ItemCount;
+	unsigned int m_FileCount;
+	__int64 m_FileSize;
 	int m_Context;
 	int m_ContextView;
 	unsigned int m_RecommendedView;

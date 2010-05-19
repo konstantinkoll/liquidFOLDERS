@@ -21,8 +21,10 @@ LFSearchResult::LFSearchResult(int ctx)
 	m_HidingItems = false;
 	m_HasCategories = false;
 	m_QueryTime = 0;
-	m_Files = NULL;
-	m_Count = 0;
+	m_Items = NULL;
+	m_ItemCount = 0;
+	m_FileCount = 0;
+	m_FileSize = 0;
 	m_Allocated = 0;
 }
 
@@ -36,39 +38,41 @@ LFSearchResult::LFSearchResult(int ctx, LFSearchResult* res)
 	m_HidingItems = res->m_HidingItems;
 	m_HasCategories = res->m_HasCategories;
 	m_QueryTime = res->m_QueryTime;
-	m_Files = static_cast<LFItemDescriptor**>(_aligned_malloc(res->m_Count*sizeof(LFItemDescriptor*), LFSR_MemoryAlignment));
-	m_Allocated = res->m_Count;
-	if (m_Files)
+	m_Items = static_cast<LFItemDescriptor**>(_aligned_malloc(res->m_ItemCount*sizeof(LFItemDescriptor*), LFSR_MemoryAlignment));
+	m_FileCount = res->m_FileCount;
+	m_FileSize = res->m_FileSize;
+	m_Allocated = res->m_ItemCount;
+	if (m_Items)
 	{
-		memcpy(m_Files, res->m_Files, res->m_Count*sizeof(LFItemDescriptor*));
-		m_Count = res->m_Count;
-		for (unsigned int a=0; a<res->m_Count; a++)
-			m_Files[a]->RefCount++;
+		memcpy(m_Items, res->m_Items, res->m_ItemCount*sizeof(LFItemDescriptor*));
+		m_ItemCount = res->m_ItemCount;
+		for (unsigned int a=0; a<res->m_ItemCount; a++)
+			m_Items[a]->RefCount++;
 	}
 	else
 	{
 		m_LastError = LFMemoryError;
-		m_Count = 0;
+		m_ItemCount = 0;
 		m_Allocated =0;
 	}
 }
 
 LFSearchResult::~LFSearchResult()
 {
-	if (m_Files)
+	if (m_Items)
 	{
-		for (unsigned int a=0; a<m_Count; a++)
-			LFFreeItemDescriptor(m_Files[a]);
-		_aligned_free(m_Files);
+		for (unsigned int a=0; a<m_ItemCount; a++)
+			LFFreeItemDescriptor(m_Items[a]);
+		_aligned_free(m_Items);
 	}
 }
 
 bool LFSearchResult::AddItemDescriptor(LFItemDescriptor* i)
 {
-	if (!m_Files)
+	if (!m_Items)
 	{
-		m_Files = static_cast<LFItemDescriptor**>(_aligned_malloc(LFSR_FirstAlloc*sizeof(LFItemDescriptor*), LFSR_MemoryAlignment));
-		if (!m_Files)
+		m_Items = static_cast<LFItemDescriptor**>(_aligned_malloc(LFSR_FirstAlloc*sizeof(LFItemDescriptor*), LFSR_MemoryAlignment));
+		if (!m_Items)
 		{
 			m_LastError = LFMemoryError;
 			return false;
@@ -76,10 +80,10 @@ bool LFSearchResult::AddItemDescriptor(LFItemDescriptor* i)
 		m_Allocated = LFSR_FirstAlloc;
 	}
 	
-	if (m_Count==m_Allocated)
+	if (m_ItemCount==m_Allocated)
 	{
-		m_Files = static_cast<LFItemDescriptor**>(_aligned_realloc(m_Files, (m_Allocated+LFSR_SubsequentAlloc)*sizeof(LFItemDescriptor*), LFSR_MemoryAlignment));
-		if (!m_Files)
+		m_Items = static_cast<LFItemDescriptor**>(_aligned_realloc(m_Items, (m_Allocated+LFSR_SubsequentAlloc)*sizeof(LFItemDescriptor*), LFSR_MemoryAlignment));
+		if (!m_Items)
 		{
 			m_LastError = LFMemoryError;
 			return false;
@@ -88,8 +92,8 @@ bool LFSearchResult::AddItemDescriptor(LFItemDescriptor* i)
 	}
 
 	if (m_RawCopy)
-		i->Position = m_Count;
-	m_Files[m_Count++] = i;
+		i->Position = m_ItemCount;
+	m_Items[m_ItemCount++] = i;
 
 	return true;
 }
@@ -212,15 +216,15 @@ void LFSearchResult::AddBacklink(char* StoreID, LFFilter* f)
 
 void LFSearchResult::RemoveItemDescriptor(unsigned int idx)
 {
-	assert(idx<m_Count);
+	assert(idx<m_ItemCount);
 
-	LFFreeItemDescriptor(m_Files[idx]);
+	LFFreeItemDescriptor(m_Items[idx]);
 
-	if (idx<--m_Count)
+	if (idx<--m_ItemCount)
 	{
-		m_Files[idx] = m_Files[m_Count];
+		m_Items[idx] = m_Items[m_ItemCount];
 		if (m_RawCopy)
-			m_Files[idx]->Position = idx;
+			m_Items[idx]->Position = idx;
 	}
 }
 
@@ -228,9 +232,9 @@ void LFSearchResult::RemoveFlaggedItemDescriptors()
 {
 	unsigned int idx = 0;
 	
-	while (idx<m_Count)
+	while (idx<m_ItemCount)
 	{
-		if (m_Files[idx]->DeleteFlag)
+		if (m_Items[idx]->DeleteFlag)
 		{
 			RemoveItemDescriptor(idx);
 		}

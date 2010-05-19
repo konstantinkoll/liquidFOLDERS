@@ -62,13 +62,13 @@ void CCalendarDayView::SetSearchResult(LFSearchResult* _result)
 		lvi.cColumns = 3;
 		lvi.puColumns = puColumns;
 
-		for (UINT a=0; a<_result->m_Count; a++)
+		for (UINT a=0; a<_result->m_ItemCount; a++)
 		{
 			lvi.iItem = a;
-			lvi.pszText = (LPWSTR)_result->m_Files[a]->AttributeStrings[LFAttrFileName];
-			lvi.iImage = _result->m_Files[a]->IconID-1;
-			//lvi.iGroupId = _result->m_Files[a]->CategoryID;
-			lvi.state = (_result->m_Files[a]->Type & LFTypeGhosted) ? LVIS_CUT : 0;
+			lvi.pszText = (LPWSTR)_result->m_Items[a]->AttributeStrings[LFAttrFileName];
+			lvi.iImage = _result->m_Items[a]->IconID-1;
+			//lvi.iGroupId = _result->m_Items[a]->CategoryID;
+			lvi.state = (_result->m_Items[a]->Type & LFTypeGhosted) ? LVIS_CUT : 0;
 			lvi.stateMask = LVIS_CUT;
 			m_FileList.InsertItem(&lvi);
 		}

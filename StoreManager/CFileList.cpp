@@ -196,9 +196,9 @@ void CFileList::OnGetDispInfo(NMHDR* pNMHDR, LRESULT* /*pResult*/)
 	{
 		UINT attr = ColumnMapping[pItem->iSubItem];
 		if ((pItem->mask & LVIF_TEXT) && (theApp.m_Attributes[attr]->Type!=LFTypeRating))
-			pItem->pszText = (LPWSTR)View->result->m_Files[idx]->AttributeStrings[attr];
+			pItem->pszText = (LPWSTR)View->result->m_Items[idx]->AttributeStrings[attr];
 		if (pItem->mask & LVIF_IMAGE)
-			pItem->iImage = View->result->m_Files[idx]->IconID-1;
+			pItem->iImage = View->result->m_Items[idx]->IconID-1;
 	}
 }
 
@@ -248,7 +248,7 @@ void CFileList::OnCustomDraw(NMHDR* pNMHDR, LRESULT* pResult)
 			}
 
 			HDC hdcMem = CreateCompatibleDC(lplvcd->nmcd.hdc);
-			UCHAR level = *(UCHAR*)View->result->m_Files[lplvcd->nmcd.dwItemSpec]->AttributeValues[attr];
+			UCHAR level = *(UCHAR*)View->result->m_Items[lplvcd->nmcd.dwItemSpec]->AttributeValues[attr];
 			HBITMAP hbmOld = (HBITMAP)SelectObject(hdcMem, attr==LFAttrRating ? theApp.m_RatingBitmaps[level] : theApp.m_PriorityBitmaps[level]);
 
 			int w = min(rect.Width(), RatingBitmapWidth);
@@ -391,7 +391,7 @@ void CFileList::OnBeginLabelEdit(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	LV_DISPINFO* pDispInfo = (LV_DISPINFO*)pNMHDR;
 
-	if (View->result->m_Files[pDispInfo->item.iItem]->Type & (LFTypeVirtual | LFTypeDrive))
+	if (View->result->m_Items[pDispInfo->item.iItem]->Type & (LFTypeVirtual | LFTypeDrive))
 	{
 		*pResult = TRUE;
 		return;

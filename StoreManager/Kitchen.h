@@ -7,8 +7,8 @@ int compare(const LFSearchResult* res, const LFViewParameters* vp, UINT eins, UI
 	ASSERT(theApp.m_Attributes[LFAttrStoreID]->Type==LFTypeAnsiString);
 	ASSERT(theApp.m_Attributes[LFAttrFileID]->Type==LFTypeAnsiString);
 
-	LFItemDescriptor* d1 = res->m_Files[eins];
-	LFItemDescriptor* d2 = res->m_Files[zwei];
+	LFItemDescriptor* d1 = res->m_Items[eins];
+	LFItemDescriptor* d2 = res->m_Items[zwei];
 
 	// Dateien mit Symbol IDI_FLD_Back immer nach vorne
 	if ((d1->IconID==IDI_FLD_Back) && (d2->IconID!=IDI_FLD_Back))
@@ -237,7 +237,7 @@ void Heap(const LFSearchResult* res, const LFViewParameters* vp, int wurzel, int
 				idx++;
 		if (compare(res, vp, wurzel, idx)<0)
 		{
-			std::swap(res->m_Files[wurzel], res->m_Files[idx]);
+			std::swap(res->m_Items[wurzel], res->m_Items[idx]);
 			wurzel = idx;
 		}
 		else
@@ -249,13 +249,13 @@ void Heap(const LFSearchResult* res, const LFViewParameters* vp, int wurzel, int
 
 void SortSearchResult(LFSearchResult* res, LFViewParameters* vp)
 {
-	if ((res->m_Count>1) && (theApp.m_Attributes[vp->SortBy]->Sortable))
+	if ((res->m_ItemCount>1) && (theApp.m_Attributes[vp->SortBy]->Sortable))
 	{
-		for (int a=res->m_Count/2-1; a>=0; a--)
-			Heap(res, vp, a, res->m_Count);
-		for (int a=res->m_Count-1; a>0; )
+		for (int a=res->m_ItemCount/2-1; a>=0; a--)
+			Heap(res, vp, a, res->m_ItemCount);
+		for (int a=res->m_ItemCount-1; a>0; )
 		{
-			std::swap(res->m_Files[0], res->m_Files[a]);
+			std::swap(res->m_Items[0], res->m_Items[a]);
 			Heap(res, vp, 0, a--);
 		}
 	}

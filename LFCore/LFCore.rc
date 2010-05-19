@@ -122,13 +122,16 @@ LANGUAGE LANG_ENGLISH, SUBLANG_NEUTRAL
 
 STRINGTABLE 
 BEGIN
-    IDS_LFCategoryInternalStores "Internal stores\nThese stores reside on an internal drive, and are always available."
-    IDS_LFCategoryHybridStores "Hybrid stores\nThese stores can be searched, even when the removable drive is not connected."
-    IDS_LFCategoryExternalStores "External stores\nThese stores reside entirely on removable drives."
+    IDS_LFCategoryInternalStores 
+                            "Internal stores\nThese stores reside on an internal drive, and are always available."
+    IDS_LFCategoryHybridStores 
+                            "Hybrid stores\nThese stores can be searched, even when the removable drive is not connected."
+    IDS_LFCategoryExternalStores 
+                            "External stores\nThese stores reside entirely on removable drives."
     IDS_LFCategoryDrives    "Removable drives\nChoose one of these to create a new external or hybrid store."
     IDS_LFCategoryStore     "This store"
-    IDS_LFCategoryMultimediaTypes "Multimedia"
-    IDS_LFCategoryDocuments  "Documents"
+    IDS_LFCategoryMediaTypes "Media"
+    IDS_LFCategoryDocuments "Documents"
     IDS_LFCategoryHousekeeping "Housekeeping"
 END
 
@@ -140,6 +143,10 @@ BEGIN
     IDS_LFCategoryPhotographic "Photos"
     IDS_LFCategoryAudio     "Audio"
     IDS_LFCategoryTimebased "Timebased"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_LFCategoryBibliographic "Bibliographic"
     IDS_LFCategoryWorkflow  "Workflow"
     IDS_LFCategoryInternal  "Internal use"
@@ -161,6 +168,10 @@ BEGIN
     IDS_BacklinkComment     "One level up"
     IDS_StoreDefaultName    "New store"
     IDS_LastSeen            "Last mounted from %s"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_SeenOn              "Mounted on %s"
     IDS_ErrorCaption        "Error"
     IDS_DeleteStoreCaption  "Delete store ""%s"""
@@ -175,21 +186,30 @@ BEGIN
     IDS_LFErrorMemoryError  "Memory error"
     IDS_LFErrorIllegalQuery "The filter describes an illegal request."
     IDS_LFErrorIllegalStoreDescriptor "The store settings are not valid."
-    IDS_LFErrorStoreNotFound "The selected store is not mounted or not present."
+    IDS_LFErrorStoreNotFound 
+                            "The selected store is not mounted or not present."
     IDS_LFErrorDriveNotReady "Physical drive not ready!"
     IDS_LFErrorIllegalPhysFolder "The physical folder is not accessible."
+END
+
+STRINGTABLE 
+BEGIN
     IDS_LFErrorRegistryError "The registry cannot be accessed."
     IDS_LFErrorIllegalKey   "The store or file key is illegal."
     IDS_LFErrorNoDefaultStore "There is currently no default store."
-    IDS_LFErrorTooManyStores "The maximum number of stores has already been created."
+    IDS_LFErrorTooManyStores 
+                            "The maximum number of stores has already been created."
     IDS_LFErrorStoreNotMounted "The store is currently not mounted."
     IDS_LFErrorMutexError   "liquidFOLDERS is currently blocked by another process."
-    IDS_LFErrorIllegalAttribute "At least one of the selected items does not possesss the attribute."
-    IDS_LFErrorIllegalItemType "At least one of the selected items does not support this operation."
+    IDS_LFErrorIllegalAttribute 
+                            "At least one of the selected items does not possesss the attribute."
+    IDS_LFErrorIllegalItemType 
+                            "At least one of the selected items does not support this operation."
     IDS_LFErrorIllegalValue "At least one of the attribute values is illegal."
     IDS_LFErrorIndexNotCreated "The store index could not be created."
     IDS_LFErrorIndexError   "The store index is not current and requires scheduled maintenance."
-    IDS_LFErrorIndexRepairError "The store index is damaged and could not be repaired (write protected disc ?)."
+    IDS_LFErrorIndexRepairError 
+                            "The store index is damaged and could not be repaired (write protected disc ?)."
 END
 
 STRINGTABLE 
@@ -197,19 +217,23 @@ BEGIN
     IDS_AttrFileName        "Name"
     IDS_AttrStoreID         "Store ID"
     IDS_AttrFileID          "File ID"
-    IDS_AttrHint            "Hint"
     IDS_AttrComment         "Comment"
+    IDS_AttrHint            "Hint"
     IDS_AttrCreationTime    "Creation time"
     IDS_AttrFileTime        "File time"
     IDS_AttrFileFormat      "File format"
     IDS_AttrFileSize        "Size"
     IDS_AttrFlags           "Flags"
+    IDS_AttrURL             "URL"
     IDS_AttrTags            "Tags"
     IDS_AttrRating          "Rating"
     IDS_AttrPriority        "Priority"
-    IDS_AttrURL             "URL"
     IDS_AttrLocationName    "Location name"
     IDS_AttrLocationIATA    "IATA airport code"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_AttrLocationGPS     "GPS location"
     IDS_AttrHeight          "Height"
     IDS_AttrWidth           "Width"
@@ -217,8 +241,6 @@ BEGIN
     IDS_AttrAspectRatio     "Aspect ratio"
     IDS_AttrVideoCodec      "Video codec"
     IDS_AttrRoll            "Roll"
-    IDS_AttrRecordingTime   "Recording time"
-    IDS_AttrRecordingEquipment "Equipment"
     IDS_AttrExposure        "Exposure"
     IDS_AttrFocus           "Focus"
     IDS_AttrAperture        "Aperture"
@@ -228,6 +250,10 @@ BEGIN
     IDS_AttrSamplerate      "Sample rate"
     IDS_AttrAudioCodec      "Audio codec"
     IDS_AttrDuration        "Duration"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_AttrBitrate         "Bitrate"
     IDS_AttrArtist          "Artist or author"
     IDS_AttrTitle           "Title"
@@ -235,6 +261,8 @@ BEGIN
     IDS_AttrISBN            "ISBN"
     IDS_AttrLanguage        "Language"
     IDS_AttrPages           "Page or slide count"
+    IDS_AttrRecordingTime   "Recording time"
+    IDS_AttrRecordingEquipment "Equipment"
     IDS_AttrSignature       "Signature"
     IDS_AttrFrom            "From"
     IDS_AttrTo              "To"
@@ -246,15 +274,17 @@ END
 STRINGTABLE 
 BEGIN
     IDS_DomainAllFiles      "All files\nAll files in this store"
+    IDS_DomainAllMediaFiles "All media files\nAll audio files, pictures, photos and videos"
     IDS_DomainFavorites     "Favorites\nAll files which are rated"
     IDS_DomainFilters       "Filters\nUser-defined filters"
-    IDS_DomainTrash         "Trash\nFiles marked for final deletion"
-    IDS_DomainUnknown       "Unknown file formats\nFiles which have not been assigned to any category yet"
-    IDS_DomainAllMultimediaFiles "All multimedia files\nAll audio files, pictures, photos and videos"
     IDS_DomainAudio         "Audio"
     IDS_DomainPhotos        "Photos\nJPEG and raw photos only"
     IDS_DomainPictures      "Pictures\nIncludes photos"
     IDS_DomainVideos        "Videos"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_DomainArchives      "Archives"
     IDS_DomainContacts      "Contacts"
     IDS_DomainDocuments     "Documents\nOffice documents"
@@ -265,6 +295,8 @@ BEGIN
     IDS_DomainPresentations "Presentations"
     IDS_DomainSpreadsheets  "Spreadsheets"
     IDS_DomainWeb           "Web pages"
+    IDS_DomainTrash         "Trash\nDeleted files"
+    IDS_DomainUnknown       "Unknown file formats\nFiles which have not been assigned to any category yet"
 END
 
 STRINGTABLE 

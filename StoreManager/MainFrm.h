@@ -105,6 +105,7 @@ protected:
 	CMFCRibbonComboBox* m_cbxActiveContext;
 	CMFCToolBarImages m_PanelImages;
 	CMFCRibbonStatusBar  m_wndStatusBar;
+	CMFCRibbonBaseElement* m_sbFileCount;
 	CMFCRibbonBaseElement* m_sbItemCount;
 	CMFCRibbonBaseElement* m_sbHint;
 	CCaptionBar m_wndCaptionBar;
@@ -164,6 +165,7 @@ protected:
 	afx_msg void OnUpdateStoreCommands(CCmdUI* pCmdUI);
 	afx_msg void OnChangeChildView(UINT nID);
 	afx_msg void OnUpdateSelection();
+	afx_msg void OnUpdateFileCount();
 	afx_msg void OnStartNavigation();
 	afx_msg void OnNavigateFirst();
 	afx_msg void OnNavigateBackOne();

@@ -255,9 +255,9 @@ BOOL CFolderItem::GetChildren(CGetChildrenEventArgs& e)
 			return FALSE;
 		}
 
-		for (UINT a=0; a<res->m_Count; a++)
+		for (UINT a=0; a<res->m_ItemCount; a++)
 		{
-			LFItemDescriptor* i = res->m_Files[a];
+			LFItemDescriptor* i = res->m_Items[a];
 
 			if ((((i->Type & LFTypeMask)==LFTypeStore) || ((i->Type & LFTypeMask)==LFTypeVirtual)) && (e.childrenType & NSECT_Folders))
 			{

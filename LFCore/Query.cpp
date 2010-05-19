@@ -95,7 +95,13 @@ LFSearchResult* QueryDomains(LFFilter* filter)
 				nf->Options = filter->Options;
 				strcpy_s(nf->StoreID, LFKeySize, filter->StoreID);
 				wcscpy_s(nf->Name, 256, d->DomainName);
-				res->AddItemDescriptor(AllocFolderDescriptor(d->DomainName, d->Comment, Hint, filter->StoreID, FileID, &size[a], d->IconID, d->CategoryID, nf));
+
+				if (res->AddItemDescriptor(AllocFolderDescriptor(d->DomainName, d->Comment, Hint, filter->StoreID, FileID, &size[a], d->IconID, d->CategoryID, nf)))
+					if (a>=LFFirstPhysicalDomain)
+					{
+						res->m_FileCount += cnt[a];
+						res->m_FileSize += size[a];
+					}
 
 				LFFreeDomainDescriptor(d);
 			}
@@ -204,7 +210,9 @@ LFCore_API LFSearchResult* LFQuery(LFFilter* filter)
 		if ((wcscmp(filter->Name, L"")==0) && (res->m_Context!=LFContextDefault))
 			LoadString(LFCoreModuleHandle, res->m_Context+IDS_FirstContext, filter->Name, 256);
 		GetLocalTime(&filter->Result.Time);
-		filter->Result.ItemCount = res->m_Count;
+		filter->Result.ItemCount = res->m_ItemCount;
+		filter->Result.FileCount = res->m_FileCount;
+		filter->Result.FileSize = res->m_FileSize;
 	}
 
 	res->m_QueryTime = GetTickCount()-start;

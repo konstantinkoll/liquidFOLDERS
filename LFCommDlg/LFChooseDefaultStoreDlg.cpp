@@ -106,7 +106,7 @@ LRESULT LFChooseDefaultStoreDlg::UpdateStores(WPARAM wParam, LPARAM /*lParam*/)
 		char StoreID[LFKeySize] = "";
 		int idx = m_List.GetNextItem(-1, LVIS_SELECTED);
 		if ((idx!=-1) && (result))
-			strcpy_s(StoreID, LFKeySize, result->m_Files[idx]->CoreAttributes.StoreID);
+			strcpy_s(StoreID, LFKeySize, result->m_Items[idx]->CoreAttributes.StoreID);
 
 		m_List.SetRedraw(FALSE);
 
@@ -124,14 +124,14 @@ LRESULT LFChooseDefaultStoreDlg::UpdateStores(WPARAM wParam, LPARAM /*lParam*/)
 
 		SortSearchResult(result);
 
-		((CButton*)GetDlgItem(IDOK))->EnableWindow(result->m_Count);
-		m_List.SetItemCount(result->m_Count);
+		((CButton*)GetDlgItem(IDOK))->EnableWindow(result->m_ItemCount);
+		m_List.SetItemCount(result->m_ItemCount);
 		for (UINT a=0; a<5; a++)
 			m_List.SetColumnWidth(a, LVSCW_AUTOSIZE_USEHEADER);
 
 		idx = -1;
-		for (UINT a=0; a<result->m_Count; a++)
-			if (((idx==-1) && (result->m_Files[a]->Type & LFTypeDefaultStore)) || (!strcmp(StoreID, result->m_Files[a]->CoreAttributes.StoreID)))
+		for (UINT a=0; a<result->m_ItemCount; a++)
+			if (((idx==-1) && (result->m_Items[a]->Type & LFTypeDefaultStore)) || (!strcmp(StoreID, result->m_Items[a]->CoreAttributes.StoreID)))
 				idx = a;
 
 		m_List.SetItemState(idx, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
@@ -151,17 +151,17 @@ void LFChooseDefaultStoreDlg::OnGetDispInfo(NMHDR* pNMHDR, LRESULT* /*pResult*/)
 	if (pItem->mask & LVIF_TEXT)
 	{
 		const UINT attrs[5] = { LFAttrFileName, LFAttrComment, LFAttrCreationTime, LFAttrStoreID, LFAttrHint };
-		pItem->pszText = (LPWSTR)result->m_Files[idx]->AttributeStrings[attrs[pItem->iSubItem]];
+		pItem->pszText = (LPWSTR)result->m_Items[idx]->AttributeStrings[attrs[pItem->iSubItem]];
 	}
 
 	if (pItem->mask & LVIF_IMAGE)
-		pItem->iImage = (result->m_Files[idx]->Type & LFTypeDefaultStore);
+		pItem->iImage = (result->m_Items[idx]->Type & LFTypeDefaultStore);
 }
 
 void LFChooseDefaultStoreDlg::OnDoubleClick(NMHDR* /*pNMHDR*/, LRESULT* /*pResult*/)
 {
 	if (result)
-		if (result->m_Count)
+		if (result->m_ItemCount)
 			PostMessage(WM_COMMAND, (WPARAM)IDOK);
 }
 
@@ -187,7 +187,7 @@ void LFChooseDefaultStoreDlg::DoDataExchange(CDataExchange* pDX)
 		int idx = m_List.GetNextItem(-1, LVIS_SELECTED);
 		if (idx!=-1)
 		{
-			strcpy_s(StoreID, LFKeySize, result->m_Files[idx]->CoreAttributes.StoreID);
+			strcpy_s(StoreID, LFKeySize, result->m_Items[idx]->CoreAttributes.StoreID);
 			LFErrorBox(LFMakeDefaultStore(StoreID), GetSafeHwnd());
 		}
 		else

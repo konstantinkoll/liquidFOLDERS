@@ -76,8 +76,8 @@ void CFileView::OnUpdateSearchResult(LFSearchResult* _result, int _FocusItem)
 		pViewParameters = &theApp.m_Views[ActiveContextID];
 		m_ViewParameters.SortBy = pViewParameters->SortBy;
 
-		if (_FocusItem>(int)_result->m_Count-1)
-			_FocusItem = (int)_result->m_Count-1;
+		if (_FocusItem>(int)_result->m_ItemCount-1)
+			_FocusItem = (int)_result->m_ItemCount-1;
 		FocusItem = _FocusItem;
 	}
 	else
@@ -201,7 +201,7 @@ void CFileView::OnItemContextMenu(int idx, CPoint point)
 {
 	UINT nID = 0;
 	UINT cmdDefault = 0;
-	LFItemDescriptor* f = result->m_Files[idx];
+	LFItemDescriptor* f = result->m_Items[idx];
 	switch (f->Type & LFTypeMask)
 	{
 	case LFTypeDrive:
@@ -361,7 +361,7 @@ void CFileView::OnLButtonDown(UINT nFlags, CPoint point)
 		}
 		else
 		{
-			for (UINT a=0; a<result->m_Count; a++)
+			for (UINT a=0; a<result->m_ItemCount; a++)
 				SelectItem(a, (int)a==n, TRUE);
 
 			Invalidate();
@@ -405,7 +405,7 @@ void CFileView::OnRButtonDown(UINT nFlags, CPoint point)
 			{
 				FocusItem = n;
 
-				for (UINT a=0; a<result->m_Count; a++)
+				for (UINT a=0; a<result->m_ItemCount; a++)
 					SelectItem(a, (int)a==n, TRUE);
 
 				Invalidate();
@@ -468,15 +468,15 @@ void CFileView::OnToggleGrannyMode()
 void CFileView::OnSelectAll()
 {
 	if (result)
-		for (UINT a=0; a<result->m_Count; a++)
-			SelectItem(a, TRUE, a<result->m_Count-1);
+		for (UINT a=0; a<result->m_ItemCount; a++)
+			SelectItem(a, TRUE, a<result->m_ItemCount-1);
 }
 
 void CFileView::OnSelectNone()
 {
 	if (result)
-		for (UINT a=0; a<result->m_Count; a++)
-			SelectItem(a, FALSE, a<result->m_Count-1);
+		for (UINT a=0; a<result->m_ItemCount; a++)
+			SelectItem(a, FALSE, a<result->m_ItemCount-1);
 }
 
 void CFileView::OnUpdateCommands(CCmdUI* pCmdUI)
@@ -491,7 +491,7 @@ void CFileView::OnUpdateCommands(CCmdUI* pCmdUI)
 	case ID_VIEW_SELECTALL:
 	case ID_VIEW_SELECTNONE:
 		if (result)
-			b = (result->m_Count>0);
+			b = (result->m_ItemCount>0);
 		break;
 	}
 

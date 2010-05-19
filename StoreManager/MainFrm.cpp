@@ -208,9 +208,12 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (!m_wndStatusBar.Create(this))
 		return -1;
 
+	m_sbFileCount = new CMFCRibbonStatusBarPane(ID_PANE_STATUSBAR_FILECOUNT, _T(""), TRUE);
 	m_sbItemCount = new CMFCRibbonStatusBarPane(ID_PANE_STATUSBAR_ITEMCOUNT, _T(""), TRUE);
 	m_sbHint = new CMFCRibbonStatusBarPane(ID_PANE_STATUSBAR_HINT, _T(""), TRUE);
 
+	m_wndStatusBar.AddElement(m_sbFileCount, _T("File count"));
+	m_wndStatusBar.AddSeparator();
 	m_wndStatusBar.AddElement(m_sbItemCount, _T("Item count"));
 	m_wndStatusBar.AddSeparator();
 	m_wndStatusBar.AddElement(m_sbHint, _T("Hint"));
@@ -654,9 +657,9 @@ BOOL CMainFrame::AddClipItem(LFItemDescriptor* i)
 		return FALSE;
 	#endif
 
-	for (UINT a=0; a<RawFiles->m_Count; a++)
-		if ((strcmp(i->CoreAttributes.StoreID, RawFiles->m_Files[a]->CoreAttributes.StoreID)==0) &&
-			(strcmp(i->CoreAttributes.FileID, RawFiles->m_Files[a]->CoreAttributes.FileID)==0))
+	for (UINT a=0; a<RawFiles->m_ItemCount; a++)
+		if ((strcmp(i->CoreAttributes.StoreID, RawFiles->m_Items[a]->CoreAttributes.StoreID)==0) &&
+			(strcmp(i->CoreAttributes.FileID, RawFiles->m_Items[a]->CoreAttributes.FileID)==0))
 			return FALSE;
 
 	LFAddItemDescriptor(RawFiles, LFAllocItemDescriptor(i));
@@ -672,10 +675,10 @@ void CMainFrame::OnClipRemove()
 		int idx = GetNextSelectedItem(-1);
 		while (idx!=-1)
 		{
-			int pos = CookedFiles->m_Files[idx]->Position;
+			int pos = CookedFiles->m_Items[idx]->Position;
 			if (pos!=-1)
 			{
-				RawFiles->m_Files[pos]->DeleteFlag = true;
+				RawFiles->m_Items[pos]->DeleteFlag = true;
 				m_wndView->SelectItem(idx, FALSE, TRUE);
 			}
 
@@ -698,7 +701,7 @@ void CMainFrame::Remember(CMainFrame* clip)
 		BOOL changes = FALSE;
 		while (idx!=-1)
 		{
-			if (clip->AddClipItem(CookedFiles->m_Files[idx]))
+			if (clip->AddClipItem(CookedFiles->m_Items[idx]))
 				changes = TRUE;
 
 			idx = GetNextSelectedItem(idx);
@@ -785,9 +788,9 @@ void CMainFrame::OnStoreNewInternal()
 	LFErrorBox(res);
 
 	if ((res==LFOk) && (CookedFiles) && (m_wndView))
-		for (UINT a=0; a<CookedFiles->m_Count; a++)
+		for (UINT a=0; a<CookedFiles->m_ItemCount; a++)
 		{
-			LFItemDescriptor* i = CookedFiles->m_Files[a];
+			LFItemDescriptor* i = CookedFiles->m_Items[a];
 			if ((strcmp(s->StoreID, i->CoreAttributes.StoreID)==0) && ((i->Type & LFTypeMask)==LFTypeStore))
 			{
 				m_wndView->SetFocus();
@@ -804,7 +807,7 @@ void CMainFrame::OnStoreNewDrive()
 	int i = GetSelectedItem();
 
 	if (i!=-1)
-		ExecuteCreateStoreDlg(IDD_STORENEWDRIVE, CookedFiles->m_Files[i]->CoreAttributes.FileID[0]);
+		ExecuteCreateStoreDlg(IDD_STORENEWDRIVE, CookedFiles->m_Items[i]->CoreAttributes.FileID[0]);
 }
 
 void CMainFrame::OnStoreDelete()
@@ -813,7 +816,7 @@ void CMainFrame::OnStoreDelete()
 
 	if (i!=-1)
 	{
-		LFItemDescriptor* store = LFAllocItemDescriptor(CookedFiles->m_Files[i]);
+		LFItemDescriptor* store = LFAllocItemDescriptor(CookedFiles->m_Items[i]);
 		LFErrorBox(theApp.DeleteStore(store));
 		LFFreeItemDescriptor(store);
 	}
@@ -833,7 +836,7 @@ void CMainFrame::OnStoreMakeDefault()
 	int i = GetSelectedItem();
 
 	if (i!=-1)
-		LFErrorBox(LFMakeDefaultStore(CookedFiles->m_Files[i]->CoreAttributes.StoreID));
+		LFErrorBox(LFMakeDefaultStore(CookedFiles->m_Items[i]->CoreAttributes.StoreID));
 }
 
 void CMainFrame::OnStoreMakeHybrid()
@@ -841,7 +844,7 @@ void CMainFrame::OnStoreMakeHybrid()
 	int i = GetSelectedItem();
 
 	if (i!=-1)
-		LFErrorBox(LFMakeHybridStore(CookedFiles->m_Files[i]->CoreAttributes.StoreID));
+		LFErrorBox(LFMakeHybridStore(CookedFiles->m_Items[i]->CoreAttributes.StoreID));
 }
 
 CString MakeHex(BYTE* x, UINT bCount)
@@ -871,7 +874,7 @@ void CMainFrame::OnStoreProperties()
 
 	if (i!=-1)
 	{
-		LFStorePropertiesDlg dlg(this, CookedFiles->m_Files[i]->CoreAttributes.StoreID);
+		LFStorePropertiesDlg dlg(this, CookedFiles->m_Items[i]->CoreAttributes.StoreID);
 		dlg.DoModal();
 	}
 }
@@ -879,7 +882,7 @@ void CMainFrame::OnStoreProperties()
 void CMainFrame::OnStoreBackup()
 {
 	CString tmpStr;
-	tmpStr.LoadString(IDS_REGFILEFILTER);
+	ENSURE(tmpStr.LoadString(IDS_REGFILEFILTER));
 	tmpStr += _T(" (*.reg)|*.reg||");
 
 	CFileDialog* dlg;
@@ -898,9 +901,9 @@ void CMainFrame::OnStoreBackup()
 			{
 				f.WriteString(_T("Windows Registry Editor Version 5.00\n"));
 
-				for (UINT a=0; a<CookedFiles->m_Count; a++)
+				for (UINT a=0; a<CookedFiles->m_ItemCount; a++)
 				{
-					LFItemDescriptor* i = CookedFiles->m_Files[a];
+					LFItemDescriptor* i = CookedFiles->m_Items[a];
 					if ((i->Type & LFTypeStore) && (i->CategoryID==LFCategoryInternalStores))
 					{
 						LFStoreDescriptor s;
@@ -962,7 +965,7 @@ void CMainFrame::OnUpdateStoreCommands(CCmdUI* pCmdUI)
 	if ((ActiveContextID==LFContextStores) && (CookedFiles))
 	{
 		int i = GetSelectedItem();
-		LFItemDescriptor* f = (i==-1 ? NULL : CookedFiles->m_Files[i]);
+		LFItemDescriptor* f = (i==-1 ? NULL : CookedFiles->m_Items[i]);
 
 		switch (pCmdUI->m_nID)
 		{
@@ -1108,13 +1111,13 @@ void CMainFrame::OnUpdateSelection()
 		else
 		{
 			CString tmpStr;
-			if ((CookedFiles->m_Files[i]->Type & (LFTypeStore | LFTypeRequiresMaintenance))==(LFTypeStore | LFTypeRequiresMaintenance))
+			if ((CookedFiles->m_Items[i]->Type & (LFTypeStore | LFTypeRequiresMaintenance))==(LFTypeStore | LFTypeRequiresMaintenance))
 			{
 				ENSURE(tmpStr.LoadString(IDS_REQUIRESMAINTENANCE));
 			}
 			else
 			{
-				tmpStr = CookedFiles->m_Files[i]->AttributeStrings[LFAttrHint];
+				tmpStr = CookedFiles->m_Items[i]->AttributeStrings[LFAttrHint];
 			}
 			m_sbHint->SetText(tmpStr);
 		}
@@ -1128,10 +1131,10 @@ void CMainFrame::OnUpdateSelection()
 
 	while (i>=0)
 	{
-		m_wndInspector.UpdateAdd(CookedFiles->m_Files[i]);
-		FilesSelected |= (CookedFiles->m_Files[i]->Type & LFTypeMask)==LFTypeFile;
+		m_wndInspector.UpdateAdd(CookedFiles->m_Items[i]);
+		FilesSelected |= (CookedFiles->m_Items[i]->Type & LFTypeMask)==LFTypeFile;
 		Count++;
-		Size += *(__int64*)CookedFiles->m_Files[i]->AttributeValues[LFAttrFileSize];
+		Size += *(__int64*)CookedFiles->m_Items[i]->AttributeValues[LFAttrFileSize];
 		i = GetNextSelectedItem(i);
 	}
 
@@ -1144,23 +1147,54 @@ void CMainFrame::OnUpdateSelection()
 		CString tmpStr;
 		if (Count)
 		{
-			maskStr.LoadString(Count==1 ? IDS_SELECTED_SINGULAR : IDS_SELECTED_PLURAL);
+			ENSURE(maskStr.LoadString(Count==1 ? IDS_SELECTED_SINGULAR : IDS_SELECTED_PLURAL));
 			StrFormatByteSizeW(Size, sizeStr, 256);
 		}
 		else
 		{
 			if (CookedFiles)
-				Count = CookedFiles->m_Count;
+				Count = CookedFiles->m_ItemCount;
 	
-			maskStr.LoadString(Count==1 ? IDS_ITEMS_SINGULAR : IDS_ITEMS_PLURAL);
+			ENSURE(maskStr.LoadString(Count==1 ? IDS_ITEMS_SINGULAR : IDS_ITEMS_PLURAL));
 		}
 		tmpStr.Format(maskStr, Count, sizeStr);
 		m_sbItemCount->SetText(tmpStr);
 	}
 
-	// Update
-	m_wndStatusBar.RecalcLayout();
-	m_wndStatusBar.Invalidate();
+	if ((m_sbHint) || (m_sbItemCount))
+	{
+		// Update
+		m_wndStatusBar.RecalcLayout();
+		m_wndStatusBar.Invalidate();
+	}
+}
+
+void CMainFrame::OnUpdateFileCount()
+{
+	if (m_sbFileCount)
+	{
+		CString tmpStr;
+		if (CookedFiles->m_FileCount)
+		{
+			CString maskStr;
+			ENSURE(maskStr.LoadString(CookedFiles->m_FileCount==1 ? IDS_FILES_SINGULAR : IDS_FILES_PLURAL));
+			
+			wchar_t sizeStr[256];
+			StrFormatByteSizeW(CookedFiles->m_FileSize, sizeStr, 256);
+
+			tmpStr.Format(maskStr, CookedFiles->m_FileCount, sizeStr);
+		}
+		else
+		{
+			ENSURE(tmpStr.LoadString(IDS_NOFILES));
+		}
+		m_sbFileCount->SetText(tmpStr);
+
+		// Update
+		m_wndStatusBar.RecalcLayout();
+		m_wndStatusBar.Invalidate();
+	}
+
 }
 
 BOOL CMainFrame::RenameSingleItem(UINT n, CString Name)
@@ -1172,7 +1206,7 @@ BOOL CMainFrame::RenameSingleItem(UINT n, CString Name)
 	if (Name!="")
 	{
 		LFTransactionList* tl = LFAllocTransactionList();
-		LFAddItemDescriptor(tl, CookedFiles->m_Files[n]);
+		LFAddItemDescriptor(tl, CookedFiles->m_Items[n]);
 
 		LFVariantData value;
 		value.Attr = LFAttrFileName;
@@ -1204,7 +1238,7 @@ LFTransactionList* CMainFrame::BuildTransactionList()
 		int idx = GetNextSelectedItem(-1);
 		while (idx!=-1)
 		{
-			LFAddItemDescriptor(tl, CookedFiles->m_Files[idx], idx);
+			LFAddItemDescriptor(tl, CookedFiles->m_Items[idx], idx);
 			idx = GetNextSelectedItem(idx);
 		}
 	}
@@ -1248,7 +1282,7 @@ void CMainFrame::OnStartNavigation()
 
 	if (idx!=-1)
 	{
-		LFItemDescriptor* f = CookedFiles->m_Files[idx];
+		LFItemDescriptor* f = CookedFiles->m_Items[idx];
 
 		if (f->NextFilter)
 		{
@@ -1427,8 +1461,8 @@ void CMainFrame::OnUpdateNavCommands(CCmdUI* pCmdUI)
 		i = GetSelectedItem();
 		if (i!=-1)
 		{
-			b &= (CookedFiles->m_Files[i]->NextFilter!=NULL) ||
-				((CookedFiles->m_Files[i]->Type & (LFTypeNotMounted | LFTypeMask))==LFTypeDrive);
+			b &= (CookedFiles->m_Items[i]->NextFilter!=NULL) ||
+				((CookedFiles->m_Items[i]->Type & (LFTypeNotMounted | LFTypeMask))==LFTypeDrive);
 		}
 		else
 		{
@@ -2150,6 +2184,7 @@ void CMainFrame::CookFiles(int recipe, int FocusItem)
 
 	UpdateSearchResult(FALSE, FocusItem);
 	UpdateHistory();
+	OnUpdateFileCount();
 
 	if (Victim)
 		LFFreeSearchResult(Victim);
@@ -2158,7 +2193,7 @@ void CMainFrame::CookFiles(int recipe, int FocusItem)
 	{
 		wchar_t* error = LFGetErrorText(CookedFiles->m_LastError);
 		CString message;
-		message.Format(error, RawFiles->m_QueryTime, stop-start, RawFiles->m_Count, CookedFiles->m_Count);
+		message.Format(error, RawFiles->m_QueryTime, stop-start, RawFiles->m_ItemCount, CookedFiles->m_ItemCount);
 		ShowCaptionBar(IDB_INFO, message);
 		free(error);
 	}
