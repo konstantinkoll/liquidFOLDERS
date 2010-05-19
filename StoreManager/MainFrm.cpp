@@ -1498,16 +1498,18 @@ void CMainFrame::InitializeRibbon()
 
 		pMainPanel->Add(theApp.CommandButton(ID_APP_NEWVIEW, 0, 0));
 		pMainPanel->Add(theApp.CommandButton(ID_APP_NEWCLIPBOARD, 1, 1));
+		pMainPanel->Add(new CMFCRibbonSeparator(TRUE));
 		pMainPanel->Add(theApp.CommandButton(ID_APP_NEWFILEDROP, 2, 2));
 		pMainPanel->Add(theApp.CommandButton(ID_APP_NEWMIGRATE, 3, 3));
+		pMainPanel->Add(theApp.CommandButton(ID_APP_PROMPT, 4, 4));
 		pMainPanel->Add(new CMFCRibbonSeparator(TRUE));
-		pMainPanel->Add(theApp.CommandButton(ID_APP_CLOSEOTHERS, 4, 4));
-		pMainPanel->Add(theApp.CommandButton(ID_APP_CLOSE, 5, 5));
+		pMainPanel->Add(theApp.CommandButton(ID_APP_CLOSEOTHERS, 5, 5));
+		pMainPanel->Add(theApp.CommandButton(ID_APP_CLOSE, 6, 6));
 
 		strTemp = "About";
-		pMainPanel->AddToBottom(new CMFCRibbonMainPanelButton(ID_APP_ABOUT, strTemp, 6));
+		pMainPanel->AddToBottom(new CMFCRibbonMainPanelButton(ID_APP_ABOUT, strTemp, 7));
 		strTemp = "Exit";
-		pMainPanel->AddToBottom(new CMFCRibbonMainPanelButton(ID_APP_EXIT, strTemp, 7));
+		pMainPanel->AddToBottom(new CMFCRibbonMainPanelButton(ID_APP_EXIT, strTemp, 8));
 
 	strTemp = "Home";
 	CMFCRibbonCategory* pCategoryHome = m_wndRibbonBar.AddCategory(strTemp, IDB_RIBBONHOME_16, IDB_RIBBONHOME_32);
@@ -1531,22 +1533,20 @@ void CMainFrame::InitializeRibbon()
 
 				pPanelPlaces->Add(theApp.CommandButton(ID_NAV_STORES, 7, 7));
 				pPanelPlaces->Add(theApp.CommandButton(ID_NAV_HOME, 8, 8));
-				pPanelPlaces->AddSeparator();
-				pPanelPlaces->Add(theApp.CommandButton(ID_APP_PROMPT, 9, 9));
 		}
 
 		strTemp = "liquidFOLDERS";
 		CMFCRibbonPanel* pPanelliquidFOLDERS = pCategoryHome->AddPanel(strTemp, m_PanelImages.ExtractIcon(0));
-		pPanelliquidFOLDERS->EnableLaunchButton(ID_APP_ABOUT, 14);
+		pPanelliquidFOLDERS->EnableLaunchButton(ID_APP_ABOUT, 13);
 
-			pPanelliquidFOLDERS->Add(theApp.CommandButton(ID_APP_HELP, 10, 10));
-			pPanelliquidFOLDERS->Add(theApp.CommandButton(ID_APP_SUPPORT, 11, 11));
+			pPanelliquidFOLDERS->Add(theApp.CommandButton(ID_APP_HELP, 9, 9));
+			pPanelliquidFOLDERS->Add(theApp.CommandButton(ID_APP_SUPPORT, 10, 10));
 
 			if (!LFIsLicensed())
 			{
 				pPanelliquidFOLDERS->AddSeparator();
-				pPanelliquidFOLDERS->Add(theApp.CommandButton(ID_APP_PURCHASE, 12, 12));
-				pPanelliquidFOLDERS->Add(theApp.CommandButton(ID_APP_ENTERLICENSEKEY, 13, 13));
+				pPanelliquidFOLDERS->Add(theApp.CommandButton(ID_APP_PURCHASE, 11, 11));
+				pPanelliquidFOLDERS->Add(theApp.CommandButton(ID_APP_ENTERLICENSEKEY, 12, 12));
 			}
 
 	strTemp = "View";

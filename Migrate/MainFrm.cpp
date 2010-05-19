@@ -307,13 +307,14 @@ void CMainFrame::InitializeRibbon()
 
 		pMainPanel->Add(theApp.CommandButton(ID_APP_NEWFILEDROP, 0, 0));
 		pMainPanel->Add(theApp.CommandButton(ID_APP_NEWSTOREMANAGER, 1, 1));
+		pMainPanel->Add(theApp.CommandButton(ID_APP_PROMPT, 2, 2));
 		pMainPanel->Add(new CMFCRibbonSeparator(TRUE));
-		pMainPanel->Add(theApp.CommandButton(ID_APP_CLOSE, 2, 2));
+		pMainPanel->Add(theApp.CommandButton(ID_APP_CLOSE, 3, 3));
 
 		strTemp = "About";
-		pMainPanel->AddToBottom(new CMFCRibbonMainPanelButton(ID_APP_ABOUT, strTemp, 3));
+		pMainPanel->AddToBottom(new CMFCRibbonMainPanelButton(ID_APP_ABOUT, strTemp, 4));
 		strTemp = "Exit";
-		pMainPanel->AddToBottom(new CMFCRibbonMainPanelButton(ID_APP_EXIT, strTemp, 4));
+		pMainPanel->AddToBottom(new CMFCRibbonMainPanelButton(ID_APP_EXIT, strTemp, 5));
 
 	strTemp = "Migrate to liquidFOLDERS";
 	CMFCRibbonCategory* pCategoryMigrate = m_wndRibbonBar.AddCategory(strTemp, IDB_RIBBONMIGRATE_16, IDB_RIBBONMIGRATE_32);

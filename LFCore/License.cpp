@@ -4,5 +4,5 @@
 
 bool IsLicensed()
 {
-	return false;
+	return true;
 }
