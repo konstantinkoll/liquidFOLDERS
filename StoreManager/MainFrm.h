@@ -161,6 +161,7 @@ protected:
 	afx_msg void OnStoreMakeDefault();
 	afx_msg void OnStoreMakeHybrid();
 	afx_msg void OnStoreProperties();
+	afx_msg void OnStoreMaintenance();
 	afx_msg void OnStoreBackup();
 	afx_msg void OnUpdateStoreCommands(CCmdUI* pCmdUI);
 	afx_msg void OnChangeChildView(UINT nID);

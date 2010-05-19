@@ -557,22 +557,40 @@ LFCore_API unsigned int LFStoreMaintenance(char* key)
 
 LFCore_API unsigned int LFStoreMaintenance()
 {
-/*	if (!GetMutex(Mutex_Stores))
+	if (!GetMutex(Mutex_Stores))
 		return LFMutexError;
 
-	HANDLE StoreLock = NULL;
-	LFStoreDescriptor* slot = FindStore(key, &StoreLock);
+	char* keys;
+	unsigned int count = FindStores(&keys);
 	ReleaseMutex(Mutex_Stores);
 
-	if (!slot)
-		return LFIllegalKey;
-	if (!StoreLock)
-		return LFMutexError;
+	if (count)
+	{
+		char* ptr = keys;
+		for (unsigned int a=0; a<count; a++)
+		{
+			if (!GetMutex(Mutex_Stores))
+			{
+				free(keys);
+				return LFMutexError;
+			}
 
-	unsigned int res = RunMaintenance(slot, true);
-	ReleaseMutexForStore(StoreLock);
+			HANDLE StoreLock = NULL;
+			LFStoreDescriptor* slot = FindStore(ptr, &StoreLock);
+			ReleaseMutex(Mutex_Stores);
 
-	return res;*/
+			if ((!slot) || (!StoreLock))
+				continue;
+
+			// TODO
+			/*unsigned int res = */LFStoreMaintenance(ptr);
+			ReleaseMutexForStore(StoreLock);
+
+			ptr += LFKeySize;
+		}
+
+		free(keys);
+	}
 
 	return LFOk;
 }

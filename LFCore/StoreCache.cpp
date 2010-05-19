@@ -548,6 +548,23 @@ LFStoreDescriptor* FindStore(GUID guid, HANDLE* lock)
 	return NULL;
 }
 
+unsigned int FindStores(char** keys)
+{
+	if (StoreCount)
+	{
+		*keys = (char*)malloc(LFKeySize*StoreCount);
+		char* ptr = *keys;
+
+		for (unsigned int a=0; a<StoreCount; a++)
+		{
+			strcpy_s(ptr, LFKeySize, StoreCache[a].StoreID);
+			ptr += LFKeySize;
+		}
+	}
+
+	return StoreCount;
+}
+
 unsigned int UpdateStore(LFStoreDescriptor* s, bool MakeDefault)
 {
 	// FileTime setzen
@@ -640,7 +657,7 @@ LFCore_API bool LFDefaultStoreAvailable()
 
 LFCore_API char* LFGetDefaultStore()
 {
-	char* s = static_cast<char*>(malloc(LFKeySize));
+	char* s = (char*)(malloc(LFKeySize));
 	strcpy_s(s, LFKeySize, "");
 
 	if (GetMutex(Mutex_Stores))

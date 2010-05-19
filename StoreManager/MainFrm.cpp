@@ -120,6 +120,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_COMMAND(ID_STORE_MAKEDEFAULT, OnStoreMakeDefault)
 	ON_COMMAND(ID_STORE_MAKEHYBRID, OnStoreMakeHybrid)
 	ON_COMMAND(ID_STORE_PROPERTIES, OnStoreProperties)
+	ON_COMMAND(ID_STORE_MAINTENANCE, OnStoreMaintenance)
 	ON_COMMAND(ID_STORE_BACKUP, OnStoreBackup)
 END_MESSAGE_MAP()
 
@@ -877,6 +878,11 @@ void CMainFrame::OnStoreProperties()
 		LFStorePropertiesDlg dlg(this, CookedFiles->m_Items[i]->CoreAttributes.StoreID);
 		dlg.DoModal();
 	}
+}
+
+void CMainFrame::OnStoreMaintenance()
+{
+	LFStoreMaintenance();
 }
 
 void CMainFrame::OnStoreBackup()
