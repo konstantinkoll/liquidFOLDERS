@@ -116,6 +116,20 @@ FileFound:
 	RemoveDirectoryA(lpPath);
 }
 
+bool DirWriteable(LPCSTR lpPath)
+{
+	char Filename[MAX_PATH];
+	strcpy_s(Filename, MAX_PATH, lpPath);
+	strcat_s(Filename, MAX_PATH, "LF_TEST.BIN");
+
+	HANDLE h = CreateFileA(Filename, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+	if (h==INVALID_HANDLE_VALUE)
+		return false;
+
+	CloseHandle(h);
+	return DeleteFileA(Filename)==TRUE;
+}
+
 unsigned int ValidateStoreDirectories(LFStoreDescriptor* s)
 {
 	// Store phys. anlegen
@@ -496,10 +510,20 @@ LFCore_API bool LFAskDeleteStore(LFStoreDescriptor* s, HWND hWnd)
 
 unsigned int RunMaintenance(LFStoreDescriptor* s, bool scheduled)
 {
+	// Verzeichnisse prüfen
 	unsigned int res = ValidateStoreDirectories(s);
 	if (res!=LFOk)
 		return res;
 
+	// Sind die Verzeichnisse beschreibbar?
+	if (s->IdxPathMain[0]!='\0')
+		if (!DirWriteable(s->IdxPathMain))
+			return LFDriveWriteProtected;
+	if (s->IdxPathAux[0]!='\0')
+		if (!DirWriteable(s->IdxPathAux))
+			return LFDriveWriteProtected;
+
+	// Index prüfen
 	CIndex* idx = new CIndex(((s->StoreMode!=LFStoreModeHybrid) || IsStoreMounted(s)) ? s->IdxPathMain : s->IdxPathAux, s->StoreID);
 	switch (idx->Check(scheduled))
 	{
@@ -519,6 +543,7 @@ unsigned int RunMaintenance(LFStoreDescriptor* s, bool scheduled)
 		}
 	}
 
+	// Index duplizieren
 	if ((s->StoreMode==LFStoreModeHybrid) && IsStoreMounted(s))
 	{
 		// TODO: Copy index
@@ -555,7 +580,7 @@ LFCore_API unsigned int LFStoreMaintenance(char* key)
 	return res;
 }
 
-LFCore_API unsigned int LFStoreMaintenance()
+LFCore_API unsigned int LFStoreMaintenance(unsigned int* Repaired, unsigned int* NoAccess, unsigned int* RepairError)
 {
 	if (!GetMutex(Mutex_Stores))
 		return LFMutexError;
@@ -582,8 +607,21 @@ LFCore_API unsigned int LFStoreMaintenance()
 			if ((!slot) || (!StoreLock))
 				continue;
 
-			// TODO
-			/*unsigned int res = */LFStoreMaintenance(ptr);
+			switch (LFStoreMaintenance(ptr))
+			{
+			case LFOk:
+				if (Repaired)
+					*Repaired++;
+				break;
+			case LFIllegalPhysicalPath:
+			case LFDriveWriteProtected:
+				if (NoAccess)
+					*NoAccess++;
+				break;
+			default:
+				if (RepairError)
+					*RepairError++;
+			}
 			ReleaseMutexForStore(StoreLock);
 
 			ptr += LFKeySize;
@@ -606,7 +644,7 @@ unsigned int OpenStore(LFStoreDescriptor* s, bool WriteAccess, CIndex* &Index1, 
 	if (s->NeedsCheck)
 	{
 		unsigned int res = RunMaintenance(s, false);
-		if (res!=LFOk)
+		if ((res!=LFOk) && (res!=LFDriveWriteProtected))
 			return res;
 	}
 

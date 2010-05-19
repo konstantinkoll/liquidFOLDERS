@@ -284,7 +284,7 @@ LFCore_API bool LFAskDeleteStore(LFStoreDescriptor* s, HWND hWnd=NULL);
 LFCore_API unsigned int LFStoreMaintenance(char* key);
 
 // Startet geplante Wartungsarbeiten für alle Store
-LFCore_API unsigned int LFStoreMaintenance();
+LFCore_API unsigned int LFStoreMaintenance(unsigned int* Repaired=NULL, unsigned int* NoAccess=NULL, unsigned int* RepairError=NULL);
 
 // Gibt an, ob ein Default Stores verfügbar ist
 LFCore_API bool LFDefaultStoreAvailable();

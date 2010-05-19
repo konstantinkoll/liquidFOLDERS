@@ -484,19 +484,20 @@ struct LFStoreDescriptor
 #define LFIllegalStoreDescriptor        4
 #define LFStoreNotFound                 5
 #define LFDriveNotReady                 6
-#define LFIllegalPhysicalPath           7
-#define LFRegistryError                 8
-#define LFIllegalKey                    9
-#define LFNoDefaultStore                10
-#define LFTooManyStores                 11
-#define LFStoreNotMounted               12
-#define LFMutexError                    13
-#define LFIllegalAttribute              14
-#define LFIllegalItemType               15
-#define LFIllegalValue                  16
-#define LFIndexNotCreated               17
-#define LFIndexError                    18
-#define LFIndexRepairError              19
+#define LFDriveWriteProtected           7
+#define LFIllegalPhysicalPath           8
+#define LFRegistryError                 9
+#define LFIllegalKey                    10
+#define LFNoDefaultStore                11
+#define LFTooManyStores                 12
+#define LFStoreNotMounted               13
+#define LFMutexError                    14
+#define LFIllegalAttribute              15
+#define LFIllegalItemType               16
+#define LFIllegalValue                  17
+#define LFIndexNotCreated               18
+#define LFIndexError                    19
+#define LFIndexRepairError              20
 
 
 // Structures and classes from LFCore.DLL

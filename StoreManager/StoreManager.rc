@@ -660,7 +660,7 @@ BEGIN
     ID_STORE_MAKEDEFAULT    "Makes the selected internal store the default store.\nMake default"
     ID_STORE_MAKEHYBRID     "Converts the selected store into a hybrid store. This enables you to search the store, even if it is not mounted.\nMake hybrid"
     ID_STORE_PROPERTIES     "Shows the properties of the selected store.\nProperties"
-    ID_STORE_MAINTENANCE    "Runs scheduled maintenance on all mounted stores.\nRun maintenance"
+    ID_STORE_MAINTENANCE    "Runs scheduled maintenance on all stores.\nRun maintenance"
     ID_STORE_BACKUP         "Saves important settings from the registry (including the properties of all internal stores and file format assignments) to a .reg file.\nBackup settings"
 END
 
