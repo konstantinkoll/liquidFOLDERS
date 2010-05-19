@@ -757,13 +757,28 @@ LFCore_API unsigned int LFMountDrive(char d)
 					ValidateStoreSettings(slot);
 					changeOccured = true;
 
+					if (slot->StoreMode!=LFStoreModeHybrid)
+						goto Finish1;
+
 					// Hybrid-Stores in der Registry abspeichern, damit LastSeen aktualisiert wird
-					if (slot->StoreMode==LFStoreModeHybrid)
-						SaveStoreSettingsToRegistry(slot);
+					SaveStoreSettingsToRegistry(slot);
+
+					HANDLE StoreLock;
+					if (!GetMutexForStore(slot, &StoreLock))
+						goto Finish1;
+
+					ReleaseMutex(Mutex_Stores);
+					res = CopyDir(slot->IdxPathMain, slot->IdxPathAux);
+					ReleaseMutexForStore(StoreLock);
+					goto Finish2;
 				}
+
+Finish1:
+				ReleaseMutex(Mutex_Stores);
+Finish2:
+				;
 			}
 
-			ReleaseMutex(Mutex_Stores);
 			LFFreeStoreDescriptor(s);
 		} while (FindNextFileA(hFind, &ffd));
 

@@ -116,6 +116,11 @@ FileFound:
 	RemoveDirectoryA(lpPath);
 }
 
+unsigned int CopyDir(LPCSTR lpPathSrc, LPCSTR lpPathDst)
+{
+	return LFOk;
+}
+
 bool DirWriteable(LPCSTR lpPath)
 {
 	char Filename[MAX_PATH];
@@ -328,38 +333,36 @@ LFCore_API unsigned int LFMakeHybridStore(char* key, HWND hWndSource)
 	LFStoreDescriptor* slot = FindStore(key, &StoreLock);
 	if (slot)
 	{
-		if (slot->StoreMode!=LFStoreModeExternal)
+		if ((slot->StoreMode!=LFStoreModeExternal) || (!IsStoreMounted(slot)))
 		{
-			res = LFIllegalStoreDescriptor;
-			goto Cleanup;
-		}
-
-		if (!IsStoreMounted(slot))
-		{
-			res = LFIllegalStoreDescriptor;
-			goto Cleanup;
+			ReleaseMutexForStore(StoreLock);
+			ReleaseMutex(Mutex_Stores);
+			return LFIllegalStoreDescriptor;
 		}
 
 		slot->StoreMode = LFStoreModeHybrid;
 		res = ValidateStoreSettings(slot);
 		if (res!=LFOk)
-			goto Cleanup;
+		{
+			ReleaseMutexForStore(StoreLock);
+			ReleaseMutex(Mutex_Stores);
+			return res;
+		}
+
+		#define CheckAbort if (res!=LFOk) { ReleaseMutexForStore(StoreLock); return res; }
 
 		res = UpdateStore(slot);
-		if (res!=LFOk)
-			goto Cleanup;
+		ReleaseMutex(Mutex_Stores);
+		CheckAbort
 
 		res = ValidateStoreDirectories(slot);
-		if (res!=LFOk)
-			goto Cleanup;
+		CheckAbort
 
-		// TODO: Index kopieren
+		res = CopyDir(slot->IdxPathMain, slot->IdxPathAux);
+		CheckAbort
 	}
 
-Cleanup:
-	// TODO: effizienter
 	ReleaseMutexForStore(StoreLock);
-	ReleaseMutex(Mutex_Stores);
 
 	if (res==LFOk)
 		SendMessage(HWND_BROADCAST, LFMessages.StoreAttributesChanged, LFMSGF_ExtHybStores, (LPARAM)hWndSource);
@@ -446,6 +449,14 @@ LFCore_API unsigned int LFDeleteStore(char* key, HWND hWndSource)
 	LFStoreDescriptor* slot = FindStore(key, &StoreLock);
 	if ((slot) && (StoreLock))
 	{
+		if (slot->DatPath[0]!='\0')
+			if (!DirWriteable(slot->DatPath))
+			{
+				ReleaseMutex(Mutex_Stores);
+				ReleaseMutexForStore(StoreLock);
+				return LFDriveWriteProtected;
+			}
+
 		LFStoreDescriptor victim = *slot;
 		res = DeleteStore(slot);
 		ReleaseMutex(Mutex_Stores);
@@ -524,7 +535,7 @@ unsigned int RunMaintenance(LFStoreDescriptor* s, bool scheduled)
 			return LFDriveWriteProtected;
 
 	// Index prüfen
-	CIndex* idx = new CIndex(((s->StoreMode!=LFStoreModeHybrid) || IsStoreMounted(s)) ? s->IdxPathMain : s->IdxPathAux, s->StoreID);
+	CIndex* idx = new CIndex((s->StoreMode!=LFStoreModeHybrid) ? s->IdxPathMain : s->IdxPathAux, s->StoreID);
 	switch (idx->Check(scheduled))
 	{
 	case IndexReindexRequired:
@@ -546,9 +557,14 @@ unsigned int RunMaintenance(LFStoreDescriptor* s, bool scheduled)
 	// Index duplizieren
 	if ((s->StoreMode==LFStoreModeHybrid) && IsStoreMounted(s))
 	{
-		// TODO: Copy index
+		res = CopyDir(s->IdxPathAux, s->IdxPathMain);
+		if (res!=LFOk)
+			return res;
 	}
 
+	SYSTEMTIME st;
+	GetLocalTime(&st);
+	SystemTimeToFileTime(&st, &s->MaintenanceTime);
 	s->NeedsCheck = false;
 	delete idx;
 

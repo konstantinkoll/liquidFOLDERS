@@ -5,6 +5,7 @@
 DWORD CreateDir(LPCSTR lpPath);
 void HideDir(LPCSTR lpPath);
 void RemoveDir(LPCSTR lpPath);
+unsigned int CopyDir(LPCSTR lpPathSrc, LPCSTR lpPathDst);
 unsigned int ValidateStoreDirectories(LFStoreDescriptor* s);
 void InitStores();
 unsigned int OpenStore(LFStoreDescriptor* s, bool WriteAccess, CIndex* &Index1, CIndex* &Index2);
