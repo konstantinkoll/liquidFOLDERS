@@ -60,6 +60,8 @@
 #define IDS_HELPURL                     21050
 #define IDS_PURCHASEURL                 21051
 #define IDS_ERROR                       21052
+#define IDS_STORES_SINGULAR             21053
+#define IDS_STORES_PLURAL               21054
 #define IDD_WELCOME                     21100
 #define IDC_STORENAME1                  21101
 #define IDC_STORENAME2                  21102
@@ -115,7 +117,11 @@
 #define IDC_SKIP                        21802
 #define IDC_ALPHABETICALLY              21803
 #define IDC_RESET                       21804
-#define IDD_REGISTRY                    21900
+#define IDD_STOREMAINTENANCE            21900
+#define IDC_SERVICED                    21901
+#define IDC_WRITEPROTECTED              21902
+#define IDC_ERROR                       21903
+#define IDD_REGISTRY                    22000
 
 // Next default values for new objects
 // 

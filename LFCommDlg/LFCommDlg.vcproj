@@ -516,6 +516,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\LFStoreMaintenanceDlg.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\LFStoreNewDlg.cpp"
 				>
 			</File>
@@ -679,6 +683,10 @@
 			</File>
 			<File
 				RelativePath=".\LFStoreDeleteDlg.h"
+				>
+			</File>
+			<File
+				RelativePath=".\LFStoreMaintenanceDlg.h"
 				>
 			</File>
 			<File
@@ -897,6 +905,10 @@
 			</File>
 			<File
 				RelativePath=".\res\StoreDelete_Tiny.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\StoreMaintenance_Tiny.ico"
 				>
 			</File>
 			<File

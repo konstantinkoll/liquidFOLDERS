@@ -10,8 +10,8 @@ public:
 
 	virtual void DoDataExchange(CDataExchange* pDX);
 
+protected:
 	afx_msg BOOL OnInitDialog();
-	afx_msg void OnDestroy();
 	afx_msg LRESULT UpdateStore(WPARAM wParam, LPARAM lParam);
 	DECLARE_MESSAGE_MAP()
 

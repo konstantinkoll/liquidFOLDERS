@@ -53,6 +53,7 @@ BEGIN_MESSAGE_MAP(CPaneList, CListCtrl)
 	ON_NOTIFY_REFLECT_EX(LVN_ENDLABELEDIT, OnEndLabelEdit)
 	ON_WM_CONTEXTMENU()
 	ON_WM_KEYDOWN()
+	ON_WM_CTLCOLOR()
 END_MESSAGE_MAP()
 
 void CPaneList::OnCustomDraw(NMHDR* pNMHDR, LRESULT* pResult)
@@ -265,6 +266,7 @@ void CPaneList::DrawItem(int nID, CDC* pDC, CMFCVisualManager* dm)
 
 BOOL CPaneList::SetWindowPos(const CWnd* pWndInsertAfter, int x, int y, int cx, int cy, UINT nFlags)
 {
+
 	if (cx<LastWidth)
 	{
 		SetTileSize(cx);

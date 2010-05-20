@@ -2323,6 +2323,10 @@
 			>
 		</File>
 		<File
+			RelativePath=".\StoreMaintenance_Tiny.ico"
+			>
+		</File>
+		<File
 			RelativePath="StoreManager.ico"
 			>
 		</File>
@@ -2336,10 +2340,6 @@
 		</File>
 		<File
 			RelativePath=".\StoreProperties_Tiny.ico"
-			>
-		</File>
-		<File
-			RelativePath=".\StoreStats_Tiny.ico"
 			>
 		</File>
 		<File

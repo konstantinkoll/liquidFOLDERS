@@ -1,0 +1,49 @@
+#include "StdAfx.h"
+#include "LFStoreMaintenanceDlg.h"
+#include "Resource.h"
+
+
+// LFStoreMaintenanceDlg
+//
+
+extern AFX_EXTENSION_MODULE LFCommDlgDLL;
+
+LFStoreMaintenanceDlg::LFStoreMaintenanceDlg(LFMaintenanceDlgParameters* pParameters, CWnd* pParentWnd)
+	: CDialog(IDD_STOREMAINTENANCE, pParentWnd)
+{
+	parameters = pParameters;
+}
+
+LFStoreMaintenanceDlg::~LFStoreMaintenanceDlg()
+{
+}
+
+BEGIN_MESSAGE_MAP(LFStoreMaintenanceDlg, CDialog)
+END_MESSAGE_MAP()
+
+BOOL LFStoreMaintenanceDlg::OnInitDialog()
+{
+	CDialog::OnInitDialog();
+
+	// Symbol für dieses Dialogfeld festlegen. Wird automatisch erledigt
+	// wenn das Hauptfenster der Anwendung kein Dialogfeld ist
+	HICON hIcon = LoadIcon(LFCommDlgDLL.hResource, MAKEINTRESOURCE(IDD_STOREMAINTENANCE));
+	SetIcon(hIcon, FALSE);
+	SetIcon(hIcon, TRUE);
+
+	SetNumber(IDC_SERVICED, parameters->Repaired);
+	SetNumber(IDC_WRITEPROTECTED, parameters->NoAccess);
+	SetNumber(IDC_ERROR, parameters->RepairError);
+
+	return TRUE;
+}
+
+void LFStoreMaintenanceDlg::SetNumber(UINT ID, UINT Number)
+{
+	CString mask;
+	ENSURE(mask.LoadString(Number==1 ? IDS_STORES_SINGULAR : IDS_STORES_PLURAL));
+
+	CString tmpStr;
+	tmpStr.Format(mask, Number);
+	GetDlgItem(ID)->SetWindowText(tmpStr);
+}

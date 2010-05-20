@@ -882,7 +882,13 @@ void CMainFrame::OnStoreProperties()
 
 void CMainFrame::OnStoreMaintenance()
 {
-	LFStoreMaintenance();
+	LFMaintenanceDlgParameters p;
+	ZeroMemory(&p, sizeof(p));
+
+	LFErrorBox(LFStoreMaintenance(&p.Repaired, &p.NoAccess, &p.RepairError), GetSafeHwnd());
+
+	LFStoreMaintenanceDlg dlg(&p, this);
+	dlg.DoModal();
 }
 
 void CMainFrame::OnStoreBackup()
@@ -891,13 +897,12 @@ void CMainFrame::OnStoreBackup()
 	ENSURE(tmpStr.LoadString(IDS_REGFILEFILTER));
 	tmpStr += _T(" (*.reg)|*.reg||");
 
-	CFileDialog* dlg;
-	dlg = new CFileDialog(FALSE, _T(".reg"), NULL, OFN_OVERWRITEPROMPT, tmpStr, this);
+	CFileDialog dlg(FALSE, _T(".reg"), NULL, OFN_OVERWRITEPROMPT, tmpStr, this);
 
-	if (dlg->DoModal()==IDOK)
+	if (dlg.DoModal()==IDOK)
 	{
 		CStdioFile f;
-		if (!f.Open(dlg->GetFileName(), CFile::modeCreate | CFile::modeWrite))
+		if (!f.Open(dlg.GetFileName(), CFile::modeCreate | CFile::modeWrite))
 		{
 			LFErrorBox(LFDriveNotReady);
 		}
@@ -961,8 +966,6 @@ void CMainFrame::OnStoreBackup()
 			f.Close();
 		}
 	}
-
-	delete dlg;
 }
 
 void CMainFrame::OnUpdateStoreCommands(CCmdUI* pCmdUI)

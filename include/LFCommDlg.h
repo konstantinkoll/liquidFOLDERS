@@ -21,6 +21,7 @@
 #include "..\LFCommDlg\LFSelectLocationGPSDlg.h"
 #include "..\LFCommDlg\LFSelectLocationIATADlg.h"
 #include "..\LFCommDlg\LFStoreDeleteDlg.h"
+#include "..\LFCommDlg\LFStoreMaintenanceDlg.h"
 #include "..\LFCommDlg\LFStoreNewDlg.h"
 #include "..\LFCommDlg\LFStorePropertiesDlg.h"
 #include "..\LFCommDlg\LFWelcomeDlg.h"

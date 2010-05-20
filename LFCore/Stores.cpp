@@ -627,16 +627,16 @@ LFCore_API unsigned int LFStoreMaintenance(unsigned int* Repaired, unsigned int*
 			{
 			case LFOk:
 				if (Repaired)
-					*Repaired++;
+					(*Repaired)++;
 				break;
 			case LFIllegalPhysicalPath:
 			case LFDriveWriteProtected:
 				if (NoAccess)
-					*NoAccess++;
+					(*NoAccess)++;
 				break;
 			default:
 				if (RepairError)
-					*RepairError++;
+					(*RepairError)++;
 			}
 			ReleaseMutexForStore(StoreLock);
 

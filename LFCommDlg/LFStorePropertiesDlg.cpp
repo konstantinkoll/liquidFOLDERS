@@ -29,7 +29,6 @@ LFStorePropertiesDlg::~LFStorePropertiesDlg()
 }
 
 BEGIN_MESSAGE_MAP(LFStorePropertiesDlg, CDialog)
-	ON_WM_DESTROY()
 	ON_REGISTERED_MESSAGE(MessageIDs->StoresChanged, UpdateStore)
 	ON_REGISTERED_MESSAGE(MessageIDs->StoreAttributesChanged, UpdateStore)
 END_MESSAGE_MAP()
@@ -55,11 +54,6 @@ BOOL LFStorePropertiesDlg::OnInitDialog()
 	SetWindowText(caption);
 
 	return TRUE;
-}
-
-void LFStorePropertiesDlg::OnDestroy()
-{
-	CDialog::OnDestroy();
 }
 
 LRESULT LFStorePropertiesDlg::UpdateStore(WPARAM /*wParam*/, LPARAM /*lParam*/)

@@ -129,6 +129,7 @@ IDD_SELECTGPS           ICON                    "res\\LocationGPS_Tiny.ico"
 IDD_ENTERLICENSEKEY     ICON                    "res\\Key_Small.ico"
 IDD_STOREPROPERTIES     ICON                    "res\\StoreProperties_Tiny.ico"
 IDD_ITEMTEMPLATE        ICON                    "res\\Inspector_Tiny.ico"
+IDD_STOREMAINTENANCE    ICON                    "res\\StoreMaintenance_Tiny.ico"
 IDD_REGISTRY            ICON                    "res\\Registry_Tiny.ico"
 #endif    // Neutral resources
 /////////////////////////////////////////////////////////////////////////////
@@ -392,6 +393,21 @@ BEGIN
     LTEXT           "Nicht vorhandene Attribute werden mit den Angaben unten ergänzt.\nFalls dies nicht gewünscht wird, klicken Sie bitte auf „Überspringen“.",IDC_STATIC,14,16,249,18
 END
 
+IDD_STOREMAINTENANCE DIALOGEX 0, 0, 200, 79
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Wartungsarbeiten"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    GROUPBOX        "Zusammenfassung",IDC_STATIC,7,7,186,45
+    LTEXT           "Erfolgreich gewartet:",IDC_STATIC,14,17,105,8
+    LTEXT           "X",IDC_SERVICED,125,17,60,8,SS_ENDELLIPSIS
+    LTEXT           "Kein Zugriff (schreibgeschützt):",IDC_STATIC,14,27,105,8
+    LTEXT           "X",IDC_WRITEPROTECTED,125,27,60,8,SS_ENDELLIPSIS
+    LTEXT           "Noch immer fehlerhaft:",IDC_STATIC,14,37,105,8
+    LTEXT           "X",IDC_ERROR,125,37,60,8,SS_ENDELLIPSIS
+    DEFPUSHBUTTON   "Ok",IDOK,7,58,50,14,WS_GROUP
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -480,6 +496,14 @@ BEGIN
         TOPMARGIN, 7
         BOTTOMMARGIN, 331
     END
+
+    IDD_STOREMAINTENANCE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 193
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 72
+    END
 END
 #endif    // APSTUDIO_INVOKED
 
@@ -513,6 +537,8 @@ BEGIN
     IDS_HELPURL             "http://liquidFOLDERS.net/cms.php?lang=de&page=tour"
     IDS_PURCHASEURL         "http://liquidFOLDERS.net/cms.php?lang=de&page=purchase"
     IDS_ERROR               "Fehler"
+    IDS_STORES_SINGULAR     "%d Store"
+    IDS_STORES_PLURAL       "%d Stores"
 END
 
 STRINGTABLE 
@@ -792,6 +818,21 @@ BEGIN
     LTEXT           "Missing file attributes will be set using the values below.\nIf you don't want your files to be amended, press ""Skip"".",IDC_STATIC,14,16,249,18
 END
 
+IDD_STOREMAINTENANCE DIALOGEX 0, 0, 200, 79
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Scheduled maintenance"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    GROUPBOX        "Summary",IDC_STATIC,7,7,186,45
+    LTEXT           "Successfully serviced:",IDC_STATIC,14,17,105,8
+    LTEXT           "X",IDC_SERVICED,125,17,60,8,SS_ENDELLIPSIS
+    LTEXT           "No access (write protected):",IDC_STATIC,14,27,105,8
+    LTEXT           "X",IDC_WRITEPROTECTED,125,27,60,8,SS_ENDELLIPSIS
+    LTEXT           "Beyond repair (still errors):",IDC_STATIC,14,37,105,8
+    LTEXT           "X",IDC_ERROR,125,37,60,8,SS_ENDELLIPSIS
+    DEFPUSHBUTTON   "Ok",IDOK,7,58,50,14,WS_GROUP
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -880,6 +921,14 @@ BEGIN
         TOPMARGIN, 7
         BOTTOMMARGIN, 331
     END
+
+    IDD_STOREMAINTENANCE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 193
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 72
+    END
 END
 #endif    // APSTUDIO_INVOKED
 
@@ -913,6 +962,8 @@ BEGIN
     IDS_HELPURL             "http://liquidFOLDERS.net/cms.php?lang=en&page=tour"
     IDS_PURCHASEURL         "http://liquidFOLDERS.net/cms.php?lang=en&page=purchase"
     IDS_ERROR               "Error"
+    IDS_STORES_SINGULAR     "%d store"
+    IDS_STORES_PLURAL       "%d stores"
 END
 
 STRINGTABLE 
@@ -966,7 +1017,8 @@ BEGIN
     GROUPBOX        "Esquema de color",IDC_STATIC,87,169,142,35,WS_GROUP
     GROUPBOX        "StoreManager",IDC_STATIC,87,210,142,40,WS_GROUP
     CONTROL         "Solo platinas &encuadenadas",IDC_HIDEEMPTYDRIVES,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,94,221,128,10
-    CONTROL         "Solamente &dominios con archivos",IDC_HIDEEMPTYDOMAINS,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,94,234,128,10
+    CONTROL         "Solamente &dominios con archivos",IDC_HIDEEMPTYDOMAINS,
+                    "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,94,234,128,10
     GROUPBOX        "Licencia",IDC_STATIC,238,169,155,35,WS_GROUP
     LTEXT           "Nombre:",IDC_NAME,245,179,141,8
     LTEXT           "X",IDC_LICENSEKEY,245,189,141,8
@@ -1313,6 +1365,8 @@ BEGIN
     IDS_HELPURL             "http://liquidFOLDERS.net/cms.php?lang=es&page=tour"
     IDS_PURCHASEURL         "http://liquidFOLDERS.net/cms.php?lang=es&page=purchase"
     IDS_ERROR               "Error"
+    IDS_STORES_SINGULAR     "%d store"
+    IDS_STORES_PLURAL       "%d stores"
 END
 
 STRINGTABLE 
@@ -1715,6 +1769,8 @@ BEGIN
     IDS_HELPURL             "http://liquidFOLDERS.net/cms.php?lang=fr&page=tour"
     IDS_PURCHASEURL         "http://liquidFOLDERS.net/cms.php?lang=fr&page=purchase"
     IDS_ERROR               "Erreur"
+    IDS_STORES_SINGULAR     "%d store"
+    IDS_STORES_PLURAL       "%d stores"
 END
 
 STRINGTABLE 
