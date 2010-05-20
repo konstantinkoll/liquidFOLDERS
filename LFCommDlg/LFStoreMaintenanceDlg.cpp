@@ -40,10 +40,18 @@ BOOL LFStoreMaintenanceDlg::OnInitDialog()
 
 void LFStoreMaintenanceDlg::SetNumber(UINT ID, UINT Number)
 {
-	CString mask;
-	ENSURE(mask.LoadString(Number==1 ? IDS_STORES_SINGULAR : IDS_STORES_PLURAL));
-
 	CString tmpStr;
-	tmpStr.Format(mask, Number);
+
+	if (Number)
+	{
+		CString mask;
+		ENSURE(mask.LoadString(Number==1 ? IDS_STORES_SINGULAR : IDS_STORES_PLURAL));
+		tmpStr.Format(mask, Number);
+	}
+	else
+	{
+		tmpStr = "\u2014";
+	}
+
 	GetDlgItem(ID)->SetWindowText(tmpStr);
 }
