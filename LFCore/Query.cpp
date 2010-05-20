@@ -93,6 +93,7 @@ LFSearchResult* QueryDomains(LFFilter* filter)
 				LFFilter* nf = LFAllocFilter();
 				nf->Mode = LFFilterModeDirectoryTree;
 				nf->Options = filter->Options;
+				nf->DomainID = a;
 				strcpy_s(nf->StoreID, LFKeySize, filter->StoreID);
 				wcscpy_s(nf->Name, 256, d->DomainName);
 
@@ -151,7 +152,26 @@ LFSearchResult* QueryStore(LFFilter* filter)
 			delete idx2;
 		ReleaseMutexForStore(StoreLock);
 
-		filter->Result.FilterType = (filter->Mode==LFFilterModeDirectoryTree) ? LFFilterTypeSubfolder : LFFilterTypeQueryFilter;
+		if (filter->Mode==LFFilterModeDirectoryTree)
+		{
+			switch (filter->DomainID)
+			{
+			case LFDomainTrash:
+				res->m_Context = LFContextHousekeeping;
+				filter->Result.FilterType = LFFilterTypeTrash;
+				break;
+			case LFDomainUnknown:
+				res->m_Context = LFContextHousekeeping;
+				filter->Result.FilterType = LFFilterTypeUnknownFileFormats;
+				break;
+			default:
+				filter->Result.FilterType = LFFilterTypeSubfolder;
+			}
+		}
+		else
+		{
+			filter->Result.FilterType = LFFilterTypeQueryFilter;
+		}
 	}
 	else
 	{
