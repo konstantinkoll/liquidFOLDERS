@@ -6,6 +6,7 @@ struct LFMaintenanceDlgParameters
 {
 	UINT Repaired;
 	UINT NoAccess;
+	UINT NoFreeSpace;
 	UINT RepairError;
 };
 

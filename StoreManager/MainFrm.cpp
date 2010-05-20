@@ -885,7 +885,7 @@ void CMainFrame::OnStoreMaintenance()
 	LFMaintenanceDlgParameters p;
 	ZeroMemory(&p, sizeof(p));
 
-	LFErrorBox(LFStoreMaintenance(&p.Repaired, &p.NoAccess, &p.RepairError), GetSafeHwnd());
+	LFErrorBox(LFStoreMaintenance(&p.Repaired, &p.NoAccess, &p.NoFreeSpace, &p.RepairError), GetSafeHwnd());
 
 	LFStoreMaintenanceDlg dlg(&p, this);
 	dlg.DoModal();

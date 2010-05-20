@@ -120,7 +120,8 @@
 #define IDD_STOREMAINTENANCE            21900
 #define IDC_SERVICED                    21901
 #define IDC_WRITEPROTECTED              21902
-#define IDC_ERROR                       21903
+#define IDC_NOFREESPACE                 21903
+#define IDC_ERROR                       21904
 #define IDD_REGISTRY                    22000
 
 // Next default values for new objects

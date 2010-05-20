@@ -211,6 +211,8 @@ BEGIN
     IDS_LFErrorIndexError   "The store index is not current and requires scheduled maintenance."
     IDS_LFErrorIndexRepairError 
                             "The store index is damaged and could not be repaired (write protected disc ?)."
+    IDS_LFErrorNotEnoughFreeDisc 
+                            "There is not enough free disc space."
 END
 
 STRINGTABLE 

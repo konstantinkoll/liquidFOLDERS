@@ -596,7 +596,7 @@ LFCore_API unsigned int LFStoreMaintenance(char* key)
 	return res;
 }
 
-LFCore_API unsigned int LFStoreMaintenance(unsigned int* Repaired, unsigned int* NoAccess, unsigned int* RepairError)
+LFCore_API unsigned int LFStoreMaintenance(unsigned int* Repaired, unsigned int* NoAccess, unsigned int* NoFreeSpace, unsigned int* RepairError)
 {
 	if (!GetMutex(Mutex_Stores))
 		return LFMutexError;
@@ -633,6 +633,10 @@ LFCore_API unsigned int LFStoreMaintenance(unsigned int* Repaired, unsigned int*
 			case LFDriveWriteProtected:
 				if (NoAccess)
 					(*NoAccess)++;
+				break;
+			case LFNotEnoughFreeDiscSpace:
+				if (NoFreeSpace)
+					(*NoFreeSpace)++;
 				break;
 			default:
 				if (RepairError)

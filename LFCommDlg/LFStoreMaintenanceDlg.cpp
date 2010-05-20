@@ -33,6 +33,7 @@ BOOL LFStoreMaintenanceDlg::OnInitDialog()
 
 	SetNumber(IDC_SERVICED, parameters->Repaired);
 	SetNumber(IDC_WRITEPROTECTED, parameters->NoAccess);
+	SetNumber(IDC_NOFREESPACE, parameters->NoFreeSpace);
 	SetNumber(IDC_ERROR, parameters->RepairError);
 
 	return TRUE;

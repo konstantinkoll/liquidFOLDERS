@@ -393,19 +393,21 @@ BEGIN
     LTEXT           "Nicht vorhandene Attribute werden mit den Angaben unten ergänzt.\nFalls dies nicht gewünscht wird, klicken Sie bitte auf „Überspringen“.",IDC_STATIC,14,16,249,18
 END
 
-IDD_STOREMAINTENANCE DIALOGEX 0, 0, 200, 79
+IDD_STOREMAINTENANCE DIALOGEX 0, 0, 200, 89
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Wartungsarbeiten"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    GROUPBOX        "Zusammenfassung",IDC_STATIC,7,7,186,45
+    GROUPBOX        "Zusammenfassung",IDC_STATIC,7,7,186,55
     LTEXT           "Erfolgreich gewartet:",IDC_STATIC,14,17,105,8
     LTEXT           "X",IDC_SERVICED,125,17,60,8,SS_ENDELLIPSIS
     LTEXT           "Kein Zugriff (schreibgeschützt):",IDC_STATIC,14,27,105,8
     LTEXT           "X",IDC_WRITEPROTECTED,125,27,60,8,SS_ENDELLIPSIS
-    LTEXT           "Noch immer fehlerhaft:",IDC_STATIC,14,37,105,8
-    LTEXT           "X",IDC_ERROR,125,37,60,8,SS_ENDELLIPSIS
-    DEFPUSHBUTTON   "Ok",IDOK,7,58,50,14,WS_GROUP
+    LTEXT           "Zu wenig freier Speicherplatz:",IDC_STATIC,14,37,105,8
+    LTEXT           "X",IDC_NOFREESPACE,125,37,60,8,SS_ENDELLIPSIS
+    LTEXT           "Noch immer fehlerhaft:",IDC_STATIC,14,47,105,8
+    LTEXT           "X",IDC_ERROR,125,47,60,8,SS_ENDELLIPSIS
+    DEFPUSHBUTTON   "Ok",IDOK,7,68,50,14,WS_GROUP
 END
 
 
@@ -502,7 +504,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 193
         TOPMARGIN, 7
-        BOTTOMMARGIN, 72
+        BOTTOMMARGIN, 82
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -818,19 +820,21 @@ BEGIN
     LTEXT           "Missing file attributes will be set using the values below.\nIf you don't want your files to be amended, press ""Skip"".",IDC_STATIC,14,16,249,18
 END
 
-IDD_STOREMAINTENANCE DIALOGEX 0, 0, 200, 79
+IDD_STOREMAINTENANCE DIALOGEX 0, 0, 200, 89
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Scheduled maintenance"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    GROUPBOX        "Summary",IDC_STATIC,7,7,186,45
+    GROUPBOX        "Summary",IDC_STATIC,7,7,186,55
     LTEXT           "Successfully serviced:",IDC_STATIC,14,17,105,8
     LTEXT           "X",IDC_SERVICED,125,17,60,8,SS_ENDELLIPSIS
     LTEXT           "No access (write protected):",IDC_STATIC,14,27,105,8
     LTEXT           "X",IDC_WRITEPROTECTED,125,27,60,8,SS_ENDELLIPSIS
-    LTEXT           "Beyond repair (still errors):",IDC_STATIC,14,37,105,8
-    LTEXT           "X",IDC_ERROR,125,37,60,8,SS_ENDELLIPSIS
-    DEFPUSHBUTTON   "Ok",IDOK,7,58,50,14,WS_GROUP
+    LTEXT           "Not enough free disc space:",IDC_STATIC,14,37,105,8
+    LTEXT           "X",IDC_NOFREESPACE,125,37,60,8,SS_ENDELLIPSIS
+    LTEXT           "Beyond repair (still errors):",IDC_STATIC,14,47,105,8
+    LTEXT           "X",IDC_ERROR,125,47,60,8,SS_ENDELLIPSIS
+    DEFPUSHBUTTON   "Ok",IDOK,7,68,50,14,WS_GROUP
 END
 
 
@@ -927,7 +931,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 193
         TOPMARGIN, 7
-        BOTTOMMARGIN, 72
+        BOTTOMMARGIN, 82
     END
 END
 #endif    // APSTUDIO_INVOKED
