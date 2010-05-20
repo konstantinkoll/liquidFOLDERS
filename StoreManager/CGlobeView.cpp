@@ -148,16 +148,14 @@ void CGlobeView::SetSearchResult(LFSearchResult* _result)
 			for (UINT a=0; a<_result->m_ItemCount; a++)
 			{
 				LFGeoCoordinates* c = (LFGeoCoordinates*)_result->m_Items[a]->AttributeValues[LFAttrLocationGPS];
+				ZeroMemory(&m_Locations[a], sizeof(Location));
 				if (c)
-				{
-					CalculateWorldCoords(c->Latitude, c->Longitude, m_Locations[a].world);
-					m_Locations[a].valid = TRUE;
-					m_Locations[a].selected = FALSE;
-				}
-				else
-				{
-					ZeroMemory(&m_Locations[a], sizeof(Location));
-				}
+					if ((c->Latitude!=0) || (c->Longitude!=0))
+					{
+						CalculateWorldCoords(c->Latitude, c->Longitude, m_Locations[a].world);
+						m_Locations[a].valid = TRUE;
+						m_Locations[a].selected = FALSE;
+					}
 			}
 		}
 
