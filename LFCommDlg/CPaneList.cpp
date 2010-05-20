@@ -53,7 +53,7 @@ BEGIN_MESSAGE_MAP(CPaneList, CListCtrl)
 	ON_NOTIFY_REFLECT_EX(LVN_ENDLABELEDIT, OnEndLabelEdit)
 	ON_WM_CONTEXTMENU()
 	ON_WM_KEYDOWN()
-	ON_WM_CTLCOLOR()
+	ON_WM_NCCALCSIZE()
 END_MESSAGE_MAP()
 
 void CPaneList::OnCustomDraw(NMHDR* pNMHDR, LRESULT* pResult)
@@ -156,6 +156,12 @@ void CPaneList::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 	}
 
 	CListCtrl::OnKeyDown(nChar, nRepCnt, nFlags);
+}
+
+void CPaneList::OnNcCalcSize(BOOL bCalcValidRects, NCCALCSIZE_PARAMS FAR* lpncsp)
+{
+	ModifyStyle(WS_HSCROLL, 0);
+	CListCtrl::OnNcCalcSize(bCalcValidRects, lpncsp);
 }
 
 void CPaneList::DrawItem(int nID, CDC* pDC, CMFCVisualManager* dm)
