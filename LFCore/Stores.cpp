@@ -124,8 +124,11 @@ unsigned int CopyDir(LPCSTR lpPathSrc, LPCSTR lpPathDst)
 
 bool DirFreeSpace(LPCSTR lpPathSrc, unsigned int Required)
 {
-	// TODO
-	return true;
+	ULARGE_INTEGER FreeBytesAvailable;
+	if (!GetDiskFreeSpaceExA(lpPathSrc, &FreeBytesAvailable, NULL, NULL))
+		return false;
+
+	return FreeBytesAvailable.QuadPart>=Required;
 }
 
 bool DirWriteable(LPCSTR lpPath)
