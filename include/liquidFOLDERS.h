@@ -118,7 +118,7 @@ struct LFAirport
 
 struct LFItemCategoryDescriptor
 {
-	wchar_t Name[54];
+	wchar_t Name[64];
 	wchar_t Hint[256];
 };
 
