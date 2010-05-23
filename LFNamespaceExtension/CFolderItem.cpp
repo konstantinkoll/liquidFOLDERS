@@ -456,7 +456,7 @@ FolderThemes CFolderItem::GetFolderTheme()
 			t = NSEFT_Video;
 			break;
 		case LFDomainAllFiles:
-		case LFDomainAllMultimediaFiles:
+		case LFDomainAllMediaFiles:
 		case LFDomainFavorites:
 			t = NSEFT_Search;
 			break;
