@@ -118,7 +118,14 @@ FileFound:
 
 unsigned int CopyDir(LPCSTR lpPathSrc, LPCSTR lpPathDst)
 {
+	// TODO
 	return LFOk;
+}
+
+bool DirFreeSpace(LPCSTR lpPathSrc, unsigned int Required)
+{
+	// TODO
+	return true;
 }
 
 bool DirWriteable(LPCSTR lpPath)
@@ -538,6 +545,9 @@ unsigned int RunMaintenance(LFStoreDescriptor* s, bool scheduled)
 	CIndex* idx = new CIndex((s->StoreMode!=LFStoreModeHybrid) ? s->IdxPathMain : s->IdxPathAux, s->StoreID);
 	switch (idx->Check(scheduled))
 	{
+	case IndexNotEnoughFreeDiscSpace:
+		delete idx;
+		return LFNotEnoughFreeDiscSpace;
 	case IndexReindexRequired:
 		// TODO
 	case IndexError:

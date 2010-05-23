@@ -355,6 +355,21 @@ void CHeapfile::Invalidate(LFItemDescriptor* i)
 	Invalidate(i->CoreAttributes.FileID, ID);
 }
 
+unsigned int CHeapfile::GetItemCount()
+{
+	return ItemCount;
+}
+
+unsigned int CHeapfile::GetRequiredElementSize()
+{
+	return max(Hdr.ElementSize, RequestedElementSize);
+}
+
+unsigned int CHeapfile::GetRequiredDiscSize()
+{
+	return GetRequiredElementSize()*ItemCount+sizeof(HeapfileHeader);
+}
+
 bool CHeapfile::Compact()
 {
 	if ((!Hdr.NeedsCompaction) && (OpenStatus!=HeapMaintenanceRequired) && (OpenStatus!=HeapMaintenanceRecommended))
@@ -369,7 +384,7 @@ bool CHeapfile::Compact()
 		return false;
 
 	HeapfileHeader NewHdr = Hdr;
-	NewHdr.ElementSize = min(Hdr.ElementSize, RequestedElementSize);
+	NewHdr.ElementSize = max(Hdr.ElementSize, RequestedElementSize);
 	NewHdr.NeedsCompaction = false;
 	NewHdr.Version = CurIdxVersion;
 
@@ -382,6 +397,7 @@ bool CHeapfile::Compact()
 		ABORT
 
 	int Next = 0;
+	int Count = 0;
 	void* Ptr;
 	bool res = true;
 	char* tmpBuf = (char*)malloc(NewHdr.ElementSize);
@@ -409,6 +425,8 @@ bool CHeapfile::Compact()
 				ABORT
 			if (NewHdr.ElementSize!=Written)
 				ABORT
+
+			Count++;
 		}
 	};
 
@@ -429,6 +447,7 @@ bool CHeapfile::Compact()
 	Hdr = NewHdr;
 	AllocBuffer();
 	FirstInBuffer = LastInBuffer = -1;
+	ItemCount = Count;
 	return true;
 }
 

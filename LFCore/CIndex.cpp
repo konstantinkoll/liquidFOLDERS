@@ -3,6 +3,7 @@
 #include "stdafx.h"
 #include "CIndex.h"
 #include "LFItemDescriptor.h"
+#include "Stores.h"
 #include <assert.h>
 
 
@@ -75,6 +76,7 @@ unsigned int CIndex::Check(bool scheduled)
 	bool Reindex = false;
 	bool Repaired = false;
 	unsigned int tres[IdxTableCount];
+	unsigned int MaxSize = 0;
 
 	// Tabellen prüfen
 	for (unsigned int a=0; a<IdxTableCount; a++)
@@ -82,6 +84,7 @@ unsigned int CIndex::Check(bool scheduled)
 		LoadTable(a, &tres[a]);
 		switch (tres[a])
 		{
+		case HeapCannotCreate:
 		case HeapError:
 			return IndexError;
 		case HeapCreated:
@@ -90,10 +93,6 @@ unsigned int CIndex::Check(bool scheduled)
 			Reindex = true;
 			Repaired = true;
 			break;
-		case HeapCannotCreate:
-			if (a==IDMaster)
-				return IndexError;
-			break;
 		case HeapMaintenanceRequired:
 			if (!Tables[a]->Compact())
 				return IndexError;
@@ -101,11 +100,16 @@ unsigned int CIndex::Check(bool scheduled)
 			Repaired = true;
 			break;
 		}
+
+		MaxSize = max(MaxSize, Tables[a]->GetRequiredElementSize());
 	}
 
 	// Index-Durchlauf
 	if (scheduled || Reindex)
 	{
+		if (!DirFreeSpace(Path, MaxSize*Tables[IDMaster]->GetItemCount()))
+			return IndexNotEnoughFreeDiscSpace;
+
 		// TODO: registrierte Formate anpassen, ggf. neue Slaves erstellen
 	}
 
@@ -113,6 +117,8 @@ unsigned int CIndex::Check(bool scheduled)
 	if (scheduled)
 		for (unsigned int a=0; a<IdxTableCount; a++)
 		{
+			if (!DirFreeSpace(Path, Tables[a]->GetRequiredDiscSize()))
+				return IndexNotEnoughFreeDiscSpace;
 			if (!Tables[a]->Compact())
 				return IndexError;
 

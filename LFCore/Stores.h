@@ -5,6 +5,7 @@
 DWORD CreateDir(LPCSTR lpPath);
 void HideDir(LPCSTR lpPath);
 void RemoveDir(LPCSTR lpPath);
+bool DirFreeSpace(LPCSTR lpPathSrc, unsigned int Required);
 unsigned int CopyDir(LPCSTR lpPathSrc, LPCSTR lpPathDst);
 unsigned int ValidateStoreDirectories(LFStoreDescriptor* s);
 void InitStores();

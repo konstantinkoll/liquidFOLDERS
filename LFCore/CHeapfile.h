@@ -28,6 +28,8 @@ struct HeapfileHeader
 
 class LFCore_API CHeapfile
 {
+	friend class CIndex;
+
 public:
 	CHeapfile(char* Path, char* Filename, unsigned int _ElementSize, unsigned int _KeyOffset=0);
 	~CHeapfile();
@@ -46,20 +48,23 @@ public:
 	void Invalidate(void* Ptr);
 	void Invalidate(char* Key, int& Next);
 	void Invalidate(LFItemDescriptor* i);
+	unsigned int GetItemCount();
+	unsigned int GetRequiredElementSize();
+	unsigned int GetRequiredDiscSize();
 	bool Compact();
 	void MakeDirty(bool NeedsCompaction=false);
 
 	unsigned int OpenStatus;
-	unsigned int RequestedElementSize;
 
 protected:
 	void* Buffer;
 	HeapfileHeader Hdr;
-	int FirstInBuffer;
-	int LastInBuffer;
+	unsigned int RequestedElementSize;
 	unsigned int KeyOffset;
 	unsigned int BufferSize;
 	int ItemCount;
+	int FirstInBuffer;
+	int LastInBuffer;
 	bool BufferNeedsWriteback;
 	bool HeaderNeedsWriteback;
 

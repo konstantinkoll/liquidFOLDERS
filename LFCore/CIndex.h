@@ -12,6 +12,7 @@
 #define IndexFullyRepaired             2
 #define IndexError                     3
 #define IndexReindexRequired           4
+#define IndexNotEnoughFreeDiscSpace    5
 
 class CIndex
 {
