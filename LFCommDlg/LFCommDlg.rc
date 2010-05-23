@@ -537,8 +537,8 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_HELPURL             "http://liquidFOLDERS.net/cms.php?lang=de&page=tour"
-    IDS_PURCHASEURL         "http://liquidFOLDERS.net/cms.php?lang=de&page=purchase"
+    IDS_HELPURL             "http://liquidFOLDERS.net/tour/de/"
+    IDS_PURCHASEURL         "http://liquidFOLDERS.net/purchase/de/"
     IDS_ERROR               "Fehler"
     IDS_STORES_SINGULAR     "%d Store"
     IDS_STORES_PLURAL       "%d Stores"
@@ -965,8 +965,8 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_HELPURL             "http://liquidFOLDERS.net/cms.php?lang=en&page=tour"
-    IDS_PURCHASEURL         "http://liquidFOLDERS.net/cms.php?lang=en&page=purchase"
+    IDS_HELPURL             "http://liquidFOLDERS.net/tour/en/"
+    IDS_PURCHASEURL         "http://liquidFOLDERS.net/purchase/en/"
     IDS_ERROR               "Error"
     IDS_STORES_SINGULAR     "%d store"
     IDS_STORES_PLURAL       "%d stores"
@@ -1368,8 +1368,8 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_HELPURL             "http://liquidFOLDERS.net/cms.php?lang=es&page=tour"
-    IDS_PURCHASEURL         "http://liquidFOLDERS.net/cms.php?lang=es&page=purchase"
+    IDS_HELPURL             "http://liquidFOLDERS.net/tour/es/"
+    IDS_PURCHASEURL         "http://liquidFOLDERS.net/purchase/es/"
     IDS_ERROR               "Error"
     IDS_STORES_SINGULAR     "%d store"
     IDS_STORES_PLURAL       "%d stores"
@@ -1772,8 +1772,8 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_HELPURL             "http://liquidFOLDERS.net/cms.php?lang=fr&page=tour"
-    IDS_PURCHASEURL         "http://liquidFOLDERS.net/cms.php?lang=fr&page=purchase"
+    IDS_HELPURL             "http://liquidFOLDERS.net/tour/fr/"
+    IDS_PURCHASEURL         "http://liquidFOLDERS.net/purchase/fr/"
     IDS_ERROR               "Erreur"
     IDS_STORES_SINGULAR     "%d store"
     IDS_STORES_PLURAL       "%d stores"
