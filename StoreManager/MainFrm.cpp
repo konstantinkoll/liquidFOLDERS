@@ -1220,6 +1220,7 @@ BOOL CMainFrame::RenameSingleItem(UINT n, CString Name)
 		LFVariantData value;
 		value.Attr = LFAttrFileName;
 		value.Type = LFTypeUnicodeString;
+		value.IsNull = false;
 		wcscpy_s(value.UnicodeString, 256, Name.GetBuffer());
 
 		LFTransactionUpdate(tl, GetSafeHwnd(), &value);

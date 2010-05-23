@@ -76,6 +76,7 @@ BOOL CAttributeProperty::OnUpdateValue()
 	if (FormatProperty()!=strText)
 	{
 		m_varValue = (LPCTSTR)strText;
+		p_Data->IsNull = false;
 		switch (p_Data->Type)
 		{
 		case LFTypeUnicodeString:
