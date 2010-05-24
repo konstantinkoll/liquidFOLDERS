@@ -415,35 +415,6 @@ LFCore_API unsigned int LFSetStoreAttributes(char* key, wchar_t* name, wchar_t* 
 	return res;
 }
 
-LFCore_API unsigned int LFSetStoreComment(char* key, wchar_t* comment, HWND hWndSource, bool InternalCall)
-{
-	if (!key)
-		return LFIllegalKey;
-	if (key[0]=='\0')
-		return LFIllegalKey;
-	if (!comment)
-		return LFIllegalValue;
-
-	if (!GetMutex(Mutex_Stores))
-		return LFMutexError;
-
-	unsigned int res = LFIllegalKey;
-	LFStoreDescriptor* slot = FindStore(key);
-	if (slot)
-	{
-		wcscpy_s(slot->Comment, 256, comment);
-		res = UpdateStore(slot);
-	}
-
-	unsigned int Mode = slot->StoreMode;
-	ReleaseMutex(Mutex_Stores);
-
-	if ((res==LFOk) && (!InternalCall))
-		SendNotifyMessage(HWND_BROADCAST, LFMessages.StoreAttributesChanged, Mode==LFStoreModeInternal ? LFMSGF_IntStores : LFMSGF_ExtHybStores, (LPARAM)hWndSource);
-
-	return res;
-}
-
 LFCore_API unsigned int LFDeleteStore(char* key, HWND hWndSource)
 {
 	if (!key)
