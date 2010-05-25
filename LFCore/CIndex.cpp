@@ -3,6 +3,7 @@
 #include "stdafx.h"
 #include "CIndex.h"
 #include "LFItemDescriptor.h"
+#include "Query.h"
 #include "Stores.h"
 #include <assert.h>
 
@@ -240,27 +241,39 @@ void CIndex::Retrieve(LFFilter* f, LFSearchResult* res)
 		LFItemDescriptor* i = LFAllocItemDescriptor();
 		Tables[IDMaster]->WriteToItemDescriptor(i, PtrM);
 
-		// Slave
-		if ((PtrM->SlaveID) && (PtrM->SlaveID<IdxTableCount))
-			if (LoadTable(PtrM->SlaveID))
-			{
-				void* PtrS;
+		int pass = PassesFilterCore(i, f);
+		bool str = false;
 
-				if (Tables[PtrM->SlaveID]->FindKey(PtrM->FileID, IDs[PtrM->SlaveID], PtrS))
-					Tables[PtrM->SlaveID]->WriteToItemDescriptor(i, PtrS);
-			}
-			else
-			{
-				res->m_LastError = LFIndexError;
-			}
-
-		// Filter
-		if (f->Searchterm[0]!=L'\0')
-			AttributesToString(i);
-		if (LFPassesFilter(i, f))
+		if (pass==0)
 		{
-			if (f->Searchterm[0]==L'\0')
+			// Slave
+			if ((PtrM->SlaveID) && (PtrM->SlaveID<IdxTableCount))
+				if (LoadTable(PtrM->SlaveID))
+				{
+					void* PtrS;
+
+					if (Tables[PtrM->SlaveID]->FindKey(PtrM->FileID, IDs[PtrM->SlaveID], PtrS))
+						Tables[PtrM->SlaveID]->WriteToItemDescriptor(i, PtrS);
+				}
+				else
+				{
+					res->m_LastError = LFIndexError;
+				}
+
+			if (f->Searchterm[0]!=L'\0')
+			{
 				AttributesToString(i);
+				str = true;
+			}
+
+			pass = PassesFilterSlaves(i, f) ? 1 : -1;
+		}
+
+		if (pass==1)
+		{
+			if (!str)
+				AttributesToString(i);
+
 			res->AddItemDescriptor(i);
 		}
 	}

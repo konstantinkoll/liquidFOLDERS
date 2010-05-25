@@ -315,7 +315,7 @@ struct LFAttributeDescriptor
 #define LFDomainTrash                  18
 #define LFDomainUnknown                19
 
-#define LFFirstPhysicalDomain           5
+#define LFFirstPhysicalDomain           3
 #define LFDomainCount                  20
 
 

@@ -1,5 +1,6 @@
 #pragma once
 #include "liquidFOLDERS.h"
 
-// Interner Gebrauch
+int PassesFilterCore(LFItemDescriptor* i, LFFilter* filter);
+bool PassesFilterSlaves(LFItemDescriptor* i, LFFilter* filter);
 LFSearchResult* QueryDomains(LFFilter* f);

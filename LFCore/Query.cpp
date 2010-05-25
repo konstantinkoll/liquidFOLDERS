@@ -12,11 +12,63 @@ extern HMODULE LFCoreModuleHandle;
 extern HANDLE Mutex_Stores;
 
 
+int PassesFilterCore(LFItemDescriptor* i, LFFilter* filter)
+{
+	assert(filter);
+	assert(i);
+
+	// StoreID wird durch Query Optimization bearbeitet
+
+	// DomainID
+	if (filter->DomainID)
+		switch (filter->DomainID)
+		{
+		case LFDomainAllMediaFiles:
+			if ((i->CoreAttributes.DomainID<LFDomainAudio) || (i->CoreAttributes.DomainID>LFDomainVideos))
+				return -1;
+		case LFDomainAllFiles:
+			break;
+		case LFDomainFavorites:
+			if (!i->CoreAttributes.Rating)
+				return -1;
+			break;
+		case LFDomainTrash:
+			if (!(i->CoreAttributes.Flags & LFFlagTrash))
+				return -1;
+			break;
+		case LFDomainUnknown:
+			if ((i->CoreAttributes.DomainID) && (i->CoreAttributes.DomainID<LFDomainCount))
+				return -1;
+			break;
+		default:
+			if (filter->DomainID!=i->CoreAttributes.DomainID)
+				return -1;
+		}
+
+	// TODO
+	return 0;
+}
+
+bool PassesFilterSlaves(LFItemDescriptor* i, LFFilter* filter)
+{
+	assert(filter);
+	assert(i);
+
+	// TODO
+	return true;
+}
+
 LFCore_API bool LFPassesFilter(LFItemDescriptor* i, LFFilter* filter)
 {
-	// TODO
-
-	return true;
+	switch (PassesFilterCore(i, filter))
+	{
+	case -1:
+		return false;
+	case 1:
+		return true;
+	default:
+		return PassesFilterSlaves(i, filter);
+	}
 }
 
 LFSearchResult* QueryStores(LFFilter* filter)
