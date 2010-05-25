@@ -560,6 +560,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Registry.h"
+				>
+			</File>
+			<File
 				RelativePath=".\resource.h"
 				>
 			</File>

@@ -1,4 +1,5 @@
 #include "StdAfx.h"
+#include "IdxTables.h"
 #include "ShellProperties.h"
 
 static const GUID PropertyStorage =
@@ -13,6 +14,31 @@ static const GUID PropertySummary =
 // Alle Variablen im Segment müssen initalisiert werden !
 
 #pragma data_seg("common_shprop")
+
+unsigned char DomainSlaves[LFDomainCount] = {
+	IDMaster,							// LFDomainAllFiles
+	IDMaster,							// LFDomainAllMediaFiles
+	IDMaster,							// LFDomainFavorites
+	IDMaster,							// LFDomainFilters
+	IDSlaveAudio,						// LFDomainAudio
+	IDSlavePictures,					// LFDomainPhotos
+	IDSlavePictures,					// LFDomainPictures
+	IDSlaveVideos,						// LFDomainVideos
+	IDMaster,							// LFDomainArchives
+	IDMaster,							// LFDomainContacts
+	IDSlaveDocuments,					// LFDomainDocuments
+	IDMaster,							// LFDomainEvents
+	IDMaster,							// LFDomainFonts
+	IDMaster,							// LFDomainGeodata
+	IDSlaveMails,						// LFDomainMessages
+	IDSlaveDocuments,					// LFDomainPresentations
+	IDSlaveDocuments,					// LFDomainSpreadsheets
+	IDSlaveDocuments,					// LFDomainWeb
+	IDMaster,							// LFDomainTrash
+	IDMaster							// LFDomainUnknown
+};
+
+#include "Registry.h"
 
 LFShellProperty AttrProperties[LFAttributeCount] = {
 	{ PropertyStorage, 10 },		// LFAttrFileName
@@ -72,3 +98,6 @@ LFShellProperty AttrProperties[LFAttributeCount] = {
 
 #pragma data_seg()
 #pragma comment(linker, "/SECTION:common_shprop,RWS")
+
+
+

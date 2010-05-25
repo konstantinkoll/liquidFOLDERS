@@ -40,6 +40,9 @@ int PassesFilterCore(LFItemDescriptor* i, LFFilter* filter)
 			if ((i->CoreAttributes.DomainID) && (i->CoreAttributes.DomainID<LFDomainCount))
 				return -1;
 			break;
+		case LFDomainPictures:
+			if (i->CoreAttributes.DomainID==LFDomainPhotos)
+				break;
 		default:
 			if (filter->DomainID!=i->CoreAttributes.DomainID)
 				return -1;
@@ -133,7 +136,7 @@ LFSearchResult* QueryDomains(LFFilter* filter)
 			delete idx2;
 		ReleaseMutexForStore(StoreLock);
 
-		for (unsigned int a=0; a<LFDomainCount; a++)
+		for (unsigned char a=0; a<LFDomainCount; a++)
 			if ((cnt[a]) || (!filter->HideEmptyDomains) || (filter->UnhideAll))
 			{
 				LFDomainDescriptor* d = LFGetDomainInfo(a);

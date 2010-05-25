@@ -289,7 +289,7 @@ void CIndex::RetrieveStats(unsigned int* cnt, __int64* size)
 
 	while (Tables[IDMaster]->FindNext(ID, (void*&)PtrM))
 	{
-		#define Count(Domain) if (cnt) cnt[Domain]++; if (size) size[Domain] += PtrM->FileSize;
+		#define Count(Domain) if (cnt) cnt[Domain]++; if (size) size[Domain]+=PtrM->FileSize;
 
 		if (PtrM->Flags & LFFlagTrash)
 		{
@@ -300,6 +300,8 @@ void CIndex::RetrieveStats(unsigned int* cnt, __int64* size)
 			Count(LFDomainAllFiles);
 			if ((PtrM->DomainID>=LFDomainAudio) && (PtrM->DomainID<=LFDomainVideos))
 				Count(LFDomainAllMediaFiles);
+			if (PtrM->DomainID==LFDomainPhotos)
+				Count(LFDomainPictures);
 			if (PtrM->Rating)
 				Count(LFDomainFavorites);
 
