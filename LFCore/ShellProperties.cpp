@@ -2,6 +2,7 @@
 #include "IdxTables.h"
 #include "ShellProperties.h"
 #include <assert.h>
+#include <shlwapi.h>
 
 static const GUID PropertyStorage =
 	{ 0xb725f130, 0x47ef, 0x101a, { 0xa5, 0xf1, 0x02, 0x60, 0x8c, 0x9e, 0xeb, 0xac } };
@@ -126,6 +127,33 @@ unsigned char GetHardcodedDomain(char* ext)
 	return 0;
 }
 
+unsigned char GetPerceivedDomain(char* ext)
+{
+	wchar_t ExtW[17];
+	size_t sz = strlen(ext)+1;
+	ExtW[0] = '.';
+	MultiByteToWideChar(CP_ACP, 0, ext, (int)sz, &ExtW[1], (int)sz);
+
+	PERCEIVED Type;
+	PERCEIVEDFLAG Flag;
+	if (AssocGetPerceivedType(ExtW, &Type, &Flag, NULL)==S_OK)
+		switch (Type)
+		{
+		case PERCEIVED_TYPE_IMAGE:
+			return LFDomainPictures;
+		case PERCEIVED_TYPE_AUDIO:
+			return LFDomainAudio;
+		case PERCEIVED_TYPE_VIDEO:
+			return LFDomainVideos;
+		case PERCEIVED_TYPE_COMPRESSED:
+			return LFDomainArchives;
+		case PERCEIVED_TYPE_CONTACTS:
+			return LFDomainContacts;
+		}
+
+	return 0;
+}
+
 void SetFileDomainAndSlave(LFItemDescriptor* i)
 {
 	assert(i);
@@ -138,8 +166,11 @@ void SetFileDomainAndSlave(LFItemDescriptor* i)
 	#endif
 
 	// Domain
+	//if (!i->CoreAttributes.DomainID)
+	//	i->CoreAttributes.DomainID = GetHardcodedDomain(i->CoreAttributes.FileFormat);
+	// TODO: Benutzer-Einstellungen abfragen
 	if (!i->CoreAttributes.DomainID)
-		i->CoreAttributes.DomainID = GetHardcodedDomain(i->CoreAttributes.FileFormat);
+		i->CoreAttributes.DomainID = GetPerceivedDomain(i->CoreAttributes.FileFormat);
 
 	// Slave
 	assert(i->DomainID<LFDomainCount);
@@ -149,42 +180,44 @@ void SetFileDomainAndSlave(LFItemDescriptor* i)
 LFItemDescriptor* GetItemDescriptorForFile(wchar_t* fn, LFItemDescriptor* i)
 {
 	if (!i)
+	{
 		i = LFAllocItemDescriptor();
-	i->Type = (i->Type & (!LFTypeMask)) | LFTypeFile;
+		i->Type = (i->Type & (!LFTypeMask)) | LFTypeFile;
 
-	// Name
-	wchar_t* LastBackslash = wcsrchr(fn, '\\');
-	if (*LastBackslash=='\0')
-	{
-		LastBackslash = fn;
-	}
-	else
-	{
-		LastBackslash++;
-	}
-
-	wchar_t Name[256];
-	wcscpy_s(Name, 256, LastBackslash);
-
-	// Erweiterung
-	wchar_t* LastExt = wcsrchr(Name, '.');
-	if (*LastExt!='\0')
-	{
-		char Ext[16] = { 0 };
-
-		wchar_t* Ptr = LastExt+1;
-		unsigned int cCount = 0;
-		while ((*Ptr!='\0') && (cCount<16))
+		// Name
+		wchar_t* LastBackslash = wcsrchr(fn, '\\');
+		if (*LastBackslash=='\0')
 		{
-			Ext[cCount++] = (*Ptr<255) ? tolower(*Ptr) & 0xFF : '_';
-			*Ptr++;
+			LastBackslash = fn;
+		}
+		else
+		{
+			LastBackslash++;
 		}
 
-		SetAttribute(i, LFAttrFileFormat, Ext);
-		*LastExt = '\0';
-	}
+		wchar_t Name[256];
+		wcscpy_s(Name, 256, LastBackslash);
 
-	SetAttribute(i, LFAttrFileName, Name);
+		// Erweiterung
+		wchar_t* LastExt = wcsrchr(Name, '.');
+		if (*LastExt!='\0')
+		{
+			char Ext[16] = { 0 };
+
+			wchar_t* Ptr = LastExt+1;
+			unsigned int cCount = 0;
+			while ((*Ptr!='\0') && (cCount<16))
+			{
+				Ext[cCount++] = (*Ptr<255) ? tolower(*Ptr) & 0xFF : '_';
+				*Ptr++;
+			}
+
+			SetAttribute(i, LFAttrFileFormat, Ext);
+			*LastExt = '\0';
+		}
+
+		SetAttribute(i, LFAttrFileName, Name);
+	}
 
 	// Attribute des Dateisystems
 	WIN32_FIND_DATAW ffd;
