@@ -173,7 +173,7 @@ void SetFileDomainAndSlave(LFItemDescriptor* i)
 		i->CoreAttributes.DomainID = GetPerceivedDomain(i->CoreAttributes.FileFormat);
 
 	// Slave
-	assert(i->DomainID<LFDomainCount);
+	assert(i->CoreAttributes.DomainID<LFDomainCount);
 	i->CoreAttributes.SlaveID = DomainSlaves[i->CoreAttributes.DomainID];
 }
 
