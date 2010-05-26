@@ -8,6 +8,10 @@
 #include <assert.h>
 #include <string>
 
+
+#include "ShellProperties.h"
+
+
 extern HMODULE LFCoreModuleHandle;
 extern HANDLE Mutex_Stores;
 

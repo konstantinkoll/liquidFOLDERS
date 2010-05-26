@@ -166,8 +166,8 @@ void SetFileDomainAndSlave(LFItemDescriptor* i)
 	#endif
 
 	// Domain
-	//if (!i->CoreAttributes.DomainID)
-	//	i->CoreAttributes.DomainID = GetHardcodedDomain(i->CoreAttributes.FileFormat);
+	if (!i->CoreAttributes.DomainID)
+		i->CoreAttributes.DomainID = GetHardcodedDomain(i->CoreAttributes.FileFormat);
 	// TODO: Benutzer-Einstellungen abfragen
 	if (!i->CoreAttributes.DomainID)
 		i->CoreAttributes.DomainID = GetPerceivedDomain(i->CoreAttributes.FileFormat);
@@ -235,6 +235,8 @@ LFItemDescriptor* GetItemDescriptorForFile(wchar_t* fn, LFItemDescriptor* i)
 
 	// Domain und Slave
 	SetFileDomainAndSlave(i);
+
+	// TODO: weitere Attribute
 
 	return i;
 }
