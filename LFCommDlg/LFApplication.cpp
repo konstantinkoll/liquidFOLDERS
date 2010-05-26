@@ -208,6 +208,7 @@ BOOL LFApplication::InitInstance()
 	m_nAppLook = GetGlobalInt(_T("ApplicationLook"), ID_VIEW_APPLOOK_OFF_2007_BLUE);
 	SetApplicationLook(m_nAppLook);
 
+#ifndef _DEBUG //Disable Watchdog in Debug Mode. When started no recompilation is possible
 	// Watchdog starten
 	HANDLE mutex = CreateMutex(NULL, FALSE, _T(LFCM_Watchdog));
 	if (mutex && GetLastError()==ERROR_SUCCESS)
@@ -218,6 +219,7 @@ BOOL LFApplication::InitInstance()
 		if (_access(path+"LFWatchdog.exe", 0)==0)
 			ShellExecute(NULL, _T("open"), path+"LFWatchdog.exe", NULL, NULL, SW_SHOW);
 	}
+#endif
 
 	// Beim ersten Mal Welcome-Dialog anzeigen
 	if ((LFGetStoreCount()==0) && (GetGlobalInt(_T("FirstRun"), 1)!=0))
