@@ -40,7 +40,7 @@ unsigned char DomainSlaves[LFDomainCount] = {
 	IDMaster							// LFDomainUnknown
 };
 
-#include "Registry.h"
+#include "DomainTable.h"
 
 LFShellProperty AttrProperties[LFAttributeCount] = {
 	{ PropertyStorage, 10 },		// LFAttrFileName

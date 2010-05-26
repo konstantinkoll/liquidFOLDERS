@@ -504,6 +504,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\DomainTable.h"
+				>
+			</File>
+			<File
 				RelativePath=".\IATA.h"
 				>
 			</File>
@@ -557,10 +561,6 @@
 			</File>
 			<File
 				RelativePath=".\Query.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Registry.h"
 				>
 			</File>
 			<File
