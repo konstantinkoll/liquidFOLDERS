@@ -11,10 +11,10 @@
 #include "IATA_DE.h"
 #include "IATA_EN.h"
 
-bool UseGermanDB = false;
-
 #pragma data_seg()
 #pragma comment(linker, "/SECTION:common_iata,RWS")
+
+bool UseGermanDB = false;
 
 
 void InitAirportDatabase()

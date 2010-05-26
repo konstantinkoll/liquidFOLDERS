@@ -1,8 +1,6 @@
 #include "StdAfx.h"
 #include "IdxTables.h"
 #include "ShellProperties.h"
-#include <sys/types.h>
-#include <sys/stat.h>
 
 static const GUID PropertyStorage =
 	{ 0xb725f130, 0x47ef, 0x101a, { 0xa5, 0xf1, 0x02, 0x60, 0x8c, 0x9e, 0xeb, 0xac } };
@@ -102,16 +100,59 @@ LFShellProperty AttrProperties[LFAttributeCount] = {
 #pragma comment(linker, "/SECTION:common_shprop,RWS")
 
 
-LFItemDescriptor* GetItemDescriptorForFile(const wchar_t* fn)
+LFItemDescriptor* GetItemDescriptorForFile(wchar_t* fn, LFItemDescriptor* i)
 {
-	LFItemDescriptor* i = LFAllocItemDescriptor();
+	if (!i)
+		i = LFAllocItemDescriptor();
+	i->Type = (i->Type & (!LFTypeMask)) | LFTypeFile;
+
+	// Name
+	wchar_t* LastBackslash = wcsrchr(fn, '\\');
+	if (*LastBackslash=='\0')
+	{
+		LastBackslash = fn;
+	}
+	else
+	{
+		LastBackslash++;
+	}
+
+	wchar_t Name[256];
+	wcscpy_s(Name, 256, LastBackslash);
+
+	// Erweiterung
+	wchar_t* LastExt = wcsrchr(Name, '.');
+	if (*LastExt!='\0')
+	{
+		char Ext[16] = { 0 };
+
+		wchar_t* Ptr = LastExt+1;
+		unsigned int cCount = 0;
+		while ((*Ptr!='\0') && (cCount<16))
+		{
+			Ext[cCount++] = (*Ptr<255) ? tolower(*Ptr) & 0xFF : '_';
+			*Ptr++;
+		}
+
+		SetAttribute(i, LFAttrFileFormat, Ext);
+		*LastExt = '\0';
+	}
+
+	SetAttribute(i, LFAttrFileName, Name);
 
 	// Attribute des Dateisystems
-	struct __stat64 buffer;
-	if (_wstati64(fn, &buffer)==0)
+	WIN32_FIND_DATAW ffd;
+	HANDLE hFind = FindFirstFileW(fn, &ffd);
+
+	if (hFind!=INVALID_HANDLE_VALUE)
 	{
-		SetAttribute(i, LFAttrCreationTime, &buffer.st_ctime);
-		SetAttribute(i, LFAttrFileTime, &buffer.st_mtime);
-		SetAttribute(i, LFAttrFileSize, &buffer.st_size);
+		SetAttribute(i, LFAttrCreationTime, &ffd.ftCreationTime);
+		SetAttribute(i, LFAttrFileTime, &ffd.ftLastWriteTime);
+		__int64 size = (((__int64)ffd.nFileSizeHigh) << 32)+ffd.nFileSizeLow;
+		SetAttribute(i, LFAttrFileSize, &size);
 	}
+
+	FindClose(hFind);
+
+	return i;
 }

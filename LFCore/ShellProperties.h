@@ -1,4 +1,4 @@
 #pragma once
 #include "liquidFOLDERS.h"
 
-LFItemDescriptor* GetItemDescriptorForFile(const wchar_t* fn);
+LFItemDescriptor* GetItemDescriptorForFile(wchar_t* fn, LFItemDescriptor* i=NULL);
