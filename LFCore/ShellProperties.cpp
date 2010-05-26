@@ -1,6 +1,7 @@
 #include "StdAfx.h"
 #include "IdxTables.h"
 #include "ShellProperties.h"
+#include <assert.h>
 
 static const GUID PropertyStorage =
 	{ 0xb725f130, 0x47ef, 0x101a, { 0xa5, 0xf1, 0x02, 0x60, 0x8c, 0x9e, 0xeb, 0xac } };
@@ -100,6 +101,51 @@ LFShellProperty AttrProperties[LFAttributeCount] = {
 #pragma comment(linker, "/SECTION:common_shprop,RWS")
 
 
+unsigned char GetHardcodedDomain(char* ext)
+{
+	unsigned int left = 0;
+	unsigned int right = sizeof(Registry)/sizeof(RegisteredFile);
+
+	while (left<right)
+	{
+		unsigned int mid = left+(right-left)/2;
+
+		switch (strcmp(ext, Registry[mid].Format))
+		{
+		case 0:
+			return Registry[mid].DomainID;
+		case 1:
+			left = mid+1;
+			break;
+		case -1:
+			right = mid;
+			break;
+		}
+	}
+
+	return 0;
+}
+
+void SetFileDomainAndSlave(LFItemDescriptor* i)
+{
+	assert(i);
+
+	#ifdef _DEBUG
+	// Test: ist die Domain-Liste korrekt sortiert?
+	for (unsigned int a=0; a<(sizeof(Registry)/sizeof(RegisteredFile))-2; a++)
+		if (strcmp(Registry[a].Format, Registry[a+1].Format)>-1)
+			MessageBoxA(NULL, Registry[a].Format, "Registry sort error", 0);
+	#endif
+
+	// Domain
+	if (!i->CoreAttributes.DomainID)
+		i->CoreAttributes.DomainID = GetHardcodedDomain(i->CoreAttributes.FileFormat);
+
+	// Slave
+	assert(i->DomainID<LFDomainCount);
+	i->CoreAttributes.SlaveID = DomainSlaves[i->CoreAttributes.DomainID];
+}
+
 LFItemDescriptor* GetItemDescriptorForFile(wchar_t* fn, LFItemDescriptor* i)
 {
 	if (!i)
@@ -153,6 +199,9 @@ LFItemDescriptor* GetItemDescriptorForFile(wchar_t* fn, LFItemDescriptor* i)
 	}
 
 	FindClose(hFind);
+
+	// Domain und Slave
+	SetFileDomainAndSlave(i);
 
 	return i;
 }
