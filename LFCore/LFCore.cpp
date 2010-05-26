@@ -350,29 +350,29 @@ LFCore_API LFDomainDescriptor* LFGetDomainInfo(unsigned int ID)
 	*(d->ImportantAttributes) += LFAttrRating;
 	*(d->ImportantAttributes) += LFAttrPriority;
 
-	if ((ID!=LFDomainAllMediaFiles) && (ID<=LFDomainFilters))
+	if ((ID==LFDomainTrash) || (ID==LFDomainUnknown))
 	{
-		d->CategoryID = LFCategoryStore;
+		d->CategoryID = LFCategoryHousekeeping;
 	}
 	else
-		if ((ID==LFDomainAllMediaFiles) || (ID<=LFDomainVideos))
+		if ((ID==LFDomainAllMediaFiles) || ((ID>=LFDomainAudio) && (ID<=LFDomainVideos)))
 		{
 			d->CategoryID = LFCategoryMediaTypes;
 		}
 		else
-			if (ID<LFDomainTrash)
+			if ((ID==LFDomainAllFiles) || (ID==LFDomainFilters) || (ID==LFDomainFavorites))
 			{
-				d->CategoryID = LFCategoryOtherTypes;
+				d->CategoryID = LFCategoryStore;
 			}
 			else
 			{
-				d->CategoryID = LFCategoryHousekeeping;
+				d->CategoryID = LFCategoryOtherTypes;
 			}
 
-	const unsigned int Icons[LFDomainCount] = { IDI_FLD_All, IDI_FLD_All, IDI_FLD_Favorites, IDI_FLD_System, 
-		IDI_FLD_Audio, IDI_FLD_Photos, IDI_FLD_Pictures, IDI_FLD_Video, IDI_FLD_Archive, IDI_FLD_Contacts,
+	const unsigned int Icons[LFDomainCount] = { IDI_FLD_All, IDI_FLD_All, IDI_FLD_Favorites, IDI_FLD_Trash, IDI_FLD_Default,
+		IDI_FLD_System, IDI_FLD_Audio, IDI_FLD_Photos, IDI_FLD_Pictures, IDI_FLD_Video, IDI_FLD_Archive, IDI_FLD_Contacts,
 		IDI_FLD_Documents, IDI_FLD_Calendar, IDI_FLD_Fonts, IDI_FLD_Location, IDI_FLD_Mail, IDI_FLD_Presentations,
-		IDI_FLD_Spreadsheets, IDI_FLD_Web, IDI_FLD_Trash, IDI_FLD_Default };
+		IDI_FLD_Spreadsheets, IDI_FLD_Web };
 	d->IconID = Icons[ID];
 
 	switch (ID)

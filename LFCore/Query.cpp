@@ -157,7 +157,7 @@ LFSearchResult* QueryDomains(LFFilter* filter)
 				wcscpy_s(nf->Name, 256, d->DomainName);
 
 				if (res->AddItemDescriptor(AllocFolderDescriptor(d->DomainName, d->Comment, Hint, filter->StoreID, FileID, &size[a], d->IconID, d->CategoryID, nf)))
-					if (a>=LFFirstPhysicalDomain)
+					if (a>=LFFirstSoloDomain)
 					{
 						res->m_FileCount += cnt[a];
 						res->m_FileSize += size[a];
