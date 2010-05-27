@@ -209,6 +209,7 @@ BOOL LFApplication::InitInstance()
 	SetApplicationLook(m_nAppLook);
 
 	// Watchdog starten
+	#ifndef _DEBUG
 	HANDLE mutex = CreateMutex(NULL, FALSE, _T(LFCM_Watchdog));
 	if (mutex && GetLastError()==ERROR_SUCCESS)
 	{
@@ -218,6 +219,7 @@ BOOL LFApplication::InitInstance()
 		if (_access(path+"LFWatchdog.exe", 0)==0)
 			ShellExecute(NULL, _T("open"), path+"LFWatchdog.exe", NULL, NULL, SW_SHOW);
 	}
+	#endif
 
 	// Beim ersten Mal Welcome-Dialog anzeigen
 	if ((LFGetStoreCount()==0) && (GetGlobalInt(_T("FirstRun"), 1)!=0))

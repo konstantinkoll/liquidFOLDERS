@@ -412,7 +412,7 @@ void SetAttribute(LFItemDescriptor* i, unsigned int attr, const void* v, bool to
 // LFItemDescriptor
 //
 
-LFCore_API LFItemDescriptor* LFAllocItemDescriptor()
+LFCore_API LFItemDescriptor* LFAllocItemDescriptor(LFItemDescriptor* i)
 {
 	LFItemDescriptor* d = static_cast<LFItemDescriptor*>(malloc(sizeof(LFItemDescriptor)));
 	ZeroMemory(d, sizeof(LFItemDescriptor));
@@ -439,64 +439,61 @@ LFCore_API LFItemDescriptor* LFAllocItemDescriptor()
 	d->AttributeValues[LFAttrLocationIATA] = &d->CoreAttributes.LocationIATA;
 	d->AttributeValues[LFAttrLocationGPS] = &d->CoreAttributes.LocationGPS;
 
-	return d;
-}
-
-LFCore_API LFItemDescriptor* LFAllocItemDescriptor(LFItemDescriptor* i)
-{
-	LFItemDescriptor* d = LFAllocItemDescriptor();
-	d->CategoryID = i->CategoryID;
-	d->CoreAttributes = i->CoreAttributes;
-	d->DeleteFlag = i->DeleteFlag;
-	wcscpy_s(d->Hint, 256, i->Hint);
-	d->IconID = i->IconID;
-	d->Type = i->Type;
-
-	if (i->NextFilter)
-		d->NextFilter = LFAllocFilter(i->NextFilter);
-
-	if (i->Slave)
+	if (i)
 	{
-		size_t sz = _msize(i->Slave);
-		d->Slave = malloc(sz);
-		memcpy(d->Slave, i->Slave, sz);
-	}
+		d->CategoryID = i->CategoryID;
+		d->CoreAttributes = i->CoreAttributes;
+		d->DeleteFlag = i->DeleteFlag;
+		wcscpy_s(d->Hint, 256, i->Hint);
+		d->IconID = i->IconID;
+		d->Type = i->Type;
 
-	for (unsigned int a=0; a<LFAttributeCount; a++)
-	{
-		// Value
-		if ((a>LFLastLocalAttribute) && (i->AttributeValues[a]))
-			if (IsSlaveAttribute(i, a))
-			{
-				__int64 ofs = (char*)i->AttributeValues[a]-(char*)i->Slave;
-				d->AttributeValues[a] = (char*)d->Slave+ofs;
-			}
-			else
-			{
-				size_t sz = _msize(i->AttributeValues[a]);
-				d->AttributeValues[a] = malloc(sz);
-				memcpy_s(d->AttributeValues[a], sz, i->AttributeValues, sz);
-			}
+		if (i->NextFilter)
+			d->NextFilter = LFAllocFilter(i->NextFilter);
 
-		// String
-		if ((i->AttributeStrings[a]) && (!d->AttributeStrings[a]))
-			if (i->AttributeStrings[a]==i->AttributeValues[a])
-			{
-				d->AttributeStrings[a] = (wchar_t*)d->AttributeValues[a];
-			}
-			else
-			{
-				if ((AttrTypes[a]==LFTypeFlags) || (AttrTypes[a]==LFTypeRating))
+		if (i->Slave)
+		{
+			size_t sz = _msize(i->Slave);
+			d->Slave = malloc(sz);
+			memcpy(d->Slave, i->Slave, sz);
+		}
+
+		for (unsigned int a=0; a<LFAttributeCount; a++)
+		{
+			// Value
+			if ((a>LFLastLocalAttribute) && (i->AttributeValues[a]))
+				if (IsSlaveAttribute(i, a))
 				{
-					d->AttributeStrings[a] = i->AttributeStrings[a];
+					__int64 ofs = (char*)i->AttributeValues[a]-(char*)i->Slave;
+					d->AttributeValues[a] = (char*)d->Slave+ofs;
 				}
 				else
 				{
-					size_t sz = _msize(i->AttributeStrings[a]);
-					d->AttributeStrings[a] = (wchar_t*)malloc(sz);
-					memcpy_s(d->AttributeStrings[a], sz, i->AttributeStrings[a], sz);
+					size_t sz = _msize(i->AttributeValues[a]);
+					d->AttributeValues[a] = malloc(sz);
+					memcpy_s(d->AttributeValues[a], sz, i->AttributeValues, sz);
 				}
-			}
+
+			// String
+			if ((i->AttributeStrings[a]) && (!d->AttributeStrings[a]))
+				if (i->AttributeStrings[a]==i->AttributeValues[a])
+				{
+					d->AttributeStrings[a] = (wchar_t*)d->AttributeValues[a];
+				}
+				else
+				{
+					if ((AttrTypes[a]==LFTypeFlags) || (AttrTypes[a]==LFTypeRating))
+					{
+						d->AttributeStrings[a] = i->AttributeStrings[a];
+					}
+					else
+					{
+						size_t sz = _msize(i->AttributeStrings[a]);
+						d->AttributeStrings[a] = (wchar_t*)malloc(sz);
+						memcpy_s(d->AttributeStrings[a], sz, i->AttributeStrings[a], sz);
+					}
+				}
+		}
 	}
 
 	return d;

@@ -53,7 +53,7 @@ void LFStoreMaintenanceDlg::SetNumber(UINT ID, UINT Number)
 	{
 #pragma warning(disable:4428)
 		tmpStr = "\u2014";
-#pragma warning(disable:4428)
+#pragma warning(enable:4428)
 	}
 
 	GetDlgItem(ID)->SetWindowText(tmpStr);
