@@ -21,6 +21,8 @@ unsigned char DomainSlaves[LFDomainCount] = {
 	IDMaster,							// LFDomainAllFiles
 	IDMaster,							// LFDomainAllMediaFiles
 	IDMaster,							// LFDomainFavorites
+	IDMaster,							// LFDomainTrash
+	IDMaster,							// LFDomainUnknown
 	IDMaster,							// LFDomainFilters
 	IDSlaveAudio,						// LFDomainAudio
 	IDSlavePictures,					// LFDomainPhotos
@@ -35,9 +37,7 @@ unsigned char DomainSlaves[LFDomainCount] = {
 	IDSlaveMails,						// LFDomainMessages
 	IDSlaveDocuments,					// LFDomainPresentations
 	IDSlaveDocuments,					// LFDomainSpreadsheets
-	IDSlaveDocuments,					// LFDomainWeb
-	IDMaster,							// LFDomainTrash
-	IDMaster							// LFDomainUnknown
+	IDSlaveDocuments					// LFDomainWeb
 };
 
 #include "DomainTable.h"
@@ -174,7 +174,7 @@ void SetFileDomainAndSlave(LFItemDescriptor* i)
 
 	// Slave
 	assert(i->CoreAttributes.DomainID<LFDomainCount);
-	//i->CoreAttributes.SlaveID = DomainSlaves[i->CoreAttributes.DomainID];
+	i->CoreAttributes.SlaveID = DomainSlaves[i->CoreAttributes.DomainID];
 }
 
 LFItemDescriptor* GetItemDescriptorForFile(wchar_t* fn, LFItemDescriptor* i)
@@ -234,7 +234,7 @@ LFItemDescriptor* GetItemDescriptorForFile(wchar_t* fn, LFItemDescriptor* i)
 	FindClose(hFind);
 
 	// Domain und Slave
-//	SetFileDomainAndSlave(i);
+	SetFileDomainAndSlave(i);
 
 	// TODO: weitere Attribute
 

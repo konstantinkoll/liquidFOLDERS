@@ -110,23 +110,18 @@ void CHeapfile::GetAttribute(void* PtrDst, unsigned int offset, unsigned int att
 	assert(PtrDst);
 	assert(attr<LFAttributeCount);
 
-	size_t sz = GetAttributeSize(attr, i->AttributeValues[attr]);
-
-	unsigned int EndOfTuple = Hdr.ElementSize;
-	if (KeyOffset==Hdr.ElementSize-LFKeySize)
-		EndOfTuple -= LFKeySize;
-
-	if (offset+sz<=EndOfTuple)
+	if (i->AttributeValues[attr])
 	{
-		char* P = (char*)PtrDst+offset;
+		size_t sz = GetAttributeSize(attr, i->AttributeValues[attr]);
 
-		if (i->AttributeValues[attr])
+		unsigned int EndOfTuple = Hdr.ElementSize;
+		if (KeyOffset==Hdr.ElementSize-LFKeySize)
+			EndOfTuple -= LFKeySize;
+
+		if (offset+sz<=EndOfTuple)
 		{
+			char* P = (char*)PtrDst+offset;
 			memcpy_s(P, sz, i->AttributeValues[attr], sz);
-		}
-		else
-		{
-			ZeroMemory(P, sz);
 		}
 	}
 }

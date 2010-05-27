@@ -71,6 +71,8 @@ void CIdxTableDocuments::GetFromItemDescriptor(void* PtrDst, LFItemDescriptor* i
 	}
 	else
 	{
+		ZeroMemory(PtrDst, sizeof(LFDocumentAttributes));
+
 		GetAttribute(PtrDst, offsetof(LFDocumentAttributes, Author), LFAttrArtist, i);
 		GetAttribute(PtrDst, offsetof(LFDocumentAttributes, Copyright), LFAttrCopyright, i);
 		GetAttribute(PtrDst, offsetof(LFDocumentAttributes, Title), LFAttrTitle, i);
@@ -130,6 +132,8 @@ void CIdxTableMails::GetFromItemDescriptor(void* PtrDst, LFItemDescriptor* i)
 	}
 	else
 	{
+		ZeroMemory(PtrDst, sizeof(LFMailAttributes));
+
 		GetAttribute(PtrDst, offsetof(LFMailAttributes, From), LFAttrFrom, i);
 		GetAttribute(PtrDst, offsetof(LFMailAttributes, To), LFAttrTo, i);
 		GetAttribute(PtrDst, offsetof(LFMailAttributes, Subject), LFAttrTitle, i);
@@ -183,6 +187,8 @@ void CIdxTableAudio::GetFromItemDescriptor(void* PtrDst, LFItemDescriptor* i)
 	}
 	else
 	{
+		ZeroMemory(PtrDst, sizeof(LFAudioAttributes));
+
 		GetAttribute(PtrDst, offsetof(LFAudioAttributes, Artist), LFAttrArtist, i);
 		GetAttribute(PtrDst, offsetof(LFAudioAttributes, Copyright), LFAttrCopyright, i);
 		GetAttribute(PtrDst, offsetof(LFAudioAttributes, Title), LFAttrTitle, i);
@@ -244,6 +250,8 @@ void CIdxTablePictures::GetFromItemDescriptor(void* PtrDst, LFItemDescriptor* i)
 	}
 	else
 	{
+		ZeroMemory(PtrDst, sizeof(LFPictureAttributes));
+
 		GetAttribute(PtrDst, offsetof(LFPictureAttributes, Artist), LFAttrArtist, i);
 		GetAttribute(PtrDst, offsetof(LFPictureAttributes, Copyright), LFAttrCopyright, i);
 		GetAttribute(PtrDst, offsetof(LFPictureAttributes, Title), LFAttrTitle, i);
@@ -309,6 +317,8 @@ void CIdxTableVideos::GetFromItemDescriptor(void* PtrDst, LFItemDescriptor* i)
 	}
 	else
 	{
+		ZeroMemory(PtrDst, sizeof(LFVideoAttributes));
+
 		GetAttribute(PtrDst, offsetof(LFVideoAttributes, Artist), LFAttrArtist, i);
 		GetAttribute(PtrDst, offsetof(LFVideoAttributes, Copyright), LFAttrCopyright, i);
 		GetAttribute(PtrDst, offsetof(LFVideoAttributes, Title), LFAttrTitle, i);
