@@ -454,6 +454,6 @@ bool CHeapfile::Compact()
 void CHeapfile::MakeDirty(bool _NeedsCompaction)
 {
 	BufferNeedsWriteback = true;
-	Hdr.NeedsCompaction = _NeedsCompaction;
+	Hdr.NeedsCompaction |= _NeedsCompaction;
 	HeaderNeedsWriteback |= _NeedsCompaction;
 }

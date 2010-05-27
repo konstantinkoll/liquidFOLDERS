@@ -32,7 +32,7 @@ class LFCore_API CHeapfile
 
 public:
 	CHeapfile(char* Path, char* Filename, unsigned int _ElementSize, unsigned int _KeyOffset=0);
-	~CHeapfile();
+	virtual ~CHeapfile();
 
 	virtual void GetFromItemDescriptor(void* PtrDst, LFItemDescriptor* i) = 0;
 	virtual void WriteToItemDescriptor(LFItemDescriptor* i, void* PtrSrc) = 0;

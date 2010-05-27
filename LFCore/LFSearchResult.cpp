@@ -69,6 +69,8 @@ LFSearchResult::~LFSearchResult()
 
 bool LFSearchResult::AddItemDescriptor(LFItemDescriptor* i)
 {
+	assert(i);
+
 	if (!m_Items)
 	{
 		m_Items = static_cast<LFItemDescriptor**>(_aligned_malloc(LFSR_FirstAlloc*sizeof(LFItemDescriptor*), LFSR_MemoryAlignment));
@@ -79,7 +81,7 @@ bool LFSearchResult::AddItemDescriptor(LFItemDescriptor* i)
 		}
 		m_Allocated = LFSR_FirstAlloc;
 	}
-	
+
 	if (m_ItemCount==m_Allocated)
 	{
 		m_Items = static_cast<LFItemDescriptor**>(_aligned_realloc(m_Items, (m_Allocated+LFSR_SubsequentAlloc)*sizeof(LFItemDescriptor*), LFSR_MemoryAlignment));
@@ -100,6 +102,8 @@ bool LFSearchResult::AddItemDescriptor(LFItemDescriptor* i)
 
 bool LFSearchResult::AddStoreDescriptor(LFStoreDescriptor* s, LFFilter* f)
 {
+	assert(s);
+
 	LFFilter* nf = LFAllocFilter();
 	nf->Mode = LFFilterModeStoreHome;
 	if (f)

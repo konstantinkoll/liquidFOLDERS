@@ -13,6 +13,7 @@
 
 #pragma once
 #include "liquidFOLDERS.h"
+#pragma warning(disable:4428)
 
 
 //
@@ -166,6 +167,17 @@ LFCore_API void LFRemoveFlaggedItemDescriptors(LFSearchResult* res);
 
 
 
+// Neue Importliste erzeugen
+LFCore_API LFImportList* LFAllocImportList();
+
+// Existierendes LFImportList freigeben
+LFCore_API void LFFreeImportList(LFImportList* il);
+
+// String zur LFImportList hinzufügen
+LFCore_API bool LFAddImportPath(LFImportList* il, wchar_t* path);
+
+
+
 // Neue Transaktionsliste erzeugen
 LFCore_API LFTransactionList* LFAllocTransactionList();
 
@@ -298,6 +310,9 @@ LFCore_API unsigned int LFMountDrive(char d);
 
 // Unmountet alle Hybrid-Stores und externen Stores auf Laufwerk d
 LFCore_API unsigned int LFUnmountDrive(char d);
+
+// Importiert Dateien in einen Store
+LFCore_API unsigned int LFImportFiles(char* key, LFImportList* il, LFItemDescriptor* it=NULL);
 
 
 

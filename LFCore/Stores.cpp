@@ -2,8 +2,10 @@
 #include "..\\include\\LFCore.h"
 #include "LFItemDescriptor.h"
 #include "Mutex.h"
+#include "ShellProperties.h"
 #include "Stores.h"
 #include "StoreCache.h"
+#include <assert.h>
 #include <io.h>
 #include <iostream>
 #include <malloc.h>
@@ -695,4 +697,56 @@ unsigned int OpenStore(char* key, bool WriteAccess, CIndex* &Index1, CIndex* &In
 		ReleaseMutexForStore(*lock);
 
 	return res;
+}
+
+LFCore_API unsigned int LFImportFiles(char* key, LFImportList* il, LFItemDescriptor* it)
+{
+	assert(il);
+
+	// Store finden
+	char store[LFKeySize] = "";
+	if (key)
+		strcpy_s(store, LFKeySize, key);
+
+	if (store[0]=='\0')
+		if (GetMutex(Mutex_Stores))
+		{
+			strcpy_s(store, LFKeySize, DefaultStore);
+			ReleaseMutex(Mutex_Stores);
+		}
+
+	if (store[0]=='\0')
+		return LFNoDefaultStore;
+
+	// Importliste vorbereiten
+	// TODO
+
+	// Import
+	CIndex* idx1;
+	CIndex* idx2;
+	HANDLE StoreLock = NULL;
+	unsigned int res = OpenStore(&store[0], true, idx1, idx2, NULL, &StoreLock);
+	if (res==LFOk)
+	{
+		for (unsigned int a=0; a<il->m_Count; a++)
+		{
+			LFItemDescriptor* i = GetItemDescriptorForFile(il->m_Entries[a]);
+			SetAttribute(i, LFAttrStoreID, &store);
+			SetAttribute(i, LFAttrFileID, "TEST");
+
+			if (idx1)
+				idx1->AddItem(i);
+			if (idx2)
+				idx2->AddItem(i);
+			LFFreeItemDescriptor(i);
+		}
+
+		if (idx1)
+			delete idx1;
+		if (idx2)
+			delete idx2;
+		ReleaseMutexForStore(StoreLock);
+	}
+
+	return LFOk;
 }

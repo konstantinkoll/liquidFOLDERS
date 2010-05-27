@@ -25,6 +25,8 @@ LFTransactionList::~LFTransactionList()
 
 bool LFTransactionList::AddItemDescriptor(LFItemDescriptor* i, unsigned int UserData)
 {
+	assert(i);
+
 	if (!m_Entries)
 	{
 		m_Entries = static_cast<LFTL_Entry*>(_aligned_malloc(LFTL_FirstAlloc*sizeof(LFTL_Entry), LFTL_MemoryAlignment));

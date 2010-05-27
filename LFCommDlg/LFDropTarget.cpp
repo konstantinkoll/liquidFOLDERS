@@ -38,8 +38,6 @@ BOOL LFDropTarget::OnDrop(CWnd* /*pWnd*/, COleDataObject* pDataObject, DROPEFFEC
 		return FALSE;
 	}
 
-	// TODO: internes Format holen
-
 	// HDROP holen
 	HGLOBAL hG = pDataObject->GetGlobalData(CF_HDROP);
 	if (!hG)
@@ -67,19 +65,25 @@ BOOL LFDropTarget::OnDrop(CWnd* /*pWnd*/, COleDataObject* pDataObject, DROPEFFEC
 	}
 
 	// Dateien durchlaufen
-	BOOL success = FALSE;
+	BOOL success = TRUE;
 	UINT uNumFiles = DragQueryFile(hDrop, (UINT)-1, NULL, 0);
-	TCHAR szNextFile [MAX_PATH];
+	wchar_t szNextFile[MAX_PATH];
 
+	LFImportList* il = LFAllocImportList();
 	for (UINT uFile=0; uFile<uNumFiles; uFile++)
-		if (DragQueryFile(hDrop, uFile, szNextFile, MAX_PATH )>0)
-		{
-			// TODO
-			success = TRUE;
-		}
+		if (DragQueryFile(hDrop, uFile, szNextFile, MAX_PATH))
+			if (!LFAddImportPath(il, &szNextFile[0]))
+				success = FALSE;
 
 	GlobalUnlock(hG);
+
+	// Import
+	if (success)
+		if (LFImportFiles("", il, it)!=LFOk)
+			success = FALSE;
+
 	LFFreeItemDescriptor(it);
+	LFFreeImportList(il);
 	return success;
 }
 

@@ -174,7 +174,7 @@ void SetFileDomainAndSlave(LFItemDescriptor* i)
 
 	// Slave
 	assert(i->CoreAttributes.DomainID<LFDomainCount);
-	i->CoreAttributes.SlaveID = DomainSlaves[i->CoreAttributes.DomainID];
+	//i->CoreAttributes.SlaveID = DomainSlaves[i->CoreAttributes.DomainID];
 }
 
 LFItemDescriptor* GetItemDescriptorForFile(wchar_t* fn, LFItemDescriptor* i)
@@ -234,7 +234,7 @@ LFItemDescriptor* GetItemDescriptorForFile(wchar_t* fn, LFItemDescriptor* i)
 	FindClose(hFind);
 
 	// Domain und Slave
-	SetFileDomainAndSlave(i);
+//	SetFileDomainAndSlave(i);
 
 	// TODO: weitere Attribute
 

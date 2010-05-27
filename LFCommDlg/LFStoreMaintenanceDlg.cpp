@@ -1,4 +1,5 @@
 #include "StdAfx.h"
+#include "LFCore.h"
 #include "LFStoreMaintenanceDlg.h"
 #include "Resource.h"
 
@@ -51,9 +52,7 @@ void LFStoreMaintenanceDlg::SetNumber(UINT ID, UINT Number)
 	}
 	else
 	{
-#pragma warning(disable:4428)
 		tmpStr = "\u2014";
-#pragma warning(enable:4428)
 	}
 
 	GetDlgItem(ID)->SetWindowText(tmpStr);

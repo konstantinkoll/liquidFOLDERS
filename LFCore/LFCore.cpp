@@ -507,6 +507,23 @@ LFCore_API void LFRemoveFlaggedItemDescriptors(LFSearchResult* res)
 }
 
 
+LFCore_API LFImportList* LFAllocImportList()
+{
+	return new LFImportList();
+}
+
+LFCore_API void LFFreeImportList(LFImportList* il)
+{
+	if (il)
+		delete il;
+}
+
+LFCore_API bool LFAddImportPath(LFImportList* il, wchar_t* path)
+{
+	return il->AddPath(path);
+}
+
+
 LFCore_API LFTransactionList* LFAllocTransactionList()
 {
 	return new LFTransactionList();
