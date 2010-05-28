@@ -341,7 +341,7 @@ size_t GetAttributeMaxCharacterCount(unsigned int attr)
 	case LFAttrLocationIATA:
 		return 3;
 	case LFAttrFileFormat:
-		return 15;
+		return LFExtSize-1;
 	case LFAttrExposure:
 	case LFAttrChip:
 	case LFAttrISBN:

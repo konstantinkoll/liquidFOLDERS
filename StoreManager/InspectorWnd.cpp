@@ -119,6 +119,7 @@ void CInspectorWnd::UpdateAdd(LFItemDescriptor* i)
 	{
 	case LFTypeDrive:
 		AddValue(i, LFAttrFileName, FALSE);
+		AddValue(i, LFAttrHint);
 		AddValueVirtual(AttrDriveLetter, i->CoreAttributes.FileID);
 		break;
 	case LFTypeVirtual:
@@ -126,15 +127,22 @@ void CInspectorWnd::UpdateAdd(LFItemDescriptor* i)
 		AddValue(i, LFAttrFileID);
 		AddValue(i, LFAttrStoreID);
 		AddValue(i, LFAttrComment, FALSE);
+		AddValue(i, LFAttrHint);
 		for (UINT a=LFAttrHint+1; a<LFAttributeCount; a++)
 			if (i->AttributeStrings[a])
 				AddValue(i, a, FALSE);
+		break;
+	case LFTypeFile:
+		for (UINT a=0; a<=LFLastLocalAttribute; a++)
+			if (a!=LFAttrHint)
+				AddValue(i, a);
 		break;
 	case LFTypeStore:
 		AddValue(i, LFAttrFileName);
 		AddValue(i, LFAttrFileID);
 		AddValue(i, LFAttrStoreID);
 		AddValue(i, LFAttrComment);
+		AddValue(i, LFAttrHint);
 		AddValue(i, LFAttrCreationTime);
 		AddValue(i, LFAttrFileTime);
 
@@ -160,8 +168,6 @@ void CInspectorWnd::UpdateAdd(LFItemDescriptor* i)
 		AddValueVirtual(AttrPathIdxAux, s.IdxPathAux);
 		break;
 	}
-
-	AddValue(i, LFAttrHint);
 }
 
 void CInspectorWnd::UpdateFinish()
@@ -206,7 +212,7 @@ void CInspectorWnd::UpdateFinish()
 	m_wndPropList.SetRedraw(FALSE);
 
 	// Flughafen-Name
-	if (AttributeStatus[LFAttrLocationIATA]==StatusUsed)
+	if ((AttributeStatus[LFAttrLocationIATA]==StatusUsed) && (AttributeValues[LFAttrLocationIATA].AnsiString[0]!='\0'))
 	{
 		LFAirport* airport;
 		if (LFIATAGetAirportByCode(AttributeValues[LFAttrLocationIATA].AnsiString, &airport))

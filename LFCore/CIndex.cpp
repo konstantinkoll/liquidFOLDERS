@@ -239,6 +239,8 @@ void CIndex::Retrieve(LFFilter* f, LFSearchResult* res)
 	{
 		// Master
 		LFItemDescriptor* i = LFAllocItemDescriptor();
+		i->Type = LFTypeFile;
+
 		Tables[IDMaster]->WriteToItemDescriptor(i, PtrM);
 
 		int pass = PassesFilterCore(i, f);

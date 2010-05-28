@@ -202,11 +202,11 @@ LFItemDescriptor* GetItemDescriptorForFile(wchar_t* fn, LFItemDescriptor* i)
 		wchar_t* LastExt = wcsrchr(Name, '.');
 		if (*LastExt!='\0')
 		{
-			char Ext[16] = { 0 };
+			char Ext[LFExtSize] = { 0 };
 
 			wchar_t* Ptr = LastExt+1;
 			unsigned int cCount = 0;
-			while ((*Ptr!='\0') && (cCount<16))
+			while ((*Ptr!='\0') && (cCount<LFExtSize-1))
 			{
 				Ext[cCount++] = (*Ptr<255) ? tolower(*Ptr) & 0xFF : '_';
 				*Ptr++;

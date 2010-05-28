@@ -56,6 +56,7 @@ void CListView::SetSearchResult(LFSearchResult* _result)
 		{
 			m_FileList.SetItemCountEx(_result->m_ItemCount, 0);
 			m_FileList.SetItemState(FocusItem, LVIS_FOCUSED, LVIS_FOCUSED);
+			m_FileList.EnsureVisible(FocusItem, FALSE);
 		}
 		else
 		{
@@ -87,6 +88,8 @@ void CListView::SetSearchResult(LFSearchResult* _result)
 				lvi.stateMask = LVIS_CUT | LVIS_FOCUSED;
 				m_FileList.InsertItem(&lvi);
 			}
+
+			m_FileList.EnsureVisible(FocusItem, FALSE);
 		}
 	}
 

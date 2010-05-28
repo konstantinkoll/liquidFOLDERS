@@ -724,15 +724,41 @@ LFCore_API unsigned int LFImportFiles(char* key, LFImportList* il, LFItemDescrip
 	// Import
 	CIndex* idx1;
 	CIndex* idx2;
+	LFStoreDescriptor* slot;
 	HANDLE StoreLock = NULL;
-	unsigned int res = OpenStore(&store[0], true, idx1, idx2, NULL, &StoreLock);
+	unsigned int res = OpenStore(&store[0], true, idx1, idx2, &slot, &StoreLock);
 	if (res==LFOk)
 	{
 		for (unsigned int a=0; a<il->m_Count; a++)
 		{
+			char FileID[LFKeySize];
+			strcpy_s(FileID, LFKeySize, "TEST");
+
+			char FNA[MAX_PATH];
+			strcpy_s(FNA, MAX_PATH, slot->DatPath);
+			strcat_s(FNA, MAX_PATH, FileID);
+
+			wchar_t FNW[MAX_PATH];
+			size_t sz = strlen(FNA)+1;
+			MultiByteToWideChar(CP_ACP, 0, FNA, (int)sz, &FNW[0], (int)sz);
+
+			wchar_t Ext[LFExtSize];
+			wcscpy_s(Ext, LFExtSize, wcsrchr(wcsrchr(il->m_Entries[a], '\\'), '.'));
+
+			for (unsigned int b=0; b<LFExtSize; b++)
+				Ext[b] = tolower(Ext[b]) & 0xFFFF;
+
+			wcscat_s(FNW, MAX_PATH, Ext);
+
+			if (!CopyFile(il->m_Entries[a], FNW, FALSE))
+			{
+				res = LFIllegalPhysicalPath;
+				break;
+			}
+
 			LFItemDescriptor* i = GetItemDescriptorForFile(il->m_Entries[a]);
 			SetAttribute(i, LFAttrStoreID, &store);
-			SetAttribute(i, LFAttrFileID, "TEST");
+			SetAttribute(i, LFAttrFileID, FileID);
 
 			if (idx1)
 				idx1->AddItem(i);
@@ -748,5 +774,5 @@ LFCore_API unsigned int LFImportFiles(char* key, LFImportList* il, LFItemDescrip
 		ReleaseMutexForStore(StoreLock);
 	}
 
-	return LFOk;
+	return res;
 }

@@ -118,5 +118,10 @@ void LFItemTemplateDlg::DoDataExchange(CDataExchange* pDX)
 
 	DDX_Control(pDX, IDC_INSPECTOR, m_Inspector);
 
-	//TODO
+	if (pDX->m_bSaveAndValidate)
+	{
+		m_pItem->Type = LFTypeFile;
+
+		//TODO
+	}
 }

@@ -33,6 +33,7 @@ struct LFMessageIDs
 #define LFKeyLength                     LFKeySize-1
 #define LFKeyChars                      'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '_', '-'
 
+#define LFExtSize                       16
 
 // Mutex objects
 
@@ -398,7 +399,7 @@ struct LFCoreAttributes
 	wchar_t Comment[256];
 	FILETIME CreationTime;
 	FILETIME FileTime;
-	char FileFormat[16];
+	char FileFormat[LFExtSize];
 	__int64 FileSize;
 	unsigned int Flags;
 	wchar_t Tags[256];
