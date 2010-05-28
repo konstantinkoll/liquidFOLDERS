@@ -16,10 +16,10 @@ extern HMODULE LFCoreModuleHandle;
 extern HANDLE Mutex_Stores;
 
 
-int PassesFilterCore(LFItemDescriptor* i, LFFilter* filter)
+int PassesFilterCore(LFCoreAttributes* ca, LFFilter* filter)
 {
 	assert(filter);
-	assert(i);
+	assert(ca);
 
 	// StoreID wird durch Query Optimization bearbeitet
 
@@ -28,27 +28,27 @@ int PassesFilterCore(LFItemDescriptor* i, LFFilter* filter)
 		switch (filter->DomainID)
 		{
 		case LFDomainAllMediaFiles:
-			if ((i->CoreAttributes.DomainID<LFDomainAudio) || (i->CoreAttributes.DomainID>LFDomainVideos))
+			if ((ca->DomainID<LFDomainAudio) || (ca->DomainID>LFDomainVideos))
 				return -1;
 		case LFDomainAllFiles:
 			break;
 		case LFDomainFavorites:
-			if (!i->CoreAttributes.Rating)
+			if (!ca->Rating)
 				return -1;
 			break;
 		case LFDomainTrash:
-			if (!(i->CoreAttributes.Flags & LFFlagTrash))
+			if (!(ca->Flags & LFFlagTrash))
 				return -1;
 			break;
 		case LFDomainUnknown:
-			if ((i->CoreAttributes.DomainID) && (i->CoreAttributes.DomainID<LFDomainCount))
+			if ((ca->DomainID) && (ca->DomainID<LFDomainCount))
 				return -1;
 			break;
 		case LFDomainPictures:
-			if (i->CoreAttributes.DomainID==LFDomainPhotos)
+			if (ca->DomainID==LFDomainPhotos)
 				break;
 		default:
-			if (filter->DomainID!=i->CoreAttributes.DomainID)
+			if (filter->DomainID!=ca->DomainID)
 				return -1;
 		}
 
@@ -67,7 +67,7 @@ bool PassesFilterSlaves(LFItemDescriptor* i, LFFilter* filter)
 
 LFCore_API bool LFPassesFilter(LFItemDescriptor* i, LFFilter* filter)
 {
-	switch (PassesFilterCore(i, filter))
+	switch (PassesFilterCore(&i->CoreAttributes, filter))
 	{
 	case -1:
 		return false;

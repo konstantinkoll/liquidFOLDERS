@@ -237,31 +237,33 @@ void CIndex::Retrieve(LFFilter* f, LFSearchResult* res)
 
 	while (Tables[IDMaster]->FindNext(IDs[IDMaster], (void*&)PtrM))
 	{
+		int pass = PassesFilterCore(PtrM, f);
+		if (pass==-1)
+			continue;
+
 		// Master
 		LFItemDescriptor* i = LFAllocItemDescriptor();
 		i->Type = LFTypeFile;
-
 		Tables[IDMaster]->WriteToItemDescriptor(i, PtrM);
 
-		int pass = PassesFilterCore(i, f);
 		bool str = false;
 
-		if (pass==0)
+		// Slave
+		if ((PtrM->SlaveID) && (PtrM->SlaveID<IdxTableCount))
+			if (LoadTable(PtrM->SlaveID))
+			{
+				void* PtrS;
+
+				if (Tables[PtrM->SlaveID]->FindKey(PtrM->FileID, IDs[PtrM->SlaveID], PtrS))
+					Tables[PtrM->SlaveID]->WriteToItemDescriptor(i, PtrS);
+			}
+			else
+			{
+				res->m_LastError = LFIndexError;
+			}
+
+		if (pass!=1)
 		{
-			// Slave
-			if ((PtrM->SlaveID) && (PtrM->SlaveID<IdxTableCount))
-				if (LoadTable(PtrM->SlaveID))
-				{
-					void* PtrS;
-
-					if (Tables[PtrM->SlaveID]->FindKey(PtrM->FileID, IDs[PtrM->SlaveID], PtrS))
-						Tables[PtrM->SlaveID]->WriteToItemDescriptor(i, PtrS);
-				}
-				else
-				{
-					res->m_LastError = LFIndexError;
-				}
-
 			if (f->Searchterm[0]!=L'\0')
 			{
 				AttributesToString(i);
@@ -275,9 +277,12 @@ void CIndex::Retrieve(LFFilter* f, LFSearchResult* res)
 		{
 			if (!str)
 				AttributesToString(i);
-
-			res->AddItemDescriptor(i);
+			if (res->AddItemDescriptor(i))
+				continue;
 		}
+
+		// Nicht gesucht
+		LFFreeItemDescriptor(i);
 	}
 }
 
