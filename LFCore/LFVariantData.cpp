@@ -2,14 +2,230 @@
 #include "LFItemDescriptor.h"
 #include "LFVariantData.h"
 #include <assert.h>
+#include <cmath>
+#include <shlwapi.h>
 #include <wchar.h>
 
 
 extern unsigned char AttrTypes[];
 
+wchar_t RatingStrings[6] = L"\x2605\x2605\x2605\x2605\x2605";
+wchar_t FlagStrings[8][4] = { L"---", L"--T", L"-N-", L"-NT", L"L--", L"L-T", L"LN-", L"LNT" };
+
+
+// Conversion ToString
+//
+
+inline double GetMinutes(double c)
+{
+	c = fabs(c)+ROUNDOFF;
+	return (c-(double)(int)c)*60.0;
+}
+
+inline double GetSeconds(double c)
+{
+	c = fabs(c)*60.0+ROUNDOFF;
+	return (c-(double)(int)c)*60.0;
+}
+
+
+LFCore_API void LFFourCCToString(const unsigned int c, wchar_t* str, size_t cCount)
+{
+	if (cCount>=5)
+	{
+		str[0] = c & 0xFF;
+		str[1] = (c>>8) & 0xFF;
+		str[2] = (c>>16) & 0xFF;
+		str[3] = c>>24;
+		str[4] = '\0';
+	}
+}
+
+LFCore_API void LFUINTToString(const unsigned int v, wchar_t* str, size_t cCount)
+{
+	swprintf(str, cCount, L"%d", v);
+}
+
+LFCore_API void LFINT64ToString(const __int64 v, wchar_t* str, size_t cCount)
+{
+	StrFormatByteSizeW(v, str, (unsigned int)cCount);
+}
+
+LFCore_API void LFFractionToString(const LFFraction frac, wchar_t* str, size_t cCount)
+{
+	swprintf(str, cCount, L"%u/%u", frac.Num, frac.Denum);
+}
+
+LFCore_API void LFDoubleToString(const double d, wchar_t* str, size_t cCount)
+{
+	swprintf(str, cCount, L"%f", d);
+}
+
+LFCore_API void LFGeoCoordinateToString(const double c, wchar_t* str, size_t cCount, bool IsLatitude)
+{
+	wchar_t Hemisphere[2];
+	if (IsLatitude)
+	{
+		Hemisphere[0] = 'N';
+		Hemisphere[1] = 'S';
+	}
+	else
+	{
+		Hemisphere[0] = 'W';
+		Hemisphere[1] = 'E';
+	}
+
+	swprintf(str, cCount, L"%u°%u\'%u\"%c",
+		(unsigned int)(fabs(c)+ROUNDOFF),
+		(unsigned int)GetMinutes(c),
+		(unsigned int)(GetSeconds(c)+0.5),
+		Hemisphere[c>0]);
+}
+
+LFCore_API void LFGeoCoordinatesToString(const LFGeoCoordinates c, wchar_t* str, size_t cCount)
+{
+	if ((c.Latitude==0) && (c.Longitude==0))
+	{
+		wcscpy_s(str, cCount, L"");
+	}
+	else
+	{
+		wchar_t tmpStr[256];
+		LFGeoCoordinateToString(c.Longitude, tmpStr, 256, false);
+
+		LFGeoCoordinateToString(c.Latitude, str, cCount, true);
+		wcscat_s(str, cCount, L", ");
+		wcscat_s(str, cCount, tmpStr);
+	}
+}
+
+LFCore_API void LFTimeToString(const FILETIME t, wchar_t* str, size_t cCount, unsigned int mask)
+{
+	*str = '\0';
+
+	if ((t.dwHighDateTime) || (t.dwLowDateTime))
+	{
+		SYSTEMTIME st;
+		FileTimeToSystemTime(&t, &st);
+
+		if (mask & 1)
+		{
+			int cDate = GetDateFormat(LOCALE_USER_DEFAULT, DATE_SHORTDATE, &st, NULL, NULL, 0);
+			if (cDate>256)
+				cDate = 256;
+			GetDateFormat(LOCALE_USER_DEFAULT, DATE_SHORTDATE, &st, NULL, str, cDate);
+		}
+
+		if (mask==3)
+			wcscat_s(str, cCount, L", ");
+
+		if (mask & 2)
+		{
+			wchar_t tmpStr[256];
+			int cTime = GetTimeFormat(LOCALE_USER_DEFAULT, TIME_FORCE24HOURFORMAT, &st, NULL, NULL, 0);
+			if (cTime>256)
+				cTime = 256;
+			GetTimeFormat(LOCALE_USER_DEFAULT, TIME_FORCE24HOURFORMAT, &st, NULL, tmpStr, cTime);
+			wcscat_s(str, cCount, tmpStr);
+		}
+	}
+}
+
+LFCore_API void LFDurationToString(unsigned int d, wchar_t* str, size_t cCount)
+{
+	d = (d+999)/1000;
+	swprintf(str, cCount, L"%02d:%02d:%02d", d/3600, (d/60)%60, d%60);
+}
+
+void ToString(void* value, unsigned int type, wchar_t* str, size_t cCount)
+{
+	assert(type<LFTypeCount);
+	assert(str);
+
+	if (value)
+	{
+		size_t sz;
+
+		switch (type)
+		{
+		case LFTypeUnicodeString:
+			wcscpy_s(str, cCount, (wchar_t*)value);
+			return;
+		case LFTypeAnsiString:
+			sz = strlen((char*)value)+1;
+			MultiByteToWideChar(CP_ACP, 0, (char*)value, (int)sz, str, cCount);
+			return;
+		case LFTypeFourCC:
+			LFFourCCToString(*((unsigned int*)value), str, cCount);
+			return;
+		case LFTypeRating:
+			assert(*((unsigned char*)value)<=LFMaxRating);
+			wcscpy_s(str, cCount, &RatingStrings[5-*((unsigned char*)value)/2]);
+			return;
+		case LFTypeUINT:
+			LFUINTToString(*((unsigned int*)value), str, cCount);
+			return;
+		case LFTypeINT64:
+			LFINT64ToString(*((__int64*)value), str, cCount);
+			return;
+		case LFTypeFraction:
+			LFFractionToString(*((LFFraction*)value), str, cCount);
+			return;
+		case LFTypeDouble:
+			LFDoubleToString(*((double*)value), str, cCount);
+			return;
+		case LFTypeFlags:
+			wcscpy_s(str, cCount, &FlagStrings[*((unsigned int*)value) & ((1<<(LFLastFlagBit+1))-1)][0]);
+			return;
+		case LFTypeGeoCoordinates:
+			LFGeoCoordinatesToString(*((LFGeoCoordinates*)value), str, cCount);
+			return;
+		case LFTypeTime:
+			LFTimeToString(*((FILETIME*)value), str, cCount, 3);
+			return;
+		case LFTypeDuration:
+			LFDurationToString(*((unsigned int*)value), str, cCount);
+			return;
+		default:
+			assert(false);
+		}
+	}
+
+	wcscpy_s(str, cCount, L"");
+}
+
+LFCore_API void LFAttributeToString(LFItemDescriptor* i, unsigned int attr, wchar_t* str, size_t cCount)
+{
+	assert(i);
+	assert(attr<LFAttributeCount);
+	assert(AttrTypes[attr]<LFTypeCount);
+
+	ToString(i->AttributeValues[attr], AttrTypes[attr], str, cCount);
+}
+
+
+// LFVariantData
+//
+
+LFCore_API void LFVariantDataToString(LFVariantData* v, wchar_t* str, size_t cCount)
+{
+	assert(v);
+
+	if (v->IsNull)
+	{
+		wcscpy_s(str, cCount, L"");
+	}
+	else
+	{
+		assert(v->Type<LFTypeCount);
+		ToString(&v->Value, v->Type, str, cCount);
+	}
+}
 
 LFCore_API void LFGetNullVariantData(LFVariantData* v)
 {
+	assert(v);
+
 	v->Type = (v->Attr<LFAttributeCount) ? AttrTypes[v->Attr] : LFTypeUnicodeString;
 	v->IsNull = true;
 
@@ -70,6 +286,9 @@ LFCore_API bool LFIsVariantDataEqual(LFVariantData* v1, LFVariantData* v2)
 
 LFCore_API bool LFIsEqualToVariantData(LFItemDescriptor* i, LFVariantData* v)
 {
+	assert(i);
+	assert(v);
+
 	if (i->AttributeValues[v->Attr])
 	{
 		if (v->IsNull)
@@ -114,6 +333,9 @@ LFCore_API bool LFIsEqualToVariantData(LFItemDescriptor* i, LFVariantData* v)
 
 LFCore_API void LFGetAttributeVariantData(LFItemDescriptor* i, LFVariantData* v)
 {
+	assert(i);
+	assert(v);
+
 	if (i->AttributeValues[v->Attr])
 	{
 		assert(v->Attr<LFAttributeCount);
@@ -130,10 +352,11 @@ LFCore_API void LFGetAttributeVariantData(LFItemDescriptor* i, LFVariantData* v)
 	}
 }
 
-LFCore_API void LFSetAttributeVariantData(LFItemDescriptor* i, LFVariantData* v, wchar_t* ustr)
+LFCore_API void LFSetAttributeVariantData(LFItemDescriptor* i, LFVariantData* v)
 {
+	assert(i);
 	assert(v->Attr<LFAttributeCount);
 	assert(!v->IsNull);
 
-	SetAttribute(i, v->Attr, &v->Value, true, ustr);
+	SetAttribute(i, v->Attr, &v->Value);
 }

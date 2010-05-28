@@ -60,4 +60,5 @@ protected:
 
 private:
 	UINT ItemChanged;
+	wchar_t m_StrBuffer[256];
 };

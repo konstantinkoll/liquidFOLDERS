@@ -48,15 +48,17 @@ CString CookAttributeString(wchar_t* attr)
 
 void WriteGoogleAttribute(CStdioFile* f, LFItemDescriptor* i, UINT attr)
 {
-	if (i->AttributeStrings[attr])
-		if (wcscmp(i->AttributeStrings[attr], L"")!=0)
-		{
-			f->WriteString(_T("&lt;b&gt;"));
-			f->WriteString(CookAttributeString(theApp.m_Attributes[attr]->Name));
-			f->WriteString(_T("&lt;/b&gt;: "));
-			f->WriteString(CookAttributeString(i->AttributeStrings[attr]));
-			f->WriteString(_T("&lt;br&gt;"));
-		}
+	wchar_t tmpStr[256];
+	LFAttributeToString(i, attr, tmpStr, 256);
+
+	if (tmpStr[0]!='\0')
+	{
+		f->WriteString(_T("&lt;b&gt;"));
+		f->WriteString(CookAttributeString(theApp.m_Attributes[attr]->Name));
+		f->WriteString(_T("&lt;/b&gt;: "));
+		f->WriteString(CookAttributeString(tmpStr));
+		f->WriteString(_T("&lt;br&gt;"));
+	}
 }
 
 
@@ -1135,7 +1137,7 @@ void CGlobeView::CalcAndDrawLabel()
 
 	glEnable2D();
 
-	for (UINT a=0; a<result->m_ItemCount; a++)
+	/*for (UINT a=0; a<result->m_ItemCount; a++)
 		if (m_Locations[a].valid)
 			if (m_Locations[a].alpha>0.0f)
 			{
@@ -1160,7 +1162,7 @@ void CGlobeView::CalcAndDrawLabel()
 				case LFAttrLocationGPS:
 					if ((!wcslen(caption)) || (m_ViewParameters.GlobeShowGPS))
 					{
-						caption = result->m_Items[a]->AttributeStrings[LFAttrLocationGPS];
+						//caption = result->m_Items[a]->AttributeStrings[LFAttrLocationGPS];
 						cCaption = (UINT)wcslen(caption);
 						coordinates = NULL;
 					}
@@ -1168,7 +1170,7 @@ void CGlobeView::CalcAndDrawLabel()
 				}
 
 				DrawLabel(&m_Locations[a], cCaption, caption, subcaption, coordinates, hint, FocusItem==(int)a);
-			}
+			}*/
 
 	glDisable2D();
 }

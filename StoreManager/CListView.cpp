@@ -80,7 +80,7 @@ void CListView::SetSearchResult(LFSearchResult* _result)
 			for (UINT a=0; a<_result->m_ItemCount; a++)
 			{
 				lvi.iItem = a;
-				lvi.pszText = (LPWSTR)_result->m_Items[a]->AttributeStrings[LFAttrFileName];
+				lvi.pszText = (LPWSTR)_result->m_Items[a]->CoreAttributes.FileName;
 				lvi.iImage = _result->m_Items[a]->IconID-1;
 				lvi.iGroupId = _result->m_Items[a]->CategoryID;
 				lvi.state = ((_result->m_Items[a]->Type & LFTypeGhosted) ? LVIS_CUT : 0) |

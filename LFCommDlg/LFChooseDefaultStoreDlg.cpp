@@ -151,7 +151,8 @@ void LFChooseDefaultStoreDlg::OnGetDispInfo(NMHDR* pNMHDR, LRESULT* /*pResult*/)
 	if (pItem->mask & LVIF_TEXT)
 	{
 		const UINT attrs[5] = { LFAttrFileName, LFAttrComment, LFAttrCreationTime, LFAttrStoreID, LFAttrHint };
-		pItem->pszText = (LPWSTR)result->m_Items[idx]->AttributeStrings[attrs[pItem->iSubItem]];
+		LFAttributeToString(result->m_Items[idx], attrs[pItem->iSubItem], m_StrBuffer, 256);
+		pItem->pszText = (LPWSTR)m_StrBuffer;
 	}
 
 	if (pItem->mask & LVIF_IMAGE)

@@ -89,7 +89,7 @@ public:
 	void UpdateViewOptions();
 	void UpdateSortOptions();
 	BOOL RenameSingleItem(UINT n, CString Name);
-	BOOL UpdateSelectedItems(LFVariantData* value1, wchar_t* ustr1=NULL, LFVariantData* value2=NULL, wchar_t* ustr2=NULL, LFVariantData* value3=NULL, wchar_t* ustr3=NULL);
+	BOOL UpdateSelectedItems(LFVariantData* value1, LFVariantData* value2=NULL, LFVariantData* value3=NULL);
 	BOOL OpenChildView(BOOL Force=FALSE);
 
 	BOOL IsClipboard;

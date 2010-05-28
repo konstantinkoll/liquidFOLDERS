@@ -92,7 +92,7 @@ LFCore_API void LFFreeItemDescriptor(LFItemDescriptor* i);
 LFCore_API void LFGetAttributeVariantData(LFItemDescriptor* i, LFVariantData* v);
 
 // Attributwert setzen
-LFCore_API void LFSetAttributeVariantData(LFItemDescriptor* i, LFVariantData* v, wchar_t* ustr=NULL);
+LFCore_API void LFSetAttributeVariantData(LFItemDescriptor* i, LFVariantData* v);
 
 
 
@@ -123,7 +123,11 @@ LFCore_API void LFTimeToString(const FILETIME t, wchar_t* str, size_t cCount, un
 // Konvertiert eine Zeitdauer in eine Zeichenkette
 LFCore_API void LFDurationToString(unsigned int d, wchar_t* str, size_t cCount);
 
+// Konvertiert ein Attribut in eine Zeichenkette
+LFCore_API void LFAttributeToString(LFItemDescriptor* i, unsigned int attr, wchar_t* str, size_t cCount);
 
+// Konvertiert eine LFVariantData-Struktur in eine Zeichenkette
+LFCore_API void LFVariantDataToString(LFVariantData* v, wchar_t* str, size_t cCount);
 
 // Erzeugt eine neutrale LFVariantData-Struktur (Null-Element)
 // v->Attr muss gesetzt sein
@@ -323,7 +327,7 @@ LFCore_API unsigned int LFImportFiles(char* key, LFImportList* il, LFItemDescrip
 // Ändert bei allen Einträgen in tl bis zu 3 Attributwerte
 // hWndSource enthält das Window-Handle des auslösenden Fensters, welches bei allen globalen Nachrichten
 // als LPARAM mitgeschickt wird (ggf. NULL)
-LFCore_API void LFTransactionUpdate(LFTransactionList* tl, HWND hWndSource, LFVariantData* value1, wchar_t* ustr1=NULL, LFVariantData* value2=NULL, wchar_t* ustr2=NULL, LFVariantData* value3=NULL, wchar_t* ustr3=NULL);
+LFCore_API void LFTransactionUpdate(LFTransactionList* tl, HWND hWndSource, LFVariantData* value1, LFVariantData* value2=NULL, LFVariantData* value3=NULL);
 
 
 

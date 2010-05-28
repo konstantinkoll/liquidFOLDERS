@@ -246,8 +246,6 @@ void CIndex::Retrieve(LFFilter* f, LFSearchResult* res)
 		i->Type = LFTypeFile;
 		Tables[IDMaster]->WriteToItemDescriptor(i, PtrM);
 
-		bool str = false;
-
 		// Slave
 		if ((PtrM->SlaveID) && (PtrM->SlaveID<IdxTableCount))
 			if (LoadTable(PtrM->SlaveID))
@@ -263,23 +261,11 @@ void CIndex::Retrieve(LFFilter* f, LFSearchResult* res)
 			}
 
 		if (pass!=1)
-		{
-			if (f->Searchterm[0]!=L'\0')
-			{
-				AttributesToString(i);
-				str = true;
-			}
-
 			pass = PassesFilterSlaves(i, f) ? 1 : -1;
-		}
 
 		if (pass==1)
-		{
-			if (!str)
-				AttributesToString(i);
 			if (res->AddItemDescriptor(i))
 				continue;
-		}
 
 		// Nicht gesucht
 		LFFreeItemDescriptor(i);

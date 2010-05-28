@@ -1126,7 +1126,7 @@ void CMainFrame::OnUpdateSelection()
 			}
 			else
 			{
-				tmpStr = CookedFiles->m_Items[i]->AttributeStrings[LFAttrHint];
+				tmpStr = CookedFiles->m_Items[i]->Hint;
 			}
 			m_sbHint->SetText(tmpStr);
 		}
@@ -1256,10 +1256,10 @@ LFTransactionList* CMainFrame::BuildTransactionList()
 	return tl;
 }
 
-BOOL CMainFrame::UpdateSelectedItems(LFVariantData* value1, wchar_t* ustr1, LFVariantData* value2, wchar_t* ustr2, LFVariantData* value3, wchar_t* ustr3)
+BOOL CMainFrame::UpdateSelectedItems(LFVariantData* value1, LFVariantData* value2, LFVariantData* value3)
 {
 	LFTransactionList* tl = BuildTransactionList();
-	LFTransactionUpdate(tl, GetSafeHwnd(), value1, ustr1, value2, ustr2, value3, ustr3);
+	LFTransactionUpdate(tl, GetSafeHwnd(), value1, value2, value3);
 
 	if (m_wndView)
 	{

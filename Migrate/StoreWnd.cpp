@@ -42,8 +42,11 @@ void CStoreWnd::AddStoreItem(LFItemDescriptor* i)
 	lvi.state = (i->Type & LFTypeGhosted) ? LVIS_CUT : 0;
 	int idx = m_wndList.InsertItem(&lvi);
 
-	m_wndList.SetItemText(idx, 1, i->AttributeStrings[LFAttrComment]);
-	m_wndList.SetItemText(idx, 2, i->AttributeStrings[LFAttrCreationTime]);
+	wchar_t tmpStr[256];
+	LFAttributeToString(i, LFAttrCreationTime, tmpStr, 256);
+
+	m_wndList.SetItemText(idx, 1, i->CoreAttributes.Comment);
+	m_wndList.SetItemText(idx, 2, tmpStr);
 }
 
 void CStoreWnd::UpdateStores(BOOL FocusDefaultStore)

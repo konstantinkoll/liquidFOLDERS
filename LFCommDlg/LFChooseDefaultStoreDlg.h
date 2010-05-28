@@ -31,4 +31,7 @@ protected:
 	afx_msg void LFChooseDefaultStoreDlg::OnDoubleClick(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnNewStore();
 	DECLARE_MESSAGE_MAP()
+
+private:
+	wchar_t m_StrBuffer[256];
 };

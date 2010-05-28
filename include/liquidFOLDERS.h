@@ -442,9 +442,7 @@ struct LFItemDescriptor
 
 	LFCoreAttributes CoreAttributes;
 	wchar_t Hint[256];
-
 	void* AttributeValues[LFAttributeCount];
-	wchar_t* AttributeStrings[LFAttributeCount];
 
 	int Position;
 	bool DeleteFlag;

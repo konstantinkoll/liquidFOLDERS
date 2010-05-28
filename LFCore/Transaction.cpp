@@ -6,7 +6,7 @@
 
 extern LFMessageIDs LFMessages;
 
-void UpdateStore(LFTransactionList* tl, unsigned int idx, LFVariantData* value, wchar_t* ustr, bool& Updated)
+void UpdateStore(LFTransactionList* tl, unsigned int idx, LFVariantData* value, bool& Updated)
 {
 	unsigned int result = LFIllegalAttribute;
 
@@ -24,7 +24,7 @@ void UpdateStore(LFTransactionList* tl, unsigned int idx, LFVariantData* value, 
 
 	if (result==LFOk)
 	{
-		LFSetAttributeVariantData(tl->m_Entries[idx].Item, value, ustr);
+		LFSetAttributeVariantData(tl->m_Entries[idx].Item, value);
 		tl->m_Changes = true;
 		Updated |= true;
 	}
@@ -34,7 +34,7 @@ void UpdateStore(LFTransactionList* tl, unsigned int idx, LFVariantData* value, 
 	}
 }
 
-LFCore_API void LFTransactionUpdate(LFTransactionList* tl, HWND hWndSource, LFVariantData* value1, wchar_t* ustr1, LFVariantData* value2, wchar_t* ustr2, LFVariantData* value3, wchar_t* ustr3)
+LFCore_API void LFTransactionUpdate(LFTransactionList* tl, HWND hWndSource, LFVariantData* value1, LFVariantData* value2, LFVariantData* value3)
 {
 	bool StoresUpdated = false;
 
@@ -44,11 +44,11 @@ LFCore_API void LFTransactionUpdate(LFTransactionList* tl, HWND hWndSource, LFVa
 			switch (tl->m_Entries[a].Item->Type & LFTypeMask)
 			{
 			case LFTypeStore:
-				UpdateStore(tl, a, value1, ustr1, StoresUpdated);
+				UpdateStore(tl, a, value1, StoresUpdated);
 				if (value2)
-					UpdateStore(tl, a, value2, ustr2, StoresUpdated);
+					UpdateStore(tl, a, value2, StoresUpdated);
 				if (value3)
-					UpdateStore(tl, a, value3, ustr3, StoresUpdated);
+					UpdateStore(tl, a, value3, StoresUpdated);
 			case LFTypeFile:
 				break;
 			default:

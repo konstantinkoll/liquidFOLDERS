@@ -66,7 +66,6 @@ void CInspectorWnd::UpdateStart(BOOL Reset)
 		ZeroMemory(AttributeVisible, sizeof(AttributeVisible));
 		ZeroMemory(AttributeStatus, sizeof(AttributeStatus));
 		ZeroMemory(AttributeEditable, sizeof(AttributeEditable));
-		ZeroMemory(AttributeStrings, sizeof(AttributeStrings));
 
 		for (UINT a=0; a<AttrCount; a++)
 		{
@@ -129,22 +128,17 @@ void CInspectorWnd::UpdateAdd(LFItemDescriptor* i)
 		AddValue(i, LFAttrComment, FALSE);
 		AddValue(i, LFAttrHint);
 		for (UINT a=LFAttrHint+1; a<LFAttributeCount; a++)
-			if (i->AttributeStrings[a])
+			if (i->AttributeValues[a])
 				AddValue(i, a, FALSE);
 		break;
 	case LFTypeFile:
-		for (UINT a=0; a<=LFLastLocalAttribute; a++)
-			if (a!=LFAttrHint)
+		for (UINT a=0; a<LFAttributeCount; a++)
+			if ((i->AttributeValues[a]) && (a!=LFAttrHint))
 				AddValue(i, a);
 		break;
 	case LFTypeStore:
-		AddValue(i, LFAttrFileName);
-		AddValue(i, LFAttrFileID);
-		AddValue(i, LFAttrStoreID);
-		AddValue(i, LFAttrComment);
-		AddValue(i, LFAttrHint);
-		AddValue(i, LFAttrCreationTime);
-		AddValue(i, LFAttrFileTime);
+		for (UINT a=0; a<=LFAttrFileTime; a++)
+			AddValue(i, a);
 
 		LFStoreDescriptor s;
 		LFGetStoreSettings(i->CoreAttributes.FileID, &s);
@@ -262,14 +256,17 @@ void CInspectorWnd::UpdateFinish()
 			}
 			pAttributes[a]->Enable(enabled);
 			pAttributes[a]->AllowEdit(editable);
+
 			pAttributes[a]->ResetOriginalValue();
 			if (a<LFAttributeCount)
 			{
-				((CAttributeProperty*)pAttributes[a])->SetValue(AttributeStrings[a], AttributeStatus[a]==StatusMultiple);
+				wchar_t tmpStr[256];
+				LFVariantDataToString(&AttributeValues[a], tmpStr, 256);
+				((CAttributeProperty*)pAttributes[a])->SetValue(tmpStr, AttributeStatus[a]==StatusMultiple);
 			}
 			else
 			{
-				pAttributes[a]->SetValue(AttributeStatus[a]==StatusMultiple ? _T("...") : AttributeStrings[a]);
+				pAttributes[a]->SetValue(AttributeStatus[a]==StatusMultiple ? _T("...") : AttributeValues[a].UnicodeString);
 			}
 		#ifndef _DEBUG
 		}
@@ -400,23 +397,14 @@ LRESULT CInspectorWnd::OnPropertyChanged(WPARAM /*wparam*/, LPARAM lparam)
 	LFVariantData* value1 = pProp->p_Data;
 	LFVariantData* value2 = NULL;
 	LFVariantData* value3 = NULL;
-	CString tmpStr1 = pProp->GetValue();
-	CString tmpStr2;
-	CString tmpStr3;
 
 	if ((pProp->p_DependentProp1) && (pProp->m_UseDependencies & 1))
-	{
 		value2 = (*(pProp->p_DependentProp1))->p_Data;
-		tmpStr2 = (*(pProp->p_DependentProp1))->GetValue();
-	}
 
 	if ((pProp->p_DependentProp2) && (pProp->m_UseDependencies & 2))
-	{
 		value3 = (*(pProp->p_DependentProp2))->p_Data;
-		tmpStr3 = (*(pProp->p_DependentProp2))->GetValue();
-	}
 
-	((CMainFrame*)GetParentFrame())->UpdateSelectedItems(value1, tmpStr1.GetBuffer(), value2, tmpStr2.GetBuffer(), value3, tmpStr3.GetBuffer());
+	((CMainFrame*)GetParentFrame())->UpdateSelectedItems(value1, value2, value3);
 	pProp->m_UseDependencies = 0;
 
 	return 0;
@@ -512,36 +500,24 @@ void CInspectorWnd::OnUpdateCommands(CCmdUI* pCmdUI)
 
 void CInspectorWnd::AddValue(LFItemDescriptor* i, UINT Attr, BOOL Editable)
 {
-	if (i->AttributeStrings[Attr])
+	AttributeVisible[Attr] = TRUE;
+	AttributeEditable[Attr] |= Editable;
+
+	if (i->AttributeValues[Attr])
 	{
-		BOOL Present = Editable || (wcslen(i->AttributeStrings[Attr]));
-
-		if (Present)
+		switch (AttributeStatus[Attr])
 		{
-			AttributeVisible[Attr] = TRUE;
-			AttributeEditable[Attr] |= Editable;
-
-			switch (AttributeStatus[Attr])
-			{
-			case StatusUnused:
-				AttributeStatus[Attr] = StatusUsed;
-				LFGetAttributeVariantData(i, &AttributeValues[Attr]);
-				wcscpy_s(AttributeStrings[Attr], 256, i->AttributeStrings[Attr]);
-				break;
-			case StatusUsed:
-				if (!LFIsEqualToVariantData(i, &AttributeValues[Attr]))
-				{
-					AttributeStatus[Attr] = StatusMultiple;
-					wcscpy_s(AttributeStrings[Attr], 256, L"");
-				}
-			}
+		case StatusUnused:
+			AttributeStatus[Attr] = StatusUsed;
+			LFGetAttributeVariantData(i, &AttributeValues[Attr]);
+			break;
+		case StatusUsed:
+			if (!LFIsEqualToVariantData(i, &AttributeValues[Attr]))
+				AttributeStatus[Attr] = StatusMultiple;
 		}
 	}
 	else
 	{
-		AttributeVisible[Attr] = TRUE;
-		AttributeEditable[Attr] |= Editable;
-
 		switch (AttributeStatus[Attr])
 		{
 		case StatusUnused:
@@ -549,10 +525,7 @@ void CInspectorWnd::AddValue(LFItemDescriptor* i, UINT Attr, BOOL Editable)
 			break;
 		case StatusUsed:
 			if (!AttributeValues[Attr].IsNull)
-			{
 				AttributeStatus[Attr] = StatusMultiple;
-				wcscpy_s(AttributeStrings[Attr], 256, L"");
-			}
 		}
 	}
 }
@@ -571,14 +544,10 @@ void CInspectorWnd::AddValueVirtual(UINT Attr, char* Value, BOOL Editable)
 	case StatusUnused:
 		AttributeStatus[Attr] = StatusUsed;
 		wcscpy_s(AttributeValues[Attr].UnicodeString, 256, tmpStr);
-		wcscpy_s(AttributeStrings[Attr], 256, tmpStr);
 		break;
 	case StatusUsed:
 		if (wcscmp(AttributeValues[Attr].UnicodeString, tmpStr)!=0)
-		{
 			AttributeStatus[Attr] = StatusMultiple;
-			wcscpy_s(AttributeStrings[Attr], 256, L"");
-		}
 		break;
 	}
 }
@@ -593,15 +562,10 @@ void CInspectorWnd::AddValueVirtual(UINT Attr, wchar_t* Value, BOOL Editable)
 	case StatusUnused:
 		AttributeStatus[Attr] = StatusUsed;
 		wcscpy_s(AttributeValues[Attr].UnicodeString, 256, Value);
-		wcscpy_s(AttributeStrings[Attr], 256, Value);
 		break;
 	case StatusUsed:
 		if (wcscmp(AttributeValues[Attr].UnicodeString, Value)!=0)
-		{
 			AttributeStatus[Attr] = StatusMultiple;
-			wcscpy_s(AttributeStrings[Attr], 256, L"");
-		}
-
 		break;
 	}
 }

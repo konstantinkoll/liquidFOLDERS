@@ -92,7 +92,6 @@ private:
 	UINT AttributeCategory[AttrCount];
 	BOOL AttributeEditable[AttrCount];
 	LFVariantData AttributeValues[AttrCount];
-	wchar_t AttributeStrings[AttrCount][256];
 	CString AttributeVirtualNames[AttrCount-LFAttributeCount];
 
 	CString TypeName;
