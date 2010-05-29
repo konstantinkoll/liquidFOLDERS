@@ -155,6 +155,7 @@ void CGlobeView::SetSearchResult(LFSearchResult* _result)
 					if ((c->Latitude!=0) || (c->Longitude!=0))
 					{
 						CalculateWorldCoords(c->Latitude, c->Longitude, m_Locations[a].world);
+						LFGeoCoordinatesToString(*c, m_Locations[a].coordstring, 32);
 						m_Locations[a].valid = TRUE;
 						m_Locations[a].selected = FALSE;
 					}
@@ -1137,7 +1138,7 @@ void CGlobeView::CalcAndDrawLabel()
 
 	glEnable2D();
 
-	/*for (UINT a=0; a<result->m_ItemCount; a++)
+	for (UINT a=0; a<result->m_ItemCount; a++)
 		if (m_Locations[a].valid)
 			if (m_Locations[a].alpha>0.0f)
 			{
@@ -1145,8 +1146,8 @@ void CGlobeView::CalcAndDrawLabel()
 				wchar_t* caption = result->m_Items[a]->CoreAttributes.FileName;
 				UINT cCaption = (UINT)wcslen(caption);
 				wchar_t* subcaption = NULL;
-				wchar_t* coordinates = (m_ViewParameters.GlobeShowGPS ? result->m_Items[a]->AttributeStrings[LFAttrLocationGPS] : NULL);
-				wchar_t* hint = (m_ViewParameters.GlobeShowHints ? result->m_Items[a]->AttributeStrings[LFAttrHint] : NULL);
+				wchar_t* coordinates = (m_ViewParameters.GlobeShowGPS ? m_Locations[a].coordstring : NULL);
+				wchar_t* hint = (m_ViewParameters.GlobeShowHints ? result->m_Items[a]->Hint : NULL);
 
 				// Beschriftung aufbereiten
 				switch (m_ViewParameters.SortBy)
@@ -1162,7 +1163,7 @@ void CGlobeView::CalcAndDrawLabel()
 				case LFAttrLocationGPS:
 					if ((!wcslen(caption)) || (m_ViewParameters.GlobeShowGPS))
 					{
-						//caption = result->m_Items[a]->AttributeStrings[LFAttrLocationGPS];
+						caption = m_Locations[a].coordstring;
 						cCaption = (UINT)wcslen(caption);
 						coordinates = NULL;
 					}
@@ -1170,7 +1171,7 @@ void CGlobeView::CalcAndDrawLabel()
 				}
 
 				DrawLabel(&m_Locations[a], cCaption, caption, subcaption, coordinates, hint, FocusItem==(int)a);
-			}*/
+			}
 
 	glDisable2D();
 }

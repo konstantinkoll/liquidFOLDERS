@@ -21,6 +21,7 @@ struct Location
 	int screenpoint[2];
 	int screenlabel[4];
 	GLfloat alpha;
+	wchar_t coordstring[32];
 };
 
 struct LocalSettings
