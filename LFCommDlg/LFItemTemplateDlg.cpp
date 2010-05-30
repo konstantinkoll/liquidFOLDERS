@@ -18,6 +18,16 @@ LFItemTemplateDlg::LFItemTemplateDlg(CWnd* pParentWnd, LFItemDescriptor* pItem)
 		AttributeValues[a].Attr = a;
 		LFGetNullVariantData(&AttributeValues[a]);
 	}
+
+	CFrameWnd* Frame = pParentWnd->GetParentFrame();
+	if (Frame)
+	{
+		Frame->BringWindowToTop();
+	}
+	else
+	{
+		pParentWnd->BringWindowToTop();
+	}
 }
 
 LFItemTemplateDlg::~LFItemTemplateDlg()

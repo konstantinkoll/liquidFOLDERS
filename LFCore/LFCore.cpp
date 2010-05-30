@@ -507,12 +507,12 @@ LFCore_API void LFRemoveFlaggedItemDescriptors(LFSearchResult* res)
 }
 
 
-LFCore_API LFFileImportList* LFAllocImportList()
+LFCore_API LFFileImportList* LFAllocFileImportList()
 {
 	return new LFFileImportList();
 }
 
-LFCore_API void LFFreeImportList(LFFileImportList* il)
+LFCore_API void LFFreeFileImportList(LFFileImportList* il)
 {
 	if (il)
 		delete il;
