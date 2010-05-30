@@ -6,17 +6,18 @@
 
 #define LFIL_MemoryAlignment     8
 
-// LFImportList
+// LFFileImportList
 // Speichert eine Liste mit Zeigen auf Unicode-Strings ab, die die vollständigen
 // Pfade zu importierender Dateien enthalten.
 
-class LFImportList
+class LFFileImportList
 {
 public:
-	LFImportList();
-	virtual ~LFImportList();
+	LFFileImportList();
+	virtual ~LFFileImportList();
 
 	bool AddPath(wchar_t* path);
+	void Resolve();
 
 	wchar_t** m_Entries;
 	unsigned int m_LastError;

@@ -507,18 +507,18 @@ LFCore_API void LFRemoveFlaggedItemDescriptors(LFSearchResult* res)
 }
 
 
-LFCore_API LFImportList* LFAllocImportList()
+LFCore_API LFFileImportList* LFAllocImportList()
 {
-	return new LFImportList();
+	return new LFFileImportList();
 }
 
-LFCore_API void LFFreeImportList(LFImportList* il)
+LFCore_API void LFFreeImportList(LFFileImportList* il)
 {
 	if (il)
 		delete il;
 }
 
-LFCore_API bool LFAddImportPath(LFImportList* il, wchar_t* path)
+LFCore_API bool LFAddImportPath(LFFileImportList* il, wchar_t* path)
 {
 	return il->AddPath(path);
 }

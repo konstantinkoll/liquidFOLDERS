@@ -190,29 +190,57 @@ void CreateStoreIndex(char* _Path, char* _StoreID, unsigned int &res)
 		res = LFIndexNotCreated;
 }
 
-void GetFileLocation(char* _Path, LFItemDescriptor* i, char* dst, size_t cCount)
+void GetFileLocation(char* _Path, char* _FileID, char* _FileFormat, char* dst, size_t cCount)
 {
 	char buf[3] = " \\";
-	buf[0] = i->CoreAttributes.FileID[0];
+	buf[0] = _FileID[0];
 
 	strcpy_s(dst, cCount, _Path);
 	strcat_s(dst, cCount, buf);
-	strcat_s(dst, cCount, &i->CoreAttributes.FileID[1]);
+	strcat_s(dst, cCount, &_FileID[1]);
 
-	if (i->CoreAttributes.FileFormat[0]!='\0')
+	if (_FileFormat[0]!='\0')
 	{
 		strcat_s(dst, cCount, ".");
-		strcat_s(dst, cCount, i->CoreAttributes.FileFormat);
+		strcat_s(dst, cCount, _FileFormat);
 	}
 }
 
-DWORD PrepareImport(char* _Path)
+bool FileExists(char* path)
 {
+	return (_access(path, 0)==0);
+}
+
+unsigned int PrepareImport(LFStoreDescriptor* slot, LFItemDescriptor* i, char* Dst, size_t cCount)
+{
+	SetAttribute(i, LFAttrStoreID, slot->StoreID);
+
 	char Path[MAX_PATH];
-	strcpy_s(Path, MAX_PATH, _Path);
+	char chars[38] = { LFKeyChars };
+
+	SYSTEMTIME st;
+	GetSystemTime(&st);
+	srand(st.wMilliseconds*rand());
+
+	do
+	{
+		for (unsigned int a=0; a<LFKeyLength; a++)
+		{
+			int r = rand()%38;
+			i->CoreAttributes.FileID[a] = chars[r];
+		}
+
+		i->CoreAttributes.FileID[LFKeyLength] = 0;
+		GetFileLocation(slot->DatPath, i->CoreAttributes.FileID, i->CoreAttributes.FileFormat, Path, MAX_PATH);
+	}
+	while (FileExists(Path));
+
+	if (Dst)
+		strcpy_s(Dst, cCount, Path);
 
 	*strrchr(Path, '\\') = '\0';
-	return CreateDir(Path);
+	DWORD res =CreateDir(Path);
+	return ((res==ERROR_SUCCESS) || (res==ERROR_ALREADY_EXISTS)) ? LFOk : LFIllegalPhysicalPath;
 }
 
 
@@ -235,7 +263,7 @@ LFCore_API unsigned int LFGetFileLocation(LFItemDescriptor* i, char* dst, size_t
 	if (slot)
 		if (IsStoreMounted(slot))
 		{
-			GetFileLocation(slot->DatPath, i, dst, cCount);
+			GetFileLocation(slot->DatPath, i->CoreAttributes.FileID, i->CoreAttributes.FileFormat, dst, cCount);
 			res = LFOk;
 		}
 		else
@@ -758,7 +786,7 @@ unsigned int OpenStore(char* key, bool WriteAccess, CIndex* &Index1, CIndex* &In
 	return res;
 }
 
-LFCore_API unsigned int LFImportFiles(char* key, LFImportList* il, LFItemDescriptor* it)
+LFCore_API unsigned int LFImportFiles(char* key, LFFileImportList* il, LFItemDescriptor* it)
 {
 	assert(il);
 
@@ -778,7 +806,7 @@ LFCore_API unsigned int LFImportFiles(char* key, LFImportList* il, LFItemDescrip
 		return LFNoDefaultStore;
 
 	// Importliste vorbereiten
-	// TODO
+	il->Resolve();
 
 	// Import
 	CIndex* idx1;
@@ -794,28 +822,17 @@ LFCore_API unsigned int LFImportFiles(char* key, LFImportList* il, LFItemDescrip
 				LFItemDescriptor* i = LFAllocItemDescriptor(it);
 				SetNameExtFromFile(i, il->m_Entries[a]);
 
-				// ID finden
-				char FileID[LFKeySize];
-				strcpy_s(FileID, LFKeySize, "TEST");
-
-				SetAttribute(i, LFAttrStoreID, &store);
-				SetAttribute(i, LFAttrFileID, FileID);
-
 				char CopyToA[MAX_PATH];
-				GetFileLocation(slot->DatPath, i, CopyToA, MAX_PATH);
-
-				DWORD pi_res = PrepareImport(CopyToA);
-				if ((pi_res!=ERROR_SUCCESS) && (pi_res!=ERROR_ALREADY_EXISTS))
+				res = PrepareImport(slot, i, CopyToA, MAX_PATH);
+				if (res!=LFOk)
 				{
 					LFFreeItemDescriptor(i);
-					res = LFIllegalPhysicalPath;
 					break;
 				}
 
 				wchar_t CopyToW[MAX_PATH];
 				size_t sz = strlen(CopyToA)+1;
 				MultiByteToWideChar(CP_ACP, 0, CopyToA, (int)sz, &CopyToW[0], (int)sz);
-
 				if (!CopyFile(il->m_Entries[a], CopyToW, FALSE))
 				{
 					LFFreeItemDescriptor(i);

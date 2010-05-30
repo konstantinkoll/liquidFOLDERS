@@ -1,10 +1,10 @@
 #include "StdAfx.h"
 #include "..\\include\\LFCore.h"
-#include "LFImportList.h"
+#include "LFFileImportList.h"
 #include <assert.h>
 #include <malloc.h>
 
-LFImportList::LFImportList()
+LFFileImportList::LFFileImportList()
 {
 	m_LastError = LFOk;
 	m_Entries = NULL;
@@ -12,7 +12,7 @@ LFImportList::LFImportList()
 	m_Allocated = 0;
 }
 
-LFImportList::~LFImportList()
+LFFileImportList::~LFFileImportList()
 {
 	if (m_Entries)
 	{
@@ -23,7 +23,7 @@ LFImportList::~LFImportList()
 	}
 }
 
-bool LFImportList::AddPath(wchar_t* path)
+bool LFFileImportList::AddPath(wchar_t* path)
 {
 	assert(path);
 
@@ -55,4 +55,9 @@ bool LFImportList::AddPath(wchar_t* path)
 	m_Count++;
 
 	return true;
+}
+
+void LFFileImportList::Resolve()
+{
+	// TODO
 }

@@ -69,7 +69,7 @@ BOOL LFDropTarget::OnDrop(CWnd* /*pWnd*/, COleDataObject* pDataObject, DROPEFFEC
 	UINT uNumFiles = DragQueryFile(hDrop, (UINT)-1, NULL, 0);
 	wchar_t szNextFile[MAX_PATH];
 
-	LFImportList* il = LFAllocImportList();
+	LFFileImportList* il = LFAllocFileImportList();
 	for (UINT uFile=0; uFile<uNumFiles; uFile++)
 		if (DragQueryFile(hDrop, uFile, szNextFile, MAX_PATH))
 			if (!LFAddImportPath(il, &szNextFile[0]))
@@ -83,7 +83,7 @@ BOOL LFDropTarget::OnDrop(CWnd* /*pWnd*/, COleDataObject* pDataObject, DROPEFFEC
 			success = FALSE;
 
 	LFFreeItemDescriptor(it);
-	LFFreeImportList(il);
+	LFFreeFileImportList(il);
 	return success;
 }
 

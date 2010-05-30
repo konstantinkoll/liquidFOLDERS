@@ -505,6 +505,6 @@ struct LFStoreDescriptor
 
 // Structures and classes from LFCore.DLL
 
-#include "..\\LFCore\\LFImportList.h"
+#include "..\\LFCore\\LFFileImportList.h"
 #include "..\\LFCore\\LFSearchResult.h"
 #include "..\\LFCore\\LFTransactionList.h"

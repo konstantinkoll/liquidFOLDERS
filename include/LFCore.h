@@ -171,14 +171,14 @@ LFCore_API void LFRemoveFlaggedItemDescriptors(LFSearchResult* res);
 
 
 
-// Neue Importliste erzeugen
-LFCore_API LFImportList* LFAllocImportList();
+// Neue Datei-Importliste erzeugen
+LFCore_API LFFileImportList* LFAllocFileImportList();
 
-// Existierendes LFImportList freigeben
-LFCore_API void LFFreeImportList(LFImportList* il);
+// Existierendes LFFileImportList freigeben
+LFCore_API void LFFreeFileImportList(LFFileImportList* il);
 
-// String zur LFImportList hinzufügen
-LFCore_API bool LFAddImportPath(LFImportList* il, wchar_t* path);
+// String zur LFFileImportList hinzufügen
+LFCore_API bool LFAddImportPath(LFFileImportList* il, wchar_t* path);
 
 
 
@@ -319,7 +319,7 @@ LFCore_API unsigned int LFMountDrive(char d);
 LFCore_API unsigned int LFUnmountDrive(char d);
 
 // Importiert Dateien in einen Store
-LFCore_API unsigned int LFImportFiles(char* key, LFImportList* il, LFItemDescriptor* it=NULL);
+LFCore_API unsigned int LFImportFiles(char* key, LFFileImportList* il, LFItemDescriptor* it=NULL);
 
 
 
