@@ -204,6 +204,10 @@ void CFileView::OnItemContextMenu(int idx, CPoint point)
 	LFItemDescriptor* f = result->m_Items[idx];
 	switch (f->Type & LFTypeMask)
 	{
+	case LFTypeVirtual:
+		nID = (f->IconID==IDI_FLD_Back ? IDM_BACK : m_ViewParameters.Mode==LFViewGlobe ? IDM_VIRTUAL_GLOBE : IDM_VIRTUAL);
+		cmdDefault = ID_NAV_STARTNAVIGATION;
+		break;
 	case LFTypeDrive:
 		nID = IDM_DRIVE;
 		cmdDefault = ID_STORE_NEWDRIVE;
@@ -212,8 +216,8 @@ void CFileView::OnItemContextMenu(int idx, CPoint point)
 		nID = IDM_STORE;
 		cmdDefault = ID_NAV_STARTNAVIGATION;
 		break;
-	case LFTypeVirtual:
-		nID = (f->IconID==IDI_FLD_Back ? IDM_BACK : m_ViewParameters.Mode==LFViewGlobe ? IDM_VIRTUAL_GLOBE : IDM_VIRTUAL);
+	case LFTypeFile:
+		nID = IDM_FILE;
 		cmdDefault = ID_NAV_STARTNAVIGATION;
 		break;
 	}

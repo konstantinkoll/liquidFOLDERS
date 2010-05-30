@@ -259,6 +259,14 @@ BEGIN
     END
 END
 
+IDM_FILE MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "&Open",                       ID_NAV_STARTNAVIGATION
+    END
+END
+
 IDM_GLOBE MENU 
 BEGIN
     POPUP "POPUP"

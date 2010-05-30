@@ -200,7 +200,7 @@ void CFileList::OnGetDispInfo(NMHDR* pNMHDR, LRESULT* /*pResult*/)
 			pItem->pszText = (LPWSTR)m_StrBuffer;
 		}
 		if (pItem->mask & LVIF_IMAGE)
-			pItem->iImage = 5;//View->result->m_Items[idx]->IconID-1;
+			pItem->iImage = View->result->m_Items[idx]->IconID-1;
 	}
 }
 

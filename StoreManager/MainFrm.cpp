@@ -1292,27 +1292,40 @@ void CMainFrame::OnStartNavigation()
 
 	if (idx!=-1)
 	{
-		LFItemDescriptor* f = CookedFiles->m_Items[idx];
+		LFItemDescriptor* i = CookedFiles->m_Items[idx];
 
-		if (f->NextFilter)
+		if (i->NextFilter)
 		{
 			// Es ist ein weiterer Filter angehängt, also dorthin navigieren
-			NavigateTo(LFAllocFilter(f->NextFilter));
+			NavigateTo(LFAllocFilter(i->NextFilter));
 		}
 		else
 		{
-			if (!(f->Type & LFTypeNotMounted))
+			if (!(i->Type & LFTypeNotMounted))
 			{
-				switch (f->Type & LFTypeMask)
+				char Path[MAX_PATH];
+				unsigned int res;
+
+				switch (i->Type & LFTypeMask)
 				{
 				case LFTypeDrive:
-					ExecuteCreateStoreDlg(IDD_STORENEWDRIVE, f->CoreAttributes.FileID[0]);
+					ExecuteCreateStoreDlg(IDD_STORENEWDRIVE, i->CoreAttributes.FileID[0]);
 					break;
 				case LFTypeFile:
-					// TODO
+					res = LFGetFileLocation(i, Path, MAX_PATH);
+					if (res==LFOk)
+					{
+						ShellExecuteA(NULL, "open", Path, NULL, NULL, SW_SHOW);
+					}
+					else
+					{
+						LFErrorBox(res);
+					}
+
 					break;
 				default:
 					ASSERT(FALSE);
+					break;
 				}
 			}
 		}
@@ -1472,7 +1485,8 @@ void CMainFrame::OnUpdateNavCommands(CCmdUI* pCmdUI)
 		if (i!=-1)
 		{
 			b &= (CookedFiles->m_Items[i]->NextFilter!=NULL) ||
-				((CookedFiles->m_Items[i]->Type & (LFTypeNotMounted | LFTypeMask))==LFTypeDrive);
+				((CookedFiles->m_Items[i]->Type & (LFTypeMask | LFTypeNotMounted))==LFTypeDrive) ||
+				((CookedFiles->m_Items[i]->Type & (LFTypeMask))==LFTypeFile);
 		}
 		else
 		{
