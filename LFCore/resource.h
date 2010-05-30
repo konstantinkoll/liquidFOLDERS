@@ -41,7 +41,8 @@
 #define IDI_DRV_Disconnected            33
 #define IDI_DRV_Connected               34
 #define IDI_DRV_Server                  35
-#define IDI_LastIcon                    35
+#define IDI_FILE_Generic                36
+#define IDI_LastIcon                    36
 #define IDS_FirstItemCategory           1000
 #define IDS_LFCategoryInternalStores    1000
 #define IDS_LFCategoryHybridStores      1001

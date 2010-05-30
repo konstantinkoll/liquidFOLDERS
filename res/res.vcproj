@@ -257,6 +257,14 @@
 		<Filter
 			Name="Files"
 			>
+			<File
+				RelativePath=".\Files\FILE_Generic.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\Files\FILE_Generic.png"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Folders"

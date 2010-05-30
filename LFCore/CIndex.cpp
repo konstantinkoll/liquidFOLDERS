@@ -244,6 +244,7 @@ void CIndex::Retrieve(LFFilter* f, LFSearchResult* res)
 		// Master
 		LFItemDescriptor* i = LFAllocItemDescriptor();
 		i->Type = LFTypeFile;
+		i->IconID = IDI_FILE_Generic;
 		Tables[IDMaster]->WriteToItemDescriptor(i, PtrM);
 
 		// Slave
