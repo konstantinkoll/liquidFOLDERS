@@ -833,7 +833,7 @@ BEGIN
     LTEXT           "X",IDC_WRITEPROTECTED,125,33,60,8,SS_ENDELLIPSIS
     LTEXT           "Not enough free disc space:",IDC_STATIC,14,43,105,8
     LTEXT           "X",IDC_NOFREESPACE,125,43,60,8,SS_ENDELLIPSIS
-	LTEXT           "Beyond repair (still errors):",IDC_STATIC,14,53,105,8
+    LTEXT           "Beyond repair (still errors):",IDC_STATIC,14,53,105,8
     LTEXT           "X",IDC_ERROR,125,53,60,8,SS_ENDELLIPSIS
     DEFPUSHBUTTON   "Ok",IDOK,7,74,50,14,WS_GROUP
     CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ | WS_GROUP,14,29,172,1
@@ -1250,6 +1250,24 @@ BEGIN
     LTEXT           "Los atributos faltantes del archivo serán establecidos usando los valores que a continuación se enlistan. Si usted no quiere que sus archivos sean corregidos, presione ""Omitir"".",IDC_STATIC,14,16,249,26
 END
 
+IDD_STOREMAINTENANCE DIALOGEX 0, 0, 220, 95
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Mantenimiento programado"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    GROUPBOX        "Sumario",IDC_STATIC,7,7,206,61
+    LTEXT           "Revisión satisfactoria:",IDC_STATIC,14,17,125,8
+    LTEXT           "X",IDC_SERVICED,145,17,60,8,SS_ENDELLIPSIS
+    LTEXT           "Sin acceso (protegido contra escritura):",IDC_STATIC,14,33,125,8
+    LTEXT           "X",IDC_WRITEPROTECTED,145,33,60,8,SS_ENDELLIPSIS
+    LTEXT           "Sin suficiente espacio libre en disco:",IDC_STATIC,14,43,125,8
+    LTEXT           "X",IDC_NOFREESPACE,145,43,60,8,SS_ENDELLIPSIS
+    LTEXT           "Sin reparación (aún con errores):",IDC_STATIC,14,53,125,8
+    LTEXT           "X",IDC_ERROR,145,53,60,8,SS_ENDELLIPSIS
+    DEFPUSHBUTTON   "Ok",IDOK,7,74,50,14,WS_GROUP
+    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ | WS_GROUP,14,29,192,1
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -1337,6 +1355,14 @@ BEGIN
         RIGHTMARGIN, 270
         TOPMARGIN, 7
         BOTTOMMARGIN, 331
+    END
+
+    IDD_STOREMAINTENANCE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 193
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 88
     END
 END
 #endif    // APSTUDIO_INVOKED
