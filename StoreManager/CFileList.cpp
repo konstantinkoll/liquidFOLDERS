@@ -185,11 +185,10 @@ void CFileList::OnGetDispInfo(NMHDR* pNMHDR, LRESULT* /*pResult*/)
 
 	if (pItem->mask & LVIF_COLUMNS)
 	{
-		pItem->cColumns = 4;
+		pItem->cColumns = 3;
 		pItem->puColumns[0] = 1;
 		pItem->puColumns[1] = 2;
-		pItem->puColumns[2] = 3;
-		pItem->puColumns[3] = 4;
+		pItem->puColumns[2] = 4;
 	}
 
 	if (View->result)
@@ -201,7 +200,7 @@ void CFileList::OnGetDispInfo(NMHDR* pNMHDR, LRESULT* /*pResult*/)
 			pItem->pszText = (LPWSTR)m_StrBuffer;
 		}
 		if (pItem->mask & LVIF_IMAGE)
-			pItem->iImage = View->result->m_Items[idx]->IconID-1;
+			pItem->iImage = 5;//View->result->m_Items[idx]->IconID-1;
 	}
 }
 

@@ -70,16 +70,29 @@ void CListView::SetSearchResult(LFSearchResult* _result)
 		if (_result)
 		{
 			// Change or append items
-			UINT puColumns[] = { 1, 2, 3, 4 };
+			UINT puColumns[3];
+			if (_result->m_Context==LFContextStoreHome)
+			{
+				puColumns[0] = 1;
+				puColumns[1] = 3;
+				puColumns[2] = 4;
+			}
+			else
+			{
+				puColumns[0] = 1;
+				puColumns[1] = 2;
+				puColumns[2] = 3;
+			}
+
 			LVITEM lvi;
 			ZeroMemory(&lvi, sizeof(lvi));
 			lvi.mask = LVIF_TEXT | LVIF_IMAGE | LVIF_GROUPID | LVIF_COLUMNS | LVIF_STATE;
-			lvi.cColumns = 4;
 			lvi.puColumns = puColumns;
 
 			for (UINT a=0; a<_result->m_ItemCount; a++)
 			{
 				lvi.iItem = a;
+				lvi.cColumns = (_result->m_Context==LFContextStoreHome) ? _result->m_Items[a]->Hint[0]!='\0' ? 4 : 2 : 3;
 				lvi.pszText = (LPWSTR)_result->m_Items[a]->CoreAttributes.FileName;
 				lvi.iImage = _result->m_Items[a]->IconID-1;
 				lvi.iGroupId = _result->m_Items[a]->CategoryID;
@@ -192,14 +205,15 @@ void CListView::SetViewOptions(UINT _ViewID, BOOL Force)
 			LVTILEVIEWINFO tvi;
 			ZeroMemory(&tvi, sizeof(tvi));
 			tvi.cbSize = sizeof(LVTILEVIEWINFO);
-			tvi.cLines = 5;
-			tvi.dwFlags = LVTVIF_AUTOSIZE;
-			tvi.dwMask = LVTVIM_COLUMNS;
+			tvi.cLines = 3;
+			tvi.dwFlags = LVTVIF_FIXEDWIDTH;
+			tvi.dwMask = LVTVIM_COLUMNS | LVTVIM_TILESIZE;
+			tvi.sizeTile.cx = 240;
 			if ((theApp.osInfo.dwMajorVersion==5) && (m_FileList.OwnerData))  // Only for virtual lists on Windows XP
 			{
 				tvi.dwMask |= LVTVIM_LABELMARGIN;
-				tvi.rcLabelMargin.bottom = (int)(GetFontHeight(pViewParameters->GrannyMode)*1.7);
-				tvi.rcLabelMargin.top = -24;
+				tvi.rcLabelMargin.bottom = (int)(GetFontHeight(pViewParameters->GrannyMode)*1.3);
+				tvi.rcLabelMargin.top = -18;
 				tvi.rcLabelMargin.left = 1;
 				tvi.rcLabelMargin.right = 1;
 			}
@@ -230,7 +244,7 @@ void CListView::SetViewOptions(UINT _ViewID, BOOL Force)
 			m_FileList.SetIconSpacing(140, 140+(int)(GetFontHeight(pViewParameters->GrannyMode)*2.5));
 			break;
 		case LFViewSmallIcons:
-			m_FileList.SetIconSpacing(32+(int)(GetFontHeight(pViewParameters->GrannyMode)*8), 48+(int)(GetFontHeight(pViewParameters->GrannyMode)*2.5));
+			m_FileList.SetIconSpacing(32+(int)(GetFontHeight(pViewParameters->GrannyMode)*8), (int)(GetFontHeight(pViewParameters->GrannyMode)*8));
 		case LFViewTiles:
 			icons = pViewParameters->GrannyMode ? &theApp.m_Icons64 : &theApp.m_Icons48;
 			break;
