@@ -21,6 +21,9 @@ extern HANDLE Mutex_Stores;
 extern LFMessageIDs LFMessages;
 
 
+// Verzeichnis-Funktionen
+//
+
 DWORD CreateDir(LPCSTR lpPath)
 {
 	SECURITY_ATTRIBUTES sa;
@@ -187,6 +190,62 @@ void CreateStoreIndex(char* _Path, char* _StoreID, unsigned int &res)
 		res = LFIndexNotCreated;
 }
 
+void GetFileLocation(char* _Path, LFItemDescriptor* i, char* dst, size_t cCount)
+{
+	char buf[3] = " \\";
+	buf[0] = i->CoreAttributes.FileID[0];
+
+	strcpy_s(dst, cCount, _Path);
+	strcat_s(dst, cCount, buf);
+	strcat_s(dst, cCount, &i->CoreAttributes.FileID[1]);
+
+	if (i->CoreAttributes.FileFormat[0]!='\0')
+	{
+		strcat_s(dst, cCount, ".");
+		strcat_s(dst, cCount, i->CoreAttributes.FileFormat);
+	}
+}
+
+DWORD PrepareImport(char* _Path)
+{
+	char Path[MAX_PATH];
+	strcpy_s(Path, MAX_PATH, _Path);
+
+	*strrchr(Path, '\\') = '\0';
+	return CreateDir(Path);
+}
+
+
+// Stores
+//
+
+LFCore_API unsigned int LFGetFileLocation(LFItemDescriptor* i, char* dst, size_t cCount)
+{
+	if ((i->Type & LFTypeMask)!=LFTypeFile)
+		return LFIllegalKey;
+	if (i->CoreAttributes.StoreID=='\0')
+		return LFIllegalKey;
+
+	if (!GetMutex(Mutex_Stores))
+		return LFMutexError;
+
+	unsigned int res = LFIllegalKey;
+	LFStoreDescriptor* slot = FindStore(i->CoreAttributes.StoreID);
+
+	if (slot)
+		if (IsStoreMounted(slot))
+		{
+			GetFileLocation(slot->DatPath, i, dst, cCount);
+			res = LFOk;
+		}
+		else
+		{
+			res = LFStoreNotMounted;
+		}
+
+	ReleaseMutex(Mutex_Stores);
+	return res;
+}
 
 LFCore_API unsigned int LFGetStoreSettings(char* key, LFStoreDescriptor* s)
 {
@@ -730,42 +789,48 @@ LFCore_API unsigned int LFImportFiles(char* key, LFImportList* il, LFItemDescrip
 	if (res==LFOk)
 	{
 		for (unsigned int a=0; a<il->m_Count; a++)
-		{
-			char FileID[LFKeySize];
-			strcpy_s(FileID, LFKeySize, "TEST");
-
-			char FNA[MAX_PATH];
-			strcpy_s(FNA, MAX_PATH, slot->DatPath);
-			strcat_s(FNA, MAX_PATH, FileID);
-
-			wchar_t FNW[MAX_PATH];
-			size_t sz = strlen(FNA)+1;
-			MultiByteToWideChar(CP_ACP, 0, FNA, (int)sz, &FNW[0], (int)sz);
-
-			wchar_t Ext[LFExtSize];
-			wcscpy_s(Ext, LFExtSize, wcsrchr(wcsrchr(il->m_Entries[a], '\\'), '.'));
-
-			for (unsigned int b=0; b<LFExtSize; b++)
-				Ext[b] = tolower(Ext[b]) & 0xFFFF;
-
-			wcscat_s(FNW, MAX_PATH, Ext);
-
-			if (!CopyFile(il->m_Entries[a], FNW, FALSE))
+			if (il->m_Entries[a])
 			{
-				res = LFIllegalPhysicalPath;
-				break;
+				LFItemDescriptor* i = LFAllocItemDescriptor(it);
+				SetNameExtFromFile(i, il->m_Entries[a]);
+
+				// ID finden
+				char FileID[LFKeySize];
+				strcpy_s(FileID, LFKeySize, "TEST");
+
+				SetAttribute(i, LFAttrStoreID, &store);
+				SetAttribute(i, LFAttrFileID, FileID);
+
+				char CopyToA[MAX_PATH];
+				GetFileLocation(slot->DatPath, i, CopyToA, MAX_PATH);
+
+				DWORD pi_res = PrepareImport(CopyToA);
+				if ((pi_res!=ERROR_SUCCESS) && (pi_res!=ERROR_ALREADY_EXISTS))
+				{
+					LFFreeItemDescriptor(i);
+					res = LFIllegalPhysicalPath;
+					break;
+				}
+
+				wchar_t CopyToW[MAX_PATH];
+				size_t sz = strlen(CopyToA)+1;
+				MultiByteToWideChar(CP_ACP, 0, CopyToA, (int)sz, &CopyToW[0], (int)sz);
+
+				if (!CopyFile(il->m_Entries[a], CopyToW, FALSE))
+				{
+					LFFreeItemDescriptor(i);
+					res = LFIllegalPhysicalPath;
+					break;
+				}
+
+				SetAttributesFromFile(i, CopyToW);
+
+				if (idx1)
+					idx1->AddItem(i);
+				if (idx2)
+					idx2->AddItem(i);
+				LFFreeItemDescriptor(i);
 			}
-
-			LFItemDescriptor* i = GetItemDescriptorForFile(il->m_Entries[a]);
-			SetAttribute(i, LFAttrStoreID, &store);
-			SetAttribute(i, LFAttrFileID, FileID);
-
-			if (idx1)
-				idx1->AddItem(i);
-			if (idx2)
-				idx2->AddItem(i);
-			LFFreeItemDescriptor(i);
-		}
 
 		if (idx1)
 			delete idx1;

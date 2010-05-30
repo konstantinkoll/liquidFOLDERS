@@ -9,6 +9,7 @@ extern unsigned int StoreCount;
 
 bool IsStoreMounted(LFStoreDescriptor* s);
 void AppendGUID(LFStoreDescriptor* s, char* p);
+bool FileExists(char* path);
 void GetAutoPath(LFStoreDescriptor* s, char* p);
 unsigned int ValidateStoreSettings(LFStoreDescriptor* s);
 void InitStoreCache();

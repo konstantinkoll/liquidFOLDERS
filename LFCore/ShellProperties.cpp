@@ -177,48 +177,8 @@ void SetFileDomainAndSlave(LFItemDescriptor* i)
 	i->CoreAttributes.SlaveID = DomainSlaves[i->CoreAttributes.DomainID];
 }
 
-LFItemDescriptor* GetItemDescriptorForFile(wchar_t* fn, LFItemDescriptor* i)
+void SetAttributesFromFile(LFItemDescriptor* i, wchar_t* fn)
 {
-	if (!i)
-	{
-		i = LFAllocItemDescriptor();
-		i->Type = (i->Type & (!LFTypeMask)) | LFTypeFile;
-
-		// Name
-		wchar_t* LastBackslash = wcsrchr(fn, '\\');
-		if (*LastBackslash=='\0')
-		{
-			LastBackslash = fn;
-		}
-		else
-		{
-			LastBackslash++;
-		}
-
-		wchar_t Name[256];
-		wcscpy_s(Name, 256, LastBackslash);
-
-		// Erweiterung
-		wchar_t* LastExt = wcsrchr(Name, '.');
-		if (*LastExt!='\0')
-		{
-			char Ext[LFExtSize] = { 0 };
-
-			wchar_t* Ptr = LastExt+1;
-			unsigned int cCount = 0;
-			while ((*Ptr!='\0') && (cCount<LFExtSize-1))
-			{
-				Ext[cCount++] = (*Ptr<255) ? tolower(*Ptr) & 0xFF : '_';
-				*Ptr++;
-			}
-
-			SetAttribute(i, LFAttrFileFormat, Ext);
-			*LastExt = '\0';
-		}
-
-		SetAttribute(i, LFAttrFileName, Name);
-	}
-
 	// Attribute des Dateisystems
 	WIN32_FIND_DATAW ffd;
 	HANDLE hFind = FindFirstFileW(fn, &ffd);
@@ -237,6 +197,34 @@ LFItemDescriptor* GetItemDescriptorForFile(wchar_t* fn, LFItemDescriptor* i)
 	SetFileDomainAndSlave(i);
 
 	// TODO: weitere Attribute
+}
 
-	return i;
+void SetNameExtFromFile(LFItemDescriptor* i, wchar_t* fn)
+{
+	i->Type = (i->Type & !LFTypeMask) | LFTypeFile;
+
+	// Name
+	wchar_t Name[256];
+	wchar_t* LastBackslash = wcsrchr(fn, '\\');
+	wcscpy_s(Name, 256, (*LastBackslash=='\0') ? fn : LastBackslash+1);
+
+	// Erweiterung
+	wchar_t* LastExt = wcsrchr(Name, '.');
+	if (*LastExt!='\0')
+	{
+		char Ext[LFExtSize] = { 0 };
+
+		wchar_t* Ptr = LastExt+1;
+		unsigned int cCount = 0;
+		while ((*Ptr!='\0') && (cCount<LFExtSize-1))
+		{
+			Ext[cCount++] = (*Ptr<255) ? tolower(*Ptr) & 0xFF : '_';
+			*Ptr++;
+		}
+
+		SetAttribute(i, LFAttrFileFormat, Ext);
+		*LastExt = '\0';
+	}
+
+	SetAttribute(i, LFAttrFileName, Name);
 }

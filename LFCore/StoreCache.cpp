@@ -67,6 +67,11 @@ void GetAutoPath(LFStoreDescriptor* s, char* p)
 	AppendGUID(s, p);
 }
 
+bool FileExists(char* path)
+{
+	return (_access(path, 0)==0);
+}
+
 bool FolderExists(char* path)
 {
 	if (_access(path, 0)==0)

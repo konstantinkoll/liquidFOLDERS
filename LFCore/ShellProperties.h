@@ -2,4 +2,5 @@
 #include "liquidFOLDERS.h"
 
 void SetFileDomainAndSlave(LFItemDescriptor* i);
-LFItemDescriptor* GetItemDescriptorForFile(wchar_t* fn, LFItemDescriptor* i=NULL);
+void SetAttributesFromFile(LFItemDescriptor* i, wchar_t* fn);
+void SetNameExtFromFile(LFItemDescriptor* i, wchar_t* fn);
