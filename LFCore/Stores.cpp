@@ -820,6 +820,7 @@ LFCore_API unsigned int LFImportFiles(char* key, LFFileImportList* il, LFItemDes
 			if (il->m_Entries[a])
 			{
 				LFItemDescriptor* i = LFAllocItemDescriptor(it);
+				i->CoreAttributes.Flags = LFFlagNew;
 				SetNameExtFromFile(i, il->m_Entries[a]);
 
 				char CopyToA[MAX_PATH];
@@ -834,7 +835,7 @@ LFCore_API unsigned int LFImportFiles(char* key, LFFileImportList* il, LFItemDes
 				size_t sz = strlen(CopyToA)+1;
 				MultiByteToWideChar(CP_ACP, 0, CopyToA, (int)sz, &CopyToW[0], (int)sz);
 
-				bool shres = move ? MoveFile(il->m_Entries[a], CopyToW) : CopyFile(il->m_Entries[a], CopyToW, FALSE);
+				BOOL shres = move ? MoveFile(il->m_Entries[a], CopyToW) : CopyFile(il->m_Entries[a], CopyToW, FALSE);
 				if (!shres)
 				{
 					LFFreeItemDescriptor(i);

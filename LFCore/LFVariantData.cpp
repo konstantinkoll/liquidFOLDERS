@@ -10,7 +10,6 @@
 extern unsigned char AttrTypes[];
 
 wchar_t RatingStrings[6] = L"\x2605\x2605\x2605\x2605\x2605";
-wchar_t FlagStrings[8][4] = { L"---", L"--T", L"-N-", L"-NT", L"L--", L"L-T", L"LN-", L"LNT" };
 
 
 // Conversion ToString
@@ -145,6 +144,7 @@ void ToString(void* value, unsigned int type, wchar_t* str, size_t cCount)
 	if (value)
 	{
 		size_t sz;
+		wchar_t FlagString[4];
 
 		switch (type)
 		{
@@ -175,7 +175,11 @@ void ToString(void* value, unsigned int type, wchar_t* str, size_t cCount)
 			LFDoubleToString(*((double*)value), str, cCount);
 			return;
 		case LFTypeFlags:
-			wcscpy_s(str, cCount, &FlagStrings[*((unsigned int*)value) & ((1<<(LFLastFlagBit+1))-1)][0]);
+			FlagString[0] = (*((unsigned int*)value) & LFFlagLink) ? 'L' : '-';
+			FlagString[1] = (*((unsigned int*)value) & LFFlagNew) ? 'N' : '-';
+			FlagString[2] = (*((unsigned int*)value) & LFFlagTrash) ? 'T' : '-';
+			FlagString[3] = '\0';
+			wcscpy_s(str, cCount, FlagString);
 			return;
 		case LFTypeGeoCoordinates:
 			LFGeoCoordinatesToString(*((LFGeoCoordinates*)value), str, cCount);
