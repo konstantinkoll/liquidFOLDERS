@@ -786,7 +786,7 @@ unsigned int OpenStore(char* key, bool WriteAccess, CIndex* &Index1, CIndex* &In
 	return res;
 }
 
-LFCore_API unsigned int LFImportFiles(char* key, LFFileImportList* il, LFItemDescriptor* it)
+LFCore_API unsigned int LFImportFiles(char* key, LFFileImportList* il, LFItemDescriptor* it, bool move)
 {
 	assert(il);
 
@@ -833,7 +833,9 @@ LFCore_API unsigned int LFImportFiles(char* key, LFFileImportList* il, LFItemDes
 				wchar_t CopyToW[MAX_PATH];
 				size_t sz = strlen(CopyToA)+1;
 				MultiByteToWideChar(CP_ACP, 0, CopyToA, (int)sz, &CopyToW[0], (int)sz);
-				if (!CopyFile(il->m_Entries[a], CopyToW, FALSE))
+
+				bool shres = move ? MoveFile(il->m_Entries[a], CopyToW) : CopyFile(il->m_Entries[a], CopyToW, FALSE);
+				if (!shres)
 				{
 					LFFreeItemDescriptor(i);
 					res = LFIllegalPhysicalPath;

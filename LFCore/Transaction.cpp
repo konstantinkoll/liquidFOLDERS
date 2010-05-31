@@ -59,7 +59,7 @@ LFCore_API void LFTransactionUpdate(LFTransactionList* tl, HWND hWndSource, LFVa
 				break;
 			default:
 				tl->m_LastError = tl->m_Entries[a].LastError = LFIllegalItemType;
-				tl->m_Entries[idx].Processed = true;
+				tl->m_Entries[a].Processed = true;
 			}
 
 	if (StoresUpdated)

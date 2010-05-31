@@ -29,7 +29,7 @@ DROPEFFECT LFDropTarget::OnDragOver(CWnd* /*pWnd*/, COleDataObject* /*pDataObjec
 	return (dwKeyState & MK_CONTROL) ? DROPEFFECT_MOVE : DROPEFFECT_COPY;
 }
 
-BOOL LFDropTarget::OnDrop(CWnd* /*pWnd*/, COleDataObject* pDataObject, DROPEFFECT /*dropEffect*/, CPoint /*point*/)
+BOOL LFDropTarget::OnDrop(CWnd* /*pWnd*/, COleDataObject* pDataObject, DROPEFFECT dropEffect, CPoint /*point*/)
 {
 	// Store verfügbar ?
 	if (!LFDefaultStoreAvailable())
@@ -79,7 +79,7 @@ BOOL LFDropTarget::OnDrop(CWnd* /*pWnd*/, COleDataObject* pDataObject, DROPEFFEC
 
 	// Import
 	if (success)
-		if (LFImportFiles("", il, it)!=LFOk)
+		if (LFImportFiles("", il, it, dropEffect==DROPEFFECT_MOVE)!=LFOk)
 			success = FALSE;
 
 	LFFreeItemDescriptor(it);

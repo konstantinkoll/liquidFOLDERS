@@ -301,7 +301,7 @@ LFCore_API unsigned int LFMountDrive(char d);
 LFCore_API unsigned int LFUnmountDrive(char d);
 
 // Importiert Dateien in einen Store
-LFCore_API unsigned int LFImportFiles(char* key, LFFileImportList* il, LFItemDescriptor* it=NULL);
+LFCore_API unsigned int LFImportFiles(char* key, LFFileImportList* il, LFItemDescriptor* it=NULL, bool move=false);
 
 
 
