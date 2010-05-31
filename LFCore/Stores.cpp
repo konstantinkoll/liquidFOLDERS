@@ -822,6 +822,7 @@ LFCore_API unsigned int LFImportFiles(char* key, LFFileImportList* il, LFItemDes
 				LFItemDescriptor* i = LFAllocItemDescriptor(it);
 				i->CoreAttributes.Flags = LFFlagNew;
 				SetNameExtFromFile(i, il->m_Entries[a]);
+				SetAttributesFromFile(i, il->m_Entries[a]);
 
 				char CopyToA[MAX_PATH];
 				res = PrepareImport(slot, i, CopyToA, MAX_PATH);
@@ -842,8 +843,6 @@ LFCore_API unsigned int LFImportFiles(char* key, LFFileImportList* il, LFItemDes
 					res = LFIllegalPhysicalPath;
 					break;
 				}
-
-				SetAttributesFromFile(i, CopyToW);
 
 				if (idx1)
 					idx1->AddItem(i);

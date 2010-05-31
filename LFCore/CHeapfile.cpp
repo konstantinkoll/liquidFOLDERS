@@ -6,6 +6,7 @@
 #include <assert.h>
 #include <io.h>
 #include <malloc.h>
+#include <stdio.h>
 
 
 CHeapfile::CHeapfile(char* Path, char* Filename, unsigned int _ElementSize, unsigned int _KeyOffset)

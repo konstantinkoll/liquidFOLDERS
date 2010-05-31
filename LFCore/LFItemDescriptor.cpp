@@ -105,7 +105,7 @@ inline void FreeAttribute(LFItemDescriptor* i, unsigned int attr)
 	assert(attr<LFAttributeCount);
 
 	// Attributwert nur dann freigeben wenn er nicht statischer Teil des LFItemDescriptor ist und auch nicht zum Slave gehört
-	if ((attr>LFLastLocalAttribute) && (!IsSlaveAttribute(i, attr)) && (i->AttributeValues[attr]))
+	if ((attr>LFLastCoreAttribute) && (!IsSlaveAttribute(i, attr)) && (i->AttributeValues[attr]))
 	{
 		free(i->AttributeValues[attr]);
 		i->AttributeValues[attr] = NULL;
@@ -227,8 +227,8 @@ LFCore_API LFItemDescriptor* LFAllocItemDescriptor(LFItemDescriptor* i)
 			memcpy(d->Slave, i->Slave, sz);
 		}
 
-		for (unsigned int a=0; a<LFAttributeCount; a++)
-			if ((a>LFLastLocalAttribute) && (i->AttributeValues[a]))
+		for (unsigned int a=LFLastCoreAttribute+1; a<LFAttributeCount; a++)
+			if (i->AttributeValues[a])
 				if (IsSlaveAttribute(i, a))
 				{
 					__int64 ofs = (char*)i->AttributeValues[a]-(char*)i->Slave;
@@ -238,7 +238,7 @@ LFCore_API LFItemDescriptor* LFAllocItemDescriptor(LFItemDescriptor* i)
 				{
 					size_t sz = _msize(i->AttributeValues[a]);
 					d->AttributeValues[a] = malloc(sz);
-					memcpy_s(d->AttributeValues[a], sz, i->AttributeValues, sz);
+					memcpy_s(d->AttributeValues[a], sz, i->AttributeValues[a], sz);
 				}
 	}
 

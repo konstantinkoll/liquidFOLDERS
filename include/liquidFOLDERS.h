@@ -203,7 +203,7 @@ struct LFContextDescriptor
 #define LFAttrDoneTime                 46
 
 #define LFAttributeCount               47
-#define LFLastLocalAttribute           16
+#define LFLastCoreAttribute           16
 
 
 // Attribute types

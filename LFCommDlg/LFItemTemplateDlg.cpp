@@ -132,6 +132,8 @@ void LFItemTemplateDlg::DoDataExchange(CDataExchange* pDX)
 	{
 		m_pItem->Type = LFTypeFile;
 
-		//TODO
+		for (unsigned int a=0; a<LFAttributeCount; a++)
+			if ((pAttributes[a]) && (!AttributeValues[a].IsNull))
+				LFSetAttributeVariantData(m_pItem, &AttributeValues[a]);
 	}
 }

@@ -323,7 +323,7 @@ void CFileList::OnContextMenu(CWnd* pWnd, CPoint point)
 		if (menu.CreatePopupMenu())
 		{
 			// Attributliste
-			for (UINT a=0; a<=LFLastLocalAttribute; a++)
+			for (UINT a=0; a<=LFLastCoreAttribute; a++)
 				if (theApp.m_Contexts[View->ActiveContextID]->AllowedAttributes->IsSet(a))
 					menu.AppendMenu(MF_BYPOSITION | MF_STRING, ID_TOGGLE_ATTRIBUTE+a, theApp.m_Attributes[a]->Name);
 			menu.AppendMenu(MF_SEPARATOR);
@@ -332,7 +332,7 @@ void CFileList::OnContextMenu(CWnd* pWnd, CPoint point)
 			if (more.CreateMenu())
 			{
 				// Attributliste
-				for (UINT a=LFLastLocalAttribute+1; a<LFAttributeCount; a++)
+				for (UINT a=LFLastCoreAttribute+1; a<LFAttributeCount; a++)
 					if (theApp.m_Contexts[View->ActiveContextID]->AllowedAttributes->IsSet(a))
 						more.AppendMenu(MF_BYPOSITION | MF_STRING, ID_TOGGLE_ATTRIBUTE+a, theApp.m_Attributes[a]->Name);
 

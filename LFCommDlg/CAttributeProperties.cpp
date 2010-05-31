@@ -207,6 +207,7 @@ BOOL CAttributePropertyIATA::OnUpdateValue()
 	if (FormatProperty()!=strText)
 	{
 		m_varValue = (LPCTSTR)strText;
+		p_Data->IsNull = false;
 		WideCharToMultiByte(CP_ACP, 0, strText, strText.GetLength(), p_Data->AnsiString, 256, NULL, NULL);
 
 		m_pWndList->OnPropertyChanged(this);
@@ -278,6 +279,7 @@ BOOL CAttributePropertyRating::OnEdit(LPPOINT lptClick)
 		if (p_Data->Rating!=(unsigned char)rating)
 		{
 			p_Data->Rating = (unsigned char)rating;
+			p_Data->IsNull = false;
 			Redraw();
 			m_pWndList->OnPropertyChanged(this);
 		}
@@ -322,6 +324,7 @@ BOOL CAttributePropertyRating::PushChar(UINT nChar)
 	if (p_Data->Rating!=(unsigned char)rating)
 	{
 		p_Data->Rating = (unsigned char)rating;
+		p_Data->IsNull = false;
 		Redraw();
 		m_pWndList->OnPropertyChanged(this);
 	}
