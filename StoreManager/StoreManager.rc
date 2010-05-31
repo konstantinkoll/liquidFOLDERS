@@ -263,7 +263,7 @@ IDM_FILE MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "&Open",                       ID_NAV_STARTNAVIGATION
+        MENUITEM "&Open",                       ID_FILES_OPEN
     END
 END
 
@@ -644,6 +644,7 @@ END
 
 STRINGTABLE 
 BEGIN
+    ID_FILES_OPEN           "Opens the selected file with its respective application.\nOpen"
     ID_FILES_SHOWINSPECTOR  "Shows the inspector pane.\nInspector pane"
 END
 
