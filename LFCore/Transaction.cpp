@@ -1,6 +1,8 @@
 #include "StdAfx.h"
 #include "..\\include\\LFCore.h"
 #include "LFVariantData.h"
+#include "Mutex.h"
+#include "Stores.h"
 #include "Transaction.h"
 
 
@@ -55,13 +57,51 @@ LFCore_API void LFTransactionUpdate(LFTransactionList* tl, HWND hWndSource, LFVa
 				if (value3)
 					UpdateStore(tl, a, value3, StoresUpdated);
 			case LFTypeFile:
-				//TODO
+				if (!tl->m_Entries[a].Processed)
+				{
+					CIndex* idx1;
+					CIndex* idx2;
+					HANDLE StoreLock = NULL;
+					unsigned int res = OpenStore(tl->m_Entries->Item->CoreAttributes.StoreID, true, idx1, idx2, NULL, &StoreLock);
+
+					if (res==LFOk)
+					{
+						if (idx1)
+						{
+							idx1->Update(tl, value1, value2, value3);
+							delete idx1;
+						}
+						if (idx2)
+						{
+							idx2->Update(tl, value1, value2, value3);
+							delete idx2;
+						}
+
+						ReleaseMutexForStore(StoreLock);
+					}
+					else
+					{
+						// Cannot open index, so mark all subsequent files in the same store as processed
+						for (unsigned int b=a; b<tl->m_Count; b++)
+						{
+							LFItemDescriptor* i = tl->m_Entries[b].Item;
+							if ((i->Type & LFTypeMask)==LFTypeFile)
+								if ((strcmp(i->CoreAttributes.StoreID, tl->m_Entries[a].Item->CoreAttributes.StoreID)==0) && (!tl->m_Entries[b].Processed))
+								{
+									tl->m_Entries[b].LastError = tl->m_LastError = res;
+									tl->m_Entries[b].Processed = true;
+								}
+						}
+					}
+				}
+
 				break;
 			default:
 				tl->m_LastError = tl->m_Entries[a].LastError = LFIllegalItemType;
 				tl->m_Entries[a].Processed = true;
 			}
 
+	// Update messages
 	if (StoresUpdated)
 		SendNotifyMessage(HWND_BROADCAST, LFMessages.StoreAttributesChanged, LFMSGF_IntStores | LFMSGF_ExtHybStores, (LPARAM)hWndSource);
 }

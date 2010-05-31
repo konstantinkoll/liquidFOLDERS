@@ -133,9 +133,11 @@ LFSearchResult* QueryDomains(LFFilter* filter)
 	{
 		unsigned int cnt[LFDomainCount] = { 0 };
 		__int64 size[LFDomainCount] = { 0 };
-		idx1->RetrieveStats(cnt, size);
 		if (idx1)
+		{
+			idx1->RetrieveStats(cnt, size);
 			delete idx1;
+		}
 		if (idx2)
 			delete idx2;
 		ReleaseMutexForStore(StoreLock);
@@ -204,9 +206,11 @@ LFSearchResult* QueryStore(LFFilter* filter)
 			res->AddBacklink(filter->StoreID, nf);
 		}
 
-		idx1->Retrieve(filter, res);
 		if (idx1)
+		{
+			idx1->Retrieve(filter, res);
 			delete idx1;
+		}
 		if (idx2)
 			delete idx2;
 		ReleaseMutexForStore(StoreLock);
