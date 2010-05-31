@@ -32,13 +32,18 @@ void UpdateStore(LFTransactionList* tl, unsigned int idx, LFVariantData* value, 
 	{
 		tl->m_LastError = tl->m_Entries[idx].LastError = result;
 	}
+	tl->m_Entries[idx].Processed = true;
 }
 
 LFCore_API void LFTransactionUpdate(LFTransactionList* tl, HWND hWndSource, LFVariantData* value1, LFVariantData* value2, LFVariantData* value3)
 {
 	bool StoresUpdated = false;
 
-	// Stores and illegal item types
+	// Reset processed flag
+	for (unsigned int a=0; a<tl->m_Count; a++)
+		tl->m_Entries[a].Processed = false;
+
+	// Process
 	for (unsigned int a=0; a<tl->m_Count; a++)
 		if (tl->m_Entries[a].LastError==LFOk)
 			switch (tl->m_Entries[a].Item->Type & LFTypeMask)
@@ -50,14 +55,13 @@ LFCore_API void LFTransactionUpdate(LFTransactionList* tl, HWND hWndSource, LFVa
 				if (value3)
 					UpdateStore(tl, a, value3, StoresUpdated);
 			case LFTypeFile:
+				//TODO
 				break;
 			default:
 				tl->m_LastError = tl->m_Entries[a].LastError = LFIllegalItemType;
+				tl->m_Entries[idx].Processed = true;
 			}
 
 	if (StoresUpdated)
 		SendNotifyMessage(HWND_BROADCAST, LFMessages.StoreAttributesChanged, LFMSGF_IntStores | LFMSGF_ExtHybStores, (LPARAM)hWndSource);
-
-	// Files
-	//TODO
 }

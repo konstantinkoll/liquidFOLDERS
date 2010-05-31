@@ -52,51 +52,8 @@ bool LFTransactionList::AddItemDescriptor(LFItemDescriptor* i, unsigned int User
 	i->RefCount++;
 	m_Entries[m_Count].Item = i;
 	m_Entries[m_Count].LastError = LFOk;
-	m_Entries[m_Count++].UserData = UserData;
+	m_Entries[m_Count].UserData = UserData;
+	m_Entries[m_Count++].Processed = false;
 
 	return true;
-}
-
-void LFTransactionList::RemoveEntry(unsigned int idx)
-{
-	assert(idx<m_Count);
-
-	LFFreeItemDescriptor(m_Entries[idx].Item);
-
-	if (idx<--m_Count)
-		m_Entries[idx] = m_Entries[m_Count];
-}
-
-void LFTransactionList::RemoveFlaggedEntries()
-{
-	unsigned int idx = 0;
-	
-	while (idx<m_Count)
-	{
-		if (m_Entries[idx].Item->DeleteFlag)
-		{
-			RemoveEntry(idx);
-		}
-		else
-		{
-			idx++;
-		}
-	}
-}
-
-void LFTransactionList::RemoveErrorEntries()
-{
-	unsigned int idx = 0;
-	
-	while (idx<m_Count)
-	{
-		if (m_Entries[idx].LastError!=LFOk)
-		{
-			RemoveEntry(idx);
-		}
-		else
-		{
-			idx++;
-		}
-	}
 }

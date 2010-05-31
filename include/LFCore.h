@@ -191,24 +191,6 @@ LFCore_API void LFFreeTransactionList(LFTransactionList* tl);
 // LFItemDescriptor zur LFTransactionList hinzufügen
 LFCore_API bool LFAddItemDescriptor(LFTransactionList* tl, LFItemDescriptor* i, unsigned int UserData=0);
 
-// Eintrag aus LFTransactionList entfernen
-//
-// !!ACHTUNG!!
-// Die Sortierreihenfolge geht verloren
-LFCore_API void LFRemoveEntry(LFTransactionList* tl, unsigned idx);
-
-// Alle markierten Einträge (Item.DeleteFlag==true) aus LFTransactionList entfernen
-//
-// !!ACHTUNG!!
-// Die Sortierreihenfolge geht verloren
-LFCore_API void LFRemoveFlaggedEntries(LFTransactionList* tl);
-
-// Alle Einträge mit Fehler (Item.LastError!=LFOk) aus LFTransactionList entfernen
-//
-// !!ACHTUNG!!
-// Die Sortierreihenfolge geht verloren
-LFCore_API void LFRemoveErrorEntries(LFTransactionList* tl);
-
 
 
 // Neuen LFStoreDescriptor erzeugen

@@ -20,6 +20,7 @@ struct LFTL_Entry
 	LFItemDescriptor* Item;
 	unsigned int LastError;
 	unsigned int UserData;
+	bool Processed;
 };
 
 class LFTransactionList
@@ -29,9 +30,6 @@ public:
 	virtual ~LFTransactionList();
 
 	bool AddItemDescriptor(LFItemDescriptor* i, unsigned int UserData);
-	void RemoveEntry(unsigned int idx);
-	void RemoveFlaggedEntries();
-	void RemoveErrorEntries();
 
 	LFTL_Entry* m_Entries;
 	unsigned int m_LastError;

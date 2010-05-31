@@ -540,21 +540,6 @@ LFCore_API bool LFAddItemDescriptor(LFTransactionList* tl, LFItemDescriptor* i, 
 	return tl->AddItemDescriptor(i, UserData);
 }
 
-LFCore_API void LFRemoveEntry(LFTransactionList* tl, unsigned idx)
-{
-	tl->RemoveEntry(idx);
-}
-
-LFCore_API void LFRemoveFlaggedEntries(LFTransactionList* tl)
-{
-	tl->RemoveFlaggedEntries();
-}
-
-LFCore_API void LFRemoveErrorEntries(LFTransactionList* tl)
-{
-	tl->RemoveErrorEntries();
-}
-
 
 LFCore_API LFStoreDescriptor* LFAllocStoreDescriptor()
 {
