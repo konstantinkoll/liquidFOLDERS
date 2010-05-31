@@ -168,9 +168,61 @@ void CIndex::Update(LFItemDescriptor* i)
 	}
 }
 
-void CIndex::Update(LFTransactionList* /*li*/)
+void CIndex::Update(LFTransactionList* li)
 {
-	// TODO
+	assert(li);
+
+	if (!LoadTable(IDMaster))
+	{
+		li->m_LastError = LFIndexRepairError;
+		return;
+	}
+
+	int IDs[IdxTableCount];
+	ZeroMemory(IDs, sizeof(IDs));
+	LFCoreAttributes* PtrM;
+
+	while (Tables[IDMaster]->FindNext(IDs[IDMaster], (void*&)PtrM))
+	{
+		for (unsigned int a=0; a<li->m_Count; a++)
+		{
+			LFItemDescriptor* i = li->m_Entries[a].Item;
+			if ((i->Type & LFTypeMask)==LFTypeFile)
+				if ((strcmp(i->CoreAttributes.StoreID, StoreID)==0) && (strcmp(i->CoreAttributes.FileID, PtrM->FileID)==0))
+				{
+					// Master
+					Tables[IDMaster]->Update(i, PtrM);
+
+					// Slave
+					if ((PtrM->SlaveID) && (PtrM->SlaveID<IdxTableCount))
+						if (LoadTable(PtrM->SlaveID))
+						{
+							void* PtrS;
+
+							if (Tables[PtrM->SlaveID]->FindKey(PtrM->FileID, IDs[PtrM->SlaveID], PtrS))
+								Tables[PtrM->SlaveID]->Update(i, PtrS);
+						}
+						else
+						{
+							li->m_Entries[a].LastError = li->m_LastError = LFIndexError;
+						}
+
+					li->m_Entries[a].Processed = true;
+				}
+		}
+	}
+
+	// Ungültige Items finden
+	for (unsigned int a=0; a<li->m_Count; a++)
+	{
+		LFItemDescriptor* i = li->m_Entries[a].Item;
+		if ((i->Type & LFTypeMask)==LFTypeFile)
+			if ((strcmp(i->CoreAttributes.StoreID, StoreID)==0) && (!li->m_Entries[a].Processed))
+			{
+				li->m_Entries[a].LastError = li->m_LastError = LFIllegalKey;
+				li->m_Entries[a].Processed = true;
+			}
+	}
 }
 
 void CIndex::Remove(LFItemDescriptor* i)
