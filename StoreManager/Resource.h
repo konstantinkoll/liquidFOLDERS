@@ -115,8 +115,7 @@
 #define ID_CLIP_REMOVE                  604
 #define ID_CLIP_REMEMBERLAST            605
 #define ID_CLIP_REMEMBERNEW             606
-#define ID_FILES_OPEN                   650
-#define ID_FILES_SHOWINSPECTOR          651
+#define ID_FILES_SHOWINSPECTOR          650
 #define ID_SORT_FILENAME                700
 #define ID_SORT_COMMENT                 703
 #define ID_SORT_CREATIONTIME            705

@@ -69,7 +69,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_NAV_FIRST, ID_NAV_CLEARHISTORY, OnUpdateNavCommands)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_PANE_CAPTIONBAR, ID_PANE_HISTORYWND, OnUpdatePaneCommands)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_CLIP_COPY, ID_CLIP_REMEMBERNEW, OnUpdateClipCommands)
-	ON_UPDATE_COMMAND_UI_RANGE(ID_FILES_OPEN, ID_FILES_SHOWINSPECTOR, OnUpdateFileCommands)
+	ON_UPDATE_COMMAND_UI_RANGE(ID_FILES_SHOWINSPECTOR, ID_FILES_SHOWINSPECTOR, OnUpdateFileCommands)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_STORE_NEW, ID_STORE_BACKUP, OnUpdateStoreCommands)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_DROP_CALENDAR, ID_DROP_RESOLUTION, OnUpdateDropCommands)
 
@@ -110,7 +110,6 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_COMMAND(ID_CLIP_REMEMBERLAST, OnClipRememberLast)
 	ON_COMMAND(ID_CLIP_REMEMBERNEW, OnClipRememberNew)
 
-	ON_COMMAND(ID_FILES_OPEN, OnStartNavigation)
 	ON_COMMAND(ID_FILES_SHOWINSPECTOR, OnShowInspectorWnd)
 
 	ON_COMMAND(ID_STORE_NEW, OnStoreNew)
@@ -754,15 +753,9 @@ void CMainFrame::OnUpdateClipCommands(CCmdUI* pCmdUI)
 void CMainFrame::OnUpdateFileCommands(CCmdUI* pCmdUI)
 {
 	BOOL b = FALSE;
-	int i;
 
 	switch (pCmdUI->m_nID)
 	{
-	case ID_FILES_OPEN:
-		i = GetSelectedItem();
-		if (i!=-1)
-			b = ((CookedFiles->m_Items[i]->Type & LFTypeMask)==LFTypeFile);
-		break;
 	case ID_FILES_SHOWINSPECTOR:
 		b = TRUE;
 		break;
@@ -1493,7 +1486,8 @@ void CMainFrame::OnUpdateNavCommands(CCmdUI* pCmdUI)
 		if (i!=-1)
 		{
 			b &= (CookedFiles->m_Items[i]->NextFilter!=NULL) ||
-				((CookedFiles->m_Items[i]->Type & (LFTypeMask | LFTypeNotMounted))==LFTypeDrive);
+				((CookedFiles->m_Items[i]->Type & (LFTypeMask | LFTypeNotMounted))==LFTypeDrive) ||
+				((CookedFiles->m_Items[i]->Type & LFTypeMask)==LFTypeFile);
 		}
 		else
 		{
@@ -1728,7 +1722,7 @@ void CMainFrame::InitializeRibbon()
 		pPanelFileManage->EnableLaunchButton(ID_FILES_SHOWINSPECTOR, 10);
 
 			strTemp = "Open";
-			pPanelFileManage->Add(new CMFCRibbonButton(ID_FILES_OPEN, strTemp, 7, 7));
+			pPanelFileManage->Add(new CMFCRibbonButton(ID_NAV_STARTNAVIGATION, strTemp, 7, 7));
 			pPanelFileManage->AddSeparator();
 			strTemp = "Rename";
 			pPanelFileManage->Add(new CMFCRibbonButton(ID_APP_ABOUT, strTemp, 8, 8));
