@@ -17,9 +17,11 @@ BOOL LFDropTarget::Register(CWnd* pWnd)
 	return (m_hWnd!=pWnd->m_hWnd) ? COleDropTarget::Register(pWnd) : TRUE;
 }
 
-DROPEFFECT LFDropTarget::OnDragEnter(CWnd* /*pWnd*/, COleDataObject* /*pDataObject*/, DWORD /*dwKeyState*/, CPoint /*point*/)
+DROPEFFECT LFDropTarget::OnDragEnter(CWnd* /*pWnd*/, COleDataObject* /*pDataObject*/, DWORD dwKeyState, CPoint /*point*/)
 {
-	return DROPEFFECT_COPY;
+	SkipTemplate = (dwKeyState & MK_SHIFT);
+
+	return (dwKeyState & MK_CONTROL) ? DROPEFFECT_MOVE : DROPEFFECT_COPY;
 }
 
 DROPEFFECT LFDropTarget::OnDragOver(CWnd* /*pWnd*/, COleDataObject* /*pDataObject*/, DWORD dwKeyState, CPoint /*point*/)
@@ -85,8 +87,4 @@ BOOL LFDropTarget::OnDrop(CWnd* /*pWnd*/, COleDataObject* pDataObject, DROPEFFEC
 	LFFreeItemDescriptor(it);
 	LFFreeFileImportList(il);
 	return success;
-}
-
-void LFDropTarget::OnDragLeave (CWnd* /*pWnd*/)
-{
 }
