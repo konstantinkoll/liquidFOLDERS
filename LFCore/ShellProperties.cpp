@@ -185,10 +185,17 @@ void SetAttributesFromFile(LFItemDescriptor* i, wchar_t* fn)
 
 	if (hFind!=INVALID_HANDLE_VALUE)
 	{
+		SYSTEMTIME ust;
+		SYSTEMTIME lst;
 		FILETIME lft;
+		FileTimeToSystemTime(&ffd.ftCreationTime, &ust);
+		SystemTimeToTzSpecificLocalTime(NULL, &ust, &lst);
+		SystemTimeToFileTime(&lst, &lft);
 		FileTimeToLocalFileTime(&ffd.ftCreationTime, &lft);
 		SetAttribute(i, LFAttrCreationTime, &lft);
-		FileTimeToLocalFileTime(&ffd.ftLastWriteTime, &lft);
+		FileTimeToSystemTime(&ffd.ftLastWriteTime, &ust);
+		SystemTimeToTzSpecificLocalTime(NULL, &ust, &lst);
+		SystemTimeToFileTime(&lst, &lft);
 		SetAttribute(i, LFAttrFileTime, &lft);
 		__int64 size = (((__int64)ffd.nFileSizeHigh) << 32)+ffd.nFileSizeLow;
 		SetAttribute(i, LFAttrFileSize, &size);
