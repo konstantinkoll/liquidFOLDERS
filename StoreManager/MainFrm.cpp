@@ -69,7 +69,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_NAV_FIRST, ID_NAV_CLEARHISTORY, OnUpdateNavCommands)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_PANE_CAPTIONBAR, ID_PANE_HISTORYWND, OnUpdatePaneCommands)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_CLIP_COPY, ID_CLIP_REMEMBERNEW, OnUpdateClipCommands)
-	ON_UPDATE_COMMAND_UI_RANGE(ID_FILES_SHOWINSPECTOR, ID_FILES_SHOWINSPECTOR, OnUpdateFileCommands)
+	ON_UPDATE_COMMAND_UI_RANGE(ID_FILES_SHOWINSPECTOR, ID_FILES_DELETE, OnUpdateFileCommands)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_STORE_NEW, ID_STORE_BACKUP, OnUpdateStoreCommands)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_DROP_CALENDAR, ID_DROP_RESOLUTION, OnUpdateDropCommands)
 
@@ -111,6 +111,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_COMMAND(ID_CLIP_REMEMBERNEW, OnClipRememberNew)
 
 	ON_COMMAND(ID_FILES_SHOWINSPECTOR, OnShowInspectorWnd)
+	ON_COMMAND(ID_FILES_DELETE, OnFilesDelete)
 
 	ON_COMMAND(ID_STORE_NEW, OnStoreNew)
 	ON_COMMAND(ID_STORE_NEWINTERNAL, OnStoreNewInternal)
@@ -687,7 +688,7 @@ void CMainFrame::OnClipRemove()
 		}
 
 		LFRemoveFlaggedItemDescriptors(RawFiles);
-		CookFiles(RawFiles->m_Context, GetFocusItem());
+		CookFiles(ActiveContextID, GetFocusItem());
 	}
 }
 
@@ -750,6 +751,21 @@ void CMainFrame::OnUpdateClipCommands(CCmdUI* pCmdUI)
 	pCmdUI->Enable(b);
 }
 
+void CMainFrame::OnFilesDelete()
+{
+	UpdateTrashFlag(TRUE);
+}
+
+void CMainFrame::OnRestoreSelectedFiles()
+{
+	UpdateTrashFlag(FALSE);
+}
+
+void CMainFrame::OnRestoreAllFiles()
+{
+	UpdateTrashFlag(FALSE, TRUE);
+}
+
 void CMainFrame::OnUpdateFileCommands(CCmdUI* pCmdUI)
 {
 	BOOL b = FALSE;
@@ -757,6 +773,11 @@ void CMainFrame::OnUpdateFileCommands(CCmdUI* pCmdUI)
 	switch (pCmdUI->m_nID)
 	{
 	case ID_FILES_SHOWINSPECTOR:
+		b = TRUE;
+		break;
+	case ID_FILES_DELETE:
+		//b = RawFiles->m_FileCount;
+		// TODO
 		b = TRUE;
 		break;
 	}
@@ -1238,7 +1259,7 @@ BOOL CMainFrame::RenameSingleItem(UINT n, CString Name)
 	return result;
 }
 
-LFTransactionList* CMainFrame::BuildTransactionList()
+LFTransactionList* CMainFrame::BuildTransactionList(BOOL All)
 {
 	LFTransactionList* tl = NULL;
 
@@ -1246,11 +1267,19 @@ LFTransactionList* CMainFrame::BuildTransactionList()
 	{
 		tl = LFAllocTransactionList();
 
-		int idx = GetNextSelectedItem(-1);
-		while (idx!=-1)
+		if (All)
 		{
-			LFAddItemDescriptor(tl, CookedFiles->m_Items[idx], idx);
-			idx = GetNextSelectedItem(idx);
+			for (unsigned int a=0; a<CookedFiles->m_ItemCount; a++)
+				LFAddItemDescriptor(tl, CookedFiles->m_Items[a], a);
+		}
+		else
+		{
+			int idx = GetNextSelectedItem(-1);
+			while (idx!=-1)
+			{
+				LFAddItemDescriptor(tl, CookedFiles->m_Items[idx], idx);
+				idx = GetNextSelectedItem(idx);
+			}
 		}
 	}
 
@@ -1277,6 +1306,42 @@ BOOL CMainFrame::UpdateSelectedItems(LFVariantData* value1, LFVariantData* value
 			m_wndView->OnUpdateSearchResult(CookedFiles, GetFocusItem());
 		if (deselected)
 			OnUpdateSelection();
+	}
+
+	if (tl->m_LastError>LFCancel)
+		ShowCaptionBar(IDB_CANCEL, tl->m_LastError);
+
+	BOOL changes = tl->m_Changes;
+	LFFreeTransactionList(tl);
+	return changes;
+}
+
+BOOL CMainFrame::UpdateTrashFlag(BOOL Trash, BOOL All)
+{
+	LFVariantData value;
+	value.Attr = LFAttrFlags;
+	LFGetNullVariantData(&value);
+
+	value.Flags.Flags = Trash ? LFFlagTrash : 0;
+	value.Flags.Mask = LFFlagTrash;
+
+	LFTransactionList* tl = BuildTransactionList(All);
+	LFTransactionUpdate(tl, GetSafeHwnd(), &value);
+
+	if (m_wndView)
+	{
+		for (UINT a=0; a<tl->m_Count; a++)
+			if (tl->m_Entries[a].LastError!=LFOk)
+			{
+				m_wndView->SelectItem(tl->m_Entries[a].UserData, FALSE, TRUE);
+			}
+			else
+			{
+				tl->m_Entries[a].Item->DeleteFlag = true;
+			}
+
+		LFRemoveFlaggedItemDescriptors(RawFiles);
+		CookFiles(ActiveContextID, GetFocusItem());
 	}
 
 	if (tl->m_LastError>LFCancel)
@@ -1727,7 +1792,7 @@ void CMainFrame::InitializeRibbon()
 			strTemp = "Rename";
 			pPanelFileManage->Add(new CMFCRibbonButton(ID_APP_ABOUT, strTemp, 8, 8));
 			strTemp = "Delete";
-			pPanelFileManage->Add(new CMFCRibbonButton(ID_APP_ABOUT, strTemp, 9, 9));
+			pPanelFileManage->Add(new CMFCRibbonButton(ID_FILES_DELETE, strTemp, 9, 9));
 
 		strTemp = "Share";
 		CMFCRibbonPanel* pPanelFileShare = pCategoryFiles->AddPanel(strTemp, m_PanelImages.ExtractIcon(0));

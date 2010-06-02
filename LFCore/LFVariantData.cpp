@@ -362,5 +362,20 @@ LFCore_API void LFSetAttributeVariantData(LFItemDescriptor* i, LFVariantData* v)
 	assert(v->Attr<LFAttributeCount);
 	assert(!v->IsNull);
 
+	// Special treatment for flags
+	if (v->Attr==LFAttrFlags)
+	{
+		v->Flags.Mask &= LFFlagTrash;
+		v->Flags.Flags &= v->Flags.Mask;
+
+		if (i->AttributeValues[v->Attr])
+		{
+			unsigned int f = (*(unsigned int*)i->AttributeValues[v->Attr] & v->Flags.Mask) | v->Flags.Flags;
+			SetAttribute(i, v->Attr, &f);
+			return;
+		}
+	}
+
+	// Other attributes
 	SetAttribute(i, v->Attr, &v->Value);
 }

@@ -23,15 +23,17 @@ int PassesFilterCore(LFCoreAttributes* ca, LFFilter* filter)
 
 	// StoreID wird durch Query Optimization bearbeitet
 
-	// DomainID
+	// Domains
+	if (filter->DomainID!=LFDomainTrash)
+		if (ca->Flags & LFFlagTrash)
+			return -1;
+
 	if (filter->DomainID)
 		switch (filter->DomainID)
 		{
 		case LFDomainAllMediaFiles:
 			if ((ca->DomainID<LFDomainAudio) || (ca->DomainID>LFDomainVideos))
 				return -1;
-		case LFDomainAllFiles:
-			break;
 		case LFDomainFavorites:
 			if (!ca->Rating)
 				return -1;

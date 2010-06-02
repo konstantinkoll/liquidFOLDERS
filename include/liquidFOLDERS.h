@@ -244,7 +244,11 @@ struct LFVariantData
 		__int64 INT64;
 		LFFraction Fraction;
 		double Double;
-		unsigned int Flags;
+		struct
+		{
+			unsigned int Flags;
+			unsigned int Mask;
+		} Flags;
 		LFGeoCoordinates GeoCoordinates;
 		FILETIME Time;
 		unsigned int Duration;

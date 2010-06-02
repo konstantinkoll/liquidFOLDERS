@@ -27,7 +27,6 @@ public:
 	void Update(LFItemDescriptor* i);
 	void Update(LFTransactionList* tl, LFVariantData* value1, LFVariantData* value2=NULL, LFVariantData* value3=NULL);
 	void Remove(LFItemDescriptor* i);
-	void Remove(LFTransactionList* tl);
 	void RemoveTrash();
 	void Retrieve(LFFilter* f, LFSearchResult* res);
 	void RetrieveStats(unsigned int* cnt, __int64* size);

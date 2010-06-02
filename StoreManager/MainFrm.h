@@ -90,6 +90,7 @@ public:
 	void UpdateSortOptions();
 	BOOL RenameSingleItem(UINT n, CString Name);
 	BOOL UpdateSelectedItems(LFVariantData* value1, LFVariantData* value2=NULL, LFVariantData* value3=NULL);
+	BOOL UpdateTrashFlag(BOOL Trash, BOOL All=FALSE);
 	BOOL OpenChildView(BOOL Force=FALSE);
 
 	BOOL IsClipboard;
@@ -97,7 +98,7 @@ public:
 
 protected:
 	void UpdateSearchResult(BOOL SetEmpty, int FocusItem);
-	LFTransactionList* BuildTransactionList();
+	LFTransactionList* BuildTransactionList(BOOL All=FALSE);
 	UINT SelectViewMode(UINT ViewID=LFViewAutomatic);
 
 	CAdvancedRibbonBar m_wndRibbonBar;
@@ -152,6 +153,9 @@ protected:
 	afx_msg void OnClipRememberLast();
 	afx_msg void OnClipRememberNew();
 	afx_msg void OnUpdateClipCommands(CCmdUI* pCmdUI);
+	afx_msg void OnFilesDelete();
+	afx_msg void OnRestoreSelectedFiles();
+	afx_msg void OnRestoreAllFiles();
 	afx_msg void OnUpdateFileCommands(CCmdUI* pCmdUI);
 	afx_msg void OnStoreNew();
 	afx_msg void OnStoreNewInternal();
