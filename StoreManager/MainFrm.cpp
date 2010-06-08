@@ -1068,8 +1068,8 @@ void CMainFrame::UpdateSearchResult(BOOL SetEmpty, int FocusItem)
 	{
 		// Im Debug-Modus bleiben alle Kategorien sichtbar
 		#ifndef _DEBUG
-		m_wndRibbonBar.ShowCategory(RibbonCategory_Stores, CookedFiles->m_Context==LFContextStores);
-		m_wndRibbonBar.ShowCategory(RibbonCategory_Trash, (CookedFiles->m_Context==LFContextHousekeeping) && (ActiveFilter->Result.FilterType==LFFilterTypeTrash));
+		m_wndRibbonBar.ShowCategory(RibbonCategory_Stores, (CookedFiles->m_Context==LFContextStores) && (ActiveFilter->Result.FilterType==LFFilterTypeStores));
+		m_wndRibbonBar.ShowCategory(RibbonCategory_Trash, (CookedFiles->m_Context==LFContextTrash) && (ActiveFilter->Result.FilterType==LFFilterTypeTrash));
 		m_wndRibbonBar.ShowCategory(RibbonCategory_UnknownFileFormats, (CookedFiles->m_Context==LFContextHousekeeping) && (ActiveFilter->Result.FilterType==LFFilterTypeUnknownFileFormats));
 		#endif
 
