@@ -249,17 +249,24 @@ void CFileList::OnCustomDraw(NMHDR* pNMHDR, LRESULT* pResult)
 				theApp.zDrawThemeBackground(hTheme, lplvcd->nmcd.hdc, LVP_LISTITEM, StateIDs[iState | hot], rectBounds, rect);
 			}
 
-			HDC hdcMem = CreateCompatibleDC(lplvcd->nmcd.hdc);
-			UCHAR level = *(UCHAR*)View->result->m_Items[lplvcd->nmcd.dwItemSpec]->AttributeValues[attr];
-			HBITMAP hbmOld = (HBITMAP)SelectObject(hdcMem, attr==LFAttrRating ? theApp.m_RatingBitmaps[level] : theApp.m_PriorityBitmaps[level]);
+			LFItemDescriptor* i = View->result->m_Items[lplvcd->nmcd.dwItemSpec];
+			UCHAR level = *(UCHAR*)i->AttributeValues[attr];
+			if (level>LFMaxRating)
+				level = 0;
 
-			int w = min(rect.Width(), RatingBitmapWidth);
-			int h = min(rect.Height(), RatingBitmapHeight);
-			BLENDFUNCTION LF = { AC_SRC_OVER, 0, 0xFF, AC_SRC_ALPHA };
-			AlphaBlend(lplvcd->nmcd.hdc, rect.left, rect.top+(rect.Height()-h)/2, w, h, hdcMem, 0, 0, w, h, LF);
+			if (((i->Type & LFTypeMask)==LFTypeFile) || (level))
+			{
+				HDC hdcMem = CreateCompatibleDC(lplvcd->nmcd.hdc);
+				HBITMAP hbmOld = (HBITMAP)SelectObject(hdcMem, attr==LFAttrRating ? theApp.m_RatingBitmaps[level] : theApp.m_PriorityBitmaps[level]);
 
-			SelectObject(hdcMem, hbmOld);
-			DeleteDC(hdcMem);
+				int w = min(rect.Width(), RatingBitmapWidth);
+				int h = min(rect.Height(), RatingBitmapHeight);
+				BLENDFUNCTION LF = { AC_SRC_OVER, 0, 0xFF, AC_SRC_ALPHA };
+				AlphaBlend(lplvcd->nmcd.hdc, rect.left, rect.top+(rect.Height()-h)/2, w, h, hdcMem, 0, 0, w, h, LF);
+
+				SelectObject(hdcMem, hbmOld);
+				DeleteDC(hdcMem);
+			}
 
 			*pResult = CDRF_SKIPDEFAULT;
 		}

@@ -225,6 +225,7 @@ BEGIN
     IDS_AttrHint            "Hint"
     IDS_AttrCreationTime    "Creation time"
     IDS_AttrFileTime        "File time"
+    IDS_AttrDeleteTime      "Delete time"
     IDS_AttrFileFormat      "File format"
     IDS_AttrFileSize        "Size"
     IDS_AttrFlags           "Flags"

@@ -133,8 +133,10 @@ void CInspectorWnd::UpdateAdd(LFItemDescriptor* i)
 		break;
 	case LFTypeFile:
 		for (UINT a=0; a<LFAttributeCount; a++)
-			if ((i->AttributeValues[a]) && (a!=LFAttrHint))
+			if ((i->AttributeValues[a]) && (a!=LFAttrHint) && (a!=LFAttrDeleteTime))
 				AddValue(i, a);
+		if (i->CoreAttributes.Flags & LFFlagTrash)
+			AddValue(i, LFAttrDeleteTime);
 		break;
 	case LFTypeStore:
 		for (UINT a=0; a<=LFAttrFileTime; a++)
@@ -500,7 +502,6 @@ void CInspectorWnd::OnUpdateCommands(CCmdUI* pCmdUI)
 
 void CInspectorWnd::AddValue(LFItemDescriptor* i, UINT Attr, BOOL Editable)
 {
-	AttributeVisible[Attr] = TRUE;
 	AttributeEditable[Attr] |= Editable;
 
 	if (i->AttributeValues[Attr])
@@ -509,6 +510,7 @@ void CInspectorWnd::AddValue(LFItemDescriptor* i, UINT Attr, BOOL Editable)
 		{
 		case StatusUnused:
 			AttributeStatus[Attr] = StatusUsed;
+			AttributeVisible[Attr] = TRUE;
 			LFGetAttributeVariantData(i, &AttributeValues[Attr]);
 			break;
 		case StatusUsed:
@@ -522,6 +524,7 @@ void CInspectorWnd::AddValue(LFItemDescriptor* i, UINT Attr, BOOL Editable)
 		{
 		case StatusUnused:
 			AttributeStatus[Attr] = StatusUsed;
+			AttributeVisible[Attr] = TRUE;
 			break;
 		case StatusUsed:
 			if (!AttributeValues[Attr].IsNull)
@@ -532,7 +535,6 @@ void CInspectorWnd::AddValue(LFItemDescriptor* i, UINT Attr, BOOL Editable)
 
 void CInspectorWnd::AddValueVirtual(UINT Attr, char* Value, BOOL Editable)
 {
-	AttributeVisible[Attr] = TRUE;
 	AttributeEditable[Attr] |= Editable;
 
 	wchar_t tmpStr[256];
@@ -543,6 +545,7 @@ void CInspectorWnd::AddValueVirtual(UINT Attr, char* Value, BOOL Editable)
 	{
 	case StatusUnused:
 		AttributeStatus[Attr] = StatusUsed;
+		AttributeVisible[Attr] = TRUE;
 		wcscpy_s(AttributeValues[Attr].UnicodeString, 256, tmpStr);
 		break;
 	case StatusUsed:
@@ -554,13 +557,13 @@ void CInspectorWnd::AddValueVirtual(UINT Attr, char* Value, BOOL Editable)
 
 void CInspectorWnd::AddValueVirtual(UINT Attr, wchar_t* Value, BOOL Editable)
 {
-	AttributeVisible[Attr] = TRUE;
 	AttributeEditable[Attr] |= Editable;
 
 	switch (AttributeStatus[Attr])
 	{
 	case StatusUnused:
 		AttributeStatus[Attr] = StatusUsed;
+		AttributeVisible[Attr] = TRUE;
 		wcscpy_s(AttributeValues[Attr].UnicodeString, 256, Value);
 		break;
 	case StatusUsed:

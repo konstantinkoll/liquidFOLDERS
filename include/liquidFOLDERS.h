@@ -155,55 +155,56 @@ struct LFContextDescriptor
 #define LFAttrHint                      4
 #define LFAttrCreationTime              5
 #define LFAttrFileTime                  6
-#define LFAttrFileFormat                7
-#define LFAttrFileSize                  8
-#define LFAttrFlags                     9
-#define LFAttrURL                      10
-#define LFAttrTags                     11
-#define LFAttrRating                   12
-#define LFAttrPriority                 13
-#define LFAttrLocationName             14
-#define LFAttrLocationIATA             15
-#define LFAttrLocationGPS              16
+#define LFAttrDeleteTime                7
+#define LFAttrFileFormat                8
+#define LFAttrFileSize                  9
+#define LFAttrFlags                    10
+#define LFAttrURL                      11
+#define LFAttrTags                     12
+#define LFAttrRating                   13
+#define LFAttrPriority                 14
+#define LFAttrLocationName             15
+#define LFAttrLocationIATA             16
+#define LFAttrLocationGPS              17
 
-#define LFAttrHeight                   17
-#define LFAttrWidth                    18
-#define LFAttrResolution               19
-#define LFAttrAspectRatio              20
-#define LFAttrVideoCodec               21
-#define LFAttrRoll                     22
+#define LFAttrHeight                   18
+#define LFAttrWidth                    19
+#define LFAttrResolution               20
+#define LFAttrAspectRatio              21
+#define LFAttrVideoCodec               22
+#define LFAttrRoll                     23
 
-#define LFAttrExposure                 23
-#define LFAttrFocus                    24
-#define LFAttrAperture                 25
-#define LFAttrChip                     26
+#define LFAttrExposure                 24
+#define LFAttrFocus                    25
+#define LFAttrAperture                 26
+#define LFAttrChip                     27
 
-#define LFAttrAlbum                    27
-#define LFAttrChannels                 28
-#define LFAttrSamplerate               29
-#define LFAttrAudioCodec               30
+#define LFAttrAlbum                    28
+#define LFAttrChannels                 29
+#define LFAttrSamplerate               30
+#define LFAttrAudioCodec               31
 
-#define LFAttrDuration                 31
-#define LFAttrBitrate                  32
+#define LFAttrDuration                 32
+#define LFAttrBitrate                  33
 
-#define LFAttrArtist                   33
-#define LFAttrTitle                    34
-#define LFAttrCopyright                35
-#define LFAttrISBN                     36
-#define LFAttrLanguage                 37
-#define LFAttrPages                    38
-#define LFAttrRecordingTime            39
-#define LFAttrRecordingEquipment       40
-#define LFAttrSignature                41
+#define LFAttrArtist                   34
+#define LFAttrTitle                    35
+#define LFAttrCopyright                36
+#define LFAttrISBN                     37
+#define LFAttrLanguage                 38
+#define LFAttrPages                    39
+#define LFAttrRecordingTime            40
+#define LFAttrRecordingEquipment       41
+#define LFAttrSignature                42
 
-#define LFAttrFrom                     42
-#define LFAttrTo                       43
-#define LFAttrResponsible              44
-#define LFAttrDueTime                  45
-#define LFAttrDoneTime                 46
+#define LFAttrFrom                     43
+#define LFAttrTo                       44
+#define LFAttrResponsible              45
+#define LFAttrDueTime                  46
+#define LFAttrDoneTime                 47
 
-#define LFAttributeCount               47
-#define LFLastCoreAttribute           16
+#define LFAttributeCount               48
+#define LFLastCoreAttribute            17
 
 
 // Attribute types
@@ -403,6 +404,7 @@ struct LFCoreAttributes
 	wchar_t Comment[256];
 	FILETIME CreationTime;
 	FILETIME FileTime;
+	FILETIME DeleteTime;
 	char FileFormat[LFExtSize];
 	__int64 FileSize;
 	unsigned int Flags;

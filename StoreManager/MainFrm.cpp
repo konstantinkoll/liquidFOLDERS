@@ -2003,7 +2003,7 @@ void CMainFrame::InitializeRibbon()
 
 				pPanelDeletedFiles->Add(theApp.CommandButton(ID_TRASH_EMPTY, 0, 0));
 				pPanelDeletedFiles->AddSeparator();
-				pPanelDeletedFiles->Add(theApp.CommandButton(ID_TRASH_RESTORE, 1, 1));
+				pPanelDeletedFiles->Add(theApp.CommandButton(ID_TRASH_RESTORESELECTED, 1, 1));
 				pPanelDeletedFiles->Add(theApp.CommandButton(ID_TRASH_RESTOREALL, 2, 2));
 	}
 

@@ -133,6 +133,9 @@ LFCore_API void LFVariantDataToString(LFVariantData* v, wchar_t* str, size_t cCo
 // v->Attr muss gesetzt sein
 LFCore_API void LFGetNullVariantData(LFVariantData* v);
 
+// Prüft, ob eine LVVariantData-Strultur Null ist
+LFCore_API bool LFIsNullVariantData(LFVariantData* v);
+
 // Prüft, ob ein Dateiattribut gleich einer LFVariantData-Struktur ist
 LFCore_API bool LFIsEqualToVariantData(LFItemDescriptor* i, LFVariantData* v);
 

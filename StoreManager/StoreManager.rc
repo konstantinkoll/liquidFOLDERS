@@ -651,11 +651,7 @@ END
 STRINGTABLE 
 BEGIN
     ID_TRASH_EMPTY          "Permanently deletes all files from the trash.\nEmpty trash"
-    ID_TRASH_RESTORE        "Restores the selected files.\nRestore"
-END
-
-STRINGTABLE 
-BEGIN
+    ID_TRASH_RESTORESELECTED "Restores the selected files.\nRestore selected"
     ID_TRASH_RESTOREALL     "Restores all files.\nRestore all"
 END
 

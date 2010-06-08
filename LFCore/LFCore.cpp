@@ -171,7 +171,7 @@ LFCore_API LFAttributeDescriptor* LFGetAttributeInfo(unsigned int ID)
 	// Category
 	if (ID<=LFAttrRating)
 	{
-		a->Category = ((ID==LFAttrStoreID) || (ID==LFAttrFileID) || (ID==LFAttrFileFormat) || (ID==LFAttrFlags)) ? LFAttrCategoryInternal : LFAttrCategoryBasic;
+		a->Category = ((ID==LFAttrStoreID) || (ID==LFAttrFileID) || (ID==LFAttrDeleteTime) || (ID==LFAttrFileFormat) || (ID==LFAttrFlags)) ? LFAttrCategoryInternal : LFAttrCategoryBasic;
 	}
 	else
 	{
@@ -194,6 +194,7 @@ LFCore_API LFAttributeDescriptor* LFGetAttributeInfo(unsigned int ID)
 	case LFAttrHint:
 	case LFAttrCreationTime:
 	case LFAttrFileTime:
+	case LFAttrDeleteTime:
 	case LFAttrFileSize:
 	case LFAttrHeight:
 	case LFAttrWidth:
@@ -440,6 +441,9 @@ LFCore_API LFDomainDescriptor* LFGetDomainInfo(unsigned int ID)
 	case LFDomainGeodata:
 		*(d->ImportantAttributes) += LFAttrLocationName;
 		*(d->ImportantAttributes) += LFAttrLocationIATA;
+		break;
+	case LFDomainTrash:
+		*(d->ImportantAttributes) += LFAttrDeleteTime;
 		break;
 	}
 

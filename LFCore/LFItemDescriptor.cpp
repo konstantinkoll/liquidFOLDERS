@@ -34,6 +34,7 @@ unsigned char AttrTypes[LFAttributeCount] = {
 	LFTypeUnicodeString,		// LFAttrHint
 	LFTypeTime,					// LFAttrCreationTime
 	LFTypeTime,					// LFAttrFileTime
+	LFTypeTime,					// LFAttrDeleteTime
 	LFTypeAnsiString,			// LFAttrFileFormat
 	LFTypeINT64,				// LFAttrFileSize
 	LFTypeFlags,				// LFAttrFlags
@@ -197,6 +198,7 @@ LFCore_API LFItemDescriptor* LFAllocItemDescriptor(LFItemDescriptor* i)
 	d->AttributeValues[LFAttrHint] = &d->Hint[0];
 	d->AttributeValues[LFAttrCreationTime] = &d->CoreAttributes.CreationTime;
 	d->AttributeValues[LFAttrFileTime] = &d->CoreAttributes.FileTime;
+	d->AttributeValues[LFAttrDeleteTime] = &d->CoreAttributes.DeleteTime;
 	d->AttributeValues[LFAttrFileFormat] = &d->CoreAttributes.FileFormat;
 	d->AttributeValues[LFAttrFileSize] = &d->CoreAttributes.FileSize;
 	d->AttributeValues[LFAttrFlags] = &d->CoreAttributes.Flags;
