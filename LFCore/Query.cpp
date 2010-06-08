@@ -34,6 +34,7 @@ int PassesFilterCore(LFCoreAttributes* ca, LFFilter* filter)
 		case LFDomainAllMediaFiles:
 			if ((ca->DomainID<LFDomainAudio) || (ca->DomainID>LFDomainVideos))
 				return -1;
+			break;
 		case LFDomainFavorites:
 			if (!ca->Rating)
 				return -1;
