@@ -131,8 +131,9 @@ struct LFItemCategoryDescriptor
 #define LFContextClipboard              2
 #define LFContextDefault                3
 #define LFContextHousekeeping           4
+#define LFContextTrash                  5
 
-#define LFContextCount                  5
+#define LFContextCount                  6
 
 
 // Context descriptor

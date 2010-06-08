@@ -223,7 +223,7 @@ LFSearchResult* QueryStore(LFFilter* filter)
 			switch (filter->DomainID)
 			{
 			case LFDomainTrash:
-				res->m_Context = LFContextHousekeeping;
+				res->m_Context = LFContextTrash;
 				filter->Result.FilterType = LFFilterTypeTrash;
 				break;
 			case LFDomainUnknown:

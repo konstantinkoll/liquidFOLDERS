@@ -161,6 +161,7 @@ BEGIN
     IDS_LFContextClipboard  "Clipboard"
     IDS_LFContextDefault    "Default"
     IDS_LFContextHousekeeping "Housekeeping"
+    IDS_LFContextTrash      "Trash"
 END
 
 STRINGTABLE 

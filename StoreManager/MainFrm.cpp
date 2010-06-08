@@ -1318,15 +1318,24 @@ BOOL CMainFrame::UpdateSelectedItems(LFVariantData* value1, LFVariantData* value
 
 BOOL CMainFrame::UpdateTrashFlag(BOOL Trash, BOOL All)
 {
-	LFVariantData value;
-	value.Attr = LFAttrFlags;
-	LFGetNullVariantData(&value);
+	LFVariantData value1;
+	value1.Attr = LFAttrFlags;
+	LFGetNullVariantData(&value1);
+	value1.Flags.Flags = Trash ? LFFlagTrash : 0;
+	value1.Flags.Mask = LFFlagTrash;
 
-	value.Flags.Flags = Trash ? LFFlagTrash : 0;
-	value.Flags.Mask = LFFlagTrash;
+	LFVariantData value2;
+	value2.Attr = LFAttrDeleteTime;
+	LFGetNullVariantData(&value2);
+	if (Trash)
+	{
+		SYSTEMTIME st;
+		GetLocalTime(&st);
+		SystemTimeToFileTime(&st, &value2.Time);
+	}
 
 	LFTransactionList* tl = BuildTransactionList(All);
-	LFTransactionUpdate(tl, GetSafeHwnd(), &value);
+	LFTransactionUpdate(tl, GetSafeHwnd(), &value1, &value2);
 
 	if (m_wndView)
 	{

@@ -265,9 +265,12 @@ LFCore_API LFContextDescriptor* LFGetContextInfo(unsigned int ID)
 	case LFContextStoreHome:
 		(*c->AllowedAttributes) += LFAttrFileSize;
 		break;
+	case LFContextTrash:
+		(*c->AllowedAttributes) += LFAttrDeleteTime;
 	default:
 		for (unsigned int a=0; a<LFAttributeCount; a++)
-			(*c->AllowedAttributes) += a;
+			if (a!=LFAttrDeleteTime)
+				(*c->AllowedAttributes) += a;
 	}
 
 	return c;
