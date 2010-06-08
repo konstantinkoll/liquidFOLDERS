@@ -1791,6 +1791,7 @@ DMD     Doomadgee Mission, Australia;4;17*56'25"S, 138*49'18"E
 DME MOW Moskau (Domodemovo), Russia;4;55*24'32"N, 37*54'23"E
 DMF     Montgomery (Dannelly Airport), USA
 DMK     Bangkok (Don Mueang), Thailand;5;13*54'45"N, 100*36'24"E
+DMM     Dammam, Saudi Arabia;5;26*28'16"N, 49*47'52"E
 DMN     Deming, USA;4;32*15'44"N, 107*43'14"W
 DMO     Sedalia, USA;4;38*42'27"N, 93*10'33"W
 DMR     Dhamar, Yemen;4;14*31'59"N, 44*25'59"E
@@ -2284,6 +2285,7 @@ FIT     Fitchburg, USA;4;42*33'15"N, 71*45'32"W
 FIV     Five Fingers, USA;4;57*16'12"N, 133*37'53"W
 FIZ     Fitzroy Crossing, Australia;4;18*10'55"S, 125*33'31"E
 FJR     Al Fujairah, UAE;4;25*6'44"N, 56*19'26"E
+FKB     Karlsruhe/Baden-Baden, Germany;5;48*46'46"N, 8*4'50"E
 FKH     Fakenham, United Kingdom
 FKI     Kisangani, Congo;4;0*28'54"S, 25*20'17"E
 FKJ     Fukui, Japan;4;36*8'34"N, 136*13'26"E
@@ -6233,7 +6235,7 @@ PVC     Provincetown, USA;4;42*4'19"N, 70*13'17"W
 PVD     Providence, USA;4;41*43'26"N, 71*25'42"W
 PVE     El Porvenir, Panama;4;9*33'55"N, 78*57'12"W
 PVF     Placerville, USA;4;38*43'27"N, 120*45'12"W
-PVG SHA Shanghai (Pudong), China;4;31*8'36"N, 121*48'19"E
+PVG     Shanghai (Pudong), China;4;31*8'36"N, 121*48'19"E
 PVH     Porto Velho, Brazil;4;8*42'33"S, 63*54'8"W
 PVI     Paranavai, Brazil;4;23*5'24"S, 52*29'19"W
 PVK     Preveza/Lefkas, Greece;4;38*55'32"N, 20*45'55"E
@@ -6993,7 +6995,7 @@ SGW     Saginaw (Harry W. Browne Airport), USA;4;56*53'11"N, 134*9'30"W
 SGX     Songea, Tanzania;4;10*40'59"S, 35*34'59"E
 SGY     Skagway, USA;4;59*27'36"N, 135*18'56"W
 SGZ     Songkhla, Thailand;4;7*11'12"N, 100*36'29"E
-SHA SHA Shanghai, China;4;31*11'52"N, 121*20'11"E
+SHA     Shanghai (Hongqiao), China;5;31*11'53"N, 121*20'11"E
 SHB     Nakashibetsu, Japan;4;43*34'39"N, 144*57'36"E
 SHC     Indaselassie, Ethiopia;4;14*4'41"N, 38*16'21"E
 SHD     Staunton/Waynesboro/Harrisonburg, USA;4;38*15'50"N, 78*53'47"W

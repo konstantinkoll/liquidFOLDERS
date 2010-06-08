@@ -231,7 +231,7 @@ LFCountry Countries_EN[CountryCount_EN] = {
 };
 
 // Airports
-#define AirportCount_EN 8592
+#define AirportCount_EN 8594
 LFAirport Airports_EN[AirportCount_EN] = {
 	{  67, "AAA", "", "Anaa", { 17.355000, -145.508333 } },
 	{   8, "AAB", "", "Arrabury", { 26.690556, 141.047500 } },
@@ -1950,6 +1950,7 @@ LFAirport Airports_EN[AirportCount_EN] = {
 	{   8, "DMD", "", "Doomadgee Mission", { 17.940278, 138.821667 } },
 	{ 166, "DME", "MOW", "Moskau (Domodemovo)", { -55.408889, 37.906389 } },
 	{ 199, "DMK", "", "Bangkok (Don Mueang)", { -13.912500, 100.606667 } },
+	{ 170, "DMM", "", "Dammam", { -26.471111, 49.797778 } },
 	{ 216, "DMN", "", "Deming", { -32.262222, -107.720556 } },
 	{ 216, "DMO", "", "Sedalia", { -38.707500, -93.175833 } },
 	{ 224, "DMR", "", "Dhamar", { -14.533056, 44.433056 } },
@@ -2413,6 +2414,7 @@ LFAirport Airports_EN[AirportCount_EN] = {
 	{ 216, "FIV", "", "Five Fingers", { -57.270000, -133.631389 } },
 	{   8, "FIZ", "", "Fitzroy Crossing", { 18.181944, 125.558611 } },
 	{ 211, "FJR", "", "Al Fujairah", { -25.112222, 56.323889 } },
+	{  71, "FKB", "", "Karlsruhe/Baden-Baden", { -48.779444, 8.080556 } },
 	{  43, "FKI", "", "Kisangani", { 0.481667, 25.338056 } },
 	{  99, "FKJ", "", "Fukui", { -36.142778, 136.223889 } },
 	{ 216, "FKL", "", "Franklin", { -41.377778, -79.860278 } },
@@ -6112,7 +6114,7 @@ LFAirport Airports_EN[AirportCount_EN] = {
 	{ 216, "PVD", "", "Providence", { -41.723889, -71.428333 } },
 	{ 156, "PVE", "", "El Porvenir", { -9.565278, -78.953333 } },
 	{ 216, "PVF", "", "Placerville", { -38.724167, -120.753333 } },
-	{  40, "PVG", "SHA", "Shanghai (Pudong)", { -31.143333, 121.805278 } },
+	{  40, "PVG", "", "Shanghai (Pudong)", { -31.143333, 121.805278 } },
 	{  25, "PVH", "", "Porto Velho", { 8.709167, -63.902222 } },
 	{  25, "PVI", "", "Paranavai", { 23.090000, -52.488611 } },
 	{  74, "PVK", "", "Preveza/Lefkas", { -38.925556, 20.765278 } },
@@ -6697,7 +6699,7 @@ LFAirport Airports_EN[AirportCount_EN] = {
 	{ 198, "SGX", "", "Songea", { 10.683056, 35.583056 } },
 	{ 216, "SGY", "", "Skagway", { -59.460000, -135.315556 } },
 	{ 199, "SGZ", "", "Songkhla", { -7.186667, 100.608056 } },
-	{  40, "SHA", "SHA", "Shanghai", { -31.170556, 121.570833 } },
+	{  40, "SHA", "", "Shanghai (Hongqiao)", { -31.198056, 121.336389 } },
 	{  99, "SHB", "", "Nakashibetsu", { -43.577500, 144.960000 } },
 	{  60, "SHC", "", "Indaselassie", { -14.078056, 38.272500 } },
 	{ 216, "SHD", "", "Staunton/Waynesboro/Harrisonburg", { -38.263889, -78.896389 } },
