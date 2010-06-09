@@ -252,7 +252,7 @@ LFCore_API bool LFIsNullVariantData(LFVariantData* v)
 		return true;
 
 	assert(v->Attr<LFAttributeCount);
-	assert(v->Type==AttrTypes[v1->Attr]);
+	assert(v->Type==AttrTypes[v->Attr]);
 	assert(v->Type<LFTypeCount);
 
 	switch (v->Type)
