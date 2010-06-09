@@ -83,6 +83,18 @@ void CHistoryWnd::AddFilterItem(LFFilter* f, BOOL focus, BOOL append)
 	CString fmt;
 	ENSURE(fmt.LoadStringW(f->Result.ItemCount==1 ? IDS_ITEMS_SINGULAR : IDS_ITEMS_PLURAL));
 	tmpStr.Format(fmt, f->Result.ItemCount);
+	if (f->Result.FileCount)
+	{
+		ENSURE(fmt.LoadStringW(f->Result.FileCount==1 ? IDS_FILES_SINGULAR : IDS_FILES_PLURAL));
+		wchar_t SizeBuf[256];
+		LFINT64ToString(f->Result.FileSize, SizeBuf, 256);
+		CString fStr;
+		fStr.Format(fmt, f->Result.FileCount, SizeBuf);
+		tmpStr.Append(L" (");
+		tmpStr.Append(fStr);
+		tmpStr.Append(L")");
+	}
+
 	m_wndList.SetItemText(idx, 2, tmpStr);
 
 	if (focus)

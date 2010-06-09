@@ -222,6 +222,12 @@ void LFSearchResult::RemoveItemDescriptor(unsigned int idx)
 {
 	assert(idx<m_ItemCount);
 
+	if ((m_Items[idx]->Type & LFTypeMask)==LFTypeFile)
+	{
+		m_FileCount--;
+		m_FileSize -= m_Items[idx]->CoreAttributes.FileSize;
+	}
+
 	LFFreeItemDescriptor(m_Items[idx]);
 
 	if (idx<--m_ItemCount)

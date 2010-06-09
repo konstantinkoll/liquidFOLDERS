@@ -688,6 +688,7 @@ void CMainFrame::OnClipRemove()
 		}
 
 		LFRemoveFlaggedItemDescriptors(RawFiles);
+		UpdateHistory();
 		CookFiles(ActiveContextID, GetFocusItem());
 	}
 }
@@ -1366,6 +1367,7 @@ BOOL CMainFrame::UpdateTrashFlag(BOOL Trash, BOOL All)
 			}
 
 		LFRemoveFlaggedItemDescriptors(RawFiles);
+		UpdateHistory();
 		CookFiles(ActiveContextID, GetFocusItem());
 	}
 
@@ -2319,6 +2321,13 @@ void CMainFrame::CookFiles(int recipe, int FocusItem)
 
 void CMainFrame::UpdateHistory()
 {
+	if (RawFiles)
+	{
+		ActiveFilter->Result.FileCount = RawFiles->m_FileCount;
+		ActiveFilter->Result.FileSize = RawFiles->m_FileSize;
+		ActiveFilter->Result.ItemCount = RawFiles->m_ItemCount;
+	}
+
 	if (m_wndHistory)
 		m_wndHistory->UpdateList(m_BreadcrumbBack, ActiveFilter, m_BreadcrumbForward);
 	if (m_wndFilter)
