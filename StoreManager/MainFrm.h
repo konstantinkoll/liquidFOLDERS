@@ -196,7 +196,7 @@ private:
 	int GetFocusItem();
 	int GetSelectedItem();
 	int GetNextSelectedItem(int n);
-	int UpdateSingleItem(LFItemDescriptor* i1, LFItemDescriptor* i2, LFVariantData* value, wchar_t* string);
+	void AddTransactionItem(LFTransactionList* tl, LFItemDescriptor* i, unsigned int UserData);
 	void ShowCaptionBar(int Icon, LPCWSTR Message, int Command=0, LPCWSTR Button=_T(""));
 	void ShowCaptionBar(int Icon, UINT res, int Command=0, LPCWSTR Button=_T(""));
 	void InitializeRibbon();

@@ -186,7 +186,7 @@ LFCore_API LFItemDescriptor* LFAllocItemDescriptor(LFItemDescriptor* i)
 {
 	LFItemDescriptor* d = static_cast<LFItemDescriptor*>(malloc(sizeof(LFItemDescriptor)));
 	ZeroMemory(d, sizeof(LFItemDescriptor));
-	d->Position = -1;
+	d->Position = d->FirstAggregate = d->LastAggregate = -1;
 	d->RefCount = 1;
 
 	// Zeiger auf statische Attributwerte initalisieren

@@ -451,6 +451,8 @@ struct LFItemDescriptor
 	void* AttributeValues[LFAttributeCount];
 
 	int Position;
+	int FirstAggregate;
+	int LastAggregate;
 	bool DeleteFlag;
 	unsigned int RefCount;
 	void* Slave;

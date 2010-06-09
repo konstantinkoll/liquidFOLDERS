@@ -1259,6 +1259,22 @@ BOOL CMainFrame::RenameSingleItem(UINT n, CString Name)
 	return result;
 }
 
+void CMainFrame::AddTransactionItem(LFTransactionList* tl, LFItemDescriptor* i, unsigned int UserData)
+{
+	switch (i->Type & LFTypeMask)
+	{
+	case LFTypeFile:
+	case LFTypeStore:
+		LFAddItemDescriptor(tl, i, UserData);
+		break;
+	case LFTypeVirtual:
+		if ((i->FirstAggregate!=-1) && (i->LastAggregate!=-1))
+			for (int a=i->FirstAggregate; a<=i->LastAggregate; a++)
+				LFAddItemDescriptor(tl, RawFiles->m_Items[a], UserData);
+		break;
+	}
+}
+
 LFTransactionList* CMainFrame::BuildTransactionList(BOOL All)
 {
 	LFTransactionList* tl = NULL;
@@ -1270,14 +1286,14 @@ LFTransactionList* CMainFrame::BuildTransactionList(BOOL All)
 		if (All)
 		{
 			for (unsigned int a=0; a<CookedFiles->m_ItemCount; a++)
-				LFAddItemDescriptor(tl, CookedFiles->m_Items[a], a);
+				AddTransactionItem(tl, CookedFiles->m_Items[a], a);
 		}
 		else
 		{
 			int idx = GetNextSelectedItem(-1);
 			while (idx!=-1)
 			{
-				LFAddItemDescriptor(tl, CookedFiles->m_Items[idx], idx);
+				AddTransactionItem(tl, CookedFiles->m_Items[idx], idx);
 				idx = GetNextSelectedItem(idx);
 			}
 		}
