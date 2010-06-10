@@ -19,6 +19,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "StoreManager", "StoreManage
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LFCore", "LFCore\LFCore.vcproj", "{BA35D93B-80C7-4ED0-B7F5-5AE04E561A9D}"
+	ProjectSection(ProjectDependencies) = postProject
+		{3423EC9A-52E4-4A4D-9753-EDEBC38785EF} = {3423EC9A-52E4-4A4D-9753-EDEBC38785EF}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LFNamespaceExtension", "LFNamespaceExtension\LFNamespaceExtension.vcproj", "{42EC9845-F57D-4BD4-A39E-42EB748CF93F}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -54,7 +57,23 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Setup", "Setup\Setup.vcproj
 		{1E784088-B044-4E3A-9628-32A4C3A266E0} = {1E784088-B044-4E3A-9628-32A4C3A266E0}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ShareItKeygen", "ShareItKeygen\ShareItKeygen.vcproj", "{F17604BF-9FF0-45BC-AE25-E0F1B2856632}"
+	ProjectSection(ProjectDependencies) = postProject
+		{3423EC9A-52E4-4A4D-9753-EDEBC38785EF} = {3423EC9A-52E4-4A4D-9753-EDEBC38785EF}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cryptlib", "cryptlib\cryptlib.vcproj", "{3423EC9A-52E4-4A4D-9753-EDEBC38785EF}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MasterKeygen", "MasterKeygen\MasterKeygen.vcproj", "{37A7B322-B82B-4976-B911-3E2C85AC0F9D}"
+	ProjectSection(ProjectDependencies) = postProject
+		{3423EC9A-52E4-4A4D-9753-EDEBC38785EF} = {3423EC9A-52E4-4A4D-9753-EDEBC38785EF}
+	EndProjectSection
+EndProject
 Global
+	GlobalSection(SubversionScc) = preSolution
+		Svn-Managed = True
+		Manager = AnkhSVN - Subversion Support for Visual Studio
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
 		Debug|x64 = Debug|x64
@@ -138,12 +157,32 @@ Global
 		{02ED561E-53DC-413C-9F0B-CEA49407D942}.Debug|x64.ActiveCfg = Debug|x64
 		{02ED561E-53DC-413C-9F0B-CEA49407D942}.Release|Win32.ActiveCfg = Release|Win32
 		{02ED561E-53DC-413C-9F0B-CEA49407D942}.Release|x64.ActiveCfg = Release|x64
+		{F17604BF-9FF0-45BC-AE25-E0F1B2856632}.Debug|Win32.ActiveCfg = Debug|Win32
+		{F17604BF-9FF0-45BC-AE25-E0F1B2856632}.Debug|Win32.Build.0 = Debug|Win32
+		{F17604BF-9FF0-45BC-AE25-E0F1B2856632}.Debug|x64.ActiveCfg = Debug|x64
+		{F17604BF-9FF0-45BC-AE25-E0F1B2856632}.Debug|x64.Build.0 = Debug|x64
+		{F17604BF-9FF0-45BC-AE25-E0F1B2856632}.Release|Win32.ActiveCfg = Release|Win32
+		{F17604BF-9FF0-45BC-AE25-E0F1B2856632}.Release|Win32.Build.0 = Release|Win32
+		{F17604BF-9FF0-45BC-AE25-E0F1B2856632}.Release|x64.ActiveCfg = Release|x64
+		{F17604BF-9FF0-45BC-AE25-E0F1B2856632}.Release|x64.Build.0 = Release|x64
+		{3423EC9A-52E4-4A4D-9753-EDEBC38785EF}.Debug|Win32.ActiveCfg = Debug|Win32
+		{3423EC9A-52E4-4A4D-9753-EDEBC38785EF}.Debug|Win32.Build.0 = Debug|Win32
+		{3423EC9A-52E4-4A4D-9753-EDEBC38785EF}.Debug|x64.ActiveCfg = Debug|x64
+		{3423EC9A-52E4-4A4D-9753-EDEBC38785EF}.Debug|x64.Build.0 = Debug|x64
+		{3423EC9A-52E4-4A4D-9753-EDEBC38785EF}.Release|Win32.ActiveCfg = Release|Win32
+		{3423EC9A-52E4-4A4D-9753-EDEBC38785EF}.Release|Win32.Build.0 = Release|Win32
+		{3423EC9A-52E4-4A4D-9753-EDEBC38785EF}.Release|x64.ActiveCfg = Release|x64
+		{3423EC9A-52E4-4A4D-9753-EDEBC38785EF}.Release|x64.Build.0 = Release|x64
+		{37A7B322-B82B-4976-B911-3E2C85AC0F9D}.Debug|Win32.ActiveCfg = Debug|Win32
+		{37A7B322-B82B-4976-B911-3E2C85AC0F9D}.Debug|Win32.Build.0 = Debug|Win32
+		{37A7B322-B82B-4976-B911-3E2C85AC0F9D}.Debug|x64.ActiveCfg = Debug|x64
+		{37A7B322-B82B-4976-B911-3E2C85AC0F9D}.Debug|x64.Build.0 = Debug|x64
+		{37A7B322-B82B-4976-B911-3E2C85AC0F9D}.Release|Win32.ActiveCfg = Release|Win32
+		{37A7B322-B82B-4976-B911-3E2C85AC0F9D}.Release|Win32.Build.0 = Release|Win32
+		{37A7B322-B82B-4976-B911-3E2C85AC0F9D}.Release|x64.ActiveCfg = Release|x64
+		{37A7B322-B82B-4976-B911-3E2C85AC0F9D}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(SubversionScc) = preSolution
-		Svn-Managed = True
-		Manager = AnkhSVN - Subversion Support for Visual Studio
 	EndGlobalSection
 EndGlobal
