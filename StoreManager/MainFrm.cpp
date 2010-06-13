@@ -70,6 +70,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_PANE_CAPTIONBAR, ID_PANE_HISTORYWND, OnUpdatePaneCommands)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_CLIP_COPY, ID_CLIP_REMEMBERNEW, OnUpdateClipCommands)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_FILES_SHOWINSPECTOR, ID_FILES_DELETE, OnUpdateFileCommands)
+	ON_UPDATE_COMMAND_UI_RANGE(ID_TRASH_EMPTY, ID_TRASH_RESTOREALL, OnUpdateTrashCommands)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_STORE_NEW, ID_STORE_BACKUP, OnUpdateStoreCommands)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_DROP_CALENDAR, ID_DROP_RESOLUTION, OnUpdateDropCommands)
 
@@ -112,6 +113,10 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 
 	ON_COMMAND(ID_FILES_SHOWINSPECTOR, OnShowInspectorWnd)
 	ON_COMMAND(ID_FILES_DELETE, OnFilesDelete)
+
+	ON_COMMAND(ID_TRASH_EMPTY, OnEmptyTrash)
+	ON_COMMAND(ID_TRASH_RESTORESELECTED, OnRestoreSelectedFiles)
+	ON_COMMAND(ID_TRASH_RESTOREALL, OnRestoreAllFiles)
 
 	ON_COMMAND(ID_STORE_NEW, OnStoreNew)
 	ON_COMMAND(ID_STORE_NEWINTERNAL, OnStoreNewInternal)
@@ -754,17 +759,14 @@ void CMainFrame::OnUpdateClipCommands(CCmdUI* pCmdUI)
 
 void CMainFrame::OnFilesDelete()
 {
-	UpdateTrashFlag(TRUE);
-}
-
-void CMainFrame::OnRestoreSelectedFiles()
-{
-	UpdateTrashFlag(FALSE);
-}
-
-void CMainFrame::OnRestoreAllFiles()
-{
-	UpdateTrashFlag(FALSE, TRUE);
+	if (RawFiles->m_Context==LFContextTrash)
+	{
+		DeleteFiles();
+	}
+	else
+	{
+		UpdateTrashFlag(TRUE);
+	}
 }
 
 void CMainFrame::OnUpdateFileCommands(CCmdUI* pCmdUI)
@@ -777,11 +779,42 @@ void CMainFrame::OnUpdateFileCommands(CCmdUI* pCmdUI)
 		b = TRUE;
 		break;
 	case ID_FILES_DELETE:
-		//b = RawFiles->m_FileCount;
-		// TODO
-		b = TRUE;
+		b = FilesSelected;
 		break;
 	}
+
+	pCmdUI->Enable(b);
+}
+
+void CMainFrame::OnEmptyTrash()
+{
+	DeleteFiles(TRUE);
+}
+
+void CMainFrame::OnRestoreSelectedFiles()
+{
+	UpdateTrashFlag(FALSE);
+}
+
+void CMainFrame::OnRestoreAllFiles()
+{
+	UpdateTrashFlag(FALSE, TRUE);
+}
+
+void CMainFrame::OnUpdateTrashCommands(CCmdUI* pCmdUI)
+{
+	BOOL b = FALSE;
+	if ((ActiveContextID==LFContextTrash) && (CookedFiles))
+		switch (pCmdUI->m_nID)
+		{
+		case ID_TRASH_EMPTY:
+		case ID_TRASH_RESTOREALL:
+			b = (CookedFiles->m_FileCount);
+			break;
+		case ID_TRASH_RESTORESELECTED:
+			b = FilesSelected;
+			break;
+		}
 
 	pCmdUI->Enable(b);
 }
@@ -1163,10 +1196,13 @@ void CMainFrame::OnUpdateSelection()
 
 	while (i>=0)
 	{
-		m_wndInspector.UpdateAdd(CookedFiles->m_Items[i]);
-		FilesSelected |= (CookedFiles->m_Items[i]->Type & LFTypeMask)==LFTypeFile;
+		LFItemDescriptor* item = CookedFiles->m_Items[i];
+
+		m_wndInspector.UpdateAdd(item);
+		FilesSelected |= ((item->Type & LFTypeMask)==LFTypeFile) ||
+						(((item->Type & LFTypeMask)==LFTypeVirtual) && (item->FirstAggregate!=-1) && (item->LastAggregate!=-1));
 		Count++;
-		Size += *(__int64*)CookedFiles->m_Items[i]->AttributeValues[LFAttrFileSize];
+		Size += *(__int64*)item->AttributeValues[LFAttrFileSize];
 		i = GetNextSelectedItem(i);
 	}
 
@@ -1353,6 +1389,36 @@ BOOL CMainFrame::UpdateTrashFlag(BOOL Trash, BOOL All)
 
 	LFTransactionList* tl = BuildTransactionList(All);
 	LFTransactionUpdate(tl, GetSafeHwnd(), &value1, &value2);
+
+	if (m_wndView)
+	{
+		for (UINT a=0; a<tl->m_Count; a++)
+			if (tl->m_Entries[a].LastError!=LFOk)
+			{
+				m_wndView->SelectItem(tl->m_Entries[a].UserData, FALSE, TRUE);
+			}
+			else
+			{
+				tl->m_Entries[a].Item->DeleteFlag = true;
+			}
+
+		LFRemoveFlaggedItemDescriptors(RawFiles);
+		UpdateHistory();
+		CookFiles(ActiveContextID, GetFocusItem());
+	}
+
+	if (tl->m_LastError>LFCancel)
+		ShowCaptionBar(IDB_CANCEL, tl->m_LastError);
+
+	BOOL changes = tl->m_Changes;
+	LFFreeTransactionList(tl);
+	return changes;
+}
+
+BOOL CMainFrame::DeleteFiles(BOOL All)
+{
+	LFTransactionList* tl = BuildTransactionList(All);
+//	LFTransactionUpdate(tl, GetSafeHwnd(), &value1, &value2);
 
 	if (m_wndView)
 	{
