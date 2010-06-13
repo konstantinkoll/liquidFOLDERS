@@ -805,6 +805,7 @@ void CMainFrame::OnRestoreAllFiles()
 void CMainFrame::OnUpdateTrashCommands(CCmdUI* pCmdUI)
 {
 	BOOL b = FALSE;
+
 	if (CookedFiles)
 		if (CookedFiles->m_Context==LFContextTrash)
 			switch (pCmdUI->m_nID)
@@ -1029,6 +1030,7 @@ void CMainFrame::OnStoreBackup()
 void CMainFrame::OnUpdateStoreCommands(CCmdUI* pCmdUI)
 {
 	BOOL b = FALSE;
+
 	if (CookedFiles)
 		if (CookedFiles->m_Context==LFContextStores)
 		{
