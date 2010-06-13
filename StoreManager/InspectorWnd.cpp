@@ -368,6 +368,8 @@ int CInspectorWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	for (UINT a=0; a<LFAttrCategoryCount; a++)
 		m_wndPropList.AddProperty(pGroups[a]);
 
+	pGroups[LFAttrCategoryInternal]->Expand(FALSE);
+
 	return 0;
 }
 
