@@ -1811,55 +1811,52 @@ void CMainFrame::InitializeRibbon()
 
 		strTemp = "Manage";
 		CMFCRibbonPanel* pPanelFileManage = pCategoryFiles->AddPanel(strTemp, m_PanelImages.ExtractIcon(0));
-		pPanelFileManage->EnableLaunchButton(ID_FILES_SHOWINSPECTOR, 10);
+		pPanelFileManage->EnableLaunchButton(ID_FILES_SHOWINSPECTOR, 9);
 
-			strTemp = "Open";
-			pPanelFileManage->Add(new CMFCRibbonButton(ID_NAV_STARTNAVIGATION, strTemp, 7, 7));
-			pPanelFileManage->AddSeparator();
 			strTemp = "Rename";
-			pPanelFileManage->Add(new CMFCRibbonButton(ID_APP_ABOUT, strTemp, 8, 8));
+			pPanelFileManage->Add(new CMFCRibbonButton(ID_APP_ABOUT, strTemp, 7, 7));
 			strTemp = "Delete";
-			pPanelFileManage->Add(new CMFCRibbonButton(ID_FILES_DELETE, strTemp, 9, 9));
+			pPanelFileManage->Add(new CMFCRibbonButton(ID_FILES_DELETE, strTemp, 8, 8));
 
-		strTemp = "Share";
+		/*strTemp = "Share";
 		CMFCRibbonPanel* pPanelFileShare = pCategoryFiles->AddPanel(strTemp, m_PanelImages.ExtractIcon(0));
 
 			strTemp = "Send";
-			pPanelFileShare->Add(new CMFCRibbonButton(ID_APP_ABOUT, strTemp, 11, 11));
+			pPanelFileShare->Add(new CMFCRibbonButton(ID_APP_ABOUT, strTemp, 10, 10));
 
 			strTemp = "Upload";
-			CMFCRibbonButton* pBtnUpload = new CMFCRibbonButton(0, strTemp, 12, 12);
+			CMFCRibbonButton* pBtnUpload = new CMFCRibbonButton(0, strTemp, 11, 11);
 			pBtnUpload->SetDefaultCommand(FALSE);
 
 				strTemp = "Upload to";
 				pBtnUpload->AddSubItem(new CMFCRibbonLabel(strTemp));
 				strTemp = "Flickr";
-				pBtnUpload->AddSubItem(new CMFCRibbonButton(ID_APP_ABOUT, strTemp, 13, 13));
+				pBtnUpload->AddSubItem(new CMFCRibbonButton(ID_APP_ABOUT, strTemp, 12, 12));
 				strTemp = "Slideshare";
-				pBtnUpload->AddSubItem(new CMFCRibbonButton(ID_APP_ABOUT, strTemp, 14, 14));
+				pBtnUpload->AddSubItem(new CMFCRibbonButton(ID_APP_ABOUT, strTemp, 13, 13));
 				strTemp = "YouTube";
-				pBtnUpload->AddSubItem(new CMFCRibbonButton(ID_APP_ABOUT, strTemp, 15, 15));
+				pBtnUpload->AddSubItem(new CMFCRibbonButton(ID_APP_ABOUT, strTemp, 14, 14));
 
 			pPanelFileShare->Add(pBtnUpload);
 
 			strTemp = "Syndicate";
-			CMFCRibbonButton* pBtnSyndicate = new CMFCRibbonButton(0, strTemp, 16, 16);
+			CMFCRibbonButton* pBtnSyndicate = new CMFCRibbonButton(0, strTemp, 15, 15);
 			pBtnSyndicate->SetDefaultCommand(FALSE);
 
 				strTemp = "Syndicate URL on";
 				pBtnSyndicate ->AddSubItem(new CMFCRibbonLabel(strTemp));
 				strTemp = "Delicious";
-				pBtnSyndicate ->AddSubItem(new CMFCRibbonButton(ID_APP_ABOUT, strTemp, 17, 17));
+				pBtnSyndicate ->AddSubItem(new CMFCRibbonButton(ID_APP_ABOUT, strTemp, 16, 16));
 				strTemp = "Facebook";
-				pBtnSyndicate ->AddSubItem(new CMFCRibbonButton(ID_APP_ABOUT, strTemp, 18, 18));
+				pBtnSyndicate ->AddSubItem(new CMFCRibbonButton(ID_APP_ABOUT, strTemp, 17, 17));
 				strTemp = "Google";
-				pBtnSyndicate ->AddSubItem(new CMFCRibbonButton(ID_APP_ABOUT, strTemp, 19, 19));
+				pBtnSyndicate ->AddSubItem(new CMFCRibbonButton(ID_APP_ABOUT, strTemp, 18, 18));
 				strTemp = "Mr. Wong";
-				pBtnSyndicate ->AddSubItem(new CMFCRibbonButton(ID_APP_ABOUT, strTemp, 20, 20));
+				pBtnSyndicate ->AddSubItem(new CMFCRibbonButton(ID_APP_ABOUT, strTemp, 19, 19));
 				strTemp = "Twitter";
-				pBtnSyndicate ->AddSubItem(new CMFCRibbonButton(ID_APP_ABOUT, strTemp, 21, 21));
+				pBtnSyndicate ->AddSubItem(new CMFCRibbonButton(ID_APP_ABOUT, strTemp, 20, 20));
 
-			pPanelFileShare->Add(pBtnSyndicate);
+			pPanelFileShare->Add(pBtnSyndicate);*/
 
 	strTemp = "Mail";
 	strCtx = "EMail";
