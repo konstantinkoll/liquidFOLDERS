@@ -759,14 +759,15 @@ void CMainFrame::OnUpdateClipCommands(CCmdUI* pCmdUI)
 
 void CMainFrame::OnFilesDelete()
 {
-	if (RawFiles->m_Context==LFContextTrash)
-	{
-		DeleteFiles();
-	}
-	else
-	{
-		UpdateTrashFlag(TRUE);
-	}
+	if (CookedFiles)
+		if (CookedFiles->m_Context==LFContextTrash)
+		{
+			DeleteFiles();
+		}
+		else
+		{
+			UpdateTrashFlag(TRUE);
+		}
 }
 
 void CMainFrame::OnUpdateFileCommands(CCmdUI* pCmdUI)
@@ -804,17 +805,18 @@ void CMainFrame::OnRestoreAllFiles()
 void CMainFrame::OnUpdateTrashCommands(CCmdUI* pCmdUI)
 {
 	BOOL b = FALSE;
-	if ((ActiveContextID==LFContextTrash) && (CookedFiles))
-		switch (pCmdUI->m_nID)
-		{
-		case ID_TRASH_EMPTY:
-		case ID_TRASH_RESTOREALL:
-			b = (CookedFiles->m_FileCount);
-			break;
-		case ID_TRASH_RESTORESELECTED:
-			b = FilesSelected;
-			break;
-		}
+	if (CookedFiles)
+		if (CookedFiles->m_Context==LFContextTrash)
+			switch (pCmdUI->m_nID)
+			{
+			case ID_TRASH_EMPTY:
+			case ID_TRASH_RESTOREALL:
+				b = (CookedFiles->m_FileCount);
+				break;
+			case ID_TRASH_RESTORESELECTED:
+				b = FilesSelected;
+				break;
+			}
 
 	pCmdUI->Enable(b);
 }
@@ -1027,51 +1029,52 @@ void CMainFrame::OnStoreBackup()
 void CMainFrame::OnUpdateStoreCommands(CCmdUI* pCmdUI)
 {
 	BOOL b = FALSE;
-	if ((ActiveContextID==LFContextStores) && (CookedFiles))
-	{
-		int i = GetSelectedItem();
-		LFItemDescriptor* f = (i==-1 ? NULL : CookedFiles->m_Items[i]);
-
-		switch (pCmdUI->m_nID)
+	if (CookedFiles)
+		if (CookedFiles->m_Context==LFContextStores)
 		{
-		case ID_STORE_NEW:
-		case ID_STORE_NEWINTERNAL:
-			b = TRUE;
-			break;
-		case ID_STORE_NEWDRIVE:
-			if (f)
-				b = (f->Type & LFTypeDrive) &&
-					(!(f->Type & LFTypeNotMounted));
-			break;
-		case ID_STORE_RENAME:
-			if (f)
-				b = (f->Type & LFTypeStore) && (!(f->Type & LFTypeNotMounted)) && (ActiveViewID>=LFViewLargeIcons) && (ActiveViewID<=LFViewPreview);
-			if ((b) && (m_wndView))
-				b ^= m_wndView->IsEditing();
-			break;
-		case ID_STORE_DELETE:
-		case ID_STORE_PROPERTIES:
-			if (f)
-				b = (f->Type & LFTypeStore);
-			break;
-		case ID_STORE_MAKEDEFAULT:
-			if (f)
-				b = (f->Type & LFTypeStore) &&
-					(f->CategoryID==LFCategoryInternalStores) &&
-					((f->Type & LFTypeDefaultStore)==0);
-			break;
-		case ID_STORE_MAKEHYBRID:
-			if (f)
-				b = (f->Type & LFTypeStore) &&
-					(f->CategoryID==LFCategoryExternalStores);
-			break;
-		case ID_STORE_MAINTENANCE:
-			b = LFGetStoreCount();
-			break;
-		case ID_STORE_BACKUP:
-			b = TRUE;
+			int i = GetSelectedItem();
+			LFItemDescriptor* f = (i==-1 ? NULL : CookedFiles->m_Items[i]);
+
+			switch (pCmdUI->m_nID)
+			{
+			case ID_STORE_NEW:
+			case ID_STORE_NEWINTERNAL:
+				b = TRUE;
+				break;
+			case ID_STORE_NEWDRIVE:
+				if (f)
+					b = (f->Type & LFTypeDrive) &&
+						(!(f->Type & LFTypeNotMounted));
+				break;
+			case ID_STORE_RENAME:
+				if (f)
+					b = (f->Type & LFTypeStore) && (!(f->Type & LFTypeNotMounted)) && (ActiveViewID>=LFViewLargeIcons) && (ActiveViewID<=LFViewPreview);
+				if ((b) && (m_wndView))
+					b ^= m_wndView->IsEditing();
+				break;
+			case ID_STORE_DELETE:
+			case ID_STORE_PROPERTIES:
+				if (f)
+					b = (f->Type & LFTypeStore);
+				break;
+			case ID_STORE_MAKEDEFAULT:
+				if (f)
+					b = (f->Type & LFTypeStore) &&
+						(f->CategoryID==LFCategoryInternalStores) &&
+						((f->Type & LFTypeDefaultStore)==0);
+				break;
+			case ID_STORE_MAKEHYBRID:
+				if (f)
+					b = (f->Type & LFTypeStore) &&
+						(f->CategoryID==LFCategoryExternalStores);
+				break;
+			case ID_STORE_MAINTENANCE:
+				b = LFGetStoreCount();
+				break;
+			case ID_STORE_BACKUP:
+				b = TRUE;
+			}
 		}
-	}
 
 	pCmdUI->Enable(b);
 }
