@@ -369,18 +369,6 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\include\LFCore.h"
-				>
-			</File>
-			<File
-				RelativePath=".\LFNamespaceExtension.h"
-				>
-			</File>
-			<File
-				RelativePath="..\include\liquidFOLDERS.h"
-				>
-			</File>
-			<File
 				RelativePath=".\CAttributeCategorizer.h"
 				>
 			</File>
@@ -398,6 +386,18 @@
 			</File>
 			<File
 				RelativePath=".\helper.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\LFCore.h"
+				>
+			</File>
+			<File
+				RelativePath=".\LFNamespaceExtension.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\liquidFOLDERS.h"
 				>
 			</File>
 			<File
@@ -429,14 +429,6 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\LFNamespaceExtension.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\LFNamespaceExtension.def"
-				>
-			</File>
-			<File
 				RelativePath=".\CAttributeCategorizer.cpp"
 				>
 			</File>
@@ -454,6 +446,14 @@
 			</File>
 			<File
 				RelativePath=".\helper.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\LFNamespaceExtension.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\LFNamespaceExtension.def"
 				>
 			</File>
 			<File

@@ -7,6 +7,8 @@
 
 #include "targetver.h"
 
+#include "License.h"
+
 #include <stdio.h>
 #include <tchar.h>
 #include <string>
