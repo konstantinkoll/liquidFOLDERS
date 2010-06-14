@@ -147,20 +147,20 @@ void CInspectorWnd::UpdateAdd(LFItemDescriptor* i)
 
 		OLECHAR szGUID[MAX_PATH];
 		StringFromGUID2(s.guid, szGUID, MAX_PATH);
-		AddValueVirtual(AttrGUID, szGUID, FALSE);
+		AddValueVirtual(AttrGUID, szGUID);
 
 		wchar_t tmpStr[256];
 		LFTimeToString(s.MaintenanceTime, tmpStr, 256);
-		AddValueVirtual(AttrMaintenanceTime, tmpStr, FALSE);
+		AddValueVirtual(AttrMaintenanceTime, tmpStr);
 
 		LFUINTToString(s.IndexVersion, tmpStr, 256);
-		AddValueVirtual(AttrIndexVersion, tmpStr, FALSE);
+		AddValueVirtual(AttrIndexVersion, tmpStr);
 
 		if (s.StoreMode!=LFStoreModeInternal)
-			AddValueVirtual(AttrLastSeen, s.LastSeen, FALSE);
+			AddValueVirtual(AttrLastSeen, s.LastSeen);
 
-		AddValueVirtual(AttrPathData, s.DatPath, FALSE);
-		AddValueVirtual(AttrPathIdxMain, s.IdxPathMain, FALSE);
+		AddValueVirtual(AttrPathData, s.DatPath);
+		AddValueVirtual(AttrPathIdxMain, s.IdxPathMain);
 		AddValueVirtual(AttrPathIdxAux, s.IdxPathAux);
 		break;
 	}
@@ -213,13 +213,13 @@ void CInspectorWnd::UpdateFinish()
 		LFAirport* airport;
 		if (LFIATAGetAirportByCode(AttributeValues[LFAttrLocationIATA].AnsiString, &airport))
 		{
-			AddValueVirtual(AttrIATAAirportName, airport->Name, FALSE);
-			AddValueVirtual(AttrIATAAirportCountry, LFIATAGetCountry(airport->CountryID)->Name, FALSE);
+			AddValueVirtual(AttrIATAAirportName, airport->Name);
+			AddValueVirtual(AttrIATAAirportCountry, LFIATAGetCountry(airport->CountryID)->Name);
 		}
 		else
 		{
-			AddValueVirtual(AttrIATAAirportName, "?", FALSE);
-			AddValueVirtual(AttrIATAAirportCountry, "?", FALSE);
+			AddValueVirtual(AttrIATAAirportName, "?");
+			AddValueVirtual(AttrIATAAirportCountry, "?");
 		}
 	}
 	else
@@ -511,9 +511,12 @@ void CInspectorWnd::AddValue(LFItemDescriptor* i, UINT Attr, BOOL Editable)
 		switch (AttributeStatus[Attr])
 		{
 		case StatusUnused:
-			AttributeStatus[Attr] = StatusUsed;
-			AttributeVisible[Attr] = TRUE;
 			LFGetAttributeVariantData(i, &AttributeValues[Attr]);
+			if ((Editable) || (!LFIsNullVariantData(&AttributeValues[Attr])))
+			{
+				AttributeStatus[Attr] = StatusUsed;
+				AttributeVisible[Attr] = TRUE;
+			}
 			break;
 		case StatusUsed:
 			if (!LFIsEqualToVariantData(i, &AttributeValues[Attr]))
@@ -521,46 +524,30 @@ void CInspectorWnd::AddValue(LFItemDescriptor* i, UINT Attr, BOOL Editable)
 		}
 	}
 	else
-	{
-		switch (AttributeStatus[Attr])
-		{
-		case StatusUnused:
-			AttributeStatus[Attr] = StatusUsed;
-			AttributeVisible[Attr] = TRUE;
-			break;
-		case StatusUsed:
-			if (!AttributeValues[Attr].IsNull)
-				AttributeStatus[Attr] = StatusMultiple;
-		}
-	}
+		if (Editable)
+			switch (AttributeStatus[Attr])
+			{
+			case StatusUnused:
+				AttributeStatus[Attr] = StatusUsed;
+				AttributeVisible[Attr] = TRUE;
+				break;
+			case StatusUsed:
+				if (!AttributeValues[Attr].IsNull)
+					AttributeStatus[Attr] = StatusMultiple;
+			}
 }
 
-void CInspectorWnd::AddValueVirtual(UINT Attr, char* Value, BOOL Editable)
+void CInspectorWnd::AddValueVirtual(UINT Attr, char* Value)
 {
-	AttributeEditable[Attr] |= Editable;
-
 	wchar_t tmpStr[256];
 	size_t sz = max(strlen(Value)+1, 256);
 	MultiByteToWideChar(CP_ACP, 0, Value, (int)sz, (LPWSTR)tmpStr, (int)sz);
 
-	switch (AttributeStatus[Attr])
-	{
-	case StatusUnused:
-		AttributeStatus[Attr] = StatusUsed;
-		AttributeVisible[Attr] = TRUE;
-		wcscpy_s(AttributeValues[Attr].UnicodeString, 256, tmpStr);
-		break;
-	case StatusUsed:
-		if (wcscmp(AttributeValues[Attr].UnicodeString, tmpStr)!=0)
-			AttributeStatus[Attr] = StatusMultiple;
-		break;
-	}
+	AddValueVirtual(Attr, &tmpStr[0]);
 }
 
-void CInspectorWnd::AddValueVirtual(UINT Attr, wchar_t* Value, BOOL Editable)
+void CInspectorWnd::AddValueVirtual(UINT Attr, wchar_t* Value)
 {
-	AttributeEditable[Attr] |= Editable;
-
 	switch (AttributeStatus[Attr])
 	{
 	case StatusUnused:

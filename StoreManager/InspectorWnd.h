@@ -97,6 +97,6 @@ private:
 	CString TypeName;
 
 	void AddValue(LFItemDescriptor* i, UINT Attr, BOOL Editable=TRUE);
-	void AddValueVirtual(UINT Attr, char* Value, BOOL Editable=TRUE);
-	void AddValueVirtual(UINT Attr, wchar_t* Value, BOOL Editable=TRUE);
+	void AddValueVirtual(UINT Attr, char* Value);
+	void AddValueVirtual(UINT Attr, wchar_t* Value);
 };
