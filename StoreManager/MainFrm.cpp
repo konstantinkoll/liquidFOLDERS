@@ -1423,7 +1423,7 @@ BOOL CMainFrame::UpdateTrashFlag(BOOL Trash, BOOL All)
 BOOL CMainFrame::DeleteFiles(BOOL All)
 {
 	LFTransactionList* tl = BuildTransactionList(All);
-//	LFTransactionUpdate(tl, GetSafeHwnd(), &value1, &value2);
+	LFTransactionDelete(tl);
 
 	if (m_wndView)
 	{

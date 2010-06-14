@@ -105,3 +105,57 @@ LFCore_API void LFTransactionUpdate(LFTransactionList* tl, HWND hWndSource, LFVa
 	if (StoresUpdated)
 		SendNotifyMessage(HWND_BROADCAST, LFMessages.StoreAttributesChanged, LFMSGF_IntStores | LFMSGF_ExtHybStores, (LPARAM)hWndSource);
 }
+
+LFCore_API void LFTransactionDelete(LFTransactionList* tl)
+{
+	// Reset processed flag
+	for (unsigned int a=0; a<tl->m_Count; a++)
+		tl->m_Entries[a].Processed = false;
+
+	// Process
+	for (unsigned int a=0; a<tl->m_Count; a++)
+		if ((tl->m_Entries[a].LastError==LFOk) && (!tl->m_Entries[a].Processed))
+			if ((tl->m_Entries[a].Item->Type & LFTypeMask)==LFTypeFile)
+			{
+				CIndex* idx1;
+				CIndex* idx2;
+				LFStoreDescriptor* slot;
+				HANDLE StoreLock = NULL;
+				unsigned int res = OpenStore(tl->m_Entries->Item->CoreAttributes.StoreID, true, idx1, idx2, &slot, &StoreLock);
+
+				if (res==LFOk)
+				{
+					if (idx1)
+					{
+						idx1->Delete(tl, &slot->DatPath[0]);
+						delete idx1;
+					}
+					if (idx2)
+					{
+						idx2->Delete(tl, &slot->DatPath[0]);
+						delete idx2;
+					}
+
+					ReleaseMutexForStore(StoreLock);
+				}
+				else
+				{
+					// Cannot open index, so mark all subsequent files in the same store as processed
+					for (unsigned int b=a; b<tl->m_Count; b++)
+					{
+						LFItemDescriptor* i = tl->m_Entries[b].Item;
+						if ((i->Type & LFTypeMask)==LFTypeFile)
+							if ((strcmp(i->CoreAttributes.StoreID, tl->m_Entries[a].Item->CoreAttributes.StoreID)==0) && (!tl->m_Entries[b].Processed))
+							{
+								tl->m_Entries[b].LastError = tl->m_LastError = res;
+								tl->m_Entries[b].Processed = true;
+							}
+					}
+				}
+			}
+			else
+			{
+				tl->m_LastError = tl->m_Entries[a].LastError = LFIllegalItemType;
+				tl->m_Entries[a].Processed = true;
+			}
+}

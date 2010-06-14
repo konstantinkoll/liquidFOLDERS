@@ -193,34 +193,37 @@ void CIndex::Update(LFTransactionList* tl, LFVariantData* value1, LFVariantData*
 			if ((i->Type & LFTypeMask)==LFTypeFile)
 				if ((strcmp(i->CoreAttributes.StoreID, StoreID)==0) && (strcmp(i->CoreAttributes.FileID, PtrM->FileID)==0))
 				{
-					// Attribute setzen
-					i->CoreAttributes.Flags &= !LFFlagNew;
-					tl->m_Changes = true;
+					if (tl->m_Entries[a].LastError==LFOk)
+					{
+						// Attribute setzen
+						i->CoreAttributes.Flags &= !LFFlagNew;
+						tl->m_Changes = true;
 
-					LFSetAttributeVariantData(i, value1);
-					if (value2)
-						LFSetAttributeVariantData(i, value2);
-					if (value3)
-						LFSetAttributeVariantData(i, value3);
+						LFSetAttributeVariantData(i, value1);
+						if (value2)
+							LFSetAttributeVariantData(i, value2);
+						if (value3)
+							LFSetAttributeVariantData(i, value3);
 
-					// Master
-					Tables[IDMaster]->Update(i, PtrM);
+						// Master
+						Tables[IDMaster]->Update(i, PtrM);
 
-					// Slave
-					if ((PtrM->SlaveID) && (PtrM->SlaveID<IdxTableCount))
-						if (LoadTable(PtrM->SlaveID))
-						{
-							void* PtrS;
+						// Slave
+						if ((PtrM->SlaveID) && (PtrM->SlaveID<IdxTableCount))
+							if (LoadTable(PtrM->SlaveID))
+							{
+								void* PtrS;
 
-							if (Tables[PtrM->SlaveID]->FindKey(PtrM->FileID, IDs[PtrM->SlaveID], PtrS))
-								Tables[PtrM->SlaveID]->Update(i, PtrS);
-						}
-						else
-						{
-							tl->m_Entries[a].LastError = tl->m_LastError = LFIndexError;
-						}
+								if (Tables[PtrM->SlaveID]->FindKey(PtrM->FileID, IDs[PtrM->SlaveID], PtrS))
+									Tables[PtrM->SlaveID]->Update(i, PtrS);
+							}
+							else
+							{
+								tl->m_Entries[a].LastError = tl->m_LastError = LFIndexError;
+							}
 
-					tl->m_Entries[a].Processed = true;
+						tl->m_Entries[a].Processed = true;
+					}
 				}
 		}
 	}
@@ -238,46 +241,76 @@ void CIndex::Update(LFTransactionList* tl, LFVariantData* value1, LFVariantData*
 	}
 }
 
-void CIndex::Remove(LFItemDescriptor* i)
+void CIndex::Delete(LFTransactionList* tl, char* DatPath)
 {
-	assert(i);
+	assert(tl);
 
-	i->CoreAttributes.Flags &= !LFFlagNew;
-
-	// Master
-	LoadTable(IDMaster);
-	Tables[IDMaster]->Invalidate(i);
-
-	// Slave
-	if ((i->CoreAttributes.SlaveID) && (i->CoreAttributes.SlaveID<IdxTableCount))
+	if (!LoadTable(IDMaster))
 	{
-		LoadTable(i->CoreAttributes.SlaveID);
-		Tables[i->CoreAttributes.SlaveID]->Invalidate(i);
+		tl->m_LastError = LFIndexRepairError;
+		return;
 	}
-}
 
-void CIndex::RemoveTrash()
-{
-	LoadTable(IDMaster);
-
+	// Items löschen
 	int IDs[IdxTableCount];
 	ZeroMemory(IDs, sizeof(IDs));
-	LFCoreAttributes* Ptr;
+	LFCoreAttributes* PtrM;
 
-	while (Tables[IDMaster]->FindNext(IDs[IDMaster], (void*&)Ptr))
+	while (Tables[IDMaster]->FindNext(IDs[IDMaster], (void*&)PtrM))
 	{
-		if (Ptr->Flags & LFFlagTrash)
+		for (unsigned int a=0; a<tl->m_Count; a++)
 		{
-			// Slave
-			if ((Ptr->SlaveID) && (Ptr->SlaveID<IdxTableCount))
-			{
-				LoadTable(Ptr->SlaveID);
-				Tables[Ptr->SlaveID]->Invalidate(Ptr->FileID, IDs[Ptr->SlaveID]);
-			}
+			LFItemDescriptor* i = tl->m_Entries[a].Item;
+			if ((i->Type & LFTypeMask)==LFTypeFile)
+				if ((strcmp(i->CoreAttributes.StoreID, StoreID)==0) && (strcmp(i->CoreAttributes.FileID, PtrM->FileID)==0))
+				{
+					if (!tl->m_Entries[a].Processed)
+					{
+						char Path[MAX_PATH];
+						GetFileLocation(DatPath, PtrM->FileID, PtrM->FileFormat, Path, MAX_PATH);
 
-			// Master
-			Tables[IDMaster]->Invalidate(Ptr);
+						if (DeleteFileA(Path))
+						{
+							tl->m_Changes = true;
+						}
+						else
+						{
+							tl->m_Entries[a].LastError = tl->m_LastError = LFDriveNotReady;
+						}
+					}
+
+					if (tl->m_Entries[a].LastError==LFOk)
+					{
+						// Slave
+						if ((PtrM->SlaveID) && (PtrM->SlaveID<IdxTableCount))
+							if (LoadTable(PtrM->SlaveID))
+							{
+								Tables[PtrM->SlaveID]->Invalidate(PtrM->FileID, IDs[PtrM->SlaveID]);
+							}
+							else
+							{
+								tl->m_Entries[a].LastError = tl->m_LastError = LFIndexError;
+							}
+
+						// Master
+						Tables[IDMaster]->Invalidate(PtrM);
+					}
+
+					tl->m_Entries[a].Processed = true;
+				}
 		}
+	}
+
+	// Ungültige Items finden
+	for (unsigned int a=0; a<tl->m_Count; a++)
+	{
+		LFItemDescriptor* i = tl->m_Entries[a].Item;
+		if ((i->Type & LFTypeMask)==LFTypeFile)
+			if ((strcmp(i->CoreAttributes.StoreID, StoreID)==0) && (!tl->m_Entries[a].Processed))
+			{
+				tl->m_Entries[a].LastError = tl->m_LastError = LFIllegalKey;
+				tl->m_Entries[a].Processed = true;
+			}
 	}
 }
 

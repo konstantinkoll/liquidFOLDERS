@@ -317,6 +317,8 @@ LFCore_API unsigned int LFImportFiles(char* key, LFFileImportList* il, LFItemDes
 // als LPARAM mitgeschickt wird (ggf. NULL)
 LFCore_API void LFTransactionUpdate(LFTransactionList* tl, HWND hWndSource, LFVariantData* value1, LFVariantData* value2=NULL, LFVariantData* value3=NULL);
 
+// Löscht alle Dateien in tl
+LFCore_API void LFTransactionDelete(LFTransactionList* tl);
 
 
 //
