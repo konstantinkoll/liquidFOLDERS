@@ -35,15 +35,19 @@ public:
 	CAdvancedRibbonBar()
 	{
 		ChangeOccured = FALSE;
+		nActivate = -1;
 	}
 
-	void CAdvancedRibbonBar::ShowCategory(int nIndex, BOOL bShow=TRUE)
+	void CAdvancedRibbonBar::ShowCategory(int nIndex, BOOL bShow=TRUE, BOOL bActivate=FALSE)
 	{
 		if (nIndex<this->GetCategoryCount())
 			if (GetCategory(nIndex)->IsVisible()!=bShow)
 			{
-				CMFCRibbonBar::ShowCategory(nIndex, bShow);
 				ChangeOccured = TRUE;
+				CMFCRibbonBar::ShowCategory(nIndex, bShow);
+
+				if ((bActivate) && (bShow))
+					nActivate = nIndex;
 			}
 	}
 
@@ -58,14 +62,18 @@ public:
 			else
 			{
 				RecalcLayout();
+				if (nActivate!=-1)
+					SetActiveCategory(GetCategory(nActivate));
 			}
-			
+
 			ChangeOccured = FALSE;
+			nActivate = -1;
 		}
 	}
 
 private:
 	BOOL ChangeOccured;
+	int nActivate;
 };
 
 

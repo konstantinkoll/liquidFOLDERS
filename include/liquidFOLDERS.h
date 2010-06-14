@@ -509,6 +509,7 @@ struct LFStoreDescriptor
 #define LFIndexError                    19
 #define LFIndexRepairError              20
 #define LFNotEnoughFreeDiscSpace        21
+#define LFCannotDeleteFile              22
 
 
 // Structures and classes from LFCore.DLL

@@ -264,7 +264,8 @@ void CIndex::Delete(LFTransactionList* tl, char* DatPath)
 			if ((i->Type & LFTypeMask)==LFTypeFile)
 				if ((strcmp(i->CoreAttributes.StoreID, StoreID)==0) && (strcmp(i->CoreAttributes.FileID, PtrM->FileID)==0))
 				{
-					if (!tl->m_Entries[a].Processed)
+					// Files with "link" flag do not posses a file body
+					if ((!tl->m_Entries[a].Processed) && ((i->CoreAttributes.Flags & LFFlagLink)==0))
 					{
 						char Path[MAX_PATH];
 						GetFileLocation(DatPath, PtrM->FileID, PtrM->FileFormat, Path, MAX_PATH);
@@ -275,7 +276,7 @@ void CIndex::Delete(LFTransactionList* tl, char* DatPath)
 						}
 						else
 						{
-							tl->m_Entries[a].LastError = tl->m_LastError = LFDriveNotReady;
+							tl->m_Entries[a].LastError = tl->m_LastError = LFCannotDeleteFile;
 						}
 					}
 

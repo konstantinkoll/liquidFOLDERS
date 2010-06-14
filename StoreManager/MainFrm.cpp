@@ -316,10 +316,6 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	}
 	CookFiles(RawFiles->m_Context);
 
-	// Ggf. "Manage stores" im Ribbon aktivieren
-	if (!IsClipboard)
-		m_wndRibbonBar.SetActiveCategory(m_wndRibbonBar.GetCategory(RibbonCategory_Stores));
-
 	return 0;
 }
 
@@ -1107,9 +1103,9 @@ void CMainFrame::UpdateSearchResult(BOOL SetEmpty, int FocusItem)
 	{
 		// Im Debug-Modus bleiben alle Kategorien sichtbar
 		#ifndef _DEBUG
-		m_wndRibbonBar.ShowCategory(RibbonCategory_Stores, (CookedFiles->m_Context==LFContextStores) && (ActiveFilter->Result.FilterType==LFFilterTypeStores));
-		m_wndRibbonBar.ShowCategory(RibbonCategory_Trash, (CookedFiles->m_Context==LFContextTrash) && (ActiveFilter->Result.FilterType==LFFilterTypeTrash));
-		m_wndRibbonBar.ShowCategory(RibbonCategory_UnknownFileFormats, (CookedFiles->m_Context==LFContextHousekeeping) && (ActiveFilter->Result.FilterType==LFFilterTypeUnknownFileFormats));
+		m_wndRibbonBar.ShowCategory(RibbonCategory_Stores, (CookedFiles->m_Context==LFContextStores) && (ActiveFilter->Result.FilterType==LFFilterTypeStores), TRUE);
+		m_wndRibbonBar.ShowCategory(RibbonCategory_Trash, (CookedFiles->m_Context==LFContextTrash) && (ActiveFilter->Result.FilterType==LFFilterTypeTrash), TRUE);
+		m_wndRibbonBar.ShowCategory(RibbonCategory_UnknownFileFormats, (CookedFiles->m_Context==LFContextHousekeeping) && (ActiveFilter->Result.FilterType==LFFilterTypeUnknownFileFormats), TRUE);
 		#endif
 
 		// ChildView austauschen:

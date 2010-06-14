@@ -215,6 +215,8 @@ BEGIN
                             "The store index is damaged and could not be repaired (write protected disc ?)."
     IDS_LFErrorNotEnoughFreeDisc 
                             "There is not enough free disc space."
+    IDS_LFErrorCannotDeleteFile 
+                            "Some files cannot be deleted because they are still in use."
 END
 
 STRINGTABLE 
