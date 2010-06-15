@@ -62,15 +62,7 @@ void CFileView::OnUpdateSearchResult(LFSearchResult* _result, int _FocusItem)
 
 	if (_result)
 	{
-		if (_result->m_Context!=LFContextStores)
-		{
-			m_DropTarget.Register(this);
-		}
-		else
-		{
-			m_DropTarget.Revoke();
-			m_pDropTarget = NULL;
-		}
+		m_DropTarget.Register(this);
 
 		ActiveContextID = _result->m_ContextView;
 		pViewParameters = &theApp.m_Views[ActiveContextID];
@@ -84,6 +76,7 @@ void CFileView::OnUpdateSearchResult(LFSearchResult* _result, int _FocusItem)
 	{
 		m_DropTarget.Revoke();
 		m_pDropTarget = NULL;
+
 		FocusItem = -1;
 	}
 
