@@ -535,6 +535,7 @@ BOOL CFolderItem::GetColumn(CShellColumn& column, int index)
 		break;
 	case LFAttrCreationTime:
 	case LFAttrFileTime:
+	case LFAttrDeleteTime:
 		column.categorizerType = NSECT_String;
 		if (data.Level==LevelStores)
 			column.state = NSECS_Hidden;
