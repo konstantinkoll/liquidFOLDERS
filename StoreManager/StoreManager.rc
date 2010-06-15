@@ -646,6 +646,7 @@ END
 STRINGTABLE 
 BEGIN
     ID_FILES_SHOWINSPECTOR  "Shows the inspector pane.\nInspector pane"
+    ID_FILES_DELETE         "Deletes the selected files.\nDelete (Del)"
 END
 
 STRINGTABLE 

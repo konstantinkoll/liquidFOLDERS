@@ -288,6 +288,13 @@ BOOL CFileView::HandleDefaultKeys(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags*/)
 			return TRUE;
 		}
 		break;
+	case VK_DELETE:
+		if ((GetKeyState(VK_CONTROL)>=0) && (GetKeyState(VK_SHIFT)>=0))
+		{
+			GetParentFrame()->SendMessage(WM_COMMAND, ID_FILES_DELETE);
+			return TRUE;
+		}
+		break;
 	}
 
 	return FALSE;

@@ -1880,10 +1880,9 @@ void CMainFrame::InitializeRibbon()
 		CMFCRibbonPanel* pPanelFileManage = pCategoryFiles->AddPanel(strTemp, m_PanelImages.ExtractIcon(0));
 		pPanelFileManage->EnableLaunchButton(ID_FILES_SHOWINSPECTOR, 9);
 
-			strTemp = "Rename";
-			pPanelFileManage->Add(new CMFCRibbonButton(ID_APP_ABOUT, strTemp, 7, 7));
-			strTemp = "Delete";
-			pPanelFileManage->Add(new CMFCRibbonButton(ID_FILES_DELETE, strTemp, 8, 8));
+			/*strTemp = "Rename";
+			pPanelFileManage->Add(new CMFCRibbonButton(ID_APP_ABOUT, strTemp, 7, 7));*/
+			pPanelFileManage->Add(theApp.CommandButton(ID_FILES_DELETE, 8, 8));
 
 		/*strTemp = "Share";
 		CMFCRibbonPanel* pPanelFileShare = pCategoryFiles->AddPanel(strTemp, m_PanelImages.ExtractIcon(0));
