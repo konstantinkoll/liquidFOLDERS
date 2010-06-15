@@ -20,6 +20,8 @@ extern HMODULE LFCoreModuleHandle;
 extern HANDLE Mutex_Stores;
 extern LFMessageIDs LFMessages;
 
+static char KeyChars[38] = { LFKeyChars };
+
 
 // Verzeichnis-Funktionen
 //
@@ -216,7 +218,6 @@ unsigned int PrepareImport(LFStoreDescriptor* slot, LFItemDescriptor* i, char* D
 	SetAttribute(i, LFAttrStoreID, slot->StoreID);
 
 	char Path[MAX_PATH];
-	char chars[38] = { LFKeyChars };
 
 	SYSTEMTIME st;
 	GetSystemTime(&st);
@@ -226,8 +227,8 @@ unsigned int PrepareImport(LFStoreDescriptor* slot, LFItemDescriptor* i, char* D
 	{
 		for (unsigned int a=0; a<LFKeyLength; a++)
 		{
-			int r = rand()%38;
-			i->CoreAttributes.FileID[a] = chars[r];
+			int r = rand()%sizeof(KeyChars);
+			i->CoreAttributes.FileID[a] = KeyChars[r];
 		}
 
 		i->CoreAttributes.FileID[LFKeyLength] = 0;
@@ -549,7 +550,23 @@ LFCore_API unsigned int LFDeleteStore(char* key, HWND hWndSource)
 				RemoveDir(victim.IdxPathMain);
 
 			if (victim.DatPath[0]!='\0')
+			{
+				for (unsigned a=0; a<sizeof(KeyChars); a++)
+				{
+					char subpath[3];
+					subpath[0] = KeyChars[a];
+					subpath[1] = '\\';
+					subpath[2] = '\0';
+
+					char path[MAX_PATH];
+					strcpy_s(path, MAX_PATH, victim.DatPath);
+					strcat_s(path, MAX_PATH, subpath);
+
+					RemoveDir(path);
+				}
+
 				RemoveDir(victim.DatPath);
+			}
 		}
 	}
 	else
