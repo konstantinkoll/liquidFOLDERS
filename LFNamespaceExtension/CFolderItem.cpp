@@ -67,9 +67,9 @@ void CFolderItem::GetExtensionTargetInfo(CExtensionTargetInfo& info)
 {
 	CNSETargetInfo* nti = new CNSETargetInfo();
 
-	nti->nseTarget=NSET_MyComputer;
+	nti->nseTarget = NSET_MyComputer;
 	nti->name = _T("liquidFOLDERS");
-	nti->infoTip.LoadStringA(IDS_MyComputerHint);
+	nti->infoTip.LoadString(IDS_MyComputerHint);
 	nti->attributes = (NSEItemAttributes)(NSEIA_CFOLDERITEM | NSEIA_HasSubFolder);
 	nti->iconFile = theApp.m_IconFile;
 	nti->iconIndex = IDI_FLD_Default-1;
