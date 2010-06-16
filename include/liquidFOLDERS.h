@@ -1,4 +1,5 @@
 #pragma once
+#include <windows.h>
 
 
 // Resource IDs from LFCore.DLL
@@ -10,7 +11,6 @@
 
 #include "..\\LFCore\\LFBitArray.h"
 
-#include <windows.h>
 
 // Messages
 

@@ -1,16 +1,16 @@
 #pragma once
+#include "stdafx.h"
 #include "liquidFOLDERS.h"
 
-#include "stdafx.h"
+#define LICENSE_ID         "LICENSE_ID"
+#define LICENSE_DATE       "LICENSE_DATE"
+#define LICENSE_PRODUCT    "LICENSE_PRODUCT"
+#define LICENSE_QUANTITY   "LICENSE_QUANTITY"
+#define LICENSE_VERSION    "LICENSE_VERSION"
+#define LICENSE_NAME       "LICENSE_NAME"
 
-#define LICENSE_ID "LICENSE_ID"
-#define LICENSE_DATE "LICENSE_DATE"
-#define LICENSE_PRODUCT "LICENSE_PRODUCT"
-#define LICENSE_QUANTITY "LICENSE_QUANTITY"
-#define LICENSE_VERSION "LICENSE_VERSION"
-#define LICENSE_NAME "LICENSE_NAME"
-
-struct Version {
+struct Version
+{
 	unsigned int major, minor, release;
 };
 

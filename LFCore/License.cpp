@@ -9,7 +9,8 @@
 USING_NAMESPACE(CryptoPP)
 USING_NAMESPACE(std)
 
-Version parseVersion(string& version) {
+Version parseVersion(string& version)
+{
 	Version result;
 
 	char point;
@@ -25,14 +26,16 @@ Version parseVersion(string& version) {
 	return result;
 }
 
-LicenseData parseInput(string& message) {
+LicenseData parseInput(string& message)
+{
 	stringstream input(message);
 
 	string line;
 
 	LicenseData result;
 
-	while(!input.eof()) {
+	while(!input.eof())
+	{
 		getline(input, line);
 
 		std::string::size_type delimiterPos = line.find_first_of("=");
