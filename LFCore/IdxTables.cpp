@@ -10,7 +10,7 @@
 
 inline void ZeroCopy(void* _Dst, rsize_t _DstSize, void* _Src, rsize_t _SrcSize)
 {
-	memcpy_s(_Dst, _DstSize, _Src, _SrcSize);
+	memcpy_s(_Dst, _DstSize, _Src, min(_DstSize, _SrcSize));
 
 	if (_DstSize>_SrcSize)
 	{
