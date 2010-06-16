@@ -232,7 +232,7 @@ unsigned int SaveStoreSettingsToRegistry(LFStoreDescriptor* s)
 			res = LFRegistryError;
 		if (RegSetValueExA(k, "MaintenanceTime", 0, REG_BINARY, (BYTE*)&s->MaintenanceTime, sizeof(FILETIME))!=ERROR_SUCCESS)
 			res = LFRegistryError;
-		if (RegSetValueExA(k, "AutoLocation", 0, REG_DWORD, (BYTE*)&s->AutoLocation, sizeof(bool))!=ERROR_SUCCESS)
+		if (RegSetValueExA(k, "AutoLocation", 0, REG_DWORD, (BYTE*)&s->AutoLocation, sizeof(unsigned int))!=ERROR_SUCCESS)
 			res = LFRegistryError;
 		if (RegSetValueExA(k, "IndexVersion", 0, REG_DWORD, (BYTE*)&s->IndexVersion, sizeof(unsigned int))!=ERROR_SUCCESS)
 			res = LFRegistryError;
@@ -816,7 +816,6 @@ LFCore_API unsigned int LFUnmountDrive(char d)
 				case LFStoreModeHybrid:
 					strcpy_s(StoreCache[a].DatPath, MAX_PATH, "");
 					strcpy_s(StoreCache[a].IdxPathMain, MAX_PATH, "");
-					strcpy_s(StoreCache[a].IdxPathAux, MAX_PATH, "");
 					changeOccured = true;
 					break;
 				case LFStoreModeExternal:

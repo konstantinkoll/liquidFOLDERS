@@ -113,6 +113,7 @@ LFSearchResult* QueryDomains(LFFilter* filter)
 	LFSearchResult* res = new LFSearchResult(LFContextStoreHome);
 	res->m_RecommendedView = LFViewSmallIcons;
 	res->m_HasCategories = true;
+	strcpy_s(res->m_StoreID, LFKeySize, filter->StoreID);
 
 	if (filter->Options.AddBacklink)
 	{
@@ -190,6 +191,7 @@ LFSearchResult* QueryStore(LFFilter* filter)
 	LFSearchResult* res = new LFSearchResult(LFContextDefault);
 	res->m_RecommendedView = LFViewDetails;
 	res->m_LastError = LFOk;
+	strcpy_s(res->m_StoreID, LFKeySize, filter->StoreID);
 
 	CIndex* idx1;
 	CIndex* idx2;

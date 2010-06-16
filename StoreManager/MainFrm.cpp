@@ -661,7 +661,7 @@ BOOL CMainFrame::AddClipItem(LFItemDescriptor* i)
 	#endif
 
 	for (UINT a=0; a<RawFiles->m_ItemCount; a++)
-		if ((strcmp(i->CoreAttributes.StoreID, RawFiles->m_Items[a]->CoreAttributes.StoreID)==0) &&
+		if ((strcmp(i->StoreID, RawFiles->m_Items[a]->StoreID)==0) &&
 			(strcmp(i->CoreAttributes.FileID, RawFiles->m_Items[a]->CoreAttributes.FileID)==0))
 			return FALSE;
 
@@ -847,7 +847,7 @@ void CMainFrame::OnStoreNewInternal()
 		for (UINT a=0; a<CookedFiles->m_ItemCount; a++)
 		{
 			LFItemDescriptor* i = CookedFiles->m_Items[a];
-			if ((strcmp(s->StoreID, i->CoreAttributes.StoreID)==0) && ((i->Type & LFTypeMask)==LFTypeStore))
+			if ((strcmp(s->StoreID, i->StoreID)==0) && ((i->Type & LFTypeMask)==LFTypeStore))
 			{
 				m_wndView->SetFocus();
 				m_wndView->EditLabel(a);
@@ -892,7 +892,7 @@ void CMainFrame::OnStoreMakeDefault()
 	int i = GetSelectedItem();
 
 	if (i!=-1)
-		LFErrorBox(LFMakeDefaultStore(CookedFiles->m_Items[i]->CoreAttributes.StoreID));
+		LFErrorBox(LFMakeDefaultStore(CookedFiles->m_Items[i]->StoreID));
 }
 
 void CMainFrame::OnStoreMakeHybrid()
@@ -900,7 +900,7 @@ void CMainFrame::OnStoreMakeHybrid()
 	int i = GetSelectedItem();
 
 	if (i!=-1)
-		LFErrorBox(LFMakeHybridStore(CookedFiles->m_Items[i]->CoreAttributes.StoreID));
+		LFErrorBox(LFMakeHybridStore(CookedFiles->m_Items[i]->StoreID));
 }
 
 CString MakeHex(BYTE* x, UINT bCount)
@@ -930,7 +930,7 @@ void CMainFrame::OnStoreProperties()
 
 	if (i!=-1)
 	{
-		LFStorePropertiesDlg dlg(this, CookedFiles->m_Items[i]->CoreAttributes.StoreID);
+		LFStorePropertiesDlg dlg(this, CookedFiles->m_Items[i]->StoreID);
 		dlg.DoModal();
 	}
 }
@@ -973,7 +973,7 @@ void CMainFrame::OnStoreBackup()
 					if ((i->Type & LFTypeStore) && (i->CategoryID==LFCategoryInternalStores))
 					{
 						LFStoreDescriptor s;
-						if (LFGetStoreSettings(i->CoreAttributes.StoreID, &s)==LFOk)
+						if (LFGetStoreSettings(i->StoreID, &s)==LFOk)
 						{
 							// Header
 							tmpStr = _T("\n[HKEY_CURRENT_USER\\Software\\liquidFOLDERS\\Stores\\");

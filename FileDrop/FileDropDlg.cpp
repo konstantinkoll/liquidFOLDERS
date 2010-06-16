@@ -198,7 +198,7 @@ BOOL CFileDropDlg::OnInitDialog()
 	TimerID = SetTimer(IDT_UPDATESTATUS, 250, NULL);
 
 	// Initialize Drop
-	m_DropTarget.Register ( this );
+	m_DropTarget.Register(this, "");
 
 	return TRUE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird
 }

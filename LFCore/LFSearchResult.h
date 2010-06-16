@@ -36,6 +36,7 @@ public:
 	int m_Context;
 	int m_ContextView;
 	unsigned int m_RecommendedView;
+	char m_StoreID[LFKeySize];
 
 protected:
 	unsigned int m_Allocated;

@@ -269,7 +269,7 @@ BOOL CFolderItem::GetChildren(CGetChildrenEventArgs& e)
 				d.DisplayName = i->CoreAttributes.FileName;
 				d.Comment = i->CoreAttributes.Comment;
 				d.Hint = i->Hint;
-				d.StoreID = i->CoreAttributes.StoreID;
+				d.StoreID = i->StoreID;
 				d.FileID = i->CoreAttributes.FileID;
 				d.CreationTime = i->CoreAttributes.CreationTime;
 				d.FileTime = i->CoreAttributes.FileTime;

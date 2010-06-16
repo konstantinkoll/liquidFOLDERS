@@ -125,7 +125,39 @@ FileFound:
 
 unsigned int CopyDir(LPCSTR lpPathSrc, LPCSTR lpPathDst)
 {
-	// TODO
+	char DirSpec[MAX_PATH];
+	strcpy_s(DirSpec, MAX_PATH, lpPathSrc);
+	strcat_s(DirSpec, "*");
+
+	WIN32_FIND_DATAA FindFileData;
+	HANDLE hFind = FindFirstFileA(DirSpec, &FindFileData);
+
+	if (hFind!=INVALID_HANDLE_VALUE)
+	{
+FileFound:
+		if ((FindFileData.dwFileAttributes & (FILE_ATTRIBUTE_DIRECTORY | FILE_ATTRIBUTE_DEVICE | FILE_ATTRIBUTE_VIRTUAL))==0)
+		{
+			char fns[MAX_PATH];
+			strcpy_s(fns, MAX_PATH, lpPathSrc);
+			strcat_s(fns, MAX_PATH, FindFileData.cFileName);
+
+			char fnd[MAX_PATH];
+			strcpy_s(fnd, MAX_PATH, lpPathDst);
+			strcat_s(fnd, MAX_PATH, FindFileData.cFileName);
+
+			if (!CopyFileA(fns, fnd, FALSE))
+			{
+				FindClose(hFind);
+				return LFIndexError;
+			}
+		}
+
+		if (FindNextFileA(hFind, &FindFileData)!=0)
+			goto FileFound;
+
+		FindClose(hFind);
+	}
+
 	return LFOk;
 }
 
@@ -155,23 +187,30 @@ bool DirWriteable(LPCSTR lpPath)
 unsigned int ValidateStoreDirectories(LFStoreDescriptor* s)
 {
 	// Store phys. anlegen
-	DWORD res = CreateDir(s->DatPath);
-		if ((res!=ERROR_SUCCESS) && (res!=ERROR_ALREADY_EXISTS))
-			return LFIllegalPhysicalPath;
-	res = CreateDir(s->IdxPathMain);
-		if ((res!=ERROR_SUCCESS) && (res!=ERROR_ALREADY_EXISTS))
-			return LFIllegalPhysicalPath;
+	if (s->DatPath[0]!='\0')
+	{
+		DWORD res = CreateDir(s->DatPath);
+			if ((res!=ERROR_SUCCESS) && (res!=ERROR_ALREADY_EXISTS))
+				return LFIllegalPhysicalPath;
+	}
 
-	// Store auf externen Medien verstecken
-	if (s->StoreMode!=LFStoreModeInternal)
-		SetFileAttributesA(s->DatPath, FILE_ATTRIBUTE_HIDDEN);
+	if (s->DatPath[0]!='\0')
+	{
+		DWORD res = CreateDir(s->IdxPathMain);
+			if ((res!=ERROR_SUCCESS) && (res!=ERROR_ALREADY_EXISTS))
+				return LFIllegalPhysicalPath;
+
+		// Store auf externen Medien verstecken
+		if ((s->StoreMode!=LFStoreModeInternal) && (res==ERROR_SUCCESS))
+			SetFileAttributesA(s->DatPath, FILE_ATTRIBUTE_HIDDEN);
+	}
 
 	// Hilfsindex anlegen
 	if (s->StoreMode==LFStoreModeHybrid)
 	{
 		char tmpStr[MAX_PATH];
 		GetAutoPath(s, tmpStr);
-		res = CreateDir(tmpStr);
+		DWORD res = CreateDir(tmpStr);
 		if ((res!=ERROR_SUCCESS) && (res!=ERROR_ALREADY_EXISTS))
 			return LFIllegalPhysicalPath;
 		res = CreateDir(s->IdxPathAux);
@@ -252,14 +291,14 @@ LFCore_API unsigned int LFGetFileLocation(LFItemDescriptor* i, char* dst, size_t
 {
 	if ((i->Type & LFTypeMask)!=LFTypeFile)
 		return LFIllegalKey;
-	if (i->CoreAttributes.StoreID=='\0')
+	if (i->StoreID=='\0')
 		return LFIllegalKey;
 
 	if (!GetMutex(Mutex_Stores))
 		return LFMutexError;
 
 	unsigned int res = LFIllegalKey;
-	LFStoreDescriptor* slot = FindStore(i->CoreAttributes.StoreID);
+	LFStoreDescriptor* slot = FindStore(i->StoreID);
 
 	if (slot)
 		if (IsStoreMounted(slot))
@@ -644,6 +683,8 @@ unsigned int RunMaintenance(LFStoreDescriptor* s, bool scheduled)
 		}
 	}
 
+	delete idx;
+
 	// Index duplizieren
 	if ((s->StoreMode==LFStoreModeHybrid) && IsStoreMounted(s))
 	{
@@ -656,7 +697,6 @@ unsigned int RunMaintenance(LFStoreDescriptor* s, bool scheduled)
 	GetLocalTime(&st);
 	SystemTimeToFileTime(&st, &s->MaintenanceTime);
 	s->NeedsCheck = false;
-	delete idx;
 
 	return LFOk;
 }

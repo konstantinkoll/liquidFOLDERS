@@ -15,10 +15,10 @@ void UpdateStore(LFTransactionList* tl, unsigned int idx, LFVariantData* value, 
 	switch (value->Attr)
 	{
 	case LFAttrFileName:
-		result = LFSetStoreAttributes(tl->m_Entries[idx].Item->CoreAttributes.StoreID, value->UnicodeString, NULL, NULL, true);
+		result = LFSetStoreAttributes(tl->m_Entries[idx].Item->StoreID, value->UnicodeString, NULL, NULL, true);
 		break;
 	case LFAttrComment:
-		result = LFSetStoreAttributes(tl->m_Entries[idx].Item->CoreAttributes.StoreID, NULL, value->UnicodeString, NULL, true);
+		result = LFSetStoreAttributes(tl->m_Entries[idx].Item->StoreID, NULL, value->UnicodeString, NULL, true);
 		break;
 	default:
 		result = LFIllegalAttribute;
@@ -62,7 +62,7 @@ LFCore_API void LFTransactionUpdate(LFTransactionList* tl, HWND hWndSource, LFVa
 					CIndex* idx1;
 					CIndex* idx2;
 					HANDLE StoreLock = NULL;
-					unsigned int res = OpenStore(tl->m_Entries->Item->CoreAttributes.StoreID, true, idx1, idx2, NULL, &StoreLock);
+					unsigned int res = OpenStore(tl->m_Entries->Item->StoreID, true, idx1, idx2, NULL, &StoreLock);
 
 					if (res==LFOk)
 					{
@@ -86,7 +86,7 @@ LFCore_API void LFTransactionUpdate(LFTransactionList* tl, HWND hWndSource, LFVa
 						{
 							LFItemDescriptor* i = tl->m_Entries[b].Item;
 							if ((i->Type & LFTypeMask)==LFTypeFile)
-								if ((strcmp(i->CoreAttributes.StoreID, tl->m_Entries[a].Item->CoreAttributes.StoreID)==0) && (!tl->m_Entries[b].Processed))
+								if ((strcmp(i->StoreID, tl->m_Entries[a].Item->StoreID)==0) && (!tl->m_Entries[b].Processed))
 								{
 									tl->m_Entries[b].LastError = tl->m_LastError = res;
 									tl->m_Entries[b].Processed = true;
@@ -121,7 +121,7 @@ LFCore_API void LFTransactionDelete(LFTransactionList* tl)
 				CIndex* idx2;
 				LFStoreDescriptor* slot;
 				HANDLE StoreLock = NULL;
-				unsigned int res = OpenStore(tl->m_Entries->Item->CoreAttributes.StoreID, true, idx1, idx2, &slot, &StoreLock);
+				unsigned int res = OpenStore(tl->m_Entries->Item->StoreID, true, idx1, idx2, &slot, &StoreLock);
 
 				if (res==LFOk)
 				{
@@ -145,7 +145,7 @@ LFCore_API void LFTransactionDelete(LFTransactionList* tl)
 					{
 						LFItemDescriptor* i = tl->m_Entries[b].Item;
 						if ((i->Type & LFTypeMask)==LFTypeFile)
-							if ((strcmp(i->CoreAttributes.StoreID, tl->m_Entries[a].Item->CoreAttributes.StoreID)==0) && (!tl->m_Entries[b].Processed))
+							if ((strcmp(i->StoreID, tl->m_Entries[a].Item->StoreID)==0) && (!tl->m_Entries[b].Processed))
 							{
 								tl->m_Entries[b].LastError = tl->m_LastError = res;
 								tl->m_Entries[b].Processed = true;

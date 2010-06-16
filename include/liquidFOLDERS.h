@@ -400,7 +400,6 @@ struct LFCoreAttributes
 {
 	// Public
 	wchar_t FileName[256];
-	char StoreID[LFKeySize];
 	char FileID[LFKeySize];
 	wchar_t Comment[256];
 	FILETIME CreationTime;
@@ -447,6 +446,7 @@ struct LFItemDescriptor
 	unsigned int Type;
 
 	LFCoreAttributes CoreAttributes;
+	char StoreID[LFKeySize];
 	wchar_t Hint[256];
 	void* AttributeValues[LFAttributeCount];
 

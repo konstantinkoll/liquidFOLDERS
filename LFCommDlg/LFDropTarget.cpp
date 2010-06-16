@@ -5,28 +5,30 @@
 
 LFDropTarget::LFDropTarget()
 {
-	SkipTemplate = FALSE;
+	m_SkipTemplate = FALSE;
 }
 
 LFDropTarget::~LFDropTarget()
 {
 }
 
-BOOL LFDropTarget::Register(CWnd* pWnd)
+BOOL LFDropTarget::Register(CWnd* pWnd, char* StoreID)
 {
+	strcpy_s(m_StoreID, LFKeySize, StoreID);
+
 	return (m_hWnd!=pWnd->m_hWnd) ? COleDropTarget::Register(pWnd) : TRUE;
 }
 
 DROPEFFECT LFDropTarget::OnDragEnter(CWnd* /*pWnd*/, COleDataObject* /*pDataObject*/, DWORD dwKeyState, CPoint /*point*/)
 {
-	SkipTemplate = (dwKeyState & MK_SHIFT);
+	m_SkipTemplate = (dwKeyState & MK_SHIFT);
 
 	return (dwKeyState & MK_CONTROL) ? DROPEFFECT_MOVE : DROPEFFECT_COPY;
 }
 
 DROPEFFECT LFDropTarget::OnDragOver(CWnd* /*pWnd*/, COleDataObject* /*pDataObject*/, DWORD dwKeyState, CPoint /*point*/)
 {
-	SkipTemplate = (dwKeyState & MK_SHIFT);
+	m_SkipTemplate = (dwKeyState & MK_SHIFT);
 
 	return (dwKeyState & MK_CONTROL) ? DROPEFFECT_MOVE : DROPEFFECT_COPY;
 }
@@ -34,11 +36,12 @@ DROPEFFECT LFDropTarget::OnDragOver(CWnd* /*pWnd*/, COleDataObject* /*pDataObjec
 BOOL LFDropTarget::OnDrop(CWnd* /*pWnd*/, COleDataObject* pDataObject, DROPEFFECT dropEffect, CPoint /*point*/)
 {
 	// Store verfügbar ?
-	if (!LFDefaultStoreAvailable())
-	{
-		LFErrorBox(LFNoDefaultStore);
-		return FALSE;
-	}
+	if (m_StoreID[0]=='\0')
+		if (!LFDefaultStoreAvailable())
+		{
+			LFErrorBox(LFNoDefaultStore);
+			return FALSE;
+		}
 
 	// HDROP holen
 	HGLOBAL hG = pDataObject->GetGlobalData(CF_HDROP);
@@ -54,7 +57,7 @@ BOOL LFDropTarget::OnDrop(CWnd* /*pWnd*/, COleDataObject* pDataObject, DROPEFFEC
 
 	// Template füllen
 	LFItemDescriptor* it = NULL;
-	if (!SkipTemplate)
+	if (!m_SkipTemplate)
 	{
 		it = LFAllocItemDescriptor();
 
@@ -81,7 +84,7 @@ BOOL LFDropTarget::OnDrop(CWnd* /*pWnd*/, COleDataObject* pDataObject, DROPEFFEC
 
 	// Import
 	if (success)
-		if (LFImportFiles("", il, it, dropEffect==DROPEFFECT_MOVE)!=LFOk)
+		if (LFImportFiles(m_StoreID, il, it, dropEffect==DROPEFFECT_MOVE)!=LFOk)
 			success = FALSE;
 
 	LFFreeItemDescriptor(it);

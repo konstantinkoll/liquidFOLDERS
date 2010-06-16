@@ -192,9 +192,9 @@ LFCore_API LFItemDescriptor* LFAllocItemDescriptor(LFItemDescriptor* i)
 	// Zeiger auf statische Attributwerte initalisieren
 	// Für Attribute, die Unicode-Strings sind, auch die Zeiger für Unicode-String initalisieren
 	d->AttributeValues[LFAttrFileName] = &d->CoreAttributes.FileName[0];
-	d->AttributeValues[LFAttrStoreID] = &d->CoreAttributes.StoreID;
+	d->AttributeValues[LFAttrStoreID] = &d->StoreID;
 	d->AttributeValues[LFAttrFileID] = &d->CoreAttributes.FileID;
-	d->AttributeValues[LFAttrComment] = &d->CoreAttributes.Comment[0];
+	d->AttributeValues[LFAttrComment] = &d->CoreAttributes.Comment;
 	d->AttributeValues[LFAttrHint] = &d->Hint[0];
 	d->AttributeValues[LFAttrCreationTime] = &d->CoreAttributes.CreationTime;
 	d->AttributeValues[LFAttrFileTime] = &d->CoreAttributes.FileTime;

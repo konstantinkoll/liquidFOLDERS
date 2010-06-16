@@ -106,7 +106,7 @@ LRESULT LFChooseDefaultStoreDlg::UpdateStores(WPARAM wParam, LPARAM /*lParam*/)
 		char StoreID[LFKeySize] = "";
 		int idx = m_List.GetNextItem(-1, LVIS_SELECTED);
 		if ((idx!=-1) && (result))
-			strcpy_s(StoreID, LFKeySize, result->m_Items[idx]->CoreAttributes.StoreID);
+			strcpy_s(StoreID, LFKeySize, result->m_Items[idx]->StoreID);
 
 		m_List.SetRedraw(FALSE);
 
@@ -131,7 +131,7 @@ LRESULT LFChooseDefaultStoreDlg::UpdateStores(WPARAM wParam, LPARAM /*lParam*/)
 
 		idx = -1;
 		for (UINT a=0; a<result->m_ItemCount; a++)
-			if (((idx==-1) && (result->m_Items[a]->Type & LFTypeDefaultStore)) || (!strcmp(StoreID, result->m_Items[a]->CoreAttributes.StoreID)))
+			if (((idx==-1) && (result->m_Items[a]->Type & LFTypeDefaultStore)) || (!strcmp(StoreID, result->m_Items[a]->StoreID)))
 				idx = a;
 
 		m_List.SetItemState(idx, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
@@ -188,7 +188,7 @@ void LFChooseDefaultStoreDlg::DoDataExchange(CDataExchange* pDX)
 		int idx = m_List.GetNextItem(-1, LVIS_SELECTED);
 		if (idx!=-1)
 		{
-			strcpy_s(StoreID, LFKeySize, result->m_Items[idx]->CoreAttributes.StoreID);
+			strcpy_s(StoreID, LFKeySize, result->m_Items[idx]->StoreID);
 			LFErrorBox(LFMakeDefaultStore(StoreID), GetSafeHwnd());
 		}
 		else

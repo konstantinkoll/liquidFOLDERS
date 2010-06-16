@@ -62,7 +62,7 @@ void CFileView::OnUpdateSearchResult(LFSearchResult* _result, int _FocusItem)
 
 	if (_result)
 	{
-		m_DropTarget.Register(this);
+		m_DropTarget.Register(this, _result->m_StoreID);
 
 		ActiveContextID = _result->m_ContextView;
 		pViewParameters = &theApp.m_Views[ActiveContextID];

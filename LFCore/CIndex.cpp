@@ -191,7 +191,7 @@ void CIndex::Update(LFTransactionList* tl, LFVariantData* value1, LFVariantData*
 		{
 			LFItemDescriptor* i = tl->m_Entries[a].Item;
 			if ((i->Type & LFTypeMask)==LFTypeFile)
-				if ((strcmp(i->CoreAttributes.StoreID, StoreID)==0) && (strcmp(i->CoreAttributes.FileID, PtrM->FileID)==0))
+				if ((strcmp(i->StoreID, StoreID)==0) && (strcmp(i->CoreAttributes.FileID, PtrM->FileID)==0))
 				{
 					if (tl->m_Entries[a].LastError==LFOk)
 					{
@@ -233,7 +233,7 @@ void CIndex::Update(LFTransactionList* tl, LFVariantData* value1, LFVariantData*
 	{
 		LFItemDescriptor* i = tl->m_Entries[a].Item;
 		if ((i->Type & LFTypeMask)==LFTypeFile)
-			if ((strcmp(i->CoreAttributes.StoreID, StoreID)==0) && (!tl->m_Entries[a].Processed))
+			if ((strcmp(i->StoreID, StoreID)==0) && (!tl->m_Entries[a].Processed))
 			{
 				tl->m_Entries[a].LastError = tl->m_LastError = LFIllegalKey;
 				tl->m_Entries[a].Processed = true;
@@ -262,7 +262,7 @@ void CIndex::Delete(LFTransactionList* tl, char* DatPath)
 		{
 			LFItemDescriptor* i = tl->m_Entries[a].Item;
 			if ((i->Type & LFTypeMask)==LFTypeFile)
-				if ((strcmp(i->CoreAttributes.StoreID, StoreID)==0) && (strcmp(i->CoreAttributes.FileID, PtrM->FileID)==0))
+				if ((strcmp(i->StoreID, StoreID)==0) && (strcmp(i->CoreAttributes.FileID, PtrM->FileID)==0))
 				{
 					// Files with "link" flag do not posses a file body
 					if ((!tl->m_Entries[a].Processed) && ((i->CoreAttributes.Flags & LFFlagLink)==0))
@@ -307,7 +307,7 @@ void CIndex::Delete(LFTransactionList* tl, char* DatPath)
 	{
 		LFItemDescriptor* i = tl->m_Entries[a].Item;
 		if ((i->Type & LFTypeMask)==LFTypeFile)
-			if ((strcmp(i->CoreAttributes.StoreID, StoreID)==0) && (!tl->m_Entries[a].Processed))
+			if ((strcmp(i->StoreID, StoreID)==0) && (!tl->m_Entries[a].Processed))
 			{
 				tl->m_Entries[a].LastError = tl->m_LastError = LFIllegalKey;
 				tl->m_Entries[a].Processed = true;
@@ -341,6 +341,7 @@ void CIndex::Retrieve(LFFilter* f, LFSearchResult* res)
 		LFItemDescriptor* i = LFAllocItemDescriptor();
 		i->Type = LFTypeFile;
 		i->IconID = IDI_FILE_Generic;
+		strcpy_s(i->StoreID, LFKeySize, StoreID);
 		Tables[IDMaster]->WriteToItemDescriptor(i, PtrM);
 
 		// Slave

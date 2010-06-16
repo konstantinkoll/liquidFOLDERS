@@ -539,7 +539,7 @@ UINT LFApplication::DeleteStore(LFItemDescriptor* store, CWnd* pParentWnd)
 			return LFCancel;
 	}
 
-	return LFDeleteStore((char*)store->CoreAttributes.StoreID, hWnd);
+	return LFDeleteStore(store->StoreID, hWnd);
 }
 
 void LFApplication::PlayNavigateSound()
