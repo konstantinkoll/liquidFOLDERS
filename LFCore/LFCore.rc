@@ -217,6 +217,8 @@ BEGIN
                             "There is not enough free disc space."
     IDS_LFErrorCannotDeleteFile 
                             "Some files cannot be deleted because they are still in use."
+    IDS_LFErrorCannotCopyIndex 
+                            "The index cannot be updated (write protected disc ?)."
 END
 
 STRINGTABLE 

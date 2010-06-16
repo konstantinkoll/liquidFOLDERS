@@ -148,7 +148,7 @@ FileFound:
 			if (!CopyFileA(fns, fnd, FALSE))
 			{
 				FindClose(hFind);
-				return LFIndexError;
+				return LFCannotCopyIndex;
 			}
 		}
 

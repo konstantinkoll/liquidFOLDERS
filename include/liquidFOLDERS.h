@@ -473,7 +473,7 @@ struct LFStoreDescriptor
 	wchar_t Comment[256];
 	int StoreMode;
 	GUID guid;
-	bool AutoLocation;
+	unsigned int AutoLocation;
 	FILETIME CreationTime;
 	FILETIME FileTime;
 	FILETIME MaintenanceTime;
@@ -510,6 +510,7 @@ struct LFStoreDescriptor
 #define LFIndexRepairError              20
 #define LFNotEnoughFreeDiscSpace        21
 #define LFCannotDeleteFile              22
+#define LFCannotCopyIndex               23
 
 
 // Structures and classes from LFCore.DLL
