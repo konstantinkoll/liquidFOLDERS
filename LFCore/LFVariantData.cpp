@@ -153,7 +153,7 @@ void ToString(void* value, unsigned int type, wchar_t* str, size_t cCount)
 			return;
 		case LFTypeAnsiString:
 			sz = strlen((char*)value)+1;
-			MultiByteToWideChar(CP_ACP, 0, (char*)value, (int)sz, str, cCount);
+			MultiByteToWideChar(CP_ACP, 0, (char*)value, (int)sz, str, (int)cCount);
 			return;
 		case LFTypeFourCC:
 			LFFourCCToString(*((unsigned int*)value), str, cCount);

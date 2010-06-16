@@ -1,7 +1,7 @@
 #pragma once
 #include "stdafx.h"
-#include "liquidFOLDERS.h"
 
+// share*it
 #define LICENSE_ID         "LICENSE_ID"
 #define LICENSE_DATE       "LICENSE_DATE"
 #define LICENSE_PRODUCT    "LICENSE_PRODUCT"
@@ -11,10 +11,13 @@
 
 struct Version
 {
-	unsigned int major, minor, release;
+	unsigned int major;
+	unsigned int minor;
+	unsigned int release;
 };
 
-class LicenseData {
+class LicenseData
+{
 public:
 	std::string purchaseId;
 	std::string purchaseDate;
