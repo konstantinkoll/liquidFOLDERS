@@ -18,17 +18,17 @@ USING_NAMESPACE(std)
 
 int main(int argc, char* argv[])
 {
-	if (argc < 2) {
+	if (argc<2)
 		return -1;
-	}
 
 	///////////////////////////////////////
 	// Pseudo Random Number Generator
 	AutoSeededRandomPool rng;
+
 	///////////////////////////////////////
 	// Generate Parameters
 	CryptoPP::InvertibleRSAFunction params;
-	params.GenerateRandomWithKeySize( rng, 4096 );
+	params.GenerateRandomWithKeySize(rng, 4096);
 
 	Integer n = params.GetModulus();
 	Integer p = params.GetPrime1();
@@ -49,4 +49,3 @@ int main(int argc, char* argv[])
 
 	return 0;
 }
-
