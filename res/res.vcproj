@@ -22,7 +22,7 @@
 			Name="Debug|Win32"
 			OutputDirectory="$(SolutionDir)\$(ConfigurationName)\$(PlatformName)"
 			IntermediateDirectory="$(SolutionDir)\Temp\$(ProjectName)\$(ConfigurationName)\$(PlatformName)"
-			ConfigurationType="1"
+			ConfigurationType="10"
 			CharacterSet="2"
 			>
 			<Tool
@@ -89,7 +89,7 @@
 			Name="Debug|x64"
 			OutputDirectory="$(SolutionDir)\$(ConfigurationName)\$(PlatformName)"
 			IntermediateDirectory="$(SolutionDir)\Temp\$(ProjectName)\$(ConfigurationName)\$(PlatformName)"
-			ConfigurationType="1"
+			ConfigurationType="10"
 			CharacterSet="2"
 			>
 			<Tool
