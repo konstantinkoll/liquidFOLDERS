@@ -10,6 +10,7 @@
 
 #include "..\\LFCore\\LFBitArray.h"
 
+#include <windows.h>
 
 // Messages
 
