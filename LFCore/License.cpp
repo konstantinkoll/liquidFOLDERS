@@ -9,6 +9,17 @@ USING_NAMESPACE(CryptoPP)
 USING_NAMESPACE(std)
 
 
+// Der Inhalt dieses Segments wird über alle Instanzen von LFCore geteilt.
+
+#pragma data_seg("common_license")
+
+bool LicenseRead = false;
+LFLicense LicenseBuffer = { 0 };
+
+#pragma data_seg()
+#pragma comment(linker, "/SECTION:common_license,RWS")
+
+
 void ParseVersion(string& tmpStr, LFLicenseVersion* Version)
 {
 	char Point;
@@ -125,15 +136,18 @@ bool GetLicense(LFLicense* License)
 	return true;
 }
 
-bool IsLicensed(LFLicense* License)
+bool IsLicensed(LFLicense* License, bool Reload)
 {
-	LFLicense Buffer;
-	if (!License)
-		License = &Buffer;
+	if ((LicenseRead==false) || (Reload==true))
+	{
+		LicenseRead = true;
 
-	if (!GetLicense(License))
-		return false;
+		if (!GetLicense(&LicenseBuffer))
+			return false;
+	}
 
-	return false;
-	return true;
+	if (License)
+		*License = LicenseBuffer;
+
+	return (wcscmp(LicenseBuffer.ProductID, L"liquidFOLDERS")==0);
 }

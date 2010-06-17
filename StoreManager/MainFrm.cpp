@@ -63,9 +63,8 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->LookChanged, OnLookChanged)
 	ON_COMMAND(ID_APP_UPDATESELECTION, OnUpdateSelection)
 
-	ON_UPDATE_COMMAND_UI_RANGE(ID_APP_HELP, ID_APP_PROMPT, OnUpdateAppCommands)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_APP_NEWVIEW, ID_CONTEXT_SAVEALL, OnUpdateAppCommands)
-	ON_UPDATE_COMMAND_UI_RANGE(ID_SORT_FILENAME, ID_SORT_FILENAME+99, OnUpdateAppSortCommands)
+	ON_UPDATE_COMMAND_UI_RANGE(ID_SORT_FILENAME, ID_SORT_FILENAME+99, OnUpdateSortCommands)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_NAV_FIRST, ID_NAV_CLEARHISTORY, OnUpdateNavCommands)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_PANE_CAPTIONBAR, ID_PANE_HISTORYWND, OnUpdatePaneCommands)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_CLIP_COPY, ID_CLIP_REMEMBERNEW, OnUpdateClipCommands)
@@ -75,12 +74,12 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_DROP_CALENDAR, ID_DROP_RESOLUTION, OnUpdateDropCommands)
 
 	ON_COMMAND(ID_APP_CLOSE, OnClose)
-	ON_COMMAND(ID_APP_CLOSEOTHERS, OnAppCloseOthers)
-	ON_COMMAND(ID_APP_SORTOPTIONS, OnAppSortOptions)
-	ON_COMMAND(ID_APP_VIEWOPTIONS, OnAppViewOptions)
+	ON_COMMAND(ID_APP_CLOSEOTHERS, OnCloseOthers)
+	ON_COMMAND(ID_APP_SORTOPTIONS, OnSortOptions)
+	ON_COMMAND(ID_APP_VIEWOPTIONS, OnViewOptions)
 
 	ON_COMMAND_RANGE(ID_APP_VIEW_AUTOMATIC, ID_APP_VIEW_TIMELINE, OnChangeChildView)
-	ON_COMMAND_RANGE(ID_SORT_FILENAME, ID_SORT_FILENAME+99, OnAppSort)
+	ON_COMMAND_RANGE(ID_SORT_FILENAME, ID_SORT_FILENAME+99, OnSort)
 /*	ON_COMMAND(ID_VIEWMODE_AUTODIRS, OnToggleAutoDirs)*/
 	ON_COMMAND(ID_CONTEXT_CHOOSE, OnChooseContext)
 	ON_COMMAND(ID_CONTEXT_ALWAYSSAVE, OnAlwaysSaveContext)
@@ -365,13 +364,13 @@ BOOL CMainFrame::OnCmdMsg(UINT nID, int nCode, void* pExtra, AFX_CMDHANDLERINFO*
 	return CFrameWndEx::OnCmdMsg(nID, nCode, pExtra, pHandlerInfo);
 }
 
-void CMainFrame::OnAppCloseOthers()
+void CMainFrame::OnCloseOthers()
 {
 	theApp.m_pMainWnd = this;
 	theApp.CloseAllFrames(TRUE);
 }
 
-void CMainFrame::OnAppSortOptions()
+void CMainFrame::OnSortOptions()
 {
 	SortOptionsDlg dlg(this, ActiveViewParameters, ActiveContextID, IsClipboard);
 	if (dlg.DoModal()==IDOK)
@@ -381,7 +380,7 @@ void CMainFrame::OnAppSortOptions()
 	}
 }
 
-void CMainFrame::OnAppViewOptions()
+void CMainFrame::OnViewOptions()
 {
 	ViewOptionsDlg dlg(this, theApp.m_nAppLook, ActiveViewParameters, ActiveContextID, CookedFiles);
 	if (dlg.DoModal()==IDOK)
@@ -485,12 +484,10 @@ void CMainFrame::OnUpdateAppCommands(CCmdUI* pCmdUI)
 		pCmdUI->SetCheck(ActiveViewParameters->Mode==pCmdUI->m_nID-ID_APP_VIEW_AUTOMATIC+LFViewAutomatic);
 		pCmdUI->Enable(theApp.m_Contexts[ActiveContextID]->AllowExtendedViews && LFAttributeSortableInView(ActiveViewParameters->SortBy, pCmdUI->m_nID-ID_APP_VIEW_AUTOMATIC+LFViewAutomatic));
 		break;
-	default:
-		theApp.OnUpdateAppCommands(pCmdUI);
 	}
 }
 
-void CMainFrame::OnAppSort(UINT nID)
+void CMainFrame::OnSort(UINT nID)
 {
 	nID -= ID_SORT_FILENAME;
 	if (ActiveViewParameters->SortBy!=nID)
@@ -510,7 +507,7 @@ BOOL CMainFrame::AttributeAllowedForSorting(int attr)
 	return theApp.m_Contexts[ActiveContextID]->AllowedAttributes->IsSet(attr);
 }
 
-void CMainFrame::OnUpdateAppSortCommands(CCmdUI* pCmdUI)
+void CMainFrame::OnUpdateSortCommands(CCmdUI* pCmdUI)
 {
 	UINT attr = pCmdUI->m_nID-ID_SORT_FILENAME;
 	pCmdUI->SetCheck(ActiveViewParameters->SortBy==attr);

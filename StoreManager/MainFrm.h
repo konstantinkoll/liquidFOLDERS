@@ -137,9 +137,9 @@ protected:
 	afx_msg void OnSetFocus(CWnd *pOldWnd);
 	afx_msg void OnClose();
 	afx_msg void OnDestroy();
-	afx_msg void OnAppCloseOthers();
-	afx_msg void OnAppSortOptions();
-	afx_msg void OnAppViewOptions();
+	afx_msg void OnCloseOthers();
+	afx_msg void OnSortOptions();
+	afx_msg void OnViewOptions();
 /*	afx_msg void OnToggleAutoDirs();*/
 	afx_msg void OnChooseContext();
 	afx_msg void OnAlwaysSaveContext();
@@ -147,8 +147,8 @@ protected:
 	afx_msg void OnSaveContextNow();
 	afx_msg void OnSaveContextAll();
 	afx_msg void OnUpdateAppCommands(CCmdUI* pCmdUI);
-	afx_msg void OnAppSort(UINT nID);
-	afx_msg void OnUpdateAppSortCommands(CCmdUI* pCmdUI);
+	afx_msg void OnSort(UINT nID);
+	afx_msg void OnUpdateSortCommands(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateDropCommands(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateNavCommands(CCmdUI* pCmdUI);
 	afx_msg void OnToggleCaptionBar();

@@ -11,4 +11,4 @@
 #define LICENSE_NAME         "LICENSE_NAME"
 
 // Interner Gebrauch
-bool IsLicensed(LFLicense* License);
+bool IsLicensed(LFLicense* License, bool Reload);

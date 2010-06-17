@@ -85,6 +85,7 @@ public:
 	CFont m_Fonts[2][2];
 	OSVERSIONINFO osInfo;
 	LFMessageIDs* MessageIDs;
+	BOOL IsLicensed;
 
 	PFNSETWINDOWTHEME zSetWindowTheme;
 	PFNOPENTHEMEDATA zOpenThemeData;
@@ -105,7 +106,6 @@ public:
 	static CMFCRibbonButton* CommandButton(UINT nID, int nSmallImageIndex=-1, int nLargeImageIndex=-1, BOOL bAlwaysShowDescription=FALSE);
 	static CMFCRibbonCheckBox* CommandCheckBox(UINT nID);
 	void SendMail(CString Subject=_T(""));
-	void OnUpdateAppCommands(CCmdUI* pCmdUI);
 	int GetGlobalInt(LPCTSTR lpszEntry, int nDefault=0);
 	CString GetGlobalString(LPCTSTR lpszEntry, LPCTSTR lpszDefault=_T(""));
 	BOOL WriteGlobalInt(LPCTSTR lpszEntry, int nValue);
@@ -127,6 +127,7 @@ protected:
 	afx_msg void OnAppEnterLicenseKey();
 	afx_msg void OnAppSupport();
 	afx_msg void OnAppPrompt();
+	afx_msg void OnUpdateAppCommands(CCmdUI* pCmdUI);
 	DECLARE_MESSAGE_MAP()
 
 private:
