@@ -126,10 +126,10 @@ void LFDialog::OnDestroy()
 	CDialog::OnDestroy();
 }
 
-void LFDialog::CheckLicenseKey()
+void LFDialog::CheckLicenseKey(LFLicense* License)
 {
 	// Ggf. "Lizenzschlüssel eingeben" verschwinden lassen
-	if (LFIsLicensed())
+	if (LFIsLicensed(License))
 	{
 		CWnd* btn = GetDlgItem(IDC_ENTERLICENSEKEY);
 

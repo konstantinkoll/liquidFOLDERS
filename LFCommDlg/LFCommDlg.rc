@@ -168,10 +168,18 @@ BEGIN
                     "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,94,221,128,10
     CONTROL         "Nur &Domains mit Dateien zeigen",IDC_HIDEEMPTYDOMAINS,
                     "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,94,234,128,10
-    GROUPBOX        "Lizenz",IDC_STATIC,238,169,155,35,WS_GROUP
-    LTEXT           "Name:",IDC_NAME,245,179,141,8
-    LTEXT           "X",IDC_LICENSEKEY,245,189,141,8
-    PUSHBUTTON      "&Lizenzschlüssel eingeben...",IDC_ENTERLICENSEKEY,244,180,142,17,WS_GROUP
+    GROUPBOX        "Lizenz",IDC_STATIC,238,169,155,81,WS_GROUP
+    LTEXT           "Name:",IDC_STATIC,245,179,141,8
+    LTEXT           "X",IDC_NAME,245,189,141,8
+    LTEXT           "Kaufdatum:",IDC_STATIC,245,202,84,8
+    LTEXT           "X",IDC_PURCHASEDATE,245,212,84,8
+    LTEXT           "ID:",IDC_STATIC,335,202,50,8
+    LTEXT           "X",IDC_ID,335,212,50,8
+    LTEXT           "Menge:",IDC_STATIC,335,227,50,8
+    LTEXT           "X",IDC_QUANTITY,335,237,50,8
+    LTEXT           "Produkt:",IDC_STATIC,245,227,83,8
+    LTEXT           "X",IDC_PRODUCT,245,237,80,8
+    PUSHBUTTON      "&Lizenzschlüssel eingeben...",IDC_ENTERLICENSEKEY,243,179,143,66,WS_GROUP
 END
 
 IDD_CHOOSEDEFAULTSTORE DIALOGEX 0, 0, 466, 210
@@ -596,10 +604,18 @@ BEGIN
     GROUPBOX        "StoreManager",IDC_STATIC,87,210,142,40,WS_GROUP
     CONTROL         "Hide un&mounted drives",IDC_HIDEEMPTYDRIVES,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,94,221,128,10
     CONTROL         "Hide empty &domains",IDC_HIDEEMPTYDOMAINS,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,94,234,128,10
-    GROUPBOX        "License",IDC_STATIC,238,169,155,35,WS_GROUP
-    LTEXT           "Name:",IDC_NAME,245,179,141,8
-    LTEXT           "X",IDC_LICENSEKEY,245,189,141,8
-    PUSHBUTTON      "Enter &license key...",IDC_ENTERLICENSEKEY,244,180,142,17,WS_GROUP
+    GROUPBOX        "License",IDC_STATIC,238,169,155,81,WS_GROUP
+    LTEXT           "Name:",IDC_STATIC,245,179,141,8
+    LTEXT           "X",IDC_NAME,245,189,141,8
+    LTEXT           "Purchase date:",IDC_STATIC,245,202,84,8
+    LTEXT           "X",IDC_PURCHASEDATE,245,212,84,8
+    LTEXT           "ID:",IDC_STATIC,335,202,50,8
+    LTEXT           "X",IDC_ID,335,212,50,8
+    LTEXT           "Quantity:",IDC_STATIC,335,227,50,8
+    LTEXT           "X",IDC_QUANTITY,335,237,50,8
+    LTEXT           "Product:",IDC_STATIC,245,227,83,8
+    LTEXT           "X",IDC_PRODUCT,245,237,80,8
+    PUSHBUTTON      "Enter &license key...",IDC_ENTERLICENSEKEY,243,179,143,66,WS_GROUP
 END
 
 IDD_WELCOME DIALOGEX 0, 0, 262, 212
@@ -852,7 +868,7 @@ BEGIN
     BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 393
-        TOPMARGIN, 7
+        TOPMARGIN, 6
         BOTTOMMARGIN, 272
     END
 
@@ -1025,10 +1041,18 @@ BEGIN
     CONTROL         "Solo platinas &encuadenadas",IDC_HIDEEMPTYDRIVES,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,94,221,128,10
     CONTROL         "Solamente &dominios con archivos",IDC_HIDEEMPTYDOMAINS,
                     "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,94,234,128,10
-    GROUPBOX        "Licencia",IDC_STATIC,238,169,155,35,WS_GROUP
-    LTEXT           "Nombre:",IDC_NAME,245,179,141,8
-    LTEXT           "X",IDC_LICENSEKEY,245,189,141,8
-    PUSHBUTTON      "Dictar &licencia...",IDC_ENTERLICENSEKEY,244,180,142,17,WS_GROUP
+    GROUPBOX        "Licensia",IDC_STATIC,238,169,155,81,WS_GROUP
+    LTEXT           "Nombre:",IDC_STATIC,245,179,141,8
+    LTEXT           "X",IDC_NAME,245,189,141,8
+    LTEXT           "Purchase date:",IDC_STATIC,245,202,84,8
+    LTEXT           "X",IDC_PURCHASEDATE,245,212,84,8
+    LTEXT           "ID:",IDC_STATIC,335,202,50,8
+    LTEXT           "X",IDC_ID,335,212,50,8
+    LTEXT           "Quantity:",IDC_STATIC,335,227,50,8
+    LTEXT           "X",IDC_QUANTITY,335,237,50,8
+    LTEXT           "Product:",IDC_STATIC,245,227,83,8
+    LTEXT           "X",IDC_PRODUCT,245,237,80,8
+    PUSHBUTTON      "Dictar &licencia...",IDC_ENTERLICENSEKEY,243,179,143,66,WS_GROUP
 END
 
 IDD_CHOOSEDEFAULTSTORE DIALOGEX 0, 0, 466, 210
@@ -1455,10 +1479,18 @@ BEGIN
                     "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,94,221,148,10
     CONTROL         "Presenter seulemont &domains avec fichiers",IDC_HIDEEMPTYDOMAINS,
                     "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,94,234,148,10
-    GROUPBOX        "License",IDC_STATIC,258,169,155,35,WS_GROUP
-    LTEXT           "Nom:",IDC_NAME,265,179,141,8
-    LTEXT           "X",IDC_LICENSEKEY,265,189,141,8
-    PUSHBUTTON      "Donner clé de &license...",IDC_ENTERLICENSEKEY,264,180,142,17,WS_GROUP
+    GROUPBOX        "License",IDC_STATIC,258,169,155,81,WS_GROUP
+    LTEXT           "Nom:",IDC_STATIC,265,179,141,8
+    LTEXT           "X",IDC_NAME,265,189,141,8
+    LTEXT           "Purchase date:",IDC_STATIC,265,202,84,8
+    LTEXT           "X",IDC_PURCHASEDATE,265,212,84,8
+    LTEXT           "ID:",IDC_STATIC,355,202,50,8
+    LTEXT           "X",IDC_ID,355,212,50,8
+    LTEXT           "Quantity:",IDC_STATIC,355,227,50,8
+    LTEXT           "X",IDC_QUANTITY,355,237,50,8
+    LTEXT           "Product:",IDC_STATIC,265,227,83,8
+    LTEXT           "X",IDC_PRODUCT,265,237,80,8
+    PUSHBUTTON      "Donner clé de &license...",IDC_ENTERLICENSEKEY,263,179,143,66,WS_GROUP
 END
 
 IDD_CHOOSEDEFAULTSTORE DIALOGEX 0, 0, 466, 210
@@ -1680,6 +1712,24 @@ BEGIN
     LTEXT           "Les qualités de fichier manquants seront mis en utilisant les valeurs si-dessous.\nSi vous ne voulez pas que vos fichiers soient amendés, appuyez ""Omettre"".",IDC_STATIC,14,16,253,18
 END
 
+IDD_STOREMAINTENANCE DIALOGEX 0, 0, 220, 95
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Travail d'entretien"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    GROUPBOX        "Résumé",IDC_STATIC,7,7,206,61
+    LTEXT           "Entretenu avec succès:",IDC_STATIC,14,17,125,8
+    LTEXT           "X",IDC_SERVICED,145,17,60,8,SS_ENDELLIPSIS
+    LTEXT           "Aucun accès (protégé en écriture):",IDC_STATIC,14,33,125,8
+    LTEXT           "X",IDC_WRITEPROTECTED,145,33,60,8,SS_ENDELLIPSIS
+    LTEXT           "Trop peu de mémoire libre",IDC_STATIC,14,43,125,8
+    LTEXT           "X",IDC_NOFREESPACE,145,43,60,8,SS_ENDELLIPSIS
+    LTEXT           "Encore plein de défauts:",IDC_STATIC,14,53,125,8
+    LTEXT           "X",IDC_ERROR,145,53,60,8,SS_ENDELLIPSIS
+    DEFPUSHBUTTON   "Ok",IDOK,7,74,50,14,WS_GROUP
+    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ | WS_GROUP,14,29,192,1
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -1692,7 +1742,7 @@ BEGIN
     IDD_ABOUT, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 393
+        RIGHTMARGIN, 413
         TOPMARGIN, 7
         BOTTOMMARGIN, 272
     END

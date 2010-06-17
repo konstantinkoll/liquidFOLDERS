@@ -7,7 +7,7 @@
 
 #include "targetver.h"
 
-#include "..\\LFCore\\License.h"
+#include "License.h"
 
 #include <stdio.h>
 #include <tchar.h>

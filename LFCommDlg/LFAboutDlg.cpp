@@ -119,7 +119,15 @@ BOOL LFAboutDlg::OnInitDialog()
 	if (!ShowCancel)
 		GetDlgItem(IDCANCEL)->ShowWindow(SW_HIDE);
 
-	CheckLicenseKey();
+	// Lizenz
+	LFLicense License;
+	CheckLicenseKey(&License);
+
+	GetDlgItem(IDC_NAME)->SetWindowText(License.RegName);
+	GetDlgItem(IDC_PURCHASEDATE)->SetWindowText(License.PurchaseDate);
+	GetDlgItem(IDC_ID)->SetWindowText(License.PurchaseID);
+	GetDlgItem(IDC_PRODUCT)->SetWindowText(License.ProductID);
+	GetDlgItem(IDC_QUANTITY)->SetWindowText(License.Quantity);
 
 	return TRUE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird
 }
@@ -155,7 +163,7 @@ void LFAboutDlg::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 	dc.DrawTextW(parameters->copyright, -1, r, 0);
 	r.top += 25;
 
-	dc.DrawTextW(_T("Version ")+parameters->version+_T(" (")+parameters->build+_T(")"), -1, r, 0);
+	dc.DrawText(_T("Version ")+parameters->version+_T(" (")+parameters->build+_T(")"), -1, r, 0);
 	r.top += 25;
 
 	dc.SelectObject(oldFont);

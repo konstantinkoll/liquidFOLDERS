@@ -33,7 +33,8 @@ LFCore_API unsigned int LFGetLogicalDrives(unsigned int mask=LFGLD_Both);
 LFCore_API LFMessageIDs* LFGetMessageIDs();
 
 // Gibt true zurück, wenn diese Installation freigeschaltet ist
-LFCore_API bool LFIsLicensed();
+// Die gespeicherten Lizenzinformationen finden sich in License
+LFCore_API bool LFIsLicensed(LFLicense* License=NULL);
 
 
 

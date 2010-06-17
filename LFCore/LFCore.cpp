@@ -121,9 +121,9 @@ LFCore_API LFMessageIDs* LFGetMessageIDs()
 	return &LFMessages;
 }
 
-LFCore_API bool LFIsLicensed()
+LFCore_API bool LFIsLicensed(LFLicense* License)
 {
-	return IsLicensed();
+	return IsLicensed(License);
 }
 
 

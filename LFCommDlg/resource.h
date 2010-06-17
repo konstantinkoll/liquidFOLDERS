@@ -57,6 +57,11 @@
 #define IDC_TEXTURE_8192                21007
 #define IDC_HIDEEMPTYDRIVES             21008
 #define IDC_HIDEEMPTYDOMAINS            21009
+#define IDC_NAME                        21010
+#define IDC_PURCHASEDATE                21011
+#define IDC_ID                          21012
+#define IDC_PRODUCT                     21013
+#define IDC_QUANTITY                    21014
 #define IDS_HELPURL                     21050
 #define IDS_PURCHASEURL                 21051
 #define IDS_ERROR                       21052
@@ -99,8 +104,7 @@
 #define IDD_JUMPTOIATA                  21520
 #define IDD_SELECTGPS                   21530
 #define IDD_ENTERLICENSEKEY             21600
-#define IDC_NAME                        21601
-#define IDC_LICENSEKEY                  21602
+#define IDC_LICENSEKEY                  21601
 #define IDD_STOREPROPERTIES             21700
 #define IDC_CREATED                     21701
 #define IDC_UPDATED                     21702

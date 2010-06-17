@@ -12,6 +12,26 @@
 #include "..\\LFCore\\LFBitArray.h"
 
 
+// License
+
+struct LFLicenseVersion
+{
+	unsigned int Major;
+	unsigned int Minor;
+	unsigned int Release;
+};
+
+struct LFLicense
+{
+	wchar_t PurchaseID[256];
+	wchar_t ProductID[256];
+	wchar_t PurchaseDate[16];
+	wchar_t Quantity[8];
+	wchar_t RegName[256];
+	LFLicenseVersion Version;
+};
+
+
 // Messages
 
 struct LFMessageIDs

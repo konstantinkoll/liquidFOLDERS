@@ -20,7 +20,7 @@ protected:
 	UINT m_nIDTemplate;
 
 	virtual void OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect);
-	virtual void CheckLicenseKey();
+	virtual void CheckLicenseKey(LFLicense* License=NULL);
 
 	afx_msg BOOL OnInitDialog();
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
