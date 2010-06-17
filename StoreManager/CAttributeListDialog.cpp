@@ -36,9 +36,10 @@ void CAttributeListDialog::PopulateListCtrl(int nId, UINT mode, UINT context, LF
 	l->SetImageList(m_pAttributeIcons, LVSIL_SMALL);
 
 	const UINT iconPosition[] = { LFAttrFileName, LFAttrTitle, 0xFFFFFFFF, LFAttrCreationTime, LFAttrFileTime,
-		LFAttrRecordingTime, LFAttrDueTime, LFAttrDoneTime, LFAttrLocationName, LFAttrLocationIATA,
-		LFAttrLocationGPS, LFAttrRating, LFAttrRoll, LFAttrArtist, LFAttrComment, LFAttrDuration,
-		LFAttrLanguage, LFAttrResolution, LFAttrHeight, LFAttrWidth, LFAttrAspectRatio, LFAttrTags, LFAttrStoreID };
+		LFAttrRecordingTime, LFAttrDeleteTime, LFAttrDueTime, LFAttrDoneTime, LFAttrLocationName,
+		LFAttrLocationIATA, LFAttrLocationGPS, LFAttrRating, LFAttrRoll, LFAttrArtist, LFAttrComment,
+		LFAttrDuration, LFAttrLanguage, LFAttrResolution, LFAttrHeight, LFAttrWidth, LFAttrAspectRatio, LFAttrTags,
+		LFAttrStoreID };
 
 	LVITEM lvi;
 	ZeroMemory(&lvi, sizeof(lvi));

@@ -535,11 +535,13 @@ void CMainFrame::OnUpdateDropCommands(CCmdUI* pCmdUI)
 	case ID_DROP_TIME:
 		pCmdUI->SetCheck((ActiveViewParameters->SortBy==LFAttrCreationTime) ||
 			(ActiveViewParameters->SortBy==LFAttrFileTime) ||
+			(ActiveViewParameters->SortBy==LFAttrDeleteTime) ||
 			(ActiveViewParameters->SortBy==LFAttrRecordingTime) ||
 			(ActiveViewParameters->SortBy==LFAttrDueTime) ||
 			(ActiveViewParameters->SortBy==LFAttrDoneTime));
 		pCmdUI->Enable(AttributeAllowedForSorting(LFAttrCreationTime) ||
 			AttributeAllowedForSorting(LFAttrFileTime) ||
+			AttributeAllowedForSorting(LFAttrDeleteTime) ||
 			AttributeAllowedForSorting(LFAttrRecordingTime) ||
 			AttributeAllowedForSorting(LFAttrDueTime) ||
 			AttributeAllowedForSorting(LFAttrDoneTime));
@@ -1767,10 +1769,11 @@ void CMainFrame::InitializeRibbon()
 				pBtnSortDate->AddSubItem(new CMFCRibbonButton(ID_SORT_CREATIONTIME, theApp.m_Attributes[LFAttrCreationTime]->Name, 23, 23));
 				pBtnSortDate->AddSubItem(new CMFCRibbonButton(ID_SORT_FILETIME, theApp.m_Attributes[LFAttrFileTime]->Name, 24, 24));
 				pBtnSortDate->AddSubItem(new CMFCRibbonButton(ID_SORT_RECORDINGTIME, theApp.m_Attributes[LFAttrRecordingTime]->Name, 25, 25));
+				pBtnSortDate->AddSubItem(new CMFCRibbonButton(ID_SORT_DELETETIME, theApp.m_Attributes[LFAttrDeleteTime]->Name, 26, 26));
 				strTemp = "By workflow";
 				pBtnSortDate->AddSubItem(new CMFCRibbonLabel(strTemp));
-				pBtnSortDate->AddSubItem(new CMFCRibbonButton(ID_SORT_DUETIME, theApp.m_Attributes[LFAttrDueTime]->Name, 26, 26));
-				pBtnSortDate->AddSubItem(new CMFCRibbonButton(ID_SORT_DONETIME, theApp.m_Attributes[LFAttrDoneTime]->Name, 27, 27));
+				pBtnSortDate->AddSubItem(new CMFCRibbonButton(ID_SORT_DUETIME, theApp.m_Attributes[LFAttrDueTime]->Name, 27, 27));
+				pBtnSortDate->AddSubItem(new CMFCRibbonButton(ID_SORT_DONETIME, theApp.m_Attributes[LFAttrDoneTime]->Name, 28, 28));
 
 			pPanelArrange->Add(pBtnSortDate);
 
@@ -1780,33 +1783,33 @@ void CMainFrame::InitializeRibbon()
 
 				strTemp = "By location";
 				pBtnSortLocation->AddSubItem(new CMFCRibbonLabel(strTemp));
-				pBtnSortLocation->AddSubItem(new CMFCRibbonButton(ID_SORT_LOCATIONNAME, theApp.m_Attributes[LFAttrLocationName]->Name, 28, 28));
-				pBtnSortLocation->AddSubItem(new CMFCRibbonButton(ID_SORT_LOCATIONIATA, theApp.m_Attributes[LFAttrLocationIATA]->Name, 29, 29));
-				pBtnSortLocation->AddSubItem(new CMFCRibbonButton(ID_SORT_LOCATIONGPS, theApp.m_Attributes[LFAttrLocationGPS]->Name, 30, 30));
+				pBtnSortLocation->AddSubItem(new CMFCRibbonButton(ID_SORT_LOCATIONNAME, theApp.m_Attributes[LFAttrLocationName]->Name, 29, 29));
+				pBtnSortLocation->AddSubItem(new CMFCRibbonButton(ID_SORT_LOCATIONIATA, theApp.m_Attributes[LFAttrLocationIATA]->Name, 30, 30));
+				pBtnSortLocation->AddSubItem(new CMFCRibbonButton(ID_SORT_LOCATIONGPS, theApp.m_Attributes[LFAttrLocationGPS]->Name, 31, 31));
 
 			pPanelArrange->Add(pBtnSortLocation);
 
-			pPanelArrange->Add(new CMFCRibbonButton(ID_SORT_RATING, theApp.m_Attributes[LFAttrRating]->Name, 31, 31));
-			pPanelArrange->Add(new CMFCRibbonButton(ID_SORT_ROLL, theApp.m_Attributes[LFAttrRoll]->Name, 32, 32));
+			pPanelArrange->Add(new CMFCRibbonButton(ID_SORT_RATING, theApp.m_Attributes[LFAttrRating]->Name, 32, 32));
+			pPanelArrange->Add(new CMFCRibbonButton(ID_SORT_ROLL, theApp.m_Attributes[LFAttrRoll]->Name, 33, 33));
 
 			pPanelArrange->AddSeparator();
 
-			pPanelArrange->Add(new CMFCRibbonButton(ID_SORT_ARTIST, theApp.m_Attributes[LFAttrArtist]->Name, 33, 33));
-			pPanelArrange->Add(new CMFCRibbonButton(ID_SORT_COMMENT, theApp.m_Attributes[LFAttrComment]->Name, 34, 34));
-			pPanelArrange->Add(new CMFCRibbonButton(ID_SORT_DURATION, theApp.m_Attributes[LFAttrDuration]->Name, 35, 35));
-			pPanelArrange->Add(new CMFCRibbonButton(ID_SORT_LANGUAGE, theApp.m_Attributes[LFAttrLanguage]->Name, 36, 36));
+			pPanelArrange->Add(new CMFCRibbonButton(ID_SORT_ARTIST, theApp.m_Attributes[LFAttrArtist]->Name, 34, 34));
+			pPanelArrange->Add(new CMFCRibbonButton(ID_SORT_COMMENT, theApp.m_Attributes[LFAttrComment]->Name, 35, 35));
+			pPanelArrange->Add(new CMFCRibbonButton(ID_SORT_DURATION, theApp.m_Attributes[LFAttrDuration]->Name, 36, 36));
+			pPanelArrange->Add(new CMFCRibbonButton(ID_SORT_LANGUAGE, theApp.m_Attributes[LFAttrLanguage]->Name, 37, 37));
 
-			CMFCRibbonButton* pBtnSortResolution = new CMFCRibbonButton(ID_DROP_RESOLUTION, theApp.m_Attributes[LFAttrResolution]->Name, 37, 37);
+			CMFCRibbonButton* pBtnSortResolution = new CMFCRibbonButton(ID_DROP_RESOLUTION, theApp.m_Attributes[LFAttrResolution]->Name, 38, 38);
 			pBtnSortResolution->SetDefaultCommand(FALSE);
 
 				strTemp = "By overall dimension";
 				pBtnSortResolution->AddSubItem(new CMFCRibbonLabel(strTemp));
-				pBtnSortResolution->AddSubItem(new CMFCRibbonButton(ID_SORT_ASPECTRATIO, theApp.m_Attributes[LFAttrAspectRatio]->Name, 40, 40));
-				pBtnSortResolution->AddSubItem(new CMFCRibbonButton(ID_SORT_RESOLUTION, theApp.m_Attributes[LFAttrResolution]->Name, 37, 37));
+				pBtnSortResolution->AddSubItem(new CMFCRibbonButton(ID_SORT_ASPECTRATIO, theApp.m_Attributes[LFAttrAspectRatio]->Name, 41, 41));
+				pBtnSortResolution->AddSubItem(new CMFCRibbonButton(ID_SORT_RESOLUTION, theApp.m_Attributes[LFAttrResolution]->Name, 38, 38));
 				strTemp = "By edge";
 				pBtnSortResolution->AddSubItem(new CMFCRibbonLabel(strTemp));
-				pBtnSortResolution->AddSubItem(new CMFCRibbonButton(ID_SORT_HEIGHT, theApp.m_Attributes[LFAttrHeight]->Name, 38, 38));
-				pBtnSortResolution->AddSubItem(new CMFCRibbonButton(ID_SORT_WIDTH, theApp.m_Attributes[LFAttrWidth]->Name, 39, 39));
+				pBtnSortResolution->AddSubItem(new CMFCRibbonButton(ID_SORT_HEIGHT, theApp.m_Attributes[LFAttrHeight]->Name, 39, 39));
+				pBtnSortResolution->AddSubItem(new CMFCRibbonButton(ID_SORT_WIDTH, theApp.m_Attributes[LFAttrWidth]->Name, 40, 40));
 
 			pPanelArrange->Add(pBtnSortResolution);
 
