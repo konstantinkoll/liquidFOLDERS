@@ -264,7 +264,9 @@ BEGIN
     POPUP "POPUP"
     BEGIN
         MENUITEM "&Open",                       ID_NAV_STARTNAVIGATION
+        MENUITEM "&Remember",                   ID_CLIP_REMEMBERLAST
         MENUITEM SEPARATOR
+        MENUITEM "&Delete",                     ID_FILES_DELETE
     END
 END
 

@@ -149,5 +149,6 @@ bool IsLicensed(LFLicense* License, bool Reload)
 	if (License)
 		*License = LicenseBuffer;
 
+	return false;
 	return (wcscmp(LicenseBuffer.ProductID, L"liquidFOLDERS")==0);
 }

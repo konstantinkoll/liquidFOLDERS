@@ -199,10 +199,10 @@ STRINGTABLE
 BEGIN
     IDS_LFErrorRegistryError "The registry cannot be accessed."
     IDS_LFErrorIllegalKey   "The store or file key is illegal."
-    IDS_LFErrorNoDefaultStore "There is currently no default store."
+    IDS_LFErrorNoDefaultStore "There is no default store right now."
     IDS_LFErrorTooManyStores 
                             "The maximum number of stores has already been created."
-    IDS_LFErrorStoreNotMounted "The store is currently not mounted."
+    IDS_LFErrorStoreNotMounted "The store is not mounted right now."
     IDS_LFErrorMutexError   "liquidFOLDERS is currently blocked by another process."
     IDS_LFErrorIllegalAttribute 
                             "At least one of the selected items does not possesss the attribute."

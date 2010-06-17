@@ -2,6 +2,7 @@
 // Microsoft Visual C++ generated include file.
 // Used by LFCommDlg.rc
 //
+#define IDCANCEL2                       3
 #define ID_APP_HELP                     200
 #define ID_APP_SUPPORT                  201
 #define ID_APP_NEWFILEDROP              202
@@ -134,7 +135,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        2007
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         2017
+#define _APS_NEXT_CONTROL_VALUE         2018
 #define _APS_NEXT_SYMED_VALUE           2007
 #endif
 #endif
