@@ -25,7 +25,7 @@ struct LFLicense
 {
 	wchar_t PurchaseID[256];
 	wchar_t ProductID[256];
-	wchar_t PurchaseDate[16];
+	wchar_t PurchaseDate[16];			// Either DD/MM/YYYY or DD.MM.YYYY
 	wchar_t Quantity[8];
 	wchar_t RegName[256];
 	LFLicenseVersion Version;

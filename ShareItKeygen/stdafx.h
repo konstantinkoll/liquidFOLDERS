@@ -16,6 +16,9 @@
 #include <sstream>
 #include <fstream>
 
+#pragma warning(push, 3)
+#pragma warning(disable: 4702)
+#pragma warning(disable: 4706)
 #include "integer.h"
 #include "files.h"
 #include "osrng.h"
@@ -25,6 +28,7 @@
 #include "cryptlib.h"
 #include "sha.h"
 #include "base64.h"
+#pragma warning(pop)
 
 USING_NAMESPACE(CryptoPP)
 USING_NAMESPACE(std)

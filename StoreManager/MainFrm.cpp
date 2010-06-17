@@ -1025,7 +1025,7 @@ void CMainFrame::OnStoreBackup()
 				for (UINT a=0; a<CookedFiles->m_ItemCount; a++)
 				{
 					LFItemDescriptor* i = CookedFiles->m_Items[a];
-					if ((i->Type & LFTypeStore) && (i->CategoryID==LFCategoryInternalStores))
+					if ((i->Type & LFTypeStore) && (i->CategoryID<=LFCategoryHybridStores))
 					{
 						LFStoreDescriptor s;
 						if (LFGetStoreSettings(i->StoreID, &s)==LFOk)
