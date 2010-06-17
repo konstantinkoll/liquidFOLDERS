@@ -112,33 +112,32 @@ int main(int argc, char* argv[])
 	RSA::PrivateKey privateKey(params);
 
 	stringstream ss;
-
 	ss << LICENSE_ID << "=" << input.purchaseId << ":" << input.runningNo << endl;
 	ss << LICENSE_DATE << "="<< input.purchaseDate << endl;
 	ss << LICENSE_PRODUCT << "="<< PRODUCT << endl;
 	ss << LICENSE_QUANTITY << "="<< input.quantity << endl;
 	ss << LICENSE_VERSION << "="<< VERSION << endl;
 	ss << LICENSE_NAME << "="<< input.regName << endl;
-
 	std::string message = ss.str();
-	std::string signature;
 
 	////////////////////////////////////////////////
 	// Sign and Encode
 	RSASS<PSSR, SHA256>::Signer signer(privateKey);
 
-	StringSource( message, true, new SignerFilter(rng, signer, new StringSink(signature)));
+	std::string signature;
+	StringSource(message, true, new SignerFilter(rng, signer, new StringSink(signature)));
 
 	std::string result;
-
-	StringSource(message+signature,true,new Base64Encoder(new StringSink(result)));
+	StringSource(message+signature, true, new Base64Encoder(new StringSink(result), false));
 
 	std::ofstream keyMetadataOutput(argv[2]);
-	keyMetadataOutput << "text/plain:liquidFOLDERS.key" << std::endl;
+	keyMetadataOutput << "text/plain:liquidFOLDERS.reg" << std::endl;
 	keyMetadataOutput.close();
 
 	std::ofstream keyOutput(argv[3]);
-	keyOutput << result << std::endl;
+	keyOutput << "Windows Registry Editor Version 5.00" << std::endl << std::endl;
+	keyOutput << "[HKEY_CURRENT_USER\\Software\\liquidFOLDERS]" << std::endl;
+	keyOutput << "\"License\"=\"" << result << "\"" << std::endl;
 	keyOutput.close();
 
 	return ERC_SUCCESS_BIN;

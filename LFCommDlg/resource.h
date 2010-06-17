@@ -2,7 +2,6 @@
 // Microsoft Visual C++ generated include file.
 // Used by LFCommDlg.rc
 //
-#define IDCANCEL2                       3
 #define ID_APP_HELP                     200
 #define ID_APP_SUPPORT                  201
 #define ID_APP_NEWFILEDROP              202
@@ -105,7 +104,8 @@
 #define IDD_JUMPTOIATA                  21520
 #define IDD_SELECTGPS                   21530
 #define IDD_ENTERLICENSEKEY             21600
-#define IDC_LICENSEKEY                  21601
+#define IDC_LOADLICENSE                 21601
+#define IDC_LICENSEKEY                  21602
 #define IDD_STOREPROPERTIES             21700
 #define IDC_CREATED                     21701
 #define IDC_UPDATED                     21702

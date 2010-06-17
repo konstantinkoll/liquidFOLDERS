@@ -339,17 +339,19 @@ BEGIN
     PUSHBUTTON      "Datenbank-Fehler melden...",IDC_REPORTERROR,121,284,115,14,WS_GROUP
 END
 
-IDD_ENTERLICENSEKEY DIALOGEX 0, 0, 320, 215
+IDD_ENTERLICENSEKEY DIALOGEX 0, 0, 320, 263
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Lizenzschlüssel eingeben"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    GROUPBOX        "Lizenz",IDC_STATIC,7,92,306,95
-    EDITTEXT        IDC_LICENSEKEY,14,113,292,45,ES_MULTILINE | ES_AUTOHSCROLL | WS_VSCROLL | WS_GROUP
-    DEFPUSHBUTTON   "Ok",IDOK,7,194,50,14,WS_GROUP
-    PUSHBUTTON      "Abbrechen",IDCANCEL,64,194,50,14,WS_GROUP
-    LTEXT           "Lizenzschlüssel:",IDC_STATIC,14,103,291,8
-    PUSHBUTTON      "Aus &Datei laden...",IDCANCEL2,14,165,75,14,WS_GROUP
+    GROUPBOX        "Lizenz",IDC_STATIC,7,92,306,142
+    LTEXT           "Bei Erwerb eines Lizenzschlüssel sendet Ihnen unser Partner share*it eine EMail, an die die Datei „liquidFOLDERS.reg“ angehängt ist. Speichern Sie diese Datei lokal auf Ihrem Computer ab.",IDC_STATIC,14,103,291,26
+    LTEXT           "Öffnen Sie die Datei anschließend mit der untenstehenden Schaltfläche. Alternativ können Sie ihren Inhalt in das Textfeld darunter kopieren.",IDC_STATIC,14,128,291,18
+    PUSHBUTTON      "Lizenz&datei laden...",IDC_LOADLICENSE,14,148,81,15,WS_GROUP
+    LTEXT           "Lizenzschlüssel:",IDC_STATIC,14,171,291,8
+    EDITTEXT        IDC_LICENSEKEY,14,180,292,45,ES_MULTILINE | ES_AUTOHSCROLL | WS_VSCROLL | WS_GROUP
+    DEFPUSHBUTTON   "Ok",IDOK,7,242,50,14,WS_GROUP
+    PUSHBUTTON      "Abbrechen",IDCANCEL,64,242,50,14,WS_GROUP
 END
 
 IDD_STOREPROPERTIES DIALOGEX 0, 0, 385, 186
@@ -488,7 +490,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 313
         TOPMARGIN, 7
-        BOTTOMMARGIN, 208
+        BOTTOMMARGIN, 256
     END
 
     IDD_STOREPROPERTIES, DIALOG
@@ -840,6 +842,21 @@ BEGIN
     CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ | WS_GROUP,14,29,172,1
 END
 
+IDD_ENTERLICENSEKEY DIALOGEX 0, 0, 320, 253
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Enter license key"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    GROUPBOX        "License",IDC_STATIC,7,92,306,132
+    LTEXT           "After purchasing a license key through our partner share*it, you'll receive an email that has the file „liquidFOLDERS.reg“ attached to it. Save this file locally on your computer.",IDC_STATIC,14,103,291,18
+    LTEXT           "Subsequently open the file using the button below, or copy and paste its contents into the textbox beneath the button.",IDC_STATIC,14,120,291,18
+    PUSHBUTTON      "Load license &file...",IDC_LOADLICENSE,14,139,81,15,WS_GROUP
+    LTEXT           "License key:",IDC_STATIC,14,161,291,8
+    EDITTEXT        IDC_LICENSEKEY,14,170,292,45,ES_MULTILINE | ES_AUTOHSCROLL | WS_VSCROLL | WS_GROUP
+    DEFPUSHBUTTON   "Ok",IDOK,7,232,50,14,WS_GROUP
+    PUSHBUTTON      "Cancel",IDCANCEL,64,232,50,14,WS_GROUP
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -927,6 +944,14 @@ BEGIN
         RIGHTMARGIN, 193
         TOPMARGIN, 7
         BOTTOMMARGIN, 88
+    END
+
+    IDD_ENTERLICENSEKEY, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 313
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 246
     END
 END
 #endif    // APSTUDIO_INVOKED

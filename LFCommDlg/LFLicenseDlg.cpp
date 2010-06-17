@@ -53,4 +53,5 @@ void LFLicenseDlg::DoDataExchange(CDataExchange* pDX)
 {
 	DDX_Control(pDX, IDOK, m_OkButton);
 	DDX_Control(pDX, IDCANCEL, m_CancelButton);
+	DDX_Control(pDX, IDC_LOADLICENSE, m_LoadButton);
 }

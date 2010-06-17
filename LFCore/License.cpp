@@ -39,7 +39,7 @@ void ParseInput(string& tmpStr, LFLicense* License)
 	stringstream ss(tmpStr);
 	string line;
 
-	while(!ss.eof())
+	while (!ss.eof())
 	{
 		getline(ss, line);
 		std::string::size_type delimiterPos = line.find_first_of("=");
