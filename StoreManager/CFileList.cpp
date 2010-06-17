@@ -296,7 +296,7 @@ void CFileList::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 
 void CFileList::OnDoubleClick(NMHDR* /*pNMHDR*/, LRESULT* /*pResult*/)
 {
-	GetParentFrame()->SendMessage(WM_COMMAND, ID_NAV_STARTNAVIGATION);
+	GetParentFrame()->SendMessage(WM_COMMAND, ID_FILES_OPEN);
 }
 
 void CFileList::OnLButtonDown(UINT nFlags, CPoint point)

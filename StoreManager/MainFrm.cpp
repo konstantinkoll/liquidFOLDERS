@@ -103,7 +103,6 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_COMMAND(ID_NAV_SHOWHISTORY, OnShowHistoryWnd)
 	ON_COMMAND(ID_NAV_STORES, OnNavigateStores)
 	ON_COMMAND(ID_NAV_HOME, OnNavigateHome)
-	ON_COMMAND(ID_NAV_STARTNAVIGATION, OnStartNavigation)
 	ON_COMMAND(ID_NAV_CLEARHISTORY, OnClearHistory)
 
 	ON_COMMAND(ID_CLIP_REMOVE, OnClipRemove)
@@ -111,6 +110,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_COMMAND(ID_CLIP_REMEMBERNEW, OnClipRememberNew)
 
 	ON_COMMAND(ID_FILES_SHOWINSPECTOR, OnShowInspectorWnd)
+	ON_COMMAND(ID_FILES_OPEN, OnFilesOpen)
 	ON_COMMAND(ID_FILES_DELETE, OnFilesDelete)
 
 	ON_COMMAND(ID_TRASH_EMPTY, OnEmptyTrash)
@@ -752,6 +752,52 @@ void CMainFrame::OnUpdateClipCommands(CCmdUI* pCmdUI)
 	pCmdUI->Enable(b);
 }
 
+void CMainFrame::OnFilesOpen()
+{
+	int idx = GetSelectedItem();
+
+	if (idx!=-1)
+	{
+		LFItemDescriptor* i = CookedFiles->m_Items[idx];
+
+		if (i->NextFilter)
+		{
+			// Es ist ein weiterer Filter angehängt, also dorthin navigieren
+			NavigateTo(LFAllocFilter(i->NextFilter));
+		}
+		else
+		{
+			if (!(i->Type & LFTypeNotMounted))
+			{
+				char Path[MAX_PATH];
+				unsigned int res;
+
+				switch (i->Type & LFTypeMask)
+				{
+				case LFTypeDrive:
+					ExecuteCreateStoreDlg(IDD_STORENEWDRIVE, i->CoreAttributes.FileID[0]);
+					break;
+				case LFTypeFile:
+					res = LFGetFileLocation(i, Path, MAX_PATH);
+					if (res==LFOk)
+					{
+						ShellExecuteA(NULL, "open", Path, NULL, NULL, SW_SHOW);
+					}
+					else
+					{
+						LFErrorBox(res);
+					}
+
+					break;
+				default:
+					ASSERT(FALSE);
+					break;
+				}
+			}
+		}
+	}
+}
+
 void CMainFrame::OnFilesDelete()
 {
 	if (CookedFiles)
@@ -768,11 +814,21 @@ void CMainFrame::OnFilesDelete()
 void CMainFrame::OnUpdateFileCommands(CCmdUI* pCmdUI)
 {
 	BOOL b = FALSE;
+	int i;
 
 	switch (pCmdUI->m_nID)
 	{
 	case ID_FILES_SHOWINSPECTOR:
 		b = TRUE;
+		break;
+	case ID_FILES_OPEN:
+		i = GetSelectedItem();
+		if (i!=-1)
+		{
+			b = (CookedFiles->m_Items[i]->NextFilter!=NULL) ||
+				((CookedFiles->m_Items[i]->Type & (LFTypeMask | LFTypeNotMounted))==LFTypeDrive) ||
+				((CookedFiles->m_Items[i]->Type & LFTypeMask)==LFTypeFile);
+		}
 		break;
 	case ID_FILES_DELETE:
 		b = FilesSelected;
@@ -1445,52 +1501,6 @@ BOOL CMainFrame::DeleteFiles(BOOL All)
 	return changes;
 }
 
-void CMainFrame::OnStartNavigation()
-{
-	int idx = GetSelectedItem();
-
-	if (idx!=-1)
-	{
-		LFItemDescriptor* i = CookedFiles->m_Items[idx];
-
-		if (i->NextFilter)
-		{
-			// Es ist ein weiterer Filter angehängt, also dorthin navigieren
-			NavigateTo(LFAllocFilter(i->NextFilter));
-		}
-		else
-		{
-			if (!(i->Type & LFTypeNotMounted))
-			{
-				char Path[MAX_PATH];
-				unsigned int res;
-
-				switch (i->Type & LFTypeMask)
-				{
-				case LFTypeDrive:
-					ExecuteCreateStoreDlg(IDD_STORENEWDRIVE, i->CoreAttributes.FileID[0]);
-					break;
-				case LFTypeFile:
-					res = LFGetFileLocation(i, Path, MAX_PATH);
-					if (res==LFOk)
-					{
-						ShellExecuteA(NULL, "open", Path, NULL, NULL, SW_SHOW);
-					}
-					else
-					{
-						LFErrorBox(res);
-					}
-
-					break;
-				default:
-					ASSERT(FALSE);
-					break;
-				}
-			}
-		}
-	}
-}
-
 void CMainFrame::OnNavigateFirst()
 {
 	UINT steps = 0;
@@ -1614,7 +1624,7 @@ void CMainFrame::OnNavigateHome()
 void CMainFrame::OnUpdateNavCommands(CCmdUI* pCmdUI)
 {
 	BOOL b = !IsClipboard;
-	int i;
+
 	switch (pCmdUI->m_nID)
 	{
 	case ID_NAV_FIRST:
@@ -1638,19 +1648,6 @@ void CMainFrame::OnUpdateNavCommands(CCmdUI* pCmdUI)
 				b = FALSE;
 		if (!LFDefaultStoreAvailable())
 			b = FALSE;
-		break;
-	case ID_NAV_STARTNAVIGATION:
-		i = GetSelectedItem();
-		if (i!=-1)
-		{
-			b &= (CookedFiles->m_Items[i]->NextFilter!=NULL) ||
-				((CookedFiles->m_Items[i]->Type & (LFTypeMask | LFTypeNotMounted))==LFTypeDrive) ||
-				((CookedFiles->m_Items[i]->Type & LFTypeMask)==LFTypeFile);
-		}
-		else
-		{
-			b = FALSE;
-		}
 		break;
 	case ID_NAV_CLEARHISTORY:
 		b &= (m_BreadcrumbBack!=NULL) || (m_BreadcrumbForward!=NULL);
@@ -1695,35 +1692,34 @@ void CMainFrame::InitializeRibbon()
 		{
 			strTemp = "Navigate";
 			CMFCRibbonPanel* pPanelNavigate = pCategoryHome->AddPanel(strTemp, m_PanelImages.ExtractIcon(5));
-			pPanelNavigate->EnableLaunchButton(ID_NAV_SHOWHISTORY, 6);
+			pPanelNavigate->EnableLaunchButton(ID_NAV_SHOWHISTORY, 5);
 
 				pPanelNavigate->Add(theApp.CommandButton(ID_NAV_FIRST, 0, 0));
 				pPanelNavigate->Add(theApp.CommandButton(ID_NAV_BACKONE, 1, 1));
 				pPanelNavigate->Add(theApp.CommandButton(ID_NAV_FORWARDONE, 2, 2));
 				pPanelNavigate->Add(theApp.CommandButton(ID_NAV_LAST, 3, 3));
-				pPanelNavigate->Add(theApp.CommandButton(ID_NAV_RELOAD, 4, 4));
 				pPanelNavigate->AddSeparator();
-				pPanelNavigate->Add(theApp.CommandButton(ID_NAV_STARTNAVIGATION, 5, 5));
+				pPanelNavigate->Add(theApp.CommandButton(ID_NAV_RELOAD, 4, 4));
 
 			strTemp = "Places";
 			CMFCRibbonPanel* pPanelPlaces = pCategoryHome->AddPanel(strTemp, m_PanelImages.ExtractIcon(16));
 
-				pPanelPlaces->Add(theApp.CommandButton(ID_NAV_STORES, 7, 7));
-				pPanelPlaces->Add(theApp.CommandButton(ID_NAV_HOME, 8, 8));
+				pPanelPlaces->Add(theApp.CommandButton(ID_NAV_STORES, 6, 6));
+				pPanelPlaces->Add(theApp.CommandButton(ID_NAV_HOME, 7, 7));
 		}
 
 		strTemp = "liquidFOLDERS";
 		CMFCRibbonPanel* pPanelliquidFOLDERS = pCategoryHome->AddPanel(strTemp, m_PanelImages.ExtractIcon(0));
-		pPanelliquidFOLDERS->EnableLaunchButton(ID_APP_ABOUT, 13);
+		pPanelliquidFOLDERS->EnableLaunchButton(ID_APP_ABOUT, 12);
 
-			pPanelliquidFOLDERS->Add(theApp.CommandButton(ID_APP_HELP, 9, 9));
-			pPanelliquidFOLDERS->Add(theApp.CommandButton(ID_APP_SUPPORT, 10, 10));
+			pPanelliquidFOLDERS->Add(theApp.CommandButton(ID_APP_HELP, 8, 8));
+			pPanelliquidFOLDERS->Add(theApp.CommandButton(ID_APP_SUPPORT, 9, 9));
 
 			if (!LFIsLicensed())
 			{
 				pPanelliquidFOLDERS->AddSeparator();
-				pPanelliquidFOLDERS->Add(theApp.CommandButton(ID_APP_PURCHASE, 11, 11));
-				pPanelliquidFOLDERS->Add(theApp.CommandButton(ID_APP_ENTERLICENSEKEY, 12, 12));
+				pPanelliquidFOLDERS->Add(theApp.CommandButton(ID_APP_PURCHASE, 10, 10));
+				pPanelliquidFOLDERS->Add(theApp.CommandButton(ID_APP_ENTERLICENSEKEY, 11, 11));
 			}
 
 	strTemp = "View";
@@ -1880,8 +1876,8 @@ void CMainFrame::InitializeRibbon()
 		CMFCRibbonPanel* pPanelFileManage = pCategoryFiles->AddPanel(strTemp, m_PanelImages.ExtractIcon(0));
 		pPanelFileManage->EnableLaunchButton(ID_FILES_SHOWINSPECTOR, 9);
 
-			/*strTemp = "Rename";
-			pPanelFileManage->Add(new CMFCRibbonButton(ID_APP_ABOUT, strTemp, 7, 7));*/
+			pPanelFileManage->Add(theApp.CommandButton(ID_FILES_OPEN, 7, 7));
+			pPanelFileManage->AddSeparator();
 			pPanelFileManage->Add(theApp.CommandButton(ID_FILES_DELETE, 8, 8));
 
 		/*strTemp = "Share";

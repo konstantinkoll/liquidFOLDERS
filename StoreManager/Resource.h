@@ -88,9 +88,8 @@
 #define ID_NAV_SHOWHISTORY              408
 #define ID_NAV_STORES                   409
 #define ID_NAV_HOME                     410
-#define ID_NAV_STARTNAVIGATION          411
-#define ID_NAV_GOTOHISTORY              412
-#define ID_NAV_CLEARHISTORY             413
+#define ID_NAV_GOTOHISTORY              411
+#define ID_NAV_CLEARHISTORY             412
 #define ID_PANE_CAPTIONBAR              500
 #define ID_PANE_FILTERWND               501
 #define ID_PANE_INSPECTORWND            502
@@ -116,7 +115,8 @@
 #define ID_CLIP_REMEMBERLAST            605
 #define ID_CLIP_REMEMBERNEW             606
 #define ID_FILES_SHOWINSPECTOR          650
-#define ID_FILES_DELETE                 651
+#define ID_FILES_OPEN                   651
+#define ID_FILES_DELETE                 652
 #define ID_SORT_FILENAME                700
 #define ID_SORT_COMMENT                 703
 #define ID_SORT_CREATIONTIME            705

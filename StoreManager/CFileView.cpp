@@ -199,7 +199,7 @@ void CFileView::OnItemContextMenu(int idx, CPoint point)
 	{
 	case LFTypeVirtual:
 		nID = (f->IconID==IDI_FLD_Back ? IDM_BACK : m_ViewParameters.Mode==LFViewGlobe ? IDM_VIRTUAL_GLOBE : IDM_VIRTUAL);
-		cmdDefault = ID_NAV_STARTNAVIGATION;
+		cmdDefault = ID_FILES_OPEN;
 		break;
 	case LFTypeDrive:
 		nID = IDM_DRIVE;
@@ -207,11 +207,11 @@ void CFileView::OnItemContextMenu(int idx, CPoint point)
 		break;
 	case LFTypeStore:
 		nID = IDM_STORE;
-		cmdDefault = ID_NAV_STARTNAVIGATION;
+		cmdDefault = ID_FILES_OPEN;
 		break;
 	case LFTypeFile:
 		nID = IDM_FILE;
-		cmdDefault = ID_NAV_STARTNAVIGATION;
+		cmdDefault = ID_FILES_OPEN;
 		break;
 	}
 
@@ -277,7 +277,7 @@ BOOL CFileView::HandleDefaultKeys(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags*/)
 	case VK_RETURN:
 		if ((GetKeyState(VK_CONTROL)>=0) && (GetKeyState(VK_SHIFT)>=0))
 		{
-			GetParentFrame()->SendMessage(WM_COMMAND, ID_NAV_STARTNAVIGATION);
+			GetParentFrame()->SendMessage(WM_COMMAND, ID_FILES_OPEN);
 			return TRUE;
 		}
 		break;
@@ -396,7 +396,7 @@ void CFileView::OnLButtonUp(UINT nFlags, CPoint point)
 
 void CFileView::OnLButtonDblClk(UINT /*nFlags*/, CPoint /*point*/)
 {
-	GetParentFrame()->SendMessage(WM_COMMAND, ID_NAV_STARTNAVIGATION);
+	GetParentFrame()->SendMessage(WM_COMMAND, ID_FILES_OPEN);
 }
 
 void CFileView::OnRButtonDown(UINT nFlags, CPoint point)

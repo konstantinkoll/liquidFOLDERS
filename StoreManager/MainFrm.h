@@ -162,6 +162,7 @@ protected:
 	afx_msg void OnClipRememberLast();
 	afx_msg void OnClipRememberNew();
 	afx_msg void OnUpdateClipCommands(CCmdUI* pCmdUI);
+	afx_msg void OnFilesOpen();
 	afx_msg void OnFilesDelete();
 	afx_msg void OnUpdateFileCommands(CCmdUI* pCmdUI);
 	afx_msg void OnEmptyTrash();
@@ -182,7 +183,6 @@ protected:
 	afx_msg void OnChangeChildView(UINT nID);
 	afx_msg void OnUpdateSelection();
 	afx_msg void OnUpdateFileCount();
-	afx_msg void OnStartNavigation();
 	afx_msg void OnNavigateFirst();
 	afx_msg void OnNavigateBackOne();
 	afx_msg LRESULT OnNavigateBack(WPARAM wParam, LPARAM lParam);

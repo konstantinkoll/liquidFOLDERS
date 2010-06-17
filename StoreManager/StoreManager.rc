@@ -221,7 +221,7 @@ IDM_VIRTUAL MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "&Open",                       ID_NAV_STARTNAVIGATION
+        MENUITEM "&Open",                       ID_FILES_OPEN
     END
 END
 
@@ -229,7 +229,7 @@ IDM_VIRTUAL_GLOBE MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "&Open",                       ID_NAV_STARTNAVIGATION
+        MENUITEM "&Open",                       ID_FILES_OPEN
         MENUITEM SEPARATOR
         MENUITEM "Open in &Google Earth...",    ID_GLOBE_GOOGLEEARTH
     END
@@ -239,7 +239,7 @@ IDM_BACK MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "&One level up",               ID_NAV_STARTNAVIGATION
+        MENUITEM "&One level up",               ID_FILES_OPEN
     END
 END
 
@@ -247,7 +247,7 @@ IDM_STORE MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "&Open",                       ID_NAV_STARTNAVIGATION
+        MENUITEM "&Open",                       ID_FILES_OPEN
         MENUITEM SEPARATOR
         MENUITEM "&Delete...",                  ID_STORE_DELETE
         MENUITEM "&Rename",                     ID_STORE_RENAME
@@ -263,7 +263,7 @@ IDM_FILE MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "&Open",                       ID_NAV_STARTNAVIGATION
+        MENUITEM "&Open",                       ID_FILES_OPEN
         MENUITEM "&Remember",                   ID_CLIP_REMEMBERLAST
         MENUITEM SEPARATOR
         MENUITEM "&Delete",                     ID_FILES_DELETE
@@ -585,7 +585,6 @@ BEGIN
     ID_NAV_SHOWHISTORY      "Shows the history pane.\nHistory pane"
     ID_NAV_STORES           "Displays all stores.\nStores"
     ID_NAV_HOME             "Opens the default store.\nDefault store"
-    ID_NAV_STARTNAVIGATION  "Opens the selected item.\nOpen"
     ID_NAV_GOTOHISTORY      "Returns to the selected location.\nGoto history"
     ID_NAV_CLEARHISTORY     "Removes all locations from the history except the current one.\nClear history"
 END
@@ -648,6 +647,7 @@ END
 STRINGTABLE 
 BEGIN
     ID_FILES_SHOWINSPECTOR  "Shows the inspector pane.\nInspector pane"
+    ID_FILES_OPEN           "Opens the selected item.\nOpen (Enter)"
     ID_FILES_DELETE         "Deletes the selected files.\nDelete (Del)"
 END
 

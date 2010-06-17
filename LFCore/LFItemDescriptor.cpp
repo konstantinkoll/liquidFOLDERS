@@ -215,6 +215,7 @@ LFCore_API LFItemDescriptor* LFAllocItemDescriptor(LFItemDescriptor* i)
 		d->CategoryID = i->CategoryID;
 		d->CoreAttributes = i->CoreAttributes;
 		d->DeleteFlag = i->DeleteFlag;
+		strcpy_s(d->StoreID, LFKeySize, i->StoreID);
 		wcscpy_s(d->Hint, 256, i->Hint);
 		d->IconID = i->IconID;
 		d->Type = i->Type;
