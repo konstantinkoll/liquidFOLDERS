@@ -9,12 +9,13 @@
     <ROW Property="AI_UNINSTALLER" Value="msiexec.exe"/>
     <ROW Property="ALLUSERS" Value="2"/>
     <ROW Property="ARPCONTACT" Value="support@liquidfolders.net"/>
+    <ROW Property="ARPHELPLINK" Value="http://liquidfolders.net/support/&#10;http://liquidfolders.net/support/"/>
     <ROW Property="ARPNOMODIFY" MultiBuildValue="DefaultBuild:1"/>
     <ROW Property="ARPNOREPAIR" Value="1"/>
     <ROW Property="ARPPRODUCTICON" Value="liquidFOLDERS.exe" Type="8"/>
     <ROW Property="ARPSYSTEMCOMPONENT" Value="1"/>
     <ROW Property="ARPURLINFOABOUT" Value="http://liquidfolders.net/"/>
-    <ROW Property="ARPURLUPDATEINFO" Value="http://liquidfolders.net/"/>
+    <ROW Property="ARPURLUPDATEINFO" Value="http://liquidfolders.net/download/"/>
     <ROW Property="AppLogoIcon" Value="AppLogo.ico" Type="1" MsiKey="AppLogoIcon"/>
     <ROW Property="Background" Value="Backdrop4.bmp" Type="1" MsiKey="Background"/>
     <ROW Property="CTRLS" Value="2"/>
@@ -316,7 +317,7 @@
     <ROW Registry="DisplayName" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="DisplayName" Value="liquidFOLDERS" Component_="AI_CustomARPName"/>
     <ROW Registry="DisplayVersion" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="DisplayVersion" Value="0.1" Component_="AI_CustomARPName"/>
     <ROW Registry="F2D914F_FE57_414F_9F88_A377C7841DA4_2" Root="2" Key="Software\Microsoft\Windows\CurrentVersion\Shell Extensions\Approved" Name="[\{]3F2D914F-FE57-414F-9F88-A377C7841DA4[\}]" Value="liquidFOLDERS" Component_="LFNamespaceExtension.dll"/>
-    <ROW Registry="HelpLink" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="HelpLink" Component_="AI_CustomARPName"/>
+    <ROW Registry="HelpLink" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="HelpLink" Value="http://liquidfolders.net/support/&#10;http://liquidfolders.net/support/" Component_="AI_CustomARPName"/>
     <ROW Registry="HelpTelephone" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="HelpTelephone" Component_="AI_CustomARPName"/>
     <ROW Registry="InfoTip" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}" Name="InfoTip" Value="liquidFOLDERS stores and files" Component_="LFNamespaceExtension.dll"/>
     <ROW Registry="ModifyPath" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="ModifyPath" Value="[AI_UNINSTALLER] /I [ProductCode]" Component_="AI_CustomARPName"/>
@@ -325,7 +326,7 @@
     <ROW Registry="QueryForOverlay" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}\ShellFolder" Name="QueryForOverlay" Component_="LFNamespaceExtension.dll"/>
     <ROW Registry="ThreadingModel" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}\InProcServer32" Name="ThreadingModel" Value="Both" Component_="LFNamespaceExtension.dll"/>
     <ROW Registry="URLInfoAbout" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="URLInfoAbout" Value="http://liquidfolders.net/" Component_="AI_CustomARPName"/>
-    <ROW Registry="URLUpdateInfo" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="URLUpdateInfo" Value="http://liquidfolders.net/" Component_="AI_CustomARPName"/>
+    <ROW Registry="URLUpdateInfo" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="URLUpdateInfo" Value="http://liquidfolders.net/download/" Component_="AI_CustomARPName"/>
     <ROW Registry="UninstallString" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="UninstallString" Value="[AI_UNINSTALLER] /x [ProductCode]" Component_="AI_CustomARPName"/>
     <ROW Registry="Visual_C_2008_SP1" Root="-1" Key="Software\Caphyon\Advanced Installer\Prereqs\[ProductCode]\[ProductVersion]" Name="Visual_C_2008_SP1" Value="1" Component_="Visual_C_2008_SP1"/>
     <ROW Registry="WantsFORPARSING" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}\ShellFolder" Name="WantsFORPARSING" Component_="LFNamespaceExtension.dll"/>

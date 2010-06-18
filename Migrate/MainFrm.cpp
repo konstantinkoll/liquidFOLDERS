@@ -208,8 +208,6 @@ void CMainFrame::OnUpdateAppCommands(CCmdUI* pCmdUI)
 	case ID_APP_FOCUSMAIN:
 		pCmdUI->Enable(TRUE);
 		break;
-	default:
-		theApp.OnUpdateAppCommands(pCmdUI);
 	}
 }
 

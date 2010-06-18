@@ -94,7 +94,7 @@ void LFLicenseDlg::OnLoadLicense()
 		CString key;
 
 		CStdioFile f;
-		if (!f.Open(dlg.GetFileName(), CFile::modeRead))
+		if (!f.Open(dlg.GetPathName(), CFile::modeRead | CFile::shareDenyWrite))
 		{
 			LFErrorBox(LFDriveNotReady);
 		}
