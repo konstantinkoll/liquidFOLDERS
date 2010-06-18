@@ -47,6 +47,15 @@
 #define IDB_READY                       20201
 #define IDB_WARNING                     20202
 #define IDB_CANCEL                      20203
+#define IDS_HELPURL                     20300
+#define IDS_PURCHASEURL                 20301
+#define IDS_ERROR                       20302
+#define IDS_STORES_SINGULAR             20303
+#define IDS_STORES_PLURAL               20304
+#define IDS_INVALIDLICENSE              20305
+#define IDS_LICFILEFILTER               20306
+#define IDS_LICENSEVALID_CAPTION        20307
+#define IDS_LICENSEVALID_MSG            20308
 #define IDD_ABOUT                       21000
 #define IDC_RIBBONCOLORCOMBO            21001
 #define IDC_TEXTUREFRAME                21002
@@ -62,11 +71,6 @@
 #define IDC_ID                          21012
 #define IDC_PRODUCT                     21013
 #define IDC_QUANTITY                    21014
-#define IDS_HELPURL                     21050
-#define IDS_PURCHASEURL                 21051
-#define IDS_ERROR                       21052
-#define IDS_STORES_SINGULAR             21053
-#define IDS_STORES_PLURAL               21054
 #define IDD_WELCOME                     21100
 #define IDC_STORENAME1                  21101
 #define IDC_STORENAME2                  21102

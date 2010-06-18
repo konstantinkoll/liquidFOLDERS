@@ -90,7 +90,7 @@ void CGlassButton::OnPaint()
 	}
 	else
 	{
-		SolidBrush sBr(Color(0x2A, 0x09, 0x09, 0x09));
+		SolidBrush sBr(Color(0x021, 0x30, 0x10, 0x00));
 		g.FillPath(&sBr, &path);
 	}
 

@@ -19,5 +19,6 @@ protected:
 
 	afx_msg BOOL OnInitDialog();
 	afx_msg void OnDestroy();
+	afx_msg void OnLoadLicense();
 	DECLARE_MESSAGE_MAP()
 };

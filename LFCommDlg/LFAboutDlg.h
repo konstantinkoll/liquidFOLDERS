@@ -36,6 +36,7 @@ protected:
 	CTransparentRadioButton m_HideEmptyDomains;
 
 	virtual void OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect);
+	virtual void CheckLicenseKey(LFLicense* License=NULL);
 	virtual void DoDataExchange(CDataExchange* pDX);
 
 	afx_msg BOOL OnInitDialog();

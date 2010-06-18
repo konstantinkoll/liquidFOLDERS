@@ -339,19 +339,19 @@ BEGIN
     PUSHBUTTON      "Datenbank-Fehler melden...",IDC_REPORTERROR,121,284,115,14,WS_GROUP
 END
 
-IDD_ENTERLICENSEKEY DIALOGEX 0, 0, 320, 263
+IDD_ENTERLICENSEKEY DIALOGEX 0, 0, 350, 255
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Lizenzschlüssel eingeben"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    GROUPBOX        "Lizenz",IDC_STATIC,7,92,306,142
-    LTEXT           "Bei Erwerb eines Lizenzschlüssel sendet Ihnen unser Partner share*it eine EMail, an die die Datei „liquidFOLDERS.reg“ angehängt ist. Speichern Sie diese Datei lokal auf Ihrem Computer ab.",IDC_STATIC,14,103,291,26
-    LTEXT           "Öffnen Sie die Datei anschließend mit der untenstehenden Schaltfläche. Alternativ können Sie ihren Inhalt in das Textfeld darunter kopieren.",IDC_STATIC,14,128,291,18
-    PUSHBUTTON      "Lizenz&datei laden...",IDC_LOADLICENSE,14,148,81,15,WS_GROUP
-    LTEXT           "Lizenzschlüssel:",IDC_STATIC,14,171,291,8
-    EDITTEXT        IDC_LICENSEKEY,14,180,292,45,ES_MULTILINE | ES_AUTOHSCROLL | WS_VSCROLL | WS_GROUP
-    DEFPUSHBUTTON   "Ok",IDOK,7,242,50,14,WS_GROUP
-    PUSHBUTTON      "Abbrechen",IDCANCEL,64,242,50,14,WS_GROUP
+    GROUPBOX        "Lizenz",IDC_STATIC,7,92,336,135
+    LTEXT           "Bei Erwerb eines Lizenzschlüssel sendet Ihnen unser Partner share*it eine EMail, an die die Datei „liquidFOLDERS.lic“ angehängt ist. Speichern Sie diese Datei lokal auf Ihrem Computer ab.",IDC_STATIC,14,103,322,18
+    LTEXT           "Öffnen Sie die Datei anschließend mit der untenstehenden Schaltfläche. Alternativ können Sie ihren Inhalt in das Textfeld darunter kopieren.",IDC_STATIC,14,119,322,18
+    PUSHBUTTON      "Lizenz&datei laden...",IDC_LOADLICENSE,14,139,81,15,WS_GROUP
+    LTEXT           "Lizenzschlüssel:",IDC_STATIC,14,164,291,8
+    EDITTEXT        IDC_LICENSEKEY,14,174,322,45,ES_MULTILINE | ES_AUTOHSCROLL | WS_VSCROLL | WS_GROUP
+    DEFPUSHBUTTON   "Ok",IDOK,7,234,50,14,WS_GROUP
+    PUSHBUTTON      "Abbrechen",IDCANCEL,64,234,50,14,WS_GROUP
 END
 
 IDD_STOREPROPERTIES DIALOGEX 0, 0, 385, 186
@@ -488,9 +488,9 @@ BEGIN
     IDD_ENTERLICENSEKEY, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 313
+        RIGHTMARGIN, 343
         TOPMARGIN, 7
-        BOTTOMMARGIN, 256
+        BOTTOMMARGIN, 248
     END
 
     IDD_STOREPROPERTIES, DIALOG
@@ -551,15 +551,15 @@ BEGIN
     IDS_ERROR               "Fehler"
     IDS_STORES_SINGULAR     "%d Store"
     IDS_STORES_PLURAL       "%d Stores"
+    IDS_INVALIDLICENSE      "Die eingegebene Lizenz ist ungültig oder abgelaufen!"
+    IDS_LICFILEFILTER       "Lizenzdateien"
+    IDS_LICENSEVALID_CAPTION "Lizenz akzeptiert"
+    IDS_LICENSEVALID_MSG    "Ihr Lizenzschlüssel ist gültig. Vielen Dank für den Kauf von liquidFOLDERS!"
 END
 
 STRINGTABLE 
 BEGIN
     ID_APP_ABOUT            "Zeigt Informationen und globale Einstellungen an.\nÜber liquidFOLDERS"
-END
-
-STRINGTABLE 
-BEGIN
     ID_APP_HELP             "Öffnet den Standard-Browser und zeigt eine geführte Tour durch liquidFOLDERS an.\nGeführte Tour"
     ID_APP_SUPPORT          "Erstelle eine neue EMail an den Kundenservice.\nEMail an Kundenservice"
     ID_APP_NEWFILEDROP      "Öffnet ein neues FileDrop-Fenster.\nFileDrop"
@@ -842,19 +842,19 @@ BEGIN
     CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ | WS_GROUP,14,29,172,1
 END
 
-IDD_ENTERLICENSEKEY DIALOGEX 0, 0, 320, 253
+IDD_ENTERLICENSEKEY DIALOGEX 0, 0, 350, 255
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Enter license key"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    GROUPBOX        "License",IDC_STATIC,7,92,306,132
-    LTEXT           "After purchasing a license key through our partner share*it, you'll receive an email that has the file „liquidFOLDERS.reg“ attached to it. Save this file locally on your computer.",IDC_STATIC,14,103,291,18
-    LTEXT           "Subsequently open the file using the button below, or copy and paste its contents into the textbox beneath the button.",IDC_STATIC,14,120,291,18
+    GROUPBOX        "License",IDC_STATIC,7,92,336,135
+    LTEXT           "After purchasing a license key through our partner share*it, you'll receive an email that has the file „liquidFOLDERS.lic“ attached to it. Save this file locally on your computer.",IDC_STATIC,14,103,322,18
+    LTEXT           "Subsequently open the file using the button below, or copy and paste its contents into the textbox beneath the button.",IDC_STATIC,14,119,322,18
     PUSHBUTTON      "Load license &file...",IDC_LOADLICENSE,14,139,81,15,WS_GROUP
-    LTEXT           "License key:",IDC_STATIC,14,161,291,8
-    EDITTEXT        IDC_LICENSEKEY,14,170,292,45,ES_MULTILINE | ES_AUTOHSCROLL | WS_VSCROLL | WS_GROUP
-    DEFPUSHBUTTON   "Ok",IDOK,7,232,50,14,WS_GROUP
-    PUSHBUTTON      "Cancel",IDCANCEL,64,232,50,14,WS_GROUP
+    LTEXT           "License key:",IDC_STATIC,14,164,291,8
+    EDITTEXT        IDC_LICENSEKEY,14,174,322,45,ES_MULTILINE | ES_AUTOHSCROLL | WS_VSCROLL | WS_GROUP
+    DEFPUSHBUTTON   "Ok",IDOK,7,234,50,14,WS_GROUP
+    PUSHBUTTON      "Cancel",IDCANCEL,64,234,50,14,WS_GROUP
 END
 
 
@@ -949,9 +949,9 @@ BEGIN
     IDD_ENTERLICENSEKEY, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 313
+        RIGHTMARGIN, 343
         TOPMARGIN, 7
-        BOTTOMMARGIN, 246
+        BOTTOMMARGIN, 248
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -988,15 +988,15 @@ BEGIN
     IDS_ERROR               "Error"
     IDS_STORES_SINGULAR     "%d store"
     IDS_STORES_PLURAL       "%d stores"
+    IDS_INVALIDLICENSE      "The license key you've entered is invalid or has expired!"
+    IDS_LICFILEFILTER       "License files"
+    IDS_LICENSEVALID_CAPTION "License valid"
+    IDS_LICENSEVALID_MSG    "Your license key is valid. Thank you very much for purchasing liquidFOLDERS! We appreciate your business."
 END
 
 STRINGTABLE 
 BEGIN
     ID_APP_ABOUT            "Displays liquidFOLDERS information and settings.\nAbout"
-END
-
-STRINGTABLE 
-BEGIN
     ID_APP_HELP             "Opens your standard browser displaying a guided tour to liquidFOLDERS.\nGuided tour"
     ID_APP_SUPPORT          "Opens your standard mail software to contact customer support.\nContact support"
     ID_APP_NEWFILEDROP      "Opens a new FileDrop window.\nNew FileDrop"
@@ -1408,10 +1408,6 @@ END
 STRINGTABLE 
 BEGIN
     ID_APP_ABOUT            "Visualiza información y configuración de liquidFOLDERS.\nAcerca de"
-END
-
-STRINGTABLE 
-BEGIN
     ID_APP_HELP             "Abre su navegador estándar visualizando una visita guiada a liquidFOLDERS.\nVisita guiada"
     ID_APP_SUPPORT          "Abre su software estándar de correo para contactar a servicio al cliente.\nContacto de servicio"
     ID_APP_NEWFILEDROP      "Abre una ventana nueva de FileDrop.\nNuevo FileDrop"
@@ -1816,10 +1812,6 @@ END
 STRINGTABLE 
 BEGIN
     ID_APP_ABOUT            "Montre des informations et embauches globales.\nConcernant liquidFOLDERS"
-END
-
-STRINGTABLE 
-BEGIN
     ID_APP_HELP             "Ouvre le standard-browser et indique un tour mené par liquidFOLDERS\nTour mené"
     ID_APP_SUPPORT          "Produis un nouvel e-mail au service aprés-vente.\nE-mail au service aprés-vente"
     ID_APP_NEWFILEDROP      "Ouvre une nouvelle fenêtre de FileDrop.\nFileDrop"

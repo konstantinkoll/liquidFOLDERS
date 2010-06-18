@@ -128,16 +128,14 @@ int main(int argc, char* argv[])
 	StringSource(message, true, new SignerFilter(rng, signer, new StringSink(signature)));
 
 	std::string result;
-	StringSource(message+signature, true, new Base64Encoder(new StringSink(result), false));
+	StringSource(message+signature, true, new Base64Encoder(new StringSink(result)));
 
 	std::ofstream keyMetadataOutput(argv[2]);
-	keyMetadataOutput << "text/plain:liquidFOLDERS.reg" << std::endl;
+	keyMetadataOutput << "text/plain:liquidFOLDERS.lic" << std::endl;
 	keyMetadataOutput.close();
 
 	std::ofstream keyOutput(argv[3]);
-	keyOutput << "Windows Registry Editor Version 5.00" << std::endl << std::endl;
-	keyOutput << "[HKEY_CURRENT_USER\\Software\\liquidFOLDERS]" << std::endl;
-	keyOutput << "\"License\"=\"" << result << "\"" << std::endl;
+	keyOutput << result << std::endl;
 	keyOutput.close();
 
 	return ERC_SUCCESS_BIN;
