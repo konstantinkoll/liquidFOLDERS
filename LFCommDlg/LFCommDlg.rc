@@ -254,7 +254,7 @@ BEGIN
     LTEXT           "Kommentar:",IDC_STATIC,155,148,171,9
     CONTROL         "(Alle Dateien und der Index werden lokal auf diesem Computer gespeichert)",IDC_STATIC,
                     "Static",SS_LEFTNOWORDWRAP | WS_GROUP,49,29,277,8
-    LTEXT           "(Alle Dateien und der Index werden extern gespeichert, mit zusätzliche Index-Kopie)",IDC_STATIC,50,60,276,8
+    LTEXT           "(Alle Dateien und der Index werden extern gespeichert, mit zusätzlicher Index-Kopie)",IDC_STATIC,50,60,276,8
     LTEXT           "(Alle Dateien und der Index werden extern gespeichert)",IDC_STATIC,49,83,277,8
     CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ | WS_GROUP,13,43,313,2
     CONTROL         20008,IDC_DEFAULTSTOREICON,"Static",SS_BITMAP | NOT WS_VISIBLE | WS_GROUP,13,18,21,20,WS_EX_TRANSPARENT
