@@ -70,7 +70,8 @@
 #define IDC_PURCHASEDATE                21011
 #define IDC_ID                          21012
 #define IDC_PRODUCT                     21013
-#define IDC_QUANTITY                    21014
+#define IDC_QUANTITYTITLE               21014
+#define IDC_QUANTITY                    21015
 #define IDD_WELCOME                     21100
 #define IDC_STORENAME1                  21101
 #define IDC_STORENAME2                  21102

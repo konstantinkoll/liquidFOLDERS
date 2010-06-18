@@ -175,7 +175,18 @@ void LFAboutDlg::CheckLicenseKey(LFLicense* License)
 	GetDlgItem(IDC_PURCHASEDATE)->SetWindowText(License->PurchaseDate);
 	GetDlgItem(IDC_ID)->SetWindowText(License->PurchaseID);
 	GetDlgItem(IDC_PRODUCT)->SetWindowText(License->ProductID);
-	GetDlgItem(IDC_QUANTITY)->SetWindowText(License->Quantity);
+
+	if (wcslen(License->ProductID)>13)
+	{
+		GetDlgItem(IDC_QUANTITYTITLE)->ShowWindow(SW_HIDE);
+		GetDlgItem(IDC_QUANTITY)->ShowWindow(SW_HIDE);
+	}
+	else
+	{
+		GetDlgItem(IDC_QUANTITYTITLE)->ShowWindow(SW_SHOW);
+		GetDlgItem(IDC_QUANTITY)->ShowWindow(SW_SHOW);
+		GetDlgItem(IDC_QUANTITY)->SetWindowText(License->Quantity);
+	}
 }
 
 void LFAboutDlg::DoDataExchange(CDataExchange* pDX)

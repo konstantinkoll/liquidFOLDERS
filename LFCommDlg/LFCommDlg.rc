@@ -175,10 +175,10 @@ BEGIN
     LTEXT           "X",IDC_PURCHASEDATE,245,212,84,8
     LTEXT           "ID:",IDC_STATIC,335,202,50,8
     LTEXT           "X",IDC_ID,335,212,50,8
-    LTEXT           "Menge:",IDC_STATIC,335,227,50,8
+    LTEXT           "Menge:",IDC_QUANTITYTITLE,335,227,50,8
     LTEXT           "X",IDC_QUANTITY,335,237,50,8
     LTEXT           "Produkt:",IDC_STATIC,245,227,83,8
-    LTEXT           "X",IDC_PRODUCT,245,237,80,8
+    LTEXT           "X",IDC_PRODUCT,245,237,141,8
     PUSHBUTTON      "&Lizenzschlüssel eingeben...",IDC_ENTERLICENSEKEY,243,179,143,66,WS_GROUP
 END
 
@@ -550,6 +550,10 @@ BEGIN
     IDS_PURCHASEURL         "http://liquidFOLDERS.net/purchase/de/"
     IDS_ERROR               "Fehler"
     IDS_STORES_SINGULAR     "%d Store"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_STORES_PLURAL       "%d Stores"
     IDS_INVALIDLICENSE      "Die eingegebene Lizenz ist ungültig oder abgelaufen!"
     IDS_LICFILEFILTER       "Lizenzdateien"
@@ -560,6 +564,10 @@ END
 STRINGTABLE 
 BEGIN
     ID_APP_ABOUT            "Zeigt Informationen und globale Einstellungen an.\nÜber liquidFOLDERS"
+END
+
+STRINGTABLE 
+BEGIN
     ID_APP_HELP             "Öffnet den Standard-Browser und zeigt eine geführte Tour durch liquidFOLDERS an.\nGeführte Tour"
     ID_APP_SUPPORT          "Erstelle eine neue EMail an den Kundenservice.\nEMail an Kundenservice"
     ID_APP_NEWFILEDROP      "Öffnet ein neues FileDrop-Fenster.\nFileDrop"
@@ -612,10 +620,10 @@ BEGIN
     LTEXT           "X",IDC_PURCHASEDATE,245,212,84,8
     LTEXT           "ID:",IDC_STATIC,335,202,50,8
     LTEXT           "X",IDC_ID,335,212,50,8
-    LTEXT           "Quantity:",IDC_STATIC,335,227,50,8
+    LTEXT           "Quantity:",IDC_QUANTITYTITLE,335,227,50,8
     LTEXT           "X",IDC_QUANTITY,335,237,50,8
     LTEXT           "Product:",IDC_STATIC,245,227,83,8
-    LTEXT           "X",IDC_PRODUCT,245,237,80,8
+    LTEXT           "X",IDC_PRODUCT,245,237,141,8
     PUSHBUTTON      "Enter &license key...",IDC_ENTERLICENSEKEY,243,179,143,66,WS_GROUP
 END
 
@@ -987,6 +995,10 @@ BEGIN
     IDS_PURCHASEURL         "http://liquidFOLDERS.net/purchase/en/"
     IDS_ERROR               "Error"
     IDS_STORES_SINGULAR     "%d store"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_STORES_PLURAL       "%d stores"
     IDS_INVALIDLICENSE      "The license key you've entered is invalid or has expired!"
     IDS_LICFILEFILTER       "License files"
@@ -997,6 +1009,10 @@ END
 STRINGTABLE 
 BEGIN
     ID_APP_ABOUT            "Displays liquidFOLDERS information and settings.\nAbout"
+END
+
+STRINGTABLE 
+BEGIN
     ID_APP_HELP             "Opens your standard browser displaying a guided tour to liquidFOLDERS.\nGuided tour"
     ID_APP_SUPPORT          "Opens your standard mail software to contact customer support.\nContact support"
     ID_APP_NEWFILEDROP      "Opens a new FileDrop window.\nNew FileDrop"
@@ -1050,10 +1066,10 @@ BEGIN
     LTEXT           "X",IDC_PURCHASEDATE,245,212,84,8
     LTEXT           "ID:",IDC_STATIC,335,202,50,8
     LTEXT           "X",IDC_ID,335,212,50,8
-    LTEXT           "Número:",IDC_STATIC,335,227,50,8
+    LTEXT           "Número:",IDC_QUANTITYTITLE,335,227,50,8
     LTEXT           "X",IDC_QUANTITY,335,237,50,8
     LTEXT           "Producto:",IDC_STATIC,245,227,83,8
-    LTEXT           "X",IDC_PRODUCT,245,237,80,8
+    LTEXT           "X",IDC_PRODUCT,245,237,141,8
     PUSHBUTTON      "Dictar &licencia...",IDC_ENTERLICENSEKEY,243,179,143,66,WS_GROUP
 END
 
@@ -1402,12 +1418,20 @@ BEGIN
     IDS_PURCHASEURL         "http://liquidFOLDERS.net/purchase/es/"
     IDS_ERROR               "Error"
     IDS_STORES_SINGULAR     "%d store"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_STORES_PLURAL       "%d stores"
 END
 
 STRINGTABLE 
 BEGIN
     ID_APP_ABOUT            "Visualiza información y configuración de liquidFOLDERS.\nAcerca de"
+END
+
+STRINGTABLE 
+BEGIN
     ID_APP_HELP             "Abre su navegador estándar visualizando una visita guiada a liquidFOLDERS.\nVisita guiada"
     ID_APP_SUPPORT          "Abre su software estándar de correo para contactar a servicio al cliente.\nContacto de servicio"
     ID_APP_NEWFILEDROP      "Abre una ventana nueva de FileDrop.\nNuevo FileDrop"
@@ -1462,10 +1486,10 @@ BEGIN
     LTEXT           "X",IDC_PURCHASEDATE,265,212,84,8
     LTEXT           "ID:",IDC_STATIC,355,202,50,8
     LTEXT           "X",IDC_ID,355,212,50,8
-    LTEXT           "Nombre:",IDC_STATIC,355,227,50,8
+    LTEXT           "Nombre:",IDC_QUANTITYTITLE,355,227,50,8
     LTEXT           "X",IDC_QUANTITY,355,237,50,8
     LTEXT           "Produit:",IDC_STATIC,265,227,83,8
-    LTEXT           "X",IDC_PRODUCT,265,237,80,8
+    LTEXT           "X",IDC_PRODUCT,245,237,141,8
     PUSHBUTTON      "Donner clé de &license...",IDC_ENTERLICENSEKEY,263,179,143,66,WS_GROUP
 END
 
@@ -1806,12 +1830,20 @@ BEGIN
     IDS_PURCHASEURL         "http://liquidFOLDERS.net/purchase/fr/"
     IDS_ERROR               "Erreur"
     IDS_STORES_SINGULAR     "%d store"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_STORES_PLURAL       "%d stores"
 END
 
 STRINGTABLE 
 BEGIN
     ID_APP_ABOUT            "Montre des informations et embauches globales.\nConcernant liquidFOLDERS"
+END
+
+STRINGTABLE 
+BEGIN
     ID_APP_HELP             "Ouvre le standard-browser et indique un tour mené par liquidFOLDERS\nTour mené"
     ID_APP_SUPPORT          "Produis un nouvel e-mail au service aprés-vente.\nE-mail au service aprés-vente"
     ID_APP_NEWFILEDROP      "Ouvre une nouvelle fenêtre de FileDrop.\nFileDrop"
