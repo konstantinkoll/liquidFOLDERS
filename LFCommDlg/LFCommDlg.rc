@@ -1479,7 +1479,7 @@ BEGIN
                     "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,94,221,148,10
     CONTROL         "Presenter seulemont &domains avec fichiers",IDC_HIDEEMPTYDOMAINS,
                     "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,94,234,148,10
-    GROUPBOX        "License",IDC_STATIC,258,169,155,81,WS_GROUP
+    GROUPBOX        "Licence",IDC_STATIC,258,169,155,81,WS_GROUP
     LTEXT           "Nom:",IDC_STATIC,265,179,141,8
     LTEXT           "X",IDC_NAME,265,189,141,8
     LTEXT           "Date d'achat:",IDC_STATIC,265,202,84,8
@@ -1490,7 +1490,7 @@ BEGIN
     LTEXT           "X",IDC_QUANTITY,355,237,50,8
     LTEXT           "Produit:",IDC_STATIC,265,227,83,8
     LTEXT           "X",IDC_PRODUCT,245,237,141,8
-    PUSHBUTTON      "Donner clé de &license...",IDC_ENTERLICENSEKEY,263,179,143,66,WS_GROUP
+    PUSHBUTTON      "Donner clé de &licence...",IDC_ENTERLICENSEKEY,263,179,143,66,WS_GROUP
 END
 
 IDD_CHOOSEDEFAULTSTORE DIALOGEX 0, 0, 466, 210
@@ -1517,7 +1517,7 @@ BEGIN
     EDITTEXT        IDC_STORENAME3,175,162,72,14,ES_AUTOHSCROLL | WS_GROUP
     DEFPUSHBUTTON   "Feu vert",IDOK,7,191,50,14,WS_GROUP
     PUSHBUTTON      "Non, merci.",IDCANCEL,64,191,50,14,WS_GROUP
-    PUSHBUTTON      "Donner clé de &license...",IDC_ENTERLICENSEKEY,150,191,105,14,WS_GROUP
+    PUSHBUTTON      "Donner clé de &licence...",IDC_ENTERLICENSEKEY,150,191,105,14,WS_GROUP
     LTEXT           "Cela semble être la première fois que vous dirigez liquidFOLDERS. liquidFOLDERS gére tous vous fichiers dans les ainsi-appelé stores. Pour recevoir le départ, vous pouvez créer jusqu'à trois stores immédiatement en remplissant leurs noms ci-dessous.",IDC_STATIC,7,101,248,36
     GROUPBOX        "Les noms des stores",IDC_STATIC,7,140,248,44,WS_GROUP
     LTEXT           "Store 1:",IDC_STATIC,14,152,27,8
@@ -1716,6 +1716,21 @@ BEGIN
     CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ | WS_GROUP,14,29,192,1
 END
 
+IDD_ENTERLICENSEKEY DIALOGEX 0, 0, 350, 255
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Donner clé de licence"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    GROUPBOX        "Licence",IDC_STATIC,7,92,336,135
+    LTEXT           "A l'acquisition d'une clé de licence, notre partenaire share*it vous envoie un e-mail auquel le fichier „liquidFOLDERS.lic“ est ajouté. Mémorisez ce fichier localement sur votre ordinateur.",IDC_STATIC,14,103,322,18
+    LTEXT           "Ensuite ouvrez le fichier avec le tableau de commande mentionné ci-dessous. Alternatif vous pouvez copier son contenu dans le champ de texte y compris.",IDC_STATIC,14,119,322,18
+    PUSHBUTTON      "Charger le fichier de licence...",IDC_LOADLICENSE,14,139,115,15,WS_GROUP
+    LTEXT           "Clé de licence:",IDC_STATIC,14,164,291,8
+    EDITTEXT        IDC_LICENSEKEY,14,174,322,45,ES_MULTILINE | ES_AUTOHSCROLL | WS_VSCROLL | WS_GROUP
+    DEFPUSHBUTTON   "Ok",IDOK,7,234,50,14,WS_GROUP
+    PUSHBUTTON      "Annuler",IDCANCEL,64,234,50,14,WS_GROUP
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -1796,6 +1811,14 @@ BEGIN
         TOPMARGIN, 7
         BOTTOMMARGIN, 331
     END
+
+    IDD_ENTERLICENSEKEY, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 343
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 248
+    END
 END
 #endif    // APSTUDIO_INVOKED
 
@@ -1835,6 +1858,10 @@ END
 STRINGTABLE 
 BEGIN
     IDS_STORES_PLURAL       "%d stores"
+    IDS_INVALIDLICENSE      "La licence entrée est non valable ou s'est terminée!"
+    IDS_LICFILEFILTER       "Fichiers de licence"
+    IDS_LICENSEVALID_CAPTION "La licence est acceptée"
+    IDS_LICENSEVALID_MSG    "Sa clé de licence est valable. Merci beaucoup pour l'achat de liquidFOLDERS!"
 END
 
 STRINGTABLE 

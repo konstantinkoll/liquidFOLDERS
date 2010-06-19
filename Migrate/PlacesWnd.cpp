@@ -83,8 +83,12 @@ void CPlacesWnd::OnSetFocus(CWnd* pOldWnd)
 
 void CPlacesWnd::OnPaint()
 {
-	m_wndShellTree.SetBkColor(afxGlobalData.clrBarFace);
-	m_wndShellTree.SetTextColor(afxGlobalData.clrTextHilite);
+	if (theApp.osInfo.dwMajorVersion>=6)
+	{
+		// Don't do this on Windows XP: the shell icons are NOT transparent and blended toward windows background
+		m_wndShellTree.SetBkColor(afxGlobalData.clrBarFace);
+		m_wndShellTree.SetTextColor(afxGlobalData.clrTextHilite);
+	}
 
 	CDockablePane::OnPaint();
 }
