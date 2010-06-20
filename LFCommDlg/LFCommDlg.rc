@@ -1296,6 +1296,21 @@ BEGIN
     CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ | WS_GROUP,14,29,192,1
 END
 
+IDD_ENTERLICENSEKEY DIALOGEX 0, 0, 350, 255
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Dictar licencia"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    GROUPBOX        "Licencia",IDC_STATIC,7,92,336,135
+    LTEXT           "Después de adquirir la licencia a través de nuestro proveedor, usted recibirá un correo con el archivo ""liquidFOLDERS.lic"" adjunto. Guarde este archivo de manera local en su computadora.",IDC_STATIC,14,103,322,18
+    LTEXT           "Posteriormente abra el archivo usando el botón de abajo, o copie y pegue su contenido dentro del recuadro debajo del botón.",IDC_STATIC,14,119,322,18
+    PUSHBUTTON      "Cargar &archivo de licencia...",IDC_LOADLICENSE,14,139,111,15,WS_GROUP
+    LTEXT           "Licencia:",IDC_STATIC,14,164,291,8
+    EDITTEXT        IDC_LICENSEKEY,14,174,322,45,ES_MULTILINE | ES_AUTOHSCROLL | WS_VSCROLL | WS_GROUP
+    DEFPUSHBUTTON   "Ok",IDOK,7,234,50,14,WS_GROUP
+    PUSHBUTTON      "Cancelar",IDCANCEL,64,234,50,14,WS_GROUP
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -1384,6 +1399,14 @@ BEGIN
         TOPMARGIN, 7
         BOTTOMMARGIN, 88
     END
+
+    IDD_ENTERLICENSEKEY, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 343
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 248
+    END
 END
 #endif    // APSTUDIO_INVOKED
 
@@ -1423,6 +1446,10 @@ END
 STRINGTABLE 
 BEGIN
     IDS_STORES_PLURAL       "%d stores"
+    IDS_INVALIDLICENSE      "La licencia que usted ha ingresado no es válida o ha expirado!"
+    IDS_LICFILEFILTER       "Archivos de licencia"
+    IDS_LICENSEVALID_CAPTION "Licencia válida"
+    IDS_LICENSEVALID_MSG    "Su licencia es válida. Muchas gracias por adquirir liquidFOLDERS! Nosotros apreciamos su negocio."
 END
 
 STRINGTABLE 
