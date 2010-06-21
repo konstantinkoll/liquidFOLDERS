@@ -40,24 +40,6 @@ CString GetFileLastWriteTimeAsString(LPCTSTR path)
 	return t.Format(_T("%m/%d/%y %I:%M %p"));
 }
 
-BOOL CopyDirectory(LPCTSTR src,LPCTSTR dst)
-{
-	TCHAR srcTemp[MAX_PATH];
-	_tcscpy(srcTemp,src);
-	srcTemp[_tcslen(src)+1] = _T('\0');
-	
-	TCHAR dstTemp[MAX_PATH];
-	_tcscpy(dstTemp,dst);
-	dstTemp[_tcslen(dst)+1] = _T('\0');
-
-	SHFILEOPSTRUCT sf = {0};
-	sf.wFunc = FO_COPY;
-	sf.pFrom = srcTemp;
-	sf.pTo = dstTemp;
-	
-	return SHFileOperation(&sf)==S_OK && !sf.fAnyOperationsAborted;
-}
-
 CString SizeStrFromLength(INT64 length)
 {
 	CString ret;

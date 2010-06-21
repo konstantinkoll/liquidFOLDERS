@@ -59,5 +59,53 @@ bool LFFileImportList::AddPath(wchar_t* path)
 
 void LFFileImportList::Resolve()
 {
-	// TODO
+	unsigned int a = 0;
+
+	while (a<m_Count)
+	{
+		if (m_Entries[a])
+		{
+			DWORD attr = GetFileAttributes(m_Entries[a]);
+			if (attr==INVALID_FILE_ATTRIBUTES)
+			{
+				free(m_Entries[a]);
+				m_Entries[a] = NULL;
+			}
+			else
+				if (attr & FILE_ATTRIBUTE_DIRECTORY)
+				{
+					// Dateien suchen und hinzufügen
+					wchar_t DirSpec[MAX_PATH];
+					wcscpy_s(DirSpec, MAX_PATH, m_Entries[a]);
+					wcscat_s(DirSpec, MAX_PATH, L"\\*");
+
+					WIN32_FIND_DATAW FindFileData;
+					HANDLE hFind = FindFirstFileW(DirSpec, &FindFileData);
+
+					if (hFind!=INVALID_HANDLE_VALUE)
+					{
+FileFound:
+						if (((FindFileData.dwFileAttributes & (FILE_ATTRIBUTE_DEVICE | FILE_ATTRIBUTE_VIRTUAL))==0) &&
+							(wcscmp(FindFileData.cFileName, L".")!=0) && (wcscmp(FindFileData.cFileName, L"..")!=0))
+						{
+							wchar_t fn[MAX_PATH];
+							wcscpy_s(fn, MAX_PATH, m_Entries[a]);
+							wcscat_s(fn, MAX_PATH, L"\\");
+							wcscat_s(fn, MAX_PATH, FindFileData.cFileName);
+							AddPath(&fn[0]);
+						}
+					}
+
+					if (FindNextFileW(hFind, &FindFileData)!=0)
+						goto FileFound;
+
+					FindClose(hFind);
+
+					free(m_Entries[a]);
+					m_Entries[a] = NULL;
+				}
+		}
+
+		a++;
+	}
 }

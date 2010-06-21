@@ -127,7 +127,7 @@ unsigned int CopyDir(LPCSTR lpPathSrc, LPCSTR lpPathDst)
 {
 	char DirSpec[MAX_PATH];
 	strcpy_s(DirSpec, MAX_PATH, lpPathSrc);
-	strcat_s(DirSpec, "*");
+	strcat_s(DirSpec, MAX_PATH, "*");
 
 	WIN32_FIND_DATAA FindFileData;
 	HANDLE hFind = FindFirstFileA(DirSpec, &FindFileData);
