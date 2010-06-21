@@ -199,7 +199,7 @@ void CFileView::OnItemContextMenu(int idx, CPoint point)
 	{
 	case LFTypeVirtual:
 		nID = (f->IconID==IDI_FLD_Back ? IDM_BACK : m_ViewParameters.Mode==LFViewGlobe ? IDM_VIRTUAL_GLOBE : IDM_VIRTUAL);
-		cmdDefault = ID_FILES_OPEN;
+		cmdDefault = ID_ITEMS_OPEN;
 		break;
 	case LFTypeDrive:
 		nID = IDM_DRIVE;
@@ -207,11 +207,11 @@ void CFileView::OnItemContextMenu(int idx, CPoint point)
 		break;
 	case LFTypeStore:
 		nID = IDM_STORE;
-		cmdDefault = ID_FILES_OPEN;
+		cmdDefault = ID_ITEMS_OPEN;
 		break;
 	case LFTypeFile:
 		nID = IDM_FILE;
-		cmdDefault = ID_FILES_OPEN;
+		cmdDefault = ID_ITEMS_OPEN;
 		break;
 	}
 
@@ -277,14 +277,14 @@ BOOL CFileView::HandleDefaultKeys(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags*/)
 	case VK_RETURN:
 		if ((GetKeyState(VK_CONTROL)>=0) && (GetKeyState(VK_SHIFT)>=0))
 		{
-			GetParentFrame()->SendMessage(WM_COMMAND, ID_FILES_OPEN);
+			GetParentFrame()->SendMessage(WM_COMMAND, ID_ITEMS_OPEN);
 			return TRUE;
 		}
 		break;
 	case VK_DELETE:
 		if ((GetKeyState(VK_CONTROL)>=0) && (GetKeyState(VK_SHIFT)>=0))
 		{
-			GetParentFrame()->SendMessage(WM_COMMAND, ID_FILES_DELETE);
+			GetParentFrame()->SendMessage(WM_COMMAND, ID_ITEMS_DELETE);
 			return TRUE;
 		}
 		break;
@@ -321,6 +321,7 @@ BEGIN_MESSAGE_MAP(CFileView, CWnd)
 	ON_COMMAND(ID_VIEW_SELECTALL, OnSelectAll)
 	ON_COMMAND(ID_VIEW_SELECTNONE, OnSelectNone)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_VIEW_GRANNY, ID_VIEW_SELECTNONE, OnUpdateCommands)
+	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->ItemsDropped, OnItemsDropped)
 END_MESSAGE_MAP()
 
 void CFileView::OnNcPaint()
@@ -396,7 +397,7 @@ void CFileView::OnLButtonUp(UINT nFlags, CPoint point)
 
 void CFileView::OnLButtonDblClk(UINT /*nFlags*/, CPoint /*point*/)
 {
-	GetParentFrame()->SendMessage(WM_COMMAND, ID_FILES_OPEN);
+	GetParentFrame()->SendMessage(WM_COMMAND, ID_ITEMS_OPEN);
 }
 
 void CFileView::OnRButtonDown(UINT nFlags, CPoint point)
@@ -500,4 +501,13 @@ void CFileView::OnUpdateCommands(CCmdUI* pCmdUI)
 	}
 
 	pCmdUI->Enable(b);
+}
+
+LRESULT CFileView::OnItemsDropped(WPARAM /*wParam*/, LPARAM /*lParam*/)
+{
+	if (result)
+		if (result->m_Context!=LFContextStores)
+			GetParentFrame()->SendMessage(WM_COMMAND, ID_NAV_RELOAD);
+
+	return NULL;
 }

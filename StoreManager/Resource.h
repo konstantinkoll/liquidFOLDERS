@@ -15,8 +15,8 @@
 #define IDB_APPMENU_16                  138
 #define IDB_RIBBONHOME_32               139
 #define IDB_RIBBONHOME_16               140
-#define IDB_RIBBONFILES_32              141
-#define IDB_RIBBONFILES_16              142
+#define IDB_RIBBONITEMS_32              141
+#define IDB_RIBBONITEMS_16              142
 #define IDB_RIBBONVIEW_32               143
 #define IDB_RIBBONVIEW_16               144
 #define IDB_RIBBONSTORES_32             145
@@ -114,9 +114,10 @@
 #define ID_CLIP_REMOVE                  604
 #define ID_CLIP_REMEMBERLAST            605
 #define ID_CLIP_REMEMBERNEW             606
-#define ID_FILES_SHOWINSPECTOR          650
-#define ID_FILES_OPEN                   651
-#define ID_FILES_DELETE                 652
+#define ID_ITEMS_SHOWINSPECTOR          650
+#define ID_ITEMS_OPEN                   651
+#define ID_ITEMS_DELETE                 652
+#define ID_ITEMS_RENAME                 653
 #define ID_SORT_FILENAME                700
 #define ID_SORT_COMMENT                 703
 #define ID_SORT_CREATIONTIME            705

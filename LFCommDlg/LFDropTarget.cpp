@@ -84,8 +84,12 @@ BOOL LFDropTarget::OnDrop(CWnd* /*pWnd*/, COleDataObject* pDataObject, DROPEFFEC
 
 	// Import
 	if (success)
+	{
 		if (LFImportFiles(m_StoreID, il, it, dropEffect==DROPEFFECT_MOVE)!=LFOk)
 			success = FALSE;
+
+		SendMessage(m_hWnd, LFGetMessageIDs()->ItemsDropped, NULL, NULL);
+	}
 
 	LFFreeItemDescriptor(it);
 	LFFreeFileImportList(il);

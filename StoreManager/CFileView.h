@@ -67,5 +67,6 @@ protected:
 	afx_msg void OnSelectAll();
 	afx_msg void OnSelectNone();
 	afx_msg void OnUpdateCommands(CCmdUI* pCmdUI);
+	afx_msg LRESULT OnItemsDropped(WPARAM wParam, LPARAM lParam);
 	DECLARE_MESSAGE_MAP()
 };

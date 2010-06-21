@@ -15,7 +15,7 @@
 
 #define RibbonCategory_Home                 0
 #define RibbonCategory_View                 1
-#define RibbonCategory_Files                2
+#define RibbonCategory_Items                2
 #define RibbonCategory_EMail_Mail           3
 #define RibbonCategory_EMail_Contacts       4
 #define RibbonCategory_UnknownFileFormats   5
@@ -26,7 +26,7 @@
 #define RibbonCategory_Stores               10
 #define RibbonCategory_Trash                11
 
-#define RibbonDefaultCategory               RibbonCategory_Files
+#define RibbonDefaultCategory               RibbonCategory_Items
 
 
 class CAdvancedRibbonBar : public CMFCRibbonBar
@@ -162,9 +162,10 @@ protected:
 	afx_msg void OnClipRememberLast();
 	afx_msg void OnClipRememberNew();
 	afx_msg void OnUpdateClipCommands(CCmdUI* pCmdUI);
-	afx_msg void OnFilesOpen();
-	afx_msg void OnFilesDelete();
-	afx_msg void OnUpdateFileCommands(CCmdUI* pCmdUI);
+	afx_msg void OnItemsOpen();
+	afx_msg void OnItemsDelete();
+	afx_msg void OnItemsRename();
+	afx_msg void OnUpdateItemCommands(CCmdUI* pCmdUI);
 	afx_msg void OnEmptyTrash();
 	afx_msg void OnRestoreSelectedFiles();
 	afx_msg void OnRestoreAllFiles();
@@ -172,8 +173,6 @@ protected:
 	afx_msg void OnStoreNew();
 	afx_msg void OnStoreNewInternal();
 	afx_msg void OnStoreNewDrive();
-	afx_msg void OnStoreDelete();
-	afx_msg void OnStoreRename();
 	afx_msg void OnStoreMakeDefault();
 	afx_msg void OnStoreMakeHybrid();
 	afx_msg void OnStoreProperties();

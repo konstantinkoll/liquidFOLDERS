@@ -37,6 +37,7 @@ struct LFLicense
 struct LFMessageIDs
 {
 	unsigned int LookChanged;
+	unsigned int ItemsDropped;
 
 	unsigned int StoresChanged;
 	unsigned int StoreAttributesChanged;

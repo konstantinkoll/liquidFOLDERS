@@ -67,8 +67,8 @@ IDB_RIBBONHOME_16       BITMAP                  "res\\Ribbon_Home_16.bmp"
 IDB_RIBBONHOME_32       BITMAP                  "res\\Ribbon_Home_32.bmp"
 IDB_RIBBONVIEW_16       BITMAP                  "res\\Ribbon_View_16.bmp"
 IDB_RIBBONVIEW_32       BITMAP                  "res\\Ribbon_View_32.bmp"
-IDB_RIBBONFILES_16      BITMAP                  "res\\Ribbon_Files_16.bmp"
-IDB_RIBBONFILES_32      BITMAP                  "res\\Ribbon_Files_32.bmp"
+IDB_RIBBONITEMS_16      BITMAP                  "res\\Ribbon_Items_16.bmp"
+IDB_RIBBONITEMS_32      BITMAP                  "res\\Ribbon_Items_32.bmp"
 IDB_RIBBONSTORES_16     BITMAP                  "res\\Ribbon_Stores_16.bmp"
 IDB_RIBBONSTORES_32     BITMAP                  "res\\Ribbon_Stores_32.bmp"
 IDB_RIBBONCALENDAR_32   BITMAP                  "res\\Ribbon_Calendar_32.bmp"
@@ -221,7 +221,7 @@ IDM_VIRTUAL MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "&Open",                       ID_FILES_OPEN
+        MENUITEM "&Open",                       ID_ITEMS_OPEN
     END
 END
 
@@ -229,7 +229,7 @@ IDM_VIRTUAL_GLOBE MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "&Open",                       ID_FILES_OPEN
+        MENUITEM "&Open",                       ID_ITEMS_OPEN
         MENUITEM SEPARATOR
         MENUITEM "Open in &Google Earth...",    ID_GLOBE_GOOGLEEARTH
     END
@@ -239,7 +239,7 @@ IDM_BACK MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "&One level up",               ID_FILES_OPEN
+        MENUITEM "&One level up",               ID_ITEMS_OPEN
     END
 END
 
@@ -247,7 +247,7 @@ IDM_STORE MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "&Open",                       ID_FILES_OPEN
+        MENUITEM "&Open",                       ID_ITEMS_OPEN
         MENUITEM SEPARATOR
         MENUITEM "&Delete...",                  ID_STORE_DELETE
         MENUITEM "&Rename",                     ID_STORE_RENAME
@@ -263,10 +263,11 @@ IDM_FILE MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "&Open",                       ID_FILES_OPEN
+        MENUITEM "&Open",                       ID_ITEMS_OPEN
         MENUITEM "&Remember",                   ID_CLIP_REMEMBERLAST
         MENUITEM SEPARATOR
-        MENUITEM "&Delete",                     ID_FILES_DELETE
+        MENUITEM "&Delete",                     ID_ITEMS_DELETE
+        MENUITEM "&Rename",                     ID_ITEMS_RENAME
     END
 END
 
@@ -646,9 +647,10 @@ END
 
 STRINGTABLE 
 BEGIN
-    ID_FILES_SHOWINSPECTOR  "Shows the inspector pane.\nInspector pane"
-    ID_FILES_OPEN           "Opens the selected item.\nOpen (Enter)"
-    ID_FILES_DELETE         "Deletes the selected files.\nDelete (Del)"
+    ID_ITEMS_SHOWINSPECTOR  "Shows the inspector pane.\nInspector pane"
+    ID_ITEMS_OPEN           "Opens the selected item.\nOpen (Enter)"
+    ID_ITEMS_DELETE         "Deletes the selected files.\nDelete (Del)"
+    ID_ITEMS_RENAME         "Renames the selected file.\nRename (F2)"
 END
 
 STRINGTABLE 
@@ -666,10 +668,10 @@ BEGIN
     ID_STORE_DELETE         "Deletes the selected store.\nDelete"
     ID_STORE_RENAME         "Renames the selected store.\nRename (F2)"
     ID_STORE_MAKEDEFAULT    "Makes the selected internal store the default store.\nMake default"
-    ID_STORE_MAKEHYBRID     "Converts the selected store into a hybrid store. This enables you to search the store, even if it is not mounted.\nMake hybrid"
+    ID_STORE_MAKEHYBRID     "Converts the selected store into a hybrid store. This allows you to search the store, even if it is not mounted.\nMake hybrid"
     ID_STORE_PROPERTIES     "Shows the properties of the selected store.\nProperties"
     ID_STORE_MAINTENANCE    "Runs scheduled maintenance on all stores.\nRun maintenance"
-    ID_STORE_BACKUP         "Saves important settings from the registry (including the properties of all internal stores and file format assignments) to a .reg file.\nBackup settings"
+    ID_STORE_BACKUP         "Saves important settings from the registry (including store properties and file format assignments) to a .reg file.\nBackup settings"
 END
 
 STRINGTABLE 

@@ -7,7 +7,6 @@
 #include "MainFrm.h"
 #include "liquidFOLDERS.h"
 #include "LFCore.h"
-#include "..\\LFCore\\resource.h"
 #include "Kitchen.h"
 #include "CFileView.h"
 #include "CListView.h"
@@ -68,7 +67,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_NAV_FIRST, ID_NAV_CLEARHISTORY, OnUpdateNavCommands)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_PANE_CAPTIONBAR, ID_PANE_HISTORYWND, OnUpdatePaneCommands)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_CLIP_COPY, ID_CLIP_REMEMBERNEW, OnUpdateClipCommands)
-	ON_UPDATE_COMMAND_UI_RANGE(ID_FILES_SHOWINSPECTOR, ID_FILES_DELETE, OnUpdateFileCommands)
+	ON_UPDATE_COMMAND_UI_RANGE(ID_ITEMS_SHOWINSPECTOR, ID_ITEMS_RENAME, OnUpdateItemCommands)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_TRASH_EMPTY, ID_TRASH_RESTOREALL, OnUpdateTrashCommands)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_STORE_NEW, ID_STORE_BACKUP, OnUpdateStoreCommands)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_DROP_CALENDAR, ID_DROP_RESOLUTION, OnUpdateDropCommands)
@@ -109,9 +108,10 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_COMMAND(ID_CLIP_REMEMBERLAST, OnClipRememberLast)
 	ON_COMMAND(ID_CLIP_REMEMBERNEW, OnClipRememberNew)
 
-	ON_COMMAND(ID_FILES_SHOWINSPECTOR, OnShowInspectorWnd)
-	ON_COMMAND(ID_FILES_OPEN, OnFilesOpen)
-	ON_COMMAND(ID_FILES_DELETE, OnFilesDelete)
+	ON_COMMAND(ID_ITEMS_SHOWINSPECTOR, OnShowInspectorWnd)
+	ON_COMMAND(ID_ITEMS_OPEN, OnItemsOpen)
+	ON_COMMAND(ID_ITEMS_DELETE, OnItemsDelete)
+	ON_COMMAND(ID_ITEMS_RENAME, OnItemsRename)
 
 	ON_COMMAND(ID_TRASH_EMPTY, OnEmptyTrash)
 	ON_COMMAND(ID_TRASH_RESTORESELECTED, OnRestoreSelectedFiles)
@@ -120,8 +120,8 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_COMMAND(ID_STORE_NEW, OnStoreNew)
 	ON_COMMAND(ID_STORE_NEWINTERNAL, OnStoreNewInternal)
 	ON_COMMAND(ID_STORE_NEWDRIVE, OnStoreNewDrive)
-	ON_COMMAND(ID_STORE_DELETE, OnStoreDelete)
-	ON_COMMAND(ID_STORE_RENAME, OnStoreRename)
+	ON_COMMAND(ID_STORE_DELETE, OnItemsDelete)
+	ON_COMMAND(ID_STORE_RENAME, OnItemsRename)
 	ON_COMMAND(ID_STORE_MAKEDEFAULT, OnStoreMakeDefault)
 	ON_COMMAND(ID_STORE_MAKEHYBRID, OnStoreMakeHybrid)
 	ON_COMMAND(ID_STORE_PROPERTIES, OnStoreProperties)
@@ -752,7 +752,7 @@ void CMainFrame::OnUpdateClipCommands(CCmdUI* pCmdUI)
 	pCmdUI->Enable(b);
 }
 
-void CMainFrame::OnFilesOpen()
+void CMainFrame::OnItemsOpen()
 {
 	int idx = GetSelectedItem();
 
@@ -798,40 +798,67 @@ void CMainFrame::OnFilesOpen()
 	}
 }
 
-void CMainFrame::OnFilesDelete()
+void CMainFrame::OnItemsDelete()
 {
+	int i;
+
 	if (CookedFiles)
-		if (CookedFiles->m_Context==LFContextTrash)
+		switch (CookedFiles->m_Context)
 		{
+		case LFContextStores:
+			i = GetSelectedItem();
+			if (i!=-1)
+			{
+				LFItemDescriptor* store = LFAllocItemDescriptor(CookedFiles->m_Items[i]);
+				LFErrorBox(theApp.DeleteStore(store));
+				LFFreeItemDescriptor(store);
+			}
+			break;
+		case LFContextTrash:
 			DeleteFiles();
-		}
-		else
-		{
+			break;
+		default:
 			UpdateTrashFlag(TRUE);
 		}
 }
 
-void CMainFrame::OnUpdateFileCommands(CCmdUI* pCmdUI)
+void CMainFrame::OnItemsRename()
+{
+	if (m_wndView)
+	{
+		m_wndView->SetFocus();
+		m_wndView->EditLabel(GetSelectedItem());
+	}
+}
+
+void CMainFrame::OnUpdateItemCommands(CCmdUI* pCmdUI)
 {
 	BOOL b = FALSE;
-	int i;
+	int i = GetSelectedItem();
+	LFItemDescriptor* f = (i==-1 ? NULL : CookedFiles->m_Items[i]);
 
 	switch (pCmdUI->m_nID)
 	{
-	case ID_FILES_SHOWINSPECTOR:
+	case ID_ITEMS_SHOWINSPECTOR:
 		b = TRUE;
 		break;
-	case ID_FILES_OPEN:
-		i = GetSelectedItem();
-		if (i!=-1)
+	case ID_ITEMS_OPEN:
+		if (f)
 		{
-			b = (CookedFiles->m_Items[i]->NextFilter!=NULL) ||
-				((CookedFiles->m_Items[i]->Type & (LFTypeMask | LFTypeNotMounted))==LFTypeDrive) ||
-				((CookedFiles->m_Items[i]->Type & LFTypeMask)==LFTypeFile);
+			b = (f->NextFilter!=NULL) ||
+				((f->Type & (LFTypeMask | LFTypeNotMounted))==LFTypeDrive) ||
+				((f->Type & LFTypeMask)==LFTypeFile);
 		}
 		break;
-	case ID_FILES_DELETE:
-		b = FilesSelected;
+	case ID_ITEMS_DELETE:
+		if (CookedFiles)
+			b = (CookedFiles->m_Context==LFContextStores) ? f ? (f->Type & LFTypeStore) : FALSE : FilesSelected;
+		break;
+	case ID_ITEMS_RENAME:
+		if (CookedFiles)
+			b = (CookedFiles->m_Context==LFContextStores) ? f ? (f->Type & LFTypeStore) &&  (ActiveViewID>=LFViewLargeIcons) && (ActiveViewID<=LFViewPreview) : FALSE : FilesSelected;
+		if ((b) && (m_wndView))
+			b ^= m_wndView->IsEditing();
 		break;
 	}
 
@@ -841,6 +868,7 @@ void CMainFrame::OnUpdateFileCommands(CCmdUI* pCmdUI)
 void CMainFrame::OnEmptyTrash()
 {
 	DeleteFiles(TRUE);
+	theApp.PlayTrashSound();
 }
 
 void CMainFrame::OnRestoreSelectedFiles()
@@ -919,27 +947,6 @@ void CMainFrame::OnStoreNewDrive()
 
 	if (i!=-1)
 		ExecuteCreateStoreDlg(IDD_STORENEWDRIVE, CookedFiles->m_Items[i]->CoreAttributes.FileID[0]);
-}
-
-void CMainFrame::OnStoreDelete()
-{
-	int i = GetSelectedItem();
-
-	if (i!=-1)
-	{
-		LFItemDescriptor* store = LFAllocItemDescriptor(CookedFiles->m_Items[i]);
-		LFErrorBox(theApp.DeleteStore(store));
-		LFFreeItemDescriptor(store);
-	}
-}
-
-void CMainFrame::OnStoreRename()
-{
-	if (m_wndView)
-	{
-		m_wndView->SetFocus();
-		m_wndView->EditLabel(GetSelectedItem());
-	}
 }
 
 void CMainFrame::OnStoreMakeDefault()
@@ -1101,7 +1108,7 @@ void CMainFrame::OnUpdateStoreCommands(CCmdUI* pCmdUI)
 				break;
 			case ID_STORE_RENAME:
 				if (f)
-					b = (f->Type & LFTypeStore) && (!(f->Type & LFTypeNotMounted)) && (ActiveViewID>=LFViewLargeIcons) && (ActiveViewID<=LFViewPreview);
+					b = (f->Type & LFTypeStore) && (ActiveViewID>=LFViewLargeIcons) && (ActiveViewID<=LFViewPreview);
 				if ((b) && (m_wndView))
 					b ^= m_wndView->IsEditing();
 				break;
@@ -1843,11 +1850,11 @@ void CMainFrame::InitializeRibbon()
 				pPanelDisplay->Add(theApp.CommandButton(ID_APP_VIEW_TIMELINE, 12, 12));
 			}
 
-	strTemp = "Files";
-	CMFCRibbonCategory* pCategoryFiles = m_wndRibbonBar.AddCategory(strTemp, IDB_RIBBONFILES_16, IDB_RIBBONFILES_32);
+	strTemp = "Items";
+	CMFCRibbonCategory* pCategoryItems = m_wndRibbonBar.AddCategory(strTemp, IDB_RIBBONITEMS_16, IDB_RIBBONITEMS_32);
 
 		strTemp = "Clipboard";
-		CMFCRibbonPanel* pPanelClipboard = pCategoryFiles->AddPanel(strTemp, m_PanelImages.ExtractIcon(9));
+		CMFCRibbonPanel* pPanelClipboard = pCategoryItems->AddPanel(strTemp, m_PanelImages.ExtractIcon(9));
 
 			pPanelClipboard->Add(theApp.CommandButton(ID_CLIP_COPY, 0, 0));
 			pPanelClipboard->Add(theApp.CommandButton(ID_VIEW_SELECTALL, 1));
@@ -1873,50 +1880,51 @@ void CMainFrame::InitializeRibbon()
 			}
 
 		strTemp = "Manage";
-		CMFCRibbonPanel* pPanelFileManage = pCategoryFiles->AddPanel(strTemp, m_PanelImages.ExtractIcon(0));
-		pPanelFileManage->EnableLaunchButton(ID_FILES_SHOWINSPECTOR, 9);
+		CMFCRibbonPanel* pPanelFileManage = pCategoryItems->AddPanel(strTemp, m_PanelImages.ExtractIcon(0));
+		pPanelFileManage->EnableLaunchButton(ID_ITEMS_SHOWINSPECTOR, 10);
 
-			pPanelFileManage->Add(theApp.CommandButton(ID_FILES_OPEN, 7, 7));
+			pPanelFileManage->Add(theApp.CommandButton(ID_ITEMS_OPEN, 7, 7));
 			pPanelFileManage->AddSeparator();
-			pPanelFileManage->Add(theApp.CommandButton(ID_FILES_DELETE, 8, 8));
+			pPanelFileManage->Add(theApp.CommandButton(ID_ITEMS_DELETE, 8, 8));
+			pPanelFileManage->Add(theApp.CommandButton(ID_ITEMS_RENAME, 9, 9));
 
 		/*strTemp = "Share";
-		CMFCRibbonPanel* pPanelFileShare = pCategoryFiles->AddPanel(strTemp, m_PanelImages.ExtractIcon(0));
+		CMFCRibbonPanel* pPanelFileShare = pCategoryItems->AddPanel(strTemp, m_PanelImages.ExtractIcon(0));
 
 			strTemp = "Send";
-			pPanelFileShare->Add(new CMFCRibbonButton(ID_APP_ABOUT, strTemp, 10, 10));
+			pPanelFileShare->Add(new CMFCRibbonButton(ID_APP_ABOUT, strTemp, 11, 11));
 
 			strTemp = "Upload";
-			CMFCRibbonButton* pBtnUpload = new CMFCRibbonButton(0, strTemp, 11, 11);
+			CMFCRibbonButton* pBtnUpload = new CMFCRibbonButton(0, strTemp, 12, 12);
 			pBtnUpload->SetDefaultCommand(FALSE);
 
 				strTemp = "Upload to";
 				pBtnUpload->AddSubItem(new CMFCRibbonLabel(strTemp));
 				strTemp = "Flickr";
-				pBtnUpload->AddSubItem(new CMFCRibbonButton(ID_APP_ABOUT, strTemp, 12, 12));
-				strTemp = "Slideshare";
 				pBtnUpload->AddSubItem(new CMFCRibbonButton(ID_APP_ABOUT, strTemp, 13, 13));
-				strTemp = "YouTube";
+				strTemp = "Slideshare";
 				pBtnUpload->AddSubItem(new CMFCRibbonButton(ID_APP_ABOUT, strTemp, 14, 14));
+				strTemp = "YouTube";
+				pBtnUpload->AddSubItem(new CMFCRibbonButton(ID_APP_ABOUT, strTemp, 15, 15));
 
 			pPanelFileShare->Add(pBtnUpload);
 
 			strTemp = "Syndicate";
-			CMFCRibbonButton* pBtnSyndicate = new CMFCRibbonButton(0, strTemp, 15, 15);
+			CMFCRibbonButton* pBtnSyndicate = new CMFCRibbonButton(0, strTemp, 16, 16);
 			pBtnSyndicate->SetDefaultCommand(FALSE);
 
 				strTemp = "Syndicate URL on";
 				pBtnSyndicate ->AddSubItem(new CMFCRibbonLabel(strTemp));
 				strTemp = "Delicious";
-				pBtnSyndicate ->AddSubItem(new CMFCRibbonButton(ID_APP_ABOUT, strTemp, 16, 16));
-				strTemp = "Facebook";
 				pBtnSyndicate ->AddSubItem(new CMFCRibbonButton(ID_APP_ABOUT, strTemp, 17, 17));
-				strTemp = "Google";
+				strTemp = "Facebook";
 				pBtnSyndicate ->AddSubItem(new CMFCRibbonButton(ID_APP_ABOUT, strTemp, 18, 18));
-				strTemp = "Mr. Wong";
+				strTemp = "Google";
 				pBtnSyndicate ->AddSubItem(new CMFCRibbonButton(ID_APP_ABOUT, strTemp, 19, 19));
-				strTemp = "Twitter";
+				strTemp = "Mr. Wong";
 				pBtnSyndicate ->AddSubItem(new CMFCRibbonButton(ID_APP_ABOUT, strTemp, 20, 20));
+				strTemp = "Twitter";
+				pBtnSyndicate ->AddSubItem(new CMFCRibbonButton(ID_APP_ABOUT, strTemp, 21, 21));
 
 			pPanelFileShare->Add(pBtnSyndicate);*/
 

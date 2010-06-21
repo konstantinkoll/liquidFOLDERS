@@ -17,6 +17,7 @@ bool APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID /*lpRese
 		LFCoreModuleHandle = hModule;
 
 		LFMessages.LookChanged = RegisterWindowMessageA("liquidFOLDERS.LookChanged");
+		LFMessages.ItemsDropped = RegisterWindowMessageA("liquidFOLDERS.ItemsDropped");
 		LFMessages.StoresChanged = RegisterWindowMessageA("liquidFOLDERS.StoresChanged");
 		LFMessages.StoreAttributesChanged = RegisterWindowMessageA("liquidFOLDERS.StoreAttributesChanged");
 		LFMessages.DefaultStoreChanged = RegisterWindowMessageA("liquidFOLDERS.DefaultStoreChanged");

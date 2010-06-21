@@ -114,6 +114,7 @@ public:
 	UINT DeleteStore(LFItemDescriptor* store, CWnd* pParentWnd=NULL);
 	void PlayNavigateSound();
 	void PlayWarningSound();
+	void PlayTrashSound();
 
 	afx_msg void OnAppNewFileDrop();
 	afx_msg void OnAppNewMigrate();

@@ -552,3 +552,8 @@ void LFApplication::PlayWarningSound()
 {
 	PlayRegSound(L"Apps\\Explorer\\SecurityBand");
 }
+
+void LFApplication::PlayTrashSound()
+{
+	PlayRegSound(L"Apps\\Explorer\\EmptyRecycleBin");
+}
