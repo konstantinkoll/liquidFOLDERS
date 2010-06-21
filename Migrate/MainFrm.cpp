@@ -25,7 +25,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoreAttributesChanged, OnStoresChanged)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->DefaultStoreChanged, OnDefaultStoreChanged)
 
-	ON_UPDATE_COMMAND_UI_RANGE(ID_APP_HELP, ID_APP_FOCUSMAIN, OnUpdateAppCommands)
+	ON_UPDATE_COMMAND_UI_RANGE(ID_APP_CLOSE, ID_APP_FOCUSMAIN, OnUpdateAppCommands)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_PANE_WORKFLOWWND, ID_PANE_STOREWND, OnUpdatePaneCommands)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_MIGRATE_START, ID_MIGRATE_SIMULATE, OnUpdateMigrateCommands)
 	ON_UPDATE_COMMAND_UI(ID_STORE_NEW, OnUpdateStoreCommands)
@@ -203,6 +203,7 @@ void CMainFrame::OnUpdateAppCommands(CCmdUI* pCmdUI)
 	{
 	case ID_APP_GRANNYMODE:
 		pCmdUI->SetCheck(theApp.m_GrannyMode);
+	case ID_APP_CLOSE:
 	case ID_APP_SHOWPLACES:
 	case ID_APP_SHOWSTORES:
 	case ID_APP_FOCUSMAIN:
