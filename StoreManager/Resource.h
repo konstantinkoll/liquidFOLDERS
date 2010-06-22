@@ -147,9 +147,10 @@
 #define ID_STORE_RENAME                 804
 #define ID_STORE_MAKEDEFAULT            805
 #define ID_STORE_MAKEHYBRID             808
-#define ID_STORE_PROPERTIES             809
-#define ID_STORE_MAINTENANCE            810
-#define ID_STORE_BACKUP                 811
+#define ID_STORE_ADDFILES               809
+#define ID_STORE_PROPERTIES             810
+#define ID_STORE_MAINTENANCE            811
+#define ID_STORE_BACKUP                 812
 #define ID_DROP_CALENDAR                820
 #define ID_DROP_NAME                    821
 #define ID_DROP_TIME                    822

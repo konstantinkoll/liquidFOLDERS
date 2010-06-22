@@ -124,6 +124,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_COMMAND(ID_STORE_RENAME, OnItemsRename)
 	ON_COMMAND(ID_STORE_MAKEDEFAULT, OnStoreMakeDefault)
 	ON_COMMAND(ID_STORE_MAKEHYBRID, OnStoreMakeHybrid)
+	ON_COMMAND(ID_STORE_ADDFILES, OnStoreAddFiles)
 	ON_COMMAND(ID_STORE_PROPERTIES, OnStoreProperties)
 	ON_COMMAND(ID_STORE_MAINTENANCE, OnStoreMaintenance)
 	ON_COMMAND(ID_STORE_BACKUP, OnStoreBackup)
@@ -997,6 +998,12 @@ void CMainFrame::OnStoreProperties()
 	}
 }
 
+void CMainFrame::OnStoreAddFiles()
+{
+	// TODO
+	MessageBox(_T("This function is not implemented right now. Please open the store and drag some files into the main window to import them. Alternatively use the FileDrop."), _T("Not implemented yet"));
+}
+
 void CMainFrame::OnStoreMaintenance()
 {
 	LFMaintenanceDlgParameters p;
@@ -1103,14 +1110,17 @@ void CMainFrame::OnUpdateStoreCommands(CCmdUI* pCmdUI)
 				break;
 			case ID_STORE_NEWDRIVE:
 				if (f)
-					b = (f->Type & LFTypeDrive) &&
-						(!(f->Type & LFTypeNotMounted));
+					b = (f->Type & LFTypeDrive) && (!(f->Type & LFTypeNotMounted));
 				break;
 			case ID_STORE_RENAME:
 				if (f)
 					b = (f->Type & LFTypeStore) && (ActiveViewID>=LFViewLargeIcons) && (ActiveViewID<=LFViewPreview);
 				if ((b) && (m_wndView))
 					b ^= m_wndView->IsEditing();
+				break;
+			case ID_STORE_ADDFILES:
+				if (f)
+					b = (f->Type & LFTypeStore) && (!(f->Type & LFTypeNotMounted));
 				break;
 			case ID_STORE_DELETE:
 			case ID_STORE_PROPERTIES:
@@ -1879,14 +1889,14 @@ void CMainFrame::InitializeRibbon()
 				pPanelClipboard->Add(pBtnRemember);
 			}
 
-		strTemp = "Manage";
-		CMFCRibbonPanel* pPanelFileManage = pCategoryItems->AddPanel(strTemp, m_PanelImages.ExtractIcon(0));
-		pPanelFileManage->EnableLaunchButton(ID_ITEMS_SHOWINSPECTOR, 10);
+		strTemp = "Basic";
+		CMFCRibbonPanel* pPanelItemsBasic = pCategoryItems->AddPanel(strTemp, m_PanelImages.ExtractIcon(0));
+		pPanelItemsBasic->EnableLaunchButton(ID_ITEMS_SHOWINSPECTOR, 10);
 
-			pPanelFileManage->Add(theApp.CommandButton(ID_ITEMS_OPEN, 7, 7));
-			pPanelFileManage->AddSeparator();
-			pPanelFileManage->Add(theApp.CommandButton(ID_ITEMS_DELETE, 8, 8));
-			pPanelFileManage->Add(theApp.CommandButton(ID_ITEMS_RENAME, 9, 9));
+			pPanelItemsBasic->Add(theApp.CommandButton(ID_ITEMS_OPEN, 7, 7));
+			pPanelItemsBasic->AddSeparator();
+			pPanelItemsBasic->Add(theApp.CommandButton(ID_ITEMS_DELETE, 8, 8));
+			pPanelItemsBasic->Add(theApp.CommandButton(ID_ITEMS_RENAME, 9, 9));
 
 		/*strTemp = "Share";
 		CMFCRibbonPanel* pPanelFileShare = pCategoryItems->AddPanel(strTemp, m_PanelImages.ExtractIcon(0));
@@ -2081,13 +2091,18 @@ void CMainFrame::InitializeRibbon()
 				pPanelStoresStores->Add(theApp.CommandButton(ID_STORE_MAKEDEFAULT, 5, 5));
 				pPanelStoresStores->Add(theApp.CommandButton(ID_STORE_MAKEHYBRID, 6, 6));
 
-			strTemp = "Housekeeping";
-			CMFCRibbonPanel* pPanelStoresInformation = pCategoryStores->AddPanel(strTemp, m_PanelImages.ExtractIcon(12));
+			strTemp = "Items";
+			CMFCRibbonPanel* pPanelStoresItems = pCategoryStores->AddPanel(strTemp, m_PanelImages.ExtractIcon(20));
 
-				pPanelStoresInformation->Add(theApp.CommandButton(ID_STORE_PROPERTIES, 7, 7));
-				pPanelStoresInformation->AddSeparator();
-				pPanelStoresInformation->Add(theApp.CommandButton(ID_STORE_MAINTENANCE, 8, 8));
-				pPanelStoresInformation->Add(theApp.CommandButton(ID_STORE_BACKUP, 9, 9));
+				pPanelStoresItems->Add(theApp.CommandButton(ID_STORE_ADDFILES, 7, 7));
+
+			strTemp = "Housekeeping";
+			CMFCRibbonPanel* pPanelStoresHousekeeping = pCategoryStores->AddPanel(strTemp, m_PanelImages.ExtractIcon(12));
+
+				pPanelStoresHousekeeping->Add(theApp.CommandButton(ID_STORE_PROPERTIES, 8, 8));
+				pPanelStoresHousekeeping->AddSeparator();
+				pPanelStoresHousekeeping->Add(theApp.CommandButton(ID_STORE_MAINTENANCE, 9, 9));
+				pPanelStoresHousekeeping->Add(theApp.CommandButton(ID_STORE_BACKUP, 10, 10));
 
 		strTemp = "Deleted files";
 		strCtx = "Trash";

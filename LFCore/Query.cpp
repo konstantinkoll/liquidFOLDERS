@@ -121,7 +121,7 @@ LFSearchResult* QueryDomains(LFFilter* filter)
 		nf->Mode = LFFilterModeStores;
 		nf->Options = filter->Options;
 
-		res->AddBacklink("", nf);
+		res->AddBacklink(filter->StoreID, nf);
 	}
 
 	wchar_t HintSingular[256];
@@ -186,21 +186,16 @@ LFSearchResult* QueryDomains(LFFilter* filter)
 	return res;
 }
 
-LFSearchResult* QueryStore(LFFilter* filter)
+bool RetrieveStore(char* StoreID, LFFilter* filter, LFSearchResult* res, bool AddBacklink)
 {
-	LFSearchResult* res = new LFSearchResult(LFContextDefault);
-	res->m_RecommendedView = LFViewDetails;
-	res->m_LastError = LFOk;
-	strcpy_s(res->m_StoreID, LFKeySize, filter->StoreID);
-
 	CIndex* idx1;
 	CIndex* idx2;
 	LFStoreDescriptor* slot;
 	HANDLE StoreLock = NULL;
-	res->m_LastError = OpenStore(&filter->StoreID[0], false, idx1, idx2, &slot, &StoreLock);
+	res->m_LastError = OpenStore(StoreID, false, idx1, idx2, &slot, &StoreLock);
 	if (res->m_LastError==LFOk)
 	{
-		if ((filter->Options.AddBacklink) && (filter->Mode==LFFilterModeDirectoryTree))
+		if (AddBacklink)
 		{
 			LFFilter* nf = LFAllocFilter();
 			nf->Mode = LFFilterModeStoreHome;
@@ -220,31 +215,86 @@ LFSearchResult* QueryStore(LFFilter* filter)
 			delete idx2;
 		ReleaseMutexForStore(StoreLock);
 
-		if (filter->Mode==LFFilterModeDirectoryTree)
+		return true;
+	}
+
+	return false;
+}
+
+LFSearchResult* QueryTree(LFFilter* filter)
+{
+	LFSearchResult* res = new LFSearchResult(LFContextDefault);
+	res->m_RecommendedView = LFViewDetails;
+	res->m_LastError = LFOk;
+	strcpy_s(res->m_StoreID, LFKeySize, filter->StoreID);
+
+	if (RetrieveStore(filter->StoreID, filter, res, filter->Options.AddBacklink))
+	{
+		switch (filter->DomainID)
 		{
-			switch (filter->DomainID)
-			{
-			case LFDomainTrash:
-				res->m_Context = LFContextTrash;
-				filter->Result.FilterType = LFFilterTypeTrash;
-				break;
-			case LFDomainUnknown:
-				res->m_Context = LFContextHousekeeping;
-				filter->Result.FilterType = LFFilterTypeUnknownFileFormats;
-				break;
-			default:
-				filter->Result.FilterType = LFFilterTypeSubfolder;
-			}
-		}
-		else
-		{
-			filter->Result.FilterType = LFFilterTypeQueryFilter;
+		case LFDomainTrash:
+			res->m_Context = LFContextTrash;
+			filter->Result.FilterType = LFFilterTypeTrash;
+			break;
+		case LFDomainUnknown:
+			res->m_Context = LFContextHousekeeping;
+			filter->Result.FilterType = LFFilterTypeUnknownFileFormats;
+			break;
+		default:
+			filter->Result.FilterType = LFFilterTypeSubfolder;
 		}
 	}
 	else
 	{
 		filter->Result.FilterType = LFFilterTypeError;
 	}
+
+	return res;
+}
+
+LFSearchResult* QuerySearch(LFFilter* filter)
+{
+	LFSearchResult* res = new LFSearchResult(LFContextDefault);
+	res->m_RecommendedView = LFViewDetails;
+	res->m_LastError = LFOk;
+	strcpy_s(res->m_StoreID, LFKeySize, filter->StoreID);
+
+	bool success = false;
+	if (filter->StoreID[0]=='\0')
+	{
+		// Alle Stores
+		if (!GetMutex(Mutex_Stores))
+		{
+			res->m_LastError = LFMutexError;
+			goto Finish;
+		}
+
+		char* keys;
+		unsigned int count = FindStores(&keys);
+		ReleaseMutex(Mutex_Stores);
+
+		if (count)
+		{
+			char* ptr = keys;
+			for (unsigned int a=0; a<count; a++)
+			{
+				if (RetrieveStore(ptr, filter, res, false))
+					success = true;
+
+				ptr += LFKeySize;
+			}
+		}
+
+		free(keys);
+	}
+	else
+	{
+		// Ein Store
+		success = RetrieveStore(filter->StoreID, filter, res, false);
+	}
+
+Finish:
+	filter->Result.FilterType = success ? LFFilterTypeQueryFilter : LFFilterTypeError;
 
 	return res;
 }
@@ -261,7 +311,7 @@ LFCore_API LFSearchResult* LFQuery(LFFilter* filter)
 	else
 	{
 		// Ggf. Default Store einsetzen
-		if ((strcmp(filter->StoreID, "")==0) && (filter->Mode>=LFFilterModeStoreHome) && (filter->Mode<=LFFilterModeSearchInStore))
+		if ((filter->StoreID[0]=='\0') && (filter->Mode>=LFFilterModeStoreHome) && (filter->Mode<=LFFilterModeDirectoryTree))
 			if (LFDefaultStoreAvailable())
 			{
 				char* ds = LFGetDefaultStore();
@@ -285,8 +335,10 @@ LFCore_API LFSearchResult* LFQuery(LFFilter* filter)
 				res = QueryDomains(filter);
 				break;
 			case LFFilterModeDirectoryTree:
-			case LFFilterModeSearchInStore:
-				res = QueryStore(filter);
+				res = QueryTree(filter);
+				break;
+			case LFFilterModeSearch:
+				res = QuerySearch(filter);
 				break;
 			default:
 				res = new LFSearchResult(LFContextDefault);
@@ -295,8 +347,9 @@ LFCore_API LFSearchResult* LFQuery(LFFilter* filter)
 			}
 
 		// Statistik
-		if ((wcscmp(filter->Name, L"")==0) && (res->m_Context!=LFContextDefault))
+		if ((filter->Name[0]==L'\0') && (res->m_Context!=LFContextDefault))
 			LoadString(LFCoreModuleHandle, res->m_Context+IDS_FirstContext, filter->Name, 256);
+
 		GetLocalTime(&filter->Result.Time);
 		filter->Result.ItemCount = res->m_ItemCount;
 		filter->Result.FileCount = res->m_FileCount;

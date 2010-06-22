@@ -367,8 +367,7 @@ struct LFDomainDescriptor
 #define LFFilterModeStores              1
 #define LFFilterModeStoreHome           2
 #define LFFilterModeDirectoryTree       3
-#define LFFilterModeSearchInStore       4
-#define LFFilterModeSearchAllStores     5
+#define LFFilterModeSearch              4
 
 #define LFFilterTypeStores              0
 #define LFFilterTypeStoreHome           1
@@ -379,6 +378,8 @@ struct LFDomainDescriptor
 #define LFFilterTypeIllegalRequest      6
 #define LFFilterTypeError               7
 #define LFFilterTypeDefault             -1
+
+#define LFFilterCompareIgnore           0	// All
 
 struct LFFilterOptions
 {
@@ -398,6 +399,13 @@ struct LFFilterResult
 	int FilterType;
 };
 
+struct LFFilterCondition
+{
+	LFFilterCondition* Next;
+	LFVariantData AttrData;					// Never use for StoreID
+	unsigned char Compare;
+};
+
 struct LFFilter
 {
 	wchar_t Name[256];
@@ -409,8 +417,9 @@ struct LFFilter
 	bool HideEmptyDomains;					// For LFFilterModeStoreHome
 
 	char StoreID[LFKeySize];				// For LFFilterModeStoreHome and above
-	unsigned char DomainID;					// For LFFilterModeStoreHome and above
+	unsigned char DomainID;					// For LFFilterModeDirectoryTree and above
 	wchar_t Searchterm[256];				// For LFFilterModeDirectoryTree and above
+	LFFilterCondition* ConditionList;		// For LFFilterModeDirectoryTree and above
 
 	LFFilterResult Result;					// Set by the query engine
 };
