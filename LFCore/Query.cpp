@@ -14,14 +14,183 @@
 
 extern HMODULE LFCoreModuleHandle;
 extern HANDLE Mutex_Stores;
+extern int CoreOffsets[];
 
+
+bool CheckCondition(void* value, LFFilterCondition* c)
+{
+	assert(c->Compare>=LFFilterCompareIgnore);
+	assert(c->Compare<=LFFilterCompareContains);
+
+	if (c->Compare==LFFilterCompareIgnore)
+		return true;
+
+	if (!value)
+		switch(c->Compare)
+		{
+		case LFFilterCompareIsEqual:
+			return LFIsNullVariantData(&c->AttrData);
+		case LFFilterCompareIsNotEqual:
+			return !LFIsNullVariantData(&c->AttrData);
+		default:
+			return false;
+		}
+
+	assert(c->AttrData.Attr<LFAttributeCount);
+	assert(c->AttrData.Type==AttrTypes[c->AttrData.Attr]);
+	assert(c->AttrData.Type<LFTypeCount);
+
+	ULARGE_INTEGER uli1;
+	ULARGE_INTEGER uli2;
+
+/*
+#define LFFilterCompareIgnore           0
+#define LFFilterCompareIsEqual          1
+#define LFFilterCompareIsNotEqual       2
+#define LFFilterCompareIsAboveOrEqual   3
+#define LFFilterCompareBeginsWith       3	// Strings
+#define LFFilterCompareIsBelowOrEqual   4
+#define LFFilterCompareEndsWith         4	// Strings
+#define LFFilterCompareContains         5	// Strings
+*/
+	switch (c->AttrData.Type)
+	{
+	case LFTypeUnicodeString:
+		// TODO
+		return true;
+	case LFTypeAnsiString:
+		// TODO
+		return true;
+	case LFTypeFourCC:
+	case LFTypeUINT:
+	case LFTypeDuration:
+		switch (c->Compare)
+		{
+		case LFFilterCompareIsEqual:
+			return *(unsigned int*)value==c->AttrData.UINT;
+		case LFFilterCompareIsNotEqual:
+			return *(unsigned int*)value!=c->AttrData.UINT;
+		case LFFilterCompareIsAboveOrEqual:
+			return *(unsigned int*)value>=c->AttrData.UINT;
+		case LFFilterCompareIsBelowOrEqual:
+			return *(unsigned int*)value<=c->AttrData.UINT;
+		default:
+			assert(false);
+			return false;
+		}
+	case LFTypeFlags:
+		switch (c->Compare)
+		{
+		case LFFilterCompareIsEqual:
+			return (*(unsigned int*)value & c->AttrData.Flags.Mask)==(c->AttrData.Flags.Flags & c->AttrData.Flags.Mask);
+		case LFFilterCompareIsNotEqual:
+			return (*(unsigned int*)value & c->AttrData.Flags.Mask)!=(c->AttrData.Flags.Flags & c->AttrData.Flags.Mask);
+		default:
+			assert(false);
+			return false;
+		}
+	case LFTypeRating:
+		switch (c->Compare)
+		{
+		case LFFilterCompareIsEqual:
+			return *(unsigned char*)value==c->AttrData.Rating;
+		case LFFilterCompareIsNotEqual:
+			return *(unsigned char*)value!=c->AttrData.Rating;
+		case LFFilterCompareIsAboveOrEqual:
+			return *(unsigned char*)value>=c->AttrData.Rating;
+		case LFFilterCompareIsBelowOrEqual:
+			return *(unsigned char*)value<=c->AttrData.Rating;
+		default:
+			assert(false);
+			return false;
+		}
+	case LFTypeINT64:
+		switch (c->Compare)
+		{
+		case LFFilterCompareIsEqual:
+			return *(__int64*)value==c->AttrData.INT64;
+		case LFFilterCompareIsNotEqual:
+			return *(__int64*)value!=c->AttrData.INT64;
+		case LFFilterCompareIsAboveOrEqual:
+			return *(__int64*)value>=c->AttrData.INT64;
+		case LFFilterCompareIsBelowOrEqual:
+			return *(__int64*)value<=c->AttrData.INT64;
+		default:
+			assert(false);
+			return false;
+		}
+	case LFTypeFraction:
+		switch (c->Compare)
+		{
+		case LFFilterCompareIsEqual:
+			return memcmp(value, &c->AttrData.Fraction, sizeof(LFFraction))==0;
+		case LFFilterCompareIsNotEqual:
+			return memcmp(value, &c->AttrData.Fraction, sizeof(LFFraction))!=0;
+		default:
+			assert(false);
+			return false;
+		}
+	case LFTypeDouble:
+		switch (c->Compare)
+		{
+		case LFFilterCompareIsEqual:
+			return *(__int64*)value==c->AttrData.Double;
+		case LFFilterCompareIsNotEqual:
+			return *(__int64*)value!=c->AttrData.Double;
+		case LFFilterCompareIsAboveOrEqual:
+			return *(__int64*)value>=c->AttrData.Double;
+		case LFFilterCompareIsBelowOrEqual:
+			return *(__int64*)value<=c->AttrData.Double;
+		default:
+			assert(false);
+			return false;
+		}
+	case LFTypeGeoCoordinates:
+		switch (c->Compare)
+		{
+		case LFFilterCompareIsEqual:
+			return memcmp(value, &c->AttrData.GeoCoordinates, sizeof(LFGeoCoordinates))==0;
+		case LFFilterCompareIsNotEqual:
+			return memcmp(value, &c->AttrData.GeoCoordinates, sizeof(LFGeoCoordinates))!=0;
+		default:
+			assert(false);
+			return false;
+		}
+	case LFTypeTime:
+		switch (c->Compare)
+		{
+		case LFFilterCompareIsEqual:
+			return memcmp(value, &c->AttrData.Time, sizeof(FILETIME))==0;
+		case LFFilterCompareIsNotEqual:
+			return memcmp(value, &c->AttrData.Time, sizeof(FILETIME))!=0;
+		case LFFilterCompareIsAboveOrEqual:
+			uli1.LowPart = (*(FILETIME*)value).dwLowDateTime;
+			uli1.HighPart = (*(FILETIME*)value).dwHighDateTime;
+			uli2.LowPart = c->AttrData.Time.dwLowDateTime;
+			uli2.HighPart = c->AttrData.Time.dwHighDateTime;
+			return uli1.QuadPart>=uli2.QuadPart;
+		case LFFilterCompareIsBelowOrEqual:
+			uli1.LowPart = (*(FILETIME*)value).dwLowDateTime;
+			uli1.HighPart = (*(FILETIME*)value).dwHighDateTime;
+			uli2.LowPart = c->AttrData.Time.dwLowDateTime;
+			uli2.HighPart = c->AttrData.Time.dwHighDateTime;
+			return uli1.QuadPart<=uli2.QuadPart;
+		default:
+			assert(false);
+			return false;
+		}
+	default:
+		assert(false);
+	}
+
+	// Something fishy is going on - play it safe and include the file
+	return true;
+}
 
 int PassesFilterCore(LFCoreAttributes* ca, LFFilter* filter)
 {
 	assert(filter);
 	assert(ca);
-
-	// StoreID wird durch Query Optimization bearbeitet
 
 	// Domains
 	if (filter->DomainID!=LFDomainTrash)
@@ -55,8 +224,27 @@ int PassesFilterCore(LFCoreAttributes* ca, LFFilter* filter)
 				return -1;
 		}
 
-	// TODO
-	return 0;
+	// Attribute
+	int advanced = (filter->Searchterm[0]==L'\0') ? 0 : 1;
+
+	LFFilterCondition* c = filter->ConditionList;
+	while (c)
+	{
+		if (c->AttrData.Attr<=LFLastCoreAttribute)
+		{
+			if (CoreOffsets[c->AttrData.Attr]!=-1)
+				if (!CheckCondition((char*)ca+CoreOffsets[c->AttrData.Attr], c))
+					return -1;
+		}
+		else
+		{
+			advanced = 0;
+		}
+
+		c = c->Next;
+	}
+
+	return advanced;
 }
 
 bool PassesFilterSlaves(LFItemDescriptor* i, LFFilter* filter)
@@ -64,7 +252,20 @@ bool PassesFilterSlaves(LFItemDescriptor* i, LFFilter* filter)
 	assert(filter);
 	assert(i);
 
+	// Attribute
+	LFFilterCondition* c = filter->ConditionList;
+	while (c)
+	{
+		if (c->AttrData.Attr>LFLastCoreAttribute)
+			if (!CheckCondition(i->AttributeValues[c->AttrData.Attr], c))
+				return false;
+
+		c = c->Next;
+	}
+
+	// Globaler Suchbegriff
 	// TODO
+
 	return true;
 }
 

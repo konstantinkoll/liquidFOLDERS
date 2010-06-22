@@ -11,6 +11,27 @@
 
 #pragma data_seg("common_attrs")
 
+int CoreOffsets[LFLastCoreAttribute+1] = {
+	offsetof(LFCoreAttributes, FileName),
+	-1,
+	offsetof(LFCoreAttributes, FileID),
+	offsetof(LFCoreAttributes, Comment),
+	-1,
+	offsetof(LFCoreAttributes, CreationTime),
+	offsetof(LFCoreAttributes, FileTime),
+	offsetof(LFCoreAttributes, DeleteTime),
+	offsetof(LFCoreAttributes, FileFormat),
+	offsetof(LFCoreAttributes, FileSize),
+	offsetof(LFCoreAttributes, Flags),
+	offsetof(LFCoreAttributes, URL),
+	offsetof(LFCoreAttributes, Tags),
+	offsetof(LFCoreAttributes, Rating),
+	offsetof(LFCoreAttributes, Priority),
+	offsetof(LFCoreAttributes, LocationName),
+	offsetof(LFCoreAttributes, LocationIATA),
+	offsetof(LFCoreAttributes, LocationGPS)
+};
+
 size_t AttrSizes[LFTypeCount] = {
 	0,							// LFTypeUnicodeString
 	0,							// LFTypeAnsiString
@@ -190,25 +211,12 @@ LFCore_API LFItemDescriptor* LFAllocItemDescriptor(LFItemDescriptor* i)
 	d->RefCount = 1;
 
 	// Zeiger auf statische Attributwerte initalisieren
-	// Für Attribute, die Unicode-Strings sind, auch die Zeiger für Unicode-String initalisieren
-	d->AttributeValues[LFAttrFileName] = &d->CoreAttributes.FileName[0];
 	d->AttributeValues[LFAttrStoreID] = &d->StoreID;
-	d->AttributeValues[LFAttrFileID] = &d->CoreAttributes.FileID;
-	d->AttributeValues[LFAttrComment] = &d->CoreAttributes.Comment;
 	d->AttributeValues[LFAttrHint] = &d->Hint[0];
-	d->AttributeValues[LFAttrCreationTime] = &d->CoreAttributes.CreationTime;
-	d->AttributeValues[LFAttrFileTime] = &d->CoreAttributes.FileTime;
-	d->AttributeValues[LFAttrDeleteTime] = &d->CoreAttributes.DeleteTime;
-	d->AttributeValues[LFAttrFileFormat] = &d->CoreAttributes.FileFormat;
-	d->AttributeValues[LFAttrFileSize] = &d->CoreAttributes.FileSize;
-	d->AttributeValues[LFAttrFlags] = &d->CoreAttributes.Flags;
-	d->AttributeValues[LFAttrURL] = &d->CoreAttributes.URL;
-	d->AttributeValues[LFAttrTags] = &d->CoreAttributes.Tags[0];
-	d->AttributeValues[LFAttrRating] = &d->CoreAttributes.Rating;
-	d->AttributeValues[LFAttrPriority] = &d->CoreAttributes.Priority;
-	d->AttributeValues[LFAttrLocationName] = &d->CoreAttributes.LocationName[0];
-	d->AttributeValues[LFAttrLocationIATA] = &d->CoreAttributes.LocationIATA;
-	d->AttributeValues[LFAttrLocationGPS] = &d->CoreAttributes.LocationGPS;
+
+	for (unsigned int a=0; a<=LFLastCoreAttribute; a++)
+		if (CoreOffsets[a]!=-1)
+			d->AttributeValues[a] = (char*)&d->CoreAttributes + CoreOffsets[a];
 
 	if (i)
 	{

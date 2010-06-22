@@ -379,7 +379,15 @@ struct LFDomainDescriptor
 #define LFFilterTypeError               7
 #define LFFilterTypeDefault             -1
 
-#define LFFilterCompareIgnore           0	// All
+#define LFFilterCompareIgnore           0
+#define LFFilterCompareIsEqual          1
+#define LFFilterCompareIsNotEqual       2
+#define LFFilterCompareIsAboveOrEqual   3
+#define LFFilterCompareBeginsWith       3	// Strings
+#define LFFilterCompareIsBelowOrEqual   4
+#define LFFilterCompareEndsWith         4	// Strings
+#define LFFilterCompareContains         5	// Strings
+
 
 struct LFFilterOptions
 {
@@ -402,7 +410,7 @@ struct LFFilterResult
 struct LFFilterCondition
 {
 	LFFilterCondition* Next;
-	LFVariantData AttrData;					// Never use for StoreID
+	LFVariantData AttrData;					// Never use for LFAttrHint or LFAttrStoreID
 	unsigned char Compare;
 };
 
@@ -439,10 +447,10 @@ struct LFCoreAttributes
 	char FileFormat[LFExtSize];
 	__int64 FileSize;
 	unsigned int Flags;
+	char URL[256];
 	wchar_t Tags[256];
 	unsigned char Rating;
 	unsigned char Priority;
-	char URL[256];
 	wchar_t LocationName[256];
 	char LocationIATA[4];
 	LFGeoCoordinates LocationGPS;
@@ -453,7 +461,7 @@ struct LFCoreAttributes
 };
 
 
-// File structure
+// Item structure
 
 #define LFTypeDefaultStore              0x0001
 #define LFTypeNotMounted                0x0002

@@ -470,6 +470,18 @@ LFCore_API LFFilter* LFAllocFilter(LFFilter* f)
 	if (f)
 	{
 		memcpy(filter, f, sizeof(LFFilter));
+		filter->ConditionList = NULL;
+
+		LFFilterCondition* c = f->ConditionList;
+		while (c)
+		{
+			LFFilterCondition* item = new LFFilterCondition;
+			memcpy(item, c, sizeof(LFFilterCondition));
+			item->Next = filter->ConditionList;
+			filter->ConditionList = item;
+
+			c = c->Next;
+		}
 	}
 	else
 	{
@@ -483,7 +495,17 @@ LFCore_API LFFilter* LFAllocFilter(LFFilter* f)
 LFCore_API void LFFreeFilter(LFFilter* f)
 {
 	if (f)
+	{
+		LFFilterCondition* c = f->ConditionList;
+		while (c)
+		{
+			LFFilterCondition* victim = c;
+			c = c->Next;
+			delete victim;
+		}
+
 		delete f;
+	}
 }
 
 
