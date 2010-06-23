@@ -17,6 +17,60 @@ extern HANDLE Mutex_Stores;
 extern int CoreOffsets[];
 
 
+wchar_t* wcsistr(const wchar_t* String, const wchar_t* Pattern)
+{
+	for (wchar_t* start=(wchar_t*)String; *start!=L'\0'; start++)
+	{
+		for (; ((*start!=L'\0') && (toupper(*start)!=toupper(*Pattern))); start++)
+		;
+
+		if (*start==L'\0')
+			return NULL;
+
+		wchar_t* pptr = (wchar_t*)Pattern;
+		wchar_t* sptr = start;
+
+		while (toupper(*sptr)==toupper(*pptr))
+		{
+			sptr++;
+			pptr++;
+
+			if (*pptr==L'\0')
+				return start;
+			
+		}
+	}
+
+	return NULL;
+}
+
+char* stristr(const char* String, const char* Pattern)
+{
+	for (char* start=(char*)String; *start!='\0'; start++)
+	{
+		for (; ((*start!='\0') && (toupper(*start)!=toupper(*Pattern))); start++)
+		;
+
+		if (*start=='\0')
+			return NULL;
+
+		char* pptr = (char*)Pattern;
+		char* sptr = start;
+
+		while (toupper(*sptr)==toupper(*pptr))
+		{
+			sptr++;
+			pptr++;
+
+			if (*pptr=='\0')
+				return start;
+			
+		}
+	}
+
+	return NULL;
+}
+
 bool CheckCondition(void* value, LFFilterCondition* c)
 {
 	assert(c->Compare>=LFFilterCompareIgnore);
@@ -42,25 +96,63 @@ bool CheckCondition(void* value, LFFilterCondition* c)
 
 	ULARGE_INTEGER uli1;
 	ULARGE_INTEGER uli2;
+	size_t len1;
+	size_t len2;
 
-/*
-#define LFFilterCompareIgnore           0
-#define LFFilterCompareIsEqual          1
-#define LFFilterCompareIsNotEqual       2
-#define LFFilterCompareIsAboveOrEqual   3
-#define LFFilterCompareBeginsWith       3	// Strings
-#define LFFilterCompareIsBelowOrEqual   4
-#define LFFilterCompareEndsWith         4	// Strings
-#define LFFilterCompareContains         5	// Strings
-*/
 	switch (c->AttrData.Type)
 	{
 	case LFTypeUnicodeString:
-		// TODO
-		return true;
+		switch (c->Compare)
+		{
+		case LFFilterCompareIsEqual:
+			return _wcsicmp((wchar_t*)value, c->AttrData.UnicodeString)==0;
+		case LFFilterCompareIsNotEqual:
+			return _wcsicmp((wchar_t*)value, c->AttrData.UnicodeString)!=0;
+		case LFFilterCompareBeginsWith:
+			len1 = wcslen((wchar_t*)value);
+			len2 = wcslen(c->AttrData.UnicodeString);
+			if (len1>len2)
+				return false;
+			return _wcsnicmp((wchar_t*)value, c->AttrData.UnicodeString, len1)==0;
+		case LFFilterCompareEndsWith:
+			len1 = wcslen((wchar_t*)value);
+			len2 = wcslen(c->AttrData.UnicodeString);
+			if (len1>len2)
+				return false;
+			return _wcsicmp((wchar_t*)value, &c->AttrData.UnicodeString[len2-len1])==0;
+		case LFFilterCompareContains:
+			return wcsistr(c->AttrData.UnicodeString, (wchar_t*)value)!=NULL;
+		default:
+			
+			assert(false);
+			return false;
+		}
 	case LFTypeAnsiString:
-		// TODO
-		return true;
+		switch (c->Compare)
+		{
+		case LFFilterCompareIsEqual:
+			return _stricmp((char*)value, c->AttrData.AnsiString)==0;
+		case LFFilterCompareIsNotEqual:
+			return _stricmp((char*)value, c->AttrData.AnsiString)!=0;
+		case LFFilterCompareBeginsWith:
+			len1 = strlen((char*)value);
+			len2 = strlen(c->AttrData.AnsiString);
+			if (len1>len2)
+				return false;
+			return _strnicmp((char*)value, c->AttrData.AnsiString, len1)==0;
+		case LFFilterCompareEndsWith:
+			len1 = strlen((char*)value);
+			len2 = strlen(c->AttrData.AnsiString);
+			if (len1>len2)
+				return false;
+			return _stricmp((char*)value, &c->AttrData.AnsiString[len2-len1])==0;
+		case LFFilterCompareContains:
+			return stristr(c->AttrData.AnsiString, (char*)value)!=NULL;
+		default:
+			
+			assert(false);
+			return false;
+		}
 	case LFTypeFourCC:
 	case LFTypeUINT:
 	case LFTypeDuration:
@@ -264,7 +356,10 @@ bool PassesFilterSlaves(LFItemDescriptor* i, LFFilter* filter)
 	}
 
 	// Globaler Suchbegriff
-	// TODO
+	if (filter->Searchterm[0]!='\0')
+	{
+		// TODO
+	}
 
 	return true;
 }

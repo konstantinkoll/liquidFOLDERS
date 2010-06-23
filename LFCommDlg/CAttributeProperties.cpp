@@ -66,6 +66,8 @@ BOOL CAttributeProperty::OnUpdateValue()
 
 	CString strText;
 	m_pWndInPlace->GetWindowText(strText);
+	strText.Trim();
+
 	if ((strText.IsEmpty()) && (p_Data->Attr==LFAttrFileName))
 		return FALSE;
 
