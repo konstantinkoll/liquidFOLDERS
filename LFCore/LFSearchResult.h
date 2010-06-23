@@ -24,6 +24,8 @@ public:
 	void AddBacklink(char* StoreID, LFFilter* f);
 	void RemoveItemDescriptor(unsigned int idx);
 	void RemoveFlaggedItemDescriptors();
+	void Sort(unsigned int attr, bool descending, bool categories);
+	void Group(unsigned int attr, bool descending);
 
 	LFItemDescriptor** m_Items;
 	bool m_HasCategories;
@@ -42,5 +44,8 @@ protected:
 	unsigned int m_Allocated;
 
 private:
+	int Compare(int eins, int zwei, unsigned int attr, bool descending, bool categories);
+	void Heap(int wurzel, int anz, unsigned int attr, bool descending, bool categories);
+
 	bool m_RawCopy;
 };

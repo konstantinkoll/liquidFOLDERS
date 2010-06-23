@@ -7,7 +7,6 @@
 #include "MainFrm.h"
 #include "liquidFOLDERS.h"
 #include "LFCore.h"
-#include "Kitchen.h"
 #include "CFileView.h"
 #include "CListView.h"
 #include "CCalendarYearView.h"
@@ -2380,9 +2379,9 @@ void CMainFrame::CookFiles(int recipe, int FocusItem)
 
 	DWORD start = GetTickCount();
 	CookedFiles = LFAllocSearchResult(recipe, RawFiles);
-	SortSearchResult(CookedFiles, &theApp.m_Views[recipe]);
-	if (!IsClipboard)
-		GroupSearchResult(CookedFiles, &theApp.m_Views[recipe]);
+	LFSortSearchResult(CookedFiles, theApp.m_Views[recipe].SortBy, theApp.m_Views[recipe].Descending==TRUE, theApp.m_Views[recipe].ShowCategories==TRUE);
+	//if (!IsClipboard)
+		//GroupSearchResult(CookedFiles, &theApp.m_Views[recipe]);
 
 	DWORD stop = GetTickCount();
 

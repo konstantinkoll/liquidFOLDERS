@@ -173,6 +173,11 @@ LFCore_API void LFRemoveItemDescriptor(LFSearchResult* res, unsigned int idx);
 // LFSearchResults, die nicht "hohl" sind (m_RawCopy==true), jedoch angepasst.
 LFCore_API void LFRemoveFlaggedItemDescriptors(LFSearchResult* res);
 
+// Sortiert LFSearchResult
+LFCore_API void LFSortSearchResult(LFSearchResult* res, unsigned int attr, bool descending, bool categories=false);
+
+// Gruppiert LFSearchResult
+LFCore_API void LFGroupSearchResult(LFSearchResult* res, unsigned int attr, bool descending);
 
 
 // Neue Datei-Importliste erzeugen

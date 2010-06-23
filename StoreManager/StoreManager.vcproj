@@ -580,10 +580,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Kitchen.h"
-				>
-			</File>
-			<File
 				RelativePath="..\include\LFCommDlg.h"
 				>
 			</File>

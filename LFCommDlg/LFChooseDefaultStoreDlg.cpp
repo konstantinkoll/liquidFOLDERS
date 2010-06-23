@@ -1,13 +1,12 @@
 #include "StdAfx.h"
 #include "LFChooseDefaultStoreDlg.h"
 #include "LFStoreNewDlg.h"
-#include "Kitchen.h"
 #include "Resource.h"
 
-// LFChooseDefaultStoreDlg
 
 extern AFX_EXTENSION_MODULE LFCommDlgDLL;
 extern LFMessageIDs* MessageIDs;
+
 
 LFChooseDefaultStoreDlg::LFChooseDefaultStoreDlg(CWnd* pParentWnd)
 	: CDialog(IDD_CHOOSEDEFAULTSTORE, pParentWnd)
@@ -122,7 +121,7 @@ LRESULT LFChooseDefaultStoreDlg::UpdateStores(WPARAM wParam, LPARAM /*lParam*/)
 		result = LFQuery(filter);
 		LFFreeFilter(filter);
 
-		SortSearchResult(result);
+		LFSortSearchResult(result, LFAttrFileName, false);
 
 		((CButton*)GetDlgItem(IDOK))->EnableWindow(result->m_ItemCount);
 		m_List.SetItemCount(result->m_ItemCount);

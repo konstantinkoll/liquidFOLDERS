@@ -1,6 +1,7 @@
 #include "StdAfx.h"
 #include "..\\include\\LFCore.h"
 #include "IdxTables.h"
+#include "LFItemDescriptor.h"
 #include "LFSearchResult.h"
 #include "StoreCache.h"
 #include <assert.h>
@@ -9,6 +10,7 @@
 
 
 extern HMODULE LFCoreModuleHandle;
+extern unsigned char AttrTypes[];
 
 
 LFSearchResult::LFSearchResult(int ctx)
@@ -256,4 +258,266 @@ void LFSearchResult::RemoveFlaggedItemDescriptors()
 			idx++;
 		}
 	}
+}
+
+int LFSearchResult::Compare(int eins, int zwei, unsigned int attr, bool descending, bool categories)
+{
+	LFItemDescriptor* d1 = m_Items[eins];
+	LFItemDescriptor* d2 = m_Items[zwei];
+
+	// Dateien mit Symbol IDI_FLD_Back immer nach vorne
+	if ((d1->IconID==IDI_FLD_Back) && (d2->IconID!=IDI_FLD_Back))
+		return -1;
+	if ((d1->IconID!=IDI_FLD_Back) && (d2->IconID==IDI_FLD_Back))
+		return 1;
+
+	// Wenn zwei Laufwerke anhand des Namens verglichen werden sollen, Laufwerksbuchstaben nehmen
+	unsigned int Sort = attr;
+	unsigned int SortSecond = LFAttrFileName;
+	if (((d1->Type & LFTypeMask)==LFTypeDrive) && ((d2->Type & LFTypeMask)==LFTypeDrive) && (categories))
+		if (Sort==LFAttrFileName)
+		{
+			Sort = LFAttrFileID;
+		}
+		else
+		{
+			SortSecond = LFAttrFileID;
+		}
+
+	// Dateien mit NULL-Werten oder leeren Strings im gewünschten Attribut hinten einsortieren
+	bool d1null = (d1->AttributeValues[Sort]==NULL);
+	if (!d1null)
+		switch (AttrTypes[Sort])
+		{
+		case LFTypeUnicodeString:
+			d1null = (*(wchar_t*)d1->AttributeValues[Sort]==0);
+			break;
+		case LFTypeAnsiString:
+			d1null = (*(char*)d1->AttributeValues[Sort]==0);
+			break;
+		case LFTypeFraction:
+			d1null = ((LFFraction*)d1->AttributeValues[Sort])->Denum == 0;
+			break;
+		case LFTypeGeoCoordinates:
+			d1null = (((LFGeoCoordinates*)d1->AttributeValues[Sort])->Latitude==0) &&
+				(((LFGeoCoordinates*)d1->AttributeValues[Sort])->Longitude==0);
+			break;
+		case LFTypeTime:
+			d1null = (((FILETIME*)d1->AttributeValues[Sort])->dwHighDateTime==0) &&
+				(((FILETIME*)d1->AttributeValues[Sort])->dwLowDateTime==0);
+			break;
+		case LFTypeFourCC:
+		case LFTypeDuration:
+			d1null = ((UINT*)d1->AttributeValues[Sort]) == 0;
+			break;
+		}
+
+	bool d2null = (d2->AttributeValues[Sort]==NULL);
+	if (!d2null)
+		switch (AttrTypes[Sort])
+		{
+		case LFTypeUnicodeString:
+			d2null = (*(wchar_t*)d2->AttributeValues[Sort]==0);
+			break;
+		case LFTypeAnsiString:
+			d2null = (*(char*)d2->AttributeValues[Sort]==0);
+			break;
+		case LFTypeFraction:
+			d2null = ((LFFraction*)d2->AttributeValues[Sort])->Denum == 0;
+			break;
+		case LFTypeGeoCoordinates:
+			d2null = (((LFGeoCoordinates*)d2->AttributeValues[Sort])->Latitude==0) &&
+				(((LFGeoCoordinates*)d2->AttributeValues[Sort])->Longitude==0);
+			break;
+		case LFTypeTime:
+			d2null = (((FILETIME*)d2->AttributeValues[Sort])->dwHighDateTime==0) &&
+				(((FILETIME*)d2->AttributeValues[Sort])->dwLowDateTime==0);
+			break;
+		case LFTypeFourCC:
+		case LFTypeDuration:
+			d2null = ((UINT*)d2->AttributeValues[Sort]) == 0;
+		}
+
+	if ((d1null) && (!d2null))
+		return 1;
+	if ((!d1null) && (d2null))
+		return -1;
+
+	// Gewünschtes Attribut vergleichen
+	int cmp = 0;
+	UINT eins32;
+	UINT zwei32;
+	__int64 eins64;
+	__int64 zwei64;
+	double einsDbl;
+	double zweiDbl;
+	LFGeoCoordinates einsCoord;
+	LFGeoCoordinates zweiCoord;
+	#define CMPROUNDOFF 0.001
+
+	if ((!d1null) && (!d2null))
+	{
+		switch (AttrTypes[Sort])
+		{
+		case LFTypeUnicodeString:
+			cmp = _wcsicmp((wchar_t*)d1->AttributeValues[Sort], (wchar_t*)d2->AttributeValues[Sort]);
+			break;
+		case LFTypeAnsiString:
+			cmp = _stricmp((char*)d1->AttributeValues[Sort], (char*)d2->AttributeValues[Sort]);
+			break;
+		case LFTypeFourCC:
+		case LFTypeRating:
+		case LFTypeUINT:
+		case LFTypeDuration:
+			eins32 = *(UINT*)d1->AttributeValues[Sort];
+			zwei32 = *(UINT*)d2->AttributeValues[Sort];
+			if (eins32<zwei32)
+			{
+				cmp = -1;
+			}
+			else
+				if (eins32>zwei32)
+					cmp = 1;
+			break;
+		case LFTypeINT64:
+			eins64 = *(__int64*)d1->AttributeValues[Sort];
+			zwei64 = *(__int64*)d2->AttributeValues[Sort];
+			if (eins64<zwei64)
+			{
+				cmp = -1;
+			}
+			else
+				if (eins64>zwei64)
+					cmp = 1;
+			break;
+		case LFTypeFraction:
+			einsDbl = (double)((LFFraction*)d1->AttributeValues[Sort])->Num / (double)((LFFraction*)d1->AttributeValues[Sort])->Denum;
+			zweiDbl = (double)((LFFraction*)d2->AttributeValues[Sort])->Num / (double)((LFFraction*)d2->AttributeValues[Sort])->Denum;
+			if (einsDbl<zweiDbl)
+			{
+				cmp = -1;
+			}
+			else
+				if (einsDbl>zweiDbl)
+					cmp = 1;
+			break;
+		case LFTypeDouble:
+			einsDbl = *(double*)d1->AttributeValues[Sort];
+			zweiDbl = *(double*)d2->AttributeValues[Sort];
+			if (einsDbl<zweiDbl)
+			{
+				cmp = -1;
+			}
+			else
+				if (einsDbl>zweiDbl)
+					cmp = 1;
+			break;
+		case LFTypeGeoCoordinates:
+			einsCoord = *(LFGeoCoordinates*)d1->AttributeValues[Sort];
+			zweiCoord = *(LFGeoCoordinates*)d2->AttributeValues[Sort];
+			if (einsCoord.Latitude<zweiCoord.Latitude-CMPROUNDOFF)
+			{
+				cmp = -1;
+			}
+			else
+				if (einsCoord.Latitude>zweiCoord.Latitude+CMPROUNDOFF)
+				{
+					cmp = 1;
+				}
+				else
+					if (einsCoord.Longitude<zweiCoord.Longitude-CMPROUNDOFF)
+					{
+						cmp = -1;
+					}
+					else
+						if (einsCoord.Longitude>zweiCoord.Longitude+CMPROUNDOFF)
+						{
+							cmp = 1;
+						}
+			break;
+		case LFTypeTime:
+			if (((FILETIME*)d1->AttributeValues[Sort])->dwHighDateTime<((FILETIME*)d2->AttributeValues[Sort])->dwHighDateTime)
+			{
+				cmp = -1;
+			}
+			else
+				if (((FILETIME*)d1->AttributeValues[Sort])->dwHighDateTime>((FILETIME*)d2->AttributeValues[Sort])->dwHighDateTime)
+				{
+					cmp = 1;
+				}
+				else
+					if (((FILETIME*)d1->AttributeValues[Sort])->dwLowDateTime<((FILETIME*)d2->AttributeValues[Sort])->dwLowDateTime)
+					{
+						cmp = -1;
+					}
+					else
+						if (((FILETIME*)d1->AttributeValues[Sort])->dwLowDateTime>((FILETIME*)d2->AttributeValues[Sort])->dwLowDateTime)
+						{
+							cmp = 1;
+						}
+			break;
+		default:
+			assert(FALSE);
+		}
+
+		// Ggf. Reihenfolge umkehren
+		if (descending)
+			cmp = -cmp;
+	}
+
+	// Dateien gleich bzgl. Attribut? Dann nach Name und notfalls FileID vergleichen für stabiles Ergebnis
+	if (cmp==0)
+	{
+		if (Sort!=SortSecond)
+			cmp = _wcsicmp((wchar_t*)d1->AttributeValues[SortSecond], (wchar_t*)d2->AttributeValues[SortSecond]);
+		if ((cmp==0) && (Sort!=LFAttrStoreID) && (SortSecond!=LFAttrStoreID))
+			cmp = strcmp((char*)d1->AttributeValues[LFAttrStoreID], (char*)d2->AttributeValues[LFAttrStoreID]);
+		if ((cmp==0) && (Sort!=LFAttrFileID) && (SortSecond!=LFAttrFileID))
+			cmp = strcmp((char*)d1->AttributeValues[LFAttrFileID], (char*)d2->AttributeValues[LFAttrFileID]);
+	}
+
+	// Wenn die Dateien noch immer gleich sind, ist irgendwas sehr kaputt
+	assert(cmp!=0);
+
+	return cmp;
+}
+
+void LFSearchResult::Heap(int wurzel, int anz, unsigned int attr, bool descending, bool categories)
+{
+	while (wurzel<=anz/2-1)
+	{
+		int idx = (wurzel+1)*2-1;
+		if (idx+1<anz)
+			if (Compare(idx, idx+1, attr, descending, categories)<0)
+				idx++;
+
+		if (Compare(wurzel, idx, attr, descending, categories)<0)
+		{
+			std::swap(m_Items[wurzel], m_Items[idx]);
+			wurzel = idx;
+		}
+		else
+		{
+			break;
+		}
+	}
+}
+
+void LFSearchResult::Sort(unsigned int attr, bool descending, bool categories)
+{
+	if (m_ItemCount>1)
+	{
+		for (int a=m_ItemCount/2-1; a>=0; a--)
+			Heap(a, m_ItemCount, attr, descending, categories);
+		for (int a=m_ItemCount-1; a>0; )
+		{
+			std::swap(m_Items[0], m_Items[a]);
+			Heap(0, a--, attr, descending, categories);
+		}
+	}
+}
+
+void LFSearchResult::Group(unsigned int attr, bool descending)
+{
+	Sort(attr, descending, false);
 }

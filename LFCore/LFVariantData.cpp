@@ -15,6 +15,8 @@ wchar_t RatingStrings[6] = L"\x2605\x2605\x2605\x2605\x2605";
 // Conversion ToString
 //
 
+#define ROUNDOFF 0.00000001
+
 inline double GetMinutes(double c)
 {
 	c = fabs(c)+ROUNDOFF;

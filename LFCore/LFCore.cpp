@@ -535,6 +535,16 @@ LFCore_API void LFRemoveFlaggedItemDescriptors(LFSearchResult* res)
 	res->RemoveFlaggedItemDescriptors();
 }
 
+LFCore_API void LFSortSearchResult(LFSearchResult* res, unsigned int attr, bool descending, bool categories)
+{
+	res->Sort(attr, descending, categories);
+}
+
+LFCore_API void LFGroupSearchResult(LFSearchResult* res, unsigned int attr, bool descending)
+{
+	res->Group(attr, descending);
+}
+
 
 LFCore_API LFFileImportList* LFAllocFileImportList()
 {
