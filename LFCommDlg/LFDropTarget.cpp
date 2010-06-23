@@ -62,7 +62,7 @@ BOOL LFDropTarget::OnDrop(CWnd* /*pWnd*/, COleDataObject* pDataObject, DROPEFFEC
 		it = LFAllocItemDescriptor();
 
 		LFItemTemplateDlg dlg(CWnd::FromHandle(m_hWnd), it);
-		if (dlg.DoModal()!=IDOK)
+		if (dlg.DoModal()==IDCANCEL)
 		{
 			GlobalUnlock(hG);
 			return FALSE;
