@@ -1013,6 +1013,8 @@ void CMainFrame::OnStoreMaintenance()
 
 	LFStoreMaintenanceDlg dlg(&p, this);
 	dlg.DoModal();
+
+	OnNavigateReload();
 }
 
 void CMainFrame::OnStoreBackup()
