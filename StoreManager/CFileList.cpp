@@ -458,6 +458,7 @@ void CFileList::OnColumnClick(NMHDR* pNMHDR, LRESULT* /*pResult*/)
 		View->pViewParameters->Descending = (theApp.m_Attributes[attr]->Type==LFTypeRating);
 	}
 
+	theApp.SaveViewOptions(View->ActiveContextID);
 	theApp.UpdateSortOptions(View->ActiveContextID);
 }
 
