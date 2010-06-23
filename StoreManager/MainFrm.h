@@ -140,7 +140,7 @@ protected:
 	afx_msg void OnCloseOthers();
 	afx_msg void OnSortOptions();
 	afx_msg void OnViewOptions();
-/*	afx_msg void OnToggleAutoDirs();*/
+	afx_msg void OnToggleAutoDirs();
 	afx_msg void OnChooseContext();
 	afx_msg void OnAlwaysSaveContext();
 	afx_msg void OnRestoreContext();

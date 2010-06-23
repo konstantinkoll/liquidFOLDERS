@@ -62,6 +62,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_COMMAND(ID_APP_UPDATESELECTION, OnUpdateSelection)
 
 	ON_UPDATE_COMMAND_UI_RANGE(ID_APP_NEWVIEW, ID_CONTEXT_SAVEALL, OnUpdateAppCommands)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_AUTODIRS, OnUpdateAppCommands)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_SORT_FILENAME, ID_SORT_FILENAME+99, OnUpdateSortCommands)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_NAV_FIRST, ID_NAV_CLEARHISTORY, OnUpdateNavCommands)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_PANE_CAPTIONBAR, ID_PANE_HISTORYWND, OnUpdatePaneCommands)
@@ -71,6 +72,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_STORE_NEW, ID_STORE_BACKUP, OnUpdateStoreCommands)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_DROP_CALENDAR, ID_DROP_RESOLUTION, OnUpdateDropCommands)
 
+	ON_COMMAND(ID_VIEW_AUTODIRS, OnToggleAutoDirs)
 	ON_COMMAND(ID_APP_CLOSE, OnClose)
 	ON_COMMAND(ID_APP_CLOSEOTHERS, OnCloseOthers)
 	ON_COMMAND(ID_APP_SORTOPTIONS, OnSortOptions)
@@ -78,7 +80,6 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 
 	ON_COMMAND_RANGE(ID_APP_VIEW_AUTOMATIC, ID_APP_VIEW_TIMELINE, OnChangeChildView)
 	ON_COMMAND_RANGE(ID_SORT_FILENAME, ID_SORT_FILENAME+99, OnSort)
-/*	ON_COMMAND(ID_VIEWMODE_AUTODIRS, OnToggleAutoDirs)*/
 	ON_COMMAND(ID_CONTEXT_CHOOSE, OnChooseContext)
 	ON_COMMAND(ID_CONTEXT_ALWAYSSAVE, OnAlwaysSaveContext)
 	ON_COMMAND(ID_CONTEXT_RESTORE, OnRestoreContext)
@@ -393,12 +394,12 @@ void CMainFrame::OnViewOptions()
 	}
 }
 
-/*void CMainFrame::OnToggleAutoDirs()
+void CMainFrame::OnToggleAutoDirs()
 {
 	ActiveViewParameters->AutoDirs = !ActiveViewParameters->AutoDirs;
 	theApp.SaveViewOptions(ActiveContextID);
 	theApp.UpdateSortOptions(ActiveContextID);
-}*/
+}
 
 void CMainFrame::OnChooseContext()
 {
@@ -458,10 +459,10 @@ void CMainFrame::OnUpdateAppCommands(CCmdUI* pCmdUI)
 				b |= (!theApp.m_Views[a].AlwaysSave) && (theApp.m_Views[a].Changed);
 		pCmdUI->Enable(b);
 		break;
-/*	case ID_VIEWMODE_AUTODIRS:
+	case ID_VIEW_AUTODIRS:
 		pCmdUI->SetCheck(ActiveViewParameters->AutoDirs);
-		pCmdUI->Enable((theApp.m_Contexts[ActiveContextID]->AllowGroups) && (ActiveViewParameters->Mode<=LFViewPreview));
-		break;*/
+		pCmdUI->Enable((theApp.m_Contexts[ActiveContextID]->AllowGroups) && (SelectViewMode(ActiveViewParameters->Mode)<=LFViewPreview));
+		break;
 	case ID_APP_VIEW_LARGEICONS:
 	case ID_APP_VIEW_SMALLICONS:
 	case ID_APP_VIEW_LIST:
@@ -2379,9 +2380,15 @@ void CMainFrame::CookFiles(int recipe, int FocusItem)
 
 	DWORD start = GetTickCount();
 	CookedFiles = LFAllocSearchResult(recipe, RawFiles);
-	LFSortSearchResult(CookedFiles, theApp.m_Views[recipe].SortBy, theApp.m_Views[recipe].Descending==TRUE, theApp.m_Views[recipe].ShowCategories==TRUE);
-	//if (!IsClipboard)
-		//GroupSearchResult(CookedFiles, &theApp.m_Views[recipe]);
+
+	if (((!IsClipboard) && (theApp.m_Views[recipe].AutoDirs)) || (theApp.m_Views[recipe].Mode>LFViewPreview))
+	{
+		LFGroupSearchResult(CookedFiles,theApp.m_Views[recipe].SortBy, theApp.m_Views[recipe].Descending==TRUE);
+	}
+	else
+	{
+		LFSortSearchResult(CookedFiles, theApp.m_Views[recipe].SortBy, theApp.m_Views[recipe].Descending==TRUE, theApp.m_Views[recipe].ShowCategories==TRUE);
+	}
 
 	DWORD stop = GetTickCount();
 
