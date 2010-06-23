@@ -540,9 +540,9 @@ LFCore_API void LFSortSearchResult(LFSearchResult* res, unsigned int attr, bool 
 	res->Sort(attr, descending, categories);
 }
 
-LFCore_API void LFGroupSearchResult(LFSearchResult* res, unsigned int attr, bool descending)
+LFCore_API void LFGroupSearchResult(LFSearchResult* res, unsigned int attr, bool descending, bool groupone)
 {
-	res->Group(attr, descending);
+	res->Group(attr, descending, groupone);
 }
 
 

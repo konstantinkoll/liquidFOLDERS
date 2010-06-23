@@ -517,7 +517,70 @@ void LFSearchResult::Sort(unsigned int attr, bool descending, bool categories)
 	}
 }
 
-void LFSearchResult::Group(unsigned int attr, bool descending)
+void LFSearchResult::Aggregate(unsigned int write, unsigned int read1, unsigned int read2, void* c, bool groupone)
 {
+	if ((read2==read1+1) && ((!groupone) || ((m_Items[read1]->Type & LFTypeMask)==LFTypeVirtual)))
+	{
+		m_Items[write] = m_Items[read1];
+	}
+	else
+	{
+		LFItemDescriptor* folder = ((CCategorizer*)c)->GetFolder(m_Items[read1]);
+
+		__int64 size = 0;
+		for (unsigned int a=read1; a<read2; a++)
+		{
+			size += m_Items[a]->CoreAttributes.FileSize;
+			LFFreeItemDescriptor(m_Items[a]);
+		}
+
+		SetAttribute(folder, LFAttrFileSize, &size);
+		m_Items[write] = folder;
+	}
+}
+
+void LFSearchResult::Group(unsigned int attr, bool descending, bool groupone)
+{
+	// Sort
 	Sort(attr, descending, false);
+
+	// Choose categorizer
+	CCategorizer* c = NULL;
+
+	switch (attr)
+	{
+	case 70000:
+		break;
+	default:
+		switch (AttrTypes[attr])
+		{
+		case LFTypeTime:
+			c = new DateCategorizer(attr);
+			break;
+		}
+	}
+
+	if (!c)
+		return;
+
+	// Process
+	unsigned int WritePtr = 0;
+	unsigned int ReadPtr1 = 0;
+	unsigned int ReadPtr2 = 1;
+
+	while (ReadPtr2<m_ItemCount)
+	{
+		if (!c->IsEqual(m_Items[ReadPtr1], m_Items[ReadPtr2]))
+		{
+			Aggregate(WritePtr, ReadPtr1, ReadPtr2, c, groupone);
+			WritePtr++;
+			ReadPtr1 = ReadPtr2;
+		}
+
+		ReadPtr2++;
+	}
+
+	Aggregate(WritePtr, ReadPtr1, m_ItemCount, c, groupone);
+	m_ItemCount = WritePtr+1;
+	delete c;
 }

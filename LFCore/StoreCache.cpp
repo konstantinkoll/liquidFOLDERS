@@ -6,7 +6,6 @@
 #include "StoreCache.h"
 #include <io.h>
 #include <malloc.h>
-#include <objbase.h>
 #include <shellapi.h>
 #include <shlobj.h>
 #include <sys/types.h>

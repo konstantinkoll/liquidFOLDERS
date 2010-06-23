@@ -1,5 +1,6 @@
 #pragma once
 #include "liquidFOLDERS.h"
+#include "Categorizer.h"
 
 #define LFSR_FirstAlloc          1024
 #define LFSR_SubsequentAlloc     1024
@@ -25,7 +26,7 @@ public:
 	void RemoveItemDescriptor(unsigned int idx);
 	void RemoveFlaggedItemDescriptors();
 	void Sort(unsigned int attr, bool descending, bool categories);
-	void Group(unsigned int attr, bool descending);
+	void Group(unsigned int attr, bool descending, bool groupone);
 
 	LFItemDescriptor** m_Items;
 	bool m_HasCategories;
@@ -46,6 +47,7 @@ protected:
 private:
 	int Compare(int eins, int zwei, unsigned int attr, bool descending, bool categories);
 	void Heap(int wurzel, int anz, unsigned int attr, bool descending, bool categories);
+	void Aggregate(unsigned int write, unsigned int read1, unsigned int read2, void* c, bool groupone);
 
 	bool m_RawCopy;
 };
