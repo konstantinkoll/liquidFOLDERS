@@ -764,7 +764,13 @@ void CMainFrame::OnItemsOpen()
 
 		if (i->NextFilter)
 		{
-			// Es ist ein weiterer Filter angehängt, also dorthin navigieren
+			if (((i->Type & LFTypeMask)==LFTypeVirtual) && (strcmp(i->CoreAttributes.FileID, "BACK")==0) && (m_BreadcrumbBack))
+				if (m_BreadcrumbBack->filter->Mode==i->NextFilter->Mode)
+				{
+					OnNavigateBackOne();
+					return;
+				}
+
 			NavigateTo(LFAllocFilter(i->NextFilter));
 		}
 		else
@@ -789,7 +795,6 @@ void CMainFrame::OnItemsOpen()
 					{
 						LFErrorBox(res);
 					}
-
 					break;
 				default:
 					ASSERT(FALSE);
