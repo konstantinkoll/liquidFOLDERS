@@ -271,7 +271,7 @@ unsigned int PrepareImport(LFStoreDescriptor* slot, LFItemDescriptor* i, char* D
 		}
 
 		i->CoreAttributes.FileID[LFKeyLength] = 0;
-		GetFileLocation(slot->DatPath, i->CoreAttributes.FileID, i->CoreAttributes.FileFormat, Path, MAX_PATH);
+		GetFileLocation(slot->DatPath, i->CoreAttributes.FileID, "*", Path, MAX_PATH);
 	}
 	while (FileExists(Path));
 
