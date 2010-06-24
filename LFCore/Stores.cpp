@@ -276,10 +276,13 @@ unsigned int PrepareImport(LFStoreDescriptor* slot, LFItemDescriptor* i, char* D
 	while (FileExists(Path));
 
 	if (Dst)
+	{
+		GetFileLocation(slot->DatPath, i->CoreAttributes.FileID, i->CoreAttributes.FileFormat, Path, MAX_PATH);
 		strcpy_s(Dst, cCount, Path);
+	}
 
 	*strrchr(Path, '\\') = '\0';
-	DWORD res =CreateDir(Path);
+	DWORD res = CreateDir(Path);
 	return ((res==ERROR_SUCCESS) || (res==ERROR_ALREADY_EXISTS)) ? LFOk : LFIllegalPhysicalPath;
 }
 

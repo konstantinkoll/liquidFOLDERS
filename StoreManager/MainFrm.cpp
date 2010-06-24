@@ -1449,12 +1449,16 @@ BOOL CMainFrame::UpdateTrashFlag(BOOL Trash, BOOL All)
 	LFVariantData value1;
 	value1.Attr = LFAttrFlags;
 	LFGetNullVariantData(&value1);
+
+	value1.IsNull = false;
 	value1.Flags.Flags = Trash ? LFFlagTrash : 0;
 	value1.Flags.Mask = LFFlagTrash;
 
 	LFVariantData value2;
 	value2.Attr = LFAttrDeleteTime;
 	LFGetNullVariantData(&value2);
+	value2.IsNull = false;
+
 	if (Trash)
 	{
 		SYSTEMTIME st;
