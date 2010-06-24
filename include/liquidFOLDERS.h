@@ -316,6 +316,7 @@ struct LFAttributeDescriptor
 	unsigned char Category;
 	unsigned int RecommendedWidth;
 	unsigned int cCharacters;
+	unsigned int IconID;
 	LFShellProperty ShPropertyMapping;
 };
 

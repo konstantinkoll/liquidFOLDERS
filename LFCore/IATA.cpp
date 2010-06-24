@@ -106,7 +106,7 @@ LFCore_API LFItemDescriptor* LFIATACreateFolderForAirport(LFAirport* airport)
 	// Dateiname in ANSI
 	char tmpStr2[256];
 	strcpy_s(tmpStr2, 256, airport->Code);
-	strcat_s(tmpStr2, 256, " \u2013 ");
+	strcat_s(tmpStr2, 256, UseGermanDB ? " – " : "—");
 	strcat_s(tmpStr2, 256, tmpStr1);
 
 	// Dateiname in Unicode

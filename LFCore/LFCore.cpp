@@ -223,6 +223,40 @@ LFCore_API LFAttributeDescriptor* LFGetAttributeInfo(unsigned int ID)
 	// Shell property
 	a->ShPropertyMapping = AttrProperties[ID];
 
+	// Icon
+
+	switch (ID)
+	{
+	case LFAttrFileTime:
+	case LFAttrRecordingTime:
+	case LFAttrCreationTime:
+	case LFAttrDuration:
+	case LFAttrDueTime:
+	case LFAttrDoneTime:
+		a->IconID = IDI_FLD_Calendar;
+		break;
+	case LFAttrRating:
+		a->IconID = IDI_FLD_Favorites;
+		break;
+	case LFAttrRoll:
+		a->IconID = IDI_FLD_Roll;
+		break;
+	case LFAttrLocationName:
+	case LFAttrLocationIATA:
+	case LFAttrLocationGPS:
+		a->IconID = IDI_FLD_Location;
+		break;
+	case LFAttrArtist:
+	case LFAttrResponsible:
+		a->IconID = IDI_FLD_Contacts;
+		break;
+	case LFAttrLanguage:
+		a->IconID = IDI_FLD_Fonts;
+		break;
+	default:
+		a->IconID = (a->Category==LFAttrCategoryInternal) ? IDI_FLD_System : IDI_FLD_Default;
+	}
+
 	return a;
 }
 
@@ -540,9 +574,9 @@ LFCore_API void LFSortSearchResult(LFSearchResult* res, unsigned int attr, bool 
 	res->Sort(attr, descending, categories);
 }
 
-LFCore_API void LFGroupSearchResult(LFSearchResult* res, unsigned int attr, bool groupone, bool groupnull)
+LFCore_API void LFGroupSearchResult(LFSearchResult* res, unsigned int attr, unsigned int icon, bool groupone)
 {
-	res->Group(attr, groupone, groupnull);
+	res->Group(attr, icon, groupone);
 }
 
 

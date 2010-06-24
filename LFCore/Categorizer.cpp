@@ -10,10 +10,9 @@ extern unsigned char AttrTypes[];
 // CCategorizer
 //
 
-CCategorizer::CCategorizer(unsigned int _attr, unsigned int _icon)
+CCategorizer::CCategorizer(unsigned int _attr)
 {
 	attr = _attr;
-	icon = _icon;
 }
 
 bool CCategorizer::IsEqual(LFItemDescriptor* i1, LFItemDescriptor* i2)
@@ -30,7 +29,6 @@ LFItemDescriptor* CCategorizer::GetFolder(LFItemDescriptor* i)
 {
 	LFItemDescriptor* folder = LFAllocItemDescriptor();
 	folder->Type = LFTypeVirtual;
-	folder->IconID = icon;
 	strcpy_s(folder->StoreID, LFKeySize, i->StoreID);
 
 	if (i->AttributeValues[attr])
@@ -54,7 +52,7 @@ bool CCategorizer::Compare(LFItemDescriptor* /*i1*/, LFItemDescriptor* /*i2*/)
 //
 
 DateCategorizer::DateCategorizer(unsigned int _attr)
-	: CCategorizer(_attr, IDI_FLD_Calendar)
+	: CCategorizer(_attr)
 {
 }
 
@@ -62,7 +60,6 @@ LFItemDescriptor* DateCategorizer::GetFolder(LFItemDescriptor* i)
 {
 	LFItemDescriptor* folder = LFAllocItemDescriptor();
 	folder->Type = LFTypeVirtual;
-	folder->IconID = icon;
 	strcpy_s(folder->StoreID, LFKeySize, i->StoreID);
 
 	if (i->AttributeValues[attr])
@@ -102,7 +99,7 @@ bool DateCategorizer::Compare(LFItemDescriptor* i1, LFItemDescriptor* i2)
 //
 
 RatingCategorizer::RatingCategorizer(unsigned int _attr)
-	: CCategorizer(_attr, _attr==LFAttrRating ? IDI_FLD_Favorites : IDI_FLD_Calendar)
+	: CCategorizer(_attr)
 {
 }
 
@@ -110,7 +107,6 @@ LFItemDescriptor* RatingCategorizer::GetFolder(LFItemDescriptor* i)
 {
 	LFItemDescriptor* folder = LFAllocItemDescriptor();
 	folder->Type = LFTypeVirtual;
-	folder->IconID = icon;
 	strcpy_s(folder->StoreID, LFKeySize, i->StoreID);
 
 	if (i->AttributeValues[attr])
@@ -138,7 +134,7 @@ bool RatingCategorizer::Compare(LFItemDescriptor* i1, LFItemDescriptor* i2)
 //
 
 UnicodeCategorizer::UnicodeCategorizer(unsigned int _attr)
-	: CCategorizer(_attr, _attr==LFAttrLocationIATA ? IDI_FLD_Location : IDI_FLD_Default)
+	: CCategorizer(_attr)
 {
 }
 
@@ -154,7 +150,7 @@ bool UnicodeCategorizer::Compare(LFItemDescriptor* i1, LFItemDescriptor* i2)
 //
 
 AnsiCategorizer::AnsiCategorizer(unsigned int _attr)
-	: CCategorizer(_attr, _attr==LFAttrLocationIATA ? IDI_FLD_Location : IDI_FLD_Default)
+	: CCategorizer(_attr)
 {
 }
 
@@ -163,4 +159,29 @@ bool AnsiCategorizer::Compare(LFItemDescriptor* i1, LFItemDescriptor* i2)
 	assert(AttrTypes[attr]==LFTypeAnsiString);
 
 	return strcmp((char*)i1->AttributeValues[attr], (char*)i2->AttributeValues[attr])==0;
+}
+
+
+// IATACategorizer
+//
+
+IATACategorizer::IATACategorizer(unsigned int _attr)
+	: AnsiCategorizer(_attr)
+{
+}
+
+LFItemDescriptor* IATACategorizer::GetFolder(LFItemDescriptor* i)
+{
+	if (i->AttributeValues[attr])
+	{
+		LFAirport* airport;
+		if (LFIATAGetAirportByCode((char*)i->AttributeValues[attr], &airport))
+		{
+			LFItemDescriptor* folder = LFIATACreateFolderForAirport(airport);
+			strcpy_s(folder->StoreID, LFKeySize, i->StoreID);
+			return folder;
+		}
+	}
+
+	return CCategorizer::GetFolder(i);
 }

@@ -524,7 +524,7 @@ void LFSearchResult::Sort(unsigned int attr, bool descending, bool categories)
 	}
 }
 
-void LFSearchResult::Aggregate(unsigned int write, unsigned int read1, unsigned int read2, void* c, bool groupone)
+void LFSearchResult::Aggregate(unsigned int write, unsigned int read1, unsigned int read2, void* c, unsigned int icon, bool groupone)
 {
 	if ((read2==read1+1) && ((!groupone) || ((m_Items[read1]->Type & LFTypeMask)==LFTypeVirtual)))
 	{
@@ -533,6 +533,7 @@ void LFSearchResult::Aggregate(unsigned int write, unsigned int read1, unsigned 
 	else
 	{
 		LFItemDescriptor* folder = ((CCategorizer*)c)->GetFolder(m_Items[read1]);
+		folder->IconID = icon;
 		if (!m_RawCopy)
 		{
 			folder->FirstAggregate = read1;
@@ -551,14 +552,15 @@ void LFSearchResult::Aggregate(unsigned int write, unsigned int read1, unsigned 
 	}
 }
 
-void LFSearchResult::Group(unsigned int attr, bool groupone, bool groupnull)
+void LFSearchResult::Group(unsigned int attr, unsigned int icon, bool groupone)
 {
 	// Choose categorizer
 	CCategorizer* c = NULL;
 
 	switch (attr)
 	{
-	case 70000:
+	case LFAttrLocationIATA:
+		c = new IATACategorizer(attr);
 		break;
 	default:
 		switch (AttrTypes[attr])
@@ -590,7 +592,7 @@ void LFSearchResult::Group(unsigned int attr, bool groupone, bool groupnull)
 	{
 		if (!c->IsEqual(m_Items[ReadPtr1], m_Items[ReadPtr2]))
 		{
-			Aggregate(WritePtr, ReadPtr1, ReadPtr2, c, groupone);
+			Aggregate(WritePtr, ReadPtr1, ReadPtr2, c, icon, groupone);
 			WritePtr++;
 			ReadPtr1 = ReadPtr2;
 		}
@@ -598,7 +600,7 @@ void LFSearchResult::Group(unsigned int attr, bool groupone, bool groupnull)
 		ReadPtr2++;
 	}
 
-	Aggregate(WritePtr, ReadPtr1, m_ItemCount, c, groupone);
+	Aggregate(WritePtr, ReadPtr1, m_ItemCount, c, icon, groupone);
 	m_ItemCount = WritePtr+1;
 	delete c;
 }

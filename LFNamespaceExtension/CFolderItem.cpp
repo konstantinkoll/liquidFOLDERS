@@ -202,38 +202,7 @@ BOOL CFolderItem::GetChildren(CGetChildrenEventArgs& e)
 					d.FileID.Format(_T("%d"), a);
 					d.StoreID = data.StoreID;
 					d.DomainID = data.DomainID;
-
-					switch (a)
-					{
-					case LFAttrFileTime:
-					case LFAttrRecordingTime:
-					case LFAttrCreationTime:
-					case LFAttrDuration:
-					case LFAttrDueTime:
-					case LFAttrDoneTime:
-						d.Icon = IDI_FLD_Calendar;
-						break;
-					case LFAttrRating:
-						d.Icon = IDI_FLD_Favorites;
-						break;
-					case LFAttrRoll:
-						d.Icon = IDI_FLD_Roll;
-						break;
-					case LFAttrLocationName:
-					case LFAttrLocationIATA:
-					case LFAttrLocationGPS:
-						d.Icon = IDI_FLD_Location;
-						break;
-					case LFAttrArtist:
-					case LFAttrResponsible:
-						d.Icon = IDI_FLD_Contacts;
-						break;
-					case LFAttrLanguage:
-						d.Icon = IDI_FLD_Fonts;
-						break;
-					default:
-						d.Icon = IDI_FLD_Default;
-					}
+					d.Icon = theApp.m_Attributes[a]->IconID;
 
 					CString tmpStr = d.DisplayName;
 					if ((sortStr[0]=='L') && (tmpStr[0]>='A') && (tmpStr[0]<='Z') && (tmpStr[1]>'Z'))

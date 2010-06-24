@@ -9,7 +9,7 @@
 class CCategorizer
 {
 public:
-	CCategorizer(unsigned int _attr, unsigned int _icon);
+	CCategorizer(unsigned int _attr);
 
 	virtual LFItemDescriptor* GetFolder(LFItemDescriptor* i);
 
@@ -19,7 +19,6 @@ protected:
 	virtual bool Compare(LFItemDescriptor* i1, LFItemDescriptor* i2);
 
 	unsigned int attr;
-	unsigned int icon;
 };
 
 
@@ -76,4 +75,16 @@ public:
 
 protected:
 	virtual bool Compare(LFItemDescriptor* i1, LFItemDescriptor* i2);
+};
+
+
+// IATACategorizer
+//
+
+class IATACategorizer : public AnsiCategorizer
+{
+public:
+	IATACategorizer(unsigned int _attr);
+
+	virtual LFItemDescriptor* GetFolder(LFItemDescriptor* i);
 };
