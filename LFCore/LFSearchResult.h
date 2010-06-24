@@ -26,7 +26,7 @@ public:
 	void RemoveItemDescriptor(unsigned int idx);
 	void RemoveFlaggedItemDescriptors();
 	void Sort(unsigned int attr, bool descending, bool categories);
-	void Group(unsigned int attr, bool descending, bool groupone);
+	void Group(unsigned int attr, bool groupone, bool groupnull);
 
 	LFItemDescriptor** m_Items;
 	bool m_HasCategories;

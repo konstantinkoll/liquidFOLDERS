@@ -2383,16 +2383,12 @@ void CMainFrame::CookFiles(int recipe, int FocusItem)
 	LFSearchResult* Victim = CookedFiles;
 
 	DWORD start = GetTickCount();
+
+	LFSortSearchResult(RawFiles, theApp.m_Views[recipe].SortBy, theApp.m_Views[recipe].Descending==TRUE, theApp.m_Views[recipe].ShowCategories==TRUE);
 	CookedFiles = LFAllocSearchResult(recipe, RawFiles);
 
 	if (((!IsClipboard) && (theApp.m_Views[recipe].AutoDirs)) || (theApp.m_Views[recipe].Mode>LFViewPreview))
-	{
-		LFGroupSearchResult(CookedFiles,theApp.m_Views[recipe].SortBy, theApp.m_Views[recipe].Descending==TRUE);
-	}
-	else
-	{
-		LFSortSearchResult(CookedFiles, theApp.m_Views[recipe].SortBy, theApp.m_Views[recipe].Descending==TRUE, theApp.m_Views[recipe].ShowCategories==TRUE);
-	}
+		LFGroupSearchResult(CookedFiles,theApp.m_Views[recipe].SortBy);
 
 	DWORD stop = GetTickCount();
 

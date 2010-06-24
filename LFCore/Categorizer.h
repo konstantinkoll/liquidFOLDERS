@@ -11,10 +11,13 @@ class CCategorizer
 public:
 	CCategorizer(unsigned int _attr, unsigned int _icon);
 
-	virtual bool IsEqual(LFItemDescriptor* i1, LFItemDescriptor* i2)=0;
 	virtual LFItemDescriptor* GetFolder(LFItemDescriptor* i);
 
+	bool IsEqual(LFItemDescriptor* i1, LFItemDescriptor* i2);
+
 protected:
+	virtual bool Compare(LFItemDescriptor* i1, LFItemDescriptor* i2);
+
 	unsigned int attr;
 	unsigned int icon;
 };
@@ -28,6 +31,23 @@ class DateCategorizer : public CCategorizer
 public:
 	DateCategorizer(unsigned int _attr);
 
-	virtual bool IsEqual(LFItemDescriptor* i1, LFItemDescriptor* i2);
 	virtual LFItemDescriptor* GetFolder(LFItemDescriptor* i);
+
+protected:
+	virtual bool Compare(LFItemDescriptor* i1, LFItemDescriptor* i2);
+};
+
+
+// RatingCategorizer
+//
+
+class RatingCategorizer : public CCategorizer
+{
+public:
+	RatingCategorizer(unsigned int _attr);
+
+	virtual LFItemDescriptor* GetFolder(LFItemDescriptor* i);
+
+protected:
+	virtual bool Compare(LFItemDescriptor* i1, LFItemDescriptor* i2);
 };

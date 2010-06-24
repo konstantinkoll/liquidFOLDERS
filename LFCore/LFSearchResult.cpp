@@ -532,6 +532,8 @@ void LFSearchResult::Aggregate(unsigned int write, unsigned int read1, unsigned 
 	else
 	{
 		LFItemDescriptor* folder = ((CCategorizer*)c)->GetFolder(m_Items[read1]);
+		folder->FirstAggregate = read1;
+		folder->LastAggregate = read2-1;
 
 		__int64 size = 0;
 		for (unsigned int a=read1; a<read2; a++)
@@ -545,11 +547,8 @@ void LFSearchResult::Aggregate(unsigned int write, unsigned int read1, unsigned 
 	}
 }
 
-void LFSearchResult::Group(unsigned int attr, bool descending, bool groupone)
+void LFSearchResult::Group(unsigned int attr, bool groupone, bool groupnull)
 {
-	// Sort
-	Sort(attr, descending, false);
-
 	// Choose categorizer
 	CCategorizer* c = NULL;
 
@@ -560,6 +559,9 @@ void LFSearchResult::Group(unsigned int attr, bool descending, bool groupone)
 	default:
 		switch (AttrTypes[attr])
 		{
+		case LFTypeRating:
+			c = new RatingCategorizer(attr);
+			break;
 		case LFTypeTime:
 			c = new DateCategorizer(attr);
 			break;
