@@ -585,7 +585,7 @@ LFSearchResult* QuerySearch(LFFilter* filter)
 			char* ptr = keys;
 			for (unsigned int a=0; a<count; a++)
 			{
-				if (RetrieveStore(ptr, filter, res, false))
+				if (RetrieveStore(ptr, filter, res, filter->Options.IsSubfolder))
 					success = true;
 
 				ptr += LFKeySize;
