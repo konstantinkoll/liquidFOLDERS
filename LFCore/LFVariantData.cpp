@@ -210,6 +210,41 @@ LFCore_API void LFAttributeToString(LFItemDescriptor* i, unsigned int attr, wcha
 }
 
 
+bool IsNullValue(unsigned int attr, void* v)
+{
+	if (!v)
+		return true;
+
+	assert(AttrTypes[attr]<LFTypeCount);
+
+	switch (AttrTypes[attr])
+	{
+	case LFTypeUnicodeString:
+		return (*(wchar_t*)v==L'\0');
+	case LFTypeAnsiString:
+		return (*(char*)v=='\0');
+	case LFTypeFourCC:
+	case LFTypeUINT:
+	case LFTypeFlags:
+	case LFTypeDuration:
+		return (*(unsigned int*)v)==0;
+	case LFTypeRating:
+		return (*(unsigned char*)v)==0;
+	case LFTypeINT64:
+	case LFTypeTime:
+		return (*(__int64*)v)==0;
+	case LFTypeFraction:
+		return (((LFFraction*)v)->Num==0) || (((LFFraction*)v)->Denum==0);
+	case LFTypeDouble:
+		return (*(double*)v)==0;
+	case LFTypeGeoCoordinates:
+		return (((LFGeoCoordinates*)v)->Latitude==0) && (((LFGeoCoordinates*)v)->Longitude==0);
+	}
+
+	return false;
+}
+
+
 // LFVariantData
 //
 
@@ -255,33 +290,8 @@ LFCore_API bool LFIsNullVariantData(LFVariantData* v)
 
 	assert(v->Attr<LFAttributeCount);
 	assert(v->Type==AttrTypes[v->Attr]);
-	assert(v->Type<LFTypeCount);
 
-	switch (v->Type)
-	{
-	case LFTypeUnicodeString:
-		return v->UnicodeString[0]=='\0';
-	case LFTypeAnsiString:
-		return v->AnsiString[0]=='\0';
-	case LFTypeFourCC:
-	case LFTypeUINT:
-	case LFTypeFlags:
-	case LFTypeDuration:
-		return v->UINT==0;
-	case LFTypeRating:
-		return v->Rating==0;
-	case LFTypeINT64:
-	case LFTypeTime:
-		return v->INT64==0;
-	case LFTypeFraction:
-		return (v->Fraction.Num==0) || (v->Fraction.Denum==0);
-	case LFTypeDouble:
-		return (v->Double==0);
-	case LFTypeGeoCoordinates:
-		return (v->GeoCoordinates.Latitude==0) && (v->GeoCoordinates.Longitude==0);
-	}
-
-	return false;
+	return IsNullValue(v->Attr, &v->Value);
 }
 
 LFCore_API bool LFIsVariantDataEqual(LFVariantData* v1, LFVariantData* v2)

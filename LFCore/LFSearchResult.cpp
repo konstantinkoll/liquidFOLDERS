@@ -4,6 +4,7 @@
 #include "LFCore.h"
 #include "LFItemDescriptor.h"
 #include "LFSearchResult.h"
+#include "LFVariantData.h"
 #include "StoreCache.h"
 #include <assert.h>
 #include <malloc.h>
@@ -292,58 +293,8 @@ int LFSearchResult::Compare(int eins, int zwei, unsigned int attr, bool descendi
 		}
 
 	// Dateien mit NULL-Werten oder leeren Strings im gewünschten Attribut hinten einsortieren
-	bool d1null = (d1->AttributeValues[Sort]==NULL);
-	if (!d1null)
-		switch (AttrTypes[Sort])
-		{
-		case LFTypeUnicodeString:
-			d1null = (*(wchar_t*)d1->AttributeValues[Sort]==0);
-			break;
-		case LFTypeAnsiString:
-			d1null = (*(char*)d1->AttributeValues[Sort]==0);
-			break;
-		case LFTypeFraction:
-			d1null = ((LFFraction*)d1->AttributeValues[Sort])->Denum == 0;
-			break;
-		case LFTypeGeoCoordinates:
-			d1null = (((LFGeoCoordinates*)d1->AttributeValues[Sort])->Latitude==0) &&
-				(((LFGeoCoordinates*)d1->AttributeValues[Sort])->Longitude==0);
-			break;
-		case LFTypeTime:
-			d1null = (((FILETIME*)d1->AttributeValues[Sort])->dwHighDateTime==0) &&
-				(((FILETIME*)d1->AttributeValues[Sort])->dwLowDateTime==0);
-			break;
-		case LFTypeFourCC:
-		case LFTypeDuration:
-			d1null = ((UINT*)d1->AttributeValues[Sort]) == 0;
-			break;
-		}
-
-	bool d2null = (d2->AttributeValues[Sort]==NULL);
-	if (!d2null)
-		switch (AttrTypes[Sort])
-		{
-		case LFTypeUnicodeString:
-			d2null = (*(wchar_t*)d2->AttributeValues[Sort]==0);
-			break;
-		case LFTypeAnsiString:
-			d2null = (*(char*)d2->AttributeValues[Sort]==0);
-			break;
-		case LFTypeFraction:
-			d2null = ((LFFraction*)d2->AttributeValues[Sort])->Denum == 0;
-			break;
-		case LFTypeGeoCoordinates:
-			d2null = (((LFGeoCoordinates*)d2->AttributeValues[Sort])->Latitude==0) &&
-				(((LFGeoCoordinates*)d2->AttributeValues[Sort])->Longitude==0);
-			break;
-		case LFTypeTime:
-			d2null = (((FILETIME*)d2->AttributeValues[Sort])->dwHighDateTime==0) &&
-				(((FILETIME*)d2->AttributeValues[Sort])->dwLowDateTime==0);
-			break;
-		case LFTypeFourCC:
-		case LFTypeDuration:
-			d2null = ((UINT*)d2->AttributeValues[Sort]) == 0;
-		}
+	bool d1null = IsNullValue(Sort, d1->AttributeValues[Sort]);
+	bool d2null = IsNullValue(Sort, d2->AttributeValues[Sort]);
 
 	if ((d1null) && (!d2null))
 		return 1;
@@ -524,11 +475,14 @@ void LFSearchResult::Sort(unsigned int attr, bool descending, bool categories)
 	}
 }
 
-void LFSearchResult::Aggregate(unsigned int write, unsigned int read1, unsigned int read2, void* c, unsigned int icon, bool groupone)
+unsigned int LFSearchResult::Aggregate(unsigned int write, unsigned int read1, unsigned int read2, void* c, unsigned int attr, unsigned int icon, bool groupone)
 {
-	if ((read2==read1+1) && ((!groupone) || ((m_Items[read1]->Type & LFTypeMask)==LFTypeVirtual)))
+	if (((read2==read1+1) && ((!groupone) || ((m_Items[read1]->Type & LFTypeMask)==LFTypeVirtual))) || (IsNullValue(attr, m_Items[read1]->AttributeValues[attr])))
 	{
-		m_Items[write] = m_Items[read1];
+		for (unsigned int a=read1; a<read2; a++)
+			m_Items[write++] = m_Items[a];
+
+		return read2-read1;
 	}
 	else
 	{
@@ -549,6 +503,8 @@ void LFSearchResult::Aggregate(unsigned int write, unsigned int read1, unsigned 
 
 		SetAttribute(folder, LFAttrFileSize, &size);
 		m_Items[write] = folder;
+
+		return 1;
 	}
 }
 
@@ -592,15 +548,14 @@ void LFSearchResult::Group(unsigned int attr, unsigned int icon, bool groupone)
 	{
 		if (!c->IsEqual(m_Items[ReadPtr1], m_Items[ReadPtr2]))
 		{
-			Aggregate(WritePtr, ReadPtr1, ReadPtr2, c, icon, groupone);
-			WritePtr++;
+			WritePtr += Aggregate(WritePtr, ReadPtr1, ReadPtr2, c, attr, icon, groupone);
 			ReadPtr1 = ReadPtr2;
 		}
 
 		ReadPtr2++;
 	}
 
-	Aggregate(WritePtr, ReadPtr1, m_ItemCount, c, icon, groupone);
-	m_ItemCount = WritePtr+1;
+	WritePtr += Aggregate(WritePtr, ReadPtr1, m_ItemCount, c, attr, icon, groupone);
+	m_ItemCount = WritePtr;
 	delete c;
 }

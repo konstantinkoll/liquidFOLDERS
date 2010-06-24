@@ -46,7 +46,8 @@ protected:
 private:
 	int Compare(int eins, int zwei, unsigned int attr, bool descending, bool categories);
 	void Heap(int wurzel, int anz, unsigned int attr, bool descending, bool categories);
-	void Aggregate(unsigned int write, unsigned int read1, unsigned int read2, void* c, unsigned int icon, bool groupone);
+	unsigned int Aggregate(unsigned int write, unsigned int read1, unsigned int read2, void* c,
+		unsigned int attr, unsigned int icon, bool groupone);
 
 	bool m_RawCopy;
 };
