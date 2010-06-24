@@ -167,7 +167,8 @@ CMainFrame::~CMainFrame()
 {
 	if (ActiveFilter)
 		LFFreeFilter(ActiveFilter);
-	LFFreeSearchResult(CookedFiles);
+	if (CookedFiles!=RawFiles)
+		LFFreeSearchResult(CookedFiles);
 	LFFreeSearchResult(RawFiles);
 	DeleteBreadcrumbs(&m_BreadcrumbBack);
 	DeleteBreadcrumbs(&m_BreadcrumbForward);
@@ -2360,7 +2361,8 @@ void CMainFrame::NavigateTo(LFFilter* f, UINT NavMode, int FocusItem)
 	if (RawFiles)
 	{
 		OldContext = RawFiles->m_Context;
-		LFFreeSearchResult(RawFiles);
+		if (RawFiles!=CookedFiles)
+			LFFreeSearchResult(RawFiles);
 	}
 
 	ActiveFilter->HideEmptyDrives = (theApp.m_HideEmptyDrives==TRUE);
@@ -2377,7 +2379,7 @@ void CMainFrame::NavigateTo(LFFilter* f, UINT NavMode, int FocusItem)
 
 void CMainFrame::CookFiles(int recipe, int FocusItem)
 {
-	// Das alte Suchergebnis wird in OldResult gespeichert, damit das View niemals eine ungültige
+	// Das alte Suchergebnis wird in Victim gespeichert, damit das View niemals eine ungültige
 	// Referenz hat. Erst nach UpdateSearchResult() kann das ggf. vorhandene alte Suchergebnis
 	// gelöscht werden.
 	LFSearchResult* Victim = CookedFiles;
@@ -2385,10 +2387,17 @@ void CMainFrame::CookFiles(int recipe, int FocusItem)
 	DWORD start = GetTickCount();
 
 	LFSortSearchResult(RawFiles, theApp.m_Views[recipe].SortBy, theApp.m_Views[recipe].Descending==TRUE, theApp.m_Views[recipe].ShowCategories==TRUE);
-	CookedFiles = LFAllocSearchResult(recipe, RawFiles);
 
 	if (((!IsClipboard) && (theApp.m_Views[recipe].AutoDirs)) || (theApp.m_Views[recipe].Mode>LFViewPreview))
+	{
+		CookedFiles = LFAllocSearchResult(recipe, RawFiles);
 		LFGroupSearchResult(CookedFiles, theApp.m_Views[recipe].SortBy, theApp.m_Attributes[theApp.m_Views[recipe].SortBy]->IconID, true);//TODO theApp.m_Attributes[theApp.m_Views[recipe].SortBy]->Type<=LFTypeAnsiString);
+	}
+	else
+	{
+		CookedFiles = RawFiles;
+		CookedFiles->m_ContextView = recipe;
+	}
 
 	DWORD stop = GetTickCount();
 
@@ -2396,7 +2405,7 @@ void CMainFrame::CookFiles(int recipe, int FocusItem)
 	UpdateHistory();
 	OnUpdateFileCount();
 
-	if (Victim)
+	if ((Victim) && (Victim!=RawFiles))
 		LFFreeSearchResult(Victim);
 
 	if ((CookedFiles->m_LastError==LFOk) && (!IsClipboard))
