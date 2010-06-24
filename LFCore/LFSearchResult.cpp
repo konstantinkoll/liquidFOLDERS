@@ -227,9 +227,6 @@ void LFSearchResult::AddBacklink(char* StoreID, LFFilter* f)
 	LoadString(LFCoreModuleHandle, IDS_BacklinkComment, BacklinkComment, 256);
 
 	LFItemDescriptor* d = AllocFolderDescriptor(BacklinkName, BacklinkComment, NULL, StoreID, "BACK", NULL, IDI_FLD_Back, LFCategoryStore, f);
-	// TODO
-	if (d->NextFilter)
-		d->NextFilter->Options.IsSubfolder = false;
 	if (!AddItemDescriptor(d))
 		delete d;
 }

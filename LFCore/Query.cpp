@@ -490,9 +490,23 @@ bool RetrieveStore(char* StoreID, LFFilter* filter, LFSearchResult* res, bool Ad
 	{
 		if (AddBacklink)
 		{
-			LFFilter* nf = LFAllocFilter();
-			nf->Mode = LFFilterModeStoreHome;
-			nf->Options = filter->Options;
+			LFFilter* nf = LFAllocFilter(filter);
+			if (nf->Options.IsSubfolder)
+			{
+				nf->Options.IsSubfolder = false;
+
+				if (nf->ConditionList)
+				{
+					LFFilterCondition* victim = nf->ConditionList;
+					nf->ConditionList = victim->Next;
+					delete victim;
+				}
+			}
+			else
+			{
+				nf->Mode = LFFilterModeStoreHome;
+			}
+
 			strcpy_s(nf->StoreID, LFKeySize, slot->StoreID);
 			wcscpy_s(nf->Name, 256, slot->StoreName);
 
