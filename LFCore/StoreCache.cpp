@@ -362,26 +362,21 @@ unsigned int ValidateStoreSettings(LFStoreDescriptor* s)
 
 void ChooseNewDefaultStore()
 {
-	bool found = false;
 	for (unsigned int a=0; a<StoreCount; a++)
 		if ((StoreCache[a].StoreMode==LFStoreModeInternal) && (strcmp(DefaultStore, StoreCache[a].StoreID)!=0))
 		{
 			LFMakeDefaultStore(StoreCache[a].StoreID, NULL, true);
-			found = true;
-			break;
+			return;
 		}
 
-	if (!found)
+	// Alten Default Store löschen
+	strcpy_s(DefaultStore, LFKeySize, "");
+
+	HKEY hive;
+	if (RegOpenKeyA(HKEY_CURRENT_USER, LFStoresHive, &hive)==ERROR_SUCCESS)
 	{
-		// Alten Default Store löschen
-		strcpy_s(DefaultStore, LFKeySize, "");
-
-		HKEY hive;
-		if (RegOpenKeyA(HKEY_CURRENT_USER, LFStoresHive, &hive)==ERROR_SUCCESS)
-		{
-			RegDeleteValueA(hive, "DefaultStore");
-			RegCloseKey(hive);
-		}
+		RegDeleteValueA(hive, "DefaultStore");
+		RegCloseKey(hive);
 	}
 }
 

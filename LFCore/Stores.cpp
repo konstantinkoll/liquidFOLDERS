@@ -262,18 +262,24 @@ unsigned int PrepareImport(LFStoreDescriptor* slot, LFItemDescriptor* i, char* D
 	GetSystemTime(&st);
 	srand(st.wMilliseconds*rand());
 
-	do
+ChooseAgain:
+	for (unsigned int a=0; a<LFKeyLength; a++)
 	{
-		for (unsigned int a=0; a<LFKeyLength; a++)
-		{
-			int r = rand()%sizeof(KeyChars);
-			i->CoreAttributes.FileID[a] = KeyChars[r];
-		}
-
-		i->CoreAttributes.FileID[LFKeyLength] = 0;
-		GetFileLocation(slot->DatPath, i->CoreAttributes.FileID, "*", Path, MAX_PATH);
+		int r = rand()%sizeof(KeyChars);
+		i->CoreAttributes.FileID[a] = KeyChars[r];
 	}
-	while (FileExists(Path));
+
+	i->CoreAttributes.FileID[LFKeyLength] = 0;
+	GetFileLocation(slot->DatPath, i->CoreAttributes.FileID, "*", Path, MAX_PATH);
+
+	WIN32_FIND_DATAA FindFileData;
+	HANDLE hFind = FindFirstFileA(Path, &FindFileData);
+
+	if (hFind!=INVALID_HANDLE_VALUE)
+	{
+		FindClose(hFind);
+		goto ChooseAgain;
+	}
 
 	if (Dst)
 	{
