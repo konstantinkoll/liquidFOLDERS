@@ -9,13 +9,12 @@
 // Breadcrumbs
 //
 
-void AddBreadcrumbItem(BreadcrumbItem** bi, LFFilter* f, int _focus)
+void AddBreadcrumbItem(BreadcrumbItem** bi, LFFilter* f, int focus)
 {
 	BreadcrumbItem* add = new BreadcrumbItem;
 	add->next = *bi;
-	memcpy(&add->filter, f, sizeof(LFFilter));
-	LFFreeFilter(f);
-	add->focus = _focus;
+	add->filter = f;
+	add->focus = focus;
 	*bi = add;
 }
 
@@ -26,7 +25,7 @@ void ConsumeBreadcrumbItem(BreadcrumbItem** bi, LFFilter** f, int* focus)
 
 	if (*bi)
 	{
-		*f = LFAllocFilter(&(*bi)->filter);
+		*f = (*bi)->filter;
 		*focus = (*bi)->focus;
 		BreadcrumbItem* victim = *bi;
 		*bi = (*bi)->next;
@@ -40,6 +39,7 @@ void DeleteBreadcrumbs(BreadcrumbItem** bi)
 	{
 		BreadcrumbItem* victim = *bi;
 		*bi = (*bi)->next;
+		LFFreeFilter(victim->filter);
 		delete victim;
 	}
 }
@@ -112,7 +112,7 @@ void CHistoryWnd::UpdateList(BreadcrumbItem* prev, LFFilter* current, Breadcrumb
 	// Zurück
 	while (prev)
 	{
-		AddFilterItem(&prev->filter, FALSE, FALSE);
+		AddFilterItem(prev->filter, FALSE, FALSE);
 		prev = prev->next;
 	}
 
@@ -122,7 +122,7 @@ void CHistoryWnd::UpdateList(BreadcrumbItem* prev, LFFilter* current, Breadcrumb
 	// Vorwärts
 	while (next)
 	{
-		AddFilterItem(&next->filter);
+		AddFilterItem(next->filter);
 		next = next->next;
 	}
 

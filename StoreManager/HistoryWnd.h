@@ -9,11 +9,11 @@
 
 struct BreadcrumbItem {
 	BreadcrumbItem* next;
-	LFFilter filter;
+	LFFilter* filter;
 	int focus;
 };
 
-void AddBreadcrumbItem(BreadcrumbItem** bi, LFFilter* f, int _focus);
+void AddBreadcrumbItem(BreadcrumbItem** bi, LFFilter* f, int focus);
 void ConsumeBreadcrumbItem(BreadcrumbItem** bi, LFFilter** f, int* focus);
 void DeleteBreadcrumbs(BreadcrumbItem** bi);
 
