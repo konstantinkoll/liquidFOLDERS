@@ -4,6 +4,7 @@
 #include <assert.h>
 
 
+extern HMODULE LFCoreModuleHandle;
 extern unsigned char AttrTypes[];
 
 
@@ -112,7 +113,7 @@ LFItemDescriptor* RatingCategorizer::GetFolder(LFItemDescriptor* i)
 	if (i->AttributeValues[attr])
 	{
 		wchar_t Name[256];
-		wcscpy_s(Name,256,L"XXX");
+		LoadString(LFCoreModuleHandle, ((attr==LFAttrRating) ? IDS_Rating1 : IDS_Priority1)+*((unsigned char*)i->AttributeValues[attr])/2-1, Name, 256);
 		SetAttribute(folder, LFAttrFileName, Name);
 
 		unsigned char rating = *((unsigned char*)i->AttributeValues[attr]) & 0xFE;

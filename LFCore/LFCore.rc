@@ -180,6 +180,22 @@ BEGIN
     IDS_DeleteStoreMessage  "Do you really want to delete this store ?"
     IDS_HintSingular        "%d file"
     IDS_HintPlural          "%d files"
+    IDS_Rating1             "Poor"
+    IDS_Rating2             "Fair"
+    IDS_Rating3             "Good"
+    IDS_Rating4             "Great"
+    IDS_Rating5             "Awesome"
+    IDS_Priority1           "Lowest"
+    IDS_Priority2           "Low"
+    IDS_Priority3           "Average"
+    IDS_Priority4           "High"
+    IDS_Priority5           "Urgent"
+    IDS_Size1               "Tiny (< 32 KB)"
+    IDS_Size2               "Small (< 128 KB)"
+    IDS_Size3               "Medium (< 1 MB)"
+    IDS_Size4               "Large (< 16 MB)"
+    IDS_Size5               "Very large (< 128 MB)"
+    IDS_Size6               "Huge (128 MB and larger)"
 END
 
 STRINGTABLE 

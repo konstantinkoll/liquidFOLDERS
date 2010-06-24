@@ -324,11 +324,21 @@ int LFSearchResult::Compare(int eins, int zwei, unsigned int attr, bool descendi
 			cmp = _stricmp((char*)d1->AttributeValues[Sort], (char*)d2->AttributeValues[Sort]);
 			break;
 		case LFTypeFourCC:
-		case LFTypeRating:
 		case LFTypeUINT:
 		case LFTypeDuration:
-			eins32 = *(UINT*)d1->AttributeValues[Sort];
-			zwei32 = *(UINT*)d2->AttributeValues[Sort];
+			eins32 = *(unsigned int*)d1->AttributeValues[Sort];
+			zwei32 = *(unsigned int*)d2->AttributeValues[Sort];
+			if (eins32<zwei32)
+			{
+				cmp = -1;
+			}
+			else
+				if (eins32>zwei32)
+					cmp = 1;
+			break;
+		case LFTypeRating:
+			eins32 = *(unsigned char*)d1->AttributeValues[Sort];
+			zwei32 = *(unsigned char*)d2->AttributeValues[Sort];
 			if (eins32<zwei32)
 			{
 				cmp = -1;
