@@ -186,3 +186,51 @@ LFItemDescriptor* IATACategorizer::GetFolder(LFItemDescriptor* i)
 
 	return CCategorizer::GetFolder(i);
 }
+
+
+// SizeCategorizer
+//
+
+SizeCategorizer::SizeCategorizer(unsigned int _attr)
+	: CCategorizer(_attr)
+{
+}
+
+LFItemDescriptor* SizeCategorizer::GetFolder(LFItemDescriptor* i)
+{
+	LFItemDescriptor* folder = LFAllocItemDescriptor();
+	folder->Type = LFTypeVirtual;
+	strcpy_s(folder->StoreID, LFKeySize, i->StoreID);
+
+	if (i->AttributeValues[attr])
+	{
+		wchar_t Name[256];
+		LoadString(LFCoreModuleHandle, IDS_Size1+GetCategory(*((__int64*)i->AttributeValues[attr])), Name, 256);
+		SetAttribute(folder, LFAttrFileName, Name);
+		SetAttribute(folder, attr, i->AttributeValues[attr]);
+	}
+
+	return folder;
+}
+
+bool SizeCategorizer::Compare(LFItemDescriptor* i1, LFItemDescriptor* i2)
+{
+	assert(AttrTypes[attr]==LFTypeINT64);
+
+	return GetCategory(*((__int64*)i1->AttributeValues[attr]))==GetCategory(*((__int64*)i2->AttributeValues[attr]));
+}
+
+unsigned int SizeCategorizer::GetCategory(const __int64 sz)
+{
+	if (sz<32*1024)
+		return 0;
+	if (sz<128*1024)
+		return 1;
+	if (sz<1024*1024)
+		return 2;
+	if (sz<16384*1024)
+		return 3;
+	if (sz<131072*1024)
+		return 4;
+	return 5;
+}

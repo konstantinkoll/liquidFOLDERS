@@ -525,6 +525,9 @@ void LFSearchResult::Group(unsigned int attr, unsigned int icon, bool groupone)
 
 	switch (attr)
 	{
+	case LFAttrFileSize:
+		c = new SizeCategorizer(attr);
+		break;
 	case LFAttrLocationIATA:
 		c = new IATACategorizer(attr);
 		break;

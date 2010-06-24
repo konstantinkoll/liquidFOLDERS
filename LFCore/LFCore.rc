@@ -195,7 +195,7 @@ BEGIN
     IDS_Size3               "Medium (< 1 MB)"
     IDS_Size4               "Large (< 16 MB)"
     IDS_Size5               "Very large (< 128 MB)"
-    IDS_Size6               "Huge (128 MB and larger)"
+    IDS_Size6               "Huge (128 MB and above)"
 END
 
 STRINGTABLE 

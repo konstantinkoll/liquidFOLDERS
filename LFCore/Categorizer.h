@@ -88,3 +88,20 @@ public:
 
 	virtual LFItemDescriptor* GetFolder(LFItemDescriptor* i);
 };
+
+
+// SizeCategorizer
+//
+
+class SizeCategorizer : public CCategorizer
+{
+public:
+	SizeCategorizer(unsigned int _attr);
+
+	virtual LFItemDescriptor* GetFolder(LFItemDescriptor* i);
+
+protected:
+	virtual bool Compare(LFItemDescriptor* i1, LFItemDescriptor* i2);
+
+	unsigned int GetCategory(const __int64 sz);
+};
