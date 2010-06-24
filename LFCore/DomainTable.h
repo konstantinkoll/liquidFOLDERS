@@ -31,6 +31,7 @@ RegisteredFile Registry[] = {
 	{ "dot",   LFDomainDocuments },
 	{ "dotm",  LFDomainDocuments },
 	{ "dotx",  LFDomainDocuments },
+	{ "dsf",   LFDomainPictures },
 	{ "dv",    LFDomainVideos },
 	{ "dvi",   LFDomainVideos },
 	{ "eot",   LFDomainFonts },
