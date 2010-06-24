@@ -177,7 +177,7 @@ LFCore_API void LFRemoveFlaggedItemDescriptors(LFSearchResult* res);
 LFCore_API void LFSortSearchResult(LFSearchResult* res, unsigned int attr, bool descending, bool categories=false);
 
 // Gruppiert LFSearchResult
-LFCore_API void LFGroupSearchResult(LFSearchResult* res, unsigned int attr, unsigned int icon, bool groupone=false);
+LFCore_API void LFGroupSearchResult(LFSearchResult* res, LFFilter* f, unsigned int attr, unsigned int icon, bool groupone=false);
 
 
 // Neue Datei-Importliste erzeugen

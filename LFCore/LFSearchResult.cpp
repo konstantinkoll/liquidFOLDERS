@@ -227,6 +227,9 @@ void LFSearchResult::AddBacklink(char* StoreID, LFFilter* f)
 	LoadString(LFCoreModuleHandle, IDS_BacklinkComment, BacklinkComment, 256);
 
 	LFItemDescriptor* d = AllocFolderDescriptor(BacklinkName, BacklinkComment, NULL, StoreID, "BACK", NULL, IDI_FLD_Back, LFCategoryStore, f);
+	// TODO
+	if (d->NextFilter)
+		d->NextFilter->Options.IsSubfolder = false;
 	if (!AddItemDescriptor(d))
 		delete d;
 }
@@ -485,7 +488,7 @@ void LFSearchResult::Sort(unsigned int attr, bool descending, bool categories)
 	}
 }
 
-unsigned int LFSearchResult::Aggregate(unsigned int write, unsigned int read1, unsigned int read2, void* c, unsigned int attr, unsigned int icon, bool groupone)
+unsigned int LFSearchResult::Aggregate(unsigned int write, unsigned int read1, unsigned int read2, void* c, unsigned int attr, unsigned int icon, bool groupone, LFFilter* f)
 {
 	if (((read2==read1+1) && ((!groupone) || ((m_Items[read1]->Type & LFTypeMask)==LFTypeVirtual))) || (IsNullValue(attr, m_Items[read1]->AttributeValues[attr])))
 	{
@@ -496,7 +499,7 @@ unsigned int LFSearchResult::Aggregate(unsigned int write, unsigned int read1, u
 	}
 	else
 	{
-		LFItemDescriptor* folder = ((CCategorizer*)c)->GetFolder(m_Items[read1]);
+		LFItemDescriptor* folder = ((CCategorizer*)c)->GetFolder(m_Items[read1], f);
 		folder->IconID = icon;
 		if (!m_RawCopy)
 		{
@@ -518,8 +521,13 @@ unsigned int LFSearchResult::Aggregate(unsigned int write, unsigned int read1, u
 	}
 }
 
-void LFSearchResult::Group(unsigned int attr, unsigned int icon, bool groupone)
+void LFSearchResult::Group(unsigned int attr, unsigned int icon, bool groupone, LFFilter* f)
 {
+	assert(f);
+
+	if (f->Options.IsSubfolder)
+		return;
+
 	// Choose categorizer
 	CCategorizer* c = NULL;
 
@@ -561,14 +569,14 @@ void LFSearchResult::Group(unsigned int attr, unsigned int icon, bool groupone)
 	{
 		if (!c->IsEqual(m_Items[ReadPtr1], m_Items[ReadPtr2]))
 		{
-			WritePtr += Aggregate(WritePtr, ReadPtr1, ReadPtr2, c, attr, icon, groupone);
+			WritePtr += Aggregate(WritePtr, ReadPtr1, ReadPtr2, c, attr, icon, groupone, f);
 			ReadPtr1 = ReadPtr2;
 		}
 
 		ReadPtr2++;
 	}
 
-	WritePtr += Aggregate(WritePtr, ReadPtr1, m_ItemCount, c, attr, icon, groupone);
+	WritePtr += Aggregate(WritePtr, ReadPtr1, m_ItemCount, c, attr, icon, groupone, f);
 	m_ItemCount = WritePtr;
 	delete c;
 }

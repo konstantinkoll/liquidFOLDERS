@@ -26,11 +26,11 @@ bool CCategorizer::IsEqual(LFItemDescriptor* i1, LFItemDescriptor* i2)
 	return Compare(i1, i2);
 }
 
-LFItemDescriptor* CCategorizer::GetFolder(LFItemDescriptor* i)
+LFItemDescriptor* CCategorizer::GetFolder(LFItemDescriptor* i, LFFilter* f)
 {
 	LFItemDescriptor* folder = LFAllocItemDescriptor();
 	folder->Type = LFTypeVirtual;
-	strcpy_s(folder->StoreID, LFKeySize, i->StoreID);
+	strcpy_s(folder->StoreID, LFKeySize, f->StoreID);
 
 	if (i->AttributeValues[attr])
 	{
@@ -38,6 +38,18 @@ LFItemDescriptor* CCategorizer::GetFolder(LFItemDescriptor* i)
 		LFAttributeToString(i, attr, Name, 256);
 		SetAttribute(folder, attr, i->AttributeValues[attr]);
 		SetAttribute(folder, LFAttrFileName, Name);
+
+		folder->NextFilter = LFAllocFilter(f);
+		folder->NextFilter->Options.IsSubfolder = true;
+
+		LFFilterCondition* c = new LFFilterCondition;
+		c->AttrData.Attr = attr;
+		c->AttrData.Type = AttrTypes[attr];
+		LFGetAttributeVariantData(i, &c->AttrData);
+		c->Compare = LFFilterCompareIsEqual;
+
+		c->Next = folder->NextFilter->ConditionList;
+		folder->NextFilter->ConditionList = c;
 	}
 
 	return folder;
@@ -57,11 +69,11 @@ DateCategorizer::DateCategorizer(unsigned int _attr)
 {
 }
 
-LFItemDescriptor* DateCategorizer::GetFolder(LFItemDescriptor* i)
+LFItemDescriptor* DateCategorizer::GetFolder(LFItemDescriptor* i, LFFilter* f)
 {
 	LFItemDescriptor* folder = LFAllocItemDescriptor();
 	folder->Type = LFTypeVirtual;
-	strcpy_s(folder->StoreID, LFKeySize, i->StoreID);
+	strcpy_s(folder->StoreID, LFKeySize, f->StoreID);
 
 	if (i->AttributeValues[attr])
 	{
@@ -104,11 +116,11 @@ RatingCategorizer::RatingCategorizer(unsigned int _attr)
 {
 }
 
-LFItemDescriptor* RatingCategorizer::GetFolder(LFItemDescriptor* i)
+LFItemDescriptor* RatingCategorizer::GetFolder(LFItemDescriptor* i, LFFilter* f)
 {
 	LFItemDescriptor* folder = LFAllocItemDescriptor();
 	folder->Type = LFTypeVirtual;
-	strcpy_s(folder->StoreID, LFKeySize, i->StoreID);
+	strcpy_s(folder->StoreID, LFKeySize, f->StoreID);
 
 	if (i->AttributeValues[attr])
 	{
@@ -171,7 +183,7 @@ IATACategorizer::IATACategorizer(unsigned int _attr)
 {
 }
 
-LFItemDescriptor* IATACategorizer::GetFolder(LFItemDescriptor* i)
+LFItemDescriptor* IATACategorizer::GetFolder(LFItemDescriptor* i, LFFilter* f)
 {
 	if (i->AttributeValues[attr])
 	{
@@ -179,12 +191,12 @@ LFItemDescriptor* IATACategorizer::GetFolder(LFItemDescriptor* i)
 		if (LFIATAGetAirportByCode((char*)i->AttributeValues[attr], &airport))
 		{
 			LFItemDescriptor* folder = LFIATACreateFolderForAirport(airport);
-			strcpy_s(folder->StoreID, LFKeySize, i->StoreID);
+			strcpy_s(folder->StoreID, LFKeySize, f->StoreID);
 			return folder;
 		}
 	}
 
-	return CCategorizer::GetFolder(i);
+	return CCategorizer::GetFolder(i, f);
 }
 
 
@@ -196,11 +208,11 @@ SizeCategorizer::SizeCategorizer(unsigned int _attr)
 {
 }
 
-LFItemDescriptor* SizeCategorizer::GetFolder(LFItemDescriptor* i)
+LFItemDescriptor* SizeCategorizer::GetFolder(LFItemDescriptor* i, LFFilter* f)
 {
 	LFItemDescriptor* folder = LFAllocItemDescriptor();
 	folder->Type = LFTypeVirtual;
-	strcpy_s(folder->StoreID, LFKeySize, i->StoreID);
+	strcpy_s(folder->StoreID, LFKeySize, f->StoreID);
 
 	if (i->AttributeValues[attr])
 	{

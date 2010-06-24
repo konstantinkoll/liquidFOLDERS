@@ -11,7 +11,7 @@ class CCategorizer
 public:
 	CCategorizer(unsigned int _attr);
 
-	virtual LFItemDescriptor* GetFolder(LFItemDescriptor* i);
+	virtual LFItemDescriptor* GetFolder(LFItemDescriptor* i, LFFilter* f);
 
 	bool IsEqual(LFItemDescriptor* i1, LFItemDescriptor* i2);
 
@@ -30,7 +30,7 @@ class DateCategorizer : public CCategorizer
 public:
 	DateCategorizer(unsigned int _attr);
 
-	virtual LFItemDescriptor* GetFolder(LFItemDescriptor* i);
+	virtual LFItemDescriptor* GetFolder(LFItemDescriptor* i, LFFilter* f);
 
 protected:
 	virtual bool Compare(LFItemDescriptor* i1, LFItemDescriptor* i2);
@@ -45,7 +45,7 @@ class RatingCategorizer : public CCategorizer
 public:
 	RatingCategorizer(unsigned int _attr);
 
-	virtual LFItemDescriptor* GetFolder(LFItemDescriptor* i);
+	virtual LFItemDescriptor* GetFolder(LFItemDescriptor* i, LFFilter* f);
 
 protected:
 	virtual bool Compare(LFItemDescriptor* i1, LFItemDescriptor* i2);
@@ -86,7 +86,7 @@ class IATACategorizer : public AnsiCategorizer
 public:
 	IATACategorizer(unsigned int _attr);
 
-	virtual LFItemDescriptor* GetFolder(LFItemDescriptor* i);
+	virtual LFItemDescriptor* GetFolder(LFItemDescriptor* i, LFFilter* f);
 };
 
 
@@ -98,7 +98,7 @@ class SizeCategorizer : public CCategorizer
 public:
 	SizeCategorizer(unsigned int _attr);
 
-	virtual LFItemDescriptor* GetFolder(LFItemDescriptor* i);
+	virtual LFItemDescriptor* GetFolder(LFItemDescriptor* i, LFFilter* f);
 
 protected:
 	virtual bool Compare(LFItemDescriptor* i1, LFItemDescriptor* i2);

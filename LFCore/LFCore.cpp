@@ -574,9 +574,9 @@ LFCore_API void LFSortSearchResult(LFSearchResult* res, unsigned int attr, bool 
 	res->Sort(attr, descending, categories);
 }
 
-LFCore_API void LFGroupSearchResult(LFSearchResult* res, unsigned int attr, unsigned int icon, bool groupone)
+LFCore_API void LFGroupSearchResult(LFSearchResult* res, LFFilter* f, unsigned int attr, unsigned int icon, bool groupone)
 {
-	res->Group(attr, icon, groupone);
+	res->Group(attr, icon, groupone, f);
 }
 
 

@@ -25,7 +25,7 @@ public:
 	void RemoveItemDescriptor(unsigned int idx);
 	void RemoveFlaggedItemDescriptors();
 	void Sort(unsigned int attr, bool descending, bool categories);
-	void Group(unsigned int attr, unsigned int icon, bool groupone);
+	void Group(unsigned int attr, unsigned int icon, bool groupone, LFFilter* f);
 
 	LFItemDescriptor** m_Items;
 	bool m_HasCategories;
@@ -47,7 +47,7 @@ private:
 	int Compare(int eins, int zwei, unsigned int attr, bool descending, bool categories);
 	void Heap(int wurzel, int anz, unsigned int attr, bool descending, bool categories);
 	unsigned int Aggregate(unsigned int write, unsigned int read1, unsigned int read2, void* c,
-		unsigned int attr, unsigned int icon, bool groupone);
+		unsigned int attr, unsigned int icon, bool groupone, LFFilter* f);
 
 	bool m_RawCopy;
 };
