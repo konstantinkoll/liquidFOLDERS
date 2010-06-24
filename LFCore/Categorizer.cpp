@@ -132,3 +132,35 @@ bool RatingCategorizer::Compare(LFItemDescriptor* i1, LFItemDescriptor* i2)
 
 	return (*((unsigned char*)i1->AttributeValues[attr])/2)==(*((unsigned char*)i2->AttributeValues[attr])/2);
 }
+
+
+// UnicodeCategorizer
+//
+
+UnicodeCategorizer::UnicodeCategorizer(unsigned int _attr)
+	: CCategorizer(_attr, _attr==LFAttrLocationIATA ? IDI_FLD_Location : IDI_FLD_Default)
+{
+}
+
+bool UnicodeCategorizer::Compare(LFItemDescriptor* i1, LFItemDescriptor* i2)
+{
+	assert(AttrTypes[attr]==LFTypeUnicodeString);
+
+	return wcscmp((wchar_t*)i1->AttributeValues[attr], (wchar_t*)i2->AttributeValues[attr])==0;
+}
+
+
+// AnsiCategorizer
+//
+
+AnsiCategorizer::AnsiCategorizer(unsigned int _attr)
+	: CCategorizer(_attr, _attr==LFAttrLocationIATA ? IDI_FLD_Location : IDI_FLD_Default)
+{
+}
+
+bool AnsiCategorizer::Compare(LFItemDescriptor* i1, LFItemDescriptor* i2)
+{
+	assert(AttrTypes[attr]==LFTypeAnsiString);
+
+	return strcmp((char*)i1->AttributeValues[attr], (char*)i2->AttributeValues[attr])==0;
+}

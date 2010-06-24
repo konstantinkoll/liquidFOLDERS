@@ -51,3 +51,29 @@ public:
 protected:
 	virtual bool Compare(LFItemDescriptor* i1, LFItemDescriptor* i2);
 };
+
+
+// UnicodeCategorizer
+//
+
+class UnicodeCategorizer : public CCategorizer
+{
+public:
+	UnicodeCategorizer(unsigned int _attr);
+
+protected:
+	virtual bool Compare(LFItemDescriptor* i1, LFItemDescriptor* i2);
+};
+
+
+// AnsiCategorizer
+//
+
+class AnsiCategorizer : public CCategorizer
+{
+public:
+	AnsiCategorizer(unsigned int _attr);
+
+protected:
+	virtual bool Compare(LFItemDescriptor* i1, LFItemDescriptor* i2);
+};

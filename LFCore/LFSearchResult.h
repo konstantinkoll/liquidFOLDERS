@@ -1,6 +1,5 @@
 #pragma once
 #include "liquidFOLDERS.h"
-#include "Categorizer.h"
 
 #define LFSR_FirstAlloc          1024
 #define LFSR_SubsequentAlloc     1024

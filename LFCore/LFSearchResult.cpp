@@ -1,6 +1,7 @@
 #include "StdAfx.h"
-#include "..\\include\\LFCore.h"
+#include "Categorizer.h"
 #include "IdxTables.h"
+#include "LFCore.h"
 #include "LFItemDescriptor.h"
 #include "LFSearchResult.h"
 #include "StoreCache.h"
@@ -532,8 +533,11 @@ void LFSearchResult::Aggregate(unsigned int write, unsigned int read1, unsigned 
 	else
 	{
 		LFItemDescriptor* folder = ((CCategorizer*)c)->GetFolder(m_Items[read1]);
-		folder->FirstAggregate = read1;
-		folder->LastAggregate = read2-1;
+		if (!m_RawCopy)
+		{
+			folder->FirstAggregate = read1;
+			folder->LastAggregate = read2-1;
+		}
 
 		__int64 size = 0;
 		for (unsigned int a=read1; a<read2; a++)
@@ -559,6 +563,12 @@ void LFSearchResult::Group(unsigned int attr, bool groupone, bool groupnull)
 	default:
 		switch (AttrTypes[attr])
 		{
+		case LFTypeUnicodeString:
+			c = new UnicodeCategorizer(attr);
+			break;
+		case LFTypeAnsiString:
+			c = new AnsiCategorizer(attr);
+			break;
 		case LFTypeRating:
 			c = new RatingCategorizer(attr);
 			break;
