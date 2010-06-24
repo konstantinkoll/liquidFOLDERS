@@ -6,10 +6,6 @@
 #include "Stores.h"
 #include "StoreCache.h"
 #include <assert.h>
-#include <string>
-
-
-#include "ShellProperties.h"
 
 
 extern HMODULE LFCoreModuleHandle;
@@ -460,7 +456,7 @@ LFSearchResult* QueryDomains(LFFilter* filter)
 				wcscpy_s(nf->Name, 256, d->DomainName);
 
 				if (res->AddItemDescriptor(AllocFolderDescriptor(d->DomainName, d->Comment, Hint, filter->StoreID, FileID, &size[a], d->IconID, d->CategoryID, nf)))
-					if (a>=LFFirstSoloDomain)
+					if ((a>=LFFirstSoloDomain) && (a!=LFDomainPhotos))
 					{
 						res->m_FileCount += cnt[a];
 						res->m_FileSize += size[a];

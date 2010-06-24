@@ -270,6 +270,16 @@ BEGIN
     END
 END
 
+IDM_FILETRASH MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "&Open",                       ID_ITEMS_OPEN
+        MENUITEM SEPARATOR
+        MENUITEM "&Restore",                    ID_TRASH_RESTORESELECTED
+    END
+END
+
 IDM_GLOBE MENU 
 BEGIN
     POPUP "POPUP"

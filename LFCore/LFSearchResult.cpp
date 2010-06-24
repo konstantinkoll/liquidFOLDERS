@@ -102,6 +102,12 @@ bool LFSearchResult::AddItemDescriptor(LFItemDescriptor* i)
 		i->Position = m_ItemCount;
 	m_Items[m_ItemCount++] = i;
 
+	if ((i->Type & LFTypeFile)==LFTypeFile)
+	{
+		m_FileCount++;
+		m_FileSize += i->CoreAttributes.FileSize;
+	}
+
 	return true;
 }
 
@@ -124,7 +130,7 @@ bool LFSearchResult::AddStoreDescriptor(LFStoreDescriptor* s, LFFilter* f)
 		d->IconID = IDI_STORE_Default;
 		d->Type |= LFTypeDefaultStore;
 		wchar_t ds[256];
-		LoadStringW(LFCoreModuleHandle, IDS_DefaultStore, ds, 256);
+		LoadString(LFCoreModuleHandle, IDS_DefaultStore, ds, 256);
 		SetAttribute(d, LFAttrHint, ds);
 	}
 	else
@@ -134,7 +140,7 @@ bool LFSearchResult::AddStoreDescriptor(LFStoreDescriptor* s, LFFilter* f)
 			if (wcscmp(s->LastSeen, L"")!=0)
 			{
 				wchar_t ls[256];
-				LoadStringW(LFCoreModuleHandle, IsMounted ? IDS_SeenOn :IDS_LastSeen, ls, 256);
+				LoadString(LFCoreModuleHandle, IsMounted ? IDS_SeenOn :IDS_LastSeen, ls, 256);
 				wchar_t hint[256];
 				wsprintf(hint, ls, s->LastSeen);
 				SetAttribute(d, LFAttrHint, hint);

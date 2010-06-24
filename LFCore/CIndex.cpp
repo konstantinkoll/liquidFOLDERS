@@ -363,11 +363,7 @@ void CIndex::Retrieve(LFFilter* f, LFSearchResult* res)
 
 		if (pass==1)
 			if (res->AddItemDescriptor(i))
-			{
-				res->m_FileCount++;
-				res->m_FileSize += PtrM->FileSize;
 				continue;
-			}
 
 		// Nicht gesucht
 		LFFreeItemDescriptor(i);

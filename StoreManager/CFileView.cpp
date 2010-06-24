@@ -210,7 +210,7 @@ void CFileView::OnItemContextMenu(int idx, CPoint point)
 		cmdDefault = ID_ITEMS_OPEN;
 		break;
 	case LFTypeFile:
-		nID = IDM_FILE;
+		nID = (ActiveContextID==LFContextTrash) ? IDM_FILETRASH : IDM_FILE;
 		cmdDefault = ID_ITEMS_OPEN;
 		break;
 	}
