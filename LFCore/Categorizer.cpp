@@ -2,6 +2,7 @@
 #include "Categorizer.h"
 #include "LFCore.h"
 #include "IATA.h"
+#include "Query.h"
 #include <assert.h>
 
 
@@ -42,7 +43,7 @@ LFItemDescriptor* CCategorizer::GetFolder(LFItemDescriptor* i, LFFilter* f)
 		c->AttrData.Attr = attr;
 		c->AttrData.Type = AttrTypes[attr];
 		LFGetAttributeVariantData(i, &c->AttrData);
-		c->Compare = LFFilterCompareIsEqual;
+		c->Compare = LFFilterCompareSubfolder;
 
 		c->Next = folder->NextFilter->ConditionList;
 		folder->NextFilter->ConditionList = c;
@@ -211,7 +212,7 @@ bool SizeCategorizer::Compare(LFItemDescriptor* i1, LFItemDescriptor* i2)
 {
 	assert(AttrTypes[attr]==LFTypeINT64);
 
-	return GetCategory(*((__int64*)i1->AttributeValues[attr]))==GetCategory(*((__int64*)i2->AttributeValues[attr]));
+	return GetSizeCategory(*((__int64*)i1->AttributeValues[attr]))==GetSizeCategory(*((__int64*)i2->AttributeValues[attr]));
 }
 
 void SizeCategorizer::CustomizeFolder(LFItemDescriptor* folder, LFItemDescriptor* i)
@@ -219,23 +220,8 @@ void SizeCategorizer::CustomizeFolder(LFItemDescriptor* folder, LFItemDescriptor
 	if (i->AttributeValues[attr])
 	{
 		wchar_t Name[256];
-		LoadString(LFCoreModuleHandle, IDS_Size1+GetCategory(*((__int64*)i->AttributeValues[attr])), Name, 256);
+		LoadString(LFCoreModuleHandle, IDS_Size1+GetSizeCategory(*((__int64*)i->AttributeValues[attr])), Name, 256);
 		SetAttribute(folder, LFAttrFileName, Name);
 		SetAttribute(folder, attr, i->AttributeValues[attr]);
 	}
-}
-
-unsigned int SizeCategorizer::GetCategory(const __int64 sz)
-{
-	if (sz<32*1024)
-		return 0;
-	if (sz<128*1024)
-		return 1;
-	if (sz<1024*1024)
-		return 2;
-	if (sz<16384*1024)
-		return 3;
-	if (sz<131072*1024)
-		return 4;
-	return 5;
 }

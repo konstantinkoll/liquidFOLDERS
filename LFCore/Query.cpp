@@ -68,6 +68,22 @@ char* stristr(const char* String, const char* Pattern)
 	return NULL;
 }
 
+unsigned int GetSizeCategory(const __int64 sz)
+{
+	if (sz<32*1024)
+		return 0;
+	if (sz<128*1024)
+		return 1;
+	if (sz<1024*1024)
+		return 2;
+	if (sz<16384*1024)
+		return 3;
+	if (sz<131072*1024)
+		return 4;
+	return 5;
+}
+
+
 bool CheckCondition(void* value, LFFilterCondition* c)
 {
 	assert(c->Compare>=LFFilterCompareIgnore);
@@ -79,6 +95,7 @@ bool CheckCondition(void* value, LFFilterCondition* c)
 	if (!value)
 		switch(c->Compare)
 		{
+		case LFFilterCompareSubfolder:
 		case LFFilterCompareIsEqual:
 			return LFIsNullVariantData(&c->AttrData);
 		case LFFilterCompareIsNotEqual:
@@ -101,6 +118,12 @@ bool CheckCondition(void* value, LFFilterCondition* c)
 	case LFTypeUnicodeString:
 		switch (c->Compare)
 		{
+		case LFFilterCompareSubfolder:
+			/*len1 = wcslen((wchar_t*)value);
+			len2 = wcslen(c->AttrData.UnicodeString);
+			if (len1<=len2)
+				return false;
+			return _wcsnicmp((wchar_t*)value, c->AttrData.UnicodeString, len1)==0;*/
 		case LFFilterCompareIsEqual:
 			return _wcsicmp((wchar_t*)value, c->AttrData.UnicodeString)==0;
 		case LFFilterCompareIsNotEqual:
@@ -127,6 +150,12 @@ bool CheckCondition(void* value, LFFilterCondition* c)
 	case LFTypeAnsiString:
 		switch (c->Compare)
 		{
+		case LFFilterCompareSubfolder:
+			/*len1 = strlen((char*)value);
+			len2 = strlen(c->AttrData.AnsiString);
+			if (len1<=len2)
+				return false;
+			return _strnicmp((char*)value, c->AttrData.AnsiString, len1)==0;*/
 		case LFFilterCompareIsEqual:
 			return _stricmp((char*)value, c->AttrData.AnsiString)==0;
 		case LFFilterCompareIsNotEqual:
@@ -155,6 +184,7 @@ bool CheckCondition(void* value, LFFilterCondition* c)
 	case LFTypeDuration:
 		switch (c->Compare)
 		{
+		case LFFilterCompareSubfolder:
 		case LFFilterCompareIsEqual:
 			return *(unsigned int*)value==c->AttrData.UINT;
 		case LFFilterCompareIsNotEqual:
@@ -181,6 +211,8 @@ bool CheckCondition(void* value, LFFilterCondition* c)
 	case LFTypeRating:
 		switch (c->Compare)
 		{
+		case LFFilterCompareSubfolder:
+			return (*(unsigned char*)value & 0xFE)==(c->AttrData.Rating & 0xFE);
 		case LFFilterCompareIsEqual:
 			return *(unsigned char*)value==c->AttrData.Rating;
 		case LFFilterCompareIsNotEqual:
@@ -196,6 +228,9 @@ bool CheckCondition(void* value, LFFilterCondition* c)
 	case LFTypeINT64:
 		switch (c->Compare)
 		{
+		case LFFilterCompareSubfolder:
+			if (c->AttrData.Attr==LFAttrFileSize)
+				return GetSizeCategory(*(__int64*)value)==GetSizeCategory(c->AttrData.INT64);
 		case LFFilterCompareIsEqual:
 			return *(__int64*)value==c->AttrData.INT64;
 		case LFFilterCompareIsNotEqual:
@@ -211,6 +246,7 @@ bool CheckCondition(void* value, LFFilterCondition* c)
 	case LFTypeFraction:
 		switch (c->Compare)
 		{
+		case LFFilterCompareSubfolder:
 		case LFFilterCompareIsEqual:
 			return memcmp(value, &c->AttrData.Fraction, sizeof(LFFraction))==0;
 		case LFFilterCompareIsNotEqual:
@@ -222,6 +258,7 @@ bool CheckCondition(void* value, LFFilterCondition* c)
 	case LFTypeDouble:
 		switch (c->Compare)
 		{
+		case LFFilterCompareSubfolder:
 		case LFFilterCompareIsEqual:
 			return *(__int64*)value==c->AttrData.Double;
 		case LFFilterCompareIsNotEqual:
@@ -237,6 +274,7 @@ bool CheckCondition(void* value, LFFilterCondition* c)
 	case LFTypeGeoCoordinates:
 		switch (c->Compare)
 		{
+		case LFFilterCompareSubfolder:
 		case LFFilterCompareIsEqual:
 			return memcmp(value, &c->AttrData.GeoCoordinates, sizeof(LFGeoCoordinates))==0;
 		case LFFilterCompareIsNotEqual:
@@ -248,6 +286,7 @@ bool CheckCondition(void* value, LFFilterCondition* c)
 	case LFTypeTime:
 		switch (c->Compare)
 		{
+		case LFFilterCompareSubfolder:
 		case LFFilterCompareIsEqual:
 			return memcmp(value, &c->AttrData.Time, sizeof(FILETIME))==0;
 		case LFFilterCompareIsNotEqual:

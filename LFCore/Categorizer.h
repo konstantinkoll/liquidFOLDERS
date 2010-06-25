@@ -100,6 +100,4 @@ public:
 protected:
 	virtual bool Compare(LFItemDescriptor* i1, LFItemDescriptor* i2);
 	virtual void CustomizeFolder(LFItemDescriptor* folder, LFItemDescriptor* i);
-
-	unsigned int GetCategory(const __int64 sz);
 };

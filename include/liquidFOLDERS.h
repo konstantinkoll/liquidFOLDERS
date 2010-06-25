@@ -381,13 +381,14 @@ struct LFDomainDescriptor
 #define LFFilterTypeDefault             -1
 
 #define LFFilterCompareIgnore           0
-#define LFFilterCompareIsEqual          1
-#define LFFilterCompareIsNotEqual       2
-#define LFFilterCompareIsAboveOrEqual   3
-#define LFFilterCompareBeginsWith       3	// Strings
-#define LFFilterCompareIsBelowOrEqual   4
-#define LFFilterCompareEndsWith         4	// Strings
-#define LFFilterCompareContains         5	// Strings
+#define LFFilterCompareSubfolder        1
+#define LFFilterCompareIsEqual          2
+#define LFFilterCompareIsNotEqual       3
+#define LFFilterCompareIsAboveOrEqual   4
+#define LFFilterCompareBeginsWith       4	// Strings
+#define LFFilterCompareIsBelowOrEqual   5
+#define LFFilterCompareEndsWith         5	// Strings
+#define LFFilterCompareContains         6	// Strings
 
 
 struct LFFilterOptions
