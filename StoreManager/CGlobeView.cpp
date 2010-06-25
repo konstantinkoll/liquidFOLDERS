@@ -149,16 +149,27 @@ void CGlobeView::SetSearchResult(LFSearchResult* _result)
 
 			for (UINT a=0; a<_result->m_ItemCount; a++)
 			{
-				LFGeoCoordinates* c = (LFGeoCoordinates*)_result->m_Items[a]->AttributeValues[LFAttrLocationGPS];
 				ZeroMemory(&m_Locations[a], sizeof(Location));
-				if (c)
-					if ((c->Latitude!=0) || (c->Longitude!=0))
+
+				LFGeoCoordinates coord = { 0, 0 };
+				if (_result->m_Items[a]->AttributeValues[LFAttrLocationGPS])
+					coord = *((LFGeoCoordinates*)_result->m_Items[a]->AttributeValues[LFAttrLocationGPS]);
+
+				if ((coord.Latitude==0) && (coord.Longitude==0))
+					if (_result->m_Items[a]->AttributeValues[LFAttrLocationIATA])
 					{
-						CalculateWorldCoords(c->Latitude, c->Longitude, m_Locations[a].world);
-						LFGeoCoordinatesToString(*c, m_Locations[a].coordstring, 32);
-						m_Locations[a].valid = TRUE;
-						m_Locations[a].selected = FALSE;
+						LFAirport* airport;
+						if (LFIATAGetAirportByCode((char*)_result->m_Items[a]->AttributeValues[LFAttrLocationIATA], &airport))
+							coord = airport->Location;
 					}
+
+				if ((coord.Latitude!=0) || (coord.Longitude!=0))
+				{
+					CalculateWorldCoords(coord.Latitude, coord.Longitude, m_Locations[a].world);
+					LFGeoCoordinatesToString(coord, m_Locations[a].coordstring, 32);
+					m_Locations[a].valid = TRUE;
+					m_Locations[a].selected = FALSE;
+				}
 			}
 		}
 
@@ -1148,6 +1159,9 @@ void CGlobeView::CalcAndDrawLabel()
 				wchar_t* subcaption = NULL;
 				wchar_t* coordinates = (m_ViewParameters.GlobeShowGPS ? m_Locations[a].coordstring : NULL);
 				wchar_t* hint = (m_ViewParameters.GlobeShowHints ? result->m_Items[a]->Hint : NULL);
+				if (hint)
+					if (*hint==L'\0')
+						hint = NULL;
 
 				// Beschriftung aufbereiten
 				switch (m_ViewParameters.SortBy)

@@ -2410,7 +2410,7 @@ void CMainFrame::CookFiles(int recipe, int FocusItem)
 	{
 		CookedFiles = LFAllocSearchResult(recipe, RawFiles);
 		LFGroupSearchResult(CookedFiles, ActiveFilter, vp->SortBy, attr->IconID,
-			(attr->Type!=LFTypeTime) && (vp->Mode<=LFViewPreview) && (vp->SortBy!=LFAttrFileName) && (vp->SortBy!=LFAttrStoreID) && (vp->SortBy!=LFAttrFileID));
+			(vp->Mode>LFViewPreview) || ((attr->Type!=LFTypeTime) && (vp->SortBy!=LFAttrFileName) && (vp->SortBy!=LFAttrStoreID) && (vp->SortBy!=LFAttrFileID)));
 	}
 	else
 	{

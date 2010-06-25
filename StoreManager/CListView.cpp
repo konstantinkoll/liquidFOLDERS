@@ -308,7 +308,7 @@ int CListView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 			if (theApp.osInfo.dwMajorVersion>=6)
 			{
 				lvg.pszSubtitle = theApp.m_ItemCategories[a]->Hint;
-				if (*lvg.pszSubtitle=='\0')
+				if (*lvg.pszSubtitle==L'\0')
 				{
 					lvg.mask &= ~LVGF_SUBTITLE;
 				}

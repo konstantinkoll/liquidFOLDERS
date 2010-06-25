@@ -211,7 +211,7 @@ BOOL CAttributePropertyIATA::OnUpdateValue()
 	{
 		m_varValue = (LPCTSTR)strText;
 		p_Data->IsNull = false;
-		WideCharToMultiByte(CP_ACP, 0, strText, strText.GetLength(), p_Data->AnsiString, 256, NULL, NULL);
+		WideCharToMultiByte(CP_ACP, 0, strText, strText.GetLength()+1, p_Data->AnsiString, 256, NULL, NULL);
 
 		m_pWndList->OnPropertyChanged(this);
 	}
