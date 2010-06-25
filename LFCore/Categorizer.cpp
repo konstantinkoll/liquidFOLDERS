@@ -1,6 +1,7 @@
 #include "StdAfx.h"
 #include "Categorizer.h"
 #include "LFCore.h"
+#include "IATA.h"
 #include <assert.h>
 
 
@@ -34,11 +35,6 @@ LFItemDescriptor* CCategorizer::GetFolder(LFItemDescriptor* i, LFFilter* f)
 
 	if (i->AttributeValues[attr])
 	{
-		wchar_t Name[256];
-		LFAttributeToString(i, attr, Name, 256);
-		SetAttribute(folder, attr, i->AttributeValues[attr]);
-		SetAttribute(folder, LFAttrFileName, Name);
-
 		folder->NextFilter = LFAllocFilter(f);
 		folder->NextFilter->Options.IsSubfolder = true;
 
@@ -52,12 +48,28 @@ LFItemDescriptor* CCategorizer::GetFolder(LFItemDescriptor* i, LFFilter* f)
 		folder->NextFilter->ConditionList = c;
 	}
 
+	CustomizeFolder(folder, i);
+	
+	if (folder->NextFilter)
+		wcscpy_s(folder->NextFilter->Name, 256, folder->CoreAttributes.FileName);
+
 	return folder;
 }
 
 bool CCategorizer::Compare(LFItemDescriptor* /*i1*/, LFItemDescriptor* /*i2*/)
 {
 	return false;
+}
+
+void CCategorizer::CustomizeFolder(LFItemDescriptor* folder, LFItemDescriptor* i)
+{
+	if (i->AttributeValues[attr])
+	{
+		wchar_t Name[256];
+		LFAttributeToString(i, attr, Name, 256);
+		SetAttribute(folder, attr, i->AttributeValues[attr]);
+		SetAttribute(folder, LFAttrFileName, Name);
+	}
 }
 
 
@@ -69,12 +81,20 @@ DateCategorizer::DateCategorizer(unsigned int _attr)
 {
 }
 
-LFItemDescriptor* DateCategorizer::GetFolder(LFItemDescriptor* i, LFFilter* f)
+bool DateCategorizer::Compare(LFItemDescriptor* i1, LFItemDescriptor* i2)
 {
-	LFItemDescriptor* folder = LFAllocItemDescriptor();
-	folder->Type = LFTypeVirtual;
-	strcpy_s(folder->StoreID, LFKeySize, f->StoreID);
+	assert(AttrTypes[attr]==LFTypeTime);
 
+	SYSTEMTIME st1;
+	SYSTEMTIME st2;
+	FileTimeToSystemTime((FILETIME*)i1->AttributeValues[attr], &st1);
+	FileTimeToSystemTime((FILETIME*)i2->AttributeValues[attr], &st2);
+
+	return (st1.wDay==st2.wDay) && (st1.wMonth==st2.wMonth) && (st1.wYear==st2.wYear);
+}
+
+void DateCategorizer::CustomizeFolder(LFItemDescriptor* folder, LFItemDescriptor* i)
+{
 	if (i->AttributeValues[attr])
 	{
 		wchar_t Name[256];
@@ -91,20 +111,6 @@ LFItemDescriptor* DateCategorizer::GetFolder(LFItemDescriptor* i, LFFilter* f)
 
 		SetAttribute(folder, LFAttrFileName, Name);
 	}
-
-	return folder;
-}
-
-bool DateCategorizer::Compare(LFItemDescriptor* i1, LFItemDescriptor* i2)
-{
-	assert(AttrTypes[attr]==LFTypeTime);
-
-	SYSTEMTIME st1;
-	SYSTEMTIME st2;
-	FileTimeToSystemTime((FILETIME*)i1->AttributeValues[attr], &st1);
-	FileTimeToSystemTime((FILETIME*)i2->AttributeValues[attr], &st2);
-
-	return (st1.wDay==st2.wDay) && (st1.wMonth==st2.wMonth) && (st1.wYear==st2.wYear);
 }
 
 
@@ -116,12 +122,15 @@ RatingCategorizer::RatingCategorizer(unsigned int _attr)
 {
 }
 
-LFItemDescriptor* RatingCategorizer::GetFolder(LFItemDescriptor* i, LFFilter* f)
+bool RatingCategorizer::Compare(LFItemDescriptor* i1, LFItemDescriptor* i2)
 {
-	LFItemDescriptor* folder = LFAllocItemDescriptor();
-	folder->Type = LFTypeVirtual;
-	strcpy_s(folder->StoreID, LFKeySize, f->StoreID);
+	assert(AttrTypes[attr]==LFTypeRating);
 
+	return (*((unsigned char*)i1->AttributeValues[attr])/2)==(*((unsigned char*)i2->AttributeValues[attr])/2);
+}
+
+void RatingCategorizer::CustomizeFolder(LFItemDescriptor* folder, LFItemDescriptor* i)
+{
 	if (i->AttributeValues[attr])
 	{
 		wchar_t Name[256];
@@ -131,15 +140,6 @@ LFItemDescriptor* RatingCategorizer::GetFolder(LFItemDescriptor* i, LFFilter* f)
 		unsigned char rating = *((unsigned char*)i->AttributeValues[attr]) & 0xFE;
 		SetAttribute(folder, attr, &rating);
 	}
-
-	return folder;
-}
-
-bool RatingCategorizer::Compare(LFItemDescriptor* i1, LFItemDescriptor* i2)
-{
-	assert(AttrTypes[attr]==LFTypeRating);
-
-	return (*((unsigned char*)i1->AttributeValues[attr])/2)==(*((unsigned char*)i2->AttributeValues[attr])/2);
 }
 
 
@@ -183,20 +183,19 @@ IATACategorizer::IATACategorizer(unsigned int _attr)
 {
 }
 
-LFItemDescriptor* IATACategorizer::GetFolder(LFItemDescriptor* i, LFFilter* f)
+void IATACategorizer::CustomizeFolder(LFItemDescriptor* folder, LFItemDescriptor* i)
 {
 	if (i->AttributeValues[attr])
 	{
 		LFAirport* airport;
 		if (LFIATAGetAirportByCode((char*)i->AttributeValues[attr], &airport))
 		{
-			LFItemDescriptor* folder = LFIATACreateFolderForAirport(airport);
-			strcpy_s(folder->StoreID, LFKeySize, f->StoreID);
-			return folder;
+			CustomizeFolderForAirport(folder, airport);
+			return;
 		}
 	}
 
-	return CCategorizer::GetFolder(i, f);
+	return CCategorizer::CustomizeFolder(folder, i);
 }
 
 
@@ -208,12 +207,15 @@ SizeCategorizer::SizeCategorizer(unsigned int _attr)
 {
 }
 
-LFItemDescriptor* SizeCategorizer::GetFolder(LFItemDescriptor* i, LFFilter* f)
+bool SizeCategorizer::Compare(LFItemDescriptor* i1, LFItemDescriptor* i2)
 {
-	LFItemDescriptor* folder = LFAllocItemDescriptor();
-	folder->Type = LFTypeVirtual;
-	strcpy_s(folder->StoreID, LFKeySize, f->StoreID);
+	assert(AttrTypes[attr]==LFTypeINT64);
 
+	return GetCategory(*((__int64*)i1->AttributeValues[attr]))==GetCategory(*((__int64*)i2->AttributeValues[attr]));
+}
+
+void SizeCategorizer::CustomizeFolder(LFItemDescriptor* folder, LFItemDescriptor* i)
+{
 	if (i->AttributeValues[attr])
 	{
 		wchar_t Name[256];
@@ -221,15 +223,6 @@ LFItemDescriptor* SizeCategorizer::GetFolder(LFItemDescriptor* i, LFFilter* f)
 		SetAttribute(folder, LFAttrFileName, Name);
 		SetAttribute(folder, attr, i->AttributeValues[attr]);
 	}
-
-	return folder;
-}
-
-bool SizeCategorizer::Compare(LFItemDescriptor* i1, LFItemDescriptor* i2)
-{
-	assert(AttrTypes[attr]==LFTypeINT64);
-
-	return GetCategory(*((__int64*)i1->AttributeValues[attr]))==GetCategory(*((__int64*)i2->AttributeValues[attr]));
 }
 
 unsigned int SizeCategorizer::GetCategory(const __int64 sz)

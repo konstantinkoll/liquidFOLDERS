@@ -370,10 +370,10 @@ LFCore_API LFDomainDescriptor* LFGetDomainInfo(unsigned int ID)
 	LoadString(LFCoreModuleHandle, IDS_FirstDomain+ID, tmpStr, 256);
 
 	for (unsigned int a=0; a<wcslen(tmpStr); a++)
-		if (tmpStr[a]=='\n')
+		if (tmpStr[a]==L'\n')
 		{
 			wcsncpy_s(d->Comment, 256, &tmpStr[a+1], wcslen(tmpStr)-a-1);
-			tmpStr[a] = '\0';
+			tmpStr[a] = L'\0';
 			break;
 		}
 

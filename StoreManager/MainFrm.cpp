@@ -2429,8 +2429,9 @@ void CMainFrame::UpdateHistory()
 	{
 		ActiveFilter->Result.FileCount = RawFiles->m_FileCount;
 		ActiveFilter->Result.FileSize = RawFiles->m_FileSize;
-		ActiveFilter->Result.ItemCount = RawFiles->m_ItemCount;
 	}
+	if (CookedFiles)
+		ActiveFilter->Result.ItemCount = CookedFiles->m_ItemCount;
 
 	if (m_wndHistory)
 		m_wndHistory->UpdateList(m_BreadcrumbBack, ActiveFilter, m_BreadcrumbForward);

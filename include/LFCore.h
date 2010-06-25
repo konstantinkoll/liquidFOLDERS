@@ -350,6 +350,3 @@ LFCore_API int LFIATAGetNextAirportByCountry(unsigned int CountryID, int last, L
 // Setzt den Zeiger *pBuffer auf den Flughafen mit dem übergebenen Code.
 // *pBuffer kann in jedem Fall überschrieben werden.
 LFCore_API bool LFIATAGetAirportByCode(char* Code, LFAirport** pBuffer);
-
-// Erzeugt aus einem Flughafen einen virtuellen Ordner
-LFCore_API LFItemDescriptor* LFIATACreateFolderForAirport(LFAirport* airport);

@@ -504,6 +504,12 @@ unsigned int LFSearchResult::Aggregate(unsigned int write, unsigned int read1, u
 			folder->LastAggregate = read2-1;
 		}
 
+		wchar_t Mask[256];
+		LoadString(LFCoreModuleHandle, (read2==read1+1) ? IDS_HintSingular : IDS_HintPlural, Mask, 256);
+		wchar_t Hint[256];
+		swprintf_s(Hint, 256, Mask, read2-read1);
+		SetAttribute(folder, LFAttrHint, &Hint);
+
 		__int64 size = 0;
 		for (unsigned int a=read1; a<read2; a++)
 		{
@@ -574,6 +580,7 @@ void LFSearchResult::Group(unsigned int attr, unsigned int icon, bool groupone, 
 	}
 
 	WritePtr += Aggregate(WritePtr, ReadPtr1, m_ItemCount, c, attr, icon, groupone, f);
-	m_ItemCount = WritePtr;
+	m_ItemCount = f->Result.ItemCount = WritePtr;
+
 	delete c;
 }

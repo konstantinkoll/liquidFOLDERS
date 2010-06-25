@@ -91,9 +91,8 @@ LFCore_API bool LFIATAGetAirportByCode(char* Code, LFAirport** pBuffer)
 	return false;
 }
 
-LFCore_API LFItemDescriptor* LFIATACreateFolderForAirport(LFAirport* airport)
+void CustomizeFolderForAirport(LFItemDescriptor* i, LFAirport* airport)
 {
-	LFItemDescriptor* i = LFAllocItemDescriptor();
 	i->IconID = IDI_FLD_Location;
 	i->Type = LFTypeVirtual;
 
@@ -123,6 +122,4 @@ LFCore_API LFItemDescriptor* LFIATACreateFolderForAirport(LFAirport* airport)
 	// Weitere Attribute
 	SetAttribute(i, LFAttrLocationIATA, airport->Code);
 	SetAttribute(i, LFAttrLocationGPS, &airport->Location);
-
-	return i;
 }

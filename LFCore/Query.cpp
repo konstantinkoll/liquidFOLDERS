@@ -491,6 +491,8 @@ bool RetrieveStore(char* StoreID, LFFilter* filter, LFSearchResult* res, bool Ad
 		if (AddBacklink)
 		{
 			LFFilter* nf = LFAllocFilter(filter);
+			strcpy_s(nf->StoreID, LFKeySize, filter->StoreID);
+
 			if (nf->Options.IsSubfolder)
 			{
 				nf->Options.IsSubfolder = false;
@@ -501,14 +503,21 @@ bool RetrieveStore(char* StoreID, LFFilter* filter, LFSearchResult* res, bool Ad
 					nf->ConditionList = victim->Next;
 					delete victim;
 				}
+
+				if (nf->Mode==LFFilterModeDirectoryTree)
+				{
+					LoadString(LFCoreModuleHandle, IDS_FirstDomain+nf->DomainID, nf->Name, 256);
+
+					wchar_t* pos = wcschr(nf->Name, L'\n');
+					if (pos)
+						*pos = L'\0';
+				}
 			}
 			else
 			{
 				nf->Mode = LFFilterModeStoreHome;
+				wcscpy_s(nf->Name, 256, slot->StoreName);
 			}
-
-			strcpy_s(nf->StoreID, LFKeySize, slot->StoreID);
-			wcscpy_s(nf->Name, 256, slot->StoreName);
 
 			res->AddBacklink(filter->StoreID, nf);
 		}
