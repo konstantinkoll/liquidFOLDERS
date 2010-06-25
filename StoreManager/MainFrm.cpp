@@ -1288,7 +1288,7 @@ void CMainFrame::OnUpdateSelection()
 	{
 		LFItemDescriptor* item = CookedFiles->m_Items[i];
 
-		m_wndInspector.UpdateAdd(item);
+		m_wndInspector.UpdateAdd(item, RawFiles);
 		FilesSelected |= ((item->Type & LFTypeMask)==LFTypeFile) ||
 						(((item->Type & LFTypeMask)==LFTypeVirtual) && (item->FirstAggregate!=-1) && (item->LastAggregate!=-1));
 		Count++;
@@ -2371,6 +2371,9 @@ void CMainFrame::NavigateTo(LFFilter* f, UINT NavMode, int FocusItem)
 	if (NavMode<NAVMODE_RELOAD)
 		UpdateSearchResult(TRUE, 0);
 
+	ActiveFilter->HideEmptyDrives = (theApp.m_HideEmptyDrives==TRUE);
+	ActiveFilter->HideEmptyDomains = (theApp.m_HideEmptyDomains==TRUE);
+
 	int OldContext = -1;
 	if (RawFiles)
 	{
@@ -2379,8 +2382,6 @@ void CMainFrame::NavigateTo(LFFilter* f, UINT NavMode, int FocusItem)
 			LFFreeSearchResult(RawFiles);
 	}
 
-	ActiveFilter->HideEmptyDrives = (theApp.m_HideEmptyDrives==TRUE);
-	ActiveFilter->HideEmptyDomains = (theApp.m_HideEmptyDomains==TRUE);
 	RawFiles = LFQuery(ActiveFilter);
 	CookFiles(((OldContext!=RawFiles->m_Context) || (ActiveContextID==-1)) ? RawFiles->m_Context : ActiveContextID, FocusItem);
 
@@ -2400,12 +2401,16 @@ void CMainFrame::CookFiles(int recipe, int FocusItem)
 
 	DWORD start = GetTickCount();
 
-	LFSortSearchResult(RawFiles, theApp.m_Views[recipe].SortBy, theApp.m_Views[recipe].Descending==TRUE, theApp.m_Views[recipe].ShowCategories==TRUE);
+	LFViewParameters* vp = &theApp.m_Views[recipe];
+	LFAttributeDescriptor* attr = theApp.m_Attributes[vp->SortBy];
 
-	if (((!IsClipboard) && (theApp.m_Views[recipe].AutoDirs) && (!ActiveFilter->Options.IsSubfolder)) || (theApp.m_Views[recipe].Mode>LFViewPreview))
+	LFSortSearchResult(RawFiles, vp->SortBy, vp->Descending==TRUE, vp->ShowCategories==TRUE);
+
+	if (((!IsClipboard) && (vp->AutoDirs) && (!ActiveFilter->Options.IsSubfolder)) || (vp->Mode>LFViewPreview))
 	{
 		CookedFiles = LFAllocSearchResult(recipe, RawFiles);
-		LFGroupSearchResult(CookedFiles, ActiveFilter, theApp.m_Views[recipe].SortBy, theApp.m_Attributes[theApp.m_Views[recipe].SortBy]->IconID, true);//TODO theApp.m_Attributes[theApp.m_Views[recipe].SortBy]->Type<=LFTypeAnsiString);
+		LFGroupSearchResult(CookedFiles, ActiveFilter, vp->SortBy, attr->IconID,
+			(attr->Type!=LFTypeTime) && (vp->Mode<=LFViewPreview) && (vp->SortBy!=LFAttrFileName) && (vp->SortBy!=LFAttrStoreID) && (vp->SortBy!=LFAttrFileID));
 	}
 	else
 	{

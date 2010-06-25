@@ -53,7 +53,7 @@ public:
 	virtual void SaveSettings();
 
 	void UpdateStart(BOOL Reset=TRUE);
-	void UpdateAdd(LFItemDescriptor* i);
+	void UpdateAdd(LFItemDescriptor* i, LFSearchResult* raw);
 	void UpdateFinish();
 
 protected:

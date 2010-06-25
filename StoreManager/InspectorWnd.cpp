@@ -75,7 +75,7 @@ void CInspectorWnd::UpdateStart(BOOL Reset)
 	}
 }
 
-void CInspectorWnd::UpdateAdd(LFItemDescriptor* i)
+void CInspectorWnd::UpdateAdd(LFItemDescriptor* i, LFSearchResult* raw)
 {
 	Count++;
 
@@ -125,11 +125,21 @@ void CInspectorWnd::UpdateAdd(LFItemDescriptor* i)
 		AddValue(i, LFAttrFileName, FALSE);
 		AddValue(i, LFAttrFileID);
 		AddValue(i, LFAttrStoreID);
-		AddValue(i, LFAttrComment, FALSE);
 		AddValue(i, LFAttrHint);
-		for (UINT a=LFAttrHint+1; a<LFAttributeCount; a++)
-			if (i->AttributeValues[a])
-				AddValue(i, a, FALSE);
+		if ((i->FirstAggregate!=-1) && (i->LastAggregate!=-1))
+		{
+			for (int a=i->FirstAggregate; a<=i->LastAggregate; a++)
+				for (UINT b=0; b<LFAttributeCount; b++)
+					if ((raw->m_Items[a]->AttributeValues[b]) && (b!=LFAttrHint) && (b!=LFAttrDeleteTime))
+						AddValue(raw->m_Items[a], b);
+		}
+		else
+		{
+			AddValue(i, LFAttrComment, FALSE);
+			for (UINT a=LFAttrHint+1; a<LFAttributeCount; a++)
+				if (i->AttributeValues[a])
+					AddValue(i, a, FALSE);
+		}
 		break;
 	case LFTypeFile:
 		for (UINT a=0; a<LFAttributeCount; a++)
