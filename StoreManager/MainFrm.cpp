@@ -1174,7 +1174,16 @@ void CMainFrame::UpdateViewOptions()
 
 void CMainFrame::UpdateSortOptions()
 {
-	CookFiles(ActiveContextID);
+	if ((!ActiveViewParameters->AutoDirs) && (ActiveFilter->Options.IsSubfolder) && (m_BreadcrumbBack))
+	{
+		OnNavigateBackOne();
+		DeleteBreadcrumbs(&m_BreadcrumbForward);
+		UpdateHistory();
+	}
+	else
+	{
+		CookFiles(ActiveContextID);
+	}
 }
 
 void CMainFrame::UpdateSearchResult(BOOL SetEmpty, int FocusItem)
