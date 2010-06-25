@@ -187,6 +187,7 @@ void CAttributePropertyIATA::OnClickButton(CPoint /*point*/)
 				m_UseDependencies |= 2;
 			}
 
+			strcpy_s(p_Data->AnsiString, 256, dlg.m_Airport->Code);
 			CString tmpStr(dlg.m_Airport->Code);
 			SetValue(tmpStr.MakeUpper(), FALSE);
 		}

@@ -215,25 +215,29 @@ void SetNameExtFromFile(LFItemDescriptor* i, wchar_t* fn)
 
 	// Name
 	wchar_t Name[256];
-	wchar_t* LastBackslash = wcsrchr(fn, '\\');
-	wcscpy_s(Name, 256, (*LastBackslash=='\0') ? fn : LastBackslash+1);
+	wchar_t* LastBackslash = wcsrchr(fn, L'\\');
+	wcscpy_s(Name, 256, (*LastBackslash==L'\0') ? fn : LastBackslash+1);
 
 	// Erweiterung
-	wchar_t* LastExt = wcsrchr(Name, '.');
+	wchar_t* LastExt = wcsrchr(Name, L'.');
 	if (*LastExt!='\0')
 	{
 		char Ext[LFExtSize] = { 0 };
 
 		wchar_t* Ptr = LastExt+1;
 		unsigned int cCount = 0;
-		while ((*Ptr!='\0') && (cCount<LFExtSize-1))
+		while ((*Ptr!=L'\0') && (cCount<LFExtSize-1))
 		{
-			Ext[cCount++] = (*Ptr<255) ? tolower(*Ptr) & 0xFF : '_';
+			Ext[cCount++] = (*Ptr<255) ? tolower(*Ptr) & 0xFF : L'_';
 			*Ptr++;
 		}
 
 		SetAttribute(i, LFAttrFileFormat, Ext);
-		*LastExt = '\0';
+		*LastExt = L'\0';
+
+		// Bei versteckten Unix-Dateien Erweiterung als Name einsetzen
+		if (Name[0]==L'\0')
+			wcscpy_s(Name, 256, LastExt+1);
 	}
 
 	SetAttribute(i, LFAttrFileName, Name);
