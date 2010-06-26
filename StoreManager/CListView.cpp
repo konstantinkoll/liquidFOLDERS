@@ -101,8 +101,6 @@ void CListView::SetSearchResult(LFSearchResult* _result)
 				lvi.stateMask = LVIS_CUT | LVIS_FOCUSED;
 				m_FileList.InsertItem(&lvi);
 			}
-
-			m_FileList.EnsureVisible(FocusItem, FALSE);
 		}
 	}
 
@@ -116,6 +114,7 @@ void CListView::SetSearchResult(LFSearchResult* _result)
 		m_FileList.RemoveFooter();
 
 		if (_result)
+		{
 			if ((_result->m_Context==LFContextStoreHome) && (_result->m_HidingItems))
 			{
 				CString tmpStr1 = _T("?");
@@ -135,6 +134,9 @@ void CListView::SetSearchResult(LFSearchResult* _result)
 				if (m_xFooterCallback.QueryInterface(IID_IListViewFooterCallback, (LPVOID*)&i)==NOERROR)
 					m_FileList.ShowFooter(i);
 			}
+
+			m_FileList.EnsureVisible(FocusItem, FALSE);
+		}
 	}
 
 	m_FileList.ItemChanged = 0;
