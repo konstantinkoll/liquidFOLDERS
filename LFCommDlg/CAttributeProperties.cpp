@@ -205,6 +205,7 @@ BOOL CAttributePropertyIATA::OnUpdateValue()
 	if ((strText.GetLength()!=0) && (strText.GetLength()!=3))
 		return FALSE;
 
+	Multiple = FALSE;
 	strText.MakeUpper();
 
 	if (FormatProperty()!=strText)
@@ -271,6 +272,7 @@ BOOL CAttributePropertyRating::OnEdit(LPPOINT lptClick)
 {
 	if (lptClick)
 	{
+		Multiple = FALSE;
 		int pos = lptClick->x-m_pWndList->GetLeftColumnWidth();
 
 		int rating = 2*(pos/18)+(pos%18>=7);
@@ -298,6 +300,7 @@ BOOL CAttributePropertyRating::OnSetCursor() const
 
 BOOL CAttributePropertyRating::PushChar(UINT nChar)
 {
+	Multiple = FALSE;
 	int rating = p_Data->Rating;
 
 	// + -
@@ -446,6 +449,7 @@ BOOL CAttributePropertyTime::OnEdit(LPPOINT lptClick)
 
 		if ((pos>=LeftDate) && (pos<=RightDate))
 		{
+			Multiple = FALSE;
 			CPropDateTimeCtrl* pWndDateTime = new CPropDateTimeCtrl(this, m_pWndList->GetBkColor());
 
 			DWORD dwStyle = WS_VISIBLE | WS_CHILD | DTS_SHORTDATEFORMAT;
@@ -457,6 +461,7 @@ BOOL CAttributePropertyTime::OnEdit(LPPOINT lptClick)
 
 		if ((pos>=LeftTime) && (pos<=RightTime))
 		{
+			Multiple = FALSE;
 			CPropDateTimeCtrl* pWndDateTime = new CPropDateTimeCtrl(this, m_pWndList->GetBkColor());
 
 			DWORD dwStyle = WS_VISIBLE | WS_CHILD | DTS_TIMEFORMAT;
@@ -484,6 +489,7 @@ BOOL CAttributePropertyTime::OnUpdateValue()
 	ASSERT_VALID(m_pWndList);
 	ASSERT(::IsWindow(m_pWndInPlace->GetSafeHwnd()));
 
+	Multiple = FALSE;
 	CDateTimeCtrl* pProp = (CDateTimeCtrl*)m_pWndInPlace;
 
 	SYSTEMTIME st;
