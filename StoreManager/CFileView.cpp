@@ -152,11 +152,18 @@ void CFileView::AppendContextMenu(CMenu* menu)
 	menu->AppendMenu(MF_STRING, ID_APP_VIEWOPTIONS, tmpStr);
 
 	if (result)
-		if (result->m_Context==LFContextStores)
+		switch (result->m_Context)
 		{
+		case LFContextStores:
 			menu->AppendMenu(MF_SEPARATOR);
 			ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_STORE_NEW));
 			menu->AppendMenu(MF_STRING, ID_STORE_NEW, tmpStr);
+			break;
+		case LFContextTrash:
+			menu->AppendMenu(MF_SEPARATOR);
+			ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_TRASH_RESTOREALL));
+			menu->AppendMenu(MF_STRING, ID_TRASH_RESTOREALL, tmpStr);
+			break;
 		}
 }
 

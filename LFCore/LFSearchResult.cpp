@@ -536,6 +536,9 @@ void LFSearchResult::Group(unsigned int attr, unsigned int icon, bool groupone, 
 
 	switch (attr)
 	{
+	case LFAttrFileName:
+		c = new NameCategorizer(attr);
+		break;
 	case LFAttrFileSize:
 		c = new SizeCategorizer(attr);
 		break;

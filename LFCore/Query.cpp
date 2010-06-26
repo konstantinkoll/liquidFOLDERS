@@ -73,6 +73,48 @@ unsigned char GetRatingCategory(const unsigned char rating)
 	return (rating==1) ? 1 : rating>>1;
 }
 
+bool GetNamePrefix(wchar_t* FullName, wchar_t* Buffer)
+{
+#define Choose if ((P2) && ((!P1) || (P2<P1))) P1 = P2;
+
+	wchar_t* P1 = wcsistr(FullName, L" —");
+	wchar_t* P2;
+
+	P2 = wcsistr(FullName, L" –"); Choose;
+	P2 = wcsistr(FullName, L" -"); Choose;
+	P2 = wcsistr(FullName, L" \""); Choose;
+	P2 = wcsistr(FullName, L" ("); Choose;
+	P2 = wcsistr(FullName, L" /"); Choose;
+	P2 = wcsistr(FullName, L" »"); Choose;
+	P2 = wcsistr(FullName, L" «"); Choose;
+	P2 = wcsistr(FullName, L" „"); Choose;
+	P2 = wcsistr(FullName, L" “"); Choose;
+	P2 = wcsistr(FullName, L"—"); Choose;
+
+/*  {Wenn kein Trenner gefunden wurde, von rechts nach Ziffern suchen}
+      if P1=0 then begin
+        P2:=length(St); Stelle:=1;
+          while P2>1 do
+            case Stelle of
+            1: case St[P2] of
+               '0'..'9','.',',': Dec(P2,1);
+               #32: begin Dec(P2,1); Stelle:=2; end;
+               else goto Skip;
+               end;
+            2: if St[P2]=#32 then Dec(P2,1) else Break;
+            end;
+          if Stelle=2 then P1:=P2+1;
+      end;
+  Skip:
+  {Ergebnis}
+      if P1>0 then ScanPrefix:=LeftStr(St,P1-1);*/
+
+	if (P1)
+		wcsncpy_s(Buffer, 256, FullName, P1-FullName);
+
+	return (P1!=NULL);
+}
+
 unsigned int GetSizeCategory(const __int64 sz)
 {
 	if (sz<32*1024)
@@ -124,11 +166,11 @@ bool CheckCondition(void* value, LFFilterCondition* c)
 		switch (c->Compare)
 		{
 		case LFFilterCompareSubfolder:
-			/*len1 = wcslen((wchar_t*)value);
+			len1 = wcslen((wchar_t*)value);
 			len2 = wcslen(c->AttrData.UnicodeString);
 			if (len1<=len2)
 				return false;
-			return _wcsnicmp((wchar_t*)value, c->AttrData.UnicodeString, len1)==0;*/
+			return _wcsnicmp((wchar_t*)value, c->AttrData.UnicodeString, len2)==0;
 		case LFFilterCompareIsEqual:
 			return _wcsicmp((wchar_t*)value, c->AttrData.UnicodeString)==0;
 		case LFFilterCompareIsNotEqual:
@@ -156,11 +198,11 @@ bool CheckCondition(void* value, LFFilterCondition* c)
 		switch (c->Compare)
 		{
 		case LFFilterCompareSubfolder:
-			/*len1 = strlen((char*)value);
+			len1 = strlen((char*)value);
 			len2 = strlen(c->AttrData.AnsiString);
 			if (len1<=len2)
 				return false;
-			return _strnicmp((char*)value, c->AttrData.AnsiString, len1)==0;*/
+			return _strnicmp((char*)value, c->AttrData.AnsiString, len2)==0;
 		case LFFilterCompareIsEqual:
 			return _stricmp((char*)value, c->AttrData.AnsiString)==0;
 		case LFFilterCompareIsNotEqual:

@@ -16,6 +16,7 @@ public:
 
 protected:
 	virtual bool Compare(LFItemDescriptor* i1, LFItemDescriptor* i2);
+	virtual LFFilterCondition* GetCondition(LFItemDescriptor* i);
 	virtual void CustomizeFolder(LFItemDescriptor* folder, LFItemDescriptor* i);
 
 	unsigned int attr;
@@ -100,4 +101,19 @@ public:
 protected:
 	virtual bool Compare(LFItemDescriptor* i1, LFItemDescriptor* i2);
 	virtual void CustomizeFolder(LFItemDescriptor* folder, LFItemDescriptor* i);
+};
+
+
+// UnicodeCategorizer
+//
+
+class NameCategorizer : public CCategorizer
+{
+public:
+	NameCategorizer(unsigned int _attr);
+
+protected:
+	virtual bool Compare(LFItemDescriptor* i1, LFItemDescriptor* i2);
+	virtual void CustomizeFolder(LFItemDescriptor* folder, LFItemDescriptor* i);
+	virtual LFFilterCondition* GetCondition(LFItemDescriptor* i);
 };

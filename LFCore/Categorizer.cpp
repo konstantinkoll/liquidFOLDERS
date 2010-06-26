@@ -39,12 +39,7 @@ LFItemDescriptor* CCategorizer::GetFolder(LFItemDescriptor* i, LFFilter* f)
 		folder->NextFilter = LFAllocFilter(f);
 		folder->NextFilter->Options.IsSubfolder = true;
 
-		LFFilterCondition* c = new LFFilterCondition;
-		c->AttrData.Attr = attr;
-		c->AttrData.Type = AttrTypes[attr];
-		LFGetAttributeVariantData(i, &c->AttrData);
-		c->Compare = LFFilterCompareSubfolder;
-
+		LFFilterCondition* c = GetCondition(i);
 		c->Next = folder->NextFilter->ConditionList;
 		folder->NextFilter->ConditionList = c;
 	}
@@ -71,6 +66,18 @@ void CCategorizer::CustomizeFolder(LFItemDescriptor* folder, LFItemDescriptor* i
 		SetAttribute(folder, attr, i->AttributeValues[attr]);
 		SetAttribute(folder, LFAttrFileName, Name);
 	}
+}
+
+LFFilterCondition* CCategorizer::GetCondition(LFItemDescriptor* i)
+{
+	LFFilterCondition* c = new LFFilterCondition;
+	c->Compare = LFFilterCompareSubfolder;
+
+	c->AttrData.Attr = attr;
+	c->AttrData.Type = AttrTypes[attr];
+	LFGetAttributeVariantData(i, &c->AttrData);
+
+	return c;
 }
 
 
@@ -224,4 +231,52 @@ void SizeCategorizer::CustomizeFolder(LFItemDescriptor* folder, LFItemDescriptor
 		SetAttribute(folder, LFAttrFileName, Name);
 		SetAttribute(folder, attr, i->AttributeValues[attr]);
 	}
+}
+
+
+// UnicodeCategorizer
+//
+
+NameCategorizer::NameCategorizer(unsigned int _attr)
+	: CCategorizer(_attr)
+{
+}
+
+bool NameCategorizer::Compare(LFItemDescriptor* i1, LFItemDescriptor* i2)
+{
+	assert(AttrTypes[attr]==LFTypeUnicodeString);
+
+	wchar_t Prefix1[256];
+	wchar_t Prefix2[256];
+
+	bool res1 = GetNamePrefix((wchar_t*)i1->AttributeValues[attr], &Prefix1[0]);
+	bool res2 = GetNamePrefix((wchar_t*)i2->AttributeValues[attr], &Prefix2[0]);
+
+	return (res1 & res2) ? wcscmp(Prefix1, Prefix2)==0 : false;
+}
+
+void NameCategorizer::CustomizeFolder(LFItemDescriptor* folder, LFItemDescriptor* i)
+{
+	if (i->AttributeValues[attr])
+	{
+		wchar_t Name[256];
+		GetNamePrefix((wchar_t*)i->AttributeValues[attr], &Name[0]);
+		SetAttribute(folder, LFAttrFileName, Name);
+		SetAttribute(folder, attr, Name);
+	}
+}
+
+LFFilterCondition* NameCategorizer::GetCondition(LFItemDescriptor* i)
+{
+	LFFilterCondition* c = new LFFilterCondition;
+	c->Compare = LFFilterCompareSubfolder;
+
+	c->AttrData.Attr = attr;
+	c->AttrData.Type = AttrTypes[attr];
+	c->AttrData.IsNull = false;
+
+	if (!GetNamePrefix((wchar_t*)i->AttributeValues[attr], &c->AttrData.UnicodeString[0]))
+		LFGetAttributeVariantData(i, &c->AttrData);
+
+	return c;
 }
