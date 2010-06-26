@@ -217,31 +217,6 @@ BEGIN
     END
 END
 
-IDM_VIRTUAL MENU 
-BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "&Open",                       ID_ITEMS_OPEN
-    END
-END
-
-IDM_VIRTUAL_GLOBE MENU 
-BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "&Open",                       ID_ITEMS_OPEN
-        MENUITEM "Open in &Google Earth...",    ID_GLOBE_GOOGLEEARTH
-    END
-END
-
-IDM_BACK MENU 
-BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "&One level up",               ID_ITEMS_OPEN
-    END
-END
-
 IDM_STORE MENU 
 BEGIN
     POPUP "POPUP"
@@ -255,6 +230,14 @@ BEGIN
         MENUITEM "Make &hybrid store",          ID_STORE_MAKEHYBRID
         MENUITEM SEPARATOR
         MENUITEM "&Properties...",              ID_STORE_PROPERTIES
+    END
+END
+
+IDM_DOMAIN MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "&Open",                       ID_ITEMS_OPEN
     END
 END
 
@@ -277,6 +260,37 @@ BEGIN
         MENUITEM "&Open",                       ID_ITEMS_OPEN
         MENUITEM SEPARATOR
         MENUITEM "&Restore",                    ID_TRASH_RESTORESELECTED
+    END
+END
+
+IDM_VIRTUAL MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "&Open",                       ID_ITEMS_OPEN
+        MENUITEM "&Remember",                   ID_CLIP_REMEMBERLAST
+        MENUITEM SEPARATOR
+        MENUITEM "&Delete",                     ID_ITEMS_DELETE
+    END
+END
+
+IDM_VIRTUAL_GLOBE MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "&Open",                       ID_ITEMS_OPEN
+        MENUITEM "Open in &Google Earth...",    ID_GLOBE_GOOGLEEARTH
+        MENUITEM "&Remember",                   ID_CLIP_REMEMBERLAST
+        MENUITEM SEPARATOR
+        MENUITEM "&Delete",                     ID_ITEMS_DELETE
+    END
+END
+
+IDM_BACK MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "&One level up",               ID_ITEMS_OPEN
     END
 END
 

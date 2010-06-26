@@ -706,8 +706,16 @@ void CMainFrame::Remember(CMainFrame* clip)
 		BOOL changes = FALSE;
 		while (idx!=-1)
 		{
-			if (clip->AddClipItem(CookedFiles->m_Items[idx]))
-				changes = TRUE;
+			LFItemDescriptor* i = CookedFiles->m_Items[idx];
+			if (((i->Type & LFTypeMask)==LFTypeVirtual) && (i->FirstAggregate!=-1) && (i->LastAggregate!=-1))
+			{
+				for (int a=i->FirstAggregate; a<=i->LastAggregate; a++)
+					if (clip->AddClipItem(RawFiles->m_Items[a]))
+						changes = TRUE;
+			}
+			else
+				if (clip->AddClipItem(CookedFiles->m_Items[idx]))
+					changes = TRUE;
 
 			idx = GetNextSelectedItem(idx);
 		}

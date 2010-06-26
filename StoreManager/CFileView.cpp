@@ -198,7 +198,7 @@ void CFileView::OnItemContextMenu(int idx, CPoint point)
 	switch (f->Type & LFTypeMask)
 	{
 	case LFTypeVirtual:
-		nID = (f->IconID==IDI_FLD_Back ? IDM_BACK : m_ViewParameters.Mode==LFViewGlobe ? IDM_VIRTUAL_GLOBE : (ActiveContextID==LFContextTrash) ? IDM_FILETRASH : IDM_VIRTUAL);
+		nID = (f->IconID==IDI_FLD_Back ? IDM_BACK : m_ViewParameters.Mode==LFViewGlobe ? IDM_VIRTUAL_GLOBE : (ActiveContextID==LFContextTrash) ? IDM_FILETRASH : (ActiveContextID==LFContextStoreHome) ? IDM_DOMAIN : IDM_VIRTUAL);
 		cmdDefault = ID_ITEMS_OPEN;
 		break;
 	case LFTypeDrive:
