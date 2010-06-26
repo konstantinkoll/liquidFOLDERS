@@ -871,7 +871,7 @@ void CMainFrame::OnUpdateItemCommands(CCmdUI* pCmdUI)
 		break;
 	case ID_ITEMS_RENAME:
 		if (CookedFiles)
-			b = (CookedFiles->m_Context==LFContextStores) ? f ? (f->Type & LFTypeStore) &&  (ActiveViewID>=LFViewLargeIcons) && (ActiveViewID<=LFViewPreview) : FALSE : FilesSelected;
+			b = f ? (CookedFiles->m_Context==LFContextStores) ? (f->Type & LFTypeStore) && (ActiveViewID>=LFViewLargeIcons) && (ActiveViewID<=LFViewPreview) : (f->Type & LFTypeMask)==LFTypeFile : FALSE;
 		if ((b) && (m_wndView))
 			b ^= m_wndView->IsEditing();
 		break;

@@ -26,7 +26,7 @@
 #define RibbonCategory_Stores               10
 #define RibbonCategory_Trash                11
 
-#define RibbonDefaultCategory               RibbonCategory_Items
+#define RibbonDefaultCategory               RibbonCategory_View
 
 
 class CAdvancedRibbonBar : public CMFCRibbonBar
