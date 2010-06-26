@@ -127,7 +127,7 @@ bool RatingCategorizer::Compare(LFItemDescriptor* i1, LFItemDescriptor* i2)
 {
 	assert(AttrTypes[attr]==LFTypeRating);
 
-	return (*((unsigned char*)i1->AttributeValues[attr])/2)==(*((unsigned char*)i2->AttributeValues[attr])/2);
+	return GetRatingCategory(*((unsigned char*)i1->AttributeValues[attr]))==GetRatingCategory(*((unsigned char*)i2->AttributeValues[attr]));
 }
 
 void RatingCategorizer::CustomizeFolder(LFItemDescriptor* folder, LFItemDescriptor* i)
@@ -135,10 +135,10 @@ void RatingCategorizer::CustomizeFolder(LFItemDescriptor* folder, LFItemDescript
 	if (i->AttributeValues[attr])
 	{
 		wchar_t Name[256];
-		LoadString(LFCoreModuleHandle, ((attr==LFAttrRating) ? IDS_Rating1 : IDS_Priority1)+*((unsigned char*)i->AttributeValues[attr])/2-1, Name, 256);
+		LoadString(LFCoreModuleHandle, ((attr==LFAttrRating) ? IDS_Rating1 : IDS_Priority1)+GetRatingCategory(*((unsigned char*)i->AttributeValues[attr]))-1, Name, 256);
 		SetAttribute(folder, LFAttrFileName, Name);
 
-		unsigned char rating = *((unsigned char*)i->AttributeValues[attr]) & 0xFE;
+		unsigned char rating = GetRatingCategory(*((unsigned char*)i->AttributeValues[attr]))*2;
 		SetAttribute(folder, attr, &rating);
 	}
 }

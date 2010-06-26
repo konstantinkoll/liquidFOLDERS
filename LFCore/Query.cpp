@@ -68,6 +68,11 @@ char* stristr(const char* String, const char* Pattern)
 	return NULL;
 }
 
+unsigned char GetRatingCategory(const unsigned char rating)
+{
+	return (rating==1) ? 1 : rating>>1;
+}
+
 unsigned int GetSizeCategory(const __int64 sz)
 {
 	if (sz<32*1024)
@@ -212,7 +217,7 @@ bool CheckCondition(void* value, LFFilterCondition* c)
 		switch (c->Compare)
 		{
 		case LFFilterCompareSubfolder:
-			return (*(unsigned char*)value & 0xFE)==(c->AttrData.Rating & 0xFE);
+			return GetRatingCategory(*(unsigned char*)value)==GetRatingCategory(c->AttrData.Rating);
 		case LFFilterCompareIsEqual:
 			return *(unsigned char*)value==c->AttrData.Rating;
 		case LFFilterCompareIsNotEqual:
