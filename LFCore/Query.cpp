@@ -91,24 +91,57 @@ bool GetNamePrefix(wchar_t* FullName, wchar_t* Buffer)
 	P2 = wcsistr(FullName, L" “"); Choose;
 	P2 = wcsistr(FullName, L"—"); Choose;
 
-/*  {Wenn kein Trenner gefunden wurde, von rechts nach Ziffern suchen}
-      if P1=0 then begin
-        P2:=length(St); Stelle:=1;
-          while P2>1 do
-            case Stelle of
-            1: case St[P2] of
-               '0'..'9','.',',': Dec(P2,1);
-               #32: begin Dec(P2,1); Stelle:=2; end;
-               else goto Skip;
-               end;
-            2: if St[P2]=#32 then Dec(P2,1) else Break;
-            end;
-          if Stelle=2 then P1:=P2+1;
-      end;
-  Skip:
-  {Ergebnis}
-      if P1>0 then ScanPrefix:=LeftStr(St,P1-1);*/
+	// Wenn kein Trenner gefunden wurde, von rechts nach Ziffern suchen
+	if (!P1)
+	{
+		unsigned char Stelle = 1;
 
+		P2 = &FullName[wcslen(FullName)-1];
+		while (P2>FullName)
+			switch (Stelle)
+			{
+			case 1:
+				switch (*P2)
+				{
+				case L'0':
+				case L'1':
+				case L'2':
+				case L'3':
+				case L'4':
+				case L'5':
+				case L'6':
+				case L'7':
+				case L'8':
+				case L'9':
+				case L'.':
+				case L',':
+					P2--;
+					break;
+				case L' ':
+					P2--;
+					Stelle = 2;
+					break;
+				default:
+					goto Skip;
+				}
+				break;
+			case 2:
+				if (*P2==L' ')
+				{
+					P2--;
+				}
+				else
+				{
+					goto Fertig;
+				}
+			}
+
+Fertig:
+		if (Stelle==2)
+			P1 = P2+1;
+	}
+
+Skip:
 	if (P1)
 		wcsncpy_s(Buffer, 256, FullName, P1-FullName);
 

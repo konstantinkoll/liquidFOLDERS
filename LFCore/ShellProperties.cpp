@@ -50,6 +50,7 @@ LFShellProperty AttrProperties[LFAttributeCount] = {
 	{ 0, 0 },						// LFAttrHint
 	{ PropertyStorage, 15 },		// LFAttrCreationTime
 	{ PropertyStorage, 14 },		// LFAttrFileTime
+	{ 0, 0 },						// LFAttrDeleteTime
 	{ 0, 0 },						// LFAttrFileFormat
 	{ PropertyStorage, 12 },		// LFAttrFileSize
 	{ 0, 0 },						// LFAttrFlags
@@ -95,7 +96,7 @@ LFShellProperty AttrProperties[LFAttributeCount] = {
 	{ 0, 0 },						// LFAttrTo
 	{ 0, 0 },						// LFAttrResponsible
 	{ 0, 0 },						// LFAttrDueTime
-	{ 0, 0 },						// LFAttrDoneTime
+	{ 0, 0 }						// LFAttrDoneTime
 };
 
 #pragma data_seg()
