@@ -284,7 +284,7 @@ void CFileList::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 	if (!View->HandleDefaultKeys(nChar, nRepCnt, nFlags))
 	{
-		ItemChanged = 1;
+		ItemChanged |= 1;
 		CExplorerList::OnKeyDown(nChar, nRepCnt, nFlags);
 
 		if (ItemChanged & 2)
@@ -301,7 +301,7 @@ void CFileList::OnDoubleClick(NMHDR* /*pNMHDR*/, LRESULT* /*pResult*/)
 
 void CFileList::OnLButtonDown(UINT nFlags, CPoint point)
 {
-	ItemChanged = 1;
+	ItemChanged |= 1;
 	CExplorerList::OnLButtonDown(nFlags, point);
 
 	if (ItemChanged & 2)
@@ -312,7 +312,7 @@ void CFileList::OnLButtonDown(UINT nFlags, CPoint point)
 
 void CFileList::OnRButtonDown(UINT nFlags, CPoint point)
 {
-	ItemChanged = 1;
+	ItemChanged |= 1;
 	CExplorerList::OnRButtonDown(nFlags, point);
 
 	if (ItemChanged & 2)
