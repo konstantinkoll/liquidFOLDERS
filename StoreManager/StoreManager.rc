@@ -246,7 +246,7 @@ BEGIN
     POPUP "POPUP"
     BEGIN
         MENUITEM "&Open",                       ID_ITEMS_OPEN
-        MENUITEM "&Remember",                   ID_CLIP_REMEMBERLAST
+        MENUITEM "Re&member",                   ID_CLIP_REMEMBERLAST
         MENUITEM SEPARATOR
         MENUITEM "&Delete",                     ID_ITEMS_DELETE
         MENUITEM "&Rename",                     ID_ITEMS_RENAME
@@ -259,7 +259,8 @@ BEGIN
     BEGIN
         MENUITEM "&Open",                       ID_ITEMS_OPEN
         MENUITEM SEPARATOR
-        MENUITEM "&Restore",                    ID_TRASH_RESTORESELECTED
+        MENUITEM "&Delete",                     ID_ITEMS_DELETE
+        MENUITEM "Re&store",                    ID_TRASH_RESTORESELECTED
     END
 END
 
@@ -268,7 +269,7 @@ BEGIN
     POPUP "POPUP"
     BEGIN
         MENUITEM "&Open",                       ID_ITEMS_OPEN
-        MENUITEM "&Remember",                   ID_CLIP_REMEMBERLAST
+        MENUITEM "Re&member",                   ID_CLIP_REMEMBERLAST
         MENUITEM SEPARATOR
         MENUITEM "&Delete",                     ID_ITEMS_DELETE
     END
@@ -280,7 +281,7 @@ BEGIN
     BEGIN
         MENUITEM "&Open",                       ID_ITEMS_OPEN
         MENUITEM "Open in &Google Earth...",    ID_GLOBE_GOOGLEEARTH
-        MENUITEM "&Remember",                   ID_CLIP_REMEMBERLAST
+        MENUITEM "Re&member",                   ID_CLIP_REMEMBERLAST
         MENUITEM SEPARATOR
         MENUITEM "&Delete",                     ID_ITEMS_DELETE
     END
