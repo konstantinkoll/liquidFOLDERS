@@ -614,14 +614,6 @@
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
 			<File
-				RelativePath=".\res\Bag.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Computer.ico"
-				>
-			</File>
-			<File
 				RelativePath=".\res\DRV_Connected.ico"
 				>
 			</File>
@@ -635,10 +627,6 @@
 			</File>
 			<File
 				RelativePath=".\res\DRV_Empty.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\res\DRV_Server.ico"
 				>
 			</File>
 			<File
@@ -746,7 +734,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\Places.ico"
+				RelativePath=".\res\Store_Bag.ico"
 				>
 			</File>
 			<File
@@ -759,6 +747,10 @@
 			</File>
 			<File
 				RelativePath=".\res\Store_Full.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Store_Server.ico"
 				>
 			</File>
 			<File

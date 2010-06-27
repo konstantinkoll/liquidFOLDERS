@@ -128,13 +128,14 @@ struct LFAirport
 #define LFCategoryInternalStores        0
 #define LFCategoryHybridStores          1
 #define LFCategoryExternalStores        2
-#define LFCategoryDrives                3
-#define LFCategoryStore                 4
-#define LFCategoryMediaTypes            5
-#define LFCategoryOtherTypes            6
-#define LFCategoryHousekeeping          7
+#define LFCategoryRemoteStores          3
+#define LFCategoryDrives                4
+#define LFCategoryStore                 5
+#define LFCategoryMediaTypes            6
+#define LFCategoryOtherTypes            7
+#define LFCategoryHousekeeping          8
 
-#define LFItemCategoryCount             8
+#define LFItemCategoryCount             9
 
 
 // Context descriptor

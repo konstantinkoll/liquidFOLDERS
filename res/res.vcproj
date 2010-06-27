@@ -32,54 +32,7 @@
 				Name="VCCustomBuildTool"
 			/>
 			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
 				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				Optimization="0"
-				MinimalRebuild="true"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="3"
-				WarningLevel="3"
-				DebugInformationFormat="4"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				GenerateDebugInformation="true"
-				TargetMachine="1"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
@@ -99,55 +52,8 @@
 				Name="VCCustomBuildTool"
 			/>
 			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
 				Name="VCMIDLTool"
 				TargetEnvironment="3"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				Optimization="0"
-				MinimalRebuild="true"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="3"
-				WarningLevel="3"
-				DebugInformationFormat="3"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				GenerateDebugInformation="true"
-				TargetMachine="17"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
@@ -235,14 +141,6 @@
 			</File>
 			<File
 				RelativePath=".\Drives\DRV_Empty.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Drives\DRV_Server.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\Drives\DRV_Server.png"
 				>
 			</File>
 			<File
@@ -534,6 +432,14 @@
 			Name="Other"
 			>
 			<File
+				RelativePath=".\Other\Computer.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\Other\Computer.png"
+				>
+			</File>
+			<File
 				RelativePath=".\Other\Favorite.ico"
 				>
 			</File>
@@ -563,6 +469,14 @@
 			</File>
 			<File
 				RelativePath=".\Other\Overlay2.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Other\Places.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\Other\Places.png"
 				>
 			</File>
 			<File
@@ -1919,19 +1833,7 @@
 			>
 		</File>
 		<File
-			RelativePath="Bag.ico"
-			>
-		</File>
-		<File
-			RelativePath="Bag.png"
-			>
-		</File>
-		<File
-			RelativePath=".\Bag_16.bmp"
-			>
-		</File>
-		<File
-			RelativePath=".\Bag_32.bmp"
+			RelativePath=".\Backdrop4.png"
 			>
 		</File>
 		<File
@@ -1956,14 +1858,6 @@
 		</File>
 		<File
 			RelativePath=".\ClipboardButton.bmp"
-			>
-		</File>
-		<File
-			RelativePath="Computer.ico"
-			>
-		</File>
-		<File
-			RelativePath="Computer.png"
 			>
 		</File>
 		<File
@@ -2163,14 +2057,6 @@
 			>
 		</File>
 		<File
-			RelativePath="Places.ico"
-			>
-		</File>
-		<File
-			RelativePath="Places.png"
-			>
-		</File>
-		<File
 			RelativePath="Plane_Tiny.ico"
 			>
 		</File>
@@ -2291,6 +2177,22 @@
 			>
 		</File>
 		<File
+			RelativePath=".\Store_Bag.ico"
+			>
+		</File>
+		<File
+			RelativePath=".\Store_Bag.png"
+			>
+		</File>
+		<File
+			RelativePath=".\Store_Bag_16.bmp"
+			>
+		</File>
+		<File
+			RelativePath=".\Store_Bag_32.bmp"
+			>
+		</File>
+		<File
 			RelativePath="Store_Default.ico"
 			>
 		</File>
@@ -2324,6 +2226,14 @@
 		</File>
 		<File
 			RelativePath="Store_Full.png"
+			>
+		</File>
+		<File
+			RelativePath=".\Store_Server.ico"
+			>
+		</File>
+		<File
+			RelativePath=".\Store_Server.png"
 			>
 		</File>
 		<File
@@ -2384,6 +2294,10 @@
 		</File>
 		<File
 			RelativePath=".\Watchdog.png"
+			>
+		</File>
+		<File
+			RelativePath=".\Watchdog_About.png"
 			>
 		</File>
 		<File

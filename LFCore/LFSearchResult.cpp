@@ -137,7 +137,7 @@ bool LFSearchResult::AddStoreDescriptor(LFStoreDescriptor* s, LFFilter* f)
 	}
 	else
 	{
-		d->IconID = (s->StoreMode==LFStoreModeInternal ? IDI_STORE_Empty : IDI_Bag);
+		d->IconID = (s->StoreMode==LFStoreModeInternal ? IDI_STORE_Empty : IDI_STORE_Bag);
 		if ((s->StoreMode==LFStoreModeHybrid) || (s->StoreMode==LFStoreModeExternal))
 			if (wcscmp(s->LastSeen, L"")!=0)
 			{

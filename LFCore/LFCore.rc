@@ -53,16 +53,14 @@ IDI_FLD_Web             ICON                    "res\\FLD_Web.ico"
 IDI_STORE_Empty         ICON                    "res\\Store_Empty.ico"
 IDI_STORE_Default       ICON                    "res\\Store_Default.ico"
 IDI_STORE_Full          ICON                    "res\\Store_Full.ico"
-IDI_Bag                 ICON                    "res\\Bag.ico"
-IDI_Places              ICON                    "res\\Places.ico"
+IDI_STORE_Bag           ICON                    "res\\Store_Bag.ico"
+IDI_STORE_Server        ICON                    "res\\Store_Server.ico"
 IDI_Web                 ICON                    "res\\Web.ico"
-IDI_Computer            ICON                    "res\\Computer.ico"
 IDI_DRV_Default         ICON                    "res\\DRV_Default.ico"
 IDI_DRV_System          ICON                    "res\\DRV_Windows.ico"
 IDI_DRV_Empty           ICON                    "res\\DRV_Empty.ico"
 IDI_DRV_Disconnected    ICON                    "res\\DRV_Disconnected.ico"
 IDI_DRV_Connected       ICON                    "res\\DRV_Connected.ico"
-IDI_DRV_Server          ICON                    "res\\DRV_Server.ico"
 IDI_FILE_Generic        ICON                    "res\\FILE_Generic.ico"
 
 /////////////////////////////////////////////////////////////////////////////
@@ -129,6 +127,8 @@ BEGIN
                             "Hybrid stores\nThese stores can be searched, even when the removable drive is not connected."
     IDS_LFCategoryExternalStores 
                             "External stores\nThese stores reside entirely on removable drives."
+    IDS_LFCategoryRemoteStores 
+                            "Remote stores\nThese stores reside on other computers."
     IDS_LFCategoryDrives    "Removable drives\nChoose one of these to create a new external or hybrid store."
     IDS_LFCategoryStore     "This store"
     IDS_LFCategoryMediaTypes "Media"

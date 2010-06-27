@@ -109,7 +109,7 @@ IDB_READY               BITMAP                  "res\\Ready_24.bmp"
 IDB_WARNING             BITMAP                  "res\\Warning_24.bmp"
 IDB_INTERNALSTORE       BITMAP                  "res\\Store_Empty_32.bmp"
 IDB_DEFAULTSTORE        BITMAP                  "res\\Store_Default_32.bmp"
-IDB_EXTERNALSTORE       BITMAP                  "res\\Bag_32.bmp"
+IDB_EXTERNALSTORE       BITMAP                  "res\\Store_Bag_32.bmp"
 IDB_DELETE              BITMAP                  "res\\Delete_96.bmp"
 
 /////////////////////////////////////////////////////////////////////////////

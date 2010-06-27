@@ -728,10 +728,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\Bag_32.bmp"
-				>
-			</File>
-			<File
 				RelativePath=".\res\Cancel_24.bmp"
 				>
 			</File>
@@ -889,6 +885,10 @@
 			</File>
 			<File
 				RelativePath=".\res\Registry_Tiny.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Store_Bag_32.bmp"
 				>
 			</File>
 			<File
