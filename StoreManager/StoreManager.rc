@@ -474,6 +474,7 @@ BEGIN
     IDS_CONTEXTMENU_SORTOPTIONS "&Arrange by..."
     IDS_CONTEXTMENU_STORE_NEW "Create &new store..."
     IDS_CONTEXTMENU_TRASH_RESTOREALL "Restore &all"
+    IDS_CONTEXTMENU_UNKNOWN_REGISTER "Re&gister formats..."
 END
 
 STRINGTABLE 
@@ -683,6 +684,9 @@ BEGIN
     ID_TRASH_EMPTY          "Permanently deletes all files from the trash.\nEmpty trash"
     ID_TRASH_RESTORESELECTED "Restores the selected files.\nRestore selected"
     ID_TRASH_RESTOREALL     "Restores all files.\nRestore all"
+    ID_UNKNOWN_REGISTER     "Registers unknown file formats to make them appear in a regular domain.\nRegister formats"
+    ID_UNKNOWN_SENDDB       "Sends a list of user-registered file formats to customer support. This allows us to include them in future releases of our software.\nSend registred formats to customer support"
+    ID_UNKNOWN_EDITDB       "Allows you to edit all user-registered file formats.\nEdit registered formats"
 END
 
 STRINGTABLE 

@@ -2009,13 +2009,11 @@ void CMainFrame::InitializeRibbon()
 		CMFCRibbonCategory* pCategoryUnknownFileFormats = m_wndRibbonBar.AddContextCategory(strTemp, strCtx, 5, AFX_CategoryColor_Green, IDB_RIBBONUNKNOWNFILEFORMATS_16, IDB_RIBBONUNKNOWNFILEFORMATS_32);
 
 			CMFCRibbonPanel* pPanelRegister = pCategoryUnknownFileFormats->AddPanel(strTemp, m_PanelImages.ExtractIcon(19));
-			pPanelRegister->EnableLaunchButton(ID_APP_ABOUT, 2);
+			pPanelRegister->EnableLaunchButton(ID_UNKNOWN_EDITDB, 2);
 
-				strTemp = "Register formats";
-				pPanelRegister->Add(new CMFCRibbonButton(ID_APP_ABOUT, strTemp, 0, 0));
+			pPanelRegister->Add(theApp.CommandButton(ID_UNKNOWN_REGISTER, 0, 0));
 				pPanelRegister->AddSeparator();
-				strTemp = "Send registred formats to customer support";
-				pPanelRegister->Add(new CMFCRibbonButton(ID_APP_ABOUT, strTemp, 1, 1));
+				pPanelRegister->Add(theApp.CommandButton(ID_UNKNOWN_SENDDB, 1, 1));
 
 		strCtx = "View";
 		strTemp = "Calendar";

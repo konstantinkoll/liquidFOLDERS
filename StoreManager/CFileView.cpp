@@ -164,6 +164,11 @@ void CFileView::AppendContextMenu(CMenu* menu)
 			ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_TRASH_RESTOREALL));
 			menu->AppendMenu(MF_STRING, ID_TRASH_RESTOREALL, tmpStr);
 			break;
+		case LFContextHousekeeping:
+			menu->AppendMenu(MF_SEPARATOR);
+			ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_UNKNOWN_REGISTER));
+			menu->AppendMenu(MF_STRING, ID_UNKNOWN_REGISTER, tmpStr);
+			break;
 		}
 }
 
@@ -227,6 +232,15 @@ void CFileView::OnItemContextMenu(int idx, CPoint point)
 		CMenu menu;
 		menu.LoadMenu(nID);
 		ASSERT_VALID(&menu);
+
+		if ((nID==IDM_FILE) && (ActiveContextID==LFContextHousekeeping))
+		{
+			CString tmpStr;
+			ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_UNKNOWN_REGISTER));
+
+			menu.GetSubMenu(0)->AppendMenu(MF_SEPARATOR);
+			menu.GetSubMenu(0)->AppendMenu(MF_STRING, ID_UNKNOWN_REGISTER, tmpStr);
+		}
 
 		CMFCPopupMenu* pPopupMenu = new CMFCPopupMenu();
 		pPopupMenu->Create(this, point.x, point.y, (HMENU)(*menu.GetSubMenu(0)));
