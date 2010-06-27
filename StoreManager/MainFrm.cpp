@@ -2114,24 +2114,24 @@ void CMainFrame::InitializeRibbon()
 					pBtnStoreNew->AddSubItem(theApp.CommandButton(ID_STORE_NEWDRIVE, 2, 2, TRUE));
 
 				pPanelStoresStores->Add(pBtnStoreNew);
-				pPanelStoresStores->Add(theApp.CommandButton(ID_STORE_DELETE, 3, 3));
-				pPanelStoresStores->Add(theApp.CommandButton(ID_STORE_RENAME, 4, 4));
+				pPanelStoresStores->Add(theApp.CommandButton(ID_STORE_DELETE, 4, 4));
+				pPanelStoresStores->Add(theApp.CommandButton(ID_STORE_RENAME, 5, 5));
 				pPanelStoresStores->AddSeparator();
-				pPanelStoresStores->Add(theApp.CommandButton(ID_STORE_MAKEDEFAULT, 5, 5));
-				pPanelStoresStores->Add(theApp.CommandButton(ID_STORE_MAKEHYBRID, 6, 6));
+				pPanelStoresStores->Add(theApp.CommandButton(ID_STORE_MAKEDEFAULT, 6, 6));
+				pPanelStoresStores->Add(theApp.CommandButton(ID_STORE_MAKEHYBRID, 7, 7));
 
 			strTemp = "Items";
 			CMFCRibbonPanel* pPanelStoresItems = pCategoryStores->AddPanel(strTemp, m_PanelImages.ExtractIcon(20));
 
-				pPanelStoresItems->Add(theApp.CommandButton(ID_STORE_ADDFILES, 7, 7));
+				pPanelStoresItems->Add(theApp.CommandButton(ID_STORE_ADDFILES, 8, 8));
 
 			strTemp = "Housekeeping";
 			CMFCRibbonPanel* pPanelStoresHousekeeping = pCategoryStores->AddPanel(strTemp, m_PanelImages.ExtractIcon(12));
 
-				pPanelStoresHousekeeping->Add(theApp.CommandButton(ID_STORE_PROPERTIES, 8, 8));
+				pPanelStoresHousekeeping->Add(theApp.CommandButton(ID_STORE_PROPERTIES, 9, 9));
 				pPanelStoresHousekeeping->AddSeparator();
-				pPanelStoresHousekeeping->Add(theApp.CommandButton(ID_STORE_MAINTENANCE, 9, 9));
-				pPanelStoresHousekeeping->Add(theApp.CommandButton(ID_STORE_BACKUP, 10, 10));
+				pPanelStoresHousekeeping->Add(theApp.CommandButton(ID_STORE_MAINTENANCE, 10, 10));
+				pPanelStoresHousekeeping->Add(theApp.CommandButton(ID_STORE_BACKUP, 11, 11));
 
 		strTemp = "Deleted files";
 		strCtx = "Trash";
