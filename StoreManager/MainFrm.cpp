@@ -779,7 +779,7 @@ void CMainFrame::OnItemsOpen()
 					return;
 				}
 
-			NavigateTo(LFAllocFilter(i->NextFilter));
+			NavigateTo(LFAllocFilter(i->NextFilter), NAVMODE_NORMAL, 0, i->FirstAggregate, i->LastAggregate);
 		}
 		else
 		{
@@ -2358,7 +2358,7 @@ BOOL CMainFrame::OpenChildView(BOOL Force)
 	return (pNewView!=NULL);
 }
 
-void CMainFrame::NavigateTo(LFFilter* f, UINT NavMode, int FocusItem)
+void CMainFrame::NavigateTo(LFFilter* f, UINT NavMode, int FocusItem, int FirstAggregate, int LastAggregate)
 {
 	if (NavMode<NAVMODE_RELOAD)
 		theApp.PlayNavigateSound();
@@ -2383,14 +2383,28 @@ void CMainFrame::NavigateTo(LFFilter* f, UINT NavMode, int FocusItem)
 	ActiveFilter->HideEmptyDomains = (theApp.m_HideEmptyDomains==TRUE);
 
 	int OldContext = -1;
+	LFSearchResult* victim = NULL;
+
 	if (RawFiles)
 	{
 		OldContext = RawFiles->m_Context;
 		if (RawFiles!=CookedFiles)
-			LFFreeSearchResult(RawFiles);
+			victim = RawFiles;
 	}
 
-	RawFiles = LFQuery(ActiveFilter);
+	if ((RawFiles) && (FirstAggregate!=-1) && (LastAggregate!=-1))
+	{
+		RawFiles = LFQuery(f, RawFiles, FirstAggregate, LastAggregate);
+		if (victim)
+			LFFreeSearchResult(victim);
+	}
+	else
+	{
+		if (victim)
+			LFFreeSearchResult(victim);
+		RawFiles = LFQuery(ActiveFilter);
+	}
+
 	CookFiles(((OldContext!=RawFiles->m_Context) || (ActiveContextID==-1)) ? RawFiles->m_Context : ActiveContextID, FocusItem);
 
 	if (CookedFiles->m_LastError>LFCancel)

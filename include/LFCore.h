@@ -232,6 +232,12 @@ LFCore_API bool LFAttributeSortableInView(unsigned int Attr, unsigned int ViewMo
 // - Ist filter==NULL, so wird eine Liste aller Stores zurückgeliefert
 LFCore_API LFSearchResult* LFQuery(LFFilter* filter);
 
+// Bestehendes Suchergebnis eingrenzen
+// - filter muss vom Typ LFFilterModeDirectoryTree oder LFFilterModeSearch sein
+// - filter muss ein Unterverzeichnis sein
+// - first und last müssen einen gültigen Bereich umfassen
+LFCore_API LFSearchResult* LFQuery(LFFilter* filter, LFSearchResult* base, int first, int last);
+
 // Gleicht eine Datei mit einem Filter ab
 LFCore_API bool LFPassesFilter(LFItemDescriptor* i, LFFilter* filter);
 

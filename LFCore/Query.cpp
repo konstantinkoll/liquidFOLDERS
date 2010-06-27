@@ -598,6 +598,42 @@ LFSearchResult* QueryDomains(LFFilter* filter)
 	return res;
 }
 
+void AddTreeBacklink(LFFilter* filter, LFSearchResult* res, LFStoreDescriptor* slot)
+{
+	LFFilter* nf = LFAllocFilter(filter);
+	strcpy_s(nf->StoreID, LFKeySize, filter->StoreID);
+
+	if (nf->Options.IsSubfolder)
+	{
+		nf->Options.IsSubfolder = false;
+
+		if (nf->ConditionList)
+		{
+			LFFilterCondition* victim = nf->ConditionList;
+			nf->ConditionList = victim->Next;
+			delete victim;
+		}
+
+		if (nf->Mode==LFFilterModeDirectoryTree)
+		{
+			LoadString(LFCoreModuleHandle, IDS_FirstDomain+nf->DomainID, nf->Name, 256);
+
+			wchar_t* pos = wcschr(nf->Name, L'\n');
+			if (pos)
+				*pos = L'\0';
+		}
+	}
+	else
+	{
+		nf->Mode = LFFilterModeStoreHome;
+
+		if (slot)
+			wcscpy_s(nf->Name, 256, slot->StoreName);
+	}
+
+	res->AddBacklink(filter->StoreID, nf);
+}
+
 bool RetrieveStore(char* StoreID, LFFilter* filter, LFSearchResult* res, bool AddBacklink)
 {
 	CIndex* idx1;
@@ -608,38 +644,7 @@ bool RetrieveStore(char* StoreID, LFFilter* filter, LFSearchResult* res, bool Ad
 	if (res->m_LastError==LFOk)
 	{
 		if (AddBacklink)
-		{
-			LFFilter* nf = LFAllocFilter(filter);
-			strcpy_s(nf->StoreID, LFKeySize, filter->StoreID);
-
-			if (nf->Options.IsSubfolder)
-			{
-				nf->Options.IsSubfolder = false;
-
-				if (nf->ConditionList)
-				{
-					LFFilterCondition* victim = nf->ConditionList;
-					nf->ConditionList = victim->Next;
-					delete victim;
-				}
-
-				if (nf->Mode==LFFilterModeDirectoryTree)
-				{
-					LoadString(LFCoreModuleHandle, IDS_FirstDomain+nf->DomainID, nf->Name, 256);
-
-					wchar_t* pos = wcschr(nf->Name, L'\n');
-					if (pos)
-						*pos = L'\0';
-				}
-			}
-			else
-			{
-				nf->Mode = LFFilterModeStoreHome;
-				wcscpy_s(nf->Name, 256, slot->StoreName);
-			}
-
-			res->AddBacklink(filter->StoreID, nf);
-		}
+			AddTreeBacklink(filter, res, slot);
 
 		if (idx1)
 		{
@@ -656,6 +661,23 @@ bool RetrieveStore(char* StoreID, LFFilter* filter, LFSearchResult* res, bool Ad
 	return false;
 }
 
+void FinishTreeQuery(LFFilter* filter, LFSearchResult* res)
+{
+	switch (filter->DomainID)
+	{
+	case LFDomainTrash:
+		res->m_Context = LFContextTrash;
+		filter->Result.FilterType = LFFilterTypeTrash;
+		break;
+	case LFDomainUnknown:
+		res->m_Context = LFContextHousekeeping;
+		filter->Result.FilterType = LFFilterTypeUnknownFileFormats;
+		break;
+	default:
+		filter->Result.FilterType = LFFilterTypeSubfolder;
+	}
+}
+
 LFSearchResult* QueryTree(LFFilter* filter)
 {
 	LFSearchResult* res = new LFSearchResult(LFContextDefault);
@@ -665,19 +687,7 @@ LFSearchResult* QueryTree(LFFilter* filter)
 
 	if (RetrieveStore(filter->StoreID, filter, res, filter->Options.AddBacklink))
 	{
-		switch (filter->DomainID)
-		{
-		case LFDomainTrash:
-			res->m_Context = LFContextTrash;
-			filter->Result.FilterType = LFFilterTypeTrash;
-			break;
-		case LFDomainUnknown:
-			res->m_Context = LFContextHousekeeping;
-			filter->Result.FilterType = LFFilterTypeUnknownFileFormats;
-			break;
-		default:
-			filter->Result.FilterType = LFFilterTypeSubfolder;
-		}
+		FinishTreeQuery(filter, res);
 	}
 	else
 	{
@@ -713,7 +723,7 @@ LFSearchResult* QuerySearch(LFFilter* filter)
 			char* ptr = keys;
 			for (unsigned int a=0; a<count; a++)
 			{
-				if (RetrieveStore(ptr, filter, res, filter->Options.IsSubfolder))
+				if (RetrieveStore(ptr, filter, res, filter->Options.AddBacklink && filter->Options.IsSubfolder))
 					success = true;
 
 				ptr += LFKeySize;
@@ -736,8 +746,9 @@ Finish:
 
 LFCore_API LFSearchResult* LFQuery(LFFilter* filter)
 {
-	LFSearchResult* res = NULL;
 	DWORD start = GetTickCount();
+
+	LFSearchResult* res = NULL;
 
 	if (!filter)
 	{
@@ -789,6 +800,34 @@ LFCore_API LFSearchResult* LFQuery(LFFilter* filter)
 		filter->Result.ItemCount = res->m_ItemCount;
 		filter->Result.FileCount = res->m_FileCount;
 		filter->Result.FileSize = res->m_FileSize;
+	}
+
+	res->m_QueryTime = GetTickCount()-start;
+	return res;
+}
+
+LFCore_API LFSearchResult* LFQuery(LFFilter* filter, LFSearchResult* base, int first, int last)
+{
+	DWORD start = GetTickCount();
+
+	LFSearchResult* res = new LFSearchResult(LFContextDefault);;
+	res->m_RecommendedView = LFViewDetails;
+
+	if ((filter->Mode>=LFFilterModeDirectoryTree) && (filter->Options.IsSubfolder) &&
+		(first<=last) && (first>=0) && (first<(int)base->m_ItemCount) && (last>=0) && (last<(int)base->m_ItemCount))
+	{
+		res->m_LastError = LFOk;
+		strcpy_s(res->m_StoreID, LFKeySize, filter->StoreID);
+
+		AddTreeBacklink(filter, res, NULL);
+		for (int a=first; a<=last; a++)
+			res->AddItemDescriptor(LFAllocItemDescriptor(base->m_Items[a]));
+		FinishTreeQuery(filter, res);
+	}
+	else
+	{
+		res->m_LastError = LFIllegalQuery;
+		filter->Result.FilterType = LFFilterTypeIllegalRequest;
 	}
 
 	res->m_QueryTime = GetTickCount()-start;

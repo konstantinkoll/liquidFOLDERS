@@ -211,7 +211,7 @@ private:
 	void ShowCaptionBar(int Icon, LPCWSTR Message, int Command=0, LPCWSTR Button=_T(""));
 	void ShowCaptionBar(int Icon, UINT res, int Command=0, LPCWSTR Button=_T(""));
 	void InitializeRibbon();
-	void NavigateTo(LFFilter* f, UINT NavMode=NAVMODE_NORMAL, int FocusItem=0);
+	void NavigateTo(LFFilter* f, UINT NavMode=NAVMODE_NORMAL, int FocusItem=0, int FirstAggregate=-1, int LastAggregate=-1);
 	void CookFiles(int recipe, int FocusItem=0);
 	void UpdateHistory();
 };
