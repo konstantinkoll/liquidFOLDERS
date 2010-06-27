@@ -287,7 +287,10 @@ ChooseAgain:
 		strcpy_s(Dst, cCount, Path);
 	}
 
-	*strrchr(Path, '\\') = '\0';
+	char* LastBackslash = strrchr(Path, '\\');
+	if (LastBackslash)
+		*LastBackslash = '\0';
+
 	DWORD res = CreateDir(Path);
 	return ((res==ERROR_SUCCESS) || (res==ERROR_ALREADY_EXISTS)) ? LFOk : LFIllegalPhysicalPath;
 }
