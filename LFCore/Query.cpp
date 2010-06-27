@@ -681,7 +681,6 @@ void FinishTreeQuery(LFFilter* filter, LFSearchResult* res)
 LFSearchResult* QueryTree(LFFilter* filter)
 {
 	LFSearchResult* res = new LFSearchResult(LFContextDefault);
-	res->m_RecommendedView = LFViewDetails;
 	res->m_LastError = LFOk;
 	strcpy_s(res->m_StoreID, LFKeySize, filter->StoreID);
 
@@ -700,7 +699,6 @@ LFSearchResult* QueryTree(LFFilter* filter)
 LFSearchResult* QuerySearch(LFFilter* filter)
 {
 	LFSearchResult* res = new LFSearchResult(LFContextDefault);
-	res->m_RecommendedView = LFViewDetails;
 	res->m_LastError = LFOk;
 	strcpy_s(res->m_StoreID, LFKeySize, filter->StoreID);
 
@@ -810,22 +808,23 @@ LFCore_API LFSearchResult* LFQuery(LFFilter* filter, LFSearchResult* base, int f
 {
 	DWORD start = GetTickCount();
 
-	LFSearchResult* res = new LFSearchResult(LFContextDefault);;
-	res->m_RecommendedView = LFViewDetails;
+	LFSearchResult* res;
 
-	if ((filter->Mode>=LFFilterModeDirectoryTree) && (filter->Options.IsSubfolder) &&
+	if ((filter->Mode>=LFFilterModeDirectoryTree) && (filter->Options.IsSubfolder) && (base->m_RawCopy) &&
 		(first<=last) && (first>=0) && (first<(int)base->m_ItemCount) && (last>=0) && (last<(int)base->m_ItemCount))
 	{
+		res = base;
+		res->m_RecommendedView = LFViewDetails;
 		res->m_LastError = LFOk;
 		strcpy_s(res->m_StoreID, LFKeySize, filter->StoreID);
 
+		res->KeepRange(first, last);
 		AddTreeBacklink(filter, res, NULL);
-		for (int a=first; a<=last; a++)
-			res->AddItemDescriptor(LFAllocItemDescriptor(base->m_Items[a]));
 		FinishTreeQuery(filter, res);
 	}
 	else
 	{
+		res = new LFSearchResult(LFContextDefault);
 		res->m_LastError = LFIllegalQuery;
 		filter->Result.FilterType = LFFilterTypeIllegalRequest;
 	}

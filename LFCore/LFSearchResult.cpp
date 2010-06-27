@@ -268,6 +268,14 @@ void LFSearchResult::RemoveFlaggedItemDescriptors()
 	}
 }
 
+void LFSearchResult::KeepRange(int first, int last)
+{
+	for (int a=m_ItemCount-1; a>last; a--)
+		RemoveItemDescriptor((unsigned int)a);
+	for (int a=first-1; a>=0; a--)
+		RemoveItemDescriptor((unsigned int)a);
+}
+
 int LFSearchResult::Compare(int eins, int zwei, unsigned int attr, bool descending, bool categories)
 {
 	LFItemDescriptor* d1 = m_Items[eins];

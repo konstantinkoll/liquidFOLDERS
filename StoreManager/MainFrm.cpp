@@ -2395,7 +2395,7 @@ void CMainFrame::NavigateTo(LFFilter* f, UINT NavMode, int FocusItem, int FirstA
 	if ((RawFiles) && (FirstAggregate!=-1) && (LastAggregate!=-1))
 	{
 		RawFiles = LFQuery(f, RawFiles, FirstAggregate, LastAggregate);
-		if (victim)
+		if ((victim) && (victim!=RawFiles))
 			LFFreeSearchResult(victim);
 	}
 	else

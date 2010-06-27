@@ -24,6 +24,7 @@ public:
 	void AddBacklink(char* StoreID, LFFilter* f);
 	void RemoveItemDescriptor(unsigned int idx);
 	void RemoveFlaggedItemDescriptors();
+	void KeepRange(int first, int last);
 	void Sort(unsigned int attr, bool descending, bool categories);
 	void Group(unsigned int attr, unsigned int icon, bool groupone, LFFilter* f);
 
@@ -39,6 +40,7 @@ public:
 	int m_ContextView;
 	unsigned int m_RecommendedView;
 	char m_StoreID[LFKeySize];
+	bool m_RawCopy;
 
 protected:
 	unsigned int m_Allocated;
@@ -48,6 +50,4 @@ private:
 	void Heap(int wurzel, int anz, unsigned int attr, bool descending, bool categories);
 	unsigned int Aggregate(unsigned int write, unsigned int read1, unsigned int read2, void* c,
 		unsigned int attr, unsigned int icon, bool groupone, LFFilter* f);
-
-	bool m_RawCopy;
 };
