@@ -121,11 +121,10 @@ BOOL ViewOptionsDlg::OnInitDialog()
 	ZeroMemory(&lvi, sizeof(lvi));
 	lvi.mask = LVIF_TEXT | LVIF_IMAGE | LVIF_GROUPID | LVIF_PARAM | LVIF_STATE;
 	lvi.iGroupId = 0;
-	UINT anz = (theApp.m_Contexts[context]->AllowExtendedViews) ? LFViewCount-1 : (context>LFContextStoreHome) ? LFViewPreview : LFViewTiles;
 
-	for(UINT a=LFViewAutomatic; a<=anz; a++)
+	for (UINT a=LFViewAutomatic; a<LFViewCount; a++)
 	{
-		if (LFAttributeSortableInView(view->SortBy, a))
+		if (theApp.m_Contexts[context]->AllowedViews->IsSet(a) && LFAttributeSortableInView(view->SortBy, a))
 		{
 			lvi.lParam = (LPARAM)a;
 			lvi.pszText = theApp.GetCommandName(ID_APP_VIEW_AUTOMATIC+a).AllocSysString();

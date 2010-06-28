@@ -281,7 +281,6 @@ LFCore_API LFContextDescriptor* LFGetContextInfo(unsigned int ID)
 
 	LFContextDescriptor* c = LFAllocContextDescriptor();
 	LoadString(LFCoreModuleHandle, ID+IDS_FirstContext, c->Name, 64);
-	c->AllowExtendedViews = (ID>LFContextClipboard) && (ID<LFContextSubfolderDefault);
 	c->AllowGroups = (ID>LFContextClipboard);
 
 	c->AllowedAttributes = new LFBitArray(LFAttributeCount);
@@ -307,6 +306,16 @@ LFCore_API LFContextDescriptor* LFGetContextInfo(unsigned int ID)
 				(*c->AllowedAttributes) += a;
 	}
 
+	c->AllowedViews = new LFBitArray(LFViewCount);
+
+	unsigned int cnt = ((ID>LFContextClipboard) && (ID<LFContextSubfolderDefault)) ? LFViewCount-1 : (ID>LFContextStoreHome) ? LFViewPreview : LFViewTiles;
+	for (unsigned int a=0; a<=cnt; a++)
+		if (a!=LFViewCalendarDay)
+			(*c->AllowedViews) += a;
+
+	if (ID==LFContextSubfolderDay)
+		(*c->AllowedViews) += LFViewCalendarDay;
+
 	return c;
 }
 
@@ -316,6 +325,8 @@ LFCore_API void LFFreeContextDescriptor(LFContextDescriptor* c)
 	{
 		if (c->AllowedAttributes)
 			delete c->AllowedAttributes;
+		if (c->AllowedViews)
+			delete c->AllowedViews;
 		delete c;
 	}
 }

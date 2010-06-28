@@ -108,6 +108,7 @@ void CCalendarDayView::SetViewOptions(UINT /*_ViewID*/, BOOL Force)
 		m_FileList.SetBkColor(back);
 		m_FileList.SetTextBkColor(back);
 		m_FileList.SetTextColor(text);
+		m_CalendarHeaderCtrl.SetColors(text, back, (pViewParameters->Background==ChildBackground_Ribbon) ? back : 0xA0A0A0);
 
 		if (theApp.osInfo.dwMajorVersion==5)
 		{

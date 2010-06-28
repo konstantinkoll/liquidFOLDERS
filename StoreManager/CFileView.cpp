@@ -376,7 +376,7 @@ void CFileView::OnNcPaint()
 		if (NcDividerLineY)
 		{
 			dc.SetPixel(1, NcDividerLineY, col);
-			dc.SetPixel(rect.Width()-2, NcDividerLineY, col);
+			dc.SetPixel(rect.Width(), NcDividerLineY, col);
 		}
 	}
 }

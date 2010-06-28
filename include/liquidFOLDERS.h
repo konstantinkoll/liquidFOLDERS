@@ -167,9 +167,9 @@ struct LFItemCategoryDescriptor
 struct LFContextDescriptor
 {
 	wchar_t Name[64];
-	bool AllowExtendedViews;
 	bool AllowGroups;
 	LFBitArray* AllowedAttributes;
+	LFBitArray* AllowedViews;
 };
 
 

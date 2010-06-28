@@ -459,31 +459,21 @@ void CMainFrame::OnUpdateAppCommands(CCmdUI* pCmdUI)
 			b |= (RawFiles->m_Context>=LFContextSubfolderDefault);
 		pCmdUI->Enable(b && (SelectViewMode(ActiveViewParameters->Mode)<=LFViewPreview));
 		break;
+	case ID_APP_VIEW_AUTOMATIC:
 	case ID_APP_VIEW_LARGEICONS:
 	case ID_APP_VIEW_SMALLICONS:
 	case ID_APP_VIEW_LIST:
 	case ID_APP_VIEW_DETAILS:
 	case ID_APP_VIEW_TILES:
-		pCmdUI->Enable(LFAttributeSortableInView(ActiveViewParameters->SortBy, pCmdUI->m_nID-ID_APP_VIEW_AUTOMATIC+LFViewAutomatic));
-	case ID_APP_VIEW_AUTOMATIC:
-		pCmdUI->SetCheck(ActiveViewParameters->Mode==pCmdUI->m_nID-ID_APP_VIEW_AUTOMATIC+LFViewAutomatic);
-		break;
 	case ID_APP_VIEW_PREVIEW:
-		pCmdUI->SetCheck(ActiveViewParameters->Mode==LFViewPreview);
-		pCmdUI->Enable((ActiveContextID>LFContextStoreHome) && LFAttributeSortableInView(ActiveViewParameters->SortBy, pCmdUI->m_nID-ID_APP_VIEW_AUTOMATIC+LFViewAutomatic));
-		break;
-	case ID_APP_VIEW_CALENDAR_WEEK:
 	case ID_APP_VIEW_CALENDAR_YEAR:
+	case ID_APP_VIEW_CALENDAR_WEEK:
+	case ID_APP_VIEW_CALENDAR_DAY:
 	case ID_APP_VIEW_GLOBE:
 	case ID_APP_VIEW_TAGCLOUD:
 	case ID_APP_VIEW_TIMELINE:
 		pCmdUI->SetCheck(ActiveViewParameters->Mode==pCmdUI->m_nID-ID_APP_VIEW_AUTOMATIC+LFViewAutomatic);
-		pCmdUI->Enable(theApp.m_Contexts[ActiveContextID]->AllowExtendedViews && LFAttributeSortableInView(ActiveViewParameters->SortBy, pCmdUI->m_nID-ID_APP_VIEW_AUTOMATIC+LFViewAutomatic));
-		break;
-	case ID_APP_VIEW_CALENDAR_DAY:
-		pCmdUI->SetCheck(ActiveViewParameters->Mode==pCmdUI->m_nID-ID_APP_VIEW_CALENDAR_DAY+LFViewAutomatic);
-		pCmdUI->Enable(ActiveContextID==LFContextSubfolderDay);
-		break;
+		pCmdUI->Enable(theApp.m_Contexts[ActiveContextID]->AllowedViews->IsSet(pCmdUI->m_nID-ID_APP_VIEW_AUTOMATIC+LFViewAutomatic));
 	}
 }
 
@@ -521,7 +511,9 @@ void CMainFrame::OnUpdateDropCommands(CCmdUI* pCmdUI)
 	case ID_DROP_CALENDAR:
 		pCmdUI->SetCheck((ActiveViewParameters->Mode>=LFViewCalendarYear) &&
 			(ActiveViewParameters->Mode<=LFViewCalendarDay));
-		pCmdUI->Enable(((theApp.m_Contexts[ActiveContextID]->AllowExtendedViews) || (ActiveContextID==LFContextSubfolderDay)) &&
+		pCmdUI->Enable((theApp.m_Contexts[ActiveContextID]->AllowedViews->IsSet(LFViewCalendarYear) ||
+			theApp.m_Contexts[ActiveContextID]->AllowedViews->IsSet(LFViewCalendarWeek) ||
+			theApp.m_Contexts[ActiveContextID]->AllowedViews->IsSet(LFViewCalendarDay)) &&
 			(LFAttributeSortableInView(ActiveViewParameters->SortBy, LFViewCalendarYear) ||
 			LFAttributeSortableInView(ActiveViewParameters->SortBy, LFViewCalendarWeek) ||
 			LFAttributeSortableInView(ActiveViewParameters->SortBy, LFViewCalendarDay)));
