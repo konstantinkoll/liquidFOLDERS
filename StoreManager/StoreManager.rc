@@ -35,7 +35,7 @@ LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
 IDR_MAINFRAME           ICON                    "res\\StoreManager.ico"
 IDR_CLIPBOARD           ICON                    "res\\Clipboard_Small.ico"
 IDD_VIEWOPTIONS         ICON                    "res\\DisplayOptions_Tiny.ico"
-IDD_SORTOPTIONS         ICON                    "res\\ArrangeOptions_Tiny.ico"
+IDD_SORTOPTIONS         ICON                    "res\\SortOptions_Tiny.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -63,6 +63,7 @@ IDB_PANEL_16            BITMAP                  "res\\Panel_16.bmp"
 IDB_CLIPBOARDBUTTON     BITMAP                  "res\\ClipboardButton.bmp"
 IDB_DESCENDING          BITMAP                  "res\\Descending_16.bmp"
 IDB_ASCENDING           BITMAP                  "res\\Ascending_16.bmp"
+IDB_GROUPING            BITMAP                  "res\\Grouping_32.bmp"
 IDB_RIBBONHOME_16       BITMAP                  "res\\Ribbon_Home_16.bmp"
 IDB_RIBBONHOME_32       BITMAP                  "res\\Ribbon_Home_32.bmp"
 IDB_RIBBONVIEW_16       BITMAP                  "res\\Ribbon_View_16.bmp"
@@ -83,8 +84,8 @@ IDB_RIBBONTRASH_32      BITMAP                  "res\\Ribbon_Trash_32.bmp"
 IDB_RIBBONTRASH_16      BITMAP                  "res\\Ribbon_Trash_16.bmp"
 IDB_RIBBONTAGCLOUD_32   BITMAP                  "res\\Ribbon_Tagcloud_32.bmp"
 IDB_RIBBONTAGCLOUD_16   BITMAP                  "res\\Ribbon_Tagcloud_16.bmp"
-IDB_RIBBONUNKNOWNFILEFORMATS_32   BITMAP                  "res\\Ribbon_UnknownFileFormats_32.bmp"
-IDB_RIBBONUNKNOWNFILEFORMATS_16   BITMAP                  "res\\Ribbon_UnknownFileFormats_16.bmp"
+IDB_RIBBONUNKNOWNFILEFORMATS_32 BITMAP                  "res\\Ribbon_UnknownFileFormats_32.bmp"
+IDB_RIBBONUNKNOWNFILEFORMATS_16 BITMAP                  "res\\Ribbon_UnknownFileFormats_16.bmp"
 ID_PANE_HISTORYWND      BITMAP                  "res\\Toolbar_History.bmp"
 ID_PANE_INSPECTORWND    BITMAP                  "res\\Toolbar_Inspector.bmp"
 ID_PANE_FILTERWND       BITMAP                  "res\\Toolbar_Filter.bmp"
@@ -311,14 +312,6 @@ BEGIN
     END
 END
 
-IDM_DETAILS MENU 
-BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "Autosize &columns",           ID_VIEW_AUTOSIZECOLUMNS
-    END
-END
-
 IDM_HISTORY MENU 
 BEGIN
     POPUP "POPUP"
@@ -371,14 +364,15 @@ BEGIN
     PUSHBUTTON      "Cancel",IDCANCEL,65,298,50,14,WS_GROUP
     GROUPBOX        "",IDC_ATTRBOX,7,7,269,235,WS_GROUP
     LTEXT           "All attributes available in this context:",IDC_STATIC,14,17,254,8
-    CONTROL         "Enable sub&folders",IDC_AUTODIRS,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,14,262,169,10
+    CONTROL         "&Group items into subfolders",IDC_AUTODIRS,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,42,262,141,10
     CONTROL         "&Ascending",IDC_ASCENDING,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,219,259,49,10
     CONTROL         "&Descending",IDC_DESCENDING,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,219,272,50,10
-    GROUPBOX        "Subfolders",IDC_STATIC,7,248,181,42,WS_GROUP
+    GROUPBOX        "Grouping",IDC_STATIC,7,248,181,42,WS_GROUP
     GROUPBOX        "Sort direction",IDC_STATIC,198,248,78,42,WS_GROUP
     CONTROL         134,IDC_STATIC,"Static",SS_BITMAP,204,259,11,10
     CONTROL         135,IDC_STATIC,"Static",SS_BITMAP,204,272,11,10
-    LTEXT           "",IDC_SUBFOLDERHINT,14,275,169,8
+    LTEXT           "",IDC_SUBFOLDERHINT,42,275,141,8
+    CONTROL         136,IDC_STATIC,"Static",SS_BITMAP,14,262,21,20
 END
 
 
@@ -469,16 +463,16 @@ BEGIN
     IDS_VIEWGROUP2          "Standard views"
     IDS_VIEWGROUP3          "Calendar views"
     IDS_VIEWGROUP4          "Enhanced views"
-    IDS_CONTEXTMENU_GRANNY  "&Granny mode"
-    IDS_CONTEXTMENU_VIEWOPTIONS "&Display as..."
     IDS_CONTEXTMENU_SORTOPTIONS "&Arrange by..."
+    IDS_CONTEXTMENU_AUTODIRS "&Group into subfolders"
+    IDS_CONTEXTMENU_VIEWOPTIONS "&Display as..."
     IDS_CONTEXTMENU_STORE_NEW "Create &new store..."
-    IDS_CONTEXTMENU_TRASH_RESTOREALL "Restore &all"
-    IDS_CONTEXTMENU_UNKNOWN_REGISTER "Re&gister formats..."
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_CONTEXTMENU_TRASH_RESTOREALL "Restore &all"
+    IDS_CONTEXTMENU_UNKNOWN_REGISTER "Re&gister formats..."
     IDS_ITEMS_SINGULAR      "%d item"
     IDS_ITEMS_PLURAL        "%d items"
     IDS_SELECTED_SINGULAR   "%d item selected, %s"
@@ -493,17 +487,18 @@ BEGIN
     IDS_MULTIPLETYPESSELECTED "Multiple types, %d items"
     IDS_MOREATTRIBUTES      "&More attributes..."
     IDS_TYPE_DRIVE_SINGULAR "%d removable drive"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_TYPE_DRIVE_PLURAL   "%d removable drives"
     IDS_TYPE_STORE_SINGULAR "%d store"
     IDS_TYPE_STORE_PLURAL   "%d stores"
     IDS_TYPE_FILE_SINGULAR  "%d file"
     IDS_TYPE_FILE_PLURAL    "%d files"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_TYPE_VIRTUAL_SINGULAR "%d virtual folder"
     IDS_TYPE_VIRTUAL_PLURAL "%d virtual folders"
+    IDS_REQUIRESMAINTENANCE "This store requires scheduled maintenance."
 END
 
 STRINGTABLE 
@@ -512,17 +507,16 @@ BEGIN
     IDS_VATTR_MAINTENANCETIME "Last maintenance"
     IDS_VATTR_LASTSEEN      "Last seen"
     IDS_VATTR_GUID          "GUID"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_VATTR_PATH_DAT      "Data path"
     IDS_VATTR_PATH_IDX_MAIN "Main index path"
     IDS_VATTR_PATH_IDX_AUX  "Aux. index path"
     IDS_VATTR_INDEXVERSION  "Index version"
     IDS_VATTR_IATA_NAME     "IATA airport name"
     IDS_VATTR_IATA_COUNTRY  "Country/territory"
-END
-
-STRINGTABLE 
-BEGIN
-    IDS_REQUIRESMAINTENANCE "This store requires scheduled maintenance."
 END
 
 STRINGTABLE 
@@ -564,7 +558,7 @@ BEGIN
     ID_VIEW_SELECTNONE      "Deselects all items.\nSelect none (Ctrl+N)"
     ID_VIEW_CATEGORIES      "Enables or disables categories in this context.\nCategories"
     ID_VIEW_AUTOSIZECOLUMNS "Autosize &columns"
-    ID_VIEW_AUTODIRS        "Enables or disables subfolders in this context. This options is not available in all contexts, and always turned on for certain view modes.\nSubfolders"
+    ID_VIEW_AUTODIRS        "Enables or disables grouping of similar files into subfolders for this context. This option is not available in all contexts, and always turned on for certain view modes.\nGroup into subfolders"
 END
 
 STRINGTABLE 
@@ -583,11 +577,11 @@ BEGIN
     ID_SORT_LOCATIONGPS     "Sorts the search result by GPS location.\nSort by GPS location"
     ID_SORT_HEIGHT          "Sorts the search result by height.\nSort by height"
     ID_SORT_WIDTH           "Sorts the search result by width.\nSort by width"
-    ID_SORT_RESOLUTION      "Sorts the search result by resolution.\nSort by resolution"
 END
 
 STRINGTABLE 
 BEGIN
+    ID_SORT_RESOLUTION      "Sorts the search result by resolution.\nSort by resolution"
     ID_SORT_ASPECTRATIO     "Sorts the search result by aspect ratio.\nSort by aspect ratio"
     ID_SORT_ROLL            "Sorts the search result by roll name.\nSort by roll"
     ID_SORT_DURATION        "Sorts the search result by duration.\nSort by duration"
@@ -683,6 +677,10 @@ STRINGTABLE
 BEGIN
     ID_TRASH_EMPTY          "Permanently deletes all files from the trash.\nEmpty trash"
     ID_TRASH_RESTORESELECTED "Restores the selected files.\nRestore selected"
+END
+
+STRINGTABLE 
+BEGIN
     ID_TRASH_RESTOREALL     "Restores all files.\nRestore all"
     ID_UNKNOWN_REGISTER     "Registers unknown file formats to make them appear in a regular domain.\nRegister formats"
     ID_UNKNOWN_SENDDB       "Sends a list of user-registered file formats to customer support. This allows us to include them in future releases of our software.\nSend registred formats to customer support"
@@ -706,7 +704,7 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_SUBFOLDERS_MANDATORY "Subfolders are mandatory for the active view."
+    IDS_SUBFOLDERS_MANDATORY "Subfolders are mandatory for this view."
     IDS_SUBFOLDERS_NOTAVAIL "Subfolders are not available in this context."
     IDS_GROUPBOX_SORT       "Sort items by this attribute"
     IDS_GROUPBOX_GROUP      "Arrange items by this attribute"

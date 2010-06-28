@@ -352,11 +352,6 @@ void CFileList::OnContextMenu(CWnd* pWnd, CPoint point)
 				}
 			}
 
-			// Autosize
-			CString tmpStr;
-			ENSURE(tmpStr.LoadString(ID_VIEW_AUTOSIZECOLUMNS));
-			menu.AppendMenu(MF_BYPOSITION | MF_STRING, ID_VIEW_AUTOSIZECOLUMNS, tmpStr);
-
 			// Andere
 			View->AppendContextMenu(&menu);
 

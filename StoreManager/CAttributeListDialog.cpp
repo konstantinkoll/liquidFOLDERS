@@ -32,7 +32,7 @@ void CAttributeListDialog::PopulateListCtrl(int nId, UINT mode, UINT context, LF
 	l->SetExtendedStyle(l->GetExtendedStyle() | dwExStyle);
 
 	m_pAttributeIcons = new CImageListTransparent();
-	m_pAttributeIcons->CreateFromResource(IDB_RIBBONVIEW_16, 20, 42);
+	m_pAttributeIcons->CreateFromResource(IDB_RIBBONVIEW_16, 21, 43);
 	l->SetImageList(m_pAttributeIcons, LVSIL_SMALL);
 
 	const UINT iconPosition[] = { LFAttrFileName, LFAttrTitle, 0xFFFFFFFF, LFAttrCreationTime, LFAttrFileTime,

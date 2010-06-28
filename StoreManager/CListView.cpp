@@ -258,23 +258,6 @@ void CListView::SetViewOptions(UINT _ViewID, BOOL Force)
 	}
 }
 
-CMenu* CListView::GetContextMenu()
-{
-	CMenu* menu;
-
-	if (m_FileList.GetView()==LV_VIEW_DETAILS)
-	{
-		menu = new CMenu();
-		menu->LoadMenu(IDM_DETAILS);
-	}
-	else
-	{
-		menu = NULL;
-	}
-
-	return menu;
-}
-
 
 BEGIN_MESSAGE_MAP(CListView, CAbstractListView)
 	ON_WM_CREATE()

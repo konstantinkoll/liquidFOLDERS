@@ -146,13 +146,6 @@ void CCalendarDayView::SetViewOptions(UINT /*_ViewID*/, BOOL Force)
 	m_FileList.Invalidate();
 }
 
-CMenu* CCalendarDayView::GetContextMenu()
-{
-	CMenu* menu = new CMenu();
-	menu->LoadMenu(IDM_DETAILS);
-	return menu;
-}
-
 
 BEGIN_MESSAGE_MAP(CCalendarDayView, CAbstractListView)
 	ON_WM_CREATE()

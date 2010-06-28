@@ -21,7 +21,6 @@ public:
 protected:
 	virtual void SetViewOptions(UINT _ViewID, BOOL Force);
 	virtual void SetSearchResult(LFSearchResult* _result);
-	virtual CMenu* GetContextMenu();
 
 	void AdjustLayout();
 

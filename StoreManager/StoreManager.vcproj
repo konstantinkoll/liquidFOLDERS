@@ -638,10 +638,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\ArrangeOptions_Tiny.ico"
-				>
-			</File>
-			<File
 				RelativePath=".\res\Ascending_16.bmp"
 				>
 			</File>
@@ -675,6 +671,10 @@
 			</File>
 			<File
 				RelativePath=".\res\DisplayOptions_Tiny.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Grouping_32.bmp"
 				>
 			</File>
 			<File
@@ -746,6 +746,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\Ribbon_Items_16.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Ribbon_Items_32.bmp"
+				>
+			</File>
+			<File
 				RelativePath=".\res\Ribbon_Stores_16.bmp"
 				>
 			</File>
@@ -783,6 +791,10 @@
 			</File>
 			<File
 				RelativePath=".\res\Ribbon_View_32.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\SortOptions_Tiny.ico"
 				>
 			</File>
 			<File

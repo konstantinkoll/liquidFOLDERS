@@ -508,14 +508,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Ribbon\Arrange_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\Arrange_32.png"
-				>
-			</File>
-			<File
 				RelativePath="Ribbon\Artist_16.png"
 				>
 			</File>
@@ -545,14 +537,6 @@
 			</File>
 			<File
 				RelativePath="Ribbon\Author_32.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\AutoFolders_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\AutoFolders_32.png"
 				>
 			</File>
 			<File
@@ -1032,7 +1016,11 @@
 				>
 			</File>
 			<File
-				RelativePath="Ribbon\Groups_16.png"
+				RelativePath=".\Ribbon\Grouping_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\Grouping_32.png"
 				>
 			</File>
 			<File
@@ -1440,6 +1428,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Ribbon\SortOptions_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\SortOptions_32.png"
+				>
+			</File>
+			<File
 				RelativePath="Ribbon\StoreBackup_16.png"
 				>
 			</File>
@@ -1809,10 +1805,6 @@
 			>
 		</File>
 		<File
-			RelativePath=".\Arrange_Tiny.ico"
-			>
-		</File>
-		<File
 			RelativePath="Ascending_16.bmp"
 			>
 		</File>
@@ -1942,6 +1934,10 @@
 		</File>
 		<File
 			RelativePath=".\Google.png"
+			>
+		</File>
+		<File
+			RelativePath=".\Grouping_32.bmp"
 			>
 		</File>
 		<File
@@ -2174,6 +2170,10 @@
 		</File>
 		<File
 			RelativePath=".\Slideshare.png"
+			>
+		</File>
+		<File
+			RelativePath=".\SortOptions_Tiny.ico"
 			>
 		</File>
 		<File

@@ -20,7 +20,6 @@ public:
 	virtual ~CCalendarDayView();
 
 	void Create(CWnd* _pParentWnd, LFSearchResult* _result);
-	virtual CMenu* GetContextMenu();
 
 protected:
 	CCalendarHeaderCtrl m_CalendarHeaderCtrl;

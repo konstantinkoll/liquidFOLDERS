@@ -143,11 +143,18 @@ CMenu* CFileView::GetContextMenu()
 void CFileView::AppendContextMenu(CMenu* menu)
 {
 	CString tmpStr;
-	ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_GRANNY));
-	menu->AppendMenu(MF_STRING, ID_VIEW_GRANNY, tmpStr);
-	menu->AppendMenu(MF_SEPARATOR);
+
+	if (m_ViewParameters.Mode==LFViewDetails)
+	{
+		ENSURE(tmpStr.LoadString(ID_VIEW_AUTOSIZECOLUMNS));
+		menu->AppendMenu(MF_BYPOSITION | MF_STRING, ID_VIEW_AUTOSIZECOLUMNS, tmpStr);
+		menu->AppendMenu(MF_SEPARATOR);
+	}
+
 	ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_SORTOPTIONS));
 	menu->AppendMenu(MF_STRING, ID_APP_SORTOPTIONS, tmpStr);
+	ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_AUTODIRS));
+	menu->AppendMenu(MF_STRING, ID_VIEW_AUTODIRS, tmpStr);
 	ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_VIEWOPTIONS));
 	menu->AppendMenu(MF_STRING, ID_APP_VIEWOPTIONS, tmpStr);
 
