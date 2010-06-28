@@ -351,5 +351,5 @@ void CFileItem::GetIconFileAndIndex(CGetIconFileAndIndexEventArgs& e)
 {
 	e.iconExtractMode = NSEIEM_IconFileAndIndex;
 	e.iconFile = theApp.m_IconFile;
-	e.iconIndex = IDI_DRV_Server-1;
+	e.iconIndex = IDI_FILE_Generic-1;
 }

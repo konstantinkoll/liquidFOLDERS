@@ -56,27 +56,27 @@ void ParseInput(string& tmpStr, LFLicense* License)
 
 			if (name==LICENSE_ID)
 			{
-				MultiByteToWideChar(CP_UTF8, 0, value.c_str(), value.length()+1, License->PurchaseID, 256);
+				MultiByteToWideChar(CP_UTF8, 0, value.c_str(), (int)value.length()+1, License->PurchaseID, 256);
 			}
 			else
 				if (name==LICENSE_PRODUCT)
 				{
-					MultiByteToWideChar(CP_UTF8, 0, value.c_str(), value.length()+1, License->ProductID, 256);
+					MultiByteToWideChar(CP_UTF8, 0, value.c_str(), (int)value.length()+1, License->ProductID, 256);
 				}
 				else
 					if (name==LICENSE_DATE)
 					{
-						MultiByteToWideChar(CP_UTF8, 0, value.c_str(), value.length()+1, License->PurchaseDate, 16);
+						MultiByteToWideChar(CP_UTF8, 0, value.c_str(), (int)value.length()+1, License->PurchaseDate, 16);
 					}
 					else
 						if (name==LICENSE_QUANTITY)
 						{
-							MultiByteToWideChar(CP_UTF8, 0, value.c_str(), value.length()+1, License->Quantity, 8);
+							MultiByteToWideChar(CP_UTF8, 0, value.c_str(), (int)value.length()+1, License->Quantity, 8);
 						}
 						else
 							if (name==LICENSE_NAME)
 							{
-								MultiByteToWideChar(CP_UTF8, 0, value.c_str(), value.length()+1, License->RegName, 256);
+								MultiByteToWideChar(CP_UTF8, 0, value.c_str(), (int)value.length()+1, License->RegName, 256);
 							}
 							else
 								if (name==LICENSE_VERSION)
