@@ -34,7 +34,7 @@ LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
 // remains consistent on all systems.
 IDR_MAINFRAME           ICON                    "res\\StoreManager.ico"
 IDR_CLIPBOARD           ICON                    "res\\Clipboard_Small.ico"
-IDD_VIEWOPTIONS         ICON                    "res\\DisplayOptions_Tiny.ico"
+IDD_VIEWOPTIONS         ICON                    "res\\ViewOptions_Tiny.ico"
 IDD_SORTOPTIONS         ICON                    "res\\SortOptions_Tiny.ico"
 
 /////////////////////////////////////////////////////////////////////////////
