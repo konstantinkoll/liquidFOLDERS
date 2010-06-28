@@ -435,7 +435,7 @@ void CMainFrame::OnUpdateAppCommands(CCmdUI* pCmdUI)
 		break;
 	case ID_CONTEXT_CHOOSE:
 		if (RawFiles)
-			b = (RawFiles->m_Context>LFContextClipboard);
+			b = (RawFiles->m_Context>LFContextClipboard) && (RawFiles->m_Context<LFContextSubfolderDefault);
 		pCmdUI->Enable(b);
 		break;
 	case ID_CONTEXT_ALWAYSSAVE:
@@ -453,7 +453,10 @@ void CMainFrame::OnUpdateAppCommands(CCmdUI* pCmdUI)
 		break;
 	case ID_VIEW_AUTODIRS:
 		pCmdUI->SetCheck(ActiveViewParameters->AutoDirs);
-		pCmdUI->Enable((theApp.m_Contexts[ActiveContextID]->AllowGroups) && (SelectViewMode(ActiveViewParameters->Mode)<=LFViewPreview));
+		b = theApp.m_Contexts[ActiveContextID]->AllowGroups;
+		if (RawFiles)
+			b |= (RawFiles->m_Context>=LFContextSubfolderDefault);
+		pCmdUI->Enable(b && (SelectViewMode(ActiveViewParameters->Mode)<=LFViewPreview));
 		break;
 	case ID_APP_VIEW_LARGEICONS:
 	case ID_APP_VIEW_SMALLICONS:

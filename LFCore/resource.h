@@ -95,6 +95,9 @@
 #define IDS_LFContextDefault            2003
 #define IDS_LFContextHousekeeping       2004
 #define IDS_LFContextTrash              2005
+#define IDS_LFContextSubfolderDefault   2006
+#define IDS_LFContextSubfolderDay       2007
+#define IDS_LFContextSubfolderLocation  2008
 #define IDS_FirstError                  3000
 #define IDS_LFErrorOk                   3000
 #define IDS_LFErrorMemoryError          3002

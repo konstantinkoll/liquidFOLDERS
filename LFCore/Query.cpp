@@ -680,7 +680,7 @@ void FinishTreeQuery(LFFilter* filter, LFSearchResult* res)
 
 LFSearchResult* QueryTree(LFFilter* filter)
 {
-	LFSearchResult* res = new LFSearchResult(LFContextDefault);
+	LFSearchResult* res = new LFSearchResult(filter->Options.IsSubfolder ? LFContextSubfolderDefault : LFContextDefault);
 	res->m_LastError = LFOk;
 	strcpy_s(res->m_StoreID, LFKeySize, filter->StoreID);
 
@@ -698,7 +698,7 @@ LFSearchResult* QueryTree(LFFilter* filter)
 
 LFSearchResult* QuerySearch(LFFilter* filter)
 {
-	LFSearchResult* res = new LFSearchResult(LFContextDefault);
+	LFSearchResult* res = new LFSearchResult(filter->Options.IsSubfolder ? LFContextSubfolderDefault : LFContextDefault);
 	res->m_LastError = LFOk;
 	strcpy_s(res->m_StoreID, LFKeySize, filter->StoreID);
 
@@ -814,6 +814,7 @@ LFCore_API LFSearchResult* LFQuery(LFFilter* filter, LFSearchResult* base, int f
 		(first<=last) && (first>=0) && (first<(int)base->m_ItemCount) && (last>=0) && (last<(int)base->m_ItemCount))
 	{
 		res = base;
+		res->m_Context = LFContextSubfolderDefault;
 		res->m_RecommendedView = LFViewDetails;
 		res->m_LastError = LFOk;
 		strcpy_s(res->m_StoreID, LFKeySize, filter->StoreID);
@@ -824,7 +825,7 @@ LFCore_API LFSearchResult* LFQuery(LFFilter* filter, LFSearchResult* base, int f
 	}
 	else
 	{
-		res = new LFSearchResult(LFContextDefault);
+		res = new LFSearchResult(LFContextSubfolderDefault);
 		res->m_LastError = LFIllegalQuery;
 		filter->Result.FilterType = LFFilterTypeIllegalRequest;
 	}

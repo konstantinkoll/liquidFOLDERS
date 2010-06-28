@@ -162,6 +162,9 @@ BEGIN
     IDS_LFContextDefault    "Default"
     IDS_LFContextHousekeeping "Housekeeping"
     IDS_LFContextTrash      "Trash"
+    IDS_LFContextSubfolderDefault  "Subfolder"
+    IDS_LFContextSubfolderDay "Subfolder (day)"
+    IDS_LFContextSubfolderLocation "Subfolder (location)"
 END
 
 STRINGTABLE 

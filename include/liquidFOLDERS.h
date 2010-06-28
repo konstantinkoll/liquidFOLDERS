@@ -155,8 +155,11 @@ struct LFItemCategoryDescriptor
 #define LFContextDefault                3
 #define LFContextHousekeeping           4
 #define LFContextTrash                  5
+#define LFContextSubfolderDefault       6
+#define LFContextSubfolderDay           7
+#define LFContextSubfolderLocation      8
 
-#define LFContextCount                  6
+#define LFContextCount                  9
 
 
 // Context descriptor
