@@ -348,7 +348,6 @@ void CFileList::OnContextMenu(CWnd* pWnd, CPoint point)
 					CString tmpStr;
 					ENSURE(tmpStr.LoadString(IDS_MOREATTRIBUTES));
 					menu.AppendMenu(MF_STRING | MF_POPUP, (UINT_PTR)(HMENU)more, tmpStr);
-					menu.AppendMenu(MF_SEPARATOR);
 				}
 			}
 
