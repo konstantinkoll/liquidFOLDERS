@@ -558,7 +558,7 @@ BEGIN
     ID_VIEW_SELECTNONE      "Deselects all items.\nSelect none (Ctrl+N)"
     ID_VIEW_CATEGORIES      "Enables or disables categories in this context.\nCategories"
     ID_VIEW_AUTOSIZECOLUMNS "Autosize &columns"
-    ID_VIEW_AUTODIRS        "Enables or disables grouping of similar files into subfolders for this context. This option is not available in all contexts, and always turned on for certain view modes.\nGroup into subfolders"
+    ID_VIEW_AUTODIRS        "Enables or disables grouping of similar files into subfolders for this context. This option is not available in all contexts, and always enabled for certain view modes.\nGroup into subfolders"
 END
 
 STRINGTABLE 
