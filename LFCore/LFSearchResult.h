@@ -27,6 +27,7 @@ public:
 	void KeepRange(int first, int last);
 	void Sort(unsigned int attr, bool descending, bool categories);
 	void Group(unsigned int attr, unsigned int icon, bool groupone, LFFilter* f);
+	void SetContext(LFFilter* f);
 
 	LFItemDescriptor** m_Items;
 	bool m_HasCategories;

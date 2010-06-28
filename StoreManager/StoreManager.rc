@@ -247,6 +247,7 @@ BEGIN
     POPUP "POPUP"
     BEGIN
         MENUITEM "&Open",                       ID_ITEMS_OPEN
+        MENUITEM "Open &with...",                ID_ITEMS_OPENWITH
         MENUITEM "Re&member",                   ID_CLIP_REMEMBERLAST
         MENUITEM SEPARATOR
         MENUITEM "&Delete",                     ID_ITEMS_DELETE
@@ -254,11 +255,12 @@ BEGIN
     END
 END
 
-IDM_FILETRASH MENU 
+IDM_FILE_TRASH MENU 
 BEGIN
     POPUP "POPUP"
     BEGIN
         MENUITEM "&Open",                       ID_ITEMS_OPEN
+        MENUITEM "Open &with...",                ID_ITEMS_OPENWITH
         MENUITEM SEPARATOR
         MENUITEM "&Delete",                     ID_ITEMS_DELETE
         MENUITEM "Re&store",                    ID_TRASH_RESTORESELECTED
@@ -273,6 +275,17 @@ BEGIN
         MENUITEM "Re&member",                   ID_CLIP_REMEMBERLAST
         MENUITEM SEPARATOR
         MENUITEM "&Delete",                     ID_ITEMS_DELETE
+    END
+END
+
+IDM_VIRTUAL_TRASH MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "&Open",                       ID_ITEMS_OPEN
+        MENUITEM SEPARATOR
+        MENUITEM "&Delete",                     ID_ITEMS_DELETE
+        MENUITEM "Re&store",                    ID_TRASH_RESTORESELECTED
     END
 END
 

@@ -163,6 +163,7 @@ protected:
 	afx_msg void OnClipRememberNew();
 	afx_msg void OnUpdateClipCommands(CCmdUI* pCmdUI);
 	afx_msg void OnItemsOpen();
+	afx_msg void OnItemsOpenWith();
 	afx_msg void OnItemsDelete();
 	afx_msg void OnItemsRename();
 	afx_msg void OnUpdateItemCommands(CCmdUI* pCmdUI);

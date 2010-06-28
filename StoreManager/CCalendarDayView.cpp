@@ -79,14 +79,12 @@ void CCalendarDayView::SetSearchResult(LFSearchResult* _result)
 
 	m_FileList.ItemChanged = 0;
 	m_FileList.SetRedraw(TRUE);
-	m_CalendarHeaderCtrl.SetText(L"Hallo Du");
+	m_CalendarHeaderCtrl.SetText(_T("Test (current day along with controls will appear here)"));
 }
 
 void CCalendarDayView::SetViewOptions(UINT /*_ViewID*/, BOOL Force)
 {
-	m_FileList.SetRedraw(FALSE);
-
-	// Font and icons
+	// Font
 	if (Force || (pViewParameters->GrannyMode!=m_ViewParameters.GrannyMode))
 	{
 		m_FileList.SetFont(&theApp.m_Fonts[FALSE][pViewParameters->GrannyMode]);
@@ -97,10 +95,6 @@ void CCalendarDayView::SetViewOptions(UINT /*_ViewID*/, BOOL Force)
 			pHdrCtrl->SetFont(NULL);
 			pHdrCtrl->SetFont(&theApp.m_Fonts[FALSE][FALSE]);
 		}
-
-		CImageList* icons = pViewParameters->GrannyMode ? &theApp.m_Icons24: &theApp.m_Icons16;
-		m_FileList.SetImageList(icons, LVSIL_NORMAL);
-		m_FileList.SetImageList(icons, LVSIL_SMALL);
 	}
 
 	// Colors
@@ -111,9 +105,8 @@ void CCalendarDayView::SetViewOptions(UINT /*_ViewID*/, BOOL Force)
 		COLORREF highlight;
 		theApp.GetBackgroundColors(pViewParameters->Background, &back, &text, &highlight);
 
-		m_CalendarHeaderCtrl.SetColors(highlight, back, pViewParameters->Background==ChildBackground_Ribbon ? afxGlobalData.clrBarDkShadow : GetSysColor(COLOR_3DFACE+1));
 		m_FileList.SetBkColor(back);
-		m_FileList.SetTextBkColor(CLR_NONE);
+		m_FileList.SetTextBkColor(back);
 		m_FileList.SetTextColor(text);
 
 		if (theApp.osInfo.dwMajorVersion==5)
@@ -128,8 +121,8 @@ void CCalendarDayView::SetViewOptions(UINT /*_ViewID*/, BOOL Force)
 	}
 
 	// Categories
-	//if (Force || (pViewParameters->ShowCategories!=m_ViewParameters.ShowCategories))
-	//	m_FileList.EnableGroupView(pViewParameters->ShowCategories && (!m_FileList.OwnerData));
+	//if (Force || (pViewParameters->ShowCategories!=m_ViewParameters.ShowCategories) || (_ViewID!=ViewID))
+	//	m_FileList.EnableGroupView(pViewParameters->ShowCategories && (!m_FileList.OwnerData) && (_ViewID!=LFViewList));
 
 	// Full row select
 	if (Force || (pViewParameters->FullRowSelect!=m_ViewParameters.FullRowSelect))
@@ -137,13 +130,22 @@ void CCalendarDayView::SetViewOptions(UINT /*_ViewID*/, BOOL Force)
 
 	// View
 	if (Force)
+	{
 		m_FileList.SetView(LV_VIEW_DETAILS);
+		m_FileList.CreateColumns();
+	}
+	else
+	{
+		m_FileList.SetHeader();
+	}
 
-	// Header
-	m_FileList.SetHeader(FALSE, FALSE);
-
-	m_FileList.SetRedraw(TRUE);
-	m_FileList.Invalidate();
+	// Icons
+	if (Force || (pViewParameters->GrannyMode!=m_ViewParameters.GrannyMode))
+	{
+		CImageList* icons = pViewParameters->GrannyMode ? &theApp.m_Icons24: &theApp.m_Icons16;
+		m_FileList.SetImageList(icons, LVSIL_NORMAL);
+		m_FileList.SetImageList(icons, LVSIL_SMALL);
+	}
 }
 
 

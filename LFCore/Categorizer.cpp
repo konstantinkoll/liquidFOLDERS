@@ -106,12 +106,10 @@ void DateCategorizer::CustomizeFolder(LFItemDescriptor* folder, LFItemDescriptor
 	if (i->AttributeValues[attr])
 	{
 		wchar_t Name[256];
-		FILETIME ft;
-		SYSTEMTIME st;
-
-		ft = *((FILETIME*)i->AttributeValues[attr]);
+		FILETIME ft = *((FILETIME*)i->AttributeValues[attr]);
 		LFTimeToString(ft, Name, 256, 1);
 
+		SYSTEMTIME st;
 		FileTimeToSystemTime(&ft, &st);
 		st.wHour = st.wMinute = st.wSecond = st.wMilliseconds = 0;
 		SystemTimeToFileTime(&st, &ft);
@@ -119,6 +117,23 @@ void DateCategorizer::CustomizeFolder(LFItemDescriptor* folder, LFItemDescriptor
 
 		SetAttribute(folder, LFAttrFileName, Name);
 	}
+}
+
+LFFilterCondition* DateCategorizer::GetCondition(LFItemDescriptor* i)
+{
+	LFFilterCondition* c = new LFFilterCondition;
+	c->Compare = LFFilterCompareSubfolder;
+
+	c->AttrData.Attr = attr;
+	c->AttrData.Type = AttrTypes[attr];
+
+	FILETIME ft = *((FILETIME*)i->AttributeValues[attr]);
+	SYSTEMTIME st;
+	FileTimeToSystemTime(&ft, &st);
+	st.wHour = st.wMinute = st.wSecond = st.wMilliseconds = 0;
+	SystemTimeToFileTime(&st, &c->AttrData.Time);
+
+	return c;
 }
 
 

@@ -595,3 +595,46 @@ void LFSearchResult::Group(unsigned int attr, unsigned int icon, bool groupone, 
 
 	delete c;
 }
+
+void LFSearchResult::SetContext(LFFilter* f)
+{
+	switch (f->Mode)
+	{
+	case LFFilterModeStores:
+		m_Context = LFContextStores;
+		break;
+	case LFFilterModeStoreHome:
+		m_Context = LFContextStoreHome;
+		break;
+	default:
+		if (f->Options.IsSubfolder)
+		{
+			m_Context = LFContextSubfolderDefault;
+			if (f->ConditionList)
+				switch (f->ConditionList->AttrData.Attr)
+				{
+				case LFAttrLocationName:
+				case LFAttrLocationIATA:
+				case LFAttrLocationGPS:
+					m_Context = LFContextSubfolderLocation;
+					break;
+				default:
+					if (AttrTypes[f->ConditionList->AttrData.Attr]==LFTypeTime)
+						m_Context = LFContextSubfolderDay;
+				}
+		}
+		else
+			switch (f->DomainID)
+			{
+			case LFDomainTrash:
+				m_Context = LFContextTrash;
+				break;
+			case LFDomainUnknown:
+				m_Context = LFContextHousekeeping;
+				break;
+			default:
+				m_Context = LFContextDefault;
+				break;
+			}
+	}
+}

@@ -110,6 +110,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 
 	ON_COMMAND(ID_ITEMS_SHOWINSPECTOR, OnShowInspectorWnd)
 	ON_COMMAND(ID_ITEMS_OPEN, OnItemsOpen)
+	ON_COMMAND(ID_ITEMS_OPENWITH, OnItemsOpenWith)
 	ON_COMMAND(ID_ITEMS_DELETE, OnItemsDelete)
 	ON_COMMAND(ID_ITEMS_RENAME, OnItemsRename)
 
@@ -471,14 +472,17 @@ void CMainFrame::OnUpdateAppCommands(CCmdUI* pCmdUI)
 		pCmdUI->SetCheck(ActiveViewParameters->Mode==LFViewPreview);
 		pCmdUI->Enable((ActiveContextID>LFContextStoreHome) && LFAttributeSortableInView(ActiveViewParameters->SortBy, pCmdUI->m_nID-ID_APP_VIEW_AUTOMATIC+LFViewAutomatic));
 		break;
-	case ID_APP_VIEW_CALENDAR_YEAR:
 	case ID_APP_VIEW_CALENDAR_WEEK:
-	case ID_APP_VIEW_CALENDAR_DAY:
+	case ID_APP_VIEW_CALENDAR_YEAR:
 	case ID_APP_VIEW_GLOBE:
 	case ID_APP_VIEW_TAGCLOUD:
 	case ID_APP_VIEW_TIMELINE:
 		pCmdUI->SetCheck(ActiveViewParameters->Mode==pCmdUI->m_nID-ID_APP_VIEW_AUTOMATIC+LFViewAutomatic);
 		pCmdUI->Enable(theApp.m_Contexts[ActiveContextID]->AllowExtendedViews && LFAttributeSortableInView(ActiveViewParameters->SortBy, pCmdUI->m_nID-ID_APP_VIEW_AUTOMATIC+LFViewAutomatic));
+		break;
+	case ID_APP_VIEW_CALENDAR_DAY:
+		pCmdUI->SetCheck(ActiveViewParameters->Mode==pCmdUI->m_nID-ID_APP_VIEW_CALENDAR_DAY+LFViewAutomatic);
+		pCmdUI->Enable(ActiveContextID==LFContextSubfolderDay);
 		break;
 	}
 }
@@ -517,7 +521,7 @@ void CMainFrame::OnUpdateDropCommands(CCmdUI* pCmdUI)
 	case ID_DROP_CALENDAR:
 		pCmdUI->SetCheck((ActiveViewParameters->Mode>=LFViewCalendarYear) &&
 			(ActiveViewParameters->Mode<=LFViewCalendarDay));
-		pCmdUI->Enable(theApp.m_Contexts[ActiveContextID]->AllowExtendedViews &&
+		pCmdUI->Enable(((theApp.m_Contexts[ActiveContextID]->AllowExtendedViews) || (ActiveContextID==LFContextSubfolderDay)) &&
 			(LFAttributeSortableInView(ActiveViewParameters->SortBy, LFViewCalendarYear) ||
 			LFAttributeSortableInView(ActiveViewParameters->SortBy, LFViewCalendarWeek) ||
 			LFAttributeSortableInView(ActiveViewParameters->SortBy, LFViewCalendarDay)));
@@ -791,7 +795,8 @@ void CMainFrame::OnItemsOpen()
 					res = LFGetFileLocation(i, Path, MAX_PATH);
 					if (res==LFOk)
 					{
-						ShellExecuteA(NULL, "open", Path, NULL, NULL, SW_SHOW);
+						if (ShellExecuteA(NULL, "open", Path, NULL, NULL, SW_SHOW)==(HINSTANCE)SE_ERR_NOASSOC)
+							OnItemsOpenWith();
 					}
 					else
 					{
@@ -802,6 +807,29 @@ void CMainFrame::OnItemsOpen()
 					ASSERT(FALSE);
 					break;
 				}
+			}
+		}
+	}
+}
+
+void CMainFrame::OnItemsOpenWith()
+{
+	int idx = GetSelectedItem();
+
+	if (idx!=-1)
+	{
+		LFItemDescriptor* i = CookedFiles->m_Items[idx];
+
+		if ((!i->NextFilter) && ((i->Type & (LFTypeNotMounted | LFTypeMask))==LFTypeFile))
+		{
+			char Path[MAX_PATH];
+			unsigned int res = LFGetFileLocation(i, Path, MAX_PATH);
+			if (res==LFOk)
+			{
+				char Cmd[300];
+				strcpy_s(Cmd, 300, "shell32.dll,OpenAs_RunDLL ");
+				strcat_s(Cmd, 300, Path);
+				ShellExecuteA(GetSafeHwnd(), "open", "rundll32.exe", Cmd, Path, SW_SHOW);
 			}
 		}
 	}
@@ -853,11 +881,13 @@ void CMainFrame::OnUpdateItemCommands(CCmdUI* pCmdUI)
 		break;
 	case ID_ITEMS_OPEN:
 		if (f)
-		{
 			b = (f->NextFilter!=NULL) ||
 				((f->Type & (LFTypeMask | LFTypeNotMounted))==LFTypeDrive) ||
-				((f->Type & LFTypeMask)==LFTypeFile);
-		}
+				((f->Type & (LFTypeMask | LFTypeNotMounted))==LFTypeFile);
+		break;
+	case ID_ITEMS_OPENWITH:
+		if (f)
+			b = (!f->NextFilter) && ((f->Type & (LFTypeMask | LFTypeNotMounted))==LFTypeFile);
 		break;
 	case ID_ITEMS_DELETE:
 		if (CookedFiles)

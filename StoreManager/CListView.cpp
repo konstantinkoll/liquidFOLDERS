@@ -233,7 +233,6 @@ void CListView::SetViewOptions(UINT _ViewID, BOOL Force)
 		if (_ViewID==LFViewDetails)
 			m_FileList.SetHeader();
 
-
 	// Icons
 	if (Force || (_ViewID!=ViewID) || (pViewParameters->GrannyMode!=m_ViewParameters.GrannyMode))
 	{
