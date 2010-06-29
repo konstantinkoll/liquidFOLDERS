@@ -395,7 +395,7 @@ LFCore_API void LFGetAttributeVariantData(LFItemDescriptor* i, LFVariantData* v)
 		assert(v->Type<LFTypeCount);
 
 		size_t sz = GetAttributeSize(v->Attr, i->AttributeValues[v->Attr]);
-		memcpy_s(&v->Value, sz, i->AttributeValues[v->Attr], sz);
+		memcpy(&v->Value, i->AttributeValues[v->Attr], sz);
 		v->IsNull = false;
 	}
 	else

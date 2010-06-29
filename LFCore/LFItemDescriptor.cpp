@@ -196,7 +196,7 @@ void SetAttribute(LFItemDescriptor* i, unsigned int attr, const void* v)
 	}
 
 	// Kopieren
-	memcpy_s(i->AttributeValues[attr], sz, v, sz);
+	memcpy(i->AttributeValues[attr], v, sz);
 }
 
 
@@ -249,7 +249,7 @@ LFCore_API LFItemDescriptor* LFAllocItemDescriptor(LFItemDescriptor* i)
 				{
 					size_t sz = _msize(i->AttributeValues[a]);
 					d->AttributeValues[a] = malloc(sz);
-					memcpy_s(d->AttributeValues[a], sz, i->AttributeValues[a], sz);
+					memcpy(d->AttributeValues[a], i->AttributeValues[a], sz);
 				}
 	}
 

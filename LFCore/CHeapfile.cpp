@@ -122,7 +122,7 @@ void CHeapfile::GetAttribute(void* PtrDst, unsigned int offset, unsigned int att
 		if (offset+sz<=EndOfTuple)
 		{
 			char* P = (char*)PtrDst+offset;
-			memcpy_s(P, sz, i->AttributeValues[attr], sz);
+			memcpy(P, i->AttributeValues[attr], sz);
 		}
 	}
 }
@@ -410,7 +410,7 @@ bool CHeapfile::Compact()
 				memcpy_s(tmpBuf, NewHdr.ElementSize, Ptr, Hdr.ElementSize-LFKeySize);
 
 				char* P = (char*)Ptr+Hdr.ElementSize-LFKeySize;
-				memcpy_s(tmpBuf+NewHdr.ElementSize-LFKeySize, LFKeySize, P, LFKeySize);
+				memcpy(tmpBuf+NewHdr.ElementSize-LFKeySize, P, LFKeySize);
 			}
 			else
 			{
