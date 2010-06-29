@@ -100,6 +100,7 @@ public:
 	BOOL UpdateSelectedItems(LFVariantData* value1, LFVariantData* value2=NULL, LFVariantData* value3=NULL);
 	BOOL UpdateTrashFlag(BOOL Trash, BOOL All=FALSE);
 	BOOL DeleteFiles(BOOL All=FALSE);
+	UINT SelectViewMode(UINT ViewID=LFViewAutomatic);
 	BOOL OpenChildView(BOOL Force=FALSE);
 
 	BOOL IsClipboard;
@@ -108,7 +109,6 @@ public:
 protected:
 	void UpdateSearchResult(BOOL SetEmpty, int FocusItem);
 	LFTransactionList* BuildTransactionList(BOOL All=FALSE);
-	UINT SelectViewMode(UINT ViewID=LFViewAutomatic);
 
 	CAdvancedRibbonBar m_wndRibbonBar;
 	CMFCRibbonApplicationButton m_MainButton;

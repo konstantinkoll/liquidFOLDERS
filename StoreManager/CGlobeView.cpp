@@ -152,8 +152,8 @@ void CGlobeView::SetSearchResult(LFSearchResult* _result)
 				ZeroMemory(&m_Locations[a], sizeof(Location));
 
 				LFGeoCoordinates coord = { 0, 0 };
-				if (_result->m_Items[a]->AttributeValues[LFAttrLocationGPS])
-					coord = *((LFGeoCoordinates*)_result->m_Items[a]->AttributeValues[LFAttrLocationGPS]);
+				if ((theApp.m_Attributes[m_ViewParameters.SortBy]->Type==LFTypeGeoCoordinates) && (_result->m_Items[a]->AttributeValues[m_ViewParameters.SortBy]))
+					coord = *((LFGeoCoordinates*)_result->m_Items[a]->AttributeValues[m_ViewParameters.SortBy]);
 
 				if ((coord.Latitude==0) && (coord.Longitude==0))
 					if (_result->m_Items[a]->AttributeValues[LFAttrLocationIATA])
@@ -1175,12 +1175,8 @@ void CGlobeView::CalcAndDrawLabel()
 					}
 					break;
 				case LFAttrLocationGPS:
-					if ((!wcslen(caption)) || (m_ViewParameters.GlobeShowGPS))
-					{
-						caption = m_Locations[a].coordstring;
-						cCaption = (UINT)wcslen(caption);
+					if ((wcscmp(caption, m_Locations[a].coordstring)==0) && (m_ViewParameters.GlobeShowGPS))
 						coordinates = NULL;
-					}
 					break;
 				}
 

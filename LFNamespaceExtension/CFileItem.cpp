@@ -45,13 +45,11 @@ void CFileItem::GetDisplayNameEx(CString& displayName,DisplayNameFlags flags)
 {
 	// If a fully qualified parsing name is requested, return the full path
 	if ((flags & NSEDNF_InFolder)==0)
-	{
 		if ((flags & NSEDNF_ForParsing) != 0)
 		{
 			displayName = fullPath;
 			return;
 		}
-	}
 	
 	// For all other types, call the default implementation which simply calls the 
 	// GetDisplayName function

@@ -144,7 +144,8 @@ void CFileView::AppendContextMenu(CMenu* menu)
 {
 	CString tmpStr;
 
-	if (m_ViewParameters.Mode==LFViewDetails)
+	UINT Mode = ((CMainFrame*)GetParentFrame())->SelectViewMode(m_ViewParameters.Mode);
+	if ((Mode==LFViewDetails) || (Mode==LFViewCalendarDay))
 	{
 		ENSURE(tmpStr.LoadString(ID_VIEW_AUTOSIZECOLUMNS));
 		menu->AppendMenu(MF_BYPOSITION | MF_STRING, ID_VIEW_AUTOSIZECOLUMNS, tmpStr);
@@ -467,6 +468,9 @@ void CFileView::OnRButtonUp(UINT nFlags, CPoint point)
 
 		if (IsSelected(n))
 		{
+			Invalidate();
+			GetParentFrame()->SendMessage(WM_COMMAND, ID_APP_UPDATESELECTION);
+
 			ClientToScreen(&point);
 			OnItemContextMenu(n, point);
 			return;

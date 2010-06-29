@@ -281,7 +281,7 @@ LFCore_API LFContextDescriptor* LFGetContextInfo(unsigned int ID)
 
 	LFContextDescriptor* c = LFAllocContextDescriptor();
 	LoadString(LFCoreModuleHandle, ID+IDS_FirstContext, c->Name, 64);
-	c->AllowGroups = (ID>LFContextClipboard);
+	c->AllowGroups = (ID>LFContextClipboard) && (ID<LFContextSubfolderDefault);
 
 	c->AllowedAttributes = new LFBitArray(LFAttributeCount);
 	(*c->AllowedAttributes) += LFAttrFileName;

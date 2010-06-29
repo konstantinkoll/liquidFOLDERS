@@ -130,7 +130,7 @@ void CInspectorWnd::UpdateAdd(LFItemDescriptor* i, LFSearchResult* raw)
 		{
 			for (int a=i->FirstAggregate; a<=i->LastAggregate; a++)
 				for (UINT b=0; b<LFAttributeCount; b++)
-					if ((raw->m_Items[a]->AttributeValues[b]) && (b!=LFAttrHint) && (b!=LFAttrDeleteTime))
+					if ((raw->m_Items[a]->AttributeValues[b]) && (b!=LFAttrFileName) && (b!=LFAttrHint) && (b!=LFAttrDeleteTime))
 						AddValue(raw->m_Items[a], b);
 		}
 		else

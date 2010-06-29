@@ -389,7 +389,7 @@ void CMainFrame::OnViewOptions()
 
 void CMainFrame::OnToggleAutoDirs()
 {
-	ActiveViewParameters->AutoDirs = !ActiveViewParameters->AutoDirs;
+	ActiveViewParameters->AutoDirs = (!ActiveViewParameters->AutoDirs);
 	theApp.SaveViewOptions(ActiveContextID);
 	theApp.UpdateSortOptions(ActiveContextID);
 }
@@ -429,14 +429,15 @@ void CMainFrame::OnSaveContextAll()
 void CMainFrame::OnUpdateAppCommands(CCmdUI* pCmdUI)
 {
 	BOOL b = FALSE;
+	UINT view;
 	switch (pCmdUI->m_nID)
 	{
 	case ID_APP_CLOSEOTHERS:
 		pCmdUI->Enable(theApp.m_listMainFrames.size()>1);
 		break;
 	case ID_CONTEXT_CHOOSE:
-		if (RawFiles)
-			b = (RawFiles->m_Context>LFContextClipboard) && (RawFiles->m_Context<LFContextSubfolderDefault);
+		if (CookedFiles)
+			b = (CookedFiles->m_Context>LFContextClipboard) && (CookedFiles->m_Context<LFContextSubfolderDefault);
 		pCmdUI->Enable(b);
 		break;
 	case ID_CONTEXT_ALWAYSSAVE:
@@ -453,11 +454,8 @@ void CMainFrame::OnUpdateAppCommands(CCmdUI* pCmdUI)
 		pCmdUI->Enable(b);
 		break;
 	case ID_VIEW_AUTODIRS:
-		pCmdUI->SetCheck(ActiveViewParameters->AutoDirs);
-		b = theApp.m_Contexts[ActiveContextID]->AllowGroups;
-		if (RawFiles)
-			b |= (RawFiles->m_Context>=LFContextSubfolderDefault);
-		pCmdUI->Enable(b && (SelectViewMode(ActiveViewParameters->Mode)<=LFViewPreview));
+		pCmdUI->SetCheck((ActiveViewParameters->AutoDirs) || (ActiveContextID>=LFContextSubfolderDefault));
+		pCmdUI->Enable((theApp.m_Contexts[ActiveContextID]->AllowGroups) && (SelectViewMode(ActiveViewParameters->Mode)<=LFViewPreview));
 		break;
 	case ID_APP_VIEW_AUTOMATIC:
 	case ID_APP_VIEW_LARGEICONS:
@@ -472,8 +470,13 @@ void CMainFrame::OnUpdateAppCommands(CCmdUI* pCmdUI)
 	case ID_APP_VIEW_GLOBE:
 	case ID_APP_VIEW_TAGCLOUD:
 	case ID_APP_VIEW_TIMELINE:
-		pCmdUI->SetCheck(ActiveViewParameters->Mode==pCmdUI->m_nID-ID_APP_VIEW_AUTOMATIC+LFViewAutomatic);
-		pCmdUI->Enable(theApp.m_Contexts[ActiveContextID]->AllowedViews->IsSet(pCmdUI->m_nID-ID_APP_VIEW_AUTOMATIC+LFViewAutomatic));
+		view = pCmdUI->m_nID-ID_APP_VIEW_AUTOMATIC+LFViewAutomatic;
+		pCmdUI->SetCheck(ActiveViewID==(int)view);
+		b = theApp.m_Contexts[ActiveContextID]->AllowedViews->IsSet(view) &&
+			LFAttributeSortableInView(ActiveViewParameters->SortBy, view);
+		if (CookedFiles)
+			b &= (theApp.m_Contexts[CookedFiles->m_Context]->AllowedViews->IsSet(view)==true);
+		pCmdUI->Enable(b);
 	}
 }
 
@@ -509,8 +512,8 @@ void CMainFrame::OnUpdateDropCommands(CCmdUI* pCmdUI)
 	switch (pCmdUI->m_nID)
 	{
 	case ID_DROP_CALENDAR:
-		pCmdUI->SetCheck((ActiveViewParameters->Mode>=LFViewCalendarYear) &&
-			(ActiveViewParameters->Mode<=LFViewCalendarDay));
+		pCmdUI->SetCheck((ActiveViewID>=LFViewCalendarYear) &&
+			(ActiveViewID<=LFViewCalendarDay));
 		pCmdUI->Enable((theApp.m_Contexts[ActiveContextID]->AllowedViews->IsSet(LFViewCalendarYear) ||
 			theApp.m_Contexts[ActiveContextID]->AllowedViews->IsSet(LFViewCalendarWeek) ||
 			theApp.m_Contexts[ActiveContextID]->AllowedViews->IsSet(LFViewCalendarDay)) &&
@@ -1198,16 +1201,7 @@ void CMainFrame::UpdateViewOptions()
 
 void CMainFrame::UpdateSortOptions()
 {
-	if ((!ActiveViewParameters->AutoDirs) && (ActiveFilter->Options.IsSubfolder) && (m_BreadcrumbBack))
-	{
-		OnNavigateBackOne();
-		DeleteBreadcrumbs(&m_BreadcrumbForward);
-		UpdateHistory();
-	}
-	else
-	{
-		CookFiles(ActiveContextID);
-	}
+	CookFiles(ActiveContextID);
 }
 
 void CMainFrame::UpdateSearchResult(BOOL SetEmpty, int FocusItem)
@@ -1700,13 +1694,13 @@ void CMainFrame::OnUpdateNavCommands(CCmdUI* pCmdUI)
 		b &= (m_BreadcrumbForward!=NULL);
 		break;
 	case ID_NAV_STORES:
-		if (RawFiles)
-			if (RawFiles->m_Context==LFContextStores)
+		if (CookedFiles)
+			if (CookedFiles->m_Context==LFContextStores)
 				b = FALSE;
 		break;
 	case ID_NAV_HOME:
-		if (RawFiles)
-			if (RawFiles->m_Context==LFContextStoreHome)
+		if (CookedFiles)
+			if (CookedFiles->m_Context==LFContextStoreHome)
 				b = FALSE;
 		if (!LFDefaultStoreAvailable())
 			b = FALSE;
@@ -2245,6 +2239,9 @@ void CMainFrame::ShowCaptionBar(int Icon, UINT res, int Command, LPCWSTR Button)
 
 UINT CMainFrame::SelectViewMode(UINT ViewID)
 {
+	if (CookedFiles)
+		if (!theApp.m_Contexts[CookedFiles->m_Context]->AllowedViews->IsSet(ViewID))
+			ViewID = LFViewAutomatic;
 	if ((ViewID<LFViewAutomatic) || (ViewID>=LFViewCount))
 		ViewID = LFViewAutomatic;
 	if (ViewID==LFViewAutomatic)
@@ -2261,8 +2258,8 @@ UINT CMainFrame::SelectViewMode(UINT ViewID)
 BOOL CMainFrame::OpenChildView(BOOL Force)
 {
 	UINT ViewID = SelectViewMode(ActiveViewParameters->Mode);
-	if (ActiveViewParameters->Mode!=LFViewAutomatic)
-		ActiveViewParameters->Mode = ViewID;
+	//if (ActiveViewParameters->Mode!=LFViewAutomatic)
+	//	ActiveViewParameters->Mode = ViewID;
 
 	ASSERT(LFAttributeSortableInView(ActiveViewParameters->SortBy, ViewID));
 	CFileView* pNewView = NULL;
@@ -2496,8 +2493,8 @@ void CMainFrame::UpdateHistory()
 
 LRESULT CMainFrame::OnDrivesChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)
 {
-	if (RawFiles)
-		if (RawFiles->m_Context==LFContextStores)
+	if (CookedFiles)
+		if (CookedFiles->m_Context==LFContextStores)
 			OnNavigateReload();
 
 	return NULL;
@@ -2505,8 +2502,8 @@ LRESULT CMainFrame::OnDrivesChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)
 
 LRESULT CMainFrame::OnStoresChanged(WPARAM /*wParam*/, LPARAM lParam)
 {
-	if (RawFiles)
-		switch (RawFiles->m_Context)
+	if (CookedFiles)
+		switch (CookedFiles->m_Context)
 		{
 		case LFContextStores:
 			if (GetSafeHwnd()!=(HWND)lParam)
