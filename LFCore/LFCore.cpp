@@ -9,6 +9,7 @@
 #include "LFItemDescriptor.h"
 #include "License.h"
 #include "ShellProperties.h"
+#include <assert.h>
 #include <iostream>
 #include <winioctl.h>
 
@@ -673,7 +674,9 @@ LFCore_API void LFErrorBox(unsigned int ID, HWND hWnd)
 
 LFCore_API bool LFAttributeSortableInView(unsigned int Attr, unsigned int ViewMode)
 {
-	bool b = (Attr!=LFAttrLocationGPS);
+	assert(Attr<LFAttributeCount);
+
+	bool b = true;
 	switch (ViewMode)
 	{
 	case LFViewAutomatic:
@@ -683,13 +686,13 @@ LFCore_API bool LFAttributeSortableInView(unsigned int Attr, unsigned int ViewMo
 	case LFViewCalendarWeek:
 	case LFViewCalendarDay:
 	case LFViewTimeline:
-		b = ((Attr==LFAttrCreationTime) || (Attr==LFAttrFileTime) || (Attr==LFAttrRecordingTime) || (Attr==LFAttrDueTime) || (Attr==LFAttrDoneTime));
+		b = (AttrTypes[Attr]==LFTypeTime);
 		break;
 	case LFViewGlobe:
 		b = ((Attr==LFAttrLocationIATA) || (Attr==LFAttrLocationGPS));
 		break;
 	case LFViewTagcloud:
-		b &= (Attr!=LFAttrRating);
+		b = (Attr!=LFAttrRating);
 		break;
 	}
 	return b;

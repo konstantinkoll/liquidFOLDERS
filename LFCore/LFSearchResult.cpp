@@ -319,7 +319,6 @@ int LFSearchResult::Compare(int eins, int zwei, unsigned int attr, bool descendi
 	double zweiDbl;
 	LFGeoCoordinates einsCoord;
 	LFGeoCoordinates zweiCoord;
-	#define CMPROUNDOFF 0.001
 
 	if ((!d1null) && (!d2null))
 	{
@@ -391,22 +390,22 @@ int LFSearchResult::Compare(int eins, int zwei, unsigned int attr, bool descendi
 		case LFTypeGeoCoordinates:
 			einsCoord = *(LFGeoCoordinates*)d1->AttributeValues[Sort];
 			zweiCoord = *(LFGeoCoordinates*)d2->AttributeValues[Sort];
-			if (einsCoord.Latitude<zweiCoord.Latitude-CMPROUNDOFF)
+			if (einsCoord.Latitude<zweiCoord.Latitude)
 			{
 				cmp = -1;
 			}
 			else
-				if (einsCoord.Latitude>zweiCoord.Latitude+CMPROUNDOFF)
+				if (einsCoord.Latitude>zweiCoord.Latitude)
 				{
 					cmp = 1;
 				}
 				else
-					if (einsCoord.Longitude<zweiCoord.Longitude-CMPROUNDOFF)
+					if (einsCoord.Longitude<zweiCoord.Longitude)
 					{
 						cmp = -1;
 					}
 					else
-						if (einsCoord.Longitude>zweiCoord.Longitude+CMPROUNDOFF)
+						if (einsCoord.Longitude>zweiCoord.Longitude)
 						{
 							cmp = 1;
 						}
@@ -564,6 +563,9 @@ void LFSearchResult::Group(unsigned int attr, unsigned int icon, bool groupone, 
 			break;
 		case LFTypeRating:
 			c = new RatingCategorizer(attr);
+			break;
+		case LFTypeGeoCoordinates:
+			c = new CoordCategorizer(attr);
 			break;
 		case LFTypeTime:
 			c = new DateCategorizer(attr);

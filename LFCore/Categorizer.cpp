@@ -45,7 +45,7 @@ LFItemDescriptor* CCategorizer::GetFolder(LFItemDescriptor* i, LFFilter* f)
 	}
 
 	CustomizeFolder(folder, i);
-	
+
 	if (folder->NextFilter)
 		wcscpy_s(folder->NextFilter->Name, 256, folder->CoreAttributes.FileName);
 
@@ -219,7 +219,23 @@ void IATACategorizer::CustomizeFolder(LFItemDescriptor* folder, LFItemDescriptor
 		}
 	}
 
-	return CCategorizer::CustomizeFolder(folder, i);
+	CCategorizer::CustomizeFolder(folder, i);
+}
+
+
+// CoordCategorizer
+//
+
+CoordCategorizer::CoordCategorizer(unsigned int _attr)
+	: CCategorizer(_attr)
+{
+}
+
+bool CoordCategorizer::Compare(LFItemDescriptor* i1, LFItemDescriptor* i2)
+{
+	assert(AttrTypes[attr]==LFTypeGeoCoordinates);
+
+	return memcmp(i1->AttributeValues[attr], i2->AttributeValues[attr], sizeof(LFGeoCoordinates))==0;
 }
 
 

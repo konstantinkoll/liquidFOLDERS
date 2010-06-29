@@ -91,6 +91,19 @@ protected:
 };
 
 
+// CoordCategorizer
+//
+
+class CoordCategorizer : public CCategorizer
+{
+public:
+	CoordCategorizer(unsigned int _attr);
+
+protected:
+	virtual bool Compare(LFItemDescriptor* i1, LFItemDescriptor* i2);
+};
+
+
 // SizeCategorizer
 //
 
