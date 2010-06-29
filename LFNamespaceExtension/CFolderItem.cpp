@@ -274,6 +274,7 @@ BOOL CFolderItem::GetChildren(CGetChildrenEventArgs& e)
 				d.Comment = i->CoreAttributes.Comment;
 				d.Hint = i->Hint;
 				d.StoreID = i->StoreID;
+				d.DomainID = data.DomainID;
 				d.FileID = i->CoreAttributes.FileID;
 				d.CreationTime = i->CoreAttributes.CreationTime;
 				d.FileTime = i->CoreAttributes.FileTime;
