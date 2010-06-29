@@ -157,12 +157,15 @@ END_MESSAGE_MAP()
 
 int CCalendarDayView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
-	if (CFileView::OnCreate(lpCreateStruct) == -1)
+	if (CFileView::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
-	m_CalendarHeaderCtrl.Create(this, 2);
+	if (!m_CalendarHeaderCtrl.Create(this, 2))
+		return -1;
 
-	m_FileList.Create(this, FALSE);
+	if (!m_FileList.Create(this, FALSE))
+		return -1;
+
 	//m_FileList.EnableGroupView(TRUE);
 
 	return 0;

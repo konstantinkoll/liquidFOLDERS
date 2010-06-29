@@ -126,6 +126,7 @@ LFFilterCondition* DateCategorizer::GetCondition(LFItemDescriptor* i)
 
 	c->AttrData.Attr = attr;
 	c->AttrData.Type = AttrTypes[attr];
+	c->AttrData.IsNull = false;
 
 	FILETIME ft = *((FILETIME*)i->AttributeValues[attr]);
 	SYSTEMTIME st;
@@ -249,7 +250,7 @@ void SizeCategorizer::CustomizeFolder(LFItemDescriptor* folder, LFItemDescriptor
 }
 
 
-// UnicodeCategorizer
+// NameCategorizer
 //
 
 NameCategorizer::NameCategorizer(unsigned int _attr)

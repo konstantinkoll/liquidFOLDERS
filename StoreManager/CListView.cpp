@@ -33,7 +33,6 @@ void CListView::Create(CWnd* pParentWnd, LFSearchResult* _result, UINT _ViewID)
 	rect.SetRectEmpty();
 	CWnd::Create(className, _T(""), dwStyle, rect, pParentWnd, AFX_IDW_PANE_FIRST);
 
-	m_FileList.SetImageList(&theApp.m_Icons16, LVSIL_FOOTER);
 	CFileView::Create(_result, _ViewID);
 }
 
@@ -265,10 +264,13 @@ END_MESSAGE_MAP()
 
 int CListView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
-	if (CFileView::OnCreate(lpCreateStruct) == -1)
+	if (CFileView::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
-	m_FileList.Create(this, !result->m_HasCategories);
+	if (!m_FileList.Create(this, !result->m_HasCategories))
+		return -1;
+
+	m_FileList.SetImageList(&theApp.m_Icons16, LVSIL_FOOTER);
 
 	if (result->m_HasCategories)
 	{

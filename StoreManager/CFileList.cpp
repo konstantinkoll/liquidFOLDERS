@@ -27,7 +27,7 @@ CFileList::~CFileList()
 {
 }
 
-void CFileList::Create(CFileView* pViewWnd, BOOL _OwnerData)
+BOOL CFileList::Create(CFileView* pViewWnd, BOOL _OwnerData)
 {
 	View = pViewWnd;
 	OwnerData = _OwnerData;
@@ -39,8 +39,12 @@ void CFileList::Create(CFileView* pViewWnd, BOOL _OwnerData)
 
 	CRect rect;
 	rect.SetRectEmpty();
-	CExplorerList::Create(dwStyle, rect, pViewWnd, 1);
-	SetExtendedStyle(FileListExtendedStyles);
+
+	BOOL res = CExplorerList::Create(dwStyle, rect, pViewWnd, 1);
+	if (res)
+		SetExtendedStyle(FileListExtendedStyles);
+
+	return res;
 }
 
 void CFileList::SetHeader(BOOL sorting, BOOL selectCol)

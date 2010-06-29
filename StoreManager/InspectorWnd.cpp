@@ -307,7 +307,7 @@ END_MESSAGE_MAP()
 
 int CInspectorWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
-	if (CDockablePane::OnCreate(lpCreateStruct) == -1)
+	if (CDockablePane::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
 	CString oldBase = theApp.GetRegistryBase();
@@ -316,7 +316,7 @@ int CInspectorWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_Alphabetic = theApp.GetInt(_T("Alphabetic"), FALSE);
 	theApp.SetRegistryBase(oldBase);
 
-	if (m_wndToolBar.Create(this, AFX_DEFAULT_TOOLBAR_STYLE) == -1)
+	if (!m_wndToolBar.Create(this, AFX_DEFAULT_TOOLBAR_STYLE))
 		return -1;
 
 	m_wndToolBar.LoadToolBar(ID_PANE_INSPECTORWND, 0, 0, TRUE);
@@ -324,12 +324,12 @@ int CInspectorWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndToolBar.SetPaneStyle(m_wndToolBar.GetPaneStyle() & ~(CBRS_GRIPPER | CBRS_SIZE_DYNAMIC | CBRS_BORDER_TOP | CBRS_BORDER_BOTTOM | CBRS_BORDER_LEFT | CBRS_BORDER_RIGHT));
 	m_wndToolBar.SetRouteCommandsViaFrame(FALSE);
 
-	if (m_wndIconCtrl.Create(this, 1) == -1)
+	if (!m_wndIconCtrl.Create(this, 1))
 		return -1;
 
 	CRect rectDummy;
 	rectDummy.SetRectEmpty();
-	if (m_wndPropList.Create(WS_VISIBLE | WS_CHILD, rectDummy, this, 2) == -1)
+	if (!m_wndPropList.Create(WS_VISIBLE | WS_CHILD, rectDummy, this, 2))
 		return -1;
 
 	m_wndPropList.SetGroupNameFullWidth(TRUE, FALSE);

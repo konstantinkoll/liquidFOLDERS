@@ -23,7 +23,7 @@ public:
 	CFileList();
 	virtual ~CFileList();
 
-	void Create(CFileView* pViewWnd, BOOL _OwnerData);
+	BOOL Create(CFileView* pViewWnd, BOOL _OwnerData);
 	int GetFontHeight();
 	void SetHeader(BOOL sorting=FALSE, BOOL selectCol=TRUE);
 	BOOL SetColumnWidth(int nCol, int cx);

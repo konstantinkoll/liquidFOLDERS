@@ -514,14 +514,14 @@ LFCore_API LFFilter* LFAllocFilter(LFFilter* f)
 	LFFilter* filter = new LFFilter;
 	if (f)
 	{
-		memcpy(filter, f, sizeof(LFFilter));
+		*filter = *f;
 		filter->ConditionList = NULL;
 
 		LFFilterCondition* c = f->ConditionList;
 		while (c)
 		{
 			LFFilterCondition* item = new LFFilterCondition;
-			memcpy(item, c, sizeof(LFFilterCondition));
+			*item = *c;
 			item->Next = filter->ConditionList;
 			filter->ConditionList = item;
 
