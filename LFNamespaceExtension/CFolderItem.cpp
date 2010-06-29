@@ -232,7 +232,7 @@ BOOL CFolderItem::GetChildren(CGetChildrenEventArgs& e)
 		f->DomainID = (unsigned char)data.DomainID;
 		res = LFQuery(f);
 		LFSortSearchResult(res, atoi(data.FileID), false);
-		LFGroupSearchResult(res, f, atoi(data.FileID), data.Icon, true);
+		LFGroupSearchResult(res, f, atoi(data.FileID), data.Icon, atoi(data.FileID)!=LFAttrFileName);
 		break;
 	case LevelAttrValue:
 		f = LFAllocFilter();
@@ -301,11 +301,11 @@ BOOL CFolderItem::GetChildren(CGetChildrenEventArgs& e)
 			}
 
 			if (((i->Type & LFTypeMask)==LFTypeFile) && (e.childrenType & NSECT_NonFolders))
-				/*if (data.Level<=LevelAttribute)
+				if ((data.Level==LevelAttribute) && (data.Value.Attr!=LFAttrFileName))
 				{
 					AddNullFolder = TRUE;
 				}
-				else*/
+				else
 				{
 					e.children->AddTail(new CFileItem(i->StoreID, &i->CoreAttributes));
 				}

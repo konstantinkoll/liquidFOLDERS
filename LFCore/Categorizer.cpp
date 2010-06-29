@@ -292,7 +292,9 @@ void NameCategorizer::CustomizeFolder(LFItemDescriptor* folder, LFItemDescriptor
 	if (i->AttributeValues[attr])
 	{
 		wchar_t Name[256];
-		GetNamePrefix((wchar_t*)i->AttributeValues[attr], &Name[0]);
+		if (!GetNamePrefix((wchar_t*)i->AttributeValues[attr], &Name[0]))
+			wcscpy_s(Name, 256, i->CoreAttributes.FileName);
+
 		SetAttribute(folder, LFAttrFileName, Name);
 		SetAttribute(folder, attr, Name);
 	}
