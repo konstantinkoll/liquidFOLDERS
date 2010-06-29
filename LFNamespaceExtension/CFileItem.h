@@ -4,27 +4,23 @@
 class CFileItem : public CNSEItem
 {
 public:
-
 	DECLARE_DYNCREATE(CFileItem)
 
-	// name of the file
-	CString name;
-	// Full path of the file
-	CString fullPath;
-	
+	CString StoreID;
+	LFCoreAttributes Attrs;
+
 	CFileItem();
-	CFileItem(LPCTSTR parentFolder,LPCTSTR name);
-	CFileItem(LPCTSTR s);
+	CFileItem(LPCTSTR _StoreID, LFCoreAttributes* _Attrs);
 
 	virtual ~CFileItem();
+
+	virtual void GetDisplayName(CString& displayName);
+	virtual void GetDisplayNameEx(CString& displayName, DisplayNameFlags flags);
+	virtual void Serialize(CArchive& ar);
 
 	virtual void GetOverlayIcon(CGetOverlayIconEventArgs& e);
 	virtual LPSTREAM GetStream();
 	virtual BOOL GetFileDescriptor(FILEDESCRIPTOR* fd);
-	virtual void GetDisplayNameEx(CString& displayName,DisplayNameFlags flags);
-	virtual HBITMAP GetThumbnail(CGetThumbnailEventArgs& e);
-	virtual void GetDisplayName(CString& displayName);
-	virtual void Serialize(CArchive& ar);
 	virtual int CompareTo(CNSEItem* otherItem, CShellColumn& column);
 	virtual BOOL OnChangeName(CChangeNameEventArgs& e);
 	virtual int GetXPTaskPaneColumnIndices(UINT* indices);

@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "..\\include\\LFCore.h"
 #include "LFItemDescriptor.h"
+#include "LFVariantData.h"
 #include "Mutex.h"
 #include "Query.h"
 #include "Stores.h"
@@ -169,8 +170,13 @@ bool CheckCondition(void* value, LFFilterCondition* c)
 	assert(c->Compare>=LFFilterCompareIgnore);
 	assert(c->Compare<=LFFilterCompareContains);
 
-	if (c->Compare==LFFilterCompareIgnore)
+	switch (c->Compare)
+	{
+	case LFFilterCompareIgnore:
 		return true;
+	case LFFilterCompareIsNull:
+		return IsNullValue(c->AttrData.Attr, value);
+	}
 
 	if (!value)
 		switch(c->Compare)
@@ -201,11 +207,14 @@ bool CheckCondition(void* value, LFFilterCondition* c)
 		switch (c->Compare)
 		{
 		case LFFilterCompareSubfolder:
-			len1 = wcslen((wchar_t*)value);
-			len2 = wcslen(c->AttrData.UnicodeString);
-			if (len1<=len2)
-				return false;
-			return _wcsnicmp((wchar_t*)value, c->AttrData.UnicodeString, len2)==0;
+			if (c->AttrData.Attr==LFAttrFileName)
+			{
+				len1 = wcslen((wchar_t*)value);
+				len2 = wcslen(c->AttrData.UnicodeString);
+				if (len1<=len2)
+					return false;
+				return _wcsnicmp((wchar_t*)value, c->AttrData.UnicodeString, len2)==0;
+			}
 		case LFFilterCompareIsEqual:
 			return _wcsicmp((wchar_t*)value, c->AttrData.UnicodeString)==0;
 		case LFFilterCompareIsNotEqual:
@@ -233,11 +242,6 @@ bool CheckCondition(void* value, LFFilterCondition* c)
 		switch (c->Compare)
 		{
 		case LFFilterCompareSubfolder:
-			len1 = strlen((char*)value);
-			len2 = strlen(c->AttrData.AnsiString);
-			if (len1<=len2)
-				return false;
-			return _strnicmp((char*)value, c->AttrData.AnsiString, len2)==0;
 		case LFFilterCompareIsEqual:
 			return _stricmp((char*)value, c->AttrData.AnsiString)==0;
 		case LFFilterCompareIsNotEqual:

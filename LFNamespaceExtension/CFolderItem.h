@@ -5,9 +5,9 @@
 #define LevelRoot        0
 #define LevelStores      1
 #define LevelStoreHome   2
-#define LevelDomain      3
-#define LevelAttribute   4
-#define LevelAttrValue   5
+#define LevelAttribute   3
+#define LevelAttrValue   4
+#define LevelFile        5
 
 #define NSEIA_CFOLDERITEM   NSEIA_CanLink | NSEIA_DropTarget | NSEIA_FileSysAncestor | NSEIA_Browsable | NSEIA_Folder
 
@@ -31,8 +31,8 @@ struct FolderSerialization
 	CString FileID;
 	CString StoreID;
 	UINT DomainID;
-	UINT AttributeID;
-	CString AttributeValue;
+	UCHAR Compare;
+	LFVariantData Value;
 	FILETIME CreationTime;
 	FILETIME FileTime;
 	INT64 Size;

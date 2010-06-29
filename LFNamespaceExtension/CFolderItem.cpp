@@ -46,7 +46,7 @@ BOOL CFolderItem::CFolderItemFactory::UpdateRegistry(BOOL bRegister)
 
 
 // Class CFolderItem
-
+//
 
 CFolderItem::CFolderItem()
 {
@@ -102,14 +102,14 @@ void CFolderItem::Serialize(CArchive& ar)
 	ar << data.Comment;
 	ar << data.FileID;
 	ar << data.StoreID;
+	ar << data.DomainID;
+	ar << data.Compare;
+	ar.Write(&data.Value, sizeof(LFVariantData));
 	ar << data.CreationTime.dwHighDateTime;
 	ar << data.CreationTime.dwLowDateTime;
 	ar << data.FileTime.dwHighDateTime;
 	ar << data.FileTime.dwLowDateTime;
 	ar << data.Size;
-	ar << data.DomainID;
-	ar << data.AttributeID;
-	ar << data.AttributeValue;
 }
 
 CNSEItem* CFolderItem::DeserializeChild(CArchive& ar)
@@ -123,10 +123,19 @@ CNSEItem* CFolderItem::DeserializeChild(CArchive& ar)
 	BYTE ItemType;
 	ar >> ItemType;
 
+	CString StoreID;
+	UINT Size;
+	LFCoreAttributes Attrs;
+	ZeroMemory(&Attrs, sizeof(LFCoreAttributes));
+
 	switch (ItemType)
 	{
 	case 0:
-		break;
+		ar >> StoreID;
+		ar >> Size;
+		ar.Read(&Attrs, min(Size, sizeof(LFCoreAttributes)));
+
+		return new CFileItem(StoreID, &Attrs);
 	case 1:
 		FolderSerialization d;
 		ar >> d.Level;
@@ -138,17 +147,16 @@ CNSEItem* CFolderItem::DeserializeChild(CArchive& ar)
 		ar >> d.Comment;
 		ar >> d.FileID;
 		ar >> d.StoreID;
+		ar >> d.DomainID;
+		ar >> d.Compare;
+		ar.Read(&d.Value, sizeof(LFVariantData));
 		ar >> d.CreationTime.dwHighDateTime;
 		ar >> d.CreationTime.dwLowDateTime;
 		ar >> d.FileTime.dwHighDateTime;
 		ar >> d.FileTime.dwLowDateTime;
 		ar >> d.Size;
-		ar >> d.DomainID;
-		ar >> d.AttributeID;
-		ar >> d.AttributeValue;
 
 		return new CFolderItem(d);
-		break;
 	}
 
 	return NULL;
@@ -167,7 +175,7 @@ BOOL CFolderItem::GetChildren(CGetChildrenEventArgs& e)
 	case LevelStores:
 		f = LFAllocFilter();
 		f->Mode = LFFilterModeStoreHome;
-		//f->HideEmptyDomains = true;
+		f->HideEmptyDomains = true;
 		strcpy_s(f->StoreID, LFKeySize, (LPCTSTR)data.StoreID);
 		res = LFQuery(f);
 		break;
@@ -188,6 +196,9 @@ BOOL CFolderItem::GetChildren(CGetChildrenEventArgs& e)
 			d.StoreID = data.StoreID;
 			d.DomainID = data.DomainID;
 			d.Icon = IDI_FLD_All;
+			d.Compare = LFFilterCompareIgnore;
+			ZeroMemory(&d.Value, sizeof(LFVariantData));
+
 			e.children->AddTail(new CFolderItem(d));
 
 			for (UINT a=0; a<LFAttributeCount; a++)
@@ -203,6 +214,7 @@ BOOL CFolderItem::GetChildren(CGetChildrenEventArgs& e)
 					d.StoreID = data.StoreID;
 					d.DomainID = data.DomainID;
 					d.Icon = theApp.m_Attributes[a]->IconID;
+					d.Compare = LFFilterCompareSubfolder;
 
 					CString tmpStr = d.DisplayName;
 					if ((sortStr[0]=='L') && (tmpStr[0]>='A') && (tmpStr[0]<='Z') && (tmpStr[1]>'Z'))
@@ -213,22 +225,45 @@ BOOL CFolderItem::GetChildren(CGetChildrenEventArgs& e)
 				}
 		}
 		break;
+	case LevelAttribute:
+		f = LFAllocFilter();
+		f->Mode = LFFilterModeDirectoryTree;
+		strcpy_s(f->StoreID, LFKeySize, (LPCTSTR)data.StoreID);
+		f->DomainID = (unsigned char)data.DomainID;
+		res = LFQuery(f);
+		LFSortSearchResult(res, atoi(data.FileID), false);
+		LFGroupSearchResult(res, f, atoi(data.FileID), data.Icon, true);
+		break;
+	case LevelAttrValue:
+		f = LFAllocFilter();
+		f->Mode = LFFilterModeDirectoryTree;
+		strcpy_s(f->StoreID, LFKeySize, (LPCTSTR)data.StoreID);
+		f->DomainID = (unsigned char)data.DomainID;
+		f->ConditionList = new LFFilterCondition;
+		f->ConditionList->Compare = data.Compare;
+		f->ConditionList->AttrData = data.Value;
+		f->ConditionList->Next = NULL;
+		res = LFQuery(f);
+		break;
 	}
 
 	if (res)
 	{
-		if (res->m_LastError!=LFOk)
+		/*if (res->m_LastError!=LFOk)
 		{
 			LFFreeSearchResult(res);
 			LFFreeFilter(f);
 			return FALSE;
-		}
+		}*/
+
+		BOOL AddNullFolder = FALSE;
 
 		for (UINT a=0; a<res->m_ItemCount; a++)
 		{
 			LFItemDescriptor* i = res->m_Items[a];
 
-			if ((((i->Type & LFTypeMask)==LFTypeStore) || ((i->Type & LFTypeMask)==LFTypeVirtual)) && (e.childrenType & NSECT_Folders))
+			if ((((i->Type & LFTypeMask)==LFTypeStore) || (((i->Type & LFTypeMask)==LFTypeVirtual) &&
+				(i->CategoryID!=LFCategoryHousekeeping))) && (e.childrenType & NSECT_Folders))
 			{
 				FolderSerialization d;
 				d.Level = data.Level+1;
@@ -248,26 +283,32 @@ BOOL CFolderItem::GetChildren(CGetChildrenEventArgs& e)
 				{
 				case LevelStores:
 					d.DomainID = atoi(d.FileID);
-
-					switch (d.DomainID)
+					if (d.DomainID==LFDomainFavorites)
 					{
-					case LFDomainTrash:
-					case LFDomainUnknown:
-						d.Level = LevelAttrValue;
-						break;
-					case LFDomainFavorites:
 						d.Level = LevelAttribute;
-						d.AttributeID = LFAttrRating;
+						d.FileID.Format(_T("%d"), LFAttrRating);
 					}
 					break;
+				case LevelAttribute:
+					if (i->NextFilter->ConditionList)
+					{
+						d.Compare = i->NextFilter->ConditionList->Compare;
+						d.Value = i->NextFilter->ConditionList->AttrData;
+					}
 				}
 
 				e.children->AddTail(new CFolderItem(d));
 			}
 
 			if (((i->Type & LFTypeMask)==LFTypeFile) && (e.childrenType & NSECT_NonFolders))
-			{
-			}
+				/*if (data.Level<=LevelAttribute)
+				{
+					AddNullFolder = TRUE;
+				}
+				else*/
+				{
+					e.children->AddTail(new CFileItem(i->StoreID, &i->CoreAttributes));
+				}
 		}
 		LFFreeSearchResult(res);
 	}
@@ -449,7 +490,7 @@ BOOL CFolderItem::GetColumn(CShellColumn& column, int index)
 		limit = LFAttrComment;
 		break;
 	case LevelAttrValue:
-		limit = LFAttributeCount;
+		limit = LFLastCoreAttribute;
 		break;
 	default:
 		limit = LFAttrHint;

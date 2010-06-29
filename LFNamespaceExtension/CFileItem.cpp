@@ -7,72 +7,59 @@
 #include "helper.h"
 
 
-//////////////////////////////////////////////////////////////////////
-// Construction/Destruction
-//////////////////////////////////////////////////////////////////////
 IMPLEMENT_DYNCREATE(CFileItem, CNSEItem)
+
+
+// Class CFileItem
+//
 
 CFileItem::CFileItem()
 {
 }
 
-CFileItem::CFileItem(LPCTSTR s)
+CFileItem::CFileItem(LPCTSTR _StoreID, LFCoreAttributes* _Attrs)
 {
-	fullPath = s;
-	name = PathFindFileName(s);
-}
-
-CFileItem::CFileItem(LPCTSTR parentFolder,LPCTSTR name)
-{
-	fullPath = PathCombineNSE(parentFolder, name);
-	this->name = name;	
+	StoreID = _StoreID;
+	Attrs = *_Attrs;
 }
 
 CFileItem::~CFileItem()
 {
-	
 }
 
-// The GetDisplayName functionis called to retrieve the display name of the item.
 void CFileItem::GetDisplayName(CString& displayName)
 {
-	displayName=name;
+	displayName = Attrs.FileName;
 }
 
-// The GetDisplayNameEx function is called to retrieve different types of 
-// display names for the item. 
-void CFileItem::GetDisplayNameEx(CString& displayName,DisplayNameFlags flags)
+void CFileItem::GetDisplayNameEx(CString& displayName, DisplayNameFlags flags)
 {
-	// If a fully qualified parsing name is requested, return the full path
 	if ((flags & NSEDNF_InFolder)==0)
-		if ((flags & NSEDNF_ForParsing) != 0)
+		if ((flags & NSEDNF_ForParsing)!=0)
 		{
-			displayName = fullPath;
+			displayName = StoreID;
+			displayName += _T("\\");
+			displayName += Attrs.FileID;
 			return;
 		}
-	
-	// For all other types, call the default implementation which simply calls the 
-	// GetDisplayName function
-	CNSEItem::GetDisplayNameEx(displayName,flags);
-	
+
+	CNSEItem::GetDisplayNameEx(displayName, flags);
 }
 
-
-// The Serialize function is called to persist immutable data about the item. 
-// A typical implementation should first store the type of this item and 
-// then information specific to this type of item. 
 void CFileItem::Serialize(CArchive& ar)
 {
-	// Write version number of the serialized data. This is necessary as Windows may cache 
-	// old data and present it back to us resulting in mismatch.
-	ar << (BYTE)1; // Version=1, change if data format changes
-
-	// Store type = 0 (file)
+	ar << (BYTE)CLFNamespaceExtensionVersion;
 	ar << (BYTE)0;
-
-	// Store name of the file
-	ar << name;
+	ar << StoreID;
+	ar << (UINT)sizeof(LFCoreAttributes);
+	ar.Write(&Attrs, sizeof(LFCoreAttributes));
 }
+
+
+
+
+
+
 
 // The CompareTo function is called to perform a comparison of the item with the
 // specified item with respect to the specified column. Return a number less 
@@ -81,9 +68,11 @@ void CFileItem::Serialize(CArchive& ar)
 int CFileItem::CompareTo(CNSEItem* otherItem, CShellColumn& column)
 {
 	// Folders should come before files
-	if (IS(otherItem,CFolderItem))
+	if (IS(otherItem, CFolderItem))
 		return 1;
-	
+
+	return 1;
+	/*
 	CFileItem* file2 = AS(otherItem,CFileItem);
 	
 	if (column.index == 0) // name
@@ -125,13 +114,13 @@ int CFileItem::CompareTo(CNSEItem* otherItem, CShellColumn& column)
 	}
 	
 	return 0;
-
+*/
 }
 
 LPSTREAM CFileItem::GetStream()
 {
 	LPSTREAM ret = NULL;
-	SHCreateStreamOnFile(fullPath,STGM_READ,&ret);
+	//SHCreateStreamOnFile(fullPath,STGM_READ,&ret);
 	return ret;
 }
 
@@ -140,7 +129,7 @@ LPSTREAM CFileItem::GetStream()
 BOOL CFileItem::GetFileDescriptor(FILEDESCRIPTOR* fd)
 {
 	ZeroMemory(fd,sizeof(FILEDESCRIPTOR));
-	
+/*	
 	WIN32_FILE_ATTRIBUTE_DATA fad;
 	GetFileAttributesEx(fullPath,GetFileExInfoStandard,&fad); 
 	
@@ -152,7 +141,7 @@ BOOL CFileItem::GetFileDescriptor(FILEDESCRIPTOR* fd)
 	fd->nFileSizeLow = fad.nFileSizeLow;
 	fd->nFileSizeHigh = fad.nFileSizeHigh; 
 	fd->dwFlags = FD_ACCESSTIME | FD_ATTRIBUTES | FD_CREATETIME | FD_FILESIZE | FD_WRITESTIME | FD_PROGRESSUI;
-	 
+	 */
 	return TRUE; 
 }
 
@@ -194,17 +183,11 @@ int CFileItem::GetPreviewDetailsColumnIndices(UINT* indices)
 // Called to get the infotip for the item
 void CFileItem::GetInfoTip(CString& infotip)
 {
-	infotip = fullPath;
+	infotip = _T("Infotip");
 }
 
 void CFileItem::GetOverlayIcon(CGetOverlayIconEventArgs& e)
 {
-	// Use shortcut overlay icon the file is a link
-	if (fullPath.Right(4)==_T(".lnk"))
-	{
-		e.overlayIconType = NSEOIT_Shortcut;
-		return;
-	}
 }
 
 // The IsValid is called to verify whether the item is valid or not. Typically, 
@@ -212,7 +195,8 @@ void CFileItem::GetOverlayIcon(CGetOverlayIconEventArgs& e)
 // item represents and return true or false based on the status of the data.
 BOOL CFileItem::IsValid()
 {
-	return FileExists(fullPath);	
+	//return FileExists(fullPath);
+	return TRUE;
 }
 
 
@@ -261,7 +245,9 @@ BOOL CFileItem::GetColumnValue(CString& value,CShellColumn& column)
 // item in Details/Report mode for the specified column.
 BOOL CFileItem::GetColumnValueEx(VARIANT* value,CShellColumn& column)
 {
-	WIN32_FILE_ATTRIBUTE_DATA fd;
+	CString dummy(_T("ABC"));
+	CUtils::SetVariantCString(value, dummy);
+/*	WIN32_FILE_ATTRIBUTE_DATA fd;
 	// Only the 'Name' column displays data for keys.
 	switch (column.index)
 	{
@@ -300,7 +286,7 @@ BOOL CFileItem::GetColumnValueEx(VARIANT* value,CShellColumn& column)
 	default:
 		return FALSE;
 
-	}
+	}*/
 
 	return TRUE;
 }
@@ -310,7 +296,7 @@ BOOL CFileItem::GetColumnValueEx(VARIANT* value,CShellColumn& column)
 // This function should return true of the renaming was successfully applied.
 BOOL CFileItem::OnChangeName(CChangeNameEventArgs& e)
 {
-	BOOL ret = FALSE;
+	/*BOOL ret = FALSE;
 	
 	try
 	{
@@ -328,23 +314,11 @@ BOOL CFileItem::OnChangeName(CChangeNameEventArgs& e)
 	{
 		ret = FALSE; // failure
 	}
-	return ret;
+	return ret;*/
 
+	return FALSE;
 }
 
-// Called to get the thumbnail for the item
-HBITMAP CFileItem::GetThumbnail(CGetThumbnailEventArgs& e)
-{
-	HBITMAP ret =NULL;
-	if(fullPath.Right(4)==_T(".bmp"))
-	{
-		ret = (HBITMAP)LoadImage(NULL,fullPath,IMAGE_BITMAP,e.sizeThumbnail.cx,e.sizeThumbnail.cy,LR_LOADFROMFILE);
-	}
-	return ret; 
-}
-
-// The GetIconFileAndIndex function is called to retrieve information about the icon 
-// for the item.
 void CFileItem::GetIconFileAndIndex(CGetIconFileAndIndexEventArgs& e)
 {
 	e.iconExtractMode = NSEIEM_IconFileAndIndex;
