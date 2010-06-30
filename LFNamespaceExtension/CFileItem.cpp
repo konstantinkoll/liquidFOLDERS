@@ -27,6 +27,20 @@ CFileItem::~CFileItem()
 {
 }
 
+NSEItemAttributes CFileItem::GetAttributes(NSEItemAttributes /*requested*/)
+{
+	return (NSEItemAttributes)(NSEIA_FileSystem | NSEIA_CanRename | NSEIA_CanDelete | NSEIA_CanMove | NSEIA_CanLink | NSEIA_CanCopy);
+}
+
+void CFileItem::Serialize(CArchive& ar)
+{
+	ar << (BYTE)CLFNamespaceExtensionVersion;
+	ar << (BYTE)0;
+	ar << StoreID;
+	ar << (UINT)sizeof(LFCoreAttributes);
+	ar.Write(&Attrs, sizeof(LFCoreAttributes));
+}
+
 void CFileItem::GetDisplayName(CString& displayName)
 {
 	displayName = Attrs.FileName;
@@ -46,14 +60,13 @@ void CFileItem::GetDisplayNameEx(CString& displayName, DisplayNameFlags flags)
 	CNSEItem::GetDisplayNameEx(displayName, flags);
 }
 
-void CFileItem::Serialize(CArchive& ar)
+void CFileItem::GetIconFileAndIndex(CGetIconFileAndIndexEventArgs& e)
 {
-	ar << (BYTE)CLFNamespaceExtensionVersion;
-	ar << (BYTE)0;
-	ar << StoreID;
-	ar << (UINT)sizeof(LFCoreAttributes);
-	ar.Write(&Attrs, sizeof(LFCoreAttributes));
+	e.iconExtractMode = NSEIEM_IconFileAndIndex;
+	e.iconFile = theApp.m_IconFile;
+	e.iconIndex = IDI_FILE_Generic-1;
 }
+
 
 
 
@@ -128,7 +141,6 @@ LPSTREAM CFileItem::GetStream()
 // about the item.
 BOOL CFileItem::GetFileDescriptor(FILEDESCRIPTOR* fd)
 {
-	ZeroMemory(fd,sizeof(FILEDESCRIPTOR));
 /*	
 	WIN32_FILE_ATTRIBUTE_DATA fad;
 	GetFileAttributesEx(fullPath,GetFileExInfoStandard,&fad); 
@@ -145,21 +157,6 @@ BOOL CFileItem::GetFileDescriptor(FILEDESCRIPTOR* fd)
 	return TRUE; 
 }
 
-
-// The GetAttributes function is called to retrieve the attributes of the item 
-// in the namespace extension. Folder items should include 
-// NSEItemAttributes.Folder in the return value. Other attributes should be 
-// returned if the item supports the corresponding functionality. 
-NSEItemAttributes CFileItem::GetAttributes(NSEItemAttributes /*requested*/)
-{
-	int ret = NSEIA_CanRename
-		| NSEIA_CanDelete
-		| NSEIA_CanMove
-		| NSEIA_CanLink
-		| NSEIA_FileSystem
-		| NSEIA_CanCopy;
-	return (NSEItemAttributes)ret;
-}
 
 int CFileItem::GetTileViewColumnIndices(UINT* indices)
 {
@@ -184,10 +181,6 @@ int CFileItem::GetPreviewDetailsColumnIndices(UINT* indices)
 void CFileItem::GetInfoTip(CString& infotip)
 {
 	infotip = _T("Infotip");
-}
-
-void CFileItem::GetOverlayIcon(CGetOverlayIconEventArgs& e)
-{
 }
 
 // The IsValid is called to verify whether the item is valid or not. Typically, 
@@ -317,11 +310,4 @@ BOOL CFileItem::OnChangeName(CChangeNameEventArgs& e)
 	return ret;*/
 
 	return FALSE;
-}
-
-void CFileItem::GetIconFileAndIndex(CGetIconFileAndIndexEventArgs& e)
-{
-	e.iconExtractMode = NSEIEM_IconFileAndIndex;
-	e.iconFile = theApp.m_IconFile;
-	e.iconIndex = IDI_FILE_Generic-1;
 }

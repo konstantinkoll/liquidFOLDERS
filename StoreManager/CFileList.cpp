@@ -124,7 +124,7 @@ void CFileList::CreateColumns()
 		AddColumn(LFAttrFileName);
 		AddColumn(LFAttrComment);
 		AddColumn(LFAttrFileTime);
-		AddColumn(LFAttrHint);
+		AddColumn(LFAttrDescription);
 		AddColumn(LFAttrFileSize);
 		break;
 	default:

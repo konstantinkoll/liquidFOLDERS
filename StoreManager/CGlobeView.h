@@ -87,7 +87,7 @@ protected:
 	void DrawScene(BOOL InternalCall=FALSE);
 	void CalcAndDrawPoints();
 	void CalcAndDrawLabel();
-	void DrawLabel(Location* loc, UINT cCaption, wchar_t* caption, wchar_t* subcaption, wchar_t* coordinates, wchar_t* hint, BOOL focused);
+	void DrawLabel(Location* loc, UINT cCaption, wchar_t* caption, wchar_t* subcaption, wchar_t* coordinates, wchar_t* description, BOOL focused);
 
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();

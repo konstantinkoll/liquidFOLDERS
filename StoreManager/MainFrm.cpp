@@ -1290,7 +1290,7 @@ void CMainFrame::OnUpdateSelection()
 			}
 			else
 			{
-				tmpStr = CookedFiles->m_Items[i]->Hint;
+				tmpStr = CookedFiles->m_Items[i]->Description;
 			}
 			m_sbHint->SetText(tmpStr);
 		}

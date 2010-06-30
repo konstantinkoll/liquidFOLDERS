@@ -91,7 +91,7 @@ void CListView::SetSearchResult(LFSearchResult* _result)
 			for (UINT a=0; a<_result->m_ItemCount; a++)
 			{
 				lvi.iItem = a;
-				lvi.cColumns = (_result->m_Context==LFContextStoreHome) ? _result->m_Items[a]->Hint[0]!='\0' ? 4 : 2 : 3;
+				lvi.cColumns = (_result->m_Context==LFContextStoreHome) ? _result->m_Items[a]->Description[0]!='\0' ? 4 : 2 : 3;
 				lvi.pszText = (LPWSTR)_result->m_Items[a]->CoreAttributes.FileName;
 				lvi.iImage = _result->m_Items[a]->IconID-1;
 				lvi.iGroupId = _result->m_Items[a]->CategoryID;

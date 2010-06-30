@@ -162,7 +162,7 @@ LFCore_API LFAttributeDescriptor* LFGetAttributeInfo(unsigned int ID)
 	case LFAttrComment:
 		a->RecommendedWidth = 350;
 		break;
-	case LFAttrHint:
+	case LFAttrDescription:
 		a->RecommendedWidth = 100;
 		break;
 	default:
@@ -192,7 +192,7 @@ LFCore_API LFAttributeDescriptor* LFGetAttributeInfo(unsigned int ID)
 	// ReadOnly
 	switch (ID)
 	{
-	case LFAttrHint:
+	case LFAttrDescription:
 	case LFAttrCreationTime:
 	case LFAttrFileTime:
 	case LFAttrDeleteTime:
@@ -223,6 +223,11 @@ LFCore_API LFAttributeDescriptor* LFGetAttributeInfo(unsigned int ID)
 
 	// Shell property
 	a->ShPropertyMapping = AttrProperties[ID];
+	if (!a->ShPropertyMapping.ID)
+	{
+		a->ShPropertyMapping.Schema = PropertyLF;
+		a->ShPropertyMapping.ID = ID;
+	}
 
 	// Icon
 
@@ -288,7 +293,7 @@ LFCore_API LFContextDescriptor* LFGetContextInfo(unsigned int ID)
 	(*c->AllowedAttributes) += LFAttrFileName;
 	(*c->AllowedAttributes) += LFAttrStoreID;
 	(*c->AllowedAttributes) += LFAttrFileID;
-	(*c->AllowedAttributes) += LFAttrHint;
+	(*c->AllowedAttributes) += LFAttrDescription;
 	(*c->AllowedAttributes) += LFAttrComment;
 
 	switch (ID)
@@ -392,7 +397,7 @@ LFCore_API LFDomainDescriptor* LFGetDomainInfo(unsigned int ID)
 	wcscpy_s(d->DomainName, 64, tmpStr);
 
 	*(d->ImportantAttributes) += LFAttrFileName;
-	*(d->ImportantAttributes) += LFAttrHint;
+	*(d->ImportantAttributes) += LFAttrDescription;
 	*(d->ImportantAttributes) += LFAttrCreationTime;
 	*(d->ImportantAttributes) += LFAttrFileTime;
 	*(d->ImportantAttributes) += LFAttrRoll;
@@ -521,7 +526,7 @@ LFCore_API LFFilter* LFAllocFilter(LFFilter* f)
 		LFFilterCondition* c = f->ConditionList;
 		while (c)
 		{
-			LFFilterCondition* item = new LFFilterCondition;
+			LFFilterCondition* item = LFAllocFilterCondition();;
 			*item = *c;
 			item->Next = filter->ConditionList;
 			filter->ConditionList = item;
@@ -547,11 +552,25 @@ LFCore_API void LFFreeFilter(LFFilter* f)
 		{
 			LFFilterCondition* victim = c;
 			c = c->Next;
-			delete victim;
+			LFFreeFilterCondition(victim);
 		}
 
 		delete f;
 	}
+}
+
+LFCore_API LFFilterCondition* LFAllocFilterCondition()
+{
+	LFFilterCondition* c = new LFFilterCondition();
+	ZeroMemory(c, sizeof(LFFilterCondition));
+
+	return c;
+}
+
+LFCore_API void LFFreeFilterCondition(LFFilterCondition* c)
+{
+	if (c)
+		delete c;
 }
 
 

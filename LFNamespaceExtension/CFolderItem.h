@@ -26,16 +26,17 @@ struct FolderSerialization
 	UINT Type;
 	UINT CategoryID;
 	CString DisplayName;
-	CString Hint;
+	CString Description;
 	CString Comment;
-	CString FileID;
 	CString StoreID;
+	CString FileID;
 	UINT DomainID;
 	UCHAR Compare;
 	LFVariantData Value;
 	FILETIME CreationTime;
 	FILETIME FileTime;
 	INT64 Size;
+	CString Format;
 };
 
 class CFolderItem : public CNSEFolder

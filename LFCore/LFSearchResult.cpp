@@ -133,7 +133,7 @@ bool LFSearchResult::AddStoreDescriptor(LFStoreDescriptor* s, LFFilter* f)
 		d->Type |= LFTypeDefaultStore;
 		wchar_t ds[256];
 		LoadString(LFCoreModuleHandle, IDS_DefaultStore, ds, 256);
-		SetAttribute(d, LFAttrHint, ds);
+		SetAttribute(d, LFAttrDescription, ds);
 	}
 	else
 	{
@@ -143,9 +143,9 @@ bool LFSearchResult::AddStoreDescriptor(LFStoreDescriptor* s, LFFilter* f)
 			{
 				wchar_t ls[256];
 				LoadString(LFCoreModuleHandle, IsMounted ? IDS_SeenOn :IDS_LastSeen, ls, 256);
-				wchar_t hint[256];
-				wsprintf(hint, ls, s->LastSeen);
-				SetAttribute(d, LFAttrHint, hint);
+				wchar_t descr[256];
+				wsprintf(descr, ls, s->LastSeen);
+				SetAttribute(d, LFAttrDescription, descr);
 			}
 	}
 
@@ -211,7 +211,7 @@ void LFSearchResult::AddDrives(LFFilter* filter)
 			char key[] = " :";
 			key[0] = cDrive;
 			SetAttribute(d, LFAttrFileID, key);
-			SetAttribute(d, LFAttrHint, sfi.szTypeName);
+			SetAttribute(d, LFAttrDescription, sfi.szTypeName);
 
 			if (!AddItemDescriptor(d))
 				LFFreeItemDescriptor(d);
@@ -515,7 +515,7 @@ unsigned int LFSearchResult::Aggregate(unsigned int write, unsigned int read1, u
 		LoadString(LFCoreModuleHandle, (read2==read1+1) ? IDS_HintSingular : IDS_HintPlural, Mask, 256);
 		wchar_t Hint[256];
 		swprintf_s(Hint, 256, Mask, read2-read1);
-		SetAttribute(folder, LFAttrHint, &Hint);
+		SetAttribute(folder, LFAttrDescription, &Hint);
 
 		__int64 size = 0;
 		for (unsigned int a=read1; a<read2; a++)

@@ -70,7 +70,7 @@ void CCategorizer::CustomizeFolder(LFItemDescriptor* folder, LFItemDescriptor* i
 
 LFFilterCondition* CCategorizer::GetCondition(LFItemDescriptor* i)
 {
-	LFFilterCondition* c = new LFFilterCondition;
+	LFFilterCondition* c = LFAllocFilterCondition();
 	c->Compare = LFFilterCompareSubfolder;
 
 	c->AttrData.Attr = attr;
@@ -121,7 +121,7 @@ void DateCategorizer::CustomizeFolder(LFItemDescriptor* folder, LFItemDescriptor
 
 LFFilterCondition* DateCategorizer::GetCondition(LFItemDescriptor* i)
 {
-	LFFilterCondition* c = new LFFilterCondition;
+	LFFilterCondition* c = LFAllocFilterCondition();
 	c->Compare = LFFilterCompareSubfolder;
 
 	c->AttrData.Attr = attr;
@@ -302,7 +302,7 @@ void NameCategorizer::CustomizeFolder(LFItemDescriptor* folder, LFItemDescriptor
 
 LFFilterCondition* NameCategorizer::GetCondition(LFItemDescriptor* i)
 {
-	LFFilterCondition* c = new LFFilterCondition;
+	LFFilterCondition* c = LFAllocFilterCondition();
 	c->Compare = LFFilterCompareSubfolder;
 
 	c->AttrData.Attr = attr;

@@ -118,32 +118,32 @@ void CInspectorWnd::UpdateAdd(LFItemDescriptor* i, LFSearchResult* raw)
 	{
 	case LFTypeDrive:
 		AddValue(i, LFAttrFileName, FALSE);
-		AddValue(i, LFAttrHint);
+		AddValue(i, LFAttrDescription);
 		AddValueVirtual(AttrDriveLetter, i->CoreAttributes.FileID);
 		break;
 	case LFTypeVirtual:
 		AddValue(i, LFAttrFileName, FALSE);
 		AddValue(i, LFAttrFileID);
 		AddValue(i, LFAttrStoreID);
-		AddValue(i, LFAttrHint);
+		AddValue(i, LFAttrDescription);
 		if ((i->FirstAggregate!=-1) && (i->LastAggregate!=-1))
 		{
 			for (int a=i->FirstAggregate; a<=i->LastAggregate; a++)
 				for (UINT b=0; b<LFAttributeCount; b++)
-					if ((raw->m_Items[a]->AttributeValues[b]) && (b!=LFAttrFileName) && (b!=LFAttrHint) && (b!=LFAttrDeleteTime))
+					if ((raw->m_Items[a]->AttributeValues[b]) && (b!=LFAttrFileName) && (b!=LFAttrDescription) && (b!=LFAttrDeleteTime))
 						AddValue(raw->m_Items[a], b);
 		}
 		else
 		{
 			AddValue(i, LFAttrComment, FALSE);
-			for (UINT a=LFAttrHint+1; a<LFAttributeCount; a++)
+			for (UINT a=LFAttrDescription+1; a<LFAttributeCount; a++)
 				if (i->AttributeValues[a])
 					AddValue(i, a, FALSE);
 		}
 		break;
 	case LFTypeFile:
 		for (UINT a=0; a<LFAttributeCount; a++)
-			if ((i->AttributeValues[a]) && (a!=LFAttrHint) && (a!=LFAttrDeleteTime))
+			if ((i->AttributeValues[a]) && (a!=LFAttrDescription) && (a!=LFAttrDeleteTime))
 				AddValue(i, a);
 		if (i->CoreAttributes.Flags & LFFlagTrash)
 			AddValue(i, LFAttrDeleteTime);

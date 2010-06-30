@@ -1158,10 +1158,10 @@ void CGlobeView::CalcAndDrawLabel()
 				UINT cCaption = (UINT)wcslen(caption);
 				wchar_t* subcaption = NULL;
 				wchar_t* coordinates = (m_ViewParameters.GlobeShowGPS ? m_Locations[a].coordstring : NULL);
-				wchar_t* hint = (m_ViewParameters.GlobeShowHints ? result->m_Items[a]->Hint : NULL);
-				if (hint)
-					if (*hint==L'\0')
-						hint = NULL;
+				wchar_t* description = (m_ViewParameters.GlobeShowHints ? result->m_Items[a]->Description : NULL);
+				if (description)
+					if (*description==L'\0')
+						description = NULL;
 
 				// Beschriftung aufbereiten
 				switch (m_ViewParameters.SortBy)
@@ -1180,13 +1180,13 @@ void CGlobeView::CalcAndDrawLabel()
 					break;
 				}
 
-				DrawLabel(&m_Locations[a], cCaption, caption, subcaption, coordinates, hint, FocusItem==(int)a);
+				DrawLabel(&m_Locations[a], cCaption, caption, subcaption, coordinates, description, FocusItem==(int)a);
 			}
 
 	glDisable2D();
 }
 
-void CGlobeView::DrawLabel(Location* loc, UINT cCaption, wchar_t* caption, wchar_t* subcaption, wchar_t* coordinates, wchar_t* hint, BOOL focused)
+void CGlobeView::DrawLabel(Location* loc, UINT cCaption, wchar_t* caption, wchar_t* subcaption, wchar_t* coordinates, wchar_t* description, BOOL focused)
 {
 	ASSERT(ARROWSIZE>3);
 
@@ -1212,14 +1212,14 @@ void CGlobeView::DrawLabel(Location* loc, UINT cCaption, wchar_t* caption, wchar
 	UINT width = LargeFont->GetTextWidth(caption, cCaption);
 	width = max(width, SmallFont->GetTextWidth(subcaption));
 	width = max(width, SmallFont->GetTextWidth(coordinates));
-	width = max(width, SmallFont->GetTextWidth(hint));
+	width = max(width, SmallFont->GetTextWidth(description));
 	width += 8;
 
 	// Höhe
 	UINT height = LargeFont->GetTextHeight(caption);
 	height += SmallFont->GetTextHeight(subcaption);
 	height += SmallFont->GetTextHeight(coordinates);
-	height += SmallFont->GetTextHeight(hint);
+	height += SmallFont->GetTextHeight(description);
 	height += 3;
 
 	// Position
@@ -1317,6 +1317,6 @@ void CGlobeView::DrawLabel(Location* loc, UINT cCaption, wchar_t* caption, wchar
 		glColor4f(TextColor[0], TextColor[1], TextColor[2], loc->alpha/2);
 	if (coordinates)
 		y += SmallFont->Render(coordinates, x, y);
-	if (hint)
-		y += SmallFont->Render(hint, x, y);
+	if (description)
+		y += SmallFont->Render(description, x, y);
 }

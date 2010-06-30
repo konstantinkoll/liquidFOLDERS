@@ -148,6 +148,12 @@ LFCore_API LFFilter* LFAllocFilter(LFFilter* f=NULL);
 // Existierenden LFFilter freigeben
 LFCore_API void LFFreeFilter(LFFilter* f);
 
+// Neue LFFilterCondition erzeugen
+LFCore_API LFFilterCondition* LFAllocFilterCondition();
+
+// Existierende LFFilterCondition freigeben
+LFCore_API void LFFreeFilterCondition(LFFilterCondition* c);
+
 
 
 // Neues Suchergebnis mit Kontext ctx erzeugen

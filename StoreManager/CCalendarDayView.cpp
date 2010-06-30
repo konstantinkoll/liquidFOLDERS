@@ -55,7 +55,7 @@ void CCalendarDayView::SetSearchResult(LFSearchResult* _result)
 
 	if (_result)
 	{
-		UINT puColumns[] = { LFAttrFileTime, LFAttrFileSize, LFAttrHint };
+		UINT puColumns[] = { LFAttrFileTime, LFAttrFileSize, LFAttrDescription };
 		LVITEM lvi;
 		ZeroMemory(&lvi, sizeof(lvi));
 		lvi.mask = LVIF_TEXT | LVIF_IMAGE | /*LVIF_GROUPID |*/ LVIF_COLUMNS | LVIF_STATE;

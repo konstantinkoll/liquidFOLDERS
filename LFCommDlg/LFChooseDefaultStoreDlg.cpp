@@ -73,7 +73,7 @@ BOOL LFChooseDefaultStoreDlg::OnInitDialog()
 	AddColumn(&m_List, LFAttrComment, 1);
 	AddColumn(&m_List, LFAttrCreationTime, 2);
 	AddColumn(&m_List, LFAttrStoreID, 3);
-	AddColumn(&m_List, LFAttrHint, 4);
+	AddColumn(&m_List, LFAttrDescription, 4);
 
 	SendMessage(MessageIDs->StoresChanged, LFMSGF_IntStores);
 	LFErrorBox(result->m_LastError);
@@ -149,7 +149,7 @@ void LFChooseDefaultStoreDlg::OnGetDispInfo(NMHDR* pNMHDR, LRESULT* /*pResult*/)
 
 	if (pItem->mask & LVIF_TEXT)
 	{
-		const UINT attrs[5] = { LFAttrFileName, LFAttrComment, LFAttrCreationTime, LFAttrStoreID, LFAttrHint };
+		const UINT attrs[5] = { LFAttrFileName, LFAttrComment, LFAttrCreationTime, LFAttrStoreID, LFAttrDescription };
 		LFAttributeToString(result->m_Items[idx], attrs[pItem->iSubItem], m_StrBuffer, 256);
 		pItem->pszText = (LPWSTR)m_StrBuffer;
 	}

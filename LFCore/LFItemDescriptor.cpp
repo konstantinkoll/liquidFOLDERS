@@ -52,7 +52,7 @@ unsigned char AttrTypes[LFAttributeCount] = {
 	LFTypeAnsiString,			// LFAttrStoreID
 	LFTypeAnsiString,			// LFAttrFileID
 	LFTypeUnicodeString,		// LFAttrComment
-	LFTypeUnicodeString,		// LFAttrHint
+	LFTypeUnicodeString,		// LFAttrDescription
 	LFTypeTime,					// LFAttrCreationTime
 	LFTypeTime,					// LFAttrFileTime
 	LFTypeTime,					// LFAttrDeleteTime
@@ -212,7 +212,7 @@ LFCore_API LFItemDescriptor* LFAllocItemDescriptor(LFItemDescriptor* i)
 
 	// Zeiger auf statische Attributwerte initalisieren
 	d->AttributeValues[LFAttrStoreID] = &d->StoreID;
-	d->AttributeValues[LFAttrHint] = &d->Hint[0];
+	d->AttributeValues[LFAttrDescription] = &d->Description[0];
 
 	for (unsigned int a=0; a<=LFLastCoreAttribute; a++)
 		if (CoreOffsets[a]!=-1)
@@ -224,7 +224,7 @@ LFCore_API LFItemDescriptor* LFAllocItemDescriptor(LFItemDescriptor* i)
 		d->CoreAttributes = i->CoreAttributes;
 		d->DeleteFlag = i->DeleteFlag;
 		strcpy_s(d->StoreID, LFKeySize, i->StoreID);
-		wcscpy_s(d->Hint, 256, i->Hint);
+		wcscpy_s(d->Description, 256, i->Description);
 		d->IconID = i->IconID;
 		d->Type = i->Type;
 
@@ -256,7 +256,7 @@ LFCore_API LFItemDescriptor* LFAllocItemDescriptor(LFItemDescriptor* i)
 	return d;
 }
 
-LFItemDescriptor* AllocFolderDescriptor(const wchar_t* Name, const wchar_t* Comment, const wchar_t* Hint, const char* StoreID, const char* FileID, __int64* Size, unsigned int IconID, unsigned int CategoryID, LFFilter* Filter)
+LFItemDescriptor* AllocFolderDescriptor(const wchar_t* Name, const wchar_t* Comment, const wchar_t* Description, const char* StoreID, const char* FileID, __int64* Size, unsigned int IconID, unsigned int CategoryID, LFFilter* Filter)
 {
 	LFItemDescriptor* d = LFAllocItemDescriptor();
 
@@ -273,8 +273,8 @@ LFItemDescriptor* AllocFolderDescriptor(const wchar_t* Name, const wchar_t* Comm
 		SetAttribute(d, LFAttrFileID, FileID);
 	if (Comment)
 		SetAttribute(d, LFAttrComment, Comment);
-	if (Hint)
-		SetAttribute(d, LFAttrHint, Hint);
+	if (Description)
+		SetAttribute(d, LFAttrDescription, Description);
 	if (Size)
 		SetAttribute(d, LFAttrFileSize, Size);
 

@@ -179,7 +179,7 @@ struct LFContextDescriptor
 #define LFAttrStoreID                   1
 #define LFAttrFileID                    2
 #define LFAttrComment                   3
-#define LFAttrHint                      4
+#define LFAttrDescription               4
 #define LFAttrCreationTime              5
 #define LFAttrFileTime                  6
 #define LFAttrDeleteTime                7
@@ -418,7 +418,7 @@ struct LFFilterResult
 struct LFFilterCondition
 {
 	LFFilterCondition* Next;
-	LFVariantData AttrData;					// Never use for LFAttrHint or LFAttrStoreID
+	LFVariantData AttrData;					// Never use for LFAttrDesciption or LFAttrStoreID
 	unsigned char Compare;
 };
 
@@ -494,7 +494,7 @@ struct LFItemDescriptor
 
 	LFCoreAttributes CoreAttributes;
 	char StoreID[LFKeySize];
-	wchar_t Hint[256];
+	wchar_t Description[256];
 	void* AttributeValues[LFAttributeCount];
 
 	int Position;

@@ -10,6 +10,11 @@ static const GUID PropertyQuery =
 	{ 0x49691c90, 0x7e17, 0x101a, { 0xa9, 0x1c, 0x08, 0x00, 0x2b, 0x2e, 0xcd, 0xa9 } };
 static const GUID PropertySummary =
 	{ 0xf29f85e0, 0x4ff9, 0x1068, { 0xab, 0x91, 0x08, 0x00, 0x2b, 0x27, 0xb3, 0xd9 } };
+static const GUID PropertyMedia =
+	{ 0x64440492, 0x4c8b, 0x11d1, { 0x8b, 0x70, 0x08, 0x00, 0x36, 0xb1, 0x1a, 0x03} };
+static const GUID PropertyVersion =
+	{ 0x0CEF7D53, 0xFA64, 0x11D1, { 0xA2, 0x03, 0x00, 0x00, 0xF8, 0x1F, 0xED, 0xEE } };
+
 
 // Der Inhalt dieses Segments wird über alle Instanzen von LFCore geteilt.
 // Der Zugriff muss daher über Mutex-Objekte serialisiert/synchronisiert werden.
@@ -45,13 +50,13 @@ unsigned char DomainSlaves[LFDomainCount] = {
 LFShellProperty AttrProperties[LFAttributeCount] = {
 	{ PropertyStorage, 10 },		// LFAttrFileName
 	{ 0, 0 },						// LFAttrStoreID
-	{ 0, 0 },						// LFAttrFileID
+	{ PropertyStorage, 8 },			// LFAttrFileID
 	{ PropertySummary, 6 },			// LFAttrComment
-	{ 0, 0 },						// LFAttrHint
+	{ PropertyVersion, 3 },			// LFAttrDescription
 	{ PropertyStorage, 15 },		// LFAttrCreationTime
 	{ PropertyStorage, 14 },		// LFAttrFileTime
 	{ 0, 0 },						// LFAttrDeleteTime
-	{ 0, 0 },						// LFAttrFileFormat
+	{ PropertyStorage, 4 },			// LFAttrFileFormat
 	{ PropertyStorage, 12 },		// LFAttrFileSize
 	{ 0, 0 },						// LFAttrFlags
 	{ PropertyQuery, 9 },			// LFAttrURL
