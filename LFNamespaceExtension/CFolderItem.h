@@ -67,7 +67,7 @@ public:
 	virtual int GetContentViewColumnIndices(UINT* indices);
 	virtual CCategorizer* GetCategorizer(CShellColumn &column);
 	virtual FolderThemes GetFolderTheme();
-	virtual BOOL GetColumn(CShellColumn& column,int index);
+	virtual BOOL GetColumn(CShellColumn& column, int index);
 	virtual BOOL GetColumnValueEx(VARIANT* value, CShellColumn& column);
 	virtual BOOL IsValid();
 	virtual void GetMenuItems(CGetMenuitemsEventArgs& e);

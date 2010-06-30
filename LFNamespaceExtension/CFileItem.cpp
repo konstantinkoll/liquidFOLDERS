@@ -67,227 +67,296 @@ void CFileItem::GetIconFileAndIndex(CGetIconFileAndIndexEventArgs& e)
 	e.iconIndex = IDI_FILE_Generic-1;
 }
 
-
-
-
-
-
-
-
-// The CompareTo function is called to perform a comparison of the item with the
-// specified item with respect to the specified column. Return a number less 
-// than zero if this item should come before otherItem, greater than zero if 
-// this item should come after otherItem, and zero if the two items are equal.
-int CFileItem::CompareTo(CNSEItem* otherItem, CShellColumn& column)
+void CFileItem::GetInfoTip(CString& infotip)
 {
-	// Folders should come before files
-	if (IS(otherItem, CFolderItem))
-		return 1;
-
-	return 1;
-	/*
-	CFileItem* file2 = AS(otherItem,CFileItem);
-	
-	if (column.index == 0) // name
-	{
-		return name.CompareNoCase(file2->name);
-	}
-	
-	if (column.index == 1) // size
-	{
-		WIN32_FILE_ATTRIBUTE_DATA fd1,fd2;
-		GetFileAttributesEx(fullPath,GetFileExInfoStandard,&fd1);
-		GetFileAttributesEx(file2->fullPath,GetFileExInfoStandard,&fd2);
-
-		if(fd1.nFileSizeLow==fd2.nFileSizeLow)
-			return 0;
-
-		if(fd1.nFileSizeLow<fd2.nFileSizeLow)
-			return -1;
-		
-		return 1;
-	}
-	
-	if (column.index == 2) // type
-	{
-		CString type1 = CUtils::GetFileType(fullPath);
-		CString type2 = CUtils::GetFileType(file2->fullPath);
-		
-		return type1.CompareNoCase(type2); 
-		
-	}
-	
-	if (column.index == 3) // date modified
-	{
-		WIN32_FILE_ATTRIBUTE_DATA fd1,fd2;
-		GetFileAttributesEx(fullPath,GetFileExInfoStandard,&fd1);
-		GetFileAttributesEx(file2->fullPath,GetFileExInfoStandard,&fd2);
-
-		return CompareFileTime(&fd1.ftLastWriteTime,&fd2.ftLastWriteTime);
-	}
-	
-	return 0;
-*/
+	infotip = Attrs.Comment;
 }
 
-LPSTREAM CFileItem::GetStream()
+int CFileItem::GetXPTaskPaneColumnIndices(UINT* indices)
 {
-	LPSTREAM ret = NULL;
-	//SHCreateStreamOnFile(fullPath,STGM_READ,&ret);
-	return ret;
-}
+	indices[0] = LFAttrFileName;
+	indices[1] = LFAttrComment;
+	indices[2] = LFAttrCreationTime;
+	indices[3] = LFAttrFileTime;
+	indices[4] = LFAttrFileSize;
 
-// The GetFileDescriptor function is called to retrieve file-related information
-// about the item.
-BOOL CFileItem::GetFileDescriptor(FILEDESCRIPTOR* fd)
-{
-/*	
-	WIN32_FILE_ATTRIBUTE_DATA fad;
-	GetFileAttributesEx(fullPath,GetFileExInfoStandard,&fad); 
-	
-	_tcscpy(fd->cFileName,name);
-	fd->dwFileAttributes = fad.dwFileAttributes;
-	fd->ftCreationTime = fad.ftCreationTime;
-	fd->ftLastAccessTime = fad.ftLastAccessTime;
-	fd->ftLastWriteTime = fad.ftLastWriteTime;
-	fd->nFileSizeLow = fad.nFileSizeLow;
-	fd->nFileSizeHigh = fad.nFileSizeHigh; 
-	fd->dwFlags = FD_ACCESSTIME | FD_ATTRIBUTES | FD_CREATETIME | FD_FILESIZE | FD_WRITESTIME | FD_PROGRESSUI;
-	 */
-	return TRUE; 
+	return 5;
 }
-
 
 int CFileItem::GetTileViewColumnIndices(UINT* indices)
 {
-	// Display last two column values in Tile View
-	indices[0]=1;
-	indices[1]=2;
-	indices[2]=3;
+	indices[0] = LFAttrComment;
+	indices[1] = LFAttrFileTime;
+	indices[2] = LFAttrFileSize;
+
 	return 3;
 }
 
 int CFileItem::GetPreviewDetailsColumnIndices(UINT* indices)
 {
-	// Display last two column values in Tile View
-	indices[0]=0;
-	indices[1]=1;
-	indices[2]=2;
-	indices[3]=3;
-	return 4;
+	indices[0] = LFAttrComment;
+	indices[1] = LFAttrCreationTime;
+	indices[2] = LFAttrFileTime;
+	indices[3] = LFAttrFileSize;
+	indices[4] = LFAttrURL;
+	indices[5] = LFAttrTags;
+	indices[6] = LFAttrRating;
+
+	return 7;
 }
 
-// Called to get the infotip for the item
-void CFileItem::GetInfoTip(CString& infotip)
+int CFileItem::GetContentViewColumnIndices(UINT* indices)
 {
-	infotip = _T("Infotip");
+	return GetXPTaskPaneColumnIndices(indices);
 }
 
-// The IsValid is called to verify whether the item is valid or not. Typically, 
-// your implementation should check with the actual underlying data that this 
-// item represents and return true or false based on the status of the data.
-BOOL CFileItem::IsValid()
+BOOL CFileItem::GetColumnValueEx(VARIANT* value, CShellColumn& column)
 {
-	//return FileExists(fullPath);
-	return TRUE;
-}
+	CString tmpStr;
+	wchar_t tmpBuf[256];
 
-
-int CFileItem::GetXPTaskPaneColumnIndices(UINT* indices)
-{
-	// Display all four column values in the Task Pane of Windows Explorer
-	indices[0]=0;
-	indices[1]=1;
-	indices[2]=2;
-	indices[3]=3;
-	return 4;
-}
-
-/*
-// The GetColumnValue method is deprecated. Use the GetColumnValueEx instead (see below).
-BOOL CFileItem::GetColumnValue(CString& value,CShellColumn& column)
-{
-	// Only the 'Name' column displays data for keys.
 	switch (column.index)
 	{
-	case 0: // name
-		value = name;
+	case LFAttrFileName:
+		tmpStr = Attrs.FileName;
 		break;
-		
-	case 1: // Size
-		WIN32_FILE_ATTRIBUTE_DATA fd;
-		GetFileAttributesEx(fullPath,GetFileExInfoStandard,&fd);
-		value = SizeStrFromLength(fd.nFileSizeLow);
+	case LFAttrFileID:
+		tmpStr = Attrs.FileID;
 		break;
-		
-	case 2: // Type
-		value = CUtils::GetFileType(fullPath);
+	case LFAttrStoreID:
+		tmpStr = StoreID;
 		break;
-
-	case 3: // Date Modified
-		value = GetFileLastWriteTimeAsString(fullPath);
+	case LFAttrComment:
+		tmpStr = Attrs.Comment;
 		break;
-		
-	}
-	
-	return TRUE;
-}
-*/
-
-// The GetColumnValueEx function is called to retrieve the value to be displayed for the
-// item in Details/Report mode for the specified column.
-BOOL CFileItem::GetColumnValueEx(VARIANT* value,CShellColumn& column)
-{
-	CString dummy(_T("ABC"));
-	CUtils::SetVariantCString(value, dummy);
-/*	WIN32_FILE_ATTRIBUTE_DATA fd;
-	// Only the 'Name' column displays data for keys.
-	switch (column.index)
-	{
-	case 0: // name
-		CUtils::SetVariantCString(value,name);
-		break;
-
-	case 1: // Size
-		GetFileAttributesEx(fullPath,GetFileExInfoStandard,&fd);
-		UINT64 size; size = (((UINT64)fd.nFileSizeHigh) << 32 ) + fd.nFileSizeLow;
-		if(value->vt == VT_BSTR) // Value is asked in string format(on XP and before)
+	case LFAttrCreationTime:
+		if ((Attrs.CreationTime.dwHighDateTime) || (Attrs.CreationTime.dwHighDateTime))
 		{
-			CUtils::SetVariantCString(value,SizeStrFromLength(size));
+			if (value->vt==VT_BSTR)
+			{
+				LFTimeToString(Attrs.CreationTime, tmpBuf, 256);
+				tmpStr = tmpBuf;
+			}
+			else
+			{
+				CUtils::SetVariantFILETIME(value, Attrs.CreationTime);
+				return TRUE;
+			}
 		}
-		else // Value is being asked as VARIANT 
+		else
 		{
-			CUtils::SetVariantUINT64(value,size);
+			return FALSE;
 		}
 		break;
-
-	case 2: // Type
-		CUtils::SetVariantCString(value,CUtils::GetFileType(fullPath)); 
-		break;
-
-	case 3: // Date Modified
-		if(value->vt==VT_BSTR) // Value is asked in string format(on XP and before)
-			CUtils::SetVariantCString(value,GetFileLastWriteTimeAsString(fullPath));
-		else // Value is being asked as VARIANT 
+	case LFAttrFileTime:
+		if ((Attrs.FileTime.dwHighDateTime) || (Attrs.FileTime.dwHighDateTime))
 		{
-			WIN32_FILE_ATTRIBUTE_DATA fd;
-			GetFileAttributesEx(fullPath,GetFileExInfoStandard,&fd);
-			CUtils::SetVariantFILETIME(value,fd.ftLastWriteTime);
+			if (value->vt==VT_BSTR)
+			{
+				LFTimeToString(Attrs.FileTime, tmpBuf, 256);
+				tmpStr = tmpBuf;
+			}
+			else
+			{
+				CUtils::SetVariantFILETIME(value, Attrs.FileTime);
+				return TRUE;
+			}
+		}
+		else
+		{
+			return FALSE;
 		}
 		break;
-
+	case LFAttrFileSize:
+		if (value->vt==VT_BSTR)
+		{
+			LFINT64ToString(Attrs.FileSize, tmpBuf, 256);
+			tmpStr = tmpBuf;
+		}
+		else
+		{
+			CUtils::SetVariantINT64(value, Attrs.FileSize);
+			return TRUE;
+		}
+		break;
+	case LFAttrURL:
+		tmpStr = Attrs.URL;
+		break;
+	case LFAttrTags:
+		tmpStr = Attrs.Tags;
+		break;
+	case LFAttrRating:
+	case LFAttrPriority:
+		tmpStr = "TODO";
+		break;
+	case LFAttrLocationName:
+		tmpStr = Attrs.LocationName;
+		break;
+	case LFAttrLocationIATA:
+		tmpStr = Attrs.LocationIATA;
+		break;
+	case LFAttrLocationGPS:
+		LFGeoCoordinatesToString(Attrs.LocationGPS, tmpBuf, 256);
+		tmpStr = tmpBuf;
+		break;
 	default:
 		return FALSE;
+	}
 
-	}*/
+	CUtils::SetVariantCString(value, tmpStr);
+	return TRUE;
+}
+
+BOOL CFileItem::IsValid()
+{
+	return TRUE;
+}
+
+int CFileItem::CompareTo(CNSEItem* otherItem, CShellColumn& column)
+{
+	if (IS(otherItem, CFolderItem))
+		return 1;
+
+	CFileItem* dir2 = AS(otherItem, CFileItem);
+
+	CString str1;
+	CString str2;
+	int ret;
+
+	switch (column.index)
+	{
+	case LFAttrFileName:
+		str1 = Attrs.FileName;
+		str2 = dir2->Attrs.FileName;
+		break;
+	case LFAttrStoreID:
+		str1 = StoreID;
+		str2 = dir2->StoreID;
+		break;
+	case LFAttrFileID:
+		str1 = Attrs.FileID;
+		str2 = dir2->Attrs.FileID;
+		break;
+	case LFAttrComment:
+		str1 = Attrs.Comment;
+		str2 = dir2->Attrs.Comment;
+		break;
+	case LFAttrCreationTime:
+		ret = CompareFileTime(&Attrs.CreationTime, &dir2->Attrs.CreationTime);
+		goto GotRet;
+	case LFAttrFileTime:
+		ret = CompareFileTime(&Attrs.FileTime, &dir2->Attrs.FileTime);
+		goto GotRet;
+	case LFAttrFileSize:
+		if (Attrs.FileSize<dir2->Attrs.FileSize)
+			return -1;
+		if (Attrs.FileSize>dir2->Attrs.FileSize)
+			return 1;
+		goto GotRet;
+	case LFAttrURL:
+		str1 = Attrs.URL;
+		str2 = dir2->Attrs.URL;
+		break;
+	case LFAttrRating:
+		if (Attrs.Rating<dir2->Attrs.Rating)
+			return -1;
+		if (Attrs.Rating>dir2->Attrs.Rating)
+			return 1;
+		goto GotRet;
+	case LFAttrPriority:
+		if (Attrs.Priority<dir2->Attrs.Priority)
+			return -1;
+		if (Attrs.Priority>dir2->Attrs.Priority)
+			return 1;
+		goto GotRet;
+	case LFAttrLocationName:
+		str1 = Attrs.LocationName;
+		str2 = dir2->Attrs.LocationName;
+		break;
+	case LFAttrLocationIATA:
+		str1 = Attrs.LocationIATA;
+		str2 = dir2->Attrs.LocationIATA;
+		break;
+	}
+
+	// Items with empty attribute values come last
+	if ((str1=="") && (str2!=""))
+		return 1;
+	if ((str1!="") && (str2==""))
+		return -1;
+
+	// Compare desired attribute
+	ret = str1.CompareNoCase(str2);
+GotRet:
+	if (ret)
+		return ret;
+
+	// Compare file names
+	ret = wcscmp(Attrs.FileName, dir2->Attrs.FileName);
+	if (ret)
+		return ret;
+
+	// Compare store IDs
+	ret = StoreID.Compare(dir2->StoreID);
+	if (ret)
+		return ret;
+
+	// Compare file IDs
+	return strcmp(Attrs.FileID, dir2->Attrs.FileID);
+
+}
+
+BOOL CFileItem::GetFileDescriptor(FILEDESCRIPTOR* fd)
+{
+	wchar_t* ptr = &Attrs.FileName[0];
+	UINT wpos = 0;
+	do
+	{
+		fd->cFileName[wpos++] = (*ptr<=0xFF ? (char)*ptr : '?');
+	}
+	while (*ptr++!=L'\0');
+
+	fd->dwFlags = FD_PROGRESSUI | FD_WRITESTIME | FD_CREATETIME | FD_FILESIZE;
+
+	fd->ftCreationTime = Attrs.CreationTime;
+	fd->ftLastWriteTime = Attrs.FileTime;
+
+	LARGE_INTEGER sz;
+	sz.QuadPart = Attrs.FileSize;
+	fd->nFileSizeHigh = sz.HighPart;
+	fd->nFileSizeLow = sz.LowPart;
 
 	return TRUE;
 }
+
+LPSTREAM CFileItem::GetStream()
+{
+	LPSTREAM ret = NULL;
+
+	char Path[MAX_PATH];
+	UINT res = LFGetFileLocation((char*)(LPCSTR)StoreID, &Attrs, Path, MAX_PATH);
+	if (res!=LFOk)
+	{
+		LFErrorBox(res);
+	}
+	else
+	{
+		SHCreateStreamOnFileA(Path, STGM_READ, &ret);
+	}
+
+	return ret;
+}
+
+
+
+
+
+
 
 
 // The OnChangeName function is called when the item has been renamed in Windows Explorer.
 // This function should return true of the renaming was successfully applied.
-BOOL CFileItem::OnChangeName(CChangeNameEventArgs& e)
+BOOL CFileItem::OnChangeName(CChangeNameEventArgs& /*e*/)
 {
 	/*BOOL ret = FALSE;
 	

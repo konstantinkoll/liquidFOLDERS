@@ -8,6 +8,8 @@
 #define IDS_AllFilesComment             1003
 #define IDS_Store                       1004
 #define IDS_Folder                      1005
+#define IDS_NULLFOLDER_NameMask         1006
+#define IDS_NULLFOLDER_CommentMask      1007
 #define IDS_MustNotDeleteStore          2000
 #define IDS_MENU_CreateNewStore         3000
 #define IDS_HINT_CreateNewStore         3001

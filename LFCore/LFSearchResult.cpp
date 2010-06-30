@@ -411,25 +411,7 @@ int LFSearchResult::Compare(int eins, int zwei, unsigned int attr, bool descendi
 						}
 			break;
 		case LFTypeTime:
-			if (((FILETIME*)d1->AttributeValues[Sort])->dwHighDateTime<((FILETIME*)d2->AttributeValues[Sort])->dwHighDateTime)
-			{
-				cmp = -1;
-			}
-			else
-				if (((FILETIME*)d1->AttributeValues[Sort])->dwHighDateTime>((FILETIME*)d2->AttributeValues[Sort])->dwHighDateTime)
-				{
-					cmp = 1;
-				}
-				else
-					if (((FILETIME*)d1->AttributeValues[Sort])->dwLowDateTime<((FILETIME*)d2->AttributeValues[Sort])->dwLowDateTime)
-					{
-						cmp = -1;
-					}
-					else
-						if (((FILETIME*)d1->AttributeValues[Sort])->dwLowDateTime>((FILETIME*)d2->AttributeValues[Sort])->dwLowDateTime)
-						{
-							cmp = 1;
-						}
+			cmp = CompareFileTime((FILETIME*)d1->AttributeValues[Sort], (FILETIME*)d2->AttributeValues[Sort]);
 			break;
 		default:
 			assert(FALSE);

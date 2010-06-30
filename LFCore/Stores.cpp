@@ -299,23 +299,21 @@ ChooseAgain:
 // Stores
 //
 
-LFCore_API unsigned int LFGetFileLocation(LFItemDescriptor* i, char* dst, size_t cCount)
+LFCore_API unsigned int LFGetFileLocation(char* StoreID, LFCoreAttributes* ca, char* dst, size_t cCount)
 {
-	if ((i->Type & LFTypeMask)!=LFTypeFile)
-		return LFIllegalKey;
-	if (i->StoreID=='\0')
+	if (StoreID=='\0')
 		return LFIllegalKey;
 
 	if (!GetMutex(Mutex_Stores))
 		return LFMutexError;
 
 	unsigned int res = LFIllegalKey;
-	LFStoreDescriptor* slot = FindStore(i->StoreID);
+	LFStoreDescriptor* slot = FindStore(StoreID);
 
 	if (slot)
 		if (IsStoreMounted(slot))
 		{
-			GetFileLocation(slot->DatPath, i->CoreAttributes.FileID, i->CoreAttributes.FileFormat, dst, cCount);
+			GetFileLocation(slot->DatPath, ca->FileID, ca->FileFormat, dst, cCount);
 			res = LFOk;
 		}
 		else
@@ -325,6 +323,14 @@ LFCore_API unsigned int LFGetFileLocation(LFItemDescriptor* i, char* dst, size_t
 
 	ReleaseMutex(Mutex_Stores);
 	return res;
+}
+
+LFCore_API unsigned int LFGetFileLocation(LFItemDescriptor* i, char* dst, size_t cCount)
+{
+	if ((i->Type & LFTypeMask)!=LFTypeFile)
+		return LFIllegalKey;
+
+	return LFGetFileLocation(i->StoreID, &i->CoreAttributes, dst, cCount);
 }
 
 LFCore_API unsigned int LFGetStoreSettings(char* key, LFStoreDescriptor* s)

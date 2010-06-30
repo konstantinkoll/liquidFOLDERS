@@ -19,22 +19,16 @@ public:
 	virtual void GetDisplayName(CString& displayName);
 	virtual void GetDisplayNameEx(CString& displayName, DisplayNameFlags flags);
 	virtual void GetIconFileAndIndex(CGetIconFileAndIndexEventArgs& e);
-
-	virtual LPSTREAM GetStream();
-	virtual BOOL GetFileDescriptor(FILEDESCRIPTOR* fd);
-	virtual int CompareTo(CNSEItem* otherItem, CShellColumn& column);
-	virtual BOOL OnChangeName(CChangeNameEventArgs& e);
-	virtual int GetXPTaskPaneColumnIndices(UINT* indices);
-	//virtual BOOL GetColumnValue(CString& value,CShellColumn& column);
-
 	virtual void GetInfoTip(CString& infotip);
-	virtual BOOL IsValid();
-
-	HKEY GetKey();
-	void GetTypeString(CString& typeStr);
-
-	BOOL GetColumnValueEx(VARIANT* value,CShellColumn& column);
+	virtual int GetXPTaskPaneColumnIndices(UINT* indices);
 	int GetTileViewColumnIndices(UINT* indices);
 	int GetPreviewDetailsColumnIndices(UINT* indices);
+	virtual int GetContentViewColumnIndices(UINT* indices);
+	BOOL GetColumnValueEx(VARIANT* value,CShellColumn& column);
+	virtual BOOL IsValid();
+	virtual int CompareTo(CNSEItem* otherItem, CShellColumn& column);
+	virtual BOOL GetFileDescriptor(FILEDESCRIPTOR* fd);
 
+	virtual LPSTREAM GetStream();
+	virtual BOOL OnChangeName(CChangeNameEventArgs& e);
 };

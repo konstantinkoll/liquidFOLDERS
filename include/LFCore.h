@@ -253,6 +253,9 @@ LFCore_API bool LFPassesFilter(LFItemDescriptor* i, LFFilter* filter);
 //
 
 // Gibt den physischen Pfad einer Datei zurück
+LFCore_API unsigned int LFGetFileLocation(char* StoreID, LFCoreAttributes* ca, char* dst, size_t cCount);
+
+// Gibt den physischen Pfad einer Datei zurück
 LFCore_API unsigned int LFGetFileLocation(LFItemDescriptor* i, char* dst, size_t cCount);
 
 // Gibt die Daten eines Stores zurück

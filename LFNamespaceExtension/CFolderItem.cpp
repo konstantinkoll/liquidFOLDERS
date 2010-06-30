@@ -11,6 +11,17 @@
 #include <shlguid.h>
 
 
+CString FrmtAttrStr(CString Mask, CString Name)
+{
+	if ((Mask[0]=='L') && (Name[0]>='A') && (Name[0]<='Z') && (Name[1]>'Z'))
+		Name = Name.MakeLower().Mid(0,1)+Name.Mid(1, Name.GetLength()-1);
+
+	CString tmpStr;
+	tmpStr.Format(Mask.Mid(1, Mask.GetLength()-1), Name);
+	return tmpStr;
+}
+
+
 IMPLEMENT_DYNCREATE(CFolderItem, CNSEFolder)
 
 // The GUID of the class representing the root folder is used as the GUID for the namespace extension
@@ -185,8 +196,7 @@ BOOL CFolderItem::GetChildren(CGetChildrenEventArgs& e)
 		if (e.childrenType & NSECT_Folders)
 		{
 			CString sortStr;
-			BOOL bValidName = sortStr.LoadString(IDS_AttributeComment);
-			ASSERT(bValidName);
+			ENSURE(sortStr.LoadString(IDS_AttributeComment));
 
 			FolderSerialization d = { 0 };
 			d.Level = data.Level+2;
@@ -211,16 +221,12 @@ BOOL CFolderItem::GetChildren(CGetChildrenEventArgs& e)
 					d.Type = LFTypeVirtual;
 					d.CategoryID = theApp.m_Attributes[a]->Category;
 					d.DisplayName = theApp.m_Attributes[a]->Name;
+					d.Comment = FrmtAttrStr(sortStr, CString(theApp.m_Attributes[a]->Name));
 					d.StoreID = data.StoreID;
 					d.FileID.Format(_T("%d"), a);
 					d.DomainID = data.DomainID;
 					d.Compare = LFFilterCompareSubfolder;
 					d.Format.LoadString(IDS_Folder);
-
-					CString tmpStr = d.DisplayName;
-					if ((sortStr[0]=='L') && (tmpStr[0]>='A') && (tmpStr[0]<='Z') && (tmpStr[1]>'Z'))
-						tmpStr = tmpStr.MakeLower().Mid(0, 1)+tmpStr.Mid(1, tmpStr.GetLength()-1);
-					d.Comment.Format(sortStr.Mid(1, sortStr.GetLength()-1), tmpStr);
 
 					e.children->AddTail(new CFolderItem(d));
 				}
@@ -257,7 +263,8 @@ BOOL CFolderItem::GetChildren(CGetChildrenEventArgs& e)
 			return FALSE;
 		}
 
-		BOOL AddNullFolder = FALSE;
+		UINT NullCount = 0;
+		INT64 NullSize = 0;
 
 		for (UINT a=0; a<res->m_ItemCount; a++)
 		{
@@ -302,9 +309,10 @@ BOOL CFolderItem::GetChildren(CGetChildrenEventArgs& e)
 			}
 
 			if (((i->Type & LFTypeMask)==LFTypeFile) && (e.childrenType & NSECT_NonFolders))
-				if ((data.Level==LevelAttribute) && (data.Value.Attr!=LFAttrFileName))
+				if ((data.Level==LevelAttribute) && (atoi(data.FileID)!=LFAttrFileName))
 				{
-					AddNullFolder = TRUE;
+					NullCount++;
+					NullSize += i->CoreAttributes.FileSize;
 				}
 				else
 				{
@@ -312,6 +320,32 @@ BOOL CFolderItem::GetChildren(CGetChildrenEventArgs& e)
 				}
 		}
 		LFFreeSearchResult(res);
+
+		if (NullCount)
+		{
+			UINT attr = atoi(data.FileID);
+
+			FolderSerialization d = { 0 };
+			d.Level = data.Level+1;
+			d.Icon = IDI_FLD_Default;
+			d.Type = LFTypeVirtual;
+			d.CategoryID = LFAttrCategoryCount;
+			d.StoreID = data.StoreID;
+			d.FileID = "NULL";
+			d.DomainID = data.DomainID;
+			d.Size = NullSize;
+			d.Compare = LFFilterCompareIsNull;
+			d.Value.Attr = attr;
+			d.Format.LoadString(IDS_Folder);
+
+			CString tmpStr;
+			tmpStr.LoadString(IDS_NULLFOLDER_NameMask);
+			d.DisplayName = FrmtAttrStr(tmpStr, CString(theApp.m_Attributes[attr]->Name));
+			tmpStr.LoadString(IDS_NULLFOLDER_CommentMask);
+			d.Comment = FrmtAttrStr(tmpStr, CString(theApp.m_Attributes[attr]->Name));
+
+			e.children->AddTail(new CFolderItem(d));
+		}
 	}
 
 	if (f)
@@ -511,7 +545,7 @@ BOOL CFolderItem::GetColumn(CShellColumn& column, int index)
 	column.categorizerType = NSECT_Alphabetical;
 	column.index = index;
 	column.defaultVisible = (index!=LFAttrStoreID) && (index!=LFAttrFileID);
-	if ((theApp.m_Attributes[index]->ShPropertyMapping.ID)/* && (index!=LFAttrComment)*/)
+	if (theApp.m_Attributes[index]->ShPropertyMapping.ID)
 	{
 		column.fmtid = theApp.m_Attributes[index]->ShPropertyMapping.Schema;
 		column.pid = theApp.m_Attributes[index]->ShPropertyMapping.ID;
@@ -553,7 +587,7 @@ BOOL CFolderItem::GetColumn(CShellColumn& column, int index)
 			column.state = NSECS_Hidden;
 		break;
 	case LFAttrDescription:
-		if (data.Level==LevelStoreHome)
+		if ((data.Level==LevelStoreHome) || (data.Level==LevelAttrValue))
 			column.state = NSECS_Hidden;
 		break;
 	case LFAttrFileFormat:
@@ -568,6 +602,7 @@ BOOL CFolderItem::GetColumn(CShellColumn& column, int index)
 			column.state = NSECS_Hidden;
 		break;
 	case LFAttrDeleteTime:
+	case LFAttrFlags:
 		column.categorizerType = NSECT_String;
 		column.state = NSECS_Hidden;
 		break;
@@ -805,6 +840,8 @@ int CFolderItem::CompareTo(CNSEItem* otherItem, CShellColumn& column)
 
 	CString str1;
 	CString str2;
+	int ret;
+
 	switch (column.index)
 	{
 	case LFAttrFileName:
@@ -819,10 +856,26 @@ int CFolderItem::CompareTo(CNSEItem* otherItem, CShellColumn& column)
 		str1 = data.FileID;
 		str2 = dir2->data.FileID;
 		break;
+	case LFAttrComment:
+		str1 = data.Comment;
+		str2 = dir2->data.Comment;
+		break;
 	case LFAttrDescription:
 		str1 = data.Description;
 		str2 = dir2->data.Description;
 		break;
+	case LFAttrCreationTime:
+		ret = CompareFileTime(&data.CreationTime, &dir2->data.CreationTime);
+		goto GotRet;
+	case LFAttrFileTime:
+		ret = CompareFileTime(&data.FileTime, &dir2->data.FileTime);
+		goto GotRet;
+	case LFAttrFileSize:
+		if (data.Size<dir2->data.Size)
+			return -1;
+		if (data.Size>dir2->data.Size)
+			return 1;
+		goto GotRet;
 	}
 
 	// Items with empty attribute values come last
@@ -832,7 +885,8 @@ int CFolderItem::CompareTo(CNSEItem* otherItem, CShellColumn& column)
 		return -1;
 
 	// Compare desired attribute
-	int ret = str1.CompareNoCase(str2);
+	ret = str1.CompareNoCase(str2);
+GotRet:
 	if (ret)
 		return ret;
 
@@ -852,10 +906,10 @@ int CFolderItem::CompareTo(CNSEItem* otherItem, CShellColumn& column)
 
 BOOL CFolderItem::GetFileDescriptor(FILEDESCRIPTOR* fd)
 {
-	ZeroMemory(fd, sizeof(FILEDESCRIPTOR));
+	_tcscpy(fd->cFileName, data.DisplayName);
 
-	fd->dwFileAttributes = FILE_ATTRIBUTE_DIRECTORY;
 	fd->dwFlags = FD_ATTRIBUTES | FD_PROGRESSUI;
+	fd->dwFileAttributes = FILE_ATTRIBUTE_DIRECTORY;
 
 	switch (data.Level)
 	{
@@ -1110,17 +1164,34 @@ void CFolderItem::DragDrop(CNSEDragEventArgs& /*e*/)
 */
 }
 
-// Called when a non-folder item is double-clicked
-BOOL CFolderItem::OnOpen(CExecuteMenuitemsEventArgs& /*e*/)
+
+BOOL CFolderItem::OnOpen(CExecuteMenuitemsEventArgs& e)
 {
-/*	if (e.children->GetCount() == 1)
+	if (e.children->GetCount() == 1)
 	{
 		POSITION pos = e.children->GetHeadPosition();
 		CFileItem* temp = (CFileItem*)e.children->GetNext(pos);
 
 		if (IS(temp,CFileItem))
-			ShellExecute(e.hWnd,_T("open"),temp->fullPath,NULL,NULL,SW_SHOWNORMAL);
-	}*/
+		{
+			char Path[MAX_PATH];
+			UINT res = LFGetFileLocation((char*)(LPCSTR)data.StoreID, &temp->Attrs, Path, MAX_PATH);
+			if (res!=LFOk)
+			{
+				LFErrorBox(res);
+			}
+			else
+				if (ShellExecuteA(e.hWnd, "open", Path, "", "", SW_SHOW)==(HINSTANCE)SE_ERR_NOASSOC)
+				{
+					char Cmd[300];
+					strcpy_s(Cmd, 300, "shell32.dll,OpenAs_RunDLL ");
+					strcat_s(Cmd, 300, Path);
+					ShellExecuteA(e.hWnd, "open", "rundll32.exe", Cmd, Path, SW_SHOW);
+				}
 
-	return TRUE;
+			return TRUE;
+		}
+	}
+
+	return FALSE;
 }
