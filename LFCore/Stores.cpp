@@ -40,7 +40,7 @@ DWORD CreateDir(LPCSTR lpPath)
 	if (!OpenProcessToken(GetCurrentProcess(), TOKEN_QUERY, &hToken))
 		return GetLastError();
 
-	GetTokenInformation( hToken, TokenUser, NULL, 0, &dwNeeded);
+	GetTokenInformation(hToken, TokenUser, NULL, 0, &dwNeeded);
 	if (GetLastError()!=ERROR_INSUFFICIENT_BUFFER)
 	{
 		dwError = GetLastError();
