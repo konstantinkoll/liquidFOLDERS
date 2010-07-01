@@ -10,19 +10,24 @@
 #define IDS_Folder                      1005
 #define IDS_NULLFOLDER_NameMask         1006
 #define IDS_NULLFOLDER_CommentMask      1007
-#define IDS_MustNotDeleteStore          2000
-#define IDS_MENU_CreateNewStore         3000
-#define IDS_HINT_CreateNewStore         3001
-#define IDS_MENU_MakeDefaultStore       3002
-#define IDS_HINT_MakeDefaultStore       3003
-#define IDS_MENU_MakeHybridStore        3004
-#define IDS_HINT_MakeHybridStore        3005
-#define IDS_DeleteStore                 3006
-#define IDS_HINT_DeleteStore            3007
-#define IDS_MENU_CreateLink             3008
-#define IDS_HINT_CreateLink             3009
-#define IDS_TEXT_CreateLink             4000
-#define IDS_CAPT_CreateLink             4001
+#define IDS_CAPT_DeleteStore            1008
+#define IDS_TEXT_DeleteStore            1009
+#define IDS_CAPT_CreateLink             1010
+#define IDS_TEXT_CreateLink             1011
+#define IDS_MENU_CreateNewStore         2000
+#define IDS_HINT_CreateNewStore         2001
+#define IDS_MENU_MakeDefaultStore       2002
+#define IDS_HINT_MakeDefaultStore       2003
+#define IDS_MENU_MakeHybridStore        2004
+#define IDS_HINT_MakeHybridStore        2005
+#define IDS_MENU_Open                   2006
+#define IDS_HINT_Open                   2007
+#define IDS_MENU_CreateLink             2008
+#define IDS_HINT_CreateLink             2009
+#define IDS_MENU_Delete                 2010
+#define IDS_HINT_Delete                 2011
+#define IDS_MENU_Rename                 2012
+#define IDS_HINT_Rename                 2013
 
 // Next default values for new objects
 // 

@@ -91,7 +91,10 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_MustNotDeleteStore  "Stores can only be deleted from the StoreManager to avoid accidental trashing of many files."
+    IDS_CAPT_DeleteStore    "Delete store"
+    IDS_TEXT_DeleteStore    "Stores can only be deleted from the StoreManager to avoid accidental trashing of many files."
+    IDS_CAPT_CreateLink     "Shortcut"
+    IDS_TEXT_CreateLink     "You cannot create a shortcut here. Would you like to place it on the desktop ?"
 END
 
 STRINGTABLE 
@@ -103,20 +106,14 @@ BEGIN
     IDS_MENU_MakeHybridStore "Make &hybrid store"
     IDS_HINT_MakeHybridStore 
                             "Converts the selected store into a hybrid store."
-    IDS_DeleteStore         "Delete store"
-    IDS_HINT_DeleteStore    "Deletes the selected store."
-END
-
-STRINGTABLE 
-BEGIN
-    IDS_MENU_CreateLink     "Create &shortcut on desktop"
-    IDS_HINT_CreateLink     "Creates a shortcut of the selected items on the desktop."
-END
-
-STRINGTABLE 
-BEGIN
-    IDS_TEXT_CreateLink     "You cannot create a shortcut here. Would you like to place it on the desktop ?"
-    IDS_CAPT_CreateLink     "Shortcut"
+    IDS_MENU_Open           "&Open"
+    IDS_HINT_Open           "Opens the selected item."
+    IDS_MENU_CreateLink     "Create &shortcut"
+    IDS_HINT_CreateLink     "Creates a shortcut for the selected items."
+    IDS_MENU_Delete         "&Delete"
+    IDS_HINT_Delete         "Deletes the selected items."
+    IDS_MENU_Rename         "&Rename"
+    IDS_HINT_Rename         "Renames the selected item."
 END
 
 #endif    // Englisch (neutral) resources

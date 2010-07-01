@@ -11,13 +11,13 @@
 
 #define NSEIA_CFOLDERITEM   NSEIA_CanLink | NSEIA_DropTarget | NSEIA_FileSysAncestor | NSEIA_Browsable | NSEIA_Folder
 
+#define VERB_CREATELINK         "link"
 #define VERB_CREATENEWSTORE     "newstore"
+#define VERB_DELETE             "delete"
 #define VERB_MAKEDEFAULTSTORE   "defaultstore"
 #define VERB_MAKEHYBRIDSTORE    "hybridstore"
+#define VERB_OPEN               "open"
 #define VERB_RENAME             "rename"
-#define VERB_DELETE             "delete"
-#define VERB_CREATELINK         "link"
-#define VERB_CREATELINKDESKTOP  "linkdesktop"
 
 struct FolderSerialization
 {
@@ -76,6 +76,7 @@ public:
 	virtual BOOL GetFileDescriptor(FILEDESCRIPTOR* fd);
 	virtual BOOL OnChangeName(CChangeNameEventArgs& e);
 	virtual BOOL OnDelete(CExecuteMenuitemsEventArgs& e);
+	virtual BOOL OnOpen(CExecuteMenuitemsEventArgs& e);
 	void CreateShortcut(CNSEItem* Item, const CString& LinkFilename, const CString& Description, UINT Icon);
 	void UpdateItems(BOOL add);
 
@@ -85,5 +86,4 @@ public:
 	virtual void DragOver(CNSEDragEventArgs& e);
 	virtual void DragEnter(CNSEDragEventArgs& e);
 	virtual void DragDrop(CNSEDragEventArgs& e);
-	virtual BOOL OnOpen(CExecuteMenuitemsEventArgs& e);
 };

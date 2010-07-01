@@ -94,7 +94,7 @@ NSEItemAttributes CFolderItem::GetAttributes(NSEItemAttributes /*requested*/)
 
 	if (data.Level==LevelStores)
 		ret |= NSEIA_CanRename | NSEIA_CanDelete;
-	if (data.Level<=LevelAttrValue)
+	if (data.Level<LevelAttrValue)
 		ret |= NSEIA_HasSubFolder;
 
 	return (NSEItemAttributes)ret;
@@ -308,20 +308,19 @@ BOOL CFolderItem::GetChildren(CGetChildrenEventArgs& e)
 				e.children->AddTail(new CFolderItem(d));
 			}
 
-			if (((i->Type & LFTypeMask)==LFTypeFile) && (e.childrenType & NSECT_NonFolders))
+			if ((i->Type & LFTypeMask)==LFTypeFile)
 				if ((data.Level==LevelAttribute) && (atoi(data.FileID)!=LFAttrFileName))
 				{
 					NullCount++;
 					NullSize += i->CoreAttributes.FileSize;
 				}
 				else
-				{
-					e.children->AddTail(new CFileItem(i->StoreID, &i->CoreAttributes));
-				}
+					if (e.childrenType & NSECT_NonFolders)
+						e.children->AddTail(new CFileItem(i->StoreID, &i->CoreAttributes));
 		}
 		LFFreeSearchResult(res);
 
-		if (NullCount)
+		if ((NullCount) && (e.childrenType & NSECT_Folders))
 		{
 			UINT attr = atoi(data.FileID);
 
@@ -391,23 +390,6 @@ void CFolderItem::GetDisplayNameEx(CString& displayName, DisplayNameFlags flags)
 
 CNSEItem* CFolderItem::GetChildFromDisplayName(CGetChildFromDisplayNameEventArgs& /*e*/)
 {
-//	AfxMessageBox(e.displayName);
-/*	if(e.assumeChildExists)
-	{
-		return new CFileItem(this->fullPath, e.displayName);
-	}
-	else
-	{
-		// Return only if file truly exists
-		if(FileExists(PathCombineNSE(this->fullPath,e.displayName)))
-		{
-			return new CFileItem(this->fullPath, e.displayName);
-		}
-		else if (DirectoryExists(PathCombineNSE(this->fullPath, e.displayName)))
-		{
-			return new CFolderItem(this->fullPath, e.displayName);
-		}
-	}*/
 	return NULL;
 }
 
@@ -706,8 +688,15 @@ void CFolderItem::GetMenuItems(CGetMenuitemsEventArgs& e)
 	CString tmpStr;
 	CString tmpHint;
 
-	if (e.menu->GetItemCount()>0)
-		e.menu->AddItem(_T(""))->SetSeparator(TRUE);
+	// All items can be opened
+	if (e.children->GetCount()>=1)
+	{
+		ENSURE(tmpStr.LoadString(IDS_MENU_Open));
+		ENSURE(tmpHint.LoadString(IDS_HINT_Open));
+		e.menu->InsertItem(tmpStr, _T(VERB_OPEN), tmpHint, 0)->SetDefaultItem(TRUE);
+	}
+
+	e.menu->AddItem(_T(""))->SetSeparator(TRUE);
 
 	switch (data.Level)
 	{
@@ -718,26 +707,52 @@ void CFolderItem::GetMenuItems(CGetMenuitemsEventArgs& e)
 			ENSURE(tmpHint.LoadString(IDS_HINT_CreateNewStore));
 			e.menu->AddItem(tmpStr, _T(VERB_CREATENEWSTORE), tmpHint);
 		}
+
 		if (e.children->GetCount()==1)
 		{
 			CFolderItem* f = (CFolderItem*)e.children->GetHead();
+
 			ENSURE(tmpStr.LoadString(IDS_MENU_MakeDefaultStore));
 			ENSURE(tmpHint.LoadString(IDS_HINT_MakeDefaultStore));
-			CShellMenuItem* i = e.menu->AddItem(tmpStr, _T(VERB_MAKEDEFAULTSTORE), tmpHint);
-			i->SetEnabled((f->data.Type & LFTypeStore) && (f->data.CategoryID==LFStoreModeInternal));
+			e.menu->InsertItem(tmpStr, _T(VERB_MAKEDEFAULTSTORE), tmpHint, 2)->SetEnabled((f->data.Type & LFTypeStore) && (f->data.CategoryID==LFStoreModeInternal));
+
 			ENSURE(tmpStr.LoadString(IDS_MENU_MakeHybridStore));
 			ENSURE(tmpHint.LoadString(IDS_HINT_MakeHybridStore));
-			i = e.menu->AddItem(tmpStr, _T(VERB_MAKEHYBRIDSTORE), tmpHint);
-			i->SetEnabled((f->data.Type & LFTypeStore) && (f->data.CategoryID==LFStoreModeExternal));
+			e.menu->InsertItem(tmpStr, _T(VERB_MAKEHYBRIDSTORE), tmpHint, 3)->SetEnabled((f->data.Type & LFTypeStore) && (f->data.CategoryID==LFStoreModeExternal));
+		}
+
+		if ((e.menu->GetItemCount()<=4) && (e.children->GetCount()>=1))
+		{
+			e.menu->AddItem(_T(""))->SetSeparator(TRUE);
+
+			ENSURE(tmpStr.LoadString(IDS_MENU_CreateLink));
+			ENSURE(tmpHint.LoadString(IDS_HINT_CreateLink));
+			e.menu->AddItem(tmpStr, _T(VERB_CREATELINK), tmpHint);
+
+			ENSURE(tmpStr.LoadString(IDS_MENU_Delete));
+			ENSURE(tmpHint.LoadString(IDS_HINT_Delete));
+			e.menu->AddItem(tmpStr, _T(VERB_DELETE), tmpHint);
+
+			if (e.children->GetCount()==1)
+			{
+				ENSURE(tmpStr.LoadString(IDS_MENU_Rename));
+				ENSURE(tmpHint.LoadString(IDS_HINT_Rename));
+				e.menu->AddItem(tmpStr, _T(VERB_RENAME), tmpHint);
+			}
 		}
 		break;
-	}
+	case LevelStores:
+	case LevelStoreHome:
+	case LevelAttribute:
+		if ((e.menu->GetItemCount()<=4) && (e.children->GetCount()>=1))
+		{
+			e.menu->AddItem(_T(""))->SetSeparator(TRUE);
 
-	if (e.children->GetCount()>=1)
-	{
-		ENSURE(tmpStr.LoadString(IDS_MENU_CreateLink));
-		ENSURE(tmpHint.LoadString(IDS_HINT_CreateLink));
-		e.menu->AddItem(tmpStr, _T(VERB_CREATELINKDESKTOP), tmpHint);
+			ENSURE(tmpStr.LoadString(IDS_MENU_CreateLink));
+			ENSURE(tmpHint.LoadString(IDS_HINT_CreateLink));
+			e.menu->AddItem(tmpStr, _T(VERB_CREATELINK), tmpHint);
+		}
+		break;
 	}
 }
 
@@ -773,16 +788,7 @@ BOOL CFolderItem::OnExecuteMenuItem(CExecuteMenuitemsEventArgs& e)
 			char key[LFKeySize];
 			strcpy_s(key, LFKeySize, folder->data.StoreID);
 
-			UINT res;
-			if (e.menuItem->GetVerb()==_T(VERB_MAKEDEFAULTSTORE))
-			{
-				res = LFMakeDefaultStore(&key[0]);
-			}
-			else
-			{
-				res = LFMakeHybridStore(&key[0]);
-			}
-
+			UINT res = (e.menuItem->GetVerb()==_T(VERB_MAKEDEFAULTSTORE)) ? LFMakeDefaultStore(&key[0]) : LFMakeHybridStore(&key[0]);
 			if (res!=LFOk)
 			{
 				LFErrorBox(res);
@@ -798,20 +804,17 @@ BOOL CFolderItem::OnExecuteMenuItem(CExecuteMenuitemsEventArgs& e)
 		return FALSE;
 	}
 
-	if ((e.menuItem->GetVerb()==_T(VERB_CREATELINK)) || (e.menuItem->GetVerb()==_T(VERB_CREATELINKDESKTOP)))
+	if (e.menuItem->GetVerb()==_T(VERB_CREATELINK))
 	{
 		// Ask if link should be created on desktop
-		if (e.menuItem->GetVerb()==_T(VERB_CREATELINK))
-		{
-			CString tmpStr;
-			CString tmpCaption;
+		CString tmpStr;
+		CString tmpCaption;
 
-			ENSURE(tmpStr.LoadString(IDS_TEXT_CreateLink));
-			ENSURE(tmpCaption.LoadString(IDS_CAPT_CreateLink));
+		ENSURE(tmpStr.LoadString(IDS_TEXT_CreateLink));
+		ENSURE(tmpCaption.LoadString(IDS_CAPT_CreateLink));
 
-			if (MessageBox(NULL, tmpStr, tmpCaption, MB_YESNO | MB_ICONQUESTION)==IDNO)
-				return FALSE;
-		}
+		if (MessageBox(NULL, tmpStr, tmpCaption, MB_YESNO | MB_ICONQUESTION)==IDNO)
+			return FALSE;
 
 		// Create link on desktop
 		POSITION pos = e.children->GetHeadPosition();
@@ -963,11 +966,45 @@ BOOL CFolderItem::OnDelete(CExecuteMenuitemsEventArgs& /*e*/)
 
 		CString caption;
 		CString msg;
-		ENSURE(caption.LoadStringA(IDS_DeleteStore));
-		ENSURE(msg.LoadStringA(IDS_MustNotDeleteStore));
+		ENSURE(caption.LoadString(IDS_CAPT_DeleteStore));
+		ENSURE(msg.LoadString(IDS_TEXT_DeleteStore));
 
 		MessageBox(NULL, msg, caption, MB_ICONSTOP | MB_OK);
 		break;
+	}
+
+	return FALSE;
+}
+
+BOOL CFolderItem::OnOpen(CExecuteMenuitemsEventArgs& e)
+{
+	if (e.children->GetCount()==1)
+	{
+		POSITION pos = e.children->GetHeadPosition();
+		CNSEItem* item = (CFileItem*)e.children->GetNext(pos);
+
+		if (IS(item, CFolderItem))
+			BrowseToChild((CFolderItem*)item);
+
+		if (IS(item, CFileItem))
+		{
+			char Path[MAX_PATH];
+			UINT res = LFGetFileLocation((char*)(LPCSTR)data.StoreID, &((CFileItem*)item)->Attrs, Path, MAX_PATH);
+			if (res!=LFOk)
+			{
+				LFErrorBox(res);
+			}
+			else
+				if (ShellExecuteA(e.hWnd, "open", Path, "", "", SW_SHOW)==(HINSTANCE)SE_ERR_NOASSOC)
+				{
+					char Cmd[300];
+					strcpy_s(Cmd, 300, "shell32.dll,OpenAs_RunDLL ");
+					strcat_s(Cmd, 300, Path);
+					ShellExecuteA(e.hWnd, "open", "rundll32.exe", Cmd, Path, SW_SHOW);
+				}
+
+			return TRUE;
+		}
 	}
 
 	return FALSE;
@@ -1032,6 +1069,7 @@ void CFolderItem::UpdateItems(BOOL add)
 	f->NotifyUpdated();
 	f->InternalRelease();
 }
+
 
 
 
@@ -1162,36 +1200,4 @@ void CFolderItem::DragDrop(CNSEDragEventArgs& /*e*/)
 		}
 	}
 */
-}
-
-
-BOOL CFolderItem::OnOpen(CExecuteMenuitemsEventArgs& e)
-{
-	if (e.children->GetCount() == 1)
-	{
-		POSITION pos = e.children->GetHeadPosition();
-		CFileItem* temp = (CFileItem*)e.children->GetNext(pos);
-
-		if (IS(temp,CFileItem))
-		{
-			char Path[MAX_PATH];
-			UINT res = LFGetFileLocation((char*)(LPCSTR)data.StoreID, &temp->Attrs, Path, MAX_PATH);
-			if (res!=LFOk)
-			{
-				LFErrorBox(res);
-			}
-			else
-				if (ShellExecuteA(e.hWnd, "open", Path, "", "", SW_SHOW)==(HINSTANCE)SE_ERR_NOASSOC)
-				{
-					char Cmd[300];
-					strcpy_s(Cmd, 300, "shell32.dll,OpenAs_RunDLL ");
-					strcat_s(Cmd, 300, Path);
-					ShellExecuteA(e.hWnd, "open", "rundll32.exe", Cmd, Path, SW_SHOW);
-				}
-
-			return TRUE;
-		}
-	}
-
-	return FALSE;
 }

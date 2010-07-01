@@ -61,7 +61,7 @@ LFShellProperty AttrProperties[LFAttributeCount] = {
 	{ 0, 0 },						// LFAttrFlags
 	{ PropertyQuery, 9 },			// LFAttrURL
 	{ 0, 0 },						// LFAttrTags
-	{ 0, 0 },						// LFAttrRating
+	{ PropertyMedia, 9 },			// LFAttrRating
 	{ 0, 0 },						// LFAttrPriority
 	{ 0, 0 },						// LFAttrLocationName
 	{ 0, 0 },						// LFAttrLocationIATA

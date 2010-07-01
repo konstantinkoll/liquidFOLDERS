@@ -28,7 +28,8 @@ public:
 	virtual BOOL IsValid();
 	virtual int CompareTo(CNSEItem* otherItem, CShellColumn& column);
 	virtual BOOL GetFileDescriptor(FILEDESCRIPTOR* fd);
-
 	virtual LPSTREAM GetStream();
+
+	// TODO
 	virtual BOOL OnChangeName(CChangeNameEventArgs& e);
 };

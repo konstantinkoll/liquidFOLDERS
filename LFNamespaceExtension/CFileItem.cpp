@@ -29,7 +29,7 @@ CFileItem::~CFileItem()
 
 NSEItemAttributes CFileItem::GetAttributes(NSEItemAttributes /*requested*/)
 {
-	return (NSEItemAttributes)(NSEIA_FileSystem | NSEIA_CanRename | NSEIA_CanDelete | NSEIA_CanMove | NSEIA_CanLink | NSEIA_CanCopy);
+	return (NSEItemAttributes)(NSEIA_FileSystem /*| NSEIA_CanRename | NSEIA_CanDelete | NSEIA_CanMove | NSEIA_CanCopy*/);
 }
 
 void CFileItem::Serialize(CArchive& ar)
@@ -113,6 +113,7 @@ int CFileItem::GetContentViewColumnIndices(UINT* indices)
 BOOL CFileItem::GetColumnValueEx(VARIANT* value, CShellColumn& column)
 {
 	CString tmpStr;
+	UINT tmpInt;
 	wchar_t tmpBuf[256];
 
 	switch (column.index)
@@ -186,8 +187,23 @@ BOOL CFileItem::GetColumnValueEx(VARIANT* value, CShellColumn& column)
 		tmpStr = Attrs.Tags;
 		break;
 	case LFAttrRating:
+		if (value->vt==VT_BSTR)
+		{
+			if (Attrs.Rating>1)
+				tmpStr.Format(_T("%d"), Attrs.Rating/2);
+		}
+		else
+		{
+			tmpInt = Attrs.Rating*10;
+			if (tmpInt>99)
+				tmpInt = 99;
+			CUtils::SetVariantUINT(value, tmpInt);
+			return TRUE;
+		}
+		break;
 	case LFAttrPriority:
-		tmpStr = "TODO";
+		if (Attrs.Priority>1)
+			tmpStr.Format(_T("%d"), Attrs.Priority/2);
 		break;
 	case LFAttrLocationName:
 		tmpStr = Attrs.LocationName;
