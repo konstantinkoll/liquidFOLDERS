@@ -55,7 +55,7 @@
     <ROW Component="FileDrop.exe" ComponentId="{2112C382-EC69-4377-8231-86BD5FAB6DB3}" Directory_="APPDIR" Attributes="256" KeyPath="FileDrop.exe"/>
     <ROW Component="LFCommDlg.dll" ComponentId="{79E36DCC-424C-43F8-8B66-0B18C1199F8A}" Directory_="APPDIR" Attributes="256" KeyPath="LFCommDlg.dll"/>
     <ROW Component="LFCore.dll" ComponentId="{6B3B9330-53CC-4DCC-A85C-B719B1D7B018}" Directory_="System64Folder" Attributes="256" KeyPath="LFCore.dll"/>
-    <ROW Component="LFNamespaceExtension.dll" ComponentId="{958C10FB-58FF-4E2B-A9A7-CA1F4A13EC25}" Directory_="System64Folder" Attributes="768" KeyPath="LFNamespaceExtension.dll"/>
+    <ROW Component="LFNamespaceExtension.dll" ComponentId="{958C10FB-58FF-4E2B-A9A7-CA1F4A13EC25}" Directory_="System64Folder" Attributes="256" KeyPath="LFNamespaceExtension.dll"/>
     <ROW Component="LFWatchdog.exe" ComponentId="{53C7BF53-DAB2-49EE-A40D-8E42C866CA6F}" Directory_="APPDIR" Attributes="256" KeyPath="LFWatchdog.exe"/>
     <ROW Component="Migrate.exe" ComponentId="{0D89D6BC-65FF-455A-BA9B-AFBD4F05BDE3}" Directory_="APPDIR" Attributes="256" KeyPath="Migrate.exe"/>
     <ROW Component="SHORTCUTDIR" ComponentId="{252E79F3-5959-444B-A7EA-CD698BA212E7}" Directory_="SHORTCUTDIR" Attributes="0"/>
@@ -414,5 +414,6 @@
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.PreReqSearchComponent">
     <ROW SearchKey="SP" Prereq="Visual_C_2008_SP1" SearchType="9" SearchString="HKLM\SOFTWARE\Microsoft\DevDiv\VC\Servicing\9.0\RED\1033\SP" RefContent="M1" Order="1" Property="PreReqSearch"/>
+    <ROW SearchKey="SP_1" Prereq="Visual_C_2008_SP1" SearchType="9" SearchString="HKLM\SOFTWARE\Microsoft\DevDiv\VC\Servicing\9.0\SP" RefContent="M1" Order="2" Property="PreReqSearch_1"/>
   </COMPONENT>
 </DOCUMENT>

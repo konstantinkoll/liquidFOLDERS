@@ -416,5 +416,6 @@
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.PreReqSearchComponent">
     <ROW SearchKey="SP" Prereq="Visual_C_2008_SP1" SearchType="9" SearchString="HKLM\SOFTWARE\Microsoft\DevDiv\VC\Servicing\9.0\RED\1033\SP" RefContent="M1" Order="1" Property="PreReqSearch"/>
+    <ROW SearchKey="SP_1" Prereq="Visual_C_2008_SP1" SearchType="9" SearchString="HKLM\SOFTWARE\Microsoft\DevDiv\VC\Servicing\9.0\SP" RefContent="M1" Order="2" Property="PreReqSearch_1"/>
   </COMPONENT>
 </DOCUMENT>
