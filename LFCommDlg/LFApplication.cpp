@@ -169,9 +169,6 @@ OSVERSIONINFO osInfo;
 
 BOOL LFApplication::InitInstance()
 {
-	// OLE Initialisieren
-	AfxOleInit();
-
 	// GDI+ initalisieren
 	GdiplusStartupInput gdiplusStartupInput;
 	GdiplusStartup(&m_gdiplusToken, &gdiplusStartupInput, NULL);
@@ -190,6 +187,9 @@ BOOL LFApplication::InitInstance()
 	InitCommonControlsEx(&InitCtrls);
 
 	CWinAppEx::InitInstance();
+
+	// OLE Initialisieren
+	ENSURE(AfxOleInit());
 
 	SetRegistryKey(_T("liquidFOLDERS"));
 	LoadStdProfileSettings();
