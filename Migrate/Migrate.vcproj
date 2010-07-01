@@ -85,6 +85,7 @@
 			/>
 			<Tool
 				Name="VCManifestTool"
+				AdditionalManifestFiles="$(SolutionDir)\include\liquidFOLDERS32.manifest.xml"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -167,6 +168,7 @@
 			/>
 			<Tool
 				Name="VCManifestTool"
+				AdditionalManifestFiles="$(SolutionDir)\include\liquidFOLDERS64.manifest.xml"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -255,6 +257,7 @@
 			/>
 			<Tool
 				Name="VCManifestTool"
+				AdditionalManifestFiles="$(SolutionDir)\include\liquidFOLDERS32.manifest.xml"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -342,6 +345,7 @@
 			/>
 			<Tool
 				Name="VCManifestTool"
+				AdditionalManifestFiles="$(SolutionDir)\include\liquidFOLDERS64.manifest.xml"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -443,18 +447,6 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\include\LFCommDlg.h"
-				>
-			</File>
-			<File
-				RelativePath="..\include\LFCore.h"
-				>
-			</File>
-			<File
-				RelativePath="..\include\liquidFOLDERS.h"
-				>
-			</File>
-			<File
 				RelativePath=".\CHeaderView.h"
 				>
 			</File>
@@ -468,6 +460,18 @@
 			</File>
 			<File
 				RelativePath=".\Kitchen.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\LFCommDlg.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\LFCore.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\liquidFOLDERS.h"
 				>
 			</File>
 			<File
@@ -589,6 +593,14 @@
 				>
 			</File>
 		</Filter>
+		<File
+			RelativePath="..\include\liquidFOLDERS32.manifest.xml"
+			>
+		</File>
+		<File
+			RelativePath="..\include\liquidFOLDERS64.manifest.xml"
+			>
+		</File>
 	</Files>
 	<Globals>
 	</Globals>

@@ -1,7 +1,5 @@
-#pragma once
-#pragma comment(linker,"/manifestdependency:\"type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
-// Theming aktivieren, selbst wenn der Dialog aus einer Applikation ohne Theming aufgerufen wird (StoreManager)
 
+#pragma once
 #include "CGdiPlusBitmap.h"
 #include "liquidFOLDERS.h"
 #include "CGlassButton.h"

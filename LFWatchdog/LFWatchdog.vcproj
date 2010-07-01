@@ -80,6 +80,7 @@
 			/>
 			<Tool
 				Name="VCManifestTool"
+				AdditionalManifestFiles="$(SolutionDir)\include\liquidFOLDERS32.manifest.xml"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -159,6 +160,7 @@
 			/>
 			<Tool
 				Name="VCManifestTool"
+				AdditionalManifestFiles="$(SolutionDir)\include\liquidFOLDERS64.manifest.xml"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -240,6 +242,7 @@
 			/>
 			<Tool
 				Name="VCManifestTool"
+				AdditionalManifestFiles="$(SolutionDir)\include\liquidFOLDERS32.manifest.xml"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -321,6 +324,7 @@
 			/>
 			<Tool
 				Name="VCManifestTool"
+				AdditionalManifestFiles="$(SolutionDir)\include\liquidFOLDERS64.manifest.xml"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -477,6 +481,14 @@
 				>
 			</File>
 		</Filter>
+		<File
+			RelativePath="..\include\liquidFOLDERS32.manifest.xml"
+			>
+		</File>
+		<File
+			RelativePath="..\include\liquidFOLDERS64.manifest.xml"
+			>
+		</File>
 	</Files>
 	<Globals>
 	</Globals>
