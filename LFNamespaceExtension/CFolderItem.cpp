@@ -1063,11 +1063,9 @@ void CFolderItem::CreateShortcut(CNSEItem* Item, const CString& LinkFilename, co
 
 void CFolderItem::UpdateItems(BOOL add)
 {
-	CNSEFolder* f = GetRootFolder();
+	NotifyUpdated();
 	if (add)
-		f->RefreshView();
-	f->NotifyUpdated();
-	f->InternalRelease();
+		RefreshView();
 }
 
 
