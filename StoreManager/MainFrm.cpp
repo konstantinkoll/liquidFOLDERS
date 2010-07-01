@@ -795,7 +795,7 @@ void CMainFrame::OnItemsOpen()
 					}
 					else
 					{
-						LFErrorBox(res);
+						LFErrorBox(res, GetSafeHwnd());
 					}
 					break;
 				default:
@@ -842,7 +842,7 @@ void CMainFrame::OnItemsDelete()
 			if (i!=-1)
 			{
 				LFItemDescriptor* store = LFAllocItemDescriptor(CookedFiles->m_Items[i]);
-				LFErrorBox(theApp.DeleteStore(store));
+				LFErrorBox(theApp.DeleteStore(store), GetSafeHwnd());
 				LFFreeItemDescriptor(store);
 			}
 			break;
@@ -941,7 +941,7 @@ void CMainFrame::ExecuteCreateStoreDlg(UINT nIDTemplate, char drv)
 
 	LFStoreNewDlg dlg(this, nIDTemplate, drv, s);
 	if (dlg.DoModal()==IDOK)
-		LFErrorBox(LFCreateStore(s, dlg.makeDefault));
+		LFErrorBox(LFCreateStore(s, dlg.makeDefault), GetSafeHwnd());
 
 	LFFreeStoreDescriptor(s);
 }
@@ -958,7 +958,7 @@ void CMainFrame::OnStoreNewInternal()
 	s->StoreMode = LFStoreModeInternal;
 
 	UINT res = LFCreateStore(s);
-	LFErrorBox(res);
+	LFErrorBox(res, GetSafeHwnd());
 
 	if ((res==LFOk) && (CookedFiles) && (m_wndView))
 		for (UINT a=0; a<CookedFiles->m_ItemCount; a++)
@@ -988,7 +988,7 @@ void CMainFrame::OnStoreMakeDefault()
 	int i = GetSelectedItem();
 
 	if (i!=-1)
-		LFErrorBox(LFMakeDefaultStore(CookedFiles->m_Items[i]->StoreID));
+		LFErrorBox(LFMakeDefaultStore(CookedFiles->m_Items[i]->StoreID), GetSafeHwnd());
 }
 
 void CMainFrame::OnStoreMakeHybrid()
@@ -996,7 +996,7 @@ void CMainFrame::OnStoreMakeHybrid()
 	int i = GetSelectedItem();
 
 	if (i!=-1)
-		LFErrorBox(LFMakeHybridStore(CookedFiles->m_Items[i]->StoreID));
+		LFErrorBox(LFMakeHybridStore(CookedFiles->m_Items[i]->StoreID), GetSafeHwnd());
 }
 
 CString MakeHex(BYTE* x, UINT bCount)
@@ -1033,8 +1033,53 @@ void CMainFrame::OnStoreProperties()
 
 void CMainFrame::OnStoreAddFiles()
 {
-	// TODO
-	MessageBox(_T("This function is not implemented right now. Please open the store and drag some files into the main window to import them. Alternatively use the FileDrop."), _T("Not implemented yet"));
+	int i = GetSelectedItem();
+
+	if (i!=-1)
+	{
+		LFFileImportList* il = LFAllocFileImportList();
+
+		// Dateien finden
+		CFileDialog fdlg(TRUE, NULL, NULL, OFN_ALLOWMULTISELECT | OFN_EXPLORER | OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY, NULL, this);
+
+		CString caption = theApp.GetCommandName(ID_STORE_ADDFILES);
+		fdlg.m_pOFN->lpstrTitle = caption;
+
+		CString Filenames;
+		fdlg.m_pOFN->nMaxFile = 8192*sizeof(wchar_t)*((MAX_PATH+1)+1);
+		fdlg.m_pOFN->lpstrFile = Filenames.GetBuffer(fdlg.m_pOFN->nMaxFile);
+		fdlg.m_pOFN->nFileOffset = 0;
+
+		if (fdlg.DoModal()==IDOK)
+		{
+			POSITION pos = fdlg.GetStartPosition();
+			while (pos)
+			{
+				CString strPath = fdlg.GetNextPathName(pos);
+				if ((strPath.Find(_T(":\\\\"))==1) && (strPath.GetLength()>4))
+				{
+					CString temp = strPath.Left(3);
+					temp += strPath.Mid(4);
+					strPath = temp;
+				}
+
+				wchar_t Buf[MAX_PATH];
+				memcpy_s(Buf, MAX_PATH*sizeof(wchar_t), strPath, (strPath.GetLength()+1)*sizeof(wchar_t));
+				LFAddImportPath(il, Buf);
+			}
+
+			// Template füllen
+			LFItemDescriptor* it = LFAllocItemDescriptor();
+			LFItemTemplateDlg tdlg(this, it);
+			if (tdlg.DoModal()!=IDCANCEL)
+				LFErrorBox(LFImportFiles(CookedFiles->m_Items[i]->StoreID, il, it), GetSafeHwnd());
+
+			LFFreeItemDescriptor(it);
+		}
+
+		Filenames.ReleaseBuffer();
+		LFFreeFileImportList(il);
+	}
 }
 
 void CMainFrame::OnStoreMaintenance()
@@ -1056,14 +1101,14 @@ void CMainFrame::OnStoreBackup()
 	ENSURE(tmpStr.LoadString(IDS_REGFILEFILTER));
 	tmpStr += _T(" (*.reg)|*.reg||");
 
-	CFileDialog dlg(FALSE, _T(".reg"), NULL, OFN_OVERWRITEPROMPT, tmpStr, this);
+	CFileDialog dlg(FALSE, _T(".reg"), NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, tmpStr, this);
 
 	if (dlg.DoModal()==IDOK)
 	{
 		CStdioFile f;
 		if (!f.Open(dlg.GetFileName(), CFile::modeCreate | CFile::modeWrite))
 		{
-			LFErrorBox(LFDriveNotReady);
+			LFErrorBox(LFDriveNotReady, GetSafeHwnd());
 		}
 		else
 		{
@@ -1119,7 +1164,7 @@ void CMainFrame::OnStoreBackup()
 			}
 			catch(CFileException ex)
 			{
-				LFErrorBox(LFDriveNotReady);
+				LFErrorBox(LFDriveNotReady, GetSafeHwnd());
 			}
 
 			f.Close();

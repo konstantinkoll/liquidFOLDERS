@@ -85,8 +85,12 @@ BOOL LFDropTarget::OnDrop(CWnd* /*pWnd*/, COleDataObject* pDataObject, DROPEFFEC
 	// Import
 	if (success)
 	{
-		if (LFImportFiles(m_StoreID, il, it, dropEffect==DROPEFFECT_MOVE)!=LFOk)
+		UINT res = LFImportFiles(m_StoreID, il, it, dropEffect==DROPEFFECT_MOVE);
+		if (res!=LFOk)
+		{
+			LFErrorBox(res);
 			success = FALSE;
+		}
 
 		SendMessage(m_hWnd, LFGetMessageIDs()->ItemsDropped, NULL, NULL);
 	}

@@ -458,7 +458,7 @@ void CInspectorWnd::OnExport()
 	tmpStr.LoadString(IDS_TXTFILEFILTER);
 	tmpStr += _T(" (*.txt)|*.txt||");
 
-	CFileDialog dlg(FALSE, _T(".txt"), NULL, OFN_OVERWRITEPROMPT, tmpStr, this);
+	CFileDialog dlg(FALSE, _T(".txt"), NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, tmpStr, this);
 	if (dlg.DoModal()==IDOK)
 	{
 		CStdioFile f;
