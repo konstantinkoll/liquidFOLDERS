@@ -78,7 +78,7 @@ public:
 	virtual BOOL OnDelete(CExecuteMenuitemsEventArgs& e);
 	virtual BOOL OnOpen(CExecuteMenuitemsEventArgs& e);
 	void CreateShortcut(CNSEItem* Item, const CString& LinkFilename, const CString& Description, UINT Icon);
-	void UpdateItems(BOOL add);
+	void UpdateItems();
 
 	// TODO
 	virtual void InitDataObject(CInitDataObjectEventArgs& e);

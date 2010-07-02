@@ -771,7 +771,7 @@ BOOL CFolderItem::OnExecuteMenuItem(CExecuteMenuitemsEventArgs& e)
 		}
 		else
 		{
-			UpdateItems(TRUE);
+			UpdateItems();
 		}
 
 		LFFreeStoreDescriptor(s);
@@ -795,7 +795,7 @@ BOOL CFolderItem::OnExecuteMenuItem(CExecuteMenuitemsEventArgs& e)
 			}
 			else
 			{
-				UpdateItems(FALSE);
+				UpdateItems();
 			}
 
 			return (res==LFOk);
@@ -952,7 +952,7 @@ BOOL CFolderItem::OnChangeName(CChangeNameEventArgs& e)
 	}
 	else
 	{
-		UpdateItems(FALSE);
+		UpdateItems();
 	}
 
 	return (res==LFOk);
@@ -1061,11 +1061,17 @@ void CFolderItem::CreateShortcut(CNSEItem* Item, const CString& LinkFilename, co
 	}
 }
 
-void CFolderItem::UpdateItems(BOOL add)
+void CFolderItem::UpdateItems()
 {
 	NotifyUpdated();
-	if (add)
-		RefreshView();
+
+	CNSEFolder* parent = GetParentFolder();
+	if (parent)
+	{
+		parent->NotifyUpdated();
+		parent->RefreshView();
+		parent->InternalRelease();
+	}
 }
 
 
