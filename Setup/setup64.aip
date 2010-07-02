@@ -52,27 +52,27 @@
     <ROW Component="AI_ExePath" ComponentId="{2F050720-4FFB-4F2A-BB07-32D0EA0AEF36}" Directory_="APPDIR" Attributes="4" KeyPath="AI_ExePath"/>
     <ROW Component="FileDrop.exe" ComponentId="{2112C382-EC69-4377-8231-86BD5FAB6DB3}" Directory_="APPDIR" Attributes="256" KeyPath="FileDrop.exe"/>
     <ROW Component="LFCommDlg.dll" ComponentId="{79E36DCC-424C-43F8-8B66-0B18C1199F8A}" Directory_="APPDIR" Attributes="256" KeyPath="LFCommDlg.dll"/>
-    <ROW Component="LFCore.dll" ComponentId="{6B3B9330-53CC-4DCC-A85C-B719B1D7B018}" Directory_="System64Folder" Attributes="256" KeyPath="LFCore.dll"/>
-    <ROW Component="LFNamespaceExtension.dll" ComponentId="{958C10FB-58FF-4E2B-A9A7-CA1F4A13EC25}" Directory_="System64Folder" Attributes="256" KeyPath="LFNamespaceExtension.dll"/>
-    <ROW Component="LFWatchdog.exe" ComponentId="{53C7BF53-DAB2-49EE-A40D-8E42C866CA6F}" Directory_="APPDIR" Attributes="256" KeyPath="LFWatchdog.exe"/>
+    <ROW Component="LFCore.dll" ComponentId="{6B3B9330-53CC-4DCC-A85C-B719B1D7B018}" Directory_="SystemFolder" Attributes="256" KeyPath="LFCore.dll"/>
+    <ROW Component="LFNamespaceExtension.dll" ComponentId="{958C10FB-58FF-4E2B-A9A7-CA1F4A13EC25}" Directory_="SystemFolder" Attributes="256" KeyPath="LFNamespaceExtension.dll"/>
+    <ROW Component="LFWatchdog.exe" ComponentId="{8B20F94F-7420-4E03-98DD-DA9A19F0C59E}" Directory_="APPDIR" Attributes="256" KeyPath="LFWatchdog.exe"/>
     <ROW Component="Migrate.exe" ComponentId="{0D89D6BC-65FF-455A-BA9B-AFBD4F05BDE3}" Directory_="APPDIR" Attributes="256" KeyPath="Migrate.exe"/>
     <ROW Component="SHORTCUTDIR" ComponentId="{252E79F3-5959-444B-A7EA-CD698BA212E7}" Directory_="SHORTCUTDIR" Attributes="0"/>
     <ROW Component="StoreManager.exe" ComponentId="{CD94E9D9-3367-4F36-BB82-B2FCDDE6250E}" Directory_="APPDIR" Attributes="256" KeyPath="StoreManager.exe"/>
-    <ROW Component="Visual_C_2008_SP1" ComponentId="{EF467874-3989-43A9-B23E-E89BC4914555}" Directory_="APPDIR" Attributes="4" KeyPath="Visual_C_2008_SP1" Options="2"/>
+    <ROW Component="Visual_C_2008_SP1" ComponentId="{E48EF50E-DCBC-42F1-AE1B-CF798B1F9753}" Directory_="APPDIR" Attributes="4" KeyPath="Visual_C_2008_SP1" Options="2"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiFeatsComponent">
-    <ROW Feature="FileDrop" Title="FileDrop" Description="FileDrop" Display="7" Level="1" Directory_="APPDIR" Attributes="0" Components="FileDrop.exe"/>
-    <ROW Feature="MigrationWizard" Title="MigrationWizard" Description="Migration Wizard" Display="9" Level="1" Directory_="APPDIR" Attributes="0" Components="Migrate.exe"/>
-    <ROW Feature="Visual_C_2008_SP1_Redistributable" Title="Visual C++ 2008 SP1 Redistributable" Description="Visual C++ 2008 SP1 Redistributable" Display="11" Level="1" Attributes="0" Components="Visual_C_2008_SP1"/>
-    <ROW Feature="liquidFOLDERS" Title="liquidFOLDERS" Description="liquidFOLDERS" Display="0" Level="1" Directory_="APPDIR" Attributes="16" Components="LFCommDlg.dll LFCore.dll LFNamespaceExtension.dll StoreManager.exe SHORTCUTDIR AI_CustomARPName AI_ExePath AI_DisableModify LFWatchdog.exe"/>
+    <ROW Feature="FileDrop" Title="FileDrop" Description="FileDrop" Display="3" Level="1" Directory_="APPDIR" Attributes="8" Components="FileDrop.exe AI_CustomARPName AI_DisableModify"/>
+    <ROW Feature="MigrationWizard" Title="MigrationWizard" Description="Migration Wizard" Display="5" Level="1" Directory_="APPDIR" Attributes="8" Components="Migrate.exe AI_CustomARPName AI_DisableModify"/>
+    <ROW Feature="Visual_C_2008_SP1_Redistributable" Title="Visual C++ 2008 SP1 Redistributable" Description="Visual C++ 2008 SP1 Redistributable" Display="0" Level="1" Attributes="24" Components="Visual_C_2008_SP1 AI_CustomARPName AI_DisableModify"/>
+    <ROW Feature="liquidFOLDERS" Title="liquidFOLDERS" Description="liquidFOLDERS" Display="0" Level="1" Directory_="APPDIR" Attributes="24" Components="LFCommDlg.dll LFCore.dll LFNamespaceExtension.dll StoreManager.exe SHORTCUTDIR AI_CustomARPName AI_ExePath AI_DisableModify LFWatchdog.exe"/>
     <ATTRIBUTE name="CurrentFeature" value="liquidFOLDERS"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiFilesComponent">
     <ROW File="FileDrop.exe" Component_="FileDrop.exe" FileName="FileDrop.exe" Attributes="0" SourcePath="Release\x64\FileDrop.exe" SelfReg="false" Sequence="5"/>
-    <ROW File="LFCommDlg.dll" Component_="LFCommDlg.dll" FileName="BFComm~1.dll|LFCommDlg.dll" Attributes="0" SourcePath="Release\x64\LFCommDlg.dll" SelfReg="false" Sequence="1"/>
+    <ROW File="LFCommDlg.dll" Component_="LFCommDlg.dll" FileName="LFComm~1.dll|LFCommDlg.dll" Attributes="0" SourcePath="Release\x64\LFCommDlg.dll" SelfReg="false" Sequence="1"/>
     <ROW File="LFCore.dll" Component_="LFCore.dll" FileName="LFCore.dll" Attributes="0" SourcePath="Release\x64\LFCore.dll" SelfReg="false" Sequence="2"/>
-    <ROW File="LFNamespaceExtension.dll" Component_="LFNamespaceExtension.dll" FileName="BFName~1.dll|LFNamespaceExtension.dll" Attributes="0" SourcePath="Release\x64\LFNamespaceExtension.dll" SelfReg="safe" Sequence="4" DigSign="true"/>
-    <ROW File="LFWatchdog.exe" Component_="LFWatchdog.exe" FileName="BFWatc~1.exe|LFWatchdog.exe" Attributes="0" SourcePath="Release\x64\LFWatchdog.exe" SelfReg="false" Sequence="8"/>
+    <ROW File="LFNamespaceExtension.dll" Component_="LFNamespaceExtension.dll" FileName="LFName~1.dll|LFNamespaceExtension.dll" Attributes="0" SourcePath="Release\x64\LFNamespaceExtension.dll" SelfReg="safe" Sequence="4" DigSign="true"/>
+    <ROW File="LFWatchdog.exe" Component_="LFWatchdog.exe" FileName="LFWatc~1.exe|LFWatchdog.exe" Attributes="0" SourcePath="Release\x64\LFWatchdog.exe" SelfReg="false" Sequence="8"/>
     <ROW File="Migrate.exe" Component_="Migrate.exe" FileName="Migrate.exe" Attributes="0" SourcePath="Release\x64\Migrate.exe" SelfReg="false" Sequence="6"/>
     <ROW File="StoreManager.exe" Component_="StoreManager.exe" FileName="StoreM~1.exe|StoreManager.exe" Attributes="0" SourcePath="Release\x64\StoreManager.exe" SelfReg="false" Sequence="7"/>
   </COMPONENT>
