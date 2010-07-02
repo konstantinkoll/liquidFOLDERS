@@ -93,7 +93,6 @@ BOOL CStoreManagerApp::InitInstance()
 	for (UINT a=0; a<LFViewCount; a++)
 		switch (a)
 		{
-		case LFViewLargeIcons:
 		case LFViewGlobe:
 			m_Background[a] = ChildBackground_Ribbon;
 			break;

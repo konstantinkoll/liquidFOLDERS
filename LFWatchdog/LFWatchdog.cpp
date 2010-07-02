@@ -19,7 +19,7 @@ BOOL AboutWindow = FALSE;
 
 
 // Use a guid to uniquely identify our icon
-class __declspec(uuid("f144ca00-1a4f-11df-8a39-0800200c9a66")) BFIcon;
+class __declspec(uuid("f144ca00-1a4f-11df-8a39-0800200c9a66")) LFIcon;
 
 
 BOOL AddNotificationIcon(HWND hwnd)
@@ -31,7 +31,7 @@ BOOL AddNotificationIcon(HWND hwnd)
 	nid.cbSize = sizeof(nid);
 	nid.hWnd = hwnd;
 	nid.uFlags = NIF_ICON | NIF_TIP | NIF_MESSAGE;
-	nid.guidItem = __uuidof(BFIcon);
+	nid.guidItem = __uuidof(LFIcon);
 	nid.uVersion = NOTIFYICON_VERSION_4;
 	nid.uCallbackMessage = WMAPP_NOTIFYCALLBACK;
 	nid.hIcon = (HICON)LoadImage(AfxGetInstanceHandle(), MAKEINTRESOURCE(IDI_ICON), IMAGE_ICON, sz, sz, LR_LOADTRANSPARENT);
@@ -41,13 +41,14 @@ BOOL AddNotificationIcon(HWND hwnd)
 	return Shell_NotifyIcon(NIM_SETVERSION, &nid);
 }
 
-BOOL DeleteNotificationIcon()
+BOOL DeleteNotificationIcon(HWND hwnd)
 {
 	NOTIFYICONDATA nid;
 	ZeroMemory(&nid, sizeof(nid));
 	nid.cbSize = sizeof(nid);
+	nid.hWnd = hwnd;
 	nid.uFlags = NIF_GUID;
-	nid.guidItem = __uuidof(BFIcon);
+	nid.guidItem = __uuidof(LFIcon);
 
 	return Shell_NotifyIcon(NIM_DELETE, &nid);
 }
@@ -158,7 +159,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		AddNotificationIcon(hwnd);
 		break;
 	case WM_DESTROY:
-		DeleteNotificationIcon();
+		DeleteNotificationIcon(hwnd);
 		PostQuitMessage(0);
 		break;
 	case WMAPP_NOTIFYCALLBACK:
@@ -182,6 +183,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 			ShowAboutDlg();
 			break;
 		case ID_APP_EXIT:
+			DeleteNotificationIcon(hwnd);
 			PostQuitMessage(0);
 			break;
 		}
