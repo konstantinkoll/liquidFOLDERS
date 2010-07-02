@@ -239,13 +239,20 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	tmpStr = "Panes";
 	m_wndStatusBar.AddExtendedElement(pGroupPanels, tmpStr);
 
-	CMFCRibbonButtonsGroup* pGroupViewOptions = new CMFCRibbonButtonsGroup();
-	pGroupViewOptions->AddButton(new CMFCRibbonButton(ID_VIEW_GRANNY, _T(""), m_PanelImages.ExtractIcon(15)));
+	CMFCRibbonButtonsGroup* pGroupOptions = new CMFCRibbonButtonsGroup();
+	pGroupOptions->AddButton(new CMFCRibbonButton(ID_APP_SORTOPTIONS, _T(""), m_PanelImages.ExtractIcon(21)));
+	pGroupOptions->AddButton(new CMFCRibbonButton(ID_APP_VIEWOPTIONS, _T(""), m_PanelImages.ExtractIcon(4)));
+
+	tmpStr = "Options";
+	m_wndStatusBar.AddExtendedElement(pGroupOptions, tmpStr);
+
+	CMFCRibbonButtonsGroup* pGroupDisplay = new CMFCRibbonButtonsGroup();
+	pGroupDisplay->AddButton(new CMFCRibbonButton(ID_VIEW_GRANNY, _T(""), m_PanelImages.ExtractIcon(15)));
 	if (!IsClipboard)
-		pGroupViewOptions->AddButton(new CMFCRibbonButton(ID_VIEW_CATEGORIES, _T(""), m_PanelImages.ExtractIcon(7)));
+		pGroupDisplay->AddButton(new CMFCRibbonButton(ID_VIEW_CATEGORIES, _T(""), m_PanelImages.ExtractIcon(7)));
 
 	tmpStr = "Display";
-	m_wndStatusBar.AddExtendedElement(pGroupViewOptions, tmpStr);
+	m_wndStatusBar.AddExtendedElement(pGroupDisplay, tmpStr);
 
 	UINT dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | CBRS_FLOAT_MULTI;
 
