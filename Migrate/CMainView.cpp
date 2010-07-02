@@ -61,7 +61,7 @@ void CMainView::ClearRoot()
 BOOL CMainView::PaintEmpty(CDC* pDC, Graphics* g, CRect& rect)
 {
 	const int StatusHeight = 36;
-	BOOL border = theApp.m_nAppLook==ID_VIEW_APPLOOK_OFF_2007_BLACK;
+	BOOL border = (theApp.m_nAppLook==ID_VIEW_APPLOOK_OFF_2007_BLACK);
 
 	COLORREF back;
 	COLORREF text;
@@ -74,15 +74,7 @@ BOOL CMainView::PaintEmpty(CDC* pDC, Graphics* g, CRect& rect)
 	// Balken
 	r.top = r.bottom;
 	r.bottom = rect.bottom-border;
-	SolidBrush* brush;
-	if (border)
-	{
-		brush = new SolidBrush(Color(255, 230, 240, 250));
-	}
-	else
-	{
-		brush = new SolidBrush(Color(160, 255, 255, 255));
-	}
+	SolidBrush* brush = new SolidBrush(border ? Color(255, 230, 240, 250) : Color(160, 255, 255, 255));
 	g->FillRectangle(brush, r.left, r.top, r.Width(), r.Height());
 	delete brush;
 
@@ -139,11 +131,12 @@ void CMainView::DrawBorder(CDC* pDC, CRect& rect)
 {
 	CPen penBorder;
 	penBorder.CreatePen(PS_SOLID, 1, 0xA0A0A0);
-	CPen* pOldPen = pDC->SelectObject(&penBorder);
-	CBrush* pOldBrush = (CBrush*)pDC->SelectObject(GetStockObject(HOLLOW_BRUSH));
+
+	CPen* pOldPen = (CPen*)pDC->SelectObject(&penBorder);
+	HGDIOBJ pOldBrush = pDC->SelectObject(GetStockObject(HOLLOW_BRUSH));
 	pDC->Rectangle(rect);
-	pDC->SelectObject(pOldPen);
 	pDC->SelectObject(pOldBrush);
+	pDC->SelectObject(pOldPen);
 }
 
 
