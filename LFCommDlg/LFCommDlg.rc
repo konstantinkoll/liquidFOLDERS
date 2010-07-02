@@ -205,9 +205,9 @@ BEGIN
     EDITTEXT        IDC_STORENAME2,94,162,72,14,ES_AUTOHSCROLL | WS_GROUP
     EDITTEXT        IDC_STORENAME3,175,162,72,14,ES_AUTOHSCROLL | WS_GROUP
     DEFPUSHBUTTON   "Und los!",IDOK,7,191,50,14,WS_GROUP
-    PUSHBUTTON      "Nein danke.",IDCANCEL,64,191,50,14,WS_GROUP
+    PUSHBUTTON      "Jetzt nicht.",IDCANCEL,64,191,50,14,WS_GROUP
     PUSHBUTTON      "&Lizenzschlüssel eingeben...",IDC_ENTERLICENSEKEY,150,191,105,14,WS_GROUP
-    LTEXT           "Dies scheint der erste Start von liquidFOLDERS zu sein. liquidFOLDERS speichert alle Dateien in sog. „Stores“. Um gleich loszulegen, können Sie hier bis zu drei Stores anlegen, indem Sie deren Namen eintragen (z.B. „Meine Dateien“).",IDC_STATIC,7,101,248,36
+    LTEXT           "Dies ist der erste Start von liquidFOLDERS. liquidFOLDERS speichert alle Dateien in sog. „Stores“. Um gleich loszulegen, können Sie hier bis zu drei Stores anlegen, indem Sie deren Namen eintragen (z.B. „Meine Dateien“).",IDC_STATIC,7,101,248,36
     GROUPBOX        "Store-Namen",IDC_STATIC,7,140,248,44,WS_GROUP
     LTEXT           "Store 1:",IDC_STATIC,14,152,72,8
     LTEXT           "Store 2:",IDC_STATIC,94,152,72,8
@@ -637,9 +637,9 @@ BEGIN
     EDITTEXT        IDC_STORENAME2,94,162,72,14,ES_AUTOHSCROLL | WS_GROUP
     EDITTEXT        IDC_STORENAME3,175,162,72,14,ES_AUTOHSCROLL | WS_GROUP
     DEFPUSHBUTTON   "Go ahead!",IDOK,7,191,50,14,WS_GROUP
-    PUSHBUTTON      "No, thanks.",IDCANCEL,64,191,50,14,WS_GROUP
+    PUSHBUTTON      "Not now.",IDCANCEL,64,191,50,14,WS_GROUP
     PUSHBUTTON      "Enter &license key...",IDC_ENTERLICENSEKEY,150,191,105,14,WS_GROUP
-    LTEXT           "This seems to be the first time you run liquidFOLDERS. liquidFOLDERS keeps all your files in so-called stores. To get going, you can create up to three stores right now, by simply filling in their names below (e.g. ""Home"" and ""Work"").",IDC_STATIC,7,101,248,36
+    LTEXT           "This is the first time you run liquidFOLDERS. liquidFOLDERS keeps all your files in so-called stores. To get going, you can create up to three stores right now, by simply filling in their names below (e.g. ""Home"" and ""Work"").",IDC_STATIC,7,101,248,36
     GROUPBOX        "Store names",IDC_STATIC,7,140,248,44,WS_GROUP
     LTEXT           "Store 1:",IDC_STATIC,14,152,27,8
     LTEXT           "Store 2:",IDC_STATIC,94,152,27,8
@@ -1542,10 +1542,10 @@ BEGIN
     EDITTEXT        IDC_STORENAME1,14,162,72,14,ES_AUTOHSCROLL | WS_GROUP
     EDITTEXT        IDC_STORENAME2,94,162,72,14,ES_AUTOHSCROLL | WS_GROUP
     EDITTEXT        IDC_STORENAME3,175,162,72,14,ES_AUTOHSCROLL | WS_GROUP
-    DEFPUSHBUTTON   "Feu vert",IDOK,7,191,50,14,WS_GROUP
-    PUSHBUTTON      "Non, merci.",IDCANCEL,64,191,50,14,WS_GROUP
+    DEFPUSHBUTTON   "Feu vert",IDOK,7,191,47,14,WS_GROUP
+    PUSHBUTTON      "Pas maintenant.",IDCANCEL,61,191,66,14,WS_GROUP
     PUSHBUTTON      "Donner clé de &licence...",IDC_ENTERLICENSEKEY,150,191,105,14,WS_GROUP
-    LTEXT           "Cela semble être la première fois que vous dirigez liquidFOLDERS. liquidFOLDERS gére tous vous fichiers dans les ainsi-appelé stores. Pour recevoir le départ, vous pouvez créer jusqu'à trois stores immédiatement en remplissant leurs noms ci-dessous.",IDC_STATIC,7,101,248,36
+    LTEXT           "C'est la première fois que vous dirigez liquidFOLDERS. liquidFOLDERS gére tous vous fichiers dans les ainsi-appelé stores. Pour recevoir le départ, vous pouvez créer jusqu'à trois stores immédiatement en remplissant leurs noms ci-dessous.",IDC_STATIC,7,101,248,36
     GROUPBOX        "Les noms des stores",IDC_STATIC,7,140,248,44,WS_GROUP
     LTEXT           "Store 1:",IDC_STATIC,14,152,27,8
     LTEXT           "Store 2:",IDC_STATIC,94,152,27,8
