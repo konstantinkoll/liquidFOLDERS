@@ -520,12 +520,9 @@ void CMainFrame::OnUpdateDropCommands(CCmdUI* pCmdUI)
 	case ID_DROP_CALENDAR:
 		pCmdUI->SetCheck((ActiveViewID>=LFViewCalendarYear) &&
 			(ActiveViewID<=LFViewCalendarDay));
-		pCmdUI->Enable((theApp.m_Contexts[ActiveContextID]->AllowedViews->IsSet(LFViewCalendarYear) ||
+		pCmdUI->Enable(theApp.m_Contexts[ActiveContextID]->AllowedViews->IsSet(LFViewCalendarYear) ||
 			theApp.m_Contexts[ActiveContextID]->AllowedViews->IsSet(LFViewCalendarWeek) ||
-			theApp.m_Contexts[ActiveContextID]->AllowedViews->IsSet(LFViewCalendarDay)) &&
-			(LFAttributeSortableInView(ActiveViewParameters->SortBy, LFViewCalendarYear) ||
-			LFAttributeSortableInView(ActiveViewParameters->SortBy, LFViewCalendarWeek) ||
-			LFAttributeSortableInView(ActiveViewParameters->SortBy, LFViewCalendarDay)));
+			theApp.m_Contexts[ActiveContextID]->AllowedViews->IsSet(LFViewCalendarDay));
 		break;
 	case ID_DROP_NAME:
 		pCmdUI->SetCheck((ActiveViewParameters->SortBy==LFAttrFileName) ||
