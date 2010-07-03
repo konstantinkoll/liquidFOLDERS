@@ -124,7 +124,7 @@ BOOL ViewOptionsDlg::OnInitDialog()
 
 	for (UINT a=LFViewAutomatic; a<LFViewCount; a++)
 	{
-		if (theApp.m_Contexts[context]->AllowedViews->IsSet(a) && LFAttributeSortableInView(view->SortBy, a))
+		if (theApp.m_Contexts[context]->AllowedViews->IsSet(a))
 		{
 			lvi.lParam = (LPARAM)a;
 			lvi.pszText = theApp.GetCommandName(ID_APP_VIEW_AUTOMATIC+a).AllocSysString();

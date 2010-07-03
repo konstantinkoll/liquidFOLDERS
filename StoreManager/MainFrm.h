@@ -101,7 +101,7 @@ public:
 	BOOL UpdateTrashFlag(BOOL Trash, BOOL All=FALSE);
 	BOOL DeleteFiles(BOOL All=FALSE);
 	UINT SelectViewMode(UINT ViewID=LFViewAutomatic);
-	BOOL OpenChildView(BOOL Force=FALSE);
+	BOOL OpenChildView(BOOL Force=FALSE, BOOL AllowChangeSort=FALSE);
 
 	BOOL IsClipboard;
 	int ActiveContextID;

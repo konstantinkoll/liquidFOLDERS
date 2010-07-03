@@ -479,8 +479,7 @@ void CMainFrame::OnUpdateAppCommands(CCmdUI* pCmdUI)
 	case ID_APP_VIEW_TIMELINE:
 		view = pCmdUI->m_nID-ID_APP_VIEW_AUTOMATIC+LFViewAutomatic;
 		pCmdUI->SetCheck(ActiveViewID==(int)view);
-		b = theApp.m_Contexts[ActiveContextID]->AllowedViews->IsSet(view) &&
-			LFAttributeSortableInView(ActiveViewParameters->SortBy, view);
+		b = theApp.m_Contexts[ActiveContextID]->AllowedViews->IsSet(view);
 		if (CookedFiles)
 			b &= (theApp.m_Contexts[CookedFiles->m_Context]->AllowedViews->IsSet(view)==true);
 		pCmdUI->Enable(b);
@@ -2307,11 +2306,24 @@ UINT CMainFrame::SelectViewMode(UINT ViewID)
 	return ViewID;
 }
 
-BOOL CMainFrame::OpenChildView(BOOL Force)
+BOOL CMainFrame::OpenChildView(BOOL Force, BOOL AllowChangeSort)
 {
+	if (AllowChangeSort)
+		if (!LFAttributeSortableInView(ActiveViewParameters->SortBy, ActiveViewParameters->Mode))
+		{
+			for (UINT a=0; a<LFAttributeCount; a++)
+			if (LFAttributeSortableInView(a, ActiveViewParameters->Mode))
+			{
+				ActiveViewParameters->SortBy = a;
+				break;
+			}
+
+			theApp.SaveViewOptions(ActiveContextID);
+			theApp.UpdateSortOptions(ActiveContextID);
+			return FALSE;
+		}
+
 	UINT ViewID = SelectViewMode(ActiveViewParameters->Mode);
-	//if (ActiveViewParameters->Mode!=LFViewAutomatic)
-	//	ActiveViewParameters->Mode = ViewID;
 
 	ASSERT(LFAttributeSortableInView(ActiveViewParameters->SortBy, ViewID));
 	CFileView* pNewView = NULL;
