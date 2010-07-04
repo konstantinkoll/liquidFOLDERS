@@ -1035,6 +1035,15 @@ void CMainFrame::OnStoreProperties()
 	}
 }
 
+wchar_t InitialDir[MAX_PATH];
+int CALLBACK BrowseCallbackProc(HWND hWnd, UINT uMsg, LPARAM /*lParam*/, LPARAM /*lpData*/)
+{
+	if (uMsg==BFFM_INITIALIZED)
+		SendMessage(hWnd, BFFM_SETSELECTION, TRUE, (LPARAM)InitialDir);
+
+	return 0;
+}
+
 void CMainFrame::OnStoreAddFolder()
 {
 	int i = GetSelectedItem();
@@ -1043,45 +1052,52 @@ void CMainFrame::OnStoreAddFolder()
 	{
 		LFFileImportList* il = LFAllocFileImportList();
 
+		CString mask;
+		CString caption;
+		ENSURE(mask.LoadString(IDS_ADDFOLDER));
+		caption.Format(mask, CookedFiles->m_Items[i]->CoreAttributes.FileName);
+
 		// Verzeichnis finden
-		CFileDialog fdlg(TRUE, NULL, NULL, OFN_ALLOWMULTISELECT | OFN_EXPLORER | OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY, NULL, this);
+		BROWSEINFO bi;
+		ZeroMemory(&bi, sizeof(bi));
+		TCHAR szDisplayName[_MAX_PATH];
+		szDisplayName[0] = '\0';
+		bi.hwndOwner = GetSafeHwnd();
+		bi.pidlRoot = NULL;
+		bi.pszDisplayName = szDisplayName;
+		bi.lpszTitle = caption;
+		bi.ulFlags = BIF_RETURNONLYFSDIRS | BIF_NEWDIALOGSTYLE | BIF_NONEWFOLDERBUTTON | BIF_EDITBOX;
+		bi.lpfn = BrowseCallbackProc;
 
-		CString caption = theApp.GetCommandName(ID_STORE_ADDFOLDER);
-		fdlg.m_pOFN->lpstrTitle = caption;
+		LPITEMIDLIST pIIL = SHBrowseForFolder(&bi);
+		wchar_t ReturnedDir[MAX_PATH];
 
-		CString Filenames;
-		fdlg.m_pOFN->nMaxFile = 8192*sizeof(wchar_t)*((MAX_PATH+1)+1);
-		fdlg.m_pOFN->lpstrFile = Filenames.GetBuffer(fdlg.m_pOFN->nMaxFile);
-		fdlg.m_pOFN->nFileOffset = 0;
-
-		if (fdlg.DoModal()==IDOK)
+		BOOL bRet = ::SHGetPathFromIDList(pIIL, ReturnedDir);
+		if (bRet)
 		{
-			POSITION pos = fdlg.GetStartPosition();
-			while (pos)
+			if (ReturnedDir[0]!=L'\0')
 			{
-				CString strPath = fdlg.GetNextPathName(pos);
-				if ((strPath.Find(_T(":\\\\"))==1) && (strPath.GetLength()>4))
-				{
-					CString temp = strPath.Left(3);
-					temp += strPath.Mid(4);
-					strPath = temp;
-				}
+				LFAddImportPath(il, ReturnedDir);
+				wcscpy_s(InitialDir, MAX_PATH, ReturnedDir);
 
-				wchar_t Buf[MAX_PATH];
-				memcpy_s(Buf, MAX_PATH*sizeof(wchar_t), strPath, (strPath.GetLength()+1)*sizeof(wchar_t));
-				LFAddImportPath(il, Buf);
+				// Template füllen
+				LFItemDescriptor* it = LFAllocItemDescriptor();
+				LFItemTemplateDlg tdlg(this, it);
+				if (tdlg.DoModal()!=IDCANCEL)
+					LFErrorBox(LFImportFiles(CookedFiles->m_Items[i]->StoreID, il, it), GetSafeHwnd());
+
+				LFFreeItemDescriptor(it);
 			}
 
-			// Template füllen
-			LFItemDescriptor* it = LFAllocItemDescriptor();
-			LFItemTemplateDlg tdlg(this, it);
-			if (tdlg.DoModal()!=IDCANCEL)
-				LFErrorBox(LFImportFiles(CookedFiles->m_Items[i]->StoreID, il, it), GetSafeHwnd());
-
-			LFFreeItemDescriptor(it);
+			LPMALLOC pMalloc;
+			HRESULT HR = SHGetMalloc(&pMalloc);
+			if (HR==S_OK)
+			{
+				pMalloc->Free(pIIL);
+				pMalloc->Release();
+			}
 		}
 
-		Filenames.ReleaseBuffer();
 		LFFreeFileImportList(il);
 	}
 }

@@ -514,6 +514,7 @@ BEGIN
     IDS_TYPE_VIRTUAL_SINGULAR "%d virtual folder"
     IDS_TYPE_VIRTUAL_PLURAL "%d virtual folders"
     IDS_REQUIRESMAINTENANCE "This store requires scheduled maintenance."
+    IDS_ADDFOLDER           "Choose a directory to import into the store ""%s"". All files, including all files in all subdirectories, will be imported.";
 END
 
 STRINGTABLE 
