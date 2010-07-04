@@ -313,24 +313,32 @@ void LFApplication::GetBackgroundColors(UINT Background, COLORREF* back, COLORRE
 	}
 }
 
-CString LFApplication::GetCommandName(UINT nID)
+CString LFApplication::GetCommandName(UINT nID, BOOL bInsertSpace)
 {
 	CString tmpStr = _T("?");
 	tmpStr.LoadString(nID);
 
-	int pos = tmpStr.Find('\n');
+	int pos = tmpStr.Find(L'\n');
 	if (pos!=-1)
 		tmpStr.Delete(0, pos+1);
+
 	pos = tmpStr.Find(_T(" ("));
 	if (pos!=-1)
 		tmpStr.Delete(pos, tmpStr.GetLength()-pos);
 
+	if (bInsertSpace)
+	{
+		pos = tmpStr.Find(L'-');
+		if ((pos!=-1) && (tmpStr.Find(L' ')==-1))
+			tmpStr.Insert(pos+1, L' ');
+	}
+
 	return tmpStr;
 }
 
-CMFCRibbonButton* LFApplication::CommandButton(UINT nID, int nSmallImageIndex, int nLargeImageIndex, BOOL bAlwaysShowDescription)
+CMFCRibbonButton* LFApplication::CommandButton(UINT nID, int nSmallImageIndex, int nLargeImageIndex, BOOL bAlwaysShowDescription, BOOL bInsertSpace)
 {
-	return new CMFCRibbonButton(nID, GetCommandName(nID), nSmallImageIndex, nLargeImageIndex, bAlwaysShowDescription);
+	return new CMFCRibbonButton(nID, GetCommandName(nID, bInsertSpace), nSmallImageIndex, nLargeImageIndex, bAlwaysShowDescription);
 }
 
 CMFCRibbonCheckBox* LFApplication::CommandCheckBox(UINT nID)

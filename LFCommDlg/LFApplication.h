@@ -102,8 +102,8 @@ public:
 
 	CString GetDefaultFontFace();
 	static void GetBackgroundColors(UINT Background, COLORREF* back, COLORREF* text=NULL, COLORREF* highlight=NULL);
-	static CString GetCommandName(UINT nID);
-	static CMFCRibbonButton* CommandButton(UINT nID, int nSmallImageIndex=-1, int nLargeImageIndex=-1, BOOL bAlwaysShowDescription=FALSE);
+	static CString GetCommandName(UINT nID, BOOL bInsertSpace=FALSE);
+	static CMFCRibbonButton* CommandButton(UINT nID, int nSmallImageIndex=-1, int nLargeImageIndex=-1, BOOL bAlwaysShowDescription=FALSE, BOOL bInsertSpace=FALSE);
 	static CMFCRibbonCheckBox* CommandCheckBox(UINT nID);
 	void SendMail(CString Subject=_T(""));
 	int GetGlobalInt(LPCTSTR lpszEntry, int nDefault=0);

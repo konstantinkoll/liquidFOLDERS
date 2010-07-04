@@ -125,6 +125,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_COMMAND(ID_STORE_RENAME, OnItemsRename)
 	ON_COMMAND(ID_STORE_MAKEDEFAULT, OnStoreMakeDefault)
 	ON_COMMAND(ID_STORE_MAKEHYBRID, OnStoreMakeHybrid)
+	ON_COMMAND(ID_STORE_ADDFOLDER, OnStoreAddFolder)
 	ON_COMMAND(ID_STORE_ADDFILES, OnStoreAddFiles)
 	ON_COMMAND(ID_STORE_PROPERTIES, OnStoreProperties)
 	ON_COMMAND(ID_STORE_MAINTENANCE, OnStoreMaintenance)
@@ -1034,6 +1035,57 @@ void CMainFrame::OnStoreProperties()
 	}
 }
 
+void CMainFrame::OnStoreAddFolder()
+{
+	int i = GetSelectedItem();
+
+	if (i!=-1)
+	{
+		LFFileImportList* il = LFAllocFileImportList();
+
+		// Verzeichnis finden
+		CFileDialog fdlg(TRUE, NULL, NULL, OFN_ALLOWMULTISELECT | OFN_EXPLORER | OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY, NULL, this);
+
+		CString caption = theApp.GetCommandName(ID_STORE_ADDFOLDER);
+		fdlg.m_pOFN->lpstrTitle = caption;
+
+		CString Filenames;
+		fdlg.m_pOFN->nMaxFile = 8192*sizeof(wchar_t)*((MAX_PATH+1)+1);
+		fdlg.m_pOFN->lpstrFile = Filenames.GetBuffer(fdlg.m_pOFN->nMaxFile);
+		fdlg.m_pOFN->nFileOffset = 0;
+
+		if (fdlg.DoModal()==IDOK)
+		{
+			POSITION pos = fdlg.GetStartPosition();
+			while (pos)
+			{
+				CString strPath = fdlg.GetNextPathName(pos);
+				if ((strPath.Find(_T(":\\\\"))==1) && (strPath.GetLength()>4))
+				{
+					CString temp = strPath.Left(3);
+					temp += strPath.Mid(4);
+					strPath = temp;
+				}
+
+				wchar_t Buf[MAX_PATH];
+				memcpy_s(Buf, MAX_PATH*sizeof(wchar_t), strPath, (strPath.GetLength()+1)*sizeof(wchar_t));
+				LFAddImportPath(il, Buf);
+			}
+
+			// Template füllen
+			LFItemDescriptor* it = LFAllocItemDescriptor();
+			LFItemTemplateDlg tdlg(this, it);
+			if (tdlg.DoModal()!=IDCANCEL)
+				LFErrorBox(LFImportFiles(CookedFiles->m_Items[i]->StoreID, il, it), GetSafeHwnd());
+
+			LFFreeItemDescriptor(it);
+		}
+
+		Filenames.ReleaseBuffer();
+		LFFreeFileImportList(il);
+	}
+}
+
 void CMainFrame::OnStoreAddFiles()
 {
 	int i = GetSelectedItem();
@@ -1201,6 +1253,7 @@ void CMainFrame::OnUpdateStoreCommands(CCmdUI* pCmdUI)
 				if ((b) && (m_wndView))
 					b ^= m_wndView->IsEditing();
 				break;
+			case ID_STORE_ADDFOLDER:
 			case ID_STORE_ADDFILES:
 				if (f)
 					b = (f->Type & LFTypeStore) && (!(f->Type & LFTypeNotMounted));
@@ -1777,8 +1830,8 @@ void CMainFrame::InitializeRibbon()
 		pMainPanel->Add(theApp.CommandButton(ID_APP_NEWVIEW, 0, 0));
 		pMainPanel->Add(theApp.CommandButton(ID_APP_NEWCLIPBOARD, 1, 1));
 		pMainPanel->Add(new CMFCRibbonSeparator(TRUE));
-		pMainPanel->Add(theApp.CommandButton(ID_APP_NEWFILEDROP, 2, 2));
-		pMainPanel->Add(theApp.CommandButton(ID_APP_NEWMIGRATE, 3, 3));
+		pMainPanel->Add(theApp.CommandButton(ID_APP_NEWMIGRATE, 2, 2));
+		pMainPanel->Add(theApp.CommandButton(ID_APP_NEWFILEDROP, 3, 3));
 		pMainPanel->Add(theApp.CommandButton(ID_APP_PROMPT, 4, 4));
 		pMainPanel->Add(new CMFCRibbonSeparator(TRUE));
 		pMainPanel->Add(theApp.CommandButton(ID_APP_CLOSEOTHERS, 5, 5));
@@ -2184,15 +2237,19 @@ void CMainFrame::InitializeRibbon()
 			strTemp = "Items";
 			CMFCRibbonPanel* pPanelStoresItems = pCategoryStores->AddPanel(strTemp, m_PanelImages.ExtractIcon(3));
 
-				pPanelStoresItems->Add(theApp.CommandButton(ID_STORE_ADDFILES, 8, 8));
+				pPanelStoresItems->Add(theApp.CommandButton(ID_STORE_ADDFOLDER, 8, 8));
+				pPanelStoresItems->Add(theApp.CommandButton(ID_STORE_ADDFILES, 9, 9));
+				pPanelStoresItems->AddSeparator();
+				pPanelStoresItems->Add(theApp.CommandButton(ID_APP_NEWMIGRATE, 10, 10, FALSE, TRUE));
+				pPanelStoresItems->Add(theApp.CommandButton(ID_APP_NEWFILEDROP, 11, 11));
 
 			strTemp = "Housekeeping";
 			CMFCRibbonPanel* pPanelStoresHousekeeping = pCategoryStores->AddPanel(strTemp, m_PanelImages.ExtractIcon(12));
 
-				pPanelStoresHousekeeping->Add(theApp.CommandButton(ID_STORE_PROPERTIES, 9, 9));
+				pPanelStoresHousekeeping->Add(theApp.CommandButton(ID_STORE_PROPERTIES, 12, 12));
 				pPanelStoresHousekeeping->AddSeparator();
-				pPanelStoresHousekeeping->Add(theApp.CommandButton(ID_STORE_MAINTENANCE, 10, 10));
-				pPanelStoresHousekeeping->Add(theApp.CommandButton(ID_STORE_BACKUP, 11, 11));
+				pPanelStoresHousekeeping->Add(theApp.CommandButton(ID_STORE_MAINTENANCE, 13, 13));
+				pPanelStoresHousekeeping->Add(theApp.CommandButton(ID_STORE_BACKUP, 14, 14));
 
 		strTemp = "Deleted files";
 		strCtx = "Trash";
