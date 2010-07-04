@@ -829,6 +829,10 @@
 				RelativePath=".\res\Toolbar_Inspector.bmp"
 				>
 			</File>
+			<File
+				RelativePath=".\res\ViewOptions_Tiny.ico"
+				>
+			</File>
 		</Filter>
 		<File
 			RelativePath="..\include\liquidFOLDERS32.manifest.xml"

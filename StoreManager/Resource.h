@@ -246,6 +246,7 @@
 #define IDC_CHECKALL                    2009
 #define IDC_UNCHECKALL                  2010
 #define IDC_BACKGROUNDTEXT              2011
+#define IDC_TREE1                       2011
 #define IDC_SHOWREPORTHEADER            2012
 #define IDC_FULLROWSELECT               2013
 #define IDD_SORTOPTIONS                 2100
@@ -259,7 +260,6 @@
 #define IDC_ATTRBOX                     2108
 #define IDS_GROUPBOX_SORT               2109
 #define IDS_GROUPBOX_GROUP              2110
-
 #define ID_TOGGLE_ATTRIBUTE             50000
 
 // Next default values for new objects
@@ -268,7 +268,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        2007
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         2011
+#define _APS_NEXT_CONTROL_VALUE         2012
 #define _APS_NEXT_SYMED_VALUE           2007
 #endif
 #endif

@@ -249,7 +249,7 @@ BEGIN
     POPUP "POPUP"
     BEGIN
         MENUITEM "&Open",                       ID_ITEMS_OPEN
-        MENUITEM "Open &with...",                ID_ITEMS_OPENWITH
+        MENUITEM "Open &with...",               ID_ITEMS_OPENWITH
         MENUITEM "Re&member",                   ID_CLIP_REMEMBERLAST
         MENUITEM SEPARATOR
         MENUITEM "&Delete",                     ID_ITEMS_DELETE
@@ -262,7 +262,7 @@ BEGIN
     POPUP "POPUP"
     BEGIN
         MENUITEM "&Open",                       ID_ITEMS_OPEN
-        MENUITEM "Open &with...",                ID_ITEMS_OPENWITH
+        MENUITEM "Open &with...",               ID_ITEMS_OPENWITH
         MENUITEM SEPARATOR
         MENUITEM "&Delete",                     ID_ITEMS_DELETE
         MENUITEM "Re&store",                    ID_TRASH_RESTORESELECTED
@@ -514,7 +514,7 @@ BEGIN
     IDS_TYPE_VIRTUAL_SINGULAR "%d virtual folder"
     IDS_TYPE_VIRTUAL_PLURAL "%d virtual folders"
     IDS_REQUIRESMAINTENANCE "This store requires scheduled maintenance."
-    IDS_ADDFOLDER           "Choose a directory to import into the store ""%s"". All files including all subdirectories will be imported. For more sophisticated options, please open the Migration Wizard.";
+    IDS_ADDFOLDER           "Choose a directory to import into the store ""%s"". All files including all subdirectories will be imported. For more sophisticated options, please open the Migration Wizard."
 END
 
 STRINGTABLE 

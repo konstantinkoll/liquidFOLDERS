@@ -1036,10 +1036,20 @@ void CMainFrame::OnStoreProperties()
 }
 
 wchar_t InitialDir[MAX_PATH];
-int CALLBACK BrowseCallbackProc(HWND hWnd, UINT uMsg, LPARAM /*lParam*/, LPARAM /*lpData*/)
+int CALLBACK BrowseCallbackProc(HWND hWnd, UINT uMsg, LPARAM lParam, LPARAM /*lpData*/)
 {
-	if (uMsg==BFFM_INITIALIZED)
+	wchar_t Dir[MAX_PATH] = L"";
+
+	switch (uMsg)
+	{
+	case BFFM_INITIALIZED:
 		SendMessage(hWnd, BFFM_SETSELECTION, TRUE, (LPARAM)InitialDir);
+		SendMessage(hWnd, BFFM_ENABLEOK, 0, InitialDir[0]!=L'\0');
+		break;
+	case BFFM_SELCHANGED:
+		SendMessage(hWnd, BFFM_ENABLEOK, 0, SHGetPathFromIDList((LPCITEMIDLIST)lParam, Dir));
+		break;
+	}
 
 	return 0;
 }
@@ -1058,10 +1068,10 @@ void CMainFrame::OnStoreAddFolder()
 		caption.Format(mask, CookedFiles->m_Items[i]->CoreAttributes.FileName);
 
 		// Verzeichnis finden
+		wchar_t szDisplayName[MAX_PATH] = L"";
+
 		BROWSEINFO bi;
 		ZeroMemory(&bi, sizeof(bi));
-		TCHAR szDisplayName[_MAX_PATH];
-		szDisplayName[0] = '\0';
 		bi.hwndOwner = GetSafeHwnd();
 		bi.pidlRoot = NULL;
 		bi.pszDisplayName = szDisplayName;
@@ -1070,9 +1080,9 @@ void CMainFrame::OnStoreAddFolder()
 		bi.lpfn = BrowseCallbackProc;
 
 		LPITEMIDLIST pIIL = SHBrowseForFolder(&bi);
-		wchar_t ReturnedDir[MAX_PATH];
 
-		BOOL bRet = ::SHGetPathFromIDList(pIIL, ReturnedDir);
+		wchar_t ReturnedDir[MAX_PATH] = L"";
+		BOOL bRet = SHGetPathFromIDList(pIIL, ReturnedDir);
 		if (bRet)
 		{
 			if (ReturnedDir[0]!=L'\0')
