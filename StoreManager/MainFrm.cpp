@@ -2234,14 +2234,14 @@ void CMainFrame::InitializeRibbon()
 				pPanelStoresStores->Add(theApp.CommandButton(ID_STORE_MAKEDEFAULT, 6, 6));
 				pPanelStoresStores->Add(theApp.CommandButton(ID_STORE_MAKEHYBRID, 7, 7));
 
-			strTemp = "Items";
-			CMFCRibbonPanel* pPanelStoresItems = pCategoryStores->AddPanel(strTemp, m_PanelImages.ExtractIcon(3));
+			strTemp = "Import files";
+			CMFCRibbonPanel* pPanelStoresImport = pCategoryStores->AddPanel(strTemp, m_PanelImages.ExtractIcon(3));
 
-				pPanelStoresItems->Add(theApp.CommandButton(ID_STORE_ADDFOLDER, 8, 8));
-				pPanelStoresItems->Add(theApp.CommandButton(ID_STORE_ADDFILES, 9, 9));
-				pPanelStoresItems->AddSeparator();
-				pPanelStoresItems->Add(theApp.CommandButton(ID_APP_NEWMIGRATE, 10, 10, FALSE, TRUE));
-				pPanelStoresItems->Add(theApp.CommandButton(ID_APP_NEWFILEDROP, 11, 11));
+				pPanelStoresImport->Add(theApp.CommandButton(ID_STORE_ADDFOLDER, 8, 8));
+				pPanelStoresImport->Add(theApp.CommandButton(ID_STORE_ADDFILES, 9, 9));
+				pPanelStoresImport->AddSeparator();
+				pPanelStoresImport->Add(theApp.CommandButton(ID_APP_NEWMIGRATE, 10, 10, FALSE, TRUE));
+				pPanelStoresImport->Add(theApp.CommandButton(ID_APP_NEWFILEDROP, 11, 11));
 
 			strTemp = "Housekeeping";
 			CMFCRibbonPanel* pPanelStoresHousekeeping = pCategoryStores->AddPanel(strTemp, m_PanelImages.ExtractIcon(12));
