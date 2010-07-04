@@ -2035,7 +2035,7 @@ void CMainFrame::InitializeRibbon()
 			}
 
 		strTemp = "Basic";
-		CMFCRibbonPanel* pPanelItemsBasic = pCategoryItems->AddPanel(strTemp, m_PanelImages.ExtractIcon(0));
+		CMFCRibbonPanel* pPanelItemsBasic = pCategoryItems->AddPanel(strTemp, m_PanelImages.ExtractIcon(3));
 		pPanelItemsBasic->EnableLaunchButton(ID_ITEMS_SHOWINSPECTOR, 10);
 
 			pPanelItemsBasic->Add(theApp.CommandButton(ID_ITEMS_OPEN, 7, 7));
@@ -2235,7 +2235,7 @@ void CMainFrame::InitializeRibbon()
 				pPanelStoresStores->Add(theApp.CommandButton(ID_STORE_MAKEHYBRID, 7, 7));
 
 			strTemp = "Import files";
-			CMFCRibbonPanel* pPanelStoresImport = pCategoryStores->AddPanel(strTemp, m_PanelImages.ExtractIcon(3));
+			CMFCRibbonPanel* pPanelStoresImport = pCategoryStores->AddPanel(strTemp, m_PanelImages.ExtractIcon(22));
 
 				pPanelStoresImport->Add(theApp.CommandButton(ID_STORE_ADDFOLDER, 8, 8));
 				pPanelStoresImport->Add(theApp.CommandButton(ID_STORE_ADDFILES, 9, 9));
