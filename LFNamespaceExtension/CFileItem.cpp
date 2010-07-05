@@ -74,9 +74,19 @@ void CFileItem::GetDisplayNameEx(CString& displayName, DisplayNameFlags flags)
 
 void CFileItem::GetIconFileAndIndex(CGetIconFileAndIndexEventArgs& e)
 {
-	e.iconExtractMode = NSEIEM_IconFileAndIndex;
-	e.iconFile = theApp.m_IconFile;
-	e.iconIndex = IDI_FILE_Generic-1;
+	char Path[MAX_PATH];
+	UINT res = LFGetFileLocation((char*)(LPCSTR)StoreID, &Attrs, Path, MAX_PATH);
+	if (res==LFOk)
+	{
+		e.iconExtractMode = NSEIEM_SystemImageListIndexFromPath;
+		e.iconFile = Path;
+	}
+	else
+	{
+		e.iconExtractMode = NSEIEM_IconFileAndIndex;
+		e.iconFile = theApp.m_IconFile;
+		e.iconIndex = IDI_FILE_Generic-1;
+	}
 }
 
 void CFileItem::GetInfoTip(CString& infotip)
