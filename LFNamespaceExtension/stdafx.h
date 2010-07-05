@@ -40,4 +40,8 @@
 #include <afxsock.h>		// MFC socket extensions
 #include <shlwapi.h>
 
+#include <gdiplus.h>
+using namespace Gdiplus;
+#pragma comment(lib, "gdiplus.lib")
+
 #include <eznamespaceextensions.h>

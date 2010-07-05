@@ -50,9 +50,16 @@ void CFileItem::GetDisplayNameEx(CString& displayName, DisplayNameFlags flags)
 	if ((flags & NSEDNF_InFolder)==0)
 		if ((flags & NSEDNF_ForParsing)!=0)
 		{
-			displayName = StoreID;
-			displayName += _T("\\");
-			displayName += Attrs.FileID;
+			char Path[MAX_PATH];
+			UINT res = LFGetFileLocation((char*)(LPCSTR)StoreID, &Attrs, Path, MAX_PATH);
+			if (res!=LFOk)
+			{
+				LFErrorBox(res);
+			}
+			else
+			{
+				displayName = Path;
+			}
 			return;
 		}
 
