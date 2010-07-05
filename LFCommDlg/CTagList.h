@@ -19,6 +19,7 @@ protected:
 	CFont m_FontLarge;
 	CFont m_FontSmall;
 
+	void CreateRoundRectangle(CRect rect, int rad, GraphicsPath& path);
 	void DrawItem(int nID, CDC* pDC);
 
 	afx_msg void OnCustomDraw(NMHDR* pNMHDR, LRESULT* pResult);

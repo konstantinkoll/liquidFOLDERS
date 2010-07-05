@@ -221,9 +221,7 @@ void CGlassButton::CreateBottomRadialPath(CRect rect, GraphicsPath& path)
 	path.Reset();
 
 	RectF rectF((REAL)rect.left, (REAL)rect.top, (REAL)rect.Width(), (REAL)rect.Height());
-	//rectF.X -= rect.Width()*.35f;
 	rectF.Y -= rect.Height()*.15f;
-	//rectF.Width *= 1.7f;
 	rectF.Height *= 2.3f;
 
 	path.AddEllipse(rectF);
