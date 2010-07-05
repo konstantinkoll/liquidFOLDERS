@@ -265,6 +265,7 @@ bool GetNextTag(wchar_t** tagarray, wchar_t* tag, size_t cCount)
 		case L',':
 		case L':':
 		case L';':
+		case L'|':
 			if (start)
 			{
 				wcsncpy_s(tag, cCount, start, *tagarray-start);

@@ -60,7 +60,7 @@ LFShellProperty AttrProperties[LFAttributeCount] = {
 	{ PropertyStorage, 12 },		// LFAttrFileSize
 	{ 0, 0 },						// LFAttrFlags
 	{ PropertyQuery, 9 },			// LFAttrURL
-	{ 0, 0 },						// LFAttrTags
+	{ PropertySummary, 5 },			// LFAttrTags
 	{ PropertyMedia, 9 },			// LFAttrRating
 	{ 0, 0 },						// LFAttrPriority
 	{ 0, 0 },						// LFAttrLocationName

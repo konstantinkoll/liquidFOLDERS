@@ -4,7 +4,6 @@
 #include "CFolderItem.h"
 #include "CFileItem.h"
 #include "LFCore.h"
-#include "helper.h"
 
 
 IMPLEMENT_DYNCREATE(CFileItem, CNSEItem)

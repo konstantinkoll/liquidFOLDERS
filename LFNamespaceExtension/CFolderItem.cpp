@@ -238,8 +238,7 @@ BOOL CFolderItem::GetChildren(CGetChildrenEventArgs& e)
 		strcpy_s(f->StoreID, LFKeySize, (LPCTSTR)data.StoreID);
 		f->DomainID = (unsigned char)data.DomainID;
 		res = LFQuery(f);
-		LFSortSearchResult(res, atoi(data.FileID), false);
-		LFGroupSearchResult(res, f, atoi(data.FileID), data.Icon, atoi(data.FileID)!=LFAttrFileName);
+		LFGroupSearchResult(res, atoi(data.FileID), false, false, data.Icon, atoi(data.FileID)!=LFAttrFileName, f);
 		break;
 	case LevelAttrValue:
 		f = LFAllocFilter();

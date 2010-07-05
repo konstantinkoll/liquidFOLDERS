@@ -389,10 +389,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\helper.h"
-				>
-			</File>
-			<File
 				RelativePath="..\include\LFCore.h"
 				>
 			</File>
@@ -446,10 +442,6 @@
 			</File>
 			<File
 				RelativePath=".\CFolderItem.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\helper.cpp"
 				>
 			</File>
 			<File
