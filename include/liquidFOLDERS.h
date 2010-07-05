@@ -237,19 +237,20 @@ struct LFContextDescriptor
 // Attribute types
 
 #define LFTypeUnicodeString             0
-#define LFTypeAnsiString                1
-#define LFTypeFourCC                    2
-#define LFTypeRating                    3
-#define LFTypeUINT                      4
-#define LFTypeINT64                     5
-#define LFTypeFraction                  6
-#define LFTypeDouble                    7
-#define LFTypeFlags                     8
-#define LFTypeGeoCoordinates            9
-#define LFTypeTime                     10
-#define LFTypeDuration                 11
+#define LFTypeUnicodeArray              1
+#define LFTypeAnsiString                2
+#define LFTypeFourCC                    3
+#define LFTypeRating                    4
+#define LFTypeUINT                      5
+#define LFTypeINT64                     6
+#define LFTypeFraction                  7
+#define LFTypeDouble                    8
+#define LFTypeFlags                     9
+#define LFTypeGeoCoordinates           10
+#define LFTypeTime                     11
+#define LFTypeDuration                 12
 
-#define LFTypeCount                    12
+#define LFTypeCount                    13
 #define LFMaxRating                    10
 
 
@@ -265,6 +266,7 @@ struct LFVariantData
 		unsigned char Value;
 
 		wchar_t UnicodeString[256];
+		wchar_t UnicodeArray[256];
 		char AnsiString[256];
 		unsigned int FourCC;
 		unsigned char Rating;
@@ -500,6 +502,7 @@ struct LFItemDescriptor
 	int Position;
 	int FirstAggregate;
 	int LastAggregate;
+	int AggregateCount;
 	bool DeleteFlag;
 	unsigned int RefCount;
 	void* Slave;

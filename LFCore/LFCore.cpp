@@ -152,7 +152,7 @@ LFCore_API LFAttributeDescriptor* LFGetAttributeInfo(unsigned int ID)
 	a->Type = AttrTypes[ID];
 
 	// Type and character count (where appropriate)
-	if ((a->Type==LFTypeUnicodeString) || (a->Type==LFTypeAnsiString))
+	if ((a->Type==LFTypeUnicodeString) || (a->Type==LFTypeUnicodeArray) || (a->Type==LFTypeAnsiString))
 		a->cCharacters = (unsigned int)GetAttributeMaxCharacterCount(ID);
 
 	// Recommended width
@@ -605,9 +605,9 @@ LFCore_API void LFSortSearchResult(LFSearchResult* res, unsigned int attr, bool 
 	res->Sort(attr, descending, categories);
 }
 
-LFCore_API void LFGroupSearchResult(LFSearchResult* res, LFFilter* f, unsigned int attr, unsigned int icon, bool groupone)
+LFCore_API void LFGroupSearchResult(LFSearchResult* res, unsigned int attr, bool descending, bool categories, unsigned int icon, bool groupone, LFFilter* f)
 {
-	res->Group(attr, icon, groupone, f);
+	res->Group(attr, descending, categories, icon, groupone, f);
 }
 
 

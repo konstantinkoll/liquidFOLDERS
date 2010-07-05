@@ -22,11 +22,11 @@ public:
 	bool AddStoreDescriptor(LFStoreDescriptor* s, LFFilter* f);
 	void AddDrives(LFFilter* filter);
 	void AddBacklink(char* StoreID, LFFilter* f);
-	void RemoveItemDescriptor(unsigned int idx);
-	void RemoveFlaggedItemDescriptors();
+	void RemoveItemDescriptor(unsigned int idx, bool updatecount=true);
+	void RemoveFlaggedItemDescriptors(bool updatecount=true);
 	void KeepRange(int first, int last);
 	void Sort(unsigned int attr, bool descending, bool categories);
-	void Group(unsigned int attr, unsigned int icon, bool groupone, LFFilter* f);
+	void Group(unsigned int attr, bool descending, bool categories, unsigned int icon, bool groupone, LFFilter* f);
 	void SetContext(LFFilter* f);
 
 	LFItemDescriptor** m_Items;
@@ -51,4 +51,5 @@ private:
 	void Heap(int wurzel, int anz, unsigned int attr, bool descending, bool categories);
 	unsigned int Aggregate(unsigned int write, unsigned int read1, unsigned int read2, void* c,
 		unsigned int attr, unsigned int icon, bool groupone, LFFilter* f);
+	void GroupArray(unsigned int attr, unsigned int icon, LFFilter* f);
 };

@@ -34,6 +34,7 @@ int CoreOffsets[LFLastCoreAttribute+1] = {
 
 size_t AttrSizes[LFTypeCount] = {
 	0,							// LFTypeUnicodeString
+	0,							// LFTypeUnicodeArray
 	0,							// LFTypeAnsiString
 	sizeof(UINT),				// LFTypeFourCC
 	sizeof(unsigned char),		// LFTypeRating
@@ -60,7 +61,7 @@ unsigned char AttrTypes[LFAttributeCount] = {
 	LFTypeINT64,				// LFAttrFileSize
 	LFTypeFlags,				// LFAttrFlags
 	LFTypeAnsiString,			// LFAttrURL
-	LFTypeUnicodeString,		// LFAttrTags
+	LFTypeUnicodeArray,			// LFAttrTags
 	LFTypeRating,				// LFAttrRating
 	LFTypeRating,				// LFAttrPriority
 	LFTypeUnicodeString,		// LFAttrLocationName
@@ -137,7 +138,7 @@ inline void FreeAttribute(LFItemDescriptor* i, unsigned int attr)
 size_t GetAttributeMaxCharacterCount(unsigned int attr)
 {
 	assert(attr<LFAttributeCount);
-	assert((AttrTypes[attr]==LFTypeUnicodeString) || (AttrTypes[attr]==LFTypeAnsiString));
+	assert((AttrTypes[attr]==LFTypeUnicodeString) || (AttrTypes[attr]==LFTypeUnicodeArray) || (AttrTypes[attr]==LFTypeAnsiString));
 
 	switch (attr)
 	{
@@ -168,6 +169,7 @@ inline size_t GetAttributeSize(unsigned int attr, const void* v)
 	switch (AttrTypes[attr])
 	{
 	case LFTypeUnicodeString:
+	case LFTypeUnicodeArray:
 		return (min(GetAttributeMaxCharacterCount(attr), wcslen((wchar_t*)v))+1)*sizeof(wchar_t);
 	case LFTypeAnsiString:
 		return min(GetAttributeMaxCharacterCount(attr), strlen((char*)v))+1;
@@ -256,13 +258,14 @@ LFCore_API LFItemDescriptor* LFAllocItemDescriptor(LFItemDescriptor* i)
 	return d;
 }
 
-LFItemDescriptor* AllocFolderDescriptor(const wchar_t* Name, const wchar_t* Comment, const wchar_t* Description, const char* StoreID, const char* FileID, __int64* Size, unsigned int IconID, unsigned int CategoryID, LFFilter* Filter)
+LFItemDescriptor* AllocFolderDescriptor(const wchar_t* Name, const wchar_t* Comment, const wchar_t* Description, const char* StoreID, const char* FileID, __int64* Size, unsigned int IconID, unsigned int CategoryID, unsigned int Count, LFFilter* Filter)
 {
 	LFItemDescriptor* d = LFAllocItemDescriptor();
 
 	d->IconID = IconID;
 	d->CategoryID = CategoryID;
 	d->Type = LFTypeVirtual;
+	d->AggregateCount = Count;
 	d->NextFilter = Filter;
 
 	if (Name)

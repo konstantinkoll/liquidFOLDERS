@@ -185,7 +185,7 @@ void CFileList::OnGetDispInfo(NMHDR* pNMHDR, LRESULT* /*pResult*/)
 	LV_DISPINFO* pDispInfo = (LV_DISPINFO*)pNMHDR;
 	LV_ITEM* pItem = &pDispInfo->item;
 
-	int idx = pItem->iItem;
+	LFItemDescriptor* i = View->result->m_Items[pItem->iItem];
 
 	if (pItem->mask & LVIF_COLUMNS)
 	{
@@ -200,11 +200,11 @@ void CFileList::OnGetDispInfo(NMHDR* pNMHDR, LRESULT* /*pResult*/)
 		UINT attr = ColumnMapping[pItem->iSubItem];
 		if ((pItem->mask & LVIF_TEXT) && (theApp.m_Attributes[attr]->Type!=LFTypeRating))
 		{
-			LFAttributeToString(View->result->m_Items[idx], attr, m_StrBuffer, 256);
+			LFAttributeToString(i, attr, m_StrBuffer, 256);
 			pItem->pszText = (LPWSTR)m_StrBuffer;
 		}
 		if (pItem->mask & LVIF_IMAGE)
-			pItem->iImage = View->result->m_Items[idx]->IconID-1;
+			pItem->iImage = i->IconID-1;
 	}
 }
 

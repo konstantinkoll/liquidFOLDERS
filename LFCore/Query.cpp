@@ -200,6 +200,8 @@ bool CheckCondition(void* value, LFFilterCondition* c)
 	size_t len2;
 	SYSTEMTIME st;
 	FILETIME ft;
+	wchar_t* tagarray;
+	wchar_t tag[256];
 
 	switch (c->AttrData.Type)
 	{
@@ -235,6 +237,19 @@ bool CheckCondition(void* value, LFFilterCondition* c)
 			return wcsistr(c->AttrData.UnicodeString, (wchar_t*)value)!=NULL;
 		default:
 			
+			assert(false);
+			return false;
+		}
+	case LFTypeUnicodeArray:
+		switch (c->Compare)
+		{
+		case LFFilterCompareSubfolder:
+			tagarray = (wchar_t*)value;
+			while (GetNextTag(&tagarray, tag, 256))
+				if (_wcsicmp(tag, c->AttrData.UnicodeArray)==0)
+					return true;
+			return false;
+		default:
 			assert(false);
 			return false;
 		}
@@ -584,7 +599,7 @@ LFSearchResult* QueryDomains(LFFilter* filter)
 				strcpy_s(nf->StoreID, LFKeySize, filter->StoreID);
 				wcscpy_s(nf->Name, 256, d->DomainName);
 
-				if (res->AddItemDescriptor(AllocFolderDescriptor(d->DomainName, d->Comment, Hint, filter->StoreID, FileID, &size[a], d->IconID, d->CategoryID, nf)))
+				if (res->AddItemDescriptor(AllocFolderDescriptor(d->DomainName, d->Comment, Hint, filter->StoreID, FileID, &size[a], d->IconID, d->CategoryID, cnt[a], nf)))
 					if ((a>=LFFirstSoloDomain) && (a!=LFDomainPhotos))
 					{
 						res->m_FileCount += cnt[a];

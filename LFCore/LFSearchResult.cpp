@@ -7,6 +7,7 @@
 #include "LFVariantData.h"
 #include "StoreCache.h"
 #include <assert.h>
+#include <hash_map>
 #include <malloc.h>
 #include <shellapi.h>
 
@@ -66,6 +67,7 @@ LFSearchResult::LFSearchResult(int ctx, LFSearchResult* res)
 
 LFSearchResult::~LFSearchResult()
 {
+
 	if (m_Items)
 	{
 		for (unsigned int a=0; a<m_ItemCount; a++)
@@ -226,20 +228,23 @@ void LFSearchResult::AddBacklink(char* StoreID, LFFilter* f)
 	wchar_t BacklinkComment[256];
 	LoadString(LFCoreModuleHandle, IDS_BacklinkComment, BacklinkComment, 256);
 
-	LFItemDescriptor* d = AllocFolderDescriptor(BacklinkName, BacklinkComment, NULL, StoreID, "BACK", NULL, IDI_FLD_Back, LFCategoryStore, f);
+	LFItemDescriptor* d = AllocFolderDescriptor(BacklinkName, BacklinkComment, NULL, StoreID, "BACK", NULL, IDI_FLD_Back, LFCategoryStore, 0, f);
+	d->CoreAttributes.FileSize = -1;
+
 	if (!AddItemDescriptor(d))
 		delete d;
 }
 
-void LFSearchResult::RemoveItemDescriptor(unsigned int idx)
+void LFSearchResult::RemoveItemDescriptor(unsigned int idx, bool updatecount)
 {
 	assert(idx<m_ItemCount);
 
-	if ((m_Items[idx]->Type & LFTypeMask)==LFTypeFile)
-	{
-		m_FileCount--;
-		m_FileSize -= m_Items[idx]->CoreAttributes.FileSize;
-	}
+	if (updatecount)
+		if ((m_Items[idx]->Type & LFTypeMask)==LFTypeFile)
+		{
+			m_FileCount--;
+			m_FileSize -= m_Items[idx]->CoreAttributes.FileSize;
+		}
 
 	LFFreeItemDescriptor(m_Items[idx]);
 
@@ -251,7 +256,7 @@ void LFSearchResult::RemoveItemDescriptor(unsigned int idx)
 	}
 }
 
-void LFSearchResult::RemoveFlaggedItemDescriptors()
+void LFSearchResult::RemoveFlaggedItemDescriptors(bool updatecount)
 {
 	unsigned int idx = 0;
 	
@@ -259,7 +264,7 @@ void LFSearchResult::RemoveFlaggedItemDescriptors()
 	{
 		if (m_Items[idx]->DeleteFlag)
 		{
-			RemoveItemDescriptor(idx);
+			RemoveItemDescriptor(idx, updatecount);
 		}
 		else
 		{
@@ -325,6 +330,7 @@ int LFSearchResult::Compare(int eins, int zwei, unsigned int attr, bool descendi
 		switch (AttrTypes[Sort])
 		{
 		case LFTypeUnicodeString:
+		case LFTypeUnicodeArray:
 			cmp = _wcsicmp((wchar_t*)d1->AttributeValues[Sort], (wchar_t*)d2->AttributeValues[Sort]);
 			break;
 		case LFTypeAnsiString:
@@ -491,6 +497,7 @@ unsigned int LFSearchResult::Aggregate(unsigned int write, unsigned int read1, u
 		{
 			folder->FirstAggregate = read1;
 			folder->LastAggregate = read2-1;
+			folder->AggregateCount = read2-read1;
 		}
 
 		wchar_t Mask[256];
@@ -513,12 +520,23 @@ unsigned int LFSearchResult::Aggregate(unsigned int write, unsigned int read1, u
 	}
 }
 
-void LFSearchResult::Group(unsigned int attr, unsigned int icon, bool groupone, LFFilter* f)
+void LFSearchResult::Group(unsigned int attr, bool descending, bool categories, unsigned int icon, bool groupone, LFFilter* f)
 {
 	assert(f);
 
 	if (f->Options.IsSubfolder)
 		return;
+
+	// Special treatment for string arrays
+	if (AttrTypes[attr]==LFTypeUnicodeArray)
+	{
+		GroupArray(attr, icon, f);
+		Sort(attr, descending, categories);
+		return;
+	}
+
+	// Pre-sort
+	Sort(attr, descending, categories);
 
 	// Choose categorizer
 	CCategorizer* c = NULL;
@@ -620,5 +638,77 @@ void LFSearchResult::SetContext(LFFilter* f)
 				m_Context = LFContextDefault;
 				break;
 			}
+	}
+}
+
+void LFSearchResult::GroupArray(unsigned int attr, unsigned int icon, LFFilter* f)
+{
+	assert(AttrTypes[attr]==LFTypeUnicodeArray);
+
+	typedef stdext::hash_map<std::wstring, unsigned int> hashcount;
+	typedef stdext::hash_map<std::wstring, __int64> hashsize;
+	hashcount tagcount;
+	hashsize tagsize;
+
+	for (unsigned int a=0; a<m_ItemCount; a++)
+	{
+		wchar_t* tagarray = (wchar_t*)m_Items[a]->AttributeValues[attr];
+		bool found = false;
+
+		if (tagarray)
+		{
+			wchar_t tag[256];
+			while (GetNextTag(&tagarray, tag, 256))
+			{
+				for (wchar_t* ptr = tag; *ptr; ptr++)
+					*ptr = (wchar_t)tolower(*ptr);
+
+				tagcount[tag]++;
+				tagsize[tag] += m_Items[a]->CoreAttributes.FileSize;
+				found = true;
+			}
+		}
+
+		m_Items[a]->DeleteFlag = found;
+	}
+
+	RemoveFlaggedItemDescriptors(false);
+
+	hashcount::iterator it;
+	for (it=tagcount.begin(); it!=tagcount.end(); it++)
+	{
+		LFItemDescriptor* folder = LFAllocItemDescriptor();
+		folder->Type = LFTypeVirtual;
+		folder->IconID = icon;
+		folder->AggregateCount = it->second;
+		strcpy_s(folder->StoreID, LFKeySize, f->StoreID);
+
+		wchar_t Mask[256];
+		LoadString(LFCoreModuleHandle, (folder->AggregateCount==1) ? IDS_HintSingular : IDS_HintPlural, Mask, 256);
+		wchar_t Hint[256];
+		swprintf_s(Hint, 256, Mask, folder->AggregateCount);
+		SetAttribute(folder, LFAttrDescription, &Hint);
+		SetAttribute(folder, LFAttrFileSize, &tagsize[it->first]);
+
+		LFFilterCondition* c = LFAllocFilterCondition();
+		c->Compare = LFFilterCompareSubfolder;
+		c->AttrData.Attr = attr;
+		c->AttrData.Type = AttrTypes[attr];
+		wcscpy_s(c->AttrData.UnicodeArray, 256, it->first.c_str());
+
+		folder->NextFilter = LFAllocFilter(f);
+		folder->NextFilter->Options.IsSubfolder = true;
+		c->Next = folder->NextFilter->ConditionList;
+		folder->NextFilter->ConditionList = c;
+
+		wchar_t Tag[256];
+		wcscpy_s(Tag, 256, it->first.c_str());
+		Tag[0] = (wchar_t)toupper(Tag[0]);
+
+		SetAttribute(folder, attr, Tag);
+		SetAttribute(folder, LFAttrFileName, Tag);
+		wcscpy_s(folder->NextFilter->Name, 256, Tag);
+
+		AddItemDescriptor(folder);
 	}
 }

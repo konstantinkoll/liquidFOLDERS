@@ -592,10 +592,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\LFIndexing.h"
-				>
-			</File>
-			<File
 				RelativePath="..\include\liquidFOLDERS.h"
 				>
 			</File>

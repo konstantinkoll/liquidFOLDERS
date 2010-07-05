@@ -1991,6 +1991,7 @@ void CMainFrame::InitializeRibbon()
 				pBtnSortResolution->AddSubItem(new CMFCRibbonButton(ID_SORT_WIDTH, theApp.m_Attributes[LFAttrWidth]->Name, 41, 41));
 
 			pPanelArrange->Add(pBtnSortResolution);
+			pPanelArrange->Add(new CMFCRibbonButton(ID_SORT_TAGS, theApp.m_Attributes[LFAttrTags]->Name, 43, 43));
 
 		strTemp = "Aggregate";
 		CMFCRibbonPanel* pPanelAggregate = pCategoryView->AddPanel(strTemp, m_PanelImages.ExtractIcon(20));
@@ -2586,16 +2587,16 @@ void CMainFrame::CookFiles(int recipe, int FocusItem)
 	LFViewParameters* vp = &theApp.m_Views[recipe];
 	LFAttributeDescriptor* attr = theApp.m_Attributes[vp->SortBy];
 
-	LFSortSearchResult(RawFiles, vp->SortBy, vp->Descending==TRUE, vp->ShowCategories==TRUE);
-
 	if (((!IsClipboard) && (vp->AutoDirs) && (!ActiveFilter->Options.IsSubfolder)) || (vp->Mode>LFViewPreview))
 	{
 		CookedFiles = LFAllocSearchResult(recipe, RawFiles);
-		LFGroupSearchResult(CookedFiles, ActiveFilter, vp->SortBy, attr->IconID,
-			(vp->Mode>LFViewPreview) || ((attr->Type!=LFTypeTime) && (vp->SortBy!=LFAttrFileName) && (vp->SortBy!=LFAttrStoreID) && (vp->SortBy!=LFAttrFileID)));
+		LFGroupSearchResult(CookedFiles, vp->SortBy, vp->Descending==TRUE, vp->ShowCategories==TRUE, attr->IconID,
+			(vp->Mode>LFViewPreview) || ((attr->Type!=LFTypeTime) && (vp->SortBy!=LFAttrFileName) && (vp->SortBy!=LFAttrStoreID) && (vp->SortBy!=LFAttrFileID)),
+			ActiveFilter);
 	}
 	else
 	{
+		LFSortSearchResult(RawFiles, vp->SortBy, vp->Descending==TRUE, vp->ShowCategories==TRUE);
 		CookedFiles = RawFiles;
 		CookedFiles->m_ContextView = recipe;
 	}

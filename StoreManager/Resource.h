@@ -127,6 +127,7 @@
 #define ID_SORT_CREATIONTIME            705
 #define ID_SORT_FILETIME                706
 #define ID_SORT_DELETETIME              707
+#define ID_SORT_TAGS                    712
 #define ID_SORT_RATING                  713
 #define ID_SORT_PRIORITY                714
 #define ID_SORT_LOCATIONNAME            715

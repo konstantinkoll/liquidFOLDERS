@@ -587,6 +587,7 @@ STRINGTABLE
 BEGIN
     ID_SORT_CREATIONTIME    "Sorts the search result by creation time.\nSort by creation time"
     ID_SORT_FILETIME        "Sorts the search result by file time.\nSort by file time"
+    ID_SORT_TAGS            "Sorts the search result by tags.\nSort by tags"
     ID_SORT_RATING          "Sorts the search result by rating.\nSort by rating"
     ID_SORT_LOCATIONNAME    "Sorts the search result by location name.\nSort by location name"
     ID_SORT_LOCATIONIATA    "Sorts the search result by IATA airport code.\nSort by IATA airport code"

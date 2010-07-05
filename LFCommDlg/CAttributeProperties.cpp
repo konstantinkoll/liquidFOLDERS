@@ -82,6 +82,7 @@ BOOL CAttributeProperty::OnUpdateValue()
 		switch (p_Data->Type)
 		{
 		case LFTypeUnicodeString:
+		case LFTypeUnicodeArray:
 			wcscpy_s(p_Data->UnicodeString, 256, strText);
 			break;
 		case LFTypeAnsiString:

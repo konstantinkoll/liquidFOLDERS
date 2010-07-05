@@ -49,7 +49,14 @@ LFCore_API void LFUINTToString(const unsigned int v, wchar_t* str, size_t cCount
 
 LFCore_API void LFINT64ToString(const __int64 v, wchar_t* str, size_t cCount)
 {
-	StrFormatByteSizeW(v, str, (unsigned int)cCount);
+	if (v>=0)
+	{
+		StrFormatByteSize(v, str, (unsigned int)cCount);
+	}
+	else
+	{
+		str[0] = L'\0';
+	}
 }
 
 LFCore_API void LFFractionToString(const LFFraction frac, wchar_t* str, size_t cCount)
@@ -151,6 +158,7 @@ void ToString(void* value, unsigned int type, wchar_t* str, size_t cCount)
 		switch (type)
 		{
 		case LFTypeUnicodeString:
+		case LFTypeUnicodeArray:
 			wcscpy_s(str, cCount, (wchar_t*)value);
 			return;
 		case LFTypeAnsiString:
@@ -220,6 +228,7 @@ bool IsNullValue(unsigned int attr, void* v)
 	switch (AttrTypes[attr])
 	{
 	case LFTypeUnicodeString:
+	case LFTypeUnicodeArray:
 		return (*(wchar_t*)v==L'\0');
 	case LFTypeAnsiString:
 		return (*(char*)v=='\0');
@@ -239,6 +248,41 @@ bool IsNullValue(unsigned int attr, void* v)
 		return (*(double*)v)==0;
 	case LFTypeGeoCoordinates:
 		return (((LFGeoCoordinates*)v)->Latitude==0) && (((LFGeoCoordinates*)v)->Longitude==0);
+	}
+
+	return false;
+}
+
+bool GetNextTag(wchar_t** tagarray, wchar_t* tag, size_t cCount)
+{
+	wchar_t* start = NULL;
+
+	while (**tagarray!=L'\0')
+	{
+		switch (**tagarray)
+		{
+		case L' ':
+		case L',':
+		case L':':
+		case L';':
+			if (start)
+			{
+				wcsncpy_s(tag, cCount, start, *tagarray-start);
+				return true;
+			}
+			break;
+		default:
+			if (!start)
+				start = *tagarray;
+		}
+
+		(*tagarray)++;
+	}
+
+	if (start)
+	{
+		wcscpy_s(tag, cCount, start);
+		return true;
 	}
 
 	return false;
@@ -311,6 +355,7 @@ LFCore_API bool LFIsVariantDataEqual(LFVariantData* v1, LFVariantData* v2)
 	switch (v1->Type)
 	{
 	case LFTypeUnicodeString:
+	case LFTypeUnicodeArray:
 		return wcscmp(v1->UnicodeString, v2->UnicodeString)==0;
 	case LFTypeAnsiString:
 		return strcmp(v1->AnsiString, v2->AnsiString)==0;
@@ -354,6 +399,8 @@ LFCore_API bool LFIsEqualToVariantData(LFItemDescriptor* i, LFVariantData* v)
 		{
 		case LFTypeUnicodeString:
 			return wcscmp((wchar_t*)i->AttributeValues[v->Attr], v->UnicodeString)==0;
+		case LFTypeUnicodeArray:
+			return wcscmp((wchar_t*)i->AttributeValues[v->Attr], v->UnicodeArray)==0;
 		case LFTypeAnsiString:
 			return strcmp((char*)i->AttributeValues[v->Attr], v->AnsiString)==0;
 		case LFTypeFourCC:
