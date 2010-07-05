@@ -45,7 +45,7 @@ BOOL CFolderItem::CFolderItemFactory::UpdateRegistry(BOOL bRegister)
 		
 		// Register the namespace extension
 		CNSEFolder::RegisterExtension(RUNTIME_CLASS(CFolderItem));
-		return ret; 
+		return ret;
 	}
 	else
 	{
