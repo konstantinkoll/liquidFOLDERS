@@ -186,10 +186,6 @@ void CListView::SetViewOptions(UINT _ViewID, BOOL Force)
 	if (Force || (pViewParameters->ShowCategories!=m_ViewParameters.ShowCategories) || (_ViewID!=ViewID))
 		m_FileList.EnableGroupView(pViewParameters->ShowCategories && (!m_FileList.OwnerData) && (_ViewID!=LFViewList));
 
-	// Full row select
-	if (Force || (pViewParameters->FullRowSelect!=m_ViewParameters.FullRowSelect))
-		m_FileList.SetExtendedStyle(FileListExtendedStyles | (pViewParameters->FullRowSelect ? LVS_EX_FULLROWSELECT : 0));
-
 	// View
 	if (Force || (_ViewID!=ViewID))
 	{
@@ -224,9 +220,9 @@ void CListView::SetViewOptions(UINT _ViewID, BOOL Force)
 			iView = LV_VIEW_TILE;
 		}
 
-		m_FileList.ModifyStyle(LVS_ALIGNLEFT, _ViewID==LFViewList ? LVS_ALIGNLEFT : 0);
-		if (theApp.osInfo.dwMajorVersion<6)
-			m_FileList.SetExtendedStyle(FileListExtendedStyles | (_ViewID==LFViewPreview ? LVS_EX_BORDERSELECT : 0));
+		m_FileList.ModifyStyle(_ViewID!=LFViewList ? LVS_ALIGNLEFT : 0, _ViewID==LFViewList ? LVS_ALIGNLEFT : 0);
+		if (theApp.osInfo.dwMajorVersion==5)
+			m_FileList.SetExtendedStyle(m_FileList.GetExtendedStyle() & !LVS_EX_BORDERSELECT | (_ViewID==LFViewPreview ? LVS_EX_BORDERSELECT : 0));
 
 		m_FileList.SetView(iView);
 		m_FileList.CreateColumns();
@@ -234,6 +230,11 @@ void CListView::SetViewOptions(UINT _ViewID, BOOL Force)
 	else
 		if (_ViewID==LFViewDetails)
 			m_FileList.SetHeader();
+
+	// Full row select
+	if (Force || (_ViewID!=ViewID) || (pViewParameters->FullRowSelect!=m_ViewParameters.FullRowSelect))
+		if (_ViewID==LFViewDetails)
+			m_FileList.SetExtendedStyle(m_FileList.GetExtendedStyle() & !LVS_EX_FULLROWSELECT | (pViewParameters->FullRowSelect ? LVS_EX_FULLROWSELECT : 0));
 
 	// Icons
 	if (Force || (_ViewID!=ViewID) || (pViewParameters->GrannyMode!=m_ViewParameters.GrannyMode))
