@@ -43,6 +43,12 @@ void CFileItem::Serialize(CArchive& ar)
 void CFileItem::GetDisplayName(CString& displayName)
 {
 	displayName = Attrs.FileName;
+
+	if (Attrs.FileFormat[0]!='\0')
+	{
+		displayName += '.';
+		displayName += Attrs.FileFormat;
+	}
 }
 
 void CFileItem::GetDisplayNameEx(CString& displayName, DisplayNameFlags flags)
