@@ -48,28 +48,43 @@ BOOL LFEditTagsDlg::OnInitDialog()
 	tvi.cLines = 2;
 	tvi.dwFlags = LVTVIF_FIXEDSIZE;
 	tvi.dwMask = LVTVIM_COLUMNS | LVTVIM_TILESIZE;
-	tvi.sizeTile.cx = 140;
-	tvi.sizeTile.cy = 40;
+	tvi.sizeTile.cx = 152;
+	tvi.sizeTile.cy = 24;
 
 	m_TagList.SetTileViewInfo(&tvi);
 	m_TagList.SetView(LV_VIEW_TILE);
 	m_TagList.SetExtendedStyle(LVS_EX_DOUBLEBUFFER);
 
 	// Vorschläge
-	for (unsigned int a=0; a<1000; a++)
-	{
-		UINT puColumns[] = { 1, 2 };
-		LVITEM lvi;
-		ZeroMemory(&lvi, sizeof(lvi));
-		lvi.mask = LVIF_TEXT | LVIF_COLUMNS;
-		lvi.cColumns = 1;
-		lvi.puColumns = puColumns;
-		lvi.iItem = a;
-		lvi.pszText = _T("Test");
-		int idx = m_TagList.InsertItem(&lvi);
+	LFFilter* f = LFAllocFilter();
+	f->Mode = LFFilterModeDirectoryTree;
+	f->Options.IgnoreSlaves = true;
+	LFSearchResult* res = LFQuery(f);
+	LFGroupSearchResult(res, LFAttrTags, false, false, 0, true, f);
+	LFFreeFilter(f);
 
-		m_TagList.SetItemText(idx, 1, _T("0"));
+	for (unsigned int a=0; a<res->m_ItemCount; a++)
+	{
+		LFItemDescriptor* i = res->m_Items[a];
+		if (((i->Type & LFTypeMask)==LFTypeVirtual) && (i->AggregateCount))
+		{
+			UINT puColumns[] = { 1, 2 };
+			LVITEM lvi;
+			ZeroMemory(&lvi, sizeof(lvi));
+			lvi.mask = LVIF_TEXT | LVIF_COLUMNS;
+			lvi.cColumns = 1;
+			lvi.puColumns = puColumns;
+			lvi.iItem = a;
+			lvi.pszText = i->CoreAttributes.FileName;
+			int idx = m_TagList.InsertItem(&lvi);
+
+			CString cnt;
+			cnt.Format(_T("%d"), i->AggregateCount);
+			m_TagList.SetItemText(idx, 1, cnt);
+		}
 	}
+
+	LFFreeSearchResult(res);
 
 	return TRUE;
 }

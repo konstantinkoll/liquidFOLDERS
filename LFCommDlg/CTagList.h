@@ -16,6 +16,9 @@ public:
 	~CTagList();
 
 protected:
+	CFont m_FontLarge;
+	CFont m_FontSmall;
+
 	void DrawItem(int nID, CDC* pDC);
 
 	afx_msg void OnCustomDraw(NMHDR* pNMHDR, LRESULT* pResult);

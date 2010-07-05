@@ -344,24 +344,27 @@ void CIndex::Retrieve(LFFilter* f, LFSearchResult* res)
 		strcpy_s(i->StoreID, LFKeySize, StoreID);
 		Tables[IDMaster]->WriteToItemDescriptor(i, PtrM);
 
-		// Slave
-		if ((PtrM->SlaveID) && (PtrM->SlaveID<IdxTableCount))
-			if (LoadTable(PtrM->SlaveID))
-			{
-				void* PtrS;
+		if (!f->Options.IgnoreSlaves)
+		{
+			// Slave
+			if ((PtrM->SlaveID) && (PtrM->SlaveID<IdxTableCount))
+				if (LoadTable(PtrM->SlaveID))
+				{
+					void* PtrS;
 
-				if (Tables[PtrM->SlaveID]->FindKey(PtrM->FileID, IDs[PtrM->SlaveID], PtrS))
-					Tables[PtrM->SlaveID]->WriteToItemDescriptor(i, PtrS);
-			}
-			else
-			{
-				res->m_LastError = LFIndexError;
-			}
+					if (Tables[PtrM->SlaveID]->FindKey(PtrM->FileID, IDs[PtrM->SlaveID], PtrS))
+						Tables[PtrM->SlaveID]->WriteToItemDescriptor(i, PtrS);
+				}
+				else
+				{
+					res->m_LastError = LFIndexError;
+				}
 
-		if (pass!=1)
-			pass = PassesFilterSlaves(i, f) ? 1 : -1;
+			if (pass!=1)
+				pass = PassesFilterSlaves(i, f) ? 1 : -1;
+		}
 
-		if (pass==1)
+		if (pass!=-1)
 			if (res->AddItemDescriptor(i))
 				continue;
 

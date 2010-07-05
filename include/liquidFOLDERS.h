@@ -405,7 +405,10 @@ struct LFFilterOptions
 	// For LFFilterModeStores
 	bool OnlyInternalStores;				// If true, only internal stores are added
 	bool AddDrives;							// If true, drives are added
+
+	// For LFFilterModeDirectoryTree and above
 	bool IsSubfolder;						// If true, you are already inside a grouped subdirectory
+	bool IgnoreSlaves;						// If true, returns only core attributes
 };
 
 struct LFFilterResult

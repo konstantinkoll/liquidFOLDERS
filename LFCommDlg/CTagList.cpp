@@ -4,6 +4,7 @@
 
 #include "stdafx.h"
 #include "CTagList.h"
+#include "LFApplication.h"
 
 
 // CTagList
@@ -12,6 +13,14 @@
 CTagList::CTagList()
 	: CListCtrl()
 {
+	CString face = ((LFApplication*)AfxGetApp())->GetDefaultFontFace();
+
+	m_FontLarge.CreateFont(-14, 0, 0, 0, FW_NORMAL, 0, 0, 0, ANSI_CHARSET,
+		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
+		face);
+	m_FontSmall.CreateFont(-8, 0, 0, 0, FW_NORMAL, 0, 0, 0, ANSI_CHARSET,
+		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
+		face);
 }
 
 CTagList::~CTagList()
@@ -43,32 +52,42 @@ void CTagList::OnCustomDraw(NMHDR* pNMHDR, LRESULT* pResult)
 
 void CTagList::DrawItem(int nID, CDC* pDC)
 {
-	CRect rect;
-	int H;
-	COLORREF oldCol;
+	COLORREF oldCol = (COLORREF)-1;
 	COLORREF bkCol = GetBkColor();
+	COLORREF selCol;
+	COLORREF texCol;
 
 	// Background
 	CRect rectBounds;
 	GetItemRect(nID, rectBounds, LVIR_BOUNDS);
 	int oldMode = pDC->SetBkMode(TRANSPARENT);
 
+	pDC->FillSolidRect(rectBounds, bkCol);
+
 	UINT State = GetItemState(nID, LVIS_SELECTED | LVIS_FOCUSED | LVIS_CUT);
-	if ((State & (LVIS_SELECTED | LVIS_FOCUSED)) && ((State & LVIS_SELECTED) || ((GetFocus()==this)) || (GetStyle() & LVS_SHOWSELALWAYS)))
+	if ((State & LVIS_SELECTED) && ((GetFocus()==this) || (GetStyle() & LVS_SHOWSELALWAYS)))
 	{
-		pDC->FillSolidRect(rectBounds, GetSysColor(COLOR_HIGHLIGHT));
-		//((MyDrawManager*)dm)->DrawItem(pDC, rectBounds, State & LVIS_SELECTED, ((GetFocus()==this) && (State & LVIS_FOCUSED)));
+		selCol = GetSysColor(COLOR_HIGHLIGHT);
+		texCol = GetSysColor(COLOR_HIGHLIGHTTEXT);
 	}
 	else
 	{
-		pDC->FillSolidRect(rectBounds, bkCol);
+		selCol = GetSysColor(COLOR_HIGHLIGHT);
+		selCol = (((((selCol>>16) & 0xFF) >> 2) + ((((bkCol>>16) & 0xFF)*3) >> 2))<<16) |
+				(((((selCol>>8) & 0xFF) >> 2) + ((((bkCol>>8) & 0xFF)*3) >> 2))<<8) |
+				(((selCol & 0xFF) >> 2) + (((bkCol & 0xFF)*3) >> 2));
+		texCol = GetSysColor(COLOR_WINDOWTEXT);
 	}
+	pDC->FillSolidRect(rectBounds, selCol);
+
+	rectBounds.DeflateRect(4, 0);
 
 	TCHAR text[260];
 	UINT columns[2];
 	LVITEM item;
 	ZeroMemory(&item, sizeof(item));
 	item.iItem = nID;
+	item.iSubItem = 1;
 	item.pszText = text;
 	item.cchTextMax = sizeof(text)/sizeof(TCHAR);
 	item.puColumns = columns;
@@ -76,32 +95,27 @@ void CTagList::DrawItem(int nID, CDC* pDC)
 	item.mask = LVIF_TEXT | LVIF_COLUMNS;
 	GetItem(&item);
 
+	// Anzahl
+	CFont* pOldFont = pDC->SelectObject(&m_FontSmall);
+	int L = pDC->GetTextExtent(item.pszText).cx;
+
+	oldCol = pDC->SetTextColor(texCol);
+	pDC->DrawText(item.pszText, -1, rectBounds, DT_NOPREFIX | DT_END_ELLIPSIS | DT_SINGLELINE | DT_RIGHT | DT_VCENTER);
+
+	pDC->SelectObject(pOldFont);
+
 	// Label
-	H = pDC->GetTextExtent(item.pszText).cy;
-	GetItemRect(nID, &rect, LVIR_LABEL);
+	item.iSubItem = 0;
+	item.pszText = text;
+	GetItem(&item);
 
-	UINT nFormat = DT_SINGLELINE;
-	pDC->DrawText(item.pszText, -1, rect, DT_NOPREFIX | DT_END_ELLIPSIS | nFormat);
+	pOldFont = pDC->SelectObject(&m_FontLarge);
+	rectBounds.right -= L+4;
 
-	item.mask = LVIF_TEXT;
+	SetTextColor(texCol);
+	pDC->DrawText(item.pszText, -1, rectBounds, DT_NOPREFIX | DT_END_ELLIPSIS | DT_SINGLELINE | DT_CENTER | DT_VCENTER);
 
-	oldCol = (COLORREF)-1;
-	if ((!State) && (pDC->GetTextColor()==0x000000))
-		oldCol = pDC->SetTextColor((bkCol>>1) & 0x7F7F7F);
-
-	for (UINT a=0; a<item.cColumns; a++)
-	{
-		rect.top += pDC->GetTextExtent(item.pszText).cy;
-
-		item.iSubItem = item.puColumns[a];
-		item.pszText = text;
-		GetItem(&item);
-
-		pDC->DrawText(item.pszText, -1, rect, DT_NOPREFIX | DT_SINGLELINE | DT_END_ELLIPSIS);
-	}
-
-	if (oldCol!=(COLORREF)-1)
-		pDC->SetTextColor(oldCol);
-
+	pDC->SelectObject(pOldFont);
+	pDC->SetTextColor(oldCol);
 	pDC->SetBkMode(oldMode);
 }
