@@ -224,7 +224,10 @@ void CListView::SetViewOptions(UINT _ViewID, BOOL Force)
 			iView = LV_VIEW_TILE;
 		}
 
-		ModifyStyle(LVS_ALIGNLEFT, _ViewID==LFViewList ? LVS_ALIGNLEFT : 0);
+		m_FileList.ModifyStyle(LVS_ALIGNLEFT, _ViewID==LFViewList ? LVS_ALIGNLEFT : 0);
+		if (theApp.osInfo.dwMajorVersion<6)
+			m_FileList.SetExtendedStyle(FileListExtendedStyles | (_ViewID==LFViewPreview ? LVS_EX_BORDERSELECT : 0));
+
 		m_FileList.SetView(iView);
 		m_FileList.CreateColumns();
 	}
