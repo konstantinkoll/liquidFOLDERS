@@ -112,11 +112,9 @@ int CFilterWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	if (!m_wndList.Create(dwViewStyle | LVS_NOCOLUMNHEADER, CRect(0, 0, 0, 0), this, ID_FILTERLIST))
 		return -1;
-	
+
 	const DWORD dwExStyle = LVS_EX_DOUBLEBUFFER | LVS_EX_LABELTIP;
 	m_wndList.SetExtendedStyle(dwExStyle);
-	m_wndList.SetBkColor(afxGlobalData.clrBarFace);
-	m_wndList.SetTextBkColor(afxGlobalData.clrBarFace);
 
 	LV_COLUMN lvc;
 	ZeroMemory(&lvc, sizeof(lvc));

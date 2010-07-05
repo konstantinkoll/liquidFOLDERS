@@ -420,6 +420,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CTagList.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\CToolbarList.cpp"
 				>
 			</File>
@@ -497,6 +501,10 @@
 			</File>
 			<File
 				RelativePath=".\LFDropTarget.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\LFEditTagsDlg.cpp"
 				>
 			</File>
 			<File
@@ -622,6 +630,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CTagList.h"
+				>
+			</File>
+			<File
 				RelativePath=".\CToolbarList.h"
 				>
 			</File>
@@ -663,6 +675,10 @@
 			</File>
 			<File
 				RelativePath=".\LFDropTarget.h"
+				>
+			</File>
+			<File
+				RelativePath=".\LFEditTagsDlg.h"
 				>
 			</File>
 			<File
@@ -917,6 +933,10 @@
 			</File>
 			<File
 				RelativePath=".\res\StoreProperties_Tiny.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Tags_Tiny.ico"
 				>
 			</File>
 			<File

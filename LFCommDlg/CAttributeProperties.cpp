@@ -4,6 +4,7 @@
 
 #include "stdafx.h"
 #include "CAttributeProperties.h"
+#include "LFEditTagsDlg.h"
 #include "LFSelectLocationGPSDlg.h"
 #include "LFSelectLocationIATADlg.h"
 #include "Resource.h"
@@ -143,6 +144,35 @@ void CAttributeProperty::OnDrawName(CDC* pDC, CRect rect)
 
 	if (clrTextOld != (COLORREF)-1)
 		pDC->SetTextColor(clrTextOld);
+}
+
+
+// CAttributePropertyTags
+//
+
+CAttributePropertyTags::CAttributePropertyTags(LFVariantData* _pData)
+	: CAttributeProperty(_pData)
+{
+}
+
+CAttributePropertyTags::~CAttributePropertyTags()
+{
+}
+
+BOOL CAttributePropertyTags::HasButton() const
+{
+	return TRUE;
+}
+
+void CAttributePropertyTags::OnClickButton(CPoint /*point*/)
+{
+	LFEditTagsDlg dlg(NULL, Multiple ? _T("") : p_Data->UnicodeArray);
+
+	if (dlg.DoModal()==IDOK)
+	{
+		wcscpy_s(p_Data->UnicodeArray, 256, dlg.m_Tags);
+		SetValue(dlg.m_Tags, FALSE);
+	}
 }
 
 

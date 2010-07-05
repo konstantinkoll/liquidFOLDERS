@@ -10,6 +10,7 @@
 #define ID_APP_PROMPT                   205
 #define ID_APP_PURCHASE                 206
 #define ID_APP_ENTERLICENSEKEY          207
+#define IDC_BUTTON1                     2020
 #define IDB_KEY                         20000
 #define IDB_BACKDROP                    20001
 #define IDB_LOGO                        20002
@@ -132,15 +133,19 @@
 #define IDC_WRITEPROTECTED              21902
 #define IDC_NOFREESPACE                 21903
 #define IDC_ERROR                       21904
-#define IDD_REGISTRY                    22000
+#define IDD_EDITTAGS                    22000
+#define IDC_TAGS                        22001
+#define IDC_ADDTAGS                     22002
+#define IDC_TAGLIST                     22003
+#define IDD_REGISTRY                    22100
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        2007
+#define _APS_NEXT_RESOURCE_VALUE        2008
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         2018
+#define _APS_NEXT_CONTROL_VALUE         2021
 #define _APS_NEXT_SYMED_VALUE           2007
 #endif
 #endif

@@ -67,7 +67,6 @@ void CStoreWnd::UpdateStores(BOOL FocusDefaultStore)
 
 	SortSearchResult(result);
 
-	m_wndList.SetRedraw(FALSE);
 	m_wndList.DeleteAllItems();
 
 	idx = -1;
@@ -80,8 +79,6 @@ void CStoreWnd::UpdateStores(BOOL FocusDefaultStore)
 	}
 
 	m_wndList.SetItemState(idx, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
-	m_wndList.SetRedraw(TRUE);
-	m_wndList.SetTileSize();
 }
 
 int CStoreWnd::GetSelectedItem()

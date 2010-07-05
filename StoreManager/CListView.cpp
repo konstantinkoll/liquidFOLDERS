@@ -222,10 +222,11 @@ void CListView::SetViewOptions(UINT _ViewID, BOOL Force)
 
 		m_FileList.ModifyStyle(_ViewID!=LFViewList ? LVS_ALIGNLEFT : 0, _ViewID==LFViewList ? LVS_ALIGNLEFT : 0);
 		if (theApp.osInfo.dwMajorVersion==5)
-			m_FileList.SetExtendedStyle(m_FileList.GetExtendedStyle() & !LVS_EX_BORDERSELECT | (_ViewID==LFViewPreview ? LVS_EX_BORDERSELECT : 0));
+			m_FileList.SetExtendedStyle(m_FileList.GetExtendedStyle() & !LVS_EX_BORDERSELECT | FileListExtendedStyles | (_ViewID==LFViewPreview ? LVS_EX_BORDERSELECT : 0));
 
 		m_FileList.SetView(iView);
 		m_FileList.CreateColumns();
+		m_FileList.EnsureVisible(0, FALSE);
 	}
 	else
 		if (_ViewID==LFViewDetails)
@@ -234,7 +235,7 @@ void CListView::SetViewOptions(UINT _ViewID, BOOL Force)
 	// Full row select
 	if (Force || (_ViewID!=ViewID) || (pViewParameters->FullRowSelect!=m_ViewParameters.FullRowSelect))
 		if (_ViewID==LFViewDetails)
-			m_FileList.SetExtendedStyle(m_FileList.GetExtendedStyle() & !LVS_EX_FULLROWSELECT | (pViewParameters->FullRowSelect ? LVS_EX_FULLROWSELECT : 0));
+			m_FileList.SetExtendedStyle(m_FileList.GetExtendedStyle() & !LVS_EX_FULLROWSELECT | FileListExtendedStyles | (pViewParameters->FullRowSelect ? LVS_EX_FULLROWSELECT : 0));
 
 	// Icons
 	if (Force || (_ViewID!=ViewID) || (pViewParameters->GrannyMode!=m_ViewParameters.GrannyMode))

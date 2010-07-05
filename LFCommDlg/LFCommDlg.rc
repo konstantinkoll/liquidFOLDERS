@@ -130,6 +130,7 @@ IDD_ENTERLICENSEKEY     ICON                    "res\\Key_Small.ico"
 IDD_STOREPROPERTIES     ICON                    "res\\StoreProperties_Tiny.ico"
 IDD_ITEMTEMPLATE        ICON                    "res\\Inspector_Tiny.ico"
 IDD_STOREMAINTENANCE    ICON                    "res\\StoreMaintenance_Tiny.ico"
+IDD_EDITTAGS            ICON                    "res\\Tags_Tiny.ico"
 IDD_REGISTRY            ICON                    "res\\Registry_Tiny.ico"
 #endif    // Neutral resources
 /////////////////////////////////////////////////////////////////////////////
@@ -420,6 +421,22 @@ BEGIN
     CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ | WS_GROUP,14,29,172,1
 END
 
+IDD_EDITTAGS DIALOGEX 0, 0, 348, 238
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Schlagworte bearbeiten"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    GROUPBOX        "Eingetragene Schlagworte",IDC_STATIC,7,7,334,47
+    EDITTEXT        IDC_TAGS,14,21,320,14,ES_AUTOHSCROLL | WS_GROUP
+    LTEXT           "Schlagworte werden durch Leerzeichen oder Kommata getrennt.",IDC_STATIC,14,39,319,10
+    GROUPBOX        "Vorschläge",IDC_STATIC,7,62,334,148
+    LTEXT           "Diese Schlagworte wurden bereits an Dateien innerhalb des selben Stores vergeben:",IDC_STATIC,14,73,260,16
+    PUSHBUTTON      "&Hinzufügen",IDC_ADDTAGS,279,73,55,14
+    CONTROL         "",IDC_TAGLIST,"SysListView32",LVS_SHOWSELALWAYS | LVS_NOLABELWRAP | WS_BORDER | WS_GROUP | WS_TABSTOP,14,93,320,109
+    DEFPUSHBUTTON   "OK",IDOK,7,217,50,14,WS_GROUP
+    PUSHBUTTON      "Abbrechen",IDCANCEL,64,217,50,14,WS_GROUP
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -515,6 +532,14 @@ BEGIN
         RIGHTMARGIN, 193
         TOPMARGIN, 7
         BOTTOMMARGIN, 88
+    END
+
+    IDD_EDITTAGS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 341
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 231
     END
 END
 #endif    // APSTUDIO_INVOKED

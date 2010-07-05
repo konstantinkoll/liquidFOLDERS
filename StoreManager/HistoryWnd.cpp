@@ -57,7 +57,7 @@ CHistoryWnd::~CHistoryWnd()
 {
 }
 
-void CHistoryWnd::AddFilterItem(LFFilter* f, BOOL focus, BOOL append)
+void CHistoryWnd::AddFilterItem(LFFilter* f, BOOL append, BOOL focus)
 {
 	UINT puColumns[] = { 1, 2 };
 	LVITEM lvi;
@@ -65,7 +65,7 @@ void CHistoryWnd::AddFilterItem(LFFilter* f, BOOL focus, BOOL append)
 	lvi.mask = LVIF_TEXT | LVIF_IMAGE | LVIF_COLUMNS;
 	lvi.cColumns = 2;
 	lvi.puColumns = puColumns;
-	lvi.iItem = (append ? m_wndList.GetItemCount() : 0);
+	lvi.iItem = append ? m_wndList.GetItemCount() : 0;
 	lvi.pszText = f->Name;
 	lvi.iImage = f->Result.FilterType;
 	int idx = m_wndList.InsertItem(&lvi);
@@ -112,22 +112,21 @@ void CHistoryWnd::UpdateList(BreadcrumbItem* prev, LFFilter* current, Breadcrumb
 	// Zurück
 	while (prev)
 	{
-		AddFilterItem(prev->filter, FALSE, FALSE);
+		AddFilterItem(prev->filter, FALSE);
 		prev = prev->next;
 	}
 
 	// Aktuell
-	AddFilterItem(current, TRUE);
+	AddFilterItem(current, TRUE, TRUE);
 
 	// Vorwärts
 	while (next)
 	{
-		AddFilterItem(next->filter);
+		AddFilterItem(next->filter, TRUE);
 		next = next->next;
 	}
 
 	m_wndList.SetRedraw(TRUE);
-	m_wndList.SetTileSize();
 }
 
 
@@ -157,7 +156,7 @@ int CHistoryWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	const DWORD dwViewStyle = WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | LVS_NOCOLUMNHEADER | LVS_SHOWSELALWAYS | LVS_SINGLESEL;
 	if (!m_wndList.Create(dwViewStyle, CRect(0, 0, 0, 0), this, ID_HISTORYLIST))
 		return -1;
-	
+
 	const DWORD dwExStyle = LVS_EX_DOUBLEBUFFER | LVS_EX_LABELTIP;
 	m_wndList.SetExtendedStyle(dwExStyle);
 	m_wndList.SetContextMenu(IDM_HISTORY);

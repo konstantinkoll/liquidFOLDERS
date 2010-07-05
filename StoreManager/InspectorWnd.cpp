@@ -354,6 +354,9 @@ int CInspectorWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		{
 			switch (theApp.m_Attributes[a]->Type)
 			{
+			case LFTypeUnicodeArray:
+				pAttributes[a] = new CAttributePropertyTags(&AttributeValues[a]);
+				break;
 			case LFTypeAnsiString:
 				pAttributes[a] = (a==LFAttrLocationIATA) ? new CAttributePropertyIATA(&AttributeValues[a], (CAttributeProperty**)&pAttributes[LFAttrLocationName], (CAttributeProperty**)&pAttributes[LFAttrLocationGPS]) : new CAttributeProperty(&AttributeValues[a]);
 				break;

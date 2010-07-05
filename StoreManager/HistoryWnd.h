@@ -36,7 +36,7 @@ protected:
 	CImageListTransparent m_Icons;
 	int m_CurrentItem;
 
-	void AddFilterItem(LFFilter* f, BOOL focus=FALSE, BOOL append=TRUE);
+	void AddFilterItem(LFFilter* f, BOOL append, BOOL focus=FALSE);
 
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnSize(UINT nType, int cx, int cy);

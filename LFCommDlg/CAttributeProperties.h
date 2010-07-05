@@ -38,6 +38,20 @@ protected:
 };
 
 
+// CAttributePropertyTags
+//
+
+class AFX_EXT_CLASS CAttributePropertyTags : public CAttributeProperty
+{
+public:
+	CAttributePropertyTags(LFVariantData* _pData);
+	virtual ~CAttributePropertyTags();
+
+	virtual BOOL HasButton() const;
+	virtual void OnClickButton(CPoint point);
+};
+
+
 // CAttributePropertyIATA
 //
 
