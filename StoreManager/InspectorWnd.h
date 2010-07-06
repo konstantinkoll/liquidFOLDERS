@@ -52,7 +52,7 @@ public:
 	virtual void AdjustLayout();
 	virtual void SaveSettings();
 
-	void UpdateStart(BOOL Reset=TRUE);
+	void UpdateStart(LFFilter* f);
 	void UpdateAdd(LFItemDescriptor* i, LFSearchResult* raw);
 	void UpdateFinish();
 

@@ -150,9 +150,10 @@ void CAttributeProperty::OnDrawName(CDC* pDC, CRect rect)
 // CAttributePropertyTags
 //
 
-CAttributePropertyTags::CAttributePropertyTags(LFVariantData* _pData)
+CAttributePropertyTags::CAttributePropertyTags(LFVariantData* _pData, char* _StoreID)
 	: CAttributeProperty(_pData)
 {
+	SetStore(_StoreID);
 }
 
 CAttributePropertyTags::~CAttributePropertyTags()
@@ -166,7 +167,7 @@ BOOL CAttributePropertyTags::HasButton() const
 
 void CAttributePropertyTags::OnClickButton(CPoint /*point*/)
 {
-	LFEditTagsDlg dlg(NULL, Multiple ? _T("") : p_Data->UnicodeArray);
+	LFEditTagsDlg dlg(NULL, Multiple ? _T("") : p_Data->UnicodeArray, StoreIDValid ? StoreID : NULL);
 
 	if (dlg.DoModal()==IDOK)
 	{
@@ -205,6 +206,13 @@ BOOL CAttributePropertyTags::OnUpdateValue()
 	}
 
 	return TRUE;
+}
+
+void CAttributePropertyTags::SetStore(char* _StoreID)
+{
+	StoreIDValid = (_StoreID!=NULL);
+	if (_StoreID)
+		strcpy_s(StoreID, LFKeySize, _StoreID);
 }
 
 

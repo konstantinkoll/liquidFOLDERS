@@ -44,12 +44,18 @@ protected:
 class AFX_EXT_CLASS CAttributePropertyTags : public CAttributeProperty
 {
 public:
-	CAttributePropertyTags(LFVariantData* _pData);
+	CAttributePropertyTags(LFVariantData* _pData, char* _StoreID=NULL);
 	virtual ~CAttributePropertyTags();
 
 	virtual BOOL HasButton() const;
 	virtual void OnClickButton(CPoint point);
 	virtual BOOL OnUpdateValue();
+
+	void SetStore(char* _StoreID);
+
+protected:
+	char StoreID[LFKeySize];
+	BOOL StoreIDValid;
 };
 
 

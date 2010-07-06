@@ -430,7 +430,7 @@ BEGIN
     EDITTEXT        IDC_TAGS,14,21,320,14,ES_AUTOHSCROLL | WS_GROUP
     LTEXT           "Schlagworte werden durch Leerzeichen oder Kommata getrennt.",IDC_STATIC,14,39,319,10
     GROUPBOX        "Vorschläge",IDC_STATIC,7,62,334,148
-    LTEXT           "Diese Schlagworte wurden bereits an Dateien innerhalb des selben Stores vergeben:",IDC_STATIC,14,73,260,16
+    LTEXT           "Diese Schlagworte wurden bereits an Dateien innerhalb des selben Stores vergeben (klicken Sie auf ein Schlagwort, um es hinzuzufügen):",IDC_STATIC,14,73,260,16
     PUSHBUTTON      "&Hinzufügen",IDC_ADDTAGS,279,73,55,14,WS_DISABLED
     CONTROL         "",IDC_TAGLIST,"SysListView32",LVS_SHOWSELALWAYS | LVS_NOLABELWRAP | WS_BORDER | WS_GROUP | WS_TABSTOP,14,93,320,109
     DEFPUSHBUTTON   "OK",IDOK,7,217,50,14,WS_GROUP
@@ -899,7 +899,7 @@ BEGIN
     EDITTEXT        IDC_TAGS,14,21,320,14,ES_AUTOHSCROLL | WS_GROUP
     LTEXT           "Tags are separated by blanks or commas.",IDC_STATIC,14,39,319,10
     GROUPBOX        "Suggestions",IDC_STATIC,7,62,334,148
-    LTEXT           "These tags have already been assigned to files inside this store:",IDC_STATIC,14,73,260,16
+    LTEXT           "These tags have already been assigned to files inside this store (click on a tag to add it):",IDC_STATIC,14,73,260,16
     PUSHBUTTON      "&Add tags",IDC_ADDTAGS,279,73,55,14,WS_DISABLED
     CONTROL         "",IDC_TAGLIST,"SysListView32",LVS_SHOWSELALWAYS | LVS_NOLABELWRAP | WS_BORDER | WS_GROUP | WS_TABSTOP,14,93,320,109
     DEFPUSHBUTTON   "OK",IDOK,7,217,50,14,WS_GROUP

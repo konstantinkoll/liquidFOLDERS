@@ -4,11 +4,12 @@
 
 extern AFX_EXTENSION_MODULE LFCommDlgDLL;
 
-LFItemTemplateDlg::LFItemTemplateDlg(CWnd* pParentWnd, LFItemDescriptor* pItem)
+LFItemTemplateDlg::LFItemTemplateDlg(CWnd* pParentWnd, LFItemDescriptor* pItem, char* _StoreID)
 	: CDialog(IDD_ITEMTEMPLATE, pParentWnd)
 {
 	m_pItem = pItem;
 	p_App = (LFApplication*)AfxGetApp();
+	strcpy_s(StoreID, LFKeySize, _StoreID);
 
 	ZeroMemory(pGroups, sizeof(pGroups));
 	ZeroMemory(pAttributes, sizeof(pAttributes));
@@ -67,7 +68,7 @@ BOOL LFItemTemplateDlg::OnInitDialog()
 			switch (AttributeValues[a].Type)
 			{
 			case LFTypeUnicodeArray:
-				pAttributes[a] = new CAttributePropertyTags(&AttributeValues[a]);
+				pAttributes[a] = new CAttributePropertyTags(&AttributeValues[a], StoreID);
 				break;
 			case LFTypeAnsiString:
 				pAttributes[a] = (a==LFAttrLocationIATA) ? new CAttributePropertyIATA(&AttributeValues[a], (CAttributeProperty**)&pAttributes[LFAttrLocationName], (CAttributeProperty**)&pAttributes[LFAttrLocationGPS]) : new CAttributeProperty(&AttributeValues[a]);

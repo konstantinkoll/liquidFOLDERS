@@ -7,7 +7,7 @@
 class AFX_EXT_CLASS LFItemTemplateDlg : public CDialog
 {
 public:
-	LFItemTemplateDlg(CWnd* pParentWnd, LFItemDescriptor* pItem);
+	LFItemTemplateDlg(CWnd* pParentWnd, LFItemDescriptor* pItem, char* _StoreID);
 	virtual ~LFItemTemplateDlg();
 
 	virtual void DoDataExchange(CDataExchange* pDX);
@@ -26,6 +26,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
+	char StoreID[LFKeySize];
 	LFVariantData AttributeValues[LFAttributeCount];
 	CInspectorGrid m_Inspector;
 };

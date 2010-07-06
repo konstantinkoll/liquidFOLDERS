@@ -1092,7 +1092,7 @@ void CMainFrame::OnStoreAddFolder()
 
 				// Template füllen
 				LFItemDescriptor* it = LFAllocItemDescriptor();
-				LFItemTemplateDlg tdlg(this, it);
+				LFItemTemplateDlg tdlg(this, it, CookedFiles->m_Items[i]->StoreID);
 				if (tdlg.DoModal()!=IDCANCEL)
 					LFErrorBox(LFImportFiles(CookedFiles->m_Items[i]->StoreID, il, it), GetSafeHwnd());
 
@@ -1151,7 +1151,7 @@ void CMainFrame::OnStoreAddFiles()
 
 			// Template füllen
 			LFItemDescriptor* it = LFAllocItemDescriptor();
-			LFItemTemplateDlg tdlg(this, it);
+			LFItemTemplateDlg tdlg(this, it, CookedFiles->m_Items[i]->StoreID);
 			if (tdlg.DoModal()!=IDCANCEL)
 				LFErrorBox(LFImportFiles(CookedFiles->m_Items[i]->StoreID, il, it), GetSafeHwnd());
 
@@ -1423,7 +1423,7 @@ void CMainFrame::OnUpdateSelection()
 		}
 
 	// Selection
-	m_wndInspector.UpdateStart();
+	m_wndInspector.UpdateStart(ActiveFilter);
 	i = GetNextSelectedItem(-1);
 	FilesSelected = FALSE;
 	UINT Count = 0;

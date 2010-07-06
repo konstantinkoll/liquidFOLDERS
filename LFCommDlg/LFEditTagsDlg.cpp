@@ -4,11 +4,15 @@
 
 extern AFX_EXTENSION_MODULE LFCommDlgDLL;
 
-LFEditTagsDlg::LFEditTagsDlg(CWnd* pParentWnd, CString _Tags)
+LFEditTagsDlg::LFEditTagsDlg(CWnd* pParentWnd, CString _Tags, char* _StoreID)
 	: CDialog(IDD_EDITTAGS, pParentWnd)
 {
 	m_Tags = _Tags;
 	p_App = (LFApplication*)AfxGetApp();
+
+	StoreIDValid = (_StoreID!=NULL);
+	if (_StoreID)
+		strcpy_s(StoreID, LFKeySize, _StoreID);
 }
 
 LFEditTagsDlg::~LFEditTagsDlg()
@@ -60,36 +64,44 @@ BOOL LFEditTagsDlg::OnInitDialog()
 	m_TagList.SetView(LV_VIEW_TILE);
 	m_TagList.SetExtendedStyle(LVS_EX_DOUBLEBUFFER | LVS_EX_ONECLICKACTIVATE);
 
-	// Vorschläge
-	LFFilter* f = LFAllocFilter();
-	f->Mode = LFFilterModeDirectoryTree;
-	f->Options.IgnoreSlaves = true;
-	LFSearchResult* res = LFQuery(f);
-	LFGroupSearchResult(res, LFAttrTags, false, false, 0, true, f);
-	LFFreeFilter(f);
-
-	for (unsigned int a=0; a<res->m_ItemCount; a++)
+	if (StoreIDValid)
 	{
-		LFItemDescriptor* i = res->m_Items[a];
-		if (((i->Type & LFTypeMask)==LFTypeVirtual) && (i->AggregateCount))
+		// Vorschläge
+		LFFilter* f = LFAllocFilter();
+		strcpy_s(f->StoreID, LFKeySize, StoreID);
+		f->Mode = LFFilterModeDirectoryTree;
+		f->Options.IgnoreSlaves = true;
+		LFSearchResult* res = LFQuery(f);
+		LFGroupSearchResult(res, LFAttrTags, false, false, 0, true, f);
+		LFFreeFilter(f);
+
+		for (unsigned int a=0; a<res->m_ItemCount; a++)
 		{
-			UINT puColumns[] = { 1, 2 };
-			LVITEM lvi;
-			ZeroMemory(&lvi, sizeof(lvi));
-			lvi.mask = LVIF_TEXT | LVIF_COLUMNS;
-			lvi.cColumns = 1;
-			lvi.puColumns = puColumns;
-			lvi.iItem = a;
-			lvi.pszText = i->CoreAttributes.FileName;
-			int idx = m_TagList.InsertItem(&lvi);
+			LFItemDescriptor* i = res->m_Items[a];
+			if (((i->Type & LFTypeMask)==LFTypeVirtual) && (i->AggregateCount))
+			{
+				UINT puColumns[] = { 1, 2 };
+				LVITEM lvi;
+				ZeroMemory(&lvi, sizeof(lvi));
+				lvi.mask = LVIF_TEXT | LVIF_COLUMNS;
+				lvi.cColumns = 1;
+				lvi.puColumns = puColumns;
+				lvi.iItem = a;
+				lvi.pszText = i->CoreAttributes.FileName;
+				int idx = m_TagList.InsertItem(&lvi);
 
-			CString cnt;
-			cnt.Format(_T("%d"), i->AggregateCount);
-			m_TagList.SetItemText(idx, 1, cnt);
+				CString cnt;
+				cnt.Format(_T("%d"), i->AggregateCount);
+				m_TagList.SetItemText(idx, 1, cnt);
+			}
 		}
-	}
 
-	LFFreeSearchResult(res);
+		LFFreeSearchResult(res);
+	}
+	else
+	{
+		m_TagList.EnableWindow(FALSE);
+	}
 
 	return TRUE;
 }

@@ -49,29 +49,30 @@ void CInspectorWnd::SaveSettings()
 	theApp.SetRegistryBase(oldBase);
 }
 
-void CInspectorWnd::UpdateStart(BOOL Reset)
+void CInspectorWnd::UpdateStart(LFFilter* f)
 {
-	if (Reset)
+	Count = 0;
+
+	// Icon
+	m_wndIconCtrl.SetStatus(StatusUnused);
+	IconStatus = StatusUnused;
+
+	// Typ
+	TypeStatus = StatusUnused;
+
+	// Properties
+	ZeroMemory(AttributeVisible, sizeof(AttributeVisible));
+	ZeroMemory(AttributeStatus, sizeof(AttributeStatus));
+	ZeroMemory(AttributeEditable, sizeof(AttributeEditable));
+
+	for (UINT a=0; a<AttrCount; a++)
 	{
-		Count = 0;
+		AttributeValues[a].Attr = a;
+		LFGetNullVariantData(&AttributeValues[a]);
 
-		// Icon
-		m_wndIconCtrl.SetStatus(StatusUnused);
-		IconStatus = StatusUnused;
-
-		// Typ
-		TypeStatus = StatusUnused;
-
-		// Properties
-		ZeroMemory(AttributeVisible, sizeof(AttributeVisible));
-		ZeroMemory(AttributeStatus, sizeof(AttributeStatus));
-		ZeroMemory(AttributeEditable, sizeof(AttributeEditable));
-
-		for (UINT a=0; a<AttrCount; a++)
-		{
-			AttributeValues[a].Attr = a;
-			LFGetNullVariantData(&AttributeValues[a]);
-		}
+		if (a<LFAttributeCount)
+			if (theApp.m_Attributes[a]->Type==LFTypeUnicodeArray)
+				((CAttributePropertyTags*)pAttributes[a])->SetStore(f ? f->Mode==LFFilterModeDirectoryTree ? f->StoreID : NULL : NULL);
 	}
 }
 
