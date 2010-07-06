@@ -2553,7 +2553,7 @@ void CMainFrame::NavigateTo(LFFilter* f, UINT NavMode, int FocusItem, int FirstA
 	if (CookedFiles->m_LastError>LFCancel)
 	{
 		theApp.PlayWarningSound();
-		ShowCaptionBar(ActiveFilter->Result.FilterType==LFFilterTypeError ? IDB_CANCEL : IDB_WARNING, CookedFiles->m_LastError, ActiveFilter->Result.FilterType==LFFilterTypeError ? ID_STORE_MAINTENANCE : 0);
+		ShowCaptionBar(ActiveFilter->Result.FilterType==LFFilterTypeError ? IDB_CANCEL : IDB_WARNING, CookedFiles->m_LastError, CookedFiles->m_LastError==LFIndexAccessError ? ID_STORE_MAINTENANCE : 0);
 	}
 	else
 		if ((m_wndCaptionBar.IsVisible()) && (!theApp.m_ShowQueryDuration))

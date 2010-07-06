@@ -219,7 +219,7 @@ void CIndex::Update(LFTransactionList* tl, LFVariantData* value1, LFVariantData*
 							}
 							else
 							{
-								tl->m_Entries[a].LastError = tl->m_LastError = LFIndexError;
+								tl->m_Entries[a].LastError = tl->m_LastError = LFIndexAccessError;
 							}
 
 						tl->m_Entries[a].Processed = true;
@@ -290,7 +290,7 @@ void CIndex::Delete(LFTransactionList* tl, char* DatPath)
 							}
 							else
 							{
-								tl->m_Entries[a].LastError = tl->m_LastError = LFIndexError;
+								tl->m_Entries[a].LastError = tl->m_LastError = LFIndexAccessError;
 							}
 
 						// Master
@@ -323,7 +323,7 @@ void CIndex::Retrieve(LFFilter* f, LFSearchResult* res)
 
 	if (!LoadTable(IDMaster))
 	{
-		res->m_LastError = LFIndexRepairError;
+		res->m_LastError = LFIndexAccessError;
 		return;
 	}
 
@@ -357,7 +357,7 @@ void CIndex::Retrieve(LFFilter* f, LFSearchResult* res)
 				}
 				else
 				{
-					res->m_LastError = LFIndexError;
+					res->m_LastError = LFIndexAccessError;
 				}
 
 			if (pass!=1)
@@ -373,10 +373,10 @@ void CIndex::Retrieve(LFFilter* f, LFSearchResult* res)
 	}
 }
 
-void CIndex::RetrieveStats(unsigned int* cnt, __int64* size)
+unsigned int CIndex::RetrieveStats(unsigned int* cnt, __int64* size)
 {
 	if (!LoadTable(IDMaster))
-		return;
+		return LFIndexAccessError;
 
 	int ID = 0;
 	LFCoreAttributes* PtrM;
@@ -402,4 +402,6 @@ void CIndex::RetrieveStats(unsigned int* cnt, __int64* size)
 			Count(((PtrM->DomainID>=LFFirstPhysicalDomain) && (PtrM->DomainID<LFDomainCount)) ? PtrM->DomainID : LFDomainUnknown);
 		}
 	}
+
+	return LFOk;
 }

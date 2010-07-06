@@ -576,42 +576,43 @@ LFSearchResult* QueryDomains(LFFilter* filter)
 		__int64 size[LFDomainCount] = { 0 };
 		if (idx1)
 		{
-			idx1->RetrieveStats(cnt, size);
+			res->m_LastError = idx1->RetrieveStats(cnt, size);
 			delete idx1;
 		}
 		if (idx2)
 			delete idx2;
 		ReleaseMutexForStore(StoreLock);
 
-		for (unsigned char a=0; a<LFDomainCount; a++)
-			if ((cnt[a]) || (!filter->HideEmptyDomains) || (filter->UnhideAll))
-			{
-				LFDomainDescriptor* d = LFGetDomainInfo(a);
-				char FileID[LFKeySize];
-				sprintf_s(FileID, LFKeySize, "%d", a);
-				wchar_t Hint[256];
-				swprintf_s(Hint, 256, cnt[a]==1 ? HintSingular : HintPlural, cnt[a]);
+		if (res->m_LastError==LFOk)
+			for (unsigned char a=0; a<LFDomainCount; a++)
+				if ((cnt[a]) || (!filter->HideEmptyDomains) || (filter->UnhideAll))
+				{
+					LFDomainDescriptor* d = LFGetDomainInfo(a);
+					char FileID[LFKeySize];
+					sprintf_s(FileID, LFKeySize, "%d", a);
+					wchar_t Hint[256];
+					swprintf_s(Hint, 256, cnt[a]==1 ? HintSingular : HintPlural, cnt[a]);
 
-				LFFilter* nf = LFAllocFilter();
-				nf->Mode = LFFilterModeDirectoryTree;
-				nf->Options = filter->Options;
-				nf->DomainID = a;
-				strcpy_s(nf->StoreID, LFKeySize, filter->StoreID);
-				wcscpy_s(nf->Name, 256, d->DomainName);
+					LFFilter* nf = LFAllocFilter();
+					nf->Mode = LFFilterModeDirectoryTree;
+					nf->Options = filter->Options;
+					nf->DomainID = a;
+					strcpy_s(nf->StoreID, LFKeySize, filter->StoreID);
+					wcscpy_s(nf->Name, 256, d->DomainName);
 
-				if (res->AddItemDescriptor(AllocFolderDescriptor(d->DomainName, d->Comment, Hint, filter->StoreID, FileID, &size[a], d->IconID, d->CategoryID, cnt[a], nf)))
-					if ((a>=LFFirstSoloDomain) && (a!=LFDomainPhotos))
-					{
-						res->m_FileCount += cnt[a];
-						res->m_FileSize += size[a];
-					}
+					if (res->AddItemDescriptor(AllocFolderDescriptor(d->DomainName, d->Comment, Hint, filter->StoreID, FileID, &size[a], d->IconID, d->CategoryID, cnt[a], nf)))
+						if ((a>=LFFirstSoloDomain) && (a!=LFDomainPhotos))
+						{
+							res->m_FileCount += cnt[a];
+							res->m_FileSize += size[a];
+						}
 
-				LFFreeDomainDescriptor(d);
-			}
-			else
-			{
-				res->m_HidingItems = true;
-			}
+					LFFreeDomainDescriptor(d);
+				}
+				else
+				{
+					res->m_HidingItems = true;
+				}
 
 		filter->Result.FilterType = LFFilterTypeStoreHome;
 	}

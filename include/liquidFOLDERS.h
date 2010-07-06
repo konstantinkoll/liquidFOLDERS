@@ -559,7 +559,7 @@ struct LFStoreDescriptor
 #define LFIllegalItemType               16
 #define LFIllegalValue                  17
 #define LFIndexNotCreated               18
-#define LFIndexError                    19
+#define LFIndexAccessError              19
 #define LFIndexRepairError              20
 #define LFNotEnoughFreeDiscSpace        21
 #define LFCannotDeleteFile              22

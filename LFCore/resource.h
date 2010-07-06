@@ -117,7 +117,7 @@
 #define IDS_LFErrorIllegalItemType      3016
 #define IDS_LFErrorIllegalValue         3017
 #define IDS_LFErrorIndexNotCreated      3018
-#define IDS_LFErrorIndexError           3019
+#define IDS_LFErrorIndexAccessError     3019
 #define IDS_LFErrorIndexRepairError     3020
 #define IDS_LFErrorNotEnoughFreeDisc    3021
 #define IDS_LFErrorCannotDeleteFile     3022
