@@ -13,8 +13,9 @@
 CTagList::CTagList()
 	: CListCtrl()
 {
-	CString face = ((LFApplication*)AfxGetApp())->GetDefaultFontFace();
+	ZeroMemory(&m_BgBitmaps, sizeof(m_BgBitmaps));
 
+	CString face = ((LFApplication*)AfxGetApp())->GetDefaultFontFace();
 	m_FontLarge.CreateFont(-14, 0, 0, 0, FW_NORMAL, 0, 0, 0, ANSI_CHARSET,
 		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
 		face);
@@ -25,6 +26,9 @@ CTagList::CTagList()
 
 CTagList::~CTagList()
 {
+	for (UINT a=0; a<2; a++)
+		if (m_BgBitmaps[a])
+			delete m_BgBitmaps[a];
 }
 
 void CTagList::CreateRoundRectangle(CRect rect, int rad, GraphicsPath& path)
@@ -51,6 +55,7 @@ void CTagList::CreateRoundRectangle(CRect rect, int rad, GraphicsPath& path)
 
 BEGIN_MESSAGE_MAP(CTagList, CListCtrl)
 	ON_NOTIFY_REFLECT(NM_CUSTOMDRAW, OnCustomDraw)
+	ON_WM_SYSCOLORCHANGE()
 END_MESSAGE_MAP()
 
 void CTagList::OnCustomDraw(NMHDR* pNMHDR, LRESULT* pResult)
@@ -77,17 +82,13 @@ void CTagList::DrawItem(int nID, CDC* pDC)
 	COLORREF selCol;
 	COLORREF texCol;
 
-	// Background
-	CRect rectBounds;
-	GetItemRect(nID, rectBounds, LVIR_BOUNDS);
-	CRect rect(rectBounds);
-	rect.MoveToXY(0, 0);
-
 	UINT State = GetItemState(nID, LVIS_SELECTED | LVIS_FOCUSED);
+	UINT bgBitmap;
 	if ((State & LVIS_SELECTED) && ((GetFocus()==this) || (GetStyle() & LVS_SHOWSELALWAYS)))
 	{
 		selCol = GetSysColor(COLOR_HIGHLIGHT);
 		texCol = GetSysColor(COLOR_HIGHLIGHTTEXT);
+		bgBitmap = 0;
 	}
 	else
 	{
@@ -96,33 +97,53 @@ void CTagList::DrawItem(int nID, CDC* pDC)
 				(((((selCol>>8) & 0xFF) >> 2) + ((((bkCol>>8) & 0xFF)*3) >> 2))<<8) |
 				(((selCol & 0xFF) >> 2) + (((bkCol & 0xFF)*3) >> 2));
 		texCol = GetSysColor(COLOR_WINDOWTEXT);
+		bgBitmap = 1;
 	}
+
+	// Background
+	CRect rectBounds;
+	GetItemRect(nID, rectBounds, LVIR_BOUNDS);
+
+	CRect rect(rectBounds);
+	rect.MoveToXY(0, 0);
 
 	CDC dc;
 	dc.CreateCompatibleDC(pDC);
-	dc.SetBkMode(TRANSPARENT);
+	CBitmap* pOldBitmap;
 
-	CBitmap buffer;
-	buffer.CreateCompatibleBitmap(pDC, rectBounds.Width(), rectBounds.Height());
-	CBitmap* pOldBitmap = dc.SelectObject(&buffer);
+	if (!m_BgBitmaps[bgBitmap])
+	{
+		dc.SetBkMode(TRANSPARENT);
 
-	dc.FillSolidRect(rect, bkCol);
+		m_BgBitmaps[bgBitmap] = new CBitmap();
+		m_BgBitmaps[bgBitmap]->CreateCompatibleBitmap(pDC, rectBounds.Width(), rectBounds.Height());
+		pOldBitmap = dc.SelectObject(m_BgBitmaps[bgBitmap]);
 
-	// Border
-	Graphics g(dc.m_hDC);
-	g.SetCompositingMode(CompositingModeSourceOver);
-	g.SetSmoothingMode(SmoothingModeAntiAlias);
+		dc.FillSolidRect(rect, bkCol);
 
-	if (!m_Path.GetPointCount())
-		CreateRoundRectangle(rect, 9, m_Path);
+		// Border
+		Graphics g(dc.m_hDC);
+		g.SetCompositingMode(CompositingModeSourceOver);
+		g.SetSmoothingMode(SmoothingModeAntiAlias);
 
-	// Inner border
-	SolidBrush sBr(Color(State & LVIS_SELECTED ? 0xC0 : 0x80, selCol & 0xFF, (selCol>>8) & 0xFF, (selCol>>16) & 0xFF));
-	g.FillPath(&sBr, &m_Path);
+		if (!m_Path.GetPointCount())
+			CreateRoundRectangle(rect, 9, m_Path);
 
-	// Outer border
-	Pen pen(Color(selCol & 0xFF, (selCol>>8) & 0xFF, (selCol>>16) & 0xFF));
-	g.DrawPath(&pen, &m_Path);
+		// Inner border
+		SolidBrush sBr(Color(State & LVIS_SELECTED ? 0xC0 : 0x80, selCol & 0xFF, (selCol>>8) & 0xFF, (selCol>>16) & 0xFF));
+		g.FillPath(&sBr, &m_Path);
+
+		// Outer border
+		Pen pen(Color(selCol & 0xFF, (selCol>>8) & 0xFF, (selCol>>16) & 0xFF));
+		g.DrawPath(&pen, &m_Path);
+	}
+	else
+	{
+		pOldBitmap = dc.SelectObject(m_BgBitmaps[bgBitmap]);
+	}
+
+	pDC->BitBlt(rectBounds.left, rectBounds.top, rectBounds.Width(), rectBounds.Height(), &dc, 0, 0, SRCCOPY);
+	dc.SelectObject(pOldBitmap);
 
 	// Item
 	TCHAR text[260];
@@ -138,33 +159,41 @@ void CTagList::DrawItem(int nID, CDC* pDC)
 	item.mask = LVIF_TEXT | LVIF_COLUMNS;
 	GetItem(&item);
 
+	pDC->SetBkMode(TRANSPARENT);
+
 	// Count
-	CFont* pOldFont = dc.SelectObject(&m_FontSmall);
-	rect.DeflateRect(5, 0);
-	int L = dc.GetTextExtent(item.pszText).cx;
-	dc.SetTextColor((State & LVIS_SELECTED) ? texCol : ((texCol>>1) & 0x7F7F7F) + ((dc.GetPixel(rect.right, rect.top+10)>>1) & 0x7F7F7F));
-	dc.DrawText(item.pszText, -1, rect, DT_NOPREFIX | DT_END_ELLIPSIS | DT_SINGLELINE | DT_RIGHT | DT_VCENTER);
-	dc.SelectObject(pOldFont);
+	CFont* pOldFont = pDC->SelectObject(&m_FontSmall);
+	rectBounds.DeflateRect(5, 0);
+	int L = pDC->GetTextExtent(item.pszText).cx;
+	pDC->SetTextColor((State & LVIS_SELECTED) ? texCol : ((texCol>>1) & 0x7F7F7F) + ((pDC->GetPixel(rectBounds.right, rectBounds.top+10)>>1) & 0x7F7F7F));
+	pDC->DrawText(item.pszText, -1, rectBounds, DT_NOPREFIX | DT_END_ELLIPSIS | DT_SINGLELINE | DT_RIGHT | DT_VCENTER);
+	pDC->SelectObject(pOldFont);
 
 	// Label
 	item.iSubItem = 0;
 	item.pszText = text;
 	GetItem(&item);
 
-	pOldFont = dc.SelectObject(&m_FontLarge);
-	rect.right -= L+5;
-	dc.SetTextColor(texCol);
-	dc.DrawText(item.pszText, -1, rect, DT_NOPREFIX | DT_END_ELLIPSIS | DT_SINGLELINE | DT_CENTER | DT_VCENTER);
-	dc.SelectObject(pOldFont);
-
-	pDC->BitBlt(rectBounds.left, rectBounds.top, rectBounds.Width(), rectBounds.Height(), &dc, 0, 0, SRCCOPY);
-	dc.SelectObject(pOldBitmap);
+	pOldFont = pDC->SelectObject(&m_FontLarge);
+	rectBounds.right -= L+5;
+	pDC->SetTextColor(texCol);
+	pDC->DrawText(item.pszText, -1, rectBounds, DT_NOPREFIX | DT_END_ELLIPSIS | DT_SINGLELINE | DT_CENTER | DT_VCENTER);
+	pDC->SelectObject(pOldFont);
 
 	// FocusRect
 	if ((State & LVIS_FOCUSED) && (GetFocus()==this))
 	{
-		rect.DeflateRect(0, 1);
-		rect.MoveToXY(rectBounds.left+5, rectBounds.top+1);
-		pDC->DrawFocusRect(rect);
+		rectBounds.DeflateRect(0, 1);
+		pDC->DrawFocusRect(rectBounds);
 	}
+}
+
+void CTagList::OnSysColorChange()
+{
+	for (UINT a=0; a<2; a++)
+		if (m_BgBitmaps[a])
+		{
+			delete m_BgBitmaps[a];
+			m_BgBitmaps[a] = NULL;
+		}
 }

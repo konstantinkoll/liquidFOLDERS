@@ -99,27 +99,7 @@ void CCalendarDayView::SetViewOptions(UINT /*_ViewID*/, BOOL Force)
 
 	// Colors
 	if (Force || (pViewParameters->Background!=m_ViewParameters.Background) || (theApp.m_nAppLook!=RibbonColor))
-	{
-		COLORREF back;
-		COLORREF text;
-		COLORREF highlight;
-		theApp.GetBackgroundColors(pViewParameters->Background, &back, &text, &highlight);
-
-		m_FileList.SetBkColor(back);
-		m_FileList.SetTextBkColor(back);
-		m_FileList.SetTextColor(text);
-		m_CalendarHeaderCtrl.SetColors(text, back, (pViewParameters->Background==ChildBackground_Ribbon) ? back : 0xA0A0A0);
-
-		if (theApp.osInfo.dwMajorVersion==5)
-		{
-			LVGROUPMETRICS metrics;
-			ZeroMemory(&metrics, sizeof(LVGROUPMETRICS));
-			metrics.cbSize = sizeof(LVGROUPMETRICS);
-			metrics.mask = LVGMF_TEXTCOLOR;
-			metrics.crHeader = text;
-			m_FileList.SetGroupMetrics(&metrics);
-		}
-	}
+		OnSysColorChange();
 
 	// Categories
 	//if (Force || (pViewParameters->ShowCategories!=m_ViewParameters.ShowCategories) || (_ViewID!=ViewID))

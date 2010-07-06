@@ -73,6 +73,7 @@ BEGIN_MESSAGE_MAP(CAbstractListView, CFileView)
 	ON_COMMAND(ID_VIEW_AUTOSIZECOLUMNS, OnAutosizeColumns)
 	ON_COMMAND(ID_VIEW_CATEGORIES, OnToggleCategories)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_VIEW_CATEGORIES, ID_VIEW_AUTOSIZECOLUMNS, OnUpdateCommands)
+	ON_WM_SYSCOLORCHANGE()
 END_MESSAGE_MAP()
 
 void CAbstractListView::OnSetFocus(CWnd* pOldWnd)
@@ -129,4 +130,26 @@ void CAbstractListView::OnUpdateCommands(CCmdUI* pCmdUI)
 	}
 
 	pCmdUI->Enable(b);
+}
+
+void CAbstractListView::OnSysColorChange()
+{
+	COLORREF back;
+	COLORREF text;
+	COLORREF highlight;
+	theApp.GetBackgroundColors(pViewParameters->Background, &back, &text, &highlight);
+
+	m_FileList.SetBkColor(back);
+	m_FileList.SetTextBkColor(back);
+	m_FileList.SetTextColor(text);
+
+	if (theApp.osInfo.dwMajorVersion==5)
+	{
+		LVGROUPMETRICS metrics;
+		ZeroMemory(&metrics, sizeof(LVGROUPMETRICS));
+		metrics.cbSize = sizeof(LVGROUPMETRICS);
+		metrics.mask = LVGMF_TEXTCOLOR;
+		metrics.crHeader = text;
+		m_FileList.SetGroupMetrics(&metrics);
+	}
 }

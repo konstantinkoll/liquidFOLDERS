@@ -37,5 +37,6 @@ protected:
 	afx_msg void OnUpdateToggleAttribute(CCmdUI* pCmdUI);
 	afx_msg void OnAutosizeColumns();
 	afx_msg void OnToggleCategories();
+	afx_msg void OnSysColorChange();
 	DECLARE_MESSAGE_MAP()
 };

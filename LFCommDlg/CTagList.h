@@ -23,8 +23,10 @@ protected:
 	void DrawItem(int nID, CDC* pDC);
 
 	afx_msg void OnCustomDraw(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnSysColorChange();
 	DECLARE_MESSAGE_MAP()
 
 private:
 	GraphicsPath m_Path;
+	CBitmap* m_BgBitmaps[2];
 };
