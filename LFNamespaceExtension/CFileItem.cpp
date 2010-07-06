@@ -162,7 +162,9 @@ BOOL CFileItem::GetColumnValueEx(VARIANT* value, CShellColumn& column)
 			}
 			else
 			{
-				CUtils::SetVariantFILETIME(value, Attrs.CreationTime);
+				FILETIME ft;
+				LocalFileTimeToFileTime(&Attrs.CreationTime, &ft);
+				CUtils::SetVariantFILETIME(value, ft);
 				return TRUE;
 			}
 		}
@@ -181,7 +183,9 @@ BOOL CFileItem::GetColumnValueEx(VARIANT* value, CShellColumn& column)
 			}
 			else
 			{
-				CUtils::SetVariantFILETIME(value, Attrs.FileTime);
+				FILETIME ft;
+				LocalFileTimeToFileTime(&Attrs.FileTime, &ft);
+				CUtils::SetVariantFILETIME(value, ft);
 				return TRUE;
 			}
 		}

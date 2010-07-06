@@ -626,7 +626,9 @@ BOOL CFolderItem::GetColumnValueEx(VARIANT* value, CShellColumn& column)
 			}
 			else
 			{
-				CUtils::SetVariantFILETIME(value, data.CreationTime);
+				FILETIME ft;
+				LocalFileTimeToFileTime(&data.CreationTime, &ft);
+				CUtils::SetVariantFILETIME(value, ft);
 			}
 		}
 		else
@@ -646,7 +648,9 @@ BOOL CFolderItem::GetColumnValueEx(VARIANT* value, CShellColumn& column)
 			}
 			else
 			{
-				CUtils::SetVariantFILETIME(value, data.FileTime);
+				FILETIME ft;
+				LocalFileTimeToFileTime(&data.FileTime, &ft);
+				CUtils::SetVariantFILETIME(value, ft);
 			}
 		}
 		else
