@@ -65,7 +65,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_AUTODIRS, OnUpdateAppCommands)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_SORT_FILENAME, ID_SORT_FILENAME+99, OnUpdateSortCommands)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_NAV_FIRST, ID_NAV_CLEARHISTORY, OnUpdateNavCommands)
-	ON_UPDATE_COMMAND_UI_RANGE(ID_PANE_CAPTIONBAR, ID_PANE_HISTORYWND, OnUpdatePaneCommands)
+	ON_UPDATE_COMMAND_UI_RANGE(ID_PANE_FILTERWND, ID_PANE_HISTORYWND, OnUpdatePaneCommands)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_CLIP_COPY, ID_CLIP_REMEMBERNEW, OnUpdateClipCommands)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_ITEMS_SHOWINSPECTOR, ID_ITEMS_RENAME, OnUpdateItemCommands)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_TRASH_EMPTY, ID_TRASH_RESTOREALL, OnUpdateTrashCommands)
@@ -86,7 +86,6 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_COMMAND(ID_CONTEXT_SAVENOW, OnSaveContextNow)
 	ON_COMMAND(ID_CONTEXT_SAVEALL, OnSaveContextAll)
 
-	ON_COMMAND(ID_PANE_CAPTIONBAR, OnToggleCaptionBar)
 	ON_COMMAND(ID_PANE_FILTERWND, OnToggleFilterWnd)
 	ON_COMMAND(ID_PANE_INSPECTORWND, OnToggleInspectorWnd)
 	ON_COMMAND(ID_PANE_HISTORYWND, OnToggleHistoryWnd)
@@ -149,7 +148,6 @@ LFFilter* GetRootFilter()
 CMainFrame::CMainFrame(BOOL _IsClipboard)
 {
 	IsClipboard = _IsClipboard;
-	CaptionBarUsed = 0;
 	ActiveViewID = -1;
 	ActiveContextID = -1;
 	ActiveFilter = GetRootFilter();
@@ -231,7 +229,6 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	CMFCRibbonButtonsGroup* pGroupPanels = new CMFCRibbonButtonsGroup();
 	if (!IsClipboard)
 	{
-		pGroupPanels->AddButton(new CMFCRibbonButton(ID_PANE_CAPTIONBAR, _T(""), m_PanelImages.ExtractIcon(8)));
 		pGroupPanels->AddButton(new CMFCRibbonButton(ID_PANE_FILTERWND, _T(""), m_PanelImages.ExtractIcon(1)));
 		pGroupPanels->AddButton(new CMFCRibbonButton(ID_PANE_HISTORYWND, _T(""), m_PanelImages.ExtractIcon(10)));
 	}
@@ -568,13 +565,6 @@ void CMainFrame::OnUpdateDropCommands(CCmdUI* pCmdUI)
 	}
 }
 
-void CMainFrame::OnToggleCaptionBar()
-{
-	BOOL b = m_wndCaptionBar.IsVisible() ? SW_HIDE : SW_SHOW;
-	m_wndCaptionBar.ShowWindow(b);
-	RecalcLayout(FALSE);
-}
-
 void CMainFrame::OnToggleFilterWnd()
 {
 	if (m_wndFilter)
@@ -629,10 +619,6 @@ void CMainFrame::OnUpdatePaneCommands(CCmdUI* pCmdUI)
 {
 	switch (pCmdUI->m_nID)
 	{
-	case ID_PANE_CAPTIONBAR:
-		pCmdUI->SetCheck(m_wndCaptionBar.IsVisible());
-		pCmdUI->Enable(CaptionBarUsed);
-		break;
 	case ID_PANE_FILTERWND:
 		if (m_wndFilter)
 			pCmdUI->SetCheck(m_wndFilter->IsVisible());
@@ -1255,7 +1241,7 @@ void CMainFrame::OnStoreBackup()
 
 void CMainFrame::OnUpdateStoreCommands(CCmdUI* pCmdUI)
 {
-	BOOL b = FALSE;
+	BOOL b = (pCmdUI->m_nID==ID_STORE_MAINTENANCE) ? LFGetStoreCount() : FALSE;
 
 	if (CookedFiles)
 		if (CookedFiles->m_Context==LFContextStores)
@@ -1299,9 +1285,6 @@ void CMainFrame::OnUpdateStoreCommands(CCmdUI* pCmdUI)
 				if (f)
 					b = (f->Type & LFTypeStore) &&
 						(f->CategoryID==LFCategoryExternalStores);
-				break;
-			case ID_STORE_MAINTENANCE:
-				b = LFGetStoreCount();
 				break;
 			case ID_STORE_BACKUP:
 				b = TRUE;
@@ -2262,7 +2245,7 @@ void CMainFrame::InitializeRibbon()
 				pPanelStoresStores->Add(theApp.CommandButton(ID_STORE_MAKEHYBRID, 7, 7));
 
 			strTemp = "Import files";
-			CMFCRibbonPanel* pPanelStoresImport = pCategoryStores->AddPanel(strTemp, m_PanelImages.ExtractIcon(22));
+			CMFCRibbonPanel* pPanelStoresImport = pCategoryStores->AddPanel(strTemp, m_PanelImages.ExtractIcon(8));
 
 				pPanelStoresImport->Add(theApp.CommandButton(ID_STORE_ADDFOLDER, 8, 8));
 				pPanelStoresImport->Add(theApp.CommandButton(ID_STORE_ADDFILES, 9, 9));
@@ -2327,45 +2310,44 @@ void CMainFrame::InitializeRibbon()
 	m_wndRibbonBar.AddToTabs(new CMFCRibbonButton(ID_APP_HELP, NULL, m_PanelImages.ExtractIcon(0)));
 }
 
-void CMainFrame::ShowCaptionBar(int Icon, LPCWSTR Message, int Command, LPCWSTR Button)
+void CMainFrame::ShowCaptionBar(int Icon, LPCWSTR Message, int Command)
 {
-	// Meldung nur anzeigen wenn Titelleiste unsichtbar ist oder die Meldung eine höhere Priorität hat
-	if ((m_wndCaptionBar.IsVisible()) && (Icon<CaptionBarUsed))
-		return;
+	// Text und Icon
+	m_wndCaptionBar.SetText(Message, CMFCCaptionBar::ALIGN_LEFT);
+	m_wndCaptionBar.SetBitmap(Icon, RGB(255,255,255), FALSE, CMFCCaptionBar::ALIGN_LEFT);
+	m_wndCaptionBar.Invalidate();
 
 	// Button
 	if (Command)
 	{
-		m_wndCaptionBar.SetButton(Button, Command, CMFCCaptionBar::ALIGN_LEFT, FALSE);
+		m_wndCaptionBar.SetButton(theApp.GetCommandName(Command)+_T("..."), Command, CMFCCaptionBar::ALIGN_LEFT, FALSE);
+
 		CString strTemp;
 		ENSURE(strTemp.LoadString(Command));
 		int y = strTemp.Find('\n');
 		if (!y)
 			y = strTemp.GetLength();
 		m_wndCaptionBar.SetButtonToolTip(strTemp.Left(y));
+		m_wndCaptionBar.EnableButton(TRUE);
 	}
 	else
 	{
-		m_wndCaptionBar.RemoveButton();
+		m_wndCaptionBar.SetButton(_T(" "), 0, CMFCCaptionBar::ALIGN_LEFT, FALSE);
+		m_wndCaptionBar.EnableButton(FALSE);
 	}
 
-	// Text und Icon
-	m_wndCaptionBar.SetText(Message, CMFCCaptionBar::ALIGN_LEFT);
-	m_wndCaptionBar.SetBitmap(Icon, RGB(255,255,255), FALSE, CMFCCaptionBar::ALIGN_LEFT);
-
-	// Balken sichtbar machen wenn die Meldung keine Debug-Information ist oder selbige gewünscht wird
-	if ((Icon!=IDB_INFO) || (theApp.m_ShowQueryDuration))
+	// Balken sichtbar machen
+	if (!m_wndCaptionBar.IsVisible())
 	{
 		m_wndCaptionBar.ShowWindow(SW_SHOW);
 		RecalcLayout(FALSE);
 	}
-	CaptionBarUsed = Icon;
 }
 
-void CMainFrame::ShowCaptionBar(int Icon, UINT res, int Command, LPCWSTR Button)
+void CMainFrame::ShowCaptionBar(int Icon, UINT res, int Command)
 {
 	wchar_t* message = LFGetErrorText(res);
-	ShowCaptionBar(Icon, message, Command, Button);
+	ShowCaptionBar(Icon, message, Command);
 	free(message);
 }
 
@@ -2571,8 +2553,14 @@ void CMainFrame::NavigateTo(LFFilter* f, UINT NavMode, int FocusItem, int FirstA
 	if (CookedFiles->m_LastError>LFCancel)
 	{
 		theApp.PlayWarningSound();
-		ShowCaptionBar(ActiveFilter->Result.FilterType==LFFilterTypeError ? IDB_CANCEL : IDB_WARNING, CookedFiles->m_LastError);
+		ShowCaptionBar(ActiveFilter->Result.FilterType==LFFilterTypeError ? IDB_CANCEL : IDB_WARNING, CookedFiles->m_LastError, ActiveFilter->Result.FilterType==LFFilterTypeError ? ID_STORE_MAINTENANCE : 0);
 	}
+	else
+		if ((m_wndCaptionBar.IsVisible()) && (!theApp.m_ShowQueryDuration))
+		{
+			m_wndCaptionBar.ShowWindow(SW_HIDE);
+			RecalcLayout(FALSE);
+		}
 }
 
 void CMainFrame::CookFiles(int recipe, int FocusItem)
@@ -2610,7 +2598,7 @@ void CMainFrame::CookFiles(int recipe, int FocusItem)
 	if ((Victim) && (Victim!=RawFiles))
 		LFFreeSearchResult(Victim);
 
-	if ((CookedFiles->m_LastError==LFOk) && (!IsClipboard))
+	if ((CookedFiles->m_LastError==LFOk) && (!IsClipboard) && (theApp.m_ShowQueryDuration))
 	{
 		wchar_t* error = LFGetErrorText(CookedFiles->m_LastError);
 		CString message;

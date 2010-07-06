@@ -126,7 +126,6 @@ protected:
 	BOOL FilesSelected;
 	BreadcrumbItem* m_BreadcrumbBack;
 	BreadcrumbItem* m_BreadcrumbForward;
-	int CaptionBarUsed;
 	int ActiveViewID;
 	LFViewParameters* ActiveViewParameters;
 	LFFilter* ActiveFilter;
@@ -151,7 +150,6 @@ protected:
 	afx_msg void OnUpdateSortCommands(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateDropCommands(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateNavCommands(CCmdUI* pCmdUI);
-	afx_msg void OnToggleCaptionBar();
 	afx_msg void OnToggleFilterWnd();
 	afx_msg void OnShowInspectorWnd();
 	afx_msg void OnToggleInspectorWnd();
@@ -210,8 +208,8 @@ private:
 	int GetSelectedItem();
 	int GetNextSelectedItem(int n);
 	void AddTransactionItem(LFTransactionList* tl, LFItemDescriptor* i, unsigned int UserData);
-	void ShowCaptionBar(int Icon, LPCWSTR Message, int Command=0, LPCWSTR Button=_T(""));
-	void ShowCaptionBar(int Icon, UINT res, int Command=0, LPCWSTR Button=_T(""));
+	void ShowCaptionBar(int Icon, LPCWSTR Message, int Command=0);
+	void ShowCaptionBar(int Icon, UINT res, int Command=0);
 	void InitializeRibbon();
 	void NavigateTo(LFFilter* f, UINT NavMode=NAVMODE_NORMAL, int FocusItem=0, int FirstAggregate=-1, int LastAggregate=-1);
 	void CookFiles(int recipe, int FocusItem=0);

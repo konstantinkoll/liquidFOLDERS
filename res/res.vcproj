@@ -620,18 +620,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Ribbon\Caption_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\Caption_32.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\CaptionBar_16.png"
-				>
-			</File>
-			<File
 				RelativePath=".\Ribbon\Clear_16.png"
 				>
 			</File>
