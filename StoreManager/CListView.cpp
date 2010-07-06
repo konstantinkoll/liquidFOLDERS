@@ -24,7 +24,7 @@ CListView::~CListView()
 
 void CListView::Create(CWnd* pParentWnd, LFSearchResult* _result, UINT _ViewID)
 {
-	result = _result;
+	m_HasCategories = _result->m_HasCategories;
 
 	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, NULL, NULL, NULL);
 
@@ -53,8 +53,11 @@ void CListView::SetSearchResult(LFSearchResult* _result)
 	{
 		if (_result)
 		{
+			if (result)
+				m_FileList.SetItemState(FocusItem, LVIS_FOCUSED, LVIS_FOCUSED);
 			m_FileList.SetItemCountEx(_result->m_ItemCount, 0);
-			m_FileList.SetItemState(FocusItem, LVIS_FOCUSED, LVIS_FOCUSED);
+			if (!result)
+				m_FileList.SetItemState(FocusItem, LVIS_FOCUSED, LVIS_FOCUSED);
 			m_FileList.EnsureVisible(FocusItem, FALSE);
 		}
 		else
@@ -157,8 +160,6 @@ void CListView::SetSearchResult(LFSearchResult* _result)
 				IListViewFooterCallback* i = NULL;
 				if (m_xFooterCallback.QueryInterface(IID_IListViewFooterCallback, (LPVOID*)&i)==NOERROR)
 					m_FileList.ShowFooter(i);
-
-				m_FileList.EnsureVisible(FocusItem, FALSE);
 			}
 		}
 	}
@@ -191,6 +192,31 @@ void CListView::SetViewOptions(UINT _ViewID, BOOL Force)
 	// Categories
 	if (Force || (pViewParameters->ShowCategories!=m_ViewParameters.ShowCategories) || (_ViewID!=ViewID))
 		m_FileList.EnableGroupView(pViewParameters->ShowCategories && (!m_FileList.OwnerData) && (_ViewID!=LFViewList));
+
+	// Icons
+	if (Force || (_ViewID!=ViewID) || (pViewParameters->GrannyMode!=m_ViewParameters.GrannyMode))
+	{
+		CImageList* icons = NULL;
+		int nImageList = LVSIL_NORMAL;
+
+		switch (_ViewID)
+		{
+		case LFViewLargeIcons:
+		case LFViewPreview:
+			icons = &theApp.m_Icons128;
+			m_FileList.SetIconSpacing(140, 140+(int)(GetFontHeight(pViewParameters->GrannyMode)*2.5));
+			break;
+		case LFViewSmallIcons:
+			m_FileList.SetIconSpacing(32+(int)(GetFontHeight(pViewParameters->GrannyMode)*8), (int)(GetFontHeight(pViewParameters->GrannyMode)*8));
+		case LFViewTiles:
+			icons = pViewParameters->GrannyMode ? &theApp.m_Icons64 : &theApp.m_Icons48;
+			break;
+		default:
+			icons = pViewParameters->GrannyMode ? &theApp.m_Icons24: &theApp.m_Icons16;
+			nImageList = LVSIL_SMALL;
+		}
+		m_FileList.SetImageList(icons, nImageList);
+	}
 
 	// View
 	if (Force || (_ViewID!=ViewID))
@@ -232,7 +258,7 @@ void CListView::SetViewOptions(UINT _ViewID, BOOL Force)
 
 		m_FileList.SetView(iView);
 		m_FileList.CreateColumns();
-		m_FileList.EnsureVisible(0, FALSE);
+		m_FileList.EnsureVisible(FocusItem, FALSE);
 	}
 	else
 		if (_ViewID==LFViewDetails)
@@ -242,29 +268,6 @@ void CListView::SetViewOptions(UINT _ViewID, BOOL Force)
 	if (Force || (_ViewID!=ViewID) || (pViewParameters->FullRowSelect!=m_ViewParameters.FullRowSelect))
 		if (_ViewID==LFViewDetails)
 			m_FileList.SetExtendedStyle(m_FileList.GetExtendedStyle() & !LVS_EX_FULLROWSELECT | FileListExtendedStyles | (pViewParameters->FullRowSelect ? LVS_EX_FULLROWSELECT : 0));
-
-	// Icons
-	if (Force || (_ViewID!=ViewID) || (pViewParameters->GrannyMode!=m_ViewParameters.GrannyMode))
-	{
-		CImageList* icons = NULL;
-		switch (_ViewID)
-		{
-		case LFViewLargeIcons:
-		case LFViewPreview:
-			icons = &theApp.m_Icons128;
-			m_FileList.SetIconSpacing(140, 140+(int)(GetFontHeight(pViewParameters->GrannyMode)*2.5));
-			break;
-		case LFViewSmallIcons:
-			m_FileList.SetIconSpacing(32+(int)(GetFontHeight(pViewParameters->GrannyMode)*8), (int)(GetFontHeight(pViewParameters->GrannyMode)*8));
-		case LFViewTiles:
-			icons = pViewParameters->GrannyMode ? &theApp.m_Icons64 : &theApp.m_Icons48;
-			break;
-		default:
-			icons = pViewParameters->GrannyMode ? &theApp.m_Icons24: &theApp.m_Icons16;
-		}
-		m_FileList.SetImageList(icons, LVSIL_NORMAL);
-		m_FileList.SetImageList(icons, LVSIL_SMALL);
-	}
 }
 
 
@@ -278,12 +281,12 @@ int CListView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CFileView::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
-	if (!m_FileList.Create(this, !result->m_HasCategories))
+	if (!m_FileList.Create(this, !m_HasCategories))
 		return -1;
 
 	m_FileList.SetImageList(&theApp.m_Icons16, LVSIL_FOOTER);
 
-	if (result->m_HasCategories)
+	if (m_HasCategories)
 	{
 		LVGROUP lvg;
 		ZeroMemory(&lvg, sizeof(lvg));

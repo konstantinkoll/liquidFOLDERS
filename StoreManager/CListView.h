@@ -33,4 +33,6 @@ protected:
 		STDMETHOD(OnButtonClicked)(int, LPARAM, PINT);
 		STDMETHOD(OnDestroyButton)(int, LPARAM);
 	END_INTERFACE_PART(FooterCallback)
+
+	BOOL m_HasCategories;
 };

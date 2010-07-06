@@ -164,6 +164,7 @@ void CAttributeProperty::OnDrawValue(CDC* pDC, CRect rect)
 	{
 		strVal = strMultiple;
 
+		oldColor = pDC->SetTextColor(afxGlobalData.clrGrayedText);
 		pOldFont = (CFont*)pDC->SelectObject(((CInspectorGrid*)m_pWndList)->GetItalicFnt());
 	}
 	else

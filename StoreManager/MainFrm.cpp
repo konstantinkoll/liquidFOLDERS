@@ -664,16 +664,14 @@ void CMainFrame::OnClipRemove()
 		{
 			int pos = CookedFiles->m_Items[idx]->Position;
 			if (pos!=-1)
-			{
 				RawFiles->m_Items[pos]->DeleteFlag = true;
-				m_wndView->SelectItem(idx, FALSE, TRUE);
-			}
 
 			idx = GetNextSelectedItem(idx);
 		}
 
 		LFRemoveFlaggedItemDescriptors(RawFiles);
 		UpdateHistory();
+		SendMessage(WM_COMMAND, ID_VIEW_SELECTNONE);
 		CookFiles(ActiveContextID, GetFocusItem());
 	}
 }
@@ -1615,17 +1613,12 @@ BOOL CMainFrame::UpdateTrashFlag(BOOL Trash, BOOL All)
 	if (m_wndView)
 	{
 		for (UINT a=0; a<tl->m_Count; a++)
-			if (tl->m_Entries[a].LastError!=LFOk)
-			{
-				m_wndView->SelectItem(tl->m_Entries[a].UserData, FALSE, TRUE);
-			}
-			else
-			{
+			if (tl->m_Entries[a].LastError==LFOk)
 				tl->m_Entries[a].Item->DeleteFlag = true;
-			}
 
 		LFRemoveFlaggedItemDescriptors(RawFiles);
 		UpdateHistory();
+		SendMessage(WM_COMMAND, ID_VIEW_SELECTNONE);
 		CookFiles(ActiveContextID, GetFocusItem());
 	}
 
@@ -1645,17 +1638,12 @@ BOOL CMainFrame::DeleteFiles(BOOL All)
 	if (m_wndView)
 	{
 		for (UINT a=0; a<tl->m_Count; a++)
-			if (tl->m_Entries[a].LastError!=LFOk)
-			{
-				m_wndView->SelectItem(tl->m_Entries[a].UserData, FALSE, TRUE);
-			}
-			else
-			{
+			if (tl->m_Entries[a].LastError==LFOk)
 				tl->m_Entries[a].Item->DeleteFlag = true;
-			}
 
 		LFRemoveFlaggedItemDescriptors(RawFiles);
 		UpdateHistory();
+		SendMessage(WM_COMMAND, ID_VIEW_SELECTNONE);
 		CookFiles(ActiveContextID, GetFocusItem());
 	}
 

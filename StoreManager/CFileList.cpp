@@ -185,8 +185,6 @@ void CFileList::OnGetDispInfo(NMHDR* pNMHDR, LRESULT* /*pResult*/)
 	LV_DISPINFO* pDispInfo = (LV_DISPINFO*)pNMHDR;
 	LV_ITEM* pItem = &pDispInfo->item;
 
-	LFItemDescriptor* i = View->result->m_Items[pItem->iItem];
-
 	if (pItem->mask & LVIF_COLUMNS)
 	{
 		pItem->cColumns = 3;
@@ -197,6 +195,8 @@ void CFileList::OnGetDispInfo(NMHDR* pNMHDR, LRESULT* /*pResult*/)
 
 	if (View->result)
 	{
+		LFItemDescriptor* i = View->result->m_Items[pItem->iItem];
+
 		UINT attr = ColumnMapping[pItem->iSubItem];
 		if ((pItem->mask & LVIF_TEXT) && (theApp.m_Attributes[attr]->Type!=LFTypeRating))
 		{
@@ -230,7 +230,7 @@ void CFileList::OnCustomDraw(NMHDR* pNMHDR, LRESULT* pResult)
 	case CDDS_ITEMPOSTPAINT|CDDS_SUBITEM:
 		col = lplvcd->iSubItem;
 		attr = ColumnMapping[col];
-		if (theApp.m_Attributes[attr]->Type==LFTypeRating)
+		if ((theApp.m_Attributes[attr]->Type==LFTypeRating) && (View->result))
 		{
 			CRect rect;
 			GetSubItemRect((int)lplvcd->nmcd.dwItemSpec, col, LVIR_BOUNDS, rect);
@@ -430,6 +430,9 @@ void CFileList::OnItemChanged(NMHDR* pNMHDR, LRESULT* /*pResult*/)
 			GetParentFrame()->SendMessage(WM_COMMAND, ID_APP_UPDATESELECTION);
 			ItemChanged = 0;
 		}
+
+	if ((pNMListView->uChanged & LVIF_STATE) && (pNMListView->uNewState & LVIS_FOCUSED))
+		View->FocusItem = pNMListView->iItem;
 }
 
 void CFileList::OnColumnClick(NMHDR* pNMHDR, LRESULT* /*pResult*/)

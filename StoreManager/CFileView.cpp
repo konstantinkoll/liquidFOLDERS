@@ -57,9 +57,6 @@ void CFileView::OnUpdateViewOptions(int _ActiveContextID, int _ViewID, BOOL Forc
 
 void CFileView::OnUpdateSearchResult(LFSearchResult* _result, int _FocusItem)
 {
-	SetCursor(theApp.LoadStandardCursor(_result ? IDC_ARROW : IDC_WAIT));
-	result = _result;
-
 	if (_result)
 	{
 		m_DropTarget.Register(this, _result->m_StoreID);
@@ -81,6 +78,9 @@ void CFileView::OnUpdateSearchResult(LFSearchResult* _result, int _FocusItem)
 	}
 
 	SetSearchResult(_result);
+
+	SetCursor(theApp.LoadStandardCursor(_result ? IDC_ARROW : IDC_WAIT));
+	result = _result;
 }
 
 void CFileView::SelectItem(int /*n*/, BOOL /*select*/, BOOL /*InternalCall*/)
