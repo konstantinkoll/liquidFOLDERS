@@ -30,6 +30,7 @@ LFSearchResult::LFSearchResult(int ctx)
 	m_ItemCount = 0;
 	m_FileCount = 0;
 	m_FileSize = 0;
+	m_StoreCount = 0;
 	m_StoreID[0] = '\0';
 	m_Allocated = 0;
 }
@@ -47,6 +48,7 @@ LFSearchResult::LFSearchResult(int ctx, LFSearchResult* res)
 	m_Items = static_cast<LFItemDescriptor**>(_aligned_malloc(res->m_ItemCount*sizeof(LFItemDescriptor*), LFSR_MemoryAlignment));
 	m_FileCount = res->m_FileCount;
 	m_FileSize = res->m_FileSize;
+	m_StoreCount = res->m_StoreCount;
 	strcpy_s(m_StoreID, LFKeySize, res->m_StoreID);
 	m_Allocated = res->m_ItemCount;
 
@@ -172,7 +174,13 @@ bool LFSearchResult::AddStoreDescriptor(LFStoreDescriptor* s, LFFilter* f)
 
 	bool res = AddItemDescriptor(d);
 	if (!res)
+	{
 		LFFreeItemDescriptor(d);
+	}
+	else
+	{
+		m_StoreCount++;
+	}
 
 	return res;
 }

@@ -36,6 +36,7 @@ public:
 	unsigned int m_LastError;
 	unsigned int m_ItemCount;
 	unsigned int m_FileCount;
+	unsigned int m_StoreCount;
 	__int64 m_FileSize;
 	int m_Context;
 	int m_ContextView;

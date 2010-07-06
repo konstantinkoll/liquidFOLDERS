@@ -114,11 +114,32 @@ void CListView::SetSearchResult(LFSearchResult* _result)
 
 		if (_result)
 		{
-			if ((_result->m_Context==LFContextStoreHome) && (_result->m_HidingItems))
+			UINT cmd = 0;
+			UINT icon = 0;
+
+			switch (_result->m_Context)
+			{
+			case LFContextStores:
+				if (!_result->m_StoreCount)
+				{
+					cmd = ID_STORE_NEW;
+					icon = IDI_STORE_Empty-1;
+				}
+				break;
+			case LFContextStoreHome:
+				if (_result->m_HidingItems)
+				{
+					cmd = ID_NAV_RELOAD_SHOWALL;
+					icon = IDI_FLD_Default-1;
+				}
+				break;
+			}
+
+			if (cmd)
 			{
 				CString tmpStr1 = _T("?");
 				CString tmpStr2 = _T("?");
-				tmpStr1.LoadString(ID_NAV_RELOAD_SHOWALL);
+				ENSURE(tmpStr1.LoadString(cmd));
 
 				int pos = tmpStr1.Find('\n');
 				if (pos!=-1)
@@ -128,13 +149,13 @@ void CListView::SetSearchResult(LFSearchResult* _result)
 				}
 
 				m_FileList.SetFooterText(tmpStr1);
-				m_FileList.InsertFooterButton(0, tmpStr2, NULL, IDI_FLD_Default-1, ID_NAV_RELOAD_SHOWALL);
+				m_FileList.InsertFooterButton(0, tmpStr2, NULL, icon, cmd);
 				IListViewFooterCallback* i = NULL;
 				if (m_xFooterCallback.QueryInterface(IID_IListViewFooterCallback, (LPVOID*)&i)==NOERROR)
 					m_FileList.ShowFooter(i);
-			}
 
-			m_FileList.EnsureVisible(FocusItem, FALSE);
+				m_FileList.EnsureVisible(FocusItem, FALSE);
+			}
 		}
 	}
 
@@ -311,11 +332,11 @@ END_INTERFACE_MAP()
 
 IMPLEMENT_IUNKNOWN(CListView, FooterCallback)
 
-STDMETHODIMP CListView::XFooterCallback::OnButtonClicked(int /*itemIndex*/, LPARAM /*lParam*/, PINT pRemoveFooter)
+STDMETHODIMP CListView::XFooterCallback::OnButtonClicked(int /*itemIndex*/, LPARAM lParam, PINT pRemoveFooter)
 {
 	METHOD_PROLOGUE(CListView, FooterCallback);
-	pThis->GetParentFrame()->PostMessage(WM_COMMAND, ID_NAV_RELOAD_SHOWALL);
-	*pRemoveFooter = TRUE;
+	pThis->GetParentFrame()->PostMessage(WM_COMMAND, (WPARAM)lParam);
+	*pRemoveFooter = (lParam==ID_NAV_RELOAD_SHOWALL);
 	return S_OK;
 }
 
