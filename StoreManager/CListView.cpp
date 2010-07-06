@@ -169,6 +169,8 @@ void CListView::SetSearchResult(LFSearchResult* _result)
 
 void CListView::SetViewOptions(UINT _ViewID, BOOL Force)
 {
+	m_FileList.SetRedraw(FALSE);
+
 	// Font
 	if (Force || (pViewParameters->GrannyMode!=m_ViewParameters.GrannyMode))
 	{
@@ -268,6 +270,8 @@ void CListView::SetViewOptions(UINT _ViewID, BOOL Force)
 	if (Force || (_ViewID!=ViewID) || (pViewParameters->FullRowSelect!=m_ViewParameters.FullRowSelect))
 		if (_ViewID==LFViewDetails)
 			m_FileList.SetExtendedStyle(m_FileList.GetExtendedStyle() & !LVS_EX_FULLROWSELECT | FileListExtendedStyles | (pViewParameters->FullRowSelect ? LVS_EX_FULLROWSELECT : 0));
+
+	m_FileList.SetRedraw(TRUE);
 }
 
 

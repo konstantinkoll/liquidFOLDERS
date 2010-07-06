@@ -107,8 +107,8 @@ BOOL CFileList::SetColumnWidth(int nCol, int cx)
 
 void CFileList::CreateColumns()
 {
-	for (UINT a=0; a<ColumnCount; a++)
-		DeleteColumn(0);
+	for (int a=ColumnCount-1; a>=0; a--)
+		DeleteColumn(a);
 	ColumnCount = 0;
 
 	switch (GetView())
