@@ -623,6 +623,10 @@ unsigned int DeleteStore(LFStoreDescriptor* s)
 			break;
 		}
 
+	// Ggf. ersten Store als neuen Default Store
+	if (strcmp(victim.StoreID, DefaultStore)==0)
+		ChooseNewDefaultStore();
+
 	// Einstellungen
 	unsigned int res = LFOk;
 	if ((victim.StoreMode==LFStoreModeInternal) || (victim.StoreMode==LFStoreModeHybrid))
@@ -630,10 +634,6 @@ unsigned int DeleteStore(LFStoreDescriptor* s)
 	if ((victim.StoreMode==LFStoreModeHybrid) || (victim.StoreMode==LFStoreModeExternal))
 		if ((res==LFOk) && (IsStoreMounted(&victim)))
 			res = DeleteStoreSettingsFromFile(&victim);
-
-	// Ggf. ersten Store als neuen Default Store
-	if ((res==LFOk) && (strcmp(s->StoreID, DefaultStore)==0))
-		ChooseNewDefaultStore();
 
 	return res;
 }
