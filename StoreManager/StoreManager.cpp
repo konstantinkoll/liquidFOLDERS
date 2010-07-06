@@ -47,7 +47,6 @@ CStoreManagerApp::CStoreManagerApp()
 
 	// Load icons
 	HINSTANCE hModIcons = LoadLibrary(_T("LFCore.DLL"));
-
 	if (hModIcons!=NULL)
 	{
 		ExtractCoreIcons(hModIcons, 128, &m_Icons128);

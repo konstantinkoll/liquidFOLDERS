@@ -116,6 +116,8 @@ void CListView::SetSearchResult(LFSearchResult* _result)
 		{
 			UINT cmd = 0;
 			UINT icon = 0;
+			CString footerStr;
+			CString btnStr;
 
 			switch (_result->m_Context)
 			{
@@ -123,7 +125,8 @@ void CListView::SetSearchResult(LFSearchResult* _result)
 				if (!_result->m_StoreCount)
 				{
 					cmd = ID_STORE_NEW;
-					icon = IDI_STORE_Empty-1;
+					icon = IDI_STORE_Default-1;
+					footerStr = _T("There aren't any stores right now.");
 				}
 				break;
 			case LFContextStoreHome:
@@ -137,19 +140,20 @@ void CListView::SetSearchResult(LFSearchResult* _result)
 
 			if (cmd)
 			{
-				CString tmpStr1 = _T("?");
-				CString tmpStr2 = _T("?");
-				ENSURE(tmpStr1.LoadString(cmd));
+				CString tmpStr;
+				ENSURE(tmpStr.LoadString(cmd));
 
-				int pos = tmpStr1.Find('\n');
+				int pos = tmpStr.Find('\n');
 				if (pos!=-1)
 				{
-					tmpStr2 = tmpStr1.Mid(pos+1);
-					tmpStr1.Delete(pos, tmpStr1.GetLength()-pos);
+					if (footerStr.IsEmpty())
+						footerStr = tmpStr.Mid(0, pos-1);
+					if (btnStr.IsEmpty())
+						btnStr = tmpStr.Mid(pos+1);
 				}
 
-				m_FileList.SetFooterText(tmpStr1);
-				m_FileList.InsertFooterButton(0, tmpStr2, NULL, icon, cmd);
+				m_FileList.SetFooterText(footerStr);
+				m_FileList.InsertFooterButton(0, btnStr, NULL, icon, cmd);
 				IListViewFooterCallback* i = NULL;
 				if (m_xFooterCallback.QueryInterface(IID_IListViewFooterCallback, (LPVOID*)&i)==NOERROR)
 					m_FileList.ShowFooter(i);
