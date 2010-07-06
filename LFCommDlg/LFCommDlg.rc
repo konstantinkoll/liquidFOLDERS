@@ -431,7 +431,7 @@ BEGIN
     LTEXT           "Schlagworte werden durch Leerzeichen oder Kommata getrennt.",IDC_STATIC,14,39,319,10
     GROUPBOX        "Vorschläge",IDC_STATIC,7,62,334,148
     LTEXT           "Diese Schlagworte wurden bereits an Dateien innerhalb des selben Stores vergeben:",IDC_STATIC,14,73,260,16
-    PUSHBUTTON      "&Hinzufügen",IDC_ADDTAGS,279,73,55,14
+    PUSHBUTTON      "&Hinzufügen",IDC_ADDTAGS,279,73,55,14,WS_DISABLED
     CONTROL         "",IDC_TAGLIST,"SysListView32",LVS_SHOWSELALWAYS | LVS_NOLABELWRAP | WS_BORDER | WS_GROUP | WS_TABSTOP,14,93,320,109
     DEFPUSHBUTTON   "OK",IDOK,7,217,50,14,WS_GROUP
     PUSHBUTTON      "Abbrechen",IDCANCEL,64,217,50,14,WS_GROUP

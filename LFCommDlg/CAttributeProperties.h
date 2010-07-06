@@ -49,6 +49,7 @@ public:
 
 	virtual BOOL HasButton() const;
 	virtual void OnClickButton(CPoint point);
+	virtual BOOL OnUpdateValue();
 };
 
 

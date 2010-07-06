@@ -17,8 +17,12 @@ protected:
 	LFApplication* p_App;
 
 	afx_msg BOOL OnInitDialog();
+	afx_msg void OnDoubleClick(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnItemChanged(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnAddTags();
 	DECLARE_MESSAGE_MAP()
 
 private:
+	CEdit m_TagEdit;
 	CTagList m_TagList;
 };

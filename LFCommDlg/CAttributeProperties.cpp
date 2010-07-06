@@ -175,6 +175,38 @@ void CAttributePropertyTags::OnClickButton(CPoint /*point*/)
 	}
 }
 
+BOOL CAttributePropertyTags::OnUpdateValue()
+{
+	ASSERT_VALID(this);
+	ASSERT_VALID(m_pWndInPlace);
+	ASSERT_VALID(m_pWndList);
+	ASSERT(::IsWindow(m_pWndInPlace->GetSafeHwnd()));
+
+	CString strText;
+	m_pWndInPlace->GetWindowText(strText);
+	strText.Trim();
+
+	if ((strText.IsEmpty()) && (p_Data->Attr==LFAttrFileName))
+		return FALSE;
+
+	Multiple = FALSE;
+	wchar_t tmpStr[256];
+	wcscpy_s(tmpStr, 256, strText);
+	LFSanitizeUnicodeArray(tmpStr, 256);
+	strText = tmpStr;
+
+	if (FormatProperty()!=strText)
+	{
+		m_varValue = (LPCTSTR)strText;
+		p_Data->IsNull = false;
+		wcscpy_s(p_Data->UnicodeString, 256, strText);
+
+		m_pWndList->OnPropertyChanged(this);
+	}
+
+	return TRUE;
+}
+
 
 // CAttributePropertyIATA
 //

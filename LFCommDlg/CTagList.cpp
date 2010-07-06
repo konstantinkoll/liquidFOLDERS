@@ -117,7 +117,7 @@ void CTagList::DrawItem(int nID, CDC* pDC)
 	CreateRoundRectangle(rect, 9, path);
 
 	// Inner border
-	SolidBrush sBr(Color(State & LVIS_SELECTED ? 0xE0 : 0x80, selCol & 0xFF, (selCol>>8) & 0xFF, (selCol>>16) & 0xFF));
+	SolidBrush sBr(Color(State & LVIS_SELECTED ? 0xC0 : 0x80, selCol & 0xFF, (selCol>>8) & 0xFF, (selCol>>16) & 0xFF));
 	g.FillPath(&sBr, &path);
 
 	// Outer border
@@ -142,7 +142,7 @@ void CTagList::DrawItem(int nID, CDC* pDC)
 	CFont* pOldFont = dc.SelectObject(&m_FontSmall);
 	rect.DeflateRect(5, 0);
 	int L = dc.GetTextExtent(item.pszText).cx;
-	dc.SetTextColor(texCol);
+	dc.SetTextColor((State & LVIS_SELECTED) ? texCol : ((texCol>>1) & 0x7F7F7F) + ((dc.GetPixel(rect.right, rect.top+10)>>1) & 0x7F7F7F));
 	dc.DrawText(item.pszText, -1, rect, DT_NOPREFIX | DT_END_ELLIPSIS | DT_SINGLELINE | DT_RIGHT | DT_VCENTER);
 	dc.SelectObject(pOldFont);
 
@@ -153,7 +153,7 @@ void CTagList::DrawItem(int nID, CDC* pDC)
 
 	pOldFont = dc.SelectObject(&m_FontLarge);
 	rect.right -= L+5;
-	SetTextColor(texCol);
+	dc.SetTextColor(texCol);
 	dc.DrawText(item.pszText, -1, rect, DT_NOPREFIX | DT_END_ELLIPSIS | DT_SINGLELINE | DT_CENTER | DT_VCENTER);
 	dc.SelectObject(pOldFont);
 
@@ -163,8 +163,8 @@ void CTagList::DrawItem(int nID, CDC* pDC)
 	// FocusRect
 	if ((State & LVIS_FOCUSED) && (GetFocus()==this))
 	{
-		rect.DeflateRect(0, 2);
-		rect.MoveToXY(rectBounds.left+5, rectBounds.top+2);
+		rect.DeflateRect(0, 1);
+		rect.MoveToXY(rectBounds.left+5, rectBounds.top+1);
 		pDC->DrawFocusRect(rect);
 	}
 }

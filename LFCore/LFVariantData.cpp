@@ -3,6 +3,7 @@
 #include "LFVariantData.h"
 #include <assert.h>
 #include <cmath>
+#include <hash_map>
 #include <shlwapi.h>
 #include <wchar.h>
 
@@ -474,4 +475,29 @@ LFCore_API void LFSetAttributeVariantData(LFItemDescriptor* i, LFVariantData* v)
 
 	// Other attributes
 	SetAttribute(i, v->Attr, &v->Value);
+}
+
+LFCore_API void LFSanitizeUnicodeArray(wchar_t* buf, size_t cCount)
+{
+	typedef stdext::hash_map<std::wstring, unsigned int> hashcount;
+	hashcount tags;
+
+	wchar_t tag[256];
+	wchar_t* tagarray = buf;
+	while (GetNextTag(&tagarray, tag, 256))
+	{
+		for (wchar_t* ptr = tag; *ptr; ptr++)
+			*ptr = (wchar_t)tolower(*ptr);
+		tag[0] = (wchar_t)toupper(tag[0]);
+
+		tags[tag] = 1;
+	}
+
+	buf[0] = L'\0';
+	for (hashcount::iterator it=tags.begin(); it!=tags.end(); it++)
+	{
+		if (buf[0]!=L'\0')
+			wcscat_s(buf, cCount, L" ");
+		wcscat_s(buf, cCount, it->first.c_str());
+	}
 }

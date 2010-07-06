@@ -657,15 +657,21 @@ void LFSearchResult::GroupArray(unsigned int attr, unsigned int icon, LFFilter* 
 
 		if (tagarray)
 		{
+			hashcount filetags;
 			wchar_t tag[256];
 			while (GetNextTag(&tagarray, tag, 256))
 			{
 				for (wchar_t* ptr = tag; *ptr; ptr++)
 					*ptr = (wchar_t)tolower(*ptr);
 
-				tagcount[tag]++;
-				tagsize[tag] += m_Items[a]->CoreAttributes.FileSize;
+				filetags[tag] = 1;
 				found = true;
+			}
+
+			for (hashcount::iterator it=filetags.begin(); it!=filetags.end(); it++)
+			{
+				tagcount[it->first]++;
+				tagsize[it->first] += m_Items[a]->CoreAttributes.FileSize;
 			}
 		}
 
@@ -674,8 +680,7 @@ void LFSearchResult::GroupArray(unsigned int attr, unsigned int icon, LFFilter* 
 
 	RemoveFlaggedItemDescriptors(false);
 
-	hashcount::iterator it;
-	for (it=tagcount.begin(); it!=tagcount.end(); it++)
+	for (hashcount::iterator it=tagcount.begin(); it!=tagcount.end(); it++)
 	{
 		LFItemDescriptor* folder = LFAllocItemDescriptor();
 		folder->Type = LFTypeVirtual;

@@ -140,6 +140,9 @@ LFCore_API bool LFIsNullVariantData(LFVariantData* v);
 // Prüft, ob ein Dateiattribut gleich einer LFVariantData-Struktur ist
 LFCore_API bool LFIsEqualToVariantData(LFItemDescriptor* i, LFVariantData* v);
 
+// Entfernt doppelte Eintäge in einem Unicode-Array
+LFCore_API void LFSanitizeUnicodeArray(wchar_t* buf, size_t cCount);
+
 
 
 // Neuen LFFilter erzeugen, ggf. als Kopie eines existierenden Filters

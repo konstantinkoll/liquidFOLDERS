@@ -402,6 +402,7 @@ LFCore_API LFDomainDescriptor* LFGetDomainInfo(unsigned int ID)
 	*(d->ImportantAttributes) += LFAttrFileTime;
 	*(d->ImportantAttributes) += LFAttrRoll;
 	*(d->ImportantAttributes) += LFAttrComment;
+	*(d->ImportantAttributes) += LFAttrTags;
 	*(d->ImportantAttributes) += LFAttrRating;
 	*(d->ImportantAttributes) += LFAttrPriority;
 
