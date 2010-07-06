@@ -113,16 +113,16 @@ void CTagList::DrawItem(int nID, CDC* pDC)
 	g.SetCompositingMode(CompositingModeSourceOver);
 	g.SetSmoothingMode(SmoothingModeAntiAlias);
 
-	GraphicsPath path;
-	CreateRoundRectangle(rect, 9, path);
+	if (!m_Path.GetPointCount())
+		CreateRoundRectangle(rect, 9, m_Path);
 
 	// Inner border
 	SolidBrush sBr(Color(State & LVIS_SELECTED ? 0xC0 : 0x80, selCol & 0xFF, (selCol>>8) & 0xFF, (selCol>>16) & 0xFF));
-	g.FillPath(&sBr, &path);
+	g.FillPath(&sBr, &m_Path);
 
 	// Outer border
 	Pen pen(Color(selCol & 0xFF, (selCol>>8) & 0xFF, (selCol>>16) & 0xFF));
-	g.DrawPath(&pen, &path);
+	g.DrawPath(&pen, &m_Path);
 
 	// Item
 	TCHAR text[260];

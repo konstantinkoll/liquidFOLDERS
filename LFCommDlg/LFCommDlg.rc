@@ -890,6 +890,22 @@ BEGIN
     PUSHBUTTON      "Cancel",IDCANCEL,64,234,50,14,WS_GROUP
 END
 
+IDD_EDITTAGS DIALOGEX 0, 0, 348, 238
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Edit tags"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    GROUPBOX        "Tags",IDC_STATIC,7,7,334,47
+    EDITTEXT        IDC_TAGS,14,21,320,14,ES_AUTOHSCROLL | WS_GROUP
+    LTEXT           "Tags are separated by blanks or commas.",IDC_STATIC,14,39,319,10
+    GROUPBOX        "Suggestions",IDC_STATIC,7,62,334,148
+    LTEXT           "These tags have already been assigned to files inside this store:",IDC_STATIC,14,73,260,16
+    PUSHBUTTON      "&Add tags",IDC_ADDTAGS,279,73,55,14,WS_DISABLED
+    CONTROL         "",IDC_TAGLIST,"SysListView32",LVS_SHOWSELALWAYS | LVS_NOLABELWRAP | WS_BORDER | WS_GROUP | WS_TABSTOP,14,93,320,109
+    DEFPUSHBUTTON   "OK",IDOK,7,217,50,14,WS_GROUP
+    PUSHBUTTON      "Cancel",IDCANCEL,64,217,50,14,WS_GROUP
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -985,6 +1001,14 @@ BEGIN
         RIGHTMARGIN, 343
         TOPMARGIN, 7
         BOTTOMMARGIN, 248
+    END
+
+    IDD_EDITTAGS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 341
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 231
     END
 END
 #endif    // APSTUDIO_INVOKED

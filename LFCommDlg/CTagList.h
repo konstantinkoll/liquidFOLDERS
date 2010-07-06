@@ -24,4 +24,7 @@ protected:
 
 	afx_msg void OnCustomDraw(NMHDR* pNMHDR, LRESULT* pResult);
 	DECLARE_MESSAGE_MAP()
+
+private:
+	GraphicsPath m_Path;
 };
