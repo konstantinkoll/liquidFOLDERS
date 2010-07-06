@@ -3,6 +3,7 @@
 
 #include "stdafx.h"
 #include "LFCore.h"
+#include "resource.h"
 #include <afxwin.h>
 #include <afxdllx.h>
 
@@ -12,6 +13,7 @@
 
 AFX_EXTENSION_MODULE LFCommDlgDLL = { NULL, NULL };
 LFMessageIDs* MessageIDs = LFGetMessageIDs();
+CString strMultiple;
 
 extern "C" int APIENTRY
 DllMain(HINSTANCE hInstance, DWORD dwReason, LPVOID lpReserved)
@@ -38,6 +40,8 @@ DllMain(HINSTANCE hInstance, DWORD dwReason, LPVOID lpReserved)
 		//  führen kann.
 
 		new CDynLinkLibrary(LFCommDlgDLL);
+
+		strMultiple.LoadString(IDS_MULTIPLEVALUES);
 	}
 	else if (dwReason == DLL_PROCESS_DETACH)
 	{

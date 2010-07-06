@@ -584,6 +584,7 @@ BEGIN
     IDS_LICFILEFILTER       "Lizenzdateien"
     IDS_LICENSEVALID_CAPTION "Lizenz akzeptiert"
     IDS_LICENSEVALID_MSG    "Ihr Lizenzschlüssel ist gültig. Vielen Dank für den Kauf von liquidFOLDERS!"
+    IDS_MULTIPLEVALUES      "Unterschiedliche Werte"
 END
 
 STRINGTABLE 
@@ -1053,6 +1054,7 @@ BEGIN
     IDS_LICFILEFILTER       "License files"
     IDS_LICENSEVALID_CAPTION "License valid"
     IDS_LICENSEVALID_MSG    "Your license key is valid. Thank you very much for purchasing liquidFOLDERS! We appreciate your business."
+    IDS_MULTIPLEVALUES      "Multiple values"
 END
 
 STRINGTABLE 
@@ -1499,6 +1501,7 @@ BEGIN
     IDS_LICFILEFILTER       "Archivos de licencia"
     IDS_LICENSEVALID_CAPTION "Licencia válida"
     IDS_LICENSEVALID_MSG    "Su licencia es válida. Muchas gracias por adquirir liquidFOLDERS! Nosotros apreciamos su negocio."
+    IDS_MULTIPLEVALUES      "Datos diversos"
 END
 
 STRINGTABLE 
@@ -1938,6 +1941,7 @@ BEGIN
     IDS_LICFILEFILTER       "Fichiers de licence"
     IDS_LICENSEVALID_CAPTION "La licence est acceptée"
     IDS_LICENSEVALID_MSG    "Sa clé de licence est valable. Merci beaucoup pour l'achat de liquidFOLDERS!"
+    IDS_MULTIPLEVALUES      "Valeurs plusieurs"
 END
 
 STRINGTABLE 

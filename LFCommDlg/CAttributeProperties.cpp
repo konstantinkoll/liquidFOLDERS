@@ -14,6 +14,8 @@
 // CAttributeProperty
 //
 
+extern CString strMultiple;
+
 CAttributeProperty::CAttributeProperty(LFVariantData* _pData, CAttributeProperty** _pDependentProp1, CAttributeProperty** _pDependentProp2,
 	LPCTSTR Mask, LPCTSTR Template, LPCTSTR ValidChars)
 	: CMFCPropertyGridProperty(((LFApplication*)AfxGetApp())->m_Attributes[_pData->Attr]->Name, _T(""), NULL, _pData->Attr, Mask, Template, ValidChars)
@@ -69,15 +71,14 @@ BOOL CAttributeProperty::OnUpdateValue()
 	m_pWndInPlace->GetWindowText(strText);
 	strText.Trim();
 
-	if ((strText.IsEmpty()) && (p_Data->Attr==LFAttrFileName))
-		return FALSE;
-
-	Multiple = FALSE;
 	if (p_Data->Attr==LFAttrLanguage)
 		strText.MakeUpper();
 
 	if (FormatProperty()!=strText)
 	{
+		if ((strText.IsEmpty()) && (p_Data->Attr==LFAttrFileName))
+			return FALSE;
+
 		m_varValue = (LPCTSTR)strText;
 		p_Data->IsNull = false;
 		switch (p_Data->Type)
@@ -91,6 +92,7 @@ BOOL CAttributeProperty::OnUpdateValue()
 			break;
 		}
 
+		Multiple = FALSE;
 		m_pWndList->OnPropertyChanged(this);
 	}
 
@@ -99,7 +101,7 @@ BOOL CAttributeProperty::OnUpdateValue()
 
 CString CAttributeProperty::FormatProperty()
 {
-	return Multiple ? _T("...") : CMFCPropertyGridProperty::FormatProperty();
+	return Multiple ? _T("") : CMFCPropertyGridProperty::FormatProperty();
 }
 
 void CAttributeProperty::OnDrawName(CDC* pDC, CRect rect)
@@ -146,6 +148,37 @@ void CAttributeProperty::OnDrawName(CDC* pDC, CRect rect)
 		pDC->SetTextColor(clrTextOld);
 }
 
+void CAttributeProperty::OnDrawValue(CDC* pDC, CRect rect)
+{
+	ASSERT_VALID(this);
+	ASSERT_VALID(pDC);
+	ASSERT_VALID(m_pWndList);
+
+	CFont* pOldFont = NULL;
+	COLORREF oldColor = (COLORREF)-1;
+	rect.DeflateRect(AFX_TEXT_MARGIN, 0);
+
+	CString strVal = FormatProperty();
+
+	if (Multiple)
+	{
+		strVal = strMultiple;
+
+		pOldFont = (CFont*)pDC->SelectObject(((CInspectorGrid*)m_pWndList)->GetItalicFnt());
+	}
+	else
+		if (IsModified())
+			pOldFont = (CFont*)pDC->SelectObject(((CInspectorGrid*)m_pWndList)->GetBoldFnt());
+
+	pDC->DrawText(strVal, rect, DT_LEFT | DT_SINGLELINE | DT_VCENTER | DT_NOPREFIX | DT_END_ELLIPSIS);
+	m_bValueIsTruncated = pDC->GetTextExtent(strVal).cx > rect.Width();
+
+	if (pOldFont)
+		pDC->SelectObject(pOldFont);
+	if (oldColor!=-1)
+		pDC->SetTextColor(oldColor);
+}
+
 
 // CAttributePropertyTags
 //
@@ -190,7 +223,6 @@ BOOL CAttributePropertyTags::OnUpdateValue()
 	if ((strText.IsEmpty()) && (p_Data->Attr==LFAttrFileName))
 		return FALSE;
 
-	Multiple = FALSE;
 	wchar_t tmpStr[256];
 	wcscpy_s(tmpStr, 256, strText);
 	LFSanitizeUnicodeArray(tmpStr, 256);
@@ -202,6 +234,7 @@ BOOL CAttributePropertyTags::OnUpdateValue()
 		p_Data->IsNull = false;
 		wcscpy_s(p_Data->UnicodeString, 256, strText);
 
+		Multiple = FALSE;
 		m_pWndList->OnPropertyChanged(this);
 	}
 
@@ -276,7 +309,6 @@ BOOL CAttributePropertyIATA::OnUpdateValue()
 	if ((strText.GetLength()!=0) && (strText.GetLength()!=3))
 		return FALSE;
 
-	Multiple = FALSE;
 	strText.MakeUpper();
 
 	if (FormatProperty()!=strText)
@@ -285,6 +317,7 @@ BOOL CAttributePropertyIATA::OnUpdateValue()
 		p_Data->IsNull = false;
 		WideCharToMultiByte(CP_ACP, 0, strText, strText.GetLength()+1, p_Data->AnsiString, 256, NULL, NULL);
 
+		Multiple = FALSE;
 		m_pWndList->OnPropertyChanged(this);
 	}
 
@@ -560,7 +593,6 @@ BOOL CAttributePropertyTime::OnUpdateValue()
 	ASSERT_VALID(m_pWndList);
 	ASSERT(::IsWindow(m_pWndInPlace->GetSafeHwnd()));
 
-	Multiple = FALSE;
 	CDateTimeCtrl* pProp = (CDateTimeCtrl*)m_pWndInPlace;
 
 	SYSTEMTIME st;
@@ -576,6 +608,7 @@ BOOL CAttributePropertyTime::OnUpdateValue()
 		m_varValue = tmpStr;
 		Redraw();
 
+		Multiple = FALSE;
 		m_pWndList->OnPropertyChanged(this);
 	}
 

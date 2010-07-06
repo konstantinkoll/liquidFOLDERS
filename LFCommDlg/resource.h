@@ -57,6 +57,7 @@
 #define IDS_LICFILEFILTER               20306
 #define IDS_LICENSEVALID_CAPTION        20307
 #define IDS_LICENSEVALID_MSG            20308
+#define IDS_MULTIPLEVALUES              20309
 #define IDD_ABOUT                       21000
 #define IDC_RIBBONCOLORCOMBO            21001
 #define IDC_TEXTUREFRAME                21002

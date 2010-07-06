@@ -23,6 +23,7 @@ public:
 	virtual CString FormatProperty();
 	virtual void SetValue(const COleVariant& varValue, BOOL _Multiple);
 	virtual void OnDrawName(CDC* pDC, CRect rect);
+	virtual void OnDrawValue(CDC* pDC, CRect rect);
 
 	void SetDependentValue(const COleVariant& varValue);
 
