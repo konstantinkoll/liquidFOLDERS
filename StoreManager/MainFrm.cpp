@@ -2461,8 +2461,10 @@ BOOL CMainFrame::OpenChildView(BOOL Force, BOOL AllowChangeSort)
 		}
 
 		m_wndView = pNewView;
-		if (GetFocus()!=&m_wndHistory->m_wndList)
-			m_wndView->SetFocus();
+
+		if (GetActiveWindow()==this)
+			if (GetFocus()!=&m_wndHistory->m_wndList)
+				m_wndView->SetFocus();
 
 		if (pVictim)
 		{
