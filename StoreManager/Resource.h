@@ -48,7 +48,8 @@
 #define IDM_VIRTUAL_GLOBE               207
 #define IDM_BACK                        208
 #define IDM_GLOBE                       209
-#define IDM_HISTORY                     210
+#define IDM_TAGCLOUD                    210
+#define IDM_HISTORY                     211
 #define ID_APP_NEWVIEW                  250
 #define ID_APP_NEWCLIPBOARD             251
 #define ID_APP_CLOSE                    252

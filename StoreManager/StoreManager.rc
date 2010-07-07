@@ -324,6 +324,18 @@ BEGIN
         MENUITEM "Show &airport names",         ID_GLOBE_SHOWAIRPORTNAMES
         MENUITEM "Show G&PS locations",         ID_GLOBE_SHOWGPS
         MENUITEM "Show &hints",                 ID_GLOBE_SHOWHINTS
+        MENUITEM SEPARATOR
+    END
+END
+
+IDM_TAGCLOUD MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "Use &font size",              ID_TAGCLOUD_USESIZE
+        MENUITEM "Use &color",                  ID_TAGCLOUD_USECOLORS
+        MENUITEM "Use &opacity",                ID_TAGCLOUD_USEOPACITY
+        MENUITEM SEPARATOR
     END
 END
 

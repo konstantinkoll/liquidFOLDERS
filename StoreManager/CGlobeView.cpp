@@ -286,6 +286,7 @@ BEGIN_MESSAGE_MAP(CGlobeView, CFileView)
 	ON_WM_PAINT()
 	ON_WM_SETFOCUS()
 	ON_WM_KILLFOCUS()
+	ON_WM_SYSCOLORCHANGE()
 END_MESSAGE_MAP()
 
 void CGlobeView::DisplayCursor(LPCTSTR _lpszCursorName)
@@ -506,7 +507,7 @@ void CGlobeView::OnShowHints()
 
 void CGlobeView::OnUpdateCommands(CCmdUI* pCmdUI)
 {
-	BOOL b = FALSE;
+	BOOL b = TRUE;
 	switch (pCmdUI->m_nID)
 	{
 	case ID_GLOBE_ZOOMIN:
@@ -526,11 +527,9 @@ void CGlobeView::OnUpdateCommands(CCmdUI* pCmdUI)
 		break;
 	case ID_GLOBE_HQMODEL:
 		pCmdUI->SetCheck(theApp.m_GlobeHQModel);
-		b = TRUE;
 		break;
 	case ID_GLOBE_SHOWBUBBLES:
 		pCmdUI->SetCheck(m_ViewParameters.GlobeShowBubbles);
-		b = TRUE;
 		break;
 	case ID_GLOBE_SHOWAIRPORTNAMES:
 		pCmdUI->SetCheck(m_ViewParameters.GlobeShowAirportNames);
@@ -543,9 +542,6 @@ void CGlobeView::OnUpdateCommands(CCmdUI* pCmdUI)
 	case ID_GLOBE_SHOWHINTS:
 		pCmdUI->SetCheck(m_ViewParameters.GlobeShowHints);
 		b = m_ViewParameters.GlobeShowBubbles;
-		break;
-	default:
-		b = TRUE;
 	}
 
 	pCmdUI->Enable(b);
@@ -684,6 +680,11 @@ void CGlobeView::OnSetFocus(CWnd* /*pOldWnd*/)
 }
 
 void CGlobeView::OnKillFocus(CWnd* /*pNewWnd*/)
+{
+	DrawScene();
+}
+
+void CGlobeView::OnSysColorChange()
 {
 	DrawScene();
 }

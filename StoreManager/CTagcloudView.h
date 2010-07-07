@@ -37,18 +37,28 @@ protected:
 	Tag* m_Tags;
 	HTHEME hTheme;
 
+	virtual void SetViewOptions(UINT _ViewID, BOOL Force);
 	virtual void SetSearchResult(LFSearchResult* _result);
 	virtual BOOL IsSelected(int n);
 	virtual int ItemAtPosition(CPoint point);
+	virtual CMenu* GetContextMenu();
 
 	CFont* GetFont(int idx);
 	void AdjustLayout();
 
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();
+	afx_msg void OnOmitRare();
+	afx_msg void OnUseSize();
+	afx_msg void OnUseColors();
+	afx_msg void OnUseOpacity();
+	afx_msg void OnUpdateCommands(CCmdUI* pCmdUI);
 	afx_msg LRESULT OnThemeChanged();
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnPaint();
+	afx_msg void OnSetFocus(CWnd* pOldWnd);
+	afx_msg void OnKillFocus(CWnd* pNewWnd);
+	afx_msg void OnSysColorChange();
 	DECLARE_MESSAGE_MAP()
 };

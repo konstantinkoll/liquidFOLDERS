@@ -77,6 +77,7 @@ protected:
 	virtual BOOL IsSelected(int n);
 	virtual int ItemAtPosition(CPoint point);
 	virtual CMenu* GetContextMenu();
+
 	void Init();
 	void PrepareFont(BOOL large, BOOL granny);
 	void PrepareTexture();
@@ -114,6 +115,7 @@ protected:
 	afx_msg void OnPaint();
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
 	afx_msg void OnKillFocus(CWnd* pNewWnd);
+	afx_msg void OnSysColorChange();
 	DECLARE_MESSAGE_MAP()
 
 private:

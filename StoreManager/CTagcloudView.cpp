@@ -48,6 +48,30 @@ void CTagcloudView::Create(CWnd* _pParentWnd, LFSearchResult* _result)
 	CFileView::Create(_result, LFViewTagcloud);
 }
 
+void CTagcloudView::SetViewOptions(UINT /*_ViewID*/, BOOL Force)
+{
+	UINT Changes = 0;
+	
+	if ((Force) || (m_ViewParameters.TagcloudUseSize!=pViewParameters->TagcloudUseSize))
+		Changes = 1;
+	if ((Force) || (m_ViewParameters.TagcloudOmitRare!=pViewParameters->TagcloudOmitRare))
+		Changes = 2;
+
+	m_ViewParameters = *pViewParameters;
+
+	switch (Changes)
+	{
+	case 1:
+		AdjustLayout();
+	case 0:
+		Invalidate();
+		break;
+	case 2:
+		SetSearchResult(result);
+		break;
+	}
+}
+
 void CTagcloudView::SetSearchResult(LFSearchResult* _result)
 {
 	if (m_Tags)
@@ -84,10 +108,21 @@ void CTagcloudView::SetSearchResult(LFSearchResult* _result)
 			int delta = maximum-minimum+1;
 			for (UINT a=0; a<_result->m_ItemCount; a++)
 				if (m_Tags[a].cnt)
-				{
-					m_Tags[a].alpha = 55+(200*(m_Tags[a].cnt-minimum))/delta;
-					m_Tags[a].fontsize = (20*(m_Tags[a].cnt-minimum))/delta;
-				}
+					if ((m_ViewParameters.TagcloudOmitRare) && (delta>1) && (m_Tags[a].cnt==minimum))
+					{
+						m_Tags[a].cnt = 0;
+					}
+					else
+						if (delta==1)
+						{
+							m_Tags[a].alpha = 255;
+							m_Tags[a].fontsize = 19;
+						}
+						else
+						{
+							m_Tags[a].alpha = 56+(200*(m_Tags[a].cnt-minimum))/delta;
+							m_Tags[a].fontsize = (20*(m_Tags[a].cnt-minimum))/delta;
+						}
 
 		}
 
@@ -104,7 +139,7 @@ void CTagcloudView::SelectItem(int n, BOOL select, BOOL InternalCall)
 
 		if (!InternalCall)
 		{
-			//UpdateScene(TRUE);
+			Invalidate();
 			GetParentFrame()->SendMessage(WM_COMMAND, ID_APP_UPDATESELECTION);
 		}
 	}
@@ -153,9 +188,16 @@ int CTagcloudView::ItemAtPosition(CPoint point)
 	return -1;
 }
 
+CMenu* CTagcloudView::GetContextMenu()
+{
+	CMenu* menu = new CMenu();
+	menu->LoadMenu(IDM_TAGCLOUD);
+	return menu;
+}
+
 CFont* CTagcloudView::GetFont(int idx)
 {
-	return &m_Fonts[m_Tags[idx].fontsize + (m_ViewParameters.GrannyMode ? 2 : 0)];
+	return &m_Fonts[(m_ViewParameters.TagcloudUseSize ? m_Tags[idx].fontsize : DefaultFontSize) + (m_ViewParameters.GrannyMode ? 2 : 0)];
 }
 
 void CTagcloudView::AdjustLayout()
@@ -213,10 +255,18 @@ void CTagcloudView::AdjustLayout()
 BEGIN_MESSAGE_MAP(CTagcloudView, CFileView)
 	ON_WM_CREATE()
 	ON_WM_DESTROY()
+	ON_COMMAND(ID_TAGCLOUD_OMITRARE, OnOmitRare)
+	ON_COMMAND(ID_TAGCLOUD_USESIZE, OnUseSize)
+	ON_COMMAND(ID_TAGCLOUD_USECOLORS, OnUseColors)
+	ON_COMMAND(ID_TAGCLOUD_USEOPACITY, OnUseOpacity)
+	ON_UPDATE_COMMAND_UI_RANGE(ID_TAGCLOUD_SORTNAME, ID_TAGCLOUD_USEOPACITY, OnUpdateCommands)
 	ON_WM_THEMECHANGED()
 	ON_WM_SIZE()
 	ON_WM_ERASEBKGND()
 	ON_WM_PAINT()
+	ON_WM_SETFOCUS()
+	ON_WM_KILLFOCUS()
+	ON_WM_SYSCOLORCHANGE()
 END_MESSAGE_MAP()
 
 int CTagcloudView::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -239,6 +289,51 @@ void CTagcloudView::OnDestroy()
 		theApp.zCloseThemeData(hTheme);
 
 	CFileView::OnDestroy();
+}
+
+void CTagcloudView::OnOmitRare()
+{
+	pViewParameters->TagcloudOmitRare = !pViewParameters->TagcloudOmitRare;
+	OnViewOptionsChanged();
+}
+
+void CTagcloudView::OnUseSize()
+{
+	pViewParameters->TagcloudUseSize = !pViewParameters->TagcloudUseSize;
+	OnViewOptionsChanged();
+}
+
+void CTagcloudView::OnUseColors()
+{
+	pViewParameters->TagcloudUseColors = !pViewParameters->TagcloudUseColors;
+	OnViewOptionsChanged();
+}
+
+void CTagcloudView::OnUseOpacity()
+{
+	pViewParameters->TagcloudUseOpacity = !pViewParameters->TagcloudUseOpacity;
+	OnViewOptionsChanged();
+}
+
+void CTagcloudView::OnUpdateCommands(CCmdUI* pCmdUI)
+{
+	BOOL b = TRUE;
+	switch (pCmdUI->m_nID)
+	{
+	case ID_TAGCLOUD_OMITRARE:
+		pCmdUI->SetCheck(m_ViewParameters.TagcloudOmitRare);
+		break;
+	case ID_TAGCLOUD_USESIZE:
+		pCmdUI->SetCheck(m_ViewParameters.TagcloudUseSize);
+		break;
+	case ID_TAGCLOUD_USECOLORS:
+		pCmdUI->SetCheck(m_ViewParameters.TagcloudUseColors);
+		break;
+	case ID_TAGCLOUD_USEOPACITY:
+		pCmdUI->SetCheck(m_ViewParameters.TagcloudUseOpacity);
+	}
+
+	pCmdUI->Enable(b);
 }
 
 LRESULT CTagcloudView::OnThemeChanged()
@@ -293,19 +388,61 @@ void CTagcloudView::OnPaint()
 			if (m_Tags[a].cnt)
 			{
 				CRect rect(&m_Tags[a].rect);
-				//dc.FillSolidRect(rect, GetSysColor(COLOR_HIGHLIGHT));
 
-				dc.SelectObject(GetFont(a));
-				dc.SetTextColor(((text & 0xFF)*m_Tags[a].alpha + (back & 0xFF)*(255-m_Tags[a].alpha))>>8 |
-								((((text>>8) & 0xFF)*m_Tags[a].alpha + ((back>>8) & 0xFF)*(255-m_Tags[a].alpha)) & 0xFF00) |
-								((((text>>16) & 0xFF)*m_Tags[a].alpha + ((back>>16) & 0xFF)*(255-m_Tags[a].alpha))<<8) & 0xFF0000);
+				COLORREF color = text;
+
+				if (m_Tags[a].selected)
+				{
+					if (hTheme)
+					{
+						const int StateIDs[4] = { LISS_NORMAL, LISS_HOT, GetFocus()!=this ? LISS_SELECTEDNOTFOCUS : LISS_SELECTED, LISS_HOTSELECTED };
+						UINT state = m_Tags[a].selected ? 2 : 0;
+						theApp.zDrawThemeBackground(hTheme, dc.m_hDC, LVP_LISTITEM, StateIDs[state], rect, rect);
+					}
+					else
+					{
+						dc.FillSolidRect(rect, GetSysColor(GetFocus()==this ? COLOR_HIGHLIGHT : COLOR_3DFACE));
+						color = GetSysColor(GetFocus()==this ? COLOR_HIGHLIGHTTEXT : COLOR_BTNTEXT);
+					}
+				}
+				else
+					if (m_ViewParameters.TagcloudUseOpacity)
+						color =((text & 0xFF)*m_Tags[a].alpha + (back & 0xFF)*(255-m_Tags[a].alpha))>>8 |
+									((((text>>8) & 0xFF)*m_Tags[a].alpha + ((back>>8) & 0xFF)*(255-m_Tags[a].alpha)) & 0xFF00) |
+									((((text>>16) & 0xFF)*m_Tags[a].alpha + ((back>>16) & 0xFF)*(255-m_Tags[a].alpha))<<8) & 0xFF0000;
+
+				CFont* pOldFont = dc.SelectObject(GetFont(a));
+				dc.SetTextColor(color);
 
 				dc.DrawText(result->m_Items[a]->CoreAttributes.FileName, -1, rect, TextFormat | DT_CENTER | DT_VCENTER);
 
-				rect.DeflateRect(1, 1);
-				//dc.DrawFocusRect(rect);
+				if (((int)a==FocusItem) && ((!hTheme) || (!m_Tags[a].selected)))
+				{
+					if (hTheme)
+						rect.DeflateRect(1, 1);
+
+					dc.SetTextColor(text);
+					dc.DrawFocusRect(rect);
+				}
+
+				dc.SelectObject(pOldFont);
 			}
 
 	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);
 	dc.SelectObject(pOldBitmap);
+}
+
+void CTagcloudView::OnSetFocus(CWnd* /*pOldWnd*/)
+{
+	Invalidate();
+}
+
+void CTagcloudView::OnKillFocus(CWnd* /*pNewWnd*/)
+{
+	Invalidate();
+}
+
+void CTagcloudView::OnSysColorChange()
+{
+	Invalidate();
 }

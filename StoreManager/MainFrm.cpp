@@ -197,7 +197,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	// Ggf. Fenstertitel und Symbol gegen Clipboard-Icon austauschen
 	if (IsClipboard)
 	{
-		tmpStr = "Clipboard";
+		tmpStr = _T("Clipboard");
 		SetWindowText(tmpStr);
 		SetTitle(tmpStr);
 	}
