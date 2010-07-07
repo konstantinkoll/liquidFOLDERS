@@ -272,6 +272,7 @@ void LFSearchResult::RemoveFlaggedItemDescriptors(bool updatecount)
 	{
 		if (m_Items[idx]->DeleteFlag)
 		{
+			m_Items[idx]->DeleteFlag = false;
 			RemoveItemDescriptor(idx, updatecount);
 		}
 		else
@@ -543,23 +544,23 @@ void LFSearchResult::Group(unsigned int attr, bool descending, bool categories, 
 		return;
 	}
 
-	// Pre-sort
-	Sort(attr, descending, categories);
-
 	// Choose categorizer
 	CCategorizer* c = NULL;
 
 	switch (attr)
 	{
-	case LFAttrFileName:
-		c = new NameCategorizer(attr);
-		break;
 	case LFAttrFileSize:
 		c = new SizeCategorizer(attr);
 		break;
 	case LFAttrLocationIATA:
 		c = new IATACategorizer(attr);
 		break;
+	case LFAttrFileName:
+		if (!groupone)
+		{
+			c = new NameCategorizer(attr);
+			break;
+		}
 	default:
 		switch (AttrTypes[attr])
 		{

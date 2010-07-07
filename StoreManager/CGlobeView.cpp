@@ -142,6 +142,7 @@ void CGlobeView::SetSearchResult(LFSearchResult* _result)
 		m_Locations = NULL;
 	}
 
+	result = _result;
 	if (_result)
 		if (_result->m_ItemCount)
 		{

@@ -40,7 +40,7 @@ public:
 	LocalSettings m_LocalSettings;
 	BOOL m_CameraChanged;
 
-	void Create(CWnd* pParentWnd,  LFSearchResult* _result);
+	void Create(CWnd* pParentWnd, LFSearchResult* _result);
 	virtual void SelectItem(int n, BOOL select=TRUE, BOOL InternalCall=FALSE);
 	virtual int GetSelectedItem();
 	virtual int GetNextSelectedItem(int n);

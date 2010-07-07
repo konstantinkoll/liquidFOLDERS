@@ -205,6 +205,7 @@ void CAttributePropertyTags::OnClickButton(CPoint /*point*/)
 
 	if (dlg.DoModal()==IDOK)
 	{
+		p_Data->IsNull = false;
 		wcscpy_s(p_Data->UnicodeArray, 256, dlg.m_Tags);
 		SetValue(dlg.m_Tags, FALSE);
 	}
@@ -278,6 +279,7 @@ void CAttributePropertyIATA::OnClickButton(CPoint /*point*/)
 			{
 				ASSERT((*p_DependentProp1)->p_Data->Attr==LFAttrLocationName);
 				size_t sz = strlen(dlg.m_Airport->Name)+1;
+				(*p_DependentProp1)->p_Data->IsNull = false;
 				MultiByteToWideChar(CP_ACP, 0, dlg.m_Airport->Name, (int)sz, (*p_DependentProp1)->p_Data->UnicodeString, (int)sz);
 				(*p_DependentProp1)->SetDependentValue((*p_DependentProp1)->p_Data->UnicodeString);
 				m_UseDependencies |= 1;
@@ -285,6 +287,7 @@ void CAttributePropertyIATA::OnClickButton(CPoint /*point*/)
 			if ((p_DependentProp2) && (dlg.m_IATA_OverwriteGPS))
 			{
 				ASSERT((*p_DependentProp2)->p_Data->Attr==LFAttrLocationGPS);
+				(*p_DependentProp2)->p_Data->IsNull = false;
 				(*p_DependentProp2)->p_Data->GeoCoordinates = dlg.m_Airport->Location;
 				wchar_t tmpStr[256];
 				LFGeoCoordinatesToString(dlg.m_Airport->Location, tmpStr, 256);
@@ -292,6 +295,7 @@ void CAttributePropertyIATA::OnClickButton(CPoint /*point*/)
 				m_UseDependencies |= 2;
 			}
 
+			p_Data->IsNull = false;
 			strcpy_s(p_Data->AnsiString, 256, dlg.m_Airport->Code);
 			CString tmpStr(dlg.m_Airport->Code);
 			SetValue(tmpStr.MakeUpper(), FALSE);
@@ -354,6 +358,8 @@ void CAttributePropertyGPS::OnClickButton(CPoint /*point*/)
 
 	if (dlg.DoModal()==IDOK)
 	{
+		p_Data->IsNull = false;
+
 		wchar_t tmpStr[256];
 		LFGeoCoordinatesToString(p_Data->GeoCoordinates, &tmpStr[0], 256);
 		SetValue(tmpStr, FALSE);

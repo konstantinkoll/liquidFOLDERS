@@ -2359,7 +2359,10 @@ UINT CMainFrame::SelectViewMode(UINT ViewID)
 
 BOOL CMainFrame::OpenChildView(BOOL Force, BOOL AllowChangeSort)
 {
+	UINT ViewID = SelectViewMode(ActiveViewParameters->Mode);
+
 	if (AllowChangeSort)
+	{
 		if (!LFAttributeSortableInView(ActiveViewParameters->SortBy, ActiveViewParameters->Mode))
 		{
 			for (UINT a=0; a<LFAttributeCount; a++)
@@ -2374,7 +2377,9 @@ BOOL CMainFrame::OpenChildView(BOOL Force, BOOL AllowChangeSort)
 			return FALSE;
 		}
 
-	UINT ViewID = SelectViewMode(ActiveViewParameters->Mode);
+		if ((ViewID>LFViewPreview)!=(ActiveViewID>LFViewPreview))
+			theApp.UpdateSortOptions(ActiveContextID);
+	}
 
 	ASSERT(LFAttributeSortableInView(ActiveViewParameters->SortBy, ViewID));
 	CFileView* pNewView = NULL;
@@ -2563,6 +2568,8 @@ void CMainFrame::CookFiles(int recipe, int FocusItem)
 	LFViewParameters* vp = &theApp.m_Views[recipe];
 	LFAttributeDescriptor* attr = theApp.m_Attributes[vp->SortBy];
 
+	LFSortSearchResult(RawFiles, vp->SortBy, vp->Descending==TRUE, vp->ShowCategories==TRUE);
+
 	if (((!IsClipboard) && (vp->AutoDirs) && (!ActiveFilter->Options.IsSubfolder)) || (vp->Mode>LFViewPreview))
 	{
 		CookedFiles = LFAllocSearchResult(recipe, RawFiles);
@@ -2572,7 +2579,6 @@ void CMainFrame::CookFiles(int recipe, int FocusItem)
 	}
 	else
 	{
-		LFSortSearchResult(RawFiles, vp->SortBy, vp->Descending==TRUE, vp->ShowCategories==TRUE);
 		CookedFiles = RawFiles;
 		CookedFiles->m_ContextView = recipe;
 	}

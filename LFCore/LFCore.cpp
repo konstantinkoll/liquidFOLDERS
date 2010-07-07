@@ -699,9 +699,6 @@ LFCore_API bool LFAttributeSortableInView(unsigned int Attr, unsigned int ViewMo
 	bool b = true;
 	switch (ViewMode)
 	{
-	case LFViewAutomatic:
-		b = true;
-		break;
 	case LFViewCalendarYear:
 	case LFViewCalendarWeek:
 	case LFViewCalendarDay:
@@ -710,9 +707,6 @@ LFCore_API bool LFAttributeSortableInView(unsigned int Attr, unsigned int ViewMo
 		break;
 	case LFViewGlobe:
 		b = ((Attr==LFAttrLocationIATA) || (Attr==LFAttrLocationGPS));
-		break;
-	case LFViewTagcloud:
-		b = (Attr!=LFAttrRating);
 		break;
 	}
 	return b;
