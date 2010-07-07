@@ -14,10 +14,7 @@ struct Tag
 	BOOL selected;
 	UINT fontsize;
 	UINT alpha;
-	int x;
-	int y;
-	int h;
-	int w;
+	RECT rect;
 };
 
 
@@ -36,7 +33,7 @@ public:
 	virtual int GetNextSelectedItem(int n);
 
 protected:
-	CFont m_Fonts[24];
+	CFont m_Fonts[22];
 	Tag* m_Tags;
 	HTHEME hTheme;
 
@@ -44,9 +41,13 @@ protected:
 	virtual BOOL IsSelected(int n);
 	virtual int ItemAtPosition(CPoint point);
 
+	CFont* GetFont(int idx);
+	void AdjustLayout();
+
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();
 	afx_msg LRESULT OnThemeChanged();
+	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnPaint();
 	DECLARE_MESSAGE_MAP()

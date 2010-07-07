@@ -12,13 +12,18 @@
 // CTagcloudView
 //
 
+#define DefaultFontSize     2
+#define TextFormat          DT_NOPREFIX | DT_END_ELLIPSIS | DT_SINGLELINE
+#define Gutter              2
+
+
 CTagcloudView::CTagcloudView()
 {
 	m_Tags = NULL;
 	hTheme = NULL;
 
 	CString face = theApp.GetDefaultFontFace();
-	for (int a=0; a<24; a++)
+	for (int a=0; a<22; a++)
 		m_Fonts[a].CreateFont(-(a*2+10), 0, 0, 0, FW_NORMAL, 0, 0, 0, ANSI_CHARSET,
 		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, a>=4 ? ANTIALIASED_QUALITY : CLEARTYPE_QUALITY,
 		DEFAULT_PITCH | FF_DONTCARE, face);
@@ -80,12 +85,14 @@ void CTagcloudView::SetSearchResult(LFSearchResult* _result)
 			for (UINT a=0; a<_result->m_ItemCount; a++)
 				if (m_Tags[a].cnt)
 				{
-					m_Tags[a].alpha = 15+(240*(m_Tags[a].cnt-minimum))/delta;
+					m_Tags[a].alpha = 55+(200*(m_Tags[a].cnt-minimum))/delta;
 					m_Tags[a].fontsize = (20*(m_Tags[a].cnt-minimum))/delta;
 				}
 
 		}
 
+	result = _result;
+	AdjustLayout();
 	Invalidate();
 }
 
@@ -134,27 +141,72 @@ BOOL CTagcloudView::IsSelected(int n)
 
 int CTagcloudView::ItemAtPosition(CPoint point)
 {
-/*	if ((!m_Locations) || (!result) || (!m_ViewParameters.GlobeShowBubbles))
-		return -1;
+	if ((m_Tags) && (result))
+		for (UINT a=0; a<result->m_ItemCount; a++)
+			if (m_Tags[a].cnt)
+			{
+				CRect rect(m_Tags[a].rect);
+				if (rect.PtInRect(point))
+					return a;
+			}
 
-	int res = -1;
-	float alpha = 0.0f;
-	for (UINT a=0; a<result->m_ItemCount; a++)
+	return -1;
+}
+
+CFont* CTagcloudView::GetFont(int idx)
+{
+	return &m_Fonts[m_Tags[idx].fontsize + (m_ViewParameters.GrannyMode ? 2 : 0)];
+}
+
+void CTagcloudView::AdjustLayout()
+{
+	if (result)
 	{
-		if (m_Locations[a].cnt)
-			if ((m_Locations[a].alpha>0.1f) && ((m_Locations[a].alpha>alpha-0.05f) || (m_Locations[a].alpha>0.75f)))
-				if ((point.x>=m_Locations[a].screenlabel[0]) &&
-					(point.x<m_Locations[a].screenlabel[2]) &&
-					(point.y>=m_Locations[a].screenlabel[1]) &&
-					(point.y<m_Locations[a].screenlabel[3]))
-				{
-					res = a;
-					alpha = m_Locations[a].alpha;
-				}
+		CDC* dc = GetWindowDC();
+
+		CRect rectClient;
+		GetClientRect(rectClient);
+
+		int row = Gutter;
+		int col = 0;
+		int rowheight = 0;
+		int rowstart = 0;
+
+#define CenterRow(last) for (UINT b=rowstart; b<=last; b++) \
+	if (m_Tags[b].cnt) { \
+	int offs = (rowheight-(m_Tags[b].rect.bottom-m_Tags[b].rect.top))/2; m_Tags[b].rect.bottom += offs; m_Tags[b].rect.top += offs; \
+	offs = (rectClient.Width()-col)/2; m_Tags[b].rect.left += offs; m_Tags[b].rect.right += offs; \
 	}
 
-	return res;*/
-	return -1;
+		for (UINT a=0; a<result->m_ItemCount; a++)
+			if (m_Tags[a].cnt)
+			{
+				CRect rect(0, 0, rectClient.Width()-2*Gutter, 128);
+				dc->SelectObject(GetFont(a));
+				dc->DrawText(result->m_Items[a]->CoreAttributes.FileName, -1, rect, TextFormat | DT_CALCRECT);
+				rect.InflateRect(5, 4);
+
+				if (col+rect.Width()+3*Gutter>rectClient.Width())
+				{
+					row += rowheight+Gutter;
+					CenterRow(a-1);
+					col = 0;
+					rowstart = a;
+					rowheight = 0;
+				}
+
+				rect.MoveToXY(col, row);
+				m_Tags[a].rect = rect;
+
+				col += rect.Width()+Gutter;
+				rowheight = max(rowheight, rect.Height());
+			}
+
+		if (result->m_ItemCount)
+			CenterRow(result->m_ItemCount-1);
+
+		ReleaseDC(dc);
+	}
 }
 
 
@@ -162,6 +214,7 @@ BEGIN_MESSAGE_MAP(CTagcloudView, CFileView)
 	ON_WM_CREATE()
 	ON_WM_DESTROY()
 	ON_WM_THEMECHANGED()
+	ON_WM_SIZE()
 	ON_WM_ERASEBKGND()
 	ON_WM_PAINT()
 END_MESSAGE_MAP()
@@ -201,6 +254,14 @@ LRESULT CTagcloudView::OnThemeChanged()
 	return TRUE;
 }
 
+void CTagcloudView::OnSize(UINT nType, int cx, int cy)
+{
+	CFileView::OnSize(nType, cx, cy);
+
+	AdjustLayout();
+	Invalidate();
+}
+
 BOOL CTagcloudView::OnEraseBkgnd(CDC* /*pDC*/)
 {
 	return TRUE;
@@ -231,8 +292,18 @@ void CTagcloudView::OnPaint()
 		for (UINT a=0; a<result->m_ItemCount; a++)
 			if (m_Tags[a].cnt)
 			{
-				dc.SelectObject(m_Fonts[m_Tags[a].fontsize]);
-				dc.TextOut(10, a*20, result->m_Items[a]->CoreAttributes.FileName);
+				CRect rect(&m_Tags[a].rect);
+				//dc.FillSolidRect(rect, GetSysColor(COLOR_HIGHLIGHT));
+
+				dc.SelectObject(GetFont(a));
+				dc.SetTextColor(((text & 0xFF)*m_Tags[a].alpha + (back & 0xFF)*(255-m_Tags[a].alpha))>>8 |
+								((((text>>8) & 0xFF)*m_Tags[a].alpha + ((back>>8) & 0xFF)*(255-m_Tags[a].alpha)) & 0xFF00) |
+								((((text>>16) & 0xFF)*m_Tags[a].alpha + ((back>>16) & 0xFF)*(255-m_Tags[a].alpha))<<8) & 0xFF0000);
+
+				dc.DrawText(result->m_Items[a]->CoreAttributes.FileName, -1, rect, TextFormat | DT_CENTER | DT_VCENTER);
+
+				rect.DeflateRect(1, 1);
+				//dc.DrawFocusRect(rect);
 			}
 
 	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);

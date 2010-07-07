@@ -631,7 +631,7 @@ BOOL CGlobeView::OnSetCursor(CWnd* /*pWnd*/, UINT /*nHitTest*/, UINT /*message*/
 
 void CGlobeView::OnSize(UINT nType, int cx, int cy)
 {
-	CWnd::OnSize(nType, cx, cy);
+	CFileView::OnSize(nType, cx, cy);
 
 	if (cy>0)
 	{
