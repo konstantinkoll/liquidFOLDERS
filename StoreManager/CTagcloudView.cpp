@@ -115,15 +115,28 @@ void CTagcloudView::SetSearchResult(LFSearchResult* _result)
 					else
 						if (delta==1)
 						{
-							m_Tags[a].alpha = 255;
 							m_Tags[a].fontsize = 19;
+							m_Tags[a].alpha = 255;
+							m_Tags[a].color = 0x0000FF;
 						}
 						else
 						{
-							m_Tags[a].alpha = 56+(200*(m_Tags[a].cnt-minimum))/delta;
 							m_Tags[a].fontsize = (20*(m_Tags[a].cnt-minimum))/delta;
+							m_Tags[a].alpha = 56+(200*(m_Tags[a].cnt-minimum))/delta;
+							if (m_Tags[a].alpha<128)
+							{
+								m_Tags[a].color = 0xFF0000 | ((128-m_Tags[a].alpha)<<9);
+							}
+							else
+								if (m_Tags[a].alpha<192)
+								{
+									m_Tags[a].color = (0xFF0000-(m_Tags[a].alpha-128)*0x020000) | ((m_Tags[a].alpha-128)*2);
+								}
+								else
+								{
+									m_Tags[a].color = (0x800000-(m_Tags[a].alpha-192)*0x020000) | (0x000080+(m_Tags[a].alpha-192)*2);
+								}
 						}
-
 		}
 
 	result = _result;
@@ -255,6 +268,8 @@ void CTagcloudView::AdjustLayout()
 BEGIN_MESSAGE_MAP(CTagcloudView, CFileView)
 	ON_WM_CREATE()
 	ON_WM_DESTROY()
+	ON_COMMAND(ID_TAGCLOUD_SORTNAME, OnSortName)
+	ON_COMMAND(ID_TAGCLOUD_SORTCOUNT, OnSortCount)
 	ON_COMMAND(ID_TAGCLOUD_OMITRARE, OnOmitRare)
 	ON_COMMAND(ID_TAGCLOUD_USESIZE, OnUseSize)
 	ON_COMMAND(ID_TAGCLOUD_USECOLORS, OnUseColors)
@@ -291,6 +306,18 @@ void CTagcloudView::OnDestroy()
 	CFileView::OnDestroy();
 }
 
+void CTagcloudView::OnSortName()
+{
+	pViewParameters->TagcloudAlphabetic = TRUE;
+	OnViewOptionsChanged();
+}
+
+void CTagcloudView::OnSortCount()
+{
+	pViewParameters->TagcloudAlphabetic = FALSE;
+	OnViewOptionsChanged();
+}
+
 void CTagcloudView::OnOmitRare()
 {
 	pViewParameters->TagcloudOmitRare = !pViewParameters->TagcloudOmitRare;
@@ -320,6 +347,12 @@ void CTagcloudView::OnUpdateCommands(CCmdUI* pCmdUI)
 	BOOL b = TRUE;
 	switch (pCmdUI->m_nID)
 	{
+	case ID_TAGCLOUD_SORTNAME:
+		pCmdUI->SetCheck(m_ViewParameters.TagcloudAlphabetic);
+		break;
+	case ID_TAGCLOUD_SORTCOUNT:
+		pCmdUI->SetCheck(!m_ViewParameters.TagcloudAlphabetic);
+		break;
 	case ID_TAGCLOUD_OMITRARE:
 		pCmdUI->SetCheck(m_ViewParameters.TagcloudOmitRare);
 		break;
@@ -389,7 +422,7 @@ void CTagcloudView::OnPaint()
 			{
 				CRect rect(&m_Tags[a].rect);
 
-				COLORREF color = text;
+				COLORREF color = m_ViewParameters.TagcloudUseColors ? m_Tags[a].color : text;
 
 				if (m_Tags[a].selected)
 				{
@@ -407,9 +440,9 @@ void CTagcloudView::OnPaint()
 				}
 				else
 					if (m_ViewParameters.TagcloudUseOpacity)
-						color =((text & 0xFF)*m_Tags[a].alpha + (back & 0xFF)*(255-m_Tags[a].alpha))>>8 |
-									((((text>>8) & 0xFF)*m_Tags[a].alpha + ((back>>8) & 0xFF)*(255-m_Tags[a].alpha)) & 0xFF00) |
-									((((text>>16) & 0xFF)*m_Tags[a].alpha + ((back>>16) & 0xFF)*(255-m_Tags[a].alpha))<<8) & 0xFF0000;
+						color =((color & 0xFF)*m_Tags[a].alpha + (back & 0xFF)*(255-m_Tags[a].alpha))>>8 |
+									((((color>>8) & 0xFF)*m_Tags[a].alpha + ((back>>8) & 0xFF)*(255-m_Tags[a].alpha)) & 0xFF00) |
+									((((color>>16) & 0xFF)*m_Tags[a].alpha + ((back>>16) & 0xFF)*(255-m_Tags[a].alpha))<<8) & 0xFF0000;
 
 				CFont* pOldFont = dc.SelectObject(GetFont(a));
 				dc.SetTextColor(color);

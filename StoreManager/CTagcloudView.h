@@ -13,6 +13,7 @@ struct Tag
 	int cnt;
 	BOOL selected;
 	UINT fontsize;
+	COLORREF color;
 	UINT alpha;
 	RECT rect;
 };
@@ -48,6 +49,8 @@ protected:
 
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();
+	afx_msg void OnSortName();
+	afx_msg void OnSortCount();
 	afx_msg void OnOmitRare();
 	afx_msg void OnUseSize();
 	afx_msg void OnUseColors();

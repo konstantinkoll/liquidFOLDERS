@@ -362,6 +362,11 @@ void CStoreManagerApp::LoadViewOptions(int context)
 	m_Views[context].GlobeShowAirportNames = GetInt(_T("GlobeShowAirportNames"), TRUE);
 	m_Views[context].GlobeShowGPS = GetInt(_T("GlobeShowGPS"), TRUE);
 	m_Views[context].GlobeShowHints = GetInt(_T("GlobeShowHints"), TRUE);
+	m_Views[context].TagcloudAlphabetic = GetInt(_T("TagcloudSortAlphabetic"), TRUE);
+	m_Views[context].TagcloudOmitRare = GetInt(_T("TagcloudOmitRare"), FALSE);
+	m_Views[context].TagcloudUseSize = GetInt(_T("TagcloudUseSize"), TRUE);
+	m_Views[context].TagcloudUseColors = GetInt(_T("TagcloudUseColors"), FALSE);
+	m_Views[context].TagcloudUseOpacity = GetInt(_T("TagcloudUseOpacity"), TRUE);
 	m_Views[context].Changed = FALSE;
 
 	for (UINT a=0; a<LFAttributeCount; a++)
@@ -411,6 +416,11 @@ void CStoreManagerApp::SaveViewOptions(int context, UINT SaveMode)
 		WriteInt(_T("GlobeShowAirportNames"), m_Views[context].GlobeShowAirportNames);
 		WriteInt(_T("GlobeShowGPS"), m_Views[context].GlobeShowGPS);
 		WriteInt(_T("GlobeShowHints"), m_Views[context].GlobeShowHints);
+		WriteInt(_T("TagcloudSortAlphabetic"), m_Views[context].TagcloudAlphabetic);
+		WriteInt(_T("TagcloudOmitRare"), m_Views[context].TagcloudOmitRare);
+		WriteInt(_T("TagcloudUseSize"), m_Views[context].TagcloudUseSize);
+		WriteInt(_T("TagcloudUseColors"), m_Views[context].TagcloudUseColors);
+		WriteInt(_T("TagcloudUseOpacity"), m_Views[context].TagcloudUseOpacity);
 
 		WriteBinary(_T("ColumnOrder"), (LPBYTE)m_Views[context].ColumnOrder, sizeof(m_Views[context].ColumnOrder));
 		WriteBinary(_T("ColumnWidth"), (LPBYTE)m_Views[context].ColumnWidth, sizeof(m_Views[context].ColumnWidth));
