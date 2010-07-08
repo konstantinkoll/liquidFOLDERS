@@ -17,7 +17,7 @@ public:
 	CCalendarWeekView();
 	virtual ~CCalendarWeekView();
 
-	void Create(CWnd* _pParentWnd, LFSearchResult* _result);
+	void Create(CWnd* _pParentWnd, LFSearchResult* _result, int _FocusItem);
 
 protected:
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);

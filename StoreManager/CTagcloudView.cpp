@@ -36,7 +36,7 @@ CTagcloudView::~CTagcloudView()
 		delete[] m_Tags;
 }
 
-void CTagcloudView::Create(CWnd* _pParentWnd, LFSearchResult* _result)
+void CTagcloudView::Create(CWnd* _pParentWnd, LFSearchResult* _result, int _FocusItem)
 {
 	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, NULL, NULL, NULL);
 
@@ -45,7 +45,7 @@ void CTagcloudView::Create(CWnd* _pParentWnd, LFSearchResult* _result)
 	rect.SetRectEmpty();
 	CWnd::Create(className, _T(""), dwStyle, rect, _pParentWnd, AFX_IDW_PANE_FIRST);
 
-	CFileView::Create(_result, LFViewTagcloud, theApp.osInfo.dwMajorVersion>=6);
+	CFileView::Create(_result, LFViewTagcloud, _FocusItem, theApp.osInfo.dwMajorVersion>=6);
 }
 
 void CTagcloudView::SetViewOptions(UINT /*_ViewID*/, BOOL Force)
@@ -74,11 +74,9 @@ void CTagcloudView::SetViewOptions(UINT /*_ViewID*/, BOOL Force)
 
 void CTagcloudView::SetSearchResult(LFSearchResult* _result)
 {
-	if (m_Tags)
-	{
-		delete[] m_Tags;
-		m_Tags = NULL;
-	}
+	UINT VictimCount = result ? result->m_ItemCount : 0;
+	Tag* Victim = m_Tags;
+	m_Tags = NULL;
 
 	if (_result)
 		if (_result->m_ItemCount)
@@ -92,6 +90,8 @@ void CTagcloudView::SetSearchResult(LFSearchResult* _result)
 			for (UINT a=0; a<_result->m_ItemCount; a++)
 			{
 				ZeroMemory(&m_Tags[a], sizeof(Tag));
+				if (a<VictimCount)
+					m_Tags[a].selected = Victim[a].selected;
 
 				LFItemDescriptor* i = _result->m_Items[a];
 				if ((i->Type & LFTypeMask)==LFTypeVirtual)
@@ -156,6 +156,9 @@ void CTagcloudView::SetSearchResult(LFSearchResult* _result)
 		}
 
 	result = _result;
+	if (Victim)
+		delete[] Victim;
+
 	AdjustLayout();
 	Invalidate();
 }

@@ -98,7 +98,7 @@ CGlobeView::~CGlobeView()
 		delete[] m_Locations;
 }
 
-void CGlobeView::Create(CWnd* _pParentWnd, LFSearchResult* _result)
+void CGlobeView::Create(CWnd* _pParentWnd, LFSearchResult* _result, int _FocusItem)
 {
 	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS | CS_OWNDC, hCursor, NULL, NULL);
 
@@ -107,7 +107,7 @@ void CGlobeView::Create(CWnd* _pParentWnd, LFSearchResult* _result)
 	rect.SetRectEmpty();
 	CWnd::Create(className, _T(""), dwStyle, rect, _pParentWnd, AFX_IDW_PANE_FIRST);
 
-	CFileView::Create(_result, LFViewGlobe, FALSE, FALSE);
+	CFileView::Create(_result, LFViewGlobe, _FocusItem, FALSE, FALSE);
 }
 
 void CGlobeView::SetViewOptions(UINT /*_ViewID*/, BOOL Force)
@@ -136,11 +136,9 @@ void CGlobeView::SetViewOptions(UINT /*_ViewID*/, BOOL Force)
 
 void CGlobeView::SetSearchResult(LFSearchResult* _result)
 {
-	if (m_Locations)
-	{
-		delete[] m_Locations;
-		m_Locations = NULL;
-	}
+	UINT VictimCount = result ? result->m_ItemCount : 0;
+	Location* Victim = m_Locations;
+	m_Locations = NULL;
 
 	result = _result;
 	if (_result)
@@ -152,6 +150,8 @@ void CGlobeView::SetSearchResult(LFSearchResult* _result)
 			for (UINT a=0; a<_result->m_ItemCount; a++)
 			{
 				ZeroMemory(&m_Locations[a], sizeof(Location));
+				if (a<VictimCount)
+					m_Locations[a].selected = Victim[a].selected;
 
 				LFGeoCoordinates coord = { 0, 0 };
 				if ((theApp.m_Attributes[m_ViewParameters.SortBy]->Type==LFTypeGeoCoordinates) && (_result->m_Items[a]->AttributeValues[m_ViewParameters.SortBy]))
@@ -190,6 +190,9 @@ void CGlobeView::SetSearchResult(LFSearchResult* _result)
 						break;
 					}
 		}
+
+	if (Victim)
+		delete[] Victim;
 
 	UpdateScene(TRUE);
 }

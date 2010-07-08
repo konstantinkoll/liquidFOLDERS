@@ -16,7 +16,7 @@ public:
 	CListView();
 	virtual ~CListView();
 
-	void Create(CWnd* pParentWnd, LFSearchResult* _result, UINT _ViewID);
+	void Create(CWnd* pParentWnd, LFSearchResult* _result, UINT _ViewID, int _FocusItem);
 
 protected:
 	virtual void SetViewOptions(UINT _ViewID, BOOL Force);

@@ -32,7 +32,7 @@ public:
 	virtual int GetSelectedItem();
 	virtual int GetNextSelectedItem(int n);
 
-	void Create(CWnd* _pParentWnd, LFSearchResult* _result);
+	void Create(CWnd* _pParentWnd, LFSearchResult* _result, int _FocusItem);
 
 protected:
 	CFont m_Fonts[22];

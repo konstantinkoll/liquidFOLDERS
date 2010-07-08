@@ -25,13 +25,13 @@ CFileView::~CFileView()
 {
 }
 
-void CFileView::Create(LFSearchResult* _result, UINT _ViewID, BOOL _EnableHover, BOOL _EnableShiftSelection)
+void CFileView::Create(LFSearchResult* _result, UINT _ViewID, int _FocusItem, BOOL _EnableHover, BOOL _EnableShiftSelection)
 {
 	EnableHover = _EnableHover;
 	EnableShiftSelection = _EnableShiftSelection;
 
 	OnUpdateViewOptions(_result->m_ContextView, _ViewID, TRUE);
-	OnUpdateSearchResult(_result, 0);
+	OnUpdateSearchResult(_result, _FocusItem);
 }
 
 void CFileView::OnUpdateViewOptions(int _ActiveContextID, int _ViewID, BOOL Force)

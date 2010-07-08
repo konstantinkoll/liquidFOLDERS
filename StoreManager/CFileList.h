@@ -6,6 +6,7 @@
 #include "liquidFOLDERS.h"
 #include "CFileView.h"
 #include "LFCommDlg.h"
+#include "afxpropertygridtooltipctrl.h"
 
 
 // CFileList
@@ -30,11 +31,13 @@ public:
 
 protected:
 	CFileView* View;
+	CMFCPropertyGridToolTipCtrl ToolTip;
 	BOOL OwnerData;
 	BOOL Editing;
 	int LastSortBy;
 	UINT ColumnCount;
 	UINT ColumnMapping[LFAttributeCount];
+	UINT TooltipCount;
 
 	void CreateColumns();
 	void AddColumn(UINT attr);

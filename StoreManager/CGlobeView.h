@@ -44,7 +44,7 @@ public:
 	virtual int GetSelectedItem();
 	virtual int GetNextSelectedItem(int n);
 
-	void Create(CWnd* pParentWnd, LFSearchResult* _result);
+	void Create(CWnd* pParentWnd, LFSearchResult* _result, int _FocusItem);
 
 protected:
 	CClientDC* m_pDC;

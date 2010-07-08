@@ -20,7 +20,7 @@ CTimelineView::~CTimelineView()
 {
 }
 
-void CTimelineView::Create(CWnd* _pParentWnd, LFSearchResult* _result)
+void CTimelineView::Create(CWnd* _pParentWnd, LFSearchResult* _result, int _FocusItem)
 {
 	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, NULL, NULL, NULL);
 
@@ -29,7 +29,7 @@ void CTimelineView::Create(CWnd* _pParentWnd, LFSearchResult* _result)
 	rect.SetRectEmpty();
 	CWnd::Create(className, _T(""), dwStyle, rect, _pParentWnd, AFX_IDW_PANE_FIRST);
 
-	CFileView::Create(_result, LFViewTimeline);
+	CFileView::Create(_result, LFViewTimeline, _FocusItem);
 }
 
 

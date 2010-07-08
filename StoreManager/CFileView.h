@@ -28,7 +28,7 @@ public:
 	virtual void OnContextMenu(CPoint point);				// Kontextmenü für das View
 	virtual void OnItemContextMenu(int idx, CPoint point);	// Kontextmenu für ein Item
 
-	void Create(LFSearchResult* _result, UINT _ViewID, BOOL _EnableHover=TRUE, BOOL _EnableShiftSelection=TRUE);
+	void Create(LFSearchResult* _result, UINT _ViewID, int _FocusItem=0, BOOL _EnableHover=TRUE, BOOL _EnableShiftSelection=TRUE);
 	void OnUpdateViewOptions(int _ActiveContextID=-1, int _ViewID=-1, BOOL Force=FALSE);
 	void OnUpdateSearchResult(LFSearchResult* _result, int _FocusItem);
 	BOOL HandleDefaultKeys(UINT nChar, UINT nRepCnt, UINT nFlags);

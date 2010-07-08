@@ -21,6 +21,7 @@ CFileList::CFileList()
 	LastSortBy = -1;
 	hTheme = NULL;
 	ColumnCount = 0;
+	TooltipCount = 0;
 }
 
 CFileList::~CFileList()
@@ -43,6 +44,8 @@ BOOL CFileList::Create(CFileView* pViewWnd, BOOL _OwnerData)
 	BOOL res = CExplorerList::Create(dwStyle, rect, pViewWnd, 1);
 	if (res)
 		SetExtendedStyle(FileListExtendedStyles);
+
+	ToolTip.Create(this);
 
 	return res;
 }
@@ -90,6 +93,9 @@ void CFileList::SetHeader(BOOL sorting, BOOL selectCol)
 	// Spalte markieren
 	if (selectCol)
 		SetSelectedColumn(col);
+
+	// Subclass
+
 }
 
 BOOL CFileList::SetColumnWidth(int nCol, int cx)

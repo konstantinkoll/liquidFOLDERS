@@ -100,8 +100,9 @@ public:
 	BOOL UpdateSelectedItems(LFVariantData* value1, LFVariantData* value2=NULL, LFVariantData* value3=NULL);
 	BOOL UpdateTrashFlag(BOOL Trash, BOOL All=FALSE);
 	BOOL DeleteFiles(BOOL All=FALSE);
+	int GetFocusItem();
 	UINT SelectViewMode(UINT ViewID=LFViewAutomatic);
-	BOOL OpenChildView(BOOL Force=FALSE, BOOL AllowChangeSort=FALSE);
+	BOOL OpenChildView(int FocusItem=0, BOOL Force=FALSE, BOOL AllowChangeSort=FALSE);
 
 	BOOL IsClipboard;
 	int ActiveContextID;
@@ -204,7 +205,6 @@ private:
 	void ExecuteCreateStoreDlg(UINT nIDTemplate, char drv);
 	void Remember(CMainFrame* clip);
 	void BackupStores(BOOL all=FALSE);
-	int GetFocusItem();
 	int GetSelectedItem();
 	int GetNextSelectedItem(int n);
 	void AddTransactionItem(LFTransactionList* tl, LFItemDescriptor* i, unsigned int UserData);

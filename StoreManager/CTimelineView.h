@@ -17,7 +17,7 @@ public:
 	CTimelineView();
 	virtual ~CTimelineView();
 
-	void Create(CWnd* _pParentWnd, LFSearchResult* _result);
+	void Create(CWnd* _pParentWnd, LFSearchResult* _result, int _FocusItem);
 
 protected:
 

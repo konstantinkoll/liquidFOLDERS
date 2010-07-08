@@ -1340,7 +1340,7 @@ void CMainFrame::UpdateSearchResult(BOOL SetEmpty, int FocusItem)
 			ActiveViewParameters = &theApp.m_Views[ActiveContextID];
 			if (m_cbxActiveContext)
 				m_cbxActiveContext->SelectItem(ActiveContextID);
-			if (OpenChildView(force))
+			if (OpenChildView(FocusItem, force))
 				return;
 		}
 		#ifndef _DEBUG
@@ -1501,10 +1501,7 @@ BOOL CMainFrame::RenameSingleItem(UINT n, CString Name)
 		LFTransactionUpdate(tl, GetSafeHwnd(), &value);
 
 		if (tl->m_Changes)
-		{
 			m_wndView->OnUpdateSearchResult(CookedFiles, GetFocusItem());
-			OnUpdateSelection();
-		}
 
 		if (tl->m_LastError>LFCancel)
 			ShowCaptionBar(IDB_CANCEL, tl->m_LastError);
@@ -1576,7 +1573,7 @@ BOOL CMainFrame::UpdateSelectedItems(LFVariantData* value1, LFVariantData* value
 
 		if (tl->m_Changes)
 			m_wndView->OnUpdateSearchResult(CookedFiles, GetFocusItem());
-		if ((tl->m_Changes) || (deselected))
+		if (deselected)
 			OnUpdateSelection();
 	}
 
@@ -2360,7 +2357,7 @@ UINT CMainFrame::SelectViewMode(UINT ViewID)
 	return ViewID;
 }
 
-BOOL CMainFrame::OpenChildView(BOOL Force, BOOL AllowChangeSort)
+BOOL CMainFrame::OpenChildView(int FocusItem, BOOL Force, BOOL AllowChangeSort)
 {
 	UINT ViewID = SelectViewMode(ActiveViewParameters->Mode);
 
@@ -2401,49 +2398,49 @@ BOOL CMainFrame::OpenChildView(BOOL Force, BOOL AllowChangeSort)
 		if (Force)
 		{
 			pNewView = new CListView();
-			((CListView*)pNewView)->Create(this, CookedFiles, ViewID);
+			((CListView*)pNewView)->Create(this, CookedFiles, ViewID, FocusItem);
 		}
 		break;
 	case LFViewCalendarYear:
 		if ((Force) || (ActiveViewID!=LFViewCalendarYear))
 		{
 			pNewView = new CCalendarYearView();
-			((CCalendarYearView*)pNewView)->Create(this, CookedFiles);
+			((CCalendarYearView*)pNewView)->Create(this, CookedFiles, FocusItem);
 		}
 		break;
 	case LFViewCalendarWeek:
 		if ((Force) || (ActiveViewID!=LFViewCalendarWeek))
 		{
 			pNewView = new CCalendarWeekView();
-			((CCalendarWeekView*)pNewView)->Create(this, CookedFiles);
+			((CCalendarWeekView*)pNewView)->Create(this, CookedFiles, FocusItem);
 		}
 		break;
 	case LFViewCalendarDay:
 		if ((Force) || (ActiveViewID!=LFViewCalendarDay))
 		{
 			pNewView = new CCalendarDayView();
-			((CCalendarDayView*)pNewView)->Create(this, CookedFiles);
+			((CCalendarDayView*)pNewView)->Create(this, CookedFiles, FocusItem);
 		}
 		break;
 	case LFViewGlobe:
 		if ((Force) || (ActiveViewID!=LFViewGlobe))
 		{
 			pNewView = new CGlobeView();
-			((CGlobeView*)pNewView)->Create(this, CookedFiles);
+			((CGlobeView*)pNewView)->Create(this, CookedFiles, FocusItem);
 		}
 		break;
 	case LFViewTagcloud:
 		if ((Force) || (ActiveViewID!=LFViewTagcloud))
 		{
 			pNewView = new CTagcloudView();
-			((CTagcloudView*)pNewView)->Create(this, CookedFiles);
+			((CTagcloudView*)pNewView)->Create(this, CookedFiles, FocusItem);
 		}
 		break;
 	case LFViewTimeline:
 		if ((Force) || (ActiveViewID!=LFViewTimeline))
 		{
 			pNewView = new CTimelineView();
-			((CTimelineView*)pNewView)->Create(this, CookedFiles);
+			((CTimelineView*)pNewView)->Create(this, CookedFiles, FocusItem);
 		}
 		break;
 	}

@@ -282,7 +282,7 @@ void CStoreManagerApp::OpenChildViews(int context, BOOL UpdateViewOptions)
 	{
 		if ((*ppFrame)->ActiveContextID==context)
 		{
-			(*ppFrame)->OpenChildView(FALSE, TRUE);
+			(*ppFrame)->OpenChildView((*ppFrame)->GetFocusItem(), FALSE, TRUE);
 		}
 		else
 		{
