@@ -181,7 +181,8 @@ void CGlobeView::SelectItem(int n, BOOL select, BOOL InternalCall)
 {
 	if (m_Locations)
 	{
-		m_Locations[n].selected = select;
+		if (m_Locations[n].valid)
+			m_Locations[n].selected = select;
 
 		if (!InternalCall)
 		{

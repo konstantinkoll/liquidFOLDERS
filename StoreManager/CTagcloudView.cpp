@@ -45,7 +45,7 @@ void CTagcloudView::Create(CWnd* _pParentWnd, LFSearchResult* _result)
 	rect.SetRectEmpty();
 	CWnd::Create(className, _T(""), dwStyle, rect, _pParentWnd, AFX_IDW_PANE_FIRST);
 
-	CFileView::Create(_result, LFViewTagcloud, TRUE);//theApp.osInfo.dwMajorVersion>=6);
+	CFileView::Create(_result, LFViewTagcloud, theApp.osInfo.dwMajorVersion>=6);
 }
 
 void CTagcloudView::SetViewOptions(UINT /*_ViewID*/, BOOL Force)
@@ -148,7 +148,8 @@ void CTagcloudView::SelectItem(int n, BOOL select, BOOL InternalCall)
 {
 	if (m_Tags)
 	{
-		m_Tags[n].selected = select;
+		if (m_Tags[n].cnt)
+			m_Tags[n].selected = select;
 
 		if (!InternalCall)
 		{
