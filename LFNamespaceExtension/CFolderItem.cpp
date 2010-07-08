@@ -207,7 +207,7 @@ BOOL CFolderItem::GetChildren(CGetChildrenEventArgs& e)
 			d.Comment.LoadString(IDS_AllFilesComment);
 			d.StoreID = data.StoreID;
 			d.FileID = "ALL";
-			d.DomainID = LFDomainAllFiles;
+			d.DomainID = data.DomainID;
 			d.Format.LoadString(IDS_Folder);
 
 			e.children->AddTail(new CFolderItem(d));
