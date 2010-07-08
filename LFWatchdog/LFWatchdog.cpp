@@ -199,6 +199,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case WMAPP_NOTIFYCALLBACK:
 			switch (LOWORD(lParam))
 			{
+			case WM_LBUTTONUP:
 			case WM_RBUTTONUP:
 				ShowMenu(hWnd);
 				break;
