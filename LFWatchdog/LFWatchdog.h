@@ -3,6 +3,7 @@
 //
 
 #pragma once
+#include "LFCore.h"
 #include <Windows.h>
 
 
@@ -16,6 +17,7 @@ public:
 	CWatchdogApp();
 
 	CString path;
+	LFMessageIDs* p_MessageIDs;
 
 	virtual BOOL InitInstance();
 	virtual int ExitInstance();

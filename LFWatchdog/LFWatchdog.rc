@@ -87,7 +87,6 @@ IDB_ABOUTICON           PNG                     "res\\Watchdog_About.png"
 STRINGTABLE 
 BEGIN
     IDS_APP_TITLE           "LFWatchdog"
-    IDS_TOOLTIP             "liquidFOLDERS Watchdog"
 END
 
 #endif    // Neutral resources
@@ -127,6 +126,8 @@ END
 STRINGTABLE 
 BEGIN
     IDS_ABOUT               "Über Watchdog"
+    IDS_TOOLTIP_SINGULAR    "liquidFOLDERS Watchdog (%d Store)"
+    IDS_TOOLTIP_PLURAL      "liquidFOLDERS Watchdog (%d Stores)"
 END
 
 #endif    // Deutsch (neutral) resources
@@ -166,6 +167,8 @@ END
 STRINGTABLE 
 BEGIN
     IDS_ABOUT               "About Watchdog"
+    IDS_TOOLTIP_SINGULAR    "liquidFOLDERS Watchdog (%d store)"
+    IDS_TOOLTIP_PLURAL      "liquidFOLDERS Watchdog (%d stores)"
 END
 
 #endif    // Englisch (neutral) resources
@@ -205,6 +208,8 @@ END
 STRINGTABLE 
 BEGIN
     IDS_ABOUT               "About Watchdog"
+    IDS_TOOLTIP_SINGULAR    "liquidFOLDERS Watchdog (%d store)"
+    IDS_TOOLTIP_PLURAL      "liquidFOLDERS Watchdog (%d stores)"
 END
 
 #endif    // Spanisch (neutral) resources
@@ -244,6 +249,8 @@ END
 STRINGTABLE 
 BEGIN
     IDS_ABOUT               "Concernant Watchdog"
+    IDS_TOOLTIP_SINGULAR    "liquidFOLDERS Watchdog (%d store)"
+    IDS_TOOLTIP_PLURAL      "liquidFOLDERS Watchdog (%d stores)"
 END
 
 #endif    // Französisch (neutral) resources

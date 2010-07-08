@@ -5,9 +5,10 @@
 #define IDI_ICON                        1
 #define IDB_ABOUTICON                   2
 #define IDS_APP_TITLE                   100
-#define IDS_TOOLTIP                     101
 #define IDM_TRAY                        200
 #define IDS_ABOUT                       300
+#define IDS_TOOLTIP_SINGULAR            301
+#define IDS_TOOLTIP_PLURAL              302
 
 // Next default values for new objects
 // 

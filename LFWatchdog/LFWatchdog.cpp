@@ -3,7 +3,6 @@
 //
 
 #include "stdafx.h"
-#include "LFCore.h"
 #include "LFCommDlg.h"
 #include "resource.h"
 #include "LFWatchdog.h"
@@ -22,35 +21,58 @@ BOOL AboutWindow = FALSE;
 class __declspec(uuid("f144ca00-1a4f-11df-8a39-0800200c9a66")) LFIcon;
 
 
-BOOL AddNotificationIcon(HWND hwnd)
+void PrepareTrayTip(wchar_t* Buf, size_t cCount)
+{
+	UINT Stores = LFGetStoreCount();
+
+	wchar_t Mask[256];
+	ENSURE(LoadString(AfxGetResourceHandle(), (Stores==1) ? IDS_TOOLTIP_SINGULAR : IDS_TOOLTIP_PLURAL, Mask, 256));
+	swprintf(Buf, cCount, Mask, Stores);
+}
+
+BOOL AddNotificationIcon(HWND hWnd)
 {
 	int sz = GetSystemMetrics(SM_CXSMICON);
 
 	NOTIFYICONDATA nid;
 	ZeroMemory(&nid, sizeof(nid));
 	nid.cbSize = sizeof(nid);
-	nid.hWnd = hwnd;
+	nid.hWnd = hWnd;
 	nid.uFlags = NIF_ICON | NIF_TIP | NIF_MESSAGE;
 	nid.guidItem = __uuidof(LFIcon);
 	nid.uVersion = NOTIFYICON_VERSION_4;
 	nid.uCallbackMessage = WMAPP_NOTIFYCALLBACK;
-	nid.hIcon = (HICON)LoadImage(AfxGetInstanceHandle(), MAKEINTRESOURCE(IDI_ICON), IMAGE_ICON, sz, sz, LR_LOADTRANSPARENT);
-	LoadString(AfxGetInstanceHandle(), IDS_TOOLTIP, nid.szTip, 256);
+	nid.hIcon = (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IDI_ICON), IMAGE_ICON, sz, sz, LR_LOADTRANSPARENT);
+	PrepareTrayTip(nid.szTip, 128);
 	Shell_NotifyIcon(NIM_ADD, &nid);
 
 	return Shell_NotifyIcon(NIM_SETVERSION, &nid);
 }
 
-BOOL DeleteNotificationIcon(HWND hwnd)
+BOOL DeleteNotificationIcon(HWND hWnd)
 {
 	NOTIFYICONDATA nid;
 	ZeroMemory(&nid, sizeof(nid));
 	nid.cbSize = sizeof(nid);
-	nid.hWnd = hwnd;
+	nid.hWnd = hWnd;
 	nid.uFlags = NIF_GUID;
 	nid.guidItem = __uuidof(LFIcon);
 
 	return Shell_NotifyIcon(NIM_DELETE, &nid);
+}
+
+BOOL OnStoresChanged(HWND hWnd)
+{
+	NOTIFYICONDATA nid;
+	ZeroMemory(&nid, sizeof(nid));
+	nid.cbSize = sizeof(nid);
+	nid.hWnd = hWnd;
+	nid.uFlags = NIF_TIP;
+	nid.uVersion = NOTIFYICON_VERSION_4;
+	PrepareTrayTip(nid.szTip, 128);
+	Shell_NotifyIcon(NIM_ADD, &nid);
+
+	return Shell_NotifyIcon(NIM_MODIFY, &nid);
 }
 
 void RegisterWindowClass(PCWSTR pszClassName, WNDPROC lpfnWndProc)
@@ -71,7 +93,7 @@ void RegisterWindowClass(PCWSTR pszClassName, WNDPROC lpfnWndProc)
 	RegisterClassEx(&wcex);
 }
 
-LRESULT OnMediaChanged(HWND /*hwnd*/, WPARAM wParam, LPARAM lParam)
+LRESULT OnMediaChanged(HWND /*hWnd*/, WPARAM wParam, LPARAM lParam)
 {
 	typedef struct
 	{
@@ -151,46 +173,51 @@ void ShowMenu(HWND hTargetWnd)
 	DestroyMenu(hMenu);
 }
 
-LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	switch (message)
+	if (message==theApp.p_MessageIDs->StoresChanged)
 	{
-	case WM_CREATE:
-		AddNotificationIcon(hwnd);
-		break;
-	case WM_DESTROY:
-		DeleteNotificationIcon(hwnd);
-		PostQuitMessage(0);
-		break;
-	case WMAPP_NOTIFYCALLBACK:
-		switch (LOWORD(lParam))
+		OnStoresChanged(hWnd);
+	}
+	else
+		switch (message)
 		{
-		case WM_RBUTTONUP:
-			ShowMenu(hwnd);
+		case WM_CREATE:
+			AddNotificationIcon(hWnd);
 			break;
-		case WM_LBUTTONDBLCLK:
-			ShowAboutDlg();
-			break;
-		}
-		break;
-	case WM_USER_MEDIACHANGED:
-		OnMediaChanged(hwnd, wParam, lParam);
-		break;
-	case WM_COMMAND:
-		switch (wParam)
-		{
-		case ID_APP_ABOUT:
-			ShowAboutDlg();
-			break;
-		case ID_APP_EXIT:
-			DeleteNotificationIcon(hwnd);
+		case WM_DESTROY:
+			DeleteNotificationIcon(hWnd);
 			PostQuitMessage(0);
 			break;
+		case WMAPP_NOTIFYCALLBACK:
+			switch (LOWORD(lParam))
+			{
+			case WM_RBUTTONUP:
+				ShowMenu(hWnd);
+				break;
+			case WM_LBUTTONDBLCLK:
+				ShowAboutDlg();
+				break;
+			}
+			break;
+		case WM_USER_MEDIACHANGED:
+			OnMediaChanged(hWnd, wParam, lParam);
+			break;
+		case WM_COMMAND:
+			switch (wParam)
+			{
+			case ID_APP_ABOUT:
+				ShowAboutDlg();
+				break;
+			case ID_APP_EXIT:
+				DeleteNotificationIcon(hWnd);
+				PostQuitMessage(0);
+				break;
+			}
+			break;
+		default:
+			return DefWindowProc(hWnd, message, wParam, lParam);
 		}
-		break;
-	default:
-		return DefWindowProc(hwnd, message, wParam, lParam);
-	}
 
 	return 0;
 }
@@ -199,25 +226,25 @@ HWND CreateHostWindow()
 {
 	RegisterWindowClass(szWindowClass, WndProc);
 
-	WCHAR szTitle[100];
-	LoadString(AfxGetInstanceHandle(), IDS_APP_TITLE, szTitle, ARRAYSIZE(szTitle));
+	WCHAR szTitle[256];
+	ENSURE(LoadString(AfxGetResourceHandle(), IDS_APP_TITLE, szTitle, ARRAYSIZE(szTitle)));
 
-	HWND hwnd = CreateWindow(szWindowClass, szTitle, WS_DISABLED, CW_USEDEFAULT, 0, 250, 200, NULL, NULL, AfxGetInstanceHandle(), NULL);
-	if (hwnd)
+	HWND hWnd = CreateWindow(szWindowClass, szTitle, WS_DISABLED, CW_USEDEFAULT, 0, 250, 200, NULL, NULL, AfxGetInstanceHandle(), NULL);
+	if (hWnd)
 	{
 		// Benachrichtigung, wenn sich Laufwerke ändern
 		LPITEMIDLIST ppidl;
-		if (SHGetSpecialFolderLocation(hwnd, CSIDL_DESKTOP, &ppidl)==NOERROR)
+		if (SHGetSpecialFolderLocation(hWnd, CSIDL_DESKTOP, &ppidl)==NOERROR)
 		{
 			SHChangeNotifyEntry shCNE;
 			shCNE.pidl = ppidl;
 			shCNE.fRecursive = TRUE;
 
-			ulSHChangeNotifyRegister = SHChangeNotifyRegister(hwnd, SHCNRF_ShellLevel,
+			ulSHChangeNotifyRegister = SHChangeNotifyRegister(hWnd, SHCNRF_ShellLevel,
 				SHCNE_DRIVEADD | SHCNE_DRIVEREMOVED | SHCNE_MEDIAINSERTED | SHCNE_MEDIAREMOVED,
 				WM_USER_MEDIACHANGED, 1, &shCNE);
 			ASSERT(ulSHChangeNotifyRegister);
-			return hwnd;
+			return hWnd;
 		}
 	}
 
@@ -267,6 +294,9 @@ BOOL CWatchdogApp::InitInstance()
 	// die Sie in Ihrer Anwendung verwenden möchten.
 	InitCtrls.dwICC = ICC_WIN95_CLASSES;
 	InitCommonControlsEx(&InitCtrls);
+
+	// Nachrichten
+	p_MessageIDs = LFGetMessageIDs();
 
 	CWinAppEx::InitInstance();
 	CreateHostWindow();
