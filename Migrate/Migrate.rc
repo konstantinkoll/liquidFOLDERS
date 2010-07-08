@@ -273,7 +273,7 @@ BEGIN
     ID_STORE_DELETE         "Deletes the selected store.\nDelete"
     ID_STORE_RENAME         "Renames the selected store.\nRename (F2)"
     ID_STORE_MAKEDEFAULT    "Makes the selected internal store the default store.\nMake default"
-    ID_STORE_PROPERTIES     "View and change the attributes of the selected store\nProperties"
+    ID_STORE_PROPERTIES     "View and change the properties of the selected store\nProperties"
     ID_STORE_SHOWCATEGORIES "Enables or disables categories in this list.\nShow categories"
 END
 

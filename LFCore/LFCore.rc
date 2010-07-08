@@ -224,10 +224,10 @@ BEGIN
     IDS_LFErrorStoreNotMounted "The store is not mounted right now."
     IDS_LFErrorMutexError   "liquidFOLDERS is currently blocked by another process."
     IDS_LFErrorIllegalAttribute 
-                            "At least one of the selected items does not possesss the attribute."
+                            "At least one of the selected items does not possesss the property."
     IDS_LFErrorIllegalItemType 
                             "At least one of the selected items does not support this operation."
-    IDS_LFErrorIllegalValue "At least one of the attribute values is illegal."
+    IDS_LFErrorIllegalValue "At least one of the property values is illegal."
     IDS_LFErrorIndexNotCreated "The store index could not be created."
     IDS_LFErrorIndexAccessError 
                             "The store index cannot be accessed. Please run scheduled maintenance."

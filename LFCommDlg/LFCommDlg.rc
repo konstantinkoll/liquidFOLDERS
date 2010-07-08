@@ -390,7 +390,7 @@ END
 
 IDD_ITEMTEMPLATE DIALOGEX 0, 0, 277, 338
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Attribute ergänzen"
+CAPTION "Eigenschaften ergänzen"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     CONTROL         "Inspektor",IDC_INSPECTOR,"CInspectorGrid",WS_BORDER | WS_GROUP | WS_TABSTOP,14,35,249,248
@@ -400,7 +400,7 @@ BEGIN
     PUSHBUTTON      "Überspringen",IDC_SKIP,64,317,60,14,WS_GROUP
     PUSHBUTTON      "Abbrechen",IDCANCEL,131,317,50,14,WS_GROUP
     GROUPBOX        "Inspektor",IDC_STATIC,7,7,263,304
-    LTEXT           "Nicht vorhandene Attribute werden mit den Angaben unten ergänzt.\nFalls dies nicht gewünscht wird, klicken Sie bitte auf „Überspringen“.",IDC_STATIC,14,16,249,18
+    LTEXT           "Nicht vorhandene Eigenschaften werden mit den Angaben unten ergänzt.\nFalls dies nicht gewünscht wird, klicken Sie bitte auf „Überspringen“.",IDC_STATIC,14,16,249,18
 END
 
 IDD_STOREMAINTENANCE DIALOGEX 0, 0, 200, 95
@@ -845,7 +845,7 @@ END
 
 IDD_ITEMTEMPLATE DIALOGEX 0, 0, 277, 338
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "File attributes"
+CAPTION "Add properties"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     CONTROL         "Inspector",IDC_INSPECTOR,"CInspectorGrid",WS_BORDER | WS_GROUP | WS_TABSTOP,14,35,249,248
@@ -855,7 +855,7 @@ BEGIN
     PUSHBUTTON      "Skip",IDC_SKIP,64,317,50,14,WS_GROUP
     PUSHBUTTON      "Cancel",IDCANCEL,121,317,50,14,WS_GROUP
     GROUPBOX        "Inspector",IDC_STATIC,7,7,263,304
-    LTEXT           "Missing file attributes will be set using the values below.\nIf you don't want your files to be amended, press ""Skip"".",IDC_STATIC,14,16,249,18
+    LTEXT           "Missing file properties will be set using the values below.\nIf you don't want your files to be amended, press ""Skip"".",IDC_STATIC,14,16,249,18
 END
 
 IDD_STOREMAINTENANCE DIALOGEX 0, 0, 200, 95
@@ -1316,7 +1316,7 @@ END
 
 IDD_ITEMTEMPLATE DIALOGEX 0, 0, 277, 338
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Atributos de archivo"
+CAPTION "Propiedades de archivo"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     CONTROL         "Inspector",IDC_INSPECTOR,"CInspectorGrid",WS_BORDER | WS_GROUP | WS_TABSTOP,14,42,249,241
@@ -1326,7 +1326,7 @@ BEGIN
     PUSHBUTTON      "Omitir",IDC_SKIP,64,317,50,14,WS_GROUP
     PUSHBUTTON      "Cancelar",IDCANCEL,121,317,50,14,WS_GROUP
     GROUPBOX        "Inspector",IDC_STATIC,7,7,263,304
-    LTEXT           "Los atributos faltantes del archivo serán establecidos usando los valores que a continuación se enlistan. Si usted no quiere que sus archivos sean corregidos, presione ""Omitir"".",IDC_STATIC,14,16,249,26
+    LTEXT           "Las propiedades faltantes del archivo serán establecidos usando los valores que a continuación se enlistan. Si usted no quiere que sus archivos sean corregidos, presione ""Omitir"".",IDC_STATIC,14,16,249,26
 END
 
 IDD_STOREMAINTENANCE DIALOGEX 0, 0, 220, 95

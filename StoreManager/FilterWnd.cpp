@@ -30,7 +30,7 @@ void CFilterWnd::AddConditionItem(BOOL focus)
 	lvi.cColumns = 2;
 	lvi.puColumns = puColumns;
 	lvi.iItem = m_wndList.GetItemCount();
-	lvi.pszText = L"Attribute";
+	lvi.pszText = L"Property";
 	lvi.iImage = -1;
 	int idx = m_wndList.InsertItem(&lvi);
 

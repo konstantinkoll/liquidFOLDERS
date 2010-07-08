@@ -378,7 +378,7 @@ BEGIN
     LTEXT           "Ribbon color:",IDC_STATIC,14,256,43,8
     LTEXT           "Background color for selected view (""%s""):",IDC_BACKGROUNDTEXT,119,256,99,19
     LTEXT           "All views available in this context:",IDC_STATIC,14,17,160,8
-    LTEXT           "Include these attributes:",IDC_STATIC,198,17,239,8
+    LTEXT           "Include these properties:",IDC_STATIC,198,17,239,8
 END
 
 IDD_SORTOPTIONS DIALOGEX 0, 0, 283, 319
@@ -390,7 +390,7 @@ BEGIN
     DEFPUSHBUTTON   "OK",IDOK,7,298,50,14,WS_GROUP
     PUSHBUTTON      "Cancel",IDCANCEL,65,298,50,14,WS_GROUP
     GROUPBOX        "",IDC_ATTRBOX,7,7,269,235,WS_GROUP
-    LTEXT           "All attributes available in this context:",IDC_STATIC,14,17,254,8
+    LTEXT           "All properties available in this context:",IDC_STATIC,14,17,254,8
     CONTROL         "&Group items into subfolders",IDC_AUTODIRS,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,42,262,141,10
     CONTROL         "&Ascending",IDC_ASCENDING,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,219,259,49,10
     CONTROL         "&Descending",IDC_DESCENDING,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,219,272,50,10
@@ -509,10 +509,10 @@ BEGIN
     IDS_FILES_PLURAL        "%d files, %s"
     IDS_REGFILEFILTER       "Registry files"
     IDS_TXTFILEFILTER       "Text files"
-    IDS_ATTRIBUTENOTSORTABLE "This attribute is not suitable for sorting."
+    IDS_ATTRIBUTENOTSORTABLE "This property is not suitable for sorting."
     IDS_NOITEMSSELECTED     "No items selected"
     IDS_MULTIPLETYPESSELECTED "Multiple types, %d items"
-    IDS_MOREATTRIBUTES      "&More attributes..."
+    IDS_MOREATTRIBUTES      "&More properties..."
     IDS_TYPE_DRIVE_SINGULAR "%d removable drive"
 END
 
@@ -557,7 +557,7 @@ END
 
 STRINGTABLE 
 BEGIN
-    ID_APP_VIEW_DETAILS     "Displays files as a report with selectable attribute columns.\nDetails"
+    ID_APP_VIEW_DETAILS     "Displays files as a report with selectable property columns.\nDetails"
     ID_APP_VIEW_TILES       "Displays files as tiles, including a decent sized icon and detailed information.\nTiles"
     ID_APP_VIEW_PREVIEW     "Displays files as preview images.\nPreview"
     ID_APP_VIEW_CALENDAR_YEAR 
@@ -566,7 +566,7 @@ BEGIN
                             "Places files on a calendar that displays a whole week.\nWeek"
     ID_APP_VIEW_CALENDAR_DAY 
                             "Places files on a calendar the displays a single day at a time.\nDay"
-    ID_APP_VIEW_GLOBE       "Places file on a globe depening on their location attribute.\nGlobe"
+    ID_APP_VIEW_GLOBE       "Places file on a globe depening on their location property.\nGlobe"
     ID_APP_VIEW_TAGCLOUD    "Displays files as tag cloud. This is the only view that can show files sorted by their tags.\nTag cloud"
     ID_APP_VIEW_TIMELINE    "Displays files on a timeline.\nTimeline"
     ID_CONTEXT_ALWAYSSAVE   "Immediately saves all changes to the view settings of this context.\nSave all changes"
@@ -642,8 +642,8 @@ END
 STRINGTABLE 
 BEGIN
     ID_INSPECTOR_TOGGLEICON "Shows or hides the icon area.\nIcon area"
-    ID_INSPECTOR_TREEVIEW   "Shows all attributes in a tree.\nTree view"
-    ID_INSPECTOR_ALPHABETIC "Shows all attributes sorted alphabetically.\nAlphabetic view"
+    ID_INSPECTOR_TREEVIEW   "Shows all properties in a tree.\nTree view"
+    ID_INSPECTOR_ALPHABETIC "Shows all properties sorted alphabetically.\nAlphabetic view"
     ID_INSPECTOR_EXPANDALL  "Expands all property groups.\nExpand all"
     ID_INSPECTOR_EXPORT     "Saves the properties as a text file.\nExport properties"
 END
@@ -736,8 +736,8 @@ STRINGTABLE
 BEGIN
     IDS_SUBFOLDERS_MANDATORY "Subfolders are mandatory for this view."
     IDS_SUBFOLDERS_NOTAVAIL "Subfolders are not available in this context."
-    IDS_GROUPBOX_SORT       "Sort items by this attribute"
-    IDS_GROUPBOX_GROUP      "Arrange items by this attribute"
+    IDS_GROUPBOX_SORT       "Sort items by this property"
+    IDS_GROUPBOX_GROUP      "Arrange items by this property"
 END
 
 STRINGTABLE 

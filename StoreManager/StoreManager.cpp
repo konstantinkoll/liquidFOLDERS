@@ -365,8 +365,8 @@ void CStoreManagerApp::LoadViewOptions(int context)
 	m_Views[context].TagcloudAlphabetic = GetInt(_T("TagcloudSortAlphabetic"), TRUE);
 	m_Views[context].TagcloudOmitRare = GetInt(_T("TagcloudOmitRare"), FALSE);
 	m_Views[context].TagcloudUseSize = GetInt(_T("TagcloudUseSize"), TRUE);
-	m_Views[context].TagcloudUseColors = GetInt(_T("TagcloudUseColors"), FALSE);
-	m_Views[context].TagcloudUseOpacity = GetInt(_T("TagcloudUseOpacity"), TRUE);
+	m_Views[context].TagcloudUseColors = GetInt(_T("TagcloudUseColors"), TRUE);
+	m_Views[context].TagcloudUseOpacity = GetInt(_T("TagcloudUseOpacity"), FALSE);
 	m_Views[context].Changed = FALSE;
 
 	for (UINT a=0; a<LFAttributeCount; a++)
