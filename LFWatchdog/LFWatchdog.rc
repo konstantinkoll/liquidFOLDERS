@@ -11,6 +11,7 @@
 #include "targetver.h"
 #endif
 #include "afxres.h"
+#include "..\LFCommDlg\resource.h"
 
 /////////////////////////////////////////////////////////////////////////////
 #undef APSTUDIO_READONLY_SYMBOLS
@@ -113,6 +114,10 @@ BEGIN
     BEGIN
         MENUITEM "&Über Watchdog...",           ID_APP_ABOUT
         MENUITEM SEPARATOR
+        MENUITEM "&StoreManager starten",       ID_APP_NEWSTOREMANAGER
+        MENUITEM "&Migrations-Assistenten starten", ID_APP_NEWMIGRATE
+        MENUITEM "&FileDrop starten",           ID_APP_NEWFILEDROP
+        MENUITEM SEPARATOR
         MENUITEM "&Beenden",                    ID_APP_EXIT
     END
 END
@@ -153,6 +158,10 @@ BEGIN
     POPUP "POPUP"
     BEGIN
         MENUITEM "&About...",                   ID_APP_ABOUT
+        MENUITEM SEPARATOR
+        MENUITEM "Launch &StoreManager",        ID_APP_NEWSTOREMANAGER
+        MENUITEM "Launch &Migration Wizard",    ID_APP_NEWMIGRATE
+        MENUITEM "Launch &FileDrop",            ID_APP_NEWFILEDROP
         MENUITEM SEPARATOR
         MENUITEM "&Quit",                       ID_APP_EXIT
     END
@@ -195,6 +204,10 @@ BEGIN
     BEGIN
         MENUITEM "&Sobre Watchdog...",          ID_APP_ABOUT
         MENUITEM SEPARATOR
+        MENUITEM "Empezar &StoreManager",       ID_APP_NEWSTOREMANAGER
+        MENUITEM "Empezar &Migration Wizard",   ID_APP_NEWMIGRATE
+        MENUITEM "Empezar &FileDrop",           ID_APP_NEWFILEDROP
+        MENUITEM SEPARATOR
         MENUITEM "&Terminar",                   ID_APP_EXIT
     END
 END
@@ -235,6 +248,10 @@ BEGIN
     POPUP "POPUP"
     BEGIN
         MENUITEM "Concernant &Watchdog...",     ID_APP_ABOUT
+        MENUITEM SEPARATOR
+        MENUITEM "Commencer &StoreManager",     ID_APP_NEWSTOREMANAGER
+        MENUITEM "Commencer &Migration Wizard", ID_APP_NEWMIGRATE
+        MENUITEM "Commencer &FileDrop",         ID_APP_NEWFILEDROP
         MENUITEM SEPARATOR
         MENUITEM "&Quitter",                    ID_APP_EXIT
     END
@@ -283,6 +300,7 @@ BEGIN
     "#include ""targetver.h""\r\n"
     "#endif\r\n"
     "#include ""afxres.h""\r\n"
+    "#include ""..\\LFCommDlg\\resource.h""\r\n"
     "\0"
 END
 

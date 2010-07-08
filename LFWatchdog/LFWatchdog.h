@@ -16,7 +16,6 @@ class CWatchdogApp : public LFApplication
 public:
 	CWatchdogApp();
 
-	CString path;
 	LFMessageIDs* p_MessageIDs;
 
 	virtual BOOL InitInstance();

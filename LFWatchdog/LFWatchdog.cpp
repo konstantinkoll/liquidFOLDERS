@@ -6,6 +6,7 @@
 #include "LFCommDlg.h"
 #include "resource.h"
 #include "LFWatchdog.h"
+#include <io.h>
 #include <shlobj.h>
 #include <shlwapi.h>
 
@@ -162,6 +163,12 @@ void ShowMenu(HWND hTargetWnd)
 	SetMenuDefaultItem(hSubMenu, ID_APP_ABOUT, 0);
 	if (AboutWindow)
 		EnableMenuItem(hSubMenu, ID_APP_ABOUT, MF_BYCOMMAND | MF_GRAYED);
+	if (_access(theApp.path+"StoreManager.exe", 0)!=0)
+		EnableMenuItem(hSubMenu, ID_APP_NEWSTOREMANAGER, MF_BYCOMMAND | MF_GRAYED);
+	if (_access(theApp.path+"Migrate.exe", 0)!=0)
+		EnableMenuItem(hSubMenu, ID_APP_NEWMIGRATE, MF_BYCOMMAND | MF_GRAYED);
+	if (_access(theApp.path+"FileDrop.exe", 0)!=0)
+		EnableMenuItem(hSubMenu, ID_APP_NEWFILEDROP, MF_BYCOMMAND | MF_GRAYED);
 
 	POINT pos;
 	GetCursorPos(&pos);
@@ -208,6 +215,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			{
 			case ID_APP_ABOUT:
 				ShowAboutDlg();
+				break;
+			case ID_APP_NEWSTOREMANAGER:
+				theApp.OnAppNewStoreManager();
+				break;
+			case ID_APP_NEWMIGRATE:
+				theApp.OnAppNewMigrate();
+				break;
+			case ID_APP_NEWFILEDROP:
+				theApp.OnAppNewFileDrop();
 				break;
 			case ID_APP_EXIT:
 				DeleteNotificationIcon(hWnd);
@@ -256,12 +272,6 @@ HWND CreateHostWindow()
 
 CWatchdogApp::CWatchdogApp()
 {
-	// Anwendungspfad
-	TCHAR szPathName[MAX_PATH];
-	::GetModuleFileName(NULL, szPathName, MAX_PATH);
-	LPTSTR pszFileName = _tcsrchr(szPathName, '\\')+1;
-	*pszFileName = '\0';
-	path = szPathName;
 }
 
 
