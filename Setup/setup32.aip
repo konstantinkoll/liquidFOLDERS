@@ -40,8 +40,13 @@
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiDirsComponent">
     <ROW Directory="APPDIR" Directory_Parent="TARGETDIR" DefaultDir="APPDIR:." IsPseudoRoot="1"/>
+    <ROW Directory="AppDataFolder" Directory_Parent="TARGETDIR" DefaultDir="AppDat~1|AppDataFolder" IsPseudoRoot="1"/>
+    <ROW Directory="Microsoft_DIR" Directory_Parent="AppDataFolder" DefaultDir="Micros~1|Microsoft"/>
+    <ROW Directory="Neues_Verzeichnis_DIR" Directory_Parent="Microsoft_DIR" DefaultDir="Intern~1|Internet Explorer"/>
     <ROW Directory="ProgramMenuFolder" Directory_Parent="TARGETDIR" DefaultDir="Progra~1|ProgramMenuFolder" IsPseudoRoot="1"/>
+    <ROW Directory="Quick_Launch_DIR" Directory_Parent="Neues_Verzeichnis_DIR" DefaultDir="QuickL~1|Quick Launch"/>
     <ROW Directory="SHORTCUTDIR" Directory_Parent="TARGETDIR" DefaultDir="SHORTC~1|SHORTCUTDIR" IsPseudoRoot="1"/>
+    <ROW Directory="StartMenuFolder" Directory_Parent="TARGETDIR" DefaultDir="StartM~1|StartMenuFolder" IsPseudoRoot="1"/>
     <ROW Directory="SystemFolder" Directory_Parent="TARGETDIR" DefaultDir="System~1|SystemFolder" IsPseudoRoot="1"/>
     <ROW Directory="TARGETDIR" DefaultDir="SourceDir"/>
   </COMPONENT>
@@ -56,6 +61,7 @@
     <ROW Component="LFWatchdog" ComponentId="{AEAD05B4-A0D1-4F74-B471-ECEB9357358F}" Directory_="APPDIR" Attributes="4" KeyPath="LFWatchdog"/>
     <ROW Component="LFWatchdog.exe" ComponentId="{8B20F94F-7420-4E03-98DD-DA9A19F0C59E}" Directory_="APPDIR" Attributes="0" KeyPath="LFWatchdog.exe"/>
     <ROW Component="Migrate.exe" ComponentId="{0D89D6BC-65FF-455A-BA9B-AFBD4F05BDE3}" Directory_="APPDIR" Attributes="0" KeyPath="Migrate.exe"/>
+    <ROW Component="Quick_Launch" ComponentId="{304CC4C3-1A53-46C6-B2CE-40BE6BF512B0}" Directory_="Quick_Launch_DIR" Attributes="0"/>
     <ROW Component="SHORTCUTDIR" ComponentId="{252E79F3-5959-444B-A7EA-CD698BA212E7}" Directory_="SHORTCUTDIR" Attributes="0"/>
     <ROW Component="StoreManager.exe" ComponentId="{CD94E9D9-3367-4F36-BB82-B2FCDDE6250E}" Directory_="APPDIR" Attributes="0" KeyPath="StoreManager.exe"/>
     <ROW Component="Visual_C_2008_SP1" ComponentId="{E48EF50E-DCBC-42F1-AE1B-CF798B1F9753}" Directory_="APPDIR" Attributes="4" KeyPath="Visual_C_2008_SP1" Options="2"/>
@@ -64,7 +70,7 @@
     <ROW Feature="FileDrop" Title="FileDrop" Description="FileDrop" Display="3" Level="1" Directory_="APPDIR" Attributes="8" Components="FileDrop.exe AI_CustomARPName AI_DisableModify"/>
     <ROW Feature="MigrationWizard" Title="MigrationWizard" Description="Migration Wizard" Display="5" Level="1" Directory_="APPDIR" Attributes="8" Components="Migrate.exe AI_CustomARPName AI_DisableModify"/>
     <ROW Feature="Visual_C_2008_SP1_Redistributable" Title="Visual C++ 2008 SP1 Redistributable" Description="Visual C++ 2008 SP1 Redistributable" Display="0" Level="1" Attributes="24" Components="Visual_C_2008_SP1 AI_CustomARPName AI_DisableModify"/>
-    <ROW Feature="liquidFOLDERS" Title="liquidFOLDERS" Description="liquidFOLDERS" Display="0" Level="1" Directory_="APPDIR" Attributes="24" Components="LFCommDlg.dll LFCore.dll LFNamespaceExtension.dll StoreManager.exe SHORTCUTDIR AI_CustomARPName AI_ExePath AI_DisableModify LFWatchdog.exe LFWatchdog"/>
+    <ROW Feature="liquidFOLDERS" Title="liquidFOLDERS" Description="liquidFOLDERS" Display="0" Level="1" Directory_="APPDIR" Attributes="24" Components="LFCommDlg.dll LFCore.dll LFNamespaceExtension.dll StoreManager.exe SHORTCUTDIR AI_CustomARPName AI_ExePath AI_DisableModify LFWatchdog.exe LFWatchdog Quick_Launch"/>
     <ATTRIBUTE name="CurrentFeature" value="liquidFOLDERS"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiFilesComponent">
@@ -289,6 +295,7 @@
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiCreateFolderComponent">
     <ROW Directory_="SHORTCUTDIR" Component_="SHORTCUTDIR"/>
+    <ROW Directory_="Quick_Launch_DIR" Component_="Quick_Launch"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiCustActComponent">
     <ROW Action="AI_AppSearchEx" Type="1" Source="Prereq.dll" Target="DoAppSearchEx"/>
@@ -398,7 +405,8 @@
     <ROW Shortcut="FileDrop" Directory_="SHORTCUTDIR" Name="FileDrop" Component_="FileDrop.exe" Target="[#FileDrop.exe]" Description="FileDrop" Hotkey="0" IconIndex="0" ShowCmd="1" WkDir="APPDIR"/>
     <ROW Shortcut="Migration_Wizard" Directory_="SHORTCUTDIR" Name="Migrat~1|Migration Wizard" Component_="Migrate.exe" Target="[#Migrate.exe]" Description="Migration Wizard" Hotkey="0" IconIndex="0" ShowCmd="1" WkDir="APPDIR"/>
     <ROW Shortcut="StoreManager" Directory_="SHORTCUTDIR" Name="StoreM~1|StoreManager" Component_="StoreManager.exe" Target="[#StoreManager.exe]" Description="StoreManager" Hotkey="0" IconIndex="0" ShowCmd="1" WkDir="APPDIR"/>
-    <ROW Shortcut="StoreManager_1" Directory_="ProgramMenuFolder" Name="liquid~1|liquidFOLDERS" Component_="StoreManager.exe" Target="[#StoreManager.exe]" Description="StoreManager" Hotkey="0" Icon_="liquidFOLDERS.exe" IconIndex="0" ShowCmd="1" WkDir="APPDIR"/>
+    <ROW Shortcut="StoreManager_1" Directory_="Quick_Launch_DIR" Name="StoreM~1|StoreManager" Component_="StoreManager.exe" Target="[#StoreManager.exe]" Description="liquidFOLDERS StoreManager" Hotkey="0" IconIndex="0" ShowCmd="1" WkDir="APPDIR"/>
+    <ROW Shortcut="StoreManager_2" Directory_="StartMenuFolder" Name="liquid~1|liquidFOLDERS" Component_="StoreManager.exe" Target="[#StoreManager.exe]" Description="liquidFOLDERS StoreManager" Hotkey="0" Icon_="liquidFOLDERS.exe" IconIndex="0" ShowCmd="1" WkDir="APPDIR"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiTextStyleComponent">
     <ROW TextStyle="BlueText" FaceName="Arial" Size="12" Color="16711680" StyleBits="0" MsiKey="BlueText"/>
