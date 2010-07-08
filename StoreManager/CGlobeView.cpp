@@ -148,6 +148,7 @@ void CGlobeView::SetSearchResult(LFSearchResult* _result)
 		{
 			m_Locations = new Location[_result->m_ItemCount];
 
+			// Compute locations
 			for (UINT a=0; a<_result->m_ItemCount; a++)
 			{
 				ZeroMemory(&m_Locations[a], sizeof(Location));
@@ -172,6 +173,22 @@ void CGlobeView::SetSearchResult(LFSearchResult* _result)
 					m_Locations[a].selected = FALSE;
 				}
 			}
+
+			// Set focus
+			if (!m_Locations[FocusItem].valid)
+				for (UINT a=(UINT)FocusItem; a<_result->m_ItemCount; a++)
+					if (m_Locations[a].valid)
+					{
+						FocusItem = a;
+						break;
+					}
+			if (!m_Locations[FocusItem].valid)
+				for (UINT a=0; a<_result->m_ItemCount; a++)
+					if (m_Locations[a].valid)
+					{
+						FocusItem = a;
+						break;
+					}
 		}
 
 	UpdateScene(TRUE);

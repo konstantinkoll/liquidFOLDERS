@@ -137,6 +137,22 @@ void CTagcloudView::SetSearchResult(LFSearchResult* _result)
 									m_Tags[a].color = (0x800000-(m_Tags[a].alpha-192)*0x020000) | (0x000080+(m_Tags[a].alpha-192)*2);
 								}
 						}
+
+			// Set focus
+			if (!m_Tags[FocusItem].cnt)
+				for (UINT a=(UINT)FocusItem; a<_result->m_ItemCount; a++)
+					if (m_Tags[a].cnt)
+					{
+						FocusItem = a;
+						break;
+					}
+			if (!m_Tags[FocusItem].cnt)
+				for (UINT a=0; a<_result->m_ItemCount; a++)
+					if (m_Tags[a].cnt)
+					{
+						FocusItem = a;
+						break;
+					}
 		}
 
 	result = _result;
@@ -204,7 +220,7 @@ int CTagcloudView::ItemAtPosition(CPoint point)
 
 void CTagcloudView::InvalidateItem(int n)
 {
-	if ((m_Tags) && (result))
+	if ((m_Tags) && (result) && (n!=-1))
 		InvalidateRect(&m_Tags[n].rect, FALSE);
 }
 
