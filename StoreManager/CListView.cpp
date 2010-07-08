@@ -33,7 +33,7 @@ void CListView::Create(CWnd* pParentWnd, LFSearchResult* _result, UINT _ViewID)
 	rect.SetRectEmpty();
 	CWnd::Create(className, _T(""), dwStyle, rect, pParentWnd, AFX_IDW_PANE_FIRST);
 
-	CFileView::Create(_result, _ViewID);
+	CFileView::Create(_result, _ViewID, FALSE, FALSE);
 }
 
 void CListView::AdjustLayout()

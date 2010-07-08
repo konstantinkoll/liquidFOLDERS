@@ -28,10 +28,11 @@ public:
 	CTagcloudView();
 	virtual ~CTagcloudView();
 
-	void Create(CWnd* _pParentWnd, LFSearchResult* _result);
 	virtual void SelectItem(int n, BOOL select=TRUE, BOOL InternalCall=FALSE);
 	virtual int GetSelectedItem();
 	virtual int GetNextSelectedItem(int n);
+
+	void Create(CWnd* _pParentWnd, LFSearchResult* _result);
 
 protected:
 	CFont m_Fonts[22];
@@ -42,6 +43,7 @@ protected:
 	virtual void SetSearchResult(LFSearchResult* _result);
 	virtual BOOL IsSelected(int n);
 	virtual int ItemAtPosition(CPoint point);
+	virtual void InvalidateItem(int n);
 	virtual CMenu* GetContextMenu();
 
 	CFont* GetFont(int idx);

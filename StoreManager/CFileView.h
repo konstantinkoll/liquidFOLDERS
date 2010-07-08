@@ -28,7 +28,7 @@ public:
 	virtual void OnContextMenu(CPoint point);				// Kontextmenü für das View
 	virtual void OnItemContextMenu(int idx, CPoint point);	// Kontextmenu für ein Item
 
-	void Create(LFSearchResult* _result, UINT _ViewID);
+	void Create(LFSearchResult* _result, UINT _ViewID, BOOL _EnableHover=TRUE, BOOL _EnableShiftSelection=TRUE);
 	void OnUpdateViewOptions(int _ActiveContextID=-1, int _ViewID=-1, BOOL Force=FALSE);
 	void OnUpdateSearchResult(LFSearchResult* _result, int _FocusItem);
 	BOOL HandleDefaultKeys(UINT nChar, UINT nRepCnt, UINT nFlags);
@@ -44,13 +44,17 @@ protected:
 	UINT RibbonColor;
 	UINT ViewID;
 	BOOL HideFileExt;
+	BOOL EnableHover;
+	BOOL EnableShiftSelection;
 	int FocusItem;
+	int HoverItem;
 	int NcDividerLineY;
 
 	virtual void SetViewOptions(UINT _ViewID, BOOL Force);
 	virtual void SetSearchResult(LFSearchResult* _result);
 	virtual BOOL IsSelected(int n);
 	virtual int ItemAtPosition(CPoint point);
+	virtual void InvalidateItem(int n);
 	virtual CMenu* GetContextMenu();
 
 	void AppendContextMenu(CMenu* menu);
@@ -62,6 +66,8 @@ protected:
 	afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);
 	afx_msg void OnRButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnRButtonUp(UINT nFlags, CPoint point);
+	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
+	afx_msg void OnMouseLeave();
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg BOOL OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message);
 	afx_msg void OnToggleGrannyMode();
@@ -70,4 +76,7 @@ protected:
 	afx_msg void OnUpdateCommands(CCmdUI* pCmdUI);
 	afx_msg LRESULT OnItemsDropped(WPARAM wParam, LPARAM lParam);
 	DECLARE_MESSAGE_MAP()
+
+private:
+	BOOL MouseInView;
 };

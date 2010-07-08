@@ -107,7 +107,7 @@ void CGlobeView::Create(CWnd* _pParentWnd, LFSearchResult* _result)
 	rect.SetRectEmpty();
 	CWnd::Create(className, _T(""), dwStyle, rect, _pParentWnd, AFX_IDW_PANE_FIRST);
 
-	CFileView::Create(_result, LFViewGlobe);
+	CFileView::Create(_result, LFViewGlobe, FALSE, FALSE);
 }
 
 void CGlobeView::SetViewOptions(UINT /*_ViewID*/, BOOL Force)

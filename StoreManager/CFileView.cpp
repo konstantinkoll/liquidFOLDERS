@@ -16,16 +16,20 @@ CFileView::CFileView()
 	ActiveContextID = LFContextDefault;
 	ViewID = LFViewAutomatic;
 	result = NULL;
-	FocusItem = -1;
+	FocusItem = HoverItem = -1;
 	NcDividerLineY = 0;
+	MouseInView = FALSE;
 }
 
 CFileView::~CFileView()
 {
 }
 
-void CFileView::Create(LFSearchResult* _result, UINT _ViewID)
+void CFileView::Create(LFSearchResult* _result, UINT _ViewID, BOOL _EnableHover, BOOL _EnableShiftSelection)
 {
+	EnableHover = _EnableHover;
+	EnableShiftSelection = _EnableShiftSelection;
+
 	OnUpdateViewOptions(_result->m_ContextView, _ViewID, TRUE);
 	OnUpdateSearchResult(_result, 0);
 }
@@ -120,6 +124,11 @@ BOOL CFileView::IsSelected(int /*n*/)
 int CFileView::ItemAtPosition(CPoint /*point*/)
 {
 	return -1;
+}
+
+void CFileView::InvalidateItem(int /*n*/)
+{
+	Invalidate();
 }
 
 void CFileView::EditLabel(int /*n*/)
@@ -345,6 +354,8 @@ BEGIN_MESSAGE_MAP(CFileView, CWnd)
 	ON_WM_LBUTTONDBLCLK()
 	ON_WM_RBUTTONDOWN()
 	ON_WM_RBUTTONUP()
+	ON_WM_MOUSEMOVE()
+	ON_WM_MOUSELEAVE()
 	ON_WM_KEYDOWN()
 	ON_WM_SETCURSOR()
 	ON_COMMAND(ID_VIEW_GRANNY, OnToggleGrannyMode)
@@ -395,7 +406,7 @@ void CFileView::OnLButtonDown(UINT nFlags, CPoint point)
 		}
 		else
 		{
-			if (nFlags & MK_SHIFT)
+			if ((nFlags & MK_SHIFT) && (EnableShiftSelection))
 			{
 				for (UINT a=0; a<result->m_ItemCount; a++)
 					SelectItem(a, (((int)a>=n) && ((int)a<=FocusItem)) || (((int)a>=FocusItem) && ((int)a<=n)), TRUE);
@@ -456,8 +467,9 @@ void CFileView::OnRButtonDown(UINT nFlags, CPoint point)
 			else
 				if (FocusItem!=n)
 				{
-					FocusItem = n;
-					Invalidate();
+					std::swap(FocusItem, n);
+					InvalidateItem(n);
+					InvalidateItem(FocusItem);
 				}
 	}
 	else
@@ -491,6 +503,47 @@ void CFileView::OnRButtonUp(UINT nFlags, CPoint point)
 
 	ClientToScreen(&point);
 	OnContextMenu(point);
+}
+
+void CFileView::OnMouseMove(UINT nFlags, CPoint point)
+{
+	if (EnableHover)
+	{
+		if (!MouseInView)
+		{
+			TRACKMOUSEEVENT tme;
+			ZeroMemory(&tme, sizeof(tme));
+			tme.cbSize = sizeof(TRACKMOUSEEVENT);
+			tme.dwFlags = TME_LEAVE;
+			tme.hwndTrack = GetSafeHwnd();
+			TrackMouseEvent(&tme);
+
+			MouseInView = TRUE;
+		}
+
+		int idx = ItemAtPosition(point);
+		if (idx!=HoverItem)
+		{
+			std::swap(idx, HoverItem);
+			InvalidateItem(idx);
+			InvalidateItem(HoverItem);
+		}
+	}
+
+	CWnd::OnMouseMove(nFlags, point);
+}
+
+void CFileView::OnMouseLeave()
+{
+	if (HoverItem!=-1)
+	{
+		int idx = HoverItem;
+		HoverItem = -1;
+		InvalidateItem(idx);
+	}
+
+	MouseInView = FALSE;
+	CWnd::OnMouseLeave();
 }
 
 void CFileView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)

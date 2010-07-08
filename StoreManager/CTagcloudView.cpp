@@ -45,7 +45,7 @@ void CTagcloudView::Create(CWnd* _pParentWnd, LFSearchResult* _result)
 	rect.SetRectEmpty();
 	CWnd::Create(className, _T(""), dwStyle, rect, _pParentWnd, AFX_IDW_PANE_FIRST);
 
-	CFileView::Create(_result, LFViewTagcloud);
+	CFileView::Create(_result, LFViewTagcloud, TRUE);//theApp.osInfo.dwMajorVersion>=6);
 }
 
 void CTagcloudView::SetViewOptions(UINT /*_ViewID*/, BOOL Force)
@@ -199,6 +199,12 @@ int CTagcloudView::ItemAtPosition(CPoint point)
 			}
 
 	return -1;
+}
+
+void CTagcloudView::InvalidateItem(int n)
+{
+	if ((m_Tags) && (result))
+		InvalidateRect(&m_Tags[n].rect, FALSE);
 }
 
 CMenu* CTagcloudView::GetContextMenu()
@@ -424,12 +430,12 @@ void CTagcloudView::OnPaint()
 
 				COLORREF color = m_ViewParameters.TagcloudUseColors ? m_Tags[a].color : text;
 
-				if (m_Tags[a].selected)
+				if ((m_Tags[a].selected) || (HoverItem==(int)a))
 				{
 					if (hTheme)
 					{
 						const int StateIDs[4] = { LISS_NORMAL, LISS_HOT, GetFocus()!=this ? LISS_SELECTEDNOTFOCUS : LISS_SELECTED, LISS_HOTSELECTED };
-						UINT state = m_Tags[a].selected ? 2 : 0;
+						UINT state = (m_Tags[a].selected ? 2 : 0) | (HoverItem==(int)a ? 1 : 0);
 						theApp.zDrawThemeBackground(hTheme, dc.m_hDC, LVP_LISTITEM, StateIDs[state], rect, rect);
 					}
 					else

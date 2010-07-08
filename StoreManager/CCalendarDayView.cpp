@@ -42,7 +42,7 @@ void CCalendarDayView::Create(CWnd* _pParentWnd, LFSearchResult* _result)
 	rect.SetRectEmpty();
 	CWnd::Create(className, _T(""), dwStyle, rect, _pParentWnd, AFX_IDW_PANE_FIRST);
 
-	CFileView::Create(_result, LFViewCalendarDay);
+	CFileView::Create(_result, LFViewCalendarDay, FALSE, FALSE);
 }
 
 void CCalendarDayView::SetSearchResult(LFSearchResult* _result)
