@@ -157,6 +157,7 @@ void CAttributeProperty::OnDrawValue(CDC* pDC, CRect rect)
 	CFont* pOldFont = NULL;
 	COLORREF oldColor = (COLORREF)-1;
 	rect.DeflateRect(AFX_TEXT_MARGIN, 0);
+	rect.left++;
 
 	CString strVal = FormatProperty();
 
