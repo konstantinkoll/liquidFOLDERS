@@ -38,7 +38,7 @@ BOOL AddNotificationIcon(HWND hWnd)
 	ZeroMemory(&nid, sizeof(nid));
 	nid.cbSize = sizeof(nid);
 	nid.hWnd = hWnd;
-	nid.uFlags = NIF_ICON | NIF_TIP | NIF_MESSAGE;
+	nid.uFlags = NIF_ICON | NIF_TIP | NIF_MESSAGE | NIF_GUID | NIF_SHOWTIP;
 	nid.guidItem = __uuidof(LFIcon);
 	nid.uVersion = NOTIFYICON_VERSION_4;
 	nid.uCallbackMessage = WMAPP_NOTIFYCALLBACK;
