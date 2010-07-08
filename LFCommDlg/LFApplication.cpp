@@ -29,15 +29,15 @@ extern AFX_EXTENSION_MODULE LFCommDlgDLL;
 void PlayRegSound(CString Identifier)
 {
 	CString strFile;
-	CString strKey = L"AppEvents\\Schemes\\";
+	CString strKey = _T("AppEvents\\Schemes\\");
 	strKey += Identifier;
-	strKey += L"\\.current";
+	strKey += _T("\\.current");
 
 	CSettingsStoreSP regSP;
 	CSettingsStore& reg = regSP.Create(FALSE, TRUE);
 
 	if (reg.Open(strKey))
-		if (reg.Read(L"", strFile))
+		if (reg.Read(_T(""), strFile))
 			if (!strFile.IsEmpty())
 				PlaySound(strFile, NULL, SND_FILENAME | SND_ASYNC | SND_NODEFAULT | SND_NOWAIT);
 }
@@ -244,7 +244,7 @@ int LFApplication::ExitInstance()
 
 CString LFApplication::GetDefaultFontFace()
 {
-	return (osInfo.dwMajorVersion==5 ? L"Arial" : L"Segoe UI");
+	return (osInfo.dwMajorVersion==5 ? _T("Arial") : _T("Segoe UI"));
 }
 
 void LFApplication::GetBackgroundColors(UINT Background, COLORREF* back, COLORREF* text, COLORREF* highlight)
@@ -348,8 +348,8 @@ CMFCRibbonCheckBox* LFApplication::CommandCheckBox(UINT nID)
 
 void LFApplication::SendMail(CString Subject)
 {
-	CString URL("mailto:support@liquidfolders.net");
-	if (Subject!="")
+	CString URL = _T("mailto:support@liquidfolders.net");
+	if (!Subject.IsEmpty())
 		URL += _T("?subject=")+Subject;
 	ShellExecute(m_pActiveWnd->GetSafeHwnd(), _T("open"), URL, NULL, NULL, SW_SHOW);
 }

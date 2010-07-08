@@ -33,7 +33,7 @@ NSEItemAttributes CFileItem::GetAttributes(NSEItemAttributes /*requested*/)
 
 void CFileItem::Serialize(CArchive& ar)
 {
-	ar << (BYTE)CLFNamespaceExtensionVersion;
+	ar << (BYTE)LFNamespaceExtensionVersion;
 	ar << (BYTE)0;
 	ar << StoreID;
 	ar << (UINT)sizeof(LFCoreAttributes);
@@ -63,9 +63,8 @@ void CFileItem::GetDisplayNameEx(CString& displayName, DisplayNameFlags flags)
 			return;
 		}
 
-	CNSEItem::GetDisplayNameEx(displayName, flags);
-
-	if ((flags & NSEDNF_ForParsing)!=0)
+	displayName = Attrs.FileName;
+	if (((flags & NSEDNF_ForParsing)!=0) || (!theApp.HideExt()))
 		if (Attrs.FileFormat[0]!='\0')
 		{
 			displayName += '.';
@@ -195,6 +194,16 @@ BOOL CFileItem::GetColumnValueEx(VARIANT* value, CShellColumn& column)
 			return FALSE;
 		}
 		break;
+	case LFAttrFileFormat:
+		if (Attrs.FileFormat[0]!='\0')
+		{
+			tmpStr = _T(".");
+			tmpStr.Append(Attrs.FileFormat);
+		}
+		else
+		{
+			return FALSE;
+		}
 	case LFAttrFileSize:
 		if (value->vt==VT_BSTR)
 		{

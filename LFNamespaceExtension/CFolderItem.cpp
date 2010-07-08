@@ -102,7 +102,7 @@ NSEItemAttributes CFolderItem::GetAttributes(NSEItemAttributes /*requested*/)
 
 void CFolderItem::Serialize(CArchive& ar)
 {
-	ar << (BYTE)CLFNamespaceExtensionVersion;
+	ar << (BYTE)LFNamespaceExtensionVersion;
 	ar << (BYTE)1;
 	ar << data.Level;
 	ar << data.Icon;
@@ -129,7 +129,7 @@ CNSEItem* CFolderItem::DeserializeChild(CArchive& ar)
 	BYTE version;
 	ar >> version;
 
-	if (version!=CLFNamespaceExtensionVersion)
+	if (version!=LFNamespaceExtensionVersion)
 		return NULL;
 
 	BYTE ItemType;

@@ -5,15 +5,17 @@
 #include <objbase.h>
 #include <shlguid.h>
 
-#define CLFNamespaceExtensionVersion   1
+#define LFNamespaceExtensionVersion   1
 
-class CLFNamespaceExtensionApp : public CWinApp
+class LFNamespaceExtensionApp : public CWinApp
 {
 public:
-	CLFNamespaceExtensionApp();
-	~CLFNamespaceExtensionApp();
+	LFNamespaceExtensionApp();
+	~LFNamespaceExtensionApp();
 
 	virtual BOOL InitInstance();
+
+	BOOL HideExt();
 
 	TCHAR m_IconFile[MAX_PATH];
 	LFAttributeDescriptor* m_Attributes[LFAttributeCount];
@@ -23,5 +25,5 @@ public:
 };
 
 EXTERN_C IMAGE_DOS_HEADER __ImageBase;
-extern CLFNamespaceExtensionApp theApp;
+extern LFNamespaceExtensionApp theApp;
 extern OSVERSIONINFO osInfo;

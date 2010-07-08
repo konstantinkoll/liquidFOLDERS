@@ -4,9 +4,10 @@
 #include "stdafx.h"
 #include "LFNamespaceExtension.h"
 #include "LFCore.h"
+#include "afxsettingsstore.h"
 
 
-CLFNamespaceExtensionApp::CLFNamespaceExtensionApp()
+LFNamespaceExtensionApp::LFNamespaceExtensionApp()
 {
 	//Version
 	ZeroMemory(&osInfo, sizeof(OSVERSIONINFO));
@@ -45,7 +46,7 @@ CLFNamespaceExtensionApp::CLFNamespaceExtensionApp()
 	CoInitialize(NULL);
 }
 
-CLFNamespaceExtensionApp::~CLFNamespaceExtensionApp()
+LFNamespaceExtensionApp::~LFNamespaceExtensionApp()
 {
 	// Shell-API freigeben
 	CoUninitialize();
@@ -62,7 +63,7 @@ CLFNamespaceExtensionApp::~CLFNamespaceExtensionApp()
 
 // Das einzige CStoreManagerApp-Objekt
 
-CLFNamespaceExtensionApp theApp;
+LFNamespaceExtensionApp theApp;
 
 
 // Versionsinfo
@@ -70,7 +71,7 @@ CLFNamespaceExtensionApp theApp;
 OSVERSIONINFO osInfo;
 
 
-BOOL CLFNamespaceExtensionApp::InitInstance()
+BOOL LFNamespaceExtensionApp::InitInstance()
 {
 	OleInitialize(NULL);
 
@@ -79,6 +80,21 @@ BOOL CLFNamespaceExtensionApp::InitInstance()
 	CNSEFolder::RegisterExtensionData(_T("Name:KonstantinKoll*Company:BLUefolders*Email:ceo@bluefolders.net#Oo0m5Ouz+xz64KV57IinRTUvhkNojDZGjBd5MNXfwDEmgcr4baoQFMono3odGhqP"));
 
 	return CWinApp::InitInstance();
+}
+
+BOOL LFNamespaceExtensionApp::HideExt()
+{
+	CSettingsStoreSP regSP;
+	CSettingsStore& reg = regSP.Create(FALSE, TRUE);
+
+	if (reg.Open(_T("Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced")))
+	{
+		DWORD hide;
+		if (reg.Read(_T("HideFileExt"), hide))
+			return hide;
+	}
+
+	return FALSE;
 }
 
 
