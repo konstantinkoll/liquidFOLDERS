@@ -388,17 +388,25 @@ void CFileView::OnLButtonDown(UINT nFlags, CPoint point)
 	int n = ItemAtPosition(point);
 	if (n!=-1)
 	{
-		FocusItem = n;
-
 		if (nFlags & MK_CONTROL)
 		{
+			FocusItem = n;
 			SelectItem(n, !IsSelected(n));
 		}
 		else
 		{
-			for (UINT a=0; a<result->m_ItemCount; a++)
-				SelectItem(a, (int)a==n, TRUE);
+			if (nFlags & MK_SHIFT)
+			{
+				for (UINT a=0; a<result->m_ItemCount; a++)
+					SelectItem(a, (((int)a>=n) && ((int)a<=FocusItem)) || (((int)a>=FocusItem) && ((int)a<=n)), TRUE);
+			}
+			else
+			{
+				for (UINT a=0; a<result->m_ItemCount; a++)
+					SelectItem(a, (int)a==n, TRUE);
+			}
 
+			FocusItem = n;
 			Invalidate();
 			GetParentFrame()->SendMessage(WM_COMMAND, ID_APP_UPDATESELECTION);
 		}
@@ -435,7 +443,7 @@ void CFileView::OnRButtonDown(UINT nFlags, CPoint point)
 	int n = ItemAtPosition(point);
 	if (n!=-1)
 	{
-		if (!(nFlags & MK_CONTROL))
+		if (!(nFlags & (MK_SHIFT | MK_CONTROL)))
 			if (!IsSelected(n))
 			{
 				FocusItem = n;
