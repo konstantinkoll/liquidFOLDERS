@@ -43,12 +43,6 @@ void CFileItem::Serialize(CArchive& ar)
 void CFileItem::GetDisplayName(CString& displayName)
 {
 	displayName = Attrs.FileName;
-
-	if (Attrs.FileFormat[0]!='\0')
-	{
-		displayName += '.';
-		displayName += Attrs.FileFormat;
-	}
 }
 
 void CFileItem::GetDisplayNameEx(CString& displayName, DisplayNameFlags flags)
@@ -70,6 +64,13 @@ void CFileItem::GetDisplayNameEx(CString& displayName, DisplayNameFlags flags)
 		}
 
 	CNSEItem::GetDisplayNameEx(displayName, flags);
+
+	if ((flags & NSEDNF_ForParsing)!=0)
+		if (Attrs.FileFormat[0]!='\0')
+		{
+			displayName += '.';
+			displayName += Attrs.FileFormat;
+		}
 }
 
 void CFileItem::GetIconFileAndIndex(CGetIconFileAndIndexEventArgs& e)
