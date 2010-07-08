@@ -1501,7 +1501,10 @@ BOOL CMainFrame::RenameSingleItem(UINT n, CString Name)
 		LFTransactionUpdate(tl, GetSafeHwnd(), &value);
 
 		if (tl->m_Changes)
+		{
 			m_wndView->OnUpdateSearchResult(CookedFiles, GetFocusItem());
+			OnUpdateSelection();
+		}
 
 		if (tl->m_LastError>LFCancel)
 			ShowCaptionBar(IDB_CANCEL, tl->m_LastError);
@@ -1573,7 +1576,7 @@ BOOL CMainFrame::UpdateSelectedItems(LFVariantData* value1, LFVariantData* value
 
 		if (tl->m_Changes)
 			m_wndView->OnUpdateSearchResult(CookedFiles, GetFocusItem());
-		if (deselected)
+		if ((tl->m_Changes) || (deselected))
 			OnUpdateSelection();
 	}
 
