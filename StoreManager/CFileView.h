@@ -43,6 +43,7 @@ protected:
 	UINT ActiveContextID;
 	UINT RibbonColor;
 	UINT ViewID;
+	BOOL HideFileExt;
 	int FocusItem;
 	int NcDividerLineY;
 

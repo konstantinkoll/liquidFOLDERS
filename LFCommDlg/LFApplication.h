@@ -115,6 +115,7 @@ public:
 	void PlayNavigateSound();
 	void PlayWarningSound();
 	void PlayTrashSound();
+	BOOL HideFileExt();
 
 	afx_msg void OnAppNewFileDrop();
 	afx_msg void OnAppNewMigrate();

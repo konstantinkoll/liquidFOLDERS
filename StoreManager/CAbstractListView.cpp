@@ -47,7 +47,13 @@ int CAbstractListView::GetNextSelectedItem(int n)
 
 void CAbstractListView::EditLabel(int n)
 {
-	m_FileList.EditLabel(n);
+	CEdit* Edit = m_FileList.EditLabel(n);
+	if (Edit)
+	{
+		wchar_t* Label = result->m_Items[n]->CoreAttributes.FileName;
+		Edit->SetWindowText(Label);
+		Edit->SetSel(0, wcslen(Label));
+	}
 }
 
 BOOL CAbstractListView::IsSelected(int n)

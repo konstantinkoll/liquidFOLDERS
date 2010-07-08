@@ -64,7 +64,7 @@ void CFileItem::GetDisplayNameEx(CString& displayName, DisplayNameFlags flags)
 		}
 
 	displayName = Attrs.FileName;
-	if (((flags & NSEDNF_ForParsing)!=0) || (!theApp.HideExt()))
+	if (((flags & NSEDNF_ForParsing)!=0) || (!theApp.HideFileExt()))
 		if (Attrs.FileFormat[0]!='\0')
 		{
 			displayName += '.';

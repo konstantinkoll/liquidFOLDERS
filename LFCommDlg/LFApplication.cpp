@@ -565,3 +565,18 @@ void LFApplication::PlayTrashSound()
 {
 	PlayRegSound(L"Apps\\Explorer\\EmptyRecycleBin");
 }
+
+BOOL LFApplication::HideFileExt()
+{
+	CSettingsStoreSP regSP;
+	CSettingsStore& reg = regSP.Create(FALSE, TRUE);
+
+	if (reg.Open(_T("Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced")))
+	{
+		DWORD hide;
+		if (reg.Read(_T("HideFileExt"), hide))
+			return hide;
+	}
+
+	return FALSE;
+}

@@ -82,7 +82,7 @@ BOOL LFNamespaceExtensionApp::InitInstance()
 	return CWinApp::InitInstance();
 }
 
-BOOL LFNamespaceExtensionApp::HideExt()
+BOOL LFNamespaceExtensionApp::HideFileExt()
 {
 	CSettingsStoreSP regSP;
 	CSettingsStore& reg = regSP.Create(FALSE, TRUE);

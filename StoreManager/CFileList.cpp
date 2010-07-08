@@ -201,6 +201,14 @@ void CFileList::OnGetDispInfo(NMHDR* pNMHDR, LRESULT* /*pResult*/)
 		if ((pItem->mask & LVIF_TEXT) && (theApp.m_Attributes[attr]->Type!=LFTypeRating))
 		{
 			LFAttributeToString(i, attr, m_StrBuffer, 256);
+			if (attr==LFAttrFileName)
+				if ((!View->HideFileExt) && (i->CoreAttributes.FileFormat[0]!='\0'))
+				{
+					UINT l = wcslen(m_StrBuffer);
+					m_StrBuffer[l] = L'.';
+					LFAttributeToString(i, LFAttrFileFormat, &m_StrBuffer[l+1], 299-l);
+				}
+
 			pItem->pszText = (LPWSTR)m_StrBuffer;
 		}
 		if (pItem->mask & LVIF_IMAGE)

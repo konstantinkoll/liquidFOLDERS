@@ -68,6 +68,7 @@ void CFileView::OnUpdateSearchResult(LFSearchResult* _result, int _FocusItem)
 		if (_FocusItem>(int)_result->m_ItemCount-1)
 			_FocusItem = (int)_result->m_ItemCount-1;
 		FocusItem = _FocusItem;
+		HideFileExt = theApp.HideFileExt();
 	}
 	else
 	{
