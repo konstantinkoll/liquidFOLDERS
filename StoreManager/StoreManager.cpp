@@ -372,7 +372,7 @@ void CStoreManagerApp::LoadViewOptions(int context)
 	for (UINT a=0; a<LFAttributeCount; a++)
 	{
 		m_Views[context].ColumnOrder[a] = a;
-		if (m_Contexts[context]->AllowedAttributes->IsSet(a) && (a!=LFAttrStoreID) && (a!=LFAttrFileID))
+		if (m_Contexts[context]->AllowedAttributes->IsSet(a) && (a!=LFAttrStoreID) && (a!=LFAttrFileID) && (a!=LFAttrFileFormat))
 		{
 			m_Views[context].ColumnWidth[a] = m_Attributes[a]->RecommendedWidth;
 		}
