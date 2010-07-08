@@ -53,8 +53,6 @@ void CFileList::SetHeader(BOOL sorting, BOOL selectCol)
 	if (!pHdr)
 		return;
 
-	pHdr->SetRedraw(FALSE);
-
 	// Spalten
 	if (!sorting)
 		CreateColumns();
@@ -92,9 +90,6 @@ void CFileList::SetHeader(BOOL sorting, BOOL selectCol)
 	// Spalte markieren
 	if (selectCol)
 		SetSelectedColumn(col);
-
-	pHdr->SetRedraw(TRUE);
-	pHdr->Invalidate();
 }
 
 BOOL CFileList::SetColumnWidth(int nCol, int cx)
@@ -504,6 +499,9 @@ void CFileList::OnHeaderResize(NMHDR* pNMHDR, LRESULT* pResult)
 		View->pViewParameters->ColumnWidth[ColumnMapping[pHdr->iItem]] = pHdr->pitem->cxy;
 		View->OnViewOptionsChanged(TRUE);
 
+		// Workaround Windows 7 x64
+		Invalidate();
+
 		*pResult = FALSE;
 	}
 }
@@ -541,6 +539,10 @@ void CFileList::OnHeaderReorder(NMHDR* pNMHDR, LRESULT* pResult)
 		View->pViewParameters->ColumnOrder[pHdr->pitem->iOrder] = pHdr->iItem;
 
 		View->OnViewOptionsChanged();
+
+		// Workaround Windows 7 x64
+		Invalidate();
+
 		*pResult = FALSE;
 	}
 }

@@ -129,7 +129,7 @@ void CListView::SetSearchResult(LFSearchResult* _result)
 				{
 					cmd = ID_STORE_NEW;
 					icon = IDI_STORE_Default-1;
-					footerStr = _T("There aren't any stores right now.");
+					footerStr.LoadString(IDS_NOSTORES);
 				}
 				break;
 			case LFContextStoreHome:
