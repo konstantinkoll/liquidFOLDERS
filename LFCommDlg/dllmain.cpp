@@ -41,7 +41,7 @@ DllMain(HINSTANCE hInstance, DWORD dwReason, LPVOID lpReserved)
 
 		new CDynLinkLibrary(LFCommDlgDLL);
 
-		strMultiple.LoadString(IDS_MULTIPLEVALUES);
+		strMultiple.LoadString(hInstance, IDS_MULTIPLEVALUES);
 	}
 	else if (dwReason == DLL_PROCESS_DETACH)
 	{
