@@ -406,10 +406,19 @@ void CFileList::OnBeginLabelEdit(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	LV_DISPINFO* pDispInfo = (LV_DISPINFO*)pNMHDR;
 
-	if (View->result->m_Items[pDispInfo->item.iItem]->Type & (LFTypeVirtual | LFTypeDrive))
+	LFItemDescriptor* i = View->result->m_Items[pDispInfo->item.iItem];
+	if (i->Type & (LFTypeVirtual | LFTypeDrive))
 	{
 		*pResult = TRUE;
 		return;
+	}
+
+	CEdit* Edit = GetEditControl();
+	if (Edit)
+	{
+		wchar_t* Label = i->CoreAttributes.FileName;
+		Edit->SetWindowText(Label);
+		Edit->SetSel(0, wcslen(Label));
 	}
 
 	Editing = TRUE;
