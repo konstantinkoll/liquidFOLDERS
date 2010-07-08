@@ -472,7 +472,7 @@ void CTagcloudView::OnPaint()
 
 				dc.DrawText(result->m_Items[a]->CoreAttributes.FileName, -1, rect, TextFormat | DT_CENTER | DT_VCENTER);
 
-				if (((int)a==FocusItem) && ((!hTheme) || (!m_Tags[a].selected)))
+				if (((int)a==FocusItem) && (GetFocus()==this) && ((!hTheme) || (!m_Tags[a].selected)))
 				{
 					if (hTheme)
 						rect.DeflateRect(1, 1);
