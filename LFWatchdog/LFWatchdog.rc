@@ -151,7 +151,7 @@ IDM_TRAY MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "&About Watchdog...",          ID_APP_ABOUT
+        MENUITEM "&About...",                   ID_APP_ABOUT
         MENUITEM SEPARATOR
         MENUITEM "&Quit",                       ID_APP_EXIT
     END

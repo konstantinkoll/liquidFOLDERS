@@ -148,7 +148,7 @@ BEGIN
     IDS_SMALLWINDOW         "&Mini window"
     IDS_CHOOSEDEFAULTSTORE  "Choose &default store..."
     IDS_STOREMANAGER        "&Launch StoreManager"
-    IDS_ABOUT               "&About FileDrop..."
+    IDS_ABOUT               "&About..."
     IDS_HINT                "Drop files here to import them into liquidFOLDERS."
 END
 
