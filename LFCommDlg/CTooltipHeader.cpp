@@ -102,7 +102,7 @@ void CTooltipHeader::OnMouseHover(UINT /*nFlags*/, CPoint point)
 				if (GetItem(a, &i))
 				{
 					ClientToScreen(rect);
-					rect.OffsetRect(1, rect.Height());
+					rect.OffsetRect(1, rect.Height()+1);
 
 					Tooltip.Hide();
 					Tooltip.Track(rect, TooltipText);

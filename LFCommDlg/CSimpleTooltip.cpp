@@ -18,9 +18,7 @@ BOOL CSimpleTooltip::Create(CWnd* _pWndParent)
 	pWndParent = _pWndParent;
 
 	CString className = AfxRegisterWndClass(CS_DROPSHADOW | CS_SAVEBITS, NULL, NULL);
-	CRect rect;
-	rect.SetRectEmpty();
-	return CWnd::Create(className, _T(""), WS_POPUP, rect, _pWndParent, 0);
+	return CWnd::CreateEx(0, className, _T(""), WS_POPUP, 0, 0, 0, 0, _pWndParent->GetSafeHwnd(), (HMENU)NULL);
 }
 
 BOOL CSimpleTooltip::PreTranslateMessage(MSG* pMsg)
