@@ -45,8 +45,6 @@ BOOL CFileList::Create(CFileView* pViewWnd, BOOL _OwnerData)
 	if (res)
 		SetExtendedStyle(FileListExtendedStyles);
 
-	ToolTip.Create(this);
-
 	return res;
 }
 
@@ -55,6 +53,11 @@ void CFileList::SetHeader(BOOL sorting, BOOL selectCol)
 	CHeaderCtrl* pHdr = GetHeaderCtrl();
 	if (!pHdr)
 		return;
+
+	// Subclass
+	if (pHdr)
+		if (!TooltipHeader.m_hWnd)
+			VERIFY(TooltipHeader.SubclassWindow(pHdr->GetSafeHwnd()));
 
 	// Spalten
 	if (!sorting)

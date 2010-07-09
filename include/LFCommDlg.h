@@ -11,6 +11,7 @@
 #include "..\LFCommDlg\CPaneText.h"
 #include "..\LFCommDlg\CTagList.h"
 #include "..\LFCommDlg\CToolbarList.h"
+#include "..\LFCommDlg\CTooltipHeader.h"
 #include "..\LFCommDlg\CTransparentRadioButton.h"
 #include "..\LFCommDlg\LFAboutDlg.h"
 #include "..\LFCommDlg\LFApplication.h"

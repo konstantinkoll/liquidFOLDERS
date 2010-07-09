@@ -22,7 +22,7 @@ public:
 	friend class CCalendarDayView;
 
 	CFileList();
-	virtual ~CFileList();
+	~CFileList();
 
 	BOOL Create(CFileView* pViewWnd, BOOL _OwnerData);
 	int GetFontHeight();
@@ -31,7 +31,7 @@ public:
 
 protected:
 	CFileView* View;
-	CMFCPropertyGridToolTipCtrl ToolTip;
+	CTooltipHeader TooltipHeader;
 	BOOL OwnerData;
 	BOOL Editing;
 	int LastSortBy;

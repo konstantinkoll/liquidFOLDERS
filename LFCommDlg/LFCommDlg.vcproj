@@ -428,6 +428,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CTooltipHeader.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\CTransparentRadioButton.cpp"
 				>
 			</File>
@@ -635,6 +639,10 @@
 			</File>
 			<File
 				RelativePath=".\CToolbarList.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CTooltipHeader.h"
 				>
 			</File>
 			<File
