@@ -9,6 +9,7 @@
 #include "..\LFCommDlg\CMapPreviewCtrl.h"
 #include "..\LFCommDlg\CPaneList.h"
 #include "..\LFCommDlg\CPaneText.h"
+#include "..\LFCommDlg\CSimpleTooltip.h"
 #include "..\LFCommDlg\CTagList.h"
 #include "..\LFCommDlg\CToolbarList.h"
 #include "..\LFCommDlg\CTooltipHeader.h"

@@ -420,6 +420,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CSimpleTooltip.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\CTagList.cpp"
 				>
 			</File>
@@ -631,6 +635,10 @@
 			</File>
 			<File
 				RelativePath=".\CPaneText.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CSimpleTooltip.h"
 				>
 			</File>
 			<File

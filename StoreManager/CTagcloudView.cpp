@@ -243,7 +243,7 @@ void CTagcloudView::AdjustLayout()
 {
 	if (result)
 	{
-		CDC* dc = GetWindowDC();
+		CClientDC dc(this);
 
 		CRect rectClient;
 		GetClientRect(rectClient);
@@ -263,8 +263,8 @@ void CTagcloudView::AdjustLayout()
 			if (m_Tags[a].cnt)
 			{
 				CRect rect(0, 0, rectClient.Width()-2*Gutter, 128);
-				dc->SelectObject(GetFont(a));
-				dc->DrawText(result->m_Items[a]->CoreAttributes.FileName, -1, rect, TextFormat | DT_CALCRECT);
+				dc.SelectObject(GetFont(a));
+				dc.DrawText(result->m_Items[a]->CoreAttributes.FileName, -1, rect, TextFormat | DT_CALCRECT);
 				rect.InflateRect(5, 4);
 
 				if (col+rect.Width()+3*Gutter>rectClient.Width())
@@ -285,8 +285,6 @@ void CTagcloudView::AdjustLayout()
 
 		if (result->m_ItemCount)
 			CenterRow(result->m_ItemCount-1);
-
-		ReleaseDC(dc);
 	}
 }
 

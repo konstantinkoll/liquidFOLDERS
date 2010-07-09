@@ -102,11 +102,9 @@ void CTooltipHeader::OnMouseHover(UINT /*nFlags*/, CPoint point)
 				if (GetItem(a, &i))
 				{
 					ClientToScreen(rect);
-					rect.OffsetRect(3, rect.Height()-4);
+					rect.OffsetRect(1, rect.Height());
 
-					Tooltip.Deactivate();
-					Tooltip.SetTextMargin(AFX_TEXT_MARGIN);
-					Tooltip.SetFont(GetFont());
+					Tooltip.Hide();
 					Tooltip.Track(rect, TooltipText);
 
 					Tracking = a;

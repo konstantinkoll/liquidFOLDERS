@@ -725,7 +725,7 @@ BEGIN
     ID_STORE_DELETE         "Deletes the selected store.\nDelete"
     ID_STORE_RENAME         "Renames the selected store.\nRename (F2)"
     ID_STORE_MAKEDEFAULT    "Makes the selected internal store the default store.\nMake default"
-    ID_STORE_MAKEHYBRID     "Converts the selected store into a hybrid store. This allows you to search the store, even if it is not mounted.\nMake hybrid"
+    ID_STORE_MAKEHYBRID     "Converts the selected store into a hybrid store. This allows you to search the store, even when it is not mounted.\nMake hybrid"
     ID_STORE_ADDFOLDER      "Copies files from a folder and all its subfoldesr into the selected store. For more sophisticated options, please open the Migration Wizard. Contrary to desktop search engines, files get physically copied into the store—and not just indexed.\nAdd folder"
     ID_STORE_ADDFILES       "Copies files into the selected store. Contrary to desktop search engines, files get physically copied into the store—and not just indexed.\nAdd files"
     ID_STORE_PROPERTIES     "Shows the properties of the selected store.\nProperties"

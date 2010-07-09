@@ -1,12 +1,13 @@
 
-// CTooltipHeader: Schnittstelle der Klasse CTooltipHeader
+// CSimpleTooltipHeader: Schnittstelle der Klasse CSimpleTooltipHeader
 //
 
 #pragma once
 #include "afxpropertygridtooltipctrl.h"
+#include "CSimpleTooltip.h"
 
 
-// CTooltipHeader
+// CSimpleTooltipHeader
 //
 
 class AFX_EXT_CLASS CTooltipHeader : public CHeaderCtrl
@@ -24,7 +25,7 @@ public:
 	DECLARE_MESSAGE_MAP()
 
 protected:
-	CMFCPropertyGridToolTipCtrl Tooltip;
+	CSimpleTooltip Tooltip;
 
 	void TrackToolTip(CPoint point);
 
