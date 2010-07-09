@@ -16,7 +16,7 @@ CFileView::CFileView()
 	ActiveContextID = LFContextDefault;
 	ViewID = LFViewAutomatic;
 	result = NULL;
-	FocusItem = HoverItem = -1;
+	FocusItem = HoverItem = SelectionAnchor = -1;
 	NcDividerLineY = 0;
 	MouseInView = FALSE;
 }
@@ -90,6 +90,29 @@ void CFileView::OnUpdateSearchResult(LFSearchResult* _result, int _FocusItem)
 
 void CFileView::SelectItem(int /*n*/, BOOL /*select*/, BOOL /*InternalCall*/)
 {
+}
+
+void CFileView::SetFocusItem(int _FocusItem, BOOL ShiftSelect)
+{
+	if (ShiftSelect && EnableShiftSelection)
+	{
+		if (SelectionAnchor==-1)
+			SelectionAnchor = FocusItem;
+
+		for (UINT a=0; a<result->m_ItemCount; a++)
+			SelectItem(a, (((int)a>=_FocusItem) && ((int)a<=SelectionAnchor)) || (((int)a>=SelectionAnchor) && ((int)a<=_FocusItem)), TRUE);
+	}
+	else
+	{
+		SelectionAnchor = -1;
+
+		for (UINT a=0; a<result->m_ItemCount; a++)
+			SelectItem(a, (int)a==_FocusItem, TRUE);
+	}
+
+	FocusItem = _FocusItem;
+	Invalidate();
+	GetParentFrame()->SendMessage(WM_COMMAND, ID_APP_UPDATESELECTION);
 }
 
 int CFileView::GetFocusItem()
@@ -406,20 +429,7 @@ void CFileView::OnLButtonDown(UINT nFlags, CPoint point)
 		}
 		else
 		{
-			if ((nFlags & MK_SHIFT) && (EnableShiftSelection))
-			{
-				for (UINT a=0; a<result->m_ItemCount; a++)
-					SelectItem(a, (((int)a>=n) && ((int)a<=FocusItem)) || (((int)a>=FocusItem) && ((int)a<=n)), TRUE);
-			}
-			else
-			{
-				for (UINT a=0; a<result->m_ItemCount; a++)
-					SelectItem(a, (int)a==n, TRUE);
-			}
-
-			FocusItem = n;
-			Invalidate();
-			GetParentFrame()->SendMessage(WM_COMMAND, ID_APP_UPDATESELECTION);
+			SetFocusItem(n, nFlags & MK_SHIFT);
 		}
 	}
 	else

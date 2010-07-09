@@ -47,6 +47,7 @@ protected:
 	BOOL EnableHover;
 	BOOL EnableShiftSelection;
 	int FocusItem;
+	int SelectionAnchor;
 	int HoverItem;
 	int NcDividerLineY;
 
@@ -57,6 +58,7 @@ protected:
 	virtual void InvalidateItem(int n);
 	virtual CMenu* GetContextMenu();
 
+	void SetFocusItem(int _FocusItem, BOOL ShiftSelect);
 	void AppendContextMenu(CMenu* menu);
 	void OnViewOptionsChanged(BOOL LocalSettings=FALSE);
 
