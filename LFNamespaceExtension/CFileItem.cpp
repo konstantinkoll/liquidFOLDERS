@@ -204,6 +204,7 @@ BOOL CFileItem::GetColumnValueEx(VARIANT* value, CShellColumn& column)
 		{
 			return FALSE;
 		}
+		break;
 	case LFAttrFileSize:
 		if (value->vt==VT_BSTR)
 		{
