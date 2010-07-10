@@ -508,8 +508,9 @@ void CFileList::OnHeaderResize(NMHDR* pNMHDR, LRESULT* pResult)
 		View->pViewParameters->ColumnWidth[ColumnMapping[pHdr->iItem]] = pHdr->pitem->cxy;
 		View->OnViewOptionsChanged(TRUE);
 
-		// Workaround Windows 7 x64
-		Invalidate();
+		// Workaround Windows Vista
+		if ((theApp.osInfo.dwMajorVersion==6) && (theApp.osInfo.dwMinorVersion==0))
+			Invalidate();
 
 		*pResult = FALSE;
 	}
@@ -549,8 +550,9 @@ void CFileList::OnHeaderReorder(NMHDR* pNMHDR, LRESULT* pResult)
 
 		View->OnViewOptionsChanged();
 
-		// Workaround Windows 7 x64
-		Invalidate();
+		// Workaround Windows Vista
+		if ((theApp.osInfo.dwMajorVersion==6) && (theApp.osInfo.dwMinorVersion==0))
+			Invalidate();
 
 		*pResult = FALSE;
 	}
