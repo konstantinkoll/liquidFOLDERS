@@ -25,8 +25,8 @@ CTagcloudView::CTagcloudView()
 	CString face = theApp.GetDefaultFontFace();
 	for (int a=0; a<22; a++)
 		m_Fonts[a].CreateFont(-(a*2+10), 0, 0, 0, FW_NORMAL, 0, 0, 0, ANSI_CHARSET,
-		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, a>=4 ? ANTIALIASED_QUALITY : CLEARTYPE_QUALITY,
-		DEFAULT_PITCH | FF_DONTCARE, face);
+			OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, a>=4 ? ANTIALIASED_QUALITY : CLEARTYPE_QUALITY,
+			DEFAULT_PITCH | FF_DONTCARE, face);
 
 }
 
