@@ -247,6 +247,8 @@ void CTagcloudView::AdjustLayout()
 
 		CRect rectClient;
 		GetClientRect(rectClient);
+		if (!rectClient.Width())
+			return;
 
 		int row = Gutter;
 		int col = 0;
@@ -270,7 +272,8 @@ void CTagcloudView::AdjustLayout()
 				if (col+rect.Width()+3*Gutter>rectClient.Width())
 				{
 					row += rowheight+Gutter;
-					CenterRow(a-1);
+					if (a)
+						CenterRow(a-1);
 					col = 0;
 					rowstart = a;
 					rowheight = 0;
