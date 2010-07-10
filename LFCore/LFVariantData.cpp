@@ -215,7 +215,14 @@ LFCore_API void LFAttributeToString(LFItemDescriptor* i, unsigned int attr, wcha
 	assert(attr<LFAttributeCount);
 	assert(AttrTypes[attr]<LFTypeCount);
 
-	ToString(i->AttributeValues[attr], AttrTypes[attr], str, cCount);
+	if ((i->AggregateCount==0) && (attr==LFAttrFileCount))
+	{
+		str[0] = L'\0';
+	}
+	else
+	{
+		ToString(i->AttributeValues[attr], AttrTypes[attr], str, cCount);
+	}
 }
 
 

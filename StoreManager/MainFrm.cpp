@@ -2196,7 +2196,7 @@ void CMainFrame::InitializeRibbon()
 			strTemp = "Tags";
 			CMFCRibbonPanel* pPanelTagcloudTags = pCategoryTagcloud->AddPanel(strTemp, m_PanelImages.ExtractIcon(18));
 
-				pPanelTagcloudTags->Add(theApp.CommandButton(ID_TAGCLOUD_SORTNAME, 0, 0));
+				pPanelTagcloudTags->Add(theApp.CommandButton(ID_TAGCLOUD_SORTVALUE, 0, 0));
 				pPanelTagcloudTags->Add(theApp.CommandButton(ID_TAGCLOUD_SORTCOUNT, 1, 1));
 				pPanelTagcloudTags->AddSeparator();
 				pPanelTagcloudTags->Add(theApp.CommandCheckBox(ID_TAGCLOUD_OMITRARE));

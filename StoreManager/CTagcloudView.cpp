@@ -51,11 +51,13 @@ void CTagcloudView::Create(CWnd* _pParentWnd, LFSearchResult* _result, int _Focu
 void CTagcloudView::SetViewOptions(UINT /*_ViewID*/, BOOL Force)
 {
 	UINT Changes = 0;
-	
-	if ((Force) || (m_ViewParameters.TagcloudUseSize!=pViewParameters->TagcloudUseSize))
-		Changes = 1;
+
+	if ((Force) || (m_ViewParameters.TagcloudCanonical!=pViewParameters->TagcloudCanonical))
+		Changes = 2;
 	if ((Force) || (m_ViewParameters.TagcloudOmitRare!=pViewParameters->TagcloudOmitRare))
 		Changes = 2;
+	if ((Force) || (m_ViewParameters.TagcloudUseSize!=pViewParameters->TagcloudUseSize))
+		Changes = 1;
 
 	m_ViewParameters = *pViewParameters;
 
@@ -81,6 +83,7 @@ void CTagcloudView::SetSearchResult(LFSearchResult* _result)
 	if (_result)
 		if (_result->m_ItemCount)
 		{
+			LFSortSearchResult(_result, m_ViewParameters.TagcloudCanonical ? m_ViewParameters.SortBy : LFAttrFileCount, true);
 			m_Tags = new Tag[_result->m_ItemCount];
 
 			int minimum = -1;
@@ -295,13 +298,13 @@ void CTagcloudView::AdjustLayout()
 BEGIN_MESSAGE_MAP(CTagcloudView, CFileView)
 	ON_WM_CREATE()
 	ON_WM_DESTROY()
-	ON_COMMAND(ID_TAGCLOUD_SORTNAME, OnSortName)
+	ON_COMMAND(ID_TAGCLOUD_SORTVALUE, OnSortValue)
 	ON_COMMAND(ID_TAGCLOUD_SORTCOUNT, OnSortCount)
 	ON_COMMAND(ID_TAGCLOUD_OMITRARE, OnOmitRare)
 	ON_COMMAND(ID_TAGCLOUD_USESIZE, OnUseSize)
 	ON_COMMAND(ID_TAGCLOUD_USECOLORS, OnUseColors)
 	ON_COMMAND(ID_TAGCLOUD_USEOPACITY, OnUseOpacity)
-	ON_UPDATE_COMMAND_UI_RANGE(ID_TAGCLOUD_SORTNAME, ID_TAGCLOUD_USEOPACITY, OnUpdateCommands)
+	ON_UPDATE_COMMAND_UI_RANGE(ID_TAGCLOUD_SORTVALUE, ID_TAGCLOUD_USEOPACITY, OnUpdateCommands)
 	ON_WM_THEMECHANGED()
 	ON_WM_SIZE()
 	ON_WM_ERASEBKGND()
@@ -333,15 +336,15 @@ void CTagcloudView::OnDestroy()
 	CFileView::OnDestroy();
 }
 
-void CTagcloudView::OnSortName()
+void CTagcloudView::OnSortValue()
 {
-	pViewParameters->TagcloudAlphabetic = TRUE;
+	pViewParameters->TagcloudCanonical = TRUE;
 	OnViewOptionsChanged();
 }
 
 void CTagcloudView::OnSortCount()
 {
-	pViewParameters->TagcloudAlphabetic = FALSE;
+	pViewParameters->TagcloudCanonical = FALSE;
 	OnViewOptionsChanged();
 }
 
@@ -374,11 +377,11 @@ void CTagcloudView::OnUpdateCommands(CCmdUI* pCmdUI)
 	BOOL b = TRUE;
 	switch (pCmdUI->m_nID)
 	{
-	case ID_TAGCLOUD_SORTNAME:
-		pCmdUI->SetCheck(m_ViewParameters.TagcloudAlphabetic);
+	case ID_TAGCLOUD_SORTVALUE:
+		pCmdUI->SetCheck(m_ViewParameters.TagcloudCanonical);
 		break;
 	case ID_TAGCLOUD_SORTCOUNT:
-		pCmdUI->SetCheck(!m_ViewParameters.TagcloudAlphabetic);
+		pCmdUI->SetCheck(!m_ViewParameters.TagcloudCanonical);
 		break;
 	case ID_TAGCLOUD_OMITRARE:
 		pCmdUI->SetCheck(m_ViewParameters.TagcloudOmitRare);

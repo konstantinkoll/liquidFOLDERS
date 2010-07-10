@@ -678,7 +678,7 @@ END
 
 STRINGTABLE 
 BEGIN
-    ID_TAGCLOUD_SORTNAME    "Sort tags by name.\nSort by name"
+    ID_TAGCLOUD_SORTVALUE   "Sort tags by value.\nSort by value"
     ID_TAGCLOUD_SORTCOUNT   "Sort tags by count.\nSort by count"
     ID_TAGCLOUD_OMITRARE    "Removes rare tags from the search result.\nOmit rare tags"
     ID_TAGCLOUD_USESIZE     "Shows tags in different font sizes depending on their count.\nUse font size"

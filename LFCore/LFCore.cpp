@@ -172,7 +172,7 @@ LFCore_API LFAttributeDescriptor* LFGetAttributeInfo(unsigned int ID)
 	// Category
 	if (ID<=LFAttrRating)
 	{
-		a->Category = ((ID==LFAttrStoreID) || (ID==LFAttrFileID) || (ID==LFAttrDeleteTime) || (ID==LFAttrFileFormat) || (ID==LFAttrFlags)) ? LFAttrCategoryInternal : LFAttrCategoryBasic;
+		a->Category = ((ID==LFAttrStoreID) || (ID==LFAttrFileID) || (ID==LFAttrDeleteTime) || (ID==LFAttrFileCount) || (ID==LFAttrFileFormat) || (ID==LFAttrFlags)) ? LFAttrCategoryInternal : LFAttrCategoryBasic;
 	}
 	else
 	{
@@ -301,7 +301,9 @@ LFCore_API LFContextDescriptor* LFGetContextInfo(unsigned int ID)
 	case LFContextStores:
 		(*c->AllowedAttributes) += LFAttrCreationTime;
 		(*c->AllowedAttributes) += LFAttrFileTime;
+		break;
 	case LFContextStoreHome:
+		(*c->AllowedAttributes) += LFAttrFileCount;
 		(*c->AllowedAttributes) += LFAttrFileSize;
 		break;
 	case LFContextTrash:

@@ -184,54 +184,55 @@ struct LFContextDescriptor
 #define LFAttrFileTime                  6
 #define LFAttrDeleteTime                7
 #define LFAttrFileFormat                8
-#define LFAttrFileSize                  9
-#define LFAttrFlags                    10
-#define LFAttrURL                      11
-#define LFAttrTags                     12
-#define LFAttrRating                   13
-#define LFAttrPriority                 14
-#define LFAttrLocationName             15
-#define LFAttrLocationIATA             16
-#define LFAttrLocationGPS              17
+#define LFAttrFileCount                 9
+#define LFAttrFileSize                 10
+#define LFAttrFlags                    11
+#define LFAttrURL                      12
+#define LFAttrTags                     13
+#define LFAttrRating                   14
+#define LFAttrPriority                 15
+#define LFAttrLocationName             16
+#define LFAttrLocationIATA             17
+#define LFAttrLocationGPS              18
 
-#define LFAttrHeight                   18
-#define LFAttrWidth                    19
-#define LFAttrResolution               20
-#define LFAttrAspectRatio              21
-#define LFAttrVideoCodec               22
-#define LFAttrRoll                     23
+#define LFAttrHeight                   19
+#define LFAttrWidth                    20
+#define LFAttrResolution               21
+#define LFAttrAspectRatio              22
+#define LFAttrVideoCodec               23
+#define LFAttrRoll                     24
 
-#define LFAttrExposure                 24
-#define LFAttrFocus                    25
-#define LFAttrAperture                 26
-#define LFAttrChip                     27
+#define LFAttrExposure                 25
+#define LFAttrFocus                    26
+#define LFAttrAperture                 27
+#define LFAttrChip                     28
 
-#define LFAttrAlbum                    28
-#define LFAttrChannels                 29
-#define LFAttrSamplerate               30
-#define LFAttrAudioCodec               31
+#define LFAttrAlbum                    29
+#define LFAttrChannels                 30
+#define LFAttrSamplerate               31
+#define LFAttrAudioCodec               32
 
-#define LFAttrDuration                 32
-#define LFAttrBitrate                  33
+#define LFAttrDuration                 33
+#define LFAttrBitrate                  34
 
-#define LFAttrArtist                   34
-#define LFAttrTitle                    35
-#define LFAttrCopyright                36
-#define LFAttrISBN                     37
-#define LFAttrLanguage                 38
-#define LFAttrPages                    39
-#define LFAttrRecordingTime            40
-#define LFAttrRecordingEquipment       41
-#define LFAttrSignature                42
+#define LFAttrArtist                   35
+#define LFAttrTitle                    36
+#define LFAttrCopyright                37
+#define LFAttrISBN                     38
+#define LFAttrLanguage                 39
+#define LFAttrPages                    40
+#define LFAttrRecordingTime            41
+#define LFAttrRecordingEquipment       42
+#define LFAttrSignature                43
 
-#define LFAttrFrom                     43
-#define LFAttrTo                       44
-#define LFAttrResponsible              45
-#define LFAttrDueTime                  46
-#define LFAttrDoneTime                 47
+#define LFAttrFrom                     44
+#define LFAttrTo                       45
+#define LFAttrResponsible              46
+#define LFAttrDueTime                  47
+#define LFAttrDoneTime                 48
 
-#define LFAttributeCount               48
-#define LFLastCoreAttribute            17
+#define LFAttributeCount               49
+#define LFLastCoreAttribute            18
 
 
 // Attribute types

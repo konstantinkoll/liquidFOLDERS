@@ -238,6 +238,7 @@ BOOL CFolderItem::GetChildren(CGetChildrenEventArgs& e)
 		strcpy_s(f->StoreID, LFKeySize, (LPCTSTR)data.StoreID);
 		f->DomainID = (unsigned char)data.DomainID;
 		res = LFQuery(f);
+		LFSortSearchResult(res, atoi(data.FileID), false, false);
 		LFGroupSearchResult(res, atoi(data.FileID), false, false, data.Icon, atoi(data.FileID)!=LFAttrFileName, f);
 		break;
 	case LevelAttrValue:
@@ -554,11 +555,6 @@ BOOL CFolderItem::GetColumn(CShellColumn& column, int index)
 	case LFAttrStoreID:
 		column.categorizerType = NSECT_String;
 		break;
-	case LFAttrFileSize:
-		column.categorizerType = NSECT_String;
-		if ((data.Level==LevelRoot) || (data.Level==LevelStoreHome))
-			column.state = NSECS_Hidden;
-		break;
 	case LFAttrFileID:
 		if (data.Level<LevelAttrValue)
 			column.state = NSECS_Hidden;
@@ -569,6 +565,14 @@ BOOL CFolderItem::GetColumn(CShellColumn& column, int index)
 		break;
 	case LFAttrDescription:
 		if ((data.Level==LevelStoreHome) || (data.Level==LevelAttrValue))
+			column.state = NSECS_Hidden;
+		break;
+	case LFAttrFileCount:
+		column.state = NSECS_Hidden;
+		break;
+	case LFAttrFileSize:
+		column.categorizerType = NSECT_String;
+		if ((data.Level==LevelRoot) || (data.Level==LevelStoreHome))
 			column.state = NSECS_Hidden;
 		break;
 	case LFAttrFileFormat:

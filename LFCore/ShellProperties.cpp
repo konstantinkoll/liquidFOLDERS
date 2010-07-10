@@ -57,6 +57,7 @@ LFShellProperty AttrProperties[LFAttributeCount] = {
 	{ PropertyStorage, 14 },		// LFAttrFileTime
 	{ 0, 0 },						// LFAttrDeleteTime
 	{ PropertyStorage, 4 },			// LFAttrFileFormat
+	{ 0, 0 },						// LFAttrFileCount
 	{ PropertyStorage, 12 },		// LFAttrFileSize
 	{ 0, 0 },						// LFAttrFlags
 	{ PropertyQuery, 9 },			// LFAttrURL

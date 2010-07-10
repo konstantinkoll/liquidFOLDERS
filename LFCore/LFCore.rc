@@ -170,7 +170,7 @@ END
 STRINGTABLE 
 BEGIN
     IDS_BacklinkName        "Back"
-    IDS_BacklinkComment     "One level up"
+    IDS_BacklinkDescription "One level up"
     IDS_StoreDefaultName    "New store"
     IDS_LastSeen            "Last mounted from %s"
 END
@@ -252,6 +252,7 @@ BEGIN
     IDS_AttrFileTime        "File time"
     IDS_AttrDeleteTime      "Delete time"
     IDS_AttrFileFormat      "File format"
+    IDS_AttrFileCount       "File count"
     IDS_AttrFileSize        "Size"
     IDS_AttrFlags           "Flags"
     IDS_AttrURL             "URL"
