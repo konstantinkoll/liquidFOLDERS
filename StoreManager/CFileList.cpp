@@ -206,7 +206,7 @@ void CFileList::OnGetDispInfo(NMHDR* pNMHDR, LRESULT* /*pResult*/)
 		{
 			LFAttributeToString(i, attr, m_StrBuffer, 256);
 			if (attr==LFAttrFileName)
-				if ((!View->HideFileExt) && (i->CoreAttributes.FileFormat[0]!='\0'))
+				if ((!View->HideFileExt) && (i->CoreAttributes.FileFormat[0]!='\0') && ((i->Type & LFTypeMask)==LFTypeFile))
 				{
 					UINT l = wcslen(m_StrBuffer);
 					m_StrBuffer[l] = L'.';

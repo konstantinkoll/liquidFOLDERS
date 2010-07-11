@@ -83,7 +83,7 @@ void CTagcloudView::SetSearchResult(LFSearchResult* _result)
 	if (_result)
 		if (_result->m_ItemCount)
 		{
-			LFSortSearchResult(_result, m_ViewParameters.TagcloudCanonical ? m_ViewParameters.SortBy : LFAttrFileCount, true);
+			LFSortSearchResult(_result, m_ViewParameters.TagcloudCanonical ? m_ViewParameters.SortBy : LFAttrFileCount, m_ViewParameters.TagcloudCanonical==FALSE);
 			m_Tags = new Tag[_result->m_ItemCount];
 
 			int minimum = -1;
