@@ -857,12 +857,9 @@ void CFolderItem::OnExecuteFrameCommand(CExecuteFrameCommandEventArgs& e)
 	switch (e.toolbarButtonIndex)
 	{
 	case 1:
-		OnCreateNewStore();
-		break;
-	case 3:
 		OnStoreManager();
 		break;
-	case 4:
+	case 2:
 		OnMigrate();
 		break;
 	}
