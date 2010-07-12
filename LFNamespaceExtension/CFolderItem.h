@@ -18,6 +18,8 @@
 #define VERB_MAKEHYBRIDSTORE    "hybridstore"
 #define VERB_OPEN               "open"
 #define VERB_RENAME             "rename"
+#define VERB_STOREMANAGER       "storemanager"
+#define VERB_MIGRATE            "migrate"
 
 struct FolderSerialization
 {
@@ -35,6 +37,7 @@ struct FolderSerialization
 	LFVariantData Value;
 	FILETIME CreationTime;
 	FILETIME FileTime;
+	UINT Count;
 	INT64 Size;
 	CString Format;
 };
@@ -72,12 +75,19 @@ public:
 	virtual BOOL IsValid();
 	virtual void GetMenuItems(CGetMenuitemsEventArgs& e);
 	virtual BOOL OnExecuteMenuItem(CExecuteMenuitemsEventArgs& e);
+	virtual void OnExecuteFrameCommand(CExecuteFrameCommandEventArgs& e);
 	virtual int CompareTo(CNSEItem* otherItem, CShellColumn& column);
 	virtual BOOL GetFileDescriptor(FILEDESCRIPTOR* fd);
+	virtual void GetToolbarButtons(CPtrList& commands);
+	virtual void GetToolbarCommands(CPtrList& commands);
 	virtual BOOL OnChangeName(CChangeNameEventArgs& e);
 	virtual BOOL OnDelete(CExecuteMenuitemsEventArgs& e);
 	virtual BOOL OnOpen(CExecuteMenuitemsEventArgs& e);
-	void CreateShortcut(CNSEItem* Item, const CString& LinkFilename, const CString& Description, UINT Icon);
+
+	BOOL OnCreateNewStore();
+	BOOL OnStoreManager(HWND hWnd=NULL);
+	BOOL OnMigrate(HWND hWnd=NULL);
+	void OnCreateShortcut(CNSEItem* Item, const CString& LinkFilename, const CString& Description, UINT Icon);
 	void UpdateItems();
 
 	// TODO

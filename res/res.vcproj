@@ -2025,11 +2025,19 @@
 			>
 		</File>
 		<File
+			RelativePath=".\Migrate_24.bmp"
+			>
+		</File>
+		<File
 			RelativePath=".\Ribbon\Migrate_32.png"
 			>
 		</File>
 		<File
 			RelativePath=".\Migrate_About.png"
+			>
+		</File>
+		<File
+			RelativePath=".\Migrate_Tiny.ico"
 			>
 		</File>
 		<File
@@ -2205,7 +2213,15 @@
 			>
 		</File>
 		<File
+			RelativePath=".\Store_Empty_24.bmp"
+			>
+		</File>
+		<File
 			RelativePath=".\Store_Empty_32.bmp"
+			>
+		</File>
+		<File
+			RelativePath=".\Store_Empty_Tiny.ico"
 			>
 		</File>
 		<File
@@ -2237,7 +2253,15 @@
 			>
 		</File>
 		<File
+			RelativePath=".\StoreManager_24.bmp"
+			>
+		</File>
+		<File
 			RelativePath=".\StoreManager_About.png"
+			>
+		</File>
+		<File
+			RelativePath=".\StoreManager_Tiny.ico"
 			>
 		</File>
 		<File

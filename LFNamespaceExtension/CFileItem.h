@@ -1,5 +1,6 @@
 
 #pragma once
+#include "liquidFOLDERS.h"
 
 class CFileItem : public CNSEItem
 {

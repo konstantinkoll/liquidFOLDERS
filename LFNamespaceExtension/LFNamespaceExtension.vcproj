@@ -24,7 +24,7 @@
 			OutputDirectory="$(SolutionDir)\$(ConfigurationName)\$(PlatformName)"
 			IntermediateDirectory="$(SolutionDir)\Temp\$(ProjectName)\$(ConfigurationName)\$(PlatformName)"
 			ConfigurationType="2"
-			UseOfMFC="2"
+			UseOfMFC="1"
 			CharacterSet="2"
 			>
 			<Tool
@@ -52,7 +52,7 @@
 				StringPooling="true"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
-				RuntimeLibrary="3"
+				RuntimeLibrary="1"
 				UsePrecompiledHeader="2"
 				WarningLevel="4"
 				Detect64BitPortabilityProblems="false"
@@ -107,7 +107,7 @@
 			OutputDirectory="$(SolutionDir)\$(ConfigurationName)\$(PlatformName)"
 			IntermediateDirectory="$(SolutionDir)\Temp\$(ProjectName)\$(ConfigurationName)\$(PlatformName)"
 			ConfigurationType="2"
-			UseOfMFC="2"
+			UseOfMFC="1"
 			CharacterSet="2"
 			>
 			<Tool
@@ -136,7 +136,7 @@
 				StringPooling="true"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
-				RuntimeLibrary="3"
+				RuntimeLibrary="1"
 				UsePrecompiledHeader="2"
 				WarningLevel="4"
 				Detect64BitPortabilityProblems="false"
@@ -277,7 +277,7 @@
 			OutputDirectory="$(SolutionDir)\$(ConfigurationName)\$(PlatformName)"
 			IntermediateDirectory="$(SolutionDir)\Temp\$(ProjectName)\$(ConfigurationName)\$(PlatformName)"
 			ConfigurationType="2"
-			UseOfMFC="2"
+			UseOfMFC="1"
 			CharacterSet="2"
 			>
 			<Tool
@@ -306,7 +306,7 @@
 				AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;C:\Program Files (x86)\LogicNP Software\EZNamespaceExtensionsMFC 2009\Include&quot;;&quot;H:\Programme\LogicNP Software\EZNamespaceExtensionsMFC 2009\Include&quot;"
 				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;_USRDLL"
 				StringPooling="true"
-				RuntimeLibrary="2"
+				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="2"
 				WarningLevel="4"
@@ -389,6 +389,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Commands.h"
+				>
+			</File>
+			<File
 				RelativePath="..\include\LFCore.h"
 				>
 			</File>
@@ -422,6 +426,34 @@
 				RelativePath=".\res\LFNamespaceExtension.rc2"
 				>
 			</File>
+			<File
+				RelativePath=".\res\Migrate_24.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Migrate_Tiny.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Store_Empty_24.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Store_Empty_Tiny.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\StoreManager_24.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\StoreManager_Small.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\StoreManager_Tiny.ico"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Quelldateien"
@@ -442,6 +474,10 @@
 			</File>
 			<File
 				RelativePath=".\CFolderItem.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Commands.cpp"
 				>
 			</File>
 			<File

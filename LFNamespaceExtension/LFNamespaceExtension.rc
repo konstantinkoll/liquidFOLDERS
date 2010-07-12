@@ -59,6 +59,26 @@ BEGIN
     END
 END
 
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDB_NewStore            BITMAP                  "res\\Store_Empty_24.bmp"
+IDB_StoreManager        BITMAP                  "res\\StoreManager_24.bmp"
+IDB_Migrate             BITMAP                  "res\\Migrate_24.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_NewStore            ICON                    "res\\Store_Empty_Tiny.ico"
+IDI_StoreManager        ICON                    "res\\StoreManager_Tiny.ico"
+IDI_Migrate             ICON                    "res\\Migrate_Tiny.ico"
 #endif    // Neutral resources
 /////////////////////////////////////////////////////////////////////////////
 
@@ -87,19 +107,21 @@ BEGIN
     IDS_Folder              "Virtual folder"
     IDS_NULLFOLDER_NameMask "LWithout %s"
     IDS_NULLFOLDER_CommentMask "LAll files without %s"
+    IDS_FILES_Singular      "%d file"
+    IDS_FILES_Plural        "%d files"
 END
 
 STRINGTABLE 
 BEGIN
     IDS_CAPT_DeleteStore    "Delete store"
-    IDS_TEXT_DeleteStore    "Stores can only be deleted from the StoreManager to avoid accidental trashing of many files."
+    IDS_TEXT_DeleteStore    "Stores can only be deleted from the StoreManager to avoid accidental trashing of many files. Would you like to open the StoreManager now ?"
     IDS_CAPT_CreateLink     "Shortcut"
     IDS_TEXT_CreateLink     "You cannot create a shortcut here. Would you like to place it on the desktop ?"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_MENU_CreateNewStore "Create &new store"
+    IDS_MENU_CreateNewStore "Create &new internal store"
     IDS_HINT_CreateNewStore "Creates a new internal store for your files."
     IDS_MENU_MakeDefaultStore "Make &default store"
     IDS_HINT_MakeDefaultStore "Makes the selected store the default store."
@@ -114,6 +136,10 @@ BEGIN
     IDS_HINT_Delete         "Deletes the selected items."
     IDS_MENU_Rename         "&Rename"
     IDS_HINT_Rename         "Renames the selected item."
+    IDS_MENU_StoreManager   "Open &StoreManager"
+    IDS_HINT_StoreManager   "Opens the liquidFOLDERS StoreManager."
+    IDS_MENU_Migrate        "Open &Migration Wizard"
+    IDS_HINT_Migrate        "Opens the liquidFOLDERS Migration Wizard."
 END
 
 #endif    // Englisch (neutral) resources

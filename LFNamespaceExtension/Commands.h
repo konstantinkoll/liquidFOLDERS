@@ -1,0 +1,49 @@
+
+#pragma once
+#include "LFCore.h"
+
+
+// CmdCreateNewStore
+//
+
+class CmdCreateNewStore : public CExplorerCommand
+{
+public:
+	CmdCreateNewStore();
+
+	virtual CString GetCaption(CPtrList* nseItems);
+	virtual CString GetToolTip(CPtrList* nseItems);
+	virtual BOOL Invoke(CPtrList* nseItems);
+	virtual CString GetIcon(CPtrList* nseItems);
+};
+
+
+// CmdStoreManager
+//
+
+class CmdStoreManager : public CExplorerCommand
+{
+public:
+	CmdStoreManager();
+
+	virtual CString GetCaption(CPtrList* nseItems);
+	virtual CString GetToolTip(CPtrList* nseItems);
+	virtual BOOL Invoke(CPtrList* nseItems);
+	virtual CString GetIcon(CPtrList* nseItems);
+};
+
+
+// CmdMigrate
+//
+
+
+class CmdMigrate : public CExplorerCommand
+{
+public:
+	CmdMigrate();
+
+	virtual CString GetCaption(CPtrList* nseItems);
+	virtual CString GetToolTip(CPtrList* nseItems);
+	virtual BOOL Invoke(CPtrList* nseItems);
+	virtual CString GetIcon(CPtrList* nseItems);
+};

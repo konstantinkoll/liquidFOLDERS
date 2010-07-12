@@ -159,9 +159,9 @@ BEGIN
     BEGIN
         MENUITEM "&About...",                   ID_APP_ABOUT
         MENUITEM SEPARATOR
-        MENUITEM "Launch &StoreManager",        ID_APP_NEWSTOREMANAGER
-        MENUITEM "Launch &Migration Wizard",    ID_APP_NEWMIGRATE
-        MENUITEM "Launch &FileDrop",            ID_APP_NEWFILEDROP
+        MENUITEM "Open &StoreManager",          ID_APP_NEWSTOREMANAGER
+        MENUITEM "Open &Migration Wizard",      ID_APP_NEWMIGRATE
+        MENUITEM "Open &FileDrop",              ID_APP_NEWFILEDROP
         MENUITEM SEPARATOR
         MENUITEM "&Quit",                       ID_APP_EXIT
     END

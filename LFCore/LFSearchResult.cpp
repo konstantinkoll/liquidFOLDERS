@@ -502,11 +502,11 @@ unsigned int LFSearchResult::Aggregate(unsigned int write, unsigned int read1, u
 	{
 		LFItemDescriptor* folder = ((CCategorizer*)c)->GetFolder(m_Items[read1], f);
 		folder->IconID = icon;
+		folder->AggregateCount = read2-read1;
 		if (!m_RawCopy)
 		{
 			folder->FirstAggregate = read1;
 			folder->LastAggregate = read2-1;
-			folder->AggregateCount = read2-read1;
 		}
 
 		wchar_t Mask[256];
