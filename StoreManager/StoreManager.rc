@@ -36,6 +36,7 @@ IDR_MAINFRAME           ICON                    "res\\StoreManager.ico"
 IDR_CLIPBOARD           ICON                    "res\\Clipboard_Small.ico"
 IDD_VIEWOPTIONS         ICON                    "res\\ViewOptions_Tiny.ico"
 IDD_SORTOPTIONS         ICON                    "res\\SortOptions_Tiny.ico"
+IDD_CHOOSEDETAILS       ICON                    "res\\Table_Tiny.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -402,6 +403,24 @@ BEGIN
     CONTROL         136,IDC_STATIC,"Static",SS_BITMAP,14,262,21,20
 END
 
+IDD_CHOOSEDETAILS DIALOGEX 0, 0, 233, 276
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Details for ""%s"""
+FONT 8, "MS Shell Dlg", 400, 0, 0x0
+BEGIN
+    GROUPBOX        "Details",IDC_STATIC,7,7,219,241
+    LTEXT           "Choose the details for this context:",IDC_STATIC,14,17,205,9
+    CONTROL         "",IDC_VIEWATTRIBUTES,"SysListView32",LVS_LIST | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SORTASCENDING | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_ALIGNLEFT | WS_BORDER | WS_GROUP | WS_TABSTOP,14,27,141,198
+    PUSHBUTTON      "Move &up",IDC_MOVEUP,161,26,58,14,WS_GROUP
+    PUSHBUTTON      "Move &down",IDC_MOVEDOWN,161,44,58,14,WS_GROUP
+    PUSHBUTTON      "Check &all",IDC_CHECKALL,161,68,58,14,WS_GROUP
+    PUSHBUTTON      "&Uncheck all",IDC_UNCHECKALL,161,86,58,14,WS_GROUP
+    LTEXT           "Width of the selected column (in pixels):",IDC_STATIC,14,232,133,8
+    EDITTEXT        IDC_WIDTH,151,230,22,13,ES_RIGHT | ES_AUTOHSCROLL | ES_NUMBER | WS_GROUP
+    DEFPUSHBUTTON   "OK",IDOK,7,255,50,14,WS_GROUP
+    PUSHBUTTON      "Cancel",IDCANCEL,65,255,50,14,WS_GROUP
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -425,6 +444,14 @@ BEGIN
         RIGHTMARGIN, 276
         TOPMARGIN, 7
         BOTTOMMARGIN, 312
+    END
+
+    IDD_CHOOSEDETAILS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 226
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 269
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -587,6 +614,7 @@ BEGIN
     ID_VIEW_SELECTNONE      "Deselects all items.\nSelect none (Ctrl+N)"
     ID_VIEW_CATEGORIES      "Enables or disables categories in this context.\nCategories"
     ID_VIEW_AUTOSIZECOLUMNS "Autosize &columns"
+    ID_VIEW_CHOOSEDETAILS   "Ch&oose details..."
     ID_VIEW_AUTODIRS        "Enables or disables grouping of similar files into subfolders for this context. Grouping is not available in all contexts, and cannot be turned off in subfolders or advanced view modes.\nGroup into subfolders"
 END
 
@@ -606,21 +634,21 @@ BEGIN
     ID_SORT_LOCATIONIATA    "Sorts the search result by IATA airport code.\nSort by IATA airport code"
     ID_SORT_LOCATIONGPS     "Sorts the search result by GPS location.\nSort by GPS location"
     ID_SORT_HEIGHT          "Sorts the search result by height.\nSort by height"
-    ID_SORT_WIDTH           "Sorts the search result by width.\nSort by width"
 END
 
 STRINGTABLE 
 BEGIN
+    ID_SORT_WIDTH           "Sorts the search result by width.\nSort by width"
     ID_SORT_RESOLUTION      "Sorts the search result by resolution.\nSort by resolution"
     ID_SORT_ASPECTRATIO     "Sorts the search result by aspect ratio.\nSort by aspect ratio"
     ID_SORT_ROLL            "Sorts the search result by roll name.\nSort by roll"
     ID_SORT_DURATION        "Sorts the search result by duration.\nSort by duration"
     ID_SORT_ARTIST          "Sorts the search result by artist.\nSort by artist/author"
-    ID_SORT_TITLE           "Sorts the search result by title.\nSort by title"
 END
 
 STRINGTABLE 
 BEGIN
+    ID_SORT_TITLE           "Sorts the search result by title.\nSort by title"
     ID_SORT_LANGUAGE        "Sorts the search result by language.\nSort by language"
     ID_SORT_RECORDINGTIME   "Sorts the search result by recording time.\nSort by recording time"
 END

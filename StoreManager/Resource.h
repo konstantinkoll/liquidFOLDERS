@@ -80,7 +80,8 @@
 #define ID_VIEW_SELECTNONE              352
 #define ID_VIEW_CATEGORIES              353
 #define ID_VIEW_AUTOSIZECOLUMNS         354
-#define ID_VIEW_AUTODIRS                355
+#define ID_VIEW_CHOOSEDETAILS           355
+#define ID_VIEW_AUTODIRS                356
 #define ID_NAV_FIRST                    400
 #define ID_NAV_BACKONE                  401
 #define ID_NAV_BACK                     402
@@ -263,6 +264,10 @@
 #define IDC_ATTRBOX                     2108
 #define IDS_GROUPBOX_SORT               2109
 #define IDS_GROUPBOX_GROUP              2110
+#define IDD_CHOOSEDETAILS               2200
+#define IDC_MOVEUP                      2201
+#define IDC_MOVEDOWN                    2202
+#define IDC_WIDTH                       2203
 #define ID_TOGGLE_ATTRIBUTE             50000
 
 // Next default values for new objects

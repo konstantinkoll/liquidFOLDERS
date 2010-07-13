@@ -17,6 +17,7 @@
 #include "CTimelineView.h"
 #include "SortOptionsDlg.h"
 #include "ViewOptionsDlg.h"
+#include "ChooseDetailsDlg.h"
 #include "LFCommDlg.h"
 #include <io.h>
 
@@ -72,11 +73,12 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_STORE_NEW, ID_STORE_BACKUP, OnUpdateStoreCommands)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_DROP_CALENDAR, ID_DROP_RESOLUTION, OnUpdateDropCommands)
 
-	ON_COMMAND(ID_VIEW_AUTODIRS, OnToggleAutoDirs)
 	ON_COMMAND(ID_APP_CLOSE, OnClose)
 	ON_COMMAND(ID_APP_CLOSEOTHERS, OnCloseOthers)
 	ON_COMMAND(ID_APP_SORTOPTIONS, OnSortOptions)
 	ON_COMMAND(ID_APP_VIEWOPTIONS, OnViewOptions)
+	ON_COMMAND(ID_VIEW_CHOOSEDETAILS, OnChooseDetails)
+	ON_COMMAND(ID_VIEW_AUTODIRS, OnToggleAutoDirs)
 
 	ON_COMMAND_RANGE(ID_APP_VIEW_AUTOMATIC, ID_APP_VIEW_TIMELINE, OnChangeChildView)
 	ON_COMMAND_RANGE(ID_SORT_FILENAME, ID_SORT_FILENAME+99, OnSort)
@@ -237,13 +239,6 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	tmpStr = "Panes";
 	m_wndStatusBar.AddExtendedElement(pGroupPanels, tmpStr);
 
-	CMFCRibbonButtonsGroup* pGroupOptions = new CMFCRibbonButtonsGroup();
-	pGroupOptions->AddButton(new CMFCRibbonButton(ID_APP_SORTOPTIONS, _T(""), m_PanelImages.ExtractIcon(21)));
-	pGroupOptions->AddButton(new CMFCRibbonButton(ID_APP_VIEWOPTIONS, _T(""), m_PanelImages.ExtractIcon(4)));
-
-	tmpStr = "Options";
-	m_wndStatusBar.AddExtendedElement(pGroupOptions, tmpStr);
-
 	CMFCRibbonButtonsGroup* pGroupDisplay = new CMFCRibbonButtonsGroup();
 	pGroupDisplay->AddButton(new CMFCRibbonButton(ID_VIEW_GRANNY, _T(""), m_PanelImages.ExtractIcon(15)));
 	if (!IsClipboard)
@@ -387,6 +382,16 @@ void CMainFrame::OnViewOptions()
 		if (dlg.RibbonColor!=theApp.m_nAppLook)
 			::SendNotifyMessage(HWND_BROADCAST, theApp.p_MessageIDs->LookChanged, dlg.RibbonColor, 0);
 
+		theApp.SaveViewOptions(ActiveContextID);
+		theApp.OpenChildViews(ActiveContextID, TRUE);
+	}
+}
+
+void CMainFrame::OnChooseDetails()
+{
+	ChooseDetailsDlg dlg(this, ActiveViewParameters, ActiveContextID);
+	if (dlg.DoModal()==IDOK)
+	{
 		theApp.SaveViewOptions(ActiveContextID);
 		theApp.OpenChildViews(ActiveContextID, TRUE);
 	}

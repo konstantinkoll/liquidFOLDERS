@@ -31,21 +31,14 @@ void DDX_ComboBox(CDataExchange* pDX_, int nIDC_, UINT& selection_, int offset)
 ViewOptionsDlg::ViewOptionsDlg(CWnd* pParentWnd, UINT _RibbonColor, LFViewParameters* _view, int _context, LFSearchResult* files)
 	: CAttributeListDialog(IDD_VIEWOPTIONS, pParentWnd)
 {
-	ASSERT(_view!=NULL);
+	ASSERT(_view);
 	ShowAttributes = NULL;
 	ShowCategories = NULL;
 	m_pViewIcons = NULL;
 	RibbonColor = _RibbonColor;
 	view = _view;
 	context = _context;
-	if (files)
-	{
-		HasCategories = files->m_HasCategories;
-	}
-	else
-	{
-		HasCategories = TRUE;
-	}
+	HasCategories = files ? files->m_HasCategories : TRUE;
 }
 
 ViewOptionsDlg::~ViewOptionsDlg()

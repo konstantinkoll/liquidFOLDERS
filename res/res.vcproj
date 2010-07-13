@@ -1520,6 +1520,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Ribbon\Table_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\Table_32.png"
+				>
+			</File>
+			<File
 				RelativePath=".\Ribbon\Tags_16.png"
 				>
 			</File>
@@ -2270,6 +2278,10 @@
 		</File>
 		<File
 			RelativePath=".\StoreProperties_Tiny.ico"
+			>
+		</File>
+		<File
+			RelativePath=".\Table_Tiny.ico"
 			>
 		</File>
 		<File

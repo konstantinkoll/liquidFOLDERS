@@ -182,6 +182,8 @@ void CFileView::AppendContextMenu(CMenu* menu)
 	{
 		ENSURE(tmpStr.LoadString(ID_VIEW_AUTOSIZECOLUMNS));
 		menu->AppendMenu(MF_BYPOSITION | MF_STRING, ID_VIEW_AUTOSIZECOLUMNS, tmpStr);
+		ENSURE(tmpStr.LoadString(ID_VIEW_CHOOSEDETAILS));
+		menu->AppendMenu(MF_BYPOSITION | MF_STRING, ID_VIEW_CHOOSEDETAILS, tmpStr);
 		menu->AppendMenu(MF_SEPARATOR);
 	}
 

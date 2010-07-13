@@ -414,6 +414,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ChooseDetailsDlg.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\CIconCtrl.cpp"
 				>
 			</File>
@@ -541,6 +545,10 @@
 			</File>
 			<File
 				RelativePath=".\CGlobeView.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ChooseDetailsDlg.h"
 				>
 			</File>
 			<File
@@ -811,6 +819,10 @@
 			</File>
 			<File
 				RelativePath=".\res\StoreManager_About.png"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Table_Tiny.ico"
 				>
 			</File>
 			<File

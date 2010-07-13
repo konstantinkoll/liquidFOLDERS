@@ -347,25 +347,9 @@ void CFileList::OnContextMenu(CWnd* pWnd, CPoint point)
 		{
 			// Attributliste
 			for (UINT a=0; a<=LFLastCoreAttribute; a++)
-				if (theApp.m_Contexts[View->ActiveContextID]->AllowedAttributes->IsSet(a))
+				if ((a!=LFAttrStoreID) && (a!=LFAttrFileID) && (theApp.m_Contexts[View->ActiveContextID]->AllowedAttributes->IsSet(a)))
 					menu.AppendMenu(MF_BYPOSITION | MF_STRING, ID_TOGGLE_ATTRIBUTE+a, theApp.m_Attributes[a]->Name);
 			menu.AppendMenu(MF_SEPARATOR);
-
-			CMenu more;
-			if (more.CreateMenu())
-			{
-				// Attributliste
-				for (UINT a=LFLastCoreAttribute+1; a<LFAttributeCount; a++)
-					if (theApp.m_Contexts[View->ActiveContextID]->AllowedAttributes->IsSet(a))
-						more.AppendMenu(MF_BYPOSITION | MF_STRING, ID_TOGGLE_ATTRIBUTE+a, theApp.m_Attributes[a]->Name);
-
-				if (more.GetMenuItemCount())
-				{
-					CString tmpStr;
-					ENSURE(tmpStr.LoadString(IDS_MOREATTRIBUTES));
-					menu.AppendMenu(MF_STRING | MF_POPUP, (UINT_PTR)(HMENU)more, tmpStr);
-				}
-			}
 
 			// Andere
 			View->AppendContextMenu(&menu);

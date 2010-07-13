@@ -530,7 +530,7 @@ BOOL CFolderItem::GetColumn(CShellColumn& column, int index)
 
 	column.name = theApp.m_Attributes[index]->Name;
 	column.width = theApp.m_Attributes[index]->RecommendedWidth/7;  // Chars, not pixel
-	column.fmt = ((theApp.m_Attributes[index]->Type>=LFTypeUINT) || (index==LFAttrStoreID) || (index==LFAttrFileID)) ? NSESCF_Right : NSESCF_Left;
+	column.fmt = ((theApp.m_Attributes[index]->Type>=LFTypeUINT) || (index==LFAttrStoreID) || (index==LFAttrFileID) || (index==LFAttrFileCount)) ? NSESCF_Right : NSESCF_Left;
 	column.categorizerType = NSECT_Alphabetical;
 	column.index = index;
 	column.defaultVisible = (index!=LFAttrStoreID) && (index!=LFAttrFileID) && (index!=LFAttrFileCount);
