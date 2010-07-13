@@ -16,13 +16,17 @@ public:
 	virtual BOOL InitInstance();
 
 	BOOL HideFileExt();
-	BOOL GetApplicationPath(CString App, CString& Path);
 
+	CString PathStoreManager;
+	CString PathMigrate;
 	TCHAR m_IconFile[MAX_PATH];
 	LFAttributeDescriptor* m_Attributes[LFAttributeCount];
 	LFDomainDescriptor* m_Domains[LFDomainCount];
 	LFItemCategoryDescriptor* m_ItemCategories[LFItemCategoryCount];
 	wchar_t* m_AttrCategoryNames[LFAttrCategoryCount+1];
+
+protected:
+	BOOL GetApplicationPath(CString App, CString& Path);
 };
 
 EXTERN_C IMAGE_DOS_HEADER __ImageBase;

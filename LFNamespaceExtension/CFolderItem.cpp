@@ -773,15 +773,22 @@ void CFolderItem::GetMenuItems(CGetMenuitemsEventArgs& e)
 
 	if (e.children->GetCount()==0)
 	{
-		e.menu->AddItem(_T(""))->SetSeparator(TRUE);
+		if ((!theApp.PathStoreManager.IsEmpty()) || (!theApp.PathMigrate.IsEmpty()))
+			e.menu->AddItem(_T(""))->SetSeparator(TRUE);
 
-		ENSURE(tmpStr.LoadString(IDS_MENU_StoreManager));
-		ENSURE(tmpHint.LoadString(IDS_HINT_StoreManager));
-		e.menu->AddItem(tmpStr, _T(VERB_STOREMANAGER), tmpHint);
+		if (!theApp.PathStoreManager.IsEmpty())
+		{
+			ENSURE(tmpStr.LoadString(IDS_MENU_StoreManager));
+			ENSURE(tmpHint.LoadString(IDS_HINT_StoreManager));
+			e.menu->AddItem(tmpStr, _T(VERB_STOREMANAGER), tmpHint);
+		}
 
-		ENSURE(tmpStr.LoadString(IDS_MENU_Migrate));
-		ENSURE(tmpHint.LoadString(IDS_HINT_Migrate));
-		e.menu->AddItem(tmpStr, _T(VERB_MIGRATE), tmpHint);
+		if (!theApp.PathMigrate.IsEmpty())
+		{
+			ENSURE(tmpStr.LoadString(IDS_MENU_Migrate));
+			ENSURE(tmpHint.LoadString(IDS_HINT_Migrate));
+			e.menu->AddItem(tmpStr, _T(VERB_MIGRATE), tmpHint);
+		}
 	}
 }
 
@@ -967,17 +974,27 @@ BOOL CFolderItem::GetFileDescriptor(FILEDESCRIPTOR* fd)
 
 void CFolderItem::GetToolbarButtons(CPtrList& commands)
 {
-	CString tmpStr;
 
-	commands.AddTail(new CShellToolbarButton(_T(""), NSESTBT_Separator));
+	if ((!theApp.PathStoreManager.IsEmpty()) || (!theApp.PathMigrate.IsEmpty()))
+	{
+		CString tmpStr;
 
-	ENSURE(tmpStr.LoadString(IDS_MENU_StoreManager));
-	tmpStr.Remove('&');
-	commands.AddTail(new CShellToolbarButton(tmpStr, NSESTBT_Normal, (INT_PTR)IDB_StoreManager));
+		commands.AddTail(new CShellToolbarButton(_T(""), NSESTBT_Separator));
 
-	ENSURE(tmpStr.LoadString(IDS_MENU_Migrate));
-	tmpStr.Remove('&');
-	commands.AddTail(new CShellToolbarButton(tmpStr, NSESTBT_Normal, (INT_PTR)IDB_Migrate));
+		if (!theApp.PathStoreManager.IsEmpty())
+		{
+			ENSURE(tmpStr.LoadString(IDS_MENU_StoreManager));
+			tmpStr.Remove('&');
+			commands.AddTail(new CShellToolbarButton(tmpStr, NSESTBT_Normal, (INT_PTR)IDB_StoreManager));
+		}
+
+		if (!theApp.PathMigrate.IsEmpty())
+		{
+			ENSURE(tmpStr.LoadString(IDS_MENU_Migrate));
+			tmpStr.Remove('&');
+			commands.AddTail(new CShellToolbarButton(tmpStr, NSESTBT_Normal, (INT_PTR)IDB_Migrate));
+		}
+	}
 }
 
 void CFolderItem::GetToolbarCommands(CPtrList& commands)
@@ -985,8 +1002,10 @@ void CFolderItem::GetToolbarCommands(CPtrList& commands)
 	if (data.Level==LevelRoot)
 		commands.AddTail(new CmdCreateNewStore());
 
-	commands.AddTail(new CmdStoreManager());
-	commands.AddTail(new CmdMigrate());
+	if (!theApp.PathStoreManager.IsEmpty())
+		commands.AddTail(new CmdStoreManager());
+	if (!theApp.PathMigrate.IsEmpty())
+		commands.AddTail(new CmdMigrate());
 }
 
 BOOL CFolderItem::OnChangeName(CChangeNameEventArgs& e)
@@ -1088,10 +1107,9 @@ BOOL CFolderItem::OnCreateNewStore()
 
 BOOL CFolderItem::OnStoreManager(HWND hWnd)
 {
-	CString Path;
-	if (theApp.GetApplicationPath(_T("StoreManager"), Path))
+	if (!theApp.PathStoreManager.IsEmpty())
 	{
-		ShellExecute(hWnd, "open", Path, "", NULL, SW_SHOW);
+		ShellExecute(hWnd, "open", theApp.PathStoreManager, "", NULL, SW_SHOW);
 		return TRUE;
 	}
 
@@ -1100,10 +1118,9 @@ BOOL CFolderItem::OnStoreManager(HWND hWnd)
 
 BOOL CFolderItem::OnMigrate(HWND hWnd)
 {
-	CString Path;
-	if (theApp.GetApplicationPath(_T("Migrate"), Path))
+	if (!theApp.PathMigrate.IsEmpty())
 	{
-		ShellExecute(hWnd, "open", Path, "", NULL, SW_SHOW);
+		ShellExecute(hWnd, "open", theApp.PathMigrate, "", NULL, SW_SHOW);
 		return TRUE;
 	}
 

@@ -75,10 +75,14 @@ OSVERSIONINFO osInfo;
 BOOL LFNamespaceExtensionApp::InitInstance()
 {
 	OleInitialize(NULL);
-
 	COleObjectFactory::RegisterAll();
 
 	CNSEFolder::RegisterExtensionData(_T("Name:KonstantinKoll*Company:BLUefolders*Email:ceo@bluefolders.net#Oo0m5Ouz+xz64KV57IinRTUvhkNojDZGjBd5MNXfwDEmgcr4baoQFMono3odGhqP"));
+
+	if (!GetApplicationPath(_T("StoreManager"), PathStoreManager))
+		PathStoreManager.Empty();
+	if (!GetApplicationPath(_T("Migrate"), PathMigrate))
+		PathMigrate.Empty();
 
 	return CWinApp::InitInstance();
 }
