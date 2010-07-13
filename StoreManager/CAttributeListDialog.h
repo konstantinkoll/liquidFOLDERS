@@ -3,6 +3,7 @@
 
 #define ALD_Mode_ShowAttributes   0
 #define ALD_Mode_SortAttribute    1
+#define ALD_Mode_ChooseDetails    2
 
 class CAttributeListDialog : public CDialog
 {

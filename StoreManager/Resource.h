@@ -267,7 +267,6 @@
 #define IDD_CHOOSEDETAILS               2200
 #define IDC_MOVEUP                      2201
 #define IDC_MOVEDOWN                    2202
-#define IDC_WIDTH                       2203
 #define ID_TOGGLE_ATTRIBUTE             50000
 
 // Next default values for new objects

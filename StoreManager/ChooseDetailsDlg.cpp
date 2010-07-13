@@ -42,7 +42,7 @@ BOOL ChooseDetailsDlg::OnInitDialog()
 	SetWindowText(caption);
 
 	// Kontrollelemente einstellen
-	PopulateListCtrl(IDC_VIEWATTRIBUTES, ALD_Mode_ShowAttributes, context, view);
+	PopulateListCtrl(IDC_VIEWATTRIBUTES, ALD_Mode_ChooseDetails, context, view);
 	ShowAttributes = ((CListCtrl*)GetDlgItem(IDC_VIEWATTRIBUTES));
 
 	return TRUE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird

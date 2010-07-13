@@ -7,6 +7,31 @@ static int CALLBACK MyCompareProc(LPARAM lParam1, LPARAM lParam2, LPARAM /*lPara
 	return wcscmp(theApp.m_Attributes[(int)lParam1]->Name, theApp.m_Attributes[(int)lParam2]->Name);
 }
 
+void AddAttribute(CListCtrl* l, UINT attr, BOOL check)
+{
+	static const UINT iconPosition[] = { LFAttrFileName, LFAttrTitle, 0xFFFFFFFF, LFAttrCreationTime, LFAttrFileTime,
+		LFAttrRecordingTime, LFAttrDeleteTime, LFAttrDueTime, LFAttrDoneTime, LFAttrLocationName,
+		LFAttrLocationIATA, LFAttrLocationGPS, LFAttrRating, LFAttrRoll, LFAttrArtist, LFAttrComment,
+		LFAttrDuration, LFAttrLanguage, LFAttrResolution, LFAttrHeight, LFAttrWidth, LFAttrAspectRatio, LFAttrTags,
+		LFAttrStoreID };
+
+	LVITEM lvi;
+	ZeroMemory(&lvi, sizeof(lvi));
+	lvi.mask = LVIF_TEXT | LVIF_IMAGE | LVIF_PARAM;
+	lvi.lParam = (LPARAM)attr;
+	lvi.pszText = theApp.m_Attributes[attr]->Name;
+	lvi.iImage = -1;
+	lvi.iItem = l->GetItemCount();
+
+	for (UINT b=0; b<sizeof(iconPosition)/sizeof(UINT); b++)
+		if (iconPosition[b]==attr)
+		{
+			lvi.iImage = b;
+			break;
+		}
+
+	l->SetCheck(l->InsertItem(&lvi), check);
+}
 
 // CAttributeListDialog
 //
@@ -27,7 +52,7 @@ void CAttributeListDialog::PopulateListCtrl(int nId, UINT mode, UINT context, LF
 {
 	CListCtrl* l = (CListCtrl*)GetDlgItem(nId);
 	UINT dwExStyle = LVS_EX_FULLROWSELECT | LVS_EX_DOUBLEBUFFER | LVS_EX_JUSTIFYCOLUMNS;
-	if (mode==ALD_Mode_ShowAttributes)
+	if (mode!=ALD_Mode_SortAttribute)
 		dwExStyle |= LVS_EX_CHECKBOXES;
 	l->SetExtendedStyle(l->GetExtendedStyle() | dwExStyle);
 
@@ -35,46 +60,38 @@ void CAttributeListDialog::PopulateListCtrl(int nId, UINT mode, UINT context, LF
 	m_pAttributeIcons->CreateFromResource(IDB_RIBBONVIEW_16, 21, 43);
 	l->SetImageList(m_pAttributeIcons, LVSIL_SMALL);
 
-	const UINT iconPosition[] = { LFAttrFileName, LFAttrTitle, 0xFFFFFFFF, LFAttrCreationTime, LFAttrFileTime,
-		LFAttrRecordingTime, LFAttrDeleteTime, LFAttrDueTime, LFAttrDoneTime, LFAttrLocationName,
-		LFAttrLocationIATA, LFAttrLocationGPS, LFAttrRating, LFAttrRoll, LFAttrArtist, LFAttrComment,
-		LFAttrDuration, LFAttrLanguage, LFAttrResolution, LFAttrHeight, LFAttrWidth, LFAttrAspectRatio, LFAttrTags,
-		LFAttrStoreID };
-
-	LVITEM lvi;
-	ZeroMemory(&lvi, sizeof(lvi));
-	lvi.mask = LVIF_TEXT | LVIF_IMAGE | LVIF_PARAM;
-		for(UINT a=0; a<LFAttributeCount; a++)
+		for (UINT a=0; a<LFAttributeCount; a++)
 		{
 			bool add = theApp.m_Contexts[context]->AllowedAttributes->IsSet(a);
-			bool check = FALSE;
+			BOOL check = FALSE;
 			switch (mode)
 			{
 			case ALD_Mode_ShowAttributes:
+				check = vp->ColumnWidth[a];
 				add &= !theApp.m_Attributes[a]->AlwaysVisible;
-				check = (vp->ColumnWidth[a]>0);
 				break;
 			case ALD_Mode_SortAttribute:
 				add &= theApp.m_Attributes[a]->Sortable;
-				lvi.mask |= LVIF_STATE;
+				break;
+			case ALD_Mode_ChooseDetails:
+				add &= (!theApp.m_Attributes[a]->AlwaysVisible) && (vp->ColumnWidth[a]);
+				check = add;
 				break;
 			}
 
 			if (add)
-			{
-				lvi.lParam = (LPARAM)a;
-				lvi.pszText = theApp.m_Attributes[a]->Name;
-				lvi.iImage = -1;
-				for (UINT b=0; b<sizeof(iconPosition)/sizeof(UINT); b++)
-					if (iconPosition[b]==a)
-					{
-						lvi.iImage = b;
-						break;
-					}
-				l->SetCheck(l->InsertItem(&lvi), check);
-			}
+				AddAttribute(l, a, check);
 		}
-	l->SortItems(MyCompareProc, 0);
+
+	if (mode!=ALD_Mode_ChooseDetails)
+	{
+		l->SortItems(MyCompareProc, 0);
+	}
+	else
+		for (UINT a=0; a<LFAttributeCount; a++)
+			if ((vp->ColumnWidth[a]==0) && (!theApp.m_Attributes[a]->AlwaysVisible) && (theApp.m_Contexts[context]->AllowedAttributes->IsSet(a)))
+				AddAttribute(l, a, FALSE);
+
 	l->SetColumnWidth(0, LVSCW_AUTOSIZE);
 
 	int select = 0;
