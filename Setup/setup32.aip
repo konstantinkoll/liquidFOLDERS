@@ -413,10 +413,6 @@
     <ROW Condition="VersionMsi &gt;= WIMinVersion" Description="[ProductName] kann nicht auf Systemen mit Windows Installer Version kleiner als [WIMinVersion] installiert werden." DescriptionLocId="AI.LaunchCondition.WI" IsPredefined="true" Builds="DefaultBuild"/>
     <ROW Condition="VersionNT" Description="[ProductName] kann nicht auf [WindowsFamily9X] installiert werden." DescriptionLocId="AI.LaunchCondition.No9X" IsPredefined="true" Builds="DefaultBuild"/>
   </COMPONENT>
-  <COMPONENT cid="caphyon.advinst.msicomp.MsiRadioButtonComponent">
-    <ROW Property="AppsShutdownOption" Order="1" Value="All" X="5" Y="9" Width="341" Height="20" Text="S&amp;cliesse Anwendungen automatisch und versuche neu zu starten nach der vollständigen Installation" TextLocId="RadioButton.Text.AppsShutdownOption#1" MsiKey="AppsShutdownOption#1"/>
-    <ROW Property="AppsShutdownOption" Order="2" Value="None" X="5" Y="30" Width="341" Height="15" Text="Schliesse die Anwendungen &amp;nicht. (Ein Neustart ist erforderlich.)" TextLocId="RadioButton.Text.AppsShutdownOption#2" MsiKey="AppsShutdownOption#2"/>
-  </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiRegLocatorComponent">
     <ROW Signature_="AI_EXE_PATH_CU" Root="1" Key="Software\Caphyon\Advanced Installer\LZMA\[ProductCode]\[ProductVersion]" Name="AI_ExePath" Type="2"/>
     <ROW Signature_="AI_EXE_PATH_LM" Root="2" Key="Software\Caphyon\Advanced Installer\LZMA\[ProductCode]\[ProductVersion]" Name="AI_ExePath" Type="2"/>
