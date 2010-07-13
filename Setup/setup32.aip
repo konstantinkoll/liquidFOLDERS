@@ -61,7 +61,7 @@
     <ROW Component="AIShRegAnswer" ComponentId="{3A9CF3DB-A5C0-4432-8610-A39401D06D3E}" Directory_="APPDIR" Attributes="4" KeyPath="AIShRegAnswer"/>
     <ROW Component="AI_CustomARPName" ComponentId="{DD5C3246-58C0-4609-98A5-C77D22F76065}" Directory_="APPDIR" Attributes="4" KeyPath="DisplayName"/>
     <ROW Component="AI_DisableModify" ComponentId="{C0DC78FA-77DF-4F73-B4AA-18AA98E73FFB}" Directory_="APPDIR" Attributes="4" KeyPath="NoModify"/>
-    <ROW Component="AI_ExePath" ComponentId="{33E4B3BC-A7C9-4A7A-AE93-E8F7035F1087}" Directory_="APPDIR" Attributes="4" KeyPath="AI_ExePath"/>
+    <ROW Component="AI_ExePath" ComponentId="{201869D9-7416-435F-A2AF-8C16BC7991E4}" Directory_="APPDIR" Attributes="4" KeyPath="AI_ExePath"/>
     <ROW Component="FileDrop.exe" ComponentId="{2112C382-EC69-4377-8231-86BD5FAB6DB3}" Directory_="APPDIR" Attributes="0" KeyPath="FileDrop.exe"/>
     <ROW Component="LFCommDlg.dll" ComponentId="{79E36DCC-424C-43F8-8B66-0B18C1199F8A}" Directory_="APPDIR" Attributes="0" KeyPath="LFCommDlg.dll"/>
     <ROW Component="LFCore.dll" ComponentId="{6B3B9330-53CC-4DCC-A85C-B719B1D7B018}" Directory_="SystemFolder" Attributes="0" KeyPath="LFCore.dll"/>
@@ -280,7 +280,7 @@
     <ROW Dialog_="UserExit" Control="Finish" Type="PushButton" X="307" Y="330" Width="56" Height="17" Attributes="3" Text="[ButtonText_Finish]" Control_Next="Cancel" TextLocId="-" MsiKey="UserExit#Finish"/>
     <ROW Dialog_="VerifyReadyDlg" Control="Install" Type="PushButton" X="307" Y="330" Width="56" Height="17" Attributes="3" Text="[ButtonText_Install]" Control_Next="Cancel" TextLocId="-" MsiKey="VerifyReadyDlg#Install"/>
     <ROW Dialog_="FolderDlg" Control="PushButton_Cancel" Type="PushButton" X="380" Y="330" Width="56" Height="17" Attributes="3" Text="[ButtonText_Cancel]" Control_Next="Bitmap" TextLocId="-"/>
-    <ROW Dialog_="VerifyReadyDlg" Control="PushButton_Cancel" Type="PushButton" X="380" Y="330" Width="56" Height="17" Attributes="3" Text="[ButtonText_Cancel]" Control_Next="Bitmap" TextLocId="-"/>
+    <ROW Dialog_="VerifyReadyDlg" Control="PushButton_Cancel" Type="PushButton" X="380" Y="330" Width="56" Height="17" Attributes="3" Text="[ButtonText_Cancel]" Control_Next="TitleIcon" TextLocId="-"/>
     <ROW Dialog_="MaintenanceWelcomeDlg" Control="PushButton_Cancel" Type="PushButton" X="380" Y="330" Width="56" Height="17" Attributes="3" Text="[ButtonText_Cancel]" Control_Next="Bitmap" TextLocId="-"/>
     <ROW Dialog_="MaintenanceTypeDlg" Control="PushButton_Cancel" Type="PushButton" X="380" Y="330" Width="56" Height="17" Attributes="3" Text="[ButtonText_Cancel]" Control_Next="RemoveLabel" TextLocId="-"/>
     <ROW Dialog_="PatchWelcomeDlg" Control="PushButton_Cancel" Type="PushButton" X="380" Y="330" Width="56" Height="17" Attributes="3" Text="[ButtonText_Cancel]" Control_Next="Bitmap" TextLocId="-"/>
@@ -295,6 +295,15 @@
     <ROW Dialog_="ShortcutsDlg" Control="TitleIcon" Type="Icon" X="10" Y="10" Width="36" Height="36" Attributes="7340033" Text="[ShortcutLogoIcon]" Control_Next="PushButton_Cancel" MsiKey="ShortcutsDlg#TitleIcon"/>
     <ROW Dialog_="ShortcutsDlg" Control="PushButton_Cancel" Type="PushButton" X="380" Y="330" Width="56" Height="17" Attributes="3" Text="[ButtonText_Cancel]" Control_Next="Bitmap" TextLocId="-"/>
     <ROW Dialog_="AdminBrowseDlg" Control="TitleIcon" Type="Icon" X="10" Y="10" Width="36" Height="36" Attributes="7340033" Text="[FolderLogoIcon]" Control_Next="Bitmap"/>
+    <ROW Dialog_="VerifyReadyDlg" Control="TitleIcon" Type="Icon" X="10" Y="10" Width="36" Height="36" Attributes="7340033" Text="[InstallLogoIcon]" Control_Next="Bitmap"/>
+    <ROW Dialog_="VerifyRemoveDlg" Control="Text" Type="Text" X="55" Y="130" Width="380" Height="60" Attributes="65539" Text="Click Remove to remove [ProductName] from your computer.  If you want to review or change any of your installation settings, click Back.  Close the window to exit the wizard." Control_Next="TitleIcon" TextLocId="Control.Text.VerifyRemoveDlg#TextNoClose" MsiKey="VerifyRemoveDlg#Text"/>
+    <ROW Dialog_="VerifyRemoveDlg" Control="Remove" Type="PushButton" X="307" Y="330" Width="56" Height="17" Attributes="3" Text="[ButtonText_Remove]" Control_Next="Cancel" TextLocId="-" MsiKey="VerifyRemoveDlg#Remove"/>
+    <ROW Dialog_="VerifyRepairDlg" Control="Repair" Type="PushButton" X="307" Y="330" Width="56" Height="17" Attributes="3" Text="[ButtonText_Repair]" Control_Next="Cancel" TextLocId="-" MsiKey="VerifyRepairDlg#Repair"/>
+    <ROW Dialog_="VerifyRepairDlg" Control="Text" Type="Text" X="55" Y="130" Width="380" Height="60" Attributes="65539" Text="Click Repair to repair the installation of [ProductName].  If you want to review or change any of your installation settings, click Back.  Close the window to exit the wizard." Control_Next="TitleIcon" TextLocId="Control.Text.VerifyRepairDlg#TextNoClose" MsiKey="VerifyRepairDlg#Text"/>
+    <ROW Dialog_="VerifyRemoveDlg" Control="TitleIcon" Type="Icon" X="10" Y="10" Width="36" Height="36" Attributes="7340033" Text="[InstallLogoIcon]" Control_Next="PushButton_Cancel"/>
+    <ROW Dialog_="VerifyRepairDlg" Control="TitleIcon" Type="Icon" X="10" Y="10" Width="36" Height="36" Attributes="7340033" Text="[InstallLogoIcon]" Control_Next="PushButton_Cancel"/>
+    <ROW Dialog_="VerifyRemoveDlg" Control="PushButton_Cancel" Type="PushButton" X="380" Y="330" Width="56" Height="17" Attributes="3" Text="[ButtonText_Cancel]" Control_Next="Bitmap" TextLocId="-"/>
+    <ROW Dialog_="VerifyRepairDlg" Control="PushButton_Cancel" Type="PushButton" X="380" Y="330" Width="56" Height="17" Attributes="3" Text="[ButtonText_Cancel]" Control_Next="Bitmap" TextLocId="-"/>
     <ATTRIBUTE name="FixedSizeBitmaps" value="0"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiControlEventComponent">
@@ -322,6 +331,8 @@
     <ROW Dialog_="ShortcutsDlg" Control_="Back" Event="NewDialog" Argument="FolderDlg" Condition="AI_INSTALL" Ordering="1"/>
     <ROW Dialog_="ShortcutsDlg" Control_="Next" Event="NewDialog" Argument="VerifyReadyDlg" Condition="AI_INSTALL" Ordering="1"/>
     <ROW Dialog_="ShortcutsDlg" Control_="PushButton_Cancel" Event="EndDialog" Argument="Exit" Condition="1" Ordering="1"/>
+    <ROW Dialog_="VerifyRemoveDlg" Control_="PushButton_Cancel" Event="EndDialog" Argument="Exit" Condition="1" Ordering="1"/>
+    <ROW Dialog_="VerifyRepairDlg" Control_="PushButton_Cancel" Event="EndDialog" Argument="Exit" Condition="1" Ordering="1"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiCreateFolderComponent">
     <ROW Directory_="SHORTCUTDIR" Component_="SHORTCUTDIR"/>
