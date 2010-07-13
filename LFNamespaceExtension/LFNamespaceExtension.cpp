@@ -5,6 +5,7 @@
 #include "LFNamespaceExtension.h"
 #include "LFCore.h"
 #include "afxsettingsstore.h"
+#include <io.h>
 
 
 LFNamespaceExtensionApp::LFNamespaceExtensionApp()
@@ -95,6 +96,29 @@ BOOL LFNamespaceExtensionApp::HideFileExt()
 	}
 
 	return FALSE;
+}
+
+BOOL LFNamespaceExtensionApp::GetApplicationPath(CString App, CString& Path)
+{
+	// Registry
+	CSettingsStoreSP regSP;
+	CSettingsStore& reg = regSP.Create(TRUE, TRUE);
+
+	if (reg.Open(_T("Software\\liquidFOLDERS\\")))
+		if (reg.Read(App, Path))
+			if (_access(Path, 0)==0)
+				return TRUE;
+
+	// Festen Pfad probieren
+	char tmpStr[MAX_PATH];
+	if (!SHGetSpecialFolderPath(NULL, tmpStr, CSIDL_PROGRAM_FILES, FALSE))
+		return FALSE;
+
+	Path = tmpStr;
+	Path.Append(_T("\\liquidFOLDERS\\"));
+	Path.Append(App);
+	Path.Append(_T(".exe"));
+	return (_access(Path, 0)==0);
 }
 
 

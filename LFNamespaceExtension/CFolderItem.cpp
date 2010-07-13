@@ -1088,28 +1088,26 @@ BOOL CFolderItem::OnCreateNewStore()
 
 BOOL CFolderItem::OnStoreManager(HWND hWnd)
 {
-	char Path[MAX_PATH];
-	if (!SHGetSpecialFolderPathA(hWnd, Path, CSIDL_PROGRAM_FILES, FALSE))
-		return FALSE;
+	CString Path;
+	if (theApp.GetApplicationPath(_T("StoreManager"), Path))
+	{
+		ShellExecute(hWnd, "open", Path, "", NULL, SW_SHOW);
+		return TRUE;
+	}
 
-	char File[MAX_PATH];
-	strcpy_s(File, MAX_PATH, Path);
-	strcat_s(File, MAX_PATH, "\\liquidFOLDERS\\StoreManager.exe");
-	ShellExecuteA(hWnd, "open", File, "", Path, SW_SHOW);
-	return TRUE;
+	return FALSE;
 }
 
 BOOL CFolderItem::OnMigrate(HWND hWnd)
 {
-	char Path[MAX_PATH];
-	if (!SHGetSpecialFolderPathA(hWnd, Path, CSIDL_PROGRAM_FILES, FALSE))
-		return FALSE;
+	CString Path;
+	if (theApp.GetApplicationPath(_T("Migrate"), Path))
+	{
+		ShellExecute(hWnd, "open", Path, "", NULL, SW_SHOW);
+		return TRUE;
+	}
 
-	char File[MAX_PATH];
-	strcpy_s(File, MAX_PATH, Path);
-	strcat_s(File, MAX_PATH, "\\liquidFOLDERS\\Migrate.exe");
-	ShellExecuteA(hWnd, "open", File, "", Path, SW_SHOW);
-	return TRUE;
+	return FALSE;
 }
 
 void CFolderItem::OnCreateShortcut(CNSEItem* Item, const CString& LinkFilename, const CString& Description, UINT Icon)

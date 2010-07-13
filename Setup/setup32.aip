@@ -68,9 +68,11 @@
     <ROW Component="LFNamespaceExtension.dll" ComponentId="{958C10FB-58FF-4E2B-A9A7-CA1F4A13EC25}" Directory_="SystemFolder" Attributes="0" KeyPath="LFNamespaceExtension.dll"/>
     <ROW Component="LFWatchdog" ComponentId="{AEAD05B4-A0D1-4F74-B471-ECEB9357358F}" Directory_="APPDIR" Attributes="4" KeyPath="LFWatchdog"/>
     <ROW Component="LFWatchdog.exe" ComponentId="{8B20F94F-7420-4E03-98DD-DA9A19F0C59E}" Directory_="APPDIR" Attributes="0" KeyPath="LFWatchdog.exe"/>
+    <ROW Component="Migrate" ComponentId="{1BB96C8D-B19A-4D7E-9FF3-BCDA6857CB9F}" Directory_="APPDIR" Attributes="4" KeyPath="Migrate"/>
     <ROW Component="Migrate.exe" ComponentId="{0D89D6BC-65FF-455A-BA9B-AFBD4F05BDE3}" Directory_="APPDIR" Attributes="0" KeyPath="Migrate.exe"/>
     <ROW Component="Quick_Launch" ComponentId="{304CC4C3-1A53-46C6-B2CE-40BE6BF512B0}" Directory_="Quick_Launch_DIR" Attributes="0"/>
     <ROW Component="SHORTCUTDIR" ComponentId="{252E79F3-5959-444B-A7EA-CD698BA212E7}" Directory_="SHORTCUTDIR" Attributes="0"/>
+    <ROW Component="StoreManager" ComponentId="{B5CC391B-769C-4D78-ACF0-9E1E82F1ABE2}" Directory_="APPDIR" Attributes="4" KeyPath="StoreManager"/>
     <ROW Component="StoreManager.exe" ComponentId="{CD94E9D9-3367-4F36-BB82-B2FCDDE6250E}" Directory_="APPDIR" Attributes="0" KeyPath="StoreManager.exe"/>
     <ROW Component="Visual_C_2008_SP1" ComponentId="{E48EF50E-DCBC-42F1-AE1B-CF798B1F9753}" Directory_="APPDIR" Attributes="4" KeyPath="Visual_C_2008_SP1" Options="2"/>
   </COMPONENT>
@@ -78,7 +80,7 @@
     <ROW Feature="FileDrop" Title="FileDrop" Description="FileDrop" Display="3" Level="1" Directory_="APPDIR" Attributes="8" Components="FileDrop.exe AI_CustomARPName AI_DisableModify"/>
     <ROW Feature="MigrationWizard" Title="MigrationWizard" Description="Migration Wizard" Display="5" Level="1" Directory_="APPDIR" Attributes="8" Components="Migrate.exe AI_CustomARPName AI_DisableModify"/>
     <ROW Feature="Visual_C_2008_SP1_Redistributable" Title="Visual C++ 2008 SP1 Redistributable" Description="Visual C++ 2008 SP1 Redistributable" Display="0" Level="1" Attributes="24" Components="Visual_C_2008_SP1 AI_CustomARPName AI_DisableModify"/>
-    <ROW Feature="liquidFOLDERS" Title="liquidFOLDERS" Description="liquidFOLDERS" Display="0" Level="1" Directory_="APPDIR" Attributes="24" Components="LFCommDlg.dll LFCore.dll LFNamespaceExtension.dll StoreManager.exe SHORTCUTDIR AI_CustomARPName AI_DisableModify LFWatchdog.exe LFWatchdog Quick_Launch AIShRegAnswer AI_ExePath"/>
+    <ROW Feature="liquidFOLDERS" Title="liquidFOLDERS" Description="liquidFOLDERS" Display="0" Level="1" Directory_="APPDIR" Attributes="24" Components="LFCommDlg.dll LFCore.dll LFNamespaceExtension.dll StoreManager.exe SHORTCUTDIR AI_CustomARPName AI_DisableModify LFWatchdog.exe LFWatchdog Quick_Launch AIShRegAnswer AI_ExePath StoreManager Migrate"/>
     <ATTRIBUTE name="CurrentFeature" value="liquidFOLDERS"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiFilesComponent">
@@ -433,10 +435,12 @@
     <ROW Registry="HelpTelephone" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="HelpTelephone" Component_="AI_CustomARPName"/>
     <ROW Registry="InfoTip" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}" Name="InfoTip" Value="liquidFOLDERS stores and files" Component_="LFNamespaceExtension.dll"/>
     <ROW Registry="LFWatchdog" Root="2" Key="Software\Microsoft\Windows\CurrentVersion\Run" Name="LFWatchdog" Value="&quot;[#LFWatchdog.exe]&quot;" Component_="LFWatchdog"/>
+    <ROW Registry="Migrate" Root="2" Key="Software\liquidFOLDERS" Name="Migrate" Value="[#Migrate.exe]" Component_="Migrate"/>
     <ROW Registry="ModifyPath" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="ModifyPath" Value="[AI_UNINSTALLER] /I [ProductCode]" Component_="AI_CustomARPName"/>
     <ROW Registry="NoModify" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="NoModify" Value="#1" Component_="AI_DisableModify"/>
     <ROW Registry="Publisher" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="Publisher" Value="liquidFOLDERS" Component_="AI_CustomARPName"/>
     <ROW Registry="QueryForOverlay" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}\ShellFolder" Name="QueryForOverlay" Component_="LFNamespaceExtension.dll"/>
+    <ROW Registry="StoreManager" Root="2" Key="Software\liquidFOLDERS" Name="StoreManager" Value="[#StoreManager.exe]" Component_="StoreManager"/>
     <ROW Registry="ThreadingModel" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}\InProcServer32" Name="ThreadingModel" Value="Both" Component_="LFNamespaceExtension.dll"/>
     <ROW Registry="URLInfoAbout" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="URLInfoAbout" Value="http://liquidfolders.net/support/" Component_="AI_CustomARPName"/>
     <ROW Registry="URLUpdateInfo" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="URLUpdateInfo" Value="http://liquidfolders.net/download/" Component_="AI_CustomARPName"/>

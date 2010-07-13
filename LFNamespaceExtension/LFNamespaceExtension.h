@@ -16,6 +16,7 @@ public:
 	virtual BOOL InitInstance();
 
 	BOOL HideFileExt();
+	BOOL GetApplicationPath(CString App, CString& Path);
 
 	TCHAR m_IconFile[MAX_PATH];
 	LFAttributeDescriptor* m_Attributes[LFAttributeCount];
