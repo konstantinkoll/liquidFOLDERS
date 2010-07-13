@@ -188,7 +188,7 @@ void CPaneList::DrawItem(int nID, CDC* pDC, CMFCVisualManager* dm)
 			pDC->FillSolidRect(rectBounds, bkCol);
 	}
 
-	TCHAR text[260];
+	TCHAR text[MAX_PATH];
 	UINT columns[2];
 	LVITEM item;
 	ZeroMemory(&item, sizeof(item));

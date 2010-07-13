@@ -62,25 +62,44 @@ void CAttributeListDialog::PopulateListCtrl(int nId, UINT mode, UINT context, LF
 
 		for (UINT a=0; a<LFAttributeCount; a++)
 		{
-			bool add = theApp.m_Contexts[context]->AllowedAttributes->IsSet(a);
+			int attr = 0;
+			if (mode==ALD_Mode_ChooseDetails)
+			{
+				int cnt = 0;
+				for (UINT b=0; b<LFAttributeCount; b++)
+					if (vp->ColumnWidth[b])
+						if ((cnt++)==vp->ColumnOrder[a])
+						{
+							attr = b;
+							break;
+						}
+				if (attr==-1)
+					continue;
+			}
+			else
+			{
+				attr = a;
+			}
+			
+			bool add = theApp.m_Contexts[context]->AllowedAttributes->IsSet(attr);
 			BOOL check = FALSE;
 			switch (mode)
 			{
 			case ALD_Mode_ShowAttributes:
-				check = vp->ColumnWidth[a];
-				add &= !theApp.m_Attributes[a]->AlwaysVisible;
+				check = vp->ColumnWidth[attr];
+				add &= !theApp.m_Attributes[attr]->AlwaysVisible;
 				break;
 			case ALD_Mode_SortAttribute:
-				add &= theApp.m_Attributes[a]->Sortable;
+				add &= theApp.m_Attributes[attr]->Sortable;
 				break;
 			case ALD_Mode_ChooseDetails:
-				add &= (!theApp.m_Attributes[a]->AlwaysVisible) && (vp->ColumnWidth[a]);
+				add &= (!theApp.m_Attributes[attr]->AlwaysVisible) && (vp->ColumnWidth[attr]);
 				check = add;
 				break;
 			}
 
 			if (add)
-				AddAttribute(l, a, check);
+				AddAttribute(l, attr, check);
 		}
 
 	if (mode!=ALD_Mode_ChooseDetails)
