@@ -131,10 +131,6 @@
 			>
 		</File>
 		<File
-			RelativePath=".\Hourglass.ico"
-			>
-		</File>
-		<File
 			RelativePath=".\Info.ico"
 			>
 		</File>
@@ -155,6 +151,10 @@
 			>
 		</File>
 		<File
+			RelativePath=".\Shortcuts.ico"
+			>
+		</File>
+		<File
 			RelativePath=".\Tools.ico"
 			>
 		</File>
@@ -164,6 +164,10 @@
 		</File>
 		<File
 			RelativePath=".\vcredist_x86.exe"
+			>
+		</File>
+		<File
+			RelativePath=".\Wait.ico"
 			>
 		</File>
 		<File

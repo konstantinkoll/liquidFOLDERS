@@ -1945,14 +1945,6 @@
 			>
 		</File>
 		<File
-			RelativePath=".\Hourglass.ico"
-			>
-		</File>
-		<File
-			RelativePath=".\Hourglass.png"
-			>
-		</File>
-		<File
 			RelativePath=".\IATA-DE.TXT"
 			>
 		</File>
@@ -2173,6 +2165,10 @@
 			>
 		</File>
 		<File
+			RelativePath=".\Shortcuts.ico"
+			>
+		</File>
+		<File
 			RelativePath=".\Slideshare.png"
 			>
 		</File>
@@ -2294,6 +2290,10 @@
 		</File>
 		<File
 			RelativePath=".\Twitter.png"
+			>
+		</File>
+		<File
+			RelativePath=".\Wait.ico"
 			>
 		</File>
 		<File
