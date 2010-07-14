@@ -25,6 +25,7 @@ END_MESSAGE_MAP()
 // CStoreManagerApp-Erstellung
 
 CStoreManagerApp::CStoreManagerApp()
+	: LFApplication(HasGUI_Ribbon)
 {
 	ZeroMemory(&m_GLTextureCache, sizeof(m_GLTextureCache));
 	ZeroMemory(&m_GLTextureBinds, sizeof(m_GLTextureBinds));

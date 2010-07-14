@@ -23,6 +23,7 @@ END_MESSAGE_MAP()
 // CMigrateApp-Erstellung
 
 CMigrateApp::CMigrateApp()
+	: LFApplication(HasGUI_Ribbon)
 {
 }
 

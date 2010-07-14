@@ -16,15 +16,10 @@ class CWatchdogApp : public LFApplication
 public:
 	CWatchdogApp();
 
-	LFMessageIDs* p_MessageIDs;
-
 	virtual BOOL InitInstance();
 	virtual int ExitInstance();
 
-	void ErrorBox(UINT res);
-
 protected:
-	ULONG_PTR m_gdiplusToken;
 	HANDLE sessionMutex;
 };
 

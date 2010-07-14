@@ -13,6 +13,7 @@
 // CRunCmdApp-Erstellung
 
 CRunCmdApp::CRunCmdApp()
+	: LFApplication(HasGUI_None)
 {
 }
 
@@ -37,13 +38,6 @@ BOOL CRunCmdApp::InitInstance()
 	// Rufen Sie DragAcceptFiles nur auf, wenn ein Suffix vorhanden ist.
 	//  In einer SDI-Anwendung ist dies nach ProcessShellCommand erforderlich
 	return TRUE;
-}
-
-int CRunCmdApp::ExitInstance()
-{
-	CWinApp::ExitInstance();
-	GdiplusShutdown(m_gdiplusToken);
-	return 0;
 }
 
 void CRunCmdApp::OnAppAbout()

@@ -19,12 +19,9 @@ public:
 	virtual ~CRunCmdApp();
 
 	virtual BOOL InitInstance();
-	virtual int ExitInstance();
 
 protected:
 	void OnAppAbout();
-
-	ULONG_PTR m_gdiplusToken;
 };
 
 extern CRunCmdApp theApp;

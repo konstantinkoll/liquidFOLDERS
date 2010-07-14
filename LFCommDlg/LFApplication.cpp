@@ -45,9 +45,10 @@ void PlayRegSound(CString Identifier)
 
 // LFApplication-Erstellung
 
-LFApplication::LFApplication()
+LFApplication::LFApplication(UINT _HasGUI)
 {
 	zSetWindowTheme = NULL;
+	HasGUI = _HasGUI;
 
 	// Version
 	ZeroMemory(&osInfo, sizeof(OSVERSIONINFO));
@@ -188,26 +189,32 @@ BOOL LFApplication::InitInstance()
 
 	CWinAppEx::InitInstance();
 
+	if (HasGUI==HasGUI_None)
+		return TRUE;
+
 	// OLE Initialisieren
 	ENSURE(AfxOleInit());
 
 	SetRegistryKey(_T("liquidFOLDERS"));
 	LoadStdProfileSettings();
 
-	InitContextMenuManager();
-	InitShellManager();
+	if (HasGUI==HasGUI_Ribbon)
+	{
+		InitContextMenuManager();
+		InitShellManager();
 
-	InitKeyboardManager();
+		InitKeyboardManager();
 
-	InitTooltipManager();
-	CMFCToolTipInfo ttParams;
-	ttParams.m_bVislManagerTheme = TRUE;
-	GetTooltipManager()->SetTooltipParams(AFX_TOOLTIP_TYPE_ALL, RUNTIME_CLASS(CMFCToolTipCtrl), &ttParams);
+		InitTooltipManager();
+		CMFCToolTipInfo ttParams;
+		ttParams.m_bVislManagerTheme = TRUE;
+		GetTooltipManager()->SetTooltipParams(AFX_TOOLTIP_TYPE_ALL, RUNTIME_CLASS(CMFCToolTipCtrl), &ttParams);
 
-	CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerOffice2007));
-	CDockingManager::SetDockingMode(DT_IMMEDIATE);
-	m_nAppLook = GetGlobalInt(_T("ApplicationLook"), ID_VIEW_APPLOOK_OFF_2007_BLUE);
-	SetApplicationLook(m_nAppLook);
+		CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerOffice2007));
+		CDockingManager::SetDockingMode(DT_IMMEDIATE);
+		m_nAppLook = GetGlobalInt(_T("ApplicationLook"), ID_VIEW_APPLOOK_OFF_2007_BLUE);
+		SetApplicationLook(m_nAppLook);
+	}
 
 	// Watchdog starten
 	#ifndef _DEBUG

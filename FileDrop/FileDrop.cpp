@@ -10,6 +10,7 @@
 // CFileDropApp-Erstellung
 
 CFileDropApp::CFileDropApp()
+	: LFApplication(HasGUI_Standard)
 {
 }
 

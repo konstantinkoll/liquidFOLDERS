@@ -16,6 +16,10 @@
 #define RatingBitmapWidth        88
 #define RatingBitmapHeight       15
 
+#define HasGUI_None               0
+#define HasGUI_Standard           1
+#define HasGUI_Ribbon             2
+
 typedef HRESULT(__stdcall *PFNSETWINDOWTHEME)(HWND hwnd, LPCWSTR pszSubAppName, LPCWSTR pszSubIdList);
 typedef HRESULT(__stdcall *PFNCLOSETHEMEDATA)(HTHEME hTheme);
 typedef HTHEME(__stdcall *PFNOPENTHEMEDATA)(HWND hwnd, LPCWSTR pszClassList);
@@ -69,7 +73,7 @@ struct LFViewParameters
 class AFX_EXT_CLASS LFApplication : public CWinAppEx
 {
 public:
-	LFApplication();
+	LFApplication(UINT _HasGUI);
 	virtual ~LFApplication();
 
 	CString path;
@@ -86,6 +90,7 @@ public:
 	OSVERSIONINFO osInfo;
 	LFMessageIDs* MessageIDs;
 	BOOL IsLicensed;
+	UINT HasGUI;
 
 	PFNSETWINDOWTHEME zSetWindowTheme;
 	PFNOPENTHEMEDATA zOpenThemeData;

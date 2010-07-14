@@ -270,6 +270,7 @@ HWND CreateHostWindow()
 // CWatchdogApp-Erstellung
 
 CWatchdogApp::CWatchdogApp()
+	: LFApplication(HasGUI_None)
 {
 }
 
@@ -290,24 +291,7 @@ BOOL CWatchdogApp::InitInstance()
 		return FALSE;
 	}
 
-	// GDI+ initalisieren
-	GdiplusStartupInput gdiplusStartupInput;
-	GdiplusStartup(&m_gdiplusToken, &gdiplusStartupInput, NULL);
-
-	// InitCommonControlsEx() ist für Windows XP erforderlich, wenn ein Anwendungsmanifest
-	// die Verwendung von ComCtl32.dll Version 6 oder höher zum Aktivieren
-	// von visuellen Stilen angibt. Ansonsten treten beim Erstellen von Fenstern Fehler auf.
-	INITCOMMONCONTROLSEX InitCtrls;
-	InitCtrls.dwSize = sizeof(InitCtrls);
-	// Legen Sie dies fest, um alle allgemeinen Steuerelementklassen einzubeziehen,
-	// die Sie in Ihrer Anwendung verwenden möchten.
-	InitCtrls.dwICC = ICC_WIN95_CLASSES;
-	InitCommonControlsEx(&InitCtrls);
-
-	// Nachrichten
-	p_MessageIDs = LFGetMessageIDs();
-
-	CWinAppEx::InitInstance();
+	LFApplication::InitInstance();
 	CreateHostWindow();
 
 	MSG msg;
@@ -322,8 +306,7 @@ BOOL CWatchdogApp::InitInstance()
 
 int CWatchdogApp::ExitInstance()
 {
-	CWinApp::ExitInstance();
-	GdiplusShutdown(m_gdiplusToken);
+	LFApplication::ExitInstance();
 	CloseHandle(sessionMutex);
 	sessionMutex = NULL;
 	return 0;
