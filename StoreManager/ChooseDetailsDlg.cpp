@@ -26,7 +26,7 @@ void ChooseDetailsDlg::SwapItems(int FocusItem, int NewPos)
 	i1.pszText = text1;
 	i1.cchTextMax = sizeof(text1)/sizeof(TCHAR);
 	i1.iItem = FocusItem;
-	i1.mask = LVIF_TEXT | LVIF_IMAGE | LVIF_STATE;
+	i1.mask = LVIF_TEXT | LVIF_IMAGE | LVIF_PARAM;
 	ShowAttributes->GetItem(&i1);
 
 	TCHAR text2[MAX_PATH];
@@ -35,13 +35,19 @@ void ChooseDetailsDlg::SwapItems(int FocusItem, int NewPos)
 	i2.pszText = text2;
 	i2.cchTextMax = sizeof(text2)/sizeof(TCHAR);
 	i2.iItem = NewPos;
-	i2.mask = LVIF_TEXT | LVIF_IMAGE | LVIF_STATE;
+	i2.mask = LVIF_TEXT | LVIF_IMAGE | LVIF_PARAM;
 	ShowAttributes->GetItem(&i2);
 
 	std::swap(i1.iItem, i2.iItem);
 
 	ShowAttributes->SetItem(&i1);
 	ShowAttributes->SetItem(&i2);
+
+	BOOL Check1 = ShowAttributes->GetCheck(FocusItem);
+	BOOL Check2 = ShowAttributes->GetCheck(NewPos);
+	ShowAttributes->SetCheck(FocusItem, Check2);
+	ShowAttributes->SetCheck(NewPos, Check1);
+
 	ShowAttributes->SetItemState(NewPos, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
 }
 
@@ -114,6 +120,19 @@ void ChooseDetailsDlg::DoDataExchange(CDataExchange* pDX)
 		for (int a=0; a<LFAttributeCount; a++)
 			if ((!theApp.m_Attributes[a]->AlwaysVisible) && (!present[a]))
 				view->ColumnWidth[a] = 0;
+
+		// Reihenfolge
+		view->ColumnOrder[0] = 0;
+		UINT cnt = 1;
+		for (int a=0; a<ShowAttributes->GetItemCount(); a++)
+			if (ShowAttributes->GetCheck(a))
+			{
+				UINT colID = 0;
+				for (int b=0; b<ShowAttributes->GetItemCount(); b++)
+					if ((ShowAttributes->GetCheck(b)) && (ShowAttributes->GetItemData(b)<=ShowAttributes->GetItemData(a)))
+						colID++;
+				view->ColumnOrder[cnt++] = colID;
+			}
 	}
 }
 
