@@ -558,6 +558,24 @@ UINT LFApplication::DeleteStore(LFItemDescriptor* store, CWnd* pParentWnd)
 	return LFDeleteStore(store->StoreID, hWnd);
 }
 
+UINT LFApplication::DeleteStore(LFStoreDescriptor* store, CWnd* pParentWnd)
+{
+	HWND hWnd = (pParentWnd ? pParentWnd->GetSafeHwnd() : NULL);
+
+	if (!LFAskDeleteStore(store, hWnd))
+		return LFCancel;
+
+	// Dialogbox nur zeigen, wenn der Store gemountet ist
+	if (store->DatPath[0]!='\0')
+	{
+		LFStoreDeleteDlg dlg(pParentWnd, store->StoreName);
+		if (dlg.DoModal()!=IDOK)
+			return LFCancel;
+	}
+
+	return LFDeleteStore(store->StoreID, hWnd);
+}
+
 void LFApplication::PlayNavigateSound()
 {
 	PlayRegSound(L"Apps\\Explorer\\Navigating");

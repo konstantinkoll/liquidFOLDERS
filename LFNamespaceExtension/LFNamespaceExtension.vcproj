@@ -454,6 +454,10 @@
 				RelativePath=".\res\StoreManager_Tiny.ico"
 				>
 			</File>
+			<File
+				RelativePath=".\res\StoreProperties_Tiny.ico"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Quelldateien"

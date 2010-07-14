@@ -33,27 +33,96 @@ BOOL CRunCmdApp::InitInstance()
 {
 	LFApplication::InitInstance();
 
-	OnAppAbout();
+	if (__argc)
+	{
+		CString command(__targv[1]);
+		command.MakeUpper();
 
-	// Rufen Sie DragAcceptFiles nur auf, wenn ein Suffix vorhanden ist.
-	//  In einer SDI-Anwendung ist dies nach ProcessShellCommand erforderlich
+		switch (__argc)
+		{
+		case 2:
+			if (command==_T("ABOUT"))
+			{
+				OnAppAbout(IDS_ABOUT, IDB_ABOUTICON);
+				return TRUE;
+			}
+			if (command==_T("ABOUTEXTENSION"))
+			{
+				OnAppAbout(IDS_EXTENSIONABOUT, IDB_EXTENSIONABOUTICON);
+				return TRUE;
+			}
+			if (command==_T("NEWSTORE"))
+			{
+				OnStoreCreate();
+				return TRUE;
+			}
+			break;
+		case 3:
+			if (command==_T("DELETESTORE"))
+			{
+				OnStoreDelete(__targv[2]);
+				return TRUE;
+			}
+			if (command==_T("STOREPROPERTIES"))
+			{
+				OnStoreProperties(__targv[2]);
+				return TRUE;
+			}
+		}
+	}
+
 	return TRUE;
 }
 
-void CRunCmdApp::OnAppAbout()
+void CRunCmdApp::OnAppAbout(UINT ResIDName, UINT ResIDPicture)
 {
 	LFAboutDlgParameters p;
-	p.appname = "RunCmd";
+	ENSURE(p.appname.LoadString(ResIDName));
 	p.build = __TIMESTAMP__;
 	p.icon = new CGdiPlusBitmapResource();
-	p.icon->Load(IDB_ABOUTICON, _T("PNG"), AfxGetInstanceHandle());
+	p.icon->Load(ResIDPicture, _T("PNG"), AfxGetInstanceHandle());
 	p.TextureSize = -1;
 	p.RibbonColor = ID_VIEW_APPLOOK_OFF_2007_NONE;
 	p.HideEmptyDrives = -1;
 	p.HideEmptyDomains = -1;
 
-	LFAboutDlg dlg(&p, m_pActiveWnd);
+	LFAboutDlg dlg(&p, CWnd::GetForegroundWindow());
 	dlg.DoModal();
 
 	delete p.icon;
+}
+
+void CRunCmdApp::OnStoreCreate()
+{
+	LFStoreDescriptor* s = LFAllocStoreDescriptor();
+
+	LFStoreNewDlg dlg(CWnd::GetForegroundWindow(), IDD_STORENEW, '\0', s);
+	if (dlg.DoModal()==IDOK)
+		LFErrorBox(LFCreateStore(s, dlg.makeDefault));
+
+	LFFreeStoreDescriptor(s);
+}
+
+void CRunCmdApp::OnStoreDelete(CString ID)
+{
+	char StoreID[LFKeySize];
+	wcstombs_s(NULL, StoreID, ID, LFKeySize);
+
+	LFStoreDescriptor* store = LFAllocStoreDescriptor();
+	UINT res = LFGetStoreSettings(StoreID, store);
+
+	if (res==LFOk)
+		res = theApp.DeleteStore(store, CWnd::GetForegroundWindow());
+
+	LFFreeStoreDescriptor(store);
+	LFErrorBox(res);
+}
+
+void CRunCmdApp::OnStoreProperties(CString ID)
+{
+	char StoreID[LFKeySize];
+	wcstombs_s(NULL, StoreID, ID, LFKeySize);
+
+	LFStorePropertiesDlg dlg(StoreID, CWnd::GetForegroundWindow());
+	dlg.DoModal();
 }

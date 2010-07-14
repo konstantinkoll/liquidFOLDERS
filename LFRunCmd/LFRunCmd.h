@@ -21,7 +21,10 @@ public:
 	virtual BOOL InitInstance();
 
 protected:
-	void OnAppAbout();
+	void OnAppAbout(UINT ResIDName, UINT ResIDPicture);
+	void OnStoreCreate();
+	void OnStoreDelete(CString ID);
+	void OnStoreProperties(CString ID);
 };
 
 extern CRunCmdApp theApp;

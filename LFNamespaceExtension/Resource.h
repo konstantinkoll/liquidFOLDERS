@@ -2,12 +2,13 @@
 // Microsoft Visual C++ generated include file.
 // Used by LFNamespaceExtension.rc
 //
-#define IDB_NewStore                    100
-#define IDI_NewStore                    101
-#define IDB_StoreManager                102
-#define IDI_StoreManager                103
-#define IDB_Migrate                     104
-#define IDI_Migrate                     105
+#define IDI_StoreProperties             100
+#define IDB_NewStore                    101
+#define IDI_NewStore                    102
+#define IDB_StoreManager                103
+#define IDI_StoreManager                104
+#define IDB_Migrate                     105
+#define IDI_Migrate                     106
 #define IDS_MyComputerHint              1000
 #define IDS_AttributeComment            1001
 #define IDS_AllFiles                    1002
@@ -18,10 +19,8 @@
 #define IDS_NULLFOLDER_CommentMask      1007
 #define IDS_FILES_Singular              1008
 #define IDS_FILES_Plural                1009
-#define IDS_CAPT_DeleteStore            1010
-#define IDS_TEXT_DeleteStore            1011
-#define IDS_CAPT_CreateLink             1012
-#define IDS_TEXT_CreateLink             1013
+#define IDS_CAPT_CreateLink             1010
+#define IDS_TEXT_CreateLink             1011
 #define IDS_MENU_CreateNewStore         2000
 #define IDS_HINT_CreateNewStore         2001
 #define IDS_MENU_MakeDefaultStore       2002
@@ -36,10 +35,14 @@
 #define IDS_HINT_Delete                 2011
 #define IDS_MENU_Rename                 2012
 #define IDS_HINT_Rename                 2013
-#define IDS_MENU_StoreManager           2014
-#define IDS_HINT_StoreManager           2015
-#define IDS_MENU_Migrate                2016
-#define IDS_HINT_Migrate                2017
+#define IDS_MENU_Properties             2014
+#define IDS_HINT_Properties             2015
+#define IDS_MENU_StoreManager           2016
+#define IDS_HINT_StoreManager           2017
+#define IDS_MENU_Migrate                2018
+#define IDS_HINT_Migrate                2019
+#define IDS_MENU_About                  2020
+#define IDS_HINT_About                  2021
 
 // Next default values for new objects
 // 

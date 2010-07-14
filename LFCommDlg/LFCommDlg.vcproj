@@ -25,6 +25,7 @@
 			IntermediateDirectory="$(SolutionDir)\Temp\$(ProjectName)\$(ConfigurationName)\$(PlatformName)"
 			ConfigurationType="2"
 			UseOfMFC="2"
+			UseOfATL="0"
 			CharacterSet="1"
 			>
 			<Tool
@@ -109,6 +110,7 @@
 			IntermediateDirectory="$(SolutionDir)\Temp\$(ProjectName)\$(ConfigurationName)\$(PlatformName)"
 			ConfigurationType="2"
 			UseOfMFC="2"
+			UseOfATL="0"
 			CharacterSet="1"
 			>
 			<Tool
@@ -193,7 +195,7 @@
 			IntermediateDirectory="$(SolutionDir)\Temp\$(ProjectName)\$(ConfigurationName)\$(PlatformName)"
 			ConfigurationType="2"
 			UseOfMFC="2"
-			UseOfATL="1"
+			UseOfATL="0"
 			CharacterSet="1"
 			WholeProgramOptimization="1"
 			>
@@ -283,6 +285,7 @@
 			IntermediateDirectory="$(SolutionDir)\Temp\$(ProjectName)\$(ConfigurationName)\$(PlatformName)"
 			ConfigurationType="2"
 			UseOfMFC="2"
+			UseOfATL="0"
 			CharacterSet="1"
 			WholeProgramOptimization="1"
 			>

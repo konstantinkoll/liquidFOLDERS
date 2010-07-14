@@ -272,7 +272,7 @@ void CStoreWnd::OnStoreProperties()
 
 	if (i!=-1)
 	{
-		LFStorePropertiesDlg dlg(this, result->m_Items[i]->StoreID);
+		LFStorePropertiesDlg dlg(result->m_Items[i]->StoreID, this);
 		dlg.DoModal();
 	}
 }

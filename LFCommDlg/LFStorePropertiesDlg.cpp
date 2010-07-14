@@ -11,7 +11,7 @@
 extern AFX_EXTENSION_MODULE LFCommDlgDLL;
 extern LFMessageIDs* MessageIDs;
 
-LFStorePropertiesDlg::LFStorePropertiesDlg(CWnd* pParentWnd, char* _StoreID)
+LFStorePropertiesDlg::LFStorePropertiesDlg(char* _StoreID, CWnd* pParentWnd)
 	: CDialog(IDD_STOREPROPERTIES, pParentWnd)
 {
 	if (LFGetStoreSettings(_StoreID, &store)==LFOk)

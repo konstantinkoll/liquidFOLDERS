@@ -1019,7 +1019,7 @@ void CMainFrame::OnStoreProperties()
 
 	if (i!=-1)
 	{
-		LFStorePropertiesDlg dlg(this, CookedFiles->m_Items[i]->StoreID);
+		LFStorePropertiesDlg dlg(CookedFiles->m_Items[i]->StoreID, this);
 		dlg.DoModal();
 	}
 }

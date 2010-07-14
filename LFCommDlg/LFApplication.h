@@ -117,6 +117,7 @@ public:
 	BOOL WriteGlobalString(LPCTSTR lpszEntry, LPCTSTR lpszValue);
 	static void ExtractCoreIcons(HINSTANCE hModIcons, int size, CImageList* li);
 	UINT DeleteStore(LFItemDescriptor* store, CWnd* pParentWnd=NULL);
+	UINT DeleteStore(LFStoreDescriptor* store, CWnd* pParentWnd=NULL);
 	void PlayNavigateSound();
 	void PlayWarningSound();
 	void PlayTrashSound();

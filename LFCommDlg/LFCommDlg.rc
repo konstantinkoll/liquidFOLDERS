@@ -1061,7 +1061,7 @@ END
 
 STRINGTABLE 
 BEGIN
-    ID_APP_ABOUT            "Displays liquidFOLDERS information and settings.\nAbout"
+    ID_APP_ABOUT            "Shows liquidFOLDERS information and settings.\nAbout"
 END
 
 STRINGTABLE 

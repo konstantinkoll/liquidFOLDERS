@@ -94,7 +94,7 @@ NSEItemAttributes CFolderItem::GetAttributes(NSEItemAttributes /*requested*/)
 	UINT ret = NSEIA_CFOLDERITEM;
 
 	if (data.Level==LevelStores)
-		ret |= NSEIA_CanRename | NSEIA_CanDelete;
+		ret |= NSEIA_CanRename | NSEIA_CanDelete | NSEIA_HasPropSheet;
 	if (data.Level<LevelAttrValue)
 		ret |= NSEIA_HasSubFolder;
 
@@ -754,6 +754,12 @@ void CFolderItem::GetMenuItems(CGetMenuitemsEventArgs& e)
 				ENSURE(tmpStr.LoadString(IDS_MENU_Rename));
 				ENSURE(tmpHint.LoadString(IDS_HINT_Rename));
 				e.menu->AddItem(tmpStr, _T(VERB_RENAME), tmpHint);
+
+				e.menu->AddItem(_T(""))->SetSeparator(TRUE);
+
+				ENSURE(tmpStr.LoadString(IDS_MENU_Properties));
+				ENSURE(tmpHint.LoadString(IDS_HINT_Properties));
+				e.menu->AddItem(tmpStr, _T(VERB_PROPERTIES), tmpHint);
 			}
 		}
 		break;
@@ -792,10 +798,24 @@ void CFolderItem::GetMenuItems(CGetMenuitemsEventArgs& e)
 	}
 }
 
+void CFolderItem::OnMergeFrameMenu(CMergeFrameMenuEventArgs& e)
+{
+	CShellMenuItem* item = e.menu->AddItem(_T("liquidFOLDERS"));
+	item->SetHasSubMenu(TRUE);
+
+	CString tmpStr;
+	CString tmpHint;
+	ENSURE(tmpStr.LoadString(IDS_MENU_About));
+	ENSURE(tmpHint.LoadString(IDS_HINT_About));
+
+	CShellMenu* subMenu = item->GetSubMenu();
+	item = subMenu->AddItem(tmpStr, _T(VERB_ABOUT), tmpHint);
+}
+
 BOOL CFolderItem::OnExecuteMenuItem(CExecuteMenuitemsEventArgs& e)
 {
 	if (e.menuItem->GetVerb()==_T(VERB_CREATENEWSTORE))
-		return OnCreateNewStore();
+		return OnCreateNewStore(e.hWnd);
 
 	if (e.menuItem->GetVerb()==_T(VERB_STOREMANAGER))
 		return OnStoreManager(e.hWnd);
@@ -814,15 +834,7 @@ BOOL CFolderItem::OnExecuteMenuItem(CExecuteMenuitemsEventArgs& e)
 			strcpy_s(key, LFKeySize, folder->data.StoreID);
 
 			UINT res = (e.menuItem->GetVerb()==_T(VERB_MAKEDEFAULTSTORE)) ? LFMakeDefaultStore(&key[0]) : LFMakeHybridStore(&key[0]);
-			if (res!=LFOk)
-			{
-				LFErrorBox(res);
-			}
-			else
-			{
-				UpdateItems();
-			}
-
+			LFErrorBox(res);
 			return (res==LFOk);
 		}
 
@@ -861,15 +873,22 @@ BOOL CFolderItem::OnExecuteMenuItem(CExecuteMenuitemsEventArgs& e)
 
 void CFolderItem::OnExecuteFrameCommand(CExecuteFrameCommandEventArgs& e)
 {
-	switch (e.toolbarButtonIndex)
+	if(e.menuItem)
 	{
-	case 1:
-		OnStoreManager();
-		break;
-	case 2:
-		OnMigrate();
-		break;
+		if (e.menuItem->GetVerb()==_T(VERB_ABOUT))
+			if (!theApp.m_PathRunCmd.IsEmpty())
+				ShellExecute(NULL, "open", theApp.m_PathRunCmd, "ABOUTEXTENSION", NULL, SW_SHOW);
 	}
+	else
+		switch (e.toolbarButtonIndex)
+		{
+		case 1:
+			OnStoreManager();
+			break;
+		case 2:
+			OnMigrate();
+			break;
+		}
 }
 
 int CFolderItem::CompareTo(CNSEItem* otherItem, CShellColumn& column)
@@ -1020,15 +1039,7 @@ BOOL CFolderItem::OnChangeName(CChangeNameEventArgs& e)
 	LPWSTR name = T2W(e.newName);
 
 	UINT res = LFSetStoreAttributes(&key[0], name, NULL);
-	if (res!=LFOk)
-	{
-		LFErrorBox(res);
-	}
-	else
-	{
-		UpdateItems();
-	}
-
+	LFErrorBox(res);
 	return (res==LFOk);
 }
 
@@ -1037,14 +1048,45 @@ BOOL CFolderItem::OnDelete(CExecuteMenuitemsEventArgs& e)
 	switch (data.Level)
 	{
 	case LevelRoot:
-		CString caption;
-		CString msg;
-		ENSURE(caption.LoadString(IDS_CAPT_DeleteStore));
-		ENSURE(msg.LoadString(IDS_TEXT_DeleteStore));
+		if (!theApp.m_PathRunCmd.IsEmpty())
+		{
+			POSITION pos = e.children->GetHeadPosition();
+			if (pos)
+			{
+				CNSEItem* item = (CNSEItem*)e.children->GetNext(pos);
+				if (IS(item, CFolderItem))
+				{
+					CString id = AS(item, CFolderItem)->data.StoreID;
+					ShellExecute(e.hWnd, "open", theApp.m_PathRunCmd, _T("DELETESTORE ")+id, NULL, SW_SHOW);
+					return TRUE;
+				}
+			}
+		}
+		break;
+	}
 
-		if (MessageBox(e.hWnd, msg, caption, MB_ICONSTOP | MB_YESNO)==IDYES)
-			return OnStoreManager(e.hWnd);
+	return FALSE;
+}
 
+BOOL CFolderItem::OnProperties(CExecuteMenuitemsEventArgs& e)
+{
+	switch (data.Level)
+	{
+	case LevelRoot:
+		if (!theApp.m_PathRunCmd.IsEmpty())
+		{
+			POSITION pos = e.children->GetHeadPosition();
+			if (pos)
+			{
+				CNSEItem* item = (CNSEItem*)e.children->GetNext(pos);
+				if (IS(item, CFolderItem))
+				{
+					CString id = AS(item, CFolderItem)->data.StoreID;
+					ShellExecute(e.hWnd, "open", theApp.m_PathRunCmd, _T("STOREPROPERTIES ")+id, NULL, SW_SHOW);
+					return TRUE;
+				}
+			}
+		}
 		break;
 	}
 
@@ -1085,24 +1127,15 @@ BOOL CFolderItem::OnOpen(CExecuteMenuitemsEventArgs& e)
 	return FALSE;
 }
 
-BOOL CFolderItem::OnCreateNewStore()
+BOOL CFolderItem::OnCreateNewStore(HWND hWnd)
 {
-	LFStoreDescriptor* s = LFAllocStoreDescriptor();
-	s->AutoLocation = TRUE;
-	s->StoreMode = LFStoreModeInternal;
-
-	UINT res = LFCreateStore(s);
-	if (res!=LFOk)
+	if (!theApp.m_PathRunCmd.IsEmpty())
 	{
-		LFErrorBox(res);
-	}
-	else
-	{
-		UpdateItems();
+		ShellExecute(hWnd, "open", theApp.m_PathRunCmd, "NEWSTORE", NULL, SW_SHOW);
+		return TRUE;
 	}
 
-	LFFreeStoreDescriptor(s);
-	return (res==LFOk);
+	return FALSE;
 }
 
 BOOL CFolderItem::OnStoreManager(HWND hWnd)
@@ -1178,18 +1211,6 @@ void CFolderItem::OnCreateShortcut(CNSEItem* Item, const CString& LinkFilename, 
 	}
 }
 
-void CFolderItem::UpdateItems()
-{
-	NotifyUpdated();
-
-	CNSEFolder* parent = GetParentFolder();
-	if (parent)
-	{
-		parent->NotifyUpdated();
-		parent->RefreshView();
-		parent->InternalRelease();
-	}
-}
 
 
 

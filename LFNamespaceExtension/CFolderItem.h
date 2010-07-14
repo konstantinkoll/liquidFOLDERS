@@ -13,13 +13,15 @@
 
 #define VERB_CREATELINK         "link"
 #define VERB_CREATENEWSTORE     "newstore"
-#define VERB_DELETE             "delete"
 #define VERB_MAKEDEFAULTSTORE   "defaultstore"
 #define VERB_MAKEHYBRIDSTORE    "hybridstore"
 #define VERB_OPEN               "open"
 #define VERB_RENAME             "rename"
+#define VERB_DELETE             "delete"
+#define VERB_PROPERTIES         "properties"
 #define VERB_STOREMANAGER       "storemanager"
 #define VERB_MIGRATE            "migrate"
+#define VERB_ABOUT              "about"
 
 struct FolderSerialization
 {
@@ -74,6 +76,7 @@ public:
 	virtual BOOL GetColumnValueEx(VARIANT* value, CShellColumn& column);
 	virtual BOOL IsValid();
 	virtual void GetMenuItems(CGetMenuitemsEventArgs& e);
+	virtual void OnMergeFrameMenu(CMergeFrameMenuEventArgs& e);
 	virtual BOOL OnExecuteMenuItem(CExecuteMenuitemsEventArgs& e);
 	virtual void OnExecuteFrameCommand(CExecuteFrameCommandEventArgs& e);
 	virtual int CompareTo(CNSEItem* otherItem, CShellColumn& column);
@@ -82,9 +85,10 @@ public:
 	virtual void GetToolbarCommands(CPtrList& commands);
 	virtual BOOL OnChangeName(CChangeNameEventArgs& e);
 	virtual BOOL OnDelete(CExecuteMenuitemsEventArgs& e);
+	virtual BOOL OnProperties(CExecuteMenuitemsEventArgs& e);
 	virtual BOOL OnOpen(CExecuteMenuitemsEventArgs& e);
 
-	BOOL OnCreateNewStore();
+	BOOL OnCreateNewStore(HWND hWnd=NULL);
 	BOOL OnStoreManager(HWND hWnd=NULL);
 	BOOL OnMigrate(HWND hWnd=NULL);
 	void OnCreateShortcut(CNSEItem* Item, const CString& LinkFilename, const CString& Description, UINT Icon);
