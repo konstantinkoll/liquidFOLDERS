@@ -8,7 +8,6 @@ struct LFAboutDlgParameters
 	// Vom Aufrufer zu setzen
 	CString appname;
 	CString build;
-	CString caption;
 	CGdiPlusBitmapResource* icon;
 	int TextureSize;
 	int MaxTextureSize;

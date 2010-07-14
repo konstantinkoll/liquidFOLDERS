@@ -51,7 +51,6 @@ void CRunCmdApp::OnAppAbout()
 	LFAboutDlgParameters p;
 	p.appname = "RunCmd";
 	p.build = __TIMESTAMP__;
-	ENSURE(p.caption.LoadString(IDS_ABOUT));
 	p.icon = new CGdiPlusBitmapResource();
 	p.icon->Load(IDB_ABOUTICON, _T("PNG"), AfxGetInstanceHandle());
 	p.TextureSize = -1;

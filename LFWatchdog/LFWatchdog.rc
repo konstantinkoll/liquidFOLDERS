@@ -130,7 +130,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_ABOUT               "Über Watchdog"
     IDS_TOOLTIP_SINGULAR    "liquidFOLDERS Watchdog (%d Store)"
     IDS_TOOLTIP_PLURAL      "liquidFOLDERS Watchdog (%d Stores)"
 END
@@ -175,7 +174,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_ABOUT               "About Watchdog"
     IDS_TOOLTIP_SINGULAR    "liquidFOLDERS Watchdog (%d store)"
     IDS_TOOLTIP_PLURAL      "liquidFOLDERS Watchdog (%d stores)"
 END
@@ -220,7 +218,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_ABOUT               "About Watchdog"
     IDS_TOOLTIP_SINGULAR    "liquidFOLDERS Watchdog (%d store)"
     IDS_TOOLTIP_PLURAL      "liquidFOLDERS Watchdog (%d stores)"
 END
@@ -265,7 +262,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_ABOUT               "Concernant Watchdog"
     IDS_TOOLTIP_SINGULAR    "liquidFOLDERS Watchdog (%d store)"
     IDS_TOOLTIP_PLURAL      "liquidFOLDERS Watchdog (%d stores)"
 END

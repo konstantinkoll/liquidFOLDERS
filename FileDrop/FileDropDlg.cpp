@@ -266,7 +266,6 @@ void CFileDropDlg::OnAbout()
 	LFAboutDlgParameters p;
 	p.appname = "FileDrop";
 	p.build = __TIMESTAMP__;
-	p.caption = strAbout;
 	p.icon = new CGdiPlusBitmapResource();
 	p.icon->Load(IDB_ABOUTICON, _T("PNG"), AfxGetInstanceHandle());
 	p.TextureSize = -1;

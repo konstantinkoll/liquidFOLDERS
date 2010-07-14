@@ -2,8 +2,8 @@
 // Microsoft Visual C++ generated include file.
 // Used by LFRunCmd.rc
 //
-#define IDI_MAIN                        128
-#define IDB_ABOUTICON                   129
+#define IDI_MAIN                        1
+#define IDB_ABOUTICON                   2
 #define IDS_ABOUT                       1000
 
 // Next default values for new objects

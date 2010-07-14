@@ -13,8 +13,6 @@ LFAboutDlg::LFAboutDlg(LFAboutDlgParameters* pParameters, CWnd* pParent)
 {
 	ASSERT(pParameters!=NULL);
 	parameters = pParameters;
-	parameters->caption.Remove('&');
-	parameters->caption.Remove('.');
 
 	CString modFilename;
 	if (GetModuleFileName(AfxGetInstanceHandle(), modFilename.GetBuffer(MAX_PATH), MAX_PATH) > 0)
@@ -60,7 +58,13 @@ END_MESSAGE_MAP()
 BOOL LFAboutDlg::OnInitDialog()
 {
 	LFDialog::OnInitDialog();
-	SetWindowText(parameters->caption);
+
+	// Titelleiste
+	CString text;
+	GetWindowText(text);
+	CString caption;
+	caption.Format(text, parameters->appname);
+	SetWindowText(caption);
 
 	BOOL ShowCancel = FALSE;
 
