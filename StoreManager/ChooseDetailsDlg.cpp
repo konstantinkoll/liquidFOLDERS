@@ -133,6 +133,10 @@ void ChooseDetailsDlg::DoDataExchange(CDataExchange* pDX)
 						colID++;
 				view->ColumnOrder[cnt++] = colID;
 			}
+
+		// Nicht belegte Spalten
+		for (UINT a=cnt; a<LFAttributeCount; a++)
+			view->ColumnOrder[a] = a;
 	}
 }
 
