@@ -106,6 +106,62 @@
 	<References>
 	</References>
 	<Files>
+		<Filter
+			Name="MSM_x86"
+			>
+			<File
+				RelativePath=".\MSM_x86\Microsoft_VC90_CRT_x86.msm"
+				>
+			</File>
+			<File
+				RelativePath=".\MSM_x86\Microsoft_VC90_MFC_x86.msm"
+				>
+			</File>
+			<File
+				RelativePath=".\MSM_x86\Microsoft_VC90_MFCLOC_x86.msm"
+				>
+			</File>
+			<File
+				RelativePath=".\MSM_x86\policy_9_0_Microsoft_VC90_CRT_x86.msm"
+				>
+			</File>
+			<File
+				RelativePath=".\MSM_x86\policy_9_0_Microsoft_VC90_MFC_x86.msm"
+				>
+			</File>
+			<File
+				RelativePath=".\MSM_x86\policy_9_0_Microsoft_VC90_MFCLOC_x86.msm"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="MSM_x64"
+			>
+			<File
+				RelativePath=".\MSM_x64\Microsoft_VC90_CRT_x86_x64.msm"
+				>
+			</File>
+			<File
+				RelativePath=".\MSM_x64\Microsoft_VC90_MFC_x86_x64.msm"
+				>
+			</File>
+			<File
+				RelativePath=".\MSM_x64\Microsoft_VC90_MFCLOC_x86_x64.msm"
+				>
+			</File>
+			<File
+				RelativePath=".\MSM_x64\policy_9_0_Microsoft_VC90_CRT_x86_x64.msm"
+				>
+			</File>
+			<File
+				RelativePath=".\MSM_x64\policy_9_0_Microsoft_VC90_MFC_x86_x64.msm"
+				>
+			</File>
+			<File
+				RelativePath=".\MSM_x64\policy_9_0_Microsoft_VC90_MFCLOC_x86_x64.msm"
+				>
+			</File>
+		</Filter>
 		<File
 			RelativePath=".\AppLogo.ico"
 			>
