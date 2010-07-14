@@ -79,10 +79,10 @@ BOOL LFNamespaceExtensionApp::InitInstance()
 
 	CNSEFolder::RegisterExtensionData(_T("Name:KonstantinKoll*Company:BLUefolders*Email:ceo@bluefolders.net#Oo0m5Ouz+xz64KV57IinRTUvhkNojDZGjBd5MNXfwDEmgcr4baoQFMono3odGhqP"));
 
-	if (!GetApplicationPath(_T("StoreManager"), PathStoreManager))
-		PathStoreManager.Empty();
-	if (!GetApplicationPath(_T("Migrate"), PathMigrate))
-		PathMigrate.Empty();
+	if (!GetApplicationPath(_T("StoreManager"), m_PathStoreManager))
+		m_PathStoreManager.Empty();
+	if (!GetApplicationPath(_T("Migrate"), m_PathMigrate))
+		m_PathMigrate.Empty();
 
 	return CWinApp::InitInstance();
 }
@@ -112,6 +112,17 @@ BOOL LFNamespaceExtensionApp::GetApplicationPath(CString App, CString& Path)
 		if (reg.Read(App, Path))
 			if (_access(Path, 0)==0)
 				return TRUE;
+
+	// Modulpfad probieren
+	Path = m_IconFile;
+	int pos = Path.ReverseFind('\\');
+	if (pos)
+		Path = Path.Left(pos+1);
+	Path.Append(App);
+	Path.Append(_T(".exe"));
+	MessageBox(NULL,Path,0,0);
+	if (_access(Path, 0)==0)
+		return TRUE;
 
 	// Festen Pfad probieren
 	char tmpStr[MAX_PATH];

@@ -773,17 +773,17 @@ void CFolderItem::GetMenuItems(CGetMenuitemsEventArgs& e)
 
 	if (e.children->GetCount()==0)
 	{
-		if ((!theApp.PathStoreManager.IsEmpty()) || (!theApp.PathMigrate.IsEmpty()))
+		if ((!theApp.m_PathStoreManager.IsEmpty()) || (!theApp.m_PathMigrate.IsEmpty()))
 			e.menu->AddItem(_T(""))->SetSeparator(TRUE);
 
-		if (!theApp.PathStoreManager.IsEmpty())
+		if (!theApp.m_PathStoreManager.IsEmpty())
 		{
 			ENSURE(tmpStr.LoadString(IDS_MENU_StoreManager));
 			ENSURE(tmpHint.LoadString(IDS_HINT_StoreManager));
 			e.menu->AddItem(tmpStr, _T(VERB_STOREMANAGER), tmpHint);
 		}
 
-		if (!theApp.PathMigrate.IsEmpty())
+		if (!theApp.m_PathMigrate.IsEmpty())
 		{
 			ENSURE(tmpStr.LoadString(IDS_MENU_Migrate));
 			ENSURE(tmpHint.LoadString(IDS_HINT_Migrate));
@@ -975,20 +975,20 @@ BOOL CFolderItem::GetFileDescriptor(FILEDESCRIPTOR* fd)
 void CFolderItem::GetToolbarButtons(CPtrList& commands)
 {
 
-	if ((!theApp.PathStoreManager.IsEmpty()) || (!theApp.PathMigrate.IsEmpty()))
+	if ((!theApp.m_PathStoreManager.IsEmpty()) || (!theApp.m_PathMigrate.IsEmpty()))
 	{
 		CString tmpStr;
 
 		commands.AddTail(new CShellToolbarButton(_T(""), NSESTBT_Separator));
 
-		if (!theApp.PathStoreManager.IsEmpty())
+		if (!theApp.m_PathStoreManager.IsEmpty())
 		{
 			ENSURE(tmpStr.LoadString(IDS_MENU_StoreManager));
 			tmpStr.Remove('&');
 			commands.AddTail(new CShellToolbarButton(tmpStr, NSESTBT_Normal, (INT_PTR)IDB_StoreManager));
 		}
 
-		if (!theApp.PathMigrate.IsEmpty())
+		if (!theApp.m_PathMigrate.IsEmpty())
 		{
 			ENSURE(tmpStr.LoadString(IDS_MENU_Migrate));
 			tmpStr.Remove('&');
@@ -1002,9 +1002,9 @@ void CFolderItem::GetToolbarCommands(CPtrList& commands)
 	if (data.Level==LevelRoot)
 		commands.AddTail(new CmdCreateNewStore());
 
-	if (!theApp.PathStoreManager.IsEmpty())
+	if (!theApp.m_PathStoreManager.IsEmpty())
 		commands.AddTail(new CmdStoreManager());
-	if (!theApp.PathMigrate.IsEmpty())
+	if (!theApp.m_PathMigrate.IsEmpty())
 		commands.AddTail(new CmdMigrate());
 }
 
@@ -1107,9 +1107,9 @@ BOOL CFolderItem::OnCreateNewStore()
 
 BOOL CFolderItem::OnStoreManager(HWND hWnd)
 {
-	if (!theApp.PathStoreManager.IsEmpty())
+	if (!theApp.m_PathStoreManager.IsEmpty())
 	{
-		ShellExecute(hWnd, "open", theApp.PathStoreManager, "", NULL, SW_SHOW);
+		ShellExecute(hWnd, "open", theApp.m_PathStoreManager, "", NULL, SW_SHOW);
 		return TRUE;
 	}
 
@@ -1118,9 +1118,9 @@ BOOL CFolderItem::OnStoreManager(HWND hWnd)
 
 BOOL CFolderItem::OnMigrate(HWND hWnd)
 {
-	if (!theApp.PathMigrate.IsEmpty())
+	if (!theApp.m_PathMigrate.IsEmpty())
 	{
-		ShellExecute(hWnd, "open", theApp.PathMigrate, "", NULL, SW_SHOW);
+		ShellExecute(hWnd, "open", theApp.m_PathMigrate, "", NULL, SW_SHOW);
 		return TRUE;
 	}
 

@@ -17,8 +17,8 @@ public:
 
 	BOOL HideFileExt();
 
-	CString PathStoreManager;
-	CString PathMigrate;
+	CString m_PathStoreManager;
+	CString m_PathMigrate;
 	TCHAR m_IconFile[MAX_PATH];
 	LFAttributeDescriptor* m_Attributes[LFAttributeCount];
 	LFDomainDescriptor* m_Domains[LFDomainCount];
