@@ -10,11 +10,30 @@ static const GUID PropertyQuery =
 	{ 0x49691c90, 0x7e17, 0x101a, { 0xa9, 0x1c, 0x08, 0x00, 0x2b, 0x2e, 0xcd, 0xa9 } };
 static const GUID PropertySummary =
 	{ 0xf29f85e0, 0x4ff9, 0x1068, { 0xab, 0x91, 0x08, 0x00, 0x2b, 0x27, 0xb3, 0xd9 } };
+static const GUID PropertyDocuments =
+	{ 0xd5cdd502, 0x2e9c, 0x101b, { 0x93, 0x97, 0x08, 0x00, 0x2b, 0x2c, 0xf9, 0xae } };
+static const GUID PropertyImage =
+	{ 0x6444048f, 0x4c8b, 0x11d1, { 0x8b, 0x70, 0x08, 0x00, 0x36, 0xb1, 0x1a, 0x03 } };
+static const GUID PropertyAudio =
+	{ 0x64440490, 0x4c8b, 0x11d1, { 0x8b, 0x70, 0x08, 0x00, 0x36, 0xb1, 0x1a, 0x03 } };
+static const GUID PropertyVideo =
+	{ 0x64440491, 0x4c8b, 0x11d1, { 0x8b, 0x70, 0x08, 0x00, 0x36, 0xb1, 0x1a, 0x03 } };
 static const GUID PropertyMedia =
-	{ 0x64440492, 0x4c8b, 0x11d1, { 0x8b, 0x70, 0x08, 0x00, 0x36, 0xb1, 0x1a, 0x03} };
+	{ 0x64440492, 0x4c8b, 0x11d1, { 0x8b, 0x70, 0x08, 0x00, 0x36, 0xb1, 0x1a, 0x03 } };
+static const GUID PropertyPhoto =
+	{ 0x14B81DA1, 0x0135, 0x4D31, { 0x96, 0xD9, 0x6C, 0xBF, 0xC9, 0x67, 0x1A, 0x99 } };
+static const GUID PropertyMusic =
+	{ 0x56A3372E, 0xCE9C, 0x11D2, { 0x9F, 0x0E, 0x00, 0x60, 0x97, 0xC6, 0x86, 0xF6 } };
 static const GUID PropertyVersion =
 	{ 0x0CEF7D53, 0xFA64, 0x11D1, { 0xA2, 0x03, 0x00, 0x00, 0xF8, 0x1F, 0xED, 0xEE } };
-
+static const GUID PropertyUnnamed1 =
+	{ 0x3F8472B5, 0xE0AF, 0x4DB2, { 0x80, 0x71, 0xC5, 0x3F, 0xE7, 0x6A, 0xE7, 0xCE } };
+static const GUID PropertyUnnamed2 =
+	{ 0x72FAB781, 0xACDA, 0x43E5, { 0xB1, 0x55, 0xB2, 0x43, 0x4F, 0x85, 0xE6, 0x78 } };
+static const GUID PropertyUnnamed3 =
+	{ 0xE3E0584C, 0xB788, 0x4A5A, { 0xBB, 0x20, 0x7F, 0x5A, 0x44, 0xC9, 0xAC, 0xDD } };
+static const GUID PropertyUnnamed4 =
+	{ 0x2E4B640D, 0x5019, 0x46D8, { 0x88, 0x81, 0x55, 0x41, 0x4C, 0xC5, 0xCA, 0xA0 } };
 
 // Der Inhalt dieses Segments wird über alle Instanzen von LFCore geteilt.
 // Der Zugriff muss daher über Mutex-Objekte serialisiert/synchronisiert werden.
@@ -63,46 +82,46 @@ LFShellProperty AttrProperties[LFAttributeCount] = {
 	{ PropertyQuery, 9 },			// LFAttrURL
 	{ PropertySummary, 5 },			// LFAttrTags
 	{ PropertyMedia, 9 },			// LFAttrRating
-	{ 0, 0 },						// LFAttrPriority
+	{ PropertyUnnamed3, 11 },		// LFAttrPriority
 	{ 0, 0 },						// LFAttrLocationName
 	{ 0, 0 },						// LFAttrLocationIATA
 	{ 0, 0 },						// LFAttrLocationGPS
 
-	{ 0, 0 },						// LFAttrHeight
-	{ 0, 0 },						// LFAttrWidth
+	{ PropertyImage, 4 },			// LFAttrHeight
+	{ PropertyImage, 3 },			// LFAttrWidth
 	{ 0, 0 },						// LFAttrResolution
 	{ 0, 0 },						// LFAttrAspectRatio
-	{ 0, 0 },						// LFAttrVideoCodec
-	{ 0, 0 },						// LFAttrRoll
+	{ PropertyVideo, 44 },			// LFAttrVideoCodec
+	{ PropertyPhoto, 18248 },		// LFAttrRoll
 
 	{ 0, 0 },						// LFAttrExposure
 	{ 0, 0 },						// LFAttrFocus
 	{ 0, 0 },						// LFAttrAperture
 	{ 0, 0 },						// LFAttrChip
 
-	{ 0, 0 },						// LFAttrAlbum
-	{ 0, 0 },						// LFAttrChannels
-	{ 0, 0 },						// LFAttrSamplerate
+	{ PropertyMusic, 4 },			// LFAttrAlbum
+	{ PropertyMedia, 7 },			// LFAttrChannels
+	{ PropertyMedia, 5 },			// LFAttrSamplerate
 	{ 0, 0 },						// LFAttrAudioCodec
 
-	{ 0, 0 },						// LFAttrDuration
-	{ 0, 0 },						// LFAttrBitrate
+	{ PropertyAudio, 3 },			// LFAttrDuration
+	{ PropertyMedia, 4 },			// LFAttrBitrate
 
 	{ PropertySummary, 4 },			// LFAttrArtist
 	{ PropertySummary, 2 },			// LFAttrTitle
-	{ 0, 0 },						// LFAttrCopyright
+	{ PropertyMedia, 11 },			// LFAttrCopyright
 	{ 0, 0 },						// LFAttrISBN
 	{ 0, 0 },						// LFAttrLanguage
-	{ 0, 0 },						// LFAttrPages
-	{ 0, 0 },						// LFAttrRecordingTime
+	{ PropertyDocuments, 14 },		// LFAttrPages
+	{ PropertyUnnamed4, 100 },		// LFAttrRecordingTime
 	{ 0, 0 },						// LFAttrRecordingEquipment
 	{ 0, 0 },						// LFAttrSignature
 
 	{ 0, 0 },						// LFAttrFrom
 	{ 0, 0 },						// LFAttrTo
 	{ 0, 0 },						// LFAttrResponsible
-	{ 0, 0 },						// LFAttrDueTime
-	{ 0, 0 }						// LFAttrDoneTime
+	{ PropertyUnnamed1, 100 },		// LFAttrDueTime
+	{ PropertyUnnamed2, 100 }		// LFAttrDoneTime
 };
 
 #pragma data_seg()
