@@ -79,6 +79,8 @@ BOOL LFNamespaceExtensionApp::InitInstance()
 
 	CNSEFolder::RegisterExtensionData(_T("Name:KonstantinKoll*Company:BLUefolders*Email:ceo@bluefolders.net#Oo0m5Ouz+xz64KV57IinRTUvhkNojDZGjBd5MNXfwDEmgcr4baoQFMono3odGhqP"));
 
+	if (!GetApplicationPath(_T("RunCmd"), m_PathRunCmd))
+		m_PathRunCmd.Empty();
 	if (!GetApplicationPath(_T("StoreManager"), m_PathStoreManager))
 		m_PathStoreManager.Empty();
 	if (!GetApplicationPath(_T("Migrate"), m_PathMigrate))

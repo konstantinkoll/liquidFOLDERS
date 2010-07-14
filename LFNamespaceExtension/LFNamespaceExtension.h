@@ -17,6 +17,7 @@ public:
 
 	BOOL HideFileExt();
 
+	CString m_PathRunCmd;
 	CString m_PathStoreManager;
 	CString m_PathMigrate;
 	TCHAR m_IconFile[MAX_PATH];

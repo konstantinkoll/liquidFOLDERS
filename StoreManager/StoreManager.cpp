@@ -218,7 +218,6 @@ void CStoreManagerApp::OnAppAbout()
 	p.appname = "StoreManager";
 	p.build = __TIMESTAMP__;
 	p.caption = "About StoreManager";
-	p.icon = NULL;
 	p.icon = new CGdiPlusBitmapResource();
 	p.icon->Load(IDB_ABOUTICON, _T("PNG"), AfxGetInstanceHandle());
 	p.TextureSize = m_nTextureSize;

@@ -2169,6 +2169,10 @@
 			>
 		</File>
 		<File
+			RelativePath=".\RunCmd_About.png"
+			>
+		</File>
+		<File
 			RelativePath=".\Shortcuts.ico"
 			>
 		</File>
