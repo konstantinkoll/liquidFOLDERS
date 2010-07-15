@@ -4,10 +4,63 @@
 #include "CFolderItem.h"
 #include "Commands.h"
 #include "LFCore.h"
+#include "LFNamespaceExtension.h"
 #include "liquidFOLDERS.h"
 #include "resource.h"
 #include <io.h>
 #include <shlguid.h>
+
+
+// CmdProperties
+//
+
+CmdProperties::CmdProperties()
+{
+	static const GUID GProperties = { 0x8ff9154a, 0x5432, 0x40fa, { 0xbe, 0xe0, 0x1e, 0xaf, 0xff, 0xd8, 0x3f, 0xdb } };
+	guid = GProperties;
+}
+
+CString CmdProperties::GetCaption(CPtrList* /*nseItems*/)
+{
+	CString caption;
+	ENSURE(caption.LoadString(IDS_MENU_Properties));
+	caption.Remove('&');
+	return caption;
+}
+
+CString CmdProperties::GetToolTip(CPtrList* /*nseItems*/)
+{
+	CString hint;
+	ENSURE(hint.LoadString(IDS_HINT_Properties));
+	return hint;
+}
+
+ExplorerCommandState CmdProperties::GetState(CPtrList* nseItems)
+{
+	return ((nseItems->GetCount()==1) && (!theApp.m_PathRunCmd.IsEmpty())) ? ECS_Enabled : ECS_Disabled;
+}
+
+BOOL CmdProperties::Invoke(CPtrList* nseItems)
+{
+	POSITION pos = nseItems->GetHeadPosition();
+	if (pos)
+	{
+		CNSEItem* item = (CNSEItem*)nseItems->GetNext(pos);
+		if (IS(item, CFolderItem))
+		{
+			CString id = AS(item, CFolderItem)->data.StoreID;
+			ShellExecute(NULL, "open", theApp.m_PathRunCmd, _T("STOREPROPERTIES ")+id, NULL, SW_SHOW);
+			return TRUE;
+		}
+	}
+
+	return FALSE;
+}
+
+CString CmdProperties::GetIcon(CPtrList* /*nseItems*/)
+{
+	return _T("LFNamespaceExtension.dll,0");
+}
 
 
 // CmdCreateNewStore
@@ -32,6 +85,11 @@ CString CmdCreateNewStore::GetToolTip(CPtrList* /*nseItems*/)
 	CString hint;
 	ENSURE(hint.LoadString(IDS_HINT_CreateNewStore));
 	return hint;
+}
+
+ExplorerCommandState CmdCreateNewStore::GetState(CPtrList* /*nseItems*/)
+{
+	return (!theApp.m_PathRunCmd.IsEmpty()) ? ECS_Enabled : ECS_Disabled;
 }
 
 BOOL CmdCreateNewStore::Invoke(CPtrList* /*nseItems*/)
@@ -69,6 +127,11 @@ CString CmdStoreManager::GetToolTip(CPtrList* /*nseItems*/)
 	return hint;
 }
 
+ExplorerCommandState CmdStoreManager::GetState(CPtrList* /*nseItems*/)
+{
+	return (!theApp.m_PathStoreManager.IsEmpty()) ? ECS_Enabled : ECS_Disabled;
+}
+
 BOOL CmdStoreManager::Invoke(CPtrList* /*nseItems*/)
 {
 	return ((CFolderItem*)nseFolder)->OnStoreManager();
@@ -102,6 +165,11 @@ CString CmdMigrate::GetToolTip(CPtrList* /*nseItems*/)
 	CString hint;
 	ENSURE(hint.LoadString(IDS_HINT_Migrate));
 	return hint;
+}
+
+ExplorerCommandState CmdMigrate::GetState(CPtrList* /*nseItems*/)
+{
+	return (!theApp.m_PathMigrate.IsEmpty()) ? ECS_Enabled : ECS_Disabled;
 }
 
 BOOL CmdMigrate::Invoke(CPtrList* /*nseItems*/)

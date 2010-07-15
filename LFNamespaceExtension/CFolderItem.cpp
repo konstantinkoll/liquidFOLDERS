@@ -721,7 +721,7 @@ void CFolderItem::GetMenuItems(CGetMenuitemsEventArgs& e)
 		{
 			ENSURE(tmpStr.LoadString(IDS_MENU_CreateNewStore));
 			ENSURE(tmpHint.LoadString(IDS_HINT_CreateNewStore));
-			e.menu->AddItem(tmpStr, _T(VERB_CREATENEWSTORE), tmpHint);
+			e.menu->AddItem(tmpStr, _T(VERB_CREATENEWSTORE), tmpHint)->SetEnabled(!theApp.m_PathRunCmd.IsEmpty());
 		}
 
 		if (e.children->GetCount()==1)
@@ -747,7 +747,7 @@ void CFolderItem::GetMenuItems(CGetMenuitemsEventArgs& e)
 
 			ENSURE(tmpStr.LoadString(IDS_MENU_Delete));
 			ENSURE(tmpHint.LoadString(IDS_HINT_Delete));
-			e.menu->AddItem(tmpStr, _T(VERB_DELETE), tmpHint);
+			e.menu->AddItem(tmpStr, _T(VERB_DELETE), tmpHint)->SetEnabled(!theApp.m_PathRunCmd.IsEmpty());
 
 			if (e.children->GetCount()==1)
 			{
@@ -759,7 +759,7 @@ void CFolderItem::GetMenuItems(CGetMenuitemsEventArgs& e)
 
 				ENSURE(tmpStr.LoadString(IDS_MENU_Properties));
 				ENSURE(tmpHint.LoadString(IDS_HINT_Properties));
-				e.menu->AddItem(tmpStr, _T(VERB_PROPERTIES), tmpHint);
+				e.menu->AddItem(tmpStr, _T(VERB_PROPERTIES), tmpHint)->SetEnabled(!theApp.m_PathRunCmd.IsEmpty());;
 			}
 		}
 		break;
@@ -776,26 +776,6 @@ void CFolderItem::GetMenuItems(CGetMenuitemsEventArgs& e)
 		}
 		break;
 	}
-
-	if (e.children->GetCount()==0)
-	{
-		if ((!theApp.m_PathStoreManager.IsEmpty()) || (!theApp.m_PathMigrate.IsEmpty()))
-			e.menu->AddItem(_T(""))->SetSeparator(TRUE);
-
-		if (!theApp.m_PathStoreManager.IsEmpty())
-		{
-			ENSURE(tmpStr.LoadString(IDS_MENU_StoreManager));
-			ENSURE(tmpHint.LoadString(IDS_HINT_StoreManager));
-			e.menu->AddItem(tmpStr, _T(VERB_STOREMANAGER), tmpHint);
-		}
-
-		if (!theApp.m_PathMigrate.IsEmpty())
-		{
-			ENSURE(tmpStr.LoadString(IDS_MENU_Migrate));
-			ENSURE(tmpHint.LoadString(IDS_HINT_Migrate));
-			e.menu->AddItem(tmpStr, _T(VERB_MIGRATE), tmpHint);
-		}
-	}
 }
 
 void CFolderItem::OnMergeFrameMenu(CMergeFrameMenuEventArgs& e)
@@ -803,25 +783,29 @@ void CFolderItem::OnMergeFrameMenu(CMergeFrameMenuEventArgs& e)
 	CShellMenuItem* item = e.menu->AddItem(_T("liquidFOLDERS"));
 	item->SetHasSubMenu(TRUE);
 
+	CShellMenu* subMenu = item->GetSubMenu();
+
 	CString tmpStr;
 	CString tmpHint;
 	ENSURE(tmpStr.LoadString(IDS_MENU_About));
 	ENSURE(tmpHint.LoadString(IDS_HINT_About));
+	subMenu->AddItem(tmpStr, _T(VERB_ABOUT), tmpHint)->SetEnabled(!theApp.m_PathRunCmd.IsEmpty());
 
-	CShellMenu* subMenu = item->GetSubMenu();
-	item = subMenu->AddItem(tmpStr, _T(VERB_ABOUT), tmpHint);
+	subMenu->AddItem(_T(""))->SetSeparator(TRUE);
+
+	ENSURE(tmpStr.LoadString(IDS_MENU_StoreManager));
+	ENSURE(tmpHint.LoadString(IDS_HINT_StoreManager));
+	subMenu->AddItem(tmpStr, _T(VERB_STOREMANAGER), tmpHint)->SetEnabled(!theApp.m_PathStoreManager.IsEmpty());
+
+	ENSURE(tmpStr.LoadString(IDS_MENU_Migrate));
+	ENSURE(tmpHint.LoadString(IDS_HINT_Migrate));
+	subMenu->AddItem(tmpStr, _T(VERB_MIGRATE), tmpHint)->SetEnabled(!theApp.m_PathMigrate.IsEmpty());;
 }
 
 BOOL CFolderItem::OnExecuteMenuItem(CExecuteMenuitemsEventArgs& e)
 {
 	if (e.menuItem->GetVerb()==_T(VERB_CREATENEWSTORE))
 		return OnCreateNewStore(e.hWnd);
-
-	if (e.menuItem->GetVerb()==_T(VERB_STOREMANAGER))
-		return OnStoreManager(e.hWnd);
-
-	if (e.menuItem->GetVerb()==_T(VERB_MIGRATE))
-		return OnMigrate(e.hWnd);
 
 	if ((e.menuItem->GetVerb()==_T(VERB_MAKEDEFAULTSTORE)) || (e.menuItem->GetVerb()==_T(VERB_MAKEHYBRIDSTORE)))
 	{
@@ -878,6 +862,12 @@ void CFolderItem::OnExecuteFrameCommand(CExecuteFrameCommandEventArgs& e)
 		if (e.menuItem->GetVerb()==_T(VERB_ABOUT))
 			if (!theApp.m_PathRunCmd.IsEmpty())
 				ShellExecute(NULL, "open", theApp.m_PathRunCmd, "ABOUTEXTENSION", NULL, SW_SHOW);
+
+		if (e.menuItem->GetVerb()==_T(VERB_STOREMANAGER))
+			OnStoreManager();
+
+		if (e.menuItem->GetVerb()==_T(VERB_MIGRATE))
+			OnMigrate();
 	}
 	else
 		switch (e.toolbarButtonIndex)
@@ -1019,12 +1009,13 @@ void CFolderItem::GetToolbarButtons(CPtrList& commands)
 void CFolderItem::GetToolbarCommands(CPtrList& commands)
 {
 	if (data.Level==LevelRoot)
+	{
+		commands.AddTail(new CmdProperties());
 		commands.AddTail(new CmdCreateNewStore());
+	}
 
-	if (!theApp.m_PathStoreManager.IsEmpty())
-		commands.AddTail(new CmdStoreManager());
-	if (!theApp.m_PathMigrate.IsEmpty())
-		commands.AddTail(new CmdMigrate());
+	commands.AddTail(new CmdStoreManager());
+	commands.AddTail(new CmdMigrate());
 }
 
 BOOL CFolderItem::OnChangeName(CChangeNameEventArgs& e)

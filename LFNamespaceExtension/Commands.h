@@ -3,6 +3,22 @@
 #include "LFCore.h"
 
 
+// CmdProperties
+//
+
+class CmdProperties : public CExplorerCommand
+{
+public:
+	CmdProperties();
+
+	virtual CString GetCaption(CPtrList* nseItems);
+	virtual CString GetToolTip(CPtrList* nseItems);
+	virtual ExplorerCommandState GetState(CPtrList* nseItems);
+	virtual BOOL Invoke(CPtrList* nseItems);
+	virtual CString GetIcon(CPtrList* nseItems);
+};
+
+
 // CmdCreateNewStore
 //
 
@@ -13,6 +29,7 @@ public:
 
 	virtual CString GetCaption(CPtrList* nseItems);
 	virtual CString GetToolTip(CPtrList* nseItems);
+	virtual ExplorerCommandState GetState(CPtrList* nseItems);
 	virtual BOOL Invoke(CPtrList* nseItems);
 	virtual CString GetIcon(CPtrList* nseItems);
 };
@@ -28,6 +45,7 @@ public:
 
 	virtual CString GetCaption(CPtrList* nseItems);
 	virtual CString GetToolTip(CPtrList* nseItems);
+	virtual ExplorerCommandState GetState(CPtrList* nseItems);
 	virtual BOOL Invoke(CPtrList* nseItems);
 	virtual CString GetIcon(CPtrList* nseItems);
 };
@@ -44,6 +62,7 @@ public:
 
 	virtual CString GetCaption(CPtrList* nseItems);
 	virtual CString GetToolTip(CPtrList* nseItems);
+	virtual ExplorerCommandState GetState(CPtrList* nseItems);
 	virtual BOOL Invoke(CPtrList* nseItems);
 	virtual CString GetIcon(CPtrList* nseItems);
 };
