@@ -1,5 +1,5 @@
 
-// RunCmd.h: Hauptheaderdatei für die RunCmd-Anwendung
+// LFRunCmd.h: Hauptheaderdatei für die RunCmd-Anwendung
 //
 
 #pragma once

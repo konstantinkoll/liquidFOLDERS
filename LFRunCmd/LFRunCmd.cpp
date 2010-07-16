@@ -1,5 +1,5 @@
 
-// RunCmd.cpp: Definiert das Klassenverhalten für die Anwendung.
+// LFRunCmd.cpp: Definiert das Klassenverhalten für die Anwendung.
 //
 
 #include "stdafx.h"
@@ -42,32 +42,17 @@ BOOL CRunCmdApp::InitInstance()
 		{
 		case 2:
 			if (command==_T("ABOUT"))
-			{
 				OnAppAbout(IDS_ABOUT, IDB_ABOUTICON);
-				return TRUE;
-			}
 			if (command==_T("ABOUTEXTENSION"))
-			{
 				OnAppAbout(IDS_EXTENSIONABOUT, IDB_EXTENSIONABOUTICON);
-				return TRUE;
-			}
 			if (command==_T("NEWSTORE"))
-			{
 				OnStoreCreate();
-				return TRUE;
-			}
 			break;
 		case 3:
 			if (command==_T("DELETESTORE"))
-			{
 				OnStoreDelete(__targv[2]);
-				return TRUE;
-			}
 			if (command==_T("STOREPROPERTIES"))
-			{
 				OnStoreProperties(__targv[2]);
-				return TRUE;
-			}
 		}
 	}
 
