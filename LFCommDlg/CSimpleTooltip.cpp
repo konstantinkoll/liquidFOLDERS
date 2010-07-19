@@ -113,14 +113,14 @@ void CSimpleTooltip::Track(CPoint point, const CString& strText)
 	else
 		if (rect.bottom>rectScreen.bottom)
 		{
-			rect.bottom = rectScreen.bottom;
+			rect.bottom = point.y-1;
 			rect.top = rect.bottom-sz.cy;
 		}
 		else
 			if (rect.top<rectScreen.top)
 			{
 				rect.top = rectScreen.top;
-				rect.bottom = rect.bottom+sz.cy;
+				rect.bottom = rect.top+sz.cy;
 			}
 
 	CMFCToolTipInfo params;
