@@ -86,6 +86,8 @@ void CFileDropWnd::UpdateStore()
 
 void CFileDropWnd::SetWindowRect(int x, int y, BOOL TopMost)
 {
+	UINT Flags = SWP_NOSIZE;
+
 	if ((x!=-1) || (y!=-1))
 	{
 		CRect r;
@@ -99,9 +101,13 @@ void CFileDropWnd::SetWindowRect(int x, int y, BOOL TopMost)
 		if (y+r.Height()>d.Height())
 			y = d.Height()-r.Height();
 	}
+	else
+	{
+		Flags |= SWP_NOMOVE;
+	}
 
 	AlwaysOnTop = TopMost;
-	SetWindowPos(TopMost ? &wndTopMost : &wndNoTopMost, x, y, 0, 0, SWP_NOSIZE);
+	SetWindowPos(TopMost ? &wndTopMost : &wndNoTopMost, x, y, 0, 0, Flags);
 
 	CMenu* pSysMenu = GetSystemMenu(FALSE);
 	if (pSysMenu)
