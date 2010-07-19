@@ -384,7 +384,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\FileDropDlg.cpp"
+				RelativePath=".\FileDropWnd.cpp"
 				>
 			</File>
 			<File
@@ -430,15 +430,7 @@
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
 			<File
-				RelativePath=".\res\Down.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Dropzone_Large.png"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Dropzone_Small.png"
+				RelativePath=".\res\FileDrop.ico"
 				>
 			</File>
 			<File
@@ -453,14 +445,6 @@
 				RelativePath=".\res\FileDrop_About.png"
 				>
 			</File>
-			<File
-				RelativePath=".\res\Ready_24.png"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Warning_24.png"
-				>
-			</File>
 		</Filter>
 		<Filter
 			Name="Headerdateien"
@@ -472,7 +456,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\FileDropDlg.h"
+				RelativePath=".\FileDropWnd.h"
 				>
 			</File>
 			<File

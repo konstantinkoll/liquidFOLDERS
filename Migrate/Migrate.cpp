@@ -86,7 +86,7 @@ void CMigrateApp::OnAppAbout()
 	p.appname = "Migration Wizard";
 	p.build = __TIMESTAMP__;
 	p.icon = new CGdiPlusBitmapResource();
-	p.icon->Load(IDB_ABOUTICON, _T("PNG"), AfxGetInstanceHandle());
+	p.icon->Load(IDB_ABOUTICON, _T("PNG"), AfxGetResourceHandle());
 	p.TextureSize = -1;
 	p.RibbonColor = m_nAppLook;
 	p.HideEmptyDrives = -1;

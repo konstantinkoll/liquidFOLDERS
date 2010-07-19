@@ -156,7 +156,7 @@ IDM_TRAY MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "&About...",                   ID_APP_ABOUT
+        MENUITEM "&About Watchdog...",          ID_APP_ABOUT
         MENUITEM SEPARATOR
         MENUITEM "Open &StoreManager",          ID_APP_NEWSTOREMANAGER
         MENUITEM "Open &Migration Wizard",      ID_APP_NEWMIGRATE
@@ -244,7 +244,7 @@ IDM_TRAY MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "Concernant &Watchdog...",     ID_APP_ABOUT
+        MENUITEM "&Concernant Watchdog...",     ID_APP_ABOUT
         MENUITEM SEPARATOR
         MENUITEM "Commencer &StoreManager",     ID_APP_NEWSTOREMANAGER
         MENUITEM "Commencer &Migration Wizard", ID_APP_NEWMIGRATE

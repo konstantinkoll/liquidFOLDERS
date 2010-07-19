@@ -11,6 +11,7 @@
 #include "targetver.h"
 #endif
 #include "afxres.h"
+#include "..\LFCommDlg\resource.h"
 
 /////////////////////////////////////////////////////////////////////////////
 #undef APSTUDIO_READONLY_SYMBOLS
@@ -31,7 +32,7 @@ LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
-IDR_APPLICATION         ICON                    "res\\Down.ico"
+IDR_APPLICATION         ICON                    "res\\FileDrop.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -77,25 +78,7 @@ END
 // PNG
 //
 
-IDB_DROPZONELARGE       PNG                     "res\\Dropzone_Large.png"
-IDB_DROPZONESMALL       PNG                     "res\\Dropzone_Small.png"
-IDB_BADGE_READY         PNG                     "res\\Ready_24.png"
-IDB_BADGE_WARNING       PNG                     "res\\Warning_24.png"
 IDB_ABOUTICON           PNG                     "res\\FileDrop_About.png"
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Dialog
-//
-
-IDD_FILEDROP_DIALOG DIALOGEX 0, 0, 96, 164
-STYLE DS_SETFONT | DS_FIXEDSYS | WS_MINIMIZEBOX | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
-EXSTYLE WS_EX_ACCEPTFILES
-CAPTION "FileDrop"
-FONT 8, "MS Shell Dlg", 0, 0, 0x1
-BEGIN
-END
-
 #endif    // Neutral resources
 /////////////////////////////////////////////////////////////////////////////
 
@@ -111,17 +94,36 @@ LANGUAGE LANG_GERMAN, SUBLANG_NEUTRAL
 
 /////////////////////////////////////////////////////////////////////////////
 //
+// Menu
+//
+
+IDM_POPUP MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "Standard-Store &wählen...",   ID_APP_CHOOSEDEFAULTSTORE
+        MENUITEM "&Eigenschaften...",           ID_APP_STOREPROPERTIES
+        MENUITEM SEPARATOR
+        MENUITEM "&Über FileDrop...",           ID_APP_ABOUT
+        MENUITEM "&Immer im Vordergrund",       SC_ALWAYSONTOP
+        MENUITEM SEPARATOR
+        MENUITEM "StoreManager &starten",       ID_APP_NEWSTOREMANAGER
+        MENUITEM SEPARATOR
+        MENUITEM "&Beenden",                    ID_APP_EXIT
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
 // String Table
 //
 
 STRINGTABLE 
 BEGIN
     IDS_ALWAYSONTOP         "&Immer im Vordergrund"
-    IDS_SMALLWINDOW         "&Kleines Fenster"
-    IDS_CHOOSEDEFAULTSTORE  "Standard-Store &wählen..."
-    IDS_STOREMANAGER        "StoreManager &starten"
-    IDS_ABOUT               "Ü&ber FileDrop..."
-    IDS_HINT                "Dateien hierher ziehen zum Import nach liquidFOLDERS"
+    IDS_TOOLTIP             "Dateien hierher ziehen zum Import nach liquidFOLDERS"
+    IDS_NODEFAULTSTORE      "Kein Standard-Store"
 END
 
 #endif    // Deutsch (neutral) resources
@@ -139,17 +141,36 @@ LANGUAGE LANG_ENGLISH, SUBLANG_NEUTRAL
 
 /////////////////////////////////////////////////////////////////////////////
 //
+// Menu
+//
+
+IDM_POPUP MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "Choose &default store...",    ID_APP_CHOOSEDEFAULTSTORE
+        MENUITEM "&Properties...",              ID_APP_STOREPROPERTIES
+        MENUITEM SEPARATOR
+        MENUITEM "&About FileDrop...",          ID_APP_ABOUT
+        MENUITEM "Always on &top",              SC_ALWAYSONTOP
+        MENUITEM SEPARATOR
+        MENUITEM "Open &StoreManager",          ID_APP_NEWSTOREMANAGER
+        MENUITEM SEPARATOR
+        MENUITEM "&Quit",                       ID_APP_EXIT
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
 // String Table
 //
 
 STRINGTABLE 
 BEGIN
     IDS_ALWAYSONTOP         "Always on &top"
-    IDS_SMALLWINDOW         "&Mini window"
-    IDS_CHOOSEDEFAULTSTORE  "Choose &default store..."
-    IDS_STOREMANAGER        "&Open StoreManager"
-    IDS_ABOUT               "&About..."
-    IDS_HINT                "Drop files here to import them into liquidFOLDERS."
+    IDS_TOOLTIP             "Drop files here to import them into liquidFOLDERS."
+    IDS_NODEFAULTSTORE      "No default store"
 END
 
 #endif    // Englisch (neutral) resources
@@ -167,17 +188,36 @@ LANGUAGE LANG_SPANISH, SUBLANG_NEUTRAL
 
 /////////////////////////////////////////////////////////////////////////////
 //
+// Menu
+//
+
+IDM_POPUP MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "Selecionar store &estándar...", ID_APP_CHOOSEDEFAULTSTORE
+        MENUITEM "&Propiedades...",             ID_APP_STOREPROPERTIES
+        MENUITEM SEPARATOR
+        MENUITEM "&Sobre FileDrop...",          ID_APP_ABOUT
+        MENUITEM "Siempre &arriba",             SC_ALWAYSONTOP
+        MENUITEM SEPARATOR
+        MENUITEM "Empezar &StoreManager",       ID_APP_NEWSTOREMANAGER
+        MENUITEM SEPARATOR
+        MENUITEM "&Terminar",                   ID_APP_EXIT
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
 // String Table
 //
 
 STRINGTABLE 
 BEGIN
     IDS_ALWAYSONTOP         "Siempre &arriba"
-    IDS_SMALLWINDOW         "Ventana &pequeña"
-    IDS_CHOOSEDEFAULTSTORE  "Selecionar store estándar..."
-    IDS_STOREMANAGER        "&Empezar StoreManager"
-    IDS_ABOUT               "&Sobre FileDrop..."
-    IDS_HINT                "Pega filas aquí para importarlas a liquidFOLDERS."
+    IDS_TOOLTIP             "Pega filas aquí para importarlas a liquidFOLDERS."
+    IDS_NODEFAULTSTORE      "No hay store estándar"
 END
 
 #endif    // Spanisch (neutral) resources
@@ -195,17 +235,36 @@ LANGUAGE LANG_FRENCH, SUBLANG_NEUTRAL
 
 /////////////////////////////////////////////////////////////////////////////
 //
+// Menu
+//
+
+IDM_POPUP MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "Sél&ectioneer le store standard...", ID_APP_CHOOSEDEFAULTSTORE
+        MENUITEM "&Qualités...",                ID_APP_STOREPROPERTIES
+        MENUITEM SEPARATOR
+        MENUITEM "&Concernant FileDrop...",     ID_APP_ABOUT
+        MENUITEM "Toujours au &top",            SC_ALWAYSONTOP
+        MENUITEM SEPARATOR
+        MENUITEM "Commencer &StoreManager",     ID_APP_NEWSTOREMANAGER
+        MENUITEM SEPARATOR
+        MENUITEM "&Quitter",                    ID_APP_EXIT
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
 // String Table
 //
 
 STRINGTABLE 
 BEGIN
     IDS_ALWAYSONTOP         "Toujours au &top"
-    IDS_SMALLWINDOW         "&Petite fenêtre"
-    IDS_CHOOSEDEFAULTSTORE  "Sélectioneer le store standard..."
-    IDS_STOREMANAGER        "&Commencer StoreManager"
-    IDS_ABOUT               "Concernant &FileDrop..."
-    IDS_HINT                "Ici afiu de importer dans liquidFOLDERS"
+    IDS_TOOLTIP             "Ici afiu de importer dans liquidFOLDERS"
+    IDS_NODEFAULTSTORE      "Pas de store standard"
 END
 
 #endif    // Französisch (neutral) resources
@@ -238,6 +297,7 @@ BEGIN
     "#include ""targetver.h""\r\n"
     "#endif\r\n"
     "#include ""afxres.h""\r\n"
+    "#include ""..\\LFCommDlg\\resource.h""\r\n"
     "\0"
 END
 

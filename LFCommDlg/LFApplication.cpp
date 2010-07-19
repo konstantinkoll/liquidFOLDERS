@@ -47,7 +47,6 @@ void PlayRegSound(CString Identifier)
 
 LFApplication::LFApplication(UINT _HasGUI)
 {
-	zSetWindowTheme = NULL;
 	HasGUI = _HasGUI;
 
 	// Version
@@ -90,9 +89,31 @@ LFApplication::LFApplication(UINT _HasGUI)
 		m_ThemeLibLoaded = FALSE;
 	}
 
+	// Aero
+	hModAero = LoadLibrary(_T("DWMAPI.DLL"));
+	if (hModAero)
+	{
+		zDwmIsCompositionEnabled = (PFNDWMISCOMPOSITIONENABLED)GetProcAddress(hModAero, "DwmIsCompositionEnabled");
+		zDwmExtendFrameIntoClientArea = (PFNDWMEXTENDFRAMEINTOCLIENTAREA)GetProcAddress(hModAero, "DwmExtendFrameIntoClientArea");
+
+		m_AeroLibLoaded = (zDwmIsCompositionEnabled && zDwmExtendFrameIntoClientArea);
+		if (!m_AeroLibLoaded)
+		{
+			FreeLibrary(hModAero);
+			hModAero = NULL;
+		}
+	}
+	else
+	{
+		zDwmIsCompositionEnabled = NULL;
+		zDwmExtendFrameIntoClientArea = NULL;
+
+		m_AeroLibLoaded = FALSE;
+	}
+
 	// Anwendungspfad
 	TCHAR szPathName[MAX_PATH];
-	::GetModuleFileName(NULL, szPathName, MAX_PATH);
+	GetModuleFileName(NULL, szPathName, MAX_PATH);
 	LPTSTR pszFileName = _tcsrchr(szPathName, '\\')+1;
 	*pszFileName = '\0';
 	path = szPathName;
@@ -189,6 +210,13 @@ BOOL LFApplication::InitInstance()
 
 	CWinAppEx::InitInstance();
 
+	InitTooltipManager();
+	CMFCToolTipInfo ttParams;
+	ttParams.m_bVislManagerTheme = TRUE;
+	GetTooltipManager()->SetTooltipParams(AFX_TOOLTIP_TYPE_ALL, RUNTIME_CLASS(CMFCToolTipCtrl), &ttParams);
+
+	CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerOffice2007));
+
 	if (HasGUI==HasGUI_None)
 		return TRUE;
 
@@ -205,12 +233,6 @@ BOOL LFApplication::InitInstance()
 
 		InitKeyboardManager();
 
-		InitTooltipManager();
-		CMFCToolTipInfo ttParams;
-		ttParams.m_bVislManagerTheme = TRUE;
-		GetTooltipManager()->SetTooltipParams(AFX_TOOLTIP_TYPE_ALL, RUNTIME_CLASS(CMFCToolTipCtrl), &ttParams);
-
-		CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerOffice2007));
 		CDockingManager::SetDockingMode(DT_IMMEDIATE);
 		m_nAppLook = GetGlobalInt(_T("ApplicationLook"), ID_VIEW_APPLOOK_OFF_2007_BLUE);
 		SetApplicationLook(m_nAppLook);
@@ -246,6 +268,12 @@ int LFApplication::ExitInstance()
 {
 	CWinAppEx::ExitInstance();
 	GdiplusShutdown(m_gdiplusToken);
+
+	if (hModThemes)
+		FreeLibrary(hModThemes);
+	if (hModAero)
+		FreeLibrary(hModAero);
+
 	return 0;
 }
 

@@ -105,7 +105,7 @@ END_MESSAGE_MAP()
 
 int CStoreWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
-	if (CDockablePane::OnCreate(lpCreateStruct) == -1)
+	if (CDockablePane::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
 	theApp.SetRegistryBase(_T("Stores"));
@@ -162,7 +162,7 @@ int CStoreWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndList.SetView(LV_VIEW_TILE);
 
 	// Load icons
-	HINSTANCE hModIcons = LoadLibrary(_T("LFCore.DLL"));
+	HINSTANCE hModIcons = LoadLibrary(_T("LFCORE.DLL"));
 	if (hModIcons!=NULL)
 	{
 		theApp.ExtractCoreIcons(hModIcons, 32, &m_Icons);

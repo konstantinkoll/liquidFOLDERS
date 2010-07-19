@@ -4,7 +4,7 @@
 
 #include "stdafx.h"
 #include "FileDrop.h"
-#include "FileDropDlg.h"
+#include "FileDropWnd.h"
 
 
 // CFileDropApp-Erstellung
@@ -32,8 +32,9 @@ BOOL CFileDropApp::InitInstance()
 
 	SetRegistryBase(_T("Settings"));
 
-	CFileDropDlg dlg;
-	dlg.DoModal();
+	m_pMainWnd = new CFileDropWnd();
+	((CFileDropWnd*)m_pMainWnd)->Create();
+	m_pMainWnd->ShowWindow(SW_SHOW);
 
-	return FALSE;
+	return TRUE;
 }

@@ -66,6 +66,7 @@ LRESULT CExplorerList::OnThemeChanged()
 			p_App->zCloseThemeData(hTheme);
 
 		hTheme = p_App->zOpenThemeData(m_hWnd, VSCLASS_LISTVIEW);
+		Invalidate();
 	}
 
 	return TRUE;

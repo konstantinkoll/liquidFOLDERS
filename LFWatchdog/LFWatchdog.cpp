@@ -132,7 +132,7 @@ void ShowAboutDlg()
 		p.appname = "Watchdog";
 		p.build = __TIMESTAMP__;
 		p.icon = new CGdiPlusBitmapResource();
-		p.icon->Load(IDB_ABOUTICON, _T("PNG"), AfxGetInstanceHandle());
+		p.icon->Load(IDB_ABOUTICON, _T("PNG"), AfxGetResourceHandle());
 		p.TextureSize = -1;
 		p.RibbonColor = ID_VIEW_APPLOOK_OFF_2007_NONE;
 		p.HideEmptyDrives = -1;
@@ -148,7 +148,7 @@ void ShowAboutDlg()
 
 void ShowMenu(HWND hTargetWnd)
 {
-	HMENU hMenu = LoadMenu(AfxGetInstanceHandle(), MAKEINTRESOURCE(IDM_TRAY));
+	HMENU hMenu = LoadMenu(AfxGetResourceHandle(), MAKEINTRESOURCE(IDM_TRAY));
 	if (!hMenu)
 		return;
 

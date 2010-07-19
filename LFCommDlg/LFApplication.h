@@ -20,16 +20,19 @@
 #define HasGUI_Standard           1
 #define HasGUI_Ribbon             2
 
-typedef HRESULT(__stdcall *PFNSETWINDOWTHEME)(HWND hwnd, LPCWSTR pszSubAppName, LPCWSTR pszSubIdList);
-typedef HRESULT(__stdcall *PFNCLOSETHEMEDATA)(HTHEME hTheme);
-typedef HTHEME(__stdcall *PFNOPENTHEMEDATA)(HWND hwnd, LPCWSTR pszClassList);
-typedef HRESULT (__stdcall *PFNDRAWTHEMEBACKGROUND)(HTHEME hTheme, HDC hdc, int iPartId,
-							int iStateId, const RECT *pRect, const RECT *pClipRect);
-typedef HRESULT (__stdcall *PFNDRAWTHEMETEXT)(HTHEME hTheme, HDC hdc, int iPartId, 
-							int iStateId, LPCWSTR pszText, int iCharCount, DWORD dwTextFlags, 
-							DWORD dwTextFlags2, const RECT *pRect);
-typedef HRESULT (__stdcall *PFNGETTHEMESYSFONT)(HTHEME hTheme, int iFontID, LOGFONT *plf);
-typedef HRESULT (__stdcall *PFNGETTHEMESYSCOLOR)(HTHEME hTheme, int iColorID);
+typedef HRESULT(__stdcall* PFNSETWINDOWTHEME)(HWND hwnd, LPCWSTR pszSubAppName, LPCWSTR pszSubIdList);
+typedef HRESULT(__stdcall* PFNCLOSETHEMEDATA)(HTHEME hTheme);
+typedef HTHEME(__stdcall* PFNOPENTHEMEDATA)(HWND hwnd, LPCWSTR pszClassList);
+typedef HRESULT (__stdcall* PFNDRAWTHEMEBACKGROUND)(HTHEME hTheme, HDC hdc, int iPartId,
+							int iStateId, const RECT* pRect, const RECT* pClipRect);
+typedef HRESULT (__stdcall* PFNDRAWTHEMETEXT)(HTHEME hTheme, HDC hdc, int iPartId,
+							int iStateId, LPCWSTR pszText, int iCharCount, DWORD dwTextFlags,
+							DWORD dwTextFlags2, const RECT* pRect);
+typedef HRESULT (__stdcall* PFNGETTHEMESYSFONT)(HTHEME hTheme, int iFontID, LOGFONT* plf);
+typedef HRESULT (__stdcall* PFNGETTHEMESYSCOLOR)(HTHEME hTheme, int iColorID);
+
+typedef HRESULT(__stdcall* PFNDWMISCOMPOSITIONENABLED)(BOOL* pfEnabled);
+typedef HRESULT(__stdcall* PFNDWMEXTENDFRAMEINTOCLIENTAREA)(HWND hWnd, const MARGINS* pMarInset);
 
 
 // View parameters
@@ -101,6 +104,10 @@ public:
 	PFNGETTHEMESYSCOLOR zGetThemeSysColor;
 	BOOL m_ThemeLibLoaded;
 
+	PFNDWMISCOMPOSITIONENABLED zDwmIsCompositionEnabled;
+	PFNDWMEXTENDFRAMEINTOCLIENTAREA zDwmExtendFrameIntoClientArea;
+	BOOL m_AeroLibLoaded;
+
 	virtual BOOL InitInstance();
 	virtual int ExitInstance();
 	virtual void SetApplicationLook(UINT nID);
@@ -141,4 +148,5 @@ protected:
 private:
 	ULONG_PTR m_gdiplusToken;
 	HMODULE hModThemes;
+	HMODULE hModAero;
 };

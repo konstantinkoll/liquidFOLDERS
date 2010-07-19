@@ -3,6 +3,7 @@
 #include "..\LFCommDlg\CCaptionBar.h"
 #include "..\LFCommDlg\CGdiPlusBitmap.h"
 #include "..\LFCommDlg\CGlassButton.h"
+#include "..\LFCommDlg\CGlassWindow.h"
 #include "..\LFCommDlg\CExplorerList.h"
 #include "..\LFCommDlg\CImageListTransparent.h"
 #include "..\LFCommDlg\CInspectorGrid.h"

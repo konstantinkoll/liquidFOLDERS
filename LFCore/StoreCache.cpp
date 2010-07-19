@@ -655,7 +655,7 @@ LFCore_API bool LFDefaultStoreAvailable()
 LFCore_API char* LFGetDefaultStore()
 {
 	char* s = (char*)(malloc(LFKeySize));
-	strcpy_s(s, LFKeySize, "");
+	*s = '\0';
 
 	if (GetMutex(Mutex_Stores))
 	{

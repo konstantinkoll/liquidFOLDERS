@@ -2,25 +2,15 @@
 // Microsoft Visual C++ generated include file.
 // Used by FileDrop.rc
 //
-#define IDM_ALWAYSONTOP                 0x10
-#define IDM_SMALLWINDOW                 0x20
-#define IDM_CHOOSEDEFAULTSTORE          0x30
-#define IDM_STOREMANAGER                0x40
-#define IDM_ABOUT                       0x50
-#define IDT_UPDATESTATUS                0x60
-#define IDS_ALWAYSONTOP                 100
-#define IDS_SMALLWINDOW                 101
-#define IDS_CHOOSEDEFAULTSTORE          102
-#define IDS_STOREMANAGER                103
-#define IDS_ABOUT                       104
-#define IDS_HINT                        105
-#define IDD_FILEDROP_DIALOG             106
+#define SC_ALWAYSONTOP                  0x10
 #define IDR_APPLICATION                 128
-#define IDB_DROPZONELARGE               129
-#define IDB_DROPZONESMALL               130
-#define IDB_BADGE_READY                 131
-#define IDB_BADGE_WARNING               132
-#define IDB_ABOUTICON                   133
+#define IDB_ABOUTICON                   129
+#define IDM_POPUP                       130
+#define ID_APP_CHOOSEDEFAULTSTORE       200
+#define ID_APP_STOREPROPERTIES          201
+#define IDS_ALWAYSONTOP                 1000
+#define IDS_TOOLTIP                     1001
+#define IDS_NODEFAULTSTORE              1002
 
 // Next default values for new objects
 // 

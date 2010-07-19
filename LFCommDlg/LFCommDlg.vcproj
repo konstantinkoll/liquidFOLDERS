@@ -399,6 +399,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CGlassWindow.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\CImageListTransparent.cpp"
 				>
 			</File>
@@ -614,6 +618,10 @@
 			</File>
 			<File
 				RelativePath=".\CGlassButton.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CGlassWindow.h"
 				>
 			</File>
 			<File

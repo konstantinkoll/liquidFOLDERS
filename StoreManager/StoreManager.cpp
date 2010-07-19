@@ -47,8 +47,8 @@ CStoreManagerApp::CStoreManagerApp()
 	}
 
 	// Load icons
-	HINSTANCE hModIcons = LoadLibrary(_T("LFCore.DLL"));
-	if (hModIcons!=NULL)
+	HINSTANCE hModIcons = LoadLibrary(_T("LFCORE.DLL"));
+	if (hModIcons)
 	{
 		ExtractCoreIcons(hModIcons, 128, &m_Icons128);
 		ExtractCoreIcons(hModIcons, 64, &m_Icons64);
@@ -175,8 +175,8 @@ void CStoreManagerApp::CloseAllFrames(BOOL leaveOne)
 	MSG msg;
 
 	// Nachrichten löschen
-	while(::PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
-		::DispatchMessage(&msg);
+	while(PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+		DispatchMessage(&msg);
 
 	std::list<CMainFrame*>::iterator ppFrame = m_listMainFrames.begin();
 	while (ppFrame!=m_listMainFrames.end())
@@ -185,11 +185,11 @@ void CStoreManagerApp::CloseAllFrames(BOOL leaveOne)
 			(*ppFrame)->PostMessage(WM_CLOSE);
 		ppFrame++ ;
 
-		while(::PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
-			::DispatchMessage(&msg);
+		while(PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+			DispatchMessage(&msg);
 	}
 
-	if ((m_pMainWnd!=NULL) && (leaveOne==FALSE))
+	if ((m_pMainWnd) && (!leaveOne))
 		m_pMainWnd->PostMessage(WM_CLOSE);
 }
 
@@ -219,7 +219,7 @@ void CStoreManagerApp::OnAppAbout()
 	p.appname = "StoreManager";
 	p.build = __TIMESTAMP__;
 	p.icon = new CGdiPlusBitmapResource();
-	p.icon->Load(IDB_ABOUTICON, _T("PNG"), AfxGetInstanceHandle());
+	p.icon->Load(IDB_ABOUTICON, _T("PNG"), AfxGetResourceHandle());
 	p.TextureSize = m_nTextureSize;
 	p.MaxTextureSize = m_nMaxTextureSize;
 	p.RibbonColor = m_nAppLook;

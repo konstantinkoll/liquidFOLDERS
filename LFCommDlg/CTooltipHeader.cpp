@@ -13,7 +13,6 @@
 CTooltipHeader::CTooltipHeader()
 	: CHeaderCtrl()
 {
-	Tracking = -1;
 	MouseInWnd = FALSE;
 }
 
@@ -45,7 +44,6 @@ BOOL CTooltipHeader::PreTranslateMessage(MSG* pMsg)
 	case WM_NCRBUTTONUP:
 	case WM_NCMBUTTONUP:
 		Tooltip.Hide();
-		Tracking = 1;
 		break;
 	}
 
@@ -79,9 +77,8 @@ void CTooltipHeader::OnMouseMove(UINT nFlags, CPoint point)
 void CTooltipHeader::OnMouseLeave()
 {
 	Tooltip.Deactivate();
-	Tracking = -1;
-
 	MouseInWnd = FALSE;
+
 	CHeaderCtrl::OnMouseLeave();
 }
 
@@ -92,7 +89,7 @@ void CTooltipHeader::OnMouseHover(UINT /*nFlags*/, CPoint point)
 	{
 		CRect rect;
 		if (GetItemRect(a, rect))
-			if (rect.PtInRect(point) && (a!=Tracking))
+			if (rect.PtInRect(point))
 			{
 				HDITEMW i;
 				i.mask = HDI_TEXT;
@@ -101,13 +98,8 @@ void CTooltipHeader::OnMouseHover(UINT /*nFlags*/, CPoint point)
 
 				if (GetItem(a, &i))
 				{
-					ClientToScreen(rect);
-					rect.OffsetRect(1, rect.Height()+1);
-
-					Tooltip.Hide();
-					Tooltip.Track(rect, TooltipText);
-
-					Tracking = a;
+					ClientToScreen(&point);
+					Tooltip.Track(point, TooltipText);
 				}
 
 				break;

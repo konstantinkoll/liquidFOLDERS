@@ -6,7 +6,6 @@
 CSimpleTooltip::CSimpleTooltip()
 {
 	pWndParent = NULL;
-	m_rect.SetRectEmpty();
 }
 
 CSimpleTooltip::~CSimpleTooltip()
@@ -39,14 +38,15 @@ BOOL CSimpleTooltip::PreTranslateMessage(MSG* pMsg)
 	return CWnd::PreTranslateMessage(pMsg);
 }
 
-void CSimpleTooltip::Track(CRect rect, const CString& strText)
+void CSimpleTooltip::Track(CPoint point, const CString& strText)
 {
 	if (!GetSafeHwnd())
 		return;
-	if ((m_rect==rect) && (m_strText==strText))
-		return;
 
-	m_rect = rect;
+	if (m_strText==strText)
+		return;
+	if (!m_strText.IsEmpty())
+		Hide();
 	m_strText = strText;
 
 	CClientDC dc(this);
@@ -58,15 +58,20 @@ void CSimpleTooltip::Track(CRect rect, const CString& strText)
 
 	dc.SelectObject(pOldFont);
 
+	CRect rect;
+	rect.top = point.y+18;
+	rect.bottom = rect.top+sz.cy;
+
 	if (pWndParent->GetExStyle() & WS_EX_LAYOUTRTL)
 	{
-		rect.left = rect.right-sz.cx;
+		rect.left = point.x-sz.cx;
+		rect.right = point.x;
 	}
 	else
 	{
-		rect.right = rect.left+sz.cx;
+		rect.left = point.x;
+		rect.right = point.x+sz.cx;
 	}
-	rect.bottom = rect.top+sz.cy;
 
 	MONITORINFO mi;
 	mi.cbSize = sizeof(MONITORINFO);
@@ -138,15 +143,12 @@ void CSimpleTooltip::Track(CRect rect, const CString& strText)
 
 void CSimpleTooltip::Hide()
 {
-	if (GetSafeHwnd())
-		ShowWindow(SW_HIDE);
+	ShowWindow(SW_HIDE);
 }
 
 void CSimpleTooltip::Deactivate()
 {
 	m_strText.Empty();
-	m_rect.SetRectEmpty();
-
 	Hide();
 }
 

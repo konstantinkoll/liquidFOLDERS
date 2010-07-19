@@ -1877,26 +1877,6 @@
 			>
 		</File>
 		<File
-			RelativePath="Down.ico"
-			>
-		</File>
-		<File
-			RelativePath="Down.png"
-			>
-		</File>
-		<File
-			RelativePath=".\Down_Small.ico"
-			>
-		</File>
-		<File
-			RelativePath="Dropzone_Large.png"
-			>
-		</File>
-		<File
-			RelativePath="Dropzone_Small.png"
-			>
-		</File>
-		<File
 			RelativePath=".\Earthmap_1024.jpg"
 			>
 		</File>
@@ -1914,6 +1894,14 @@
 		</File>
 		<File
 			RelativePath=".\Facebook.png"
+			>
+		</File>
+		<File
+			RelativePath=".\FileDrop.ico"
+			>
+		</File>
+		<File
+			RelativePath=".\FileDrop.png"
 			>
 		</File>
 		<File
@@ -2153,10 +2141,6 @@
 			>
 		</File>
 		<File
-			RelativePath="Ready_24.png"
-			>
-		</File>
-		<File
 			RelativePath=".\Registry_Tiny.ico"
 			>
 		</File>
@@ -2309,15 +2293,7 @@
 			>
 		</File>
 		<File
-			RelativePath="Warning.png"
-			>
-		</File>
-		<File
 			RelativePath="Warning_24.bmp"
-			>
-		</File>
-		<File
-			RelativePath="Warning_24.png"
 			>
 		</File>
 		<File

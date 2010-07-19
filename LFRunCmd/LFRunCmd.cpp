@@ -65,7 +65,7 @@ void CRunCmdApp::OnAppAbout(UINT ResIDName, UINT ResIDPicture)
 	ENSURE(p.appname.LoadString(ResIDName));
 	p.build = __TIMESTAMP__;
 	p.icon = new CGdiPlusBitmapResource();
-	p.icon->Load(ResIDPicture, _T("PNG"), AfxGetInstanceHandle());
+	p.icon->Load(ResIDPicture, _T("PNG"), AfxGetResourceHandle());
 	p.TextureSize = -1;
 	p.RibbonColor = ID_VIEW_APPLOOK_OFF_2007_NONE;
 	p.HideEmptyDrives = -1;

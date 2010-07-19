@@ -10,7 +10,6 @@
 #define ID_APP_PROMPT                   205
 #define ID_APP_PURCHASE                 206
 #define ID_APP_ENTERLICENSEKEY          207
-#define IDC_BUTTON1                     2020
 #define IDB_KEY                         20000
 #define IDB_BACKDROP                    20001
 #define IDB_LOGO                        20002
