@@ -5,6 +5,22 @@
 #include "stdafx.h"
 #include "FileDrop.h"
 #include "FileDropWnd.h"
+#include "resource.h"
+
+
+static BOOL CALLBACK EnumWindowsProc(HWND hWnd, LPARAM /*lParam*/)
+{
+	BOOL res = TRUE;
+
+	CWnd* wnd = CWnd::FromHandle(hWnd);
+
+	CString caption;
+	wnd->GetWindowText(caption);
+	if (caption==_T("FileDrop"))
+		res = (wnd->SendMessage(theApp.WakeupMsg, NULL, NULL)!=24878);
+
+	return res;
+}
 
 
 // CFileDropApp-Erstellung
@@ -12,6 +28,7 @@
 CFileDropApp::CFileDropApp()
 	: LFApplication(HasGUI_Standard)
 {
+	WakeupMsg = RegisterWindowMessageA("liquidFOLDERS.FileDrop.Wakeup");
 }
 
 CFileDropApp::~CFileDropApp()
@@ -28,6 +45,9 @@ CFileDropApp theApp;
 
 BOOL CFileDropApp::InitInstance()
 {
+	if (!EnumWindows((WNDENUMPROC)EnumWindowsProc, NULL))
+		return FALSE;
+
 	LFApplication::InitInstance();
 
 	SetRegistryBase(_T("Settings"));

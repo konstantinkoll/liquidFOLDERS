@@ -16,6 +16,8 @@ public:
 	~CFileDropApp();
 
 	virtual BOOL InitInstance();
+
+	UINT WakeupMsg;
 };
 
 extern CFileDropApp theApp;

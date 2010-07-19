@@ -32,12 +32,14 @@ protected:
 	afx_msg LRESULT OnNcHitTest(CPoint point);
 	afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
 	afx_msg void OnActivate(UINT nState, CWnd* pWndOther, BOOL bMinimized);
+	afx_msg void OnMove(int x, int y);
 	afx_msg void OnAlwaysOnTop();
 	afx_msg void OnChooseDefaultStore();
 	afx_msg void OnStoreProperties();
 	afx_msg void OnAbout();
 	afx_msg void OnNewStoreManager();
 	afx_msg LRESULT OnStoresChanged(WPARAM wParam, LPARAM lParam);
+	afx_msg LRESULT OnWakeup(WPARAM wParam, LPARAM lParam);
 	DECLARE_MESSAGE_MAP()
 
 	LFDropTarget m_DropTarget;
@@ -47,6 +49,8 @@ protected:
 	CMFCToolBarImages m_Warning;
 	LFStoreDescriptor m_Store;
 	CString Label;
+	int PosX;
+	int PosY;
 	BOOL AlwaysOnTop;
 	BOOL MouseInWnd;
 	BOOL Grabbed;

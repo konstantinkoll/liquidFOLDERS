@@ -30,7 +30,7 @@ BOOL CFileDropWnd::Create()
 
 	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, theApp.LoadStandardCursor(IDC_ARROW), NULL, m_hIcon);
 
-	const DWORD dwStyle = WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU | WS_OVERLAPPED;
+	const DWORD dwStyle = WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU;// | WS_OVERLAPPED;
 	const DWORD dwExStyle = WS_EX_APPWINDOW;
 	CRect rect(0, 0, 144, 180);
 	return CGlassWindow::CreateEx(dwExStyle, className, _T("FileDrop"), dwStyle, rect, NULL, 0);
@@ -100,6 +100,9 @@ void CFileDropWnd::SetWindowRect(int x, int y, BOOL TopMost)
 			x = d.Width()-r.Width();
 		if (y+r.Height()>d.Height())
 			y = d.Height()-r.Height();
+
+		PosX = x;
+		PosY = y;
 	}
 	else
 	{
@@ -114,6 +117,7 @@ void CFileDropWnd::SetWindowRect(int x, int y, BOOL TopMost)
 		pSysMenu->CheckMenuItem(SC_ALWAYSONTOP, MF_BYCOMMAND | (TopMost ? MF_CHECKED : MF_UNCHECKED));
 }
 
+
 BEGIN_MESSAGE_MAP(CFileDropWnd, CGlassWindow)
 	ON_WM_CREATE()
 	ON_WM_CLOSE()
@@ -125,6 +129,7 @@ BEGIN_MESSAGE_MAP(CFileDropWnd, CGlassWindow)
 	ON_WM_NCHITTEST()
 	ON_WM_SYSCOMMAND()
 	ON_WM_ACTIVATE()
+	ON_WM_MOVE()
 	ON_COMMAND(SC_ALWAYSONTOP, OnAlwaysOnTop)
 	ON_COMMAND(ID_APP_CHOOSEDEFAULTSTORE, OnChooseDefaultStore)
 	ON_COMMAND(ID_APP_STOREPROPERTIES, OnStoreProperties)
@@ -134,6 +139,7 @@ BEGIN_MESSAGE_MAP(CFileDropWnd, CGlassWindow)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoresChanged, OnStoresChanged)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoreAttributesChanged, OnStoresChanged)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->DefaultStoreChanged, OnStoresChanged)
+	ON_REGISTERED_MESSAGE(theApp.WakeupMsg, OnWakeup)
 END_MESSAGE_MAP()
 
 int CFileDropWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -166,7 +172,9 @@ int CFileDropWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	Tooltip.Create(this);
 
 	// Einstellungen laden
-	SetWindowRect(theApp.GetInt(_T("X"), 10000), theApp.GetInt(_T("Y"), 10000), theApp.GetInt(_T("AlwaysONTop"), TRUE));
+	PosX = theApp.GetInt(_T("X"), 10000);
+	PosY = theApp.GetInt(_T("Y"), 10000);
+	SetWindowRect(PosX, PosY, theApp.GetInt(_T("AlwaysOnTop"), TRUE));
 
 	// IDM_xxx muss sich im Bereich der Systembefehle befinden.
 	ASSERT((IDM_ALWAYSONTOP & 0xFFF0)==IDM_ALWAYSONTOP);
@@ -197,11 +205,9 @@ int CFileDropWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 void CFileDropWnd::OnClose()
 {
-	CRect r;
-	GetWindowRect(&r);
 	theApp.WriteInt(_T("AlwaysOnTop"), AlwaysOnTop);
-	theApp.WriteInt(_T("X"), r.left);
-	theApp.WriteInt(_T("Y"), r.top);
+	theApp.WriteInt(_T("X"), PosX);
+	theApp.WriteInt(_T("Y"), PosY);
 
 	CGlassWindow::OnClose();
 }
@@ -411,6 +417,20 @@ void CFileDropWnd::OnActivate(UINT /*nState*/, CWnd* /*pWndOther*/, BOOL bMinimi
 		Invalidate();
 }
 
+void CFileDropWnd::OnMove(int x, int y)
+{
+	CGlassWindow::OnMove(x, y);
+
+	CRect rect;
+	GetWindowRect(rect);
+
+	if ((rect.left>=-100) && (rect.top>=-100))
+	{
+		PosX = rect.left;
+		PosY = rect.top;
+	}
+}
+
 void CFileDropWnd::OnAlwaysOnTop()
 {
 	SetWindowRect(-1, -1, !AlwaysOnTop);
@@ -460,4 +480,13 @@ LRESULT CFileDropWnd::OnStoresChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)
 	Invalidate();
 
 	return NULL;
+}
+
+LRESULT CFileDropWnd::OnWakeup(WPARAM /*wParam*/, LPARAM /*lParam*/)
+{
+	if (IsIconic())
+		ShowWindow(SW_RESTORE);
+
+	SetForegroundWindow();
+	return 24878;
 }
