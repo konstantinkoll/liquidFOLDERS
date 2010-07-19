@@ -780,7 +780,7 @@ void CFolderItem::GetMenuItems(CGetMenuitemsEventArgs& e)
 
 void CFolderItem::OnMergeFrameMenu(CMergeFrameMenuEventArgs& e)
 {
-	CShellMenuItem* item = e.menu->AddItem(_T("liquidFOLDERS"));
+	CShellMenuItem* item = e.menu->AddItem(_T("&liquidFOLDERS"));
 	item->SetHasSubMenu(TRUE);
 
 	CShellMenu* subMenu = item->GetSubMenu();

@@ -53,7 +53,7 @@ void CSimpleTooltip::Track(CPoint point, const CString& strText)
 	CFont* pOldFont = dc.SelectObject(&afxGlobalData.fontTooltip);
 
 	CSize sz = dc.GetTextExtent(m_strText);
-	sz.cx += 2*AFX_TEXT_MARGIN+4;
+	sz.cx += 2*AFX_TEXT_MARGIN+6;
 	sz.cy += 2*AFX_TEXT_MARGIN+4;
 
 	dc.SelectObject(pOldFont);
