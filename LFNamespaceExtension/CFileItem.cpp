@@ -4,6 +4,7 @@
 #include "CFolderItem.h"
 #include "CFileItem.h"
 #include "LFCore.h"
+#include <shlwapi.h>
 
 
 IMPLEMENT_DYNCREATE(CFileItem, CNSEItem)

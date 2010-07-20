@@ -311,7 +311,6 @@ BEGIN
     "#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_DEU)\r\n"
     "LANGUAGE 7, 1\r\n"
     "#pragma code_page(1252)\r\n"
-    "#include ""res\\FileDrop.rc2""  // Nicht mit Microsoft Visual C++ bearbeitete Ressourcen\r\n"
     "#include ""l.DEU\\afxres.rc""      // Standardkomponenten\r\n"
     "#endif\r\n"
     "\0"
@@ -337,7 +336,6 @@ END
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_DEU)
 LANGUAGE 7, 1
 #pragma code_page(1252)
-#include "res\FileDrop.rc2"  // Nicht mit Microsoft Visual C++ bearbeitete Ressourcen
 #include "l.DEU\afxres.rc"      // Standardkomponenten
 #endif
 

@@ -438,10 +438,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\FileDrop.rc2"
-				>
-			</File>
-			<File
 				RelativePath=".\res\FileDrop_About.png"
 				>
 			</File>

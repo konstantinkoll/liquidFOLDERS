@@ -367,7 +367,6 @@ END
 
 3 TEXTINCLUDE 
 BEGIN
-    "\r\n"
     "\0"
 END
 

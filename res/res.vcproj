@@ -2197,6 +2197,10 @@
 			>
 		</File>
 		<File
+			RelativePath=".\Store_Default_Tiny.ico"
+			>
+		</File>
+		<File
 			RelativePath="Store_Empty.ico"
 			>
 		</File>
@@ -2209,15 +2213,7 @@
 			>
 		</File>
 		<File
-			RelativePath=".\Store_Empty_24.bmp"
-			>
-		</File>
-		<File
 			RelativePath=".\Store_Empty_32.bmp"
-			>
-		</File>
-		<File
-			RelativePath=".\Store_Empty_Tiny.ico"
 			>
 		</File>
 		<File

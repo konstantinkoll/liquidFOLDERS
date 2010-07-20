@@ -738,10 +738,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\LFCore.rc2"
-				>
-			</File>
-			<File
 				RelativePath=".\res\Store_Bag.ico"
 				>
 			</File>

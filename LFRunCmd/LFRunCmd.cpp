@@ -46,9 +46,11 @@ BOOL CRunCmdApp::InitInstance()
 			if (command==_T("ABOUTEXTENSION"))
 				OnAppAbout(IDS_EXTENSIONABOUT, IDB_EXTENSIONABOUTICON);
 			if (command==_T("NEWSTORE"))
-				OnStoreCreate();
+				OnStoreCreate(IDD_STORENEW);
 			break;
 		case 3:
+			if (command==_T("NEWSTOREDRIVE"))
+				OnStoreCreate(IDD_STORENEWDRIVE, *__targv[2] & 0xFF);
 			if (command==_T("DELETESTORE"))
 				OnStoreDelete(__targv[2]);
 			if (command==_T("STOREPROPERTIES"))
@@ -77,11 +79,11 @@ void CRunCmdApp::OnAppAbout(UINT ResIDName, UINT ResIDPicture)
 	delete p.icon;
 }
 
-void CRunCmdApp::OnStoreCreate()
+void CRunCmdApp::OnStoreCreate(UINT ResID, char Drive)
 {
 	LFStoreDescriptor* s = LFAllocStoreDescriptor();
 
-	LFStoreNewDlg dlg(CWnd::GetForegroundWindow(), IDD_STORENEW, '\0', s);
+	LFStoreNewDlg dlg(CWnd::GetForegroundWindow(), ResID, Drive, s);
 	if (dlg.DoModal()==IDOK)
 		LFErrorBox(LFCreateStore(s, dlg.makeDefault));
 

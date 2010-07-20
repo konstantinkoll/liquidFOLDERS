@@ -47,7 +47,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;C:\Program Files (x86)\LogicNP Software\EZNamespaceExtensionsMFC 2009\Include&quot;;&quot;H:\Programme\LogicNP Software\EZNamespaceExtensionsMFC 2009\Include&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;C:\Program Files (x86)\LogicNP Software\EZNamespaceExtensionsMFC 2009\Include&quot;;&quot;C:\Program Files (x86)\LogicNP Software\EZShellExtensionsMFC 2009\Include&quot;"
 				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG;_USRDLL"
 				StringPooling="true"
 				MinimalRebuild="true"
@@ -73,7 +73,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="&quot;C:\Program Files (x86)\LogicNP Software\EZNamespaceExtensionsMFC 2009\Lib&quot;;&quot;H:\Programme\LogicNP Software\EZNamespaceExtensionsMFC 2009\Lib&quot;"
+				AdditionalLibraryDirectories="&quot;C:\Program Files (x86)\LogicNP Software\EZShellExtensionsMFC 2009\Lib&quot;;&quot;C:\Program Files (x86)\LogicNP Software\EZNamespaceExtensionsMFC 2009\Lib&quot;"
 				ModuleDefinitionFile=".\LFNamespaceExtension.def"
 				GenerateDebugInformation="true"
 				SubSystem="2"
@@ -131,7 +131,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;C:\Program Files (x86)\LogicNP Software\EZNamespaceExtensionsMFC 2009\Include&quot;;&quot;H:\Programme\LogicNP Software\EZNamespaceExtensionsMFC 2009\Include&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;C:\Program Files (x86)\LogicNP Software\EZNamespaceExtensionsMFC 2009\Include&quot;;&quot;C:\Program Files (x86)\LogicNP Software\EZShellExtensionsMFC 2009\Include&quot;"
 				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG;_USRDLL"
 				StringPooling="true"
 				MinimalRebuild="true"
@@ -157,7 +157,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="&quot;H:\Programme\LogicNP Software\EZNamespaceExtensionsMFC 2009\Lib&quot;;&quot;C:\Program Files (x86)\LogicNP Software\EZNamespaceExtensionsMFC 2009\Lib&quot;"
+				AdditionalLibraryDirectories="&quot;C:\Program Files (x86)\LogicNP Software\EZShellExtensionsMFC 2009\Lib&quot;;&quot;C:\Program Files (x86)\LogicNP Software\EZNamespaceExtensionsMFC 2009\Lib&quot;"
 				ModuleDefinitionFile=".\LFNamespaceExtension.def"
 				GenerateDebugInformation="true"
 				SubSystem="2"
@@ -216,7 +216,7 @@
 				Optimization="3"
 				OmitFramePointers="true"
 				WholeProgramOptimization="true"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;C:\Program Files (x86)\LogicNP Software\EZNamespaceExtensionsMFC 2009\Include&quot;;&quot;H:\Programme\LogicNP Software\EZNamespaceExtensionsMFC 2009\Include&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;C:\Program Files (x86)\LogicNP Software\EZNamespaceExtensionsMFC 2009\Include&quot;;&quot;C:\Program Files (x86)\LogicNP Software\EZShellExtensionsMFC 2009\Include&quot;"
 				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;_USRDLL"
 				StringPooling="true"
 				RuntimeLibrary="0"
@@ -241,7 +241,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="&quot;C:\Program Files (x86)\LogicNP Software\EZNamespaceExtensionsMFC 2009\Lib&quot;;&quot;H:\Programme\LogicNP Software\EZNamespaceExtensionsMFC 2009\Lib&quot;"
+				AdditionalLibraryDirectories="&quot;C:\Program Files (x86)\LogicNP Software\EZShellExtensionsMFC 2009\Lib&quot;;&quot;C:\Program Files (x86)\LogicNP Software\EZNamespaceExtensionsMFC 2009\Lib&quot;"
 				ModuleDefinitionFile=".\LFNamespaceExtension.def"
 				GenerateDebugInformation="true"
 				SubSystem="2"
@@ -303,7 +303,7 @@
 				Optimization="3"
 				OmitFramePointers="true"
 				WholeProgramOptimization="true"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;C:\Program Files (x86)\LogicNP Software\EZNamespaceExtensionsMFC 2009\Include&quot;;&quot;H:\Programme\LogicNP Software\EZNamespaceExtensionsMFC 2009\Include&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;C:\Program Files (x86)\LogicNP Software\EZNamespaceExtensionsMFC 2009\Include&quot;;&quot;C:\Program Files (x86)\LogicNP Software\EZShellExtensionsMFC 2009\Include&quot;"
 				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;_USRDLL"
 				StringPooling="true"
 				RuntimeLibrary="0"
@@ -328,7 +328,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="&quot;C:\Program Files (x86)\LogicNP Software\EZNamespaceExtensionsMFC 2009\Lib&quot;;&quot;H:\Programme\LogicNP Software\EZNamespaceExtensionsMFC 2009\Lib&quot;"
+				AdditionalLibraryDirectories="&quot;C:\Program Files (x86)\LogicNP Software\EZShellExtensionsMFC 2009\Lib&quot;;&quot;C:\Program Files (x86)\LogicNP Software\EZNamespaceExtensionsMFC 2009\Lib&quot;"
 				ModuleDefinitionFile=".\LFNamespaceExtension.def"
 				GenerateDebugInformation="true"
 				SubSystem="2"
@@ -381,6 +381,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CDriveMenu.h"
+				>
+			</File>
+			<File
 				RelativePath=".\CFileItem.h"
 				>
 			</File>
@@ -423,10 +427,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\LFNamespaceExtension.rc2"
-				>
-			</File>
-			<File
 				RelativePath=".\res\Migrate_24.bmp"
 				>
 			</File>
@@ -435,11 +435,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\Store_Empty_24.bmp"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Store_Empty_Tiny.ico"
+				RelativePath=".\res\Store_Default_Tiny.ico"
 				>
 			</File>
 			<File
@@ -452,6 +448,10 @@
 			</File>
 			<File
 				RelativePath=".\res\StoreManager_Tiny.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\StoreNew_Tiny.ico"
 				>
 			</File>
 			<File
@@ -470,6 +470,10 @@
 			</File>
 			<File
 				RelativePath=".\CCategoryCategorizer.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\CDriveMenu.cpp"
 				>
 			</File>
 			<File

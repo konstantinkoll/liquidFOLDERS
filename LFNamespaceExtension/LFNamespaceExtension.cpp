@@ -5,6 +5,8 @@
 #include "LFNamespaceExtension.h"
 #include "LFCore.h"
 #include "afxsettingsstore.h"
+#include <eznamespaceextensions.h>
+#include <ezshellextensions.h>
 #include <io.h>
 
 
@@ -16,15 +18,15 @@ LFNamespaceExtensionApp::LFNamespaceExtensionApp()
 	GetVersionEx(&osInfo);
 
 	// Dateiname mit Icons
-	HMODULE hModCore = LoadLibrary("LFCore.DLL");
+	HMODULE hModCore = LoadLibrary("LFCORE.DLL");
 	if (hModCore)
 	{
-		::GetModuleFileName(hModCore, m_IconFile, MAX_PATH);
+		GetModuleFileName(hModCore, m_IconFile, MAX_PATH);
 		FreeLibrary(hModCore);
 	}
 	else
 	{
-		strcpy_s(m_IconFile, MAX_PATH, "LFCore.DLL");
+		strcpy_s(m_IconFile, MAX_PATH, "LFCORE.DLL");
 	}
 
 	// Get attribute information
@@ -77,7 +79,8 @@ BOOL LFNamespaceExtensionApp::InitInstance()
 	OleInitialize(NULL);
 	COleObjectFactory::RegisterAll();
 
-	CNSEFolder::RegisterExtensionData(_T("Name:KonstantinKoll*Company:BLUefolders*Email:ceo@bluefolders.net#Oo0m5Ouz+xz64KV57IinRTUvhkNojDZGjBd5MNXfwDEmgcr4baoQFMono3odGhqP"));
+	EZNamespaceExtensionsMFC::CNSEFolder::RegisterExtensionData(_T("Name:KonstantinKoll*Company:BLUefolders*Email:ceo@bluefolders.net#Oo0m5Ouz+xz64KV57IinRTUvhkNojDZGjBd5MNXfwDEmgcr4baoQFMono3odGhqP"));
+	EZShellExtensionsMFC::CExtensionTargetInfo::RegisterExtensionData(_T("Name:KonstantinKoll*Company:BLUefolders*Email:ceo@bluefolders.net#B2/22Ctegy/B3wHN28jR2uUsStzxt2RNPvEEmoFUuY4XGheEmCPKFVrhwK823NwN"));
 
 	if (!GetApplicationPath(_T("LFRunCmd"), m_PathRunCmd))
 		m_PathRunCmd.Empty();

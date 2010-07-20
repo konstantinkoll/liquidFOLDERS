@@ -1,6 +1,8 @@
 
 #pragma once
 #include "LFCore.h"
+#include <eznamespaceextensions.h>
+
 
 #define LevelRoot        0
 #define LevelStores      1

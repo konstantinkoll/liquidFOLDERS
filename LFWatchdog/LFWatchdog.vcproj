@@ -469,10 +469,6 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\res\LFWatchdog.rc2"
-				>
-			</File>
-			<File
 				RelativePath=".\res\Watchdog.ico"
 				>
 			</File>

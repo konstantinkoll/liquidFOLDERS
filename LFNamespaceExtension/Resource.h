@@ -3,12 +3,12 @@
 // Used by LFNamespaceExtension.rc
 //
 #define IDI_StoreProperties             100
-#define IDB_NewStore                    101
-#define IDI_NewStore                    102
-#define IDB_StoreManager                103
-#define IDI_StoreManager                104
-#define IDB_Migrate                     105
-#define IDI_Migrate                     106
+#define IDI_NewStore                    101
+#define IDI_StoreManager                102
+#define IDI_Migrate                     103
+#define IDI_DefaultStore                104
+#define IDB_StoreManager                105
+#define IDB_Migrate                     106
 #define IDS_MyComputerHint              1000
 #define IDS_AttributeComment            1001
 #define IDS_AllFiles                    1002

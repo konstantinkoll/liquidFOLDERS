@@ -462,10 +462,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\LFRunCmd.rc2"
-				>
-			</File>
-			<File
 				RelativePath=".\res\LFRunCmd_About.png"
 				>
 			</File>

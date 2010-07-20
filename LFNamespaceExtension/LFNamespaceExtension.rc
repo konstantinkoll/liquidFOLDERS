@@ -65,7 +65,6 @@ END
 // Bitmap
 //
 
-IDB_NewStore            BITMAP                  "res\\Store_Empty_24.bmp"
 IDB_StoreManager        BITMAP                  "res\\StoreManager_24.bmp"
 IDB_Migrate             BITMAP                  "res\\Migrate_24.bmp"
 
@@ -77,9 +76,10 @@ IDB_Migrate             BITMAP                  "res\\Migrate_24.bmp"
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
 IDI_StoreProperties     ICON                    "res\\StoreProperties_Tiny.ico"
-IDI_NewStore            ICON                    "res\\Store_Empty_Tiny.ico"
+IDI_NewStore            ICON                    "res\\StoreNew_Tiny.ico"
 IDI_StoreManager        ICON                    "res\\StoreManager_Tiny.ico"
 IDI_Migrate             ICON                    "res\\Migrate_Tiny.ico"
+IDI_DefaultStore        ICON                    "res\\Store_Default_Tiny.ico"
 #endif    // Neutral resources
 /////////////////////////////////////////////////////////////////////////////
 
@@ -120,7 +120,7 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_MENU_CreateNewStore "Create &new store"
+    IDS_MENU_CreateNewStore "Create &new store..."
     IDS_HINT_CreateNewStore "Creates a new store for your files."
     IDS_MENU_MakeDefaultStore "Make &default store"
     IDS_HINT_MakeDefaultStore "Makes the selected store the default store."
@@ -177,17 +177,6 @@ END
 
 3 TEXTINCLUDE 
 BEGIN
-    "#define _AFX_NO_SPLITTER_RESOURCES\r\n"
-    "#define _AFX_NO_OLE_RESOURCES\r\n"
-    "#define _AFX_NO_TRACKER_RESOURCES\r\n"
-    "#define _AFX_NO_PROPERTY_RESOURCES\r\n"
-    "\r\n"
-    "#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_FRA)\r\n"
-    "LANGUAGE 12, 1\r\n"
-    "#pragma code_page(1252)\r\n"
-    "#include ""res\\LFNamespaceExtension.rc2""  // non-Microsoft Visual C++ edited resources\r\n"
-    "#include ""afxres.rc""     // Standard components\r\n"
-    "#endif\r\n"
     "\0"
 END
 
@@ -203,17 +192,6 @@ END
 //
 // Generated from the TEXTINCLUDE 3 resource.
 //
-#define _AFX_NO_SPLITTER_RESOURCES
-#define _AFX_NO_OLE_RESOURCES
-#define _AFX_NO_TRACKER_RESOURCES
-#define _AFX_NO_PROPERTY_RESOURCES
-
-#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_FRA)
-LANGUAGE 12, 1
-#pragma code_page(1252)
-#include "res\LFNamespaceExtension.rc2"  // non-Microsoft Visual C++ edited resources
-#include "afxres.rc"     // Standard components
-#endif
 
 /////////////////////////////////////////////////////////////////////////////
 #endif    // not APSTUDIO_INVOKED

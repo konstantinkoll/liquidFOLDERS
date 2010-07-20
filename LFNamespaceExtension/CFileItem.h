@@ -1,6 +1,8 @@
 
 #pragma once
 #include "liquidFOLDERS.h"
+#include <eznamespaceextensions.h>
+
 
 class CFileItem : public CNSEItem
 {
