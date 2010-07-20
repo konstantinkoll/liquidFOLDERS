@@ -49,6 +49,7 @@ CDriveMenu::CDriveMenu()
 void CDriveMenu::GetExtensionTargetInfo(CExtensionTargetInfo& info)
 {
 	info.AddProgIDTarget(SpecialProgIDTargets_AllDrives);
+	info.registryKeyName = _T("liquidFOLDERS.DriveMenu");
 }
 
 BOOL CDriveMenu::OnInitialize(LPDATAOBJECT dataObject)
