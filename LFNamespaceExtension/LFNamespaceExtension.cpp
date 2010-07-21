@@ -1,3 +1,4 @@
+
 // LFNamespaceExtension.cpp : Defines the initialization routines for the DLL.
 //
 
@@ -47,6 +48,21 @@ LFNamespaceExtensionApp::LFNamespaceExtensionApp()
 
 	// Shell-API initalisieren
 	CoInitialize(NULL);
+
+	// Link-Datei schreiben
+	char Path[MAX_PATH];
+	if (SHGetSpecialFolderPathA(NULL, Path, CSIDL_SENDTO, TRUE))
+	{
+		char Name[256];
+		LFGetDefaultStoreName(Name, 256);
+
+		strcat_s(Path, MAX_PATH, "\\");
+		strcat_s(Path, MAX_PATH, Name);
+		strcat_s(Path, MAX_PATH, ".LFSendTo");
+
+		CFile f(Path, CFile::modeCreate | CFile::modeWrite);
+		f.Close();
+	}
 }
 
 LFNamespaceExtensionApp::~LFNamespaceExtensionApp()
@@ -79,9 +95,11 @@ BOOL LFNamespaceExtensionApp::InitInstance()
 	OleInitialize(NULL);
 	COleObjectFactory::RegisterAll();
 
+	// Lizenz
 	EZNamespaceExtensionsMFC::CNSEFolder::RegisterExtensionData(_T("Name:KonstantinKoll*Company:BLUefolders*Email:ceo@bluefolders.net#Oo0m5Ouz+xz64KV57IinRTUvhkNojDZGjBd5MNXfwDEmgcr4baoQFMono3odGhqP"));
 	EZShellExtensionsMFC::CExtensionTargetInfo::RegisterExtensionData(_T("Name:KonstantinKoll*Company:BLUefolders*Email:ceo@bluefolders.net#B2/22Ctegy/B3wHN28jR2uUsStzxt2RNPvEEmoFUuY4XGheEmCPKFVrhwK823NwN"));
 
+	// Pfade
 	if (!GetApplicationPath(_T("LFRunCmd"), m_PathRunCmd))
 		m_PathRunCmd.Empty();
 	if (!GetApplicationPath(_T("StoreManager"), m_PathStoreManager))

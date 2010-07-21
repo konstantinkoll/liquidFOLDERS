@@ -318,6 +318,9 @@ LFCore_API bool LFDefaultStoreAvailable();
 // Gibt den Key des Default Stores zurück
 LFCore_API char* LFGetDefaultStore();
 
+// Gibt den Standard-Namen des Default Stores zurück
+LFCore_API void LFGetDefaultStoreName(char* name, size_t cCount);
+
 // Gibt die Anzahl aller Stores zurück
 LFCore_API unsigned int LFGetStoreCount();
 

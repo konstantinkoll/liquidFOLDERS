@@ -397,6 +397,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CSendTo.h"
+				>
+			</File>
+			<File
 				RelativePath="..\include\LFCore.h"
 				>
 			</File>
@@ -432,10 +436,6 @@
 			</File>
 			<File
 				RelativePath=".\res\Migrate_Tiny.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Store_Default_Tiny.ico"
 				>
 			</File>
 			<File
@@ -486,6 +486,10 @@
 			</File>
 			<File
 				RelativePath=".\Commands.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\CSendTo.cpp"
 				>
 			</File>
 			<File

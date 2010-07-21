@@ -29,6 +29,7 @@ LFStoreDescriptor StoreCache[MaxStores] = { 0 };
 
 
 extern HANDLE Mutex_Stores;
+extern HMODULE LFCoreModuleHandle;
 extern LFMessageIDs LFMessages;
 extern unsigned int DriveTypes[26];
 
@@ -664,6 +665,11 @@ LFCore_API char* LFGetDefaultStore()
 	}
 
 	return s;
+}
+
+LFCore_API void LFGetDefaultStoreName(char* name, size_t cCount)
+{
+	LoadStringA(LFCoreModuleHandle, IDS_DefaultStore, name, (int)cCount);
 }
 
 LFCore_API unsigned int LFGetStoreCount()

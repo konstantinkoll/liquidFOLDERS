@@ -79,7 +79,6 @@ IDI_StoreProperties     ICON                    "res\\StoreProperties_Tiny.ico"
 IDI_NewStore            ICON                    "res\\StoreNew_Tiny.ico"
 IDI_StoreManager        ICON                    "res\\StoreManager_Tiny.ico"
 IDI_Migrate             ICON                    "res\\Migrate_Tiny.ico"
-IDI_DefaultStore        ICON                    "res\\Store_Default_Tiny.ico"
 #endif    // Neutral resources
 /////////////////////////////////////////////////////////////////////////////
 
@@ -110,12 +109,9 @@ BEGIN
     IDS_NULLFOLDER_CommentMask "LAll files without %s"
     IDS_FILES_Singular      "%d file"
     IDS_FILES_Plural        "%d files"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_CAPT_CreateLink     "Shortcut"
     IDS_TEXT_CreateLink     "You cannot create a shortcut here. Would you like to place it on the desktop ?"
+    IDS_LINK_DefaultStore   "Default Store"
 END
 
 STRINGTABLE 
