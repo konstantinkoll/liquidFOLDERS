@@ -11,6 +11,7 @@
 #include "ShellProperties.h"
 #include <assert.h>
 #include <iostream>
+#include <shlobj.h>
 #include <winioctl.h>
 
 
@@ -125,6 +126,24 @@ LFCore_API LFMessageIDs* LFGetMessageIDs()
 LFCore_API bool LFIsLicensed(LFLicense* License, bool Reload)
 {
 	return IsLicensed(License, Reload);
+}
+
+LFCore_API void LFCreateSendTo()
+{
+	char Path[MAX_PATH];
+	if (SHGetSpecialFolderPathA(NULL, Path, CSIDL_SENDTO, TRUE))
+	{
+		char Name[256];
+		LFGetDefaultStoreName(Name, 256);
+
+		strcat_s(Path, MAX_PATH, "\\");
+		strcat_s(Path, MAX_PATH, Name);
+		strcat_s(Path, MAX_PATH, ".LFSendTo");
+
+		HANDLE hFile = CreateFileA(Path, GENERIC_WRITE, 0, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+		if (hFile!=INVALID_HANDLE_VALUE)
+			CloseHandle(hFile);
+	}
 }
 
 

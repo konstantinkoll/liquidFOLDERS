@@ -50,19 +50,7 @@ LFNamespaceExtensionApp::LFNamespaceExtensionApp()
 	CoInitialize(NULL);
 
 	// Link-Datei schreiben
-	char Path[MAX_PATH];
-	if (SHGetSpecialFolderPathA(NULL, Path, CSIDL_SENDTO, TRUE))
-	{
-		char Name[256];
-		LFGetDefaultStoreName(Name, 256);
-
-		strcat_s(Path, MAX_PATH, "\\");
-		strcat_s(Path, MAX_PATH, Name);
-		strcat_s(Path, MAX_PATH, ".LFSendTo");
-
-		CFile f(Path, CFile::modeCreate | CFile::modeWrite);
-		f.Close();
-	}
+	LFCreateSendTo();
 }
 
 LFNamespaceExtensionApp::~LFNamespaceExtensionApp()

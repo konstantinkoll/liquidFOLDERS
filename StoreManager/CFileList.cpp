@@ -208,7 +208,7 @@ void CFileList::OnGetDispInfo(NMHDR* pNMHDR, LRESULT* /*pResult*/)
 			if (attr==LFAttrFileName)
 				if ((!View->HideFileExt) && (i->CoreAttributes.FileFormat[0]!='\0') && ((i->Type & LFTypeMask)==LFTypeFile))
 				{
-					UINT l = wcslen(m_StrBuffer);
+					size_t l = wcslen(m_StrBuffer);
 					m_StrBuffer[l] = L'.';
 					LFAttributeToString(i, LFAttrFileFormat, &m_StrBuffer[l+1], 299-l);
 				}
@@ -406,7 +406,7 @@ void CFileList::OnBeginLabelEdit(NMHDR* pNMHDR, LRESULT* pResult)
 	{
 		wchar_t* Label = i->CoreAttributes.FileName;
 		Edit->SetWindowText(Label);
-		Edit->SetSel(0, wcslen(Label));
+		Edit->SetSel(0, (int)wcslen(Label));
 	}
 
 	Editing = TRUE;

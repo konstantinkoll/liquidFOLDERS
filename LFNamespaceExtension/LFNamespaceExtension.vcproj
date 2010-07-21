@@ -397,15 +397,15 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CSendTo.h"
-				>
-			</File>
-			<File
 				RelativePath="..\include\LFCore.h"
 				>
 			</File>
 			<File
 				RelativePath=".\LFNamespaceExtension.h"
+				>
+			</File>
+			<File
+				RelativePath=".\LFSendTo.h"
 				>
 			</File>
 			<File
@@ -489,15 +489,15 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CSendTo.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\LFNamespaceExtension.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\LFNamespaceExtension.def"
+				>
+			</File>
+			<File
+				RelativePath=".\LFSendTo.cpp"
 				>
 			</File>
 			<File

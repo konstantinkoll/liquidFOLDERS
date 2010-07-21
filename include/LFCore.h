@@ -36,6 +36,10 @@ LFCore_API LFMessageIDs* LFGetMessageIDs();
 // Die gespeicherten Lizenzinformationen finden sich in License
 LFCore_API bool LFIsLicensed(LFLicense* License=NULL, bool Reload=false);
 
+// Erzeugt einen Link mit DropHandler zur Explorer-Erweiterung
+// im SendTo-Ordner des Benutzers
+LFCore_API void LFCreateSendTo();
+
 
 
 // Neuen LFAttributeDescriptor erzeugen
@@ -315,10 +319,10 @@ LFCore_API unsigned int LFStoreMaintenance(unsigned int* Repaired=NULL, unsigned
 // Gibt an, ob ein Default Stores verfügbar ist
 LFCore_API bool LFDefaultStoreAvailable();
 
-// Gibt den Key des Default Stores zurück
+// Gibt den Key des aktuellen Default Stores zurück
 LFCore_API char* LFGetDefaultStore();
 
-// Gibt den Standard-Namen des Default Stores zurück
+// Gibt den Standardnamen des Default Stores zurück
 LFCore_API void LFGetDefaultStoreName(char* name, size_t cCount);
 
 // Gibt die Anzahl aller Stores zurück

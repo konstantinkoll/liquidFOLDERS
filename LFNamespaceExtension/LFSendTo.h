@@ -2,13 +2,13 @@
 #pragma once
 #include <ezshellextensions.h>
 
-class CSendTo : public CSendToExtension
+class LFSendTo : public CSendToExtension
 {
 public:
-	DECLARE_DYNCREATE(CSendTo)
-	DECLARE_OLECREATE_EX(CSendTo)
+	DECLARE_DYNCREATE(LFSendTo)
+	DECLARE_OLECREATE_EX(LFSendTo)
 
-	CSendTo();
+	LFSendTo();
 
 	virtual void GetExtensionTargetInfo(CSendToExtensionTargetInfo& info);
 	virtual UINT OnDragDrop(CDragDropEventArgs& e);
