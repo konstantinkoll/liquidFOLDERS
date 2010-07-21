@@ -57,6 +57,12 @@ void CSendTo::GetExtensionTargetInfo(CSendToExtensionTargetInfo& info)
 
 UINT CSendTo::OnDragDrop(CDragDropEventArgs& /*e*/)
 {
+	if (!LFDefaultStoreAvailable())
+	{
+		LFErrorBox(LFNoDefaultStore);
+		return DROPEFFECT_NONE;
+	}
+
 	CStringArray* files = GetFiles();
 
 	// TODO
