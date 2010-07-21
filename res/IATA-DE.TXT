@@ -1952,6 +1952,7 @@ EBB     Kampala, Uganda;4;0*2'33"S, 32*26'37"E
 EBD     El Obeid, Sudan;4;13*9'12"N, 30*13'58"E
 EBG     El Barge, Kolumbien;4;7*35'47"N, 74*48'32"W
 EBJ     Esbjerg, DÑnemark;4;55*31'33"N, 8*33'12"E
+EBL     Erbil, Irak;5;36*14'15"N, 43*57'47"E
 EBM     El Borma, Algerien;4;31*42'15"N, 9*15'17"E
 EBN     Ebadon, Marshall-Inseln;4;9*19'50"N, 166*49'11"E
 EBS     Webster City, USA;4;42*26'12"N, 93*52'8"W
@@ -3324,7 +3325,7 @@ ITH     Ithaca, USA;4;42*29'28"N, 76*27'30"W
 ITI     Itambacuri, Brasilien;4;18*4'2"S, 41*40'2"W
 ITJ     Itajai, Brasilien
 ITK     Itokama, Neu-Guinea;4;9*11'60"S, 148*15'0"E
-ITM OSA Osaka (Itami Airport), Japan;4;34*47'8"N, 135*26'18"E
+ITM OSA Osaka (Itami Airport), Japan;5;34*47'4"N, 135*26'21"E
 ITN     Itabuna, Brasilien;4;14*48'38"S, 39*17'26"W
 ITO     Hilo, USA;4;19*43'13"N, 155*2'54"W
 ITQ     Itaqui, Brasilien;4;29*10'23"S, 56*32'12"W
@@ -3431,7 +3432,7 @@ JDZ     Jingdezhen, China;4;29*20'19"N, 117*10'33"E
 JED     Jeddah, Saudi-Arabien;4;21*40'46"N, 39*9'24"E
 JEE     Jeremie, Haãti;4;18*39'47"N, 74*10'13"W
 JEF     Jefferson City, USA;4;38*35'28"N, 92*9'22"W
-JEG     Egedesminde, Grînland;4;68*43'19"N, 52*47'5"W
+JEG     Aasiaat, Grînland;5;68*43'19"N, 52*47'5"W
 JEJ     Jeh, Marshall-Inseln;4;7*34'59"N, 168*55'1"E
 JEM     Emeryville, USA
 JEQ     Jequie, Brasilien;4;13*52'40"S, 40*4'18"W
@@ -3469,7 +3470,7 @@ JIJ     Jigiga, éthiopien;5;6*44'2"N, 44*15'11"E
 JIL     Jilin, China;4;44*0'8"N, 126*23'44"E
 JIM     Jimma, éthiopien;4;7*39'58"N, 36*48'60"E
 JIN     Jinja, Uganda;4;0*27'0"S, 33*12'0"E
-JIO ONT Ontario (Heliport), USA
+JIO     Ontario (Heliport), USA
 JIP     Jipijapa, Equador;4;1*21'0"S, 80*34'59"W
 JIR     Jiri, Nepal;4;27*37'1"N, 86*13'1"E
 JIT     Kitsault, Kanada
@@ -3532,6 +3533,7 @@ JPN WAS Washington (Pentagon Heliport), USA;4;38*52'27"N, 77*3'27"W
 JPR     Ji Parana, Brasilien;4;10*52'15"S, 61*50'47"W
 JPT     Houston (Park Ten Heliport), USA
 JPU PAR Paris (La Defense Heliport), Frankreich;4;48*43'59"N, 2*32'60"E
+JQA     Qaarsut, Grînland;5;70*44'3"N, 52*41'46"W
 JQE     Jaque, Panama;4;7*31'1"N, 78*9'0"W
 JQV     Annapolis (Heliport), USA
 JRA NYC New York (Port Authority Midtown Heliport), USA;4;40*45'16"N, 74*0'26"W
@@ -5265,7 +5267,7 @@ NGF     Kaneohe, USA;4;21*27'2"N, 157*46'5"W
 NGI     Ngau, Fiji;4;18*6'56"S, 179*20'23"E
 NGM     Agana, Guam
 NGN     Nargana, Panama;4;9*26'60"N, 78*34'59"W
-NGO     Nagoya, Japan;4;34*51'30"N, 136*48'19"E
+NGO     Nagoya, Japan;5;34*51'30"N, 136*48'19"E
 NGP     Corpus Christi (Naval Airstation), USA;4;27*41'34"N, 97*17'28"W
 NGR     Nigerum, Neu-Guinea;4;5*40'1"S, 141*7'59"E
 NGS     Nagasaki, Japan;4;32*55'1"N, 129*54'49"E
@@ -5301,6 +5303,7 @@ NIT     Niort, Frankreich;4;46*18'48"N, 0*23'40"E
 NIX     Nioro, Mali;4;15*14'17"N, 9*34'34"W
 NJA     Atsugi, Japan;4;35*27'17"N, 139*27'1"E
 NJC     Nizhevartovsk, Russland;4;60*56'57"N, 76*29'1"E
+NJF     Najav, Irak;5;31*59'30"N, 44*24'15"E
 NJK     El Centro, USA;4;32*49'45"N, 115*40'18"W
 NJM     Swansboro, USA;4;34*41'26"N, 77*1'47"W
 NJP     Warminster, USA
@@ -5311,6 +5314,7 @@ NKC     Nouakchott, Mauretanien;4;18*5'52"N, 15*56'53"W
 NKG     Nanjing, China;4;31*44'31"N, 118*51'43"E
 NKI     Naukiti, USA;4;55*50'60"N, 133*10'59"W
 NKL     Nkolo, Kongo;4;5*26'60"S, 14*49'59"E
+NKM     Nagoya (Komaki) Airfield, Japan;5;35*15'18"N, 136*55'28"E
 NKN     Nankina, Neu-Guinea;4;5*49'59"S, 146*26'60"E
 NKS     N'Kongsamba, Kamerun;4;4*56'60"N, 9*55'59"E
 NKT     Cherry Point, USA;4;34*54'3"N, 76*52'51"W
@@ -5653,11 +5657,11 @@ ONI     Moanamani, Indonesien;4;3*58'1"S, 136*4'59"E
 ONL     O'Neill, USA;4;42*28'12"N, 98*41'17"W
 ONM     Socorro, USA;4;34*1'21"N, 106*54'11"W
 ONN     Onion Bay, USA
-ONO ONT Ontario, USA;4;44*1'14"N, 117*0'49"W
+ONO     Ontario, USA;4;44*1'14"N, 117*0'49"W
 ONP     Newport, USA;4;44*34'49"N, 124*3'29"W
 ONR     Monkira, Australien;4;24*49'7"S, 140*33'11"E
 ONS     Onslow, Australien;4;21*40'6"S, 115*6'47"E
-ONT ONT Ontario, USA
+ONT     LA/Ontario, USA;5;34*03'22"N, 117*36'04"W
 ONU     Ono I Lau, Fiji;4;20*38'60"S, 178*41'60"W
 ONX     Colon, Panama;4;9*21'24"N, 79*52'3"W
 ONY     Olney, USA;4;33*21'3"N, 98*49'9"W
@@ -6420,6 +6424,7 @@ QOI     Cotia, Brasilien
 QOM     Omyia, Japan
 QOR     Ordu, TÅrkei
 QOS     Oristamo, Italien
+QOX     Memmingen Airbase, Deutschland;5;47*59'0"N, 10*14'0"E
 QPA     Padua, Italien;4;45*23'45"N, 11*50'52"E
 QPD     Pinar del Rio, Kuba;4;22*25'17"N, 83*40'42"W
 QPE     Petropolis, Brasilien;4;22*35'42"S, 43*11'17"W
@@ -8601,6 +8606,7 @@ XMQ     Simmons, USA
 XMR     Cape Canaveral, USA;4;28*28'4"N, 80*34'1"W
 XMS     Macas, Equador;4;2*17'57"S, 78*7'15"W
 XMY     Yam Island, Australien;4;9*54'4"S, 142*46'32"E
+XNA     Arkansas Regional Airport, USA;5;36*16'55"N, 94*18'25"W
 XNG     Quang Ngai, Vietnam;4;15*7'1"N, 108*46'59"E
 XNN     Xining, China;4;36*31'39"N, 102*2'34"E
 XNO     North, USA;4;33*37'1"N, 81*4'59"W
