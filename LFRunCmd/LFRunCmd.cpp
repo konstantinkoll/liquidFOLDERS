@@ -47,8 +47,8 @@ BOOL CRunCmdApp::InitInstance()
 				OnAppAbout(IDS_EXTENSIONABOUT, IDB_EXTENSIONABOUTICON);
 			if (command==_T("NEWSTORE"))
 				OnStoreCreate(IDD_STORENEW);
-			if (command==_T("CREATESENDTO"))
-				LFCreateSendTo();
+			if (command==_T("INSTALL"))
+				LFCreateSendTo(true);
 			break;
 		case 3:
 			if (command==_T("NEWSTOREDRIVE"))

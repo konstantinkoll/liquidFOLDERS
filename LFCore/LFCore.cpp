@@ -128,22 +128,46 @@ LFCore_API bool LFIsLicensed(LFLicense* License, bool Reload)
 	return IsLicensed(License, Reload);
 }
 
-LFCore_API void LFCreateSendTo()
+LFCore_API void LFCreateSendTo(bool force)
 {
-	char Path[MAX_PATH];
-	if (SHGetSpecialFolderPathA(NULL, Path, CSIDL_SENDTO, TRUE))
+	HKEY k;
+	if (RegCreateKeyA(HKEY_CURRENT_USER, "Software\\liquidFOLDERS", &k)==ERROR_SUCCESS)
 	{
-		char Name[256];
-		LFGetDefaultStoreName(Name, 256);
+		BOOL created;
 
-		strcat_s(Path, MAX_PATH, "\\");
-		strcat_s(Path, MAX_PATH, Name);
-		strcat_s(Path, MAX_PATH, ".LFSendTo");
+		DWORD type;
+		DWORD sz = sizeof(created);
+		if (RegQueryValueExA(k, "SendToCreated", NULL, &type, (BYTE*)created, &sz)==ERROR_SUCCESS)
+		{
+			force |= (created==FALSE);
+		}
+		else
+		{
+			force = true;
+		}
 
-		HANDLE hFile = CreateFileA(Path, GENERIC_WRITE, 0, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
-		if (hFile!=INVALID_HANDLE_VALUE)
-			CloseHandle(hFile);
+		created = TRUE;
+		RegSetValueExA(k, "SendToCreated", 0, REG_DWORD, (BYTE*)&created, sizeof(created));
+		RegCloseKey(k);
 	}
+
+	if (force)
+	{
+		char Path[MAX_PATH];
+		if (SHGetSpecialFolderPathA(NULL, Path, CSIDL_SENDTO, TRUE))
+		{
+			char Name[256];
+			LFGetDefaultStoreName(Name, 256);
+
+			strcat_s(Path, MAX_PATH, "\\");
+			strcat_s(Path, MAX_PATH, Name);
+			strcat_s(Path, MAX_PATH, ".LFSendTo");
+
+			HANDLE hFile = CreateFileA(Path, GENERIC_WRITE, 0, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+			if (hFile!=INVALID_HANDLE_VALUE)
+				CloseHandle(hFile);
+		}
+		}
 }
 
 

@@ -198,6 +198,9 @@ BOOL LFApplication::InitInstance()
 	// Nachrichten registrieren
 	p_MessageIDs = LFGetMessageIDs();
 
+	// SendTo-Link erzeugen
+	LFCreateSendTo();
+
 	// InitCommonControlsEx() ist für Windows XP erforderlich, wenn ein Anwendungsmanifest
 	// die Verwendung von ComCtl32.dll Version 6 oder höher zum Aktivieren
 	// von visuellen Stilen angibt. Ansonsten treten beim Erstellen von Fenstern Fehler auf.

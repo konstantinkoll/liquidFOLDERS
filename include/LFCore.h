@@ -38,7 +38,8 @@ LFCore_API bool LFIsLicensed(LFLicense* License=NULL, bool Reload=false);
 
 // Erzeugt einen Link mit DropHandler zur Explorer-Erweiterung
 // im SendTo-Ordner des Benutzers
-LFCore_API void LFCreateSendTo();
+// Wenn force==false wird der Link nur beim ersten Aufruf erzeugt
+LFCore_API void LFCreateSendTo(bool force=false);
 
 
 
