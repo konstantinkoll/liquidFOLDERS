@@ -490,6 +490,7 @@ struct LFCoreAttributes
 #define LFFlagTrash                     0x0001
 #define LFFlagNew                       0x0002
 #define LFFlagLink                      0x0004
+#define LFFlagMissing                   0x0008
 
 struct LFItemDescriptor
 {

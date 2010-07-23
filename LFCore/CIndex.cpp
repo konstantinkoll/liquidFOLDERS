@@ -8,10 +8,11 @@
 #include <assert.h>
 
 
-CIndex::CIndex(char* _Path, char* _StoreID)
+CIndex::CIndex(char* _Path, char* _StoreID, char* _DatPath)
 {
 	strcpy_s(Path, MAX_PATH, _Path);
 	strcpy_s(StoreID, LFKeySize, _StoreID);
+	strcpy_s(DatPath, MAX_PATH, _DatPath);
 	ZeroMemory(Tables, sizeof(Tables));
 }
 
@@ -74,10 +75,10 @@ bool CIndex::Create()
 
 unsigned int CIndex::Check(bool scheduled)
 {
-	bool Reindex = false;
+	bool SlaveReindex = false;
 	bool Repaired = false;
 	unsigned int tres[IdxTableCount];
-	unsigned int MaxSize = 0;
+	unsigned int RecordSize = 0;
 
 	// Tabellen prüfen
 	for (unsigned int a=0; a<IdxTableCount; a++)
@@ -90,8 +91,8 @@ unsigned int CIndex::Check(bool scheduled)
 			return IndexError;
 		case HeapCreated:
 			if (a==IDMaster)
-				return IndexReindexRequired;
-			Reindex = true;
+				return IndexCompleteReindexRequired;
+			SlaveReindex = true;
 			Repaired = true;
 			break;
 		case HeapMaintenanceRequired:
@@ -102,16 +103,37 @@ unsigned int CIndex::Check(bool scheduled)
 			break;
 		}
 
-		MaxSize = max(MaxSize, Tables[a]->GetRequiredElementSize());
+		RecordSize += Tables[a]->GetRequiredElementSize();
 	}
 
 	// Index-Durchlauf
-	if (scheduled || Reindex)
+	if (scheduled || SlaveReindex)
 	{
-		if (!DirFreeSpace(Path, MaxSize*Tables[IDMaster]->GetItemCount()))
+		if (!DirFreeSpace(Path, RecordSize*Tables[IDMaster]->GetItemCount()))
 			return IndexNotEnoughFreeDiscSpace;
 
-		// TODO: registrierte Formate anpassen, ggf. neue Slaves erstellen
+		int ID = 0;
+		LFCoreAttributes* PtrM;
+
+		while (Tables[IDMaster]->FindNext(ID, (void*&)PtrM))
+		{
+			// Ist der Dateikörper noch vorhanden?
+			if ((!(PtrM->Flags & LFFlagLink)) && (DatPath[0]!='\0'))
+			{
+				char FilePath[MAX_PATH];
+				GetFileLocation(DatPath, PtrM->FileID, PtrM->FileFormat, FilePath, MAX_PATH);
+
+				unsigned int Flags = FileExists(FilePath) ? 0 : LFFlagMissing;
+				if ((Flags & LFFlagMissing)!=(PtrM->Flags & LFFlagMissing))
+				{
+					PtrM->Flags &= ~LFFlagMissing;
+					PtrM->Flags |= Flags;
+					Tables[IDMaster]->MakeDirty();
+				}
+			}
+
+			// TODO: registrierte Formate anpassen, ggf. neue Slaves erstellen
+		}
 	}
 
 	// Kompaktieren
@@ -156,7 +178,7 @@ void CIndex::Update(LFItemDescriptor* i)
 {
 	assert(i);
 
-	i->CoreAttributes.Flags &= !LFFlagNew;
+	i->CoreAttributes.Flags &= ~LFFlagNew;
 
 	// Master
 	LoadTable(IDMaster);
@@ -196,7 +218,7 @@ void CIndex::Update(LFTransactionList* tl, LFVariantData* value1, LFVariantData*
 					if (tl->m_Entries[a].LastError==LFOk)
 					{
 						// Attribute setzen
-						i->CoreAttributes.Flags &= !LFFlagNew;
+						i->CoreAttributes.Flags &= ~LFFlagNew;
 						tl->m_Changes = true;
 
 						LFSetAttributeVariantData(i, value1);

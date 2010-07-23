@@ -154,7 +154,7 @@ void ToString(void* value, unsigned int type, wchar_t* str, size_t cCount)
 	if (value)
 	{
 		size_t sz;
-		wchar_t FlagString[4];
+		wchar_t FlagString[5];
 
 		switch (type)
 		{
@@ -189,7 +189,8 @@ void ToString(void* value, unsigned int type, wchar_t* str, size_t cCount)
 			FlagString[0] = (*((unsigned int*)value) & LFFlagLink) ? 'L' : '-';
 			FlagString[1] = (*((unsigned int*)value) & LFFlagNew) ? 'N' : '-';
 			FlagString[2] = (*((unsigned int*)value) & LFFlagTrash) ? 'T' : '-';
-			FlagString[3] = '\0';
+			FlagString[3] = (*((unsigned int*)value) & LFFlagMissing) ? 'M' : '-';
+			FlagString[4] = '\0';
 			wcscpy_s(str, cCount, FlagString);
 			return;
 		case LFTypeGeoCoordinates:
@@ -474,7 +475,7 @@ LFCore_API void LFSetAttributeVariantData(LFItemDescriptor* i, LFVariantData* v)
 
 		if (i->AttributeValues[v->Attr])
 		{
-			unsigned int f = (*(unsigned int*)i->AttributeValues[v->Attr] & v->Flags.Mask) | v->Flags.Flags;
+			unsigned int f = ((*(unsigned int*)i->AttributeValues[v->Attr]) & (~v->Flags.Mask)) | v->Flags.Flags;
 			SetAttribute(i, v->Attr, &f);
 			return;
 		}

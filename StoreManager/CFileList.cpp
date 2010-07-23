@@ -232,6 +232,9 @@ void CFileList::OnCustomDraw(NMHDR* pNMHDR, LRESULT* pResult)
 		*pResult = CDRF_NOTIFYITEMDRAW;
 		break;
 	case CDDS_ITEMPREPAINT:
+		if (View->result)
+			if (View->result->m_Items[lplvcd->nmcd.dwItemSpec]->CoreAttributes.Flags & LFFlagMissing)
+				lplvcd->clrText = 0x0000FF;
 		if ((hTheme) && (GetItemState((int)lplvcd->nmcd.dwItemSpec, LVIS_SELECTED)))
 			lplvcd->nmcd.uItemState &= ~CDIS_FOCUS;
 		*pResult = CDRF_NOTIFYSUBITEMDRAW;

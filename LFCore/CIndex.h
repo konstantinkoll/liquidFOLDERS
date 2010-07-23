@@ -11,13 +11,13 @@
 #define IndexPartiallyRepaired         1
 #define IndexFullyRepaired             2
 #define IndexError                     3
-#define IndexReindexRequired           4
+#define IndexCompleteReindexRequired   4
 #define IndexNotEnoughFreeDiscSpace    5
 
 class CIndex
 {
 public:
-	CIndex(char* _Path, char* _StoreID);
+	CIndex(char* _Path, char* _StoreID, char* _DatPath);
 	~CIndex();
 
 	bool Create();
@@ -37,4 +37,5 @@ private:
 	CHeapfile* Tables[IdxTableCount];
 	char Path[MAX_PATH];
 	char StoreID[LFKeySize];
+	char DatPath[MAX_PATH];
 };

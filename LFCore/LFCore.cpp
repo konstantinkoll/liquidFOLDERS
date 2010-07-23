@@ -133,7 +133,7 @@ LFCore_API void LFCreateSendTo(bool force)
 	HKEY k;
 	if (RegCreateKeyA(HKEY_CURRENT_USER, "Software\\liquidFOLDERS", &k)==ERROR_SUCCESS)
 	{
-		BOOL created;
+		BOOL created = false;
 
 		DWORD type;
 		DWORD sz = sizeof(created);

@@ -221,12 +221,12 @@ unsigned int ValidateStoreDirectories(LFStoreDescriptor* s)
 	return LFOk;
 }
 
-void CreateStoreIndex(char* _Path, char* _StoreID, unsigned int &res)
+void CreateStoreIndex(char* _Path, char* _StoreID, char* _DatPath, unsigned int &res)
 {
 	if (_Path[0]=='\0')
 		return;
 
-	CIndex idx(_Path, _StoreID);
+	CIndex idx(_Path, _StoreID, _DatPath);
 	if (!idx.Create())
 		res = LFIndexNotCreated;
 }
@@ -409,8 +409,8 @@ LFCore_API unsigned int LFCreateStore(LFStoreDescriptor* s, bool MakeDefault, HW
 			res = ValidateStoreDirectories(s);
 			if (res==LFOk)
 			{
-				CreateStoreIndex(s->IdxPathMain, s->StoreID, res);
-				CreateStoreIndex(s->IdxPathAux, s->StoreID, res);
+				CreateStoreIndex(s->IdxPathMain, s->StoreID, s->DatPath, res);
+				CreateStoreIndex(s->IdxPathAux, s->StoreID, s->DatPath, res);
 			}
 
 			ReleaseMutex(StoreLock);
@@ -679,13 +679,13 @@ unsigned int RunMaintenance(LFStoreDescriptor* s, bool scheduled)
 			return LFDriveWriteProtected;
 
 	// Index prüfen
-	CIndex* idx = new CIndex((s->StoreMode!=LFStoreModeHybrid) ? s->IdxPathMain : s->IdxPathAux, s->StoreID);
+	CIndex* idx = new CIndex((s->StoreMode!=LFStoreModeHybrid) ? s->IdxPathMain : s->IdxPathAux, s->StoreID, s->DatPath);
 	switch (idx->Check(scheduled))
 	{
 	case IndexNotEnoughFreeDiscSpace:
 		delete idx;
 		return LFNotEnoughFreeDiscSpace;
-	case IndexReindexRequired:
+	case IndexCompleteReindexRequired:
 		// TODO
 	case IndexError:
 		delete idx;
@@ -819,13 +819,13 @@ unsigned int OpenStore(LFStoreDescriptor* s, bool WriteAccess, CIndex* &Index1, 
 	// Index öffnen
 	if (WriteAccess)
 	{
-		Index1 = new CIndex(s->IdxPathMain, s->StoreID);
+		Index1 = new CIndex(s->IdxPathMain, s->StoreID, s->DatPath);
 		if (s->StoreMode==LFStoreModeHybrid)
-			Index2 = new CIndex(s->IdxPathAux, s->StoreID);
+			Index2 = new CIndex(s->IdxPathAux, s->StoreID, s->DatPath);
 	}
 	else
 	{
-		Index1 = new CIndex(s->StoreMode==LFStoreModeHybrid ? s->IdxPathAux : s->IdxPathMain, s->StoreID);
+		Index1 = new CIndex(s->StoreMode==LFStoreModeHybrid ? s->IdxPathAux : s->IdxPathMain, s->StoreID, s->DatPath);
 	}
 
 	return LFOk;

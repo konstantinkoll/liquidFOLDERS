@@ -9,6 +9,7 @@ bool DirFreeSpace(LPCSTR lpPathSrc, unsigned int Required);
 unsigned int CopyDir(LPCSTR lpPathSrc, LPCSTR lpPathDst);
 unsigned int ValidateStoreDirectories(LFStoreDescriptor* s);
 void GetFileLocation(char* _Path, char* _FileID, char* _FileFormat, char* dst, size_t cCount);
+bool FileExists(char* path);
 void InitStores();
 unsigned int OpenStore(LFStoreDescriptor* s, bool WriteAccess, CIndex* &Index1, CIndex* &Index2);
 unsigned int OpenStore(char* key, bool WriteAccess, CIndex* &Index1, CIndex* &Index2, LFStoreDescriptor** s, HANDLE* lock);
