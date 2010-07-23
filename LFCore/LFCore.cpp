@@ -199,7 +199,7 @@ LFCore_API LFAttributeDescriptor* LFGetAttributeInfo(unsigned int ID)
 		a->cCharacters = (unsigned int)GetAttributeMaxCharacterCount(ID);
 
 	// Recommended width
-	const unsigned int rWidths[] = { 200, 200, 100, 100, 100, 120, 100, 100, 100, 150, 140, 100 };
+	const unsigned int rWidths[LFTypeCount] = { 200, 200, 200, 100, 100, 100, 120, 100, 100, 100, 150, 140, 100 };
 	switch (ID)
 	{
 	case LFAttrComment:
@@ -353,7 +353,7 @@ LFCore_API LFContextDescriptor* LFGetContextInfo(unsigned int ID)
 		(*c->AllowedAttributes) += LFAttrDeleteTime;
 	default:
 		for (unsigned int a=0; a<LFAttributeCount; a++)
-			if (a!=LFAttrDeleteTime)
+			if ((a!=LFAttrDeleteTime) && ((ID<LFContextSubfolderDefault) || (a!=LFAttrFileCount)))
 				(*c->AllowedAttributes) += a;
 	}
 

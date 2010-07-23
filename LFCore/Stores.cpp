@@ -249,37 +249,38 @@ void GetFileLocation(char* _Path, char* _FileID, char* _FileFormat, char* dst, s
 
 bool FileExists(char* path)
 {
-	return (_access(path, 0)==0);
+	WIN32_FIND_DATAA FindFileData;
+	HANDLE hFind = FindFirstFileA(path, &FindFileData);
+
+	bool res = (hFind!=INVALID_HANDLE_VALUE);
+	if (res)
+		FindClose(hFind);
+
+	return res;
 }
 
 unsigned int PrepareImport(LFStoreDescriptor* slot, LFItemDescriptor* i, char* Dst, size_t cCount)
 {
 	SetAttribute(i, LFAttrStoreID, slot->StoreID);
 
-	char Path[MAX_PATH];
-
 	SYSTEMTIME st;
 	GetSystemTime(&st);
 	srand(st.wMilliseconds*rand());
 
-ChooseAgain:
-	for (unsigned int a=0; a<LFKeyLength; a++)
+	char Path[MAX_PATH];
+
+	do
 	{
-		int r = rand()%sizeof(KeyChars);
-		i->CoreAttributes.FileID[a] = KeyChars[r];
+		for (unsigned int a=0; a<LFKeyLength; a++)
+		{
+			int r = rand()%sizeof(KeyChars);
+			i->CoreAttributes.FileID[a] = KeyChars[r];
+		}
+
+		i->CoreAttributes.FileID[LFKeyLength] = 0;
+		GetFileLocation(slot->DatPath, i->CoreAttributes.FileID, "*", Path, MAX_PATH);
 	}
-
-	i->CoreAttributes.FileID[LFKeyLength] = 0;
-	GetFileLocation(slot->DatPath, i->CoreAttributes.FileID, "*", Path, MAX_PATH);
-
-	WIN32_FIND_DATAA FindFileData;
-	HANDLE hFind = FindFirstFileA(Path, &FindFileData);
-
-	if (hFind!=INVALID_HANDLE_VALUE)
-	{
-		FindClose(hFind);
-		goto ChooseAgain;
-	}
+	while (FileExists(Path));
 
 	if (Dst)
 	{
