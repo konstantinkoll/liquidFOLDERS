@@ -13,7 +13,7 @@
     <ROW Property="AI_SHORTCUTSREG" Value="0|0|0|0|"/>
     <ROW Property="AI_STARTUP_SH" Type="4" MsiKey="AI_STARTUP_SH"/>
     <ROW Property="AI_UNINSTALLER" Value="msiexec.exe"/>
-    <ROW Property="ALLUSERS" Value="2"/>
+    <ROW Property="ALLUSERS" Value="2" MultiBuildValue="DefaultBuild:1"/>
     <ROW Property="ARPCONTACT" Value="support@liquidfolders.net"/>
     <ROW Property="ARPHELPLINK" Value="http://liquidfolders.net/tour/"/>
     <ROW Property="ARPNOMODIFY" MultiBuildValue="DefaultBuild:1"/>
