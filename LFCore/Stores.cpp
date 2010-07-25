@@ -305,6 +305,12 @@ LFCore_API unsigned int LFGetFileLocation(char* StoreID, LFCoreAttributes* ca, c
 	if (StoreID=='\0')
 		return LFIllegalKey;
 
+	if (ca->Flags & LFFlagLink)
+	{
+		*dst = '\0';
+		return LFOk;
+	}
+
 	if (!GetMutex(Mutex_Stores))
 		return LFMutexError;
 
@@ -315,7 +321,17 @@ LFCore_API unsigned int LFGetFileLocation(char* StoreID, LFCoreAttributes* ca, c
 		if (IsStoreMounted(slot))
 		{
 			GetFileLocation(slot->DatPath, ca->FileID, ca->FileFormat, dst, cCount);
-			res = LFOk;
+
+			if (FileExists(dst))
+			{
+				ca->Flags &= ~LFFlagMissing;
+				res = LFOk;
+			}
+			else
+			{
+				ca->Flags |= LFFlagMissing;
+				res = LFNoFileBody;
+			}
 		}
 		else
 		{
@@ -331,7 +347,32 @@ LFCore_API unsigned int LFGetFileLocation(LFItemDescriptor* i, char* dst, size_t
 	if ((i->Type & LFTypeMask)!=LFTypeFile)
 		return LFIllegalKey;
 
-	return LFGetFileLocation(i->StoreID, &i->CoreAttributes, dst, cCount);
+	unsigned int flags = i->CoreAttributes.Flags;
+	unsigned int res = LFGetFileLocation(i->StoreID, &i->CoreAttributes, dst, cCount);
+
+	if (flags!=i->CoreAttributes.Flags)
+	{
+		// Update index
+		CIndex* idx1;
+		CIndex* idx2;
+		HANDLE StoreLock = NULL;
+		if (OpenStore(i->StoreID, true, idx1, idx2, NULL, &StoreLock)==LFOk)
+		{
+			if (idx1)
+			{
+				idx1->Update(i, false);
+				delete idx1;
+			}
+			if (idx2)
+			{
+				idx2->Update(i, false);
+				delete idx2;
+			}
+			ReleaseMutexForStore(StoreLock);
+		}
+	}
+
+	return res;
 }
 
 LFCore_API unsigned int LFGetStoreSettings(char* key, LFStoreDescriptor* s)

@@ -566,6 +566,7 @@ struct LFStoreDescriptor
 #define LFNotEnoughFreeDiscSpace        21
 #define LFCannotDeleteFile              22
 #define LFCannotCopyIndex               23
+#define LFNoFileBody                    24
 
 
 // Structures and classes from LFCore.DLL

@@ -788,6 +788,8 @@ void CMainFrame::OnItemsOpen()
 					}
 					else
 					{
+						if (m_wndView)
+							m_wndView->Invalidate();
 						LFErrorBox(res, GetSafeHwnd());
 					}
 					break;
@@ -818,6 +820,12 @@ void CMainFrame::OnItemsOpenWith()
 				strcpy_s(Cmd, 300, "shell32.dll,OpenAs_RunDLL ");
 				strcat_s(Cmd, 300, Path);
 				ShellExecuteA(GetSafeHwnd(), "open", "rundll32.exe", Cmd, Path, SW_SHOW);
+			}
+			else
+			{
+				if (m_wndView)
+					m_wndView->Invalidate();
+				LFErrorBox(res, GetSafeHwnd());
 			}
 		}
 	}

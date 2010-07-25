@@ -174,7 +174,7 @@ void CIndex::AddItem(LFItemDescriptor* i)
 	}
 }
 
-void CIndex::Update(LFItemDescriptor* i)
+void CIndex::Update(LFItemDescriptor* i, bool IncludeSlaves)
 {
 	assert(i);
 
@@ -185,7 +185,7 @@ void CIndex::Update(LFItemDescriptor* i)
 	Tables[IDMaster]->Update(i);
 
 	// Slave
-	if ((i->CoreAttributes.SlaveID) && (i->CoreAttributes.SlaveID<IdxTableCount))
+	if ((i->CoreAttributes.SlaveID) && (i->CoreAttributes.SlaveID<IdxTableCount) && (IncludeSlaves))
 	{
 		LoadTable(i->CoreAttributes.SlaveID);
 		Tables[i->CoreAttributes.SlaveID]->Update(i);
