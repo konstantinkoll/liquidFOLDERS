@@ -495,7 +495,7 @@ void CMainFrame::OnSort(UINT nID)
 	if (ActiveViewParameters->SortBy!=nID)
 	{
 		ActiveViewParameters->SortBy = nID;
-		ActiveViewParameters->Descending = (theApp.m_Attributes[nID]->Type==LFTypeRating);
+		ActiveViewParameters->Descending = (theApp.m_Attributes[nID]->Type==LFTypeRating) || (theApp.m_Attributes[attr]->Type==LFTypeTime);;
 		if (!LFAttributeSortableInView(ActiveViewParameters->SortBy, ActiveViewParameters->Mode))
 			ActiveViewParameters->Mode = LFViewAutomatic;
 
