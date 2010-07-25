@@ -222,16 +222,23 @@ void CIndex::Update(LFTransactionList* tl, LFVariantData* value1, LFVariantData*
 						tl->m_Changes = true;
 
 						LFSetAttributeVariantData(i, value1);
+						bool IncludeSlave = (value1->Attr>LFLastCoreAttribute);
 						if (value2)
+						{
 							LFSetAttributeVariantData(i, value2);
+							IncludeSlave |= (value2->Attr>LFLastCoreAttribute);
+						}
 						if (value3)
+						{
 							LFSetAttributeVariantData(i, value3);
+							IncludeSlave |= (value3->Attr>LFLastCoreAttribute);
+						}
 
 						// Master
 						Tables[IDMaster]->Update(i, PtrM);
 
 						// Slave
-						if ((PtrM->SlaveID) && (PtrM->SlaveID<IdxTableCount))
+						if ((PtrM->SlaveID) && (PtrM->SlaveID<IdxTableCount) && (IncludeSlave))
 							if (LoadTable(PtrM->SlaveID))
 							{
 								void* PtrS;
