@@ -26,7 +26,10 @@ CAttributeProperty::CAttributeProperty(LFVariantData* _pData, CAttributeProperty
 	p_DependentProp2 = _pDependentProp2;
 	m_UseDependencies = 0;
 	MaxLength = p_App->m_Attributes[_pData->Attr]->cCharacters;
-	Multiple = FALSE;
+
+	wchar_t tmpStr[256];
+	LFVariantDataToString(_pData, tmpStr, 256);
+	SetValue(tmpStr, FALSE);
 }
 
 CAttributeProperty::~CAttributeProperty()

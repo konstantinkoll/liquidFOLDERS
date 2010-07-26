@@ -264,7 +264,7 @@ struct LFVariantData
 	bool IsNull;
 	union
 	{
-		unsigned char Value;
+		unsigned char Value[512];
 
 		wchar_t UnicodeString[256];
 		wchar_t UnicodeArray[256];

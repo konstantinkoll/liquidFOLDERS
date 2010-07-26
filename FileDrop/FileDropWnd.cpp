@@ -176,9 +176,9 @@ int CFileDropWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	PosY = theApp.GetInt(_T("Y"), 10000);
 	SetWindowRect(PosX, PosY, theApp.GetInt(_T("AlwaysOnTop"), TRUE));
 
-	// IDM_xxx muss sich im Bereich der Systembefehle befinden.
-	ASSERT((IDM_ALWAYSONTOP & 0xFFF0)==IDM_ALWAYSONTOP);
-	ASSERT(IDM_ALWAYSONTOP<0xF000);
+	// SC_xxx muss sich im Bereich der Systembefehle befinden.
+	ASSERT((SC_ALWAYSONTOP & 0xFFF0)==SC_ALWAYSONTOP);
+	ASSERT(SC_ALWAYSONTOP<0xF000);
 
 	CMenu* pSysMenu = GetSystemMenu(FALSE);
 	if (pSysMenu)

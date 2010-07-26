@@ -20,6 +20,35 @@ LFItemTemplateDlg::LFItemTemplateDlg(CWnd* pParentWnd, LFItemDescriptor* pItem, 
 		LFGetNullVariantData(&AttributeValues[a]);
 	}
 
+	CSettingsStoreSP regSP;
+	CSettingsStore& reg = regSP.Create(FALSE, FALSE);
+
+	if (reg.Open(_T("Software\\liquidFOLDERS\\Template")))
+	{
+		int count = 0;
+		if (reg.Read(_T("AttrCount"), count))
+			if (count==LFAttributeCount)
+				for (unsigned int a=0; a<LFAttributeCount; a++)
+				{
+					CString value;
+					value.Format(_T("Attr%d"), a);
+
+					BYTE* pData = NULL;
+					UINT pSz = 0;
+
+					if (reg.Read(value, &pData, &pSz))
+					{
+						if (pSz==sizeof(AttributeValues[a].Value))
+						{
+							memcpy_s(AttributeValues[a].Value, sizeof(AttributeValues[a].Value), pData, pSz);
+							AttributeValues[a].IsNull = false;
+						}
+
+						free(pData);
+					}
+				}
+	}
+
 	CFrameWnd* Frame = pParentWnd->GetParentFrame();
 	if (Frame)
 	{
@@ -139,5 +168,28 @@ void LFItemTemplateDlg::DoDataExchange(CDataExchange* pDX)
 		for (unsigned int a=0; a<LFAttributeCount; a++)
 			if ((pAttributes[a]) && (!AttributeValues[a].IsNull))
 				LFSetAttributeVariantData(m_pItem, &AttributeValues[a]);
+
+		CSettingsStoreSP regSP;
+		CSettingsStore& reg = regSP.Create(FALSE, FALSE);
+
+		if (reg.CreateKey(_T("Software\\liquidFOLDERS\\Template")))
+		{
+			reg.Write(_T("AttrCount"), LFAttributeCount);
+
+			for (unsigned int a=0; a<LFAttributeCount; a++)
+			{
+				CString value;
+				value.Format(_T("Attr%d"), a);
+
+				if ((pAttributes[a]) && (!AttributeValues[a].IsNull))
+				{
+					reg.Write(value, (BYTE*)&AttributeValues[a].Value, sizeof(AttributeValues[a].Value));
+				}
+				else
+				{
+					reg.DeleteValue(value);
+				}
+			}
+		}
 	}
 }

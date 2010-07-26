@@ -173,7 +173,7 @@ RegisteredFile Registry[] = {
 	{ "xltx",  LFDomainSpreadsheets },
 	{ "xm",    LFDomainAudio },
 	{ "xml",   LFDomainWeb },
-	{ "xsl",   LFDomainWeb },
 	{ "xps",   LFDomainDocuments },
+	{ "xsl",   LFDomainWeb },
 	{ "zip",   LFDomainArchives }
 };
