@@ -288,40 +288,52 @@ void LFApplication::GetBackgroundColors(UINT Background, COLORREF* back, COLORRE
 	switch (Background)
 	{
 	case ChildBackground_Ribbon:
-		switch (CMFCVisualManagerOffice2007::GetStyle())
+	#if (_MFC_VER>=0x1000)
+		if (m_nAppLook==ID_VIEW_APPLOOK_WINDOWS_7)
 		{
-		case CMFCVisualManagerOffice2007::Office2007_Silver:
 			if (back)
-				*back = (COLORREF)0xDDD4D0;
+				*back = (COLORREF)0xCAD4E3;
 			if (text)
 				*text = (COLORREF)0x000000;
 			if (highlight)
-				*highlight = (COLORREF)0x5C534C;
-			break;
-		case CMFCVisualManagerOffice2007::Office2007_ObsidianBlack:
-			if (back)
-				*back = (COLORREF)0x535353;
-			if (text)
-				*text = (COLORREF)0xFFFFFF;
-			if (highlight)
-				*highlight = (COLORREF)0xFFFFFF;
-			break;
-		case CMFCVisualManagerOffice2007::Office2007_Aqua:
-			if (back)
-				*back = (COLORREF)0xD9CAC4;
-			if (text)
-				*text = (COLORREF)0x000000;
-			if (highlight)
-				*highlight = (COLORREF)0x6E1500;
-			break;
-		default:
-			if (back)
-				*back = (COLORREF)0xFFDBBF;
-			if (text)
-				*text = (COLORREF)0x000000;
-			if (highlight)
-				*highlight = (COLORREF)0x8B4215;
+				*highlight = (COLORREF)0x003399;
 		}
+		else
+	#endif
+			switch (CMFCVisualManagerOffice2007::GetStyle())
+			{
+			case CMFCVisualManagerOffice2007::Office2007_Silver:
+				if (back)
+					*back = (COLORREF)0xDDD4D0;
+				if (text)
+					*text = (COLORREF)0x000000;
+				if (highlight)
+					*highlight = (COLORREF)0x5C534C;
+				break;
+			case CMFCVisualManagerOffice2007::Office2007_ObsidianBlack:
+				if (back)
+					*back = (COLORREF)0x535353;
+				if (text)
+					*text = (COLORREF)0xFFFFFF;
+				if (highlight)
+					*highlight = (COLORREF)0xFFFFFF;
+				break;
+			case CMFCVisualManagerOffice2007::Office2007_Aqua:
+				if (back)
+					*back = (COLORREF)0xD9CAC4;
+				if (text)
+					*text = (COLORREF)0x000000;
+				if (highlight)
+					*highlight = (COLORREF)0x6E1500;
+				break;
+			default:
+				if (back)
+					*back = (COLORREF)0xFFDBBF;
+				if (text)
+					*text = (COLORREF)0x000000;
+				if (highlight)
+					*highlight = (COLORREF)0x8B4215;
+			}
 		break;
 	case ChildBackground_Black:
 		if (back)
