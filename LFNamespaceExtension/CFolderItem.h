@@ -18,6 +18,7 @@
 #define VERB_MAKEDEFAULTSTORE   "defaultstore"
 #define VERB_MAKEHYBRIDSTORE    "hybridstore"
 #define VERB_OPEN               "open"
+#define VERB_OPENWITH           "openwith"
 #define VERB_RENAME             "rename"
 #define VERB_DELETE             "delete"
 #define VERB_PROPERTIES         "properties"
@@ -89,6 +90,7 @@ public:
 	virtual BOOL OnDelete(CExecuteMenuitemsEventArgs& e);
 	virtual BOOL OnProperties(CExecuteMenuitemsEventArgs& e);
 	virtual BOOL OnOpen(CExecuteMenuitemsEventArgs& e);
+	virtual BOOL OnOpenWith(CExecuteMenuitemsEventArgs& e);
 
 	BOOL OnCreateNewStore(HWND hWnd=NULL);
 	BOOL OnStoreManager(HWND hWnd=NULL);

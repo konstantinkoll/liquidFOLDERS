@@ -19,6 +19,7 @@ RegisteredFile Registry[] = {
 	{ "c",     LFDomainDocuments },
 	{ "cab",   LFDomainArchives },
 	{ "cda",   LFDomainAudio },
+	{ "chm",   LFDomainDocuments },
 	{ "cpp",   LFDomainDocuments },
 	{ "cs",    LFDomainDocuments },
 	{ "css",   LFDomainWeb },
@@ -60,6 +61,8 @@ RegisteredFile Registry[] = {
 	{ "ico",   LFDomainPictures },
 	{ "ics",   LFDomainEvents },
 	{ "iff",   LFDomainAudio },
+	{ "inc",   LFDomainDocuments },
+	{ "jar",   LFDomainArchives },
 	{ "jav",   LFDomainDocuments },
 	{ "java",  LFDomainDocuments },
 	{ "jfi",   LFDomainPhotos },
@@ -81,6 +84,7 @@ RegisteredFile Registry[] = {
 	{ "mjp",   LFDomainVideos },
 	{ "mjpeg", LFDomainVideos },
 	{ "mjpg",  LFDomainVideos },
+	{ "mmap",  LFDomainDocuments },
 	{ "mod",   LFDomainAudio },
 	{ "mov",   LFDomainVideos },
 	{ "mp1",   LFDomainAudio },
@@ -168,6 +172,8 @@ RegisteredFile Registry[] = {
 	{ "xltm",  LFDomainSpreadsheets },
 	{ "xltx",  LFDomainSpreadsheets },
 	{ "xm",    LFDomainAudio },
+	{ "xml",   LFDomainWeb },
+	{ "xsl",   LFDomainWeb },
 	{ "xps",   LFDomainDocuments },
 	{ "zip",   LFDomainArchives }
 };

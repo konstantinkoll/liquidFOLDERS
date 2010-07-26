@@ -125,6 +125,8 @@ BEGIN
                             "Converts the selected store into a hybrid store."
     IDS_MENU_Open           "&Open"
     IDS_HINT_Open           "Opens the selected item."
+    IDS_MENU_OpenWith       "Open &with..."
+    IDS_HINT_OpenWith       "Choose program to open this file with."
     IDS_MENU_CreateLink     "Create &shortcut"
     IDS_HINT_CreateLink     "Creates a shortcut for the selected items."
     IDS_MENU_Delete         "&Delete"

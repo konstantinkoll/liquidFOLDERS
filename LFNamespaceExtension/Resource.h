@@ -30,20 +30,22 @@
 #define IDS_HINT_MakeHybridStore        2005
 #define IDS_MENU_Open                   2006
 #define IDS_HINT_Open                   2007
-#define IDS_MENU_CreateLink             2008
-#define IDS_HINT_CreateLink             2009
-#define IDS_MENU_Delete                 2010
-#define IDS_HINT_Delete                 2011
-#define IDS_MENU_Rename                 2012
-#define IDS_HINT_Rename                 2013
-#define IDS_MENU_Properties             2014
-#define IDS_HINT_Properties             2015
-#define IDS_MENU_StoreManager           2016
-#define IDS_HINT_StoreManager           2017
-#define IDS_MENU_Migrate                2018
-#define IDS_HINT_Migrate                2019
-#define IDS_MENU_About                  2020
-#define IDS_HINT_About                  2021
+#define IDS_MENU_OpenWith               2008
+#define IDS_HINT_OpenWith               2009
+#define IDS_MENU_CreateLink             2010
+#define IDS_HINT_CreateLink             2011
+#define IDS_MENU_Delete                 2012
+#define IDS_HINT_Delete                 2013
+#define IDS_MENU_Rename                 2014
+#define IDS_HINT_Rename                 2015
+#define IDS_MENU_Properties             2016
+#define IDS_HINT_Properties             2017
+#define IDS_MENU_StoreManager           2018
+#define IDS_HINT_StoreManager           2019
+#define IDS_MENU_Migrate                2020
+#define IDS_HINT_Migrate                2021
+#define IDS_MENU_About                  2022
+#define IDS_HINT_About                  2023
 
 // Next default values for new objects
 // 

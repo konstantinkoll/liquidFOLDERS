@@ -449,7 +449,7 @@ int CFolderItem::GetTileViewColumnIndices(UINT* indices)
 		return 3;
 	case LevelAttrValue:
 		indices[2] = LFAttrFileSize;
-		return (data.FileID=="ALL") ? 2 : 3;
+		return (data.FileID==_T("ALL")) ? 2 : 3;
 	}
 
 	return 2;
@@ -470,7 +470,7 @@ int CFolderItem::GetPreviewDetailsColumnIndices(UINT* indices)
 	case LevelStoreHome:
 	case LevelAttrValue:
 		indices[2] = LFAttrFileSize;
-		return (data.FileID=="ALL") ? 2 : 3;
+		return (data.FileID==_T("ALL")) ? 2 : 3;
 	case LevelAttribute:
 		return 1;
 	}
@@ -493,7 +493,7 @@ CCategorizer* CFolderItem::GetCategorizer(CShellColumn &column)
 	case LevelStoreHome:
 		return new CAttributeCategorizer(this, column);
 	default:
-		return CFolderItem::GetCategorizer(column);
+		return CNSEFolder::GetCategorizer(column);
 	}
 }
 
@@ -707,6 +707,13 @@ void CFolderItem::GetMenuItems(CGetMenuitemsEventArgs& e)
 	// All items can be opened
 	if (e.children->GetCount()>=1)
 	{
+		if (data.Level==LevelAttrValue)
+		{
+			ENSURE(tmpStr.LoadString(IDS_MENU_OpenWith));
+			ENSURE(tmpHint.LoadString(IDS_HINT_OpenWith));
+			e.menu->InsertItem(tmpStr, _T(VERB_OPENWITH), tmpHint, 0);
+		}
+
 		ENSURE(tmpStr.LoadString(IDS_MENU_Open));
 		ENSURE(tmpHint.LoadString(IDS_HINT_Open));
 		e.menu->InsertItem(tmpStr, _T(VERB_OPEN), tmpHint, 0)->SetDefaultItem(TRUE);
@@ -806,6 +813,9 @@ BOOL CFolderItem::OnExecuteMenuItem(CExecuteMenuitemsEventArgs& e)
 {
 	if (e.menuItem->GetVerb()==_T(VERB_CREATENEWSTORE))
 		return OnCreateNewStore(e.hWnd);
+
+	if (e.menuItem->GetVerb()==_T(VERB_OPENWITH))
+		return OnOpenWith(e);
 
 	if ((e.menuItem->GetVerb()==_T(VERB_MAKEDEFAULTSTORE)) || (e.menuItem->GetVerb()==_T(VERB_MAKEHYBRIDSTORE)))
 	{
@@ -1110,6 +1120,36 @@ BOOL CFolderItem::OnOpen(CExecuteMenuitemsEventArgs& e)
 					strcat_s(Cmd, 300, Path);
 					ShellExecuteA(e.hWnd, "open", "rundll32.exe", Cmd, Path, SW_SHOW);
 				}
+
+			return TRUE;
+		}
+	}
+
+	return FALSE;
+}
+
+BOOL CFolderItem::OnOpenWith(CExecuteMenuitemsEventArgs& e)
+{
+	if (e.children->GetCount()==1)
+	{
+		POSITION pos = e.children->GetHeadPosition();
+		CNSEItem* item = (CFileItem*)e.children->GetNext(pos);
+
+		if (IS(item, CFileItem))
+		{
+			char Path[MAX_PATH];
+			UINT res = LFGetFileLocation((char*)(LPCSTR)data.StoreID, &((CFileItem*)item)->Attrs, Path, MAX_PATH);
+			if (res!=LFOk)
+			{
+				LFErrorBox(res);
+			}
+			else
+			{
+				char Cmd[300];
+				strcpy_s(Cmd, 300, "shell32.dll,OpenAs_RunDLL ");
+				strcat_s(Cmd, 300, Path);
+				ShellExecuteA(e.hWnd, "open", "rundll32.exe", Cmd, Path, SW_SHOW);
+			}
 
 			return TRUE;
 		}
