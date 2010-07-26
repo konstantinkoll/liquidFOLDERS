@@ -15,7 +15,6 @@ LFChooseDefaultStoreDlg::LFChooseDefaultStoreDlg(CWnd* pParentWnd)
 	m_icDefaultStore = NULL;
 	m_Icons = NULL;
 	result = NULL;
-	StoreID[0] = '\0';
 }
 
 LFChooseDefaultStoreDlg::~LFChooseDefaultStoreDlg()
@@ -186,13 +185,9 @@ void LFChooseDefaultStoreDlg::DoDataExchange(CDataExchange* pDX)
 	{
 		int idx = m_List.GetNextItem(-1, LVIS_SELECTED);
 		if (idx!=-1)
-		{
-			strcpy_s(StoreID, LFKeySize, result->m_Items[idx]->StoreID);
-			LFErrorBox(LFMakeDefaultStore(StoreID, GetSafeHwnd()), GetSafeHwnd());
+			LFErrorBox(LFMakeDefaultStore(result->m_Items[idx]->StoreID, GetSafeHwnd()), GetSafeHwnd());
 		}
-		else
-		{
-			strcpy_s(StoreID, LFKeySize, "");
-		}
+
+
 	}
 }

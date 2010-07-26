@@ -10,8 +10,6 @@ public:
 	LFChooseDefaultStoreDlg(CWnd* pParentWnd);
 	virtual ~LFChooseDefaultStoreDlg();
 
-	char StoreID[LFKeySize];
-
 protected:
 	HICON m_icStore;
 	HICON m_icDefaultStore;

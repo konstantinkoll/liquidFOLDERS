@@ -30,7 +30,7 @@ BOOL CFileDropWnd::Create()
 
 	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, theApp.LoadStandardCursor(IDC_ARROW), NULL, m_hIcon);
 
-	const DWORD dwStyle = WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU;// | WS_OVERLAPPED;
+	const DWORD dwStyle = WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU;
 	const DWORD dwExStyle = WS_EX_APPWINDOW;
 	CRect rect(0, 0, 144, 180);
 	return CGlassWindow::CreateEx(dwExStyle, className, _T("FileDrop"), dwStyle, rect, NULL, 0);
