@@ -786,8 +786,7 @@ Finish2:
 		} while (FindNextFileA(hFind, &ffd));
 
 	FindClose(hFind);
-
-	SendNotifyMessage(HWND_BROADCAST, changeOccured ? LFMessages.StoresChanged : LFMessages.DrivesChanged, changeOccured ? LFMSGF_ExtHybStores : 0, NULL);
+	SendStoreNotifyMessage(changeOccured ? LFMessages.StoresChanged : LFMessages.DrivesChanged, changeOccured ? LFMSGF_ExtHybStores : 0, NULL);
 	return res;
 }
 
@@ -844,6 +843,6 @@ LFCore_API unsigned int LFUnmountDrive(char d)
 			}
 
 	ReleaseMutex(Mutex_Stores);
-	SendNotifyMessage(HWND_BROADCAST, changeOccured ? LFMessages.StoresChanged : LFMessages.DrivesChanged, changeOccured ? LFMSGF_ExtHybStores : 0, NULL);
+	SendStoreNotifyMessage(changeOccured ? LFMessages.StoresChanged : LFMessages.DrivesChanged, changeOccured ? LFMSGF_ExtHybStores : 0, NULL);
 	return res;
 }

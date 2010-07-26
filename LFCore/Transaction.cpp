@@ -103,7 +103,7 @@ LFCore_API void LFTransactionUpdate(LFTransactionList* tl, HWND hWndSource, LFVa
 
 	// Update messages
 	if (StoresUpdated)
-		SendNotifyMessage(HWND_BROADCAST, LFMessages.StoreAttributesChanged, LFMSGF_IntStores | LFMSGF_ExtHybStores, (LPARAM)hWndSource);
+		SendStoreNotifyMessage(LFMessages.StoreAttributesChanged, LFMSGF_IntStores | LFMSGF_ExtHybStores, hWndSource);
 }
 
 LFCore_API void LFTransactionDelete(LFTransactionList* tl)

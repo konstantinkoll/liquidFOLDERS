@@ -186,8 +186,5 @@ void LFChooseDefaultStoreDlg::DoDataExchange(CDataExchange* pDX)
 		int idx = m_List.GetNextItem(-1, LVIS_SELECTED);
 		if (idx!=-1)
 			LFErrorBox(LFMakeDefaultStore(result->m_Items[idx]->StoreID, GetSafeHwnd()), GetSafeHwnd());
-		}
-
-
 	}
 }

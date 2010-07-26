@@ -231,13 +231,12 @@ BOOL LFApplication::InitInstance()
 	{
 		InitContextMenuManager();
 		InitShellManager();
-
 		InitKeyboardManager();
-
 		CDockingManager::SetDockingMode(DT_IMMEDIATE);
-		m_nAppLook = GetGlobalInt(_T("ApplicationLook"), ID_VIEW_APPLOOK_OFF_2007_BLUE);
-		SetApplicationLook(m_nAppLook);
 	}
+
+	m_nAppLook = GetGlobalInt(_T("ApplicationLook"), ID_VIEW_APPLOOK_OFF_2007_BLUE);
+	SetApplicationLook(m_nAppLook);
 
 	// Watchdog starten
 	#ifndef _DEBUG
