@@ -98,9 +98,9 @@ void LFChooseDefaultStoreDlg::AddColumn(CListCtrl* l, UINT attr, UINT no)
 	LFFreeAttributeDescriptor(i);
 }
 
-LRESULT LFChooseDefaultStoreDlg::UpdateStores(WPARAM wParam, LPARAM /*lParam*/)
+LRESULT LFChooseDefaultStoreDlg::UpdateStores(WPARAM wParam, LPARAM lParam)
 {
-	if (wParam & LFMSGF_IntStores)
+	if ((wParam & LFMSGF_IntStores) && (GetSafeHwnd()!=(HWND)lParam))
 	{
 		char StoreID[LFKeySize] = "";
 		int idx = m_List.GetNextItem(-1, LVIS_SELECTED);
@@ -188,7 +188,7 @@ void LFChooseDefaultStoreDlg::DoDataExchange(CDataExchange* pDX)
 		if (idx!=-1)
 		{
 			strcpy_s(StoreID, LFKeySize, result->m_Items[idx]->StoreID);
-			LFErrorBox(LFMakeDefaultStore(StoreID), GetSafeHwnd());
+			LFErrorBox(LFMakeDefaultStore(StoreID, GetSafeHwnd()), GetSafeHwnd());
 		}
 		else
 		{
