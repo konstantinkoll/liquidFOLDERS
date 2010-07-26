@@ -38,12 +38,10 @@ IMPLEMENT_OLECREATE_EX(CFolderItem, _T("LFNamespaceExtension.RootFolder"),
 // by concatenating the class name with "Factory".
 BOOL CFolderItem::CFolderItemFactory::UpdateRegistry(BOOL bRegister)
 {
-	AFX_MANAGE_STATE(_afxModuleAddrThis);
-
 	if (bRegister)
 	{
 		BOOL ret = AfxOleRegisterServerClass(m_clsid, m_lpszProgID, m_lpszProgID, m_lpszProgID, OAT_DISPATCH_OBJECT);
-		
+
 		// Register the namespace extension
 		CNSEFolder::RegisterExtension(RUNTIME_CLASS(CFolderItem));
 		return ret;

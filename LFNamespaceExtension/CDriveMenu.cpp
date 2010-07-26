@@ -21,13 +21,12 @@ IMPLEMENT_OLECREATE_EX(CDriveMenu, _T("LFNamespaceExtension.DriveMenu"),
 BOOL CDriveMenu::CDriveMenuFactory::UpdateRegistry(BOOL bRegister)
 {
 	if (bRegister)
-	{ 
-		BOOL ret = AfxOleRegisterServerClass(m_clsid, m_lpszProgID,
-			m_lpszProgID, m_lpszProgID, OAT_DISPATCH_OBJECT);
-		
+	{
+		BOOL ret = AfxOleRegisterServerClass(m_clsid, m_lpszProgID, m_lpszProgID, m_lpszProgID, OAT_DISPATCH_OBJECT);
+
 		// Register the shell extension
 		CContextMenuExtension::RegisterExtension(RUNTIME_CLASS(CDriveMenu));
-		return ret; 
+		return ret;
 	}
 	else
 	{

@@ -21,13 +21,12 @@ IMPLEMENT_OLECREATE_EX(LFSendTo, _T("LFNamespaceExtension.SendTo"),
 BOOL LFSendTo::LFSendToFactory::UpdateRegistry(BOOL bRegister)
 {
 	if (bRegister)
-	{ 
-		BOOL ret = AfxOleRegisterServerClass(m_clsid, m_lpszProgID,
-			m_lpszProgID, m_lpszProgID, OAT_DISPATCH_OBJECT);
+	{
+		BOOL ret = AfxOleRegisterServerClass(m_clsid, m_lpszProgID, m_lpszProgID, m_lpszProgID, OAT_DISPATCH_OBJECT);
 		
 		// Register the shell extension
 		CSendToExtension::RegisterExtension(RUNTIME_CLASS(LFSendTo));
-		return ret; 
+		return ret;
 	}
 	else
 	{
