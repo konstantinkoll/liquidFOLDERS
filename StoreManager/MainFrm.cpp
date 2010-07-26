@@ -2659,7 +2659,12 @@ LRESULT CMainFrame::OnStoresChanged(WPARAM /*wParam*/, LPARAM lParam)
 LRESULT CMainFrame::OnLookChanged(WPARAM wParam, LPARAM /*lParam*/)
 {
 	if (this==theApp.m_pMainWnd)
+	{
 		theApp.SetApplicationLook((UINT)wParam);
+	#if (_MFC_VER>=0x1000)
+		m_wndRibbonBar.SetWindows7Look((UINT)wParam==ID_VIEW_APPLOOK_WINDOWS_7);
+	#endif
+	}
 
 	return NULL;
 }

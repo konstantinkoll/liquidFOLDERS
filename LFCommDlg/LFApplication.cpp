@@ -218,8 +218,6 @@ BOOL LFApplication::InitInstance()
 	ttParams.m_bVislManagerTheme = TRUE;
 	GetTooltipManager()->SetTooltipParams(AFX_TOOLTIP_TYPE_ALL, RUNTIME_CLASS(CMFCToolTipCtrl), &ttParams);
 
-	CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerOffice2007));
-
 	if (HasGUI==HasGUI_None)
 		return TRUE;
 
@@ -470,18 +468,24 @@ void LFApplication::SetApplicationLook(UINT nID)
 	switch (m_nAppLook)
 	{
 	case ID_VIEW_APPLOOK_OFF_2007_BLACK:
+		CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerOffice2007));
 		CMFCVisualManagerOffice2007::SetStyle(CMFCVisualManagerOffice2007::Office2007_ObsidianBlack);
 		break;
-
 	case ID_VIEW_APPLOOK_OFF_2007_SILVER:
+		CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerOffice2007));
 		CMFCVisualManagerOffice2007::SetStyle(CMFCVisualManagerOffice2007::Office2007_Silver);
 		break;
-
 	case ID_VIEW_APPLOOK_OFF_2007_AQUA:
+		CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerOffice2007));
 		CMFCVisualManagerOffice2007::SetStyle(CMFCVisualManagerOffice2007::Office2007_Aqua);
 		break;
-
+#if (_MFC_VER>=0x1000)
+	case ID_VIEW_APPLOOK_WINDOWS_7:
+		CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerWindows7));
+		break;
+#endif
 	default:
+		CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerOffice2007));
 		CMFCVisualManagerOffice2007::SetStyle(CMFCVisualManagerOffice2007::Office2007_LunaBlue);
 		break;
 	}

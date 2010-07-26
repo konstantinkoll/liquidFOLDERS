@@ -135,6 +135,10 @@ BOOL ViewOptionsDlg::OnInitDialog()
 	ShowAttributes = ((CListCtrl*)GetDlgItem(IDC_VIEWATTRIBUTES));
 	ShowCategories = ((CButton*)GetDlgItem(IDC_GROUPS));
 
+#if (_MFC_VER>=0x1000)
+	((CComboBox*)GetDlgItem(IDC_BACKGROUNDCOMBO))->AddString(_T("Windows 7"));
+#endif
+
 	NM_LISTVIEW nmlv;
 	LRESULT res;
 	nmlv.lParam = view->Mode;

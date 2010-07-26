@@ -76,6 +76,9 @@ BOOL LFAboutDlg::OnInitDialog()
 	}
 	else
 	{
+	#if (_MFC_VER>=0x1000)
+		cbx->AddString(_T("Windows 7"));
+	#endif
 		cbx->SetCurSel(parameters->RibbonColor-1);
 		ShowCancel = TRUE;
 	}

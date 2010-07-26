@@ -2,7 +2,7 @@
 #include <windows.h>
 
 
-// Resource IDs from LFCore.DLL
+// Resource IDs from LFCORE.DLL
 
 #include "..\\LFCore\\resource.h"
 
