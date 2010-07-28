@@ -23,11 +23,11 @@
     <ROW Property="ARPURLINFOABOUT" Value="http://liquidfolders.net/support/"/>
     <ROW Property="ARPURLUPDATEINFO" Value="http://liquidfolders.net/download/"/>
     <ROW Property="AppLogoIcon" Value="AppLogo.ico" Type="1" MsiKey="AppLogoIcon"/>
-    <ROW Property="Background" Value="Backdrop4.bmp" Type="1" MsiKey="Background"/>
+    <ROW Property="Background" Value="Backdrop5.bmp" Type="1" MsiKey="Background"/>
     <ROW Property="CompleteSetupIcon" Value="Install.ico" Type="1" MsiKey="CompleteSetupIcon"/>
     <ROW Property="CustomSetupIcon" Value="Install.ico" Type="1" MsiKey="CustomSetupIcon"/>
     <ROW Property="ExclamationIcon" Value="Warning.ico" Type="1" MsiKey="ExclamationIcon"/>
-    <ROW Property="ExitBackground" Value="Backdrop3.bmp" Type="1" MsiKey="ExitBackground"/>
+    <ROW Property="ExitBackground" Value="Backdrop4.bmp" Type="1" MsiKey="ExitBackground"/>
     <ROW Property="FolderLogoIcon" Value="DestinationFolder.ico" Type="1" MsiKey="FolderLogoIcon"/>
     <ROW Property="InfoIcon" Value="Info.ico" Type="1" MsiKey="InfoIcon"/>
     <ROW Property="InstallLogoIcon" Value="Install.ico" Type="1" MsiKey="InstallLogoIcon"/>
@@ -141,8 +141,8 @@
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiBinaryComponent">
     <ROW Name="AppLogo.ico" SourcePath="Setup\AppLogo.ico"/>
-    <ROW Name="Backdrop3.bmp" SourcePath="Setup\Backdrop3.bmp"/>
     <ROW Name="Backdrop4.bmp" SourcePath="Setup\Backdrop4.bmp"/>
+    <ROW Name="Backdrop5.bmp" SourcePath="Setup\Backdrop5.bmp"/>
     <ROW Name="DestinationFolder.ico" SourcePath="Setup\DestinationFolder.ico"/>
     <ROW Name="Info.ico" SourcePath="Setup\Info.ico"/>
     <ROW Name="Install.ico" SourcePath="Setup\Install.ico"/>

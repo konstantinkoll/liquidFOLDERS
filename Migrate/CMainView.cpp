@@ -74,9 +74,8 @@ BOOL CMainView::PaintEmpty(CDC* pDC, Graphics* g, CRect& rect)
 	// Balken
 	r.top = r.bottom;
 	r.bottom = rect.bottom-border;
-	SolidBrush* brush = new SolidBrush(border ? Color(255, 230, 240, 250) : Color(160, 255, 255, 255));
-	g->FillRectangle(brush, r.left, r.top, r.Width(), r.Height());
-	delete brush;
+	SolidBrush brush(border ? Color(255, 230, 240, 250) : Color(160, 255, 255, 255));
+	g->FillRectangle(&brush, r.left, r.top, r.Width(), r.Height());
 
 	// Logo
 	int l = logo->m_pBitmap->GetWidth();

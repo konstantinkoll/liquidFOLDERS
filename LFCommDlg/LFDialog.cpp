@@ -93,6 +93,27 @@ void LFDialog::OnEraseBkgnd(CDC& /*dc*/, Graphics& g, CRect& rect)
 	int h = backdrop->m_pBitmap->GetHeight();
 	g.DrawImage(backdrop->m_pBitmap, rect.Width()-l, rect.Height()-h, l, h);
 
+	CRect btn;
+	GetDlgItem(IDOK)->GetWindowRect(&btn);
+	ScreenToClient(&btn);
+
+	int Line = btn.top-(rect.Height()-btn.bottom)-3;
+
+	SolidBrush brush1(Color(180, 255, 255, 255));
+	g.FillRectangle(&brush1, 0, 0, BackBufferL, Line);
+
+	brush1.SetColor(Color(255, 205, 250, 255));
+	g.FillRectangle(&brush1, 0, Line++, BackBufferL, 1);
+
+	brush1.SetColor(Color(255, 183, 210, 240));
+	g.FillRectangle(&brush1, 0, Line++, BackBufferL, 1);
+
+	brush1.SetColor(Color(255, 247, 250, 254));
+	g.FillRectangle(&brush1, 0, Line++, BackBufferL, 1);
+
+	LinearGradientBrush brush2(Point(0, Line-1), Point(0, rect.Height()), Color(200, 255, 255, 255), Color(0, 255, 255, 255));
+	g.FillRectangle(&brush2, 0, Line, BackBufferL, rect.Height()-Line);
+
 	l = logo->m_pBitmap->GetWidth();
 	h = logo->m_pBitmap->GetHeight();
 	g.DrawImage(logo->m_pBitmap, rect.Width()-l-8, 8, l, h);
