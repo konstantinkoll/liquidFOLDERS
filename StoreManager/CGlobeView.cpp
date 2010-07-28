@@ -1123,7 +1123,7 @@ void CGlobeView::CalcAndDrawPoints()
 			// double y = modelview[0+1] * m_Locations[a].world[0] + modelview[4+1] * m_Locations[a].world[1] + modelview[8+1] * m_Locations[a].world[2];
 			double z = modelview[0+2] * m_Locations[a].world[0] + modelview[4+2] * m_Locations[a].world[1] + modelview[8+2] * m_Locations[a].world[2];
 
-			if (z>m_FogEnd)
+			if ((z>m_FogEnd) && (m_Width) && (m_Height))
 			{
 				// Feedback
 				GLfloat buffer[4];
