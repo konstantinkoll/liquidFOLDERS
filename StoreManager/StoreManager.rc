@@ -695,6 +695,7 @@ BEGIN
     ID_GLOBE_GOOGLEEARTH    "Opens the selected places in Google Earth. Google Earth must be installed on this computer.\nOpen in Google Earth"
     ID_GLOBE_TEXTURESIZE    "Selects the size of the 3D texture used for the earth's 3D model.\nTexture size"
     ID_GLOBE_HQMODEL        "Selects a 3D model of the earth with greater detail, but also greater hardware requirements.\nUse high quality model"
+    ID_GLOBE_SHOWSPOTS      "Shows or hides the location spot of each folder.\nShow spot"
     ID_GLOBE_SHOWBUBBLES    "Shows or hides the details of each folder.\nShow details"
     ID_GLOBE_SHOWAIRPORTNAMES 
                             "Shows or hides the airport name of each folder.\nShow airport names"

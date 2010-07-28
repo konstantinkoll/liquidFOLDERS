@@ -291,6 +291,7 @@ BEGIN_MESSAGE_MAP(CGlobeView, CFileView)
 	ON_COMMAND(ID_GLOBE_JUMPTOLOCATION, OnJumpToLocation)
 	ON_COMMAND(ID_GLOBE_GOOGLEEARTH, OnGoogleEarth)
 	ON_COMMAND(ID_GLOBE_HQMODEL, OnHQModel)
+	ON_COMMAND(ID_GLOBE_SHOWSPOTS, OnShowSpots)
 	ON_COMMAND(ID_GLOBE_SHOWBUBBLES, OnShowBubbles)
 	ON_COMMAND(ID_GLOBE_SHOWAIRPORTNAMES, OnShowAirportNames)
 	ON_COMMAND(ID_GLOBE_SHOWGPS, OnShowGPS)
@@ -502,9 +503,21 @@ void CGlobeView::OnHQModel()
 	OnViewOptionsChanged();
 }
 
+void CGlobeView::OnShowSpots()
+{
+	pViewParameters->GlobeShowSpots = !pViewParameters->GlobeShowSpots;
+	if (!pViewParameters->GlobeShowSpots)
+		pViewParameters->GlobeShowBubbles = TRUE;
+
+	OnViewOptionsChanged();
+}
+
 void CGlobeView::OnShowBubbles()
 {
 	pViewParameters->GlobeShowBubbles = !pViewParameters->GlobeShowBubbles;
+	if (!pViewParameters->GlobeShowBubbles)
+		pViewParameters->GlobeShowSpots = TRUE;
+
 	OnViewOptionsChanged();
 }
 
@@ -548,6 +561,9 @@ void CGlobeView::OnUpdateCommands(CCmdUI* pCmdUI)
 		break;
 	case ID_GLOBE_HQMODEL:
 		pCmdUI->SetCheck(theApp.m_GlobeHQModel);
+		break;
+	case ID_GLOBE_SHOWSPOTS:
+		pCmdUI->SetCheck(m_ViewParameters.GlobeShowSpots);
 		break;
 	case ID_GLOBE_SHOWBUBBLES:
 		pCmdUI->SetCheck(m_ViewParameters.GlobeShowBubbles);
@@ -1146,19 +1162,22 @@ void CGlobeView::CalcAndDrawPoints()
 						psize *= max(m_Locations[a].alpha, 0.25f);
 					}
 
-					// Weiﬂ
-					glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-					glPointSize(psize);
-					glBegin(GL_POINTS);
-					glVertex3dv(m_Locations[a].world);
-					glEnd();
+					if (m_ViewParameters.GlobeShowSpots)
+					{
+						// Weiﬂ
+						glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+						glPointSize(psize);
+						glBegin(GL_POINTS);
+						glVertex3dv(m_Locations[a].world);
+						glEnd();
 
-					// Rot
-					glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
-					glPointSize(psize*0.66f);
-					glBegin(GL_POINTS);
-					glVertex3dv(m_Locations[a].world);
-					glEnd();
+						// Rot
+						glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
+						glPointSize(psize*0.66f);
+						glBegin(GL_POINTS);
+						glVertex3dv(m_Locations[a].world);
+						glEnd();
+					}
 				}
 			}
 		}

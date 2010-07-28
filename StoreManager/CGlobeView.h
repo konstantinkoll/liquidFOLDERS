@@ -100,6 +100,7 @@ protected:
 	afx_msg void OnJumpToLocation();
 	afx_msg void OnGoogleEarth();
 	afx_msg void OnHQModel();
+	afx_msg void OnShowSpots();
 	afx_msg void OnShowBubbles();
 	afx_msg void OnShowAirportNames();
 	afx_msg void OnShowGPS();

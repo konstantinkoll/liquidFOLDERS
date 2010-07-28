@@ -2198,7 +2198,9 @@ void CMainFrame::InitializeRibbon()
 				pPanelGlobeOptions->Add(new CTextureComboBox(ID_GLOBE_TEXTURESIZE, 80));
 				pPanelGlobeOptions->Add(theApp.CommandCheckBox(ID_GLOBE_HQMODEL));
 				pPanelGlobeOptions->AddSeparator();
-				pPanelGlobeOptions->Add(theApp.CommandButton(ID_GLOBE_SHOWBUBBLES, 6, 6));
+				pPanelGlobeOptions->Add(theApp.CommandButton(ID_GLOBE_SHOWSPOTS, 6, 6));
+				pPanelGlobeOptions->AddSeparator();
+				pPanelGlobeOptions->Add(theApp.CommandButton(ID_GLOBE_SHOWBUBBLES, 7, 7));
 				pPanelGlobeOptions->Add(theApp.CommandCheckBox(ID_GLOBE_SHOWAIRPORTNAMES));
 				pPanelGlobeOptions->Add(theApp.CommandCheckBox(ID_GLOBE_SHOWGPS));
 				pPanelGlobeOptions->Add(theApp.CommandCheckBox(ID_GLOBE_SHOWHINTS));

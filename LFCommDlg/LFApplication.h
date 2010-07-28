@@ -56,6 +56,7 @@ struct LFViewParameters
 	int GlobeAngleY;
 	int GlobeAngleZ;
 	int GlobeZoom;
+	BOOL GlobeShowSpots;
 	BOOL GlobeShowBubbles;
 	BOOL GlobeShowAirportNames;
 	BOOL GlobeShowGPS;
