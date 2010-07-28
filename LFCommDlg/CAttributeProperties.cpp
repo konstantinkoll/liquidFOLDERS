@@ -294,7 +294,7 @@ void CAttributePropertyIATA::OnClickButton(CPoint /*point*/)
 				(*p_DependentProp2)->p_Data->IsNull = false;
 				(*p_DependentProp2)->p_Data->GeoCoordinates = dlg.m_Airport->Location;
 				wchar_t tmpStr[256];
-				LFGeoCoordinatesToString(dlg.m_Airport->Location, tmpStr, 256);
+				LFGeoCoordinatesToString(dlg.m_Airport->Location, tmpStr, 256, true);
 				(*p_DependentProp2)->SetDependentValue(tmpStr);
 				m_UseDependencies |= 2;
 			}
@@ -365,7 +365,7 @@ void CAttributePropertyGPS::OnClickButton(CPoint /*point*/)
 		p_Data->IsNull = false;
 
 		wchar_t tmpStr[256];
-		LFGeoCoordinatesToString(p_Data->GeoCoordinates, &tmpStr[0], 256);
+		LFGeoCoordinatesToString(p_Data->GeoCoordinates, &tmpStr[0], 256, true);
 		SetValue(tmpStr, FALSE);
 	}
 }

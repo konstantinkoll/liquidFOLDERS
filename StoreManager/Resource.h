@@ -178,11 +178,12 @@
 #define ID_GLOBE_GOOGLEEARTH            905
 #define ID_GLOBE_TEXTURESIZE            906
 #define ID_GLOBE_HQMODEL                907
-#define ID_GLOBE_SHOWSPOTS              908
-#define ID_GLOBE_SHOWBUBBLES            909
-#define ID_GLOBE_SHOWAIRPORTNAMES       910
-#define ID_GLOBE_SHOWGPS                911
-#define ID_GLOBE_SHOWHINTS              912
+#define ID_GLOBE_SHOWBUBBLES            908
+#define ID_GLOBE_SHOWAIRPORTNAMES       909
+#define ID_GLOBE_SHOWGPS                910
+#define ID_GLOBE_SHOWHINTS              911
+#define ID_GLOBE_SHOWSPOTS              912
+#define ID_GLOBE_SHOWVIEWPOINT          913
 #define ID_TAGCLOUD_SORTVALUE           920
 #define ID_TAGCLOUD_SORTCOUNT           921
 #define ID_TAGCLOUD_OMITRARE            922
@@ -228,6 +229,7 @@
 #define IDS_REQUIRESMAINTENANCE         1031
 #define IDS_ADDFOLDER                   1032
 #define IDS_NOSTORES                    1033
+#define IDS_YOULOOKAT                   1034
 #define IDS_VATTR_FIRST                 1100
 #define IDS_VATTR_DRIVELETTER           1100
 #define IDS_VATTR_MAINTENANCETIME       1101

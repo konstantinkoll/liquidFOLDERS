@@ -118,10 +118,10 @@ LFCore_API void LFFractionToString(const LFFraction frac, wchar_t* str, size_t c
 LFCore_API void LFDoubleToString(const double d, wchar_t* str, size_t cCount);
 
 // Konvertiert eine Koordinaten-Komponente in eine Zeichenkette
-LFCore_API void LFGeoCoordinateToString(const double c, wchar_t* str, size_t cCount, bool IsLatitude);
+LFCore_API void LFGeoCoordinateToString(const double c, wchar_t* str, size_t cCount, bool IsLatitude, bool FillZero);
 
 // Konvertiert eine Geo-Position in eine Zeichenkette
-LFCore_API void LFGeoCoordinatesToString(const LFGeoCoordinates c, wchar_t* str, size_t cCount);
+LFCore_API void LFGeoCoordinatesToString(const LFGeoCoordinates c, wchar_t* str, size_t cCount, bool FillZero);
 
 // Konvertiert eine Zeit in eine Zeichenkette
 LFCore_API void LFTimeToString(const FILETIME t, wchar_t* str, size_t cCount, unsigned int mask=3);

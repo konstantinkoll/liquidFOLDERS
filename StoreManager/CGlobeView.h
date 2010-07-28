@@ -67,6 +67,7 @@ protected:
 	GLfloat m_FogStart;
 	BOOL m_Grabbed;
 	CPoint m_GrabPoint;
+	CString YouLookAt;
 	COLORREF m_ColorBack;
 	COLORREF m_ColorText;
 	COLORREF m_ColorHighlight;
@@ -100,11 +101,12 @@ protected:
 	afx_msg void OnJumpToLocation();
 	afx_msg void OnGoogleEarth();
 	afx_msg void OnHQModel();
-	afx_msg void OnShowSpots();
 	afx_msg void OnShowBubbles();
 	afx_msg void OnShowAirportNames();
 	afx_msg void OnShowGPS();
 	afx_msg void OnShowHints();
+	afx_msg void OnShowSpots();
+	afx_msg void OnShowViewpoint();
 	afx_msg void OnUpdateCommands(CCmdUI* pCmdUI);
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);

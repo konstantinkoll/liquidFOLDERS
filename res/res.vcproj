@@ -1060,14 +1060,6 @@
 				>
 			</File>
 			<File
-				RelativePath="Ribbon\JumpToLocation_16.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\JumpToLocation_32.png"
-				>
-			</File>
-			<File
 				RelativePath=".\Ribbon\Key_16.png"
 				>
 			</File>
@@ -1973,10 +1965,6 @@
 			>
 		</File>
 		<File
-			RelativePath="JumpToLocation_Tiny.ico"
-			>
-		</File>
-		<File
 			RelativePath=".\Key.png"
 			>
 		</File>
@@ -1986,6 +1974,10 @@
 		</File>
 		<File
 			RelativePath=".\liquidFOLDERS.ico"
+			>
+		</File>
+		<File
+			RelativePath=".\Location_Tiny.ico"
 			>
 		</File>
 		<File

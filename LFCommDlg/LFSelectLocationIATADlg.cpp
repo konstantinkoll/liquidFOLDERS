@@ -74,7 +74,7 @@ void LFSelectLocationIATADlg::UpdatePreview()
 	m_Airport = m_Airports[idx];
 	m_Map.Update(m_Airport);
 
-	LFGeoCoordinatesToString(m_Airport->Location, m_Buffer, 256);
+	LFGeoCoordinatesToString(m_Airport->Location, m_Buffer, 256, false);
 	GetDlgItem(IDC_GPSLOCATION)->SetWindowText(m_Buffer);
 }
 

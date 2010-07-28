@@ -799,10 +799,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\JumpToLocation_Tiny.ico"
-				>
-			</File>
-			<File
 				RelativePath=".\res\Key.png"
 				>
 			</File>
@@ -816,6 +812,10 @@
 			</File>
 			<File
 				RelativePath=".\res\LFCommDlg.rc2"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Location_Tiny.ico"
 				>
 			</File>
 			<File

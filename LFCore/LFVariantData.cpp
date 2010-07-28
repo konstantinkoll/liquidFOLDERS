@@ -70,7 +70,7 @@ LFCore_API void LFDoubleToString(const double d, wchar_t* str, size_t cCount)
 	swprintf(str, cCount, L"%f", d);
 }
 
-LFCore_API void LFGeoCoordinateToString(const double c, wchar_t* str, size_t cCount, bool IsLatitude)
+LFCore_API void LFGeoCoordinateToString(const double c, wchar_t* str, size_t cCount, bool IsLatitude, bool FillZero)
 {
 	wchar_t Hemisphere[2];
 	if (IsLatitude)
@@ -84,14 +84,18 @@ LFCore_API void LFGeoCoordinateToString(const double c, wchar_t* str, size_t cCo
 		Hemisphere[1] = 'E';
 	}
 
-	swprintf(str, cCount, L"%u°%u\'%u\"%c",
+	swprintf(str, cCount, FillZero ? L"%3u°%2u\'%2u\"%c" : L"%u°%u\'%u\"%c",
 		(unsigned int)(fabs(c)+ROUNDOFF),
 		(unsigned int)GetMinutes(c),
 		(unsigned int)(GetSeconds(c)+0.5),
 		Hemisphere[c>0]);
+
+	if (FillZero)
+		while (wchar_t* p=wcschr(str, L' '))
+			*p = L'0';
 }
 
-LFCore_API void LFGeoCoordinatesToString(const LFGeoCoordinates c, wchar_t* str, size_t cCount)
+LFCore_API void LFGeoCoordinatesToString(const LFGeoCoordinates c, wchar_t* str, size_t cCount, bool FillZero)
 {
 	if ((c.Latitude==0) && (c.Longitude==0))
 	{
@@ -100,9 +104,9 @@ LFCore_API void LFGeoCoordinatesToString(const LFGeoCoordinates c, wchar_t* str,
 	else
 	{
 		wchar_t tmpStr[256];
-		LFGeoCoordinateToString(c.Longitude, tmpStr, 256, false);
+		LFGeoCoordinateToString(c.Longitude, tmpStr, 256, false, FillZero);
 
-		LFGeoCoordinateToString(c.Latitude, str, cCount, true);
+		LFGeoCoordinateToString(c.Latitude, str, cCount, true, FillZero);
 		wcscat_s(str, cCount, L", ");
 		wcscat_s(str, cCount, tmpStr);
 	}
@@ -194,7 +198,7 @@ void ToString(void* value, unsigned int type, wchar_t* str, size_t cCount)
 			wcscpy_s(str, cCount, FlagString);
 			return;
 		case LFTypeGeoCoordinates:
-			LFGeoCoordinatesToString(*((LFGeoCoordinates*)value), str, cCount);
+			LFGeoCoordinatesToString(*((LFGeoCoordinates*)value), str, cCount, true);
 			return;
 		case LFTypeTime:
 			LFTimeToString(*((FILETIME*)value), str, cCount, 3);

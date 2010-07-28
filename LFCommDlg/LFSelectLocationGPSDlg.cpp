@@ -62,9 +62,9 @@ void LFSelectLocationGPSDlg::OnUpdateEdit(NMHDR* pNMHDR, LRESULT* pResult)
 	*m_pCoord = *pTag->pCoord;
 
 	wchar_t tmpStr[256];
-	LFGeoCoordinateToString(m_pCoord->Latitude, tmpStr, 256, TRUE);
+	LFGeoCoordinateToString(m_pCoord->Latitude, tmpStr, 256, true, false);
 	GetDlgItem(IDC_LATITUDE)->SetWindowText(tmpStr);
-	LFGeoCoordinateToString(m_pCoord->Longitude, tmpStr, 256, FALSE);
+	LFGeoCoordinateToString(m_pCoord->Longitude, tmpStr, 256, false, false);
 	GetDlgItem(IDC_LONGITUDE)->SetWindowText(tmpStr);
 
 	*pResult = 0;

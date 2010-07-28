@@ -553,6 +553,7 @@ BEGIN
     IDS_REQUIRESMAINTENANCE "This store requires scheduled maintenance."
     IDS_ADDFOLDER           "Choose a directory to import into the store ""%s"". All files including all subdirectories will be imported. For more sophisticated options, please open the Migration Wizard."
     IDS_NOSTORES            "There are no stores available right now."
+    IDS_YOULOOKAT           "You look at %s"
 END
 
 STRINGTABLE 
@@ -695,12 +696,13 @@ BEGIN
     ID_GLOBE_GOOGLEEARTH    "Opens the selected places in Google Earth. Google Earth must be installed on this computer.\nOpen in Google Earth"
     ID_GLOBE_TEXTURESIZE    "Selects the size of the 3D texture used for the earth's 3D model.\nTexture size"
     ID_GLOBE_HQMODEL        "Selects a 3D model of the earth with greater detail, but also greater hardware requirements.\nUse high quality model"
-    ID_GLOBE_SHOWSPOTS      "Shows or hides the location spot of each folder.\nShow spot"
     ID_GLOBE_SHOWBUBBLES    "Shows or hides the details of each folder.\nShow details"
     ID_GLOBE_SHOWAIRPORTNAMES 
                             "Shows or hides the airport name of each folder.\nShow airport names"
     ID_GLOBE_SHOWGPS        "Shows or hides the GPS location of each folder.\nShow GPS locations"
     ID_GLOBE_SHOWHINTS      "Shows or hides the hint text of each folder.\nShow hints"
+    ID_GLOBE_SHOWSPOTS      "Shows or hides the location spot of each folder.\nShow spots"
+    ID_GLOBE_SHOWVIEWPOINT  "Shows or hides the viewpoint coordinates in the globe's status bar.\nShow viewpoint"
 END
 
 STRINGTABLE 

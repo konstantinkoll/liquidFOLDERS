@@ -89,6 +89,7 @@ CGlobeView::CGlobeView()
 	mPoint.x = 0;
 	mPoint.y = 0;
 	m_nTexture = -1;
+	ENSURE(YouLookAt.LoadString(IDS_YOULOOKAT));
 	m_LockUpdate = FALSE;
 }
 
@@ -168,7 +169,7 @@ void CGlobeView::SetSearchResult(LFSearchResult* _result)
 				if ((coord.Latitude!=0) || (coord.Longitude!=0))
 				{
 					CalculateWorldCoords(coord.Latitude, coord.Longitude, m_Locations[a].world);
-					LFGeoCoordinatesToString(coord, m_Locations[a].coordstring, 32);
+					LFGeoCoordinatesToString(coord, m_Locations[a].coordstring, 32, false);
 					m_Locations[a].valid = TRUE;
 					m_Locations[a].selected = FALSE;
 				}
@@ -291,12 +292,13 @@ BEGIN_MESSAGE_MAP(CGlobeView, CFileView)
 	ON_COMMAND(ID_GLOBE_JUMPTOLOCATION, OnJumpToLocation)
 	ON_COMMAND(ID_GLOBE_GOOGLEEARTH, OnGoogleEarth)
 	ON_COMMAND(ID_GLOBE_HQMODEL, OnHQModel)
-	ON_COMMAND(ID_GLOBE_SHOWSPOTS, OnShowSpots)
 	ON_COMMAND(ID_GLOBE_SHOWBUBBLES, OnShowBubbles)
 	ON_COMMAND(ID_GLOBE_SHOWAIRPORTNAMES, OnShowAirportNames)
 	ON_COMMAND(ID_GLOBE_SHOWGPS, OnShowGPS)
 	ON_COMMAND(ID_GLOBE_SHOWHINTS, OnShowHints)
-	ON_UPDATE_COMMAND_UI_RANGE(ID_GLOBE_ZOOMIN, ID_GLOBE_SHOWHINTS, OnUpdateCommands)
+	ON_COMMAND(ID_GLOBE_SHOWSPOTS, OnShowSpots)
+	ON_COMMAND(ID_GLOBE_SHOWVIEWPOINT, OnShowViewpoint)
+	ON_UPDATE_COMMAND_UI_RANGE(ID_GLOBE_ZOOMIN, ID_GLOBE_SHOWVIEWPOINT, OnUpdateCommands)
 	ON_WM_LBUTTONDOWN()
 	ON_WM_LBUTTONUP()
 	ON_WM_MOUSEMOVE()
@@ -345,7 +347,7 @@ int CGlobeView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 
 	Init();
-	SetTimer(1, 16, NULL);
+	SetTimer(1, 10, NULL);
 
 	return 0;
 }
@@ -503,15 +505,6 @@ void CGlobeView::OnHQModel()
 	OnViewOptionsChanged();
 }
 
-void CGlobeView::OnShowSpots()
-{
-	pViewParameters->GlobeShowSpots = !pViewParameters->GlobeShowSpots;
-	if (!pViewParameters->GlobeShowSpots)
-		pViewParameters->GlobeShowBubbles = TRUE;
-
-	OnViewOptionsChanged();
-}
-
 void CGlobeView::OnShowBubbles()
 {
 	pViewParameters->GlobeShowBubbles = !pViewParameters->GlobeShowBubbles;
@@ -539,6 +532,21 @@ void CGlobeView::OnShowHints()
 	OnViewOptionsChanged();
 }
 
+void CGlobeView::OnShowSpots()
+{
+	pViewParameters->GlobeShowSpots = !pViewParameters->GlobeShowSpots;
+	if (!pViewParameters->GlobeShowSpots)
+		pViewParameters->GlobeShowBubbles = TRUE;
+
+	OnViewOptionsChanged();
+}
+
+void CGlobeView::OnShowViewpoint()
+{
+	pViewParameters->GlobeShowViewpoint = !pViewParameters->GlobeShowViewpoint;
+	OnViewOptionsChanged();
+}
+
 void CGlobeView::OnUpdateCommands(CCmdUI* pCmdUI)
 {
 	BOOL b = TRUE;
@@ -562,9 +570,6 @@ void CGlobeView::OnUpdateCommands(CCmdUI* pCmdUI)
 	case ID_GLOBE_HQMODEL:
 		pCmdUI->SetCheck(theApp.m_GlobeHQModel);
 		break;
-	case ID_GLOBE_SHOWSPOTS:
-		pCmdUI->SetCheck(m_ViewParameters.GlobeShowSpots);
-		break;
 	case ID_GLOBE_SHOWBUBBLES:
 		pCmdUI->SetCheck(m_ViewParameters.GlobeShowBubbles);
 		break;
@@ -579,6 +584,13 @@ void CGlobeView::OnUpdateCommands(CCmdUI* pCmdUI)
 	case ID_GLOBE_SHOWHINTS:
 		pCmdUI->SetCheck(m_ViewParameters.GlobeShowHints);
 		b = m_ViewParameters.GlobeShowBubbles;
+		break;
+	case ID_GLOBE_SHOWSPOTS:
+		pCmdUI->SetCheck(m_ViewParameters.GlobeShowSpots);
+		break;
+	case ID_GLOBE_SHOWVIEWPOINT:
+		pCmdUI->SetCheck(m_ViewParameters.GlobeShowViewpoint);
+		break;
 	}
 
 	pCmdUI->Enable(b);
@@ -962,12 +974,12 @@ BOOL CGlobeView::UpdateScene(BOOL Redraw)
 		if (m_Zoom<TargetZoom-0.009f)
 		{
 			res = TRUE;
-			m_Zoom += 0.01f;
+			m_Zoom += 0.005f;
 		}
 		if (m_Zoom>TargetZoom+0.009f)
 		{
 			res = TRUE;
-			m_Zoom -= 0.01f;
+			m_Zoom -= 0.005f;
 		}
 	}
 
@@ -1006,8 +1018,8 @@ BOOL CGlobeView::UpdateScene(BOOL Redraw)
 		if ((abs(m_AngleY-m_LocalSettings.AngleY)>0.1f) || (abs(m_AngleZ-m_LocalSettings.AngleZ)>0.1f))
 		{
 			res = TRUE;
-			m_AngleY = (m_AngleY*19+m_LocalSettings.AngleY)/20;
-			m_AngleZ = (m_AngleZ*19+m_LocalSettings.AngleZ)/20;
+			m_AngleY = (m_AngleY*29+m_LocalSettings.AngleY)/30;
+			m_AngleZ = (m_AngleZ*29+m_LocalSettings.AngleZ)/30;
 		}
 		else
 		{
@@ -1093,30 +1105,60 @@ void CGlobeView::DrawScene(BOOL InternalCall)
 	// Statuszeile
 	if (m_Height>=STATUSBAR_HEIGHT)
 	{
-		glEnable2D();
-
-		// Kante
-		glColor4d(backcol[0], backcol[1], backcol[2], 0.8f);
-		glBegin(GL_LINES);
-		glVertex2i(0, m_Height-STATUSBAR_HEIGHT);
-		glVertex2i(m_Width, m_Height-STATUSBAR_HEIGHT);
-		glEnd();
-
-		// Füllen
-		glColor4d(backcol[0], backcol[1], backcol[2], 0.65f);
-		glRecti(0, m_Height-STATUSBAR_HEIGHT, m_Width, m_Height);
-
-		// Text
-		GLfloat highlightcol[4];
-		ColorRef2GLColor(highlightcol, m_ColorHighlight);
-		glColor4d(highlightcol[0], highlightcol[1], highlightcol[2], 1.0f);
-
 		wchar_t Copyright[] = L"© NASA's Earth Observatory";
-		m_pSpecialFont->Render(&Copyright[0],
-			(m_Width-m_pSpecialFont->GetTextWidth(&Copyright[0]))>>1,
-			m_Height-16);
+		int CopyrightX = -1;
+		UINT CopyrightWidth = m_pSpecialFont->GetTextWidth(Copyright);
 
-		glDisable2D();
+		if (m_Width>=(int)CopyrightWidth)
+		{
+			glEnable2D();
+
+			// Kante
+			glColor4d(backcol[0], backcol[1], backcol[2], 0.8f);
+			glBegin(GL_LINES);
+			glVertex2i(0, m_Height-STATUSBAR_HEIGHT);
+			glVertex2i(m_Width, m_Height-STATUSBAR_HEIGHT);
+			glEnd();
+
+			// Füllen
+			glColor4d(backcol[0], backcol[1], backcol[2], 0.65f);
+			glRecti(0, m_Height-STATUSBAR_HEIGHT, m_Width, m_Height);
+
+			wchar_t Viewpoint[256];
+			int ViewpointX = -1;
+			if (m_ViewParameters.GlobeShowViewpoint)
+			{
+				wchar_t Coord[256];
+				LFGeoCoordinates c;
+				c.Latitude = -m_AngleY;
+				c.Longitude = (m_AngleZ>180.0) ? 360-m_AngleZ : -m_AngleZ;
+				LFGeoCoordinatesToString(c, Coord, 256, true);
+
+				swprintf(Viewpoint, 256, YouLookAt, Coord);
+				UINT ViewpointWidth = m_pSpecialFont->GetTextWidth(Viewpoint);
+
+				if (m_Width>=(int)(CopyrightWidth+ViewpointWidth+60))
+				{
+					UINT Spare = m_Width-CopyrightWidth-ViewpointWidth;
+					CopyrightX = Spare/3;
+					ViewpointX = m_Width-ViewpointWidth-Spare/3;
+				}
+			}
+
+			if (CopyrightX==-1)
+				CopyrightX = (m_Width-m_pSpecialFont->GetTextWidth(&Copyright[0]))>>1;
+
+			// Text
+			GLfloat highlightcol[4];
+			ColorRef2GLColor(highlightcol, m_ColorHighlight);
+			glColor4d(highlightcol[0], highlightcol[1], highlightcol[2], 1.0f);
+
+			m_pSpecialFont->Render(Copyright, CopyrightX, m_Height-16);
+			if (ViewpointX!=-1)
+				m_pSpecialFont->Render(Viewpoint, ViewpointX, m_Height-16);
+
+			glDisable2D();
+		}
 	}
 
 	glFinish();
