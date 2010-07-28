@@ -90,7 +90,7 @@ BOOL CGLFont::Create(CFont* font)
 	return ok;
 }
 
-UINT CGLFont::Render(wchar_t* pStr, float xs, float ys, int cCount)
+UINT CGLFont::Render(wchar_t* pStr, int xs, int ys, int cCount)
 {
 	if (!pStr)
 		return 0;
@@ -103,9 +103,9 @@ UINT CGLFont::Render(wchar_t* pStr, float xs, float ys, int cCount)
 	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
 	glBegin (GL_QUADS);
-	float x = xs;
-	float y = ys;
-	float h = 0;
+	int x = xs;
+	int y = ys;
+	UINT h = 0;
 
 	while ((cCount>0) && (*pStr))
 	{
@@ -130,10 +130,10 @@ UINT CGLFont::Render(wchar_t* pStr, float xs, float ys, int cCount)
 	glEnd();
 
 	glDisable(GL_TEXTURE_2D);
-	return (UINT)ceil(h);
+	return h;
 }
 
-float CGLFont::RenderChar(UCHAR ch, float x, float y, float* pHeight)
+UINT CGLFont::RenderChar(UCHAR ch, int x, int y, UINT* pHeight)
 {
 	ASSERT(pHeight);
 
@@ -142,20 +142,20 @@ float CGLFont::RenderChar(UCHAR ch, float x, float y, float* pHeight)
 	float tx2 = TexCoords[ch][2];
 	float ty2 = TexCoords[ch][3];
 
-	float w = (tx2-tx1)*m_TexSize;
-	float h = (ty2-ty1)*m_TexSize;
+	UINT w = (int)((tx2-tx1)*m_TexSize);
+	UINT h = (int)((ty2-ty1)*m_TexSize);
 
 	glTexCoord2f(tx1, ty2);
-	glVertex2f(x, y+h);
+	glVertex2i(x, y+h);
 
 	glTexCoord2f(tx2, ty2);
-	glVertex2f(x+w, y+h);
+	glVertex2i(x+w, y+h);
 
 	glTexCoord2f(tx2, ty1);
-	glVertex2f(x+w, y);
+	glVertex2i(x+w, y);
 
 	glTexCoord2f(tx1, ty1);
-	glVertex2f(x, y);
+	glVertex2i(x, y);
 
 	*pHeight = max(*pHeight, h);
 	return w;

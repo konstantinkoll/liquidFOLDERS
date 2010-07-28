@@ -727,6 +727,7 @@ void glEnable2D()
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
 	glLoadIdentity();
+	glTranslatef (0.375, 0.375, 0);
 
 	glPushAttrib(GL_DEPTH_BUFFER_BIT);
 	glDisable(GL_DEPTH_TEST);
@@ -1096,8 +1097,8 @@ void CGlobeView::DrawScene(BOOL InternalCall)
 
 		wchar_t Copyright[] = L"© NASA's Earth Observatory";
 		m_pSpecialFont->Render(&Copyright[0],
-			(float)((m_Width-m_pSpecialFont->GetTextWidth(&Copyright[0]))>>1),
-			m_Height-16.0f);
+			(m_Width-m_pSpecialFont->GetTextWidth(&Copyright[0]))>>1,
+			m_Height-16);
 
 		glDisable2D();
 	}
@@ -1253,37 +1254,38 @@ void CGlobeView::DrawLabel(Location* loc, UINT cCaption, wchar_t* caption, wchar
 	loc->screenlabel[2] = loc->screenlabel[0]+width;
 	loc->screenlabel[3] = loc->screenlabel[1]+height;
 
-	GLfloat x = (GLfloat)loc->screenlabel[0];
-	GLfloat y = (GLfloat)loc->screenlabel[1];
+	int x = loc->screenlabel[0];
+	int y = loc->screenlabel[1];
 
 	// Schatten
 	for (int s=3; s>0; s--)
 	{
 		glColor4f(0.0f, 0.0f, 0.0f, loc->alpha/(s+2.5f));
-		glBegin(GL_LINE_STRIP);
-		glVertex2f(x+2.5f, y+height+s+0.5f);
-		glVertex2f(x+width+s+0.5f, y+height+s+0.5f);
-		glVertex2f(x+width+s+0.5f, y+2.5f);
+		glBegin(GL_LINES);
+		glVertex2i(x+2, y+height+s);
+		glVertex2i(x+width+s, y+height+s);
+		glVertex2i(x+width+s, y+2);
+		glVertex2i(x+width+s, y+height+s+1);
 		glEnd();
 	}
 
 	glColor4f(0.0f, 0.0f, 0.0f, loc->alpha/2.5f);
 	glBegin(GL_LINES);
-	glVertex2f(x+width+0.5f, y+height+0.5f);
-	glVertex2f(x+width+1.5f, y+height+0.5f);
+	glVertex2i(x+width, y+height);
+	glVertex2i(x+width+1, y+height);
 
 	// Grauer Rand
 	glColor4f(BaseColor[0]/2, BaseColor[1]/2, BaseColor[2]/2, loc->alpha);
 	glEnable(GL_LINE_STIPPLE);
 	glLineStipple(1, 0xFFFF);
-	glVertex2f(x+0.5f, y-0.5f);				// Oben
-	glVertex2f(x+width+0.25f, y-0.5f);
-	glVertex2f(x+0.5f, y+height+0.5f);		// Unten
-	glVertex2f(x+width+0.25f, y+height+0.5f);
-	glVertex2f(x-0.5f, y);					// Links
-	glVertex2f(x-0.5f, y+height);
-	glVertex2f(x+width+0.5f, y);			// Rechts
-	glVertex2f(x+width+0.5f, y+height);
+	glVertex2i(x, y-1);						// Oben
+	glVertex2i(x+width, y-1);
+	glVertex2i(x, y+height);				// Unten
+	glVertex2i(x+width, y+height);
+	glVertex2i(x-1, y);						// Links
+	glVertex2i(x-1, y+height);
+	glVertex2i(x+width, y);					// Rechts
+	glVertex2i(x+width, y+height);
 	glDisable(GL_LINE_STIPPLE);
 	glEnd();
 
@@ -1306,14 +1308,15 @@ void CGlobeView::DrawLabel(Location* loc, UINT cCaption, wchar_t* caption, wchar
 		default:
 			glColor4f(BaseColor[0], BaseColor[1], BaseColor[2], loc->alpha);
 		}
-		glVertex2f(loc->screenpoint[0]+0.5f, (GLfloat)(loc->screenpoint[1]+(a-2)*top));
-		glVertex2f(loc->screenpoint[0]+0.5f+(ARROWSIZE-a)*top, (GLfloat)(loc->screenpoint[1]+(ARROWSIZE-2)*top));
-		glVertex2f(loc->screenpoint[0]+0.5f-(ARROWSIZE-a)*top, (GLfloat)(loc->screenpoint[1]+(ARROWSIZE-2)*top));
+
+		glVertex2i(loc->screenpoint[0], loc->screenpoint[1]+(a-2)*top);
+		glVertex2i(loc->screenpoint[0]+(ARROWSIZE-a)*top, loc->screenpoint[1]+(ARROWSIZE-2)*top);
+		glVertex2i(loc->screenpoint[0]-(ARROWSIZE-a)*top, loc->screenpoint[1]+(ARROWSIZE-2)*top);
 	}
 	glEnd();
 
 	// Innen
-	glRectf(x, y, x+width, y+height);
+	glRecti(x, y, x+width, y+height);
 	if (focused)
 		if (this==GetFocus())
 		{
@@ -1321,15 +1324,15 @@ void CGlobeView::DrawLabel(Location* loc, UINT cCaption, wchar_t* caption, wchar
 			glEnable(GL_LINE_STIPPLE);
 			glLineStipple(1, 0xAAAA);
 			glBegin(GL_LINE_LOOP);
-			glVertex2f(x+0.5f, y+0.5f);
-			glVertex2f(x+width-0.5f, y+0.5f);
-			glVertex2f(x+width-0.5f, y+height-0.5f);
-			glVertex2f(x+0.5f, y+height-0.5f);
+			glVertex2i(x, y);
+			glVertex2i(x+width-1, y);
+			glVertex2i(x+width-1, y+height-1);
+			glVertex2i(x, y+height-1);
 			glEnd();
 			glDisable(GL_LINE_STIPPLE);
 		}
 
-	x += 3.0f;
+	x += 3;
 
 	glColor4f(TextColor[0], TextColor[1], TextColor[2], loc->alpha);
 	y += LargeFont->Render(caption, x, y, cCaption);
