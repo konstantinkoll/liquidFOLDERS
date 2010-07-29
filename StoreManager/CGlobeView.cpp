@@ -903,7 +903,6 @@ void CGlobeView::PrepareModel(BOOL HQ)
 		glDepthFunc(GL_LEQUAL);
 
 		glEnable(GL_TEXTURE_2D);
-		glEnable(GL_NORMALIZE);
 
 		glBegin(GL_TRIANGLES);
 
@@ -922,7 +921,6 @@ void CGlobeView::PrepareModel(BOOL HQ)
 		}
 
 		glEnd();
-		glDisable(GL_NORMALIZE);
 		glDisable(GL_TEXTURE_2D);
 		glDisable(GL_DEPTH_TEST);
 		glEndList();
@@ -1114,6 +1112,7 @@ void CGlobeView::DrawScene(BOOL InternalCall)
 
 		glEnable(GL_LIGHT0);
 		glEnable(GL_LIGHTING);
+		glEnable(GL_NORMALIZE);
 
 		glLightModelfv(GL_LIGHT_MODEL_AMBIENT, lAmbient);
 	}
@@ -1128,6 +1127,7 @@ void CGlobeView::DrawScene(BOOL InternalCall)
 
 	if (theApp.m_GlobeLighting)
 	{
+		glDisable(GL_NORMALIZE);
 		glDisable(GL_LIGHTING);
 		glDisable(GL_LIGHT0);
 	}
