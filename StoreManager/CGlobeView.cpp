@@ -894,7 +894,10 @@ void CGlobeView::PrepareModel(BOOL HQ)
 		glDepthFunc(GL_LEQUAL);
 
 		glEnable(GL_TEXTURE_2D);
-		glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+		glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+
+		glEnable(GL_LIGHTING);
+		glEnable(GL_NORMALIZE);
 
 		glBegin(GL_TRIANGLES);
 
@@ -908,10 +911,13 @@ void CGlobeView::PrepareModel(BOOL HQ)
 			double x = nodes[pos++];
 			double y = nodes[pos++];
 			double z = nodes[pos++];
+			glNormal3d(x, y, z);
 			glVertex3d(x, y, z);
 		}
 
 		glEnd();
+		glDisable(GL_NORMALIZE);
+		glDisable(GL_LIGHTING);
 		glDisable(GL_TEXTURE_2D);
 		glDisable(GL_DEPTH_TEST);
 		glEndList();
@@ -1086,10 +1092,28 @@ void CGlobeView::DrawScene(BOOL InternalCall)
 	glFogf(GL_FOG_START, DISTANCE-m_FogStart);
 	glFogf(GL_FOG_END, DISTANCE-m_FogEnd);
 
-	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+	GLfloat lAmbient[] = { 0.8f, 0.8f, 0.8f, 1.0f };
+	GLfloat lDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+	GLfloat lSpecular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+	glLightfv(GL_LIGHT0, GL_AMBIENT, lAmbient);
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, lDiffuse);
+	glLightfv(GL_LIGHT0, GL_SPECULAR, lSpecular);
+
+	GLfloat LightPosition[3];
+	LightPosition[0] = 100.0f*cos(PI*m_AngleZ/180.0);
+	LightPosition[1] = 100.0f*(-sin(PI*m_AngleZ/180.0)*cos(PI*m_AngleY/180.0));
+	LightPosition[2] = 100.0f*sin(PI*m_AngleY/180.0);
+	glLightfv(GL_LIGHT0, GL_POSITION, LightPosition);
+
+	glEnable(GL_LIGHT0);
+
+	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, lAmbient);
+
 	if (m_TextureGlobe)
 		glBindTexture(GL_TEXTURE_2D, m_TextureGlobe->GetID());
 	glCallList(m_GlobeList[theApp.m_GlobeHQModel]);
+
+	glDisable(GL_LIGHT0);
 
 	if (m_Locations)
 	{
