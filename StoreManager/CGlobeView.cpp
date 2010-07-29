@@ -292,6 +292,7 @@ BEGIN_MESSAGE_MAP(CGlobeView, CFileView)
 	ON_COMMAND(ID_GLOBE_JUMPTOLOCATION, OnJumpToLocation)
 	ON_COMMAND(ID_GLOBE_GOOGLEEARTH, OnGoogleEarth)
 	ON_COMMAND(ID_GLOBE_HQMODEL, OnHQModel)
+	ON_COMMAND(ID_GLOBE_LIGHTING, OnLighting)
 	ON_COMMAND(ID_GLOBE_SHOWBUBBLES, OnShowBubbles)
 	ON_COMMAND(ID_GLOBE_SHOWAIRPORTNAMES, OnShowAirportNames)
 	ON_COMMAND(ID_GLOBE_SHOWGPS, OnShowGPS)
@@ -498,10 +499,15 @@ void CGlobeView::OnGoogleEarth()
 		f.Close();
 	}
 }
-
 void CGlobeView::OnHQModel()
 {
 	theApp.m_GlobeHQModel = !theApp.m_GlobeHQModel;
+	OnViewOptionsChanged();
+}
+
+void CGlobeView::OnLighting()
+{
+	theApp.m_GlobeLighting = !theApp.m_GlobeLighting;
 	OnViewOptionsChanged();
 }
 
@@ -569,6 +575,9 @@ void CGlobeView::OnUpdateCommands(CCmdUI* pCmdUI)
 		break;
 	case ID_GLOBE_HQMODEL:
 		pCmdUI->SetCheck(theApp.m_GlobeHQModel);
+		break;
+	case ID_GLOBE_LIGHTING:
+		pCmdUI->SetCheck(theApp.m_GlobeLighting);
 		break;
 	case ID_GLOBE_SHOWBUBBLES:
 		pCmdUI->SetCheck(m_ViewParameters.GlobeShowBubbles);
@@ -894,9 +903,6 @@ void CGlobeView::PrepareModel(BOOL HQ)
 		glDepthFunc(GL_LEQUAL);
 
 		glEnable(GL_TEXTURE_2D);
-		glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-
-		glEnable(GL_LIGHTING);
 		glEnable(GL_NORMALIZE);
 
 		glBegin(GL_TRIANGLES);
@@ -917,7 +923,6 @@ void CGlobeView::PrepareModel(BOOL HQ)
 
 		glEnd();
 		glDisable(GL_NORMALIZE);
-		glDisable(GL_LIGHTING);
 		glDisable(GL_TEXTURE_2D);
 		glDisable(GL_DEPTH_TEST);
 		glEndList();
@@ -1092,28 +1097,40 @@ void CGlobeView::DrawScene(BOOL InternalCall)
 	glFogf(GL_FOG_START, DISTANCE-m_FogStart);
 	glFogf(GL_FOG_END, DISTANCE-m_FogEnd);
 
-	GLfloat lAmbient[] = { 0.8f, 0.8f, 0.8f, 1.0f };
-	GLfloat lDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-	GLfloat lSpecular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-	glLightfv(GL_LIGHT0, GL_AMBIENT, lAmbient);
-	glLightfv(GL_LIGHT0, GL_DIFFUSE, lDiffuse);
-	glLightfv(GL_LIGHT0, GL_SPECULAR, lSpecular);
+	if (theApp.m_GlobeLighting)
+	{
+		GLfloat lAmbient[] = { 0.9f, 0.9f, 0.9f, 1.0f };
+		GLfloat lDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+		GLfloat lSpecular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+		glLightfv(GL_LIGHT0, GL_AMBIENT, lAmbient);
+		glLightfv(GL_LIGHT0, GL_DIFFUSE, lDiffuse);
+		glLightfv(GL_LIGHT0, GL_SPECULAR, lSpecular);
 
-	GLfloat LightPosition[3];
-	LightPosition[0] = 100.0f*cos(PI*m_AngleZ/180.0);
-	LightPosition[1] = 100.0f*(-sin(PI*m_AngleZ/180.0)*cos(PI*m_AngleY/180.0));
-	LightPosition[2] = 100.0f*sin(PI*m_AngleY/180.0);
-	glLightfv(GL_LIGHT0, GL_POSITION, LightPosition);
+		GLfloat LightPosition[3];
+		LightPosition[0] = (GLfloat)(100.0*cos(PI*m_AngleZ/180.0));
+		LightPosition[1] = (GLfloat)(100.0*(-sin(PI*m_AngleZ/180.0)*cos(PI*m_AngleY/180.0)));
+		LightPosition[2] = (GLfloat)(100.0*sin(PI*m_AngleY/180.0));
+		glLightfv(GL_LIGHT0, GL_POSITION, LightPosition);
 
-	glEnable(GL_LIGHT0);
+		glEnable(GL_LIGHT0);
+		glEnable(GL_LIGHTING);
 
-	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, lAmbient);
+		glLightModelfv(GL_LIGHT_MODEL_AMBIENT, lAmbient);
+	}
 
 	if (m_TextureGlobe)
+	{
 		glBindTexture(GL_TEXTURE_2D, m_TextureGlobe->GetID());
+		glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, theApp.m_GlobeLighting ? GL_MODULATE : GL_REPLACE);
+	}
+
 	glCallList(m_GlobeList[theApp.m_GlobeHQModel]);
 
-	glDisable(GL_LIGHT0);
+	if (theApp.m_GlobeLighting)
+	{
+		glDisable(GL_LIGHTING);
+		glDisable(GL_LIGHT0);
+	}
 
 	if (m_Locations)
 	{

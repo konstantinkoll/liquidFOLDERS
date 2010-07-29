@@ -31,6 +31,7 @@ public:
 	UINT m_nMaxTextureSize;
 	BOOL m_ShowQueryDuration;
 	BOOL m_GlobeHQModel;
+	BOOL m_GlobeLighting;
 	BOOL m_HideEmptyDrives;
 	BOOL m_HideEmptyDomains;
 	list<CMainFrame*> m_listMainFrames;

@@ -82,6 +82,7 @@ BOOL CStoreManagerApp::InitInstance()
 	m_HideEmptyDrives = GetInt(_T("HideEmptyDrives"), FALSE);
 	m_HideEmptyDomains = GetInt(_T("HideEmptyDomains"), FALSE);
 	m_GlobeHQModel = GetInt(_T("GlobeHQModel"), TRUE);
+	m_GlobeLighting = GetInt(_T("GlobeLighting"), TRUE);
 	m_ShowQueryDuration = GetInt(_T("ShowQueryDuration"), 0);
 	m_nTextureSize = GetInt(_T("TextureSize"), 0);
 	m_nMaxTextureSize = GetInt(_T("MaxTextureSize"), LFTexture8192);
@@ -120,6 +121,7 @@ int CStoreManagerApp::ExitInstance()
 	WriteInt(_T("HideEmptyDrives"), m_HideEmptyDrives);
 	WriteInt(_T("HideEmptyDomains"), m_HideEmptyDomains);
 	WriteInt(_T("GlobeHQModel"), m_GlobeHQModel);
+	WriteInt(_T("GlobeLighting"), m_GlobeLighting);
 	WriteInt(_T("ShowQueryDuration"), m_ShowQueryDuration);
 	WriteInt(_T("TextureSize"), m_nTextureSize);
 	WriteInt(_T("MaxTextureSize"), m_nMaxTextureSize);

@@ -2193,10 +2193,15 @@ void CMainFrame::InitializeRibbon()
 			strTemp = "Display options";
 			CMFCRibbonPanel* pPanelGlobeOptions = pCategoryGlobe->AddPanel(strTemp, m_PanelImages.ExtractIcon(4));
 
+					CMFCRibbonButtonsGroup* p3DOptions = new CMFCRibbonButtonsGroup();
+					p3DOptions->AddButton(theApp.CommandButton(ID_GLOBE_HQMODEL));
+					p3DOptions->AddButton(theApp.CommandButton(ID_GLOBE_LIGHTING));
+
+				pPanelGlobeOptions->Add(p3DOptions);
+
 				strTemp = "Texture size:";
 				pPanelGlobeOptions->Add(new CMFCRibbonLabel(strTemp));
-				pPanelGlobeOptions->Add(new CTextureComboBox(ID_GLOBE_TEXTURESIZE, 80));
-				pPanelGlobeOptions->Add(theApp.CommandCheckBox(ID_GLOBE_HQMODEL));
+				pPanelGlobeOptions->Add(new CTextureComboBox(ID_GLOBE_TEXTURESIZE, 100));
 				pPanelGlobeOptions->AddSeparator();
 				pPanelGlobeOptions->Add(theApp.CommandButton(ID_GLOBE_SHOWBUBBLES, 6, 6));
 				pPanelGlobeOptions->Add(theApp.CommandCheckBox(ID_GLOBE_SHOWAIRPORTNAMES));
