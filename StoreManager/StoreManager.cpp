@@ -98,7 +98,7 @@ BOOL CStoreManagerApp::InitInstance()
 			m_Background[a] = ChildBackground_Ribbon;
 			break;
 		default:
-			m_Background[a] = ChildBackground_System;
+			m_Background[a] = (osInfo.dwMajorVersion>=6) ? ChildBackground_White : ChildBackground_System;
 		}
 	GetBinary(_T("Background"), m_Background, sizeof(m_Background));
 
@@ -108,9 +108,6 @@ BOOL CStoreManagerApp::InitInstance()
 		LoadViewOptions(a);
 
 	OnAppNewView();
-
-	// Rufen Sie DragAcceptFiles nur auf, wenn ein Suffix vorhanden ist.
-	//  In einer SDI-Anwendung ist dies nach ProcessShellCommand erforderlich
 	return TRUE;
 }
 
