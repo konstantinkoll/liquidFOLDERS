@@ -26,6 +26,26 @@ static inline double decToRad(double dec)
 	return dec*(PI/180.0);
 }
 
+static inline void MatrixMul(GLdouble Result[4][4], GLdouble Left[4][4], GLdouble Right[4][4])
+{
+	Result[0][0] = Left[0][0]*Right[0][0] + Left[0][1]*Right[1][0] + Left[0][2]*Right[2][0] + Left[0][3]*Right[3][0];
+	Result[0][1] = Left[0][0]*Right[0][1] + Left[0][1]*Right[1][1] + Left[0][2]*Right[2][1] + Left[0][3]*Right[3][1];
+	Result[0][2] = Left[0][0]*Right[0][2] + Left[0][1]*Right[1][2] + Left[0][2]*Right[2][2] + Left[0][3]*Right[3][2];
+	Result[0][3] = Left[0][0]*Right[0][3] + Left[0][1]*Right[1][3] + Left[0][2]*Right[2][3] + Left[0][3]*Right[3][3];
+	Result[1][0] = Left[1][0]*Right[0][0] + Left[1][1]*Right[1][0] + Left[1][2]*Right[2][0] + Left[1][3]*Right[3][0];
+	Result[1][1] = Left[1][0]*Right[0][1] + Left[1][1]*Right[1][1] + Left[1][2]*Right[2][1] + Left[1][3]*Right[3][1];
+	Result[1][2] = Left[1][0]*Right[0][2] + Left[1][1]*Right[1][2] + Left[1][2]*Right[2][2] + Left[1][3]*Right[3][2];
+	Result[1][3] = Left[1][0]*Right[0][3] + Left[1][1]*Right[1][3] + Left[1][2]*Right[2][3] + Left[1][3]*Right[3][3];
+	Result[2][0] = Left[2][0]*Right[0][0] + Left[2][1]*Right[1][0] + Left[2][2]*Right[2][0] + Left[2][3]*Right[3][0];
+	Result[2][1] = Left[2][0]*Right[0][1] + Left[2][1]*Right[1][1] + Left[2][2]*Right[2][1] + Left[2][3]*Right[3][1];
+	Result[2][2] = Left[2][0]*Right[0][2] + Left[2][1]*Right[1][2] + Left[2][2]*Right[2][2] + Left[2][3]*Right[3][2];
+	Result[2][3] = Left[2][0]*Right[0][3] + Left[2][1]*Right[1][3] + Left[2][2]*Right[2][3] + Left[2][3]*Right[3][3];
+	Result[3][0] = Left[3][0]*Right[0][0] + Left[3][1]*Right[1][0] + Left[3][2]*Right[2][0] + Left[3][3]*Right[3][0];
+	Result[3][1] = Left[3][0]*Right[0][1] + Left[3][1]*Right[1][1] + Left[3][2]*Right[2][1] + Left[3][3]*Right[3][1];
+	Result[3][2] = Left[3][0]*Right[0][2] + Left[3][1]*Right[1][2] + Left[3][2]*Right[2][2] + Left[3][3]*Right[3][2];
+	Result[3][3] = Left[3][0]*Right[0][3] + Left[3][1]*Right[1][3] + Left[3][2]*Right[2][3] + Left[3][3]*Right[3][3];
+}
+
 void CalculateWorldCoords(double lat, double lon, double result[])
 {
 	double lon_r = decToRad(lon);
@@ -1210,57 +1230,56 @@ void CGlobeView::DrawScene(BOOL InternalCall)
 
 void CGlobeView::CalcAndDrawPoints()
 {
-	GLdouble modelview[16];
-	glGetDoublev(GL_MODELVIEW_MATRIX, modelview);
+	GLdouble modelview[4][4];
+	glGetDoublev(GL_MODELVIEW_MATRIX, &modelview[0][0]);
+
+	GLdouble projection[4][4];
+	glGetDoublev(GL_PROJECTION_MATRIX, &projection[0][0]);
+
+	GLdouble mvp[4][4];
+	MatrixMul(mvp, modelview, projection);
+
+	GLdouble szx = m_Width/2.0;
+	GLdouble szy = m_Height/2.0;
 
 	for (UINT a=0; a<result->m_ItemCount; a++)
 		if (m_Locations[a].valid)
 		{
 			m_Locations[a].alpha = 0.0f;
 
-			// double x = modelview[0] * m_Locations[a].world[0] + modelview[4] * m_Locations[a].world[1] + modelview[8] * m_Locations[a].world[2];
-			// double y = modelview[0+1] * m_Locations[a].world[0] + modelview[4+1] * m_Locations[a].world[1] + modelview[8+1] * m_Locations[a].world[2];
-			double z = modelview[0+2] * m_Locations[a].world[0] + modelview[4+2] * m_Locations[a].world[1] + modelview[8+2] * m_Locations[a].world[2];
-
+			GLdouble z = modelview[0][2]*m_Locations[a].world[0] + modelview[1][2]*m_Locations[a].world[1] + modelview[2][2]*m_Locations[a].world[2];
 			if ((z>m_FogEnd) && (m_Width) && (m_Height))
 			{
-				// Feedback
-				GLfloat buffer[4];
-				glFeedbackBuffer(4, GL_3D,buffer);
+				GLdouble w = mvp[0][3]*m_Locations[a].world[0] + mvp[1][3]*m_Locations[a].world[1] + mvp[2][3]*m_Locations[a].world[2] + mvp[3][3];
+				GLdouble x = (mvp[0][0]*m_Locations[a].world[0] + mvp[1][0]*m_Locations[a].world[1] + mvp[2][0]*m_Locations[a].world[2] + mvp[3][0])*szx/w;
+				GLdouble y = -(mvp[0][1]*m_Locations[a].world[0] + mvp[1][1]*m_Locations[a].world[1] + mvp[2][1]*m_Locations[a].world[2] + mvp[3][1])*szy/w;
 
-				glRenderMode(GL_FEEDBACK);
-				glBegin(GL_POINTS);
-				glVertex3dv(m_Locations[a].world);
-				glEnd();
-				if (glRenderMode(GL_RENDER)>0)
+				m_Locations[a].screenpoint[0] = (int)(x+szx+0.5f);
+				m_Locations[a].screenpoint[1] = (int)(y+szy+0.5f);
+
+				m_Locations[a].alpha = 1.0f;
+				GLfloat psize = 9.5f;
+				if (z<m_FogStart)
 				{
-					m_Locations[a].screenpoint[0] = (int)(buffer[1]+0.5f);
-					m_Locations[a].screenpoint[1] = m_Height-(int)(buffer[2]+0.5f);
+					m_Locations[a].alpha -= (GLfloat)((m_FogStart-z)/(m_FogStart-m_FogEnd));
+					psize *= max(m_Locations[a].alpha, 0.25f);
+				}
 
-					m_Locations[a].alpha = 1.0f;
-					GLfloat psize = 9.5f;
-					if (z<m_FogStart)
-					{
-						m_Locations[a].alpha -= (GLfloat)((m_FogStart-z)/(m_FogStart-m_FogEnd));
-						psize *= max(m_Locations[a].alpha, 0.25f);
-					}
+				if (m_ViewParameters.GlobeShowSpots)
+				{
+					// Weiß
+					glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+					glPointSize(psize);
+					glBegin(GL_POINTS);
+					glVertex3dv(m_Locations[a].world);
+					glEnd();
 
-					if (m_ViewParameters.GlobeShowSpots)
-					{
-						// Weiß
-						glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-						glPointSize(psize);
-						glBegin(GL_POINTS);
-						glVertex3dv(m_Locations[a].world);
-						glEnd();
-
-						// Rot
-						glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
-						glPointSize(psize*0.66f);
-						glBegin(GL_POINTS);
-						glVertex3dv(m_Locations[a].world);
-						glEnd();
-					}
+					// Rot
+					glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
+					glPointSize(psize*0.66f);
+					glBegin(GL_POINTS);
+					glVertex3dv(m_Locations[a].world);
+					glEnd();
 				}
 			}
 		}
