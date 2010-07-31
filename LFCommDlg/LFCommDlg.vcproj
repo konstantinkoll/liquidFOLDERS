@@ -775,10 +775,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\Cancel_24.bmp"
-				>
-			</File>
-			<File
 				RelativePath=".\res\Delete_96.bmp"
 				>
 			</File>
@@ -791,7 +787,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\Info_24.bmp"
+				RelativePath=".\res\Error.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Info.ico"
 				>
 			</File>
 			<File
@@ -927,11 +927,15 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\Ready_24.bmp"
+				RelativePath=".\res\Ready.ico"
 				>
 			</File>
 			<File
 				RelativePath=".\res\Registry_Tiny.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Shield.ico"
 				>
 			</File>
 			<File
@@ -967,7 +971,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\Warning_24.bmp"
+				RelativePath=".\res\Warning.ico"
 				>
 			</File>
 			<File

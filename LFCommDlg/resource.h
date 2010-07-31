@@ -43,10 +43,7 @@
 #define IDB_PRIORITY8                   20128
 #define IDB_PRIORITY9                   20129
 #define IDB_PRIORITY10                  20130
-#define IDB_INFO                        20200
-#define IDB_READY                       20201
-#define IDB_WARNING                     20202
-#define IDB_CANCEL                      20203
+#define IDI_READY                       20200
 #define IDS_HELPURL                     20300
 #define IDS_PURCHASEURL                 20301
 #define IDS_ERROR                       20302

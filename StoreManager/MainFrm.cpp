@@ -1517,7 +1517,7 @@ BOOL CMainFrame::RenameSingleItem(UINT n, CString Name)
 			m_wndView->OnUpdateSearchResult(CookedFiles, GetFocusItem());
 
 		if (tl->m_LastError>LFCancel)
-			ShowCaptionBar(IDB_CANCEL, tl->m_LastError);
+			ShowCaptionBar(IDI_ERROR, tl->m_LastError);
 
 		LFFreeTransactionList(tl);
 	}
@@ -1591,7 +1591,7 @@ BOOL CMainFrame::UpdateSelectedItems(LFVariantData* value1, LFVariantData* value
 	}
 
 	if (tl->m_LastError>LFCancel)
-		ShowCaptionBar(IDB_CANCEL, tl->m_LastError);
+		ShowCaptionBar(IDI_ERROR, tl->m_LastError);
 
 	BOOL changes = tl->m_Changes;
 	LFFreeTransactionList(tl);
@@ -1636,7 +1636,7 @@ BOOL CMainFrame::UpdateTrashFlag(BOOL Trash, BOOL All)
 	}
 
 	if (tl->m_LastError>LFCancel)
-		ShowCaptionBar(IDB_CANCEL, tl->m_LastError);
+		ShowCaptionBar(IDI_ERROR, tl->m_LastError);
 
 	BOOL changes = tl->m_Changes;
 	LFFreeTransactionList(tl);
@@ -1661,7 +1661,7 @@ BOOL CMainFrame::DeleteFiles(BOOL All)
 	}
 
 	if (tl->m_LastError>LFCancel)
-		ShowCaptionBar(IDB_CANCEL, tl->m_LastError);
+		ShowCaptionBar(IDI_ERROR, tl->m_LastError);
 
 	BOOL changes = tl->m_Changes;
 	LFFreeTransactionList(tl);
@@ -2319,11 +2319,11 @@ void CMainFrame::InitializeRibbon()
 	m_wndRibbonBar.AddToTabs(new CMFCRibbonButton(ID_APP_HELP, NULL, m_PanelImages.ExtractIcon(0)));
 }
 
-void CMainFrame::ShowCaptionBar(int Icon, LPCWSTR Message, int Command)
+void CMainFrame::ShowCaptionBar(LPCWSTR Icon, LPCWSTR Message, int Command)
 {
 	// Text und Icon
 	m_wndCaptionBar.SetText(Message, CMFCCaptionBar::ALIGN_LEFT);
-	m_wndCaptionBar.SetBitmap(Icon, 0xFFFFFF, FALSE, CMFCCaptionBar::ALIGN_LEFT);
+	m_wndCaptionBar.SetIcon(Icon, CMFCCaptionBar::ALIGN_LEFT);
 	m_wndCaptionBar.Invalidate();
 
 	// Button
@@ -2353,7 +2353,7 @@ void CMainFrame::ShowCaptionBar(int Icon, LPCWSTR Message, int Command)
 	}
 }
 
-void CMainFrame::ShowCaptionBar(int Icon, UINT res, int Command)
+void CMainFrame::ShowCaptionBar(LPCWSTR Icon, UINT res, int Command)
 {
 	wchar_t* message = LFGetErrorText(res);
 	ShowCaptionBar(Icon, message, Command);
@@ -2569,7 +2569,7 @@ void CMainFrame::NavigateTo(LFFilter* f, UINT NavMode, int FocusItem, int FirstA
 	if (CookedFiles->m_LastError>LFCancel)
 	{
 		theApp.PlayWarningSound();
-		ShowCaptionBar(ActiveFilter->Result.FilterType==LFFilterTypeError ? IDB_CANCEL : IDB_WARNING, CookedFiles->m_LastError, CookedFiles->m_LastError==LFIndexAccessError ? ID_STORE_MAINTENANCE : 0);
+		ShowCaptionBar(ActiveFilter->Result.FilterType==LFFilterTypeError ? IDI_ERROR : IDI_EXCLAMATION, CookedFiles->m_LastError, CookedFiles->m_LastError==LFIndexAccessError ? ID_STORE_MAINTENANCE : 0);
 	}
 	else
 		if ((m_wndCaptionBar.IsVisible()) && (!theApp.m_ShowQueryDuration))
@@ -2620,7 +2620,7 @@ void CMainFrame::CookFiles(int recipe, int FocusItem)
 		wchar_t* error = LFGetErrorText(CookedFiles->m_LastError);
 		CString message;
 		message.Format(error, RawFiles->m_QueryTime, stop-start, RawFiles->m_ItemCount, CookedFiles->m_ItemCount);
-		ShowCaptionBar(IDB_INFO, message);
+		ShowCaptionBar(IDI_ASTERISK, message);
 		free(error);
 	}
 }

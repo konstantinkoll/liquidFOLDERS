@@ -1821,14 +1821,6 @@
 			>
 		</File>
 		<File
-			RelativePath="Cancel.ico"
-			>
-		</File>
-		<File
-			RelativePath="Cancel_24.bmp"
-			>
-		</File>
-		<File
 			RelativePath=".\Clipboard_16.png"
 			>
 		</File>
@@ -1889,6 +1881,10 @@
 			>
 		</File>
 		<File
+			RelativePath=".\Error.ico"
+			>
+		</File>
+		<File
 			RelativePath=".\Facebook.png"
 			>
 		</File>
@@ -1938,10 +1934,6 @@
 		</File>
 		<File
 			RelativePath="Info.ico"
-			>
-		</File>
-		<File
-			RelativePath="Info_24.bmp"
 			>
 		</File>
 		<File
@@ -2133,10 +2125,6 @@
 			>
 		</File>
 		<File
-			RelativePath="Ready_24.bmp"
-			>
-		</File>
-		<File
 			RelativePath=".\Registry_Tiny.ico"
 			>
 		</File>
@@ -2150,6 +2138,10 @@
 		</File>
 		<File
 			RelativePath=".\RunCmd_About.png"
+			>
+		</File>
+		<File
+			RelativePath=".\Shield.ico"
 			>
 		</File>
 		<File
@@ -2278,10 +2270,6 @@
 		</File>
 		<File
 			RelativePath="Warning.ico"
-			>
-		</File>
-		<File
-			RelativePath="Warning_24.bmp"
 			>
 		</File>
 		<File

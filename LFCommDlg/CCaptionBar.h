@@ -12,4 +12,6 @@ public:
 
 	virtual BOOL LoadState(LPCTSTR lpszProfileName = NULL, int nIndex = -1, UINT uiID = (UINT) -1);
 	virtual BOOL SaveState(LPCTSTR lpszProfileName = NULL, int nIndex = -1, UINT uiID = (UINT) -1);
+
+	void SetIcon(LPCWSTR Icon, BarElementAlignment iconAlignment);
 };
