@@ -4,7 +4,6 @@
 #include "liquidFOLDERS.h"
 #include "CGlassButton.h"
 #include "CTransparentRadioButton.h"
-#include "CUACCtrl.h"
 
 #define LFDS_Blue         1
 #define LFDS_White        2
@@ -37,9 +36,11 @@ protected:
 
 private:
 	CBitmap BackBuffer;
-	CUACCtrl Headline;
 	int BackBufferL;
 	int BackBufferH;
 	HICON hIconL;
 	HICON hIconS;
+	HICON hIconShield;
+	int ShieldSize;
+	int UACHeight;
 };

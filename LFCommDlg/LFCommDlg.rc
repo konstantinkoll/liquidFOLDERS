@@ -226,7 +226,7 @@ BEGIN
     CONTROL         "&Löschen",IDC_DELETE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,15,97,61,10
     PUSHBUTTON      "Jetzt löschen (keine weiteren Warnungen)",IDOK,6,132,165,14,WS_DISABLED | WS_GROUP
     LTEXT           "Soll der Store wirklich gelöscht werden?\n\nDa der gewählte Store zur Zeit angeschlossen ist, werden alle Dateien im Store ohne Wiederherstellungsmöglichkeit gelöscht!",IDC_STATIC,7,31,213,33
-    GROUPBOX        "Bestätigung",IDC_STATIC,7,72,74,41,WS_GROUP
+    GROUPBOX        "Zustimmung",IDC_STATIC,7,72,74,41,BS_FLAT | WS_GROUP
 END
 
 IDD_STORENEW DIALOGEX 0, 0, 350, 252
@@ -584,6 +584,7 @@ BEGIN
     IDS_LICENSEVALID_CAPTION "Lizenz akzeptiert"
     IDS_LICENSEVALID_MSG    "Ihr Lizenzschlüssel ist gültig. Vielen Dank für den Kauf von liquidFOLDERS!"
     IDS_MULTIPLEVALUES      "Unterschiedliche Werte"
+    IDS_UACMESSAGE          "Ihre Zustimmung ist erforderlich"
 END
 
 STRINGTABLE 
@@ -695,7 +696,7 @@ BEGIN
     CONTROL         "&Delete",IDC_DELETE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,15,97,61,10
     PUSHBUTTON      "Delete now (there will be no further warnings)",IDOK,6,132,165,14,WS_DISABLED | WS_GROUP
     LTEXT           "Please confirm that you really want to delete the selected store.\n\nSince the store is currently mounted, you will lose all files inside that store without recovery option!",IDC_STATIC,7,31,213,33
-    GROUPBOX        "Confirmation",IDC_STATIC,7,72,74,41,WS_GROUP
+    GROUPBOX        "Permission",IDC_STATIC,7,72,74,41,BS_FLAT | WS_GROUP
 END
 
 IDD_STORENEW DIALOGEX 0, 0, 316, 252
@@ -941,8 +942,9 @@ BEGIN
     IDD_STOREDELETE, DIALOG
     BEGIN
         LEFTMARGIN, 7
+        RIGHTMARGIN, 270
         TOPMARGIN, 7
-        BOTTOMMARGIN, 101
+        BOTTOMMARGIN, 146
     END
 
     IDD_STORENEW, DIALOG
@@ -1052,6 +1054,7 @@ BEGIN
     IDS_LICENSEVALID_CAPTION "License valid"
     IDS_LICENSEVALID_MSG    "Your license key is valid. Thank you very much for purchasing liquidFOLDERS! We appreciate your business."
     IDS_MULTIPLEVALUES      "Multiple values"
+    IDS_UACMESSAGE          "liquidFOLDERS needs your permission to continue"
 END
 
 STRINGTABLE 
@@ -1164,7 +1167,7 @@ BEGIN
     CONTROL         "&Eliminar",IDC_DELETE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,15,97,61,10
     PUSHBUTTON      "Eliminar ahora (no habrá más avisos)",IDOK,6,132,165,14,WS_DISABLED | WS_GROUP
     LTEXT           "Confirme si realmente desea eliminar el store seleccionado.\n\nDado que el store está actualmente conectado, perderá todos los archivos dentro de ese store sin opción a recuperarlos!",IDC_STATIC,7,31,206,33
-    GROUPBOX        "Confirmación",IDC_STATIC,7,72,74,41,WS_GROUP
+    GROUPBOX        "Confirmación",IDC_STATIC,7,72,74,41,BS_FLAT | WS_GROUP
 END
 
 IDD_STORENEW DIALOGEX 0, 0, 387, 252
@@ -1611,7 +1614,7 @@ BEGIN
     CONTROL         "&Effacez",IDC_DELETE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,15,97,61,10
     PUSHBUTTON      "Effacez maintenant (il n'y aura aucun avertissement de plus)",IDOK,6,133,210,14,WS_DISABLED | WS_GROUP
     LTEXT           "Confirmez s'il vous plaît que vous voulez vraiment effacer le store choisi.\n\nComme le store est actuellement monté, vous perdrez tous les fichiers à l'intérieur de ce store sans option de récupération!",IDC_STATIC,7,31,242,33
-    GROUPBOX        "Confirmation",IDC_STATIC,7,72,74,41,WS_GROUP
+    GROUPBOX        "Confirmation",IDC_STATIC,7,72,74,41,BS_FLAT | WS_GROUP
 END
 
 IDD_STORENEW DIALOGEX 0, 0, 347, 252

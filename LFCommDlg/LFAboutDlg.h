@@ -26,6 +26,13 @@ public:
 	LFAboutDlg(LFAboutDlgParameters* pParameters, CWnd* pParent=NULL);
 
 protected:
+	virtual void OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect);
+	virtual void CheckLicenseKey(LFLicense* License=NULL);
+	virtual void DoDataExchange(CDataExchange* pDX);
+
+	afx_msg BOOL OnInitDialog();
+	DECLARE_MESSAGE_MAP()
+
 	LFAboutDlgParameters* parameters;
 	CGlassButton m_OkButton;
 	CGlassButton m_CancelButton;
@@ -33,11 +40,4 @@ protected:
 	CTransparentRadioButton m_Texture[LFTexture8192-LFTextureAuto+1];
 	CTransparentRadioButton m_HideEmptyDrives;
 	CTransparentRadioButton m_HideEmptyDomains;
-
-	virtual void OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect);
-	virtual void CheckLicenseKey(LFLicense* License=NULL);
-	virtual void DoDataExchange(CDataExchange* pDX);
-
-	afx_msg BOOL OnInitDialog();
-	DECLARE_MESSAGE_MAP()
 };

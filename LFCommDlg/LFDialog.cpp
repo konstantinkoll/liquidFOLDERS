@@ -21,7 +21,8 @@ LFDialog::LFDialog(UINT nIDTemplate, UINT nIDStyle, CWnd* pParent)
 	m_nIDTemplate = nIDTemplate;
 	m_nIDStyle = nIDStyle;
 	backdrop = logo = NULL;
-	BackBufferL = BackBufferH = 0;
+	hIconS = hIconL = hIconShield = NULL;
+	BackBufferL = BackBufferH = UACHeight = ShieldSize = 0;
 }
 
 
@@ -46,27 +47,23 @@ BOOL LFDialog::OnInitDialog()
 	switch (m_nIDStyle)
 	{
 	case LFDS_Blue:
-		{
-			// Hintergrundbild laden
-			backdrop = new CGdiPlusBitmapResource();
-			backdrop->Load(IDB_BACKDROP, _T("PNG"), LFCommDlgDLL.hResource);
+		// Hintergrundbild laden
+		backdrop = new CGdiPlusBitmapResource();
+		backdrop->Load(IDB_BACKDROP, _T("PNG"), LFCommDlgDLL.hResource);
 
-			// Logo laden
-			logo = new CGdiPlusBitmapResource();
-			logo->Load(IDB_LOGO, _T("PNG"), LFCommDlgDLL.hResource);
+		// Logo laden
+		logo = new CGdiPlusBitmapResource();
+		logo->Load(IDB_LOGO, _T("PNG"), LFCommDlgDLL.hResource);
 
-			break;
-		}
+		break;
 	case LFDS_UAC:
-		{
-			CRect rect;
-			GetClientRect(rect);
-			rect.bottom = MulDiv(40, LOWORD(GetDialogBaseUnits()), 8);
-			Headline.Create(rect, this, 1000);
+		// Schild
+		UACHeight = MulDiv(40, LOWORD(GetDialogBaseUnits()), 8);
+		ShieldSize = (UACHeight<24) ? 16 : (UACHeight<32) ? 24 : (UACHeight<48) ? 32 : 48;
+		hIconShield = (HICON)LoadImage(LFCommDlgDLL.hResource, IDI_SHIELD, IMAGE_ICON, ShieldSize, ShieldSize, LR_LOADTRANSPARENT);
 
-			((LFApplication*)AfxGetApp())->PlayWarningSound();
-			break;
-		}
+		((LFApplication*)AfxGetApp())->PlayWarningSound();
+		break;
 	}
 
 	return TRUE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird
@@ -79,6 +76,7 @@ BOOL LFDialog::OnEraseBkgnd(CDC* pDC)
 
 	CDC dc;
 	dc.CreateCompatibleDC(pDC);
+	dc.SetBkMode(TRANSPARENT);
 
 	CBitmap* pOldBitmap;
 	if ((BackBufferL!=rect.Width()) || (BackBufferH!=rect.Height()))
@@ -105,7 +103,7 @@ BOOL LFDialog::OnEraseBkgnd(CDC* pDC)
 	return TRUE;
 }
 
-void LFDialog::OnEraseBkgnd(CDC& /*dc*/, Graphics& g, CRect& rect)
+void LFDialog::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 {
 	CRect btn;
 	GetDlgItem(IDOK)->GetWindowRect(&btn);
@@ -146,12 +144,35 @@ void LFDialog::OnEraseBkgnd(CDC& /*dc*/, Graphics& g, CRect& rect)
 	case LFDS_White:
 	case LFDS_UAC:
 		{
-			SolidBrush brush(Color(255, 255, 255, 255));
-			g.FillRectangle(&brush, 0, 0, BackBufferL, ++Line);
-			brush.SetColor(Color(255, 223, 223, 223));
-			g.FillRectangle(&brush, 0, Line++, BackBufferL, 1);
-			brush.SetColor(Color(255, 240, 240, 240));
-			g.FillRectangle(&brush, 0, Line, BackBufferL, rect.Height()-Line);
+			SolidBrush brush1(Color(255, 255, 255, 255));
+			g.FillRectangle(&brush1, 0, 0, BackBufferL, ++Line);
+			brush1.SetColor(Color(255, 223, 223, 223));
+			g.FillRectangle(&brush1, 0, Line++, BackBufferL, 1);
+			brush1.SetColor(Color(255, 240, 240, 240));
+			g.FillRectangle(&brush1, 0, Line, BackBufferL, rect.Height()-Line);
+
+			if (m_nIDStyle!=LFDS_UAC)
+				break;
+
+			LinearGradientBrush brush2(Point(0, 0), Point(rect.Width(), 0), Color(4, 80, 130), Color(28, 120, 133));
+			g.FillRectangle(&brush2, 0, 0, rect.Width(), UACHeight);
+
+			CRect borders(0, 0, 7, 7);
+			MapDialogRect(&borders);
+
+			DrawIconEx(dc.m_hDC, borders.right, (UACHeight-ShieldSize)/2, hIconShield, ShieldSize, ShieldSize, 0, NULL, DI_NORMAL);
+
+			CRect rectText(rect);
+			rectText.left = borders.right+ShieldSize;
+			rectText.bottom = UACHeight;
+
+			CString tmpStr;
+			ENSURE(tmpStr.LoadString(IDS_UACMESSAGE));
+
+			CFont* pOldFont = dc.SelectObject(&((LFApplication*)AfxGetApp())->m_Fonts[FALSE][TRUE]);
+			dc.SetTextColor(0xFFFFFF);
+			dc.DrawText(tmpStr, -1, rectText, DT_SINGLELINE | DT_VCENTER | DT_END_ELLIPSIS | DT_LEFT);
+			dc.SelectObject(pOldFont);
 
 			break;
 		}
@@ -179,9 +200,11 @@ void LFDialog::OnDestroy()
 	if (logo)
 		delete logo;
 	if (hIconL)
-		DeleteObject(hIconL);
+		DestroyIcon(hIconL);
 	if (hIconS)
-		DeleteObject(hIconS);
+		DestroyIcon(hIconS);
+	if (hIconShield)
+		DestroyIcon(hIconShield);
 
 	CDialog::OnDestroy();
 }

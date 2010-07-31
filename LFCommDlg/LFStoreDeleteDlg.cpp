@@ -50,3 +50,9 @@ void LFStoreDeleteDlg::SetOkButton()
 {
 	GetDlgItem(IDOK)->EnableWindow(GetCheckedRadioButton(IDC_KEEP, IDC_DELETE)==IDC_DELETE);
 }
+
+void LFStoreDeleteDlg::DoDataExchange(CDataExchange* pDX)
+{
+	DDX_Control(pDX, IDC_KEEP, m_KeepButton);
+	DDX_Control(pDX, IDC_DELETE, m_DeleteButton);
+}

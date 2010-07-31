@@ -250,7 +250,7 @@ BOOL CFileItem::GetColumnValueEx(VARIANT* value, CShellColumn& column)
 		tmpStr = Attrs.LocationIATA;
 		break;
 	case LFAttrLocationGPS:
-		LFGeoCoordinatesToString(Attrs.LocationGPS, tmpBuf, 256);
+		LFGeoCoordinatesToString(Attrs.LocationGPS, tmpBuf, 256, true);
 		tmpStr = tmpBuf;
 		break;
 	default:
