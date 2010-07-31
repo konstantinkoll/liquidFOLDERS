@@ -150,7 +150,7 @@ LANGUAGE LANG_GERMAN, SUBLANG_NEUTRAL
 // Dialog
 //
 
-IDD_ABOUT DIALOGEX 0, 0, 400, 287
+IDD_ABOUT DIALOGEX 0, 0, 410, 287
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Über %s"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
@@ -162,26 +162,26 @@ BEGIN
     CONTROL         "&2048×2048",IDC_TEXTURE_2048,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,14,208,57,10
     CONTROL         "&4096×4096",IDC_TEXTURE_4096,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,14,221,57,10
     CONTROL         "&8192×4096",IDC_TEXTURE_8192,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,14,234,57,10
-    COMBOBOX        IDC_RIBBONCOLORCOMBO,94,182,128,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
+    COMBOBOX        IDC_RIBBONCOLORCOMBO,94,182,138,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
     GROUPBOX        "Globus-Textur",IDC_TEXTUREFRAME,7,170,71,80,WS_GROUP
-    GROUPBOX        "Farbschema",IDC_STATIC,87,169,142,35,WS_GROUP
-    GROUPBOX        "StoreManager",IDC_STATIC,87,210,142,40,WS_GROUP
+    GROUPBOX        "Farbschema",IDC_STATIC,87,169,152,35,WS_GROUP
+    GROUPBOX        "StoreManager",IDC_STATIC,87,210,152,40,WS_GROUP
     CONTROL         "Nur &eingebundene Laufwerke zeigen",IDC_HIDEEMPTYDRIVES,
-                    "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,94,221,128,10
+                    "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,94,221,138,10
     CONTROL         "Nur &Domains mit Dateien zeigen",IDC_HIDEEMPTYDOMAINS,
-                    "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,94,234,128,10
-    GROUPBOX        "Lizenz",IDC_STATIC,238,169,155,81,WS_GROUP
-    LTEXT           "Name:",IDC_STATIC,245,179,141,8
-    LTEXT           "X",IDC_NAME,245,189,141,8
-    LTEXT           "Kaufdatum:",IDC_STATIC,245,202,84,8
-    LTEXT           "X",IDC_PURCHASEDATE,245,212,84,8
-    LTEXT           "ID:",IDC_STATIC,335,202,50,8
-    LTEXT           "X",IDC_ID,335,212,50,8
-    LTEXT           "Menge:",IDC_QUANTITYTITLE,335,227,50,8
-    LTEXT           "X",IDC_QUANTITY,335,237,50,8
-    LTEXT           "Produkt:",IDC_STATIC,245,227,83,8
-    LTEXT           "X",IDC_PRODUCT,245,237,141,8
-    PUSHBUTTON      "&Lizenzschlüssel eingeben...",IDC_ENTERLICENSEKEY,243,179,143,66,WS_GROUP
+                    "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,94,234,138,10
+    GROUPBOX        "Lizenz",IDC_STATIC,248,169,155,81,WS_GROUP
+    LTEXT           "Name:",IDC_STATIC,255,179,141,8
+    LTEXT           "X",IDC_NAME,255,189,141,8
+    LTEXT           "Kaufdatum:",IDC_STATIC,255,202,84,8
+    LTEXT           "X",IDC_PURCHASEDATE,255,212,84,8
+    LTEXT           "ID:",IDC_STATIC,345,202,50,8
+    LTEXT           "X",IDC_ID,345,212,50,8
+    LTEXT           "Menge:",IDC_QUANTITYTITLE,345,227,50,8
+    LTEXT           "X",IDC_QUANTITY,345,237,50,8
+    LTEXT           "Produkt:",IDC_STATIC,255,227,83,8
+    LTEXT           "X",IDC_PRODUCT,255,237,141,8
+    PUSHBUTTON      "&Lizenzschlüssel eingeben...",IDC_ENTERLICENSEKEY,253,179,143,66,WS_GROUP
 END
 
 IDD_CHOOSEDEFAULTSTORE DIALOGEX 0, 0, 466, 210
@@ -226,39 +226,38 @@ BEGIN
     CONTROL         "&Löschen",IDC_DELETE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,82,62,61,10
     PUSHBUTTON      "Jetzt löschen (keine weiteren Warnungen)",IDOK,6,87,165,14,WS_DISABLED | WS_GROUP
     CONTROL         20010,IDC_STATIC,"Static",SS_BITMAP | SS_REALSIZEIMAGE | WS_GROUP,6,7,64,59
-    LTEXT           "Soll der Store wirklich gelöscht werden?\nDa der gewählte Store zur Zeit angeschlossen ist, werden alle Dateien im Store ohne Wiederherstellungsmöglichkeit gelöscht!",IDC_STATIC,75,7,214,35
+    LTEXT           "Soll der Store wirklich gelöscht werden?\nDa der gewählte Store zur Zeit angeschlossen ist, werden alle Dateien im Store ohne Wiederherstellungsmöglichkeit gelöscht!",IDC_STATIC,75,7,214,27
     GROUPBOX        "Bestätigung",IDC_STATIC,74,37,74,41,WS_GROUP
 END
 
-IDD_STORENEW DIALOGEX 0, 0, 340, 252
+IDD_STORENEW DIALOGEX 0, 0, 350, 252
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Neuen Store anlegen"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    CONTROL         "&Interner Store",IDC_INTERNALSTORE,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,39,18,262,10
-    CONTROL         "&Hybrid-Store",IDC_HYBRIDSTORE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,39,49,262,10
-    CONTROL         "&Externer Store",IDC_EXTERNALSTORE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,39,72,262,10
+    CONTROL         "&Interner Store",IDC_INTERNALSTORE,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,39,18,272,10
+    CONTROL         "&Hybrid-Store",IDC_HYBRIDSTORE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,39,49,272,10
+    CONTROL         "&Externer Store",IDC_EXTERNALSTORE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,39,72,272,10
     CONTROL         "&Automatisch wählen",IDC_AUTODRIVE,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,14,120,113,10
     CONTROL         "",IDC_DRIVELIST,"SysListView32",LVS_SMALLICON | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_AUTOARRANGE | LVS_ALIGNLEFT | WS_DISABLED | WS_BORDER | WS_GROUP | WS_TABSTOP,14,145,115,68
-    EDITTEXT        IDC_STORENAME,155,129,171,14,ES_AUTOHSCROLL | WS_GROUP
-    EDITTEXT        IDC_COMMENT,155,158,171,14,ES_AUTOHSCROLL | WS_GROUP
-    CONTROL         "&Standard-Store",IDC_MAKEDEFAULT,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,155,177,171,10
+    EDITTEXT        IDC_STORENAME,155,129,181,14,ES_AUTOHSCROLL | WS_GROUP
+    EDITTEXT        IDC_COMMENT,155,158,181,14,ES_AUTOHSCROLL | WS_GROUP
+    CONTROL         "&Standard-Store",IDC_MAKEDEFAULT,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,155,177,181,10
     DEFPUSHBUTTON   "OK",IDOK,6,231,50,14,WS_GROUP
     PUSHBUTTON      "Abbrechen",IDCANCEL,63,231,50,14,WS_GROUP
-    GROUPBOX        "Store-Typ",IDC_STATIC,7,7,326,92,WS_GROUP
+    GROUPBOX        "Store-Typ",IDC_STATIC,7,7,336,92,WS_GROUP
     GROUPBOX        "Speicherort",IDC_STATIC,7,108,129,114,WS_GROUP
-    GROUPBOX        "Eigenschaften",IDC_STATIC,148,108,185,86,WS_GROUP
+    GROUPBOX        "Eigenschaften",IDC_STATIC,148,108,195,86,WS_GROUP
     CONTROL         20007,IDC_INTERNALSTOREICON,"Static",SS_BITMAP | WS_GROUP,13,18,21,20,WS_EX_TRANSPARENT
     CONTROL         20009,IDC_STATIC,"Static",SS_BITMAP | WS_GROUP,13,49,21,20
     CONTROL         20009,IDC_STATIC,"Static",SS_BITMAP | WS_GROUP,13,72,21,20
     LTEXT           "Laufwerk:",IDC_STATIC,14,135,113,8
-    LTEXT           "Store-Name:",IDC_STATIC,155,118,171,9
-    LTEXT           "Kommentar:",IDC_STATIC,155,148,171,9
-    CONTROL         "(Alle Dateien und der Index werden lokal auf diesem Computer gespeichert)",IDC_STATIC,
-                    "Static",SS_LEFTNOWORDWRAP | WS_GROUP,49,29,277,8
-    LTEXT           "(Alle Dateien und der Index werden extern gespeichert, mit zusätzlicher Index-Kopie)",IDC_STATIC,50,60,276,8
-    LTEXT           "(Alle Dateien und der Index werden extern gespeichert)",IDC_STATIC,49,83,277,8
-    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ | WS_GROUP,13,43,313,2
+    LTEXT           "Store-Name:",IDC_STATIC,155,118,181,9
+    LTEXT           "Kommentar:",IDC_STATIC,155,148,181,9
+    LTEXT           "(Alle Dateien und der Index werden lokal auf diesem Computer gespeichert)",IDC_STATIC,49,29,287,8
+    LTEXT           "(Alle Dateien und der Index werden extern gespeichert, mit zusätzlicher Index-Kopie)",IDC_STATIC,50,60,287,8
+    LTEXT           "(Alle Dateien und der Index werden extern gespeichert)",IDC_STATIC,49,83,287,8
+    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ | WS_GROUP,13,43,323,2
     CONTROL         20008,IDC_DEFAULTSTOREICON,"Static",SS_BITMAP | NOT WS_VISIBLE | WS_GROUP,13,18,21,20,WS_EX_TRANSPARENT
 END
 
@@ -450,7 +449,7 @@ BEGIN
     IDD_ABOUT, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 393
+        RIGHTMARGIN, 403
         TOPMARGIN, 7
         BOTTOMMARGIN, 280
     END
@@ -482,7 +481,7 @@ BEGIN
     IDD_STORENEW, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 333
+        RIGHTMARGIN, 343
         TOPMARGIN, 7
         BOTTOMMARGIN, 245
     END
@@ -697,7 +696,7 @@ BEGIN
     CONTROL         "&Delete",IDC_DELETE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,82,62,61,10
     PUSHBUTTON      "Delete now (there will be no further warnings)",IDOK,6,87,165,14,WS_DISABLED | WS_GROUP
     CONTROL         20010,IDC_STATIC,"Static",SS_BITMAP | SS_REALSIZEIMAGE | WS_GROUP,6,7,64,59
-    LTEXT           "Please confirm that you really want to delete the selected store.\nSince the store is currently mounted, you will lose all files inside that store without recovery option!",IDC_STATIC,75,7,214,35
+    LTEXT           "Please confirm that you really want to delete the selected store.\nSince the store is currently mounted, you will lose all files inside that store without recovery option!",IDC_STATIC,75,7,214,27
     GROUPBOX        "Confirmation",IDC_STATIC,74,37,74,41,WS_GROUP
 END
 
@@ -725,10 +724,9 @@ BEGIN
     LTEXT           "Drive:",IDC_STATIC,14,135,90,8
     LTEXT           "Store name:",IDC_STATIC,131,119,171,9
     LTEXT           "Comment:",IDC_STATIC,131,148,171,9
-    CONTROL         "(All files and the index are stored locally on this computer)",IDC_STATIC,
-                    "Static",SS_LEFTNOWORDWRAP | WS_GROUP,49,29,252,8
+    LTEXT           "(All files and the index are stored locally on this computer)",IDC_STATIC,49,29,252,8
     LTEXT           "(All files and the index are stored externally, with a local copy of the index)",IDC_STATIC,49,60,252,8
-    LTEXT           "(All files and the index are stored externally)",IDC_STATIC,49,83,251,8
+    LTEXT           "(All files and the index are stored externally)",IDC_STATIC,49,83,252,8
     CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ | WS_GROUP,13,43,289,2
     CONTROL         20008,IDC_DEFAULTSTOREICON,"Static",SS_BITMAP | NOT WS_VISIBLE | WS_GROUP,13,18,21,20,WS_EX_TRANSPARENT
 END
@@ -1169,7 +1167,7 @@ BEGIN
     CONTROL         "&Eliminar",IDC_DELETE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,82,62,61,10
     PUSHBUTTON      "Eliminar ahora (no habrá más avisos)",IDOK,6,87,165,14,WS_DISABLED | WS_GROUP
     CONTROL         20010,IDC_STATIC,"Static",SS_BITMAP | SS_REALSIZEIMAGE | WS_GROUP,6,7,64,59
-    LTEXT           "Confirme si realmente desea eliminar el store seleccionado.\nDado que el store está actualmente conectado, perderá todos los archivos dentro de ese store sin opción a recuperarlos!",IDC_STATIC,75,7,214,35
+    LTEXT           "Confirme si realmente desea eliminar el store seleccionado.\nDado que el store está actualmente conectado, perderá todos los archivos dentro de ese store sin opción a recuperarlos!",IDC_STATIC,75,7,214,27
     GROUPBOX        "Confirmación",IDC_STATIC,74,37,74,41,WS_GROUP
 END
 
@@ -1197,8 +1195,7 @@ BEGIN
     LTEXT           "Unidad:",IDC_STATIC,14,135,162,8
     LTEXT           "Nombre de store:",IDC_STATIC,201,119,171,9
     LTEXT           "Observaciones:",IDC_STATIC,201,148,171,9
-    CONTROL         "(Todos los archivos y el índice están almacenados de manera local en esta computadora)",IDC_STATIC,
-                    "Static",SS_LEFTNOWORDWRAP | WS_GROUP,49,29,324,8
+    LTEXT           "(Todos los archivos y el índice están almacenados de manera local en esta computadora)",IDC_STATIC,49,29,324,8
     LTEXT           "(Todos los archivos y el índice están almacenados de manera externa con una copia local del índice)",IDC_STATIC,49,60,324,8
     LTEXT           "(Todos los archivos y el índice están almacenados de manera esterna)",IDC_STATIC,49,83,324,8
     CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ | WS_GROUP,13,43,360,2
@@ -1449,7 +1446,7 @@ BEGIN
     IDD_STOREMAINTENANCE, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 193
+        RIGHTMARGIN, 213
         TOPMARGIN, 7
         BOTTOMMARGIN, 88
     END
@@ -1608,17 +1605,17 @@ BEGIN
     LTEXT           "Store 3:",IDC_STATIC,175,152,27,8
 END
 
-IDD_STOREDELETE DIALOGEX 0, 0, 296, 108
+IDD_STOREDELETE DIALOGEX 0, 0, 326, 108
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Effacez le store monté sur ""%s"""
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "Cancel",IDCANCEL,179,87,50,14,WS_GROUP
+    DEFPUSHBUTTON   "Annuler",IDCANCEL,224,87,50,14,WS_GROUP
     CONTROL         "&Gardez le store",IDC_KEEP,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,82,50,62,10
     CONTROL         "&Effacez",IDC_DELETE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,82,62,61,10
-    PUSHBUTTON      "Effacez maintenant (il n'y aura aucun avertissement de plus)",IDOK,6,87,165,14,WS_DISABLED | WS_GROUP
+    PUSHBUTTON      "Effacez maintenant (il n'y aura aucun avertissement de plus)",IDOK,6,87,210,14,WS_DISABLED | WS_GROUP
     CONTROL         20010,IDC_STATIC,"Static",SS_BITMAP | SS_REALSIZEIMAGE | WS_GROUP,6,7,64,59
-    LTEXT           "Confirmez s'il vous plaît que vous voulez vraiment effacer le store choisi.\nComme le store est actuellement monté, vous perdrez tous les fichiers à l'intérieur de ce store sans option de récupération!",IDC_STATIC,75,7,214,35
+    LTEXT           "Confirmez s'il vous plaît que vous voulez vraiment effacer le store choisi.\nComme le store est actuellement monté, vous perdrez tous les fichiers à l'intérieur de ce store sans option de récupération!",IDC_STATIC,75,7,244,27
     GROUPBOX        "Confirmation",IDC_STATIC,74,37,74,41,WS_GROUP
 END
 
@@ -1646,8 +1643,7 @@ BEGIN
     LTEXT           "Lecteur:",IDC_STATIC,14,135,121,8
     LTEXT           "Nom du store:",IDC_STATIC,161,119,171,9
     LTEXT           "Commentaire:",IDC_STATIC,161,148,171,9
-    CONTROL         "(Tous les fichiers et l'index sont conservés localement sur cet ordinateur)",IDC_STATIC,
-                    "Static",SS_LEFTNOWORDWRAP | WS_GROUP,49,29,284,8
+    LTEXT           "(Tous les fichiers et l'index sont conservés localement sur cet ordinateur)",IDC_STATIC,49,29,284,8
     LTEXT           "(Tous les fichiers sont conservés extérieurement, avec une copie locale de l'index)",IDC_STATIC,49,60,284,8
     LTEXT           "(Tous les fichiers et l'index sont conservés extérieurement)",IDC_STATIC,49,83,284,8
     CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ | WS_GROUP,13,43,320,2
@@ -1733,52 +1729,52 @@ BEGIN
     PUSHBUTTON      "Annoncez erreur de données...",IDC_REPORTERROR,121,284,126,14,WS_GROUP
 END
 
-IDD_STOREPROPERTIES DIALOGEX 0, 0, 365, 186
+IDD_STOREPROPERTIES DIALOGEX 0, 0, 375, 186
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Qualités de ""%s"""
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    GROUPBOX        "Qualités",IDC_STATIC,7,7,351,152
-    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ | WS_GROUP,14,56,339,1
-    LTEXT           "Nom du store:",IDC_STATIC,14,18,55,8
-    EDITTEXT        IDC_STORENAME,72,16,279,14,ES_AUTOHSCROLL
-    LTEXT           "Commentaire:",IDC_STATIC,14,37,55,8
-    EDITTEXT        IDC_COMMENT,72,35,279,14,ES_AUTOHSCROLL
-    LTEXT           "Produit:",IDC_STATIC,14,64,55,8
-    LTEXT           "X",IDC_CREATED,72,64,279,8,SS_ENDELLIPSIS
-    LTEXT           "Changé:",IDC_STATIC,14,74,55,8
-    LTEXT           "X",IDC_UPDATED,72,74,279,8,SS_ENDELLIPSIS
-    LTEXT           "Maintenance:",IDC_STATIC,14,84,55,8
-    LTEXT           "X",IDC_MAINTENANCE,72,84,279,8,SS_ENDELLIPSIS
-    LTEXT           "Finalement vu:",IDC_LASTSEENCAPTION,14,94,55,8
-    LTEXT           "X",IDC_LASTSEEN,72,94,279,8,SS_ENDELLIPSIS
-    LTEXT           "GUID:",IDC_STATIC,14,104,55,8
-    LTEXT           "X",IDC_GUID,72,104,279,8,SS_ENDELLIPSIS
-    LTEXT           "Données:",IDC_STATIC,14,114,55,8
-    LTEXT           "X",IDC_DATPATH,72,114,279,8,SS_PATHELLIPSIS
-    LTEXT           "Index principal:",IDC_STATIC,14,124,55,8
-    LTEXT           "X",IDC_IDXPATHMAIN,72,124,279,8,SS_PATHELLIPSIS
-    LTEXT           "Index auxiliaire:",IDC_STATIC,14,134,55,8
-    LTEXT           "X",IDC_IDXPATHAUX,72,134,279,8,SS_PATHELLIPSIS
-    LTEXT           "Version de index:",IDC_STATIC,14,144,55,8
-    LTEXT           "X",IDC_IDXVERSION,72,144,279,8,SS_ENDELLIPSIS
+    GROUPBOX        "Qualités",IDC_STATIC,7,7,361,152
+    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ | WS_GROUP,14,56,349,1
+    LTEXT           "Nom du store:",IDC_STATIC,14,18,65,8
+    EDITTEXT        IDC_STORENAME,82,16,279,14,ES_AUTOHSCROLL
+    LTEXT           "Commentaire:",IDC_STATIC,14,37,65,8
+    EDITTEXT        IDC_COMMENT,82,35,279,14,ES_AUTOHSCROLL
+    LTEXT           "Produit:",IDC_STATIC,14,64,65,8
+    LTEXT           "X",IDC_CREATED,82,64,279,8,SS_ENDELLIPSIS
+    LTEXT           "Changé:",IDC_STATIC,14,74,65,8
+    LTEXT           "X",IDC_UPDATED,82,74,279,8,SS_ENDELLIPSIS
+    LTEXT           "Maintenance:",IDC_STATIC,14,84,65,8
+    LTEXT           "X",IDC_MAINTENANCE,82,84,279,8,SS_ENDELLIPSIS
+    LTEXT           "Finalement vu:",IDC_LASTSEENCAPTION,14,94,65,8
+    LTEXT           "X",IDC_LASTSEEN,82,94,279,8,SS_ENDELLIPSIS
+    LTEXT           "GUID:",IDC_STATIC,14,104,65,8
+    LTEXT           "X",IDC_GUID,82,104,279,8,SS_ENDELLIPSIS
+    LTEXT           "Données:",IDC_STATIC,14,114,65,8
+    LTEXT           "X",IDC_DATPATH,82,114,279,8,SS_PATHELLIPSIS
+    LTEXT           "Index principal:",IDC_STATIC,14,124,65,8
+    LTEXT           "X",IDC_IDXPATHMAIN,82,124,279,8,SS_PATHELLIPSIS
+    LTEXT           "Index auxiliaire:",IDC_STATIC,14,134,65,8
+    LTEXT           "X",IDC_IDXPATHAUX,82,134,279,8,SS_PATHELLIPSIS
+    LTEXT           "Version de index:",IDC_STATIC,14,144,65,8
+    LTEXT           "X",IDC_IDXVERSION,82,144,279,8,SS_ENDELLIPSIS
     DEFPUSHBUTTON   "OK",IDOK,7,165,50,14,WS_GROUP
     PUSHBUTTON      "Annuler",IDCANCEL,64,165,50,14,WS_GROUP
 END
 
-IDD_ITEMTEMPLATE DIALOGEX 0, 0, 281, 338
+IDD_ITEMTEMPLATE DIALOGEX 0, 0, 291, 338
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Qualités des fichiers"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    CONTROL         "Inspecteur",IDC_INSPECTOR,"CInspectorGrid",WS_BORDER | WS_GROUP | WS_TABSTOP,14,35,253,248
+    CONTROL         "Inspecteur",IDC_INSPECTOR,"CInspectorGrid",WS_BORDER | WS_GROUP | WS_TABSTOP,14,35,263,248
     CONTROL         "Classer &alphabétiquement",IDC_ALPHABETICALLY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,291,207,10
-    PUSHBUTTON      "&Vider",IDC_RESET,226,289,41,14,WS_GROUP
+    PUSHBUTTON      "&Vider",IDC_RESET,236,289,41,14,WS_GROUP
     DEFPUSHBUTTON   "OK",IDOK,7,317,50,14,WS_GROUP
     PUSHBUTTON      "Omettre",IDC_SKIP,64,317,50,14,WS_GROUP
     PUSHBUTTON      "Annuler",IDCANCEL,121,317,50,14,WS_GROUP
-    GROUPBOX        "Inspecteur",IDC_STATIC,7,7,267,304
-    LTEXT           "Les qualités de fichier manquants seront mis en utilisant les valeurs si-dessous.\nSi vous ne voulez pas que vos fichiers soient amendés, appuyez ""Omettre"".",IDC_STATIC,14,16,253,18
+    GROUPBOX        "Inspecteur",IDC_STATIC,7,7,277,304
+    LTEXT           "Les qualités de fichier manquants seront mis en utilisant les valeurs si-dessous.\nSi vous ne voulez pas que vos fichiers soient amendés, appuyez ""Omettre"".",IDC_STATIC,14,16,263,18
 END
 
 IDD_STOREMAINTENANCE DIALOGEX 0, 0, 220, 95
@@ -1850,7 +1846,7 @@ BEGIN
     IDD_STOREDELETE, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 289
+        RIGHTMARGIN, 319
         TOPMARGIN, 7
         BOTTOMMARGIN, 101
     END
@@ -1882,7 +1878,7 @@ BEGIN
     IDD_STOREPROPERTIES, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 358
+        RIGHTMARGIN, 368
         TOPMARGIN, 7
         BOTTOMMARGIN, 179
     END
@@ -1890,7 +1886,7 @@ BEGIN
     IDD_ITEMTEMPLATE, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 274
+        RIGHTMARGIN, 284
         TOPMARGIN, 7
         BOTTOMMARGIN, 331
     END

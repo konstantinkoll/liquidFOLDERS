@@ -382,24 +382,24 @@ BEGIN
     LTEXT           "Include these properties:",IDC_STATIC,198,17,239,8
 END
 
-IDD_SORTOPTIONS DIALOGEX 0, 0, 283, 319
+IDD_SORTOPTIONS DIALOGEX 0, 0, 289, 319
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Arrange ""%s"" by"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    CONTROL         "",IDC_SORTATTRIBUTE,"SysListView32",LVS_LIST | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SORTASCENDING | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_ALIGNLEFT | LVS_NOCOLUMNHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,14,27,255,206
+    CONTROL         "",IDC_SORTATTRIBUTE,"SysListView32",LVS_LIST | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SORTASCENDING | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_ALIGNLEFT | LVS_NOCOLUMNHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,14,27,261,206
     DEFPUSHBUTTON   "OK",IDOK,7,298,50,14,WS_GROUP
     PUSHBUTTON      "Cancel",IDCANCEL,65,298,50,14,WS_GROUP
-    GROUPBOX        "",IDC_ATTRBOX,7,7,269,235,WS_GROUP
-    LTEXT           "All properties available in this context:",IDC_STATIC,14,17,254,8
-    CONTROL         "&Group items into subfolders",IDC_AUTODIRS,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,42,262,141,10
-    CONTROL         "&Ascending",IDC_ASCENDING,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,219,259,49,10
-    CONTROL         "&Descending",IDC_DESCENDING,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,219,272,50,10
-    GROUPBOX        "Grouping",IDC_STATIC,7,248,181,42,WS_GROUP
-    GROUPBOX        "Sort direction",IDC_STATIC,198,248,78,42,WS_GROUP
-    CONTROL         134,IDC_STATIC,"Static",SS_BITMAP,204,259,11,10
-    CONTROL         135,IDC_STATIC,"Static",SS_BITMAP,204,272,11,10
-    LTEXT           "",IDC_SUBFOLDERHINT,42,275,141,8
+    GROUPBOX        "",IDC_ATTRBOX,7,7,275,235,WS_GROUP
+    LTEXT           "All properties available in this context:",IDC_STATIC,14,17,261,8
+    CONTROL         "&Group items into subfolders",IDC_AUTODIRS,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,42,262,147,10
+    CONTROL         "&Ascending",IDC_ASCENDING,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,225,259,49,10
+    CONTROL         "&Descending",IDC_DESCENDING,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,225,272,50,10
+    GROUPBOX        "Grouping",IDC_STATIC,7,248,188,42,WS_GROUP
+    GROUPBOX        "Sort direction",IDC_STATIC,204,248,78,42,WS_GROUP
+    CONTROL         134,IDC_STATIC,"Static",SS_BITMAP,210,259,9,8
+    CONTROL         135,IDC_STATIC,"Static",SS_BITMAP,210,272,9,8
+    LTEXT           "",IDC_SUBFOLDERHINT,42,275,146,8
     CONTROL         136,IDC_STATIC,"Static",SS_BITMAP,14,262,21,20
 END
 
@@ -439,7 +439,7 @@ BEGIN
     IDD_SORTOPTIONS, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 276
+        RIGHTMARGIN, 282
         TOPMARGIN, 7
         BOTTOMMARGIN, 312
     END
@@ -701,13 +701,13 @@ BEGIN
     ID_GLOBE_SHOWAIRPORTNAMES 
                             "Shows or hides the airport name of each folder.\nShow airport names"
     ID_GLOBE_SHOWGPS        "Shows or hides the GPS location of each folder.\nShow GPS locations"
-    ID_GLOBE_SHOWHINTS      "Shows or hides the hint text of each folder.\nShow hints"
-    ID_GLOBE_SHOWSPOTS      "Shows or hides the location spot of each folder.\nShow spots"
-    ID_GLOBE_SHOWVIEWPOINT  "Shows or hides the viewpoint coordinates in the globe's status bar.\nShow viewpoint"
 END
 
 STRINGTABLE 
 BEGIN
+    ID_GLOBE_SHOWHINTS      "Shows or hides the hint text of each folder.\nShow hints"
+    ID_GLOBE_SHOWSPOTS      "Shows or hides the location spot of each folder.\nShow spots"
+    ID_GLOBE_SHOWVIEWPOINT  "Shows or hides the viewpoint coordinates in the globe's status bar.\nShow viewpoint"
     ID_TAGCLOUD_SORTVALUE   "Sort tags by value.\nSort by value"
     ID_TAGCLOUD_SORTCOUNT   "Sort tags by count.\nSort by count"
     ID_TAGCLOUD_OMITRARE    "Removes rare tags from the search result.\nOmit rare tags"
