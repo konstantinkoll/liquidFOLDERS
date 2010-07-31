@@ -165,8 +165,12 @@ int CFileDropWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	}
 
 	// Badge laden
-	m_Warning.Load(IDB_WARNING);
-	m_Warning.SetSingleImage();
+	hModIcons = LoadLibrary(_T("LFCOMMDLG.DLL"));
+	if (hModIcons)
+	{
+		m_hWarning = (HICON)LoadImage(hModIcons, IDI_EXCLAMATION, IMAGE_ICON, 24, 24, LR_LOADTRANSPARENT);
+		FreeLibrary(hModIcons);
+	}
 
 	// Tooltip
 	Tooltip.Create(this);
@@ -309,12 +313,7 @@ BOOL CFileDropWnd::OnEraseBkgnd(CDC* pDC)
 
 	// Badge
 	if (!StoreValid)
-	{
-		CAfxDrawState ds;
-		m_Warning.PrepareDrawImage(ds, CSize(24, 24));
-		m_Warning.Draw(&dc, rect.Width()-28, 0, 0);
-		m_Warning.EndDrawImage(ds);
-	}
+		DrawIconEx(dc.m_hDC, rect.Width()-28, 0, m_hWarning, 24, 24, 0, NULL, DI_NORMAL);
 
 	pDC->BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);
 

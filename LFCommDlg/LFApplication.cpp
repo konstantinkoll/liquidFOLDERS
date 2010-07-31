@@ -232,7 +232,6 @@ BOOL LFApplication::InitInstance()
 		InitContextMenuManager();
 		InitShellManager();
 		InitKeyboardManager();
-		CDockingManager::SetDockingMode(DT_IMMEDIATE);
 	}
 
 	m_nAppLook = GetGlobalInt(_T("ApplicationLook"), ID_VIEW_APPLOOK_OFF_2007_BLUE);
@@ -500,6 +499,8 @@ void LFApplication::SetApplicationLook(UINT nID)
 		CMFCVisualManagerOffice2007::SetStyle(CMFCVisualManagerOffice2007::Office2007_LunaBlue);
 		break;
 	}
+
+	CDockingManager::SetDockingMode(DT_IMMEDIATE);
 }
 
 CString LFApplication::GetGlobalRegPath()

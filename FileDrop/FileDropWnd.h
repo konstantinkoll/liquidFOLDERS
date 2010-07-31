@@ -45,8 +45,8 @@ protected:
 	LFDropTarget m_DropTarget;
 	CSimpleTooltip Tooltip;
 	HICON m_hIcon;
+	HICON m_hWarning;
 	CImageList m_Dropzone;
-	CMFCToolBarImages m_Warning;
 	LFStoreDescriptor m_Store;
 	CString Label;
 	int PosX;
