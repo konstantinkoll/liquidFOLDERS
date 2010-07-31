@@ -69,28 +69,36 @@ void CTransparentRadioButton::OnPaint()
 	dcBack.SelectObject(oldBitmap);
 
 	// Icon
-	CRect rectIcon;
-	rectIcon.CopyRect(rect);
-	rectIcon.left--;
-	rectIcon.right = rectIcon.left+rect.Height();
+	CRect rectIcon(rect);
 
 	if (hTheme)
 	{
+		int uiPart = IsRadio ? BP_RADIOBUTTON : BP_CHECKBOX;
 		int uiStyle = RBS_UNCHECKEDDISABLED;
 		if (IsWindowEnabled())
 			uiStyle = (GetState() & 4) ? RBS_UNCHECKEDPRESSED : m_Hover ? RBS_UNCHECKEDHOT : RBS_UNCHECKEDNORMAL;
-		p_App->zDrawThemeBackground(hTheme, dc.m_hDC, IsRadio ? BP_RADIOBUTTON : BP_CHECKBOX, uiStyle + (GetCheck() ? 4 : 0), rectIcon, rectIcon);
+		uiStyle += (GetCheck() ? 4 : 0);
+
+		SIZE sz;
+		p_App->zGetThemePartSize(hTheme, dc.m_hDC, uiPart, uiStyle, NULL, TS_DRAW, &sz);
+		rectIcon.top = (rectIcon.Height()-sz.cy)/2;
+		rectIcon.bottom = rectIcon.top+sz.cy;
+		rectIcon.right = rectIcon.left+sz.cx;
+
+		p_App->zDrawThemeBackground(hTheme, dc.m_hDC, uiPart, uiStyle, rectIcon, rectIcon);
 	}
 	else
 	{
+		rectIcon.left--;
+		rectIcon.right = rectIcon.left+rect.Height();
+
 		UINT uiStyle = IsRadio ? DFCS_BUTTONRADIO : DFCS_BUTTONCHECK | (GetCheck() ? DFCS_CHECKED : 0) | (GetState() ? DFCS_PUSHED : 0) | (IsWindowEnabled() ? 0 : DFCS_INACTIVE);
 		dc.DrawFrameControl(rectIcon, DFC_BUTTON, uiStyle);
 	}
 
 	// Text
-	CRect rectText;
-	rectText.CopyRect(rect);
-	rectText.left += rect.Height();
+	CRect rectText(rect);
+	rectText.left = rectIcon.right+2;
 	CFont* pOldFont = (CFont*)dc.SelectStockObject(DEFAULT_GUI_FONT);
 	CString tmpStr;
 	GetWindowText(tmpStr);

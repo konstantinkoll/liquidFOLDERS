@@ -32,7 +32,7 @@ BOOL CFileDropWnd::Create()
 
 	const DWORD dwStyle = WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU;
 	const DWORD dwExStyle = WS_EX_APPWINDOW;
-	CRect rect(0, 0, 144, 180);
+	CRect rect(0, 0, 144, 190);
 	return CGlassWindow::CreateEx(dwExStyle, className, _T("FileDrop"), dwStyle, rect, NULL, 0);
 }
 

@@ -23,13 +23,15 @@
 typedef HRESULT(__stdcall* PFNSETWINDOWTHEME)(HWND hwnd, LPCWSTR pszSubAppName, LPCWSTR pszSubIdList);
 typedef HRESULT(__stdcall* PFNCLOSETHEMEDATA)(HTHEME hTheme);
 typedef HTHEME(__stdcall* PFNOPENTHEMEDATA)(HWND hwnd, LPCWSTR pszClassList);
-typedef HRESULT (__stdcall* PFNDRAWTHEMEBACKGROUND)(HTHEME hTheme, HDC hdc, int iPartId,
+typedef HRESULT(__stdcall* PFNDRAWTHEMEBACKGROUND)(HTHEME hTheme, HDC hdc, int iPartId,
 							int iStateId, const RECT* pRect, const RECT* pClipRect);
-typedef HRESULT (__stdcall* PFNDRAWTHEMETEXT)(HTHEME hTheme, HDC hdc, int iPartId,
+typedef HRESULT(__stdcall* PFNDRAWTHEMETEXT)(HTHEME hTheme, HDC hdc, int iPartId,
 							int iStateId, LPCWSTR pszText, int iCharCount, DWORD dwTextFlags,
 							DWORD dwTextFlags2, const RECT* pRect);
-typedef HRESULT (__stdcall* PFNGETTHEMESYSFONT)(HTHEME hTheme, int iFontID, LOGFONT* plf);
-typedef HRESULT (__stdcall* PFNGETTHEMESYSCOLOR)(HTHEME hTheme, int iColorID);
+typedef HRESULT(__stdcall* PFNGETTHEMESYSFONT)(HTHEME hTheme, int iFontID, LOGFONT* plf);
+typedef HRESULT(__stdcall* PFNGETTHEMESYSCOLOR)(HTHEME hTheme, int iColorID);
+typedef HRESULT (__stdcall* PFNGETTHEMEPARTSIZE)(HTHEME hTheme, HDC hdc, int iPartId, int iStateId,
+							LPRECT prc, THEMESIZE eSize, SIZE *psz);
 
 typedef HRESULT(__stdcall* PFNDWMISCOMPOSITIONENABLED)(BOOL* pfEnabled);
 typedef HRESULT(__stdcall* PFNDWMEXTENDFRAMEINTOCLIENTAREA)(HWND hWnd, const MARGINS* pMarInset);
@@ -104,6 +106,7 @@ public:
 	PFNDRAWTHEMETEXT zDrawThemeText;
 	PFNGETTHEMESYSFONT zGetThemeSysFont;
 	PFNGETTHEMESYSCOLOR zGetThemeSysColor;
+	PFNGETTHEMEPARTSIZE zGetThemePartSize;
 	BOOL m_ThemeLibLoaded;
 
 	PFNDWMISCOMPOSITIONENABLED zDwmIsCompositionEnabled;
