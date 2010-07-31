@@ -64,6 +64,7 @@ BOOL LFDialog::OnInitDialog()
 			rect.bottom = MulDiv(40, LOWORD(GetDialogBaseUnits()), 8);
 			Headline.Create(rect, this, 1000);
 
+			((LFApplication*)AfxGetApp())->PlayWarningSound();
 			break;
 		}
 	}

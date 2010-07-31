@@ -28,7 +28,7 @@ void CUACCtrl::Create(CRect &rect, CWnd* pParentWnd, UINT nID)
 {
 	int height = rect.Height()-6;
 	m_IconSz = (height<24) ? 16 : (height<32) ? 24 : (height<48) ? 32 : 48;
-	m_Border = MulDiv(7, LOWORD(GetDialogBaseUnits()), 4)-3;
+	m_Border = MulDiv(7, LOWORD(GetDialogBaseUnits()), 4)-4;
 
 	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW, NULL, NULL, NULL);
 

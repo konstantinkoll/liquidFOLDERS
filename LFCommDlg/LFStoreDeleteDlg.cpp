@@ -1,7 +1,6 @@
 #include "StdAfx.h"
 #include "LFStoreDeleteDlg.h"
 #include "Resource.h"
-#include <mmsystem.h>
 
 
 // LFStoreDeleteDlg
@@ -43,9 +42,6 @@ BOOL LFStoreDeleteDlg::OnInitDialog()
 
 	// Radiobutton setzen
 	((CButton*)GetDlgItem(IDC_KEEP))->SetCheck(TRUE);
-
-	// Sound
-	PlaySoundA("SystemExclamation", NULL, SND_ALIAS | SND_ASYNC | SND_NOWAIT);
 
 	return TRUE;
 }
