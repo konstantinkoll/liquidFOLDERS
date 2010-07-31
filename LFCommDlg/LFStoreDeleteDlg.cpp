@@ -27,12 +27,6 @@ BOOL LFStoreDeleteDlg::OnInitDialog()
 {
 	LFDialog::OnInitDialog();
 
-	// Symbol für dieses Dialogfeld festlegen. Wird automatisch erledigt
-	// wenn das Hauptfenster der Anwendung kein Dialogfeld ist
-	HICON hIcon = LoadIcon(LFCommDlgDLL.hResource, MAKEINTRESOURCE(IDD_STOREDELETE));
-	SetIcon(hIcon, FALSE);
-	SetIcon(hIcon, TRUE);
-
 	// Titelleiste
 	CString text;
 	GetWindowText(text);

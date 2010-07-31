@@ -216,7 +216,7 @@ BEGIN
     LTEXT           "Store 3:",IDC_STATIC,175,152,72,8
 END
 
-IDD_STOREDELETE DIALOGEX 0, 0, 277, 153
+IDD_STOREDELETE DIALOGEX 0, 0, 277, 175
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Eingebundenen Store „%s“ löschen"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
@@ -227,6 +227,7 @@ BEGIN
     PUSHBUTTON      "Jetzt löschen (keine weiteren Warnungen)",IDOK,6,132,165,14,WS_DISABLED | WS_GROUP
     LTEXT           "Soll der Store wirklich gelöscht werden?\n\nDa der gewählte Store zur Zeit angeschlossen ist, werden alle Dateien im Store ohne Wiederherstellungsmöglichkeit gelöscht!",IDC_STATIC,7,31,213,33
     GROUPBOX        "Zustimmung",IDC_STATIC,7,72,74,41,BS_FLAT | WS_GROUP
+    LTEXT           "Dieses Fenster verhindert das unabsichtliche Löschen von sehr vielen Dateien.",IDC_STATIC,7,160,263,8
 END
 
 IDD_STORENEW DIALOGEX 0, 0, 350, 252
@@ -474,7 +475,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 270
         TOPMARGIN, 7
-        BOTTOMMARGIN, 146
+        BOTTOMMARGIN, 168
     END
 
     IDD_STORENEW, DIALOG
@@ -686,7 +687,7 @@ BEGIN
     PUSHBUTTON      "Create &new store...",IDC_NEWSTORE,374,189,85,14
 END
 
-IDD_STOREDELETE DIALOGEX 0, 0, 277, 153
+IDD_STOREDELETE DIALOGEX 0, 0, 277, 175
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Delete mounted store ""%s"""
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
@@ -697,6 +698,7 @@ BEGIN
     PUSHBUTTON      "Delete now (there will be no further warnings)",IDOK,6,132,165,14,WS_DISABLED | WS_GROUP
     LTEXT           "Please confirm that you really want to delete the selected store.\n\nSince the store is currently mounted, you will lose all files inside that store without recovery option!",IDC_STATIC,7,31,213,33
     GROUPBOX        "Permission",IDC_STATIC,7,72,74,41,BS_FLAT | WS_GROUP
+    LTEXT           "This window prevents you from accidentially nuking lots of files.",IDC_STATIC,7,160,263,8
 END
 
 IDD_STORENEW DIALOGEX 0, 0, 316, 252
@@ -944,7 +946,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 270
         TOPMARGIN, 7
-        BOTTOMMARGIN, 146
+        BOTTOMMARGIN, 168
     END
 
     IDD_STORENEW, DIALOG
@@ -1157,7 +1159,7 @@ BEGIN
     LTEXT           "Store 3:",IDC_STATIC,175,152,27,8
 END
 
-IDD_STOREDELETE DIALOGEX 0, 0, 277, 153
+IDD_STOREDELETE DIALOGEX 0, 0, 277, 175
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Eliminar store conectado ""%s"""
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
@@ -1168,6 +1170,7 @@ BEGIN
     PUSHBUTTON      "Eliminar ahora (no habrá más avisos)",IDOK,6,132,165,14,WS_DISABLED | WS_GROUP
     LTEXT           "Confirme si realmente desea eliminar el store seleccionado.\n\nDado que el store está actualmente conectado, perderá todos los archivos dentro de ese store sin opción a recuperarlos!",IDC_STATIC,7,31,206,33
     GROUPBOX        "Confirmación",IDC_STATIC,7,72,74,41,BS_FLAT | WS_GROUP
+    LTEXT           "Dieses Fenster verhindert das unabsichtliche Löschen von sehr vielen Dateien.",IDC_STATIC,7,160,263,8
 END
 
 IDD_STORENEW DIALOGEX 0, 0, 387, 252
@@ -1399,7 +1402,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 270
         TOPMARGIN, 7
-        BOTTOMMARGIN, 146
+        BOTTOMMARGIN, 168
     END
 
     IDD_STORENEW, DIALOG
@@ -1604,7 +1607,7 @@ BEGIN
     LTEXT           "Store 3:",IDC_STATIC,175,152,27,8
 END
 
-IDD_STOREDELETE DIALOGEX 0, 0, 293, 154
+IDD_STOREDELETE DIALOGEX 0, 0, 293, 175
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Effacez le store monté sur ""%s"""
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
@@ -1615,6 +1618,7 @@ BEGIN
     PUSHBUTTON      "Effacez maintenant (il n'y aura aucun avertissement de plus)",IDOK,6,133,210,14,WS_DISABLED | WS_GROUP
     LTEXT           "Confirmez s'il vous plaît que vous voulez vraiment effacer le store choisi.\n\nComme le store est actuellement monté, vous perdrez tous les fichiers à l'intérieur de ce store sans option de récupération!",IDC_STATIC,7,31,242,33
     GROUPBOX        "Confirmation",IDC_STATIC,7,72,74,41,BS_FLAT | WS_GROUP
+    LTEXT           "Dieses Fenster verhindert das unabsichtliche Löschen von sehr vielen Dateien.",IDC_STATIC,7,160,279,8
 END
 
 IDD_STORENEW DIALOGEX 0, 0, 347, 252
@@ -1847,7 +1851,7 @@ BEGIN
         RIGHTMARGIN, 286
         RIGHTMARGIN, 277
         TOPMARGIN, 7
-        BOTTOMMARGIN, 147
+        BOTTOMMARGIN, 168
     END
 
     IDD_STORENEW, DIALOG

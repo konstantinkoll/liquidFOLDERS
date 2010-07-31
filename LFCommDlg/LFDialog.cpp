@@ -37,12 +37,15 @@ BOOL LFDialog::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
-	// Symbol für dieses Dialogfeld festlegen. Wird automatisch erledigt
-	// wenn das Hauptfenster der Anwendung kein Dialogfeld ist
-	hIconS = (HICON)LoadImage(LFCommDlgDLL.hResource, MAKEINTRESOURCE(m_nIDTemplate), IMAGE_ICON, 16, 16, LR_LOADTRANSPARENT);
-	SetIcon(hIconS, FALSE);
-	hIconL = (HICON)LoadImage(LFCommDlgDLL.hResource, MAKEINTRESOURCE(m_nIDTemplate), IMAGE_ICON, 32, 32, LR_LOADTRANSPARENT);
-	SetIcon(hIconL, TRUE);
+	if (m_nIDStyle!=LFDS_UAC)
+	{
+		// Symbol für dieses Dialogfeld festlegen. Wird automatisch erledigt
+		// wenn das Hauptfenster der Anwendung kein Dialogfeld ist
+		hIconS = (HICON)LoadImage(LFCommDlgDLL.hResource, MAKEINTRESOURCE(m_nIDTemplate), IMAGE_ICON, 16, 16, LR_LOADTRANSPARENT);
+		SetIcon(hIconS, FALSE);
+		hIconL = (HICON)LoadImage(LFCommDlgDLL.hResource, MAKEINTRESOURCE(m_nIDTemplate), IMAGE_ICON, 32, 32, LR_LOADTRANSPARENT);
+		SetIcon(hIconL, TRUE);
+	}
 
 	switch (m_nIDStyle)
 	{
@@ -105,10 +108,13 @@ BOOL LFDialog::OnEraseBkgnd(CDC* pDC)
 
 void LFDialog::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 {
+	CRect borders(0, 0, 7, 7);
+	MapDialogRect(&borders);
+
 	CRect btn;
 	GetDlgItem(IDOK)->GetWindowRect(&btn);
 	ScreenToClient(&btn);
-	int Line = btn.top-(rect.Height()-btn.bottom)-3;
+	int Line = btn.top-borders.Height()-3;
 
 	switch (m_nIDStyle)
 	{
@@ -151,14 +157,16 @@ void LFDialog::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 			brush1.SetColor(Color(255, 240, 240, 240));
 			g.FillRectangle(&brush1, 0, Line, BackBufferL, rect.Height()-Line);
 
+			brush1.SetColor(Color(255, 223, 223, 223));
+			g.FillRectangle(&brush1, 0, btn.bottom+borders.Height()+1, BackBufferL, 1);
+			brush1.SetColor(Color(255, 255, 255, 255));
+			g.FillRectangle(&brush1, 0, btn.bottom+borders.Height()+2, BackBufferL, 1);
+
 			if (m_nIDStyle!=LFDS_UAC)
 				break;
 
 			LinearGradientBrush brush2(Point(0, 0), Point(rect.Width(), 0), Color(4, 80, 130), Color(28, 120, 133));
 			g.FillRectangle(&brush2, 0, 0, rect.Width(), UACHeight);
-
-			CRect borders(0, 0, 7, 7);
-			MapDialogRect(&borders);
 
 			DrawIconEx(dc.m_hDC, borders.right, (UACHeight-ShieldSize)/2, hIconShield, ShieldSize, ShieldSize, 0, NULL, DI_NORMAL);
 
