@@ -1,6 +1,7 @@
 #pragma once
+#include "LFDialog.h"
 
-class AFX_EXT_CLASS LFStoreDeleteDlg : public CDialog
+class AFX_EXT_CLASS LFStoreDeleteDlg : public LFDialog
 {
 public:
 	LFStoreDeleteDlg(CWnd* pParentWnd, wchar_t* _StoreName);

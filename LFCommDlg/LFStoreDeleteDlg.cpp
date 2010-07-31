@@ -10,7 +10,7 @@
 extern AFX_EXTENSION_MODULE LFCommDlgDLL;
 
 LFStoreDeleteDlg::LFStoreDeleteDlg(CWnd* pParentWnd, wchar_t* _StoreName)
-	: CDialog(IDD_STOREDELETE, pParentWnd)
+	: LFDialog(IDD_STOREDELETE, LFDS_UAC, pParentWnd)
 {
 	StoreName = _StoreName;
 }
@@ -19,14 +19,14 @@ LFStoreDeleteDlg::~LFStoreDeleteDlg()
 {
 }
 
-BEGIN_MESSAGE_MAP(LFStoreDeleteDlg, CDialog)
+BEGIN_MESSAGE_MAP(LFStoreDeleteDlg, LFDialog)
 	ON_BN_CLICKED(IDC_KEEP, SetOkButton)
 	ON_BN_CLICKED(IDC_DELETE, SetOkButton)
 END_MESSAGE_MAP()
 
 BOOL LFStoreDeleteDlg::OnInitDialog()
 {
-	CDialog::OnInitDialog();
+	LFDialog::OnInitDialog();
 
 	// Symbol für dieses Dialogfeld festlegen. Wird automatisch erledigt
 	// wenn das Hauptfenster der Anwendung kein Dialogfeld ist

@@ -4,11 +4,18 @@
 #include "liquidFOLDERS.h"
 #include "CGlassButton.h"
 #include "CTransparentRadioButton.h"
+#include "CUACCtrl.h"
+
+#define LFDS_Blue         1
+#define LFDS_White        2
+#define LFDS_UAC          3
+
+#define LFDS_Default      LFDS_Blue
 
 class AFX_EXT_CLASS LFDialog : public CDialog
 {
 public:
-	LFDialog(UINT nIDTemplate, CWnd* pParent=NULL);
+	LFDialog(UINT nIDTemplate, UINT nIDStyle=LFDS_Default, CWnd* pParent=NULL);
 
 	CBitmap* GetBackBuffer();
 
@@ -16,6 +23,7 @@ protected:
 	CGdiPlusBitmapResource* backdrop;
 	CGdiPlusBitmapResource* logo;
 	UINT m_nIDTemplate;
+	UINT m_nIDStyle;
 
 	virtual void OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect);
 	virtual void CheckLicenseKey(LFLicense* License=NULL);
@@ -29,8 +37,9 @@ protected:
 
 private:
 	CBitmap BackBuffer;
+	CUACCtrl Headline;
 	int BackBufferL;
 	int BackBufferH;
-	HICON m_hIconL;
-	HICON m_hIconS;
+	HICON hIconL;
+	HICON hIconS;
 };

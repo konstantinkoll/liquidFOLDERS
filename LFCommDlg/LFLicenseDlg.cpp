@@ -8,7 +8,7 @@ using namespace Gdiplus;
 extern AFX_EXTENSION_MODULE LFCommDlgDLL;
 
 LFLicenseDlg::LFLicenseDlg(CWnd* pParent)
-	: LFDialog(IDD_ENTERLICENSEKEY, pParent)
+	: LFDialog(IDD_ENTERLICENSEKEY, LFDS_Default, pParent)
 {
 	icon = NULL;
 }

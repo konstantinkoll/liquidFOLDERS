@@ -9,7 +9,7 @@ using namespace Gdiplus;
 extern AFX_EXTENSION_MODULE LFCommDlgDLL;
 
 LFAboutDlg::LFAboutDlg(LFAboutDlgParameters* pParameters, CWnd* pParent)
-	: LFDialog(IDD_ABOUT, pParent)
+	: LFDialog(IDD_ABOUT, LFDS_Default, pParent)
 {
 	ASSERT(pParameters!=NULL);
 	parameters = pParameters;

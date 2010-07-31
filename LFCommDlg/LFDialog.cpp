@@ -15,12 +15,12 @@ using namespace Gdiplus;
 
 extern AFX_EXTENSION_MODULE LFCommDlgDLL;
 
-LFDialog::LFDialog(UINT nIDTemplate, CWnd* pParent)
+LFDialog::LFDialog(UINT nIDTemplate, UINT nIDStyle, CWnd* pParent)
 	: CDialog(nIDTemplate, pParent)
 {
 	m_nIDTemplate = nIDTemplate;
+	m_nIDStyle = nIDStyle;
 	backdrop = logo = NULL;
-	m_hIconL = m_hIconS = NULL;
 	BackBufferL = BackBufferH = 0;
 }
 
@@ -38,18 +38,35 @@ BOOL LFDialog::OnInitDialog()
 
 	// Symbol für dieses Dialogfeld festlegen. Wird automatisch erledigt
 	// wenn das Hauptfenster der Anwendung kein Dialogfeld ist
-	m_hIconS = (HICON)LoadImage(LFCommDlgDLL.hResource, MAKEINTRESOURCE(m_nIDTemplate), IMAGE_ICON, 16, 16, LR_LOADTRANSPARENT);
-	SetIcon(m_hIconS, FALSE);
-	m_hIconL = (HICON)LoadImage(LFCommDlgDLL.hResource, MAKEINTRESOURCE(m_nIDTemplate), IMAGE_ICON, 32, 32, LR_LOADTRANSPARENT);
-	SetIcon(m_hIconL, TRUE);
+	hIconS = (HICON)LoadImage(LFCommDlgDLL.hResource, MAKEINTRESOURCE(m_nIDTemplate), IMAGE_ICON, 16, 16, LR_LOADTRANSPARENT);
+	SetIcon(hIconS, FALSE);
+	hIconL = (HICON)LoadImage(LFCommDlgDLL.hResource, MAKEINTRESOURCE(m_nIDTemplate), IMAGE_ICON, 32, 32, LR_LOADTRANSPARENT);
+	SetIcon(hIconL, TRUE);
 
-	// Hintergrundbild laden
-	backdrop = new CGdiPlusBitmapResource();
-	backdrop->Load(IDB_BACKDROP, _T("PNG"), LFCommDlgDLL.hResource);
+	switch (m_nIDStyle)
+	{
+	case LFDS_Blue:
+		{
+			// Hintergrundbild laden
+			backdrop = new CGdiPlusBitmapResource();
+			backdrop->Load(IDB_BACKDROP, _T("PNG"), LFCommDlgDLL.hResource);
 
-	// Logo laden
-	logo = new CGdiPlusBitmapResource();
-	logo->Load(IDB_LOGO, _T("PNG"), LFCommDlgDLL.hResource);
+			// Logo laden
+			logo = new CGdiPlusBitmapResource();
+			logo->Load(IDB_LOGO, _T("PNG"), LFCommDlgDLL.hResource);
+
+			break;
+		}
+	case LFDS_UAC:
+		{
+			CRect rect;
+			GetClientRect(rect);
+			rect.bottom = MulDiv(40, LOWORD(GetDialogBaseUnits()), 8);
+			Headline.Create(rect, this, 1000);
+
+			break;
+		}
+	}
 
 	return TRUE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird
 }
@@ -89,41 +106,55 @@ BOOL LFDialog::OnEraseBkgnd(CDC* pDC)
 
 void LFDialog::OnEraseBkgnd(CDC& /*dc*/, Graphics& g, CRect& rect)
 {
-	int l = backdrop->m_pBitmap->GetWidth();
-	int h = backdrop->m_pBitmap->GetHeight();
-	if ((l>rect.Width()) || (h>rect.Height()))
-	{
-		double f = max((double)rect.Width()/l, (double)rect.Height()/h);
-		l = (int)(l*f);
-		h = (int)(h*f);
-	}
-
-	g.DrawImage(backdrop->m_pBitmap, rect.Width()-l, rect.Height()-h, l, h);
-
 	CRect btn;
 	GetDlgItem(IDOK)->GetWindowRect(&btn);
 	ScreenToClient(&btn);
-
 	int Line = btn.top-(rect.Height()-btn.bottom)-3;
 
-	SolidBrush brush1(Color(180, 255, 255, 255));
-	g.FillRectangle(&brush1, 0, 0, BackBufferL, Line);
+	switch (m_nIDStyle)
+	{
+	case LFDS_Blue:
+		{
+			int l = backdrop->m_pBitmap->GetWidth();
+			int h = backdrop->m_pBitmap->GetHeight();
+			if ((l>rect.Width()) || (h>rect.Height()))
+			{
+				double f = max((double)rect.Width()/l, (double)rect.Height()/h);
+				l = (int)(l*f);
+				h = (int)(h*f);
+			}
+			g.DrawImage(backdrop->m_pBitmap, rect.Width()-l, rect.Height()-h, l, h);
 
-	brush1.SetColor(Color(255, 205, 250, 255));
-	g.FillRectangle(&brush1, 0, Line++, BackBufferL, 1);
+			SolidBrush brush1(Color(180, 255, 255, 255));
+			g.FillRectangle(&brush1, 0, 0, BackBufferL, Line);
+			brush1.SetColor(Color(255, 205, 250, 255));
+			g.FillRectangle(&brush1, 0, Line++, BackBufferL, 1);
+			brush1.SetColor(Color(255, 183, 210, 240));
+			g.FillRectangle(&brush1, 0, Line++, BackBufferL, 1);
+			brush1.SetColor(Color(255, 247, 250, 254));
+			g.FillRectangle(&brush1, 0, Line++, BackBufferL, 1);
+			LinearGradientBrush brush2(Point(0, Line-1), Point(0, rect.Height()), Color(200, 255, 255, 255), Color(0, 255, 255, 255));
+			g.FillRectangle(&brush2, 0, Line, BackBufferL, rect.Height()-Line);
 
-	brush1.SetColor(Color(255, 183, 210, 240));
-	g.FillRectangle(&brush1, 0, Line++, BackBufferL, 1);
+			l = logo->m_pBitmap->GetWidth();
+			h = logo->m_pBitmap->GetHeight();
+			g.DrawImage(logo->m_pBitmap, rect.Width()-l-8, 8, l, h);
 
-	brush1.SetColor(Color(255, 247, 250, 254));
-	g.FillRectangle(&brush1, 0, Line++, BackBufferL, 1);
+			break;
+		}
+	case LFDS_White:
+	case LFDS_UAC:
+		{
+			SolidBrush brush(Color(255, 255, 255, 255));
+			g.FillRectangle(&brush, 0, 0, BackBufferL, ++Line);
+			brush.SetColor(Color(255, 223, 223, 223));
+			g.FillRectangle(&brush, 0, Line++, BackBufferL, 1);
+			brush.SetColor(Color(255, 240, 240, 240));
+			g.FillRectangle(&brush, 0, Line, BackBufferL, rect.Height()-Line);
 
-	LinearGradientBrush brush2(Point(0, Line-1), Point(0, rect.Height()), Color(200, 255, 255, 255), Color(0, 255, 255, 255));
-	g.FillRectangle(&brush2, 0, Line, BackBufferL, rect.Height()-Line);
-
-	l = logo->m_pBitmap->GetWidth();
-	h = logo->m_pBitmap->GetHeight();
-	g.DrawImage(logo->m_pBitmap, rect.Width()-l-8, 8, l, h);
+			break;
+		}
+	}
 }
 
 HBRUSH LFDialog::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
@@ -146,10 +177,10 @@ void LFDialog::OnDestroy()
 		delete backdrop;
 	if (logo)
 		delete logo;
-	if (m_hIconL)
-		DeleteObject(m_hIconL);
-	if (m_hIconS)
-		DeleteObject(m_hIconS);
+	if (hIconL)
+		DeleteObject(hIconL);
+	if (hIconS)
+		DeleteObject(hIconS);
 
 	CDialog::OnDestroy();
 }

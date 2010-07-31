@@ -5,7 +5,7 @@
 
 
 LFWelcomeDlg::LFWelcomeDlg(CWnd* pParentWnd)
-	: LFDialog(IDD_WELCOME, pParentWnd)
+	: LFDialog(IDD_WELCOME, LFDS_Default, pParentWnd)
 {
 }
 

@@ -447,6 +447,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CUACCtrl.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\dllmain.cpp"
 				>
 				<FileConfiguration
@@ -669,6 +673,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CUACCtrl.h"
+				>
+			</File>
+			<File
 				RelativePath=".\IListViewFooter.h"
 				>
 			</File>
@@ -772,10 +780,6 @@
 			</File>
 			<File
 				RelativePath=".\res\Backdrop.png"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Delete_96.bmp"
 				>
 			</File>
 			<File

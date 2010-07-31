@@ -106,7 +106,6 @@ IDB_PRIORITY10          BITMAP                  "res\\Priority10.bmp"
 IDB_INTERNALSTORE       BITMAP                  "res\\Store_Empty_32.bmp"
 IDB_DEFAULTSTORE        BITMAP                  "res\\Store_Default_32.bmp"
 IDB_EXTERNALSTORE       BITMAP                  "res\\Store_Bag_32.bmp"
-IDB_DELETE              BITMAP                  "res\\Delete_96.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -116,9 +115,9 @@ IDB_DELETE              BITMAP                  "res\\Delete_96.bmp"
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
 IDI_READY               ICON                    "res\\Ready.ico"
-IDI_ASTERISK            ICON                    "res\\Info.ico"
-IDI_EXCLAMATION         ICON                    "res\\Warning.ico"
-IDI_ERROR               ICON                    "res\\Error.ico"
+32516                   ICON                    "res\\Info.ico"
+32515                   ICON                    "res\\Warning.ico"
+32513                   ICON                    "res\\Error.ico"
 IDI_SHIELD              ICON                    "res\\Shield.ico"
 IDD_ABOUT               ICON                    "res\\About_Small.ico"
 IDD_STORENEW            ICON                    "res\\StoreNew_Tiny.ico"
@@ -217,18 +216,17 @@ BEGIN
     LTEXT           "Store 3:",IDC_STATIC,175,152,72,8
 END
 
-IDD_STOREDELETE DIALOGEX 0, 0, 296, 108
+IDD_STOREDELETE DIALOGEX 0, 0, 277, 153
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Eingebundenen Store „%s“ löschen"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "Abbrechen",IDCANCEL,179,87,50,14,WS_GROUP
-    CONTROL         "Store &behalten",IDC_KEEP,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,82,50,62,10
-    CONTROL         "&Löschen",IDC_DELETE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,82,62,61,10
-    PUSHBUTTON      "Jetzt löschen (keine weiteren Warnungen)",IDOK,6,87,165,14,WS_DISABLED | WS_GROUP
-    CONTROL         20010,IDC_STATIC,"Static",SS_BITMAP | SS_REALSIZEIMAGE | WS_GROUP,6,7,64,59
-    LTEXT           "Soll der Store wirklich gelöscht werden?\nDa der gewählte Store zur Zeit angeschlossen ist, werden alle Dateien im Store ohne Wiederherstellungsmöglichkeit gelöscht!",IDC_STATIC,75,7,214,27
-    GROUPBOX        "Bestätigung",IDC_STATIC,74,37,74,41,WS_GROUP
+    DEFPUSHBUTTON   "Abbrechen",IDCANCEL,179,132,50,14,WS_GROUP
+    CONTROL         "Store &behalten",IDC_KEEP,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,15,85,62,10
+    CONTROL         "&Löschen",IDC_DELETE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,15,97,61,10
+    PUSHBUTTON      "Jetzt löschen (keine weiteren Warnungen)",IDOK,6,132,165,14,WS_DISABLED | WS_GROUP
+    LTEXT           "Soll der Store wirklich gelöscht werden?\n\nDa der gewählte Store zur Zeit angeschlossen ist, werden alle Dateien im Store ohne Wiederherstellungsmöglichkeit gelöscht!",IDC_STATIC,7,31,213,33
+    GROUPBOX        "Bestätigung",IDC_STATIC,7,72,74,41,WS_GROUP
 END
 
 IDD_STORENEW DIALOGEX 0, 0, 350, 252
@@ -474,9 +472,9 @@ BEGIN
     IDD_STOREDELETE, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 289
+        RIGHTMARGIN, 270
         TOPMARGIN, 7
-        BOTTOMMARGIN, 101
+        BOTTOMMARGIN, 146
     END
 
     IDD_STORENEW, DIALOG
@@ -687,18 +685,17 @@ BEGIN
     PUSHBUTTON      "Create &new store...",IDC_NEWSTORE,374,189,85,14
 END
 
-IDD_STOREDELETE DIALOGEX 0, 0, 296, 108
+IDD_STOREDELETE DIALOGEX 0, 0, 277, 153
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Delete mounted store ""%s"""
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "Cancel",IDCANCEL,179,87,50,14,WS_GROUP
-    CONTROL         "&Keep the store",IDC_KEEP,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,82,50,62,10
-    CONTROL         "&Delete",IDC_DELETE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,82,62,61,10
-    PUSHBUTTON      "Delete now (there will be no further warnings)",IDOK,6,87,165,14,WS_DISABLED | WS_GROUP
-    CONTROL         20010,IDC_STATIC,"Static",SS_BITMAP | SS_REALSIZEIMAGE | WS_GROUP,6,7,64,59
-    LTEXT           "Please confirm that you really want to delete the selected store.\nSince the store is currently mounted, you will lose all files inside that store without recovery option!",IDC_STATIC,75,7,214,27
-    GROUPBOX        "Confirmation",IDC_STATIC,74,37,74,41,WS_GROUP
+    DEFPUSHBUTTON   "Cancel",IDCANCEL,179,132,50,14,WS_GROUP
+    CONTROL         "&Keep the store",IDC_KEEP,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,15,85,62,10
+    CONTROL         "&Delete",IDC_DELETE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,15,97,61,10
+    PUSHBUTTON      "Delete now (there will be no further warnings)",IDOK,6,132,165,14,WS_DISABLED | WS_GROUP
+    LTEXT           "Please confirm that you really want to delete the selected store.\n\nSince the store is currently mounted, you will lose all files inside that store without recovery option!",IDC_STATIC,7,31,213,33
+    GROUPBOX        "Confirmation",IDC_STATIC,7,72,74,41,WS_GROUP
 END
 
 IDD_STORENEW DIALOGEX 0, 0, 316, 252
@@ -944,7 +941,6 @@ BEGIN
     IDD_STOREDELETE, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 289
         TOPMARGIN, 7
         BOTTOMMARGIN, 101
     END
@@ -1158,18 +1154,17 @@ BEGIN
     LTEXT           "Store 3:",IDC_STATIC,175,152,27,8
 END
 
-IDD_STOREDELETE DIALOGEX 0, 0, 296, 108
+IDD_STOREDELETE DIALOGEX 0, 0, 277, 153
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Eliminar store conectado ""%s"""
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "Cancelar",IDCANCEL,179,87,50,14,WS_GROUP
-    CONTROL         "&Conservar store",IDC_KEEP,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,82,50,62,10
-    CONTROL         "&Eliminar",IDC_DELETE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,82,62,61,10
-    PUSHBUTTON      "Eliminar ahora (no habrá más avisos)",IDOK,6,87,165,14,WS_DISABLED | WS_GROUP
-    CONTROL         20010,IDC_STATIC,"Static",SS_BITMAP | SS_REALSIZEIMAGE | WS_GROUP,6,7,64,59
-    LTEXT           "Confirme si realmente desea eliminar el store seleccionado.\nDado que el store está actualmente conectado, perderá todos los archivos dentro de ese store sin opción a recuperarlos!",IDC_STATIC,75,7,214,27
-    GROUPBOX        "Confirmación",IDC_STATIC,74,37,74,41,WS_GROUP
+    DEFPUSHBUTTON   "Cancelar",IDCANCEL,179,132,50,14,WS_GROUP
+    CONTROL         "&Conservar store",IDC_KEEP,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,15,85,62,10
+    CONTROL         "&Eliminar",IDC_DELETE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,15,97,61,10
+    PUSHBUTTON      "Eliminar ahora (no habrá más avisos)",IDOK,6,132,165,14,WS_DISABLED | WS_GROUP
+    LTEXT           "Confirme si realmente desea eliminar el store seleccionado.\n\nDado que el store está actualmente conectado, perderá todos los archivos dentro de ese store sin opción a recuperarlos!",IDC_STATIC,7,31,206,33
+    GROUPBOX        "Confirmación",IDC_STATIC,7,72,74,41,WS_GROUP
 END
 
 IDD_STORENEW DIALOGEX 0, 0, 387, 252
@@ -1399,9 +1394,9 @@ BEGIN
     IDD_STOREDELETE, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 289
+        RIGHTMARGIN, 270
         TOPMARGIN, 7
-        BOTTOMMARGIN, 101
+        BOTTOMMARGIN, 146
     END
 
     IDD_STORENEW, DIALOG
@@ -1606,18 +1601,17 @@ BEGIN
     LTEXT           "Store 3:",IDC_STATIC,175,152,27,8
 END
 
-IDD_STOREDELETE DIALOGEX 0, 0, 326, 108
+IDD_STOREDELETE DIALOGEX 0, 0, 293, 154
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Effacez le store monté sur ""%s"""
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "Annuler",IDCANCEL,224,87,50,14,WS_GROUP
-    CONTROL         "&Gardez le store",IDC_KEEP,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,82,50,62,10
-    CONTROL         "&Effacez",IDC_DELETE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,82,62,61,10
-    PUSHBUTTON      "Effacez maintenant (il n'y aura aucun avertissement de plus)",IDOK,6,87,210,14,WS_DISABLED | WS_GROUP
-    CONTROL         20010,IDC_STATIC,"Static",SS_BITMAP | SS_REALSIZEIMAGE | WS_GROUP,6,7,64,59
-    LTEXT           "Confirmez s'il vous plaît que vous voulez vraiment effacer le store choisi.\nComme le store est actuellement monté, vous perdrez tous les fichiers à l'intérieur de ce store sans option de récupération!",IDC_STATIC,75,7,244,27
-    GROUPBOX        "Confirmation",IDC_STATIC,74,37,74,41,WS_GROUP
+    DEFPUSHBUTTON   "Annuler",IDCANCEL,224,133,50,14,WS_GROUP
+    CONTROL         "&Gardez le store",IDC_KEEP,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,15,85,62,10
+    CONTROL         "&Effacez",IDC_DELETE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,15,97,61,10
+    PUSHBUTTON      "Effacez maintenant (il n'y aura aucun avertissement de plus)",IDOK,6,133,210,14,WS_DISABLED | WS_GROUP
+    LTEXT           "Confirmez s'il vous plaît que vous voulez vraiment effacer le store choisi.\n\nComme le store est actuellement monté, vous perdrez tous les fichiers à l'intérieur de ce store sans option de récupération!",IDC_STATIC,7,31,242,33
+    GROUPBOX        "Confirmation",IDC_STATIC,7,72,74,41,WS_GROUP
 END
 
 IDD_STORENEW DIALOGEX 0, 0, 347, 252
@@ -1847,9 +1841,10 @@ BEGIN
     IDD_STOREDELETE, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 319
+        RIGHTMARGIN, 286
+        RIGHTMARGIN, 277
         TOPMARGIN, 7
-        BOTTOMMARGIN, 101
+        BOTTOMMARGIN, 147
     END
 
     IDD_STORENEW, DIALOG
