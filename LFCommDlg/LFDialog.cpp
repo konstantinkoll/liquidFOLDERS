@@ -91,6 +91,13 @@ void LFDialog::OnEraseBkgnd(CDC& /*dc*/, Graphics& g, CRect& rect)
 {
 	int l = backdrop->m_pBitmap->GetWidth();
 	int h = backdrop->m_pBitmap->GetHeight();
+	if ((l>rect.Width()) || (h>rect.Height()))
+	{
+		double f = max((double)rect.Width()/l, (double)rect.Height()/h);
+		l = (int)(l*f);
+		h = (int)(h*f);
+	}
+
 	g.DrawImage(backdrop->m_pBitmap, rect.Width()-l, rect.Height()-h, l, h);
 
 	CRect btn;
