@@ -1107,14 +1107,6 @@ void CGlobeView::DrawScene(BOOL InternalCall)
 	glLoadIdentity();
 	gluLookAt(DISTANCE, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0);
 
-	glRotatef(m_AngleY, 0.0f, 1.0f, 0.0f);
-	glRotatef(m_AngleZ, 0.0f, 0.0f, 1.0f);
-	glScalef(m_Scale, m_Scale, m_Scale);
-
-	glEnable(GL_FOG);
-	glFogf(GL_FOG_START, DISTANCE-m_FogStart);
-	glFogf(GL_FOG_END, DISTANCE-m_FogEnd);
-
 	if (theApp.m_GlobeLighting)
 	{
 		GLfloat lAmbient[] = { 0.9f, 0.9f, 0.9f, 1.0f };
@@ -1125,9 +1117,9 @@ void CGlobeView::DrawScene(BOOL InternalCall)
 		glLightfv(GL_LIGHT0, GL_SPECULAR, lSpecular);
 
 		GLfloat LightPosition[3];
-		LightPosition[0] = (GLfloat)(100.0*cos(PI*m_AngleZ/180.0));
-		LightPosition[1] = (GLfloat)(100.0*(-sin(PI*m_AngleZ/180.0)*cos(PI*m_AngleY/180.0)));
-		LightPosition[2] = (GLfloat)(100.0*sin(PI*m_AngleY/180.0));
+		LightPosition[0] = 100.0f;
+		LightPosition[1] = 0.0f;
+		LightPosition[2] = 0.0f;
 		glLightfv(GL_LIGHT0, GL_POSITION, LightPosition);
 
 		glEnable(GL_LIGHT0);
@@ -1136,6 +1128,14 @@ void CGlobeView::DrawScene(BOOL InternalCall)
 
 		glLightModelfv(GL_LIGHT_MODEL_AMBIENT, lAmbient);
 	}
+
+	glRotatef(m_AngleY, 0.0f, 1.0f, 0.0f);
+	glRotatef(m_AngleZ, 0.0f, 0.0f, 1.0f);
+	glScalef(m_Scale, m_Scale, m_Scale);
+
+	glEnable(GL_FOG);
+	glFogf(GL_FOG_START, DISTANCE-m_FogStart);
+	glFogf(GL_FOG_END, DISTANCE-m_FogEnd);
 
 	if (m_TextureGlobe)
 	{
