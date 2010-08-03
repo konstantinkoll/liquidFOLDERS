@@ -353,8 +353,8 @@ void CStoreManagerApp::LoadViewOptions(int context)
 	m_Views[context].SortBy = GetInt(_T("SortBy"), LFAttrFileName);
 	m_Views[context].Descending = GetInt(_T("Descending"), FALSE);
 	m_Views[context].AutoDirs = GetInt(_T("AutoDirs"), TRUE);
-	m_Views[context].GlobeAngleY = GetInt(_T("GlobeAngleY"), 1);
-	m_Views[context].GlobeAngleZ = GetInt(_T("GlobeAngleZ"), 1);
+	m_Views[context].GlobeLatitude = GetInt(_T("GlobeLatitude"), 1);
+	m_Views[context].GlobeLongitude = GetInt(_T("GlobeLongitude"), 1);
 	m_Views[context].GlobeZoom = GetInt(_T("GlobeZoom"), 70);
 	m_Views[context].GlobeShowBubbles = GetInt(_T("GlobeShowBubbles"), TRUE);
 	m_Views[context].GlobeShowAirportNames = GetInt(_T("GlobeShowAirportNames"), TRUE);
@@ -409,8 +409,8 @@ void CStoreManagerApp::SaveViewOptions(int context, UINT SaveMode)
 		WriteInt(_T("SortBy"), m_Views[context].SortBy);
 		WriteInt(_T("Descending"), m_Views[context].Descending);
 		WriteInt(_T("AutoDirs"), m_Views[context].AutoDirs);
-		WriteInt(_T("GlobeAngleY"), m_Views[context].GlobeAngleY);
-		WriteInt(_T("GlobeAngleZ"), m_Views[context].GlobeAngleZ);
+		WriteInt(_T("GlobeLatitude"), m_Views[context].GlobeLatitude);
+		WriteInt(_T("GlobeLongitude"), m_Views[context].GlobeLongitude);
 		WriteInt(_T("GlobeZoom"), m_Views[context].GlobeZoom);
 		WriteInt(_T("GlobeShowBubbles"), m_Views[context].GlobeShowBubbles);
 		WriteInt(_T("GlobeShowAirportNames"), m_Views[context].GlobeShowAirportNames);

@@ -59,7 +59,10 @@ BOOL CmdProperties::Invoke(CPtrList* nseItems)
 
 CString CmdProperties::GetIcon(CPtrList* /*nseItems*/)
 {
-	return _T("LFNamespaceExtension.dll,0");
+	CString tmpStr(theApp.m_ThisFile);
+	tmpStr.Append(_T(",0"));
+
+	return tmpStr;
 }
 
 
@@ -99,7 +102,10 @@ BOOL CmdCreateNewStore::Invoke(CPtrList* /*nseItems*/)
 
 CString CmdCreateNewStore::GetIcon(CPtrList* /*nseItems*/)
 {
-	return _T("LFNamespaceExtension.dll,1");
+	CString tmpStr(theApp.m_ThisFile);
+	tmpStr.Append(_T(",1"));
+
+	return tmpStr;
 }
 
 
@@ -139,7 +145,10 @@ BOOL CmdStoreManager::Invoke(CPtrList* /*nseItems*/)
 
 CString CmdStoreManager::GetIcon(CPtrList* /*nseItems*/)
 {
-	return _T("LFNamespaceExtension.dll,2");
+	CString tmpStr(theApp.m_ThisFile);
+	tmpStr.Append(_T(",2"));
+
+	return tmpStr;
 }
 
 
@@ -179,5 +188,8 @@ BOOL CmdMigrate::Invoke(CPtrList* /*nseItems*/)
 
 CString CmdMigrate::GetIcon(CPtrList* /*nseItems*/)
 {
-	return _T("LFNamespaceExtension.dll,3");
+	CString tmpStr(theApp.m_ThisFile);
+	tmpStr.Append(_T(",3"));
+
+	return tmpStr;
 }

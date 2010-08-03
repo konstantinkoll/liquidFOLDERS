@@ -2,6 +2,10 @@
 #include "..\\include\\LFCore.h"
 #include "LFItemDescriptor.h"
 #include "IATA.h"
+#include <assert.h>
+
+
+extern unsigned char AttrTypes[];
 
 
 // Der Inhalt dieses Segments wird über alle Instanzen von LFCore geteilt.
@@ -66,6 +70,11 @@ LFCore_API int LFIATAGetNextAirportByCountry(unsigned int CountryID, int last, L
 
 LFCore_API bool LFIATAGetAirportByCode(char* Code, LFAirport** pBuffer)
 {
+	if (!Code)
+		return false;
+	if (*Code=='\0')
+		return false;
+
 	int first = 0;
 	int last = (int)LFIATAGetAirportCount()-1;
 
@@ -89,6 +98,31 @@ LFCore_API bool LFIATAGetAirportByCode(char* Code, LFAirport** pBuffer)
 	}
 
 	return false;
+}
+
+LFCore_API bool LFGetItemCoordinates(LFItemDescriptor* i, unsigned int PreferredAttr, LFGeoCoordinates* coord)
+{
+	assert(AttrTypes[LFAttrLocationIATA]==LFTypeAnsiString);
+
+	bool res = false;
+
+	if ((AttrTypes[PreferredAttr]==LFTypeGeoCoordinates) && (i->AttributeValues[PreferredAttr]))
+	{
+		*coord = *((LFGeoCoordinates*)i->AttributeValues[PreferredAttr]);
+		res = (coord->Latitude!=0.0) || (coord->Longitude!=0.0);
+	}
+
+	if ((!res) && (PreferredAttr==LFAttrLocationGPS))
+	{
+		LFAirport* airport;
+		if (LFIATAGetAirportByCode((char*)i->AttributeValues[LFAttrLocationIATA], &airport))
+		{
+			*coord = airport->Location;
+			res = true;
+		}
+	}
+
+	return res;
 }
 
 void CustomizeFolderForAirport(LFItemDescriptor* i, LFAirport* airport)

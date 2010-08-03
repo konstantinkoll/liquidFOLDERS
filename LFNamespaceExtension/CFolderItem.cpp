@@ -76,14 +76,24 @@ void CFolderItem::GetCLSID(LPCLSID pCLSID)
 void CFolderItem::GetExtensionTargetInfo(CExtensionTargetInfo& info)
 {
 	CNSETargetInfo* nti = new CNSETargetInfo();
-
 	nti->nseTarget = NSET_MyComputer;
 	nti->name = _T("liquidFOLDERS");
-	nti->infoTip.LoadString(IDS_MyComputerHint);
+	nti->infoTip.LoadString(IDS_InfoTip);
 	nti->attributes = (NSEItemAttributes)(NSEIA_CFOLDERITEM | NSEIA_HasSubFolder);
-	nti->iconFile = theApp.m_IconFile;
+	nti->iconFile = theApp.m_CoreFile;
 	nti->iconIndex = IDI_FLD_Default-1;
+	nti->AddRootNodeProperty(_T("SortOrderIndex"), (UINT)64);
+	nti->AddRootNodeProperty(_T("System.PropList.DetailsPaneNullSelect"), _T("prop:"));
+	nti->AddRootNodeProperty(_T("System.PropList.DetailsPaneNullSelectTitle"), _T("prop:~System.ItemNameDisplay;~System.ItemTypeText"));
+	info.AddTarget(nti);
 
+	nti = new CNSETargetInfo();
+	nti->nseTarget = NSET_Desktop;
+	nti->name = _T("liquidFOLDERS");
+	nti->infoTip.LoadString(IDS_InfoTip);
+	nti->attributes = (NSEItemAttributes)(NSEIA_CFOLDERITEM | NSEIA_HasSubFolder);
+	nti->iconFile = theApp.m_CoreFile;
+	nti->iconIndex = IDI_FLD_Default-1;
 	info.AddTarget(nti);
 }
 
@@ -401,7 +411,7 @@ CNSEItem* CFolderItem::GetChildFromDisplayName(CGetChildFromDisplayNameEventArgs
 void CFolderItem::GetIconFileAndIndex(CGetIconFileAndIndexEventArgs& e)
 {
 	e.iconExtractMode = NSEIEM_IconFileAndIndex;
-	e.iconFile = theApp.m_IconFile;
+	e.iconFile = theApp.m_CoreFile;
 	e.iconIndex = data.Icon-1;
 }
 
@@ -714,7 +724,7 @@ void CFolderItem::GetMenuItems(CGetMenuitemsEventArgs& e)
 
 		ENSURE(tmpStr.LoadString(IDS_MENU_Open));
 		ENSURE(tmpHint.LoadString(IDS_HINT_Open));
-		e.menu->InsertItem(tmpStr, _T(VERB_OPEN), tmpHint, 0)->SetDefaultItem(TRUE);
+		e.menu->InsertItem(tmpStr, _T(VERB_OPEN), tmpHint, 0)->SetDefaultItem(!(e.flags & NSEQCF_NoDefault));
 	}
 
 	e.menu->AddItem(_T(""))->SetSeparator(TRUE);
@@ -731,6 +741,8 @@ void CFolderItem::GetMenuItems(CGetMenuitemsEventArgs& e)
 
 		if (e.children->GetCount()==1)
 		{
+			e.menu->InsertItem(_T(""), 1)->SetSeparator(TRUE);
+
 			CFolderItem* f = (CFolderItem*)e.children->GetHead();
 
 			ENSURE(tmpStr.LoadString(IDS_MENU_MakeDefaultStore));
@@ -742,7 +754,7 @@ void CFolderItem::GetMenuItems(CGetMenuitemsEventArgs& e)
 			e.menu->InsertItem(tmpStr, _T(VERB_MAKEHYBRIDSTORE), tmpHint, 3)->SetEnabled((f->data.Type & LFTypeStore) && (f->data.CategoryID==LFStoreModeExternal));
 		}
 
-		if ((e.menu->GetItemCount()<=4) && (e.children->GetCount()>=1))
+		if ((!(e.flags & NSEQCF_NoDefault)) && (e.children->GetCount()>=1))
 		{
 			e.menu->AddItem(_T(""))->SetSeparator(TRUE);
 
@@ -756,9 +768,12 @@ void CFolderItem::GetMenuItems(CGetMenuitemsEventArgs& e)
 
 			if (e.children->GetCount()==1)
 			{
-				ENSURE(tmpStr.LoadString(IDS_MENU_Rename));
-				ENSURE(tmpHint.LoadString(IDS_HINT_Rename));
-				e.menu->AddItem(tmpStr, _T(VERB_RENAME), tmpHint);
+				if (e.flags & NSEQCF_CanRename)
+				{
+					ENSURE(tmpStr.LoadString(IDS_MENU_Rename));
+					ENSURE(tmpHint.LoadString(IDS_HINT_Rename));
+					e.menu->AddItem(tmpStr, _T(VERB_RENAME), tmpHint);
+				}
 
 				e.menu->AddItem(_T(""))->SetSeparator(TRUE);
 
@@ -771,7 +786,7 @@ void CFolderItem::GetMenuItems(CGetMenuitemsEventArgs& e)
 	case LevelStores:
 	case LevelStoreHome:
 	case LevelAttribute:
-		if ((e.menu->GetItemCount()<=4) && (e.children->GetCount()>=1))
+		if ((!(e.flags & NSEQCF_NoDefault)) && (e.children->GetCount()>=1))
 		{
 			e.menu->AddItem(_T(""))->SetSeparator(TRUE);
 
@@ -1218,7 +1233,7 @@ void CFolderItem::OnCreateShortcut(CNSEItem* Item, const CString& LinkFilename, 
 			Icon = IDI_STORE_Empty;
 
 		psl->SetIDList(Item->GetPIDLAbsolute());
-		psl->SetIconLocation(theApp.m_IconFile, Icon-1);
+		psl->SetIconLocation(theApp.m_CoreFile, Icon-1);
 		psl->SetDescription((LPCSTR)Description);
 
 		// Query IShellLink for the IPersistFile interface for saving the 

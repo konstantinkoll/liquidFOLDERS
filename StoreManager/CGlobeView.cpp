@@ -97,8 +97,8 @@ CGlobeView::CGlobeView()
 	m_Height = 0;
 	m_GlobeList[FALSE] = -1;
 	m_GlobeList[TRUE] = -1;
-	m_AngleY = 0.0f;
-	m_AngleZ = 0.0f;
+	m_Latitude = 0.0f;
+	m_Longitude = 0.0f;
 	m_Zoom = -1.0f;
 	m_Scale = 0.7f;
 	m_Radius = 0.0f;
@@ -106,8 +106,8 @@ CGlobeView::CGlobeView()
 	m_Locations = NULL;
 	m_CameraChanged = FALSE;
 	lpszCursorName = NULL;
-	mPoint.x = 0;
-	mPoint.y = 0;
+	m_CursorPos.x = 0;
+	m_CursorPos.y = 0;
 	m_nTexture = -1;
 	ENSURE(YouLookAt.LoadString(IDS_YOULOOKAT));
 	m_LockUpdate = FALSE;
@@ -135,8 +135,8 @@ void CGlobeView::SetViewOptions(UINT /*_ViewID*/, BOOL Force)
 {
 	if (Force)
 	{
-		m_LocalSettings.AngleY = pViewParameters->GlobeAngleY/1000.0f;
-		m_LocalSettings.AngleZ = pViewParameters->GlobeAngleZ/1000.0f;
+		m_LocalSettings.Latitude = pViewParameters->GlobeLatitude/1000.0f;
+		m_LocalSettings.Longitude = pViewParameters->GlobeLongitude/1000.0f;
 		m_LocalSettings.GlobeZoom = pViewParameters->GlobeZoom;
 	}
 
@@ -166,6 +166,7 @@ void CGlobeView::SetSearchResult(LFSearchResult* _result)
 		if (_result->m_ItemCount)
 		{
 			m_Locations = new Location[_result->m_ItemCount];
+			int FirstItem = -1;
 
 			// Compute locations
 			for (UINT a=0; a<_result->m_ItemCount; a++)
@@ -174,24 +175,15 @@ void CGlobeView::SetSearchResult(LFSearchResult* _result)
 				if (a<VictimCount)
 					m_Locations[a].selected = Victim[a].selected;
 
-				LFGeoCoordinates coord = { 0, 0 };
-				if ((theApp.m_Attributes[m_ViewParameters.SortBy]->Type==LFTypeGeoCoordinates) && (_result->m_Items[a]->AttributeValues[m_ViewParameters.SortBy]))
-					coord = *((LFGeoCoordinates*)_result->m_Items[a]->AttributeValues[m_ViewParameters.SortBy]);
-
-				if ((coord.Latitude==0) && (coord.Longitude==0))
-					if (_result->m_Items[a]->AttributeValues[LFAttrLocationIATA])
-					{
-						LFAirport* airport;
-						if (LFIATAGetAirportByCode((char*)_result->m_Items[a]->AttributeValues[LFAttrLocationIATA], &airport))
-							coord = airport->Location;
-					}
-
-				if ((coord.Latitude!=0) || (coord.Longitude!=0))
+				LFGeoCoordinates coord;
+				if (LFGetItemCoordinates(_result->m_Items[a], m_ViewParameters.SortBy, &coord))
 				{
 					CalculateWorldCoords(coord.Latitude, coord.Longitude, m_Locations[a].world);
 					LFGeoCoordinatesToString(coord, m_Locations[a].coordstring, 32, false);
+
 					m_Locations[a].valid = TRUE;
-					m_Locations[a].selected = FALSE;
+					if (FirstItem==-1)
+						FirstItem = a;
 				}
 			}
 
@@ -204,12 +196,7 @@ void CGlobeView::SetSearchResult(LFSearchResult* _result)
 						break;
 					}
 			if (!m_Locations[FocusItem].valid)
-				for (UINT a=0; a<_result->m_ItemCount; a++)
-					if (m_Locations[a].valid)
-					{
-						FocusItem = a;
-						break;
-					}
+				FocusItem = FirstItem;
 		}
 
 	if (Victim)
@@ -222,12 +209,11 @@ void CGlobeView::SelectItem(int n, BOOL select, BOOL InternalCall)
 {
 	if (m_Locations)
 	{
-		if (m_Locations[n].valid)
-			m_Locations[n].selected = select;
+		m_Locations[n].selected = select;
 
 		if (!InternalCall)
 		{
-			UpdateScene(TRUE);
+			DrawScene(TRUE);
 			GetParentFrame()->SendMessage(WM_COMMAND, ID_APP_UPDATESELECTION);
 		}
 	}
@@ -334,32 +320,29 @@ BEGIN_MESSAGE_MAP(CGlobeView, CFileView)
 	ON_WM_SYSCOLORCHANGE()
 END_MESSAGE_MAP()
 
-void CGlobeView::DisplayCursor(LPCTSTR _lpszCursorName)
-{
-	if (_lpszCursorName!=lpszCursorName)
-	{
-		hCursor = theApp.LoadStandardCursor(_lpszCursorName);
-		lpszCursorName = _lpszCursorName;
-	}
-}
-
 void CGlobeView::UpdateCursor()
 {
 	LPCTSTR csr;
-	if (ItemAtPosition(mPoint)==-1)
+	if (m_Grabbed)
 	{
-		csr = (CursorOnGlobe(mPoint) ? IDC_HAND : IDC_ARROW);
+		csr = IDC_HAND;
 	}
 	else
 	{
 		csr = IDC_ARROW;
+
+		if (CursorOnGlobe(m_CursorPos))
+			if (ItemAtPosition(m_CursorPos)==-1)
+				csr = IDC_HAND;
 	}
 
 	if (csr!=lpszCursorName)
 	{
-		DisplayCursor(csr);
-		SetCursor(hCursor);
+		hCursor = theApp.LoadStandardCursor(csr);
+		lpszCursorName = csr;
 	}
+
+	SetCursor(hCursor);
 }
 
 int CGlobeView::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -433,8 +416,8 @@ void CGlobeView::OnScaleToFit()
 
 void CGlobeView::OnSaveCamera()
 {
-	pViewParameters->GlobeAngleY = (int)(m_LocalSettings.AngleY*1000.0f);
-	pViewParameters->GlobeAngleZ = (int)(m_LocalSettings.AngleZ*1000.0f);
+	pViewParameters->GlobeLatitude = (int)(m_LocalSettings.Latitude*1000.0f);
+	pViewParameters->GlobeLongitude = (int)(m_LocalSettings.Longitude*1000.0f);
 	pViewParameters->GlobeZoom = m_LocalSettings.GlobeZoom;
 	OnViewOptionsChanged(TRUE);
 	m_CameraChanged = FALSE;
@@ -447,8 +430,8 @@ void CGlobeView::OnJumpToLocation()
 	if (dlg.DoModal()==IDOK)
 	{
 		ASSERT(dlg.m_Airport);
-		m_LocalSettings.AngleY = (GLfloat)-dlg.m_Airport->Location.Latitude;
-		m_LocalSettings.AngleZ = (GLfloat)-dlg.m_Airport->Location.Longitude;
+		m_LocalSettings.Latitude = (GLfloat)-dlg.m_Airport->Location.Latitude;
+		m_LocalSettings.Longitude = (GLfloat)-dlg.m_Airport->Location.Longitude;
 		m_CameraChanged = TRUE;
 		UpdateScene();
 	}
@@ -638,7 +621,7 @@ void CGlobeView::OnLButtonDown(UINT nFlags, CPoint point)
 			m_GrabPoint = point;
 			m_Grabbed = TRUE;
 			SetCapture();
-			DisplayCursor(IDC_HAND);
+			UpdateCursor();
 		}
 	}
 	else
@@ -663,14 +646,14 @@ void CGlobeView::OnLButtonUp(UINT nFlags, CPoint point)
 
 void CGlobeView::OnMouseMove(UINT nFlags, CPoint point)
 {
-	mPoint = point;
+	m_CursorPos = point;
 
 	if (m_Grabbed)
 	{
 		CSize rotate = m_GrabPoint - point;
 		m_GrabPoint = point;
-		m_LocalSettings.AngleZ = m_AngleZ -= rotate.cx/m_Scale*0.12f;
-		m_LocalSettings.AngleY = m_AngleY -= rotate.cy/m_Scale*0.12f;
+		m_LocalSettings.Longitude = m_Longitude -= rotate.cx/m_Scale*0.12f;
+		m_LocalSettings.Latitude = m_Latitude -= rotate.cy/m_Scale*0.12f;
 		m_CameraChanged = TRUE;
 
 		UpdateScene(TRUE);
@@ -718,7 +701,6 @@ void CGlobeView::OnSize(UINT nType, int cx, int cy)
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
 		gluPerspective(3.0f, (GLdouble)cx/cy, 0.1f, 500.0f);
-		glMatrixMode(GL_MODELVIEW);
 	}
 }
 
@@ -1013,48 +995,48 @@ BOOL CGlobeView::UpdateScene(BOOL Redraw)
 	}
 
 	// Nicht über die Pole rollen
-	if (m_LocalSettings.AngleY<-75.0f)
-		m_LocalSettings.AngleY = -75.0f;
-	if (m_LocalSettings.AngleY>75.0f)
-		m_LocalSettings.AngleY = 75.0f;
+	if (m_LocalSettings.Latitude<-75.0f)
+		m_LocalSettings.Latitude = -75.0f;
+	if (m_LocalSettings.Latitude>75.0f)
+		m_LocalSettings.Latitude = 75.0f;
 
 	// Rotation normieren
-	if (m_LocalSettings.AngleZ<0.0f)
-		m_LocalSettings.AngleZ += 360.0f;
-	if (m_LocalSettings.AngleZ>360.0f)
-		m_LocalSettings.AngleZ -= 360.0f;
+	if (m_LocalSettings.Longitude<0.0f)
+		m_LocalSettings.Longitude += 360.0f;
+	if (m_LocalSettings.Longitude>360.0f)
+		m_LocalSettings.Longitude -= 360.0f;
 
-	if ((m_AngleY==0.0f) && (m_AngleZ==0.0f))
+	if ((m_Latitude==0.0f) && (m_Longitude==0.0f))
 	{
-		res |= (m_AngleY!=m_LocalSettings.AngleY) || (m_AngleZ!=m_LocalSettings.AngleZ);
-		m_AngleY = m_LocalSettings.AngleY;
-		m_AngleZ = m_LocalSettings.AngleZ;
+		res |= (m_Latitude!=m_LocalSettings.Latitude) || (m_Longitude!=m_LocalSettings.Longitude);
+		m_Latitude = m_LocalSettings.Latitude;
+		m_Longitude = m_LocalSettings.Longitude;
 	}
 	else
 	{
 		// Nicht über die Pole rollen
-		if (m_AngleY<-75.0f)
-			m_AngleY = -75.0f;
-		if (m_AngleY>75.0f)
-			m_AngleY = 75.0f;
+		if (m_Latitude<-75.0f)
+			m_Latitude = -75.0f;
+		if (m_Latitude>75.0f)
+			m_Latitude = 75.0f;
 
 		// Rotation normieren
-		if (m_AngleZ-m_LocalSettings.AngleZ<-180.0f)
-			m_AngleZ += 360.0f;
-		if (m_AngleZ-m_LocalSettings.AngleZ>180.0f)
-			m_AngleZ -= 360.0f;
+		if (m_Longitude-m_LocalSettings.Longitude<-180.0f)
+			m_Longitude += 360.0f;
+		if (m_Longitude-m_LocalSettings.Longitude>180.0f)
+			m_Longitude -= 360.0f;
 
-		if ((abs(m_AngleY-m_LocalSettings.AngleY)>0.1f) || (abs(m_AngleZ-m_LocalSettings.AngleZ)>0.1f))
+		if ((abs(m_Latitude-m_LocalSettings.Latitude)>0.1f) || (abs(m_Longitude-m_LocalSettings.Longitude)>0.1f))
 		{
 			res = TRUE;
-			m_AngleY = (m_AngleY*29+m_LocalSettings.AngleY)/30;
-			m_AngleZ = (m_AngleZ*29+m_LocalSettings.AngleZ)/30;
+			m_Latitude = (m_Latitude*29+m_LocalSettings.Latitude)/30;
+			m_Longitude = (m_Longitude*29+m_LocalSettings.Longitude)/30;
 		}
 		else
 		{
-			res |= (m_AngleY!=m_LocalSettings.AngleY) || (m_AngleZ!=m_LocalSettings.AngleZ);
-			m_AngleY = m_LocalSettings.AngleY;
-			m_AngleZ = m_LocalSettings.AngleZ;
+			res |= (m_Latitude!=m_LocalSettings.Latitude) || (m_Longitude!=m_LocalSettings.Longitude);
+			m_Latitude = m_LocalSettings.Latitude;
+			m_Longitude = m_LocalSettings.Longitude;
 		}
 	}
 
@@ -1129,8 +1111,8 @@ void CGlobeView::DrawScene(BOOL InternalCall)
 		glLightModelfv(GL_LIGHT_MODEL_AMBIENT, lAmbient);
 	}
 
-	glRotatef(m_AngleY, 0.0f, 1.0f, 0.0f);
-	glRotatef(m_AngleZ, 0.0f, 0.0f, 1.0f);
+	glRotatef(m_Latitude, 0.0f, 1.0f, 0.0f);
+	glRotatef(m_Longitude, 0.0f, 0.0f, 1.0f);
 	glScalef(m_Scale, m_Scale, m_Scale);
 
 	glEnable(GL_FOG);
@@ -1191,8 +1173,8 @@ void CGlobeView::DrawScene(BOOL InternalCall)
 			{
 				wchar_t Coord[256];
 				LFGeoCoordinates c;
-				c.Latitude = -m_AngleY;
-				c.Longitude = (m_AngleZ>180.0) ? 360-m_AngleZ : -m_AngleZ;
+				c.Latitude = -m_Latitude;
+				c.Longitude = (m_Longitude>180.0) ? 360-m_Longitude : -m_Longitude;
 				LFGeoCoordinatesToString(c, Coord, 256, true);
 
 				swprintf(Viewpoint, 256, YouLookAt, Coord);
@@ -1438,20 +1420,19 @@ void CGlobeView::DrawLabel(Location* loc, UINT cCaption, wchar_t* caption, wchar
 
 	// Innen
 	glRecti(x, y, x+width, y+height);
-	if (focused)
-		if (this==GetFocus())
-		{
-			glColor4f(1.0f-BaseColor[0], 1.0f-BaseColor[1], 1.0f-BaseColor[2], loc->alpha);
-			glEnable(GL_LINE_STIPPLE);
-			glLineStipple(1, 0xAAAA);
-			glBegin(GL_LINE_LOOP);
-			glVertex2i(x, y);
-			glVertex2i(x+width-1, y);
-			glVertex2i(x+width-1, y+height-1);
-			glVertex2i(x, y+height-1);
-			glEnd();
-			glDisable(GL_LINE_STIPPLE);
-		}
+	if ((focused) && (GetFocus()==this))
+	{
+		glColor4f(1.0f-BaseColor[0], 1.0f-BaseColor[1], 1.0f-BaseColor[2], loc->alpha);
+		glEnable(GL_LINE_STIPPLE);
+		glLineStipple(1, 0xAAAA);
+		glBegin(GL_LINE_LOOP);
+		glVertex2i(x, y);
+		glVertex2i(x+width-1, y);
+		glVertex2i(x+width-1, y+height-1);
+		glVertex2i(x, y+height-1);
+		glEnd();
+		glDisable(GL_LINE_STIPPLE);
+	}
 
 	x += 3;
 

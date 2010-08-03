@@ -198,7 +198,7 @@ void ToString(void* value, unsigned int type, wchar_t* str, size_t cCount)
 			wcscpy_s(str, cCount, FlagString);
 			return;
 		case LFTypeGeoCoordinates:
-			LFGeoCoordinatesToString(*((LFGeoCoordinates*)value), str, cCount, true);
+			LFGeoCoordinatesToString(*((LFGeoCoordinates*)value), str, cCount, false);
 			return;
 		case LFTypeTime:
 			LFTimeToString(*((FILETIME*)value), str, cCount, 3);

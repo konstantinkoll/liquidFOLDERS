@@ -26,8 +26,8 @@ struct Location
 
 struct LocalSettings
 {
-	GLfloat AngleY;
-	GLfloat AngleZ;
+	GLfloat Latitude;
+	GLfloat Longitude;
 	int GlobeZoom;
 };
 
@@ -58,8 +58,8 @@ protected:
 	int m_Width;
 	int m_Height;
 	GLint m_GlobeList[2];
-	GLfloat m_AngleY;
-	GLfloat m_AngleZ;
+	GLfloat m_Latitude;
+	GLfloat m_Longitude;
 	GLfloat m_Zoom;
 	GLfloat m_Scale;
 	GLfloat m_Radius;
@@ -125,10 +125,9 @@ protected:
 
 private:
 	LPCTSTR lpszCursorName;
-	CPoint mPoint;
+	CPoint m_CursorPos;
 	int m_nTexture;
 
 	BOOL CursorOnGlobe(CPoint point);
-	void DisplayCursor(LPCTSTR lpszCursorName);
 	void UpdateCursor();
 };

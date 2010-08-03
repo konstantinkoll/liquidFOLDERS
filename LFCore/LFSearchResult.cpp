@@ -318,10 +318,8 @@ int LFSearchResult::Compare(int eins, int zwei, unsigned int attr, bool descendi
 	bool d1null = IsNullValue(Sort, d1->AttributeValues[Sort]);
 	bool d2null = IsNullValue(Sort, d2->AttributeValues[Sort]);
 
-	if ((d1null) && (!d2null))
-		return 1;
-	if ((!d1null) && (d2null))
-		return -1;
+	if (d1null!=d2null)
+		return (int)d1null-(int)d2null;
 
 	// Gewünschtes Attribut vergleichen
 	int cmp = 0;

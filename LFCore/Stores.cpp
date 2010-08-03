@@ -308,11 +308,16 @@ void SendStoreNotifyMessage(unsigned int Msg, unsigned int Flags, HWND hWndSourc
 	if (pDesktopPtr)
 	{
 		LPITEMIDLIST pidlLocal;
+
+		hrRes = pDesktopPtr->ParseDisplayName(NULL, NULL,
+			L"::{3F2D914F-FE57-414F-9F88-A377C7841DA4}",
+			NULL, &pidlLocal, NULL);
+		SHChangeNotify(SHCNE_UPDATEDIR, SHCNF_FLUSHNOWAIT | SHCNF_IDLIST, pidlLocal, NULL);
+
 		hrRes = pDesktopPtr->ParseDisplayName(NULL, NULL,
 			L"::{20D04FE0-3AEA-1069-A2D8-08002B30309D}\\::{3F2D914F-FE57-414F-9F88-A377C7841DA4}",
 			NULL, &pidlLocal, NULL);
-
-		SHChangeNotify(SHCNE_UPDATEITEM, SHCNF_FLUSHNOWAIT | SHCNF_IDLIST, pidlLocal, NULL);
+		SHChangeNotify(SHCNE_UPDATEDIR, SHCNF_FLUSHNOWAIT | SHCNF_IDLIST, pidlLocal, NULL);
 	}
 }
 

@@ -20,7 +20,8 @@ public:
 	CString m_PathRunCmd;
 	CString m_PathStoreManager;
 	CString m_PathMigrate;
-	TCHAR m_IconFile[MAX_PATH];
+	TCHAR m_CoreFile[MAX_PATH];
+	TCHAR m_ThisFile[MAX_PATH];
 	LFAttributeDescriptor* m_Attributes[LFAttributeCount];
 	LFDomainDescriptor* m_Domains[LFDomainCount];
 	LFItemCategoryDescriptor* m_ItemCategories[LFItemCategoryCount];

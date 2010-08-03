@@ -18,16 +18,18 @@ LFNamespaceExtensionApp::LFNamespaceExtensionApp()
 	osInfo.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
 	GetVersionEx(&osInfo);
 
-	// Dateiname mit Icons
+	// Dateinamen mit Icons
+	GetModuleFileName((HINSTANCE)&__ImageBase, m_ThisFile, MAX_PATH);
+
 	HMODULE hModCore = LoadLibrary("LFCORE.DLL");
 	if (hModCore)
 	{
-		GetModuleFileName(hModCore, m_IconFile, MAX_PATH);
+		GetModuleFileName(hModCore, m_CoreFile, MAX_PATH);
 		FreeLibrary(hModCore);
 	}
 	else
 	{
-		strcpy_s(m_IconFile, MAX_PATH, "LFCORE.DLL");
+		strcpy_s(m_CoreFile, MAX_PATH, "LFCORE.DLL");
 	}
 
 	// Get attribute information
@@ -125,7 +127,7 @@ BOOL LFNamespaceExtensionApp::GetApplicationPath(CString App, CString& Path)
 				return TRUE;
 
 	// Modulpfad probieren
-	Path = m_IconFile;
+	Path = theApp.m_ThisFile;
 	int pos = Path.ReverseFind('\\');
 	if (pos)
 		Path = Path.Left(pos+1);

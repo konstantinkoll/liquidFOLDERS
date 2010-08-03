@@ -85,7 +85,7 @@ void CFileItem::GetIconFileAndIndex(CGetIconFileAndIndexEventArgs& e)
 	else
 	{
 		e.iconExtractMode = NSEIEM_IconFileAndIndex;
-		e.iconFile = theApp.m_IconFile;
+		e.iconFile = theApp.m_CoreFile;
 		e.iconIndex = IDI_FILE_Generic-1;
 	}
 }
@@ -250,7 +250,7 @@ BOOL CFileItem::GetColumnValueEx(VARIANT* value, CShellColumn& column)
 		tmpStr = Attrs.LocationIATA;
 		break;
 	case LFAttrLocationGPS:
-		LFGeoCoordinatesToString(Attrs.LocationGPS, tmpBuf, 256, true);
+		LFGeoCoordinatesToString(Attrs.LocationGPS, tmpBuf, 256, false);
 		tmpStr = tmpBuf;
 		break;
 	default:

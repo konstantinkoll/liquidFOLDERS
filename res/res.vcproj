@@ -448,6 +448,18 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Other\Library.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\Other\Library1.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Other\Library2.png"
+				>
+			</File>
+			<File
 				RelativePath=".\Other\Link.ico"
 				>
 			</File>
