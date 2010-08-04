@@ -20,8 +20,9 @@ LFDialog::LFDialog(UINT nIDTemplate, UINT nIDStyle, CWnd* pParent)
 {
 	m_nIDTemplate = nIDTemplate;
 	m_nIDStyle = nIDStyle;
-	hIconS = hIconL = NULL;
+	hIconS = hIconL = hIconShield = NULL;
 	hBackgroundBrush = NULL;
+	backdrop = logo = NULL;
 	BackBufferL = BackBufferH = 0;
 }
 
