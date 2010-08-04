@@ -112,7 +112,7 @@ LFCore_API bool LFGetItemCoordinates(LFItemDescriptor* i, unsigned int Preferred
 		res = (coord->Latitude!=0.0) || (coord->Longitude!=0.0);
 	}
 
-	if ((!res) && (PreferredAttr==LFAttrLocationGPS))
+	if ((!res) && ((PreferredAttr==LFAttrLocationGPS) || (PreferredAttr==LFAttrLocationIATA)))
 	{
 		LFAirport* airport;
 		if (LFIATAGetAirportByCode((char*)i->AttributeValues[LFAttrLocationIATA], &airport))

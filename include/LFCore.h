@@ -26,8 +26,13 @@
 #define LFGLD_Network                    4
 #define LFGLD_All                        7
 
+#define DRIVE_EXTHD                      100
+
 // Wie Win32-Funktion GetLogicalDrives(), allerdings selektiv (s.o.)
 LFCore_API unsigned int LFGetLogicalDrives(unsigned int mask=LFGLD_Both);
+
+// Gibt den Index für das Laufwerks-Icon zurück
+LFCore_API unsigned int LFGetDriveIcon(char Drv, bool IsMounted=true);
 
 // Gibt einen Zeiger auf die IDs aller registrierten Nachrichten zurück
 LFCore_API LFMessageIDs* LFGetMessageIDs();
@@ -330,10 +335,10 @@ LFCore_API void LFGetDefaultStoreName(char* name, size_t cCount);
 LFCore_API unsigned int LFGetStoreCount();
 
 // Mountet alle Hybrid-Stores und externen Stores auf Laufwerk d
-LFCore_API unsigned int LFMountDrive(char d);
+LFCore_API unsigned int LFMountDrive(char d, bool InternalCall=false);
 
 // Unmountet alle Hybrid-Stores und externen Stores auf Laufwerk d
-LFCore_API unsigned int LFUnmountDrive(char d);
+LFCore_API unsigned int LFUnmountDrive(char d, bool InternalCall=false);
 
 // Importiert Dateien in einen Store
 LFCore_API unsigned int LFImportFiles(char* key, LFFileImportList* il, LFItemDescriptor* it=NULL, bool move=false);

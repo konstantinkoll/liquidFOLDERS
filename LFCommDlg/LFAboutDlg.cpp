@@ -140,7 +140,7 @@ void LFAboutDlg::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 		g.DrawImage(parameters->icon->m_pBitmap, 16, 16, parameters->icon->m_pBitmap->GetWidth(), parameters->icon->m_pBitmap->GetHeight());
 
 	CRect r = rect;
-	r.top = 32+logo->m_pBitmap->GetHeight();
+	r.top = 172;
 	r.left = 16;
 
 	HFONT font = CreateFont(40, 0, 0, 0, FW_BOLD, FALSE, FALSE, FALSE, ANSI_CHARSET,
@@ -198,15 +198,6 @@ void LFAboutDlg::CheckLicenseKey(LFLicense* License)
 
 void LFAboutDlg::DoDataExchange(CDataExchange* pDX)
 {
-	DDX_Control(pDX, IDOK, m_OkButton);
-	DDX_Control(pDX, IDCANCEL, m_CancelButton);
-	DDX_Control(pDX, IDC_ENTERLICENSEKEY, m_LicenseButton);
-
-	for (UINT a=LFTextureAuto; a<=LFTexture8192; a++)
-		DDX_Control(pDX, IDC_TEXTURE_AUTO+a, m_Texture[a]);
-	DDX_Control(pDX, IDC_HIDEEMPTYDRIVES, m_HideEmptyDrives);
-	DDX_Control(pDX, IDC_HIDEEMPTYDOMAINS, m_HideEmptyDomains);
-
 	if (pDX->m_bSaveAndValidate)
 	{
 		for (UINT a=LFTextureAuto; a<=LFTexture8192; a++)

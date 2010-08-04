@@ -52,10 +52,6 @@ void LFLicenseDlg::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 
 void LFLicenseDlg::DoDataExchange(CDataExchange* pDX)
 {
-	DDX_Control(pDX, IDOK, m_OkButton);
-	DDX_Control(pDX, IDCANCEL, m_CancelButton);
-	DDX_Control(pDX, IDC_LOADLICENSE, m_LoadButton);
-
 	if (pDX->m_bSaveAndValidate)
 	{
 		CString key;

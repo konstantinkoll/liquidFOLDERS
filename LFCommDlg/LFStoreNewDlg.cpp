@@ -32,7 +32,6 @@ BEGIN_MESSAGE_MAP(LFStoreNewDlg, CDialog)
 	ON_BN_CLICKED(IDC_HYBRIDSTORE, SetOptions)
 	ON_BN_CLICKED(IDC_EXTERNALSTORE, SetOptions)
 	ON_BN_CLICKED(IDC_AUTODRIVE, SetOptions)
-	ON_WM_CTLCOLOR()
 	ON_MESSAGE(WM_USER_MEDIACHANGED, OnMediaChanged)
 END_MESSAGE_MAP()
 
@@ -47,7 +46,7 @@ BOOL LFStoreNewDlg::OnInitDialog()
 	SetIcon(hIcon, TRUE);
 
 	// Load icons
-	HINSTANCE hModIcons = LoadLibrary(_T("LFCore.DLL"));
+	HINSTANCE hModIcons = LoadLibrary(_T("LFCORE.DLL"));
 	if (hModIcons!=NULL)
 	{
 		((LFApplication*)AfxGetApp())->ExtractCoreIcons(hModIcons, 16, &icons);
@@ -128,17 +127,6 @@ void LFStoreNewDlg::SetOptions()
 		GetDlgItem(IDC_DRIVELIST)->EnableWindow(!b);
 		PopulateListCtrl();
 	}
-}
-
-HBRUSH LFStoreNewDlg::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
-{
-	if (nCtlColor==CTLCOLOR_BTN)
-	{
-		pDC->SetBkMode(TRANSPARENT);
-		return (HBRUSH)GetStockObject(NULL_BRUSH);
-	}
-
-	return CDialog::OnCtlColor(pDC, pWnd, nCtlColor);
 }
 
 LRESULT LFStoreNewDlg::OnMediaChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)
@@ -225,20 +213,10 @@ void LFStoreNewDlg::PopulateListCtrl()
 		UINT uDriveType = GetDriveType(szDriveRoot);
 
 		SHFILEINFO sfi;
-			if (SHGetFileInfo(szDriveRoot, 0, &sfi, sizeof(SHFILEINFO), SHGFI_DISPLAYNAME | SHGFI_TYPENAME | SHGFI_ATTRIBUTES))
+			if (SHGetFileInfo(szDriveRoot, 0, &sfi, sizeof(SHFILEINFO), SHGFI_DISPLAYNAME | SHGFI_ATTRIBUTES))
 			if (sfi.dwAttributes)
 			{
-				int icon;
-				switch (uDriveType)
-				{
-				case DRIVE_REMOTE:
-					icon = IDI_DRV_Connected-1;
-					break;
-				default:
-					icon = (cDrive==SysDrive[0] ? IDI_DRV_System : IDI_DRV_Default)-1;
-				}
-
-				li->InsertItem(nIndex, sfi.szDisplayName, icon);
+				li->InsertItem(nIndex, sfi.szDisplayName, LFGetDriveIcon(cDrive, sfi.dwAttributes!=0)-1);
 				li->SetItemData(nIndex, (DWORD)cDrive);
 				nIndex++;
 			}

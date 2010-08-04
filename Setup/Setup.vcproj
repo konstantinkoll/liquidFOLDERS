@@ -215,14 +215,6 @@
 			>
 		</File>
 		<File
-			RelativePath=".\vcredist_x64.exe"
-			>
-		</File>
-		<File
-			RelativePath=".\vcredist_x86.exe"
-			>
-		</File>
-		<File
 			RelativePath=".\Wait.ico"
 			>
 		</File>

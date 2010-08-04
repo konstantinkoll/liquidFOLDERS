@@ -2,8 +2,7 @@
 #pragma once
 #include "CGdiPlusBitmap.h"
 #include "liquidFOLDERS.h"
-#include "CGlassButton.h"
-#include "CTransparentRadioButton.h"
+#include "LFApplication.h"
 
 #define LFDS_Blue         1
 #define LFDS_White        2
@@ -16,11 +15,7 @@ class AFX_EXT_CLASS LFDialog : public CDialog
 public:
 	LFDialog(UINT nIDTemplate, UINT nIDStyle=LFDS_Default, CWnd* pParent=NULL);
 
-	CBitmap* GetBackBuffer();
-
 protected:
-	CGdiPlusBitmapResource* backdrop;
-	CGdiPlusBitmapResource* logo;
 	UINT m_nIDTemplate;
 	UINT m_nIDStyle;
 
@@ -35,12 +30,15 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
-	CBitmap BackBuffer;
-	int BackBufferL;
-	int BackBufferH;
+	CGdiPlusBitmapResource* backdrop;
+	CGdiPlusBitmapResource* logo;
 	HICON hIconL;
 	HICON hIconS;
 	HICON hIconShield;
 	int ShieldSize;
 	int UACHeight;
+	CBitmap BackBuffer;
+	int BackBufferL;
+	int BackBufferH;
+	HBRUSH hBackgroundBrush;
 };

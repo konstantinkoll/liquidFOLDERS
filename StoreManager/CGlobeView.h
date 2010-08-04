@@ -57,14 +57,6 @@ protected:
 	CGLFont* LargeFont;
 	int m_Width;
 	int m_Height;
-	GLint m_GlobeList[2];
-	GLfloat m_Latitude;
-	GLfloat m_Longitude;
-	GLfloat m_Zoom;
-	GLfloat m_Scale;
-	GLfloat m_Radius;
-	GLfloat m_FogEnd;
-	GLfloat m_FogStart;
 	BOOL m_Grabbed;
 	CPoint m_GrabPoint;
 	CString YouLookAt;
@@ -72,7 +64,6 @@ protected:
 	COLORREF m_ColorText;
 	COLORREF m_ColorHighlight;
 	Location* m_Locations;
-	BOOL m_LockUpdate;
 
 	virtual void SetViewOptions(UINT _ViewID, BOOL Force);
 	virtual void SetSearchResult(LFSearchResult* _result);
@@ -86,6 +77,7 @@ protected:
 	void PrepareModel(BOOL HQ);
 	void Done();
 	BOOL SetupPixelFormat();
+	void Normalize();
 	BOOL UpdateScene(BOOL Redraw=FALSE);
 	void DrawScene(BOOL InternalCall=FALSE);
 	void CalcAndDrawPoints();
@@ -124,9 +116,21 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
+	GLint m_GlobeList[2];
+	GLfloat m_Latitude;
+	GLfloat m_Longitude;
+	GLfloat m_Zoom;
+	GLfloat m_Scale;
+	GLfloat m_Radius;
+	GLfloat m_FogEnd;
+	GLfloat m_FogStart;
+	GLfloat m_AnimStartLatitude;
+	GLfloat m_AnimStartLongitude;
+	UINT m_AnimCounter;
 	LPCTSTR lpszCursorName;
 	CPoint m_CursorPos;
 	int m_nTexture;
+	BOOL m_LockUpdate;
 
 	BOOL CursorOnGlobe(CPoint point);
 	void UpdateCursor();

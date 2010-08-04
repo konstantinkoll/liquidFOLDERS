@@ -20,9 +20,9 @@ LFDialog::LFDialog(UINT nIDTemplate, UINT nIDStyle, CWnd* pParent)
 {
 	m_nIDTemplate = nIDTemplate;
 	m_nIDStyle = nIDStyle;
-	backdrop = logo = NULL;
-	hIconS = hIconL = hIconShield = NULL;
-	BackBufferL = BackBufferH = UACHeight = ShieldSize = 0;
+	hIconS = hIconL = NULL;
+	hBackgroundBrush = NULL;
+	BackBufferL = BackBufferH = 0;
 }
 
 
@@ -45,6 +45,10 @@ BOOL LFDialog::OnInitDialog()
 		SetIcon(hIconS, FALSE);
 		hIconL = (HICON)LoadImage(LFCommDlgDLL.hResource, MAKEINTRESOURCE(m_nIDTemplate), IMAGE_ICON, 32, 32, LR_LOADTRANSPARENT);
 		SetIcon(hIconL, TRUE);
+	}
+	else
+	{
+		((LFApplication*)AfxGetApp())->PlayWarningSound();
 	}
 
 	switch (m_nIDStyle)
@@ -94,6 +98,8 @@ BOOL LFDialog::OnEraseBkgnd(CDC* pDC)
 		g.SetCompositingMode(CompositingModeSourceOver);
 
 		OnEraseBkgnd(dc, g, rect);
+
+		hBackgroundBrush = CreatePatternBrush(BackBuffer);
 	}
 	else
 	{
@@ -194,8 +200,14 @@ HBRUSH LFDialog::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 
 	if ((nCtlColor==CTLCOLOR_BTN) || (nCtlColor==CTLCOLOR_STATIC))
 	{
+		CRect rc; 
+		pWnd->GetWindowRect(&rc);
+		ScreenToClient(&rc);
+
 		pDC->SetBkMode(TRANSPARENT);
-		hbr = (HBRUSH)GetStockObject(HOLLOW_BRUSH);
+		pDC->SetBrushOrg(-rc.left, -rc.top);
+
+		hbr = hBackgroundBrush;
 	}
 
 	return hbr;
@@ -213,6 +225,8 @@ void LFDialog::OnDestroy()
 		DestroyIcon(hIconS);
 	if (hIconShield)
 		DestroyIcon(hIconShield);
+	if (hBackgroundBrush)
+		DeleteObject(hBackgroundBrush);
 
 	CDialog::OnDestroy();
 }
@@ -240,9 +254,4 @@ void LFDialog::OnEnterLicenseKey()
 	CheckLicenseKey();
 	if (!(GetExStyle() & WS_EX_APPWINDOW))
 		ShowWindow(SW_SHOW);
-}
-
-CBitmap* LFDialog::GetBackBuffer()
-{
-	return &BackBuffer;
 }

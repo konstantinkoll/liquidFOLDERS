@@ -6,12 +6,9 @@ class AFX_EXT_CLASS LFWelcomeDlg : public LFDialog
 public:
 	LFWelcomeDlg(CWnd* pParentWnd=NULL);
 
-protected:
-	CGlassButton m_OkButton;
-	CGlassButton m_CancelButton;
-	CGlassButton m_LicenseButton;
-
 	virtual void DoDataExchange(CDataExchange* pDX);
+
+protected:
 	void CreateStore(int ID);
 
 	afx_msg BOOL OnInitDialog();

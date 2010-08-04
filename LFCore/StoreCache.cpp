@@ -441,7 +441,7 @@ void MountExternal()
 		SHFILEINFOA sfi;
 		if (SHGetFileInfoA(szDriveRoot, 0, &sfi, sizeof(SHFILEINFO), SHGFI_ATTRIBUTES))
 			if (sfi.dwAttributes)
-				LFMountDrive(cDrive);
+				LFMountDrive(cDrive, true);
 	}
 }
 
@@ -686,7 +686,7 @@ LFCore_API unsigned int LFGetStoreCount()
 }
 
 
-LFCore_API unsigned int LFMountDrive(char d)
+LFCore_API unsigned int LFMountDrive(char d, bool InternalCall)
 {
 	char mask[] = " :\\*.store";
 	mask[0] = d;
@@ -786,11 +786,14 @@ Finish2:
 		} while (FindNextFileA(hFind, &ffd));
 
 	FindClose(hFind);
-	SendStoreNotifyMessage(changeOccured ? LFMessages.StoresChanged : LFMessages.DrivesChanged, changeOccured ? LFMSGF_ExtHybStores : 0, NULL);
+
+	if (!InternalCall)
+		SendStoreNotifyMessage(changeOccured ? LFMessages.StoresChanged : LFMessages.DrivesChanged, changeOccured ? LFMSGF_ExtHybStores : 0, NULL);
+
 	return res;
 }
 
-LFCore_API unsigned int LFUnmountDrive(char d)
+LFCore_API unsigned int LFUnmountDrive(char d, bool InternalCall)
 {
 	if (!GetMutex(Mutex_Stores))
 		return LFMutexError;
@@ -843,6 +846,9 @@ LFCore_API unsigned int LFUnmountDrive(char d)
 			}
 
 	ReleaseMutex(Mutex_Stores);
-	SendStoreNotifyMessage(changeOccured ? LFMessages.StoresChanged : LFMessages.DrivesChanged, changeOccured ? LFMSGF_ExtHybStores : 0, NULL);
+
+	if (!InternalCall)
+		SendStoreNotifyMessage(changeOccured ? LFMessages.StoresChanged : LFMessages.DrivesChanged, changeOccured ? LFMSGF_ExtHybStores : 0, NULL);
+
 	return res;
 }

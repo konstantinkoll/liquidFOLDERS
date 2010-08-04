@@ -15,7 +15,7 @@ struct LFAboutDlgParameters
 	BOOL HideEmptyDrives;
 	BOOL HideEmptyDomains;
 
-	// Von LFAbout gesetzt
+	// Von LFCommDlg gesetzt
 	CString version;
 	CString copyright;
 };
@@ -34,10 +34,4 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 	LFAboutDlgParameters* parameters;
-	CGlassButton m_OkButton;
-	CGlassButton m_CancelButton;
-	CGlassButton m_LicenseButton;
-	CTransparentRadioButton m_Texture[LFTexture8192-LFTextureAuto+1];
-	CTransparentRadioButton m_HideEmptyDrives;
-	CTransparentRadioButton m_HideEmptyDomains;
 };

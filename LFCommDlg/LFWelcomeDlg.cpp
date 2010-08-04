@@ -24,10 +24,6 @@ BOOL LFWelcomeDlg::OnInitDialog()
 
 void LFWelcomeDlg::DoDataExchange(CDataExchange* pDX)
 {
-	DDX_Control(pDX, IDOK, m_OkButton);
-	DDX_Control(pDX, IDCANCEL, m_CancelButton);
-	DDX_Control(pDX, IDC_ENTERLICENSEKEY, m_LicenseButton);
-
 	if (pDX->m_bSaveAndValidate)
 	{
 		CreateStore(IDC_STORENAME1);

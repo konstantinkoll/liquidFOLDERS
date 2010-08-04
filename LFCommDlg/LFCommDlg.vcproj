@@ -395,10 +395,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CGlassButton.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\CGlassWindow.cpp"
 				>
 			</File>
@@ -440,10 +436,6 @@
 			</File>
 			<File
 				RelativePath=".\CTooltipHeader.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\CTransparentRadioButton.cpp"
 				>
 			</File>
 			<File
@@ -617,10 +609,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CGlassButton.h"
-				>
-			</File>
-			<File
 				RelativePath=".\CGlassWindow.h"
 				>
 			</File>
@@ -662,10 +650,6 @@
 			</File>
 			<File
 				RelativePath=".\CTooltipHeader.h"
-				>
-			</File>
-			<File
-				RelativePath=".\CTransparentRadioButton.h"
 				>
 			</File>
 			<File

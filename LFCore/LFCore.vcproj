@@ -638,15 +638,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\DRV_ExtHD.ico"
+				>
+			</File>
+			<File
 				RelativePath=".\res\DRV_Windows.ico"
 				>
 			</File>
 			<File
 				RelativePath=".\res\FILE_Generic.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\res\FLD_ActiveX.ico"
 				>
 			</File>
 			<File
@@ -755,10 +755,6 @@
 			</File>
 			<File
 				RelativePath=".\res\Store_Server.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Web.ico"
 				>
 			</File>
 		</Filter>

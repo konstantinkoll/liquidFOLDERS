@@ -144,6 +144,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Drives\DRV_ExtHD.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\Drives\DRV_ExtHD.png"
+				>
+			</File>
+			<File
 				RelativePath=".\Drives\DRV_Windows.ico"
 				>
 			</File>
@@ -167,10 +175,6 @@
 		<Filter
 			Name="Folders"
 			>
-			<File
-				RelativePath=".\Folders\ActiveX.png"
-				>
-			</File>
 			<File
 				RelativePath=".\Folders\All.png"
 				>
@@ -205,10 +209,6 @@
 			</File>
 			<File
 				RelativePath=".\Folders\Favorites.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Folders\FLD_ActiveX.ico"
 				>
 			</File>
 			<File
@@ -432,6 +432,14 @@
 			Name="Other"
 			>
 			<File
+				RelativePath=".\Other\ActiveX.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\Other\ActiveX.png"
+				>
+			</File>
+			<File
 				RelativePath=".\Other\Computer.ico"
 				>
 			</File>
@@ -497,6 +505,14 @@
 			</File>
 			<File
 				RelativePath=".\Other\Unlink.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Other\Web.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\Other\Web.png"
 				>
 			</File>
 			<File
@@ -2282,14 +2298,6 @@
 		</File>
 		<File
 			RelativePath=".\Watchdog_About.png"
-			>
-		</File>
-		<File
-			RelativePath="Web.ico"
-			>
-		</File>
-		<File
-			RelativePath="Web.png"
 			>
 		</File>
 		<File

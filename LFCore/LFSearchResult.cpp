@@ -14,6 +14,7 @@
 
 extern HMODULE LFCoreModuleHandle;
 extern unsigned char AttrTypes[];
+extern unsigned int DriveTypes[];
 
 
 LFSearchResult::LFSearchResult(int ctx)
@@ -207,15 +208,9 @@ void LFSearchResult::AddDrives(LFFilter* filter)
 
 			LFItemDescriptor* d = LFAllocItemDescriptor();
 			d->Type = LFTypeDrive;
-			if (sfi.dwAttributes)
-			{
-				d->IconID = IDI_DRV_Default;
-			}
-			else
-			{
-				d->IconID = IDI_DRV_Empty;
+			d->IconID = LFGetDriveIcon(cDrive, sfi.dwAttributes!=0);
+			if (!sfi.dwAttributes)
 				d->Type |= LFTypeGhosted | LFTypeNotMounted;
-			}
 			d->CategoryID = LFCategoryDrives;
 			SetAttribute(d, LFAttrFileName, sfi.szDisplayName);
 			char key[] = " :";

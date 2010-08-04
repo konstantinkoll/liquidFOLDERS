@@ -28,6 +28,7 @@ extern LFShellProperty AttrProperties[];
 #pragma data_seg("common_drives")
 
 unsigned int DriveTypes[26] = { DRIVE_UNKNOWN };
+char BootDrive = '\0';
 
 #pragma data_seg()
 #pragma comment(linker, "/SECTION:common_drives,RWS")
@@ -89,7 +90,7 @@ LFCore_API unsigned int LFGetLogicalDrives(unsigned int mask)
 				{
 				case BusType1394:
 				case BusTypeUsb:
-					uDriveType = DRIVE_REMOVABLE;
+					uDriveType = DRIVE_EXTHD;
 					break;
 				}
 
@@ -103,6 +104,7 @@ LFCore_API unsigned int LFGetLogicalDrives(unsigned int mask)
 				DrivesOnSystem &= ~Index;
 			break;
 		case DRIVE_REMOVABLE:
+		case DRIVE_EXTHD:
 			if (!(mask & LFGLD_External))
 				DrivesOnSystem &= ~Index;
 			break;
@@ -116,6 +118,29 @@ LFCore_API unsigned int LFGetLogicalDrives(unsigned int mask)
 	}
 
 	return DrivesOnSystem;
+}
+
+LFCore_API unsigned int LFGetDriveIcon(char Drv, bool IsMounted)
+{
+	unsigned int ic = IDI_DRV_Default;
+
+	if ((Drv>='A') && (Drv<='Z'))
+		switch (DriveTypes[Drv-'A'])
+		{
+		case DRIVE_FIXED:
+			ic = (Drv==BootDrive) ? IDI_DRV_System : IsMounted ? IDI_DRV_Default : IDI_DRV_Empty;
+			break;
+		case DRIVE_REMOVABLE:
+			ic = IsMounted ? IDI_DRV_Default : IDI_DRV_Empty;
+			break;
+		case DRIVE_EXTHD:
+			ic = IDI_DRV_ExtHD;
+			break;
+		case DRIVE_REMOTE:
+			ic = IsMounted ? IDI_DRV_Connected : IDI_DRV_Disconnected;
+		}
+
+	return ic;
 }
 
 LFCore_API LFMessageIDs* LFGetMessageIDs()

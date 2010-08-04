@@ -17,8 +17,7 @@ public:
 	afx_msg void OnDestroy();
 	afx_msg void SetInternalIcon();
 	afx_msg void SetOptions();
-	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
-	afx_msg LRESULT OnMediaChanged(WPARAM, LPARAM);
+	afx_msg LRESULT OnMediaChanged(WPARAM wParam, LPARAM lParam);
 	DECLARE_MESSAGE_MAP()
 
 private:

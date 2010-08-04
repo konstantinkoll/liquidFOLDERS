@@ -12,6 +12,7 @@
 #define DISTANCE 39.0f
 #define ARROWSIZE 9
 #define PI 3.14159265358979323846
+#define ANIMLENGTH 200
 
 void ColorRef2GLColor(GLfloat* dst, COLORREF src, GLfloat Alpha=1.0f)
 {
@@ -108,6 +109,7 @@ CGlobeView::CGlobeView()
 	lpszCursorName = NULL;
 	m_CursorPos.x = 0;
 	m_CursorPos.y = 0;
+	m_AnimCounter = 0;
 	m_nTexture = -1;
 	ENSURE(YouLookAt.LoadString(IDS_YOULOOKAT));
 	m_LockUpdate = FALSE;
@@ -430,6 +432,9 @@ void CGlobeView::OnJumpToLocation()
 	if (dlg.DoModal()==IDOK)
 	{
 		ASSERT(dlg.m_Airport);
+		m_AnimCounter = ANIMLENGTH;
+		m_AnimStartLatitude = m_Latitude;
+		m_AnimStartLongitude = m_Longitude;
 		m_LocalSettings.Latitude = (GLfloat)-dlg.m_Airport->Location.Latitude;
 		m_LocalSettings.Longitude = (GLfloat)-dlg.m_Airport->Location.Longitude;
 		m_CameraChanged = TRUE;
@@ -620,6 +625,14 @@ void CGlobeView::OnLButtonDown(UINT nFlags, CPoint point)
 		{
 			m_GrabPoint = point;
 			m_Grabbed = TRUE;
+			if (m_AnimCounter)
+			{
+				m_AnimCounter = 0;
+				m_LocalSettings.Latitude = m_Latitude;
+				m_LocalSettings.Longitude = m_Longitude;
+				m_LocalSettings.GlobeZoom = (int)(m_Zoom*100.f);
+			}
+
 			SetCapture();
 			UpdateCursor();
 		}
@@ -959,6 +972,27 @@ BOOL CGlobeView::SetupPixelFormat()
 	return pixelformat ? SetPixelFormat(m_pDC->GetSafeHdc(), pixelformat, &pfd) : FALSE;
 }
 
+void CGlobeView::Normalize()
+{
+	// Zoom
+	if (m_LocalSettings.GlobeZoom<0)
+		m_LocalSettings.GlobeZoom = 0;
+	if (m_LocalSettings.GlobeZoom>100)
+		m_LocalSettings.GlobeZoom = 100;
+
+	// Nicht über die Pole rollen
+	if (m_LocalSettings.Latitude<-75.0f)
+		m_LocalSettings.Latitude = -75.0f;
+	if (m_LocalSettings.Latitude>75.0f)
+		m_LocalSettings.Latitude = 75.0f;
+
+	// Rotation normieren
+	if (m_LocalSettings.Longitude<0.0f)
+		m_LocalSettings.Longitude += 360.0f;
+	if (m_LocalSettings.Longitude>360.0f)
+		m_LocalSettings.Longitude -= 360.0f;
+}
+
 BOOL CGlobeView::UpdateScene(BOOL Redraw)
 {
 	if (m_LockUpdate)
@@ -966,12 +1000,7 @@ BOOL CGlobeView::UpdateScene(BOOL Redraw)
 	m_LockUpdate = TRUE;
 
 	BOOL res = Redraw;
-
-	// Zoom
-	if (m_LocalSettings.GlobeZoom<0)
-		m_LocalSettings.GlobeZoom = 0;
-	if (m_LocalSettings.GlobeZoom>100)
-		m_LocalSettings.GlobeZoom = 100;
+	Normalize();
 
 	GLfloat TargetZoom = m_LocalSettings.GlobeZoom/100.0f;
 
@@ -994,18 +1023,6 @@ BOOL CGlobeView::UpdateScene(BOOL Redraw)
 		}
 	}
 
-	// Nicht über die Pole rollen
-	if (m_LocalSettings.Latitude<-75.0f)
-		m_LocalSettings.Latitude = -75.0f;
-	if (m_LocalSettings.Latitude>75.0f)
-		m_LocalSettings.Latitude = 75.0f;
-
-	// Rotation normieren
-	if (m_LocalSettings.Longitude<0.0f)
-		m_LocalSettings.Longitude += 360.0f;
-	if (m_LocalSettings.Longitude>360.0f)
-		m_LocalSettings.Longitude -= 360.0f;
-
 	if ((m_Latitude==0.0f) && (m_Longitude==0.0f))
 	{
 		res |= (m_Latitude!=m_LocalSettings.Latitude) || (m_Longitude!=m_LocalSettings.Longitude);
@@ -1014,6 +1031,32 @@ BOOL CGlobeView::UpdateScene(BOOL Redraw)
 	}
 	else
 	{
+		if (m_AnimCounter)
+		{
+			GLfloat f = (GLfloat)((cos(PI*m_AnimCounter/ANIMLENGTH)+1.0)/2.0);
+			m_Latitude = m_AnimStartLatitude*(1.0f-f) + m_LocalSettings.Latitude*f;
+			m_Longitude = m_AnimStartLongitude*(1.0f-f) + m_LocalSettings.Longitude*f;
+
+			if (TargetZoom<0.6f)
+			{
+				GLfloat dist = 0.6f-TargetZoom;
+				if (dist>TargetZoom*1.2f)
+					dist = TargetZoom*1.2f;
+
+				f = (GLfloat)sin(PI*m_AnimCounter/ANIMLENGTH);
+				m_Zoom = TargetZoom*(1.0f-f)+(TargetZoom+dist)*f;
+			}
+
+			m_AnimCounter--;
+			res = TRUE;
+		}
+		else
+		{
+			res |= (m_Latitude!=m_LocalSettings.Latitude) || (m_Longitude!=m_LocalSettings.Longitude);
+			m_Latitude = m_LocalSettings.Latitude;
+			m_Longitude = m_LocalSettings.Longitude;
+		}
+
 		// Nicht über die Pole rollen
 		if (m_Latitude<-75.0f)
 			m_Latitude = -75.0f;
@@ -1025,19 +1068,6 @@ BOOL CGlobeView::UpdateScene(BOOL Redraw)
 			m_Longitude += 360.0f;
 		if (m_Longitude-m_LocalSettings.Longitude>180.0f)
 			m_Longitude -= 360.0f;
-
-		if ((abs(m_Latitude-m_LocalSettings.Latitude)>0.1f) || (abs(m_Longitude-m_LocalSettings.Longitude)>0.1f))
-		{
-			res = TRUE;
-			m_Latitude = (m_Latitude*29+m_LocalSettings.Latitude)/30;
-			m_Longitude = (m_Longitude*29+m_LocalSettings.Longitude)/30;
-		}
-		else
-		{
-			res |= (m_Latitude!=m_LocalSettings.Latitude) || (m_Longitude!=m_LocalSettings.Longitude);
-			m_Latitude = m_LocalSettings.Latitude;
-			m_Longitude = m_LocalSettings.Longitude;
-		}
 	}
 
 	if (res)
