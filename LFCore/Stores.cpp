@@ -302,22 +302,20 @@ void SendStoreNotifyMessage(unsigned int Msg, unsigned int Flags, HWND hWndSourc
 	SendNotifyMessage(HWND_BROADCAST, Msg, (WPARAM)Flags, (LPARAM)hWndSource);
 
 	// Explorer
-	IShellFolder* pDesktopPtr = NULL;
-	HRESULT hrRes = SHGetDesktopFolder(&pDesktopPtr);
-
-	if (pDesktopPtr)
+	IShellFolder* pDesktopPtr;
+	if (SUCCEEDED(SHGetDesktopFolder(&pDesktopPtr)))
 	{
 		LPITEMIDLIST pidlLocal;
 
-		hrRes = pDesktopPtr->ParseDisplayName(NULL, NULL,
+		if (SUCCEEDED(pDesktopPtr->ParseDisplayName(NULL, NULL,
 			L"::{3F2D914F-FE57-414F-9F88-A377C7841DA4}",
-			NULL, &pidlLocal, NULL);
-		SHChangeNotify(SHCNE_UPDATEDIR, SHCNF_FLUSHNOWAIT | SHCNF_IDLIST, pidlLocal, NULL);
+			NULL, &pidlLocal, NULL)))
+			SHChangeNotify(SHCNE_UPDATEDIR, SHCNF_FLUSHNOWAIT | SHCNF_IDLIST, pidlLocal, NULL);
 
-		hrRes = pDesktopPtr->ParseDisplayName(NULL, NULL,
+		if (SUCCEEDED(pDesktopPtr->ParseDisplayName(NULL, NULL,
 			L"::{20D04FE0-3AEA-1069-A2D8-08002B30309D}\\::{3F2D914F-FE57-414F-9F88-A377C7841DA4}",
-			NULL, &pidlLocal, NULL);
-		SHChangeNotify(SHCNE_UPDATEDIR, SHCNF_FLUSHNOWAIT | SHCNF_IDLIST, pidlLocal, NULL);
+			NULL, &pidlLocal, NULL)))
+			SHChangeNotify(SHCNE_UPDATEDIR, SHCNF_FLUSHNOWAIT | SHCNF_IDLIST, pidlLocal, NULL);
 	}
 }
 

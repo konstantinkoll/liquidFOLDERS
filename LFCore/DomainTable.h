@@ -162,6 +162,8 @@ RegisteredFile Registry[] = {
 	{ "wave",  LFDomainAudio },
 	{ "wm",    LFDomainAudio },
 	{ "wmv",   LFDomainVideos },
+	{ "wof",   LFDomainFonts },
+	{ "woff",   LFDomainFonts },
 	{ "xlb",   LFDomainSpreadsheets },
 	{ "xls",   LFDomainSpreadsheets },
 	{ "xlsb",  LFDomainSpreadsheets },
