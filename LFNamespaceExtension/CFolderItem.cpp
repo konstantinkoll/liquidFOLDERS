@@ -159,7 +159,7 @@ CNSEItem* CFolderItem::DeserializeChild(CArchive& ar)
 
 		return new CFileItem(StoreID, &Attrs);
 	case 1:
-		FolderSerialization d ;
+		FolderSerialization d;
 		ar >> d.Level;
 		ar >> d.Icon;
 		ar >> d.Type;
@@ -388,8 +388,8 @@ void CFolderItem::GetDisplayNameEx(CString& displayName, DisplayNameFlags flags)
 
 			if (data.Level>LevelStores)
 				displayName += '\\'+data.StoreID;
-			if (data.FileID!="")
-				displayName += '\\'+data.FileID;
+			//if (data.FileID!="")
+			//	displayName += '\\'+data.FileID;
 		}
 		else
 		{
@@ -403,9 +403,25 @@ void CFolderItem::GetDisplayNameEx(CString& displayName, DisplayNameFlags flags)
 	CNSEFolder::GetDisplayNameEx(displayName, flags);
 }
 
-CNSEItem* CFolderItem::GetChildFromDisplayName(CGetChildFromDisplayNameEventArgs& /*e*/)
+CNSEItem* CFolderItem::GetChildFromDisplayNameEx(CGetChildFromDisplayNameEventArgs& e)
 {
-	return NULL;
+/*	LFStoreDescriptor store;
+	char key[LFKeySize];
+	strcpy_s(key, LFKeySize, e.displayName);
+
+	if (LFGetStoreSettings(key, &store)==LFOk)
+	{
+		MessageBox(NULL,key,"Found",0);*/
+		MessageBox(NULL,e.displayName,"Parse",0);
+
+		FolderSerialization d = { 0 };
+		d.Level = LevelStores;
+		d.StoreID = e.displayName;
+		return new CFolderItem(d);
+/*	}
+	MessageBox(NULL,key,0,0);
+
+	return NULL;*/
 }
 
 void CFolderItem::GetIconFileAndIndex(CGetIconFileAndIndexEventArgs& e)
@@ -704,7 +720,14 @@ BOOL CFolderItem::GetColumnValueEx(VARIANT* value, CShellColumn& column)
 
 BOOL CFolderItem::IsValid()
 {
-	return TRUE;
+	if (data.Level==LevelRoot)
+		return TRUE;
+
+	LFStoreDescriptor store;
+	char key[LFKeySize];
+	strcpy_s(key, LFKeySize, data.StoreID);
+
+	return (LFGetStoreSettings(key, &store)==LFOk);
 }
 
 void CFolderItem::GetMenuItems(CGetMenuitemsEventArgs& e)
@@ -910,6 +933,9 @@ int CFolderItem::CompareTo(CNSEItem* otherItem, CShellColumn& column)
 		return -1;
 
 	CFolderItem* dir2 = AS(otherItem, CFolderItem);
+
+//	if ((data.Level==LevelStores) && (dir2->data.Level==LevelStores) && (data.StoreID==dir2->data.StoreID))
+//		return 0;
 
 	CString str1;
 	CString str2;

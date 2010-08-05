@@ -66,7 +66,7 @@ public:
 	virtual BOOL GetChildren(CGetChildrenEventArgs& e);
 	virtual void GetDisplayName(CString& displayName);
 	virtual void GetDisplayNameEx(CString& displayName, DisplayNameFlags flags);
-	virtual CNSEItem* GetChildFromDisplayName(CGetChildFromDisplayNameEventArgs& e);
+	virtual CNSEItem* GetChildFromDisplayNameEx(CGetChildFromDisplayNameEventArgs& e);
 	virtual void GetIconFileAndIndex(CGetIconFileAndIndexEventArgs& e);
 	virtual void GetInfoTip(CString& infotip);
 	virtual int GetXPTaskPaneColumnIndices(UINT* indices);

@@ -788,7 +788,10 @@ Finish2:
 	FindClose(hFind);
 
 	if (!InternalCall)
-		SendStoreNotifyMessage(changeOccured ? LFMessages.StoresChanged : LFMessages.DrivesChanged, changeOccured ? LFMSGF_ExtHybStores : 0, NULL);
+	{
+		SendLFNotifyMessage(changeOccured ? LFMessages.StoresChanged : LFMessages.DrivesChanged, changeOccured ? LFMSGF_ExtHybStores : 0, NULL);
+		SendShellNotifyMessage(SHCNE_UPDATEDIR);
+	}
 
 	return res;
 }
@@ -848,7 +851,10 @@ LFCore_API unsigned int LFUnmountDrive(char d, bool InternalCall)
 	ReleaseMutex(Mutex_Stores);
 
 	if (!InternalCall)
-		SendStoreNotifyMessage(changeOccured ? LFMessages.StoresChanged : LFMessages.DrivesChanged, changeOccured ? LFMSGF_ExtHybStores : 0, NULL);
+	{
+		SendLFNotifyMessage(changeOccured ? LFMessages.StoresChanged : LFMessages.DrivesChanged, changeOccured ? LFMSGF_ExtHybStores : 0, NULL);
+		SendShellNotifyMessage(SHCNE_UPDATEDIR);
+	}
 
 	return res;
 }
