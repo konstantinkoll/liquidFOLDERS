@@ -36,12 +36,12 @@ LFSearchResult::LFSearchResult(int ctx)
 	m_Allocated = 0;
 }
 
-LFSearchResult::LFSearchResult(int ctx, LFSearchResult* res)
+LFSearchResult::LFSearchResult(LFSearchResult* res)
 {
 	m_RawCopy = false;
 	m_LastError = res->m_LastError;
 	m_Context = res->m_Context;
-	m_ContextView = ctx;
+	m_ContextView = res->m_ContextView;
 	m_RecommendedView = res->m_RecommendedView;
 	m_HidingItems = res->m_HidingItems;
 	m_HasCategories = res->m_HasCategories;
@@ -522,21 +522,8 @@ unsigned int LFSearchResult::Aggregate(unsigned int write, unsigned int read1, u
 	}
 }
 
-void LFSearchResult::Group(unsigned int attr, bool descending, bool categories, unsigned int icon, bool groupone, LFFilter* f)
+void LFSearchResult::Group(unsigned int attr, unsigned int icon, bool groupone, LFFilter* f)
 {
-	assert(f);
-
-	if (f->Options.IsSubfolder)
-		return;
-
-	// Special treatment for string arrays
-	if (AttrTypes[attr]==LFTypeUnicodeArray)
-	{
-		GroupArray(attr, icon, f);
-		Sort(attr, descending, categories);
-		return;
-	}
-
 	// Choose categorizer
 	CCategorizer* c = NULL;
 

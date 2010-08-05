@@ -177,8 +177,18 @@ void CGlobeView::SetSearchResult(LFSearchResult* _result)
 				if (a<VictimCount)
 					m_Locations[a].selected = Victim[a].selected;
 
-				LFGeoCoordinates coord;
-				if (LFGetItemCoordinates(_result->m_Items[a], m_ViewParameters.SortBy, &coord))
+				LFGeoCoordinates coord = { 0.0, 0.0 };
+				if (m_ViewParameters.SortBy==LFAttrLocationIATA)
+				{
+					LFAirport* airport;
+					if (LFIATAGetAirportByCode((char*)_result->m_Items[a]->AttributeValues[LFAttrLocationIATA], &airport))
+						coord = airport->Location;
+				}
+				else
+					if (_result->m_Items[a]->AttributeValues[m_ViewParameters.SortBy])
+						coord = *((LFGeoCoordinates*)_result->m_Items[a]->AttributeValues[m_ViewParameters.SortBy]);
+
+				if ((coord.Latitude!=0.0) || (coord.Longitude!=0))
 				{
 					CalculateWorldCoords(coord.Latitude, coord.Longitude, m_Locations[a].world);
 					LFGeoCoordinatesToString(coord, m_Locations[a].coordstring, 32, false);

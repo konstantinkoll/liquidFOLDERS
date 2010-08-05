@@ -15,7 +15,7 @@ class LFSearchResult
 {
 public:
 	LFSearchResult(int ctx);
-	LFSearchResult(int ctx, LFSearchResult* res);
+	LFSearchResult(LFSearchResult* res);
 	virtual ~LFSearchResult();
 
 	bool AddItemDescriptor(LFItemDescriptor* i);
@@ -26,7 +26,8 @@ public:
 	void RemoveFlaggedItemDescriptors(bool updatecount=true);
 	void KeepRange(int first, int last);
 	void Sort(unsigned int attr, bool descending, bool categories);
-	void Group(unsigned int attr, bool descending, bool categories, unsigned int icon, bool groupone, LFFilter* f);
+	void Group(unsigned int attr,unsigned int icon, bool groupone, LFFilter* f);
+	void GroupArray(unsigned int attr, unsigned int icon, LFFilter* f);
 	void SetContext(LFFilter* f);
 
 	LFItemDescriptor** m_Items;
@@ -52,5 +53,4 @@ private:
 	void Heap(int wurzel, int anz, unsigned int attr, bool descending, bool categories);
 	unsigned int Aggregate(unsigned int write, unsigned int read1, unsigned int read2, void* c,
 		unsigned int attr, unsigned int icon, bool groupone, LFFilter* f);
-	void GroupArray(unsigned int attr, unsigned int icon, LFFilter* f);
 };

@@ -504,6 +504,7 @@ struct LFItemDescriptor
 	wchar_t Description[256];
 	void* AttributeValues[LFAttributeCount];
 
+	// Internal use only
 	int Position;
 	int FirstAggregate;
 	int LastAggregate;

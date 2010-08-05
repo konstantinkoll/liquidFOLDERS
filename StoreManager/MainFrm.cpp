@@ -2591,20 +2591,18 @@ void CMainFrame::CookFiles(int recipe, int FocusItem)
 	LFViewParameters* vp = &theApp.m_Views[recipe];
 	LFAttributeDescriptor* attr = theApp.m_Attributes[vp->SortBy];
 
-	LFSortSearchResult(RawFiles, vp->SortBy, vp->Descending==TRUE, vp->ShowCategories==TRUE);
-
 	if (((!IsClipboard) && (vp->AutoDirs) && (!ActiveFilter->Options.IsSubfolder)) || (vp->Mode>LFViewPreview))
 	{
-		CookedFiles = LFAllocSearchResult(recipe, RawFiles);
-		LFGroupSearchResult(CookedFiles, vp->SortBy, vp->Descending==TRUE, vp->ShowCategories==TRUE, attr->IconID,
+		CookedFiles = LFGroupSearchResult(RawFiles, vp->SortBy, vp->Descending==TRUE, vp->ShowCategories==TRUE, attr->IconID,
 			(vp->Mode>LFViewPreview) || ((attr->Type!=LFTypeTime) && (vp->SortBy!=LFAttrFileName) && (vp->SortBy!=LFAttrStoreID) && (vp->SortBy!=LFAttrFileID)),
 			ActiveFilter);
 	}
 	else
 	{
+		LFSortSearchResult(RawFiles, vp->SortBy, vp->Descending==TRUE, vp->ShowCategories==TRUE);
 		CookedFiles = RawFiles;
-		CookedFiles->m_ContextView = recipe;
 	}
+	CookedFiles->m_ContextView = recipe;
 
 	DWORD stop = GetTickCount();
 

@@ -195,8 +195,8 @@ LFCore_API void LFRemoveFlaggedItemDescriptors(LFSearchResult* res);
 // Sortiert LFSearchResult
 LFCore_API void LFSortSearchResult(LFSearchResult* res, unsigned int attr, bool descending, bool categories=false);
 
-// Gruppiert LFSearchResult
-LFCore_API void LFGroupSearchResult(LFSearchResult* res, unsigned int attr, bool descending, bool categories, unsigned int icon, bool groupone, LFFilter* f);
+// Gruppiert LFSearchResult und liefert Kopie zurück
+LFCore_API LFSearchResult* LFGroupSearchResult(LFSearchResult* res, unsigned int attr, bool descending, bool categories, unsigned int icon, bool groupone, LFFilter* f);
 
 
 // Neue Datei-Importliste erzeugen
@@ -381,7 +381,3 @@ LFCore_API int LFIATAGetNextAirportByCountry(unsigned int CountryID, int last, L
 // Setzt den Zeiger *pBuffer auf den Flughafen mit dem übergebenen Code.
 // *pBuffer kann in jedem Fall überschrieben werden.
 LFCore_API bool LFIATAGetAirportByCode(char* Code, LFAirport** pBuffer);
-
-// Liefert zu einem LFItemDescriptor anhand von PreferredAttr oder ggf. LFAttrLocationIATA die Position.
-// *coord kann in jedem Fall überschrieben werden.
-LFCore_API bool LFGetItemCoordinates(LFItemDescriptor* i, unsigned int PreferredAttr, LFGeoCoordinates* coord);

@@ -7,6 +7,7 @@
 #include "resource.h"
 #include "IATA.h"
 #include "LFItemDescriptor.h"
+#include "LFVariantData.h"
 #include "License.h"
 #include "ShellProperties.h"
 #include <assert.h>
@@ -647,7 +648,7 @@ LFCore_API void LFFreeFilterCondition(LFFilterCondition* c)
 
 LFCore_API LFSearchResult* LFAllocSearchResult(int ctx, LFSearchResult* res)
 {
-	return (res) ? new LFSearchResult(ctx, res): new LFSearchResult(ctx);
+	return (res) ? new LFSearchResult(res): new LFSearchResult(ctx);
 }
 
 LFCore_API void LFFreeSearchResult(LFSearchResult* res)
@@ -676,9 +677,43 @@ LFCore_API void LFSortSearchResult(LFSearchResult* res, unsigned int attr, bool 
 	res->Sort(attr, descending, categories);
 }
 
-LFCore_API void LFGroupSearchResult(LFSearchResult* res, unsigned int attr, bool descending, bool categories, unsigned int icon, bool groupone, LFFilter* f)
+LFCore_API LFSearchResult* LFGroupSearchResult(LFSearchResult* res, unsigned int attr, bool descending, bool categories, unsigned int icon, bool groupone, LFFilter* f)
 {
-	res->Group(attr, descending, categories, icon, groupone, f);
+	assert(f);
+
+	if (f->Options.IsSubfolder)
+		return res;
+
+
+	// Special treatment for string arrays
+	if (AttrTypes[attr]==LFTypeUnicodeArray)
+	{
+		LFSearchResult* cooked = new LFSearchResult(res);
+		cooked->GroupArray(attr, icon, f);
+		cooked->Sort(attr, descending, categories);
+		return cooked;
+	}
+
+	// Special treatment for missing GPS location
+	if (attr==LFAttrLocationGPS)
+		for (unsigned int a=0; a<res->m_ItemCount; a++)
+			if (IsNullValue(LFAttrLocationGPS, res->m_Items[a]->AttributeValues[LFAttrLocationGPS]))
+			{
+				LFAirport* airport;
+				if (LFIATAGetAirportByCode((char*)res->m_Items[a]->AttributeValues[LFAttrLocationIATA], &airport))
+					res->m_Items[a]->AttributeValues[LFAttrLocationGPS] = &airport->Location;
+			}
+
+	res->Sort(attr, descending, categories);
+	LFSearchResult* cooked = new LFSearchResult(res);
+	cooked->Group(attr, icon, groupone, f);
+
+	// Revert to old GPS location
+	if (attr==LFAttrLocationGPS)
+		for (unsigned int a=0; a<res->m_ItemCount; a++)
+			res->m_Items[a]->AttributeValues[LFAttrLocationGPS] = &res->m_Items[a]->CoreAttributes.LocationGPS;
+
+	return cooked;
 }
 
 
