@@ -559,6 +559,7 @@ LFCore_API unsigned int LFMakeDefaultStore(char* key, HWND hWndSource, bool Inte
 		{
 			SendLFNotifyMessage(LFMessages.DefaultStoreChanged, LFMSGF_IntStores, hWndSource);
 			SendShellNotifyMessage(SHCNE_UPDATEITEM, key);
+			SendShellNotifyMessage(SHCNE_UPDATEDIR);
 		}
 	}
 
@@ -615,6 +616,7 @@ LFCore_API unsigned int LFMakeHybridStore(char* key, HWND hWndSource)
 	{
 		SendLFNotifyMessage(LFMessages.StoreAttributesChanged, LFMSGF_ExtHybStores, hWndSource);
 		SendShellNotifyMessage(SHCNE_UPDATEITEM, key);
+		SendShellNotifyMessage(SHCNE_UPDATEDIR);
 	}
 
 	return res;
