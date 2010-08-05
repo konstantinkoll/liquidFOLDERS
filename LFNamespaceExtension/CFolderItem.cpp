@@ -10,6 +10,7 @@
 #include "CAttributeCategorizer.h"
 #include <io.h>
 #include <shlguid.h>
+#include <shlobj.h>
 
 
 CString FrmtAttrStr(CString Mask, CString Name)
@@ -412,7 +413,6 @@ CNSEItem* CFolderItem::GetChildFromDisplayNameEx(CGetChildFromDisplayNameEventAr
 	if (LFGetStoreSettings(key, &store)==LFOk)
 	{
 		MessageBox(NULL,key,"Found",0);*/
-		MessageBox(NULL,e.displayName,"Parse",0);
 
 		FolderSerialization d = { 0 };
 		d.Level = LevelStores;
@@ -727,7 +727,22 @@ BOOL CFolderItem::IsValid()
 	char key[LFKeySize];
 	strcpy_s(key, LFKeySize, data.StoreID);
 
-	return (LFGetStoreSettings(key, &store)==LFOk);
+	if (LFGetStoreSettings(key, &store)!=LFOk)
+		return FALSE;
+
+	if (data.Level>LevelStores)
+		return TRUE;
+
+	wchar_t wsz[256];
+	MultiByteToWideChar(CP_ACP, 0, (LPCSTR)data.DisplayName, -1, wsz, 256);
+	if (wcscmp(wsz, store.StoreName)!=0)
+		return FALSE;
+	MultiByteToWideChar(CP_ACP, 0, (LPCSTR)data.Comment, -1, wsz, 256);
+	if (wcscmp(wsz, store.Comment)!=0)
+		return FALSE;
+
+	return (memcmp(&data.CreationTime, &store.CreationTime, sizeof(FILETIME))==0) &&
+		(memcmp(&data.FileTime, &store.FileTime, sizeof(FILETIME))==0);
 }
 
 void CFolderItem::GetMenuItems(CGetMenuitemsEventArgs& e)
@@ -1080,7 +1095,9 @@ BOOL CFolderItem::OnChangeName(CChangeNameEventArgs& e)
 
 	UINT res = LFSetStoreAttributes(&key[0], name, NULL);
 	LFErrorBox(res);
-	return (res==LFOk);
+
+	//	Immer FALSE zurückliefern, da das Update der Shell durch LFCore vorgenommen wird
+	return FALSE;
 }
 
 BOOL CFolderItem::OnDelete(CExecuteMenuitemsEventArgs& e)

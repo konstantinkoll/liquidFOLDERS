@@ -308,19 +308,35 @@ void SendShellNotifyMessage(unsigned int Msg, char* StoreID)
 	{
 		wcscpy_s(Key, LFKeySize+1, L"\\");
 		MultiByteToWideChar(CP_ACP, 0, StoreID, strlen(StoreID)+1, &Key[1], LFKeySize);
+
 	}
 	else
 	{
 		Key[0] = L'\0';
 	}
 
+	IShellFolder* pDesktopPtr = NULL;
+	SHGetDesktopFolder(&pDesktopPtr);
+
 	wchar_t Path[MAX_PATH];
 	wcscpy_s(Path, MAX_PATH, L"::{3F2D914F-FE57-414F-9F88-A377C7841DA4}");
 	wcscat_s(Path, MAX_PATH, Key);
+	if (pDesktopPtr)
+	{
+		LPITEMIDLIST pidlLocal;
+		pDesktopPtr->ParseDisplayName(NULL, NULL, Path, NULL, &pidlLocal, NULL);
+		SHChangeNotify(SHCNE_UPDATEITEM, SHCNF_FLUSH | SHCNF_IDLIST, pidlLocal, NULL);
+	}
 	SHChangeNotify(Msg, SHCNF_FLUSH | SHCNF_PATH, Path, (Msg==SHCNE_RENAMEFOLDER) ? Path : NULL);
 
 	wcscpy_s(Path, MAX_PATH, L"::{20D04FE0-3AEA-1069-A2D8-08002B30309D}\\::{3F2D914F-FE57-414F-9F88-A377C7841DA4}");
 	wcscat_s(Path, MAX_PATH, Key);
+	if (pDesktopPtr)
+	{
+		LPITEMIDLIST pidlLocal;
+		pDesktopPtr->ParseDisplayName(NULL, NULL, Path, NULL, &pidlLocal, NULL);
+		SHChangeNotify(SHCNE_UPDATEITEM, SHCNF_FLUSH | SHCNF_IDLIST, pidlLocal, NULL);
+	}
 	SHChangeNotify(Msg, SHCNF_FLUSH | SHCNF_PATH, Path, (Msg==SHCNE_RENAMEFOLDER) ? Path : NULL);
 }
 
@@ -542,8 +558,7 @@ LFCore_API unsigned int LFMakeDefaultStore(char* key, HWND hWndSource, bool Inte
 		if (res==LFOk)
 		{
 			SendLFNotifyMessage(LFMessages.DefaultStoreChanged, LFMSGF_IntStores, hWndSource);
-			SendShellNotifyMessage(SHCNE_ATTRIBUTES, key);
-			SendShellNotifyMessage(SHCNE_UPDATEDIR);
+			SendShellNotifyMessage(SHCNE_UPDATEITEM, key);
 		}
 	}
 
@@ -599,8 +614,7 @@ LFCore_API unsigned int LFMakeHybridStore(char* key, HWND hWndSource)
 	if (res==LFOk)
 	{
 		SendLFNotifyMessage(LFMessages.StoreAttributesChanged, LFMSGF_ExtHybStores, hWndSource);
-		SendShellNotifyMessage(SHCNE_ATTRIBUTES, key);
-		SendShellNotifyMessage(SHCNE_UPDATEDIR);
+		SendShellNotifyMessage(SHCNE_UPDATEITEM, key);
 	}
 
 	return res;
@@ -635,14 +649,18 @@ LFCore_API unsigned int LFSetStoreAttributes(char* key, wchar_t* name, wchar_t* 
 	unsigned int Mode = slot->StoreMode;
 	ReleaseMutex(Mutex_Stores);
 
-	if ((res==LFOk) && (!InternalCall))
+	if (res==LFOk)
 	{
-		SendLFNotifyMessage(LFMessages.StoreAttributesChanged, Mode==LFStoreModeInternal ? LFMSGF_IntStores : LFMSGF_ExtHybStores, hWndSource);
 		if (name)
 			SendShellNotifyMessage(SHCNE_RENAMEFOLDER, key);
 		if (comment)
-			SendShellNotifyMessage(SHCNE_ATTRIBUTES, key);
-		SendShellNotifyMessage(SHCNE_UPDATEDIR);
+			SendShellNotifyMessage(SHCNE_UPDATEITEM, key);
+
+		if (!InternalCall)
+		{
+			SendLFNotifyMessage(LFMessages.StoreAttributesChanged, Mode==LFStoreModeInternal ? LFMSGF_IntStores : LFMSGF_ExtHybStores, hWndSource);
+			SendShellNotifyMessage(SHCNE_UPDATEDIR);
+		}
 	}
 
 	return res;

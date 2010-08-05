@@ -4,6 +4,7 @@
 #include "Mutex.h"
 #include "Stores.h"
 #include "Transaction.h"
+#include <shlobj.h>
 
 
 extern LFMessageIDs LFMessages;
@@ -103,7 +104,10 @@ LFCore_API void LFTransactionUpdate(LFTransactionList* tl, HWND hWndSource, LFVa
 
 	// Update messages
 	if (StoresUpdated)
+	{
 		SendLFNotifyMessage(LFMessages.StoreAttributesChanged, LFMSGF_IntStores | LFMSGF_ExtHybStores, hWndSource);
+		SendShellNotifyMessage(SHCNE_UPDATEDIR);
+	}
 }
 
 LFCore_API void LFTransactionDelete(LFTransactionList* tl)
