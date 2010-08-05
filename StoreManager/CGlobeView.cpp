@@ -856,6 +856,18 @@ void CGlobeView::PrepareTexture()
 
 	GLint texSize = 1024;
 	glGetIntegerv(GL_MAX_TEXTURE_SIZE, &texSize);
+
+Smaller:
+	glTexImage2D(GL_PROXY_TEXTURE_2D, 0, 4, texSize, texSize, 0, GL_BGRA, GL_UNSIGNED_BYTE, NULL);
+	GLint proxySize = 0;
+	glGetTexLevelParameteriv(GL_PROXY_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &proxySize);
+
+	if ((proxySize==0) && (texSize>1024))
+	{
+		texSize /= 2;
+		goto Smaller;
+	}
+
 	if (texSize>=8192)
 	{
 		theApp.m_nMaxTextureSize = LFTexture8192;
@@ -1040,8 +1052,8 @@ BOOL CGlobeView::UpdateScene(BOOL Redraw)
 			if (TargetZoom<0.6f)
 			{
 				GLfloat dist = 0.6f-TargetZoom;
-				if (dist>TargetZoom*1.2f)
-					dist = TargetZoom*1.2f;
+				if (dist>(TargetZoom+0.1f)*1.2f)
+					dist = (TargetZoom+0.1f)*1.2f;
 
 				f = (GLfloat)sin(PI*m_AnimCounter/ANIMLENGTH);
 				m_Zoom = TargetZoom*(1.0f-f)+(TargetZoom+dist)*f;
@@ -1056,18 +1068,6 @@ BOOL CGlobeView::UpdateScene(BOOL Redraw)
 			m_Latitude = m_LocalSettings.Latitude;
 			m_Longitude = m_LocalSettings.Longitude;
 		}
-
-		// Nicht über die Pole rollen
-		if (m_Latitude<-75.0f)
-			m_Latitude = -75.0f;
-		if (m_Latitude>75.0f)
-			m_Latitude = 75.0f;
-
-		// Rotation normieren
-		if (m_Longitude-m_LocalSettings.Longitude<-180.0f)
-			m_Longitude += 360.0f;
-		if (m_Longitude-m_LocalSettings.Longitude>180.0f)
-			m_Longitude -= 360.0f;
 	}
 
 	if (res)
