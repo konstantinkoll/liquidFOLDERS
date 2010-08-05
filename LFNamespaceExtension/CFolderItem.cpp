@@ -406,22 +406,12 @@ void CFolderItem::GetDisplayNameEx(CString& displayName, DisplayNameFlags flags)
 
 CNSEItem* CFolderItem::GetChildFromDisplayNameEx(CGetChildFromDisplayNameEventArgs& e)
 {
-/*	LFStoreDescriptor store;
-	char key[LFKeySize];
-	strcpy_s(key, LFKeySize, e.displayName);
+	// TODO: check level, add files
 
-	if (LFGetStoreSettings(key, &store)==LFOk)
-	{
-		MessageBox(NULL,key,"Found",0);*/
-
-		FolderSerialization d = { 0 };
-		d.Level = LevelStores;
-		d.StoreID = e.displayName;
-		return new CFolderItem(d);
-/*	}
-	MessageBox(NULL,key,0,0);
-
-	return NULL;*/
+	FolderSerialization d = { 0 };
+	d.Level = LevelStores;
+	d.StoreID = e.displayName;
+	return new CFolderItem(d);
 }
 
 void CFolderItem::GetIconFileAndIndex(CGetIconFileAndIndexEventArgs& e)
