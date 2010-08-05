@@ -542,8 +542,8 @@ LFCore_API unsigned int LFMakeDefaultStore(char* key, HWND hWndSource, bool Inte
 		if (res==LFOk)
 		{
 			SendLFNotifyMessage(LFMessages.DefaultStoreChanged, LFMSGF_IntStores, hWndSource);
-			SendShellNotifyMessage(SHCNE_UPDATEITEM);
 			SendShellNotifyMessage(SHCNE_UPDATEDIR);
+			SendShellNotifyMessage(SHCNE_UPDATEITEM);
 		}
 	}
 
@@ -599,8 +599,8 @@ LFCore_API unsigned int LFMakeHybridStore(char* key, HWND hWndSource)
 	if (res==LFOk)
 	{
 		SendLFNotifyMessage(LFMessages.StoreAttributesChanged, LFMSGF_ExtHybStores, hWndSource);
-		SendShellNotifyMessage(SHCNE_UPDATEITEM);
 		SendShellNotifyMessage(SHCNE_UPDATEDIR);
+		SendShellNotifyMessage(SHCNE_UPDATEITEM);
 	}
 
 	return res;
