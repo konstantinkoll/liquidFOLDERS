@@ -190,6 +190,7 @@ CNSEItem* CFolderItem::DeserializeChild(CArchive& ar)
 BOOL CFolderItem::GetChildren(CGetChildrenEventArgs& e)
 {
 	LFFilter* f = NULL;
+	LFSearchResult* base = NULL;
 	LFSearchResult* res = NULL;
 
 	switch (data.Level)
@@ -249,9 +250,8 @@ BOOL CFolderItem::GetChildren(CGetChildrenEventArgs& e)
 		f->Mode = LFFilterModeDirectoryTree;
 		strcpy_s(f->StoreID, LFKeySize, (LPCTSTR)data.StoreID);
 		f->DomainID = (unsigned char)data.DomainID;
-		res = LFQuery(f);
-		LFSortSearchResult(res, atoi(data.FileID), false, false);
-		LFGroupSearchResult(res, atoi(data.FileID), false, false, data.Icon, atoi(data.FileID)!=LFAttrFileName, f);
+		base = LFQuery(f);
+		res = LFGroupSearchResult(base, atoi(data.FileID), false, false, data.Icon, atoi(data.FileID)!=LFAttrFileName, f);
 		break;
 	case LevelAttrValue:
 		f = LFAllocFilter();
@@ -366,6 +366,7 @@ BOOL CFolderItem::GetChildren(CGetChildrenEventArgs& e)
 	if (f)
 		LFFreeFilter(f);
 
+	LFFreeSearchResult(base);
 	return TRUE;
 }
 
