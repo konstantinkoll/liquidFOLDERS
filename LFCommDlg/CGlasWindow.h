@@ -1,5 +1,5 @@
 
-// CGlassWindow: Schnittstelle der Klasse CGlassWindow
+// CGlasWindow: Schnittstelle der Klasse CGlasWindow
 //
 
 #pragma once
@@ -7,14 +7,14 @@
 #include "LFApplication.h"
 
 
-// CGlassWindow
+// CGlasWindow
 //
 
-class AFX_EXT_CLASS CGlassWindow : public CWnd
+class AFX_EXT_CLASS CGlasWindow : public CWnd
 {
 public:
-	CGlassWindow();
-	~CGlassWindow();
+	CGlasWindow();
+	~CGlasWindow();
 
 	virtual void UseGlassBackground();
 

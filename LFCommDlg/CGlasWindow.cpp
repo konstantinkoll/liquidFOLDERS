@@ -1,15 +1,15 @@
 
-// CGlassWindow.cpp: Implementierung der Klasse CGlassWindow
+// CGlasWindow.cpp: Implementierung der Klasse CGlasWindow
 //
 
 #include "stdafx.h"
-#include "CGlassWindow.h"
+#include "CGlasWindow.h"
 
 
-// CGlassWindow
+// CGlasWindow
 //
 
-CGlassWindow::CGlassWindow()
+CGlasWindow::CGlasWindow()
 	: CWnd()
 {
 	p_App = (LFApplication*)AfxGetApp();
@@ -17,11 +17,11 @@ CGlassWindow::CGlassWindow()
 	m_IsAeroWindow = FALSE;
 }
 
-CGlassWindow::~CGlassWindow()
+CGlasWindow::~CGlasWindow()
 {
 }
 
-void CGlassWindow::UseGlassBackground()
+void CGlasWindow::UseGlassBackground()
 {
 	ASSERT(p_App->m_AeroLibLoaded);
 
@@ -30,14 +30,14 @@ void CGlassWindow::UseGlassBackground()
 }
 
 
-BEGIN_MESSAGE_MAP(CGlassWindow, CWnd)
+BEGIN_MESSAGE_MAP(CGlasWindow, CWnd)
 	ON_WM_CREATE()
 	ON_WM_DESTROY()
 	ON_WM_THEMECHANGED()
 	ON_WM_DWMCOMPOSITIONCHANGED()
 END_MESSAGE_MAP()
 
-int CGlassWindow::OnCreate(LPCREATESTRUCT lpCreateStruct)
+int CGlasWindow::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if (CWnd::OnCreate(lpCreateStruct) == -1)
 		return -1;
@@ -48,7 +48,7 @@ int CGlassWindow::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	return 0;
 }
 
-void CGlassWindow::OnDestroy()
+void CGlasWindow::OnDestroy()
 {
 	if (hTheme)
 		p_App->zCloseThemeData(hTheme);
@@ -56,7 +56,7 @@ void CGlassWindow::OnDestroy()
 	CWnd::OnDestroy();
 }
 
-LRESULT CGlassWindow::OnThemeChanged()
+LRESULT CGlasWindow::OnThemeChanged()
 {
 	if (p_App->m_ThemeLibLoaded)
 	{
@@ -70,7 +70,7 @@ LRESULT CGlassWindow::OnThemeChanged()
 	return TRUE;
 }
 
-void CGlassWindow::OnCompositionChanged()
+void CGlasWindow::OnCompositionChanged()
 {
 	if (p_App->m_AeroLibLoaded)
 	{

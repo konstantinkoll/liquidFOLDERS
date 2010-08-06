@@ -12,7 +12,7 @@
 
 
 CFileDropWnd::CFileDropWnd()
-	: CGlassWindow()
+	: CGlasWindow()
 {
 	m_hIcon = NULL;
 	MouseInWnd = Grabbed = StoreValid = FALSE;
@@ -33,7 +33,7 @@ BOOL CFileDropWnd::Create()
 	const DWORD dwStyle = WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU;
 	const DWORD dwExStyle = WS_EX_APPWINDOW;
 	CRect rect(0, 0, 144, 190);
-	return CGlassWindow::CreateEx(dwExStyle, className, _T("FileDrop"), dwStyle, rect, NULL, 0);
+	return CGlasWindow::CreateEx(dwExStyle, className, _T("FileDrop"), dwStyle, rect, NULL, 0);
 }
 
 BOOL CFileDropWnd::PreTranslateMessage(MSG* pMsg)
@@ -58,7 +58,7 @@ BOOL CFileDropWnd::PreTranslateMessage(MSG* pMsg)
 		break;
 	}
 
-	return CGlassWindow::PreTranslateMessage(pMsg);
+	return CGlasWindow::PreTranslateMessage(pMsg);
 }
 
 void CFileDropWnd::UpdateStore()
@@ -118,7 +118,7 @@ void CFileDropWnd::SetWindowRect(int x, int y, BOOL TopMost)
 }
 
 
-BEGIN_MESSAGE_MAP(CFileDropWnd, CGlassWindow)
+BEGIN_MESSAGE_MAP(CFileDropWnd, CGlasWindow)
 	ON_WM_CREATE()
 	ON_WM_CLOSE()
 	ON_WM_ERASEBKGND()
@@ -144,7 +144,7 @@ END_MESSAGE_MAP()
 
 int CFileDropWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
-	if (CGlassWindow::OnCreate(lpCreateStruct)==-1)
+	if (CGlasWindow::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
 	// Hintergrundbilder laden
@@ -213,7 +213,7 @@ void CFileDropWnd::OnClose()
 	theApp.WriteInt(_T("X"), PosX);
 	theApp.WriteInt(_T("Y"), PosY);
 
-	CGlassWindow::OnClose();
+	CGlasWindow::OnClose();
 }
 
 BOOL CFileDropWnd::OnEraseBkgnd(CDC* pDC)
@@ -337,7 +337,7 @@ void CFileDropWnd::OnMouseMove(UINT nFlags, CPoint point)
 		MouseInWnd = TRUE;
 	}
 
-	CGlassWindow::OnMouseMove(nFlags, point);
+	CGlasWindow::OnMouseMove(nFlags, point);
 }
 
 void CFileDropWnd::OnMouseLeave()
@@ -345,7 +345,7 @@ void CFileDropWnd::OnMouseLeave()
 	Tooltip.Deactivate();
 	MouseInWnd = FALSE;
 
-	CGlassWindow::OnMouseLeave();
+	CGlasWindow::OnMouseLeave();
 }
 
 void CFileDropWnd::OnMouseHover(UINT nFlags, CPoint point)
@@ -406,7 +406,7 @@ void CFileDropWnd::OnSysCommand(UINT nID, LPARAM lParam)
 		OnAlwaysOnTop();
 		break;
 	default:
-		CGlassWindow::OnSysCommand(nID, lParam);
+		CGlasWindow::OnSysCommand(nID, lParam);
 	}
 }
 
@@ -418,7 +418,7 @@ void CFileDropWnd::OnActivate(UINT /*nState*/, CWnd* /*pWndOther*/, BOOL bMinimi
 
 void CFileDropWnd::OnMove(int x, int y)
 {
-	CGlassWindow::OnMove(x, y);
+	CGlasWindow::OnMove(x, y);
 
 	CRect rect;
 	GetWindowRect(rect);
