@@ -382,22 +382,20 @@ void CFolderItem::GetDisplayNameEx(CString& displayName, DisplayNameFlags flags)
 	// If a fully qualified parsing name is requested, return the full path
 	if ((flags & NSEDNF_ForParsing) && (!(flags & NSEDNF_ForAddressBar)))
 	{
-		// If a fully qualified parsing name is requested, return the full path
 		if (!(flags & NSEDNF_InFolder))
 		{
 			WCHAR buf[39];
 			StringFromGUID2(guid, buf, 39);
 			CString id(buf);
-			displayName = "::{20D04FE0-3AEA-1069-A2D8-08002B30309D}\\::"+id;
+			displayName = id;
 
-			if (data.Level>LevelStores)
+			if (data.Level>LevelRoot)
 				displayName += '\\'+data.StoreID;
-			//if (data.FileID!="")
-			//	displayName += '\\'+data.FileID;
 		}
 		else
 		{
-			displayName = data.FileID;
+			if (data.Level>LevelRoot)
+				displayName = data.StoreID;
 		}
 
 		return;
@@ -547,7 +545,7 @@ BOOL CFolderItem::GetColumn(CShellColumn& column, int index)
 
 	column.name = theApp.m_Attributes[index]->Name;
 	column.width = theApp.m_Attributes[index]->RecommendedWidth/7;  // Chars, not pixel
-	column.fmt = ((theApp.m_Attributes[index]->Type>=LFTypeUINT) || (index==LFAttrStoreID) || (index==LFAttrFileID) || (index==LFAttrFileCount)) ? NSESCF_Right : NSESCF_Left;
+	column.fmt = ((theApp.m_Attributes[index]->Type>=LFTypeUINT) || (index==LFAttrStoreID) || (index==LFAttrFileID) || (index==LFAttrFileCount) || (index==LFAttrDescription)) ? NSESCF_Right : NSESCF_Left;
 	column.categorizerType = NSECT_Alphabetical;
 	column.index = index;
 	column.defaultVisible = (index!=LFAttrStoreID) && (index!=LFAttrFileID) && (index!=LFAttrFileCount);
@@ -758,13 +756,13 @@ void CFolderItem::GetMenuItems(CGetMenuitemsEventArgs& e)
 		e.menu->InsertItem(tmpStr, _T(VERB_OPEN), tmpHint, 0)->SetDefaultItem(!(e.flags & NSEQCF_NoDefault));
 	}
 
-	e.menu->AddItem(_T(""))->SetSeparator(TRUE);
-
 	switch (data.Level)
 	{
 	case LevelRoot:
 		if (e.children->GetCount()==0)
 		{
+			e.menu->AddItem(_T(""))->SetSeparator(TRUE);
+
 			ENSURE(tmpStr.LoadString(IDS_MENU_CreateNewStore));
 			ENSURE(tmpHint.LoadString(IDS_HINT_CreateNewStore));
 			e.menu->AddItem(tmpStr, _T(VERB_CREATENEWSTORE), tmpHint)->SetEnabled(!theApp.m_PathRunCmd.IsEmpty());
@@ -888,7 +886,7 @@ BOOL CFolderItem::OnExecuteMenuItem(CExecuteMenuitemsEventArgs& e)
 		ENSURE(tmpStr.LoadString(IDS_TEXT_CreateLink));
 		ENSURE(tmpCaption.LoadString(IDS_CAPT_CreateLink));
 
-		if (MessageBox(NULL, tmpStr, tmpCaption, MB_YESNO | MB_ICONQUESTION)==IDNO)
+		if (MessageBox(GetViewWindow(), tmpStr, tmpCaption, MB_YESNO | MB_ICONQUESTION)==IDNO)
 			return FALSE;
 
 		// Create link on desktop
@@ -905,8 +903,7 @@ BOOL CFolderItem::OnExecuteMenuItem(CExecuteMenuitemsEventArgs& e)
 		return TRUE;
 	}
 
-	AfxMessageBox(e.menuItem->GetVerb());
-	return TRUE;
+	return FALSE;
 }
 
 void CFolderItem::OnExecuteFrameCommand(CExecuteFrameCommandEventArgs& e)
