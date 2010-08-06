@@ -106,6 +106,8 @@ NSEItemAttributes CFolderItem::GetAttributes(NSEItemAttributes /*requested*/)
 		ret |= NSEIA_CanRename | NSEIA_CanDelete | NSEIA_HasPropSheet;
 	if (data.Level<LevelAttrValue)
 		ret |= NSEIA_HasSubFolder;
+	if (data.Level>LevelRoot)
+		ret |= NSEIA_DropTarget;
 
 	return (NSEItemAttributes)ret;
 }
@@ -1289,6 +1291,30 @@ void CFolderItem::OnCreateShortcut(CNSEItem* Item, const CString& LinkFilename, 
 	}
 }
 
+void CFolderItem::DragOver(CNSEDragEventArgs& e)
+{
+	if (data.Level==LevelRoot)
+	{
+		e.effect = DROPEFFECT_NONE;
+	}
+	else
+	{
+		e.effect = (e.keyState & MK_CONTROL) ? DROPEFFECT_MOVE : DROPEFFECT_COPY;
+	}
+}
+
+void CFolderItem::DragEnter(CNSEDragEventArgs& e)
+{
+	if (data.Level==LevelRoot)
+	{
+		e.effect = DROPEFFECT_NONE;
+	}
+	else
+	{
+		e.effect = (e.keyState & MK_CONTROL) ? DROPEFFECT_MOVE : DROPEFFECT_COPY;
+	}
+}
+
 
 
 
@@ -1357,31 +1383,10 @@ void CFolderItem::OnExternalDrop(CNSEDragEventArgs& /*e*/)
 
 }
 
-// Called when a drag-drop operation moves over the item.
-void CFolderItem::DragOver(CNSEDragEventArgs& e)
-{
-	if ((e.keyState & MK_CONTROL) != 0 && (e.keyState & MK_SHIFT) != 0)
-		e.effect = DROPEFFECT_LINK;
-	else if ((e.keyState & MK_SHIFT) != 0)
-		e.effect = DROPEFFECT_MOVE;
-	else
-		e.effect = DROPEFFECT_COPY;
-}
-
-// Called when a drag-drop operation moves over the item for the first time.
-void CFolderItem::DragEnter(CNSEDragEventArgs& e)  
-{
-	if ((e.keyState & MK_CONTROL) != 0 && (e.keyState & MK_SHIFT) != 0)
-		e.effect = DROPEFFECT_LINK;
-	else if ((e.keyState & MK_SHIFT) != 0)
-		e.effect = DROPEFFECT_MOVE;
-	else
-		e.effect = DROPEFFECT_COPY;
-}
-
 // Called when a drop occurs over the item.
-void CFolderItem::DragDrop(CNSEDragEventArgs& /*e*/)
+void CFolderItem::DragDrop(CNSEDragEventArgs& e)
 {
+	MessageBox(e.hWnd, _T("Not implemented"), _T("Drop"), 0);
 	// If file drop data is present, do the copy/move
 /*	CStringArray files;
 	if (e.data->GetHDROPData(&files))

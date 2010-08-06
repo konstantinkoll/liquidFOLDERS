@@ -11,7 +11,7 @@
 #define LevelAttrValue   4
 #define LevelFile        5
 
-#define NSEIA_CFOLDERITEM   NSEIA_CanLink | NSEIA_DropTarget | NSEIA_FileSysAncestor | NSEIA_Browsable | NSEIA_Folder
+#define NSEIA_CFOLDERITEM   NSEIA_CanLink | NSEIA_FileSysAncestor | NSEIA_Browsable | NSEIA_Folder
 
 #define VERB_CREATELINK         "link"
 #define VERB_CREATENEWSTORE     "newstore"
@@ -91,6 +91,8 @@ public:
 	virtual BOOL OnProperties(CExecuteMenuitemsEventArgs& e);
 	virtual BOOL OnOpen(CExecuteMenuitemsEventArgs& e);
 	virtual BOOL OnOpenWith(CExecuteMenuitemsEventArgs& e);
+	virtual void DragOver(CNSEDragEventArgs& e);
+	virtual void DragEnter(CNSEDragEventArgs& e);
 
 	BOOL OnCreateNewStore(HWND hWnd=NULL);
 	BOOL OnStoreManager(HWND hWnd=NULL);
@@ -101,7 +103,5 @@ public:
 	// TODO
 	virtual void InitDataObject(CInitDataObjectEventArgs& e);
 	virtual void OnExternalDrop(CNSEDragEventArgs& e);
-	virtual void DragOver(CNSEDragEventArgs& e);
-	virtual void DragEnter(CNSEDragEventArgs& e);
 	virtual void DragDrop(CNSEDragEventArgs& e);
 };
