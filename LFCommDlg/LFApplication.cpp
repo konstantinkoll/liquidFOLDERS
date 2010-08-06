@@ -66,6 +66,7 @@ LFApplication::LFApplication(UINT _HasGUI)
 		zCloseThemeData = (PFNCLOSETHEMEDATA)GetProcAddress(hModThemes, "CloseThemeData");
 		zDrawThemeBackground = (PFNDRAWTHEMEBACKGROUND)GetProcAddress(hModThemes, "DrawThemeBackground");
 		zDrawThemeText = (PFNDRAWTHEMETEXT)GetProcAddress(hModThemes, "DrawThemeText");
+		zDrawThemeTextEx = (PFNDRAWTHEMETEXTEX)GetProcAddress(hModThemes, "DrawThemeTextEx");
 		zGetThemeSysFont = (PFNGETTHEMESYSFONT)GetProcAddress(hModThemes, "GetThemeSysFont");
 		zGetThemeSysColor = (PFNGETTHEMESYSCOLOR)GetProcAddress(hModThemes, "GetThemeSysColor");
 		zGetThemePartSize = (PFNGETTHEMEPARTSIZE)GetProcAddress(hModThemes, "GetThemePartSize");
@@ -84,6 +85,7 @@ LFApplication::LFApplication(UINT _HasGUI)
 		zCloseThemeData = NULL;
 		zDrawThemeBackground = NULL;
 		zDrawThemeText = NULL;
+		zDrawThemeTextEx = NULL;
 		zGetThemeSysFont = NULL;
 		zGetThemeSysColor = NULL;
 		zGetThemePartSize = NULL;
@@ -97,8 +99,9 @@ LFApplication::LFApplication(UINT _HasGUI)
 	{
 		zDwmIsCompositionEnabled = (PFNDWMISCOMPOSITIONENABLED)GetProcAddress(hModAero, "DwmIsCompositionEnabled");
 		zDwmExtendFrameIntoClientArea = (PFNDWMEXTENDFRAMEINTOCLIENTAREA)GetProcAddress(hModAero, "DwmExtendFrameIntoClientArea");
+		zDwmDefWindowProc = (PFNDWMDEFWINDOWPROC)GetProcAddress(hModAero, "DwmDefWindowProc");
 
-		m_AeroLibLoaded = (zDwmIsCompositionEnabled && zDwmExtendFrameIntoClientArea);
+		m_AeroLibLoaded = (zDwmIsCompositionEnabled && zDwmExtendFrameIntoClientArea && zDwmDefWindowProc);
 		if (!m_AeroLibLoaded)
 		{
 			FreeLibrary(hModAero);
@@ -109,6 +112,7 @@ LFApplication::LFApplication(UINT _HasGUI)
 	{
 		zDwmIsCompositionEnabled = NULL;
 		zDwmExtendFrameIntoClientArea = NULL;
+		zDwmDefWindowProc = NULL;
 
 		m_AeroLibLoaded = FALSE;
 	}

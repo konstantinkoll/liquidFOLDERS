@@ -30,8 +30,8 @@ BOOL CFileDropWnd::Create()
 
 	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, theApp.LoadStandardCursor(IDC_ARROW), NULL, m_hIcon);
 
-	const DWORD dwStyle = WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU;
-	const DWORD dwExStyle = WS_EX_APPWINDOW;
+	const DWORD dwStyle = WS_BORDER | WS_MINIMIZEBOX | WS_SIZEBOX | WS_SYSMENU | WS_CLIPCHILDREN | WS_CLIPSIBLINGS;
+	const DWORD dwExStyle = WS_EX_APPWINDOW | WS_EX_WINDOWEDGE | WS_EX_CONTROLPARENT;
 	CRect rect(0, 0, 144, 190);
 	return CGlasWindow::CreateEx(dwExStyle, className, _T("FileDrop"), dwStyle, rect, NULL, 0);
 }
@@ -86,7 +86,7 @@ void CFileDropWnd::UpdateStore()
 
 void CFileDropWnd::SetWindowRect(int x, int y, BOOL TopMost)
 {
-	UINT Flags = SWP_NOSIZE;
+	UINT Flags = SWP_NOSIZE | SWP_FRAMECHANGED;
 
 	if ((x!=-1) || (y!=-1))
 	{
@@ -135,7 +135,7 @@ BEGIN_MESSAGE_MAP(CFileDropWnd, CGlasWindow)
 	ON_COMMAND(ID_APP_STOREPROPERTIES, OnStoreProperties)
 	ON_COMMAND(ID_APP_ABOUT, OnAbout)
 	ON_COMMAND(ID_APP_NEWSTOREMANAGER, OnNewStoreManager)
-	ON_COMMAND(ID_APP_EXIT, OnAbout)
+	ON_COMMAND(ID_APP_EXIT, OnQuit)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoresChanged, OnStoresChanged)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoreAttributesChanged, OnStoresChanged)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->DefaultStoreChanged, OnStoresChanged)
@@ -146,6 +146,10 @@ int CFileDropWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if (CGlasWindow::OnCreate(lpCreateStruct)==-1)
 		return -1;
+
+	// Aero
+	MARGINS Margins = { -1, -1, -1, -1 };
+	UseGlasBackground(Margins);
 
 	// Hintergrundbilder laden
 	m_Dropzone.Create(128, 128, ILC_COLOR32, 2, 1);
@@ -219,15 +223,22 @@ void CFileDropWnd::OnClose()
 BOOL CFileDropWnd::OnEraseBkgnd(CDC* pDC)
 {
 	CRect rect;
-	GetClientRect(rect);
+	CGlasWindow::GetClientRect(rect);
 
 	CDC dc;
 	dc.CreateCompatibleDC(pDC);
 	dc.SetBkMode(TRANSPARENT);
 
-	CBitmap buffer;
-	buffer.CreateCompatibleBitmap(pDC, rect.Width(), rect.Height());
-	CBitmap* pOldBitmap = dc.SelectObject(&buffer);
+	BITMAPINFO dib = { 0 };
+	dib.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+	dib.bmiHeader.biWidth = rect.Width();
+	dib.bmiHeader.biHeight = -rect.Height();
+	dib.bmiHeader.biPlanes = 1;
+	dib.bmiHeader.biBitCount = 32;
+	dib.bmiHeader.biCompression = BI_RGB;
+
+	HBITMAP bmp = CreateDIBSection(dc.m_hDC, &dib, DIB_RGB_COLORS, NULL, NULL, 0);
+	HBITMAP hOldBitmap = (HBITMAP)dc.SelectObject(bmp);
 
 	// Hintergrund
 	COLORREF cr = m_IsAeroWindow ? 0x000000 : GetSysColor(hTheme ? (GetActiveWindow())==this ? COLOR_ACTIVECAPTION : COLOR_INACTIVECAPTION : COLOR_3DFACE);
@@ -243,6 +254,11 @@ BOOL CFileDropWnd::OnEraseBkgnd(CDC* pDC)
 	CRect rtext;
 	rtext.SetRectEmpty();
 
+	dc.DrawText(Label, -1, rtext, textflags | DT_CALCRECT);
+	rtext.top = 120;
+	rtext.bottom = rect.Height();
+	rtext.right = rect.Width();
+
 	if ((m_IsAeroWindow) || (hTheme))
 	{
 		LOGFONT lf;
@@ -252,41 +268,18 @@ BOOL CFileDropWnd::OnEraseBkgnd(CDC* pDC)
 
 		CFont titleFont;
 		titleFont.CreateFontIndirect(&lf);
-
 		CFont* oldFont = dc.SelectObject(&titleFont);
-		dc.DrawText(Label, -1, rtext, textflags | DT_CALCRECT);
 
 		if (m_IsAeroWindow)
 		{
-			wchar_t Buffer[256];
-			wcscpy_s(Buffer, 256, Label);
-			
-			FontFamily fontFamily(lf.lfFaceName);
-			StringFormat strformat;
-			GraphicsPath TextPath;
-			TextPath.AddString(Buffer, (int)wcslen(Buffer), &fontFamily, FontStyleRegular, (REAL)-lf.lfHeight, Gdiplus::Point(((rect.Width()-rtext.Width())>>1)-5, 120+((rect.bottom-120-rtext.Height())>>1)), &strformat);
+			DTTOPTS opts = { sizeof(DTTOPTS) };
+			opts.dwFlags = DTT_COMPOSITED | DTT_GLOWSIZE | DTT_TEXTCOLOR;
+			opts.iGlowSize = 15;
 
-			Graphics g(dc.m_hDC);
-			g.SetCompositingMode(CompositingModeSourceOver);
-			g.SetSmoothingMode(SmoothingModeAntiAlias);
-			g.SetInterpolationMode(InterpolationModeHighQualityBicubic);
-
-			Pen pen(Color(0x30, 0xFF, 0xFF, 0xFF), 5.5);
-			pen.SetLineJoin(LineJoinRound);
-			g.DrawPath(&pen, &TextPath);
-			pen.SetWidth(3.5);
-			g.DrawPath(&pen, &TextPath);
-			pen.SetWidth(1.5);
-			g.DrawPath(&pen, &TextPath);
-			SolidBrush brush(Color(0, 0, 0));
-			g.FillPath(&brush, &TextPath);
+			theApp.zDrawThemeTextEx(hTheme, dc, 0, GetActiveWindow()==this ? CS_ACTIVE : CS_INACTIVE, Label, -1, textflags, rtext, &opts);
 		}
 		else
 		{
-			rtext.top = 120;
-			rtext.bottom = rect.bottom;
-			rtext.right = rect.right;
-
 			theApp.zDrawThemeText(hTheme, dc, WP_CAPTION, GetActiveWindow()==this ? CS_ACTIVE : CS_INACTIVE,
 				Label, -1, textflags, 0, rtext);
 
@@ -301,10 +294,6 @@ BOOL CFileDropWnd::OnEraseBkgnd(CDC* pDC)
 		HGDIOBJ oldFont = dc.SelectObject(GetStockObject(DEFAULT_GUI_FONT));
 		dc.DrawText(Label, -1, rtext, textflags | DT_CALCRECT);
 
-		rtext.top = 120;
-		rtext.bottom = rect.bottom;
-		rtext.right = rect.right;
-
 		dc.SetTextColor(GetSysColor(COLOR_WINDOWTEXT));
 		dc.DrawText(Label, -1, rtext, textflags);
 
@@ -315,10 +304,10 @@ BOOL CFileDropWnd::OnEraseBkgnd(CDC* pDC)
 	if (!StoreValid)
 		DrawIconEx(dc.m_hDC, rect.Width()-28, 0, m_hWarning, 24, 24, 0, NULL, DI_NORMAL);
 
-	pDC->BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);
+	pDC->BitBlt(rect.left, rect.top, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);
 
-	dc.SelectObject(pOldBitmap);
-	buffer.DeleteObject();
+	dc.SelectObject(hOldBitmap);
+	DeleteObject(bmp);
 
 	return TRUE;
 }
@@ -391,11 +380,9 @@ void CFileDropWnd::OnRButtonDown(UINT /*nFlags*/, CPoint point)
 
 LRESULT CFileDropWnd::OnNcHitTest(CPoint point)
 {
-	SHORT LButtonDown;
-	LButtonDown = GetAsyncKeyState(VK_LBUTTON);
-
-	LRESULT uHitTest = DefWindowProc(WM_NCHITTEST, 0, (point.y<<16) | point.x);
-	return ((uHitTest==HTCLIENT) && (LButtonDown & 0x8000)) ? HTCAPTION : uHitTest;
+	SHORT LButtonDown = GetAsyncKeyState(VK_LBUTTON);
+	LRESULT uHitTest = CGlasWindow::OnNcHitTest(point);
+	return ((uHitTest>=HTLEFT) && (uHitTest<=HTBOTTOMRIGHT)) ? HTCAPTION : ((uHitTest==HTCLIENT) && (LButtonDown & 0x8000)) ? HTCAPTION : uHitTest;
 }
 
 void CFileDropWnd::OnSysCommand(UINT nID, LPARAM lParam)
@@ -488,4 +475,9 @@ LRESULT CFileDropWnd::OnWakeup(WPARAM /*wParam*/, LPARAM /*lParam*/)
 
 	SetForegroundWindow();
 	return 24878;
+}
+
+void CFileDropWnd::OnQuit()
+{
+	PostQuitMessage(0);
 }

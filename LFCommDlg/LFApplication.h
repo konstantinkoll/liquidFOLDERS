@@ -28,6 +28,9 @@ typedef HRESULT(__stdcall* PFNDRAWTHEMEBACKGROUND)(HTHEME hTheme, HDC hdc, int i
 typedef HRESULT(__stdcall* PFNDRAWTHEMETEXT)(HTHEME hTheme, HDC hdc, int iPartId,
 							int iStateId, LPCWSTR pszText, int iCharCount, DWORD dwTextFlags,
 							DWORD dwTextFlags2, const RECT* pRect);
+typedef HRESULT(__stdcall* PFNDRAWTHEMETEXTEX)(HTHEME hTheme, HDC hdc, int iPartId,
+							int iStateId, LPCWSTR pszText, int iCharCount, DWORD dwTextFlags,
+							const RECT* pRect, const DTTOPTS* pOptions);
 typedef HRESULT(__stdcall* PFNGETTHEMESYSFONT)(HTHEME hTheme, int iFontID, LOGFONT* plf);
 typedef HRESULT(__stdcall* PFNGETTHEMESYSCOLOR)(HTHEME hTheme, int iColorID);
 typedef HRESULT (__stdcall* PFNGETTHEMEPARTSIZE)(HTHEME hTheme, HDC hdc, int iPartId, int iStateId,
@@ -35,6 +38,7 @@ typedef HRESULT (__stdcall* PFNGETTHEMEPARTSIZE)(HTHEME hTheme, HDC hdc, int iPa
 
 typedef HRESULT(__stdcall* PFNDWMISCOMPOSITIONENABLED)(BOOL* pfEnabled);
 typedef HRESULT(__stdcall* PFNDWMEXTENDFRAMEINTOCLIENTAREA)(HWND hWnd, const MARGINS* pMarInset);
+typedef BOOL(__stdcall* PFNDWMDEFWINDOWPROC)(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam, LRESULT* plResult);
 
 
 // View parameters
@@ -104,6 +108,7 @@ public:
 	PFNCLOSETHEMEDATA zCloseThemeData;
 	PFNDRAWTHEMEBACKGROUND zDrawThemeBackground;
 	PFNDRAWTHEMETEXT zDrawThemeText;
+	PFNDRAWTHEMETEXTEX zDrawThemeTextEx;
 	PFNGETTHEMESYSFONT zGetThemeSysFont;
 	PFNGETTHEMESYSCOLOR zGetThemeSysColor;
 	PFNGETTHEMEPARTSIZE zGetThemePartSize;
@@ -111,6 +116,7 @@ public:
 
 	PFNDWMISCOMPOSITIONENABLED zDwmIsCompositionEnabled;
 	PFNDWMEXTENDFRAMEINTOCLIENTAREA zDwmExtendFrameIntoClientArea;
+	PFNDWMDEFWINDOWPROC zDwmDefWindowProc;
 	BOOL m_AeroLibLoaded;
 
 	virtual BOOL InitInstance();
