@@ -86,6 +86,15 @@ LRESULT CGlasWindow::OnThemeChanged()
 			p_App->zCloseThemeData(hTheme);
 
 		hTheme = p_App->zOpenThemeData(m_hWnd, m_IsAeroWindow ? _T("CompositedWindow::Window") : VSCLASS_WINDOW);
+
+		if (p_App->zSetWindowThemeAttribute)
+		{
+			WTA_OPTIONS opt;
+			opt.dwMask = WTNCA_NODRAWCAPTION | WTNCA_NODRAWICON;
+			opt.dwFlags = WTNCA_NODRAWCAPTION | WTNCA_NODRAWICON;
+			p_App->zSetWindowThemeAttribute(m_hWnd, WTA_NONCLIENT, &opt, sizeof(WTA_OPTIONS));
+		}
+
 		Invalidate();
 	}
 

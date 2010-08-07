@@ -276,7 +276,8 @@ BOOL CFileDropWnd::OnEraseBkgnd(CDC* pDC)
 			opts.dwFlags = DTT_COMPOSITED | DTT_GLOWSIZE | DTT_TEXTCOLOR;
 			opts.iGlowSize = 15;
 
-			theApp.zDrawThemeTextEx(hTheme, dc, 0, GetActiveWindow()==this ? CS_ACTIVE : CS_INACTIVE, Label, -1, textflags, rtext, &opts);
+			if (theApp.zDrawThemeTextEx)
+				theApp.zDrawThemeTextEx(hTheme, dc, 0, GetActiveWindow()==this ? CS_ACTIVE : CS_INACTIVE, Label, -1, textflags, rtext, &opts);
 		}
 		else
 		{
