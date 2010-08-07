@@ -193,7 +193,7 @@ LRESULT CGlasWindow::OnNcHitTest(CPoint point)
 					Col = 2;
 				}
 
-			LRESULT HitMatrix[3][3] = 
+			const LRESULT HitMatrix[3][3] = 
 			{
 				{ HTTOPLEFT, HTTOP, HTTOPRIGHT },
 				{ HTLEFT, HTCLIENT, HTRIGHT },
@@ -209,7 +209,7 @@ LRESULT CGlasWindow::OnNcHitTest(CPoint point)
 	return CWnd::OnNcHitTest(point);
 }
 
-void CGlasWindow::OnActivateApp(BOOL bActive, DWORD dwThreadID)
+void CGlasWindow::OnActivateApp(BOOL /*bActive*/, DWORD /*dwThreadID*/)
 {
 	Invalidate();
 	UpdateWindow();
