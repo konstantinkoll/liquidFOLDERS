@@ -66,6 +66,7 @@ BEGIN_MESSAGE_MAP(CGlasWindow, CWnd)
 	ON_WM_DWMCOMPOSITIONCHANGED()
 	ON_WM_NCCALCSIZE()
 	ON_WM_NCHITTEST()
+	ON_WM_ACTIVATEAPP()
 END_MESSAGE_MAP()
 
 int CGlasWindow::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -206,4 +207,10 @@ LRESULT CGlasWindow::OnNcHitTest(CPoint point)
 	}
 
 	return CWnd::OnNcHitTest(point);
+}
+
+void CGlasWindow::OnActivateApp(BOOL bActive, DWORD dwThreadID)
+{
+	Invalidate();
+	UpdateWindow();
 }
