@@ -222,8 +222,11 @@ void CFileDropWnd::OnClose()
 
 BOOL CFileDropWnd::OnEraseBkgnd(CDC* pDC)
 {
-	CRect rect;
-	CGlasWindow::GetClientRect(rect);
+	CRect rclient;
+	GetClientRect(rclient);
+
+	CRect rlayout;
+	GetLayoutRect(rlayout);
 
 	CDC dc;
 	dc.CreateCompatibleDC(pDC);
@@ -231,8 +234,8 @@ BOOL CFileDropWnd::OnEraseBkgnd(CDC* pDC)
 
 	BITMAPINFO dib = { 0 };
 	dib.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-	dib.bmiHeader.biWidth = rect.Width();
-	dib.bmiHeader.biHeight = -rect.Height();
+	dib.bmiHeader.biWidth = rclient.Width();
+	dib.bmiHeader.biHeight = -rclient.Height();
 	dib.bmiHeader.biPlanes = 1;
 	dib.bmiHeader.biBitCount = 32;
 	dib.bmiHeader.biCompression = BI_RGB;
@@ -241,23 +244,33 @@ BOOL CFileDropWnd::OnEraseBkgnd(CDC* pDC)
 	HBITMAP hOldBitmap = (HBITMAP)dc.SelectObject(bmp);
 
 	// Hintergrund
-	COLORREF cr = m_IsAeroWindow ? 0x000000 : GetSysColor(hTheme ? (GetActiveWindow())==this ? COLOR_ACTIVECAPTION : COLOR_INACTIVECAPTION : COLOR_3DFACE);
-	dc.FillSolidRect(rect, cr);
+	if (m_IsAeroWindow)
+	{
+		dc.FillSolidRect(rclient, 0x000000);
+	}
+	else
+		if (hTheme)
+		{
+			CRect rframe(rclient);
+			rframe.left -= GetSystemMetrics(SM_CXSIZEFRAME);
+			rframe.right += GetSystemMetrics(SM_CXSIZEFRAME);
+			theApp.zDrawThemeBackground(hTheme, dc, WP_FRAMELEFT, GetActiveWindow()==this ? CS_ACTIVE : CS_INACTIVE, rframe, rclient);
+		}
+		else
+		{
+			dc.FillSolidRect(rclient, GetSysColor(COLOR_3DFACE));
+		}
 
 	// Dropzone
-	POINT pt = { (rect.Width()-128)>>1, 0 };
+	POINT pt = { rlayout.left+(rlayout.Width()-128)/2, rlayout.top };
 	SIZE sz = { 128, 128 };
-	m_Dropzone.DrawEx(&dc, StoreValid, pt, sz, CLR_NONE, cr, StoreValid ? ILD_TRANSPARENT : m_IsAeroWindow ? ILD_BLEND25 : ILD_BLEND50);
+	m_Dropzone.DrawEx(&dc, StoreValid, pt, sz, CLR_NONE, CLR_NONE, StoreValid ? ILD_TRANSPARENT : m_IsAeroWindow ? ILD_BLEND25 : ILD_BLEND50);
 
 	// Text
-	const UINT textflags = DT_VCENTER | DT_CENTER | DT_SINGLELINE;
-	CRect rtext;
-	rtext.SetRectEmpty();
+	CRect rtext(rlayout);
+	rtext.top += 120;
 
-	dc.DrawText(Label, -1, rtext, textflags | DT_CALCRECT);
-	rtext.top = 120;
-	rtext.bottom = rect.Height();
-	rtext.right = rect.Width();
+	const UINT textflags = DT_VCENTER | DT_CENTER | DT_SINGLELINE;
 
 	if ((m_IsAeroWindow) || (hTheme))
 	{
@@ -293,7 +306,6 @@ BOOL CFileDropWnd::OnEraseBkgnd(CDC* pDC)
 	else
 	{
 		HGDIOBJ oldFont = dc.SelectObject(GetStockObject(DEFAULT_GUI_FONT));
-		dc.DrawText(Label, -1, rtext, textflags | DT_CALCRECT);
 
 		dc.SetTextColor(GetSysColor(COLOR_WINDOWTEXT));
 		dc.DrawText(Label, -1, rtext, textflags);
@@ -303,9 +315,9 @@ BOOL CFileDropWnd::OnEraseBkgnd(CDC* pDC)
 
 	// Badge
 	if (!StoreValid)
-		DrawIconEx(dc.m_hDC, rect.Width()-28, 0, m_hWarning, 24, 24, 0, NULL, DI_NORMAL);
+		DrawIconEx(dc.m_hDC, rlayout.right-28, rlayout.top, m_hWarning, 24, 24, 0, NULL, DI_NORMAL);
 
-	pDC->BitBlt(rect.left, rect.top, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);
+	pDC->BitBlt(0, 0, rclient.Width(), rclient.Height(), &dc, 0, 0, SRCCOPY);
 
 	dc.SelectObject(hOldBitmap);
 	DeleteObject(bmp);

@@ -42,12 +42,20 @@ void CGlasWindow::UseGlasBackground(MARGINS Margins)
 		p_App->zDwmExtendFrameIntoClientArea(m_hWnd, &Margins);
 }
 
-void CGlasWindow::GetClientRect(LPRECT lpRect) const
+void CGlasWindow::GetLayoutRect(LPRECT lpRect) const
 {
-	CWnd::GetClientRect(lpRect);
+	GetClientRect(lpRect);
 
 	if (m_IsAeroWindow)
+	{
 		lpRect->top += GetSystemMetrics(SM_CYCAPTION);
+	}
+	else
+		if (hTheme)
+		{
+			lpRect->left++;
+			lpRect->right--;
+		}
 }
 
 
@@ -133,6 +141,12 @@ void CGlasWindow::OnNcCalcSize(BOOL bCalcValidRects, NCCALCSIZE_PARAMS *lpncsp)
 	}
 
 	CWnd::OnNcCalcSize(bCalcValidRects, lpncsp);
+
+	if (hTheme)
+	{
+		lpncsp->rgrc[0].left--;
+		lpncsp->rgrc[0].right++;
+	}
 }
 
 LRESULT CGlasWindow::OnNcHitTest(CPoint point)
@@ -155,8 +169,8 @@ LRESULT CGlasWindow::OnNcHitTest(CPoint point)
 			USHORT Row = 1;
 			USHORT Col = 1;
 
-			int cx = GetSystemMetrics((GetStyle() & WS_SIZEBOX) ? SM_CXSIZEFRAME : SM_CXFIXEDFRAME);
-			int cy = GetSystemMetrics((GetStyle() & WS_SIZEBOX) ? SM_CYSIZEFRAME : SM_CYFIXEDFRAME);
+			int cx = GetSystemMetrics(SM_CXSIZEFRAME);
+			int cy = GetSystemMetrics(SM_CYSIZEFRAME);
 
 			if ((point.y>=rect.top) && (point.y<rect.top+cy))
 			{

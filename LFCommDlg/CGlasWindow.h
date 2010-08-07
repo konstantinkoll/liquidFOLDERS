@@ -19,7 +19,7 @@ public:
 	virtual LRESULT DefWindowProc(UINT message, WPARAM wParam, LPARAM lParam);
 
 	void UseGlasBackground(MARGINS Margins);
-	void GetClientRect(LPRECT lpRect) const;
+	void GetLayoutRect(LPRECT lpRect) const;
 
 	BOOL m_IsAeroWindow;
 	HTHEME hTheme;
