@@ -157,17 +157,11 @@ void LFDialog::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 	case LFDS_White:
 	case LFDS_UAC:
 		{
-			SolidBrush brush1(Color(255, 255, 255, 255));
-			g.FillRectangle(&brush1, 0, 0, BackBufferL, ++Line);
-			brush1.SetColor(Color(255, 223, 223, 223));
-			g.FillRectangle(&brush1, 0, Line++, BackBufferL, 1);
-			brush1.SetColor(Color(255, 240, 240, 240));
-			g.FillRectangle(&brush1, 0, Line, BackBufferL, rect.Height()-Line);
-
-			brush1.SetColor(Color(255, 223, 223, 223));
-			g.FillRectangle(&brush1, 0, btn.bottom+borders.Height()+1, BackBufferL, 1);
-			brush1.SetColor(Color(255, 255, 255, 255));
-			g.FillRectangle(&brush1, 0, btn.bottom+borders.Height()+2, BackBufferL, 1);
+			dc.FillSolidRect(0, 0, BackBufferL, ++Line, 0xFFFFFF);
+			dc.FillSolidRect(0, Line++, BackBufferL, 1, 0xDFDFDF);
+			dc.FillSolidRect(0, Line, BackBufferL, rect.Height()-Line, 0xF0F0F0);
+			dc.FillSolidRect(0, btn.bottom+borders.Height()+1, BackBufferL, 1, 0xDFDFDF);
+			dc.FillSolidRect(0, btn.bottom+borders.Height()+2, BackBufferL, 1, 0xFFFFFF);
 
 			if (m_nIDStyle!=LFDS_UAC)
 				break;
