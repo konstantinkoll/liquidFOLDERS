@@ -121,7 +121,7 @@ void CFileDropWnd::SetWindowRect(int x, int y, BOOL TopMost)
 BEGIN_MESSAGE_MAP(CFileDropWnd, CGlasWindow)
 	ON_WM_CREATE()
 	ON_WM_CLOSE()
-	ON_WM_ERASEBKGND()
+	//ON_WM_ERASEBKGND()
 	ON_WM_MOUSEMOVE()
 	ON_WM_MOUSELEAVE()
 	ON_WM_MOUSEHOVER()
@@ -148,7 +148,8 @@ int CFileDropWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 
 	// Aero
-	MARGINS Margins = { -1, -1, -1, -1 };
+//	MARGINS Margins = { -1, -1, -1, -1 };
+	MARGINS Margins = { 5, 10, 50, 20 };
 	UseGlasBackground(Margins);
 
 	// Hintergrundbilder laden
@@ -199,7 +200,7 @@ int CFileDropWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 		// Überflüssige Einträge löschen
 		pSysMenu->DeleteMenu(SC_MAXIMIZE, MF_BYCOMMAND);
-		pSysMenu->DeleteMenu(SC_SIZE, MF_BYCOMMAND);
+//		pSysMenu->DeleteMenu(SC_SIZE, MF_BYCOMMAND);
 	}
 
 	// Store
@@ -244,22 +245,7 @@ BOOL CFileDropWnd::OnEraseBkgnd(CDC* pDC)
 	HBITMAP hOldBitmap = (HBITMAP)dc.SelectObject(bmp);
 
 	// Hintergrund
-	if (m_IsAeroWindow)
-	{
-		dc.FillSolidRect(rclient, 0x000000);
-	}
-	else
-		if (hTheme)
-		{
-			CRect rframe(rclient);
-			rframe.left -= GetSystemMetrics(SM_CXSIZEFRAME);
-			rframe.right += GetSystemMetrics(SM_CXSIZEFRAME);
-			theApp.zDrawThemeBackground(hTheme, dc, WP_FRAMELEFT, GetActiveWindow()==this ? CS_ACTIVE : CS_INACTIVE, rframe, rclient);
-		}
-		else
-		{
-			dc.FillSolidRect(rclient, GetSysColor(COLOR_3DFACE));
-		}
+	CGlasWindow::OnEraseBkgnd(&dc);
 
 	// Dropzone
 	POINT pt = { rlayout.left+(rlayout.Width()-128)/2, rlayout.top };
@@ -395,7 +381,7 @@ LRESULT CFileDropWnd::OnNcHitTest(CPoint point)
 {
 	SHORT LButtonDown = GetAsyncKeyState(VK_LBUTTON);
 	LRESULT uHitTest = CGlasWindow::OnNcHitTest(point);
-	return ((uHitTest>=HTLEFT) && (uHitTest<=HTBOTTOMRIGHT)) ? HTCAPTION : ((uHitTest==HTCLIENT) && (LButtonDown & 0x8000)) ? HTCAPTION : uHitTest;
+	return /*((uHitTest>=HTLEFT) && (uHitTest<=HTBOTTOMRIGHT)) ? HTCAPTION : */((uHitTest==HTCLIENT) && (LButtonDown & 0x8000)) ? HTCAPTION : uHitTest;
 }
 
 void CFileDropWnd::OnSysCommand(UINT nID, LPARAM lParam)

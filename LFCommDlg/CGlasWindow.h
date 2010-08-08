@@ -20,6 +20,7 @@ public:
 
 	void UseGlasBackground(MARGINS Margins);
 	void GetLayoutRect(LPRECT lpRect) const;
+	void DrawFrameBackground(CDC* pDC, CRect rect);
 
 	BOOL m_IsAeroWindow;
 	HTHEME hTheme;
@@ -30,6 +31,7 @@ protected:
 
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();
+	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg LRESULT OnThemeChanged();
 	afx_msg void OnCompositionChanged();
 	afx_msg void OnNcCalcSize(BOOL bCalcValidRects, NCCALCSIZE_PARAMS *lpncsp);
