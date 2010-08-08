@@ -121,7 +121,7 @@ void CFileDropWnd::SetWindowRect(int x, int y, BOOL TopMost)
 BEGIN_MESSAGE_MAP(CFileDropWnd, CGlasWindow)
 	ON_WM_CREATE()
 	ON_WM_CLOSE()
-	//ON_WM_ERASEBKGND()
+	ON_WM_ERASEBKGND()
 	ON_WM_MOUSEMOVE()
 	ON_WM_MOUSELEAVE()
 	ON_WM_MOUSEHOVER()
@@ -148,8 +148,7 @@ int CFileDropWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 
 	// Aero
-//	MARGINS Margins = { -1, -1, -1, -1 };
-	MARGINS Margins = { 5, 10, 50, 20 };
+	MARGINS Margins = { -1, -1, -1, -1 };
 	UseGlasBackground(Margins);
 
 	// Hintergrundbilder laden
@@ -200,7 +199,7 @@ int CFileDropWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 		// Überflüssige Einträge löschen
 		pSysMenu->DeleteMenu(SC_MAXIMIZE, MF_BYCOMMAND);
-//		pSysMenu->DeleteMenu(SC_SIZE, MF_BYCOMMAND);
+		pSysMenu->DeleteMenu(SC_SIZE, MF_BYCOMMAND);
 	}
 
 	// Store
@@ -381,7 +380,7 @@ LRESULT CFileDropWnd::OnNcHitTest(CPoint point)
 {
 	SHORT LButtonDown = GetAsyncKeyState(VK_LBUTTON);
 	LRESULT uHitTest = CGlasWindow::OnNcHitTest(point);
-	return /*((uHitTest>=HTLEFT) && (uHitTest<=HTBOTTOMRIGHT)) ? HTCAPTION : */((uHitTest==HTCLIENT) && (LButtonDown & 0x8000)) ? HTCAPTION : uHitTest;
+	return ((uHitTest>=HTLEFT) && (uHitTest<=HTBOTTOMRIGHT)) ? HTCAPTION : ((uHitTest==HTCLIENT) && (LButtonDown & 0x8000)) ? HTCAPTION : uHitTest;
 }
 
 void CFileDropWnd::OnSysCommand(UINT nID, LPARAM lParam)

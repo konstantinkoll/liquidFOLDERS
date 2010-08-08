@@ -9,6 +9,9 @@
 // CGlasWindow
 //
 
+#define GLASFRAMESIZE                 6
+#define GLASCAPTIONSIZE               25
+
 CGlasWindow::CGlasWindow()
 	: CWnd()
 {
@@ -40,10 +43,14 @@ void CGlasWindow::UseGlasBackground(MARGINS Margins)
 
 	if (m_IsAeroWindow)
 	{
-		Margins.cxLeftWidth += GetSystemMetrics(SM_CXSIZEFRAME);
-		Margins.cxRightWidth += GetSystemMetrics(SM_CXSIZEFRAME);
-		Margins.cyTopHeight += GetSystemMetrics(SM_CYCAPTION);
-		Margins.cyBottomHeight += GetSystemMetrics(SM_CYSIZEFRAME);
+		if ((Margins.cxLeftWidth!=-1) && (Margins.cxRightWidth!=-1) && (Margins.cyTopHeight!=-1) && (Margins.cyBottomHeight==-1))
+		{
+			Margins.cxLeftWidth += GLASFRAMESIZE;
+			Margins.cxRightWidth += GLASFRAMESIZE;
+			Margins.cyTopHeight += GLASCAPTIONSIZE;
+			Margins.cyBottomHeight += GLASFRAMESIZE;
+		}
+
 		p_App->zDwmExtendFrameIntoClientArea(m_hWnd, &Margins);
 	}
 }
@@ -54,10 +61,10 @@ void CGlasWindow::GetLayoutRect(LPRECT lpRect) const
 
 	if (m_IsAeroWindow)
 	{
-		lpRect->top += GetSystemMetrics(SM_CYCAPTION);
-		lpRect->left += GetSystemMetrics(SM_CXSIZEFRAME);
-		lpRect->right -= GetSystemMetrics(SM_CXSIZEFRAME);
-		lpRect->bottom -= GetSystemMetrics(SM_CYSIZEFRAME);
+		lpRect->top += GLASCAPTIONSIZE;
+		lpRect->left += GLASFRAMESIZE;
+		lpRect->right -= GLASFRAMESIZE;
+		lpRect->bottom -= GLASFRAMESIZE;
 	}
 	else
 		if (hTheme)
@@ -141,11 +148,7 @@ BOOL CGlasWindow::OnEraseBkgnd(CDC* pDC)
 	HBITMAP bmp = CreateDIBSection(dc.m_hDC, &dib, DIB_RGB_COLORS, NULL, NULL, 0);
 	HBITMAP hOldBitmap = (HBITMAP)dc.SelectObject(bmp);
 
-	if ((m_Margins.cxLeftWidth==-1) || (m_Margins.cxRightWidth==-1) || (m_Margins.cyTopHeight==-1) || (m_Margins.cyBottomHeight==-1))
-	{
-		DrawFrameBackground(&dc, rclient);
-	}
-	else
+	if ((m_Margins.cxLeftWidth!=-1) && (m_Margins.cxRightWidth!=-1) && (m_Margins.cyTopHeight!=-1) && (m_Margins.cyBottomHeight==-1))
 	{
 		CRect rectLayout;
 		GetLayoutRect(rectLayout);
@@ -172,6 +175,10 @@ BOOL CGlasWindow::OnEraseBkgnd(CDC* pDC)
 		}
 
 		dc.FillSolidRect(rectLayout, 0xFF0000);
+	}
+	else
+	{
+		DrawFrameBackground(&dc, rclient);
 	}
 
 	pDC->BitBlt(0, 0, rclient.Width(), rclient.Height(), &dc, 0, 0, SRCCOPY);
@@ -210,6 +217,7 @@ void CGlasWindow::OnCompositionChanged()
 	if (p_App->m_AeroLibLoaded)
 	{
 		p_App->zDwmIsCompositionEnabled(&m_IsAeroWindow);
+		UseGlasBackground(m_Margins);
 	}
 	else
 	{
@@ -220,10 +228,7 @@ void CGlasWindow::OnCompositionChanged()
 void CGlasWindow::OnNcCalcSize(BOOL bCalcValidRects, NCCALCSIZE_PARAMS *lpncsp)
 {
 	if (m_IsAeroWindow)
-	{
-		UseGlasBackground(m_Margins);
 		return;
-	}
 
 	CWnd::OnNcCalcSize(bCalcValidRects, lpncsp);
 
