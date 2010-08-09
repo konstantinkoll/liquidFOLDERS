@@ -431,10 +431,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CToolbarList.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\CTooltipHeader.cpp"
 				>
 			</File>
@@ -484,10 +480,6 @@
 			</File>
 			<File
 				RelativePath=".\LFApplication.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\LFCaptionBar.cpp"
 				>
 			</File>
 			<File
@@ -645,10 +637,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CToolbarList.h"
-				>
-			</File>
-			<File
 				RelativePath=".\CTooltipHeader.h"
 				>
 			</File>
@@ -662,10 +650,6 @@
 			</File>
 			<File
 				RelativePath=".\LFApplication.h"
-				>
-			</File>
-			<File
-				RelativePath=".\LFCaptionBar.h"
 				>
 			</File>
 			<File

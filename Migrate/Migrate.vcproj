@@ -385,15 +385,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\MainFrm.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\Migrate.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\PlacesWnd.cpp"
+				RelativePath=".\MigrateWnd.cpp"
 				>
 			</File>
 			<File
@@ -432,14 +428,6 @@
 					/>
 				</FileConfiguration>
 			</File>
-			<File
-				RelativePath=".\StoreWnd.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\WorkflowWnd.cpp"
-				>
-			</File>
 		</Filter>
 		<Filter
 			Name="Headerdateien"
@@ -471,15 +459,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\MainFrm.h"
-				>
-			</File>
-			<File
 				RelativePath=".\Migrate.h"
 				>
 			</File>
 			<File
-				RelativePath=".\PlacesWnd.h"
+				RelativePath=".\MigrateWnd.h"
 				>
 			</File>
 			<File
@@ -491,15 +475,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\StoreWnd.h"
-				>
-			</File>
-			<File
 				RelativePath=".\targetver.h"
-				>
-			</File>
-			<File
-				RelativePath=".\WorkflowWnd.h"
 				>
 			</File>
 		</Filter>
@@ -509,19 +485,7 @@
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
 			<File
-				RelativePath=".\res\AppMenu_16.bmp"
-				>
-			</File>
-			<File
-				RelativePath=".\res\AppMenu_32.bmp"
-				>
-			</File>
-			<File
 				RelativePath=".\res\Logo alpha micro.png"
-				>
-			</File>
-			<File
-				RelativePath=".\res\MainButton.bmp"
 				>
 			</File>
 			<File
@@ -534,54 +498,6 @@
 			</File>
 			<File
 				RelativePath=".\res\Migrate_About.png"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Panel_16.bmp"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Ribbon_Migrate_16.bmp"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Ribbon_Migrate_32.bmp"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Tile0.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Tile1_DE.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Tile1_EN.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Tile1_ES.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Tile1_FR.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Tile2.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Tile3.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Toolbar_Places.bmp"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Toolbar_Stores.bmp"
 				>
 			</File>
 		</Filter>
