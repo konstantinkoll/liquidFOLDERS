@@ -13,7 +13,7 @@ class CFileDropApp : public LFApplication
 {
 public:
 	CFileDropApp();
-	~CFileDropApp();
+	virtual ~CFileDropApp();
 
 	virtual BOOL InitInstance();
 

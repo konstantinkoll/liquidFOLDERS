@@ -9,7 +9,7 @@
 // CGlasWindow
 //
 
-#define GLASFRAMESIZE                 6
+#define GLASFRAMESIZE                 8
 #define GLASCAPTIONSIZE               25
 
 CGlasWindow::CGlasWindow()
@@ -43,7 +43,7 @@ void CGlasWindow::UseGlasBackground(MARGINS Margins)
 
 	if (m_IsAeroWindow)
 	{
-		if ((Margins.cxLeftWidth!=-1) && (Margins.cxRightWidth!=-1) && (Margins.cyTopHeight!=-1) && (Margins.cyBottomHeight==-1))
+		if ((Margins.cxLeftWidth!=-1) && (Margins.cxRightWidth!=-1) && (Margins.cyTopHeight!=-1) && (Margins.cyBottomHeight!=-1))
 		{
 			Margins.cxLeftWidth += GLASFRAMESIZE;
 			Margins.cxRightWidth += GLASFRAMESIZE;
@@ -148,7 +148,7 @@ BOOL CGlasWindow::OnEraseBkgnd(CDC* pDC)
 	HBITMAP bmp = CreateDIBSection(dc.m_hDC, &dib, DIB_RGB_COLORS, NULL, NULL, 0);
 	HBITMAP hOldBitmap = (HBITMAP)dc.SelectObject(bmp);
 
-	if ((m_Margins.cxLeftWidth!=-1) && (m_Margins.cxRightWidth!=-1) && (m_Margins.cyTopHeight!=-1) && (m_Margins.cyBottomHeight==-1))
+	if ((m_Margins.cxLeftWidth!=-1) && (m_Margins.cxRightWidth!=-1) && (m_Margins.cyTopHeight!=-1) && (m_Margins.cyBottomHeight!=-1))
 	{
 		CRect rectLayout;
 		GetLayoutRect(rectLayout);
@@ -174,7 +174,8 @@ BOOL CGlasWindow::OnEraseBkgnd(CDC* pDC)
 			DrawFrameBackground(&dc, rc);
 		}
 
-		dc.FillSolidRect(rectLayout, 0xFF0000);
+		if ((rectLayout.Width()>0) && (rectLayout.Height()>0))
+			dc.FillSolidRect(rectLayout, 0xFFFFFF);
 	}
 	else
 	{
@@ -250,31 +251,29 @@ LRESULT CGlasWindow::OnNcHitTest(CPoint point)
 		CRect rect;
 		GetWindowRect(rect);
 
-		CRect frame;
-		AdjustWindowRectEx(frame, GetWindowLong(m_hWnd, GWL_STYLE), FALSE, GetWindowLong(m_hWnd, GWL_EXSTYLE));
+		CRect sysmenu(rect.left+GLASFRAMESIZE, rect.top+GLASFRAMESIZE, rect.left+GLASFRAMESIZE+GetSystemMetrics(SM_CXSMICON), rect.top+GLASFRAMESIZE+GetSystemMetrics(SM_CYSMICON));
+		if (sysmenu.PtInRect(point))
+			return CWnd::OnNcHitTest(point);
 
 		USHORT Row = 1;
 		USHORT Col = 1;
 
-		int cx = GetSystemMetrics(SM_CXSIZEFRAME);
-		int cy = GetSystemMetrics(SM_CYSIZEFRAME);
-
-		if ((point.y>=rect.top) && (point.y<rect.top+cy))
+		if ((point.y>=rect.top) && (point.y<rect.top+GLASFRAMESIZE))
 		{
 			Row = 0;
 		}
 		else
-			if ((point.y<rect.bottom) && (point.y>=rect.bottom-cy))
+			if ((point.y<rect.bottom) && (point.y>=rect.bottom-GLASFRAMESIZE))
 			{
 				Row = 2;
 			}
 
-		if ((point.x>=rect.left) && (point.x<rect.left+cx))
+		if ((point.x>=rect.left) && (point.x<rect.left+GLASFRAMESIZE))
 		{
 			Col = 0;
 		}
 		else
-			if ((point.x<rect.right) && (point.x>=rect.right-cx))
+			if ((point.x<rect.right) && (point.x>=rect.right-GLASFRAMESIZE))
 			{
 				Col = 2;
 			}

@@ -31,7 +31,6 @@ protected:
 	afx_msg void OnRButtonDown(UINT nFlags, CPoint point);
 	afx_msg LRESULT OnNcHitTest(CPoint point);
 	afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
-	afx_msg void OnActivate(UINT nState, CWnd* pWndOther, BOOL bMinimized);
 	afx_msg void OnMove(int x, int y);
 	afx_msg void OnAlwaysOnTop();
 	afx_msg void OnChooseDefaultStore();

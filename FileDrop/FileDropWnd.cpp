@@ -8,7 +8,6 @@
 #include "Resource.h"
 #include "LFCore.h"
 #include <io.h>
-#include <uxtheme.h>
 
 
 CFileDropWnd::CFileDropWnd()
@@ -128,7 +127,6 @@ BEGIN_MESSAGE_MAP(CFileDropWnd, CGlasWindow)
 	ON_WM_RBUTTONDOWN()
 	ON_WM_NCHITTEST()
 	ON_WM_SYSCOMMAND()
-	ON_WM_ACTIVATE()
 	ON_WM_MOVE()
 	ON_COMMAND(SC_ALWAYSONTOP, OnAlwaysOnTop)
 	ON_COMMAND(ID_APP_CHOOSEDEFAULTSTORE, OnChooseDefaultStore)
@@ -393,12 +391,6 @@ void CFileDropWnd::OnSysCommand(UINT nID, LPARAM lParam)
 	default:
 		CGlasWindow::OnSysCommand(nID, lParam);
 	}
-}
-
-void CFileDropWnd::OnActivate(UINT /*nState*/, CWnd* /*pWndOther*/, BOOL bMinimized)
-{
-	if (!bMinimized)
-		Invalidate();
 }
 
 void CFileDropWnd::OnMove(int x, int y)
