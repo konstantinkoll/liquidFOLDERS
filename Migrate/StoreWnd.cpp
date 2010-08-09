@@ -6,7 +6,6 @@
 #include "LFCore.h"
 #include "MainFrm.h"
 #include "Migrate.h"
-#include "Kitchen.h"
 
 
 // CStoreWnd
@@ -65,7 +64,7 @@ void CStoreWnd::UpdateStores(BOOL FocusDefaultStore)
 
 	result = LFQuery(NULL);
 
-	SortSearchResult(result);
+	LFSortSearchResult(result, LFAttrFileName, false, true);
 
 	m_wndList.DeleteAllItems();
 
