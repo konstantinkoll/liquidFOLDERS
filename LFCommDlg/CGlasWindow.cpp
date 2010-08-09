@@ -9,9 +9,6 @@
 // CGlasWindow
 //
 
-#define GLASFRAMESIZE                 8
-#define GLASCAPTIONSIZE               25
-
 CGlasWindow::CGlasWindow()
 	: CWnd()
 {
@@ -42,36 +39,18 @@ void CGlasWindow::UseGlasBackground(MARGINS Margins)
 	m_Margins = Margins;
 
 	if (m_IsAeroWindow)
-	{
-		if ((Margins.cxLeftWidth!=-1) && (Margins.cxRightWidth!=-1) && (Margins.cyTopHeight!=-1) && (Margins.cyBottomHeight!=-1))
-		{
-			Margins.cxLeftWidth += GLASFRAMESIZE;
-			Margins.cxRightWidth += GLASFRAMESIZE;
-			Margins.cyTopHeight += GLASCAPTIONSIZE;
-			Margins.cyBottomHeight += GLASFRAMESIZE;
-		}
-
 		p_App->zDwmExtendFrameIntoClientArea(m_hWnd, &Margins);
-	}
 }
 
 void CGlasWindow::GetLayoutRect(LPRECT lpRect) const
 {
 	GetClientRect(lpRect);
 
-	if (m_IsAeroWindow)
+	if ((!m_IsAeroWindow) && (hTheme))
 	{
-		lpRect->top += GLASCAPTIONSIZE;
-		lpRect->left += GLASFRAMESIZE;
-		lpRect->right -= GLASFRAMESIZE;
-		lpRect->bottom -= GLASFRAMESIZE;
+		lpRect->left++;
+		lpRect->right--;
 	}
-	else
-		if (hTheme)
-		{
-			lpRect->left++;
-			lpRect->right--;
-		}
 }
 
 void CGlasWindow::DrawFrameBackground(CDC* pDC, CRect rect)
@@ -105,7 +84,6 @@ BEGIN_MESSAGE_MAP(CGlasWindow, CWnd)
 	ON_WM_THEMECHANGED()
 	ON_WM_DWMCOMPOSITIONCHANGED()
 	ON_WM_NCCALCSIZE()
-	ON_WM_NCHITTEST()
 	ON_WM_ACTIVATEAPP()
 END_MESSAGE_MAP()
 
@@ -228,9 +206,6 @@ void CGlasWindow::OnCompositionChanged()
 
 void CGlasWindow::OnNcCalcSize(BOOL bCalcValidRects, NCCALCSIZE_PARAMS *lpncsp)
 {
-	if (m_IsAeroWindow)
-		return;
-
 	CWnd::OnNcCalcSize(bCalcValidRects, lpncsp);
 
 	if (hTheme)
@@ -238,57 +213,6 @@ void CGlasWindow::OnNcCalcSize(BOOL bCalcValidRects, NCCALCSIZE_PARAMS *lpncsp)
 		lpncsp->rgrc[0].left--;
 		lpncsp->rgrc[0].right++;
 	}
-}
-
-LRESULT CGlasWindow::OnNcHitTest(CPoint point)
-{
-	if (m_IsAeroWindow)
-	{
-		LRESULT res;
-		if (p_App->zDwmDefWindowProc(m_hWnd, WM_NCHITTEST, NULL, (point.y<<16) | point.x, &res))
-			return res;
-
-		CRect rect;
-		GetWindowRect(rect);
-
-		CRect sysmenu(rect.left+GLASFRAMESIZE, rect.top+GLASFRAMESIZE, rect.left+GLASFRAMESIZE+GetSystemMetrics(SM_CXSMICON), rect.top+GLASFRAMESIZE+GetSystemMetrics(SM_CYSMICON));
-		if (sysmenu.PtInRect(point))
-			return CWnd::OnNcHitTest(point);
-
-		USHORT Row = 1;
-		USHORT Col = 1;
-
-		if ((point.y>=rect.top) && (point.y<rect.top+GLASFRAMESIZE))
-		{
-			Row = 0;
-		}
-		else
-			if ((point.y<rect.bottom) && (point.y>=rect.bottom-GLASFRAMESIZE))
-			{
-				Row = 2;
-			}
-
-		if ((point.x>=rect.left) && (point.x<rect.left+GLASFRAMESIZE))
-		{
-			Col = 0;
-		}
-		else
-			if ((point.x<rect.right) && (point.x>=rect.right-GLASFRAMESIZE))
-			{
-				Col = 2;
-			}
-
-		const LRESULT HitMatrix[3][3] = 
-		{
-			{ HTTOPLEFT, HTTOP, HTTOPRIGHT },
-			{ HTLEFT, HTCLIENT, HTRIGHT },
-			{ HTBOTTOMLEFT, HTBOTTOM, HTBOTTOMRIGHT },
-		};
-
-		return HitMatrix[Row][Col];
-	}
-
-	return CWnd::OnNcHitTest(point);
 }
 
 void CGlasWindow::OnActivateApp(BOOL /*bActive*/, DWORD /*dwThreadID*/)
