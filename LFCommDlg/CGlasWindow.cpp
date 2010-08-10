@@ -99,6 +99,7 @@ BEGIN_MESSAGE_MAP(CGlasWindow, CWnd)
 	ON_WM_THEMECHANGED()
 	ON_WM_DWMCOMPOSITIONCHANGED()
 	ON_WM_NCCALCSIZE()
+	ON_WM_NCHITTEST()
 	ON_WM_NCACTIVATE()
 	ON_WM_SIZE()
 	ON_WM_GETMINMAXINFO()
@@ -233,6 +234,13 @@ void CGlasWindow::OnNcCalcSize(BOOL bCalcValidRects, NCCALCSIZE_PARAMS* lpncsp)
 		lpncsp->rgrc[0].left--;
 		lpncsp->rgrc[0].right++;
 	}
+}
+
+LRESULT CGlasWindow::OnNcHitTest(CPoint point)
+{
+	SHORT LButtonDown = GetAsyncKeyState(VK_LBUTTON);
+	LRESULT uHitTest = CWnd::OnNcHitTest(point);
+	return ((!(GetStyle() & WS_MAXIMIZEBOX)) && (uHitTest>=HTLEFT) && (uHitTest<=HTBOTTOMRIGHT)) ? HTCAPTION : ((uHitTest==HTCLIENT) && (LButtonDown & 0x8000)) ? HTCAPTION : uHitTest;
 }
 
 BOOL CGlasWindow::OnNcActivate(BOOL bActive)

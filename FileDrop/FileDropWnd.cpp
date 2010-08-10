@@ -123,7 +123,6 @@ BEGIN_MESSAGE_MAP(CFileDropWnd, CGlasWindow)
 	ON_WM_MOUSELEAVE()
 	ON_WM_MOUSEHOVER()
 	ON_WM_RBUTTONDOWN()
-	ON_WM_NCHITTEST()
 	ON_WM_SYSCOMMAND()
 	ON_WM_MOVE()
 	ON_COMMAND(SC_ALWAYSONTOP, OnAlwaysOnTop)
@@ -370,13 +369,6 @@ void CFileDropWnd::OnRButtonDown(UINT /*nFlags*/, CPoint point)
 		ClientToScreen(&point);
 		popup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, this);
 	}
-}
-
-LRESULT CFileDropWnd::OnNcHitTest(CPoint point)
-{
-	SHORT LButtonDown = GetAsyncKeyState(VK_LBUTTON);
-	LRESULT uHitTest = CGlasWindow::OnNcHitTest(point);
-	return ((uHitTest>=HTLEFT) && (uHitTest<=HTBOTTOMRIGHT)) ? HTCAPTION : ((uHitTest==HTCLIENT) && (LButtonDown & 0x8000)) ? HTCAPTION : uHitTest;
 }
 
 void CFileDropWnd::OnSysCommand(UINT nID, LPARAM lParam)

@@ -53,7 +53,6 @@ void CMigrateWnd::AdjustLayout()
 
 BEGIN_MESSAGE_MAP(CMigrateWnd, CGlasWindow)
 	ON_WM_CREATE()
-	ON_WM_NCHITTEST()
 /*	ON_COMMAND(ID_APP_ABOUT, OnAbout)
 	ON_COMMAND(ID_APP_NEWSTOREMANAGER, OnNewStoreManager)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoresChanged, OnStoresChanged)
@@ -67,12 +66,12 @@ int CMigrateWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 
 	// Aero
-	MARGINS Margins = { 0, 0, 100, 0 };
+	MARGINS Margins = { 0, 0, 40, 0 };
 	UseGlasBackground(Margins);
 
 	// Explorer header
 	m_wndExplorerHeader.Create(this, 1);
-	m_wndExplorerHeader.SetText(_T("You have not selected a root folder yet"), _T("Click on the area at the top left to select a folder for browsing"));
+	m_wndExplorerHeader.SetText(_T("You have not selected a root folder yet"), _T("Click above to select a folder for browsing."));
 
 	// Bottom area
 	m_wndBottomArea.Create(this, MAKEINTRESOURCE(IDD_BOTTOMAREA), CBRS_BOTTOM, 2);
@@ -82,12 +81,6 @@ int CMigrateWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	return 0;
 }
 
-LRESULT CMigrateWnd::OnNcHitTest(CPoint point)
-{
-	SHORT LButtonDown = GetAsyncKeyState(VK_LBUTTON);
-	LRESULT uHitTest = CGlasWindow::OnNcHitTest(point);
-	return ((uHitTest==HTCLIENT) && (LButtonDown & 0x8000)) ? HTCAPTION : uHitTest;
-}
 /*
 void CMigrateWnd::OnAbout()
 {

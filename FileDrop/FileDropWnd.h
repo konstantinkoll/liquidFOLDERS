@@ -29,7 +29,6 @@ protected:
 	afx_msg void OnMouseLeave();
 	afx_msg void OnMouseHover(UINT nFlags, CPoint point);
 	afx_msg void OnRButtonDown(UINT nFlags, CPoint point);
-	afx_msg LRESULT OnNcHitTest(CPoint point);
 	afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
 	afx_msg void OnMove(int x, int y);
 	afx_msg void OnAlwaysOnTop();

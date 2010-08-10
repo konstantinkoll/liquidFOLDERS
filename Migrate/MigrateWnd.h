@@ -24,7 +24,6 @@ protected:
 	CBottomArea m_wndBottomArea;
 
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
-	afx_msg LRESULT OnNcHitTest(CPoint point);
 	afx_msg void OnAbout();
 	afx_msg void OnNewStoreManager();
 	afx_msg LRESULT OnStoresChanged(WPARAM wParam, LPARAM lParam);
