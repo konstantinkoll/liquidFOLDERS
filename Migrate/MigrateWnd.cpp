@@ -28,9 +28,6 @@ BOOL CMigrateWnd::Create()
 
 	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, theApp.LoadStandardCursor(IDC_ARROW), NULL, m_hIcon);
 
-	const DWORD dwStyle = WS_BORDER | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_THICKFRAME | WS_SYSMENU | WS_CLIPCHILDREN | WS_CLIPSIBLINGS;
-	const DWORD dwExStyle = WS_EX_APPWINDOW | WS_EX_CONTROLPARENT;
-	
 	CRect rect;
 	SystemParametersInfo(SPI_GETWORKAREA, NULL, &rect, NULL);
 	rect.DeflateRect(32, 32);
@@ -38,8 +35,18 @@ BOOL CMigrateWnd::Create()
 	CString caption;
 	ENSURE(caption.LoadString(IDR_APPLICATION));
 
-	return CGlasWindow::CreateEx(dwExStyle, className, caption, dwStyle, rect, NULL, 0);
+	return CGlasWindow::Create(WS_MINIMIZEBOX | WS_MAXIMIZEBOX, className, caption, rect);
 }
+
+void CMigrateWnd::AdjustLayout()
+{
+	CRect rect;
+	GetLayoutRect(rect);
+
+	const UINT BottomHeight = MulDiv(45, LOWORD(GetDialogBaseUnits()), 8);
+	m_wndBottomArea.SetWindowPos(NULL, rect.left, rect.bottom-BottomHeight, rect.Width(), BottomHeight, SWP_NOACTIVATE | SWP_NOZORDER);
+}
+
 
 BEGIN_MESSAGE_MAP(CMigrateWnd, CGlasWindow)
 	ON_WM_CREATE()
@@ -69,6 +76,11 @@ int CMigrateWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	MARGINS Margins = { 0, 0, 100, 0 };
 	UseGlasBackground(Margins);
 
+	// Bottom area
+	m_wndBottomArea.Create(this, MAKEINTRESOURCE(IDD_BOTTOMAREA), CBRS_BOTTOM, 1);
+
+	AdjustLayout();
+	GetDlgItem(IDOK)->SetFocus();
 	return 0;
 }
 

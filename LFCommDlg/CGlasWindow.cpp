@@ -22,6 +22,12 @@ CGlasWindow::~CGlasWindow()
 {
 }
 
+BOOL CGlasWindow::Create(DWORD dwStyle, LPCTSTR lpszClassName, LPCTSTR lpszWindowName, const RECT& rect, CWnd* pParentWnd, UINT nID)
+{
+	return CWnd::CreateEx(WS_EX_APPWINDOW | WS_EX_CONTROLPARENT, lpszClassName, lpszWindowName,
+		dwStyle | WS_BORDER | WS_THICKFRAME | WS_SYSMENU | WS_CLIPCHILDREN | WS_CLIPSIBLINGS, rect, pParentWnd, nID);
+}
+
 LRESULT CGlasWindow::DefWindowProc(UINT message, WPARAM wParam, LPARAM lParam)
 {
 	if (m_IsAeroWindow)
@@ -78,6 +84,11 @@ void CGlasWindow::DrawFrameBackground(CDC* pDC, CRect rect)
 		{
 			pDC->FillSolidRect(rect, GetSysColor(COLOR_3DFACE));
 		}
+}
+
+UINT CGlasWindow::GetDesign()
+{
+	return m_IsAeroWindow ? GWD_AERO : hTheme ? GWD_THEMED : GWD_DEFAULT;
 }
 
 
@@ -244,7 +255,7 @@ void CGlasWindow::OnGetMinMaxInfo(MINMAXINFO* lpMMI)
 	if (GetStyle() & WS_MAXIMIZEBOX)
 	{
 		lpMMI->ptMinTrackSize.x = max(lpMMI->ptMinTrackSize.x, 
-			256+
+			384+
 			((m_Margins.cxLeftWidth>0) ? m_Margins.cxLeftWidth : 0)+
 			((m_Margins.cxRightWidth>0) ? m_Margins.cxRightWidth : 0));
 		lpMMI->ptMinTrackSize.y = max(lpMMI->ptMinTrackSize.y, 

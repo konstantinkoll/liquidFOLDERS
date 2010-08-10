@@ -95,18 +95,55 @@ LANGUAGE LANG_ENGLISH, SUBLANG_NEUTRAL
 
 /////////////////////////////////////////////////////////////////////////////
 //
+// Dialog
+//
+
+IDD_BOTTOMAREA DIALOGEX 0, 0, 251, 28
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "&Migrate files",IDOK,7,7,58,14
+    CONTROL         "&Simulate migration",IDC_CHECK1,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,79,9,77,10
+    CONTROL         "&Delete imported files",IDC_CHECK2,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,162,9,81,10
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    IDD_BOTTOMAREA, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 244
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 21
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
 // String Table
 //
 
 STRINGTABLE 
 BEGIN
     IDR_APPLICATION         "Migration Wizard"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_EMPTYHINT           "The Migration Wizard allows you to bulk import files from a directory tree into a liquidFOLDERS store."
 END
 
 #endif    // Englisch (neutral) resources
 /////////////////////////////////////////////////////////////////////////////
-
 
 
 /////////////////////////////////////////////////////////////////////////////

@@ -4,6 +4,7 @@
 
 #pragma once
 #include "LFCommDlg.h"
+#include "CBottomArea.h"
 
 
 // CMigrateWnd
@@ -14,9 +15,13 @@ public:
 	CMigrateWnd();
 	~CMigrateWnd();
 
+	virtual void AdjustLayout();
+
 	BOOL Create();
 
 protected:
+	CBottomArea m_wndBottomArea;
+
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg LRESULT OnNcHitTest(CPoint point);
 	afx_msg void OnActivate(UINT nState, CWnd* pWndOther, BOOL bMinimized);

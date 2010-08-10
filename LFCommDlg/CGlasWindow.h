@@ -10,6 +10,10 @@
 // CGlasWindow
 //
 
+#define GWD_DEFAULT            1
+#define GWD_THEMED             2
+#define GWD_AERO               3
+
 class AFX_EXT_CLASS CGlasWindow : public CWnd
 {
 public:
@@ -19,15 +23,17 @@ public:
 	virtual LRESULT DefWindowProc(UINT message, WPARAM wParam, LPARAM lParam);
 	virtual void AdjustLayout();
 
+	BOOL Create(DWORD dwStyle, LPCTSTR lpszClassName, LPCTSTR lpszWindowName, const RECT& rect, CWnd* pParentWnd=NULL, UINT nID=0);
 	void UseGlasBackground(MARGINS Margins);
 	void GetLayoutRect(LPRECT lpRect) const;
 	void DrawFrameBackground(CDC* pDC, CRect rect);
+	UINT GetDesign();
 
-	BOOL m_IsAeroWindow;
 	HTHEME hTheme;
 
 protected:
 	LFApplication* p_App;
+	BOOL m_IsAeroWindow;
 	MARGINS m_Margins;
 
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);

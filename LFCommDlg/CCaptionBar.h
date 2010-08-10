@@ -2,7 +2,9 @@
 // CCaptionBar.h: Schnittstelle der Klasse CCaptionBar
 //
 
+
 // CCapationBar
+//
 
 class AFX_EXT_CLASS CCaptionBar : public CMFCCaptionBar
 {
