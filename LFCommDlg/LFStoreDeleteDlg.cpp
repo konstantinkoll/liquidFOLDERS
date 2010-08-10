@@ -37,6 +37,15 @@ BOOL LFStoreDeleteDlg::OnInitDialog()
 	// Radiobutton setzen
 	((CButton*)GetDlgItem(IDC_KEEP))->SetCheck(TRUE);
 
+	// Fette Überschrift
+	LOGFONT lf;
+	if (GetFont()->GetLogFont(&lf))
+	{
+		lf.lfWeight = FW_BOLD;
+		BoldFont.CreateFontIndirect(&lf);
+		GetDlgItem(IDC_CAPTION)->SetFont(&BoldFont, false);
+	}
+
 	return TRUE;
 }
 

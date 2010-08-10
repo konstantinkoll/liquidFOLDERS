@@ -93,6 +93,7 @@
 #define IDD_STOREDELETE                 21400
 #define IDC_KEEP                        21401
 #define IDC_DELETE                      21402
+#define IDC_CAPTION                     21403
 #define IDD_SELECTIATA                  21500
 #define IDC_COUNTRY                     21501
 #define IDC_AIRPORTS                    21502

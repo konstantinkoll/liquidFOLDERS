@@ -215,18 +215,20 @@ BEGIN
     LTEXT           "Store 3:",IDC_STATIC,175,152,72,8
 END
 
-IDD_STOREDELETE DIALOGEX 0, 0, 277, 175
+IDD_STOREDELETE DIALOGEX 0, 0, 277, 205
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Eingebundenen Store „%s“ löschen"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "Abbrechen",IDCANCEL,179,132,50,14,WS_GROUP
-    CONTROL         "Store &behalten",IDC_KEEP,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,15,85,62,10
-    CONTROL         "&Löschen",IDC_DELETE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,15,97,61,10
-    PUSHBUTTON      "Jetzt löschen (keine weiteren Warnungen)",IDOK,6,132,165,14,WS_DISABLED | WS_GROUP
-    LTEXT           "Soll der Store wirklich gelöscht werden?\n\nDa der gewählte Store zur Zeit angeschlossen ist, werden alle Dateien im Store ohne Wiederherstellungsmöglichkeit gelöscht!",IDC_STATIC,7,31,213,33
-    GROUPBOX        "Zustimmung",IDC_STATIC,7,72,74,41,BS_FLAT | WS_GROUP
-    LTEXT           "Dieses Fenster verhindert das unabsichtliche Löschen von sehr vielen Dateien.",IDC_STATIC,7,160,263,8
+    DEFPUSHBUTTON   "Abbrechen",IDCANCEL,179,162,50,14,WS_GROUP
+    CONTROL         "Store &behalten",IDC_KEEP,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,15,115,62,10
+    CONTROL         "&Löschen",IDC_DELETE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,15,127,61,10
+    PUSHBUTTON      "Jetzt löschen (keine weiteren Warnungen)",IDOK,6,162,165,14,WS_DISABLED | WS_GROUP
+    LTEXT           "Soll der Store wirklich gelöscht werden?",IDC_CAPTION,7,31,263,8
+    LTEXT           "Da der gewählte Store zur Zeit angeschlossen ist, werden alle Dateien im Store ohne Wiederherstellungsmöglichkeit gelöscht!",IDC_STATIC,7,51,213,17
+    LTEXT           "Zum Löschen geben Sie Ihre Zustimmung, indem Sie „Löschen“ auswählen und anschließend auf „Jetzt löschen“ klicken:",IDC_STATIC,7,81,213,17
+    GROUPBOX        "Zustimmung",IDC_STATIC,7,102,74,41,BS_FLAT | WS_GROUP
+    LTEXT           "Dieses Fenster verhindert das unabsichtliche Löschen von sehr vielen Dateien.",IDC_STATIC,7,190,263,8
 END
 
 IDD_STORENEW DIALOGEX 0, 0, 350, 252
@@ -474,7 +476,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 270
         TOPMARGIN, 7
-        BOTTOMMARGIN, 168
+        BOTTOMMARGIN, 198
     END
 
     IDD_STORENEW, DIALOG
@@ -686,18 +688,20 @@ BEGIN
     PUSHBUTTON      "Create &new store...",IDC_NEWSTORE,374,189,85,14
 END
 
-IDD_STOREDELETE DIALOGEX 0, 0, 277, 175
+IDD_STOREDELETE DIALOGEX 0, 0, 277, 205
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Delete mounted store ""%s"""
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "Cancel",IDCANCEL,179,132,50,14,WS_GROUP
-    CONTROL         "&Keep the store",IDC_KEEP,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,15,85,62,10
-    CONTROL         "&Delete",IDC_DELETE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,15,97,61,10
-    PUSHBUTTON      "Delete now (there will be no further warnings)",IDOK,6,132,165,14,WS_DISABLED | WS_GROUP
-    LTEXT           "Please confirm that you really want to delete the selected store.\n\nSince the store is currently mounted, you will lose all files inside that store without recovery option!",IDC_STATIC,7,31,213,33
-    GROUPBOX        "Permission",IDC_STATIC,7,72,74,41,BS_FLAT | WS_GROUP
-    LTEXT           "This window prevents you from accidentially nuking lots of files.",IDC_STATIC,7,160,263,8
+    DEFPUSHBUTTON   "Cancel",IDCANCEL,179,162,50,14,WS_GROUP
+    CONTROL         "&Keep the store",IDC_KEEP,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,15,115,62,10
+    CONTROL         "&Delete",IDC_DELETE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,15,127,61,10
+    PUSHBUTTON      "Delete now (there will be no further warnings)",IDOK,6,162,165,14,WS_DISABLED | WS_GROUP
+    LTEXT           "Please confirm that you really want to delete the selected store.",IDC_CAPTION,7,31,263,8
+    LTEXT           "Since the store is currently mounted, you will lose all files inside that store without recovery option!",IDC_STATIC,7,51,166,17
+    LTEXT           "You give permission to delete the store by choosing ""Delete"" below, and then click on the button ""Delete now"".",IDC_STATIC,7,81,205,17
+    GROUPBOX        "Permission",IDC_STATIC,7,102,74,41,BS_FLAT | WS_GROUP
+    LTEXT           "This window prevents you from accidentially nuking lots of files.",IDC_STATIC,7,190,263,8
 END
 
 IDD_STORENEW DIALOGEX 0, 0, 316, 252
@@ -945,7 +949,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 270
         TOPMARGIN, 7
-        BOTTOMMARGIN, 168
+        BOTTOMMARGIN, 198
     END
 
     IDD_STORENEW, DIALOG
@@ -1158,18 +1162,20 @@ BEGIN
     LTEXT           "Store 3:",IDC_STATIC,175,152,27,8
 END
 
-IDD_STOREDELETE DIALOGEX 0, 0, 277, 175
+IDD_STOREDELETE DIALOGEX 0, 0, 277, 205
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Eliminar store conectado ""%s"""
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "Cancelar",IDCANCEL,179,132,50,14,WS_GROUP
-    CONTROL         "&Conservar store",IDC_KEEP,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,15,85,62,10
-    CONTROL         "&Eliminar",IDC_DELETE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,15,97,61,10
-    PUSHBUTTON      "Eliminar ahora (no habrá más avisos)",IDOK,6,132,165,14,WS_DISABLED | WS_GROUP
-    LTEXT           "Confirme si realmente desea eliminar el store seleccionado.\n\nDado que el store está actualmente conectado, perderá todos los archivos dentro de ese store sin opción a recuperarlos!",IDC_STATIC,7,31,206,33
-    GROUPBOX        "Confirmación",IDC_STATIC,7,72,74,41,BS_FLAT | WS_GROUP
-    LTEXT           "Dieses Fenster verhindert das unabsichtliche Löschen von sehr vielen Dateien.",IDC_STATIC,7,160,263,8
+    DEFPUSHBUTTON   "Cancelar",IDCANCEL,179,162,50,14,WS_GROUP
+    CONTROL         "&Conservar store",IDC_KEEP,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,15,115,62,10
+    CONTROL         "&Eliminar",IDC_DELETE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,15,127,61,10
+    PUSHBUTTON      "Eliminar ahora (no habrá más avisos)",IDOK,6,162,165,14,WS_DISABLED | WS_GROUP
+    LTEXT           "Confirme si realmente desea eliminar el store seleccionado.",IDC_CAPTION,7,31,263,8
+    LTEXT           "Dado que el store está actualmente conectado, perderá todos los archivos dentro de ese store sin opción a recuperarlos!",IDC_STATIC,7,51,206,17
+    LTEXT           "You give permission to delete the store by choosing ""Delete"" below, and then klick on the button ""Delete now"".",IDC_STATIC,7,81,205,17
+    GROUPBOX        "Permiso",IDC_STATIC,7,102,78,41,BS_FLAT | WS_GROUP
+    LTEXT           "This window prevents you from accidentially nuking lots of files.",IDC_STATIC,7,190,263,8
 END
 
 IDD_STORENEW DIALOGEX 0, 0, 387, 252
@@ -1401,7 +1407,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 270
         TOPMARGIN, 7
-        BOTTOMMARGIN, 168
+        BOTTOMMARGIN, 198
     END
 
     IDD_STORENEW, DIALOG
@@ -1503,6 +1509,7 @@ BEGIN
     IDS_LICENSEVALID_CAPTION "Licencia válida"
     IDS_LICENSEVALID_MSG    "Su licencia es válida. Muchas gracias por adquirir liquidFOLDERS! Nosotros apreciamos su negocio."
     IDS_MULTIPLEVALUES      "Datos diversos"
+    IDS_UACMESSAGE          "liquidFOLDERS necesita su permiso para continuar"
 END
 
 STRINGTABLE 
@@ -1606,18 +1613,20 @@ BEGIN
     LTEXT           "Store 3:",IDC_STATIC,175,152,27,8
 END
 
-IDD_STOREDELETE DIALOGEX 0, 0, 293, 175
+IDD_STOREDELETE DIALOGEX 0, 0, 295, 204
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Effacez le store monté sur ""%s"""
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "Annuler",IDCANCEL,224,133,50,14,WS_GROUP
-    CONTROL         "&Gardez le store",IDC_KEEP,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,15,85,62,10
-    CONTROL         "&Effacez",IDC_DELETE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,15,97,61,10
-    PUSHBUTTON      "Effacez maintenant (il n'y aura aucun avertissement de plus)",IDOK,6,133,210,14,WS_DISABLED | WS_GROUP
-    LTEXT           "Confirmez s'il vous plaît que vous voulez vraiment effacer le store choisi.\n\nComme le store est actuellement monté, vous perdrez tous les fichiers à l'intérieur de ce store sans option de récupération!",IDC_STATIC,7,31,242,33
-    GROUPBOX        "Confirmation",IDC_STATIC,7,72,74,41,BS_FLAT | WS_GROUP
-    LTEXT           "Dieses Fenster verhindert das unabsichtliche Löschen von sehr vielen Dateien.",IDC_STATIC,7,160,279,8
+    DEFPUSHBUTTON   "Annuler",IDCANCEL,224,162,50,14,WS_GROUP
+    CONTROL         "&Gardet le store",IDC_KEEP,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,15,115,62,10
+    CONTROL         "&Effacez",IDC_DELETE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,15,127,61,10
+    PUSHBUTTON      "Effacez maintenant (il n'y aura aucun avertissement de plus)",IDOK,6,162,210,14,WS_DISABLED | WS_GROUP
+    LTEXT           "Confirmez s'il vous plaît que vous voulez vraiment effacer le store choisi.",IDC_CAPTION,7,31,281,8
+    LTEXT           "Comme le store est actuellement monté, vous perdrez tous les fichiers à l'intérieur de ce store sans option de récupération!",IDC_STATIC,7,51,213,17
+    LTEXT           "Zum Löschen geben Sie Ihre Zustimmung, indem Sie „Löschen“ auswählen und anschließend auf „Jetzt löschen“ klicken:",IDC_STATIC,7,81,213,17
+    GROUPBOX        "Confirmation",IDC_STATIC,7,102,74,41,BS_FLAT | WS_GROUP
+    LTEXT           "Dieses Fenster verhindert das unabsichtliche Löschen von sehr vielen Dateien.",IDC_STATIC,7,189,281,8
 END
 
 IDD_STORENEW DIALOGEX 0, 0, 347, 252
@@ -1847,10 +1856,10 @@ BEGIN
     IDD_STOREDELETE, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 286
-        RIGHTMARGIN, 277
+        RIGHTMARGIN, 288
+        RIGHTMARGIN, 288
         TOPMARGIN, 7
-        BOTTOMMARGIN, 168
+        BOTTOMMARGIN, 197
     END
 
     IDD_STORENEW, DIALOG
@@ -1944,6 +1953,7 @@ BEGIN
     IDS_LICENSEVALID_CAPTION "La licence est acceptée"
     IDS_LICENSEVALID_MSG    "Sa clé de licence est valable. Merci beaucoup pour l'achat de liquidFOLDERS!"
     IDS_MULTIPLEVALUES      "Valeurs plusieurs"
+    IDS_UACMESSAGE          "liquidFOLDERS needs your permission to continue"
 END
 
 STRINGTABLE 

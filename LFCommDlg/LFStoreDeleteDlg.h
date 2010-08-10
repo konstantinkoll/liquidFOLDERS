@@ -13,4 +13,5 @@ public:
 
 private:
 	wchar_t* StoreName;
+	CFont BoldFont;
 };
