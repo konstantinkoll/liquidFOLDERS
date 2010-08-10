@@ -359,7 +359,7 @@ void LFApplication::GetBackgroundColors(UINT Background, COLORREF* back, COLORRE
 		if (text)
 			*text = (COLORREF)0x000000;
 		if (highlight)
-			*highlight = (COLORREF)0x800000;
+			*highlight = (COLORREF)0x663300;
 		break;
 	default:
 		if (back)

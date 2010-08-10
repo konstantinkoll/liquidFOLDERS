@@ -14,10 +14,6 @@ CPaneText::CPaneText()
 {
 }
 
-CPaneText::~CPaneText()
-{
-}
-
 BOOL CPaneText::Create(CWnd* pParentWnd, UINT nID, CString _text)
 {
 	m_Text = _text;

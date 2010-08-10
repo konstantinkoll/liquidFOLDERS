@@ -42,10 +42,6 @@ CPaneList::CPaneList()
 	Editing = -1;
 }
 
-CPaneList::~CPaneList()
-{
-}
-
 
 BEGIN_MESSAGE_MAP(CPaneList, CListCtrl)
 	ON_NOTIFY_REFLECT(NM_CUSTOMDRAW, OnCustomDraw)

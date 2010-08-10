@@ -17,10 +17,6 @@ CExplorerList::CExplorerList()
 	hTheme = NULL;
 }
 
-CExplorerList::~CExplorerList()
-{
-}
-
 void CExplorerList::EnableTheming()
 {
 	if ((p_App->m_ThemeLibLoaded) && (p_App->osInfo.dwMajorVersion>=6))

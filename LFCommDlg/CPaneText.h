@@ -9,7 +9,6 @@ class AFX_EXT_CLASS CPaneText : public CWnd
 {
 public:
 	CPaneText();
-	virtual ~CPaneText();
 
 	BOOL Create(CWnd* pParentWnd, UINT nID, CString _text=_T(""));
 	void SetText(CString _text=_T(""));

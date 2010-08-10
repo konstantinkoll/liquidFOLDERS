@@ -17,7 +17,6 @@ class AFX_EXT_CLASS CExplorerList : public CListCtrl
 {
 public:
 	CExplorerList();
-	~CExplorerList();
 
 	void EnableTheming();
 	BOOL SupportsFooter();

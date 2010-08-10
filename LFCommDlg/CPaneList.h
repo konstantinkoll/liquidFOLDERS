@@ -13,7 +13,6 @@ class AFX_EXT_CLASS CPaneList : public CListCtrl
 {
 public:
 	CPaneList();
-	~CPaneList();
 
 	virtual BOOL SetWindowPos(const CWnd* pWndInsertAfter, int x, int y, int cx, int cy, UINT nFlags);
 
