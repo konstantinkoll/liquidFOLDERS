@@ -17,6 +17,7 @@ public:
 	~CGlasWindow();
 
 	virtual LRESULT DefWindowProc(UINT message, WPARAM wParam, LPARAM lParam);
+	virtual void AdjustLayout();
 
 	void UseGlasBackground(MARGINS Margins);
 	void GetLayoutRect(LPRECT lpRect) const;
@@ -34,7 +35,9 @@ protected:
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg LRESULT OnThemeChanged();
 	afx_msg void OnCompositionChanged();
-	afx_msg void OnNcCalcSize(BOOL bCalcValidRects, NCCALCSIZE_PARAMS *lpncsp);
-	afx_msg void OnActivateApp(BOOL bActive, DWORD dwThreadID);
+	afx_msg void OnNcCalcSize(BOOL bCalcValidRects, NCCALCSIZE_PARAMS* lpncsp);
+	afx_msg BOOL OnNcActivate(BOOL bActive);
+	afx_msg void OnSize(UINT nType, int cx, int cy);
+	afx_msg void OnGetMinMaxInfo(MINMAXINFO* lpMMI);
 	DECLARE_MESSAGE_MAP()
 };

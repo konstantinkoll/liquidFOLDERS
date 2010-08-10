@@ -34,6 +34,10 @@ LRESULT CGlasWindow::DefWindowProc(UINT message, WPARAM wParam, LPARAM lParam)
 	return CWnd::DefWindowProc(message, wParam, lParam);
 }
 
+void CGlasWindow::AdjustLayout()
+{
+}
+
 void CGlasWindow::UseGlasBackground(MARGINS Margins)
 {
 	m_Margins = Margins;
@@ -84,7 +88,9 @@ BEGIN_MESSAGE_MAP(CGlasWindow, CWnd)
 	ON_WM_THEMECHANGED()
 	ON_WM_DWMCOMPOSITIONCHANGED()
 	ON_WM_NCCALCSIZE()
-	ON_WM_ACTIVATEAPP()
+	ON_WM_NCACTIVATE()
+	ON_WM_SIZE()
+	ON_WM_GETMINMAXINFO()
 END_MESSAGE_MAP()
 
 int CGlasWindow::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -184,6 +190,8 @@ LRESULT CGlasWindow::OnThemeChanged()
 			opt.dwFlags = WTNCA_NODRAWCAPTION | WTNCA_NODRAWICON;
 			p_App->zSetWindowThemeAttribute(m_hWnd, WTA_NONCLIENT, &opt, sizeof(WTA_OPTIONS));
 		}
+
+		AdjustLayout();
 	}
 
 	return TRUE;
@@ -197,6 +205,7 @@ void CGlasWindow::OnCompositionChanged()
 	{
 		p_App->zDwmIsCompositionEnabled(&m_IsAeroWindow);
 		UseGlasBackground(m_Margins);
+		AdjustLayout();
 	}
 	else
 	{
@@ -204,19 +213,43 @@ void CGlasWindow::OnCompositionChanged()
 	}
 }
 
-void CGlasWindow::OnNcCalcSize(BOOL bCalcValidRects, NCCALCSIZE_PARAMS *lpncsp)
+void CGlasWindow::OnNcCalcSize(BOOL bCalcValidRects, NCCALCSIZE_PARAMS* lpncsp)
 {
 	CWnd::OnNcCalcSize(bCalcValidRects, lpncsp);
 
-	if (hTheme)
+	if ((hTheme) && (!m_IsAeroWindow))
 	{
 		lpncsp->rgrc[0].left--;
 		lpncsp->rgrc[0].right++;
 	}
 }
 
-void CGlasWindow::OnActivateApp(BOOL /*bActive*/, DWORD /*dwThreadID*/)
+BOOL CGlasWindow::OnNcActivate(BOOL bActive)
 {
 	Invalidate();
 	UpdateWindow();
+	return CWnd::OnNcActivate(bActive);
+}
+
+void CGlasWindow::OnSize(UINT nType, int cx, int cy)
+{
+	CWnd::OnSize(nType, cx, cy);
+	AdjustLayout();
+}
+
+void CGlasWindow::OnGetMinMaxInfo(MINMAXINFO* lpMMI)
+{
+	CWnd::OnGetMinMaxInfo(lpMMI);
+
+	if (GetStyle() & WS_MAXIMIZEBOX)
+	{
+		lpMMI->ptMinTrackSize.x = max(lpMMI->ptMinTrackSize.x, 
+			256+
+			((m_Margins.cxLeftWidth>0) ? m_Margins.cxLeftWidth : 0)+
+			((m_Margins.cxRightWidth>0) ? m_Margins.cxRightWidth : 0));
+		lpMMI->ptMinTrackSize.y = max(lpMMI->ptMinTrackSize.y, 
+			128+GetSystemMetrics(SM_CYCAPTION)+
+			((m_Margins.cyTopHeight>0) ? m_Margins.cyTopHeight : 0)+
+			((m_Margins.cyBottomHeight>0) ? m_Margins.cyBottomHeight : 0));
+	}
 }

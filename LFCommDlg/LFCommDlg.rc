@@ -1059,7 +1059,7 @@ BEGIN
     IDS_LICENSEVALID_CAPTION "License valid"
     IDS_LICENSEVALID_MSG    "Your license key is valid. Thank you very much for purchasing liquidFOLDERS! We appreciate your business."
     IDS_MULTIPLEVALUES      "Multiple values"
-    IDS_UACMESSAGE          "liquidFOLDERS needs your permission to continue"
+    IDS_UACMESSAGE          "liquidFOLDERS needs your permission"
 END
 
 STRINGTABLE 
