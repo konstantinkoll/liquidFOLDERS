@@ -387,6 +387,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CExplorerHeader.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\CExplorerList.cpp"
 				>
 			</File>
@@ -593,6 +597,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CExplorerHeader.h"
+				>
+			</File>
+			<File
 				RelativePath=".\CExplorerList.h"
 				>
 			</File>
@@ -752,6 +760,10 @@
 			</File>
 			<File
 				RelativePath=".\res\Error.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\ExplorerGradient.bmp"
 				>
 			</File>
 			<File

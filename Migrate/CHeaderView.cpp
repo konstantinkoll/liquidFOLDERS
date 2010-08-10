@@ -75,6 +75,6 @@ BOOL CHeaderView::OnEraseBkgnd(CDC* pDC)
 
 BOOL CHeaderView::OnSetCursor(CWnd* /*pWnd*/, UINT /*nHitTest*/, UINT /*message*/)
 {
-	SetCursor(theApp.LoadStandardCursor(IDC_ARROW));
+	SetCursor(LoadCursor(NULL, IDC_ARROW));
 	return TRUE;
 }

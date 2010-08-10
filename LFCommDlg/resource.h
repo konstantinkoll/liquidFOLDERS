@@ -20,6 +20,7 @@
 #define IDB_INTERNALSTORE               20007
 #define IDB_DEFAULTSTORE                20008
 #define IDB_EXTERNALSTORE               20009
+#define IDB_EXPLORERGRADIENT            20010
 #define IDB_RATING0                     20100
 #define IDB_RATING1                     20101
 #define IDB_RATING2                     20102

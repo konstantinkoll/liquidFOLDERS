@@ -47,6 +47,6 @@ BOOL CTreeView::OnEraseBkgnd(CDC* pDC)
 
 BOOL CTreeView::OnSetCursor(CWnd* /*pWnd*/, UINT /*nHitTest*/, UINT /*message*/)
 {
-	SetCursor(theApp.LoadStandardCursor(IDC_ARROW));
+	SetCursor(LoadCursor(NULL, IDC_ARROW));
 	return TRUE;
 }

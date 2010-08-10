@@ -15,8 +15,6 @@ public:
 	void Empty();
 	bool Load(LPCWSTR pFile);
 
-	operator Gdiplus::Bitmap*() const;
-
 	Gdiplus::Bitmap* m_pBitmap;
 };
 

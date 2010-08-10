@@ -40,11 +40,6 @@ bool CGdiPlusBitmap::Load(LPCWSTR pFile)
 	return (m_pBitmap->GetLastStatus()==Gdiplus::Ok);
 }
 
-//CGdiPlusBitmap::operator Gdiplus::Bitmap*()
-//{
-//	return m_pBitmap;
-//}
-
 
 // CGdiPlusBitmapResource
 //

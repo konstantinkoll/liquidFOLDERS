@@ -101,6 +101,7 @@ public:
 	HBITMAP m_PriorityBitmaps[LFMaxRating+1];
 	CFont m_Fonts[2][2];
 	CFont m_CaptionFont;
+	CFont m_DefaultFont;
 	OSVERSIONINFO osInfo;
 	LFMessageIDs* MessageIDs;
 	BOOL IsLicensed;

@@ -106,6 +106,7 @@ IDB_PRIORITY10          BITMAP                  "res\\Priority10.bmp"
 IDB_INTERNALSTORE       BITMAP                  "res\\Store_Empty_32.bmp"
 IDB_DEFAULTSTORE        BITMAP                  "res\\Store_Default_32.bmp"
 IDB_EXTERNALSTORE       BITMAP                  "res\\Store_Bag_32.bmp"
+IDB_EXPLORERGRADIENT    BITMAP                  "res\\ExplorerGradient.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
 //

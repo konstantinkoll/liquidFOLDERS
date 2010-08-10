@@ -90,7 +90,7 @@ CGlobeView::CGlobeView()
 {
 	m_pDC = NULL;
 	m_hrc = NULL;
-	hCursor = theApp.LoadStandardCursor(IDC_WAIT);
+	hCursor = LoadCursor(NULL, IDC_WAIT);
 	m_TextureGlobe = NULL;
 	m_pSpecialFont = NULL;
 	ZeroMemory(m_pFonts, sizeof(m_pFonts));
@@ -350,7 +350,7 @@ void CGlobeView::UpdateCursor()
 
 	if (csr!=lpszCursorName)
 	{
-		hCursor = theApp.LoadStandardCursor(csr);
+		hCursor = LoadCursor(NULL, csr);
 		lpszCursorName = csr;
 	}
 
@@ -902,7 +902,7 @@ Smaller:
 
 	if ((int)tex!=m_nTexture)
 	{
-		SetCursor(theApp.LoadStandardCursor(IDC_WAIT));
+		SetCursor(LoadCursor(NULL, IDC_WAIT));
 
 		m_LockUpdate = TRUE;
 		wglMakeCurrent(m_pDC->GetSafeHdc(), m_hrc);

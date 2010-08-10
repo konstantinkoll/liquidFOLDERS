@@ -26,7 +26,7 @@ BOOL CMigrateWnd::Create()
 {
 	m_hIcon = theApp.LoadIcon(IDR_APPLICATION);
 
-	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, theApp.LoadStandardCursor(IDC_ARROW), NULL, m_hIcon);
+	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, LoadCursor(NULL, IDC_ARROW), NULL, m_hIcon);
 
 	CRect rect;
 	SystemParametersInfo(SPI_GETWORKAREA, NULL, &rect, NULL);
@@ -43,6 +43,9 @@ void CMigrateWnd::AdjustLayout()
 	CRect rect;
 	GetLayoutRect(rect);
 
+	const UINT ExplorerHeight = m_wndExplorerHeader.GetPreferredHeight();
+	m_wndExplorerHeader.SetWindowPos(NULL, rect.left, rect.top+m_Margins.cyTopHeight, rect.Width(), ExplorerHeight, SWP_NOACTIVATE | SWP_NOZORDER);
+
 	const UINT BottomHeight = MulDiv(45, LOWORD(GetDialogBaseUnits()), 8);
 	m_wndBottomArea.SetWindowPos(NULL, rect.left, rect.bottom-BottomHeight, rect.Width(), BottomHeight, SWP_NOACTIVATE | SWP_NOZORDER);
 }
@@ -50,21 +53,12 @@ void CMigrateWnd::AdjustLayout()
 
 BEGIN_MESSAGE_MAP(CMigrateWnd, CGlasWindow)
 	ON_WM_CREATE()
-	ON_WM_CLOSE()
-	ON_WM_ERASEBKGND()
-	ON_WM_MOUSEMOVE()
-	ON_WM_MOUSELEAVE()
-	ON_WM_MOUSEHOVER()
-	ON_WM_RBUTTONDOWN()
 	ON_WM_NCHITTEST()
-	ON_WM_SYSCOMMAND()
-	ON_WM_ACTIVATE()
-	ON_WM_MOVE()
-	ON_COMMAND(ID_APP_ABOUT, OnAbout)
+/*	ON_COMMAND(ID_APP_ABOUT, OnAbout)
 	ON_COMMAND(ID_APP_NEWSTOREMANAGER, OnNewStoreManager)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoresChanged, OnStoresChanged)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoreAttributesChanged, OnStoresChanged)
-	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->DefaultStoreChanged, OnStoresChanged)
+	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->DefaultStoreChanged, OnStoresChanged)*/
 END_MESSAGE_MAP()
 
 int CMigrateWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -76,8 +70,12 @@ int CMigrateWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	MARGINS Margins = { 0, 0, 100, 0 };
 	UseGlasBackground(Margins);
 
+	// Explorer header
+	m_wndExplorerHeader.Create(this, 1);
+	m_wndExplorerHeader.SetText(_T("You have not selected a root folder yet"), _T("Click on the area at the top left to select a folder for browsing"));
+
 	// Bottom area
-	m_wndBottomArea.Create(this, MAKEINTRESOURCE(IDD_BOTTOMAREA), CBRS_BOTTOM, 1);
+	m_wndBottomArea.Create(this, MAKEINTRESOURCE(IDD_BOTTOMAREA), CBRS_BOTTOM, 2);
 
 	AdjustLayout();
 	GetDlgItem(IDOK)->SetFocus();
@@ -90,13 +88,7 @@ LRESULT CMigrateWnd::OnNcHitTest(CPoint point)
 	LRESULT uHitTest = CGlasWindow::OnNcHitTest(point);
 	return ((uHitTest==HTCLIENT) && (LButtonDown & 0x8000)) ? HTCAPTION : uHitTest;
 }
-
-void CMigrateWnd::OnActivate(UINT /*nState*/, CWnd* /*pWndOther*/, BOOL bMinimized)
-{
-	if (!bMinimized)
-		Invalidate();
-}
-
+/*
 void CMigrateWnd::OnAbout()
 {
 	LFAboutDlgParameters p;
@@ -120,7 +112,7 @@ void CMigrateWnd::OnNewStoreManager()
 	theApp.OnAppNewStoreManager();
 }
 
-LRESULT CMigrateWnd::OnStoresChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)
+LRESULT CMigrateWnd::OnStoresChanged(WPARAM wParam, LPARAM lParam)
 {
 	return NULL;
-}
+}*/

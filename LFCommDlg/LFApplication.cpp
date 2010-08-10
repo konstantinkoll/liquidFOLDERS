@@ -150,6 +150,14 @@ LFApplication::LFApplication(UINT _HasGUI)
 		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
 		face);
 
+	int sz = 8;
+	LOGFONT lf;
+	if (SystemParametersInfo(SPI_GETICONTITLELOGFONT, sizeof(LOGFONT), &lf, 0))
+		sz = abs(lf.lfHeight);
+
+	m_DefaultFont.CreateFont(-sz, 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET,
+		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
+		face);
 	m_CaptionFont.CreateFont(-18, 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET,
 		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
 		face);
@@ -359,7 +367,7 @@ void LFApplication::GetBackgroundColors(UINT Background, COLORREF* back, COLORRE
 		if (text)
 			*text = (COLORREF)0x000000;
 		if (highlight)
-			*highlight = (COLORREF)0x663300;
+			*highlight = (COLORREF)0x993300;
 		break;
 	default:
 		if (back)
