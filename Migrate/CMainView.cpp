@@ -24,7 +24,7 @@ void CMainView::Create(CWnd* _pParentWnd, UINT nID)
 	const DWORD dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_TABSTOP;
 	CRect rect;
 	rect.SetRectEmpty();
-	CWnd::Create(className, _T("MigrateMainView"), dwStyle, rect, _pParentWnd, nID);
+	CWnd::CreateEx(WS_EX_CONTROLPARENT, className, _T("MigrateMainView"), dwStyle, rect, _pParentWnd, nID);
 }
 
 void CMainView::SetRoot(CString _Root)
@@ -54,11 +54,7 @@ void CMainView::AdjustLayout()
 	GetClientRect(rect);
 
 	if (((CGlasWindow*)GetParent())->GetDesign()==GWD_DEFAULT)
-	{
-		rect.left++;
-		rect.right--;
-		rect.bottom--;
-	}
+		rect.DeflateRect(1, 1);
 
 	const UINT ExplorerHeight = m_wndExplorerHeader.GetPreferredHeight();
 	m_wndExplorerHeader.SetWindowPos(NULL, rect.left, rect.top, rect.Width(), ExplorerHeight, SWP_NOACTIVATE | SWP_NOZORDER);
@@ -82,14 +78,17 @@ int CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CWnd::OnCreate(lpCreateStruct) == -1)
 		return -1;
 
+	// Task bar
+
+
 	// Explorer header
-	m_wndExplorerHeader.Create(this, 1);
+	m_wndExplorerHeader.Create(this, 2);
 
 	// Column header
-	m_wndHeader.Create(this, 2);
+	m_wndHeader.Create(this, 3);
 
 	// Tree
-	m_wndTree.Create(this, 3);
+	m_wndTree.Create(this, 4);
 
 	ClearRoot();
 	return 0;
