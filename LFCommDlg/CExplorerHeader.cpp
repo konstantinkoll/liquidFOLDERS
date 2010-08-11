@@ -21,6 +21,7 @@ CExplorerHeader::CExplorerHeader()
 	m_BackCol = 0xFFFFFF;
 	m_LineCol = 0xF5E5D6;
 	m_hBackgroundBrush = NULL;
+	m_GradientLine = TRUE;
 }
 
 CExplorerHeader::~CExplorerHeader()
@@ -44,13 +45,23 @@ void CExplorerHeader::SetText(CString _Caption, CString _Hint)
 	Invalidate();
 }
 
-void CExplorerHeader::SetColors(COLORREF _CaptionCol, COLORREF _HintCol, COLORREF _BackCol, COLORREF _LineCol)
+void CExplorerHeader::SetColors(COLORREF CaptionCol, COLORREF HintCol, COLORREF BackCol, COLORREF LineCol, BOOL Repaint)
 {
-	m_CaptionCol = _CaptionCol;
-	m_HintCol = _HintCol;
-	m_BackCol = _BackCol;
-	m_LineCol = _LineCol;
-	Invalidate();
+	m_CaptionCol = CaptionCol;
+	m_HintCol = HintCol;
+	m_BackCol = BackCol;
+	m_LineCol = LineCol;
+
+	if (Repaint)
+		Invalidate();
+}
+
+void CExplorerHeader::SetLineStyle(BOOL GradientLine, BOOL Repaint)
+{
+	m_GradientLine = GradientLine;
+
+	if (Repaint)
+		Invalidate();
 }
 
 UINT CExplorerHeader::GetPreferredHeight()
@@ -128,6 +139,31 @@ void CExplorerHeader::OnPaint()
 	else
 	{
 		dc.FillSolidRect(rect, m_BackCol);
+	}
+
+	if (m_GradientLine)
+	{
+		if (rect.Width()>2*BORDERLEFT)
+		{
+			Graphics g(dc);
+
+			Color c1;
+			c1.SetFromCOLORREF(m_BackCol);
+			Color c2;
+			c2.SetFromCOLORREF(m_LineCol);
+
+			LinearGradientBrush brush1(Point(0, 0), Point(BORDERLEFT, 0), c1, c2);
+			g.FillRectangle(&brush1, 0, rect.bottom-1, BORDERLEFT, 1);
+
+			LinearGradientBrush brush2(Point(rect.right, 0), Point(rect.right-BORDERLEFT, 0), c1, c2);
+			g.FillRectangle(&brush2, rect.right-BORDERLEFT, rect.bottom-1, BORDERLEFT, 1);
+
+			dc.FillSolidRect(BORDERLEFT, rect.bottom-1, rect.Width()-2*BORDERLEFT, 1, m_LineCol);
+		}
+	}
+	else
+	{
+		dc.FillSolidRect(0, rect.bottom-1, rect.Width(), 1, m_LineCol);
 	}
 
 	CFont* pOldFont = dc.SelectObject(&((LFApplication*)AfxGetApp())->m_CaptionFont);

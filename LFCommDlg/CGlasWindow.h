@@ -24,6 +24,7 @@ public:
 	virtual void AdjustLayout();
 
 	BOOL Create(DWORD dwStyle, LPCTSTR lpszClassName, LPCTSTR lpszWindowName, const RECT& rect, CWnd* pParentWnd=NULL, UINT nID=0);
+	BOOL PreTranslateMessage(MSG* pMsg);
 	void UseGlasBackground(MARGINS Margins);
 	void GetLayoutRect(LPRECT lpRect) const;
 	void DrawFrameBackground(CDC* pDC, CRect rect);

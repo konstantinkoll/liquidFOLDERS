@@ -14,7 +14,8 @@ public:
 
 	BOOL Create(CWnd* pParentWnd, UINT nID);
 	void SetText(CString _Caption, CString _Hint);
-	void SetColors(COLORREF _CaptionCol, COLORREF _HintCol, COLORREF _BackCol, COLORREF _LineCol);
+	void SetColors(COLORREF CaptionCol, COLORREF HintCol, COLORREF BackCol, COLORREF LineCol, BOOL Repaint=TRUE);
+	void SetLineStyle(BOOL GradientLine, BOOL Repaint=TRUE);
 	UINT GetPreferredHeight();
 
 protected:
@@ -26,6 +27,7 @@ protected:
 	CString m_Hint;
 	CBitmap m_Background;
 	HBRUSH m_hBackgroundBrush;
+	BOOL m_GradientLine;
 
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();

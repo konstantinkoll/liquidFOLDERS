@@ -40,6 +40,17 @@ LRESULT CGlasWindow::DefWindowProc(UINT message, WPARAM wParam, LPARAM lParam)
 	return CWnd::DefWindowProc(message, wParam, lParam);
 }
 
+BOOL CGlasWindow::PreTranslateMessage(MSG* pMsg)
+{
+	if ((pMsg->message==WM_KEYDOWN) && (pMsg->wParam==VK_TAB))
+	{
+		GetNextDlgTabItem(GetFocus(), GetKeyState(VK_SHIFT)<0)->SetFocus();
+		return TRUE;
+	}
+
+	return CWnd::PreTranslateMessage(pMsg);
+}
+
 void CGlasWindow::AdjustLayout()
 {
 }
