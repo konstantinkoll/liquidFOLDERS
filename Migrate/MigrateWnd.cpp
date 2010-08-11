@@ -52,8 +52,8 @@ void CMigrateWnd::AdjustLayout()
 
 BEGIN_MESSAGE_MAP(CMigrateWnd, CGlasWindow)
 	ON_WM_CREATE()
-/*	ON_COMMAND(ID_APP_ABOUT, OnAbout)
-	ON_COMMAND(ID_APP_NEWSTOREMANAGER, OnNewStoreManager)
+	ON_COMMAND(ID_APP_ABOUT, OnAbout)
+/*	ON_COMMAND(ID_APP_NEWSTOREMANAGER, OnNewStoreManager)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoresChanged, OnStoresChanged)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoreAttributesChanged, OnStoresChanged)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->DefaultStoreChanged, OnStoresChanged)*/
@@ -79,7 +79,6 @@ int CMigrateWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	return 0;
 }
 
-/*
 void CMigrateWnd::OnAbout()
 {
 	LFAboutDlgParameters p;
@@ -98,6 +97,7 @@ void CMigrateWnd::OnAbout()
 	delete p.icon;
 }
 
+/*
 void CMigrateWnd::OnNewStoreManager()
 {
 	theApp.OnAppNewStoreManager();

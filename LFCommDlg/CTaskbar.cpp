@@ -20,8 +20,11 @@ CTaskbar::CTaskbar()
 	BackBufferL = BackBufferH = 0;
 }
 
-BOOL CTaskbar::Create(CWnd* pParentWnd, UINT nID)
+BOOL CTaskbar::Create(CWnd* pParentWnd, UINT ResID, UINT nID)
 {
+	Icons.SetImageSize(CSize(16, 16));
+	Icons.Load(ResID);
+
 	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, LoadCursor(NULL, IDC_ARROW), NULL, NULL);
 
 	const DWORD dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE;
@@ -39,6 +42,21 @@ UINT CTaskbar::GetPreferredHeight()
 	h += abs(lf.lfHeight);
 
 	return h;
+}
+
+CTaskButton* CTaskbar::AddButton(UINT nID, CString Text, int IconID, BOOL bAddRight, BOOL bOnlyIcon)
+{
+	OSVERSIONINFO i = ((LFApplication*)AfxGetApp())->osInfo;
+
+	CTaskButton* btn = new CTaskButton();
+	btn->Create(bOnlyIcon ? _T("") : Text, bOnlyIcon ? Text : _T(""), &Icons,
+		bOnlyIcon || (i.dwMajorVersion<6) || ((i.dwMajorVersion==6) && (i.dwMinorVersion==0)) ? IconID : -1,
+		this, nID);
+
+	list<CTaskButton*>* li = bAddRight ? &ButtonsRight : &ButtonsLeft;
+	li->push_back(btn);
+
+	return btn;
 }
 
 
@@ -73,13 +91,13 @@ BOOL CTaskbar::OnEraseBkgnd(CDC* pDC)
 		BackBufferL = rect.Width();
 		BackBufferH = rect.Height();
 
+		BackBuffer.DeleteObject();
 		BackBuffer.CreateCompatibleBitmap(pDC, rect.Width(), rect.Height());
 		pOldBitmap = dc.SelectObject(&BackBuffer);
 
 		Graphics g(dc);
 
 		OSVERSIONINFO i = ((LFApplication*)AfxGetApp())->osInfo;
-
 		if ((i.dwMajorVersion>=6) && (i.dwMinorVersion!=0))
 		{
 			UINT line = (rect.Height()-2)/2;
@@ -182,5 +200,61 @@ void CTaskbar::OnSize(UINT nType, int cx, int cy)
 
 void CTaskbar::OnUpdateButtons()
 {
+	CRect rect;
+	GetClientRect(rect);
 
+	OSVERSIONINFO i = ((LFApplication*)AfxGetApp())->osInfo;
+	int Row = BORDER-1 - (((i.dwMajorVersion>=6) && (i.dwMinorVersion!=0)) ? 1 : 0);
+
+	int RPos = rect.right+2*BORDER-BORDERLEFT;
+	std::list<CTaskButton*>::iterator ppBtn = ButtonsRight.begin();
+	while (ppBtn!=ButtonsRight.end())
+	{
+		if ((*ppBtn)->IsWindowEnabled())
+		{
+			int l = (*ppBtn)->GetPreferredWidth();
+			RPos -= l+BORDER;
+			if (RPos>=BORDERLEFT)
+			{
+				(*ppBtn)->SetWindowPos(NULL, RPos, Row, l, rect.Height()-2*BORDER+1, SWP_NOZORDER | SWP_NOACTIVATE);
+				(*ppBtn)->ShowWindow(SW_SHOW);
+			}
+			else
+			{
+				(*ppBtn)->ShowWindow(SW_HIDE);
+			}
+		}
+		else
+		{
+			(*ppBtn)->ShowWindow(SW_HIDE);
+		}
+
+		ppBtn++;
+	}
+
+	int LPos = rect.left+BORDERLEFT-BORDER;
+	ppBtn = ButtonsLeft.begin();
+	while (ppBtn!=ButtonsLeft.end())
+	{
+		if ((*ppBtn)->IsWindowEnabled())
+		{
+			int l = (*ppBtn)->GetPreferredWidth();
+			if (LPos+l+BORDERLEFT-BORDER<RPos)
+			{
+				(*ppBtn)->SetWindowPos(NULL, LPos, Row, l, rect.Height()-2*BORDER+1, SWP_NOZORDER | SWP_NOACTIVATE);
+				(*ppBtn)->ShowWindow(SW_SHOW);
+			}
+			else
+			{
+				(*ppBtn)->ShowWindow(SW_HIDE);
+			}
+			LPos += l+BORDERLEFT;
+		}
+		else
+		{
+			(*ppBtn)->ShowWindow(SW_HIDE);
+		}
+
+		ppBtn++;
+	}
 }

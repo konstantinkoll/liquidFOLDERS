@@ -92,6 +92,7 @@ BOOL LFDialog::OnEraseBkgnd(CDC* pDC)
 		BackBufferL = rect.Width();
 		BackBufferH = rect.Height();
 
+		BackBuffer.DeleteObject();
 		BackBuffer.CreateCompatibleBitmap(pDC, rect.Width(), rect.Height());
 		pOldBitmap = dc.SelectObject(&BackBuffer);
 

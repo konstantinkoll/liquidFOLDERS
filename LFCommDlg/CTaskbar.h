@@ -16,8 +16,9 @@ class AFX_EXT_CLASS CTaskbar : public CWnd
 public:
 	CTaskbar();
 
-	BOOL Create(CWnd* pParentWnd, UINT nID);
+	BOOL Create(CWnd* pParentWnd, UINT ResID, UINT nID);
 	UINT GetPreferredHeight();
+	CTaskButton* AddButton(UINT nID, CString Text, int IconID, BOOL bAddRight=FALSE, BOOL bOnlyIcon=FALSE);
 
 protected:
 	afx_msg void OnDestroy();
@@ -28,6 +29,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
+	CMFCToolBarImages Icons;
 	CBitmap BackBuffer;
 	int BackBufferL;
 	int BackBufferH;

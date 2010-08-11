@@ -15,6 +15,9 @@ class AFX_EXT_CLASS CTaskButton : public CButton
 public:
 	CTaskButton();
 
+	void Create(CString Caption, CString Tooltip, CMFCToolBarImages* Icons, int IconID, CWnd* pParentWnd, UINT nID);
+	int GetPreferredWidth();
+
 protected:
 	afx_msg void OnPaint();
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
@@ -24,8 +27,11 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
+	CString m_Caption;
+	CString m_Tooltip;
+	CMFCToolBarImages* m_Icons;
+	int m_IconID;
 	BOOL m_Hover;
 
 	void CreateRoundRectangle(CRect rect, int rad, GraphicsPath& path);
-	void CreateBottomRadialPath(CRect rect, GraphicsPath& path);
 };

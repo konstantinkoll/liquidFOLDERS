@@ -87,7 +87,19 @@ int CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 
 	// Task bar
-	m_wndTaskbar.Create(this, 1);
+	m_wndTaskbar.Create(this, IDB_TASKS, 1);
+
+	m_wndTaskbar.AddButton(100, _T("Select root folder"), 0);
+	m_wndTaskbar.AddButton(101, _T("Rename folder"), 1);
+	m_wndTaskbar.AddButton(102, _T("Delete folder"), 2);
+	m_wndTaskbar.AddButton(103, _T("Include subfolders"), 3);
+	m_wndTaskbar.AddButton(103, _T("Exclude subfolders"), 4);
+	m_wndTaskbar.AddButton(ID_APP_NEWSTOREMANAGER, _T("Open StoreManager"), 5);
+
+
+	m_wndTaskbar.AddButton(ID_APP_HELP, _T("Help"), 8, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_PURCHASE, _T("Purchase"), 7, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_ABOUT, _T("About Migration Wizard"), 6, TRUE, TRUE);
 
 	// Explorer header
 	m_wndExplorerHeader.Create(this, 2);
