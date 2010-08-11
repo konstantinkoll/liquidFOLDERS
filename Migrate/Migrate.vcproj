@@ -504,6 +504,10 @@
 				RelativePath=".\res\Migrate_About.png"
 				>
 			</File>
+			<File
+				RelativePath=".\res\Tasks.bmp"
+				>
+			</File>
 		</Filter>
 		<File
 			RelativePath="..\include\liquidFOLDERS32.manifest.xml"
