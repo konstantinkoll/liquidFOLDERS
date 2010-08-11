@@ -13,6 +13,7 @@
 #include "..\LFCommDlg\CSimpleTooltip.h"
 #include "..\LFCommDlg\CTagList.h"
 #include "..\LFCommDlg\CTaskbar.h"
+#include "..\LFCommDlg\CTaskButton.h"
 #include "..\LFCommDlg\CTooltipHeader.h"
 #include "..\LFCommDlg\LFAboutDlg.h"
 #include "..\LFCommDlg\LFApplication.h"

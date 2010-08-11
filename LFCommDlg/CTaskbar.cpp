@@ -46,6 +46,8 @@ BEGIN_MESSAGE_MAP(CTaskbar, CWnd)
 	ON_WM_DESTROY()
 	ON_WM_ERASEBKGND()
 	ON_WM_CTLCOLOR()
+	ON_WM_SIZE()
+	ON_COMMAND(ID_UPDATEBUTTONS, OnUpdateButtons)
 END_MESSAGE_MAP()
 
 void CTaskbar::OnDestroy()
@@ -169,4 +171,16 @@ HBRUSH CTaskbar::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 	}
 
 	return hbr;
+}
+
+void CTaskbar::OnSize(UINT nType, int cx, int cy)
+{
+	CWnd::OnSize(nType, cx, cy);
+
+	OnUpdateButtons();
+}
+
+void CTaskbar::OnUpdateButtons()
+{
+
 }
