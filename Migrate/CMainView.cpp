@@ -90,10 +90,10 @@ int CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndTaskbar.Create(this, IDB_TASKS, 1);
 
 	m_wndTaskbar.AddButton(100, _T("Select root folder"), 0);
-	m_wndTaskbar.AddButton(101, _T("Rename folder"), 1);
-	m_wndTaskbar.AddButton(102, _T("Delete folder"), 2);
-	m_wndTaskbar.AddButton(103, _T("Include subfolders"), 3);
-	m_wndTaskbar.AddButton(103, _T("Exclude subfolders"), 4);
+	m_wndTaskbar.AddButton(101, _T("Include subfolders"), 1);
+	m_wndTaskbar.AddButton(102, _T("Exclude subfolders"), 2);
+	m_wndTaskbar.AddButton(103, _T("Rename folder"), 3);
+	m_wndTaskbar.AddButton(104, _T("Delete folder"), 4);
 	m_wndTaskbar.AddButton(ID_APP_NEWSTOREMANAGER, _T("Open StoreManager"), 5);
 
 
