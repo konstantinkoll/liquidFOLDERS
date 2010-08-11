@@ -1,9 +1,9 @@
 
-// FileDropWnd.h: Headerdatei
+// MigrateWnd.h: Headerdatei
 //
 
 #pragma once
-#include "LFCommDlg.h"
+#include "CMainView.h"
 #include "CBottomArea.h"
 
 
@@ -20,7 +20,7 @@ public:
 	BOOL Create();
 
 protected:
-	CExplorerHeader m_wndExplorerHeader;
+	CMainView m_wndMainView;
 	CBottomArea m_wndBottomArea;
 
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);

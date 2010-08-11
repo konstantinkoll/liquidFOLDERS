@@ -4,12 +4,15 @@
 //
 #define IDR_APPLICATION                 128
 #define IDB_ABOUTICON                   129
-#define IDB_LOGO_MICRO                  130
-#define IDS_EMPTYHINT                   1000
+#define IDS_NOROOT_CAPTION              1000
+#define IDS_NOROOT_HINT                 1001
+#define IDS_NOSELECTION_CAPTION         1002
+#define IDS_NOSELECTION_HINT            1003
+#define IDS_SELECTION_CAPTION           1004
+#define IDS_SELECTION_HINT              1005
 #define IDD_BOTTOMAREA                  2000
-#define IDD_DIALOG1                     2007
-#define IDC_CHECK1                      2011
-#define IDC_CHECK2                      2012
+#define IDC_SIMULATE                    2001
+#define IDC_DELETEIMPORTED              2002
 
 // Next default values for new objects
 // 

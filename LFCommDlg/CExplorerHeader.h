@@ -13,7 +13,7 @@ public:
 	virtual ~CExplorerHeader();
 
 	BOOL Create(CWnd* pParentWnd, UINT nID);
-	void SetText(CString _Caption, CString _Hint);
+	void SetText(CString _Caption, CString _Hint, BOOL Repaint=TRUE);
 	void SetColors(COLORREF CaptionCol, COLORREF HintCol, COLORREF BackCol, COLORREF LineCol, BOOL Repaint=TRUE);
 	void SetLineStyle(BOOL GradientLine, BOOL Repaint=TRUE);
 	UINT GetPreferredHeight();

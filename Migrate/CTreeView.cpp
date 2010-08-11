@@ -40,7 +40,7 @@ BOOL CTreeView::OnEraseBkgnd(CDC* pDC)
 	CRect rect;
 	GetClientRect(rect);
 
-	pDC->FillSolidRect(rect, GetSysColor(COLOR_WINDOW));
+	pDC->FillSolidRect(rect, 0xFFFFFF);
 
 	return TRUE;
 }

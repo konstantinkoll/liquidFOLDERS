@@ -38,11 +38,13 @@ BOOL CExplorerHeader::Create(CWnd* pParentWnd, UINT nID)
 	return CWnd::Create(className, _T("ExplorerHeader"), dwStyle, rect, pParentWnd, nID);
 }
 
-void CExplorerHeader::SetText(CString _Caption, CString _Hint)
+void CExplorerHeader::SetText(CString _Caption, CString _Hint, BOOL Repaint)
 {
 	m_Caption = _Caption;
 	m_Hint = _Hint;
-	Invalidate();
+
+	if (Repaint)
+		Invalidate();
 }
 
 void CExplorerHeader::SetColors(COLORREF CaptionCol, COLORREF HintCol, COLORREF BackCol, COLORREF LineCol, BOOL Repaint)
@@ -143,7 +145,7 @@ void CExplorerHeader::OnPaint()
 
 	if (m_GradientLine)
 	{
-		if (rect.Width()>2*BORDERLEFT)
+		if (rect.Width()>4*BORDERLEFT)
 		{
 			Graphics g(dc);
 
@@ -152,13 +154,13 @@ void CExplorerHeader::OnPaint()
 			Color c2;
 			c2.SetFromCOLORREF(m_LineCol);
 
-			LinearGradientBrush brush1(Point(0, 0), Point(BORDERLEFT, 0), c1, c2);
-			g.FillRectangle(&brush1, 0, rect.bottom-1, BORDERLEFT, 1);
+			LinearGradientBrush brush1(Point(0, 0), Point(BORDERLEFT*2, 0), c1, c2);
+			g.FillRectangle(&brush1, 0, rect.bottom-1, BORDERLEFT*2, 1);
 
-			LinearGradientBrush brush2(Point(rect.right, 0), Point(rect.right-BORDERLEFT, 0), c1, c2);
-			g.FillRectangle(&brush2, rect.right-BORDERLEFT, rect.bottom-1, BORDERLEFT, 1);
+			LinearGradientBrush brush2(Point(rect.right, 0), Point(rect.right-BORDERLEFT*2, 0), c1, c2);
+			g.FillRectangle(&brush2, rect.right-BORDERLEFT*2, rect.bottom-1, BORDERLEFT*2, 1);
 
-			dc.FillSolidRect(BORDERLEFT, rect.bottom-1, rect.Width()-2*BORDERLEFT, 1, m_LineCol);
+			dc.FillSolidRect(BORDERLEFT*2, rect.bottom-1, rect.Width()-BORDERLEFT*4, 1, m_LineCol);
 		}
 	}
 	else

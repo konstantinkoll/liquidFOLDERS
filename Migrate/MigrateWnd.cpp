@@ -1,5 +1,5 @@
 
-// FileDropWnd.cpp: Implementierungsdatei
+// MigrateWnd.cpp: Implementierungsdatei
 //
 
 #include "stdafx.h"
@@ -43,11 +43,10 @@ void CMigrateWnd::AdjustLayout()
 	CRect rect;
 	GetLayoutRect(rect);
 
-	const UINT ExplorerHeight = m_wndExplorerHeader.GetPreferredHeight();
-	m_wndExplorerHeader.SetWindowPos(NULL, rect.left, rect.top+m_Margins.cyTopHeight, rect.Width(), ExplorerHeight, SWP_NOACTIVATE | SWP_NOZORDER);
-
 	const UINT BottomHeight = MulDiv(45, LOWORD(GetDialogBaseUnits()), 8);
 	m_wndBottomArea.SetWindowPos(NULL, rect.left, rect.bottom-BottomHeight, rect.Width(), BottomHeight, SWP_NOACTIVATE | SWP_NOZORDER);
+
+	m_wndMainView.SetWindowPos(NULL, rect.left, rect.top+m_Margins.cyTopHeight, rect.Width(), rect.bottom-BottomHeight-m_Margins.cyTopHeight, SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
 
@@ -65,19 +64,18 @@ int CMigrateWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CGlasWindow::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
+	// Main view
+	m_wndMainView.Create(this, 3);
+
+	// Bottom area
+	m_wndBottomArea.Create(this, MAKEINTRESOURCE(IDD_BOTTOMAREA), CBRS_BOTTOM, 4);
+
 	// Aero
 	MARGINS Margins = { 0, 0, 40, 0 };
 	UseGlasBackground(Margins);
 
-	// Explorer header
-	m_wndExplorerHeader.Create(this, 1);
-	m_wndExplorerHeader.SetText(_T("You have not selected a root folder yet"), _T("Click above to select a folder for browsing."));
-
-	// Bottom area
-	m_wndBottomArea.Create(this, MAKEINTRESOURCE(IDD_BOTTOMAREA), CBRS_BOTTOM, 2);
-
+	m_wndBottomArea.SetFocus();
 	AdjustLayout();
-	GetDlgItem(IDOK)->SetFocus();
 	return 0;
 }
 

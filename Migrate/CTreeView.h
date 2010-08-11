@@ -12,7 +12,7 @@ class CTreeView : public CWnd
 {
 public:
 	CTreeView();
-	virtual ~CTreeView();
+	~CTreeView();
 
 	void Create(CWnd* _pParentWnd, UINT nID);
 

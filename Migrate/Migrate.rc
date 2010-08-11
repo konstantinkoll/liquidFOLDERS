@@ -40,7 +40,6 @@ IDR_APPLICATION         ICON                    "res\\Migrate.ico"
 //
 
 IDB_ABOUTICON           PNG                     "res\\Migrate_About.png"
-IDB_LOGO_MICRO          PNG                     "res\\Logo alpha micro.png"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -100,11 +99,12 @@ LANGUAGE LANG_ENGLISH, SUBLANG_NEUTRAL
 
 IDD_BOTTOMAREA DIALOGEX 0, 0, 251, 28
 STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN
+EXSTYLE WS_EX_CONTROLPARENT
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "&Migrate files",IDOK,7,7,58,14
-    CONTROL         "&Simulate migration",IDC_CHECK1,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,79,9,77,10
-    CONTROL         "&Delete imported files",IDC_CHECK2,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,162,9,81,10
+    CONTROL         "&Simulate migration",IDC_SIMULATE,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,79,9,77,10
+    CONTROL         "&Delete imported files",IDC_DELETEIMPORTED,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,162,9,81,10
 END
 
 
@@ -139,7 +139,12 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_EMPTYHINT           "The Migration Wizard allows you to bulk import files from a directory tree into a liquidFOLDERS store."
+    IDS_NOROOT_CAPTION      "You have not selected a root folder yet"
+    IDS_NOROOT_HINT         "Click above to select a folder for browsing."
+    IDS_NOSELECTION_CAPTION "You have not selected any folders for migration"
+    IDS_NOSELECTION_HINT    "Click on the checkboxes in the tree below to select a folder."
+    IDS_SELECTION_CAPTION   "You have selected %d folders"
+    IDS_SELECTION_HINT      "These folders contain %d files (%s)."
 END
 
 #endif    // Englisch (neutral) resources
