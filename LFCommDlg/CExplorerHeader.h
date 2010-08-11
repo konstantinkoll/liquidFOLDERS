@@ -10,7 +10,6 @@ class AFX_EXT_CLASS CExplorerHeader : public CWnd
 {
 public:
 	CExplorerHeader();
-	virtual ~CExplorerHeader();
 
 	BOOL Create(CWnd* pParentWnd, UINT nID);
 	void SetText(CString _Caption, CString _Hint, BOOL Repaint=TRUE);

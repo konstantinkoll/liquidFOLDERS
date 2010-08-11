@@ -12,6 +12,7 @@
 #include "..\LFCommDlg\CPaneText.h"
 #include "..\LFCommDlg\CSimpleTooltip.h"
 #include "..\LFCommDlg\CTagList.h"
+#include "..\LFCommDlg\CTaskbar.h"
 #include "..\LFCommDlg\CTooltipHeader.h"
 #include "..\LFCommDlg\LFAboutDlg.h"
 #include "..\LFCommDlg\LFApplication.h"

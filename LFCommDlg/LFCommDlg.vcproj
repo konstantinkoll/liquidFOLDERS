@@ -435,6 +435,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CTaskbar.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\CTooltipHeader.cpp"
 				>
 			</File>
@@ -642,6 +646,10 @@
 			</File>
 			<File
 				RelativePath=".\CTagList.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CTaskbar.h"
 				>
 			</File>
 			<File

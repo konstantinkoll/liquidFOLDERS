@@ -111,7 +111,7 @@ BEGIN_MESSAGE_MAP(CGlasWindow, CWnd)
 	ON_WM_DWMCOMPOSITIONCHANGED()
 	ON_WM_NCCALCSIZE()
 	ON_WM_NCHITTEST()
-	ON_WM_NCACTIVATE()
+	ON_WM_ACTIVATEAPP()
 	ON_WM_SIZE()
 	ON_WM_GETMINMAXINFO()
 END_MESSAGE_MAP()
@@ -254,11 +254,12 @@ LRESULT CGlasWindow::OnNcHitTest(CPoint point)
 	return ((!(GetStyle() & WS_MAXIMIZEBOX)) && (uHitTest>=HTLEFT) && (uHitTest<=HTBOTTOMRIGHT)) ? HTCAPTION : ((uHitTest==HTCLIENT) && (LButtonDown & 0x8000)) ? HTCAPTION : uHitTest;
 }
 
-BOOL CGlasWindow::OnNcActivate(BOOL bActive)
+void CGlasWindow::OnActivateApp(BOOL bActive, DWORD dwThreadID)
 {
+	CWnd::OnActivateApp(bActive, dwThreadID);
+
 	Invalidate();
 	UpdateWindow();
-	return CWnd::OnNcActivate(bActive);
 }
 
 void CGlasWindow::OnSize(UINT nType, int cx, int cy)

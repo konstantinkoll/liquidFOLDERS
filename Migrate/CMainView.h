@@ -23,6 +23,7 @@ public:
 	void SetRoot(CString _Root);
 
 protected:
+	CTaskbar m_wndTaskbar;
 	CExplorerHeader m_wndExplorerHeader;
 	CHeaderView m_wndHeader;
 	CTreeView m_wndTree;
@@ -34,5 +35,6 @@ protected:
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
+	afx_msg LRESULT OnThemeChanged();
 	DECLARE_MESSAGE_MAP()
 };

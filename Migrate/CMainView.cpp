@@ -31,6 +31,9 @@ void CMainView::SetRoot(CString _Root)
 {
 	Root = _Root;
 	IsRootSet = TRUE;
+
+	m_wndExplorerHeader.SetLineStyle(FALSE, FALSE);
+
 	Invalidate();
 }
 
@@ -44,6 +47,7 @@ void CMainView::ClearRoot()
 	ENSURE(caption.LoadString(IDS_NOROOT_CAPTION));
 	ENSURE(hint.LoadString(IDS_NOROOT_HINT));
 	m_wndExplorerHeader.SetText(caption, hint, FALSE);
+	m_wndExplorerHeader.SetLineStyle(TRUE, FALSE);
 
 	Invalidate();
 }
@@ -56,13 +60,16 @@ void CMainView::AdjustLayout()
 	if (((CGlasWindow*)GetParent())->GetDesign()==GWD_DEFAULT)
 		rect.DeflateRect(1, 1);
 
+	const UINT TaskHeight = m_wndTaskbar.GetPreferredHeight();
+	m_wndTaskbar.SetWindowPos(NULL, rect.left, rect.top, rect.Width(), TaskHeight, SWP_NOACTIVATE | SWP_NOZORDER);
+
 	const UINT ExplorerHeight = m_wndExplorerHeader.GetPreferredHeight();
-	m_wndExplorerHeader.SetWindowPos(NULL, rect.left, rect.top, rect.Width(), ExplorerHeight, SWP_NOACTIVATE | SWP_NOZORDER);
+	m_wndExplorerHeader.SetWindowPos(NULL, rect.left, rect.top+TaskHeight, rect.Width(), ExplorerHeight, SWP_NOACTIVATE | SWP_NOZORDER);
 
 	const UINT HeaderHeight = m_wndHeader.GetPreferredHeight();
-	m_wndHeader.SetWindowPos(NULL, rect.left, rect.top+ExplorerHeight, rect.Width(), HeaderHeight, SWP_NOACTIVATE | SWP_NOZORDER);
+	m_wndHeader.SetWindowPos(NULL, rect.left, rect.top+TaskHeight+ExplorerHeight, rect.Width(), HeaderHeight, SWP_NOACTIVATE | SWP_NOZORDER);
 
-	m_wndTree.SetWindowPos(NULL, rect.left, rect.top+ExplorerHeight+HeaderHeight, rect.Width(), rect.Height()-ExplorerHeight-HeaderHeight, SWP_NOACTIVATE | SWP_NOZORDER);
+	m_wndTree.SetWindowPos(NULL, rect.left, rect.top+TaskHeight+ExplorerHeight+HeaderHeight, rect.Width(), rect.Height()-ExplorerHeight-HeaderHeight-TaskHeight, SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
 
@@ -71,6 +78,7 @@ BEGIN_MESSAGE_MAP(CMainView, CWnd)
 	ON_WM_ERASEBKGND()
 	ON_WM_SIZE()
 	ON_WM_SETFOCUS()
+	ON_WM_THEMECHANGED()
 END_MESSAGE_MAP()
 
 int CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -79,7 +87,7 @@ int CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 
 	// Task bar
-
+	m_wndTaskbar.Create(this, 1);
 
 	// Explorer header
 	m_wndExplorerHeader.Create(this, 2);
@@ -113,4 +121,10 @@ void CMainView::OnSize(UINT nType, int cx, int cy)
 void CMainView::OnSetFocus(CWnd* /*pOldWnd*/)
 {
 	m_wndTree.SetFocus();
+}
+
+LRESULT CMainView::OnThemeChanged()
+{
+	AdjustLayout();
+	return TRUE;
 }

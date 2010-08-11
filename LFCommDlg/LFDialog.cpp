@@ -100,6 +100,8 @@ BOOL LFDialog::OnEraseBkgnd(CDC* pDC)
 
 		OnEraseBkgnd(dc, g, rect);
 
+		if (hBackgroundBrush)
+			DeleteObject(hBackgroundBrush);
 		hBackgroundBrush = CreatePatternBrush(BackBuffer);
 	}
 	else

@@ -24,10 +24,6 @@ CExplorerHeader::CExplorerHeader()
 	m_GradientLine = TRUE;
 }
 
-CExplorerHeader::~CExplorerHeader()
-{
-}
-
 BOOL CExplorerHeader::Create(CWnd* pParentWnd, UINT nID)
 {
 	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, LoadCursor(NULL, IDC_ARROW), NULL, NULL);
@@ -86,7 +82,6 @@ BEGIN_MESSAGE_MAP(CExplorerHeader, CWnd)
 	ON_WM_DESTROY()
 	ON_WM_ERASEBKGND()
 	ON_WM_PAINT()
-	ON_WM_SIZE()
 END_MESSAGE_MAP()
 
 int CExplorerHeader::OnCreate(LPCREATESTRUCT lpCreateStruct)
