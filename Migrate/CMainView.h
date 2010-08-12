@@ -16,11 +16,13 @@ class CMainView : public CWnd
 public:
 	CMainView();
 
-	CString Root;
+	virtual BOOL OnCmdMsg(UINT nID, int nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo);
 
 	void Create(CWnd* _pParentWnd, UINT nID);
 	void ClearRoot();
 	void SetRoot(CString _Root);
+
+	CString Root;
 
 protected:
 	CTaskbar m_wndTaskbar;

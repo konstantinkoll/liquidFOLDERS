@@ -9,7 +9,6 @@
 #include "..\\LFCore\\resource.h"
 #include "LFCore.h"
 #include "LFCommDlg.h"
-#include <list>
 
 
 // CStoreManagerApp

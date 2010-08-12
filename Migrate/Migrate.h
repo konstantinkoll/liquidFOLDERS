@@ -13,13 +13,16 @@ class CMigrateApp : public LFApplication
 {
 public:
 	CMigrateApp();
-	virtual ~CMigrateApp();
+
+	virtual BOOL InitInstance();
+	virtual int ExitInstance();
 
 	BOOL m_DeleteImported;
 	BOOL m_Simulate;
 
-	virtual BOOL InitInstance();
-	virtual int ExitInstance();
+protected:
+	afx_msg void OnAppAbout();
+	DECLARE_MESSAGE_MAP()
 };
 
 extern CMigrateApp theApp;

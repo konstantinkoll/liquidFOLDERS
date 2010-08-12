@@ -51,8 +51,12 @@ BOOL CGlasWindow::PreTranslateMessage(MSG* pMsg)
 	return CWnd::PreTranslateMessage(pMsg);
 }
 
-void CGlasWindow::AdjustLayout()
+BOOL CGlasWindow::OnCmdMsg(UINT nID, int nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo)
 {
+	if (CWnd::OnCmdMsg(nID, nCode, pExtra, pHandlerInfo))
+		return TRUE;
+
+	return p_App->OnCmdMsg(nID, nCode, pExtra, pHandlerInfo);
 }
 
 void CGlasWindow::UseGlasBackground(MARGINS Margins)
@@ -61,6 +65,10 @@ void CGlasWindow::UseGlasBackground(MARGINS Margins)
 
 	if (m_IsAeroWindow)
 		p_App->zDwmExtendFrameIntoClientArea(m_hWnd, &Margins);
+}
+
+void CGlasWindow::AdjustLayout()
+{
 }
 
 void CGlasWindow::GetLayoutRect(LPRECT lpRect) const

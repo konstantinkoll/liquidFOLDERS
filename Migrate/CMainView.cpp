@@ -27,6 +27,14 @@ void CMainView::Create(CWnd* _pParentWnd, UINT nID)
 	CWnd::CreateEx(WS_EX_CONTROLPARENT, className, _T("MigrateMainView"), dwStyle, rect, _pParentWnd, nID);
 }
 
+BOOL CMainView::OnCmdMsg(UINT nID, int nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo)
+{
+	if (CWnd::OnCmdMsg(nID, nCode, pExtra, pHandlerInfo))
+		return TRUE;
+
+	return GetParent()->OnCmdMsg(nID, nCode, pExtra, pHandlerInfo);
+}
+
 void CMainView::SetRoot(CString _Root)
 {
 	Root = _Root;
@@ -79,8 +87,6 @@ BEGIN_MESSAGE_MAP(CMainView, CWnd)
 	ON_WM_SIZE()
 	ON_WM_SETFOCUS()
 	ON_WM_THEMECHANGED()
-	ON_BN_CLICKED(ID_APP_ABOUT, OnAbout)
-	ON_BN_CLICKED(ID_APP_NEWSTOREMANAGER, OnNewStoreManager)
 END_MESSAGE_MAP()
 
 int CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -99,9 +105,9 @@ int CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndTaskbar.AddButton(ID_APP_NEWSTOREMANAGER, _T("Open StoreManager"), 5);
 
 	m_wndTaskbar.AddButton(ID_APP_HELP, _T("Help"), 10, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_PURCHASE, _T("Customer support"), 9, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_SUPPORT, _T("Customer support"), 9, TRUE, TRUE);
 	m_wndTaskbar.AddButton(ID_APP_ABOUT, _T("About Migration Wizard"), 8, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_PURCHASE, _T("Enter license key"), 7, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_ENTERLICENSEKEY, _T("Enter license key"), 7, TRUE, TRUE);
 	m_wndTaskbar.AddButton(ID_APP_PURCHASE, _T("Purchase license"), 6, TRUE, TRUE);
 
 	// Explorer header
@@ -142,27 +148,4 @@ LRESULT CMainView::OnThemeChanged()
 {
 	AdjustLayout();
 	return TRUE;
-}
-
-void CMainView::OnAbout()
-{
-	LFAboutDlgParameters p;
-	ENSURE(p.appname.LoadString(IDR_APPLICATION));
-	p.build = __TIMESTAMP__;
-	p.icon = new CGdiPlusBitmapResource();
-	p.icon->Load(IDB_ABOUTICON, _T("PNG"), AfxGetResourceHandle());
-	p.TextureSize = -1;
-	p.RibbonColor = ID_VIEW_APPLOOK_OFF_2007_NONE;
-	p.HideEmptyDrives = -1;
-	p.HideEmptyDomains = -1;
-
-	LFAboutDlg dlg(&p, this);
-	dlg.DoModal();
-
-	delete p.icon;
-}
-
-void CMainView::OnNewStoreManager()
-{
-	theApp.OnAppNewStoreManager();
 }

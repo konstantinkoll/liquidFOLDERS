@@ -67,17 +67,17 @@ public:
 protected:
 	virtual void OnClosingMainFrame(CFrameImpl* pFrameImpl);
 
-private:
 	afx_msg void OnAppAbout();
 	afx_msg void OnAppNewView();
 	afx_msg void OnAppNewClipboard();
 	afx_msg void OnAppExit();
 	DECLARE_MESSAGE_MAP()
 
+private:
+	void GetMaxTextureSize();
+
 	HBITMAP m_GLTextureCache[4];
 	UINT m_GLTextureBinds[4];
-
-	void GetMaxTextureSize();
 };
 
 extern CStoreManagerApp theApp;

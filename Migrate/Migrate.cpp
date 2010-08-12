@@ -8,17 +8,19 @@
 #include "resource.h"
 
 
+// CMigrateApp
+
+BEGIN_MESSAGE_MAP(CMigrateApp, LFApplication)
+	ON_COMMAND(ID_APP_ABOUT, OnAppAbout)
+END_MESSAGE_MAP()
+
+
 // CMigrateApp-Erstellung
 
 CMigrateApp::CMigrateApp()
 	: LFApplication(HasGUI_Standard)
 {
 }
-
-CMigrateApp::~CMigrateApp()
-{
-}
-
 
 // Das einzige CMigrateApp-Objekt
 
@@ -49,4 +51,22 @@ int CMigrateApp::ExitInstance()
 	WriteInt(_T("Simulate"), m_Simulate);
 
 	return LFApplication::ExitInstance();
+}
+
+void CMigrateApp::OnAppAbout()
+{
+	LFAboutDlgParameters p;
+	ENSURE(p.appname.LoadString(IDR_APPLICATION));
+	p.build = __TIMESTAMP__;
+	p.icon = new CGdiPlusBitmapResource();
+	p.icon->Load(IDB_ABOUTICON, _T("PNG"), AfxGetResourceHandle());
+	p.TextureSize = -1;
+	p.RibbonColor = ID_VIEW_APPLOOK_OFF_2007_NONE;
+	p.HideEmptyDrives = -1;
+	p.HideEmptyDomains = -1;
+
+	LFAboutDlg dlg(&p, m_pMainWnd);
+	dlg.DoModal();
+
+	delete p.icon;
 }
