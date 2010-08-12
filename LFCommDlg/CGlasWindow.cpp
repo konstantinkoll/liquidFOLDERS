@@ -18,10 +18,6 @@ CGlasWindow::CGlasWindow()
 	ZeroMemory(&m_Margins, sizeof(MARGINS));
 }
 
-CGlasWindow::~CGlasWindow()
-{
-}
-
 BOOL CGlasWindow::Create(DWORD dwStyle, LPCTSTR lpszClassName, LPCTSTR lpszWindowName, const RECT& rect, CWnd* pParentWnd, UINT nID)
 {
 	return CWnd::CreateEx(WS_EX_APPWINDOW | WS_EX_CONTROLPARENT, lpszClassName, lpszWindowName,
@@ -69,6 +65,11 @@ void CGlasWindow::UseGlasBackground(MARGINS Margins)
 
 void CGlasWindow::AdjustLayout()
 {
+}
+
+void CGlasWindow::PostNcDestroy()
+{
+	delete this;
 }
 
 void CGlasWindow::GetLayoutRect(LPRECT lpRect) const
