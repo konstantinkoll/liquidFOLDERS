@@ -36,7 +36,7 @@ BOOL CTaskbar::Create(CWnd* pParentWnd, UINT ResID, UINT nID)
 LRESULT CTaskbar::DefWindowProc(UINT message, WPARAM wParam, LPARAM lParam)
 {
 	if (message==WM_COMMAND)
-		return GetParent()->SendMessage(WM_COMMAND, wParam, lParam);
+		return GetParent()->SendMessage(message, wParam, lParam);
 
 	return CWnd::DefWindowProc(message, wParam, lParam);
 }
@@ -214,33 +214,33 @@ void CTaskbar::OnUpdateButtons()
 	int Row = BORDER-1 - (((i.dwMajorVersion>=6) && (i.dwMinorVersion!=0)) ? 1 : 0);
 
 	int RPos = rect.right+2*BORDER-BORDERLEFT;
-	std::list<CTaskButton*>::iterator ppBtn = ButtonsRight.begin();
-	while (ppBtn!=ButtonsRight.end())
+	std::list<CTaskButton*>::reverse_iterator ppBtnR = ButtonsRight.rbegin();
+	while (ppBtnR!=ButtonsRight.rend())
 	{
-		if ((*ppBtn)->IsWindowEnabled())
+		if ((*ppBtnR)->IsWindowEnabled())
 		{
-			int l = (*ppBtn)->GetPreferredWidth();
+			int l = (*ppBtnR)->GetPreferredWidth();
 			RPos -= l+BORDER;
 			if (RPos>=BORDERLEFT)
 			{
-				(*ppBtn)->SetWindowPos(NULL, RPos, Row, l, rect.Height()-2*BORDER+1, SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOREDRAW);
-				(*ppBtn)->ShowWindow(SW_SHOW);
+				(*ppBtnR)->SetWindowPos(NULL, RPos, Row, l, rect.Height()-2*BORDER+1, SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOREDRAW);
+				(*ppBtnR)->ShowWindow(SW_SHOW);
 			}
 			else
 			{
-				(*ppBtn)->ShowWindow(SW_HIDE);
+				(*ppBtnR)->ShowWindow(SW_HIDE);
 			}
 		}
 		else
 		{
-			(*ppBtn)->ShowWindow(SW_HIDE);
+			(*ppBtnR)->ShowWindow(SW_HIDE);
 		}
 
-		ppBtn++;
+		ppBtnR++;
 	}
 
 	int LPos = rect.left+BORDERLEFT-BORDER;
-	ppBtn = ButtonsLeft.begin();
+	std::list<CTaskButton*>::iterator ppBtn = ButtonsLeft.begin();
 	while (ppBtn!=ButtonsLeft.end())
 	{
 		if ((*ppBtn)->IsWindowEnabled())

@@ -85,7 +85,6 @@ BEGIN_MESSAGE_MAP(CMainView, CWnd)
 	ON_WM_CREATE()
 	ON_WM_ERASEBKGND()
 	ON_WM_SIZE()
-	ON_WM_SETFOCUS()
 	ON_WM_THEMECHANGED()
 END_MESSAGE_MAP()
 
@@ -104,11 +103,11 @@ int CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndTaskbar.AddButton(104, _T("Delete folder"), 4);
 	m_wndTaskbar.AddButton(ID_APP_NEWSTOREMANAGER, _T("Open StoreManager"), 5);
 
-	m_wndTaskbar.AddButton(ID_APP_HELP, _T("Help"), 10, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_SUPPORT, _T("Customer support"), 9, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_ABOUT, _T("About Migration Wizard"), 8, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_ENTERLICENSEKEY, _T("Enter license key"), 7, TRUE, TRUE);
 	m_wndTaskbar.AddButton(ID_APP_PURCHASE, _T("Purchase license"), 6, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_ENTERLICENSEKEY, _T("Enter license key"), 7, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_ABOUT, _T("About Migration Wizard"), 8, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_SUPPORT, _T("Customer support"), 9, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_HELP, _T("Help"), 10, TRUE, TRUE);
 
 	// Explorer header
 	m_wndExplorerHeader.Create(this, 2);
@@ -137,11 +136,6 @@ void CMainView::OnSize(UINT nType, int cx, int cy)
 {
 	CWnd::OnSize(nType, cx, cy);
 	AdjustLayout();
-}
-
-void CMainView::OnSetFocus(CWnd* /*pOldWnd*/)
-{
-	m_wndTree.SetFocus();
 }
 
 LRESULT CMainView::OnThemeChanged()
