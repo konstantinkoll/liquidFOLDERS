@@ -44,7 +44,7 @@ int CTaskButton::GetPreferredWidth()
 
 		CDC* dc = GetDC();
 		CFont* pOldFont = dc->SelectObject(&((LFApplication*)AfxGetApp())->m_DefaultFont);
-		dc->GetTextExtent(m_Caption);
+		sz = dc->GetTextExtent(m_Caption);
 		dc->SelectObject(pOldFont);
 		ReleaseDC(dc);
 
@@ -261,8 +261,11 @@ LRESULT CTaskButton::OnMouseLeave(WPARAM /*wParam*/, LPARAM /*lParam*/)
 
 void CTaskButton::OnEnable(BOOL bEnable)
 {
-	CButton::OnEnable(bEnable);
-	GetParent()->SendMessage(WM_COMMAND, ID_UPDATEBUTTONS);
+	if (bEnable!=IsWindowEnabled())
+	{
+		CButton::OnEnable(bEnable);
+		GetParent()->SendMessage(WM_COMMAND, ID_UPDATEBUTTONS);
+	}
 }
 
 void CTaskButton::CreateRoundRectangle(CRect rect, int rad, GraphicsPath& path)
