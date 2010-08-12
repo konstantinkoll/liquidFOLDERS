@@ -24,7 +24,8 @@ protected:
 	CBottomArea m_wndBottomArea;
 
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
-	afx_msg LRESULT OnStoresChanged(WPARAM wParam, LPARAM lParam);
+	afx_msg void OnIdleUpdateCmdUI();
+//	afx_msg LRESULT OnStoresChanged(WPARAM wParam, LPARAM lParam);
 	DECLARE_MESSAGE_MAP()
 
 	HICON m_hIcon;

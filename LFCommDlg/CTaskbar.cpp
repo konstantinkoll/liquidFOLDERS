@@ -61,10 +61,78 @@ CTaskButton* CTaskbar::AddButton(UINT nID, CString Text, int IconID, BOOL bAddRi
 		bOnlyIcon || (i.dwMajorVersion<6) || ((i.dwMajorVersion==6) && (i.dwMinorVersion==0)) ? IconID : -1,
 		this, nID);
 
+	CCmdUI cmdUI;
+	cmdUI.m_nID = nID;
+	cmdUI.m_pOther = btn;
+	cmdUI.DoUpdate(GetParent(), TRUE);
+
 	list<CTaskButton*>* li = bAddRight ? &ButtonsRight : &ButtonsLeft;
 	li->push_back(btn);
 
 	return btn;
+}
+
+void CTaskbar::AdjustLayout()
+{
+	CRect rect;
+	GetClientRect(rect);
+
+	OSVERSIONINFO i = ((LFApplication*)AfxGetApp())->osInfo;
+	int Row = BORDER-1 - (((i.dwMajorVersion>=6) && (i.dwMinorVersion!=0)) ? 1 : 0);
+
+	int RPos = rect.right+2*BORDER-BORDERLEFT;
+	std::list<CTaskButton*>::reverse_iterator ppBtnR = ButtonsRight.rbegin();
+	while (ppBtnR!=ButtonsRight.rend())
+	{
+		if ((*ppBtnR)->IsWindowEnabled())
+		{
+			int l = (*ppBtnR)->GetPreferredWidth();
+			RPos -= l+BORDER;
+			if (RPos>=BORDERLEFT)
+			{
+				(*ppBtnR)->SetWindowPos(NULL, RPos, Row, l, rect.Height()-2*BORDER+1, SWP_NOZORDER | SWP_NOACTIVATE);
+				(*ppBtnR)->Invalidate();
+				(*ppBtnR)->ShowWindow(SW_SHOW);
+			}
+			else
+			{
+				(*ppBtnR)->ShowWindow(SW_HIDE);
+			}
+		}
+		else
+		{
+			(*ppBtnR)->ShowWindow(SW_HIDE);
+		}
+
+		ppBtnR++;
+	}
+
+	int LPos = rect.left+BORDERLEFT-BORDER;
+	std::list<CTaskButton*>::iterator ppBtn = ButtonsLeft.begin();
+	while (ppBtn!=ButtonsLeft.end())
+	{
+		if ((*ppBtn)->IsWindowEnabled())
+		{
+			int l = (*ppBtn)->GetPreferredWidth();
+			if (LPos+l+BORDERLEFT-BORDER<RPos)
+			{
+				(*ppBtn)->SetWindowPos(NULL, LPos, Row, l, rect.Height()-2*BORDER+1, SWP_NOZORDER | SWP_NOACTIVATE);
+				(*ppBtn)->Invalidate();
+				(*ppBtn)->ShowWindow(SW_SHOW);
+			}
+			else
+			{
+				(*ppBtn)->ShowWindow(SW_HIDE);
+			}
+			LPos += l+BORDERLEFT;
+		}
+		else
+		{
+			(*ppBtn)->ShowWindow(SW_HIDE);
+		}
+
+		ppBtn++;
+	}
 }
 
 
@@ -73,12 +141,28 @@ BEGIN_MESSAGE_MAP(CTaskbar, CWnd)
 	ON_WM_ERASEBKGND()
 	ON_WM_CTLCOLOR()
 	ON_WM_SIZE()
-	ON_COMMAND(ID_UPDATEBUTTONS, OnUpdateButtons)
+	ON_MESSAGE_VOID(WM_IDLEUPDATECMDUI, OnIdleUpdateCmdUI)
 END_MESSAGE_MAP()
 
 void CTaskbar::OnDestroy()
 {
 	CWnd::OnDestroy();
+
+	std::list<CTaskButton*>::iterator ppBtn = ButtonsRight.begin();
+	while (ppBtn!=ButtonsRight.end())
+	{
+		(*ppBtn)->DestroyWindow();
+		delete *ppBtn;
+		ppBtn++;
+	}
+
+	ppBtn = ButtonsLeft.begin();
+	while (ppBtn!=ButtonsLeft.end())
+	{
+		(*ppBtn)->DestroyWindow();
+		delete *ppBtn;
+		ppBtn++;
+	}
 
 	if (hBackgroundBrush)
 		DeleteObject(hBackgroundBrush);
@@ -201,67 +285,37 @@ HBRUSH CTaskbar::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 void CTaskbar::OnSize(UINT nType, int cx, int cy)
 {
 	CWnd::OnSize(nType, cx, cy);
-
-	OnUpdateButtons();
+	AdjustLayout();
 }
 
-void CTaskbar::OnUpdateButtons()
+void CTaskbar::OnIdleUpdateCmdUI()
 {
-	CRect rect;
-	GetClientRect(rect);
+	BOOL Update = FALSE;
 
-	OSVERSIONINFO i = ((LFApplication*)AfxGetApp())->osInfo;
-	int Row = BORDER-1 - (((i.dwMajorVersion>=6) && (i.dwMinorVersion!=0)) ? 1 : 0);
-
-	int RPos = rect.right+2*BORDER-BORDERLEFT;
-	std::list<CTaskButton*>::reverse_iterator ppBtnR = ButtonsRight.rbegin();
-	while (ppBtnR!=ButtonsRight.rend())
+	std::list<CTaskButton*>::iterator ppBtn = ButtonsRight.begin();
+	while (ppBtn!=ButtonsRight.end())
 	{
-		if ((*ppBtnR)->IsWindowEnabled())
-		{
-			int l = (*ppBtnR)->GetPreferredWidth();
-			RPos -= l+BORDER;
-			if (RPos>=BORDERLEFT)
-			{
-				(*ppBtnR)->SetWindowPos(NULL, RPos, Row, l, rect.Height()-2*BORDER+1, SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOREDRAW);
-				(*ppBtnR)->ShowWindow(SW_SHOW);
-			}
-			else
-			{
-				(*ppBtnR)->ShowWindow(SW_HIDE);
-			}
-		}
-		else
-		{
-			(*ppBtnR)->ShowWindow(SW_HIDE);
-		}
-
-		ppBtnR++;
-	}
-
-	int LPos = rect.left+BORDERLEFT-BORDER;
-	std::list<CTaskButton*>::iterator ppBtn = ButtonsLeft.begin();
-	while (ppBtn!=ButtonsLeft.end())
-	{
-		if ((*ppBtn)->IsWindowEnabled())
-		{
-			int l = (*ppBtn)->GetPreferredWidth();
-			if (LPos+l+BORDERLEFT-BORDER<RPos)
-			{
-				(*ppBtn)->SetWindowPos(NULL, LPos, Row, l, rect.Height()-2*BORDER+1, SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOREDRAW);
-				(*ppBtn)->ShowWindow(SW_SHOW);
-			}
-			else
-			{
-				(*ppBtn)->ShowWindow(SW_HIDE);
-			}
-			LPos += l+BORDERLEFT;
-		}
-		else
-		{
-			(*ppBtn)->ShowWindow(SW_HIDE);
-		}
+		CCmdUI cmdUI;
+		cmdUI.m_nID = (*ppBtn)->GetDlgCtrlID();
+		cmdUI.m_pOther = *ppBtn;
+		cmdUI.DoUpdate(GetParent(), TRUE);
+		Update |= cmdUI.m_bEnableChanged;
 
 		ppBtn++;
 	}
+
+	ppBtn = ButtonsLeft.begin();
+	while (ppBtn!=ButtonsLeft.end())
+	{
+		CCmdUI cmdUI;
+		cmdUI.m_nID = (*ppBtn)->GetDlgCtrlID();
+		cmdUI.m_pOther = *ppBtn;
+		cmdUI.DoUpdate(GetParent(), TRUE);
+		Update |= cmdUI.m_bEnableChanged;
+
+		ppBtn++;
+	}
+
+	if (Update)
+		AdjustLayout();
 }

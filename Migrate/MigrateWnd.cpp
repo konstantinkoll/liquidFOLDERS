@@ -40,6 +40,11 @@ BOOL CMigrateWnd::Create()
 
 void CMigrateWnd::AdjustLayout()
 {
+	if (!IsWindow(m_wndBottomArea.GetSafeHwnd()))
+		return;
+	if (!IsWindow(m_wndMainView.GetSafeHwnd()))
+		return;
+
 	CRect rect;
 	GetLayoutRect(rect);
 
@@ -52,6 +57,7 @@ void CMigrateWnd::AdjustLayout()
 
 BEGIN_MESSAGE_MAP(CMigrateWnd, CGlasWindow)
 	ON_WM_CREATE()
+	ON_MESSAGE_VOID(WM_IDLEUPDATECMDUI, OnIdleUpdateCmdUI)
 /*	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoresChanged, OnStoresChanged)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoreAttributesChanged, OnStoresChanged)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->DefaultStoreChanged, OnStoresChanged)*/
@@ -75,6 +81,10 @@ int CMigrateWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndBottomArea.SetFocus();
 	AdjustLayout();
 	return 0;
+}
+
+void CMigrateWnd::OnIdleUpdateCmdUI()
+{
 }
 
 /*

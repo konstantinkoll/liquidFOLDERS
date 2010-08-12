@@ -5,6 +5,11 @@
 #define IDR_APPLICATION                 128
 #define IDB_ABOUTICON                   129
 #define IDB_TASKS                       130
+#define ID_VIEW_SELECTROOT              400
+#define ID_VIEW_INCLUDETREE             401
+#define ID_VIEW_EXCLUDETREE             402
+#define ID_VIEW_RENAME                  403
+#define ID_VIEW_DELETE                  404
 #define IDS_NOROOT_CAPTION              1000
 #define IDS_NOROOT_HINT                 1001
 #define IDS_NOSELECTION_CAPTION         1002
@@ -14,7 +19,6 @@
 #define IDD_BOTTOMAREA                  2000
 #define IDC_SIMULATE                    2001
 #define IDC_DELETEIMPORTED              2002
-#define IDB_BITMAP1                     2008
 
 // Next default values for new objects
 // 

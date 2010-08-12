@@ -60,7 +60,6 @@ BEGIN_MESSAGE_MAP(CTaskButton, CButton)
 	ON_WM_PAINT()
 	ON_WM_MOUSEMOVE()
 	ON_MESSAGE(WM_MOUSELEAVE, OnMouseLeave)
-	ON_WM_ENABLE()
 END_MESSAGE_MAP()
 
 BOOL CTaskButton::OnEraseBkgnd(CDC* /*pDC*/)
@@ -257,15 +256,6 @@ LRESULT CTaskButton::OnMouseLeave(WPARAM /*wParam*/, LPARAM /*lParam*/)
 	Invalidate();
 
 	return NULL;
-}
-
-void CTaskButton::OnEnable(BOOL bEnable)
-{
-	if (bEnable!=IsWindowEnabled())
-	{
-		CButton::OnEnable(bEnable);
-		GetParent()->SendMessage(WM_COMMAND, ID_UPDATEBUTTONS);
-	}
 }
 
 void CTaskButton::CreateRoundRectangle(CRect rect, int rad, GraphicsPath& path)

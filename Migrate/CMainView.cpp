@@ -86,21 +86,22 @@ BEGIN_MESSAGE_MAP(CMainView, CWnd)
 	ON_WM_ERASEBKGND()
 	ON_WM_SIZE()
 	ON_WM_THEMECHANGED()
+	ON_UPDATE_COMMAND_UI_RANGE(ID_VIEW_SELECTROOT, ID_VIEW_DELETE, OnUpdateTaskbar)
 END_MESSAGE_MAP()
 
 int CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
-	if (CWnd::OnCreate(lpCreateStruct) == -1)
+	if (CWnd::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
 	// Task bar
 	m_wndTaskbar.Create(this, IDB_TASKS, 1);
 
-	m_wndTaskbar.AddButton(100, _T("Select root folder"), 0);
-	m_wndTaskbar.AddButton(101, _T("Include subfolders"), 1);
-	m_wndTaskbar.AddButton(102, _T("Exclude subfolders"), 2);
-	m_wndTaskbar.AddButton(103, _T("Rename folder"), 3);
-	m_wndTaskbar.AddButton(104, _T("Delete folder"), 4);
+	m_wndTaskbar.AddButton(ID_VIEW_SELECTROOT, _T("Select root folder"), 0);
+	m_wndTaskbar.AddButton(ID_VIEW_INCLUDETREE, _T("Include subfolders"), 1);
+	m_wndTaskbar.AddButton(ID_VIEW_EXCLUDETREE, _T("Exclude subfolders"), 2);
+	m_wndTaskbar.AddButton(ID_VIEW_RENAME, _T("Rename folder"), 3);
+	m_wndTaskbar.AddButton(ID_VIEW_DELETE, _T("Delete folder"), 4);
 	m_wndTaskbar.AddButton(ID_APP_NEWSTOREMANAGER, _T("Open StoreManager"), 5);
 
 	m_wndTaskbar.AddButton(ID_APP_PURCHASE, _T("Purchase license"), 6, TRUE, TRUE);
@@ -142,4 +143,16 @@ LRESULT CMainView::OnThemeChanged()
 {
 	AdjustLayout();
 	return TRUE;
+}
+
+void CMainView::OnUpdateTaskbar(CCmdUI* pCmdUI)
+{
+	switch (pCmdUI->m_nID)
+	{
+	case ID_VIEW_SELECTROOT:
+		pCmdUI->Enable(!IsRootSet);
+		break;
+	default:
+		pCmdUI->Enable(IsRootSet);
+	}
 }

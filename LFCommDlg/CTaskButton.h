@@ -8,8 +8,6 @@
 // CTaskButton
 //
 
-#define ID_UPDATEBUTTONS             900
-
 class AFX_EXT_CLASS CTaskButton : public CButton
 {
 public:
