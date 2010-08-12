@@ -33,6 +33,14 @@ BOOL CTaskbar::Create(CWnd* pParentWnd, UINT ResID, UINT nID)
 	return CWnd::CreateEx(WS_EX_CONTROLPARENT, className, _T("Taskbar"), dwStyle, rect, pParentWnd, nID);
 }
 
+LRESULT CTaskbar::DefWindowProc(UINT message, WPARAM wParam, LPARAM lParam)
+{
+	if (message==WM_COMMAND)
+		return GetParent()->SendMessage(WM_COMMAND, wParam, lParam);
+
+	return CWnd::DefWindowProc(message, wParam, lParam);
+}
+
 UINT CTaskbar::GetPreferredHeight()
 {
 	LOGFONT lf;
@@ -167,7 +175,6 @@ BOOL CTaskbar::OnEraseBkgnd(CDC* pDC)
 
 	pDC->BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);
 	dc.SelectObject(pOldBitmap);
-
 	return TRUE;
 }
 
@@ -216,7 +223,7 @@ void CTaskbar::OnUpdateButtons()
 			RPos -= l+BORDER;
 			if (RPos>=BORDERLEFT)
 			{
-				(*ppBtn)->SetWindowPos(NULL, RPos, Row, l, rect.Height()-2*BORDER+1, SWP_NOZORDER | SWP_NOACTIVATE);
+				(*ppBtn)->SetWindowPos(NULL, RPos, Row, l, rect.Height()-2*BORDER+1, SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOREDRAW);
 				(*ppBtn)->ShowWindow(SW_SHOW);
 			}
 			else
@@ -241,7 +248,7 @@ void CTaskbar::OnUpdateButtons()
 			int l = (*ppBtn)->GetPreferredWidth();
 			if (LPos+l+BORDERLEFT-BORDER<RPos)
 			{
-				(*ppBtn)->SetWindowPos(NULL, LPos, Row, l, rect.Height()-2*BORDER+1, SWP_NOZORDER | SWP_NOACTIVATE);
+				(*ppBtn)->SetWindowPos(NULL, LPos, Row, l, rect.Height()-2*BORDER+1, SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOREDRAW);
 				(*ppBtn)->ShowWindow(SW_SHOW);
 			}
 			else

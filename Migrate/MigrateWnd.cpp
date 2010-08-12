@@ -46,15 +46,13 @@ void CMigrateWnd::AdjustLayout()
 	const UINT BottomHeight = MulDiv(45, LOWORD(GetDialogBaseUnits()), 8);
 	m_wndBottomArea.SetWindowPos(NULL, rect.left, rect.bottom-BottomHeight, rect.Width(), BottomHeight, SWP_NOACTIVATE | SWP_NOZORDER);
 
-	m_wndMainView.SetWindowPos(NULL, rect.left, rect.top+m_Margins.cyTopHeight, rect.Width(), rect.bottom-BottomHeight-m_Margins.cyTopHeight, SWP_NOACTIVATE | SWP_NOZORDER);
+	m_wndMainView.SetWindowPos(NULL, rect.left, rect.top+m_Margins.cyTopHeight, rect.Width(), rect.bottom-BottomHeight-m_Margins.cyTopHeight, SWP_NOACTIVATE | SWP_NOZORDER | SWP_NOREDRAW);
 }
 
 
 BEGIN_MESSAGE_MAP(CMigrateWnd, CGlasWindow)
 	ON_WM_CREATE()
-	ON_COMMAND(ID_APP_ABOUT, OnAbout)
-/*	ON_COMMAND(ID_APP_NEWSTOREMANAGER, OnNewStoreManager)
-	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoresChanged, OnStoresChanged)
+/*	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoresChanged, OnStoresChanged)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoreAttributesChanged, OnStoresChanged)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->DefaultStoreChanged, OnStoresChanged)*/
 END_MESSAGE_MAP()
@@ -79,30 +77,7 @@ int CMigrateWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	return 0;
 }
 
-void CMigrateWnd::OnAbout()
-{
-	LFAboutDlgParameters p;
-	ENSURE(p.appname.LoadString(IDR_APPLICATION));
-	p.build = __TIMESTAMP__;
-	p.icon = new CGdiPlusBitmapResource();
-	p.icon->Load(IDB_ABOUTICON, _T("PNG"), AfxGetResourceHandle());
-	p.TextureSize = -1;
-	p.RibbonColor = ID_VIEW_APPLOOK_OFF_2007_NONE;
-	p.HideEmptyDrives = -1;
-	p.HideEmptyDomains = -1;
-
-	LFAboutDlg dlg(&p, this);
-	dlg.DoModal();
-
-	delete p.icon;
-}
-
 /*
-void CMigrateWnd::OnNewStoreManager()
-{
-	theApp.OnAppNewStoreManager();
-}
-
 LRESULT CMigrateWnd::OnStoresChanged(WPARAM wParam, LPARAM lParam)
 {
 	return NULL;

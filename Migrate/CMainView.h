@@ -36,5 +36,7 @@ protected:
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
 	afx_msg LRESULT OnThemeChanged();
+	afx_msg void OnAbout();
+	afx_msg void OnNewStoreManager();
 	DECLARE_MESSAGE_MAP()
 };
