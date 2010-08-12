@@ -97,7 +97,7 @@ void CGlasWindow::DrawFrameBackground(CDC* pDC, CRect rect)
 			rframe.right += GetSystemMetrics(SM_CXSIZEFRAME);
 			rframe.bottom += GetSystemMetrics(SM_CYSIZEFRAME);
 
-			p_App->zDrawThemeBackground(hTheme, *pDC, WP_FRAMELEFT, GetActiveWindow()==this ? CS_ACTIVE : CS_INACTIVE, rframe, rect);
+			p_App->zDrawThemeBackground(hTheme, *pDC, WP_FRAMELEFT, (m_Active && m_Enabled) ? CS_ACTIVE : CS_INACTIVE, rframe, rect);
 		}
 		else
 		{
@@ -120,6 +120,7 @@ BEGIN_MESSAGE_MAP(CGlasWindow, CWnd)
 	ON_WM_NCCALCSIZE()
 	ON_WM_NCHITTEST()
 	ON_WM_ACTIVATEAPP()
+	ON_WM_ENABLE()
 	ON_WM_SIZE()
 	ON_WM_GETMINMAXINFO()
 END_MESSAGE_MAP()
@@ -265,9 +266,25 @@ LRESULT CGlasWindow::OnNcHitTest(CPoint point)
 void CGlasWindow::OnActivateApp(BOOL bActive, DWORD dwThreadID)
 {
 	CWnd::OnActivateApp(bActive, dwThreadID);
+	m_Active = bActive;
 
-	Invalidate();
-	UpdateWindow();
+	if (GetDesign()==GWD_THEMED)
+	{
+		Invalidate();
+		UpdateWindow();
+	}
+}
+
+void CGlasWindow::OnEnable(BOOL bEnable)
+{
+	CWnd::OnEnable(bEnable);
+	m_Enabled = bEnable;
+
+	if (GetDesign()==GWD_THEMED)
+	{
+		Invalidate();
+		UpdateWindow();
+	}
 }
 
 void CGlasWindow::OnSize(UINT nType, int cx, int cy)
