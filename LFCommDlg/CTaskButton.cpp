@@ -19,7 +19,7 @@ CTaskButton::CTaskButton()
 	m_Hover = FALSE;
 }
 
-void CTaskButton::Create(CString Caption, CString Tooltip, CMFCToolBarImages* Icons, int IconID, CWnd* pParentWnd, UINT nID)
+BOOL CTaskButton::Create(CString Caption, CString Tooltip, CMFCToolBarImages* Icons, int IconID, CWnd* pParentWnd, UINT nID)
 {
 	m_Caption = Caption;
 	m_Tooltip = Tooltip;
@@ -28,7 +28,32 @@ void CTaskButton::Create(CString Caption, CString Tooltip, CMFCToolBarImages* Ic
 
 	CRect rect;
 	rect.SetRectEmpty();
-	CButton::Create(Caption, WS_VISIBLE | WS_TABSTOP | WS_GROUP, rect, pParentWnd, nID);
+	return CButton::Create(Caption, WS_VISIBLE | WS_TABSTOP | WS_GROUP, rect, pParentWnd, nID);
+}
+
+BOOL CTaskButton::PreTranslateMessage(MSG* pMsg)
+{
+	switch (pMsg->message)
+	{
+	case WM_KEYDOWN:
+	case WM_SYSKEYDOWN:
+	case WM_LBUTTONDOWN:
+	case WM_RBUTTONDOWN:
+	case WM_MBUTTONDOWN:
+	case WM_LBUTTONUP:
+	case WM_RBUTTONUP:
+	case WM_MBUTTONUP:
+	case WM_NCLBUTTONDOWN:
+	case WM_NCRBUTTONDOWN:
+	case WM_NCMBUTTONDOWN:
+	case WM_NCLBUTTONUP:
+	case WM_NCRBUTTONUP:
+	case WM_NCMBUTTONUP:
+		m_TooltipCtrl.Hide();
+		break;
+	}
+
+	return CButton::PreTranslateMessage(pMsg);
 }
 
 int CTaskButton::GetPreferredWidth()
@@ -56,11 +81,24 @@ int CTaskButton::GetPreferredWidth()
 
 
 BEGIN_MESSAGE_MAP(CTaskButton, CButton)
+	ON_WM_CREATE()
 	ON_WM_ERASEBKGND()
 	ON_WM_PAINT()
 	ON_WM_MOUSEMOVE()
-	ON_MESSAGE(WM_MOUSELEAVE, OnMouseLeave)
+	ON_WM_MOUSELEAVE()
+	ON_WM_MOUSEHOVER()
 END_MESSAGE_MAP()
+
+int CTaskButton::OnCreate(LPCREATESTRUCT lpCreateStruct)
+{
+	if (CButton::OnCreate(lpCreateStruct)==-1)
+		return -1;
+
+	// Tooltip
+	m_TooltipCtrl.Create(this);
+
+	return 0;
+}
 
 BOOL CTaskButton::OnEraseBkgnd(CDC* /*pDC*/)
 {
@@ -244,18 +282,44 @@ void CTaskButton::OnMouseMove(UINT nFlags, CPoint point)
 
 		TRACKMOUSEEVENT tme;
 		tme.cbSize = sizeof(TRACKMOUSEEVENT);
-		tme.dwFlags = TME_LEAVE;
-		tme.hwndTrack = GetSafeHwnd();
+		tme.dwFlags = TME_LEAVE | TME_HOVER;
+		tme.dwHoverTime = HOVER_DEFAULT;
+		tme.hwndTrack = m_hWnd;
 		TrackMouseEvent(&tme);
 	}
 }
 
-LRESULT CTaskButton::OnMouseLeave(WPARAM /*wParam*/, LPARAM /*lParam*/)
+void CTaskButton::OnMouseLeave()
 {
+	m_TooltipCtrl.Deactivate();
 	m_Hover = FALSE;
 	Invalidate();
 
-	return NULL;
+	CButton::OnMouseLeave();
+}
+
+void CTaskButton::OnMouseHover(UINT nFlags, CPoint point)
+{
+	if (!m_Tooltip.IsEmpty())
+	{
+		if ((nFlags & (MK_LBUTTON | MK_MBUTTON | MK_RBUTTON | MK_XBUTTON1 | MK_XBUTTON2))==0)
+		{
+			ClientToScreen(&point);
+			m_TooltipCtrl.Track(point, m_Tooltip);
+		}
+		else
+		{
+			m_TooltipCtrl.Deactivate();
+		}
+
+		TRACKMOUSEEVENT tme;
+		ZeroMemory(&tme, sizeof(tme));
+		tme.cbSize = sizeof(TRACKMOUSEEVENT);
+		tme.dwFlags = TME_LEAVE | TME_HOVER;
+		tme.dwHoverTime = HOVER_DEFAULT;
+		tme.hwndTrack = m_hWnd;
+		TrackMouseEvent(&tme);
+	}
 }
 
 void CTaskButton::CreateRoundRectangle(CRect rect, int rad, GraphicsPath& path)

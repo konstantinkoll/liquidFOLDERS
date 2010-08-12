@@ -295,24 +295,28 @@ void CTaskbar::OnIdleUpdateCmdUI()
 	std::list<CTaskButton*>::iterator ppBtn = ButtonsRight.begin();
 	while (ppBtn!=ButtonsRight.end())
 	{
+		BOOL Enabled = (*ppBtn)->IsWindowEnabled();
+
 		CCmdUI cmdUI;
 		cmdUI.m_nID = (*ppBtn)->GetDlgCtrlID();
 		cmdUI.m_pOther = *ppBtn;
 		cmdUI.DoUpdate(GetParent(), TRUE);
-		Update |= cmdUI.m_bEnableChanged;
 
+		Update |= ((*ppBtn)->IsWindowEnabled()!=Enabled);
 		ppBtn++;
 	}
 
 	ppBtn = ButtonsLeft.begin();
 	while (ppBtn!=ButtonsLeft.end())
 	{
+		BOOL Enabled = (*ppBtn)->IsWindowEnabled();
+
 		CCmdUI cmdUI;
 		cmdUI.m_nID = (*ppBtn)->GetDlgCtrlID();
 		cmdUI.m_pOther = *ppBtn;
 		cmdUI.DoUpdate(GetParent(), TRUE);
-		Update |= cmdUI.m_bEnableChanged;
 
+		Update |= ((*ppBtn)->IsWindowEnabled()!=Enabled);
 		ppBtn++;
 	}
 

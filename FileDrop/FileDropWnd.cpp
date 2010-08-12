@@ -313,7 +313,8 @@ void CFileDropWnd::OnMouseMove(UINT nFlags, CPoint point)
 		ZeroMemory(&tme, sizeof(tme));
 		tme.cbSize = sizeof(TRACKMOUSEEVENT);
 		tme.dwFlags = TME_LEAVE | TME_HOVER;
-		tme.hwndTrack = GetSafeHwnd();
+		tme.dwHoverTime = HOVER_DEFAULT;
+		tme.hwndTrack = m_hWnd;
 		TrackMouseEvent(&tme);
 
 		MouseInWnd = TRUE;
@@ -349,7 +350,8 @@ void CFileDropWnd::OnMouseHover(UINT nFlags, CPoint point)
 	ZeroMemory(&tme, sizeof(tme));
 	tme.cbSize = sizeof(TRACKMOUSEEVENT);
 	tme.dwFlags = TME_LEAVE | TME_HOVER;
-	tme.hwndTrack = GetSafeHwnd();
+	tme.dwHoverTime = HOVER_DEFAULT;
+	tme.hwndTrack = m_hWnd;
 	TrackMouseEvent(&tme);
 }
 
