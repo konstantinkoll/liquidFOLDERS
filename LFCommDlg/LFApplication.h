@@ -102,6 +102,7 @@ public:
 	CFont m_Fonts[2][2];
 	CFont m_CaptionFont;
 	CFont m_DefaultFont;
+	CFont m_ItalicFont;
 	OSVERSIONINFO osInfo;
 	LFMessageIDs* MessageIDs;
 	BOOL IsLicensed;

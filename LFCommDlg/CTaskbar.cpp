@@ -219,19 +219,19 @@ BOOL CTaskbar::OnEraseBkgnd(CDC* pDC)
 			{
 				c1.SetFromCOLORREF(0x883000);
 				c2.SetFromCOLORREF(0x805820);
-				c3 = Color(128, 0xC0, 0xE0, 0xFF);
+				c3 = Color(0x80, 0xC0, 0xE0, 0xFF);
 			}
 			else
 			{
 				c1.SetFromCOLORREF(0x754804);
 				c2.SetFromCOLORREF(0x776C19);
-				c3 = Color(128, 0xC0, 0xFF, 0xE0);
+				c3 = Color(0x80, 0xC0, 0xFF, 0xE0);
 			}
 
 			LinearGradientBrush brush1(Point(0, 0), Point(rect.right, 0), c1, c2);
 			g.FillRectangle(&brush1, 0, 0, rect.right, rect.bottom);
 
-			SolidBrush brush2(Color(128, 0x00, 0x00, 0x00));
+			SolidBrush brush2(Color(0x60, 0x00, 0x00, 0x00));
 			g.FillRectangle(&brush2, 0, rect.bottom-1, rect.right, 1);
 
 			UINT line = rect.Height()/2;
@@ -240,7 +240,7 @@ BOOL CTaskbar::OnEraseBkgnd(CDC* pDC)
 			g.FillRectangle(&brush3, 0, 0, rect.right, line);
 
 			LinearGradientBrush brush4(Point(0, line), Point(0, rect.bottom-1), Color(0, 0xFF, 0xFF, 0xFF), c3);
-			g.FillRectangle(&brush4, 0, line, rect.right, line);
+			g.FillRectangle(&brush4, 0, line+1, rect.right, rect.bottom-line-2);
 
 			SolidBrush brush5(Color(64, 0xFF, 0xFF, 0xFF));
 			g.FillRectangle(&brush5, 0, 0, rect.right, 1);

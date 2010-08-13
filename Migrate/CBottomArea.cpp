@@ -43,27 +43,27 @@ void CBottomArea::OnDestroy()
 	CWnd::OnDestroy();
 }
 
-BOOL CBottomArea::OnEraseBkgnd(CDC* pDC)
+BOOL CBottomArea::OnEraseBkgnd(CDC* /*pDC*/)
 {
-	CRect rect;
-	GetClientRect(rect);
-
-	if (((CGlasWindow*)GetParent())->GetDesign()>GWD_DEFAULT)
-	{
-		pDC->FillSolidRect(rect.top++, rect.left, rect.Width(), 1, 0xDFDFDF);
-		pDC->FillSolidRect(rect, 0xF0F0F0);
-	}
-	else
-	{
-		pDC->FillSolidRect(rect, GetSysColor(COLOR_3DFACE));
-	}
-
 	return TRUE;
 }
 
 void CBottomArea::OnPaint()
 {
-	CPaintDC(this);
+	CPaintDC pDC(this);
+
+	CRect rect;
+	GetClientRect(rect);
+
+	if (((CGlasWindow*)GetParent())->GetDesign()>GWD_DEFAULT)
+	{
+		pDC.FillSolidRect(rect.top++, rect.left, rect.Width(), 1, 0xDFDFDF);
+		pDC.FillSolidRect(rect, 0xF0F0F0);
+	}
+	else
+	{
+		pDC.FillSolidRect(rect, GetSysColor(COLOR_3DFACE));
+	}
 }
 
 HBRUSH CBottomArea::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)

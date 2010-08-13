@@ -16,6 +16,10 @@
 #define IDS_NOSELECTION_HINT            1003
 #define IDS_SELECTION_CAPTION           1004
 #define IDS_SELECTION_HINT              1005
+#define IDS_FOLDER_CAPTION              1006
+#define IDS_FOLDER_HINT                 1007
+#define IDS_STORE_CAPTION               1008
+#define IDS_STORE_HINT                  1009
 #define IDD_BOTTOMAREA                  2000
 #define IDC_SIMULATE                    2001
 #define IDC_DELETEIMPORTED              2002

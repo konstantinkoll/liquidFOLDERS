@@ -18,8 +18,10 @@ CDropdownSelector::CDropdownSelector()
 	m_Hover = FALSE;
 }
 
-BOOL CDropdownSelector::Create(CGlasWindow* pParentWnd, UINT nID)
+BOOL CDropdownSelector::Create(CString EmptyHint, CGlasWindow* pParentWnd, UINT nID)
 {
+	m_EmptyHint = EmptyHint;
+
 	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, LoadCursor(NULL, IDC_ARROW), NULL, NULL);
 
 	const DWORD dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE;
@@ -133,9 +135,9 @@ void CDropdownSelector::OnPaint()
 	CRect rtext(rcontent);
 	rtext.DeflateRect(BORDER, 0);
 
-	CFont* pOldFont = dc.SelectObject(&((LFApplication*)AfxGetApp())->m_DefaultFont);
-	dc.SetTextColor(0x000000);
-	dc.DrawText(_T("Test"), -1, rtext, DT_SINGLELINE | DT_END_ELLIPSIS | DT_VCENTER);
+	CFont* pOldFont = dc.SelectObject(&((LFApplication*)AfxGetApp())->m_ItalicFont);
+	dc.SetTextColor(0x808080);
+	dc.DrawText(m_EmptyHint, -1, rtext, DT_SINGLELINE | DT_END_ELLIPSIS | DT_VCENTER);
 	dc.SelectObject(pOldFont);
 
 	// Set alpha

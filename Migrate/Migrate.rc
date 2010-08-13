@@ -152,6 +152,10 @@ BEGIN
     IDS_NOSELECTION_HINT    "Click on the checkboxes in the tree below to select a folder."
     IDS_SELECTION_CAPTION   "You have selected %d folders"
     IDS_SELECTION_HINT      "These folders contain %d files (%s)."
+	IDS_FOLDER_CAPTION      "Source:"
+	IDS_FOLDER_HINT         "Click here to select a folder"
+    IDS_STORE_CAPTION       "Destination store:"
+    IDS_STORE_HINT          "Click here to select the destination store"
 END
 
 #endif    // Englisch (neutral) resources

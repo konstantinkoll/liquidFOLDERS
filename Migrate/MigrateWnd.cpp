@@ -52,7 +52,7 @@ void CMigrateWnd::AdjustLayout()
 	CRect rect;
 	GetLayoutRect(rect);
 
-	const UINT Border = GetSystemMetrics(SM_CXFRAME);
+	const UINT Border = 4;
 	const UINT SelectorHeight = m_wndFolder.GetPreferredHeight();
 	m_wndFolder.SetWindowPos(NULL, rect.left, rect.top+4, (rect.Width()-Border)/2, SelectorHeight, SWP_NOACTIVATE | SWP_NOZORDER);
 	m_wndStore.SetWindowPos(NULL, rect.right-(rect.Width()-Border)/2, rect.top+4, (rect.Width()-Border)/2, SelectorHeight, SWP_NOACTIVATE | SWP_NOZORDER);
@@ -78,10 +78,13 @@ int CMigrateWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 
 	// Folder selector
-	m_wndFolder.Create(this, 1);
+	CString tmpStr;
+	ENSURE(tmpStr.LoadString(IDS_FOLDER_HINT));
+	m_wndFolder.Create(tmpStr, this, 1);
 
 	// Store selector
-	m_wndStore.Create(this, 2);
+	ENSURE(tmpStr.LoadString(IDS_STORE_HINT));
+	m_wndStore.Create(tmpStr, this, 2);
 
 	// Main view
 	m_wndMainView.Create(this, 3);

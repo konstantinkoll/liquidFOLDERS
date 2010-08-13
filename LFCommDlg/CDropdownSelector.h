@@ -14,10 +14,11 @@ class AFX_EXT_CLASS CDropdownSelector : public CWnd
 public:
 	CDropdownSelector();
 
-	BOOL Create(CGlasWindow* pParentWnd, UINT nID);
+	BOOL Create(CString EmptyHint, CGlasWindow* pParentWnd, UINT nID);
 	UINT GetPreferredHeight();
 
 protected:
+	CString m_EmptyHint;
 	BOOL m_Hover;
 
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
