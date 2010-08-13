@@ -21,8 +21,8 @@ public:
 
 protected:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
-	afx_msg void OnPaint();
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
+	afx_msg void OnPaint();
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg void OnMouseLeave();
 	afx_msg void OnMouseHover(UINT nFlags, CPoint point);
@@ -35,6 +35,4 @@ private:
 	CMFCToolBarImages* m_Icons;
 	int m_IconID;
 	BOOL m_Hover;
-
-	void CreateRoundRectangle(CRect rect, int rad, GraphicsPath& path);
 };

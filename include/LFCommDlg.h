@@ -1,6 +1,7 @@
 #pragma once
 #include "..\LFCommDlg\CAttributeProperties.h"
 #include "..\LFCommDlg\CCaptionBar.h"
+#include "..\LFCommDlg\CDropdownSelector.h"
 #include "..\LFCommDlg\CExplorerHeader.h"
 #include "..\LFCommDlg\CExplorerList.h"
 #include "..\LFCommDlg\CGdiPlusBitmap.h"
@@ -29,3 +30,5 @@
 #include "..\LFCommDlg\LFStoreNewDlg.h"
 #include "..\LFCommDlg\LFStorePropertiesDlg.h"
 #include "..\LFCommDlg\LFWelcomeDlg.h"
+
+void CreateRoundRectangle(CRect rect, int rad, GraphicsPath& path);

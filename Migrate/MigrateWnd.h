@@ -5,6 +5,7 @@
 #pragma once
 #include "CMainView.h"
 #include "CBottomArea.h"
+#include "LFCommDlg.h"
 
 
 // CMigrateWnd
@@ -20,6 +21,8 @@ public:
 	BOOL Create();
 
 protected:
+	CDropdownSelector m_wndFolder;
+	CDropdownSelector m_wndStore;
 	CMainView m_wndMainView;
 	CBottomArea m_wndBottomArea;
 

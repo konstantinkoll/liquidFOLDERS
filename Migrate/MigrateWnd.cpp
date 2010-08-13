@@ -40,6 +40,10 @@ BOOL CMigrateWnd::Create()
 
 void CMigrateWnd::AdjustLayout()
 {
+	if (!IsWindow(m_wndFolder.GetSafeHwnd()))
+		return;
+	if (!IsWindow(m_wndStore.GetSafeHwnd()))
+		return;
 	if (!IsWindow(m_wndBottomArea.GetSafeHwnd()))
 		return;
 	if (!IsWindow(m_wndMainView.GetSafeHwnd()))
@@ -47,6 +51,11 @@ void CMigrateWnd::AdjustLayout()
 
 	CRect rect;
 	GetLayoutRect(rect);
+
+	const UINT Border = GetSystemMetrics(SM_CXFRAME);
+	const UINT SelectorHeight = m_wndFolder.GetPreferredHeight();
+	m_wndFolder.SetWindowPos(NULL, rect.left, rect.top+4, (rect.Width()-Border)/2, SelectorHeight, SWP_NOACTIVATE | SWP_NOZORDER);
+	m_wndStore.SetWindowPos(NULL, rect.right-(rect.Width()-Border)/2, rect.top+4, (rect.Width()-Border)/2, SelectorHeight, SWP_NOACTIVATE | SWP_NOZORDER);
 
 	const UINT BottomHeight = MulDiv(45, LOWORD(GetDialogBaseUnits()), 8);
 	m_wndBottomArea.SetWindowPos(NULL, rect.left, rect.bottom-BottomHeight, rect.Width(), BottomHeight, SWP_NOACTIVATE | SWP_NOZORDER);
@@ -68,6 +77,12 @@ int CMigrateWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CGlasWindow::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
+	// Folder selector
+	m_wndFolder.Create(this, 1);
+
+	// Store selector
+	m_wndStore.Create(this, 2);
+
 	// Main view
 	m_wndMainView.Create(this, 3);
 
@@ -75,7 +90,7 @@ int CMigrateWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndBottomArea.Create(this, MAKEINTRESOURCE(IDD_BOTTOMAREA), CBRS_BOTTOM, 4);
 
 	// Aero
-	MARGINS Margins = { 0, 0, 40, 0 };
+	MARGINS Margins = { 0, 0, m_wndFolder.GetPreferredHeight()+11, 0 };
 	UseGlasBackground(Margins);
 
 	m_wndBottomArea.SetFocus();

@@ -387,6 +387,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CDropdownSelector.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\CExplorerHeader.cpp"
 				>
 			</File>
@@ -602,6 +606,10 @@
 			</File>
 			<File
 				RelativePath=".\CCaptionBar.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CDropdownSelector.h"
 				>
 			</File>
 			<File
