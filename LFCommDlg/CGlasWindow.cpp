@@ -116,6 +116,7 @@ BEGIN_MESSAGE_MAP(CGlasWindow, CWnd)
 	ON_WM_CREATE()
 	ON_WM_DESTROY()
 	ON_WM_ERASEBKGND()
+	ON_WM_PAINT()
 	ON_WM_THEMECHANGED()
 	ON_WM_DWMCOMPOSITIONCHANGED()
 	ON_WM_NCCALCSIZE()
@@ -145,13 +146,20 @@ void CGlasWindow::OnDestroy()
 	CWnd::OnDestroy();
 }
 
-BOOL CGlasWindow::OnEraseBkgnd(CDC* pDC)
+BOOL CGlasWindow::OnEraseBkgnd(CDC* /*pDC*/)
 {
+	return TRUE;
+}
+
+void CGlasWindow::OnPaint()
+{
+	CPaintDC pDC(this);
+
 	CRect rclient;
 	GetClientRect(rclient);
 
 	CDC dc;
-	dc.CreateCompatibleDC(pDC);
+	dc.CreateCompatibleDC(&pDC);
 	dc.SetBkMode(TRANSPARENT);
 
 	BITMAPINFO dib = { 0 };
@@ -199,12 +207,10 @@ BOOL CGlasWindow::OnEraseBkgnd(CDC* pDC)
 		DrawFrameBackground(&dc, rclient);
 	}
 
-	pDC->BitBlt(0, 0, rclient.Width(), rclient.Height(), &dc, 0, 0, SRCCOPY);
+	pDC.BitBlt(0, 0, rclient.Width(), rclient.Height(), &dc, 0, 0, SRCCOPY);
 
 	dc.SelectObject(hOldBitmap);
 	DeleteObject(bmp);
-
-	return TRUE;
 }
 
 LRESULT CGlasWindow::OnThemeChanged()

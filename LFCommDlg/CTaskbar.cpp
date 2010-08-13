@@ -138,6 +138,7 @@ void CTaskbar::AdjustLayout()
 
 BEGIN_MESSAGE_MAP(CTaskbar, CWnd)
 	ON_WM_DESTROY()
+	ON_WM_PAINT()
 	ON_WM_ERASEBKGND()
 	ON_WM_CTLCOLOR()
 	ON_WM_SIZE()
@@ -257,9 +258,18 @@ BOOL CTaskbar::OnEraseBkgnd(CDC* pDC)
 		pOldBitmap = dc.SelectObject(&BackBuffer);
 	}
 
-	pDC->BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);
 	dc.SelectObject(pOldBitmap);
 	return TRUE;
+}
+
+void CTaskbar::OnPaint()
+{
+	CPaintDC pDC(this);
+
+	CRect rect;
+	GetClientRect(rect);
+
+	FillRect(pDC, rect, hBackgroundBrush);
 }
 
 HBRUSH CTaskbar::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)

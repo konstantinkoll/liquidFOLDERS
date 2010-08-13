@@ -1174,9 +1174,9 @@ BEGIN
     PUSHBUTTON      "Eliminar ahora (no habrá más avisos)",IDOK,6,162,165,14,WS_DISABLED | WS_GROUP
     LTEXT           "Confirme si realmente desea eliminar el store seleccionado.",IDC_CAPTION,7,31,263,8
     LTEXT           "Dado que el store está actualmente conectado, perderá todos los archivos dentro de ese store sin opción a recuperarlos!",IDC_STATIC,7,51,206,17
-    LTEXT           "You give permission to delete the store by choosing ""Delete"" below, and then klick on the button ""Delete now"".",IDC_STATIC,7,81,205,17
+    LTEXT           "Usted da permiso de eliminar el store al elegir ""Eliminar"" en la parte de abajo y luego dar click en ""Eliminar ahora"".",IDC_STATIC,7,81,205,17
     GROUPBOX        "Permiso",IDC_STATIC,7,102,78,41,BS_FLAT | WS_GROUP
-    LTEXT           "This window prevents you from accidentially nuking lots of files.",IDC_STATIC,7,190,263,8
+    LTEXT           "Esta ventana previene que usted elimine accidentalmente muchos archivos.",IDC_STATIC,7,190,263,8
 END
 
 IDD_STORENEW DIALOGEX 0, 0, 387, 252
