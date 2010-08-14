@@ -107,9 +107,8 @@ int CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	m_wndTaskbar.AddButton(ID_APP_PURCHASE, _T("Purchase license"), 6, TRUE, TRUE);
 	m_wndTaskbar.AddButton(ID_APP_ENTERLICENSEKEY, _T("Enter license key"), 7, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_ABOUT, _T("About Migration Wizard"), 8, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_SUPPORT, _T("Customer support"), 9, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_HELP, _T("Help"), 10, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_SUPPORT, _T("Customer support"), 8, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_ABOUT, _T("About Migration Wizard"), 9, TRUE, TRUE);
 
 	// Explorer header
 	m_wndExplorerHeader.Create(this, 2);
