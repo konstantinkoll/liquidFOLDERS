@@ -27,7 +27,7 @@ BOOL CFileDropWnd::Create()
 {
 	m_hIcon = theApp.LoadIcon(IDR_APPLICATION);
 
-	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, theApp.LoadStandardCursor(IDC_ARROW), NULL, m_hIcon);
+	CString className = AfxRegisterWndClass(CS_DBLCLKS, theApp.LoadStandardCursor(IDC_ARROW), NULL, m_hIcon);
 
 	CRect rect(0, 0, 144, 190);
 	return CGlasWindow::Create(WS_MINIMIZEBOX, className, _T("FileDrop"), rect);

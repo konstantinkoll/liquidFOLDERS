@@ -26,7 +26,7 @@ BOOL CMigrateWnd::Create()
 {
 	m_hIcon = theApp.LoadIcon(IDR_APPLICATION);
 
-	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, LoadCursor(NULL, IDC_ARROW), NULL, m_hIcon);
+	CString className = AfxRegisterWndClass(CS_DBLCLKS, LoadCursor(NULL, IDC_ARROW), NULL, m_hIcon);
 
 	CRect rect;
 	SystemParametersInfo(SPI_GETWORKAREA, NULL, &rect, NULL);
