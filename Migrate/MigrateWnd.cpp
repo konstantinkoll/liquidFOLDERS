@@ -86,11 +86,11 @@ int CMigrateWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	ENSURE(tmpStr.LoadString(IDS_STORE_HINT));
 	m_wndStore.Create(tmpStr, this, 2);
 
-	// Main view
-	m_wndMainView.Create(this, 3);
-
 	// Bottom area
-	m_wndBottomArea.Create(this, MAKEINTRESOURCE(IDD_BOTTOMAREA), CBRS_BOTTOM, 4);
+	m_wndBottomArea.Create(this, MAKEINTRESOURCE(IDD_BOTTOMAREA), CBRS_BOTTOM, 3);
+
+	// Main view
+	m_wndMainView.Create(this, 4);
 
 	// Aero
 	MARGINS Margins = { 0, 0, m_wndFolder.GetPreferredHeight()+11, 0 };
