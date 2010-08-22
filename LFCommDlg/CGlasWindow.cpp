@@ -158,21 +158,6 @@ void CGlasWindow::OnPaint()
 	CRect rclient;
 	GetClientRect(rclient);
 
-	CDC dc;
-	dc.CreateCompatibleDC(&pDC);
-	dc.SetBkMode(TRANSPARENT);
-
-	BITMAPINFO dib = { 0 };
-	dib.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-	dib.bmiHeader.biWidth = rclient.Width();
-	dib.bmiHeader.biHeight = -rclient.Height();
-	dib.bmiHeader.biPlanes = 1;
-	dib.bmiHeader.biBitCount = 32;
-	dib.bmiHeader.biCompression = BI_RGB;
-
-	HBITMAP bmp = CreateDIBSection(dc.m_hDC, &dib, DIB_RGB_COLORS, NULL, NULL, 0);
-	HBITMAP hOldBitmap = (HBITMAP)dc.SelectObject(bmp);
-
 	if ((m_Margins.cxLeftWidth!=-1) && (m_Margins.cxRightWidth!=-1) && (m_Margins.cyTopHeight!=-1) && (m_Margins.cyBottomHeight!=-1))
 	{
 		CRect rectLayout;
@@ -180,37 +165,32 @@ void CGlasWindow::OnPaint()
 
 		CRect rc(rclient);
 		rc.right = rectLayout.left = rectLayout.left+m_Margins.cxLeftWidth;
-		DrawFrameBackground(&dc, rc);
+		DrawFrameBackground(&pDC, rc);
 
 		rc.CopyRect(rclient);
 		rc.left = rectLayout.right = rectLayout.right-m_Margins.cxRightWidth;
-		DrawFrameBackground(&dc, rc);
+		DrawFrameBackground(&pDC, rc);
 
 		if (m_Margins.cyTopHeight)
 		{
 			CRect rc(rclient);
 			rc.bottom = rectLayout.top = rectLayout.top+m_Margins.cyTopHeight;
-			DrawFrameBackground(&dc, rc);
+			DrawFrameBackground(&pDC, rc);
 		}
 		if (m_Margins.cyBottomHeight)
 		{
 			CRect rc(rclient);
 			rc.top = rectLayout.bottom = rectLayout.bottom-m_Margins.cyBottomHeight;
-			DrawFrameBackground(&dc, rc);
+			DrawFrameBackground(&pDC, rc);
 		}
 
 		if ((rectLayout.Width()>0) && (rectLayout.Height()>0))
-			dc.FillSolidRect(rectLayout, 0xFFFFFF);
+			pDC.FillSolidRect(rectLayout, 0xFFFFFF);
 	}
 	else
 	{
-		DrawFrameBackground(&dc, rclient);
+		DrawFrameBackground(&pDC, rclient);
 	}
-
-	pDC.BitBlt(0, 0, rclient.Width(), rclient.Height(), &dc, 0, 0, SRCCOPY);
-
-	dc.SelectObject(hOldBitmap);
-	DeleteObject(bmp);
 }
 
 LRESULT CGlasWindow::OnThemeChanged()
