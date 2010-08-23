@@ -15,6 +15,8 @@
 CDropdownSelector::CDropdownSelector()
 	: CWnd()
 {
+	p_App = (LFApplication*)AfxGetApp();
+	hTheme = NULL;
 	m_Hover = FALSE;
 }
 
@@ -33,7 +35,7 @@ BOOL CDropdownSelector::Create(CString EmptyHint, CGlasWindow* pParentWnd, UINT 
 UINT CDropdownSelector::GetPreferredHeight()
 {
 	LOGFONT lf;
-	((LFApplication*)AfxGetApp())->m_DefaultFont.GetLogFont(&lf);
+	p_App->m_DefaultFont.GetLogFont(&lf);
 	UINT h = max(abs(lf.lfHeight), GetSystemMetrics(SM_CYSMICON));
 
 	return h+2*BORDER;
@@ -45,6 +47,7 @@ BEGIN_MESSAGE_MAP(CDropdownSelector, CWnd)
 	ON_WM_DESTROY()
 	ON_WM_ERASEBKGND()
 	ON_WM_PAINT()
+	ON_WM_THEMECHANGED()
 	ON_WM_MOUSEMOVE()
 	ON_WM_MOUSELEAVE()
 END_MESSAGE_MAP()
@@ -54,11 +57,16 @@ int CDropdownSelector::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CWnd::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
+	OnThemeChanged();
+
 	return 0;
 }
 
 void CDropdownSelector::OnDestroy()
 {
+	if (hTheme)
+		p_App->zCloseThemeData(hTheme);
+
 	CWnd::OnDestroy();
 }
 
@@ -132,10 +140,41 @@ void CDropdownSelector::OnPaint()
 		}
 	}
 
+	CRect rclip(rcontent);
+	rclip.left = rclip.right-GetSystemMetrics(SM_CXHSCROLL);
+	CRect rarrow(rclip);
+
+	if (hTheme)
+	{
+		// Hack to achive the same style as Windows Explorer
+		if (p_App->osInfo.dwMajorVersion>=6)
+		{
+			rarrow.InflateRect(1, 1);
+			if (m_Hover)
+			{
+				rclip.left--;
+			}
+			else
+			{
+				rarrow.InflateRect(1, 1);
+			}
+		}
+
+		p_App->zDrawThemeBackground(hTheme, dc, CP_DROPDOWNBUTTON, m_Hover ? CBXS_HOT : CBXS_NORMAL, rarrow, rclip);
+	}
+	else
+	{
+		if (m_Hover)
+			dc.DrawFrameControl(rarrow, DFC_BUTTON, DFCS_TRANSPARENT | 16 | DFCS_HOT);
+
+		dc.DrawFrameControl(rarrow, DFC_MENU, DFCS_TRANSPARENT | 16 | (m_Hover ? DFCS_HOT : DFCS_FLAT));
+	}
+
 	CRect rtext(rcontent);
+	rtext.right = rclip.left;
 	rtext.DeflateRect(BORDER, 0);
 
-	CFont* pOldFont = dc.SelectObject(&((LFApplication*)AfxGetApp())->m_ItalicFont);
+	CFont* pOldFont = dc.SelectObject(&p_App->m_ItalicFont);
 	dc.SetTextColor(0x808080);
 	dc.DrawText(m_EmptyHint, -1, rtext, DT_SINGLELINE | DT_END_ELLIPSIS | DT_VCENTER);
 	dc.SelectObject(pOldFont);
@@ -158,6 +197,19 @@ void CDropdownSelector::OnPaint()
 
 	dc.SelectObject(hOldBitmap);
 	DeleteObject(bmp);
+}
+
+LRESULT CDropdownSelector::OnThemeChanged()
+{
+	if (p_App->m_ThemeLibLoaded)
+	{
+		if (hTheme)
+			p_App->zCloseThemeData(hTheme);
+
+		hTheme = p_App->zOpenThemeData(m_hWnd, _T("ComboBox"));
+	}
+
+	return TRUE;
 }
 
 void CDropdownSelector::OnMouseMove(UINT nFlags, CPoint point)

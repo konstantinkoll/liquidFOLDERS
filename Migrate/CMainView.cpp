@@ -84,7 +84,6 @@ void CMainView::AdjustLayout()
 BEGIN_MESSAGE_MAP(CMainView, CWnd)
 	ON_WM_CREATE()
 	ON_WM_ERASEBKGND()
-	ON_WM_PAINT()
 	ON_WM_SIZE()
 	ON_WM_THEMECHANGED()
 	ON_UPDATE_COMMAND_UI_RANGE(ID_VIEW_SELECTROOT, ID_VIEW_DELETE, OnUpdateTaskbar)
@@ -123,25 +122,21 @@ int CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	return 0;
 }
 
-BOOL CMainView::OnEraseBkgnd(CDC* /*pDC*/)
+BOOL CMainView::OnEraseBkgnd(CDC* pDC)
 {
-	return TRUE;
-}
-
-void CMainView::OnPaint()
-{
-	CPaintDC pDC(this);
-
 	CRect rect;
 	GetClientRect(rect);
 
-	pDC.FillSolidRect(rect, 0xA0A0A0);
+	pDC->FillSolidRect(rect, 0xA0A0A0);
+
+	return TRUE;
 }
 
 void CMainView::OnSize(UINT nType, int cx, int cy)
 {
 	CWnd::OnSize(nType, cx, cy);
 	AdjustLayout();
+	RedrawWindow(NULL, NULL, RDW_UPDATENOW | RDW_INVALIDATE);
 }
 
 LRESULT CMainView::OnThemeChanged()
