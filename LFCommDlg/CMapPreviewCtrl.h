@@ -31,7 +31,4 @@ protected:
 	afx_msg void OnNcPaint();
 	afx_msg void OnPaint();
 	DECLARE_MESSAGE_MAP()
-
-private:
-	OSVERSIONINFO osInfo;
 };

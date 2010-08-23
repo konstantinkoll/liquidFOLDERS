@@ -44,6 +44,7 @@ protected:
 	afx_msg void OnDestroy();
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnPaint();
+	afx_msg void OnSysColorChange();
 	afx_msg LRESULT OnThemeChanged();
 	afx_msg void OnCompositionChanged();
 	afx_msg void OnNcCalcSize(BOOL bCalcValidRects, NCCALCSIZE_PARAMS* lpncsp);
@@ -53,4 +54,7 @@ protected:
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg void OnGetMinMaxInfo(MINMAXINFO* lpMMI);
 	DECLARE_MESSAGE_MAP()
+
+private:
+	void SetTheme();
 };

@@ -21,12 +21,14 @@ public:
 	BOOL Create(CWnd* pParentWnd, UINT ResID, UINT nID);
 	UINT GetPreferredHeight();
 	CTaskButton* AddButton(UINT nID, CString Text, int IconID, BOOL bAddRight=FALSE, BOOL bOnlyIcon=FALSE);
+	void SetDesign(UINT _Design);
 	void AdjustLayout();
 
 protected:
 	afx_msg void OnDestroy();
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnPaint();
+	afx_msg void OnSysColorChange();
 	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg void OnIdleUpdateCmdUI();
@@ -38,6 +40,7 @@ private:
 	int BackBufferL;
 	int BackBufferH;
 	HBRUSH hBackgroundBrush;
+	UINT Design;
 	list<CTaskButton*> ButtonsLeft;
 	list<CTaskButton*> ButtonsRight;
 };

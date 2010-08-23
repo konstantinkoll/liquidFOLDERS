@@ -3,6 +3,7 @@
 //
 
 #include "stdafx.h"
+#include "CGlasWindow.h"
 #include "CTaskButton.h"
 #include "LFCommDlg.h"
 
@@ -16,6 +17,7 @@ CTaskButton::CTaskButton()
 	: CButton()
 {
 	m_Hover = FALSE;
+	m_Design = GWD_DEFAULT;
 }
 
 BOOL CTaskButton::Create(CString Caption, CString Tooltip, CMFCToolBarImages* Icons, int IconID, CWnd* pParentWnd, UINT nID)
@@ -78,6 +80,11 @@ int CTaskButton::GetPreferredWidth()
 	return l;
 }
 
+void CTaskButton::SetDesign(UINT _Design)
+{
+	m_Design = _Design;
+}
+
 
 BEGIN_MESSAGE_MAP(CTaskButton, CButton)
 	ON_WM_CREATE()
@@ -128,56 +135,34 @@ void CTaskButton::OnPaint()
 	if (brush)
 		FillRect(dc, rect, brush);
 
-	Graphics g(dc);
-	g.SetCompositingMode(CompositingModeSourceOver);
-	g.SetSmoothingMode(SmoothingModeAntiAlias);
-
 	CFont* pOldFont = dc.SelectObject(&((LFApplication*)AfxGetApp())->m_DefaultFont);
 
-	OSVERSIONINFO i = ((LFApplication*)AfxGetApp())->osInfo;
-	if ((i.dwMajorVersion>=6) && (i.dwMinorVersion!=0))
+	if (m_Design==GWD_DEFAULT)
 	{
-		if ((Focused) || (Selected) || (m_Hover))
+		COLORREF c1 = GetSysColor(COLOR_3DHIGHLIGHT);
+		COLORREF c2 = GetSysColor(COLOR_3DFACE);
+		COLORREF c3 = GetSysColor(COLOR_3DSHADOW);
+		COLORREF c4 = 0x000000;
+
+		if ((Selected) || (m_Hover))
 		{
-			// Outer border
-			CRect rectBounds(rect);
-			rectBounds.right--;
-			rectBounds.bottom--;
-
-			GraphicsPath path;
-			CreateRoundRectangle(rectBounds, 2, path);
-	
-			Pen pen(Color(0x70, 0x50, 0x57, 0x62));
-			g.DrawPath(&pen, &path);
-
-			// Inner border
-			rectBounds.DeflateRect(1, 1);
-			CreateRoundRectangle(rectBounds, 1, path);
-
-			g.SetSmoothingMode(SmoothingModeDefault);
-
 			if (Selected)
 			{
-				SolidBrush brush(Color(0x24+1, 0x50, 0x57, 0x62));
-				g.FillRectangle(&brush, rectBounds.left, rectBounds.top, rectBounds.Width()+1, rectBounds.Height()+1);
+				std::swap(c1, c4);
+				std::swap(c2, c3);
 			}
-			else
-				if (m_Hover)
-				{
-					SolidBrush brush1(Color(0x40, 0xFF, 0xFF, 0xFF));
-					g.FillRectangle(&brush1, rectBounds.left, rectBounds.top+1, rectBounds.Width(), rectBounds.Height()/2+1);
 
-					SolidBrush brush2(Color(0x40, 0xA0, 0xAF, 0xC3));
-					g.FillRectangle(&brush2, rectBounds.left, rectBounds.top+rectBounds.Height()/2+2, rectBounds.Width(), rectBounds.Height()/2-1);
-				}
+			CRect rectBorder(rect);
+			dc.Draw3dRect(rectBorder, c1, c4);
+			rectBorder.DeflateRect(1, 1);
+			dc.Draw3dRect(rectBorder, c2, c3);
+		}
 
-			g.SetSmoothingMode(SmoothingModeAntiAlias);
-
-			if (!Selected)
-			{
-				pen.SetColor(Color(0x80, 0xFF, 0xFF, 0xFF));
-				g.DrawPath(&pen, &path);
-			}
+		if (Focused)
+		{
+			CRect rectFocus(rect);
+			rectFocus.DeflateRect(2, 2);
+			dc.DrawFocusRect(rectFocus);
 		}
 
 		CRect rectText(rect);
@@ -195,74 +180,153 @@ void CTaskButton::OnPaint()
 			rectText.left += 16+BORDER;
 		}
 
-		dc.SetTextColor(0x5B391E);
+		dc.SetTextColor(GetSysColor(COLOR_WINDOWTEXT));
 		dc.DrawText(m_Caption, -1, rectText, DT_SINGLELINE | DT_END_ELLIPSIS | DT_VCENTER);
 	}
 	else
 	{
-		if ((Focused) || (Selected) || (m_Hover))
+		Graphics g(dc);
+		g.SetCompositingMode(CompositingModeSourceOver);
+		g.SetSmoothingMode(SmoothingModeAntiAlias);
+
+		UINT OSVersion = ((LFApplication*)AfxGetApp())->OSVersion;
+		switch (OSVersion)
 		{
-			// Outer border
-			CRect rectBounds(rect);
-			rectBounds.right--;
-			rectBounds.bottom--;
-
-			GraphicsPath path;
-			CreateRoundRectangle(rectBounds, 4, path);
-	
-			Pen pen(Color(0x58, 0x00, 0x00, 0x00));
-			g.DrawPath(&pen, &path);
-
-			// Inner border
-			rectBounds.DeflateRect(1, 1);
-			CreateRoundRectangle(rectBounds, 2, path);
-
-			if ((m_Hover) || (Selected))
+		case OS_Vista:
 			{
-				// Shine
-				Color c1;
-				Color c2;
+				if ((Focused) || (Selected) || (m_Hover))
+				{
+					// Outer border
+					CRect rectBounds(rect);
+					rectBounds.right--;
+					rectBounds.bottom--;
+
+					GraphicsPath path;
+					CreateRoundRectangle(rectBounds, 4, path);
+
+					Pen pen(Color(0x58, 0x00, 0x00, 0x00));
+					g.DrawPath(&pen, &path);
+
+					// Inner border
+					rectBounds.DeflateRect(1, 1);
+					CreateRoundRectangle(rectBounds, 2, path);
+
+					if ((m_Hover) || (Selected))
+					{
+						// Shine
+						Color c1;
+						Color c2;
+						if (Selected)
+						{
+							c1 = Color(0x20, 0x00, 0x00, 0x00);
+							c2 = Color(0x40, 0x00, 0x00, 0x00);
+						}
+						else
+						{
+							c1 = Color(0x40, 0xFF, 0xFF, 0xFF);
+							c2 = Color(0x00, 0xFF, 0xFF, 0xFF);
+						}
+
+						LinearGradientBrush brush(Point(0, rectBounds.top), Point(0, rectBounds.bottom), c1, c2);
+						g.FillRectangle(&brush, rectBounds.left, rectBounds.top, rectBounds.Width(), rectBounds.Height());
+					}
+
+					pen.SetColor(Color(0x58, 0xFF, 0xFF, 0xFF));
+					g.DrawPath(&pen, &path);
+				}
+
+				CRect rectText(rect);
+				rectText.DeflateRect(BORDER+2, BORDER);
 				if (Selected)
+					rectText.OffsetRect(1, 1);
+
+				if ((m_Icons) && (m_IconID!=-1))
 				{
-					c1 = Color(0x20, 0x00, 0x00, 0x00);
-					c2 = Color(0x40, 0x00, 0x00, 0x00);
-				}
-				else
-				{
-					c1 = Color(0x40, 0xFF, 0xFF, 0xFF);
-					c2 = Color(0x00, 0xFF, 0xFF, 0xFF);
+					CAfxDrawState ds;
+					m_Icons->PrepareDrawImage(ds);
+					m_Icons->Draw(&dc, rectText.left, (rect.Height()-rectText.Height())/2+(Selected ? 1 : 0), m_IconID);
+					m_Icons->EndDrawImage(ds);
+
+					rectText.left += 16+BORDER;
 				}
 
-				LinearGradientBrush brush(Point(0, rectBounds.top), Point(0, rectBounds.bottom), c1, c2);
-				g.FillRectangle(&brush, rectBounds.left, rectBounds.top, rectBounds.Width(), rectBounds.Height());
+				rectText.OffsetRect(1, 1);
+				dc.SetTextColor(0x000000);
+				dc.DrawText(m_Caption, -1, rectText, DT_SINGLELINE | DT_END_ELLIPSIS | DT_VCENTER);
+
+				rectText.OffsetRect(-1, -1);
+				dc.SetTextColor(0xFFFFFF);
+				dc.DrawText(m_Caption, -1, rectText, DT_SINGLELINE | DT_END_ELLIPSIS | DT_VCENTER);
+
+				break;
 			}
+		case OS_XP:
+		case OS_Seven:
+			{
+				if ((Focused) || (Selected) || (m_Hover))
+				{
+					// Outer border
+					CRect rectBounds(rect);
+					rectBounds.right--;
+					rectBounds.bottom--;
 
-			pen.SetColor(Color(0x58, 0xFF, 0xFF, 0xFF));
-			g.DrawPath(&pen, &path);
+					GraphicsPath path;
+					CreateRoundRectangle(rectBounds, 2, path);
+	
+					Pen pen(Color(0x70, 0x50, 0x57, 0x62));
+					g.DrawPath(&pen, &path);
+
+					// Inner border
+					rectBounds.DeflateRect(1, 1);
+					CreateRoundRectangle(rectBounds, 1, path);
+
+					g.SetSmoothingMode(SmoothingModeDefault);
+
+					if (Selected)
+					{
+						SolidBrush brush(Color(0x24+1, 0x50, 0x57, 0x62));
+						g.FillRectangle(&brush, rectBounds.left, rectBounds.top, rectBounds.Width()+1, rectBounds.Height()+1);
+					}
+					else
+						if (m_Hover)
+						{
+							SolidBrush brush1(Color(0x40, 0xFF, 0xFF, 0xFF));
+							g.FillRectangle(&brush1, rectBounds.left, rectBounds.top+1, rectBounds.Width(), rectBounds.Height()/2+1);
+
+							SolidBrush brush2(Color(0x40, 0xA0, 0xAF, 0xC3));
+							g.FillRectangle(&brush2, rectBounds.left, rectBounds.top+rectBounds.Height()/2+2, rectBounds.Width(), rectBounds.Height()/2-1);
+						}
+
+					g.SetSmoothingMode(SmoothingModeAntiAlias);
+
+					if (!Selected)
+					{
+						pen.SetColor(Color(0x80, 0xFF, 0xFF, 0xFF));
+						g.DrawPath(&pen, &path);
+					}
+				}
+
+				CRect rectText(rect);
+				rectText.DeflateRect(BORDER+2, BORDER);
+				if (Selected)
+					rectText.OffsetRect(1, 1);
+
+				if ((m_Icons) && (m_IconID!=-1))
+				{
+					CAfxDrawState ds;
+					m_Icons->PrepareDrawImage(ds);
+					m_Icons->Draw(&dc, rectText.left, (rect.Height()-rectText.Height())/2+(Selected ? 1 : 0), m_IconID);
+					m_Icons->EndDrawImage(ds);
+
+					rectText.left += 16+BORDER;
+				}
+
+				dc.SetTextColor(OSVersion==OS_XP ? GetSysColor(COLOR_WINDOWTEXT) : 0x5B391E);
+				dc.DrawText(m_Caption, -1, rectText, DT_SINGLELINE | DT_END_ELLIPSIS | DT_VCENTER);
+
+				break;
+			}
 		}
-
-		CRect rectText(rect);
-		rectText.DeflateRect(BORDER+2, BORDER);
-		if (Selected)
-			rectText.OffsetRect(1, 1);
-
-		if ((m_Icons) && (m_IconID!=-1))
-		{
-			CAfxDrawState ds;
-			m_Icons->PrepareDrawImage(ds);
-			m_Icons->Draw(&dc, rectText.left, (rect.Height()-rectText.Height())/2+(Selected ? 1 : 0), m_IconID);
-			m_Icons->EndDrawImage(ds);
-
-			rectText.left += 16+BORDER;
-		}
-
-		rectText.OffsetRect(1, 1);
-		dc.SetTextColor(0x000000);
-		dc.DrawText(m_Caption, -1, rectText, DT_SINGLELINE | DT_END_ELLIPSIS | DT_VCENTER);
-
-		rectText.OffsetRect(-1, -1);
-		dc.SetTextColor(0xFFFFFF);
-		dc.DrawText(m_Caption, -1, rectText, DT_SINGLELINE | DT_END_ELLIPSIS | DT_VCENTER);
 	}
 
 	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);

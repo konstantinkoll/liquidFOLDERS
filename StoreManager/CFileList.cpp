@@ -497,7 +497,7 @@ void CFileList::OnHeaderResize(NMHDR* pNMHDR, LRESULT* pResult)
 		View->OnViewOptionsChanged(TRUE);
 
 		// Workaround Windows Vista
-		if ((theApp.osInfo.dwMajorVersion==6) && (theApp.osInfo.dwMinorVersion==0))
+		if (theApp.OSVersion==OS_Vista)
 			Invalidate();
 
 		*pResult = FALSE;
@@ -539,7 +539,7 @@ void CFileList::OnHeaderReorder(NMHDR* pNMHDR, LRESULT* pResult)
 		View->OnViewOptionsChanged();
 
 		// Workaround Windows Vista
-		if ((theApp.osInfo.dwMajorVersion==6) && (theApp.osInfo.dwMinorVersion==0))
+		if (theApp.OSVersion==OS_Vista)
 			Invalidate();
 
 		*pResult = FALSE;

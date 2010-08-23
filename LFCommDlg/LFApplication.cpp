@@ -50,9 +50,11 @@ LFApplication::LFApplication(UINT _HasGUI)
 	HasGUI = _HasGUI;
 
 	// Version
+	OSVERSIONINFO osInfo;
 	ZeroMemory(&osInfo, sizeof(OSVERSIONINFO));
 	osInfo.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
 	GetVersionEx(&osInfo);
+	OSVersion = (osInfo.dwMajorVersion<6) ? OS_XP : ((osInfo.dwMajorVersion==6) && (osInfo.dwMinorVersion==0)) ? OS_Vista : OS_Seven;
 
 	// Nachrichten
 	MessageIDs = LFGetMessageIDs();
@@ -205,11 +207,6 @@ LFApplication::~LFApplication()
 }
 
 
-// Versionsinfo
-
-OSVERSIONINFO osInfo;
-
-
 // LFApplication-Initialisierung
 
 BOOL LFApplication::InitInstance()
@@ -301,7 +298,7 @@ int LFApplication::ExitInstance()
 
 CString LFApplication::GetDefaultFontFace()
 {
-	return (osInfo.dwMajorVersion==5 ? _T("Arial") : _T("Segoe UI"));
+	return (OSVersion==OS_XP ? _T("Arial") : _T("Segoe UI"));
 }
 
 void LFApplication::GetBackgroundColors(UINT Background, COLORREF* back, COLORREF* text, COLORREF* highlight)

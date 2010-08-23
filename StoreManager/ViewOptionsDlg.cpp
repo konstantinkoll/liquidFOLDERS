@@ -89,9 +89,9 @@ BOOL ViewOptionsDlg::OnInitDialog()
 	lvg.cchHeader = (int)wcslen(lvg.pszHeader);
 	lvg.uAlign = LVGA_HEADER_LEFT;
 	lvg.state = LVGS_COLLAPSIBLE;
-	if (theApp.osInfo.dwMajorVersion>=6)
+	if (theApp.OSVersion>=OS_Vista)
 	{
-		lvg.mask |=  LVGF_STATE;
+		lvg.mask |= LVGF_STATE;
 		lvg.stateMask = LVGS_COLLAPSIBLE;
 	}
 	l->InsertGroup(lvg.iGroupId, &lvg);

@@ -17,6 +17,7 @@ public:
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 
 	BOOL Create(CString Caption, CString Tooltip, CMFCToolBarImages* Icons, int IconID, CWnd* pParentWnd, UINT nID);
+	void SetDesign(UINT _Design);
 	int GetPreferredWidth();
 
 protected:
@@ -35,4 +36,5 @@ private:
 	CMFCToolBarImages* m_Icons;
 	int m_IconID;
 	BOOL m_Hover;
+	UINT m_Design;
 };

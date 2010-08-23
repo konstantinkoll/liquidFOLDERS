@@ -20,6 +20,10 @@
 #define HasGUI_Standard           1
 #define HasGUI_Ribbon             2
 
+#define OS_XP                     0
+#define OS_Vista                  1
+#define OS_Seven                  2
+
 typedef HRESULT(__stdcall* PFNSETWINDOWTHEME)(HWND hwnd, LPCWSTR pszSubAppName, LPCWSTR pszSubIdList);
 typedef HRESULT(__stdcall* PFNCLOSETHEMEDATA)(HTHEME hTheme);
 typedef HTHEME(__stdcall* PFNOPENTHEMEDATA)(HWND hwnd, LPCWSTR pszClassList);
@@ -103,10 +107,10 @@ public:
 	CFont m_CaptionFont;
 	CFont m_DefaultFont;
 	CFont m_ItalicFont;
-	OSVERSIONINFO osInfo;
 	LFMessageIDs* MessageIDs;
 	BOOL IsLicensed;
 	UINT HasGUI;
+	UINT OSVersion;
 
 	PFNSETWINDOWTHEME zSetWindowTheme;
 	PFNOPENTHEMEDATA zOpenThemeData;

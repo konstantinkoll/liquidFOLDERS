@@ -3,6 +3,7 @@
 //
 
 #include "stdafx.h"
+#include "CGlasWindow.h"
 #include "CTaskbar.h"
 #include "LFApplication.h"
 
@@ -18,6 +19,7 @@ CTaskbar::CTaskbar()
 {
 	hBackgroundBrush = NULL;
 	BackBufferL = BackBufferH = 0;
+	Design = GWD_DEFAULT;
 }
 
 BOOL CTaskbar::Create(CWnd* pParentWnd, UINT ResID, UINT nID)
@@ -44,7 +46,7 @@ LRESULT CTaskbar::DefWindowProc(UINT message, WPARAM wParam, LPARAM lParam)
 UINT CTaskbar::GetPreferredHeight()
 {
 	LOGFONT lf;
-	UINT h = 4*BORDER+4;
+	UINT h = 4*BORDER+((Design==GWD_DEFAULT) ? 3 : 4);
 
 	((LFApplication*)AfxGetApp())->m_DefaultFont.GetLogFont(&lf);
 	h += abs(lf.lfHeight);
@@ -54,11 +56,9 @@ UINT CTaskbar::GetPreferredHeight()
 
 CTaskButton* CTaskbar::AddButton(UINT nID, CString Text, int IconID, BOOL bAddRight, BOOL bOnlyIcon)
 {
-	OSVERSIONINFO i = ((LFApplication*)AfxGetApp())->osInfo;
-
 	CTaskButton* btn = new CTaskButton();
 	btn->Create(bOnlyIcon ? _T("") : Text, bOnlyIcon ? Text : _T(""), &Icons,
-		bOnlyIcon || (i.dwMajorVersion<6) || ((i.dwMajorVersion==6) && (i.dwMinorVersion==0)) ? IconID : -1,
+		bOnlyIcon || (((LFApplication*)AfxGetApp())->OSVersion<OS_Seven) ? IconID : -1,
 		this, nID);
 
 	CCmdUI cmdUI;
@@ -72,13 +72,19 @@ CTaskButton* CTaskbar::AddButton(UINT nID, CString Text, int IconID, BOOL bAddRi
 	return btn;
 }
 
+void CTaskbar::SetDesign(UINT _Design)
+{
+	Design = _Design;
+	OnSysColorChange();
+}
+
 void CTaskbar::AdjustLayout()
 {
 	CRect rect;
 	GetClientRect(rect);
 
-	OSVERSIONINFO i = ((LFApplication*)AfxGetApp())->osInfo;
-	int Row = BORDER-1 - (((i.dwMajorVersion>=6) && (i.dwMinorVersion!=0)) ? 1 : 0);
+	int Row = BORDER-1;
+	int h = rect.Height()-2*BORDER+((Design==GWD_DEFAULT) ? 2 : 1);
 
 	int RPos = rect.right+2*BORDER-BORDERLEFT;
 	std::list<CTaskButton*>::reverse_iterator ppBtnR = ButtonsRight.rbegin();
@@ -90,7 +96,8 @@ void CTaskbar::AdjustLayout()
 			RPos -= l+BORDER;
 			if (RPos>=BORDERLEFT)
 			{
-				(*ppBtnR)->SetWindowPos(NULL, RPos, Row, l, rect.Height()-2*BORDER+1, SWP_NOZORDER | SWP_NOACTIVATE);
+				(*ppBtnR)->SetDesign(Design);
+				(*ppBtnR)->SetWindowPos(NULL, RPos, Row, l, h, SWP_NOZORDER | SWP_NOACTIVATE);
 				(*ppBtnR)->Invalidate();
 				(*ppBtnR)->ShowWindow(SW_SHOW);
 			}
@@ -116,7 +123,8 @@ void CTaskbar::AdjustLayout()
 			int l = (*ppBtn)->GetPreferredWidth();
 			if (LPos+l+BORDERLEFT-BORDER<RPos)
 			{
-				(*ppBtn)->SetWindowPos(NULL, LPos, Row, l, rect.Height()-2*BORDER+1, SWP_NOZORDER | SWP_NOACTIVATE);
+				(*ppBtn)->SetDesign(Design);
+				(*ppBtn)->SetWindowPos(NULL, LPos, Row, l, h, SWP_NOZORDER | SWP_NOACTIVATE);
 				(*ppBtn)->Invalidate();
 				(*ppBtn)->ShowWindow(SW_SHOW);
 			}
@@ -140,6 +148,7 @@ BEGIN_MESSAGE_MAP(CTaskbar, CWnd)
 	ON_WM_DESTROY()
 	ON_WM_PAINT()
 	ON_WM_ERASEBKGND()
+	ON_WM_SYSCOLORCHANGE()
 	ON_WM_CTLCOLOR()
 	ON_WM_SIZE()
 	ON_MESSAGE_VOID(WM_IDLEUPDATECMDUI, OnIdleUpdateCmdUI)
@@ -190,64 +199,80 @@ BOOL CTaskbar::OnEraseBkgnd(CDC* pDC)
 
 		Graphics g(dc);
 
-		OSVERSIONINFO i = ((LFApplication*)AfxGetApp())->osInfo;
-		if ((i.dwMajorVersion>=6) && (i.dwMinorVersion!=0))
+		if (Design==GWD_DEFAULT)
 		{
-			UINT line = (rect.Height()-2)/2;
-
-			LinearGradientBrush brush1(Point(0, 0), Point(0, line+1), Color(0xFD, 0xFE, 0xFF), Color(0xE6, 0xF0, 0xFA));
-			g.FillRectangle(&brush1, 1, 0, rect.right-2, line+1);
-
-			LinearGradientBrush brush2(Point(0, line+2), Point(0, rect.bottom-4), Color(0xDC, 0xE6, 0xF4), Color(0xDD, 0xE9, 0xF7));
-			g.FillRectangle(&brush2, 1, line+1, rect.right-2, rect.bottom-line-4);
-
-			LinearGradientBrush brush3(Point(0, 1), Point(0, rect.bottom-4), Color(0xFF, 0xFF, 0xFF), Color(0xEE, 0xF4, 0xFB));
-			g.FillRectangle(&brush3, 0, 0, 1, rect.bottom-3);
-			g.FillRectangle(&brush3, rect.right-1, 0, 1, rect.bottom-3);
-
-			dc.FillSolidRect(0, rect.bottom-3, rect.right, 1, 0xFBEFE4);
-			dc.FillSolidRect(0, rect.bottom-2, rect.right, 1, 0xEADACD);
-			dc.FillSolidRect(0, rect.bottom-1, rect.right, 1, 0xC3AFA0);
+			dc.FillSolidRect(rect, GetSysColor(COLOR_3DFACE));
 		}
 		else
-		{
-			Color c1;
-			Color c2;
-			Color c3;
-
-			if (i.dwMajorVersion==5)
+			switch (((LFApplication*)AfxGetApp())->OSVersion)
 			{
-				c1.SetFromCOLORREF(0x883000);
-				c2.SetFromCOLORREF(0x805820);
-				c3 = Color(0x80, 0xC0, 0xE0, 0xFF);
+			case OS_XP:
+				{
+					dc.FillSolidRect(rect, GetSysColor(COLOR_3DFACE));
+
+					Color c1;
+					c1.SetFromCOLORREF(GetSysColor(COLOR_3DHIGHLIGHT));
+					Color c2;
+					c2.SetFromCOLORREF(GetSysColor(COLOR_3DFACE));
+					Color c3;
+					c3.SetFromCOLORREF(GetSysColor(COLOR_3DSHADOW));
+				
+					UINT border = rect.Height()/4;
+
+					LinearGradientBrush brush3(Point(0, 0), Point(0, border), c1, c2);
+					g.FillRectangle(&brush3, 0, 0, rect.right, border);
+
+					LinearGradientBrush brush4(Point(0, rect.bottom-border), Point(0, rect.bottom), c2, c3);
+					g.FillRectangle(&brush4, 0, rect.bottom-border, rect.right, border);
+
+					break;
+				}
+			case OS_Vista:
+				{
+					Color c1(0x04, 0x48, 0x75);
+					Color c2(0x19, 0x6C, 0x77);
+					Color c3(0x80, 0xC0, 0xFF, 0xE0);
+
+					LinearGradientBrush brush1(Point(0, 0), Point(rect.right, 0), c1, c2);
+					g.FillRectangle(&brush1, 0, 0, rect.right, rect.bottom);
+
+					SolidBrush brush2(Color(0x60, 0x00, 0x00, 0x00));
+					g.FillRectangle(&brush2, 0, rect.bottom-1, rect.right, 1);
+
+					UINT line = rect.Height()/2;
+
+					LinearGradientBrush brush3(Point(0, 0), Point(0, line), Color(128, 0xFF, 0xFF, 0xFF), Color(24, 0xFF, 0xFF, 0xFF));
+					g.FillRectangle(&brush3, 0, 0, rect.right, line);
+
+					LinearGradientBrush brush4(Point(0, line), Point(0, rect.bottom-1), Color(0, 0xFF, 0xFF, 0xFF), c3);
+					g.FillRectangle(&brush4, 0, line+1, rect.right, rect.bottom-line-2);
+
+					SolidBrush brush5(Color(64, 0xFF, 0xFF, 0xFF));
+					g.FillRectangle(&brush5, 0, 0, rect.right, 1);
+					g.FillRectangle(&brush5, 0, rect.bottom-2, rect.right, 1);
+					g.FillRectangle(&brush5, 0, 0, 1, rect.bottom-1);
+					g.FillRectangle(&brush5, rect.right-1, 0, 1, rect.bottom-1);
+				}
+			case OS_Seven:
+				{
+					UINT line = (rect.Height()-2)/2;
+
+					LinearGradientBrush brush1(Point(0, 0), Point(0, line+1), Color(0xFD, 0xFE, 0xFF), Color(0xE6, 0xF0, 0xFA));
+					g.FillRectangle(&brush1, 1, 0, rect.right-2, line+1);
+
+					LinearGradientBrush brush2(Point(0, line+2), Point(0, rect.bottom-4), Color(0xDC, 0xE6, 0xF4), Color(0xDD, 0xE9, 0xF7));
+					g.FillRectangle(&brush2, 1, line+1, rect.right-2, rect.bottom-line-4);
+
+					LinearGradientBrush brush3(Point(0, 1), Point(0, rect.bottom-4), Color(0xFF, 0xFF, 0xFF), Color(0xEE, 0xF4, 0xFB));
+					g.FillRectangle(&brush3, 0, 0, 1, rect.bottom-3);
+					g.FillRectangle(&brush3, rect.right-1, 0, 1, rect.bottom-3);
+
+					dc.FillSolidRect(0, rect.bottom-3, rect.right, 1, 0xFBEFE4);
+					dc.FillSolidRect(0, rect.bottom-2, rect.right, 1, 0xEADACD);
+					dc.FillSolidRect(0, rect.bottom-1, rect.right, 1, 0xC3AFA0);
+					break;
+				}
 			}
-			else
-			{
-				c1.SetFromCOLORREF(0x754804);
-				c2.SetFromCOLORREF(0x776C19);
-				c3 = Color(0x80, 0xC0, 0xFF, 0xE0);
-			}
-
-			LinearGradientBrush brush1(Point(0, 0), Point(rect.right, 0), c1, c2);
-			g.FillRectangle(&brush1, 0, 0, rect.right, rect.bottom);
-
-			SolidBrush brush2(Color(0x60, 0x00, 0x00, 0x00));
-			g.FillRectangle(&brush2, 0, rect.bottom-1, rect.right, 1);
-
-			UINT line = rect.Height()/2;
-
-			LinearGradientBrush brush3(Point(0, 0), Point(0, line), Color(128, 0xFF, 0xFF, 0xFF), Color(24, 0xFF, 0xFF, 0xFF));
-			g.FillRectangle(&brush3, 0, 0, rect.right, line);
-
-			LinearGradientBrush brush4(Point(0, line), Point(0, rect.bottom-1), Color(0, 0xFF, 0xFF, 0xFF), c3);
-			g.FillRectangle(&brush4, 0, line+1, rect.right, rect.bottom-line-2);
-
-			SolidBrush brush5(Color(64, 0xFF, 0xFF, 0xFF));
-			g.FillRectangle(&brush5, 0, 0, rect.right, 1);
-			g.FillRectangle(&brush5, 0, rect.bottom-2, rect.right, 1);
-			g.FillRectangle(&brush5, 0, 0, 1, rect.bottom-1);
-			g.FillRectangle(&brush5, rect.right-1, 0, 1, rect.bottom-1);
-		}
 
 		if (hBackgroundBrush)
 			DeleteObject(hBackgroundBrush);
@@ -270,6 +295,11 @@ void CTaskbar::OnPaint()
 	GetClientRect(rect);
 
 	FillRect(pDC, rect, hBackgroundBrush);
+}
+
+void CTaskbar::OnSysColorChange()
+{
+	BackBufferL = BackBufferH = 0;
 }
 
 HBRUSH CTaskbar::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)

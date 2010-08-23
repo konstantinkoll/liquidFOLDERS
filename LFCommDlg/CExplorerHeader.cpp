@@ -4,6 +4,7 @@
 
 #include "stdafx.h"
 #include "CExplorerHeader.h"
+#include "CGlasWindow.h"
 #include "LFApplication.h"
 
 
@@ -22,6 +23,7 @@ CExplorerHeader::CExplorerHeader()
 	m_LineCol = 0xF5E5D6;
 	m_hBackgroundBrush = NULL;
 	m_GradientLine = TRUE;
+	m_Design = GWD_DEFAULT;
 }
 
 BOOL CExplorerHeader::Create(CWnd* pParentWnd, UINT nID)
@@ -60,6 +62,11 @@ void CExplorerHeader::SetLineStyle(BOOL GradientLine, BOOL Repaint)
 
 	if (Repaint)
 		Invalidate();
+}
+
+void CExplorerHeader::SetDesign(UINT _Design)
+{
+	m_Design = _Design;
 }
 
 UINT CExplorerHeader::GetPreferredHeight()
@@ -123,7 +130,7 @@ void CExplorerHeader::OnPaint()
 	buffer.CreateCompatibleBitmap(&pDC, rect.Width(), rect.Height());
 	CBitmap* pOldBitmap = dc.SelectObject(&buffer);
 
-	if (m_BackCol==0xFFFFFF)
+	if ((m_BackCol==0xFFFFFF) && (m_Design>GWD_DEFAULT))
 	{
 		CRect rectBackground(rect);
 		if (rectBackground.bottom>60)
@@ -138,41 +145,42 @@ void CExplorerHeader::OnPaint()
 		dc.FillSolidRect(rect, m_BackCol);
 	}
 
-	if (m_GradientLine)
-	{
-		if (rect.Width()>4*BORDERLEFT)
+	if (m_Design>GWD_DEFAULT)
+		if (m_GradientLine)
 		{
-			Graphics g(dc);
+			if (rect.Width()>4*BORDERLEFT)
+			{
+				Graphics g(dc);
 
-			Color c1;
-			c1.SetFromCOLORREF(m_BackCol);
-			Color c2;
-			c2.SetFromCOLORREF(m_LineCol);
+				Color c1;
+				c1.SetFromCOLORREF(m_BackCol);
+				Color c2;
+				c2.SetFromCOLORREF(m_LineCol);
 
-			LinearGradientBrush brush1(Point(0, 0), Point(BORDERLEFT*2, 0), c1, c2);
-			g.FillRectangle(&brush1, 0, rect.bottom-1, BORDERLEFT*2, 1);
+				LinearGradientBrush brush1(Point(0, 0), Point(BORDERLEFT*2, 0), c1, c2);
+				g.FillRectangle(&brush1, 0, rect.bottom-1, BORDERLEFT*2, 1);
 
-			LinearGradientBrush brush2(Point(rect.right, 0), Point(rect.right-BORDERLEFT*2, 0), c1, c2);
-			g.FillRectangle(&brush2, rect.right-BORDERLEFT*2, rect.bottom-1, BORDERLEFT*2, 1);
+				LinearGradientBrush brush2(Point(rect.right, 0), Point(rect.right-BORDERLEFT*2, 0), c1, c2);
+				g.FillRectangle(&brush2, rect.right-BORDERLEFT*2, rect.bottom-1, BORDERLEFT*2, 1);
 
-			dc.FillSolidRect(BORDERLEFT*2, rect.bottom-1, rect.Width()-BORDERLEFT*4, 1, m_LineCol);
+				dc.FillSolidRect(BORDERLEFT*2, rect.bottom-1, rect.Width()-BORDERLEFT*4, 1, m_LineCol);
+			}
 		}
-	}
-	else
-	{
-		dc.FillSolidRect(0, rect.bottom-1, rect.Width(), 1, m_LineCol);
-	}
+		else
+		{
+			dc.FillSolidRect(0, rect.bottom-1, rect.Width(), 1, m_LineCol);
+		}
 
 	CFont* pOldFont = dc.SelectObject(&((LFApplication*)AfxGetApp())->m_CaptionFont);
 	CSize sz = dc.GetTextExtent(m_Caption, m_Caption.GetLength());
 	CRect rectText(BORDERLEFT, BORDER, rect.right, BORDER+sz.cy);
-	dc.SetTextColor(m_CaptionCol);
+	dc.SetTextColor((m_Design==GWD_DEFAULT) ? 0x000000 : m_CaptionCol);
 	dc.DrawText(m_Caption, rectText, DT_SINGLELINE | DT_END_ELLIPSIS);
 
 	dc.SelectObject(&((LFApplication*)AfxGetApp())->m_DefaultFont);
 	sz = dc.GetTextExtent(m_Hint, m_Hint.GetLength());
 	rectText.SetRect(BORDERLEFT, rect.bottom-sz.cy-BORDER-1, rect.right, rect.bottom-BORDER-1);
-	dc.SetTextColor(m_HintCol);
+	dc.SetTextColor((m_Design==GWD_DEFAULT) ? 0x000000 : m_HintCol);
 	dc.DrawText(m_Hint, rectText, DT_SINGLELINE | DT_END_ELLIPSIS);
 
 	dc.SelectObject(pOldFont);

@@ -111,12 +111,32 @@ UINT CGlasWindow::GetDesign()
 	return m_IsAeroWindow ? GWD_AERO : hTheme ? GWD_THEMED : GWD_DEFAULT;
 }
 
+void CGlasWindow::SetTheme()
+{
+	if (p_App->m_ThemeLibLoaded)
+	{
+		if (hTheme)
+			p_App->zCloseThemeData(hTheme);
+
+		hTheme = p_App->zOpenThemeData(m_hWnd, m_IsAeroWindow ? _T("CompositedWindow::Window") : VSCLASS_WINDOW);
+
+		if (p_App->zSetWindowThemeAttribute)
+		{
+			WTA_OPTIONS opt;
+			opt.dwMask = WTNCA_NODRAWCAPTION | WTNCA_NODRAWICON;
+			opt.dwFlags = WTNCA_NODRAWCAPTION | WTNCA_NODRAWICON;
+			p_App->zSetWindowThemeAttribute(m_hWnd, WTA_NONCLIENT, &opt, sizeof(WTA_OPTIONS));
+		}
+	}
+}
+
 
 BEGIN_MESSAGE_MAP(CGlasWindow, CWnd)
 	ON_WM_CREATE()
 	ON_WM_DESTROY()
 	ON_WM_ERASEBKGND()
 	ON_WM_PAINT()
+	ON_WM_SYSCOLORCHANGE()
 	ON_WM_THEMECHANGED()
 	ON_WM_DWMCOMPOSITIONCHANGED()
 	ON_WM_NCCALCSIZE()
@@ -193,43 +213,34 @@ void CGlasWindow::OnPaint()
 	}
 }
 
+void CGlasWindow::OnSysColorChange()
+{
+	AdjustLayout();
+}
+
 LRESULT CGlasWindow::OnThemeChanged()
 {
-	if (p_App->m_ThemeLibLoaded)
-	{
-		if (hTheme)
-			p_App->zCloseThemeData(hTheme);
-
-		hTheme = p_App->zOpenThemeData(m_hWnd, m_IsAeroWindow ? _T("CompositedWindow::Window") : VSCLASS_WINDOW);
-
-		if (p_App->zSetWindowThemeAttribute)
-		{
-			WTA_OPTIONS opt;
-			opt.dwMask = WTNCA_NODRAWCAPTION | WTNCA_NODRAWICON;
-			opt.dwFlags = WTNCA_NODRAWCAPTION | WTNCA_NODRAWICON;
-			p_App->zSetWindowThemeAttribute(m_hWnd, WTA_NONCLIENT, &opt, sizeof(WTA_OPTIONS));
-		}
-
-		AdjustLayout();
-	}
+	SetTheme();
+	AdjustLayout();
 
 	return TRUE;
 }
 
 void CGlasWindow::OnCompositionChanged()
 {
-	OnThemeChanged();
+	SetTheme();
 
 	if (p_App->m_AeroLibLoaded)
 	{
 		p_App->zDwmIsCompositionEnabled(&m_IsAeroWindow);
 		UseGlasBackground(m_Margins);
-		AdjustLayout();
 	}
 	else
 	{
 		m_IsAeroWindow = FALSE;
 	}
+
+	AdjustLayout();
 }
 
 void CGlasWindow::OnNcCalcSize(BOOL bCalcValidRects, NCCALCSIZE_PARAMS* lpncsp)

@@ -97,7 +97,7 @@ BOOL CStoreManagerApp::InitInstance()
 			m_Background[a] = ChildBackground_Ribbon;
 			break;
 		default:
-			m_Background[a] = (osInfo.dwMajorVersion>=6) ? ChildBackground_White : ChildBackground_System;
+			m_Background[a] = (OSVersion>=OS_Vista) ? ChildBackground_White : ChildBackground_System;
 		}
 	GetBinary(_T("Background"), m_Background, sizeof(m_Background));
 

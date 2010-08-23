@@ -45,7 +45,7 @@ void CTagcloudView::Create(CWnd* _pParentWnd, LFSearchResult* _result, int _Focu
 	rect.SetRectEmpty();
 	CWnd::Create(className, _T(""), dwStyle, rect, _pParentWnd, AFX_IDW_PANE_FIRST);
 
-	CFileView::Create(_result, LFViewTagcloud, _FocusItem, theApp.osInfo.dwMajorVersion>=6);
+	CFileView::Create(_result, LFViewTagcloud, _FocusItem, theApp.OSVersion>=OS_Vista);
 }
 
 void CTagcloudView::SetViewOptions(UINT /*_ViewID*/, BOOL Force)
@@ -319,7 +319,7 @@ int CTagcloudView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CFileView::OnCreate(lpCreateStruct) == -1)
 		return -1;
 
-	if ((theApp.m_ThemeLibLoaded) && (theApp.osInfo.dwMajorVersion>=6))
+	if ((theApp.m_ThemeLibLoaded) && (theApp.OSVersion>=OS_Vista))
 	{
 		theApp.zSetWindowTheme(GetSafeHwnd(), L"explorer", NULL);
 		hTheme = theApp.zOpenThemeData(GetSafeHwnd(), VSCLASS_LISTVIEW);
@@ -401,7 +401,7 @@ void CTagcloudView::OnUpdateCommands(CCmdUI* pCmdUI)
 
 LRESULT CTagcloudView::OnThemeChanged()
 {
-	if ((theApp.m_ThemeLibLoaded) && (theApp.osInfo.dwMajorVersion>=6))
+	if ((theApp.m_ThemeLibLoaded) && (theApp.OSVersion>=OS_Vista))
 	{
 		if (hTheme)
 			theApp.zCloseThemeData(hTheme);

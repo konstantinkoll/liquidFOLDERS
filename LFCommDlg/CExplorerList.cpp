@@ -19,7 +19,7 @@ CExplorerList::CExplorerList()
 
 void CExplorerList::EnableTheming()
 {
-	if ((p_App->m_ThemeLibLoaded) && (p_App->osInfo.dwMajorVersion>=6))
+	if ((p_App->m_ThemeLibLoaded) && (p_App->OSVersion>=OS_Vista))
 	{
 		p_App->zSetWindowTheme(GetSafeHwnd(), L"explorer", NULL);
 		hTheme = p_App->zOpenThemeData(GetSafeHwnd(), VSCLASS_LISTVIEW);
@@ -40,7 +40,7 @@ int CExplorerList::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	EnableTheming();
 
-	if (p_App->osInfo.dwMajorVersion>=6)
+	if (p_App->OSVersion>=OS_Vista)
 		SendMessage(0x10BD, (WPARAM)&IID_IListViewFooter, (LPARAM)&p_FooterHandler);
 
 	return 0;
@@ -56,7 +56,7 @@ void CExplorerList::OnDestroy()
 
 LRESULT CExplorerList::OnThemeChanged()
 {
-	if ((p_App->m_ThemeLibLoaded) && (p_App->osInfo.dwMajorVersion>=6))
+	if ((p_App->m_ThemeLibLoaded) && (p_App->OSVersion>=OS_Vista))
 	{
 		if (hTheme)
 			p_App->zCloseThemeData(hTheme);

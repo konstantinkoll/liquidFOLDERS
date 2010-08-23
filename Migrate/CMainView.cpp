@@ -14,7 +14,7 @@
 
 CMainView::CMainView()
 {
-	IsRootSet = FALSE;
+	m_IsRootSet = FALSE;
 }
 
 void CMainView::Create(CWnd* _pParentWnd, UINT nID)
@@ -38,17 +38,23 @@ BOOL CMainView::OnCmdMsg(UINT nID, int nCode, void* pExtra, AFX_CMDHANDLERINFO* 
 void CMainView::SetRoot(CString _Root)
 {
 	Root = _Root;
-	IsRootSet = TRUE;
+	m_IsRootSet = TRUE;
 
 	m_wndExplorerHeader.SetLineStyle(FALSE, FALSE);
 
 	Invalidate();
 }
 
+void CMainView::SetDesign(UINT _Design)
+{
+	m_wndTaskbar.SetDesign(_Design);
+	m_wndExplorerHeader.SetDesign(_Design);
+}
+
 void CMainView::ClearRoot()
 {
 	Root.Empty();
-	IsRootSet = FALSE;
+	m_IsRootSet = FALSE;
 
 	CString caption;
 	CString hint;
@@ -64,9 +70,6 @@ void CMainView::AdjustLayout()
 {
 	CRect rect;
 	GetClientRect(rect);
-
-	if (((CGlasWindow*)GetParent())->GetDesign()==GWD_DEFAULT)
-		rect.DeflateRect(1, 1);
 
 	const UINT TaskHeight = m_wndTaskbar.GetPreferredHeight();
 	m_wndTaskbar.SetWindowPos(NULL, rect.left, rect.top, rect.Width(), TaskHeight, SWP_NOACTIVATE | SWP_NOZORDER);
@@ -85,7 +88,6 @@ BEGIN_MESSAGE_MAP(CMainView, CWnd)
 	ON_WM_CREATE()
 	ON_WM_ERASEBKGND()
 	ON_WM_SIZE()
-	ON_WM_THEMECHANGED()
 	ON_UPDATE_COMMAND_UI_RANGE(ID_VIEW_SELECTROOT, ID_VIEW_DELETE, OnUpdateTaskbar)
 END_MESSAGE_MAP()
 
@@ -122,13 +124,8 @@ int CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	return 0;
 }
 
-BOOL CMainView::OnEraseBkgnd(CDC* pDC)
+BOOL CMainView::OnEraseBkgnd(CDC* /*pDC*/)
 {
-	CRect rect;
-	GetClientRect(rect);
-
-	pDC->FillSolidRect(rect, 0xA0A0A0);
-
 	return TRUE;
 }
 
@@ -139,20 +136,14 @@ void CMainView::OnSize(UINT nType, int cx, int cy)
 	RedrawWindow(NULL, NULL, RDW_UPDATENOW | RDW_INVALIDATE);
 }
 
-LRESULT CMainView::OnThemeChanged()
-{
-	AdjustLayout();
-	return TRUE;
-}
-
 void CMainView::OnUpdateTaskbar(CCmdUI* pCmdUI)
 {
 	switch (pCmdUI->m_nID)
 	{
 	case ID_VIEW_SELECTROOT:
-		pCmdUI->Enable(!IsRootSet);
+		pCmdUI->Enable(!m_IsRootSet);
 		break;
 	default:
-		pCmdUI->Enable(IsRootSet);
+		pCmdUI->Enable(m_IsRootSet);
 	}
 }

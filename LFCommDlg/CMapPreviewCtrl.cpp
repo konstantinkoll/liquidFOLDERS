@@ -4,6 +4,7 @@
 
 #include "stdafx.h"
 #include "CMapPreviewCtrl.h"
+#include "LFApplication.h"
 #include "Resource.h"
 
 
@@ -45,11 +46,6 @@ CMapPreviewCtrl::CMapPreviewCtrl()
 	m_Airport = NULL;
 	m_Location.Latitude = 0;
 	m_Location.Longitude = 0;
-
-	// Version
-	ZeroMemory(&osInfo, sizeof(OSVERSIONINFO));
-	osInfo.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
-	GetVersionEx(&osInfo);
 }
 
 CMapPreviewCtrl::~CMapPreviewCtrl()
@@ -65,7 +61,7 @@ void CMapPreviewCtrl::Update(LFAirport* _Airport)
 		m_Airport = _Airport;
 		if (_Airport)
 		{
-			FontFamily fontFamily(osInfo.dwMajorVersion==5 ? L"Arial" : L"Segoe UI");
+			FontFamily fontFamily(((LFApplication*)AfxGetApp())->GetDefaultFontFace());
 			wchar_t pszBuf[4];
 			MultiByteToWideChar(CP_ACP, 0, m_Airport->Code, 4, pszBuf, 4);
 

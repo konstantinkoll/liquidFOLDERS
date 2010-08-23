@@ -144,7 +144,7 @@ void CAbstractListView::OnSysColorChange()
 	m_FileList.SetTextBkColor(back);
 	m_FileList.SetTextColor(text);
 
-	if (theApp.osInfo.dwMajorVersion==5)
+	if (theApp.OSVersion==OS_XP)
 	{
 		LVGROUPMETRICS metrics;
 		ZeroMemory(&metrics, sizeof(LVGROUPMETRICS));

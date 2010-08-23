@@ -238,7 +238,7 @@ void CListView::SetViewOptions(UINT _ViewID, BOOL Force)
 			tvi.dwFlags = LVTVIF_FIXEDWIDTH;
 			tvi.dwMask = LVTVIM_COLUMNS | LVTVIM_TILESIZE;
 			tvi.sizeTile.cx = 240;
-			if ((theApp.osInfo.dwMajorVersion==5) && (m_FileList.OwnerData))  // Only for virtual lists on Windows XP
+			if ((theApp.OSVersion==OS_XP) && (m_FileList.OwnerData))  // Only for virtual lists on Windows XP
 			{
 				tvi.dwMask |= LVTVIM_LABELMARGIN;
 				tvi.rcLabelMargin.bottom = (int)(GetFontHeight(pViewParameters->GrannyMode)*1.3);
@@ -253,7 +253,7 @@ void CListView::SetViewOptions(UINT _ViewID, BOOL Force)
 		}
 
 		m_FileList.ModifyStyle(_ViewID!=LFViewList ? LVS_ALIGNLEFT : 0, _ViewID==LFViewList ? LVS_ALIGNLEFT : 0);
-		if (theApp.osInfo.dwMajorVersion==5)
+		if (theApp.OSVersion==OS_XP)
 			m_FileList.SetExtendedStyle(m_FileList.GetExtendedStyle() & !LVS_EX_BORDERSELECT | FileListExtendedStyles | (_ViewID==LFViewPreview ? LVS_EX_BORDERSELECT : 0));
 
 		m_FileList.SetView(iView);
@@ -293,7 +293,7 @@ int CListView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		lvg.cbSize = sizeof(lvg);
 		lvg.mask = LVGF_HEADER | LVGF_GROUPID | LVGF_ALIGN;
 		lvg.uAlign = LVGA_HEADER_LEFT;
-		if (theApp.osInfo.dwMajorVersion>=6)
+		if (theApp.OSVersion>=OS_Vista)
 		{
 			lvg.mask |= LVGF_STATE;
 			lvg.state = LVGS_COLLAPSIBLE;
@@ -305,7 +305,7 @@ int CListView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 			lvg.iGroupId = a;
 			lvg.pszHeader = theApp.m_ItemCategories[a]->Name;
 
-			if (theApp.osInfo.dwMajorVersion>=6)
+			if (theApp.OSVersion>=OS_Vista)
 			{
 				lvg.pszSubtitle = theApp.m_ItemCategories[a]->Hint;
 				if (*lvg.pszSubtitle==L'\0')
