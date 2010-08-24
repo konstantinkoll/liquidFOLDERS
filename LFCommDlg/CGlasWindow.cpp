@@ -261,7 +261,10 @@ void CGlasWindow::OnActivateApp(BOOL bActive, DWORD dwThreadID)
 	m_Active = bActive;
 
 	if (GetDesign()==GWD_THEMED)
+	{
+		Invalidate();
 		RedrawWindow(NULL, NULL, RDW_ALLCHILDREN | RDW_UPDATENOW | RDW_INVALIDATE);
+	}
 }
 
 void CGlasWindow::OnEnable(BOOL bEnable)
@@ -270,7 +273,10 @@ void CGlasWindow::OnEnable(BOOL bEnable)
 	m_Enabled = bEnable;
 
 	if (GetDesign()==GWD_THEMED)
+	{
+		Invalidate();
 		RedrawWindow(NULL, NULL, RDW_ALLCHILDREN | RDW_UPDATENOW | RDW_INVALIDATE);
+	}
 }
 
 void CGlasWindow::OnSize(UINT nType, int cx, int cy)

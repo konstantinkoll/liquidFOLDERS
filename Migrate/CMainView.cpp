@@ -133,7 +133,6 @@ void CMainView::OnSize(UINT nType, int cx, int cy)
 {
 	CWnd::OnSize(nType, cx, cy);
 	AdjustLayout();
-	RedrawWindow(NULL, NULL, RDW_UPDATENOW | RDW_INVALIDATE);
 }
 
 void CMainView::OnUpdateTaskbar(CCmdUI* pCmdUI)
