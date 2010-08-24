@@ -15,11 +15,12 @@ using namespace Gdiplus;
 
 extern AFX_EXTENSION_MODULE LFCommDlgDLL;
 
-LFDialog::LFDialog(UINT nIDTemplate, UINT nIDStyle, CWnd* pParent)
+LFDialog::LFDialog(UINT nIDTemplate, UINT _Design, CWnd* pParent)
 	: CDialog(nIDTemplate, pParent)
 {
 	m_nIDTemplate = nIDTemplate;
-	m_nIDStyle = nIDStyle;
+	m_Design = _Design;
+	p_App = (LFApplication*)AfxGetApp();
 	hIconS = hIconL = hIconShield = NULL;
 	hBackgroundBrush = NULL;
 	backdrop = logo = NULL;
@@ -29,6 +30,7 @@ LFDialog::LFDialog(UINT nIDTemplate, UINT nIDStyle, CWnd* pParent)
 
 BEGIN_MESSAGE_MAP(LFDialog, CDialog)
 	ON_WM_ERASEBKGND()
+	ON_WM_THEMECHANGED()
 	ON_WM_CTLCOLOR()
 	ON_WM_DESTROY()
 	ON_BN_CLICKED(IDC_ENTERLICENSEKEY, OnEnterLicenseKey)
@@ -38,7 +40,7 @@ BOOL LFDialog::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
-	if (m_nIDStyle!=LFDS_UAC)
+	if (m_Design!=LFDS_UAC)
 	{
 		// Symbol für dieses Dialogfeld festlegen. Wird automatisch erledigt
 		// wenn das Hauptfenster der Anwendung kein Dialogfeld ist
@@ -47,12 +49,8 @@ BOOL LFDialog::OnInitDialog()
 		hIconL = (HICON)LoadImage(LFCommDlgDLL.hResource, MAKEINTRESOURCE(m_nIDTemplate), IMAGE_ICON, 32, 32, LR_DEFAULTCOLOR);
 		SetIcon(hIconL, TRUE);
 	}
-	else
-	{
-		((LFApplication*)AfxGetApp())->PlayWarningSound();
-	}
 
-	switch (m_nIDStyle)
+	switch (m_Design)
 	{
 	case LFDS_Blue:
 		// Hintergrundbild laden
@@ -70,7 +68,7 @@ BOOL LFDialog::OnInitDialog()
 		ShieldSize = (UACHeight<24) ? 16 : (UACHeight<32) ? 24 : (UACHeight<48) ? 32 : 48;
 		hIconShield = (HICON)LoadImage(LFCommDlgDLL.hResource, IDI_SHIELD, IMAGE_ICON, ShieldSize, ShieldSize, LR_DEFAULTCOLOR);
 
-		((LFApplication*)AfxGetApp())->PlayWarningSound();
+		p_App->PlayWarningSound();
 		break;
 	}
 
@@ -126,33 +124,47 @@ void LFDialog::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 	ScreenToClient(&btn);
 	int Line = btn.top-borders.Height()-3;
 
-	switch (m_nIDStyle)
+	switch (m_Design)
 	{
 	case LFDS_Blue:
 		{
-			int l = backdrop->m_pBitmap->GetWidth();
-			int h = backdrop->m_pBitmap->GetHeight();
-			if ((l<rect.Width()) || (h<rect.Height()))
+			if (p_App->m_ThemeLibLoaded)
 			{
-				double f = max((double)rect.Width()/l, (double)rect.Height()/h);
-				l = (int)(l*f);
-				h = (int)(h*f);
+				HTHEME hTheme = p_App->zOpenThemeData(m_hWnd, VSCLASS_WINDOW);
+
+				if (hTheme)
+				{
+					int l = backdrop->m_pBitmap->GetWidth();
+					int h = backdrop->m_pBitmap->GetHeight();
+					if ((l<rect.Width()) || (h<rect.Height()))
+					{
+						double f = max((double)rect.Width()/l, (double)rect.Height()/h);
+						l = (int)(l*f);
+						h = (int)(h*f);
+					}
+					g.DrawImage(backdrop->m_pBitmap, rect.Width()-l, rect.Height()-h, l, h);
+
+					SolidBrush brush1(Color(180, 255, 255, 255));
+					g.FillRectangle(&brush1, 0, 0, BackBufferL, Line);
+					brush1.SetColor(Color(255, 205, 250, 255));
+					g.FillRectangle(&brush1, 0, Line++, BackBufferL, 1);
+					brush1.SetColor(Color(255, 183, 210, 240));
+					g.FillRectangle(&brush1, 0, Line++, BackBufferL, 1);
+					brush1.SetColor(Color(255, 247, 250, 254));
+					g.FillRectangle(&brush1, 0, Line++, BackBufferL, 1);
+					LinearGradientBrush brush2(Point(0, Line-1), Point(0, rect.Height()), Color(200, 255, 255, 255), Color(0, 255, 255, 255));
+					g.FillRectangle(&brush2, 0, Line, BackBufferL, rect.Height()-Line);
+
+					p_App->zCloseThemeData(hTheme);
+					goto Finish;
+				}
 			}
-			g.DrawImage(backdrop->m_pBitmap, rect.Width()-l, rect.Height()-h, l, h);
 
-			SolidBrush brush1(Color(180, 255, 255, 255));
-			g.FillRectangle(&brush1, 0, 0, BackBufferL, Line);
-			brush1.SetColor(Color(255, 205, 250, 255));
-			g.FillRectangle(&brush1, 0, Line++, BackBufferL, 1);
-			brush1.SetColor(Color(255, 183, 210, 240));
-			g.FillRectangle(&brush1, 0, Line++, BackBufferL, 1);
-			brush1.SetColor(Color(255, 247, 250, 254));
-			g.FillRectangle(&brush1, 0, Line++, BackBufferL, 1);
-			LinearGradientBrush brush2(Point(0, Line-1), Point(0, rect.Height()), Color(200, 255, 255, 255), Color(0, 255, 255, 255));
-			g.FillRectangle(&brush2, 0, Line, BackBufferL, rect.Height()-Line);
+			dc.FillSolidRect(rect, GetSysColor(COLOR_3DFACE));
 
-			l = logo->m_pBitmap->GetWidth();
-			h = logo->m_pBitmap->GetHeight();
+Finish:
+			int l = logo->m_pBitmap->GetWidth();
+			int h = logo->m_pBitmap->GetHeight();
 			g.DrawImage(logo->m_pBitmap, rect.Width()-l-8, 8, l, h);
 
 			break;
@@ -166,7 +178,7 @@ void LFDialog::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 			dc.FillSolidRect(0, btn.bottom+borders.Height()+1, BackBufferL, 1, 0xDFDFDF);
 			dc.FillSolidRect(0, btn.bottom+borders.Height()+2, BackBufferL, 1, 0xFFFFFF);
 
-			if (m_nIDStyle!=LFDS_UAC)
+			if (m_Design!=LFDS_UAC)
 				break;
 
 			LinearGradientBrush brush2(Point(0, 0), Point(rect.Width(), 0), Color(4, 80, 130), Color(28, 120, 133));
@@ -189,6 +201,13 @@ void LFDialog::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 			break;
 		}
 	}
+}
+
+LRESULT LFDialog::OnThemeChanged()
+{
+	BackBufferL = BackBufferH = 0;
+
+	return TRUE;
 }
 
 HBRUSH LFDialog::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)

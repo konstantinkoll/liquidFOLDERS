@@ -13,17 +13,19 @@
 class AFX_EXT_CLASS LFDialog : public CDialog
 {
 public:
-	LFDialog(UINT nIDTemplate, UINT nIDStyle=LFDS_Default, CWnd* pParent=NULL);
+	LFDialog(UINT nIDTemplate, UINT _Design=LFDS_Default, CWnd* pParent=NULL);
 
 protected:
+	LFApplication* p_App;
 	UINT m_nIDTemplate;
-	UINT m_nIDStyle;
+	UINT m_Design;
 
 	virtual void OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect);
 	virtual void CheckLicenseKey(LFLicense* License=NULL);
 
 	afx_msg BOOL OnInitDialog();
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
+	afx_msg LRESULT OnThemeChanged();
 	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
 	afx_msg void OnDestroy();
 	afx_msg void OnEnterLicenseKey();
