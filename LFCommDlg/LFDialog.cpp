@@ -42,9 +42,9 @@ BOOL LFDialog::OnInitDialog()
 	{
 		// Symbol für dieses Dialogfeld festlegen. Wird automatisch erledigt
 		// wenn das Hauptfenster der Anwendung kein Dialogfeld ist
-		hIconS = (HICON)LoadImage(LFCommDlgDLL.hResource, MAKEINTRESOURCE(m_nIDTemplate), IMAGE_ICON, 16, 16, LR_LOADTRANSPARENT);
+		hIconS = (HICON)LoadImage(LFCommDlgDLL.hResource, MAKEINTRESOURCE(m_nIDTemplate), IMAGE_ICON, 16, 16, LR_DEFAULTCOLOR);
 		SetIcon(hIconS, FALSE);
-		hIconL = (HICON)LoadImage(LFCommDlgDLL.hResource, MAKEINTRESOURCE(m_nIDTemplate), IMAGE_ICON, 32, 32, LR_LOADTRANSPARENT);
+		hIconL = (HICON)LoadImage(LFCommDlgDLL.hResource, MAKEINTRESOURCE(m_nIDTemplate), IMAGE_ICON, 32, 32, LR_DEFAULTCOLOR);
 		SetIcon(hIconL, TRUE);
 	}
 	else
@@ -68,7 +68,7 @@ BOOL LFDialog::OnInitDialog()
 		// Schild
 		UACHeight = MulDiv(40, LOWORD(GetDialogBaseUnits()), 8);
 		ShieldSize = (UACHeight<24) ? 16 : (UACHeight<32) ? 24 : (UACHeight<48) ? 32 : 48;
-		hIconShield = (HICON)LoadImage(LFCommDlgDLL.hResource, IDI_SHIELD, IMAGE_ICON, ShieldSize, ShieldSize, LR_LOADTRANSPARENT);
+		hIconShield = (HICON)LoadImage(LFCommDlgDLL.hResource, IDI_SHIELD, IMAGE_ICON, ShieldSize, ShieldSize, LR_DEFAULTCOLOR);
 
 		((LFApplication*)AfxGetApp())->PlayWarningSound();
 		break;

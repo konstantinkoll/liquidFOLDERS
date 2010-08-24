@@ -135,7 +135,6 @@ BEGIN_MESSAGE_MAP(CGlasWindow, CWnd)
 	ON_WM_CREATE()
 	ON_WM_DESTROY()
 	ON_WM_ERASEBKGND()
-	ON_WM_PAINT()
 	ON_WM_SYSCOLORCHANGE()
 	ON_WM_THEMECHANGED()
 	ON_WM_DWMCOMPOSITIONCHANGED()
@@ -166,15 +165,8 @@ void CGlasWindow::OnDestroy()
 	CWnd::OnDestroy();
 }
 
-BOOL CGlasWindow::OnEraseBkgnd(CDC* /*pDC*/)
+BOOL CGlasWindow::OnEraseBkgnd(CDC* pDC)
 {
-	return TRUE;
-}
-
-void CGlasWindow::OnPaint()
-{
-	CPaintDC pDC(this);
-
 	CRect rclient;
 	GetClientRect(rclient);
 
@@ -185,32 +177,34 @@ void CGlasWindow::OnPaint()
 
 		CRect rc(rclient);
 		rc.right = rectLayout.left = rectLayout.left+m_Margins.cxLeftWidth;
-		DrawFrameBackground(&pDC, rc);
+		DrawFrameBackground(pDC, rc);
 
 		rc.CopyRect(rclient);
 		rc.left = rectLayout.right = rectLayout.right-m_Margins.cxRightWidth;
-		DrawFrameBackground(&pDC, rc);
+		DrawFrameBackground(pDC, rc);
 
 		if (m_Margins.cyTopHeight)
 		{
 			CRect rc(rclient);
 			rc.bottom = rectLayout.top = rectLayout.top+m_Margins.cyTopHeight;
-			DrawFrameBackground(&pDC, rc);
+			DrawFrameBackground(pDC, rc);
 		}
 		if (m_Margins.cyBottomHeight)
 		{
 			CRect rc(rclient);
 			rc.top = rectLayout.bottom = rectLayout.bottom-m_Margins.cyBottomHeight;
-			DrawFrameBackground(&pDC, rc);
+			DrawFrameBackground(pDC, rc);
 		}
 
 		if ((rectLayout.Width()>0) && (rectLayout.Height()>0))
-			pDC.FillSolidRect(rectLayout, 0xFFFFFF);
+			pDC->FillSolidRect(rectLayout, 0xFFFFFF);
 	}
 	else
 	{
-		DrawFrameBackground(&pDC, rclient);
+		DrawFrameBackground(pDC, rclient);
 	}
+
+	return TRUE;
 }
 
 void CGlasWindow::OnSysColorChange()

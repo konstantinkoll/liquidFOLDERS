@@ -152,11 +152,11 @@ int CFileDropWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	HINSTANCE hModIcons = LoadLibrary(_T("LFCORE.DLL"));
 	if (hModIcons)
 	{
-		HICON ic = (HICON)LoadImage(hModIcons, MAKEINTRESOURCE(IDI_STORE_Empty), IMAGE_ICON, 128, 128, LR_LOADTRANSPARENT);
+		HICON ic = (HICON)LoadImage(hModIcons, MAKEINTRESOURCE(IDI_STORE_Empty), IMAGE_ICON, 128, 128, LR_DEFAULTCOLOR);
 		m_Dropzone.Add(ic);
 		DestroyIcon(ic);
 
-		ic = (HICON)LoadImage(hModIcons, MAKEINTRESOURCE(IDI_STORE_Default), IMAGE_ICON, 128, 128, LR_LOADTRANSPARENT);
+		ic = (HICON)LoadImage(hModIcons, MAKEINTRESOURCE(IDI_STORE_Default), IMAGE_ICON, 128, 128, LR_DEFAULTCOLOR);
 		m_Dropzone.Add(ic);
 		DestroyIcon(ic);
 
@@ -167,7 +167,7 @@ int CFileDropWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	hModIcons = LoadLibrary(_T("LFCOMMDLG.DLL"));
 	if (hModIcons)
 	{
-		m_hWarning = (HICON)LoadImage(hModIcons, IDI_EXCLAMATION, IMAGE_ICON, 24, 24, LR_LOADTRANSPARENT);
+		m_hWarning = (HICON)LoadImage(hModIcons, IDI_EXCLAMATION, IMAGE_ICON, 24, 24, LR_DEFAULTCOLOR);
 		FreeLibrary(hModIcons);
 	}
 
@@ -235,7 +235,7 @@ BOOL CFileDropWnd::OnEraseBkgnd(CDC* pDC)
 	dib.bmiHeader.biBitCount = 32;
 	dib.bmiHeader.biCompression = BI_RGB;
 
-	HBITMAP bmp = CreateDIBSection(dc.m_hDC, &dib, DIB_RGB_COLORS, NULL, NULL, 0);
+	HBITMAP bmp = CreateDIBSection(dc, &dib, DIB_RGB_COLORS, NULL, NULL, 0);
 	HBITMAP hOldBitmap = (HBITMAP)dc.SelectObject(bmp);
 
 	// Hintergrund
@@ -295,7 +295,7 @@ BOOL CFileDropWnd::OnEraseBkgnd(CDC* pDC)
 
 	// Badge
 	if (!StoreValid)
-		DrawIconEx(dc.m_hDC, rlayout.right-28, rlayout.top, m_hWarning, 24, 24, 0, NULL, DI_NORMAL);
+		DrawIconEx(dc, rlayout.right-28, rlayout.top, m_hWarning, 24, 24, 0, NULL, DI_NORMAL);
 
 	pDC->BitBlt(0, 0, rclient.Width(), rclient.Height(), &dc, 0, 0, SRCCOPY);
 

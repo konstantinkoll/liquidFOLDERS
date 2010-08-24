@@ -43,7 +43,6 @@ protected:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
-	afx_msg void OnPaint();
 	afx_msg void OnSysColorChange();
 	afx_msg LRESULT OnThemeChanged();
 	afx_msg void OnCompositionChanged();

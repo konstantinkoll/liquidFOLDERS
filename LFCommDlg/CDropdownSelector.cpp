@@ -17,6 +17,8 @@ CDropdownSelector::CDropdownSelector()
 {
 	p_App = (LFApplication*)AfxGetApp();
 	hTheme = NULL;
+	m_Icon = NULL;
+	m_IsEmpty = TRUE;
 	m_Hover = FALSE;
 }
 
@@ -30,6 +32,31 @@ BOOL CDropdownSelector::Create(CString EmptyHint, CGlasWindow* pParentWnd, UINT 
 	CRect rect;
 	rect.SetRectEmpty();
 	return CWnd::Create(className, _T("DropdownSelector"), dwStyle, rect, pParentWnd, nID);
+}
+
+void CDropdownSelector::SetEmpty(BOOL Repaint)
+{
+	m_IsEmpty = TRUE;
+
+	if (m_Icon)
+	{
+		DestroyIcon(m_Icon);
+		m_Icon = NULL;
+	}
+
+	if (Repaint)
+		Invalidate();
+}
+
+void CDropdownSelector::SetItem(CString Caption, HICON hIcon, CString DisplayName, BOOL Repaint)
+{
+	m_Caption = Caption;
+	m_Icon = hIcon;
+	m_DisplayName = DisplayName;
+	m_IsEmpty = FALSE;
+
+	if (Repaint)
+		Invalidate();
 }
 
 UINT CDropdownSelector::GetPreferredHeight()
@@ -66,6 +93,8 @@ void CDropdownSelector::OnDestroy()
 {
 	if (hTheme)
 		p_App->zCloseThemeData(hTheme);
+	if (m_Icon)
+		DestroyIcon(m_Icon);
 
 	CWnd::OnDestroy();
 }
@@ -174,9 +203,46 @@ void CDropdownSelector::OnPaint()
 	rtext.right = rclip.left;
 	rtext.DeflateRect(BORDER, 0);
 
-	CFont* pOldFont = dc.SelectObject(&p_App->m_ItalicFont);
-	dc.SetTextColor(0x808080);
-	dc.DrawText(m_EmptyHint, -1, rtext, DT_SINGLELINE | DT_END_ELLIPSIS | DT_VCENTER);
+	CFont* pOldFont;
+
+	if (m_IsEmpty)
+	{
+		pOldFont = dc.SelectObject(&p_App->m_ItalicFont);
+		dc.SetTextColor(0x808080);
+		dc.DrawText(m_EmptyHint, -1, rtext, DT_SINGLELINE | DT_END_ELLIPSIS | DT_VCENTER);
+	}
+	else
+	{
+		pOldFont = dc.SelectObject(&p_App->m_DefaultFont);
+		COLORREF c1 = (pCtrlSite->GetDesign()==GWD_DEFAULT) ? GetSysColor(COLOR_WINDOWTEXT) : 0x000000;
+		COLORREF c2 = (pCtrlSite->GetDesign()==GWD_DEFAULT) ? GetSysColor(COLOR_3DSHADOW) : 0x808080;
+
+		if (!m_Caption.IsEmpty())
+		{
+			dc.SetTextColor(m_Hover ? c1 : c2);
+			dc.DrawText(m_Caption, -1, rtext, DT_SINGLELINE | DT_END_ELLIPSIS | DT_VCENTER);
+			rtext.left += dc.GetTextExtent(m_Caption, m_Caption.GetLength()).cx+BORDER;
+		}
+
+		if (m_Icon)
+		{
+			int cx = GetSystemMetrics(SM_CXSMICON);
+			int cy = GetSystemMetrics(SM_CYSMICON);
+
+			if (rtext.left+cx<rtext.right)
+			{
+				DrawIconEx(dc, rtext.left, rtext.top+(rtext.Height()-cy)/2, m_Icon, cx, cy, 0, NULL, DI_NORMAL);
+				rtext.left += cx+BORDER;
+			}
+		}
+
+		if (!m_DisplayName.IsEmpty())
+		{
+			dc.SetTextColor(c1);
+			dc.DrawText(m_DisplayName, -1, rtext, DT_SINGLELINE | DT_END_ELLIPSIS | DT_VCENTER);
+		}
+	}
+
 	dc.SelectObject(pOldFont);
 
 	// Set alpha

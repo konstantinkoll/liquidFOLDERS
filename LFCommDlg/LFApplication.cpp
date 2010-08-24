@@ -601,7 +601,7 @@ void LFApplication::ExtractCoreIcons(HINSTANCE hModIcons, int size, CImageList* 
 
 	for (UINT a=1; a<=IDI_LastIcon; a++)
 	{
-		HICON ic = (HICON)LoadImage(hModIcons, MAKEINTRESOURCE(a), IMAGE_ICON, size, size, LR_LOADTRANSPARENT);
+		HICON ic = (HICON)LoadImage(hModIcons, MAKEINTRESOURCE(a), IMAGE_ICON, size, size, LR_DEFAULTCOLOR);
 		li->Add(ic);
 		DestroyIcon(ic);
 	}

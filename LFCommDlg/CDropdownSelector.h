@@ -15,12 +15,16 @@ public:
 	CDropdownSelector();
 
 	BOOL Create(CString EmptyHint, CGlasWindow* pParentWnd, UINT nID);
+	void SetEmpty(BOOL Repaint=TRUE);
+	void SetItem(CString Caption, HICON hIcon, CString DisplayName, BOOL Repaint=TRUE);
 	UINT GetPreferredHeight();
-
-	HTHEME hTheme;
 
 protected:
 	CString m_EmptyHint;
+	CString m_Caption;
+	CString m_DisplayName;
+	HICON m_Icon;
+	BOOL m_IsEmpty;
 	BOOL m_Hover;
 	LFApplication* p_App;
 
@@ -32,4 +36,7 @@ protected:
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg void OnMouseLeave();
 	DECLARE_MESSAGE_MAP()
+
+private:
+	HTHEME hTheme;
 };

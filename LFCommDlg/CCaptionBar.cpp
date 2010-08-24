@@ -40,5 +40,5 @@ void CCaptionBar::SetIcon(LPCWSTR Icon, BarElementAlignment iconAlignment)
 		m_hIcon = NULL;
 	}
 
-	CMFCCaptionBar::SetIcon((HICON)LoadImage(LFCommDlgDLL.hResource, Icon, IMAGE_ICON, 24, 24, LR_LOADTRANSPARENT), iconAlignment);
+	CMFCCaptionBar::SetIcon((HICON)LoadImage(LFCommDlgDLL.hResource, Icon, IMAGE_ICON, 24, 24, LR_DEFAULTCOLOR), iconAlignment);
 }
