@@ -31,6 +31,7 @@ LFDialog::LFDialog(UINT nIDTemplate, UINT _Design, CWnd* pParent)
 BEGIN_MESSAGE_MAP(LFDialog, CDialog)
 	ON_WM_ERASEBKGND()
 	ON_WM_THEMECHANGED()
+	ON_WM_SYSCOLORCHANGE()
 	ON_WM_CTLCOLOR()
 	ON_WM_DESTROY()
 	ON_BN_CLICKED(IDC_ENTERLICENSEKEY, OnEnterLicenseKey)
@@ -200,9 +201,20 @@ Finish:
 
 LRESULT LFDialog::OnThemeChanged()
 {
-	BackBufferL = BackBufferH = 0;
+	if (m_Design==LFDS_Blue)
+		BackBufferL = BackBufferH = 0;
 
 	return 0;
+}
+
+void LFDialog::OnSysColorChange()
+{
+	BOOL Redraw = (m_Design==LFDS_Blue);
+	if (p_App->m_ThemeLibLoaded)
+		Redraw &= !p_App->zIsThemeActive();
+
+	if (Redraw)
+		BackBufferL = BackBufferH = 0;
 }
 
 HBRUSH LFDialog::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
