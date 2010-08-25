@@ -65,7 +65,7 @@ LRESULT CExplorerList::OnThemeChanged()
 		Invalidate();
 	}
 
-	return TRUE;
+	return 0;
 }
 
 BOOL CExplorerList::SupportsFooter()

@@ -41,6 +41,7 @@ typedef HRESULT (__stdcall* PFNGETTHEMEPARTSIZE)(HTHEME hTheme, HDC hdc, int iPa
 							LPRECT prc, THEMESIZE eSize, SIZE *psz);
 typedef HRESULT (__stdcall* PFNSETWINDOWTHEMEATTRIBUTE)(HWND hWnd, WINDOWTHEMEATTRIBUTETYPE eAttribute,
 							void* pAttribute, DWORD cdAttribute);
+typedef BOOL (__stdcall* PFNISTHEMEACTIVE)();
 
 typedef HRESULT(__stdcall* PFNDWMISCOMPOSITIONENABLED)(BOOL* pfEnabled);
 typedef HRESULT(__stdcall* PFNDWMEXTENDFRAMEINTOCLIENTAREA)(HWND hWnd, const MARGINS* pMarInset);
@@ -122,6 +123,7 @@ public:
 	PFNGETTHEMESYSCOLOR zGetThemeSysColor;
 	PFNGETTHEMEPARTSIZE zGetThemePartSize;
 	PFNSETWINDOWTHEMEATTRIBUTE zSetWindowThemeAttribute;
+	PFNISTHEMEACTIVE zIsThemeActive;
 	BOOL m_ThemeLibLoaded;
 
 	PFNDWMISCOMPOSITIONENABLED zDwmIsCompositionEnabled;

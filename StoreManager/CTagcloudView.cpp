@@ -409,7 +409,7 @@ LRESULT CTagcloudView::OnThemeChanged()
 		hTheme = theApp.zOpenThemeData(m_hWnd, VSCLASS_LISTVIEW);
 	}
 
-	return TRUE;
+	return 0;
 }
 
 void CTagcloudView::OnSize(UINT nType, int cx, int cy)

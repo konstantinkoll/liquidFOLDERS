@@ -129,10 +129,7 @@ void LFDialog::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 	case LFDS_Blue:
 		{
 			if (p_App->m_ThemeLibLoaded)
-			{
-				HTHEME hTheme = p_App->zOpenThemeData(m_hWnd, VSCLASS_WINDOW);
-
-				if (hTheme)
+				if (p_App->zIsThemeActive())
 				{
 					int l = backdrop->m_pBitmap->GetWidth();
 					int h = backdrop->m_pBitmap->GetHeight();
@@ -155,10 +152,8 @@ void LFDialog::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 					LinearGradientBrush brush2(Point(0, Line-1), Point(0, rect.Height()), Color(200, 255, 255, 255), Color(0, 255, 255, 255));
 					g.FillRectangle(&brush2, 0, Line, BackBufferL, rect.Height()-Line);
 
-					p_App->zCloseThemeData(hTheme);
 					goto Finish;
 				}
-			}
 
 			dc.FillSolidRect(rect, GetSysColor(COLOR_3DFACE));
 
@@ -207,7 +202,7 @@ LRESULT LFDialog::OnThemeChanged()
 {
 	BackBufferL = BackBufferH = 0;
 
-	return TRUE;
+	return 0;
 }
 
 HBRUSH LFDialog::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
