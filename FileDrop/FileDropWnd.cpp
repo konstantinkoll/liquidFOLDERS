@@ -339,21 +339,14 @@ void CFileDropWnd::OnMouseHover(UINT nFlags, CPoint point)
 		ENSURE(strHint.LoadString(IDS_TOOLTIP));
 
 		ClientToScreen(&point);
-		Tooltip.Track(point, LoadIcon(AfxGetResourceHandle(), MAKEINTRESOURCE(IDR_APPLICATION)),
-			CSize(GetSystemMetrics(SM_CXICON), GetSystemMetrics(SM_CYICON)), _T("FileDrop"), strHint);
+		Tooltip.Track(point,
+			(HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IDR_APPLICATION), IMAGE_ICON, 48, 48, LR_DEFAULTCOLOR),
+			CSize(48, 48), _T("FileDrop"), strHint);
 	}
 	else
 	{
 		Tooltip.Deactivate();
 	}
-
-	TRACKMOUSEEVENT tme;
-	ZeroMemory(&tme, sizeof(tme));
-	tme.cbSize = sizeof(TRACKMOUSEEVENT);
-	tme.dwFlags = TME_LEAVE;
-	tme.dwHoverTime = HOVER_DEFAULT;
-	tme.hwndTrack = m_hWnd;
-	TrackMouseEvent(&tme);
 }
 
 void CFileDropWnd::OnRButtonDown(UINT /*nFlags*/, CPoint point)

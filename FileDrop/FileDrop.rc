@@ -122,7 +122,7 @@ END
 STRINGTABLE 
 BEGIN
     IDS_ALWAYSONTOP         "&Immer im Vordergrund"
-    IDS_TOOLTIP             "Dateien hierher ziehen zum Import nach liquidFOLDERS"
+    IDS_TOOLTIP             "Dateien hierher ziehen zum\nImport nach liquidFOLDERS"
     IDS_NODEFAULTSTORE      "Kein Standard-Store"
 END
 
@@ -169,7 +169,7 @@ END
 STRINGTABLE 
 BEGIN
     IDS_ALWAYSONTOP         "Always on &top"
-    IDS_TOOLTIP             "Drop files here to import them into liquidFOLDERS."
+    IDS_TOOLTIP             "Drop files here to import\nthem into liquidFOLDERS."
     IDS_NODEFAULTSTORE      "No default store"
 END
 
@@ -216,7 +216,7 @@ END
 STRINGTABLE 
 BEGIN
     IDS_ALWAYSONTOP         "Siempre &arriba"
-    IDS_TOOLTIP             "Pega filas aquí para importarlas a liquidFOLDERS."
+    IDS_TOOLTIP             "Pega filas aquí para importarlas\na liquidFOLDERS."
     IDS_NODEFAULTSTORE      "No hay store estándar"
 END
 
@@ -263,7 +263,7 @@ END
 STRINGTABLE 
 BEGIN
     IDS_ALWAYSONTOP         "Toujours au &top"
-    IDS_TOOLTIP             "Ici afiu de importer dans liquidFOLDERS"
+    IDS_TOOLTIP             "Ici afiu de importer\ndans liquidFOLDERS"
     IDS_NODEFAULTSTORE      "Pas de store standard"
 END
 
