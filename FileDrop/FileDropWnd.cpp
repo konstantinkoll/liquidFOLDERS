@@ -51,7 +51,7 @@ BOOL CFileDropWnd::PreTranslateMessage(MSG* pMsg)
 	case WM_NCLBUTTONUP:
 	case WM_NCRBUTTONUP:
 	case WM_NCMBUTTONUP:
-		Tooltip.Hide();
+		Tooltip.Deactivate();
 		break;
 	}
 
@@ -339,7 +339,8 @@ void CFileDropWnd::OnMouseHover(UINT nFlags, CPoint point)
 		ENSURE(strHint.LoadString(IDS_TOOLTIP));
 
 		ClientToScreen(&point);
-		Tooltip.Track(point, strHint);
+		Tooltip.Track(point, LoadIcon(AfxGetResourceHandle(), MAKEINTRESOURCE(IDR_APPLICATION)),
+			CSize(GetSystemMetrics(SM_CXICON), GetSystemMetrics(SM_CYICON)), _T("FileDrop"), strHint);
 	}
 	else
 	{
@@ -349,7 +350,7 @@ void CFileDropWnd::OnMouseHover(UINT nFlags, CPoint point)
 	TRACKMOUSEEVENT tme;
 	ZeroMemory(&tme, sizeof(tme));
 	tme.cbSize = sizeof(TRACKMOUSEEVENT);
-	tme.dwFlags = TME_LEAVE | TME_HOVER;
+	tme.dwFlags = TME_LEAVE;
 	tme.dwHoverTime = HOVER_DEFAULT;
 	tme.hwndTrack = m_hWnd;
 	TrackMouseEvent(&tme);

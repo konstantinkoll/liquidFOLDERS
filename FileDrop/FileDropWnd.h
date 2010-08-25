@@ -42,7 +42,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 	LFDropTarget m_DropTarget;
-	CSimpleTooltip Tooltip;
+	LFTooltip Tooltip;
 	HICON m_hIcon;
 	HICON m_hWarning;
 	CImageList m_Dropzone;
