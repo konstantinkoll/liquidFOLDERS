@@ -3,7 +3,7 @@
 //
 
 #pragma once
-#include "CSimpleTooltip.h"
+#include "LFTooltip.h"
 
 
 // CTaskButton
@@ -32,7 +32,7 @@ protected:
 private:
 	CString m_Caption;
 	CString m_Tooltip;
-	CSimpleTooltip m_TooltipCtrl;
+	LFTooltip m_TooltipCtrl;
 	CMFCToolBarImages* m_Icons;
 	int m_IconID;
 	BOOL m_Hover;

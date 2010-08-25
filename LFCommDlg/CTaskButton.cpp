@@ -50,7 +50,7 @@ BOOL CTaskButton::PreTranslateMessage(MSG* pMsg)
 	case WM_NCLBUTTONUP:
 	case WM_NCRBUTTONUP:
 	case WM_NCMBUTTONUP:
-		m_TooltipCtrl.Hide();
+		m_TooltipCtrl.Deactivate();
 		break;
 	}
 
@@ -135,8 +135,7 @@ void CTaskButton::OnPaint()
 	if (brush)
 		FillRect(dc, rect, brush);
 
-	CFont* pOldFont = dc.SelectObject(&((LFApplication*)AfxGetApp())->m_DefaultFont);
-
+	// Button
 	if (m_Design==GWD_DEFAULT)
 	{
 		COLORREF c1 = GetSysColor(COLOR_3DHIGHLIGHT);
@@ -181,10 +180,13 @@ void CTaskButton::OnPaint()
 		}
 
 		dc.SetTextColor(GetSysColor(COLOR_WINDOWTEXT));
+		dc.SelectStockObject(DEFAULT_GUI_FONT);
 		dc.DrawText(m_Caption, -1, rectText, DT_SINGLELINE | DT_END_ELLIPSIS | DT_VCENTER);
 	}
 	else
 	{
+		CFont* pOldFont = dc.SelectObject(&((LFApplication*)AfxGetApp())->m_DefaultFont);
+
 		Graphics g(dc);
 		g.SetCompositingMode(CompositingModeSourceOver);
 		g.SetSmoothingMode(SmoothingModeAntiAlias);
@@ -327,11 +329,12 @@ void CTaskButton::OnPaint()
 				break;
 			}
 		}
+
+		dc.SelectObject(pOldFont);
 	}
 
 	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);
 	dc.SelectObject(pOldBitmap);
-	dc.SelectObject(pOldFont);
 }
 
 void CTaskButton::OnMouseMove(UINT nFlags, CPoint point)
@@ -364,23 +367,13 @@ void CTaskButton::OnMouseLeave()
 void CTaskButton::OnMouseHover(UINT nFlags, CPoint point)
 {
 	if (!m_Tooltip.IsEmpty())
-	{
 		if ((nFlags & (MK_LBUTTON | MK_MBUTTON | MK_RBUTTON | MK_XBUTTON1 | MK_XBUTTON2))==0)
 		{
 			ClientToScreen(&point);
-			m_TooltipCtrl.Track(point, m_Tooltip);
+			m_TooltipCtrl.Track(point, NULL, NULL, _T(""), m_Tooltip);
 		}
 		else
 		{
 			m_TooltipCtrl.Deactivate();
 		}
-
-		TRACKMOUSEEVENT tme;
-		ZeroMemory(&tme, sizeof(tme));
-		tme.cbSize = sizeof(TRACKMOUSEEVENT);
-		tme.dwFlags = TME_LEAVE | TME_HOVER;
-		tme.dwHoverTime = HOVER_DEFAULT;
-		tme.hwndTrack = m_hWnd;
-		TrackMouseEvent(&tme);
-	}
 }

@@ -431,10 +431,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CSimpleTooltip.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\CTagList.cpp"
 				>
 			</File>
@@ -555,6 +551,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\LFTooltip.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\LFWelcomeDlg.cpp"
 				>
 			</File>
@@ -653,10 +653,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CSimpleTooltip.h"
-				>
-			</File>
-			<File
 				RelativePath=".\CTagList.h"
 				>
 			</File>
@@ -738,6 +734,10 @@
 			</File>
 			<File
 				RelativePath=".\LFStorePropertiesDlg.h"
+				>
+			</File>
+			<File
+				RelativePath=".\LFTooltip.h"
 				>
 			</File>
 			<File

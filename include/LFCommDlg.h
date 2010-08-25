@@ -11,7 +11,6 @@
 #include "..\LFCommDlg\CMapPreviewCtrl.h"
 #include "..\LFCommDlg\CPaneList.h"
 #include "..\LFCommDlg\CPaneText.h"
-#include "..\LFCommDlg\CSimpleTooltip.h"
 #include "..\LFCommDlg\CTagList.h"
 #include "..\LFCommDlg\CTaskbar.h"
 #include "..\LFCommDlg\CTaskButton.h"
@@ -29,6 +28,7 @@
 #include "..\LFCommDlg\LFStoreMaintenanceDlg.h"
 #include "..\LFCommDlg\LFStoreNewDlg.h"
 #include "..\LFCommDlg\LFStorePropertiesDlg.h"
+#include "..\LFCommDlg\LFTooltip.h"
 #include "..\LFCommDlg\LFWelcomeDlg.h"
 
 void CreateRoundRectangle(CRect rect, int rad, GraphicsPath& path);

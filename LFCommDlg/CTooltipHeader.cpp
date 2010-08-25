@@ -43,7 +43,7 @@ BOOL CTooltipHeader::PreTranslateMessage(MSG* pMsg)
 	case WM_NCLBUTTONUP:
 	case WM_NCRBUTTONUP:
 	case WM_NCMBUTTONUP:
-		Tooltip.Hide();
+		Tooltip.Deactivate();
 		break;
 	}
 
@@ -100,7 +100,7 @@ void CTooltipHeader::OnMouseHover(UINT /*nFlags*/, CPoint point)
 				if (GetItem(a, &i))
 				{
 					ClientToScreen(&point);
-					Tooltip.Track(point, TooltipText);
+					Tooltip.Track(point, NULL, NULL, _T(""), TooltipText);
 				}
 
 				break;
