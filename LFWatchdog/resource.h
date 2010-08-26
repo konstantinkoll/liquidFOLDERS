@@ -4,7 +4,6 @@
 //
 #define IDI_ICON                        1
 #define IDB_ABOUTICON                   2
-#define IDS_APP_TITLE                   100
 #define IDM_TRAY                        200
 #define IDS_TOOLTIP_SINGULAR            300
 #define IDS_TOOLTIP_PLURAL              301

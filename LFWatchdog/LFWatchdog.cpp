@@ -163,6 +163,7 @@ void ShowMenu(HWND hTargetWnd)
 	HBITMAP bmp1 = SetMenuItemIcon(hSubMenu, 2, ID_APP_NEWSTOREMANAGER);
 	HBITMAP bmp2 = SetMenuItemIcon(hSubMenu, 3, ID_APP_NEWFILEDROP);
 	HBITMAP bmp3 = SetMenuItemIcon(hSubMenu, 4, ID_APP_NEWMIGRATE);
+	SetMenuItemBitmap(hSubMenu, 6, HBMMENU_POPUP_CLOSE);
 
 	SetMenuDefaultItem(hSubMenu, ID_APP_ABOUT, 0);
 	if (AboutWindow)
@@ -249,10 +250,7 @@ HWND CreateHostWindow()
 {
 	RegisterWindowClass(szWindowClass, WndProc);
 
-	WCHAR szTitle[256];
-	ENSURE(LoadString(AfxGetResourceHandle(), IDS_APP_TITLE, szTitle, ARRAYSIZE(szTitle)));
-
-	HWND hWnd = CreateWindow(szWindowClass, szTitle, WS_DISABLED, CW_USEDEFAULT, 0, 250, 200, NULL, NULL, AfxGetInstanceHandle(), NULL);
+	HWND hWnd = CreateWindow(szWindowClass, _T("LFWatchdog"), WS_DISABLED, CW_USEDEFAULT, 0, 250, 200, NULL, NULL, AfxGetInstanceHandle(), NULL);
 	if (hWnd)
 	{
 		// Benachrichtigung, wenn sich Laufwerke ändern

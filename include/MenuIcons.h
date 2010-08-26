@@ -1,4 +1,19 @@
 
+void SetMenuItemBitmap(HMENU hMenu, UINT item, HBITMAP hBmp)
+{
+	MENUITEMINFO mii;
+	mii.cbSize = sizeof(mii);
+	mii.fMask = MIIM_BITMAP;
+	mii.hbmpItem = hBmp;
+	SetMenuItemInfo(hMenu, item, TRUE, &mii);
+
+	MENUINFO mi;
+	mi.cbSize = sizeof(mi);
+	mi.fMask = MIM_STYLE;
+	mi.dwStyle = MNS_CHECKORBMP;
+	SetMenuInfo(hMenu, &mi);
+}
+
 HBITMAP SetMenuItemIcon(HMENU hMenu, UINT item, HICON hIcon, int cx, int cy)
 {
 	if (((LFApplication*)AfxGetApp())->OSVersion<OS_Vista)
@@ -22,18 +37,7 @@ HBITMAP SetMenuItemIcon(HMENU hMenu, UINT item, HICON hIcon, int cx, int cy)
 	SelectObject(hDC, pOldBitmap);
 	DeleteDC(hDC);
 
-	MENUITEMINFO mii;
-	mii.cbSize = sizeof(mii);
-	mii.fMask = MIIM_BITMAP;
-	mii.hbmpItem = bmp;
-	SetMenuItemInfo(hMenu, item, TRUE, &mii);
-
-	MENUINFO mi;
-	mi.cbSize = sizeof(mi);
-	mi.fMask = MIM_STYLE;
-	mi.dwStyle = MNS_CHECKORBMP;
-	SetMenuInfo(hMenu, &mi);
-
+	SetMenuItemBitmap(hMenu, item, bmp);
 	return bmp;
 }
 

@@ -366,6 +366,7 @@ void CFileDropWnd::OnRButtonDown(UINT /*nFlags*/, CPoint point)
 	{
 		HBITMAP bmp1 = SetMenuItemIcon(*popup, 0, ID_APP_CHOOSEDEFAULTSTORE);
 		HBITMAP bmp2 = SetMenuItemIcon(*popup, 6, ID_APP_NEWSTOREMANAGER);
+		SetMenuItemBitmap(*popup, 8, HBMMENU_POPUP_CLOSE);
 
 		popup->CheckMenuItem(SC_ALWAYSONTOP, AlwaysOnTop ? MF_CHECKED : MF_UNCHECKED);
 		popup->EnableMenuItem(ID_APP_STOREPROPERTIES, StoreValid ? MF_ENABLED : MF_GRAYED);
