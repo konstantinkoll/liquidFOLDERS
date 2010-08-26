@@ -33,6 +33,9 @@ LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
 IDI_ICON                ICON                    "res\\Watchdog.ico"
+ID_APP_NEWSTOREMANAGER  ICON                    "res\\StoreManager_Small.ico"
+ID_APP_NEWFILEDROP      ICON                    "res\\FileDrop_Small.ico"
+ID_APP_NEWMIGRATE       ICON                    "res\\Migrate_Small.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //

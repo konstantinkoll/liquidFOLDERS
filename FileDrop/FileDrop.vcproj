@@ -441,6 +441,14 @@
 				RelativePath=".\res\FileDrop_About.png"
 				>
 			</File>
+			<File
+				RelativePath=".\res\Store_Default_Small.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\StoreManager_Small.ico"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Headerdateien"
@@ -465,6 +473,10 @@
 			</File>
 			<File
 				RelativePath="..\include\liquidFOLDERS.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\MenuIcons.h"
 				>
 			</File>
 			<File

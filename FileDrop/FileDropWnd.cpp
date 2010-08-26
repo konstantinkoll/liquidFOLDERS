@@ -7,6 +7,7 @@
 #include "FileDropWnd.h"
 #include "Resource.h"
 #include "LFCore.h"
+#include "MenuIcons.h"
 #include <io.h>
 
 
@@ -122,6 +123,7 @@ BEGIN_MESSAGE_MAP(CFileDropWnd, CGlasWindow)
 	ON_WM_MOUSEMOVE()
 	ON_WM_MOUSELEAVE()
 	ON_WM_MOUSEHOVER()
+	ON_WM_NCLBUTTONDBLCLK()
 	ON_WM_RBUTTONDOWN()
 	ON_WM_SYSCOMMAND()
 	ON_WM_MOVE()
@@ -349,6 +351,11 @@ void CFileDropWnd::OnMouseHover(UINT nFlags, CPoint point)
 	}
 }
 
+void CFileDropWnd::OnNcLButtonDblClk(UINT /*nFlags*/, CPoint /*point*/)
+{
+	OnChooseDefaultStore();
+}
+
 void CFileDropWnd::OnRButtonDown(UINT /*nFlags*/, CPoint point)
 {
 	CMenu menu;
@@ -357,6 +364,9 @@ void CFileDropWnd::OnRButtonDown(UINT /*nFlags*/, CPoint point)
 	CMenu* popup = menu.GetSubMenu(0);
 	if (popup)
 	{
+		HBITMAP bmp1 = SetMenuItemIcon(*popup, 0, ID_APP_CHOOSEDEFAULTSTORE);
+		HBITMAP bmp2 = SetMenuItemIcon(*popup, 6, ID_APP_NEWSTOREMANAGER);
+
 		popup->CheckMenuItem(SC_ALWAYSONTOP, AlwaysOnTop ? MF_CHECKED : MF_UNCHECKED);
 		popup->EnableMenuItem(ID_APP_STOREPROPERTIES, StoreValid ? MF_ENABLED : MF_GRAYED);
 		popup->EnableMenuItem(ID_APP_NEWSTOREMANAGER, (_access(theApp.path+"StoreManager.exe", 0)==0) ? MF_ENABLED : MF_GRAYED);
@@ -364,6 +374,9 @@ void CFileDropWnd::OnRButtonDown(UINT /*nFlags*/, CPoint point)
 		popup->SetDefaultItem(ID_APP_CHOOSEDEFAULTSTORE);
 		ClientToScreen(&point);
 		popup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, this);
+
+		DeleteObject(bmp1);
+		DeleteObject(bmp2);
 	}
 }
 

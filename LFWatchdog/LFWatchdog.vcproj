@@ -367,6 +367,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\include\MenuIcons.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Resource.h"
 				>
 			</File>
@@ -429,6 +433,10 @@
 			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav"
 			>
 			<File
+				RelativePath=".\res\FileDrop_Small.ico"
+				>
+			</File>
+			<File
 				RelativePath=".\LFWatchdog.rc"
 				>
 				<FileConfiguration
@@ -467,6 +475,18 @@
 						AdditionalIncludeDirectories="$(IntDir)"
 					/>
 				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\res\Migrate_Small.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\StoreManager.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\StoreManager_Small.ico"
+				>
 			</File>
 			<File
 				RelativePath=".\res\Watchdog.ico"

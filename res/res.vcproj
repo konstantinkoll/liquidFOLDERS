@@ -1857,6 +1857,10 @@
 			>
 		</File>
 		<File
+			RelativePath=".\FileDrop_Small.ico"
+			>
+		</File>
+		<File
 			RelativePath=".\Flickr.png"
 			>
 		</File>
@@ -1962,6 +1966,10 @@
 		</File>
 		<File
 			RelativePath=".\Migrate_About.png"
+			>
+		</File>
+		<File
+			RelativePath=".\Migrate_Small.ico"
 			>
 		</File>
 		<File
@@ -2137,6 +2145,10 @@
 			>
 		</File>
 		<File
+			RelativePath=".\Store_Default_Small.ico"
+			>
+		</File>
+		<File
 			RelativePath="Store_Empty.ico"
 			>
 		</File>
@@ -2182,6 +2194,10 @@
 		</File>
 		<File
 			RelativePath=".\StoreManager_About.png"
+			>
+		</File>
+		<File
+			RelativePath=".\StoreManager_Small.ico"
 			>
 		</File>
 		<File

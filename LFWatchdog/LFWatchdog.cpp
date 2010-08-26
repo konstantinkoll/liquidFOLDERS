@@ -6,6 +6,7 @@
 #include "LFCommDlg.h"
 #include "resource.h"
 #include "LFWatchdog.h"
+#include "MenuIcons.h"
 #include <io.h>
 #include <shlobj.h>
 #include <shlwapi.h>
@@ -43,7 +44,7 @@ BOOL AddNotificationIcon(HWND hWnd)
 	nid.guidItem = __uuidof(LFIcon);
 	nid.uVersion = NOTIFYICON_VERSION_4;
 	nid.uCallbackMessage = WMAPP_NOTIFYCALLBACK;
-	nid.hIcon = (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IDI_ICON), IMAGE_ICON, sz, sz, LR_LOADTRANSPARENT);
+	nid.hIcon = (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IDI_ICON), IMAGE_ICON, sz, sz, LR_DEFAULTCOLOR);
 	PrepareTrayTip(nid.szTip, 128);
 	Shell_NotifyIcon(NIM_ADD, &nid);
 
@@ -159,6 +160,10 @@ void ShowMenu(HWND hTargetWnd)
 		return;
 	}
 
+	HBITMAP bmp1 = SetMenuItemIcon(hSubMenu, 2, ID_APP_NEWSTOREMANAGER);
+	HBITMAP bmp2 = SetMenuItemIcon(hSubMenu, 3, ID_APP_NEWFILEDROP);
+	HBITMAP bmp3 = SetMenuItemIcon(hSubMenu, 4, ID_APP_NEWMIGRATE);
+
 	SetMenuDefaultItem(hSubMenu, ID_APP_ABOUT, 0);
 	if (AboutWindow)
 		EnableMenuItem(hSubMenu, ID_APP_ABOUT, MF_BYCOMMAND | MF_GRAYED);
@@ -177,6 +182,9 @@ void ShowMenu(HWND hTargetWnd)
 	PostMessage(hTargetWnd, WM_NULL, 0, 0);
 
 	DestroyMenu(hMenu);
+	DeleteObject(bmp1);
+	DeleteObject(bmp2);
+	DeleteObject(bmp3);
 }
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)

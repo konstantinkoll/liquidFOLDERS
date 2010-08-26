@@ -33,6 +33,8 @@ LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
 IDR_APPLICATION         ICON                    "res\\FileDrop.ico"
+ID_APP_CHOOSEDEFAULTSTORE ICON                    "res\\Store_Default_Small.ico"
+ID_APP_NEWSTOREMANAGER  ICON                    "res\\StoreManager_Small.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -122,7 +124,7 @@ END
 STRINGTABLE 
 BEGIN
     IDS_ALWAYSONTOP         "&Immer im Vordergrund"
-    IDS_TOOLTIP             "Dateien hierher ziehen zum\nImport nach liquidFOLDERS"
+    IDS_TOOLTIP             "Dateien hierher ziehen zum\nImport nach liquidFOLDERS."
     IDS_NODEFAULTSTORE      "Kein Standard-Store"
 END
 
@@ -263,7 +265,7 @@ END
 STRINGTABLE 
 BEGIN
     IDS_ALWAYSONTOP         "Toujours au &top"
-    IDS_TOOLTIP             "Ici afiu de importer\ndans liquidFOLDERS"
+    IDS_TOOLTIP             "Ici afiu de importer\ndans liquidFOLDERS."
     IDS_NODEFAULTSTORE      "Pas de store standard"
 END
 
