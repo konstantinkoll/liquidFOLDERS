@@ -541,8 +541,6 @@ void CFileView::OnMouseMove(UINT nFlags, CPoint point)
 			InvalidateItem(HoverItem);
 		}
 	}
-
-	CWnd::OnMouseMove(nFlags, point);
 }
 
 void CFileView::OnMouseLeave()
@@ -555,7 +553,6 @@ void CFileView::OnMouseLeave()
 	}
 
 	MouseInView = FALSE;
-	CWnd::OnMouseLeave();
 }
 
 void CFileView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)

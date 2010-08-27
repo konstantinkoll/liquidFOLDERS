@@ -163,7 +163,6 @@ void CMapSelectionCtrl::OnPaint()
 void CMapSelectionCtrl::OnLButtonDown(UINT nFlags, CPoint point)
 {
 	UpdateLocation(point);
-	CWnd::OnLButtonDown(nFlags, point);
 }
 
 void CMapSelectionCtrl::OnMouseMove(UINT nFlags, CPoint point)
