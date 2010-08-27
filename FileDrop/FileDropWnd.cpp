@@ -151,22 +151,16 @@ int CFileDropWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	// Hintergrundbilder laden
 	m_Dropzone.Create(128, 128, ILC_COLOR32, 2, 1);
 
-	HINSTANCE hModIcons = LoadLibrary(_T("LFCORE.DLL"));
-	if (hModIcons)
-	{
-		HICON ic = (HICON)LoadImage(hModIcons, MAKEINTRESOURCE(IDI_STORE_Empty), IMAGE_ICON, 128, 128, LR_DEFAULTCOLOR);
-		m_Dropzone.Add(ic);
-		DestroyIcon(ic);
+	HICON ic = LFGetIcon(IDI_STORE_Empty, 128, 128);
+	m_Dropzone.Add(ic);
+	DestroyIcon(ic);
 
-		ic = (HICON)LoadImage(hModIcons, MAKEINTRESOURCE(IDI_STORE_Default), IMAGE_ICON, 128, 128, LR_DEFAULTCOLOR);
-		m_Dropzone.Add(ic);
-		DestroyIcon(ic);
-
-		FreeLibrary(hModIcons);
-	}
+	ic = LFGetIcon(IDI_STORE_Default, 128, 128);
+	m_Dropzone.Add(ic);
+	DestroyIcon(ic);
 
 	// Badge laden
-	hModIcons = LoadLibrary(_T("LFCOMMDLG.DLL"));
+	HMODULE hModIcons = LoadLibrary(_T("LFCOMMDLG.DLL"));
 	if (hModIcons)
 	{
 		m_hWarning = (HICON)LoadImage(hModIcons, IDI_EXCLAMATION, IMAGE_ICON, 24, 24, LR_DEFAULTCOLOR);

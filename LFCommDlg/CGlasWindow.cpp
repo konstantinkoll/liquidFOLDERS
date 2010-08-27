@@ -14,6 +14,7 @@ CGlasWindow::CGlasWindow()
 {
 	p_App = (LFApplication*)AfxGetApp();
 	hTheme = NULL;
+	m_Active = TRUE;
 	m_IsAeroWindow = FALSE;
 	ZeroMemory(&m_Margins, sizeof(MARGINS));
 }
@@ -303,7 +304,7 @@ void CGlasWindow::OnGetMinMaxInfo(MINMAXINFO* lpMMI)
 	}
 }
 
-void CGlasWindow::OnRButtonUp(UINT nFlags, CPoint point)
+void CGlasWindow::OnRButtonUp(UINT /*nFlags*/, CPoint point)
 {
 	ClientToScreen(&point);
 	DWORD Item = GetSystemMenu(FALSE)->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON | TPM_RETURNCMD, point.x, point.y, this);
