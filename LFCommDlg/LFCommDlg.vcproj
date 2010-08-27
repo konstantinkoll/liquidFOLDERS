@@ -383,6 +383,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CBottomArea.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\CCaptionBar.cpp"
 				>
 			</File>
@@ -602,6 +606,10 @@
 			>
 			<File
 				RelativePath=".\CAttributeProperties.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CBottomArea.h"
 				>
 			</File>
 			<File

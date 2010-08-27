@@ -4,7 +4,6 @@
 
 #pragma once
 #include "CMainView.h"
-#include "CBottomArea.h"
 #include "LFCommDlg.h"
 
 
