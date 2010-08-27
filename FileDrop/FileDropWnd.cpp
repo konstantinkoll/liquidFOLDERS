@@ -124,7 +124,7 @@ BEGIN_MESSAGE_MAP(CFileDropWnd, CGlasWindow)
 	ON_WM_MOUSELEAVE()
 	ON_WM_MOUSEHOVER()
 	ON_WM_NCLBUTTONDBLCLK()
-	ON_WM_RBUTTONDOWN()
+	ON_WM_RBUTTONUP()
 	ON_WM_SYSCOMMAND()
 	ON_WM_MOVE()
 	ON_COMMAND(SC_ALWAYSONTOP, OnAlwaysOnTop)
@@ -356,7 +356,7 @@ void CFileDropWnd::OnNcLButtonDblClk(UINT /*nFlags*/, CPoint /*point*/)
 	OnChooseDefaultStore();
 }
 
-void CFileDropWnd::OnRButtonDown(UINT /*nFlags*/, CPoint point)
+void CFileDropWnd::OnRButtonUp(UINT /*nFlags*/, CPoint point)
 {
 	CMenu menu;
 	menu.LoadMenu(IDM_POPUP);

@@ -26,6 +26,8 @@ protected:
 	HICON m_Icon;
 	BOOL m_IsEmpty;
 	BOOL m_Hover;
+	BOOL m_Pressed;
+	BOOL m_Dropped;
 	LFApplication* p_App;
 
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
@@ -35,6 +37,10 @@ protected:
 	afx_msg LRESULT OnThemeChanged();
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg void OnMouseLeave();
+	afx_msg void OnMouseHover(UINT nFlags, CPoint point);
+	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
+	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
+	afx_msg void OnRButtonUp(UINT nFlags, CPoint point);
 	DECLARE_MESSAGE_MAP()
 
 private:

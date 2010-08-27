@@ -52,6 +52,7 @@ protected:
 	afx_msg void OnEnable(BOOL bEnable);
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg void OnGetMinMaxInfo(MINMAXINFO* lpMMI);
+	afx_msg void OnRButtonUp(UINT nFlags, CPoint point);
 	DECLARE_MESSAGE_MAP()
 
 private:

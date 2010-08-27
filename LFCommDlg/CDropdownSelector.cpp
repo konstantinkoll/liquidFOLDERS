@@ -19,7 +19,7 @@ CDropdownSelector::CDropdownSelector()
 	hTheme = NULL;
 	m_Icon = NULL;
 	m_IsEmpty = TRUE;
-	m_Hover = FALSE;
+	m_Hover = m_Pressed = m_Dropped = FALSE;
 }
 
 BOOL CDropdownSelector::Create(CString EmptyHint, CGlasWindow* pParentWnd, UINT nID)
@@ -77,6 +77,10 @@ BEGIN_MESSAGE_MAP(CDropdownSelector, CWnd)
 	ON_WM_THEMECHANGED()
 	ON_WM_MOUSEMOVE()
 	ON_WM_MOUSELEAVE()
+	ON_WM_MOUSEHOVER()
+	ON_WM_LBUTTONDOWN()
+	ON_WM_LBUTTONUP()
+	ON_WM_RBUTTONUP()
 END_MESSAGE_MAP()
 
 int CDropdownSelector::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -130,7 +134,7 @@ void CDropdownSelector::OnPaint()
 
 	CGlasWindow* pCtrlSite = (CGlasWindow*)GetParent();
 	pCtrlSite->DrawFrameBackground(&dc, rclient);
-	const BYTE Alpha = m_Hover ? 0xF0 : 0xD0;
+	const BYTE Alpha = (m_Hover || m_Dropped) ? 0xF0 : 0xD0;
 
 	CRect rcontent(rclient);
 	switch (pCtrlSite->GetDesign())
@@ -189,14 +193,14 @@ void CDropdownSelector::OnPaint()
 			}
 		}
 
-		p_App->zDrawThemeBackground(hTheme, dc, CP_DROPDOWNBUTTON, m_Hover ? CBXS_HOT : CBXS_NORMAL, rarrow, rclip);
+		p_App->zDrawThemeBackground(hTheme, dc, CP_DROPDOWNBUTTON, m_Pressed ? CBXS_PRESSED : (m_Hover && !m_Dropped) ? CBXS_HOT : CBXS_NORMAL, rarrow, rclip);
 	}
 	else
 	{
-		if (m_Hover)
+		if (m_Hover && !m_Dropped)
 			dc.DrawFrameControl(rarrow, DFC_BUTTON, DFCS_TRANSPARENT | 16 | DFCS_HOT);
 
-		dc.DrawFrameControl(rarrow, DFC_MENU, DFCS_TRANSPARENT | 16 | (m_Hover ? DFCS_HOT : DFCS_FLAT));
+		dc.DrawFrameControl(rarrow, DFC_MENU, DFCS_TRANSPARENT | 16 | (m_Pressed ? DFCS_PUSHED : (m_Hover && !m_Dropped) ? DFCS_HOT : DFCS_FLAT));
 	}
 
 	CRect rtext(rcontent);
@@ -219,7 +223,7 @@ void CDropdownSelector::OnPaint()
 
 		if (!m_Caption.IsEmpty())
 		{
-			dc.SetTextColor(m_Hover ? c1 : c2);
+			dc.SetTextColor((m_Hover || m_Dropped) ? c1 : c2);
 			dc.DrawText(m_Caption, -1, rtext, DT_SINGLELINE | DT_END_ELLIPSIS | DT_VCENTER);
 			rtext.left += dc.GetTextExtent(m_Caption, m_Caption.GetLength()).cx+BORDER;
 		}
@@ -272,16 +276,14 @@ LRESULT CDropdownSelector::OnThemeChanged()
 		if (hTheme)
 			p_App->zCloseThemeData(hTheme);
 
-		hTheme = p_App->zOpenThemeData(m_hWnd, _T("ComboBox"));
+		hTheme = p_App->zOpenThemeData(m_hWnd, VSCLASS_COMBOBOX);
 	}
 
-	return TRUE;
+	return 0;
 }
 
 void CDropdownSelector::OnMouseMove(UINT nFlags, CPoint point)
 {
-	CWnd::OnMouseMove(nFlags, point);
-
 	if (!m_Hover)
 	{
 		m_Hover = TRUE;
@@ -298,8 +300,55 @@ void CDropdownSelector::OnMouseMove(UINT nFlags, CPoint point)
 
 void CDropdownSelector::OnMouseLeave()
 {
-	m_Hover = FALSE;
+	m_Hover = m_Pressed = FALSE;
 	Invalidate();
+}
 
-	CWnd::OnMouseLeave();
+void CDropdownSelector::OnMouseHover(UINT nFlags, CPoint point)
+{
+	if ((nFlags & (MK_LBUTTON | MK_MBUTTON | MK_RBUTTON | MK_XBUTTON1 | MK_XBUTTON2))==0)
+	{
+		ClientToScreen(&point);
+		//m_TooltipCtrl.Track(point, m_Tooltip);
+	}
+	else
+	{
+		//m_TooltipCtrl.Deactivate();
+	}
+}
+
+void CDropdownSelector::OnLButtonDown(UINT nFlags, CPoint point)
+{
+	if (m_Dropped)
+	{
+		m_Dropped = FALSE;
+	}
+	else
+	{
+		m_Pressed = m_Dropped = TRUE;
+		SetCapture();
+	}
+
+	Invalidate();
+}
+
+void CDropdownSelector::OnLButtonUp(UINT nFlags, CPoint point)
+{
+	if (m_Pressed)
+	{
+		m_Pressed = FALSE;
+		Invalidate();
+
+		ReleaseCapture();
+	}
+}
+
+void CDropdownSelector::OnRButtonUp(UINT nFlags, CPoint point)
+{
+	CRect rect;
+	GetWindowRect(rect);
+	point += rect.TopLeft();
+	GetParent()->ScreenToClient(&point);
+
+	GetParent()->SendMessage(WM_RBUTTONUP, (WPARAM)nFlags, (LPARAM)((point.y<<16) | point.x));
 }

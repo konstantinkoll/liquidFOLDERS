@@ -144,6 +144,7 @@ BEGIN_MESSAGE_MAP(CGlasWindow, CWnd)
 	ON_WM_ENABLE()
 	ON_WM_SIZE()
 	ON_WM_GETMINMAXINFO()
+	ON_WM_RBUTTONUP()
 END_MESSAGE_MAP()
 
 int CGlasWindow::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -300,4 +301,11 @@ void CGlasWindow::OnGetMinMaxInfo(MINMAXINFO* lpMMI)
 			((m_Margins.cyTopHeight>0) ? m_Margins.cyTopHeight : 0)+
 			((m_Margins.cyBottomHeight>0) ? m_Margins.cyBottomHeight : 0));
 	}
+}
+
+void CGlasWindow::OnRButtonUp(UINT nFlags, CPoint point)
+{
+	ClientToScreen(&point);
+	DWORD Item = GetSystemMenu(FALSE)->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON | TPM_RETURNCMD, point.x, point.y, this);
+	SendMessage(WM_SYSCOMMAND, (WPARAM)Item);
 }
