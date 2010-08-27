@@ -428,6 +428,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Other\Store_Full.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\Other\Store_Full.png"
+				>
+			</File>
+			<File
 				RelativePath=".\Other\Unlink.ico"
 				>
 			</File>
@@ -1973,10 +1981,6 @@
 			>
 		</File>
 		<File
-			RelativePath=".\Migrate_Tiny.ico"
-			>
-		</File>
-		<File
 			RelativePath=".\MisterWong.png"
 			>
 		</File>
@@ -2165,14 +2169,6 @@
 			>
 		</File>
 		<File
-			RelativePath="Store_Full.ico"
-			>
-		</File>
-		<File
-			RelativePath="Store_Full.png"
-			>
-		</File>
-		<File
 			RelativePath=".\Store_Server.ico"
 			>
 		</File>
@@ -2198,10 +2194,6 @@
 		</File>
 		<File
 			RelativePath=".\StoreManager_Small.ico"
-			>
-		</File>
-		<File
-			RelativePath=".\StoreManager_Tiny.ico"
 			>
 		</File>
 		<File

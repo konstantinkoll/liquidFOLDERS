@@ -8,6 +8,8 @@
 #include "liquidFOLDERS.h"
 #include "CCategoryCategorizer.h"
 #include "CAttributeCategorizer.h"
+#include "MenuIcons.h"
+#include "afxsettingsstore.h"
 #include <io.h>
 #include <shlguid.h>
 #include <shlobj.h>
@@ -39,18 +41,32 @@ IMPLEMENT_OLECREATE_EX(CFolderItem, _T("LFNamespaceExtension.RootFolder"),
 // by concatenating the class name with "Factory".
 BOOL CFolderItem::CFolderItemFactory::UpdateRegistry(BOOL bRegister)
 {
+	CSettingsStoreSP regSP;
+	CSettingsStore& reg = regSP.Create(TRUE, FALSE);
+
 	if (bRegister)
 	{
 		BOOL ret = AfxOleRegisterServerClass(m_clsid, m_lpszProgID, m_lpszProgID, m_lpszProgID, OAT_DISPATCH_OBJECT);
 
 		// Register the namespace extension
 		CNSEFolder::RegisterExtension(RUNTIME_CLASS(CFolderItem));
+
+		// Move to delegate folders
+		reg.DeleteKey(_T("Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\MyComputer\\NameSpace\\{3F2D914F-FE57-414F-9F88-A377C7841DA4}"), TRUE);
+
+		if (reg.Open(_T("Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\MyComputer\\NameSpace\\DelegateFolders")))
+			reg.CreateKey(_T("{3F2D914F-FE57-414F-9F88-A377C7841DA4}"));
+
 		return ret;
 	}
 	else
 	{
 		// Unregister the namespace extension
 		CNSEFolder::UnregisterExtension(RUNTIME_CLASS(CFolderItem));
+
+		// Remove delegate folder
+		reg.DeleteKey(_T("Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\MyComputer\\NameSpace\\DelegateFolders\\{3F2D914F-FE57-414F-9F88-A377C7841DA4}"), TRUE);
+
 		return AfxOleUnregisterClass(m_clsid, m_lpszProgID);
 	}
 }
@@ -95,6 +111,9 @@ void CFolderItem::GetExtensionTargetInfo(CExtensionTargetInfo& info)
 	nti->attributes = (NSEItemAttributes)(NSEIA_CFOLDERITEM | NSEIA_HasSubFolder);
 	nti->iconFile = theApp.m_CoreFile;
 	nti->iconIndex = IDI_FLD_Default-1;
+	nti->AddRootNodeProperty(_T("SortOrderIndex"), (UINT)64);
+	nti->AddRootNodeProperty(_T("System.PropList.DetailsPaneNullSelect"), _T("prop:"));
+	nti->AddRootNodeProperty(_T("System.PropList.DetailsPaneNullSelectTitle"), _T("prop:~System.ItemNameDisplay;~System.ItemTypeText"));
 	info.AddTarget(nti);
 }
 
@@ -765,7 +784,10 @@ void CFolderItem::GetMenuItems(CGetMenuitemsEventArgs& e)
 
 			ENSURE(tmpStr.LoadString(IDS_MENU_CreateNewStore));
 			ENSURE(tmpHint.LoadString(IDS_HINT_CreateNewStore));
-			e.menu->AddItem(tmpStr, _T(VERB_CREATENEWSTORE), tmpHint)->SetEnabled(!theApp.m_PathRunCmd.IsEmpty());
+
+			CShellMenuItem* item = e.menu->AddItem(tmpStr, _T(VERB_CREATENEWSTORE), tmpHint);
+			item->SetEnabled(!theApp.m_PathRunCmd.IsEmpty());
+			theApp.SetCoreMenuIcon(item, IDI_STORE_Empty);
 		}
 
 		if (e.children->GetCount()==1)
@@ -829,6 +851,10 @@ void CFolderItem::GetMenuItems(CGetMenuitemsEventArgs& e)
 
 void CFolderItem::OnMergeFrameMenu(CMergeFrameMenuEventArgs& e)
 {
+	int cx;
+	int cy;
+	theApp.GetIconSize(cx, cy);
+
 	CShellMenuItem* item = e.menu->AddItem(_T("&liquidFOLDERS"));
 	item->SetHasSubMenu(TRUE);
 
@@ -838,17 +864,28 @@ void CFolderItem::OnMergeFrameMenu(CMergeFrameMenuEventArgs& e)
 	CString tmpHint;
 	ENSURE(tmpStr.LoadString(IDS_MENU_About));
 	ENSURE(tmpHint.LoadString(IDS_HINT_About));
+
 	subMenu->AddItem(tmpStr, _T(VERB_ABOUT), tmpHint)->SetEnabled(!theApp.m_PathRunCmd.IsEmpty());
 
 	subMenu->AddItem(_T(""))->SetSeparator(TRUE);
 
 	ENSURE(tmpStr.LoadString(IDS_MENU_StoreManager));
 	ENSURE(tmpHint.LoadString(IDS_HINT_StoreManager));
-	subMenu->AddItem(tmpStr, _T(VERB_STOREMANAGER), tmpHint)->SetEnabled(!theApp.m_PathStoreManager.IsEmpty());
+
+	item = subMenu->AddItem(tmpStr, _T(VERB_STOREMANAGER), tmpHint);
+	item->SetEnabled(!theApp.m_PathStoreManager.IsEmpty());
+	HICON hIcon = (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IDI_StoreManager), IMAGE_ICON, cx, cy, LR_DEFAULTCOLOR);
+	item->SetBitmap(IconToBitmap(hIcon, cx, cy));
+	DestroyIcon(hIcon);
 
 	ENSURE(tmpStr.LoadString(IDS_MENU_Migrate));
 	ENSURE(tmpHint.LoadString(IDS_HINT_Migrate));
-	subMenu->AddItem(tmpStr, _T(VERB_MIGRATE), tmpHint)->SetEnabled(!theApp.m_PathMigrate.IsEmpty());;
+	item = subMenu->AddItem(tmpStr, _T(VERB_MIGRATE), tmpHint);
+	item->SetEnabled(!theApp.m_PathMigrate.IsEmpty());
+	hIcon = (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IDI_Migrate), IMAGE_ICON, cx, cy, LR_DEFAULTCOLOR);
+	item->SetBitmap(IconToBitmap(hIcon, cx, cy));
+	DestroyIcon(hIcon);
+
 }
 
 BOOL CFolderItem::OnExecuteMenuItem(CExecuteMenuitemsEventArgs& e)

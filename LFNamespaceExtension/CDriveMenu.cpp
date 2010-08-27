@@ -3,6 +3,7 @@
 #include "LFCore.h"
 #include "LFNamespaceExtension.h"
 #include "CDriveMenu.h"
+#include "MenuIcons.h"
 #include "resource.h"
 
 #define HIDA_GetPIDLFolder(pida) (LPITEMIDLIST)(((LPBYTE)pida)+(pida)->aoffset[0])
@@ -131,7 +132,23 @@ void CDriveMenu::OnGetMenuItems(CGetMenuitemsEventArgs& e)
 		ENSURE(tmpHint.LoadString(IDS_HINT_CreateNewStore));
 
 		e.menu->AddItem(_T(""))->SetSeparator(TRUE);
-		e.menu->AddItem(tmpStr, _T(VERB_CREATENEWSTOREDRIVE), tmpHint)->SetEnabled(!theApp.m_PathRunCmd.IsEmpty());
+
+		CShellMenuItem* item = e.menu->AddItem(tmpStr, _T(VERB_CREATENEWSTOREDRIVE), tmpHint);
+		item->SetEnabled(!theApp.m_PathRunCmd.IsEmpty());
+
+		HMODULE hModCore = LoadLibrary("LFCORE.DLL");
+		if (hModCore)
+		{
+			int cx;
+			int cy;
+			theApp.GetIconSize(cx, cy);
+
+			HICON hIcon = (HICON)LoadImage(hModCore, MAKEINTRESOURCE((Drive=='\1') ? IDI_STORE_Empty : IDI_STORE_Bag), IMAGE_ICON, cx, cy, LR_DEFAULTCOLOR);
+			FreeLibrary(hModCore);
+
+			item->SetBitmap(IconToBitmap(hIcon, cx, cy));
+			DestroyIcon(hIcon);
+		}
 	}
 }
 

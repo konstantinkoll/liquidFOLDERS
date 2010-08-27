@@ -5,6 +5,7 @@
 #include "stdafx.h"
 #include "LFNamespaceExtension.h"
 #include "LFCore.h"
+#include "MenuIcons.h"
 #include "afxsettingsstore.h"
 #include <eznamespaceextensions.h>
 #include <ezshellextensions.h>
@@ -147,6 +148,34 @@ BOOL LFNamespaceExtensionApp::GetApplicationPath(CString App, CString& Path)
 	Path.Append(App);
 	Path.Append(_T(".exe"));
 	return (_access(Path, 0)==0);
+}
+
+void LFNamespaceExtensionApp::GetIconSize(int& cx, int& cy)
+{
+	OSVERSIONINFO osInfo;
+	ZeroMemory(&osInfo, sizeof(OSVERSIONINFO));
+	osInfo.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
+	GetVersionEx(&osInfo);
+
+	cx = GetSystemMetrics((osInfo.dwMajorVersion<6) ? SM_CXMENUCHECK : SM_CXSMICON);
+	cy = GetSystemMetrics((osInfo.dwMajorVersion<6) ? SM_CYMENUCHECK : SM_CYSMICON);
+}
+
+void LFNamespaceExtensionApp::SetCoreMenuIcon(void* item, UINT ResID)
+{
+	HMODULE hModCore = LoadLibrary("LFCORE.DLL");
+	if (hModCore)
+	{
+		int cx;
+		int cy;
+		GetIconSize(cx, cy);
+
+		HICON hIcon = (HICON)LoadImage(hModCore, MAKEINTRESOURCE(ResID), IMAGE_ICON, cx, cy, LR_DEFAULTCOLOR);
+		FreeLibrary(hModCore);
+
+		((EZNamespaceExtensionsMFC::CShellMenuItem*)item)->SetBitmap(IconToBitmap(hIcon, cx, cy));
+		DestroyIcon(hIcon);
+	}
 }
 
 

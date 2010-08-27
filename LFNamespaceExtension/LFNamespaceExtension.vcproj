@@ -413,6 +413,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\include\MenuIcons.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Resource.h"
 				>
 			</File>
@@ -435,7 +439,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\Migrate_Tiny.ico"
+				RelativePath=".\res\Migrate_Small.ico"
 				>
 			</File>
 			<File
@@ -444,10 +448,6 @@
 			</File>
 			<File
 				RelativePath=".\res\StoreManager_Small.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\res\StoreManager_Tiny.ico"
 				>
 			</File>
 			<File
@@ -498,6 +498,10 @@
 			</File>
 			<File
 				RelativePath=".\LFSendTo.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\include\MenuIcons.cpp"
 				>
 			</File>
 			<File

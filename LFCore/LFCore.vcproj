@@ -750,10 +750,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\Store_Full.ico"
-				>
-			</File>
-			<File
 				RelativePath=".\res\Store_Server.ico"
 				>
 			</File>

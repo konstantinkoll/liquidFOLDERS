@@ -16,6 +16,8 @@ public:
 	virtual BOOL InitInstance();
 
 	BOOL HideFileExt();
+	void GetIconSize(int& cx, int& cy);
+	void SetCoreMenuIcon(void* item, UINT ResID);
 
 	CString m_PathRunCmd;
 	CString m_PathStoreManager;

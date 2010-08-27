@@ -388,6 +388,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\include\MenuIcons.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\stdafx.cpp"
 				>
 				<FileConfiguration
