@@ -196,6 +196,11 @@ LFCore_API void LFCreateSendTo(bool force)
 		}
 }
 
+LFCore_API HICON LFGetIcon(unsigned int ResID, int cx, int cy)
+{
+	return (HICON)LoadImage(LFCoreModuleHandle, MAKEINTRESOURCE(ResID), IMAGE_ICON, cx, cy, LR_DEFAULTCOLOR);
+}
+
 
 LFCore_API LFAttributeDescriptor* LFAllocAttributeDescriptor()
 {

@@ -46,6 +46,8 @@ LFCore_API bool LFIsLicensed(LFLicense* License=NULL, bool Reload=false);
 // Wenn force==false wird der Link nur beim ersten Aufruf erzeugt
 LFCore_API void LFCreateSendTo(bool force=false);
 
+// Gibt ein Icon dieser DLL zurück
+LFCore_API HICON LFGetIcon(unsigned int ResID, int cx, int cy);
 
 
 // Neuen LFAttributeDescriptor erzeugen

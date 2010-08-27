@@ -163,19 +163,13 @@ void LFNamespaceExtensionApp::GetIconSize(int& cx, int& cy)
 
 void LFNamespaceExtensionApp::SetCoreMenuIcon(void* item, UINT ResID)
 {
-	HMODULE hModCore = LoadLibrary("LFCORE.DLL");
-	if (hModCore)
-	{
-		int cx;
-		int cy;
-		GetIconSize(cx, cy);
+	int cx;
+	int cy;
+	GetIconSize(cx, cy);
 
-		HICON hIcon = (HICON)LoadImage(hModCore, MAKEINTRESOURCE(ResID), IMAGE_ICON, cx, cy, LR_DEFAULTCOLOR);
-		FreeLibrary(hModCore);
-
-		((EZNamespaceExtensionsMFC::CShellMenuItem*)item)->SetBitmap(IconToBitmap(hIcon, cx, cy));
-		DestroyIcon(hIcon);
-	}
+	HICON hIcon = LFGetIcon(ResID, cx, cy);
+	((EZNamespaceExtensionsMFC::CShellMenuItem*)item)->SetBitmap(IconToBitmap(hIcon, cx, cy));
+	DestroyIcon(hIcon);
 }
 
 
