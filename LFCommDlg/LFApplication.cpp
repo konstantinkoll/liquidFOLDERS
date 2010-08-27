@@ -56,6 +56,9 @@ LFApplication::LFApplication(UINT _HasGUI)
 	GetVersionEx(&osInfo);
 	OSVersion = (osInfo.dwMajorVersion<6) ? OS_XP : ((osInfo.dwMajorVersion==6) && (osInfo.dwMinorVersion==0)) ? OS_Vista : OS_Seven;
 
+	// DLL-Hijacking verhindern
+	SetDllDirectory(_T(""));
+
 	// Nachrichten
 	MessageIDs = LFGetMessageIDs();
 
