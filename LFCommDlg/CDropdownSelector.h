@@ -4,6 +4,26 @@
 
 #pragma once
 #include "CGlasWindow.h"
+#include "CExplorerList.h"
+#include "CBottomArea.h"
+
+
+// CDropdownWindow
+//
+
+class AFX_EXT_CLASS CDropdownWindow : public CWnd
+{
+public:
+	CDropdownWindow();
+
+	BOOL Create(CWnd* pParentWnd);
+
+protected:
+	CExplorerList m_List;
+	CBottomArea m_BottomArea;
+
+	DECLARE_MESSAGE_MAP()
+};
 
 
 // CDropdownSelector
@@ -13,6 +33,8 @@ class AFX_EXT_CLASS CDropdownSelector : public CWnd
 {
 public:
 	CDropdownSelector();
+
+	virtual CDropdownWindow* GetDropdownWindow();
 
 	BOOL Create(CString EmptyHint, CGlasWindow* pParentWnd, UINT nID);
 	void SetEmpty(BOOL Repaint=TRUE);
@@ -29,6 +51,7 @@ protected:
 	BOOL m_Pressed;
 	BOOL m_Dropped;
 	LFApplication* p_App;
+	CDropdownWindow* p_DropWindow;
 
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();

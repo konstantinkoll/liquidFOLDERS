@@ -10,7 +10,7 @@ LFTooltip::LFTooltip()
 
 BOOL LFTooltip::Create(CWnd* pWndParent)
 {
-	CString className = AfxRegisterWndClass(CS_DROPSHADOW | CS_SAVEBITS, NULL, NULL);
+	CString className = AfxRegisterWndClass(CS_DROPSHADOW | CS_SAVEBITS, LoadCursor(NULL, IDC_ARROW));
 	return CWnd::CreateEx(0, className, _T(""), WS_POPUP, 0, 0, 0, 0, pWndParent->GetSafeHwnd(), NULL);
 }
 

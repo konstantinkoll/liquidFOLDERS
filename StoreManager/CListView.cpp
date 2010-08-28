@@ -26,7 +26,7 @@ void CListView::Create(CWnd* pParentWnd, LFSearchResult* _result, UINT _ViewID, 
 {
 	m_HasCategories = _result->m_HasCategories;
 
-	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, NULL, NULL, NULL);
+	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS);
 
 	const DWORD dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN;
 	CRect rect;

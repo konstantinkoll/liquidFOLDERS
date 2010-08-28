@@ -35,7 +35,7 @@ void CCalendarDayView::AdjustLayout()
 
 void CCalendarDayView::Create(CWnd* _pParentWnd, LFSearchResult* _result, int _FocusItem)
 {
-	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, NULL, NULL, NULL);
+	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS);
 
 	const DWORD dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN;
 	CRect rect;

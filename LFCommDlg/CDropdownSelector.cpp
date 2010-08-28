@@ -7,6 +7,27 @@
 #include "LFCommDlg.h"
 
 
+// CDropdownWindow
+//
+
+CDropdownWindow::CDropdownWindow()
+	: CWnd()
+{
+}
+
+BOOL CDropdownWindow::Create(CWnd* pParentWnd)
+{
+	CString className = AfxRegisterWndClass(CS_DBLCLKS, LoadCursor(NULL, IDC_ARROW));
+	return CWnd::CreateEx(WS_EX_TOOLWINDOW, className, _T(""), WS_BORDER | WS_CHILD, 0, 0, 0, 0, pParentWnd->GetSafeHwnd(), NULL);
+}
+
+
+BEGIN_MESSAGE_MAP(CDropdownWindow, CWnd)
+
+END_MESSAGE_MAP()
+
+
+
 // CDropdownSelector
 //
 
@@ -16,17 +37,23 @@ CDropdownSelector::CDropdownSelector()
 	: CWnd()
 {
 	p_App = (LFApplication*)AfxGetApp();
+	p_DropWindow = NULL;
 	hTheme = NULL;
 	m_Icon = NULL;
 	m_IsEmpty = TRUE;
 	m_Hover = m_Pressed = m_Dropped = FALSE;
 }
 
+CDropdownWindow* CDropdownSelector::GetDropdownWindow()
+{
+	return new CDropdownWindow();
+}
+
 BOOL CDropdownSelector::Create(CString EmptyHint, CGlasWindow* pParentWnd, UINT nID)
 {
 	m_EmptyHint = EmptyHint;
 
-	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, LoadCursor(NULL, IDC_ARROW), NULL, NULL);
+	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, LoadCursor(NULL, IDC_ARROW));
 
 	const DWORD dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE;
 	CRect rect;
@@ -99,6 +126,12 @@ void CDropdownSelector::OnDestroy()
 		p_App->zCloseThemeData(hTheme);
 	if (m_Icon)
 		DestroyIcon(m_Icon);
+
+	if (p_DropWindow)
+	{
+		p_DropWindow->DestroyWindow();
+		delete p_DropWindow;
+	}
 
 	CWnd::OnDestroy();
 }
@@ -321,12 +354,25 @@ void CDropdownSelector::OnLButtonDown(UINT nFlags, CPoint point)
 {
 	if (m_Dropped)
 	{
+		p_DropWindow->DestroyWindow();
+		delete p_DropWindow;
+		p_DropWindow = NULL;
+
 		m_Dropped = FALSE;
 	}
 	else
 	{
 		m_Pressed = m_Dropped = TRUE;
 		SetCapture();
+
+		p_DropWindow = GetDropdownWindow();
+		p_DropWindow->Create(GetDesktopWindow());
+
+		CRect rect;
+		GetClientRect(rect);
+		ClientToScreen(rect);
+
+		p_DropWindow->SetWindowPos(&wndTopMost, rect.left+2, rect.bottom-1, rect.Width()-4, 250, SWP_SHOWWINDOW);
 	}
 
 	Invalidate();

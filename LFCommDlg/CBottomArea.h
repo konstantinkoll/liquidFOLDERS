@@ -2,6 +2,8 @@
 // CBottomArea.h: Schnittstelle der Klasse CBottomArea
 //
 
+#pragma once
+
 
 // CBottomArea
 //
