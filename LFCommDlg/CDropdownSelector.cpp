@@ -15,17 +15,74 @@ CDropdownWindow::CDropdownWindow()
 {
 }
 
-BOOL CDropdownWindow::Create(CWnd* pParentWnd)
+BOOL CDropdownWindow::Create(CWnd* pOwnerWnd, UINT _DialogResID)
 {
-	CString className = AfxRegisterWndClass(CS_DBLCLKS, LoadCursor(NULL, IDC_ARROW));
-	return CWnd::CreateEx(WS_EX_TOOLWINDOW, className, _T(""), WS_BORDER | WS_CHILD, 0, 0, 0, 0, pParentWnd->GetSafeHwnd(), NULL);
+	m_DialogResID = _DialogResID;
+
+	CString className = AfxRegisterWndClass(CS_DROPSHADOW | CS_DBLCLKS, LoadCursor(NULL, IDC_ARROW));
+
+	BOOL res = CWnd::CreateEx(WS_EX_TOOLWINDOW, className, _T(""), WS_BORDER | WS_CHILD, 0, 0, 0, 0, GetDesktopWindow()->GetSafeHwnd(), NULL);
+	SetOwner(pOwnerWnd);
+	return res;
+}
+
+void CDropdownWindow::AdjustLayout()
+{
+	if (!IsWindow(m_wndList.GetSafeHwnd()))
+		return;
+
+	CRect rect;
+	GetClientRect(rect);
+
+	if (IsWindow(m_wndBottomArea.GetSafeHwnd()))
+	{
+		const UINT BottomHeight = MulDiv(45, LOWORD(GetDialogBaseUnits()), 8);
+		m_wndBottomArea.SetWindowPos(NULL, rect.left, rect.bottom-BottomHeight, rect.Width(), BottomHeight, SWP_NOACTIVATE | SWP_NOZORDER);
+		rect.bottom -= BottomHeight;
+	}
+
+	m_wndList.SetWindowPos(NULL, rect.left, rect.top, rect.Width(), rect.bottom, SWP_NOACTIVATE | SWP_NOZORDER);
+}
+
+void CDropdownWindow::SetDesign(UINT _Design)
+{
+	m_wndList.SetBkColor(_Design==GWD_DEFAULT ? GetSysColor(COLOR_WINDOW) : 0xFFFFFF);
+	m_wndList.SetTextColor(_Design==GWD_DEFAULT ? GetSysColor(COLOR_WINDOWTEXT) : 0x000000);
+	m_wndList.SetTextBkColor(_Design==GWD_DEFAULT ? GetSysColor(COLOR_WINDOW) : 0xFFFFFF);
+
+	m_wndBottomArea.SetDesign(_Design);
 }
 
 
 BEGIN_MESSAGE_MAP(CDropdownWindow, CWnd)
-
+	ON_WM_CREATE()
+	ON_WM_SIZE()
 END_MESSAGE_MAP()
 
+int CDropdownWindow::OnCreate(LPCREATESTRUCT lpCreateStruct)
+{
+	if (CWnd::OnCreate(lpCreateStruct)==-1)
+		return -1;
+
+	const DWORD dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE;
+
+	CRect rect;
+	rect.SetRectEmpty();
+	m_wndList.Create(dwStyle, rect, this, 1);
+	m_wndList.SetExtendedStyle(LVS_EX_DOUBLEBUFFER | LVS_EX_ONECLICKACTIVATE);
+	m_wndList.EnableTheming();
+
+	if (m_DialogResID)
+		m_wndBottomArea.Create(this, m_DialogResID, dwStyle, 2);
+
+	return 0;
+}
+
+void CDropdownWindow::OnSize(UINT nType, int cx, int cy)
+{
+	CWnd::OnSize(nType, cx, cy);
+	AdjustLayout();
+}
 
 
 // CDropdownSelector
@@ -44,9 +101,10 @@ CDropdownSelector::CDropdownSelector()
 	m_Hover = m_Pressed = m_Dropped = FALSE;
 }
 
-CDropdownWindow* CDropdownSelector::GetDropdownWindow()
+void CDropdownSelector::CreateDropdownWindow()
 {
-	return new CDropdownWindow();
+	p_DropWindow = new CDropdownWindow();
+	p_DropWindow->Create(this, 2000);
 }
 
 BOOL CDropdownSelector::Create(CString EmptyHint, CGlasWindow* pParentWnd, UINT nID)
@@ -365,14 +423,14 @@ void CDropdownSelector::OnLButtonDown(UINT nFlags, CPoint point)
 		m_Pressed = m_Dropped = TRUE;
 		SetCapture();
 
-		p_DropWindow = GetDropdownWindow();
-		p_DropWindow->Create(GetDesktopWindow());
-
 		CRect rect;
 		GetClientRect(rect);
 		ClientToScreen(rect);
 
-		p_DropWindow->SetWindowPos(&wndTopMost, rect.left+2, rect.bottom-1, rect.Width()-4, 250, SWP_SHOWWINDOW);
+		CreateDropdownWindow();
+
+		p_DropWindow->SetDesign(((CGlasWindow*)GetParent())->GetDesign());
+		p_DropWindow->SetWindowPos(&wndTopMost, rect.left+1, rect.bottom-1, rect.Width()-2, 250, SWP_SHOWWINDOW);
 	}
 
 	Invalidate();

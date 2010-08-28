@@ -16,12 +16,18 @@ class AFX_EXT_CLASS CDropdownWindow : public CWnd
 public:
 	CDropdownWindow();
 
-	BOOL Create(CWnd* pParentWnd);
+	virtual void AdjustLayout();
+
+	BOOL Create(CWnd* pOwnerWnd, UINT _DialogResID);
+	void SetDesign(UINT _Design);
 
 protected:
-	CExplorerList m_List;
-	CBottomArea m_BottomArea;
+	CExplorerList m_wndList;
+	CBottomArea m_wndBottomArea;
+	UINT m_DialogResID;
 
+	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
+	afx_msg void OnSize(UINT nType, int cx, int cy);
 	DECLARE_MESSAGE_MAP()
 };
 
@@ -34,7 +40,7 @@ class AFX_EXT_CLASS CDropdownSelector : public CWnd
 public:
 	CDropdownSelector();
 
-	virtual CDropdownWindow* GetDropdownWindow();
+	virtual void CreateDropdownWindow();
 
 	BOOL Create(CString EmptyHint, CGlasWindow* pParentWnd, UINT nID);
 	void SetEmpty(BOOL Repaint=TRUE);
