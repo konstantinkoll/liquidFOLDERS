@@ -114,6 +114,14 @@ BEGIN
     CONTROL         "&Delete imported files",IDC_DELETEIMPORTED,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,162,9,81,10
 END
 
+IDD_CHOOSEFOLDER DIALOGEX 0, 0, 102, 28
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN
+EXSTYLE WS_EX_CONTROLPARENT
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "Choose &other folder...",IDOK,7,7,88,14
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -152,8 +160,12 @@ BEGIN
     IDS_NOSELECTION_HINT    "Click on the checkboxes in the tree below to select a folder."
     IDS_SELECTION_CAPTION   "You have selected %d folders"
     IDS_SELECTION_HINT      "These folders contain %d files (%s)."
-	IDS_FOLDER_CAPTION      "Source:"
-	IDS_FOLDER_HINT         "Click here to select a folder"
+    IDS_FOLDER_CAPTION      "Source:"
+    IDS_FOLDER_HINT         "Click here to select a folder"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_STORE_CAPTION       "Destination store:"
     IDS_STORE_HINT          "Click here to select the destination store"
 END

@@ -381,6 +381,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CPIDLSelector.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\CTreeView.cpp"
 				>
 			</File>
@@ -440,6 +444,10 @@
 			</File>
 			<File
 				RelativePath=".\CMainView.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CPIDLSelector.h"
 				>
 			</File>
 			<File

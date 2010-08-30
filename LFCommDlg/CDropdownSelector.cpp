@@ -3,7 +3,6 @@
 //
 
 #include "stdafx.h"
-#include "CDropdownSelector.h"
 #include "LFCommDlg.h"
 
 
@@ -50,7 +49,18 @@ void CDropdownWindow::SetDesign(UINT _Design)
 	m_wndList.SetTextColor(_Design==GWD_DEFAULT ? GetSysColor(COLOR_WINDOWTEXT) : 0x000000);
 	m_wndList.SetTextBkColor(_Design==GWD_DEFAULT ? GetSysColor(COLOR_WINDOW) : 0xFFFFFF);
 
-	m_wndBottomArea.SetDesign(_Design);
+	if (((LFApplication*)AfxGetApp())->OSVersion==OS_XP)
+	{
+		LVGROUPMETRICS metrics;
+		ZeroMemory(&metrics, sizeof(LVGROUPMETRICS));
+		metrics.cbSize = sizeof(LVGROUPMETRICS);
+		metrics.mask = LVGMF_TEXTCOLOR;
+		metrics.crHeader = (_Design==GWD_DEFAULT) ? GetSysColor(COLOR_WINDOWTEXT) : 0x993300;
+		m_wndList.SetGroupMetrics(&metrics);
+	}
+
+	if (IsWindow(m_wndBottomArea.GetSafeHwnd()))
+		m_wndBottomArea.SetDesign(_Design);
 }
 
 
@@ -64,12 +74,12 @@ int CDropdownWindow::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CWnd::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
-	const DWORD dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE;
+	const DWORD dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | LVS_AUTOARRANGE;
 
 	CRect rect;
 	rect.SetRectEmpty();
 	m_wndList.Create(dwStyle, rect, this, 1);
-	m_wndList.SetExtendedStyle(LVS_EX_DOUBLEBUFFER | LVS_EX_ONECLICKACTIVATE);
+	m_wndList.SetExtendedStyle(LVS_EX_DOUBLEBUFFER | LVS_EX_ONECLICKACTIVATE | LVS_EX_TRACKSELECT);
 	m_wndList.EnableTheming();
 
 	if (m_DialogResID)
@@ -104,7 +114,7 @@ CDropdownSelector::CDropdownSelector()
 void CDropdownSelector::CreateDropdownWindow()
 {
 	p_DropWindow = new CDropdownWindow();
-	p_DropWindow->Create(this, 2000);
+	p_DropWindow->Create(this, 0);
 }
 
 BOOL CDropdownSelector::Create(CString EmptyHint, CGlasWindow* pParentWnd, UINT nID)
@@ -391,7 +401,7 @@ void CDropdownSelector::OnMouseMove(UINT nFlags, CPoint point)
 
 void CDropdownSelector::OnMouseLeave()
 {
-	m_Hover = m_Pressed = FALSE;
+	m_Hover = FALSE;
 	Invalidate();
 }
 
@@ -426,6 +436,8 @@ void CDropdownSelector::OnLButtonDown(UINT nFlags, CPoint point)
 		CRect rect;
 		GetClientRect(rect);
 		ClientToScreen(rect);
+		if (rect.Width()<450)
+			rect.right = rect.left+450;
 
 		CreateDropdownWindow();
 

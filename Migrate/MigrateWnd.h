@@ -4,6 +4,7 @@
 
 #pragma once
 #include "CMainView.h"
+#include "CPIDLSelector.h"
 #include "LFCommDlg.h"
 
 
@@ -20,7 +21,7 @@ public:
 	BOOL Create();
 
 protected:
-	CDropdownSelector m_wndFolder;
+	CPIDLSelector m_wndFolder;
 	CDropdownSelector m_wndStore;
 	CMainView m_wndMainView;
 	CBottomArea m_wndBottomArea;

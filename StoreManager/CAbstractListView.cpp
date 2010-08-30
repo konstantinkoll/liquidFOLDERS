@@ -150,7 +150,7 @@ void CAbstractListView::OnSysColorChange()
 		ZeroMemory(&metrics, sizeof(LVGROUPMETRICS));
 		metrics.cbSize = sizeof(LVGROUPMETRICS);
 		metrics.mask = LVGMF_TEXTCOLOR;
-		metrics.crHeader = text;
+		metrics.crHeader = metrics.crLeft = text;
 		m_FileList.SetGroupMetrics(&metrics);
 	}
 }

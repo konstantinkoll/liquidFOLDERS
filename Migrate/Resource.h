@@ -23,6 +23,7 @@
 #define IDD_BOTTOMAREA                  2000
 #define IDC_SIMULATE                    2001
 #define IDC_DELETEIMPORTED              2002
+#define IDD_CHOOSEFOLDER                2100
 
 // Next default values for new objects
 // 
