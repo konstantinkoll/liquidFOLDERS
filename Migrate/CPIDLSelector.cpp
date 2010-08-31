@@ -175,9 +175,12 @@ int CPIDLDropdownWindow::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CDropdownWindow::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
-	AddCategory(0, _T("Folders"));
-	AddCategory(1, _T("Libraries"));
-	AddCategory(2, _T("Removable storage"));
+	for (UINT a=0; a<3; a++)
+	{
+		CString tmpStr;
+		ENSURE(tmpStr.LoadString(IDS_FOLDERCATEGORY1+a));
+		AddCategory(a, tmpStr);
+	}
 
 	SHFILEINFO shfi;
 	il.Attach((HIMAGELIST)SHGetFileInfo(_T("C:\\"), NULL, &shfi, sizeof(shfi), SHGFI_SYSICONINDEX | SHGFI_LARGEICON | SHGFI_ICON));

@@ -168,6 +168,9 @@ STRINGTABLE
 BEGIN
     IDS_STORE_CAPTION       "Destination store:"
     IDS_STORE_HINT          "Click here to select the destination store"
+    IDS_FOLDERCATEGORY1     "Folders"
+    IDS_FOLDERCATEGORY2     "Libraries"
+    IDS_FOLDERCATEGORY3     "Removable storage"
 END
 
 #endif    // Englisch (neutral) resources
