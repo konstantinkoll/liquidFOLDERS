@@ -122,7 +122,6 @@ void LFTooltip::Track(CPoint point, HICON hIcon, CSize szIcon, const CString& st
 	mi.cbSize = sizeof(MONITORINFO);
 
 	CRect rectScreen;
-
 	if (GetMonitorInfo(MonitorFromPoint(rect.TopLeft(), MONITOR_DEFAULTTONEAREST), &mi))
 	{
 		rectScreen = mi.rcWork;

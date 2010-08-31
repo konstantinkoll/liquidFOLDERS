@@ -452,16 +452,36 @@ void CDropdownSelector::OnLButtonDown(UINT nFlags, CPoint point)
 		m_Pressed = m_Dropped = TRUE;
 		SetCapture();
 
-		CRect rect;
-		GetClientRect(rect);
-		ClientToScreen(rect);
-		if (rect.Width()<500)
-			rect.right = rect.left+500;
-
 		CreateDropdownWindow();
 
+		CRect rectClient;
+		GetClientRect(rectClient);
+		ClientToScreen(rectClient);
+
+		MONITORINFO mi;
+		mi.cbSize = sizeof(MONITORINFO);
+
+		CRect rectScreen;
+		if (GetMonitorInfo(MonitorFromPoint(rectClient.TopLeft(), MONITOR_DEFAULTTONEAREST), &mi))
+		{
+			rectScreen = mi.rcWork;
+		}
+		else
+		{
+			SystemParametersInfo(SPI_GETWORKAREA, 0, &rectScreen, 0);
+		}
+
+		CRect rectDrop(rectClient);
+		rectDrop.DeflateRect(1, 1);
+		rectDrop.top = rectDrop.bottom;
+		rectDrop.bottom = rectDrop.top+rectScreen.Height()*2/5;
+		if (rectDrop.Width()<500)
+			rectDrop.right = rectDrop.left+500;
+		if (rectDrop.bottom>rectScreen.bottom)
+			rectDrop.MoveToY(rectClient.top-rectDrop.Height()+1);
+
 		p_DropWindow->SetDesign(((CGlasWindow*)GetParent())->GetDesign());
-		p_DropWindow->SetWindowPos(&wndTopMost, rect.left+1, rect.bottom-1, rect.Width()-2, 250, SWP_SHOWWINDOW | SWP_NOACTIVATE);
+		p_DropWindow->SetWindowPos(&wndTopMost, rectDrop.left, rectDrop.top, rectDrop.Width(), rectDrop.Height(), SWP_SHOWWINDOW | SWP_NOACTIVATE);
 		p_DropWindow->SetFocus();
 	}
 
