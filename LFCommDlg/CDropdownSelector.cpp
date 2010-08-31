@@ -95,6 +95,7 @@ int CDropdownWindow::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndList.Create(dwStyle, rect, this, 1);
 	m_wndList.SetExtendedStyle(LVS_EX_DOUBLEBUFFER | LVS_EX_ONECLICKACTIVATE | LVS_EX_JUSTIFYCOLUMNS);
 	m_wndList.SetHotCursor(LoadCursor(NULL, IDC_ARROW));
+	m_wndList.SetFont(&((LFApplication*)AfxGetApp())->m_DefaultFont, FALSE);
 
 	if (m_DialogResID)
 		m_wndBottomArea.Create(this, m_DialogResID, dwStyle, 2);
