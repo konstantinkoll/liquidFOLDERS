@@ -204,7 +204,7 @@ LRESULT LFDialog::OnThemeChanged()
 	if (m_Design==LFDS_Blue)
 		BackBufferL = BackBufferH = 0;
 
-	return 0;
+	return TRUE;
 }
 
 void LFDialog::OnSysColorChange()

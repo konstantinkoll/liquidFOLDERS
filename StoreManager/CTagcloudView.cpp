@@ -409,7 +409,7 @@ LRESULT CTagcloudView::OnThemeChanged()
 		hTheme = theApp.zOpenThemeData(m_hWnd, VSCLASS_LISTVIEW);
 	}
 
-	return 0;
+	return TRUE;
 }
 
 void CTagcloudView::OnSize(UINT nType, int cx, int cy)
@@ -463,10 +463,11 @@ void CTagcloudView::OnPaint()
 						theApp.zDrawThemeBackground(hTheme, dc.m_hDC, LVP_LISTITEM, StateIDs[state], rect, rect);
 					}
 					else
-					{
-						dc.FillSolidRect(rect, GetSysColor(GetFocus()==this ? COLOR_HIGHLIGHT : COLOR_3DFACE));
-						color = GetSysColor(GetFocus()==this ? COLOR_HIGHLIGHTTEXT : COLOR_BTNTEXT);
-					}
+						if (m_Tags[a].selected)
+						{
+							dc.FillSolidRect(rect, GetSysColor(GetFocus()==this ? COLOR_HIGHLIGHT : COLOR_3DFACE));
+							color = GetSysColor(GetFocus()==this ? COLOR_HIGHLIGHTTEXT : COLOR_BTNTEXT);
+						}
 				}
 				else
 					if (m_ViewParameters.TagcloudUseOpacity)

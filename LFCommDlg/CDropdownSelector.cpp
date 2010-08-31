@@ -20,7 +20,7 @@ BOOL CDropdownWindow::Create(CWnd* pOwnerWnd, UINT _DialogResID)
 
 	CString className = AfxRegisterWndClass(CS_DROPSHADOW | CS_DBLCLKS, LoadCursor(NULL, IDC_ARROW));
 
-	BOOL res = CWnd::CreateEx(WS_EX_TOOLWINDOW, className, _T(""), WS_BORDER | WS_CHILD, 0, 0, 0, 0, GetDesktopWindow()->GetSafeHwnd(), NULL);
+	BOOL res = CWnd::CreateEx(WS_EX_CONTROLPARENT | WS_EX_TOOLWINDOW | WS_EX_NOACTIVATE, className, _T(""), WS_BORDER | WS_CHILD, 0, 0, 0, 0, GetDesktopWindow()->GetSafeHwnd(), NULL, NULL);
 	SetOwner(pOwnerWnd);
 	return res;
 }
@@ -41,6 +41,7 @@ void CDropdownWindow::AdjustLayout()
 	}
 
 	m_wndList.SetWindowPos(NULL, rect.left, rect.top, rect.Width(), rect.bottom, SWP_NOACTIVATE | SWP_NOZORDER);
+	m_wndList.EnsureVisible(0, FALSE);
 }
 
 void CDropdownWindow::SetDesign(UINT _Design)
@@ -54,7 +55,7 @@ void CDropdownWindow::SetDesign(UINT _Design)
 		LVGROUPMETRICS metrics;
 		ZeroMemory(&metrics, sizeof(LVGROUPMETRICS));
 		metrics.cbSize = sizeof(LVGROUPMETRICS);
-		metrics.mask = LVGMF_TEXTCOLOR;
+		metrics.mask = LVGMF_TEXTCOLOR | LVGMF_BORDERSIZE;
 		metrics.crHeader = (_Design==GWD_DEFAULT) ? GetSysColor(COLOR_WINDOWTEXT) : 0x993300;
 		m_wndList.SetGroupMetrics(&metrics);
 	}
@@ -63,10 +64,23 @@ void CDropdownWindow::SetDesign(UINT _Design)
 		m_wndBottomArea.SetDesign(_Design);
 }
 
+void CDropdownWindow::AddCategory(int ID, CString name)
+{
+	LVGROUP lvg;
+	ZeroMemory(&lvg, sizeof(lvg));
+	lvg.cbSize = sizeof(lvg);
+	lvg.mask = LVGF_HEADER | LVGF_GROUPID | LVGF_ALIGN;
+	lvg.uAlign = LVGA_HEADER_LEFT;
+	lvg.iGroupId = ID;
+	lvg.pszHeader = name.GetBuffer();
+	m_wndList.InsertGroup(ID, &lvg);
+}
+
 
 BEGIN_MESSAGE_MAP(CDropdownWindow, CWnd)
 	ON_WM_CREATE()
 	ON_WM_SIZE()
+	ON_WM_SETFOCUS()
 END_MESSAGE_MAP()
 
 int CDropdownWindow::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -74,13 +88,13 @@ int CDropdownWindow::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CWnd::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
-	const DWORD dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | LVS_AUTOARRANGE;
+	const DWORD dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | LVS_SHOWSELALWAYS | LVS_AUTOARRANGE | LVS_SHAREIMAGELISTS;
 
 	CRect rect;
 	rect.SetRectEmpty();
 	m_wndList.Create(dwStyle, rect, this, 1);
-	m_wndList.SetExtendedStyle(LVS_EX_DOUBLEBUFFER | LVS_EX_ONECLICKACTIVATE | LVS_EX_TRACKSELECT);
-	m_wndList.EnableTheming();
+	m_wndList.SetExtendedStyle(LVS_EX_DOUBLEBUFFER | LVS_EX_ONECLICKACTIVATE);
+	m_wndList.SetHotCursor(LoadCursor(NULL, IDC_ARROW));
 
 	if (m_DialogResID)
 		m_wndBottomArea.Create(this, m_DialogResID, dwStyle, 2);
@@ -92,6 +106,11 @@ void CDropdownWindow::OnSize(UINT nType, int cx, int cy)
 {
 	CWnd::OnSize(nType, cx, cy);
 	AdjustLayout();
+}
+
+void CDropdownWindow::OnSetFocus(CWnd* /*pOldWnd*/)
+{
+	m_wndList.SetFocus();
 }
 
 
@@ -235,7 +254,7 @@ void CDropdownSelector::OnPaint()
 
 	CGlasWindow* pCtrlSite = (CGlasWindow*)GetParent();
 	pCtrlSite->DrawFrameBackground(&dc, rclient);
-	const BYTE Alpha = (m_Hover || m_Dropped) ? 0xF0 : 0xD0;
+	const BYTE Alpha = m_Dropped ? 0xFF : m_Hover ? 0xF0 : 0xD0;
 
 	CRect rcontent(rclient);
 	switch (pCtrlSite->GetDesign())
@@ -380,7 +399,7 @@ LRESULT CDropdownSelector::OnThemeChanged()
 		hTheme = p_App->zOpenThemeData(m_hWnd, VSCLASS_COMBOBOX);
 	}
 
-	return 0;
+	return TRUE;
 }
 
 void CDropdownSelector::OnMouseMove(UINT nFlags, CPoint point)
@@ -442,7 +461,8 @@ void CDropdownSelector::OnLButtonDown(UINT nFlags, CPoint point)
 		CreateDropdownWindow();
 
 		p_DropWindow->SetDesign(((CGlasWindow*)GetParent())->GetDesign());
-		p_DropWindow->SetWindowPos(&wndTopMost, rect.left+1, rect.bottom-1, rect.Width()-2, 250, SWP_SHOWWINDOW);
+		p_DropWindow->SetWindowPos(&wndTopMost, rect.left+1, rect.bottom-1, rect.Width()-2, 250, SWP_SHOWWINDOW | SWP_NOACTIVATE);
+		p_DropWindow->SetFocus();
 	}
 
 	Invalidate();

@@ -18,8 +18,9 @@ public:
 
 	virtual void AdjustLayout();
 
-	BOOL Create(CWnd* pOwnerWnd, UINT _DialogResID);
+	BOOL Create(CWnd* pOwnerWnd, UINT _DialogResID=0);
 	void SetDesign(UINT _Design);
+	void AddCategory(int ID, CString name);
 
 protected:
 	CExplorerList m_wndList;
@@ -28,6 +29,7 @@ protected:
 
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnSize(UINT nType, int cx, int cy);
+	afx_msg void OnSetFocus(CWnd* pOldWnd);
 	DECLARE_MESSAGE_MAP()
 };
 
