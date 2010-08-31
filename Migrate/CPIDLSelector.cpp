@@ -4,6 +4,7 @@
 
 #include "stdafx.h"
 #include "CPIDLSelector.h"
+#include "Migrate.h"
 #include "resource.h"
 
 
@@ -51,11 +52,8 @@ void CPIDLDropdownWindow::AddPIDL(LPITEMIDLIST pidl, UINT Category)
 
 	LVITEM lvi;
 	ZeroMemory(&lvi, sizeof(lvi));
-	lvi.mask = LVIF_TEXT | LVIF_IMAGE | LVIF_GROUPID;// | LVIF_COLUMNS;
-	//lvi.puColumns = puColumns;
-
+	lvi.mask = LVIF_TEXT | LVIF_IMAGE | LVIF_GROUPID;
 	lvi.iItem = m_wndList.GetItemCount();
-	//lvi.cColumns = (_result->m_Context==LFContextStoreHome) ? _result->m_Items[a]->Description[0]!='\0' ? 4 : 2 : 3;
 	lvi.pszText = sfi.szDisplayName;
 	lvi.iImage = sfi.iIcon;
 	lvi.iGroupId = Category;
@@ -105,6 +103,7 @@ void CPIDLDropdownWindow::AddChildren(wchar_t* Path, UINT Category)
 		ULONG dwAttributes;
 		LPITEMIDLIST pidl = NULL;
 		Desktop->ParseDisplayName(NULL, NULL, Path, &chEaten, &pidl, &dwAttributes);
+		AddPIDL(pidl, Category);
 
 		IShellFolder* Libraries;
 		if (SUCCEEDED(Desktop->BindToObject(pidl, NULL, IID_IShellFolder, (void**)&Libraries)))
@@ -137,26 +136,20 @@ void CPIDLDropdownWindow::AddChildren(wchar_t* Path, UINT Category)
 
 void CPIDLDropdownWindow::PopulateList()
 {
-	m_wndList.DeleteAllItems();
+	//m_wndList.DeleteAllItems();
 
 	BOOL IsSeven = ((LFApplication*)AfxGetApp())->OSVersion>=OS_Seven;
 
 	// Special folders
-	AddCSIDL(CSIDL_DESKTOP, 0);										// Desktop
-	AddCSIDL(CSIDL_MYDOCUMENTS, 0);									// My documents
-	AddCSIDL(CSIDL_MYMUSIC, 0);										// My music
-	AddCSIDL(CSIDL_MYPICTURES, 0);									// My pictures
-	AddCSIDL(CSIDL_MYVIDEO, 0);										// My videos
-	AddKnownFolder(FOLDERID_Contacts, 0);							// Contacts
-	AddKnownFolder(FOLDERID_Downloads, 0);							// Downloads
-
-	//if (IsSeven)
-	{
-		AddPath(_T("::{031E4825-7B94-4dc3-B131-E946B44C8DD5}"), 1);	// Libraries
-
-		// Libraries
+	AddCSIDL(CSIDL_DESKTOP, 0);											// Desktop
+	AddCSIDL(CSIDL_MYDOCUMENTS, 0);										// My documents
+	AddCSIDL(CSIDL_MYMUSIC, 0);											// My music
+	AddCSIDL(CSIDL_MYPICTURES, 0);										// My pictures
+	AddCSIDL(CSIDL_MYVIDEO, 0);											// My videos
+	AddKnownFolder(FOLDERID_Contacts, 0);								// Contacts
+	AddKnownFolder(FOLDERID_Downloads, 0);								// Downloads
+	if (IsSeven)
 		AddChildren(_T("::{031E4825-7B94-4dc3-B131-E946B44C8DD5}"), 1);	// Libraries
-	}
 
 	// Drives
 	UINT Drives = LFGetLogicalDrives(LFGLD_External);
@@ -192,8 +185,15 @@ int CPIDLDropdownWindow::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndList.SetImageList(&il, LVSIL_NORMAL);
 	m_wndList.EnableGroupView(TRUE);
 
-	PopulateList();
+	IMAGEINFO ii;
+	il.GetImageInfo(0, &ii);
+	CDC* dc = GetWindowDC();
+	CFont* pOldFont = dc->SelectObject(&theApp.m_DefaultFont);
+	m_wndList.SetIconSpacing(CXDropdownListIconSpacing, ii.rcImage.bottom-ii.rcImage.top+dc->GetTextExtent(_T("Wy"), 2).cy*2+4);
+	dc->SelectObject(pOldFont);
+	ReleaseDC(dc);
 
+	PopulateList();
 	return 0;
 }
 
