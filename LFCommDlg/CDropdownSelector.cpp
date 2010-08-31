@@ -93,7 +93,7 @@ int CDropdownWindow::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	CRect rect;
 	rect.SetRectEmpty();
 	m_wndList.Create(dwStyle, rect, this, 1);
-	m_wndList.SetExtendedStyle(LVS_EX_DOUBLEBUFFER | LVS_EX_ONECLICKACTIVATE);
+	m_wndList.SetExtendedStyle(LVS_EX_DOUBLEBUFFER | LVS_EX_ONECLICKACTIVATE | LVS_EX_JUSTIFYCOLUMNS);
 	m_wndList.SetHotCursor(LoadCursor(NULL, IDC_ARROW));
 
 	if (m_DialogResID)
@@ -455,8 +455,8 @@ void CDropdownSelector::OnLButtonDown(UINT nFlags, CPoint point)
 		CRect rect;
 		GetClientRect(rect);
 		ClientToScreen(rect);
-		if (rect.Width()<450)
-			rect.right = rect.left+450;
+		if (rect.Width()<500)
+			rect.right = rect.left+500;
 
 		CreateDropdownWindow();
 

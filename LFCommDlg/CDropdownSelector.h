@@ -11,7 +11,7 @@
 // CDropdownWindow
 //
 
-#define CXDropdownListIconSpacing     118
+#define CXDropdownListIconSpacing     90
 
 class AFX_EXT_CLASS CDropdownWindow : public CWnd
 {

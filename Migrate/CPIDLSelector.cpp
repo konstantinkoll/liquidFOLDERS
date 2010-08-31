@@ -136,11 +136,10 @@ void CPIDLDropdownWindow::AddChildren(wchar_t* Path, UINT Category)
 
 void CPIDLDropdownWindow::PopulateList()
 {
-	//m_wndList.DeleteAllItems();
-
+	m_wndList.DeleteAllItems();
 	BOOL IsSeven = ((LFApplication*)AfxGetApp())->OSVersion>=OS_Seven;
 
-	// Special folders
+	// Special folders and libraries
 	AddCSIDL(CSIDL_DESKTOP, 0);											// Desktop
 	AddCSIDL(CSIDL_MYDOCUMENTS, 0);										// My documents
 	AddCSIDL(CSIDL_MYMUSIC, 0);											// My music
