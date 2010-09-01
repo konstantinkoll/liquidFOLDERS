@@ -13,6 +13,7 @@ CGlasWindow::CGlasWindow()
 	: CWnd()
 {
 	p_App = (LFApplication*)AfxGetApp();
+	p_PopupWindow = NULL;
 	hTheme = NULL;
 	m_Active = TRUE;
 	m_IsAeroWindow = FALSE;
@@ -39,6 +40,28 @@ LRESULT CGlasWindow::DefWindowProc(UINT message, WPARAM wParam, LPARAM lParam)
 
 BOOL CGlasWindow::PreTranslateMessage(MSG* pMsg)
 {
+	if (p_PopupWindow)
+		if (GetCapture()!=p_PopupWindow->GetOwner())
+			switch (pMsg->message)
+			{
+			case WM_KEYDOWN:
+			case WM_SYSKEYDOWN:
+			case WM_LBUTTONDOWN:
+			case WM_RBUTTONDOWN:
+			case WM_MBUTTONDOWN:
+			case WM_LBUTTONUP:
+			case WM_RBUTTONUP:
+			case WM_MBUTTONUP:
+			case WM_NCLBUTTONDOWN:
+			case WM_NCRBUTTONDOWN:
+			case WM_NCMBUTTONDOWN:
+			case WM_NCLBUTTONUP:
+			case WM_NCRBUTTONUP:
+			case WM_NCMBUTTONUP:
+				p_PopupWindow->GetOwner()->SendMessage(WM_CLOSEDROPDOWN);
+				return TRUE;
+			}
+
 	if ((pMsg->message==WM_KEYDOWN) && (pMsg->wParam==VK_TAB))
 	{
 		GetNextDlgTabItem(GetFocus(), GetKeyState(VK_SHIFT)<0)->SetFocus();
@@ -129,6 +152,13 @@ void CGlasWindow::SetTheme()
 			p_App->zSetWindowThemeAttribute(m_hWnd, WTA_NONCLIENT, &opt, sizeof(WTA_OPTIONS));
 		}
 	}
+}
+
+CWnd* CGlasWindow::RegisterPopupWindow(CWnd* pPopupWnd)
+{
+	CWnd* old = p_PopupWindow;
+	p_PopupWindow = pPopupWnd;
+	return old;
 }
 
 
@@ -261,6 +291,9 @@ void CGlasWindow::OnActivateApp(BOOL bActive, DWORD dwThreadID)
 {
 	CWnd::OnActivateApp(bActive, dwThreadID);
 	m_Active = bActive;
+
+	if ((!bActive) && (p_PopupWindow))
+		p_PopupWindow->GetOwner()->SendMessage(WM_CLOSEDROPDOWN);
 
 	if (GetDesign()==GWD_THEMED)
 	{

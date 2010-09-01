@@ -14,6 +14,8 @@
 #define GWD_THEMED             2
 #define GWD_AERO               3
 
+#define WM_CLOSEDROPDOWN       WM_USER+1
+
 class AFX_EXT_CLASS CGlasWindow : public CWnd
 {
 public:
@@ -30,10 +32,12 @@ public:
 	void GetLayoutRect(LPRECT lpRect) const;
 	void DrawFrameBackground(CDC* pDC, CRect rect);
 	UINT GetDesign();
+	CWnd* RegisterPopupWindow(CWnd* pPopupWnd);
 
 	HTHEME hTheme;
 
 protected:
+	CWnd* p_PopupWindow;
 	LFApplication* p_App;
 	BOOL m_IsAeroWindow;
 	BOOL m_Active;

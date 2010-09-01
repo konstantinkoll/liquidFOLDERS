@@ -55,8 +55,7 @@ void CDropdownListCtrl::OnCustomDraw(NMHDR* pNMHDR, LRESULT* pResult)
 			CRect rect;
 			GetItemRect(lplvcd->nmcd.dwItemSpec, rect, LVIR_BOUNDS);
 			::FillRect(lplvcd->nmcd.hdc, rect, CreateSolidBrush(lplvcd->clrTextBk));
-
-			*pResult = CDRF_NOTIFYPOSTPAINT;
+*pResult = CDRF_NOTIFYPOSTPAINT;
 			break;
 		}
 	default:
@@ -136,7 +135,6 @@ BEGIN_MESSAGE_MAP(CDropdownWindow, CWnd)
 	ON_WM_CREATE()
 	ON_WM_SIZE()
 	ON_WM_SETFOCUS()
-	ON_WM_ACTIVATEAPP()
 END_MESSAGE_MAP()
 
 int CDropdownWindow::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -168,12 +166,6 @@ void CDropdownWindow::OnSize(UINT nType, int cx, int cy)
 void CDropdownWindow::OnSetFocus(CWnd* /*pOldWnd*/)
 {
 	m_wndList.SetFocus();
-}
-
-void CDropdownWindow::OnActivateApp(BOOL bActive, DWORD dwThreadID)
-{
-	if (!bActive)
-		GetOwner()->PostMessage(WM_CLOSEDROPDOWN);
 }
 
 
@@ -539,9 +531,9 @@ void CDropdownSelector::OnLButtonDown(UINT /*nFlags*/, CPoint /*point*/)
 
 		p_DropWindow->SetDesign(((CGlasWindow*)GetParent())->GetDesign());
 		p_DropWindow->SetWindowPos(&wndTopMost, rectDrop.left, rectDrop.top, rectDrop.Width(), rectDrop.Height(), SWP_SHOWWINDOW | SWP_NOACTIVATE);
+		((CGlasWindow*)GetParent())->RegisterPopupWindow(p_DropWindow);
 
 		Invalidate();
-
 	}
 }
 
@@ -570,11 +562,12 @@ LRESULT CDropdownSelector::OnCloseDropdown(WPARAM /*wParam*/, LPARAM /*lParam*/)
 {
 	if (p_DropWindow)
 	{
+		((CGlasWindow*)GetParent())->RegisterPopupWindow(NULL);
+		m_Dropped = FALSE;
+
 		p_DropWindow->DestroyWindow();
 		delete p_DropWindow;
 		p_DropWindow = NULL;
-
-		m_Dropped = FALSE;
 
 		Invalidate();
 		return TRUE;

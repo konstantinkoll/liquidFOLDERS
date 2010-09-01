@@ -46,15 +46,12 @@ protected:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
-	afx_msg void OnActivateApp(BOOL bActive, DWORD dwThreadID);
 	DECLARE_MESSAGE_MAP()
 };
 
 
 // CDropdownSelector
 //
-
-#define WM_CLOSEDROPDOWN              WM_USER+2
 
 class AFX_EXT_CLASS CDropdownSelector : public CWnd
 {

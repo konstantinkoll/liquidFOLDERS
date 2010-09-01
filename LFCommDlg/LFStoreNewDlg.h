@@ -1,6 +1,6 @@
 #pragma once
-#include <shlobj.h>
 #include "liquidFOLDERS.h"
+#include <shlobj.h>
 
 class AFX_EXT_CLASS LFStoreNewDlg : public CDialog
 {
