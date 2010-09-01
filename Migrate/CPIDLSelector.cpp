@@ -168,6 +168,7 @@ void CPIDLDropdownWindow::PopulateList()
 BEGIN_MESSAGE_MAP(CPIDLDropdownWindow, CDropdownWindow)
 	ON_WM_CREATE()
 	ON_WM_DESTROY()
+	ON_BN_CLICKED(IDOK, OnChooseFolder)
 END_MESSAGE_MAP()
 
 int CPIDLDropdownWindow::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -183,7 +184,7 @@ int CPIDLDropdownWindow::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	}
 
 	SHFILEINFO shfi;
-	il.Attach((HIMAGELIST)SHGetFileInfo(_T("C:\\"), NULL, &shfi, sizeof(shfi), SHGFI_SYSICONINDEX | SHGFI_LARGEICON | SHGFI_ICON));
+	il.Attach((HIMAGELIST)SHGetFileInfo(_T(""), NULL, &shfi, sizeof(shfi), SHGFI_SYSICONINDEX | SHGFI_LARGEICON | SHGFI_ICON));
 	m_wndList.SetImageList(&il, LVSIL_NORMAL);
 	m_wndList.EnableGroupView(TRUE);
 
@@ -203,6 +204,15 @@ void CPIDLDropdownWindow::OnDestroy()
 {
 	CDropdownWindow::OnDestroy();
 	il.Detach();
+}
+
+void CPIDLDropdownWindow::OnChooseFolder()
+{
+	ShowWindow(SW_HIDE);
+
+	GetOwner()->MessageBox(_T("Test"));
+
+	GetOwner()->PostMessage(WM_CLOSEDROPDOWN);
 }
 
 

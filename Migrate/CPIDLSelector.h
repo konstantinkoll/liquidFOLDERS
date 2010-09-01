@@ -26,6 +26,7 @@ protected:
 
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();
+	afx_msg void OnChooseFolder();
 	DECLARE_MESSAGE_MAP()
 };
 

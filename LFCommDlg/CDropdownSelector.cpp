@@ -6,6 +6,65 @@
 #include "LFCommDlg.h"
 
 
+// CDropdownListCtrl
+//
+
+CDropdownListCtrl::CDropdownListCtrl()
+	: CExplorerList()
+{
+}
+
+
+BEGIN_MESSAGE_MAP(CDropdownListCtrl, CExplorerList)
+	ON_NOTIFY_REFLECT(NM_CUSTOMDRAW, OnCustomDraw)
+END_MESSAGE_MAP()
+
+void CDropdownListCtrl::OnCustomDraw(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	LPNMLVCUSTOMDRAW lplvcd = (LPNMLVCUSTOMDRAW)pNMHDR;
+
+	switch(lplvcd->nmcd.dwDrawStage)
+	{
+	case CDDS_PREPAINT:
+		*pResult = CDRF_NOTIFYITEMDRAW;
+		break;
+	case CDDS_ITEMPOSTPAINT:
+		if ((!hTheme) && (GetHotItem()==(int)lplvcd->nmcd.dwItemSpec))
+		{
+			SetBkColor(GetSysColor(COLOR_WINDOW));
+
+			CRect rect;
+			GetItemRect(lplvcd->nmcd.dwItemSpec, rect, LVIR_BOUNDS);
+			DrawFocusRect(lplvcd->nmcd.hdc, rect);
+
+			*pResult = CDRF_SKIPDEFAULT;
+			break;
+		}
+
+		*pResult = CDRF_DODEFAULT;
+		break;
+	case CDDS_ITEMPREPAINT:
+		if ((!hTheme) && (GetHotItem()==(int)lplvcd->nmcd.dwItemSpec))
+		{
+			lplvcd->nmcd.uItemState |= CDIS_SELECTED;
+			lplvcd->clrTextBk = GetSysColor(COLOR_HIGHLIGHT);
+			lplvcd->clrText = GetSysColor(COLOR_HIGHLIGHTTEXT);
+
+			SetBkColor(lplvcd->clrTextBk);
+
+			CRect rect;
+			GetItemRect(lplvcd->nmcd.dwItemSpec, rect, LVIR_BOUNDS);
+			::FillRect(lplvcd->nmcd.hdc, rect, CreateSolidBrush(lplvcd->clrTextBk));
+
+			*pResult = CDRF_NOTIFYPOSTPAINT;
+			break;
+		}
+	default:
+		*pResult = CDRF_DODEFAULT;
+	}
+}
+
+
 // CDropdownWindow
 //
 
@@ -50,21 +109,11 @@ void CDropdownWindow::SetDesign(UINT _Design)
 	m_wndList.SetTextColor(_Design==GWD_DEFAULT ? GetSysColor(COLOR_WINDOWTEXT) : 0x000000);
 	m_wndList.SetTextBkColor(_Design==GWD_DEFAULT ? GetSysColor(COLOR_WINDOW) : 0xFFFFFF);
 
-	if (((LFApplication*)AfxGetApp())->OSVersion==OS_XP)
-	{
-		LVGROUPMETRICS metrics;
-		ZeroMemory(&metrics, sizeof(LVGROUPMETRICS));
-		metrics.cbSize = sizeof(LVGROUPMETRICS);
-		metrics.mask = LVGMF_TEXTCOLOR | LVGMF_BORDERSIZE;
-		metrics.crHeader = (_Design==GWD_DEFAULT) ? GetSysColor(COLOR_WINDOWTEXT) : 0x993300;
-		m_wndList.SetGroupMetrics(&metrics);
-	}
-
 	if (IsWindow(m_wndBottomArea.GetSafeHwnd()))
 		m_wndBottomArea.SetDesign(_Design);
 }
 
-void CDropdownWindow::AddCategory(int ID, CString name)
+void CDropdownWindow::AddCategory(int ID, CString name, CString hint)
 {
 	LVGROUP lvg;
 	ZeroMemory(&lvg, sizeof(lvg));
@@ -73,6 +122,12 @@ void CDropdownWindow::AddCategory(int ID, CString name)
 	lvg.uAlign = LVGA_HEADER_LEFT;
 	lvg.iGroupId = ID;
 	lvg.pszHeader = name.GetBuffer();
+	if ((!hint.IsEmpty()) && (((LFApplication*)AfxGetApp())->OSVersion>=OS_Vista))
+	{
+		lvg.pszSubtitle = hint.GetBuffer();
+		lvg.mask |= LVGF_SUBTITLE;
+	}
+
 	m_wndList.InsertGroup(ID, &lvg);
 }
 
@@ -81,6 +136,7 @@ BEGIN_MESSAGE_MAP(CDropdownWindow, CWnd)
 	ON_WM_CREATE()
 	ON_WM_SIZE()
 	ON_WM_SETFOCUS()
+	ON_WM_ACTIVATEAPP()
 END_MESSAGE_MAP()
 
 int CDropdownWindow::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -114,6 +170,12 @@ void CDropdownWindow::OnSetFocus(CWnd* /*pOldWnd*/)
 	m_wndList.SetFocus();
 }
 
+void CDropdownWindow::OnActivateApp(BOOL bActive, DWORD dwThreadID)
+{
+	if (!bActive)
+		GetOwner()->PostMessage(WM_CLOSEDROPDOWN);
+}
+
 
 // CDropdownSelector
 //
@@ -143,7 +205,7 @@ BOOL CDropdownSelector::Create(CString EmptyHint, CGlasWindow* pParentWnd, UINT 
 
 	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, LoadCursor(NULL, IDC_ARROW));
 
-	const DWORD dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE;
+	const DWORD dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_TABSTOP;
 	CRect rect;
 	rect.SetRectEmpty();
 	return CWnd::Create(className, _T("DropdownSelector"), dwStyle, rect, pParentWnd, nID);
@@ -196,6 +258,7 @@ BEGIN_MESSAGE_MAP(CDropdownSelector, CWnd)
 	ON_WM_LBUTTONDOWN()
 	ON_WM_LBUTTONUP()
 	ON_WM_RBUTTONUP()
+	ON_MESSAGE(WM_CLOSEDROPDOWN, OnCloseDropdown)
 END_MESSAGE_MAP()
 
 int CDropdownSelector::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -215,12 +278,7 @@ void CDropdownSelector::OnDestroy()
 	if (m_Icon)
 		DestroyIcon(m_Icon);
 
-	if (p_DropWindow)
-	{
-		p_DropWindow->DestroyWindow();
-		delete p_DropWindow;
-	}
-
+	OnCloseDropdown();
 	CWnd::OnDestroy();
 }
 
@@ -403,7 +461,7 @@ LRESULT CDropdownSelector::OnThemeChanged()
 	return TRUE;
 }
 
-void CDropdownSelector::OnMouseMove(UINT nFlags, CPoint point)
+void CDropdownSelector::OnMouseMove(UINT /*nFlags*/, CPoint /*point*/)
 {
 	if (!m_Hover)
 	{
@@ -438,15 +496,13 @@ void CDropdownSelector::OnMouseHover(UINT nFlags, CPoint point)
 	}
 }
 
-void CDropdownSelector::OnLButtonDown(UINT nFlags, CPoint point)
+void CDropdownSelector::OnLButtonDown(UINT /*nFlags*/, CPoint /*point*/)
 {
+	SetFocus();
+
 	if (m_Dropped)
 	{
-		p_DropWindow->DestroyWindow();
-		delete p_DropWindow;
-		p_DropWindow = NULL;
-
-		m_Dropped = FALSE;
+		OnCloseDropdown();
 	}
 	else
 	{
@@ -483,13 +539,13 @@ void CDropdownSelector::OnLButtonDown(UINT nFlags, CPoint point)
 
 		p_DropWindow->SetDesign(((CGlasWindow*)GetParent())->GetDesign());
 		p_DropWindow->SetWindowPos(&wndTopMost, rectDrop.left, rectDrop.top, rectDrop.Width(), rectDrop.Height(), SWP_SHOWWINDOW | SWP_NOACTIVATE);
-		p_DropWindow->SetFocus();
-	}
 
-	Invalidate();
+		Invalidate();
+
+	}
 }
 
-void CDropdownSelector::OnLButtonUp(UINT nFlags, CPoint point)
+void CDropdownSelector::OnLButtonUp(UINT /*nFlags*/, CPoint /*point*/)
 {
 	if (m_Pressed)
 	{
@@ -508,4 +564,21 @@ void CDropdownSelector::OnRButtonUp(UINT nFlags, CPoint point)
 	GetParent()->ScreenToClient(&point);
 
 	GetParent()->SendMessage(WM_RBUTTONUP, (WPARAM)nFlags, (LPARAM)((point.y<<16) | point.x));
+}
+
+LRESULT CDropdownSelector::OnCloseDropdown(WPARAM /*wParam*/, LPARAM /*lParam*/)
+{
+	if (p_DropWindow)
+	{
+		p_DropWindow->DestroyWindow();
+		delete p_DropWindow;
+		p_DropWindow = NULL;
+
+		m_Dropped = FALSE;
+
+		Invalidate();
+		return TRUE;
+	}
+
+	return FALSE;
 }

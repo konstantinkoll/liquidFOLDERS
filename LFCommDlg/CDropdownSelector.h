@@ -8,6 +8,20 @@
 #include "CBottomArea.h"
 
 
+// CDropdownListCtrl
+//
+
+class AFX_EXT_CLASS CDropdownListCtrl : public CExplorerList
+{
+public:
+	CDropdownListCtrl();
+
+protected:
+	afx_msg void OnCustomDraw(NMHDR* pNMHDR, LRESULT* pResult);
+	DECLARE_MESSAGE_MAP()
+};
+
+
 // CDropdownWindow
 //
 
@@ -22,22 +36,25 @@ public:
 
 	BOOL Create(CWnd* pOwnerWnd, UINT _DialogResID=0);
 	void SetDesign(UINT _Design);
-	void AddCategory(int ID, CString name);
+	void AddCategory(int ID, CString name, CString hint=_T(""));
 
 protected:
-	CExplorerList m_wndList;
+	CDropdownListCtrl m_wndList;
 	CBottomArea m_wndBottomArea;
 	UINT m_DialogResID;
 
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
+	afx_msg void OnActivateApp(BOOL bActive, DWORD dwThreadID);
 	DECLARE_MESSAGE_MAP()
 };
 
 
 // CDropdownSelector
 //
+
+#define WM_CLOSEDROPDOWN              WM_USER+2
 
 class AFX_EXT_CLASS CDropdownSelector : public CWnd
 {
@@ -74,6 +91,7 @@ protected:
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnRButtonUp(UINT nFlags, CPoint point);
+	afx_msg LRESULT OnCloseDropdown(WPARAM wParam=NULL, LPARAM lParam=NULL);
 	DECLARE_MESSAGE_MAP()
 
 private:
