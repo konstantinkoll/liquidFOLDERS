@@ -17,6 +17,7 @@ CDropdownListCtrl::CDropdownListCtrl()
 
 BEGIN_MESSAGE_MAP(CDropdownListCtrl, CExplorerList)
 	ON_NOTIFY_REFLECT(NM_CUSTOMDRAW, OnCustomDraw)
+	ON_WM_RBUTTONDOWN()
 	ON_WM_LBUTTONDOWN()
 	ON_WM_LBUTTONUP()
 END_MESSAGE_MAP()
@@ -63,6 +64,10 @@ void CDropdownListCtrl::OnCustomDraw(NMHDR* pNMHDR, LRESULT* pResult)
 	default:
 		*pResult = CDRF_DODEFAULT;
 	}
+}
+
+void CDropdownListCtrl::OnRButtonDown(UINT /*nFlags*/, CPoint /*point*/)
+{
 }
 
 void CDropdownListCtrl::OnLButtonDown(UINT /*nFlags*/, CPoint /*point*/)
