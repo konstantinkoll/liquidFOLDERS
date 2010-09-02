@@ -95,7 +95,7 @@ void LFTooltip::Track(CPoint point, HICON hIcon, CSize szIcon, const CString& st
 
 	if (hIcon)
 	{
-		sz.cx += szIcon.cx+AFX_TEXT_MARGIN;
+		sz.cx += szIcon.cx+2*AFX_TEXT_MARGIN;
 		sz.cy = max(sz.cy, szIcon.cy);
 	}
 
@@ -294,7 +294,7 @@ void LFTooltip::OnPaint()
 	if (m_Icon)
 	{
 		DrawIconEx(dc, rect.left, rect.top, m_Icon, m_szIcon.cx, m_szIcon.cy, 0, NULL, DI_NORMAL);
-		rect.left += m_szIcon.cx+AFX_TEXT_MARGIN;
+		rect.left += m_szIcon.cx+2*AFX_TEXT_MARGIN;
 	}
 
 	if (!m_strCaption.IsEmpty())

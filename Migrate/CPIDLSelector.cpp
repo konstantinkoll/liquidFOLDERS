@@ -270,13 +270,41 @@ void CPIDLSelector::SetItem(LPITEMIDLIST _pidl, BOOL Repaint)
 void CPIDLSelector::GetTooltipData(HICON& hIcon, CSize& size, CString& caption, CString& hint)
 {
 	SHFILEINFO sfi;
-	if (SUCCEEDED(SHGetFileInfo((wchar_t*)pidl, 0, &sfi, sizeof(SHFILEINFO), SHGFI_PIDL | SHGFI_DISPLAYNAME | SHGFI_TYPENAME | SHGFI_ICON | SHGFI_LARGEICON)))
+	if (SUCCEEDED(SHGetFileInfo((wchar_t*)pidl, 0, &sfi, sizeof(SHFILEINFO), SHGFI_PIDL | SHGFI_DISPLAYNAME | SHGFI_TYPENAME | SHGFI_ICON | SHGFI_SYSICONINDEX | SHGFI_LARGEICON)))
 	{
-		hIcon = sfi.hIcon;
-		size.cx = GetSystemMetrics(SM_CXICON);
-		size.cy = GetSystemMetrics(SM_CYICON);
+		hIcon = theApp.m_SystemImageListLarge.ExtractIcon(sfi.iIcon);
 		caption = sfi.szDisplayName;
 		hint = sfi.szTypeName;
+
+		IShellFolder* Parent = NULL;
+		LPCITEMIDLIST Child = NULL;
+		if (SUCCEEDED(SHBindToParent(pidl, IID_IShellFolder, (void**)&Parent, &Child)))
+		{
+			WIN32_FIND_DATA ffd;
+			if (SUCCEEDED(SHGetDataFromIDList(Parent, Child, SHGDFIL_FINDDATA, &ffd, sizeof(WIN32_FIND_DATA))))
+			{
+				FILETIME lft;
+
+				wchar_t tmpBuf1[256];
+				FileTimeToLocalFileTime(&ffd.ftCreationTime, &lft);
+				LFTimeToString(lft, tmpBuf1, 256);
+				wchar_t tmpBuf2[256];
+				FileTimeToLocalFileTime(&ffd.ftLastWriteTime, &lft);
+				LFTimeToString(lft, tmpBuf2, 256);
+				
+				CString tmpStr;
+				tmpStr.Format(_T("\n%s: %s\n%s: %s"),
+					theApp.m_Attributes[LFAttrCreationTime]->Name, tmpBuf1,
+					theApp.m_Attributes[LFAttrFileTime]->Name, tmpBuf2);
+				hint.Append(tmpStr);
+			}
+			Parent->Release();
+		}
+
+		IMAGEINFO ii;
+		theApp.m_SystemImageListLarge.GetImageInfo(0, &ii);
+		size.cx = ii.rcImage.right-ii.rcImage.left;
+		size.cy = ii.rcImage.bottom-ii.rcImage.top;
 	}
 }
 
