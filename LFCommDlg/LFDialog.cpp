@@ -125,40 +125,43 @@ void LFDialog::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 	ScreenToClient(&btn);
 	int Line = btn.top-borders.Height()-3;
 
+	BOOL Themed = FALSE;
+	if (p_App->m_ThemeLibLoaded)
+		if (p_App->zIsThemeActive())
+			Themed = TRUE;
+
 	switch (m_Design)
 	{
 	case LFDS_Blue:
 		{
-			if (p_App->m_ThemeLibLoaded)
-				if (p_App->zIsThemeActive())
+			if (Themed)
+			{
+				int l = backdrop->m_pBitmap->GetWidth();
+				int h = backdrop->m_pBitmap->GetHeight();
+				if ((l<rect.Width()) || (h<rect.Height()))
 				{
-					int l = backdrop->m_pBitmap->GetWidth();
-					int h = backdrop->m_pBitmap->GetHeight();
-					if ((l<rect.Width()) || (h<rect.Height()))
-					{
-						double f = max((double)rect.Width()/l, (double)rect.Height()/h);
-						l = (int)(l*f);
-						h = (int)(h*f);
-					}
-					g.DrawImage(backdrop->m_pBitmap, rect.Width()-l, rect.Height()-h, l, h);
-
-					SolidBrush brush1(Color(180, 255, 255, 255));
-					g.FillRectangle(&brush1, 0, 0, BackBufferL, Line);
-					brush1.SetColor(Color(255, 205, 250, 255));
-					g.FillRectangle(&brush1, 0, Line++, BackBufferL, 1);
-					brush1.SetColor(Color(255, 183, 210, 240));
-					g.FillRectangle(&brush1, 0, Line++, BackBufferL, 1);
-					brush1.SetColor(Color(255, 247, 250, 254));
-					g.FillRectangle(&brush1, 0, Line++, BackBufferL, 1);
-					LinearGradientBrush brush2(Point(0, Line-1), Point(0, rect.Height()), Color(200, 255, 255, 255), Color(0, 255, 255, 255));
-					g.FillRectangle(&brush2, 0, Line, BackBufferL, rect.Height()-Line);
-
-					goto Finish;
+					double f = max((double)rect.Width()/l, (double)rect.Height()/h);
+					l = (int)(l*f);
+					h = (int)(h*f);
 				}
+				g.DrawImage(backdrop->m_pBitmap, rect.Width()-l, rect.Height()-h, l, h);
 
-			dc.FillSolidRect(rect, GetSysColor(COLOR_3DFACE));
+				SolidBrush brush1(Color(180, 255, 255, 255));
+				g.FillRectangle(&brush1, 0, 0, BackBufferL, Line);
+				brush1.SetColor(Color(255, 205, 250, 255));
+				g.FillRectangle(&brush1, 0, Line++, BackBufferL, 1);
+				brush1.SetColor(Color(255, 183, 210, 240));
+				g.FillRectangle(&brush1, 0, Line++, BackBufferL, 1);
+				brush1.SetColor(Color(255, 247, 250, 254));
+				g.FillRectangle(&brush1, 0, Line++, BackBufferL, 1);
+				LinearGradientBrush brush2(Point(0, Line-1), Point(0, rect.Height()), Color(200, 255, 255, 255), Color(0, 255, 255, 255));
+				g.FillRectangle(&brush2, 0, Line, BackBufferL, rect.Height()-Line);
+			}
+			else
+			{
+				dc.FillSolidRect(rect, GetSysColor(COLOR_3DFACE));
+			}
 
-Finish:
 			int l = logo->m_pBitmap->GetWidth();
 			int h = logo->m_pBitmap->GetHeight();
 			g.DrawImage(logo->m_pBitmap, rect.Width()-l-8, 8, l, h);
@@ -169,16 +172,32 @@ Finish:
 	case LFDS_UAC:
 		{
 			dc.FillSolidRect(0, 0, BackBufferL, ++Line, 0xFFFFFF);
-			dc.FillSolidRect(0, Line++, BackBufferL, 1, 0xDFDFDF);
-			dc.FillSolidRect(0, Line, BackBufferL, rect.Height()-Line, 0xF0F0F0);
-			dc.FillSolidRect(0, btn.bottom+borders.Height()+1, BackBufferL, 1, 0xDFDFDF);
-			dc.FillSolidRect(0, btn.bottom+borders.Height()+2, BackBufferL, 1, 0xFFFFFF);
+			if (Themed)
+			{
+				dc.FillSolidRect(0, Line++, BackBufferL, 1, 0xDFDFDF);
+				dc.FillSolidRect(0, Line, BackBufferL, rect.Height()-Line, 0xF0F0F0);
+				dc.FillSolidRect(0, btn.bottom+borders.Height()+1, BackBufferL, 1, 0xDFDFDF);
+				dc.FillSolidRect(0, btn.bottom+borders.Height()+2, BackBufferL, 1, 0xFFFFFF);
+			}
+			else
+			{
+				dc.FillSolidRect(0, Line++, BackBufferL, rect.Height()-Line, GetSysColor(COLOR_3DFACE));
+			}
 
 			if (m_Design!=LFDS_UAC)
 				break;
 
-			LinearGradientBrush brush2(Point(0, 0), Point(rect.Width(), 0), Color(4, 80, 130), Color(28, 120, 133));
-			g.FillRectangle(&brush2, 0, 0, rect.Width(), UACHeight);
+			if (Themed)
+			{
+				LinearGradientBrush brush2(Point(0, 0), Point(BackBufferL, 0), Color(4, 80, 130), Color(28, 120, 133));
+				g.FillRectangle(&brush2, 0, 0, BackBufferL, UACHeight);
+				dc.SetTextColor(0xFFFFFF);
+			}
+			else
+			{
+				dc.FillSolidRect(0, 0, BackBufferL, UACHeight, GetSysColor(COLOR_HIGHLIGHT));
+				dc.SetTextColor(GetSysColor(COLOR_HIGHLIGHTTEXT));
+			}
 
 			DrawIconEx(dc.m_hDC, borders.right, (UACHeight-ShieldSize)/2, hIconShield, ShieldSize, ShieldSize, 0, NULL, DI_NORMAL);
 
@@ -190,7 +209,6 @@ Finish:
 			ENSURE(tmpStr.LoadString(IDS_UACMESSAGE));
 
 			CFont* pOldFont = dc.SelectObject(&((LFApplication*)AfxGetApp())->m_CaptionFont);
-			dc.SetTextColor(0xFFFFFF);
 			dc.DrawText(tmpStr, -1, rectText, DT_SINGLELINE | DT_VCENTER | DT_END_ELLIPSIS | DT_LEFT);
 			dc.SelectObject(pOldFont);
 
