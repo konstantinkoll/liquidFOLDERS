@@ -6,6 +6,7 @@
 #include "CGlasWindow.h"
 #include "CExplorerList.h"
 #include "CBottomArea.h"
+#include "LFTooltip.h"
 
 
 // CDropdownListCtrl
@@ -63,8 +64,10 @@ class AFX_EXT_CLASS CDropdownSelector : public CWnd
 public:
 	CDropdownSelector();
 
+	virtual BOOL PreTranslateMessage(MSG* pMsg);
 	virtual void CreateDropdownWindow();
 	virtual void SetEmpty(BOOL Repaint=TRUE);
+	virtual void GetTooltipData(HICON& hIcon, CSize& size, CString& caption, CString& hint);
 
 	BOOL Create(CString EmptyHint, CGlasWindow* pParentWnd, UINT nID);
 	void SetItem(CString Caption, HICON hIcon, CString DisplayName, BOOL Repaint=TRUE);
@@ -81,6 +84,7 @@ protected:
 	BOOL m_Dropped;
 	LFApplication* p_App;
 	CDropdownWindow* p_DropWindow;
+	LFTooltip m_TooltipCtrl;
 
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();

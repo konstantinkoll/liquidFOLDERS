@@ -52,7 +52,7 @@ BOOL CFileDropWnd::PreTranslateMessage(MSG* pMsg)
 	case WM_NCLBUTTONUP:
 	case WM_NCRBUTTONUP:
 	case WM_NCMBUTTONUP:
-		Tooltip.Deactivate();
+		m_TooltipCtrl.Deactivate();
 		break;
 	}
 
@@ -168,7 +168,7 @@ int CFileDropWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	}
 
 	// Tooltip
-	Tooltip.Create(this);
+	m_TooltipCtrl.Create(this);
 
 	// Einstellungen laden
 	PosX = theApp.GetInt(_T("X"), 10000);
@@ -321,7 +321,7 @@ void CFileDropWnd::OnMouseMove(UINT nFlags, CPoint point)
 
 void CFileDropWnd::OnMouseLeave()
 {
-	Tooltip.Deactivate();
+	m_TooltipCtrl.Deactivate();
 	MouseInWnd = FALSE;
 
 	CGlasWindow::OnMouseLeave();
@@ -335,13 +335,13 @@ void CFileDropWnd::OnMouseHover(UINT nFlags, CPoint point)
 		ENSURE(strHint.LoadString(IDS_TOOLTIP));
 
 		ClientToScreen(&point);
-		Tooltip.Track(point,
+		m_TooltipCtrl.Track(point,
 			(HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IDR_APPLICATION), IMAGE_ICON, 48, 48, LR_DEFAULTCOLOR),
 			CSize(48, 48), _T("FileDrop"), strHint);
 	}
 	else
 	{
-		Tooltip.Deactivate();
+		m_TooltipCtrl.Deactivate();
 	}
 }
 

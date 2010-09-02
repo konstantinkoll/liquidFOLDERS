@@ -43,7 +43,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 	LFDropTarget m_DropTarget;
-	LFTooltip Tooltip;
+	LFTooltip m_TooltipCtrl;
 	HICON m_hIcon;
 	HICON m_hWarning;
 	CImageList m_Dropzone;

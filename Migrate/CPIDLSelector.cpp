@@ -267,6 +267,19 @@ void CPIDLSelector::SetItem(LPITEMIDLIST _pidl, BOOL Repaint)
 	}
 }
 
+void CPIDLSelector::GetTooltipData(HICON& hIcon, CSize& size, CString& caption, CString& hint)
+{
+	SHFILEINFO sfi;
+	if (SUCCEEDED(SHGetFileInfo((wchar_t*)pidl, 0, &sfi, sizeof(SHFILEINFO), SHGFI_PIDL | SHGFI_DISPLAYNAME | SHGFI_TYPENAME | SHGFI_ICON | SHGFI_LARGEICON)))
+	{
+		hIcon = sfi.hIcon;
+		size.cx = GetSystemMetrics(SM_CXICON);
+		size.cy = GetSystemMetrics(SM_CYICON);
+		caption = sfi.szDisplayName;
+		hint = sfi.szTypeName;
+	}
+}
+
 
 BEGIN_MESSAGE_MAP(CPIDLSelector, CDropdownSelector)
 	ON_MESSAGE(WM_SETITEM, OnSetItem)

@@ -216,6 +216,31 @@ BOOL CDropdownSelector::Create(CString EmptyHint, CGlasWindow* pParentWnd, UINT 
 	return CWnd::Create(className, _T("DropdownSelector"), dwStyle, rect, pParentWnd, nID);
 }
 
+BOOL CDropdownSelector::PreTranslateMessage(MSG* pMsg)
+{
+	switch (pMsg->message)
+	{
+	case WM_KEYDOWN:
+	case WM_SYSKEYDOWN:
+	case WM_LBUTTONDOWN:
+	case WM_RBUTTONDOWN:
+	case WM_MBUTTONDOWN:
+	case WM_LBUTTONUP:
+	case WM_RBUTTONUP:
+	case WM_MBUTTONUP:
+	case WM_NCLBUTTONDOWN:
+	case WM_NCRBUTTONDOWN:
+	case WM_NCMBUTTONDOWN:
+	case WM_NCLBUTTONUP:
+	case WM_NCRBUTTONUP:
+	case WM_NCMBUTTONUP:
+		m_TooltipCtrl.Deactivate();
+		break;
+	}
+
+	return CWnd::PreTranslateMessage(pMsg);
+}
+
 void CDropdownSelector::CreateDropdownWindow()
 {
 	p_DropWindow = new CDropdownWindow();
@@ -252,6 +277,10 @@ void CDropdownSelector::SetItem(CString Caption, HICON hIcon, CString DisplayNam
 		Invalidate();
 }
 
+void CDropdownSelector::GetTooltipData(HICON& /*hIcon*/, CSize& /*size*/, CString& /*caption*/, CString& /*hint*/)
+{
+}
+
 UINT CDropdownSelector::GetPreferredHeight()
 {
 	LOGFONT lf;
@@ -285,6 +314,9 @@ int CDropdownSelector::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 
 	OnThemeChanged();
+
+	// Tooltip
+	m_TooltipCtrl.Create(this);
 
 	return 0;
 }
@@ -517,20 +549,27 @@ void CDropdownSelector::OnMouseMove(UINT /*nFlags*/, CPoint /*point*/)
 
 void CDropdownSelector::OnMouseLeave()
 {
+	m_TooltipCtrl.Deactivate();
 	m_Hover = FALSE;
 	Invalidate();
 }
 
 void CDropdownSelector::OnMouseHover(UINT nFlags, CPoint point)
 {
-	if ((nFlags & (MK_LBUTTON | MK_MBUTTON | MK_RBUTTON | MK_XBUTTON1 | MK_XBUTTON2))==0)
+	if (((nFlags & (MK_LBUTTON | MK_MBUTTON | MK_RBUTTON | MK_XBUTTON1 | MK_XBUTTON2))==0) && (!m_Dropped) && (!m_IsEmpty))
 	{
+		HICON hIcon = NULL;
+		CSize size(0, 0);
+		CString caption;
+		CString hint;
+		GetTooltipData(hIcon, size, caption, hint);
+
 		ClientToScreen(&point);
-		//m_TooltipCtrl.Track(point, m_Tooltip);
+		m_TooltipCtrl.Track(point, hIcon, size, caption, hint);
 	}
 	else
 	{
-		//m_TooltipCtrl.Deactivate();
+		m_TooltipCtrl.Deactivate();
 	}
 }
 
@@ -606,6 +645,8 @@ void CDropdownSelector::OnRButtonUp(UINT nFlags, CPoint point)
 
 LRESULT CDropdownSelector::OnCloseDropdown(WPARAM /*wParam*/, LPARAM /*lParam*/)
 {
+	m_TooltipCtrl.Deactivate();
+
 	if (p_DropWindow)
 	{
 		((CGlasWindow*)GetParent())->RegisterPopupWindow(NULL);

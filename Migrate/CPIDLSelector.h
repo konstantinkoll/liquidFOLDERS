@@ -41,6 +41,7 @@ public:
 
 	virtual void CreateDropdownWindow();
 	virtual void SetEmpty(BOOL Repaint=TRUE);
+	virtual void GetTooltipData(HICON& hIcon, CSize& size, CString& caption, CString& hint);
 
 	void SetItem(LPITEMIDLIST _pidl, BOOL Repaint=TRUE);
 
