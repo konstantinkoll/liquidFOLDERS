@@ -55,7 +55,7 @@ protected:
 // CDropdownSelector
 //
 
-#define WM_SETITEMDATA         WM_USER+3
+#define WM_SETITEM         WM_USER+3
 
 class AFX_EXT_CLASS CDropdownSelector : public CWnd
 {
@@ -63,9 +63,9 @@ public:
 	CDropdownSelector();
 
 	virtual void CreateDropdownWindow();
+	virtual void SetEmpty(BOOL Repaint=TRUE);
 
 	BOOL Create(CString EmptyHint, CGlasWindow* pParentWnd, UINT nID);
-	void SetEmpty(BOOL Repaint=TRUE);
 	void SetItem(CString Caption, HICON hIcon, CString DisplayName, BOOL Repaint=TRUE);
 	UINT GetPreferredHeight();
 

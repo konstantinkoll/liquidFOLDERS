@@ -8,30 +8,6 @@
 #include "resource.h"
 
 
-LPITEMIDLIST GetNextItem(LPITEMIDLIST pidl)
-{
-	if (!pidl)
-		return NULL;
-
-	return (LPITEMIDLIST)(LPBYTE)(((LPBYTE)pidl)+pidl->mkid.cb);
-}
-
-UINT GetByteSize(LPITEMIDLIST pidl)
-{
-	if (!pidl)
-		return 0;
-
-	UINT Size = 0;
-	while (pidl->mkid.cb)
-	{
-		Size += pidl->mkid.cb;
-		pidl = GetNextItem(pidl);
-	}
-
-	return Size+sizeof(ITEMIDLIST);
-}
-
-
 // CPIDLDropdownWindow
 //
 
@@ -40,15 +16,23 @@ CPIDLDropdownWindow::CPIDLDropdownWindow()
 {
 }
 
-void CPIDLDropdownWindow::AddPIDL(LPITEMIDLIST pidl, UINT Category)
+BOOL CPIDLDropdownWindow::AddPIDL(LPITEMIDLIST pidl, UINT Category, BOOL FreeOnFail)
 {
 	if (!pidl)
-		return;
+		return FALSE;
 	SHFILEINFO sfi;
 	if (FAILED(SHGetFileInfo((wchar_t*)pidl, 0, &sfi, sizeof(SHFILEINFO), SHGFI_PIDL | SHGFI_DISPLAYNAME | SHGFI_ATTRIBUTES | SHGFI_SYSICONINDEX)))
-		return;
+	{
+		if (FreeOnFail)
+			theApp.p_Malloc->Free(pidl);
+		return FALSE;
+	}
 	if (!sfi.dwAttributes)
-		return;
+	{
+		if (FreeOnFail)
+			theApp.p_Malloc->Free(pidl);
+		return FALSE;
+	}
 
 	LVITEM lvi;
 	ZeroMemory(&lvi, sizeof(lvi));
@@ -57,7 +41,9 @@ void CPIDLDropdownWindow::AddPIDL(LPITEMIDLIST pidl, UINT Category)
 	lvi.pszText = sfi.szDisplayName;
 	lvi.iImage = sfi.iIcon;
 	lvi.iGroupId = Category;
-	m_wndList.InsertItem(&lvi);
+	m_wndList.SetItemData(m_wndList.InsertItem(&lvi), (DWORD_PTR)pidl);
+
+	return TRUE;
 }
 
 void CPIDLDropdownWindow::AddKnownFolder(REFKNOWNFOLDERID rfid, UINT Category)
@@ -80,6 +66,8 @@ void CPIDLDropdownWindow::AddPath(wchar_t* Path, UINT Category)
 		LPITEMIDLIST pidl = NULL;
 		Desktop->ParseDisplayName(NULL, NULL, Path, &chEaten, &pidl, &dwAttributes);
 		AddPIDL(pidl, Category);
+
+		Desktop->Release();
 	}
 }
 
@@ -92,10 +80,6 @@ void CPIDLDropdownWindow::AddCSIDL(int CSIDL, UINT Category)
 
 void CPIDLDropdownWindow::AddChildren(wchar_t* Path, UINT Category)
 {
-	LPMALLOC pMalloc;
-	if (FAILED(SHGetMalloc(&pMalloc)))
-		return;
-
 	IShellFolder* Desktop;
 	if (SUCCEEDED(SHGetDesktopFolder(&Desktop)))
 	{
@@ -103,7 +87,7 @@ void CPIDLDropdownWindow::AddChildren(wchar_t* Path, UINT Category)
 		ULONG dwAttributes;
 		LPITEMIDLIST pidl = NULL;
 		Desktop->ParseDisplayName(NULL, NULL, Path, &chEaten, &pidl, &dwAttributes);
-		AddPIDL(pidl, Category);
+		BOOL ParentAdded = AddPIDL(pidl, Category, FALSE);
 
 		IShellFolder* Libraries;
 		if (SUCCEEDED(Desktop->BindToObject(pidl, NULL, IID_IShellFolder, (void**)&Libraries)))
@@ -115,10 +99,10 @@ void CPIDLDropdownWindow::AddChildren(wchar_t* Path, UINT Category)
 				LPITEMIDLIST libabs;
 				while (e->Next(1, &librel, NULL)==S_OK)
 				{
-					UINT cb1 = GetByteSize(pidl)-sizeof(ITEMIDLIST);
-					UINT cb2 = GetByteSize(librel);
+					UINT cb1 = theApp.GetByteSize(pidl)-sizeof(ITEMIDLIST);
+					UINT cb2 = theApp.GetByteSize(librel);
 
-					libabs = (LPITEMIDLIST)pMalloc->Alloc(cb1+cb2);
+					libabs = (LPITEMIDLIST)theApp.p_Malloc->Alloc(cb1+cb2);
 					if (libabs)
 					{
 						ZeroMemory(libabs, cb1+cb2);
@@ -126,12 +110,19 @@ void CPIDLDropdownWindow::AddChildren(wchar_t* Path, UINT Category)
 						CopyMemory(((LPBYTE)libabs)+cb1, librel, cb2);
 						AddPIDL(libabs, Category);
 					}
+
+					theApp.p_Malloc->Free(librel);
 				}
 				e->Release();
 			}
-		}
-	}
 
+			Libraries->Release();
+		}
+
+		Desktop->Release();
+		if (!ParentAdded)
+			theApp.p_Malloc->Free(pidl);
+	}
 }
 
 void CPIDLDropdownWindow::PopulateList()
@@ -168,6 +159,7 @@ void CPIDLDropdownWindow::PopulateList()
 BEGIN_MESSAGE_MAP(CPIDLDropdownWindow, CDropdownWindow)
 	ON_WM_CREATE()
 	ON_WM_DESTROY()
+	ON_NOTIFY(LVN_ITEMCHANGED, 1, OnItemChanged)
 	ON_BN_CLICKED(IDOK, OnChooseFolder)
 END_MESSAGE_MAP()
 
@@ -202,8 +194,28 @@ int CPIDLDropdownWindow::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 void CPIDLDropdownWindow::OnDestroy()
 {
+	for (int a=0; a<m_wndList.GetItemCount(); a++)
+	{
+		LPITEMIDLIST pidl = (LPITEMIDLIST)m_wndList.GetItemData(a);
+		if (pidl)
+			theApp.p_Malloc->Free(pidl);
+	}
+
 	CDropdownWindow::OnDestroy();
+	DeleteObject(il.m_hImageList);
 	il.Detach();
+}
+
+void CPIDLDropdownWindow::OnItemChanged(NMHDR* pNMHDR, LRESULT* /*pResult*/)
+{
+	NM_LISTVIEW* pNMListView = (NM_LISTVIEW*)pNMHDR;
+
+	if ((pNMListView->uChanged & LVIF_STATE) && (pNMListView->uNewState & LVIS_SELECTED))
+	{
+		LPITEMIDLIST pidl = (LPITEMIDLIST)m_wndList.GetItemData(pNMListView->iItem);
+		GetOwner()->SendMessage(WM_SETITEM, NULL, (LPARAM)pidl);
+		GetOwner()->PostMessage(WM_CLOSEDROPDOWN);
+	}
 }
 
 void CPIDLDropdownWindow::OnChooseFolder()
@@ -222,10 +234,65 @@ void CPIDLDropdownWindow::OnChooseFolder()
 CPIDLSelector::CPIDLSelector()
 	: CDropdownSelector()
 {
+	pidl = NULL;
+}
+
+CPIDLSelector::~CPIDLSelector()
+{
+	if (pidl)
+		theApp.p_Malloc->Free(pidl);
 }
 
 void CPIDLSelector::CreateDropdownWindow()
 {
 	p_DropWindow = new CPIDLDropdownWindow();
 	p_DropWindow->Create(this, IDD_CHOOSEFOLDER);
+}
+
+void CPIDLSelector::SetEmpty(BOOL Repaint)
+{
+	if (pidl)
+	{
+		theApp.p_Malloc->Free(pidl);
+		pidl = NULL;
+	}
+
+	CDropdownSelector::SetEmpty(Repaint);
+}
+
+void CPIDLSelector::SetItem(LPITEMIDLIST _pidl, BOOL Repaint)
+{
+	if (pidl)
+		theApp.p_Malloc->Free(pidl);
+
+	pidl = theApp.Clone(_pidl);
+	if (pidl)
+	{
+		SHFILEINFO sfi;
+		if (SUCCEEDED(SHGetFileInfo((wchar_t*)pidl, 0, &sfi, sizeof(SHFILEINFO), SHGFI_PIDL | SHGFI_DISPLAYNAME | SHGFI_ICON | SHGFI_SMALLICON)))
+		{
+			CString tmpStr;
+			ENSURE(tmpStr.LoadString(IDS_FOLDER_CAPTION));
+			CDropdownSelector::SetItem(tmpStr, sfi.hIcon, sfi.szDisplayName, Repaint);
+		}
+		else
+		{
+			SetEmpty();
+		}
+	}
+	else
+	{
+		SetEmpty();
+	}
+}
+
+
+BEGIN_MESSAGE_MAP(CPIDLSelector, CDropdownSelector)
+	ON_MESSAGE(WM_SETITEM, OnSetItem)
+END_MESSAGE_MAP()
+
+LRESULT CPIDLSelector::OnSetItem(WPARAM /*wParam*/, LPARAM lParam)
+{
+	SetItem((LPITEMIDLIST)lParam);
+	return NULL;
 }

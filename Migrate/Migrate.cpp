@@ -20,6 +20,7 @@ END_MESSAGE_MAP()
 CMigrateApp::CMigrateApp()
 	: LFApplication(HasGUI_Standard)
 {
+	SHGetMalloc(&p_Malloc);
 }
 
 // Das einzige CMigrateApp-Objekt
@@ -69,4 +70,38 @@ void CMigrateApp::OnAppAbout()
 	dlg.DoModal();
 
 	delete p.icon;
+}
+
+LPITEMIDLIST CMigrateApp::GetNextItem(LPITEMIDLIST pidl)
+{
+	if (!pidl)
+		return NULL;
+
+	return (LPITEMIDLIST)(LPBYTE)(((LPBYTE)pidl)+pidl->mkid.cb);
+}
+
+UINT CMigrateApp::GetByteSize(LPITEMIDLIST pidl)
+{
+	if (!pidl)
+		return 0;
+
+	UINT Size = 0;
+	while (pidl->mkid.cb)
+	{
+		Size += pidl->mkid.cb;
+		pidl = GetNextItem(pidl);
+	}
+
+	return Size+sizeof(ITEMIDLIST);
+}
+
+LPITEMIDLIST CMigrateApp::Clone(LPITEMIDLIST pidl)
+{
+	UINT cb = GetByteSize(pidl);
+
+	LPITEMIDLIST pidlcopy = (LPITEMIDLIST)p_Malloc->Alloc(cb);
+	if (pidlcopy)
+		CopyMemory(pidlcopy, pidl, cb);
+
+	return pidlcopy;
 }

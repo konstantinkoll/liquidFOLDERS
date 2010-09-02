@@ -17,6 +17,11 @@ public:
 	virtual BOOL InitInstance();
 	virtual int ExitInstance();
 
+	LPITEMIDLIST GetNextItem(LPITEMIDLIST pidl);
+	UINT GetByteSize(LPITEMIDLIST pidl);
+	LPITEMIDLIST Clone(LPITEMIDLIST pidl);
+
+	LPMALLOC p_Malloc;
 	BOOL m_DeleteImported;
 	BOOL m_Simulate;
 

@@ -111,6 +111,8 @@ BOOL CDriveMenu::OnInitialize(LPDATAOBJECT dataObject)
 
 			GlobalUnlock(pIDList);
 		}
+
+		pDesktopPtr->Release();
 	}
 
 	d.Detach();

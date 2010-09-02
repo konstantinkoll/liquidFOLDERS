@@ -204,12 +204,6 @@ CDropdownSelector::CDropdownSelector()
 	m_Hover = m_Pressed = m_Dropped = FALSE;
 }
 
-void CDropdownSelector::CreateDropdownWindow()
-{
-	p_DropWindow = new CDropdownWindow();
-	p_DropWindow->Create(this, 0);
-}
-
 BOOL CDropdownSelector::Create(CString EmptyHint, CGlasWindow* pParentWnd, UINT nID)
 {
 	m_EmptyHint = EmptyHint;
@@ -220,6 +214,12 @@ BOOL CDropdownSelector::Create(CString EmptyHint, CGlasWindow* pParentWnd, UINT 
 	CRect rect;
 	rect.SetRectEmpty();
 	return CWnd::Create(className, _T("DropdownSelector"), dwStyle, rect, pParentWnd, nID);
+}
+
+void CDropdownSelector::CreateDropdownWindow()
+{
+	p_DropWindow = new CDropdownWindow();
+	p_DropWindow->Create(this, 0);
 }
 
 void CDropdownSelector::SetEmpty(BOOL Repaint)
