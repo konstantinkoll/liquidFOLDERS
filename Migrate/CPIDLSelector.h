@@ -16,8 +16,6 @@ public:
 	void PopulateList();
 
 protected:
-	CImageList il;
-
 	BOOL AddPIDL(LPITEMIDLIST pidl, UINT Category, BOOL FreeOnFail=TRUE);
 	void AddKnownFolder(REFKNOWNFOLDERID rfid, UINT Category);
 	void AddPath(wchar_t* Path, UINT Category);

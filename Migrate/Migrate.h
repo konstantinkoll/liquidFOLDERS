@@ -20,8 +20,11 @@ public:
 	LPITEMIDLIST GetNextItem(LPITEMIDLIST pidl);
 	UINT GetByteSize(LPITEMIDLIST pidl);
 	LPITEMIDLIST Clone(LPITEMIDLIST pidl);
+	LPITEMIDLIST Concat(LPITEMIDLIST left, LPITEMIDLIST right);
 
 	LPMALLOC p_Malloc;
+	CImageList m_SystemImageListSmall;
+	CImageList m_SystemImageListLarge;
 	BOOL m_DeleteImported;
 	BOOL m_Simulate;
 

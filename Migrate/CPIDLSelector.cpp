@@ -93,25 +93,13 @@ void CPIDLDropdownWindow::AddChildren(wchar_t* Path, UINT Category)
 		if (SUCCEEDED(Desktop->BindToObject(pidl, NULL, IID_IShellFolder, (void**)&Libraries)))
 		{
 			IEnumIDList* e;
-			Libraries->EnumObjects(NULL, SHCONTF_FOLDERS | SHCONTF_NONFOLDERS, &e);
+			Libraries->EnumObjects(NULL, SHCONTF_FOLDERS, &e);
 			{
-				LPITEMIDLIST librel;
-				LPITEMIDLIST libabs;
-				while (e->Next(1, &librel, NULL)==S_OK)
+				LPITEMIDLIST lib;
+				while (e->Next(1, &lib, NULL)==S_OK)
 				{
-					UINT cb1 = theApp.GetByteSize(pidl)-sizeof(ITEMIDLIST);
-					UINT cb2 = theApp.GetByteSize(librel);
-
-					libabs = (LPITEMIDLIST)theApp.p_Malloc->Alloc(cb1+cb2);
-					if (libabs)
-					{
-						ZeroMemory(libabs, cb1+cb2);
-						CopyMemory(libabs, pidl, cb1);
-						CopyMemory(((LPBYTE)libabs)+cb1, librel, cb2);
-						AddPIDL(libabs, Category);
-					}
-
-					theApp.p_Malloc->Free(librel);
+					AddPIDL(theApp.Concat(pidl, lib), Category);
+					theApp.p_Malloc->Free(lib);
 				}
 				e->Release();
 			}
@@ -175,13 +163,11 @@ int CPIDLDropdownWindow::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		AddCategory(a, tmpStr);
 	}
 
-	SHFILEINFO shfi;
-	il.Attach((HIMAGELIST)SHGetFileInfo(_T(""), NULL, &shfi, sizeof(shfi), SHGFI_SYSICONINDEX | SHGFI_LARGEICON | SHGFI_ICON));
-	m_wndList.SetImageList(&il, LVSIL_NORMAL);
+	m_wndList.SetImageList(&theApp.m_SystemImageListLarge, LVSIL_NORMAL);
 	m_wndList.EnableGroupView(TRUE);
 
 	IMAGEINFO ii;
-	il.GetImageInfo(0, &ii);
+	theApp.m_SystemImageListLarge.GetImageInfo(0, &ii);
 	CDC* dc = GetWindowDC();
 	CFont* pOldFont = dc->SelectObject(&theApp.m_DefaultFont);
 	m_wndList.SetIconSpacing(CXDropdownListIconSpacing, ii.rcImage.bottom-ii.rcImage.top+dc->GetTextExtent(_T("Wy"), 2).cy*2+4);
@@ -202,8 +188,6 @@ void CPIDLDropdownWindow::OnDestroy()
 	}
 
 	CDropdownWindow::OnDestroy();
-	DeleteObject(il.m_hImageList);
-	il.Detach();
 }
 
 void CPIDLDropdownWindow::OnItemChanged(NMHDR* pNMHDR, LRESULT* /*pResult*/)
@@ -214,7 +198,6 @@ void CPIDLDropdownWindow::OnItemChanged(NMHDR* pNMHDR, LRESULT* /*pResult*/)
 	{
 		LPITEMIDLIST pidl = (LPITEMIDLIST)m_wndList.GetItemData(pNMListView->iItem);
 		GetOwner()->SendMessage(WM_SETITEM, NULL, (LPARAM)pidl);
-		GetOwner()->PostMessage(WM_CLOSEDROPDOWN);
 	}
 }
 
@@ -223,8 +206,6 @@ void CPIDLDropdownWindow::OnChooseFolder()
 	ShowWindow(SW_HIDE);
 
 	GetOwner()->MessageBox(_T("Test"));
-
-	GetOwner()->PostMessage(WM_CLOSEDROPDOWN);
 }
 
 

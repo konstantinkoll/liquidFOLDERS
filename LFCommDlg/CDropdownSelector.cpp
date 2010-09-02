@@ -224,13 +224,14 @@ void CDropdownSelector::CreateDropdownWindow()
 
 void CDropdownSelector::SetEmpty(BOOL Repaint)
 {
-	m_IsEmpty = TRUE;
-
+	OnCloseDropdown();
 	if (m_Icon)
 	{
 		DestroyIcon(m_Icon);
 		m_Icon = NULL;
 	}
+
+	m_IsEmpty = TRUE;
 
 	if (Repaint)
 		Invalidate();
@@ -238,6 +239,10 @@ void CDropdownSelector::SetEmpty(BOOL Repaint)
 
 void CDropdownSelector::SetItem(CString Caption, HICON hIcon, CString DisplayName, BOOL Repaint)
 {
+	OnCloseDropdown();
+	if (m_Icon)
+		DestroyIcon(m_Icon);
+
 	m_Caption = Caption;
 	m_Icon = hIcon;
 	m_DisplayName = DisplayName;

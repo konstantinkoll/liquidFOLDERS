@@ -55,7 +55,8 @@ protected:
 // CDropdownSelector
 //
 
-#define WM_SETITEM         WM_USER+3
+#define WM_SETITEM              WM_USER+3
+#define NM_SELECTIONCHANGED     WM_USER+4
 
 class AFX_EXT_CLASS CDropdownSelector : public CWnd
 {

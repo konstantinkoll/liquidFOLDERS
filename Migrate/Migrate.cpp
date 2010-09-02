@@ -34,6 +34,11 @@ BOOL CMigrateApp::InitInstance()
 {
 	LFApplication::InitInstance();
 
+	// System image list
+	SHFILEINFO shfi;
+	m_SystemImageListSmall.Attach((HIMAGELIST)SHGetFileInfo(_T(""), NULL, &shfi, sizeof(shfi), SHGFI_SYSICONINDEX | SHGFI_SMALLICON));
+	m_SystemImageListLarge.Attach((HIMAGELIST)SHGetFileInfo(_T(""), NULL, &shfi, sizeof(shfi), SHGFI_SYSICONINDEX | SHGFI_LARGEICON));
+
 	// Registry auslesen
 	SetRegistryBase(_T("Settings"));
 	m_DeleteImported = GetInt(_T("DeleteImported"), FALSE);
@@ -104,4 +109,20 @@ LPITEMIDLIST CMigrateApp::Clone(LPITEMIDLIST pidl)
 		CopyMemory(pidlcopy, pidl, cb);
 
 	return pidlcopy;
+}
+
+LPITEMIDLIST CMigrateApp::Concat(LPITEMIDLIST left, LPITEMIDLIST right)
+{
+	UINT cb1 = theApp.GetByteSize(left)-sizeof(ITEMIDLIST);
+	UINT cb2 = theApp.GetByteSize(right);
+
+	LPITEMIDLIST pidlconcat = (LPITEMIDLIST)p_Malloc->Alloc(cb1+cb2);
+	if (pidlconcat)
+	{
+		ZeroMemory(pidlconcat, cb1+cb2);
+		CopyMemory(pidlconcat, left, cb1);
+		CopyMemory(((LPBYTE)pidlconcat)+cb1, right, cb2);
+	}
+
+	return pidlconcat;
 }

@@ -517,7 +517,7 @@ void CFileView::OnRButtonUp(UINT nFlags, CPoint point)
 	OnContextMenu(point);
 }
 
-void CFileView::OnMouseMove(UINT nFlags, CPoint point)
+void CFileView::OnMouseMove(UINT /*nFlags*/, CPoint point)
 {
 	if (EnableHover)
 	{
