@@ -440,9 +440,10 @@ void CDropdownSelector::OnPaint()
 			dc.DrawFrameControl(rarrow, DFC_BUTTON, DFCS_TRANSPARENT | 16 | DFCS_HOT | (m_Pressed ? DFCS_PUSHED : 0));
 
 		dc.DrawFrameControl(rarrow, DFC_MENU, DFCS_TRANSPARENT | 16 | (m_Pressed ? DFCS_PUSHED : (m_Hover && !m_Dropped) ? DFCS_HOT : DFCS_FLAT));
+		rclip.left--;
 
 		if (m_Hover || m_Pressed || m_Dropped)
-			dc.FillSolidRect(--rclip.left, rclip.top, 1, rclip.Height(), GetSysColor(COLOR_3DFACE));
+			dc.FillSolidRect(rclip.left, rclip.top, 1, rclip.Height(), GetSysColor(COLOR_3DFACE));
 	}
 
 	CRect rtext(rcontent);
