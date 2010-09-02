@@ -201,11 +201,51 @@ void CPIDLDropdownWindow::OnItemChanged(NMHDR* pNMHDR, LRESULT* /*pResult*/)
 	}
 }
 
+wchar_t InitialDir[MAX_PATH];
+int CALLBACK BrowseCallbackProc(HWND hWnd, UINT uMsg, LPARAM lParam, LPARAM /*lpData*/)
+{
+	wchar_t Dir[MAX_PATH] = L"";
+
+	switch (uMsg)
+	{
+	case BFFM_INITIALIZED:
+		SendMessage(hWnd, BFFM_SETSELECTION, TRUE, (LPARAM)InitialDir);
+		SendMessage(hWnd, BFFM_ENABLEOK, 0, InitialDir[0]!=L'\0');
+		break;
+	case BFFM_SELCHANGED:
+		SendMessage(hWnd, BFFM_ENABLEOK, 0, SHGetPathFromIDList((LPCITEMIDLIST)lParam, Dir));
+		break;
+	}
+
+	return 0;
+}
+
 void CPIDLDropdownWindow::OnChooseFolder()
 {
 	ShowWindow(SW_HIDE);
 
-	GetOwner()->MessageBox(_T("Test"));
+	// Verzeichnis finden
+	wchar_t szDisplayName[MAX_PATH] = L"";
+
+	BROWSEINFO bi;
+	ZeroMemory(&bi, sizeof(bi));
+	bi.hwndOwner = GetOwner()->GetSafeHwnd();
+	bi.pidlRoot = NULL;
+	bi.pszDisplayName = szDisplayName;
+	bi.lpszTitle = _T("CCC");//caption;
+	bi.ulFlags = BIF_NEWDIALOGSTYLE | BIF_NONEWFOLDERBUTTON;
+	//bi.lpfn = BrowseCallbackProc;
+
+	LPITEMIDLIST pidl = SHBrowseForFolder(&bi);
+	if (pidl)
+	{
+		GetOwner()->SendMessage(WM_SETITEM, NULL, (LPARAM)pidl);
+		theApp.p_Malloc->Free(pidl);
+	}
+	else
+	{
+		GetOwner()->SendMessage(WM_CLOSEDROPDOWN);
+	}
 }
 
 
