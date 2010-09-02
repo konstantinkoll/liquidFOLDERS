@@ -42,6 +42,15 @@ BOOL CGlasWindow::PreTranslateMessage(MSG* pMsg)
 {
 	if (p_PopupWindow)
 		if (GetCapture()!=p_PopupWindow->GetOwner())
+		{
+			
+			CRect rect;
+			p_PopupWindow->GetOwner()->GetClientRect(rect);
+			p_PopupWindow->GetOwner()->ClientToScreen(rect);
+
+			CPoint pt;
+			GetCursorPos(&pt);
+
 			switch (pMsg->message)
 			{
 			case WM_KEYDOWN:
@@ -52,6 +61,8 @@ BOOL CGlasWindow::PreTranslateMessage(MSG* pMsg)
 			case WM_LBUTTONUP:
 			case WM_RBUTTONUP:
 			case WM_MBUTTONUP:
+				p_PopupWindow->GetOwner()->SendMessage(WM_CLOSEDROPDOWN);
+				return rect.PtInRect(pt);
 			case WM_NCLBUTTONDOWN:
 			case WM_NCRBUTTONDOWN:
 			case WM_NCMBUTTONDOWN:
@@ -61,6 +72,7 @@ BOOL CGlasWindow::PreTranslateMessage(MSG* pMsg)
 				p_PopupWindow->GetOwner()->SendMessage(WM_CLOSEDROPDOWN);
 				return TRUE;
 			}
+		}
 
 	if ((pMsg->message==WM_KEYDOWN) && (pMsg->wParam==VK_TAB))
 	{
