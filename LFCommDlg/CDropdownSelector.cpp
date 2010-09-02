@@ -17,6 +17,8 @@ CDropdownListCtrl::CDropdownListCtrl()
 
 BEGIN_MESSAGE_MAP(CDropdownListCtrl, CExplorerList)
 	ON_NOTIFY_REFLECT(NM_CUSTOMDRAW, OnCustomDraw)
+	ON_WM_LBUTTONDOWN()
+	ON_WM_LBUTTONUP()
 END_MESSAGE_MAP()
 
 void CDropdownListCtrl::OnCustomDraw(NMHDR* pNMHDR, LRESULT* pResult)
@@ -27,21 +29,6 @@ void CDropdownListCtrl::OnCustomDraw(NMHDR* pNMHDR, LRESULT* pResult)
 	{
 	case CDDS_PREPAINT:
 		*pResult = CDRF_NOTIFYITEMDRAW;
-		break;
-	case CDDS_ITEMPOSTPAINT:
-		if ((!hTheme) && (GetHotItem()==(int)lplvcd->nmcd.dwItemSpec))
-		{
-			SetBkColor(GetSysColor(COLOR_WINDOW));
-
-			CRect rect;
-			GetItemRect(lplvcd->nmcd.dwItemSpec, rect, LVIR_BOUNDS);
-			DrawFocusRect(lplvcd->nmcd.hdc, rect);
-
-			*pResult = CDRF_SKIPDEFAULT;
-			break;
-		}
-
-		*pResult = CDRF_DODEFAULT;
 		break;
 	case CDDS_ITEMPREPAINT:
 		if ((!hTheme) && (GetHotItem()==(int)lplvcd->nmcd.dwItemSpec))
@@ -55,11 +42,43 @@ void CDropdownListCtrl::OnCustomDraw(NMHDR* pNMHDR, LRESULT* pResult)
 			CRect rect;
 			GetItemRect(lplvcd->nmcd.dwItemSpec, rect, LVIR_BOUNDS);
 			::FillRect(lplvcd->nmcd.hdc, rect, CreateSolidBrush(lplvcd->clrTextBk));
-*pResult = CDRF_NOTIFYPOSTPAINT;
+			*pResult = CDRF_NOTIFYPOSTPAINT;
+			break;
+		}
+
+		*pResult = CDRF_DODEFAULT;
+		break;
+	case CDDS_ITEMPOSTPAINT:
+		if ((!hTheme) && (GetHotItem()==(int)lplvcd->nmcd.dwItemSpec))
+		{
+			SetBkColor(GetSysColor(COLOR_WINDOW));
+
+			CRect rect;
+			GetItemRect(lplvcd->nmcd.dwItemSpec, rect, LVIR_BOUNDS);
+			DrawFocusRect(lplvcd->nmcd.hdc, rect);
+
+			*pResult = CDRF_SKIPDEFAULT;
 			break;
 		}
 	default:
 		*pResult = CDRF_DODEFAULT;
+	}
+}
+
+void CDropdownListCtrl::OnLButtonDown(UINT /*nFlags*/, CPoint /*point*/)
+{
+}
+
+void CDropdownListCtrl::OnLButtonUp(UINT /*nFlags*/, CPoint point)
+{
+	int idx = GetHotItem();
+	if (idx!=-1)
+	{
+		CRect rect;
+		GetItemRect(idx, rect, LVIR_BOUNDS);
+
+		if (rect.PtInRect(point))
+			SetItemState(idx, LVIS_SELECTED, LVIS_SELECTED);
 	}
 }
 
@@ -251,6 +270,8 @@ BEGIN_MESSAGE_MAP(CDropdownSelector, CWnd)
 	ON_WM_LBUTTONUP()
 	ON_WM_RBUTTONUP()
 	ON_MESSAGE(WM_CLOSEDROPDOWN, OnCloseDropdown)
+	ON_WM_SETFOCUS()
+	ON_WM_KILLFOCUS()
 END_MESSAGE_MAP()
 
 int CDropdownSelector::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -305,7 +326,7 @@ void CDropdownSelector::OnPaint()
 
 	CGlasWindow* pCtrlSite = (CGlasWindow*)GetParent();
 	pCtrlSite->DrawFrameBackground(&dc, rclient);
-	const BYTE Alpha = m_Dropped ? 0xFF : m_Hover ? 0xF0 : 0xD0;
+	const BYTE Alpha = m_Dropped ? 0xFF : (m_Hover || (GetFocus()==this)) ? 0xF0 : 0xD0;
 
 	CRect rcontent(rclient);
 	switch (pCtrlSite->GetDesign())
@@ -337,9 +358,19 @@ void CDropdownSelector::OnPaint()
 		}
 	case GWD_DEFAULT:
 		{
-			rcontent.DeflateRect(1, 1);
 			dc.Draw3dRect(rcontent, GetSysColor(COLOR_3DSHADOW), GetSysColor(COLOR_3DHIGHLIGHT));
 			rcontent.DeflateRect(1, 1);
+			if (m_Dropped || (GetFocus()==this))
+			{
+				dc.Draw3dRect(rcontent, 0x000000, GetSysColor(COLOR_3DFACE));
+				rcontent.DeflateRect(1, 1);
+				dc.FillSolidRect(rcontent, GetSysColor(COLOR_WINDOW));
+			}
+			else
+			{
+				rcontent.DeflateRect(1, 1);
+			}
+
 			break;
 		}
 	}
@@ -368,10 +399,13 @@ void CDropdownSelector::OnPaint()
 	}
 	else
 	{
-		if (m_Hover && !m_Dropped)
-			dc.DrawFrameControl(rarrow, DFC_BUTTON, DFCS_TRANSPARENT | 16 | DFCS_HOT);
+		if (m_Hover || m_Pressed || m_Dropped)
+			dc.DrawFrameControl(rarrow, DFC_BUTTON, DFCS_TRANSPARENT | 16 | DFCS_HOT | (m_Pressed ? DFCS_PUSHED : 0));
 
 		dc.DrawFrameControl(rarrow, DFC_MENU, DFCS_TRANSPARENT | 16 | (m_Pressed ? DFCS_PUSHED : (m_Hover && !m_Dropped) ? DFCS_HOT : DFCS_FLAT));
+
+		if (m_Hover || m_Pressed || m_Dropped)
+			dc.FillSolidRect(--rclip.left, rclip.top, 1, rclip.Height(), GetSysColor(COLOR_3DFACE));
 	}
 
 	CRect rtext(rcontent);
@@ -419,6 +453,13 @@ void CDropdownSelector::OnPaint()
 	}
 
 	dc.SelectObject(pOldFont);
+
+	if ((GetFocus()==this) && (!m_Dropped) && (pCtrlSite->GetDesign()==GWD_DEFAULT))
+	{
+		rtext.InflateRect(3, -1);
+		dc.SetTextColor(0x000000);
+		dc.DrawFocusRect(rtext);
+	}
 
 	// Set alpha
 	BITMAP bm;
@@ -574,4 +615,14 @@ LRESULT CDropdownSelector::OnCloseDropdown(WPARAM /*wParam*/, LPARAM /*lParam*/)
 	}
 
 	return FALSE;
+}
+
+void CDropdownSelector::OnSetFocus(CWnd* /*pOldWnd*/)
+{
+	Invalidate();
+}
+
+void CDropdownSelector::OnKillFocus(CWnd* /*pOldWnd*/)
+{
+	Invalidate();
 }
