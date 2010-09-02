@@ -16,6 +16,7 @@ public:
 protected:
 	void Hide();
 
+	BOOL m_Themed;
 	HICON m_Icon;
 	CSize m_szIcon;
 	CString m_strCaption;

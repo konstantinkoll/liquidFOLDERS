@@ -1,5 +1,6 @@
 
 #include "stdafx.h"
+#include "LFApplication.h"
 #include "LFTooltip.h"
 
 
@@ -167,14 +168,21 @@ void LFTooltip::Track(CPoint point, HICON hIcon, CSize szIcon, const CString& st
 				rect.bottom = rect.top+sz.cy;
 			}
 
-	CMFCToolTipInfo params;
-	CMFCVisualManager::GetInstance()->GetToolTipInfo(params);
-	if (params.m_bRoundedCorners)
+	m_Themed = FALSE;
+	LFApplication* pApp = (LFApplication*)AfxGetApp();
+	if (pApp->m_ThemeLibLoaded)
+		m_Themed = pApp->zIsThemeActive();
+
+	CRgn rgn;
+	if (m_Themed)
 	{
-		CRgn rgn;
 		rgn.CreateRoundRectRgn(0, 0, sz.cx+1, sz.cy+1, 4, 4);
-		SetWindowRgn(rgn, FALSE);
 	}
+	else
+	{
+		rgn.CreateRectRgn(0, 0, sz.cx, sz.cy);
+	}
+	SetWindowRgn(rgn, FALSE);
 
 	SetWindowPos(&wndTop, rect.left, rect.top, rect.Width(), rect.Height(), SWP_NOACTIVATE | SWP_NOOWNERZORDER);
 	ShowWindow(SW_SHOWNOACTIVATE);
@@ -233,40 +241,26 @@ void LFTooltip::OnPaint()
 	rect.DeflateRect(1, 1);
 
 	// Background
-	CMFCToolTipInfo params;
-	CMFCVisualManager::GetInstance()->GetToolTipInfo(params);
-
-	if (params.m_clrFill==(COLORREF)-1)
+	if (m_Themed)
 	{
-		FillRect(dc.GetSafeHdc(), rect, GetSysColorBrush(COLOR_INFOBK));
+		Graphics g(dc);
+		LinearGradientBrush brush(Point(0, rect.top), Point(0, rect.bottom+1), Color(0xFF, 0xFF, 0xFF), Color(0xC9, 0xD9, 0xEF));
+		g.FillRectangle(&brush, rect.left, rect.top, rect.Width(), rect.Height());
 	}
 	else
 	{
-		if (params.m_clrFillGradient==(COLORREF)-1)
-		{
-			CBrush br(params.m_clrFill);
-			dc.FillRect(rect, &br);
-		}
-		else
-		{
-			CDrawingManager dm(dc);
-			dm.FillGradient2(rect, params.m_clrFillGradient, params.m_clrFill, (params.m_nGradientAngle==-1) ? 90 : params.m_nGradientAngle);
-		}
+		dc.FillSolidRect(rect, GetSysColor(COLOR_INFOBK));
 	}
 
 	// Border
-	COLORREF clrLine = (params.m_clrBorder==(COLORREF)-1) ? GetSysColor(COLOR_INFOTEXT) : params.m_clrBorder;
-	COLORREF clrText = (params.m_clrText==(COLORREF)-1) ? GetSysColor(COLOR_INFOTEXT) : params.m_clrText;
+	COLORREF clrLine = m_Themed ? 0x767676 : GetSysColor(COLOR_INFOTEXT);
+	COLORREF clrText = m_Themed ? 0x4C4C4C : GetSysColor(COLOR_INFOTEXT);
 
 	CPen penLine(PS_SOLID, 1, clrLine);
 	CPen* pOldPen = dc.SelectObject(&penLine);
 	rect.InflateRect(1, 1);
 
-	if (!params.m_bRoundedCorners)
-	{
-		dc.Draw3dRect(rect, clrLine, clrLine);
-	}
-	else
+	if (m_Themed)
 	{
 		const int nOffset = 2;
 
@@ -283,6 +277,10 @@ void LFTooltip::OnPaint()
 		dc.LineTo(rect.left, rect.top+nOffset);
 
 		dc.LineTo(rect.left+nOffset, rect.top);
+	}
+	else
+	{
+		dc.Draw3dRect(rect, clrLine, clrLine);
 	}
 
 	dc.SelectObject(pOldPen);
