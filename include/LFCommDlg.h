@@ -5,6 +5,7 @@
 #include "..\LFCommDlg\CDropdownSelector.h"
 #include "..\LFCommDlg\CExplorerHeader.h"
 #include "..\LFCommDlg\CExplorerList.h"
+#include "..\LFCommDlg\CExplorerTree.h"
 #include "..\LFCommDlg\CGdiPlusBitmap.h"
 #include "..\LFCommDlg\CGlasWindow.h"
 #include "..\LFCommDlg\CImageListTransparent.h"
@@ -18,6 +19,7 @@
 #include "..\LFCommDlg\CTooltipHeader.h"
 #include "..\LFCommDlg\LFAboutDlg.h"
 #include "..\LFCommDlg\LFApplication.h"
+#include "..\LFCommDlg\LFBrowseForFolderDlg.h"
 #include "..\LFCommDlg\LFChooseDefaultStoreDlg.h"
 #include "..\LFCommDlg\LFDropTarget.h"
 #include "..\LFCommDlg\LFEditTagsDlg.h"
@@ -32,4 +34,11 @@
 #include "..\LFCommDlg\LFTooltip.h"
 #include "..\LFCommDlg\LFWelcomeDlg.h"
 
-void CreateRoundRectangle(CRect rect, int rad, GraphicsPath& path);
+#ifdef LFCommDlg_EXPORTS
+#define LFCommDlg_API __declspec(dllexport)
+#else
+#define LFCommDlg_API __declspec(dllimport)
+#endif
+
+LFCommDlg_API void CreateRoundRectangle(CRect rect, int rad, GraphicsPath& path);
+LFCommDlg_API void TooltipDataFromPIDL(LPITEMIDLIST pidl, CImageList* icons, HICON& hIcon, CSize& size, CString& caption, CString& hint);

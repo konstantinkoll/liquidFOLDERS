@@ -7,7 +7,6 @@ class AFX_EXT_CLASS LFEditTagsDlg : public CDialog
 {
 public:
 	LFEditTagsDlg(CWnd* pParentWnd, CString _Tags, char* _StoreID);
-	virtual ~LFEditTagsDlg();
 
 	virtual void DoDataExchange(CDataExchange* pDX);
 

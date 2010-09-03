@@ -41,7 +41,7 @@ LRESULT CGlasWindow::DefWindowProc(UINT message, WPARAM wParam, LPARAM lParam)
 BOOL CGlasWindow::PreTranslateMessage(MSG* pMsg)
 {
 	if (p_PopupWindow)
-		if (GetCapture()!=p_PopupWindow->GetOwner())
+		if ((GetCapture()!=p_PopupWindow->GetOwner()) && (p_PopupWindow->IsWindowVisible()))
 		{
 			
 			CRect rect;

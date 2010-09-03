@@ -36,10 +36,6 @@ CInspectorGrid::CInspectorGrid()
 	m_nLeftColumnWidth = 150;
 }
 
-CInspectorGrid::~CInspectorGrid()
-{
-}
-
 CFont* CInspectorGrid::GetBoldFnt()
 {
 	return &m_fontBold;

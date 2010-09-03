@@ -21,9 +21,6 @@ LFStoreNewDlg::LFStoreNewDlg(CWnd* pParentWnd, UINT nIDTemplate, char Drive, LFS
 	m_Drive = Drive;
 }
 
-LFStoreNewDlg::~LFStoreNewDlg()
-{
-}
 
 BEGIN_MESSAGE_MAP(LFStoreNewDlg, CDialog)
 	ON_WM_DESTROY()

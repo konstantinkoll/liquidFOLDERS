@@ -32,10 +32,6 @@ CAttributeProperty::CAttributeProperty(LFVariantData* _pData, CAttributeProperty
 	SetValue(tmpStr, FALSE);
 }
 
-CAttributeProperty::~CAttributeProperty()
-{
-}
-
 void CAttributeProperty::SetValue(const COleVariant& varValue, BOOL _Multiple)
 {
 	Multiple = _Multiple;
@@ -194,10 +190,6 @@ CAttributePropertyTags::CAttributePropertyTags(LFVariantData* _pData, char* _Sto
 	SetStore(_StoreID);
 }
 
-CAttributePropertyTags::~CAttributePropertyTags()
-{
-}
-
 BOOL CAttributePropertyTags::HasButton() const
 {
 	return TRUE;
@@ -260,10 +252,6 @@ void CAttributePropertyTags::SetStore(char* _StoreID)
 
 CAttributePropertyIATA::CAttributePropertyIATA(LFVariantData* _pData, CAttributeProperty** _pDependentProp1, CAttributeProperty** _pDependentProp2)
 	: CAttributeProperty(_pData, _pDependentProp1, _pDependentProp2, NULL, NULL, _T("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"))
-{
-}
-
-CAttributePropertyIATA::~CAttributePropertyIATA()
 {
 }
 
@@ -342,10 +330,6 @@ CAttributePropertyGPS::CAttributePropertyGPS(LFVariantData* _pData)
 {
 }
 
-CAttributePropertyGPS::~CAttributePropertyGPS()
-{
-}
-
 BOOL CAttributePropertyGPS::HasButton() const
 {
 	return TRUE;
@@ -376,10 +360,6 @@ void CAttributePropertyGPS::OnClickButton(CPoint /*point*/)
 
 CAttributePropertyRating::CAttributePropertyRating(LFVariantData* _pData)
 	: CAttributeProperty(_pData)
-{
-}
-
-CAttributePropertyRating::~CAttributePropertyRating()
 {
 }
 
@@ -543,10 +523,6 @@ CAttributePropertyTime::CAttributePropertyTime(LFVariantData* _pData)
 	: CAttributeProperty(_pData)
 {
 	LeftDate = RightDate = LeftTime = RightTime = 0;
-}
-
-CAttributePropertyTime::~CAttributePropertyTime()
-{
 }
 
 BOOL CAttributePropertyTime::OnEdit(LPPOINT lptClick)

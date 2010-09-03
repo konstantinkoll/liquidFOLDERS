@@ -10,16 +10,12 @@ LFSelectLocationGPSDlg::LFSelectLocationGPSDlg(CWnd* pParentWnd, LFGeoCoordinate
 	m_pCoord = pCoord;
 }
 
-LFSelectLocationGPSDlg::~LFSelectLocationGPSDlg()
-{
-}
 
 BEGIN_MESSAGE_MAP(LFSelectLocationGPSDlg, CDialog)
 	ON_WM_DESTROY()
 	ON_WM_TIMER()
 	ON_NOTIFY(MAP_UPDATE_LOCATION, IDC_MAP_SELECTION, OnUpdateEdit)
 END_MESSAGE_MAP()
-
 
 BOOL LFSelectLocationGPSDlg::OnInitDialog()
 {

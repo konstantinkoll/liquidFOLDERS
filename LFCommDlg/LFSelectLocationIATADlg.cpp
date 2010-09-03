@@ -28,10 +28,6 @@ LFSelectLocationIATADlg::LFSelectLocationIATADlg(CWnd* pParentWnd, UINT nIDTempl
 	}
 }
 
-LFSelectLocationIATADlg::~LFSelectLocationIATADlg()
-{
-}
-
 void LFSelectLocationIATADlg::LoadCountry(UINT country, BOOL SelectFirst)
 {
 	CListCtrl* li = (CListCtrl*)GetDlgItem(IDC_AIRPORTS);

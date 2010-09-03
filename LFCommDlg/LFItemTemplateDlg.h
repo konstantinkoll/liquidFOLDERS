@@ -8,7 +8,6 @@ class AFX_EXT_CLASS LFItemTemplateDlg : public CDialog
 {
 public:
 	LFItemTemplateDlg(CWnd* pParentWnd, LFItemDescriptor* pItem, char* _StoreID);
-	virtual ~LFItemTemplateDlg();
 
 	virtual void DoDataExchange(CDataExchange* pDX);
 

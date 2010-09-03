@@ -252,10 +252,10 @@ BOOL LFApplication::InitInstance()
 	SetRegistryKey(_T("liquidFOLDERS"));
 	LoadStdProfileSettings();
 
+	InitShellManager();
 	if (HasGUI==HasGUI_Ribbon)
 	{
 		InitContextMenuManager();
-		InitShellManager();
 		InitKeyboardManager();
 	}
 

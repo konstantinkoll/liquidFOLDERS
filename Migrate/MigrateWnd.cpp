@@ -69,6 +69,7 @@ void CMigrateWnd::AdjustLayout()
 BEGIN_MESSAGE_MAP(CMigrateWnd, CGlasWindow)
 	ON_WM_CREATE()
 	ON_MESSAGE_VOID(WM_IDLEUPDATECMDUI, OnIdleUpdateCmdUI)
+	ON_COMMAND(ID_VIEW_SELECTROOT, OnSelectRoot)
 /*	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoresChanged, OnStoresChanged)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoreAttributesChanged, OnStoresChanged)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->DefaultStoreChanged, OnStoresChanged)*/
@@ -82,17 +83,21 @@ int CMigrateWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	// Folder selector
 	CString tmpStr;
 	ENSURE(tmpStr.LoadString(IDS_FOLDER_HINT));
-	m_wndFolder.Create(tmpStr, this, 1);
+	if (m_wndFolder.Create(tmpStr, this, 1)==-1)
+		return -1;
 
 	// Store selector
 	ENSURE(tmpStr.LoadString(IDS_STORE_HINT));
-	m_wndStore.Create(tmpStr, this, 2);
+	if (m_wndStore.Create(tmpStr, this, 2)==-1)
+		return -1;
 
 	// Main view
-	m_wndMainView.Create(this, 3);
+	if (m_wndMainView.Create(this, 3)==-1)
+		return -1;
 
 	// Bottom area
-	m_wndBottomArea.Create(this, MAKEINTRESOURCE(IDD_BOTTOMAREA), CBRS_BOTTOM, 4);
+	if (m_wndBottomArea.Create(this, MAKEINTRESOURCE(IDD_BOTTOMAREA), CBRS_BOTTOM, 4)==-1)
+		return -1;
 
 	// Aero
 	MARGINS Margins = { 0, 0, m_wndFolder.GetPreferredHeight()+11, 0 };
@@ -105,6 +110,14 @@ int CMigrateWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 void CMigrateWnd::OnIdleUpdateCmdUI()
 {
+}
+
+void CMigrateWnd::OnSelectRoot()
+{
+	LFBrowseForFolderDlg dlg(this);
+	if (dlg.DoModal()==IDOK)
+	{
+	}
 }
 
 /*

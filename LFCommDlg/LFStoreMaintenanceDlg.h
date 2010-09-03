@@ -14,7 +14,6 @@ class AFX_EXT_CLASS LFStoreMaintenanceDlg : public CDialog
 {
 public:
 	LFStoreMaintenanceDlg(LFMaintenanceDlgParameters* pParameters, CWnd* pParentWnd=NULL);
-	virtual ~LFStoreMaintenanceDlg();
 
 protected:
 	LFMaintenanceDlgParameters* parameters;

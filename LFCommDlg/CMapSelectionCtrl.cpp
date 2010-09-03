@@ -20,7 +20,7 @@ CMapSelectionCtrl::CMapSelectionCtrl()
 
 	if (!(::GetClassInfo(hInst, L"CMapSelectionCtrl", &wndcls)))
 	{
-		wndcls.style = CS_DBLCLKS | CS_HREDRAW | CS_VREDRAW;
+		wndcls.style = CS_DBLCLKS | CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS;
 		wndcls.lpfnWndProc = ::DefWindowProc;
 		wndcls.cbClsExtra = wndcls.cbWndExtra = 0;
 		wndcls.hInstance = hInst;
@@ -160,7 +160,7 @@ void CMapSelectionCtrl::OnPaint()
 	dc.SelectObject(pOldBitmap);
 }
 
-void CMapSelectionCtrl::OnLButtonDown(UINT nFlags, CPoint point)
+void CMapSelectionCtrl::OnLButtonDown(UINT /*nFlags*/, CPoint point)
 {
 	UpdateLocation(point);
 }

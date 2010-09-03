@@ -6,12 +6,13 @@ class AFX_EXT_CLASS LFStoreNewDlg : public CDialog
 {
 public:
 	LFStoreNewDlg(CWnd* pParentWnd, UINT nIDTemplate, char Drive, LFStoreDescriptor* _store);
-	virtual ~LFStoreNewDlg();
 
 	virtual void DoDataExchange(CDataExchange* pDX);
-	void PopulateListCtrl();
 
 	bool makeDefault;
+
+protected:
+	void PopulateListCtrl();
 
 	afx_msg BOOL OnInitDialog();
 	afx_msg void OnDestroy();

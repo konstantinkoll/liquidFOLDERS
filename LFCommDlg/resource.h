@@ -10,6 +10,7 @@
 #define ID_APP_PROMPT                   205
 #define ID_APP_PURCHASE                 206
 #define ID_APP_ENTERLICENSEKEY          207
+#define IDC_CUSTOM2                     2022
 #define IDB_KEY                         20000
 #define IDB_BACKDROP                    20001
 #define IDB_LOGO                        20002
@@ -136,7 +137,10 @@
 #define IDC_TAGS                        22001
 #define IDC_ADDTAGS                     22002
 #define IDC_TAGLIST                     22003
-#define IDD_REGISTRY                    22100
+#define IDD_BROWSEFORFOLDER             22100
+#define IDC_EXPLORERHEADER              22101
+#define IDC_SHELLTREE                   22102
+#define IDD_REGISTRY                    22200
 
 // Next default values for new objects
 // 
@@ -144,7 +148,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        2008
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         2021
+#define _APS_NEXT_CONTROL_VALUE         2023
 #define _APS_NEXT_SYMED_VALUE           2007
 #endif
 #endif

@@ -15,9 +15,6 @@ LFEditTagsDlg::LFEditTagsDlg(CWnd* pParentWnd, CString _Tags, char* _StoreID)
 		strcpy_s(StoreID, LFKeySize, _StoreID);
 }
 
-LFEditTagsDlg::~LFEditTagsDlg()
-{
-}
 
 BEGIN_MESSAGE_MAP(LFEditTagsDlg, CDialog)
 	ON_NOTIFY(NM_DBLCLK, IDC_TAGLIST, OnDoubleClick)
@@ -63,6 +60,7 @@ BOOL LFEditTagsDlg::OnInitDialog()
 	m_TagList.SetTileViewInfo(&tvi);
 	m_TagList.SetView(LV_VIEW_TILE);
 	m_TagList.SetExtendedStyle(LVS_EX_DOUBLEBUFFER | LVS_EX_ONECLICKACTIVATE);
+	m_TagList.SetHoverTime(1);
 
 	if (StoreIDValid)
 	{
@@ -71,8 +69,9 @@ BOOL LFEditTagsDlg::OnInitDialog()
 		strcpy_s(f->StoreID, LFKeySize, StoreID);
 		f->Mode = LFFilterModeDirectoryTree;
 		f->Options.IgnoreSlaves = true;
-		LFSearchResult* res = LFQuery(f);
-		LFGroupSearchResult(res, LFAttrTags, false, false, 0, true, f);
+		LFSearchResult* base = LFQuery(f);
+		LFSearchResult* res = LFGroupSearchResult(base, LFAttrTags, false, false, 0, true, f);
+		LFFreeSearchResult(base);
 		LFFreeFilter(f);
 
 		for (unsigned int a=0; a<res->m_ItemCount; a++)

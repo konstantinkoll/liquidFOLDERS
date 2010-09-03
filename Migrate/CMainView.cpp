@@ -17,14 +17,14 @@ CMainView::CMainView()
 	m_IsRootSet = FALSE;
 }
 
-void CMainView::Create(CWnd* _pParentWnd, UINT nID)
+int CMainView::Create(CWnd* _pParentWnd, UINT nID)
 {
 	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, LoadCursor(NULL, IDC_ARROW));
 
 	const DWORD dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_TABSTOP;
 	CRect rect;
 	rect.SetRectEmpty();
-	CWnd::CreateEx(WS_EX_CONTROLPARENT, className, _T("MigrateMainView"), dwStyle, rect, _pParentWnd, nID);
+	return CWnd::CreateEx(WS_EX_CONTROLPARENT, className, _T("MigrateMainView"), dwStyle, rect, _pParentWnd, nID);
 }
 
 BOOL CMainView::OnCmdMsg(UINT nID, int nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo)
@@ -88,6 +88,7 @@ BEGIN_MESSAGE_MAP(CMainView, CWnd)
 	ON_WM_CREATE()
 	ON_WM_ERASEBKGND()
 	ON_WM_SIZE()
+	ON_COMMAND(ID_VIEW_SELECTROOT, OnSelectRoot)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_VIEW_SELECTROOT, ID_VIEW_DELETE, OnUpdateTaskbar)
 END_MESSAGE_MAP()
 
@@ -97,7 +98,8 @@ int CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 
 	// Task bar
-	m_wndTaskbar.Create(this, IDB_TASKS, 1);
+	if (m_wndTaskbar.Create(this, IDB_TASKS, 1)==-1)
+		return -1;
 
 	m_wndTaskbar.AddButton(ID_VIEW_SELECTROOT, _T("Select root folder"), 0);
 	m_wndTaskbar.AddButton(ID_VIEW_INCLUDETREE, _T("Include subfolders"), 1);
@@ -112,13 +114,16 @@ int CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndTaskbar.AddButton(ID_APP_ABOUT, _T("About Migration Wizard"), 9, TRUE, TRUE);
 
 	// Explorer header
-	m_wndExplorerHeader.Create(this, 2);
+	if (m_wndExplorerHeader.Create(this, 2)==-1)
+		return -1;
 
 	// Column header
-	m_wndHeader.Create(this, 3);
+	if (m_wndHeader.Create(this, 3)==-1)
+		return -1;
 
 	// Tree
-	m_wndTree.Create(this, 4);
+	if (m_wndTree.Create(this, 4)==-1)
+		return -1;
 
 	ClearRoot();
 	return 0;
@@ -133,6 +138,11 @@ void CMainView::OnSize(UINT nType, int cx, int cy)
 {
 	CWnd::OnSize(nType, cx, cy);
 	AdjustLayout();
+}
+
+void CMainView::OnSelectRoot()
+{
+	GetParent()->SendMessage(WM_COMMAND, ID_VIEW_SELECTROOT);
 }
 
 void CMainView::OnUpdateTaskbar(CCmdUI* pCmdUI)

@@ -2,6 +2,8 @@
 // CExplorerHeader.h: Schnittstelle der Klasse CExplorerHeader
 //
 
+#pragma once
+
 
 // CExplorerHeader
 //

@@ -50,7 +50,7 @@
 				AdditionalOptions="/MP"
 				Optimization="0"
 				AdditionalIncludeDirectories="$(SolutionDir)\include"
-				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG;_AFXEXT"
+				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG;_AFXEXT;LFCommDlg_EXPORTS"
 				StringPooling="true"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -135,7 +135,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="$(SolutionDir)\include"
-				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG;_AFXEXT"
+				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG;_AFXEXT;LFCommDlg_EXPORTS"
 				StringPooling="true"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -223,7 +223,7 @@
 				EnableIntrinsicFunctions="true"
 				OmitFramePointers="true"
 				AdditionalIncludeDirectories="$(SolutionDir)\include"
-				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;_AFXEXT"
+				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;_AFXEXT;LFCommDlg_EXPORTS"
 				StringPooling="true"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -313,7 +313,7 @@
 				EnableIntrinsicFunctions="true"
 				OmitFramePointers="true"
 				AdditionalIncludeDirectories="$(SolutionDir)\include"
-				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;_AFXEXT"
+				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;_AFXEXT;LFCommDlg_EXPORTS"
 				StringPooling="true"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -400,6 +400,10 @@
 			</File>
 			<File
 				RelativePath=".\CExplorerList.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\CExplorerTree.cpp"
 				>
 			</File>
 			<File
@@ -496,6 +500,10 @@
 			</File>
 			<File
 				RelativePath=".\LFApplication.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\LFBrowseForFolderDlg.cpp"
 				>
 			</File>
 			<File
@@ -629,6 +637,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CExplorerTree.h"
+				>
+			</File>
+			<File
 				RelativePath=".\CGdiPlusBitmap.h"
 				>
 			</File>
@@ -686,6 +698,10 @@
 			</File>
 			<File
 				RelativePath=".\LFApplication.h"
+				>
+			</File>
+			<File
+				RelativePath=".\LFBrowseForFolderDlg.h"
 				>
 			</File>
 			<File
@@ -796,6 +812,10 @@
 			</File>
 			<File
 				RelativePath=".\res\ExplorerGradient.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Folder_Small.ico"
 				>
 			</File>
 			<File

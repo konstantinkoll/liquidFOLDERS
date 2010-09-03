@@ -15,18 +15,14 @@ CTreeView::CTreeView()
 {
 }
 
-CTreeView::~CTreeView()
-{
-}
-
-void CTreeView::Create(CWnd* _pParentWnd, UINT nID)
+int CTreeView::Create(CWnd* _pParentWnd, UINT nID)
 {
 	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, LoadCursor(NULL, IDC_ARROW));
 
 	const DWORD dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE;
 	CRect rect;
 	rect.SetRectEmpty();
-	CWnd::Create(className, _T("Tree"), dwStyle, rect, _pParentWnd, nID);
+	return CWnd::Create(className, _T("Tree"), dwStyle, rect, _pParentWnd, nID);
 }
 
 

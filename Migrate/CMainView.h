@@ -18,7 +18,7 @@ public:
 
 	virtual BOOL OnCmdMsg(UINT nID, int nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo);
 
-	void Create(CWnd* _pParentWnd, UINT nID);
+	int Create(CWnd* _pParentWnd, UINT nID);
 	void ClearRoot();
 	void SetRoot(CString _Root);
 	void SetDesign(UINT _Design);
@@ -37,6 +37,7 @@ protected:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnSize(UINT nType, int cx, int cy);
+	afx_msg void OnSelectRoot();
 	afx_msg void OnUpdateTaskbar(CCmdUI* pCmdUI);
 	DECLARE_MESSAGE_MAP()
 };

@@ -14,9 +14,6 @@ LFStoreDeleteDlg::LFStoreDeleteDlg(CWnd* pParentWnd, wchar_t* _StoreName)
 	StoreName = _StoreName;
 }
 
-LFStoreDeleteDlg::~LFStoreDeleteDlg()
-{
-}
 
 BEGIN_MESSAGE_MAP(LFStoreDeleteDlg, LFDialog)
 	ON_BN_CLICKED(IDC_KEEP, SetOkButton)

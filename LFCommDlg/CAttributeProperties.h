@@ -15,7 +15,6 @@ class AFX_EXT_CLASS CAttributeProperty : public CMFCPropertyGridProperty
 public:
 	CAttributeProperty(LFVariantData* _pData, CAttributeProperty** _pDependentProp1=NULL, CAttributeProperty** _pDependentProp2=NULL,
 		LPCTSTR Mask=NULL, LPCTSTR Template=NULL, LPCTSTR ValidChars=NULL);
-	virtual ~CAttributeProperty();
 
 	virtual BOOL IsEditable();
 	virtual BOOL OnEdit(LPPOINT lptClick);
@@ -46,7 +45,6 @@ class AFX_EXT_CLASS CAttributePropertyTags : public CAttributeProperty
 {
 public:
 	CAttributePropertyTags(LFVariantData* _pData, char* _StoreID=NULL);
-	virtual ~CAttributePropertyTags();
 
 	virtual BOOL HasButton() const;
 	virtual void OnClickButton(CPoint point);
@@ -67,7 +65,6 @@ class AFX_EXT_CLASS CAttributePropertyIATA : public CAttributeProperty
 {
 public:
 	CAttributePropertyIATA(LFVariantData* _pData, CAttributeProperty** _pDependentProp1=NULL, CAttributeProperty** _pDependentProp2=NULL);
-	virtual ~CAttributePropertyIATA();
 
 	virtual BOOL HasButton() const;
 	virtual void OnClickButton(CPoint point);
@@ -82,7 +79,6 @@ class AFX_EXT_CLASS CAttributePropertyGPS : public CAttributeProperty
 {
 public:
 	CAttributePropertyGPS(LFVariantData* _pData);
-	virtual ~CAttributePropertyGPS();
 
 	virtual BOOL HasButton() const;
 	virtual BOOL IsEditable();
@@ -97,7 +93,6 @@ class AFX_EXT_CLASS CAttributePropertyRating : public CAttributeProperty
 {
 public:
 	CAttributePropertyRating(LFVariantData* _pData);
-	virtual ~CAttributePropertyRating();
 
 	virtual BOOL OnEdit(LPPOINT lptClick);
 	virtual BOOL OnSetCursor() const;
@@ -134,7 +129,6 @@ class AFX_EXT_CLASS CAttributePropertyTime : public CAttributeProperty
 {
 public:
 	CAttributePropertyTime(LFVariantData* _pData);
-	virtual ~CAttributePropertyTime();
 
 	virtual BOOL OnEdit(LPPOINT lptClick);
 	virtual BOOL OnUpdateValue();

@@ -13,9 +13,8 @@ class CHeaderView : public CWnd
 {
 public:
 	CHeaderView();
-	virtual ~CHeaderView();
 
-	void Create(CWnd* _pParentWnd, UINT nID);
+	int Create(CWnd* _pParentWnd, UINT nID);
 	int GetPreferredHeight();
 
 protected:

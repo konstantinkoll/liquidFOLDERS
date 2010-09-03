@@ -12,9 +12,8 @@ class CTreeView : public CWnd
 {
 public:
 	CTreeView();
-	~CTreeView();
 
-	void Create(CWnd* _pParentWnd, UINT nID);
+	int Create(CWnd* _pParentWnd, UINT nID);
 
 protected:
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);

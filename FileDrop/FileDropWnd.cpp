@@ -331,13 +331,16 @@ void CFileDropWnd::OnMouseHover(UINT nFlags, CPoint point)
 {
 	if ((nFlags & (MK_LBUTTON | MK_MBUTTON | MK_RBUTTON | MK_XBUTTON1 | MK_XBUTTON2))==0)
 	{
-		CString strHint;
-		ENSURE(strHint.LoadString(IDS_TOOLTIP));
+		if (!m_TooltipCtrl.IsWindowVisible())
+		{
+			CString strHint;
+			ENSURE(strHint.LoadString(IDS_TOOLTIP));
 
-		ClientToScreen(&point);
-		m_TooltipCtrl.Track(point,
-			(HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IDR_APPLICATION), IMAGE_ICON, 48, 48, LR_DEFAULTCOLOR),
-			CSize(48, 48), _T("FileDrop"), strHint);
+			ClientToScreen(&point);
+			m_TooltipCtrl.Track(point,
+				(HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IDR_APPLICATION), IMAGE_ICON, 48, 48, LR_DEFAULTCOLOR),
+				CSize(48, 48), _T("FileDrop"), strHint);
+		}
 	}
 	else
 	{

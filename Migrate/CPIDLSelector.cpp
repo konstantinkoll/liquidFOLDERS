@@ -24,13 +24,13 @@ BOOL CPIDLDropdownWindow::AddPIDL(LPITEMIDLIST pidl, UINT Category, BOOL FreeOnF
 	if (FAILED(SHGetFileInfo((wchar_t*)pidl, 0, &sfi, sizeof(SHFILEINFO), SHGFI_PIDL | SHGFI_DISPLAYNAME | SHGFI_ATTRIBUTES | SHGFI_SYSICONINDEX)))
 	{
 		if (FreeOnFail)
-			theApp.p_Malloc->Free(pidl);
+			theApp.GetShellManager()->FreeItem(pidl);
 		return FALSE;
 	}
 	if (!sfi.dwAttributes)
 	{
 		if (FreeOnFail)
-			theApp.p_Malloc->Free(pidl);
+			theApp.GetShellManager()->FreeItem(pidl);
 		return FALSE;
 	}
 
@@ -80,6 +80,8 @@ void CPIDLDropdownWindow::AddCSIDL(int CSIDL, UINT Category)
 
 void CPIDLDropdownWindow::AddChildren(wchar_t* Path, UINT Category)
 {
+	CShellManager* sm = theApp.GetShellManager();
+
 	IShellFolder* Desktop;
 	if (SUCCEEDED(SHGetDesktopFolder(&Desktop)))
 	{
@@ -98,8 +100,8 @@ void CPIDLDropdownWindow::AddChildren(wchar_t* Path, UINT Category)
 				LPITEMIDLIST lib;
 				while (e->Next(1, &lib, NULL)==S_OK)
 				{
-					AddPIDL(theApp.Concat(pidl, lib), Category);
-					theApp.p_Malloc->Free(lib);
+					AddPIDL(sm->ConcatenateItem(pidl, lib), Category);
+					sm->FreeItem(lib);
 				}
 				e->Release();
 			}
@@ -109,7 +111,7 @@ void CPIDLDropdownWindow::AddChildren(wchar_t* Path, UINT Category)
 
 		Desktop->Release();
 		if (!ParentAdded)
-			theApp.p_Malloc->Free(pidl);
+			sm->FreeItem(pidl);
 	}
 }
 
@@ -184,7 +186,7 @@ void CPIDLDropdownWindow::OnDestroy()
 	{
 		LPITEMIDLIST pidl = (LPITEMIDLIST)m_wndList.GetItemData(a);
 		if (pidl)
-			theApp.p_Malloc->Free(pidl);
+			theApp.GetShellManager()->FreeItem(pidl);
 	}
 
 	CDropdownWindow::OnDestroy();
@@ -222,30 +224,8 @@ int CALLBACK BrowseCallbackProc(HWND hWnd, UINT uMsg, LPARAM lParam, LPARAM /*lp
 
 void CPIDLDropdownWindow::OnChooseFolder()
 {
-	ShowWindow(SW_HIDE);
-
-	// Verzeichnis finden
-	wchar_t szDisplayName[MAX_PATH] = L"";
-
-	BROWSEINFO bi;
-	ZeroMemory(&bi, sizeof(bi));
-	bi.hwndOwner = GetOwner()->GetSafeHwnd();
-	bi.pidlRoot = NULL;
-	bi.pszDisplayName = szDisplayName;
-	bi.lpszTitle = _T("CCC");//caption;
-	bi.ulFlags = BIF_NEWDIALOGSTYLE | BIF_NONEWFOLDERBUTTON;
-	//bi.lpfn = BrowseCallbackProc;
-
-	LPITEMIDLIST pidl = SHBrowseForFolder(&bi);
-	if (pidl)
-	{
-		GetOwner()->SendMessage(WM_SETITEM, NULL, (LPARAM)pidl);
-		theApp.p_Malloc->Free(pidl);
-	}
-	else
-	{
-		GetOwner()->SendMessage(WM_CLOSEDROPDOWN);
-	}
+	GetOwner()->PostMessage(WM_CLOSEDROPDOWN);
+	theApp.m_pMainWnd->SendMessage(WM_COMMAND, ID_VIEW_SELECTROOT);
 }
 
 
@@ -261,7 +241,7 @@ CPIDLSelector::CPIDLSelector()
 CPIDLSelector::~CPIDLSelector()
 {
 	if (pidl)
-		theApp.p_Malloc->Free(pidl);
+		theApp.GetShellManager()->FreeItem(pidl);
 }
 
 void CPIDLSelector::CreateDropdownWindow()
@@ -274,7 +254,7 @@ void CPIDLSelector::SetEmpty(BOOL Repaint)
 {
 	if (pidl)
 	{
-		theApp.p_Malloc->Free(pidl);
+		theApp.GetShellManager()->FreeItem(pidl);
 		pidl = NULL;
 	}
 
@@ -284,9 +264,9 @@ void CPIDLSelector::SetEmpty(BOOL Repaint)
 void CPIDLSelector::SetItem(LPITEMIDLIST _pidl, BOOL Repaint)
 {
 	if (pidl)
-		theApp.p_Malloc->Free(pidl);
+		theApp.GetShellManager()->FreeItem(pidl);
 
-	pidl = theApp.Clone(_pidl);
+	pidl = theApp.GetShellManager()->CopyItem(_pidl);
 	if (pidl)
 	{
 		SHFILEINFO sfi;
@@ -309,7 +289,7 @@ void CPIDLSelector::SetItem(LPITEMIDLIST _pidl, BOOL Repaint)
 
 void CPIDLSelector::GetTooltipData(HICON& hIcon, CSize& size, CString& caption, CString& hint)
 {
-	theApp.TooltipDataFromPIDL(pidl, hIcon, size, caption, hint);
+	TooltipDataFromPIDL(pidl, &theApp.m_SystemImageListLarge, hIcon, size, caption, hint);
 }
 
 

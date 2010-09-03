@@ -24,7 +24,7 @@ class CMapSelectionCtrl : public CWnd
 {
 public:
 	CMapSelectionCtrl();
-	virtual ~CMapSelectionCtrl();
+	~CMapSelectionCtrl();
 
 	void OnBlink();
 	void SetGeoCoordinates(const LFGeoCoordinates _Coord);

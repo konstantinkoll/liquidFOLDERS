@@ -60,9 +60,6 @@ LFItemTemplateDlg::LFItemTemplateDlg(CWnd* pParentWnd, LFItemDescriptor* pItem, 
 	}
 }
 
-LFItemTemplateDlg::~LFItemTemplateDlg()
-{
-}
 
 BEGIN_MESSAGE_MAP(LFItemTemplateDlg, CDialog)
 	ON_BN_CLICKED(IDC_ALPHABETICALLY, OnSortAlphabetically)

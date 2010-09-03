@@ -13,10 +13,6 @@ CImageListTransparent::CImageListTransparent()
 {
 }
 
-CImageListTransparent::~CImageListTransparent()
-{
-}
-
 void CImageListTransparent::CreateFromResource(UINT ID, UINT first, UINT last, int cx, int cy)
 {
 	Create(cx, cy, ILC_COLOR32, last-first+1, 4);

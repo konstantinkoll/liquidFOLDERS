@@ -15,7 +15,6 @@ friend class CAttributeProperty;
 
 public:
 	CInspectorGrid();
-	virtual ~CInspectorGrid();
 
 	CFont* GetBoldFnt();
 	CFont* GetItalicFnt();

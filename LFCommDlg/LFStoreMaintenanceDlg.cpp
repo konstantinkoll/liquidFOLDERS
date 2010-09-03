@@ -15,9 +15,6 @@ LFStoreMaintenanceDlg::LFStoreMaintenanceDlg(LFMaintenanceDlgParameters* pParame
 	parameters = pParameters;
 }
 
-LFStoreMaintenanceDlg::~LFStoreMaintenanceDlg()
-{
-}
 
 BEGIN_MESSAGE_MAP(LFStoreMaintenanceDlg, CDialog)
 END_MESSAGE_MAP()

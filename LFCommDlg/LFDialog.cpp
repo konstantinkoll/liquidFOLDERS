@@ -219,9 +219,7 @@ void LFDialog::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 
 LRESULT LFDialog::OnThemeChanged()
 {
-	if (m_Design==LFDS_Blue)
-		BackBufferL = BackBufferH = 0;
-
+	BackBufferL = BackBufferH = 0;
 	return TRUE;
 }
 

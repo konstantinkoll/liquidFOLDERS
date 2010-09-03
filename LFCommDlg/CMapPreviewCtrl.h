@@ -16,7 +16,7 @@ class CMapPreviewCtrl : public CWnd
 {
 public:
 	CMapPreviewCtrl();
-	virtual ~CMapPreviewCtrl();
+	~CMapPreviewCtrl();
 
 	void Update(LFAirport* _Airport);
 

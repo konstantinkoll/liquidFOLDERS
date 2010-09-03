@@ -24,9 +24,6 @@ LFStorePropertiesDlg::LFStorePropertiesDlg(char* _StoreID, CWnd* pParentWnd)
 	}
 }
 
-LFStorePropertiesDlg::~LFStorePropertiesDlg()
-{
-}
 
 BEGIN_MESSAGE_MAP(LFStorePropertiesDlg, CDialog)
 	ON_REGISTERED_MESSAGE(MessageIDs->StoresChanged, UpdateStore)

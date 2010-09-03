@@ -21,18 +21,14 @@ CHeaderView::CHeaderView()
 #endif
 }
 
-CHeaderView::~CHeaderView()
-{
-}
-
-void CHeaderView::Create(CWnd* _pParentWnd, UINT nID)
+int CHeaderView::Create(CWnd* _pParentWnd, UINT nID)
 {
 	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, LoadCursor(NULL, IDC_ARROW));
 
 	const DWORD dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE;
 	CRect rect;
 	rect.SetRectEmpty();
-	CWnd::Create(className, _T("Header"), dwStyle, rect, _pParentWnd, nID);
+	int res = CWnd::Create(className, _T("Header"), dwStyle, rect, _pParentWnd, nID);
 
 	rect.top = 1;
 	rect.bottom = 20;
@@ -48,6 +44,8 @@ void CHeaderView::Create(CWnd* _pParentWnd, UINT nID)
 		cbxs[a].SetFont(fnt);
 		cbxs[a].AddString(L"Test");
 	}
+
+	return res;
 }
 
 int CHeaderView::GetPreferredHeight()

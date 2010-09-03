@@ -8,7 +8,9 @@ class AFX_EXT_CLASS LFChooseDefaultStoreDlg : public CDialog
 {
 public:
 	LFChooseDefaultStoreDlg(CWnd* pParentWnd);
-	virtual ~LFChooseDefaultStoreDlg();
+	~LFChooseDefaultStoreDlg();
+
+	virtual void DoDataExchange(CDataExchange* pDX);
 
 protected:
 	HICON m_icStore;
@@ -16,8 +18,6 @@ protected:
 	CExplorerList m_List;
 	CImageList* m_Icons;
 	LFSearchResult* result;
-
-	virtual void DoDataExchange(CDataExchange* pDX);
 
 	void AddColumn(CListCtrl* l, UINT attr, UINT no);
 

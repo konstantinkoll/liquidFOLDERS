@@ -11,6 +11,8 @@
 // CExplorerHeader
 //
 
+extern AFX_EXTENSION_MODULE LFCommDlgDLL;
+
 #define BORDERLEFT      16
 #define BORDER          10
 
@@ -47,10 +49,14 @@ void CExplorerHeader::SetText(CString _Caption, CString _Hint, BOOL Repaint)
 
 void CExplorerHeader::SetColors(COLORREF CaptionCol, COLORREF HintCol, COLORREF BackCol, COLORREF LineCol, BOOL Repaint)
 {
-	m_CaptionCol = CaptionCol;
-	m_HintCol = HintCol;
-	m_BackCol = BackCol;
-	m_LineCol = LineCol;
+	if (CaptionCol!=(COLORREF)-1)
+		m_CaptionCol = CaptionCol;
+	if (HintCol!=(COLORREF)-1)
+		m_HintCol = HintCol;
+	if (BackCol!=(COLORREF)-1)
+		m_BackCol = BackCol;
+	if (LineCol!=(COLORREF)-1)
+		m_LineCol = LineCol;
 
 	if (Repaint)
 		Invalidate();

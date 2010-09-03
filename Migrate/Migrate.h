@@ -17,13 +17,6 @@ public:
 	virtual BOOL InitInstance();
 	virtual int ExitInstance();
 
-	LPITEMIDLIST GetNextItem(LPITEMIDLIST pidl);
-	UINT GetByteSize(LPITEMIDLIST pidl);
-	LPITEMIDLIST Clone(LPITEMIDLIST pidl);
-	LPITEMIDLIST Concat(LPITEMIDLIST left, LPITEMIDLIST right);
-	void TooltipDataFromPIDL(LPITEMIDLIST pidl, HICON& hIcon, CSize& size, CString& caption, CString& hint);
-
-	LPMALLOC p_Malloc;
 	CImageList m_SystemImageListSmall;
 	CImageList m_SystemImageListLarge;
 	BOOL m_DeleteImported;

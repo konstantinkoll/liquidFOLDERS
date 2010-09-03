@@ -170,13 +170,16 @@ int CDropdownWindow::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	CRect rect;
 	rect.SetRectEmpty();
-	m_wndList.Create(dwStyle, rect, this, 1);
+	if (m_wndList.Create(dwStyle, rect, this, 1)==-1)
+		return -1;
+
 	m_wndList.SetExtendedStyle(LVS_EX_DOUBLEBUFFER | LVS_EX_ONECLICKACTIVATE | LVS_EX_JUSTIFYCOLUMNS);
 	m_wndList.SetHotCursor(LoadCursor(NULL, IDC_ARROW));
 	m_wndList.SetFont(&((LFApplication*)AfxGetApp())->m_DefaultFont, FALSE);
 
 	if (m_DialogResID)
-		m_wndBottomArea.Create(this, m_DialogResID, dwStyle, 2);
+		if (m_wndBottomArea.Create(this, m_DialogResID, dwStyle, 2)==-1)
+			return -1;
 
 	return 0;
 }
@@ -564,14 +567,17 @@ void CDropdownSelector::OnMouseHover(UINT nFlags, CPoint point)
 {
 	if (((nFlags & (MK_LBUTTON | MK_MBUTTON | MK_RBUTTON | MK_XBUTTON1 | MK_XBUTTON2))==0) && (!m_Dropped) && (!m_IsEmpty))
 	{
-		HICON hIcon = NULL;
-		CSize size(0, 0);
-		CString caption;
-		CString hint;
-		GetTooltipData(hIcon, size, caption, hint);
+		if (!m_TooltipCtrl.IsWindowVisible())
+		{
+			HICON hIcon = NULL;
+			CSize size(0, 0);
+			CString caption;
+			CString hint;
+			GetTooltipData(hIcon, size, caption, hint);
 
-		ClientToScreen(&point);
-		m_TooltipCtrl.Track(point, hIcon, size, caption, hint);
+			ClientToScreen(&point);
+			m_TooltipCtrl.Track(point, hIcon, size, caption, hint);
+		}
 	}
 	else
 	{

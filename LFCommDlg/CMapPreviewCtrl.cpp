@@ -21,7 +21,7 @@ CMapPreviewCtrl::CMapPreviewCtrl()
 
 	if (!(::GetClassInfo(hInst, L"CMapPreviewCtrl", &wndcls)))
 	{
-		wndcls.style = CS_DBLCLKS | CS_HREDRAW | CS_VREDRAW;
+		wndcls.style = CS_DBLCLKS | CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS;
 		wndcls.lpfnWndProc = ::DefWindowProc;
 		wndcls.cbClsExtra = wndcls.cbWndExtra = 0;
 		wndcls.hInstance = hInst;

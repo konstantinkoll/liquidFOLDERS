@@ -7,7 +7,6 @@ class AFX_EXT_CLASS LFSelectLocationGPSDlg : public CDialog
 {
 public:
 	LFSelectLocationGPSDlg(CWnd* pParentWnd, LFGeoCoordinates* pCoord);
-	virtual ~LFSelectLocationGPSDlg();
 
 	virtual void DoDataExchange(CDataExchange* pDX);
 

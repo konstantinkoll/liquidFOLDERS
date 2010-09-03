@@ -5,6 +5,7 @@
 
 
 LFTooltip::LFTooltip()
+	: CWnd()
 {
 	m_Icon = NULL;
 }
