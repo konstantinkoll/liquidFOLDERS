@@ -6,9 +6,13 @@
 class AFX_EXT_CLASS LFBrowseForFolderDlg : public LFDialog
 {
 public:
-	LFBrowseForFolderDlg(CWnd* pParentWnd=NULL);
+	LFBrowseForFolderDlg(BOOL OnlyFSObjects=TRUE, CWnd* pParentWnd=NULL, CString Caption=_T(""), CString Hint=_T(""));
 
 protected:
+	BOOL m_OnlyFSObjects;
+	CString m_Caption;
+	CString m_Hint;
+
 	void AdjustLayout();
 
 	afx_msg BOOL OnInitDialog();

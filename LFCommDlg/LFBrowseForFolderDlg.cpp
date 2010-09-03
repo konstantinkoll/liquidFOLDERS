@@ -4,23 +4,28 @@
 #include "resource.h"
 
 
-LFBrowseForFolderDlg::LFBrowseForFolderDlg(CWnd* pParentWnd)
+LFBrowseForFolderDlg::LFBrowseForFolderDlg(BOOL OnlyFSObjects, CWnd* pParentWnd, CString Caption, CString Hint)
 	: LFDialog(IDD_BROWSEFORFOLDER, LFDS_White, pParentWnd)
 {
+	m_OnlyFSObjects = OnlyFSObjects;
+	m_Caption = Caption;
+	m_Hint = Hint;
 }
 
 void LFBrowseForFolderDlg::AdjustLayout()
 {
-	if (!IsWindow(m_wndExplorerHeader.GetSafeHwnd()))
-		return;
 	if (!IsWindow(m_wndExplorerTree.GetSafeHwnd()))
 		return;
 
 	CRect rect;
 	GetClientRect(rect);
 
-	const UINT ExplorerHeight = m_wndExplorerHeader.GetPreferredHeight();
-	m_wndExplorerHeader.SetWindowPos(NULL, rect.left, rect.top, rect.Width(), ExplorerHeight, SWP_NOACTIVATE | SWP_NOZORDER);
+	UINT ExplorerHeight = 0;
+	if (IsWindow(m_wndExplorerHeader))
+	{
+		ExplorerHeight = m_wndExplorerHeader.GetPreferredHeight();
+		m_wndExplorerHeader.SetWindowPos(NULL, rect.left, rect.top, rect.Width(), ExplorerHeight, SWP_NOACTIVATE | SWP_NOZORDER);
+	}
 
 	CRect borders(0, 0, 7, 7);
 	MapDialogRect(&borders);
@@ -43,9 +48,12 @@ BOOL LFBrowseForFolderDlg::OnInitDialog()
 {
 	LFDialog::OnInitDialog();
 
-	m_wndExplorerHeader.Create(this, IDC_EXPLORERHEADER);
-	m_wndExplorerHeader.SetText(_T("Test"), _T("Test"), FALSE);
-	m_wndExplorerHeader.SetLineStyle(FALSE, FALSE);
+	if ((!m_Caption.IsEmpty()) || (!m_Hint.IsEmpty()))
+	{
+		m_wndExplorerHeader.Create(this, IDC_EXPLORERHEADER);
+		m_wndExplorerHeader.SetText(m_Caption, m_Hint, FALSE);
+		m_wndExplorerHeader.SetLineStyle(FALSE, FALSE);
+	}
 
 	m_wndExplorerTree.Create(this, IDC_SHELLTREE);
 	m_wndExplorerTree.SetBkColor(0xFFFFFF);

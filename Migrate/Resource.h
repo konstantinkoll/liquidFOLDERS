@@ -20,9 +20,11 @@
 #define IDS_FOLDER_HINT                 1007
 #define IDS_STORE_CAPTION               1008
 #define IDS_STORE_HINT                  1009
-#define IDS_FOLDERCATEGORY1             1010
-#define IDS_FOLDERCATEGORY2             1011
-#define IDS_FOLDERCATEGORY3             1012
+#define IDS_BROWSEFORFOLDER_CAPTION     1010
+#define IDS_BROWSEFORFOLDER_HINT        1011
+#define IDS_FOLDERCATEGORY1             1012
+#define IDS_FOLDERCATEGORY2             1013
+#define IDS_FOLDERCATEGORY3             1014
 #define IDD_BOTTOMAREA                  2000
 #define IDC_SIMULATE                    2001
 #define IDC_DELETEIMPORTED              2002

@@ -819,6 +819,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\Folder_Tiny.ico"
+				>
+			</File>
+			<File
 				RelativePath=".\res\Info.ico"
 				>
 			</File>

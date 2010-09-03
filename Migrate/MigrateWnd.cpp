@@ -114,10 +114,14 @@ void CMigrateWnd::OnIdleUpdateCmdUI()
 
 void CMigrateWnd::OnSelectRoot()
 {
-	LFBrowseForFolderDlg dlg(this);
+	CString caption;
+	ENSURE(caption.LoadString(IDS_BROWSEFORFOLDER_CAPTION));
+	CString hint;
+	ENSURE(hint.LoadString(IDS_BROWSEFORFOLDER_HINT));
+
+	LFBrowseForFolderDlg dlg(FALSE, this, caption, hint);
 	if (dlg.DoModal()==IDOK)
-	{
-	}
+		m_wndFolder.SetItem(NULL);
 }
 
 /*
