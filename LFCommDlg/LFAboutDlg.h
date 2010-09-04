@@ -1,7 +1,15 @@
+
+// LFAboutDlg.h: Schnittstelle der Klasse LFAboutDlg
+//
+
 #pragma once
 #include "CGdiPlusBitmap.h"
 #include "liquidFOLDERS.h"
 #include "LFDialog.h"
+
+
+// LFAboutDlg
+//
 
 struct LFAboutDlgParameters
 {

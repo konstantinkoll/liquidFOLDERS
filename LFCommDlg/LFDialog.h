@@ -1,8 +1,16 @@
 
+// LFDialog.h: Schnittstelle der Klasse LFDialog
+//
+
+
 #pragma once
 #include "CGdiPlusBitmap.h"
 #include "liquidFOLDERS.h"
 #include "LFApplication.h"
+
+
+// LFDialog
+//
 
 #define LFDS_Blue         1
 #define LFDS_White        2

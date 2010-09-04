@@ -1,6 +1,14 @@
+
+// LFStorePropertiesDlg.h: Schnittstelle der Klasse LFStorePropertiesDlg
+//
+
 #pragma once
 #include <shlobj.h>
 #include "liquidFOLDERS.h"
+
+
+// LFStorePropertiesDlg
+//
 
 class AFX_EXT_CLASS LFStorePropertiesDlg : public CDialog
 {

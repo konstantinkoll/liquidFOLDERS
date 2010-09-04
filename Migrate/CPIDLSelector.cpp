@@ -203,25 +203,6 @@ void CPIDLDropdownWindow::OnItemChanged(NMHDR* pNMHDR, LRESULT* /*pResult*/)
 	}
 }
 
-wchar_t InitialDir[MAX_PATH];
-int CALLBACK BrowseCallbackProc(HWND hWnd, UINT uMsg, LPARAM lParam, LPARAM /*lpData*/)
-{
-	wchar_t Dir[MAX_PATH] = L"";
-
-	switch (uMsg)
-	{
-	case BFFM_INITIALIZED:
-		SendMessage(hWnd, BFFM_SETSELECTION, TRUE, (LPARAM)InitialDir);
-		SendMessage(hWnd, BFFM_ENABLEOK, 0, InitialDir[0]!=L'\0');
-		break;
-	case BFFM_SELCHANGED:
-		SendMessage(hWnd, BFFM_ENABLEOK, 0, SHGetPathFromIDList((LPCITEMIDLIST)lParam, Dir));
-		break;
-	}
-
-	return 0;
-}
-
 void CPIDLDropdownWindow::OnChooseFolder()
 {
 	GetOwner()->PostMessage(WM_CLOSEDROPDOWN);

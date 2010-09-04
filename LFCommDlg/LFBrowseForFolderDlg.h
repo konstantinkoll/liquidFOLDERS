@@ -1,7 +1,15 @@
+
+// LFBrowseForFolderDlg.h: Schnittstelle der Klasse LFBrowseForFolderDlg
+//
+
 #pragma once
 #include "LFDialog.h"
 #include "CExplorerHeader.h"
 #include "CExplorerTree.h"
+
+
+// LFBrowseForFolderDlg
+//
 
 class AFX_EXT_CLASS LFBrowseForFolderDlg : public LFDialog
 {

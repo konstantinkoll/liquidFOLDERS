@@ -1,7 +1,15 @@
+
+// LFSelectLocationGPSDlg.h: Schnittstelle der Klasse LFSelectLocationGPSDlg
+//
+
 #pragma once
 #include "LFCore.h"
 #include "LFCommDlg.h"
 #include "CMapSelectionCtrl.h"
+
+
+// LFSelectLocationGPSDlg
+//
 
 class AFX_EXT_CLASS LFSelectLocationGPSDlg : public CDialog
 {

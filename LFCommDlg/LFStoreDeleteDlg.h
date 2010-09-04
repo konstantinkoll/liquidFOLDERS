@@ -1,5 +1,13 @@
+
+// LFStoreDeleteDlg.h: Schnittstelle der Klasse LFStoreDeleteDlg
+//
+
 #pragma once
 #include "LFDialog.h"
+
+
+// LFStoreDeleteDlg
+//
 
 class AFX_EXT_CLASS LFStoreDeleteDlg : public LFDialog
 {

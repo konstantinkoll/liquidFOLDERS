@@ -1,6 +1,13 @@
+
+// LFStoreMaintenanceDlg.h: Schnittstelle der Klasse LFStoreMaintenanceDlg
+//
+
 #pragma once
-#include <shlobj.h>
 #include "liquidFOLDERS.h"
+
+
+// LFStoreMaintenanceDlg
+//
 
 struct LFMaintenanceDlgParameters
 {

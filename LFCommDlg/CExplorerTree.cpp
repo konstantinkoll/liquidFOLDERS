@@ -263,12 +263,16 @@ void CExplorerTree::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 	HTREEITEM hItem = NULL;
 	if ((point.x==-1) && (point.y==-1))
 	{
-		CRect rectItem;
-		if ((hItem = GetSelectedItem()) && (GetItemRect(hItem, rectItem, FALSE)))
+		hItem = GetSelectedItem();
+		if (hItem)
 		{
-			point.x = rectItem.left;
-			point.y = rectItem.bottom + 1;
-			ClientToScreen(&point);
+			CRect rectItem;
+			if (GetItemRect(hItem, rectItem, FALSE))
+			{
+				point.x = rectItem.left;
+				point.y = rectItem.bottom + 1;
+				ClientToScreen(&point);
+			}
 		}
 	}
 	else

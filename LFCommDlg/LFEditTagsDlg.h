@@ -1,7 +1,15 @@
+
+// LFEditTagsDlg.h: Schnittstelle der Klasse LFEditTagsDlg
+//
+
 #pragma once
 #include "LFCore.h"
 #include "LFApplication.h"
 #include "CTagList.h"
+
+
+// LFEditTagsDlg
+//
 
 class AFX_EXT_CLASS LFEditTagsDlg : public CDialog
 {

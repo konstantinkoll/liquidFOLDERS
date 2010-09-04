@@ -1,6 +1,13 @@
+
+// LFStoreNewDlg.h: Schnittstelle der Klasse LFStoreNew
+//
+
 #pragma once
 #include "liquidFOLDERS.h"
-#include <shlobj.h>
+
+
+// LFStoreNewDlg
+//
 
 class AFX_EXT_CLASS LFStoreNewDlg : public CDialog
 {

@@ -1,8 +1,16 @@
+
+// LFItemTemplateDlg.h: Schnittstelle der Klasse LFItemTemplateDlg
+//
+
 #pragma once
 #include "LFCore.h"
 #include "LFApplication.h"
 #include "CAttributeProperties.h"
 #include "CInspectorGrid.h"
+
+
+// LFItemTemplateDlg
+//
 
 class AFX_EXT_CLASS LFItemTemplateDlg : public CDialog
 {

@@ -1,6 +1,14 @@
+
+// LFSelectLocationIATADlg.h: Schnittstelle der Klasse LFSelectLocationIATADlg
+//
+
 #pragma once
 #include "LFCommDlg.h"
 #include "CMapPreviewCtrl.h"
+
+
+// LFSelectLocationIATADlg
+//
 
 #define MaxAirportsPerCountry   2500
 
@@ -17,7 +25,6 @@ public:
 	BOOL m_IATA_OverwriteGPS;
 
 protected:
-
 	void LoadCountry(UINT country, BOOL SelectFirst=TRUE);
 	void UpdatePreview();
 

@@ -1,5 +1,13 @@
+
+// LFWelcomeDlg.h: Schnittstelle der Klasse LFWelcomeDlg
+//
+
 #pragma once
 #include "LFDialog.h"
+
+
+// LFWelcomeDlg
+//
 
 class AFX_EXT_CLASS LFWelcomeDlg : public LFDialog
 {

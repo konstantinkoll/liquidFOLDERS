@@ -1,8 +1,15 @@
+
+// LFChooseDefaultStoreDlg.h: Schnittstelle der Klasse LFChooseDefaultStoreDlg
+//
+
 #pragma once
 #include "LFCore.h"
 #include "liquidFOLDERS.h"
 #include "CExplorerList.h"
-#include <list>
+
+
+// LFChooseDefaultStoreDlg
+//
 
 class AFX_EXT_CLASS LFChooseDefaultStoreDlg : public CDialog
 {
