@@ -243,6 +243,7 @@ BOOL LFApplication::InitInstance()
 	ttParams.m_bVislManagerTheme = TRUE;
 	GetTooltipManager()->SetTooltipParams(AFX_TOOLTIP_TYPE_ALL, RUNTIME_CLASS(CMFCToolTipCtrl), &ttParams);
 
+	InitShellManager();
 	if (HasGUI==HasGUI_None)
 		return TRUE;
 
@@ -252,7 +253,6 @@ BOOL LFApplication::InitInstance()
 	SetRegistryKey(_T("liquidFOLDERS"));
 	LoadStdProfileSettings();
 
-	InitShellManager();
 	if (HasGUI==HasGUI_Ribbon)
 	{
 		InitContextMenuManager();
