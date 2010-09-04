@@ -17,8 +17,6 @@ public:
 	virtual BOOL InitInstance();
 	virtual int ExitInstance();
 
-	CImageList m_SystemImageListSmall;
-	CImageList m_SystemImageListLarge;
 	BOOL m_DeleteImported;
 	BOOL m_Simulate;
 

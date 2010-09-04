@@ -102,6 +102,8 @@ public:
 	LFContextDescriptor* m_Contexts[LFContextCount];
 	LFItemCategoryDescriptor* m_ItemCategories[LFItemCategoryCount];
 	LFViewParameters m_Views[LFContextCount];
+	CImageList m_SystemImageListSmall;
+	CImageList m_SystemImageListLarge;
 	HBITMAP m_RatingBitmaps[LFMaxRating+1];
 	HBITMAP m_PriorityBitmaps[LFMaxRating+1];
 	CFont m_Fonts[2][2];

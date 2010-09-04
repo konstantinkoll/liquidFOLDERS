@@ -172,6 +172,11 @@ LFApplication::LFApplication(UINT _HasGUI)
 		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
 		face);
 
+	// System image lists
+	SHFILEINFO shfi;
+	m_SystemImageListSmall.Attach((HIMAGELIST)SHGetFileInfo(_T(""), NULL, &shfi, sizeof(shfi), SHGFI_SYSICONINDEX | SHGFI_SMALLICON));
+	m_SystemImageListLarge.Attach((HIMAGELIST)SHGetFileInfo(_T(""), NULL, &shfi, sizeof(shfi), SHGFI_SYSICONINDEX | SHGFI_LARGEICON));
+
 	// Get attribute information
 	for (UINT a=0; a<LFAttrCategoryCount; a++)
 		m_AttrCategories[a] = LFGetAttrCategoryName(a);

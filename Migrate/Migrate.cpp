@@ -33,11 +33,6 @@ BOOL CMigrateApp::InitInstance()
 {
 	LFApplication::InitInstance();
 
-	// System image list
-	SHFILEINFO shfi;
-	m_SystemImageListSmall.Attach((HIMAGELIST)SHGetFileInfo(_T(""), NULL, &shfi, sizeof(shfi), SHGFI_SYSICONINDEX | SHGFI_SMALLICON));
-	m_SystemImageListLarge.Attach((HIMAGELIST)SHGetFileInfo(_T(""), NULL, &shfi, sizeof(shfi), SHGFI_SYSICONINDEX | SHGFI_LARGEICON));
-
 	// Registry auslesen
 	SetRegistryBase(_T("Settings"));
 	m_DeleteImported = GetInt(_T("DeleteImported"), FALSE);

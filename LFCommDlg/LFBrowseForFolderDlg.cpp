@@ -56,10 +56,8 @@ BOOL LFBrowseForFolderDlg::OnInitDialog()
 	}
 
 	m_wndExplorerTree.Create(this, IDC_SHELLTREE);
-	m_wndExplorerTree.SetBkColor(0xFFFFFF);
-	m_wndExplorerTree.SetTextColor(0x000000);
-	m_wndExplorerTree.SetFlags(SHCONTF_FOLDERS);
-	m_wndExplorerTree.EnableShellContextMenu(TRUE);
+//	m_wndExplorerTree.SetFlags(SHCONTF_FOLDERS);
+//	m_wndExplorerTree.EnableShellContextMenu(TRUE);
 	m_wndExplorerTree.SetFocus();
 
 	OnThemeChanged();

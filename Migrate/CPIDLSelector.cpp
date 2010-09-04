@@ -94,16 +94,16 @@ void CPIDLDropdownWindow::AddChildren(wchar_t* Path, UINT Category)
 		IShellFolder* Libraries;
 		if (SUCCEEDED(Desktop->BindToObject(pidl, NULL, IID_IShellFolder, (void**)&Libraries)))
 		{
-			IEnumIDList* e;
-			Libraries->EnumObjects(NULL, SHCONTF_FOLDERS, &e);
+			IEnumIDList* pEnum;
+			Libraries->EnumObjects(NULL, SHCONTF_FOLDERS, &pEnum);
 			{
 				LPITEMIDLIST lib;
-				while (e->Next(1, &lib, NULL)==S_OK)
+				while (pEnum->Next(1, &lib, NULL)==S_OK)
 				{
 					AddPIDL(sm->ConcatenateItem(pidl, lib), Category);
 					sm->FreeItem(lib);
 				}
-				e->Release();
+				pEnum->Release();
 			}
 
 			Libraries->Release();
