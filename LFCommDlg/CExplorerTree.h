@@ -14,9 +14,16 @@ class AFX_EXT_CLASS CExplorerTree : public CTreeCtrl
 public:
 	CExplorerTree();
 
-	BOOL Create(CWnd* pParentWnd, UINT nID);
+	BOOL Create(CWnd* pParentWnd, UINT nID, BOOL OnlyFilesystem=TRUE);
+	LPITEMIDLIST GetSelectedPIDL();
 
 protected:
+	LFApplication* p_App;
+	IContextMenu2* m_pContextMenu2;
+	BOOL m_OnlyFilesystem;
+
+	virtual LRESULT WindowProc(UINT message, WPARAM wParam, LPARAM lParam);
+
 	CString OnGetItemText(LPAFX_SHELLITEMINFO pItem);
 	int OnGetItemIcon(LPAFX_SHELLITEMINFO pItem, BOOL bSelected);
 	void PopulateTree();
@@ -30,6 +37,4 @@ protected:
 	afx_msg void OnDeleteItem(NMHDR* pNMHDR, LRESULT* pResult);
 	DECLARE_MESSAGE_MAP()
 
-	LFApplication* p_App;
-	IContextMenu2* m_pContextMenu2;
 };

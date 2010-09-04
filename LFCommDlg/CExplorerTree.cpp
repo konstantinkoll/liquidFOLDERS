@@ -32,8 +32,10 @@ CExplorerTree::CExplorerTree()
 	m_pContextMenu2 = NULL;
 }
 
-BOOL CExplorerTree::Create(CWnd* pParentWnd, UINT nID)
+BOOL CExplorerTree::Create(CWnd* pParentWnd, UINT nID, BOOL OnlyFilesystem)
 {
+	m_OnlyFilesystem = OnlyFilesystem;
+
 	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, LoadCursor(NULL, IDC_ARROW));
 
 	const DWORD dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_TABSTOP | TVS_HASBUTTONS | TVS_NOTOOLTIPS;
@@ -42,12 +44,46 @@ BOOL CExplorerTree::Create(CWnd* pParentWnd, UINT nID)
 	return CTreeCtrl::Create(dwStyle, rect, pParentWnd, nID);
 }
 
+LPITEMIDLIST CExplorerTree::GetSelectedPIDL()
+{
+	HTREEITEM hItem = GetSelectedItem();
+	if (!hItem)
+		return NULL;
+
+	TVITEM tvItem;
+	ZeroMemory(&tvItem, sizeof(tvItem));
+	tvItem.mask = TVIF_PARAM;
+	tvItem.hItem = hItem;
+	if (!GetItem(&tvItem))
+		return NULL;
+
+	LPAFX_SHELLITEMINFO pItem = (LPAFX_SHELLITEMINFO)tvItem.lParam;
+	return pItem->pidlFQ;
+}
+
+LRESULT CExplorerTree::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
+{
+	switch (message)
+	{
+	case WM_INITMENUPOPUP:
+	case WM_DRAWITEM:
+	case WM_MEASUREITEM:
+		if (m_pContextMenu2)
+		{
+			m_pContextMenu2->HandleMenuMsg(message, wParam, lParam);
+			return 0;
+		}
+	}
+
+	return CTreeCtrl::WindowProc(message, wParam, lParam);
+}
+
 CString CExplorerTree::OnGetItemText(LPAFX_SHELLITEMINFO pItem)
 {
 	ASSERT(pItem);
 
 	SHFILEINFO sfi;
-	if (SHGetFileInfo((LPCTSTR) pItem->pidlFQ, 0, &sfi, sizeof(sfi), SHGFI_PIDL | SHGFI_DISPLAYNAME))
+	if (SHGetFileInfo((LPCTSTR)pItem->pidlFQ, 0, &sfi, sizeof(sfi), SHGFI_PIDL | SHGFI_DISPLAYNAME))
 		return sfi.szDisplayName;
 
 	return _T("?");
@@ -149,8 +185,9 @@ void CExplorerTree::EnumObjects(HTREEITEM hParentItem, IShellFolder* pParentFold
 		DWORD dwAttribs = SFGAO_HASSUBFOLDER | SFGAO_FOLDER | SFGAO_DISPLAYATTRMASK | SFGAO_CANRENAME | SFGAO_FILESYSANCESTOR | SFGAO_FILESYSTEM;
 		pParentFolder->GetAttributesOf(1, (LPCITEMIDLIST*)&pidlTemp, &dwAttribs);
 
-		if (!(dwAttribs & (SFGAO_FILESYSANCESTOR | SFGAO_FILESYSTEM)))
-			continue;
+		if (m_OnlyFilesystem)
+			if (!(dwAttribs & (SFGAO_FILESYSANCESTOR | SFGAO_FILESYSTEM)))
+				continue;
 
 		TVITEM tvItem;
 		ZeroMemory(&tvItem, sizeof(tvItem));
@@ -185,7 +222,6 @@ void CExplorerTree::EnumObjects(HTREEITEM hParentItem, IShellFolder* pParentFold
 
 	pEnum->Release();
 }
-
 
 
 BEGIN_MESSAGE_MAP(CExplorerTree, CTreeCtrl)
@@ -327,6 +363,14 @@ void CExplorerTree::OnItemExpanding(NMHDR* pNMHDR, LRESULT* pResult)
 	{
 	case TVE_EXPAND:
 		GetChildItems(hItem);
+		if (!GetChildItem(hItem))
+		{
+			TV_ITEM tvItem;
+			ZeroMemory(&tvItem, sizeof(tvItem));
+			tvItem.hItem = hItem;
+			tvItem.mask = TVIF_CHILDREN;
+			SetItem(&tvItem);
+		}
 		break;
 	case TVE_COLLAPSE:
 		for (HTREEITEM hItemSel = GetSelectedItem(); hItemSel;)
@@ -362,34 +406,3 @@ void CExplorerTree::OnDeleteItem(NMHDR* pNMHDR, LRESULT* pResult)
 	GlobalFree((HGLOBAL)pItem);
 	*pResult = 0;
 }
-
-
-
-
-
-
-/*void CMFCShellTreeCtrl::Refresh()
-{
-	DeleteAllItems();
-	PopulateTree();
-	TreeView_SetScrollTime(GetSafeHwnd(), 100);
-}
-
-LRESULT CMFCShellTreeCtrl::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
-{
-	switch (message)
-	{
-	case WM_INITMENUPOPUP:
-	case WM_DRAWITEM:
-	case WM_MEASUREITEM:
-		if (m_pContextMenu2 != NULL)
-		{
-			m_pContextMenu2->HandleMenuMsg(message, wParam, lParam);
-			return 0;
-		}
-		break;
-	}
-
-	return CTreeCtrl::WindowProc(message, wParam, lParam);
-}
-*/

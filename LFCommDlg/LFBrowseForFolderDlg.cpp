@@ -7,9 +7,23 @@
 LFBrowseForFolderDlg::LFBrowseForFolderDlg(BOOL OnlyFSObjects, CWnd* pParentWnd, CString Caption, CString Hint)
 	: LFDialog(IDD_BROWSEFORFOLDER, LFDS_White, pParentWnd)
 {
+	p_App = (LFApplication*)AfxGetApp();
 	m_OnlyFSObjects = OnlyFSObjects;
 	m_Caption = Caption;
 	m_Hint = Hint;
+	m_FolderPIDL = NULL;
+}
+
+LFBrowseForFolderDlg::~LFBrowseForFolderDlg()
+{
+	if (m_FolderPIDL)
+		p_App->GetShellManager()->FreeItem(m_FolderPIDL);
+}
+
+void LFBrowseForFolderDlg::DoDataExchange(CDataExchange* pDX)
+{
+	if (pDX->m_bSaveAndValidate)
+		m_FolderPIDL = p_App->GetShellManager()->CopyItem(m_wndExplorerTree.GetSelectedPIDL());
 }
 
 void LFBrowseForFolderDlg::AdjustLayout()
@@ -40,8 +54,6 @@ void LFBrowseForFolderDlg::AdjustLayout()
 
 BEGIN_MESSAGE_MAP(LFBrowseForFolderDlg, LFDialog)
 	ON_WM_THEMECHANGED()
-	ON_WM_SIZE()
-	ON_WM_GETMINMAXINFO()
 END_MESSAGE_MAP()
 
 BOOL LFBrowseForFolderDlg::OnInitDialog()
@@ -55,9 +67,7 @@ BOOL LFBrowseForFolderDlg::OnInitDialog()
 		m_wndExplorerHeader.SetLineStyle(FALSE, FALSE);
 	}
 
-	m_wndExplorerTree.Create(this, IDC_SHELLTREE);
-//	m_wndExplorerTree.SetFlags(SHCONTF_FOLDERS);
-//	m_wndExplorerTree.EnableShellContextMenu(TRUE);
+	m_wndExplorerTree.Create(this, IDC_SHELLTREE, TRUE);
 	m_wndExplorerTree.SetFocus();
 
 	OnThemeChanged();
@@ -72,18 +82,4 @@ LRESULT LFBrowseForFolderDlg::OnThemeChanged()
 	m_wndExplorerHeader.SetDesign(Themed ? GWD_THEMED : GWD_DEFAULT);
 
 	return LFDialog::OnThemeChanged();
-}
-
-void LFBrowseForFolderDlg::OnSize(UINT nType, int cx, int cy)
-{
-	LFDialog::OnSize(nType, cx, cy);
-	AdjustLayout();
-}
-
-void LFBrowseForFolderDlg::OnGetMinMaxInfo(MINMAXINFO* lpMMI)
-{
-	LFDialog::OnGetMinMaxInfo(lpMMI);
-
-	lpMMI->ptMinTrackSize.x = max(lpMMI->ptMinTrackSize.x, 200);
-	lpMMI->ptMinTrackSize.y = max(lpMMI->ptMinTrackSize.y, 400);
 }
