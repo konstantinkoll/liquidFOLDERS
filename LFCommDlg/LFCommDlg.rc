@@ -606,6 +606,8 @@ BEGIN
     IDS_LICENSEVALID_MSG    "Ihr Lizenzschlüssel ist gültig. Vielen Dank für den Kauf von liquidFOLDERS!"
     IDS_MULTIPLEVALUES      "Unterschiedliche Werte"
     IDS_UACMESSAGE          "Ihre Zustimmung ist erforderlich"
+    IDS_EXPAND              "E&rweitern"
+    IDS_COLLAPSE            "&Reduzieren"
 END
 
 STRINGTABLE 
@@ -1096,6 +1098,8 @@ BEGIN
     IDS_LICENSEVALID_MSG    "Your license key is valid. Thank you very much for purchasing liquidFOLDERS! We appreciate your business."
     IDS_MULTIPLEVALUES      "Multiple values"
     IDS_UACMESSAGE          "liquidFOLDERS needs your permission"
+    IDS_EXPAND              "&Expand"
+    IDS_COLLAPSE            "&Collapse"
 END
 
 STRINGTABLE 
@@ -1563,6 +1567,8 @@ BEGIN
     IDS_LICENSEVALID_MSG    "Su licencia es válida. Muchas gracias por adquirir liquidFOLDERS! Nosotros apreciamos su negocio."
     IDS_MULTIPLEVALUES      "Datos diversos"
     IDS_UACMESSAGE          "liquidFOLDERS necesita su permiso para continuar"
+    IDS_EXPAND              "Abrir &algo"
+    IDS_COLLAPSE            "Plegar &algo"
 END
 
 STRINGTABLE 
@@ -2024,6 +2030,8 @@ BEGIN
     IDS_LICENSEVALID_MSG    "Sa clé de licence est valable. Merci beaucoup pour l'achat de liquidFOLDERS!"
     IDS_MULTIPLEVALUES      "Valeurs plusieurs"
     IDS_UACMESSAGE          "liquidFOLDERS needs your permission to continue"
+    IDS_EXPAND              "&Ouvrir"
+    IDS_COLLAPSE            "&Fermer"
 END
 
 STRINGTABLE 

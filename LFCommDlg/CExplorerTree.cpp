@@ -289,7 +289,7 @@ void CExplorerTree::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 
 	TVITEM tvItem;
 	ZeroMemory(&tvItem, sizeof(tvItem));
-	tvItem.mask = TVIF_PARAM;
+	tvItem.mask = TVIF_PARAM | TVIF_CHILDREN | TVIF_STATE;
 	tvItem.hItem = hItem;
 	if (!GetItem(&tvItem))
 		return;
@@ -315,8 +315,17 @@ void CExplorerTree::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 		{
 			HMENU hPopup = CreatePopupMenu();
 			if (hPopup)
-				if (SUCCEEDED(pcm->QueryContextMenu(hPopup, 0, 1, 0x7FFF, CMF_NORMAL | CMF_EXPLORE)))
+				if (SUCCEEDED(pcm->QueryContextMenu(hPopup, 0, 1, 0x6FFF, CMF_NORMAL | CMF_EXPLORE)))
 				{
+					if (tvItem.cChildren)
+					{
+						CString tmpStr;
+						ENSURE(tmpStr.LoadString(LFCommDlgDLL.hResource, tvItem.state & TVIS_EXPANDED ? IDS_COLLAPSE : IDS_EXPAND));
+						InsertMenu(hPopup, 0, MF_BYPOSITION, 0x7000, tmpStr);
+						InsertMenu(hPopup, 1, MF_BYPOSITION | MF_SEPARATOR, 0x7001, NULL);
+						SetMenuDefaultItem(hPopup, 0x7000, 0);
+					}
+
 					pcm->QueryInterface(IID_IContextMenu2, (void**)&m_pContextMenu2);
 					UINT idCmd = TrackPopupMenu(hPopup, TPM_LEFTALIGN | TPM_RETURNCMD | TPM_RIGHTBUTTON, point.x, point.y, 0, GetSafeHwnd(), NULL);
 					if (m_pContextMenu2)
@@ -325,24 +334,29 @@ void CExplorerTree::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 						m_pContextMenu2 = NULL;
 					}
 
-					if (idCmd)
+					if (idCmd==0x7000)
 					{
-						CWaitCursor wait;
-
-						CMINVOKECOMMANDINFO cmi;
-						cmi.cbSize = sizeof(CMINVOKECOMMANDINFO);
-						cmi.fMask = 0;
-						cmi.hwnd = GetParent()->GetSafeHwnd();
-						cmi.lpVerb = (LPCSTR)(INT_PTR)(idCmd-1);
-						cmi.lpParameters = NULL;
-						cmi.lpDirectory = NULL;
-						cmi.nShow = SW_SHOWNORMAL;
-						cmi.dwHotKey = 0;
-						cmi.hIcon = NULL;
-
-						pcm->InvokeCommand(&cmi);
-						SetFocus();
+						Expand(hItem, TVE_TOGGLE);
 					}
+					else
+						if (idCmd)
+						{
+							CWaitCursor wait;
+
+							CMINVOKECOMMANDINFO cmi;
+							cmi.cbSize = sizeof(CMINVOKECOMMANDINFO);
+							cmi.fMask = 0;
+							cmi.hwnd = GetParent()->GetSafeHwnd();
+							cmi.lpVerb = (LPCSTR)(INT_PTR)(idCmd-1);
+							cmi.lpParameters = NULL;
+							cmi.lpDirectory = NULL;
+							cmi.nShow = SW_SHOWNORMAL;
+							cmi.dwHotKey = 0;
+							cmi.hIcon = NULL;
+
+							pcm->InvokeCommand(&cmi);
+							SetFocus();
+						}
 				}
 
 			pcm->Release();

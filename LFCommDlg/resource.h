@@ -56,6 +56,8 @@
 #define IDS_LICENSEVALID_MSG            20308
 #define IDS_MULTIPLEVALUES              20309
 #define IDS_UACMESSAGE                  20310
+#define IDS_EXPAND                      20311
+#define IDS_COLLAPSE                    20312
 #define IDD_ABOUT                       21000
 #define IDC_RIBBONCOLORCOMBO            21001
 #define IDC_TEXTUREFRAME                21002
