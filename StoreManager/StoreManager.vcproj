@@ -418,7 +418,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CIconCtrl.cpp"
+				RelativePath=".\CInspectorIconCtrl.cpp"
 				>
 			</File>
 			<File
@@ -552,7 +552,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CIconCtrl.h"
+				RelativePath=".\CInspectorIconCtrl.h"
 				>
 			</File>
 			<File

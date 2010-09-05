@@ -4,6 +4,7 @@
 
 #pragma once
 #include "liquidFOLDERS.h"
+#include "CIconCtrl.h"
 
 
 // LFStoreNewDlg
@@ -29,8 +30,12 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
-	CImageList icons;
 	LFStoreDescriptor* store;
+
+	CImageList m_Icons;
+	CIconCtrl m_IconInternal;
+	CIconCtrl m_IconHybrid;
+	CIconCtrl m_IconExternal;
 	ULONG m_ulSHChangeNotifyRegister;
 	UINT m_nIDTemplate;
 	char m_Drive;

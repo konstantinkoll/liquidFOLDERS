@@ -27,7 +27,7 @@ CMapPreviewCtrl::CMapPreviewCtrl()
 		wndcls.hInstance = hInst;
 		wndcls.hIcon = NULL;
 		wndcls.hCursor = LoadCursor(NULL, IDC_ARROW);
-		wndcls.hbrBackground = (HBRUSH)(COLOR_3DFACE);
+		wndcls.hbrBackground = NULL;
 		wndcls.lpszMenuName = NULL;
 		wndcls.lpszClassName = L"CMapPreviewCtrl";
 

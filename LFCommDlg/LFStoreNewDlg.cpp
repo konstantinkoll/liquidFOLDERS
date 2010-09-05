@@ -7,6 +7,7 @@
 #include "Resource.h"
 #include "LFCore.h"
 #include "LFApplication.h"
+#include "..\\LFCore\\resource.h"
 
 
 // LFStoreNewDlg
@@ -46,11 +47,11 @@ BOOL LFStoreNewDlg::OnInitDialog()
 	SetIcon(hIcon, FALSE);
 	SetIcon(hIcon, TRUE);
 
-	// Load icons
+	// Load list icons
 	HINSTANCE hModIcons = LoadLibrary(_T("LFCORE.DLL"));
-	if (hModIcons!=NULL)
+	if (hModIcons)
 	{
-		((LFApplication*)AfxGetApp())->ExtractCoreIcons(hModIcons, 16, &icons);
+		((LFApplication*)AfxGetApp())->ExtractCoreIcons(hModIcons, GetSystemMetrics(SM_CYSMICON), &m_Icons);
 		FreeLibrary(hModIcons);
 	}
 
@@ -72,6 +73,11 @@ BOOL LFStoreNewDlg::OnInitDialog()
 		caption.Format(text, m_Drive);
 		SetWindowText(caption);
 	}
+
+	// Icons
+	SetInternalIcon();
+	m_IconHybrid.SetCoreIcon(IDI_STORE_Bag);
+	m_IconExternal.SetCoreIcon(IDI_STORE_Bag);
 
 	// Benachrichtigung, wenn sich Laufwerke ändern
 	HWND hWnd = GetSafeHwnd();
@@ -106,11 +112,7 @@ void LFStoreNewDlg::OnDestroy()
 void LFStoreNewDlg::SetInternalIcon()
 {
 	if (m_nIDTemplate==IDD_STORENEW)
-	{
-		BOOL b = ((CButton*)GetDlgItem(IDC_MAKEDEFAULT))->GetCheck();
-		GetDlgItem(b ? IDC_DEFAULTSTOREICON : IDC_INTERNALSTOREICON)->ShowWindow(SW_SHOW);
-		GetDlgItem(b ? IDC_INTERNALSTOREICON : IDC_DEFAULTSTOREICON)->ShowWindow(SW_HIDE);
-	}
+		m_IconInternal.SetCoreIcon(((CButton*)GetDlgItem(IDC_MAKEDEFAULT))->GetCheck() ? IDI_STORE_Default : IDI_STORE_Internal);
 }
 
 void LFStoreNewDlg::SetOptions()
@@ -150,7 +152,13 @@ LRESULT LFStoreNewDlg::OnMediaChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)
 
 void LFStoreNewDlg::DoDataExchange(CDataExchange* pDX)
 {
-	// DDX nur beim Verlassen des Dialogs
+	if (m_nIDTemplate==IDD_STORENEW)
+		DDX_Control(pDX, IDC_INTERNALSTOREICON, m_IconInternal);
+
+	DDX_Control(pDX, IDC_HYBRIDSTOREICON, m_IconHybrid);
+	DDX_Control(pDX, IDC_EXTERNALSTOREICON, m_IconExternal);
+
+	// Nur beim Verlassen des Dialogs
 	if ((store) && (pDX->m_bSaveAndValidate))
 	{
 		// Pfad zusammenbauen
@@ -196,7 +204,7 @@ void LFStoreNewDlg::PopulateListCtrl()
 	li->SetExtendedStyle(LVS_EX_FULLROWSELECT | LVS_EX_DOUBLEBUFFER);
 	int FocusItem = li->GetNextItem(-1, LVNI_FOCUSED);
 	li->DeleteAllItems();
-	li->SetImageList(&icons, LVSIL_SMALL);
+	li->SetImageList(&m_Icons, LVSIL_SMALL);
 
 	DWORD DrivesOnSystem = LFGetLogicalDrives(fixed ? LFGLD_Internal | LFGLD_Network : LFGLD_External);
 	wchar_t szDriveRoot[] = L" :\\";
@@ -214,7 +222,7 @@ void LFStoreNewDlg::PopulateListCtrl()
 		UINT uDriveType = GetDriveType(szDriveRoot);
 
 		SHFILEINFO sfi;
-			if (SHGetFileInfo(szDriveRoot, 0, &sfi, sizeof(SHFILEINFO), SHGFI_DISPLAYNAME | SHGFI_ATTRIBUTES))
+		if (SHGetFileInfo(szDriveRoot, 0, &sfi, sizeof(SHFILEINFO), SHGFI_DISPLAYNAME | SHGFI_ATTRIBUTES))
 			if (sfi.dwAttributes)
 			{
 				li->InsertItem(nIndex, sfi.szDisplayName, LFGetDriveIcon(cDrive, sfi.dwAttributes!=0)-1);

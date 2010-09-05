@@ -1,5 +1,5 @@
 
-// CIconCtrl.h: Schnittstelle der Klasse CIconCtrl
+// CInspectorIconCtrl.h: Schnittstelle der Klasse CInspectorIconCtrl
 //
 
 #pragma once
@@ -7,7 +7,7 @@
 #include "LFCommDlg.h"
 
 
-// CIconCtrl
+// CInspectorIconCtrl
 //
 
 #define StatusUnused            0
@@ -15,11 +15,11 @@
 #define StatusMultiple          2
 
 
-class CIconCtrl : public CWnd
+class CInspectorIconCtrl : public CWnd
 {
 public:
-	CIconCtrl();
-	virtual ~CIconCtrl();
+	CInspectorIconCtrl();
+	~CInspectorIconCtrl();
 
 	BOOL Create(CWnd* pParentWnd, UINT nID);
 	void SetStatus(UINT _status, HICON _icon=NULL, CString _description=_T(""));

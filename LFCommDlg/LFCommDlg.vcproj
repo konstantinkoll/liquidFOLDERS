@@ -415,6 +415,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CIconCtrl.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\CImageListTransparent.cpp"
 				>
 			</File>
@@ -646,6 +650,10 @@
 			</File>
 			<File
 				RelativePath=".\CGlasWindow.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CIconCtrl.h"
 				>
 			</File>
 			<File
@@ -968,18 +976,6 @@
 			</File>
 			<File
 				RelativePath=".\res\Shield.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Store_Bag_32.bmp"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Store_Default_32.bmp"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Store_Empty_32.bmp"
 				>
 			</File>
 			<File

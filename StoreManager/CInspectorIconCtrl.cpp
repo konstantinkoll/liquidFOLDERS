@@ -1,17 +1,17 @@
 
-// CIconCtrl.cpp: Implementierung der Klasse CIconCtrl
+// CInspectorIconCtrl.cpp: Implementierung der Klasse CInspectorIconCtrl
 //
 
 #include "stdafx.h"
-#include "CIconCtrl.h"
+#include "CInspectorIconCtrl.h"
 #include "StoreManager.h"
 #include "Resource.h"
 
 
-// CIconCtrl
+// CInspectorIconCtrl
 //
 
-CIconCtrl::CIconCtrl()
+CInspectorIconCtrl::CInspectorIconCtrl()
 	: CWnd()
 {
 	m_Status = StatusUnused;
@@ -21,7 +21,7 @@ CIconCtrl::CIconCtrl()
 	m_Multiple = NULL;
 }
 
-CIconCtrl::~CIconCtrl()
+CInspectorIconCtrl::~CInspectorIconCtrl()
 {
 	if (m_Icon)
 		DestroyIcon(m_Icon);
@@ -31,7 +31,7 @@ CIconCtrl::~CIconCtrl()
 		delete m_Multiple;
 }
 
-BOOL CIconCtrl::Create(CWnd* pParentWnd, UINT nID)
+BOOL CInspectorIconCtrl::Create(CWnd* pParentWnd, UINT nID)
 {
 	// Bilder laden
 	m_Empty = new CGdiPlusBitmapResource();
@@ -49,7 +49,7 @@ BOOL CIconCtrl::Create(CWnd* pParentWnd, UINT nID)
 	return CWnd::Create(className, _T("FancyIcon"), dwStyle, rect, pParentWnd, nID);
 }
 
-void CIconCtrl::SetStatus(UINT _status, HICON _icon, CString _description)
+void CInspectorIconCtrl::SetStatus(UINT _status, HICON _icon, CString _description)
 {
 	ASSERT((_status==StatusUnused) || (_status==StatusUsed) || (_status==StatusMultiple));
 
@@ -76,7 +76,7 @@ void CIconCtrl::SetStatus(UINT _status, HICON _icon, CString _description)
 	Invalidate();
 }
 
-int CIconCtrl::GetPreferredHeight(int cx)
+int CInspectorIconCtrl::GetPreferredHeight(int cx)
 {
 	int Height = (cx>128 ? 128 : cx);
 	if (Height<16)
@@ -86,7 +86,7 @@ int CIconCtrl::GetPreferredHeight(int cx)
 }
 
 
-BEGIN_MESSAGE_MAP(CIconCtrl, CWnd)
+BEGIN_MESSAGE_MAP(CInspectorIconCtrl, CWnd)
 	ON_WM_ERASEBKGND()
 	ON_WM_PAINT()
 	ON_WM_SETFOCUS()
@@ -94,12 +94,12 @@ BEGIN_MESSAGE_MAP(CIconCtrl, CWnd)
 	ON_WM_SIZE()
 END_MESSAGE_MAP()
 
-BOOL CIconCtrl::OnEraseBkgnd(CDC* /*pDC*/)
+BOOL CInspectorIconCtrl::OnEraseBkgnd(CDC* /*pDC*/)
 {
 	return TRUE;
 }
 
-void CIconCtrl::OnPaint()
+void CInspectorIconCtrl::OnPaint()
 {
 	CPaintDC pDC(this);
 
@@ -121,11 +121,11 @@ void CIconCtrl::OnPaint()
 
 	if (m_Status==StatusUsed)
 	{
-		DrawIconEx(dc.m_hDC, cx, cy, m_Icon, m_IconSize, m_IconSize, 0, NULL, DI_NORMAL);
+		DrawIconEx(dc, cx, cy, m_Icon, m_IconSize, m_IconSize, 0, NULL, DI_NORMAL);
 	}
 	else
 	{
-		Graphics g(dc.m_hDC);
+		Graphics g(dc);
 		g.SetCompositingMode(CompositingModeSourceOver);
 
 		CGdiPlusBitmapResource* i = (m_Status == StatusUnused) ? m_Empty : m_Multiple;
@@ -148,7 +148,7 @@ void CIconCtrl::OnPaint()
 	dc.SelectObject(pOldBitmap);
 }
 
-void CIconCtrl::OnSetFocus(CWnd* /*pOldWnd*/)
+void CInspectorIconCtrl::OnSetFocus(CWnd* /*pOldWnd*/)
 {
 	CWnd* pParent = GetParent();
 
@@ -156,12 +156,12 @@ void CIconCtrl::OnSetFocus(CWnd* /*pOldWnd*/)
 		pParent->SetFocus();
 }
 
-void CIconCtrl::OnLButtonDown(UINT /*nFlags*/, CPoint /*point*/)
+void CInspectorIconCtrl::OnLButtonDown(UINT /*nFlags*/, CPoint /*point*/)
 {
 	OnSetFocus(NULL);
 }
 
-void CIconCtrl::OnSize(UINT nType, int cx, int cy)
+void CInspectorIconCtrl::OnSize(UINT nType, int cx, int cy)
 {
 	CWnd::OnSize(nType, cx, cy);
 

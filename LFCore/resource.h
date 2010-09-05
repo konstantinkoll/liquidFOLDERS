@@ -27,7 +27,7 @@
 #define IDI_FLD_Trash                   19
 #define IDI_FLD_Video                   20
 #define IDI_FLD_Web                     21
-#define IDI_STORE_Empty                 22
+#define IDI_STORE_Internal              22
 #define IDI_STORE_Default               23
 #define IDI_STORE_Bag                   24
 #define IDI_STORE_Server                25

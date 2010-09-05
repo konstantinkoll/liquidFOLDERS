@@ -1,6 +1,6 @@
 
 #pragma once
-#include "CIconCtrl.h"
+#include "CInspectorIconCtrl.h"
 #include "LFCommDlg.h"
 #include "liquidFOLDERS.h"
 
@@ -58,7 +58,7 @@ public:
 
 protected:
 	CInspectorToolBar m_wndToolBar;
-	CIconCtrl m_wndIconCtrl;
+	CInspectorIconCtrl m_wndIconCtrl;
 	CInspectorGrid m_wndPropList;
 	CMFCPropertyGridProperty* pGroups[LFAttrCategoryCount];
 	CMFCPropertyGridProperty* pAttributes[AttrCount];

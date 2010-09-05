@@ -2137,23 +2137,11 @@
 			>
 		</File>
 		<File
-			RelativePath=".\Store_Bag_16.bmp"
-			>
-		</File>
-		<File
-			RelativePath=".\Store_Bag_32.bmp"
-			>
-		</File>
-		<File
 			RelativePath="Store_Default.ico"
 			>
 		</File>
 		<File
 			RelativePath="Store_Default.png"
-			>
-		</File>
-		<File
-			RelativePath=".\Store_Default_32.bmp"
 			>
 		</File>
 		<File
@@ -2166,14 +2154,6 @@
 		</File>
 		<File
 			RelativePath="Store_Empty.png"
-			>
-		</File>
-		<File
-			RelativePath=".\Store_Empty_16.bmp"
-			>
-		</File>
-		<File
-			RelativePath=".\Store_Empty_32.bmp"
 			>
 		</File>
 		<File

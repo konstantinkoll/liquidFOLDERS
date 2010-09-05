@@ -109,7 +109,7 @@ STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN
 EXSTYLE WS_EX_CONTROLPARENT
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "&Migrate files",IDOK,7,7,58,14
+    DEFPUSHBUTTON   "&Migrate files",IDOK,7,7,58,14,WS_DISABLED
     CONTROL         "&Simulate migration",IDC_SIMULATE,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,79,9,77,10
     CONTROL         "&Delete imported files",IDC_DELETEIMPORTED,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,162,9,81,10
 END
@@ -169,7 +169,8 @@ BEGIN
     IDS_STORE_CAPTION       "Destination store:"
     IDS_STORE_HINT          "Click here to select the destination store"
     IDS_BROWSEFORFOLDER_CAPTION "Root folder"
-    IDS_BROWSEFORFOLDER_HINT "You can select subfolders and attribute mappings later."
+    IDS_BROWSEFORFOLDER_HINT 
+                            "You can select subfolders and attribute mappings later."
     IDS_FOLDERCATEGORY1     "Folders"
     IDS_FOLDERCATEGORY2     "Libraries"
     IDS_FOLDERCATEGORY3     "Removable storage"
