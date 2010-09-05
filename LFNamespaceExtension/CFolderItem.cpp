@@ -31,7 +31,7 @@ IMPLEMENT_DYNCREATE(CFolderItem, CNSEFolder)
 // The GUID of the class representing the root folder is used as the GUID for the namespace extension
 // 3F2D914F-FE57-414F-9F88-A377C7841DA4
 IMPLEMENT_OLECREATE_EX(CFolderItem, _T("LFNamespaceExtension.RootFolder"),
-	0x3f2d914f, 0xfe57, 0x414f, 0x9f, 0x88, 0xa3, 0x77, 0xc7, 0x84, 0x1d, 0xa4)
+	0x3F2D914F, 0xFE57, 0x414F, 0x9F, 0x88, 0xA3, 0x77, 0xC7, 0x84, 0x1D, 0xA4)
 
 
 // This function is called when you register the namespace extension dll file
