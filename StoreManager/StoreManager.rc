@@ -550,7 +550,6 @@ BEGIN
     IDS_TYPE_VIRTUAL_SINGULAR "%d virtual folder"
     IDS_TYPE_VIRTUAL_PLURAL "%d virtual folders"
     IDS_REQUIRESMAINTENANCE "This store requires scheduled maintenance."
-    IDS_IMPORTFOLDER        "The folder and all subfolders will be imported."
     IDS_NOSTORES            "There are no stores available right now."
     IDS_YOULOOKAT           "You look at %s"
 END
@@ -755,7 +754,7 @@ BEGIN
     ID_STORE_RENAME         "Renames the selected store.\nRename (F2)"
     ID_STORE_MAKEDEFAULT    "Makes the selected internal store the default store.\nMake default"
     ID_STORE_MAKEHYBRID     "Converts the selected store into a hybrid store. This allows you to search the store, even when it is not mounted.\nMake hybrid"
-    ID_STORE_IMPORTFOLDER   "Copies files from a folder and all its subfoldesr into the selected store. For more sophisticated options, please open the Migration Wizard. Contrary to desktop search engines, files get physically copied into the store—and not just indexed.\nImport folder"
+    ID_STORE_IMPORTFOLDER   "Copies files from a folder and all its subfolders into the selected store. For more sophisticated options, please open the Migration Wizard. Contrary to desktop search engines, files get physically copied into the store—and not just indexed.\nImport folder"
     ID_STORE_PROPERTIES     "Shows the properties of the selected store.\nProperties"
     ID_STORE_MAINTENANCE    "Runs scheduled maintenance on all stores.\nRun maintenance"
     ID_STORE_BACKUP         "Saves important settings from the registry (including store properties and file format assignments) to a .reg file.\nBackup settings"

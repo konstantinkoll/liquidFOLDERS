@@ -1036,26 +1036,7 @@ void CMainFrame::OnStoreImportFolder()
 	int i = GetSelectedItem();
 
 	if (i!=-1)
-	{
-		CString hint;
-		ENSURE(hint.LoadString(IDS_IMPORTFOLDER));
-
-		LFBrowseForFolderDlg dlg(TRUE, _T(""), this, theApp.GetCommandName(ID_STORE_IMPORTFOLDER), hint);
-		if (dlg.DoModal()==IDOK)
-		{
-			LFFileImportList* il = LFAllocFileImportList();
-			LFAddImportPath(il, dlg.m_FolderPath);
-
-			// Template füllen
-			LFItemDescriptor* it = LFAllocItemDescriptor();
-			LFItemTemplateDlg tdlg(this, it, CookedFiles->m_Items[i]->StoreID);
-			if (tdlg.DoModal()!=IDCANCEL)
-				LFErrorBox(LFImportFiles(CookedFiles->m_Items[i]->StoreID, il, it), GetSafeHwnd());
-
-			LFFreeItemDescriptor(it);
-			LFFreeFileImportList(il);
-		}
-	}
+		LFImportFolder(CookedFiles->m_Items[i]->StoreID, this);
 }
 
 void CMainFrame::OnStoreMaintenance()

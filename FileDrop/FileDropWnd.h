@@ -34,6 +34,7 @@ protected:
 	afx_msg void OnMove(int x, int y);
 	afx_msg void OnAlwaysOnTop();
 	afx_msg void OnChooseDefaultStore();
+	afx_msg void OnImportFolder();
 	afx_msg void OnStoreProperties();
 	afx_msg void OnAbout();
 	afx_msg void OnNewStoreManager();

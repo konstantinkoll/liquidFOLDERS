@@ -80,3 +80,27 @@ LFCommDlg_API BOOL IsCtrlThemed()
 
 	return FALSE;
 }
+
+LFCommDlg_API void LFImportFolder(char* StoreID, CWnd* pParentWnd)
+{
+	CString caption;
+	ENSURE(caption.LoadString(IDS_IMPORTFOLDER_CAPTION));
+	CString hint;
+	ENSURE(hint.LoadString(IDS_IMPORTFOLDER_HINT));
+
+	LFBrowseForFolderDlg dlg(TRUE, _T(""), pParentWnd, caption, hint);
+	if (dlg.DoModal()==IDOK)
+	{
+		LFFileImportList* il = LFAllocFileImportList();
+		LFAddImportPath(il, dlg.m_FolderPath);
+
+		// Template füllen
+		LFItemDescriptor* it = LFAllocItemDescriptor();
+		LFItemTemplateDlg tdlg(pParentWnd, it, StoreID);
+		if (tdlg.DoModal()!=IDCANCEL)
+			LFErrorBox(LFImportFiles(StoreID, il, it), pParentWnd->GetSafeHwnd());
+
+		LFFreeItemDescriptor(it);
+		LFFreeFileImportList(il);
+	}
+}

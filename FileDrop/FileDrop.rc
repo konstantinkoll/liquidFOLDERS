@@ -104,6 +104,7 @@ BEGIN
     POPUP "POPUP"
     BEGIN
         MENUITEM "Standard-Store &wählen...",   ID_APP_CHOOSEDEFAULTSTORE
+        MENUITEM "&Verzeichnis importieren...", ID_APP_IMPORTFOLDER
         MENUITEM "&Eigenschaften...",           ID_APP_STOREPROPERTIES
         MENUITEM SEPARATOR
         MENUITEM "&Über FileDrop...",           ID_APP_ABOUT
@@ -151,6 +152,7 @@ BEGIN
     POPUP "POPUP"
     BEGIN
         MENUITEM "Choose &default store...",    ID_APP_CHOOSEDEFAULTSTORE
+        MENUITEM "&Import folder...",           ID_APP_IMPORTFOLDER
         MENUITEM "&Properties...",              ID_APP_STOREPROPERTIES
         MENUITEM SEPARATOR
         MENUITEM "&About FileDrop...",          ID_APP_ABOUT
@@ -198,6 +200,7 @@ BEGIN
     POPUP "POPUP"
     BEGIN
         MENUITEM "Selecionar store &estándar...", ID_APP_CHOOSEDEFAULTSTORE
+        MENUITEM "&Importar directorio...",     ID_APP_IMPORTFOLDER
         MENUITEM "&Propiedades...",             ID_APP_STOREPROPERTIES
         MENUITEM SEPARATOR
         MENUITEM "&Sobre FileDrop...",          ID_APP_ABOUT
@@ -245,6 +248,7 @@ BEGIN
     POPUP "POPUP"
     BEGIN
         MENUITEM "Sél&ectioneer le store standard...", ID_APP_CHOOSEDEFAULTSTORE
+        MENUITEM "&Importer dossier...",        ID_APP_IMPORTFOLDER
         MENUITEM "&Qualités...",                ID_APP_STOREPROPERTIES
         MENUITEM SEPARATOR
         MENUITEM "&Concernant FileDrop...",     ID_APP_ABOUT

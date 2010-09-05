@@ -7,7 +7,8 @@
 #define IDB_ABOUTICON                   129
 #define IDM_POPUP                       130
 #define ID_APP_CHOOSEDEFAULTSTORE       200
-#define ID_APP_STOREPROPERTIES          201
+#define ID_APP_IMPORTFOLDER             201
+#define ID_APP_STOREPROPERTIES          202
 #define IDS_ALWAYSONTOP                 1000
 #define IDS_TOOLTIP                     1001
 #define IDS_NODEFAULTSTORE              1002

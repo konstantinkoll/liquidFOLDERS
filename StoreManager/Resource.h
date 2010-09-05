@@ -227,7 +227,7 @@
 #define IDS_TYPE_VIRTUAL_SINGULAR       1029
 #define IDS_TYPE_VIRTUAL_PLURAL         1030
 #define IDS_REQUIRESMAINTENANCE         1031
-#define IDS_IMPORTFOLDER                   1032
+#define IDS_IMPORTFOLDER                1032
 #define IDS_NOSTORES                    1033
 #define IDS_YOULOOKAT                   1034
 #define IDS_VATTR_FIRST                 1100

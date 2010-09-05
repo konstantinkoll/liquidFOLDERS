@@ -43,3 +43,5 @@
 LFCommDlg_API void CreateRoundRectangle(CRect rect, int rad, GraphicsPath& path);
 LFCommDlg_API void TooltipDataFromPIDL(LPITEMIDLIST pidl, CImageList* icons, HICON& hIcon, CSize& size, CString& caption, CString& hint);
 LFCommDlg_API BOOL IsCtrlThemed();
+
+LFCommDlg_API void LFImportFolder(char* StoreID, CWnd* pParentWnd=NULL);

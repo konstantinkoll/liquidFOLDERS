@@ -10,7 +10,6 @@
 #define ID_APP_PROMPT                   205
 #define ID_APP_PURCHASE                 206
 #define ID_APP_ENTERLICENSEKEY          207
-#define IDC_CUSTOM2                     2022
 #define IDB_KEY                         20000
 #define IDB_BACKDROP                    20001
 #define IDB_LOGO                        20002
@@ -58,6 +57,8 @@
 #define IDS_UACMESSAGE                  20310
 #define IDS_EXPAND                      20311
 #define IDS_COLLAPSE                    20312
+#define IDS_IMPORTFOLDER_CAPTION        20313
+#define IDS_IMPORTFOLDER_HINT           20314
 #define IDD_ABOUT                       21000
 #define IDC_RIBBONCOLORCOMBO            21001
 #define IDC_TEXTUREFRAME                21002

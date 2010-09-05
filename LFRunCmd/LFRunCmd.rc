@@ -101,8 +101,6 @@ STRINGTABLE
 BEGIN
     IDS_ABOUT               "RunCmd"
     IDS_EXTENSIONABOUT      "Explorer-Erweiterung"
-    IDS_IMPORTFOLDER_Caption "Verzeichnis importieren"
-    IDS_IMPORTFOLDER_Hint   "Auch alle Unterverzeichnisse werden importiert."
 END
 
 #endif    // Deutsch (neutral) resources
@@ -127,8 +125,6 @@ STRINGTABLE
 BEGIN
     IDS_ABOUT               "RunCmd"
     IDS_EXTENSIONABOUT      "Explorer Extension"
-    IDS_IMPORTFOLDER_Caption "Import folder"
-    IDS_IMPORTFOLDER_Hint   "The folder and all its subfolders will be imported."
 END
 
 #endif    // Englisch (neutral) resources
@@ -153,8 +149,6 @@ STRINGTABLE
 BEGIN
     IDS_ABOUT               "RunCmd"
     IDS_EXTENSIONABOUT      "Suplemento del Explorer"
-    IDS_IMPORTFOLDER_Caption "Import folder"
-    IDS_IMPORTFOLDER_Hint   "The folder and all its subfolders will be imported."
 END
 
 #endif    // Spanisch (neutral) resources
@@ -179,8 +173,6 @@ STRINGTABLE
 BEGIN
     IDS_ABOUT               "RunCmd"
     IDS_EXTENSIONABOUT      "Extension de l'Explorer"
-    IDS_IMPORTFOLDER_Caption "Import folder"
-    IDS_IMPORTFOLDER_Hint   "The folder and all its subfolders will be imported."
 END
 
 #endif    // Französisch (neutral) resources
@@ -226,10 +218,6 @@ BEGIN
     "LANGUAGE 7, 1\r\n"
     "#pragma code_page(1252)\r\n"
     "#include ""l.DEU\\afxres.rc""          // Standardkomponenten\r\n"
-    "#if !defined(_AFXDLL)\r\n"
-    "#include ""l.DEU\\afxprint.rc""                // Ressourcen für Drucken/Seitenansicht\r\n"
-    "#include ""l.DEU\\afxribbon.rc""               // Ressourcen für MFC-Multifunktionsleiste und -Steuerleiste\r\n"
-    "#endif\r\n"
     "#endif\r\n"
     "\0"
 END
@@ -254,10 +242,6 @@ END
 LANGUAGE 7, 1
 #pragma code_page(1252)
 #include "l.DEU\afxres.rc"          // Standardkomponenten
-#if !defined(_AFXDLL)
-#include "l.DEU\afxprint.rc"                // Ressourcen für Drucken/Seitenansicht
-#include "l.DEU\afxribbon.rc"               // Ressourcen für MFC-Multifunktionsleiste und -Steuerleiste
-#endif
 #endif
 
 /////////////////////////////////////////////////////////////////////////////

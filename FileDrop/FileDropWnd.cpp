@@ -132,6 +132,7 @@ BEGIN_MESSAGE_MAP(CFileDropWnd, CGlasWindow)
 	ON_WM_MOVE()
 	ON_COMMAND(SC_ALWAYSONTOP, OnAlwaysOnTop)
 	ON_COMMAND(ID_APP_CHOOSEDEFAULTSTORE, OnChooseDefaultStore)
+	ON_COMMAND(ID_APP_IMPORTFOLDER, OnImportFolder)
 	ON_COMMAND(ID_APP_STOREPROPERTIES, OnStoreProperties)
 	ON_COMMAND(ID_APP_ABOUT, OnAbout)
 	ON_COMMAND(ID_APP_NEWSTOREMANAGER, OnNewStoreManager)
@@ -369,6 +370,7 @@ void CFileDropWnd::OnRButtonUp(UINT /*nFlags*/, CPoint point)
 		SetMenuItemBitmap(*popup, 8, HBMMENU_POPUP_CLOSE);
 
 		popup->CheckMenuItem(SC_ALWAYSONTOP, AlwaysOnTop ? MF_CHECKED : MF_UNCHECKED);
+		popup->EnableMenuItem(ID_APP_IMPORTFOLDER, StoreValid ? MF_ENABLED : MF_GRAYED);
 		popup->EnableMenuItem(ID_APP_STOREPROPERTIES, StoreValid ? MF_ENABLED : MF_GRAYED);
 		popup->EnableMenuItem(ID_APP_NEWSTOREMANAGER, (_access(theApp.path+"StoreManager.exe", 0)==0) ? MF_ENABLED : MF_GRAYED);
 
@@ -416,6 +418,12 @@ void CFileDropWnd::OnChooseDefaultStore()
 {
 	LFChooseDefaultStoreDlg dlg(this);
 	dlg.DoModal();
+}
+
+void CFileDropWnd::OnImportFolder()
+{
+	if (StoreValid)
+		LFImportFolder(m_Store.StoreID, this);
 }
 
 void CFileDropWnd::OnStoreProperties()

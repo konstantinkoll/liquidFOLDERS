@@ -117,26 +117,7 @@ void CRunCmdApp::OnImportFolder(CString ID)
 	char StoreID[LFKeySize];
 	wcstombs_s(NULL, StoreID, ID, LFKeySize);
 
-	CString caption;
-	ENSURE(caption.LoadString(IDS_IMPORTFOLDER_Caption));
-	CString hint;
-	ENSURE(hint.LoadString(IDS_IMPORTFOLDER_Hint));
-
-	LFBrowseForFolderDlg dlg(TRUE, _T(""), CWnd::GetForegroundWindow(), caption, hint);
-	if (dlg.DoModal()==IDOK)
-	{
-		LFFileImportList* il = LFAllocFileImportList();
-		LFAddImportPath(il, dlg.m_FolderPath);
-
-		// Template füllen
-		LFItemDescriptor* it = LFAllocItemDescriptor();
-		LFItemTemplateDlg tdlg(CWnd::GetForegroundWindow(), it, StoreID);
-		if (tdlg.DoModal()!=IDCANCEL)
-			LFErrorBox(LFImportFiles(StoreID, il, it), CWnd::GetForegroundWindow()->GetSafeHwnd());
-
-		LFFreeItemDescriptor(it);
-		LFFreeFileImportList(il);
-	}
+	LFImportFolder(StoreID, CWnd::GetForegroundWindow());
 }
 
 void CRunCmdApp::OnStoreProperties(CString ID)

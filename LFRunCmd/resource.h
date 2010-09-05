@@ -7,8 +7,6 @@
 #define IDB_EXTENSIONABOUTICON          3
 #define IDS_ABOUT                       1000
 #define IDS_EXTENSIONABOUT              1001
-#define IDS_IMPORTFOLDER_Caption        1002
-#define IDS_IMPORTFOLDER_Hint           1003
 
 // Next default values for new objects
 // 
