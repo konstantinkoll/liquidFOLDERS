@@ -1220,7 +1220,19 @@ BOOL CFolderItem::OnOpen(CExecuteMenuitemsEventArgs& e)
 		CNSEItem* item = (CFileItem*)e.children->GetNext(pos);
 
 		if (IS(item, CFolderItem))
-			BrowseToChild((CFolderItem*)item);
+			if (!CUtils::BrowseTo(item->GetPIDLAbsolute(), e.hWnd))
+			{
+				SHELLEXECUTEINFO  sei;
+				ZeroMemory(&sei, sizeof(sei));
+				sei.cbSize = sizeof(sei);
+				sei.fMask = SEE_MASK_IDLIST | SEE_MASK_CLASSNAME;
+				sei.lpIDList = GetPIDLAbsolute();
+				sei.lpClass = _T("folder");
+				sei.hwnd = GetViewWindow();
+				sei.nShow = SW_SHOWNORMAL;
+				sei.lpVerb = _T("open");
+				ShellExecuteEx(&sei);
+			}
 
 		if (IS(item, CFileItem))
 		{
