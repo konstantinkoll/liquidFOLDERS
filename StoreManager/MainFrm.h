@@ -178,7 +178,6 @@ protected:
 	afx_msg void OnStoreMakeHybrid();
 	afx_msg void OnStoreProperties();
 	afx_msg void OnStoreAddFolder();
-	afx_msg void OnStoreAddFiles();
 	afx_msg void OnStoreMaintenance();
 	afx_msg void OnStoreBackup();
 	afx_msg void OnUpdateStoreCommands(CCmdUI* pCmdUI);

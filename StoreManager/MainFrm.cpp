@@ -127,7 +127,6 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_COMMAND(ID_STORE_MAKEDEFAULT, OnStoreMakeDefault)
 	ON_COMMAND(ID_STORE_MAKEHYBRID, OnStoreMakeHybrid)
 	ON_COMMAND(ID_STORE_ADDFOLDER, OnStoreAddFolder)
-	ON_COMMAND(ID_STORE_ADDFILES, OnStoreAddFiles)
 	ON_COMMAND(ID_STORE_PROPERTIES, OnStoreProperties)
 	ON_COMMAND(ID_STORE_MAINTENANCE, OnStoreMaintenance)
 	ON_COMMAND(ID_STORE_BACKUP, OnStoreBackup)
@@ -1032,119 +1031,20 @@ void CMainFrame::OnStoreProperties()
 	}
 }
 
-wchar_t InitialDir[MAX_PATH];
-int CALLBACK BrowseCallbackProc(HWND hWnd, UINT uMsg, LPARAM lParam, LPARAM /*lpData*/)
-{
-	wchar_t Dir[MAX_PATH] = L"";
-
-	switch (uMsg)
-	{
-	case BFFM_INITIALIZED:
-		SendMessage(hWnd, BFFM_SETSELECTION, TRUE, (LPARAM)InitialDir);
-		SendMessage(hWnd, BFFM_ENABLEOK, 0, InitialDir[0]!=L'\0');
-		break;
-	case BFFM_SELCHANGED:
-		SendMessage(hWnd, BFFM_ENABLEOK, 0, SHGetPathFromIDList((LPCITEMIDLIST)lParam, Dir));
-		break;
-	}
-
-	return 0;
-}
-
 void CMainFrame::OnStoreAddFolder()
 {
 	int i = GetSelectedItem();
 
 	if (i!=-1)
 	{
-		LFFileImportList* il = LFAllocFileImportList();
+		CString hint;
+		ENSURE(hint.LoadString(IDS_ADDFOLDER));
 
-		CString mask;
-		CString caption;
-		ENSURE(mask.LoadString(IDS_ADDFOLDER));
-		caption.Format(mask, CookedFiles->m_Items[i]->CoreAttributes.FileName);
-
-		// Verzeichnis finden
-		wchar_t szDisplayName[MAX_PATH] = L"";
-
-		BROWSEINFO bi;
-		ZeroMemory(&bi, sizeof(bi));
-		bi.hwndOwner = GetSafeHwnd();
-		bi.pidlRoot = NULL;
-		bi.pszDisplayName = szDisplayName;
-		bi.lpszTitle = caption;
-		bi.ulFlags = BIF_RETURNONLYFSDIRS | BIF_NEWDIALOGSTYLE | BIF_NONEWFOLDERBUTTON | BIF_EDITBOX;
-		bi.lpfn = BrowseCallbackProc;
-
-		LPITEMIDLIST pIIL = SHBrowseForFolder(&bi);
-
-		wchar_t ReturnedDir[MAX_PATH] = L"";
-		BOOL bRet = SHGetPathFromIDList(pIIL, ReturnedDir);
-		if (bRet)
+		LFBrowseForFolderDlg dlg(TRUE, _T(""), this, theApp.GetCommandName(ID_STORE_ADDFOLDER), hint);
+		if (dlg.DoModal()==IDOK)
 		{
-			if (ReturnedDir[0]!=L'\0')
-			{
-				LFAddImportPath(il, ReturnedDir);
-				wcscpy_s(InitialDir, MAX_PATH, ReturnedDir);
-
-				// Template füllen
-				LFItemDescriptor* it = LFAllocItemDescriptor();
-				LFItemTemplateDlg tdlg(this, it, CookedFiles->m_Items[i]->StoreID);
-				if (tdlg.DoModal()!=IDCANCEL)
-					LFErrorBox(LFImportFiles(CookedFiles->m_Items[i]->StoreID, il, it), GetSafeHwnd());
-
-				LFFreeItemDescriptor(it);
-			}
-
-			LPMALLOC pMalloc;
-			HRESULT HR = SHGetMalloc(&pMalloc);
-			if (HR==S_OK)
-			{
-				pMalloc->Free(pIIL);
-				pMalloc->Release();
-			}
-		}
-
-		LFFreeFileImportList(il);
-	}
-}
-
-void CMainFrame::OnStoreAddFiles()
-{
-	int i = GetSelectedItem();
-
-	if (i!=-1)
-	{
-		LFFileImportList* il = LFAllocFileImportList();
-
-		// Dateien finden
-		CFileDialog fdlg(TRUE, NULL, NULL, OFN_ALLOWMULTISELECT | OFN_EXPLORER | OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY, NULL, this);
-
-		CString caption = theApp.GetCommandName(ID_STORE_ADDFILES);
-		fdlg.m_pOFN->lpstrTitle = caption;
-
-		CString Filenames;
-		fdlg.m_pOFN->nMaxFile = 8192*sizeof(wchar_t)*((MAX_PATH+1)+1);
-		fdlg.m_pOFN->lpstrFile = Filenames.GetBuffer(fdlg.m_pOFN->nMaxFile);
-		fdlg.m_pOFN->nFileOffset = 0;
-
-		if (fdlg.DoModal()==IDOK)
-		{
-			POSITION pos = fdlg.GetStartPosition();
-			while (pos)
-			{
-				CString strPath = fdlg.GetNextPathName(pos);
-				if ((strPath.Find(_T(":\\\\"))==1) && (strPath.GetLength()>4))
-				{
-					CString temp = strPath.Left(3);
-					temp += strPath.Mid(4);
-					strPath = temp;
-				}
-
-				wchar_t Buf[MAX_PATH];
-				memcpy_s(Buf, MAX_PATH*sizeof(wchar_t), strPath, (strPath.GetLength()+1)*sizeof(wchar_t));
-				LFAddImportPath(il, Buf);
-			}
+			LFFileImportList* il = LFAllocFileImportList();
+			LFAddImportPath(il, dlg.m_FolderPath);
 
 			// Template füllen
 			LFItemDescriptor* it = LFAllocItemDescriptor();
@@ -1153,10 +1053,8 @@ void CMainFrame::OnStoreAddFiles()
 				LFErrorBox(LFImportFiles(CookedFiles->m_Items[i]->StoreID, il, it), GetSafeHwnd());
 
 			LFFreeItemDescriptor(it);
+			LFFreeFileImportList(il);
 		}
-
-		Filenames.ReleaseBuffer();
-		LFFreeFileImportList(il);
 	}
 }
 
@@ -1277,7 +1175,6 @@ void CMainFrame::OnUpdateStoreCommands(CCmdUI* pCmdUI)
 					b ^= m_wndView->IsEditing();
 				break;
 			case ID_STORE_ADDFOLDER:
-			case ID_STORE_ADDFILES:
 				if (f)
 					b = (f->Type & LFTypeStore) && (!(f->Type & LFTypeNotMounted));
 				break;
@@ -2257,18 +2154,17 @@ void CMainFrame::InitializeRibbon()
 			CMFCRibbonPanel* pPanelStoresImport = pCategoryStores->AddPanel(strTemp, m_PanelImages.ExtractIcon(8));
 
 				pPanelStoresImport->Add(theApp.CommandButton(ID_STORE_ADDFOLDER, 8, 8));
-				pPanelStoresImport->Add(theApp.CommandButton(ID_STORE_ADDFILES, 9, 9));
 				pPanelStoresImport->AddSeparator();
-				pPanelStoresImport->Add(theApp.CommandButton(ID_APP_NEWMIGRATE, 10, 10, FALSE, TRUE));
-				pPanelStoresImport->Add(theApp.CommandButton(ID_APP_NEWFILEDROP, 11, 11));
+				pPanelStoresImport->Add(theApp.CommandButton(ID_APP_NEWMIGRATE, 9, 9, FALSE, TRUE));
+				pPanelStoresImport->Add(theApp.CommandButton(ID_APP_NEWFILEDROP, 10, 10));
 
 			strTemp = "Housekeeping";
 			CMFCRibbonPanel* pPanelStoresHousekeeping = pCategoryStores->AddPanel(strTemp, m_PanelImages.ExtractIcon(12));
 
-				pPanelStoresHousekeeping->Add(theApp.CommandButton(ID_STORE_PROPERTIES, 12, 12));
+				pPanelStoresHousekeeping->Add(theApp.CommandButton(ID_STORE_PROPERTIES, 11, 11));
 				pPanelStoresHousekeeping->AddSeparator();
-				pPanelStoresHousekeeping->Add(theApp.CommandButton(ID_STORE_MAINTENANCE, 13, 13));
-				pPanelStoresHousekeeping->Add(theApp.CommandButton(ID_STORE_BACKUP, 14, 14));
+				pPanelStoresHousekeeping->Add(theApp.CommandButton(ID_STORE_MAINTENANCE, 12, 12));
+				pPanelStoresHousekeeping->Add(theApp.CommandButton(ID_STORE_BACKUP, 13, 13));
 
 		strTemp = "Deleted files";
 		strCtx = "Trash";
