@@ -14,13 +14,14 @@ class AFX_EXT_CLASS CExplorerTree : public CTreeCtrl
 public:
 	CExplorerTree();
 
-	BOOL Create(CWnd* pParentWnd, UINT nID, BOOL OnlyFilesystem=TRUE);
+	BOOL Create(CWnd* pParentWnd, UINT nID, BOOL OnlyFilesystem=TRUE, CString RootPath=_T(""));
 	LPITEMIDLIST GetSelectedPIDL();
 
 protected:
 	LFApplication* p_App;
 	IContextMenu2* m_pContextMenu2;
 	BOOL m_OnlyFilesystem;
+	CString m_RootPath;
 
 	virtual LRESULT WindowProc(UINT message, WPARAM wParam, LPARAM lParam);
 

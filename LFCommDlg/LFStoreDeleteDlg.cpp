@@ -1,3 +1,7 @@
+
+// LFStoreDeleteDlg.cpp: Implementierung der Klasse LFStoreDeleteDlg
+//
+
 #include "StdAfx.h"
 #include "LFStoreDeleteDlg.h"
 #include "Resource.h"

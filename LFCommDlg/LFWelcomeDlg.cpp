@@ -1,8 +1,15 @@
+
+// LFWelcomeDlg.cpp: Implementierung der Klasse LFWelcomeDlg
+//
+
 #include "stdafx.h"
 #include "LFWelcomeDlg.h"
 #include "LFCore.h"
 #include "resource.h"
 
+
+// LFWelcomeDlg
+//
 
 LFWelcomeDlg::LFWelcomeDlg(CWnd* pParentWnd)
 	: LFDialog(IDD_WELCOME, LFDS_Default, pParentWnd)

@@ -1,6 +1,14 @@
+
+// LFSelectLocationGPSDlg.cpp: Implementierung der Klasse LFSelectLocationGPSDlg
+//
+
 #include "StdAfx.h"
 #include "LFSelectLocationGPSDlg.h"
 #include "Resource.h"
+
+
+// LFSelectLocationGPSDlg
+//
 
 extern AFX_EXTENSION_MODULE LFCommDlgDLL;
 

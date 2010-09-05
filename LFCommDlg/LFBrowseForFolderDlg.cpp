@@ -1,17 +1,26 @@
+
+// LFBrowseForFolderDlg.cpp: Implementierung der Klasse LFBrowseForFolderDlg
+//
+
 #include "stdafx.h"
 #include "CGlasWindow.h"
 #include "LFBrowseForFolderDlg.h"
 #include "resource.h"
 
 
-LFBrowseForFolderDlg::LFBrowseForFolderDlg(BOOL OnlyFSObjects, CWnd* pParentWnd, CString Caption, CString Hint)
+// LFBrowseForFolderDlg
+//
+
+LFBrowseForFolderDlg::LFBrowseForFolderDlg(BOOL OnlyFSObjects, CString RootPath, CWnd* pParentWnd, CString Caption, CString Hint)
 	: LFDialog(IDD_BROWSEFORFOLDER, LFDS_White, pParentWnd)
 {
 	p_App = (LFApplication*)AfxGetApp();
 	m_OnlyFSObjects = OnlyFSObjects;
+	m_RootPath = RootPath;
 	m_Caption = Caption;
 	m_Hint = Hint;
 	m_FolderPIDL = NULL;
+	m_FolderPath[0] = L'\0';
 }
 
 LFBrowseForFolderDlg::~LFBrowseForFolderDlg()
@@ -23,7 +32,10 @@ LFBrowseForFolderDlg::~LFBrowseForFolderDlg()
 void LFBrowseForFolderDlg::DoDataExchange(CDataExchange* pDX)
 {
 	if (pDX->m_bSaveAndValidate)
+	{
 		m_FolderPIDL = p_App->GetShellManager()->CopyItem(m_wndExplorerTree.GetSelectedPIDL());
+		SHGetPathFromIDList(m_FolderPIDL, m_FolderPath);
+	}
 }
 
 void LFBrowseForFolderDlg::AdjustLayout()
@@ -53,7 +65,7 @@ void LFBrowseForFolderDlg::AdjustLayout()
 
 
 BEGIN_MESSAGE_MAP(LFBrowseForFolderDlg, LFDialog)
-	ON_WM_THEMECHANGED()
+	ON_NOTIFY(TVN_SELCHANGED, IDC_SHELLTREE, OnSelectionChanged)
 END_MESSAGE_MAP()
 
 BOOL LFBrowseForFolderDlg::OnInitDialog()
@@ -67,19 +79,23 @@ BOOL LFBrowseForFolderDlg::OnInitDialog()
 		m_wndExplorerHeader.SetLineStyle(FALSE, FALSE);
 	}
 
-	m_wndExplorerTree.Create(this, IDC_SHELLTREE, TRUE);
+	m_wndExplorerTree.Create(this, IDC_SHELLTREE, TRUE, m_RootPath);
 	m_wndExplorerTree.SetFocus();
 
-	OnThemeChanged();
 	AdjustLayout();
 
 	return FALSE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird
 }
 
-LRESULT LFBrowseForFolderDlg::OnThemeChanged()
+void LFBrowseForFolderDlg::OnSelectionChanged(NMHDR* pNMHDR, LRESULT* /*pResult*/)
 {
-	BOOL Themed = (p_App->m_ThemeLibLoaded) ? p_App->zIsThemeActive() : FALSE;
-	m_wndExplorerHeader.SetDesign(Themed ? GWD_THEMED : GWD_DEFAULT);
+	if (m_OnlyFSObjects)
+	{
+		NM_TREEVIEW* pNMTreeView = (NM_TREEVIEW*)pNMHDR;
 
-	return LFDialog::OnThemeChanged();
+		LPAFX_SHELLITEMINFO pInfo = (LPAFX_SHELLITEMINFO)pNMTreeView->itemNew.lParam;
+
+		TCHAR path[MAX_PATH];
+		GetDlgItem(IDOK)->EnableWindow(SHGetPathFromIDList(pInfo->pidlFQ, path));
+	}
 }

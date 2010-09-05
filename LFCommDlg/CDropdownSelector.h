@@ -39,7 +39,6 @@ public:
 	virtual void AdjustLayout();
 
 	BOOL Create(CWnd* pOwnerWnd, UINT _DialogResID=0);
-	void SetDesign(UINT _Design);
 	void AddCategory(int ID, CString name, CString hint=_T(""));
 
 protected:

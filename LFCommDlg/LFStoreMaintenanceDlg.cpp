@@ -1,3 +1,7 @@
+
+// LFStoreMaintenanceDlg.cpp: Implementierung der Klasse LFStoreMaintenanceDlg
+//
+
 #include "StdAfx.h"
 #include "LFCore.h"
 #include "LFStoreMaintenanceDlg.h"

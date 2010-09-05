@@ -1,8 +1,13 @@
 
-#include "stdafx.h"
-#include "LFApplication.h"
-#include "LFTooltip.h"
+// LFTooltip.cpp: Implementierung der Klasse LFTooltip
+//
 
+#include "stdafx.h"
+#include "LFCommDlg.h"
+
+
+// LFTooltip
+//
 
 LFTooltip::LFTooltip()
 	: CWnd()
@@ -169,12 +174,8 @@ void LFTooltip::Track(CPoint point, HICON hIcon, CSize szIcon, const CString& st
 				rect.bottom = rect.top+sz.cy;
 			}
 
-	m_Themed = FALSE;
-	LFApplication* pApp = (LFApplication*)AfxGetApp();
-	if (pApp->m_ThemeLibLoaded)
-		m_Themed = pApp->zIsThemeActive();
-
 	CRgn rgn;
+	m_Themed = IsCtrlThemed();
 	if (m_Themed)
 	{
 		rgn.CreateRoundRectRgn(0, 0, sz.cx+1, sz.cy+1, 4, 4);

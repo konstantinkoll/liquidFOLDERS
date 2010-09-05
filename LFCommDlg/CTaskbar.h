@@ -21,7 +21,6 @@ public:
 	BOOL Create(CWnd* pParentWnd, UINT ResID, UINT nID);
 	UINT GetPreferredHeight();
 	CTaskButton* AddButton(UINT nID, CString Text, int IconID, BOOL bAddRight=FALSE, BOOL bOnlyIcon=FALSE);
-	void SetDesign(UINT _Design);
 	void AdjustLayout();
 
 protected:
@@ -40,7 +39,6 @@ private:
 	int BackBufferL;
 	int BackBufferH;
 	HBRUSH hBackgroundBrush;
-	UINT Design;
 	list<CTaskButton*> ButtonsLeft;
 	list<CTaskButton*> ButtonsRight;
 };

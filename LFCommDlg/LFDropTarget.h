@@ -1,11 +1,18 @@
+
+// LFDropTarget.h: Schnittstelle der Klasse LFDropTarget
+//
+
 #pragma once
 #include "afxole.h"
+
+
+// LFDropTarget
+//
 
 class AFX_EXT_CLASS LFDropTarget : public COleDropTarget
 {
 public:
 	LFDropTarget();
-	~LFDropTarget();
 
 	virtual BOOL Register(CWnd* pWnd, char* StoreID);
 	virtual DROPEFFECT OnDragEnter(CWnd* pWnd, COleDataObject* pDataObject, DWORD dwKeyState, CPoint point);

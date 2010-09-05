@@ -1,12 +1,18 @@
+
+// LFChooseDefaultStoreDlg.cpp: Implementierung der Klasse LFChooseDefaultStoreDlg
+//
+
 #include "StdAfx.h"
 #include "LFChooseDefaultStoreDlg.h"
 #include "LFStoreNewDlg.h"
 #include "Resource.h"
 
 
+// LFChooseDefaultStoreDlg
+//
+
 extern AFX_EXTENSION_MODULE LFCommDlgDLL;
 extern LFMessageIDs* MessageIDs;
-
 
 LFChooseDefaultStoreDlg::LFChooseDefaultStoreDlg(CWnd* pParentWnd)
 	: CDialog(IDD_CHOOSEDEFAULTSTORE, pParentWnd)

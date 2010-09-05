@@ -1,9 +1,17 @@
+
+// LFLicenseDlg.cpp: Implementierung der Klasse LFLicenseDlg
+//
+
 #include "stdafx.h"
 #include "LFLicenseDlg.h"
 #include "LFCore.h"
 #include "Resource.h"
 
 using namespace Gdiplus;
+
+
+// LFLicenseDlg
+//
 
 extern AFX_EXTENSION_MODULE LFCommDlgDLL;
 

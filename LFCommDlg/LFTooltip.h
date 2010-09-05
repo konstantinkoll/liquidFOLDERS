@@ -1,6 +1,12 @@
 
+// LFTooltip.h: Schnittstelle der Klasse LFTooltip
+//
+
 #pragma once
 
+
+// LFTooltip
+//
 
 class AFX_EXT_CLASS LFTooltip : public CWnd
 {

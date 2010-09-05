@@ -126,16 +126,6 @@ void CDropdownWindow::AdjustLayout()
 	m_wndList.EnsureVisible(0, FALSE);
 }
 
-void CDropdownWindow::SetDesign(UINT _Design)
-{
-	m_wndList.SetBkColor(_Design==GWD_DEFAULT ? GetSysColor(COLOR_WINDOW) : 0xFFFFFF);
-	m_wndList.SetTextColor(_Design==GWD_DEFAULT ? GetSysColor(COLOR_WINDOWTEXT) : 0x000000);
-	m_wndList.SetTextBkColor(_Design==GWD_DEFAULT ? GetSysColor(COLOR_WINDOW) : 0xFFFFFF);
-
-	if (IsWindow(m_wndBottomArea.GetSafeHwnd()))
-		m_wndBottomArea.SetDesign(_Design);
-}
-
 void CDropdownWindow::AddCategory(int ID, CString name, CString hint)
 {
 	LVGROUP lvg;
@@ -176,6 +166,11 @@ int CDropdownWindow::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndList.SetExtendedStyle(LVS_EX_DOUBLEBUFFER | LVS_EX_ONECLICKACTIVATE | LVS_EX_JUSTIFYCOLUMNS);
 	m_wndList.SetHotCursor(LoadCursor(NULL, IDC_ARROW));
 	m_wndList.SetFont(&((LFApplication*)AfxGetApp())->m_DefaultFont, FALSE);
+
+	BOOL Themed = IsCtrlThemed();
+	m_wndList.SetBkColor(Themed ? 0xFFFFFF : GetSysColor(COLOR_WINDOW));
+	m_wndList.SetTextColor(Themed ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT));
+	m_wndList.SetTextBkColor(Themed ? 0xFFFFFF : GetSysColor(COLOR_WINDOW));
 
 	if (m_DialogResID)
 		if (m_wndBottomArea.Create(this, m_DialogResID, dwStyle, 2)==-1)
@@ -374,49 +369,41 @@ void CDropdownSelector::OnPaint()
 	const BYTE Alpha = m_Dropped ? 0xFF : (m_Hover || (GetFocus()==this)) ? 0xF0 : 0xD0;
 
 	CRect rcontent(rclient);
-	switch (pCtrlSite->GetDesign())
+	if (hTheme)
 	{
-	case GWD_AERO:
-	case GWD_THEMED:
+		CRect rbounds(rcontent);
+		rbounds.right--;
+		rbounds.bottom--;
+
+		rcontent.DeflateRect(2, 2);
+		SolidBrush brush1(Color(Alpha, 0xFF, 0xFF, 0xFF));
+		g.FillRectangle(&brush1, rcontent.left, rcontent.top, rcontent.Width(), rcontent.Height());
+		g.SetSmoothingMode(SmoothingModeAntiAlias);
+
+		GraphicsPath path;
+		CreateRoundRectangle(rbounds, 2, path);
+		Pen pen(Color(0x40, 0xFF, 0xFF, 0xFF));
+		g.DrawPath(&pen, &path);
+		rbounds.DeflateRect(1, 1);
+
+		CreateRoundRectangle(rbounds, 1, path);
+		LinearGradientBrush brush2(Point(0, rbounds.top), Point(0, rbounds.bottom), Color(Alpha, 0x50, 0x50, 0x50), Color(Alpha, 0xB0, 0xB0, 0xB0));
+		pen.SetBrush(&brush2);
+		g.DrawPath(&pen, &path);
+	}
+	else
+	{
+		dc.Draw3dRect(rcontent, GetSysColor(COLOR_3DSHADOW), GetSysColor(COLOR_3DHIGHLIGHT));
+		rcontent.DeflateRect(1, 1);
+		if (m_Dropped || (GetFocus()==this))
 		{
-			CRect rbounds(rcontent);
-			rbounds.right--;
-			rbounds.bottom--;
-
-			rcontent.DeflateRect(2, 2);
-			SolidBrush brush1(Color(Alpha, 0xFF, 0xFF, 0xFF));
-			g.FillRectangle(&brush1, rcontent.left, rcontent.top, rcontent.Width(), rcontent.Height());
-			g.SetSmoothingMode(SmoothingModeAntiAlias);
-
-			GraphicsPath path;
-			CreateRoundRectangle(rbounds, 2, path);
-			Pen pen(Color(0x40, 0xFF, 0xFF, 0xFF));
-			g.DrawPath(&pen, &path);
-			rbounds.DeflateRect(1, 1);
-
-			CreateRoundRectangle(rbounds, 1, path);
-			LinearGradientBrush brush2(Point(0, rbounds.top), Point(0, rbounds.bottom), Color(Alpha, 0x50, 0x50, 0x50), Color(Alpha, 0xB0, 0xB0, 0xB0));
-			pen.SetBrush(&brush2);
-			g.DrawPath(&pen, &path);
-
-			break;
-		}
-	case GWD_DEFAULT:
-		{
-			dc.Draw3dRect(rcontent, GetSysColor(COLOR_3DSHADOW), GetSysColor(COLOR_3DHIGHLIGHT));
+			dc.Draw3dRect(rcontent, 0x000000, GetSysColor(COLOR_3DFACE));
 			rcontent.DeflateRect(1, 1);
-			if (m_Dropped || (GetFocus()==this))
-			{
-				dc.Draw3dRect(rcontent, 0x000000, GetSysColor(COLOR_3DFACE));
-				rcontent.DeflateRect(1, 1);
-				dc.FillSolidRect(rcontent, GetSysColor(COLOR_WINDOW));
-			}
-			else
-			{
-				rcontent.DeflateRect(1, 1);
-			}
-
-			break;
+			dc.FillSolidRect(rcontent, GetSysColor(COLOR_WINDOW));
+		}
+		else
+		{
+			rcontent.DeflateRect(1, 1);
 		}
 	}
 
@@ -500,7 +487,7 @@ void CDropdownSelector::OnPaint()
 
 	dc.SelectObject(pOldFont);
 
-	if ((GetFocus()==this) && (!m_Dropped) && (pCtrlSite->GetDesign()==GWD_DEFAULT))
+	if ((GetFocus()==this) && (!m_Dropped) && (!hTheme))
 	{
 		rtext.InflateRect(3, -1);
 		dc.SetTextColor(0x000000);
@@ -626,7 +613,6 @@ void CDropdownSelector::OnLButtonDown(UINT /*nFlags*/, CPoint /*point*/)
 		if (rectDrop.bottom>rectScreen.bottom)
 			rectDrop.MoveToY(rectClient.top-rectDrop.Height()+1);
 
-		p_DropWindow->SetDesign(((CGlasWindow*)GetParent())->GetDesign());
 		p_DropWindow->SetWindowPos(&wndTopMost, rectDrop.left, rectDrop.top, rectDrop.Width(), rectDrop.Height(), SWP_SHOWWINDOW | SWP_NOACTIVATE);
 		((CGlasWindow*)GetParent())->RegisterPopupWindow(p_DropWindow);
 

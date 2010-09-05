@@ -1,9 +1,9 @@
+
 // LFDialog.cpp: Implementierungsdatei
 //
 
 #include "stdafx.h"
-#include "LFDialog.h"
-#include "LFLicenseDlg.h"
+#include "LFCommDlg.h"
 #include "LFCore.h"
 #include "Resource.h"
 
@@ -125,11 +125,7 @@ void LFDialog::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 	ScreenToClient(&btn);
 	int Line = btn.top-borders.Height()-3;
 
-	BOOL Themed = FALSE;
-	if (p_App->m_ThemeLibLoaded)
-		if (p_App->zIsThemeActive())
-			Themed = TRUE;
-
+	BOOL Themed = IsCtrlThemed();
 	switch (m_Design)
 	{
 	case LFDS_Blue:
@@ -225,11 +221,7 @@ LRESULT LFDialog::OnThemeChanged()
 
 void LFDialog::OnSysColorChange()
 {
-	BOOL Redraw = (m_Design==LFDS_Blue);
-	if (p_App->m_ThemeLibLoaded)
-		Redraw &= !p_App->zIsThemeActive();
-
-	if (Redraw)
+	if (!IsCtrlThemed())
 		BackBufferL = BackBufferH = 0;
 }
 

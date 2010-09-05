@@ -3,9 +3,7 @@
 //
 
 #include "stdafx.h"
-#include "CGlasWindow.h"
-#include "CTaskbar.h"
-#include "LFApplication.h"
+#include "LFCommDlg.h"
 
 
 // CTaskbar
@@ -19,7 +17,6 @@ CTaskbar::CTaskbar()
 {
 	hBackgroundBrush = NULL;
 	BackBufferL = BackBufferH = 0;
-	Design = GWD_DEFAULT;
 }
 
 BOOL CTaskbar::Create(CWnd* pParentWnd, UINT ResID, UINT nID)
@@ -46,7 +43,7 @@ LRESULT CTaskbar::DefWindowProc(UINT message, WPARAM wParam, LPARAM lParam)
 UINT CTaskbar::GetPreferredHeight()
 {
 	LOGFONT lf;
-	UINT h = 4*BORDER+((Design==GWD_DEFAULT) ? 3 : 4);
+	UINT h = 4*BORDER+(IsCtrlThemed() ? 4 : 3);
 
 	((LFApplication*)AfxGetApp())->m_DefaultFont.GetLogFont(&lf);
 	h += abs(lf.lfHeight);
@@ -72,19 +69,13 @@ CTaskButton* CTaskbar::AddButton(UINT nID, CString Text, int IconID, BOOL bAddRi
 	return btn;
 }
 
-void CTaskbar::SetDesign(UINT _Design)
-{
-	Design = _Design;
-	OnSysColorChange();
-}
-
 void CTaskbar::AdjustLayout()
 {
 	CRect rect;
 	GetClientRect(rect);
 
 	int Row = BORDER-1;
-	int h = rect.Height()-2*BORDER+((Design==GWD_DEFAULT) ? 2 : 1);
+	int h = rect.Height()-2*BORDER+(IsCtrlThemed() ? 1 : 2);
 
 	int RPos = rect.right+2*BORDER-BORDERLEFT;
 	std::list<CTaskButton*>::reverse_iterator ppBtnR = ButtonsRight.rbegin();
@@ -96,7 +87,6 @@ void CTaskbar::AdjustLayout()
 			RPos -= l+BORDER;
 			if (RPos>=BORDERLEFT)
 			{
-				(*ppBtnR)->SetDesign(Design);
 				(*ppBtnR)->SetWindowPos(NULL, RPos, Row, l, h, SWP_NOZORDER | SWP_NOACTIVATE);
 				(*ppBtnR)->Invalidate();
 				(*ppBtnR)->ShowWindow(SW_SHOW);
@@ -123,7 +113,6 @@ void CTaskbar::AdjustLayout()
 			int l = (*ppBtn)->GetPreferredWidth();
 			if (LPos+l+BORDERLEFT-BORDER<RPos)
 			{
-				(*ppBtn)->SetDesign(Design);
 				(*ppBtn)->SetWindowPos(NULL, LPos, Row, l, h, SWP_NOZORDER | SWP_NOACTIVATE);
 				(*ppBtn)->Invalidate();
 				(*ppBtn)->ShowWindow(SW_SHOW);
@@ -199,7 +188,7 @@ BOOL CTaskbar::OnEraseBkgnd(CDC* pDC)
 
 		Graphics g(dc);
 
-		if (Design==GWD_DEFAULT)
+		if (!IsCtrlThemed())
 		{
 			dc.FillSolidRect(rect, GetSysColor(COLOR_3DFACE));
 		}

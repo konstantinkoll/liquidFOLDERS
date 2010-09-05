@@ -1,3 +1,4 @@
+
 // LFCommDlg.cpp : Definiert die Initialisierungsroutinen für die DLL.
 //
 
@@ -68,4 +69,14 @@ LFCommDlg_API void TooltipDataFromPIDL(LPITEMIDLIST pidl, CImageList* icons, HIC
 		size.cx = ii.rcImage.right-ii.rcImage.left;
 		size.cy = ii.rcImage.bottom-ii.rcImage.top;
 	}
+}
+
+LFCommDlg_API BOOL IsCtrlThemed()
+{
+	LFApplication* pApp = (LFApplication*)AfxGetApp();
+	if (pApp)
+		if (pApp->m_ThemeLibLoaded)
+			return pApp->zIsThemeActive();
+
+	return FALSE;
 }

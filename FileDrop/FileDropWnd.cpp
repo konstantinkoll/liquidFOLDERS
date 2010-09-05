@@ -11,6 +11,9 @@
 #include <io.h>
 
 
+// FileDropWnd
+//
+
 CFileDropWnd::CFileDropWnd()
 	: CGlasWindow()
 {

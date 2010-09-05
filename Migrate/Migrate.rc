@@ -169,7 +169,7 @@ BEGIN
     IDS_STORE_CAPTION       "Destination store:"
     IDS_STORE_HINT          "Click here to select the destination store"
     IDS_BROWSEFORFOLDER_CAPTION "Root folder"
-    IDS_BROWSEFORFOLDER_HINT "You can choose subfolders and attribute mappings later."
+    IDS_BROWSEFORFOLDER_HINT "You can select subfolders and attribute mappings later."
     IDS_FOLDERCATEGORY1     "Folders"
     IDS_FOLDERCATEGORY2     "Libraries"
     IDS_FOLDERCATEGORY3     "Removable storage"

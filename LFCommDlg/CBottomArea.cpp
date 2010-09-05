@@ -3,8 +3,7 @@
 //
 
 #include "stdafx.h"
-#include "CBottomArea.h"
-#include "CGlasWindow.h"
+#include "LFCommDlg.h"
 
 
 // CBottomArea
@@ -12,12 +11,7 @@
 
 CBottomArea::CBottomArea()
 {
-	m_Design = GWD_DEFAULT;
-}
-
-void CBottomArea::SetDesign(UINT _Design)
-{
-	m_Design = _Design;
+	hBackgroundBrush = NULL;
 }
 
 
@@ -59,7 +53,7 @@ void CBottomArea::OnPaint()
 	CRect rect;
 	GetClientRect(rect);
 
-	if (m_Design>GWD_DEFAULT)
+	if (IsCtrlThemed())
 	{
 		pDC.FillSolidRect(rect.top++, rect.left, rect.Width(), 1, 0xDFDFDF);
 		pDC.FillSolidRect(rect, 0xF0F0F0);
@@ -75,7 +69,7 @@ HBRUSH CBottomArea::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 	// Call base class version at first, else it will override changes
 	HBRUSH hbr = CWnd::OnCtlColor(pDC, pWnd, nCtlColor);
 
-	if (m_Design>GWD_DEFAULT)
+	if (IsCtrlThemed())
 		if ((nCtlColor==CTLCOLOR_BTN) || (nCtlColor==CTLCOLOR_STATIC))
 		{
 			pDC->SetBkMode(TRANSPARENT);

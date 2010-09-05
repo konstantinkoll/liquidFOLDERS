@@ -1,6 +1,14 @@
+
+// LFEditTagsDlg.cpp: Implementierung der Klasse LFEditTagsDlg
+//
+
 #include "StdAfx.h"
 #include "LFEditTagsDlg.h"
 #include "Resource.h"
+
+
+// LFEditTagsDlg
+//
 
 extern AFX_EXTENSION_MODULE LFCommDlgDLL;
 

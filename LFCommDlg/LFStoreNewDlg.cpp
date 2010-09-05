@@ -1,3 +1,7 @@
+
+// LFStoreNewDlg.cpp: Implementierung der Klasse LFStoreNewDlg
+//
+
 #include "StdAfx.h"
 #include "LFStoreNewDlg.h"
 #include "Resource.h"

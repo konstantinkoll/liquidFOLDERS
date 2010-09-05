@@ -32,9 +32,10 @@ CExplorerTree::CExplorerTree()
 	m_pContextMenu2 = NULL;
 }
 
-BOOL CExplorerTree::Create(CWnd* pParentWnd, UINT nID, BOOL OnlyFilesystem)
+BOOL CExplorerTree::Create(CWnd* pParentWnd, UINT nID, BOOL OnlyFilesystem, CString RootPath)
 {
 	m_OnlyFilesystem = OnlyFilesystem;
+	m_RootPath = RootPath;
 
 	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, LoadCursor(NULL, IDC_ARROW));
 
@@ -103,15 +104,28 @@ int CExplorerTree::OnGetItemIcon(LPAFX_SHELLITEMINFO pItem, BOOL bSelected)
 void CExplorerTree::PopulateTree()
 {
 	LPITEMIDLIST pidl;
-	if (FAILED(SHGetSpecialFolderLocation(NULL, CSIDL_DESKTOP, &pidl)))
-		return;
+	IShellFolder* pParentFolder = NULL;
+	if (m_RootPath.IsEmpty())
+	{
+		if (FAILED(SHGetSpecialFolderLocation(NULL, CSIDL_DESKTOP, &pidl)))
+			return;
+	}
+	else
+	{
+		if (FAILED(SHGetDesktopFolder(&pParentFolder)))
+			return;
+
+		ULONG chEaten;
+		ULONG dwAttributes;
+		pParentFolder->ParseDisplayName(NULL, NULL, m_RootPath.GetBuffer(), &chEaten, &pidl, &dwAttributes);
+	}
 
 	TV_ITEM tvItem;
 	tvItem.mask = TVIF_PARAM | TVIF_TEXT | TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_CHILDREN;
 	LPAFX_SHELLITEMINFO pItem = (LPAFX_SHELLITEMINFO)GlobalAlloc(GPTR, sizeof(AFX_SHELLITEMINFO));
 	pItem->pidlRel = pidl;
 	pItem->pidlFQ = p_App->GetShellManager()->CopyItem(pidl);
-	pItem->pParentFolder = NULL;
+	pItem->pParentFolder = pParentFolder;
 	tvItem.lParam = (LPARAM)pItem;
 
 	CString strItem = OnGetItemText(pItem);
@@ -124,9 +138,7 @@ void CExplorerTree::PopulateTree()
 	tvInsert.item = tvItem;
 	tvInsert.hInsertAfter = TVI_LAST;
 	tvInsert.hParent = TVI_ROOT;
-	HTREEITEM hParentItem = InsertItem(&tvInsert);
-
-	Expand(hParentItem, TVE_EXPAND);
+	Expand(InsertItem(&tvInsert), TVE_EXPAND);
 }
 
 BOOL CExplorerTree::GetChildItems(HTREEITEM hParentItem)

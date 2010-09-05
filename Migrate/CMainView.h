@@ -21,7 +21,6 @@ public:
 	int Create(CWnd* _pParentWnd, UINT nID);
 	void ClearRoot();
 	void SetRoot(CString _Root);
-	void SetDesign(UINT _Design);
 
 	CString Root;
 

@@ -1,9 +1,16 @@
 
+// LFSelectLocationIATADlg.cpp: Implementierung der Klasse LFSelectLocationIATA
+//
+
 #pragma once
 #include "StdAfx.h"
 #include "LFSelectLocationIATADlg.h"
 #include "Resource.h"
 #include "LFCore.h"
+
+
+// LFSelectLocationIATADlg
+//
 
 extern AFX_EXTENSION_MODULE LFCommDlgDLL;
 

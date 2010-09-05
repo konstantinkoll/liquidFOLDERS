@@ -45,12 +45,6 @@ void CMainView::SetRoot(CString _Root)
 	Invalidate();
 }
 
-void CMainView::SetDesign(UINT _Design)
-{
-	m_wndTaskbar.SetDesign(_Design);
-	m_wndExplorerHeader.SetDesign(_Design);
-}
-
 void CMainView::ClearRoot()
 {
 	Root.Empty();

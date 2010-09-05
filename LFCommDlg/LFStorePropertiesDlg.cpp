@@ -1,3 +1,7 @@
+
+// LFStorePropertiesDlg.cpp: Implementierung der Klasse LFStorePropertiesDlg
+//
+
 #include "StdAfx.h"
 #include "LFStorePropertiesDlg.h"
 #include "Resource.h"

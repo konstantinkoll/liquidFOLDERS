@@ -11,6 +11,7 @@
 
 
 // LFApplication
+//
 
 BEGIN_MESSAGE_MAP(LFApplication, CWinAppEx)
 	ON_COMMAND(ID_APP_HELP, OnAppHelp)

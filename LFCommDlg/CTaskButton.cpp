@@ -17,7 +17,6 @@ CTaskButton::CTaskButton()
 	: CButton()
 {
 	m_Hover = FALSE;
-	m_Design = GWD_DEFAULT;
 }
 
 BOOL CTaskButton::Create(CString Caption, CString Tooltip, CMFCToolBarImages* Icons, int IconID, CWnd* pParentWnd, UINT nID)
@@ -80,11 +79,6 @@ int CTaskButton::GetPreferredWidth()
 	return l;
 }
 
-void CTaskButton::SetDesign(UINT _Design)
-{
-	m_Design = _Design;
-}
-
 
 BEGIN_MESSAGE_MAP(CTaskButton, CButton)
 	ON_WM_CREATE()
@@ -136,54 +130,7 @@ void CTaskButton::OnPaint()
 		FillRect(dc, rect, brush);
 
 	// Button
-	if (m_Design==GWD_DEFAULT)
-	{
-		COLORREF c1 = GetSysColor(COLOR_3DHIGHLIGHT);
-		COLORREF c2 = GetSysColor(COLOR_3DFACE);
-		COLORREF c3 = GetSysColor(COLOR_3DSHADOW);
-		COLORREF c4 = 0x000000;
-
-		if ((Selected) || (m_Hover))
-		{
-			if (Selected)
-			{
-				std::swap(c1, c4);
-				std::swap(c2, c3);
-			}
-
-			CRect rectBorder(rect);
-			dc.Draw3dRect(rectBorder, c1, c4);
-			rectBorder.DeflateRect(1, 1);
-			dc.Draw3dRect(rectBorder, c2, c3);
-		}
-
-		if (Focused)
-		{
-			CRect rectFocus(rect);
-			rectFocus.DeflateRect(2, 2);
-			dc.DrawFocusRect(rectFocus);
-		}
-
-		CRect rectText(rect);
-		rectText.DeflateRect(BORDER+2, BORDER);
-		if (Selected)
-			rectText.OffsetRect(1, 1);
-
-		if ((m_Icons) && (m_IconID!=-1))
-		{
-			CAfxDrawState ds;
-			m_Icons->PrepareDrawImage(ds);
-			m_Icons->Draw(&dc, rectText.left, (rect.Height()-rectText.Height())/2+(Selected ? 1 : 0), m_IconID);
-			m_Icons->EndDrawImage(ds);
-
-			rectText.left += 16+BORDER;
-		}
-
-		dc.SetTextColor(GetSysColor(COLOR_WINDOWTEXT));
-		dc.SelectStockObject(DEFAULT_GUI_FONT);
-		dc.DrawText(m_Caption, -1, rectText, DT_SINGLELINE | DT_END_ELLIPSIS | DT_VCENTER);
-	}
-	else
+	if (IsCtrlThemed())
 	{
 		CFont* pOldFont = dc.SelectObject(&((LFApplication*)AfxGetApp())->m_DefaultFont);
 
@@ -331,6 +278,53 @@ void CTaskButton::OnPaint()
 		}
 
 		dc.SelectObject(pOldFont);
+	}
+	else
+	{
+		COLORREF c1 = GetSysColor(COLOR_3DHIGHLIGHT);
+		COLORREF c2 = GetSysColor(COLOR_3DFACE);
+		COLORREF c3 = GetSysColor(COLOR_3DSHADOW);
+		COLORREF c4 = 0x000000;
+
+		if ((Selected) || (m_Hover))
+		{
+			if (Selected)
+			{
+				std::swap(c1, c4);
+				std::swap(c2, c3);
+			}
+
+			CRect rectBorder(rect);
+			dc.Draw3dRect(rectBorder, c1, c4);
+			rectBorder.DeflateRect(1, 1);
+			dc.Draw3dRect(rectBorder, c2, c3);
+		}
+
+		if (Focused)
+		{
+			CRect rectFocus(rect);
+			rectFocus.DeflateRect(2, 2);
+			dc.DrawFocusRect(rectFocus);
+		}
+
+		CRect rectText(rect);
+		rectText.DeflateRect(BORDER+2, BORDER);
+		if (Selected)
+			rectText.OffsetRect(1, 1);
+
+		if ((m_Icons) && (m_IconID!=-1))
+		{
+			CAfxDrawState ds;
+			m_Icons->PrepareDrawImage(ds);
+			m_Icons->Draw(&dc, rectText.left, (rect.Height()-rectText.Height())/2+(Selected ? 1 : 0), m_IconID);
+			m_Icons->EndDrawImage(ds);
+
+			rectText.left += 16+BORDER;
+		}
+
+		dc.SetTextColor(GetSysColor(COLOR_WINDOWTEXT));
+		dc.SelectStockObject(DEFAULT_GUI_FONT);
+		dc.DrawText(m_Caption, -1, rectText, DT_SINGLELINE | DT_END_ELLIPSIS | DT_VCENTER);
 	}
 
 	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);

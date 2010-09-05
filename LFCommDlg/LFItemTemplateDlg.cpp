@@ -1,6 +1,14 @@
+
+// LFItemTemplateDlg.cpp: Implementierung der Klasse LFItemTemplateDlg
+//
+
 #include "StdAfx.h"
 #include "LFItemTemplateDlg.h"
 #include "Resource.h"
+
+
+// LFItemTemplateDlg
+//
 
 extern AFX_EXTENSION_MODULE LFCommDlgDLL;
 

@@ -1,15 +1,18 @@
+
+// LFDropTarget.cpp: Implementierung der Klasse LFDropTarget
+//
+
 #include "StdAfx.h"
 #include "LFCommDlg.h"
 #include <iostream>
 
 
+// LFDropTarget
+//
+
 LFDropTarget::LFDropTarget()
 {
 	m_SkipTemplate = FALSE;
-}
-
-LFDropTarget::~LFDropTarget()
-{
 }
 
 BOOL LFDropTarget::Register(CWnd* pWnd, char* StoreID)

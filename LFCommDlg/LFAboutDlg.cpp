@@ -1,3 +1,7 @@
+
+// LFAboutDlg.cpp: Implementierung der Klasse LFAboutDlg
+//
+
 #include "stdafx.h"
 #include "LFAboutDlg.h"
 #include "LFCore.h"
@@ -5,6 +9,10 @@
 #include "..\\LFCore\\resource.h"
 
 using namespace Gdiplus;
+
+
+// LFAboutDlg
+//
 
 extern AFX_EXTENSION_MODULE LFCommDlgDLL;
 
