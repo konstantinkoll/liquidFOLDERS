@@ -58,6 +58,8 @@ BOOL CRunCmdApp::InitInstance()
 				OnStoreCreate(IDD_STORENEWDRIVE, *__targv[2] & 0xFF);
 			if (command==_T("DELETESTORE"))
 				OnStoreDelete(__targv[2]);
+			if (command==_T("IMPORTFOLDER"))
+				OnImportFolder(__targv[2]);
 			if (command==_T("STOREPROPERTIES"))
 				OnStoreProperties(__targv[2]);
 		}
@@ -108,6 +110,33 @@ void CRunCmdApp::OnStoreDelete(CString ID)
 
 	LFFreeStoreDescriptor(store);
 	LFErrorBox(res);
+}
+
+void CRunCmdApp::OnImportFolder(CString ID)
+{
+	char StoreID[LFKeySize];
+	wcstombs_s(NULL, StoreID, ID, LFKeySize);
+
+	CString caption;
+	ENSURE(caption.LoadString(IDS_IMPORTFOLDER_Caption));
+	CString hint;
+	ENSURE(hint.LoadString(IDS_IMPORTFOLDER_Hint));
+
+	LFBrowseForFolderDlg dlg(TRUE, _T(""), CWnd::GetForegroundWindow(), caption, hint);
+	if (dlg.DoModal()==IDOK)
+	{
+		LFFileImportList* il = LFAllocFileImportList();
+		LFAddImportPath(il, dlg.m_FolderPath);
+
+		// Template füllen
+		LFItemDescriptor* it = LFAllocItemDescriptor();
+		LFItemTemplateDlg tdlg(CWnd::GetForegroundWindow(), it, StoreID);
+		if (tdlg.DoModal()!=IDCANCEL)
+			LFErrorBox(LFImportFiles(StoreID, il, it), CWnd::GetForegroundWindow()->GetSafeHwnd());
+
+		LFFreeItemDescriptor(it);
+		LFFreeFileImportList(il);
+	}
 }
 
 void CRunCmdApp::OnStoreProperties(CString ID)

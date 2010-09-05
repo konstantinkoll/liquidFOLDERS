@@ -126,7 +126,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_COMMAND(ID_STORE_RENAME, OnItemsRename)
 	ON_COMMAND(ID_STORE_MAKEDEFAULT, OnStoreMakeDefault)
 	ON_COMMAND(ID_STORE_MAKEHYBRID, OnStoreMakeHybrid)
-	ON_COMMAND(ID_STORE_ADDFOLDER, OnStoreAddFolder)
+	ON_COMMAND(ID_STORE_IMPORTFOLDER, OnStoreImportFolder)
 	ON_COMMAND(ID_STORE_PROPERTIES, OnStoreProperties)
 	ON_COMMAND(ID_STORE_MAINTENANCE, OnStoreMaintenance)
 	ON_COMMAND(ID_STORE_BACKUP, OnStoreBackup)
@@ -1031,16 +1031,16 @@ void CMainFrame::OnStoreProperties()
 	}
 }
 
-void CMainFrame::OnStoreAddFolder()
+void CMainFrame::OnStoreImportFolder()
 {
 	int i = GetSelectedItem();
 
 	if (i!=-1)
 	{
 		CString hint;
-		ENSURE(hint.LoadString(IDS_ADDFOLDER));
+		ENSURE(hint.LoadString(IDS_IMPORTFOLDER));
 
-		LFBrowseForFolderDlg dlg(TRUE, _T(""), this, theApp.GetCommandName(ID_STORE_ADDFOLDER), hint);
+		LFBrowseForFolderDlg dlg(TRUE, _T(""), this, theApp.GetCommandName(ID_STORE_IMPORTFOLDER), hint);
 		if (dlg.DoModal()==IDOK)
 		{
 			LFFileImportList* il = LFAllocFileImportList();
@@ -1174,7 +1174,7 @@ void CMainFrame::OnUpdateStoreCommands(CCmdUI* pCmdUI)
 				if ((b) && (m_wndView))
 					b ^= m_wndView->IsEditing();
 				break;
-			case ID_STORE_ADDFOLDER:
+			case ID_STORE_IMPORTFOLDER:
 				if (f)
 					b = (f->Type & LFTypeStore) && (!(f->Type & LFTypeNotMounted));
 				break;
@@ -2153,7 +2153,7 @@ void CMainFrame::InitializeRibbon()
 			strTemp = "Import files";
 			CMFCRibbonPanel* pPanelStoresImport = pCategoryStores->AddPanel(strTemp, m_PanelImages.ExtractIcon(8));
 
-				pPanelStoresImport->Add(theApp.CommandButton(ID_STORE_ADDFOLDER, 8, 8));
+				pPanelStoresImport->Add(theApp.CommandButton(ID_STORE_IMPORTFOLDER, 8, 8));
 				pPanelStoresImport->AddSeparator();
 				pPanelStoresImport->Add(theApp.CommandButton(ID_APP_NEWMIGRATE, 9, 9, FALSE, TRUE));
 				pPanelStoresImport->Add(theApp.CommandButton(ID_APP_NEWFILEDROP, 10, 10));

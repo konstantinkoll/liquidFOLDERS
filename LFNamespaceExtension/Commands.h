@@ -3,6 +3,22 @@
 #include "LFCore.h"
 
 
+// CmdImportFolder
+//
+
+class CmdImportFolder : public CExplorerCommand
+{
+public:
+	CmdImportFolder();
+
+	virtual CString GetCaption(CPtrList* nseItems);
+	virtual CString GetToolTip(CPtrList* nseItems);
+	virtual ExplorerCommandState GetState(CPtrList* nseItems);
+	virtual BOOL Invoke(CPtrList* nseItems);
+	virtual CString GetIcon(CPtrList* nseItems);
+};
+
+
 // CmdProperties
 //
 

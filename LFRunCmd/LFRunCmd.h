@@ -24,6 +24,7 @@ protected:
 	void OnAppAbout(UINT ResIDName, UINT ResIDPicture);
 	void OnStoreCreate(UINT ResID, char Drive='\0');
 	void OnStoreDelete(CString ID);
+	void OnImportFolder(CString ID);
 	void OnStoreProperties(CString ID);
 };
 

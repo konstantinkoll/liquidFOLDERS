@@ -11,6 +11,61 @@
 #include <shlguid.h>
 
 
+// CmdImportFolder
+//
+
+CmdImportFolder::CmdImportFolder()
+{
+	static const GUID GProperties = { 0x8ff9154a, 0x5432, 0x40fa, { 0xbe, 0xe0, 0x1e, 0xaf, 0xff, 0xd8, 0x3f, 0xdb } };
+	guid = GProperties;
+}
+
+CString CmdImportFolder::GetCaption(CPtrList* /*nseItems*/)
+{
+	CString caption;
+	ENSURE(caption.LoadString(IDS_MENU_ImportFolder));
+	caption.Remove('&');
+	return caption;
+}
+
+CString CmdImportFolder::GetToolTip(CPtrList* /*nseItems*/)
+{
+	CString hint;
+	ENSURE(hint.LoadString(IDS_HINT_ImportFolder));
+	return hint;
+}
+
+ExplorerCommandState CmdImportFolder::GetState(CPtrList* nseItems)
+{
+	return ((nseItems->GetCount()==1) && (!theApp.m_PathRunCmd.IsEmpty())) ? ECS_Enabled : ECS_Disabled;
+}
+
+BOOL CmdImportFolder::Invoke(CPtrList* nseItems)
+{
+	POSITION pos = nseItems->GetHeadPosition();
+	if (pos)
+	{
+		CNSEItem* item = (CNSEItem*)nseItems->GetNext(pos);
+		if (IS(item, CFolderItem))
+		{
+			CString id = AS(item, CFolderItem)->data.StoreID;
+			ShellExecute(NULL, "open", theApp.m_PathRunCmd, _T("IMPORTFOLDER ")+id, NULL, SW_SHOW);
+			return TRUE;
+		}
+	}
+
+	return FALSE;
+}
+
+CString CmdImportFolder::GetIcon(CPtrList* /*nseItems*/)
+{
+	CString tmpStr(theApp.m_ThisFile);
+	tmpStr.Append(_T(",0"));
+
+	return tmpStr;
+}
+
+
 // CmdProperties
 //
 
@@ -60,7 +115,7 @@ BOOL CmdProperties::Invoke(CPtrList* nseItems)
 CString CmdProperties::GetIcon(CPtrList* /*nseItems*/)
 {
 	CString tmpStr(theApp.m_ThisFile);
-	tmpStr.Append(_T(",0"));
+	tmpStr.Append(_T(",1"));
 
 	return tmpStr;
 }
@@ -103,7 +158,7 @@ BOOL CmdCreateNewStore::Invoke(CPtrList* /*nseItems*/)
 CString CmdCreateNewStore::GetIcon(CPtrList* /*nseItems*/)
 {
 	CString tmpStr(theApp.m_ThisFile);
-	tmpStr.Append(_T(",1"));
+	tmpStr.Append(_T(",2"));
 
 	return tmpStr;
 }
@@ -146,7 +201,7 @@ BOOL CmdStoreManager::Invoke(CPtrList* /*nseItems*/)
 CString CmdStoreManager::GetIcon(CPtrList* /*nseItems*/)
 {
 	CString tmpStr(theApp.m_ThisFile);
-	tmpStr.Append(_T(",2"));
+	tmpStr.Append(_T(",3"));
 
 	return tmpStr;
 }
@@ -189,7 +244,7 @@ BOOL CmdMigrate::Invoke(CPtrList* /*nseItems*/)
 CString CmdMigrate::GetIcon(CPtrList* /*nseItems*/)
 {
 	CString tmpStr(theApp.m_ThisFile);
-	tmpStr.Append(_T(",3"));
+	tmpStr.Append(_T(",4"));
 
 	return tmpStr;
 }

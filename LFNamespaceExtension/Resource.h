@@ -2,7 +2,7 @@
 // Microsoft Visual C++ generated include file.
 // Used by LFNamespaceExtension.rc
 //
-#define IDI_Library                     100
+#define IDI_FolderAdd                   100
 #define IDI_StoreProperties             101
 #define IDI_NewStore                    102
 #define IDI_StoreManager                103
@@ -41,12 +41,14 @@
 #define IDS_HINT_Rename                 2015
 #define IDS_MENU_Properties             2016
 #define IDS_HINT_Properties             2017
-#define IDS_MENU_StoreManager           2018
-#define IDS_HINT_StoreManager           2019
-#define IDS_MENU_Migrate                2020
-#define IDS_HINT_Migrate                2021
-#define IDS_MENU_About                  2022
-#define IDS_HINT_About                  2023
+#define IDS_MENU_ImportFolder           2018
+#define IDS_HINT_ImportFolder           2019
+#define IDS_MENU_StoreManager           2020
+#define IDS_HINT_StoreManager           2021
+#define IDS_MENU_Migrate                2022
+#define IDS_HINT_Migrate                2023
+#define IDS_MENU_About                  2024
+#define IDS_HINT_About                  2025
 
 // Next default values for new objects
 // 

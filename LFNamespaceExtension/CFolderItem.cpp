@@ -792,17 +792,23 @@ void CFolderItem::GetMenuItems(CGetMenuitemsEventArgs& e)
 
 		if (e.children->GetCount()==1)
 		{
-			e.menu->InsertItem(_T(""), 1)->SetSeparator(TRUE);
+			e.menu->AddItem(_T(""))->SetSeparator(TRUE);
 
 			CFolderItem* f = (CFolderItem*)e.children->GetHead();
 
 			ENSURE(tmpStr.LoadString(IDS_MENU_MakeDefaultStore));
 			ENSURE(tmpHint.LoadString(IDS_HINT_MakeDefaultStore));
-			e.menu->InsertItem(tmpStr, _T(VERB_MAKEDEFAULTSTORE), tmpHint, 2)->SetEnabled((f->data.Type & LFTypeStore) && (f->data.CategoryID==LFStoreModeInternal));
+			e.menu->AddItem(tmpStr, _T(VERB_MAKEDEFAULTSTORE), tmpHint)->SetEnabled(f->data.CategoryID==LFStoreModeInternal);
 
 			ENSURE(tmpStr.LoadString(IDS_MENU_MakeHybridStore));
 			ENSURE(tmpHint.LoadString(IDS_HINT_MakeHybridStore));
-			e.menu->InsertItem(tmpStr, _T(VERB_MAKEHYBRIDSTORE), tmpHint, 3)->SetEnabled((f->data.Type & LFTypeStore) && (f->data.CategoryID==LFStoreModeExternal));
+			e.menu->AddItem(tmpStr, _T(VERB_MAKEHYBRIDSTORE), tmpHint)->SetEnabled(f->data.CategoryID==LFStoreModeExternal);
+
+			e.menu->AddItem(_T(""))->SetSeparator(TRUE);
+
+			ENSURE(tmpStr.LoadString(IDS_MENU_ImportFolder));
+			ENSURE(tmpHint.LoadString(IDS_HINT_ImportFolder));
+			e.menu->AddItem(tmpStr, _T(VERB_IMPORTFOLDER), tmpHint)->SetEnabled(!(f->data.Type & LFTypeNotMounted));
 		}
 
 		if ((!(e.flags & NSEQCF_NoDefault)) && (e.children->GetCount()>=1))
@@ -890,6 +896,9 @@ void CFolderItem::OnMergeFrameMenu(CMergeFrameMenuEventArgs& e)
 
 BOOL CFolderItem::OnExecuteMenuItem(CExecuteMenuitemsEventArgs& e)
 {
+	if (e.menuItem->GetVerb()==_T(VERB_IMPORTFOLDER))
+		return OnImportFolder(e);
+
 	if (e.menuItem->GetVerb()==_T(VERB_CREATENEWSTORE))
 		return OnCreateNewStore(e.hWnd);
 
@@ -1101,6 +1110,7 @@ void CFolderItem::GetToolbarCommands(CPtrList& commands)
 {
 	if (data.Level==LevelRoot)
 	{
+		commands.AddTail(new CmdImportFolder());
 		commands.AddTail(new CmdProperties());
 		commands.AddTail(new CmdCreateNewStore());
 	}
@@ -1142,6 +1152,31 @@ BOOL CFolderItem::OnDelete(CExecuteMenuitemsEventArgs& e)
 				{
 					CString id = AS(item, CFolderItem)->data.StoreID;
 					ShellExecute(e.hWnd, "open", theApp.m_PathRunCmd, _T("DELETESTORE ")+id, NULL, SW_SHOW);
+					return TRUE;
+				}
+			}
+		}
+		break;
+	}
+
+	return FALSE;
+}
+
+BOOL CFolderItem::OnImportFolder(CExecuteMenuitemsEventArgs& e)
+{
+	switch (data.Level)
+	{
+	case LevelRoot:
+		if (!theApp.m_PathRunCmd.IsEmpty())
+		{
+			POSITION pos = e.children->GetHeadPosition();
+			if (pos)
+			{
+				CNSEItem* item = (CNSEItem*)e.children->GetNext(pos);
+				if (IS(item, CFolderItem))
+				{
+					CString id = AS(item, CFolderItem)->data.StoreID;
+					ShellExecute(e.hWnd, "open", theApp.m_PathRunCmd, _T("IMPORTFOLDER ")+id, NULL, SW_SHOW);
 					return TRUE;
 				}
 			}

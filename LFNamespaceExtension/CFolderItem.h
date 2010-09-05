@@ -22,6 +22,7 @@
 #define VERB_RENAME             "rename"
 #define VERB_DELETE             "delete"
 #define VERB_PROPERTIES         "properties"
+#define VERB_IMPORTFOLDER       "importfolder"
 #define VERB_STOREMANAGER       "storemanager"
 #define VERB_MIGRATE            "migrate"
 #define VERB_ABOUT              "about"
@@ -88,6 +89,7 @@ public:
 	virtual void GetToolbarCommands(CPtrList& commands);
 	virtual BOOL OnChangeName(CChangeNameEventArgs& e);
 	virtual BOOL OnDelete(CExecuteMenuitemsEventArgs& e);
+	virtual BOOL OnImportFolder(CExecuteMenuitemsEventArgs& e);
 	virtual BOOL OnProperties(CExecuteMenuitemsEventArgs& e);
 	virtual BOOL OnOpen(CExecuteMenuitemsEventArgs& e);
 	virtual BOOL OnOpenWith(CExecuteMenuitemsEventArgs& e);
