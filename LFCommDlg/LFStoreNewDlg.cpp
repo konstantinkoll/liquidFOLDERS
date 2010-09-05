@@ -26,14 +26,62 @@ LFStoreNewDlg::LFStoreNewDlg(CWnd* pParentWnd, UINT nIDTemplate, char Drive, LFS
 	m_Drive = Drive;
 }
 
+void LFStoreNewDlg::PopulateListCtrl()
+{
+	BOOL fixed = ((CButton*)GetDlgItem(IDC_INTERNALSTORE))->GetCheck();
+
+	CListCtrl* li = (CListCtrl*)GetDlgItem(IDC_DRIVELIST);
+
+	li->SetExtendedStyle(LVS_EX_FULLROWSELECT | LVS_EX_DOUBLEBUFFER);
+	int FocusItem = li->GetNextItem(-1, LVNI_FOCUSED);
+	li->DeleteAllItems();
+	li->SetImageList(&m_Icons, LVSIL_SMALL);
+
+	DWORD DrivesOnSystem = LFGetLogicalDrives(fixed ? LFGLD_Internal | LFGLD_Network : LFGLD_External);
+	wchar_t szDriveRoot[] = L" :\\";
+	int nIndex = 0;
+
+	char SysDrive[MAX_PATH];
+	GetWindowsDirectoryA(SysDrive, MAX_PATH);
+
+	for (char cDrive='A'; cDrive<='Z'; cDrive++, DrivesOnSystem>>=1)
+	{
+		if (!(DrivesOnSystem & 1))
+			continue;
+
+		szDriveRoot[0] = cDrive;
+		UINT uDriveType = GetDriveType(szDriveRoot);
+
+		SHFILEINFO sfi;
+		if (SHGetFileInfo(szDriveRoot, 0, &sfi, sizeof(SHFILEINFO), SHGFI_DISPLAYNAME | SHGFI_ATTRIBUTES))
+			if (sfi.dwAttributes)
+			{
+				li->InsertItem(nIndex, sfi.szDisplayName, LFGetDriveIcon(cDrive, sfi.dwAttributes!=0)-1);
+				li->SetItemData(nIndex, (DWORD)cDrive);
+				nIndex++;
+			}
+	}
+
+	if (nIndex)
+	{
+		if (FocusItem<0)
+			FocusItem = 0;
+		if (FocusItem>=nIndex)
+			FocusItem = nIndex-1;
+		li->SetItemState(FocusItem, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
+	}
+
+	GetDlgItem(IDOK)->EnableWindow((!li->IsWindowEnabled()) || (nIndex>0));
+}
+
 
 BEGIN_MESSAGE_MAP(LFStoreNewDlg, CDialog)
 	ON_WM_DESTROY()
-	ON_BN_CLICKED(IDC_MAKEDEFAULT, SetInternalIcon)
-	ON_BN_CLICKED(IDC_INTERNALSTORE, SetOptions)
-	ON_BN_CLICKED(IDC_HYBRIDSTORE, SetOptions)
-	ON_BN_CLICKED(IDC_EXTERNALSTORE, SetOptions)
-	ON_BN_CLICKED(IDC_AUTODRIVE, SetOptions)
+	ON_BN_CLICKED(IDC_MAKEDEFAULT, OnSetInternalIcon)
+	ON_BN_CLICKED(IDC_INTERNALSTORE, OnSetOptions)
+	ON_BN_CLICKED(IDC_HYBRIDSTORE, OnSetOptions)
+	ON_BN_CLICKED(IDC_EXTERNALSTORE, OnSetOptions)
+	ON_BN_CLICKED(IDC_AUTODRIVE, OnSetOptions)
 	ON_MESSAGE(WM_USER_MEDIACHANGED, OnMediaChanged)
 END_MESSAGE_MAP()
 
@@ -75,7 +123,7 @@ BOOL LFStoreNewDlg::OnInitDialog()
 	}
 
 	// Icons
-	SetInternalIcon();
+	OnSetInternalIcon();
 	m_IconHybrid.SetCoreIcon(IDI_STORE_Bag);
 	m_IconExternal.SetCoreIcon(IDI_STORE_Bag);
 
@@ -109,13 +157,13 @@ void LFStoreNewDlg::OnDestroy()
 	CDialog::OnDestroy();
 }
 
-void LFStoreNewDlg::SetInternalIcon()
+void LFStoreNewDlg::OnSetInternalIcon()
 {
 	if (m_nIDTemplate==IDD_STORENEW)
 		m_IconInternal.SetCoreIcon(((CButton*)GetDlgItem(IDC_MAKEDEFAULT))->GetCheck() ? IDI_STORE_Default : IDI_STORE_Internal);
 }
 
-void LFStoreNewDlg::SetOptions()
+void LFStoreNewDlg::OnSetOptions()
 {
 	if (m_nIDTemplate==IDD_STORENEW)
 	{
@@ -173,11 +221,11 @@ void LFStoreNewDlg::DoDataExchange(CDataExchange* pDX)
 		{
 			Pfad = m_Drive;
 		}
-		Pfad += ":\\";
+		Pfad += _T(":\\");
 
 		// LFStoreDescriptor ausfüllen
-		GetDlgItem(IDC_STORENAME)->GetWindowText(store->StoreName, 255);
-		GetDlgItem(IDC_COMMENT)->GetWindowText(store->Comment, 255);
+		GetDlgItem(IDC_STORENAME)->GetWindowText(store->StoreName, 256);
+		GetDlgItem(IDC_COMMENT)->GetWindowText(store->Comment, 256);
 		DDX_Radio(pDX, IDC_INTERNALSTORE, store->StoreMode);
 		if (store->StoreMode==LFStoreModeInternal)
 		{
@@ -193,52 +241,4 @@ void LFStoreNewDlg::DoDataExchange(CDataExchange* pDX)
 			makeDefault = FALSE;
 		}
 	}
-}
-
-void LFStoreNewDlg::PopulateListCtrl()
-{
-	BOOL fixed = ((CButton*)GetDlgItem(IDC_INTERNALSTORE))->GetCheck();
-
-	CListCtrl* li = (CListCtrl*)GetDlgItem(IDC_DRIVELIST);
-
-	li->SetExtendedStyle(LVS_EX_FULLROWSELECT | LVS_EX_DOUBLEBUFFER);
-	int FocusItem = li->GetNextItem(-1, LVNI_FOCUSED);
-	li->DeleteAllItems();
-	li->SetImageList(&m_Icons, LVSIL_SMALL);
-
-	DWORD DrivesOnSystem = LFGetLogicalDrives(fixed ? LFGLD_Internal | LFGLD_Network : LFGLD_External);
-	wchar_t szDriveRoot[] = L" :\\";
-	int nIndex = 0;
-
-	char SysDrive[MAX_PATH];
-	GetWindowsDirectoryA(SysDrive, MAX_PATH);
-
-	for (char cDrive='A'; cDrive<='Z'; cDrive++, DrivesOnSystem>>=1)
-	{
-		if (!(DrivesOnSystem & 1))
-			continue;
-
-		szDriveRoot[0] = cDrive;
-		UINT uDriveType = GetDriveType(szDriveRoot);
-
-		SHFILEINFO sfi;
-		if (SHGetFileInfo(szDriveRoot, 0, &sfi, sizeof(SHFILEINFO), SHGFI_DISPLAYNAME | SHGFI_ATTRIBUTES))
-			if (sfi.dwAttributes)
-			{
-				li->InsertItem(nIndex, sfi.szDisplayName, LFGetDriveIcon(cDrive, sfi.dwAttributes!=0)-1);
-				li->SetItemData(nIndex, (DWORD)cDrive);
-				nIndex++;
-			}
-	}
-
-	if (nIndex)
-	{
-		if (FocusItem<0)
-			FocusItem = 0;
-		if (FocusItem>=nIndex)
-			FocusItem = nIndex-1;
-		li->SetItemState(FocusItem, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
-	}
-
-	GetDlgItem(IDOK)->EnableWindow((!li->IsWindowEnabled()) || (nIndex>0));
 }

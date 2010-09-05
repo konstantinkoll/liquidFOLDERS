@@ -24,8 +24,8 @@ protected:
 
 	afx_msg BOOL OnInitDialog();
 	afx_msg void OnDestroy();
-	afx_msg void SetInternalIcon();
-	afx_msg void SetOptions();
+	afx_msg void OnSetInternalIcon();
+	afx_msg void OnSetOptions();
 	afx_msg LRESULT OnMediaChanged(WPARAM wParam, LPARAM lParam);
 	DECLARE_MESSAGE_MAP()
 

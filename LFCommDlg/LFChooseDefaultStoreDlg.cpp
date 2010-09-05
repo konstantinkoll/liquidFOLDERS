@@ -53,7 +53,7 @@ BOOL LFChooseDefaultStoreDlg::OnInitDialog()
 	HINSTANCE hModIcons = LoadLibrary(_T("LFCore.DLL"));
 	if (hModIcons)
 	{
-		m_icStore = (HICON)LoadImage(hModIcons, MAKEINTRESOURCE(IDI_STORE_Empty), IMAGE_ICON, 16, 16, LR_DEFAULTCOLOR);
+		m_icStore = (HICON)LoadImage(hModIcons, MAKEINTRESOURCE(IDI_STORE_Internal), IMAGE_ICON, 16, 16, LR_DEFAULTCOLOR);
 		m_icDefaultStore = (HICON)LoadImage(hModIcons, MAKEINTRESOURCE(IDI_STORE_Default), IMAGE_ICON, 16, 16, LR_DEFAULTCOLOR);
 		FreeLibrary(hModIcons);
 
