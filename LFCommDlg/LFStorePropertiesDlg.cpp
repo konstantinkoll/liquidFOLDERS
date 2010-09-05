@@ -45,7 +45,7 @@ BOOL LFStorePropertiesDlg::OnInitDialog()
 	SetIcon(hIcon, TRUE);
 
 	// Store
-	SendMessage(MessageIDs->StoresChanged, LFMSGF_IntStores | LFMSGF_ExtHybStores);
+	SendNotifyMessage(MessageIDs->StoresChanged, LFMSGF_IntStores | LFMSGF_ExtHybStores, NULL);
 
 	// Titelleiste
 	CString text;
