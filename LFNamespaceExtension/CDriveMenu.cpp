@@ -145,7 +145,7 @@ void CDriveMenu::OnGetMenuItems(CGetMenuitemsEventArgs& e)
 			int cy;
 			theApp.GetIconSize(cx, cy);
 
-			HICON hIcon = (HICON)LoadImage(hModCore, MAKEINTRESOURCE((Drive=='\1') ? IDI_STORE_Empty : IDI_STORE_Bag), IMAGE_ICON, cx, cy, LR_DEFAULTCOLOR);
+			HICON hIcon = (HICON)LoadImage(hModCore, MAKEINTRESOURCE((Drive=='\1') ? IDI_STORE_Internal : IDI_STORE_Bag), IMAGE_ICON, cx, cy, LR_DEFAULTCOLOR);
 			FreeLibrary(hModCore);
 
 			item->SetBitmap(IconToBitmap(hIcon, cx, cy));

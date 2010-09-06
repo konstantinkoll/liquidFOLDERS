@@ -787,7 +787,7 @@ void CFolderItem::GetMenuItems(CGetMenuitemsEventArgs& e)
 
 			CShellMenuItem* item = e.menu->AddItem(tmpStr, _T(VERB_CREATENEWSTORE), tmpHint);
 			item->SetEnabled(!theApp.m_PathRunCmd.IsEmpty());
-			theApp.SetCoreMenuIcon(item, IDI_STORE_Empty);
+			theApp.SetCoreMenuIcon(item, IDI_STORE_Internal);
 		}
 
 		if (e.children->GetCount()==1)
@@ -1347,7 +1347,7 @@ void CFolderItem::OnCreateShortcut(CNSEItem* Item, const CString& LinkFilename, 
 	{
 		// Never use icon for default store
 		if (Icon==IDI_STORE_Default)
-			Icon = IDI_STORE_Empty;
+			Icon = IDI_STORE_Internal;
 
 		psl->SetIDList(Item->GetPIDLAbsolute());
 		psl->SetIconLocation(theApp.m_CoreFile, Icon-1);
