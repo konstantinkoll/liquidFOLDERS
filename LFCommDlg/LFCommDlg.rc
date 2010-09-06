@@ -1409,7 +1409,7 @@ END
 
 IDD_BROWSEFORFOLDER DIALOGEX 0, 0, 250, 329
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_CAPTION | WS_SYSMENU
-CAPTION "Seleccionar directorio"
+CAPTION "Seleccionar carpeta"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,7,308,50,14,WS_GROUP
@@ -1567,8 +1567,8 @@ BEGIN
     IDS_UACMESSAGE          "liquidFOLDERS necesita su permiso para continuar"
     IDS_EXPAND              "&Abrir"
     IDS_COLLAPSE            "&Plegar"
-    IDS_IMPORTFOLDER_CAPTION "Importar directorio"
-    IDS_IMPORTFOLDER_HINT   "The folder and all its subfolders will be imported."
+    IDS_IMPORTFOLDER_CAPTION "Importar carpeta"
+    IDS_IMPORTFOLDER_HINT   "La carpeta y todas sus subcarpetas serán importadas."
 END
 
 STRINGTABLE 
