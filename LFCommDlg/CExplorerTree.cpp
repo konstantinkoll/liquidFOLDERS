@@ -247,6 +247,7 @@ void CExplorerTree::EnumObjects(HTREEITEM hParentItem, IShellFolder* pParentFold
 BEGIN_MESSAGE_MAP(CExplorerTree, CTreeCtrl)
 	ON_WM_CREATE()
 	ON_WM_CONTEXTMENU()
+	ON_WM_LBUTTONDOWN()
 	ON_WM_RBUTTONDOWN()
 	ON_NOTIFY_REFLECT(TVN_ITEMEXPANDING, OnItemExpanding)
 	ON_NOTIFY_REFLECT(TVN_DELETEITEM, OnDeleteItem)
@@ -383,6 +384,21 @@ void CExplorerTree::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 		}
 
 		psfFolder->Release();
+	}
+}
+
+void CExplorerTree::OnLButtonDown(UINT nFlags, CPoint point)
+{
+	UINT uFlags;
+	HTREEITEM hItem = HitTest(point, &uFlags);
+	if ((hItem) && (uFlags & TVHT_ONITEM))
+	{
+		SetFocus();
+		SelectItem(hItem);
+	}
+	else
+	{
+		CTreeCtrl::OnLButtonDown(nFlags, point);
 	}
 }
 

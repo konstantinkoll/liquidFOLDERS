@@ -132,7 +132,6 @@ void CPIDLDropdownWindow::PopulateList()
 	switch (((LFApplication*)AfxGetApp())->OSVersion)
 	{
 	case OS_XP:
-		break;
 	case OS_Vista:
 		break;
 	default:

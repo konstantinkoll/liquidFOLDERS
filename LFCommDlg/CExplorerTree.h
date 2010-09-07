@@ -33,6 +33,7 @@ protected:
 
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
+	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnRButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnItemExpanding(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnDeleteItem(NMHDR* pNMHDR, LRESULT* pResult);
