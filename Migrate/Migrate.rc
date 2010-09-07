@@ -171,9 +171,10 @@ BEGIN
     IDS_BROWSEFORFOLDER_CAPTION "Root folder"
     IDS_BROWSEFORFOLDER_HINT 
                             "You can select subfolders and attribute mappings later."
-    IDS_FOLDERCATEGORY1     "Folders"
+    IDS_FOLDERCATEGORY1     "Personal folders"
     IDS_FOLDERCATEGORY2     "Libraries"
-    IDS_FOLDERCATEGORY3     "Removable storage"
+    IDS_FOLDERCATEGORY3     "Shared folders"
+    IDS_FOLDERCATEGORY4     "Removable storage"
 END
 
 #endif    // Englisch (neutral) resources

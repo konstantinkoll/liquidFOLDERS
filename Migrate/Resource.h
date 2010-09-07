@@ -25,6 +25,7 @@
 #define IDS_FOLDERCATEGORY1             1012
 #define IDS_FOLDERCATEGORY2             1013
 #define IDS_FOLDERCATEGORY3             1014
+#define IDS_FOLDERCATEGORY4             1015
 #define IDD_BOTTOMAREA                  2000
 #define IDC_SIMULATE                    2001
 #define IDC_DELETEIMPORTED              2002

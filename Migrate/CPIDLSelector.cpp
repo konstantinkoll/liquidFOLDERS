@@ -48,9 +48,7 @@ BOOL CPIDLDropdownWindow::AddPIDL(LPITEMIDLIST pidl, UINT Category, BOOL FreeOnF
 
 void CPIDLDropdownWindow::AddKnownFolder(REFKNOWNFOLDERID rfid, UINT Category)
 {
-	if (((LFApplication*)AfxGetApp())->OSVersion<OS_Seven)
-		return;
-
+	// Call only on Windows 7 !
 	LPITEMIDLIST pidl;
 	if (SUCCEEDED(SHGetKnownFolderIDList(rfid, 0, NULL, &pidl)))
 		AddPIDL(pidl, Category);
@@ -118,7 +116,6 @@ void CPIDLDropdownWindow::AddChildren(wchar_t* Path, UINT Category)
 void CPIDLDropdownWindow::PopulateList()
 {
 	m_wndList.DeleteAllItems();
-	BOOL IsSeven = ((LFApplication*)AfxGetApp())->OSVersion>=OS_Seven;
 
 	// Special folders and libraries
 	AddCSIDL(CSIDL_DESKTOP, 0);											// Desktop
@@ -126,10 +123,27 @@ void CPIDLDropdownWindow::PopulateList()
 	AddCSIDL(CSIDL_MYMUSIC, 0);											// My music
 	AddCSIDL(CSIDL_MYPICTURES, 0);										// My pictures
 	AddCSIDL(CSIDL_MYVIDEO, 0);											// My videos
-	AddKnownFolder(FOLDERID_Contacts, 0);								// Contacts
-	AddKnownFolder(FOLDERID_Downloads, 0);								// Downloads
-	if (IsSeven)
-		AddChildren(_T("::{031E4825-7B94-4dc3-B131-E946B44C8DD5}"), 1);	// Libraries
+
+	AddCSIDL(CSIDL_COMMON_DOCUMENTS, 2);							// Common documents
+	AddCSIDL(CSIDL_COMMON_MUSIC, 2);								// Common music
+	AddCSIDL(CSIDL_COMMON_PICTURES, 2);								// Common pictures
+	AddCSIDL(CSIDL_COMMON_VIDEO, 2);								// Common videos
+
+	switch (((LFApplication*)AfxGetApp())->OSVersion)
+	{
+	case OS_XP:
+		break;
+	case OS_Vista:
+		break;
+	default:
+		AddKnownFolder(FOLDERID_Contacts, 0);							// Contacts
+		AddKnownFolder(FOLDERID_Downloads, 0);							// Downloads
+		AddChildren(_T("::{031E4825-7B94-4DC3-B131-E946B44C8DD5}"), 1);	// Libraries
+		break;
+	}
+
+	AddCSIDL(CSIDL_FAVORITES, 0);										// Favorites
+	AddCSIDL(CSIDL_FONTS, 2);											// Fonts
 
 	// Drives
 	UINT Drives = LFGetLogicalDrives(LFGLD_External);
@@ -141,7 +155,7 @@ void CPIDLDropdownWindow::PopulateList()
 
 		wchar_t Drive[4] = L" :\\";
 		Drive[0] = cDrive;
-		AddPath(Drive, 2);
+		AddPath(Drive, 3);
 	}
 }
 
@@ -158,7 +172,7 @@ int CPIDLDropdownWindow::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CDropdownWindow::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
-	for (UINT a=0; a<3; a++)
+	for (UINT a=0; a<4; a++)
 	{
 		CString tmpStr;
 		ENSURE(tmpStr.LoadString(IDS_FOLDERCATEGORY1+a));
