@@ -150,7 +150,7 @@ void LFDialog::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 				g.FillRectangle(&brush1, 0, Line++, BackBufferL, 1);
 				brush1.SetColor(Color(255, 247, 250, 254));
 				g.FillRectangle(&brush1, 0, Line++, BackBufferL, 1);
-				LinearGradientBrush brush2(Point(0, Line-1), Point(0, rect.Height()), Color(200, 255, 255, 255), Color(0, 255, 255, 255));
+				LinearGradientBrush brush2(Point(0, Line), Point(0, rect.Height()), Color(128, 255, 255, 255), Color(64, 128, 192, 255));
 				g.FillRectangle(&brush2, 0, Line, BackBufferL, rect.Height()-Line);
 			}
 			else
