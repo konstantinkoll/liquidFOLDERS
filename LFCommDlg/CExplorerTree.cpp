@@ -3,7 +3,7 @@
 //
 
 #include "stdafx.h"
-#include "CExplorerTree.h"
+#include "LFCommDlg.h"
 
 
 extern AFX_EXTENSION_MODULE LFCommDlgDLL;
@@ -30,6 +30,8 @@ CExplorerTree::CExplorerTree()
 {
 	p_App = (LFApplication*)AfxGetApp();
 	m_pContextMenu2 = NULL;
+	m_Hover = FALSE;
+	m_HoverItem = NULL;
 }
 
 BOOL CExplorerTree::Create(CWnd* pParentWnd, UINT nID, BOOL OnlyFilesystem, CString RootPath)
@@ -77,6 +79,31 @@ LRESULT CExplorerTree::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
 	}
 
 	return CTreeCtrl::WindowProc(message, wParam, lParam);
+}
+
+BOOL CExplorerTree::PreTranslateMessage(MSG* pMsg)
+{
+	switch (pMsg->message)
+	{
+	case WM_KEYDOWN:
+	case WM_SYSKEYDOWN:
+	case WM_LBUTTONDOWN:
+	case WM_RBUTTONDOWN:
+	case WM_MBUTTONDOWN:
+	case WM_LBUTTONUP:
+	case WM_RBUTTONUP:
+	case WM_MBUTTONUP:
+	case WM_NCLBUTTONDOWN:
+	case WM_NCRBUTTONDOWN:
+	case WM_NCMBUTTONDOWN:
+	case WM_NCLBUTTONUP:
+	case WM_NCRBUTTONUP:
+	case WM_NCMBUTTONUP:
+		m_TooltipCtrl.Deactivate();
+		break;
+	}
+
+	return CWnd::PreTranslateMessage(pMsg);
 }
 
 CString CExplorerTree::OnGetItemText(LPAFX_SHELLITEMINFO pItem)
@@ -247,6 +274,9 @@ void CExplorerTree::EnumObjects(HTREEITEM hParentItem, IShellFolder* pParentFold
 BEGIN_MESSAGE_MAP(CExplorerTree, CTreeCtrl)
 	ON_WM_CREATE()
 	ON_WM_CONTEXTMENU()
+	ON_WM_MOUSEMOVE()
+	ON_WM_MOUSELEAVE()
+	ON_WM_MOUSEHOVER()
 	ON_WM_LBUTTONDOWN()
 	ON_WM_RBUTTONDOWN()
 	ON_NOTIFY_REFLECT(TVN_ITEMEXPANDING, OnItemExpanding)
@@ -257,6 +287,8 @@ int CExplorerTree::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if (CTreeCtrl::OnCreate(lpCreateStruct) == -1)
 		return -1;
+
+	m_TooltipCtrl.Create(this);
 
 	if ((p_App->m_ThemeLibLoaded) && (p_App->OSVersion>=OS_Vista))
 		p_App->zSetWindowTheme(GetSafeHwnd(), L"explorer", NULL);
@@ -385,6 +417,76 @@ void CExplorerTree::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 
 		psfFolder->Release();
 	}
+}
+
+void CExplorerTree::OnMouseMove(UINT /*nFlags*/, CPoint point)
+{
+	if (!m_Hover)
+	{
+		m_Hover = TRUE;
+
+		TRACKMOUSEEVENT tme;
+		tme.cbSize = sizeof(TRACKMOUSEEVENT);
+		tme.dwFlags = TME_LEAVE | TME_HOVER;
+		tme.dwHoverTime = HOVER_DEFAULT;
+		tme.hwndTrack = m_hWnd;
+		TrackMouseEvent(&tme);
+	}
+	else
+		if (m_TooltipCtrl.IsWindowVisible())
+		{
+			UINT uFlags;
+			HTREEITEM hItem = HitTest(point, &uFlags);
+			if ((hItem!=m_HoverItem) || (!(uFlags & TVHT_ONITEM)))
+				m_TooltipCtrl.Deactivate();
+		}
+}
+
+void CExplorerTree::OnMouseLeave()
+{
+	m_TooltipCtrl.Deactivate();
+	m_Hover = FALSE;
+}
+
+void CExplorerTree::OnMouseHover(UINT nFlags, CPoint point)
+{
+	if ((nFlags & (MK_LBUTTON | MK_MBUTTON | MK_RBUTTON | MK_XBUTTON1 | MK_XBUTTON2))==0)
+	{
+		UINT uFlags;
+		m_HoverItem = HitTest(point, &uFlags);
+		if ((m_HoverItem) && (uFlags & TVHT_ONITEM))
+			if (!m_TooltipCtrl.IsWindowVisible())
+			{
+				TVITEM tvItem;
+				ZeroMemory(&tvItem, sizeof(tvItem));
+				tvItem.mask = TVIF_PARAM;
+				tvItem.hItem = m_HoverItem;
+				if (!GetItem(&tvItem))
+					return;
+
+				LPAFX_SHELLITEMINFO pItem = (LPAFX_SHELLITEMINFO)tvItem.lParam;
+
+				HICON hIcon = NULL;
+				CSize size(0, 0);
+				CString caption;
+				CString hint;
+				TooltipDataFromPIDL(pItem->pidlFQ, &p_App->m_SystemImageListLarge, hIcon, size, caption, hint);
+
+				ClientToScreen(&point);
+				m_TooltipCtrl.Track(point, hIcon, size, caption, hint);
+			}
+	}
+	else
+	{
+		m_TooltipCtrl.Deactivate();
+	}
+
+	TRACKMOUSEEVENT tme;
+	tme.cbSize = sizeof(TRACKMOUSEEVENT);
+	tme.dwFlags = TME_LEAVE | TME_HOVER;
+	tme.dwHoverTime = HOVER_DEFAULT;
+	tme.hwndTrack = m_hWnd;
+	TrackMouseEvent(&tme);
 }
 
 void CExplorerTree::OnLButtonDown(UINT nFlags, CPoint point)
