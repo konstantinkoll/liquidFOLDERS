@@ -104,6 +104,8 @@ public:
 	LFViewParameters m_Views[LFContextCount];
 	CImageList m_SystemImageListSmall;
 	CImageList m_SystemImageListLarge;
+	CImageList m_CoreImageListSmall;
+	CImageList m_CoreImageListLarge;
 	HBITMAP m_RatingBitmaps[LFMaxRating+1];
 	HBITMAP m_PriorityBitmaps[LFMaxRating+1];
 	CFont m_Fonts[2][2];

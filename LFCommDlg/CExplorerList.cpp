@@ -113,9 +113,21 @@ void CExplorerList::SetSearchResult(LFSearchResult* result)
 			lvi.iGroupId = result->m_Items[a]->CategoryID;
 			lvi.state = (result->m_Items[a]->Type & LFTypeGhosted) ? LVIS_CUT : 0;
 			lvi.stateMask = LVIS_CUT;
-			InsertItem(&lvi);
+			int idx = InsertItem(&lvi);
+
+			wchar_t tmpStr[256];
+			SetItemText(idx, 1, result->m_Items[a]->CoreAttributes.Comment);
+			LFAttributeToString(result->m_Items[a], LFAttrCreationTime, tmpStr, 256);
+			SetItemText(idx, 2, tmpStr);
+			LFAttributeToString(result->m_Items[a], LFAttrStoreID, tmpStr, 256);
+			SetItemText(idx, 3, tmpStr);
+			SetItemText(idx, 4, result->m_Items[a]->Description);
 		}
 	}
+
+	if (GetView()==LV_VIEW_DETAILS)
+		for (UINT a=0; a<5; a++)
+			SetColumnWidth(a, LVSCW_AUTOSIZE_USEHEADER);
 }
 
 BOOL CExplorerList::SupportsFooter()
@@ -167,6 +179,15 @@ int CExplorerList::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	SetExtendedStyle(GetExtendedStyle() | LVS_EX_FULLROWSELECT | LVS_EX_DOUBLEBUFFER);
 	EnableTheming();
+
+	LVTILEVIEWINFO tvi;
+	ZeroMemory(&tvi, sizeof(tvi));
+	tvi.cbSize = sizeof(LVTILEVIEWINFO);
+	tvi.cLines = 2;
+	tvi.dwFlags = LVTVIF_FIXEDWIDTH;
+	tvi.dwMask = LVTVIM_COLUMNS | LVTVIM_TILESIZE;
+	tvi.sizeTile.cx = 220;
+	SetTileViewInfo(&tvi);
 
 	if (p_App->OSVersion>=OS_Vista)
 		SendMessage(0x10BD, (WPARAM)&IID_IListViewFooter, (LPARAM)&p_FooterHandler);

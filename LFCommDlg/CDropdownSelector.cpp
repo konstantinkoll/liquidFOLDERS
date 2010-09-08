@@ -35,9 +35,8 @@ void CDropdownListCtrl::OnCustomDraw(NMHDR* pNMHDR, LRESULT* pResult)
 		if ((!hTheme) && (GetHotItem()==(int)lplvcd->nmcd.dwItemSpec))
 		{
 			lplvcd->nmcd.uItemState |= CDIS_SELECTED;
-			lplvcd->clrTextBk = GetSysColor(COLOR_HIGHLIGHT);
+			lplvcd->clrTextBk = lplvcd->clrFace = GetSysColor(COLOR_HIGHLIGHT);
 			lplvcd->clrText = GetSysColor(COLOR_HIGHLIGHTTEXT);
-
 			SetBkColor(lplvcd->clrTextBk);
 
 			CRect rect;
@@ -189,9 +188,10 @@ CDropdownSelector::CDropdownSelector()
 	m_Hover = m_Pressed = m_Dropped = FALSE;
 }
 
-BOOL CDropdownSelector::Create(CString EmptyHint, CGlasWindow* pParentWnd, UINT nID)
+BOOL CDropdownSelector::Create(CString EmptyHint, CString Caption, CGlasWindow* pParentWnd, UINT nID)
 {
 	m_EmptyHint = EmptyHint;
+	m_Caption = Caption;
 
 	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, LoadCursor(NULL, IDC_ARROW));
 
@@ -247,13 +247,12 @@ void CDropdownSelector::SetEmpty(BOOL Repaint)
 		Invalidate();
 }
 
-void CDropdownSelector::SetItem(CString Caption, HICON hIcon, CString DisplayName, BOOL Repaint)
+void CDropdownSelector::SetItem(HICON hIcon, CString DisplayName, BOOL Repaint)
 {
 	OnCloseDropdown();
 	if (m_Icon)
 		DestroyIcon(m_Icon);
 
-	m_Caption = Caption;
 	m_Icon = hIcon;
 	m_DisplayName = DisplayName;
 	m_IsEmpty = FALSE;

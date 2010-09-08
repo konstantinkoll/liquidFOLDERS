@@ -210,10 +210,7 @@ void CPIDLDropdownWindow::OnItemChanged(NMHDR* pNMHDR, LRESULT* /*pResult*/)
 	NM_LISTVIEW* pNMListView = (NM_LISTVIEW*)pNMHDR;
 
 	if ((pNMListView->uChanged & LVIF_STATE) && (pNMListView->uNewState & LVIS_SELECTED))
-	{
-		LPITEMIDLIST pidl = (LPITEMIDLIST)m_wndList.GetItemData(pNMListView->iItem);
-		GetOwner()->SendMessage(WM_SETITEM, NULL, (LPARAM)pidl);
-	}
+		GetOwner()->SendMessage(WM_SETITEM, NULL, (LPARAM)m_wndList.GetItemData(pNMListView->iItem));
 }
 
 void CPIDLDropdownWindow::OnChooseFolder()
@@ -266,9 +263,7 @@ void CPIDLSelector::SetItem(LPITEMIDLIST _pidl, BOOL Repaint)
 		SHFILEINFO sfi;
 		if (SUCCEEDED(SHGetFileInfo((wchar_t*)pidl, 0, &sfi, sizeof(SHFILEINFO), SHGFI_PIDL | SHGFI_DISPLAYNAME | SHGFI_ICON | SHGFI_SMALLICON)))
 		{
-			CString tmpStr;
-			ENSURE(tmpStr.LoadString(IDS_FOLDER_CAPTION));
-			CDropdownSelector::SetItem(tmpStr, sfi.hIcon, sfi.szDisplayName, Repaint);
+			CDropdownSelector::SetItem(sfi.hIcon, sfi.szDisplayName, Repaint);
 		}
 		else
 		{

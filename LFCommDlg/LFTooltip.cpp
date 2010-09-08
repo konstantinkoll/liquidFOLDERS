@@ -88,7 +88,7 @@ void LFTooltip::Track(CPoint point, HICON hIcon, CSize szIcon, const CString& st
 			}
 			else
 			{
-				Line = strText.Left(pos);
+				Line = strText.Left(pos+1);
 				strText.Delete(0, pos+1);
 			}
 

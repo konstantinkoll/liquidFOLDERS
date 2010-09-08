@@ -178,6 +178,23 @@ LFApplication::LFApplication(UINT _HasGUI)
 	m_SystemImageListSmall.Attach((HIMAGELIST)SHGetFileInfo(_T(""), NULL, &shfi, sizeof(shfi), SHGFI_SYSICONINDEX | SHGFI_SMALLICON));
 	m_SystemImageListLarge.Attach((HIMAGELIST)SHGetFileInfo(_T(""), NULL, &shfi, sizeof(shfi), SHGFI_SYSICONINDEX | SHGFI_LARGEICON));
 
+	// Core image lists
+	HINSTANCE hModIcons = LoadLibrary(_T("LFCORE.DLL"));
+	if (hModIcons)
+	{
+		int cx = GetSystemMetrics(SM_CXSMICON);
+		int cy = GetSystemMetrics(SM_CYSMICON);
+		ImageList_GetIconSize(m_SystemImageListSmall, &cx, &cy);
+		ExtractCoreIcons(hModIcons, cy, &m_CoreImageListSmall);
+
+		cx = GetSystemMetrics(SM_CXICON);
+		cy = GetSystemMetrics(SM_CYICON);
+		ImageList_GetIconSize(m_SystemImageListLarge, &cx, &cy);
+		ExtractCoreIcons(hModIcons, cy, &m_CoreImageListLarge);
+
+		FreeLibrary(hModIcons);
+	}
+
 	// Get attribute information
 	for (UINT a=0; a<LFAttrCategoryCount; a++)
 		m_AttrCategories[a] = LFGetAttrCategoryName(a);

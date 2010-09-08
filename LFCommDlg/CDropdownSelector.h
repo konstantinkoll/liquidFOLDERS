@@ -68,8 +68,8 @@ public:
 	virtual void SetEmpty(BOOL Repaint=TRUE);
 	virtual void GetTooltipData(HICON& hIcon, CSize& size, CString& caption, CString& hint);
 
-	BOOL Create(CString EmptyHint, CGlasWindow* pParentWnd, UINT nID);
-	void SetItem(CString Caption, HICON hIcon, CString DisplayName, BOOL Repaint=TRUE);
+	BOOL Create(CString EmptyHint, CString Caption, CGlasWindow* pParentWnd, UINT nID);
+	void SetItem(HICON hIcon, CString DisplayName, BOOL Repaint=TRUE);
 	UINT GetPreferredHeight();
 	BOOL IsEmpty();
 

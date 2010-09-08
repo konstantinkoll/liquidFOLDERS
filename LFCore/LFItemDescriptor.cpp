@@ -1,6 +1,8 @@
 #include "StdAfx.h"
 #include "..\\include\\LFCore.h"
 #include "LFItemDescriptor.h"
+#include "CIndex.h"
+#include "StoreCache.h"
 #include <assert.h>
 #include <malloc.h>
 
@@ -109,6 +111,8 @@ unsigned char AttrTypes[LFAttributeCount] = {
 
 #pragma data_seg()
 #pragma comment(linker, "/SECTION:common_attrs,RWS")
+
+extern HMODULE LFCoreModuleHandle;
 
 
 // Attribute handling
@@ -260,6 +264,56 @@ LFCore_API LFItemDescriptor* LFAllocItemDescriptor(LFItemDescriptor* i)
 					memcpy(d->AttributeValues[a], i->AttributeValues[a], sz);
 				}
 	}
+
+	return d;
+}
+
+LFCore_API LFItemDescriptor* LFAllocItemDescriptor(LFStoreDescriptor* s)
+{
+	assert(s);
+
+	LFItemDescriptor* d = LFAllocItemDescriptor();
+	bool IsMounted = IsStoreMounted(s);
+
+	if (strcmp(s->StoreID, DefaultStore)==0)
+	{
+		d->IconID = IDI_STORE_Default;
+		d->Type |= LFTypeDefaultStore;
+		wchar_t ds[256];
+		LoadString(LFCoreModuleHandle, IDS_DefaultStore, ds, 256);
+		SetAttribute(d, LFAttrDescription, ds);
+	}
+	else
+	{
+		d->IconID = (s->StoreMode==LFStoreModeInternal ? IDI_STORE_Internal : IDI_STORE_Bag);
+		if ((s->StoreMode==LFStoreModeHybrid) || (s->StoreMode==LFStoreModeExternal))
+			if (wcscmp(s->LastSeen, L"")!=0)
+			{
+				wchar_t ls[256];
+				LoadString(LFCoreModuleHandle, IsMounted ? IDS_SeenOn :IDS_LastSeen, ls, 256);
+				wchar_t descr[256];
+				wsprintf(descr, ls, s->LastSeen);
+				SetAttribute(d, LFAttrDescription, descr);
+			}
+	}
+
+	if (!IsMounted)
+	{
+		d->Type |= LFTypeGhosted | LFTypeNotMounted;
+	}
+	else
+		// TODO
+		if ((s->IndexVersion<CurIdxVersion) /*|| (s->MaintenanceTime<)*/)
+			d->Type |= LFTypeRequiresMaintenance;
+
+	d->CategoryID = s->StoreMode;
+	d->Type |= LFTypeStore;
+	SetAttribute(d, LFAttrFileName, s->StoreName);
+	SetAttribute(d, LFAttrComment, s->Comment);
+	SetAttribute(d, LFAttrStoreID, s->StoreID);
+	SetAttribute(d, LFAttrFileID, s->StoreID);
+	SetAttribute(d, LFAttrCreationTime, &s->CreationTime);
+	SetAttribute(d, LFAttrFileTime, &s->FileTime);
 
 	return d;
 }

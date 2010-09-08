@@ -42,11 +42,12 @@ public:
 	virtual void SetEmpty(BOOL Repaint=TRUE);
 	virtual void GetTooltipData(HICON& hIcon, CSize& size, CString& caption, CString& hint);
 
-	void SetItem(LFStoreDescriptor* _store, BOOL Repaint=TRUE);
-
-	LFStoreDescriptor* store;
+	void SetItem(LFItemDescriptor* _item, BOOL Repaint=TRUE);
+	BOOL GetStoreID(char* StoreID);
 
 protected:
+	LFItemDescriptor* item;
+
 	afx_msg LRESULT OnSetItem(WPARAM wParam, LPARAM lParam);
 	DECLARE_MESSAGE_MAP()
 };

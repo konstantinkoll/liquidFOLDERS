@@ -47,14 +47,13 @@ LFCommDlg_API void TooltipDataFromPIDL(LPITEMIDLIST pidl, CImageList* icons, HIC
 			if (SUCCEEDED(SHGetDataFromIDList(Parent, Child, SHGDFIL_FINDDATA, &ffd, sizeof(WIN32_FIND_DATA))))
 			{
 				FILETIME lft;
-
 				wchar_t tmpBuf1[256];
 				FileTimeToLocalFileTime(&ffd.ftCreationTime, &lft);
 				LFTimeToString(lft, tmpBuf1, 256);
 				wchar_t tmpBuf2[256];
 				FileTimeToLocalFileTime(&ffd.ftLastWriteTime, &lft);
 				LFTimeToString(lft, tmpBuf2, 256);
-				
+
 				CString tmpStr;
 				tmpStr.Format(_T("\n%s: %s\n%s: %s"),
 					pApp->m_Attributes[LFAttrCreationTime]->Name, tmpBuf1,

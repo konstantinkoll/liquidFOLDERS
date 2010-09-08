@@ -129,48 +129,7 @@ bool LFSearchResult::AddStoreDescriptor(LFStoreDescriptor* s, LFFilter* f)
 	strcpy_s(nf->StoreID, LFKeySize, s->StoreID);
 	wcscpy_s(nf->Name, 256, s->StoreName);
 
-	LFItemDescriptor* d = LFAllocItemDescriptor();
-	bool IsMounted = IsStoreMounted(s);
-
-	if (strcmp(s->StoreID, DefaultStore)==0)
-	{
-		d->IconID = IDI_STORE_Default;
-		d->Type |= LFTypeDefaultStore;
-		wchar_t ds[256];
-		LoadString(LFCoreModuleHandle, IDS_DefaultStore, ds, 256);
-		SetAttribute(d, LFAttrDescription, ds);
-	}
-	else
-	{
-		d->IconID = (s->StoreMode==LFStoreModeInternal ? IDI_STORE_Internal : IDI_STORE_Bag);
-		if ((s->StoreMode==LFStoreModeHybrid) || (s->StoreMode==LFStoreModeExternal))
-			if (wcscmp(s->LastSeen, L"")!=0)
-			{
-				wchar_t ls[256];
-				LoadString(LFCoreModuleHandle, IsMounted ? IDS_SeenOn :IDS_LastSeen, ls, 256);
-				wchar_t descr[256];
-				wsprintf(descr, ls, s->LastSeen);
-				SetAttribute(d, LFAttrDescription, descr);
-			}
-	}
-
-	if (!IsMounted)
-	{
-		d->Type |= LFTypeGhosted | LFTypeNotMounted;
-	}
-	else
-		// TODO
-		if ((s->IndexVersion<CurIdxVersion) /*|| (s->MaintenanceTime<)*/)
-			d->Type |= LFTypeRequiresMaintenance;
-
-	d->CategoryID = s->StoreMode;
-	d->Type |= LFTypeStore;
-	SetAttribute(d, LFAttrFileName, s->StoreName);
-	SetAttribute(d, LFAttrComment, s->Comment);
-	SetAttribute(d, LFAttrStoreID, s->StoreID);
-	SetAttribute(d, LFAttrFileID, s->StoreID);
-	SetAttribute(d, LFAttrCreationTime, &s->CreationTime);
-	SetAttribute(d, LFAttrFileTime, &s->FileTime);
+	LFItemDescriptor* d = LFAllocItemDescriptor(s);
 	d->NextFilter = nf;
 
 	bool res = AddItemDescriptor(d);

@@ -98,6 +98,9 @@ LFCore_API void LFFreeDomainDescriptor(LFDomainDescriptor* f);
 // Ggf. wird eine unabhängige Kopie von i erzeugt
 LFCore_API LFItemDescriptor* LFAllocItemDescriptor(LFItemDescriptor* i=NULL);
 
+// Neuen LFItemDescriptor erzeugen und den LFStoreDescriptor konvertieren
+LFCore_API LFItemDescriptor* LFAllocItemDescriptor(LFStoreDescriptor* s);
+
 // Existierenden LFItemDescriptor freigeben
 LFCore_API void LFFreeItemDescriptor(LFItemDescriptor* i);
 

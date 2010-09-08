@@ -34,18 +34,22 @@ int CStoreDropdownWindow::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CDropdownWindow::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
+	LFApplication* pApp = (LFApplication*)AfxGetApp();
+	m_wndList.SetImageList(&pApp->m_CoreImageListSmall, LVSIL_SMALL);
+	m_wndList.SetImageList(&pApp->m_CoreImageListLarge, LVSIL_NORMAL);
+
+	IMAGEINFO ii;
+	pApp->m_CoreImageListLarge.GetImageInfo(0, &ii);
+	CDC* dc = GetWindowDC();
+	CFont* pOldFont = dc->SelectObject(&pApp->m_DefaultFont);
+	m_wndList.SetIconSpacing(CXDropdownListIconSpacing, ii.rcImage.bottom-ii.rcImage.top+dc->GetTextExtent(_T("Wy"), 2).cy*2+4);
+	dc->SelectObject(pOldFont);
+	ReleaseDC(dc);
+
 	m_wndList.AddStoreColumns();
 	m_wndList.AddItemCategories();
 	m_wndList.EnableGroupView(TRUE);
-
-/*	for (UINT a=0; a<4; a++)
-	{
-		CString tmpStr;
-		ENSURE(tmpStr.LoadString(IDS_FOLDERCATEGORY1+a));
-		m_wndList.AddCategory(a, tmpStr);
-	}
-
-	m_wndList.SetImageList(&theApp.m_SystemImageListLarge, LVSIL_NORMAL);*/
+	m_wndList.SetView(LV_VIEW_TILE);
 
 	SendMessage(MessageIDs->StoresChanged, LFMSGF_IntStores | LFMSGF_ExtHybStores);
 
@@ -70,11 +74,6 @@ LRESULT CStoreDropdownWindow::OnUpdateStores(WPARAM /*wParam*/, LPARAM /*lParam*
 
 	m_wndList.SetSearchResult(result);
 
-//	for (UINT a=0; a<5; a++)
-//		m_wndList.SetColumnWidth(a, LVSCW_AUTOSIZE_USEHEADER);
-
-	m_wndList.SetRedraw(TRUE);
-
 	return NULL;
 }
 
@@ -83,10 +82,7 @@ void CStoreDropdownWindow::OnItemChanged(NMHDR* pNMHDR, LRESULT* /*pResult*/)
 	NM_LISTVIEW* pNMListView = (NM_LISTVIEW*)pNMHDR;
 
 	if ((pNMListView->uChanged & LVIF_STATE) && (pNMListView->uNewState & LVIS_SELECTED))
-	{
-		//LFStoreDescriptor* idl = (LPITEMIDLIST)m_wndList.GetItemData(pNMListView->iItem);
-		//GetOwner()->SendMessage(WM_SETITEM, NULL, (LPARAM)pidl);
-	}
+		GetOwner()->SendMessage(WM_SETITEM, NULL, (LPARAM)result->m_Items[pNMListView->iItem]);
 }
 
 void CStoreDropdownWindow::OnCreateNewStore()
@@ -103,7 +99,11 @@ void CStoreDropdownWindow::OnCreateNewStore()
 		LFErrorBox(res);
 
 		if (res==LFOk)
-			pOwnerWnd->SendMessage(WM_SETITEM, NULL, (LPARAM)s);
+		{
+			LFItemDescriptor* i = LFAllocItemDescriptor(s);
+			pOwnerWnd->SendMessage(WM_SETITEM, NULL, (LPARAM)i);
+			LFFreeItemDescriptor(i);
+		}
 	}
 
 	LFFreeStoreDescriptor(s);
@@ -116,12 +116,12 @@ void CStoreDropdownWindow::OnCreateNewStore()
 CStoreSelector::CStoreSelector()
 	: CDropdownSelector()
 {
-	store = NULL;
+	item = NULL;
 }
 
 CStoreSelector::~CStoreSelector()
 {
-	LFFreeStoreDescriptor(store);
+	LFFreeItemDescriptor(item);
 }
 
 void CStoreSelector::CreateDropdownWindow()
@@ -132,25 +132,20 @@ void CStoreSelector::CreateDropdownWindow()
 
 void CStoreSelector::SetEmpty(BOOL Repaint)
 {
-	LFFreeStoreDescriptor(store);
-	store = NULL;
+	LFFreeItemDescriptor(item);
+	item = NULL;
 
 	CDropdownSelector::SetEmpty(Repaint);
 }
 
-void CStoreSelector::SetItem(LFStoreDescriptor* _store, BOOL Repaint)
+void CStoreSelector::SetItem(LFItemDescriptor* _item, BOOL Repaint)
 {
-	if (_store)
+	if (_item)
 	{
-		LFFreeStoreDescriptor(store);
-		store = LFAllocStoreDescriptor();
-		*store = *_store;
+		LFFreeItemDescriptor(item);
+		item = LFAllocItemDescriptor(_item);
 
-		CDropdownSelector::SetItem(_T(""), NULL, _store->StoreName, Repaint);
-/*		else
-		{
-			SetEmpty();
-		}*/
+		CDropdownSelector::SetItem(p_App->m_CoreImageListSmall.ExtractIcon(item->IconID-1), item->CoreAttributes.FileName, Repaint);
 	}
 	else
 	{
@@ -158,14 +153,54 @@ void CStoreSelector::SetItem(LFStoreDescriptor* _store, BOOL Repaint)
 	}
 }
 
+BOOL CStoreSelector::GetStoreID(char* StoreID)
+{
+	if (m_IsEmpty)
+	{
+		*StoreID = '\0';
+		return FALSE;
+	}
+
+	strcpy_s(StoreID, LFKeySize, item->StoreID);
+	return TRUE;
+}
+
 void CStoreSelector::GetTooltipData(HICON& hIcon, CSize& size, CString& caption, CString& hint)
 {
-	size.cx = GetSystemMetrics(SM_CXICON);
-	size.cy = GetSystemMetrics(SM_CYICON);
+	hIcon = p_App->m_CoreImageListLarge.ExtractIcon(item->IconID-1);
+	
+	int cx = GetSystemMetrics(SM_CXICON);
+	int cy = GetSystemMetrics(SM_CYICON);
+	ImageList_GetIconSize(p_App->m_CoreImageListLarge, &cx, &cy);
+	size.SetSize(cx, cy);
 
-	caption = store->StoreName;
-	hint = store->Comment;
-//	TooltipDataFromPIDL(pidl, &theApp.m_SystemImageListLarge, hIcon, size, caption, hint);
+	caption = item->CoreAttributes.FileName;
+	hint = item->CoreAttributes.Comment;
+
+	if (item->Description[0]!=L'\0')
+	{
+		if (!hint.IsEmpty())
+			hint.Append(_T("\n"));
+
+		hint.Append(item->Description);
+	}
+
+	if (!hint.IsEmpty())
+		hint.Append(_T("\n"));
+
+	FILETIME lft;
+	wchar_t tmpBuf1[256];
+	FileTimeToLocalFileTime(&item->CoreAttributes.CreationTime, &lft);
+	LFTimeToString(lft, tmpBuf1, 256);
+	wchar_t tmpBuf2[256];
+	FileTimeToLocalFileTime(&item->CoreAttributes.FileTime, &lft);
+	LFTimeToString(lft, tmpBuf2, 256);
+
+	CString tmpStr;
+	tmpStr.Format(_T("%s: %s\n%s: %s"),
+		p_App->m_Attributes[LFAttrCreationTime]->Name, tmpBuf1,
+		p_App->m_Attributes[LFAttrFileTime]->Name, tmpBuf2);
+	hint.Append(tmpStr);
 }
 
 
@@ -175,6 +210,6 @@ END_MESSAGE_MAP()
 
 LRESULT CStoreSelector::OnSetItem(WPARAM /*wParam*/, LPARAM lParam)
 {
-	SetItem((LFStoreDescriptor*)lParam);
+	SetItem((LFItemDescriptor*)lParam);
 	return NULL;
 }

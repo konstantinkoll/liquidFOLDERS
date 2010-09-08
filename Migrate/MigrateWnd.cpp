@@ -79,14 +79,17 @@ int CMigrateWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 
 	// Folder selector
-	CString tmpStr;
-	ENSURE(tmpStr.LoadString(IDS_FOLDER_HINT));
-	if (m_wndFolder.Create(tmpStr, this, 1)==-1)
+	CString hint;
+	ENSURE(hint.LoadString(IDS_FOLDER_HINT));
+	CString caption;
+	ENSURE(caption.LoadString(IDS_FOLDER_CAPTION));
+	if (m_wndFolder.Create(hint, caption, this, 1)==-1)
 		return -1;
 
 	// Store selector
-	ENSURE(tmpStr.LoadString(IDS_STORE_HINT));
-	if (m_wndStore.Create(tmpStr, this, 2)==-1)
+	ENSURE(hint.LoadString(IDS_STORE_HINT));
+	ENSURE(caption.LoadString(IDS_STORE_CAPTION));
+	if (m_wndStore.Create(hint, caption, this, 2)==-1)
 		return -1;
 
 	// Main view
