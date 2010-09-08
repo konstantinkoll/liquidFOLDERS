@@ -5,6 +5,7 @@
 #pragma once
 #include "liquidFOLDERS.h"
 #include "LFApplication.h"
+#include "LFCore.h"
 #include "IListViewFooter.h"
 
 
@@ -21,6 +22,10 @@ public:
 	void EnableTheming();
 	void AddCategory(int ID, CString name, CString hint=_T(""));
 	void AddItemCategories();
+	void AddColumn(int ID, CString name);
+	void AddColumn(int ID, UINT attr);
+	void AddStoreColumns();
+	void SetSearchResult(LFSearchResult* result);
 	BOOL SupportsFooter();
 	void ShowFooter(IListViewFooterCallback* pCallbackObject);
 	void RemoveFooter();

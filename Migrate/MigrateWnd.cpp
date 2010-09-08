@@ -108,6 +108,9 @@ int CMigrateWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 void CMigrateWnd::OnIdleUpdateCmdUI()
 {
+	CWnd* btn = m_wndBottomArea.GetDlgItem(IDC_MIGRATE);
+	if (btn)
+		btn->EnableWindow((!m_wndFolder.IsEmpty()) && (!m_wndStore.IsEmpty()));
 }
 
 void CMigrateWnd::OnSelectRoot()

@@ -295,6 +295,9 @@ LFCore_API LFAttributeDescriptor* LFGetAttributeInfo(unsigned int ID)
 		a->ReadOnly = (a->Category==LFAttrCategoryInternal);
 	}
 
+	// Format
+	a->FormatRight = ((a->Type>=LFTypeUINT) || (ID==LFAttrStoreID) || (ID==LFAttrFileID) || (ID==LFAttrFileCount) || (ID==LFAttrDescription));
+
 	// Shell property
 	a->ShPropertyMapping = AttrProperties[ID];
 	if (!a->ShPropertyMapping.ID)

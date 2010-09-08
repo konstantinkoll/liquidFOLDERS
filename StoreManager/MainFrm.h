@@ -7,6 +7,7 @@
 #include "InspectorWnd.h"
 #include "HistoryWnd.h"
 #include "liquidFOLDERS.h"
+#include "CCaptionBar.h"
 #include "CFileView.h"
 
 

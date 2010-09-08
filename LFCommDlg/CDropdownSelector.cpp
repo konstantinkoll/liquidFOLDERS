@@ -275,6 +275,11 @@ UINT CDropdownSelector::GetPreferredHeight()
 	return h+2*BORDER;
 }
 
+BOOL CDropdownSelector::IsEmpty()
+{
+	return m_IsEmpty;
+}
+
 
 BEGIN_MESSAGE_MAP(CDropdownSelector, CWnd)
 	ON_WM_CREATE()

@@ -319,6 +319,7 @@ struct LFAttributeDescriptor
 	bool AlwaysVisible;
 	bool Sortable;
 	bool ReadOnly;
+	bool FormatRight;
 	unsigned char Type;
 	unsigned char Category;
 	unsigned int RecommendedWidth;

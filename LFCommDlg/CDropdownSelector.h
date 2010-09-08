@@ -71,6 +71,7 @@ public:
 	BOOL Create(CString EmptyHint, CGlasWindow* pParentWnd, UINT nID);
 	void SetItem(CString Caption, HICON hIcon, CString DisplayName, BOOL Repaint=TRUE);
 	UINT GetPreferredHeight();
+	BOOL IsEmpty();
 
 protected:
 	CString m_EmptyHint;

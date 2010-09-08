@@ -2,6 +2,8 @@
 #pragma once
 #include "liquidFOLDERS.h"
 #include "LFCommDlg.h"
+#include "CPaneList.h"
+#include "CPaneText.h"
 
 
 // CFilterToolBar

@@ -9,7 +9,7 @@
 // CPaneList
 //
 
-class AFX_EXT_CLASS CPaneList : public CListCtrl
+class CPaneList : public CListCtrl
 {
 public:
 	CPaneList();

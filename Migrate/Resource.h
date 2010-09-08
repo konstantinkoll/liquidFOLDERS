@@ -27,8 +27,9 @@
 #define IDS_FOLDERCATEGORY3             1014
 #define IDS_FOLDERCATEGORY4             1015
 #define IDD_BOTTOMAREA                  2000
-#define IDC_SIMULATE                    2001
-#define IDC_DELETEIMPORTED              2002
+#define IDC_MIGRATE                     2001
+#define IDC_SIMULATE                    2002
+#define IDC_DELETEIMPORTED              2003
 #define IDD_CHOOSEFOLDER                2100
 
 // Next default values for new objects

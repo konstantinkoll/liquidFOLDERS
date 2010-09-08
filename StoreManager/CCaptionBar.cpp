@@ -9,8 +9,6 @@
 // CCaptionBar
 //
 
-extern AFX_EXTENSION_MODULE LFCommDlgDLL;
-
 CCaptionBar::CCaptionBar()
 	: CMFCCaptionBar()
 {
@@ -40,5 +38,13 @@ void CCaptionBar::SetIcon(LPCWSTR Icon, BarElementAlignment iconAlignment)
 		m_hIcon = NULL;
 	}
 
-	CMFCCaptionBar::SetIcon((HICON)LoadImage(LFCommDlgDLL.hResource, Icon, IMAGE_ICON, 24, 24, LR_DEFAULTCOLOR), iconAlignment);
+	HICON hIcon = NULL;
+	HINSTANCE hModIcons = LoadLibrary(_T("LFCOMMDLG.DLL"));
+	if (hModIcons)
+	{
+		hIcon = (HICON)LoadImage(hModIcons, Icon, IMAGE_ICON, 24, 24, LR_DEFAULTCOLOR);
+		FreeLibrary(hModIcons);
+	}
+
+	CMFCCaptionBar::SetIcon(hIcon, iconAlignment);
 }

@@ -387,10 +387,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CCaptionBar.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\CDropdownSelector.cpp"
 				>
 			</File>
@@ -419,10 +415,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CImageListTransparent.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\CInspectorGrid.cpp"
 				>
 			</File>
@@ -432,14 +424,6 @@
 			</File>
 			<File
 				RelativePath=".\CMapSelectionCtrl.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\CPaneList.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\CPaneText.cpp"
 				>
 			</File>
 			<File
@@ -629,10 +613,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CCaptionBar.h"
-				>
-			</File>
-			<File
 				RelativePath=".\CDropdownSelector.h"
 				>
 			</File>
@@ -661,10 +641,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CImageListTransparent.h"
-				>
-			</File>
-			<File
 				RelativePath=".\CInspectorGrid.h"
 				>
 			</File>
@@ -674,14 +650,6 @@
 			</File>
 			<File
 				RelativePath=".\CMapSelectionCtrl.h"
-				>
-			</File>
-			<File
-				RelativePath=".\CPaneList.h"
-				>
-			</File>
-			<File
-				RelativePath=".\CPaneText.h"
 				>
 			</File>
 			<File

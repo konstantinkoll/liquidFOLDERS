@@ -50,7 +50,7 @@ BOOL LFChooseDefaultStoreDlg::OnInitDialog()
 	CDialog::OnInitDialog();
 
 	// Icons laden
-	HINSTANCE hModIcons = LoadLibrary(_T("LFCore.DLL"));
+	HINSTANCE hModIcons = LoadLibrary(_T("LFCORE.DLL"));
 	if (hModIcons)
 	{
 		m_icStore = (HICON)LoadImage(hModIcons, MAKEINTRESOURCE(IDI_STORE_Internal), IMAGE_ICON, 16, 16, LR_DEFAULTCOLOR);
@@ -73,12 +73,7 @@ BOOL LFChooseDefaultStoreDlg::OnInitDialog()
 	m_List.SetExtendedStyle(m_List.GetExtendedStyle() | dwExStyle);
 	m_List.SetImageList(m_Icons, LVSIL_SMALL);
 	m_List.EnableTheming();
-
-	AddColumn(&m_List, LFAttrFileName, 0);
-	AddColumn(&m_List, LFAttrComment, 1);
-	AddColumn(&m_List, LFAttrCreationTime, 2);
-	AddColumn(&m_List, LFAttrStoreID, 3);
-	AddColumn(&m_List, LFAttrDescription, 4);
+	m_List.AddStoreColumns();
 
 	SendMessage(MessageIDs->StoresChanged, LFMSGF_IntStores);
 	LFErrorBox(result->m_LastError);

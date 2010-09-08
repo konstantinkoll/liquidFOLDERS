@@ -7,7 +7,7 @@
 
 // CImageListTransparent
 
-class AFX_EXT_CLASS CImageListTransparent : public CImageList
+class CImageListTransparent : public CImageList
 {
 public:
 	CImageListTransparent();

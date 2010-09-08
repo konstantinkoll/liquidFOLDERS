@@ -6,7 +6,7 @@
 // CCapationBar
 //
 
-class AFX_EXT_CLASS CCaptionBar : public CMFCCaptionBar
+class CCaptionBar : public CMFCCaptionBar
 {
 public:
 	CCaptionBar();

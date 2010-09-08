@@ -18,8 +18,11 @@ public:
 	void PopulateList();
 
 protected:
+	LFSearchResult* result;
+
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();
+	afx_msg LRESULT OnUpdateStores(WPARAM wParam, LPARAM lParam);
 	afx_msg void OnItemChanged(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnCreateNewStore();
 	DECLARE_MESSAGE_MAP()

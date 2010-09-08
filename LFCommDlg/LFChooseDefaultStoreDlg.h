@@ -33,7 +33,7 @@ protected:
 	afx_msg LRESULT OnThemeChanged();
 	afx_msg LRESULT UpdateStores(WPARAM wParam, LPARAM lParam);
 	afx_msg void OnGetDispInfo(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void LFChooseDefaultStoreDlg::OnDoubleClick(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnDoubleClick(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnNewStore();
 	DECLARE_MESSAGE_MAP()
 

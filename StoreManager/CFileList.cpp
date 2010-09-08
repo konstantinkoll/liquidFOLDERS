@@ -142,7 +142,7 @@ void CFileList::AddColumn(UINT attr)
 	ZeroMemory(&lvc, sizeof(lvc));
 	lvc.mask = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
 	lvc.pszText = theApp.m_Attributes[attr]->Name;
-	lvc.fmt = ((theApp.m_Attributes[attr]->Type >= LFTypeUINT) || (attr==LFAttrStoreID) || (attr==LFAttrFileID)) ? LVCFMT_RIGHT : LVCFMT_LEFT;
+	lvc.fmt = theApp.m_Attributes[attr]->FormatRight ? LVCFMT_RIGHT : LVCFMT_LEFT;
 	lvc.cx = View->pViewParameters->ColumnWidth[attr];
 	if (theApp.m_Attributes[attr]->Type==LFTypeRating)
 	{

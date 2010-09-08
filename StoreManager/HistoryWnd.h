@@ -2,6 +2,8 @@
 #pragma once
 #include "liquidFOLDERS.h"
 #include "LFCommDlg.h"
+#include "CImageListTransparent.h"
+#include "CPaneList.h"
 
 
 // Breadcrumbs

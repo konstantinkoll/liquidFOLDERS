@@ -398,6 +398,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CCaptionBar.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\CFileList.cpp"
 				>
 			</File>
@@ -418,11 +422,23 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CImageListTransparent.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\CInspectorIconCtrl.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\CListView.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\CPaneList.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\CPaneText.cpp"
 				>
 			</File>
 			<File
@@ -532,6 +548,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CCaptionBar.h"
+				>
+			</File>
+			<File
 				RelativePath=".\CFileList.h"
 				>
 			</File>
@@ -552,11 +572,23 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CImageListTransparent.h"
+				>
+			</File>
+			<File
 				RelativePath=".\CInspectorIconCtrl.h"
 				>
 			</File>
 			<File
 				RelativePath=".\CListView.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CPaneList.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CPaneText.h"
 				>
 			</File>
 			<File

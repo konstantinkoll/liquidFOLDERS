@@ -5,7 +5,7 @@
 // CPaneText
 //
 
-class AFX_EXT_CLASS CPaneText : public CWnd
+class CPaneText : public CWnd
 {
 public:
 	CPaneText();

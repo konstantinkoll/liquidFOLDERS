@@ -171,14 +171,14 @@ int CPIDLDropdownWindow::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CDropdownWindow::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
+	m_wndList.SetImageList(&theApp.m_SystemImageListLarge, LVSIL_NORMAL);
+
 	for (UINT a=0; a<4; a++)
 	{
 		CString tmpStr;
 		ENSURE(tmpStr.LoadString(IDS_FOLDERCATEGORY1+a));
 		m_wndList.AddCategory(a, tmpStr);
 	}
-
-	m_wndList.SetImageList(&theApp.m_SystemImageListLarge, LVSIL_NORMAL);
 	m_wndList.EnableGroupView(TRUE);
 
 	IMAGEINFO ii;
