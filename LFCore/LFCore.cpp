@@ -296,7 +296,7 @@ LFCore_API LFAttributeDescriptor* LFGetAttributeInfo(unsigned int ID)
 	}
 
 	// Format
-	a->FormatRight = ((a->Type>=LFTypeUINT) || (ID==LFAttrStoreID) || (ID==LFAttrFileID) || (ID==LFAttrFileCount) || (ID==LFAttrDescription));
+	a->FormatRight = ((a->Type>=LFTypeUINT) || (ID==LFAttrStoreID) || (ID==LFAttrFileID) || (ID==LFAttrFileCount));
 
 	// Shell property
 	a->ShPropertyMapping = AttrProperties[ID];
