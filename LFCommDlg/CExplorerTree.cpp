@@ -229,12 +229,12 @@ void CExplorerTree::EnumObjects(HTREEITEM hParentItem, IShellFolder* pParentFold
 				continue;
 
 		SHDESCRIPTIONID did;
-		if (FAILED(SHGetDataFromIDList(pParentFolder, pidlTemp, SHGDFIL_DESCRIPTIONID, &did, sizeof(SHDESCRIPTIONID))))
-			continue;
-
-		const CLSID LFNE = { 0x3F2D914F, 0xFE57, 0x414F, { 0x9F, 0x88, 0xA3, 0x77, 0xC7, 0x84, 0x1D, 0xA4 } };
-		if (did.clsid==LFNE)
-			continue;
+		if (SUCCEEDED(SHGetDataFromIDList(pParentFolder, pidlTemp, SHGDFIL_DESCRIPTIONID, &did, sizeof(SHDESCRIPTIONID))))
+		{
+			const CLSID LFNE = { 0x3F2D914F, 0xFE57, 0x414F, { 0x9F, 0x88, 0xA3, 0x77, 0xC7, 0x84, 0x1D, 0xA4 } };
+			if (did.clsid==LFNE)
+				continue;
+		}
 
 		TVITEM tvItem;
 		ZeroMemory(&tvItem, sizeof(tvItem));
