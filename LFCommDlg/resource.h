@@ -141,7 +141,8 @@
 #define IDD_BROWSEFORFOLDER             22100
 #define IDC_EXPLORERHEADER              22101
 #define IDC_SHELLTREE                   22102
-#define IDD_REGISTRY                    22200
+#define IDD_CREATENEWSTORE              22200
+#define IDD_REGISTRY                    22300
 
 // Next default values for new objects
 // 

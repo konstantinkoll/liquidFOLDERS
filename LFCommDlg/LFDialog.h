@@ -23,6 +23,8 @@ class AFX_EXT_CLASS LFDialog : public CDialog
 public:
 	LFDialog(UINT nIDTemplate, UINT _Design=LFDS_Default, CWnd* pParent=NULL);
 
+	void GetLayoutRect(LPRECT lpRect) const;
+
 protected:
 	LFApplication* p_App;
 	UINT m_nIDTemplate;

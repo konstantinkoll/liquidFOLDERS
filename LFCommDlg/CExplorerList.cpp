@@ -67,6 +67,30 @@ LRESULT CExplorerList::OnThemeChanged()
 	return TRUE;
 }
 
+void CExplorerList::AddCategory(int ID, CString name, CString hint)
+{
+	LVGROUP lvg;
+	ZeroMemory(&lvg, sizeof(lvg));
+	lvg.cbSize = sizeof(lvg);
+	lvg.mask = LVGF_HEADER | LVGF_GROUPID | LVGF_ALIGN;
+	lvg.uAlign = LVGA_HEADER_LEFT;
+	lvg.iGroupId = ID;
+	lvg.pszHeader = name.GetBuffer();
+	if ((!hint.IsEmpty()) && (p_App->OSVersion>=OS_Vista))
+	{
+		lvg.pszSubtitle = hint.GetBuffer();
+		lvg.mask |= LVGF_SUBTITLE;
+	}
+
+	InsertGroup(ID, &lvg);
+}
+
+void CExplorerList::AddItemCategories()
+{
+	for (UINT a=0; a<LFItemCategoryCount; a++)
+		AddCategory(a, p_App->m_ItemCategories[a]->Name);
+}
+
 BOOL CExplorerList::SupportsFooter()
 {
 	return (p_FooterHandler!=NULL);

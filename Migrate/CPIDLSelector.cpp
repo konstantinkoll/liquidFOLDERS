@@ -175,7 +175,7 @@ int CPIDLDropdownWindow::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	{
 		CString tmpStr;
 		ENSURE(tmpStr.LoadString(IDS_FOLDERCATEGORY1+a));
-		AddCategory(a, tmpStr);
+		m_wndList.AddCategory(a, tmpStr);
 	}
 
 	m_wndList.SetImageList(&theApp.m_SystemImageListLarge, LVSIL_NORMAL);

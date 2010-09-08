@@ -44,7 +44,7 @@ void LFBrowseForFolderDlg::AdjustLayout()
 		return;
 
 	CRect rect;
-	GetClientRect(rect);
+	GetLayoutRect(rect);
 
 	UINT ExplorerHeight = 0;
 	if (IsWindow(m_wndExplorerHeader))
@@ -56,11 +56,7 @@ void LFBrowseForFolderDlg::AdjustLayout()
 	CRect borders(0, 0, 7, 7);
 	MapDialogRect(&borders);
 
-	CRect btn;
-	GetDlgItem(IDOK)->GetWindowRect(&btn);
-	ScreenToClient(&btn);
-	const UINT Line = btn.top-borders.Height()-2;
-	m_wndExplorerTree.SetWindowPos(NULL, rect.left+borders.Width(), rect.top+ExplorerHeight, rect.Width()-borders.Width(), Line-ExplorerHeight, SWP_NOACTIVATE | SWP_NOZORDER);
+	m_wndExplorerTree.SetWindowPos(NULL, rect.left+borders.Width(), rect.top+ExplorerHeight, rect.Width()-borders.Width(), rect.Height()-ExplorerHeight, SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
 

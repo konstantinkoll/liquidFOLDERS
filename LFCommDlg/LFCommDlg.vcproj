@@ -443,6 +443,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CStoreSelector.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\CTagList.cpp"
 				>
 			</File>
@@ -678,6 +682,10 @@
 			</File>
 			<File
 				RelativePath=".\CPaneText.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CStoreSelector.h"
 				>
 			</File>
 			<File

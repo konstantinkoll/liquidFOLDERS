@@ -19,6 +19,8 @@ public:
 	CExplorerList();
 
 	void EnableTheming();
+	void AddCategory(int ID, CString name, CString hint=_T(""));
+	void AddItemCategories();
 	BOOL SupportsFooter();
 	void ShowFooter(IListViewFooterCallback* pCallbackObject);
 	void RemoveFooter();

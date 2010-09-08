@@ -14,6 +14,7 @@
 #include "..\LFCommDlg\CMapPreviewCtrl.h"
 #include "..\LFCommDlg\CPaneList.h"
 #include "..\LFCommDlg\CPaneText.h"
+#include "..\LFCommDlg\CStoreSelector.h"
 #include "..\LFCommDlg\CTagList.h"
 #include "..\LFCommDlg\CTaskbar.h"
 #include "..\LFCommDlg\CTaskButton.h"

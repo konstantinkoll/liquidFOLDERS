@@ -126,24 +126,6 @@ void CDropdownWindow::AdjustLayout()
 	m_wndList.EnsureVisible(0, FALSE);
 }
 
-void CDropdownWindow::AddCategory(int ID, CString name, CString hint)
-{
-	LVGROUP lvg;
-	ZeroMemory(&lvg, sizeof(lvg));
-	lvg.cbSize = sizeof(lvg);
-	lvg.mask = LVGF_HEADER | LVGF_GROUPID | LVGF_ALIGN;
-	lvg.uAlign = LVGA_HEADER_LEFT;
-	lvg.iGroupId = ID;
-	lvg.pszHeader = name.GetBuffer();
-	if ((!hint.IsEmpty()) && (((LFApplication*)AfxGetApp())->OSVersion>=OS_Vista))
-	{
-		lvg.pszSubtitle = hint.GetBuffer();
-		lvg.mask |= LVGF_SUBTITLE;
-	}
-
-	m_wndList.InsertGroup(ID, &lvg);
-}
-
 
 BEGIN_MESSAGE_MAP(CDropdownWindow, CWnd)
 	ON_WM_CREATE()

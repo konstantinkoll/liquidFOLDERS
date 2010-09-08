@@ -39,7 +39,6 @@ public:
 	virtual void AdjustLayout();
 
 	BOOL Create(CWnd* pOwnerWnd, UINT _DialogResID=0);
-	void AddCategory(int ID, CString name, CString hint=_T(""));
 
 protected:
 	CDropdownListCtrl m_wndList;

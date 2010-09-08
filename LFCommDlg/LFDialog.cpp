@@ -24,7 +24,23 @@ LFDialog::LFDialog(UINT nIDTemplate, UINT _Design, CWnd* pParent)
 	hIconS = hIconL = hIconShield = NULL;
 	hBackgroundBrush = NULL;
 	backdrop = logo = NULL;
-	BackBufferL = BackBufferH = 0;
+	BackBufferL = BackBufferH = UACHeight = 0;
+}
+
+void LFDialog::GetLayoutRect(LPRECT lpRect) const
+{
+	GetClientRect(lpRect);
+
+	CRect borders(0, 0, 7, 7);
+	MapDialogRect(&borders);
+
+	CRect btn;
+	GetDlgItem(IDOK)->GetWindowRect(&btn);
+	ScreenToClient(&btn);
+	lpRect->bottom = btn.top-borders.Height()-(m_Design==LFDS_Blue ? 3 : 1);
+
+	if (m_Design==LFDS_UAC)
+		lpRect->top = UACHeight;
 }
 
 
@@ -123,7 +139,10 @@ void LFDialog::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 	CRect btn;
 	GetDlgItem(IDOK)->GetWindowRect(&btn);
 	ScreenToClient(&btn);
-	int Line = btn.top-borders.Height()-3;
+
+	CRect layout;
+	GetLayoutRect(layout);
+	int Line = layout.bottom;
 
 	BOOL Themed = IsCtrlThemed();
 	switch (m_Design)
@@ -144,13 +163,13 @@ void LFDialog::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 
 				SolidBrush brush1(Color(180, 255, 255, 255));
 				g.FillRectangle(&brush1, 0, 0, BackBufferL, Line);
-				brush1.SetColor(Color(255, 205, 250, 255));
+				brush1.SetColor(Color(224, 205, 250, 255));
 				g.FillRectangle(&brush1, 0, Line++, BackBufferL, 1);
-				brush1.SetColor(Color(255, 183, 210, 240));
+				brush1.SetColor(Color(180, 183, 210, 240));
 				g.FillRectangle(&brush1, 0, Line++, BackBufferL, 1);
-				brush1.SetColor(Color(255, 247, 250, 254));
-				g.FillRectangle(&brush1, 0, Line++, BackBufferL, 1);
-				LinearGradientBrush brush2(Point(0, Line), Point(0, rect.Height()), Color(128, 255, 255, 255), Color(64, 128, 192, 255));
+				brush1.SetColor(Color(224, 247, 250, 254));
+				g.FillRectangle(&brush1, 0, Line, BackBufferL, 1);
+				LinearGradientBrush brush2(Point(0, Line++), Point(0, rect.Height()), Color(128, 255, 255, 255), Color(64, 128, 192, 255));
 				g.FillRectangle(&brush2, 0, Line, BackBufferL, rect.Height()-Line);
 			}
 			else
@@ -167,7 +186,7 @@ void LFDialog::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 	case LFDS_White:
 	case LFDS_UAC:
 		{
-			dc.FillSolidRect(0, 0, BackBufferL, ++Line, 0xFFFFFF);
+			dc.FillSolidRect(0, 0, BackBufferL, Line, 0xFFFFFF);
 			if (Themed)
 			{
 				dc.FillSolidRect(0, Line++, BackBufferL, 1, 0xDFDFDF);

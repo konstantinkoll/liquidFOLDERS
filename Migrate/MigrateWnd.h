@@ -22,7 +22,7 @@ public:
 
 protected:
 	CPIDLSelector m_wndFolder;
-	CDropdownSelector m_wndStore;
+	CStoreSelector m_wndStore;
 	CMainView m_wndMainView;
 	CBottomArea m_wndBottomArea;
 
