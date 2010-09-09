@@ -103,6 +103,7 @@ BOOL LFChooseDefaultStoreDlg::OnInitDialog()
 	m_wndExplorerList.AddStoreColumns();
 	m_wndExplorerList.AddItemCategories();
 	m_wndExplorerList.SetView(LV_VIEW_TILE);
+	m_wndExplorerList.SetFocus();
 
 	SendMessage(MessageIDs->StoresChanged, LFMSGF_IntStores | LFMSGF_ExtHybStores);
 
@@ -128,8 +129,15 @@ LRESULT LFChooseDefaultStoreDlg::OnUpdateStores(WPARAM wParam, LPARAM lParam)
 {
 	if ((wParam & LFMSGF_IntStores) && (GetSafeHwnd()!=(HWND)lParam))
 	{
+		char StoreID[LFKeySize] = "";
 		if (result)
+		{
+			int idx = m_wndExplorerList.GetNextItem(-1, LVIS_SELECTED);
+			if (idx!=-1)
+				strcpy_s(StoreID, LFKeySize, result->m_Items[idx]->StoreID);
+
 			LFFreeSearchResult(result);
+		}
 
 		LFFilter* filter = LFAllocFilter();
 		filter->Options.OnlyInternalStores = true;
@@ -137,34 +145,9 @@ LRESULT LFChooseDefaultStoreDlg::OnUpdateStores(WPARAM wParam, LPARAM lParam)
 		LFFreeFilter(filter);
 
 		m_wndExplorerList.SetSearchResult(result);
-	}
+		GetDlgItem(IDOK)->EnableWindow(result->m_ItemCount);
 
-	return NULL;
-/*
-
-		char StoreID[LFKeySize] = "";
-		int idx = m_wndExplorerList.GetNextItem(-1, LVIS_SELECTED);
-		if ((idx!=-1) && (result))
-			strcpy_s(StoreID, LFKeySize, result->m_Items[idx]->StoreID);
-
-		LFFilter* filter = LFAllocFilter();
-		filter->Options.OnlyInternalStores = true;
-
-		if (result)
-		{
-			LFFreeSearchResult(result);
-			result = NULL;
-		}
-		result = LFQuery(filter);
-		LFFreeFilter(filter);
-
-		LFSortSearchResult(result, LFAttrFileName, false);
-
-		((CButton*)GetDlgItem(IDOK))->EnableWindow(result->m_ItemCount);
-		for (UINT a=0; a<5; a++)
-			m_wndExplorerList.SetColumnWidth(a, LVSCW_AUTOSIZE_USEHEADER);
-
-		idx = -1;
+		int idx = -1;
 		for (UINT a=0; a<result->m_ItemCount; a++)
 			if (((idx==-1) && (result->m_Items[a]->Type & LFTypeDefaultStore)) || (!strcmp(StoreID, result->m_Items[a]->StoreID)))
 				idx = a;
@@ -172,7 +155,7 @@ LRESULT LFChooseDefaultStoreDlg::OnUpdateStores(WPARAM wParam, LPARAM lParam)
 		m_wndExplorerList.SetItemState(idx, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
 	}
 
-	return NULL;*/
+	return NULL;
 }
 
 void LFChooseDefaultStoreDlg::OnDoubleClick(NMHDR* /*pNMHDR*/, LRESULT* /*pResult*/)
