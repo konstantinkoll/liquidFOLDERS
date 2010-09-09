@@ -27,14 +27,17 @@ protected:
 	CExplorerList m_wndExplorerList;
 	LFSearchResult* result;
 
+	void MakeDefault(HWND hWnd);
+
 	afx_msg BOOL OnInitDialog();
 	afx_msg void OnDestroy();
 	afx_msg void OnGetMinMaxInfo(MINMAXINFO* lpMMI);
 	afx_msg LRESULT OnUpdateStores(WPARAM wParam, LPARAM lParam);
 	afx_msg void OnDoubleClick(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnNewStore();
+	afx_msg void OnMakeDefault();
+	afx_msg void OnRename();
+	afx_msg void OnDelete();
+	afx_msg void OnProperties();
 	DECLARE_MESSAGE_MAP()
-
-private:
-	wchar_t m_StrBuffer[256];
 };

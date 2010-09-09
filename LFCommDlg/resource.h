@@ -82,6 +82,12 @@
 #define IDD_CHOOSEDEFAULTSTORE          21200
 #define IDC_STORELIST                   21201
 #define IDC_NEWSTORE                    21202
+#define IDM_STORE                       21203
+#define IDM_STORE_MAKEDEFAULT           21204
+#define IDM_STORE_RENAME                21205
+#define IDM_STORE_DELETE                21206
+#define IDM_STORE_PROPERTIES            21207
+#define IDM_CREATENEWSTORE              21208
 #define IDD_STORENEW                    21300
 #define IDC_INTERNALSTORE               21301
 #define IDC_HYBRIDSTORE                 21302

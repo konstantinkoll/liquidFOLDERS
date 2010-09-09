@@ -842,7 +842,7 @@ void CMainFrame::OnItemsDelete()
 			if (i!=-1)
 			{
 				LFItemDescriptor* store = LFAllocItemDescriptor(CookedFiles->m_Items[i]);
-				LFErrorBox(theApp.DeleteStore(store), GetSafeHwnd());
+				LFErrorBox(theApp.DeleteStore(store, this));
 				LFFreeItemDescriptor(store);
 			}
 			break;

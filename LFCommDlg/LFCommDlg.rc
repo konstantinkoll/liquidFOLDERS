@@ -146,6 +146,33 @@ LANGUAGE LANG_GERMAN, SUBLANG_NEUTRAL
 
 /////////////////////////////////////////////////////////////////////////////
 //
+// Menu
+//
+
+IDM_STORE MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "Als &Standard-Store",         IDM_STORE_MAKEDEFAULT
+        MENUITEM SEPARATOR
+        MENUITEM "&Umbenennen",                 IDM_STORE_RENAME
+        MENUITEM "&Löschen",                    IDM_STORE_DELETE
+        MENUITEM SEPARATOR
+        MENUITEM "&Eigenschaften",              IDM_STORE_PROPERTIES
+    END
+END
+
+IDM_CREATENEWSTORE MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "&Neuen Store anlegen...",     IDC_NEWSTORE
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
 // Dialog
 //
 
@@ -656,6 +683,33 @@ LANGUAGE LANG_ENGLISH, SUBLANG_NEUTRAL
 
 /////////////////////////////////////////////////////////////////////////////
 //
+// Menu
+//
+
+IDM_STORE MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "Make default &store",         IDM_STORE_MAKEDEFAULT
+        MENUITEM SEPARATOR
+        MENUITEM "&Rename",                     IDM_STORE_RENAME
+        MENUITEM "&Delete...",                  IDM_STORE_DELETE
+        MENUITEM SEPARATOR
+        MENUITEM "&Properties...",              IDM_STORE_PROPERTIES
+    END
+END
+
+IDM_CREATENEWSTORE MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "Create &new store...",        IDC_NEWSTORE
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
 // Dialog
 //
 
@@ -1156,6 +1210,33 @@ LANGUAGE LANG_SPANISH, SUBLANG_NEUTRAL
 
 /////////////////////////////////////////////////////////////////////////////
 //
+// Menu
+//
+
+IDM_STORE MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "Make default &store",         IDM_STORE_MAKEDEFAULT
+        MENUITEM SEPARATOR
+        MENUITEM "&Rename",                     IDM_STORE_RENAME
+        MENUITEM "&Delete...",                  IDM_STORE_DELETE
+        MENUITEM SEPARATOR
+        MENUITEM "&Properties...",              IDM_STORE_PROPERTIES
+    END
+END
+
+IDM_CREATENEWSTORE MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "Crear &nuevo store...",       IDC_NEWSTORE
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
 // Dialog
 //
 
@@ -1638,6 +1719,33 @@ END
 LANGUAGE LANG_FRENCH, SUBLANG_NEUTRAL
 #pragma code_page(1252)
 #endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDM_STORE MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "Make default &store",         IDM_STORE_MAKEDEFAULT
+        MENUITEM SEPARATOR
+        MENUITEM "&Rename",                     IDM_STORE_RENAME
+        MENUITEM "&Delete...",                  IDM_STORE_DELETE
+        MENUITEM SEPARATOR
+        MENUITEM "&Properties...",              IDM_STORE_PROPERTIES
+    END
+END
+
+IDM_CREATENEWSTORE MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "Créez un store &nouveau...",  IDC_NEWSTORE
+    END
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //

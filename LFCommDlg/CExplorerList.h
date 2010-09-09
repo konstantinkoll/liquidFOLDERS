@@ -26,6 +26,7 @@ public:
 	void AddColumn(int ID, UINT attr);
 	void AddStoreColumns();
 	void SetSearchResult(LFSearchResult* result);
+	void SetMenus(UINT _ItemMenuID=0, UINT _BackgroundMenuID=0);
 	BOOL SupportsFooter();
 	void ShowFooter(IListViewFooterCallback* pCallbackObject);
 	void RemoveFooter();
@@ -36,9 +37,12 @@ protected:
 	LFApplication* p_App;
 	IListViewFooter* p_FooterHandler;
 	HTHEME hTheme;
+	UINT m_ItemMenuID;
+	UINT m_BackgroundMenuID;
 
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();
 	afx_msg LRESULT OnThemeChanged();
+	afx_msg void OnContextMenu(CWnd* pWnd, CPoint pos);
 	DECLARE_MESSAGE_MAP()
 };

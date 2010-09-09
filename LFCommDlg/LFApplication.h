@@ -140,18 +140,14 @@ public:
 	virtual void SetApplicationLook(UINT nID);
 
 	CString GetDefaultFontFace();
-	static void GetBackgroundColors(UINT Background, COLORREF* back, COLORREF* text=NULL, COLORREF* highlight=NULL);
-	static CString GetCommandName(UINT nID, BOOL bInsertSpace=FALSE);
-	static CMFCRibbonButton* CommandButton(UINT nID, int nSmallImageIndex=-1, int nLargeImageIndex=-1, BOOL bAlwaysShowDescription=FALSE, BOOL bInsertSpace=FALSE);
-	static CMFCRibbonCheckBox* CommandCheckBox(UINT nID);
 	void SendMail(CString Subject=_T(""));
 	int GetGlobalInt(LPCTSTR lpszEntry, int nDefault=0);
 	CString GetGlobalString(LPCTSTR lpszEntry, LPCTSTR lpszDefault=_T(""));
 	BOOL WriteGlobalInt(LPCTSTR lpszEntry, int nValue);
 	BOOL WriteGlobalString(LPCTSTR lpszEntry, LPCTSTR lpszValue);
 	static void ExtractCoreIcons(HINSTANCE hModIcons, int size, CImageList* li);
-	UINT DeleteStore(LFItemDescriptor* store, CWnd* pParentWnd=NULL);
-	UINT DeleteStore(LFStoreDescriptor* store, CWnd* pParentWnd=NULL);
+	UINT DeleteStore(LFItemDescriptor* store, CWnd* pParentWnd=NULL, CWnd* pOwnerWnd=NULL);
+	UINT DeleteStore(LFStoreDescriptor* store, CWnd* pParentWnd=NULL, CWnd* pOwnerWnd=NULL);
 	void PlayNavigateSound();
 	void PlayWarningSound();
 	void PlayTrashSound();

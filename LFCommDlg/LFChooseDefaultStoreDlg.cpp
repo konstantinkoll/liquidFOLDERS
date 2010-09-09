@@ -5,6 +5,7 @@
 #include "StdAfx.h"
 #include "LFChooseDefaultStoreDlg.h"
 #include "LFStoreNewDlg.h"
+#include "LFStorePropertiesDlg.h"
 #include "Resource.h"
 
 
@@ -13,6 +14,8 @@
 
 extern AFX_EXTENSION_MODULE LFCommDlgDLL;
 extern LFMessageIDs* MessageIDs;
+
+#define GetSelectedStore() m_wndExplorerList.GetNextItem(-1, LVIS_SELECTED)
 
 LFChooseDefaultStoreDlg::LFChooseDefaultStoreDlg(CWnd* pParentWnd)
 	: LFDialog(IDD_CHOOSEDEFAULTSTORE, LFDS_White, pParentWnd)
@@ -31,11 +34,14 @@ void LFChooseDefaultStoreDlg::DoDataExchange(CDataExchange* pDX)
 	LFDialog::DoDataExchange(pDX);
 
 	if ((pDX->m_bSaveAndValidate) && (result))
-	{
-		int idx = m_wndExplorerList.GetNextItem(-1, LVIS_SELECTED);
-		if (idx!=-1)
-			LFErrorBox(LFMakeDefaultStore(result->m_Items[idx]->StoreID, GetSafeHwnd()), GetSafeHwnd());
-	}
+		MakeDefault(m_hWnd);
+}
+
+void LFChooseDefaultStoreDlg::MakeDefault(HWND hWnd)
+{
+	int idx = GetSelectedStore();
+	if (idx!=-1)
+		LFErrorBox(LFMakeDefaultStore(result->m_Items[idx]->StoreID, hWnd), m_hWnd);
 }
 
 void LFChooseDefaultStoreDlg::AdjustLayout()
@@ -67,6 +73,10 @@ BEGIN_MESSAGE_MAP(LFChooseDefaultStoreDlg, LFDialog)
 	ON_REGISTERED_MESSAGE(MessageIDs->StoresChanged, OnUpdateStores)
 	ON_REGISTERED_MESSAGE(MessageIDs->StoreAttributesChanged, OnUpdateStores)
 	ON_REGISTERED_MESSAGE(MessageIDs->DefaultStoreChanged, OnUpdateStores)
+	ON_COMMAND(IDM_STORE_MAKEDEFAULT, OnMakeDefault)
+	ON_COMMAND(IDM_STORE_RENAME, OnRename)
+	ON_COMMAND(IDM_STORE_DELETE, OnDelete)
+	ON_COMMAND(IDM_STORE_PROPERTIES, OnProperties)
 END_MESSAGE_MAP()
 
 BOOL LFChooseDefaultStoreDlg::OnInitDialog()
@@ -80,10 +90,9 @@ BOOL LFChooseDefaultStoreDlg::OnInitDialog()
 
 	m_wndExplorerHeader.Create(this, IDC_EXPLORERHEADER);
 	m_wndExplorerHeader.SetText(caption, hint, FALSE);
-	m_wndExplorerHeader.SetLineStyle(FALSE, FALSE);
 	m_wndExplorerHeader.SetColors(0x126E00, (COLORREF)-1, FALSE);
 
-	const UINT dwStyle = WS_VISIBLE | WS_CHILD | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | LVS_SHOWSELALWAYS | LVS_AUTOARRANGE | LVS_SHAREIMAGELISTS | LVS_ALIGNTOP;
+	const UINT dwStyle = WS_VISIBLE | WS_CHILD | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | LVS_SHOWSELALWAYS | LVS_AUTOARRANGE | LVS_SHAREIMAGELISTS | LVS_ALIGNTOP | LVS_EDITLABELS;
 	CRect rect;
 	rect.SetRectEmpty();
 	m_wndExplorerList.Create(dwStyle, rect, this, IDC_STORELIST);
@@ -102,6 +111,7 @@ BOOL LFChooseDefaultStoreDlg::OnInitDialog()
 
 	m_wndExplorerList.AddStoreColumns();
 	m_wndExplorerList.AddItemCategories();
+	m_wndExplorerList.SetMenus(IDM_STORE, IDM_CREATENEWSTORE);
 	m_wndExplorerList.SetView(LV_VIEW_TILE);
 	m_wndExplorerList.SetFocus();
 
@@ -127,7 +137,7 @@ void LFChooseDefaultStoreDlg::OnGetMinMaxInfo(MINMAXINFO* lpMMI)
 
 LRESULT LFChooseDefaultStoreDlg::OnUpdateStores(WPARAM wParam, LPARAM lParam)
 {
-	if ((wParam & LFMSGF_IntStores) && (GetSafeHwnd()!=(HWND)lParam))
+	if ((wParam & LFMSGF_IntStores) && (m_hWnd!=(HWND)lParam))
 	{
 		char StoreID[LFKeySize] = "";
 		if (result)
@@ -145,6 +155,7 @@ LRESULT LFChooseDefaultStoreDlg::OnUpdateStores(WPARAM wParam, LPARAM lParam)
 		LFFreeFilter(filter);
 
 		m_wndExplorerList.SetSearchResult(result);
+		m_wndExplorerHeader.SetLineStyle(!result->m_ItemCount, FALSE);
 		GetDlgItem(IDOK)->EnableWindow(result->m_ItemCount);
 
 		int idx = -1;
@@ -174,4 +185,33 @@ void LFChooseDefaultStoreDlg::OnNewStore()
 		LFErrorBox(LFCreateStore(s, dlg.makeDefault));
 
 	LFFreeStoreDescriptor(s);
+}
+
+void LFChooseDefaultStoreDlg::OnMakeDefault()
+{
+	MakeDefault(NULL);
+}
+
+void LFChooseDefaultStoreDlg::OnRename()
+{
+	int idx = GetSelectedStore();
+	if (idx!=-1)
+		m_wndExplorerList.EditLabel(idx);
+}
+
+void LFChooseDefaultStoreDlg::OnDelete()
+{
+	int idx = GetSelectedStore();
+	if (idx!=-1)
+		LFErrorBox(((LFApplication*)AfxGetApp())->DeleteStore(result->m_Items[idx], this));
+}
+
+void LFChooseDefaultStoreDlg::OnProperties()
+{
+	int idx = GetSelectedStore();
+	if (idx!=-1)
+	{
+		LFStorePropertiesDlg dlg(result->m_Items[idx]->StoreID, this);
+		dlg.DoModal();
+	}
 }

@@ -329,117 +329,6 @@ CString LFApplication::GetDefaultFontFace()
 	return (OSVersion==OS_XP ? _T("Arial") : _T("Segoe UI"));
 }
 
-void LFApplication::GetBackgroundColors(UINT Background, COLORREF* back, COLORREF* text, COLORREF* highlight)
-{
-	switch (Background)
-	{
-	case ChildBackground_Ribbon:
-	#if (_MFC_VER>=0x1000)
-		if (m_nAppLook==ID_VIEW_APPLOOK_WINDOWS_7)
-		{
-			if (back)
-				*back = (COLORREF)0xCAD4E3;
-			if (text)
-				*text = (COLORREF)0x000000;
-			if (highlight)
-				*highlight = (COLORREF)0x003399;
-		}
-		else
-	#endif
-			switch (CMFCVisualManagerOffice2007::GetStyle())
-			{
-			case CMFCVisualManagerOffice2007::Office2007_Silver:
-				if (back)
-					*back = (COLORREF)0xDDD4D0;
-				if (text)
-					*text = (COLORREF)0x000000;
-				if (highlight)
-					*highlight = (COLORREF)0x5C534C;
-				break;
-			case CMFCVisualManagerOffice2007::Office2007_ObsidianBlack:
-				if (back)
-					*back = (COLORREF)0x535353;
-				if (text)
-					*text = (COLORREF)0xFFFFFF;
-				if (highlight)
-					*highlight = (COLORREF)0xFFFFFF;
-				break;
-			case CMFCVisualManagerOffice2007::Office2007_Aqua:
-				if (back)
-					*back = (COLORREF)0xD9CAC4;
-				if (text)
-					*text = (COLORREF)0x000000;
-				if (highlight)
-					*highlight = (COLORREF)0x6E1500;
-				break;
-			default:
-				if (back)
-					*back = (COLORREF)0xFFDBBF;
-				if (text)
-					*text = (COLORREF)0x000000;
-				if (highlight)
-					*highlight = (COLORREF)0x8B4215;
-			}
-		break;
-	case ChildBackground_Black:
-		if (back)
-			*back = (COLORREF)0x000000;
-		if (text)
-			*text = (COLORREF)0xFFFFFF;
-		if (highlight)
-			*highlight = (COLORREF)0xCCFFFF;
-		break;
-	case ChildBackground_White:
-		if (back)
-			*back = (COLORREF)0xFFFFFF;
-		if (text)
-			*text = (COLORREF)0x000000;
-		if (highlight)
-			*highlight = (COLORREF)0x993300;
-		break;
-	default:
-		if (back)
-			*back = GetSysColor(COLOR_WINDOW);
-		if (text)
-			*text = GetSysColor(COLOR_WINDOWTEXT);
-		if (highlight)
-			*highlight = GetSysColor(COLOR_HIGHLIGHT);
-	}
-}
-
-CString LFApplication::GetCommandName(UINT nID, BOOL bInsertSpace)
-{
-	CString tmpStr = _T("?");
-	tmpStr.LoadString(nID);
-
-	int pos = tmpStr.Find(L'\n');
-	if (pos!=-1)
-		tmpStr.Delete(0, pos+1);
-
-	pos = tmpStr.Find(_T(" ("));
-	if (pos!=-1)
-		tmpStr.Delete(pos, tmpStr.GetLength()-pos);
-
-	if (bInsertSpace)
-	{
-		pos = tmpStr.Find(L'-');
-		if ((pos!=-1) && (tmpStr.Find(L' ')==-1))
-			tmpStr.Insert(pos+1, L' ');
-	}
-
-	return tmpStr;
-}
-
-CMFCRibbonButton* LFApplication::CommandButton(UINT nID, int nSmallImageIndex, int nLargeImageIndex, BOOL bAlwaysShowDescription, BOOL bInsertSpace)
-{
-	return new CMFCRibbonButton(nID, GetCommandName(nID, bInsertSpace), nSmallImageIndex, nLargeImageIndex, bAlwaysShowDescription);
-}
-
-CMFCRibbonCheckBox* LFApplication::CommandCheckBox(UINT nID)
-{
-	return new CMFCRibbonCheckBox(nID, GetCommandName(nID));
-}
-
 void LFApplication::SendMail(CString Subject)
 {
 	CString URL = _T("mailto:support@liquidfolders.net");
@@ -635,11 +524,9 @@ void LFApplication::ExtractCoreIcons(HINSTANCE hModIcons, int size, CImageList* 
 	}
 }
 
-UINT LFApplication::DeleteStore(LFItemDescriptor* store, CWnd* pParentWnd)
+UINT LFApplication::DeleteStore(LFItemDescriptor* store, CWnd* pParentWnd, CWnd* pOwnerWnd)
 {
-	HWND hWnd = (pParentWnd ? pParentWnd->GetSafeHwnd() : NULL);
-
-	if (!LFAskDeleteStore(store, hWnd))
+	if (!LFAskDeleteStore(store, pParentWnd ? pParentWnd->GetSafeHwnd() : NULL))
 		return LFCancel;
 
 	// Dialogbox nur zeigen, wenn der Store gemountet ist
@@ -650,14 +537,12 @@ UINT LFApplication::DeleteStore(LFItemDescriptor* store, CWnd* pParentWnd)
 			return LFCancel;
 	}
 
-	return LFDeleteStore(store->StoreID, hWnd);
+	return LFDeleteStore(store->StoreID, pOwnerWnd ? pOwnerWnd->GetSafeHwnd() : NULL);
 }
 
-UINT LFApplication::DeleteStore(LFStoreDescriptor* store, CWnd* pParentWnd)
+UINT LFApplication::DeleteStore(LFStoreDescriptor* store, CWnd* pParentWnd, CWnd* pOwnerWnd)
 {
-	HWND hWnd = (pParentWnd ? pParentWnd->GetSafeHwnd() : NULL);
-
-	if (!LFAskDeleteStore(store, hWnd))
+	if (!LFAskDeleteStore(store, pParentWnd ? pParentWnd->GetSafeHwnd() : NULL))
 		return LFCancel;
 
 	// Dialogbox nur zeigen, wenn der Store gemountet ist
@@ -668,7 +553,7 @@ UINT LFApplication::DeleteStore(LFStoreDescriptor* store, CWnd* pParentWnd)
 			return LFCancel;
 	}
 
-	return LFDeleteStore(store->StoreID, hWnd);
+	return LFDeleteStore(store->StoreID, pOwnerWnd ? pOwnerWnd->GetSafeHwnd() : NULL);
 }
 
 void LFApplication::PlayNavigateSound()

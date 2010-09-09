@@ -15,6 +15,7 @@ CExplorerList::CExplorerList()
 	p_App = (LFApplication*)AfxGetApp();
 	p_FooterHandler = NULL;
 	hTheme = NULL;
+	m_ItemMenuID = m_BackgroundMenuID = 0;
 }
 
 void CExplorerList::EnableTheming()
@@ -130,6 +131,12 @@ void CExplorerList::SetSearchResult(LFSearchResult* result)
 			SetColumnWidth(a, LVSCW_AUTOSIZE_USEHEADER);
 }
 
+void CExplorerList::SetMenus(UINT _ItemMenuID, UINT _BackgroundMenuID)
+{
+	m_ItemMenuID = _ItemMenuID;
+	m_BackgroundMenuID = _BackgroundMenuID;
+}
+
 BOOL CExplorerList::SupportsFooter()
 {
 	return (p_FooterHandler!=NULL);
@@ -170,6 +177,7 @@ BEGIN_MESSAGE_MAP(CExplorerList, CListCtrl)
 	ON_WM_CREATE()
 	ON_WM_DESTROY()
 	ON_WM_THEMECHANGED()
+	ON_WM_CONTEXTMENU()
 END_MESSAGE_MAP()
 
 int CExplorerList::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -214,4 +222,46 @@ LRESULT CExplorerList::OnThemeChanged()
 	}
 
 	return TRUE;
+}
+
+void CExplorerList::OnContextMenu(CWnd* /*pWnd*/, CPoint pos)
+{
+	LVHITTESTINFO pInfo;
+	if ((pos.x<0) || (pos.y<0))
+	{
+		CRect r;
+		GetItemRect(GetNextItem(-1, LVNI_FOCUSED), r, LVIR_ICON);
+		pInfo.pt.x = r.left;
+		pInfo.pt.y = r.top;
+		pos = pInfo.pt;
+	}
+	else
+	{
+		ScreenToClient(&pos);
+		pInfo.pt = pos;
+	}
+
+	SubItemHitTest(&pInfo);
+
+	UINT MenuID = m_BackgroundMenuID;
+	if (pInfo.iItem!=-1)
+		if (GetNextItem(pInfo.iItem-1, LVNI_FOCUSED | LVNI_SELECTED)==pInfo.iItem)
+			MenuID = m_ItemMenuID;
+
+	if (MenuID)
+	{
+		ClientToScreen(&pos);
+
+		CMenu Menu;
+		Menu.LoadMenu(MenuID);
+		ASSERT_VALID(&Menu);
+
+		CMenu* PopupMenu = Menu.GetSubMenu(0);
+		ASSERT_VALID(PopupMenu);
+
+		if (pInfo.iItem!=-1)
+			PopupMenu->SetDefaultItem(0, TRUE);
+
+		TrackPopupMenu(PopupMenu->GetSafeHmenu(), TPM_LEFTALIGN | TPM_RIGHTBUTTON, pos.x, pos.y, 0, GetOwner()->GetSafeHwnd(), NULL);
+	}
 }
