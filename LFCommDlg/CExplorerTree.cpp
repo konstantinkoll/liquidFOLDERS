@@ -273,6 +273,8 @@ void CExplorerTree::EnumObjects(HTREEITEM hParentItem, IShellFolder* pParentFold
 
 BEGIN_MESSAGE_MAP(CExplorerTree, CTreeCtrl)
 	ON_WM_CREATE()
+	ON_WM_ERASEBKGND()
+	ON_WM_PAINT()
 	ON_WM_CONTEXTMENU()
 	ON_WM_MOUSEMOVE()
 	ON_WM_MOUSELEAVE()
@@ -306,6 +308,32 @@ int CExplorerTree::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	PopulateTree();
 
 	return 0;
+}
+
+BOOL CExplorerTree::OnEraseBkgnd(CDC* /*pDC*/)
+{
+	return TRUE;
+}
+
+void CExplorerTree::OnPaint()
+{
+	CPaintDC pDC(this);
+
+	CRect rect;
+	GetClientRect(rect);
+
+	CDC dc;
+	dc.CreateCompatibleDC(&pDC);
+	dc.SetBkMode(TRANSPARENT);
+
+	CBitmap buffer;
+	buffer.CreateCompatibleBitmap(&pDC, rect.Width(), rect.Height());
+	CBitmap* pOldBitmap = dc.SelectObject(&buffer);
+
+	CWnd::DefWindowProc(WM_PAINT, (WPARAM)dc.m_hDC, NULL);
+
+	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);
+	dc.SelectObject(pOldBitmap);
 }
 
 void CExplorerTree::OnContextMenu(CWnd* /*pWnd*/, CPoint point)

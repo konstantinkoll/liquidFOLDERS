@@ -18,6 +18,7 @@ public:
 	~LFBrowseForFolderDlg();
 
 	virtual void DoDataExchange(CDataExchange* pDX);
+	virtual void AdjustLayout();
 
 	LPITEMIDLIST m_FolderPIDL;
 	TCHAR m_FolderPath[MAX_PATH];
@@ -29,9 +30,8 @@ protected:
 	CString m_Caption;
 	CString m_Hint;
 
-	void AdjustLayout();
-
 	afx_msg BOOL OnInitDialog();
+	afx_msg void OnGetMinMaxInfo(MINMAXINFO* lpMMI);
 	afx_msg void OnSelectionChanged(NMHDR* pNMHDR, LRESULT* pResult);
 	DECLARE_MESSAGE_MAP()
 

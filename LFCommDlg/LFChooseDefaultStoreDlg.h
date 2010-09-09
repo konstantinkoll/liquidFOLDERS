@@ -5,34 +5,32 @@
 #pragma once
 #include "LFCore.h"
 #include "liquidFOLDERS.h"
+#include "CExplorerHeader.h"
 #include "CExplorerList.h"
+#include "LFDialog.h"
 
 
 // LFChooseDefaultStoreDlg
 //
 
-class AFX_EXT_CLASS LFChooseDefaultStoreDlg : public CDialog
+class AFX_EXT_CLASS LFChooseDefaultStoreDlg : public LFDialog
 {
 public:
 	LFChooseDefaultStoreDlg(CWnd* pParentWnd);
 	~LFChooseDefaultStoreDlg();
 
+	virtual void AdjustLayout();
 	virtual void DoDataExchange(CDataExchange* pDX);
 
 protected:
-	HICON m_icStore;
-	HICON m_icDefaultStore;
-	CExplorerList m_List;
-	CImageList* m_Icons;
+	CExplorerHeader m_wndExplorerHeader;
+	CExplorerList m_wndExplorerList;
 	LFSearchResult* result;
-
-	void AddColumn(CListCtrl* l, UINT attr, UINT no);
 
 	afx_msg BOOL OnInitDialog();
 	afx_msg void OnDestroy();
-	afx_msg LRESULT OnThemeChanged();
-	afx_msg LRESULT UpdateStores(WPARAM wParam, LPARAM lParam);
-	afx_msg void OnGetDispInfo(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnGetMinMaxInfo(MINMAXINFO* lpMMI);
+	afx_msg LRESULT OnUpdateStores(WPARAM wParam, LPARAM lParam);
 	afx_msg void OnDoubleClick(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnNewStore();
 	DECLARE_MESSAGE_MAP()

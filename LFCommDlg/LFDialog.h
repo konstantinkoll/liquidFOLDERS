@@ -7,6 +7,7 @@
 #include "CGdiPlusBitmap.h"
 #include "liquidFOLDERS.h"
 #include "LFApplication.h"
+#include <list>
 
 
 // LFDialog
@@ -23,6 +24,8 @@ class AFX_EXT_CLASS LFDialog : public CDialog
 public:
 	LFDialog(UINT nIDTemplate, UINT _Design=LFDS_Default, CWnd* pParent=NULL);
 
+	virtual void AdjustLayout();
+
 	void GetLayoutRect(LPRECT lpRect) const;
 
 protected:
@@ -33,12 +36,16 @@ protected:
 	virtual void OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect);
 	virtual void CheckLicenseKey(LFLicense* License=NULL);
 
+	void AddBottomControl(CWnd* pChildWnd);
+	void AddBottomControl(UINT nID);
+
 	afx_msg BOOL OnInitDialog();
+	afx_msg void OnDestroy();
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
+	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg LRESULT OnThemeChanged();
 	afx_msg void OnSysColorChange();
 	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
-	afx_msg void OnDestroy();
 	afx_msg void OnEnterLicenseKey();
 	DECLARE_MESSAGE_MAP()
 
@@ -54,4 +61,6 @@ private:
 	int BackBufferL;
 	int BackBufferH;
 	HBRUSH hBackgroundBrush;
+	std::list<CWnd*> BottomControls;
+	int LastHeight;
 };

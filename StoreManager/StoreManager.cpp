@@ -181,7 +181,7 @@ void CStoreManagerApp::CloseAllFrames(BOOL leaveOne)
 	{
 		if ((*ppFrame)!=m_pMainWnd)
 			(*ppFrame)->PostMessage(WM_CLOSE);
-		ppFrame++ ;
+		ppFrame++;
 
 		while(PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
 			DispatchMessage(&msg);

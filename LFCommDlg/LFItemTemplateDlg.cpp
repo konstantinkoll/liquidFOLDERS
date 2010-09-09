@@ -36,7 +36,7 @@ LFItemTemplateDlg::LFItemTemplateDlg(CWnd* pParentWnd, LFItemDescriptor* pItem, 
 		int count = 0;
 		if (reg.Read(_T("AttrCount"), count))
 			if (count==LFAttributeCount)
-				for (unsigned int a=0; a<LFAttributeCount; a++)
+				for (UINT a=0; a<LFAttributeCount; a++)
 				{
 					CString value;
 					value.Format(_T("Attr%d"), a);
@@ -170,7 +170,7 @@ void LFItemTemplateDlg::DoDataExchange(CDataExchange* pDX)
 	{
 		m_pItem->Type = LFTypeFile;
 
-		for (unsigned int a=0; a<LFAttributeCount; a++)
+		for (UINT a=0; a<LFAttributeCount; a++)
 			if ((pAttributes[a]) && (!AttributeValues[a].IsNull))
 				LFSetAttributeVariantData(m_pItem, &AttributeValues[a]);
 
@@ -181,7 +181,7 @@ void LFItemTemplateDlg::DoDataExchange(CDataExchange* pDX)
 		{
 			reg.Write(_T("AttrCount"), LFAttributeCount);
 
-			for (unsigned int a=0; a<LFAttributeCount; a++)
+			for (UINT a=0; a<LFAttributeCount; a++)
 			{
 				CString value;
 				value.Format(_T("Attr%d"), a);

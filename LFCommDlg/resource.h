@@ -56,6 +56,8 @@
 #define IDS_COLLAPSE                    20312
 #define IDS_IMPORTFOLDER_CAPTION        20313
 #define IDS_IMPORTFOLDER_HINT           20314
+#define IDS_CHOOSEDEFAULT_CAPTION       20315
+#define IDS_CHOOSEDEFAULT_HINT          20316
 #define IDD_ABOUT                       21000
 #define IDC_RIBBONCOLORCOMBO            21001
 #define IDC_TEXTUREFRAME                21002

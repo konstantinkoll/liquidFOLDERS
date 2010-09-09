@@ -61,6 +61,7 @@ void LFBrowseForFolderDlg::AdjustLayout()
 
 
 BEGIN_MESSAGE_MAP(LFBrowseForFolderDlg, LFDialog)
+	ON_WM_GETMINMAXINFO()
 	ON_NOTIFY(TVN_SELCHANGED, IDC_SHELLTREE, OnSelectionChanged)
 END_MESSAGE_MAP()
 
@@ -81,6 +82,14 @@ BOOL LFBrowseForFolderDlg::OnInitDialog()
 	AdjustLayout();
 
 	return FALSE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird
+}
+
+void LFBrowseForFolderDlg::OnGetMinMaxInfo(MINMAXINFO* lpMMI)
+{
+	LFDialog::OnGetMinMaxInfo(lpMMI);
+
+	lpMMI->ptMinTrackSize.x = max(lpMMI->ptMinTrackSize.x, 200);
+	lpMMI->ptMinTrackSize.y = max(lpMMI->ptMinTrackSize.y, 300);
 }
 
 void LFBrowseForFolderDlg::OnSelectionChanged(NMHDR* pNMHDR, LRESULT* /*pResult*/)
