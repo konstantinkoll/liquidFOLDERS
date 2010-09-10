@@ -43,6 +43,7 @@ public:
 	virtual void GetTooltipData(HICON& hIcon, CSize& size, CString& caption, CString& hint);
 
 	void SetItem(LFItemDescriptor* _item, BOOL Repaint=TRUE);
+	void SetItem(LFStoreDescriptor* s, BOOL Repaint=TRUE);
 	BOOL GetStoreID(char* StoreID);
 
 protected:

@@ -68,9 +68,9 @@ BEGIN_MESSAGE_MAP(CMigrateWnd, CGlasWindow)
 	ON_WM_CREATE()
 	ON_MESSAGE_VOID(WM_IDLEUPDATECMDUI, OnIdleUpdateCmdUI)
 	ON_COMMAND(ID_VIEW_SELECTROOT, OnSelectRoot)
-/*	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoresChanged, OnStoresChanged)
+	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoresChanged, OnStoresChanged)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoreAttributesChanged, OnStoresChanged)
-	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->DefaultStoreChanged, OnStoresChanged)*/
+	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->DefaultStoreChanged, OnStoresChanged)
 END_MESSAGE_MAP()
 
 int CMigrateWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -128,8 +128,22 @@ void CMigrateWnd::OnSelectRoot()
 		m_wndFolder.SetItem(dlg.m_FolderPIDL);
 }
 
-/*
-LRESULT CMigrateWnd::OnStoresChanged(WPARAM wParam, LPARAM lParam)
+LRESULT CMigrateWnd::OnStoresChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)
 {
+	char StoreID[LFKeySize];
+	if (m_wndStore.GetStoreID(StoreID))
+	{
+		LFStoreDescriptor* s = LFAllocStoreDescriptor();
+		if (LFGetStoreSettings(StoreID, s)==LFOk)
+		{
+			m_wndStore.SetItem(s);
+		}
+		else
+		{
+			m_wndStore.SetEmpty();
+		}
+		LFFreeStoreDescriptor(s);
+	}
+
 	return NULL;
-}*/
+}

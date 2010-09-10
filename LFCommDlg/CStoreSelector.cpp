@@ -153,6 +153,21 @@ void CStoreSelector::SetItem(LFItemDescriptor* _item, BOOL Repaint)
 	}
 }
 
+void CStoreSelector::SetItem(LFStoreDescriptor* s, BOOL Repaint)
+{
+	if (s)
+	{
+		LFFreeItemDescriptor(item);
+		item = LFAllocItemDescriptor(s);
+
+		CDropdownSelector::SetItem(p_App->m_CoreImageListSmall.ExtractIcon(item->IconID-1), item->CoreAttributes.FileName, Repaint);
+	}
+	else
+	{
+		SetEmpty();
+	}
+}
+
 BOOL CStoreSelector::GetStoreID(char* StoreID)
 {
 	if (m_IsEmpty)

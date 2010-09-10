@@ -29,7 +29,7 @@ protected:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnIdleUpdateCmdUI();
 	afx_msg void OnSelectRoot();
-//	afx_msg LRESULT OnStoresChanged(WPARAM wParam, LPARAM lParam);
+	afx_msg LRESULT OnStoresChanged(WPARAM wParam, LPARAM lParam);
 	DECLARE_MESSAGE_MAP()
 
 	HICON m_hIcon;
