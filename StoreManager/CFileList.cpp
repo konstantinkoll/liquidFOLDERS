@@ -305,7 +305,7 @@ void CFileList::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 	if (!View->HandleDefaultKeys(nChar, nRepCnt, nFlags))
 	{
 		ItemChanged |= 1;
-		CExplorerList::OnKeyDown(nChar, nRepCnt, nFlags);
+		CListCtrl::OnKeyDown(nChar, nRepCnt, nFlags);
 
 		if (ItemChanged & 2)
 			GetParentFrame()->SendMessage(WM_COMMAND, ID_APP_UPDATESELECTION);

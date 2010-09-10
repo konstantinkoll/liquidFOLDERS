@@ -178,6 +178,7 @@ BEGIN_MESSAGE_MAP(CExplorerList, CListCtrl)
 	ON_WM_DESTROY()
 	ON_WM_THEMECHANGED()
 	ON_WM_CONTEXTMENU()
+	ON_WM_KEYDOWN()
 END_MESSAGE_MAP()
 
 int CExplorerList::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -231,9 +232,11 @@ void CExplorerList::OnContextMenu(CWnd* /*pWnd*/, CPoint pos)
 	{
 		CRect r;
 		GetItemRect(GetNextItem(-1, LVNI_FOCUSED), r, LVIR_ICON);
-		pInfo.pt.x = r.left;
+		pInfo.pt.x = pos.x = r.left;
 		pInfo.pt.y = r.top;
-		pos = pInfo.pt;
+
+		GetItemRect(GetNextItem(-1, LVNI_FOCUSED), r, LVIR_LABEL);
+		pos.y = r.bottom;
 	}
 	else
 	{
@@ -264,4 +267,27 @@ void CExplorerList::OnContextMenu(CWnd* /*pWnd*/, CPoint pos)
 
 		TrackPopupMenu(PopupMenu->GetSafeHmenu(), TPM_LEFTALIGN | TPM_RIGHTBUTTON, pos.x, pos.y, 0, GetOwner()->GetSafeHwnd(), NULL);
 	}
+}
+
+void CExplorerList::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
+{
+	switch(nChar)
+	{
+	case VK_F2:
+		if ((GetKeyState(VK_CONTROL)>=0) && (GetKeyState(VK_SHIFT)>=0))
+		{
+			EditLabel(GetNextItem(-1, LVIS_SELECTED | LVIS_FOCUSED));
+			return;
+		}
+		break;
+	case VK_DELETE:
+		if ((GetKeyState(VK_CONTROL)>=0) && (GetKeyState(VK_SHIFT)>=0))
+		{
+			GetOwner()->SendMessage(WM_COMMAND, IDM_STORE_DELETE);
+			return;
+		}
+		break;
+	}
+
+	CListCtrl::OnKeyDown(nChar, nRepCnt, nFlags);
 }
