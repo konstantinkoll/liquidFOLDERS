@@ -1217,7 +1217,7 @@ IDM_STORES MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "Destinar al &store predeterminado", IDM_STORE_MAKEDEFAULT
+        MENUITEM "Establecer al &store predeterminado", IDM_STORE_MAKEDEFAULT
         MENUITEM SEPARATOR
         MENUITEM "&Renombrar",                  IDM_STORE_RENAME
         MENUITEM "&Eliminar",                   IDM_STORE_DELETE
