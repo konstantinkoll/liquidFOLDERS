@@ -303,6 +303,13 @@ void SendLFNotifyMessage(unsigned int Msg, unsigned int Flags, HWND hWndSource)
 
 void SendShellNotifyMessage(unsigned int Msg, char* StoreID)
 {
+	ULONG chEaten;
+	ULONG dwAttributes;
+	LPITEMIDLIST pidl = NULL;
+	IShellFolder* pDesktop = NULL;
+	if (FAILED(SHGetDesktopFolder(&pDesktop)))
+		return;
+
 	wchar_t Key[LFKeySize+1];
 	if (StoreID)
 	{
@@ -317,11 +324,15 @@ void SendShellNotifyMessage(unsigned int Msg, char* StoreID)
 	wchar_t Path[MAX_PATH];
 	wcscpy_s(Path, MAX_PATH, L"::{3F2D914F-FE57-414F-9F88-A377C7841DA4}");
 	wcscat_s(Path, MAX_PATH, Key);
-	SHChangeNotify(Msg, SHCNF_FLUSH | SHCNF_PATH, Path, (Msg==SHCNE_RENAMEFOLDER) ? Path : NULL);
+	if (SUCCEEDED(pDesktop->ParseDisplayName(NULL, NULL, Path, &chEaten, &pidl, &dwAttributes)))
+		SHChangeNotify(Msg, SHCNF_FLUSH, pidl, (Msg==SHCNE_RENAMEFOLDER) ? pidl : NULL);
 
 	wcscpy_s(Path, MAX_PATH, L"::{20D04FE0-3AEA-1069-A2D8-08002B30309D}");
 	wcscat_s(Path, MAX_PATH, Key);
-	SHChangeNotify(Msg, SHCNF_FLUSH | SHCNF_PATH, Path, (Msg==SHCNE_RENAMEFOLDER) ? Path : NULL);
+	if (SUCCEEDED(pDesktop->ParseDisplayName(NULL, NULL, Path, &chEaten, &pidl, &dwAttributes)))
+		SHChangeNotify(Msg, SHCNF_FLUSH, pidl, (Msg==SHCNE_RENAMEFOLDER) ? pidl : NULL);
+
+	pDesktop->Release();
 }
 
 
