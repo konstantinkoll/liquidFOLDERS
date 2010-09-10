@@ -141,6 +141,7 @@ LRESULT CMigrateWnd::OnStoresChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)
 		else
 		{
 			m_wndStore.SetEmpty();
+			OnIdleUpdateCmdUI();
 		}
 		LFFreeStoreDescriptor(s);
 	}
