@@ -69,6 +69,7 @@ void LFChooseDefaultStoreDlg::AdjustLayout()
 BEGIN_MESSAGE_MAP(LFChooseDefaultStoreDlg, LFDialog)
 	ON_WM_GETMINMAXINFO()
 	ON_NOTIFY(NM_DBLCLK, IDC_STORELIST, OnDoubleClick)
+	ON_NOTIFY(LVN_ENDLABELEDIT, IDC_STORELIST, OnEndLabelEdit)
 	ON_BN_CLICKED(IDC_NEWSTORE, OnNewStore)
 	ON_REGISTERED_MESSAGE(MessageIDs->StoresChanged, OnUpdateStores)
 	ON_REGISTERED_MESSAGE(MessageIDs->StoreAttributesChanged, OnUpdateStores)
@@ -171,9 +172,34 @@ LRESULT LFChooseDefaultStoreDlg::OnUpdateStores(WPARAM wParam, LPARAM lParam)
 
 void LFChooseDefaultStoreDlg::OnDoubleClick(NMHDR* /*pNMHDR*/, LRESULT* /*pResult*/)
 {
-	if (result)
-		if (result->m_ItemCount)
-			PostMessage(WM_COMMAND, (WPARAM)IDOK);
+	if (GetSelectedStore()!=-1)
+		PostMessage(WM_COMMAND, (WPARAM)IDOK);
+}
+
+void LFChooseDefaultStoreDlg::OnEndLabelEdit(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	LV_DISPINFO* pDispInfo = (LV_DISPINFO*)pNMHDR;
+
+	*pResult = FALSE;
+
+	if ((result) && (pDispInfo->item.pszText))
+		if (pDispInfo->item.pszText[0]!=L'\0')
+		{
+			LFTransactionList* tl = LFAllocTransactionList();
+			LFAddItemDescriptor(tl, result->m_Items[pDispInfo->item.iItem]);
+
+			LFVariantData value;
+			value.Attr = LFAttrFileName;
+			value.Type = LFTypeUnicodeString;
+			value.IsNull = false;
+			wcscpy_s(value.UnicodeString, 256, pDispInfo->item.pszText);
+
+			LFTransactionUpdate(tl, NULL, &value);
+			LFErrorBox(tl->m_LastError);
+
+			LFFreeTransactionList(tl);
+			*pResult = TRUE;
+		}
 }
 
 void LFChooseDefaultStoreDlg::OnNewStore()
