@@ -82,7 +82,7 @@
 #define IDD_CHOOSEDEFAULTSTORE          21200
 #define IDC_STORELIST                   21201
 #define IDC_NEWSTORE                    21202
-#define IDM_STORE                       21203
+#define IDM_STORES                      21203
 #define IDM_STORE_MAKEDEFAULT           21204
 #define IDM_STORE_RENAME                21205
 #define IDM_STORE_DELETE                21206
