@@ -693,9 +693,9 @@ BEGIN
         MENUITEM "Make default &store",         IDM_STORE_MAKEDEFAULT
         MENUITEM SEPARATOR
         MENUITEM "&Rename",                     IDM_STORE_RENAME
-        MENUITEM "&Delete...",                  IDM_STORE_DELETE
+        MENUITEM "&Delete",                     IDM_STORE_DELETE
         MENUITEM SEPARATOR
-        MENUITEM "&Properties...",              IDM_STORE_PROPERTIES
+        MENUITEM "&Properties",                 IDM_STORE_PROPERTIES
     END
 END
 
@@ -1217,12 +1217,12 @@ IDM_STORES MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "Make default &store",         IDM_STORE_MAKEDEFAULT
+        MENUITEM "Make &store predeterminado",  IDM_STORE_MAKEDEFAULT
         MENUITEM SEPARATOR
-        MENUITEM "&Rename",                     IDM_STORE_RENAME
-        MENUITEM "&Delete...",                  IDM_STORE_DELETE
+        MENUITEM "&Renombrar",                  IDM_STORE_RENAME
+        MENUITEM "&Eliminar",                   IDM_STORE_DELETE
         MENUITEM SEPARATOR
-        MENUITEM "&Properties...",              IDM_STORE_PROPERTIES
+        MENUITEM "&Propiedades",                IDM_STORE_PROPERTIES
     END
 END
 
@@ -1732,9 +1732,9 @@ BEGIN
         MENUITEM "Make default &store",         IDM_STORE_MAKEDEFAULT
         MENUITEM SEPARATOR
         MENUITEM "&Rename",                     IDM_STORE_RENAME
-        MENUITEM "&Delete...",                  IDM_STORE_DELETE
+        MENUITEM "&Delete",                     IDM_STORE_DELETE
         MENUITEM SEPARATOR
-        MENUITEM "&Properties...",              IDM_STORE_PROPERTIES
+        MENUITEM "&Properties",                 IDM_STORE_PROPERTIES
     END
 END
 
