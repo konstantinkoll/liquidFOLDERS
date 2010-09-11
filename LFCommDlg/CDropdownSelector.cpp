@@ -654,5 +654,6 @@ void CDropdownSelector::OnSetFocus(CWnd* /*pOldWnd*/)
 
 void CDropdownSelector::OnKillFocus(CWnd* /*pOldWnd*/)
 {
-	Invalidate();
+	if (!OnCloseDropdown())
+		Invalidate();
 }
