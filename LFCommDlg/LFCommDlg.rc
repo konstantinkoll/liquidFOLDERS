@@ -1730,12 +1730,12 @@ IDM_STORES MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "Make default &store",         IDM_STORE_MAKEDEFAULT
+        MENUITEM "Faites &standard",            IDM_STORE_MAKEDEFAULT
         MENUITEM SEPARATOR
-        MENUITEM "&Rename",                     IDM_STORE_RENAME
-        MENUITEM "&Delete",                     IDM_STORE_DELETE
+        MENUITEM "&Renommer",                   IDM_STORE_RENAME
+        MENUITEM "&Effacer",                    IDM_STORE_DELETE
         MENUITEM SEPARATOR
-        MENUITEM "&Properties",                 IDM_STORE_PROPERTIES
+        MENUITEM "&Propriétés",                 IDM_STORE_PROPERTIES
     END
 END
 
