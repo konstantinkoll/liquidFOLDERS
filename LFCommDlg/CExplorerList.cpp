@@ -183,7 +183,7 @@ END_MESSAGE_MAP()
 
 int CExplorerList::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
-	if (CListCtrl::OnCreate(lpCreateStruct) == -1)
+	if (CListCtrl::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
 	SetExtendedStyle(GetExtendedStyle() | LVS_EX_FULLROWSELECT | LVS_EX_DOUBLEBUFFER);

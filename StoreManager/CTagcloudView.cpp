@@ -316,7 +316,7 @@ END_MESSAGE_MAP()
 
 int CTagcloudView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
-	if (CFileView::OnCreate(lpCreateStruct) == -1)
+	if (CFileView::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
 	if ((theApp.m_ThemeLibLoaded) && (theApp.OSVersion>=OS_Vista))

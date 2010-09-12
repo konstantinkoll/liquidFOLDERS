@@ -287,7 +287,7 @@ END_MESSAGE_MAP()
 
 int CExplorerTree::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
-	if (CTreeCtrl::OnCreate(lpCreateStruct) == -1)
+	if (CTreeCtrl::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
 	m_TooltipCtrl.Create(this);

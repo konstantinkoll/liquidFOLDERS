@@ -192,7 +192,7 @@ END_MESSAGE_MAP()
 
 int CGlasWindow::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
-	if (CWnd::OnCreate(lpCreateStruct) == -1)
+	if (CWnd::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
 	OnCompositionChanged();
