@@ -19,7 +19,6 @@ class AFX_EXT_CLASS CExplorerList : public CListCtrl
 public:
 	CExplorerList();
 
-	void EnableTheming();
 	void AddCategory(int ID, CString name, CString hint=_T(""));
 	void AddItemCategories();
 	void AddColumn(int ID, CString name);

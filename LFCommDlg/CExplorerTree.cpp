@@ -301,8 +301,6 @@ int CExplorerTree::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	LOGFONT lf;
 	p_App->m_DefaultFont.GetLogFont(&lf);
 	SetItemHeight((SHORT)(max(abs(lf.lfHeight), GetSystemMetrics(SM_CYSMICON))+(p_App->OSVersion<OS_Vista ? 2 : 6)));
-	SetBkColor(0xFFFFFF);
-	SetTextColor(0x000000);
 	SetImageList(&p_App->m_SystemImageListSmall, 0);
 
 	PopulateTree();
@@ -317,6 +315,17 @@ BOOL CExplorerTree::OnEraseBkgnd(CDC* /*pDC*/)
 
 void CExplorerTree::OnPaint()
 {
+	if (IsCtrlThemed())
+	{
+		SetBkColor(0xFFFFFF);
+		SetTextColor(0x000000);
+	}
+	else
+	{
+		SetBkColor(GetSysColor(COLOR_WINDOW));
+		SetTextColor(GetSysColor(COLOR_WINDOWTEXT));
+	}
+
 	CPaintDC pDC(this);
 
 	CRect rect;

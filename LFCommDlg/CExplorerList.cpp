@@ -18,15 +18,6 @@ CExplorerList::CExplorerList()
 	m_ItemMenuID = m_BackgroundMenuID = 0;
 }
 
-void CExplorerList::EnableTheming()
-{
-	if ((p_App->m_ThemeLibLoaded) && (p_App->OSVersion>=OS_Vista))
-	{
-		p_App->zSetWindowTheme(GetSafeHwnd(), L"explorer", NULL);
-		hTheme = p_App->zOpenThemeData(GetSafeHwnd(), VSCLASS_LISTVIEW);
-	}
-}
-
 void CExplorerList::AddCategory(int ID, CString name, CString hint)
 {
 	LVGROUP lvg;
@@ -187,7 +178,12 @@ int CExplorerList::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 
 	SetExtendedStyle(GetExtendedStyle() | LVS_EX_FULLROWSELECT | LVS_EX_DOUBLEBUFFER);
-	EnableTheming();
+
+	if ((p_App->m_ThemeLibLoaded) && (p_App->OSVersion>=OS_Vista))
+	{
+		p_App->zSetWindowTheme(GetSafeHwnd(), L"explorer", NULL);
+		hTheme = p_App->zOpenThemeData(GetSafeHwnd(), VSCLASS_LISTVIEW);
+	}
 
 	LVTILEVIEWINFO tvi;
 	ZeroMemory(&tvi, sizeof(tvi));
