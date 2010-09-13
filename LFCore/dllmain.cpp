@@ -24,10 +24,6 @@ bool APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID /*lpRese
 		LFMessages.DefaultStoreChanged = RegisterWindowMessageA("liquidFOLDERS.DefaultStoreChanged");
 		LFMessages.DrivesChanged = RegisterWindowMessageA("liquidFOLDERS.DrivesChanged");
 
-		char WindowsDir[MAX_PATH];
-		GetWindowsDirectoryA(WindowsDir, MAX_PATH);
-		BootDrive = WindowsDir[0];
-
 		InitMutex();
 		InitAirportDatabase();
 		InitStoreCache();

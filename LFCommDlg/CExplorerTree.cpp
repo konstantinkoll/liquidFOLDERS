@@ -249,6 +249,7 @@ void CExplorerTree::PopulateTree()
 		else
 		{
 			hItem = InsertItem(pParentFolder, m_RootPath.GetBuffer());
+			Select(hItem, TVGN_CARET);
 		}
 	}
 

@@ -29,7 +29,6 @@ extern LFShellProperty AttrProperties[];
 #pragma data_seg("common_drives")
 
 unsigned int DriveTypes[26] = { DRIVE_UNKNOWN };
-char BootDrive = '\0';
 
 #pragma data_seg()
 #pragma comment(linker, "/SECTION:common_drives,RWS")
@@ -129,8 +128,6 @@ LFCore_API unsigned int LFGetDriveIcon(char Drv, bool IsMounted)
 		switch (DriveTypes[Drv-'A'])
 		{
 		case DRIVE_FIXED:
-			ic = (Drv==BootDrive) ? IDI_DRV_System : IsMounted ? IDI_DRV_Default : IDI_DRV_Empty;
-			break;
 		case DRIVE_REMOVABLE:
 			ic = IsMounted ? IDI_DRV_Default : IDI_DRV_Empty;
 			break;

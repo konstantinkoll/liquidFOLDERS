@@ -17,14 +17,39 @@ extern AFX_EXTENSION_MODULE LFCommDlgDLL;
 
 #define WM_USER_MEDIACHANGED       WM_USER+2
 
-LFStoreNewDriveDlg::LFStoreNewDriveDlg(CWnd* pParentWnd, char Drive, LFStoreDescriptor* _store)
+LFStoreNewDriveDlg::LFStoreNewDriveDlg(CWnd* pParentWnd, char Drive, LFStoreDescriptor* pStore)
 	: CDialog(IDD_STORENEWDRIVE, pParentWnd)
 {
-	store = _store;
+	m_pStore = pStore;
 	m_ulSHChangeNotifyRegister = NULL;
 	m_Drive = Drive;
 }
 
+void LFStoreNewDriveDlg::DoDataExchange(CDataExchange* pDX)
+{
+	DDX_Control(pDX, IDC_HYBRIDSTOREICON, m_IconHybrid);
+	DDX_Control(pDX, IDC_EXTERNALSTOREICON, m_IconExternal);
+	DDX_Control(pDX, IDC_PATHTREE, m_PathTree);
+
+	// Nur beim Verlassen des Dialogs
+	if (pDX->m_bSaveAndValidate)
+	{
+		// Pfad zusammenbauen
+		char Path[MAX_PATH];
+		m_PathTree.GetSelectedPathA(Path);
+		if (Path[0])
+			if (Path[strlen(Path)-1]!='\\')
+				strcat_s(Path, MAX_PATH, "\\");
+
+		// LFStoreDescriptor ausfüllen
+		GetDlgItem(IDC_STORENAME)->GetWindowText(m_pStore->StoreName, 256);
+		GetDlgItem(IDC_COMMENT)->GetWindowText(m_pStore->Comment, 256);
+
+		m_pStore->StoreMode = ((CButton*)GetDlgItem(IDC_HYBRIDSTORE))->GetCheck() ? LFStoreModeHybrid : LFStoreModeExternal;
+		m_pStore->AutoLocation = FALSE;
+		strcpy_s(m_pStore->DatPath, MAX_PATH, Path);
+	}
+}
 
 BEGIN_MESSAGE_MAP(LFStoreNewDriveDlg, CDialog)
 	ON_WM_DESTROY()
@@ -41,15 +66,20 @@ BOOL LFStoreNewDriveDlg::OnInitDialog()
 	SetIcon(hIcon, FALSE);
 	SetIcon(hIcon, TRUE);
 
-	// Status und Laufwerke
+	// Titelleiste
+	CString tmpStr;
+	GetWindowText(tmpStr);
+	CString caption;
+	caption.Format(tmpStr, m_Drive);
+	SetWindowText(caption);
+
+	// Status
 	((CButton*)GetDlgItem(IDC_EXTERNALSTORE))->SetCheck(TRUE);
 
-	// Titelleiste
-	CString text;
-	GetWindowText(text);
-	CString caption;
-	caption.Format(text, m_Drive);
-	SetWindowText(caption);
+	// Pfad
+	m_PathTree.SetOnlyFilesystem(TRUE);
+	tmpStr.Format(_T("%c:\\"), m_Drive);
+	m_PathTree.SetRootPath(tmpStr);
 
 	// Icons
 	m_IconHybrid.SetCoreIcon(IDI_STORE_Bag);
@@ -87,38 +117,7 @@ LRESULT LFStoreNewDriveDlg::OnMediaChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)
 
 	UINT uDriveType = GetDriveType(szDriveRoot);
 	if ((uDriveType==DRIVE_UNKNOWN) || (uDriveType==DRIVE_NO_ROOT_DIR))
-			EndDialog(IDCANCEL);
+		EndDialog(IDCANCEL);
 
 	return NULL;
-}
-
-void LFStoreNewDriveDlg::DoDataExchange(CDataExchange* pDX)
-{
-	DDX_Control(pDX, IDC_HYBRIDSTOREICON, m_IconHybrid);
-	DDX_Control(pDX, IDC_EXTERNALSTOREICON, m_IconExternal);
-
-	// Nur beim Verlassen des Dialogs
-	if ((store) && (pDX->m_bSaveAndValidate))
-	{
-		// Pfad zusammenbauen
-		CStringA Pfad;
-	/*	if (m_nIDTemplate==IDD_STORENEW)
-		{
-			CListCtrl* li = (CListCtrl*)GetDlgItem(IDC_DRIVELIST);
-			int FocusItem = li->GetNextItem(-1, LVNI_FOCUSED);
-			Pfad = ((char)li->GetItemData(FocusItem));
-		}
-		else
-		{
-			Pfad = m_Drive;
-		}*/
-		Pfad += _T(":\\");
-
-		// LFStoreDescriptor ausfüllen
-		GetDlgItem(IDC_STORENAME)->GetWindowText(store->StoreName, 256);
-		GetDlgItem(IDC_COMMENT)->GetWindowText(store->Comment, 256);
-		DDX_Radio(pDX, IDC_INTERNALSTORE, store->StoreMode);
-		store->AutoLocation = FALSE;
-		strcpy_s(store->DatPath, MAX_PATH, Pfad);
-	}
 }
