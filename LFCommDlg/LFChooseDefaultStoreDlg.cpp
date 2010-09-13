@@ -206,9 +206,9 @@ void LFChooseDefaultStoreDlg::OnNewStore()
 {
 	LFStoreDescriptor* s = LFAllocStoreDescriptor();
 
-	LFStoreNewDlg dlg(this, IDD_STORENEW, '\0', s);
+	LFStoreNewDlg dlg(this, s);
 	if (dlg.DoModal()==IDOK)
-		LFErrorBox(LFCreateStore(s, dlg.makeDefault));
+		LFErrorBox(LFCreateStore(s, dlg.MakeDefault));
 
 	LFFreeStoreDescriptor(s);
 }

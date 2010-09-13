@@ -98,8 +98,8 @@
 #define IDC_STORENAME                   21307
 #define IDC_COMMENT                     21308
 #define IDC_MAKEDEFAULT                 21309
-#define IDC_AUTODRIVE                   21310
-#define IDC_DRIVELIST                   21311
+#define IDC_AUTOPATH                    21310
+#define IDC_PATHTREE                    21311
 #define IDD_STORENEWDRIVE               21350
 #define IDD_STOREDELETE                 21400
 #define IDC_KEEP                        21401

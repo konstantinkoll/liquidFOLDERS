@@ -551,6 +551,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\LFStoreNewDriveDlg.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\LFStorePropertiesDlg.cpp"
 				>
 			</File>
@@ -738,6 +742,10 @@
 			</File>
 			<File
 				RelativePath=".\LFStoreNewDlg.h"
+				>
+			</File>
+			<File
+				RelativePath=".\LFStoreNewDriveDlg.h"
 				>
 			</File>
 			<File

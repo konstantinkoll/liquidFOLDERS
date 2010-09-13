@@ -4,6 +4,7 @@
 
 #pragma once
 #include "liquidFOLDERS.h"
+#include "CExplorerTree.h"
 #include "CIconCtrl.h"
 
 
@@ -13,14 +14,14 @@
 class AFX_EXT_CLASS LFStoreNewDlg : public CDialog
 {
 public:
-	LFStoreNewDlg(CWnd* pParentWnd, UINT nIDTemplate, char Drive, LFStoreDescriptor* _store);
+	LFStoreNewDlg(CWnd* pParentWnd, LFStoreDescriptor* pStore);
 
 	virtual void DoDataExchange(CDataExchange* pDX);
 
-	bool makeDefault;
+	bool MakeDefault;
 
 protected:
-	void PopulateListCtrl();
+	void PopulateTreeCtrl();
 
 	afx_msg BOOL OnInitDialog();
 	afx_msg void OnDestroy();
@@ -30,13 +31,11 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
-	LFStoreDescriptor* store;
+	LFStoreDescriptor* m_pStore;
 
-	CImageList m_Icons;
 	CIconCtrl m_IconInternal;
 	CIconCtrl m_IconHybrid;
 	CIconCtrl m_IconExternal;
+	CExplorerTree m_PathTree;
 	ULONG m_ulSHChangeNotifyRegister;
-	UINT m_nIDTemplate;
-	char m_Drive;
 };

@@ -776,7 +776,7 @@ void CMainFrame::OnItemsOpen()
 				switch (i->Type & LFTypeMask)
 				{
 				case LFTypeDrive:
-					ExecuteCreateStoreDlg(IDD_STORENEWDRIVE, i->CoreAttributes.FileID[0]);
+					OnStoreNewDrive(i->CoreAttributes.FileID[0]);
 					break;
 				case LFTypeFile:
 					res = LFGetFileLocation(i, Path, MAX_PATH);
@@ -935,20 +935,15 @@ void CMainFrame::OnUpdateTrashCommands(CCmdUI* pCmdUI)
 	pCmdUI->Enable(b);
 }
 
-void CMainFrame::ExecuteCreateStoreDlg(UINT nIDTemplate, char drv)
+void CMainFrame::OnStoreNew()
 {
 	LFStoreDescriptor* s = LFAllocStoreDescriptor();
 
-	LFStoreNewDlg dlg(this, nIDTemplate, drv, s);
+	LFStoreNewDlg dlg(this, s);
 	if (dlg.DoModal()==IDOK)
-		LFErrorBox(LFCreateStore(s, dlg.makeDefault), GetSafeHwnd());
+		LFErrorBox(LFCreateStore(s, dlg.MakeDefault), m_hWnd);
 
 	LFFreeStoreDescriptor(s);
-}
-
-void CMainFrame::OnStoreNew()
-{
-	ExecuteCreateStoreDlg(IDD_STORENEW, '\0');
 }
 
 void CMainFrame::OnStoreNewInternal()
@@ -975,12 +970,28 @@ void CMainFrame::OnStoreNewInternal()
 	LFFreeStoreDescriptor(s);
 }
 
+void CMainFrame::OnStoreNewDrive(char drv)
+{
+	int i = GetSelectedItem();
+
+	if (i!=-1)
+	{
+		LFStoreDescriptor* s = LFAllocStoreDescriptor();
+
+		LFStoreNewDriveDlg dlg(this, drv, s);
+		if (dlg.DoModal()==IDOK)
+			LFErrorBox(LFCreateStore(s, FALSE), m_hWnd);
+
+		LFFreeStoreDescriptor(s);
+	}
+}
+
 void CMainFrame::OnStoreNewDrive()
 {
 	int i = GetSelectedItem();
 
 	if (i!=-1)
-		ExecuteCreateStoreDlg(IDD_STORENEWDRIVE, CookedFiles->m_Items[i]->CoreAttributes.FileID[0]);
+		OnStoreNewDrive(CookedFiles->m_Items[i]->CoreAttributes.FileID[0]);
 }
 
 void CMainFrame::OnStoreMakeDefault()

@@ -17,61 +17,21 @@ extern AFX_EXTENSION_MODULE LFCommDlgDLL;
 
 #define WM_USER_MEDIACHANGED       WM_USER+2
 
-LFStoreNewDlg::LFStoreNewDlg(CWnd* pParentWnd, UINT nIDTemplate, char Drive, LFStoreDescriptor* _store)
-	: CDialog(nIDTemplate, pParentWnd)
+LFStoreNewDlg::LFStoreNewDlg(CWnd* pParentWnd, LFStoreDescriptor* pStore)
+	: CDialog(IDD_STORENEW, pParentWnd)
 {
-	store = _store;
+	ASSERT(pStore);
+
+	m_pStore = pStore;
 	m_ulSHChangeNotifyRegister = NULL;
-	m_nIDTemplate = nIDTemplate;
-	m_Drive = Drive;
 }
 
-void LFStoreNewDlg::PopulateListCtrl()
+void LFStoreNewDlg::PopulateTreeCtrl()
 {
-	BOOL fixed = ((CButton*)GetDlgItem(IDC_INTERNALSTORE))->GetCheck();
+	m_PathTree.SetRootPath(((CButton*)GetDlgItem(IDC_INTERNALSTORE))->GetCheck() ? CETR_InternalDrives : CETR_ExternalDrives);
 
-	CListCtrl* li = (CListCtrl*)GetDlgItem(IDC_DRIVELIST);
-
-	li->SetExtendedStyle(LVS_EX_FULLROWSELECT | LVS_EX_DOUBLEBUFFER);
-	int FocusItem = li->GetNextItem(-1, LVNI_FOCUSED);
-	li->DeleteAllItems();
-	li->SetImageList(&m_Icons, LVSIL_SMALL);
-
-	DWORD DrivesOnSystem = LFGetLogicalDrives(fixed ? LFGLD_Internal | LFGLD_Network : LFGLD_External);
-	wchar_t szDriveRoot[] = L" :\\";
-	int nIndex = 0;
-
-	char SysDrive[MAX_PATH];
-	GetWindowsDirectoryA(SysDrive, MAX_PATH);
-
-	for (char cDrive='A'; cDrive<='Z'; cDrive++, DrivesOnSystem>>=1)
-	{
-		if (!(DrivesOnSystem & 1))
-			continue;
-
-		szDriveRoot[0] = cDrive;
-		UINT uDriveType = GetDriveType(szDriveRoot);
-
-		SHFILEINFO sfi;
-		if (SHGetFileInfo(szDriveRoot, 0, &sfi, sizeof(SHFILEINFO), SHGFI_DISPLAYNAME | SHGFI_ATTRIBUTES))
-			if (sfi.dwAttributes)
-			{
-				li->InsertItem(nIndex, sfi.szDisplayName, LFGetDriveIcon(cDrive, sfi.dwAttributes!=0)-1);
-				li->SetItemData(nIndex, (DWORD)cDrive);
-				nIndex++;
-			}
-	}
-
-	if (nIndex)
-	{
-		if (FocusItem<0)
-			FocusItem = 0;
-		if (FocusItem>=nIndex)
-			FocusItem = nIndex-1;
-		li->SetItemState(FocusItem, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
-	}
-
-	GetDlgItem(IDOK)->EnableWindow((!li->IsWindowEnabled()) || (nIndex>0));
+	char Path[MAX_PATH];
+	GetDlgItem(IDOK)->EnableWindow((!m_PathTree.IsWindowEnabled()) || (m_PathTree.GetSelectedPathA(Path)));
 }
 
 
@@ -81,7 +41,7 @@ BEGIN_MESSAGE_MAP(LFStoreNewDlg, CDialog)
 	ON_BN_CLICKED(IDC_INTERNALSTORE, OnSetOptions)
 	ON_BN_CLICKED(IDC_HYBRIDSTORE, OnSetOptions)
 	ON_BN_CLICKED(IDC_EXTERNALSTORE, OnSetOptions)
-	ON_BN_CLICKED(IDC_AUTODRIVE, OnSetOptions)
+	ON_BN_CLICKED(IDC_AUTOPATH, OnSetOptions)
 	ON_MESSAGE(WM_USER_MEDIACHANGED, OnMediaChanged)
 END_MESSAGE_MAP()
 
@@ -95,32 +55,12 @@ BOOL LFStoreNewDlg::OnInitDialog()
 	SetIcon(hIcon, FALSE);
 	SetIcon(hIcon, TRUE);
 
-	// Load list icons
-	HINSTANCE hModIcons = LoadLibrary(_T("LFCORE.DLL"));
-	if (hModIcons)
-	{
-		((LFApplication*)AfxGetApp())->ExtractCoreIcons(hModIcons, GetSystemMetrics(SM_CYSMICON), &m_Icons);
-		FreeLibrary(hModIcons);
-	}
+	// Status
+	((CButton*)GetDlgItem(IDC_INTERNALSTORE))->SetCheck(TRUE);
+	((CButton*)GetDlgItem(IDC_AUTOPATH))->SetCheck(TRUE);
 
-	// Status und Laufwerke
-	if (m_nIDTemplate==IDD_STORENEW)
-	{
-		((CButton*)GetDlgItem(IDC_INTERNALSTORE))->SetCheck(TRUE);
-		((CButton*)GetDlgItem(IDC_AUTODRIVE))->SetCheck(TRUE);
-		PopulateListCtrl();
-	}
-	else
-	{
-		((CButton*)GetDlgItem(IDC_EXTERNALSTORE))->SetCheck(TRUE);
-
-		// Titelleiste
-		CString text;
-		GetWindowText(text);
-		CString caption;
-		caption.Format(text, m_Drive);
-		SetWindowText(caption);
-	}
+	// Pfad
+	PopulateTreeCtrl();
 
 	// Icons
 	OnSetInternalIcon();
@@ -128,22 +68,16 @@ BOOL LFStoreNewDlg::OnInitDialog()
 	m_IconExternal.SetCoreIcon(IDI_STORE_Bag);
 
 	// Benachrichtigung, wenn sich Laufwerke ändern
-	HWND hWnd = GetSafeHwnd();
-	LPITEMIDLIST ppidl;
-	if (SHGetSpecialFolderLocation(hWnd, CSIDL_DESKTOP, &ppidl)==NOERROR)
+	LPITEMIDLIST pidl;
+	if (SUCCEEDED(SHGetSpecialFolderLocation(m_hWnd, CSIDL_DESKTOP, &pidl)))
 	{
 		SHChangeNotifyEntry shCNE;
-		shCNE.pidl = ppidl;
+		shCNE.pidl = pidl;
 		shCNE.fRecursive = TRUE;
 
-		m_ulSHChangeNotifyRegister = SHChangeNotifyRegister(hWnd, SHCNRF_ShellLevel,
+		m_ulSHChangeNotifyRegister = SHChangeNotifyRegister(m_hWnd, SHCNRF_ShellLevel,
 			SHCNE_DRIVEADD | SHCNE_DRIVEREMOVED | SHCNE_MEDIAINSERTED | SHCNE_MEDIAREMOVED,
 			WM_USER_MEDIACHANGED, 1, &shCNE);
-		ASSERT(m_ulSHChangeNotifyRegister);
-	}
-	else
-	{
-		ASSERT(FALSE);
 	}
 
 	return TRUE;
@@ -159,86 +93,62 @@ void LFStoreNewDlg::OnDestroy()
 
 void LFStoreNewDlg::OnSetInternalIcon()
 {
-	if (m_nIDTemplate==IDD_STORENEW)
-		m_IconInternal.SetCoreIcon(((CButton*)GetDlgItem(IDC_MAKEDEFAULT))->GetCheck() ? IDI_STORE_Default : IDI_STORE_Internal);
+	m_IconInternal.SetCoreIcon(((CButton*)GetDlgItem(IDC_MAKEDEFAULT))->GetCheck() ? IDI_STORE_Default : IDI_STORE_Internal);
 }
 
 void LFStoreNewDlg::OnSetOptions()
 {
-	if (m_nIDTemplate==IDD_STORENEW)
-	{
-		BOOL b = ((CButton*)GetDlgItem(IDC_INTERNALSTORE))->GetCheck();
+	BOOL b = ((CButton*)GetDlgItem(IDC_INTERNALSTORE))->GetCheck();
+	GetDlgItem(IDC_MAKEDEFAULT)->EnableWindow(b);
+	GetDlgItem(IDC_AUTOPATH)->EnableWindow(b);
 
-		GetDlgItem(IDC_MAKEDEFAULT)->EnableWindow(b);
-		GetDlgItem(IDC_AUTODRIVE)->EnableWindow(b);
+	if (b)
+		b ^= !((CButton*)GetDlgItem(IDC_AUTOPATH))->GetCheck();
+	GetDlgItem(IDC_PATHTREE)->EnableWindow(!b);
 
-		if (b)
-			b ^= !((CButton*)GetDlgItem(IDC_AUTODRIVE))->GetCheck();
-
-		GetDlgItem(IDC_DRIVELIST)->EnableWindow(!b);
-		PopulateListCtrl();
-	}
+	PopulateTreeCtrl();
 }
 
 LRESULT LFStoreNewDlg::OnMediaChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)
 {
-	if (m_nIDTemplate==IDD_STORENEW)
-	{
-		PopulateListCtrl();
-	}
-	else
-	{
-		// Wenn das Laufwerk nicht mehr vorhanden ist, Dialog schließen
-		wchar_t szDriveRoot[] = L" :\\";
-		szDriveRoot[0] = m_Drive;
-		UINT uDriveType = GetDriveType(szDriveRoot);
-		if ((uDriveType==DRIVE_UNKNOWN) || (uDriveType==DRIVE_NO_ROOT_DIR))
-			EndDialog(IDCANCEL);
-	}
+	//PopulateTreeCtrl();
+
 	return NULL;
 }
 
 void LFStoreNewDlg::DoDataExchange(CDataExchange* pDX)
 {
-	if (m_nIDTemplate==IDD_STORENEW)
-		DDX_Control(pDX, IDC_INTERNALSTOREICON, m_IconInternal);
-
+	DDX_Control(pDX, IDC_INTERNALSTOREICON, m_IconInternal);
 	DDX_Control(pDX, IDC_HYBRIDSTOREICON, m_IconHybrid);
 	DDX_Control(pDX, IDC_EXTERNALSTOREICON, m_IconExternal);
+	DDX_Control(pDX, IDC_PATHTREE, m_PathTree);
 
 	// Nur beim Verlassen des Dialogs
-	if ((store) && (pDX->m_bSaveAndValidate))
+	if (pDX->m_bSaveAndValidate)
 	{
 		// Pfad zusammenbauen
-		CStringA Pfad;
-		if (m_nIDTemplate==IDD_STORENEW)
-		{
-			CListCtrl* li = (CListCtrl*)GetDlgItem(IDC_DRIVELIST);
-			int FocusItem = li->GetNextItem(-1, LVNI_FOCUSED);
-			Pfad = ((char)li->GetItemData(FocusItem));
-		}
-		else
-		{
-			Pfad = m_Drive;
-		}
-		Pfad += _T(":\\");
+		char Path[MAX_PATH];
+		m_PathTree.GetSelectedPathA(Path);
+		if (Path[0])
+			if (Path[strlen(Path)-1]!='\\')
+				strcat_s(Path, MAX_PATH, "\\");
 
 		// LFStoreDescriptor ausfüllen
-		GetDlgItem(IDC_STORENAME)->GetWindowText(store->StoreName, 256);
-		GetDlgItem(IDC_COMMENT)->GetWindowText(store->Comment, 256);
-		DDX_Radio(pDX, IDC_INTERNALSTORE, store->StoreMode);
-		if (store->StoreMode==LFStoreModeInternal)
+		GetDlgItem(IDC_STORENAME)->GetWindowText(m_pStore->StoreName, 256);
+		GetDlgItem(IDC_COMMENT)->GetWindowText(m_pStore->Comment, 256);
+		DDX_Radio(pDX, IDC_INTERNALSTORE, m_pStore->StoreMode);
+
+		if (m_pStore->StoreMode==LFStoreModeInternal)
 		{
-			makeDefault = ((CButton*)GetDlgItem(IDC_MAKEDEFAULT))->GetCheck()!=0;
-			store->AutoLocation = ((CButton*)GetDlgItem(IDC_AUTODRIVE))->GetCheck()!=0;
-			if (!store->AutoLocation)
-				strcpy_s(store->DatPath, MAX_PATH, Pfad);
+			MakeDefault = ((CButton*)GetDlgItem(IDC_MAKEDEFAULT))->GetCheck()!=0;
+			m_pStore->AutoLocation = ((CButton*)GetDlgItem(IDC_AUTOPATH))->GetCheck()!=0;
+			strcpy_s(m_pStore->DatPath, MAX_PATH, m_pStore->AutoLocation ? "" : Path);
 		}
 		else
 		{
-			store->AutoLocation = FALSE;
-			strcpy_s(store->DatPath, MAX_PATH, Pfad);
-			makeDefault = FALSE;
+			MakeDefault = FALSE;
+			m_pStore->AutoLocation = FALSE;
+			strcpy_s(m_pStore->DatPath, MAX_PATH, Path);
 		}
 	}
 }

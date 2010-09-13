@@ -203,9 +203,9 @@ protected:
 
 private:
 	BOOL AttributeAllowedForSorting(int attr);
-	void ExecuteCreateStoreDlg(UINT nIDTemplate, char drv);
 	void Remember(CMainFrame* clip);
 	void BackupStores(BOOL all=FALSE);
+	void OnStoreNewDrive(char drv);
 	int GetSelectedItem();
 	int GetNextSelectedItem(int n);
 	void AddTransactionItem(LFTransactionList* tl, LFItemDescriptor* i, unsigned int UserData);

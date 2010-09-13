@@ -92,10 +92,10 @@ void CStoreDropdownWindow::OnCreateNewStore()
 
 	LFStoreDescriptor* s = LFAllocStoreDescriptor();
 
-	LFStoreNewDlg dlg(this, IDD_STORENEW, '\0', s);
+	LFStoreNewDlg dlg(this, s);
 	if (dlg.DoModal()==IDOK)
 	{
-		UINT res = LFCreateStore(s, dlg.makeDefault);
+		UINT res = LFCreateStore(s, dlg.MakeDefault);
 		LFErrorBox(res);
 
 		if (res==LFOk)

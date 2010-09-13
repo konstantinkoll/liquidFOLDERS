@@ -10,13 +10,23 @@
 // CExplorerTree
 //
 
+#define CETR_Desktop            _T("")
+#define CETR_InternalDrives     _T("::DRVINTERNAL")
+#define CETR_ExternalDrives     _T("::DRVEXTERNAL")
+
 class AFX_EXT_CLASS CExplorerTree : public CTreeCtrl
 {
 public:
 	CExplorerTree();
 
+	virtual void PreSubclassWindow();
+
 	BOOL Create(CWnd* pParentWnd, UINT nID, BOOL OnlyFilesystem=TRUE, CString RootPath=_T(""));
 	LPITEMIDLIST GetSelectedPIDL();
+	BOOL GetSelectedPathA(LPSTR Path);
+	BOOL GetSelectedPathW(LPWSTR Path);
+	void PopulateTree();
+	void SetRootPath(CString RootPath);
 
 protected:
 	LFApplication* p_App;
@@ -24,6 +34,7 @@ protected:
 	IContextMenu2* m_pContextMenu2;
 	BOOL m_OnlyFilesystem;
 	BOOL m_Hover;
+	BOOL m_ExplorerStyle;
 	HTREEITEM m_HoverItem;
 	CString m_RootPath;
 
@@ -32,7 +43,8 @@ protected:
 
 	CString OnGetItemText(LPAFX_SHELLITEMINFO pItem);
 	int OnGetItemIcon(LPAFX_SHELLITEMINFO pItem, BOOL bSelected);
-	void PopulateTree();
+	HTREEITEM InsertItem(IShellFolder* pParentFolder, LPITEMIDLIST pidlRel, HTREEITEM hParent=TVI_ROOT, BOOL children=TRUE, LPITEMIDLIST pidlFQ=NULL);
+	HTREEITEM InsertItem(IShellFolder* pParentFolder, wchar_t* Path);
 	BOOL GetChildItems(HTREEITEM hParentItem);
 	void EnumObjects(HTREEITEM hParentItem, IShellFolder* pParentFolder, LPITEMIDLIST pidlParent);
 

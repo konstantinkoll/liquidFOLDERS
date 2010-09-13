@@ -32,19 +32,31 @@ CExplorerTree::CExplorerTree()
 	m_pContextMenu2 = NULL;
 	m_Hover = FALSE;
 	m_HoverItem = NULL;
+	m_ExplorerStyle = FALSE;
 }
 
 BOOL CExplorerTree::Create(CWnd* pParentWnd, UINT nID, BOOL OnlyFilesystem, CString RootPath)
 {
 	m_OnlyFilesystem = OnlyFilesystem;
 	m_RootPath = RootPath;
+	m_ExplorerStyle = TRUE;
 
 	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, LoadCursor(NULL, IDC_ARROW));
 
-	const DWORD dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_TABSTOP | TVS_HASBUTTONS | TVS_NOTOOLTIPS;
+	const DWORD dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_TABSTOP | TVS_HASBUTTONS | TVS_NOTOOLTIPS | TVS_DISABLEDRAGDROP | TVS_SHOWSELALWAYS;
 	CRect rect;
 	rect.SetRectEmpty();
 	return CTreeCtrl::Create(dwStyle, rect, pParentWnd, nID);
+}
+
+void CExplorerTree::PreSubclassWindow()
+{
+	m_TooltipCtrl.Create(this);
+
+	if (p_App->OSVersion==OS_XP)
+		ModifyStyle(0, TVS_HASLINES);
+
+	SetImageList(&p_App->m_SystemImageListSmall, 0);
 }
 
 LPITEMIDLIST CExplorerTree::GetSelectedPIDL()
@@ -62,6 +74,18 @@ LPITEMIDLIST CExplorerTree::GetSelectedPIDL()
 
 	LPAFX_SHELLITEMINFO pItem = (LPAFX_SHELLITEMINFO)tvItem.lParam;
 	return pItem->pidlFQ;
+}
+
+BOOL CExplorerTree::GetSelectedPathA(LPSTR Path)
+{
+	LPITEMIDLIST pidl = GetSelectedPIDL();
+	return pidl ? SHGetPathFromIDListA(pidl, Path) : FALSE;
+}
+
+BOOL CExplorerTree::GetSelectedPathW(LPWSTR Path)
+{
+	LPITEMIDLIST pidl = GetSelectedPIDL();
+	return pidl ? SHGetPathFromIDListW(pidl, Path) : FALSE;
 }
 
 LRESULT CExplorerTree::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
@@ -99,6 +123,7 @@ BOOL CExplorerTree::PreTranslateMessage(MSG* pMsg)
 	case WM_NCLBUTTONUP:
 	case WM_NCRBUTTONUP:
 	case WM_NCMBUTTONUP:
+	case WM_MOUSEWHEEL:
 		m_TooltipCtrl.Deactivate();
 		break;
 	}
@@ -128,30 +153,23 @@ int CExplorerTree::OnGetItemIcon(LPAFX_SHELLITEMINFO pItem, BOOL bSelected)
 	return -1;
 }
 
-void CExplorerTree::PopulateTree()
+HTREEITEM CExplorerTree::InsertItem(IShellFolder* pParentFolder, LPITEMIDLIST pidlRel, HTREEITEM hParent, BOOL children, LPITEMIDLIST pidlFQ)
 {
-	LPITEMIDLIST pidl;
-	IShellFolder* pParentFolder = NULL;
-	if (m_RootPath.IsEmpty())
-	{
-		if (FAILED(SHGetSpecialFolderLocation(NULL, CSIDL_DESKTOP, &pidl)))
-			return;
-	}
-	else
-	{
-		if (FAILED(SHGetDesktopFolder(&pParentFolder)))
-			return;
+	if (!pidlRel)
+		return NULL;
+	if (!pidlFQ)
+		pidlFQ = p_App->GetShellManager()->CopyItem(pidlRel);
 
-		ULONG chEaten;
-		ULONG dwAttributes;
-		pParentFolder->ParseDisplayName(NULL, NULL, m_RootPath.GetBuffer(), &chEaten, &pidl, &dwAttributes);
-	}
+	if (pParentFolder)
+		pParentFolder->AddRef();
 
 	TV_ITEM tvItem;
+	ZeroMemory(&tvItem, sizeof(tvItem));
 	tvItem.mask = TVIF_PARAM | TVIF_TEXT | TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_CHILDREN;
+
 	LPAFX_SHELLITEMINFO pItem = (LPAFX_SHELLITEMINFO)GlobalAlloc(GPTR, sizeof(AFX_SHELLITEMINFO));
-	pItem->pidlRel = pidl;
-	pItem->pidlFQ = p_App->GetShellManager()->CopyItem(pidl);
+	pItem->pidlRel = pidlRel;
+	pItem->pidlFQ = pidlFQ;
 	pItem->pParentFolder = pParentFolder;
 	tvItem.lParam = (LPARAM)pItem;
 
@@ -159,13 +177,87 @@ void CExplorerTree::PopulateTree()
 	tvItem.pszText = strItem.GetBuffer(strItem.GetLength());
 	tvItem.iImage = OnGetItemIcon(pItem, FALSE);
 	tvItem.iSelectedImage = OnGetItemIcon(pItem, TRUE);
-	tvItem.cChildren = TRUE;
+	tvItem.cChildren = children;
 
 	TV_INSERTSTRUCT tvInsert;
 	tvInsert.item = tvItem;
 	tvInsert.hInsertAfter = TVI_LAST;
-	tvInsert.hParent = TVI_ROOT;
-	Expand(InsertItem(&tvInsert), TVE_EXPAND);
+	tvInsert.hParent = hParent;
+
+	return CTreeCtrl::InsertItem(&tvInsert);
+}
+
+HTREEITEM CExplorerTree::InsertItem(IShellFolder* pParentFolder, wchar_t* Path)
+{
+	ULONG chEaten;
+	ULONG dwAttributes;
+	LPITEMIDLIST pidl = NULL;
+	pParentFolder->ParseDisplayName(NULL, NULL, Path, &chEaten, &pidl, &dwAttributes);
+
+	return InsertItem(pParentFolder, pidl, TVI_ROOT, TRUE);
+}
+
+void CExplorerTree::PopulateTree()
+{
+	DeleteAllItems();
+
+	LPITEMIDLIST pidl;
+	IShellFolder* pParentFolder = NULL;
+	HTREEITEM hItem = NULL;
+	if (m_RootPath.IsEmpty())
+	{
+		if (FAILED(SHGetSpecialFolderLocation(NULL, CSIDL_DESKTOP, &pidl)))
+			return;
+
+		hItem = InsertItem(pParentFolder, pidl);
+	}
+	else
+	{
+		if (FAILED(SHGetDesktopFolder(&pParentFolder)))
+			return;
+
+		if ((m_RootPath==CETR_InternalDrives) || (m_RootPath==CETR_ExternalDrives))
+		{
+			DWORD DrivesOnSystem = LFGetLogicalDrives(m_RootPath==CETR_InternalDrives ? LFGLD_Internal | LFGLD_Network : LFGLD_External);
+			wchar_t szDriveRoot[] = L" :\\";
+
+			char SysDrive[MAX_PATH];
+			GetWindowsDirectoryA(SysDrive, MAX_PATH);
+
+			for (char cDrive='A'; cDrive<='Z'; cDrive++, DrivesOnSystem>>=1)
+			{
+				if (!(DrivesOnSystem & 1))
+					continue;
+
+				szDriveRoot[0] = cDrive;
+				UINT uDriveType = GetDriveType(szDriveRoot);
+
+				SHFILEINFO sfi;
+				if (SHGetFileInfo(szDriveRoot, 0, &sfi, sizeof(SHFILEINFO), SHGFI_DISPLAYNAME | SHGFI_ATTRIBUTES))
+					if (sfi.dwAttributes)
+						InsertItem(pParentFolder, szDriveRoot);
+			}
+		}
+		else
+		{
+			hItem = InsertItem(pParentFolder, m_RootPath.GetBuffer());
+		}
+	}
+
+	if ((hItem) && (!(GetStyle() & TVS_LINESATROOT)))
+		Expand(hItem, TVE_EXPAND);
+
+	if (pParentFolder)
+		pParentFolder->Release();
+}
+
+void CExplorerTree::SetRootPath(CString RootPath)
+{
+	if (RootPath!=m_RootPath)
+	{
+		m_RootPath = RootPath;
+		PopulateTree();
+	}
 }
 
 BOOL CExplorerTree::GetChildItems(HTREEITEM hParentItem)
@@ -236,35 +328,7 @@ void CExplorerTree::EnumObjects(HTREEITEM hParentItem, IShellFolder* pParentFold
 				continue;
 		}
 
-		TVITEM tvItem;
-		ZeroMemory(&tvItem, sizeof(tvItem));
-		tvItem.mask = TVIF_PARAM | TVIF_TEXT | TVIF_IMAGE | TVIF_SELECTEDIMAGE | TVIF_CHILDREN;
-		pParentFolder->AddRef();
-
-		LPAFX_SHELLITEMINFO pItem = (LPAFX_SHELLITEMINFO)GlobalAlloc(GPTR, sizeof(AFX_SHELLITEMINFO));
-		pItem->pidlRel = pidlTemp;
-		pItem->pidlFQ = p_App->GetShellManager()->ConcatenateItem(pidlParent, pidlTemp);
-		pItem->pParentFolder = pParentFolder;
-		tvItem.lParam = (LPARAM)pItem;
-
-		CString strItem = OnGetItemText(pItem);
-		tvItem.pszText = strItem.GetBuffer(strItem.GetLength());
-		tvItem.iImage = OnGetItemIcon(pItem, FALSE);
-		tvItem.iSelectedImage = OnGetItemIcon(pItem, TRUE);
-
-		tvItem.cChildren = (dwAttribs & SFGAO_HASSUBFOLDER);
-		if (dwAttribs & SFGAO_SHARE)
-		{
-			tvItem.mask |= TVIF_STATE;
-			tvItem.stateMask |= TVIS_OVERLAYMASK;
-			tvItem.state |= INDEXTOOVERLAYMASK(1);
-		}
-
-		TVINSERTSTRUCT tvInsert;
-		tvInsert.item = tvItem;
-		tvInsert.hInsertAfter = TVI_LAST;
-		tvInsert.hParent = hParentItem;
-		InsertItem(&tvInsert);
+		InsertItem(pParentFolder, pidlTemp, hParentItem, (dwAttribs & SFGAO_HASSUBFOLDER), p_App->GetShellManager()->ConcatenateItem(pidlParent, pidlTemp));
 	}
 
 	pEnum->Release();
@@ -290,18 +354,14 @@ int CExplorerTree::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CTreeCtrl::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
-	m_TooltipCtrl.Create(this);
-
 	if ((p_App->m_ThemeLibLoaded) && (p_App->OSVersion>=OS_Vista))
 		p_App->zSetWindowTheme(GetSafeHwnd(), L"explorer", NULL);
-
-	if (p_App->OSVersion==OS_XP)
-		ModifyStyle(0, TVS_HASLINES);
 
 	LOGFONT lf;
 	p_App->m_DefaultFont.GetLogFont(&lf);
 	SetItemHeight((SHORT)(max(abs(lf.lfHeight), GetSystemMetrics(SM_CYSMICON))+(p_App->OSVersion<OS_Vista ? 2 : 6)));
-	SetImageList(&p_App->m_SystemImageListSmall, 0);
+
+	PreSubclassWindow();
 
 	PopulateTree();
 
@@ -315,16 +375,22 @@ BOOL CExplorerTree::OnEraseBkgnd(CDC* /*pDC*/)
 
 void CExplorerTree::OnPaint()
 {
-	if (IsCtrlThemed())
+	if ((m_ExplorerStyle) && (IsCtrlThemed()))
 	{
 		SetBkColor(0xFFFFFF);
 		SetTextColor(0x000000);
 	}
 	else
-	{
-		SetBkColor(GetSysColor(COLOR_WINDOW));
-		SetTextColor(GetSysColor(COLOR_WINDOWTEXT));
-	}
+		if (IsWindowEnabled())
+		{
+			SetBkColor(GetSysColor(COLOR_WINDOW));
+			SetTextColor(GetSysColor(COLOR_WINDOWTEXT));
+		}
+		else
+		{
+			SetBkColor(GetSysColor(COLOR_3DFACE));
+			SetTextColor(GetSysColor(COLOR_GRAYTEXT));
+		}
 
 	CPaintDC pDC(this);
 
