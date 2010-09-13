@@ -21,7 +21,6 @@ public:
 
 	virtual void PreSubclassWindow();
 
-	BOOL Create(CWnd* pParentWnd, UINT nID, BOOL OnlyFilesystem=TRUE, CString RootPath=_T(""));
 	LPITEMIDLIST GetSelectedPIDL();
 	BOOL GetSelectedPathA(LPSTR Path);
 	BOOL GetSelectedPathW(LPWSTR Path);

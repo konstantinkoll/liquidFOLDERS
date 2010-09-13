@@ -53,18 +53,6 @@ CExplorerTree::CExplorerTree()
 	m_ExplorerStyle = FALSE;
 }
 
-BOOL CExplorerTree::Create(CWnd* pParentWnd, UINT nID, BOOL OnlyFilesystem, CString RootPath)
-{
-	m_OnlyFilesystem = OnlyFilesystem;
-	m_RootPath = RootPath;
-	m_ExplorerStyle = TRUE;
-
-	const DWORD dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_TABSTOP | TVS_HASBUTTONS | TVS_NOTOOLTIPS | TVS_DISABLEDRAGDROP | TVS_SHOWSELALWAYS;
-	CRect rect;
-	rect.SetRectEmpty();
-	return CTreeCtrl::Create(dwStyle, rect, pParentWnd, nID);
-}
-
 void CExplorerTree::PreSubclassWindow()
 {
 	m_TooltipCtrl.Create(this);
@@ -371,7 +359,6 @@ void CExplorerTree::EnumObjects(HTREEITEM hParentItem, IShellFolder* pParentFold
 
 
 BEGIN_MESSAGE_MAP(CExplorerTree, CTreeCtrl)
-	ON_WM_CREATE()
 	ON_WM_ERASEBKGND()
 	ON_WM_PAINT()
 	ON_WM_CONTEXTMENU()
@@ -383,25 +370,6 @@ BEGIN_MESSAGE_MAP(CExplorerTree, CTreeCtrl)
 	ON_NOTIFY_REFLECT(TVN_ITEMEXPANDING, OnItemExpanding)
 	ON_NOTIFY_REFLECT(TVN_DELETEITEM, OnDeleteItem)
 END_MESSAGE_MAP()
-
-int CExplorerTree::OnCreate(LPCREATESTRUCT lpCreateStruct)
-{
-	if (CTreeCtrl::OnCreate(lpCreateStruct)==-1)
-		return -1;
-
-	if ((p_App->m_ThemeLibLoaded) && (p_App->OSVersion>=OS_Vista))
-		p_App->zSetWindowTheme(GetSafeHwnd(), L"explorer", NULL);
-
-	LOGFONT lf;
-	p_App->m_DefaultFont.GetLogFont(&lf);
-	SetItemHeight((SHORT)(max(abs(lf.lfHeight), GetSystemMetrics(SM_CYSMICON))+(p_App->OSVersion<OS_Vista ? 2 : 6)));
-
-	PreSubclassWindow();
-
-	PopulateTree();
-
-	return 0;
-}
 
 BOOL CExplorerTree::OnEraseBkgnd(CDC* /*pDC*/)
 {

@@ -31,6 +31,8 @@ LFBrowseForFolderDlg::~LFBrowseForFolderDlg()
 
 void LFBrowseForFolderDlg::DoDataExchange(CDataExchange* pDX)
 {
+	DDX_Control(pDX, IDC_SHELLTREE, m_wndExplorerTree);
+
 	if (pDX->m_bSaveAndValidate)
 	{
 		m_FolderPIDL = p_App->GetShellManager()->CopyItem(m_wndExplorerTree.GetSelectedPIDL());
@@ -76,12 +78,18 @@ BOOL LFBrowseForFolderDlg::OnInitDialog()
 		m_wndExplorerHeader.SetLineStyle(FALSE, FALSE);
 	}
 
-	m_wndExplorerTree.Create(this, IDC_SHELLTREE, TRUE, m_RootPath);
-	m_wndExplorerTree.SetFocus();
+	if ((p_App->m_ThemeLibLoaded) && (p_App->OSVersion>=OS_Vista))
+		p_App->zSetWindowTheme(m_wndExplorerTree, L"explorer", NULL);
+
+	LOGFONT lf;
+	p_App->m_DefaultFont.GetLogFont(&lf);
+	m_wndExplorerTree.SetItemHeight((SHORT)(max(abs(lf.lfHeight), GetSystemMetrics(SM_CYSMICON))+(p_App->OSVersion<OS_Vista ? 2 : 6)));
+	m_wndExplorerTree.SetOnlyFilesystem(TRUE);
+	m_wndExplorerTree.PopulateTree();
 
 	AdjustLayout();
 
-	return FALSE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird
+	return TRUE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird
 }
 
 void LFBrowseForFolderDlg::OnGetMinMaxInfo(MINMAXINFO* lpMMI)
