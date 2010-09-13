@@ -27,6 +27,7 @@ public:
 	BOOL GetSelectedPathW(LPWSTR Path);
 	void PopulateTree();
 	void SetRootPath(CString RootPath);
+	void SetOnlyFilesystem(BOOL OnlyFilesystem);
 
 protected:
 	LFApplication* p_App;

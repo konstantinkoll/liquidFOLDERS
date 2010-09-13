@@ -220,6 +220,7 @@ void CExplorerTree::PopulateTree()
 		{
 			DWORD DrivesOnSystem = LFGetLogicalDrives(m_RootPath==CETR_InternalDrives ? LFGLD_Internal | LFGLD_Network : LFGLD_External);
 			wchar_t szDriveRoot[] = L" :\\";
+			BOOL First = TRUE;
 
 			char SysDrive[MAX_PATH];
 			GetWindowsDirectoryA(SysDrive, MAX_PATH);
@@ -235,7 +236,14 @@ void CExplorerTree::PopulateTree()
 				SHFILEINFO sfi;
 				if (SHGetFileInfo(szDriveRoot, 0, &sfi, sizeof(SHFILEINFO), SHGFI_DISPLAYNAME | SHGFI_ATTRIBUTES))
 					if (sfi.dwAttributes)
-						InsertItem(pParentFolder, szDriveRoot);
+					{
+						HTREEITEM hItem = InsertItem(pParentFolder, szDriveRoot);
+						if (First)
+						{
+							Select(hItem, TVGN_CARET);
+							First = FALSE;
+						}
+					}
 			}
 		}
 		else
@@ -258,6 +266,11 @@ void CExplorerTree::SetRootPath(CString RootPath)
 		m_RootPath = RootPath;
 		PopulateTree();
 	}
+}
+
+void CExplorerTree::SetOnlyFilesystem(BOOL OnlyFilesystem)
+{
+	m_OnlyFilesystem = OnlyFilesystem;
 }
 
 BOOL CExplorerTree::GetChildItems(HTREEITEM hParentItem)

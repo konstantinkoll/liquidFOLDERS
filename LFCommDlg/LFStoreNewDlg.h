@@ -21,12 +21,14 @@ public:
 	bool MakeDefault;
 
 protected:
+	void SetOkButton();
 	void PopulateTreeCtrl();
 
 	afx_msg BOOL OnInitDialog();
 	afx_msg void OnDestroy();
 	afx_msg void OnSetInternalIcon();
 	afx_msg void OnSetOptions();
+	afx_msg void OnSelChanged(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg LRESULT OnMediaChanged(WPARAM wParam, LPARAM lParam);
 	DECLARE_MESSAGE_MAP()
 
