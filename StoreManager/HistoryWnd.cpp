@@ -146,7 +146,7 @@ int CHistoryWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 	SetRedraw(FALSE);
 
-	if (m_wndToolBar.Create(this, AFX_DEFAULT_TOOLBAR_STYLE)==-1)
+	if (!m_wndToolBar.Create(this, AFX_DEFAULT_TOOLBAR_STYLE))
 		return -1;
 
 	m_wndToolBar.LoadToolBar(ID_PANE_HISTORYWND, 0, 0, TRUE);

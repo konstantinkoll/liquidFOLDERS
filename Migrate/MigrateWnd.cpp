@@ -40,13 +40,13 @@ BOOL CMigrateWnd::Create()
 
 void CMigrateWnd::AdjustLayout()
 {
-	if (!IsWindow(m_wndFolder.GetSafeHwnd()))
+	if (!IsWindow(m_wndFolder))
 		return;
-	if (!IsWindow(m_wndStore.GetSafeHwnd()))
+	if (!IsWindow(m_wndStore))
 		return;
-	if (!IsWindow(m_wndBottomArea.GetSafeHwnd()))
+	if (!IsWindow(m_wndBottomArea))
 		return;
-	if (!IsWindow(m_wndMainView.GetSafeHwnd()))
+	if (!IsWindow(m_wndMainView))
 		return;
 
 	CRect rect;
@@ -83,21 +83,21 @@ int CMigrateWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	ENSURE(hint.LoadString(IDS_FOLDER_HINT));
 	CString caption;
 	ENSURE(caption.LoadString(IDS_FOLDER_CAPTION));
-	if (m_wndFolder.Create(hint, caption, this, 1)==-1)
+	if (!m_wndFolder.Create(hint, caption, this, 1))
 		return -1;
 
 	// Store selector
 	ENSURE(hint.LoadString(IDS_STORE_HINT));
 	ENSURE(caption.LoadString(IDS_STORE_CAPTION));
-	if (m_wndStore.Create(hint, caption, this, 2)==-1)
+	if (!m_wndStore.Create(hint, caption, this, 2))
 		return -1;
 
 	// Main view
-	if (m_wndMainView.Create(this, 3)==-1)
+	if (!m_wndMainView.Create(this, 3))
 		return -1;
 
 	// Bottom area
-	if (m_wndBottomArea.Create(this, MAKEINTRESOURCE(IDD_BOTTOMAREA), CBRS_BOTTOM, 4)==-1)
+	if (!m_wndBottomArea.Create(this, MAKEINTRESOURCE(IDD_BOTTOMAREA), CBRS_BOTTOM, 4))
 		return -1;
 
 	// Aero

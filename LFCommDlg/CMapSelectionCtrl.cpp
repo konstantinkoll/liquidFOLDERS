@@ -20,7 +20,7 @@ CMapSelectionCtrl::CMapSelectionCtrl()
 
 	if (!(::GetClassInfo(hInst, L"CMapSelectionCtrl", &wndcls)))
 	{
-		wndcls.style = CS_DBLCLKS | CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS;
+		wndcls.style = CS_DBLCLKS | CS_HREDRAW | CS_VREDRAW;
 		wndcls.lpfnWndProc = ::DefWindowProc;
 		wndcls.cbClsExtra = wndcls.cbWndExtra = 0;
 		wndcls.hInstance = hInst;

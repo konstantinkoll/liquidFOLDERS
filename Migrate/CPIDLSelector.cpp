@@ -20,6 +20,7 @@ BOOL CPIDLDropdownWindow::AddPIDL(LPITEMIDLIST pidl, UINT Category, BOOL FreeOnF
 {
 	if (!pidl)
 		return FALSE;
+
 	SHFILEINFO sfi;
 	if (FAILED(SHGetFileInfo((wchar_t*)pidl, 0, &sfi, sizeof(SHFILEINFO), SHGFI_PIDL | SHGFI_DISPLAYNAME | SHGFI_ATTRIBUTES | SHGFI_SYSICONINDEX)))
 	{

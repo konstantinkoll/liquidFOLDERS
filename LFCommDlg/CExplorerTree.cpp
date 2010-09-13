@@ -6,9 +6,6 @@
 #include "LFCommDlg.h"
 
 
-extern AFX_EXTENSION_MODULE LFCommDlgDLL;
-
-
 int CALLBACK CompareProc(LPARAM lParam1, LPARAM lParam2, LPARAM /*lParamSort*/)
 {
 	LPAFX_SHELLITEMINFO pItem1 = (LPAFX_SHELLITEMINFO)lParam1;
@@ -25,9 +22,30 @@ int CALLBACK CompareProc(LPARAM lParam1, LPARAM lParam2, LPARAM /*lParamSort*/)
 // CExplorerTree
 //
 
+extern AFX_EXTENSION_MODULE LFCommDlgDLL;
+
 CExplorerTree::CExplorerTree()
 	: CTreeCtrl()
 {
+	WNDCLASS wndcls;
+	HINSTANCE hInst = LFCommDlgDLL.hModule;
+
+	if (!(::GetClassInfo(hInst, L"CExplorerTree", &wndcls)))
+	{
+		wndcls.style = CS_DBLCLKS | CS_HREDRAW | CS_VREDRAW;
+		wndcls.lpfnWndProc = ::DefWindowProc;
+		wndcls.cbClsExtra = wndcls.cbWndExtra = 0;
+		wndcls.hInstance = hInst;
+		wndcls.hIcon = NULL;
+		wndcls.hCursor = LoadCursor(NULL, IDC_ARROW);
+		wndcls.hbrBackground = NULL;
+		wndcls.lpszMenuName = NULL;
+		wndcls.lpszClassName = L"CExplorerTree";
+
+		if (!AfxRegisterClass(&wndcls))
+			AfxThrowResourceException();
+	}
+
 	p_App = (LFApplication*)AfxGetApp();
 	m_pContextMenu2 = NULL;
 	m_Hover = FALSE;
@@ -40,8 +58,6 @@ BOOL CExplorerTree::Create(CWnd* pParentWnd, UINT nID, BOOL OnlyFilesystem, CStr
 	m_OnlyFilesystem = OnlyFilesystem;
 	m_RootPath = RootPath;
 	m_ExplorerStyle = TRUE;
-
-	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, LoadCursor(NULL, IDC_ARROW));
 
 	const DWORD dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_TABSTOP | TVS_HASBUTTONS | TVS_NOTOOLTIPS | TVS_DISABLEDRAGDROP | TVS_SHOWSELALWAYS;
 	CRect rect;
@@ -128,7 +144,7 @@ BOOL CExplorerTree::PreTranslateMessage(MSG* pMsg)
 		break;
 	}
 
-	return CWnd::PreTranslateMessage(pMsg);
+	return CTreeCtrl::PreTranslateMessage(pMsg);
 }
 
 CString CExplorerTree::OnGetItemText(LPAFX_SHELLITEMINFO pItem)
@@ -241,7 +257,6 @@ void CExplorerTree::PopulateTree()
 					continue;
 
 				szDriveRoot[0] = cDrive;
-				UINT uDriveType = GetDriveType(szDriveRoot);
 
 				SHFILEINFO sfi;
 				if (SHGetFileInfo(szDriveRoot, 0, &sfi, sizeof(SHFILEINFO), SHGFI_DISPLAYNAME | SHGFI_ATTRIBUTES))
@@ -425,7 +440,7 @@ void CExplorerTree::OnPaint()
 	buffer.CreateCompatibleBitmap(&pDC, rect.Width(), rect.Height());
 	CBitmap* pOldBitmap = dc.SelectObject(&buffer);
 
-	CWnd::DefWindowProc(WM_PAINT, (WPARAM)dc.m_hDC, NULL);
+	CTreeCtrl::DefWindowProc(WM_PAINT, (WPARAM)dc.m_hDC, NULL);
 
 	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);
 	dc.SelectObject(pOldBitmap);

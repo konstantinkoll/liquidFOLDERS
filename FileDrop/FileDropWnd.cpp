@@ -153,7 +153,8 @@ int CFileDropWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	UseGlasBackground(Margins);
 
 	// Hintergrundbilder laden
-	m_Dropzone.Create(128, 128, ILC_COLOR32, 2, 1);
+	if (!m_Dropzone.Create(128, 128, ILC_COLOR32, 2, 1))
+		return -1;
 
 	HICON ic = LFGetIcon(IDI_STORE_Internal, 128, 128);
 	m_Dropzone.Add(ic);

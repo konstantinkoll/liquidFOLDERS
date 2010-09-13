@@ -46,7 +46,7 @@ void LFChooseDefaultStoreDlg::MakeDefault(HWND hWnd)
 
 void LFChooseDefaultStoreDlg::AdjustLayout()
 {
-	if (!IsWindow(m_wndExplorerList.GetSafeHwnd()))
+	if (!IsWindow(m_wndExplorerList))
 		return;
 
 	CRect rect;

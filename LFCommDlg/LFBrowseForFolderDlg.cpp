@@ -40,7 +40,7 @@ void LFBrowseForFolderDlg::DoDataExchange(CDataExchange* pDX)
 
 void LFBrowseForFolderDlg::AdjustLayout()
 {
-	if (!IsWindow(m_wndExplorerTree.GetSafeHwnd()))
+	if (!IsWindow(m_wndExplorerTree))
 		return;
 
 	CRect rect;

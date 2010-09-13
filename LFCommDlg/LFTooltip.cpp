@@ -197,7 +197,8 @@ void LFTooltip::Track(CPoint point, HICON hIcon, CSize szIcon, const CString& st
 
 void LFTooltip::Hide()
 {
-	ShowWindow(SW_HIDE);
+	if (IsWindow(m_hWnd))
+		ShowWindow(SW_HIDE);
 }
 
 void LFTooltip::Deactivate()
