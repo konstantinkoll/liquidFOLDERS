@@ -753,8 +753,8 @@ LFCore_API unsigned int LFMountDrive(char d, bool InternalCall)
 
 				if (slot)
 				{
-					strncpy_s(slot->DatPath, MAX_PATH, mask, 3);
-					AppendGUID(slot, slot->DatPath);
+					strcpy_s(slot->DatPath, MAX_PATH, s->DatPath);
+					slot->DatPath[0] = d;
 					slot->NeedsCheck = true;
 
 					ValidateStoreSettings(slot);
