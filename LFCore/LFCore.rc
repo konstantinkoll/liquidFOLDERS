@@ -67,8 +67,8 @@ IDI_FILE_Generic        ICON                    "res\\FILE_Generic.ico"
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 0,1,0,0
- PRODUCTVERSION 0,1,0,0
+ FILEVERSION 0,8,0,0
+ PRODUCTVERSION 0,8,0,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -84,13 +84,13 @@ BEGIN
         BLOCK "000004e4"
         BEGIN
             VALUE "CompanyName", "liquidFOLDERS"
-            VALUE "FileVersion", "0.1"
+            VALUE "FileVersion", "0.8"
             VALUE "InternalName", "LFCore"
             VALUE "LegalCopyright", "© 2009-2010 liquidFOLDERS"
             VALUE "LegalTrademarks", "liquidFOLDERS®"
             VALUE "OriginalFilename", "LFCore.dll"
             VALUE "ProductName", "liquidFOLDERS"
-            VALUE "ProductVersion", "0.1"
+            VALUE "ProductVersion", "0.8"
         END
     END
     BLOCK "VarFileInfo"
