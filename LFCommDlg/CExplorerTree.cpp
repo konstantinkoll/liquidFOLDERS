@@ -187,14 +187,29 @@ HTREEITEM CExplorerTree::InsertItem(IShellFolder* pParentFolder, LPITEMIDLIST pi
 	return CTreeCtrl::InsertItem(&tvInsert);
 }
 
-HTREEITEM CExplorerTree::InsertItem(IShellFolder* pParentFolder, wchar_t* Path)
+HTREEITEM CExplorerTree::InsertItem(wchar_t* Path)
 {
+	IShellFolder* pDesktop = NULL;
+	if (FAILED(SHGetDesktopFolder(&pDesktop)))
+		return NULL;
+
 	ULONG chEaten;
 	ULONG dwAttributes;
-	LPITEMIDLIST pidl = NULL;
-	pParentFolder->ParseDisplayName(NULL, NULL, Path, &chEaten, &pidl, &dwAttributes);
+	LPITEMIDLIST pidlFQ = NULL;
+	pDesktop->ParseDisplayName(NULL, NULL, Path, &chEaten, &pidlFQ, &dwAttributes);
+	pDesktop->Release();
 
-	return InsertItem(pParentFolder, pidl, TVI_ROOT, TRUE);
+	IShellFolder* pParentFolder = NULL;
+	LPCITEMIDLIST pidlRel = NULL;
+	if (FAILED(SHBindToParent(pidlFQ, IID_IShellFolder, (void**)&pParentFolder, &pidlRel)))
+		return NULL;
+
+	HTREEITEM hItem = InsertItem(pParentFolder, p_App->GetShellManager()->CopyItem(pidlRel), TVI_ROOT, TRUE, pidlFQ);
+
+	if (pParentFolder)
+		pParentFolder->Release();
+
+	return hItem;
 }
 
 void CExplorerTree::PopulateTree()
@@ -202,20 +217,15 @@ void CExplorerTree::PopulateTree()
 	DeleteAllItems();
 
 	LPITEMIDLIST pidl;
-	IShellFolder* pParentFolder = NULL;
 	HTREEITEM hItem = NULL;
 	if (m_RootPath.IsEmpty())
 	{
 		if (FAILED(SHGetSpecialFolderLocation(NULL, CSIDL_DESKTOP, &pidl)))
 			return;
 
-		hItem = InsertItem(pParentFolder, pidl);
+		hItem = InsertItem(NULL, pidl);
 	}
 	else
-	{
-		if (FAILED(SHGetDesktopFolder(&pParentFolder)))
-			return;
-
 		if ((m_RootPath==CETR_InternalDrives) || (m_RootPath==CETR_ExternalDrives))
 		{
 			DWORD DrivesOnSystem = LFGetLogicalDrives(m_RootPath==CETR_InternalDrives ? LFGLD_Internal | LFGLD_Network : LFGLD_External);
@@ -237,7 +247,7 @@ void CExplorerTree::PopulateTree()
 				if (SHGetFileInfo(szDriveRoot, 0, &sfi, sizeof(SHFILEINFO), SHGFI_DISPLAYNAME | SHGFI_ATTRIBUTES))
 					if (sfi.dwAttributes)
 					{
-						HTREEITEM hItem = InsertItem(pParentFolder, szDriveRoot);
+						HTREEITEM hItem = InsertItem(/*pParentFolder, */szDriveRoot);
 						if (First)
 						{
 							Select(hItem, TVGN_CARET);
@@ -248,16 +258,12 @@ void CExplorerTree::PopulateTree()
 		}
 		else
 		{
-			hItem = InsertItem(pParentFolder, m_RootPath.GetBuffer());
+			hItem = InsertItem(m_RootPath.GetBuffer());
 			Select(hItem, TVGN_CARET);
 		}
-	}
 
 	if ((hItem) && (!(GetStyle() & TVS_LINESATROOT)))
 		Expand(hItem, TVE_EXPAND);
-
-	if (pParentFolder)
-		pParentFolder->Release();
 }
 
 void CExplorerTree::SetRootPath(CString RootPath)
@@ -471,7 +477,8 @@ void CExplorerTree::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 	IShellFolder* psfFolder = pInfo->pParentFolder;
 	if (!psfFolder)
 	{
-		ENSURE(SUCCEEDED(SHGetDesktopFolder(&psfFolder)));
+		if (FAILED(SHGetDesktopFolder(&psfFolder)))
+			return;
 	}
 	else
 	{

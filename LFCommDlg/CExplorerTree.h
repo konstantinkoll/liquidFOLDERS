@@ -45,7 +45,7 @@ protected:
 	CString OnGetItemText(LPAFX_SHELLITEMINFO pItem);
 	int OnGetItemIcon(LPAFX_SHELLITEMINFO pItem, BOOL bSelected);
 	HTREEITEM InsertItem(IShellFolder* pParentFolder, LPITEMIDLIST pidlRel, HTREEITEM hParent=TVI_ROOT, BOOL children=TRUE, LPITEMIDLIST pidlFQ=NULL);
-	HTREEITEM InsertItem(IShellFolder* pParentFolder, wchar_t* Path);
+	HTREEITEM InsertItem(wchar_t* Path);
 	BOOL GetChildItems(HTREEITEM hParentItem);
 	void EnumObjects(HTREEITEM hParentItem, IShellFolder* pParentFolder, LPITEMIDLIST pidlParent);
 
