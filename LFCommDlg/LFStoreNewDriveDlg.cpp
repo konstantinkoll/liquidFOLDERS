@@ -7,6 +7,7 @@
 #include "Resource.h"
 #include "LFCore.h"
 #include "LFApplication.h"
+#include "CExplorerTree.h"
 #include "..\\LFCore\\resource.h"
 
 
@@ -86,17 +87,10 @@ BOOL LFStoreNewDriveDlg::OnInitDialog()
 	m_IconExternal.SetCoreIcon(IDI_STORE_Bag);
 
 	// Benachrichtigung, wenn sich Laufwerke ändern
-	LPITEMIDLIST pidl;
-	if (SUCCEEDED(SHGetSpecialFolderLocation(m_hWnd, CSIDL_DESKTOP, &pidl)))
-	{
-		SHChangeNotifyEntry shCNE;
-		shCNE.pidl = pidl;
-		shCNE.fRecursive = TRUE;
-
-		m_ulSHChangeNotifyRegister = SHChangeNotifyRegister(m_hWnd, SHCNRF_ShellLevel,
-			SHCNE_DRIVEADD | SHCNE_DRIVEREMOVED | SHCNE_MEDIAINSERTED | SHCNE_MEDIAREMOVED,
-			WM_USER_MEDIACHANGED, 1, &shCNE);
-	}
+	SHChangeNotifyEntry shCNE = { NULL, TRUE };
+	m_ulSHChangeNotifyRegister = SHChangeNotifyRegister(m_hWnd, SHCNRF_InterruptLevel | SHCNRF_ShellLevel,
+		SHCNE_DRIVEADD | SHCNE_DRIVEREMOVED | SHCNE_MEDIAINSERTED | SHCNE_MEDIAREMOVED | SHCNE_INTERRUPT,
+		WM_SHELLCHANGE, 1, &shCNE);
 
 	return TRUE;
 }

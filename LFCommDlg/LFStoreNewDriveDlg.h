@@ -22,7 +22,6 @@ protected:
 	CIconCtrl m_IconHybrid;
 	CIconCtrl m_IconExternal;
 	CExplorerTree m_PathTree;
-	ULONG m_ulSHChangeNotifyRegister;
 	char m_Drive;
 
 	afx_msg BOOL OnInitDialog();
@@ -32,4 +31,5 @@ protected:
 
 private:
 	LFStoreDescriptor* m_pStore;
+	ULONG m_ulSHChangeNotifyRegister;
 };

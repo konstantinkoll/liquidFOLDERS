@@ -14,6 +14,8 @@
 #define CETR_InternalDrives     _T("::DRVINTERNAL")
 #define CETR_ExternalDrives     _T("::DRVEXTERNAL")
 
+#define WM_SHELLCHANGE         WM_USER+2
+
 class AFX_EXT_CLASS CExplorerTree : public CTreeCtrl
 {
 public:
@@ -24,6 +26,7 @@ public:
 	LPITEMIDLIST GetSelectedPIDL();
 	BOOL GetSelectedPathA(LPSTR Path);
 	BOOL GetSelectedPathW(LPWSTR Path);
+	HTREEITEM FindItem(LPITEMIDLIST pidl);
 	void PopulateTree();
 	void SetRootPath(CString RootPath);
 	void SetOnlyFilesystem(BOOL OnlyFilesystem);
@@ -48,7 +51,7 @@ protected:
 	BOOL GetChildItems(HTREEITEM hParentItem);
 	void EnumObjects(HTREEITEM hParentItem, IShellFolder* pParentFolder, LPITEMIDLIST pidlParent);
 
-	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
+	afx_msg void OnDestroy();
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnPaint();
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
@@ -59,5 +62,9 @@ protected:
 	afx_msg void OnRButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnItemExpanding(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnDeleteItem(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg LRESULT OnShellChange(WPARAM wParam, LPARAM lParam);
 	DECLARE_MESSAGE_MAP()
+
+private:
+	ULONG m_ulSHChangeNotifyRegister;
 };

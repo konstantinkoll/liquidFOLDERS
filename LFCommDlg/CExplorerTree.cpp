@@ -51,6 +51,7 @@ CExplorerTree::CExplorerTree()
 	m_Hover = FALSE;
 	m_HoverItem = NULL;
 	m_ExplorerStyle = FALSE;
+	m_ulSHChangeNotifyRegister = NULL;
 }
 
 void CExplorerTree::PreSubclassWindow()
@@ -61,6 +62,12 @@ void CExplorerTree::PreSubclassWindow()
 		ModifyStyle(0, TVS_HASLINES);
 
 	SetImageList(&p_App->m_SystemImageListSmall, 0);
+
+	// Benachrichtigung, wenn sich Items ändern
+	SHChangeNotifyEntry shCNE = { NULL, TRUE };
+	m_ulSHChangeNotifyRegister = SHChangeNotifyRegister(m_hWnd, SHCNRF_InterruptLevel | SHCNRF_ShellLevel,
+		SHCNE_DRIVEADD | SHCNE_DRIVEREMOVED | SHCNE_MEDIAINSERTED | SHCNE_MEDIAREMOVED | SHCNE_INTERRUPT,
+		WM_SHELLCHANGE, 1, &shCNE);
 }
 
 LPITEMIDLIST CExplorerTree::GetSelectedPIDL()
@@ -236,9 +243,6 @@ void CExplorerTree::PopulateTree()
 			wchar_t szDriveRoot[] = L" :\\";
 			BOOL First = TRUE;
 
-			char SysDrive[MAX_PATH];
-			GetWindowsDirectoryA(SysDrive, MAX_PATH);
-
 			for (char cDrive='A'; cDrive<='Z'; cDrive++, DrivesOnSystem>>=1)
 			{
 				if (!(DrivesOnSystem & 1))
@@ -250,7 +254,7 @@ void CExplorerTree::PopulateTree()
 				if (SHGetFileInfo(szDriveRoot, 0, &sfi, sizeof(SHFILEINFO), SHGFI_DISPLAYNAME | SHGFI_ATTRIBUTES))
 					if (sfi.dwAttributes)
 					{
-						HTREEITEM hItem = InsertItem(/*pParentFolder, */szDriveRoot);
+						HTREEITEM hItem = InsertItem(szDriveRoot);
 						if (First)
 						{
 							Select(hItem, TVGN_CARET);
@@ -267,6 +271,11 @@ void CExplorerTree::PopulateTree()
 
 	if ((hItem) && (!(GetStyle() & TVS_LINESATROOT)))
 		Expand(hItem, TVE_EXPAND);
+}
+
+HTREEITEM CExplorerTree::FindItem(LPITEMIDLIST pidl)
+{
+	return GetRootItem();
 }
 
 void CExplorerTree::SetRootPath(CString RootPath)
@@ -359,6 +368,7 @@ void CExplorerTree::EnumObjects(HTREEITEM hParentItem, IShellFolder* pParentFold
 
 
 BEGIN_MESSAGE_MAP(CExplorerTree, CTreeCtrl)
+	ON_WM_DESTROY()
 	ON_WM_ERASEBKGND()
 	ON_WM_PAINT()
 	ON_WM_CONTEXTMENU()
@@ -369,7 +379,16 @@ BEGIN_MESSAGE_MAP(CExplorerTree, CTreeCtrl)
 	ON_WM_RBUTTONDOWN()
 	ON_NOTIFY_REFLECT(TVN_ITEMEXPANDING, OnItemExpanding)
 	ON_NOTIFY_REFLECT(TVN_DELETEITEM, OnDeleteItem)
+	ON_MESSAGE(WM_SHELLCHANGE, OnShellChange)
 END_MESSAGE_MAP()
+
+void CExplorerTree::OnDestroy()
+{
+	if (m_ulSHChangeNotifyRegister)
+		VERIFY(SHChangeNotifyDeregister(m_ulSHChangeNotifyRegister));
+
+	CTreeCtrl::OnDestroy();
+}
 
 BOOL CExplorerTree::OnEraseBkgnd(CDC* /*pDC*/)
 {
@@ -668,4 +687,92 @@ void CExplorerTree::OnDeleteItem(NMHDR* pNMHDR, LRESULT* pResult)
 
 	GlobalFree((HGLOBAL)pItem);
 	*pResult = 0;
+}
+
+LRESULT CExplorerTree::OnShellChange(WPARAM wParam, LPARAM lParam)
+{
+	LPITEMIDLIST* pidls = (LPITEMIDLIST*)wParam;
+
+	LPITEMIDLIST pidl1FQ = NULL;
+	LPITEMIDLIST pidl2FQ = NULL;
+	IShellFolder* pDesktop = NULL;
+	if (SUCCEEDED(SHGetDesktopFolder(&pDesktop)))
+	{
+		SHGetRealIDL(pDesktop, pidls[0], &pidl1FQ);
+		if (pidls[1])
+			SHGetRealIDL(pDesktop, pidls[1], &pidl2FQ);
+
+		pDesktop->Release();
+	}
+
+	switch (lParam)
+	{
+	case SHCNE_DRIVEADD:
+	case SHCNE_MEDIAINSERTED:
+		{
+			if ((m_RootPath==CETR_InternalDrives) || (m_RootPath==CETR_ExternalDrives))
+			{
+				wchar_t szPath[MAX_PATH];
+				if (SUCCEEDED(SHGetPathFromIDList(pidl1FQ, szPath)))
+				{
+					DWORD DrivesOnSystem = LFGetLogicalDrives(m_RootPath==CETR_InternalDrives ? LFGLD_Internal | LFGLD_Network : LFGLD_External);
+
+					if (DrivesOnSystem & (1 << (szPath[0]-'A')))
+					{
+						wchar_t szDriveRoot[4];
+						wcsncpy_s(szDriveRoot, 4, szPath, 3);
+
+						SHFILEINFO sfi;
+						if (SHGetFileInfo(szDriveRoot, 0, &sfi, sizeof(SHFILEINFO), SHGFI_DISPLAYNAME | SHGFI_ATTRIBUTES))
+							if (sfi.dwAttributes)
+								InsertItem(szDriveRoot);
+					}
+				}
+			}
+			else
+			{
+			}
+
+			break;
+		}
+	case SHCNE_RENAMEFOLDER:
+		{
+
+			HTREEITEM hItem = FindItem(pidl1FQ);
+
+			TVITEM tvItem;
+			ZeroMemory(&tvItem, sizeof(tvItem));
+			tvItem.mask = TVIF_PARAM | TVIF_TEXT | TVIF_IMAGE | TVIF_SELECTEDIMAGE;
+			tvItem.hItem = hItem;
+
+			if (GetItem(&tvItem))
+			{
+				LPAFX_SHELLITEMINFO pItem = (LPAFX_SHELLITEMINFO)tvItem.lParam;
+
+				IShellFolder* pParentFolder = NULL;
+				LPCITEMIDLIST pidlRel = NULL;
+				if (SUCCEEDED(SHBindToParent(pidl2FQ, IID_IShellFolder, (void**)&pParentFolder, &pidlRel)))
+				{
+					pItem->pidlFQ = p_App->GetShellManager()->CopyItem(pidl2FQ);
+					pItem->pidlRel = p_App->GetShellManager()->CopyItem(pidlRel);
+					pItem->pParentFolder = pParentFolder;
+
+					CString strItem = OnGetItemText(pItem);
+					tvItem.pszText = strItem.GetBuffer(strItem.GetLength());
+					tvItem.iImage = OnGetItemIcon(pItem, FALSE);
+					tvItem.iSelectedImage = OnGetItemIcon(pItem, TRUE);
+
+					SetItem(&tvItem);
+				}
+			}
+
+			break;
+		}
+	}
+
+	p_App->GetShellManager()->FreeItem(pidl1FQ);
+	if (pidl2FQ)
+		p_App->GetShellManager()->FreeItem(pidl2FQ);
+
+	return TRUE;
 }

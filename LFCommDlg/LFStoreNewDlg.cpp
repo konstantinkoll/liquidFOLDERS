@@ -23,7 +23,6 @@ LFStoreNewDlg::LFStoreNewDlg(CWnd* pParentWnd, LFStoreDescriptor* pStore)
 	ASSERT(pStore);
 
 	m_pStore = pStore;
-	m_ulSHChangeNotifyRegister = NULL;
 }
 
 void LFStoreNewDlg::SetOkButton()
@@ -77,14 +76,12 @@ void LFStoreNewDlg::DoDataExchange(CDataExchange* pDX)
 
 
 BEGIN_MESSAGE_MAP(LFStoreNewDlg, CDialog)
-	ON_WM_DESTROY()
 	ON_BN_CLICKED(IDC_MAKEDEFAULT, OnSetInternalIcon)
 	ON_BN_CLICKED(IDC_INTERNALSTORE, OnSetOptions)
 	ON_BN_CLICKED(IDC_HYBRIDSTORE, OnSetOptions)
 	ON_BN_CLICKED(IDC_EXTERNALSTORE, OnSetOptions)
 	ON_BN_CLICKED(IDC_AUTOPATH, OnSetOptions)
 	ON_NOTIFY(TVN_SELCHANGED, IDC_PATHTREE, OnSelChanged)
-	ON_MESSAGE(WM_USER_MEDIACHANGED, OnMediaChanged)
 END_MESSAGE_MAP()
 
 BOOL LFStoreNewDlg::OnInitDialog()
@@ -110,28 +107,7 @@ BOOL LFStoreNewDlg::OnInitDialog()
 	m_IconHybrid.SetCoreIcon(IDI_STORE_Bag);
 	m_IconExternal.SetCoreIcon(IDI_STORE_Bag);
 
-	// Benachrichtigung, wenn sich Laufwerke ändern
-	LPITEMIDLIST pidl;
-	if (SUCCEEDED(SHGetSpecialFolderLocation(m_hWnd, CSIDL_DESKTOP, &pidl)))
-	{
-		SHChangeNotifyEntry shCNE;
-		shCNE.pidl = pidl;
-		shCNE.fRecursive = TRUE;
-
-		m_ulSHChangeNotifyRegister = SHChangeNotifyRegister(m_hWnd, SHCNRF_ShellLevel,
-			SHCNE_DRIVEADD | SHCNE_DRIVEREMOVED | SHCNE_MEDIAINSERTED | SHCNE_MEDIAREMOVED,
-			WM_USER_MEDIACHANGED, 1, &shCNE);
-	}
-
 	return TRUE;
-}
-
-void LFStoreNewDlg::OnDestroy()
-{
-	if (m_ulSHChangeNotifyRegister)
-		VERIFY(SHChangeNotifyDeregister(m_ulSHChangeNotifyRegister));
-
-	CDialog::OnDestroy();
 }
 
 void LFStoreNewDlg::OnSetInternalIcon()
@@ -155,11 +131,4 @@ void LFStoreNewDlg::OnSetOptions()
 void LFStoreNewDlg::OnSelChanged(NMHDR* /*pNMHDR*/, LRESULT* /*pResult*/)
 {
 	SetOkButton();
-}
-
-LRESULT LFStoreNewDlg::OnMediaChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)
-{
-	PopulateTreeCtrl();
-
-	return NULL;
 }

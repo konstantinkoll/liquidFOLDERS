@@ -28,10 +28,8 @@ protected:
 	CIconCtrl m_IconHybrid;
 	CIconCtrl m_IconExternal;
 	CExplorerTree m_PathTree;
-	ULONG m_ulSHChangeNotifyRegister;
 
 	afx_msg BOOL OnInitDialog();
-	afx_msg void OnDestroy();
 	afx_msg void OnSetInternalIcon();
 	afx_msg void OnSetOptions();
 	afx_msg void OnSelChanged(NMHDR* pNMHDR, LRESULT* pResult);
