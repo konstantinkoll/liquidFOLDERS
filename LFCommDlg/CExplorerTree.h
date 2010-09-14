@@ -26,7 +26,7 @@ public:
 	LPITEMIDLIST GetSelectedPIDL();
 	BOOL GetSelectedPathA(LPSTR Path);
 	BOOL GetSelectedPathW(LPWSTR Path);
-	HTREEITEM FindItem(IShellFolder* pDesktop, LPITEMIDLIST pidl);
+	//HTREEITEM FindItem(IShellFolder* pDesktop, LPITEMIDLIST pidl);
 	void PopulateTree();
 	void SetRootPath(CString RootPath);
 	void SetOnlyFilesystem(BOOL OnlyFilesystem);
@@ -50,6 +50,7 @@ protected:
 	HTREEITEM InsertItem(wchar_t* Path);
 	BOOL GetChildItems(HTREEITEM hParentItem);
 	void EnumObjects(HTREEITEM hParentItem, IShellFolder* pParentFolder, LPITEMIDLIST pidlParent);
+	BOOL DeletePath(LPWSTR Path);
 
 	afx_msg void OnDestroy();
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);

@@ -274,10 +274,11 @@ void CExplorerTree::PopulateTree()
 		Expand(hItem, TVE_EXPAND);
 }
 
-HTREEITEM CExplorerTree::FindItem(IShellFolder* pDesktop, LPITEMIDLIST pidl)
+BOOL CExplorerTree::DeletePath(LPWSTR Path)
 {
-	ASSERT(pDesktop);
-/*
+	BOOL Deleted = FALSE;
+
+	CList<HTREEITEM> lstItems;
 	HTREEITEM hItem = GetRootItem();
 
 	while (hItem)
@@ -290,25 +291,32 @@ HTREEITEM CExplorerTree::FindItem(IShellFolder* pDesktop, LPITEMIDLIST pidl)
 		if (GetItem(&tvItem))
 		{
 			LPAFX_SHELLITEMINFO pItem = (LPAFX_SHELLITEMINFO)tvItem.lParam;
+			BOOL AddChildren = TRUE;
 
-			MessageBox(OnGetItemText(pItem));
+			wchar_t tmpPath[MAX_PATH];
+			if (SHGetPathFromIDList(pItem->pidlFQ, tmpPath))
+				if (wcscmp(tmpPath, Path)==0)
+				{
+					DeleteItem(hItem);
+					AddChildren = FALSE;
+					Deleted = TRUE;
+				}
 
-			// Equal
-			if (IsEqual(pItem->pidlFQ, pidl))
-				return hItem;
-
-			BOOL x = IsParent(pItem->pidlFQ, pidl);
-			if (x)
-				MessageBox(_T("Parent"));
-			hItem = x ? GetChildItem(hItem) : GetNextSiblingItem(hItem);
+			if (AddChildren)
+			{
+				hItem = GetChildItem(hItem);
+				while (hItem)
+				{
+					lstItems.AddTail(hItem);
+					hItem = GetNextSiblingItem(hItem);
+				}
+			}
 		}
-		else
-		{
-			hItem = GetNextSiblingItem(hItem);
-		}
+
+		hItem = lstItems.IsEmpty() ? NULL : lstItems.RemoveHead();
 	}
-*/
-	return NULL;
+
+	return Deleted;
 }
 
 void CExplorerTree::SetRootPath(CString RootPath)
@@ -747,25 +755,22 @@ LRESULT CExplorerTree::OnShellChange(WPARAM wParam, LPARAM lParam)
 	{
 	case SHCNE_DRIVEADD:
 	case SHCNE_MEDIAINSERTED:
-		if ((m_RootPath==CETR_InternalDrives) || (m_RootPath==CETR_ExternalDrives))
-		{
-			DWORD DrivesOnSystem = LFGetLogicalDrives(m_RootPath==CETR_InternalDrives ? LFGLD_Internal | LFGLD_Network : LFGLD_External);
+		if (Path1[0]!='\0')
+			if ((m_RootPath==CETR_InternalDrives) || (m_RootPath==CETR_ExternalDrives))
+			{
+				DWORD DrivesOnSystem = LFGetLogicalDrives(m_RootPath==CETR_InternalDrives ? LFGLD_Internal | LFGLD_Network : LFGLD_External);
 
-			if (DrivesOnSystem & (1 << (Path1[0]-'A')))
-				InsertItem(Path1);
-		}
+				if (DrivesOnSystem & (1 << (Path1[0]-'A')))
+					InsertItem(Path1);
+			}
 		break;
 	case SHCNE_DRIVEREMOVED:
 	case SHCNE_MEDIAREMOVED:
 	case SHCNE_RMDIR:
-		{
-			HTREEITEM hItem = FindItem(pDesktop, pidl1FQ);
-			if (hItem)
-				DeleteItem(hItem);
-
-			break;
-		}
-	case SHCNE_RENAMEFOLDER:
+		if (Path1[0]!='\0')
+			DeletePath(Path1);
+		break;
+/*	case SHCNE_RENAMEFOLDER:
 		{
 			HTREEITEM hItem = FindItem(pDesktop, pidl1FQ);
 
@@ -799,7 +804,7 @@ LRESULT CExplorerTree::OnShellChange(WPARAM wParam, LPARAM lParam)
 			}
 
 			break;
-		}
+		}*/
 	}
 
 	p_App->GetShellManager()->FreeItem(pidl1FQ);
