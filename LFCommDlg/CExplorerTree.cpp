@@ -784,7 +784,7 @@ void CExplorerTree::OnDeleteItem(NMHDR* pNMHDR, LRESULT* pResult)
 	LPAFX_SHELLITEMINFO pItem = (LPAFX_SHELLITEMINFO)pNMTreeView->itemOld.lParam;
 
 	p_App->GetShellManager()->FreeItem(pItem->pidlFQ);
-	p_App->GetShellManager()->FreeItem(pItem->pidlRel);n F
+	p_App->GetShellManager()->FreeItem(pItem->pidlRel);
 	if (pItem->pParentFolder)
 		pItem->pParentFolder->Release();
 
