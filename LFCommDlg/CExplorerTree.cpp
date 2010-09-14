@@ -277,28 +277,37 @@ void CExplorerTree::PopulateTree()
 HTREEITEM CExplorerTree::FindItem(IShellFolder* pDesktop, LPITEMIDLIST pidl)
 {
 	ASSERT(pDesktop);
-
+/*
 	HTREEITEM hItem = GetRootItem();
 
 	while (hItem)
 	{
 		TVITEM tvItem;
 		ZeroMemory(&tvItem, sizeof(tvItem));
-		tvItem.mask = TVIF_PARAM | TVIF_TEXT | TVIF_IMAGE | TVIF_SELECTEDIMAGE;
+		tvItem.mask = TVIF_PARAM;
 		tvItem.hItem = hItem;
 
 		if (GetItem(&tvItem))
 		{
 			LPAFX_SHELLITEMINFO pItem = (LPAFX_SHELLITEMINFO)tvItem.lParam;
 
+			MessageBox(OnGetItemText(pItem));
+
 			// Equal
-			if (pDesktop->CompareIDs(NULL, pItem->pidlFQ, pidl)==0)
+			if (IsEqual(pItem->pidlFQ, pidl))
 				return hItem;
+
+			BOOL x = IsParent(pItem->pidlFQ, pidl);
+			if (x)
+				MessageBox(_T("Parent"));
+			hItem = x ? GetChildItem(hItem) : GetNextSiblingItem(hItem);
 		}
-
-		hItem = GetNextSiblingItem(hItem);
+		else
+		{
+			hItem = GetNextSiblingItem(hItem);
+		}
 	}
-
+*/
 	return NULL;
 }
 
@@ -719,44 +728,33 @@ LRESULT CExplorerTree::OnShellChange(WPARAM wParam, LPARAM lParam)
 
 	LPITEMIDLIST pidl1FQ = NULL;
 	LPITEMIDLIST pidl2FQ = NULL;
+	wchar_t Path1[MAX_PATH] = L"";
+	wchar_t Path2[MAX_PATH] = L"";
+
 	IShellFolder* pDesktop = NULL;
 	if (SUCCEEDED(SHGetDesktopFolder(&pDesktop)))
 	{
 		SHGetRealIDL(pDesktop, pidls[0], &pidl1FQ);
+		SHGetPathFromIDList(pidl1FQ, Path1);
 		if (pidls[1])
+		{
 			SHGetRealIDL(pDesktop, pidls[1], &pidl2FQ);
+			SHGetPathFromIDList(pidl2FQ, Path2);
+		}
 	}
 
 	switch (lParam)
 	{
 	case SHCNE_DRIVEADD:
 	case SHCNE_MEDIAINSERTED:
+		if ((m_RootPath==CETR_InternalDrives) || (m_RootPath==CETR_ExternalDrives))
 		{
-			if ((m_RootPath==CETR_InternalDrives) || (m_RootPath==CETR_ExternalDrives))
-			{
-				wchar_t szPath[MAX_PATH];
-				if (SUCCEEDED(SHGetPathFromIDList(pidl1FQ, szPath)))
-				{
-					DWORD DrivesOnSystem = LFGetLogicalDrives(m_RootPath==CETR_InternalDrives ? LFGLD_Internal | LFGLD_Network : LFGLD_External);
+			DWORD DrivesOnSystem = LFGetLogicalDrives(m_RootPath==CETR_InternalDrives ? LFGLD_Internal | LFGLD_Network : LFGLD_External);
 
-					if (DrivesOnSystem & (1 << (szPath[0]-'A')))
-					{
-						wchar_t szDriveRoot[4];
-						wcsncpy_s(szDriveRoot, 4, szPath, 3);
-
-						SHFILEINFO sfi;
-						if (SHGetFileInfo(szDriveRoot, 0, &sfi, sizeof(SHFILEINFO), SHGFI_DISPLAYNAME | SHGFI_ATTRIBUTES))
-							if (sfi.dwAttributes)
-								InsertItem(szDriveRoot);
-					}
-				}
-			}
-			else
-			{
-			}
-
-			break;
+			if (DrivesOnSystem & (1 << (Path1[0]-'A')))
+				InsertItem(Path1);
 		}
+		break;
 	case SHCNE_DRIVEREMOVED:
 	case SHCNE_MEDIAREMOVED:
 	case SHCNE_RMDIR:

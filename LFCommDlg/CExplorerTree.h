@@ -67,4 +67,7 @@ protected:
 
 private:
 	ULONG m_ulSHChangeNotifyRegister;
+
+	BOOL IsParent(LPITEMIDLIST pidlParent, LPITEMIDLIST pidlChild);
+	BOOL IsEqual(LPITEMIDLIST pidl1, LPITEMIDLIST pidl2);
 };
