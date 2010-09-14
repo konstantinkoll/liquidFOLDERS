@@ -67,7 +67,7 @@ void CExplorerTree::PreSubclassWindow()
 	SHChangeNotifyEntry shCNE = { NULL, TRUE };
 	m_ulSHChangeNotifyRegister = SHChangeNotifyRegister(m_hWnd, SHCNRF_InterruptLevel | SHCNRF_ShellLevel,
 		SHCNE_DRIVEADD | SHCNE_DRIVEREMOVED | SHCNE_MEDIAINSERTED | SHCNE_MEDIAREMOVED |
-			SHCNE_MKDIR | SHCNE_RMDIR | SHCNE_RENAMEFOLDER | SHCNE_INTERRUPT,
+			SHCNE_RMDIR | SHCNE_RENAMEFOLDER | SHCNE_INTERRUPT,
 		WM_SHELLCHANGE, 1, &shCNE);
 }
 
@@ -208,8 +208,11 @@ HTREEITEM CExplorerTree::InsertItem(wchar_t* Path)
 	ULONG chEaten;
 	ULONG dwAttributes;
 	LPITEMIDLIST pidlFQ = NULL;
-	pDesktop->ParseDisplayName(NULL, NULL, Path, &chEaten, &pidlFQ, &dwAttributes);
+	HRESULT hr = pDesktop->ParseDisplayName(NULL, NULL, Path, &chEaten, &pidlFQ, &dwAttributes);
 	pDesktop->Release();
+
+	if (FAILED(hr))
+		return NULL;
 
 	IShellFolder* pParentFolder = NULL;
 	LPCITEMIDLIST pidlRel = NULL;
@@ -317,6 +320,66 @@ BOOL CExplorerTree::DeletePath(LPWSTR Path)
 	}
 
 	return Deleted;
+}
+
+void CExplorerTree::UpdatePath(LPWSTR Path1, LPWSTR Path2, IShellFolder* pDesktop)
+{
+	CList<HTREEITEM> lstItems;
+	HTREEITEM hItem = GetRootItem();
+
+	while (hItem)
+	{
+		TVITEM tvItem;
+		ZeroMemory(&tvItem, sizeof(tvItem));
+		tvItem.mask = TVIF_PARAM | TVIF_TEXT | TVIF_IMAGE | TVIF_SELECTEDIMAGE;
+		tvItem.hItem = hItem;
+
+		if (GetItem(&tvItem))
+		{
+			LPAFX_SHELLITEMINFO pItem = (LPAFX_SHELLITEMINFO)tvItem.lParam;
+
+			wchar_t tmpPath[MAX_PATH];
+			if (SHGetPathFromIDList(pItem->pidlFQ, tmpPath))
+				if (wcscmp(tmpPath, Path1)==0)
+				{
+					ULONG chEaten;
+					ULONG dwAttributes;
+					LPITEMIDLIST pidlFQ = NULL;
+					if (SUCCEEDED(pDesktop->ParseDisplayName(NULL, NULL, Path2, &chEaten, &pidlFQ, &dwAttributes)))
+					{
+						IShellFolder* pParentFolder = NULL;
+						LPCITEMIDLIST pidlRel = NULL;
+						if (SUCCEEDED(SHBindToParent(pidlFQ, IID_IShellFolder, (void**)&pParentFolder, &pidlRel)))
+						{
+							p_App->GetShellManager()->FreeItem(pItem->pidlFQ);
+							p_App->GetShellManager()->FreeItem(pItem->pidlRel);
+							if (pItem->pParentFolder)
+								pItem->pParentFolder->Release();
+
+							pItem->pidlFQ = pidlFQ;
+							pItem->pidlRel = p_App->GetShellManager()->CopyItem(pidlRel);
+							pItem->pParentFolder = pParentFolder;
+
+							CString strItem = OnGetItemText(pItem);
+							tvItem.pszText = strItem.GetBuffer(strItem.GetLength());
+							tvItem.iImage = OnGetItemIcon(pItem, FALSE);
+							tvItem.iSelectedImage = OnGetItemIcon(pItem, TRUE);
+
+							SetItem(&tvItem);
+						}
+					}
+				}
+
+			hItem = GetChildItem(hItem);
+			while (hItem)
+			{
+				lstItems.AddTail(hItem);
+				hItem = GetNextSiblingItem(hItem);
+			}
+		}
+
+		hItem = lstItems.IsEmpty() ? NULL : lstItems.RemoveHead();
+	}
 }
 
 void CExplorerTree::SetRootPath(CString RootPath)
@@ -721,8 +784,7 @@ void CExplorerTree::OnDeleteItem(NMHDR* pNMHDR, LRESULT* pResult)
 	LPAFX_SHELLITEMINFO pItem = (LPAFX_SHELLITEMINFO)pNMTreeView->itemOld.lParam;
 
 	p_App->GetShellManager()->FreeItem(pItem->pidlFQ);
-	p_App->GetShellManager()->FreeItem(pItem->pidlRel);
-
+	p_App->GetShellManager()->FreeItem(pItem->pidlRel);n F
 	if (pItem->pParentFolder)
 		pItem->pParentFolder->Release();
 
@@ -770,41 +832,32 @@ LRESULT CExplorerTree::OnShellChange(WPARAM wParam, LPARAM lParam)
 		if (Path1[0]!='\0')
 			DeletePath(Path1);
 		break;
-/*	case SHCNE_RENAMEFOLDER:
+	case SHCNE_RENAMEFOLDER:
+		if ((Path1[0]!='\0') && (Path2[0]!='\0'))
 		{
-			HTREEITEM hItem = FindItem(pDesktop, pidl1FQ);
+			wchar_t Parent1[MAX_PATH];
+			wcscpy_s(Parent1, MAX_PATH, Path1);
+			wchar_t* last = wcsrchr(Parent1, L'\\');
+			if (last)
+				*(last+1) = '\0';
 
-			if (hItem)
+			wchar_t Parent2[MAX_PATH];
+			wcscpy_s(Parent2, MAX_PATH, Path2);
+			last = wcsrchr(Parent2, L'\\');
+			if (last)
+				*(last+1) = '\0';
+
+			if (wcscmp(Parent1, Parent2)==0)
 			{
-				TVITEM tvItem;
-				ZeroMemory(&tvItem, sizeof(tvItem));
-				tvItem.mask = TVIF_PARAM | TVIF_TEXT | TVIF_IMAGE | TVIF_SELECTEDIMAGE;
-				tvItem.hItem = hItem;
-
-				if (GetItem(&tvItem))
-				{
-					LPAFX_SHELLITEMINFO pItem = (LPAFX_SHELLITEMINFO)tvItem.lParam;
-
-					IShellFolder* pParentFolder = NULL;
-					LPCITEMIDLIST pidlRel = NULL;
-					if (SUCCEEDED(SHBindToParent(pidl2FQ, IID_IShellFolder, (void**)&pParentFolder, &pidlRel)))
-					{
-						pItem->pidlFQ = p_App->GetShellManager()->CopyItem(pidl2FQ);
-						pItem->pidlRel = p_App->GetShellManager()->CopyItem(pidlRel);
-						pItem->pParentFolder = pParentFolder;
-
-						CString strItem = OnGetItemText(pItem);
-						tvItem.pszText = strItem.GetBuffer(strItem.GetLength());
-						tvItem.iImage = OnGetItemIcon(pItem, FALSE);
-						tvItem.iSelectedImage = OnGetItemIcon(pItem, TRUE);
-
-						SetItem(&tvItem);
-					}
-				}
+				UpdatePath(Path1, Path2, pDesktop);
 			}
+			else
+			{
+				DeletePath(Path1);
+			}
+		}
 
-			break;
-		}*/
+		break;
 	}
 
 	p_App->GetShellManager()->FreeItem(pidl1FQ);

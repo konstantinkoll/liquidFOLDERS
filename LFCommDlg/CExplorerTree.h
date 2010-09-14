@@ -51,6 +51,7 @@ protected:
 	BOOL GetChildItems(HTREEITEM hParentItem);
 	void EnumObjects(HTREEITEM hParentItem, IShellFolder* pParentFolder, LPITEMIDLIST pidlParent);
 	BOOL DeletePath(LPWSTR Path);
+	void UpdatePath(LPWSTR Path1, LPWSTR Path2, IShellFolder* pDesktop);
 
 	afx_msg void OnDestroy();
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
