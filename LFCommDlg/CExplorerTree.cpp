@@ -66,7 +66,8 @@ void CExplorerTree::PreSubclassWindow()
 	// Benachrichtigung, wenn sich Items ändern
 	SHChangeNotifyEntry shCNE = { NULL, TRUE };
 	m_ulSHChangeNotifyRegister = SHChangeNotifyRegister(m_hWnd, SHCNRF_InterruptLevel | SHCNRF_ShellLevel,
-		SHCNE_DRIVEADD | SHCNE_DRIVEREMOVED | SHCNE_MEDIAINSERTED | SHCNE_MEDIAREMOVED | SHCNE_INTERRUPT,
+		SHCNE_DRIVEADD | SHCNE_DRIVEREMOVED | SHCNE_MEDIAINSERTED | SHCNE_MEDIAREMOVED |
+			SHCNE_MKDIR | SHCNE_RMDIR | SHCNE_RENAMEFOLDER | SHCNE_INTERRUPT,
 		WM_SHELLCHANGE, 1, &shCNE);
 }
 
@@ -273,9 +274,32 @@ void CExplorerTree::PopulateTree()
 		Expand(hItem, TVE_EXPAND);
 }
 
-HTREEITEM CExplorerTree::FindItem(LPITEMIDLIST pidl)
+HTREEITEM CExplorerTree::FindItem(IShellFolder* pDesktop, LPITEMIDLIST pidl)
 {
-	return GetRootItem();
+	ASSERT(pDesktop);
+
+	HTREEITEM hItem = GetRootItem();
+
+	while (hItem)
+	{
+		TVITEM tvItem;
+		ZeroMemory(&tvItem, sizeof(tvItem));
+		tvItem.mask = TVIF_PARAM | TVIF_TEXT | TVIF_IMAGE | TVIF_SELECTEDIMAGE;
+		tvItem.hItem = hItem;
+
+		if (GetItem(&tvItem))
+		{
+			LPAFX_SHELLITEMINFO pItem = (LPAFX_SHELLITEMINFO)tvItem.lParam;
+
+			// Equal
+			if (pDesktop->CompareIDs(NULL, pItem->pidlFQ, pidl)==0)
+				return hItem;
+		}
+
+		hItem = GetNextSiblingItem(hItem);
+	}
+
+	return NULL;
 }
 
 void CExplorerTree::SetRootPath(CString RootPath)
@@ -701,8 +725,6 @@ LRESULT CExplorerTree::OnShellChange(WPARAM wParam, LPARAM lParam)
 		SHGetRealIDL(pDesktop, pidls[0], &pidl1FQ);
 		if (pidls[1])
 			SHGetRealIDL(pDesktop, pidls[1], &pidl2FQ);
-
-		pDesktop->Release();
 	}
 
 	switch (lParam)
@@ -735,34 +757,46 @@ LRESULT CExplorerTree::OnShellChange(WPARAM wParam, LPARAM lParam)
 
 			break;
 		}
+	case SHCNE_DRIVEREMOVED:
+	case SHCNE_MEDIAREMOVED:
+	case SHCNE_RMDIR:
+		{
+			HTREEITEM hItem = FindItem(pDesktop, pidl1FQ);
+			if (hItem)
+				DeleteItem(hItem);
+
+			break;
+		}
 	case SHCNE_RENAMEFOLDER:
 		{
+			HTREEITEM hItem = FindItem(pDesktop, pidl1FQ);
 
-			HTREEITEM hItem = FindItem(pidl1FQ);
-
-			TVITEM tvItem;
-			ZeroMemory(&tvItem, sizeof(tvItem));
-			tvItem.mask = TVIF_PARAM | TVIF_TEXT | TVIF_IMAGE | TVIF_SELECTEDIMAGE;
-			tvItem.hItem = hItem;
-
-			if (GetItem(&tvItem))
+			if (hItem)
 			{
-				LPAFX_SHELLITEMINFO pItem = (LPAFX_SHELLITEMINFO)tvItem.lParam;
+				TVITEM tvItem;
+				ZeroMemory(&tvItem, sizeof(tvItem));
+				tvItem.mask = TVIF_PARAM | TVIF_TEXT | TVIF_IMAGE | TVIF_SELECTEDIMAGE;
+				tvItem.hItem = hItem;
 
-				IShellFolder* pParentFolder = NULL;
-				LPCITEMIDLIST pidlRel = NULL;
-				if (SUCCEEDED(SHBindToParent(pidl2FQ, IID_IShellFolder, (void**)&pParentFolder, &pidlRel)))
+				if (GetItem(&tvItem))
 				{
-					pItem->pidlFQ = p_App->GetShellManager()->CopyItem(pidl2FQ);
-					pItem->pidlRel = p_App->GetShellManager()->CopyItem(pidlRel);
-					pItem->pParentFolder = pParentFolder;
+					LPAFX_SHELLITEMINFO pItem = (LPAFX_SHELLITEMINFO)tvItem.lParam;
 
-					CString strItem = OnGetItemText(pItem);
-					tvItem.pszText = strItem.GetBuffer(strItem.GetLength());
-					tvItem.iImage = OnGetItemIcon(pItem, FALSE);
-					tvItem.iSelectedImage = OnGetItemIcon(pItem, TRUE);
+					IShellFolder* pParentFolder = NULL;
+					LPCITEMIDLIST pidlRel = NULL;
+					if (SUCCEEDED(SHBindToParent(pidl2FQ, IID_IShellFolder, (void**)&pParentFolder, &pidlRel)))
+					{
+						pItem->pidlFQ = p_App->GetShellManager()->CopyItem(pidl2FQ);
+						pItem->pidlRel = p_App->GetShellManager()->CopyItem(pidlRel);
+						pItem->pParentFolder = pParentFolder;
 
-					SetItem(&tvItem);
+						CString strItem = OnGetItemText(pItem);
+						tvItem.pszText = strItem.GetBuffer(strItem.GetLength());
+						tvItem.iImage = OnGetItemIcon(pItem, FALSE);
+						tvItem.iSelectedImage = OnGetItemIcon(pItem, TRUE);
+
+						SetItem(&tvItem);
+					}
 				}
 			}
 
@@ -774,5 +808,7 @@ LRESULT CExplorerTree::OnShellChange(WPARAM wParam, LPARAM lParam)
 	if (pidl2FQ)
 		p_App->GetShellManager()->FreeItem(pidl2FQ);
 
-	return TRUE;
+	pDesktop->Release();
+
+	return NULL;
 }

@@ -89,7 +89,7 @@ BOOL LFStoreNewDriveDlg::OnInitDialog()
 	// Benachrichtigung, wenn sich Laufwerke ändern
 	SHChangeNotifyEntry shCNE = { NULL, TRUE };
 	m_ulSHChangeNotifyRegister = SHChangeNotifyRegister(m_hWnd, SHCNRF_InterruptLevel | SHCNRF_ShellLevel,
-		SHCNE_DRIVEADD | SHCNE_DRIVEREMOVED | SHCNE_MEDIAINSERTED | SHCNE_MEDIAREMOVED | SHCNE_INTERRUPT,
+		SHCNE_DRIVEREMOVED | SHCNE_MEDIAREMOVED | SHCNE_INTERRUPT,
 		WM_SHELLCHANGE, 1, &shCNE);
 
 	return TRUE;

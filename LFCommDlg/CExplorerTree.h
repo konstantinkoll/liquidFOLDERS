@@ -26,7 +26,7 @@ public:
 	LPITEMIDLIST GetSelectedPIDL();
 	BOOL GetSelectedPathA(LPSTR Path);
 	BOOL GetSelectedPathW(LPWSTR Path);
-	HTREEITEM FindItem(LPITEMIDLIST pidl);
+	HTREEITEM FindItem(IShellFolder* pDesktop, LPITEMIDLIST pidl);
 	void PopulateTree();
 	void SetRootPath(CString RootPath);
 	void SetOnlyFilesystem(BOOL OnlyFilesystem);
