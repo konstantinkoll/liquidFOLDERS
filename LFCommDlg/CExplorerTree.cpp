@@ -122,6 +122,15 @@ BOOL CExplorerTree::PreTranslateMessage(MSG* pMsg)
 	switch (pMsg->message)
 	{
 	case WM_KEYDOWN:
+		if ((pMsg->wParam==VK_RETURN) || (pMsg->wParam==VK_ESCAPE))
+		{
+			CEdit* edit = GetEditControl();
+			if (edit)
+			{
+				edit->SendMessage(WM_KEYDOWN, pMsg->wParam, pMsg->lParam);
+				return TRUE;
+			}
+		}
 	case WM_SYSKEYDOWN:
 	case WM_LBUTTONDOWN:
 	case WM_RBUTTONDOWN:
@@ -470,6 +479,8 @@ void CExplorerTree::UpdatePath(LPWSTR Path1, LPWSTR Path2, IShellFolder* pDeskto
 							tvItem.iSelectedImage = OnGetItemIcon(pItem, TRUE);
 
 							SetItem(&tvItem);
+
+							//pParentFolder->Release();
 						}
 					}
 				}
@@ -585,6 +596,7 @@ BEGIN_MESSAGE_MAP(CExplorerTree, CTreeCtrl)
 	ON_WM_MOUSEHOVER()
 	ON_WM_LBUTTONDOWN()
 	ON_WM_RBUTTONDOWN()
+	ON_WM_KEYDOWN()
 	ON_NOTIFY_REFLECT(TVN_ITEMEXPANDING, OnItemExpanding)
 	ON_NOTIFY_REFLECT(TVN_DELETEITEM, OnDeleteItem)
 	ON_NOTIFY_REFLECT(TVN_BEGINLABELEDIT, OnBeginLabelEdit)
@@ -810,7 +822,7 @@ void CExplorerTree::OnMouseHover(UINT nFlags, CPoint point)
 	{
 		UINT uFlags;
 		m_HoverItem = HitTest(point, &uFlags);
-		if ((m_HoverItem) && (uFlags & TVHT_ONITEM))
+		if ((m_HoverItem) && (uFlags & TVHT_ONITEM) && (!GetEditControl()))
 			if (!m_TooltipCtrl.IsWindowVisible())
 			{
 				TVITEM tvItem;
@@ -864,6 +876,17 @@ void CExplorerTree::OnRButtonDown(UINT nFlags, CPoint point)
 {
 	SetFocus();
 	SelectItem(HitTest(point, &nFlags));
+}
+
+void CExplorerTree::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
+{
+	if ((nChar==VK_F2) && (GetKeyState(VK_CONTROL)>=0) && (GetKeyState(VK_SHIFT)>=0))
+	{
+		EditLabel(GetSelectedItem());
+		return;
+	}
+
+	CTreeCtrl::OnKeyDown(nChar, nRepCnt, nFlags);
 }
 
 void CExplorerTree::OnItemExpanding(NMHDR* pNMHDR, LRESULT* pResult)
@@ -940,7 +963,7 @@ void CExplorerTree::OnEndLabelEdit(NMHDR* pNMHDR, LRESULT* pResult)
 		CString Name;
 		edit->GetWindowText(Name);
 		if (!Name.IsEmpty())
-			if (FAILED(pItem->pParentFolder->SetNameOf(GetParent()->GetSafeHwnd(), pItem->pidlFQ, Name, SHGDN_NORMAL, NULL)))
+			if (FAILED(pItem->pParentFolder->SetNameOf(GetParent()->GetSafeHwnd(), pItem->pidlRel, Name, SHGDN_NORMAL, NULL)))
 				*pResult = FALSE;
 	}
 }
