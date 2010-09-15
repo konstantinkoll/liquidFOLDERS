@@ -479,8 +479,6 @@ void CExplorerTree::UpdatePath(LPWSTR Path1, LPWSTR Path2, IShellFolder* pDeskto
 							tvItem.iSelectedImage = OnGetItemIcon(pItem, TRUE);
 
 							SetItem(&tvItem);
-
-							//pParentFolder->Release();
 						}
 					}
 				}
@@ -564,7 +562,7 @@ void CExplorerTree::EnumObjects(HTREEITEM hParentItem, IShellFolder* pParentFold
 	LPITEMIDLIST pidlTemp;
 	while (pEnum->Next(1, &pidlTemp, NULL)==S_OK)
 	{
-		DWORD dwAttribs = SFGAO_HASSUBFOLDER | SFGAO_FOLDER | SFGAO_DISPLAYATTRMASK | SFGAO_CANRENAME | SFGAO_FILESYSANCESTOR | SFGAO_FILESYSTEM;
+		DWORD dwAttribs = SFGAO_HASSUBFOLDER | SFGAO_FOLDER | SFGAO_FILESYSANCESTOR | SFGAO_FILESYSTEM;
 		pParentFolder->GetAttributesOf(1, (LPCITEMIDLIST*)&pidlTemp, &dwAttribs);
 
 		if (m_OnlyFilesystem)
@@ -717,13 +715,7 @@ void CExplorerTree::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 			HMENU hPopup = CreatePopupMenu();
 			if (hPopup)
 			{
-				UINT uFlags = CMF_NORMAL | CMF_EXPLORE;
-
-				wchar_t tmpPath[MAX_PATH];
-				if (SHGetPathFromIDList(pInfo->pidlFQ, tmpPath))
-					if (wcslen(tmpPath)>3)
-						uFlags = CMF_CANRENAME;
-
+				UINT uFlags = CMF_NORMAL | CMF_EXPLORE | CMF_CANRENAME;
 				if (SUCCEEDED(pcm->QueryContextMenu(hPopup, 0, 1, 0x6FFF, uFlags)))
 				{
 					if (tvItem.cChildren)
@@ -946,8 +938,14 @@ void CExplorerTree::OnBeginLabelEdit(NMHDR* pNMHDR, LRESULT* pResult)
 	NMTVDISPINFO* pNMTreeView = (NMTVDISPINFO*)pNMHDR;
 	LPAFX_SHELLITEMINFO pItem = (LPAFX_SHELLITEMINFO)pNMTreeView->item.lParam;
 
-	wchar_t tmpPath[MAX_PATH];
-	*pResult = SHGetPathFromIDList(pItem->pidlFQ, tmpPath) ? FALSE : TRUE;
+	*pResult = TRUE;
+
+	if (pItem->pParentFolder)
+	{
+		DWORD dwAttribs = SFGAO_CANRENAME;
+		pItem->pParentFolder->GetAttributesOf(1, (LPCITEMIDLIST*)&pItem->pidlRel, &dwAttribs);
+		*pResult = !(dwAttribs & SFGAO_CANRENAME);
+	}
 }
 
 void CExplorerTree::OnEndLabelEdit(NMHDR* pNMHDR, LRESULT* pResult)
@@ -957,14 +955,17 @@ void CExplorerTree::OnEndLabelEdit(NMHDR* pNMHDR, LRESULT* pResult)
 
 	*pResult = TRUE;
 
-	CEdit* edit = GetEditControl();
-	if (edit)
+	if (pItem->pParentFolder)
 	{
-		CString Name;
-		edit->GetWindowText(Name);
-		if (!Name.IsEmpty())
-			if (FAILED(pItem->pParentFolder->SetNameOf(GetParent()->GetSafeHwnd(), pItem->pidlRel, Name, SHGDN_NORMAL, NULL)))
-				*pResult = FALSE;
+		CEdit* edit = GetEditControl();
+		if (edit)
+		{
+			CString Name;
+			edit->GetWindowText(Name);
+			if (!Name.IsEmpty())
+				if (FAILED(pItem->pParentFolder->SetNameOf(GetParent()->GetSafeHwnd(), pItem->pidlRel, Name, SHGDN_NORMAL, NULL)))
+					*pResult = FALSE;
+		}
 	}
 }
 
