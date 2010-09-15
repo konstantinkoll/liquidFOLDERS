@@ -199,7 +199,7 @@ HTREEITEM CExplorerTree::InsertItem(IShellFolder* pParentFolder, LPITEMIDLIST pi
 	return CTreeCtrl::InsertItem(&tvInsert);
 }
 
-HTREEITEM CExplorerTree::InsertItem(wchar_t* Path)
+HTREEITEM CExplorerTree::InsertItem(wchar_t* Path, HTREEITEM hParent)
 {
 	IShellFolder* pDesktop = NULL;
 	if (FAILED(SHGetDesktopFolder(&pDesktop)))
@@ -219,7 +219,10 @@ HTREEITEM CExplorerTree::InsertItem(wchar_t* Path)
 	if (FAILED(SHBindToParent(pidlFQ, IID_IShellFolder, (void**)&pParentFolder, &pidlRel)))
 		return NULL;
 
-	HTREEITEM hItem = InsertItem(pParentFolder, p_App->GetShellManager()->CopyItem(pidlRel), TVI_ROOT, TRUE, pidlFQ);
+	DWORD dwAttribs = SFGAO_HASSUBFOLDER;
+	pParentFolder->GetAttributesOf(1, (LPCITEMIDLIST*)&pidlRel, &dwAttribs);
+
+	HTREEITEM hItem = InsertItem(pParentFolder, p_App->GetShellManager()->CopyItem(pidlRel), hParent, (dwAttribs & SFGAO_HASSUBFOLDER), pidlFQ);
 
 	if (pParentFolder)
 		pParentFolder->Release();
@@ -288,7 +291,7 @@ BOOL CExplorerTree::DeletePath(LPWSTR Path)
 	{
 		TVITEM tvItem;
 		ZeroMemory(&tvItem, sizeof(tvItem));
-		tvItem.mask = TVIF_PARAM;
+		tvItem.mask = TVIF_PARAM | TVIF_CHILDREN;
 		tvItem.hItem = hItem;
 
 		if (GetItem(&tvItem))
@@ -300,7 +303,31 @@ BOOL CExplorerTree::DeletePath(LPWSTR Path)
 			if (SHGetPathFromIDList(pItem->pidlFQ, tmpPath))
 				if (wcscmp(tmpPath, Path)==0)
 				{
+					HTREEITEM hParent = GetParentItem(hItem);
+
 					DeleteItem(hItem);
+
+					if (hParent)
+						if (!GetChildItem(hParent))
+						{
+							//if (GetItemState(hParent, TVIS_EXPANDED))
+							//	Expand(hItem, TVE_COLLAPSE);
+
+							TVITEM tvParent;
+							ZeroMemory(&tvParent, sizeof(tvParent));
+							tvParent.mask = TVIF_PARAM | TVIF_CHILDREN | TVIF_STATE;
+							tvParent.hItem = hParent;
+							tvParent.stateMask = TVIS_EXPANDED;
+
+							if (GetItem(&tvParent))
+							{
+								tvParent.cChildren = FALSE;
+								tvParent.state &= !TVIS_EXPANDED;
+
+								SetItem(&tvParent);
+							}
+						}
+
 					AddChildren = FALSE;
 					Deleted = TRUE;
 				}
@@ -320,6 +347,56 @@ BOOL CExplorerTree::DeletePath(LPWSTR Path)
 	}
 
 	return Deleted;
+}
+
+BOOL CExplorerTree::AddPath(LPWSTR Path, LPWSTR Parent)
+{
+	BOOL Added = FALSE;
+
+	CList<HTREEITEM> lstItems;
+	HTREEITEM hItem = GetRootItem();
+
+	while (hItem)
+	{
+		TVITEM tvItem;
+		ZeroMemory(&tvItem, sizeof(tvItem));
+		tvItem.mask = TVIF_PARAM | TVIF_CHILDREN;
+		tvItem.hItem = hItem;
+
+		if (GetItem(&tvItem))
+		{
+			LPAFX_SHELLITEMINFO pItem = (LPAFX_SHELLITEMINFO)tvItem.lParam;
+			BOOL AddChildren = TRUE;
+
+			wchar_t tmpPath[MAX_PATH];
+			if (SHGetPathFromIDList(pItem->pidlFQ, tmpPath))
+				if (wcscmp(tmpPath, Parent)==0)
+				{
+					tvItem.cChildren = TRUE;
+					SetItem(&tvItem);
+
+					if (GetItemState(hItem, TVIS_EXPANDED))
+						InsertItem(Path, hItem);
+
+					AddChildren = FALSE;
+					Added = TRUE;
+				}
+
+			if (AddChildren)
+			{
+				hItem = GetChildItem(hItem);
+				while (hItem)
+				{
+					lstItems.AddTail(hItem);
+					hItem = GetNextSiblingItem(hItem);
+				}
+			}
+		}
+
+		hItem = lstItems.IsEmpty() ? NULL : lstItems.RemoveHead();
+	}
+
+	return Added;
 }
 
 void CExplorerTree::UpdatePath(LPWSTR Path1, LPWSTR Path2, IShellFolder* pDesktop)
@@ -838,14 +915,14 @@ LRESULT CExplorerTree::OnShellChange(WPARAM wParam, LPARAM lParam)
 			wchar_t Parent1[MAX_PATH];
 			wcscpy_s(Parent1, MAX_PATH, Path1);
 			wchar_t* last = wcsrchr(Parent1, L'\\');
-			if (last)
-				*(last+1) = '\0';
+			if (last>&Parent1[2])
+				*last = '\0';
 
 			wchar_t Parent2[MAX_PATH];
 			wcscpy_s(Parent2, MAX_PATH, Path2);
 			last = wcsrchr(Parent2, L'\\');
-			if (last)
-				*(last+1) = '\0';
+			if (last>&Parent2[2])
+				*last = '\0';
 
 			if (wcscmp(Parent1, Parent2)==0)
 			{
@@ -854,6 +931,8 @@ LRESULT CExplorerTree::OnShellChange(WPARAM wParam, LPARAM lParam)
 			else
 			{
 				DeletePath(Path1);
+				if ((Parent2[0]!='\0') && (wcscmp(Path2, Parent2)!=0))
+					AddPath(Path2, Parent2);
 			}
 		}
 
