@@ -26,7 +26,6 @@ public:
 	LPITEMIDLIST GetSelectedPIDL();
 	BOOL GetSelectedPathA(LPSTR Path);
 	BOOL GetSelectedPathW(LPWSTR Path);
-	//HTREEITEM FindItem(IShellFolder* pDesktop, LPITEMIDLIST pidl);
 	void PopulateTree();
 	void SetRootPath(CString RootPath);
 	void SetOnlyFilesystem(BOOL OnlyFilesystem);
@@ -66,6 +65,8 @@ protected:
 	afx_msg void OnRButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnItemExpanding(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnDeleteItem(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnBeginLabelEdit(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnEndLabelEdit(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg LRESULT OnShellChange(WPARAM wParam, LPARAM lParam);
 	DECLARE_MESSAGE_MAP()
 

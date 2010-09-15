@@ -587,6 +587,8 @@ BEGIN_MESSAGE_MAP(CExplorerTree, CTreeCtrl)
 	ON_WM_RBUTTONDOWN()
 	ON_NOTIFY_REFLECT(TVN_ITEMEXPANDING, OnItemExpanding)
 	ON_NOTIFY_REFLECT(TVN_DELETEITEM, OnDeleteItem)
+	ON_NOTIFY_REFLECT(TVN_BEGINLABELEDIT, OnBeginLabelEdit)
+	ON_NOTIFY_REFLECT(TVN_ENDLABELEDIT, OnEndLabelEdit)
 	ON_MESSAGE(WM_SHELLCHANGE, OnShellChange)
 END_MESSAGE_MAP()
 
@@ -702,7 +704,15 @@ void CExplorerTree::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 		{
 			HMENU hPopup = CreatePopupMenu();
 			if (hPopup)
-				if (SUCCEEDED(pcm->QueryContextMenu(hPopup, 0, 1, 0x6FFF, CMF_NORMAL | CMF_EXPLORE)))
+			{
+				UINT uFlags = CMF_NORMAL | CMF_EXPLORE;
+
+				wchar_t tmpPath[MAX_PATH];
+				if (SHGetPathFromIDList(pInfo->pidlFQ, tmpPath))
+					if (wcslen(tmpPath)>3)
+						uFlags = CMF_CANRENAME;
+
+				if (SUCCEEDED(pcm->QueryContextMenu(hPopup, 0, 1, 0x6FFF, uFlags)))
 				{
 					if (tvItem.cChildren)
 					{
@@ -728,23 +738,35 @@ void CExplorerTree::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 					else
 						if (idCmd)
 						{
-							CWaitCursor wait;
+							char Verb[256] = "";
+							pcm->GetCommandString(idCmd-1, GCS_VERBA, NULL, Verb, 256);
 
-							CMINVOKECOMMANDINFO cmi;
-							cmi.cbSize = sizeof(CMINVOKECOMMANDINFO);
-							cmi.fMask = 0;
-							cmi.hwnd = GetParent()->GetSafeHwnd();
-							cmi.lpVerb = (LPCSTR)(INT_PTR)(idCmd-1);
-							cmi.lpParameters = NULL;
-							cmi.lpDirectory = NULL;
-							cmi.nShow = SW_SHOWNORMAL;
-							cmi.dwHotKey = 0;
-							cmi.hIcon = NULL;
+							if (strcmp(Verb, "rename")==0)
+							{
+								EditLabel(hItem);
+							}
+							else
+							{
+								CWaitCursor wait;
 
-							pcm->InvokeCommand(&cmi);
-							SetFocus();
+								CMINVOKECOMMANDINFO cmi;
+								cmi.cbSize = sizeof(CMINVOKECOMMANDINFO);
+								cmi.fMask = 0;
+								cmi.hwnd = GetParent()->GetSafeHwnd();
+								cmi.lpVerb = (LPCSTR)(INT_PTR)(idCmd-1);
+								cmi.lpParameters = NULL;
+								cmi.lpDirectory = NULL;
+								cmi.nShow = SW_SHOWNORMAL;
+								cmi.dwHotKey = 0;
+								cmi.hIcon = NULL;
+
+								pcm->InvokeCommand(&cmi);
+
+								SetFocus();
+							}
 						}
 				}
+			}
 
 			pcm->Release();
 		}
@@ -894,6 +916,33 @@ void CExplorerTree::OnDeleteItem(NMHDR* pNMHDR, LRESULT* pResult)
 
 	GlobalFree((HGLOBAL)pItem);
 	*pResult = 0;
+}
+
+void CExplorerTree::OnBeginLabelEdit(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	NMTVDISPINFO* pNMTreeView = (NMTVDISPINFO*)pNMHDR;
+	LPAFX_SHELLITEMINFO pItem = (LPAFX_SHELLITEMINFO)pNMTreeView->item.lParam;
+
+	wchar_t tmpPath[MAX_PATH];
+	*pResult = SHGetPathFromIDList(pItem->pidlFQ, tmpPath) ? FALSE : TRUE;
+}
+
+void CExplorerTree::OnEndLabelEdit(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	NMTVDISPINFO* pNMTreeView = (NMTVDISPINFO*)pNMHDR;
+	LPAFX_SHELLITEMINFO pItem = (LPAFX_SHELLITEMINFO)pNMTreeView->item.lParam;
+
+	*pResult = TRUE;
+
+	CEdit* edit = GetEditControl();
+	if (edit)
+	{
+		CString Name;
+		edit->GetWindowText(Name);
+		if (!Name.IsEmpty())
+			if (FAILED(pItem->pParentFolder->SetNameOf(GetParent()->GetSafeHwnd(), pItem->pidlFQ, Name, SHGDN_NORMAL, NULL)))
+				*pResult = FALSE;
+	}
 }
 
 LRESULT CExplorerTree::OnShellChange(WPARAM wParam, LPARAM lParam)
