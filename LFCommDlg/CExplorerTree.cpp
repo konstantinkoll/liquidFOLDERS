@@ -67,7 +67,7 @@ void CExplorerTree::PreSubclassWindow()
 	SHChangeNotifyEntry shCNE = { NULL, TRUE };
 	m_ulSHChangeNotifyRegister = SHChangeNotifyRegister(m_hWnd, SHCNRF_InterruptLevel | SHCNRF_ShellLevel,
 		SHCNE_DRIVEADD | SHCNE_DRIVEREMOVED | SHCNE_MEDIAINSERTED | SHCNE_MEDIAREMOVED |
-			SHCNE_RMDIR | SHCNE_RENAMEFOLDER | SHCNE_UPDATEITEM | SHCNE_INTERRUPT,
+			SHCNE_MKDIR | SHCNE_RMDIR | SHCNE_RENAMEFOLDER | SHCNE_UPDATEITEM | SHCNE_INTERRUPT,
 		WM_SHELLCHANGE, 1, &shCNE);
 }
 
@@ -1017,6 +1017,11 @@ LRESULT CExplorerTree::OnShellChange(WPARAM wParam, LPARAM lParam)
 				if (DrivesOnSystem & (1 << (Path1[0]-'A')))
 					InsertItem(Path1);
 			}
+		break;
+	case SHCNE_MKDIR:
+		if ((Path1[0]!='\0') && (Parent1[0]!='\0') && (wcscmp(Path1, Parent1)!=0))
+			if (AddPath(Path1, Parent1))
+				NotifyOwner = TRUE;
 		break;
 	case SHCNE_DRIVEREMOVED:
 	case SHCNE_MEDIAREMOVED:
