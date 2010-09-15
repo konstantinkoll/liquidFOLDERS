@@ -67,7 +67,7 @@ void CExplorerTree::PreSubclassWindow()
 	SHChangeNotifyEntry shCNE = { NULL, TRUE };
 	m_ulSHChangeNotifyRegister = SHChangeNotifyRegister(m_hWnd, SHCNRF_InterruptLevel | SHCNRF_ShellLevel,
 		SHCNE_DRIVEADD | SHCNE_DRIVEREMOVED | SHCNE_MEDIAINSERTED | SHCNE_MEDIAREMOVED |
-			SHCNE_RMDIR | SHCNE_RENAMEFOLDER | SHCNE_INTERRUPT,
+			SHCNE_RMDIR | SHCNE_RENAMEFOLDER | SHCNE_UPDATEITEM | SHCNE_INTERRUPT,
 		WM_SHELLCHANGE, 1, &shCNE);
 }
 
@@ -280,6 +280,33 @@ void CExplorerTree::PopulateTree()
 		Expand(hItem, TVE_EXPAND);
 }
 
+BOOL CExplorerTree::ChildrenContainPath(HTREEITEM hParentItem, LPWSTR Path)
+{
+	HTREEITEM hItem = GetChildItem(hParentItem);
+
+	while (hItem)
+	{
+		TVITEM tvItem;
+		ZeroMemory(&tvItem, sizeof(tvItem));
+		tvItem.mask = TVIF_PARAM;
+		tvItem.hItem = hItem;
+
+		if (GetItem(&tvItem))
+		{
+			LPAFX_SHELLITEMINFO pItem = (LPAFX_SHELLITEMINFO)tvItem.lParam;
+
+			wchar_t tmpPath[MAX_PATH];
+			if (SHGetPathFromIDList(pItem->pidlFQ, tmpPath))
+				if (wcscmp(tmpPath, Path)==0)
+					return TRUE;
+		}
+
+		hItem = GetNextSiblingItem(hItem);
+	}
+
+	return FALSE;
+}
+
 BOOL CExplorerTree::DeletePath(LPWSTR Path)
 {
 	BOOL Deleted = FALSE;
@@ -303,28 +330,25 @@ BOOL CExplorerTree::DeletePath(LPWSTR Path)
 			if (SHGetPathFromIDList(pItem->pidlFQ, tmpPath))
 				if (wcscmp(tmpPath, Path)==0)
 				{
-					HTREEITEM hParent = GetParentItem(hItem);
+					HTREEITEM hParentItem = GetParentItem(hItem);
 
 					DeleteItem(hItem);
 
-					if (hParent)
-						if (!GetChildItem(hParent))
+					if (hParentItem)
+						if (!GetChildItem(hParentItem))
 						{
-							//if (GetItemState(hParent, TVIS_EXPANDED))
-							//	Expand(hItem, TVE_COLLAPSE);
+							TVITEM tvParentItem;
+							ZeroMemory(&tvParentItem, sizeof(tvParentItem));
+							tvParentItem.mask = TVIF_PARAM | TVIF_CHILDREN | TVIF_STATE;
+							tvParentItem.hItem = hParentItem;
+							tvParentItem.stateMask = TVIS_EXPANDED;
 
-							TVITEM tvParent;
-							ZeroMemory(&tvParent, sizeof(tvParent));
-							tvParent.mask = TVIF_PARAM | TVIF_CHILDREN | TVIF_STATE;
-							tvParent.hItem = hParent;
-							tvParent.stateMask = TVIS_EXPANDED;
-
-							if (GetItem(&tvParent))
+							if (GetItem(&tvParentItem))
 							{
-								tvParent.cChildren = FALSE;
-								tvParent.state &= !TVIS_EXPANDED;
+								tvParentItem.cChildren = FALSE;
+								tvParentItem.state &= !TVIS_EXPANDED;
 
-								SetItem(&tvParent);
+								SetItem(&tvParentItem);
 							}
 						}
 
@@ -376,10 +400,13 @@ BOOL CExplorerTree::AddPath(LPWSTR Path, LPWSTR Parent)
 					SetItem(&tvItem);
 
 					if (GetItemState(hItem, TVIS_EXPANDED))
-						InsertItem(Path, hItem);
+						if (!ChildrenContainPath(hItem, Path))
+						{
+							InsertItem(Path, hItem);
+							Added = TRUE;
+						}
 
 					AddChildren = FALSE;
-					Added = TRUE;
 				}
 
 			if (AddChildren)
@@ -877,16 +904,29 @@ LRESULT CExplorerTree::OnShellChange(WPARAM wParam, LPARAM lParam)
 	LPITEMIDLIST pidl2FQ = NULL;
 	wchar_t Path1[MAX_PATH] = L"";
 	wchar_t Path2[MAX_PATH] = L"";
+	wchar_t Parent1[MAX_PATH] = L"";
+	wchar_t Parent2[MAX_PATH] = L"";
 
 	IShellFolder* pDesktop = NULL;
 	if (SUCCEEDED(SHGetDesktopFolder(&pDesktop)))
 	{
 		SHGetRealIDL(pDesktop, pidls[0], &pidl1FQ);
 		SHGetPathFromIDList(pidl1FQ, Path1);
+
+		wcscpy_s(Parent1, MAX_PATH, Path1);
+		wchar_t* last = wcsrchr(Parent1, L'\\');
+		if (last>&Parent1[2])
+			*last = '\0';
+
 		if (pidls[1])
 		{
 			SHGetRealIDL(pDesktop, pidls[1], &pidl2FQ);
 			SHGetPathFromIDList(pidl2FQ, Path2);
+
+			wcscpy_s(Parent2, MAX_PATH, Path2);
+			last = wcsrchr(Parent2, L'\\');
+			if (last>&Parent2[2])
+				*last = '\0';
 		}
 	}
 
@@ -911,19 +951,6 @@ LRESULT CExplorerTree::OnShellChange(WPARAM wParam, LPARAM lParam)
 		break;
 	case SHCNE_RENAMEFOLDER:
 		if ((Path1[0]!='\0') && (Path2[0]!='\0'))
-		{
-			wchar_t Parent1[MAX_PATH];
-			wcscpy_s(Parent1, MAX_PATH, Path1);
-			wchar_t* last = wcsrchr(Parent1, L'\\');
-			if (last>&Parent1[2])
-				*last = '\0';
-
-			wchar_t Parent2[MAX_PATH];
-			wcscpy_s(Parent2, MAX_PATH, Path2);
-			last = wcsrchr(Parent2, L'\\');
-			if (last>&Parent2[2])
-				*last = '\0';
-
 			if (wcscmp(Parent1, Parent2)==0)
 			{
 				UpdatePath(Path1, Path2, pDesktop);
@@ -934,8 +961,12 @@ LRESULT CExplorerTree::OnShellChange(WPARAM wParam, LPARAM lParam)
 				if ((Parent2[0]!='\0') && (wcscmp(Path2, Parent2)!=0))
 					AddPath(Path2, Parent2);
 			}
-		}
-
+		break;
+	case SHCNE_UPDATEITEM:
+		wcscpy_s(Path2, MAX_PATH, Parent1);
+		wcscat_s(Path2, MAX_PATH, L"\\desktop.ini");
+		if (wcscmp(Path1, Path2)==0)
+			UpdatePath(Parent1, Parent1, pDesktop);
 		break;
 	}
 

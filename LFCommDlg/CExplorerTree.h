@@ -50,6 +50,7 @@ protected:
 	HTREEITEM InsertItem(wchar_t* Path, HTREEITEM hParent=TVI_ROOT);
 	BOOL GetChildItems(HTREEITEM hParentItem);
 	void EnumObjects(HTREEITEM hParentItem, IShellFolder* pParentFolder, LPITEMIDLIST pidlParent);
+	BOOL ChildrenContainPath(HTREEITEM hParentItem, LPWSTR Path);
 	BOOL DeletePath(LPWSTR Path);
 	BOOL AddPath(LPWSTR Path, LPWSTR Parent);
 	void UpdatePath(LPWSTR Path1, LPWSTR Path2, IShellFolder* pDesktop);
@@ -70,7 +71,4 @@ protected:
 
 private:
 	ULONG m_ulSHChangeNotifyRegister;
-
-	BOOL IsParent(LPITEMIDLIST pidlParent, LPITEMIDLIST pidlChild);
-	BOOL IsEqual(LPITEMIDLIST pidl1, LPITEMIDLIST pidl2);
 };
