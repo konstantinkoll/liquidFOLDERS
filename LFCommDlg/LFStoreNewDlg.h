@@ -33,7 +33,7 @@ protected:
 	afx_msg void OnSetInternalIcon();
 	afx_msg void OnSetOptions();
 	afx_msg void OnSelChanged(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg LRESULT OnMediaChanged(WPARAM wParam, LPARAM lParam);
+	afx_msg LRESULT OnShellChange(WPARAM wParam, LPARAM lParam);
 	DECLARE_MESSAGE_MAP()
 
 private:

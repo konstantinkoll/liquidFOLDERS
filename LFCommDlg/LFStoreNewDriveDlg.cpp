@@ -16,8 +16,6 @@
 
 extern AFX_EXTENSION_MODULE LFCommDlgDLL;
 
-#define WM_USER_MEDIACHANGED       WM_USER+2
-
 LFStoreNewDriveDlg::LFStoreNewDriveDlg(CWnd* pParentWnd, char Drive, LFStoreDescriptor* pStore)
 	: CDialog(IDD_STORENEWDRIVE, pParentWnd)
 {
@@ -52,9 +50,10 @@ void LFStoreNewDriveDlg::DoDataExchange(CDataExchange* pDX)
 	}
 }
 
+
 BEGIN_MESSAGE_MAP(LFStoreNewDriveDlg, CDialog)
 	ON_WM_DESTROY()
-	ON_MESSAGE(WM_USER_MEDIACHANGED, OnMediaChanged)
+	ON_MESSAGE(WM_SHELLCHANGE, OnShellChange)
 END_MESSAGE_MAP()
 
 BOOL LFStoreNewDriveDlg::OnInitDialog()
@@ -103,7 +102,7 @@ void LFStoreNewDriveDlg::OnDestroy()
 	CDialog::OnDestroy();
 }
 
-LRESULT LFStoreNewDriveDlg::OnMediaChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)
+LRESULT LFStoreNewDriveDlg::OnShellChange(WPARAM /*wParam*/, LPARAM /*lParam*/)
 {
 	// Wenn das Laufwerk nicht mehr vorhanden ist, Dialog schlieﬂen
 	wchar_t szDriveRoot[] = L" :\\";

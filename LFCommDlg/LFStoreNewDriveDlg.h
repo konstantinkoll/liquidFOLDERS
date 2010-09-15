@@ -26,7 +26,7 @@ protected:
 
 	afx_msg BOOL OnInitDialog();
 	afx_msg void OnDestroy();
-	afx_msg LRESULT OnMediaChanged(WPARAM wParam, LPARAM lParam);
+	afx_msg LRESULT OnShellChange(WPARAM wParam, LPARAM lParam);
 	DECLARE_MESSAGE_MAP()
 
 private:

@@ -930,6 +930,8 @@ LRESULT CExplorerTree::OnShellChange(WPARAM wParam, LPARAM lParam)
 		}
 	}
 
+	BOOL NotifyOwner = FALSE;
+
 	switch (lParam)
 	{
 	case SHCNE_DRIVEADD:
@@ -947,7 +949,8 @@ LRESULT CExplorerTree::OnShellChange(WPARAM wParam, LPARAM lParam)
 	case SHCNE_MEDIAREMOVED:
 	case SHCNE_RMDIR:
 		if (Path1[0]!='\0')
-			DeletePath(Path1);
+			if (DeletePath(Path1))
+				NotifyOwner = TRUE;
 		break;
 	case SHCNE_RENAMEFOLDER:
 		if ((Path1[0]!='\0') && (Path2[0]!='\0'))
@@ -957,9 +960,11 @@ LRESULT CExplorerTree::OnShellChange(WPARAM wParam, LPARAM lParam)
 			}
 			else
 			{
-				DeletePath(Path1);
+				if (DeletePath(Path1))
+					NotifyOwner = TRUE;
 				if ((Parent2[0]!='\0') && (wcscmp(Path2, Parent2)!=0))
-					AddPath(Path2, Parent2);
+					if (AddPath(Path2, Parent2))
+						NotifyOwner = TRUE;
 			}
 		break;
 	case SHCNE_UPDATEITEM:
@@ -975,6 +980,9 @@ LRESULT CExplorerTree::OnShellChange(WPARAM wParam, LPARAM lParam)
 		p_App->GetShellManager()->FreeItem(pidl2FQ);
 
 	pDesktop->Release();
+
+	if (NotifyOwner)
+		GetOwner()->SendNotifyMessage(WM_SHELLCHANGE, NULL, NULL);
 
 	return NULL;
 }
