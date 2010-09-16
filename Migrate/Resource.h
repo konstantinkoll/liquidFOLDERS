@@ -10,6 +10,7 @@
 #define ID_VIEW_EXCLUDETREE             402
 #define ID_VIEW_RENAME                  403
 #define ID_VIEW_DELETE                  404
+#define ID_VIEW_PROPERTIES              405
 #define IDS_NOROOT_CAPTION              1000
 #define IDS_NOROOT_HINT                 1001
 #define IDS_NOSELECTION_CAPTION         1002

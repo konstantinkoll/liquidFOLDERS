@@ -133,21 +133,29 @@ void CMigrateWnd::OnSelectRoot()
 LRESULT CMigrateWnd::OnStoresChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)
 {
 	m_wndStore.Update();
-	OnIdleUpdateCmdUI();
+
+	PostMessage(WM_KICKIDLE);
 
 	return NULL;
 }
 
 void CMigrateWnd::OnRootChanged(NMHDR* /*pNMHDR*/, LRESULT* /*pResult*/)
 {
-	OnIdleUpdateCmdUI();
+	if (m_wndFolder.IsEmpty())
+	{
+		m_wndMainView.ClearRoot();
+	}
+	else
+	{
+		m_wndMainView.SetRoot(m_wndFolder.pidl, FALSE);
+	}
 
-	MessageBox(_T("Change"));
+	PostMessage(WM_KICKIDLE);
 }
 
 void CMigrateWnd::OnRootUpdate(NMHDR* /*pNMHDR*/, LRESULT* /*pResult*/)
 {
-	OnIdleUpdateCmdUI();
+	m_wndMainView.SetRoot(m_wndFolder.pidl, TRUE);
 
-	MessageBox(_T("Update"));
+	PostMessage(WM_KICKIDLE);
 }

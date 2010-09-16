@@ -77,9 +77,10 @@ int CTreeView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CWnd::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
+	const DWORD dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | HDS_HORZ | HDS_FULLDRAG | HDS_BUTTONS | CCS_TOP | CCS_NOMOVEY | CCS_NODIVIDER;
 	CRect rect;
 	rect.SetRectEmpty();
-	if (!m_wndHeader.Create(WS_CHILD | WS_VISIBLE | HDS_HORZ | HDS_FULLDRAG | HDS_BUTTONS | CCS_TOP | CCS_NOMOVEY | CCS_NODIVIDER, rect, this, 1))
+	if (!m_wndHeader.Create(dwStyle, rect, this, 1))
 		return -1;
 
 	m_wndHeader.SetFont(&theApp.m_DefaultFont);
@@ -87,7 +88,7 @@ int CTreeView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	HDITEM HdItem;
 	HdItem.mask = HDI_TEXT | HDI_WIDTH | HDI_FORMAT;
 	HdItem.cxy = MINWIDTH;
-	HdItem.fmt = HDF_STRING | HDF_CENTER | HDF_SPLITBUTTON;
+	HdItem.fmt = HDF_STRING | HDF_CENTER;
 
 	for (UINT a=0; a<10; a++)
 	{

@@ -35,29 +35,34 @@ BOOL CMainView::OnCmdMsg(UINT nID, int nCode, void* pExtra, AFX_CMDHANDLERINFO* 
 	return GetParent()->OnCmdMsg(nID, nCode, pExtra, pHandlerInfo);
 }
 
-void CMainView::SetRoot(CString _Root)
-{
-	Root = _Root;
-	m_IsRootSet = TRUE;
-
-	m_wndExplorerHeader.SetLineStyle(FALSE, FALSE);
-
-	Invalidate();
-}
-
 void CMainView::ClearRoot()
 {
-	Root.Empty();
 	m_IsRootSet = FALSE;
 
 	CString caption;
 	CString hint;
 	ENSURE(caption.LoadString(IDS_NOROOT_CAPTION));
 	ENSURE(hint.LoadString(IDS_NOROOT_HINT));
-	m_wndExplorerHeader.SetText(caption, hint, FALSE);
-	m_wndExplorerHeader.SetLineStyle(TRUE, FALSE);
 
-	Invalidate();
+	m_wndExplorerHeader.SetText(caption, hint, FALSE);
+	m_wndExplorerHeader.SetLineStyle(TRUE);
+}
+
+void CMainView::SetRoot(LPITEMIDLIST pidl, BOOL Update)
+{
+	m_IsRootSet = TRUE;
+
+	CString caption;
+	CString hint;
+	SHFILEINFO sfi;
+	if (SUCCEEDED(SHGetFileInfo((wchar_t*)pidl, 0, &sfi, sizeof(SHFILEINFO), SHGFI_PIDL | SHGFI_DISPLAYNAME | SHGFI_TYPENAME)))
+	{
+		caption = sfi.szDisplayName;
+		hint = sfi.szTypeName;
+	}
+
+	m_wndExplorerHeader.SetText(caption, hint, FALSE);
+	m_wndExplorerHeader.SetLineStyle(FALSE);
 }
 
 void CMainView::AdjustLayout()
@@ -80,7 +85,7 @@ BEGIN_MESSAGE_MAP(CMainView, CWnd)
 	ON_WM_ERASEBKGND()
 	ON_WM_SIZE()
 	ON_COMMAND(ID_VIEW_SELECTROOT, OnSelectRoot)
-	ON_UPDATE_COMMAND_UI_RANGE(ID_VIEW_SELECTROOT, ID_VIEW_DELETE, OnUpdateTaskbar)
+	ON_UPDATE_COMMAND_UI_RANGE(ID_VIEW_SELECTROOT, ID_VIEW_PROPERTIES, OnUpdateTaskbar)
 END_MESSAGE_MAP()
 
 int CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -97,12 +102,13 @@ int CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndTaskbar.AddButton(ID_VIEW_EXCLUDETREE, _T("Exclude subfolders"), 2);
 	m_wndTaskbar.AddButton(ID_VIEW_RENAME, _T("Rename folder"), 3);
 	m_wndTaskbar.AddButton(ID_VIEW_DELETE, _T("Delete folder"), 4);
-	m_wndTaskbar.AddButton(ID_APP_NEWSTOREMANAGER, _T("Open StoreManager"), 5);
+	m_wndTaskbar.AddButton(ID_VIEW_PROPERTIES, _T("Properties"), 5);
+	m_wndTaskbar.AddButton(ID_APP_NEWSTOREMANAGER, _T("Open StoreManager"), 6);
 
-	m_wndTaskbar.AddButton(ID_APP_PURCHASE, _T("Purchase license"), 6, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_ENTERLICENSEKEY, _T("Enter license key"), 7, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_SUPPORT, _T("Customer support"), 8, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_ABOUT, _T("About Migration Wizard"), 9, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_PURCHASE, _T("Purchase license"), 7, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_ENTERLICENSEKEY, _T("Enter license key"), 8, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_SUPPORT, _T("Customer support"), 9, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_ABOUT, _T("About Migration Wizard"), 10, TRUE, TRUE);
 
 	// Explorer header
 	if (m_wndExplorerHeader.Create(this, 2)==-1)

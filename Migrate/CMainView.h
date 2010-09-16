@@ -19,9 +19,7 @@ public:
 
 	int Create(CWnd* _pParentWnd, UINT nID);
 	void ClearRoot();
-	void SetRoot(CString _Root);
-
-	CString Root;
+	void SetRoot(LPITEMIDLIST pidl, BOOL Update);
 
 protected:
 	CTaskbar m_wndTaskbar;

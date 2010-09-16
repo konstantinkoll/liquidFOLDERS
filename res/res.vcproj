@@ -904,6 +904,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Ribbon\FolderProperties_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\FolderProperties_32.png"
+				>
+			</File>
+			<File
 				RelativePath=".\Ribbon\FolderRemove_16.png"
 				>
 			</File>
