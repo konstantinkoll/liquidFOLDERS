@@ -14,14 +14,6 @@ CTagList::CTagList()
 	: CListCtrl()
 {
 	ZeroMemory(&m_BgBitmaps, sizeof(m_BgBitmaps));
-
-	CString face = ((LFApplication*)AfxGetApp())->GetDefaultFontFace();
-	m_FontLarge.CreateFont(-14, 0, 0, 0, FW_NORMAL, 0, 0, 0, ANSI_CHARSET,
-		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
-		face);
-	m_FontSmall.CreateFont(-10, 0, 0, 0, FW_NORMAL, 0, 0, 0, ANSI_CHARSET,
-		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
-		face);
 }
 
 CTagList::~CTagList()
@@ -161,8 +153,10 @@ void CTagList::DrawItem(int nID, CDC* pDC)
 
 	pDC->SetBkMode(TRANSPARENT);
 
+	LFApplication* pApp = (LFApplication*)AfxGetApp();
+
 	// Count
-	CFont* pOldFont = pDC->SelectObject(&m_FontSmall);
+	CFont* pOldFont = pDC->SelectObject(&pApp->m_SmallFont);
 	rectBounds.DeflateRect(5, 0);
 	int L = pDC->GetTextExtent(item.pszText).cx;
 	pDC->SetTextColor((State & LVIS_SELECTED) ? texCol : ((texCol>>1) & 0x7F7F7F) + ((pDC->GetPixel(rectBounds.right, rectBounds.top+10)>>1) & 0x7F7F7F));
@@ -174,7 +168,7 @@ void CTagList::DrawItem(int nID, CDC* pDC)
 	item.pszText = text;
 	GetItem(&item);
 
-	pOldFont = pDC->SelectObject(&m_FontLarge);
+	pOldFont = pDC->SelectObject(&pApp->m_DefaultFont);
 	rectBounds.right -= L+5;
 	pDC->SetTextColor(texCol);
 	pDC->DrawText(item.pszText, -1, rectBounds, DT_NOPREFIX | DT_END_ELLIPSIS | DT_SINGLELINE | DT_CENTER | DT_VCENTER);

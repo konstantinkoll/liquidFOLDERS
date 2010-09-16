@@ -109,9 +109,10 @@ public:
 	HBITMAP m_RatingBitmaps[LFMaxRating+1];
 	HBITMAP m_PriorityBitmaps[LFMaxRating+1];
 	CFont m_Fonts[2][2];
-	CFont m_CaptionFont;
 	CFont m_DefaultFont;
 	CFont m_ItalicFont;
+	CFont m_SmallFont;
+	CFont m_CaptionFont;
 	LFMessageIDs* MessageIDs;
 	BOOL IsLicensed;
 	UINT HasGUI;
