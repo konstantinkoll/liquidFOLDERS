@@ -380,8 +380,8 @@ LRESULT CPIDLSelector::OnShellChange(WPARAM wParam, LPARAM lParam)
 			SetEmpty();
 		break;
 	case SHCNE_RENAMEFOLDER:
-		if ((Path1[0]!='\0') && (Path2[0]!='\0') && (wcscmp(Path2, CurrentPath)!=0))
-			SetItem(pDesktop, Path2, TRUE, wcscmp(Parent1, Parent2) ? NM_SELCHANGED : NM_SELUPDATE);
+		if ((Path1[0]!='\0') && (Path2[0]!='\0'))
+			SetItem(pDesktop, Path2, TRUE, wcscmp(Path1, Path2) ? NM_SELCHANGED : NM_SELUPDATE);
 		break;
 	case SHCNE_UPDATEITEM:
 		wcscpy_s(Path2, MAX_PATH, Parent1);
