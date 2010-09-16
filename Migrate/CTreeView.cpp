@@ -8,8 +8,45 @@
 #include "LFCore.h"
 
 
+// CTreeHeader
+//
+
+CTreeHeader::CTreeHeader()
+{
+}
+
+
+BEGIN_MESSAGE_MAP(CTreeHeader, CHeaderCtrl)
+	ON_WM_LBUTTONDOWN()
+	ON_WM_LBUTTONUP()
+END_MESSAGE_MAP()
+
+void CTreeHeader::OnLButtonDown(UINT nFlags, CPoint point)
+{
+	HDHITTESTINFO hii;
+	hii.pt = point;
+
+	int idx = HitTest(&hii);
+	if ((idx) || (hii.flags!=HHT_ONHEADER) || (GetCapture()==this))
+		CHeaderCtrl::OnLButtonDown(nFlags, point);
+}
+
+void CTreeHeader::OnLButtonUp(UINT nFlags, CPoint point)
+{
+	HDHITTESTINFO hii;
+	hii.pt = point;
+
+	int idx = HitTest(&hii);
+	if ((idx) || (hii.flags!=HHT_ONHEADER) || (GetCapture()==this))
+		CHeaderCtrl::OnLButtonUp(nFlags, point);
+}
+
+
 // CTreeView
 //
+
+#define MINWIDTH     75
+#define MAXWIDTH     350
 
 CTreeView::CTreeView()
 {
@@ -31,6 +68,8 @@ BEGIN_MESSAGE_MAP(CTreeView, CWnd)
 	ON_WM_ERASEBKGND()
 	ON_WM_SIZE()
 	ON_WM_SETCURSOR()
+	ON_NOTIFY(HDN_BEGINDRAG, 1, OnBeginDrag)
+	ON_NOTIFY(HDN_ITEMCHANGING, 1, OnItemChanging)
 END_MESSAGE_MAP()
 
 int CTreeView::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -40,8 +79,21 @@ int CTreeView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	CRect rect;
 	rect.SetRectEmpty();
-	if (!m_wndHeader.Create(WS_CHILD | WS_VISIBLE | HDS_HORZ | HDS_BUTTONS | CCS_TOP | CCS_NOMOVEY | CCS_NODIVIDER, rect, this, 1))
+	if (!m_wndHeader.Create(WS_CHILD | WS_VISIBLE | HDS_HORZ | HDS_FULLDRAG | HDS_BUTTONS | CCS_TOP | CCS_NOMOVEY | CCS_NODIVIDER, rect, this, 1))
 		return -1;
+
+	m_wndHeader.SetFont(&theApp.m_DefaultFont);
+
+	HDITEM HdItem;
+	HdItem.mask = HDI_TEXT | HDI_WIDTH | HDI_FORMAT;
+	HdItem.cxy = MINWIDTH;
+	HdItem.fmt = HDF_STRING | HDF_CENTER | HDF_SPLITBUTTON;
+
+	for (UINT a=0; a<10; a++)
+	{
+		HdItem.pszText = a ? L"Ignore" : L"";
+		m_wndHeader.InsertItem(a, &HdItem);
+	}
 
 	return 0;
 }
@@ -76,4 +128,25 @@ BOOL CTreeView::OnSetCursor(CWnd* /*pWnd*/, UINT /*nHitTest*/, UINT /*message*/)
 {
 	SetCursor(LoadCursor(NULL, IDC_ARROW));
 	return TRUE;
+}
+
+void CTreeView::OnBeginDrag(NMHDR* /*pNMHDR*/, LRESULT* pResult)
+{
+	*pResult = TRUE;
+}
+
+void CTreeView::OnItemChanging(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	LPNMHEADER pHdr = (LPNMHEADER)pNMHDR;
+
+	if (pHdr->pitem->mask & HDI_WIDTH)
+	{
+		if (pHdr->pitem->cxy<MINWIDTH)
+			pHdr->pitem->cxy = MINWIDTH;
+
+		if (pHdr->pitem->cxy>MAXWIDTH)
+			pHdr->pitem->cxy = MAXWIDTH;
+
+		*pResult = FALSE;
+	}
 }
