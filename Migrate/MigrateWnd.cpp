@@ -132,31 +132,22 @@ void CMigrateWnd::OnSelectRoot()
 
 LRESULT CMigrateWnd::OnStoresChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)
 {
-	char StoreID[LFKeySize];
-	if (m_wndStore.GetStoreID(StoreID))
-	{
-		LFStoreDescriptor* s = LFAllocStoreDescriptor();
-		if (LFGetStoreSettings(StoreID, s)==LFOk)
-		{
-			m_wndStore.SetItem(s, TRUE, NM_SELUPDATE);
-		}
-		else
-		{
-			m_wndStore.SetEmpty();
-			OnIdleUpdateCmdUI();
-		}
-		LFFreeStoreDescriptor(s);
-	}
+	m_wndStore.Update();
+	OnIdleUpdateCmdUI();
 
 	return NULL;
 }
 
 void CMigrateWnd::OnRootChanged(NMHDR* /*pNMHDR*/, LRESULT* /*pResult*/)
 {
+	OnIdleUpdateCmdUI();
+
 	MessageBox(_T("Change"));
 }
 
 void CMigrateWnd::OnRootUpdate(NMHDR* /*pNMHDR*/, LRESULT* /*pResult*/)
 {
+	OnIdleUpdateCmdUI();
+
 	MessageBox(_T("Update"));
 }

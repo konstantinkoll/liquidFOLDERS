@@ -92,7 +92,7 @@ void CStoreDropdownWindow::OnCreateNewStore()
 
 	LFStoreDescriptor* s = LFAllocStoreDescriptor();
 
-	LFStoreNewDlg dlg(this, s);
+	LFStoreNewDlg dlg(AfxGetApp()->GetMainWnd(), s);
 	if (dlg.DoModal()==IDOK)
 	{
 		UINT res = LFCreateStore(s, dlg.MakeDefault);
@@ -178,6 +178,24 @@ BOOL CStoreSelector::GetStoreID(char* StoreID)
 
 	strcpy_s(StoreID, LFKeySize, item->StoreID);
 	return TRUE;
+}
+
+void CStoreSelector::Update()
+{
+	char StoreID[LFKeySize];
+	if (GetStoreID(StoreID))
+	{
+		LFStoreDescriptor* s = LFAllocStoreDescriptor();
+		if (LFGetStoreSettings(StoreID, s)==LFOk)
+		{
+			SetItem(s, TRUE, NM_SELUPDATE);
+		}
+		else
+		{
+			SetEmpty();
+		}
+		LFFreeStoreDescriptor(s);
+	}
 }
 
 void CStoreSelector::GetTooltipData(HICON& hIcon, CSize& size, CString& caption, CString& hint)
