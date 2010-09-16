@@ -6,21 +6,6 @@
 #include "LFCommDlg.h"
 
 
-// CTreeHeader
-//
-
-class CTreeHeader : public CTooltipHeader
-{
-public:
-	CTreeHeader();
-
-protected:
-	afx_msg void OnLButtonDown(UINT NFlags, CPoint point);
-	afx_msg void OnLButtonUp(UINT NFlags, CPoint point);
-	DECLARE_MESSAGE_MAP()
-};
-
-
 // CTreeView
 //
 
@@ -35,7 +20,7 @@ public:
 	void SetRoot(LPITEMIDLIST pidl, BOOL Update);
 
 protected:
-	CTreeHeader m_wndHeader;
+	CTooltipHeader m_wndHeader;
 
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);

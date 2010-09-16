@@ -270,7 +270,7 @@ void CTaskButton::OnPaint()
 					rectText.left += 16+BORDER;
 				}
 
-				dc.SetTextColor(OSVersion==OS_XP ? GetSysColor(COLOR_WINDOWTEXT) : 0x5B391E);
+				dc.SetTextColor(0x5B391E);
 				dc.DrawText(m_Caption, -1, rectText, DT_SINGLELINE | DT_END_ELLIPSIS | DT_VCENTER);
 
 				break;

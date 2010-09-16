@@ -8,40 +8,6 @@
 #include "LFCore.h"
 
 
-// CTreeHeader
-//
-
-CTreeHeader::CTreeHeader()
-{
-}
-
-
-BEGIN_MESSAGE_MAP(CTreeHeader, CTooltipHeader)
-	ON_WM_LBUTTONDOWN()
-	ON_WM_LBUTTONUP()
-END_MESSAGE_MAP()
-
-void CTreeHeader::OnLButtonDown(UINT nFlags, CPoint point)
-{
-	HDHITTESTINFO hii;
-	hii.pt = point;
-
-	int idx = HitTest(&hii);
-	if ((idx) || (hii.flags!=HHT_ONHEADER) || (GetCapture()==this))
-		CHeaderCtrl::OnLButtonDown(nFlags, point);
-}
-
-void CTreeHeader::OnLButtonUp(UINT nFlags, CPoint point)
-{
-	HDHITTESTINFO hii;
-	hii.pt = point;
-
-	int idx = HitTest(&hii);
-	if ((idx) || (hii.flags!=HHT_ONHEADER) || (GetCapture()==this))
-		CHeaderCtrl::OnLButtonUp(nFlags, point);
-}
-
-
 // CTreeView
 //
 

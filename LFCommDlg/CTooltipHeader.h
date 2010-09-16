@@ -3,7 +3,6 @@
 //
 
 #pragma once
-#include "afxpropertygridtooltipctrl.h"
 #include "LFTooltip.h"
 
 
@@ -14,11 +13,12 @@ class AFX_EXT_CLASS CTooltipHeader : public CHeaderCtrl
 {
 public:
 	CTooltipHeader();
-	~CTooltipHeader();
 
 	virtual void PreSubclassWindow();
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 
+	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
+	afx_msg void OnPaint();
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg void OnMouseLeave();
 	afx_msg void OnMouseHover(UINT nFlags, CPoint point);
@@ -30,5 +30,6 @@ protected:
 private:
 	BOOL m_Hover;
 	int m_HoverItem;
+	int m_TrackItem;
 	wchar_t m_TooltipTextBuffer[256];
 };

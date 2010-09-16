@@ -195,27 +195,6 @@ BOOL CTaskbar::OnEraseBkgnd(CDC* pDC)
 		else
 			switch (((LFApplication*)AfxGetApp())->OSVersion)
 			{
-			case OS_XP:
-				{
-					dc.FillSolidRect(rect, GetSysColor(COLOR_3DFACE));
-
-					Color c1;
-					c1.SetFromCOLORREF(GetSysColor(COLOR_3DHIGHLIGHT));
-					Color c2;
-					c2.SetFromCOLORREF(GetSysColor(COLOR_3DFACE));
-					Color c3;
-					c3.SetFromCOLORREF(GetSysColor(COLOR_3DSHADOW));
-				
-					UINT border = rect.Height()/4;
-
-					LinearGradientBrush brush3(Point(0, 0), Point(0, border), c1, c2);
-					g.FillRectangle(&brush3, 0, 0, rect.right, border);
-
-					LinearGradientBrush brush4(Point(0, rect.bottom-border), Point(0, rect.bottom), c2, c3);
-					g.FillRectangle(&brush4, 0, rect.bottom-border, rect.right, border);
-
-					break;
-				}
 			case OS_Vista:
 				{
 					Color c1(0x04, 0x48, 0x75);
@@ -241,7 +220,10 @@ BOOL CTaskbar::OnEraseBkgnd(CDC* pDC)
 					g.FillRectangle(&brush5, 0, rect.bottom-2, rect.right, 1);
 					g.FillRectangle(&brush5, 0, 0, 1, rect.bottom-1);
 					g.FillRectangle(&brush5, rect.right-1, 0, 1, rect.bottom-1);
+
+					break;
 				}
+			case OS_XP:
 			case OS_Seven:
 				{
 					UINT line = (rect.Height()-2)/2;

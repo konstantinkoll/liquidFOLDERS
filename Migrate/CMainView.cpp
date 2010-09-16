@@ -44,8 +44,7 @@ void CMainView::ClearRoot()
 	ENSURE(caption.LoadString(IDS_NOROOT_CAPTION));
 	ENSURE(hint.LoadString(IDS_NOROOT_HINT));
 
-	m_wndExplorerHeader.SetText(caption, hint, FALSE);
-	m_wndExplorerHeader.SetLineStyle(TRUE);
+	m_wndExplorerHeader.SetText(caption, hint);
 
 	m_wndTree.ClearRoot();
 }
@@ -63,8 +62,7 @@ void CMainView::SetRoot(LPITEMIDLIST pidl, BOOL Update)
 		hint = sfi.szTypeName;
 	}
 
-	m_wndExplorerHeader.SetText(caption, hint, FALSE);
-	m_wndExplorerHeader.SetLineStyle(FALSE);
+	m_wndExplorerHeader.SetText(caption, hint);
 
 	m_wndTree.SetRoot(pidl, Update);
 }
