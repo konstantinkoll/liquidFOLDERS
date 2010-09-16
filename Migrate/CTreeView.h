@@ -3,12 +3,13 @@
 //
 
 #pragma once
+#include "LFCommDlg.h"
 
 
 // CTreeHeader
 //
 
-class CTreeHeader : public CHeaderCtrl
+class CTreeHeader : public CTooltipHeader
 {
 public:
 	CTreeHeader();
@@ -28,13 +29,17 @@ class CTreeView : public CWnd
 public:
 	CTreeView();
 
-	int Create(CWnd* _pParentWnd, UINT nID);
+	BOOL Create(CWnd* _pParentWnd, UINT nID);
+	void AdjustLayout();
+	void ClearRoot();
+	void SetRoot(LPITEMIDLIST pidl, BOOL Update);
 
 protected:
 	CTreeHeader m_wndHeader;
 
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
+	afx_msg void OnPaint();
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg BOOL OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message);
 	afx_msg void OnBeginDrag(NMHDR* pNMHDR, LRESULT* pResult);

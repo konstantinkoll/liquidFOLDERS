@@ -110,7 +110,7 @@ BEGIN
         MENUITEM "&Über FileDrop...",           ID_APP_ABOUT
         MENUITEM "&Immer im Vordergrund",       SC_ALWAYSONTOP
         MENUITEM SEPARATOR
-        MENUITEM "StoreManager &starten",       ID_APP_NEWSTOREMANAGER
+        MENUITEM "&StoreManager starten",       ID_APP_NEWSTOREMANAGER
         MENUITEM SEPARATOR
         MENUITEM "&Beenden",                    ID_APP_EXIT
     END

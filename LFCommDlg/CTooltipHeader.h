@@ -25,12 +25,10 @@ public:
 	DECLARE_MESSAGE_MAP()
 
 protected:
-	LFTooltip Tooltip;
-
-	void TrackToolTip(CPoint point);
+	LFTooltip m_TooltipCtrl;
 
 private:
-	wchar_t TooltipText[256];
-	int Tracking;
-	BOOL MouseInWnd;
+	BOOL m_Hover;
+	int m_HoverItem;
+	wchar_t m_TooltipTextBuffer[256];
 };

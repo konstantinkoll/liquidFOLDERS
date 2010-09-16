@@ -46,6 +46,8 @@ void CMainView::ClearRoot()
 
 	m_wndExplorerHeader.SetText(caption, hint, FALSE);
 	m_wndExplorerHeader.SetLineStyle(TRUE);
+
+	m_wndTree.ClearRoot();
 }
 
 void CMainView::SetRoot(LPITEMIDLIST pidl, BOOL Update)
@@ -63,6 +65,8 @@ void CMainView::SetRoot(LPITEMIDLIST pidl, BOOL Update)
 
 	m_wndExplorerHeader.SetText(caption, hint, FALSE);
 	m_wndExplorerHeader.SetLineStyle(FALSE);
+
+	m_wndTree.SetRoot(pidl, Update);
 }
 
 void CMainView::AdjustLayout()
@@ -94,7 +98,7 @@ int CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 
 	// Task bar
-	if (m_wndTaskbar.Create(this, IDB_TASKS, 1)==-1)
+	if (!m_wndTaskbar.Create(this, IDB_TASKS, 1))
 		return -1;
 
 	m_wndTaskbar.AddButton(ID_VIEW_SELECTROOT, _T("Select root folder"), 0);
@@ -108,14 +112,14 @@ int CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndTaskbar.AddButton(ID_APP_PURCHASE, _T("Purchase license"), 7, TRUE, TRUE);
 	m_wndTaskbar.AddButton(ID_APP_ENTERLICENSEKEY, _T("Enter license key"), 8, TRUE, TRUE);
 	m_wndTaskbar.AddButton(ID_APP_SUPPORT, _T("Customer support"), 9, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_ABOUT, _T("About Migration Wizard"), 10, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_ABOUT, _T("About liquidFOLDERS"), 10, TRUE, TRUE);
 
 	// Explorer header
-	if (m_wndExplorerHeader.Create(this, 2)==-1)
+	if (!m_wndExplorerHeader.Create(this, 2))
 		return -1;
 
 	// Tree
-	if (m_wndTree.Create(this, 3)==-1)
+	if (!m_wndTree.Create(this, 3))
 		return -1;
 
 	ClearRoot();

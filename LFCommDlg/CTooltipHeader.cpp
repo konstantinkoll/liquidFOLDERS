@@ -13,7 +13,8 @@
 CTooltipHeader::CTooltipHeader()
 	: CHeaderCtrl()
 {
-	MouseInWnd = FALSE;
+	m_Hover = FALSE;
+	m_HoverItem = -1;
 }
 
 CTooltipHeader::~CTooltipHeader()
@@ -22,7 +23,7 @@ CTooltipHeader::~CTooltipHeader()
 
 void CTooltipHeader::PreSubclassWindow()
 {
-	Tooltip.Create(this);
+	m_TooltipCtrl.Create(this);
 }
 
 BOOL CTooltipHeader::PreTranslateMessage(MSG* pMsg)
@@ -43,7 +44,7 @@ BOOL CTooltipHeader::PreTranslateMessage(MSG* pMsg)
 	case WM_NCLBUTTONUP:
 	case WM_NCRBUTTONUP:
 	case WM_NCMBUTTONUP:
-		Tooltip.Deactivate();
+		m_TooltipCtrl.Deactivate();
 		break;
 	}
 
@@ -59,8 +60,10 @@ END_MESSAGE_MAP()
 
 void CTooltipHeader::OnMouseMove(UINT nFlags, CPoint point)
 {
-	if (!MouseInWnd)
+	if (!m_Hover)
 	{
+		m_Hover = TRUE;
+
 		TRACKMOUSEEVENT tme;
 		ZeroMemory(&tme, sizeof(tme));
 		tme.cbSize = sizeof(TRACKMOUSEEVENT);
@@ -68,43 +71,56 @@ void CTooltipHeader::OnMouseMove(UINT nFlags, CPoint point)
 		tme.dwHoverTime = HOVER_DEFAULT;
 		tme.hwndTrack = GetSafeHwnd();
 		TrackMouseEvent(&tme);
-
-		MouseInWnd = TRUE;
 	}
+	else
+		if (m_TooltipCtrl.IsWindowVisible())
+		{
+			HDHITTESTINFO htt;
+			htt.pt = point;
+
+			int Item = HitTest(&htt);
+			if (Item!=m_HoverItem)
+				m_TooltipCtrl.Deactivate();
+		}
 
 	CHeaderCtrl::OnMouseMove(nFlags, point);
 }
 
 void CTooltipHeader::OnMouseLeave()
 {
-	Tooltip.Deactivate();
-	MouseInWnd = FALSE;
+	m_TooltipCtrl.Deactivate();
+	m_Hover = FALSE;
 
 	CHeaderCtrl::OnMouseLeave();
 }
 
-void CTooltipHeader::OnMouseHover(UINT /*nFlags*/, CPoint point)
+void CTooltipHeader::OnMouseHover(UINT nFlags, CPoint point)
 {
-	int cnt = GetItemCount();
-	for (int a=0; a<cnt; a++)
+	if ((nFlags & (MK_LBUTTON | MK_MBUTTON | MK_RBUTTON | MK_XBUTTON1 | MK_XBUTTON2))==0)
 	{
-		CRect rect;
-		if (GetItemRect(a, rect))
-			if (rect.PtInRect(point))
+		HDHITTESTINFO htt;
+		htt.pt = point;
+
+		m_HoverItem = HitTest(&htt);
+		if (m_HoverItem!=-1)
+			if (!m_TooltipCtrl.IsWindowVisible())
 			{
 				HDITEMW i;
 				i.mask = HDI_TEXT;
-				i.pszText = TooltipText;
+				i.pszText = m_TooltipTextBuffer;
 				i.cchTextMax = 256;
 
-				if (GetItem(a, &i))
-				{
-					ClientToScreen(&point);
-					Tooltip.Track(point, NULL, NULL, _T(""), TooltipText);
-				}
-
-				break;
+				if (GetItem(m_HoverItem, &i))
+					if (m_TooltipTextBuffer[0]!=L'\0')
+					{
+						ClientToScreen(&point);
+						m_TooltipCtrl.Track(point, NULL, NULL, _T(""), m_TooltipTextBuffer);
+					}
 			}
+	}
+	else
+	{
+		m_TooltipCtrl.Deactivate();
 	}
 
 	TRACKMOUSEEVENT tme;
