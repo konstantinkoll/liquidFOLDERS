@@ -110,7 +110,7 @@ void CStoreDropdownWindow::OnCreateNewStore()
 }
 
 
-// CDropdownSelector
+// CStoreSelector
 //
 
 CStoreSelector::CStoreSelector()
@@ -138,33 +138,33 @@ void CStoreSelector::SetEmpty(BOOL Repaint)
 	CDropdownSelector::SetEmpty(Repaint);
 }
 
-void CStoreSelector::SetItem(LFItemDescriptor* _item, BOOL Repaint)
+void CStoreSelector::SetItem(LFItemDescriptor* _item, BOOL Repaint, UINT NotifyCode)
 {
 	if (_item)
 	{
 		LFFreeItemDescriptor(item);
 		item = LFAllocItemDescriptor(_item);
 
-		CDropdownSelector::SetItem(p_App->m_CoreImageListSmall.ExtractIcon(item->IconID-1), item->CoreAttributes.FileName, Repaint);
+		CDropdownSelector::SetItem(p_App->m_CoreImageListSmall.ExtractIcon(item->IconID-1), item->CoreAttributes.FileName, Repaint, NotifyCode);
 	}
 	else
 	{
-		SetEmpty();
+		SetEmpty(Repaint);
 	}
 }
 
-void CStoreSelector::SetItem(LFStoreDescriptor* s, BOOL Repaint)
+void CStoreSelector::SetItem(LFStoreDescriptor* s, BOOL Repaint, UINT NotifyCode)
 {
 	if (s)
 	{
 		LFFreeItemDescriptor(item);
 		item = LFAllocItemDescriptor(s);
 
-		CDropdownSelector::SetItem(p_App->m_CoreImageListSmall.ExtractIcon(item->IconID-1), item->CoreAttributes.FileName, Repaint);
+		CDropdownSelector::SetItem(p_App->m_CoreImageListSmall.ExtractIcon(item->IconID-1), item->CoreAttributes.FileName, Repaint, NotifyCode);
 	}
 	else
 	{
-		SetEmpty();
+		SetEmpty(Repaint);
 	}
 }
 

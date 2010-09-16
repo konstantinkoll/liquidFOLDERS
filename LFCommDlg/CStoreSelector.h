@@ -42,8 +42,8 @@ public:
 	virtual void SetEmpty(BOOL Repaint=TRUE);
 	virtual void GetTooltipData(HICON& hIcon, CSize& size, CString& caption, CString& hint);
 
-	void SetItem(LFItemDescriptor* _item, BOOL Repaint=TRUE);
-	void SetItem(LFStoreDescriptor* s, BOOL Repaint=TRUE);
+	void SetItem(LFItemDescriptor* _item, BOOL Repaint=TRUE, UINT NotifyCode=NM_SELCHANGED);
+	void SetItem(LFStoreDescriptor* s, BOOL Repaint=TRUE, UINT NotifyCode=NM_SELCHANGED);
 	BOOL GetStoreID(char* StoreID);
 
 protected:

@@ -101,11 +101,13 @@ void CMapSelectionCtrl::SendUpdateMsg()
 	remainVisible = 1;
 	Invalidate();
 
+	tagGPSDATA tag;
 	tag.hdr.code = MAP_UPDATE_LOCATION;
 	tag.hdr.hwndFrom = m_hWnd;
 	tag.hdr.idFrom = GetDlgCtrlID();
 	tag.pCoord = &m_Coord;
-	::PostMessage(GetParent()->m_hWnd, WM_NOTIFY, tag.hdr.idFrom, LPARAM(&tag));
+
+	GetOwner()->SendMessage(WM_NOTIFY, tag.hdr.idFrom, LPARAM(&tag));
 }
 
 

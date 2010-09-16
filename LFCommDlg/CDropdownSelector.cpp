@@ -232,6 +232,16 @@ void CDropdownSelector::CreateDropdownWindow()
 	p_DropWindow->Create(this, 0);
 }
 
+void CDropdownSelector::NotifyOwner(UINT NotifyCode)
+{
+	NMHDR tag;
+	tag.hwndFrom = m_hWnd;
+	tag.idFrom = GetDlgCtrlID();
+	tag.code = NotifyCode;
+
+	GetOwner()->SendMessage(WM_NOTIFY, tag.idFrom, LPARAM(&tag));
+}
+
 void CDropdownSelector::SetEmpty(BOOL Repaint)
 {
 	OnCloseDropdown();
@@ -241,13 +251,17 @@ void CDropdownSelector::SetEmpty(BOOL Repaint)
 		m_Icon = NULL;
 	}
 
+	BOOL bNotifyOwner = !m_IsEmpty;
 	m_IsEmpty = TRUE;
 
 	if (Repaint)
 		Invalidate();
+
+	if (bNotifyOwner)
+		NotifyOwner(NM_SELCHANGED);
 }
 
-void CDropdownSelector::SetItem(HICON hIcon, CString DisplayName, BOOL Repaint)
+void CDropdownSelector::SetItem(HICON hIcon, CString DisplayName, BOOL Repaint, UINT NotifyCode)
 {
 	OnCloseDropdown();
 	if (m_Icon)
@@ -259,6 +273,8 @@ void CDropdownSelector::SetItem(HICON hIcon, CString DisplayName, BOOL Repaint)
 
 	if (Repaint)
 		Invalidate();
+
+	NotifyOwner(NotifyCode);
 }
 
 void CDropdownSelector::GetTooltipData(HICON& /*hIcon*/, CSize& /*size*/, CString& /*caption*/, CString& /*hint*/)

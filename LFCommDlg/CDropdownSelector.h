@@ -55,8 +55,9 @@ protected:
 // CDropdownSelector
 //
 
-#define WM_SETITEM              WM_USER+3
-#define NM_SELECTIONCHANGED     WM_USER+4
+#define WM_SETITEM        WM_USER+3
+#define NM_SELCHANGED     WM_USER+4
+#define NM_SELUPDATE      WM_USER+5
 
 class AFX_EXT_CLASS CDropdownSelector : public CWnd
 {
@@ -69,7 +70,7 @@ public:
 	virtual void GetTooltipData(HICON& hIcon, CSize& size, CString& caption, CString& hint);
 
 	BOOL Create(CString EmptyHint, CString Caption, CGlasWindow* pParentWnd, UINT nID);
-	void SetItem(HICON hIcon, CString DisplayName, BOOL Repaint=TRUE);
+	void SetItem(HICON hIcon, CString DisplayName, BOOL Repaint=TRUE, UINT NotifyCode=NM_SELCHANGED);
 	UINT GetPreferredHeight();
 	BOOL IsEmpty();
 
@@ -85,6 +86,8 @@ protected:
 	LFApplication* p_App;
 	CDropdownWindow* p_DropWindow;
 	LFTooltip m_TooltipCtrl;
+
+	void NotifyOwner(UINT NotifyCode);
 
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();

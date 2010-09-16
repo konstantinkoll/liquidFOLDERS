@@ -45,7 +45,6 @@ protected:
 private:
 	BOOL blink;
 	UINT remainVisible;
-	tagGPSDATA tag;
 
 	void SendUpdateMsg();
 };

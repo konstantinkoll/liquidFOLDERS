@@ -43,11 +43,18 @@ public:
 	virtual void SetEmpty(BOOL Repaint=TRUE);
 	virtual void GetTooltipData(HICON& hIcon, CSize& size, CString& caption, CString& hint);
 
-	void SetItem(LPITEMIDLIST _pidl, BOOL Repaint=TRUE);
+	void SetItem(LPITEMIDLIST _pidl, BOOL Repaint=TRUE, UINT NotifyCode=NM_SELCHANGED);
+	void SetItem(IShellFolder* pDesktop, wchar_t* Path, BOOL Repaint=TRUE, UINT NotifyCode=NM_SELCHANGED);
 
 	LPITEMIDLIST pidl;
 
 protected:
+	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
+	afx_msg void OnDestroy();
 	afx_msg LRESULT OnSetItem(WPARAM wParam, LPARAM lParam);
+	afx_msg LRESULT OnShellChange(WPARAM wParam, LPARAM lParam);
 	DECLARE_MESSAGE_MAP()
+
+private:
+	ULONG m_ulSHChangeNotifyRegister;
 };

@@ -71,6 +71,8 @@ BEGIN_MESSAGE_MAP(CMigrateWnd, CGlasWindow)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoresChanged, OnStoresChanged)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoreAttributesChanged, OnStoresChanged)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->DefaultStoreChanged, OnStoresChanged)
+	ON_NOTIFY(NM_SELCHANGED, 1, OnRootChanged)
+	ON_NOTIFY(NM_SELUPDATE, 1, OnRootUpdate)
 END_MESSAGE_MAP()
 
 int CMigrateWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -136,7 +138,7 @@ LRESULT CMigrateWnd::OnStoresChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)
 		LFStoreDescriptor* s = LFAllocStoreDescriptor();
 		if (LFGetStoreSettings(StoreID, s)==LFOk)
 		{
-			m_wndStore.SetItem(s);
+			m_wndStore.SetItem(s, TRUE, NM_SELUPDATE);
 		}
 		else
 		{
@@ -147,4 +149,14 @@ LRESULT CMigrateWnd::OnStoresChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)
 	}
 
 	return NULL;
+}
+
+void CMigrateWnd::OnRootChanged(NMHDR* /*pNMHDR*/, LRESULT* /*pResult*/)
+{
+	MessageBox(_T("Change"));
+}
+
+void CMigrateWnd::OnRootUpdate(NMHDR* /*pNMHDR*/, LRESULT* /*pResult*/)
+{
+	MessageBox(_T("Update"));
 }

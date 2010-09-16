@@ -18,6 +18,13 @@ LFSelectLocationGPSDlg::LFSelectLocationGPSDlg(CWnd* pParentWnd, LFGeoCoordinate
 	m_pCoord = pCoord;
 }
 
+void LFSelectLocationGPSDlg::DoDataExchange(CDataExchange* pDX)
+{
+	CDialog::DoDataExchange(pDX);
+
+	DDX_Control(pDX, IDC_MAP_SELECTION, m_Map);
+}
+
 
 BEGIN_MESSAGE_MAP(LFSelectLocationGPSDlg, CDialog)
 	ON_WM_DESTROY()
@@ -72,11 +79,4 @@ void LFSelectLocationGPSDlg::OnUpdateEdit(NMHDR* pNMHDR, LRESULT* pResult)
 	GetDlgItem(IDC_LONGITUDE)->SetWindowText(tmpStr);
 
 	*pResult = 0;
-}
-
-void LFSelectLocationGPSDlg::DoDataExchange(CDataExchange* pDX)
-{
-	CDialog::DoDataExchange(pDX);
-
-	DDX_Control(pDX, IDC_MAP_SELECTION, m_Map);
 }

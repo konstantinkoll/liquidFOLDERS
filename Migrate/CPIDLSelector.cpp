@@ -221,7 +221,7 @@ void CPIDLDropdownWindow::OnChooseFolder()
 }
 
 
-// CDropdownSelector
+// CPIDLSelector
 //
 
 CPIDLSelector::CPIDLSelector()
@@ -253,7 +253,7 @@ void CPIDLSelector::SetEmpty(BOOL Repaint)
 	CDropdownSelector::SetEmpty(Repaint);
 }
 
-void CPIDLSelector::SetItem(LPITEMIDLIST _pidl, BOOL Repaint)
+void CPIDLSelector::SetItem(LPITEMIDLIST _pidl, BOOL Repaint, UINT NotifyCode)
 {
 	if (pidl)
 		theApp.GetShellManager()->FreeItem(pidl);
@@ -264,16 +264,32 @@ void CPIDLSelector::SetItem(LPITEMIDLIST _pidl, BOOL Repaint)
 		SHFILEINFO sfi;
 		if (SUCCEEDED(SHGetFileInfo((wchar_t*)pidl, 0, &sfi, sizeof(SHFILEINFO), SHGFI_PIDL | SHGFI_DISPLAYNAME | SHGFI_ICON | SHGFI_SMALLICON)))
 		{
-			CDropdownSelector::SetItem(sfi.hIcon, sfi.szDisplayName, Repaint);
+			CDropdownSelector::SetItem(sfi.hIcon, sfi.szDisplayName, Repaint, NotifyCode);
 		}
 		else
 		{
-			SetEmpty();
+			SetEmpty(Repaint);
 		}
 	}
 	else
 	{
-		SetEmpty();
+		SetEmpty(Repaint);
+	}
+}
+
+void CPIDLSelector::SetItem(IShellFolder* pDesktop, wchar_t* Path, BOOL Repaint, UINT NotifyCode)
+{
+	ULONG chEaten;
+	ULONG dwAttributes;
+	LPITEMIDLIST pidlFQ = NULL;
+	if (SUCCEEDED(pDesktop->ParseDisplayName(NULL, NULL, Path, &chEaten, &pidlFQ, &dwAttributes)))
+	{
+		SetItem(pidlFQ, Repaint, NotifyCode);
+		p_App->GetShellManager()->FreeItem(pidlFQ);
+	}
+	else
+	{
+		SetEmpty(Repaint);
 	}
 }
 
@@ -284,11 +300,98 @@ void CPIDLSelector::GetTooltipData(HICON& hIcon, CSize& size, CString& caption, 
 
 
 BEGIN_MESSAGE_MAP(CPIDLSelector, CDropdownSelector)
+	ON_WM_CREATE()
+	ON_WM_DESTROY()
 	ON_MESSAGE(WM_SETITEM, OnSetItem)
+	ON_MESSAGE(WM_SHELLCHANGE, OnShellChange)
 END_MESSAGE_MAP()
+
+int CPIDLSelector::OnCreate(LPCREATESTRUCT lpCreateStruct)
+{
+	if (CDropdownSelector::OnCreate(lpCreateStruct)==-1)
+		return -1;
+
+	// Benachrichtigung, wenn sich Items ändern
+	SHChangeNotifyEntry shCNE = { NULL, TRUE };
+	m_ulSHChangeNotifyRegister = SHChangeNotifyRegister(m_hWnd, SHCNRF_InterruptLevel | SHCNRF_ShellLevel,
+		SHCNE_DRIVEREMOVED | SHCNE_MEDIAREMOVED | SHCNE_RMDIR | SHCNE_RENAMEFOLDER | SHCNE_UPDATEITEM | SHCNE_INTERRUPT,
+		WM_SHELLCHANGE, 1, &shCNE);
+
+	return 0;
+}
+
+void CPIDLSelector::OnDestroy()
+{
+	if (m_ulSHChangeNotifyRegister)
+		VERIFY(SHChangeNotifyDeregister(m_ulSHChangeNotifyRegister));
+
+	CDropdownSelector::OnDestroy();
+}
 
 LRESULT CPIDLSelector::OnSetItem(WPARAM /*wParam*/, LPARAM lParam)
 {
 	SetItem((LPITEMIDLIST)lParam);
+	return NULL;
+}
+
+LRESULT CPIDLSelector::OnShellChange(WPARAM wParam, LPARAM lParam)
+{
+	if (m_IsEmpty)
+		return NULL;
+
+	wchar_t CurrentPath[MAX_PATH] = L"";
+	if (!SHGetPathFromIDList(pidl, CurrentPath))
+		return NULL;
+
+	LPITEMIDLIST* pidls = (LPITEMIDLIST*)wParam;
+
+	wchar_t Path1[MAX_PATH] = L"";
+	wchar_t Path2[MAX_PATH] = L"";
+	wchar_t Parent1[MAX_PATH] = L"";
+	wchar_t Parent2[MAX_PATH] = L"";
+
+	IShellFolder* pDesktop = NULL;
+	if (SUCCEEDED(SHGetDesktopFolder(&pDesktop)))
+	{
+		SHGetPathFromIDList(pidls[0], Path1);
+
+		wcscpy_s(Parent1, MAX_PATH, Path1);
+		wchar_t* last = wcsrchr(Parent1, L'\\');
+		if (last>&Parent1[2])
+			*last = '\0';
+
+		if (pidls[1])
+		{
+			SHGetPathFromIDList(pidls[1], Path2);
+
+			wcscpy_s(Parent2, MAX_PATH, Path2);
+			last = wcsrchr(Parent2, L'\\');
+			if (last>&Parent2[2])
+				*last = '\0';
+		}
+	}
+
+	switch (lParam)
+	{
+	case SHCNE_DRIVEREMOVED:
+	case SHCNE_MEDIAREMOVED:
+	case SHCNE_RMDIR:
+		if (wcscmp(CurrentPath, Path1)==0)
+			SetEmpty();
+		break;
+	case SHCNE_RENAMEFOLDER:
+		if ((Path1[0]!='\0') && (Path2[0]!='\0') && (wcscmp(Path2, CurrentPath)!=0))
+			SetItem(pDesktop, Path2, TRUE, wcscmp(Parent1, Parent2) ? NM_SELCHANGED : NM_SELUPDATE);
+		break;
+	case SHCNE_UPDATEITEM:
+		wcscpy_s(Path2, MAX_PATH, Parent1);
+		wcscat_s(Path2, MAX_PATH, L"\\desktop.ini");
+		if ((wcscmp(Path1, Path2)==0) && (wcscmp(Path2, CurrentPath)!=0))
+			SetItem(pDesktop, Parent1, TRUE, NM_SELUPDATE);
+		break;
+	}
+
+	pDesktop->Release();
+
 	return NULL;
 }

@@ -973,8 +973,6 @@ LRESULT CExplorerTree::OnShellChange(WPARAM wParam, LPARAM lParam)
 {
 	LPITEMIDLIST* pidls = (LPITEMIDLIST*)wParam;
 
-	LPITEMIDLIST pidl1FQ = NULL;
-	LPITEMIDLIST pidl2FQ = NULL;
 	wchar_t Path1[MAX_PATH] = L"";
 	wchar_t Path2[MAX_PATH] = L"";
 	wchar_t Parent1[MAX_PATH] = L"";
@@ -983,8 +981,7 @@ LRESULT CExplorerTree::OnShellChange(WPARAM wParam, LPARAM lParam)
 	IShellFolder* pDesktop = NULL;
 	if (SUCCEEDED(SHGetDesktopFolder(&pDesktop)))
 	{
-		SHGetRealIDL(pDesktop, pidls[0], &pidl1FQ);
-		SHGetPathFromIDList(pidl1FQ, Path1);
+		SHGetPathFromIDList(pidls[0], Path1);
 
 		wcscpy_s(Parent1, MAX_PATH, Path1);
 		wchar_t* last = wcsrchr(Parent1, L'\\');
@@ -993,8 +990,7 @@ LRESULT CExplorerTree::OnShellChange(WPARAM wParam, LPARAM lParam)
 
 		if (pidls[1])
 		{
-			SHGetRealIDL(pDesktop, pidls[1], &pidl2FQ);
-			SHGetPathFromIDList(pidl2FQ, Path2);
+			SHGetPathFromIDList(pidls[1], Path2);
 
 			wcscpy_s(Parent2, MAX_PATH, Path2);
 			last = wcsrchr(Parent2, L'\\');
@@ -1053,14 +1049,18 @@ LRESULT CExplorerTree::OnShellChange(WPARAM wParam, LPARAM lParam)
 		break;
 	}
 
-	p_App->GetShellManager()->FreeItem(pidl1FQ);
-	if (pidl2FQ)
-		p_App->GetShellManager()->FreeItem(pidl2FQ);
-
 	pDesktop->Release();
 
 	if (NotifyOwner)
-		GetOwner()->SendNotifyMessage(WM_SHELLCHANGE, NULL, NULL);
+	{
+		NMTREEVIEW tag;
+		ZeroMemory(&tag, sizeof(tag));
+		tag.hdr.hwndFrom = m_hWnd;
+		tag.hdr.idFrom = GetDlgCtrlID();
+		tag.hdr.code = TVN_SELCHANGED;
+
+		GetOwner()->SendMessage(WM_NOTIFY, tag.hdr.idFrom, LPARAM(&tag));
+	}
 
 	return NULL;
 }

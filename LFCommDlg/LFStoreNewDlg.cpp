@@ -82,8 +82,6 @@ BEGIN_MESSAGE_MAP(LFStoreNewDlg, CDialog)
 	ON_BN_CLICKED(IDC_EXTERNALSTORE, OnSetOptions)
 	ON_BN_CLICKED(IDC_AUTOPATH, OnSetOptions)
 	ON_NOTIFY(TVN_SELCHANGED, IDC_PATHTREE, OnSelChanged)
-	ON_NOTIFY(TVN_DELETEITEM, IDC_PATHTREE, OnSelChanged)
-	ON_MESSAGE(WM_SHELLCHANGE, OnShellChange)
 END_MESSAGE_MAP()
 
 BOOL LFStoreNewDlg::OnInitDialog()
@@ -133,11 +131,4 @@ void LFStoreNewDlg::OnSetOptions()
 void LFStoreNewDlg::OnSelChanged(NMHDR* /*pNMHDR*/, LRESULT* /*pResult*/)
 {
 	SetOkButton();
-}
-
-LRESULT LFStoreNewDlg::OnShellChange(WPARAM /*wParam*/, LPARAM /*lParam*/)
-{
-	SetOkButton();
-
-	return NULL;
 }
