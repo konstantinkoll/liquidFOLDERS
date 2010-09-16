@@ -71,10 +71,7 @@ void CMainView::AdjustLayout()
 	const UINT ExplorerHeight = m_wndExplorerHeader.GetPreferredHeight();
 	m_wndExplorerHeader.SetWindowPos(NULL, rect.left, rect.top+TaskHeight, rect.Width(), ExplorerHeight, SWP_NOACTIVATE | SWP_NOZORDER);
 
-	const UINT HeaderHeight = m_wndHeader.GetPreferredHeight();
-	m_wndHeader.SetWindowPos(NULL, rect.left, rect.top+TaskHeight+ExplorerHeight, rect.Width(), HeaderHeight, SWP_NOACTIVATE | SWP_NOZORDER);
-
-	m_wndTree.SetWindowPos(NULL, rect.left, rect.top+TaskHeight+ExplorerHeight+HeaderHeight, rect.Width(), rect.Height()-ExplorerHeight-HeaderHeight-TaskHeight, SWP_NOACTIVATE | SWP_NOZORDER);
+	m_wndTree.SetWindowPos(NULL, rect.left, rect.top+TaskHeight+ExplorerHeight, rect.Width(), rect.Height()-ExplorerHeight-TaskHeight, SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
 
@@ -111,12 +108,8 @@ int CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (m_wndExplorerHeader.Create(this, 2)==-1)
 		return -1;
 
-	// Column header
-	if (m_wndHeader.Create(this, 3)==-1)
-		return -1;
-
 	// Tree
-	if (m_wndTree.Create(this, 4)==-1)
+	if (m_wndTree.Create(this, 3)==-1)
 		return -1;
 
 	ClearRoot();

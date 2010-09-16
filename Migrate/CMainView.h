@@ -4,7 +4,6 @@
 
 #pragma once
 #include "LFCommDlg.h"
-#include "CHeaderView.h"
 #include "CTreeView.h"
 
 
@@ -27,7 +26,6 @@ public:
 protected:
 	CTaskbar m_wndTaskbar;
 	CExplorerHeader m_wndExplorerHeader;
-	CHeaderView m_wndHeader;
 	CTreeView m_wndTree;
 	BOOL m_IsRootSet;
 
