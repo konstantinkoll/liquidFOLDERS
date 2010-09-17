@@ -37,6 +37,7 @@ class CTreeView : public CWnd
 {
 public:
 	CTreeView();
+	~CTreeView();
 
 	BOOL Create(CWnd* _pParentWnd, UINT nID);
 	void AdjustLayout();
@@ -59,6 +60,7 @@ protected:
 	BOOL InsertRow(UINT Row);
 	//BOOL RemoveRow(UINT Row);
 	void SetItem(UINT row, UINT col, IShellFolder* pParentFolder, LPITEMIDLIST pidlRel, LPITEMIDLIST pidlFQ);
+	UINT InsertItem(UINT row, UINT col, IShellFolder* pParentFolder, LPITEMIDLIST pidlRel, LPITEMIDLIST pidlFQ);
 	void FreeItem(Cell* cell);
 	void FreeTree();
 
@@ -73,4 +75,7 @@ protected:
 	afx_msg void OnBeginDrag(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnItemChanging(NMHDR* pNMHDR, LRESULT* pResult);
 	DECLARE_MESSAGE_MAP()
+
+private:
+	IShellFolder* pDesktop;
 };

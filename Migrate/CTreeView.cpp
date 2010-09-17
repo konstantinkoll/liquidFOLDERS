@@ -15,13 +15,22 @@
 #define MAXWIDTH     350
 
 #define MARGIN       3
-#define GUTTER       8
+#define GUTTER       10
 
 CTreeView::CTreeView()
 {
 	m_Tree = NULL;
 	m_Allocated = m_Rows = m_Cols = 0;
 	hThemeList = hThemeButton = NULL;
+
+	pDesktop = NULL;
+	SHGetDesktopFolder(&pDesktop);
+}
+
+CTreeView::~CTreeView()
+{
+	if (pDesktop)
+		pDesktop->Release();
 }
 
 BOOL CTreeView::Create(CWnd* _pParentWnd, UINT nID)
@@ -66,12 +75,26 @@ void CTreeView::SetRoot(LPITEMIDLIST pidl, BOOL Update)
 		InsertRow(0);
 	}
 
+	HRESULT hr;
 	IShellFolder* pParentFolder = NULL;
 	LPCITEMIDLIST pidlRel = NULL;
-	if (SUCCEEDED(SHBindToParent(pidl, IID_IShellFolder, (void**)&pParentFolder, &pidlRel)))
+	if (theApp.GetShellManager()->GetItemSize(pidl)==2)
 	{
-		SetItem(0, 0, pParentFolder, theApp.GetShellManager()->CopyItem(pidlRel), theApp.GetShellManager()->CopyItem(pidl));
-		pParentFolder->Release();
+		//pParentFolder = pDesktop;
+		pidlRel = theApp.GetShellManager()->CopyItem(pidl);
+		pDesktop->AddRef();
+		hr = S_OK;
+	}
+	else
+	{
+		hr = SHBindToParent(pidl, IID_IShellFolder, (void**)&pParentFolder, &pidlRel);
+	}
+
+	if (SUCCEEDED(hr))
+	{
+		InsertItem(0, 0, pParentFolder, theApp.GetShellManager()->CopyItem(pidlRel), theApp.GetShellManager()->CopyItem(pidl));
+		if (pParentFolder)
+			pParentFolder->Release();
 
 		if (!Update)
 		{
@@ -107,7 +130,7 @@ BOOL CTreeView::InsertRow(UINT Row)
 	}
 
 	if (Row<m_Rows)
-		for (UINT a=m_Rows; a>Row; a--)
+		for (UINT a=m_Rows; a>=Row; a--)
 			memcpy(&m_Tree[(a+1)*MaxColumns], &m_Tree[a*MaxColumns], MaxColumns*sizeof(Cell));
 
 	ZeroMemory(&m_Tree[Row*MaxColumns], MaxColumns*sizeof(Cell));
@@ -164,6 +187,66 @@ void CTreeView::SetItem(UINT row, UINT col, IShellFolder* pParentFolder, LPITEMI
 
 	if (!SHGetPathFromIDList(pidlFQ, cell->pItem->Path))
 		cell->pItem->Path[0] = L'\0';
+}
+
+UINT CTreeView::InsertItem(UINT row, UINT col, IShellFolder* pParentFolder, LPITEMIDLIST pidlRel, LPITEMIDLIST pidlFQ)
+{
+	UINT Inserted = 0;
+	SetItem(row, col, pParentFolder, pidlRel, pidlFQ);
+
+	if (col<MaxColumns-1)
+	{
+		IShellFolder* pFolder;
+		HRESULT hr;
+		if (!pParentFolder)
+		{
+			hr = SHGetDesktopFolder(&pFolder);
+		}
+		else
+		{
+			hr = pDesktop->BindToObject(pidlFQ, NULL, IID_IShellFolder, (void**)&pFolder);
+		}
+
+		if (SUCCEEDED(hr))
+		{
+			IEnumIDList* pEnum;
+			if (SUCCEEDED(pFolder->EnumObjects(NULL, SHCONTF_FOLDERS, &pEnum)))
+			{
+				BOOL NewRow = FALSE;
+
+				LPITEMIDLIST pidlTemp;
+				while (pEnum->Next(1, &pidlTemp, NULL)==S_OK)
+				{
+					DWORD dwAttribs = SFGAO_HASSUBFOLDER | SFGAO_FOLDER | SFGAO_FILESYSANCESTOR | SFGAO_FILESYSTEM;
+					pFolder->GetAttributesOf(1, (LPCITEMIDLIST*)&pidlTemp, &dwAttribs);
+
+					if (!(dwAttribs & (SFGAO_FILESYSANCESTOR | SFGAO_FILESYSTEM)))
+						continue;
+
+					SHDESCRIPTIONID did;
+					if (SUCCEEDED(SHGetDataFromIDList(pParentFolder, pidlTemp, SHGDFIL_DESCRIPTIONID, &did, sizeof(SHDESCRIPTIONID))))
+					{
+						const CLSID LFNE = { 0x3F2D914F, 0xFE57, 0x414F, { 0x9F, 0x88, 0xA3, 0x77, 0xC7, 0x84, 0x1D, 0xA4 } };
+						if (did.clsid==LFNE)
+							continue;
+					}
+
+					if (NewRow)
+					{
+						Inserted++;
+						InsertRow(row+Inserted);
+					}
+
+					Inserted += InsertItem(row+Inserted, col+1, pFolder, pidlTemp, theApp.GetShellManager()->ConcatenateItem(pidlFQ, pidlTemp));
+					NewRow = TRUE;
+				}
+				pEnum->Release();
+			}
+			pFolder->Release();
+		}
+	}
+
+	return Inserted;
 }
 
 void CTreeView::FreeItem(Cell* cell)
@@ -303,7 +386,6 @@ void CTreeView::OnPaint()
 	dc.FillSolidRect(rect, Themed ? 0xFFFFFF : GetSysColor(COLOR_WINDOW));
 
 	CFont* pOldFont = dc.SelectObject(&theApp.m_DefaultFont);
-	dc.SetTextColor(0x000000);
 
 	int y = m_HeaderHeight+1;
 	Cell* curCell = m_Tree;
@@ -314,10 +396,27 @@ void CTreeView::OnPaint()
 		{
 			if (curCell->pItem)
 			{
-				CRect rectItem(x, y, x+100, y+m_RowHeight);
+				CRect rectItem(x+GUTTER, y, x+100, y+m_RowHeight);
 
-				theApp.m_SystemImageListSmall.Draw(&dc, curCell->pItem->IconIDNormal, CPoint(x+MARGIN+GUTTER, y+(m_RowHeight-m_IconHeight-1)/2), ILD_TRANSPARENT);
-				rectItem.left += m_IconWidth+MARGIN+GUTTER+4;
+				if (TRUE)
+				{
+					if (hThemeList)
+					{
+						dc.SetTextColor(0x000000);
+					}
+					else
+					{
+						dc.FillSolidRect(rectItem, GetSysColor(COLOR_HIGHLIGHT));
+						dc.SetTextColor(GetSysColor(COLOR_HIGHLIGHTTEXT));
+					}
+				}
+				else
+				{
+					dc.SetTextColor(Themed ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT));
+				}
+
+				theApp.m_SystemImageListSmall.Draw(&dc, curCell->pItem->IconIDNormal, CPoint(rectItem.left+MARGIN, y+(m_RowHeight-m_IconHeight-1)/2), ILD_TRANSPARENT);
+				rectItem.left += m_IconWidth+MARGIN+4;
 				dc.DrawText(curCell->pItem->Name, -1, rectItem, DT_VCENTER | DT_SINGLELINE | DT_END_ELLIPSIS);
 			}
 
