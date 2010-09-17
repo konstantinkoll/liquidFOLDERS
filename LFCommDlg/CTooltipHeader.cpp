@@ -16,11 +16,6 @@ CTooltipHeader::CTooltipHeader()
 	m_HoverItem = m_TrackItem = -1;
 }
 
-void CTooltipHeader::PreSubclassWindow()
-{
-	m_TooltipCtrl.Create(this);
-}
-
 BOOL CTooltipHeader::PreTranslateMessage(MSG* pMsg)
 {
 	switch (pMsg->message)
@@ -48,12 +43,24 @@ BOOL CTooltipHeader::PreTranslateMessage(MSG* pMsg)
 
 
 BEGIN_MESSAGE_MAP(CTooltipHeader, CHeaderCtrl)
+	ON_WM_CREATE()
 	ON_WM_ERASEBKGND()
 	ON_WM_PAINT()
 	ON_WM_MOUSEMOVE()
 	ON_WM_MOUSELEAVE()
 	ON_WM_MOUSEHOVER()
 END_MESSAGE_MAP()
+
+int CTooltipHeader::OnCreate(LPCREATESTRUCT lpCreateStruct)
+{
+	if (CHeaderCtrl::OnCreate(lpCreateStruct)==-1)
+		return -1;
+
+	// Tooltip
+	m_TooltipCtrl.Create(this);
+
+	return 0;
+}
 
 BOOL CTooltipHeader::OnEraseBkgnd(CDC* /*pDC*/)
 {

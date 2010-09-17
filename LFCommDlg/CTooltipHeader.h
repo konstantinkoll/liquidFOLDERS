@@ -14,9 +14,9 @@ class AFX_EXT_CLASS CTooltipHeader : public CHeaderCtrl
 public:
 	CTooltipHeader();
 
-	virtual void PreSubclassWindow();
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 
+	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnPaint();
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
