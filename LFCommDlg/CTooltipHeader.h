@@ -19,6 +19,8 @@ public:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnPaint();
+	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
+	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg void OnMouseLeave();
 	afx_msg void OnMouseHover(UINT nFlags, CPoint point);
@@ -30,6 +32,8 @@ protected:
 private:
 	BOOL m_Hover;
 	int m_HoverItem;
+	int m_PressedItem;
 	int m_TrackItem;
+	int m_TooltipItem;
 	wchar_t m_TooltipTextBuffer[256];
 };

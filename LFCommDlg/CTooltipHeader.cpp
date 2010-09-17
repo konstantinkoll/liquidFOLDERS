@@ -13,7 +13,7 @@ CTooltipHeader::CTooltipHeader()
 	: CHeaderCtrl()
 {
 	m_Hover = FALSE;
-	m_HoverItem = m_TrackItem = -1;
+	m_HoverItem = m_PressedItem = m_TrackItem = m_TooltipItem = -1;
 }
 
 BOOL CTooltipHeader::PreTranslateMessage(MSG* pMsg)
@@ -46,6 +46,8 @@ BEGIN_MESSAGE_MAP(CTooltipHeader, CHeaderCtrl)
 	ON_WM_CREATE()
 	ON_WM_ERASEBKGND()
 	ON_WM_PAINT()
+	ON_WM_LBUTTONDOWN()
+	ON_WM_LBUTTONUP()
 	ON_WM_MOUSEMOVE()
 	ON_WM_MOUSELEAVE()
 	ON_WM_MOUSEHOVER()
@@ -104,9 +106,7 @@ void CTooltipHeader::OnPaint()
 				{
 					if (IsCtrlThemed())
 					{
-						if (m_HoverItem==a)
-						{
-						if (GetCapture()==this)
+						if (m_PressedItem==a)
 						{
 							dc.Draw3dRect(rectItem, 0xD9CBC0, 0xD9CBC0);
 							rectItem.DeflateRect(1, 1);
@@ -119,6 +119,7 @@ void CTooltipHeader::OnPaint()
 							rectItem.top -= 2;
 						}
 						else
+							if ((m_PressedItem==-1) && (m_TrackItem==a) || ((m_TrackItem==-1) && (m_HoverItem==a)))
 							{
 								LinearGradientBrush brush1(Point(0, 0), Point(0, rect.bottom), Color(0xDF, 0xEA, 0xF7), Color(0xE3, 0xE8, 0xEE));
 								g.FillRectangle(&brush1, rectItem.left, rectItem.top, 1, rectItem.Height());
@@ -128,7 +129,6 @@ void CTooltipHeader::OnPaint()
 								LinearGradientBrush brush2(Point(0, 0), Point(0, rect.bottom-2), Color(0xFD, 0xFE, 0xFF), Color(0xEF, 0xF3, 0xF9));
 								g.FillRectangle(&brush2, rectItem.left+2, 0, rectItem.Width()-4, rectItem.Height()-2);
 							}
-						}
 							else
 							{
 								LinearGradientBrush brush1(Point(0, 0), Point(0, rect.bottom), Color(0xDF, 0xEA, 0xF7), Color(0xFF, 0xFF, 0xFF));
@@ -143,7 +143,7 @@ void CTooltipHeader::OnPaint()
 						COLORREF c3 = GetSysColor(COLOR_3DSHADOW);
 						COLORREF c4 = 0x000000;
 
-						if (FALSE)
+						if (m_PressedItem==a)
 						{
 							std::swap(c1, c4);
 							std::swap(c2, c3);
@@ -190,6 +190,26 @@ void CTooltipHeader::OnPaint()
 	dc.SelectObject(pOldBitmap);
 }
 
+void CTooltipHeader::OnLButtonDown(UINT nFlags, CPoint point)
+{
+	HDHITTESTINFO htt;
+	htt.pt = point;
+	int idx = HitTest(&htt);
+	m_PressedItem = (htt.flags==HHT_ONHEADER) ? idx : -1;
+	m_TrackItem = ((htt.flags==HHT_ONDIVIDER) || (htt.flags==HHT_ONDIVOPEN)) ? idx : -1;
+
+	CHeaderCtrl::OnLButtonDown(nFlags, point);
+	Invalidate();
+}
+
+void CTooltipHeader::OnLButtonUp(UINT nFlags, CPoint point)
+{
+	m_PressedItem = m_TrackItem = -1;
+
+	CHeaderCtrl::OnLButtonUp(nFlags, point);
+	Invalidate();
+}
+
 void CTooltipHeader::OnMouseMove(UINT nFlags, CPoint point)
 {
 	HDHITTESTINFO htt;
@@ -209,7 +229,7 @@ void CTooltipHeader::OnMouseMove(UINT nFlags, CPoint point)
 		TrackMouseEvent(&tme);
 	}
 	else
-		if ((m_TooltipCtrl.IsWindowVisible()) && (m_HoverItem!=m_TrackItem))
+		if ((m_TooltipCtrl.IsWindowVisible()) && (m_HoverItem!=m_TooltipItem))
 			m_TooltipCtrl.Deactivate();
 
 	CHeaderCtrl::OnMouseMove(nFlags, point);
@@ -231,8 +251,8 @@ void CTooltipHeader::OnMouseHover(UINT nFlags, CPoint point)
 		HDHITTESTINFO htt;
 		htt.pt = point;
 
-		m_TrackItem = HitTest(&htt);
-		if (m_TrackItem!=-1)
+		m_TooltipItem = HitTest(&htt);
+		if (m_TooltipItem!=-1)
 			if (!m_TooltipCtrl.IsWindowVisible())
 			{
 				HDITEMW i;
@@ -240,7 +260,7 @@ void CTooltipHeader::OnMouseHover(UINT nFlags, CPoint point)
 				i.pszText = m_TooltipTextBuffer;
 				i.cchTextMax = 256;
 
-				if (GetItem(m_TrackItem, &i))
+				if (GetItem(m_TooltipItem, &i))
 					if (m_TooltipTextBuffer[0]!=L'\0')
 					{
 						ClientToScreen(&point);
