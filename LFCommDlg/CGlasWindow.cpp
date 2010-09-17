@@ -76,7 +76,9 @@ BOOL CGlasWindow::PreTranslateMessage(MSG* pMsg)
 
 	if ((pMsg->message==WM_KEYDOWN) && (pMsg->wParam==VK_TAB))
 	{
-		GetNextDlgTabItem(GetFocus(), GetKeyState(VK_SHIFT)<0)->SetFocus();
+		CWnd* pWnd = GetNextDlgTabItem(GetFocus(), GetKeyState(VK_SHIFT)<0);
+		if (pWnd)
+			pWnd->SetFocus();
 		return TRUE;
 	}
 
