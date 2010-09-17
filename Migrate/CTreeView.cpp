@@ -14,10 +14,14 @@
 #define MINWIDTH     75
 #define MAXWIDTH     350
 
+#define MARGIN       3
+#define GUTTER       8
+
 CTreeView::CTreeView()
 {
 	m_Tree = NULL;
 	m_Allocated = m_Rows = m_Cols = 0;
+	hThemeList = hThemeButton = NULL;
 }
 
 BOOL CTreeView::Create(CWnd* _pParentWnd, UINT nID)
@@ -62,11 +66,17 @@ void CTreeView::SetRoot(LPITEMIDLIST pidl, BOOL Update)
 		InsertRow(0);
 	}
 
-//	SetItem(m_Tree, theApp.GetShellManager()->CopyItem(pidl));
-
-	if (!Update)
+	IShellFolder* pParentFolder = NULL;
+	LPCITEMIDLIST pidlRel = NULL;
+	if (SUCCEEDED(SHBindToParent(pidl, IID_IShellFolder, (void**)&pParentFolder, &pidlRel)))
 	{
-		// TODO
+		SetItem(0, 0, pParentFolder, theApp.GetShellManager()->CopyItem(pidlRel), theApp.GetShellManager()->CopyItem(pidl));
+		pParentFolder->Release();
+
+		if (!Update)
+		{
+			// TODO
+		}
 	}
 
 	m_wndHeader.ModifyStyle(HDS_HIDDEN, 0);
@@ -106,8 +116,12 @@ BOOL CTreeView::InsertRow(UINT Row)
 	return TRUE;
 }
 
-void CTreeView::SetItem(Cell* cell, IShellFolder* pParentFolder, LPITEMIDLIST pidlRel, LPITEMIDLIST pidlFQ)
+void CTreeView::SetItem(UINT row, UINT col, IShellFolder* pParentFolder, LPITEMIDLIST pidlRel, LPITEMIDLIST pidlFQ)
 {
+	ASSERT(row<m_Rows);
+	ASSERT(col<MaxColumns);
+
+	Cell* cell = &m_Tree[row*MaxColumns+col];
 	if (!cell->pItem)
 	{
 		cell->pItem = (ItemData*)malloc(sizeof(ItemData));
@@ -184,6 +198,7 @@ void CTreeView::FreeTree()
 BEGIN_MESSAGE_MAP(CTreeView, CWnd)
 	ON_WM_CREATE()
 	ON_WM_DESTROY()
+	ON_WM_THEMECHANGED()
 	ON_WM_ERASEBKGND()
 	ON_WM_PAINT()
 	ON_WM_SIZE()
@@ -204,6 +219,23 @@ int CTreeView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (!m_wndHeader.Create(dwStyle, rect, this, 1))
 		return -1;
 
+	if (theApp.m_ThemeLibLoaded)
+	{
+		hThemeButton = theApp.zOpenThemeData(GetSafeHwnd(), VSCLASS_BUTTON);
+		if (theApp.OSVersion>=OS_Vista)
+			hThemeList = theApp.zOpenThemeData(GetSafeHwnd(), VSCLASS_LISTVIEW);
+	}
+
+	IMAGEINFO ii;
+	theApp.m_SystemImageListSmall.GetImageInfo(0, &ii);
+	m_IconWidth = ii.rcImage.right-ii.rcImage.left;
+	m_IconHeight = ii.rcImage.bottom-ii.rcImage.top;
+
+	LOGFONT lf;
+	theApp.m_DefaultFont.GetLogFont(&lf);
+	m_RowHeight = 5+max(abs(lf.lfHeight), m_IconHeight);
+
+
 	HDITEM HdItem;
 	HdItem.mask = HDI_TEXT | HDI_WIDTH | HDI_FORMAT;
 	HdItem.cxy = MINWIDTH;
@@ -220,9 +252,31 @@ int CTreeView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 void CTreeView::OnDestroy()
 {
-	CWnd::OnDestroy();
+	if (hThemeButton)
+		theApp.zCloseThemeData(hThemeButton);
+	if (hThemeList)
+		theApp.zCloseThemeData(hThemeList);
 
 	FreeTree();
+
+	CWnd::OnDestroy();
+}
+
+LRESULT CTreeView::OnThemeChanged()
+{
+	if (theApp.m_ThemeLibLoaded)
+	{
+		if (hThemeButton)
+			theApp.zCloseThemeData(hThemeButton);
+		if (hThemeList)
+			theApp.zCloseThemeData(hThemeList);
+
+		hThemeButton = theApp.zOpenThemeData(GetSafeHwnd(), VSCLASS_BUTTON);
+		if (theApp.OSVersion>=OS_Vista)
+			hThemeList = theApp.zOpenThemeData(GetSafeHwnd(), VSCLASS_LISTVIEW);
+	}
+
+	return TRUE;
 }
 
 BOOL CTreeView::OnEraseBkgnd(CDC* /*pDC*/)
@@ -236,7 +290,49 @@ void CTreeView::OnPaint()
 
 	CRect rect;
 	GetClientRect(rect);
-	pDC.FillSolidRect(rect, 0xFFFFFF);
+
+	CDC dc;
+	dc.CreateCompatibleDC(&pDC);
+	dc.SetBkMode(TRANSPARENT);
+
+	CBitmap buffer;
+	buffer.CreateCompatibleBitmap(&pDC, rect.Width(), rect.Height());
+	CBitmap* pOldBitmap = dc.SelectObject(&buffer);
+
+	BOOL Themed = IsCtrlThemed();
+	dc.FillSolidRect(rect, Themed ? 0xFFFFFF : GetSysColor(COLOR_WINDOW));
+
+	CFont* pOldFont = dc.SelectObject(&theApp.m_DefaultFont);
+	dc.SetTextColor(0x000000);
+
+	int y = m_HeaderHeight+1;
+	Cell* curCell = m_Tree;
+	for (UINT row=0; row<m_Rows; row++)
+	{
+		int x = 1;
+		for (UINT col=0; col<MaxColumns; col++)
+		{
+			if (curCell->pItem)
+			{
+				CRect rectItem(x, y, x+100, y+m_RowHeight);
+
+				theApp.m_SystemImageListSmall.Draw(&dc, curCell->pItem->IconIDNormal, CPoint(x+MARGIN+GUTTER, y+(m_RowHeight-m_IconHeight-1)/2), ILD_TRANSPARENT);
+				rectItem.left += m_IconWidth+MARGIN+GUTTER+4;
+				dc.DrawText(curCell->pItem->Name, -1, rectItem, DT_VCENTER | DT_SINGLELINE | DT_END_ELLIPSIS);
+			}
+
+			x += 100;
+			curCell++;
+		}
+
+		y += m_RowHeight;
+		if (y>rect.Height())
+			break;
+	}
+
+	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);
+	dc.SelectObject(pOldFont);
+	dc.SelectObject(pOldBitmap);
 }
 
 void CTreeView::OnSize(UINT nType, int cx, int cy)

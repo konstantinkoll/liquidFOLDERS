@@ -46,15 +46,25 @@ public:
 protected:
 	Cell* m_Tree;
 	CTooltipHeader m_wndHeader;
+	HTHEME hThemeList;
+	HTHEME hThemeButton;
+	UINT m_HeaderHeight;
+	UINT m_Allocated;
+	UINT m_Rows;
+	UINT m_Cols;
+	UINT m_RowHeight;
+	int m_IconWidth;
+	int m_IconHeight;
 
 	BOOL InsertRow(UINT Row);
 	//BOOL RemoveRow(UINT Row);
-	void SetItem(Cell* cell, IShellFolder* pParentFolder, LPITEMIDLIST pidlRel, LPITEMIDLIST pidlFQ);
+	void SetItem(UINT row, UINT col, IShellFolder* pParentFolder, LPITEMIDLIST pidlRel, LPITEMIDLIST pidlFQ);
 	void FreeItem(Cell* cell);
 	void FreeTree();
 
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();
+	afx_msg LRESULT OnThemeChanged();
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnPaint();
 	afx_msg void OnSize(UINT nType, int cx, int cy);
@@ -63,10 +73,4 @@ protected:
 	afx_msg void OnBeginDrag(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnItemChanging(NMHDR* pNMHDR, LRESULT* pResult);
 	DECLARE_MESSAGE_MAP()
-
-private:
-	UINT m_HeaderHeight;
-	UINT m_Allocated;
-	UINT m_Rows;
-	UINT m_Cols;
 };
