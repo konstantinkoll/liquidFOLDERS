@@ -58,6 +58,8 @@ int CTooltipHeader::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CHeaderCtrl::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
+	SetFont(&((LFApplication*)AfxGetApp())->m_DefaultFont);
+
 	// Tooltip
 	m_TooltipCtrl.Create(this);
 

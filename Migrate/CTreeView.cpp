@@ -39,7 +39,8 @@ void CTreeView::AdjustLayout()
 	HdLayout.pwpos = &wp;
 	m_wndHeader.Layout(&HdLayout);
 
-	m_wndHeader.SetWindowPos(NULL, wp.x, wp.y, wp.cx, wp.cy, wp.flags | SWP_NOZORDER | SWP_NOACTIVATE);
+	m_HeaderHeight = wp.cy + (wp.cy ? 4 : 0);
+	m_wndHeader.SetWindowPos(NULL, wp.x, wp.y, wp.cx, m_HeaderHeight, wp.flags | SWP_NOZORDER | SWP_NOACTIVATE);
 }
 
 void CTreeView::ClearRoot()
@@ -82,8 +83,6 @@ int CTreeView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	rect.SetRectEmpty();
 	if (!m_wndHeader.Create(dwStyle, rect, this, 1))
 		return -1;
-
-	m_wndHeader.SetFont(&theApp.m_DefaultFont);
 
 	HDITEM HdItem;
 	HdItem.mask = HDI_TEXT | HDI_WIDTH | HDI_FORMAT;

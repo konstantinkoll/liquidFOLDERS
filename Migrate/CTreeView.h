@@ -31,4 +31,7 @@ protected:
 	afx_msg void OnBeginDrag(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnItemChanging(NMHDR* pNMHDR, LRESULT* pResult);
 	DECLARE_MESSAGE_MAP()
+
+private:
+	UINT m_HeaderHeight;
 };
