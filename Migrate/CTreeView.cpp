@@ -22,7 +22,7 @@ BOOL CTreeView::Create(CWnd* _pParentWnd, UINT nID)
 {
 	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, LoadCursor(NULL, IDC_ARROW));
 
-	const DWORD dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE;
+	const DWORD dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_TABSTOP;
 	CRect rect;
 	rect.SetRectEmpty();
 	return CWnd::Create(className, _T("Tree"), dwStyle, rect, _pParentWnd, nID);
@@ -67,6 +67,7 @@ BEGIN_MESSAGE_MAP(CTreeView, CWnd)
 	ON_WM_PAINT()
 	ON_WM_SIZE()
 	ON_WM_SETCURSOR()
+	ON_WM_LBUTTONDOWN()
 	ON_NOTIFY(HDN_BEGINDRAG, 1, OnBeginDrag)
 	ON_NOTIFY(HDN_ITEMCHANGING, 1, OnItemChanging)
 END_MESSAGE_MAP()
@@ -122,6 +123,11 @@ BOOL CTreeView::OnSetCursor(CWnd* /*pWnd*/, UINT /*nHitTest*/, UINT /*message*/)
 {
 	SetCursor(LoadCursor(NULL, IDC_ARROW));
 	return TRUE;
+}
+
+void CTreeView::OnLButtonDown(UINT nFlags, CPoint point)
+{
+	SetFocus();
 }
 
 void CTreeView::OnBeginDrag(NMHDR* /*pNMHDR*/, LRESULT* pResult)

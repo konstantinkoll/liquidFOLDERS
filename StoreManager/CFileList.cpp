@@ -54,11 +54,6 @@ void CFileList::SetHeader(BOOL sorting, BOOL selectCol)
 	if (!pHdr)
 		return;
 
-	// Subclass
-	if (pHdr)
-		if (!TooltipHeader.m_hWnd)
-			VERIFY(TooltipHeader.SubclassWindow(pHdr->GetSafeHwnd()));
-
 	// Spalten
 	if (!sorting)
 		CreateColumns();

@@ -6,7 +6,6 @@
 #include "liquidFOLDERS.h"
 #include "CFileView.h"
 #include "LFCommDlg.h"
-#include "afxpropertygridtooltipctrl.h"
 
 
 // CFileList
@@ -31,7 +30,6 @@ public:
 
 protected:
 	CFileView* View;
-	CTooltipHeader TooltipHeader;
 	BOOL OwnerData;
 	BOOL Editing;
 	int LastSortBy;
