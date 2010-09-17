@@ -70,7 +70,6 @@ LFSearchResult::LFSearchResult(LFSearchResult* res)
 
 LFSearchResult::~LFSearchResult()
 {
-
 	if (m_Items)
 	{
 		for (unsigned int a=0; a<m_ItemCount; a++)

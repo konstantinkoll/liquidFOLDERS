@@ -14,7 +14,7 @@ class LFFileImportList
 {
 public:
 	LFFileImportList();
-	virtual ~LFFileImportList();
+	~LFFileImportList();
 
 	bool AddPath(wchar_t* path);
 	void Resolve();

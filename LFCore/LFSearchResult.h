@@ -16,7 +16,7 @@ class LFSearchResult
 public:
 	LFSearchResult(int ctx);
 	LFSearchResult(LFSearchResult* res);
-	virtual ~LFSearchResult();
+	~LFSearchResult();
 
 	bool AddItemDescriptor(LFItemDescriptor* i);
 	bool AddStoreDescriptor(LFStoreDescriptor* s, LFFilter* f);

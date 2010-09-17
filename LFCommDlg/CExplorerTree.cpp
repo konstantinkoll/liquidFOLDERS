@@ -157,7 +157,7 @@ CString CExplorerTree::OnGetItemText(LPAFX_SHELLITEMINFO pItem)
 	ASSERT(pItem);
 
 	SHFILEINFO sfi;
-	if (SHGetFileInfo((LPCTSTR)pItem->pidlFQ, 0, &sfi, sizeof(sfi), SHGFI_PIDL | SHGFI_DISPLAYNAME))
+	if (SUCCEEDED(SHGetFileInfo((LPCTSTR)pItem->pidlFQ, 0, &sfi, sizeof(sfi), SHGFI_PIDL | SHGFI_DISPLAYNAME)))
 		return sfi.szDisplayName;
 
 	return _T("?");
@@ -168,7 +168,7 @@ int CExplorerTree::OnGetItemIcon(LPAFX_SHELLITEMINFO pItem, BOOL bSelected)
 	ASSERT(pItem);
 
 	SHFILEINFO sfi;
-	if (SHGetFileInfo((LPCTSTR)pItem->pidlFQ, 0, &sfi, sizeof(sfi), SHGFI_PIDL | SHGFI_SYSICONINDEX | SHGFI_SMALLICON | (bSelected ? SHGFI_OPENICON : SHGFI_LINKOVERLAY)))
+	if (SUCCEEDED(SHGetFileInfo((LPCTSTR)pItem->pidlFQ, 0, &sfi, sizeof(sfi), SHGFI_PIDL | SHGFI_SYSICONINDEX | SHGFI_SMALLICON | (bSelected ? SHGFI_OPENICON : SHGFI_LINKOVERLAY))))
 		return sfi.iIcon;
 
 	return -1;
@@ -178,8 +178,6 @@ HTREEITEM CExplorerTree::InsertItem(IShellFolder* pParentFolder, LPITEMIDLIST pi
 {
 	if (!pidlRel)
 		return NULL;
-	if (!pidlFQ)
-		pidlFQ = p_App->GetShellManager()->CopyItem(pidlRel);
 
 	if (pParentFolder)
 		pParentFolder->AddRef();
@@ -190,7 +188,7 @@ HTREEITEM CExplorerTree::InsertItem(IShellFolder* pParentFolder, LPITEMIDLIST pi
 
 	LPAFX_SHELLITEMINFO pItem = (LPAFX_SHELLITEMINFO)GlobalAlloc(GPTR, sizeof(AFX_SHELLITEMINFO));
 	pItem->pidlRel = pidlRel;
-	pItem->pidlFQ = pidlFQ;
+	pItem->pidlFQ = pidlFQ ? pidlFQ : p_App->GetShellManager()->CopyItem(pidlRel);
 	pItem->pParentFolder = pParentFolder;
 	tvItem.lParam = (LPARAM)pItem;
 

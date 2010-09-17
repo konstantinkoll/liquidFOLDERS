@@ -16,6 +16,8 @@
 
 CTreeView::CTreeView()
 {
+	m_Tree = NULL;
+	m_Allocated = m_Rows = m_Cols = 0;
 }
 
 BOOL CTreeView::Create(CWnd* _pParentWnd, UINT nID)
@@ -45,25 +47,143 @@ void CTreeView::AdjustLayout()
 
 void CTreeView::ClearRoot()
 {
+	FreeTree();
+
 	m_wndHeader.ModifyStyle(0, HDS_HIDDEN);
 	AdjustLayout();
-
-
 	Invalidate();
 }
 
 void CTreeView::SetRoot(LPITEMIDLIST pidl, BOOL Update)
 {
+	if (!Update)
+	{
+		FreeTree();
+		InsertRow(0);
+	}
+
+//	SetItem(m_Tree, theApp.GetShellManager()->CopyItem(pidl));
+
+	if (!Update)
+	{
+		// TODO
+	}
+
 	m_wndHeader.ModifyStyle(HDS_HIDDEN, 0);
 	AdjustLayout();
-
-
 	Invalidate();
+}
+
+BOOL CTreeView::InsertRow(UINT Row)
+{
+	ASSERT(Row<=m_Rows);
+
+	if (!m_Tree)
+	{
+		m_Tree = (Cell*)_aligned_malloc(FirstAlloc*MaxColumns*sizeof(Cell), MemoryAlignment);
+		if (!m_Tree)
+			return FALSE;
+
+		m_Allocated = FirstAlloc;
+	}
+
+	if (m_Rows==m_Allocated)
+	{
+		m_Tree = (Cell*)_aligned_realloc(m_Tree, (m_Allocated+SubsequentAlloc)*MaxColumns*sizeof(Cell), MemoryAlignment);
+		if (!m_Tree)
+			return FALSE;
+
+		m_Allocated += SubsequentAlloc;
+	}
+
+	if (Row<m_Rows)
+		for (UINT a=m_Rows; a>Row; a--)
+			memcpy(&m_Tree[(a+1)*MaxColumns], &m_Tree[a*MaxColumns], MaxColumns*sizeof(Cell));
+
+	ZeroMemory(&m_Tree[Row*MaxColumns], MaxColumns*sizeof(Cell));
+	m_Rows++;
+
+	return TRUE;
+}
+
+void CTreeView::SetItem(Cell* cell, IShellFolder* pParentFolder, LPITEMIDLIST pidlRel, LPITEMIDLIST pidlFQ)
+{
+	if (!cell->pItem)
+	{
+		cell->pItem = (ItemData*)malloc(sizeof(ItemData));
+	}
+	else
+	{
+		theApp.GetShellManager()->FreeItem(cell->pItem->pidlFQ);
+		theApp.GetShellManager()->FreeItem(cell->pItem->pidlRel);
+		if (cell->pItem->pParentFolder)
+			cell->pItem->pParentFolder->Release();
+	}
+
+	if (!pidlRel)
+		return;
+
+	if (pParentFolder)
+		pParentFolder->AddRef();
+
+	cell->pItem->pidlFQ = pidlFQ ? pidlFQ : theApp.GetShellManager()->CopyItem(pidlRel);
+	cell->pItem->pidlRel = pidlRel;
+	cell->pItem->pParentFolder = pParentFolder;
+
+	SHFILEINFO sfi;
+	if (SUCCEEDED(SHGetFileInfo((LPCTSTR)pidlFQ, 0, &sfi, sizeof(sfi), SHGFI_PIDL | SHGFI_DISPLAYNAME)))
+	{
+		wcscpy_s(cell->pItem->Name, 256, sfi.szDisplayName);
+	}
+	else
+	{
+		wcscpy_s(cell->pItem->Name, 256, L"?");
+	}
+
+	cell->pItem->IconIDNormal =
+		SUCCEEDED(SHGetFileInfo((LPCTSTR)pidlFQ, 0, &sfi, sizeof(sfi), SHGFI_PIDL | SHGFI_SYSICONINDEX | SHGFI_SMALLICON | SHGFI_LINKOVERLAY))
+		? sfi.iIcon : -1;
+
+	cell->pItem->IconIDSelected =
+		SUCCEEDED(SHGetFileInfo((LPCTSTR)pidlFQ, 0, &sfi, sizeof(sfi), SHGFI_PIDL | SHGFI_SYSICONINDEX | SHGFI_SMALLICON | SHGFI_OPENICON))
+		? sfi.iIcon : -1;
+
+	if (!SHGetPathFromIDList(pidlFQ, cell->pItem->Path))
+		cell->pItem->Path[0] = L'\0';
+}
+
+void CTreeView::FreeItem(Cell* cell)
+{
+	if (cell->pItem)
+	{
+		theApp.GetShellManager()->FreeItem(cell->pItem->pidlFQ);
+		theApp.GetShellManager()->FreeItem(cell->pItem->pidlRel);
+		if (cell->pItem->pParentFolder)
+			cell->pItem->pParentFolder->Release();
+
+		free(cell->pItem);
+	}
+}
+
+void CTreeView::FreeTree()
+{
+	if (m_Tree)
+	{
+		Cell* cell = m_Tree;
+		for (UINT a=0; a<m_Rows*MaxColumns; a++)
+			FreeItem(cell++);
+
+		_aligned_free(m_Tree);
+		m_Tree = NULL;
+	}
+
+	m_Allocated = m_Rows = m_Cols = 0;
 }
 
 
 BEGIN_MESSAGE_MAP(CTreeView, CWnd)
 	ON_WM_CREATE()
+	ON_WM_DESTROY()
 	ON_WM_ERASEBKGND()
 	ON_WM_PAINT()
 	ON_WM_SIZE()
@@ -89,13 +209,20 @@ int CTreeView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	HdItem.cxy = MINWIDTH;
 	HdItem.fmt = HDF_STRING | HDF_CENTER;
 
-	for (UINT a=0; a<10; a++)
+	for (UINT a=0; a<MaxColumns; a++)
 	{
 		HdItem.pszText = a ? L"Ignore" : L"";
 		m_wndHeader.InsertItem(a, &HdItem);
 	}
 
 	return 0;
+}
+
+void CTreeView::OnDestroy()
+{
+	CWnd::OnDestroy();
+
+	FreeTree();
 }
 
 BOOL CTreeView::OnEraseBkgnd(CDC* /*pDC*/)

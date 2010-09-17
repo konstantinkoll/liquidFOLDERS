@@ -27,7 +27,7 @@ class LFTransactionList
 {
 public:
 	LFTransactionList();
-	virtual ~LFTransactionList();
+	~LFTransactionList();
 
 	bool AddItemDescriptor(LFItemDescriptor* i, unsigned int UserData);
 
