@@ -28,7 +28,7 @@ BOOL CCalendarHeaderCtrl::Create(CFileView* pParentWnd, UINT nID)
 
 	const DWORD dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE;
 	CRect rect;
-	return CWnd::Create(className, _T("Header"), dwStyle, rect, pParentWnd, nID);
+	return CWnd::Create(className, _T(""), dwStyle, rect, pParentWnd, nID);
 }
 
 void CCalendarHeaderCtrl::SetText(CString _Text)

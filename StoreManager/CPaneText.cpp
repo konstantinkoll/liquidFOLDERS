@@ -22,7 +22,7 @@ BOOL CPaneText::Create(CWnd* pParentWnd, UINT nID, CString _text)
 
 	const DWORD dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE;
 	CRect rect;
-	return CWnd::Create(className, _T("PaneText"), dwStyle, rect, pParentWnd, nID);
+	return CWnd::Create(className, _T(""), dwStyle, rect, pParentWnd, nID);
 }
 
 void CPaneText::SetText(CString _text)

@@ -198,7 +198,7 @@ BOOL CDropdownSelector::Create(CString EmptyHint, CString Caption, CGlasWindow* 
 	const DWORD dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_TABSTOP;
 	CRect rect;
 	rect.SetRectEmpty();
-	return CWnd::Create(className, _T("DropdownSelector"), dwStyle, rect, pParentWnd, nID);
+	return CWnd::Create(className, _T(""), dwStyle, rect, pParentWnd, nID);
 }
 
 BOOL CDropdownSelector::PreTranslateMessage(MSG* pMsg)

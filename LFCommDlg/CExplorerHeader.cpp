@@ -30,7 +30,7 @@ BOOL CExplorerHeader::Create(CWnd* pParentWnd, UINT nID)
 	const DWORD dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE;
 	CRect rect;
 	rect.SetRectEmpty();
-	return CWnd::Create(className, _T("ExplorerHeader"), dwStyle, rect, pParentWnd, nID);
+	return CWnd::Create(className, _T(""), dwStyle, rect, pParentWnd, nID);
 }
 
 void CExplorerHeader::SetText(CString _Caption, CString _Hint, BOOL Repaint)

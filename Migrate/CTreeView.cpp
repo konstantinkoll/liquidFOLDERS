@@ -25,7 +25,7 @@ BOOL CTreeView::Create(CWnd* _pParentWnd, UINT nID)
 	const DWORD dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_TABSTOP;
 	CRect rect;
 	rect.SetRectEmpty();
-	return CWnd::Create(className, _T("Tree"), dwStyle, rect, _pParentWnd, nID);
+	return CWnd::Create(className, _T(""), dwStyle, rect, _pParentWnd, nID);
 }
 
 void CTreeView::AdjustLayout()
