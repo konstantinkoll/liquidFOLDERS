@@ -94,7 +94,7 @@ void CPIDLDropdownWindow::AddChildren(wchar_t* Path, UINT Category)
 		if (SUCCEEDED(Desktop->BindToObject(pidl, NULL, IID_IShellFolder, (void**)&Libraries)))
 		{
 			IEnumIDList* pEnum;
-			Libraries->EnumObjects(NULL, SHCONTF_FOLDERS, &pEnum);
+			if (SUCCEEDED(Libraries->EnumObjects(NULL, SHCONTF_FOLDERS, &pEnum)))
 			{
 				LPITEMIDLIST lib;
 				while (pEnum->Next(1, &lib, NULL)==S_OK)
@@ -380,7 +380,7 @@ LRESULT CPIDLSelector::OnShellChange(WPARAM wParam, LPARAM lParam)
 			SetEmpty();
 		break;
 	case SHCNE_RENAMEFOLDER:
-		if ((Path1[0]!='\0') && (Path2[0]!='\0'))
+		if ((Path1[0]!='\0') && (Path2[0]!='\0') && (wcscmp(Path1, CurrentPath)==0))
 			SetItem(pDesktop, Path2, TRUE, wcscmp(Path1, Path2) ? NM_SELCHANGED : NM_SELUPDATE);
 		break;
 	case SHCNE_UPDATEITEM:
