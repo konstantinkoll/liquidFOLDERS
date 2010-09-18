@@ -24,6 +24,7 @@ CTreeView::CTreeView()
 	m_Allocated = m_Rows = m_Cols = 0;
 	hThemeList = hThemeButton = NULL;
 	m_Selected.x = m_Selected.y = m_Hot.x = m_Hot.y = -1;
+	m_CheckboxHot = m_CheckboxPressed = FALSE;
 
 	pDesktop = NULL;
 	SHGetDesktopFolder(&pDesktop);
@@ -64,6 +65,7 @@ void CTreeView::ClearRoot()
 {
 	FreeTree();
 	m_Selected.x = m_Selected.y = m_Hot.x = m_Hot.y = -1;
+	m_CheckboxHot = m_CheckboxPressed = FALSE;
 
 	m_wndHeader.ModifyStyle(0, HDS_HIDDEN);
 	AdjustLayout();
@@ -339,7 +341,7 @@ int CTreeView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	LOGFONT lf;
 	theApp.m_DefaultFont.GetLogFont(&lf);
-	m_RowHeight = (6+max(abs(lf.lfHeight), m_IconHeight)) & ~1;
+	m_RowHeight = (4+max(abs(lf.lfHeight), m_IconHeight)) & ~1;
 
 	for (UINT a=0; a<MaxColumns; a++)
 		m_ColumnWidth[a] = MINWIDTH;
@@ -427,22 +429,24 @@ void CTreeView::OnPaint()
 		{
 			if (curCell->pItem)
 			{
-				CRect rectItem(x+GUTTER, y, x+m_ColumnWidth[col], y+m_RowHeight-1);
+				CRect rectItem(x+GUTTER, y, x+m_ColumnWidth[col], y+m_RowHeight);
+				BOOL Hot = (m_Hot.x==(int)row) && (m_Hot.y==(int)col);
+				BOOL Selected = (m_Selected.x==(int)row) && (m_Selected.y==(int)col);
 
 				if (hThemeList)
 				{
 					const int StateIDs[4] = { LISS_NORMAL, LISS_HOT, GetFocus()!=this ? LISS_SELECTEDNOTFOCUS : LISS_SELECTED, LISS_HOTSELECTED };
 					UINT State = 0;
-					if ((m_Hot.x==(int)row) && (m_Hot.y==(int)col))
+					if (Hot)
 						State |= 1;
-					if ((m_Selected.x==(int)row) && (m_Selected.y==(int)col))
+					if (Selected)
 						State |= 2;
 
 					theApp.zDrawThemeBackground(hThemeList, dc, LVP_LISTITEM, StateIDs[State], rectItem, rectItem);
-					dc.SetTextColor(0x000000);
+					dc.SetTextColor(curCell->pItem->Path[0] ? 0x000000 : 0x808080);
 				}
 				else
-					if ((m_Hot.x==(int)row) && (m_Hot.y==(int)col))
+					if (Hot)
 					{
 						dc.FillSolidRect(rectItem, GetSysColor(COLOR_HIGHLIGHT));
 						dc.SetTextColor(GetSysColor(COLOR_HIGHLIGHTTEXT));
@@ -450,33 +454,47 @@ void CTreeView::OnPaint()
 					}
 					else
 					{
-						dc.SetTextColor(Themed ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT));
+						dc.SetTextColor(curCell->pItem->Path[0] ? Themed ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT) : Themed ? 0x808080 : GetSysColor(COLOR_GRAYTEXT));
 					}
 
-				theApp.m_SystemImageListSmall.Draw(&dc, curCell->pItem->IconIDNormal, CPoint(rectItem.left+BORDER, y+(m_RowHeight-m_IconHeight)/2), ILD_TRANSPARENT);
+				theApp.m_SystemImageListSmall.Draw(&dc, Selected ? curCell->pItem->IconIDSelected : curCell->pItem->IconIDNormal, CPoint(rectItem.left+BORDER, y+(m_RowHeight-m_IconHeight)/2), ILD_TRANSPARENT);
 				rectItem.left += m_IconWidth+BORDER+MARGIN;
 				rectItem.right -= BORDER;
+
+				if (hThemeButton)
+				{
+					int uiStyle = CBS_UNCHECKEDDISABLED;
+					if (curCell->pItem->Path[0])
+						uiStyle = m_CheckboxPressed ? CBS_UNCHECKEDPRESSED : m_CheckboxHot ? CBS_UNCHECKEDHOT : CBS_UNCHECKEDNORMAL;
+					theApp.zDrawThemeBackground(hThemeButton, dc.m_hDC, BP_CHECKBOX, uiStyle+(curCell->Flags & CF_CHECKED ? 4 : 0), rectItem, rectItem);
+				}
+				else
+				{
+					UINT uiStyle = DFCS_BUTTONCHECK | (curCell->Flags & CF_CHECKED ? DFCS_CHECKED : 0) | (m_CheckboxPressed ? DFCS_PUSHED : 0) | (curCell->pItem->Path[0] ? 0 : DFCS_INACTIVE);
+					dc.DrawFrameControl(rectItem, DFC_BUTTON, uiStyle);
+				}
+
 				dc.DrawText(curCell->pItem->Name, -1, rectItem, DT_VCENTER | DT_SINGLELINE | DT_END_ELLIPSIS);
 
-				dc.MoveTo(x+((curCell->Flags & CF_ISSIBLING) ? GUTTER/2 : 0), y+(m_RowHeight-1)/2);
-				dc.LineTo(x+GUTTER+BORDER-1, y+(m_RowHeight-1)/2);
+				dc.MoveTo(x+((curCell->Flags & CF_ISSIBLING) ? GUTTER/2 : 0), y+m_RowHeight/2);
+				dc.LineTo(x+GUTTER+BORDER-1, y+m_RowHeight/2);
 
 				if (curCell->Flags & CF_HASCHILDREN)
 				{
-					dc.MoveTo(x+GUTTER+BORDER, y+(m_RowHeight-1)/2);
-					dc.LineTo(x+m_ColumnWidth[col], y+(m_RowHeight-1)/2);
+					dc.MoveTo(x+GUTTER+BORDER, y+m_RowHeight/2);
+					dc.LineTo(x+m_ColumnWidth[col], y+m_RowHeight/2);
 				}
 			}
 
 			if (curCell->Flags & CF_ISSIBLING)
 			{
 				dc.MoveTo(x+GUTTER/2, y);
-				dc.LineTo(x+GUTTER/2, y+(m_RowHeight-1)/2);
+				dc.LineTo(x+GUTTER/2, y+m_RowHeight/2);
 			}
 
 			if (curCell->Flags & CF_HASSIBLINGS)
 			{
-				dc.MoveTo(x+GUTTER/2, y+(m_RowHeight-1)/2);
+				dc.MoveTo(x+GUTTER/2, y+m_RowHeight/2);
 				dc.LineTo(x+GUTTER/2, y+m_RowHeight);
 			}
 

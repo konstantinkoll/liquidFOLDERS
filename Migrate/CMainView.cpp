@@ -100,8 +100,8 @@ int CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 
 	m_wndTaskbar.AddButton(ID_VIEW_SELECTROOT, _T("Select root folder"), 0);
-	m_wndTaskbar.AddButton(ID_VIEW_INCLUDETREE, _T("Include subfolders"), 1);
-	m_wndTaskbar.AddButton(ID_VIEW_EXCLUDETREE, _T("Exclude subfolders"), 2);
+	m_wndTaskbar.AddButton(ID_VIEW_INCLUDETREE, _T("Include branch"), 1);
+	m_wndTaskbar.AddButton(ID_VIEW_EXCLUDETREE, _T("Exclude branch"), 2);
 	m_wndTaskbar.AddButton(ID_VIEW_RENAME, _T("Rename folder"), 3);
 	m_wndTaskbar.AddButton(ID_VIEW_DELETE, _T("Delete folder"), 4);
 	m_wndTaskbar.AddButton(ID_VIEW_PROPERTIES, _T("Properties"), 5);

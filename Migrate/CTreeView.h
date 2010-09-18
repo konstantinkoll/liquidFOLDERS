@@ -62,6 +62,8 @@ protected:
 	int m_IconHeight;
 	CPoint m_Selected;
 	CPoint m_Hot;
+	BOOL m_CheckboxHot;
+	BOOL m_CheckboxPressed;
 
 	BOOL InsertRow(UINT Row);
 	//BOOL RemoveRow(UINT Row);
