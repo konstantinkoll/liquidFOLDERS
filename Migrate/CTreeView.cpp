@@ -16,7 +16,7 @@
 
 #define BORDER       3
 #define MARGIN       4
-#define GUTTER       10
+#define GUTTER       9
 
 CTreeView::CTreeView()
 {
@@ -95,7 +95,7 @@ void CTreeView::SetRoot(LPITEMIDLIST pidl, BOOL Update)
 
 	if (SUCCEEDED(hr))
 	{
-		InsertItem(0, 0, pParentFolder, theApp.GetShellManager()->CopyItem(pidlRel), theApp.GetShellManager()->CopyItem(pidl));
+		InsertItem(0, 0, pParentFolder, theApp.GetShellManager()->CopyItem(pidlRel), theApp.GetShellManager()->CopyItem(pidl), CF_CHECKED);
 		if (pParentFolder)
 			pParentFolder->Release();
 
@@ -143,7 +143,7 @@ BOOL CTreeView::InsertRow(UINT Row)
 	return TRUE;
 }
 
-void CTreeView::SetItem(UINT row, UINT col, IShellFolder* pParentFolder, LPITEMIDLIST pidlRel, LPITEMIDLIST pidlFQ)
+void CTreeView::SetItem(UINT row, UINT col, IShellFolder* pParentFolder, LPITEMIDLIST pidlRel, LPITEMIDLIST pidlFQ, UINT Flags)
 {
 	ASSERT(row<m_Rows);
 	ASSERT(col<MaxColumns);
@@ -167,6 +167,7 @@ void CTreeView::SetItem(UINT row, UINT col, IShellFolder* pParentFolder, LPITEMI
 	if (pParentFolder)
 		pParentFolder->AddRef();
 
+	cell->Flags = Flags;
 	cell->pItem->pidlFQ = pidlFQ ? pidlFQ : theApp.GetShellManager()->CopyItem(pidlRel);
 	cell->pItem->pidlRel = pidlRel;
 	cell->pItem->pParentFolder = pParentFolder;
@@ -193,10 +194,11 @@ void CTreeView::SetItem(UINT row, UINT col, IShellFolder* pParentFolder, LPITEMI
 		cell->pItem->Path[0] = L'\0';
 }
 
-UINT CTreeView::InsertItem(UINT row, UINT col, IShellFolder* pParentFolder, LPITEMIDLIST pidlRel, LPITEMIDLIST pidlFQ)
+UINT CTreeView::InsertItem(UINT row, UINT col, IShellFolder* pParentFolder, LPITEMIDLIST pidlRel, LPITEMIDLIST pidlFQ, UINT Flags)
 {
 	UINT Inserted = 0;
-	SetItem(row, col, pParentFolder, pidlRel, pidlFQ);
+
+	SetItem(row, col, pParentFolder, pidlRel, pidlFQ, Flags);
 
 	if (col<MaxColumns-1)
 	{
@@ -217,6 +219,7 @@ UINT CTreeView::InsertItem(UINT row, UINT col, IShellFolder* pParentFolder, LPIT
 			if (SUCCEEDED(pFolder->EnumObjects(NULL, SHCONTF_FOLDERS, &pEnum)))
 			{
 				BOOL NewRow = FALSE;
+				Flags &= CF_CHECKED;
 
 				LPITEMIDLIST pidlTemp;
 				while (pEnum->Next(1, &pidlTemp, NULL)==S_OK)
@@ -237,11 +240,24 @@ UINT CTreeView::InsertItem(UINT row, UINT col, IShellFolder* pParentFolder, LPIT
 
 					if (NewRow)
 					{
+						for (int a=row+Inserted; a>=0; a--)
+						{
+							m_Tree[a*MaxColumns+col+1].Flags |= CF_HASSIBLINGS;
+							if (m_Tree[a*MaxColumns+col].Flags & CF_HASCHILDREN)
+								break;
+							m_Tree[a*MaxColumns+col+1].Flags |= CF_ISSIBLING;
+						}
+
 						Inserted++;
 						InsertRow(row+Inserted);
+						Flags |= CF_ISSIBLING;
+					}
+					else
+					{
+						m_Tree[row*MaxColumns+col].Flags |= CF_HASCHILDREN;
 					}
 
-					Inserted += InsertItem(row+Inserted, col+1, pFolder, pidlTemp, theApp.GetShellManager()->ConcatenateItem(pidlFQ, pidlTemp));
+					Inserted += InsertItem(row+Inserted, col+1, pFolder, pidlTemp, theApp.GetShellManager()->ConcatenateItem(pidlFQ, pidlTemp), Flags);
 					NewRow = TRUE;
 				}
 				pEnum->Release();
@@ -323,7 +339,7 @@ int CTreeView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	LOGFONT lf;
 	theApp.m_DefaultFont.GetLogFont(&lf);
-	m_RowHeight = 5+max(abs(lf.lfHeight), m_IconHeight);
+	m_RowHeight = (6+max(abs(lf.lfHeight), m_IconHeight)) & ~1;
 
 	for (UINT a=0; a<MaxColumns; a++)
 		m_ColumnWidth[a] = MINWIDTH;
@@ -396,6 +412,12 @@ void CTreeView::OnPaint()
 
 	CFont* pOldFont = dc.SelectObject(&theApp.m_DefaultFont);
 
+	LOGBRUSH brsh;
+	brsh.lbColor = 0x808080;
+	brsh.lbStyle = PS_SOLID;
+	CPen pen(PS_COSMETIC | PS_ALTERNATE, 1, &brsh);
+	CPen* pOldPen = dc.SelectObject(&pen);
+
 	int y = m_HeaderHeight+1;
 	Cell* curCell = m_Tree;
 	for (UINT row=0; row<m_Rows; row++)
@@ -416,11 +438,11 @@ void CTreeView::OnPaint()
 					if ((m_Selected.x==(int)row) && (m_Selected.y==(int)col))
 						State |= 2;
 
-					theApp.zDrawThemeBackground(hThemeList, dc, LVP_LISTITEM, LISS_SELECTED/*StateIDs[State]*/, rectItem, rectItem);
+					theApp.zDrawThemeBackground(hThemeList, dc, LVP_LISTITEM, StateIDs[State], rectItem, rectItem);
 					dc.SetTextColor(0x000000);
 				}
 				else
-					if ((m_Selected.x==(int)row) && (m_Selected.y==(int)col))
+					if ((m_Hot.x==(int)row) && (m_Hot.y==(int)col))
 					{
 						dc.FillSolidRect(rectItem, GetSysColor(COLOR_HIGHLIGHT));
 						dc.SetTextColor(GetSysColor(COLOR_HIGHLIGHTTEXT));
@@ -435,6 +457,27 @@ void CTreeView::OnPaint()
 				rectItem.left += m_IconWidth+BORDER+MARGIN;
 				rectItem.right -= BORDER;
 				dc.DrawText(curCell->pItem->Name, -1, rectItem, DT_VCENTER | DT_SINGLELINE | DT_END_ELLIPSIS);
+
+				dc.MoveTo(x+((curCell->Flags & CF_ISSIBLING) ? GUTTER/2 : 0), y+(m_RowHeight-1)/2);
+				dc.LineTo(x+GUTTER+BORDER-1, y+(m_RowHeight-1)/2);
+
+				if (curCell->Flags & CF_HASCHILDREN)
+				{
+					dc.MoveTo(x+GUTTER+BORDER, y+(m_RowHeight-1)/2);
+					dc.LineTo(x+m_ColumnWidth[col], y+(m_RowHeight-1)/2);
+				}
+			}
+
+			if (curCell->Flags & CF_ISSIBLING)
+			{
+				dc.MoveTo(x+GUTTER/2, y);
+				dc.LineTo(x+GUTTER/2, y+(m_RowHeight-1)/2);
+			}
+
+			if (curCell->Flags & CF_HASSIBLINGS)
+			{
+				dc.MoveTo(x+GUTTER/2, y+(m_RowHeight-1)/2);
+				dc.LineTo(x+GUTTER/2, y+m_RowHeight);
 			}
 
 			x += m_ColumnWidth[col];
@@ -447,6 +490,7 @@ void CTreeView::OnPaint()
 	}
 
 	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);
+	dc.SelectObject(pOldPen);
 	dc.SelectObject(pOldFont);
 	dc.SelectObject(pOldBitmap);
 }

@@ -15,6 +15,9 @@
 #define MemoryAlignment     8
 
 #define CF_CHECKED          1
+#define CF_HASCHILDREN      2
+#define CF_HASSIBLINGS      4
+#define CF_ISSIBLING        8
 
 struct ItemData
 {
@@ -62,8 +65,8 @@ protected:
 
 	BOOL InsertRow(UINT Row);
 	//BOOL RemoveRow(UINT Row);
-	void SetItem(UINT row, UINT col, IShellFolder* pParentFolder, LPITEMIDLIST pidlRel, LPITEMIDLIST pidlFQ);
-	UINT InsertItem(UINT row, UINT col, IShellFolder* pParentFolder, LPITEMIDLIST pidlRel, LPITEMIDLIST pidlFQ);
+	void SetItem(UINT row, UINT col, IShellFolder* pParentFolder, LPITEMIDLIST pidlRel, LPITEMIDLIST pidlFQ, UINT Flags);
+	UINT InsertItem(UINT row, UINT col, IShellFolder* pParentFolder, LPITEMIDLIST pidlRel, LPITEMIDLIST pidlFQ, UINT Flags);
 	void FreeItem(Cell* cell);
 	void FreeTree();
 
