@@ -410,6 +410,9 @@ void CTreeView::OnPaint()
 					{
 						dc.FillSolidRect(rectItem, GetSysColor(COLOR_HIGHLIGHT));
 						dc.SetTextColor(GetSysColor(COLOR_HIGHLIGHTTEXT));
+
+						if (TRUE)
+							dc.DrawFocusRect(rectItem);
 					}
 				}
 				else
