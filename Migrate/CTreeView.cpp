@@ -318,14 +318,16 @@ int CTreeView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	theApp.m_DefaultFont.GetLogFont(&lf);
 	m_RowHeight = 5+max(abs(lf.lfHeight), m_IconHeight);
 
+	for (UINT a=0; a<MaxColumns; a++)
+		m_ColumnWidth[a] = MINWIDTH;
 
 	HDITEM HdItem;
 	HdItem.mask = HDI_TEXT | HDI_WIDTH | HDI_FORMAT;
-	HdItem.cxy = MINWIDTH;
 	HdItem.fmt = HDF_STRING | HDF_CENTER;
 
 	for (UINT a=0; a<MaxColumns; a++)
 	{
+		HdItem.cxy = m_ColumnWidth[a];
 		HdItem.pszText = a ? L"Ignore" : L"";
 		m_wndHeader.InsertItem(a, &HdItem);
 	}
@@ -396,7 +398,7 @@ void CTreeView::OnPaint()
 		{
 			if (curCell->pItem)
 			{
-				CRect rectItem(x+GUTTER, y, x+100, y+m_RowHeight);
+				CRect rectItem(x+GUTTER, y, x+m_ColumnWidth[col], y+m_RowHeight);
 
 				if (TRUE)
 				{
@@ -420,7 +422,7 @@ void CTreeView::OnPaint()
 				dc.DrawText(curCell->pItem->Name, -1, rectItem, DT_VCENTER | DT_SINGLELINE | DT_END_ELLIPSIS);
 			}
 
-			x += 100;
+			x += m_ColumnWidth[col];
 			curCell++;
 		}
 
@@ -467,6 +469,9 @@ void CTreeView::OnItemChanging(NMHDR* pNMHDR, LRESULT* pResult)
 
 		if (pHdr->pitem->cxy>MAXWIDTH)
 			pHdr->pitem->cxy = MAXWIDTH;
+
+		m_ColumnWidth[pHdr->iItem] = pHdr->pitem->cxy;
+		Invalidate();
 
 		*pResult = FALSE;
 	}

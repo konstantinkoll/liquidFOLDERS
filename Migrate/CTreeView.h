@@ -47,6 +47,7 @@ public:
 protected:
 	Cell* m_Tree;
 	CTooltipHeader m_wndHeader;
+	int m_ColumnWidth[MaxColumns];
 	HTHEME hThemeList;
 	HTHEME hThemeButton;
 	UINT m_HeaderHeight;
