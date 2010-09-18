@@ -14,7 +14,8 @@
 #define MINWIDTH     75
 #define MAXWIDTH     350
 
-#define MARGIN       3
+#define BORDER       3
+#define MARGIN       4
 #define GUTTER       10
 
 CTreeView::CTreeView()
@@ -22,6 +23,7 @@ CTreeView::CTreeView()
 	m_Tree = NULL;
 	m_Allocated = m_Rows = m_Cols = 0;
 	hThemeList = hThemeButton = NULL;
+	m_Selected.x = m_Selected.y = m_Hot.x = m_Hot.y = -1;
 
 	pDesktop = NULL;
 	SHGetDesktopFolder(&pDesktop);
@@ -61,6 +63,7 @@ void CTreeView::AdjustLayout()
 void CTreeView::ClearRoot()
 {
 	FreeTree();
+	m_Selected.x = m_Selected.y = m_Hot.x = m_Hot.y = -1;
 
 	m_wndHeader.ModifyStyle(0, HDS_HIDDEN);
 	AdjustLayout();
@@ -99,6 +102,7 @@ void CTreeView::SetRoot(LPITEMIDLIST pidl, BOOL Update)
 		if (!Update)
 		{
 			// TODO
+			m_Selected.x = m_Selected.y = 0;
 		}
 	}
 
@@ -306,7 +310,10 @@ int CTreeView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	{
 		hThemeButton = theApp.zOpenThemeData(GetSafeHwnd(), VSCLASS_BUTTON);
 		if (theApp.OSVersion>=OS_Vista)
+		{
+			theApp.zSetWindowTheme(GetSafeHwnd(), L"explorer", NULL);
 			hThemeList = theApp.zOpenThemeData(GetSafeHwnd(), VSCLASS_LISTVIEW);
+		}
 	}
 
 	IMAGEINFO ii;
@@ -398,30 +405,35 @@ void CTreeView::OnPaint()
 		{
 			if (curCell->pItem)
 			{
-				CRect rectItem(x+GUTTER, y, x+m_ColumnWidth[col], y+m_RowHeight);
+				CRect rectItem(x+GUTTER, y, x+m_ColumnWidth[col], y+m_RowHeight-1);
 
-				if (TRUE)
+				if (hThemeList)
 				{
-					if (hThemeList)
-					{
-						dc.SetTextColor(0x000000);
-					}
-					else
+					const int StateIDs[4] = { LISS_NORMAL, LISS_HOT, GetFocus()!=this ? LISS_SELECTEDNOTFOCUS : LISS_SELECTED, LISS_HOTSELECTED };
+					UINT State = 0;
+					if ((m_Hot.x==(int)row) && (m_Hot.y==(int)col))
+						State |= 1;
+					if ((m_Selected.x==(int)row) && (m_Selected.y==(int)col))
+						State |= 2;
+
+					theApp.zDrawThemeBackground(hThemeList, dc, LVP_LISTITEM, LISS_SELECTED/*StateIDs[State]*/, rectItem, rectItem);
+					dc.SetTextColor(0x000000);
+				}
+				else
+					if ((m_Selected.x==(int)row) && (m_Selected.y==(int)col))
 					{
 						dc.FillSolidRect(rectItem, GetSysColor(COLOR_HIGHLIGHT));
 						dc.SetTextColor(GetSysColor(COLOR_HIGHLIGHTTEXT));
-
-						if (TRUE)
-							dc.DrawFocusRect(rectItem);
+						dc.DrawFocusRect(rectItem);
 					}
-				}
-				else
-				{
-					dc.SetTextColor(Themed ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT));
-				}
+					else
+					{
+						dc.SetTextColor(Themed ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT));
+					}
 
-				theApp.m_SystemImageListSmall.Draw(&dc, curCell->pItem->IconIDNormal, CPoint(rectItem.left+MARGIN, y+(m_RowHeight-m_IconHeight-1)/2), ILD_TRANSPARENT);
-				rectItem.left += m_IconWidth+MARGIN+4;
+				theApp.m_SystemImageListSmall.Draw(&dc, curCell->pItem->IconIDNormal, CPoint(rectItem.left+BORDER, y+(m_RowHeight-m_IconHeight)/2), ILD_TRANSPARENT);
+				rectItem.left += m_IconWidth+BORDER+MARGIN;
+				rectItem.right -= BORDER;
 				dc.DrawText(curCell->pItem->Name, -1, rectItem, DT_VCENTER | DT_SINGLELINE | DT_END_ELLIPSIS);
 			}
 
