@@ -73,6 +73,7 @@ protected:
 	void FreeItem(Cell* cell);
 	void FreeTree();
 	BOOL HitTest(CPoint point, CPoint* item, BOOL* cbhot);
+	void InvalidateItem(CPoint item);
 
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();
@@ -84,6 +85,9 @@ protected:
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg void OnMouseLeave();
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
+	afx_msg void OnRButtonDown(UINT nFlags, CPoint point);
+	afx_msg void OnSetFocus(CWnd* pOldWnd);
+	afx_msg void OnKillFocus(CWnd* pNewWnd);
 	afx_msg void OnBeginDrag(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnItemChanging(NMHDR* pNMHDR, LRESULT* pResult);
 	DECLARE_MESSAGE_MAP()

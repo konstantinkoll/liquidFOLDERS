@@ -110,6 +110,7 @@ void CTreeView::SetRoot(LPITEMIDLIST pidl, BOOL Update)
 
 	m_wndHeader.ModifyStyle(HDS_HIDDEN, 0);
 	AdjustLayout();
+	SetFocus();
 	Invalidate();
 }
 
@@ -306,11 +307,12 @@ BOOL CTreeView::HitTest(CPoint point, CPoint* item, BOOL* cbhot)
 {
 	BOOL res = FALSE;
 
-	int row = (point.y>=m_HeaderHeight) ? (point.y-m_HeaderHeight-1)/m_RowHeight : -1;
+	point.y -= m_HeaderHeight+1;
+	int row = (point.y>=0) ? point.y/m_RowHeight : -1;
 	int col = -1;
+	int x = 1;
 	if (row!=-1)
 	{
-		int x = 1;
 		for (UINT a=0; a<m_Cols; a++)
 		{
 			if ((point.x>=x+GUTTER) && (point.x<x+m_ColumnWidth[a]))
@@ -324,7 +326,14 @@ BOOL CTreeView::HitTest(CPoint point, CPoint* item, BOOL* cbhot)
 	}
 
 	if ((row>=0) && (row<(int)m_Rows) && (col!=-1))
+	{
 		res = (m_Tree[row*MaxColumns+col].pItem!=NULL);
+		if ((res) && (cbhot))
+		{
+			CRect rectButton(x+GUTTER+BORDER, row*m_RowHeight+(m_RowHeight-m_CheckboxSize.cy)/2, x+GUTTER+BORDER+m_CheckboxSize.cx, row*m_RowHeight+(m_RowHeight-m_CheckboxSize.cy)/2+m_CheckboxSize.cy);
+			*cbhot = rectButton.PtInRect(point);
+		}
+	}
 
 	if (item)
 	{
@@ -333,6 +342,19 @@ BOOL CTreeView::HitTest(CPoint point, CPoint* item, BOOL* cbhot)
 	}
 
 	return res;
+}
+
+void CTreeView::InvalidateItem(CPoint item)
+{
+	if ((item.x!=-1) && (item.y!=-1))
+	{
+		int x = 1;
+		for (UINT a=0; a<(UINT)item.x; a++)
+			x += m_ColumnWidth[a];
+
+		CRect rect(x, m_HeaderHeight+item.y*m_RowHeight+1, x+m_ColumnWidth[item.x], m_HeaderHeight+(item.y+1)*m_RowHeight+1);
+		InvalidateRect(rect);
+	}
 }
 
 void CTreeView::SetCheckboxSize()
@@ -362,6 +384,9 @@ BEGIN_MESSAGE_MAP(CTreeView, CWnd)
 	ON_WM_MOUSEMOVE()
 	ON_WM_MOUSELEAVE()
 	ON_WM_LBUTTONDOWN()
+	ON_WM_RBUTTONDOWN()
+	ON_WM_SETFOCUS()
+	ON_WM_KILLFOCUS()
 	ON_NOTIFY(HDN_BEGINDRAG, 1, OnBeginDrag)
 	ON_NOTIFY(HDN_ITEMCHANGING, 1, OnItemChanging)
 END_MESSAGE_MAP()
@@ -512,11 +537,13 @@ void CTreeView::OnPaint()
 						dc.SetTextColor(curCell->pItem->Path[0] ? 0x000000 : 0x808080);
 					}
 					else
-						if (Hot)
+						if (Selected)
 						{
-							dc.FillSolidRect(rectItem, GetSysColor(COLOR_HIGHLIGHT));
-							dc.SetTextColor(GetSysColor(COLOR_HIGHLIGHTTEXT));
-							dc.DrawFocusRect(rectItem);
+							dc.FillSolidRect(rectItem, GetSysColor(GetFocus()==this ? COLOR_HIGHLIGHT : COLOR_3DFACE));
+							dc.SetTextColor(GetSysColor(GetFocus()==this ? COLOR_HIGHLIGHTTEXT : COLOR_WINDOWTEXT));
+
+							if (GetFocus()==this)
+								dc.DrawFocusRect(rectItem);
 						}
 						else
 						{
@@ -534,7 +561,7 @@ void CTreeView::OnPaint()
 						int uiStyle;
 						if (curCell->pItem->Path[0])
 						{
-							uiStyle = m_CheckboxPressed ? CBS_UNCHECKEDPRESSED : m_CheckboxHot ? CBS_UNCHECKEDHOT : CBS_UNCHECKEDNORMAL;
+							uiStyle = m_CheckboxPressed ? CBS_UNCHECKEDPRESSED : (Hot && m_CheckboxHot) ? CBS_UNCHECKEDHOT : CBS_UNCHECKEDNORMAL;
 							if (curCell->Flags & CF_CHECKED)
 								uiStyle += 4;
 						}
@@ -624,21 +651,63 @@ void CTreeView::OnMouseMove(UINT nFlags, CPoint point)
 		TrackMouseEvent(&tme);
 	}
 
-	HitTest(point, &m_Hot, NULL);
-	Invalidate();
+	InvalidateItem(m_Hot);
+	if (HitTest(point, &m_Hot, &m_CheckboxHot))
+		if (nFlags & MK_RBUTTON)
+		{
+			SetFocus();
+			InvalidateItem(m_Selected);
+			m_Selected = m_Hot;
+		}
+	InvalidateItem(m_Hot);
 }
 
 void CTreeView::OnMouseLeave()
 {
 //	m_TooltipCtrl.Deactivate();
-	m_Hover = FALSE;
 
-	CWnd::OnMouseLeave();
+	m_Hover = FALSE;
+	m_Hot.x = m_Hot.y = -1;
+
+	Invalidate();
 }
 
-void CTreeView::OnLButtonDown(UINT nFlags, CPoint point)
+void CTreeView::OnLButtonDown(UINT /*nFlags*/, CPoint point)
 {
 	SetFocus();
+
+	CPoint item;
+	if (HitTest(point, &item, &m_CheckboxHot))
+	{
+		InvalidateItem(m_Selected);
+		InvalidateItem(item);
+
+		m_Selected = item;
+	}
+}
+
+void CTreeView::OnRButtonDown(UINT /*nFlags*/, CPoint point)
+{
+	SetFocus();
+
+	CPoint item;
+	if (HitTest(point, &item, &m_CheckboxHot))
+	{
+		InvalidateItem(m_Selected);
+		InvalidateItem(item);
+
+		m_Selected = item;
+	}
+}
+
+void CTreeView::OnSetFocus(CWnd* /*pOldWnd*/)
+{
+	InvalidateItem(m_Selected);
+}
+
+void CTreeView::OnKillFocus(CWnd* /*pNewWnd*/)
+{
+	InvalidateItem(m_Selected);
 }
 
 void CTreeView::OnBeginDrag(NMHDR* /*pNMHDR*/, LRESULT* pResult)

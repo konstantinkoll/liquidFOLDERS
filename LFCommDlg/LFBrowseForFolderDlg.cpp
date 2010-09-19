@@ -79,7 +79,10 @@ BOOL LFBrowseForFolderDlg::OnInitDialog()
 	}
 
 	if ((p_App->m_ThemeLibLoaded) && (p_App->OSVersion>=OS_Vista))
+	{
 		p_App->zSetWindowTheme(m_wndExplorerTree, L"explorer", NULL);
+		m_wndExplorerTree.ModifyStyle(0, TVS_TRACKSELECT);
+	}
 
 	LOGFONT lf;
 	p_App->m_DefaultFont.GetLogFont(&lf);

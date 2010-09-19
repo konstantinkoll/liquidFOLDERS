@@ -656,15 +656,15 @@ void CExplorerTree::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 	if ((point.x==-1) && (point.y==-1))
 	{
 		hItem = GetSelectedItem();
-		if (hItem)
+		if (!hItem)
+			return;
+
+		CRect rectItem;
+		if (GetItemRect(hItem, rectItem, FALSE))
 		{
-			CRect rectItem;
-			if (GetItemRect(hItem, rectItem, FALSE))
-			{
-				point.x = rectItem.left;
-				point.y = rectItem.bottom + 1;
-				ClientToScreen(&point);
-			}
+			point.x = rectItem.left;
+			point.y = rectItem.bottom + 1;
+			ClientToScreen(&point);
 		}
 	}
 	else
@@ -672,12 +672,11 @@ void CExplorerTree::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 		CPoint ptClient(point);
 		ScreenToClient(&ptClient);
 
-		UINT nFlags = 0;
+		UINT nFlags;
 		hItem = HitTest(ptClient, &nFlags);
+		if ((!hItem) || (!(nFlags & TVHT_ONITEM)))
+			return;
 	}
-
-	if (!hItem)
-		return;
 
 	TVITEM tvItem;
 	ZeroMemory(&tvItem, sizeof(tvItem));
@@ -773,8 +772,17 @@ void CExplorerTree::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 	}
 }
 
-void CExplorerTree::OnMouseMove(UINT /*nFlags*/, CPoint point)
+void CExplorerTree::OnMouseMove(UINT nFlags, CPoint point)
 {
+	UINT uFlags;
+	HTREEITEM hItem = HitTest(point, &uFlags);
+
+	if ((nFlags & MK_RBUTTON) && (hItem) && (uFlags & TVHT_ONITEM))
+	{
+		SetFocus();
+		SelectItem(hItem);
+	}
+
 	if (!m_Hover)
 	{
 		m_Hover = TRUE;
@@ -787,19 +795,18 @@ void CExplorerTree::OnMouseMove(UINT /*nFlags*/, CPoint point)
 		TrackMouseEvent(&tme);
 	}
 	else
-		if (m_TooltipCtrl.IsWindowVisible())
-		{
-			UINT uFlags;
-			HTREEITEM hItem = HitTest(point, &uFlags);
-			if ((hItem!=m_HoverItem) || (!(uFlags & TVHT_ONITEM)))
-				m_TooltipCtrl.Deactivate();
-		}
+		if ((m_TooltipCtrl.IsWindowVisible()) && ((hItem!=m_HoverItem) || (!(uFlags & TVHT_ONITEM))))
+			m_TooltipCtrl.Deactivate();
+
+	CTreeCtrl::OnMouseMove(nFlags, point);
 }
 
 void CExplorerTree::OnMouseLeave()
 {
 	m_TooltipCtrl.Deactivate();
 	m_Hover = FALSE;
+
+	CTreeCtrl::OnMouseLeave();
 }
 
 void CExplorerTree::OnMouseHover(UINT nFlags, CPoint point)
@@ -843,10 +850,14 @@ void CExplorerTree::OnMouseHover(UINT nFlags, CPoint point)
 	TrackMouseEvent(&tme);
 }
 
-void CExplorerTree::OnRButtonDown(UINT nFlags, CPoint point)
+void CExplorerTree::OnRButtonDown(UINT /*nFlags*/, CPoint point)
 {
 	SetFocus();
-	SelectItem(HitTest(point, &nFlags));
+
+	UINT uFlags;
+	HTREEITEM hItem = HitTest(point, &uFlags);
+	if ((hItem) && (uFlags & TVHT_ONITEM))
+		SelectItem(hItem);
 }
 
 void CExplorerTree::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
