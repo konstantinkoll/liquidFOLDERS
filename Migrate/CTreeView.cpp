@@ -299,6 +299,22 @@ void CTreeView::FreeTree()
 	m_Allocated = m_Rows = m_Cols = 0;
 }
 
+void CTreeView::SetCheckboxSize()
+{
+	if (hThemeButton)
+	{
+		CDC dc;
+		dc.CreateCompatibleDC(NULL);
+
+		theApp.zGetThemePartSize(hThemeButton, dc, BP_CHECKBOX, CBS_UNCHECKEDDISABLED, NULL, TS_DRAW, &m_CheckboxSize);
+	}
+	else
+	{
+		m_CheckboxSize.cx = GetSystemMetrics(SM_CXMENUCHECK);
+		m_CheckboxSize.cy = GetSystemMetrics(SM_CYMENUCHECK);
+	}
+}
+
 
 BEGIN_MESSAGE_MAP(CTreeView, CWnd)
 	ON_WM_CREATE()
@@ -334,14 +350,16 @@ int CTreeView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		}
 	}
 
+	SetCheckboxSize();
+
 	IMAGEINFO ii;
 	theApp.m_SystemImageListSmall.GetImageInfo(0, &ii);
-	m_IconWidth = ii.rcImage.right-ii.rcImage.left;
-	m_IconHeight = ii.rcImage.bottom-ii.rcImage.top;
+	m_IconSize.cx = ii.rcImage.right-ii.rcImage.left;
+	m_IconSize.cy = ii.rcImage.bottom-ii.rcImage.top;
 
 	LOGFONT lf;
 	theApp.m_DefaultFont.GetLogFont(&lf);
-	m_RowHeight = (4+max(abs(lf.lfHeight), m_IconHeight)) & ~1;
+	m_RowHeight = (4+max(abs(lf.lfHeight), m_IconSize.cy)) & ~1;
 
 	for (UINT a=0; a<MaxColumns; a++)
 		m_ColumnWidth[a] = MINWIDTH;
@@ -386,6 +404,7 @@ LRESULT CTreeView::OnThemeChanged()
 			hThemeList = theApp.zOpenThemeData(GetSafeHwnd(), VSCLASS_LISTVIEW);
 	}
 
+	SetCheckboxSize();
 	return TRUE;
 }
 
@@ -435,18 +454,22 @@ void CTreeView::OnPaint()
 
 				if (hThemeList)
 				{
-					const int StateIDs[4] = { LISS_NORMAL, LISS_HOT, GetFocus()!=this ? LISS_SELECTEDNOTFOCUS : LISS_SELECTED, LISS_HOTSELECTED };
-					UINT State = 0;
-					if (Hot)
-						State |= 1;
-					if (Selected)
-						State |= 2;
+					if (Hot | Selected)
+					{
+						const int StateIDs[4] = { LISS_NORMAL, LISS_HOT, GetFocus()!=this ? LISS_SELECTEDNOTFOCUS : LISS_SELECTED, LISS_HOTSELECTED };
+						UINT State = 0;
+						if (Hot)
+							State |= 1;
+						if (Selected)
+							State |= 2;
 
-					theApp.zDrawThemeBackground(hThemeList, dc, LVP_LISTITEM, StateIDs[State], rectItem, rectItem);
+						theApp.zDrawThemeBackground(hThemeList, dc, LVP_LISTITEM, StateIDs[State], rectItem, rectItem);
+					}
+
 					dc.SetTextColor(curCell->pItem->Path[0] ? 0x000000 : 0x808080);
 				}
 				else
-					if (Hot)
+					if (Selected)
 					{
 						dc.FillSolidRect(rectItem, GetSysColor(COLOR_HIGHLIGHT));
 						dc.SetTextColor(GetSysColor(COLOR_HIGHLIGHTTEXT));
@@ -457,21 +480,39 @@ void CTreeView::OnPaint()
 						dc.SetTextColor(curCell->pItem->Path[0] ? Themed ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT) : Themed ? 0x808080 : GetSysColor(COLOR_GRAYTEXT));
 					}
 
-				theApp.m_SystemImageListSmall.Draw(&dc, Selected ? curCell->pItem->IconIDSelected : curCell->pItem->IconIDNormal, CPoint(rectItem.left+BORDER, y+(m_RowHeight-m_IconHeight)/2), ILD_TRANSPARENT);
-				rectItem.left += m_IconWidth+BORDER+MARGIN;
+				rectItem.left += m_CheckboxSize.cx+BORDER+MARGIN;
+				theApp.m_SystemImageListSmall.Draw(&dc, Selected ? curCell->pItem->IconIDSelected : curCell->pItem->IconIDNormal, CPoint(rectItem.left, y+(m_RowHeight-m_IconSize.cy)/2), ILD_TRANSPARENT);
+				rectItem.left += m_IconSize.cx+MARGIN;
 				rectItem.right -= BORDER;
 
+				CRect rectButton(x+GUTTER+BORDER, y+(m_RowHeight-m_CheckboxSize.cy)/2, x+GUTTER+BORDER+m_CheckboxSize.cx, y+(m_RowHeight-m_CheckboxSize.cy)/2+m_CheckboxSize.cy);
 				if (hThemeButton)
 				{
-					int uiStyle = CBS_UNCHECKEDDISABLED;
+					int uiStyle;
 					if (curCell->pItem->Path[0])
+					{
 						uiStyle = m_CheckboxPressed ? CBS_UNCHECKEDPRESSED : m_CheckboxHot ? CBS_UNCHECKEDHOT : CBS_UNCHECKEDNORMAL;
-					theApp.zDrawThemeBackground(hThemeButton, dc.m_hDC, BP_CHECKBOX, uiStyle+(curCell->Flags & CF_CHECKED ? 4 : 0), rectItem, rectItem);
+						if (curCell->Flags & CF_CHECKED)
+							uiStyle += 4;
+					}
+					else
+					{
+						uiStyle = CBS_UNCHECKEDDISABLED;
+					}
+					theApp.zDrawThemeBackground(hThemeButton, dc.m_hDC, BP_CHECKBOX, uiStyle, rectButton, rectButton);
 				}
 				else
 				{
-					UINT uiStyle = DFCS_BUTTONCHECK | (curCell->Flags & CF_CHECKED ? DFCS_CHECKED : 0) | (m_CheckboxPressed ? DFCS_PUSHED : 0) | (curCell->pItem->Path[0] ? 0 : DFCS_INACTIVE);
-					dc.DrawFrameControl(rectItem, DFC_BUTTON, uiStyle);
+					UINT uiStyle = DFCS_BUTTONCHECK;
+					if (curCell->pItem->Path[0])
+					{
+						uiStyle |= (curCell->Flags & CF_CHECKED ? DFCS_CHECKED : 0) | (m_CheckboxPressed ? DFCS_PUSHED : 0);
+					}
+					else
+					{
+						uiStyle |= DFCS_INACTIVE;
+					}
+					dc.DrawFrameControl(rectButton, DFC_BUTTON, uiStyle);
 				}
 
 				dc.DrawText(curCell->pItem->Name, -1, rectItem, DT_VCENTER | DT_SINGLELINE | DT_END_ELLIPSIS);

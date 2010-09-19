@@ -58,8 +58,8 @@ protected:
 	UINT m_Rows;
 	UINT m_Cols;
 	UINT m_RowHeight;
-	int m_IconWidth;
-	int m_IconHeight;
+	CSize m_IconSize;
+	CSize m_CheckboxSize;
 	CPoint m_Selected;
 	CPoint m_Hot;
 	BOOL m_CheckboxHot;
@@ -86,4 +86,6 @@ protected:
 
 private:
 	IShellFolder* pDesktop;
+
+	void SetCheckboxSize();
 };

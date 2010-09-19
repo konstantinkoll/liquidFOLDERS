@@ -58,9 +58,6 @@ void CExplorerTree::PreSubclassWindow()
 {
 	m_TooltipCtrl.Create(this);
 
-	if (p_App->OSVersion==OS_XP)
-		ModifyStyle(0, TVS_HASLINES);
-
 	SetImageList(&p_App->m_SystemImageListSmall, 0);
 
 	// Benachrichtigung, wenn sich Items ändern
