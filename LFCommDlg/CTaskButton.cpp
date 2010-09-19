@@ -300,6 +300,8 @@ void CTaskButton::OnPaint()
 			dc.Draw3dRect(rectBorder, c2, c3);
 		}
 
+		dc.SetTextColor(GetSysColor(COLOR_WINDOWTEXT));
+
 		if (Focused)
 		{
 			CRect rectFocus(rect);
@@ -322,7 +324,6 @@ void CTaskButton::OnPaint()
 			rectText.left += 16+BORDER;
 		}
 
-		dc.SetTextColor(GetSysColor(COLOR_WINDOWTEXT));
 		dc.SelectStockObject(DEFAULT_GUI_FONT);
 		dc.DrawText(m_Caption, -1, rectText, DT_SINGLELINE | DT_END_ELLIPSIS | DT_VCENTER);
 	}

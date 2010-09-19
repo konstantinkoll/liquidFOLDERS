@@ -587,7 +587,6 @@ BEGIN_MESSAGE_MAP(CExplorerTree, CTreeCtrl)
 	ON_WM_MOUSEMOVE()
 	ON_WM_MOUSELEAVE()
 	ON_WM_MOUSEHOVER()
-	ON_WM_LBUTTONDOWN()
 	ON_WM_RBUTTONDOWN()
 	ON_WM_KEYDOWN()
 	ON_NOTIFY_REFLECT(TVN_ITEMEXPANDING, OnItemExpanding)
@@ -842,21 +841,6 @@ void CExplorerTree::OnMouseHover(UINT nFlags, CPoint point)
 	tme.dwHoverTime = HOVER_DEFAULT;
 	tme.hwndTrack = m_hWnd;
 	TrackMouseEvent(&tme);
-}
-
-void CExplorerTree::OnLButtonDown(UINT nFlags, CPoint point)
-{
-	UINT uFlags;
-	HTREEITEM hItem = HitTest(point, &uFlags);
-	if ((hItem) && (uFlags & TVHT_ONITEM))
-	{
-		SetFocus();
-		SelectItem(hItem);
-	}
-	else
-	{
-		CTreeCtrl::OnLButtonDown(nFlags, point);
-	}
 }
 
 void CExplorerTree::OnRButtonDown(UINT nFlags, CPoint point)

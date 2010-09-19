@@ -64,6 +64,7 @@ protected:
 	CPoint m_Hot;
 	BOOL m_CheckboxHot;
 	BOOL m_CheckboxPressed;
+	BOOL m_Hover;
 
 	BOOL InsertRow(UINT Row);
 	//BOOL RemoveRow(UINT Row);
@@ -71,6 +72,7 @@ protected:
 	UINT InsertItem(UINT row, UINT col, IShellFolder* pParentFolder, LPITEMIDLIST pidlRel, LPITEMIDLIST pidlFQ, UINT Flags);
 	void FreeItem(Cell* cell);
 	void FreeTree();
+	BOOL HitTest(CPoint point, CPoint* item, BOOL* cbhot);
 
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();
@@ -79,6 +81,8 @@ protected:
 	afx_msg void OnPaint();
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg BOOL OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message);
+	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
+	afx_msg void OnMouseLeave();
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnBeginDrag(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnItemChanging(NMHDR* pNMHDR, LRESULT* pResult);
