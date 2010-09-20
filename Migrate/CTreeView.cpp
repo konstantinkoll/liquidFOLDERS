@@ -384,6 +384,7 @@ BEGIN_MESSAGE_MAP(CTreeView, CWnd)
 	ON_WM_MOUSEMOVE()
 	ON_WM_MOUSELEAVE()
 	ON_WM_LBUTTONDOWN()
+	ON_WM_LBUTTONUP()
 	ON_WM_RBUTTONDOWN()
 	ON_WM_SETFOCUS()
 	ON_WM_KILLFOCUS()
@@ -652,13 +653,23 @@ void CTreeView::OnMouseMove(UINT nFlags, CPoint point)
 	}
 
 	InvalidateItem(m_Hot);
-	if (HitTest(point, &m_Hot, &m_CheckboxHot))
-		if (nFlags & MK_RBUTTON)
+
+	BOOL Dragging = (GetCapture()==this);
+	BOOL Pressed;
+	CPoint Item;
+	if (HitTest(point, Dragging ? &Item : &m_Hot, Dragging ? &Pressed : &m_CheckboxHot))
+		if (Dragging)
 		{
-			SetFocus();
-			InvalidateItem(m_Selected);
-			m_Selected = m_Hot;
+			m_CheckboxPressed = (Item==m_Selected) && Pressed;
 		}
+		else
+			if (nFlags & MK_RBUTTON)
+			{
+				SetFocus();
+				InvalidateItem(m_Selected);
+				m_Selected = m_Hot;
+			}
+
 	InvalidateItem(m_Hot);
 }
 
@@ -676,13 +687,35 @@ void CTreeView::OnLButtonDown(UINT /*nFlags*/, CPoint point)
 {
 	SetFocus();
 
-	CPoint item;
-	if (HitTest(point, &item, &m_CheckboxHot))
+	CPoint Item;
+	if (HitTest(point, &Item, &m_CheckboxHot))
 	{
 		InvalidateItem(m_Selected);
-		InvalidateItem(item);
+		InvalidateItem(Item);
+		m_Selected = Item;
 
-		m_Selected = item;
+		if (m_CheckboxHot)
+		{
+			m_CheckboxPressed = TRUE;
+			SetCapture();
+		}
+	}
+}
+
+void CTreeView::OnLButtonUp(UINT /*nFlags*/, CPoint point)
+{
+	if (GetCapture()==this)
+	{
+		CPoint Item;
+		if (HitTest(point, &Item, &m_CheckboxPressed))
+			if (Item==m_Selected)
+			{
+				m_Tree[Item.y*MaxColumns+Item.x].Flags ^= CF_CHECKED;
+				InvalidateItem(Item);
+			}
+
+		m_CheckboxPressed = FALSE;
+		ReleaseCapture();
 	}
 }
 
