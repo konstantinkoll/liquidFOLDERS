@@ -25,6 +25,7 @@ CTreeView::CTreeView()
 	hThemeList = hThemeButton = NULL;
 	m_Selected.x = m_Selected.y = m_Hot.x = m_Hot.y = -1;
 	m_CheckboxHot = m_CheckboxPressed = m_Hover = FALSE;
+	m_pContextMenu2 = NULL;
 
 	pDesktop = NULL;
 	SHGetDesktopFolder(&pDesktop);
@@ -44,6 +45,49 @@ BOOL CTreeView::Create(CWnd* _pParentWnd, UINT nID)
 	CRect rect;
 	rect.SetRectEmpty();
 	return CWnd::Create(className, _T(""), dwStyle, rect, _pParentWnd, nID);
+}
+
+LRESULT CTreeView::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
+{
+	switch (message)
+	{
+	case WM_INITMENUPOPUP:
+	case WM_DRAWITEM:
+	case WM_MEASUREITEM:
+		if (m_pContextMenu2)
+		{
+			m_pContextMenu2->HandleMenuMsg(message, wParam, lParam);
+			return 0;
+		}
+	}
+
+	return CWnd::WindowProc(message, wParam, lParam);
+}
+
+BOOL CTreeView::PreTranslateMessage(MSG* pMsg)
+{
+	switch (pMsg->message)
+	{
+	case WM_KEYDOWN:
+	case WM_SYSKEYDOWN:
+	case WM_LBUTTONDOWN:
+	case WM_RBUTTONDOWN:
+	case WM_MBUTTONDOWN:
+	case WM_LBUTTONUP:
+	case WM_RBUTTONUP:
+	case WM_MBUTTONUP:
+	case WM_NCLBUTTONDOWN:
+	case WM_NCRBUTTONDOWN:
+	case WM_NCMBUTTONDOWN:
+	case WM_NCLBUTTONUP:
+	case WM_NCRBUTTONUP:
+	case WM_NCMBUTTONUP:
+	case WM_MOUSEWHEEL:
+		m_TooltipCtrl.Deactivate();
+		break;
+	}
+
+	return CWnd::PreTranslateMessage(pMsg);
 }
 
 void CTreeView::AdjustLayout()
@@ -85,9 +129,7 @@ void CTreeView::SetRoot(LPITEMIDLIST pidl, BOOL Update)
 	LPCITEMIDLIST pidlRel = NULL;
 	if (theApp.GetShellManager()->GetItemSize(pidl)==2)
 	{
-		//pParentFolder = pDesktop;
 		pidlRel = theApp.GetShellManager()->CopyItem(pidl);
-		pDesktop->AddRef();
 		hr = S_OK;
 	}
 	else
@@ -383,6 +425,7 @@ BEGIN_MESSAGE_MAP(CTreeView, CWnd)
 	ON_WM_SETCURSOR()
 	ON_WM_MOUSEMOVE()
 	ON_WM_MOUSELEAVE()
+	ON_WM_MOUSEHOVER()
 	ON_WM_LBUTTONDOWN()
 	ON_WM_LBUTTONUP()
 	ON_WM_RBUTTONDOWN()
@@ -402,6 +445,8 @@ int CTreeView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	rect.SetRectEmpty();
 	if (!m_wndHeader.Create(dwStyle, rect, this, 1))
 		return -1;
+
+	m_TooltipCtrl.Create(this);
 
 	if (theApp.m_ThemeLibLoaded)
 	{
@@ -640,6 +685,11 @@ BOOL CTreeView::OnSetCursor(CWnd* /*pWnd*/, UINT /*nHitTest*/, UINT /*message*/)
 
 void CTreeView::OnMouseMove(UINT nFlags, CPoint point)
 {
+	BOOL Dragging = (GetCapture()==this);
+	BOOL Pressed;
+	CPoint Item(-1, -1);
+	BOOL OnItem = HitTest(point, &Item, Dragging ? &Pressed : &m_CheckboxHot);
+
 	if (!m_Hover)
 	{
 		m_Hover = TRUE;
@@ -651,19 +701,23 @@ void CTreeView::OnMouseMove(UINT nFlags, CPoint point)
 		tme.hwndTrack = m_hWnd;
 		TrackMouseEvent(&tme);
 	}
+	else
+		if ((m_TooltipCtrl.IsWindowVisible()) && (Item!=m_Hot))
+			m_TooltipCtrl.Deactivate();
 
 	InvalidateItem(m_Hot);
 
-	BOOL Dragging = (GetCapture()==this);
-	BOOL Pressed;
-	CPoint Item(-1, -1);
-	if (HitTest(point, Dragging ? &Item : &m_Hot, Dragging ? &Pressed : &m_CheckboxHot))
-		if ((!Dragging) && (nFlags & MK_RBUTTON))
+	if (!Dragging)
+	{
+		m_Hot = Item;
+
+		if ((OnItem) && (nFlags & MK_RBUTTON))
 		{
 			SetFocus();
 			InvalidateItem(m_Selected);
 			m_Selected = m_Hot;
 		}
+	}
 	m_CheckboxPressed = (Item==m_Selected) && Pressed && Dragging;
 
 	InvalidateItem(m_Hot);
@@ -671,12 +725,41 @@ void CTreeView::OnMouseMove(UINT nFlags, CPoint point)
 
 void CTreeView::OnMouseLeave()
 {
-//	m_TooltipCtrl.Deactivate();
-
+	m_TooltipCtrl.Deactivate();
 	m_Hover = FALSE;
 	m_Hot.x = m_Hot.y = -1;
 
 	Invalidate();
+}
+
+void CTreeView::OnMouseHover(UINT nFlags, CPoint point)
+{
+	if ((nFlags & (MK_LBUTTON | MK_MBUTTON | MK_RBUTTON | MK_XBUTTON1 | MK_XBUTTON2))==0)
+	{
+		if ((m_Hot.x!=-1) && (m_Hot.y!=-1)  /*&& (!GetEditControl())*/)
+			if (!m_TooltipCtrl.IsWindowVisible())
+			{
+				HICON hIcon = NULL;
+				CSize size(0, 0);
+				CString caption;
+				CString hint;
+				TooltipDataFromPIDL(m_Tree[m_Hot.y*MaxColumns+m_Hot.x].pItem->pidlFQ, &theApp.m_SystemImageListLarge, hIcon, size, caption, hint);
+
+				ClientToScreen(&point);
+				m_TooltipCtrl.Track(point, hIcon, size, caption, hint);
+			}
+	}
+	else
+	{
+		m_TooltipCtrl.Deactivate();
+	}
+
+	TRACKMOUSEEVENT tme;
+	tme.cbSize = sizeof(TRACKMOUSEEVENT);
+	tme.dwFlags = TME_LEAVE | TME_HOVER;
+	tme.dwHoverTime = HOVER_DEFAULT;
+	tme.hwndTrack = m_hWnd;
+	TrackMouseEvent(&tme);
 }
 
 void CTreeView::OnLButtonDown(UINT /*nFlags*/, CPoint point)

@@ -53,6 +53,8 @@ protected:
 	int m_ColumnWidth[MaxColumns];
 	HTHEME hThemeList;
 	HTHEME hThemeButton;
+	LFTooltip m_TooltipCtrl;
+	IContextMenu2* m_pContextMenu2;
 	UINT m_HeaderHeight;
 	UINT m_Allocated;
 	UINT m_Rows;
@@ -65,6 +67,9 @@ protected:
 	BOOL m_CheckboxHot;
 	BOOL m_CheckboxPressed;
 	BOOL m_Hover;
+
+	virtual LRESULT WindowProc(UINT message, WPARAM wParam, LPARAM lParam);
+	virtual BOOL PreTranslateMessage(MSG* pMsg);
 
 	BOOL InsertRow(UINT Row);
 	//BOOL RemoveRow(UINT Row);
@@ -84,6 +89,7 @@ protected:
 	afx_msg BOOL OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message);
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg void OnMouseLeave();
+	afx_msg void OnMouseHover(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnRButtonDown(UINT nFlags, CPoint point);
