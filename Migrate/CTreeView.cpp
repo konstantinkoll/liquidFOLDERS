@@ -562,7 +562,7 @@ void CTreeView::OnPaint()
 						int uiStyle;
 						if (curCell->pItem->Path[0])
 						{
-							uiStyle = m_CheckboxPressed ? CBS_UNCHECKEDPRESSED : (Hot && m_CheckboxHot) ? CBS_UNCHECKEDHOT : CBS_UNCHECKEDNORMAL;
+							uiStyle = (Selected && m_CheckboxPressed) ? CBS_UNCHECKEDPRESSED : (Hot && m_CheckboxHot) ? CBS_UNCHECKEDHOT : CBS_UNCHECKEDNORMAL;
 							if (curCell->Flags & CF_CHECKED)
 								uiStyle += 4;
 						}
@@ -577,7 +577,7 @@ void CTreeView::OnPaint()
 						UINT uiStyle = DFCS_BUTTONCHECK;
 						if (curCell->pItem->Path[0])
 						{
-							uiStyle |= (curCell->Flags & CF_CHECKED ? DFCS_CHECKED : 0) | (m_CheckboxPressed ? DFCS_PUSHED : 0);
+							uiStyle |= (curCell->Flags & CF_CHECKED ? DFCS_CHECKED : 0) | ((Selected && m_CheckboxPressed) ? DFCS_PUSHED : 0);
 						}
 						else
 						{
@@ -656,19 +656,15 @@ void CTreeView::OnMouseMove(UINT nFlags, CPoint point)
 
 	BOOL Dragging = (GetCapture()==this);
 	BOOL Pressed;
-	CPoint Item;
+	CPoint Item(-1, -1);
 	if (HitTest(point, Dragging ? &Item : &m_Hot, Dragging ? &Pressed : &m_CheckboxHot))
-		if (Dragging)
+		if ((!Dragging) && (nFlags & MK_RBUTTON))
 		{
-			m_CheckboxPressed = (Item==m_Selected) && Pressed;
+			SetFocus();
+			InvalidateItem(m_Selected);
+			m_Selected = m_Hot;
 		}
-		else
-			if (nFlags & MK_RBUTTON)
-			{
-				SetFocus();
-				InvalidateItem(m_Selected);
-				m_Selected = m_Hot;
-			}
+	m_CheckboxPressed = (Item==m_Selected) && Pressed && Dragging;
 
 	InvalidateItem(m_Hot);
 }
