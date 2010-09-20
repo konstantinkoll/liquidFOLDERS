@@ -86,6 +86,7 @@ BEGIN_MESSAGE_MAP(CMainView, CWnd)
 	ON_WM_CREATE()
 	ON_WM_ERASEBKGND()
 	ON_WM_SIZE()
+	ON_WM_SETFOCUS()
 	ON_COMMAND(ID_VIEW_SELECTROOT, OnSelectRoot)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_VIEW_SELECTROOT, ID_VIEW_PROPERTIES, OnUpdateTaskbar)
 END_MESSAGE_MAP()
@@ -133,6 +134,11 @@ void CMainView::OnSize(UINT nType, int cx, int cy)
 {
 	CWnd::OnSize(nType, cx, cy);
 	AdjustLayout();
+}
+
+void CMainView::OnSetFocus(CWnd* /*pOldWnd*/)
+{
+	m_wndTree.SetFocus();
 }
 
 void CMainView::OnSelectRoot()

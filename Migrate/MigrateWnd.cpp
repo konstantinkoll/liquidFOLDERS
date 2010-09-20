@@ -66,6 +66,7 @@ void CMigrateWnd::AdjustLayout()
 
 BEGIN_MESSAGE_MAP(CMigrateWnd, CGlasWindow)
 	ON_WM_CREATE()
+	ON_WM_SETFOCUS()
 	ON_MESSAGE_VOID(WM_IDLEUPDATECMDUI, OnIdleUpdateCmdUI)
 	ON_COMMAND(ID_VIEW_SELECTROOT, OnSelectRoot)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoresChanged, OnStoresChanged)
@@ -109,6 +110,11 @@ int CMigrateWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndBottomArea.SetFocus();
 	AdjustLayout();
 	return 0;
+}
+
+void CMigrateWnd::OnSetFocus(CWnd* /*pOldWnd*/)
+{
+	m_wndMainView.SetFocus();
 }
 
 void CMigrateWnd::OnIdleUpdateCmdUI()
