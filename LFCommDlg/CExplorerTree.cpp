@@ -700,76 +700,73 @@ void CExplorerTree::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 		psfFolder->AddRef();
 	}
 
-	if (psfFolder)
+	IContextMenu* pcm = NULL;
+	if (SUCCEEDED(psfFolder->GetUIObjectOf(GetParent()->GetSafeHwnd(), 1, (LPCITEMIDLIST*)&pInfo->pidlRel, IID_IContextMenu, NULL, (void**)&pcm)))
 	{
-		IContextMenu* pcm = NULL;
-		if (SUCCEEDED(psfFolder->GetUIObjectOf(GetParent()->GetSafeHwnd(), 1, (LPCITEMIDLIST*)&pInfo->pidlRel, IID_IContextMenu, NULL, (void**)&pcm)))
+		HMENU hPopup = CreatePopupMenu();
+		if (hPopup)
 		{
-			HMENU hPopup = CreatePopupMenu();
-			if (hPopup)
+			UINT uFlags = CMF_NORMAL | CMF_EXPLORE | CMF_CANRENAME;
+			if (SUCCEEDED(pcm->QueryContextMenu(hPopup, 0, 1, 0x6FFF, uFlags)))
 			{
-				UINT uFlags = CMF_NORMAL | CMF_EXPLORE | CMF_CANRENAME;
-				if (SUCCEEDED(pcm->QueryContextMenu(hPopup, 0, 1, 0x6FFF, uFlags)))
+				if (tvItem.cChildren)
 				{
-					if (tvItem.cChildren)
-					{
-						CString tmpStr;
-						ENSURE(tmpStr.LoadString(LFCommDlgDLL.hResource, tvItem.state & TVIS_EXPANDED ? IDS_COLLAPSE : IDS_EXPAND));
-						InsertMenu(hPopup, 0, MF_BYPOSITION, 0x7000, tmpStr);
-						InsertMenu(hPopup, 1, MF_BYPOSITION | MF_SEPARATOR, 0x7001, NULL);
-						SetMenuDefaultItem(hPopup, 0x7000, 0);
-					}
-
-					pcm->QueryInterface(IID_IContextMenu2, (void**)&m_pContextMenu2);
-					UINT idCmd = TrackPopupMenu(hPopup, TPM_LEFTALIGN | TPM_RETURNCMD | TPM_RIGHTBUTTON, point.x, point.y, 0, GetSafeHwnd(), NULL);
-					if (m_pContextMenu2)
-					{
-						m_pContextMenu2->Release();
-						m_pContextMenu2 = NULL;
-					}
-
-					if (idCmd==0x7000)
-					{
-						Expand(hItem, TVE_TOGGLE);
-					}
-					else
-						if (idCmd)
-						{
-							char Verb[256] = "";
-							pcm->GetCommandString(idCmd-1, GCS_VERBA, NULL, Verb, 256);
-
-							if (strcmp(Verb, "rename")==0)
-							{
-								EditLabel(hItem);
-							}
-							else
-							{
-								CWaitCursor wait;
-
-								CMINVOKECOMMANDINFO cmi;
-								cmi.cbSize = sizeof(CMINVOKECOMMANDINFO);
-								cmi.fMask = 0;
-								cmi.hwnd = GetParent()->GetSafeHwnd();
-								cmi.lpVerb = (LPCSTR)(INT_PTR)(idCmd-1);
-								cmi.lpParameters = NULL;
-								cmi.lpDirectory = NULL;
-								cmi.nShow = SW_SHOWNORMAL;
-								cmi.dwHotKey = 0;
-								cmi.hIcon = NULL;
-
-								pcm->InvokeCommand(&cmi);
-
-								SetFocus();
-							}
-						}
+					CString tmpStr;
+					ENSURE(tmpStr.LoadString(LFCommDlgDLL.hResource, tvItem.state & TVIS_EXPANDED ? IDS_COLLAPSE : IDS_EXPAND));
+					InsertMenu(hPopup, 0, MF_BYPOSITION, 0x7000, tmpStr);
+					InsertMenu(hPopup, 1, MF_BYPOSITION | MF_SEPARATOR, 0x7001, NULL);
+					SetMenuDefaultItem(hPopup, 0x7000, 0);
 				}
-			}
 
-			pcm->Release();
+				pcm->QueryInterface(IID_IContextMenu2, (void**)&m_pContextMenu2);
+				UINT idCmd = TrackPopupMenu(hPopup, TPM_LEFTALIGN | TPM_RETURNCMD | TPM_RIGHTBUTTON, point.x, point.y, 0, GetSafeHwnd(), NULL);
+				if (m_pContextMenu2)
+				{
+					m_pContextMenu2->Release();
+					m_pContextMenu2 = NULL;
+				}
+
+				if (idCmd==0x7000)
+				{
+					Expand(hItem, TVE_TOGGLE);
+				}
+				else
+					if (idCmd)
+					{
+						char Verb[256] = "";
+						pcm->GetCommandString(idCmd-1, GCS_VERBA, NULL, Verb, 256);
+
+						if (strcmp(Verb, "rename")==0)
+						{
+							EditLabel(hItem);
+						}
+						else
+						{
+							CWaitCursor wait;
+
+							CMINVOKECOMMANDINFO cmi;
+							cmi.cbSize = sizeof(CMINVOKECOMMANDINFO);
+							cmi.fMask = 0;
+							cmi.hwnd = GetParent()->GetSafeHwnd();
+							cmi.lpVerb = (LPCSTR)(INT_PTR)(idCmd-1);
+							cmi.lpParameters = NULL;
+							cmi.lpDirectory = NULL;
+							cmi.nShow = SW_SHOWNORMAL;
+							cmi.dwHotKey = 0;
+							cmi.hIcon = NULL;
+
+							pcm->InvokeCommand(&cmi);
+
+							SetFocus();
+						}
+					}
+			}
 		}
 
-		psfFolder->Release();
+		pcm->Release();
 	}
+
+	psfFolder->Release();
 }
 
 void CExplorerTree::OnMouseMove(UINT nFlags, CPoint point)

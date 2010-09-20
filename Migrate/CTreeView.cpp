@@ -429,6 +429,7 @@ BEGIN_MESSAGE_MAP(CTreeView, CWnd)
 	ON_WM_LBUTTONDOWN()
 	ON_WM_LBUTTONUP()
 	ON_WM_RBUTTONDOWN()
+	ON_WM_CONTEXTMENU()
 	ON_WM_SETFOCUS()
 	ON_WM_KILLFOCUS()
 	ON_NOTIFY(HDN_BEGINDRAG, 1, OnBeginDrag)
@@ -810,6 +811,117 @@ void CTreeView::OnRButtonDown(UINT /*nFlags*/, CPoint point)
 
 		m_Selected = item;
 	}
+}
+
+void CTreeView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
+{
+	if (m_pContextMenu2)
+		return;
+
+	CPoint item(-1, -1);
+	if ((point.x==-1) && (point.y==-1))
+	{
+		item = m_Selected;
+
+/*		CRect rectItem;
+		if (GetItemRect(hItem, rectItem, FALSE))
+		{
+			point.x = rectItem.left;
+			point.y = rectItem.bottom + 1;
+			ClientToScreen(&point);
+		}*/
+	}
+	else
+	{
+		CPoint ptClient(point);
+		ScreenToClient(&ptClient);
+
+		if (!HitTest(ptClient, &item, NULL))
+			return;
+	}
+
+	Cell* cell = &m_Tree[item.y*MaxColumns+item.x];
+	if (!cell->pItem)
+		return;
+
+	IShellFolder* psfFolder = cell->pItem->pParentFolder;
+	if (!psfFolder)
+	{
+		if (FAILED(SHGetDesktopFolder(&psfFolder)))
+			return;
+	}
+	else
+	{
+		psfFolder->AddRef();
+	}
+
+	IContextMenu* pcm = NULL;
+	if (SUCCEEDED(psfFolder->GetUIObjectOf(GetParent()->GetSafeHwnd(), 1, (LPCITEMIDLIST*)&cell->pItem->pidlRel, IID_IContextMenu, NULL, (void**)&pcm)))
+	{
+		HMENU hPopup = CreatePopupMenu();
+		if (hPopup)
+		{
+			UINT uFlags = CMF_NORMAL | CMF_EXPLORE | CMF_CANRENAME;
+			if (SUCCEEDED(pcm->QueryContextMenu(hPopup, 0, 1, 0x6FFF, uFlags)))
+			{
+/*				if (tvItem.cChildren)
+				{
+					CString tmpStr;
+					ENSURE(tmpStr.LoadString(LFCommDlgDLL.hResource, tvItem.state & TVIS_EXPANDED ? IDS_COLLAPSE : IDS_EXPAND));
+					InsertMenu(hPopup, 0, MF_BYPOSITION, 0x7000, tmpStr);
+					InsertMenu(hPopup, 1, MF_BYPOSITION | MF_SEPARATOR, 0x7001, NULL);
+					SetMenuDefaultItem(hPopup, 0x7000, 0);
+				}*/
+
+				pcm->QueryInterface(IID_IContextMenu2, (void**)&m_pContextMenu2);
+				UINT idCmd = TrackPopupMenu(hPopup, TPM_LEFTALIGN | TPM_RETURNCMD | TPM_RIGHTBUTTON, point.x, point.y, 0, GetSafeHwnd(), NULL);
+				if (m_pContextMenu2)
+				{
+					m_pContextMenu2->Release();
+					m_pContextMenu2 = NULL;
+				}
+
+				if (idCmd==0x7000)
+				{
+					//Expand(hItem, TVE_TOGGLE);
+				}
+				else
+					if (idCmd)
+					{
+						char Verb[256] = "";
+						pcm->GetCommandString(idCmd-1, GCS_VERBA, NULL, Verb, 256);
+
+						if (strcmp(Verb, "rename")==0)
+						{
+							//EditLabel(hItem);
+						}
+						else
+						{
+							CWaitCursor wait;
+
+							CMINVOKECOMMANDINFO cmi;
+							cmi.cbSize = sizeof(CMINVOKECOMMANDINFO);
+							cmi.fMask = 0;
+							cmi.hwnd = GetParent()->GetSafeHwnd();
+							cmi.lpVerb = (LPCSTR)(INT_PTR)(idCmd-1);
+							cmi.lpParameters = NULL;
+							cmi.lpDirectory = NULL;
+							cmi.nShow = SW_SHOWNORMAL;
+							cmi.dwHotKey = 0;
+							cmi.hIcon = NULL;
+
+							pcm->InvokeCommand(&cmi);
+
+							SetFocus();
+						}
+					}
+			}
+		}
+
+		pcm->Release();
+	}
+
+	psfFolder->Release();
 }
 
 void CTreeView::OnSetFocus(CWnd* /*pOldWnd*/)
