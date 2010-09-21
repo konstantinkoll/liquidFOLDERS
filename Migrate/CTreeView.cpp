@@ -12,12 +12,15 @@
 // CTreeView
 //
 
-#define MINWIDTH     75
-#define MAXWIDTH     350
+#define MINWIDTH          75
+#define MAXWIDTH          350
 
-#define BORDER       3
-#define MARGIN       4
-#define GUTTER       9
+#define BORDER            3
+#define MARGIN            4
+#define GUTTER            9
+
+#define MAKEPOS(r, c)     (r)*MaxColumns+(c)
+#define MAKEPOSI(p)       MAKEPOS(p.y, p.x)
 
 CTreeView::CTreeView()
 {
@@ -157,6 +160,35 @@ void CTreeView::SetRoot(LPITEMIDLIST pidl, BOOL Update)
 	Invalidate();
 }
 
+void CTreeView::SetBranchCheck(BOOL Check, CPoint item)
+{
+	if ((item.x==-1) || (item.y==-1))
+		item = m_Selected;
+
+	UINT LastRow = GetChildRect(item);
+	if (Check)
+	{
+		m_Tree[MAKEPOSI(item)].Flags |= CF_CHECKED;
+	}
+	else
+	{
+		m_Tree[MAKEPOSI(item)].Flags &= ~CF_CHECKED;
+	}
+
+	for (UINT Row=item.y; Row<=LastRow; Row++)
+		for (UINT Col=item.x+1; Col<m_Cols; Col++)
+			if (Check)
+			{
+				m_Tree[MAKEPOS(Row, Col)].Flags |= CF_CHECKED;
+			}
+			else
+			{
+				m_Tree[MAKEPOS(Row, Col)].Flags &= ~CF_CHECKED;
+			}
+
+	Invalidate();
+}
+
 BOOL CTreeView::InsertRow(UINT Row)
 {
 	ASSERT(Row<=m_Rows);
@@ -181,9 +213,9 @@ BOOL CTreeView::InsertRow(UINT Row)
 
 	if (Row<m_Rows)
 		for (UINT a=m_Rows; a>=Row; a--)
-			memcpy(&m_Tree[(a+1)*MaxColumns], &m_Tree[a*MaxColumns], MaxColumns*sizeof(Cell));
+			memcpy(&m_Tree[MAKEPOS(a+1, 0)], &m_Tree[MAKEPOS(a, 0)], MaxColumns*sizeof(Cell));
 
-	ZeroMemory(&m_Tree[Row*MaxColumns], MaxColumns*sizeof(Cell));
+	ZeroMemory(&m_Tree[MAKEPOS(Row, 0)], MaxColumns*sizeof(Cell));
 	m_Rows++;
 
 	return TRUE;
@@ -197,7 +229,7 @@ void CTreeView::SetItem(UINT row, UINT col, IShellFolder* pParentFolder, LPITEMI
 	if (col>=m_Cols)
 		m_Cols = col+1;
 
-	Cell* cell = &m_Tree[row*MaxColumns+col];
+	Cell* cell = &m_Tree[MAKEPOS(row, col)];
 	if (!cell->pItem)
 	{
 		cell->pItem = (ItemData*)malloc(sizeof(ItemData));
@@ -291,10 +323,10 @@ UINT CTreeView::InsertItem(UINT row, UINT col, IShellFolder* pParentFolder, LPIT
 					{
 						for (int a=row+Inserted; a>=0; a--)
 						{
-							m_Tree[a*MaxColumns+col+1].Flags |= CF_HASSIBLINGS;
-							if (m_Tree[a*MaxColumns+col].Flags & CF_HASCHILDREN)
+							m_Tree[MAKEPOS(a, col+1)].Flags |= CF_HASSIBLINGS;
+							if (m_Tree[MAKEPOS(a, col)].Flags & CF_HASCHILDREN)
 								break;
-							m_Tree[a*MaxColumns+col+1].Flags |= CF_ISSIBLING;
+							m_Tree[MAKEPOS(a, col+1)].Flags |= CF_ISSIBLING;
 						}
 
 						Inserted++;
@@ -303,7 +335,7 @@ UINT CTreeView::InsertItem(UINT row, UINT col, IShellFolder* pParentFolder, LPIT
 					}
 					else
 					{
-						m_Tree[row*MaxColumns+col].Flags |= CF_HASCHILDREN;
+						m_Tree[MAKEPOS(row, col)].Flags |= CF_HASCHILDREN;
 					}
 
 					Inserted += InsertItem(row+Inserted, col+1, pFolder, pidlTemp, theApp.GetShellManager()->ConcatenateItem(pidlFQ, pidlTemp), Flags);
@@ -370,7 +402,7 @@ BOOL CTreeView::HitTest(CPoint point, CPoint* item, BOOL* cbhot)
 
 	if ((row>=0) && (row<(int)m_Rows) && (col!=-1))
 	{
-		res = (m_Tree[row*MaxColumns+col].pItem!=NULL);
+		res = (m_Tree[MAKEPOS(row, col)].pItem!=NULL);
 		if ((res) && (cbhot))
 		{
 			CRect rectButton(x+GUTTER+BORDER, row*m_RowHeight+(m_RowHeight-m_CheckboxSize.cy)/2, x+GUTTER+BORDER+m_CheckboxSize.cx, row*m_RowHeight+(m_RowHeight-m_CheckboxSize.cy)/2+m_CheckboxSize.cy);
@@ -430,6 +462,21 @@ void CTreeView::SetCheckboxSize()
 		m_CheckboxSize.cx = GetSystemMetrics(SM_CXMENUCHECK);
 		m_CheckboxSize.cy = GetSystemMetrics(SM_CYMENUCHECK);
 	}
+}
+
+UINT CTreeView::GetChildRect(CPoint item)
+{
+	UINT row = item.y;
+
+	while (row<m_Rows)
+	{
+		if (m_Tree[MAKEPOS(row+1, item.x)].pItem)
+			return row;
+
+		row++;
+	}
+
+	return row-1;
 }
 
 
@@ -762,7 +809,7 @@ void CTreeView::OnMouseHover(UINT nFlags, CPoint point)
 				CSize size(0, 0);
 				CString caption;
 				CString hint;
-				TooltipDataFromPIDL(m_Tree[m_Hot.y*MaxColumns+m_Hot.x].pItem->pidlFQ, &theApp.m_SystemImageListLarge, hIcon, size, caption, hint);
+				TooltipDataFromPIDL(m_Tree[MAKEPOSI(m_Hot)].pItem->pidlFQ, &theApp.m_SystemImageListLarge, hIcon, size, caption, hint);
 
 				ClientToScreen(&point);
 				m_TooltipCtrl.Track(point, hIcon, size, caption, hint);
@@ -800,17 +847,22 @@ void CTreeView::OnLButtonDown(UINT /*nFlags*/, CPoint point)
 	}
 }
 
-void CTreeView::OnLButtonUp(UINT /*nFlags*/, CPoint point)
+void CTreeView::OnLButtonUp(UINT nFlags, CPoint point)
 {
 	if (GetCapture()==this)
 	{
 		CPoint Item;
 		if (HitTest(point, &Item, &m_CheckboxPressed))
-			if (Item==m_Selected)
-			{
-				m_Tree[Item.y*MaxColumns+Item.x].Flags ^= CF_CHECKED;
-				InvalidateItem(Item);
-			}
+			if ((Item==m_Selected) && (m_CheckboxPressed))
+				if (nFlags & MK_CONTROL)
+				{
+					SetBranchCheck(!(m_Tree[MAKEPOSI(Item)].Flags & CF_CHECKED), Item);
+				}
+				else
+				{
+					m_Tree[MAKEPOSI(Item)].Flags ^= CF_CHECKED;
+					InvalidateItem(Item);
+				}
 
 		m_CheckboxPressed = FALSE;
 		ReleaseCapture();
@@ -873,7 +925,7 @@ void CTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 		}
 	}
 
-	Cell* cell = &m_Tree[item.y*MaxColumns+item.x];
+	Cell* cell = &m_Tree[MAKEPOSI(item)];
 	if (!cell->pItem)
 		return;
 
@@ -897,14 +949,19 @@ void CTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 			UINT uFlags = CMF_NORMAL | CMF_EXPLORE | CMF_CANRENAME;
 			if (SUCCEEDED(pcm->QueryContextMenu(hPopup, 0, 1, 0x6FFF, uFlags)))
 			{
-/*				if (tvItem.cChildren)
+				if (cell->Flags & CF_HASCHILDREN)
 				{
 					CString tmpStr;
-					ENSURE(tmpStr.LoadString(LFCommDlgDLL.hResource, tvItem.state & TVIS_EXPANDED ? IDS_COLLAPSE : IDS_EXPAND));
+					ENSURE(tmpStr.LoadString(NULL, ID_VIEW_INCLUDEBRANCH));
+					tmpStr.Insert(0, _T("&"));
 					InsertMenu(hPopup, 0, MF_BYPOSITION, 0x7000, tmpStr);
-					InsertMenu(hPopup, 1, MF_BYPOSITION | MF_SEPARATOR, 0x7001, NULL);
-					SetMenuDefaultItem(hPopup, 0x7000, 0);
-				}*/
+					ENSURE(tmpStr.LoadString(NULL, ID_VIEW_EXCLUDEBRANCH));
+					tmpStr.Insert(0, _T("&"));
+					InsertMenu(hPopup, 1, MF_BYPOSITION, 0x7001, tmpStr);
+					InsertMenu(hPopup, 2, MF_BYPOSITION | MF_SEPARATOR, 0x7001, NULL);
+				}
+
+				SetMenuDefaultItem(hPopup, (UINT)-1, 0);
 
 				pcm->QueryInterface(IID_IContextMenu2, (void**)&m_pContextMenu2);
 				UINT idCmd = TrackPopupMenu(hPopup, TPM_LEFTALIGN | TPM_RETURNCMD | TPM_RIGHTBUTTON, point.x, point.y, 0, GetSafeHwnd(), NULL);
@@ -914,12 +971,17 @@ void CTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 					m_pContextMenu2 = NULL;
 				}
 
-				if (idCmd==0x7000)
+				switch (idCmd)
 				{
-					//Expand(hItem, TVE_TOGGLE);
-				}
-				else
-					if (idCmd)
+				case 0x7000:
+					SetBranchCheck(TRUE, item);
+					break;
+				case 0x7001:
+					SetBranchCheck(FALSE, item);
+					break;
+				case 0:
+					break;
+				default:
 					{
 						char Verb[256] = "";
 						pcm->GetCommandString(idCmd-1, GCS_VERBA, NULL, Verb, 256);
@@ -948,6 +1010,7 @@ void CTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 							SetFocus();
 						}
 					}
+				}
 			}
 		}
 

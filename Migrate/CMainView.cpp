@@ -159,8 +159,11 @@ void CMainView::OnUpdateTaskbar(CCmdUI* pCmdUI)
 	}
 }
 
-void CMainView::OnContextMenu(CWnd* /*pWnd*/, CPoint pos)
+void CMainView::OnContextMenu(CWnd* pWnd, CPoint pos)
 {
+	if (pWnd->GetSafeHwnd()==m_wndTaskbar.GetSafeHwnd())
+		return;
+
 	if ((pos.x==-1) && (pos.y==-1))
 	{
 		pos.x = pos.y = 0;

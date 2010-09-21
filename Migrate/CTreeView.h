@@ -46,6 +46,7 @@ public:
 	void AdjustLayout();
 	void ClearRoot();
 	void SetRoot(LPITEMIDLIST pidl, BOOL Update);
+	void SetBranchCheck(BOOL Check, CPoint item=CPoint(-1, -1));
 
 protected:
 	Cell* m_Tree;
@@ -105,4 +106,5 @@ private:
 	IShellFolder* pDesktop;
 
 	void SetCheckboxSize();
+	UINT GetChildRect(CPoint item);
 };
