@@ -101,6 +101,30 @@ LANGUAGE LANG_ENGLISH, SUBLANG_NEUTRAL
 
 /////////////////////////////////////////////////////////////////////////////
 //
+// Menu
+//
+
+IDM_BACKGROUND MENU
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "Autosize &all columns",       ID_VIEW_AUTOSIZEALL
+        MENUITEM SEPARATOR
+        MENUITEM "Select &root folder...",      ID_VIEW_SELECTROOT
+    END
+END
+
+IDM_HEADER MENU
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "Autosize &all columns",       ID_VIEW_AUTOSIZEALL
+        MENUITEM "Autosize &column",            ID_VIEW_AUTOSIZE
+    END
+END
+
+/////////////////////////////////////////////////////////////////////////////
+//
 // Dialog
 //
 
@@ -154,6 +178,12 @@ END
 
 STRINGTABLE 
 BEGIN
+    ID_VIEW_SELECTROOT      "Select root folder"
+    ID_VIEW_INCLUDEBRANCH   "Include branch"
+    ID_VIEW_EXCLUDEBRANCH   "Exclude branch"
+    ID_VIEW_RENAME          "Rename folder"
+    ID_VIEW_DELETE          "Delete folder"
+    ID_VIEW_PROPERTIES      "Properties"
     IDS_NOROOT_CAPTION      "You have not selected a root folder yet"
     IDS_NOROOT_HINT         "Click above to select a folder for browsing."
     IDS_NOSELECTION_CAPTION "You have not selected any folders for migration"

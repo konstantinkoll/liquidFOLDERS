@@ -20,7 +20,7 @@ public:
 
 	BOOL Create(CWnd* pParentWnd, UINT ResID, UINT nID);
 	UINT GetPreferredHeight();
-	CTaskButton* AddButton(UINT nID, CString Text, int IconID, BOOL bAddRight=FALSE, BOOL bOnlyIcon=FALSE);
+	CTaskButton* AddButton(UINT nID, int IconID, BOOL bForceIcon=FALSE, BOOL bAddRight=FALSE);
 	void AdjustLayout();
 
 protected:

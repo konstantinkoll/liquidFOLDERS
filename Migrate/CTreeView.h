@@ -79,6 +79,7 @@ protected:
 	void FreeTree();
 	BOOL HitTest(CPoint point, CPoint* item, BOOL* cbhot);
 	void InvalidateItem(CPoint item);
+	void TrackMenu(UINT nID, CPoint point, int col=-1);
 
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();

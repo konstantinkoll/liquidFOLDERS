@@ -29,7 +29,7 @@ BOOL CTaskbar::Create(CWnd* pParentWnd, UINT ResID, UINT nID)
 	const DWORD dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE;
 	CRect rect;
 	rect.SetRectEmpty();
-	return CWnd::CreateEx(WS_EX_CONTROLPARENT, className, _T("Taskbar"), dwStyle, rect, pParentWnd, nID);
+	return CWnd::CreateEx(WS_EX_CONTROLPARENT, className, _T(""), dwStyle, rect, pParentWnd, nID);
 }
 
 LRESULT CTaskbar::DefWindowProc(UINT message, WPARAM wParam, LPARAM lParam)
@@ -51,11 +51,16 @@ UINT CTaskbar::GetPreferredHeight()
 	return h;
 }
 
-CTaskButton* CTaskbar::AddButton(UINT nID, CString Text, int IconID, BOOL bAddRight, BOOL bOnlyIcon)
+CTaskButton* CTaskbar::AddButton(UINT nID, int IconID, BOOL bForceIcon, BOOL bAddRight)
 {
+	CString Text;
+	ENSURE(Text.LoadString(nID));
+
+	bForceIcon |= bAddRight;
+
 	CTaskButton* btn = new CTaskButton();
-	btn->Create(bOnlyIcon ? _T("") : Text, bOnlyIcon ? Text : _T(""), &Icons,
-		bOnlyIcon || (((LFApplication*)AfxGetApp())->OSVersion<OS_Seven) ? IconID : -1,
+	btn->Create(bAddRight ? _T("") : Text, bAddRight ? Text : _T(""), &Icons,
+		bForceIcon || (((LFApplication*)AfxGetApp())->OSVersion<OS_Seven) ? IconID : -1,
 		this, nID);
 
 	CCmdUI cmdUI;

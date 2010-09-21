@@ -24,7 +24,7 @@ int CMainView::Create(CWnd* _pParentWnd, UINT nID)
 	const DWORD dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_TABSTOP;
 	CRect rect;
 	rect.SetRectEmpty();
-	return CWnd::CreateEx(WS_EX_CONTROLPARENT, className, _T("MigrateMainView"), dwStyle, rect, _pParentWnd, nID);
+	return CWnd::CreateEx(WS_EX_CONTROLPARENT, className, _T(""), dwStyle, rect, _pParentWnd, nID);
 }
 
 BOOL CMainView::OnCmdMsg(UINT nID, int nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo)
@@ -89,6 +89,7 @@ BEGIN_MESSAGE_MAP(CMainView, CWnd)
 	ON_WM_SETFOCUS()
 	ON_COMMAND(ID_VIEW_SELECTROOT, OnSelectRoot)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_VIEW_SELECTROOT, ID_VIEW_PROPERTIES, OnUpdateTaskbar)
+	ON_WM_CONTEXTMENU()
 END_MESSAGE_MAP()
 
 int CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -100,18 +101,18 @@ int CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (!m_wndTaskbar.Create(this, IDB_TASKS, 1))
 		return -1;
 
-	m_wndTaskbar.AddButton(ID_VIEW_SELECTROOT, _T("Select root folder"), 0);
-	m_wndTaskbar.AddButton(ID_VIEW_INCLUDETREE, _T("Include branch"), 1);
-	m_wndTaskbar.AddButton(ID_VIEW_EXCLUDETREE, _T("Exclude branch"), 2);
-	m_wndTaskbar.AddButton(ID_VIEW_RENAME, _T("Rename folder"), 3);
-	m_wndTaskbar.AddButton(ID_VIEW_DELETE, _T("Delete folder"), 4);
-	m_wndTaskbar.AddButton(ID_VIEW_PROPERTIES, _T("Properties"), 5);
-	m_wndTaskbar.AddButton(ID_APP_NEWSTOREMANAGER, _T("Open StoreManager"), 6);
+	m_wndTaskbar.AddButton(ID_VIEW_SELECTROOT, 0);
+	m_wndTaskbar.AddButton(ID_VIEW_INCLUDEBRANCH, 1);
+	m_wndTaskbar.AddButton(ID_VIEW_EXCLUDEBRANCH, 2);
+	m_wndTaskbar.AddButton(ID_VIEW_RENAME, 3);
+	m_wndTaskbar.AddButton(ID_VIEW_DELETE, 4);
+	m_wndTaskbar.AddButton(ID_VIEW_PROPERTIES, 5);
+	m_wndTaskbar.AddButton(ID_APP_NEWSTOREMANAGER, 6, TRUE);
 
-	m_wndTaskbar.AddButton(ID_APP_PURCHASE, _T("Purchase license"), 7, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_ENTERLICENSEKEY, _T("Enter license key"), 8, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_SUPPORT, _T("Customer support"), 9, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_ABOUT, _T("About liquidFOLDERS"), 10, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_PURCHASE, 7, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_ENTERLICENSEKEY, 8, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_SUPPORT, 9, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_ABOUT, 10, TRUE, TRUE);
 
 	// Explorer header
 	if (!m_wndExplorerHeader.Create(this, 2))
@@ -151,9 +152,29 @@ void CMainView::OnUpdateTaskbar(CCmdUI* pCmdUI)
 	switch (pCmdUI->m_nID)
 	{
 	case ID_VIEW_SELECTROOT:
-		pCmdUI->Enable(!m_IsRootSet);
+		pCmdUI->Enable(TRUE);
 		break;
 	default:
 		pCmdUI->Enable(m_IsRootSet);
 	}
+}
+
+void CMainView::OnContextMenu(CWnd* /*pWnd*/, CPoint pos)
+{
+	if ((pos.x==-1) && (pos.y==-1))
+	{
+		pos.x = pos.y = 0;
+		ClientToScreen(&pos);
+	}
+
+	CMenu menu;
+	ENSURE(menu.LoadMenu(IDM_BACKGROUND));
+
+	CMenu* popup = menu.GetSubMenu(0);
+	ASSERT(popup);
+
+	if (!m_IsRootSet)
+		popup->EnableMenuItem(ID_VIEW_AUTOSIZEALL, MF_BYCOMMAND | MF_DISABLED | MF_GRAYED);
+
+	popup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, pos.x, pos.y, this, NULL);
 }

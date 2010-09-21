@@ -6,6 +6,7 @@
 #include "CTreeView.h"
 #include "Migrate.h"
 #include "LFCore.h"
+#include "Resource.h"
 
 
 // CTreeView
@@ -349,7 +350,7 @@ BOOL CTreeView::HitTest(CPoint point, CPoint* item, BOOL* cbhot)
 {
 	BOOL res = FALSE;
 
-	point.y -= m_HeaderHeight+1;
+	point.y -= m_HeaderHeight;
 	int row = (point.y>=0) ? point.y/m_RowHeight : -1;
 	int col = -1;
 	int x = 1;
@@ -394,9 +395,26 @@ void CTreeView::InvalidateItem(CPoint item)
 		for (UINT a=0; a<(UINT)item.x; a++)
 			x += m_ColumnWidth[a];
 
-		CRect rect(x, m_HeaderHeight+item.y*m_RowHeight+1, x+m_ColumnWidth[item.x], m_HeaderHeight+(item.y+1)*m_RowHeight+1);
+		CRect rect(x, m_HeaderHeight+item.y*m_RowHeight, x+m_ColumnWidth[item.x], m_HeaderHeight+(item.y+1)*m_RowHeight);
 		InvalidateRect(rect);
 	}
+}
+
+void CTreeView::TrackMenu(UINT nID, CPoint point, int col)
+{
+	CMenu menu;
+	ENSURE(menu.LoadMenu(nID));
+
+	CMenu* popup = menu.GetSubMenu(0);
+	ASSERT(popup);
+
+	if (col>0)
+	{
+		popup->AppendMenu(MF_SEPARATOR);
+		popup->AppendMenu(MF_SEPARATOR);
+	}
+
+	popup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, this, NULL);
 }
 
 void CTreeView::SetCheckboxSize()
@@ -551,11 +569,11 @@ void CTreeView::OnPaint()
 	CPen pen(PS_COSMETIC | PS_ALTERNATE, 1, &brsh);
 	CPen* pOldPen = dc.SelectObject(&pen);
 
-	int y = m_HeaderHeight+1;
+	int y = m_HeaderHeight;
 	Cell* curCell = m_Tree;
 	for (UINT row=0; row<m_Rows; row++)
 	{
-		int x = 1;
+		int x = 0;
 		for (UINT col=0; col<MaxColumns; col++)
 		{
 			if (curCell->pItem)
@@ -813,7 +831,7 @@ void CTreeView::OnRButtonDown(UINT /*nFlags*/, CPoint point)
 	}
 }
 
-void CTreeView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
+void CTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 {
 	if (m_pContextMenu2)
 		return;
@@ -821,23 +839,38 @@ void CTreeView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 	CPoint item(-1, -1);
 	if ((point.x==-1) && (point.y==-1))
 	{
+		if ((m_Selected.x==-1) || (m_Selected.y==-1))
+		{
+			GetParent()->SendMessage(WM_CONTEXTMENU, (WPARAM)m_hWnd, MAKELPARAM(point.x, point.y));
+			return;
+		}
+
 		item = m_Selected;
 
-/*		CRect rectItem;
-		if (GetItemRect(hItem, rectItem, FALSE))
-		{
-			point.x = rectItem.left;
-			point.y = rectItem.bottom + 1;
-			ClientToScreen(&point);
-		}*/
+		point.x = GUTTER;
+		for (int a=0; a<item.x; a++)
+			point.x += m_ColumnWidth[a];
+		point.y = (item.y+1)*m_RowHeight+m_HeaderHeight+1;
+		ClientToScreen(&point);
 	}
 	else
 	{
 		CPoint ptClient(point);
 		ScreenToClient(&ptClient);
 
-		if (!HitTest(ptClient, &item, NULL))
+		if (pWnd->GetSafeHwnd()==m_wndHeader.GetSafeHwnd())
+		{
+			HDHITTESTINFO htt;
+			htt.pt = ptClient;
+			TrackMenu(IDM_HEADER, point, m_wndHeader.HitTest(&htt));
 			return;
+		}
+
+		if (!HitTest(ptClient, &item, NULL))
+		{
+			GetParent()->SendMessage(WM_CONTEXTMENU, (WPARAM)m_hWnd, MAKELPARAM(point.x, point.y));
+			return;
+		}
 	}
 
 	Cell* cell = &m_Tree[item.y*MaxColumns+item.x];

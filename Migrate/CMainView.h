@@ -35,5 +35,6 @@ protected:
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
 	afx_msg void OnSelectRoot();
 	afx_msg void OnUpdateTaskbar(CCmdUI* pCmdUI);
+	afx_msg void OnContextMenu(CWnd* pWnd, CPoint pos);
 	DECLARE_MESSAGE_MAP()
 };
