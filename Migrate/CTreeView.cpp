@@ -421,7 +421,7 @@ void CTreeView::InvalidateItem(CPoint item)
 {
 	if ((item.x!=-1) && (item.y!=-1))
 	{
-		int x = 1;
+		int x = 0;
 		for (UINT a=0; a<(UINT)item.x; a++)
 			x += m_ColumnWidth[a];
 
@@ -727,6 +727,18 @@ void CTreeView::OnPaint()
 		y += m_RowHeight;
 		if (y>rect.Height())
 			break;
+	}
+
+	if (!m_Rows)
+	{
+		CRect rectText(rect);
+		rectText.top += m_HeaderHeight+6;
+
+		CString tmpStr;
+		ENSURE(tmpStr.LoadString(IDS_NOTHINGTODISPLAY));
+
+		dc.SetTextColor(Themed ? 0x6D6D6D : GetSysColor(COLOR_3DFACE));
+		dc.DrawText(tmpStr, -1, rectText, DT_CENTER | DT_SINGLELINE | DT_END_ELLIPSIS);
 	}
 
 	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);
