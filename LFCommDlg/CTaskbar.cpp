@@ -62,6 +62,13 @@ CTaskButton* CTaskbar::AddButton(UINT nID, int IconID, BOOL bForceIcon, BOOL bAd
 	{
 		Hint = Caption.Left(pos);
 		Caption.Delete(0, pos+1);
+
+		if (Hint.GetLength()>40)
+		{
+			pos = Hint.Find(L' ', Hint.GetLength()/2);
+			if (pos!=-1)
+				Hint.SetAt(pos, L'\n');
+		}
 	}
 
 	CTaskButton* btn = new CTaskButton();
@@ -152,6 +159,7 @@ BEGIN_MESSAGE_MAP(CTaskbar, CWnd)
 	ON_WM_CTLCOLOR()
 	ON_WM_SIZE()
 	ON_MESSAGE_VOID(WM_IDLEUPDATECMDUI, OnIdleUpdateCmdUI)
+	ON_WM_CONTEXTMENU()
 END_MESSAGE_MAP()
 
 void CTaskbar::OnDestroy()
@@ -344,4 +352,46 @@ void CTaskbar::OnIdleUpdateCmdUI()
 
 	if (Update)
 		AdjustLayout();
+}
+
+void CTaskbar::OnContextMenu(CWnd* /*pWnd*/, CPoint pos)
+{
+	if ((pos.x==-1) && (pos.y==-1))
+	{
+		pos.x = pos.y = 0;
+		ClientToScreen(&pos);
+	}
+
+	CMenu menu;
+	if (!menu.CreatePopupMenu())
+		return;
+
+	std::list<CTaskButton*>::iterator ppBtn = ButtonsLeft.begin();
+	while (ppBtn!=ButtonsLeft.end())
+	{
+		if ((*ppBtn)->IsWindowEnabled())
+		{
+			wchar_t Text[256];
+			(*ppBtn)->GetWindowText(Text, 256);
+			menu.AppendMenu(0, (*ppBtn)->GetDlgCtrlID(), Text);
+		}
+		ppBtn++;
+	}
+
+	if (menu.GetMenuItemCount())
+		menu.AppendMenu(MF_SEPARATOR);
+
+	ppBtn = ButtonsRight.begin();
+	while (ppBtn!=ButtonsRight.end())
+	{
+		if ((*ppBtn)->IsWindowEnabled())
+		{
+			wchar_t Text[256];
+			(*ppBtn)->GetWindowText(Text, 256);
+			menu.AppendMenu(0, (*ppBtn)->GetDlgCtrlID(), Text);
+		}
+		ppBtn++;
+	}
+
+	menu.TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, pos.x, pos.y, this, NULL);
 }

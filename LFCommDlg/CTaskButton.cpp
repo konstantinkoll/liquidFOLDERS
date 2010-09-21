@@ -29,7 +29,7 @@ BOOL CTaskButton::Create(CString Caption, CString TooltipHeader, CString Tooltip
 
 	CRect rect;
 	rect.SetRectEmpty();
-	return CButton::Create(Caption, WS_VISIBLE | WS_TABSTOP | WS_GROUP, rect, pParentWnd, nID);
+	return CButton::Create(TooltipHeader, WS_VISIBLE | WS_TABSTOP | WS_GROUP, rect, pParentWnd, nID);
 }
 
 BOOL CTaskButton::PreTranslateMessage(MSG* pMsg)

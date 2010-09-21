@@ -110,7 +110,7 @@ int CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndTaskbar.AddButton(ID_APP_NEWSTOREMANAGER, 6, TRUE);
 
 	m_wndTaskbar.AddButton(ID_APP_PURCHASE, 7, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_ENTERLICENSEKEY, 8, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_ENTERLICENSEKEY, 8, TRUE, TRUE);
 	m_wndTaskbar.AddButton(ID_APP_PROMPT, 9, TRUE, TRUE);
 	m_wndTaskbar.AddButton(ID_APP_SUPPORT, 10, TRUE, TRUE);
 	m_wndTaskbar.AddButton(ID_APP_ABOUT, 11, TRUE, TRUE);
