@@ -178,12 +178,12 @@ END
 
 STRINGTABLE 
 BEGIN
-    ID_VIEW_SELECTROOT      "Select root folder"
-    ID_VIEW_INCLUDEBRANCH   "Include branch"
-    ID_VIEW_EXCLUDEBRANCH   "Exclude branch"
-    ID_VIEW_RENAME          "Rename folder"
-    ID_VIEW_DELETE          "Delete folder"
-    ID_VIEW_PROPERTIES      "Properties"
+    ID_VIEW_SELECTROOT      "Opens a dialog where you can select the root folder to display in the main view below.\nSelect root folder"
+    ID_VIEW_INCLUDEBRANCH   "Includes the selected folder and all subfolders.\nInclude branch"
+    ID_VIEW_EXCLUDEBRANCH   "Excludes the selected folder and all subfolders.\nExclude branch"
+    ID_VIEW_RENAME          "Renames the selected folder.\nRename folder"
+    ID_VIEW_DELETE          "Deletes the selected folder.\nDelete folder"
+    ID_VIEW_PROPERTIES      "Displays the properties of the selected folder.\nProperties"
     IDS_NOROOT_CAPTION      "You have not selected a root folder yet"
     IDS_NOROOT_HINT         "Click above to select a folder for browsing."
     IDS_NOSELECTION_CAPTION "You have not selected any folders for migration"
@@ -205,6 +205,7 @@ BEGIN
     IDS_FOLDERCATEGORY2     "Libraries"
     IDS_FOLDERCATEGORY3     "Shared folders"
     IDS_FOLDERCATEGORY4     "Removable storage"
+    IDS_NOTHINGTODISPLAY    "There is nothing to display."
 END
 
 #endif    // Englisch (neutral) resources

@@ -72,8 +72,6 @@ BOOL CTreeView::PreTranslateMessage(MSG* pMsg)
 {
 	switch (pMsg->message)
 	{
-	case WM_KEYDOWN:
-	case WM_SYSKEYDOWN:
 	case WM_LBUTTONDOWN:
 	case WM_RBUTTONDOWN:
 	case WM_MBUTTONDOWN:

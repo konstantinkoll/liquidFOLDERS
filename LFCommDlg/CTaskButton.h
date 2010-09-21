@@ -16,7 +16,7 @@ public:
 
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 
-	BOOL Create(CString Caption, CString Tooltip, CMFCToolBarImages* Icons, int IconID, CWnd* pParentWnd, UINT nID);
+	BOOL Create(CString Caption, CString TooltipHeader, CString TooltipHint, CMFCToolBarImages* Icons, int IconID, CWnd* pParentWnd, UINT nID);
 	int GetPreferredWidth();
 
 protected:
@@ -30,7 +30,8 @@ protected:
 
 private:
 	CString m_Caption;
-	CString m_Tooltip;
+	CString m_TooltipHeader;
+	CString m_TooltipHint;
 	LFTooltip m_TooltipCtrl;
 	CMFCToolBarImages* m_Icons;
 	int m_IconID;

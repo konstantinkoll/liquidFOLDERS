@@ -53,14 +53,20 @@ UINT CTaskbar::GetPreferredHeight()
 
 CTaskButton* CTaskbar::AddButton(UINT nID, int IconID, BOOL bForceIcon, BOOL bAddRight)
 {
-	CString Text;
-	ENSURE(Text.LoadString(nID));
+	CString Caption;
+	CString Hint;
+	ENSURE(Caption.LoadString(nID));
 
-	bForceIcon |= bAddRight;
+	int pos = Caption.Find(L'\n');
+	if (pos!=-1)
+	{
+		Hint = Caption.Left(pos);
+		Caption.Delete(0, pos+1);
+	}
 
 	CTaskButton* btn = new CTaskButton();
-	btn->Create(bAddRight ? _T("") : Text, bAddRight ? Text : _T(""), &Icons,
-		bForceIcon || (((LFApplication*)AfxGetApp())->OSVersion<OS_Seven) ? IconID : -1,
+	btn->Create(bAddRight ? _T("") : Caption, Caption, Hint, &Icons,
+		bForceIcon || bAddRight || (((LFApplication*)AfxGetApp())->OSVersion<OS_Seven) ? IconID : -1,
 		this, nID);
 
 	CCmdUI cmdUI;

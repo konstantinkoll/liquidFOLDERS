@@ -19,10 +19,11 @@ CTaskButton::CTaskButton()
 	m_Hover = FALSE;
 }
 
-BOOL CTaskButton::Create(CString Caption, CString Tooltip, CMFCToolBarImages* Icons, int IconID, CWnd* pParentWnd, UINT nID)
+BOOL CTaskButton::Create(CString Caption, CString TooltipHeader, CString TooltipHint, CMFCToolBarImages* Icons, int IconID, CWnd* pParentWnd, UINT nID)
 {
 	m_Caption = Caption;
-	m_Tooltip = Tooltip;
+	m_TooltipHeader = TooltipHeader;
+	m_TooltipHint = TooltipHint;
 	m_Icons = Icons;
 	m_IconID = IconID;
 
@@ -35,8 +36,6 @@ BOOL CTaskButton::PreTranslateMessage(MSG* pMsg)
 {
 	switch (pMsg->message)
 	{
-	case WM_KEYDOWN:
-	case WM_SYSKEYDOWN:
 	case WM_LBUTTONDOWN:
 	case WM_RBUTTONDOWN:
 	case WM_MBUTTONDOWN:
@@ -361,11 +360,11 @@ void CTaskButton::OnMouseLeave()
 
 void CTaskButton::OnMouseHover(UINT nFlags, CPoint point)
 {
-	if (!m_Tooltip.IsEmpty())
+	if (!m_TooltipHeader.IsEmpty())
 		if ((nFlags & (MK_LBUTTON | MK_MBUTTON | MK_RBUTTON | MK_XBUTTON1 | MK_XBUTTON2))==0)
 		{
 			ClientToScreen(&point);
-			m_TooltipCtrl.Track(point, NULL, NULL, _T(""), m_Tooltip);
+			m_TooltipCtrl.Track(point, NULL, NULL, m_TooltipHint.IsEmpty() ? _T("") : m_TooltipHeader, m_TooltipHint.IsEmpty() ? m_TooltipHeader : m_TooltipHint);
 		}
 		else
 		{

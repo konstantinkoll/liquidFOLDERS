@@ -652,19 +652,19 @@ END
 
 STRINGTABLE 
 BEGIN
-    ID_APP_ABOUT            "Über liquidFOLDERS"
+    ID_APP_ABOUT            "Zeigt Informationen und globale Einstellungen an.\nÜber liquidFOLDERS"
 END
 
 STRINGTABLE 
 BEGIN
-    ID_APP_HELP             "Geführte Tour"
-    ID_APP_SUPPORT          "EMail an Kundenservice"
-    ID_APP_NEWFILEDROP      "FileDrop starten"
-    ID_APP_NEWMIGRATE       "Migrations-Assistent starten"
-    ID_APP_NEWSTOREMANAGER  "StoreManager starten"
-    ID_APP_PROMPT           "Kommandozeile"
-    ID_APP_PURCHASE         "Lizenz erwerben"
-    ID_APP_ENTERLICENSEKEY  "Lizenzschlüssel eingeben"
+    ID_APP_HELP             "Öffnet den Standard-Browser und zeigt eine geführte Tour durch liquidFOLDERS an.\nGeführte Tour"
+    ID_APP_SUPPORT          "Öffnet das Standard-Mailprogramm für eine  EMail an den Kundenservice.\nEMail an Kundenservice"
+    ID_APP_NEWFILEDROP      "Öffnet ein neues FileDrop-Fenster.\nFileDrop starten"
+    ID_APP_NEWMIGRATE       "Öffnet den Migrations-Assistenten.\nMigrations-Assistent starten"
+    ID_APP_NEWSTOREMANAGER  "Öffnet den StoreManager.\nStoreManager starten"
+    ID_APP_PROMPT           "Öffnet ein Kommandozeilenfenster.\nKommandozeile"
+    ID_APP_PURCHASE         "Öffnet den Standard-Browser und zeigt eine Seite zum Erwerb eines Lizenz-Schlüssels an.\nLizenz erwerben"
+    ID_APP_ENTERLICENSEKEY  "Öffnet ein Fenster zum Freischalten von liquidFOLDERS.\nLizenzschlüssel eingeben"
 END
 
 #endif    // Deutsch (neutral) resources
@@ -1178,19 +1178,19 @@ END
 
 STRINGTABLE 
 BEGIN
-    ID_APP_ABOUT            "About liquidFOLDERS"
+    ID_APP_ABOUT            "Shows liquidFOLDERS information and settings.\nAbout liquidFOLDERS"
 END
 
 STRINGTABLE 
 BEGIN
-    ID_APP_HELP             "Guided tour"
-    ID_APP_SUPPORT          "Contact support"
-    ID_APP_NEWFILEDROP      "Open FileDrop"
-    ID_APP_NEWMIGRATE       "Open Migration Wizard"
-    ID_APP_NEWSTOREMANAGER  "Open StoreManager"
-    ID_APP_PROMPT           "Command prompt"
-    ID_APP_PURCHASE         "Purchase license"
-    ID_APP_ENTERLICENSEKEY  "Enter license key"
+    ID_APP_HELP             "Opens your standard browser displaying a guided tour to liquidFOLDERS.\nGuided tour"
+    ID_APP_SUPPORT          "Opens your standard mail software to contact customer support.\nContact support"
+    ID_APP_NEWFILEDROP      "Opens a new FileDrop window.\nOpen FileDrop"
+    ID_APP_NEWMIGRATE       "Opens the migration wizard.\nOpen Migration Wizard"
+    ID_APP_NEWSTOREMANAGER  "Opens the StoreManager.\nOpen StoreManager"
+    ID_APP_PROMPT           "Opens the Windows command prompt.\nCommand prompt"
+    ID_APP_PURCHASE         "Opens your standard browser displaying a page through which you can purchase a license key.\nPurchase license"
+    ID_APP_ENTERLICENSEKEY  "Opens a window to enter your license key.\nEnter license key"
 END
 
 #endif    // Englisch (neutral) resources
@@ -1689,15 +1689,19 @@ END
 
 STRINGTABLE 
 BEGIN
-    ID_APP_ABOUT            "Acerca de liquidFOLDERS"
-    ID_APP_HELP             "Visita guiada"
-    ID_APP_SUPPORT          "Contacto de servicio"
-    ID_APP_NEWFILEDROP      "Empezar FileDrop"
-    ID_APP_NEWMIGRATE       "Empezar Asistente de Migración"
-    ID_APP_NEWSTOREMANAGER  "Empezar StoreManager"
-    ID_APP_PROMPT           "Command prompt"
-    ID_APP_PURCHASE         "Adquirir licencia"
-    ID_APP_ENTERLICENSEKEY  "Dictar licencia"
+    ID_APP_ABOUT            "Visualiza información y configuración de liquidFOLDERS.\nAcerca de liquidFOLDERS"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_APP_HELP             "Abre su navegador estándar visualizando una visita guiada a liquidFOLDERS.\nVisita guiada"
+    ID_APP_SUPPORT          "Abre su software estándar de correo para contactar a servicio al cliente.\nContacto de servicio"
+    ID_APP_NEWFILEDROP      "Abre una ventana nueva de FileDrop.\nEmpezar FileDrop"
+    ID_APP_NEWMIGRATE       "Abre el asistente de migración.\nEmpezar Asistente de Migración"
+    ID_APP_NEWSTOREMANAGER  "Abre StoreManager.\nEmpezar StoreManager"
+    ID_APP_PROMPT           "Abre el command prompt de Windows.\nCommand prompt"
+    ID_APP_PURCHASE         "Abre su navegador estándar visualizando una página a través de la cual usted puede adquirir la licencia.\nAdquirir licencia"
+    ID_APP_ENTERLICENSEKEY  "Abre una ventana para ver e ingresar su licencia.\nDictar licencia"
 END
 
 #endif    // Spanisch (neutral) resources
@@ -2190,19 +2194,19 @@ END
 
 STRINGTABLE 
 BEGIN
-    ID_APP_ABOUT            "Concernant liquidFOLDERS"
+    ID_APP_ABOUT            "Montre des informations et embauches globales.\nConcernant liquidFOLDERS"
 END
 
 STRINGTABLE 
 BEGIN
-    ID_APP_HELP             "Tour mené"
-    ID_APP_SUPPORT          "E-mail au service aprés-vente"
-    ID_APP_NEWFILEDROP      "Commoncer FileDrop"
-    ID_APP_NEWMIGRATE       "Commmencer l'assistant de migration"
-    ID_APP_NEWSTOREMANAGER  "Commencer StoreManager"
-    ID_APP_PROMPT           "Lignes de commandement"
-    ID_APP_PURCHASE         "Acquérir une licence"
-    ID_APP_ENTERLICENSEKEY  "Donner clé de licence"
+    ID_APP_HELP             "Ouvre le standard-browser et indique un tour mené par liquidFOLDERS\nTour mené"
+    ID_APP_SUPPORT          "Produis un nouvel e-mail au service aprés-vente.\nE-mail au service aprés-vente"
+    ID_APP_NEWFILEDROP      "Ouvre une nouvelle fenêtre de FileDrop.\nCommoncer FileDrop"
+    ID_APP_NEWMIGRATE       "Ouvre l'assistant de migration.\nCommmencer l'assistant de migration"
+    ID_APP_NEWSTOREMANAGER  "Ouvre le StoreManager.\nCommencer StoreManager"
+    ID_APP_PROMPT           "Ouvre une fenêtre de lignes de commandement.\nLignes de commandement"
+    ID_APP_PURCHASE         "Ouvre le standard-browser avec un site pour l'acquisition d'une clé de licence.\nAcquérir une licence"
+    ID_APP_ENTERLICENSEKEY  "Ouvre une fenêtre pour la déverrouillage de liquidFOLDERS.\nDonner clé de licence"
 END
 
 #endif    // Französisch (neutral) resources

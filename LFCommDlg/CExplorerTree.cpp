@@ -128,7 +128,7 @@ BOOL CExplorerTree::PreTranslateMessage(MSG* pMsg)
 				return TRUE;
 			}
 		}
-	case WM_SYSKEYDOWN:
+		break;
 	case WM_LBUTTONDOWN:
 	case WM_RBUTTONDOWN:
 	case WM_MBUTTONDOWN:

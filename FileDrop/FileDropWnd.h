@@ -30,6 +30,7 @@ protected:
 	afx_msg void OnMouseHover(UINT nFlags, CPoint point);
 	afx_msg void OnNcLButtonDblClk(UINT nFlags, CPoint point);
 	afx_msg void OnRButtonUp(UINT nFlags, CPoint point);
+	afx_msg void OnContextMenu(CWnd* pWnd, CPoint pos);
 	afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
 	afx_msg void OnMove(int x, int y);
 	afx_msg void OnAlwaysOnTop();

@@ -41,8 +41,6 @@ BOOL CFileDropWnd::PreTranslateMessage(MSG* pMsg)
 {
 	switch (pMsg->message)
 	{
-	case WM_KEYDOWN:
-	case WM_SYSKEYDOWN:
 	case WM_LBUTTONDOWN:
 	case WM_RBUTTONDOWN:
 	case WM_MBUTTONDOWN:
@@ -128,6 +126,7 @@ BEGIN_MESSAGE_MAP(CFileDropWnd, CGlasWindow)
 	ON_WM_MOUSEHOVER()
 	ON_WM_NCLBUTTONDBLCLK()
 	ON_WM_RBUTTONUP()
+	ON_WM_CONTEXTMENU()
 	ON_WM_SYSCOMMAND()
 	ON_WM_MOVE()
 	ON_COMMAND(SC_ALWAYSONTOP, OnAlwaysOnTop)
@@ -360,28 +359,38 @@ void CFileDropWnd::OnNcLButtonDblClk(UINT /*nFlags*/, CPoint /*point*/)
 
 void CFileDropWnd::OnRButtonUp(UINT /*nFlags*/, CPoint point)
 {
+	ClientToScreen(&point);
+	OnContextMenu(this, point);
+}
+
+void CFileDropWnd::OnContextMenu(CWnd* /*pWnd*/, CPoint pos)
+{
 	CMenu menu;
-	menu.LoadMenu(IDM_POPUP);
+	ENSURE(menu.LoadMenu(IDM_POPUP));
+
+	if ((pos.x==-1) || (pos.y==-1))
+	{
+		pos.x = pos.y = 0;
+		ClientToScreen(&pos);
+	}
 
 	CMenu* popup = menu.GetSubMenu(0);
-	if (popup)
-	{
-		HBITMAP bmp1 = SetMenuItemIcon(*popup, 0, ID_APP_CHOOSEDEFAULTSTORE);
-		HBITMAP bmp2 = SetMenuItemIcon(*popup, 7, ID_APP_NEWSTOREMANAGER);
-		SetMenuItemBitmap(*popup, 8, HBMMENU_POPUP_CLOSE);
+	ASSERT(popup);
 
-		popup->CheckMenuItem(SC_ALWAYSONTOP, AlwaysOnTop ? MF_CHECKED : MF_UNCHECKED);
-		popup->EnableMenuItem(ID_APP_IMPORTFOLDER, StoreValid ? MF_ENABLED : MF_GRAYED);
-		popup->EnableMenuItem(ID_APP_STOREPROPERTIES, StoreValid ? MF_ENABLED : MF_GRAYED);
-		popup->EnableMenuItem(ID_APP_NEWSTOREMANAGER, (_access(theApp.path+"StoreManager.exe", 0)==0) ? MF_ENABLED : MF_GRAYED);
+	HBITMAP bmp1 = SetMenuItemIcon(*popup, 0, ID_APP_CHOOSEDEFAULTSTORE);
+	HBITMAP bmp2 = SetMenuItemIcon(*popup, 7, ID_APP_NEWSTOREMANAGER);
+	SetMenuItemBitmap(*popup, 8, HBMMENU_POPUP_CLOSE);
 
-		popup->SetDefaultItem(ID_APP_CHOOSEDEFAULTSTORE);
-		ClientToScreen(&point);
-		popup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, this);
+	popup->CheckMenuItem(SC_ALWAYSONTOP, AlwaysOnTop ? MF_CHECKED : MF_UNCHECKED);
+	popup->EnableMenuItem(ID_APP_IMPORTFOLDER, StoreValid ? MF_ENABLED : MF_GRAYED);
+	popup->EnableMenuItem(ID_APP_STOREPROPERTIES, StoreValid ? MF_ENABLED : MF_GRAYED);
+	popup->EnableMenuItem(ID_APP_NEWSTOREMANAGER, (_access(theApp.path+"StoreManager.exe", 0)==0) ? MF_ENABLED : MF_GRAYED);
 
-		DeleteObject(bmp1);
-		DeleteObject(bmp2);
-	}
+	popup->SetDefaultItem(ID_APP_CHOOSEDEFAULTSTORE);
+	popup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, pos.x, pos.y, this);
+
+	DeleteObject(bmp1);
+	DeleteObject(bmp2);
 }
 
 void CFileDropWnd::OnSysCommand(UINT nID, LPARAM lParam)
