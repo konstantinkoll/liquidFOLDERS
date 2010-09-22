@@ -191,6 +191,58 @@ void CTreeView::SetBranchCheck(BOOL Check, CPoint item)
 	Invalidate();
 }
 
+void CTreeView::ShowProperties(CPoint item)
+{
+	if ((item.x==-1) || (item.y==-1))
+		item = m_Selected;
+
+	Cell* cell = &m_Tree[MAKEPOSI(item)];
+
+	IShellFolder* psfFolder = cell->pItem->pParentFolder;
+	if (!psfFolder)
+	{
+		if (FAILED(SHGetDesktopFolder(&psfFolder)))
+			return;
+	}
+	else
+	{
+		psfFolder->AddRef();
+	}
+
+	IContextMenu* pcm = NULL;
+	if (SUCCEEDED(psfFolder->GetUIObjectOf(theApp.m_pMainWnd->GetSafeHwnd(), 1, (LPCITEMIDLIST*)&cell->pItem->pidlRel, IID_IContextMenu, NULL, (void**)&pcm)))
+	{
+		HMENU hPopup = CreatePopupMenu();
+		if (hPopup)
+		{
+			UINT uFlags = CMF_NORMAL | CMF_EXPLORE | CMF_CANRENAME;
+			if (SUCCEEDED(pcm->QueryContextMenu(hPopup, 0, 1, 0x6FFF, uFlags)))
+			{
+				CWaitCursor wait;
+
+				CMINVOKECOMMANDINFO cmi;
+				cmi.cbSize = sizeof(CMINVOKECOMMANDINFO);
+				cmi.fMask = 0;
+				cmi.hwnd = theApp.m_pMainWnd->GetSafeHwnd();
+				cmi.lpVerb = "properties";
+				cmi.lpParameters = NULL;
+				cmi.lpDirectory = NULL;
+				cmi.nShow = SW_SHOWNORMAL;
+				cmi.dwHotKey = 0;
+				cmi.hIcon = NULL;
+
+				pcm->InvokeCommand(&cmi);
+
+				SetFocus();
+			}
+		}
+
+		pcm->Release();
+	}
+
+	psfFolder->Release();
+}
+
 BOOL CTreeView::InsertRow(UINT Row)
 {
 	ASSERT(Row<=m_Rows);
@@ -313,13 +365,13 @@ UINT CTreeView::InsertItem(UINT row, UINT col, IShellFolder* pParentFolder, LPIT
 					if (!(dwAttribs & (SFGAO_FILESYSANCESTOR | SFGAO_FILESYSTEM)))
 						continue;
 
-					/*SHDESCRIPTIONID did;
+					SHDESCRIPTIONID did;
 					if (SUCCEEDED(SHGetDataFromIDList(pParentFolder, pidlTemp, SHGDFIL_DESCRIPTIONID, &did, sizeof(SHDESCRIPTIONID))))
 					{
 						const CLSID LFNE = { 0x3F2D914F, 0xFE57, 0x414F, { 0x9F, 0x88, 0xA3, 0x77, 0xC7, 0x84, 0x1D, 0xA4 } };
 						if (did.clsid==LFNE)
 							continue;
-					}*/
+					}
 
 					if (NewRow)
 					{
@@ -912,14 +964,9 @@ void CTreeView::OnRButtonDown(UINT /*nFlags*/, CPoint point)
 {
 	SetFocus();
 
-	CPoint item;
-	if (HitTest(point, &item, &m_CheckboxHot))
-	{
-		InvalidateItem(m_Selected);
-		InvalidateItem(item);
-
-		m_Selected = item;
-	}
+	CPoint Item;
+	if (HitTest(point, &Item, &m_CheckboxHot))
+		SelectItem(Item);
 }
 
 void CTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
@@ -980,7 +1027,7 @@ void CTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 	}
 
 	IContextMenu* pcm = NULL;
-	if (SUCCEEDED(psfFolder->GetUIObjectOf(GetParent()->GetSafeHwnd(), 1, (LPCITEMIDLIST*)&cell->pItem->pidlRel, IID_IContextMenu, NULL, (void**)&pcm)))
+	if (SUCCEEDED(psfFolder->GetUIObjectOf(theApp.m_pMainWnd->GetSafeHwnd(), 1, (LPCITEMIDLIST*)&cell->pItem->pidlRel, IID_IContextMenu, NULL, (void**)&pcm)))
 	{
 		HMENU hPopup = CreatePopupMenu();
 		if (hPopup)
@@ -1037,7 +1084,7 @@ void CTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 							CMINVOKECOMMANDINFO cmi;
 							cmi.cbSize = sizeof(CMINVOKECOMMANDINFO);
 							cmi.fMask = 0;
-							cmi.hwnd = GetParent()->GetSafeHwnd();
+							cmi.hwnd = theApp.m_pMainWnd->GetSafeHwnd();
 							cmi.lpVerb = (LPCSTR)(INT_PTR)(idCmd-1);
 							cmi.lpParameters = NULL;
 							cmi.lpDirectory = NULL;

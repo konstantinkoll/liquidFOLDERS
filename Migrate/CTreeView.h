@@ -53,6 +53,7 @@ public:
 	void ClearRoot();
 	void SetRoot(LPITEMIDLIST pidl, BOOL Update);
 	void SetBranchCheck(BOOL Check, CPoint item=CPoint(-1, -1));
+	void ShowProperties(CPoint item=CPoint(-1, -1));
 
 protected:
 	Cell* m_Tree;
