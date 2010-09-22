@@ -116,6 +116,8 @@ void CTreeView::ClearRoot()
 	m_wndHeader.ModifyStyle(0, HDS_HIDDEN);
 	AdjustLayout();
 	Invalidate();
+
+	NotifyOwner();
 }
 
 void CTreeView::SetRoot(LPITEMIDLIST pidl, BOOL Update)
@@ -156,6 +158,8 @@ void CTreeView::SetRoot(LPITEMIDLIST pidl, BOOL Update)
 	AdjustLayout();
 	SetFocus();
 	Invalidate();
+
+	NotifyOwner();
 }
 
 void CTreeView::SetBranchCheck(BOOL Check, CPoint item)
@@ -303,19 +307,19 @@ UINT CTreeView::InsertItem(UINT row, UINT col, IShellFolder* pParentFolder, LPIT
 				LPITEMIDLIST pidlTemp;
 				while (pEnum->Next(1, &pidlTemp, NULL)==S_OK)
 				{
-					DWORD dwAttribs = SFGAO_HASSUBFOLDER | SFGAO_FOLDER | SFGAO_FILESYSANCESTOR | SFGAO_FILESYSTEM;
+					DWORD dwAttribs = SFGAO_FOLDER | SFGAO_FILESYSANCESTOR | SFGAO_FILESYSTEM;
 					pFolder->GetAttributesOf(1, (LPCITEMIDLIST*)&pidlTemp, &dwAttribs);
 
 					if (!(dwAttribs & (SFGAO_FILESYSANCESTOR | SFGAO_FILESYSTEM)))
 						continue;
 
-					SHDESCRIPTIONID did;
+					/*SHDESCRIPTIONID did;
 					if (SUCCEEDED(SHGetDataFromIDList(pParentFolder, pidlTemp, SHGDFIL_DESCRIPTIONID, &did, sizeof(SHDESCRIPTIONID))))
 					{
 						const CLSID LFNE = { 0x3F2D914F, 0xFE57, 0x414F, { 0x9F, 0x88, 0xA3, 0x77, 0xC7, 0x84, 0x1D, 0xA4 } };
 						if (did.clsid==LFNE)
 							continue;
-					}
+					}*/
 
 					if (NewRow)
 					{
@@ -487,6 +491,21 @@ void CTreeView::NotifyOwner()
 	tag.pCell = ((m_Selected.x==-1) || (m_Selected.y==-1)) ? NULL : &m_Tree[MAKEPOSI(m_Selected)];
 
 	GetOwner()->SendMessage(WM_NOTIFY, tag.hdr.idFrom, LPARAM(&tag));
+}
+
+void CTreeView::SelectItem(CPoint Item)
+{
+	if (Item==m_Selected)
+		return;
+
+	if (!m_Tree[MAKEPOSI(Item)].pItem)
+		return;
+
+	InvalidateItem(m_Selected);
+	InvalidateItem(Item);
+	m_Selected = Item;
+
+	NotifyOwner();
 }
 
 
@@ -857,9 +876,7 @@ void CTreeView::OnLButtonDown(UINT /*nFlags*/, CPoint point)
 	CPoint Item;
 	if (HitTest(point, &Item, &m_CheckboxHot))
 	{
-		InvalidateItem(m_Selected);
-		InvalidateItem(Item);
-		m_Selected = Item;
+		SelectItem(Item);
 
 		if (m_CheckboxHot)
 		{

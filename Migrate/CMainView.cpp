@@ -37,7 +37,7 @@ BOOL CMainView::OnCmdMsg(UINT nID, int nCode, void* pExtra, AFX_CMDHANDLERINFO* 
 
 void CMainView::ClearRoot()
 {
-	m_IsRootSet = m_SelectedHasChildren = m_SelectedCanRename = m_SelectedCanDelete = FALSE;
+	m_IsRootSet = m_SelectedHasChildren = m_SelectedHasPropSheet = m_SelectedCanRename = m_SelectedCanDelete = FALSE;
 
 	CString caption;
 	CString hint;
@@ -52,7 +52,7 @@ void CMainView::ClearRoot()
 void CMainView::SetRoot(LPITEMIDLIST pidl, BOOL Update)
 {
 	m_IsRootSet = TRUE;
-	m_SelectedHasChildren = m_SelectedCanRename = m_SelectedCanDelete = FALSE;
+	m_SelectedHasChildren = m_SelectedHasPropSheet = m_SelectedCanRename = m_SelectedCanDelete = FALSE;
 
 	CString caption;
 	CString hint;
@@ -92,6 +92,7 @@ BEGIN_MESSAGE_MAP(CMainView, CWnd)
 	ON_COMMAND(ID_VIEW_SELECTROOT_TASKBAR, OnSelectRoot)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_VIEW_SELECTROOT, ID_VIEW_PROPERTIES, OnUpdateTaskbar)
 	ON_WM_CONTEXTMENU()
+	ON_NOTIFY(TVN_SELCHANGED, 3, OnSelectionChanged)
 END_MESSAGE_MAP()
 
 int CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -170,6 +171,9 @@ void CMainView::OnUpdateTaskbar(CCmdUI* pCmdUI)
 	case ID_VIEW_DELETE:
 		pCmdUI->Enable(m_IsRootSet && m_SelectedCanDelete);
 		break;
+	case ID_VIEW_PROPERTIES:
+		pCmdUI->Enable(m_IsRootSet && m_SelectedHasPropSheet);
+		break;
 	default:
 		pCmdUI->Enable(m_IsRootSet);
 	}
@@ -193,4 +197,25 @@ void CMainView::OnContextMenu(CWnd* /*pWnd*/, CPoint pos)
 		popup->EnableMenuItem(ID_VIEW_AUTOSIZEALL, MF_BYCOMMAND | MF_DISABLED | MF_GRAYED);
 
 	popup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, pos.x, pos.y, this, NULL);
+}
+
+void CMainView::OnSelectionChanged(NMHDR* pNMHDR, LRESULT* /*pResult*/)
+{
+	tagTreeView* pNMTreeView = (tagTreeView*)pNMHDR;
+
+	if (pNMTreeView->pCell)
+	{
+
+		DWORD dwAttribs = SFGAO_CANRENAME | SFGAO_CANDELETE | SFGAO_HASPROPSHEET;
+		pNMTreeView->pCell->pItem->pParentFolder->GetAttributesOf(1, (LPCITEMIDLIST*)&pNMTreeView->pCell->pItem->pidlRel, &dwAttribs);
+
+		m_SelectedHasChildren = (pNMTreeView->pCell->Flags & CF_HASCHILDREN);
+		m_SelectedHasPropSheet = (dwAttribs & SFGAO_HASPROPSHEET);
+		m_SelectedCanRename = (dwAttribs & SFGAO_CANRENAME);
+		m_SelectedCanDelete = (dwAttribs & SFGAO_CANDELETE);
+	}
+	else
+	{
+		m_SelectedHasChildren = m_SelectedCanRename = m_SelectedCanDelete = FALSE;
+	}
 }

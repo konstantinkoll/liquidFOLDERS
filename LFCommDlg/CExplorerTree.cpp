@@ -564,13 +564,13 @@ void CExplorerTree::EnumObjects(HTREEITEM hParentItem, IShellFolder* pParentFold
 			if (!(dwAttribs & (SFGAO_FILESYSANCESTOR | SFGAO_FILESYSTEM)))
 				continue;
 
-		SHDESCRIPTIONID did;
+		/*SHDESCRIPTIONID did;
 		if (SUCCEEDED(SHGetDataFromIDList(pParentFolder, pidlTemp, SHGDFIL_DESCRIPTIONID, &did, sizeof(SHDESCRIPTIONID))))
 		{
 			const CLSID LFNE = { 0x3F2D914F, 0xFE57, 0x414F, { 0x9F, 0x88, 0xA3, 0x77, 0xC7, 0x84, 0x1D, 0xA4 } };
 			if (did.clsid==LFNE)
 				continue;
-		}
+		}*/
 
 		InsertItem(pParentFolder, pidlTemp, hParentItem, (dwAttribs & SFGAO_HASSUBFOLDER), p_App->GetShellManager()->ConcatenateItem(pidlParent, pidlTemp));
 	}

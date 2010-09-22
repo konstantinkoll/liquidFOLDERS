@@ -129,7 +129,6 @@ void CDropdownWindow::AdjustLayout()
 BEGIN_MESSAGE_MAP(CDropdownWindow, CWnd)
 	ON_WM_CREATE()
 	ON_WM_SIZE()
-	ON_WM_SETFOCUS()
 END_MESSAGE_MAP()
 
 int CDropdownWindow::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -164,11 +163,6 @@ void CDropdownWindow::OnSize(UINT nType, int cx, int cy)
 {
 	CWnd::OnSize(nType, cx, cy);
 	AdjustLayout();
-}
-
-void CDropdownWindow::OnSetFocus(CWnd* /*pOldWnd*/)
-{
-	m_wndList.SetFocus();
 }
 
 
@@ -663,6 +657,7 @@ LRESULT CDropdownSelector::OnOpenDropdown(WPARAM /*wParam*/, LPARAM /*lParam*/)
 
 	p_DropWindow->SetWindowPos(&wndTopMost, rectDrop.left, rectDrop.top, rectDrop.Width(), rectDrop.Height(), SWP_SHOWWINDOW | SWP_NOACTIVATE);
 	((CGlasWindow*)GetParent())->RegisterPopupWindow(p_DropWindow);
+	p_DropWindow->SetFocus();
 
 	Invalidate();
 	return TRUE;

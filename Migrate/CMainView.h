@@ -27,6 +27,7 @@ protected:
 	CTreeView m_wndTree;
 	BOOL m_IsRootSet;
 	BOOL m_SelectedHasChildren;
+	BOOL m_SelectedHasPropSheet;
 	BOOL m_SelectedCanRename;
 	BOOL m_SelectedCanDelete;
 
@@ -39,5 +40,6 @@ protected:
 	afx_msg void OnSelectRoot();
 	afx_msg void OnUpdateTaskbar(CCmdUI* pCmdUI);
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint pos);
+	afx_msg void OnSelectionChanged(NMHDR* pNMHDR, LRESULT* pResult);
 	DECLARE_MESSAGE_MAP()
 };
