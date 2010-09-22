@@ -474,7 +474,16 @@ void CTreeView::TrackMenu(UINT nID, CPoint point, int col)
 		popup->AppendMenu(MF_SEPARATOR);
 	}
 
-	popup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, this, NULL);
+	switch (popup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RETURNCMD | TPM_RIGHTBUTTON, point.x, point.y, this, NULL))
+	{
+	case ID_VIEW_AUTOSIZE:
+		AutosizeColumn(col);
+		Invalidate();
+		break;
+	case ID_VIEW_AUTOSIZEALL:
+		AutosizeColumns();
+		break;
+	}
 }
 
 void CTreeView::SetCheckboxSize()
