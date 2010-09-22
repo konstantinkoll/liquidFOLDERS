@@ -36,6 +36,12 @@ struct Cell
 	UINT Flags;
 };
 
+struct tagTreeView
+{
+	NMHDR hdr;
+	Cell* pCell;
+};
+
 class CTreeView : public CWnd
 {
 public:
@@ -107,4 +113,5 @@ private:
 
 	void SetCheckboxSize();
 	UINT GetChildRect(CPoint item);
+	void NotifyOwner();
 };

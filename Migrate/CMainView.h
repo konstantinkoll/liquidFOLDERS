@@ -26,6 +26,9 @@ protected:
 	CExplorerHeader m_wndExplorerHeader;
 	CTreeView m_wndTree;
 	BOOL m_IsRootSet;
+	BOOL m_SelectedHasChildren;
+	BOOL m_SelectedCanRename;
+	BOOL m_SelectedCanDelete;
 
 	void AdjustLayout();
 

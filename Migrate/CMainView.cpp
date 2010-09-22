@@ -37,7 +37,7 @@ BOOL CMainView::OnCmdMsg(UINT nID, int nCode, void* pExtra, AFX_CMDHANDLERINFO* 
 
 void CMainView::ClearRoot()
 {
-	m_IsRootSet = FALSE;
+	m_IsRootSet = m_SelectedHasChildren = m_SelectedCanRename = m_SelectedCanDelete = FALSE;
 
 	CString caption;
 	CString hint;
@@ -52,6 +52,7 @@ void CMainView::ClearRoot()
 void CMainView::SetRoot(LPITEMIDLIST pidl, BOOL Update)
 {
 	m_IsRootSet = TRUE;
+	m_SelectedHasChildren = m_SelectedCanRename = m_SelectedCanDelete = FALSE;
 
 	CString caption;
 	CString hint;
@@ -88,6 +89,7 @@ BEGIN_MESSAGE_MAP(CMainView, CWnd)
 	ON_WM_SIZE()
 	ON_WM_SETFOCUS()
 	ON_COMMAND(ID_VIEW_SELECTROOT, OnSelectRoot)
+	ON_COMMAND(ID_VIEW_SELECTROOT_TASKBAR, OnSelectRoot)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_VIEW_SELECTROOT, ID_VIEW_PROPERTIES, OnUpdateTaskbar)
 	ON_WM_CONTEXTMENU()
 END_MESSAGE_MAP()
@@ -101,7 +103,7 @@ int CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (!m_wndTaskbar.Create(this, IDB_TASKS, 1))
 		return -1;
 
-	m_wndTaskbar.AddButton(ID_VIEW_SELECTROOT, 0);
+	m_wndTaskbar.AddButton(ID_VIEW_SELECTROOT_TASKBAR, 0);
 	m_wndTaskbar.AddButton(ID_VIEW_INCLUDEBRANCH, 1);
 	m_wndTaskbar.AddButton(ID_VIEW_EXCLUDEBRANCH, 2);
 	m_wndTaskbar.AddButton(ID_VIEW_RENAME, 3);
@@ -145,7 +147,7 @@ void CMainView::OnSetFocus(CWnd* /*pOldWnd*/)
 
 void CMainView::OnSelectRoot()
 {
-	GetParent()->SendMessage(WM_COMMAND, ID_VIEW_SELECTROOT);
+	GetOwner()->SendMessage(WM_COMMAND, ID_VIEW_SELECTROOT);
 }
 
 void CMainView::OnUpdateTaskbar(CCmdUI* pCmdUI)
@@ -155,12 +157,25 @@ void CMainView::OnUpdateTaskbar(CCmdUI* pCmdUI)
 	case ID_VIEW_SELECTROOT:
 		pCmdUI->Enable(TRUE);
 		break;
+	case ID_VIEW_SELECTROOT_TASKBAR:
+		pCmdUI->Enable(!m_IsRootSet);
+		break;
+	case ID_VIEW_INCLUDEBRANCH:
+	case ID_VIEW_EXCLUDEBRANCH:
+		pCmdUI->Enable(m_IsRootSet && m_SelectedHasChildren);
+		break;
+	case ID_VIEW_RENAME:
+		pCmdUI->Enable(m_IsRootSet && m_SelectedCanRename);
+		break;
+	case ID_VIEW_DELETE:
+		pCmdUI->Enable(m_IsRootSet && m_SelectedCanDelete);
+		break;
 	default:
 		pCmdUI->Enable(m_IsRootSet);
 	}
 }
 
-void CMainView::OnContextMenu(CWnd* pWnd, CPoint pos)
+void CMainView::OnContextMenu(CWnd* /*pWnd*/, CPoint pos)
 {
 	if ((pos.x==-1) && (pos.y==-1))
 	{

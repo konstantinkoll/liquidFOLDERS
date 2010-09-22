@@ -147,12 +147,13 @@ public:
 	BOOL WriteGlobalInt(LPCTSTR lpszEntry, int nValue);
 	BOOL WriteGlobalString(LPCTSTR lpszEntry, LPCTSTR lpszValue);
 	static void ExtractCoreIcons(HINSTANCE hModIcons, int size, CImageList* li);
-	UINT DeleteStore(LFItemDescriptor* store, CWnd* pParentWnd=NULL, CWnd* pOwnerWnd=NULL);
-	UINT DeleteStore(LFStoreDescriptor* store, CWnd* pParentWnd=NULL, CWnd* pOwnerWnd=NULL);
-	void PlayNavigateSound();
-	void PlayWarningSound();
-	void PlayTrashSound();
-	BOOL HideFileExt();
+	static UINT DeleteStore(LFItemDescriptor* store, CWnd* pParentWnd=NULL, CWnd* pOwnerWnd=NULL);
+	static UINT DeleteStore(LFStoreDescriptor* store, CWnd* pParentWnd=NULL, CWnd* pOwnerWnd=NULL);
+	static void PlayNavigateSound();
+	static void PlayWarningSound();
+	static void PlayTrashSound();
+	static BOOL HideFileExt();
+	static CString GetCommandName(UINT nID, BOOL bInsertSpace=FALSE);
 
 	afx_msg void OnAppNewFileDrop();
 	afx_msg void OnAppNewMigrate();

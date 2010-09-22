@@ -477,6 +477,18 @@ UINT CTreeView::GetChildRect(CPoint item)
 	return row-1;
 }
 
+void CTreeView::NotifyOwner()
+{
+	tagTreeView tag;
+	ZeroMemory(&tag, sizeof(tag));
+	tag.hdr.hwndFrom = m_hWnd;
+	tag.hdr.idFrom = GetDlgCtrlID();
+	tag.hdr.code = TVN_SELCHANGED;
+	tag.pCell = ((m_Selected.x==-1) || (m_Selected.y==-1)) ? NULL : &m_Tree[MAKEPOSI(m_Selected)];
+
+	GetOwner()->SendMessage(WM_NOTIFY, tag.hdr.idFrom, LPARAM(&tag));
+}
+
 
 BEGIN_MESSAGE_MAP(CTreeView, CWnd)
 	ON_WM_CREATE()
@@ -961,14 +973,15 @@ void CTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 			{
 				if (cell->Flags & CF_HASCHILDREN)
 				{
-					CString tmpStr;
-					ENSURE(tmpStr.LoadString(NULL, ID_VIEW_INCLUDEBRANCH));
+					CString tmpStr = theApp.GetCommandName(ID_VIEW_INCLUDEBRANCH);
 					tmpStr.Insert(0, _T("&"));
 					InsertMenu(hPopup, 0, MF_BYPOSITION, 0x7000, tmpStr);
-					ENSURE(tmpStr.LoadString(NULL, ID_VIEW_EXCLUDEBRANCH));
+
+					tmpStr = theApp.GetCommandName(ID_VIEW_EXCLUDEBRANCH);
 					tmpStr.Insert(0, _T("&"));
 					InsertMenu(hPopup, 1, MF_BYPOSITION, 0x7001, tmpStr);
-					InsertMenu(hPopup, 2, MF_BYPOSITION | MF_SEPARATOR, 0x7001, NULL);
+
+					InsertMenu(hPopup, 2, MF_BYPOSITION | MF_SEPARATOR, 0, NULL);
 				}
 
 				SetMenuDefaultItem(hPopup, (UINT)-1, 0);

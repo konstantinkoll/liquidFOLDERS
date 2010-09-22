@@ -6,11 +6,12 @@
 #define IDB_ABOUTICON                   129
 #define IDB_TASKS                       130
 #define ID_VIEW_SELECTROOT              400
-#define ID_VIEW_INCLUDEBRANCH           401
-#define ID_VIEW_EXCLUDEBRANCH           402
-#define ID_VIEW_RENAME                  403
-#define ID_VIEW_DELETE                  404
-#define ID_VIEW_PROPERTIES              405
+#define ID_VIEW_SELECTROOT_TASKBAR      401
+#define ID_VIEW_INCLUDEBRANCH           402
+#define ID_VIEW_EXCLUDEBRANCH           403
+#define ID_VIEW_RENAME                  404
+#define ID_VIEW_DELETE                  405
+#define ID_VIEW_PROPERTIES              406
 #define ID_VIEW_AUTOSIZE                500
 #define ID_VIEW_AUTOSIZEALL             501
 #define IDM_BACKGROUND                  600

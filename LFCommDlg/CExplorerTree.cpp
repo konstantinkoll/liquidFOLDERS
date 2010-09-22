@@ -714,7 +714,7 @@ void CExplorerTree::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 					CString tmpStr;
 					ENSURE(tmpStr.LoadString(LFCommDlgDLL.hResource, tvItem.state & TVIS_EXPANDED ? IDS_COLLAPSE : IDS_EXPAND));
 					InsertMenu(hPopup, 0, MF_BYPOSITION, 0x7000, tmpStr);
-					InsertMenu(hPopup, 1, MF_BYPOSITION | MF_SEPARATOR, 0x7001, NULL);
+					InsertMenu(hPopup, 1, MF_BYPOSITION | MF_SEPARATOR, 0, NULL);
 					SetMenuDefaultItem(hPopup, 0x7000, 0);
 				}
 

@@ -306,6 +306,8 @@ BEGIN_MESSAGE_MAP(CDropdownSelector, CWnd)
 	ON_WM_LBUTTONDOWN()
 	ON_WM_LBUTTONUP()
 	ON_WM_RBUTTONUP()
+	ON_WM_KEYDOWN()
+	ON_MESSAGE(WM_OPENDROPDOWN, OnOpenDropdown)
 	ON_MESSAGE(WM_CLOSEDROPDOWN, OnCloseDropdown)
 	ON_WM_SETFOCUS()
 	ON_WM_KILLFOCUS()
@@ -582,41 +584,8 @@ void CDropdownSelector::OnLButtonDown(UINT /*nFlags*/, CPoint /*point*/)
 	}
 	else
 	{
-		m_Pressed = m_Dropped = TRUE;
-		SetCapture();
-
-		CreateDropdownWindow();
-
-		CRect rectClient;
-		GetClientRect(rectClient);
-		ClientToScreen(rectClient);
-
-		MONITORINFO mi;
-		mi.cbSize = sizeof(MONITORINFO);
-
-		CRect rectScreen;
-		if (GetMonitorInfo(MonitorFromPoint(rectClient.TopLeft(), MONITOR_DEFAULTTONEAREST), &mi))
-		{
-			rectScreen = mi.rcWork;
-		}
-		else
-		{
-			SystemParametersInfo(SPI_GETWORKAREA, 0, &rectScreen, 0);
-		}
-
-		CRect rectDrop(rectClient);
-		rectDrop.DeflateRect(1, 1);
-		rectDrop.top = rectDrop.bottom;
-		rectDrop.bottom = rectDrop.top+rectScreen.Height()*2/5;
-		if (rectDrop.Width()<500)
-			rectDrop.right = rectDrop.left+500;
-		if (rectDrop.bottom>rectScreen.bottom)
-			rectDrop.MoveToY(rectClient.top-rectDrop.Height()+1);
-
-		p_DropWindow->SetWindowPos(&wndTopMost, rectDrop.left, rectDrop.top, rectDrop.Width(), rectDrop.Height(), SWP_SHOWWINDOW | SWP_NOACTIVATE);
-		((CGlasWindow*)GetParent())->RegisterPopupWindow(p_DropWindow);
-
-		Invalidate();
+		m_Pressed = TRUE;
+		OnOpenDropdown();
 	}
 }
 
@@ -639,6 +608,64 @@ void CDropdownSelector::OnRButtonUp(UINT nFlags, CPoint point)
 	GetParent()->ScreenToClient(&point);
 
 	GetParent()->SendMessage(WM_RBUTTONUP, (WPARAM)nFlags, (LPARAM)((point.y<<16) | point.x));
+}
+
+void CDropdownSelector::OnKeyDown(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags*/)
+{
+	switch(nChar)
+	{
+	case VK_SPACE:
+	case VK_RETURN:
+	case VK_DOWN:
+		if ((GetKeyState(VK_CONTROL)>=0) && (GetKeyState(VK_SHIFT)>=0) && (!m_Dropped))
+		{
+			OnOpenDropdown();
+			ReleaseCapture();
+		}
+	}
+}
+
+LRESULT CDropdownSelector::OnOpenDropdown(WPARAM /*wParam*/, LPARAM /*lParam*/)
+{
+	if (m_Dropped)
+		return FALSE;
+
+	m_Dropped = TRUE;
+	SetCapture();
+
+	CreateDropdownWindow();
+
+	CRect rectClient;
+	GetClientRect(rectClient);
+	ClientToScreen(rectClient);
+
+	MONITORINFO mi;
+	mi.cbSize = sizeof(MONITORINFO);
+
+	CRect rectScreen;
+	if (GetMonitorInfo(MonitorFromPoint(rectClient.TopLeft(), MONITOR_DEFAULTTONEAREST), &mi))
+	{
+		rectScreen = mi.rcWork;
+	}
+	else
+	{
+		SystemParametersInfo(SPI_GETWORKAREA, 0, &rectScreen, 0);
+	}
+
+	CRect rectDrop(rectClient);
+	rectDrop.DeflateRect(1, 1);
+	rectDrop.top = rectDrop.bottom;
+	rectDrop.bottom = rectDrop.top+rectScreen.Height()*2/5;
+	if (rectDrop.Width()<500)
+		rectDrop.right = rectDrop.left+500;
+	if (rectDrop.bottom>rectScreen.bottom)
+		rectDrop.MoveToY(rectClient.top-rectDrop.Height()+1);
+
+	p_DropWindow->SetWindowPos(&wndTopMost, rectDrop.left, rectDrop.top, rectDrop.Width(), rectDrop.Height(), SWP_SHOWWINDOW | SWP_NOACTIVATE);
+	((CGlasWindow*)GetParent())->RegisterPopupWindow(p_DropWindow);
+
+	Invalidate();
+	return TRUE;
 }
 
 LRESULT CDropdownSelector::OnCloseDropdown(WPARAM /*wParam*/, LPARAM /*lParam*/)

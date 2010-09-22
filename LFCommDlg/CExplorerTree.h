@@ -14,7 +14,7 @@
 #define CETR_InternalDrives     _T("::DRVINTERNAL")
 #define CETR_ExternalDrives     _T("::DRVEXTERNAL")
 
-#define WM_SHELLCHANGE         WM_USER+2
+#define WM_SHELLCHANGE         WM_USER+3
 
 class AFX_EXT_CLASS CExplorerTree : public CTreeCtrl
 {

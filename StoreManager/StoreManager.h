@@ -64,7 +64,6 @@ public:
 	HBITMAP GetGLTexture(UINT nID);
 	void FreeGLTexture(UINT nID);
 	static void GetBackgroundColors(UINT Background, COLORREF* back, COLORREF* text=NULL, COLORREF* highlight=NULL);
-	static CString GetCommandName(UINT nID, BOOL bInsertSpace=FALSE);
 	static CMFCRibbonButton* CommandButton(UINT nID, int nSmallImageIndex=-1, int nLargeImageIndex=-1, BOOL bAlwaysShowDescription=FALSE, BOOL bInsertSpace=FALSE);
 	static CMFCRibbonCheckBox* CommandCheckBox(UINT nID);
 

@@ -14,7 +14,8 @@
 #define GWD_THEMED             2
 #define GWD_AERO               3
 
-#define WM_CLOSEDROPDOWN       WM_USER+1
+#define WM_OPENDROPDOWN        WM_USER+1
+#define WM_CLOSEDROPDOWN       WM_USER+2
 
 class AFX_EXT_CLASS CGlasWindow : public CWnd
 {
