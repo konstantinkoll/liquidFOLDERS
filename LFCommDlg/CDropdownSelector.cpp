@@ -82,7 +82,18 @@ void CDropdownListCtrl::OnLButtonUp(UINT /*nFlags*/, CPoint point)
 		GetItemRect(idx, rect, LVIR_BOUNDS);
 
 		if (rect.PtInRect(point))
-			SetItemState(idx, LVIS_SELECTED, LVIS_SELECTED);
+		{
+			NMLISTVIEW tag;
+			ZeroMemory(&tag, sizeof(NMLISTVIEW));
+			tag.hdr.code = LVN_ITEMCHANGED;
+			tag.hdr.hwndFrom = m_hWnd;
+			tag.hdr.idFrom = GetDlgCtrlID();
+			tag.iItem = idx;
+			tag.uChanged = LVIF_STATE;
+			tag.uNewState = LVIS_SELECTED;
+
+			GetOwner()->SendNotifyMessage(WM_NOTIFY, tag.hdr.idFrom, LPARAM(&tag));
+		}
 	}
 }
 
