@@ -191,56 +191,40 @@ void CTreeView::SetBranchCheck(BOOL Check, CPoint item)
 	Invalidate();
 }
 
+void CTreeView::DeleteFolder(CPoint item)
+{
+	if ((item.x==-1) || (item.y==-1))
+		item = m_Selected;
+
+	ASSERT(m_Tree[MAKEPOSI(item)].pItem);
+
+/*	SHELLEXECUTEINFO sei;
+	ZeroMemory(&sei, sizeof(sei));
+	sei.cbSize = sizeof(sei);
+	sei.fMask = SEE_MASK_IDLIST;
+	sei.lpIDList = m_Tree[MAKEPOSI(item)].pItem->pidlFQ;
+	sei.hwnd = theApp.m_pMainWnd->GetSafeHwnd();
+	sei.nShow = SW_SHOWNORMAL;
+	sei.lpVerb = _T("properties");
+	ShellExecuteEx(&sei);*/
+}
+
 void CTreeView::ShowProperties(CPoint item)
 {
 	if ((item.x==-1) || (item.y==-1))
 		item = m_Selected;
 
-	Cell* cell = &m_Tree[MAKEPOSI(item)];
+	ASSERT(m_Tree[MAKEPOSI(item)].pItem);
 
-	IShellFolder* psfFolder = cell->pItem->pParentFolder;
-	if (!psfFolder)
-	{
-		if (FAILED(SHGetDesktopFolder(&psfFolder)))
-			return;
-	}
-	else
-	{
-		psfFolder->AddRef();
-	}
-
-	IContextMenu* pcm = NULL;
-	if (SUCCEEDED(psfFolder->GetUIObjectOf(theApp.m_pMainWnd->GetSafeHwnd(), 1, (LPCITEMIDLIST*)&cell->pItem->pidlRel, IID_IContextMenu, NULL, (void**)&pcm)))
-	{
-		HMENU hPopup = CreatePopupMenu();
-		if (hPopup)
-		{
-			UINT uFlags = CMF_NORMAL | CMF_EXPLORE | CMF_CANRENAME;
-			if (SUCCEEDED(pcm->QueryContextMenu(hPopup, 0, 1, 0x6FFF, uFlags)))
-			{
-				CWaitCursor wait;
-
-				CMINVOKECOMMANDINFO cmi;
-				cmi.cbSize = sizeof(CMINVOKECOMMANDINFO);
-				cmi.fMask = 0;
-				cmi.hwnd = theApp.m_pMainWnd->GetSafeHwnd();
-				cmi.lpVerb = "properties";
-				cmi.lpParameters = NULL;
-				cmi.lpDirectory = NULL;
-				cmi.nShow = SW_SHOWNORMAL;
-				cmi.dwHotKey = 0;
-				cmi.hIcon = NULL;
-
-				pcm->InvokeCommand(&cmi);
-
-				SetFocus();
-			}
-		}
-
-		pcm->Release();
-	}
-
-	psfFolder->Release();
+	SHELLEXECUTEINFO sei;
+	ZeroMemory(&sei, sizeof(sei));
+	sei.cbSize = sizeof(sei);
+	sei.fMask = SEE_MASK_IDLIST;
+	sei.lpIDList = m_Tree[MAKEPOSI(item)].pItem->pidlFQ;
+	sei.hwnd = theApp.m_pMainWnd->GetSafeHwnd();
+	sei.nShow = SW_SHOWNORMAL;
+	sei.lpVerb = _T("properties");
+	ShellExecuteEx(&sei);
 }
 
 BOOL CTreeView::InsertRow(UINT Row)
@@ -308,18 +292,16 @@ void CTreeView::SetItem(UINT row, UINT col, IShellFolder* pParentFolder, LPITEMI
 	cell->pItem->pParentFolder = pParentFolder;
 
 	SHFILEINFO sfi;
-	if (SUCCEEDED(SHGetFileInfo((LPCTSTR)pidlFQ, 0, &sfi, sizeof(sfi), SHGFI_PIDL | SHGFI_DISPLAYNAME)))
+	if (SUCCEEDED(SHGetFileInfo((LPCTSTR)pidlFQ, 0, &sfi, sizeof(sfi), SHGFI_PIDL | SHGFI_SYSICONINDEX | SHGFI_SMALLICON | SHGFI_LINKOVERLAY | SHGFI_DISPLAYNAME)))
 	{
 		wcscpy_s(cell->pItem->Name, 256, sfi.szDisplayName);
+		cell->pItem->IconIDNormal = sfi.iIcon;
 	}
 	else
 	{
 		wcscpy_s(cell->pItem->Name, 256, L"?");
+		cell->pItem->IconIDNormal = -1;
 	}
-
-	cell->pItem->IconIDNormal =
-		SUCCEEDED(SHGetFileInfo((LPCTSTR)pidlFQ, 0, &sfi, sizeof(sfi), SHGFI_PIDL | SHGFI_SYSICONINDEX | SHGFI_SMALLICON | SHGFI_LINKOVERLAY))
-		? sfi.iIcon : -1;
 
 	cell->pItem->IconIDSelected =
 		SUCCEEDED(SHGetFileInfo((LPCTSTR)pidlFQ, 0, &sfi, sizeof(sfi), SHGFI_PIDL | SHGFI_SYSICONINDEX | SHGFI_SMALLICON | SHGFI_OPENICON))

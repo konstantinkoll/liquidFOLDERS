@@ -224,7 +224,8 @@ HTREEITEM CExplorerTree::InsertItem(wchar_t* Path, HTREEITEM hParent)
 		return NULL;
 
 	DWORD dwAttribs = SFGAO_HASSUBFOLDER;
-	pParentFolder->GetAttributesOf(1, (LPCITEMIDLIST*)&pidlRel, &dwAttribs);
+	if (pParentFolder)
+		pParentFolder->GetAttributesOf(1, (LPCITEMIDLIST*)&pidlRel, &dwAttribs);
 
 	HTREEITEM hItem = InsertItem(pParentFolder, p_App->GetShellManager()->CopyItem(pidlRel), hParent, (dwAttribs & SFGAO_HASSUBFOLDER), pidlFQ);
 

@@ -90,6 +90,7 @@ BEGIN_MESSAGE_MAP(CMainView, CWnd)
 	ON_WM_SETFOCUS()
 	ON_COMMAND(ID_VIEW_SELECTROOT, OnSelectRoot)
 	ON_COMMAND(ID_VIEW_SELECTROOT_TASKBAR, OnSelectRoot)
+	ON_COMMAND(ID_VIEW_DELETE, OnDelete)
 	ON_COMMAND(ID_VIEW_PROPERTIES, OnProperties)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_VIEW_SELECTROOT, ID_VIEW_PROPERTIES, OnUpdateTaskbar)
 	ON_WM_CONTEXTMENU()
@@ -150,6 +151,11 @@ void CMainView::OnSetFocus(CWnd* /*pOldWnd*/)
 void CMainView::OnSelectRoot()
 {
 	GetOwner()->SendMessage(WM_COMMAND, ID_VIEW_SELECTROOT);
+}
+
+void CMainView::OnDelete()
+{
+	m_wndTree.DeleteFolder();
 }
 
 void CMainView::OnProperties()
