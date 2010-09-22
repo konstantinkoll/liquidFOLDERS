@@ -1222,11 +1222,11 @@ BOOL CFolderItem::OnOpen(CExecuteMenuitemsEventArgs& e)
 		if (IS(item, CFolderItem))
 			if (!CUtils::BrowseTo(item->GetPIDLAbsolute(), e.hWnd))
 			{
-				SHELLEXECUTEINFO  sei;
+				SHELLEXECUTEINFO sei;
 				ZeroMemory(&sei, sizeof(sei));
 				sei.cbSize = sizeof(sei);
 				sei.fMask = SEE_MASK_IDLIST | SEE_MASK_CLASSNAME;
-				sei.lpIDList = GetPIDLAbsolute();
+				sei.lpIDList = item->GetPIDLAbsolute();
 				sei.lpClass = _T("folder");
 				sei.hwnd = GetViewWindow();
 				sei.nShow = SW_SHOWNORMAL;
