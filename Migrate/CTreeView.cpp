@@ -193,38 +193,12 @@ void CTreeView::SetBranchCheck(BOOL Check, CPoint item)
 
 void CTreeView::DeleteFolder(CPoint item)
 {
-	if ((item.x==-1) || (item.y==-1))
-		item = m_Selected;
-
-	ASSERT(m_Tree[MAKEPOSI(item)].pItem);
-
-/*	SHELLEXECUTEINFO sei;
-	ZeroMemory(&sei, sizeof(sei));
-	sei.cbSize = sizeof(sei);
-	sei.fMask = SEE_MASK_IDLIST;
-	sei.lpIDList = m_Tree[MAKEPOSI(item)].pItem->pidlFQ;
-	sei.hwnd = theApp.m_pMainWnd->GetSafeHwnd();
-	sei.nShow = SW_SHOWNORMAL;
-	sei.lpVerb = _T("properties");
-	ShellExecuteEx(&sei);*/
+	ExecuteContextMenu(item, "delete");
 }
 
 void CTreeView::ShowProperties(CPoint item)
 {
-	if ((item.x==-1) || (item.y==-1))
-		item = m_Selected;
-
-	ASSERT(m_Tree[MAKEPOSI(item)].pItem);
-
-	SHELLEXECUTEINFO sei;
-	ZeroMemory(&sei, sizeof(sei));
-	sei.cbSize = sizeof(sei);
-	sei.fMask = SEE_MASK_IDLIST;
-	sei.lpIDList = m_Tree[MAKEPOSI(item)].pItem->pidlFQ;
-	sei.hwnd = theApp.m_pMainWnd->GetSafeHwnd();
-	sei.nShow = SW_SHOWNORMAL;
-	sei.lpVerb = _T("properties");
-	ShellExecuteEx(&sei);
+	ExecuteContextMenu(item, "properties");
 }
 
 BOOL CTreeView::InsertRow(UINT Row)
@@ -259,7 +233,7 @@ BOOL CTreeView::InsertRow(UINT Row)
 	return TRUE;
 }
 
-void CTreeView::SetItem(UINT row, UINT col, IShellFolder* pParentFolder, LPITEMIDLIST pidlRel, LPITEMIDLIST pidlFQ, UINT Flags)
+void CTreeView::SetItem(UINT row, UINT col, LPITEMIDLIST pidlRel, LPITEMIDLIST pidlFQ, UINT Flags)
 {
 	ASSERT(row<m_Rows);
 	ASSERT(col<MaxColumns);
@@ -276,20 +250,14 @@ void CTreeView::SetItem(UINT row, UINT col, IShellFolder* pParentFolder, LPITEMI
 	{
 		theApp.GetShellManager()->FreeItem(cell->pItem->pidlFQ);
 		theApp.GetShellManager()->FreeItem(cell->pItem->pidlRel);
-		if (cell->pItem->pParentFolder)
-			cell->pItem->pParentFolder->Release();
 	}
 
 	if (!pidlRel)
 		return;
 
-	if (pParentFolder)
-		pParentFolder->AddRef();
-
 	cell->Flags = Flags;
 	cell->pItem->pidlFQ = pidlFQ ? pidlFQ : theApp.GetShellManager()->CopyItem(pidlRel);
 	cell->pItem->pidlRel = pidlRel;
-	cell->pItem->pParentFolder = pParentFolder;
 
 	SHFILEINFO sfi;
 	if (SUCCEEDED(SHGetFileInfo((LPCTSTR)pidlFQ, 0, &sfi, sizeof(sfi), SHGFI_PIDL | SHGFI_SYSICONINDEX | SHGFI_SMALLICON | SHGFI_LINKOVERLAY | SHGFI_DISPLAYNAME)))
@@ -315,17 +283,17 @@ UINT CTreeView::InsertItem(UINT row, UINT col, IShellFolder* pParentFolder, LPIT
 {
 	UINT Inserted = 0;
 
-	SetItem(row, col, pParentFolder, pidlRel, pidlFQ, Flags);
+	SetItem(row, col, pidlRel, pidlFQ, Flags);
 
 	if (col<MaxColumns-1)
 	{
 		IShellFolder* pFolder;
 		HRESULT hr;
-		if (!pParentFolder)
+		/*if (!pParentFolder)
 		{
 			hr = SHGetDesktopFolder(&pFolder);
 		}
-		else
+		else*/
 		{
 			hr = pDesktop->BindToObject(pidlFQ, NULL, IID_IShellFolder, (void**)&pFolder);
 		}
@@ -392,8 +360,6 @@ void CTreeView::FreeItem(Cell* cell)
 	{
 		theApp.GetShellManager()->FreeItem(cell->pItem->pidlFQ);
 		theApp.GetShellManager()->FreeItem(cell->pItem->pidlRel);
-		if (cell->pItem->pParentFolder)
-			cell->pItem->pParentFolder->Release();
 
 		free(cell->pItem);
 	}
@@ -540,6 +506,48 @@ void CTreeView::SelectItem(CPoint Item)
 	m_Selected = Item;
 
 	NotifyOwner();
+}
+
+void CTreeView::ExecuteContextMenu(CPoint item, LPCSTR verb)
+{
+	if ((item.x==-1) || (item.y==-1))
+		item = m_Selected;
+	if ((item.x==-1) || (item.y==-1))
+		return;
+
+	Cell* cell = &m_Tree[MAKEPOSI(item)];
+	ASSERT(cell->pItem);
+
+	IShellFolder* pParentFolder = NULL;
+	if (FAILED(SHBindToParent(cell->pItem->pidlFQ, IID_IShellFolder, (void**)&pParentFolder, NULL)))
+		return;
+
+	IContextMenu* pcm = NULL;
+	if (SUCCEEDED(pParentFolder->GetUIObjectOf(theApp.m_pMainWnd->GetSafeHwnd(), 1, (LPCITEMIDLIST*)&cell->pItem->pidlRel, IID_IContextMenu, NULL, (void**)&pcm)))
+	{
+		HMENU hPopup = CreatePopupMenu();
+		if (hPopup)
+		{
+			UINT uFlags = CMF_NORMAL | CMF_EXPLORE;
+			if (SUCCEEDED(pcm->QueryContextMenu(hPopup, 0, 1, 0x6FFF, uFlags)))
+			{
+				CWaitCursor wait;
+
+				CMINVOKECOMMANDINFO cmi;
+				cmi.cbSize = sizeof(CMINVOKECOMMANDINFO);
+				cmi.fMask = 0;
+				cmi.hwnd = theApp.m_pMainWnd->GetSafeHwnd();
+				cmi.lpVerb = verb;
+				cmi.lpParameters = NULL;
+				cmi.lpDirectory = NULL;
+				cmi.nShow = SW_SHOWNORMAL;
+				cmi.dwHotKey = 0;
+				cmi.hIcon = NULL;
+
+				pcm->InvokeCommand(&cmi);
+			}
+		}
+	}
 }
 
 
@@ -997,19 +1005,12 @@ void CTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 	if (!cell->pItem)
 		return;
 
-	IShellFolder* psfFolder = cell->pItem->pParentFolder;
-	if (!psfFolder)
-	{
-		if (FAILED(SHGetDesktopFolder(&psfFolder)))
-			return;
-	}
-	else
-	{
-		psfFolder->AddRef();
-	}
+	IShellFolder* pParentFolder = NULL;
+	if (FAILED(SHBindToParent(cell->pItem->pidlFQ, IID_IShellFolder, (void**)&pParentFolder, NULL)))
+		return;
 
 	IContextMenu* pcm = NULL;
-	if (SUCCEEDED(psfFolder->GetUIObjectOf(theApp.m_pMainWnd->GetSafeHwnd(), 1, (LPCITEMIDLIST*)&cell->pItem->pidlRel, IID_IContextMenu, NULL, (void**)&pcm)))
+	if (SUCCEEDED(pParentFolder->GetUIObjectOf(theApp.m_pMainWnd->GetSafeHwnd(), 1, (LPCITEMIDLIST*)&cell->pItem->pidlRel, IID_IContextMenu, NULL, (void**)&pcm)))
 	{
 		HMENU hPopup = CreatePopupMenu();
 		if (hPopup)
@@ -1086,7 +1087,7 @@ void CTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 		pcm->Release();
 	}
 
-	psfFolder->Release();
+	pParentFolder->Release();
 }
 
 void CTreeView::OnSetFocus(CWnd* /*pOldWnd*/)

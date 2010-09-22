@@ -23,7 +23,6 @@ struct ItemData
 {
 	LPITEMIDLIST pidlFQ;
 	LPITEMIDLIST pidlRel;
-	IShellFolder* pParentFolder;
 	wchar_t Name[256];
 	int IconIDNormal;
 	int IconIDSelected;
@@ -82,7 +81,7 @@ protected:
 
 	BOOL InsertRow(UINT Row);
 	//BOOL RemoveRow(UINT Row);
-	void SetItem(UINT row, UINT col, IShellFolder* pParentFolder, LPITEMIDLIST pidlRel, LPITEMIDLIST pidlFQ, UINT Flags);
+	void SetItem(UINT row, UINT col, LPITEMIDLIST pidlRel, LPITEMIDLIST pidlFQ, UINT Flags);
 	UINT InsertItem(UINT row, UINT col, IShellFolder* pParentFolder, LPITEMIDLIST pidlRel, LPITEMIDLIST pidlFQ, UINT Flags);
 	void FreeItem(Cell* cell);
 	void FreeTree();
@@ -117,4 +116,5 @@ private:
 	void SetCheckboxSize();
 	UINT GetChildRect(CPoint item);
 	void NotifyOwner();
+	void ExecuteContextMenu(CPoint item, LPCSTR verb);
 };
