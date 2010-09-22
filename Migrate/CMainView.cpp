@@ -88,6 +88,7 @@ BEGIN_MESSAGE_MAP(CMainView, CWnd)
 	ON_WM_ERASEBKGND()
 	ON_WM_SIZE()
 	ON_WM_SETFOCUS()
+	ON_COMMAND(ID_VIEW_AUTOSIZEALL, OnAutosizeAll)
 	ON_COMMAND(ID_VIEW_SELECTROOT, OnSelectRoot)
 	ON_COMMAND(ID_VIEW_SELECTROOT_TASKBAR, OnSelectRoot)
 	ON_COMMAND(ID_VIEW_INCLUDEBRANCH, OnIncludeBranch)
@@ -148,6 +149,11 @@ void CMainView::OnSize(UINT nType, int cx, int cy)
 void CMainView::OnSetFocus(CWnd* /*pOldWnd*/)
 {
 	m_wndTree.SetFocus();
+}
+
+void CMainView::OnAutosizeAll()
+{
+	m_wndTree.AutosizeColumns();
 }
 
 void CMainView::OnSelectRoot()

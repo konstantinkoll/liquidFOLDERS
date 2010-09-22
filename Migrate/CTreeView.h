@@ -55,6 +55,7 @@ public:
 	void SetBranchCheck(BOOL Check, CPoint item=CPoint(-1, -1));
 	void DeleteFolder(CPoint item=CPoint(-1, -1));
 	void ShowProperties(CPoint item=CPoint(-1, -1));
+	void AutosizeColumns();
 
 protected:
 	Cell* m_Tree;

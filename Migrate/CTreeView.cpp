@@ -206,6 +206,19 @@ void CTreeView::ShowProperties(CPoint item)
 	ExecuteContextMenu(item, "properties");
 }
 
+void CTreeView::AutosizeColumns()
+{
+	m_wndHeader.SetRedraw(FALSE);
+
+	for (UINT col=0; col<m_Cols; col++)
+		AutosizeColumn(col);
+
+	Invalidate();
+
+	m_wndHeader.SetRedraw(TRUE);
+	m_wndHeader.Invalidate();
+}
+
 BOOL CTreeView::InsertRow(UINT Row)
 {
 	ASSERT(Row<=m_Rows);
