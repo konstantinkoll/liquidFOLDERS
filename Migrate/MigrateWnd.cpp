@@ -114,7 +114,8 @@ int CMigrateWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 void CMigrateWnd::OnSetFocus(CWnd* /*pOldWnd*/)
 {
-	m_wndMainView.SetFocus();
+	if (IsWindow(m_wndMainView))
+		m_wndMainView.SetFocus();
 }
 
 void CMigrateWnd::OnIdleUpdateCmdUI()

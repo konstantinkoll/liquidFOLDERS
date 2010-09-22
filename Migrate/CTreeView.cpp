@@ -126,6 +126,9 @@ void CTreeView::SetRoot(LPITEMIDLIST pidl, BOOL Update)
 	{
 		FreeTree();
 		InsertRow(0);
+
+		for (int col=m_wndHeader.GetItemCount()-1; col>=0; col--)
+			m_wndHeader.DeleteItem(col);
 	}
 
 	HRESULT hr;
@@ -149,7 +152,9 @@ void CTreeView::SetRoot(LPITEMIDLIST pidl, BOOL Update)
 
 		if (!Update)
 		{
-			// TODO
+			for (UINT a=0; a<m_Cols; a++)
+				AutosizeColumn(a);
+
 			m_Selected.x = m_Selected.y = 0;
 		}
 	}
@@ -558,6 +563,38 @@ void CTreeView::ExecuteContextMenu(CPoint item, LPCSTR verb)
 	}
 }
 
+void CTreeView::AutosizeColumn(UINT col)
+{
+	int Width = 0;
+	for (UINT row=0; row<m_Rows; row++)
+		if (m_Tree[MAKEPOS(row, col)].pItem)
+			Width = max(Width, m_Tree[MAKEPOS(row, col)].pItem->Width);
+
+	Width = min(Width+GUTTER+2*BORDER+m_CheckboxSize.cx+m_IconSize.cx+3*MARGIN, MAXWIDTH);
+
+	m_ColumnWidth[col] = Width;
+
+	if (m_wndHeader.GetItemCount()>(int)col)
+	{
+		HDITEM HdItem;
+		HdItem.mask = HDI_WIDTH;
+		HdItem.cxy = m_ColumnWidth[col];
+		m_wndHeader.SetItem(col, &HdItem);
+	}
+	else
+		while (m_wndHeader.GetItemCount()<=(int)col)
+		{
+			int idx = m_wndHeader.GetItemCount();
+
+			HDITEM HdItem;
+			HdItem.mask = HDI_TEXT | HDI_WIDTH | HDI_FORMAT;
+			HdItem.fmt = HDF_STRING | HDF_CENTER;
+			HdItem.cxy = m_ColumnWidth[idx];
+			HdItem.pszText = idx ? L"No property" : L"";
+			m_wndHeader.InsertItem(idx, &HdItem);
+		}
+}
+
 
 BEGIN_MESSAGE_MAP(CTreeView, CWnd)
 	ON_WM_CREATE()
@@ -616,17 +653,6 @@ int CTreeView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	for (UINT a=0; a<MaxColumns; a++)
 		m_ColumnWidth[a] = MINWIDTH;
-
-	HDITEM HdItem;
-	HdItem.mask = HDI_TEXT | HDI_WIDTH | HDI_FORMAT;
-	HdItem.fmt = HDF_STRING | HDF_CENTER;
-
-	for (UINT a=0; a<MaxColumns; a++)
-	{
-		HdItem.cxy = m_ColumnWidth[a];
-		HdItem.pszText = a ? L"Ignore" : L"";
-		m_wndHeader.InsertItem(a, &HdItem);
-	}
 
 	return 0;
 }
@@ -847,7 +873,7 @@ BOOL CTreeView::OnSetCursor(CWnd* /*pWnd*/, UINT /*nHitTest*/, UINT /*message*/)
 void CTreeView::OnMouseMove(UINT nFlags, CPoint point)
 {
 	BOOL Dragging = (GetCapture()==this);
-	BOOL Pressed;
+	BOOL Pressed = FALSE;
 	CPoint Item(-1, -1);
 	BOOL OnItem = HitTest(point, &Item, Dragging ? &Pressed : &m_CheckboxHot);
 

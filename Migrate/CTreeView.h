@@ -118,4 +118,5 @@ private:
 	UINT GetChildRect(CPoint item);
 	void NotifyOwner();
 	void ExecuteContextMenu(CPoint item, LPCSTR verb);
+	void AutosizeColumn(UINT col);
 };
