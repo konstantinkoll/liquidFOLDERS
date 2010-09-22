@@ -26,6 +26,7 @@ struct ItemData
 	wchar_t Name[256];
 	int IconIDNormal;
 	int IconIDSelected;
+	int Width;
 	wchar_t Path[MAX_PATH];
 };
 

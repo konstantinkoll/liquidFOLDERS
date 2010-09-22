@@ -271,6 +271,14 @@ void CTreeView::SetItem(UINT row, UINT col, LPITEMIDLIST pidlRel, LPITEMIDLIST p
 		cell->pItem->IconIDNormal = -1;
 	}
 
+	CDC* pDC = GetWindowDC();
+	CFont* pOldFont = pDC->SelectObject(&theApp.m_DefaultFont);
+	CSize sz = pDC->GetTextExtent(cell->pItem->Name, wcslen(cell->pItem->Name));
+	pDC->SelectObject(pOldFont);
+	ReleaseDC(pDC);
+
+	cell->pItem->Width = sz.cx;
+
 	cell->pItem->IconIDSelected =
 		SUCCEEDED(SHGetFileInfo((LPCTSTR)pidlFQ, 0, &sfi, sizeof(sfi), SHGFI_PIDL | SHGFI_SYSICONINDEX | SHGFI_SMALLICON | SHGFI_OPENICON))
 		? sfi.iIcon : -1;
@@ -775,8 +783,12 @@ void CTreeView::OnPaint()
 
 					if (curCell->Flags & CF_HASCHILDREN)
 					{
-						dc.MoveTo(x+GUTTER+BORDER, y+m_RowHeight/2);
-						dc.LineTo(x+m_ColumnWidth[col], y+m_RowHeight/2);
+						int right = x+GUTTER+BORDER+m_CheckboxSize.cx+m_IconSize.cx+2*MARGIN+curCell->pItem->Width+1;
+						if (right<x+m_ColumnWidth[col])
+						{
+							dc.MoveTo(x+m_ColumnWidth[col], y+m_RowHeight/2);
+							dc.LineTo(right, y+m_RowHeight/2);
+						}
 					}
 				}
 			}
