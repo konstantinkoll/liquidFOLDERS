@@ -289,11 +289,11 @@ UINT CTreeView::InsertItem(UINT row, UINT col, IShellFolder* pParentFolder, LPIT
 	{
 		IShellFolder* pFolder;
 		HRESULT hr;
-		/*if (!pParentFolder)
+		if (!pParentFolder)
 		{
 			hr = SHGetDesktopFolder(&pFolder);
 		}
-		else*/
+		else
 		{
 			hr = pDesktop->BindToObject(pidlFQ, NULL, IID_IShellFolder, (void**)&pFolder);
 		}

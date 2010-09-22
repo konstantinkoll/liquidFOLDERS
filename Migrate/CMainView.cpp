@@ -90,6 +90,8 @@ BEGIN_MESSAGE_MAP(CMainView, CWnd)
 	ON_WM_SETFOCUS()
 	ON_COMMAND(ID_VIEW_SELECTROOT, OnSelectRoot)
 	ON_COMMAND(ID_VIEW_SELECTROOT_TASKBAR, OnSelectRoot)
+	ON_COMMAND(ID_VIEW_INCLUDEBRANCH, OnIncludeBranch)
+	ON_COMMAND(ID_VIEW_EXCLUDEBRANCH, OnExcludeBranch)
 	ON_COMMAND(ID_VIEW_DELETE, OnDelete)
 	ON_COMMAND(ID_VIEW_PROPERTIES, OnProperties)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_VIEW_SELECTROOT, ID_VIEW_PROPERTIES, OnUpdateTaskbar)
@@ -151,6 +153,16 @@ void CMainView::OnSetFocus(CWnd* /*pOldWnd*/)
 void CMainView::OnSelectRoot()
 {
 	GetOwner()->SendMessage(WM_COMMAND, ID_VIEW_SELECTROOT);
+}
+
+void CMainView::OnIncludeBranch()
+{
+	m_wndTree.SetBranchCheck(TRUE);
+}
+
+void CMainView::OnExcludeBranch()
+{
+	m_wndTree.SetBranchCheck(FALSE);
 }
 
 void CMainView::OnDelete()

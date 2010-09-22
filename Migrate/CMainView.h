@@ -38,6 +38,8 @@ protected:
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
 	afx_msg void OnSelectRoot();
+	afx_msg void OnIncludeBranch();
+	afx_msg void OnExcludeBranch();
 	afx_msg void OnDelete();
 	afx_msg void OnProperties();
 	afx_msg void OnUpdateTaskbar(CCmdUI* pCmdUI);
