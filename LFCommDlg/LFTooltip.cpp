@@ -191,8 +191,6 @@ void LFTooltip::Track(CPoint point, HICON hIcon, CSize szIcon, const CString& st
 
 	Invalidate();
 	UpdateWindow();
-
-	SetCursor(AfxGetApp()->LoadStandardCursor(IDC_ARROW));
 }
 
 void LFTooltip::Hide()

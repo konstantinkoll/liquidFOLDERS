@@ -33,18 +33,18 @@ LFCommDlg_API void TooltipDataFromPIDL(LPITEMIDLIST pidl, CImageList* icons, HIC
 	LFApplication* pApp = (LFApplication*)AfxGetApp();
 
 	SHFILEINFO sfi;
-	if (SUCCEEDED(SHGetFileInfo((wchar_t*)pidl, 0, &sfi, sizeof(SHFILEINFO), SHGFI_PIDL | SHGFI_DISPLAYNAME | SHGFI_TYPENAME | SHGFI_ICON | SHGFI_SYSICONINDEX | SHGFI_LARGEICON)))
+	if (SUCCEEDED(SHGetFileInfo((wchar_t*)pidl, 0, &sfi, sizeof(SHFILEINFO), SHGFI_PIDL | SHGFI_DISPLAYNAME | SHGFI_TYPENAME | SHGFI_SYSICONINDEX | SHGFI_LARGEICON)))
 	{
 		hIcon = icons->ExtractIcon(sfi.iIcon);
 		caption = sfi.szDisplayName;
 		hint = sfi.szTypeName;
 
-		IShellFolder* Parent = NULL;
+		IShellFolder* pParentFolder = NULL;
 		LPCITEMIDLIST Child = NULL;
-		if (SUCCEEDED(SHBindToParent(pidl, IID_IShellFolder, (void**)&Parent, &Child)))
+		if (SUCCEEDED(SHBindToParent(pidl, IID_IShellFolder, (void**)&pParentFolder, &Child)))
 		{
 			WIN32_FIND_DATA ffd;
-			if (SUCCEEDED(SHGetDataFromIDList(Parent, Child, SHGDFIL_FINDDATA, &ffd, sizeof(WIN32_FIND_DATA))))
+			if (SUCCEEDED(SHGetDataFromIDList(pParentFolder, Child, SHGDFIL_FINDDATA, &ffd, sizeof(WIN32_FIND_DATA))))
 			{
 				FILETIME lft;
 				wchar_t tmpBuf1[256];
@@ -60,7 +60,7 @@ LFCommDlg_API void TooltipDataFromPIDL(LPITEMIDLIST pidl, CImageList* icons, HIC
 					pApp->m_Attributes[LFAttrFileTime]->Name, tmpBuf2);
 				hint.Append(tmpStr);
 			}
-			Parent->Release();
+			pParentFolder->Release();
 		}
 
 		IMAGEINFO ii;
