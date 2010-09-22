@@ -533,7 +533,7 @@ void CDropdownSelector::OnMouseMove(UINT /*nFlags*/, CPoint /*point*/)
 		TRACKMOUSEEVENT tme;
 		tme.cbSize = sizeof(TRACKMOUSEEVENT);
 		tme.dwFlags = TME_LEAVE | TME_HOVER;
-		tme.dwHoverTime = HOVER_DEFAULT;
+		tme.dwHoverTime = LFHOVERTIME;
 		tme.hwndTrack = m_hWnd;
 		TrackMouseEvent(&tme);
 	}

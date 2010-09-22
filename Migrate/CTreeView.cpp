@@ -359,7 +359,7 @@ UINT CTreeView::InsertItem(UINT row, UINT col, IShellFolder* pParentFolder, LPIT
 				LPITEMIDLIST pidlTemp;
 				while (pEnum->Next(1, &pidlTemp, NULL)==S_OK)
 				{
-					DWORD dwAttribs = SFGAO_FOLDER | SFGAO_FILESYSANCESTOR | SFGAO_FILESYSTEM;
+					DWORD dwAttribs = SFGAO_FILESYSANCESTOR | SFGAO_FILESYSTEM;
 					pFolder->GetAttributesOf(1, (LPCITEMIDLIST*)&pidlTemp, &dwAttribs);
 
 					if (!(dwAttribs & (SFGAO_FILESYSANCESTOR | SFGAO_FILESYSTEM)))
@@ -856,7 +856,7 @@ void CTreeView::OnMouseMove(UINT nFlags, CPoint point)
 		TRACKMOUSEEVENT tme;
 		tme.cbSize = sizeof(TRACKMOUSEEVENT);
 		tme.dwFlags = TME_LEAVE | TME_HOVER;
-		tme.dwHoverTime = HOVER_DEFAULT;
+		tme.dwHoverTime = LFHOVERTIME;
 		tme.hwndTrack = m_hWnd;
 		TrackMouseEvent(&tme);
 	}
@@ -916,7 +916,7 @@ void CTreeView::OnMouseHover(UINT nFlags, CPoint point)
 	TRACKMOUSEEVENT tme;
 	tme.cbSize = sizeof(TRACKMOUSEEVENT);
 	tme.dwFlags = TME_LEAVE | TME_HOVER;
-	tme.dwHoverTime = HOVER_DEFAULT;
+	tme.dwHoverTime = LFHOVERTIME;
 	tme.hwndTrack = m_hWnd;
 	TrackMouseEvent(&tme);
 }

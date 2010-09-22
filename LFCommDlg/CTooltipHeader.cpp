@@ -226,7 +226,7 @@ void CTooltipHeader::OnMouseMove(UINT nFlags, CPoint point)
 		ZeroMemory(&tme, sizeof(tme));
 		tme.cbSize = sizeof(TRACKMOUSEEVENT);
 		tme.dwFlags = TME_LEAVE | TME_HOVER;
-		tme.dwHoverTime = HOVER_DEFAULT;
+		tme.dwHoverTime = LFHOVERTIME;
 		tme.hwndTrack = GetSafeHwnd();
 		TrackMouseEvent(&tme);
 	}
@@ -279,7 +279,7 @@ void CTooltipHeader::OnMouseHover(UINT nFlags, CPoint point)
 	ZeroMemory(&tme, sizeof(tme));
 	tme.cbSize = sizeof(TRACKMOUSEEVENT);
 	tme.dwFlags = TME_LEAVE | TME_HOVER;
-	tme.dwHoverTime = HOVER_DEFAULT;
+	tme.dwHoverTime = LFHOVERTIME;
 	tme.hwndTrack = GetSafeHwnd();
 	TrackMouseEvent(&tme);
 }
