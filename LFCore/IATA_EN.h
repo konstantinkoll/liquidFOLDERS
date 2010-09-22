@@ -1064,7 +1064,7 @@ LFAirport Airports_EN[AirportCount_EN] = {
 	{  43, "BOA", "", "Boma", { 5.853889, 13.063889 } },
 	{  67, "BOB", "", "Bora Bora", { 16.444444, -151.751389 } },
 	{ 156, "BOC", "", "Bocas del Toro", { -9.340833, -82.250833 } },
-	{  65, "BOD", "", "Bordeaux", { -44.828333, 0.715556 } },
+	{  65, "BOD", "", "Bordeaux", { -44.828611, -0.715278 } },
 	{  43, "BOE", "", "Boundji", { 1.033056, 15.383056 } },
 	{ 216, "BOF", "WAS", "Washington (Bolling Airforce Base)", { -38.842778, -77.016111 } },
 	{  41, "BOG", "", "Bogota", { -4.703056, -74.138333 } },

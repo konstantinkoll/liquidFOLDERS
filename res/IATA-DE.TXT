@@ -853,7 +853,7 @@ BNZ     Banz, Neu-Guinea;4;5*48'0"S, 144*36'0"E
 BOA     Boma, Kongo;4;5*51'14"S, 13*3'50"E
 BOB     Bora Bora, Franz.-Polynesien;4;16*26'40"S, 151*45'5"W
 BOC     Bocas del Toro, Panama;4;9*20'27"N, 82*15'3"W
-BOD     Bordeaux, Frankreich;5;44*49'42"N, 0*42'56"E
+BOD     Bordeaux, Frankreich;5;44*49'43"N, 0*42'55"W
 BOE     Boundji, Kongo;4;1*1'59"S, 15*22'59"E
 BOF WAS Washington (Bolling Airforce Base), USA;4;38*50'34"N, 77*0'58"W
 BOG     Bogota, Kolumbien;4;4*42'11"N, 74*8'18"W
