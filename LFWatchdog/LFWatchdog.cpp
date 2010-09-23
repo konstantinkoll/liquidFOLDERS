@@ -17,6 +17,7 @@
 wchar_t const szWindowClass[] = L"LFWatchdog";
 ULONG ulSHChangeNotifyRegister;
 BOOL AboutWindow = FALSE;
+BOOL ReceivedDoubleclk = FALSE;
 
 
 // Use a guid to uniquely identify our icon
@@ -207,10 +208,17 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case WMAPP_NOTIFYCALLBACK:
 			switch (LOWORD(lParam))
 			{
+			case WM_LBUTTONUP:
+				if (ReceivedDoubleclk)
+				{
+					ReceivedDoubleclk = FALSE;
+					break;
+				}
 			case WM_RBUTTONUP:
 				ShowMenu(hWnd);
 				break;
 			case WM_LBUTTONDBLCLK:
+				ReceivedDoubleclk = TRUE;
 				ShowAboutDlg();
 				break;
 			}
