@@ -37,7 +37,7 @@ BOOL CMainView::OnCmdMsg(UINT nID, int nCode, void* pExtra, AFX_CMDHANDLERINFO* 
 
 void CMainView::ClearRoot()
 {
-	m_IsRootSet = m_SelectedHasChildren = m_SelectedHasPropSheet = m_SelectedCanRename = m_SelectedCanDelete = FALSE;
+	m_IsRootSet = m_SelectedHasChildren = m_SelectedHasPropSheet = m_SelectedCanRename = m_SelectedCanDelete = m_SelectedIsBrowsable = FALSE;
 
 	CString caption;
 	CString hint;
@@ -52,7 +52,7 @@ void CMainView::ClearRoot()
 void CMainView::SetRoot(LPITEMIDLIST pidl, BOOL Update)
 {
 	m_IsRootSet = TRUE;
-	m_SelectedHasChildren = m_SelectedHasPropSheet = m_SelectedCanRename = m_SelectedCanDelete = FALSE;
+	m_SelectedHasChildren = m_SelectedHasPropSheet = m_SelectedCanRename = m_SelectedCanDelete = m_SelectedIsBrowsable = FALSE;
 
 	CString caption;
 	CString hint;
@@ -93,6 +93,7 @@ BEGIN_MESSAGE_MAP(CMainView, CWnd)
 	ON_COMMAND(ID_VIEW_SELECTROOT_TASKBAR, OnSelectRoot)
 	ON_COMMAND(ID_VIEW_INCLUDEBRANCH, OnIncludeBranch)
 	ON_COMMAND(ID_VIEW_EXCLUDEBRANCH, OnExcludeBranch)
+	ON_COMMAND(ID_VIEW_OPEN, OnOpen)
 	ON_COMMAND(ID_VIEW_DELETE, OnDelete)
 	ON_COMMAND(ID_VIEW_PROPERTIES, OnProperties)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_VIEW_SELECTROOT, ID_VIEW_PROPERTIES, OnUpdateTaskbar)
@@ -112,16 +113,17 @@ int CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndTaskbar.AddButton(ID_VIEW_SELECTROOT_TASKBAR, 0);
 	m_wndTaskbar.AddButton(ID_VIEW_INCLUDEBRANCH, 1);
 	m_wndTaskbar.AddButton(ID_VIEW_EXCLUDEBRANCH, 2);
-	m_wndTaskbar.AddButton(ID_VIEW_RENAME, 3);
-	m_wndTaskbar.AddButton(ID_VIEW_DELETE, 4);
-	m_wndTaskbar.AddButton(ID_VIEW_PROPERTIES, 5);
-	m_wndTaskbar.AddButton(ID_APP_NEWSTOREMANAGER, 6, TRUE);
+	m_wndTaskbar.AddButton(ID_VIEW_OPEN, 3, TRUE);
+	m_wndTaskbar.AddButton(ID_VIEW_RENAME, 4);
+	m_wndTaskbar.AddButton(ID_VIEW_DELETE, 5);
+	m_wndTaskbar.AddButton(ID_VIEW_PROPERTIES, 6);
+	m_wndTaskbar.AddButton(ID_APP_NEWSTOREMANAGER, 7, TRUE);
 
-	m_wndTaskbar.AddButton(ID_APP_PURCHASE, 7, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_ENTERLICENSEKEY, 8, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_PROMPT, 9, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_SUPPORT, 10, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_ABOUT, 11, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_PURCHASE, 8, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_ENTERLICENSEKEY, 9, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_PROMPT, 10, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_SUPPORT, 11, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_ABOUT, 12, TRUE, TRUE);
 
 	// Explorer header
 	if (!m_wndExplorerHeader.Create(this, 2))
@@ -166,9 +168,15 @@ void CMainView::OnIncludeBranch()
 	m_wndTree.SetBranchCheck(TRUE);
 }
 
+
 void CMainView::OnExcludeBranch()
 {
 	m_wndTree.SetBranchCheck(FALSE);
+}
+
+void CMainView::OnOpen()
+{
+	m_wndTree.OpenFolder();
 }
 
 void CMainView::OnDelete()
@@ -194,6 +202,9 @@ void CMainView::OnUpdateTaskbar(CCmdUI* pCmdUI)
 	case ID_VIEW_INCLUDEBRANCH:
 	case ID_VIEW_EXCLUDEBRANCH:
 		pCmdUI->Enable(m_IsRootSet && m_SelectedHasChildren);
+		break;
+	case ID_VIEW_OPEN:
+		pCmdUI->Enable(m_IsRootSet && m_SelectedIsBrowsable);
 		break;
 	case ID_VIEW_RENAME:
 		pCmdUI->Enable(m_IsRootSet && m_SelectedCanRename);
@@ -238,13 +249,14 @@ void CMainView::OnSelectionChanged(NMHDR* pNMHDR, LRESULT* /*pResult*/)
 		IShellFolder* pParentFolder = NULL;
 		if (SUCCEEDED(SHBindToParent(pNMTreeView->pCell->pItem->pidlFQ, IID_IShellFolder, (void**)&pParentFolder, NULL)))
 		{
-			DWORD dwAttribs = SFGAO_CANRENAME | SFGAO_CANDELETE | SFGAO_HASPROPSHEET;
+			DWORD dwAttribs = SFGAO_CANRENAME | SFGAO_CANDELETE | SFGAO_HASPROPSHEET | SFGAO_BROWSABLE;
 			pParentFolder->GetAttributesOf(1, (LPCITEMIDLIST*)&pNMTreeView->pCell->pItem->pidlRel, &dwAttribs);
 
 			m_SelectedHasChildren = (pNMTreeView->pCell->Flags & CF_HASCHILDREN);
 			m_SelectedHasPropSheet = (dwAttribs & SFGAO_HASPROPSHEET);
 			m_SelectedCanRename = (dwAttribs & SFGAO_CANRENAME);
 			m_SelectedCanDelete = (dwAttribs & SFGAO_CANDELETE);
+			m_SelectedIsBrowsable = TRUE;//(dwAttribs & SFGAO_BROWSABLE);
 
 			pParentFolder->Release();
 			return;

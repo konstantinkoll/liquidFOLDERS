@@ -196,6 +196,11 @@ void CTreeView::SetBranchCheck(BOOL Check, CPoint item)
 	Invalidate();
 }
 
+void CTreeView::OpenFolder(CPoint item)
+{
+	ExecuteContextMenu(item, "open");
+}
+
 void CTreeView::DeleteFolder(CPoint item)
 {
 	ExecuteContextMenu(item, "delete");

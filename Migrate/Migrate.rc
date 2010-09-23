@@ -181,6 +181,7 @@ BEGIN
     ID_VIEW_SELECTROOT_TASKBAR "Opens a dialog where you can select the root folder to display in the main view below.\nSelect root folder"
     ID_VIEW_INCLUDEBRANCH   "Includes the selected folder and all subfolders.\nInclude branch"
     ID_VIEW_EXCLUDEBRANCH   "Excludes the selected folder and all subfolders.\nExclude branch"
+    ID_VIEW_OPEN            "Opens the selected folder.\nOpen"
     ID_VIEW_RENAME          "Renames the selected folder.\nRename folder"
     ID_VIEW_DELETE          "Deletes the selected folder.\nDelete folder"
     ID_VIEW_PROPERTIES      "Displays the properties of the selected folder.\nProperties"

@@ -9,9 +9,10 @@
 #define ID_VIEW_SELECTROOT_TASKBAR      401
 #define ID_VIEW_INCLUDEBRANCH           402
 #define ID_VIEW_EXCLUDEBRANCH           403
-#define ID_VIEW_RENAME                  404
-#define ID_VIEW_DELETE                  405
-#define ID_VIEW_PROPERTIES              406
+#define ID_VIEW_OPEN                    404
+#define ID_VIEW_RENAME                  405
+#define ID_VIEW_DELETE                  406
+#define ID_VIEW_PROPERTIES              407
 #define ID_VIEW_AUTOSIZE                500
 #define ID_VIEW_AUTOSIZEALL             501
 #define IDM_BACKGROUND                  600

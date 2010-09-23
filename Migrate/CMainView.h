@@ -30,6 +30,7 @@ protected:
 	BOOL m_SelectedHasPropSheet;
 	BOOL m_SelectedCanRename;
 	BOOL m_SelectedCanDelete;
+	BOOL m_SelectedIsBrowsable;
 
 	void AdjustLayout();
 
@@ -41,6 +42,7 @@ protected:
 	afx_msg void OnSelectRoot();
 	afx_msg void OnIncludeBranch();
 	afx_msg void OnExcludeBranch();
+	afx_msg void OnOpen();
 	afx_msg void OnDelete();
 	afx_msg void OnProperties();
 	afx_msg void OnUpdateTaskbar(CCmdUI* pCmdUI);

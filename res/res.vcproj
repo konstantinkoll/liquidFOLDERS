@@ -808,6 +808,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Ribbon\Explorer_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\Explorer_32.png"
+				>
+			</File>
+			<File
 				RelativePath=".\Ribbon\Facebook_16.png"
 				>
 			</File>
@@ -1425,14 +1433,6 @@
 			</File>
 			<File
 				RelativePath="Ribbon\StoreMakeHybrid_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\StoreManager_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\StoreManager_32.png"
 				>
 			</File>
 			<File
