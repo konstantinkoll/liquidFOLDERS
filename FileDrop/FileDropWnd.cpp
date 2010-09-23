@@ -377,8 +377,7 @@ void CFileDropWnd::OnContextMenu(CWnd* /*pWnd*/, CPoint pos)
 	CMenu* popup = menu.GetSubMenu(0);
 	ASSERT(popup);
 
-	HBITMAP bmp1 = SetMenuItemIcon(*popup, 0, ID_APP_CHOOSEDEFAULTSTORE);
-	HBITMAP bmp2 = SetMenuItemIcon(*popup, 7, ID_APP_NEWSTOREMANAGER);
+	HBITMAP bmp = SetMenuItemIcon(*popup, 7, ID_APP_NEWSTOREMANAGER);
 	SetMenuItemBitmap(*popup, 8, HBMMENU_POPUP_CLOSE);
 
 	popup->CheckMenuItem(SC_ALWAYSONTOP, AlwaysOnTop ? MF_CHECKED : MF_UNCHECKED);
@@ -389,8 +388,7 @@ void CFileDropWnd::OnContextMenu(CWnd* /*pWnd*/, CPoint pos)
 	popup->SetDefaultItem(ID_APP_CHOOSEDEFAULTSTORE);
 	popup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, pos.x, pos.y, this);
 
-	DeleteObject(bmp1);
-	DeleteObject(bmp2);
+	DeleteObject(bmp);
 }
 
 void CFileDropWnd::OnSysCommand(UINT nID, LPARAM lParam)
@@ -426,8 +424,9 @@ void CFileDropWnd::OnAlwaysOnTop()
 
 void CFileDropWnd::OnChooseDefaultStore()
 {
-	LFChooseDefaultStoreDlg dlg(this);
-	dlg.DoModal();
+	LFChooseStoreDlg dlg(this, LFCSD_ChooseDefault);
+	if (dlg.DoModal()==IDOK)
+		LFErrorBox(LFMakeDefaultStore(dlg.StoreID, NULL), m_hWnd);
 }
 
 void CFileDropWnd::OnImportFolder()

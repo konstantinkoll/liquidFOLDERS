@@ -69,6 +69,7 @@ BEGIN_MESSAGE_MAP(CMigrateWnd, CGlasWindow)
 	ON_WM_SETFOCUS()
 	ON_MESSAGE_VOID(WM_IDLEUPDATECMDUI, OnIdleUpdateCmdUI)
 	ON_COMMAND(ID_VIEW_SELECTROOT, OnSelectRoot)
+	ON_COMMAND(IDC_MIGRATE, OnMigrate)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoresChanged, OnStoresChanged)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoreAttributesChanged, OnStoresChanged)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->DefaultStoreChanged, OnStoresChanged)
@@ -122,7 +123,7 @@ void CMigrateWnd::OnIdleUpdateCmdUI()
 {
 	CWnd* btn = m_wndBottomArea.GetDlgItem(IDC_MIGRATE);
 	if (btn)
-		btn->EnableWindow((!m_wndFolder.IsEmpty()) && (!m_wndStore.IsEmpty()));
+		btn->EnableWindow(!m_wndFolder.IsEmpty());
 }
 
 void CMigrateWnd::OnSelectRoot()
@@ -135,6 +136,20 @@ void CMigrateWnd::OnSelectRoot()
 	LFBrowseForFolderDlg dlg(FALSE, _T(""), this, caption, hint);
 	if (dlg.DoModal()==IDOK)
 		m_wndFolder.SetItem(dlg.m_FolderPIDL);
+}
+
+void CMigrateWnd::OnMigrate()
+{
+	if (m_wndStore.IsEmpty())
+	{
+		LFChooseStoreDlg dlg(this, LFCSD_Mounted);
+		if (dlg.DoModal()!=IDOK)
+			return;
+
+		m_wndStore.SetItem(dlg.StoreID);
+	}
+
+	MessageBox(_T("Not implemented!"));
 }
 
 LRESULT CMigrateWnd::OnStoresChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)

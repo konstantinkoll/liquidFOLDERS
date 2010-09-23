@@ -14,6 +14,7 @@ CExplorerList::CExplorerList()
 {
 	p_App = (LFApplication*)AfxGetApp();
 	p_FooterHandler = NULL;
+	p_Result = NULL;
 	hTheme = NULL;
 	m_ItemMenuID = m_BackgroundMenuID = 0;
 }
@@ -82,6 +83,7 @@ void CExplorerList::SetSearchResult(LFSearchResult* result)
 {
 	DeleteAllItems();
 
+	p_Result = result;
 	if (result)
 	{
 		LFSortSearchResult(result, LFAttrFileName, false, IsGroupViewEnabled()==TRUE);
@@ -122,9 +124,10 @@ void CExplorerList::SetSearchResult(LFSearchResult* result)
 			SetColumnWidth(a, LVSCW_AUTOSIZE_USEHEADER);
 }
 
-void CExplorerList::SetMenus(UINT _ItemMenuID, UINT _BackgroundMenuID)
+void CExplorerList::SetMenus(UINT _ItemMenuID, BOOL _HighlightFirst, UINT _BackgroundMenuID)
 {
 	m_ItemMenuID = _ItemMenuID;
+	m_HighlightFirst = _HighlightFirst;
 	m_BackgroundMenuID = _BackgroundMenuID;
 }
 
@@ -259,7 +262,16 @@ void CExplorerList::OnContextMenu(CWnd* /*pWnd*/, CPoint pos)
 		ASSERT_VALID(PopupMenu);
 
 		if (pInfo.iItem!=-1)
-			PopupMenu->SetDefaultItem(0, TRUE);
+		{
+			if (m_HighlightFirst)
+				PopupMenu->SetDefaultItem(0, TRUE);
+
+			LFItemDescriptor* i = p_Result->m_Items[pInfo.iItem];
+			if (((i->Type & LFTypeMask)!=LFTypeStore) || (i->CategoryID!=LFCategoryInternalStores) || (i->Type & LFTypeDefaultStore))
+				PopupMenu->EnableMenuItem(IDM_STORE_MAKEDEFAULT, MF_GRAYED | MF_DISABLED);
+			if (((i->Type & LFTypeMask)!=LFTypeStore) || (i->CategoryID!=LFCategoryExternalStores) || (i->Type & LFTypeNotMounted))
+				PopupMenu->EnableMenuItem(IDM_STORE_MAKEHYBRID, MF_GRAYED | MF_DISABLED);
+		}
 
 		TrackPopupMenu(PopupMenu->GetSafeHmenu(), TPM_LEFTALIGN | TPM_RIGHTBUTTON, pos.x, pos.y, 0, GetOwner()->GetSafeHwnd(), NULL);
 	}

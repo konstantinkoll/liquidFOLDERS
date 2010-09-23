@@ -44,6 +44,7 @@ public:
 
 	void SetItem(LFItemDescriptor* _item, BOOL Repaint=TRUE, UINT NotifyCode=NM_SELCHANGED);
 	void SetItem(LFStoreDescriptor* s, BOOL Repaint=TRUE, UINT NotifyCode=NM_SELCHANGED);
+	void SetItem(char* Key, BOOL Repaint=TRUE);
 	BOOL GetStoreID(char* StoreID);
 	void Update();
 

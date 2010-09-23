@@ -2153,10 +2153,6 @@
 			>
 		</File>
 		<File
-			RelativePath=".\Store_Default_Small.ico"
-			>
-		</File>
-		<File
 			RelativePath=".\Store_Default_Tiny.ico"
 			>
 		</File>
@@ -2202,6 +2198,10 @@
 		</File>
 		<File
 			RelativePath=".\StoreProperties_Tiny.ico"
+			>
+		</File>
+		<File
+			RelativePath=".\Stores_Tiny.ico"
 			>
 		</File>
 		<File

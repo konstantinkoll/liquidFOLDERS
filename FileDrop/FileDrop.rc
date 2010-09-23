@@ -33,7 +33,6 @@ LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
 IDR_APPLICATION         ICON                    "res\\FileDrop.ico"
-ID_APP_CHOOSEDEFAULTSTORE ICON                    "res\\Store_Default_Small.ico"
 ID_APP_NEWSTOREMANAGER  ICON                    "res\\StoreManager_Small.ico"
 
 /////////////////////////////////////////////////////////////////////////////

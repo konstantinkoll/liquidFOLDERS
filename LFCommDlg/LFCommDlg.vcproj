@@ -499,7 +499,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\LFChooseDefaultStoreDlg.cpp"
+				RelativePath=".\LFChooseStoreDlg.cpp"
 				>
 			</File>
 			<File
@@ -693,7 +693,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\LFChooseDefaultStoreDlg.h"
+				RelativePath=".\LFChooseStoreDlg.h"
 				>
 			</File>
 			<File
@@ -976,6 +976,10 @@
 			</File>
 			<File
 				RelativePath=".\res\StoreProperties_Tiny.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Stores_Tiny.ico"
 				>
 			</File>
 			<File

@@ -18,7 +18,7 @@
 #include "..\LFCommDlg\LFAboutDlg.h"
 #include "..\LFCommDlg\LFApplication.h"
 #include "..\LFCommDlg\LFBrowseForFolderDlg.h"
-#include "..\LFCommDlg\LFChooseDefaultStoreDlg.h"
+#include "..\LFCommDlg\LFChooseStoreDlg.h"
 #include "..\LFCommDlg\LFDropTarget.h"
 #include "..\LFCommDlg\LFEditTagsDlg.h"
 #include "..\LFCommDlg\LFItemTemplateDlg.h"

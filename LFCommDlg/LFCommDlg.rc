@@ -118,6 +118,7 @@ IDI_READY               ICON                    "res\\Ready.ico"
 32513                   ICON                    "res\\Error.ico"
 IDI_SHIELD              ICON                    "res\\Shield.ico"
 IDD_ABOUT               ICON                    "res\\About_Small.ico"
+IDD_CHOOSESTORE         ICON                    "res\\Stores_Tiny.ico"
 IDD_CHOOSEDEFAULTSTORE  ICON                    "res\\Store_Default_Tiny.ico"
 IDD_STORENEW            ICON                    "res\\StoreNew_Tiny.ico"
 IDD_WELCOME             ICON                    "res\\Welcome_Small.ico"
@@ -154,6 +155,7 @@ BEGIN
     POPUP "POPUP"
     BEGIN
         MENUITEM "Als &Standard-Store",         IDM_STORE_MAKEDEFAULT
+        MENUITEM "Zu &Hybrid-Store machen",     IDM_STORE_MAKEHYBRID
         MENUITEM SEPARATOR
         MENUITEM "&Umbenennen",                 IDM_STORE_RENAME
         MENUITEM "&Löschen",                    IDM_STORE_DELETE
@@ -208,6 +210,16 @@ BEGIN
     LTEXT           "Menge:",IDC_QUANTITYTITLE,345,227,50,8
     LTEXT           "X",IDC_QUANTITY,345,237,50,8
     PUSHBUTTON      "&Lizenzschlüssel eingeben...",IDC_ENTERLICENSEKEY,253,179,143,66,WS_GROUP
+END
+
+IDD_CHOOSESTORE DIALOGEX 0, 0, 451, 282
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
+CAPTION "Store wählen"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,7,261,50,14,WS_GROUP
+    PUSHBUTTON      "Abbrechen",IDCANCEL,64,261,50,14,WS_GROUP
+    PUSHBUTTON      "&Neuen Store anlegen...",IDC_NEWSTORE,349,261,95,14
 END
 
 IDD_CHOOSEDEFAULTSTORE DIALOGEX 0, 0, 451, 282
@@ -497,7 +509,15 @@ BEGIN
         BOTTOMMARGIN, 280
     END
 
-    IDD_CHOOSEDEFAULTSTORE, DIALOG
+    IDD_CHOOSESTORE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 444
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 275
+    END
+
+	IDD_CHOOSEDEFAULTSTORE, DIALOG
     BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 444
@@ -646,8 +666,10 @@ BEGIN
     IDS_COLLAPSE            "&Reduzieren"
     IDS_IMPORTFOLDER_CAPTION "Verzeichnis importieren"
     IDS_IMPORTFOLDER_HINT   "Auch alle Unterverzeichnisse werden importiert."
-    IDS_CHOOSEDEFAULT_CAPTION "Interne Stores"
-    IDS_CHOOSEDEFAULT_HINT  "Nur interne Stores können als Standard-Store ausgewählt werden."
+    IDS_CHOOSESTORE_CAPTION "Stores"
+    IDS_CHOOSESTORE_HINT    "Nur eingebundene Stores können ausgewählt werden."
+    IDS_CHOOSEDEFAULTSTORE_CAPTION "Interne Stores"
+    IDS_CHOOSEDEFAULTSTORE_HINT  "Nur interne Stores können als Standard-Store ausgewählt werden."
 END
 
 STRINGTABLE 
@@ -690,6 +712,7 @@ BEGIN
     POPUP "POPUP"
     BEGIN
         MENUITEM "Make default &store",         IDM_STORE_MAKEDEFAULT
+        MENUITEM "Make &hybrid store",          IDM_STORE_MAKEHYBRID
         MENUITEM SEPARATOR
         MENUITEM "&Rename",                     IDM_STORE_RENAME
         MENUITEM "&Delete",                     IDM_STORE_DELETE
@@ -761,6 +784,16 @@ BEGIN
     LTEXT           "Store 1:",IDC_STATIC,14,152,27,8
     LTEXT           "Store 2:",IDC_STATIC,94,152,27,8
     LTEXT           "Store 3:",IDC_STATIC,175,152,27,8
+END
+
+IDD_CHOOSESTORE DIALOGEX 0, 0, 451, 282
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
+CAPTION "Choose store"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,7,261,50,14,WS_GROUP
+    PUSHBUTTON      "Cancel",IDCANCEL,64,261,50,14,WS_GROUP
+    PUSHBUTTON      "Create &new store...",IDC_NEWSTORE,360,261,84,14
 END
 
 IDD_CHOOSEDEFAULTSTORE DIALOGEX 0, 0, 451, 282
@@ -1039,6 +1072,14 @@ BEGIN
         BOTTOMMARGIN, 213
     END
 
+    IDD_CHOOSESTORE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 444
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 275
+    END
+
     IDD_CHOOSEDEFAULTSTORE, DIALOG
     BEGIN
         LEFTMARGIN, 7
@@ -1172,8 +1213,10 @@ BEGIN
     IDS_COLLAPSE            "&Collapse"
     IDS_IMPORTFOLDER_CAPTION "Import folder"
     IDS_IMPORTFOLDER_HINT   "The folder and all its subfolders will be imported."
-    IDS_CHOOSEDEFAULT_CAPTION "Internal stores"
-    IDS_CHOOSEDEFAULT_HINT  "Only internal stores are suitable default stores."
+    IDS_CHOOSESTORE_CAPTION "Stores"
+    IDS_CHOOSESTORE_HINT    "Only mounted stores can be selected."
+    IDS_CHOOSEDEFAULTSTORE_CAPTION "Internal stores"
+    IDS_CHOOSEDEFAULTSTORE_HINT  "Only internal stores are suitable default stores."
 END
 
 STRINGTABLE 
@@ -1216,6 +1259,7 @@ BEGIN
     POPUP "POPUP"
     BEGIN
         MENUITEM "Establecer al &store predeterminado", IDM_STORE_MAKEDEFAULT
+        MENUITEM "Convertir al store &híbrido", IDM_STORE_MAKEHYBRID
         MENUITEM SEPARATOR
         MENUITEM "&Renombrar",                  IDM_STORE_RENAME
         MENUITEM "&Eliminar",                   IDM_STORE_DELETE
@@ -1269,6 +1313,16 @@ BEGIN
     LTEXT           "Número:",IDC_QUANTITYTITLE,335,227,50,8
     LTEXT           "X",IDC_QUANTITY,335,237,50,8
     PUSHBUTTON      "Dictar &licencia...",IDC_ENTERLICENSEKEY,243,179,143,66,WS_GROUP
+END
+
+IDD_CHOOSESTORE DIALOGEX 0, 0, 451, 282
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
+CAPTION "Seleccionar store"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,7,261,50,14,WS_GROUP
+    PUSHBUTTON      "Cancelar",IDCANCEL,64,261,50,14,WS_GROUP
+    PUSHBUTTON      "Crear &nuevo store...",IDC_NEWSTORE,349,261,95,14
 END
 
 IDD_CHOOSEDEFAULTSTORE DIALOGEX 0, 0, 451, 282
@@ -1326,7 +1380,7 @@ BEGIN
     CONTROL         "Store &externo",IDC_EXTERNALSTORE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,39,86,177,10
     EDITTEXT        IDC_STORENAME,14,147,199,14,ES_AUTOHSCROLL | WS_GROUP
     EDITTEXT        IDC_COMMENT,14,177,199,14,ES_AUTOHSCROLL | WS_GROUP
-    CONTROL         "Store é&standar",IDC_MAKEDEFAULT,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,14,198,199,10
+    CONTROL         "Store predeterminado",IDC_MAKEDEFAULT,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,14,198,199,10
     CONTROL         "Elegir &automaticamente",IDC_AUTOPATH,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,236,18,173,10
     CONTROL         "",IDC_PATHTREE,"SysTreeView32",TVS_HASLINES | TVS_EDITLABELS | TVS_HASBUTTONS | TVS_LINESATROOT | TVS_DISABLEDRAGDROP | TVS_SHOWSELALWAYS | TVS_NOTOOLTIPS | WS_DISABLED | WS_BORDER | WS_HSCROLL | WS_GROUP | WS_TABSTOP,236,44,173,163
     DEFPUSHBUTTON   "OK",IDOK,6,221,50,14,WS_GROUP
@@ -1542,6 +1596,14 @@ BEGIN
         BOTTOMMARGIN, 280
     END
 
+    IDD_CHOOSESTORE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 444
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 275
+    END
+
     IDD_CHOOSEDEFAULTSTORE, DIALOG
     BEGIN
         LEFTMARGIN, 7
@@ -1683,8 +1745,10 @@ BEGIN
     IDS_COLLAPSE            "&Plegar"
     IDS_IMPORTFOLDER_CAPTION "Importar carpeta"
     IDS_IMPORTFOLDER_HINT   "La carpeta y todas sus subcarpetas serán importadas."
-    IDS_CHOOSEDEFAULT_CAPTION "Stores internos"
-    IDS_CHOOSEDEFAULT_HINT  "Se puede selecionar solamente stores internos como store predeterminado."
+    IDS_CHOOSESTORE_CAPTION "Stores"
+    IDS_CHOOSESTORE_HINT    "Se puede selecionar solamente stores conectado."
+    IDS_CHOOSEDEFAULTSTORE_CAPTION "Stores internos"
+    IDS_CHOOSEDEFAULTSTORE_HINT  "Se puede selecionar solamente stores internos como store predeterminado."
 END
 
 STRINGTABLE 
@@ -1726,7 +1790,8 @@ IDM_STORES MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "Faites &standard",            IDM_STORE_MAKEDEFAULT
+        MENUITEM "Faites store &standard",      IDM_STORE_MAKEDEFAULT
+        MENUITEM "Faites store &hybride",       IDM_STORE_MAKEHYBRID
         MENUITEM SEPARATOR
         MENUITEM "&Renommer",                   IDM_STORE_RENAME
         MENUITEM "&Effacer",                    IDM_STORE_DELETE
@@ -1781,6 +1846,16 @@ BEGIN
     LTEXT           "Nombre:",IDC_QUANTITYTITLE,355,227,50,8
     LTEXT           "X",IDC_QUANTITY,355,237,50,8
     PUSHBUTTON      "Donner clé de &licence...",IDC_ENTERLICENSEKEY,263,179,143,66,WS_GROUP
+END
+
+IDD_CHOOSESTORE DIALOGEX 0, 0, 451, 282
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
+CAPTION "Choisissez un store"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,7,261,50,14,WS_GROUP
+    PUSHBUTTON      "Annuler",IDCANCEL,64,261,50,14,WS_GROUP
+    PUSHBUTTON      "Créez un store &nouveau...",IDC_NEWSTORE,339,261,105,14
 END
 
 IDD_CHOOSEDEFAULTSTORE DIALOGEX 0, 0, 451, 282
@@ -2062,7 +2137,15 @@ BEGIN
         BOTTOMMARGIN, 275
     END
 
-    IDD_WELCOME, DIALOG
+    IDD_CHOOSESTORE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 444
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 275
+    END
+
+	IDD_WELCOME, DIALOG
     BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 255
@@ -2188,8 +2271,10 @@ BEGIN
     IDS_COLLAPSE            "&Fermer"
     IDS_IMPORTFOLDER_CAPTION "Importer dossier"
     IDS_IMPORTFOLDER_HINT   "The folder and all its subfolders will be imported."
-    IDS_CHOOSEDEFAULT_CAPTION "Stores internes"
-    IDS_CHOOSEDEFAULT_HINT  "Seulement stores internes pouvoir choisisse comme store standard."
+    IDS_CHOOSESTORE_CAPTION "Stores"
+    IDS_CHOOSESTORE_HINT    "Seulement stores montée pouvoir choisissse."
+    IDS_CHOOSEDEFAULTSTORE_CAPTION "Stores internes"
+    IDS_CHOOSEDEFAULTSTORE_HINT  "Seulement stores internes pouvoir choisisse comme store standard."
 END
 
 STRINGTABLE 

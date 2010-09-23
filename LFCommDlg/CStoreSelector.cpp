@@ -168,6 +168,23 @@ void CStoreSelector::SetItem(LFStoreDescriptor* s, BOOL Repaint, UINT NotifyCode
 	}
 }
 
+void CStoreSelector::SetItem(char* Key, BOOL Repaint)
+{
+	if (Key)
+	{
+		LFStoreDescriptor* s = LFAllocStoreDescriptor();
+
+		if (LFGetStoreSettings(Key, s)==LFOk)
+			SetItem(s, Repaint);
+
+		LFFreeStoreDescriptor(s);
+	}
+	else
+	{
+		SetEmpty(Repaint);
+	}
+}
+
 BOOL CStoreSelector::GetStoreID(char* StoreID)
 {
 	if (m_IsEmpty)

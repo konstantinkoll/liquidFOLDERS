@@ -25,7 +25,7 @@ public:
 	void AddColumn(int ID, UINT attr);
 	void AddStoreColumns();
 	void SetSearchResult(LFSearchResult* result);
-	void SetMenus(UINT _ItemMenuID=0, UINT _BackgroundMenuID=0);
+	void SetMenus(UINT _ItemMenuID=0, BOOL _HighlightFirst=FALSE, UINT _BackgroundMenuID=0);
 	BOOL SupportsFooter();
 	void ShowFooter(IListViewFooterCallback* pCallbackObject);
 	void RemoveFooter();
@@ -34,9 +34,11 @@ public:
 
 protected:
 	LFApplication* p_App;
+	LFSearchResult* p_Result;
 	IListViewFooter* p_FooterHandler;
 	HTHEME hTheme;
 	UINT m_ItemMenuID;
+	BOOL m_HighlightFirst;
 	UINT m_BackgroundMenuID;
 
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
