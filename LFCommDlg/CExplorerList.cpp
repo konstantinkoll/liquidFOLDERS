@@ -194,7 +194,7 @@ int CExplorerList::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	tvi.cLines = 2;
 	tvi.dwFlags = LVTVIF_FIXEDWIDTH;
 	tvi.dwMask = LVTVIM_COLUMNS | LVTVIM_TILESIZE;
-	tvi.sizeTile.cx = 220;
+	tvi.sizeTile.cx = 218;
 	SetTileViewInfo(&tvi);
 
 	if (p_App->OSVersion>=OS_Vista)

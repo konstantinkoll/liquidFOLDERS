@@ -59,8 +59,9 @@ void LFChooseStoreDlg::AdjustLayout()
 	CRect borders(0, 0, 7, 7);
 	MapDialogRect(&borders);
 
-	int border = (m_Mode>=LFCSD_Internal) ? borders.Width() : 0;
-	m_wndExplorerList.SetWindowPos(NULL, rect.left+border, rect.top+ExplorerHeight, rect.Width()-border, rect.Height()-ExplorerHeight, SWP_NOACTIVATE | SWP_NOZORDER);
+	int borderLeft = (m_Mode>=LFCSD_Internal) ? borders.Width() : borders.Width()/2;
+	int borderRight = (m_Mode>=LFCSD_Internal) ? 0 : 1;
+	m_wndExplorerList.SetWindowPos(NULL, rect.left+borderLeft, rect.top+ExplorerHeight, rect.Width()-borderLeft-borderRight, rect.Height()-ExplorerHeight, SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
 void LFChooseStoreDlg::UpdateOkButton()
