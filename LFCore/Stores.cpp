@@ -679,12 +679,19 @@ LFCore_API unsigned int LFDeleteStore(char* key, HWND hWndSource)
 	if ((slot) && (StoreLock))
 	{
 		if (slot->DatPath[0]!='\0')
-			if (!DirWriteable(slot->DatPath))
-			{
-				ReleaseMutex(Mutex_Stores);
-				ReleaseMutexForStore(StoreLock);
-				return LFDriveWriteProtected;
-			}
+		{
+			char Path[MAX_PATH];
+			strcpy_s(Path, MAX_PATH, slot->DatPath);
+			strcat_s(Path, MAX_PATH, "*");
+
+			if (FileExists(Path))
+				if (!DirWriteable(slot->DatPath))
+				{
+					ReleaseMutex(Mutex_Stores);
+					ReleaseMutexForStore(StoreLock);
+					return LFDriveWriteProtected;
+				}
+		}
 
 		LFStoreDescriptor victim = *slot;
 		res = DeleteStore(slot);
