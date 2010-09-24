@@ -20,8 +20,10 @@ int CoreOffsets[LFLastCoreAttribute+1] = {
 	offsetof(LFCoreAttributes, Comment),
 	-1,
 	offsetof(LFCoreAttributes, CreationTime),
+	offsetof(LFCoreAttributes, AddTime),
 	offsetof(LFCoreAttributes, FileTime),
 	offsetof(LFCoreAttributes, DeleteTime),
+	offsetof(LFCoreAttributes, ArchiveTime),
 	offsetof(LFCoreAttributes, FileFormat),
 	-1,
 	offsetof(LFCoreAttributes, FileSize),
@@ -58,8 +60,10 @@ unsigned char AttrTypes[LFAttributeCount] = {
 	LFTypeUnicodeString,		// LFAttrComment
 	LFTypeUnicodeString,		// LFAttrDescription
 	LFTypeTime,					// LFAttrCreationTime
+	LFTypeTime,					// LFAttrAddTime
 	LFTypeTime,					// LFAttrFileTime
 	LFTypeTime,					// LFAttrDeleteTime
+	LFTypeTime,					// LFAttrArchiveTime
 	LFTypeAnsiString,			// LFAttrFileFormat
 	LFTypeUINT,					// LFAttrFileCount
 	LFTypeINT64,				// LFAttrFileSize

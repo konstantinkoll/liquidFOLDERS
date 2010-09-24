@@ -9,8 +9,8 @@ static int CALLBACK MyCompareProc(LPARAM lParam1, LPARAM lParam2, LPARAM /*lPara
 
 void AddAttribute(CListCtrl* l, UINT attr, BOOL check)
 {
-	static const UINT iconPosition[] = { LFAttrFileName, LFAttrTitle, 0xFFFFFFFF, LFAttrCreationTime, LFAttrFileTime,
-		LFAttrRecordingTime, LFAttrDeleteTime, LFAttrDueTime, LFAttrDoneTime, LFAttrLocationName,
+	static const UINT iconPosition[] = { LFAttrFileName, LFAttrTitle, 0xFFFFFFFF, LFAttrCreationTime, LFAttrAddTime,
+		LFAttrFileTime, LFAttrRecordingTime, LFAttrDeleteTime, LFAttrDueTime, LFAttrDoneTime, LFAttrLocationName,
 		LFAttrLocationIATA, LFAttrLocationGPS, LFAttrRating, LFAttrRoll, LFAttrArtist, LFAttrComment,
 		LFAttrDuration, LFAttrLanguage, LFAttrResolution, LFAttrHeight, LFAttrWidth, LFAttrAspectRatio, LFAttrTags,
 		LFAttrStoreID };
@@ -57,7 +57,7 @@ void CAttributeListDialog::PopulateListCtrl(int nId, UINT mode, UINT context, LF
 	l->SetExtendedStyle(l->GetExtendedStyle() | dwExStyle);
 
 	m_pAttributeIcons = new CImageListTransparent();
-	m_pAttributeIcons->CreateFromResource(IDB_RIBBONVIEW_16, 21, 43);
+	m_pAttributeIcons->CreateFromResource(IDB_RIBBONVIEW_16, 21, 44);
 	l->SetImageList(m_pAttributeIcons, LVSIL_SMALL);
 
 		for (UINT a=0; a<LFAttributeCount; a++)

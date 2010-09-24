@@ -265,8 +265,10 @@ LFCore_API LFAttributeDescriptor* LFGetAttributeInfo(unsigned int ID)
 	{
 	case LFAttrDescription:
 	case LFAttrCreationTime:
+	case LFAttrAddTime:
 	case LFAttrFileTime:
 	case LFAttrDeleteTime:
+	case LFAttrArchiveTime:
 	case LFAttrFileSize:
 	case LFAttrHeight:
 	case LFAttrWidth:
@@ -307,12 +309,14 @@ LFCore_API LFAttributeDescriptor* LFGetAttributeInfo(unsigned int ID)
 
 	switch (ID)
 	{
-	case LFAttrFileTime:
-	case LFAttrRecordingTime:
 	case LFAttrCreationTime:
+	case LFAttrAddTime:
+	case LFAttrFileTime:
 	case LFAttrDuration:
+	case LFAttrArchiveTime:
 	case LFAttrDueTime:
 	case LFAttrDoneTime:
+	case LFAttrRecordingTime:
 		a->IconID = IDI_FLD_Calendar;
 		break;
 	case LFAttrRating:
@@ -558,6 +562,7 @@ LFCore_API LFDomainDescriptor* LFGetDomainInfo(unsigned int ID)
 	case LFDomainDocuments:
 	case LFDomainPresentations:
 	case LFDomainSpreadsheets:
+		*(d->ImportantAttributes) += LFAttrArchiveTime;
 		*(d->ImportantAttributes) += LFAttrLocationName;
 		*(d->ImportantAttributes) += LFAttrLocationIATA;
 		*(d->ImportantAttributes) += LFAttrArtist;

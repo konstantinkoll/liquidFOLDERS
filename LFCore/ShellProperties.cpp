@@ -34,6 +34,11 @@ static const GUID PropertyUnnamed3 =
 	{ 0xE3E0584C, 0xB788, 0x4A5A, { 0xBB, 0x20, 0x7F, 0x5A, 0x44, 0xC9, 0xAC, 0xDD } };
 static const GUID PropertyUnnamed4 =
 	{ 0x2E4B640D, 0x5019, 0x46D8, { 0x88, 0x81, 0x55, 0x41, 0x4C, 0xC5, 0xCA, 0xA0 } };
+static const GUID PropertyUnnamed5 =
+	{ 0x2CBAA8F5, 0xD81F, 0x47CA, { 0xB1, 0x7A, 0xF8, 0xD8, 0x22, 0x30, 0x01, 0x31 } };
+static const GUID PropertyUnnamed6 =
+	{ 0x43F8D7B7, 0xA444, 0x4F87, { 0x93, 0x83, 0x52, 0x27, 0x1C, 0x9B, 0x91, 0x5C } };
+
 
 // Der Inhalt dieses Segments wird über alle Instanzen von LFCore geteilt.
 // Der Zugriff muss daher über Mutex-Objekte serialisiert/synchronisiert werden.
@@ -74,7 +79,9 @@ LFShellProperty AttrProperties[LFAttributeCount] = {
 	{ PropertyVersion, 3 },			// LFAttrDescription
 	{ PropertyStorage, 15 },		// LFAttrCreationTime
 	{ PropertyStorage, 14 },		// LFAttrFileTime
+	{ PropertyUnnamed5, 100 },		// LFAttrAddTime
 	{ 0, 0 },						// LFAttrDeleteTime
+	{ PropertyUnnamed6, 100 },		// LFAttrArchiveTime
 	{ PropertyStorage, 4 },			// LFAttrFileFormat
 	{ 0, 0 },						// LFAttrFileCount
 	{ PropertyStorage, 12 },		// LFAttrFileSize

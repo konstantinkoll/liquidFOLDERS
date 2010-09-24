@@ -472,6 +472,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Ribbon\Added_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\Added_32.png"
+				>
+			</File>
+			<File
 				RelativePath="Ribbon\Artist_16.png"
 				>
 			</File>
@@ -837,14 +845,6 @@
 			</File>
 			<File
 				RelativePath=".\Ribbon\FileDrop_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\FileExtensions_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\FileExtensions_32.png"
 				>
 			</File>
 			<File

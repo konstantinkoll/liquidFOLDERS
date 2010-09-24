@@ -181,58 +181,60 @@ struct LFContextDescriptor
 #define LFAttrComment                   3
 #define LFAttrDescription               4
 #define LFAttrCreationTime              5
-#define LFAttrFileTime                  6
-#define LFAttrDeleteTime                7
-#define LFAttrFileFormat                8
-#define LFAttrFileCount                 9
-#define LFAttrFileSize                 10
-#define LFAttrFlags                    11
-#define LFAttrURL                      12
-#define LFAttrTags                     13
-#define LFAttrRating                   14
-#define LFAttrPriority                 15
-#define LFAttrLocationName             16
-#define LFAttrLocationIATA             17
-#define LFAttrLocationGPS              18
+#define LFAttrAddTime                   6
+#define LFAttrFileTime                  7
+#define LFAttrDeleteTime                8
+#define LFAttrArchiveTime               9
+#define LFAttrFileFormat               10
+#define LFAttrFileCount                11
+#define LFAttrFileSize                 12
+#define LFAttrFlags                    13
+#define LFAttrURL                      14
+#define LFAttrTags                     15
+#define LFAttrRating                   16
+#define LFAttrPriority                 17
+#define LFAttrLocationName             18
+#define LFAttrLocationIATA             19
+#define LFAttrLocationGPS              20
 
-#define LFAttrHeight                   19
-#define LFAttrWidth                    20
-#define LFAttrResolution               21
-#define LFAttrAspectRatio              22
-#define LFAttrVideoCodec               23
-#define LFAttrRoll                     24
+#define LFAttrHeight                   21
+#define LFAttrWidth                    22
+#define LFAttrResolution               23
+#define LFAttrAspectRatio              24
+#define LFAttrVideoCodec               25
+#define LFAttrRoll                     26
 
-#define LFAttrExposure                 25
-#define LFAttrFocus                    26
-#define LFAttrAperture                 27
-#define LFAttrChip                     28
+#define LFAttrExposure                 27
+#define LFAttrFocus                    28
+#define LFAttrAperture                 29
+#define LFAttrChip                     30
 
-#define LFAttrAlbum                    29
-#define LFAttrChannels                 30
-#define LFAttrSamplerate               31
-#define LFAttrAudioCodec               32
+#define LFAttrAlbum                    31
+#define LFAttrChannels                 32
+#define LFAttrSamplerate               33
+#define LFAttrAudioCodec               34
 
-#define LFAttrDuration                 33
-#define LFAttrBitrate                  34
+#define LFAttrDuration                 35
+#define LFAttrBitrate                  36
 
-#define LFAttrArtist                   35
-#define LFAttrTitle                    36
-#define LFAttrCopyright                37
-#define LFAttrISBN                     38
-#define LFAttrLanguage                 39
-#define LFAttrPages                    40
-#define LFAttrRecordingTime            41
-#define LFAttrRecordingEquipment       42
-#define LFAttrSignature                43
+#define LFAttrArtist                   37
+#define LFAttrTitle                    38
+#define LFAttrCopyright                39
+#define LFAttrISBN                     40
+#define LFAttrLanguage                 41
+#define LFAttrPages                    42
+#define LFAttrRecordingTime            43
+#define LFAttrRecordingEquipment       44
+#define LFAttrSignature                45
 
-#define LFAttrFrom                     44
-#define LFAttrTo                       45
-#define LFAttrResponsible              46
-#define LFAttrDueTime                  47
-#define LFAttrDoneTime                 48
+#define LFAttrFrom                     46
+#define LFAttrTo                       47
+#define LFAttrResponsible              48
+#define LFAttrDueTime                  49
+#define LFAttrDoneTime                 50
 
-#define LFAttributeCount               49
-#define LFLastCoreAttribute            18
+#define LFAttributeCount               51
+#define LFLastCoreAttribute            20
 
 
 // Attribute types
@@ -457,8 +459,10 @@ struct LFCoreAttributes
 	char FileID[LFKeySize];
 	wchar_t Comment[256];
 	FILETIME CreationTime;
+	FILETIME AddTime;
 	FILETIME FileTime;
 	FILETIME DeleteTime;
+	FILETIME ArchiveTime;
 	char FileFormat[LFExtSize];
 	__int64 FileSize;
 	unsigned int Flags;
@@ -492,6 +496,7 @@ struct LFCoreAttributes
 #define LFFlagNew                       0x0002
 #define LFFlagLink                      0x0004
 #define LFFlagMissing                   0x0008
+#define LFFlagArchive                   0x0010
 
 struct LFItemDescriptor
 {
