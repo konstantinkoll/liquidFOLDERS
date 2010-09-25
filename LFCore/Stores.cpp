@@ -314,7 +314,7 @@ void SendShellNotifyMessage(unsigned int Msg, char* StoreID)
 	if (StoreID)
 	{
 		wcscpy_s(Key, LFKeySize+1, L"\\");
-		MultiByteToWideChar(CP_ACP, 0, StoreID, strlen(StoreID)+1, &Key[1], LFKeySize);
+		MultiByteToWideChar(CP_ACP, 0, StoreID, (int)(strlen(StoreID)+1), &Key[1], LFKeySize);
 	}
 	else
 	{
