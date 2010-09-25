@@ -472,43 +472,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Ribbon\Added_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\Added_32.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\Artist_16.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\Artist_32.png"
-				>
-			</File>
-			<File
 				RelativePath="Ribbon\Ascending_16.png"
 				>
 			</File>
 			<File
 				RelativePath="Ribbon\Ascending_32.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\AspectRatio_16.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\AspectRatio_32.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\Author_16.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\Author_32.png"
 				>
 			</File>
 			<File
@@ -632,22 +600,6 @@
 				>
 			</File>
 			<File
-				RelativePath="Ribbon\Comment_16.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\Comment_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\Computer_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\Computer_32.png"
-				>
-			</File>
-			<File
 				RelativePath="Ribbon\Contact_16.png"
 				>
 			</File>
@@ -704,22 +656,6 @@
 				>
 			</File>
 			<File
-				RelativePath="Ribbon\CreationTime_16.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\CreationTime_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\Cross_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\Cross_32.png"
-				>
-			</File>
-			<File
 				RelativePath="Ribbon\Delete_16.png"
 				>
 			</File>
@@ -744,51 +680,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Ribbon\Desktop_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\Desktop_32.png"
-				>
-			</File>
-			<File
 				RelativePath=".\Ribbon\DisplayOptions_16.png"
 				>
 			</File>
 			<File
 				RelativePath=".\Ribbon\DisplayOptions_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\DoneTime_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\DoneTime_32.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\Drop_16.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\Drop_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\DueTime_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\DueTime_32.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\Duration_16.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\Duration_32.png"
 				>
 			</File>
 			<File
@@ -845,22 +741,6 @@
 			</File>
 			<File
 				RelativePath=".\Ribbon\FileDrop_32.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\FileName_16.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\FileName_32.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\FileTime_16.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\FileTime_32.png"
 				>
 			</File>
 			<File
@@ -992,14 +872,6 @@
 				>
 			</File>
 			<File
-				RelativePath="Ribbon\Height_16.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\Height_32.png"
-				>
-			</File>
-			<File
 				RelativePath="Ribbon\Help_16.png"
 				>
 			</File>
@@ -1048,14 +920,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Ribbon\Language_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\Language_32.png"
-				>
-			</File>
-			<File
 				RelativePath=".\Ribbon\Last_16.png"
 				>
 			</File>
@@ -1064,19 +928,187 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Ribbon\LFAttrAddTime_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\LFAttrAddTime_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\LFAttrArtist_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\LFAttrArtist_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\LFAttrAspectRatio_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\LFAttrAspectRatio_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\LFAttrComment_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\LFAttrComment_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\LFAttrCreationTime_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\LFAttrCreationTime_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\LFAttrDoneTime_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\LFAttrDoneTime_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\LFAttrDueTime_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\LFAttrDueTime_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\LFAttrDuration_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\LFAttrDuration_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\LFAttrFileName_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\LFAttrFileName_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\LFAttrFileTime_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\LFAttrFileTime_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\LFAttrHeight_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\LFAttrHeight_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\LFAttrLanguage_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\LFAttrLanguage_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\LFAttrLocationGPS_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\LFAttrLocationGPS_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\LFAttrLocationIATA_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\LFAttrLocationIATA_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\LFAttrLocationName_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\LFAttrLocationName_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\LFAttrRating_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\LFAttrRating_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\LFAttrRecordingTime_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\LFAttrRecordingTime_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\LFAttrReel_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\LFAttrReel_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\LFAttrResolution_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\LFAttrResolution_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\LFAttrTags_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\LFAttrTags_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\LFAttrTitle_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\LFAttrTitle_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\LFAttrWidth_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\LFAttrWidth_32.png"
+				>
+			</File>
+			<File
 				RelativePath="Ribbon\Location_16.png"
 				>
 			</File>
 			<File
 				RelativePath="Ribbon\Location_32.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\LocationGPS_16.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\LocationGPS_32.png"
 				>
 			</File>
 			<File
@@ -1112,14 +1144,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Migrate.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\Migrate.png"
-				>
-			</File>
-			<File
 				RelativePath=".\Ribbon\MisterWong_16.png"
 				>
 			</File>
@@ -1133,14 +1157,6 @@
 			</File>
 			<File
 				RelativePath=".\Ribbon\Navigate_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\Nethood_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\Nethood_32.png"
 				>
 			</File>
 			<File
@@ -1184,18 +1200,6 @@
 				>
 			</File>
 			<File
-				RelativePath="Ribbon\Plane.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\Plane_16.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\Plane_32.png"
-				>
-			</File>
-			<File
 				RelativePath="Ribbon\Print_16.png"
 				>
 			</File>
@@ -1225,30 +1229,6 @@
 			</File>
 			<File
 				RelativePath=".\Ribbon\Prompt_32.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\Rating_16.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\Rating_32.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\RecordingTime_16.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\RecordingTime_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\Reel_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\Reel_32.png"
 				>
 			</File>
 			<File
@@ -1289,14 +1269,6 @@
 			</File>
 			<File
 				RelativePath="Ribbon\Rename_32.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\Resolution_16.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\Resolution_32.png"
 				>
 			</File>
 			<File
@@ -1420,14 +1392,6 @@
 				>
 			</File>
 			<File
-				RelativePath="Ribbon\StoreLock_16.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\StoreLock_32.png"
-				>
-			</File>
-			<File
 				RelativePath="Ribbon\StoreMakeHybrid_16.png"
 				>
 			</File>
@@ -1460,14 +1424,6 @@
 				>
 			</File>
 			<File
-				RelativePath="Ribbon\StoreUnlock_16.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\StoreUnlock_32.png"
-				>
-			</File>
-			<File
 				RelativePath="Ribbon\Support_16.png"
 				>
 			</File>
@@ -1492,27 +1448,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Ribbon\Tags_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\Tags_32.png"
-				>
-			</File>
-			<File
 				RelativePath="Ribbon\Time_16.png"
 				>
 			</File>
 			<File
 				RelativePath="Ribbon\Time_32.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\Title_16.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\Title_32.png"
 				>
 			</File>
 			<File
@@ -1713,22 +1653,6 @@
 			</File>
 			<File
 				RelativePath=".\Ribbon\Welcome_32.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\Width_16.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\Width_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\Workflow_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\Workflow_32.png"
 				>
 			</File>
 			<File
@@ -1977,6 +1901,14 @@
 			>
 		</File>
 		<File
+			RelativePath=".\Migrate.ico"
+			>
+		</File>
+		<File
+			RelativePath=".\Migrate.png"
+			>
+		</File>
+		<File
 			RelativePath=".\Ribbon\Migrate_16.png"
 			>
 		</File>
@@ -2002,6 +1934,10 @@
 		</File>
 		<File
 			RelativePath="Multiple.png"
+			>
+		</File>
+		<File
+			RelativePath=".\Plane.png"
 			>
 		</File>
 		<File

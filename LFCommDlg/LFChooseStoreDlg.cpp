@@ -80,6 +80,7 @@ void LFChooseStoreDlg::UpdateOkButton()
 	GetDlgItem(IDOK)->EnableWindow(bEnable);
 }
 
+
 BEGIN_MESSAGE_MAP(LFChooseStoreDlg, LFDialog)
 	ON_WM_GETMINMAXINFO()
 	ON_NOTIFY(NM_DBLCLK, IDC_STORELIST, OnDoubleClick)
