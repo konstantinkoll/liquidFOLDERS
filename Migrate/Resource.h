@@ -39,6 +39,8 @@
 #define IDC_SIMULATE                    2002
 #define IDC_DELETEIMPORTED              2003
 #define IDD_CHOOSEFOLDER                2100
+#define IDD_CHOOSEPROPERTY              2200
+#define IDC_ATTRIBUTES                  2201
 
 // Next default values for new objects
 // 

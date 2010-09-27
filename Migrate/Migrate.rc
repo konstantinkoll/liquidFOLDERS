@@ -33,6 +33,7 @@ LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
 IDR_APPLICATION         ICON                    "res\\Migrate.ico"
+IDD_CHOOSEPROPERTY      ICON                    "res\\Field_Tiny.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -104,7 +105,7 @@ LANGUAGE LANG_ENGLISH, SUBLANG_NEUTRAL
 // Menu
 //
 
-IDM_BACKGROUND MENU
+IDM_BACKGROUND MENU 
 BEGIN
     POPUP "POPUP"
     BEGIN
@@ -114,7 +115,7 @@ BEGIN
     END
 END
 
-IDM_HEADER MENU
+IDM_HEADER MENU 
 BEGIN
     POPUP "POPUP"
     BEGIN
@@ -122,6 +123,7 @@ BEGIN
         MENUITEM "Autosize &column",            ID_VIEW_AUTOSIZE
     END
 END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -146,6 +148,17 @@ BEGIN
     DEFPUSHBUTTON   "Choose &other folder...",IDOK,7,7,88,14
 END
 
+IDD_CHOOSEPROPERTY DIALOGEX 0, 0, 289, 270
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
+CAPTION "Choose property"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "",IDC_ATTRIBUTES,"SysListView32",LVS_LIST | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SORTASCENDING | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_ALIGNLEFT | LVS_NOCOLUMNHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,14,19,261,214
+    DEFPUSHBUTTON   "OK",IDOK,7,249,50,14,WS_GROUP
+    PUSHBUTTON      "Cancel",IDCANCEL,65,249,50,14,WS_GROUP
+    GROUPBOX        "Properties",IDC_STATIC,7,7,275,235,WS_GROUP
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -161,6 +174,14 @@ BEGIN
         RIGHTMARGIN, 244
         TOPMARGIN, 7
         BOTTOMMARGIN, 21
+    END
+
+    IDD_SORTOPTIONS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 282
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 263
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -178,13 +199,18 @@ END
 
 STRINGTABLE 
 BEGIN
-    ID_VIEW_SELECTROOT_TASKBAR "Opens a dialog where you can select the root folder to display in the main view below.\nSelect root folder"
+    ID_VIEW_SELECTROOT_TASKBAR 
+                            "Opens a dialog where you can select the root folder to display in the main view below.\nSelect root folder"
     ID_VIEW_INCLUDEBRANCH   "Includes the selected folder and all subfolders.\nInclude branch"
     ID_VIEW_EXCLUDEBRANCH   "Excludes the selected folder and all subfolders.\nExclude branch"
     ID_VIEW_OPEN            "Opens the selected folder.\nOpen"
     ID_VIEW_RENAME          "Renames the selected folder.\nRename folder"
     ID_VIEW_DELETE          "Deletes the selected folder.\nDelete folder"
     ID_VIEW_PROPERTIES      "Displays the properties of the selected folder.\nProperties"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_NOROOT_CAPTION      "You have not selected a root folder yet"
     IDS_NOROOT_HINT         "Click above to select a folder for browsing."
     IDS_NOSELECTION_CAPTION "You have not selected any folders for migration"

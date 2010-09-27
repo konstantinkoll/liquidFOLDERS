@@ -728,6 +728,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Ribbon\Field_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\Field_32.png"
+				>
+			</File>
+			<File
 				RelativePath="Ribbon\File_16.png"
 				>
 			</File>
@@ -1774,6 +1782,10 @@
 		</File>
 		<File
 			RelativePath=".\Facebook.png"
+			>
+		</File>
+		<File
+			RelativePath=".\Field_Tiny.ico"
 			>
 		</File>
 		<File
