@@ -27,6 +27,7 @@ public:
 	virtual ~CStoreManagerApp();
 
 	CString path_GoogleEarth;
+	UINT m_nAppLook;
 	UINT m_nTextureSize;
 	UINT m_nMaxTextureSize;
 	BOOL m_ShowQueryDuration;

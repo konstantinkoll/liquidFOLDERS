@@ -15,7 +15,7 @@ CGlasWindow::CGlasWindow()
 	p_App = (LFApplication*)AfxGetApp();
 	p_PopupWindow = NULL;
 	hTheme = NULL;
-	m_Active = TRUE;
+	m_Active = m_Enabled = TRUE;
 	m_IsAeroWindow = FALSE;
 	ZeroMemory(&m_Margins, sizeof(MARGINS));
 }

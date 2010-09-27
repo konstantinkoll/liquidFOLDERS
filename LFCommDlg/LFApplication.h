@@ -59,7 +59,6 @@ public:
 	virtual ~LFApplication();
 
 	CString path;
-	UINT m_nAppLook;
 	LFMessageIDs* p_MessageIDs;
 	LFAttributeDescriptor* m_Attributes[LFAttributeCount];
 	wchar_t* m_AttrCategories[LFAttrCategoryCount];
@@ -100,7 +99,6 @@ public:
 
 	virtual BOOL InitInstance();
 	virtual int ExitInstance();
-	virtual void SetApplicationLook(UINT nID);
 
 	CString GetDefaultFontFace();
 	void SendMail(CString Subject=_T(""));

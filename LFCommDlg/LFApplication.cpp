@@ -272,9 +272,6 @@ BOOL LFApplication::InitInstance()
 		InitKeyboardManager();
 	}
 
-	m_nAppLook = GetGlobalInt(_T("ApplicationLook"), ID_VIEW_APPLOOK_OFF_2007_BLUE);
-	SetApplicationLook(m_nAppLook);
-
 	// Watchdog starten
 	#ifndef _DEBUG
 	HANDLE mutex = CreateMutex(NULL, FALSE, _T(LFCM_Watchdog));
@@ -392,42 +389,6 @@ void LFApplication::OnAppNewStoreManager()
 void LFApplication::OnAppPrompt()
 {
 	ShellExecute(m_pActiveWnd->GetSafeHwnd(), _T("open"), _T("cmd.exe"), NULL, NULL, SW_SHOW);
-}
-
-void LFApplication::SetApplicationLook(UINT nID)
-{
-	if (nID!=m_nAppLook)
-	{
-		m_nAppLook = nID;
-		WriteGlobalInt(_T("ApplicationLook"), nID);
-	}
-
-	switch (m_nAppLook)
-	{
-	case ID_VIEW_APPLOOK_OFF_2007_BLACK:
-		CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerOffice2007));
-		CMFCVisualManagerOffice2007::SetStyle(CMFCVisualManagerOffice2007::Office2007_ObsidianBlack);
-		break;
-	case ID_VIEW_APPLOOK_OFF_2007_SILVER:
-		CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerOffice2007));
-		CMFCVisualManagerOffice2007::SetStyle(CMFCVisualManagerOffice2007::Office2007_Silver);
-		break;
-	case ID_VIEW_APPLOOK_OFF_2007_AQUA:
-		CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerOffice2007));
-		CMFCVisualManagerOffice2007::SetStyle(CMFCVisualManagerOffice2007::Office2007_Aqua);
-		break;
-#if (_MFC_VER>=0x1000)
-	case ID_VIEW_APPLOOK_WINDOWS_7:
-		CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerWindows7));
-		break;
-#endif
-	default:
-		CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerOffice2007));
-		CMFCVisualManagerOffice2007::SetStyle(CMFCVisualManagerOffice2007::Office2007_LunaBlue);
-		break;
-	}
-
-	CDockingManager::SetDockingMode(DT_IMMEDIATE);
 }
 
 CString LFApplication::GetGlobalRegPath()
