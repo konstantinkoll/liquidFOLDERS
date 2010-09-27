@@ -62,6 +62,7 @@ protected:
 	Cell* m_Tree;
 	CTooltipHeader m_wndHeader;
 	int m_ColumnWidth[MaxColumns];
+	int m_ColumnMapping[MaxColumns];
 	HTHEME hThemeList;
 	HTHEME hThemeButton;
 	LFTooltip m_TooltipCtrl;
@@ -106,11 +107,13 @@ protected:
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnRButtonDown(UINT nFlags, CPoint point);
-	afx_msg void OnContextMenu(CWnd* /*pWnd*/, CPoint point);
+	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
 	afx_msg void OnKillFocus(CWnd* pNewWnd);
 	afx_msg void OnBeginDrag(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnItemChanging(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnItemClick(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg LRESULT OnChooseProperty(WPARAM wParam, LPARAM lParam);
 	DECLARE_MESSAGE_MAP()
 
 private:
@@ -120,5 +123,7 @@ private:
 	UINT GetChildRect(CPoint item);
 	void NotifyOwner();
 	void ExecuteContextMenu(CPoint item, LPCSTR verb);
+	CString GetColumnCaption(UINT col);
+	void UpdateColumnCaption(UINT col);
 	void AutosizeColumn(UINT col);
 };

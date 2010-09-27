@@ -5,6 +5,7 @@
 #include "stdafx.h"
 #include "CTreeView.h"
 #include "Migrate.h"
+#include "ChoosePropertyDlg.h"
 #include "LFCore.h"
 #include "Resource.h"
 
@@ -30,6 +31,9 @@ CTreeView::CTreeView()
 	m_Selected.x = m_Selected.y = m_Hot.x = m_Hot.y = -1;
 	m_CheckboxHot = m_CheckboxPressed = m_Hover = FALSE;
 	m_pContextMenu2 = NULL;
+
+	for (UINT a=0; a<MaxColumns; a++)
+		m_ColumnMapping[a] = -1;
 
 	pDesktop = NULL;
 	SHGetDesktopFolder(&pDesktop);
@@ -473,10 +477,10 @@ void CTreeView::TrackMenu(UINT nID, CPoint point, int col)
 	CMenu* popup = menu.GetSubMenu(0);
 	ASSERT(popup);
 
-	if (col>0)
+	if (!col)
 	{
-		popup->AppendMenu(MF_SEPARATOR);
-		popup->AppendMenu(MF_SEPARATOR);
+		popup->EnableMenuItem(IDD_CHOOSEPROPERTY, MF_GRAYED | MF_DISABLED);
+		popup->EnableMenuItem(ID_VIEW_RESETPROPERTY, MF_GRAYED | MF_DISABLED);
 	}
 
 	switch (popup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RETURNCMD | TPM_RIGHTBUTTON, point.x, point.y, this, NULL))
@@ -487,6 +491,13 @@ void CTreeView::TrackMenu(UINT nID, CPoint point, int col)
 		break;
 	case ID_VIEW_AUTOSIZEALL:
 		AutosizeColumns();
+		break;
+	case IDD_CHOOSEPROPERTY:
+		PostMessage(IDD_CHOOSEPROPERTY, (WPARAM)col);
+		break;
+	case ID_VIEW_RESETPROPERTY:
+		m_ColumnMapping[col] = -1;
+		UpdateColumnCaption(col);
 		break;
 	}
 }
@@ -590,6 +601,35 @@ void CTreeView::ExecuteContextMenu(CPoint item, LPCSTR verb)
 	}
 }
 
+CString CTreeView::GetColumnCaption(UINT col)
+{
+	CString tmpStr;
+
+	if (col)
+		if (m_ColumnMapping[col]!=-1)
+		{
+			tmpStr = theApp.m_Attributes[m_ColumnMapping[col]]->Name;
+		}
+		else
+		{
+			tmpStr = "No property";
+		}
+
+	return tmpStr;
+}
+
+void CTreeView::UpdateColumnCaption(UINT col)
+{
+	ASSERT(col<m_Cols);
+
+	CString caption = GetColumnCaption(col);
+
+	HDITEM HdItem;
+	HdItem.mask = HDI_TEXT;
+	HdItem.pszText = caption.GetBuffer();
+	m_wndHeader.SetItem(col, &HdItem);
+}
+
 void CTreeView::AutosizeColumn(UINT col)
 {
 	int Width = 0;
@@ -597,9 +637,7 @@ void CTreeView::AutosizeColumn(UINT col)
 		if (m_Tree[MAKEPOS(row, col)].pItem)
 			Width = max(Width, m_Tree[MAKEPOS(row, col)].pItem->Width);
 
-	Width = min(Width+GUTTER+2*BORDER+m_CheckboxSize.cx+m_IconSize.cx+3*MARGIN, MAXWIDTH);
-
-	m_ColumnWidth[col] = Width;
+	m_ColumnWidth[col] = min(Width+GUTTER+2*BORDER+m_CheckboxSize.cx+m_IconSize.cx+3*MARGIN, MAXWIDTH);
 
 	if (m_wndHeader.GetItemCount()>(int)col)
 	{
@@ -612,12 +650,13 @@ void CTreeView::AutosizeColumn(UINT col)
 		while (m_wndHeader.GetItemCount()<=(int)col)
 		{
 			int idx = m_wndHeader.GetItemCount();
+			CString caption = GetColumnCaption(idx);
 
 			HDITEM HdItem;
 			HdItem.mask = HDI_TEXT | HDI_WIDTH | HDI_FORMAT;
 			HdItem.fmt = HDF_STRING | HDF_CENTER;
 			HdItem.cxy = m_ColumnWidth[idx];
-			HdItem.pszText = idx ? L"No property" : L"";
+			HdItem.pszText = caption.GetBuffer();
 			m_wndHeader.InsertItem(idx, &HdItem);
 		}
 }
@@ -642,6 +681,8 @@ BEGIN_MESSAGE_MAP(CTreeView, CWnd)
 	ON_WM_KILLFOCUS()
 	ON_NOTIFY(HDN_BEGINDRAG, 1, OnBeginDrag)
 	ON_NOTIFY(HDN_ITEMCHANGING, 1, OnItemChanging)
+	ON_NOTIFY(HDN_ITEMCLICK, 1, OnItemClick)
+	ON_MESSAGE(IDD_CHOOSEPROPERTY, OnChooseProperty)
 END_MESSAGE_MAP()
 
 int CTreeView::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -1187,4 +1228,29 @@ void CTreeView::OnItemChanging(NMHDR* pNMHDR, LRESULT* pResult)
 
 		*pResult = FALSE;
 	}
+}
+
+void CTreeView::OnItemClick(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	LPNMHEADER pHdr = (LPNMHEADER)pNMHDR;
+
+	if (pHdr->iItem)
+		PostMessage(IDD_CHOOSEPROPERTY, (WPARAM)pHdr->iItem);
+
+	*pResult = NULL;
+}
+
+LRESULT CTreeView::OnChooseProperty(WPARAM wParam, LPARAM /*lParam*/)
+{
+	ASSERT((int)wParam>0);
+	ASSERT((int)wParam<MaxColumns);
+
+	ChoosePropertyDlg dlg(theApp.m_pMainWnd);
+	if (dlg.DoModal()!=IDCANCEL)
+	{
+		m_ColumnMapping[(int)wParam] = dlg.m_Attr;
+		UpdateColumnCaption((UINT)wParam);
+	}
+
+	return NULL;
 }

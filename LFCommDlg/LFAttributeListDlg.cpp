@@ -49,7 +49,7 @@ void LFAttributeListDlg::AddAttribute(CListCtrl* li, UINT attr)
 {
 	BOOL add;
 	BOOL check;
-	TestAttribute(attr, add, check);
+	TestAttribute(attr , add, check);
 	if (!add)
 		return;
 
@@ -57,7 +57,7 @@ void LFAttributeListDlg::AddAttribute(CListCtrl* li, UINT attr)
 		LFAttrFileTime, LFAttrRecordingTime, LFAttrDeleteTime, LFAttrDueTime, LFAttrDoneTime, LFAttrLocationName,
 		LFAttrLocationIATA, LFAttrLocationGPS, LFAttrRating, LFAttrRoll, LFAttrArtist, LFAttrComment,
 		LFAttrDuration, LFAttrLanguage, LFAttrResolution, LFAttrHeight, LFAttrWidth, LFAttrAspectRatio, LFAttrTags,
-		LFAttrStoreID };
+		LFAttrStoreID, LFAttrAlbum };
 
 	LVITEM lvi;
 	ZeroMemory(&lvi, sizeof(lvi));

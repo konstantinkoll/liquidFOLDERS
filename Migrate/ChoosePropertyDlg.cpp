@@ -33,6 +33,7 @@ void ChoosePropertyDlg::TestAttribute(UINT attr, BOOL& add, BOOL& check)
 
 
 BEGIN_MESSAGE_MAP(ChoosePropertyDlg, LFAttributeListDlg)
+	ON_BN_CLICKED(IDC_RESET, OnReset)
 	ON_NOTIFY(NM_DBLCLK, IDC_ATTRIBUTES, OnDoubleClick)
 END_MESSAGE_MAP()
 
@@ -50,6 +51,12 @@ BOOL ChoosePropertyDlg::OnInitDialog()
 	PopulateListCtrl(IDC_ATTRIBUTES, FALSE, m_Attr);
 
 	return TRUE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird
+}
+
+void ChoosePropertyDlg::OnReset()
+{
+	m_Attr = -1;
+	EndDialog(IDC_RESET);
 }
 
 void ChoosePropertyDlg::OnDoubleClick(NMHDR* /*pNMHDR*/, LRESULT* /*pResult*/)

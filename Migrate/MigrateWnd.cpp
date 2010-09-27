@@ -70,6 +70,7 @@ BEGIN_MESSAGE_MAP(CMigrateWnd, CGlasWindow)
 	ON_MESSAGE_VOID(WM_IDLEUPDATECMDUI, OnIdleUpdateCmdUI)
 	ON_COMMAND(ID_VIEW_SELECTROOT, OnSelectRoot)
 	ON_COMMAND(IDC_MIGRATE, OnMigrate)
+	ON_COMMAND(IDC_SIMULATE, OnSimulate)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoresChanged, OnStoresChanged)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoreAttributesChanged, OnStoresChanged)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->DefaultStoreChanged, OnStoresChanged)
@@ -150,6 +151,11 @@ void CMigrateWnd::OnMigrate()
 	}
 
 	MessageBox(_T("Not implemented!"));
+}
+
+void CMigrateWnd::OnSimulate()
+{
+	m_wndBottomArea.GetDlgItem(IDC_DELETEIMPORTED)->EnableWindow(!((CButton*)m_wndBottomArea.GetDlgItem(IDC_SIMULATE))->GetCheck());
 }
 
 LRESULT CMigrateWnd::OnStoresChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)

@@ -15,6 +15,7 @@
 #define ID_VIEW_PROPERTIES              407
 #define ID_VIEW_AUTOSIZE                500
 #define ID_VIEW_AUTOSIZEALL             501
+#define ID_VIEW_RESETPROPERTY           502
 #define IDM_BACKGROUND                  600
 #define IDM_HEADER                      601
 #define IDS_NOROOT_CAPTION              1000

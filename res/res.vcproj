@@ -928,6 +928,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Ribbon\LFAttrAlbum_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\LFAttrAlbum_32.png"
+				>
+			</File>
+			<File
 				RelativePath=".\Ribbon\LFAttrArtist_16.png"
 				>
 			</File>
