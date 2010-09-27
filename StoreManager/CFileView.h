@@ -7,6 +7,40 @@
 #include "LFCommDlg.h"
 
 
+// View parameters
+
+struct LFViewParameters
+{
+	UINT Mode;
+	UINT Background;
+	BOOL FullRowSelect;
+	BOOL AlwaysSave;
+	BOOL Changed;
+	int ColumnOrder[LFAttributeCount];
+	int ColumnWidth[LFAttributeCount];
+
+	UINT SortBy;
+	BOOL Descending;
+	BOOL AutoDirs;
+
+	int GlobeLatitude;
+	int GlobeLongitude;
+	int GlobeZoom;
+	BOOL GlobeShowBubbles;
+	BOOL GlobeShowAirportNames;
+	BOOL GlobeShowGPS;
+	BOOL GlobeShowHints;
+	BOOL GlobeShowSpots;
+	BOOL GlobeShowViewpoint;
+
+	BOOL TagcloudCanonical;
+	BOOL TagcloudOmitRare;
+	BOOL TagcloudUseSize;
+	BOOL TagcloudUseColors;
+	BOOL TagcloudUseOpacity;
+};
+
+
 // CFileView
 //
 
@@ -32,8 +66,7 @@ public:
 	void OnUpdateViewOptions(int _ActiveContextID=-1, int _ViewID=-1, BOOL Force=FALSE);
 	void OnUpdateSearchResult(LFSearchResult* _result, int _FocusItem);
 	BOOL HandleDefaultKeys(UINT nChar, UINT nRepCnt, UINT nFlags);
-	int GetFontHeight(BOOL GrannyMode);
-	void SetNcDividerLine(int y);
+	int GetFontHeight();
 
 protected:
 	LFViewParameters m_ViewParameters;
@@ -49,7 +82,6 @@ protected:
 	int FocusItem;
 	int SelectionAnchor;
 	int HoverItem;
-	int NcDividerLineY;
 
 	virtual void SetViewOptions(UINT _ViewID, BOOL Force);
 	virtual void SetSearchResult(LFSearchResult* _result);
@@ -62,7 +94,6 @@ protected:
 	void AppendContextMenu(CMenu* menu);
 	void OnViewOptionsChanged(BOOL LocalSettings=FALSE);
 
-	afx_msg void OnNcPaint();
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);
@@ -72,7 +103,6 @@ protected:
 	afx_msg void OnMouseLeave();
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg BOOL OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message);
-	afx_msg void OnToggleGrannyMode();
 	afx_msg void OnSelectAll();
 	afx_msg void OnSelectNone();
 	afx_msg void OnUpdateCommands(CCmdUI* pCmdUI);

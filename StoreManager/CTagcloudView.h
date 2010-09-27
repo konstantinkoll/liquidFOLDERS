@@ -35,7 +35,7 @@ public:
 	void Create(CWnd* _pParentWnd, LFSearchResult* _result, int _FocusItem);
 
 protected:
-	CFont m_Fonts[22];
+	CFont m_Fonts[20];
 	Tag* m_Tags;
 	HTHEME hTheme;
 

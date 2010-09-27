@@ -170,9 +170,9 @@ void CListView::SetSearchResult(LFSearchResult* _result)
 void CListView::SetViewOptions(UINT _ViewID, BOOL Force)
 {
 	// Font
-	if (Force || (pViewParameters->GrannyMode!=m_ViewParameters.GrannyMode))
+	if (Force)
 	{
-		m_FileList.SetFont(&theApp.m_Fonts[FALSE][pViewParameters->GrannyMode]);
+		m_FileList.SetFont(&theApp.m_DefaultFont);
 
 		if (_ViewID==LFViewDetails)
 		{
@@ -180,7 +180,7 @@ void CListView::SetViewOptions(UINT _ViewID, BOOL Force)
 			if (pHdrCtrl)
 			{
 				pHdrCtrl->SetFont(NULL);
-				pHdrCtrl->SetFont(&theApp.m_Fonts[FALSE][FALSE]);
+				pHdrCtrl->SetFont(&theApp.m_DefaultFont);
 			}
 		}
 	}
@@ -190,11 +190,11 @@ void CListView::SetViewOptions(UINT _ViewID, BOOL Force)
 		OnSysColorChange();
 
 	// Categories
-	if (Force || (pViewParameters->ShowCategories!=m_ViewParameters.ShowCategories) || (_ViewID!=ViewID))
-		m_FileList.EnableGroupView(pViewParameters->ShowCategories && (!m_FileList.OwnerData) && (_ViewID!=LFViewList));
+	if (Force || (_ViewID!=ViewID))
+		m_FileList.EnableGroupView((!m_FileList.OwnerData) && (_ViewID!=LFViewList));
 
 	// Icons
-	if (Force || (_ViewID!=ViewID) || (pViewParameters->GrannyMode!=m_ViewParameters.GrannyMode))
+	if (Force || (_ViewID!=ViewID))
 	{
 		CImageList* icons = NULL;
 		int nImageList = LVSIL_NORMAL;
@@ -204,15 +204,15 @@ void CListView::SetViewOptions(UINT _ViewID, BOOL Force)
 		case LFViewLargeIcons:
 		case LFViewPreview:
 			icons = &theApp.m_Icons128;
-			m_FileList.SetIconSpacing(140, 140+(int)(GetFontHeight(pViewParameters->GrannyMode)*2.5));
+			m_FileList.SetIconSpacing(140, 140+(int)(GetFontHeight()*2.5));
 			break;
 		case LFViewSmallIcons:
-			m_FileList.SetIconSpacing(32+(int)(GetFontHeight(pViewParameters->GrannyMode)*8), (int)(GetFontHeight(pViewParameters->GrannyMode)*8));
+			m_FileList.SetIconSpacing(32+(int)(GetFontHeight()*8), (int)(GetFontHeight()*8));
 		case LFViewTiles:
-			icons = pViewParameters->GrannyMode ? &theApp.m_Icons64 : &theApp.m_Icons48;
+			icons = &theApp.m_Icons48;
 			break;
 		default:
-			icons = pViewParameters->GrannyMode ? &theApp.m_Icons24: &theApp.m_Icons16;
+			icons = &theApp.m_Icons16;
 			nImageList = LVSIL_SMALL;
 		}
 		m_FileList.SetImageList(icons, nImageList);
@@ -241,7 +241,7 @@ void CListView::SetViewOptions(UINT _ViewID, BOOL Force)
 			if ((theApp.OSVersion==OS_XP) && (m_FileList.OwnerData))  // Only for virtual lists on Windows XP
 			{
 				tvi.dwMask |= LVTVIM_LABELMARGIN;
-				tvi.rcLabelMargin.bottom = (int)(GetFontHeight(pViewParameters->GrannyMode)*1.3);
+				tvi.rcLabelMargin.bottom = (int)(GetFontHeight()*1.3);
 				tvi.rcLabelMargin.top = -18;
 				tvi.rcLabelMargin.left = 1;
 				tvi.rcLabelMargin.right = 1;

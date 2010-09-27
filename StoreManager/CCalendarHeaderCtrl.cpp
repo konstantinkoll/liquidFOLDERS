@@ -80,7 +80,7 @@ void CCalendarHeaderCtrl::OnPaint()
 	r.bottom--;
 	dc.FillSolidRect(r, m_BackCol);
 
-	CFont* pOldFont = (CFont*)dc.SelectObject(&theApp.m_Fonts[TRUE][TRUE]);
+	CFont* pOldFont = (CFont*)dc.SelectObject(&theApp.m_CaptionFont);
 	dc.SetTextColor(m_TextCol);
 
 	dc.DrawText(m_Text, r, DT_SINGLELINE | DT_END_ELLIPSIS | DT_VCENTER | DT_CENTER);

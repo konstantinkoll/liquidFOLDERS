@@ -1,4 +1,8 @@
-#include "StdAfx.h"
+
+// ChooseDetailsDlg.cpp: Implementierung der Klasse ChooseDetailsDlg
+//
+
+#include "stdafx.h"
 #include "ChooseDetailsDlg.h"
 #include "LFCore.h"
 
@@ -6,53 +10,98 @@
 // ChooseDetailsDlg
 //
 
-ChooseDetailsDlg::ChooseDetailsDlg(CWnd* pParentWnd, LFViewParameters* _view, int _context)
-	: CAttributeListDialog(IDD_CHOOSEDETAILS, pParentWnd)
+ChooseDetailsDlg::ChooseDetailsDlg(CWnd* pParentWnd, LFViewParameters* View, int Context, UINT nIDTemplate)
+	: LFAttributeListDlg(nIDTemplate, pParentWnd)
 {
-	ASSERT(_view);
-	view = _view;
-	context = _context;
+	ASSERT(View);
+	p_View = View;
+	m_Context = Context;
+	m_Template = nIDTemplate;
 }
 
-ChooseDetailsDlg::~ChooseDetailsDlg()
+void ChooseDetailsDlg::DoDataExchange(CDataExchange* pDX)
 {
+	DDX_Control(pDX, IDC_VIEWATTRIBUTES, m_ShowAttributes);
+
+	if (pDX->m_bSaveAndValidate)
+	{
+		BOOL present[LFAttributeCount];
+		ZeroMemory(present, sizeof(present));
+
+		// Angezeigte Attribute
+		for (int a=0; a<m_ShowAttributes.GetItemCount(); a++)
+		{
+			UINT attr = (UINT)m_ShowAttributes.GetItemData(a);
+			present[attr] = TRUE;
+			if (m_ShowAttributes.GetCheck(a)!=(p_View->ColumnWidth[attr]!=0))
+				theApp.ToggleAttribute(p_View, attr);
+		}
+
+		// Nicht angezeigte Attribute
+		for (int a=0; a<LFAttributeCount; a++)
+			if ((!theApp.m_Attributes[a]->AlwaysVisible) && (!present[a]))
+				p_View->ColumnWidth[a] = 0;
+
+		// Reihenfolge
+		p_View->ColumnOrder[0] = 0;
+		UINT cnt = 1;
+		for (int a=0; a<m_ShowAttributes.GetItemCount(); a++)
+			if (m_ShowAttributes.GetCheck(a))
+			{
+				UINT colID = 0;
+				for (int b=0; b<m_ShowAttributes.GetItemCount(); b++)
+					if ((m_ShowAttributes.GetCheck(b)) && (m_ShowAttributes.GetItemData(b)<=m_ShowAttributes.GetItemData(a)))
+						colID++;
+				p_View->ColumnOrder[cnt++] = colID;
+			}
+
+		// Nicht belegte Spalten
+		for (UINT a=cnt; a<LFAttributeCount; a++)
+			p_View->ColumnOrder[a] = a;
+	}
+}
+
+void ChooseDetailsDlg::TestAttribute(UINT attr, BOOL& add, BOOL& check)
+{
+	add = (theApp.m_Contexts[m_Context]->AllowedAttributes->IsSet(attr)) && (!theApp.m_Attributes[attr]->AlwaysVisible);
+	check = (p_View->ColumnWidth[attr]);
 }
 
 void ChooseDetailsDlg::SwapItems(int FocusItem, int NewPos)
 {
-	TCHAR text1[MAX_PATH];
+	TCHAR text1[256];
 	LVITEM i1;
 	ZeroMemory(&i1, sizeof(LVITEM));
 	i1.pszText = text1;
 	i1.cchTextMax = sizeof(text1)/sizeof(TCHAR);
 	i1.iItem = FocusItem;
 	i1.mask = LVIF_TEXT | LVIF_IMAGE | LVIF_PARAM;
-	ShowAttributes->GetItem(&i1);
+	m_ShowAttributes.GetItem(&i1);
 
-	TCHAR text2[MAX_PATH];
+	TCHAR text2[256];
 	LVITEM i2;
 	ZeroMemory(&i2, sizeof(LVITEM));
 	i2.pszText = text2;
 	i2.cchTextMax = sizeof(text2)/sizeof(TCHAR);
 	i2.iItem = NewPos;
 	i2.mask = LVIF_TEXT | LVIF_IMAGE | LVIF_PARAM;
-	ShowAttributes->GetItem(&i2);
+	m_ShowAttributes.GetItem(&i2);
 
 	std::swap(i1.iItem, i2.iItem);
 
-	ShowAttributes->SetItem(&i1);
-	ShowAttributes->SetItem(&i2);
+	m_ShowAttributes.SetItem(&i1);
+	m_ShowAttributes.SetItem(&i2);
 
-	BOOL Check1 = ShowAttributes->GetCheck(FocusItem);
-	BOOL Check2 = ShowAttributes->GetCheck(NewPos);
-	ShowAttributes->SetCheck(FocusItem, Check2);
-	ShowAttributes->SetCheck(NewPos, Check1);
+	BOOL Check1 = m_ShowAttributes.GetCheck(FocusItem);
+	BOOL Check2 = m_ShowAttributes.GetCheck(NewPos);
+	m_ShowAttributes.SetCheck(FocusItem, Check2);
+	m_ShowAttributes.SetCheck(NewPos, Check1);
 
-	ShowAttributes->SetItemState(NewPos, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
+	m_ShowAttributes.SetItemState(NewPos, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
 }
 
 
-BEGIN_MESSAGE_MAP(ChooseDetailsDlg, CAttributeListDialog)
+BEGIN_MESSAGE_MAP(ChooseDetailsDlg, LFAttributeListDlg)
 	ON_NOTIFY(LVN_ITEMCHANGED, IDC_VIEWATTRIBUTES, OnSelectionChange)
 	ON_COMMAND(IDC_MOVEUP, OnMoveUp)
 	ON_COMMAND(IDC_MOVEDOWN, OnMoveDown)
@@ -62,11 +111,11 @@ END_MESSAGE_MAP()
 
 BOOL ChooseDetailsDlg::OnInitDialog()
 {
-	CDialog::OnInitDialog();
+	LFAttributeListDlg::OnInitDialog();
 
 	// Symbol für dieses Dialogfeld festlegen. Wird automatisch erledigt
 	// wenn das Hauptfenster der Anwendung kein Dialogfeld ist
-	HICON hIcon = theApp.LoadIcon(IDD_CHOOSEDETAILS);
+	HICON hIcon = theApp.LoadIcon(m_Template);
 	SetIcon(hIcon, TRUE);		// Großes Symbol verwenden
 	SetIcon(hIcon, FALSE);		// Kleines Symbol verwenden
 
@@ -74,12 +123,28 @@ BOOL ChooseDetailsDlg::OnInitDialog()
 	CString text;
 	GetWindowText(text);
 	CString caption;
-	caption.Format(text, theApp.m_Contexts[context]->Name);
+	caption.Format(text, theApp.m_Contexts[m_Context]->Name);
 	SetWindowText(caption);
 
 	// Kontrollelemente einstellen
-	ShowAttributes = ((CListCtrl*)GetDlgItem(IDC_VIEWATTRIBUTES));
-	PopulateListCtrl(IDC_VIEWATTRIBUTES, ALD_Mode_ChooseDetails, context, view);
+	PrepareListCtrl(&m_ShowAttributes, TRUE);
+
+	for (UINT a=0; a<LFAttributeCount; a++)
+	{
+		int cnt = 0;
+		for (UINT b=0; b<LFAttributeCount; b++)
+			if (p_View->ColumnWidth[b])
+				if ((cnt++)==p_View->ColumnOrder[a])
+				{
+					AddAttribute(&m_ShowAttributes, b);
+					break;
+				}
+	}
+	for (UINT a=0; a<LFAttributeCount; a++)
+		if (!p_View->ColumnWidth[a])
+			AddAttribute(&m_ShowAttributes, a);
+
+	FinalizeListCtrl(&m_ShowAttributes, -1, FALSE);
 
 	return TRUE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird
 }
@@ -89,79 +154,37 @@ void ChooseDetailsDlg::OnSelectionChange(NMHDR* pNMHDR, LRESULT* pResult)
 	NM_LISTVIEW* pNMListView = (NM_LISTVIEW*)pNMHDR;
 	int idx = (int)pNMListView->iItem;
 
-	if ((pNMListView->uNewState & LVIS_SELECTED) && (ShowAttributes))
+	if (pNMListView->uNewState & LVIS_SELECTED)
 	{
-		GetDlgItem(IDC_MOVEUP)->EnableWindow(idx>0);
-		GetDlgItem(IDC_MOVEDOWN)->EnableWindow(idx<ShowAttributes->GetItemCount()-1);
+		GetDlgItem(IDC_MOVEUP)->EnableWindow(m_ShowAttributes.IsWindowEnabled() && (idx>0));
+		GetDlgItem(IDC_MOVEDOWN)->EnableWindow(m_ShowAttributes.IsWindowEnabled() && (idx<m_ShowAttributes.GetItemCount()-1));
 	}
 
 	*pResult = 0;
 }
 
-void ChooseDetailsDlg::DoDataExchange(CDataExchange* pDX)
-{
-	CAttributeListDialog::DoDataExchange(pDX);
-
-	if (pDX->m_bSaveAndValidate)
-	{
-		BOOL present[LFAttributeCount];
-		ZeroMemory(present, sizeof(present));
-
-		// Angezeigte Attribute
-		for (int a=0; a<ShowAttributes->GetItemCount(); a++)
-		{
-			UINT attr = (UINT)ShowAttributes->GetItemData(a);
-			present[attr] = TRUE;
-			if (ShowAttributes->GetCheck(a)!=(view->ColumnWidth[attr]!=0))
-				theApp.ToggleAttribute(view, attr);
-		}
-
-		// Nicht angezeigte Attribute
-		for (int a=0; a<LFAttributeCount; a++)
-			if ((!theApp.m_Attributes[a]->AlwaysVisible) && (!present[a]))
-				view->ColumnWidth[a] = 0;
-
-		// Reihenfolge
-		view->ColumnOrder[0] = 0;
-		UINT cnt = 1;
-		for (int a=0; a<ShowAttributes->GetItemCount(); a++)
-			if (ShowAttributes->GetCheck(a))
-			{
-				UINT colID = 0;
-				for (int b=0; b<ShowAttributes->GetItemCount(); b++)
-					if ((ShowAttributes->GetCheck(b)) && (ShowAttributes->GetItemData(b)<=ShowAttributes->GetItemData(a)))
-						colID++;
-				view->ColumnOrder[cnt++] = colID;
-			}
-
-		// Nicht belegte Spalten
-		for (UINT a=cnt; a<LFAttributeCount; a++)
-			view->ColumnOrder[a] = a;
-	}
-}
-
 void ChooseDetailsDlg::OnMoveUp()
 {
-	int idx = ShowAttributes->GetNextItem(-1, LVIS_SELECTED);
+	int idx = m_ShowAttributes.GetNextItem(-1, LVIS_SELECTED);
 	if (idx>0)
 		SwapItems(idx, idx-1);
 }
 
 void ChooseDetailsDlg::OnMoveDown()
 {
-	int idx = ShowAttributes->GetNextItem(-1, LVIS_SELECTED);
-	if (idx<ShowAttributes->GetItemCount()-1)
+	int idx = m_ShowAttributes.GetNextItem(-1, LVIS_SELECTED);
+	if (idx<m_ShowAttributes.GetItemCount()-1)
 		SwapItems(idx, idx+1);
 }
 
 void ChooseDetailsDlg::OnCheckAll()
 {
-	for (int a=0; a<ShowAttributes->GetItemCount(); a++)
-		ShowAttributes->SetCheck(a);
+	for (int a=0; a<m_ShowAttributes.GetItemCount(); a++)
+		m_ShowAttributes.SetCheck(a);
 }
 
 void ChooseDetailsDlg::OnUncheckAll()
 {
-	for (int a=0; a<ShowAttributes->GetItemCount(); a++)
-		ShowAttributes->SetCheck(a, FALSE);
+	for (int a=0; a<m_ShowAttributes.GetItemCount(); a++)
+		m_ShowAttributes.SetCheck(a, FALSE);
 }

@@ -27,7 +27,6 @@ void CCalendarDayView::AdjustLayout()
 	GetClientRect(rectClient);
 
 	int heightDay = 30;
-	SetNcDividerLine(heightDay);
 
 	m_CalendarHeaderCtrl.SetWindowPos(NULL, rectClient.left, rectClient.top, rectClient.Width(), heightDay, SWP_NOACTIVATE | SWP_NOZORDER);
 	m_FileList.SetWindowPos(NULL, rectClient.left, rectClient.top + heightDay, rectClient.Width(), rectClient.Height() - heightDay, SWP_NOACTIVATE | SWP_NOZORDER);
@@ -85,15 +84,15 @@ void CCalendarDayView::SetSearchResult(LFSearchResult* _result)
 void CCalendarDayView::SetViewOptions(UINT /*_ViewID*/, BOOL Force)
 {
 	// Font
-	if (Force || (pViewParameters->GrannyMode!=m_ViewParameters.GrannyMode))
+	if (Force)
 	{
-		m_FileList.SetFont(&theApp.m_Fonts[FALSE][pViewParameters->GrannyMode]);
+		m_FileList.SetFont(&theApp.m_DefaultFont);
 
 		CHeaderCtrl * pHdrCtrl = m_FileList.GetHeaderCtrl();
 		if (pHdrCtrl)
 		{
 			pHdrCtrl->SetFont(NULL);
-			pHdrCtrl->SetFont(&theApp.m_Fonts[FALSE][FALSE]);
+			pHdrCtrl->SetFont(&theApp.m_DefaultFont);
 		}
 	}
 
@@ -121,11 +120,10 @@ void CCalendarDayView::SetViewOptions(UINT /*_ViewID*/, BOOL Force)
 	}
 
 	// Icons
-	if (Force || (pViewParameters->GrannyMode!=m_ViewParameters.GrannyMode))
+	if (Force)
 	{
-		CImageList* icons = pViewParameters->GrannyMode ? &theApp.m_Icons24: &theApp.m_Icons16;
-		m_FileList.SetImageList(icons, LVSIL_NORMAL);
-		m_FileList.SetImageList(icons, LVSIL_SMALL);
+		m_FileList.SetImageList(&theApp.m_Icons16, LVSIL_NORMAL);
+		m_FileList.SetImageList(&theApp.m_Icons16, LVSIL_SMALL);
 	}
 }
 

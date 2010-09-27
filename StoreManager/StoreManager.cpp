@@ -345,8 +345,6 @@ void CStoreManagerApp::LoadViewOptions(int context)
 	SetRegistryBase(base);
 
 	m_Views[context].Mode = GetInt(_T("Viewmode"), LFViewAutomatic);
-	m_Views[context].GrannyMode = GetInt(_T("GrannyMode"), FALSE);
-	m_Views[context].ShowCategories = GetInt(_T("ShowCategories"), TRUE);
 	m_Views[context].FullRowSelect = GetInt(_T("FullRowSelect"), FALSE);
 	m_Views[context].AlwaysSave = GetInt(_T("AlwaysSave"), TRUE);
 	m_Views[context].SortBy = GetInt(_T("SortBy"), LFAttrFileName);
@@ -402,8 +400,6 @@ void CStoreManagerApp::SaveViewOptions(int context, UINT SaveMode)
 	if ((m_Views[context].AlwaysSave) || (SaveMode==SaveMode_Force))
 	{
 		WriteInt(_T("Viewmode"), m_Views[context].Mode);
-		WriteInt(_T("GrannyMode"), m_Views[context].GrannyMode);
-		WriteInt(_T("ShowCategories"), m_Views[context].ShowCategories);
 		WriteInt(_T("FullRowSelect"), m_Views[context].FullRowSelect);
 		WriteInt(_T("SortBy"), m_Views[context].SortBy);
 		WriteInt(_T("Descending"), m_Views[context].Descending);

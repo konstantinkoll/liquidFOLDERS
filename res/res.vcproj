@@ -856,22 +856,6 @@
 				>
 			</File>
 			<File
-				RelativePath="Ribbon\Granny_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\Granny_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\Grouping_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\Grouping_32.png"
-				>
-			</File>
-			<File
 				RelativePath="Ribbon\Help_16.png"
 				>
 			</File>
@@ -1077,6 +1061,14 @@
 			</File>
 			<File
 				RelativePath=".\Ribbon\LFAttrResolution_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\LFAttrStoreID_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\LFAttrStoreID_32.png"
 				>
 			</File>
 			<File

@@ -28,10 +28,29 @@ LFStorePropertiesDlg::LFStorePropertiesDlg(char* _StoreID, CWnd* pParentWnd)
 	}
 }
 
+void LFStorePropertiesDlg::DoDataExchange(CDataExchange* pDX)
+{
+	// DDX nur beim Verlassen des Dialogs
+	if (pDX->m_bSaveAndValidate)
+	{
+		CString name;
+		GetDlgItem(IDC_STORENAME)->GetWindowText(name);
+		CString comment;
+		GetDlgItem(IDC_COMMENT)->GetWindowText(comment);
+
+		UINT res = LFSetStoreAttributes(store.StoreID, name.GetBuffer(), comment.GetBuffer());
+		if (res!=LFOk)
+		{
+			LFErrorBox(res);
+			pDX->Fail();
+		}
+	}
+}
+
 
 BEGIN_MESSAGE_MAP(LFStorePropertiesDlg, CDialog)
-	ON_REGISTERED_MESSAGE(MessageIDs->StoresChanged, UpdateStore)
-	ON_REGISTERED_MESSAGE(MessageIDs->StoreAttributesChanged, UpdateStore)
+	ON_REGISTERED_MESSAGE(MessageIDs->StoresChanged, OnUpdateStore)
+	ON_REGISTERED_MESSAGE(MessageIDs->StoreAttributesChanged, OnUpdateStore)
 END_MESSAGE_MAP()
 
 BOOL LFStorePropertiesDlg::OnInitDialog()
@@ -57,7 +76,7 @@ BOOL LFStorePropertiesDlg::OnInitDialog()
 	return TRUE;
 }
 
-LRESULT LFStorePropertiesDlg::UpdateStore(WPARAM /*wParam*/, LPARAM /*lParam*/)
+LRESULT LFStorePropertiesDlg::OnUpdateStore(WPARAM /*wParam*/, LPARAM /*lParam*/)
 {
 	CEdit* edit1 = (CEdit*)GetDlgItem(IDC_STORENAME);
 	CEdit* edit2 = (CEdit*)GetDlgItem(IDC_COMMENT);
@@ -112,23 +131,4 @@ LRESULT LFStorePropertiesDlg::UpdateStore(WPARAM /*wParam*/, LPARAM /*lParam*/)
 	}
 
 	return NULL;
-}
-
-void LFStorePropertiesDlg::DoDataExchange(CDataExchange* pDX)
-{
-	// DDX nur beim Verlassen des Dialogs
-	if (pDX->m_bSaveAndValidate)
-	{
-		CString name;
-		GetDlgItem(IDC_STORENAME)->GetWindowText(name);
-		CString comment;
-		GetDlgItem(IDC_COMMENT)->GetWindowText(comment);
-
-		UINT res = LFSetStoreAttributes(store.StoreID, name.GetBuffer(), comment.GetBuffer());
-		if (res!=LFOk)
-		{
-			LFErrorBox(res);
-			pDX->Fail();
-		}
-	}
 }

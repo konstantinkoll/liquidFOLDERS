@@ -18,6 +18,7 @@
 #define IDB_EARTHMAP_1024               20005
 #define IDB_EARTHMAP_2048               20006
 #define IDB_EXPLORERGRADIENT            20007
+#define IDB_ATTRIBUTEICONS              20008
 #define IDB_RATING0                     20100
 #define IDB_RATING1                     20101
 #define IDB_RATING2                     20102

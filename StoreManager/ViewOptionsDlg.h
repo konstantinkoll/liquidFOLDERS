@@ -1,30 +1,27 @@
-#pragma once
-#include "StoreManager.h"
-#include "CAttributeListDialog.h"
 
-class ViewOptionsDlg : public CAttributeListDialog
+// ViewOptionsDlg.h: Schnittstelle der Klasse ViewOptionsDlg
+//
+
+#pragma once
+#include "ChooseDetailsDlg.h"
+#include "StoreManager.h"
+
+
+// ViewOptionsDlg
+//
+
+class ViewOptionsDlg : public ChooseDetailsDlg
 {
 public:
-	ViewOptionsDlg(CWnd* pParentWnd, UINT _RibbonColor, LFViewParameters* _view, int _context, LFSearchResult* files);
-	virtual ~ViewOptionsDlg();
+	ViewOptionsDlg(CWnd* pParentWnd, LFViewParameters* View, UINT Context);
 
-	UINT RibbonColor;
-	int context;
-
-protected:
 	virtual void DoDataExchange(CDataExchange* pDX);
 
-	CImageListTransparent* m_pViewIcons;
-	LFViewParameters* view;
-	BOOL HasCategories;
-	CButton* ShowCategories;
-	CListCtrl* ShowAttributes;
-	CString BackgroundText;
+protected:
+	CImageListTransparent m_ViewIcons;
 
 	afx_msg BOOL OnInitDialog();
 	afx_msg void OnViewModeChange(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnCheckAll();
-	afx_msg void OnUncheckAll();
 	afx_msg void OnDoubleClick(NMHDR* pNMHDR, LRESULT* pResult);
 	DECLARE_MESSAGE_MAP()
 };

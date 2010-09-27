@@ -415,6 +415,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CImageListTransparent.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\CInspectorGrid.cpp"
 				>
 			</File>
@@ -492,6 +496,10 @@
 			</File>
 			<File
 				RelativePath=".\LFApplication.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\LFAttributeListDlg.cpp"
 				>
 			</File>
 			<File
@@ -645,6 +653,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CImageListTransparent.h"
+				>
+			</File>
+			<File
 				RelativePath=".\CInspectorGrid.h"
 				>
 			</File>
@@ -686,6 +698,10 @@
 			</File>
 			<File
 				RelativePath=".\LFApplication.h"
+				>
+			</File>
+			<File
+				RelativePath=".\LFAttributeListDlg.h"
 				>
 			</File>
 			<File
@@ -784,6 +800,10 @@
 			>
 			<File
 				RelativePath=".\res\About_Small.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Attributes.bmp"
 				>
 			</File>
 			<File

@@ -51,10 +51,8 @@ protected:
 	HGLRC m_hrc;
 	HCURSOR hCursor;
 	CTexture* m_TextureGlobe;
-	CGLFont* m_pSpecialFont;
-	CGLFont* m_pFonts[2][2];
-	CGLFont* SmallFont;
-	CGLFont* LargeFont;
+	CGLFont m_SpecialFont;
+	CGLFont m_Fonts[2];
 	int m_Width;
 	int m_Height;
 	BOOL m_Grabbed;

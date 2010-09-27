@@ -71,8 +71,7 @@ BEGIN_MESSAGE_MAP(CAbstractListView, CFileView)
 	ON_COMMAND_RANGE(ID_TOGGLE_ATTRIBUTE, ID_TOGGLE_ATTRIBUTE+LFAttributeCount-1, OnToggleAttribute)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_TOGGLE_ATTRIBUTE, ID_TOGGLE_ATTRIBUTE+LFAttributeCount-1, OnUpdateToggleAttribute)
 	ON_COMMAND(ID_VIEW_AUTOSIZECOLUMNS, OnAutosizeColumns)
-	ON_COMMAND(ID_VIEW_CATEGORIES, OnToggleCategories)
-	ON_UPDATE_COMMAND_UI_RANGE(ID_VIEW_CATEGORIES, ID_VIEW_CHOOSEDETAILS, OnUpdateCommands)
+	ON_UPDATE_COMMAND_UI_RANGE(ID_VIEW_AUTOSIZECOLUMNS, ID_VIEW_CHOOSEDETAILS, OnUpdateCommands)
 	ON_WM_SYSCOLORCHANGE()
 END_MESSAGE_MAP()
 
@@ -107,23 +106,11 @@ void CAbstractListView::OnAutosizeColumns()
 	OnViewOptionsChanged(TRUE);
 }
 
-void CAbstractListView::OnToggleCategories()
-{
-	pViewParameters->ShowCategories = !pViewParameters->ShowCategories;
-	OnViewOptionsChanged();
-}
-
 void CAbstractListView::OnUpdateCommands(CCmdUI* pCmdUI)
 {
 	BOOL b = FALSE;
 	switch (pCmdUI->m_nID)
 	{
-	case ID_VIEW_CATEGORIES:
-		b = (m_FileList.GetView()!=LV_VIEW_LIST);
-		if (result)
-			b &= (result->m_HasCategories==true);
-		pCmdUI->SetCheck(m_ViewParameters.ShowCategories);
-		break;
 	case ID_VIEW_AUTOSIZECOLUMNS:
 	case ID_VIEW_CHOOSEDETAILS:
 		b = (m_FileList.GetView()==LV_VIEW_DETAILS);

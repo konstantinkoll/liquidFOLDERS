@@ -48,42 +48,6 @@ typedef HRESULT(__stdcall* PFNDWMEXTENDFRAMEINTOCLIENTAREA)(HWND hWnd, const MAR
 typedef BOOL(__stdcall* PFNDWMDEFWINDOWPROC)(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam, LRESULT* plResult);
 
 
-// View parameters
-
-struct LFViewParameters
-{
-	UINT Mode;
-	UINT Background;
-	BOOL GrannyMode;
-	BOOL ShowCategories;
-	BOOL FullRowSelect;
-	BOOL AlwaysSave;
-	BOOL Changed;
-	int ColumnOrder[LFAttributeCount];
-	int ColumnWidth[LFAttributeCount];
-
-	UINT SortBy;
-	BOOL Descending;
-	BOOL AutoDirs;
-
-	int GlobeLatitude;
-	int GlobeLongitude;
-	int GlobeZoom;
-	BOOL GlobeShowBubbles;
-	BOOL GlobeShowAirportNames;
-	BOOL GlobeShowGPS;
-	BOOL GlobeShowHints;
-	BOOL GlobeShowSpots;
-	BOOL GlobeShowViewpoint;
-
-	BOOL TagcloudCanonical;
-	BOOL TagcloudOmitRare;
-	BOOL TagcloudUseSize;
-	BOOL TagcloudUseColors;
-	BOOL TagcloudUseOpacity;
-};
-
-
 // LFApplication:
 // Siehe LFApplication.cpp für die Implementierung dieser Klasse
 //
@@ -101,14 +65,12 @@ public:
 	wchar_t* m_AttrCategories[LFAttrCategoryCount];
 	LFContextDescriptor* m_Contexts[LFContextCount];
 	LFItemCategoryDescriptor* m_ItemCategories[LFItemCategoryCount];
-	LFViewParameters m_Views[LFContextCount];
 	CImageList m_SystemImageListSmall;
 	CImageList m_SystemImageListLarge;
 	CImageList m_CoreImageListSmall;
 	CImageList m_CoreImageListLarge;
 	HBITMAP m_RatingBitmaps[LFMaxRating+1];
 	HBITMAP m_PriorityBitmaps[LFMaxRating+1];
-	CFont m_Fonts[2][2];
 	CFont m_DefaultFont;
 	CFont m_ItalicFont;
 	CFont m_SmallFont;

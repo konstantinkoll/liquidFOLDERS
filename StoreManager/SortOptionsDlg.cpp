@@ -1,4 +1,8 @@
-#include "StdAfx.h"
+
+// SortOptionsDlg.cpp: Implementierung der Klasse SortOptionsDlg
+//
+
+#include "stdafx.h"
 #include "SortOptionsDlg.h"
 #include "LFCore.h"
 
@@ -6,32 +10,41 @@
 // SortOptionsDlg
 //
 
-SortOptionsDlg::SortOptionsDlg(CWnd* pParent, LFViewParameters* _view, int _context, BOOL _IsClipboard)
-	: CAttributeListDialog(IDD_SORTOPTIONS, pParent)
+SortOptionsDlg::SortOptionsDlg(CWnd* pParent, LFViewParameters* View, UINT Context)
+	: LFAttributeListDlg(IDD_SORTOPTIONS, pParent)
 {
-	ASSERT(_view!=NULL);
-	view = _view;
-	context = _context;
-	IsClipboard = _IsClipboard;
+	ASSERT(View);
+	p_View = View;
+	m_Context = Context;
 }
 
-SortOptionsDlg::~SortOptionsDlg()
+void SortOptionsDlg::DoDataExchange(CDataExchange* pDX)
 {
+	DDX_Radio(pDX, IDC_ASCENDING, p_View->Descending);
+	DDX_Check(pDX, IDC_AUTODIRS, p_View->AutoDirs);
+
+	if (pDX->m_bSaveAndValidate)
+	{
+		CListCtrl* pList = (CListCtrl*)GetDlgItem(IDC_SORTATTRIBUTE);
+		p_View->SortBy = (UINT)pList->GetItemData(pList->GetNextItem(-1, LVNI_SELECTED));
+	}
+}
+
+void SortOptionsDlg::TestAttribute(UINT attr, BOOL& add, BOOL& check)
+{
+	add = (theApp.m_Contexts[m_Context]->AllowedAttributes->IsSet(attr)) && (theApp.m_Attributes[attr]->Sortable);
+	check = FALSE;
 }
 
 
-BEGIN_MESSAGE_MAP(SortOptionsDlg, CAttributeListDialog)
-	ON_BN_CLICKED(IDC_AUTODIRS, SetAttrGroupBox)
+BEGIN_MESSAGE_MAP(SortOptionsDlg, LFAttributeListDlg)
+	ON_BN_CLICKED(IDC_AUTODIRS, OnSetAttrGroupBox)
 	ON_NOTIFY(NM_DBLCLK, IDC_SORTATTRIBUTE, OnDoubleClick)
 END_MESSAGE_MAP()
 
 BOOL SortOptionsDlg::OnInitDialog()
 {
-	// Ggf. automatische Verzeichnisse ein- oder ausschalten
-	view->AutoDirs |= (view->Mode>LFViewTiles);
-	view->AutoDirs &= (theApp.m_Contexts[context]->AllowGroups==true);
-
-	CDialog::OnInitDialog();
+	LFAttributeListDlg::OnInitDialog();
 
 	// Symbol für dieses Dialogfeld festlegen. Wird automatisch erledigt
 	// wenn das Hauptfenster der Anwendung kein Dialogfeld ist
@@ -43,57 +56,39 @@ BOOL SortOptionsDlg::OnInitDialog()
 	CString text;
 	GetWindowText(text);
 	CString caption;
-	caption.Format(text, theApp.m_Contexts[context]->Name);
+	caption.Format(text, theApp.m_Contexts[m_Context]->Name);
 	SetWindowText(caption);
 
 	// Attribut-Liste füllen
-	PopulateListCtrl(IDC_SORTATTRIBUTE, ALD_Mode_SortAttribute, context, view);
+	PopulateListCtrl(IDC_SORTATTRIBUTE, FALSE, p_View->SortBy);
 
 	// Ggf. Elemente deaktivieren
-	if ((!theApp.m_Contexts[context]->AllowGroups) || (view->Mode>LFViewPreview))
-	{
-		GetDlgItem(IDC_AUTODIRS)->EnableWindow(FALSE);
-
-		CString hint;
-		hint.LoadString(view->AutoDirs ? IDS_SUBFOLDERS_MANDATORY : IDS_SUBFOLDERS_NOTAVAIL);
-		GetDlgItem(IDC_SUBFOLDERHINT)->SetWindowText(hint);
-	}
-	if (view->Mode>LFViewPreview)
+	if (p_View->Mode>LFViewPreview)
 	{
 		GetDlgItem(IDC_ASCENDING)->EnableWindow(FALSE);
 		GetDlgItem(IDC_DESCENDING)->EnableWindow(FALSE);
 	}
 
+	if ((p_View->Mode>LFViewPreview) || (!theApp.m_Contexts[m_Context]->AllowGroups))
+	{
+		GetDlgItem(IDC_AUTODIRS)->EnableWindow(FALSE);
+
+		CString tmpStr;
+		ENSURE(tmpStr.LoadString(p_View->AutoDirs ? IDS_SUBFOLDERS_MANDATORY : IDS_SUBFOLDERS_NOTAVAIL));
+		GetDlgItem(IDC_SUBFOLDERHINT)->SetWindowText(tmpStr);
+	}
+
 	// Gruppenbox
-	SetAttrGroupBox();
+	OnSetAttrGroupBox();
 
 	return TRUE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird
 }
 
-void SortOptionsDlg::DoDataExchange(CDataExchange* pDX)
+void SortOptionsDlg::OnSetAttrGroupBox()
 {
-	CAttributeListDialog::DoDataExchange(pDX);
-	DDX_Radio(pDX, IDC_ASCENDING, view->Descending);
-	DDX_Check(pDX, IDC_AUTODIRS, view->AutoDirs);
-
-	if (pDX->m_bSaveAndValidate)
-	{
-		// Sortier-Attribut
-		HWND hWndCtrl = pDX->PrepareCtrl(IDC_SORTATTRIBUTE);
-		ASSERT(hWndCtrl);
-
-		CListCtrl* pList = (CListCtrl*)CWnd::FromHandle(hWndCtrl);
-		ASSERT(pList);
-
-		view->SortBy = (UINT)pList->GetItemData(pList->GetNextItem(-1, LVNI_SELECTED));
-	}
-}
-
-void SortOptionsDlg::SetAttrGroupBox()
-{
-	CString caption;
-	caption.LoadString(IsDlgButtonChecked(IDC_AUTODIRS) ? IDS_GROUPBOX_GROUP : IDS_GROUPBOX_SORT);
-	GetDlgItem(IDC_ATTRBOX)->SetWindowText(caption);
+	CString tmpStr;
+	ENSURE(tmpStr.LoadString(IsDlgButtonChecked(IDC_AUTODIRS) ? IDS_GROUPBOX_GROUP : IDS_GROUPBOX_SORT));
+	GetDlgItem(IDC_ATTRBOX)->SetWindowText(tmpStr);
 }
 
 void SortOptionsDlg::OnDoubleClick(NMHDR* /*pNMHDR*/, LRESULT* /*pResult*/)

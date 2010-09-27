@@ -17,7 +17,6 @@ CFileView::CFileView()
 	ViewID = LFViewAutomatic;
 	result = NULL;
 	FocusItem = HoverItem = SelectionAnchor = -1;
-	NcDividerLineY = 0;
 	MouseInView = FALSE;
 }
 
@@ -45,12 +44,6 @@ void CFileView::OnUpdateViewOptions(int _ActiveContextID, int _ViewID, BOOL Forc
 	ASSERT(_ViewID>LFViewAutomatic);
 
 	pViewParameters->Background = theApp.m_Background[_ViewID];
-
-	if (Force || (m_ViewParameters.Background!=pViewParameters->Background))
-	{
-		ModifyStyleEx(WS_EX_CLIENTEDGE, (pViewParameters->Background!=ChildBackground_Ribbon) ? WS_EX_CLIENTEDGE : 0);
-		::SetWindowPos(GetSafeHwnd(), HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
-	}
 
 	SetViewOptions(_ViewID, Force);
 
@@ -357,23 +350,16 @@ BOOL CFileView::HandleDefaultKeys(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags*/)
 	return FALSE;
 }
 
-int CFileView::GetFontHeight(BOOL GrannyMode)
+int CFileView::GetFontHeight()
 {
 	LOGFONT lf;
-	theApp.m_Fonts[FALSE][GrannyMode].GetLogFont(&lf);
-	if (lf.lfHeight<0)
-		lf.lfHeight = -lf.lfHeight;
+	theApp.m_DefaultFont.GetLogFont(&lf);
 
-	return lf.lfHeight;
+	return abs(lf.lfHeight);
 }
 
-void CFileView::SetNcDividerLine(int y)
-{
-	NcDividerLineY = (y>0) ? y+1 : 0;
-}
 
 BEGIN_MESSAGE_MAP(CFileView, CWnd)
-	ON_WM_NCPAINT()
 	ON_WM_LBUTTONDOWN()
 	ON_WM_LBUTTONUP()
 	ON_WM_LBUTTONDBLCLK()
@@ -383,41 +369,11 @@ BEGIN_MESSAGE_MAP(CFileView, CWnd)
 	ON_WM_MOUSELEAVE()
 	ON_WM_KEYDOWN()
 	ON_WM_SETCURSOR()
-	ON_COMMAND(ID_VIEW_GRANNY, OnToggleGrannyMode)
 	ON_COMMAND(ID_VIEW_SELECTALL, OnSelectAll)
 	ON_COMMAND(ID_VIEW_SELECTNONE, OnSelectNone)
-	ON_UPDATE_COMMAND_UI_RANGE(ID_VIEW_GRANNY, ID_VIEW_SELECTNONE, OnUpdateCommands)
+	ON_UPDATE_COMMAND_UI_RANGE(ID_VIEW_SELECTALL, ID_VIEW_SELECTNONE, OnUpdateCommands)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->ItemsDropped, OnItemsDropped)
 END_MESSAGE_MAP()
-
-void CFileView::OnNcPaint()
-{
-	if (GetExStyle() & WS_EX_CLIENTEDGE)
-	{
-		CWindowDC dc(this);
-
-		CRect rect;
-		GetWindowRect(rect);
-
-		rect.bottom -= rect.top;
-		rect.right -= rect.left;
-		rect.left = rect.top = 0;
-
-		COLORREF col = GetSysColor(COLOR_3DFACE+1);
-		dc.Draw3dRect(rect, col, col);
-
-		COLORREF back;
-		theApp.GetBackgroundColors(pViewParameters->Background, &back);
-		rect.DeflateRect(1, 1);
-		dc.Draw3dRect(rect, back, back);
-
-		if (NcDividerLineY)
-		{
-			dc.SetPixel(1, NcDividerLineY, col);
-			dc.SetPixel(rect.Width(), NcDividerLineY, col);
-		}
-	}
-}
 
 void CFileView::OnLButtonDown(UINT nFlags, CPoint point)
 {
@@ -567,12 +523,6 @@ BOOL CFileView::OnSetCursor(CWnd* /*pWnd*/, UINT /*nHitTest*/, UINT /*message*/)
 	return TRUE;
 }
 
-void CFileView::OnToggleGrannyMode()
-{
-	pViewParameters->GrannyMode = !pViewParameters->GrannyMode;
-	OnViewOptionsChanged();
-}
-
 void CFileView::OnSelectAll()
 {
 	if (result)
@@ -592,10 +542,6 @@ void CFileView::OnUpdateCommands(CCmdUI* pCmdUI)
 	BOOL b = FALSE;
 	switch (pCmdUI->m_nID)
 	{
-	case ID_VIEW_GRANNY:
-		pCmdUI->SetCheck(m_ViewParameters.GrannyMode);
-		b = TRUE;
-		break;
 	case ID_VIEW_SELECTALL:
 	case ID_VIEW_SELECTNONE:
 		if (result)

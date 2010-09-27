@@ -92,8 +92,6 @@ CGlobeView::CGlobeView()
 	m_hrc = NULL;
 	hCursor = LoadCursor(NULL, IDC_WAIT);
 	m_TextureGlobe = NULL;
-	m_pSpecialFont = NULL;
-	ZeroMemory(m_pFonts, sizeof(m_pFonts));
 	m_Width = 0;
 	m_Height = 0;
 	m_GlobeList[FALSE] = -1;
@@ -144,11 +142,6 @@ void CGlobeView::SetViewOptions(UINT /*_ViewID*/, BOOL Force)
 
 	if (Force || (pViewParameters->Background!=m_ViewParameters.Background) || (theApp.m_nAppLook!=RibbonColor))
 		theApp.GetBackgroundColors(pViewParameters->Background, &m_ColorBack, &m_ColorText, &m_ColorHighlight);
-
-	PrepareFont(FALSE, pViewParameters->GrannyMode);
-	SmallFont = m_pFonts[FALSE][pViewParameters->GrannyMode];
-	PrepareFont(TRUE, pViewParameters->GrannyMode);
-	LargeFont = m_pFonts[TRUE][pViewParameters->GrannyMode];
 
 	PrepareTexture();
 	PrepareModel(theApp.m_GlobeHQModel);
@@ -382,13 +375,6 @@ void CGlobeView::OnDestroy()
 			glDeleteLists(m_GlobeList[FALSE], 1);
 		if (m_GlobeList[TRUE]!=-1)
 			glDeleteLists(m_GlobeList[TRUE], 1);
-		if (m_pSpecialFont)
-			delete m_pSpecialFont;
-
-		for (UINT a=0; a<2; a++)
-			for (UINT b=0; b<2; b++)
-				if (m_pFonts[a][b])
-					delete m_pFonts[a][b];
 
 		wglMakeCurrent(NULL, NULL);
 		if (m_hrc)
@@ -838,21 +824,10 @@ void CGlobeView::Init()
 	glFogf(GL_FOG_DENSITY, 1.0f);
 	glHint(GL_FOG_HINT, GL_NICEST);
 
-	// Spezial-Font
-	if (!m_pSpecialFont)
-	{
-		m_pSpecialFont = new CGLFont();
-		m_pSpecialFont->Create(theApp.GetDefaultFontFace(), 12, FALSE, FALSE);
-	}
-}
-
-void CGlobeView::PrepareFont(BOOL large, BOOL granny)
-{
-	if (!m_pFonts[large][granny])
-	{
-		m_pFonts[large][granny] = new CGLFont();
-		m_pFonts[large][granny]->Create(&theApp.m_Fonts[large][granny]);
-	}
+	// Fonts
+	m_Fonts[FALSE].Create(&theApp.m_DefaultFont);
+	m_Fonts[TRUE].Create(&theApp.m_CaptionFont);
+	m_SpecialFont.Create(&theApp.m_SmallFont);
 }
 
 void CGlobeView::PrepareTexture()
@@ -1190,7 +1165,7 @@ void CGlobeView::DrawScene(BOOL InternalCall)
 	{
 		wchar_t Copyright[] = L"© NASA's Earth Observatory";
 		int CopyrightX = -1;
-		UINT CopyrightWidth = m_pSpecialFont->GetTextWidth(Copyright);
+		UINT CopyrightWidth = m_SpecialFont.GetTextWidth(Copyright);
 
 		if (m_Width>=(int)CopyrightWidth)
 		{
@@ -1218,7 +1193,7 @@ void CGlobeView::DrawScene(BOOL InternalCall)
 				LFGeoCoordinatesToString(c, Coord, 256, true);
 
 				swprintf(Viewpoint, 256, YouLookAt, Coord);
-				UINT ViewpointWidth = m_pSpecialFont->GetTextWidth(Viewpoint);
+				UINT ViewpointWidth = m_SpecialFont.GetTextWidth(Viewpoint);
 
 				if (m_Width>=(int)(CopyrightWidth+ViewpointWidth+60))
 				{
@@ -1229,16 +1204,16 @@ void CGlobeView::DrawScene(BOOL InternalCall)
 			}
 
 			if (CopyrightX==-1)
-				CopyrightX = (m_Width-m_pSpecialFont->GetTextWidth(&Copyright[0]))>>1;
+				CopyrightX = (m_Width-m_SpecialFont.GetTextWidth(&Copyright[0]))>>1;
 
 			// Text
 			GLfloat highlightcol[4];
 			ColorRef2GLColor(highlightcol, m_ColorHighlight);
 			glColor4d(highlightcol[0], highlightcol[1], highlightcol[2], 1.0f);
 
-			m_pSpecialFont->Render(Copyright, CopyrightX, m_Height-16);
+			m_SpecialFont.Render(Copyright, CopyrightX, m_Height-16);
 			if (ViewpointX!=-1)
-				m_pSpecialFont->Render(Viewpoint, ViewpointX, m_Height-16);
+				m_SpecialFont.Render(Viewpoint, ViewpointX, m_Height-16);
 
 			glDisable2D();
 		}
@@ -1376,17 +1351,17 @@ void CGlobeView::DrawLabel(Location* loc, UINT cCaption, wchar_t* caption, wchar
 	ColorRef2GLColor(&TextColor[0], TextColorRef);
 
 	// Breite
-	UINT width = LargeFont->GetTextWidth(caption, cCaption);
-	width = max(width, SmallFont->GetTextWidth(subcaption));
-	width = max(width, SmallFont->GetTextWidth(coordinates));
-	width = max(width, SmallFont->GetTextWidth(description));
+	UINT width = m_Fonts[TRUE].GetTextWidth(caption, cCaption);
+	width = max(width, m_Fonts[FALSE].GetTextWidth(subcaption));
+	width = max(width, m_Fonts[FALSE].GetTextWidth(coordinates));
+	width = max(width, m_Fonts[FALSE].GetTextWidth(description));
 	width += 8;
 
 	// Höhe
-	UINT height = LargeFont->GetTextHeight(caption);
-	height += SmallFont->GetTextHeight(subcaption);
-	height += SmallFont->GetTextHeight(coordinates);
-	height += SmallFont->GetTextHeight(description);
+	UINT height = m_Fonts[TRUE].GetTextHeight(caption);
+	height += m_Fonts[FALSE].GetTextHeight(subcaption);
+	height += m_Fonts[FALSE].GetTextHeight(coordinates);
+	height += m_Fonts[FALSE].GetTextHeight(description);
 	height += 3;
 
 	// Position
@@ -1477,14 +1452,14 @@ void CGlobeView::DrawLabel(Location* loc, UINT cCaption, wchar_t* caption, wchar
 	x += 3;
 
 	glColor4f(TextColor[0], TextColor[1], TextColor[2], loc->alpha);
-	y += LargeFont->Render(caption, x, y, cCaption);
+	y += m_Fonts[TRUE].Render(caption, x, y, cCaption);
 	if (subcaption)
-		y += SmallFont->Render(subcaption, x, y);
+		y += m_Fonts[FALSE].Render(subcaption, x, y);
 
 	if ((!loc->selected) && (BaseColorRef==0xFFFFFF) && (TextColorRef==0x000000))
 		glColor4f(TextColor[0], TextColor[1], TextColor[2], loc->alpha/2);
 	if (coordinates)
-		y += SmallFont->Render(coordinates, x, y);
+		y += m_Fonts[FALSE].Render(coordinates, x, y);
 	if (description)
-		y += SmallFont->Render(description, x, y);
+		y += m_Fonts[FALSE].Render(description, x, y);
 }

@@ -1,21 +1,28 @@
-#pragma once
-#include "StoreManager.h"
-#include "CAttributeListDialog.h"
 
-class ChooseDetailsDlg : public CAttributeListDialog
+// ChooseDetailsDlg.h: Schnittstelle der Klasse ChooseDetailsDlg
+//
+
+#pragma once
+#include "LFCommDlg.h"
+#include "StoreManager.h"
+
+
+// ChooseDetailsDlg
+//
+
+class ChooseDetailsDlg : public LFAttributeListDlg
 {
 public:
-	ChooseDetailsDlg(CWnd* pParentWnd, LFViewParameters* _view, int _context);
-	virtual ~ChooseDetailsDlg();
+	ChooseDetailsDlg(CWnd* pParentWnd, LFViewParameters* View, int Context, UINT nIDTemplate=IDD_CHOOSEDETAILS);
 
-	UINT RibbonColor;
-	int context;
-
-protected:
 	virtual void DoDataExchange(CDataExchange* pDX);
 
-	LFViewParameters* view;
-	CListCtrl* ShowAttributes;
+protected:
+	virtual void TestAttribute(UINT attr, BOOL& add, BOOL& check);
+
+	CListCtrl m_ShowAttributes;
+	LFViewParameters* p_View;
+	UINT m_Context;
 
 	afx_msg BOOL OnInitDialog();
 	afx_msg void OnSelectionChange(NMHDR* pNMHDR, LRESULT* pResult);
@@ -25,6 +32,8 @@ protected:
 	afx_msg void OnUncheckAll();
 	DECLARE_MESSAGE_MAP()
 
-protected:
+private:
 	void SwapItems(int FocusItem, int NewPos);
+
+	UINT m_Template;
 };

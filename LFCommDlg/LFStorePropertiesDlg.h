@@ -19,7 +19,7 @@ public:
 
 protected:
 	afx_msg BOOL OnInitDialog();
-	afx_msg LRESULT UpdateStore(WPARAM wParam, LPARAM lParam);
+	afx_msg LRESULT OnUpdateStore(WPARAM wParam, LPARAM lParam);
 	DECLARE_MESSAGE_MAP()
 
 private:

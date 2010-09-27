@@ -378,10 +378,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CAttributeListDialog.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\CCalendarDayView.cpp"
 				>
 			</File>
@@ -419,10 +415,6 @@
 			</File>
 			<File
 				RelativePath=".\ChooseDetailsDlg.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\CImageListTransparent.cpp"
 				>
 			</File>
 			<File
@@ -528,10 +520,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CAttributeListDialog.h"
-				>
-			</File>
-			<File
 				RelativePath=".\CCalendarDayView.h"
 				>
 			</File>
@@ -569,10 +557,6 @@
 			</File>
 			<File
 				RelativePath=".\ChooseDetailsDlg.h"
-				>
-			</File>
-			<File
-				RelativePath=".\CImageListTransparent.h"
 				>
 			</File>
 			<File

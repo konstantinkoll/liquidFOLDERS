@@ -1,54 +1,34 @@
-#include "StdAfx.h"
-#include "ViewOptionsDlg.h"
-#include "LFCore.h"
 
-
-// DDX
+// ViewOptionsDlg.cpp: Implementierung der Klasse ViewOptionsDlg
 //
 
-void DDX_ComboBox(CDataExchange* pDX_, int nIDC_, UINT& selection_, int offset)
-{
-	HWND hWndCtrl = pDX_->PrepareCtrl(nIDC_);
-	ASSERT(hWndCtrl);
-
-	CComboBox* pCbx = (CComboBox*)CWnd::FromHandle(hWndCtrl);
-	ASSERT(pCbx);
-
-	if (!pDX_->m_bSaveAndValidate)
-	{
-		pCbx->SetCurSel(selection_ - offset);
-	}
-	else
-	{
-		selection_ = pCbx->GetCurSel() + offset;
-	}
-}
+#include "stdafx.h"
+#include "ViewOptionsDlg.h"
+#include "LFCore.h"
 
 
 // ViewOptionsDlg
 //
 
-ViewOptionsDlg::ViewOptionsDlg(CWnd* pParentWnd, UINT _RibbonColor, LFViewParameters* _view, int _context, LFSearchResult* files)
-	: CAttributeListDialog(IDD_VIEWOPTIONS, pParentWnd)
+ViewOptionsDlg::ViewOptionsDlg(CWnd* pParentWnd, LFViewParameters* View, UINT Context)
+	: ChooseDetailsDlg(pParentWnd, View, Context, IDD_VIEWOPTIONS)
 {
-	ASSERT(_view);
-	ShowAttributes = NULL;
-	ShowCategories = NULL;
-	m_pViewIcons = NULL;
-	RibbonColor = _RibbonColor;
-	view = _view;
-	context = _context;
-	HasCategories = files ? files->m_HasCategories : TRUE;
 }
 
-ViewOptionsDlg::~ViewOptionsDlg()
+void ViewOptionsDlg::DoDataExchange(CDataExchange* pDX)
 {
-	if (m_pViewIcons)
-		delete m_pViewIcons;
+	ChooseDetailsDlg::DoDataExchange(pDX);
+	DDX_Check(pDX, IDC_FULLROWSELECT, p_View->FullRowSelect);
+
+	if (pDX->m_bSaveAndValidate)
+	{
+		CListCtrl* pList = (CListCtrl*)GetDlgItem(IDC_VIEWMODES);
+		p_View->Mode = (UINT)pList->GetItemData(pList->GetNextItem(-1, LVNI_SELECTED));
+	}
 }
 
 
-BEGIN_MESSAGE_MAP(ViewOptionsDlg, CAttributeListDialog)
+BEGIN_MESSAGE_MAP(ViewOptionsDlg, ChooseDetailsDlg)
 	ON_NOTIFY(LVN_ITEMCHANGED, IDC_VIEWMODES, OnViewModeChange)
 	ON_NOTIFY(NM_DBLCLK, IDC_VIEWMODES, OnDoubleClick)
 	ON_COMMAND(IDC_CHECKALL, OnCheckAll)
@@ -57,23 +37,7 @@ END_MESSAGE_MAP()
 
 BOOL ViewOptionsDlg::OnInitDialog()
 {
-	CDialog::OnInitDialog();
-
-	// Symbol für dieses Dialogfeld festlegen. Wird automatisch erledigt
-	// wenn das Hauptfenster der Anwendung kein Dialogfeld ist
-	HICON hIcon = theApp.LoadIcon(IDD_VIEWOPTIONS);
-	SetIcon(hIcon, TRUE);		// Großes Symbol verwenden
-	SetIcon(hIcon, FALSE);		// Kleines Symbol verwenden
-
-	// Titelleiste
-	CString text;
-	GetWindowText(text);
-	CString caption;
-	caption.Format(text, theApp.m_Contexts[context]->Name);
-	SetWindowText(caption);
-
-	// Background-Überschrift
-	GetDlgItem(IDC_BACKGROUNDTEXT)->GetWindowText(BackgroundText);
+	ChooseDetailsDlg::OnInitDialog();
 
 	// View-Liste füllen
 	CStringW tmpStr;
@@ -104,9 +68,8 @@ BOOL ViewOptionsDlg::OnInitDialog()
 		l->InsertGroup(lvg.iGroupId, &lvg);
 	}
 
-	m_pViewIcons = new CImageListTransparent();
-	m_pViewIcons->CreateFromResource(IDB_RIBBONVIEW_16, 0, 12);
-	l->SetImageList(m_pViewIcons, LVSIL_SMALL);
+	m_ViewIcons.Create(IDB_RIBBONVIEW_16, NULL, 0, 12);
+	l->SetImageList(&m_ViewIcons, LVSIL_SMALL);
 	l->SetIconSpacing(68, 30);
 	l->EnableGroupView(TRUE);
 
@@ -117,12 +80,12 @@ BOOL ViewOptionsDlg::OnInitDialog()
 
 	for (UINT a=LFViewAutomatic; a<LFViewCount; a++)
 	{
-		if (theApp.m_Contexts[context]->AllowedViews->IsSet(a))
+		if (theApp.m_Contexts[m_Context]->AllowedViews->IsSet(a))
 		{
 			lvi.lParam = (LPARAM)a;
 			lvi.pszText = theApp.GetCommandName(ID_APP_VIEW_AUTOMATIC+a).AllocSysString();
 			lvi.iImage = a;
-			lvi.state = lvi.stateMask = (a==view->Mode) ? LVIS_SELECTED | LVIS_FOCUSED : 0;
+			lvi.state = lvi.stateMask = (a==p_View->Mode) ? LVIS_SELECTED | LVIS_FOCUSED : 0;
 			l->InsertItem(&lvi);
 		}
 
@@ -130,18 +93,9 @@ BOOL ViewOptionsDlg::OnInitDialog()
 			lvi.iGroupId++;
 	}
 
-	// Kontrollelemente einstellen
-	PopulateListCtrl(IDC_VIEWATTRIBUTES, ALD_Mode_ShowAttributes, context, view);
-	ShowAttributes = ((CListCtrl*)GetDlgItem(IDC_VIEWATTRIBUTES));
-	ShowCategories = ((CButton*)GetDlgItem(IDC_GROUPS));
-
-#if (_MFC_VER>=0x1000)
-	((CComboBox*)GetDlgItem(IDC_BACKGROUNDCOMBO))->AddString(_T("Windows 7"));
-#endif
-
 	NM_LISTVIEW nmlv;
 	LRESULT res;
-	nmlv.lParam = view->Mode;
+	nmlv.lParam = p_View->Mode;
 	nmlv.uNewState = LVIS_SELECTED;
 	OnViewModeChange((NMHDR*)&nmlv, &res);
 
@@ -151,103 +105,26 @@ BOOL ViewOptionsDlg::OnInitDialog()
 void ViewOptionsDlg::OnViewModeChange(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	NM_LISTVIEW* pNMListView = (NM_LISTVIEW*)pNMHDR;
-	int idx = (int)pNMListView->lParam;
 
 	// Attribute
-	if ((pNMListView->uNewState & LVIS_SELECTED) && (ShowAttributes))
+	if (pNMListView->uNewState & LVIS_SELECTED)
 	{
-		BOOL enable = (idx==LFViewAutomatic) || (idx==LFViewDetails) || (idx==LFViewCalendarDay);
-		ShowAttributes->EnableWindow(enable);
-		CButton* btn = ((CButton*)GetDlgItem(IDC_CHECKALL));
-		if (btn)
-			btn->EnableWindow(enable);
-		btn = ((CButton*)GetDlgItem(IDC_UNCHECKALL));
-		if (btn)
-			btn->EnableWindow(enable);
-		btn = ((CButton*)GetDlgItem(IDC_SHOWREPORTHEADER));
-		if (btn)
-			btn->EnableWindow(enable);
-		btn = ((CButton*)GetDlgItem(IDC_FULLROWSELECT));
-		if (btn)
-			btn->EnableWindow(enable);
+		int vm = (int)pNMListView->lParam;
+		BOOL enable = (vm==LFViewAutomatic) || (vm==LFViewDetails) || (vm==LFViewCalendarDay);
+
+		m_ShowAttributes.EnableWindow(enable);
+		GetDlgItem(IDC_CHECKALL)->EnableWindow(enable);
+		GetDlgItem(IDC_UNCHECKALL)->EnableWindow(enable);
+		GetDlgItem(IDC_FULLROWSELECT)->EnableWindow(enable);
+
+		NM_LISTVIEW nmlv;
+		LRESULT res;
+		nmlv.iItem = m_ShowAttributes.GetNextItem(-1, LVIS_SELECTED);
+		nmlv.uNewState = LVIS_SELECTED;
+		OnSelectionChange((NMHDR*)&nmlv, &res);
 	}
-
-	// Kategorien
-	if ((pNMListView->uNewState & LVIS_SELECTED) && (ShowCategories))
-		if ((HasCategories) && (idx>=LFViewAutomatic) && (idx<=LFViewPreview) && (idx!=LFViewList))
-		{
-			ShowCategories->SetCheck(view->ShowCategories);
-			ShowCategories->EnableWindow(TRUE);
-		}
-		else
-		{
-			ShowCategories->SetCheck(FALSE);
-			ShowCategories->EnableWindow(FALSE);
-		}
-
-	// Hintergrund
-	GetDlgItem(IDC_BACKGROUNDCOMBO)->EnableWindow(idx>LFViewAutomatic);
-	((CComboBox*)GetDlgItem(IDC_BACKGROUNDCOMBO))->SetCurSel(theApp.m_Background[idx]);
-	
-	CString tmpStr;
-	tmpStr.Format(BackgroundText, theApp.GetCommandName(ID_APP_VIEW_AUTOMATIC+idx));
-	GetDlgItem(IDC_BACKGROUNDTEXT)->SetWindowText(tmpStr);
 
 	*pResult = 0;
-}
-
-void ViewOptionsDlg::DoDataExchange(CDataExchange* pDX)
-{
-	CAttributeListDialog::DoDataExchange(pDX);
-	DDX_ComboBox(pDX, IDC_COLORCOMBO, RibbonColor, 1);
-	DDX_Check(pDX, IDC_FULLROWSELECT, view->FullRowSelect);
-	DDX_Check(pDX, IDC_GRANNYMODE, view->GrannyMode);
-	DDX_Check(pDX, IDC_ALWAYSSAVE, view->AlwaysSave);
-	DDX_Check(pDX, IDC_SHOWQUERYTIMES, theApp.m_ShowQueryDuration);
-	if ((HasCategories) && (view->Mode>=LFViewAutomatic) && (view->Mode<=LFViewPreview))
-		DDX_Check(pDX, IDC_GROUPS, view->ShowCategories);
-
-	CListCtrl* l = (CListCtrl*)GetDlgItem(IDC_VIEWMODES);
-	if (pDX->m_bSaveAndValidate)
-	{
-		int idx = l->GetNextItem(-1, LVIS_SELECTED);
-		if (idx!=-1)
-			view->Mode = (UINT)l->GetItemData(idx);
-
-		theApp.m_Background[view->Mode] = ((CComboBox*)GetDlgItem(IDC_BACKGROUNDCOMBO))->GetCurSel();
-
-		if ((view->Mode==LFViewAutomatic) || (view->Mode==LFViewDetails) || (view->Mode==LFViewCalendarDay))
-		{
-			BOOL present[LFAttributeCount];
-			ZeroMemory(present, sizeof(present));
-
-			// Angezeigte Attribute
-			for (int a=0; a<ShowAttributes->GetItemCount(); a++)
-			{
-				UINT attr = (UINT)ShowAttributes->GetItemData(a);
-				present[attr] = TRUE;
-				if (ShowAttributes->GetCheck(a)!=(view->ColumnWidth[attr]!=0))
-					theApp.ToggleAttribute(view, attr);
-			}
-
-			// Nicht angezeigte Attribute
-			for (int a=0; a<LFAttributeCount; a++)
-				if ((!theApp.m_Attributes[a]->AlwaysVisible) && (!present[a]))
-					view->ColumnWidth[a] = 0;
-		}
-	}
-}
-
-void ViewOptionsDlg::OnCheckAll()
-{
-	for (int a=0; a<ShowAttributes->GetItemCount(); a++)
-		ShowAttributes->SetCheck(a);
-}
-
-void ViewOptionsDlg::OnUncheckAll()
-{
-	for (int a=0; a<ShowAttributes->GetItemCount(); a++)
-		ShowAttributes->SetCheck(a, FALSE);
 }
 
 void ViewOptionsDlg::OnDoubleClick(NMHDR* /*pNMHDR*/, LRESULT* /*pResult*/)

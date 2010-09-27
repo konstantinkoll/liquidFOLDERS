@@ -238,14 +238,6 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	tmpStr = "Panes";
 	m_wndStatusBar.AddExtendedElement(pGroupPanels, tmpStr);
 
-	CMFCRibbonButtonsGroup* pGroupDisplay = new CMFCRibbonButtonsGroup();
-	pGroupDisplay->AddButton(new CMFCRibbonButton(ID_VIEW_GRANNY, _T(""), m_PanelImages.ExtractIcon(15)));
-	if (!IsClipboard)
-		pGroupDisplay->AddButton(new CMFCRibbonButton(ID_VIEW_CATEGORIES, _T(""), m_PanelImages.ExtractIcon(7)));
-
-	tmpStr = "Display";
-	m_wndStatusBar.AddExtendedElement(pGroupDisplay, tmpStr);
-
 	UINT dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | CBRS_FLOAT_MULTI;
 
 	if (!IsClipboard)
@@ -365,7 +357,7 @@ void CMainFrame::OnCloseOthers()
 
 void CMainFrame::OnSortOptions()
 {
-	SortOptionsDlg dlg(this, ActiveViewParameters, ActiveContextID, IsClipboard);
+	SortOptionsDlg dlg(this, ActiveViewParameters, ActiveContextID);
 	if (dlg.DoModal()==IDOK)
 	{
 		theApp.SaveViewOptions(ActiveContextID);
@@ -375,12 +367,9 @@ void CMainFrame::OnSortOptions()
 
 void CMainFrame::OnViewOptions()
 {
-	ViewOptionsDlg dlg(this, theApp.m_nAppLook, ActiveViewParameters, ActiveContextID, CookedFiles);
+	ViewOptionsDlg dlg(this, ActiveViewParameters, ActiveContextID);
 	if (dlg.DoModal()==IDOK)
 	{
-		if (dlg.RibbonColor!=theApp.m_nAppLook)
-			::SendNotifyMessage(HWND_BROADCAST, theApp.p_MessageIDs->LookChanged, dlg.RibbonColor, 0);
-
 		theApp.SaveViewOptions(ActiveContextID);
 		theApp.OpenChildViews(ActiveContextID, TRUE);
 	}
@@ -1870,7 +1859,7 @@ void CMainFrame::InitializeRibbon()
 			pPanelArrange->Add(new CMFCRibbonButton(ID_SORT_TAGS, theApp.m_Attributes[LFAttrTags]->Name, 44, 44));
 
 		strTemp = "Aggregate";
-		CMFCRibbonPanel* pPanelAggregate = pCategoryView->AddPanel(strTemp, m_PanelImages.ExtractIcon(20));
+		CMFCRibbonPanel* pPanelAggregate = pCategoryView->AddPanel(strTemp, m_PanelImages.ExtractIcon(7));
 
 			pPanelAggregate->Add(theApp.CommandButton(ID_VIEW_AUTODIRS, 18, 18));
 
@@ -2027,7 +2016,7 @@ void CMainFrame::InitializeRibbon()
 		strCtx = "Unknown file formats";
 		CMFCRibbonCategory* pCategoryUnknownFileFormats = m_wndRibbonBar.AddContextCategory(strTemp, strCtx, 5, AFX_CategoryColor_Green, IDB_RIBBONUNKNOWNFILEFORMATS_16, IDB_RIBBONUNKNOWNFILEFORMATS_32);
 
-			CMFCRibbonPanel* pPanelRegister = pCategoryUnknownFileFormats->AddPanel(strTemp, m_PanelImages.ExtractIcon(19));
+			CMFCRibbonPanel* pPanelRegister = pCategoryUnknownFileFormats->AddPanel(strTemp, m_PanelImages.ExtractIcon(15));
 			pPanelRegister->EnableLaunchButton(ID_UNKNOWN_EDITDB, 2);
 
 			pPanelRegister->Add(theApp.CommandButton(ID_UNKNOWN_REGISTER, 0, 0));
@@ -2484,13 +2473,13 @@ void CMainFrame::CookFiles(int recipe, int FocusItem)
 
 	if (((!IsClipboard) && (vp->AutoDirs) && (!ActiveFilter->Options.IsSubfolder)) || (vp->Mode>LFViewPreview))
 	{
-		CookedFiles = LFGroupSearchResult(RawFiles, vp->SortBy, vp->Descending==TRUE, vp->ShowCategories==TRUE, attr->IconID,
+		CookedFiles = LFGroupSearchResult(RawFiles, vp->SortBy, vp->Descending==TRUE, true, attr->IconID,
 			(vp->Mode>LFViewPreview) || ((attr->Type!=LFTypeTime) && (vp->SortBy!=LFAttrFileName) && (vp->SortBy!=LFAttrStoreID) && (vp->SortBy!=LFAttrFileID)),
 			ActiveFilter);
 	}
 	else
 	{
-		LFSortSearchResult(RawFiles, vp->SortBy, vp->Descending==TRUE, vp->ShowCategories==TRUE);
+		LFSortSearchResult(RawFiles, vp->SortBy, vp->Descending==TRUE, true);
 		CookedFiles = RawFiles;
 	}
 	CookedFiles->m_ContextView = recipe;

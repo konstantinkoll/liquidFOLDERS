@@ -353,36 +353,28 @@ END
 // Dialog
 //
 
-IDD_VIEWOPTIONS DIALOGEX 0, 0, 452, 332
-STYLE WS_CLIPSIBLINGS | DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+IDD_VIEWOPTIONS DIALOGEX 0, 0, 392, 263
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
 CAPTION "Display ""%s"" as"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     CONTROL         "",IDC_VIEWMODES,"SysListView32",LVS_SMALLICON | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | WS_BORDER | WS_GROUP | WS_TABSTOP,14,27,160,201
-    CONTROL         "",IDC_VIEWATTRIBUTES,"SysListView32",LVS_LIST | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SORTASCENDING | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_ALIGNLEFT | WS_BORDER | WS_GROUP | WS_TABSTOP,198,27,240,181
-    PUSHBUTTON      "Check &all",IDC_CHECKALL,197,215,60,14,WS_GROUP
-    PUSHBUTTON      "&Uncheck all",IDC_UNCHECKALL,266,215,60,14,WS_GROUP
-    CONTROL         "Full &row select",IDC_FULLROWSELECT,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,338,217,100,10
-    COMBOBOX        IDC_COLORCOMBO,14,267,81,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
-    CONTROL         "Show query &duration",IDC_SHOWQUERYTIMES,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,14,286,81,10
-    COMBOBOX        IDC_BACKGROUNDCOMBO,119,275,99,21,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
-    CONTROL         "Show &categories",IDC_GROUPS,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,227,254,117,10
-    CONTROL         "&Granny mode (extra large font)",IDC_GRANNYMODE,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,227,270,117,10
-    CONTROL         "&Save all changes",IDC_ALWAYSSAVE,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,227,286,117,10
-    DEFPUSHBUTTON   "OK",IDOK,7,311,50,14,WS_GROUP
-    PUSHBUTTON      "Cancel",IDCANCEL,65,311,50,14,WS_GROUP
+    CONTROL         "Full &row select",IDC_FULLROWSELECT,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,196,220,118,10
+    DEFPUSHBUTTON   "OK",IDOK,7,242,50,14,WS_GROUP
+    PUSHBUTTON      "Cancel",IDCANCEL,65,242,50,14,WS_GROUP
     GROUPBOX        "Views",IDC_STATIC,7,7,174,228,WS_GROUP
-    GROUPBOX        "Report settings (Details, Day calendar)",IDC_STATIC,191,7,254,228,WS_GROUP
-    GROUPBOX        "Global settings",IDC_STATIC,7,243,95,59,WS_GROUP
-    GROUPBOX        "Advanced options",IDC_STATIC,112,243,234,59,WS_GROUP
-    LTEXT           "Ribbon color:",IDC_STATIC,14,256,43,8
-    LTEXT           "Background color for selected view (""%s""):",IDC_BACKGROUNDTEXT,119,256,99,19
     LTEXT           "All views available in this context:",IDC_STATIC,14,17,160,8
-    LTEXT           "Include these properties:",IDC_STATIC,198,17,239,8
+    GROUPBOX        "Report details",IDC_STATIC,189,7,196,228
+    LTEXT           "Choose the details for this context:",IDC_STATIC,196,17,183,9
+    CONTROL         "",IDC_VIEWATTRIBUTES,"SysListView32",LVS_SMALLICON | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_NOCOLUMNHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,196,27,118,190
+    PUSHBUTTON      "Move &up",IDC_MOVEUP,320,27,58,14,WS_GROUP
+    PUSHBUTTON      "Move &down",IDC_MOVEDOWN,320,46,58,14,WS_GROUP
+    PUSHBUTTON      "Check &all",IDC_CHECKALL,320,70,58,14,WS_GROUP
+    PUSHBUTTON      "&Uncheck all",IDC_UNCHECKALL,320,87,58,14,WS_GROUP
 END
 
 IDD_SORTOPTIONS DIALOGEX 0, 0, 289, 319
-STYLE WS_CLIPSIBLINGS | DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
 CAPTION "Arrange ""%s"" by"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
@@ -403,7 +395,7 @@ BEGIN
 END
 
 IDD_CHOOSEDETAILS DIALOGEX 0, 0, 208, 276
-STYLE WS_CLIPSIBLINGS | DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
 CAPTION "Details for ""%s"""
 FONT 8, "MS Shell Dlg", 400, 0, 0x0
 BEGIN
@@ -430,9 +422,9 @@ BEGIN
     IDD_VIEWOPTIONS, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 445
+        RIGHTMARGIN, 385
         TOPMARGIN, 7
-        BOTTOMMARGIN, 325
+        BOTTOMMARGIN, 256
     END
 
     IDD_SORTOPTIONS, DIALOG
@@ -452,35 +444,6 @@ BEGIN
     END
 END
 #endif    // APSTUDIO_INVOKED
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Dialog Info
-//
-
-IDD_VIEWOPTIONS DLGINIT
-BEGIN
-    IDC_COLORCOMBO, 0x403, 5, 0
-0x6c42, 0x6575, "\000" 
-    IDC_COLORCOMBO, 0x403, 7, 0
-0x6953, 0x766c, 0x7265, "\000" 
-    IDC_COLORCOMBO, 0x403, 6, 0
-0x6c42, 0x6361, 0x006b, 
-    IDC_COLORCOMBO, 0x403, 5, 0
-0x7141, 0x6175, "\000" 
-    IDC_BACKGROUNDCOMBO, 0x403, 6, 0
-0x6c42, 0x6361, 0x006b, 
-    IDC_BACKGROUNDCOMBO, 0x403, 18, 0
-0x6952, 0x6262, 0x6e6f, 0x6220, 0x6361, 0x676b, 0x6f72, 0x6e75, 0x0064, 
-
-    IDC_BACKGROUNDCOMBO, 0x403, 18, 0
-0x7953, 0x7473, 0x6d65, 0x6220, 0x6361, 0x676b, 0x6f72, 0x6e75, 0x0064, 
-
-    IDC_BACKGROUNDCOMBO, 0x403, 6, 0
-0x6857, 0x7469, 0x0065, 
-    0
-END
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -602,14 +565,12 @@ END
 
 STRINGTABLE 
 BEGIN
-    ID_VIEW_GRANNY          "Enables or disables extra large fonts in this context.\nGranny mode"
     ID_VIEW_SELECTALL       "Selects all items for further processing.\nSelect all (Ctrl+A)"
+    ID_VIEW_SELECTNONE      "Deselects all items.\nSelect none (Ctrl+N)"
 END
 
 STRINGTABLE 
 BEGIN
-    ID_VIEW_SELECTNONE      "Deselects all items.\nSelect none (Ctrl+N)"
-    ID_VIEW_CATEGORIES      "Enables or disables categories in this context.\nCategories"
     ID_VIEW_AUTOSIZECOLUMNS "Autosize &columns"
     ID_VIEW_CHOOSEDETAILS   "Ch&oose details..."
     ID_VIEW_AUTODIRS        "Enables or disables grouping of similar files into subfolders for this context. Grouping is not available in all contexts, and cannot be turned off in subfolders or advanced view modes.\nGroup into subfolders"
@@ -629,22 +590,22 @@ BEGIN
     ID_SORT_RATING          "Sorts the search result by rating.\nSort by rating"
     ID_SORT_LOCATIONNAME    "Sorts the search result by location name.\nSort by location name"
     ID_SORT_LOCATIONIATA    "Sorts the search result by IATA airport code.\nSort by IATA airport code"
-    ID_SORT_LOCATIONGPS     "Sorts the search result by GPS location.\nSort by GPS location"
-    ID_SORT_HEIGHT          "Sorts the search result by height.\nSort by height"
 END
 
 STRINGTABLE 
 BEGIN
+    ID_SORT_LOCATIONGPS     "Sorts the search result by GPS location.\nSort by GPS location"
+    ID_SORT_HEIGHT          "Sorts the search result by height.\nSort by height"
     ID_SORT_WIDTH           "Sorts the search result by width.\nSort by width"
     ID_SORT_RESOLUTION      "Sorts the search result by resolution.\nSort by resolution"
     ID_SORT_ASPECTRATIO     "Sorts the search result by aspect ratio.\nSort by aspect ratio"
     ID_SORT_ROLL            "Sorts the search result by roll name.\nSort by roll"
     ID_SORT_DURATION        "Sorts the search result by duration.\nSort by duration"
-    ID_SORT_ARTIST          "Sorts the search result by artist.\nSort by artist/author"
 END
 
 STRINGTABLE 
 BEGIN
+    ID_SORT_ARTIST          "Sorts the search result by artist.\nSort by artist/author"
     ID_SORT_TITLE           "Sorts the search result by title.\nSort by title"
     ID_SORT_LANGUAGE        "Sorts the search result by language.\nSort by language"
     ID_SORT_RECORDINGTIME   "Sorts the search result by recording time.\nSort by recording time"
