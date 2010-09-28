@@ -1895,13 +1895,13 @@ FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "Annuler",IDCANCEL,224,162,50,14,WS_GROUP
     CONTROL         "&Gardez le store",IDC_KEEP,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,15,115,62,10
-    CONTROL         "&Effacez",IDC_DELETE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,15,127,61,10
-    PUSHBUTTON      "Effacez maintenant (il n'y aura aucun avertissement de plus)",IDOK,6,162,210,14,WS_DISABLED | WS_GROUP
+    CONTROL         "&Effacer",IDC_DELETE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,15,127,61,10
+    PUSHBUTTON      "Effacer maintenant (il n'y aura aucun avertissement de plus)",IDOK,6,162,210,14,WS_DISABLED | WS_GROUP
     LTEXT           "Confirmez s'il vous plaît que vous voulez vraiment effacer le store choisi.",IDC_CAPTION,7,31,281,8
     LTEXT           "Comme le store est actuellement monté, vous perdrez tous les fichiers à l'intérieur de ce store sans option de récupération!",IDC_STATIC,7,51,213,17
-    LTEXT           "Zum Löschen geben Sie Ihre Zustimmung, indem Sie „Löschen“ auswählen und anschließend auf „Jetzt löschen“ klicken:",IDC_STATIC,7,81,213,17
+    LTEXT           "Pour l'effacement vous donnez votre approbation en choisir ""l'effacement"" et, ensuite, en cliquer sur ""Effacer maintenant"":",IDC_STATIC,7,81,213,17
     GROUPBOX        "Confirmation",IDC_STATIC,7,102,74,41,BS_FLAT | WS_GROUP
-    LTEXT           "Dieses Fenster verhindert das unabsichtliche Löschen von sehr vielen Dateien.",IDC_STATIC,7,189,281,8
+    LTEXT           "Cette fenêtre empêche l'effacement non intentionnel de beaucoup de fichiers.",IDC_STATIC,7,189,281,8
 END
 
 IDD_STORENEW DIALOGEX 0, 0, 423, 242
@@ -2267,11 +2267,11 @@ BEGIN
     IDS_LICENSEVALID_CAPTION "La licence est acceptée"
     IDS_LICENSEVALID_MSG    "Sa clé de licence est valable. Merci beaucoup pour l'achat de liquidFOLDERS!"
     IDS_MULTIPLEVALUES      "Valeurs plusieurs"
-    IDS_UACMESSAGE          "liquidFOLDERS needs your permission to continue"
+    IDS_UACMESSAGE          "liquidFOLDERS a besoin de votre permission de continuer"
     IDS_EXPAND              "&Ouvrir"
     IDS_COLLAPSE            "&Fermer"
     IDS_IMPORTFOLDER_CAPTION "Importer dossier"
-    IDS_IMPORTFOLDER_HINT   "The folder and all its subfolders will be imported."
+    IDS_IMPORTFOLDER_HINT   "Le dossier et tous ses sous-dossiers seront importés."
     IDS_CHOOSESTORE_CAPTION "Stores"
     IDS_CHOOSESTORE_HINT    "Seulement stores montée pouvoir choisissse."
     IDS_CHOOSEDEFAULTSTORE_CAPTION "Stores internes"
