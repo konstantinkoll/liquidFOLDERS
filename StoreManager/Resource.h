@@ -125,8 +125,8 @@
 #define ID_SORT_FILENAME                700
 #define ID_SORT_COMMENT                 703
 #define ID_SORT_CREATIONTIME            705
-#define ID_SORT_ADDTIME                 706
-#define ID_SORT_FILETIME                707
+#define ID_SORT_FILETIME                706
+#define ID_SORT_ADDTIME                 707
 #define ID_SORT_DELETETIME              708
 #define ID_SORT_TAGS                    715
 #define ID_SORT_RATING                  716

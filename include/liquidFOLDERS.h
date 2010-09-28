@@ -181,8 +181,8 @@ struct LFContextDescriptor
 #define LFAttrComment                   3
 #define LFAttrDescription               4
 #define LFAttrCreationTime              5
-#define LFAttrAddTime                   6
-#define LFAttrFileTime                  7
+#define LFAttrFileTime                  6
+#define LFAttrAddTime                   7
 #define LFAttrDeleteTime                8
 #define LFAttrArchiveTime               9
 #define LFAttrFileFormat               10

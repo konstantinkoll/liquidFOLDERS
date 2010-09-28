@@ -127,8 +127,8 @@
 #define IDS_AttrComment                 4003
 #define IDS_AttrDescription             4004
 #define IDS_AttrCreationTime            4005
-#define IDS_AttrAddTime                 4006
-#define IDS_AttrFileTime                4007
+#define IDS_AttrFileTime                4006
+#define IDS_AttrAddTime                 4007
 #define IDS_AttrDeleteTime              4008
 #define IDS_AttrArchiveTime             4009
 #define IDS_AttrFileFormat              4010
