@@ -440,9 +440,9 @@ void CTagcloudView::OnPaint()
 	buffer.CreateCompatibleBitmap(&pDC, rect.Width(), rect.Height());
 	CBitmap* pOldBitmap = dc.SelectObject(&buffer);
 
-	COLORREF back;
-	COLORREF text;
-	theApp.GetBackgroundColors(m_ViewParameters.Background, &back, &text);
+	BOOL Themed = IsCtrlThemed();
+	COLORREF back = Themed ? 0xFFFFFF : GetSysColor(COLOR_WINDOW);
+	COLORREF text = Themed ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT);
 
 	dc.FillSolidRect(rect, back);
 

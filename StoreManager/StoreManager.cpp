@@ -91,17 +91,6 @@ BOOL CStoreManagerApp::InitInstance()
 		m_nTextureSize = m_nMaxTextureSize;
 	m_nAppLook = GetGlobalInt(_T("ApplicationLook"), ID_VIEW_APPLOOK_OFF_2007_BLUE);
 
-	for (UINT a=0; a<LFViewCount; a++)
-		switch (a)
-		{
-		case LFViewGlobe:
-			m_Background[a] = ChildBackground_Ribbon;
-			break;
-		default:
-			m_Background[a] = (OSVersion>=OS_Vista) ? ChildBackground_White : ChildBackground_System;
-		}
-	GetBinary(_T("Background"), m_Background, sizeof(m_Background));
-
 	SetRegistryBase(oldBase);
 	SetApplicationLook(m_nAppLook);
 
@@ -123,7 +112,6 @@ int CStoreManagerApp::ExitInstance()
 	WriteInt(_T("ShowQueryDuration"), m_ShowQueryDuration);
 	WriteInt(_T("TextureSize"), m_nTextureSize);
 	WriteInt(_T("MaxTextureSize"), m_nMaxTextureSize);
-	WriteBinary(_T("Background"), (LPBYTE)&m_Background, sizeof(m_Background));
 	SetRegistryBase(oldBase);
 
 	return LFApplication::ExitInstance();
@@ -537,82 +525,54 @@ void CStoreManagerApp::FreeGLTexture(UINT nID)
 	m_GLTextureBinds[nID-1]--;
 }
 
-void CStoreManagerApp::GetBackgroundColors(UINT Background, COLORREF* back, COLORREF* text, COLORREF* highlight)
+void CStoreManagerApp::GetRibbonColors(COLORREF* back, COLORREF* text, COLORREF* highlight)
 {
-	switch (Background)
+#if (_MFC_VER>=0x1000)
+	if (m_nAppLook==ID_VIEW_APPLOOK_WINDOWS_7)
 	{
-	case ChildBackground_Ribbon:
-	#if (_MFC_VER>=0x1000)
-		if (m_nAppLook==ID_VIEW_APPLOOK_WINDOWS_7)
-		{
-			if (back)
-				*back = (COLORREF)0xCAD4E3;
-			if (text)
-				*text = (COLORREF)0x000000;
-			if (highlight)
-				*highlight = (COLORREF)0x003399;
-		}
-		else
-	#endif
-			switch (CMFCVisualManagerOffice2007::GetStyle())
-			{
-			case CMFCVisualManagerOffice2007::Office2007_Silver:
-				if (back)
-					*back = (COLORREF)0xDDD4D0;
-				if (text)
-					*text = (COLORREF)0x000000;
-				if (highlight)
-					*highlight = (COLORREF)0x5C534C;
-				break;
-			case CMFCVisualManagerOffice2007::Office2007_ObsidianBlack:
-				if (back)
-					*back = (COLORREF)0x535353;
-				if (text)
-					*text = (COLORREF)0xFFFFFF;
-				if (highlight)
-					*highlight = (COLORREF)0xFFFFFF;
-				break;
-			case CMFCVisualManagerOffice2007::Office2007_Aqua:
-				if (back)
-					*back = (COLORREF)0xD9CAC4;
-				if (text)
-					*text = (COLORREF)0x000000;
-				if (highlight)
-					*highlight = (COLORREF)0x6E1500;
-				break;
-			default:
-				if (back)
-					*back = (COLORREF)0xFFDBBF;
-				if (text)
-					*text = (COLORREF)0x000000;
-				if (highlight)
-					*highlight = (COLORREF)0x8B4215;
-			}
-		break;
-	case ChildBackground_Black:
 		if (back)
-			*back = (COLORREF)0x000000;
-		if (text)
-			*text = (COLORREF)0xFFFFFF;
-		if (highlight)
-			*highlight = (COLORREF)0xCCFFFF;
-		break;
-	case ChildBackground_White:
-		if (back)
-			*back = (COLORREF)0xFFFFFF;
+			*back = (COLORREF)0xCAD4E3;
 		if (text)
 			*text = (COLORREF)0x000000;
 		if (highlight)
-			*highlight = (COLORREF)0x993300;
-		break;
-	default:
-		if (back)
-			*back = GetSysColor(COLOR_WINDOW);
-		if (text)
-			*text = GetSysColor(COLOR_WINDOWTEXT);
-		if (highlight)
-			*highlight = GetSysColor(COLOR_HIGHLIGHT);
+			*highlight = (COLORREF)0x003399;
 	}
+	else
+#endif
+		switch (CMFCVisualManagerOffice2007::GetStyle())
+		{
+		case CMFCVisualManagerOffice2007::Office2007_Silver:
+			if (back)
+				*back = (COLORREF)0xDDD4D0;
+			if (text)
+				*text = (COLORREF)0x000000;
+			if (highlight)
+				*highlight = (COLORREF)0x5C534C;
+			break;
+		case CMFCVisualManagerOffice2007::Office2007_ObsidianBlack:
+			if (back)
+				*back = (COLORREF)0x535353;
+			if (text)
+				*text = (COLORREF)0xFFFFFF;
+			if (highlight)
+				*highlight = (COLORREF)0xFFFFFF;
+			break;
+		case CMFCVisualManagerOffice2007::Office2007_Aqua:
+			if (back)
+				*back = (COLORREF)0xD9CAC4;
+			if (text)
+				*text = (COLORREF)0x000000;
+			if (highlight)
+				*highlight = (COLORREF)0x6E1500;
+			break;
+		default:
+			if (back)
+				*back = (COLORREF)0xFFDBBF;
+			if (text)
+				*text = (COLORREF)0x000000;
+			if (highlight)
+				*highlight = (COLORREF)0x8B4215;
+		}
 }
 
 CMFCRibbonButton* CStoreManagerApp::CommandButton(UINT nID, int nSmallImageIndex, int nLargeImageIndex, BOOL bAlwaysShowDescription, BOOL bInsertSpace)

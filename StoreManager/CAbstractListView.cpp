@@ -122,10 +122,9 @@ void CAbstractListView::OnUpdateCommands(CCmdUI* pCmdUI)
 
 void CAbstractListView::OnSysColorChange()
 {
-	COLORREF back;
-	COLORREF text;
-	COLORREF highlight;
-	theApp.GetBackgroundColors(pViewParameters->Background, &back, &text, &highlight);
+	BOOL Themed = IsCtrlThemed();
+	COLORREF back = Themed ? 0xFFFFFF : GetSysColor(COLOR_WINDOW);
+	COLORREF text = Themed ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT);
 
 	m_FileList.SetBkColor(back);
 	m_FileList.SetTextBkColor(back);

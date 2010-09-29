@@ -96,10 +96,6 @@ void CCalendarDayView::SetViewOptions(UINT /*_ViewID*/, BOOL Force)
 		}
 	}
 
-	// Colors
-	if (Force || (pViewParameters->Background!=m_ViewParameters.Background) || (theApp.m_nAppLook!=RibbonColor))
-		OnSysColorChange();
-
 	// Categories
 	//if (Force || (pViewParameters->ShowCategories!=m_ViewParameters.ShowCategories) || (_ViewID!=ViewID))
 	//	m_FileList.EnableGroupView(pViewParameters->ShowCategories && (!m_FileList.OwnerData) && (_ViewID!=LFViewList));
@@ -118,6 +114,10 @@ void CCalendarDayView::SetViewOptions(UINT /*_ViewID*/, BOOL Force)
 	{
 		m_FileList.SetHeader();
 	}
+
+	// Farbe
+	if (Force)
+		OnSysColorChange();
 
 	// Icons
 	if (Force)

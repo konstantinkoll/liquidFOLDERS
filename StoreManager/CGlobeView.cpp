@@ -8,7 +8,7 @@
 #include "LFCore.h"
 #include <cmath>
 
-#define STATUSBAR_HEIGHT 16
+#define STATUSBAR_HEIGHT 12
 #define DISTANCE 39.0f
 #define ARROWSIZE 9
 #define PI 3.14159265358979323846
@@ -140,8 +140,8 @@ void CGlobeView::SetViewOptions(UINT /*_ViewID*/, BOOL Force)
 		m_LocalSettings.GlobeZoom = pViewParameters->GlobeZoom;
 	}
 
-	if (Force || (pViewParameters->Background!=m_ViewParameters.Background) || (theApp.m_nAppLook!=RibbonColor))
-		theApp.GetBackgroundColors(pViewParameters->Background, &m_ColorBack, &m_ColorText, &m_ColorHighlight);
+	if (Force || (theApp.m_nAppLook!=RibbonColor))
+		theApp.GetRibbonColors(&m_ColorBack, &m_ColorText, &m_ColorHighlight);
 
 	PrepareTexture();
 	PrepareModel(theApp.m_GlobeHQModel);
@@ -1211,9 +1211,9 @@ void CGlobeView::DrawScene(BOOL InternalCall)
 			ColorRef2GLColor(highlightcol, m_ColorHighlight);
 			glColor4d(highlightcol[0], highlightcol[1], highlightcol[2], 1.0f);
 
-			m_SpecialFont.Render(Copyright, CopyrightX, m_Height-16);
+			m_SpecialFont.Render(Copyright, CopyrightX, m_Height-STATUSBAR_HEIGHT);
 			if (ViewpointX!=-1)
-				m_SpecialFont.Render(Viewpoint, ViewpointX, m_Height-16);
+				m_SpecialFont.Render(Viewpoint, ViewpointX, m_Height-STATUSBAR_HEIGHT);
 
 			glDisable2D();
 		}

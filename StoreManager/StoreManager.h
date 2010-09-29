@@ -8,7 +8,6 @@
 #include "liquidFOLDERS.h"
 #include "LFCommDlg.h"
 #include <list>
-#include <uxtheme.h>
 using std::list;
 
 #define SaveMode_SettingsChanged  0
@@ -38,7 +37,6 @@ public:
 	list<CMainFrame*> m_listMainFrames;
 	list<CMainFrame*> m_listClipboardFrames;
 	LFViewParameters m_Views[LFContextCount];
-	UINT m_Background[LFViewCount];
 	CImageList m_Icons128;
 	CImageList m_Icons64;
 	CImageList m_Icons48;
@@ -64,7 +62,7 @@ public:
 	void ToggleAttribute(LFViewParameters* vp, UINT attr, int ColumnCount=-1);
 	HBITMAP GetGLTexture(UINT nID);
 	void FreeGLTexture(UINT nID);
-	static void GetBackgroundColors(UINT Background, COLORREF* back, COLORREF* text=NULL, COLORREF* highlight=NULL);
+	static void GetRibbonColors(COLORREF* back, COLORREF* text=NULL, COLORREF* highlight=NULL);
 	static CMFCRibbonButton* CommandButton(UINT nID, int nSmallImageIndex=-1, int nLargeImageIndex=-1, BOOL bAlwaysShowDescription=FALSE, BOOL bInsertSpace=FALSE);
 	static CMFCRibbonCheckBox* CommandCheckBox(UINT nID);
 

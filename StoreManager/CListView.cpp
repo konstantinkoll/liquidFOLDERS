@@ -185,13 +185,13 @@ void CListView::SetViewOptions(UINT _ViewID, BOOL Force)
 		}
 	}
 
-	// Colors
-	if (Force || (pViewParameters->Background!=m_ViewParameters.Background) || (theApp.m_nAppLook!=RibbonColor))
-		OnSysColorChange();
-
 	// Categories
 	if (Force || (_ViewID!=ViewID))
 		m_FileList.EnableGroupView((!m_FileList.OwnerData) && (_ViewID!=LFViewList));
+
+	// Farbe
+	if (Force)
+		OnSysColorChange();
 
 	// Icons
 	if (Force || (_ViewID!=ViewID))

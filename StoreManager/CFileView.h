@@ -12,7 +12,6 @@
 struct LFViewParameters
 {
 	UINT Mode;
-	UINT Background;
 	BOOL FullRowSelect;
 	BOOL AlwaysSave;
 	BOOL Changed;

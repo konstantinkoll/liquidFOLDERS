@@ -8,11 +8,6 @@
 #include "CGdiPlusBitmap.h"
 #include <uxtheme.h>
 
-#define ChildBackground_Black     0
-#define ChildBackground_Ribbon    1
-#define ChildBackground_System    2
-#define ChildBackground_White     3
-
 #define RatingBitmapWidth        88
 #define RatingBitmapHeight       15
 
