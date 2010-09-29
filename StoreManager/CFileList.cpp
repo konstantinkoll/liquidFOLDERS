@@ -450,7 +450,7 @@ void CFileList::OnColumnClick(NMHDR* pNMHDR, LRESULT* /*pResult*/)
 	}
 	else
 	{
-		if (!LFAttributeSortableInView(attr, View->m_ViewParameters.Mode))
+		if (!AttributeSortableInView(attr, View->m_ViewParameters.Mode))
 		{
 			CString msg;
 			ENSURE(msg.LoadString(IDS_ATTRIBUTENOTSORTABLE));

@@ -7,6 +7,25 @@
 #include "StoreManager.h"
 
 
+BOOL AttributeSortableInView(UINT Attr, UINT ViewMode)
+{
+	BOOL b = TRUE;
+	switch (ViewMode)
+	{
+	case LFViewCalendarYear:
+	case LFViewCalendarWeek:
+	case LFViewCalendarDay:
+	case LFViewTimeline:
+		b = (theApp.m_Attributes[Attr]->Type==LFTypeTime);
+		break;
+	case LFViewGlobe:
+		b = ((Attr==LFAttrLocationIATA) || (Attr==LFAttrLocationGPS));
+		break;
+	}
+	return b;
+}
+
+
 // CFileView
 //
 

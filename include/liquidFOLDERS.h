@@ -104,25 +104,6 @@ struct LFAirport
 };
 
 
-// Application view IDs (keep in Sync with command IDs in Resource.h of StoreManager)
-
-#define LFViewAutomatic                 0
-#define LFViewLargeIcons                1
-#define LFViewSmallIcons                2
-#define LFViewList                      3
-#define LFViewDetails                   4
-#define LFViewTiles                     5
-#define LFViewPreview                   6
-#define LFViewCalendarYear              7
-#define LFViewCalendarWeek              8
-#define LFViewCalendarDay               9
-#define LFViewGlobe                     10
-#define LFViewTagcloud                  11
-#define LFViewTimeline                  12
-
-#define LFViewCount                     13
-
-
 // Item categories
 
 #define LFCategoryInternalStores        0
@@ -169,7 +150,6 @@ struct LFContextDescriptor
 	wchar_t Name[64];
 	bool AllowGroups;
 	LFBitArray* AllowedAttributes;
-	LFBitArray* AllowedViews;
 };
 
 

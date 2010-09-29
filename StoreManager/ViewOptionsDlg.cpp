@@ -80,7 +80,7 @@ BOOL ViewOptionsDlg::OnInitDialog()
 
 	for (UINT a=LFViewAutomatic; a<LFViewCount; a++)
 	{
-		if (theApp.m_Contexts[m_Context]->AllowedViews->IsSet(a))
+		if (theApp.m_AllowedViews[m_Context]->IsSet(a))
 		{
 			lvi.lParam = (LPARAM)a;
 			lvi.pszText = theApp.GetCommandName(ID_APP_VIEW_AUTOMATIC+a).AllocSysString();

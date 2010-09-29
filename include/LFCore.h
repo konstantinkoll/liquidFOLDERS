@@ -247,10 +247,6 @@ LFCore_API wchar_t* LFGetErrorText(unsigned int ID);
 LFCore_API void LFErrorBox(unsigned int ID, HWND hWnd=NULL);
 
 
-// Attribut als Sortierkriterium für eine Ansicht erlaubt ?
-LFCore_API bool LFAttributeSortableInView(unsigned int Attr, unsigned int ViewMode);
-
-
 
 // Suchabfrage durchführen
 // - Ist filter==NULL, so wird eine Liste aller Stores zurückgeliefert

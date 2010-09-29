@@ -7,6 +7,25 @@
 #include "LFCommDlg.h"
 
 
+// View IDs
+
+#define LFViewAutomatic                 0
+#define LFViewLargeIcons                1
+#define LFViewSmallIcons                2
+#define LFViewList                      3
+#define LFViewDetails                   4
+#define LFViewTiles                     5
+#define LFViewPreview                   6
+#define LFViewCalendarYear              7
+#define LFViewCalendarWeek              8
+#define LFViewCalendarDay               9
+#define LFViewGlobe                     10
+#define LFViewTagcloud                  11
+#define LFViewTimeline                  12
+
+#define LFViewCount                     13
+
+
 // View parameters
 
 struct LFViewParameters
@@ -38,6 +57,9 @@ struct LFViewParameters
 	BOOL TagcloudUseColors;
 	BOOL TagcloudUseOpacity;
 };
+
+
+BOOL AttributeSortableInView(UINT Attr, UINT ViewMode);
 
 
 // CFileView

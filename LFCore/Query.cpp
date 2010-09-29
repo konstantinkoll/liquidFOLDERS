@@ -521,7 +521,6 @@ LFCore_API bool LFPassesFilter(LFItemDescriptor* i, LFFilter* filter)
 LFSearchResult* QueryStores(LFFilter* filter)
 {
 	LFSearchResult* res = new LFSearchResult(LFContextStores);
-	res->m_RecommendedView = LFViewLargeIcons;
 	res->m_LastError = LFOk;
 	res->m_HasCategories = true;
 
@@ -548,7 +547,6 @@ LFSearchResult* QueryStores(LFFilter* filter)
 LFSearchResult* QueryDomains(LFFilter* filter)
 {
 	LFSearchResult* res = new LFSearchResult(LFContextStoreHome);
-	res->m_RecommendedView = LFViewSmallIcons;
 	res->m_HasCategories = true;
 	strcpy_s(res->m_StoreID, LFKeySize, filter->StoreID);
 
@@ -840,7 +838,6 @@ LFCore_API LFSearchResult* LFQuery(LFFilter* filter, LFSearchResult* base, int f
 		(first<=last) && (first>=0) && (first<(int)base->m_ItemCount) && (last>=0) && (last<(int)base->m_ItemCount))
 	{
 		res = base;
-		res->m_RecommendedView = LFViewDetails;
 		res->m_LastError = LFOk;
 		strcpy_s(res->m_StoreID, LFKeySize, filter->StoreID);
 

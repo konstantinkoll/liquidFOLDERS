@@ -470,9 +470,9 @@ void CMainFrame::OnUpdateAppCommands(CCmdUI* pCmdUI)
 	case ID_APP_VIEW_TIMELINE:
 		view = pCmdUI->m_nID-ID_APP_VIEW_AUTOMATIC+LFViewAutomatic;
 		pCmdUI->SetCheck(ActiveViewID==(int)view);
-		b = theApp.m_Contexts[ActiveContextID]->AllowedViews->IsSet(view);
+		b = theApp.m_AllowedViews[ActiveContextID]->IsSet(view);
 		if (CookedFiles)
-			b &= (theApp.m_Contexts[CookedFiles->m_Context]->AllowedViews->IsSet(view)==true);
+			b &= (theApp.m_AllowedViews[CookedFiles->m_Context]->IsSet(view)==true);
 		pCmdUI->Enable(b);
 	}
 }
@@ -484,7 +484,7 @@ void CMainFrame::OnSort(UINT nID)
 	{
 		ActiveViewParameters->SortBy = nID;
 		ActiveViewParameters->Descending = (theApp.m_Attributes[nID]->Type==LFTypeRating) || (theApp.m_Attributes[nID]->Type==LFTypeTime);
-		if (!LFAttributeSortableInView(ActiveViewParameters->SortBy, ActiveViewParameters->Mode))
+		if (!AttributeSortableInView(ActiveViewParameters->SortBy, ActiveViewParameters->Mode))
 			ActiveViewParameters->Mode = LFViewAutomatic;
 
 		theApp.SaveViewOptions(ActiveContextID);
@@ -511,9 +511,9 @@ void CMainFrame::OnUpdateDropCommands(CCmdUI* pCmdUI)
 	case ID_DROP_CALENDAR:
 		pCmdUI->SetCheck((ActiveViewID>=LFViewCalendarYear) &&
 			(ActiveViewID<=LFViewCalendarDay));
-		pCmdUI->Enable(theApp.m_Contexts[ActiveContextID]->AllowedViews->IsSet(LFViewCalendarYear) ||
-			theApp.m_Contexts[ActiveContextID]->AllowedViews->IsSet(LFViewCalendarWeek) ||
-			theApp.m_Contexts[ActiveContextID]->AllowedViews->IsSet(LFViewCalendarDay));
+		pCmdUI->Enable(theApp.m_AllowedViews[ActiveContextID]->IsSet(LFViewCalendarYear) ||
+			theApp.m_AllowedViews[ActiveContextID]->IsSet(LFViewCalendarWeek) ||
+			theApp.m_AllowedViews[ActiveContextID]->IsSet(LFViewCalendarDay));
 		break;
 	case ID_DROP_NAME:
 		pCmdUI->SetCheck((ActiveViewParameters->SortBy==LFAttrFileName) ||
@@ -2243,16 +2243,16 @@ void CMainFrame::ShowCaptionBar(LPCWSTR Icon, UINT res, int Command)
 UINT CMainFrame::SelectViewMode(UINT ViewID)
 {
 	if (CookedFiles)
-		if (!theApp.m_Contexts[CookedFiles->m_Context]->AllowedViews->IsSet(ViewID))
+		if (!theApp.m_AllowedViews[CookedFiles->m_Context]->IsSet(ViewID))
 			ViewID = LFViewAutomatic;
 	if ((ViewID<LFViewAutomatic) || (ViewID>=LFViewCount))
 		ViewID = LFViewAutomatic;
 	if (ViewID==LFViewAutomatic)
-		ViewID = CookedFiles->m_RecommendedView;
+		ViewID = LFViewDetails;
 
-	if (!LFAttributeSortableInView(ActiveViewParameters->SortBy, ViewID))
+	if (!AttributeSortableInView(ActiveViewParameters->SortBy, ViewID))
 		for (UINT a=1; a<=LFViewTimeline; a++)
-			if (LFAttributeSortableInView(ActiveViewParameters->SortBy, a))
+			if (AttributeSortableInView(ActiveViewParameters->SortBy, a))
 				return a;
 
 	return ViewID;
@@ -2264,10 +2264,10 @@ BOOL CMainFrame::OpenChildView(int FocusItem, BOOL Force, BOOL AllowChangeSort)
 
 	if (AllowChangeSort)
 	{
-		if (!LFAttributeSortableInView(ActiveViewParameters->SortBy, ActiveViewParameters->Mode))
+		if (!AttributeSortableInView(ActiveViewParameters->SortBy, ActiveViewParameters->Mode))
 		{
 			for (UINT a=0; a<LFAttributeCount; a++)
-			if (LFAttributeSortableInView(a, ActiveViewParameters->Mode))
+			if (AttributeSortableInView(a, ActiveViewParameters->Mode))
 			{
 				ActiveViewParameters->SortBy = a;
 				break;
@@ -2282,7 +2282,7 @@ BOOL CMainFrame::OpenChildView(int FocusItem, BOOL Force, BOOL AllowChangeSort)
 			theApp.UpdateSortOptions(ActiveContextID);
 	}
 
-	ASSERT(LFAttributeSortableInView(ActiveViewParameters->SortBy, ViewID));
+	ASSERT(AttributeSortableInView(ActiveViewParameters->SortBy, ViewID));
 	CFileView* pNewView = NULL;
 
 	switch (ViewID)

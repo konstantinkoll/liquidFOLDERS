@@ -75,6 +75,19 @@ BOOL CStoreManagerApp::InitInstance()
 {
 	LFApplication::InitInstance();
 
+	for (UINT a=0; a<LFContextCount; a++)
+	{
+		m_AllowedViews[a] = new LFBitArray(LFViewCount);
+
+		UINT cnt = ((a>LFContextClipboard) && (a<LFContextSubfolderDefault)) ? LFViewCount-1 : (a>LFContextStoreHome) ? LFViewPreview : LFViewTiles;
+		for (UINT b=0; b<=cnt; b++)
+			if (b!=LFViewCalendarDay)
+				(*m_AllowedViews[a]) += b;
+
+		if (a==LFContextSubfolderDay)
+			(*m_AllowedViews[a]) += LFViewCalendarDay;
+	}
+
 	// Registry auslesen
 	CString oldBase = GetRegistryBase();
 	SetRegistryBase(_T("Settings"));
@@ -404,7 +417,7 @@ void CStoreManagerApp::LoadViewOptions(int context)
 
 	m_Views[context].AutoDirs &= (m_Contexts[context]->AllowGroups==true) || (context>=LFContextSubfolderDefault);
 
-	if (!theApp.m_Contexts[context]->AllowedViews->IsSet(m_Views[context].Mode))
+	if (!theApp.m_AllowedViews[context]->IsSet(m_Views[context].Mode))
 		m_Views[context].Mode = LFViewDetails;
 
 	SetRegistryBase(oldBase);

@@ -392,16 +392,6 @@ LFCore_API LFContextDescriptor* LFGetContextInfo(unsigned int ID)
 				(*c->AllowedAttributes) += a;
 	}
 
-	c->AllowedViews = new LFBitArray(LFViewCount);
-
-	unsigned int cnt = ((ID>LFContextClipboard) && (ID<LFContextSubfolderDefault)) ? LFViewCount-1 : (ID>LFContextStoreHome) ? LFViewPreview : LFViewTiles;
-	for (unsigned int a=0; a<=cnt; a++)
-		if (a!=LFViewCalendarDay)
-			(*c->AllowedViews) += a;
-
-	if (ID==LFContextSubfolderDay)
-		(*c->AllowedViews) += LFViewCalendarDay;
-
 	return c;
 }
 
@@ -411,8 +401,6 @@ LFCore_API void LFFreeContextDescriptor(LFContextDescriptor* c)
 	{
 		if (c->AllowedAttributes)
 			delete c->AllowedAttributes;
-		if (c->AllowedViews)
-			delete c->AllowedViews;
 		delete c;
 	}
 }
@@ -804,25 +792,4 @@ LFCore_API void LFErrorBox(unsigned int ID, HWND hWnd)
 
 		free(msg);
 	}
-}
-
-
-LFCore_API bool LFAttributeSortableInView(unsigned int Attr, unsigned int ViewMode)
-{
-	assert(Attr<LFAttributeCount);
-
-	bool b = true;
-	switch (ViewMode)
-	{
-	case LFViewCalendarYear:
-	case LFViewCalendarWeek:
-	case LFViewCalendarDay:
-	case LFViewTimeline:
-		b = (AttrTypes[Attr]==LFTypeTime);
-		break;
-	case LFViewGlobe:
-		b = ((Attr==LFAttrLocationIATA) || (Attr==LFAttrLocationGPS));
-		break;
-	}
-	return b;
 }
