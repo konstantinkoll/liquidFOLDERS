@@ -378,7 +378,7 @@ void CStoreManagerApp::LoadViewOptions(int context)
 	base.Format(_T("Settings\\Context%d"), context);
 	SetRegistryBase(base);
 
-	m_Views[context].Mode = GetInt(_T("Viewmode"), LFViewAutomatic);
+	m_Views[context].Mode = GetInt(_T("Viewmode"), LFViewTiles);
 	m_Views[context].FullRowSelect = GetInt(_T("FullRowSelect"), FALSE);
 	m_Views[context].AlwaysSave = GetInt(_T("AlwaysSave"), TRUE);
 	m_Views[context].SortBy = GetInt(_T("SortBy"), LFAttrFileName);

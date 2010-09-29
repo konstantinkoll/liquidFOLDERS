@@ -102,7 +102,7 @@ public:
 	BOOL UpdateTrashFlag(BOOL Trash, BOOL All=FALSE);
 	BOOL DeleteFiles(BOOL All=FALSE);
 	int GetFocusItem();
-	UINT SelectViewMode(UINT ViewID=LFViewAutomatic);
+	UINT SelectViewMode(UINT ViewID=LFViewDetails);
 	BOOL OpenChildView(int FocusItem=0, BOOL Force=FALSE, BOOL AllowChangeSort=FALSE);
 
 	BOOL IsClipboard;

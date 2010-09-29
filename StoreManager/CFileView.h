@@ -9,21 +9,20 @@
 
 // View IDs
 
-#define LFViewAutomatic                 0
-#define LFViewLargeIcons                1
-#define LFViewSmallIcons                2
-#define LFViewList                      3
-#define LFViewDetails                   4
-#define LFViewTiles                     5
-#define LFViewPreview                   6
-#define LFViewCalendarYear              7
-#define LFViewCalendarWeek              8
-#define LFViewCalendarDay               9
-#define LFViewGlobe                     10
-#define LFViewTagcloud                  11
-#define LFViewTimeline                  12
+#define LFViewLargeIcons                0
+#define LFViewSmallIcons                1
+#define LFViewList                      2
+#define LFViewDetails                   3
+#define LFViewTiles                     4
+#define LFViewPreview                   5
+#define LFViewCalendarYear              6
+#define LFViewCalendarWeek              7
+#define LFViewCalendarDay               8
+#define LFViewGlobe                     9
+#define LFViewTagcloud                  10
+#define LFViewTimeline                  11
 
-#define LFViewCount                     13
+#define LFViewCount                     12
 
 
 // View parameters

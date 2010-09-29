@@ -80,7 +80,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_COMMAND(ID_VIEW_CHOOSEDETAILS, OnChooseDetails)
 	ON_COMMAND(ID_VIEW_AUTODIRS, OnToggleAutoDirs)
 
-	ON_COMMAND_RANGE(ID_APP_VIEW_AUTOMATIC, ID_APP_VIEW_TIMELINE, OnChangeChildView)
+	ON_COMMAND_RANGE(ID_APP_VIEW_LARGEICONS, ID_APP_VIEW_TIMELINE, OnChangeChildView)
 	ON_COMMAND_RANGE(ID_SORT_FILENAME, ID_SORT_FILENAME+99, OnSort)
 	ON_COMMAND(ID_CONTEXT_CHOOSE, OnChooseContext)
 	ON_COMMAND(ID_CONTEXT_ALWAYSSAVE, OnAlwaysSaveContext)
@@ -455,7 +455,6 @@ void CMainFrame::OnUpdateAppCommands(CCmdUI* pCmdUI)
 		pCmdUI->SetCheck((ActiveViewParameters->AutoDirs) || (ActiveContextID>=LFContextSubfolderDefault));
 		pCmdUI->Enable((theApp.m_Contexts[ActiveContextID]->AllowGroups) && (SelectViewMode(ActiveViewParameters->Mode)<=LFViewPreview));
 		break;
-	case ID_APP_VIEW_AUTOMATIC:
 	case ID_APP_VIEW_LARGEICONS:
 	case ID_APP_VIEW_SMALLICONS:
 	case ID_APP_VIEW_LIST:
@@ -468,7 +467,7 @@ void CMainFrame::OnUpdateAppCommands(CCmdUI* pCmdUI)
 	case ID_APP_VIEW_GLOBE:
 	case ID_APP_VIEW_TAGCLOUD:
 	case ID_APP_VIEW_TIMELINE:
-		view = pCmdUI->m_nID-ID_APP_VIEW_AUTOMATIC+LFViewAutomatic;
+		view = pCmdUI->m_nID-ID_APP_VIEW_LARGEICONS+LFViewLargeIcons;
 		pCmdUI->SetCheck(ActiveViewID==(int)view);
 		b = theApp.m_AllowedViews[ActiveContextID]->IsSet(view);
 		if (CookedFiles)
@@ -485,7 +484,7 @@ void CMainFrame::OnSort(UINT nID)
 		ActiveViewParameters->SortBy = nID;
 		ActiveViewParameters->Descending = (theApp.m_Attributes[nID]->Type==LFTypeRating) || (theApp.m_Attributes[nID]->Type==LFTypeTime);
 		if (!AttributeSortableInView(ActiveViewParameters->SortBy, ActiveViewParameters->Mode))
-			ActiveViewParameters->Mode = LFViewAutomatic;
+			ActiveViewParameters->Mode = LFViewTiles;
 
 		theApp.SaveViewOptions(ActiveContextID);
 		theApp.UpdateSortOptions(ActiveContextID);
@@ -1252,7 +1251,7 @@ void CMainFrame::UpdateSearchResult(BOOL SetEmpty, int FocusItem)
 
 void CMainFrame::OnChangeChildView(UINT nID)
 {
-	ActiveViewParameters->Mode = nID-ID_APP_VIEW_AUTOMATIC+LFViewAutomatic;
+	ActiveViewParameters->Mode = nID-ID_APP_VIEW_LARGEICONS+LFViewLargeIcons;
 	theApp.SaveViewOptions(ActiveContextID);
 	theApp.OpenChildViews(ActiveContextID);
 }
@@ -1867,13 +1866,11 @@ void CMainFrame::InitializeRibbon()
 		CMFCRibbonPanel* pPanelDisplay = pCategoryView->AddPanel(strTemp, m_PanelImages.ExtractIcon(4));
 		pPanelDisplay->EnableLaunchButton(ID_APP_VIEWOPTIONS, 19);
 
-			pPanelDisplay->Add(theApp.CommandButton(ID_APP_VIEW_AUTOMATIC, 0, 0));
-			pPanelDisplay->AddSeparator();
-			pPanelDisplay->Add(theApp.CommandButton(ID_APP_VIEW_LARGEICONS, 1, 1));
-			pPanelDisplay->Add(theApp.CommandButton(ID_APP_VIEW_SMALLICONS, 2, 2));
-			pPanelDisplay->Add(theApp.CommandButton(ID_APP_VIEW_LIST, 3, 3));
-			pPanelDisplay->Add(theApp.CommandButton(ID_APP_VIEW_DETAILS, 4, 4));
-			pPanelDisplay->Add(theApp.CommandButton(ID_APP_VIEW_TILES, 5, 5));
+			pPanelDisplay->Add(theApp.CommandButton(ID_APP_VIEW_LARGEICONS, 0, 0));
+			pPanelDisplay->Add(theApp.CommandButton(ID_APP_VIEW_SMALLICONS, 1, 1));
+			pPanelDisplay->Add(theApp.CommandButton(ID_APP_VIEW_LIST, 2, 2));
+			pPanelDisplay->Add(theApp.CommandButton(ID_APP_VIEW_DETAILS, 3, 3));
+			pPanelDisplay->Add(theApp.CommandButton(ID_APP_VIEW_TILES, 4, 4));
 			pPanelDisplay->Add(theApp.CommandButton(ID_APP_VIEW_PREVIEW, 6, 6));
 
 			if (!IsClipboard)
@@ -2244,14 +2241,12 @@ UINT CMainFrame::SelectViewMode(UINT ViewID)
 {
 	if (CookedFiles)
 		if (!theApp.m_AllowedViews[CookedFiles->m_Context]->IsSet(ViewID))
-			ViewID = LFViewAutomatic;
-	if ((ViewID<LFViewAutomatic) || (ViewID>=LFViewCount))
-		ViewID = LFViewAutomatic;
-	if (ViewID==LFViewAutomatic)
-		ViewID = LFViewDetails;
+			ViewID = LFViewTiles;
+	if (ViewID>=LFViewCount)
+		ViewID = LFViewTiles;
 
 	if (!AttributeSortableInView(ActiveViewParameters->SortBy, ViewID))
-		for (UINT a=1; a<=LFViewTimeline; a++)
+		for (UINT a=0; a<=LFViewTimeline; a++)
 			if (AttributeSortableInView(ActiveViewParameters->SortBy, a))
 				return a;
 

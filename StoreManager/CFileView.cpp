@@ -33,7 +33,7 @@ CFileView::CFileView()
 	: CWnd()
 {
 	ActiveContextID = LFContextDefault;
-	ViewID = LFViewAutomatic;
+	ViewID = LFViewTiles;
 	result = NULL;
 	FocusItem = HoverItem = SelectionAnchor = -1;
 	MouseInView = FALSE;
@@ -60,7 +60,6 @@ void CFileView::OnUpdateViewOptions(int _ActiveContextID, int _ViewID, BOOL Forc
 
 	if (_ViewID<0)
 		_ViewID = ViewID;
-	ASSERT(_ViewID>LFViewAutomatic);
 
 	SetViewOptions(_ViewID, Force);
 

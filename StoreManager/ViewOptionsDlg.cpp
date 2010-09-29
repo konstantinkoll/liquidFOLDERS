@@ -60,7 +60,7 @@ BOOL ViewOptionsDlg::OnInitDialog()
 	}
 	l->InsertGroup(lvg.iGroupId, &lvg);
 
-	for (int a=1; a<=3; a++)
+	for (int a=0; a<2; a++)
 	{
 		lvg.iGroupId = a;
 		ENSURE(tmpStr.LoadString(IDS_VIEWGROUP1+a));
@@ -68,7 +68,7 @@ BOOL ViewOptionsDlg::OnInitDialog()
 		l->InsertGroup(lvg.iGroupId, &lvg);
 	}
 
-	m_ViewIcons.Create(IDB_RIBBONVIEW_16, NULL, 0, 12);
+	m_ViewIcons.Create(IDB_RIBBONVIEW_16, NULL, 1, 12);
 	l->SetImageList(&m_ViewIcons, LVSIL_SMALL);
 	l->SetIconSpacing(68, 30);
 	l->EnableGroupView(TRUE);
@@ -78,18 +78,19 @@ BOOL ViewOptionsDlg::OnInitDialog()
 	lvi.mask = LVIF_TEXT | LVIF_IMAGE | LVIF_GROUPID | LVIF_PARAM | LVIF_STATE;
 	lvi.iGroupId = 0;
 
-	for (UINT a=LFViewAutomatic; a<LFViewCount; a++)
+	for (UINT a=0; a<LFViewCount; a++)
 	{
 		if (theApp.m_AllowedViews[m_Context]->IsSet(a))
 		{
+			CString tmpStr = theApp.GetCommandName(ID_APP_VIEW_LARGEICONS+a);
 			lvi.lParam = (LPARAM)a;
-			lvi.pszText = theApp.GetCommandName(ID_APP_VIEW_AUTOMATIC+a).AllocSysString();
+			lvi.pszText = tmpStr.GetBuffer();
 			lvi.iImage = a;
 			lvi.state = lvi.stateMask = (a==p_View->Mode) ? LVIS_SELECTED | LVIS_FOCUSED : 0;
 			l->InsertItem(&lvi);
 		}
 
-		if ((a==0) || (a==6) || (a==9))
+		if ((a==5) || (a==8))
 			lvi.iGroupId++;
 	}
 
@@ -110,7 +111,7 @@ void ViewOptionsDlg::OnViewModeChange(NMHDR* pNMHDR, LRESULT* pResult)
 	if (pNMListView->uNewState & LVIS_SELECTED)
 	{
 		int vm = (int)pNMListView->lParam;
-		BOOL enable = (vm==LFViewAutomatic) || (vm==LFViewDetails) || (vm==LFViewCalendarDay);
+		BOOL enable = (vm==LFViewDetails) || (vm==LFViewCalendarDay);
 
 		m_ShowAttributes.EnableWindow(enable);
 		GetDlgItem(IDC_CHECKALL)->EnableWindow(enable);

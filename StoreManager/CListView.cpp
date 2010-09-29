@@ -15,7 +15,6 @@
 CListView::CListView()
 {
 	RibbonColor = 0;
-	ViewID = LFViewAutomatic;
 }
 
 CListView::~CListView()

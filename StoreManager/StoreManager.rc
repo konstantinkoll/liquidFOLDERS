@@ -583,10 +583,9 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_VIEWGROUP1          "Automatic"
-    IDS_VIEWGROUP2          "Standard views"
-    IDS_VIEWGROUP3          "Calendar views"
-    IDS_VIEWGROUP4          "Enhanced views"
+    IDS_VIEWGROUP1          "Standard views"
+    IDS_VIEWGROUP2          "Calendar views"
+    IDS_VIEWGROUP3          "Enhanced views"
     IDS_CONTEXTMENU_SORTOPTIONS "&Arrange by..."
     IDS_CONTEXTMENU_AUTODIRS "&Group into subfolders"
     IDS_CONTEXTMENU_VIEWOPTIONS "&Display as..."
@@ -647,7 +646,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    ID_APP_VIEW_AUTOMATIC   "Lets liquidFOLDERS decide on the appropriate view mode.\nAuto"
     ID_APP_VIEW_LARGEICONS  "Displays files as large icons, suitable for overview contexts.\nLarge icons"
     ID_APP_VIEW_SMALLICONS  "Displays files as small icons.\nSmall icons"
     ID_APP_VIEW_LIST        "Displays files as a list, suitable for large numbers of files.\nList"
