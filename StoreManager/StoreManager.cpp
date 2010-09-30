@@ -79,13 +79,18 @@ BOOL CStoreManagerApp::InitInstance()
 	{
 		m_AllowedViews[a] = new LFBitArray(LFViewCount);
 
-		UINT cnt = ((a>LFContextClipboard) && (a<LFContextSubfolderDefault)) ? LFViewCount-1 : (a>LFContextStoreHome) ? LFViewPreview : LFViewTiles;
+		UINT cnt = ((a>LFContextClipboard) && (a<LFContextSubfolderDefault)) ? LFViewCount-1 : (a>LFContextStoreHome) ? LFViewPreview : LFViewSearchResult;
 		for (UINT b=0; b<=cnt; b++)
-			if ((b!=LFViewCalendarDay) && (b!=LFViewSearchResult))
+			if (b!=LFViewCalendarDay)
 				(*m_AllowedViews[a]) += b;
 
 		if (a==LFContextSubfolderDay)
 			(*m_AllowedViews[a]) += LFViewCalendarDay;
+
+		// TODO
+		(*m_AllowedViews[a]) -= LFViewSearchResult;
+		(*m_AllowedViews[a]) -= LFViewCalendarYear;
+		(*m_AllowedViews[a]) -= LFViewTimeline;
 	}
 
 	// Registry auslesen

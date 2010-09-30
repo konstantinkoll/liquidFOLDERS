@@ -1544,6 +1544,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Ribbon\ViewSearchResult_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\ViewSearchResult_32.png"
+				>
+			</File>
+			<File
 				RelativePath="Ribbon\ViewSmallIcons_16.png"
 				>
 			</File>

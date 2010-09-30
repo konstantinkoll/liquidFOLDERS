@@ -464,6 +464,7 @@ void CMainFrame::OnUpdateAppCommands(CCmdUI* pCmdUI)
 	case ID_APP_VIEW_LIST:
 	case ID_APP_VIEW_DETAILS:
 	case ID_APP_VIEW_TILES:
+	case ID_APP_VIEW_SEARCHRESULT:
 	case ID_APP_VIEW_PREVIEW:
 	case ID_APP_VIEW_CALENDAR_DAY:
 	case ID_APP_VIEW_GLOBE:
@@ -1862,6 +1863,7 @@ void CMainFrame::InitializeRibbon()
 			pPanelDisplay->Add(theApp.CommandButton(ID_APP_VIEW_LIST, 2, 2));
 			pPanelDisplay->Add(theApp.CommandButton(ID_APP_VIEW_DETAILS, 3, 3));
 			pPanelDisplay->Add(theApp.CommandButton(ID_APP_VIEW_TILES, 4, 4));
+			pPanelDisplay->Add(theApp.CommandButton(ID_APP_VIEW_SEARCHRESULT, 5, 5));
 			pPanelDisplay->Add(theApp.CommandButton(ID_APP_VIEW_PREVIEW, 6, 6));
 
 			if (!IsClipboard)
