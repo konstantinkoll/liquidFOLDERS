@@ -386,10 +386,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CCalendarWeekView.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\CCalendarYearView.cpp"
 				>
 			</File>
@@ -525,10 +521,6 @@
 			</File>
 			<File
 				RelativePath=".\CCalendarHeaderCtrl.h"
-				>
-			</File>
-			<File
-				RelativePath=".\CCalendarWeekView.h"
 				>
 			</File>
 			<File

@@ -10,7 +10,6 @@
 #include "CFileView.h"
 #include "CListView.h"
 #include "CCalendarYearView.h"
-#include "CCalendarWeekView.h"
 #include "CCalendarDayView.h"
 #include "CGlobeView.h"
 #include "CTagcloudView.h"
@@ -71,7 +70,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_ITEMS_SHOWINSPECTOR, ID_ITEMS_RENAME, OnUpdateItemCommands)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_TRASH_EMPTY, ID_TRASH_RESTOREALL, OnUpdateTrashCommands)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_STORE_NEW, ID_STORE_BACKUP, OnUpdateStoreCommands)
-	ON_UPDATE_COMMAND_UI_RANGE(ID_DROP_CALENDAR, ID_DROP_RESOLUTION, OnUpdateDropCommands)
+	ON_UPDATE_COMMAND_UI_RANGE(ID_DROP_NAME, ID_DROP_RESOLUTION, OnUpdateDropCommands)
 
 	ON_COMMAND(ID_APP_CLOSE, OnClose)
 	ON_COMMAND(ID_APP_CLOSEOTHERS, OnCloseOthers)
@@ -394,10 +393,10 @@ void CMainFrame::OnToggleAutoDirs()
 
 void CMainFrame::OnChooseContext()
 {
-	m_cbxActiveContext->ClosePopupMenu();
+/*	m_cbxActiveContext->ClosePopupMenu();
 	Invalidate();
 	UpdateWindow();
-	CookFiles(m_cbxActiveContext->GetCurSel());
+	CookFiles(m_cbxActiveContext->GetCurSel());*/
 }
 
 void CMainFrame::OnAlwaysSaveContext()
@@ -455,24 +454,24 @@ void CMainFrame::OnUpdateAppCommands(CCmdUI* pCmdUI)
 		pCmdUI->SetCheck((ActiveViewParameters->AutoDirs) || (ActiveContextID>=LFContextSubfolderDefault));
 		pCmdUI->Enable((theApp.m_Contexts[ActiveContextID]->AllowGroups) && (SelectViewMode(ActiveViewParameters->Mode)<=LFViewPreview));
 		break;
+	case ID_APP_VIEW_CALENDAR_YEAR:
+		view = pCmdUI->m_nID-ID_APP_VIEW_LARGEICONS+LFViewLargeIcons;
+		pCmdUI->SetCheck((ActiveViewID==(int)view) || (ActiveViewID==(int)view+1));
+		pCmdUI->Enable(theApp.m_AllowedViews[ActiveContextID]->IsSet(view) || theApp.m_AllowedViews[ActiveContextID]->IsSet(view+1));
+		break;
 	case ID_APP_VIEW_LARGEICONS:
 	case ID_APP_VIEW_SMALLICONS:
 	case ID_APP_VIEW_LIST:
 	case ID_APP_VIEW_DETAILS:
 	case ID_APP_VIEW_TILES:
 	case ID_APP_VIEW_PREVIEW:
-	case ID_APP_VIEW_CALENDAR_YEAR:
-	case ID_APP_VIEW_CALENDAR_WEEK:
 	case ID_APP_VIEW_CALENDAR_DAY:
 	case ID_APP_VIEW_GLOBE:
 	case ID_APP_VIEW_TAGCLOUD:
 	case ID_APP_VIEW_TIMELINE:
 		view = pCmdUI->m_nID-ID_APP_VIEW_LARGEICONS+LFViewLargeIcons;
 		pCmdUI->SetCheck(ActiveViewID==(int)view);
-		b = theApp.m_AllowedViews[ActiveContextID]->IsSet(view);
-		if (CookedFiles)
-			b &= (theApp.m_AllowedViews[CookedFiles->m_Context]->IsSet(view)==true);
-		pCmdUI->Enable(b);
+		pCmdUI->Enable(theApp.m_AllowedViews[ActiveContextID]->IsSet(view));
 	}
 }
 
@@ -483,8 +482,7 @@ void CMainFrame::OnSort(UINT nID)
 	{
 		ActiveViewParameters->SortBy = nID;
 		ActiveViewParameters->Descending = (theApp.m_Attributes[nID]->Type==LFTypeRating) || (theApp.m_Attributes[nID]->Type==LFTypeTime);
-		if (!AttributeSortableInView(ActiveViewParameters->SortBy, ActiveViewParameters->Mode))
-			ActiveViewParameters->Mode = LFViewTiles;
+		ActiveViewParameters->Mode = SelectViewMode(ActiveViewParameters->Mode);
 
 		theApp.SaveViewOptions(ActiveContextID);
 		theApp.UpdateSortOptions(ActiveContextID);
@@ -507,13 +505,6 @@ void CMainFrame::OnUpdateDropCommands(CCmdUI* pCmdUI)
 {
 	switch (pCmdUI->m_nID)
 	{
-	case ID_DROP_CALENDAR:
-		pCmdUI->SetCheck((ActiveViewID>=LFViewCalendarYear) &&
-			(ActiveViewID<=LFViewCalendarDay));
-		pCmdUI->Enable(theApp.m_AllowedViews[ActiveContextID]->IsSet(LFViewCalendarYear) ||
-			theApp.m_AllowedViews[ActiveContextID]->IsSet(LFViewCalendarWeek) ||
-			theApp.m_AllowedViews[ActiveContextID]->IsSet(LFViewCalendarDay));
-		break;
 	case ID_DROP_NAME:
 		pCmdUI->SetCheck((ActiveViewParameters->SortBy==LFAttrFileName) ||
 			(ActiveViewParameters->SortBy==LFAttrTitle));
@@ -1230,8 +1221,8 @@ void CMainFrame::UpdateSearchResult(BOOL SetEmpty, int FocusItem)
 		{
 			ActiveContextID = CookedFiles->m_ContextView;
 			ActiveViewParameters = &theApp.m_Views[ActiveContextID];
-			if (m_cbxActiveContext)
-				m_cbxActiveContext->SelectItem(ActiveContextID);
+//			if (m_cbxActiveContext)
+//				m_cbxActiveContext->SelectItem(ActiveContextID);
 			if (OpenChildView(FocusItem, force))
 				return;
 		}
@@ -1771,7 +1762,7 @@ void CMainFrame::InitializeRibbon()
 	strTemp = "View";
 	CMFCRibbonCategory* pCategoryView = m_wndRibbonBar.AddCategory(strTemp, IDB_RIBBONVIEW_16, IDB_RIBBONVIEW_32);
 
-		strTemp = "Context";
+		/*strTemp = "Context";
 		CMFCRibbonPanel* pPanelContext = pCategoryView->AddPanel(strTemp, m_PanelImages.ExtractIcon(5));
 
 			strTemp = "Active context:";
@@ -1785,86 +1776,86 @@ void CMainFrame::InitializeRibbon()
 			pPanelContext->Add(theApp.CommandCheckBox(ID_CONTEXT_ALWAYSSAVE));
 			pPanelContext->Add(theApp.CommandButton(ID_CONTEXT_RESTORE, 14));
 			pPanelContext->Add(theApp.CommandButton(ID_CONTEXT_SAVENOW, 15));
-			pPanelContext->Add(theApp.CommandButton(ID_CONTEXT_SAVEALL, 16));
+			pPanelContext->Add(theApp.CommandButton(ID_CONTEXT_SAVEALL, 16));*/
 
 		strTemp = "Arrange items by";
 		CMFCRibbonPanel* pPanelArrange = pCategoryView->AddPanel(strTemp, m_PanelImages.ExtractIcon(6));
-		pPanelArrange->EnableLaunchButton(ID_APP_SORTOPTIONS, 17);
+		pPanelArrange->EnableLaunchButton(ID_APP_SORTOPTIONS, 13);
 
 			strTemp = "Name";
-			CMFCRibbonButton* pBtnSortName = new CMFCRibbonButton(ID_DROP_NAME, strTemp, 20, 20);
+			CMFCRibbonButton* pBtnSortName = new CMFCRibbonButton(ID_DROP_NAME, strTemp, 14, 14);
 			pBtnSortName->SetDefaultCommand(FALSE);
 
 				strTemp = "By name";
 				pBtnSortName->AddSubItem(new CMFCRibbonLabel(strTemp));
-				pBtnSortName->AddSubItem(new CMFCRibbonButton(ID_SORT_FILENAME, theApp.m_Attributes[LFAttrFileName]->Name, 21, 21));
-				pBtnSortName->AddSubItem(new CMFCRibbonButton(ID_SORT_TITLE, theApp.m_Attributes[LFAttrTitle]->Name, 22, 22));
+				pBtnSortName->AddSubItem(new CMFCRibbonButton(ID_SORT_FILENAME, theApp.m_Attributes[LFAttrFileName]->Name, 15, 15));
+				pBtnSortName->AddSubItem(new CMFCRibbonButton(ID_SORT_TITLE, theApp.m_Attributes[LFAttrTitle]->Name, 16, 16));
 
 			pPanelArrange->Add(pBtnSortName);
 
 			strTemp = "Time";
-			CMFCRibbonButton* pBtnSortDate = new CMFCRibbonButton(ID_DROP_TIME, strTemp, 23, 23);
+			CMFCRibbonButton* pBtnSortDate = new CMFCRibbonButton(ID_DROP_TIME, strTemp, 17, 17);
 			pBtnSortDate->SetDefaultCommand(FALSE);
 
 				strTemp = "By timestamp";
 				pBtnSortDate->AddSubItem(new CMFCRibbonLabel(strTemp));
-				pBtnSortDate->AddSubItem(new CMFCRibbonButton(ID_SORT_CREATIONTIME, theApp.m_Attributes[LFAttrCreationTime]->Name, 24, 24));
-				pBtnSortDate->AddSubItem(new CMFCRibbonButton(ID_SORT_ADDTIME, theApp.m_Attributes[LFAttrAddTime]->Name, 25, 25));
-				pBtnSortDate->AddSubItem(new CMFCRibbonButton(ID_SORT_FILETIME, theApp.m_Attributes[LFAttrFileTime]->Name, 26, 26));
-				pBtnSortDate->AddSubItem(new CMFCRibbonButton(ID_SORT_RECORDINGTIME, theApp.m_Attributes[LFAttrRecordingTime]->Name, 27, 27));
-				pBtnSortDate->AddSubItem(new CMFCRibbonButton(ID_SORT_DELETETIME, theApp.m_Attributes[LFAttrDeleteTime]->Name, 28, 28));
+				pBtnSortDate->AddSubItem(new CMFCRibbonButton(ID_SORT_CREATIONTIME, theApp.m_Attributes[LFAttrCreationTime]->Name, 18, 18));
+				pBtnSortDate->AddSubItem(new CMFCRibbonButton(ID_SORT_ADDTIME, theApp.m_Attributes[LFAttrAddTime]->Name, 19, 19));
+				pBtnSortDate->AddSubItem(new CMFCRibbonButton(ID_SORT_FILETIME, theApp.m_Attributes[LFAttrFileTime]->Name, 20, 20));
+				pBtnSortDate->AddSubItem(new CMFCRibbonButton(ID_SORT_RECORDINGTIME, theApp.m_Attributes[LFAttrRecordingTime]->Name, 21, 21));
+				pBtnSortDate->AddSubItem(new CMFCRibbonButton(ID_SORT_DELETETIME, theApp.m_Attributes[LFAttrDeleteTime]->Name, 22, 22));
 				strTemp = "By workflow";
 				pBtnSortDate->AddSubItem(new CMFCRibbonLabel(strTemp));
-				pBtnSortDate->AddSubItem(new CMFCRibbonButton(ID_SORT_DUETIME, theApp.m_Attributes[LFAttrDueTime]->Name, 29, 29));
-				pBtnSortDate->AddSubItem(new CMFCRibbonButton(ID_SORT_DONETIME, theApp.m_Attributes[LFAttrDoneTime]->Name, 30, 30));
+				pBtnSortDate->AddSubItem(new CMFCRibbonButton(ID_SORT_DUETIME, theApp.m_Attributes[LFAttrDueTime]->Name, 23, 23));
+				pBtnSortDate->AddSubItem(new CMFCRibbonButton(ID_SORT_DONETIME, theApp.m_Attributes[LFAttrDoneTime]->Name, 24, 24));
 
 			pPanelArrange->Add(pBtnSortDate);
 
 			strTemp = "Location";
-			CMFCRibbonButton* pBtnSortLocation = new CMFCRibbonButton(ID_DROP_LOCATION, strTemp, 10, 10);
+			CMFCRibbonButton* pBtnSortLocation = new CMFCRibbonButton(ID_DROP_LOCATION, strTemp, 8, 8);
 			pBtnSortLocation->SetDefaultCommand(FALSE);
 
 				strTemp = "By location";
 				pBtnSortLocation->AddSubItem(new CMFCRibbonLabel(strTemp));
-				pBtnSortLocation->AddSubItem(new CMFCRibbonButton(ID_SORT_LOCATIONNAME, theApp.m_Attributes[LFAttrLocationName]->Name, 31, 31));
-				pBtnSortLocation->AddSubItem(new CMFCRibbonButton(ID_SORT_LOCATIONIATA, theApp.m_Attributes[LFAttrLocationIATA]->Name, 32, 32));
-				pBtnSortLocation->AddSubItem(new CMFCRibbonButton(ID_SORT_LOCATIONGPS, theApp.m_Attributes[LFAttrLocationGPS]->Name, 33, 33));
+				pBtnSortLocation->AddSubItem(new CMFCRibbonButton(ID_SORT_LOCATIONNAME, theApp.m_Attributes[LFAttrLocationName]->Name, 25, 25));
+				pBtnSortLocation->AddSubItem(new CMFCRibbonButton(ID_SORT_LOCATIONIATA, theApp.m_Attributes[LFAttrLocationIATA]->Name, 26, 26));
+				pBtnSortLocation->AddSubItem(new CMFCRibbonButton(ID_SORT_LOCATIONGPS, theApp.m_Attributes[LFAttrLocationGPS]->Name, 27, 27));
 
 			pPanelArrange->Add(pBtnSortLocation);
 
-			pPanelArrange->Add(new CMFCRibbonButton(ID_SORT_RATING, theApp.m_Attributes[LFAttrRating]->Name, 34, 34));
-			pPanelArrange->Add(new CMFCRibbonButton(ID_SORT_ROLL, theApp.m_Attributes[LFAttrRoll]->Name, 35, 35));
+			pPanelArrange->Add(new CMFCRibbonButton(ID_SORT_RATING, theApp.m_Attributes[LFAttrRating]->Name, 28, 28));
+			pPanelArrange->Add(new CMFCRibbonButton(ID_SORT_ROLL, theApp.m_Attributes[LFAttrRoll]->Name, 29, 29));
 
 			pPanelArrange->AddSeparator();
 
-			pPanelArrange->Add(new CMFCRibbonButton(ID_SORT_ARTIST, theApp.m_Attributes[LFAttrArtist]->Name, 36, 36));
-			pPanelArrange->Add(new CMFCRibbonButton(ID_SORT_COMMENT, theApp.m_Attributes[LFAttrComment]->Name, 37, 37));
-			pPanelArrange->Add(new CMFCRibbonButton(ID_SORT_DURATION, theApp.m_Attributes[LFAttrDuration]->Name, 38, 38));
-			pPanelArrange->Add(new CMFCRibbonButton(ID_SORT_LANGUAGE, theApp.m_Attributes[LFAttrLanguage]->Name, 39, 39));
+			pPanelArrange->Add(new CMFCRibbonButton(ID_SORT_ARTIST, theApp.m_Attributes[LFAttrArtist]->Name, 30, 30));
+			pPanelArrange->Add(new CMFCRibbonButton(ID_SORT_COMMENT, theApp.m_Attributes[LFAttrComment]->Name, 31, 31));
+			pPanelArrange->Add(new CMFCRibbonButton(ID_SORT_DURATION, theApp.m_Attributes[LFAttrDuration]->Name, 32, 32));
+			pPanelArrange->Add(new CMFCRibbonButton(ID_SORT_LANGUAGE, theApp.m_Attributes[LFAttrLanguage]->Name, 33, 33));
 
-			CMFCRibbonButton* pBtnSortResolution = new CMFCRibbonButton(ID_DROP_RESOLUTION, theApp.m_Attributes[LFAttrResolution]->Name, 40, 40);
+			CMFCRibbonButton* pBtnSortResolution = new CMFCRibbonButton(ID_DROP_RESOLUTION, theApp.m_Attributes[LFAttrResolution]->Name, 34, 34);
 			pBtnSortResolution->SetDefaultCommand(FALSE);
 
 				strTemp = "By overall dimension";
 				pBtnSortResolution->AddSubItem(new CMFCRibbonLabel(strTemp));
-				pBtnSortResolution->AddSubItem(new CMFCRibbonButton(ID_SORT_ASPECTRATIO, theApp.m_Attributes[LFAttrAspectRatio]->Name, 43, 43));
-				pBtnSortResolution->AddSubItem(new CMFCRibbonButton(ID_SORT_RESOLUTION, theApp.m_Attributes[LFAttrResolution]->Name, 40, 40));
+				pBtnSortResolution->AddSubItem(new CMFCRibbonButton(ID_SORT_ASPECTRATIO, theApp.m_Attributes[LFAttrAspectRatio]->Name, 37, 37));
+				pBtnSortResolution->AddSubItem(new CMFCRibbonButton(ID_SORT_RESOLUTION, theApp.m_Attributes[LFAttrResolution]->Name, 34, 34));
 				strTemp = "By edge";
 				pBtnSortResolution->AddSubItem(new CMFCRibbonLabel(strTemp));
-				pBtnSortResolution->AddSubItem(new CMFCRibbonButton(ID_SORT_HEIGHT, theApp.m_Attributes[LFAttrHeight]->Name, 41, 41));
-				pBtnSortResolution->AddSubItem(new CMFCRibbonButton(ID_SORT_WIDTH, theApp.m_Attributes[LFAttrWidth]->Name, 42, 42));
+				pBtnSortResolution->AddSubItem(new CMFCRibbonButton(ID_SORT_HEIGHT, theApp.m_Attributes[LFAttrHeight]->Name, 35, 35));
+				pBtnSortResolution->AddSubItem(new CMFCRibbonButton(ID_SORT_WIDTH, theApp.m_Attributes[LFAttrWidth]->Name, 36, 36));
 
 			pPanelArrange->Add(pBtnSortResolution);
-			pPanelArrange->Add(new CMFCRibbonButton(ID_SORT_TAGS, theApp.m_Attributes[LFAttrTags]->Name, 44, 44));
+			pPanelArrange->Add(new CMFCRibbonButton(ID_SORT_TAGS, theApp.m_Attributes[LFAttrTags]->Name, 38, 38));
 
 		strTemp = "Aggregate";
 		CMFCRibbonPanel* pPanelAggregate = pCategoryView->AddPanel(strTemp, m_PanelImages.ExtractIcon(7));
 
-			pPanelAggregate->Add(theApp.CommandButton(ID_VIEW_AUTODIRS, 18, 18));
+			pPanelAggregate->Add(theApp.CommandButton(ID_VIEW_AUTODIRS, 12, 12));
 
 		strTemp = "Display search result as";
 		CMFCRibbonPanel* pPanelDisplay = pCategoryView->AddPanel(strTemp, m_PanelImages.ExtractIcon(4));
-		pPanelDisplay->EnableLaunchButton(ID_APP_VIEWOPTIONS, 19);
+		pPanelDisplay->EnableLaunchButton(ID_APP_VIEWOPTIONS, 11);
 
 			pPanelDisplay->Add(theApp.CommandButton(ID_APP_VIEW_LARGEICONS, 0, 0));
 			pPanelDisplay->Add(theApp.CommandButton(ID_APP_VIEW_SMALLICONS, 1, 1));
@@ -1876,22 +1867,10 @@ void CMainFrame::InitializeRibbon()
 			if (!IsClipboard)
 			{
 				pPanelDisplay->AddSeparator();
-
-				strTemp = "Calendar";
-				CMFCRibbonButton* pBtnViewCalendar = new CMFCRibbonButton(ID_DROP_CALENDAR, strTemp, 13, 13);
-				pBtnViewCalendar->SetDefaultCommand(FALSE);
-
-					strTemp = "Calendar views";
-					pBtnViewCalendar->AddSubItem(new CMFCRibbonLabel(strTemp));
-					pBtnViewCalendar->AddSubItem(theApp.CommandButton(ID_APP_VIEW_CALENDAR_YEAR, 7, 7));
-					pBtnViewCalendar->AddSubItem(theApp.CommandButton(ID_APP_VIEW_CALENDAR_WEEK, 8, 8));
-					pBtnViewCalendar->AddSubItem(theApp.CommandButton(ID_APP_VIEW_CALENDAR_DAY, 9, 9));
-
-				pPanelDisplay->Add(pBtnViewCalendar);
-
-				pPanelDisplay->Add(theApp.CommandButton(ID_APP_VIEW_GLOBE, 10, 10));
-				pPanelDisplay->Add(theApp.CommandButton(ID_APP_VIEW_TAGCLOUD, 11, 11));
-				pPanelDisplay->Add(theApp.CommandButton(ID_APP_VIEW_TIMELINE, 12, 12));
+				pPanelDisplay->Add(theApp.CommandButton(ID_APP_VIEW_CALENDAR_YEAR, 7, 7));
+				pPanelDisplay->Add(theApp.CommandButton(ID_APP_VIEW_GLOBE, 8, 8));
+				pPanelDisplay->Add(theApp.CommandButton(ID_APP_VIEW_TAGCLOUD, 9, 9));
+				pPanelDisplay->Add(theApp.CommandButton(ID_APP_VIEW_TIMELINE, 10, 10));
 			}
 
 	strTemp = "Items";
@@ -2239,16 +2218,22 @@ void CMainFrame::ShowCaptionBar(LPCWSTR Icon, UINT res, int Command)
 
 UINT CMainFrame::SelectViewMode(UINT ViewID)
 {
+	if (ViewID>=LFViewCount)
+		ViewID = LFViewTiles;
 	if (CookedFiles)
 		if (!theApp.m_AllowedViews[CookedFiles->m_Context]->IsSet(ViewID))
 			ViewID = LFViewTiles;
-	if (ViewID>=LFViewCount)
-		ViewID = LFViewTiles;
 
 	if (!AttributeSortableInView(ActiveViewParameters->SortBy, ViewID))
 		for (UINT a=0; a<=LFViewTimeline; a++)
 			if (AttributeSortableInView(ActiveViewParameters->SortBy, a))
-				return a;
+			{
+				if (!CookedFiles)
+					return a;
+
+				if (theApp.m_AllowedViews[CookedFiles->m_Context]->IsSet(a))
+					return a;
+			}
 
 	return ViewID;
 }
@@ -2287,6 +2272,7 @@ BOOL CMainFrame::OpenChildView(int FocusItem, BOOL Force, BOOL AllowChangeSort)
 	case LFViewList:
 	case LFViewDetails:
 	case LFViewTiles:
+	case LFViewSearchResult:
 	case LFViewPreview:
 		Force |= (ActiveViewID<LFViewLargeIcons) || (ActiveViewID>LFViewPreview);
 		if ((m_wndView) && (CookedFiles))
@@ -2302,13 +2288,6 @@ BOOL CMainFrame::OpenChildView(int FocusItem, BOOL Force, BOOL AllowChangeSort)
 		{
 			pNewView = new CCalendarYearView();
 			((CCalendarYearView*)pNewView)->Create(this, CookedFiles, FocusItem);
-		}
-		break;
-	case LFViewCalendarWeek:
-		if ((Force) || (ActiveViewID!=LFViewCalendarWeek))
-		{
-			pNewView = new CCalendarWeekView();
-			((CCalendarWeekView*)pNewView)->Create(this, CookedFiles, FocusItem);
 		}
 		break;
 	case LFViewCalendarDay:

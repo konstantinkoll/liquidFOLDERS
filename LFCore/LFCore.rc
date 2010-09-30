@@ -160,8 +160,8 @@ BEGIN
     IDS_LFContextHousekeeping "Housekeeping"
     IDS_LFContextTrash      "Trash"
     IDS_LFContextSubfolderDefault  "Subfolder"
-    IDS_LFContextSubfolderDay "Subfolder (day)"
-    IDS_LFContextSubfolderLocation "Subfolder (location)"
+    IDS_LFContextSubfolderDay "Day"
+    IDS_LFContextSubfolderLocation "Location"
 END
 
 STRINGTABLE 

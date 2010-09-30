@@ -14,9 +14,9 @@
 #define LFViewList                      2
 #define LFViewDetails                   3
 #define LFViewTiles                     4
-#define LFViewPreview                   5
-#define LFViewCalendarYear              6
-#define LFViewCalendarWeek              7
+#define LFViewSearchResult              5
+#define LFViewPreview                   6
+#define LFViewCalendarYear              7
 #define LFViewCalendarDay               8
 #define LFViewGlobe                     9
 #define LFViewTagcloud                  10

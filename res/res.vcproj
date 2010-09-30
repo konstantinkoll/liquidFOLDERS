@@ -1280,38 +1280,6 @@
 				>
 			</File>
 			<File
-				RelativePath="Ribbon\Restore_16.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\Restore_32.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\Save_16.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\Save_32.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\SaveAll_16.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\SaveAll_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\SaveAs_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\SaveAs_32.png"
-				>
-			</File>
-			<File
 				RelativePath=".\Ribbon\SaveProperties_16.png"
 				>
 			</File>
@@ -1528,43 +1496,11 @@
 				>
 			</File>
 			<File
-				RelativePath="Ribbon\ViewCalendar_16.png"
+				RelativePath=".\Ribbon\ViewCalendar_16.png"
 				>
 			</File>
 			<File
-				RelativePath="Ribbon\ViewCalendar_32.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\ViewCalendarDay_16.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\ViewCalendarDay_32.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\ViewCalendarMonth_16.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\ViewCalendarMonth_32.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\ViewCalendarWeek_16.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\ViewCalendarWeek_32.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\ViewCalendarYear_16.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\ViewCalendarYear_32.png"
+				RelativePath=".\Ribbon\ViewCalendar_32.png"
 				>
 			</File>
 			<File

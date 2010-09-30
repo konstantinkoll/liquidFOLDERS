@@ -81,7 +81,7 @@ BOOL CStoreManagerApp::InitInstance()
 
 		UINT cnt = ((a>LFContextClipboard) && (a<LFContextSubfolderDefault)) ? LFViewCount-1 : (a>LFContextStoreHome) ? LFViewPreview : LFViewTiles;
 		for (UINT b=0; b<=cnt; b++)
-			if (b!=LFViewCalendarDay)
+			if ((b!=LFViewCalendarDay) && (b!=LFViewSearchResult))
 				(*m_AllowedViews[a]) += b;
 
 		if (a==LFContextSubfolderDay)

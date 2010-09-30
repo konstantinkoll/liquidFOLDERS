@@ -68,7 +68,7 @@ BOOL ViewOptionsDlg::OnInitDialog()
 		l->InsertGroup(lvg.iGroupId, &lvg);
 	}
 
-	m_ViewIcons.Create(IDB_RIBBONVIEW_16, NULL, 1, 12);
+	m_ViewIcons.Create(IDB_RIBBONVIEW_16, NULL, 0, 10);
 	l->SetImageList(&m_ViewIcons, LVSIL_SMALL);
 	l->SetIconSpacing(68, 30);
 	l->EnableGroupView(TRUE);
@@ -85,12 +85,12 @@ BOOL ViewOptionsDlg::OnInitDialog()
 			CString tmpStr = theApp.GetCommandName(ID_APP_VIEW_LARGEICONS+a);
 			lvi.lParam = (LPARAM)a;
 			lvi.pszText = tmpStr.GetBuffer();
-			lvi.iImage = a;
+			lvi.iImage = (a>LFViewCalendarYear) ? a-1 : a;
 			lvi.state = lvi.stateMask = (a==p_View->Mode) ? LVIS_SELECTED | LVIS_FOCUSED : 0;
 			l->InsertItem(&lvi);
 		}
 
-		if ((a==5) || (a==8))
+		if (a==LFViewPreview)
 			lvi.iGroupId++;
 	}
 

@@ -114,7 +114,7 @@ protected:
 
 	CAdvancedRibbonBar m_wndRibbonBar;
 	CMFCRibbonApplicationButton m_MainButton;
-	CMFCRibbonComboBox* m_cbxActiveContext;
+	//CMFCRibbonComboBox* m_cbxActiveContext;
 	CMFCToolBarImages m_PanelImages;
 	CMFCRibbonStatusBar  m_wndStatusBar;
 	CMFCRibbonBaseElement* m_sbFileCount;
