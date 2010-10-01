@@ -37,7 +37,7 @@ BOOL CMainView::OnCmdMsg(UINT nID, int nCode, void* pExtra, AFX_CMDHANDLERINFO* 
 
 void CMainView::ClearRoot()
 {
-	m_IsRootSet = m_SelectedHasChildren = m_SelectedHasPropSheet = m_SelectedCanRename = m_SelectedCanDelete = m_SelectedIsBrowsable = FALSE;
+	m_IsRootSet = m_SelectedHasChildren = m_SelectedHasPropSheet = m_SelectedCanRename = m_SelectedCanDelete = FALSE;
 
 	CString caption;
 	CString hint;
@@ -52,7 +52,7 @@ void CMainView::ClearRoot()
 void CMainView::SetRoot(LPITEMIDLIST pidl, BOOL Update)
 {
 	m_IsRootSet = TRUE;
-	m_SelectedHasChildren = m_SelectedHasPropSheet = m_SelectedCanRename = m_SelectedCanDelete = m_SelectedIsBrowsable = FALSE;
+	m_SelectedHasChildren = m_SelectedHasPropSheet = m_SelectedCanRename = m_SelectedCanDelete = FALSE;
 
 	CString caption;
 	CString hint;
@@ -203,9 +203,6 @@ void CMainView::OnUpdateTaskbar(CCmdUI* pCmdUI)
 	case ID_VIEW_EXCLUDEBRANCH:
 		pCmdUI->Enable(m_IsRootSet && m_SelectedHasChildren);
 		break;
-	case ID_VIEW_OPEN:
-		pCmdUI->Enable(m_IsRootSet && m_SelectedIsBrowsable);
-		break;
 	case ID_VIEW_RENAME:
 		pCmdUI->Enable(m_IsRootSet && m_SelectedCanRename);
 		break;
@@ -256,7 +253,6 @@ void CMainView::OnSelectionChanged(NMHDR* pNMHDR, LRESULT* /*pResult*/)
 			m_SelectedHasPropSheet = (dwAttribs & SFGAO_HASPROPSHEET);
 			m_SelectedCanRename = (dwAttribs & SFGAO_CANRENAME);
 			m_SelectedCanDelete = (dwAttribs & SFGAO_CANDELETE);
-			m_SelectedIsBrowsable = TRUE;
 
 			pParentFolder->Release();
 			return;

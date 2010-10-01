@@ -707,7 +707,7 @@ void CExplorerTree::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 		HMENU hPopup = CreatePopupMenu();
 		if (hPopup)
 		{
-			UINT uFlags = CMF_NORMAL | CMF_EXPLORE | CMF_CANRENAME;
+			UINT uFlags = CMF_NORMAL | CMF_CANRENAME;
 			if (SUCCEEDED(pcm->QueryContextMenu(hPopup, 0, 1, 0x6FFF, uFlags)))
 			{
 				if (tvItem.cChildren)

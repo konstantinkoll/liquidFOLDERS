@@ -675,6 +675,7 @@ BEGIN_MESSAGE_MAP(CTreeView, CWnd)
 	ON_WM_MOUSEHOVER()
 	ON_WM_LBUTTONDOWN()
 	ON_WM_LBUTTONUP()
+	ON_WM_LBUTTONDBLCLK()
 	ON_WM_RBUTTONDOWN()
 	ON_WM_CONTEXTMENU()
 	ON_WM_SETFOCUS()
@@ -1030,6 +1031,8 @@ void CTreeView::OnLButtonDown(UINT /*nFlags*/, CPoint point)
 		{
 			m_CheckboxPressed = TRUE;
 			SetCapture();
+
+			InvalidateItem(Item);
 		}
 	}
 }
@@ -1054,6 +1057,18 @@ void CTreeView::OnLButtonUp(UINT nFlags, CPoint point)
 		m_CheckboxPressed = FALSE;
 		ReleaseCapture();
 	}
+}
+
+void CTreeView::OnLButtonDblClk(UINT /*nFlags*/, CPoint point)
+{
+	m_CheckboxPressed = FALSE;
+	ReleaseCapture();
+
+	CPoint Item;
+	BOOL Checkbox;
+	if (HitTest(point, &Item, &Checkbox))
+		if ((Item==m_Selected) && (!Checkbox))
+			ExecuteContextMenu(Item, "open");
 }
 
 void CTreeView::OnRButtonDown(UINT /*nFlags*/, CPoint point)
@@ -1121,7 +1136,7 @@ void CTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 		HMENU hPopup = CreatePopupMenu();
 		if (hPopup)
 		{
-			UINT uFlags = CMF_NORMAL | CMF_EXPLORE | CMF_CANRENAME;
+			UINT uFlags = CMF_NORMAL | CMF_CANRENAME;
 			if (SUCCEEDED(pcm->QueryContextMenu(hPopup, 0, 1, 0x6FFF, uFlags)))
 			{
 				if (cell->Flags & CF_HASCHILDREN)
@@ -1136,8 +1151,6 @@ void CTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 
 					InsertMenu(hPopup, 2, MF_BYPOSITION | MF_SEPARATOR, 0, NULL);
 				}
-
-				SetMenuDefaultItem(hPopup, (UINT)-1, 0);
 
 				pcm->QueryInterface(IID_IContextMenu2, (void**)&m_pContextMenu2);
 				UINT idCmd = TrackPopupMenu(hPopup, TPM_LEFTALIGN | TPM_RETURNCMD | TPM_RIGHTBUTTON, point.x, point.y, 0, GetSafeHwnd(), NULL);

@@ -30,7 +30,6 @@ protected:
 	BOOL m_SelectedHasPropSheet;
 	BOOL m_SelectedCanRename;
 	BOOL m_SelectedCanDelete;
-	BOOL m_SelectedIsBrowsable;
 
 	void AdjustLayout();
 
