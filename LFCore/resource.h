@@ -96,7 +96,6 @@
 #define IDS_LFContextSubfolderDay       2007
 #define IDS_LFContextSubfolderLocation  2008
 #define IDS_FirstError                  3000
-#define IDS_LFErrorOk                   3000
 #define IDS_LFErrorMemoryError          3002
 #define IDS_LFErrorIllegalQuery         3003
 #define IDS_LFErrorIllegalStoreDescriptor 3004

@@ -200,7 +200,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_LFErrorOk           "Query time: %d ms; cooking time: %d ms; items delivered: %d (%d after cooking)"
     IDS_LFErrorMemoryError  "Memory error"
     IDS_LFErrorIllegalQuery "The filter describes an illegal request."
     IDS_LFErrorIllegalStoreDescriptor "The store settings are not valid."

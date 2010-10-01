@@ -2359,7 +2359,7 @@ void CMainFrame::NavigateTo(LFFilter* f, UINT NavMode, int FocusItem, int FirstA
 		ShowCaptionBar(ActiveFilter->Result.FilterType==LFFilterTypeError ? IDI_ERROR : IDI_EXCLAMATION, CookedFiles->m_LastError, CookedFiles->m_LastError==LFIndexAccessError ? ID_STORE_MAINTENANCE : 0);
 	}
 	else
-		if ((m_wndCaptionBar.IsVisible()) && (!theApp.m_ShowQueryDuration))
+		if (m_wndCaptionBar.IsVisible())
 		{
 			m_wndCaptionBar.ShowWindow(SW_HIDE);
 			RecalcLayout(FALSE);
@@ -2372,8 +2372,6 @@ void CMainFrame::CookFiles(int recipe, int FocusItem)
 	// Referenz hat. Erst nach UpdateSearchResult() kann das ggf. vorhandene alte Suchergebnis
 	// gelöscht werden.
 	LFSearchResult* Victim = CookedFiles;
-
-	DWORD start = GetTickCount();
 
 	LFViewParameters* vp = &theApp.m_Views[recipe];
 	LFAttributeDescriptor* attr = theApp.m_Attributes[vp->SortBy];
@@ -2391,23 +2389,12 @@ void CMainFrame::CookFiles(int recipe, int FocusItem)
 	}
 	CookedFiles->m_ContextView = recipe;
 
-	DWORD stop = GetTickCount();
-
 	UpdateSearchResult(FALSE, FocusItem);
 	UpdateHistory();
 	OnUpdateFileCount();
 
 	if ((Victim) && (Victim!=RawFiles))
 		LFFreeSearchResult(Victim);
-
-	if ((CookedFiles->m_LastError==LFOk) && (!IsClipboard) && (theApp.m_ShowQueryDuration))
-	{
-		wchar_t* error = LFGetErrorText(CookedFiles->m_LastError);
-		CString message;
-		message.Format(error, RawFiles->m_QueryTime, stop-start, RawFiles->m_ItemCount, CookedFiles->m_ItemCount);
-		ShowCaptionBar(IDI_ASTERISK, message);
-		free(error);
-	}
 }
 
 void CMainFrame::UpdateHistory()

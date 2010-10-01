@@ -766,6 +766,7 @@ LFCore_API void LFFreeStoreDescriptor(LFStoreDescriptor* s)
 wchar_t* LoadResourceString(unsigned int ID, unsigned int length)
 {
 	wchar_t* str = new wchar_t[length];
+	*str = L'\0';
 	LoadString(LFCoreModuleHandle, ID, str, length);
 	return str;
 }
