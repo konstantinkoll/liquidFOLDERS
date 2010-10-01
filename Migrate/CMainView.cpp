@@ -47,6 +47,7 @@ void CMainView::ClearRoot()
 	m_wndExplorerHeader.SetText(caption, hint);
 
 	m_wndTree.ClearRoot();
+	m_wndTree.EnableWindow(FALSE);
 }
 
 void CMainView::SetRoot(LPITEMIDLIST pidl, BOOL Update)
@@ -66,6 +67,7 @@ void CMainView::SetRoot(LPITEMIDLIST pidl, BOOL Update)
 	m_wndExplorerHeader.SetText(caption, hint);
 
 	m_wndTree.SetRoot(pidl, Update);
+	m_wndTree.EnableWindow(TRUE);
 }
 
 void CMainView::AdjustLayout()
@@ -150,7 +152,14 @@ void CMainView::OnSize(UINT nType, int cx, int cy)
 
 void CMainView::OnSetFocus(CWnd* /*pOldWnd*/)
 {
-	m_wndTree.SetFocus();
+	if (m_wndTree.IsWindowEnabled())
+	{
+		m_wndTree.SetFocus();
+	}
+	else
+	{
+		m_wndTaskbar.SetFocus();
+	}
 }
 
 void CMainView::OnAutosizeAll()

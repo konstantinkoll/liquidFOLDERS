@@ -143,7 +143,6 @@ LFApplication::LFApplication(UINT _HasGUI)
 
 	// Fonts
 	CString face = GetDefaultFontFace();
-	const int base = 12;
 
 	int sz = 8;
 	LOGFONT lf;

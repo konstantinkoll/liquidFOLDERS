@@ -109,7 +109,7 @@ int CMigrateWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	MARGINS Margins = { 0, 0, m_wndFolder.GetPreferredHeight()+11, 0 };
 	UseGlasBackground(Margins);
 
-	m_wndBottomArea.SetFocus();
+	m_wndMainView.SetFocus();
 	AdjustLayout();
 	return 0;
 }

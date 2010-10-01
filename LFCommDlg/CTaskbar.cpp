@@ -160,6 +160,7 @@ BEGIN_MESSAGE_MAP(CTaskbar, CWnd)
 	ON_WM_SIZE()
 	ON_MESSAGE_VOID(WM_IDLEUPDATECMDUI, OnIdleUpdateCmdUI)
 	ON_WM_CONTEXTMENU()
+	ON_WM_SETFOCUS()
 END_MESSAGE_MAP()
 
 void CTaskbar::OnDestroy()
@@ -394,4 +395,18 @@ void CTaskbar::OnContextMenu(CWnd* /*pWnd*/, CPoint pos)
 	}
 
 	menu.TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, pos.x, pos.y, this, NULL);
+}
+
+void CTaskbar::OnSetFocus(CWnd* /*pOldWnd*/)
+{
+	std::list<CTaskButton*>::iterator ppBtn = ButtonsLeft.begin();
+	while (ppBtn!=ButtonsLeft.end())
+	{
+		if ((*ppBtn)->IsWindowEnabled())
+		{
+			(*ppBtn)->SetFocus();
+			break;
+		}
+		ppBtn++;
+	}
 }

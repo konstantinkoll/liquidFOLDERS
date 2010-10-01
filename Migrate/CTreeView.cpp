@@ -1068,7 +1068,7 @@ void CTreeView::OnLButtonDblClk(UINT /*nFlags*/, CPoint point)
 	BOOL Checkbox;
 	if (HitTest(point, &Item, &Checkbox))
 		if ((Item==m_Selected) && (!Checkbox))
-			ExecuteContextMenu(Item, "open");
+			OpenFolder();
 }
 
 void CTreeView::OnRButtonDown(UINT /*nFlags*/, CPoint point)
