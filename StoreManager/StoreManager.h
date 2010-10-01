@@ -10,10 +10,6 @@
 #include <list>
 using std::list;
 
-#define SaveMode_SettingsChanged  0
-#define SaveMode_Force            1
-#define SaveMode_FlagOnly         2
-
 
 // CStoreManagerApp:
 // Siehe StoreManager.cpp für die Implementierung dieser Klasse
@@ -58,8 +54,6 @@ public:
 	void UpdateSortOptions(int context);
 	void Reload(int context);
 	void GetBinary(LPCTSTR lpszEntry, void* pData, UINT size);
-	void LoadViewOptions(int context);
-	void SaveViewOptions(int context, UINT SaveMode=SaveMode_SettingsChanged);
 	void ToggleAttribute(LFViewParameters* vp, UINT attr, int ColumnCount=-1);
 	HBITMAP GetGLTexture(UINT nID);
 	void FreeGLTexture(UINT nID);
@@ -69,6 +63,8 @@ public:
 
 protected:
 	virtual void OnClosingMainFrame(CFrameImpl* pFrameImpl);
+	void LoadViewOptions(int context);
+	void SaveViewOptions(int context);
 
 	afx_msg void OnAppAbout();
 	afx_msg void OnAppNewView();

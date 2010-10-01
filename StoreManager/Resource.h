@@ -69,11 +69,6 @@
 #define ID_APP_VIEW_GLOBE               309
 #define ID_APP_VIEW_TAGCLOUD            310
 #define ID_APP_VIEW_TIMELINE            311
-#define ID_CONTEXT_CHOOSE               312
-#define ID_CONTEXT_ALWAYSSAVE           313
-#define ID_CONTEXT_RESTORE              314
-#define ID_CONTEXT_SAVENOW              315
-#define ID_CONTEXT_SAVEALL              316
 #define ID_VIEW_SELECTALL               350
 #define ID_VIEW_SELECTNONE              351
 #define ID_VIEW_AUTOSIZECOLUMNS         352

@@ -463,7 +463,6 @@ void CFileList::OnColumnClick(NMHDR* pNMHDR, LRESULT* /*pResult*/)
 		View->pViewParameters->Descending = (theApp.m_Attributes[attr]->Type==LFTypeRating) || (theApp.m_Attributes[attr]->Type==LFTypeTime);
 	}
 
-	theApp.SaveViewOptions(View->ActiveContextID);
 	theApp.UpdateSortOptions(View->ActiveContextID);
 }
 
@@ -489,7 +488,6 @@ void CFileList::OnHeaderResize(NMHDR* pNMHDR, LRESULT* pResult)
 		}
 
 		View->pViewParameters->ColumnWidth[ColumnMapping[pHdr->iItem]] = pHdr->pitem->cxy;
-		View->OnViewOptionsChanged(TRUE);
 
 		// Workaround Windows Vista
 		if (theApp.OSVersion==OS_Vista)
@@ -531,7 +529,7 @@ void CFileList::OnHeaderReorder(NMHDR* pNMHDR, LRESULT* pResult)
 			View->pViewParameters->ColumnOrder[a] = View->pViewParameters->ColumnOrder[a-1];
 		View->pViewParameters->ColumnOrder[pHdr->pitem->iOrder] = pHdr->iItem;
 
-		View->OnViewOptionsChanged();
+		theApp.UpdateViewOptions(View->ActiveContextID);
 
 		// Workaround Windows Vista
 		if (theApp.OSVersion==OS_Vista)

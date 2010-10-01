@@ -31,8 +31,6 @@ struct LFViewParameters
 {
 	UINT Mode;
 	BOOL FullRowSelect;
-	BOOL AlwaysSave;
-	BOOL Changed;
 	int ColumnOrder[LFAttributeCount];
 	int ColumnWidth[LFAttributeCount];
 
@@ -112,7 +110,6 @@ protected:
 
 	void SetFocusItem(int _FocusItem, BOOL ShiftSelect);
 	void AppendContextMenu(CMenu* menu);
-	void OnViewOptionsChanged(BOOL LocalSettings=FALSE);
 
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);

@@ -84,7 +84,7 @@ void CAbstractListView::OnSetFocus(CWnd* pOldWnd)
 void CAbstractListView::OnToggleAttribute(UINT nID)
 {
 	theApp.ToggleAttribute(pViewParameters, nID-ID_TOGGLE_ATTRIBUTE);
-	OnViewOptionsChanged();
+	theApp.UpdateViewOptions(ActiveContextID);
 }
 
 void CAbstractListView::OnUpdateToggleAttribute(CCmdUI* pCmdUI)
@@ -103,7 +103,7 @@ void CAbstractListView::OnAutosizeColumns()
 		pViewParameters->ColumnWidth[m_FileList.ColumnMapping[a]] = m_FileList.GetColumnWidth(a);
 	}
 
-	OnViewOptionsChanged(TRUE);
+	// Hier kein Broadcast an andere Fenster
 }
 
 void CAbstractListView::OnUpdateCommands(CCmdUI* pCmdUI)

@@ -417,8 +417,9 @@ void CGlobeView::OnSaveCamera()
 	pViewParameters->GlobeLatitude = (int)(m_LocalSettings.Latitude*1000.0f);
 	pViewParameters->GlobeLongitude = (int)(m_LocalSettings.Longitude*1000.0f);
 	pViewParameters->GlobeZoom = m_LocalSettings.GlobeZoom;
-	OnViewOptionsChanged(TRUE);
 	m_CameraChanged = FALSE;
+
+	// Kein Broadcase an andere Fenster
 }
 
 void CGlobeView::OnJumpToLocation()
@@ -506,13 +507,13 @@ void CGlobeView::OnGoogleEarth()
 void CGlobeView::OnHQModel()
 {
 	theApp.m_GlobeHQModel = !theApp.m_GlobeHQModel;
-	OnViewOptionsChanged();
+	theApp.UpdateViewOptions(ActiveContextID);
 }
 
 void CGlobeView::OnLighting()
 {
 	theApp.m_GlobeLighting = !theApp.m_GlobeLighting;
-	OnViewOptionsChanged();
+	theApp.UpdateViewOptions(ActiveContextID);
 }
 
 void CGlobeView::OnShowBubbles()
@@ -521,25 +522,25 @@ void CGlobeView::OnShowBubbles()
 	if (!pViewParameters->GlobeShowBubbles)
 		pViewParameters->GlobeShowSpots = TRUE;
 
-	OnViewOptionsChanged();
+	theApp.UpdateViewOptions(ActiveContextID);
 }
 
 void CGlobeView::OnShowAirportNames()
 {
 	pViewParameters->GlobeShowAirportNames = !pViewParameters->GlobeShowAirportNames;
-	OnViewOptionsChanged();
+	theApp.UpdateViewOptions(ActiveContextID);
 }
 
 void CGlobeView::OnShowGPS()
 {
 	pViewParameters->GlobeShowGPS = !pViewParameters->GlobeShowGPS;
-	OnViewOptionsChanged();
+	theApp.UpdateViewOptions(ActiveContextID);
 }
 
 void CGlobeView::OnShowHints()
 {
 	pViewParameters->GlobeShowHints = !pViewParameters->GlobeShowHints;
-	OnViewOptionsChanged();
+	theApp.UpdateViewOptions(ActiveContextID);
 }
 
 void CGlobeView::OnShowSpots()
@@ -548,13 +549,13 @@ void CGlobeView::OnShowSpots()
 	if (!pViewParameters->GlobeShowSpots)
 		pViewParameters->GlobeShowBubbles = TRUE;
 
-	OnViewOptionsChanged();
+	theApp.UpdateViewOptions(ActiveContextID);
 }
 
 void CGlobeView::OnShowViewpoint()
 {
 	pViewParameters->GlobeShowViewpoint = !pViewParameters->GlobeShowViewpoint;
-	OnViewOptionsChanged();
+	theApp.UpdateViewOptions(ActiveContextID);
 }
 
 void CGlobeView::OnUpdateCommands(CCmdUI* pCmdUI)

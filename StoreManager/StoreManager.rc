@@ -238,13 +238,13 @@ BEGIN
     GROUPBOX        "",IDC_ATTRBOX,7,7,275,235,WS_GROUP
     LTEXT           "Alle Eigenschaften in diesem Kontext:",IDC_STATIC,14,17,261,8
     CONTROL         "Dateien in Unterordner &gruppieren",IDC_AUTODIRS,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,42,262,147,10
-    CONTROL         "&Aufsteigend",IDC_ASCENDING,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,225,259,49,10
+    CONTROL         "&Aufsteigend",IDC_ASCENDING,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,225,259,50,10
     CONTROL         "A&bsteigend",IDC_DESCENDING,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,225,272,50,10
     GROUPBOX        "Gruppieren",IDC_STATIC,7,248,188,42,WS_GROUP
     GROUPBOX        "Sortierrichtung",IDC_STATIC,204,248,78,42,WS_GROUP
     CONTROL         134,IDC_STATIC,"Static",SS_BITMAP,210,259,9,8
     CONTROL         135,IDC_STATIC,"Static",SS_BITMAP,210,272,9,8
-    LTEXT           "",IDC_SUBFOLDERHINT,42,275,146,8
+    LTEXT           "",IDC_SUBFOLDERHINT,42,275,147,8
     CONTROL         136,IDC_STATIC,"Static",SS_BITMAP,14,262,21,20
 END
 
@@ -494,13 +494,13 @@ BEGIN
     GROUPBOX        "",IDC_ATTRBOX,7,7,275,235,WS_GROUP
     LTEXT           "All properties available in this context:",IDC_STATIC,14,17,261,8
     CONTROL         "&Group items into subfolders",IDC_AUTODIRS,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,42,262,147,10
-    CONTROL         "&Ascending",IDC_ASCENDING,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,225,259,49,10
+    CONTROL         "&Ascending",IDC_ASCENDING,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,225,259,50,10
     CONTROL         "&Descending",IDC_DESCENDING,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,225,272,50,10
     GROUPBOX        "Grouping",IDC_STATIC,7,248,188,42,WS_GROUP
     GROUPBOX        "Sort direction",IDC_STATIC,204,248,78,42,WS_GROUP
     CONTROL         134,IDC_STATIC,"Static",SS_BITMAP,210,259,9,8
     CONTROL         135,IDC_STATIC,"Static",SS_BITMAP,210,272,9,8
-    LTEXT           "",IDC_SUBFOLDERHINT,42,275,146,8
+    LTEXT           "",IDC_SUBFOLDERHINT,42,275,147,8
     CONTROL         136,IDC_STATIC,"Static",SS_BITMAP,14,262,21,20
 END
 
@@ -589,12 +589,12 @@ BEGIN
     IDS_CONTEXTMENU_AUTODIRS "&Group into subfolders"
     IDS_CONTEXTMENU_VIEWOPTIONS "&Display as..."
     IDS_CONTEXTMENU_STORE_NEW "Create &new store..."
+    IDS_CONTEXTMENU_TRASH_RESTOREALL "Restore &all"
+    IDS_CONTEXTMENU_UNKNOWN_REGISTER "Re&gister formats..."
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_CONTEXTMENU_TRASH_RESTOREALL "Restore &all"
-    IDS_CONTEXTMENU_UNKNOWN_REGISTER "Re&gister formats..."
     IDS_ITEMS_SINGULAR      "%d item"
     IDS_ITEMS_PLURAL        "%d items"
     IDS_SELECTED_SINGULAR   "%d item selected, %s"
@@ -609,12 +609,12 @@ BEGIN
     IDS_MULTIPLETYPESSELECTED "Multiple types, %d items"
     IDS_MOREATTRIBUTES      "&More properties..."
     IDS_TYPE_DRIVE_SINGULAR "%d removable drive"
+    IDS_TYPE_DRIVE_PLURAL   "%d removable drives"
+    IDS_TYPE_STORE_SINGULAR "%d store"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_TYPE_DRIVE_PLURAL   "%d removable drives"
-    IDS_TYPE_STORE_SINGULAR "%d store"
     IDS_TYPE_STORE_PLURAL   "%d stores"
     IDS_TYPE_FILE_SINGULAR  "%d file"
     IDS_TYPE_FILE_PLURAL    "%d files"
@@ -648,25 +648,20 @@ BEGIN
     ID_APP_VIEW_LARGEICONS  "Displays files as large icons, suitable for overview contexts.\nLarge icons"
     ID_APP_VIEW_SMALLICONS  "Displays files as small icons.\nSmall icons"
     ID_APP_VIEW_LIST        "Displays files as a list, suitable for large numbers of files.\nList"
+    ID_APP_VIEW_DETAILS     "Displays files as a report with selectable property columns.\nDetails"
 END
 
 STRINGTABLE 
 BEGIN
-    ID_APP_VIEW_DETAILS     "Displays files as a report with selectable property columns.\nDetails"
     ID_APP_VIEW_TILES       "Displays files as tiles, including a decent sized icon and detailed information.\nTiles"
-    ID_APP_VIEW_SEARCHRESULT "Displays files as wide tiles, including a decent sized icon and detailed information.\nSearch result"
+    ID_APP_VIEW_SEARCHRESULT 
+                            "Displays files as wide tiles, including a decent sized icon and detailed information.\nSearch result"
     ID_APP_VIEW_PREVIEW     "Displays files as preview images.\nPreview"
-    ID_APP_VIEW_CALENDAR_YEAR 
-                            "Places files on a calendar.\nCalendar"
-    ID_APP_VIEW_CALENDAR_DAY 
-                            "Places files on a calendar.\nCalendar"
+    ID_APP_VIEW_CALENDAR_YEAR "Places files on a calendar.\nCalendar"
+    ID_APP_VIEW_CALENDAR_DAY "Places files on a calendar.\nCalendar"
     ID_APP_VIEW_GLOBE       "Places file on a globe depening on their location property.\nGlobe"
     ID_APP_VIEW_TAGCLOUD    "Displays files as tag cloud. This is the only view that can show files sorted by their tags.\nTag cloud"
     ID_APP_VIEW_TIMELINE    "Displays files on a timeline.\nTimeline"
-    ID_CONTEXT_ALWAYSSAVE   "Immediately saves all changes to the view settings of this context.\nSave all changes"
-    ID_CONTEXT_RESTORE      "Restores the view settings to the last saved state.\nRestore"
-    ID_CONTEXT_SAVENOW      "Saves the current view settings of this context.\nSave"
-    ID_CONTEXT_SAVEALL      "Saves the current view settings of all contexts.\nSave all"
 END
 
 STRINGTABLE 
@@ -861,61 +856,61 @@ LANGUAGE LANG_SPANISH, SUBLANG_NEUTRAL
 // Dialog
 //
 
-IDD_CHOOSEDETAILS DIALOGEX 0, 0, 208, 276
+IDD_CHOOSEDETAILS DIALOGEX 0, 0, 228, 276
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
-CAPTION "Details for ""%s"""
+CAPTION "Detalles para ""%s"""
 FONT 8, "MS Shell Dlg", 400, 0, 0x0
 BEGIN
-    GROUPBOX        "Details",IDC_STATIC,7,7,194,241
-    LTEXT           "Choose the details for this context:",IDC_STATIC,14,17,183,9
+    GROUPBOX        "Detalles",IDC_STATIC,7,7,214,241
+    LTEXT           "Escoger detalles para este contexto:",IDC_STATIC,14,17,203,9
     CONTROL         "",IDC_VIEWATTRIBUTES,"SysListView32",LVS_SMALLICON | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_NOCOLUMNHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,14,27,118,213
-    PUSHBUTTON      "Move &up",IDC_MOVEUP,137,27,58,14,WS_GROUP
-    PUSHBUTTON      "Move &down",IDC_MOVEDOWN,137,46,58,14,WS_GROUP
-    PUSHBUTTON      "Check &all",IDC_CHECKALL,137,70,58,14,WS_GROUP
-    PUSHBUTTON      "&Uncheck all",IDC_UNCHECKALL,137,89,58,14,WS_GROUP
+    PUSHBUTTON      "&Subir",IDC_MOVEUP,137,27,78,14,WS_GROUP
+    PUSHBUTTON      "&Bajar",IDC_MOVEDOWN,137,46,78,14,WS_GROUP
+    PUSHBUTTON      "Seleccionar &todo",IDC_CHECKALL,137,70,78,14,WS_GROUP
+    PUSHBUTTON      "&No seleccionar todo",IDC_UNCHECKALL,137,89,78,14,WS_GROUP
     DEFPUSHBUTTON   "OK",IDOK,7,255,50,14,WS_GROUP
-    PUSHBUTTON      "Cancel",IDCANCEL,65,255,50,14,WS_GROUP
+    PUSHBUTTON      "Cancelar",IDCANCEL,65,255,50,14,WS_GROUP
 END
 
 IDD_SORTOPTIONS DIALOGEX 0, 0, 289, 319
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
-CAPTION "Arrange ""%s"" by"
+CAPTION "Ordenar ""%s"" por"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     CONTROL         "",IDC_SORTATTRIBUTE,"SysListView32",LVS_LIST | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SORTASCENDING | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_ALIGNLEFT | LVS_NOCOLUMNHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,14,27,261,206
     DEFPUSHBUTTON   "OK",IDOK,7,298,50,14,WS_GROUP
-    PUSHBUTTON      "Cancel",IDCANCEL,65,298,50,14,WS_GROUP
+    PUSHBUTTON      "Cancelar",IDCANCEL,65,298,50,14,WS_GROUP
     GROUPBOX        "",IDC_ATTRBOX,7,7,275,235,WS_GROUP
-    LTEXT           "All properties available in this context:",IDC_STATIC,14,17,261,8
-    CONTROL         "&Group items into subfolders",IDC_AUTODIRS,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,42,262,147,10
-    CONTROL         "&Ascending",IDC_ASCENDING,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,225,259,49,10
-    CONTROL         "&Descending",IDC_DESCENDING,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,225,272,50,10
-    GROUPBOX        "Grouping",IDC_STATIC,7,248,188,42,WS_GROUP
-    GROUPBOX        "Sort direction",IDC_STATIC,204,248,78,42,WS_GROUP
+    LTEXT           "Todas las propiedades disponibles en este contexto:",IDC_STATIC,14,17,261,8
+    CONTROL         "&Agrupar objetos en subarchivos",IDC_AUTODIRS,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,42,262,147,10
+    CONTROL         "&Ascendente",IDC_ASCENDING,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,225,259,50,10
+    CONTROL         "&Descendiente",IDC_DESCENDING,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,225,272,50,10
+    GROUPBOX        "Agrupación",IDC_STATIC,7,248,188,42,WS_GROUP
+    GROUPBOX        "Tipo de instrucción",IDC_STATIC,204,248,78,42,WS_GROUP
     CONTROL         134,IDC_STATIC,"Static",SS_BITMAP,210,259,9,8
     CONTROL         135,IDC_STATIC,"Static",SS_BITMAP,210,272,9,8
-    LTEXT           "",IDC_SUBFOLDERHINT,42,275,146,8
+    LTEXT           "",IDC_SUBFOLDERHINT,42,275,147,8
     CONTROL         136,IDC_STATIC,"Static",SS_BITMAP,14,262,21,20
 END
 
-IDD_VIEWOPTIONS DIALOGEX 0, 0, 392, 263
+IDD_VIEWOPTIONS DIALOGEX 0, 0, 412, 263
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
-CAPTION "Display ""%s"" as"
+CAPTION "Visualizar ""%s"" como"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     CONTROL         "",IDC_VIEWMODES,"SysListView32",LVS_SMALLICON | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | WS_BORDER | WS_GROUP | WS_TABSTOP,14,27,160,201
-    CONTROL         "Full &row select",IDC_FULLROWSELECT,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,196,220,118,10
+    CONTROL         "Seleccionar fila &entera",IDC_FULLROWSELECT,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,196,220,118,10
     DEFPUSHBUTTON   "OK",IDOK,7,242,50,14,WS_GROUP
-    PUSHBUTTON      "Cancel",IDCANCEL,65,242,50,14,WS_GROUP
-    GROUPBOX        "Views",IDC_STATIC,7,7,174,228,WS_GROUP
-    LTEXT           "All views available in this context:",IDC_STATIC,14,17,160,8
-    GROUPBOX        "Report details",IDC_STATIC,189,7,196,228
-    LTEXT           "Choose the details for this context:",IDC_STATIC,196,17,183,9
+    PUSHBUTTON      "Cancelar",IDCANCEL,65,242,50,14,WS_GROUP
+    GROUPBOX        "Vistas",IDC_STATIC,7,7,174,228,WS_GROUP
+    LTEXT           "Todas las vistas disponibles en este contexto:",IDC_STATIC,14,17,160,8
+    GROUPBOX        "Reportar detalles",IDC_STATIC,189,7,216,228
+    LTEXT           "Escoger detalles para este contexto:",IDC_STATIC,196,17,203,9
     CONTROL         "",IDC_VIEWATTRIBUTES,"SysListView32",LVS_SMALLICON | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_NOCOLUMNHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,196,27,118,190
-    PUSHBUTTON      "Move &up",IDC_MOVEUP,320,27,58,14,WS_GROUP
-    PUSHBUTTON      "Move &down",IDC_MOVEDOWN,320,46,58,14,WS_GROUP
-    PUSHBUTTON      "Check &all",IDC_CHECKALL,320,70,58,14,WS_GROUP
-    PUSHBUTTON      "&Uncheck all",IDC_UNCHECKALL,320,89,58,14,WS_GROUP
+    PUSHBUTTON      "&Subir",IDC_MOVEUP,320,27,78,14,WS_GROUP
+    PUSHBUTTON      "&Bajar",IDC_MOVEDOWN,320,46,78,14,WS_GROUP
+    PUSHBUTTON      "Seleccionar &todo",IDC_CHECKALL,320,70,78,14,WS_GROUP
+    PUSHBUTTON      "&No seleccionar todo",IDC_UNCHECKALL,320,89,78,14,WS_GROUP
 END
 
 
@@ -930,7 +925,7 @@ BEGIN
     IDD_CHOOSEDETAILS, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 201
+        RIGHTMARGIN, 221
         TOPMARGIN, 7
         BOTTOMMARGIN, 269
     END
@@ -946,7 +941,7 @@ BEGIN
     IDD_VIEWOPTIONS, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 385
+        RIGHTMARGIN, 405
         TOPMARGIN, 7
         BOTTOMMARGIN, 256
     END
@@ -1005,7 +1000,7 @@ BEGIN
     GROUPBOX        "Direction de tri",IDC_STATIC,204,248,88,42,WS_GROUP
     CONTROL         134,IDC_STATIC,"Static",SS_BITMAP,210,259,11,10
     CONTROL         135,IDC_STATIC,"Static",SS_BITMAP,210,272,11,10
-    LTEXT           "",IDC_SUBFOLDERHINT,42,275,146,8
+    LTEXT           "",IDC_SUBFOLDERHINT,42,275,147,8
     CONTROL         136,IDC_STATIC,"Static",SS_BITMAP,14,262,21,20
 END
 

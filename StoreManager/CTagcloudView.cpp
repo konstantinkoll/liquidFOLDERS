@@ -339,37 +339,37 @@ void CTagcloudView::OnDestroy()
 void CTagcloudView::OnSortValue()
 {
 	pViewParameters->TagcloudCanonical = TRUE;
-	OnViewOptionsChanged();
+	theApp.UpdateViewOptions(ActiveContextID);
 }
 
 void CTagcloudView::OnSortCount()
 {
 	pViewParameters->TagcloudCanonical = FALSE;
-	OnViewOptionsChanged();
+	theApp.UpdateViewOptions(ActiveContextID);
 }
 
 void CTagcloudView::OnOmitRare()
 {
 	pViewParameters->TagcloudOmitRare = !pViewParameters->TagcloudOmitRare;
-	OnViewOptionsChanged();
+	theApp.UpdateViewOptions(ActiveContextID);
 }
 
 void CTagcloudView::OnUseSize()
 {
 	pViewParameters->TagcloudUseSize = !pViewParameters->TagcloudUseSize;
-	OnViewOptionsChanged();
+	theApp.UpdateViewOptions(ActiveContextID);
 }
 
 void CTagcloudView::OnUseColors()
 {
 	pViewParameters->TagcloudUseColors = !pViewParameters->TagcloudUseColors;
-	OnViewOptionsChanged();
+	theApp.UpdateViewOptions(ActiveContextID);
 }
 
 void CTagcloudView::OnUseOpacity()
 {
 	pViewParameters->TagcloudUseOpacity = !pViewParameters->TagcloudUseOpacity;
-	OnViewOptionsChanged();
+	theApp.UpdateViewOptions(ActiveContextID);
 }
 
 void CTagcloudView::OnUpdateCommands(CCmdUI* pCmdUI)

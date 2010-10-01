@@ -299,13 +299,6 @@ void CFileView::OnItemContextMenu(int idx, CPoint point)
 	}
 }
 
-void CFileView::OnViewOptionsChanged(BOOL LocalSettings)
-{
-	theApp.SaveViewOptions(ActiveContextID);
-	if (!LocalSettings)
-		theApp.UpdateViewOptions(ActiveContextID);
-}
-
 BOOL CFileView::HandleDefaultKeys(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags*/)
 {
 	switch(nChar)

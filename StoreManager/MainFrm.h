@@ -143,11 +143,6 @@ protected:
 	afx_msg void OnViewOptions();
 	afx_msg void OnChooseDetails();
 	afx_msg void OnToggleAutoDirs();
-	afx_msg void OnChooseContext();
-	afx_msg void OnAlwaysSaveContext();
-	afx_msg void OnRestoreContext();
-	afx_msg void OnSaveContextNow();
-	afx_msg void OnSaveContextAll();
 	afx_msg void OnUpdateAppCommands(CCmdUI* pCmdUI);
 	afx_msg void OnSort(UINT nID);
 	afx_msg void OnUpdateSortCommands(CCmdUI* pCmdUI);

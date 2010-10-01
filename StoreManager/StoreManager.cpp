@@ -121,6 +121,9 @@ BOOL CStoreManagerApp::InitInstance()
 
 int CStoreManagerApp::ExitInstance()
 {
+	for (int a=0; a<LFContextCount; a++)
+		LoadViewOptions(a);
+
 	CString oldBase = GetRegistryBase();
 	SetRegistryBase(_T("Settings"));
 	WriteInt(_T("HideEmptyDrives"), m_HideEmptyDrives);
@@ -385,7 +388,6 @@ void CStoreManagerApp::LoadViewOptions(int context)
 
 	m_Views[context].Mode = GetInt(_T("Viewmode"), LFViewTiles);
 	m_Views[context].FullRowSelect = GetInt(_T("FullRowSelect"), FALSE);
-	m_Views[context].AlwaysSave = GetInt(_T("AlwaysSave"), TRUE);
 	m_Views[context].SortBy = GetInt(_T("SortBy"), LFAttrFileName);
 	m_Views[context].Descending = GetInt(_T("Descending"), FALSE);
 	m_Views[context].AutoDirs = GetInt(_T("AutoDirs"), TRUE);
@@ -403,7 +405,6 @@ void CStoreManagerApp::LoadViewOptions(int context)
 	m_Views[context].TagcloudUseSize = GetInt(_T("TagcloudUseSize"), TRUE);
 	m_Views[context].TagcloudUseColors = GetInt(_T("TagcloudUseColors"), TRUE);
 	m_Views[context].TagcloudUseOpacity = GetInt(_T("TagcloudUseOpacity"), FALSE);
-	m_Views[context].Changed = FALSE;
 
 	for (UINT a=0; a<LFAttributeCount; a++)
 	{
@@ -428,46 +429,35 @@ void CStoreManagerApp::LoadViewOptions(int context)
 	SetRegistryBase(oldBase);
 }
 
-void CStoreManagerApp::SaveViewOptions(int context, UINT SaveMode)
+void CStoreManagerApp::SaveViewOptions(int context)
 {
 	CString oldBase = GetRegistryBase();
 	CString base;
 	base.Format(_T("Settings\\Context%d"), context);
 	SetRegistryBase(base);
 
-	WriteInt(_T("AlwaysSave"), m_Views[context].AlwaysSave);
-	if ((m_Views[context].AlwaysSave) || (SaveMode==SaveMode_Force))
-	{
-		WriteInt(_T("Viewmode"), m_Views[context].Mode);
-		WriteInt(_T("FullRowSelect"), m_Views[context].FullRowSelect);
-		WriteInt(_T("SortBy"), m_Views[context].SortBy);
-		WriteInt(_T("Descending"), m_Views[context].Descending);
-		WriteInt(_T("AutoDirs"), m_Views[context].AutoDirs);
-		WriteInt(_T("GlobeLatitude"), m_Views[context].GlobeLatitude);
-		WriteInt(_T("GlobeLongitude"), m_Views[context].GlobeLongitude);
-		WriteInt(_T("GlobeZoom"), m_Views[context].GlobeZoom);
-		WriteInt(_T("GlobeShowBubbles"), m_Views[context].GlobeShowBubbles);
-		WriteInt(_T("GlobeShowAirportNames"), m_Views[context].GlobeShowAirportNames);
-		WriteInt(_T("GlobeShowGPS"), m_Views[context].GlobeShowGPS);
-		WriteInt(_T("GlobeShowHints"), m_Views[context].GlobeShowHints);
-		WriteInt(_T("GlobeShowSpots"), m_Views[context].GlobeShowSpots);
-		WriteInt(_T("GlobeShowViewpoint"), m_Views[context].GlobeShowViewpoint);
-		WriteInt(_T("TagcloudSortCanonical"), m_Views[context].TagcloudCanonical);
-		WriteInt(_T("TagcloudOmitRare"), m_Views[context].TagcloudOmitRare);
-		WriteInt(_T("TagcloudUseSize"), m_Views[context].TagcloudUseSize);
-		WriteInt(_T("TagcloudUseColors"), m_Views[context].TagcloudUseColors);
-		WriteInt(_T("TagcloudUseOpacity"), m_Views[context].TagcloudUseOpacity);
+	WriteInt(_T("Viewmode"), m_Views[context].Mode);
+	WriteInt(_T("FullRowSelect"), m_Views[context].FullRowSelect);
+	WriteInt(_T("SortBy"), m_Views[context].SortBy);
+	WriteInt(_T("Descending"), m_Views[context].Descending);
+	WriteInt(_T("AutoDirs"), m_Views[context].AutoDirs);
+	WriteInt(_T("GlobeLatitude"), m_Views[context].GlobeLatitude);
+	WriteInt(_T("GlobeLongitude"), m_Views[context].GlobeLongitude);
+	WriteInt(_T("GlobeZoom"), m_Views[context].GlobeZoom);
+	WriteInt(_T("GlobeShowBubbles"), m_Views[context].GlobeShowBubbles);
+	WriteInt(_T("GlobeShowAirportNames"), m_Views[context].GlobeShowAirportNames);
+	WriteInt(_T("GlobeShowGPS"), m_Views[context].GlobeShowGPS);
+	WriteInt(_T("GlobeShowHints"), m_Views[context].GlobeShowHints);
+	WriteInt(_T("GlobeShowSpots"), m_Views[context].GlobeShowSpots);
+	WriteInt(_T("GlobeShowViewpoint"), m_Views[context].GlobeShowViewpoint);
+	WriteInt(_T("TagcloudSortCanonical"), m_Views[context].TagcloudCanonical);
+	WriteInt(_T("TagcloudOmitRare"), m_Views[context].TagcloudOmitRare);
+	WriteInt(_T("TagcloudUseSize"), m_Views[context].TagcloudUseSize);
+	WriteInt(_T("TagcloudUseColors"), m_Views[context].TagcloudUseColors);
+	WriteInt(_T("TagcloudUseOpacity"), m_Views[context].TagcloudUseOpacity);
 
-		WriteBinary(_T("ColumnOrder"), (LPBYTE)m_Views[context].ColumnOrder, sizeof(m_Views[context].ColumnOrder));
-		WriteBinary(_T("ColumnWidth"), (LPBYTE)m_Views[context].ColumnWidth, sizeof(m_Views[context].ColumnWidth));
-
-		m_Views[context].Changed = FALSE;
-	}
-	else
-	{
-		if (SaveMode!=SaveMode_FlagOnly)
-			m_Views[context].Changed = TRUE;
-	}
+	WriteBinary(_T("ColumnOrder"), (LPBYTE)m_Views[context].ColumnOrder, sizeof(m_Views[context].ColumnOrder));
+	WriteBinary(_T("ColumnWidth"), (LPBYTE)m_Views[context].ColumnWidth, sizeof(m_Views[context].ColumnWidth));
 
 	SetRegistryBase(oldBase);
 }

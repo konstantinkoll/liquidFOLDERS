@@ -61,7 +61,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->LookChanged, OnLookChanged)
 	ON_COMMAND(ID_APP_UPDATESELECTION, OnUpdateSelection)
 
-	ON_UPDATE_COMMAND_UI_RANGE(ID_APP_NEWVIEW, ID_CONTEXT_SAVEALL, OnUpdateAppCommands)
+	ON_UPDATE_COMMAND_UI_RANGE(ID_APP_NEWVIEW, ID_APP_VIEW_TIMELINE, OnUpdateAppCommands)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_AUTODIRS, OnUpdateAppCommands)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_SORT_FILENAME, ID_SORT_FILENAME+99, OnUpdateSortCommands)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_NAV_FIRST, ID_NAV_CLEARHISTORY, OnUpdateNavCommands)
@@ -81,11 +81,6 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 
 	ON_COMMAND_RANGE(ID_APP_VIEW_LARGEICONS, ID_APP_VIEW_TIMELINE, OnChangeChildView)
 	ON_COMMAND_RANGE(ID_SORT_FILENAME, ID_SORT_FILENAME+99, OnSort)
-	ON_COMMAND(ID_CONTEXT_CHOOSE, OnChooseContext)
-	ON_COMMAND(ID_CONTEXT_ALWAYSSAVE, OnAlwaysSaveContext)
-	ON_COMMAND(ID_CONTEXT_RESTORE, OnRestoreContext)
-	ON_COMMAND(ID_CONTEXT_SAVENOW, OnSaveContextNow)
-	ON_COMMAND(ID_CONTEXT_SAVEALL, OnSaveContextAll)
 
 	ON_COMMAND(ID_PANE_FILTERWND, OnToggleFilterWnd)
 	ON_COMMAND(ID_PANE_INSPECTORWND, OnToggleInspectorWnd)
@@ -358,97 +353,36 @@ void CMainFrame::OnSortOptions()
 {
 	SortOptionsDlg dlg(this, ActiveViewParameters, ActiveContextID);
 	if (dlg.DoModal()==IDOK)
-	{
-		theApp.SaveViewOptions(ActiveContextID);
 		theApp.UpdateSortOptions(ActiveContextID);
-	}
 }
 
 void CMainFrame::OnViewOptions()
 {
 	ViewOptionsDlg dlg(this, ActiveViewParameters, ActiveContextID);
 	if (dlg.DoModal()==IDOK)
-	{
-		theApp.SaveViewOptions(ActiveContextID);
 		theApp.OpenChildViews(ActiveContextID, TRUE);
-	}
 }
 
 void CMainFrame::OnChooseDetails()
 {
 	ChooseDetailsDlg dlg(this, ActiveViewParameters, ActiveContextID);
 	if (dlg.DoModal()==IDOK)
-	{
-		theApp.SaveViewOptions(ActiveContextID);
 		theApp.OpenChildViews(ActiveContextID, TRUE);
-	}
 }
 
 void CMainFrame::OnToggleAutoDirs()
 {
 	ActiveViewParameters->AutoDirs = (!ActiveViewParameters->AutoDirs);
-	theApp.SaveViewOptions(ActiveContextID);
 	theApp.UpdateSortOptions(ActiveContextID);
-}
-
-void CMainFrame::OnChooseContext()
-{
-/*	m_cbxActiveContext->ClosePopupMenu();
-	Invalidate();
-	UpdateWindow();
-	CookFiles(m_cbxActiveContext->GetCurSel());*/
-}
-
-void CMainFrame::OnAlwaysSaveContext()
-{
-	ActiveViewParameters->AlwaysSave = !ActiveViewParameters->AlwaysSave;
-	theApp.SaveViewOptions(ActiveContextID, SaveMode_FlagOnly);
-}
-
-void CMainFrame::OnRestoreContext()
-{
-	theApp.LoadViewOptions(ActiveContextID);
-	CookFiles(ActiveContextID);
-}
-
-void CMainFrame::OnSaveContextNow()
-{
-	theApp.SaveViewOptions(ActiveContextID, SaveMode_Force);
-}
-
-void CMainFrame::OnSaveContextAll()
-{
-	for (int a=0; a<LFContextCount; a++)
-		if (theApp.m_Views[a].Changed)
-			theApp.SaveViewOptions(a, SaveMode_Force);
 }
 
 void CMainFrame::OnUpdateAppCommands(CCmdUI* pCmdUI)
 {
-	BOOL b = FALSE;
 	UINT view;
 	switch (pCmdUI->m_nID)
 	{
 	case ID_APP_CLOSEOTHERS:
 		pCmdUI->Enable(theApp.m_listMainFrames.size()>1);
-		break;
-	case ID_CONTEXT_CHOOSE:
-		if (CookedFiles)
-			b = (CookedFiles->m_Context>LFContextClipboard) && (CookedFiles->m_Context<LFContextSubfolderDefault);
-		pCmdUI->Enable(b);
-		break;
-	case ID_CONTEXT_ALWAYSSAVE:
-		pCmdUI->SetCheck(ActiveViewParameters->AlwaysSave);
-		pCmdUI->Enable(TRUE);
-		break;
-	case ID_CONTEXT_RESTORE:
-	case ID_CONTEXT_SAVENOW:
-		pCmdUI->Enable((!ActiveViewParameters->AlwaysSave) && (ActiveViewParameters->Changed));
-		break;
-	case ID_CONTEXT_SAVEALL:
-			for (int a=0; a<LFContextCount; a++)
-				b |= (!theApp.m_Views[a].AlwaysSave) && (theApp.m_Views[a].Changed);
-		pCmdUI->Enable(b);
 		break;
 	case ID_VIEW_AUTODIRS:
 		pCmdUI->SetCheck((ActiveViewParameters->AutoDirs) || (ActiveContextID>=LFContextSubfolderDefault));
@@ -485,7 +419,6 @@ void CMainFrame::OnSort(UINT nID)
 		ActiveViewParameters->Descending = (theApp.m_Attributes[nID]->Type==LFTypeRating) || (theApp.m_Attributes[nID]->Type==LFTypeTime);
 		ActiveViewParameters->Mode = SelectViewMode(ActiveViewParameters->Mode);
 
-		theApp.SaveViewOptions(ActiveContextID);
 		theApp.UpdateSortOptions(ActiveContextID);
 	}
 }
@@ -1244,7 +1177,6 @@ void CMainFrame::UpdateSearchResult(BOOL SetEmpty, int FocusItem)
 void CMainFrame::OnChangeChildView(UINT nID)
 {
 	ActiveViewParameters->Mode = nID-ID_APP_VIEW_LARGEICONS+LFViewLargeIcons;
-	theApp.SaveViewOptions(ActiveContextID);
 	theApp.OpenChildViews(ActiveContextID);
 }
 
@@ -2255,7 +2187,6 @@ BOOL CMainFrame::OpenChildView(int FocusItem, BOOL Force, BOOL AllowChangeSort)
 				break;
 			}
 
-			theApp.SaveViewOptions(ActiveContextID);
 			theApp.UpdateSortOptions(ActiveContextID);
 			return FALSE;
 		}
