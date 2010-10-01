@@ -35,6 +35,7 @@
 #define IDS_FOLDERCATEGORY3             1014
 #define IDS_FOLDERCATEGORY4             1015
 #define IDS_NOTHINGTODISPLAY            1016
+#define IDS_NOPROPERTY                  1017
 #define IDD_BOTTOMAREA                  2000
 #define IDC_MIGRATE                     2001
 #define IDC_SIMULATE                    2002

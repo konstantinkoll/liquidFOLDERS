@@ -612,7 +612,7 @@ CString CTreeView::GetColumnCaption(UINT col)
 		}
 		else
 		{
-			tmpStr = "No property";
+			ENSURE(tmpStr.LoadString(IDS_NOPROPERTY));
 		}
 
 	return tmpStr;

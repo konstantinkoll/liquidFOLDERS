@@ -178,6 +178,7 @@ void CMigrateWnd::OnRootChanged(NMHDR* /*pNMHDR*/, LRESULT* /*pResult*/)
 		m_wndMainView.SetRoot(m_wndFolder.pidl, FALSE);
 	}
 
+	m_wndMainView.SetFocus();
 	PostMessage(WM_KICKIDLE);
 }
 
