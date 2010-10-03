@@ -199,16 +199,16 @@ void CFileList::OnGetDispInfo(NMHDR* pNMHDR, LRESULT* /*pResult*/)
 		UINT attr = ColumnMapping[pItem->iSubItem];
 		if ((pItem->mask & LVIF_TEXT) && (theApp.m_Attributes[attr]->Type!=LFTypeRating))
 		{
-			LFAttributeToString(i, attr, m_StrBuffer, 256);
+			LFAttributeToString(i, attr, m_StrBuffer[attr], 256);
 			if (attr==LFAttrFileName)
 				if ((!View->HideFileExt) && (i->CoreAttributes.FileFormat[0]!='\0') && ((i->Type & LFTypeMask)==LFTypeFile))
 				{
-					size_t l = wcslen(m_StrBuffer);
-					m_StrBuffer[l] = L'.';
-					LFAttributeToString(i, LFAttrFileFormat, &m_StrBuffer[l+1], 299-l);
+					size_t l = wcslen(m_StrBuffer[attr]);
+					m_StrBuffer[attr][l] = L'.';
+					LFAttributeToString(i, LFAttrFileFormat, &m_StrBuffer[attr][l+1], 299-l);
 				}
 
-			pItem->pszText = (LPWSTR)m_StrBuffer;
+			pItem->pszText = (LPWSTR)m_StrBuffer[attr];
 		}
 		if (pItem->mask & LVIF_IMAGE)
 			pItem->iImage = i->IconID-1;

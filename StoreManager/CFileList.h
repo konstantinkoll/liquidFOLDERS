@@ -61,5 +61,5 @@ protected:
 
 private:
 	UINT ItemChanged;
-	wchar_t m_StrBuffer[300];
+	wchar_t m_StrBuffer[LFAttributeCount][300];
 };
