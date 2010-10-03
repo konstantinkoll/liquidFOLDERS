@@ -1155,8 +1155,6 @@ void CMainFrame::UpdateSearchResult(BOOL SetEmpty, int FocusItem)
 		{
 			ActiveContextID = CookedFiles->m_ContextView;
 			ActiveViewParameters = &theApp.m_Views[ActiveContextID];
-//			if (m_cbxActiveContext)
-//				m_cbxActiveContext->SelectItem(ActiveContextID);
 			if (OpenChildView(FocusItem, force))
 				return;
 		}
@@ -1695,22 +1693,6 @@ void CMainFrame::InitializeRibbon()
 	strTemp = "View";
 	CMFCRibbonCategory* pCategoryView = m_wndRibbonBar.AddCategory(strTemp, IDB_RIBBONVIEW_16, IDB_RIBBONVIEW_32);
 
-		/*strTemp = "Context";
-		CMFCRibbonPanel* pPanelContext = pCategoryView->AddPanel(strTemp, m_PanelImages.ExtractIcon(5));
-
-			strTemp = "Active context:";
-			pPanelContext->Add(new CMFCRibbonLabel(strTemp));
-			m_cbxActiveContext = new CMFCRibbonComboBox(ID_CONTEXT_CHOOSE, FALSE, 115);
-
-				for (int a=0; a<LFContextCount; a++)
-					m_cbxActiveContext->AddItem(theApp.m_Contexts[a]->Name);
-
-			pPanelContext->Add(m_cbxActiveContext);
-			pPanelContext->Add(theApp.CommandCheckBox(ID_CONTEXT_ALWAYSSAVE));
-			pPanelContext->Add(theApp.CommandButton(ID_CONTEXT_RESTORE, 14));
-			pPanelContext->Add(theApp.CommandButton(ID_CONTEXT_SAVENOW, 15));
-			pPanelContext->Add(theApp.CommandButton(ID_CONTEXT_SAVEALL, 16));*/
-
 		strTemp = "Arrange items by";
 		CMFCRibbonPanel* pPanelArrange = pCategoryView->AddPanel(strTemp, m_PanelImages.ExtractIcon(6));
 		pPanelArrange->EnableLaunchButton(ID_APP_SORTOPTIONS, 13);
@@ -2207,10 +2189,9 @@ BOOL CMainFrame::OpenChildView(int FocusItem, BOOL Force, BOOL AllowChangeSort)
 	case LFViewTiles:
 	case LFViewSearchResult:
 	case LFViewPreview:
-		Force |= (ActiveViewID<LFViewLargeIcons) || (ActiveViewID>LFViewPreview);
 		if ((m_wndView) && (CookedFiles))
 			Force |= (m_wndView->HasCategories()!=(CookedFiles->m_HasCategories==true));
-		if (Force)
+		if ((Force) || (ActiveViewID<LFViewLargeIcons) || (ActiveViewID>LFViewPreview))
 		{
 			pNewView = new CListView();
 			((CListView*)pNewView)->Create(this, CookedFiles, ViewID, FocusItem);

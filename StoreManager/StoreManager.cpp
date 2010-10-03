@@ -387,7 +387,26 @@ void CStoreManagerApp::LoadViewOptions(int context)
 	base.Format(_T("Settings\\Context%d"), context);
 	SetRegistryBase(base);
 
-	m_Views[context].Mode = GetInt(_T("Viewmode"), LFViewTiles);
+	UINT DefaultView;
+	switch (context)
+	{
+	case LFContextStores:
+		DefaultView = LFViewLargeIcons;
+		break;
+	case LFContextStoreHome:
+		DefaultView = LFViewSmallIcons;
+		break;
+	case LFContextClipboard:
+		DefaultView = LFViewTiles;
+		break;
+	case LFContextSubfolderDay:
+		DefaultView = LFViewCalendarDay;
+		break;
+	default:
+		DefaultView = LFViewDetails;
+	}
+
+	m_Views[context].Mode = GetInt(_T("Viewmode"), DefaultView);
 	m_Views[context].FullRowSelect = GetInt(_T("FullRowSelect"), FALSE);
 	m_Views[context].SortBy = GetInt(_T("SortBy"), LFAttrFileName);
 	m_Views[context].Descending = GetInt(_T("Descending"), FALSE);
@@ -407,6 +426,9 @@ void CStoreManagerApp::LoadViewOptions(int context)
 	m_Views[context].TagcloudUseColors = GetInt(_T("TagcloudUseColors"), TRUE);
 	m_Views[context].TagcloudUseOpacity = GetInt(_T("TagcloudUseOpacity"), FALSE);
 
+	if ((m_Views[context].Mode>=LFViewCount) || (!theApp.m_AllowedViews[context]->IsSet(m_Views[context].Mode)))
+			m_Views[context].Mode = DefaultView;
+
 	for (UINT a=0; a<LFAttributeCount; a++)
 	{
 		m_Views[context].ColumnOrder[a] = a;
@@ -423,9 +445,6 @@ void CStoreManagerApp::LoadViewOptions(int context)
 	GetBinary(_T("ColumnWidth"), &m_Views[context].ColumnWidth, sizeof(m_Views[context].ColumnWidth));
 
 	m_Views[context].AutoDirs &= (m_Contexts[context]->AllowGroups==true) || (context>=LFContextSubfolderDefault);
-
-	if (!theApp.m_AllowedViews[context]->IsSet(m_Views[context].Mode))
-		m_Views[context].Mode = LFViewDetails;
 
 	SetRegistryBase(oldBase);
 }
