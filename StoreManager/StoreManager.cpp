@@ -121,7 +121,10 @@ BOOL CStoreManagerApp::InitInstance()
 int CStoreManagerApp::ExitInstance()
 {
 	for (int a=0; a<LFContextCount; a++)
-		LoadViewOptions(a);
+	{
+		SaveViewOptions(a);
+		delete m_AllowedViews[a];
+	}
 
 	CString oldBase = GetRegistryBase();
 	SetRegistryBase(_T("Settings"));
