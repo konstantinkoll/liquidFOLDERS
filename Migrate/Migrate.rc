@@ -238,6 +238,7 @@ BEGIN
     IDS_FOLDERCATEGORY4     "Removable storage"
     IDS_NOTHINGTODISPLAY    "There is nothing to display."
     IDS_NOPROPERTY          "No property assigned"
+    IDS_CHOOSEPROPERTY      "&Choose property..."
 END
 
 #endif    // Englisch (neutral) resources

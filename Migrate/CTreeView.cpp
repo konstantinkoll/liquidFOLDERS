@@ -49,7 +49,7 @@ BOOL CTreeView::Create(CWnd* _pParentWnd, UINT nID)
 {
 	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, LoadCursor(NULL, IDC_ARROW));
 
-	const DWORD dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_TABSTOP;
+	const DWORD dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_TABSTOP | WS_HSCROLL | WS_VSCROLL;
 	CRect rect;
 	rect.SetRectEmpty();
 	return CWnd::Create(className, _T(""), dwStyle, rect, _pParentWnd, nID);
@@ -1143,13 +1143,22 @@ void CTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 				{
 					CString tmpStr = theApp.GetCommandName(ID_VIEW_INCLUDEBRANCH);
 					tmpStr.Insert(0, _T("&"));
-					InsertMenu(hPopup, 0, MF_BYPOSITION, 0x7000, tmpStr);
+					InsertMenu(hPopup, 0, MF_BYPOSITION, 0x7001, tmpStr);
 
 					tmpStr = theApp.GetCommandName(ID_VIEW_EXCLUDEBRANCH);
 					tmpStr.Insert(0, _T("&"));
-					InsertMenu(hPopup, 1, MF_BYPOSITION, 0x7001, tmpStr);
+					InsertMenu(hPopup, 1, MF_BYPOSITION, 0x7002, tmpStr);
 
 					InsertMenu(hPopup, 2, MF_BYPOSITION | MF_SEPARATOR, 0, NULL);
+				}
+
+				if (item.x)
+				{
+					CString tmpStr;
+					tmpStr.LoadString(IDS_CHOOSEPROPERTY);
+					InsertMenu(hPopup, 0, MF_BYPOSITION, 0x7000, tmpStr);
+
+					InsertMenu(hPopup, 1, MF_BYPOSITION | MF_SEPARATOR, 0, NULL);
 				}
 
 				pcm->QueryInterface(IID_IContextMenu2, (void**)&m_pContextMenu2);
@@ -1163,9 +1172,12 @@ void CTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 				switch (idCmd)
 				{
 				case 0x7000:
-					SetBranchCheck(TRUE, item);
+					OnChooseProperty((WPARAM)item.x, NULL);
 					break;
 				case 0x7001:
+					SetBranchCheck(TRUE, item);
+					break;
+				case 0x7002:
 					SetBranchCheck(FALSE, item);
 					break;
 				case 0:

@@ -177,7 +177,6 @@ void CMainView::OnIncludeBranch()
 	m_wndTree.SetBranchCheck(TRUE);
 }
 
-
 void CMainView::OnExcludeBranch()
 {
 	m_wndTree.SetBranchCheck(FALSE);
