@@ -80,6 +80,41 @@ LFCommDlg_API BOOL IsCtrlThemed()
 	return FALSE;
 }
 
+LFCommDlg_API void DrawControlBorder(CWnd* pWnd)
+{
+	CRect rect;
+	pWnd->GetWindowRect(rect);
+
+	rect.bottom -= rect.top;
+	rect.right -= rect.left;
+	rect.left = rect.top = 0;
+
+	CWindowDC dc(pWnd);
+
+	LFApplication* pApp = (LFApplication*)AfxGetApp();
+	if (pApp)
+		if (pApp->m_ThemeLibLoaded)
+			if (pApp->zIsThemeActive())
+			{
+				HTHEME hTheme = pApp->zOpenThemeData(pWnd->GetSafeHwnd(), VSCLASS_LISTBOX);
+				if (hTheme)
+				{
+					CRect rectClient(rect);
+					rectClient.DeflateRect(2, 2);
+					dc.ExcludeClipRect(rectClient);
+
+					pApp->zDrawThemeBackground(hTheme, dc, LBCP_BORDER_NOSCROLL, pWnd->IsWindowEnabled() ? GetFocus()==pWnd->GetSafeHwnd() ? LBPSN_FOCUSED : LBPSN_NORMAL : LBPSN_DISABLED, rect, rect);
+					pApp->zCloseThemeData(hTheme);
+
+					return;
+				}
+			}
+
+	dc.Draw3dRect(rect, GetSysColor(COLOR_3DSHADOW), GetSysColor(COLOR_3DHIGHLIGHT));
+	rect.DeflateRect(1, 1);
+	dc.Draw3dRect(rect, 0x000000, GetSysColor(COLOR_3DFACE));
+}
+
 LFCommDlg_API void LFImportFolder(char* StoreID, CWnd* pParentWnd)
 {
 	CString caption;

@@ -321,7 +321,7 @@ int CTagcloudView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	if ((theApp.m_ThemeLibLoaded) && (theApp.OSVersion>=OS_Vista))
 	{
-		theApp.zSetWindowTheme(GetSafeHwnd(), L"explorer", NULL);
+		theApp.zSetWindowTheme(GetSafeHwnd(), L"EXPLORER", NULL);
 		hTheme = theApp.zOpenThemeData(GetSafeHwnd(), VSCLASS_LISTVIEW);
 	}
 

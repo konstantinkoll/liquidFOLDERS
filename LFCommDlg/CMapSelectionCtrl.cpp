@@ -3,7 +3,7 @@
 //
 
 #include "stdafx.h"
-#include "CMapSelectionCtrl.h"
+#include "LFCommDlg.h"
 #include "Resource.h"
 
 
@@ -126,8 +126,7 @@ BOOL CMapSelectionCtrl::OnEraseBkgnd(CDC* /*pDC*/)
 
 void CMapSelectionCtrl::OnNcPaint()
 {
-	if (GetStyle() & WS_BORDER)
-		CMFCVisualManager::GetInstance()->OnDrawControlBorder(this);
+	DrawControlBorder(this);
 }
 
 void CMapSelectionCtrl::OnPaint()

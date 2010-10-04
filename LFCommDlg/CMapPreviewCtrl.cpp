@@ -3,8 +3,7 @@
 //
 
 #include "stdafx.h"
-#include "CMapPreviewCtrl.h"
-#include "LFApplication.h"
+#include "LFCommDlg.h"
 #include "Resource.h"
 
 
@@ -90,8 +89,7 @@ BOOL CMapPreviewCtrl::OnEraseBkgnd(CDC* /*pDC*/)
 
 void CMapPreviewCtrl::OnNcPaint()
 {
-	if (GetStyle() & WS_BORDER)
-		CMFCVisualManager::GetInstance()->OnDrawControlBorder(this);
+	DrawControlBorder(this);
 }
 
 void CMapPreviewCtrl::OnPaint()

@@ -3,7 +3,7 @@
 //
 
 #include "stdafx.h"
-#include "CInspectorGrid.h"
+#include "LFCommDlg.h"
 
 
 // CInspectorGrid
@@ -68,9 +68,15 @@ void CInspectorGrid::CreateItalicFont()
 
 
 BEGIN_MESSAGE_MAP(CInspectorGrid, CMFCPropertyGridCtrl)
+	ON_WM_NCPAINT()
 	ON_MESSAGE(WM_SETFONT, OnSetFont)
 	ON_WM_CONTEXTMENU()
 END_MESSAGE_MAP()
+
+void CInspectorGrid::OnNcPaint()
+{
+	DrawControlBorder(this);
+}
 
 LRESULT CInspectorGrid::OnSetFont(WPARAM wParam, LPARAM lParam)
 {

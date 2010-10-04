@@ -80,7 +80,7 @@ BOOL LFBrowseForFolderDlg::OnInitDialog()
 
 	if ((p_App->m_ThemeLibLoaded) && (p_App->OSVersion>=OS_Vista))
 	{
-		p_App->zSetWindowTheme(m_wndExplorerTree, L"explorer", NULL);
+		p_App->zSetWindowTheme(m_wndExplorerTree, L"EXPLORER", NULL);
 		m_wndExplorerTree.ModifyStyle(0, TVS_TRACKSELECT);
 	}
 

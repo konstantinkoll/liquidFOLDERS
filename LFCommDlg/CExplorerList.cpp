@@ -184,7 +184,7 @@ int CExplorerList::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	if ((p_App->m_ThemeLibLoaded) && (p_App->OSVersion>=OS_Vista))
 	{
-		p_App->zSetWindowTheme(GetSafeHwnd(), L"explorer", NULL);
+		p_App->zSetWindowTheme(GetSafeHwnd(), L"EXPLORER", NULL);
 		hTheme = p_App->zOpenThemeData(GetSafeHwnd(), VSCLASS_LISTVIEW);
 	}
 

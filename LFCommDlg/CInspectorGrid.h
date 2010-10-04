@@ -23,6 +23,7 @@ public:
 protected:
 	CFont m_fontItalic;
 
+	afx_msg void OnNcPaint();
 	afx_msg LRESULT OnSetFont(WPARAM, LPARAM);
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	DECLARE_MESSAGE_MAP()
