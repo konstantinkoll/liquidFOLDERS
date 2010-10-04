@@ -951,8 +951,26 @@ void CExplorerTree::OnEndLabelEdit(NMHDR* pNMHDR, LRESULT* pResult)
 			CString Name;
 			edit->GetWindowText(Name);
 			if (!Name.IsEmpty())
-				if (FAILED(pItem->pParentFolder->SetNameOf(GetParent()->GetSafeHwnd(), pItem->pidlRel, Name, SHGDN_NORMAL, NULL)))
+			{
+				LPITEMIDLIST pidlRel = NULL;
+				if (SUCCEEDED(pItem->pParentFolder->SetNameOf(GetParent()->GetSafeHwnd(), pItem->pidlRel, Name, SHGDN_NORMAL, &pidlRel)))
+				{
+					LPITEMIDLIST pidlParent = NULL;
+					p_App->GetShellManager()->GetParentItem(pItem->pidlFQ, pidlParent);
+
+					p_App->GetShellManager()->FreeItem(pItem->pidlFQ);
+					p_App->GetShellManager()->FreeItem(pItem->pidlRel);
+
+					pItem->pidlFQ = p_App->GetShellManager()->ConcatenateItem(pidlParent, pidlRel);
+					pItem->pidlRel = pidlRel;
+
+					p_App->GetShellManager()->FreeItem(pidlParent);
+				}
+				else
+				{
 					*pResult = FALSE;
+				}
+			}
 		}
 	}
 }

@@ -746,7 +746,10 @@ void CTreeView::DestroyEdit(BOOL Accept)
 						{
 							LPITEMIDLIST pidlParent = NULL;
 							theApp.GetShellManager()->GetParentItem(cell->pItem->pidlFQ, pidlParent);
+
 							SetItem(item.y, item.x, pidlRel, theApp.GetShellManager()->ConcatenateItem(pidlParent, pidlRel), cell->Flags);
+
+							theApp.GetShellManager()->FreeItem(pidlParent);
 						}
 
 						pParentFolder->Release();
