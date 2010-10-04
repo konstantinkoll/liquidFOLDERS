@@ -168,17 +168,22 @@ void CTreeView::SetRoot(LPITEMIDLIST pidl, BOOL Update)
 
 	if (SUCCEEDED(hr))
 	{
-		InsertItem(0, 0, pParentFolder, theApp.GetShellManager()->CopyItem(pidlRel), theApp.GetShellManager()->CopyItem(pidl), CF_CHECKED);
-		if (pParentFolder)
-			pParentFolder->Release();
-
 		if (!Update)
 		{
+			InsertItem(0, 0, pParentFolder, theApp.GetShellManager()->CopyItem(pidlRel), theApp.GetShellManager()->CopyItem(pidl), CF_CHECKED);
+
 			for (UINT a=0; a<m_Cols; a++)
 				AutosizeColumn(a);
 
 			m_Selected.x = m_Selected.y = 0;
 		}
+		else
+		{
+			SetItem(0, 0, theApp.GetShellManager()->CopyItem(pidlRel), theApp.GetShellManager()->CopyItem(pidl), m_Tree->Flags);
+		}
+
+		if (pParentFolder)
+		pParentFolder->Release();
 	}
 
 	m_wndHeader.ModifyStyle(HDS_HIDDEN, 0);
@@ -309,6 +314,9 @@ void CTreeView::SetItem(UINT row, UINT col, LPITEMIDLIST pidlRel, LPITEMIDLIST p
 	ASSERT(row<m_Rows);
 	ASSERT(col<MaxColumns);
 
+	if (!pidlRel)
+		return;
+
 	if (col>=m_Cols)
 		m_Cols = col+1;
 
@@ -322,9 +330,6 @@ void CTreeView::SetItem(UINT row, UINT col, LPITEMIDLIST pidlRel, LPITEMIDLIST p
 		theApp.GetShellManager()->FreeItem(cell->pItem->pidlFQ);
 		theApp.GetShellManager()->FreeItem(cell->pItem->pidlRel);
 	}
-
-	if (!pidlRel)
-		return;
 
 	cell->Flags = Flags;
 	cell->pItem->pidlFQ = pidlFQ ? pidlFQ : theApp.GetShellManager()->CopyItem(pidlRel);
@@ -614,7 +619,8 @@ void CTreeView::ExecuteContextMenu(CPoint item, LPCSTR verb)
 	DestroyEdit();
 
 	Cell* cell = &m_Tree[MAKEPOSI(item)];
-	ASSERT(cell->pItem);
+	if (!cell->pItem)
+		return;
 
 	IShellFolder* pParentFolder = NULL;
 	if (FAILED(SHBindToParent(cell->pItem->pidlFQ, IID_IShellFolder, (void**)&pParentFolder, NULL)))
@@ -714,9 +720,41 @@ void CTreeView::DestroyEdit(BOOL Accept)
 {
 	if (p_Edit)
 	{
-		p_Edit->DestroyWindow();
-		delete p_Edit;
+		CPoint item = m_EditLabel;
+		if ((item.x==-1) || (item.y==-1))
+			item = m_Selected;
+
+		CEdit* victim = p_Edit;
 		p_Edit = NULL;
+
+		CString Name;
+		victim->GetWindowText(Name);
+		victim->DestroyWindow();
+		delete victim;
+
+		if ((Accept) && (!Name.IsEmpty()) && (item.x!=-1) && (item.y!=-1))
+		{
+			Cell* cell = &m_Tree[MAKEPOSI(item)];
+			if (cell->pItem)
+				if (Name!=cell->pItem->Name)
+				{
+					IShellFolder* pParentFolder = NULL;
+					if (SUCCEEDED(SHBindToParent(cell->pItem->pidlFQ, IID_IShellFolder, (void**)&pParentFolder, NULL)))
+					{
+						LPITEMIDLIST pidlRel = NULL;
+						if (SUCCEEDED(pParentFolder->SetNameOf(m_hWnd, cell->pItem->pidlRel, Name, SHGDN_NORMAL, &pidlRel)))
+						{
+							LPITEMIDLIST pidlParent = NULL;
+							theApp.GetShellManager()->GetParentItem(cell->pItem->pidlFQ, pidlParent);
+							SetItem(item.y, item.x, pidlRel, theApp.GetShellManager()->ConcatenateItem(pidlParent, pidlRel), cell->Flags);
+						}
+
+						pParentFolder->Release();
+					}
+				}
+		}
+
+		m_EditLabel.x = m_EditLabel.y = -1;
 	}
 }
 
