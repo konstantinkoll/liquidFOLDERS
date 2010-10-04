@@ -117,6 +117,7 @@ protected:
 	afx_msg void OnBeginDrag(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnItemChanging(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnItemClick(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnDestroyEdit();
 	afx_msg LRESULT OnChooseProperty(WPARAM wParam, LPARAM lParam);
 	DECLARE_MESSAGE_MAP()
 
@@ -130,5 +131,5 @@ private:
 	CString GetColumnCaption(UINT col);
 	void UpdateColumnCaption(UINT col);
 	void AutosizeColumn(UINT col);
-	void DestroyEdit();
+	void DestroyEdit(BOOL Accept=FALSE);
 };

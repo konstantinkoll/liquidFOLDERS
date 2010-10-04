@@ -80,6 +80,17 @@ BOOL CTreeView::PreTranslateMessage(MSG* pMsg)
 {
 	switch (pMsg->message)
 	{
+	case WM_KEYDOWN:
+		if (p_Edit)
+			switch (pMsg->wParam)
+			{
+			case VK_RETURN:
+				DestroyEdit(TRUE);
+			case VK_ESCAPE:
+				DestroyEdit();
+				return TRUE;
+			}
+		break;
 	case WM_LBUTTONDOWN:
 	case WM_RBUTTONDOWN:
 	case WM_MBUTTONDOWN:
@@ -226,7 +237,6 @@ void CTreeView::ShowProperties(CPoint item)
 
 void CTreeView::AutosizeColumns()
 {
-	DestroyEdit();
 	m_wndHeader.SetRedraw(FALSE);
 
 	for (UINT col=0; col<m_Cols; col++)
@@ -252,7 +262,7 @@ void CTreeView::EditLabel(CPoint item)
 
 	wchar_t* Name = m_Tree[MAKEPOSI(item)].pItem->Name;
 
-	CRect rect(x+m_CheckboxSize.cx+m_IconSize.cx+GUTTER+BORDER+2*MARGIN-4, y, x+m_ColumnWidth[item.x], y+m_RowHeight);
+	CRect rect(x+m_CheckboxSize.cx+m_IconSize.cx+GUTTER+BORDER+2*MARGIN-5, y, x+m_ColumnWidth[item.x], y+m_RowHeight);
 
 	p_Edit = new CEdit();
 	p_Edit->Create(WS_CHILD | WS_VISIBLE | WS_BORDER | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | ES_AUTOHSCROLL, rect, this, 2);
@@ -700,7 +710,7 @@ void CTreeView::AutosizeColumn(UINT col)
 		}
 }
 
-void CTreeView::DestroyEdit()
+void CTreeView::DestroyEdit(BOOL Accept)
 {
 	if (p_Edit)
 	{
@@ -732,6 +742,7 @@ BEGIN_MESSAGE_MAP(CTreeView, CWnd)
 	ON_NOTIFY(HDN_BEGINDRAG, 1, OnBeginDrag)
 	ON_NOTIFY(HDN_ITEMCHANGING, 1, OnItemChanging)
 	ON_NOTIFY(HDN_ITEMCLICK, 1, OnItemClick)
+	ON_EN_KILLFOCUS(2, OnDestroyEdit)
 	ON_MESSAGE(IDD_CHOOSEPROPERTY, OnChooseProperty)
 END_MESSAGE_MAP()
 
@@ -1291,7 +1302,7 @@ void CTreeView::OnSetFocus(CWnd* /*pOldWnd*/)
 	InvalidateItem(m_Selected);
 }
 
-void CTreeView::OnKillFocus(CWnd* pNewWnd)
+void CTreeView::OnKillFocus(CWnd* /*pNewWnd*/)
 {
 	InvalidateItem(m_Selected);
 }
@@ -1328,6 +1339,11 @@ void CTreeView::OnItemClick(NMHDR* pNMHDR, LRESULT* pResult)
 		PostMessage(IDD_CHOOSEPROPERTY, (WPARAM)pHdr->iItem);
 
 	*pResult = NULL;
+}
+
+void CTreeView::OnDestroyEdit()
+{
+	DestroyEdit(TRUE);
 }
 
 LRESULT CTreeView::OnChooseProperty(WPARAM wParam, LPARAM /*lParam*/)
