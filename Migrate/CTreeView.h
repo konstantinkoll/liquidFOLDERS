@@ -57,9 +57,11 @@ public:
 	void DeleteFolder(CPoint item=CPoint(-1, -1));
 	void ShowProperties(CPoint item=CPoint(-1, -1));
 	void AutosizeColumns();
+	void EditLabel(CPoint item=CPoint(-1, -1));
 
 protected:
 	Cell* m_Tree;
+	CEdit* p_Edit;
 	CTooltipHeader m_wndHeader;
 	int m_ColumnWidth[MaxColumns];
 	int m_ColumnMapping[MaxColumns];
@@ -76,6 +78,7 @@ protected:
 	CSize m_CheckboxSize;
 	CPoint m_Selected;
 	CPoint m_Hot;
+	CPoint m_EditLabel;
 	BOOL m_CheckboxHot;
 	BOOL m_CheckboxPressed;
 	BOOL m_Hover;
@@ -127,4 +130,5 @@ private:
 	CString GetColumnCaption(UINT col);
 	void UpdateColumnCaption(UINT col);
 	void AutosizeColumn(UINT col);
+	void DestroyEdit();
 };

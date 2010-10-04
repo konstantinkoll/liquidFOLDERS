@@ -26,11 +26,13 @@
 CTreeView::CTreeView()
 {
 	m_Tree = NULL;
+	p_Edit = NULL;
 	m_Allocated = m_Rows = m_Cols = 0;
 	hThemeList = hThemeButton = NULL;
 	m_Selected.x = m_Selected.y = m_Hot.x = m_Hot.y = -1;
 	m_CheckboxHot = m_CheckboxPressed = m_Hover = FALSE;
 	m_pContextMenu2 = NULL;
+	m_EditLabel = CPoint(-1, -1);
 
 	for (UINT a=0; a<MaxColumns; a++)
 		m_ColumnMapping[a] = -1;
@@ -41,6 +43,8 @@ CTreeView::CTreeView()
 
 CTreeView::~CTreeView()
 {
+	DestroyEdit();
+
 	if (pDesktop)
 		pDesktop->Release();
 }
@@ -113,6 +117,7 @@ void CTreeView::AdjustLayout()
 
 void CTreeView::ClearRoot()
 {
+	DestroyEdit();
 	FreeTree();
 	m_Selected.x = m_Selected.y = m_Hot.x = m_Hot.y = -1;
 	m_CheckboxHot = m_CheckboxPressed = FALSE;
@@ -126,6 +131,8 @@ void CTreeView::ClearRoot()
 
 void CTreeView::SetRoot(LPITEMIDLIST pidl, BOOL Update)
 {
+	DestroyEdit();
+
 	if (!Update)
 	{
 		FreeTree();
@@ -175,6 +182,8 @@ void CTreeView::SetBranchCheck(BOOL Check, CPoint item)
 {
 	if ((item.x==-1) || (item.y==-1))
 		item = m_Selected;
+	if ((item.x==-1) || (item.y==-1) || (item.x>=(int)m_Cols) || (item.y>=(int)m_Rows))
+		return;
 
 	UINT LastRow = GetChildRect(item);
 	if (Check)
@@ -217,6 +226,7 @@ void CTreeView::ShowProperties(CPoint item)
 
 void CTreeView::AutosizeColumns()
 {
+	DestroyEdit();
 	m_wndHeader.SetRedraw(FALSE);
 
 	for (UINT col=0; col<m_Cols; col++)
@@ -226,6 +236,30 @@ void CTreeView::AutosizeColumns()
 
 	m_wndHeader.SetRedraw(TRUE);
 	m_wndHeader.Invalidate();
+}
+
+void CTreeView::EditLabel(CPoint item)
+{
+	if ((item.x==-1) || (item.y==-1))
+		item = m_Selected;
+	if ((item.x==-1) || (item.y==-1) || (item.x>=(int)m_Cols) || (item.y>=(int)m_Rows))
+		return;
+
+	int y = m_HeaderHeight+item.y*m_RowHeight;
+	int x = 0;
+	for (int a=0; a<item.x; a++)
+		x += m_ColumnWidth[a];
+
+	wchar_t* Name = m_Tree[MAKEPOSI(item)].pItem->Name;
+
+	CRect rect(x+m_CheckboxSize.cx+m_IconSize.cx+GUTTER+BORDER+2*MARGIN-4, y, x+m_ColumnWidth[item.x], y+m_RowHeight);
+
+	p_Edit = new CEdit();
+	p_Edit->Create(WS_CHILD | WS_VISIBLE | WS_BORDER | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | ES_AUTOHSCROLL, rect, this, 2);
+	p_Edit->SetWindowText(Name);
+	p_Edit->SetSel(0, wcslen(Name));
+	p_Edit->SetFont(&theApp.m_DefaultFont);
+	p_Edit->SetFocus();
 }
 
 BOOL CTreeView::InsertRow(UINT Row)
@@ -555,6 +589,7 @@ void CTreeView::SelectItem(CPoint Item)
 	InvalidateItem(m_Selected);
 	InvalidateItem(Item);
 	m_Selected = Item;
+	m_EditLabel = CPoint(-1, -1);
 
 	NotifyOwner();
 }
@@ -563,8 +598,10 @@ void CTreeView::ExecuteContextMenu(CPoint item, LPCSTR verb)
 {
 	if ((item.x==-1) || (item.y==-1))
 		item = m_Selected;
-	if ((item.x==-1) || (item.y==-1))
+	if ((item.x==-1) || (item.y==-1) || (item.x>=(int)m_Cols) || (item.y>=(int)m_Rows))
 		return;
+
+	DestroyEdit();
 
 	Cell* cell = &m_Tree[MAKEPOSI(item)];
 	ASSERT(cell->pItem);
@@ -632,6 +669,8 @@ void CTreeView::UpdateColumnCaption(UINT col)
 
 void CTreeView::AutosizeColumn(UINT col)
 {
+	DestroyEdit();
+
 	int Width = 0;
 	for (UINT row=0; row<m_Rows; row++)
 		if (m_Tree[MAKEPOS(row, col)].pItem)
@@ -659,6 +698,16 @@ void CTreeView::AutosizeColumn(UINT col)
 			HdItem.pszText = caption.GetBuffer();
 			m_wndHeader.InsertItem(idx, &HdItem);
 		}
+}
+
+void CTreeView::DestroyEdit()
+{
+	if (p_Edit)
+	{
+		p_Edit->DestroyWindow();
+		delete p_Edit;
+		p_Edit = NULL;
+	}
 }
 
 
@@ -992,18 +1041,24 @@ void CTreeView::OnMouseHover(UINT nFlags, CPoint point)
 {
 	if ((nFlags & (MK_LBUTTON | MK_MBUTTON | MK_RBUTTON | MK_XBUTTON1 | MK_XBUTTON2))==0)
 	{
-		if ((m_Hot.x!=-1) && (m_Hot.y!=-1)  /*&& (!GetEditControl())*/)
-			if (!m_TooltipCtrl.IsWindowVisible())
+		if ((m_Hot.x!=-1) && (m_Hot.y!=-1) && (!p_Edit))
+			if (m_Hot==m_EditLabel)
 			{
-				HICON hIcon = NULL;
-				CSize size(0, 0);
-				CString caption;
-				CString hint;
-				TooltipDataFromPIDL(m_Tree[MAKEPOSI(m_Hot)].pItem->pidlFQ, &theApp.m_SystemImageListLarge, hIcon, size, caption, hint);
-
-				ClientToScreen(&point);
-				m_TooltipCtrl.Track(point, hIcon, size, caption, hint);
+				m_TooltipCtrl.Deactivate();
+				EditLabel(m_EditLabel);
 			}
+			else
+				if (!m_TooltipCtrl.IsWindowVisible())
+				{
+					HICON hIcon = NULL;
+					CSize size(0, 0);
+					CString caption;
+					CString hint;
+					TooltipDataFromPIDL(m_Tree[MAKEPOSI(m_Hot)].pItem->pidlFQ, &theApp.m_SystemImageListLarge, hIcon, size, caption, hint);
+
+					ClientToScreen(&point);
+					m_TooltipCtrl.Track(point, hIcon, size, caption, hint);
+				}
 	}
 	else
 	{
@@ -1025,7 +1080,14 @@ void CTreeView::OnLButtonDown(UINT /*nFlags*/, CPoint point)
 	CPoint Item;
 	if (HitTest(point, &Item, &m_CheckboxHot))
 	{
-		SelectItem(Item);
+		if (Item==m_Selected)
+		{
+			m_EditLabel = m_Selected;
+		}
+		else
+		{
+			SelectItem(Item);
+		}
 
 		if (m_CheckboxHot)
 		{
@@ -1122,6 +1184,9 @@ void CTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 		}
 	}
 
+	if ((item.x==-1) || (item.y==-1) || (item.x>=(int)m_Cols) || (item.y>=(int)m_Rows))
+		return;
+
 	Cell* cell = &m_Tree[MAKEPOSI(item)];
 	if (!cell->pItem)
 		return;
@@ -1189,7 +1254,7 @@ void CTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 
 						if (strcmp(Verb, "rename")==0)
 						{
-							//EditLabel(hItem);
+							EditLabel(item);
 						}
 						else
 						{
@@ -1226,7 +1291,7 @@ void CTreeView::OnSetFocus(CWnd* /*pOldWnd*/)
 	InvalidateItem(m_Selected);
 }
 
-void CTreeView::OnKillFocus(CWnd* /*pNewWnd*/)
+void CTreeView::OnKillFocus(CWnd* pNewWnd)
 {
 	InvalidateItem(m_Selected);
 }

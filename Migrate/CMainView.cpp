@@ -96,6 +96,7 @@ BEGIN_MESSAGE_MAP(CMainView, CWnd)
 	ON_COMMAND(ID_VIEW_INCLUDEBRANCH, OnIncludeBranch)
 	ON_COMMAND(ID_VIEW_EXCLUDEBRANCH, OnExcludeBranch)
 	ON_COMMAND(ID_VIEW_OPEN, OnOpen)
+	ON_COMMAND(ID_VIEW_RENAME, OnRename)
 	ON_COMMAND(ID_VIEW_DELETE, OnDelete)
 	ON_COMMAND(ID_VIEW_PROPERTIES, OnProperties)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_VIEW_SELECTROOT, ID_VIEW_PROPERTIES, OnUpdateTaskbar)
@@ -185,6 +186,11 @@ void CMainView::OnExcludeBranch()
 void CMainView::OnOpen()
 {
 	m_wndTree.OpenFolder();
+}
+
+void CMainView::OnRename()
+{
+	m_wndTree.EditLabel();
 }
 
 void CMainView::OnDelete()
