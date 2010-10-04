@@ -748,6 +748,7 @@ void CTreeView::DestroyEdit(BOOL Accept)
 							theApp.GetShellManager()->GetParentItem(cell->pItem->pidlFQ, pidlParent);
 
 							SetItem(item.y, item.x, pidlRel, theApp.GetShellManager()->ConcatenateItem(pidlParent, pidlRel), cell->Flags);
+							InvalidateItem(item);
 
 							theApp.GetShellManager()->FreeItem(pidlParent);
 						}
