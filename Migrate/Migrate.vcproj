@@ -393,6 +393,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\DeleteFilesDlg.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\Migrate.cpp"
 				>
 			</File>
@@ -456,6 +460,10 @@
 			</File>
 			<File
 				RelativePath=".\CTreeView.h"
+				>
+			</File>
+			<File
+				RelativePath=".\DeleteFilesDlg.h"
 				>
 			</File>
 			<File

@@ -40,10 +40,11 @@
 #define IDD_BOTTOMAREA                  2000
 #define IDC_MIGRATE                     2001
 #define IDC_SIMULATE                    2002
-#define IDC_DELETEIMPORTED              2003
+#define IDC_DELETESOURCE                2003
 #define IDD_CHOOSEFOLDER                2100
 #define IDD_CHOOSEPROPERTY              2200
 #define IDC_ATTRIBUTES                  2201
+#define IDD_DELETEFILES                 2300
 
 // Next default values for new objects
 // 
@@ -51,7 +52,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        2009
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         2013
+#define _APS_NEXT_CONTROL_VALUE         2014
 #define _APS_NEXT_SYMED_VALUE           2007
 #endif
 #endif

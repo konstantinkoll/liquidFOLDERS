@@ -7,7 +7,8 @@
 #include "MigrateWnd.h"
 #include "Resource.h"
 #include "LFCore.h"
-#include <io.h>
+#include "DeleteFilesDlg.h"
+//#include <io.h>
 
 
 CMigrateWnd::CMigrateWnd()
@@ -141,6 +142,14 @@ void CMigrateWnd::OnSelectRoot()
 
 void CMigrateWnd::OnMigrate()
 {
+	// Simulate
+	if (((CButton*)m_wndBottomArea.GetDlgItem(IDC_SIMULATE))->GetCheck())
+	{
+		MessageBox(_T("Not implemented!"));
+		return;
+	}
+
+	// Do the real McCoy
 	if (m_wndStore.IsEmpty())
 	{
 		LFChooseStoreDlg dlg(this, LFCSD_Mounted);
@@ -150,12 +159,37 @@ void CMigrateWnd::OnMigrate()
 		m_wndStore.SetItem(dlg.StoreID);
 	}
 
+	char StoreID[LFKeySize];
+	if (!m_wndStore.GetStoreID(StoreID))
+	{
+		LFErrorBox(LFStoreNotFound, m_hWnd);
+		return;
+	}
+
+	LFItemDescriptor* it = LFAllocItemDescriptor();
+	LFItemTemplateDlg dlg(this, it, StoreID);
+	if (dlg.DoModal()==IDCANCEL)
+		return;
+
+	CButton* btn = (CButton*)m_wndBottomArea.GetDlgItem(IDC_DELETESOURCE);
+	BOOL DeleteSource = btn->GetCheck();
+	if (DeleteSource)
+	{
+		DeleteFilesDlg dlg(this);
+		if (dlg.DoModal()==IDCANCEL)
+			return;
+
+		DeleteSource = dlg.m_Delete;
+		btn->SetCheck(DeleteSource);
+	}
+
 	MessageBox(_T("Not implemented!"));
+	LFFreeItemDescriptor(it);
 }
 
 void CMigrateWnd::OnSimulate()
 {
-	m_wndBottomArea.GetDlgItem(IDC_DELETEIMPORTED)->EnableWindow(!((CButton*)m_wndBottomArea.GetDlgItem(IDC_SIMULATE))->GetCheck());
+	m_wndBottomArea.GetDlgItem(IDC_DELETESOURCE)->EnableWindow(!((CButton*)m_wndBottomArea.GetDlgItem(IDC_SIMULATE))->GetCheck());
 }
 
 LRESULT CMigrateWnd::OnStoresChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)
