@@ -8,7 +8,7 @@
 // LFTooltip
 //
 
-#define LFHOVERTIME     750
+#define LFHOVERTIME     650
 
 class AFX_EXT_CLASS LFTooltip : public CWnd
 {

@@ -86,8 +86,9 @@ protected:
 	virtual LRESULT WindowProc(UINT message, WPARAM wParam, LPARAM lParam);
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 
-	BOOL InsertRow(UINT Row);
-	//BOOL RemoveRow(UINT Row);
+	BOOL InsertRow(UINT row);
+	//BOOL RemoveRow(UINT row);
+	void UpdateChildPIDLs(UINT row, UINT col);
 	void SetItem(UINT row, UINT col, LPITEMIDLIST pidlRel, LPITEMIDLIST pidlFQ, UINT Flags);
 	UINT InsertItem(UINT row, UINT col, IShellFolder* pParentFolder, LPITEMIDLIST pidlRel, LPITEMIDLIST pidlFQ, UINT Flags);
 	void FreeItem(Cell* cell);

@@ -180,6 +180,7 @@ void CTreeView::SetRoot(LPITEMIDLIST pidl, BOOL Update)
 		else
 		{
 			SetItem(0, 0, theApp.GetShellManager()->CopyItem(pidlRel), theApp.GetShellManager()->CopyItem(pidl), m_Tree->Flags);
+			UpdateChildPIDLs(0, 0);
 		}
 
 		if (pParentFolder)
@@ -277,9 +278,9 @@ void CTreeView::EditLabel(CPoint item)
 	p_Edit->SetFocus();
 }
 
-BOOL CTreeView::InsertRow(UINT Row)
+BOOL CTreeView::InsertRow(UINT row)
 {
-	ASSERT(Row<=m_Rows);
+	ASSERT(row<=m_Rows);
 
 	if (!m_Tree)
 	{
@@ -299,14 +300,42 @@ BOOL CTreeView::InsertRow(UINT Row)
 		m_Allocated += SubsequentAlloc;
 	}
 
-	if (Row<m_Rows)
-		for (UINT a=m_Rows; a>=Row; a--)
+	if (row<m_Rows)
+		for (UINT a=m_Rows; a>=row; a--)
 			memcpy(&m_Tree[MAKEPOS(a+1, 0)], &m_Tree[MAKEPOS(a, 0)], MaxColumns*sizeof(Cell));
 
-	ZeroMemory(&m_Tree[MAKEPOS(Row, 0)], MaxColumns*sizeof(Cell));
+	ZeroMemory(&m_Tree[MAKEPOS(row, 0)], MaxColumns*sizeof(Cell));
 	m_Rows++;
 
 	return TRUE;
+}
+
+void CTreeView::UpdateChildPIDLs(UINT row, UINT col)
+{
+	if (col>=m_Cols-1)
+		return;
+	if (!(m_Tree[MAKEPOS(row, col)].Flags & CF_HASCHILDREN))
+		return;
+
+	UINT LastRow = GetChildRect(CPoint(col, row));
+	LPITEMIDLIST pidlParent = m_Tree[MAKEPOS(row, col)].pItem->pidlFQ;
+
+	while (row<=LastRow)
+	{
+		ItemData* pItem = m_Tree[MAKEPOS(row, col+1)].pItem;
+		if (pItem)
+		{
+			theApp.GetShellManager()->FreeItem(pItem->pidlFQ);
+			pItem->pidlFQ = theApp.GetShellManager()->ConcatenateItem(pidlParent, pItem->pidlRel);
+
+			if (!SHGetPathFromIDList(pItem->pidlFQ, pItem->Path))
+				pItem->Path[0] = L'\0';
+
+			UpdateChildPIDLs(row, col+1);
+		}
+
+		row++;
+	}
 }
 
 void CTreeView::SetItem(UINT row, UINT col, LPITEMIDLIST pidlRel, LPITEMIDLIST pidlFQ, UINT Flags)
@@ -748,6 +777,7 @@ void CTreeView::DestroyEdit(BOOL Accept)
 							theApp.GetShellManager()->GetParentItem(cell->pItem->pidlFQ, pidlParent);
 
 							SetItem(item.y, item.x, pidlRel, theApp.GetShellManager()->ConcatenateItem(pidlParent, pidlRel), cell->Flags);
+							UpdateChildPIDLs(item.y, item.x);
 							InvalidateItem(item);
 
 							theApp.GetShellManager()->FreeItem(pidlParent);
