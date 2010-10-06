@@ -117,18 +117,18 @@ void CFolderItem::GetExtensionTargetInfo(CExtensionTargetInfo& info)
 	info.AddTarget(nti);
 }
 
-NSEItemAttributes CFolderItem::GetAttributes(NSEItemAttributes /*requested*/)
+NSEItemAttributes CFolderItem::GetAttributes(NSEItemAttributes requested)
 {
-	UINT ret = NSEIA_CFOLDERITEM;
+	UINT mask = NSEIA_CFOLDERITEM;
 
 	if (data.Level==LevelStores)
-		ret |= NSEIA_CanRename | NSEIA_CanDelete | NSEIA_HasPropSheet;
+		mask |= NSEIA_CanRename | NSEIA_CanDelete | NSEIA_HasPropSheet;
 	if (data.Level<LevelAttrValue)
-		ret |= NSEIA_HasSubFolder;
+		mask |= NSEIA_HasSubFolder;
 	if (data.Level>LevelRoot)
-		ret |= NSEIA_DropTarget;
+		mask |= NSEIA_DropTarget;
 
-	return (NSEItemAttributes)ret;
+	return (NSEItemAttributes)(requested & mask);
 }
 
 void CFolderItem::Serialize(CArchive& ar)

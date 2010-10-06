@@ -27,9 +27,11 @@ CFileItem::~CFileItem()
 {
 }
 
-NSEItemAttributes CFileItem::GetAttributes(NSEItemAttributes /*requested*/)
+NSEItemAttributes CFileItem::GetAttributes(NSEItemAttributes requested)
 {
-	return (NSEItemAttributes)(NSEIA_FileSystem /*| NSEIA_CanRename | NSEIA_CanDelete | NSEIA_CanMove | NSEIA_CanCopy*/);
+	const UINT mask = NSEIA_FileSystem;
+
+	return (NSEItemAttributes)(requested & mask);
 }
 
 void CFileItem::Serialize(CArchive& ar)
