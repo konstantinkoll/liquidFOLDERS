@@ -305,7 +305,13 @@ BOOL CExplorerTree::DeletePath(LPWSTR Path)
 
 	CList<HTREEITEM> lstItems;
 	HTREEITEM hItem = GetRootItem();
+	while (hItem)
+	{
+		lstItems.AddTail(hItem);
+		hItem = GetNextSiblingItem(hItem);
+	}
 
+	hItem = lstItems.IsEmpty() ? NULL : lstItems.RemoveHead();
 	while (hItem)
 	{
 		TVITEM tvItem;
@@ -371,7 +377,13 @@ BOOL CExplorerTree::AddPath(LPWSTR Path, LPWSTR Parent)
 
 	CList<HTREEITEM> lstItems;
 	HTREEITEM hItem = GetRootItem();
+	while (hItem)
+	{
+		lstItems.AddTail(hItem);
+		hItem = GetNextSiblingItem(hItem);
+	}
 
+	hItem = lstItems.IsEmpty() ? NULL : lstItems.RemoveHead();
 	while (hItem)
 	{
 		TVITEM tvItem;
@@ -447,7 +459,13 @@ void CExplorerTree::UpdatePath(LPWSTR Path1, LPWSTR Path2, IShellFolder* pDeskto
 {
 	CList<HTREEITEM> lstItems;
 	HTREEITEM hItem = GetRootItem();
+	while (hItem)
+	{
+		lstItems.AddTail(hItem);
+		hItem = GetNextSiblingItem(hItem);
+	}
 
+	hItem = lstItems.IsEmpty() ? NULL : lstItems.RemoveHead();
 	while (hItem)
 	{
 		TVITEM tvItem;
@@ -994,8 +1012,9 @@ LRESULT CExplorerTree::OnShellChange(WPARAM wParam, LPARAM lParam)
 
 		wcscpy_s(Parent1, MAX_PATH, Path1);
 		wchar_t* last = wcsrchr(Parent1, L'\\');
-		if (last>&Parent1[2])
-			*last = '\0';
+		if (last<=&Parent1[2])
+			last = &Parent1[3];
+		*last = '\0';
 
 		if (pidls[1])
 		{
@@ -1003,8 +1022,9 @@ LRESULT CExplorerTree::OnShellChange(WPARAM wParam, LPARAM lParam)
 
 			wcscpy_s(Parent2, MAX_PATH, Path2);
 			last = wcsrchr(Parent2, L'\\');
-			if (last>&Parent2[2])
-				*last = '\0';
+			if (last<=&Parent2[2])
+				last = &Parent2[3];
+			*last = '\0';
 		}
 	}
 
