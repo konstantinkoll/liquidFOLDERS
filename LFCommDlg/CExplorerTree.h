@@ -16,6 +16,13 @@
 
 #define WM_SHELLCHANGE         WM_USER+3
 
+struct ExplorerTreeItemData
+{
+	LPITEMIDLIST pidlFQ;
+	LPITEMIDLIST pidlRel;
+	ULONG dwAttributes;
+};
+
 class AFX_EXT_CLASS CExplorerTree : public CTreeCtrl
 {
 public:
@@ -43,12 +50,12 @@ protected:
 	virtual LRESULT WindowProc(UINT message, WPARAM wParam, LPARAM lParam);
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 
-	CString OnGetItemText(LPAFX_SHELLITEMINFO pItem);
-	int OnGetItemIcon(LPAFX_SHELLITEMINFO pItem, BOOL bSelected);
-	HTREEITEM InsertItem(IShellFolder* pParentFolder, LPITEMIDLIST pidlRel, HTREEITEM hParent=TVI_ROOT, BOOL children=TRUE, LPITEMIDLIST pidlFQ=NULL);
+	CString OnGetItemText(ExplorerTreeItemData* pItem);
+	int OnGetItemIcon(ExplorerTreeItemData* pItem, BOOL bSelected);
+	HTREEITEM InsertItem(LPITEMIDLIST pidlFQ, LPITEMIDLIST pidlRel, ULONG dwAttributes=SFGAO_HASSUBFOLDER, HTREEITEM hParent=TVI_ROOT);
 	HTREEITEM InsertItem(wchar_t* Path, HTREEITEM hParent=TVI_ROOT);
 	BOOL GetChildItems(HTREEITEM hParentItem);
-	void EnumObjects(HTREEITEM hParentItem, IShellFolder* pParentFolder, LPITEMIDLIST pidlParent);
+	void EnumObjects(HTREEITEM hParentItem, LPITEMIDLIST pidlParent);
 	BOOL ChildrenContainPath(HTREEITEM hParentItem, LPWSTR Path);
 	BOOL DeletePath(LPWSTR Path);
 	BOOL AddPath(LPWSTR Path, LPWSTR Parent);
