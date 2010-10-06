@@ -124,9 +124,8 @@ int CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	m_wndTaskbar.AddButton(ID_APP_PURCHASE, 8, TRUE, TRUE);
 	m_wndTaskbar.AddButton(ID_APP_ENTERLICENSEKEY, 9, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_PROMPT, 10, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_SUPPORT, 11, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_ABOUT, 12, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_SUPPORT, 10, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_ABOUT, 11, TRUE, TRUE);
 
 	// Explorer header
 	if (!m_wndExplorerHeader.Create(this, 2))

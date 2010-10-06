@@ -121,7 +121,6 @@ protected:
 	afx_msg void OnAppPurchase();
 	afx_msg void OnAppEnterLicenseKey();
 	afx_msg void OnAppSupport();
-	afx_msg void OnAppPrompt();
 	afx_msg void OnUpdateAppCommands(CCmdUI* pCmdUI);
 	DECLARE_MESSAGE_MAP()
 

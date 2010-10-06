@@ -7,9 +7,8 @@
 #define ID_APP_NEWFILEDROP              202
 #define ID_APP_NEWMIGRATE               203
 #define ID_APP_NEWSTOREMANAGER          204
-#define ID_APP_PROMPT                   205
-#define ID_APP_PURCHASE                 206
-#define ID_APP_ENTERLICENSEKEY          207
+#define ID_APP_PURCHASE                 205
+#define ID_APP_ENTERLICENSEKEY          206
 #define IDB_KEY                         20000
 #define IDB_BACKDROP                    20001
 #define IDB_LOGO                        20002

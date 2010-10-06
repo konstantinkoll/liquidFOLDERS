@@ -21,7 +21,6 @@ BEGIN_MESSAGE_MAP(LFApplication, CWinAppEx)
 	ON_COMMAND(ID_APP_NEWFILEDROP, OnAppNewFileDrop)
 	ON_COMMAND(ID_APP_NEWMIGRATE, OnAppNewMigrate)
 	ON_COMMAND(ID_APP_NEWSTOREMANAGER, OnAppNewStoreManager)
-	ON_COMMAND(ID_APP_PROMPT, OnAppPrompt)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_APP_HELP, ID_APP_ENTERLICENSEKEY, OnUpdateAppCommands)
 END_MESSAGE_MAP()
 
@@ -383,11 +382,6 @@ void LFApplication::OnAppNewMigrate()
 void LFApplication::OnAppNewStoreManager()
 {
 	ShellExecute(m_pActiveWnd->GetSafeHwnd(), _T("open"), path+"StoreManager.exe", NULL, NULL, SW_SHOW);
-}
-
-void LFApplication::OnAppPrompt()
-{
-	ShellExecute(m_pActiveWnd->GetSafeHwnd(), _T("open"), _T("cmd.exe"), NULL, NULL, SW_SHOW);
 }
 
 CString LFApplication::GetGlobalRegPath()
