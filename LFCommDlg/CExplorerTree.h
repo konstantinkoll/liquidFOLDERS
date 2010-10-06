@@ -59,6 +59,7 @@ protected:
 	BOOL ChildrenContainPath(HTREEITEM hParentItem, LPWSTR Path);
 	BOOL DeletePath(LPWSTR Path);
 	BOOL AddPath(LPWSTR Path, LPWSTR Parent);
+	void UpdateChildPIDLs(HTREEITEM hParentItem, LPITEMIDLIST pidlParent);
 	void UpdatePath(LPWSTR Path1, LPWSTR Path2, IShellFolder* pDesktop);
 
 	afx_msg void OnDestroy();

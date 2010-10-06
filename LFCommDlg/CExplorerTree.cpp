@@ -418,6 +418,31 @@ BOOL CExplorerTree::AddPath(LPWSTR Path, LPWSTR Parent)
 	return Added;
 }
 
+void CExplorerTree::UpdateChildPIDLs(HTREEITEM hParentItem, LPITEMIDLIST pidlParent)
+{
+	HTREEITEM hItem = GetChildItem(hParentItem);
+
+	while (hItem)
+	{
+		TVITEM tvItem;
+		ZeroMemory(&tvItem, sizeof(tvItem));
+		tvItem.mask = TVIF_PARAM;
+		tvItem.hItem = hItem;
+
+		if (GetItem(&tvItem))
+		{
+			ExplorerTreeItemData* pItem = (ExplorerTreeItemData*)tvItem.lParam;
+
+			p_App->GetShellManager()->FreeItem(pItem->pidlFQ);
+			pItem->pidlFQ = p_App->GetShellManager()->ConcatenateItem(pidlParent, pItem->pidlRel);
+
+			UpdateChildPIDLs(hItem, pItem->pidlFQ);
+		}
+
+		hItem = GetNextSiblingItem(hItem);
+	}
+}
+
 void CExplorerTree::UpdatePath(LPWSTR Path1, LPWSTR Path2, IShellFolder* pDesktop)
 {
 	CList<HTREEITEM> lstItems;
@@ -460,6 +485,7 @@ void CExplorerTree::UpdatePath(LPWSTR Path1, LPWSTR Path2, IShellFolder* pDeskto
 							tvItem.iSelectedImage = OnGetItemIcon(pItem, TRUE);
 
 							SetItem(&tvItem);
+							UpdateChildPIDLs(hItem, pidlFQ);
 
 							pParentFolder->Release();
 						}
@@ -940,6 +966,7 @@ void CExplorerTree::OnEndLabelEdit(NMHDR* pNMHDR, LRESULT* pResult)
 					pItem->pidlFQ = p_App->GetShellManager()->ConcatenateItem(pidlParent, pidlRel);
 					pItem->pidlRel = pidlRel;
 
+					UpdateChildPIDLs(pNMTreeView->item.hItem, pItem->pidlFQ);
 					p_App->GetShellManager()->FreeItem(pidlParent);
 
 					*pResult = TRUE;
