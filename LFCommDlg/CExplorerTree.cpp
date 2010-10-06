@@ -916,19 +916,20 @@ void CExplorerTree::OnEndLabelEdit(NMHDR* pNMHDR, LRESULT* pResult)
 	NMTVDISPINFO* pNMTreeView = (NMTVDISPINFO*)pNMHDR;
 	ExplorerTreeItemData* pItem = (ExplorerTreeItemData*)pNMTreeView->item.lParam;
 
-	*pResult = TRUE;
+	*pResult = FALSE;
 
-/*	if (pItem->pParentFolder)
+	CEdit* edit = GetEditControl();
+	if (edit)
 	{
-		CEdit* edit = GetEditControl();
-		if (edit)
+		CString Name;
+		edit->GetWindowText(Name);
+		if (!Name.IsEmpty())
 		{
-			CString Name;
-			edit->GetWindowText(Name);
-			if (!Name.IsEmpty())
+			IShellFolder* pParentFolder = NULL;
+			if (SUCCEEDED(SHBindToParent(pItem->pidlFQ, IID_IShellFolder, (void**)&pParentFolder, NULL)))
 			{
 				LPITEMIDLIST pidlRel = NULL;
-				if (SUCCEEDED(pItem->pParentFolder->SetNameOf(GetParent()->GetSafeHwnd(), pItem->pidlRel, Name, SHGDN_NORMAL, &pidlRel)))
+				if (SUCCEEDED(pParentFolder->SetNameOf(m_hWnd, pItem->pidlRel, Name, SHGDN_NORMAL, &pidlRel)))
 				{
 					LPITEMIDLIST pidlParent = NULL;
 					p_App->GetShellManager()->GetParentItem(pItem->pidlFQ, pidlParent);
@@ -940,14 +941,14 @@ void CExplorerTree::OnEndLabelEdit(NMHDR* pNMHDR, LRESULT* pResult)
 					pItem->pidlRel = pidlRel;
 
 					p_App->GetShellManager()->FreeItem(pidlParent);
+
+					*pResult = TRUE;
 				}
-				else
-				{
-					*pResult = FALSE;
-				}
+
+				pParentFolder->Release();
 			}
 		}
-	}*/
+	}
 }
 
 LRESULT CExplorerTree::OnShellChange(WPARAM wParam, LPARAM lParam)
