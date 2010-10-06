@@ -501,6 +501,7 @@ BOOL CTreeView::HitTest(CPoint point, CPoint* item, BOOL* cbhot)
 	int row = (point.y>=0) ? point.y/m_RowHeight : -1;
 	int col = -1;
 	int x = 1;
+
 	if (row!=-1)
 	{
 		for (UINT a=0; a<m_Cols; a++)
@@ -912,7 +913,21 @@ void CTreeView::OnPaint()
 	CBitmap* pOldBitmap = dc.SelectObject(&buffer);
 
 	BOOL Themed = IsCtrlThemed();
-	dc.FillSolidRect(rect, Themed ? 0xFFFFFF : GetSysColor(COLOR_WINDOW));
+	COLORREF bkCol = Themed ? 0xFFFFFF : GetSysColor(COLOR_WINDOW);
+	dc.FillSolidRect(rect, bkCol);
+
+/*	if (m_HotColumn!=-1)
+	{
+		int x = 0;
+		for (int col=0; col<m_HotColumn; col++)
+			x += m_ColumnWidth[col];
+
+		COLORREF selCol = GetSysColor(COLOR_HIGHLIGHT);
+		COLORREF col = ((selCol & 0xFF)/12)+((bkCol & 0xFF)*11/12)+
+			(((((selCol>>8) & 0xFF)/12)+(((bkCol>>8) & 0xFF)*11/12))<<8)+
+			(((((selCol>>16) & 0xFF)/12)+(((bkCol>>16) & 0xFF)*11/12))<<16);
+		dc.FillSolidRect(x, rect.top, m_ColumnWidth[m_HotColumn], rect.Height(), col);
+	}*/
 
 	CFont* pOldFont = dc.SelectObject(&theApp.m_DefaultFont);
 
@@ -1076,7 +1091,7 @@ void CTreeView::OnMouseMove(UINT nFlags, CPoint point)
 	BOOL Dragging = (GetCapture()==this);
 	BOOL Pressed = FALSE;
 	CPoint Item(-1, -1);
-	BOOL OnItem = HitTest(point, &Item, Dragging ? &Pressed : &m_CheckboxHot);
+	BOOL OnItem = HitTest(point, &Item,Dragging ? &Pressed : &m_CheckboxHot);
 
 	if (!m_Hover)
 	{
@@ -1097,12 +1112,12 @@ void CTreeView::OnMouseMove(UINT nFlags, CPoint point)
 
 	if (!Dragging)
 	{
+		InvalidateItem(m_Hot);
 		m_Hot = Item;
 
 		if ((OnItem) && (nFlags & MK_RBUTTON))
 		{
 			SetFocus();
-			InvalidateItem(m_Selected);
 			m_Selected = m_Hot;
 		}
 	}
@@ -1114,10 +1129,10 @@ void CTreeView::OnMouseMove(UINT nFlags, CPoint point)
 void CTreeView::OnMouseLeave()
 {
 	m_TooltipCtrl.Deactivate();
+	InvalidateItem(m_Hot);
+
 	m_Hover = FALSE;
 	m_Hot.x = m_Hot.y = -1;
-
-	Invalidate();
 }
 
 void CTreeView::OnMouseHover(UINT nFlags, CPoint point)
