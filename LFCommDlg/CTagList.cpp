@@ -178,6 +178,7 @@ void CTagList::DrawItem(int nID, CDC* pDC)
 	if ((State & LVIS_FOCUSED) && (GetFocus()==this))
 	{
 		rectBounds.DeflateRect(0, 1);
+		pDC->SetBkColor(0x000000);
 		pDC->DrawFocusRect(rectBounds);
 	}
 }
