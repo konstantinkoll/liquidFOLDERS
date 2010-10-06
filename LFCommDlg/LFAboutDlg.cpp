@@ -132,7 +132,15 @@ BOOL LFAboutDlg::OnInitDialog()
 
 	// Ggf. "Abbrechen" verschwinden lassen
 	if (!ShowCancel)
+	{
 		GetDlgItem(IDCANCEL)->ShowWindow(SW_HIDE);
+
+		CRect rect;
+		GetDlgItem(IDCANCEL)->GetWindowRect(rect);
+		ScreenToClient(&rect);
+
+		GetDlgItem(IDOK)->SetWindowPos(NULL, rect.left, rect.top, rect.Width(), rect.Height(), SWP_NOZORDER | SWP_NOACTIVATE);
+	}
 
 	// Lizenz
 	CheckLicenseKey();
