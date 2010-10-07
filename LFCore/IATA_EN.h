@@ -231,7 +231,7 @@ LFCountry Countries_EN[CountryCount_EN] = {
 };
 
 // Airports
-#define AirportCount_EN 8600
+#define AirportCount_EN 8601
 LFAirport Airports_EN[AirportCount_EN] = {
 	{  67, "AAA", "", "Anaa", { 17.355000, -145.508333 } },
 	{   8, "AAB", "", "Arrabury", { 26.690556, 141.047500 } },
@@ -2018,6 +2018,7 @@ LFAirport Airports_EN[AirportCount_EN] = {
 	{ 216, "DRT", "", "Del Rio", { -29.374167, -100.927222 } },
 	{ 216, "DRU", "", "Drummond", { -46.620833, -113.205000 } },
 	{   8, "DRW", "", "Darwin", { 12.414722, 130.876667 } },
+	{ 214, "DSA", "", "Robin Hood Airport", { -53.474722, -1.004444 } },
 	{ 103, "DSC", "", "Dschang", { -5.450000, 10.066944 } },
 	{  78, "DSD", "", "La Desirade", { -16.296944, -61.084444 } },
 	{  60, "DSE", "", "Dessie", { -11.082500, 39.711389 } },

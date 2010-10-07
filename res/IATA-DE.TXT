@@ -1868,6 +1868,7 @@ DRS     Dresden, Deutschland;4;51*7'58"N, 13*46'2"E
 DRT     Del Rio, USA;4;29*22'27"N, 100*55'38"W
 DRU     Drummond, USA;4;46*37'15"N, 113*12'18"W
 DRW     Darwin, Australien;4;12*24'53"S, 130*52'36"E
+DSA     Robin Hood Airport, Groábritannien;5;53*28'29"N, 1*0'16"W
 DSC     Dschang, Kamerun;4;5*26'60"N, 10*4'1"E
 DSD     La Desirade, Guadeloupe;4;16*17'49"N, 61*5'4"W
 DSE     Dessie, Žthiopien;4;11*4'57"N, 39*42'41"E
