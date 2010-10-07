@@ -231,7 +231,7 @@ BOOL LFDialog::OnInitDialog()
 
 	CRect rect;
 	GetClientRect(rect);
-	LastHeight = rect.Height();
+	LastSize = CPoint(rect.Width(), rect.Height());
 
 	AddBottomControl(IDOK);
 	AddBottomControl(IDCANCEL);
@@ -300,8 +300,9 @@ void LFDialog::OnSize(UINT nType, int cx, int cy)
 {
 	CDialog::OnSize(nType, cx, cy);
 
-	int diff = cy-LastHeight;
-	LastHeight = cy;
+	CPoint diff(cx-LastSize.x, cy-LastSize.y);
+	LastSize.x = cx;
+	LastSize.y = cy;
 
 	std::list<CWnd*>::iterator ppWnd = BottomControls.begin();
 	while (ppWnd!=BottomControls.end())
@@ -310,7 +311,7 @@ void LFDialog::OnSize(UINT nType, int cx, int cy)
 		(*ppWnd)->GetWindowRect(rect);
 		ScreenToClient(&rect);
 
-		(*ppWnd)->SetWindowPos(NULL, rect.left, rect.top+diff, rect.Width(), rect.Height(), SWP_NOSIZE | SWP_NOACTIVATE | SWP_NOZORDER);
+		(*ppWnd)->SetWindowPos(NULL, rect.left+diff.x, rect.top+diff.y, rect.Width(), rect.Height(), SWP_NOSIZE | SWP_NOACTIVATE | SWP_NOZORDER);
 		ppWnd++;
 	}
 

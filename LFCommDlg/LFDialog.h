@@ -62,5 +62,5 @@ private:
 	int BackBufferH;
 	HBRUSH hBackgroundBrush;
 	std::list<CWnd*> BottomControls;
-	int LastHeight;
+	CPoint LastSize;
 };
