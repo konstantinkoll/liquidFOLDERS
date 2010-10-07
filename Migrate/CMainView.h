@@ -19,7 +19,7 @@ public:
 
 	int Create(CWnd* _pParentWnd, UINT nID);
 	void ClearRoot();
-	void SetRoot(LPITEMIDLIST pidl, BOOL Update);
+	void SetRoot(LPITEMIDLIST pidl, BOOL Update, BOOL ExpandAll);
 
 protected:
 	CTaskbar m_wndTaskbar;
@@ -39,8 +39,6 @@ protected:
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
 	afx_msg void OnAutosizeAll();
 	afx_msg void OnSelectRoot();
-	afx_msg void OnIncludeBranch();
-	afx_msg void OnExcludeBranch();
 	afx_msg void OnOpen();
 	afx_msg void OnRename();
 	afx_msg void OnDelete();

@@ -182,6 +182,8 @@ int CPIDLDropdownWindow::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	}
 	m_wndList.EnableGroupView(TRUE);
 
+	((CButton*)m_wndBottomArea.GetDlgItem(IDC_EXPANDALL))->SetCheck(theApp.m_ExpandAll);
+
 	IMAGEINFO ii;
 	theApp.m_SystemImageListLarge.GetImageInfo(0, &ii);
 	CDC* dc = GetWindowDC();
@@ -211,12 +213,17 @@ void CPIDLDropdownWindow::OnItemChanged(NMHDR* pNMHDR, LRESULT* /*pResult*/)
 	NM_LISTVIEW* pNMListView = (NM_LISTVIEW*)pNMHDR;
 
 	if ((pNMListView->uChanged & LVIF_STATE) && (pNMListView->uNewState & LVIS_SELECTED))
+	{
+		theApp.m_ExpandAll = ((CButton*)m_wndBottomArea.GetDlgItem(IDC_EXPANDALL))->GetCheck();
 		GetOwner()->SendMessage(WM_SETITEM, NULL, (LPARAM)m_wndList.GetItemData(pNMListView->iItem));
+	}
 }
 
 void CPIDLDropdownWindow::OnChooseFolder()
 {
+	theApp.m_ExpandAll = ((CButton*)m_wndBottomArea.GetDlgItem(IDC_EXPANDALL))->GetCheck();
 	GetOwner()->PostMessage(WM_CLOSEDROPDOWN);
+
 	theApp.m_pMainWnd->SendMessage(WM_COMMAND, ID_VIEW_SELECTROOT);
 }
 

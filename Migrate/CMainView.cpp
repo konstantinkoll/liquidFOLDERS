@@ -50,7 +50,7 @@ void CMainView::ClearRoot()
 	m_wndTree.EnableWindow(FALSE);
 }
 
-void CMainView::SetRoot(LPITEMIDLIST pidl, BOOL Update)
+void CMainView::SetRoot(LPITEMIDLIST pidl, BOOL Update, BOOL ExpandAll)
 {
 	m_IsRootSet = TRUE;
 	m_SelectedHasChildren = m_SelectedHasPropSheet = m_SelectedCanRename = m_SelectedCanDelete = FALSE;
@@ -66,7 +66,7 @@ void CMainView::SetRoot(LPITEMIDLIST pidl, BOOL Update)
 
 	m_wndExplorerHeader.SetText(caption, hint);
 
-	m_wndTree.SetRoot(pidl, Update);
+	m_wndTree.SetRoot(pidl, Update, ExpandAll);
 	m_wndTree.EnableWindow(TRUE);
 }
 
@@ -93,8 +93,6 @@ BEGIN_MESSAGE_MAP(CMainView, CWnd)
 	ON_COMMAND(ID_VIEW_AUTOSIZEALL, OnAutosizeAll)
 	ON_COMMAND(ID_VIEW_SELECTROOT, OnSelectRoot)
 	ON_COMMAND(ID_VIEW_SELECTROOT_TASKBAR, OnSelectRoot)
-	ON_COMMAND(ID_VIEW_INCLUDEBRANCH, OnIncludeBranch)
-	ON_COMMAND(ID_VIEW_EXCLUDEBRANCH, OnExcludeBranch)
 	ON_COMMAND(ID_VIEW_OPEN, OnOpen)
 	ON_COMMAND(ID_VIEW_RENAME, OnRename)
 	ON_COMMAND(ID_VIEW_DELETE, OnDelete)
@@ -114,8 +112,6 @@ int CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 
 	m_wndTaskbar.AddButton(ID_VIEW_SELECTROOT_TASKBAR, 0);
-	m_wndTaskbar.AddButton(ID_VIEW_INCLUDEBRANCH, 1);
-	m_wndTaskbar.AddButton(ID_VIEW_EXCLUDEBRANCH, 2);
 	m_wndTaskbar.AddButton(ID_VIEW_OPEN, 3, TRUE);
 	m_wndTaskbar.AddButton(ID_VIEW_RENAME, 4);
 	m_wndTaskbar.AddButton(ID_VIEW_DELETE, 5);
@@ -172,16 +168,6 @@ void CMainView::OnSelectRoot()
 	GetOwner()->SendMessage(WM_COMMAND, ID_VIEW_SELECTROOT);
 }
 
-void CMainView::OnIncludeBranch()
-{
-	m_wndTree.SetBranchCheck(TRUE);
-}
-
-void CMainView::OnExcludeBranch()
-{
-	m_wndTree.SetBranchCheck(FALSE);
-}
-
 void CMainView::OnOpen()
 {
 	m_wndTree.OpenFolder();
@@ -211,10 +197,6 @@ void CMainView::OnUpdateTaskbar(CCmdUI* pCmdUI)
 		break;
 	case ID_VIEW_SELECTROOT_TASKBAR:
 		pCmdUI->Enable(!m_IsRootSet);
-		break;
-	case ID_VIEW_INCLUDEBRANCH:
-	case ID_VIEW_EXCLUDEBRANCH:
-		pCmdUI->Enable(m_IsRootSet && m_SelectedHasChildren);
 		break;
 	case ID_VIEW_RENAME:
 		pCmdUI->Enable(m_IsRootSet && m_SelectedCanRename);

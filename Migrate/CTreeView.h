@@ -15,9 +15,10 @@
 #define MemoryAlignment     8
 
 #define CF_CHECKED          1
-#define CF_HASCHILDREN      2
-#define CF_HASSIBLINGS      4
-#define CF_ISSIBLING        8
+#define CF_CANEXPAND        2
+#define CF_HASCHILDREN      4
+#define CF_HASSIBLINGS      8
+#define CF_ISSIBLING        16
 
 struct ItemData
 {
@@ -51,7 +52,7 @@ public:
 	BOOL Create(CWnd* _pParentWnd, UINT nID);
 	void AdjustLayout();
 	void ClearRoot();
-	void SetRoot(LPITEMIDLIST pidl, BOOL Update);
+	void SetRoot(LPITEMIDLIST pidl, BOOL Update, BOOL ExpandAll);
 	void SetBranchCheck(BOOL Check, CPoint item=CPoint(-1, -1));
 	void OpenFolder(CPoint item=CPoint(-1, -1));
 	void DeleteFolder(CPoint item=CPoint(-1, -1));
@@ -90,7 +91,7 @@ protected:
 	//BOOL RemoveRow(UINT row);
 	void UpdateChildPIDLs(UINT row, UINT col);
 	void SetItem(UINT row, UINT col, LPITEMIDLIST pidlRel, LPITEMIDLIST pidlFQ, UINT Flags);
-	UINT InsertItem(UINT row, UINT col, IShellFolder* pParentFolder, LPITEMIDLIST pidlRel, LPITEMIDLIST pidlFQ, UINT Flags);
+	UINT EnumObjects(UINT row, UINT col, BOOL ExpandAll);
 	void FreeItem(Cell* cell);
 	void FreeTree();
 	BOOL HitTest(CPoint point, CPoint* item, BOOL* cbhot);

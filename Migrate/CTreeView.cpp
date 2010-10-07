@@ -140,7 +140,7 @@ void CTreeView::ClearRoot()
 	NotifyOwner();
 }
 
-void CTreeView::SetRoot(LPITEMIDLIST pidl, BOOL Update)
+void CTreeView::SetRoot(LPITEMIDLIST pidl, BOOL Update, BOOL ExpandAll)
 {
 	DestroyEdit();
 
@@ -148,42 +148,29 @@ void CTreeView::SetRoot(LPITEMIDLIST pidl, BOOL Update)
 	{
 		FreeTree();
 		InsertRow(0);
+		m_Tree->Flags |= CF_CHECKED;
 
 		for (int col=m_wndHeader.GetItemCount()-1; col>=0; col--)
 			m_wndHeader.DeleteItem(col);
 	}
 
-	HRESULT hr;
 	IShellFolder* pParentFolder = NULL;
 	LPCITEMIDLIST pidlRel = NULL;
-	if (theApp.GetShellManager()->GetItemSize(pidl)==2)
+	if (SUCCEEDED(SHBindToParent(pidl, IID_IShellFolder, (void**)&pParentFolder, &pidlRel)))
 	{
-		pidlRel = theApp.GetShellManager()->CopyItem(pidl);
-		hr = S_OK;
-	}
-	else
-	{
-		hr = SHBindToParent(pidl, IID_IShellFolder, (void**)&pParentFolder, &pidlRel);
-	}
+		SetItem(0, 0, theApp.GetShellManager()->CopyItem(pidlRel), theApp.GetShellManager()->CopyItem(pidl), m_Tree->Flags);
 
-	if (SUCCEEDED(hr))
-	{
 		if (!Update)
 		{
-			InsertItem(0, 0, pParentFolder, theApp.GetShellManager()->CopyItem(pidlRel), theApp.GetShellManager()->CopyItem(pidl), CF_CHECKED);
-
-			for (UINT a=0; a<m_Cols; a++)
-				AutosizeColumn(a);
-
+			EnumObjects(0, 0, ExpandAll);
+			AutosizeColumns();
 			m_Selected.x = m_Selected.y = 0;
 		}
 		else
 		{
-			SetItem(0, 0, theApp.GetShellManager()->CopyItem(pidlRel), theApp.GetShellManager()->CopyItem(pidl), m_Tree->Flags);
 			UpdateChildPIDLs(0, 0);
 		}
 
-		if (pParentFolder)
 		pParentFolder->Release();
 	}
 
@@ -365,15 +352,19 @@ void CTreeView::SetItem(UINT row, UINT col, LPITEMIDLIST pidlRel, LPITEMIDLIST p
 	cell->pItem->pidlRel = pidlRel;
 
 	SHFILEINFO sfi;
-	if (SUCCEEDED(SHGetFileInfo((LPCTSTR)pidlFQ, 0, &sfi, sizeof(sfi), SHGFI_PIDL | SHGFI_SYSICONINDEX | SHGFI_SMALLICON | SHGFI_LINKOVERLAY | SHGFI_DISPLAYNAME)))
+	if (SUCCEEDED(SHGetFileInfo((LPCTSTR)pidlFQ, 0, &sfi, sizeof(sfi), SHGFI_PIDL | SHGFI_SYSICONINDEX | SHGFI_SMALLICON | SHGFI_LINKOVERLAY | SHGFI_DISPLAYNAME | SHGFI_ATTRIBUTES)))
 	{
 		wcscpy_s(cell->pItem->Name, 256, sfi.szDisplayName);
 		cell->pItem->IconIDNormal = sfi.iIcon;
+
+		if ((!(cell->Flags & CF_HASCHILDREN)) && (sfi.dwAttributes & SFGAO_HASSUBFOLDER))
+			cell->Flags |= CF_CANEXPAND;
 	}
 	else
 	{
 		wcscpy_s(cell->pItem->Name, 256, L"?");
 		cell->pItem->IconIDNormal = -1;
+		cell->Flags &= ~CF_CANEXPAND;
 	}
 
 	CDC* pDC = GetWindowDC();
@@ -392,77 +383,91 @@ void CTreeView::SetItem(UINT row, UINT col, LPITEMIDLIST pidlRel, LPITEMIDLIST p
 		cell->pItem->Path[0] = L'\0';
 }
 
-UINT CTreeView::InsertItem(UINT row, UINT col, IShellFolder* pParentFolder, LPITEMIDLIST pidlRel, LPITEMIDLIST pidlFQ, UINT Flags)
+UINT CTreeView::EnumObjects(UINT row, UINT col, BOOL ExpandAll)
 {
+	if (!(m_Tree[MAKEPOS(row, col)].Flags & CF_CANEXPAND))
+		return 0;
+	if (col>=MaxColumns-1)
+		return 0;
+
+	Cell* cell = &m_Tree[MAKEPOS(row, col)];
+	cell->Flags &= ~CF_CANEXPAND;
+
+	IShellFolder* pDesktop = NULL;
+	if (FAILED(SHGetDesktopFolder(&pDesktop)))
+		return 0;
+
+	IShellFolder* pParentFolder = NULL;
+	if (theApp.GetShellManager()->GetItemSize(cell->pItem->pidlFQ)==2)
+	{
+		pParentFolder = pDesktop;
+		pDesktop->AddRef();
+	}
+	else
+		if (FAILED(pDesktop->BindToObject(cell->pItem->pidlFQ, NULL, IID_IShellFolder, (void**)&pParentFolder)))
+		{
+			pDesktop->Release();
+			return 0;
+		}
+
 	UINT Inserted = 0;
 
-	SetItem(row, col, pidlRel, pidlFQ, Flags);
-
-	if (col<MaxColumns-1)
+	IEnumIDList* pEnum;
+	if (SUCCEEDED(pParentFolder->EnumObjects(NULL, SHCONTF_FOLDERS, &pEnum)))
 	{
-		IShellFolder* pFolder;
-		HRESULT hr;
-		if (!pParentFolder)
-		{
-			hr = SHGetDesktopFolder(&pFolder);
-		}
-		else
-		{
-			hr = pDesktop->BindToObject(pidlFQ, NULL, IID_IShellFolder, (void**)&pFolder);
-		}
+		CWaitCursor wait;
 
-		if (SUCCEEDED(hr))
+		BOOL NewRow = FALSE;
+		UINT Flags = ExpandAll ? (cell->Flags & CF_CHECKED) : 0;
+
+		LPITEMIDLIST pidlTemp;
+		while (pEnum->Next(1, &pidlTemp, NULL)==S_OK)
 		{
-			IEnumIDList* pEnum;
-			if (SUCCEEDED(pFolder->EnumObjects(NULL, SHCONTF_FOLDERS, &pEnum)))
+			DWORD dwAttribs = SFGAO_FILESYSANCESTOR | SFGAO_FILESYSTEM;
+			pParentFolder->GetAttributesOf(1, (LPCITEMIDLIST*)&pidlTemp, &dwAttribs);
+
+			if (!(dwAttribs & (SFGAO_FILESYSANCESTOR | SFGAO_FILESYSTEM)))
+				continue;
+
+			SHDESCRIPTIONID did;
+			if (SUCCEEDED(SHGetDataFromIDList(pParentFolder, pidlTemp, SHGDFIL_DESCRIPTIONID, &did, sizeof(SHDESCRIPTIONID))))
 			{
-				BOOL NewRow = FALSE;
-				Flags &= CF_CHECKED;
-
-				LPITEMIDLIST pidlTemp;
-				while (pEnum->Next(1, &pidlTemp, NULL)==S_OK)
-				{
-					DWORD dwAttribs = SFGAO_FILESYSANCESTOR | SFGAO_FILESYSTEM;
-					pFolder->GetAttributesOf(1, (LPCITEMIDLIST*)&pidlTemp, &dwAttribs);
-
-					if (!(dwAttribs & (SFGAO_FILESYSANCESTOR | SFGAO_FILESYSTEM)))
-						continue;
-
-					SHDESCRIPTIONID did;
-					if (SUCCEEDED(SHGetDataFromIDList(pParentFolder, pidlTemp, SHGDFIL_DESCRIPTIONID, &did, sizeof(SHDESCRIPTIONID))))
-					{
-						const CLSID LFNE = { 0x3F2D914F, 0xFE57, 0x414F, { 0x9F, 0x88, 0xA3, 0x77, 0xC7, 0x84, 0x1D, 0xA4 } };
-						if (did.clsid==LFNE)
-							continue;
-					}
-
-					if (NewRow)
-					{
-						for (int a=row+Inserted; a>=0; a--)
-						{
-							m_Tree[MAKEPOS(a, col+1)].Flags |= CF_HASSIBLINGS;
-							if (m_Tree[MAKEPOS(a, col)].Flags & CF_HASCHILDREN)
-								break;
-							m_Tree[MAKEPOS(a, col+1)].Flags |= CF_ISSIBLING;
-						}
-
-						Inserted++;
-						InsertRow(row+Inserted);
-						Flags |= CF_ISSIBLING;
-					}
-					else
-					{
-						m_Tree[MAKEPOS(row, col)].Flags |= CF_HASCHILDREN;
-					}
-
-					Inserted += InsertItem(row+Inserted, col+1, pFolder, pidlTemp, theApp.GetShellManager()->ConcatenateItem(pidlFQ, pidlTemp), Flags);
-					NewRow = TRUE;
-				}
-				pEnum->Release();
+				const CLSID LFNE = { 0x3F2D914F, 0xFE57, 0x414F, { 0x9F, 0x88, 0xA3, 0x77, 0xC7, 0x84, 0x1D, 0xA4 } };
+				if (did.clsid==LFNE)
+					continue;
 			}
-			pFolder->Release();
+
+			if (NewRow)
+			{
+				for (int a=row+Inserted; a>=0; a--)
+				{
+					m_Tree[MAKEPOS(a, col+1)].Flags |= CF_HASSIBLINGS;
+					if (m_Tree[MAKEPOS(a, col)].Flags & CF_HASCHILDREN)
+						break;
+					m_Tree[MAKEPOS(a, col+1)].Flags |= CF_ISSIBLING;
+				}
+
+				Inserted++;
+				InsertRow(row+Inserted);
+				Flags |= CF_ISSIBLING;
+			}
+			else
+			{
+				m_Tree[MAKEPOS(row, col)].Flags |= CF_HASCHILDREN;
+			}
+
+			SetItem(row+Inserted, col+1, pidlTemp, theApp.GetShellManager()->ConcatenateItem(m_Tree[MAKEPOS(row, col)].pItem->pidlFQ, pidlTemp), Flags);
+			if (ExpandAll)
+				Inserted += EnumObjects(row+Inserted, col+1, TRUE);
+
+			NewRow = TRUE;
 		}
+
+		pEnum->Release();
 	}
+
+	pParentFolder->Release();
+	pDesktop->Release();
 
 	return Inserted;
 }
@@ -1023,7 +1028,7 @@ void CTreeView::OnPaint()
 					dc.MoveTo(x+((curCell->Flags & CF_ISSIBLING) ? GUTTER/2 : 0), y+m_RowHeight/2);
 					dc.LineTo(x+GUTTER+BORDER-1, y+m_RowHeight/2);
 
-					if (curCell->Flags & CF_HASCHILDREN)
+					if (curCell->Flags & (CF_HASCHILDREN | CF_CANEXPAND))
 					{
 						int right = x+GUTTER+BORDER+m_CheckboxSize.cx+m_IconSize.cx+2*MARGIN+curCell->pItem->Width+1;
 						if (right<x+m_ColumnWidth[col])
@@ -1178,7 +1183,7 @@ void CTreeView::OnLButtonDown(UINT /*nFlags*/, CPoint point)
 	CPoint Item;
 	if (HitTest(point, &Item, &m_CheckboxHot))
 	{
-		if (Item==m_Selected)
+		if ((Item==m_Selected) && (!m_CheckboxHot))
 		{
 			m_EditLabel = m_Selected;
 		}
@@ -1302,23 +1307,19 @@ void CTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 			UINT uFlags = CMF_NORMAL | CMF_CANRENAME;
 			if (SUCCEEDED(pcm->QueryContextMenu(hPopup, 0, 1, 0x6FFF, uFlags)))
 			{
-				if (cell->Flags & CF_HASCHILDREN)
-				{
-					CString tmpStr = theApp.GetCommandName(ID_VIEW_INCLUDEBRANCH);
-					tmpStr.Insert(0, _T("&"));
-					InsertMenu(hPopup, 0, MF_BYPOSITION, 0x7001, tmpStr);
+				CString tmpStr;
+				ENSURE(tmpStr.LoadString(IDS_INCLUDEBRANCH));
+				InsertMenu(hPopup, 0, MF_BYPOSITION, 0x7001, tmpStr);
 
-					tmpStr = theApp.GetCommandName(ID_VIEW_EXCLUDEBRANCH);
-					tmpStr.Insert(0, _T("&"));
-					InsertMenu(hPopup, 1, MF_BYPOSITION, 0x7002, tmpStr);
+				ENSURE(tmpStr.LoadString(IDS_EXCLUDEBRANCH));
+				InsertMenu(hPopup, 1, MF_BYPOSITION, 0x7002, tmpStr);
 
-					InsertMenu(hPopup, 2, MF_BYPOSITION | MF_SEPARATOR, 0, NULL);
-				}
+				InsertMenu(hPopup, 2, MF_BYPOSITION | MF_SEPARATOR, 0, NULL);
 
 				if (item.x)
 				{
 					CString tmpStr;
-					tmpStr.LoadString(IDS_CHOOSEPROPERTY);
+					ENSURE(tmpStr.LoadString(IDS_CHOOSEPROPERTY));
 					InsertMenu(hPopup, 0, MF_BYPOSITION, 0x7000, tmpStr);
 
 					InsertMenu(hPopup, 1, MF_BYPOSITION | MF_SEPARATOR, 0, NULL);

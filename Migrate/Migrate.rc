@@ -143,12 +143,13 @@ BEGIN
     CONTROL         "&Delete source files",IDC_DELETESOURCE,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,162,9,75,10
 END
 
-IDD_CHOOSEFOLDER DIALOGEX 0, 0, 102, 28
+IDD_CHOOSEFOLDER DIALOGEX 0, 0, 206, 28
 STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN
 EXSTYLE WS_EX_CONTROLPARENT
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "Choose &other folder...",IDOK,7,7,88,14
+    CONTROL         "Expand &all subfolders",IDC_EXPANDALL,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,109,9,90,10
 END
 
 IDD_CHOOSEPROPERTY DIALOGEX 0, 0, 196, 215
@@ -191,6 +192,14 @@ BEGIN
         BOTTOMMARGIN, 21
     END
 
+    IDD_CHOOSEFOLDER, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 199
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 21
+    END
+
     IDD_CHOOSEPROPERTY, DIALOG
     BEGIN
         LEFTMARGIN, 7
@@ -224,8 +233,6 @@ STRINGTABLE
 BEGIN
     ID_VIEW_SELECTROOT_TASKBAR 
                             "Opens a dialog where you can select the root folder to display in the main view below.\nSelect root folder"
-    ID_VIEW_INCLUDEBRANCH   "Includes the selected folder and all subfolders.\nInclude branch"
-    ID_VIEW_EXCLUDEBRANCH   "Excludes the selected folder and all subfolders.\nExclude branch"
     ID_VIEW_OPEN            "Opens the selected folder.\nOpen"
     ID_VIEW_RENAME          "Renames the selected folder.\nRename folder"
     ID_VIEW_DELETE          "Deletes the selected folder.\nDelete folder"
@@ -257,6 +264,8 @@ BEGIN
     IDS_FOLDERCATEGORY4     "Removable storage"
     IDS_NOTHINGTODISPLAY    "There is nothing to display."
     IDS_NOPROPERTY          "Click here to choose a property"
+    IDS_INCLUDEBRANCH       "&Include branch"
+    IDS_EXCLUDEBRANCH       "&Exclude branch"
     IDS_CHOOSEPROPERTY      "&Choose property..."
 END
 

@@ -17,6 +17,7 @@ public:
 	virtual BOOL InitInstance();
 	virtual int ExitInstance();
 
+	BOOL m_ExpandAll;
 	BOOL m_DeleteImported;
 	BOOL m_Simulate;
 

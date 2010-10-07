@@ -209,7 +209,7 @@ void CMigrateWnd::OnRootChanged(NMHDR* /*pNMHDR*/, LRESULT* /*pResult*/)
 	}
 	else
 	{
-		m_wndMainView.SetRoot(m_wndFolder.pidl, FALSE);
+		m_wndMainView.SetRoot(m_wndFolder.pidl, FALSE, theApp.m_ExpandAll);
 	}
 
 	m_wndMainView.SetFocus();
@@ -218,7 +218,7 @@ void CMigrateWnd::OnRootChanged(NMHDR* /*pNMHDR*/, LRESULT* /*pResult*/)
 
 void CMigrateWnd::OnRootUpdate(NMHDR* /*pNMHDR*/, LRESULT* /*pResult*/)
 {
-	m_wndMainView.SetRoot(m_wndFolder.pidl, TRUE);
+	m_wndMainView.SetRoot(m_wndFolder.pidl, TRUE, FALSE);
 
 	PostMessage(WM_KICKIDLE);
 }
