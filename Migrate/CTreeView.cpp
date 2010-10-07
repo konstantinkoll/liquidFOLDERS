@@ -1206,12 +1206,12 @@ void CTreeView::OnLButtonUp(UINT nFlags, CPoint point)
 			if ((Item==m_Selected) && (m_CheckboxPressed))
 				if (nFlags & MK_CONTROL)
 				{
-					SetBranchCheck(!(m_Tree[MAKEPOSI(Item)].Flags & CF_CHECKED), Item);
+					m_Tree[MAKEPOSI(Item)].Flags ^= CF_CHECKED;
+					InvalidateItem(Item);
 				}
 				else
 				{
-					m_Tree[MAKEPOSI(Item)].Flags ^= CF_CHECKED;
-					InvalidateItem(Item);
+					SetBranchCheck(!(m_Tree[MAKEPOSI(Item)].Flags & CF_CHECKED), Item);
 				}
 
 		m_CheckboxPressed = FALSE;
