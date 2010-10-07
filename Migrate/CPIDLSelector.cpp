@@ -79,8 +79,6 @@ void CPIDLDropdownWindow::AddCSIDL(int CSIDL, UINT Category)
 
 void CPIDLDropdownWindow::AddChildren(wchar_t* Path, UINT Category)
 {
-	CShellManager* sm = theApp.GetShellManager();
-
 	IShellFolder* Desktop;
 	if (SUCCEEDED(SHGetDesktopFolder(&Desktop)))
 	{
@@ -90,27 +88,28 @@ void CPIDLDropdownWindow::AddChildren(wchar_t* Path, UINT Category)
 		Desktop->ParseDisplayName(NULL, NULL, Path, &chEaten, &pidl, &dwAttributes);
 		BOOL ParentAdded = AddPIDL(pidl, Category, FALSE);
 
-		IShellFolder* Libraries;
-		if (SUCCEEDED(Desktop->BindToObject(pidl, NULL, IID_IShellFolder, (void**)&Libraries)))
+		IShellFolder* pParentFolder;
+		if (SUCCEEDED(Desktop->BindToObject(pidl, NULL, IID_IShellFolder, (void**)&pParentFolder)))
 		{
 			IEnumIDList* pEnum;
-			if (SUCCEEDED(Libraries->EnumObjects(NULL, SHCONTF_FOLDERS, &pEnum)))
+			if (SUCCEEDED(pParentFolder->EnumObjects(NULL, SHCONTF_FOLDERS, &pEnum)))
 			{
-				LPITEMIDLIST lib;
-				while (pEnum->Next(1, &lib, NULL)==S_OK)
+				LPITEMIDLIST pidlTemp;
+				while (pEnum->Next(1, &pidlTemp, NULL)==S_OK)
 				{
-					AddPIDL(sm->ConcatenateItem(pidl, lib), Category);
-					sm->FreeItem(lib);
+					AddPIDL(theApp.GetShellManager()->ConcatenateItem(pidl, pidlTemp), Category);
+					theApp.GetShellManager()->FreeItem(pidlTemp);
 				}
 				pEnum->Release();
 			}
 
-			Libraries->Release();
+			pParentFolder->Release();
 		}
 
 		Desktop->Release();
+
 		if (!ParentAdded)
-			sm->FreeItem(pidl);
+			theApp.GetShellManager()->FreeItem(pidl);
 	}
 }
 
