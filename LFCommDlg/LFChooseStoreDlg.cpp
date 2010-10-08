@@ -138,7 +138,7 @@ BOOL LFChooseStoreDlg::OnInitDialog()
 
 	m_wndExplorerList.AddStoreColumns();
 	m_wndExplorerList.AddItemCategories();
-	m_wndExplorerList.SetMenus(IDM_STORES, TRUE, IDM_CREATENEWSTORE);
+	m_wndExplorerList.SetMenus(IDM_STORES, m_Mode==LFCSD_ChooseDefault, IDM_CREATENEWSTORE);
 	m_wndExplorerList.EnableGroupView(m_Mode<LFCSD_Internal);
 	m_wndExplorerList.SetView(LV_VIEW_TILE);
 	m_wndExplorerList.SetFocus();

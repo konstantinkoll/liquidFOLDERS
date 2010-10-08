@@ -155,7 +155,7 @@ IDM_STORES MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "Als &Standard-Store",         IDM_STORE_MAKEDEFAULT
+        MENUITEM "Als &Standard-Store setzen",  IDM_STORE_MAKEDEFAULT
         MENUITEM "Zu &Hybrid-Store machen",     IDM_STORE_MAKEHYBRID
         MENUITEM SEPARATOR
         MENUITEM "&Umbenennen",                 IDM_STORE_RENAME

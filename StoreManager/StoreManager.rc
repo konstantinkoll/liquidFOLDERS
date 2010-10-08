@@ -342,7 +342,7 @@ BEGIN
         MENUITEM "Make default &store",         ID_STORE_MAKEDEFAULT
         MENUITEM "Make &hybrid store",          ID_STORE_MAKEHYBRID
         MENUITEM SEPARATOR
-        MENUITEM "&Properties...",              ID_STORE_PROPERTIES
+        MENUITEM "&Properties",                 ID_STORE_PROPERTIES
     END
 END
 

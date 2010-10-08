@@ -104,9 +104,9 @@ BEGIN
     BEGIN
         MENUITEM "Standard-Store &wählen...",   ID_APP_CHOOSEDEFAULTSTORE
         MENUITEM "&Verzeichnis importieren...", ID_APP_IMPORTFOLDER
-        MENUITEM "&Eigenschaften...",           ID_APP_STOREPROPERTIES
+        MENUITEM "&Eigenschaften",              ID_APP_STOREPROPERTIES
         MENUITEM SEPARATOR
-        MENUITEM "&Über FileDrop...",           ID_APP_ABOUT
+        MENUITEM "&Über FileDrop",              ID_APP_ABOUT
         MENUITEM "&Immer im Vordergrund",       SC_ALWAYSONTOP
         MENUITEM SEPARATOR
         MENUITEM "&StoreManager starten",       ID_APP_NEWSTOREMANAGER
@@ -152,9 +152,9 @@ BEGIN
     BEGIN
         MENUITEM "Choose &default store...",    ID_APP_CHOOSEDEFAULTSTORE
         MENUITEM "&Import folder...",           ID_APP_IMPORTFOLDER
-        MENUITEM "&Properties...",              ID_APP_STOREPROPERTIES
+        MENUITEM "&Properties",                 ID_APP_STOREPROPERTIES
         MENUITEM SEPARATOR
-        MENUITEM "&About FileDrop...",          ID_APP_ABOUT
+        MENUITEM "&About FileDrop",             ID_APP_ABOUT
         MENUITEM "Always on &top",              SC_ALWAYSONTOP
         MENUITEM SEPARATOR
         MENUITEM "Open &StoreManager",          ID_APP_NEWSTOREMANAGER
@@ -200,9 +200,9 @@ BEGIN
     BEGIN
         MENUITEM "Selecionar store &estándar...", ID_APP_CHOOSEDEFAULTSTORE
         MENUITEM "&Importar carpeta...",        ID_APP_IMPORTFOLDER
-        MENUITEM "&Propiedades...",             ID_APP_STOREPROPERTIES
+        MENUITEM "&Propiedades",                ID_APP_STOREPROPERTIES
         MENUITEM SEPARATOR
-        MENUITEM "&Sobre FileDrop...",          ID_APP_ABOUT
+        MENUITEM "&Sobre FileDrop",             ID_APP_ABOUT
         MENUITEM "Siempre &arriba",             SC_ALWAYSONTOP
         MENUITEM SEPARATOR
         MENUITEM "Empezar &StoreManager",       ID_APP_NEWSTOREMANAGER
@@ -248,9 +248,9 @@ BEGIN
     BEGIN
         MENUITEM "Sél&ectioneer le store standard...", ID_APP_CHOOSEDEFAULTSTORE
         MENUITEM "&Importer dossier...",        ID_APP_IMPORTFOLDER
-        MENUITEM "&Qualités...",                ID_APP_STOREPROPERTIES
+        MENUITEM "&Qualités",                   ID_APP_STOREPROPERTIES
         MENUITEM SEPARATOR
-        MENUITEM "&Concernant FileDrop...",     ID_APP_ABOUT
+        MENUITEM "&Concernant FileDrop",        ID_APP_ABOUT
         MENUITEM "Toujours au &top",            SC_ALWAYSONTOP
         MENUITEM SEPARATOR
         MENUITEM "Commencer &StoreManager",     ID_APP_NEWSTOREMANAGER
