@@ -499,7 +499,11 @@ void CTreeView::Collapse(UINT row, UINT col)
 	m_Tree[MAKEPOS(row, col)].Flags &= ~CF_CANCOLLAPSE;
 	m_Tree[MAKEPOS(row, col)].Flags |= CF_CANEXPAND;
 
-	RemoveRows(row+1, GetChildRect(CPoint(col, row)));
+	UINT LastRow = GetChildRect(CPoint(col, row));
+	if (((m_SelectedItem.y>=(int)row+1) && (m_SelectedItem.y<=(int)LastRow)) || ((m_SelectedItem.y==(int)row) && (m_SelectedItem.x>(int)col)))
+		m_SelectedItem = CPoint(col, row);
+
+	RemoveRows(row+1, LastRow);
 
 	for (UINT c=col+1; c<m_Cols; c++)
 		FreeItem(&m_Tree[MAKEPOS(row, c)]);
