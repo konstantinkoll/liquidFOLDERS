@@ -300,6 +300,21 @@ BOOL CTreeView::InsertRow(UINT row)
 	return TRUE;
 }
 
+void CTreeView::RemoveRows(UINT first, UINT last)
+{
+	if (first>last)
+		return;
+
+	for (UINT row=first; row<=last; row++)
+		for (UINT col=0; col<m_Cols; col++)
+			FreeItem(&m_Tree[MAKEPOS(row, col)]);
+
+	memcpy(&m_Tree[MAKEPOS(first, 0)], &m_Tree[MAKEPOS(last+1, 0)], (m_Rows-last)*MaxColumns*sizeof(Cell));
+
+	m_Rows -= (last-first+1);
+	ZeroMemory(&m_Tree[MAKEPOS(m_Rows, 0)], (last-first+1)*MaxColumns*sizeof(Cell));
+}
+
 void CTreeView::UpdateChildPIDLs(UINT row, UINT col)
 {
 	if (col>=m_Cols-1)
@@ -479,6 +494,17 @@ UINT CTreeView::EnumObjects(UINT row, UINT col, BOOL ExpandAll, BOOL FirstInstan
 	return Inserted;
 }
 
+void CTreeView::Collapse(UINT row, UINT col)
+{
+	m_Tree[MAKEPOS(row, col)].Flags &= ~CF_CANCOLLAPSE;
+	m_Tree[MAKEPOS(row, col)].Flags |= CF_CANEXPAND;
+
+	RemoveRows(row+1, GetChildRect(CPoint(col, row)));
+
+	for (UINT c=col+1; c<m_Cols; c++)
+		FreeItem(&m_Tree[MAKEPOS(row, c)]);
+}
+
 void CTreeView::FreeItem(Cell* cell)
 {
 	if (cell->pItem)
@@ -487,7 +513,10 @@ void CTreeView::FreeItem(Cell* cell)
 		theApp.GetShellManager()->FreeItem(cell->pItem->pidlRel);
 
 		free(cell->pItem);
+		cell->pItem = NULL;
 	}
+
+	cell->Flags = 0;
 }
 
 void CTreeView::FreeTree()
@@ -1273,6 +1302,7 @@ void CTreeView::OnLButtonDown(UINT nFlags, CPoint point)
 			}
 			else
 			{
+				Collapse(Expando.y, Expando.x-1);
 			}
 
 			Invalidate();

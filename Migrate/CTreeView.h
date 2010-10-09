@@ -92,10 +92,11 @@ protected:
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 
 	BOOL InsertRow(UINT row);
-	//BOOL RemoveRow(UINT row);
+	void RemoveRows(UINT first, UINT last);
 	void UpdateChildPIDLs(UINT row, UINT col);
 	void SetItem(UINT row, UINT col, LPITEMIDLIST pidlRel, LPITEMIDLIST pidlFQ, UINT Flags);
 	UINT EnumObjects(UINT row, UINT col, BOOL ExpandAll, BOOL FirstInstance=TRUE);
+	void Collapse(UINT row, UINT col);
 	void FreeItem(Cell* cell);
 	void FreeTree();
 	BOOL HitTest(CPoint point, CPoint* item, BOOL* cbhot, CPoint* exphot);
