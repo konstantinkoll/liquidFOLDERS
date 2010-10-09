@@ -27,7 +27,7 @@ void ChoosePropertyDlg::DoDataExchange(CDataExchange* pDX)
 
 void ChoosePropertyDlg::TestAttribute(UINT attr, BOOL& add, BOOL& check)
 {
-	add = !theApp.m_Attributes[attr]->ReadOnly;
+	add = (!theApp.m_Attributes[attr]->ReadOnly) && (attr!=LFAttrFileName);
 	check = FALSE;
 }
 

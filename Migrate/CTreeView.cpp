@@ -1657,7 +1657,7 @@ LRESULT CTreeView::OnChooseProperty(WPARAM wParam, LPARAM /*lParam*/)
 	ASSERT((int)wParam>0);
 	ASSERT((int)wParam<MaxColumns);
 
-	ChoosePropertyDlg dlg(theApp.m_pMainWnd);
+	ChoosePropertyDlg dlg(theApp.m_pMainWnd, m_ColumnMapping[(int)wParam]);
 	if (dlg.DoModal()!=IDCANCEL)
 	{
 		m_ColumnMapping[(int)wParam] = dlg.m_Attr;
