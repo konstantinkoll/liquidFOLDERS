@@ -151,7 +151,10 @@ void CTreeView::SetRoot(LPITEMIDLIST pidl, BOOL Update, BOOL ExpandAll)
 		m_Tree->Flags |= CF_CHECKED;
 
 		for (int col=m_wndHeader.GetItemCount()-1; col>=0; col--)
+		{
 			m_wndHeader.DeleteItem(col);
+			m_ColumnWidth[col] = MINWIDTH;
+		}
 	}
 
 	IShellFolder* pParentFolder = NULL;
@@ -439,13 +442,7 @@ UINT CTreeView::EnumObjects(UINT row, UINT col, BOOL ExpandAll)
 
 			if (NewRow)
 			{
-				for (int a=row+Inserted; a>=0; a--)
-				{
-					m_Tree[MAKEPOS(a, col+1)].Flags |= CF_HASSIBLINGS;
-					if (m_Tree[MAKEPOS(a, col)].Flags & CF_HASCHILDREN)
-						break;
-					m_Tree[MAKEPOS(a, col+1)].Flags |= CF_ISSIBLING;
-				}
+				m_Tree[MAKEPOS(row+Inserted, col+1)].Flags |= CF_HASSIBLINGS;
 
 				Inserted++;
 				InsertRow(row+Inserted);
@@ -468,6 +465,12 @@ UINT CTreeView::EnumObjects(UINT row, UINT col, BOOL ExpandAll)
 
 	pParentFolder->Release();
 	pDesktop->Release();
+
+	if (!ExpandAll)
+		for (UINT a=row+Inserted; a>row; a--)
+			for (UINT b=0; b<=col; b++)
+				if (m_Tree[MAKEPOS(a+1, b)].Flags & CF_ISSIBLING)
+					m_Tree[MAKEPOS(a, b)].Flags |= CF_HASSIBLINGS | CF_ISSIBLING;
 
 	return Inserted;
 }
@@ -738,7 +741,7 @@ void CTreeView::UpdateColumnCaption(UINT col)
 	m_wndHeader.SetItem(col, &HdItem);
 }
 
-void CTreeView::AutosizeColumn(UINT col)
+void CTreeView::AutosizeColumn(UINT col, BOOL OnlyEnlarge)
 {
 	DestroyEdit();
 
@@ -747,7 +750,8 @@ void CTreeView::AutosizeColumn(UINT col)
 		if (m_Tree[MAKEPOS(row, col)].pItem)
 			Width = max(Width, m_Tree[MAKEPOS(row, col)].pItem->Width);
 
-	m_ColumnWidth[col] = min(Width+GUTTER+2*BORDER+m_CheckboxSize.cx+m_IconSize.cx+3*MARGIN, MAXWIDTH);
+	Width += GUTTER+2*BORDER+m_CheckboxSize.cx+m_IconSize.cx+3*MARGIN;
+	m_ColumnWidth[col] = min(OnlyEnlarge ? max(Width, m_ColumnWidth[col]) : Width, MAXWIDTH);
 
 	if (m_wndHeader.GetItemCount()>(int)col)
 	{
@@ -1256,7 +1260,8 @@ void CTreeView::OnLButtonDown(UINT nFlags, CPoint point)
 			if (m_Tree[MAKEPOS(Expando.y, Expando.x-1)].Flags & CF_CANEXPAND)
 			{
 				EnumObjects(Expando.y, Expando.x-1, nFlags & MK_CONTROL);
-				AutosizeColumn(Expando.x);
+				for (UINT a=(int)Expando.x; a<m_Cols; a++)
+					AutosizeColumn(a, TRUE);
 				Invalidate();
 			}
 }

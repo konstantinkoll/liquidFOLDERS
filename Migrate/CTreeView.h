@@ -136,6 +136,6 @@ private:
 	void ExecuteContextMenu(CPoint item, LPCSTR verb);
 	CString GetColumnCaption(UINT col);
 	void UpdateColumnCaption(UINT col);
-	void AutosizeColumn(UINT col);
+	void AutosizeColumn(UINT col, BOOL OnlyEnlarge=FALSE);
 	void DestroyEdit(BOOL Accept=FALSE);
 };
