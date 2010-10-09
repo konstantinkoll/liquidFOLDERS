@@ -386,7 +386,7 @@ void CTreeView::SetItem(UINT row, UINT col, LPITEMIDLIST pidlRel, LPITEMIDLIST p
 		cell->pItem->Path[0] = L'\0';
 }
 
-UINT CTreeView::EnumObjects(UINT row, UINT col, BOOL ExpandAll)
+UINT CTreeView::EnumObjects(UINT row, UINT col, BOOL ExpandAll, BOOL FirstInstance)
 {
 	if (!(m_Tree[MAKEPOS(row, col)].Flags & CF_CANEXPAND))
 		return 0;
@@ -455,7 +455,7 @@ UINT CTreeView::EnumObjects(UINT row, UINT col, BOOL ExpandAll)
 
 			SetItem(row+Inserted, col+1, pidlTemp, theApp.GetShellManager()->ConcatenateItem(m_Tree[MAKEPOS(row, col)].pItem->pidlFQ, pidlTemp), Flags);
 			if (ExpandAll)
-				Inserted += EnumObjects(row+Inserted, col+1, TRUE);
+				Inserted += EnumObjects(row+Inserted, col+1, TRUE, FALSE);
 
 			NewRow = TRUE;
 		}
@@ -466,11 +466,15 @@ UINT CTreeView::EnumObjects(UINT row, UINT col, BOOL ExpandAll)
 	pParentFolder->Release();
 	pDesktop->Release();
 
-	if (!ExpandAll)
+	if (FirstInstance)
 		for (UINT a=row+Inserted; a>row; a--)
-			for (UINT b=0; b<=col; b++)
+			for (UINT b=1; b<m_Cols; b++)
 				if (m_Tree[MAKEPOS(a+1, b)].Flags & CF_ISSIBLING)
-					m_Tree[MAKEPOS(a, b)].Flags |= CF_HASSIBLINGS | CF_ISSIBLING;
+				{
+					m_Tree[MAKEPOS(a, b)].Flags |= CF_HASSIBLINGS;
+					if (!m_Tree[MAKEPOS(a, b-1)].pItem)
+						m_Tree[MAKEPOS(a, b)].Flags |= CF_ISSIBLING;
+				}
 
 	return Inserted;
 }
@@ -1080,12 +1084,15 @@ void CTreeView::OnPaint()
 				if (col)
 					if ((curCell-1)->Flags & (CF_CANEXPAND | CF_CANCOLLAPSE))
 					{
+						dc.MoveTo(x, y+m_RowHeight/2);
+						dc.LineTo(x+2, y+m_RowHeight/2);
+
 						CRect rectGlyph(x, y+(m_RowHeight-m_GlyphSize.cy)/2, x+m_GlyphSize.cx, y+(m_RowHeight-m_GlyphSize.cy)/2+m_GlyphSize.cy);
 						if (hThemeTree)
 						{
 							if (theApp.OSVersion==OS_XP)
 							{
-								rectGlyph.OffsetRect(0, 1);
+								rectGlyph.OffsetRect(2, 1);
 							}
 							else
 							{
@@ -1257,13 +1264,19 @@ void CTreeView::OnLButtonDown(UINT nFlags, CPoint point)
 	}
 	else
 		if ((Expando.x!=-1) && (Expando.y!=-1))
+		{
 			if (m_Tree[MAKEPOS(Expando.y, Expando.x-1)].Flags & CF_CANEXPAND)
 			{
 				EnumObjects(Expando.y, Expando.x-1, nFlags & MK_CONTROL);
 				for (UINT a=(int)Expando.x; a<m_Cols; a++)
 					AutosizeColumn(a, TRUE);
-				Invalidate();
 			}
+			else
+			{
+			}
+
+			Invalidate();
+		}
 }
 
 void CTreeView::OnLButtonUp(UINT nFlags, CPoint point)

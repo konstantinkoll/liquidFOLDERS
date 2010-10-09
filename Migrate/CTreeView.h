@@ -95,7 +95,7 @@ protected:
 	//BOOL RemoveRow(UINT row);
 	void UpdateChildPIDLs(UINT row, UINT col);
 	void SetItem(UINT row, UINT col, LPITEMIDLIST pidlRel, LPITEMIDLIST pidlFQ, UINT Flags);
-	UINT EnumObjects(UINT row, UINT col, BOOL ExpandAll);
+	UINT EnumObjects(UINT row, UINT col, BOOL ExpandAll, BOOL FirstInstance=TRUE);
 	void FreeItem(Cell* cell);
 	void FreeTree();
 	BOOL HitTest(CPoint point, CPoint* item, BOOL* cbhot, CPoint* exphot);
