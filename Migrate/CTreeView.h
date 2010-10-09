@@ -16,9 +16,10 @@
 
 #define CF_CHECKED          1
 #define CF_CANEXPAND        2
-#define CF_HASCHILDREN      4
-#define CF_HASSIBLINGS      8
-#define CF_ISSIBLING        16
+#define CF_CANCOLLAPSE      4
+#define CF_HASCHILDREN      8
+#define CF_HASSIBLINGS      16
+#define CF_ISSIBLING        32
 
 struct ItemData
 {
@@ -79,8 +80,9 @@ protected:
 	CSize m_IconSize;
 	CSize m_CheckboxSize;
 	CSize m_GlyphSize;
-	CPoint m_Selected;
-	CPoint m_Hot;
+	CPoint m_SelectedItem;
+	CPoint m_HotItem;
+	CPoint m_HotExpando;
 	CPoint m_EditLabel;
 	BOOL m_CheckboxHot;
 	BOOL m_CheckboxPressed;
@@ -96,7 +98,7 @@ protected:
 	UINT EnumObjects(UINT row, UINT col, BOOL ExpandAll);
 	void FreeItem(Cell* cell);
 	void FreeTree();
-	BOOL HitTest(CPoint point, CPoint* item, BOOL* cbhot, BOOL* glyphhot);
+	BOOL HitTest(CPoint point, CPoint* item, BOOL* cbhot, CPoint* exphot);
 	void InvalidateItem(CPoint item);
 	void TrackMenu(UINT nID, CPoint point, int col=-1);
 	void SelectItem(CPoint Item);

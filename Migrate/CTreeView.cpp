@@ -29,7 +29,7 @@ CTreeView::CTreeView()
 	p_Edit = NULL;
 	m_Allocated = m_Rows = m_Cols = 0;
 	hThemeList = hThemeButton = hThemeTree = NULL;
-	m_Selected.x = m_Selected.y = m_Hot.x = m_Hot.y = -1;
+	m_SelectedItem.x = m_SelectedItem.y = m_HotItem.x = m_HotItem.y = m_HotExpando.x = m_HotExpando.y = -1;
 	m_CheckboxHot = m_CheckboxPressed = m_Hover = FALSE;
 	m_pContextMenu2 = NULL;
 	m_EditLabel = CPoint(-1, -1);
@@ -130,7 +130,7 @@ void CTreeView::ClearRoot()
 {
 	DestroyEdit();
 	FreeTree();
-	m_Selected.x = m_Selected.y = m_Hot.x = m_Hot.y = -1;
+	m_SelectedItem.x = m_SelectedItem.y = m_HotItem.x = m_HotItem.y = -1;
 	m_CheckboxHot = m_CheckboxPressed = FALSE;
 
 	m_wndHeader.ModifyStyle(0, HDS_HIDDEN);
@@ -164,7 +164,7 @@ void CTreeView::SetRoot(LPITEMIDLIST pidl, BOOL Update, BOOL ExpandAll)
 		{
 			EnumObjects(0, 0, ExpandAll);
 			AutosizeColumns();
-			m_Selected.x = m_Selected.y = 0;
+			m_SelectedItem.x = m_SelectedItem.y = 0;
 		}
 		else
 		{
@@ -185,7 +185,7 @@ void CTreeView::SetRoot(LPITEMIDLIST pidl, BOOL Update, BOOL ExpandAll)
 void CTreeView::SetBranchCheck(BOOL Check, CPoint item)
 {
 	if ((item.x==-1) || (item.y==-1))
-		item = m_Selected;
+		item = m_SelectedItem;
 	if ((item.x==-1) || (item.y==-1) || (item.x>=(int)m_Cols) || (item.y>=(int)m_Rows))
 		return;
 
@@ -244,7 +244,7 @@ void CTreeView::AutosizeColumns()
 void CTreeView::EditLabel(CPoint item)
 {
 	if ((item.x==-1) || (item.y==-1))
-		item = m_Selected;
+		item = m_SelectedItem;
 	if ((item.x==-1) || (item.y==-1) || (item.x>=(int)m_Cols) || (item.y>=(int)m_Rows))
 		return;
 
@@ -453,7 +453,7 @@ UINT CTreeView::EnumObjects(UINT row, UINT col, BOOL ExpandAll)
 			}
 			else
 			{
-				m_Tree[MAKEPOS(row, col)].Flags |= CF_HASCHILDREN;
+				m_Tree[MAKEPOS(row, col)].Flags |= (CF_HASCHILDREN | CF_CANCOLLAPSE);
 			}
 
 			SetItem(row+Inserted, col+1, pidlTemp, theApp.GetShellManager()->ConcatenateItem(m_Tree[MAKEPOS(row, col)].pItem->pidlFQ, pidlTemp), Flags);
@@ -498,9 +498,11 @@ void CTreeView::FreeTree()
 	m_Allocated = m_Rows = m_Cols = 0;
 }
 
-BOOL CTreeView::HitTest(CPoint point, CPoint* item, BOOL* cbhot, BOOL* glyphhot)
+BOOL CTreeView::HitTest(CPoint point, CPoint* item, BOOL* cbhot, CPoint* exphot)
 {
 	BOOL res = FALSE;
+	BOOL onitem = FALSE;
+	BOOL onexpando = FALSE;
 
 	point.y -= m_HeaderHeight;
 	int row = (point.y>=0) ? point.y/m_RowHeight : -1;
@@ -509,11 +511,12 @@ BOOL CTreeView::HitTest(CPoint point, CPoint* item, BOOL* cbhot, BOOL* glyphhot)
 
 	if (row!=-1)
 	{
-		for (UINT a=0; a<m_Cols; a++)
+		for (UINT a=0; a<min(m_Cols+1, MaxColumns); a++)
 		{
-			if ((point.x>=x+GUTTER) && (point.x<x+m_ColumnWidth[a]))
+			if ((point.x>=x) && (point.x<x+m_ColumnWidth[a]))
 			{
 				col = a;
+				onitem = (point.x>=x+GUTTER);
 				break;
 			}
 
@@ -523,18 +526,34 @@ BOOL CTreeView::HitTest(CPoint point, CPoint* item, BOOL* cbhot, BOOL* glyphhot)
 
 	if ((row>=0) && (row<(int)m_Rows) && (col!=-1))
 	{
-		res = (m_Tree[MAKEPOS(row, col)].pItem!=NULL);
-		if ((res) && (cbhot))
+		if (onitem)
 		{
-			CRect rectButton(x+GUTTER+BORDER, row*m_RowHeight+(m_RowHeight-m_CheckboxSize.cy)/2, x+GUTTER+BORDER+m_CheckboxSize.cx, row*m_RowHeight+(m_RowHeight-m_CheckboxSize.cy)/2+m_CheckboxSize.cy);
-			*cbhot = rectButton.PtInRect(point);
+			res = (m_Tree[MAKEPOS(row, col)].pItem!=NULL);
+			if ((res) && (cbhot))
+			{
+				CRect rectButton(x+GUTTER+BORDER, row*m_RowHeight+(m_RowHeight-m_CheckboxSize.cy)/2, x+GUTTER+BORDER+m_CheckboxSize.cx, row*m_RowHeight+(m_RowHeight-m_CheckboxSize.cy)/2+m_CheckboxSize.cy);
+				*cbhot = rectButton.PtInRect(point);
+			}
 		}
+		else
+			if (col)
+				if (m_Tree[MAKEPOS(row, col-1)].Flags & (CF_CANEXPAND | CF_CANCOLLAPSE))
+				{
+					CRect rectGlyph(x, row*m_RowHeight+(m_RowHeight-m_GlyphSize.cy-2)/2, x+GUTTER, row*m_RowHeight+(m_RowHeight-m_GlyphSize.cy-2)/2+m_GlyphSize.cy+2);
+					onexpando = rectGlyph.PtInRect(point);
+				}
 	}
 
 	if (item)
 	{
-		item->x = res ? col : -1;
+		item->x = res ? (col && onitem) : -1;
 		item->y = res ? row : -1;
+	}
+
+	if (exphot)
+	{
+		exphot->x = onexpando ? col : -1;
+		exphot->y = onexpando ? row : -1;
 	}
 
 	return res;
@@ -624,22 +643,22 @@ void CTreeView::NotifyOwner()
 	tag.hdr.hwndFrom = m_hWnd;
 	tag.hdr.idFrom = GetDlgCtrlID();
 	tag.hdr.code = TVN_SELCHANGED;
-	tag.pCell = ((m_Selected.x==-1) || (m_Selected.y==-1)) ? NULL : &m_Tree[MAKEPOSI(m_Selected)];
+	tag.pCell = ((m_SelectedItem.x==-1) || (m_SelectedItem.y==-1)) ? NULL : &m_Tree[MAKEPOSI(m_SelectedItem)];
 
 	GetOwner()->SendMessage(WM_NOTIFY, tag.hdr.idFrom, LPARAM(&tag));
 }
 
 void CTreeView::SelectItem(CPoint Item)
 {
-	if (Item==m_Selected)
+	if (Item==m_SelectedItem)
 		return;
 
 	if (!m_Tree[MAKEPOSI(Item)].pItem)
 		return;
 
-	InvalidateItem(m_Selected);
+	InvalidateItem(m_SelectedItem);
 	InvalidateItem(Item);
-	m_Selected = Item;
+	m_SelectedItem = Item;
 	m_EditLabel = CPoint(-1, -1);
 
 	NotifyOwner();
@@ -648,7 +667,7 @@ void CTreeView::SelectItem(CPoint Item)
 void CTreeView::ExecuteContextMenu(CPoint item, LPCSTR verb)
 {
 	if ((item.x==-1) || (item.y==-1))
-		item = m_Selected;
+		item = m_SelectedItem;
 	if ((item.x==-1) || (item.y==-1) || (item.x>=(int)m_Cols) || (item.y>=(int)m_Rows))
 		return;
 
@@ -758,7 +777,7 @@ void CTreeView::DestroyEdit(BOOL Accept)
 	{
 		CPoint item = m_EditLabel;
 		if ((item.x==-1) || (item.y==-1))
-			item = m_Selected;
+			item = m_SelectedItem;
 
 		CEdit* victim = p_Edit;
 		p_Edit = NULL;
@@ -925,17 +944,17 @@ void CTreeView::OnPaint()
 	COLORREF bkCol = Themed ? 0xFFFFFF : GetSysColor(COLOR_WINDOW);
 	dc.FillSolidRect(rect, bkCol);
 
-/*	if (m_HotColumn!=-1)
+/*	if (m_HotItemColumn!=-1)
 	{
 		int x = 0;
-		for (int col=0; col<m_HotColumn; col++)
+		for (int col=0; col<m_HotItemColumn; col++)
 			x += m_ColumnWidth[col];
 
 		COLORREF selCol = GetSysColor(COLOR_HIGHLIGHT);
 		COLORREF col = ((selCol & 0xFF)/12)+((bkCol & 0xFF)*11/12)+
 			(((((selCol>>8) & 0xFF)/12)+(((bkCol>>8) & 0xFF)*11/12))<<8)+
 			(((((selCol>>16) & 0xFF)/12)+(((bkCol>>16) & 0xFF)*11/12))<<16);
-		dc.FillSolidRect(x, rect.top, m_ColumnWidth[m_HotColumn], rect.Height(), col);
+		dc.FillSolidRect(x, rect.top, m_ColumnWidth[m_HotItemColumn], rect.Height(), col);
 	}*/
 
 	CFont* pOldFont = dc.SelectObject(&theApp.m_DefaultFont);
@@ -957,8 +976,8 @@ void CTreeView::OnPaint()
 			CRect rectIntersect;
 			if (rectIntersect.IntersectRect(rectItem, rectUpdate))
 			{
-				BOOL Hot = (m_Hot.x==(int)col) && (m_Hot.y==(int)row);
-				BOOL Selected = (m_Selected.x==(int)col) && (m_Selected.y==(int)row);
+				BOOL Hot = (m_HotItem.x==(int)col) && (m_HotItem.y==(int)row);
+				BOOL Selected = (m_SelectedItem.x==(int)col) && (m_SelectedItem.y==(int)row);
 
 				if (curCell->pItem)
 				{
@@ -1042,9 +1061,6 @@ void CTreeView::OnPaint()
 					}
 				}
 
-				// Windows XP does not support hot glyphs
-				Hot &= (theApp.OSVersion>=OS_Vista);
-
 				if (curCell->Flags & CF_HASSIBLINGS)
 				{
 					dc.MoveTo(x+GUTTER/2, y+m_RowHeight/2);
@@ -1058,7 +1074,7 @@ void CTreeView::OnPaint()
 				}
 
 				if (col)
-					if (((curCell->pItem) && (!(curCell->Flags & CF_ISSIBLING))) || ((curCell-1)->Flags & CF_CANEXPAND))
+					if ((curCell-1)->Flags & (CF_CANEXPAND | CF_CANCOLLAPSE))
 					{
 						CRect rectGlyph(x, y+(m_RowHeight-m_GlyphSize.cy)/2, x+m_GlyphSize.cx, y+(m_RowHeight-m_GlyphSize.cy)/2+m_GlyphSize.cy);
 						if (hThemeTree)
@@ -1072,6 +1088,7 @@ void CTreeView::OnPaint()
 								rectGlyph.OffsetRect(1-m_GlyphSize.cx/4, 0);
 							}
 
+							BOOL Hot = (m_HotExpando.x==(int)col) && (m_HotExpando.y==(int)row) && (theApp.OSVersion>OS_XP);
 							theApp.zDrawThemeBackground(hThemeTree, dc, Hot ? TVP_HOTGLYPH : TVP_GLYPH, (curCell-1)->Flags & CF_CANEXPAND ? GLPS_CLOSED : GLPS_OPENED, rectGlyph, rectGlyph);
 						}
 						else
@@ -1125,7 +1142,8 @@ void CTreeView::OnMouseMove(UINT nFlags, CPoint point)
 	BOOL Dragging = (GetCapture()==this);
 	BOOL Pressed = FALSE;
 	CPoint Item(-1, -1);
-	BOOL OnItem = HitTest(point, &Item,Dragging ? &Pressed : &m_CheckboxHot, NULL);
+	CPoint Expando(-1, -1);
+	BOOL OnItem = HitTest(point, &Item, Dragging ? &Pressed : &m_CheckboxHot, &Expando);
 
 	if (!m_Hover)
 	{
@@ -1139,42 +1157,45 @@ void CTreeView::OnMouseMove(UINT nFlags, CPoint point)
 		TrackMouseEvent(&tme);
 	}
 	else
-		if ((m_TooltipCtrl.IsWindowVisible()) && (Item!=m_Hot))
+		if ((m_TooltipCtrl.IsWindowVisible()) && (Item!=m_HotItem))
 			m_TooltipCtrl.Deactivate();
 
-	InvalidateItem(m_Hot);
+	InvalidateItem(m_HotItem);
+	InvalidateItem(m_HotExpando);
 
 	if (!Dragging)
 	{
-		InvalidateItem(m_Hot);
-		m_Hot = Item;
+		m_HotItem = Item;
+		m_HotExpando = Expando;
 
 		if ((OnItem) && (nFlags & MK_RBUTTON))
 		{
 			SetFocus();
-			m_Selected = m_Hot;
+			m_SelectedItem = m_HotItem;
 		}
 	}
-	m_CheckboxPressed = (Item==m_Selected) && Pressed && Dragging;
+	m_CheckboxPressed = (Item==m_SelectedItem) && Pressed && Dragging;
 
-	InvalidateItem(m_Hot);
+	InvalidateItem(m_HotItem);
+	InvalidateItem(m_HotExpando);
 }
 
 void CTreeView::OnMouseLeave()
 {
 	m_TooltipCtrl.Deactivate();
-	InvalidateItem(m_Hot);
+	InvalidateItem(m_HotItem);
+	InvalidateItem(m_HotExpando);
 
 	m_Hover = FALSE;
-	m_Hot.x = m_Hot.y = -1;
+	m_HotItem.x = m_HotItem.y = -1;
 }
 
 void CTreeView::OnMouseHover(UINT nFlags, CPoint point)
 {
 	if ((nFlags & (MK_LBUTTON | MK_MBUTTON | MK_RBUTTON | MK_XBUTTON1 | MK_XBUTTON2))==0)
 	{
-		if ((m_Hot.x!=-1) && (m_Hot.y!=-1) && (!p_Edit))
-			if (m_Hot==m_EditLabel)
+		if ((m_HotItem.x!=-1) && (m_HotItem.y!=-1) && (!p_Edit))
+			if (m_HotItem==m_EditLabel)
 			{
 				m_TooltipCtrl.Deactivate();
 				EditLabel(m_EditLabel);
@@ -1186,7 +1207,7 @@ void CTreeView::OnMouseHover(UINT nFlags, CPoint point)
 					CSize size(0, 0);
 					CString caption;
 					CString hint;
-					TooltipDataFromPIDL(m_Tree[MAKEPOSI(m_Hot)].pItem->pidlFQ, &theApp.m_SystemImageListLarge, hIcon, size, caption, hint);
+					TooltipDataFromPIDL(m_Tree[MAKEPOSI(m_HotItem)].pItem->pidlFQ, &theApp.m_SystemImageListLarge, hIcon, size, caption, hint);
 
 					ClientToScreen(&point);
 					m_TooltipCtrl.Track(point, hIcon, size, caption, hint);
@@ -1205,17 +1226,17 @@ void CTreeView::OnMouseHover(UINT nFlags, CPoint point)
 	TrackMouseEvent(&tme);
 }
 
-void CTreeView::OnLButtonDown(UINT /*nFlags*/, CPoint point)
+void CTreeView::OnLButtonDown(UINT nFlags, CPoint point)
 {
 	SetFocus();
 
 	CPoint Item;
-	BOOL GlyphHot;
-	if (HitTest(point, &Item, &m_CheckboxHot, &GlyphHot))
+	CPoint Expando;
+	if (HitTest(point, &Item, &m_CheckboxHot, &Expando))
 	{
-		if ((Item==m_Selected) && (!m_CheckboxHot))
+		if ((Item==m_SelectedItem) && (!m_CheckboxHot))
 		{
-			m_EditLabel = m_Selected;
+			m_EditLabel = m_SelectedItem;
 		}
 		else
 		{
@@ -1230,6 +1251,14 @@ void CTreeView::OnLButtonDown(UINT /*nFlags*/, CPoint point)
 			InvalidateItem(Item);
 		}
 	}
+	else
+		if ((Expando.x!=-1) && (Expando.y!=-1))
+			if (m_Tree[MAKEPOS(Expando.y, Expando.x-1)].Flags & CF_CANEXPAND)
+			{
+				EnumObjects(Expando.y, Expando.x-1, nFlags & MK_CONTROL);
+				AutosizeColumn(Expando.x);
+				Invalidate();
+			}
 }
 
 void CTreeView::OnLButtonUp(UINT nFlags, CPoint point)
@@ -1237,8 +1266,8 @@ void CTreeView::OnLButtonUp(UINT nFlags, CPoint point)
 	if (GetCapture()==this)
 	{
 		CPoint Item;
-		if (HitTest(point, &Item, &m_CheckboxPressed, NULL))
-			if ((Item==m_Selected) && (m_CheckboxPressed))
+		if (HitTest(point, &Item, &m_CheckboxPressed, &m_HotExpando))
+			if ((Item==m_SelectedItem) && (m_CheckboxPressed))
 				if (nFlags & MK_CONTROL)
 				{
 					m_Tree[MAKEPOSI(Item)].Flags ^= CF_CHECKED;
@@ -1261,8 +1290,8 @@ void CTreeView::OnLButtonDblClk(UINT /*nFlags*/, CPoint point)
 
 	CPoint Item;
 	BOOL Checkbox;
-	if (HitTest(point, &Item, &Checkbox, NULL))
-		if ((Item==m_Selected) && (!Checkbox))
+	if (HitTest(point, &Item, &Checkbox, &m_HotExpando))
+		if ((Item==m_SelectedItem) && (!Checkbox))
 			OpenFolder();
 }
 
@@ -1271,7 +1300,7 @@ void CTreeView::OnRButtonDown(UINT /*nFlags*/, CPoint point)
 	SetFocus();
 
 	CPoint Item;
-	if (HitTest(point, &Item, &m_CheckboxHot, NULL))
+	if (HitTest(point, &Item, &m_CheckboxHot, &m_HotExpando))
 		SelectItem(Item);
 }
 
@@ -1283,13 +1312,13 @@ void CTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 	CPoint item(-1, -1);
 	if ((point.x==-1) && (point.y==-1))
 	{
-		if ((m_Selected.x==-1) || (m_Selected.y==-1))
+		if ((m_SelectedItem.x==-1) || (m_SelectedItem.y==-1))
 		{
 			GetParent()->SendMessage(WM_CONTEXTMENU, (WPARAM)m_hWnd, MAKELPARAM(point.x, point.y));
 			return;
 		}
 
-		item = m_Selected;
+		item = m_SelectedItem;
 
 		point.x = GUTTER;
 		for (int a=0; a<item.x; a++)
@@ -1417,12 +1446,12 @@ void CTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 
 void CTreeView::OnSetFocus(CWnd* /*pOldWnd*/)
 {
-	InvalidateItem(m_Selected);
+	InvalidateItem(m_SelectedItem);
 }
 
 void CTreeView::OnKillFocus(CWnd* /*pNewWnd*/)
 {
-	InvalidateItem(m_Selected);
+	InvalidateItem(m_SelectedItem);
 }
 
 void CTreeView::OnBeginDrag(NMHDR* /*pNMHDR*/, LRESULT* pResult)
