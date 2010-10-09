@@ -563,7 +563,7 @@ BOOL CTreeView::HitTest(CPoint point, CPoint* item, BOOL* cbhot, CPoint* exphot)
 	point.y -= m_HeaderHeight;
 	int row = (point.y>=0) ? point.y/m_RowHeight : -1;
 	int col = -1;
-	int x = 1;
+	int x = 0;
 
 	if (row!=-1)
 	{
