@@ -18,7 +18,7 @@
 
 #define BORDER            3
 #define MARGIN            4
-#define GUTTER            9
+#define GUTTER            13
 
 #define MAKEPOS(r, c)     (r)*MaxColumns+(c)
 #define MAKEPOSI(p)       MAKEPOS(p.y, p.x)
@@ -28,7 +28,7 @@ CTreeView::CTreeView()
 	m_Tree = NULL;
 	p_Edit = NULL;
 	m_Allocated = m_Rows = m_Cols = 0;
-	hThemeList = hThemeButton = NULL;
+	hThemeList = hThemeButton = hThemeTree = NULL;
 	m_Selected.x = m_Selected.y = m_Hot.x = m_Hot.y = -1;
 	m_CheckboxHot = m_CheckboxPressed = m_Hover = FALSE;
 	m_pContextMenu2 = NULL;
@@ -498,7 +498,7 @@ void CTreeView::FreeTree()
 	m_Allocated = m_Rows = m_Cols = 0;
 }
 
-BOOL CTreeView::HitTest(CPoint point, CPoint* item, BOOL* cbhot)
+BOOL CTreeView::HitTest(CPoint point, CPoint* item, BOOL* cbhot, BOOL* glyphhot)
 {
 	BOOL res = FALSE;
 
@@ -592,12 +592,13 @@ void CTreeView::SetCheckboxSize()
 	{
 		CDC* dc = GetDC();
 		theApp.zGetThemePartSize(hThemeButton, *dc, BP_CHECKBOX, CBS_UNCHECKEDDISABLED, NULL, TS_DRAW, &m_CheckboxSize);
+		theApp.zGetThemePartSize(hThemeTree, *dc, TVP_GLYPH, GLPS_CLOSED, NULL, TS_DRAW, &m_GlyphSize);
 		ReleaseDC(dc);
 	}
 	else
 	{
-		m_CheckboxSize.cx = GetSystemMetrics(SM_CXMENUCHECK);
-		m_CheckboxSize.cy = GetSystemMetrics(SM_CYMENUCHECK);
+		m_CheckboxSize.cx = m_GlyphSize.cx = GetSystemMetrics(SM_CXMENUCHECK);
+		m_CheckboxSize.cy = m_GlyphSize.cy = GetSystemMetrics(SM_CYMENUCHECK);
 	}
 }
 
@@ -840,6 +841,7 @@ int CTreeView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (theApp.m_ThemeLibLoaded)
 	{
 		hThemeButton = theApp.zOpenThemeData(GetSafeHwnd(), VSCLASS_BUTTON);
+		hThemeTree = theApp.zOpenThemeData(GetSafeHwnd(), VSCLASS_TREEVIEW);
 		if (theApp.OSVersion>=OS_Vista)
 		{
 			theApp.zSetWindowTheme(GetSafeHwnd(), L"explorer", NULL);
@@ -949,15 +951,15 @@ void CTreeView::OnPaint()
 		int x = 0;
 		for (UINT col=0; col<MaxColumns; col++)
 		{
-			if (curCell->pItem)
+			CRect rectItem(x+GUTTER, y, x+m_ColumnWidth[col], y+m_RowHeight);
+			CRect rectIntersect;
+			if (rectIntersect.IntersectRect(rectItem, rectUpdate))
 			{
-				CRect rectItem(x+GUTTER, y, x+m_ColumnWidth[col], y+m_RowHeight);
-				CRect rectIntersect;
-				if (rectIntersect.IntersectRect(rectItem, rectUpdate))
-				{
-					BOOL Hot = (m_Hot.x==(int)col) && (m_Hot.y==(int)row);
-					BOOL Selected = (m_Selected.x==(int)col) && (m_Selected.y==(int)row);
+				BOOL Hot = (m_Hot.x==(int)col) && (m_Hot.y==(int)row);
+				BOOL Selected = (m_Selected.x==(int)col) && (m_Selected.y==(int)row);
 
+				if (curCell->pItem)
+				{
 					if (hThemeList)
 					{
 						if (Hot | Selected)
@@ -968,8 +970,7 @@ void CTreeView::OnPaint()
 								State |= 1;
 							if (Selected)
 								State |= 2;
-
-							theApp.zDrawThemeBackground(hThemeList, dc, LVP_LISTITEM, StateIDs[State], rectItem, rectItem);
+								theApp.zDrawThemeBackground(hThemeList, dc, LVP_LISTITEM, StateIDs[State], rectItem, rectItem);
 						}
 
 						dc.SetTextColor(curCell->pItem->Path[0] ? 0x000000 : 0x808080);
@@ -1007,7 +1008,7 @@ void CTreeView::OnPaint()
 						{
 							uiStyle = CBS_UNCHECKEDDISABLED;
 						}
-						theApp.zDrawThemeBackground(hThemeButton, dc.m_hDC, BP_CHECKBOX, uiStyle, rectButton, rectButton);
+						theApp.zDrawThemeBackground(hThemeButton, dc, BP_CHECKBOX, uiStyle, rectButton, rectButton);
 					}
 					else
 					{
@@ -1038,18 +1039,30 @@ void CTreeView::OnPaint()
 						}
 					}
 				}
-			}
 
-			if (curCell->Flags & CF_ISSIBLING)
-			{
-				dc.MoveTo(x+GUTTER/2, y);
-				dc.LineTo(x+GUTTER/2, y+m_RowHeight/2);
-			}
+				if (curCell->Flags & CF_HASSIBLINGS)
+				{
+					dc.MoveTo(x+GUTTER/2, y+m_RowHeight/2);
+					dc.LineTo(x+GUTTER/2, y+m_RowHeight);
+				}
 
-			if (curCell->Flags & CF_HASSIBLINGS)
-			{
-				dc.MoveTo(x+GUTTER/2, y+m_RowHeight/2);
-				dc.LineTo(x+GUTTER/2, y+m_RowHeight);
+				if (curCell->Flags & CF_ISSIBLING)
+				{
+					dc.MoveTo(x+GUTTER/2, y);
+					dc.LineTo(x+GUTTER/2, y+m_RowHeight/2);
+				}
+				else
+					if ((curCell->pItem) && (col))
+					{
+						CRect rectGlyph(x+2, y+(m_RowHeight-m_GlyphSize.cy)/2+1, x+2+m_GlyphSize.cx, y+(m_RowHeight-m_GlyphSize.cy)/2+m_GlyphSize.cy+1);
+						theApp.zDrawThemeBackground(hThemeTree, dc, TVP_GLYPH, GLPS_OPENED, rectGlyph, rectGlyph);
+					}
+
+				if ((col) && ((curCell-1)->Flags & CF_CANEXPAND))
+				{
+					CRect rectGlyph(x+2, y+(m_RowHeight-m_GlyphSize.cy)/2+1, x+2+m_GlyphSize.cx, y+(m_RowHeight-m_GlyphSize.cy)/2+m_GlyphSize.cy+1);
+					theApp.zDrawThemeBackground(hThemeTree, dc, TVP_GLYPH, GLPS_CLOSED, rectGlyph, rectGlyph);
+				}
 			}
 
 			x += m_ColumnWidth[col];
@@ -1096,7 +1109,7 @@ void CTreeView::OnMouseMove(UINT nFlags, CPoint point)
 	BOOL Dragging = (GetCapture()==this);
 	BOOL Pressed = FALSE;
 	CPoint Item(-1, -1);
-	BOOL OnItem = HitTest(point, &Item,Dragging ? &Pressed : &m_CheckboxHot);
+	BOOL OnItem = HitTest(point, &Item,Dragging ? &Pressed : &m_CheckboxHot, NULL);
 
 	if (!m_Hover)
 	{
@@ -1181,7 +1194,8 @@ void CTreeView::OnLButtonDown(UINT /*nFlags*/, CPoint point)
 	SetFocus();
 
 	CPoint Item;
-	if (HitTest(point, &Item, &m_CheckboxHot))
+	BOOL GlyphHot;
+	if (HitTest(point, &Item, &m_CheckboxHot, &GlyphHot))
 	{
 		if ((Item==m_Selected) && (!m_CheckboxHot))
 		{
@@ -1207,7 +1221,7 @@ void CTreeView::OnLButtonUp(UINT nFlags, CPoint point)
 	if (GetCapture()==this)
 	{
 		CPoint Item;
-		if (HitTest(point, &Item, &m_CheckboxPressed))
+		if (HitTest(point, &Item, &m_CheckboxPressed, NULL))
 			if ((Item==m_Selected) && (m_CheckboxPressed))
 				if (nFlags & MK_CONTROL)
 				{
@@ -1231,7 +1245,7 @@ void CTreeView::OnLButtonDblClk(UINT /*nFlags*/, CPoint point)
 
 	CPoint Item;
 	BOOL Checkbox;
-	if (HitTest(point, &Item, &Checkbox))
+	if (HitTest(point, &Item, &Checkbox, NULL))
 		if ((Item==m_Selected) && (!Checkbox))
 			OpenFolder();
 }
@@ -1241,7 +1255,7 @@ void CTreeView::OnRButtonDown(UINT /*nFlags*/, CPoint point)
 	SetFocus();
 
 	CPoint Item;
-	if (HitTest(point, &Item, &m_CheckboxHot))
+	if (HitTest(point, &Item, &m_CheckboxHot, NULL))
 		SelectItem(Item);
 }
 
@@ -1280,7 +1294,7 @@ void CTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 			return;
 		}
 
-		if (!HitTest(ptClient, &item, NULL))
+		if (!HitTest(ptClient, &item, NULL, NULL))
 		{
 			GetParent()->SendMessage(WM_CONTEXTMENU, (WPARAM)m_hWnd, MAKELPARAM(point.x, point.y));
 			return;

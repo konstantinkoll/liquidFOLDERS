@@ -68,6 +68,7 @@ protected:
 	int m_ColumnMapping[MaxColumns];
 	HTHEME hThemeList;
 	HTHEME hThemeButton;
+	HTHEME hThemeTree;
 	LFTooltip m_TooltipCtrl;
 	IContextMenu2* m_pContextMenu2;
 	UINT m_HeaderHeight;
@@ -77,6 +78,7 @@ protected:
 	UINT m_RowHeight;
 	CSize m_IconSize;
 	CSize m_CheckboxSize;
+	CSize m_GlyphSize;
 	CPoint m_Selected;
 	CPoint m_Hot;
 	CPoint m_EditLabel;
@@ -94,7 +96,7 @@ protected:
 	UINT EnumObjects(UINT row, UINT col, BOOL ExpandAll);
 	void FreeItem(Cell* cell);
 	void FreeTree();
-	BOOL HitTest(CPoint point, CPoint* item, BOOL* cbhot);
+	BOOL HitTest(CPoint point, CPoint* item, BOOL* cbhot, BOOL* glyphhot);
 	void InvalidateItem(CPoint item);
 	void TrackMenu(UINT nID, CPoint point, int col=-1);
 	void SelectItem(CPoint Item);
