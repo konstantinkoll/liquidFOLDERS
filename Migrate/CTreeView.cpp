@@ -841,12 +841,12 @@ int CTreeView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (theApp.m_ThemeLibLoaded)
 	{
 		hThemeButton = theApp.zOpenThemeData(GetSafeHwnd(), VSCLASS_BUTTON);
-		hThemeTree = theApp.zOpenThemeData(GetSafeHwnd(), VSCLASS_TREEVIEW);
 		if (theApp.OSVersion>=OS_Vista)
 		{
 			theApp.zSetWindowTheme(GetSafeHwnd(), L"explorer", NULL);
 			hThemeList = theApp.zOpenThemeData(GetSafeHwnd(), VSCLASS_LISTVIEW);
 		}
+		hThemeTree = theApp.zOpenThemeData(GetSafeHwnd(), VSCLASS_TREEVIEW);
 	}
 
 	SetCheckboxSize();
@@ -1040,6 +1040,9 @@ void CTreeView::OnPaint()
 					}
 				}
 
+				// Windows XP does not support hot glyphs
+				Hot &= (theApp.OSVersion>=OS_Vista);
+
 				if (curCell->Flags & CF_HASSIBLINGS)
 				{
 					dc.MoveTo(x+GUTTER/2, y+m_RowHeight/2);
@@ -1051,18 +1054,29 @@ void CTreeView::OnPaint()
 					dc.MoveTo(x+GUTTER/2, y);
 					dc.LineTo(x+GUTTER/2, y+m_RowHeight/2);
 				}
-				else
-					if ((curCell->pItem) && (col))
-					{
-						CRect rectGlyph(x+2, y+(m_RowHeight-m_GlyphSize.cy)/2+1, x+2+m_GlyphSize.cx, y+(m_RowHeight-m_GlyphSize.cy)/2+m_GlyphSize.cy+1);
-						theApp.zDrawThemeBackground(hThemeTree, dc, TVP_GLYPH, GLPS_OPENED, rectGlyph, rectGlyph);
-					}
 
-				if ((col) && ((curCell-1)->Flags & CF_CANEXPAND))
-				{
-					CRect rectGlyph(x+2, y+(m_RowHeight-m_GlyphSize.cy)/2+1, x+2+m_GlyphSize.cx, y+(m_RowHeight-m_GlyphSize.cy)/2+m_GlyphSize.cy+1);
-					theApp.zDrawThemeBackground(hThemeTree, dc, TVP_GLYPH, GLPS_CLOSED, rectGlyph, rectGlyph);
-				}
+				if (col)
+					if (((curCell->pItem) && (!(curCell->Flags & CF_ISSIBLING))) || ((curCell-1)->Flags & CF_CANEXPAND))
+					{
+						CRect rectGlyph(x, y+(m_RowHeight-m_GlyphSize.cy)/2, x+m_GlyphSize.cx, y+(m_RowHeight-m_GlyphSize.cy)/2+m_GlyphSize.cy);
+						if (IsCtrlThemed())
+						{
+							if (theApp.OSVersion==OS_XP)
+							{
+								rectGlyph.OffsetRect(0, 1);
+							}
+							else
+							{
+								rectGlyph.OffsetRect(1-m_GlyphSize.cx/4, 0);
+							}
+
+							theApp.zDrawThemeBackground(hThemeTree, dc, Hot ? TVP_HOTGLYPH : TVP_GLYPH, (curCell-1)->Flags & CF_CANEXPAND ? GLPS_CLOSED : GLPS_OPENED, rectGlyph, rectGlyph);
+						}
+						else
+						{
+							// TODO
+						}
+					}
 			}
 
 			x += m_ColumnWidth[col];
