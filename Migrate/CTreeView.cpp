@@ -677,6 +677,17 @@ void CTreeView::TrackMenu(UINT nID, CPoint point, int col)
 		popup->EnableMenuItem(ID_VIEW_RESETPROPERTY, MF_GRAYED | MF_DISABLED);
 	}
 
+	BOOL Enable = FALSE;
+	for (UINT row=0; row<m_Rows; row++)
+		if (m_Tree[MAKEPOS(row, col)].Flags & CF_CANEXPAND)
+		{
+			Enable = TRUE;
+			break;
+		}
+
+	if (!Enable)
+		popup->EnableMenuItem(ID_VIEW_EXPANDCOLUMN, MF_GRAYED | MF_DISABLED);
+
 	switch (popup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RETURNCMD | TPM_RIGHTBUTTON, point.x, point.y, this, NULL))
 	{
 	case ID_VIEW_AUTOSIZE:
