@@ -705,8 +705,9 @@ UINT CTreeView::GetChildRect(CPoint item)
 
 	while (row<m_Rows)
 	{
-		if (m_Tree[MAKEPOS(row+1, item.x)].pItem)
-			return row;
+		for (int col=0; col<=item.x; col++)
+			if (m_Tree[MAKEPOS(row+1, col)].pItem)
+				return row;
 
 		row++;
 	}
