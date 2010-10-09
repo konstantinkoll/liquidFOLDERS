@@ -516,7 +516,7 @@ BOOL CTreeView::HitTest(CPoint point, CPoint* item, BOOL* cbhot, CPoint* exphot)
 			if ((point.x>=x) && (point.x<x+m_ColumnWidth[a]))
 			{
 				col = a;
-				onitem = (point.x>=x+GUTTER);
+				onitem = (point.x>=x+GUTTER) && (col<(int)m_Cols);
 				break;
 			}
 
@@ -546,8 +546,8 @@ BOOL CTreeView::HitTest(CPoint point, CPoint* item, BOOL* cbhot, CPoint* exphot)
 
 	if (item)
 	{
-		item->x = res ? (col && onitem) : -1;
-		item->y = res ? row : -1;
+		item->x = (res && onitem) ? col : -1;
+		item->y = (res && onitem) ? row : -1;
 	}
 
 	if (exphot)
