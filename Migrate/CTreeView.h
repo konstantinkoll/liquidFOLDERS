@@ -55,6 +55,7 @@ public:
 	void ClearRoot();
 	void SetRoot(LPITEMIDLIST pidl, BOOL Update, BOOL ExpandAll);
 	void SetBranchCheck(BOOL Check, CPoint item=CPoint(-1, -1));
+	void ExpandFolder(CPoint item=CPoint(-1, -1), BOOL ExpandAll=FALSE);
 	void OpenFolder(CPoint item=CPoint(-1, -1));
 	void DeleteFolder(CPoint item=CPoint(-1, -1));
 	void ShowProperties(CPoint item=CPoint(-1, -1));
@@ -96,7 +97,7 @@ protected:
 	void UpdateChildPIDLs(UINT row, UINT col);
 	void SetItem(UINT row, UINT col, LPITEMIDLIST pidlRel, LPITEMIDLIST pidlFQ, UINT Flags);
 	UINT EnumObjects(UINT row, UINT col, BOOL ExpandAll, BOOL FirstInstance=TRUE);
-	void Expand(UINT row, UINT col, BOOL ExpandAll);
+	void Expand(UINT row, UINT col, BOOL ExpandAll, BOOL AutosizeHeader=TRUE);
 	void Collapse(UINT row, UINT col);
 	void FreeItem(Cell* cell);
 	void FreeTree();
@@ -139,5 +140,6 @@ private:
 	CString GetColumnCaption(UINT col);
 	void UpdateColumnCaption(UINT col);
 	void AutosizeColumn(UINT col, BOOL OnlyEnlarge=FALSE);
+	void ExpandColumn(UINT col);
 	void DestroyEdit(BOOL Accept=FALSE);
 };

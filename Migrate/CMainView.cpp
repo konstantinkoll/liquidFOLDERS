@@ -37,7 +37,7 @@ BOOL CMainView::OnCmdMsg(UINT nID, int nCode, void* pExtra, AFX_CMDHANDLERINFO* 
 
 void CMainView::ClearRoot()
 {
-	m_IsRootSet = m_SelectedHasChildren = m_SelectedHasPropSheet = m_SelectedCanRename = m_SelectedCanDelete = FALSE;
+	m_IsRootSet = m_SelectedCanExpand = m_SelectedHasPropSheet = m_SelectedCanRename = m_SelectedCanDelete = FALSE;
 
 	CString caption;
 	CString hint;
@@ -53,7 +53,7 @@ void CMainView::ClearRoot()
 void CMainView::SetRoot(LPITEMIDLIST pidl, BOOL Update, BOOL ExpandAll)
 {
 	m_IsRootSet = TRUE;
-	m_SelectedHasChildren = m_SelectedHasPropSheet = m_SelectedCanRename = m_SelectedCanDelete = FALSE;
+	m_SelectedCanExpand = m_SelectedHasPropSheet = m_SelectedCanRename = m_SelectedCanDelete = FALSE;
 
 	CString caption;
 	CString hint;
@@ -93,6 +93,7 @@ BEGIN_MESSAGE_MAP(CMainView, CWnd)
 	ON_COMMAND(ID_VIEW_AUTOSIZEALL, OnAutosizeAll)
 	ON_COMMAND(ID_VIEW_SELECTROOT, OnSelectRoot)
 	ON_COMMAND(ID_VIEW_SELECTROOT_TASKBAR, OnSelectRoot)
+	ON_COMMAND(ID_VIEW_EXPAND, OnExpand)
 	ON_COMMAND(ID_VIEW_OPEN, OnOpen)
 	ON_COMMAND(ID_VIEW_RENAME, OnRename)
 	ON_COMMAND(ID_VIEW_DELETE, OnDelete)
@@ -112,16 +113,17 @@ int CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 
 	m_wndTaskbar.AddButton(ID_VIEW_SELECTROOT_TASKBAR, 0);
-	m_wndTaskbar.AddButton(ID_VIEW_OPEN, 3, TRUE);
-	m_wndTaskbar.AddButton(ID_VIEW_RENAME, 4);
-	m_wndTaskbar.AddButton(ID_VIEW_DELETE, 5);
-	m_wndTaskbar.AddButton(ID_VIEW_PROPERTIES, 6);
-	m_wndTaskbar.AddButton(ID_APP_NEWSTOREMANAGER, 7, TRUE);
+	m_wndTaskbar.AddButton(ID_VIEW_EXPAND, 1);
+	m_wndTaskbar.AddButton(ID_VIEW_OPEN, 2, TRUE);
+	m_wndTaskbar.AddButton(ID_VIEW_RENAME, 3);
+	m_wndTaskbar.AddButton(ID_VIEW_DELETE, 4);
+	m_wndTaskbar.AddButton(ID_VIEW_PROPERTIES, 5);
+	m_wndTaskbar.AddButton(ID_APP_NEWSTOREMANAGER, 6, TRUE);
 
-	m_wndTaskbar.AddButton(ID_APP_PURCHASE, 8, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_ENTERLICENSEKEY, 9, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_SUPPORT, 10, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_ABOUT, 11, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_PURCHASE, 7, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_ENTERLICENSEKEY, 8, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_SUPPORT, 9, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_ABOUT, 10, TRUE, TRUE);
 
 	// Explorer header
 	if (!m_wndExplorerHeader.Create(this, 2))
@@ -168,6 +170,11 @@ void CMainView::OnSelectRoot()
 	GetOwner()->SendMessage(WM_COMMAND, ID_VIEW_SELECTROOT);
 }
 
+void CMainView::OnExpand()
+{
+	m_wndTree.ExpandFolder();
+}
+
 void CMainView::OnOpen()
 {
 	m_wndTree.OpenFolder();
@@ -197,6 +204,9 @@ void CMainView::OnUpdateTaskbar(CCmdUI* pCmdUI)
 		break;
 	case ID_VIEW_SELECTROOT_TASKBAR:
 		pCmdUI->Enable(!m_IsRootSet);
+		break;
+	case ID_VIEW_EXPAND:
+		pCmdUI->Enable(m_IsRootSet && m_SelectedCanExpand);
 		break;
 	case ID_VIEW_RENAME:
 		pCmdUI->Enable(m_IsRootSet && m_SelectedCanRename);
@@ -244,7 +254,7 @@ void CMainView::OnSelectionChanged(NMHDR* pNMHDR, LRESULT* /*pResult*/)
 			DWORD dwAttribs = SFGAO_CANRENAME | SFGAO_CANDELETE | SFGAO_HASPROPSHEET;
 			pParentFolder->GetAttributesOf(1, (LPCITEMIDLIST*)&pNMTreeView->pCell->pItem->pidlRel, &dwAttribs);
 
-			m_SelectedHasChildren = (pNMTreeView->pCell->Flags & CF_HASCHILDREN);
+			m_SelectedCanExpand = (pNMTreeView->pCell->Flags & CF_CANEXPAND);
 			m_SelectedHasPropSheet = (dwAttribs & SFGAO_HASPROPSHEET);
 			m_SelectedCanRename = (dwAttribs & SFGAO_CANRENAME);
 			m_SelectedCanDelete = (dwAttribs & SFGAO_CANDELETE);
@@ -254,5 +264,5 @@ void CMainView::OnSelectionChanged(NMHDR* pNMHDR, LRESULT* /*pResult*/)
 		}
 	}
 
-	m_SelectedHasChildren = m_SelectedCanRename = m_SelectedCanDelete = FALSE;
+	m_SelectedCanExpand = m_SelectedHasPropSheet = m_SelectedCanRename = m_SelectedCanDelete = FALSE;
 }

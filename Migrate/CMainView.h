@@ -26,7 +26,7 @@ protected:
 	CExplorerHeader m_wndExplorerHeader;
 	CTreeView m_wndTree;
 	BOOL m_IsRootSet;
-	BOOL m_SelectedHasChildren;
+	BOOL m_SelectedCanExpand;
 	BOOL m_SelectedHasPropSheet;
 	BOOL m_SelectedCanRename;
 	BOOL m_SelectedCanDelete;
@@ -39,6 +39,7 @@ protected:
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
 	afx_msg void OnAutosizeAll();
 	afx_msg void OnSelectRoot();
+	afx_msg void OnExpand();
 	afx_msg void OnOpen();
 	afx_msg void OnRename();
 	afx_msg void OnDelete();

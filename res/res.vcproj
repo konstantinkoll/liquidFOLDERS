@@ -784,14 +784,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Ribbon\FolderAdd_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\FolderAdd_32.png"
-				>
-			</File>
-			<File
 				RelativePath=".\Ribbon\FolderError_16.png"
 				>
 			</File>
@@ -805,14 +797,6 @@
 			</File>
 			<File
 				RelativePath=".\Ribbon\FolderProperties_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\FolderRemove_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\FolderRemove_32.png"
 				>
 			</File>
 			<File
@@ -1437,6 +1421,14 @@
 			</File>
 			<File
 				RelativePath="Ribbon\TrashFull_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\TreeExpand_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\TreeExpand_32.png"
 				>
 			</File>
 			<File

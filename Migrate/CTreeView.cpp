@@ -181,7 +181,6 @@ void CTreeView::SetRoot(LPITEMIDLIST pidl, BOOL Update, BOOL ExpandAll)
 	AdjustLayout();
 	SetFocus();
 	Invalidate();
-
 	NotifyOwner();
 }
 
@@ -214,6 +213,17 @@ void CTreeView::SetBranchCheck(BOOL Check, CPoint item)
 			}
 
 	Invalidate();
+}
+
+void CTreeView::ExpandFolder(CPoint item, BOOL ExpandAll)
+{
+	if ((item.x==-1) || (item.y==-1))
+		item = m_SelectedItem;
+	if ((item.x==-1) || (item.y==-1) || (item.x>=(int)m_Cols) || (item.y>=(int)m_Rows))
+		return;
+
+	if (m_Tree[MAKEPOSI(item)].Flags & CF_CANEXPAND)
+		Expand(item.y, item.x, ExpandAll);
 }
 
 void CTreeView::OpenFolder(CPoint item)
@@ -494,16 +504,21 @@ UINT CTreeView::EnumObjects(UINT row, UINT col, BOOL ExpandAll, BOOL FirstInstan
 	return Inserted;
 }
 
-void CTreeView::Expand(UINT row, UINT col, BOOL ExpandAll)
+void CTreeView::Expand(UINT row, UINT col, BOOL ExpandAll, BOOL AutosizeHeader)
 {
 	ASSERT(m_Tree[MAKEPOS(row, col)].Flags & CF_CANEXPAND);
 
 	EnumObjects(row, col, ExpandAll);
 
-	for (UINT a=(int)col+1; a<m_Cols; a++)
-		AutosizeColumn(a, TRUE);
+	if (AutosizeHeader)
+		for (UINT a=(int)col+1; a<m_Cols; a++)
+			AutosizeColumn(a, TRUE);
 
+	SetFocus();
 	Invalidate();
+
+	if ((m_SelectedItem.x==(int)col) && (m_SelectedItem.y==(int)row))
+		NotifyOwner();
 }
 
 void CTreeView::Collapse(UINT row, UINT col)
@@ -522,7 +537,11 @@ void CTreeView::Collapse(UINT row, UINT col)
 	for (UINT c=col+1; c<m_Cols; c++)
 		FreeItem(&m_Tree[MAKEPOS(row, c)]);
 
+	SetFocus();
 	Invalidate();
+
+	if ((m_SelectedItem.x==(int)col) && (m_SelectedItem.y==(int)row))
+		NotifyOwner();
 }
 
 void CTreeView::FreeItem(Cell* cell)
@@ -650,6 +669,9 @@ void CTreeView::TrackMenu(UINT nID, CPoint point, int col)
 		break;
 	case ID_VIEW_AUTOSIZEALL:
 		AutosizeColumns();
+		break;
+	case ID_VIEW_EXPANDCOLUMN:
+		ExpandColumn(col);
 		break;
 	case IDD_CHOOSEPROPERTY:
 		PostMessage(IDD_CHOOSEPROPERTY, (WPARAM)col);
@@ -792,6 +814,16 @@ void CTreeView::UpdateColumnCaption(UINT col)
 	HdItem.mask = HDI_TEXT;
 	HdItem.pszText = caption.GetBuffer();
 	m_wndHeader.SetItem(col, &HdItem);
+}
+
+void CTreeView::ExpandColumn(UINT col)
+{
+	for (UINT row=0; row<m_Rows; row++)
+		if (m_Tree[MAKEPOS(row, col)].Flags & CF_CANEXPAND)
+			Expand(row, col, FALSE, FALSE);
+
+	for (UINT a=(int)col+1; a<m_Cols; a++)
+		AutosizeColumn(a, TRUE);
 }
 
 void CTreeView::AutosizeColumn(UINT col, BOOL OnlyEnlarge)
@@ -1354,7 +1386,14 @@ void CTreeView::OnLButtonDblClk(UINT /*nFlags*/, CPoint point)
 	BOOL Checkbox;
 	if (HitTest(point, &Item, &Checkbox, &m_HotExpando))
 		if ((Item==m_SelectedItem) && (!Checkbox))
-			OpenFolder();
+			if (m_Tree[MAKEPOSI(Item)].Flags & CF_CANEXPAND)
+			{
+				ExpandFolder();
+			}
+			else
+			{
+				OpenFolder();
+			}
 }
 
 void CTreeView::OnRButtonDown(UINT /*nFlags*/, CPoint point)
@@ -1428,6 +1467,8 @@ void CTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 			UINT uFlags = CMF_NORMAL | CMF_CANRENAME;
 			if (SUCCEEDED(pcm->QueryContextMenu(hPopup, 0, 1, 0x6FFF, uFlags)))
 			{
+				InsertMenu(hPopup, 0, MF_BYPOSITION | MF_SEPARATOR, 0, NULL);
+
 				CString tmpStr;
 				ENSURE(tmpStr.LoadString(IDS_INCLUDEBRANCH));
 				InsertMenu(hPopup, 0, MF_BYPOSITION, 0x7001, tmpStr);
@@ -1435,7 +1476,22 @@ void CTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 				ENSURE(tmpStr.LoadString(IDS_EXCLUDEBRANCH));
 				InsertMenu(hPopup, 1, MF_BYPOSITION, 0x7002, tmpStr);
 
-				InsertMenu(hPopup, 2, MF_BYPOSITION | MF_SEPARATOR, 0, NULL);
+				if (cell->Flags & CF_CANEXPAND)
+				{
+					ENSURE(tmpStr.LoadString(IDS_EXPAND));
+					InsertMenu(hPopup, 0, MF_BYPOSITION, 0x7003, tmpStr);
+
+					ENSURE(tmpStr.LoadString(IDS_EXPANDBRANCH));
+					InsertMenu(hPopup, 1, MF_BYPOSITION, 0x7004, tmpStr);
+
+					SetMenuDefaultItem(hPopup, 0x7003, FALSE);
+				}
+
+				if (cell->Flags & CF_CANCOLLAPSE)
+				{
+					ENSURE(tmpStr.LoadString(IDS_COLLAPSE));
+					InsertMenu(hPopup, 0, MF_BYPOSITION, 0x7005, tmpStr);
+				}
 
 				if (item.x)
 				{
@@ -1464,6 +1520,15 @@ void CTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 					break;
 				case 0x7002:
 					SetBranchCheck(FALSE, item);
+					break;
+				case 0x7003:
+					ExpandFolder(item, FALSE);
+					break;
+				case 0x7004:
+					ExpandFolder(item, TRUE);
+					break;
+				case 0x7005:
+					Collapse(item.y, item.x);
 					break;
 				case 0:
 					break;

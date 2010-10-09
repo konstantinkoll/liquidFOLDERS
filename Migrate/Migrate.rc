@@ -122,6 +122,8 @@ BEGIN
         MENUITEM "Autosize &all columns",       ID_VIEW_AUTOSIZEALL
         MENUITEM "Autosize &column",            ID_VIEW_AUTOSIZE
         MENUITEM SEPARATOR
+        MENUITEM "&Expand column",              ID_VIEW_EXPANDCOLUMN
+        MENUITEM SEPARATOR
         MENUITEM "Choose &property...",         IDD_CHOOSEPROPERTY
         MENUITEM "&Reset property",             ID_VIEW_RESETPROPERTY
     END
@@ -233,6 +235,7 @@ STRINGTABLE
 BEGIN
     ID_VIEW_SELECTROOT_TASKBAR 
                             "Opens a dialog where you can select the root folder to display in the main view below.\nSelect root folder"
+    ID_VIEW_EXPAND          "Adds all subfolders of the selected folder.\nExpand"
     ID_VIEW_OPEN            "Opens the selected folder.\nOpen"
     ID_VIEW_RENAME          "Renames the selected folder.\nRename folder"
     ID_VIEW_DELETE          "Deletes the selected folder.\nDelete folder"
@@ -264,9 +267,10 @@ BEGIN
     IDS_FOLDERCATEGORY4     "Removable storage"
     IDS_NOTHINGTODISPLAY    "There is nothing to display."
     IDS_NOPROPERTY          "Click here to choose a property"
+    IDS_CHOOSEPROPERTY      "Choose p&roperty..."
+    IDS_EXPANDBRANCH        "Expand &branch"
     IDS_INCLUDEBRANCH       "&Include branch"
     IDS_EXCLUDEBRANCH       "&Exclude branch"
-    IDS_CHOOSEPROPERTY      "&Choose property..."
 END
 
 #endif    // Englisch (neutral) resources
