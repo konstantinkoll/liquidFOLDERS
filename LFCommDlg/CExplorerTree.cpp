@@ -629,6 +629,38 @@ void CExplorerTree::EnumObjects(HTREEITEM hParentItem, LPITEMIDLIST pidlParent)
 	pDesktop->Release();
 }
 
+CEdit* CExplorerTree::EditLabel(HTREEITEM hItem)
+{
+	CEdit* edit = CTreeCtrl::EditLabel(hItem);
+	if (edit)
+	{
+		TVITEM tvItem;
+		ZeroMemory(&tvItem, sizeof(tvItem));
+		tvItem.mask = TVIF_PARAM;
+		tvItem.hItem = hItem;
+		if (GetItem(&tvItem))
+		{
+			ExplorerTreeItemData* pItem = (ExplorerTreeItemData*)tvItem.lParam;
+
+			IShellFolder* pParentFolder = NULL;
+			if (SUCCEEDED(SHBindToParent(pItem->pidlFQ, IID_IShellFolder, (void**)&pParentFolder, NULL)))
+			{
+				STRRET strret;
+				if (SUCCEEDED(pParentFolder->GetDisplayNameOf(pItem->pidlRel, SHGDN_FOREDITING, &strret)))
+					if (strret.uType==STRRET_WSTR)
+					{
+						edit->SetWindowText(strret.pOleStr);
+						edit->SetSel(0, wcslen(strret.pOleStr));
+					}
+
+				pParentFolder->Release();
+			}
+		}
+	}
+
+	return edit;
+}
+
 
 BEGIN_MESSAGE_MAP(CExplorerTree, CTreeCtrl)
 	ON_WM_DESTROY()

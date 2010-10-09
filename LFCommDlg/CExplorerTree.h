@@ -36,6 +36,7 @@ public:
 	void PopulateTree();
 	void SetRootPath(CString RootPath);
 	void SetOnlyFilesystem(BOOL OnlyFilesystem);
+	CEdit* EditLabel(HTREEITEM hItem);
 
 protected:
 	LFApplication* p_App;
