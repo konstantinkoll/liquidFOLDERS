@@ -106,7 +106,7 @@ void CTooltipHeader::OnPaint()
 			if (GetItem(a, &hdi))
 				if (lpBuffer[0]!=L'\0')
 				{
-					if (IsCtrlThemed())
+					if (Themed)
 					{
 						if (m_PressedItem==a)
 						{
@@ -174,7 +174,7 @@ void CTooltipHeader::OnPaint()
 						break;
 					}
 
-					dc.SetTextColor(0x7A604C);
+					dc.SetTextColor(Themed ? 0x7A604C : GetSysColor(COLOR_WINDOWTEXT));
 					dc.DrawText(lpBuffer, -1, rectItem, nFormat);
 				}
 				else

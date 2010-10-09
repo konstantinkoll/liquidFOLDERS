@@ -305,6 +305,7 @@ void CTaskButton::OnPaint()
 		{
 			CRect rectFocus(rect);
 			rectFocus.DeflateRect(2, 2);
+			dc.SetTextColor(0x000000);
 			dc.DrawFocusRect(rectFocus);
 		}
 

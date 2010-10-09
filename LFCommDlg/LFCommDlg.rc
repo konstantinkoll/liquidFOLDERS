@@ -1614,15 +1614,15 @@ END
 
 IDD_EDITTAGS DIALOGEX 0, 0, 348, 238
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
-CAPTION "Edit tags"
+CAPTION "Editar etiquetas"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    GROUPBOX        "Tags",IDC_STATIC,7,7,334,47
+    GROUPBOX        "Etiquetas",IDC_STATIC,7,7,334,47
     EDITTEXT        IDC_TAGS,14,21,320,14,ES_AUTOHSCROLL | WS_GROUP
-    LTEXT           "Tags are separated by blanks or commas.",IDC_STATIC,14,39,319,10
-    GROUPBOX        "Suggestions",IDC_STATIC,7,62,334,148
-    LTEXT           "These tags have already been assigned to files inside this store (click on a tag to add it):",IDC_STATIC,14,73,260,16
-    PUSHBUTTON      "&Add tags",IDC_ADDTAGS,279,73,55,14,WS_DISABLED
+    LTEXT           "Las etiquetas están separadas por espacios ó comas.",IDC_STATIC,14,39,319,10
+    GROUPBOX        "Sugerencias",IDC_STATIC,7,62,334,148
+    LTEXT           "Éstas etiquetas ya han sido asignadas a archivos dentro de este store (dar click en una etiqueta para añadirla):",IDC_STATIC,14,73,233,16
+    PUSHBUTTON      "&Añadir etiquetas",IDC_ADDTAGS,259,73,75,14,WS_DISABLED
     CONTROL         "",IDC_TAGLIST,"SysListView32",LVS_SHOWSELALWAYS | LVS_NOLABELWRAP | WS_BORDER | WS_GROUP | WS_TABSTOP,14,93,320,109
     DEFPUSHBUTTON   "OK",IDOK,234,217,50,14,WS_GROUP
     PUSHBUTTON      "Cancelar",IDCANCEL,291,217,50,14,WS_GROUP
