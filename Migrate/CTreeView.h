@@ -132,6 +132,7 @@ protected:
 
 private:
 	IShellFolder* pDesktop;
+	CImageList m_DefaultGlyphs;
 
 	void SetWidgetSize();
 	UINT GetChildRect(CPoint item);

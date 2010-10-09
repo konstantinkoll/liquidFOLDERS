@@ -586,10 +586,11 @@ void CExplorerTree::EnumObjects(HTREEITEM hParentItem, LPITEMIDLIST pidlParent)
 			DWORD dwAttributes = SFGAO_HASSUBFOLDER | SFGAO_FILESYSTEM | SFGAO_FILESYSANCESTOR | SFGAO_HASPROPSHEET | SFGAO_CANRENAME | SFGAO_CANDELETE;
 			pParentFolder->GetAttributesOf(1, (LPCITEMIDLIST*)&pidlTemp, &dwAttributes);
 
-			if (m_OnlyFilesystem)
-				if (!(dwAttributes & (SFGAO_FILESYSANCESTOR | SFGAO_FILESYSTEM)))
-					continue;
+			// Don't include virtual branches
+			if (!(dwAttributes & (SFGAO_FILESYSANCESTOR | SFGAO_FILESYSTEM)))
+				continue;
 
+			// Don't include liquidFOLDERS
 			SHDESCRIPTIONID did;
 			if (SUCCEEDED(SHGetDataFromIDList(pParentFolder, pidlTemp, SHGDFIL_DESCRIPTIONID, &did, sizeof(SHDESCRIPTIONID))))
 			{
@@ -598,7 +599,21 @@ void CExplorerTree::EnumObjects(HTREEITEM hParentItem, LPITEMIDLIST pidlParent)
 					continue;
 			}
 
-			InsertItem(p_App->GetShellManager()->ConcatenateItem(pidlParent, pidlTemp), pidlTemp, dwAttributes, hParentItem);
+			// Don't include file junctions
+			LPITEMIDLIST pidlFQ = p_App->GetShellManager()->ConcatenateItem(pidlParent, pidlTemp);
+
+			wchar_t Path[MAX_PATH];
+			if (SUCCEEDED(SHGetPathFromIDListW(pidlFQ, Path)))
+			{
+				DWORD attr = GetFileAttributesW(Path);
+				if ((attr!=INVALID_FILE_ATTRIBUTES) && (!(attr & FILE_ATTRIBUTE_DIRECTORY)))
+				{
+					p_App->GetShellManager()->FreeItem(pidlFQ);
+					continue;
+				}
+			}
+
+			InsertItem(pidlFQ, pidlTemp, dwAttributes, hParentItem);
 		}
 
 		pEnum->Release();

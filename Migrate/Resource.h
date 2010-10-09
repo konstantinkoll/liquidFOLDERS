@@ -5,6 +5,7 @@
 #define IDR_APPLICATION                 128
 #define IDB_ABOUTICON                   129
 #define IDB_TASKS                       130
+#define IDB_TREEWIDGETS                 131
 #define ID_VIEW_SELECTROOT              400
 #define ID_VIEW_SELECTROOT_TASKBAR      401
 #define ID_VIEW_EXPAND                  402

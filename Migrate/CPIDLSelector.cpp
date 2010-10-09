@@ -97,7 +97,30 @@ void CPIDLDropdownWindow::AddChildren(wchar_t* Path, UINT Category)
 				LPITEMIDLIST pidlTemp;
 				while (pEnum->Next(1, &pidlTemp, NULL)==S_OK)
 				{
-					AddPIDL(theApp.GetShellManager()->ConcatenateItem(pidl, pidlTemp), Category);
+					// Don't include liquidFOLDERS
+					SHDESCRIPTIONID did;
+					if (SUCCEEDED(SHGetDataFromIDList(pParentFolder, pidlTemp, SHGDFIL_DESCRIPTIONID, &did, sizeof(SHDESCRIPTIONID))))
+					{
+						const CLSID LFNE = { 0x3F2D914F, 0xFE57, 0x414F, { 0x9F, 0x88, 0xA3, 0x77, 0xC7, 0x84, 0x1D, 0xA4 } };
+						if (did.clsid==LFNE)
+							continue;
+					}
+
+					// Don't include file junctions
+					LPITEMIDLIST pidlFQ = theApp.GetShellManager()->ConcatenateItem(pidl, pidlTemp);
+
+					wchar_t Path[MAX_PATH];
+					if (SUCCEEDED(SHGetPathFromIDListW(pidlFQ, Path)))
+					{
+						DWORD attr = GetFileAttributesW(Path);
+						if ((attr!=INVALID_FILE_ATTRIBUTES) && (!(attr & FILE_ATTRIBUTE_DIRECTORY)))
+						{
+							theApp.GetShellManager()->FreeItem(pidlFQ);
+							continue;
+						}
+					}
+
+					AddPIDL(pidlFQ, Category);
 					theApp.GetShellManager()->FreeItem(pidlTemp);
 				}
 				pEnum->Release();

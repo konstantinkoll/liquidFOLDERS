@@ -87,6 +87,7 @@ END
 //
 
 IDB_TASKS               BITMAP                  "res\\Tasks.bmp"
+IDB_TREEWIDGETS         BITMAP                  "res\\TreeWidgets.bmp"
 #endif    // Neutral resources
 /////////////////////////////////////////////////////////////////////////////
 

@@ -451,18 +451,34 @@ UINT CTreeView::EnumObjects(UINT row, UINT col, BOOL ExpandAll, BOOL FirstInstan
 		LPITEMIDLIST pidlTemp;
 		while (pEnum->Next(1, &pidlTemp, NULL)==S_OK)
 		{
-			DWORD dwAttribs = SFGAO_FILESYSANCESTOR | SFGAO_FILESYSTEM;
-			pParentFolder->GetAttributesOf(1, (LPCITEMIDLIST*)&pidlTemp, &dwAttribs);
+			DWORD dwAttributes = SFGAO_FILESYSANCESTOR | SFGAO_FILESYSTEM;
+			pParentFolder->GetAttributesOf(1, (LPCITEMIDLIST*)&pidlTemp, &dwAttributes);
 
-			if (!(dwAttribs & (SFGAO_FILESYSANCESTOR | SFGAO_FILESYSTEM)))
+			// Don't include virtual branches
+			if (!(dwAttributes & (SFGAO_FILESYSANCESTOR | SFGAO_FILESYSTEM)))
 				continue;
 
+			// Don't include liquidFOLDERS
 			SHDESCRIPTIONID did;
 			if (SUCCEEDED(SHGetDataFromIDList(pParentFolder, pidlTemp, SHGDFIL_DESCRIPTIONID, &did, sizeof(SHDESCRIPTIONID))))
 			{
 				const CLSID LFNE = { 0x3F2D914F, 0xFE57, 0x414F, { 0x9F, 0x88, 0xA3, 0x77, 0xC7, 0x84, 0x1D, 0xA4 } };
 				if (did.clsid==LFNE)
 					continue;
+			}
+
+			// Don't include file junctions
+			LPITEMIDLIST pidlFQ = theApp.GetShellManager()->ConcatenateItem(m_Tree[MAKEPOS(row, col)].pItem->pidlFQ, pidlTemp);
+
+			wchar_t Path[MAX_PATH];
+			if (SUCCEEDED(SHGetPathFromIDListW(pidlFQ, Path)))
+			{
+				DWORD attr = GetFileAttributesW(Path);
+				if ((attr!=INVALID_FILE_ATTRIBUTES) && (!(attr & FILE_ATTRIBUTE_DIRECTORY)))
+				{
+					theApp.GetShellManager()->FreeItem(pidlFQ);
+					continue;
+				}
 			}
 
 			if (NewRow)
@@ -478,7 +494,7 @@ UINT CTreeView::EnumObjects(UINT row, UINT col, BOOL ExpandAll, BOOL FirstInstan
 				m_Tree[MAKEPOS(row, col)].Flags |= (CF_HASCHILDREN | CF_CANCOLLAPSE);
 			}
 
-			SetItem(row+Inserted, col+1, pidlTemp, theApp.GetShellManager()->ConcatenateItem(m_Tree[MAKEPOS(row, col)].pItem->pidlFQ, pidlTemp), Flags);
+			SetItem(row+Inserted, col+1, pidlTemp, pidlFQ, Flags);
 			if (ExpandAll)
 				Inserted += EnumObjects(row+Inserted, col+1, TRUE, FALSE);
 
@@ -492,7 +508,7 @@ UINT CTreeView::EnumObjects(UINT row, UINT col, BOOL ExpandAll, BOOL FirstInstan
 	pDesktop->Release();
 
 	if (FirstInstance)
-		for (UINT a=row+Inserted; a>row; a--)
+		for (UINT a=min(row+Inserted, m_Rows-1); a>row; a--)
 			for (UINT b=1; b<m_Cols; b++)
 				if (m_Tree[MAKEPOS(a+1, b)].Flags & CF_ISSIBLING)
 				{
@@ -694,8 +710,9 @@ void CTreeView::SetWidgetSize()
 	}
 	else
 	{
-		m_CheckboxSize.cx = m_GlyphSize.cx = GetSystemMetrics(SM_CXMENUCHECK);
-		m_CheckboxSize.cy = m_GlyphSize.cy = GetSystemMetrics(SM_CYMENUCHECK);
+		m_CheckboxSize.cx = GetSystemMetrics(SM_CXMENUCHECK);
+		m_CheckboxSize.cy = GetSystemMetrics(SM_CYMENUCHECK);
+		m_GlyphSize.cx = m_GlyphSize.cy = 11;
 	}
 }
 
@@ -965,6 +982,8 @@ int CTreeView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_IconSize.cx = ii.rcImage.right-ii.rcImage.left;
 	m_IconSize.cy = ii.rcImage.bottom-ii.rcImage.top;
 
+	m_DefaultGlyphs.Create(IDB_TREEWIDGETS, 11, 1, 0xFFFFFF);
+
 	LOGFONT lf;
 	theApp.m_DefaultFont.GetLogFont(&lf);
 	m_RowHeight = (4+max(abs(lf.lfHeight), m_IconSize.cy)) & ~1;
@@ -1186,7 +1205,8 @@ void CTreeView::OnPaint()
 						}
 						else
 						{
-							// TODO
+							rectGlyph.OffsetRect(1, 0);
+							m_DefaultGlyphs.Draw(&dc, (curCell-1)->Flags & CF_CANEXPAND ? 0 : 1, rectGlyph.TopLeft(), 0);
 						}
 					}
 			}
