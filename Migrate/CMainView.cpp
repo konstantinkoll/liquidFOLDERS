@@ -251,13 +251,13 @@ void CMainView::OnSelectionChanged(NMHDR* pNMHDR, LRESULT* /*pResult*/)
 		IShellFolder* pParentFolder = NULL;
 		if (SUCCEEDED(SHBindToParent(pNMTreeView->pCell->pItem->pidlFQ, IID_IShellFolder, (void**)&pParentFolder, NULL)))
 		{
-			DWORD dwAttribs = SFGAO_CANRENAME | SFGAO_CANDELETE | SFGAO_HASPROPSHEET;
-			pParentFolder->GetAttributesOf(1, (LPCITEMIDLIST*)&pNMTreeView->pCell->pItem->pidlRel, &dwAttribs);
+			DWORD dwAttributes = SFGAO_CANRENAME | SFGAO_CANDELETE | SFGAO_HASPROPSHEET;
+			pParentFolder->GetAttributesOf(1, (LPCITEMIDLIST*)&pNMTreeView->pCell->pItem->pidlRel, &dwAttributes);
 
 			m_SelectedCanExpand = (pNMTreeView->pCell->Flags & CF_CANEXPAND);
-			m_SelectedHasPropSheet = (dwAttribs & SFGAO_HASPROPSHEET);
-			m_SelectedCanRename = (dwAttribs & SFGAO_CANRENAME);
-			m_SelectedCanDelete = (dwAttribs & SFGAO_CANDELETE);
+			m_SelectedHasPropSheet = (dwAttributes & SFGAO_HASPROPSHEET);
+			m_SelectedCanRename = (dwAttributes & SFGAO_CANRENAME);
+			m_SelectedCanDelete = (dwAttributes & SFGAO_CANDELETE);
 
 			pParentFolder->Release();
 			return;

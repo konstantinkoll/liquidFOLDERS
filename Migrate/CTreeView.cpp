@@ -266,7 +266,19 @@ void CTreeView::EditLabel(CPoint item)
 	for (int a=0; a<item.x; a++)
 		x += m_ColumnWidth[a];
 
-	wchar_t* Name = m_Tree[MAKEPOSI(item)].pItem->Name;
+	wchar_t Name[MAX_PATH];
+	wcscpy_s(Name, MAX_PATH, m_Tree[MAKEPOSI(item)].pItem->Name);
+
+	IShellFolder* pParentFolder = NULL;
+	if (SUCCEEDED(SHBindToParent(m_Tree[MAKEPOSI(item)].pItem->pidlFQ, IID_IShellFolder, (void**)&pParentFolder, NULL)))
+	{
+		STRRET strret;
+		if (SUCCEEDED(pParentFolder->GetDisplayNameOf(m_Tree[MAKEPOSI(item)].pItem->pidlRel, SHGDN_FOREDITING, &strret)))
+			if (strret.uType==STRRET_WSTR)
+				wcscpy_s(Name, MAX_PATH, strret.pOleStr);
+
+		pParentFolder->Release();
+	}
 
 	CRect rect(x+m_CheckboxSize.cx+m_IconSize.cx+GUTTER+BORDER+2*MARGIN-5, y, x+m_ColumnWidth[item.x], y+m_RowHeight);
 
