@@ -960,6 +960,7 @@ BEGIN_MESSAGE_MAP(CTreeView, CWnd)
 	ON_WM_MOUSEMOVE()
 	ON_WM_MOUSELEAVE()
 	ON_WM_MOUSEHOVER()
+	ON_WM_KEYDOWN()
 	ON_WM_LBUTTONDOWN()
 	ON_WM_LBUTTONUP()
 	ON_WM_LBUTTONDBLCLK()
@@ -1360,6 +1361,103 @@ void CTreeView::OnMouseHover(UINT nFlags, CPoint point)
 	tme.dwHoverTime = LFHOVERTIME;
 	tme.hwndTrack = m_hWnd;
 	TrackMouseEvent(&tme);
+}
+
+void CTreeView::OnKeyDown(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags*/)
+{
+	if (m_Rows)
+	{
+		CPoint item(m_SelectedItem);
+
+		switch (nChar)
+		{
+		case VK_LEFT:
+			if (item.x)
+			{
+				item.x--;
+				for (int row=item.y; row>=0; row--)
+					if (m_Tree[MAKEPOS(row, item.x)].pItem)
+					{
+						item.y = row;
+						break;
+					}
+			}
+
+			break;
+		case VK_RIGHT:
+			if (m_Tree[MAKEPOSI(item)].Flags & CF_CANEXPAND)
+				Expand(item.y, item.x, FALSE);
+
+			if (item.x<(int)m_Cols-1)
+				if (m_Tree[MAKEPOS(item.y, item.x+1)].pItem)
+					item.x++;
+
+			break;
+		case VK_UP:
+			for (int row=item.y-1; row>=0; row--)
+				if (m_Tree[MAKEPOS(row, item.x)].pItem)
+				{
+					item.y = row;
+					break;
+				}
+
+			break;
+		case VK_DOWN:
+			for (int row=item.y+1; row<(int)m_Rows; row++)
+				if (m_Tree[MAKEPOS(row, item.x)].pItem)
+				{
+					item.y = row;
+					break;
+				}
+
+			break;
+		case VK_HOME:
+			if (GetKeyState(VK_CONTROL)<0)
+			{
+				item.x = item.y = 0;
+			}
+			else
+				for (int col=item.x; col>=0; col--)
+					if (m_Tree[MAKEPOS(item.y, col)].pItem)
+					{
+						item.x = col;
+					}
+					else
+						break;
+
+			break;
+		case VK_END:
+			if (GetKeyState(VK_CONTROL)<0)
+			{
+				item.x = m_Cols-1;
+				item.y = m_Rows-1;
+				while ((item.x>0) || (item.y>0))
+				{
+					if (m_Tree[MAKEPOS(item.y, item.x)].pItem)
+						break;
+
+					item.y--;
+					if (item.y<0)
+					{
+						item.y = m_Rows-1;
+						item.x--;
+					}
+				}
+			}
+			else
+				for (int col=item.x; col<(int)m_Cols; col++)
+					if (m_Tree[MAKEPOS(item.y, col)].pItem)
+					{
+						item.x = col;
+					}
+					else
+						break;
+
+			break;
+		}
+
+		SelectItem(item);
+	}
 }
 
 void CTreeView::OnLButtonDown(UINT nFlags, CPoint point)
