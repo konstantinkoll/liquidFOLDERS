@@ -780,6 +780,7 @@ void CTreeView::SelectItem(CPoint Item)
 	m_SelectedItem = Item;
 	m_EditLabel = CPoint(-1, -1);
 
+	ReleaseCapture();
 	NotifyOwner();
 }
 
@@ -1331,7 +1332,7 @@ void CTreeView::OnMouseHover(UINT nFlags, CPoint point)
 {
 	if ((nFlags & (MK_LBUTTON | MK_MBUTTON | MK_RBUTTON | MK_XBUTTON1 | MK_XBUTTON2))==0)
 	{
-		if ((m_HotItem.x!=-1) && (m_HotItem.y!=-1) && (!p_Edit))
+		if ((m_HotItem.x!=-1) && (m_HotItem.y!=-1) && (!m_CheckboxHot) && (!p_Edit))
 			if (m_HotItem==m_EditLabel)
 			{
 				m_TooltipCtrl.Deactivate();
