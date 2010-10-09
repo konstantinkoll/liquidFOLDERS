@@ -96,6 +96,7 @@ protected:
 	void UpdateChildPIDLs(UINT row, UINT col);
 	void SetItem(UINT row, UINT col, LPITEMIDLIST pidlRel, LPITEMIDLIST pidlFQ, UINT Flags);
 	UINT EnumObjects(UINT row, UINT col, BOOL ExpandAll, BOOL FirstInstance=TRUE);
+	void Expand(UINT row, UINT col, BOOL ExpandAll);
 	void Collapse(UINT row, UINT col);
 	void FreeItem(Cell* cell);
 	void FreeTree();

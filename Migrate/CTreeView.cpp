@@ -494,8 +494,22 @@ UINT CTreeView::EnumObjects(UINT row, UINT col, BOOL ExpandAll, BOOL FirstInstan
 	return Inserted;
 }
 
+void CTreeView::Expand(UINT row, UINT col, BOOL ExpandAll)
+{
+	ASSERT(m_Tree[MAKEPOS(row, col)].Flags & CF_CANEXPAND);
+
+	EnumObjects(row, col, ExpandAll);
+
+	for (UINT a=(int)col+1; a<m_Cols; a++)
+		AutosizeColumn(a, TRUE);
+
+	Invalidate();
+}
+
 void CTreeView::Collapse(UINT row, UINT col)
 {
+	ASSERT(m_Tree[MAKEPOS(row, col)].Flags & CF_CANCOLLAPSE);
+
 	m_Tree[MAKEPOS(row, col)].Flags &= ~CF_CANCOLLAPSE;
 	m_Tree[MAKEPOS(row, col)].Flags |= CF_CANEXPAND;
 
@@ -507,6 +521,8 @@ void CTreeView::Collapse(UINT row, UINT col)
 
 	for (UINT c=col+1; c<m_Cols; c++)
 		FreeItem(&m_Tree[MAKEPOS(row, c)]);
+
+	Invalidate();
 }
 
 void CTreeView::FreeItem(Cell* cell)
@@ -1297,20 +1313,14 @@ void CTreeView::OnLButtonDown(UINT nFlags, CPoint point)
 	}
 	else
 		if ((Expando.x!=-1) && (Expando.y!=-1))
-		{
 			if (m_Tree[MAKEPOS(Expando.y, Expando.x-1)].Flags & CF_CANEXPAND)
 			{
-				EnumObjects(Expando.y, Expando.x-1, nFlags & MK_CONTROL);
-				for (UINT a=(int)Expando.x; a<m_Cols; a++)
-					AutosizeColumn(a, TRUE);
+				Expand(Expando.y, Expando.x-1, nFlags & MK_CONTROL);
 			}
 			else
 			{
 				Collapse(Expando.y, Expando.x-1);
 			}
-
-			Invalidate();
-		}
 }
 
 void CTreeView::OnLButtonUp(UINT nFlags, CPoint point)
