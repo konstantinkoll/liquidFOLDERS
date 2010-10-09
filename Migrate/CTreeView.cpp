@@ -586,7 +586,7 @@ void CTreeView::TrackMenu(UINT nID, CPoint point, int col)
 	}
 }
 
-void CTreeView::SetCheckboxSize()
+void CTreeView::SetWidgetSize()
 {
 	if (hThemeButton)
 	{
@@ -849,7 +849,7 @@ int CTreeView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		hThemeTree = theApp.zOpenThemeData(GetSafeHwnd(), VSCLASS_TREEVIEW);
 	}
 
-	SetCheckboxSize();
+	SetWidgetSize();
 
 	IMAGEINFO ii;
 	theApp.m_SystemImageListSmall.GetImageInfo(0, &ii);
@@ -886,13 +886,15 @@ LRESULT CTreeView::OnThemeChanged()
 			theApp.zCloseThemeData(hThemeButton);
 		if (hThemeList)
 			theApp.zCloseThemeData(hThemeList);
+		if (hThemeTree)
+			theApp.zCloseThemeData(hThemeTree);
 
 		hThemeButton = theApp.zOpenThemeData(GetSafeHwnd(), VSCLASS_BUTTON);
 		if (theApp.OSVersion>=OS_Vista)
 			hThemeList = theApp.zOpenThemeData(GetSafeHwnd(), VSCLASS_LISTVIEW);
 	}
 
-	SetCheckboxSize();
+	SetWidgetSize();
 	return TRUE;
 }
 
@@ -1059,7 +1061,7 @@ void CTreeView::OnPaint()
 					if (((curCell->pItem) && (!(curCell->Flags & CF_ISSIBLING))) || ((curCell-1)->Flags & CF_CANEXPAND))
 					{
 						CRect rectGlyph(x, y+(m_RowHeight-m_GlyphSize.cy)/2, x+m_GlyphSize.cx, y+(m_RowHeight-m_GlyphSize.cy)/2+m_GlyphSize.cy);
-						if (IsCtrlThemed())
+						if (hThemeTree)
 						{
 							if (theApp.OSVersion==OS_XP)
 							{

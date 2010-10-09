@@ -128,7 +128,7 @@ protected:
 private:
 	IShellFolder* pDesktop;
 
-	void SetCheckboxSize();
+	void SetWidgetSize();
 	UINT GetChildRect(CPoint item);
 	void NotifyOwner();
 	void ExecuteContextMenu(CPoint item, LPCSTR verb);
