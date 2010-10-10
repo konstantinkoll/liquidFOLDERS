@@ -447,31 +447,37 @@ void MountExternal()
 
 void InitStoreCache()
 {
-	if (Initialized)
-		return;
-	Initialized = true;
-
-	// Default-Store laden
-	HKEY k;
-	if (RegOpenKeyA(HKEY_CURRENT_USER, LFStoresHive, &k)==ERROR_SUCCESS)
+	if (GetMutex(Mutex_Stores))
 	{
-		DWORD type;
-		DWORD sz = LFKeySize;
-		RegQueryValueExA(k, "DefaultStore", NULL, &type, (BYTE*)DefaultStore, &sz);
-		RegCloseKey(k);
+		if (!Initialized)
+		{
+			// Default-Store laden
+			HKEY k;
+			if (RegOpenKeyA(HKEY_CURRENT_USER, LFStoresHive, &k)==ERROR_SUCCESS)
+			{
+				DWORD type;
+				DWORD sz = LFKeySize;
+				RegQueryValueExA(k, "DefaultStore", NULL, &type, (BYTE*)DefaultStore, &sz);
+				RegCloseKey(k);
+			}
+
+			// Anwendungsordner anlegen
+			char tmpStr[MAX_PATH];
+			SHGetSpecialFolderPathA(NULL, tmpStr, CSIDL_APPDATA, TRUE);
+			strcat_s(tmpStr, MAX_PATH, AppPath);
+			CreateDir(tmpStr);
+
+			// Stores aus der Registry
+			LoadRegistry();
+
+			// Externe Laufwerke mounten
+			MountExternal();
+
+			Initialized = true;
+		}
+
+		ReleaseMutex(Mutex_Stores);
 	}
-
-	// Anwendungsordner anlegen
-	char tmpStr[MAX_PATH];
-	SHGetSpecialFolderPathA(NULL, tmpStr, CSIDL_APPDATA, TRUE);
-	strcat_s(tmpStr, MAX_PATH, AppPath);
-	CreateDir(tmpStr);
-
-	// Stores aus der Registry
-	LoadRegistry();
-
-	// Externe Laufwerke mounten
-	MountExternal();
 }
 
 
