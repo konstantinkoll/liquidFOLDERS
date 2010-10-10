@@ -21,7 +21,7 @@ BOOL ReceivedDoubleclk = FALSE;
 
 
 // Use a guid to uniquely identify our icon
-class __declspec(uuid("f144ca00-1a4f-11df-8a39-0800200c9a66")) LFIcon;
+class __declspec(uuid("F144CA00-1A4F-11DF-8A39-0800200C9A66")) LFIcon;
 
 
 void PrepareTrayTip(wchar_t* Buf, size_t cCount)
@@ -70,7 +70,8 @@ BOOL OnStoresChanged(HWND hWnd)
 	ZeroMemory(&nid, sizeof(nid));
 	nid.cbSize = sizeof(nid);
 	nid.hWnd = hWnd;
-	nid.uFlags = NIF_TIP;
+	nid.uFlags = NIF_TIP | NIF_GUID | NIF_MESSAGE | NIF_GUID | NIF_SHOWTIP;
+	nid.guidItem = __uuidof(LFIcon);
 	nid.uVersion = NOTIFYICON_VERSION_4;
 	PrepareTrayTip(nid.szTip, 128);
 	Shell_NotifyIcon(NIM_ADD, &nid);
