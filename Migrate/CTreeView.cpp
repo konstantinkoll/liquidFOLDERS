@@ -1655,8 +1655,13 @@ void CTreeView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 				Expand(item.y, item.x, FALSE);
 
 			if ((item.x<(int)m_Cols-1) && (GetKeyState(VK_CONTROL)>=0))
-				if (m_Tree[MAKEPOS(item.y, item.x+1)].pItem)
-					item.x++;
+				for (int row=item.y; row<(int)m_Rows; row++)
+					if (m_Tree[MAKEPOS(row, item.x+1)].pItem)
+					{
+						item.x++;
+						item.y = row;
+						break;
+					}
 
 			break;
 		case VK_UP:
