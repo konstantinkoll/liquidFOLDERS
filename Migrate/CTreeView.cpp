@@ -30,7 +30,7 @@ CTreeView::CTreeView()
 	m_Allocated = m_Rows = m_Cols = 0;
 	hThemeList = hThemeButton = hThemeTree = NULL;
 	m_SelectedItem.x = m_SelectedItem.y = m_HotItem.x = m_HotItem.y = m_HotExpando.x = m_HotExpando.y = -1;
-	m_CheckboxHot = m_CheckboxPressed = m_Hover = FALSE;
+	m_CheckboxHot = m_CheckboxPressed = m_Hover = m_SpacePressed = FALSE;
 	m_pContextMenu2 = NULL;
 	m_EditLabel = CPoint(-1, -1);
 
@@ -131,7 +131,7 @@ void CTreeView::ClearRoot()
 	DestroyEdit();
 	FreeTree();
 	m_SelectedItem.x = m_SelectedItem.y = m_HotItem.x = m_HotItem.y = -1;
-	m_CheckboxHot = m_CheckboxPressed = FALSE;
+	m_CheckboxHot = m_CheckboxPressed = m_SpacePressed = FALSE;
 
 	m_wndHeader.ModifyStyle(0, HDS_HIDDEN);
 	AdjustLayout();
@@ -1191,6 +1191,7 @@ BEGIN_MESSAGE_MAP(CTreeView, CWnd)
 	ON_WM_MOUSELEAVE()
 	ON_WM_MOUSEHOVER()
 	ON_WM_KEYDOWN()
+	ON_WM_KEYUP()
 	ON_WM_LBUTTONDOWN()
 	ON_WM_LBUTTONUP()
 	ON_WM_LBUTTONDBLCLK()
@@ -1395,7 +1396,7 @@ void CTreeView::OnPaint()
 						int uiStyle;
 						if (curCell->pItem->Path[0])
 						{
-							uiStyle = (Selected && m_CheckboxPressed) ? CBS_UNCHECKEDPRESSED : (Hot && m_CheckboxHot) ? CBS_UNCHECKEDHOT : CBS_UNCHECKEDNORMAL;
+							uiStyle = (Selected && (m_SpacePressed || m_CheckboxPressed)) ? CBS_UNCHECKEDPRESSED : (Hot && m_CheckboxHot) ? CBS_UNCHECKEDHOT : CBS_UNCHECKEDNORMAL;
 							if (curCell->Flags & CF_CHECKED)
 								uiStyle += 4;
 						}
@@ -1410,7 +1411,7 @@ void CTreeView::OnPaint()
 						UINT uiStyle = DFCS_BUTTONCHECK;
 						if (curCell->pItem->Path[0])
 						{
-							uiStyle |= (curCell->Flags & CF_CHECKED ? DFCS_CHECKED : 0) | ((Selected && m_CheckboxPressed) ? DFCS_PUSHED : 0);
+							uiStyle |= (curCell->Flags & CF_CHECKED ? DFCS_CHECKED : 0) | ((Selected && (m_SpacePressed || m_CheckboxPressed)) ? DFCS_PUSHED : 0);
 						}
 						else
 						{
@@ -1631,6 +1632,14 @@ void CTreeView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 				DeleteFolder();
 
 			break;
+		case VK_SPACE:
+			if (m_Tree[MAKEPOSI(item)].pItem->Path[0])
+			{
+				m_SpacePressed = TRUE;
+				InvalidateItem(item);
+			}
+
+			break;
 		case VK_LEFT:
 			if (GetKeyState(VK_CONTROL)<0)
 			{
@@ -1732,6 +1741,29 @@ void CTreeView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 
 		SelectItem(item);
 	}
+}
+
+void CTreeView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
+{
+	if (m_Rows)
+		switch (nChar)
+		{
+		case VK_SPACE:
+			if (m_SpacePressed)
+			{
+				if (m_Tree[MAKEPOSI(m_SelectedItem)].pItem->Path[0])
+				{
+					m_Tree[MAKEPOSI(m_SelectedItem)].Flags ^= CF_CHECKED;
+					InvalidateItem(m_SelectedItem);
+				}
+
+				m_SpacePressed = FALSE;
+			}
+
+			break;
+		default:
+			CWnd::OnKeyUp(nChar, nRepCnt, nFlags);
+		}
 }
 
 void CTreeView::OnLButtonDown(UINT nFlags, CPoint point)
@@ -1994,6 +2026,7 @@ void CTreeView::OnSetFocus(CWnd* /*pOldWnd*/)
 
 void CTreeView::OnKillFocus(CWnd* /*pNewWnd*/)
 {
+	m_SpacePressed = FALSE;
 	InvalidateItem(m_SelectedItem);
 }
 
