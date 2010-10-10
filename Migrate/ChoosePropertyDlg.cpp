@@ -50,6 +50,10 @@ BOOL ChoosePropertyDlg::OnInitDialog()
 	// Attribut-Liste füllen
 	PopulateListCtrl(IDC_ATTRIBUTES, FALSE, m_Attr);
 
+	// "Reset" deaktivieren
+	if (m_Attr==-1)
+		GetDlgItem(IDC_RESET)->EnableWindow(FALSE);
+
 	return TRUE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird
 }
 
