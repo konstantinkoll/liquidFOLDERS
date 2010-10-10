@@ -415,7 +415,7 @@ LRESULT CPIDLSelector::OnShellChange(WPARAM wParam, LPARAM lParam)
 	case SHCNE_UPDATEITEM:
 		wcscpy_s(Path2, MAX_PATH, Parent1);
 		wcscat_s(Path2, MAX_PATH, L"\\desktop.ini");
-		if ((wcscmp(Path1, Path2)==0) && (wcscmp(Path2, CurrentPath)!=0))
+		if ((wcscmp(Path1, Path2)==0) && (wcscmp(Parent1, CurrentPath)==0))
 			SetItem(pDesktop, Parent1, TRUE, NM_SELUPDATE);
 		break;
 	}

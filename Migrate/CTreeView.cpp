@@ -886,8 +886,41 @@ void CTreeView::AddPath(LPWSTR Path, LPWSTR Parent)
 
 void CTreeView::UpdatePath(LPWSTR Path1, LPWSTR Path2, IShellFolder* pDesktop)
 {
-}
+	CPoint item(0, 0);
+	while ((item.x<(int)m_Cols) && (item.y<(int)m_Rows))
+	{
+		if (m_Tree[MAKEPOSI(item)].pItem)
+		{
+			wchar_t tmpPath[MAX_PATH];
+			if (SHGetPathFromIDList(m_Tree[MAKEPOSI(item)].pItem->pidlFQ, tmpPath))
+				if (wcscmp(tmpPath, Path1)==0)
+				{
+					ULONG chEaten;
+					LPITEMIDLIST pidlFQ = NULL;
+					if (SUCCEEDED(pDesktop->ParseDisplayName(NULL, NULL, Path2, &chEaten, &pidlFQ, NULL)))
+					{
+						IShellFolder* pParentFolder = NULL;
+						LPCITEMIDLIST pidlRel = NULL;
+						if (SUCCEEDED(SHBindToParent(pidlFQ, IID_IShellFolder, (void**)&pParentFolder, &pidlRel)))
+						{
+							SetItem(item.y, item.x, theApp.GetShellManager()->CopyItem(pidlRel), pidlFQ, m_Tree[MAKEPOSI(item)].Flags);
+							InvalidateItem(item);
+							UpdateChildPIDLs(item.y, item.x);
 
+							pParentFolder->Release();
+						}
+					}
+				}
+		}
+
+		item.y++;
+		if (item.y>=(int)m_Rows)
+		{
+			item.x++;
+			item.y = 0;
+		}
+	}
+}
 
 BOOL CTreeView::ExecuteContextMenu(CPoint& item, LPCSTR verb)
 {
