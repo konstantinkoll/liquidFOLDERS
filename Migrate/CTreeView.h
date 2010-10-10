@@ -20,6 +20,9 @@
 #define CF_HASCHILDREN      8
 #define CF_HASSIBLINGS      16
 #define CF_ISSIBLING        32
+#define CF_CANRENAME        64
+#define CF_CANDELETE        128
+#define CF_HASPROPSHEET     256
 
 struct ItemData
 {
@@ -96,6 +99,7 @@ protected:
 	void RemoveRows(UINT first, UINT last);
 	void UpdateChildPIDLs(UINT row, UINT col);
 	void SetItem(UINT row, UINT col, LPITEMIDLIST pidlRel, LPITEMIDLIST pidlFQ, UINT Flags);
+	void RemoveItem(UINT row, UINT col);
 	UINT EnumObjects(UINT row, UINT col, BOOL ExpandAll, BOOL FirstInstance=TRUE);
 	void Expand(UINT row, UINT col, BOOL ExpandAll, BOOL AutosizeHeader=TRUE);
 	void Collapse(UINT row, UINT col);
@@ -138,7 +142,7 @@ private:
 	void SetWidgetSize();
 	UINT GetChildRect(CPoint item);
 	void NotifyOwner();
-	void ExecuteContextMenu(CPoint item, LPCSTR verb);
+	BOOL ExecuteContextMenu(CPoint& item, LPCSTR verb);
 	CString GetColumnCaption(UINT col);
 	void UpdateColumnCaption(UINT col);
 	void AutosizeColumn(UINT col, BOOL OnlyEnlarge=FALSE);

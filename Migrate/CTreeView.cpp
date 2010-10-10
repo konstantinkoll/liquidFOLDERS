@@ -233,7 +233,8 @@ void CTreeView::OpenFolder(CPoint item)
 
 void CTreeView::DeleteFolder(CPoint item)
 {
-	ExecuteContextMenu(item, "delete");
+	if (ExecuteContextMenu(item, "delete"))
+		RemoveItem(item.y, item.x);
 }
 
 void CTreeView::ShowProperties(CPoint item)
@@ -259,6 +260,8 @@ void CTreeView::EditLabel(CPoint item)
 	if ((item.x==-1) || (item.y==-1))
 		item = m_SelectedItem;
 	if ((item.x==-1) || (item.y==-1) || (item.x>=(int)m_Cols) || (item.y>=(int)m_Rows))
+		return;
+	if (!(m_Tree[MAKEPOSI(item)].Flags & CF_CANRENAME))
 		return;
 
 	int y = m_HeaderHeight+item.y*m_RowHeight;
@@ -318,6 +321,7 @@ BOOL CTreeView::InsertRow(UINT row)
 
 	ZeroMemory(&m_Tree[MAKEPOS(row, 0)], MaxColumns*sizeof(Cell));
 	m_Rows++;
+	m_HotItem.x = m_HotItem.y = -1;
 
 	return TRUE;
 }
@@ -327,12 +331,16 @@ void CTreeView::RemoveRows(UINT first, UINT last)
 	if (first>last)
 		return;
 
+	if ((m_HotItem.y>=(int)first) && (m_HotItem.y<=(int)last))
+		m_TooltipCtrl.Deactivate();
+
 	for (UINT row=first; row<=last; row++)
 		for (UINT col=0; col<m_Cols; col++)
 			FreeItem(&m_Tree[MAKEPOS(row, col)]);
 
 	memcpy(&m_Tree[MAKEPOS(first, 0)], &m_Tree[MAKEPOS(last+1, 0)], (m_Rows-last)*MaxColumns*sizeof(Cell));
 
+	m_HotItem.x = m_HotItem.y = -1;
 	m_Rows -= (last-first+1);
 	ZeroMemory(&m_Tree[MAKEPOS(m_Rows, 0)], (last-first+1)*MaxColumns*sizeof(Cell));
 }
@@ -399,12 +407,18 @@ void CTreeView::SetItem(UINT row, UINT col, LPITEMIDLIST pidlRel, LPITEMIDLIST p
 
 		if ((!(cell->Flags & CF_HASCHILDREN)) && (sfi.dwAttributes & SFGAO_HASSUBFOLDER))
 			cell->Flags |= CF_CANEXPAND;
+		if (sfi.dwAttributes & SFGAO_HASPROPSHEET)
+			cell->Flags |= CF_HASPROPSHEET;
+		if (sfi.dwAttributes & SFGAO_CANRENAME)
+			cell->Flags |= CF_CANRENAME;
+		if (sfi.dwAttributes & SFGAO_CANDELETE)
+			cell->Flags |= CF_CANDELETE;
 	}
 	else
 	{
 		wcscpy_s(cell->pItem->Name, 256, L"?");
 		cell->pItem->IconIDNormal = -1;
-		cell->Flags &= ~CF_CANEXPAND;
+		cell->Flags &= ~(CF_CANEXPAND | CF_HASPROPSHEET | CF_CANRENAME | CF_CANDELETE);
 	}
 
 	CDC* pDC = GetWindowDC();
@@ -421,6 +435,66 @@ void CTreeView::SetItem(UINT row, UINT col, LPITEMIDLIST pidlRel, LPITEMIDLIST p
 
 	if (!SHGetPathFromIDList(pidlFQ, cell->pItem->Path))
 		cell->pItem->Path[0] = L'\0';
+}
+
+void CTreeView::RemoveItem(UINT row, UINT col)
+{
+	ASSERT(row<m_Rows);
+	ASSERT(col<MaxColumns);
+
+	if (!col)
+	{
+		ClearRoot();
+		return;
+	}
+
+	UINT LastRow = GetChildRect(CPoint(col, row));
+	if (((m_SelectedItem.y>=(int)row+1) && (m_SelectedItem.y<=(int)LastRow)) || ((m_SelectedItem.y==(int)row) && (m_SelectedItem.x>=(int)col)))
+	{
+		CPoint item(m_SelectedItem);
+
+		item.x--;
+		for (int r=row; r>=0; r--)
+			if (m_Tree[MAKEPOS(r, item.x)].pItem)
+			{
+				item.y = r;
+				break;
+			}
+
+		SelectItem(item);
+		NotifyOwner();
+	}
+
+	BOOL HasSiblings = (m_Tree[MAKEPOS(row, col)].Flags & CF_HASSIBLINGS);
+	if (m_Tree[MAKEPOS(row, col)].Flags & CF_ISSIBLING)
+	{
+		if (!HasSiblings)
+			m_Tree[MAKEPOS(row-1, col)].Flags &= ~CF_HASSIBLINGS;
+
+		RemoveRows(row, LastRow);
+	}
+	else
+		if (HasSiblings)
+		{
+			for (UINT c=col; c<m_Cols; c++)
+				std::swap(m_Tree[MAKEPOS(row, c)], m_Tree[MAKEPOS(LastRow+1, c)]);
+
+			RemoveRows(row+1, LastRow+1);
+
+			m_Tree[MAKEPOS(row, col)].Flags &= ~CF_ISSIBLING;
+		}
+		else
+		{
+			for (UINT c=col; c<m_Cols; c++)
+				FreeItem(&m_Tree[MAKEPOS(row, c)]);
+
+			m_Tree[MAKEPOS(row, col-1)].Flags &= ~(CF_CANCOLLAPSE | CF_CANEXPAND | CF_HASCHILDREN);
+		}
+
+	m_HotItem.x = m_HotItem.y = -1;
+
+	SetFocus();
+	Invalidate();
 }
 
 UINT CTreeView::EnumObjects(UINT row, UINT col, BOOL ExpandAll, BOOL FirstInstance)
@@ -784,22 +858,22 @@ void CTreeView::SelectItem(CPoint Item)
 	NotifyOwner();
 }
 
-void CTreeView::ExecuteContextMenu(CPoint item, LPCSTR verb)
+BOOL CTreeView::ExecuteContextMenu(CPoint& item, LPCSTR verb)
 {
 	if ((item.x==-1) || (item.y==-1))
 		item = m_SelectedItem;
 	if ((item.x==-1) || (item.y==-1) || (item.x>=(int)m_Cols) || (item.y>=(int)m_Rows))
-		return;
+		return FALSE;
 
 	DestroyEdit();
 
 	Cell* cell = &m_Tree[MAKEPOSI(item)];
 	if (!cell->pItem)
-		return;
+		return FALSE;
 
 	IShellFolder* pParentFolder = NULL;
 	if (FAILED(SHBindToParent(cell->pItem->pidlFQ, IID_IShellFolder, (void**)&pParentFolder, NULL)))
-		return;
+		return FALSE;
 
 	IContextMenu* pcm = NULL;
 	if (SUCCEEDED(pParentFolder->GetUIObjectOf(theApp.m_pMainWnd->GetSafeHwnd(), 1, (LPCITEMIDLIST*)&cell->pItem->pidlRel, IID_IContextMenu, NULL, (void**)&pcm)))
@@ -823,10 +897,12 @@ void CTreeView::ExecuteContextMenu(CPoint item, LPCSTR verb)
 				cmi.dwHotKey = 0;
 				cmi.hIcon = NULL;
 
-				pcm->InvokeCommand(&cmi);
+				return SUCCEEDED(pcm->InvokeCommand(&cmi));
 			}
 		}
 	}
+
+	return FALSE;
 }
 
 CString CTreeView::GetColumnCaption(UINT col)
@@ -1364,7 +1440,7 @@ void CTreeView::OnMouseHover(UINT nFlags, CPoint point)
 	TrackMouseEvent(&tme);
 }
 
-void CTreeView::OnKeyDown(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags*/)
+void CTreeView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 	if (m_Rows)
 	{
@@ -1372,24 +1448,49 @@ void CTreeView::OnKeyDown(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags*/)
 
 		switch (nChar)
 		{
-		case VK_LEFT:
-			if (item.x)
+		case VK_F2:
+			EditLabel();
+			break;
+		case VK_RETURN:
+			if (m_Tree[MAKEPOSI(item)].Flags & CF_CANEXPAND)
 			{
-				item.x--;
-				for (int row=item.y; row>=0; row--)
-					if (m_Tree[MAKEPOS(row, item.x)].pItem)
-					{
-						item.y = row;
-						break;
-					}
+				ExpandFolder();
 			}
+			else
+			{
+				OpenFolder();
+			}
+
+			break;
+		case VK_DELETE:
+			if (m_Tree[MAKEPOSI(item)].Flags & CF_CANDELETE)
+				DeleteFolder();
+
+			break;
+		case VK_LEFT:
+			if (GetKeyState(VK_CONTROL)<0)
+			{
+				if (m_Tree[MAKEPOSI(item)].Flags & CF_CANCOLLAPSE)
+					Collapse(item.y, item.x);
+			}
+			else
+				if (item.x)
+				{
+					item.x--;
+					for (int row=item.y; row>=0; row--)
+						if (m_Tree[MAKEPOS(row, item.x)].pItem)
+						{
+							item.y = row;
+							break;
+						}
+				}
 
 			break;
 		case VK_RIGHT:
 			if (m_Tree[MAKEPOSI(item)].Flags & CF_CANEXPAND)
 				Expand(item.y, item.x, FALSE);
 
-			if (item.x<(int)m_Cols-1)
+			if ((item.x<(int)m_Cols-1) && (GetKeyState(VK_CONTROL)>=0))
 				if (m_Tree[MAKEPOS(item.y, item.x+1)].pItem)
 					item.x++;
 
@@ -1455,6 +1556,9 @@ void CTreeView::OnKeyDown(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags*/)
 						break;
 
 			break;
+		default:
+			CWnd::OnKeyDown(nChar, nRepCnt, nFlags);
+			return;
 		}
 
 		SelectItem(item);
