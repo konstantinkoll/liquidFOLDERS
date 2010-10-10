@@ -179,7 +179,6 @@ void CTreeView::SetRoot(LPITEMIDLIST pidl, BOOL Update, BOOL ExpandAll)
 
 	m_wndHeader.ModifyStyle(HDS_HIDDEN, 0);
 	AdjustLayout();
-	SetFocus();
 	Invalidate();
 	NotifyOwner();
 }
@@ -493,7 +492,6 @@ void CTreeView::RemoveItem(UINT row, UINT col)
 
 	m_HotItem.x = m_HotItem.y = -1;
 
-	SetFocus();
 	Invalidate();
 }
 
@@ -616,7 +614,6 @@ void CTreeView::Expand(UINT row, UINT col, BOOL ExpandAll, BOOL AutosizeHeader)
 		for (UINT a=(int)col+1; a<m_Cols; a++)
 			AutosizeColumn(a, TRUE);
 
-	SetFocus();
 	Invalidate();
 
 	if ((m_SelectedItem.x==(int)col) && (m_SelectedItem.y==(int)row))
@@ -639,7 +636,6 @@ void CTreeView::Collapse(UINT row, UINT col)
 	for (UINT c=col+1; c<m_Cols; c++)
 		FreeItem(&m_Tree[MAKEPOS(row, c)]);
 
-	SetFocus();
 	Invalidate();
 
 	if ((m_SelectedItem.x==(int)col) && (m_SelectedItem.y==(int)row))
@@ -882,6 +878,99 @@ void CTreeView::DeletePath(LPWSTR Path)
 
 void CTreeView::AddPath(LPWSTR Path, LPWSTR Parent)
 {
+	CPoint item(0, 0);
+	while ((item.x<min((int)m_Cols, MaxColumns-1)) && (item.y<(int)m_Rows))
+	{
+		if (m_Tree[MAKEPOSI(item)].pItem)
+		{
+			wchar_t tmpPath[MAX_PATH];
+			if (SHGetPathFromIDList(m_Tree[MAKEPOSI(item)].pItem->pidlFQ, tmpPath))
+				if (wcscmp(tmpPath, Parent)==0)
+				{
+					ULONG chEaten;
+					LPITEMIDLIST pidlFQ = NULL;
+					if (SUCCEEDED(pDesktop->ParseDisplayName(NULL, NULL, Path, &chEaten, &pidlFQ, NULL)))
+					{
+						IShellFolder* pParentFolder = NULL;
+						LPCITEMIDLIST pidlRel = NULL;
+						if (SUCCEEDED(SHBindToParent(pidlFQ, IID_IShellFolder, (void**)&pParentFolder, &pidlRel)))
+						{
+							CPoint add(item.x+1, item.y);
+							if ((int)m_Cols<=item.x)
+								m_Cols = item.x+1;
+
+							UINT Flags = 0;
+							if (!(m_Tree[MAKEPOSI(item)].Flags & CF_HASCHILDREN))
+							{
+								m_Tree[MAKEPOSI(item)].Flags |= (CF_HASCHILDREN | CF_CANCOLLAPSE);
+							}
+							else
+							{
+								BOOL Insert = TRUE;
+								while (add.y<(int)m_Rows)
+								{
+									if (m_Tree[MAKEPOSI(add)].pItem)
+									{
+										wchar_t tmpPath[MAX_PATH];
+										if (SHGetPathFromIDList(m_Tree[MAKEPOSI(add)].pItem->pidlFQ, tmpPath))
+											if (wcscmp(tmpPath, Path)==0)
+											{
+												Insert = FALSE;
+												break;
+											}
+									}
+
+									if (!(m_Tree[MAKEPOSI(add)].Flags & CF_HASSIBLINGS))
+									{
+										add.y++;
+										break;
+									}
+
+									add.y++;
+								}
+
+								if (Insert)
+								{
+									InsertRow(add.y);
+
+									Flags = CF_ISSIBLING;
+									if (add.y>item.y)
+										m_Tree[MAKEPOS(add.y-1, add.x)].Flags |= CF_HASSIBLINGS;
+
+									if (add.y<(int)m_Rows-1)
+										for (UINT col=1; (int)col<add.x; col++)
+										if (m_Tree[MAKEPOS(add.y+1, col)].Flags & CF_ISSIBLING)
+										{
+											m_Tree[MAKEPOS(add.y, col)].Flags |= CF_HASSIBLINGS;
+											if (!m_Tree[MAKEPOS(add.y, col-1)].pItem)
+												m_Tree[MAKEPOS(add.y, col)].Flags |= CF_ISSIBLING;
+										}
+								}
+								else
+								{
+									Flags = m_Tree[MAKEPOSI(add)].Flags;
+								}
+							}
+
+							SetItem(add.y, add.x, theApp.GetShellManager()->CopyItem(pidlRel), pidlFQ, Flags);
+
+							AutosizeColumn(add.x, TRUE);
+							InvalidateItem(add);
+							InvalidateItem(item);
+
+							pParentFolder->Release();
+						}
+					}
+				}
+		}
+
+		item.y++;
+		if (item.y>=(int)m_Rows)
+		{
+			item.x++;
+			item.y = 0;
+		}
+	}
 }
 
 void CTreeView::UpdatePath(LPWSTR Path1, LPWSTR Path2, IShellFolder* pDesktop)
