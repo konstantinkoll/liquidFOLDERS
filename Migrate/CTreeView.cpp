@@ -858,6 +858,37 @@ void CTreeView::SelectItem(CPoint Item)
 	NotifyOwner();
 }
 
+void CTreeView::DeletePath(LPWSTR Path)
+{
+	CPoint item(0, 0);
+	while ((item.x<(int)m_Cols) && (item.y<(int)m_Rows))
+	{
+		if (m_Tree[MAKEPOSI(item)].pItem)
+		{
+			wchar_t tmpPath[MAX_PATH];
+			if (SHGetPathFromIDList(m_Tree[MAKEPOSI(item)].pItem->pidlFQ, tmpPath))
+				if (wcscmp(tmpPath, Path)==0)
+					RemoveItem(item.y, item.x);
+		}
+
+		item.y++;
+		if (item.y>=(int)m_Rows)
+		{
+			item.x++;
+			item.y = 0;
+		}
+	}
+}
+
+void CTreeView::AddPath(LPWSTR Path, LPWSTR Parent)
+{
+}
+
+void CTreeView::UpdatePath(LPWSTR Path1, LPWSTR Path2, IShellFolder* pDesktop)
+{
+}
+
+
 BOOL CTreeView::ExecuteContextMenu(CPoint& item, LPCSTR verb)
 {
 	if ((item.x==-1) || (item.y==-1))
@@ -1050,6 +1081,7 @@ BEGIN_MESSAGE_MAP(CTreeView, CWnd)
 	ON_NOTIFY(HDN_ITEMCLICK, 1, OnItemClick)
 	ON_EN_KILLFOCUS(2, OnDestroyEdit)
 	ON_MESSAGE(IDD_CHOOSEPROPERTY, OnChooseProperty)
+	ON_MESSAGE(WM_SHELLCHANGE, OnShellChange)
 END_MESSAGE_MAP()
 
 int CTreeView::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -1092,11 +1124,21 @@ int CTreeView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	for (UINT a=0; a<MaxColumns; a++)
 		m_ColumnWidth[a] = MINWIDTH;
 
+	// Benachrichtigung, wenn sich Items ändern
+	SHChangeNotifyEntry shCNE = { NULL, TRUE };
+	m_ulSHChangeNotifyRegister = SHChangeNotifyRegister(m_hWnd, SHCNRF_InterruptLevel | SHCNRF_ShellLevel,
+		SHCNE_DRIVEREMOVED | SHCNE_MEDIAREMOVED | SHCNE_MKDIR | SHCNE_RMDIR |
+		SHCNE_RENAMEFOLDER | SHCNE_UPDATEITEM | SHCNE_INTERRUPT,
+		WM_SHELLCHANGE, 1, &shCNE);
+
 	return 0;
 }
 
 void CTreeView::OnDestroy()
 {
+	if (m_ulSHChangeNotifyRegister)
+		VERIFY(SHChangeNotifyDeregister(m_ulSHChangeNotifyRegister));
+
 	if (hThemeButton)
 		theApp.zCloseThemeData(hThemeButton);
 	if (hThemeList)
@@ -1878,6 +1920,76 @@ LRESULT CTreeView::OnChooseProperty(WPARAM wParam, LPARAM /*lParam*/)
 		m_ColumnMapping[(int)wParam] = dlg.m_Attr;
 		UpdateColumnCaption((UINT)wParam);
 	}
+
+	return NULL;
+}
+
+LRESULT CTreeView::OnShellChange(WPARAM wParam, LPARAM lParam)
+{
+	LPITEMIDLIST* pidls = (LPITEMIDLIST*)wParam;
+
+	wchar_t Path1[MAX_PATH] = L"";
+	wchar_t Path2[MAX_PATH] = L"";
+	wchar_t Parent1[MAX_PATH] = L"";
+	wchar_t Parent2[MAX_PATH] = L"";
+
+	IShellFolder* pDesktop = NULL;
+	if (FAILED(SHGetDesktopFolder(&pDesktop)))
+		return NULL;
+
+	SHGetPathFromIDList(pidls[0], Path1);
+
+	wcscpy_s(Parent1, MAX_PATH, Path1);
+	wchar_t* last = wcsrchr(Parent1, L'\\');
+	if (last<=&Parent1[2])
+		last = &Parent1[3];
+	*last = '\0';
+
+	if (pidls[1])
+	{
+		SHGetPathFromIDList(pidls[1], Path2);
+
+		wcscpy_s(Parent2, MAX_PATH, Path2);
+		last = wcsrchr(Parent2, L'\\');
+		if (last<=&Parent2[2])
+			last = &Parent2[3];
+		*last = '\0';
+	}
+
+	switch (lParam)
+	{
+	case SHCNE_MKDIR:
+		if ((Path1[0]!='\0') && (Parent1[0]!='\0') && (wcscmp(Path1, Parent1)!=0))
+			AddPath(Path1, Parent1);
+		break;
+	case SHCNE_DRIVEREMOVED:
+	case SHCNE_MEDIAREMOVED:
+	case SHCNE_RMDIR:
+		if (Path1[0]!='\0')
+			DeletePath(Path1);
+		break;
+	case SHCNE_RENAMEFOLDER:
+		if ((Path1[0]!='\0') && (Path2[0]!='\0'))
+			if (wcscmp(Parent1, Parent2)==0)
+			{
+				UpdatePath(Path1, Path2, pDesktop);
+			}
+			else
+			{
+				DeletePath(Path1);
+				if ((Parent2[0]!='\0') && (wcscmp(Path2, Parent2)!=0))
+					AddPath(Path2, Parent2);
+			}
+		break;
+	case SHCNE_UPDATEITEM:
+		wcscpy_s(Path2, MAX_PATH, Parent1);
+		wcscat_s(Path2, MAX_PATH, L"\\desktop.ini");
+		if (wcscmp(Path1, Path2)==0)
+			UpdatePath(Parent1, Parent1, pDesktop);
+		break;
+	}
+
+	pDesktop->Release();
 
 	return NULL;
 }

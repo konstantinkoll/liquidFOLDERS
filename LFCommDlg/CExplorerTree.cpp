@@ -1053,26 +1053,26 @@ LRESULT CExplorerTree::OnShellChange(WPARAM wParam, LPARAM lParam)
 	wchar_t Parent2[MAX_PATH] = L"";
 
 	IShellFolder* pDesktop = NULL;
-	if (SUCCEEDED(SHGetDesktopFolder(&pDesktop)))
+	if (FAILED(SHGetDesktopFolder(&pDesktop)))
+		return NULL;
+
+	SHGetPathFromIDList(pidls[0], Path1);
+
+	wcscpy_s(Parent1, MAX_PATH, Path1);
+	wchar_t* last = wcsrchr(Parent1, L'\\');
+	if (last<=&Parent1[2])
+		last = &Parent1[3];
+	*last = '\0';
+
+	if (pidls[1])
 	{
-		SHGetPathFromIDList(pidls[0], Path1);
+		SHGetPathFromIDList(pidls[1], Path2);
 
-		wcscpy_s(Parent1, MAX_PATH, Path1);
-		wchar_t* last = wcsrchr(Parent1, L'\\');
-		if (last<=&Parent1[2])
-			last = &Parent1[3];
+		wcscpy_s(Parent2, MAX_PATH, Path2);
+		last = wcsrchr(Parent2, L'\\');
+		if (last<=&Parent2[2])
+			last = &Parent2[3];
 		*last = '\0';
-
-		if (pidls[1])
-		{
-			SHGetPathFromIDList(pidls[1], Path2);
-
-			wcscpy_s(Parent2, MAX_PATH, Path2);
-			last = wcsrchr(Parent2, L'\\');
-			if (last<=&Parent2[2])
-				last = &Parent2[3];
-			*last = '\0';
-		}
 	}
 
 	BOOL NotifyOwner = FALSE;

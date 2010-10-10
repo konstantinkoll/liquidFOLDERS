@@ -109,6 +109,9 @@ protected:
 	void InvalidateItem(CPoint item);
 	void TrackMenu(UINT nID, CPoint point, int col=-1);
 	void SelectItem(CPoint Item);
+	void DeletePath(LPWSTR Path);
+	void AddPath(LPWSTR Path, LPWSTR Parent);
+	void UpdatePath(LPWSTR Path1, LPWSTR Path2, IShellFolder* pDesktop);
 
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();
@@ -133,11 +136,13 @@ protected:
 	afx_msg void OnItemClick(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnDestroyEdit();
 	afx_msg LRESULT OnChooseProperty(WPARAM wParam, LPARAM lParam);
+	afx_msg LRESULT OnShellChange(WPARAM wParam, LPARAM lParam);
 	DECLARE_MESSAGE_MAP()
 
 private:
 	IShellFolder* pDesktop;
 	CImageList m_DefaultGlyphs;
+	ULONG m_ulSHChangeNotifyRegister;
 
 	void SetWidgetSize();
 	UINT GetChildRect(CPoint item);
