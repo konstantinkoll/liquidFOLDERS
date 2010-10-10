@@ -860,12 +860,8 @@ void CTreeView::DeletePath(LPWSTR Path)
 	while ((item.x<(int)m_Cols) && (item.y<(int)m_Rows))
 	{
 		if (m_Tree[MAKEPOSI(item)].pItem)
-		{
-			wchar_t tmpPath[MAX_PATH];
-			if (SHGetPathFromIDList(m_Tree[MAKEPOSI(item)].pItem->pidlFQ, tmpPath))
-				if (wcscmp(tmpPath, Path)==0)
-					RemoveItem(item.y, item.x);
-		}
+			if (wcscmp(m_Tree[MAKEPOSI(item)].pItem->Path, Path)==0)
+				RemoveItem(item.y, item.x);
 
 		item.y++;
 		if (item.y>=(int)m_Rows)
@@ -882,84 +878,76 @@ void CTreeView::AddPath(LPWSTR Path, LPWSTR Parent)
 	while ((item.x<min((int)m_Cols, MaxColumns-1)) && (item.y<(int)m_Rows))
 	{
 		if (m_Tree[MAKEPOSI(item)].pItem)
-		{
-			wchar_t tmpPath[MAX_PATH];
-			if (SHGetPathFromIDList(m_Tree[MAKEPOSI(item)].pItem->pidlFQ, tmpPath))
-				if (wcscmp(tmpPath, Parent)==0)
+			if (wcscmp(m_Tree[MAKEPOSI(item)].pItem->Path, Parent)==0)
+			{
+				ULONG chEaten;
+				LPITEMIDLIST pidlFQ = NULL;
+				if (SUCCEEDED(pDesktop->ParseDisplayName(NULL, NULL, Path, &chEaten, &pidlFQ, NULL)))
 				{
-					ULONG chEaten;
-					LPITEMIDLIST pidlFQ = NULL;
-					if (SUCCEEDED(pDesktop->ParseDisplayName(NULL, NULL, Path, &chEaten, &pidlFQ, NULL)))
+					IShellFolder* pParentFolder = NULL;
+					LPCITEMIDLIST pidlRel = NULL;
+					if (SUCCEEDED(SHBindToParent(pidlFQ, IID_IShellFolder, (void**)&pParentFolder, &pidlRel)))
 					{
-						IShellFolder* pParentFolder = NULL;
-						LPCITEMIDLIST pidlRel = NULL;
-						if (SUCCEEDED(SHBindToParent(pidlFQ, IID_IShellFolder, (void**)&pParentFolder, &pidlRel)))
+						CPoint add(item.x+1, item.y);
+						if ((int)m_Cols<=item.x)
+							m_Cols = item.x+1;
+
+						UINT Flags = 0;
+						if (!(m_Tree[MAKEPOSI(item)].Flags & CF_HASCHILDREN))
 						{
-							CPoint add(item.x+1, item.y);
-							if ((int)m_Cols<=item.x)
-								m_Cols = item.x+1;
-
-							UINT Flags = 0;
-							if (!(m_Tree[MAKEPOSI(item)].Flags & CF_HASCHILDREN))
+							m_Tree[MAKEPOSI(item)].Flags |= (CF_HASCHILDREN | CF_CANCOLLAPSE);
+						}
+						else
+						{
+							BOOL Insert = TRUE;
+							while (add.y<(int)m_Rows)
 							{
-								m_Tree[MAKEPOSI(item)].Flags |= (CF_HASCHILDREN | CF_CANCOLLAPSE);
-							}
-							else
-							{
-								BOOL Insert = TRUE;
-								while (add.y<(int)m_Rows)
-								{
-									if (m_Tree[MAKEPOSI(add)].pItem)
+								if (m_Tree[MAKEPOSI(add)].pItem)
+									if (wcscmp(m_Tree[MAKEPOSI(add)].pItem->Path, Path)==0)
 									{
-										wchar_t tmpPath[MAX_PATH];
-										if (SHGetPathFromIDList(m_Tree[MAKEPOSI(add)].pItem->pidlFQ, tmpPath))
-											if (wcscmp(tmpPath, Path)==0)
-											{
-												Insert = FALSE;
-												break;
-											}
-									}
-
-									if (!(m_Tree[MAKEPOSI(add)].Flags & CF_HASSIBLINGS))
-									{
-										add.y++;
+										Insert = FALSE;
 										break;
 									}
 
+								if (!(m_Tree[MAKEPOSI(add)].Flags & CF_HASSIBLINGS))
+								{
 									add.y++;
+									break;
 								}
 
-								if (Insert)
-								{
-									InsertRow(add.y);
-
-									Flags = CF_ISSIBLING;
-									if (add.y>item.y)
-										m_Tree[MAKEPOS(add.y-1, add.x)].Flags |= CF_HASSIBLINGS;
-
-									if (add.y<(int)m_Rows-1)
-										for (UINT col=1; (int)col<add.x; col++)
-										if (m_Tree[MAKEPOS(add.y+1, col)].Flags & CF_ISSIBLING)
-										{
-											m_Tree[MAKEPOS(add.y, col)].Flags |= CF_HASSIBLINGS;
-											if (!m_Tree[MAKEPOS(add.y, col-1)].pItem)
-												m_Tree[MAKEPOS(add.y, col)].Flags |= CF_ISSIBLING;
-										}
-								}
-								else
-								{
-									Flags = m_Tree[MAKEPOSI(add)].Flags;
-								}
+								add.y++;
 							}
 
-							SetItem(add.y, add.x, theApp.GetShellManager()->CopyItem(pidlRel), pidlFQ, Flags);
+							if (Insert)
+							{
+								InsertRow(add.y);
 
-							AutosizeColumn(add.x, TRUE);
-							InvalidateItem(add);
-							InvalidateItem(item);
+								Flags = CF_ISSIBLING;
+								if (add.y>item.y)
+									m_Tree[MAKEPOS(add.y-1, add.x)].Flags |= CF_HASSIBLINGS;
 
-							pParentFolder->Release();
+								if (add.y<(int)m_Rows-1)
+									for (UINT col=1; (int)col<add.x; col++)
+									if (m_Tree[MAKEPOS(add.y+1, col)].Flags & CF_ISSIBLING)
+									{
+										m_Tree[MAKEPOS(add.y, col)].Flags |= CF_HASSIBLINGS;
+										if (!m_Tree[MAKEPOS(add.y, col-1)].pItem)
+											m_Tree[MAKEPOS(add.y, col)].Flags |= CF_ISSIBLING;
+									}
+							}
+							else
+							{
+								Flags = m_Tree[MAKEPOSI(add)].Flags;
+							}
 						}
+
+						SetItem(add.y, add.x, theApp.GetShellManager()->CopyItem(pidlRel), pidlFQ, Flags);
+
+						AutosizeColumn(add.x, TRUE);
+						InvalidateItem(add);
+						InvalidateItem(item);
+
+						pParentFolder->Release();
 					}
 				}
 		}
@@ -979,28 +967,24 @@ void CTreeView::UpdatePath(LPWSTR Path1, LPWSTR Path2, IShellFolder* pDesktop)
 	while ((item.x<(int)m_Cols) && (item.y<(int)m_Rows))
 	{
 		if (m_Tree[MAKEPOSI(item)].pItem)
-		{
-			wchar_t tmpPath[MAX_PATH];
-			if (SHGetPathFromIDList(m_Tree[MAKEPOSI(item)].pItem->pidlFQ, tmpPath))
-				if (wcscmp(tmpPath, Path1)==0)
+			if (wcscmp(m_Tree[MAKEPOSI(item)].pItem->Path, Path1)==0)
+			{
+				ULONG chEaten;
+				LPITEMIDLIST pidlFQ = NULL;
+				if (SUCCEEDED(pDesktop->ParseDisplayName(NULL, NULL, Path2, &chEaten, &pidlFQ, NULL)))
 				{
-					ULONG chEaten;
-					LPITEMIDLIST pidlFQ = NULL;
-					if (SUCCEEDED(pDesktop->ParseDisplayName(NULL, NULL, Path2, &chEaten, &pidlFQ, NULL)))
+					IShellFolder* pParentFolder = NULL;
+					LPCITEMIDLIST pidlRel = NULL;
+					if (SUCCEEDED(SHBindToParent(pidlFQ, IID_IShellFolder, (void**)&pParentFolder, &pidlRel)))
 					{
-						IShellFolder* pParentFolder = NULL;
-						LPCITEMIDLIST pidlRel = NULL;
-						if (SUCCEEDED(SHBindToParent(pidlFQ, IID_IShellFolder, (void**)&pParentFolder, &pidlRel)))
-						{
-							SetItem(item.y, item.x, theApp.GetShellManager()->CopyItem(pidlRel), pidlFQ, m_Tree[MAKEPOSI(item)].Flags);
-							InvalidateItem(item);
-							UpdateChildPIDLs(item.y, item.x);
+						SetItem(item.y, item.x, theApp.GetShellManager()->CopyItem(pidlRel), pidlFQ, m_Tree[MAKEPOSI(item)].Flags);
+						InvalidateItem(item);
+						UpdateChildPIDLs(item.y, item.x);
 
-							pParentFolder->Release();
-						}
+						pParentFolder->Release();
 					}
 				}
-		}
+			}
 
 		item.y++;
 		if (item.y>=(int)m_Rows)
