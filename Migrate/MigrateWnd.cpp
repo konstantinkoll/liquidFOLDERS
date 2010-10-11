@@ -8,7 +8,7 @@
 #include "Resource.h"
 #include "LFCore.h"
 #include "DeleteFilesDlg.h"
-//#include <io.h>
+#include "CMigrationList.h"
 
 
 CMigrateWnd::CMigrateWnd()
@@ -141,6 +141,11 @@ void CMigrateWnd::OnSelectRoot()
 
 void CMigrateWnd::OnMigrate()
 {
+	// Create snapshow
+	CMigrationList ml;
+
+
+	// Choose story if none is selected
 	if (m_wndStore.IsEmpty())
 	{
 		LFChooseStoreDlg dlg(this, LFCSD_Mounted);
@@ -150,6 +155,7 @@ void CMigrateWnd::OnMigrate()
 		m_wndStore.SetItem(dlg.StoreID);
 	}
 
+	// Paranoid: does the store really exist?
 	char StoreID[LFKeySize];
 	if (!m_wndStore.GetStoreID(StoreID))
 	{
@@ -157,11 +163,13 @@ void CMigrateWnd::OnMigrate()
 		return;
 	}
 
+	// Item template
 	LFItemDescriptor* it = LFAllocItemDescriptor();
 	LFItemTemplateDlg dlg(this, it, StoreID);
 	if (dlg.DoModal()==IDCANCEL)
 		return;
 
+	// UAC warning if source files should be deleted
 	CButton* btn = (CButton*)m_wndBottomArea.GetDlgItem(IDC_DELETESOURCE);
 	BOOL DeleteSource = btn->GetCheck();
 	if (DeleteSource)

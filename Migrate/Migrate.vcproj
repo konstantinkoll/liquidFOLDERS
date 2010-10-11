@@ -385,6 +385,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CMigrationList.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\CPIDLSelector.cpp"
 				>
 			</File>
@@ -455,6 +459,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CMigrationList.h"
+				>
+			</File>
+			<File
 				RelativePath=".\CPIDLSelector.h"
 				>
 			</File>
@@ -464,6 +472,10 @@
 			</File>
 			<File
 				RelativePath=".\DeleteFilesDlg.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\DynArray.h"
 				>
 			</File>
 			<File
