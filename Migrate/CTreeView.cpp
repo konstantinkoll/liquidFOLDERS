@@ -2168,7 +2168,7 @@ void CTreeView::OnItemChanging(NMHDR* pNMHDR, LRESULT* pResult)
 			pHdr->pitem->cxy = MAXWIDTH;
 
 		m_ColumnWidth[pHdr->iItem] = pHdr->pitem->cxy;
-		AdjustScrollbars();
+		AdjustLayout();
 		Invalidate();
 
 		*pResult = FALSE;
