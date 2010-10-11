@@ -721,10 +721,10 @@ BOOL CTreeView::HitTest(CPoint point, CPoint* item, BOOL* cbhot, CPoint* exphot)
 	BOOL onitem = FALSE;
 	BOOL onexpando = FALSE;
 
-	point.y -= m_HeaderHeight;
+	point.y -= m_HeaderHeight-m_VScrollPos;
 	int row = (point.y>=0) ? point.y/m_RowHeight : -1;
 	int col = -1;
-	int x = 0;
+	int x = -m_HScrollPos;
 
 	if (row!=-1)
 	{
@@ -780,11 +780,11 @@ void CTreeView::InvalidateItem(CPoint item)
 {
 	if ((item.x!=-1) && (item.y!=-1))
 	{
-		int x = 0;
+		int x = -m_HScrollPos;
 		for (UINT a=0; a<(UINT)item.x; a++)
 			x += m_ColumnWidth[a];
 
-		CRect rect(x, m_HeaderHeight+item.y*m_RowHeight, x+m_ColumnWidth[item.x], m_HeaderHeight+(item.y+1)*m_RowHeight);
+		CRect rect(x, m_HeaderHeight+item.y*m_RowHeight-m_VScrollPos, x+m_ColumnWidth[item.x], m_HeaderHeight-m_VScrollPos+(item.y+1)*m_RowHeight);
 		InvalidateRect(rect);
 	}
 }
