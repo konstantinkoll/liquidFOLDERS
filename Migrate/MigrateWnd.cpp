@@ -167,7 +167,10 @@ void CMigrateWnd::OnMigrate()
 	LFItemDescriptor* it = LFAllocItemDescriptor();
 	LFItemTemplateDlg dlg(this, it, StoreID);
 	if (dlg.DoModal()==IDCANCEL)
+	{
+		LFFreeItemDescriptor(it);
 		return;
+	}
 
 	// UAC warning if source files should be deleted
 	CButton* btn = (CButton*)m_wndBottomArea.GetDlgItem(IDC_DELETESOURCE);
@@ -176,7 +179,10 @@ void CMigrateWnd::OnMigrate()
 	{
 		DeleteFilesDlg dlg(this);
 		if (dlg.DoModal()==IDCANCEL)
+		{
+			LFFreeItemDescriptor(it);
 			return;
+		}
 
 		DeleteSource = dlg.m_Delete;
 		btn->SetCheck(DeleteSource);
