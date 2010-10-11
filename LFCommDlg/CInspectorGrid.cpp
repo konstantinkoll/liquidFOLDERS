@@ -75,7 +75,8 @@ END_MESSAGE_MAP()
 
 void CInspectorGrid::OnNcPaint()
 {
-	DrawControlBorder(this);
+	if (GetStyle() & WS_BORDER)
+		DrawControlBorder(this);
 }
 
 LRESULT CInspectorGrid::OnSetFont(WPARAM wParam, LPARAM lParam)

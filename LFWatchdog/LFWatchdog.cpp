@@ -86,7 +86,7 @@ void RegisterWindowClass(PCWSTR pszClassName, WNDPROC lpfnWndProc)
 	WNDCLASSEX wcex;
 	ZeroMemory(&wcex, sizeof(wcex));
 	wcex.cbSize = sizeof(wcex);
-	wcex.style = CS_HREDRAW | CS_VREDRAW;
+	wcex.style = CS_DBLCLKS | CS_HREDRAW | CS_VREDRAW;
 	wcex.lpfnWndProc = lpfnWndProc;
 	wcex.hInstance = AfxGetInstanceHandle();
 	wcex.hIcon = LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_ICON));

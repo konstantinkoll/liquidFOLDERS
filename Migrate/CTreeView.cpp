@@ -51,7 +51,7 @@ CTreeView::~CTreeView()
 
 BOOL CTreeView::Create(CWnd* _pParentWnd, UINT nID)
 {
-	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, LoadCursor(NULL, IDC_ARROW));
+	CString className = AfxRegisterWndClass(CS_DBLCLKS, LoadCursor(NULL, IDC_ARROW));
 
 	const DWORD dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_TABSTOP | WS_HSCROLL | WS_VSCROLL;
 	CRect rect;
@@ -319,15 +319,20 @@ void CTreeView::AdjustScrollbars()
 	int m_VertInc = (ScrollHeight-rect.Height()+(int)m_HeaderHeight);
 	int m_HorzInc = (ScrollWidth-rect.Width());
 
+	int oldVScrollPos = m_VScrollPos;
 	m_VScrollMax = max(0, m_VertInc);
 	m_VScrollPos = min(m_VScrollPos, m_VScrollMax);
 	SetScrollRange(SB_VERT, 0, m_VScrollMax, FALSE);
 	SetScrollPos(SB_VERT, m_VScrollPos, TRUE);
 
+	int oldHScrollPos = m_HScrollPos;
 	m_HScrollMax = max(0, m_HorzInc);
 	m_HScrollPos = min(m_HScrollPos, m_HScrollMax);
 	SetScrollRange(SB_HORZ, 0, m_HScrollMax, FALSE);
 	SetScrollPos(SB_HORZ, m_HScrollPos, TRUE);
+
+	if ((oldVScrollPos!=m_VScrollPos) || (oldHScrollPos!=m_HScrollPos))
+		Invalidate();
 }
 
 BOOL CTreeView::InsertRow(UINT row)
@@ -634,7 +639,7 @@ UINT CTreeView::EnumObjects(UINT row, UINT col, BOOL ExpandAll, BOOL FirstInstan
 	pDesktop->Release();
 
 	if (FirstInstance)
-		for (UINT a=min(row+Inserted, m_Rows-1); a>row; a--)
+		for (UINT a=min(row+Inserted, m_Rows-2); a>row; a--)
 			for (UINT b=1; b<m_Cols; b++)
 				if (m_Tree[MAKEPOS(a+1, b)].Flags & CF_ISSIBLING)
 				{
