@@ -528,6 +528,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\include\DynArray.h"
+				>
+			</File>
+			<File
 				RelativePath=".\IATA.h"
 				>
 			</File>

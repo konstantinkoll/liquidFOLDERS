@@ -209,13 +209,13 @@ void CIndex::Update(LFTransactionList* tl, LFVariantData* value1, LFVariantData*
 
 	while (Tables[IDMaster]->FindNext(IDs[IDMaster], (void*&)PtrM))
 	{
-		for (unsigned int a=0; a<tl->m_Count; a++)
+		for (unsigned int a=0; a<tl->m_ItemCount; a++)
 		{
-			LFItemDescriptor* i = tl->m_Entries[a].Item;
+			LFItemDescriptor* i = tl->m_Items[a].Item;
 			if ((i->Type & LFTypeMask)==LFTypeFile)
 				if ((strcmp(i->StoreID, StoreID)==0) && (strcmp(i->CoreAttributes.FileID, PtrM->FileID)==0))
 				{
-					if (tl->m_Entries[a].LastError==LFOk)
+					if (tl->m_Items[a].LastError==LFOk)
 					{
 						// Attribute setzen
 						i->CoreAttributes.Flags &= ~LFFlagNew;
@@ -248,24 +248,24 @@ void CIndex::Update(LFTransactionList* tl, LFVariantData* value1, LFVariantData*
 							}
 							else
 							{
-								tl->m_Entries[a].LastError = tl->m_LastError = LFIndexAccessError;
+								tl->m_Items[a].LastError = tl->m_LastError = LFIndexAccessError;
 							}
 
-						tl->m_Entries[a].Processed = true;
+						tl->m_Items[a].Processed = true;
 					}
 				}
 		}
 	}
 
 	// Ungültige Items finden
-	for (unsigned int a=0; a<tl->m_Count; a++)
+	for (unsigned int a=0; a<tl->m_ItemCount; a++)
 	{
-		LFItemDescriptor* i = tl->m_Entries[a].Item;
+		LFItemDescriptor* i = tl->m_Items[a].Item;
 		if ((i->Type & LFTypeMask)==LFTypeFile)
-			if ((strcmp(i->StoreID, StoreID)==0) && (!tl->m_Entries[a].Processed))
+			if ((strcmp(i->StoreID, StoreID)==0) && (!tl->m_Items[a].Processed))
 			{
-				tl->m_Entries[a].LastError = tl->m_LastError = LFIllegalKey;
-				tl->m_Entries[a].Processed = true;
+				tl->m_Items[a].LastError = tl->m_LastError = LFIllegalKey;
+				tl->m_Items[a].Processed = true;
 			}
 	}
 }
@@ -287,14 +287,14 @@ void CIndex::Delete(LFTransactionList* tl, char* DatPath)
 
 	while (Tables[IDMaster]->FindNext(IDs[IDMaster], (void*&)PtrM))
 	{
-		for (unsigned int a=0; a<tl->m_Count; a++)
+		for (unsigned int a=0; a<tl->m_ItemCount; a++)
 		{
-			LFItemDescriptor* i = tl->m_Entries[a].Item;
+			LFItemDescriptor* i = tl->m_Items[a].Item;
 			if ((i->Type & LFTypeMask)==LFTypeFile)
 				if ((strcmp(i->StoreID, StoreID)==0) && (strcmp(i->CoreAttributes.FileID, PtrM->FileID)==0))
 				{
 					// Files with "link" flag do not posses a file body
-					if ((!tl->m_Entries[a].Processed) && ((i->CoreAttributes.Flags & LFFlagLink)==0))
+					if ((!tl->m_Items[a].Processed) && ((i->CoreAttributes.Flags & LFFlagLink)==0))
 					{
 						char Path[MAX_PATH];
 						GetFileLocation(DatPath, PtrM->FileID, PtrM->FileFormat, Path, MAX_PATH);
@@ -305,11 +305,11 @@ void CIndex::Delete(LFTransactionList* tl, char* DatPath)
 						}
 						else
 						{
-							tl->m_Entries[a].LastError = tl->m_LastError = LFCannotDeleteFile;
+							tl->m_Items[a].LastError = tl->m_LastError = LFCannotDeleteFile;
 						}
 					}
 
-					if (tl->m_Entries[a].LastError==LFOk)
+					if (tl->m_Items[a].LastError==LFOk)
 					{
 						// Slave
 						if ((PtrM->SlaveID) && (PtrM->SlaveID<IdxTableCount))
@@ -319,27 +319,27 @@ void CIndex::Delete(LFTransactionList* tl, char* DatPath)
 							}
 							else
 							{
-								tl->m_Entries[a].LastError = tl->m_LastError = LFIndexAccessError;
+								tl->m_Items[a].LastError = tl->m_LastError = LFIndexAccessError;
 							}
 
 						// Master
 						Tables[IDMaster]->Invalidate(PtrM);
 					}
 
-					tl->m_Entries[a].Processed = true;
+					tl->m_Items[a].Processed = true;
 				}
 		}
 	}
 
 	// Ungültige Items finden
-	for (unsigned int a=0; a<tl->m_Count; a++)
+	for (unsigned int a=0; a<tl->m_ItemCount; a++)
 	{
-		LFItemDescriptor* i = tl->m_Entries[a].Item;
+		LFItemDescriptor* i = tl->m_Items[a].Item;
 		if ((i->Type & LFTypeMask)==LFTypeFile)
-			if ((strcmp(i->StoreID, StoreID)==0) && (!tl->m_Entries[a].Processed))
+			if ((strcmp(i->StoreID, StoreID)==0) && (!tl->m_Items[a].Processed))
 			{
-				tl->m_Entries[a].LastError = tl->m_LastError = LFIllegalKey;
-				tl->m_Entries[a].Processed = true;
+				tl->m_Items[a].LastError = tl->m_LastError = LFIllegalKey;
+				tl->m_Items[a].Processed = true;
 			}
 	}
 }

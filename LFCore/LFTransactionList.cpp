@@ -5,55 +5,27 @@
 #include <malloc.h>
 
 LFTransactionList::LFTransactionList()
+	: DynArray()
 {
-	m_LastError = LFOk;
-	m_Entries = NULL;
-	m_Count = 0;
-	m_Allocated = 0;
 	m_Changes = false;
 }
 
 LFTransactionList::~LFTransactionList()
 {
-	if (m_Entries)
-	{
-		for (unsigned int a=0; a<m_Count; a++)
-			LFFreeItemDescriptor(m_Entries[a].Item);
-		_aligned_free(m_Entries);
-	}
+	if (m_Items)
+		for (unsigned int a=0; a<m_ItemCount; a++)
+			LFFreeItemDescriptor(m_Items[a].Item);
 }
 
 bool LFTransactionList::AddItemDescriptor(LFItemDescriptor* i, unsigned int UserData)
 {
 	assert(i);
 
-	if (!m_Entries)
-	{
-		m_Entries = static_cast<LFTL_Entry*>(_aligned_malloc(LFTL_FirstAlloc*sizeof(LFTL_Entry), LFTL_MemoryAlignment));
-		if (!m_Entries)
-		{
-			m_LastError = LFMemoryError;
-			return false;
-		}
-		m_Allocated = LFTL_FirstAlloc;
-	}
-	
-	if (m_Count==m_Allocated)
-	{
-		m_Entries = static_cast<LFTL_Entry*>(_aligned_realloc(m_Entries, (m_Allocated+LFTL_SubsequentAlloc)*sizeof(LFTL_Entry), LFTL_MemoryAlignment));
-		if (!m_Entries)
-		{
-			m_LastError = LFMemoryError;
-			return false;
-		}
-		m_Allocated += LFTL_SubsequentAlloc;
-	}
+	LFTL_Entry entry = { i, LFOk, UserData, false };
+
+	if (!DynArray::AddItem(entry))
+		return false;
 
 	i->RefCount++;
-	m_Entries[m_Count].Item = i;
-	m_Entries[m_Count].LastError = LFOk;
-	m_Entries[m_Count].UserData = UserData;
-	m_Entries[m_Count++].Processed = false;
-
 	return true;
 }

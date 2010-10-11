@@ -1000,13 +1000,13 @@ LFCore_API unsigned int LFImportFiles(char* key, LFFileImportList* il, LFItemDes
 	unsigned int res = OpenStore(&store[0], true, idx1, idx2, &slot, &StoreLock);
 	if (res==LFOk)
 	{
-		for (unsigned int a=0; a<il->m_Count; a++)
-			if (il->m_Entries[a])
+		for (unsigned int a=0; a<il->m_ItemCount; a++)
+			if (il->m_Items[a])
 			{
 				LFItemDescriptor* i = LFAllocItemDescriptor(it);
 				i->CoreAttributes.Flags = LFFlagNew;
-				SetNameExtFromFile(i, il->m_Entries[a]);
-				SetAttributesFromFile(i, il->m_Entries[a]);
+				SetNameExtFromFile(i, il->m_Items[a]);
+				SetAttributesFromFile(i, il->m_Items[a]);
 
 				char CopyToA[MAX_PATH];
 				res = PrepareImport(slot, i, CopyToA, MAX_PATH);
@@ -1020,7 +1020,7 @@ LFCore_API unsigned int LFImportFiles(char* key, LFFileImportList* il, LFItemDes
 				size_t sz = strlen(CopyToA)+1;
 				MultiByteToWideChar(CP_ACP, 0, CopyToA, (int)sz, &CopyToW[0], (int)sz);
 
-				BOOL shres = move ? MoveFile(il->m_Entries[a], CopyToW) : CopyFile(il->m_Entries[a], CopyToW, FALSE);
+				BOOL shres = move ? MoveFile(il->m_Items[a], CopyToW) : CopyFile(il->m_Items[a], CopyToW, FALSE);
 				if (!shres)
 				{
 					LFFreeItemDescriptor(i);

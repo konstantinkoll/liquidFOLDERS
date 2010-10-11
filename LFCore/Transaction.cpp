@@ -16,10 +16,10 @@ void UpdateStore(LFTransactionList* tl, unsigned int idx, LFVariantData* value, 
 	switch (value->Attr)
 	{
 	case LFAttrFileName:
-		result = LFSetStoreAttributes(tl->m_Entries[idx].Item->StoreID, value->UnicodeString, NULL, NULL, true);
+		result = LFSetStoreAttributes(tl->m_Items[idx].Item->StoreID, value->UnicodeString, NULL, NULL, true);
 		break;
 	case LFAttrComment:
-		result = LFSetStoreAttributes(tl->m_Entries[idx].Item->StoreID, NULL, value->UnicodeString, NULL, true);
+		result = LFSetStoreAttributes(tl->m_Items[idx].Item->StoreID, NULL, value->UnicodeString, NULL, true);
 		break;
 	default:
 		result = LFIllegalAttribute;
@@ -27,15 +27,15 @@ void UpdateStore(LFTransactionList* tl, unsigned int idx, LFVariantData* value, 
 
 	if (result==LFOk)
 	{
-		LFSetAttributeVariantData(tl->m_Entries[idx].Item, value);
+		LFSetAttributeVariantData(tl->m_Items[idx].Item, value);
 		tl->m_Changes = true;
 		Updated |= true;
 	}
 	else
 	{
-		tl->m_LastError = tl->m_Entries[idx].LastError = result;
+		tl->m_LastError = tl->m_Items[idx].LastError = result;
 	}
-	tl->m_Entries[idx].Processed = true;
+	tl->m_Items[idx].Processed = true;
 }
 
 LFCore_API void LFTransactionUpdate(LFTransactionList* tl, HWND hWndSource, LFVariantData* value1, LFVariantData* value2, LFVariantData* value3)
@@ -43,13 +43,13 @@ LFCore_API void LFTransactionUpdate(LFTransactionList* tl, HWND hWndSource, LFVa
 	bool StoresUpdated = false;
 
 	// Reset processed flag
-	for (unsigned int a=0; a<tl->m_Count; a++)
-		tl->m_Entries[a].Processed = false;
+	for (unsigned int a=0; a<tl->m_ItemCount; a++)
+		tl->m_Items[a].Processed = false;
 
 	// Process
-	for (unsigned int a=0; a<tl->m_Count; a++)
-		if (tl->m_Entries[a].LastError==LFOk)
-			switch (tl->m_Entries[a].Item->Type & LFTypeMask)
+	for (unsigned int a=0; a<tl->m_ItemCount; a++)
+		if (tl->m_Items[a].LastError==LFOk)
+			switch (tl->m_Items[a].Item->Type & LFTypeMask)
 			{
 			case LFTypeStore:
 				UpdateStore(tl, a, value1, StoresUpdated);
@@ -58,12 +58,12 @@ LFCore_API void LFTransactionUpdate(LFTransactionList* tl, HWND hWndSource, LFVa
 				if (value3)
 					UpdateStore(tl, a, value3, StoresUpdated);
 			case LFTypeFile:
-				if (!tl->m_Entries[a].Processed)
+				if (!tl->m_Items[a].Processed)
 				{
 					CIndex* idx1;
 					CIndex* idx2;
 					HANDLE StoreLock = NULL;
-					unsigned int res = OpenStore(tl->m_Entries->Item->StoreID, true, idx1, idx2, NULL, &StoreLock);
+					unsigned int res = OpenStore(tl->m_Items->Item->StoreID, true, idx1, idx2, NULL, &StoreLock);
 
 					if (res==LFOk)
 					{
@@ -83,14 +83,14 @@ LFCore_API void LFTransactionUpdate(LFTransactionList* tl, HWND hWndSource, LFVa
 					else
 					{
 						// Cannot open index, so mark all subsequent files in the same store as processed
-						for (unsigned int b=a; b<tl->m_Count; b++)
+						for (unsigned int b=a; b<tl->m_ItemCount; b++)
 						{
-							LFItemDescriptor* i = tl->m_Entries[b].Item;
+							LFItemDescriptor* i = tl->m_Items[b].Item;
 							if ((i->Type & LFTypeMask)==LFTypeFile)
-								if ((strcmp(i->StoreID, tl->m_Entries[a].Item->StoreID)==0) && (!tl->m_Entries[b].Processed))
+								if ((strcmp(i->StoreID, tl->m_Items[a].Item->StoreID)==0) && (!tl->m_Items[b].Processed))
 								{
-									tl->m_Entries[b].LastError = tl->m_LastError = res;
-									tl->m_Entries[b].Processed = true;
+									tl->m_Items[b].LastError = tl->m_LastError = res;
+									tl->m_Items[b].Processed = true;
 								}
 						}
 					}
@@ -98,8 +98,8 @@ LFCore_API void LFTransactionUpdate(LFTransactionList* tl, HWND hWndSource, LFVa
 
 				break;
 			default:
-				tl->m_LastError = tl->m_Entries[a].LastError = LFIllegalItemType;
-				tl->m_Entries[a].Processed = true;
+				tl->m_LastError = tl->m_Items[a].LastError = LFIllegalItemType;
+				tl->m_Items[a].Processed = true;
 			}
 
 	// Update messages
@@ -113,19 +113,19 @@ LFCore_API void LFTransactionUpdate(LFTransactionList* tl, HWND hWndSource, LFVa
 LFCore_API void LFTransactionDelete(LFTransactionList* tl)
 {
 	// Reset processed flag
-	for (unsigned int a=0; a<tl->m_Count; a++)
-		tl->m_Entries[a].Processed = false;
+	for (unsigned int a=0; a<tl->m_ItemCount; a++)
+		tl->m_Items[a].Processed = false;
 
 	// Process
-	for (unsigned int a=0; a<tl->m_Count; a++)
-		if ((tl->m_Entries[a].LastError==LFOk) && (!tl->m_Entries[a].Processed))
-			if ((tl->m_Entries[a].Item->Type & LFTypeMask)==LFTypeFile)
+	for (unsigned int a=0; a<tl->m_ItemCount; a++)
+		if ((tl->m_Items[a].LastError==LFOk) && (!tl->m_Items[a].Processed))
+			if ((tl->m_Items[a].Item->Type & LFTypeMask)==LFTypeFile)
 			{
 				CIndex* idx1;
 				CIndex* idx2;
 				LFStoreDescriptor* slot;
 				HANDLE StoreLock = NULL;
-				unsigned int res = OpenStore(tl->m_Entries->Item->StoreID, true, idx1, idx2, &slot, &StoreLock);
+				unsigned int res = OpenStore(tl->m_Items->Item->StoreID, true, idx1, idx2, &slot, &StoreLock);
 
 				if (res==LFOk)
 				{
@@ -145,21 +145,21 @@ LFCore_API void LFTransactionDelete(LFTransactionList* tl)
 				else
 				{
 					// Cannot open index, so mark all subsequent files in the same store as processed
-					for (unsigned int b=a; b<tl->m_Count; b++)
+					for (unsigned int b=a; b<tl->m_ItemCount; b++)
 					{
-						LFItemDescriptor* i = tl->m_Entries[b].Item;
+						LFItemDescriptor* i = tl->m_Items[b].Item;
 						if ((i->Type & LFTypeMask)==LFTypeFile)
-							if ((strcmp(i->StoreID, tl->m_Entries[a].Item->StoreID)==0) && (!tl->m_Entries[b].Processed))
+							if ((strcmp(i->StoreID, tl->m_Items[a].Item->StoreID)==0) && (!tl->m_Items[b].Processed))
 							{
-								tl->m_Entries[b].LastError = tl->m_LastError = res;
-								tl->m_Entries[b].Processed = true;
+								tl->m_Items[b].LastError = tl->m_LastError = res;
+								tl->m_Items[b].Processed = true;
 							}
 					}
 				}
 			}
 			else
 			{
-				tl->m_LastError = tl->m_Entries[a].LastError = LFIllegalItemType;
-				tl->m_Entries[a].Processed = true;
+				tl->m_LastError = tl->m_Items[a].LastError = LFIllegalItemType;
+				tl->m_Items[a].Processed = true;
 			}
 }

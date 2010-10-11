@@ -1,17 +1,9 @@
 #pragma once
 #include "liquidFOLDERS.h"
+#include "DynArray.h"
 
-#define LFSR_FirstAlloc          1024
-#define LFSR_SubsequentAlloc     1024
 
-#define LFSR_MemoryAlignment     8
-
-// LFSearchResult
-// Speichert ein Suchergebnis ab als Array von Zeigern auf LFItemDescriptor. Das Array
-// wächst dynamisch, zunächst zum LFSR_FirstAlloc, dann jedes Mal um LFSR_SubsequentAlloc
-// Plätze.
-
-class LFSearchResult
+class LFSearchResult : public DynArray<LFItemDescriptor*>
 {
 public:
 	LFSearchResult(int ctx);
@@ -30,12 +22,10 @@ public:
 	void GroupArray(unsigned int attr, unsigned int icon, LFFilter* f);
 	void SetContext(LFFilter* f);
 
-	LFItemDescriptor** m_Items;
 	bool m_HasCategories;
 	bool m_HidingItems;
 	DWORD m_QueryTime;
 	unsigned int m_LastError;
-	unsigned int m_ItemCount;
 	unsigned int m_FileCount;
 	unsigned int m_StoreCount;
 	__int64 m_FileSize;
@@ -43,9 +33,6 @@ public:
 	int m_ContextView;
 	char m_StoreID[LFKeySize];
 	bool m_RawCopy;
-
-protected:
-	unsigned int m_Allocated;
 
 private:
 	int Compare(int eins, int zwei, unsigned int attr, bool descending, bool categories);

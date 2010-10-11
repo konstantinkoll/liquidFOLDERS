@@ -1378,10 +1378,10 @@ BOOL CMainFrame::UpdateSelectedItems(LFVariantData* value1, LFVariantData* value
 	{
 		BOOL deselected = FALSE;
 
-		for (UINT a=0; a<tl->m_Count; a++)
-			if (tl->m_Entries[a].LastError!=LFOk)
+		for (UINT a=0; a<tl->m_ItemCount; a++)
+			if (tl->m_Items[a].LastError!=LFOk)
 			{
-				m_wndView->SelectItem(tl->m_Entries[a].UserData, FALSE, TRUE);
+				m_wndView->SelectItem(tl->m_Items[a].UserData, FALSE, TRUE);
 				deselected = TRUE;
 			}
 
@@ -1426,9 +1426,9 @@ BOOL CMainFrame::UpdateTrashFlag(BOOL Trash, BOOL All)
 
 	if (m_wndView)
 	{
-		for (UINT a=0; a<tl->m_Count; a++)
-			if (tl->m_Entries[a].LastError==LFOk)
-				tl->m_Entries[a].Item->DeleteFlag = true;
+		for (UINT a=0; a<tl->m_ItemCount; a++)
+			if (tl->m_Items[a].LastError==LFOk)
+				tl->m_Items[a].Item->DeleteFlag = true;
 
 		LFRemoveFlaggedItemDescriptors(RawFiles);
 		UpdateHistory();
@@ -1451,9 +1451,9 @@ BOOL CMainFrame::DeleteFiles(BOOL All)
 
 	if (m_wndView)
 	{
-		for (UINT a=0; a<tl->m_Count; a++)
-			if (tl->m_Entries[a].LastError==LFOk)
-				tl->m_Entries[a].Item->DeleteFlag = true;
+		for (UINT a=0; a<tl->m_ItemCount; a++)
+			if (tl->m_Items[a].LastError==LFOk)
+				tl->m_Items[a].Item->DeleteFlag = true;
 
 		LFRemoveFlaggedItemDescriptors(RawFiles);
 		UpdateHistory();

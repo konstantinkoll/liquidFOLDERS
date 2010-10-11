@@ -18,24 +18,23 @@ extern unsigned int DriveTypes[];
 
 
 LFSearchResult::LFSearchResult(int ctx)
+	: DynArray()
 {
 	m_RawCopy = true;
-	m_LastError = LFOk;
 	m_Context = ctx;
 	m_ContextView = ctx;
 	m_HidingItems = false;
 	m_HasCategories = false;
 	m_QueryTime = 0;
 	m_Items = NULL;
-	m_ItemCount = 0;
 	m_FileCount = 0;
 	m_FileSize = 0;
 	m_StoreCount = 0;
 	m_StoreID[0] = '\0';
-	m_Allocated = 0;
 }
 
 LFSearchResult::LFSearchResult(LFSearchResult* res)
+	: DynArray()
 {
 	m_RawCopy = false;
 	m_LastError = res->m_LastError;
@@ -44,7 +43,7 @@ LFSearchResult::LFSearchResult(LFSearchResult* res)
 	m_HidingItems = res->m_HidingItems;
 	m_HasCategories = res->m_HasCategories;
 	m_QueryTime = res->m_QueryTime;
-	m_Items = static_cast<LFItemDescriptor**>(_aligned_malloc(res->m_ItemCount*sizeof(LFItemDescriptor*), LFSR_MemoryAlignment));
+	m_Items = (LFItemDescriptor**)_aligned_malloc(res->m_ItemCount*sizeof(LFItemDescriptor*), Dyn_MemoryAlignment);
 	m_FileCount = res->m_FileCount;
 	m_FileSize = res->m_FileSize;
 	m_StoreCount = res->m_StoreCount;
@@ -69,42 +68,19 @@ LFSearchResult::LFSearchResult(LFSearchResult* res)
 LFSearchResult::~LFSearchResult()
 {
 	if (m_Items)
-	{
 		for (unsigned int a=0; a<m_ItemCount; a++)
 			LFFreeItemDescriptor(m_Items[a]);
-		_aligned_free(m_Items);
-	}
 }
 
 bool LFSearchResult::AddItemDescriptor(LFItemDescriptor* i)
 {
 	assert(i);
 
-	if (!m_Items)
-	{
-		m_Items = static_cast<LFItemDescriptor**>(_aligned_malloc(LFSR_FirstAlloc*sizeof(LFItemDescriptor*), LFSR_MemoryAlignment));
-		if (!m_Items)
-		{
-			m_LastError = LFMemoryError;
-			return false;
-		}
-		m_Allocated = LFSR_FirstAlloc;
-	}
-
-	if (m_ItemCount==m_Allocated)
-	{
-		m_Items = static_cast<LFItemDescriptor**>(_aligned_realloc(m_Items, (m_Allocated+LFSR_SubsequentAlloc)*sizeof(LFItemDescriptor*), LFSR_MemoryAlignment));
-		if (!m_Items)
-		{
-			m_LastError = LFMemoryError;
-			return false;
-		}
-		m_Allocated += LFSR_SubsequentAlloc;
-	}
+	if (!DynArray::AddItem(i))
+		return false;
 
 	if (m_RawCopy)
-		i->Position = m_ItemCount;
-	m_Items[m_ItemCount++] = i;
+		i->Position = m_ItemCount-1;
 
 	if ((i->Type & LFTypeFile)==LFTypeFile)
 	{

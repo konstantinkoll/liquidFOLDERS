@@ -985,12 +985,9 @@ int CFolderItem::CompareTo(CNSEItem* otherItem, CShellColumn& column)
 
 	CFolderItem* dir2 = AS(otherItem, CFolderItem);
 
-//	if ((data.Level==LevelStores) && (dir2->data.Level==LevelStores) && (data.StoreID==dir2->data.StoreID))
-//		return 0;
-
 	CString str1;
 	CString str2;
-	int ret;
+	int ret = 0;
 
 	switch (column.index)
 	{
