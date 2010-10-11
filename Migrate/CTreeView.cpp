@@ -126,7 +126,7 @@ void CTreeView::AdjustLayout()
 
 	AdjustScrollbars();
 
-	m_wndHeader.SetWindowPos(NULL, wp.x, wp.y, wp.cx, m_HeaderHeight, wp.flags | SWP_NOZORDER | SWP_NOACTIVATE);
+	m_wndHeader.SetWindowPos(NULL, wp.x-m_HScrollPos, wp.y, wp.cx+m_HScrollMax, m_HeaderHeight, wp.flags | SWP_NOZORDER | SWP_NOACTIVATE);
 }
 
 void CTreeView::ClearRoot()
@@ -299,8 +299,8 @@ void CTreeView::EditLabel(CPoint item)
 
 void CTreeView::ResetScrollbars()
 {
-	ScrollWindow(0, m_VScrollPos, NULL, NULL);
-	ScrollWindow(m_HScrollPos, 0, NULL, NULL);
+	ScrollWindowEx(0, m_VScrollPos, NULL, NULL, NULL, NULL, SW_INVALIDATE);
+	ScrollWindowEx(m_HScrollPos, 0, NULL, NULL, NULL, NULL, SW_INVALIDATE | SW_SCROLLCHILDREN);
 	m_VScrollPos = m_HScrollPos = 0;
 	SetScrollPos(SB_VERT, m_VScrollPos, TRUE);
 	SetScrollPos(SB_HORZ, m_HScrollPos, TRUE);
@@ -1580,7 +1580,7 @@ void CTreeView::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 	if (nInc)
 	{
 		m_VScrollPos += nInc;
-		ScrollWindow(0, -nInc, NULL, NULL);
+		ScrollWindowEx(0, -nInc, NULL, NULL, NULL, NULL, SW_INVALIDATE);
 		SetScrollPos(SB_VERT, m_VScrollPos, TRUE);
 	}
 
@@ -1619,8 +1619,8 @@ void CTreeView::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 	if (nInc)
 	{
 		m_HScrollPos += nInc;
-		ScrollWindow(-nInc, 0, NULL, NULL);
-		SetScrollPos(SB_HORZ, m_VScrollPos, TRUE);
+		ScrollWindowEx(-nInc, 0, NULL, NULL, NULL, NULL, SW_INVALIDATE | SW_SCROLLCHILDREN);
+		SetScrollPos(SB_HORZ, m_HScrollPos, TRUE);
 	}
 
 	CWnd::OnHScroll(nSBCode, nPos, pScrollBar);
