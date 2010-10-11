@@ -44,9 +44,7 @@
 #define IDS_EXCLUDEBRANCH               1021
 #define IDD_BOTTOMAREA                  2000
 #define IDC_MIGRATE                     2001
-#define IDC_SIMULATE                    2002
-#define IDC_DELETESOURCE                2003
-#define IDC_CHECK1                      2014
+#define IDC_DELETESOURCE                2002
 #define IDD_CHOOSEFOLDER                2100
 #define IDC_EXPANDALL                   2101
 #define IDD_CHOOSEPROPERTY              2200

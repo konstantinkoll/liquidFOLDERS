@@ -31,7 +31,6 @@ protected:
 	afx_msg void OnIdleUpdateCmdUI();
 	afx_msg void OnSelectRoot();
 	afx_msg void OnMigrate();
-	afx_msg void OnSimulate();
 	afx_msg LRESULT OnStoresChanged(WPARAM wParam, LPARAM lParam);
 	afx_msg void OnRootChanged(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnRootUpdate(NMHDR* pNMHDR, LRESULT* pResult);

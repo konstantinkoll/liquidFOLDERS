@@ -71,7 +71,6 @@ BEGIN_MESSAGE_MAP(CMigrateWnd, CGlasWindow)
 	ON_MESSAGE_VOID(WM_IDLEUPDATECMDUI, OnIdleUpdateCmdUI)
 	ON_COMMAND(ID_VIEW_SELECTROOT, OnSelectRoot)
 	ON_COMMAND(IDC_MIGRATE, OnMigrate)
-	ON_COMMAND(IDC_SIMULATE, OnSimulate)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoresChanged, OnStoresChanged)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoreAttributesChanged, OnStoresChanged)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->DefaultStoreChanged, OnStoresChanged)
@@ -142,14 +141,6 @@ void CMigrateWnd::OnSelectRoot()
 
 void CMigrateWnd::OnMigrate()
 {
-	// Simulate
-	if (((CButton*)m_wndBottomArea.GetDlgItem(IDC_SIMULATE))->GetCheck())
-	{
-		MessageBox(_T("Not implemented!"));
-		return;
-	}
-
-	// Do the real McCoy
 	if (m_wndStore.IsEmpty())
 	{
 		LFChooseStoreDlg dlg(this, LFCSD_Mounted);
@@ -185,11 +176,6 @@ void CMigrateWnd::OnMigrate()
 
 	MessageBox(_T("Not implemented!"));
 	LFFreeItemDescriptor(it);
-}
-
-void CMigrateWnd::OnSimulate()
-{
-	m_wndBottomArea.GetDlgItem(IDC_DELETESOURCE)->EnableWindow(!((CButton*)m_wndBottomArea.GetDlgItem(IDC_SIMULATE))->GetCheck());
 }
 
 LRESULT CMigrateWnd::OnStoresChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)

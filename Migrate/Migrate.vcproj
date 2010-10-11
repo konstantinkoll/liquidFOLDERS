@@ -524,6 +524,10 @@
 				RelativePath=".\res\Tasks.bmp"
 				>
 			</File>
+			<File
+				RelativePath=".\res\TreeWidgets.bmp"
+				>
+			</File>
 		</Filter>
 		<File
 			RelativePath="..\include\liquidFOLDERS32.manifest.xml"

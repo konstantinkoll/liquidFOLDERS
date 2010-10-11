@@ -37,7 +37,6 @@ BOOL CMigrateApp::InitInstance()
 	SetRegistryBase(_T("Settings"));
 	m_ExpandAll = GetInt(_T("ExpandAll"), FALSE);
 	m_DeleteImported = GetInt(_T("DeleteImported"), FALSE);
-	m_Simulate = GetInt(_T("Simulate"), FALSE);
 
 	m_pMainWnd = new CMigrateWnd();
 	((CMigrateWnd*)m_pMainWnd)->Create();
@@ -50,7 +49,6 @@ int CMigrateApp::ExitInstance()
 {
 	WriteInt(_T("ExpandAll"), m_ExpandAll);
 	WriteInt(_T("DeleteImported"), m_DeleteImported);
-	WriteInt(_T("Simulate"), m_Simulate);
 
 	return LFApplication::ExitInstance();
 }

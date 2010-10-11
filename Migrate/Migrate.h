@@ -19,7 +19,6 @@ public:
 
 	BOOL m_ExpandAll;
 	BOOL m_DeleteImported;
-	BOOL m_Simulate;
 
 protected:
 	afx_msg void OnAppAbout();
