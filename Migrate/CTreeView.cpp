@@ -248,10 +248,11 @@ void CTreeView::AutosizeColumns()
 	for (UINT col=0; col<m_Cols; col++)
 		AutosizeColumn(col);
 
-	Invalidate();
-
 	m_wndHeader.SetRedraw(TRUE);
 	m_wndHeader.Invalidate();
+
+	AdjustScrollbars();
+	Invalidate();
 }
 
 void CTreeView::EditLabel(CPoint item)
@@ -290,6 +291,10 @@ void CTreeView::EditLabel(CPoint item)
 	p_Edit->SetSel(0, wcslen(Name));
 	p_Edit->SetFont(&theApp.m_DefaultFont);
 	p_Edit->SetFocus();
+}
+
+void CTreeView::AdjustScrollbars()
+{
 }
 
 BOOL CTreeView::InsertRow(UINT row)
@@ -614,6 +619,7 @@ void CTreeView::Expand(UINT row, UINT col, BOOL ExpandAll, BOOL AutosizeHeader)
 		for (UINT a=(int)col+1; a<m_Cols; a++)
 			AutosizeColumn(a, TRUE);
 
+	AdjustScrollbars();
 	Invalidate();
 
 	if ((m_SelectedItem.x==(int)col) && (m_SelectedItem.y==(int)row))
@@ -774,6 +780,7 @@ void CTreeView::TrackMenu(UINT nID, CPoint point, int col)
 	{
 	case ID_VIEW_AUTOSIZE:
 		AutosizeColumn(col);
+		AdjustScrollbars();
 		Invalidate();
 		break;
 	case ID_VIEW_AUTOSIZEALL:
@@ -899,8 +906,9 @@ void CTreeView::AddPath(LPWSTR Path, LPWSTR Parent)
 						}
 						else
 						{
+							UINT LastRow = GetChildRect(item);
 							BOOL Insert = TRUE;
-							while (add.y<(int)m_Rows)
+							while (add.y<=(int)LastRow)
 							{
 								if (m_Tree[MAKEPOSI(add)].pItem)
 									if (wcscmp(m_Tree[MAKEPOSI(add)].pItem->Path, Path)==0)
@@ -908,12 +916,6 @@ void CTreeView::AddPath(LPWSTR Path, LPWSTR Parent)
 										Insert = FALSE;
 										break;
 									}
-
-								if (!(m_Tree[MAKEPOSI(add)].Flags & CF_HASSIBLINGS))
-								{
-									add.y++;
-									break;
-								}
 
 								add.y++;
 							}
@@ -923,8 +925,8 @@ void CTreeView::AddPath(LPWSTR Path, LPWSTR Parent)
 								InsertRow(add.y);
 
 								Flags = CF_ISSIBLING;
-								if (add.y>item.y)
-									m_Tree[MAKEPOS(add.y-1, add.x)].Flags |= CF_HASSIBLINGS;
+								for (int row=add.y-1; row>item.y; row--)
+									m_Tree[MAKEPOS(row, add.x)].Flags |= CF_HASSIBLINGS | CF_ISSIBLING;
 
 								if (add.y<(int)m_Rows-1)
 									for (UINT col=1; (int)col<add.x; col++)
@@ -944,6 +946,7 @@ void CTreeView::AddPath(LPWSTR Path, LPWSTR Parent)
 						SetItem(add.y, add.x, theApp.GetShellManager()->CopyItem(pidlRel), pidlFQ, Flags);
 
 						AutosizeColumn(add.x, TRUE);
+						AdjustScrollbars();
 						InvalidateItem(add);
 						InvalidateItem(item);
 
@@ -1073,12 +1076,18 @@ void CTreeView::UpdateColumnCaption(UINT col)
 
 void CTreeView::ExpandColumn(UINT col)
 {
+	SetRedraw(FALSE);
+
 	for (UINT row=0; row<m_Rows; row++)
 		if (m_Tree[MAKEPOS(row, col)].Flags & CF_CANEXPAND)
 			Expand(row, col, FALSE, FALSE);
 
 	for (UINT a=(int)col+1; a<m_Cols; a++)
 		AutosizeColumn(a, TRUE);
+
+	SetRedraw(TRUE);
+	AdjustScrollbars();
+	Invalidate();
 }
 
 void CTreeView::AutosizeColumn(UINT col, BOOL OnlyEnlarge)

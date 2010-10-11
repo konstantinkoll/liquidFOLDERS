@@ -95,6 +95,7 @@ protected:
 	virtual LRESULT WindowProc(UINT message, WPARAM wParam, LPARAM lParam);
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 
+	void AdjustScrollbars();
 	BOOL InsertRow(UINT row);
 	void RemoveRows(UINT first, UINT last);
 	void UpdateChildPIDLs(UINT row, UINT col);
