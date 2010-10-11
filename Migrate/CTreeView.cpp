@@ -326,6 +326,8 @@ BOOL CTreeView::InsertRow(UINT row)
 	ZeroMemory(&m_Tree[MAKEPOS(row, 0)], MaxColumns*sizeof(Cell));
 	m_Rows++;
 	m_HotItem.x = m_HotItem.y = -1;
+	if (m_SelectedItem.y>=(int)row)
+		m_SelectedItem.y++;
 
 	return TRUE;
 }
@@ -344,8 +346,10 @@ void CTreeView::RemoveRows(UINT first, UINT last)
 
 	memcpy(&m_Tree[MAKEPOS(first, 0)], &m_Tree[MAKEPOS(last+1, 0)], (m_Rows-last)*MaxColumns*sizeof(Cell));
 
+	if (m_SelectedItem.y>(int)last)
+		m_SelectedItem.y -= last-first+1;
 	m_HotItem.x = m_HotItem.y = -1;
-	m_Rows -= (last-first+1);
+	m_Rows -= last-first+1;
 	ZeroMemory(&m_Tree[MAKEPOS(m_Rows, 0)], (last-first+1)*MaxColumns*sizeof(Cell));
 }
 
@@ -457,7 +461,7 @@ void CTreeView::RemoveItem(UINT row, UINT col)
 	{
 		CPoint item(m_SelectedItem);
 
-		item.x--;
+		item.x = col-1;
 		for (int r=row; r>=0; r--)
 			if (m_Tree[MAKEPOS(r, item.x)].pItem)
 			{
@@ -497,6 +501,7 @@ void CTreeView::RemoveItem(UINT row, UINT col)
 
 	m_HotItem.x = m_HotItem.y = -1;
 
+	AdjustScrollbars();
 	Invalidate();
 }
 
@@ -642,6 +647,7 @@ void CTreeView::Collapse(UINT row, UINT col)
 	for (UINT c=col+1; c<m_Cols; c++)
 		FreeItem(&m_Tree[MAKEPOS(row, c)]);
 
+	AdjustScrollbars();
 	Invalidate();
 
 	if ((m_SelectedItem.x==(int)col) && (m_SelectedItem.y==(int)row))
