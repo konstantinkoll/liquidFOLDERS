@@ -1217,6 +1217,8 @@ BEGIN_MESSAGE_MAP(CTreeView, CWnd)
 	ON_WM_ERASEBKGND()
 	ON_WM_PAINT()
 	ON_WM_SIZE()
+	ON_WM_VSCROLL()
+	ON_WM_HSCROLL()
 	ON_WM_SETCURSOR()
 	ON_WM_MOUSEMOVE()
 	ON_WM_MOUSELEAVE()
@@ -1373,11 +1375,12 @@ void CTreeView::OnPaint()
 	CPen pen(PS_COSMETIC | PS_ALTERNATE, 1, &brsh);
 	CPen* pOldPen = dc.SelectObject(&pen);
 
-	int y = m_HeaderHeight;
-	Cell* curCell = m_Tree;
-	for (UINT row=0; row<m_Rows; row++)
+	int start = m_VScrollPos/m_RowHeight;
+	int y = m_HeaderHeight-(m_VScrollPos % m_RowHeight);
+	Cell* curCell = &m_Tree[MAKEPOS(start, 0)];
+	for (UINT row=start; row<m_Rows; row++)
 	{
-		int x = 0;
+		int x = -m_HScrollPos;
 		for (UINT col=0; col<MaxColumns; col++)
 		{
 			CRect rectItem(x, y, x+m_ColumnWidth[col], y+m_RowHeight);
@@ -1543,6 +1546,84 @@ void CTreeView::OnSize(UINT nType, int cx, int cy)
 {
 	CWnd::OnSize(nType, cx, cy);
 	AdjustLayout();
+}
+
+void CTreeView::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
+{
+	int nInc = 0;
+	switch (nSBCode)
+	{
+	case SB_TOP:
+		nInc = -m_VScrollPos;
+		break;
+	case SB_BOTTOM:
+		nInc = m_VScrollMax-m_VScrollPos;
+		break;
+	case SB_LINEUP:
+		nInc = -((int)m_RowHeight);
+		break;
+	case SB_LINEDOWN:
+		nInc = m_RowHeight;
+		break;
+	case SB_PAGEUP:
+		nInc = min(-1, -m_VertInc);
+		break;
+	case SB_PAGEDOWN:
+		nInc = max(1, m_VertInc);
+		break;
+	case SB_THUMBTRACK:
+		nInc = nPos - m_VScrollPos;
+		break;
+	}
+
+	nInc = max(-m_VScrollPos, min(nInc, m_VScrollMax-m_VScrollPos));
+	if (nInc)
+	{
+		m_VScrollPos += nInc;
+		ScrollWindow(0, -nInc, NULL, NULL);
+		SetScrollPos(SB_VERT, m_VScrollPos, TRUE);
+	}
+
+	CWnd::OnVScroll(nSBCode, nPos, pScrollBar);
+}
+
+void CTreeView::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
+{
+	int nInc = 0;
+	switch (nSBCode)
+	{
+	case SB_TOP:
+		nInc = -m_HScrollPos;
+		break;
+	case SB_BOTTOM:
+		nInc = m_HScrollMax-m_HScrollPos;
+		break;
+	case SB_LINEUP:
+		nInc = -64;
+		break;
+	case SB_LINEDOWN:
+		nInc = 64;
+		break;
+	case SB_PAGEUP:
+		nInc = min(-1, -m_HorzInc);
+		break;
+	case SB_PAGEDOWN:
+		nInc = max(1, m_HorzInc);
+		break;
+	case SB_THUMBTRACK:
+		nInc = nPos - m_HScrollPos;
+		break;
+	}
+
+	nInc = max(-m_HScrollPos, min(nInc, m_HScrollMax-m_HScrollPos));
+	if (nInc)
+	{
+		m_HScrollPos += nInc;
+		ScrollWindow(-nInc, 0, NULL, NULL);
+		SetScrollPos(SB_HORZ, m_VScrollPos, TRUE);
+	}
+
+	CWnd::OnHScroll(nSBCode, nPos, pScrollBar);
 }
 
 BOOL CTreeView::OnSetCursor(CWnd* /*pWnd*/, UINT /*nHitTest*/, UINT /*message*/)
