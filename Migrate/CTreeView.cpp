@@ -104,6 +104,7 @@ BOOL CTreeView::PreTranslateMessage(MSG* pMsg)
 	case WM_NCRBUTTONUP:
 	case WM_NCMBUTTONUP:
 	case WM_MOUSEWHEEL:
+	case WM_MOUSEHWHEEL:
 		m_TooltipCtrl.Deactivate();
 		break;
 	}
@@ -1228,6 +1229,8 @@ BEGIN_MESSAGE_MAP(CTreeView, CWnd)
 	ON_WM_MOUSEMOVE()
 	ON_WM_MOUSELEAVE()
 	ON_WM_MOUSEHOVER()
+	ON_WM_MOUSEWHEEL()
+	ON_WM_MOUSEHWHEEL()
 	ON_WM_KEYDOWN()
 	ON_WM_KEYUP()
 	ON_WM_LBUTTONDOWN()
@@ -1723,6 +1726,46 @@ void CTreeView::OnMouseHover(UINT nFlags, CPoint point)
 	tme.dwHoverTime = LFHOVERTIME;
 	tme.hwndTrack = m_hWnd;
 	TrackMouseEvent(&tme);
+}
+
+BOOL CTreeView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
+{
+	CRect rect;
+	GetWindowRect(&rect);
+	if (!rect.PtInRect(pt))
+		return FALSE;
+
+	int nInc = max(-m_VScrollPos, min(-zDelta*(int)m_RowHeight/WHEEL_DELTA, m_VScrollMax-m_VScrollPos));
+	if (nInc)
+	{
+		m_VScrollPos += nInc;
+		ScrollWindowEx(0, -nInc, NULL, NULL, NULL, NULL, SW_INVALIDATE);
+		SetScrollPos(SB_VERT, m_VScrollPos, TRUE);
+
+		ScreenToClient(&pt);
+		OnMouseMove(nFlags, pt);
+	}
+
+	return TRUE;
+}
+
+void CTreeView::OnMouseHWheel(UINT nFlags, short zDelta, CPoint pt)
+{
+	CRect rect;
+	GetWindowRect(&rect);
+	if (!rect.PtInRect(pt))
+		return;
+
+	int nInc = max(-m_HScrollPos, min(zDelta*64/WHEEL_DELTA, m_HScrollMax-m_HScrollPos));
+	if (nInc)
+	{
+		m_HScrollPos += nInc;
+		ScrollWindowEx(-nInc, 0, NULL, NULL, NULL, NULL, SW_INVALIDATE);
+		SetScrollPos(SB_HORZ, m_HScrollPos, TRUE);
+
+		ScreenToClient(&pt);
+		OnMouseMove(nFlags, pt);
+	}
 }
 
 void CTreeView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)

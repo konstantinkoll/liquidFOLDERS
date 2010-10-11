@@ -139,6 +139,7 @@ BOOL CExplorerTree::PreTranslateMessage(MSG* pMsg)
 	case WM_NCRBUTTONUP:
 	case WM_NCMBUTTONUP:
 	case WM_MOUSEWHEEL:
+	case WM_MOUSEHWHEEL:
 		m_TooltipCtrl.Deactivate();
 		break;
 	}
