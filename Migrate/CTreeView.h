@@ -149,8 +149,6 @@ private:
 	CImageList m_DefaultGlyphs;
 	ULONG m_ulSHChangeNotifyRegister;
 	BOOL m_SpacePressed;
-	int m_HorzInc;
-	int m_VertInc;
 	int m_HScrollMax;
 	int m_VScrollMax;
 	int m_HScrollPos;

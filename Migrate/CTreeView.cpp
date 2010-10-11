@@ -316,8 +316,8 @@ void CTreeView::AdjustScrollbars()
 	for (UINT col=0; col<m_Cols; col++)
 		ScrollWidth += m_ColumnWidth[col];
 
-	m_VertInc = (ScrollHeight-rect.Height()+(int)m_HeaderHeight);
-	m_HorzInc = (ScrollWidth-rect.Width());
+	int m_VertInc = (ScrollHeight-rect.Height()+(int)m_HeaderHeight);
+	int m_HorzInc = (ScrollWidth-rect.Width());
 
 	m_VScrollMax = max(0, m_VertInc);
 	m_VScrollPos = min(m_VScrollPos, m_VScrollMax);
@@ -1550,6 +1550,9 @@ void CTreeView::OnSize(UINT nType, int cx, int cy)
 
 void CTreeView::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 {
+	CRect rect;
+	GetClientRect(&rect);
+
 	int nInc = 0;
 	switch (nSBCode)
 	{
@@ -1566,10 +1569,10 @@ void CTreeView::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 		nInc = m_RowHeight;
 		break;
 	case SB_PAGEUP:
-		nInc = min(-1, -m_VertInc);
+		nInc = min(-1, -(rect.Height()-(int)m_HeaderHeight));
 		break;
 	case SB_PAGEDOWN:
-		nInc = max(1, m_VertInc);
+		nInc = max(1, rect.Height()-(int)m_HeaderHeight);
 		break;
 	case SB_THUMBTRACK:
 		nInc = nPos - m_VScrollPos;
@@ -1598,17 +1601,13 @@ void CTreeView::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 	case SB_BOTTOM:
 		nInc = m_HScrollMax-m_HScrollPos;
 		break;
+	case SB_PAGEUP:
 	case SB_LINEUP:
 		nInc = -64;
 		break;
+	case SB_PAGEDOWN:
 	case SB_LINEDOWN:
 		nInc = 64;
-		break;
-	case SB_PAGEUP:
-		nInc = min(-1, -m_HorzInc);
-		break;
-	case SB_PAGEDOWN:
-		nInc = max(1, m_HorzInc);
 		break;
 	case SB_THUMBTRACK:
 		nInc = nPos - m_HScrollPos;
