@@ -95,6 +95,7 @@ protected:
 	virtual LRESULT WindowProc(UINT message, WPARAM wParam, LPARAM lParam);
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 
+	void ResetScrollbars();
 	void AdjustScrollbars();
 	BOOL InsertRow(UINT row);
 	void RemoveRows(UINT first, UINT last);
@@ -146,6 +147,12 @@ private:
 	CImageList m_DefaultGlyphs;
 	ULONG m_ulSHChangeNotifyRegister;
 	BOOL m_SpacePressed;
+	int m_HorzInc;
+	int m_VertInc;
+	int m_HScrollMax;
+	int m_VScrollMax;
+	int m_HScrollPos;
+	int m_VScrollPos;
 
 	void SetWidgetSize();
 	UINT GetChildRect(CPoint item);

@@ -123,6 +123,9 @@ void CTreeView::AdjustLayout()
 	m_wndHeader.Layout(&HdLayout);
 
 	m_HeaderHeight = wp.cy + (wp.cy ? 4 : 0);
+
+	AdjustScrollbars();
+
 	m_wndHeader.SetWindowPos(NULL, wp.x, wp.y, wp.cx, m_HeaderHeight, wp.flags | SWP_NOZORDER | SWP_NOACTIVATE);
 }
 
@@ -134,6 +137,7 @@ void CTreeView::ClearRoot()
 	m_CheckboxHot = m_CheckboxPressed = m_SpacePressed = FALSE;
 
 	m_wndHeader.ModifyStyle(0, HDS_HIDDEN);
+	ResetScrollbars();
 	AdjustLayout();
 	Invalidate();
 
@@ -293,8 +297,37 @@ void CTreeView::EditLabel(CPoint item)
 	p_Edit->SetFocus();
 }
 
+void CTreeView::ResetScrollbars()
+{
+	ScrollWindow(0, m_VScrollPos, NULL, NULL);
+	ScrollWindow(m_HScrollPos, 0, NULL, NULL);
+	m_VScrollPos = m_HScrollPos = 0;
+	SetScrollPos(SB_VERT, m_VScrollPos, TRUE);
+	SetScrollPos(SB_HORZ, m_HScrollPos, TRUE);
+}
+
 void CTreeView::AdjustScrollbars()
 {
+	CRect rect;
+	GetClientRect(&rect);
+
+	int ScrollHeight = m_Rows*m_RowHeight;
+	int ScrollWidth = (m_Cols<MaxColumns) ? GUTTER : 0;
+	for (UINT col=0; col<m_Cols; col++)
+		ScrollWidth += m_ColumnWidth[col];
+
+	m_VertInc = (ScrollHeight-rect.Height()+(int)m_HeaderHeight);
+	m_HorzInc = (ScrollWidth-rect.Width());
+
+	m_VScrollMax = max(0, m_VertInc);
+	m_VScrollPos = min(m_VScrollPos, m_VScrollMax);
+	SetScrollRange(SB_VERT, 0, m_VScrollMax, FALSE);
+	SetScrollPos(SB_VERT, m_VScrollPos, TRUE);
+
+	m_HScrollMax = max(0, m_HorzInc);
+	m_HScrollPos = min(m_HScrollPos, m_HScrollMax);
+	SetScrollRange(SB_HORZ, 0, m_HScrollMax, FALSE);
+	SetScrollPos(SB_HORZ, m_HScrollPos, TRUE);
 }
 
 BOOL CTreeView::InsertRow(UINT row)
@@ -470,7 +503,6 @@ void CTreeView::RemoveItem(UINT row, UINT col)
 			}
 
 		SelectItem(item);
-		NotifyOwner();
 	}
 
 	BOOL HasSiblings = (m_Tree[MAKEPOS(row, col)].Flags & CF_HASSIBLINGS);
@@ -1253,6 +1285,8 @@ int CTreeView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		SHCNE_RENAMEFOLDER | SHCNE_UPDATEITEM | SHCNE_INTERRUPT,
 		WM_SHELLCHANGE, 1, &shCNE);
 
+	ResetScrollbars();
+
 	return 0;
 }
 
@@ -1346,10 +1380,12 @@ void CTreeView::OnPaint()
 		int x = 0;
 		for (UINT col=0; col<MaxColumns; col++)
 		{
-			CRect rectItem(x+GUTTER, y, x+m_ColumnWidth[col], y+m_RowHeight);
+			CRect rectItem(x, y, x+m_ColumnWidth[col], y+m_RowHeight);
 			CRect rectIntersect;
 			if (rectIntersect.IntersectRect(rectItem, rectUpdate))
 			{
+				rectItem.left += GUTTER;
+
 				BOOL Hot = (m_HotItem.x==(int)col) && (m_HotItem.y==(int)row);
 				BOOL Selected = (m_SelectedItem.x==(int)col) && (m_SelectedItem.y==(int)row);
 
@@ -2047,6 +2083,7 @@ void CTreeView::OnItemChanging(NMHDR* pNMHDR, LRESULT* pResult)
 			pHdr->pitem->cxy = MAXWIDTH;
 
 		m_ColumnWidth[pHdr->iItem] = pHdr->pitem->cxy;
+		AdjustScrollbars();
 		Invalidate();
 
 		*pResult = FALSE;
