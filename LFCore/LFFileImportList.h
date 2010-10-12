@@ -9,5 +9,5 @@ public:
 	~LFFileImportList();
 
 	bool AddPath(wchar_t* path);
-	void Resolve();
+	void Resolve(bool recursive);
 };

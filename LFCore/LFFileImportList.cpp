@@ -34,7 +34,7 @@ bool LFFileImportList::AddPath(wchar_t* path)
 	return true;
 }
 
-void LFFileImportList::Resolve()
+void LFFileImportList::Resolve(bool recursive)
 {
 	unsigned int a = 0;
 
@@ -69,7 +69,11 @@ FileFound:
 							wcscpy_s(fn, MAX_PATH, m_Items[a]);
 							wcscat_s(fn, MAX_PATH, L"\\");
 							wcscat_s(fn, MAX_PATH, FindFileData.cFileName);
-							AddPath(&fn[0]);
+
+							DWORD attr = GetFileAttributes(m_Items[a]);
+							if (attr!=INVALID_FILE_ATTRIBUTES)
+								if ((!(attr & FILE_ATTRIBUTE_DIRECTORY)) || (recursive))
+									AddPath(fn);
 						}
 					}
 

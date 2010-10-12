@@ -29,7 +29,8 @@ bool CMigrationList::AddFolder(wchar_t* path, LFItemDescriptor* it, BOOL Resolve
 {
 	assert(path);
 
-	ML_Entry entry = { LFAllocFileImportList(), it, Resolve };
+	ML_Entry entry = { L"", LFAllocFileImportList(), it, Resolve };
+	wcscpy_s(entry.Path, MAX_PATH, path);
 	LFAddImportPath(entry.List, path);
 
 	if (!DynArray::AddItem(entry))

@@ -188,7 +188,9 @@ void CMigrateWnd::OnMigrate()
 		btn->SetCheck(DeleteSource);
 	}
 
+	// Migration starten
 	MessageBox(_T("Not implemented!"));
+
 	LFFreeItemDescriptor(it);
 }
 

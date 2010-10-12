@@ -970,7 +970,7 @@ unsigned int OpenStore(char* key, bool WriteAccess, CIndex* &Index1, CIndex* &In
 	return res;
 }
 
-LFCore_API unsigned int LFImportFiles(char* key, LFFileImportList* il, LFItemDescriptor* it, bool move)
+LFCore_API unsigned int LFImportFiles(char* key, LFFileImportList* il, LFItemDescriptor* it, bool recursive, bool move)
 {
 	assert(il);
 
@@ -990,7 +990,7 @@ LFCore_API unsigned int LFImportFiles(char* key, LFFileImportList* il, LFItemDes
 		return LFNoDefaultStore;
 
 	// Importliste vorbereiten
-	il->Resolve();
+	il->Resolve(recursive);
 
 	// Import
 	CIndex* idx1;
