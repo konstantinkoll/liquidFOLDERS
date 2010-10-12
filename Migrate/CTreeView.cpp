@@ -307,15 +307,31 @@ void CTreeView::PopulateMigrationList(CMigrationList* ml, LFItemDescriptor* it, 
 	if (!cell->pItem)
 		return;
 
+	// Template ergänzen
+	LFItemDescriptor* it2 = it;
+	if (m_ColumnMapping[col]!=-1)
+	{
+		it2 = LFAllocItemDescriptor(it);
+		// TODO
+	}
+
 	// Ordner hinzufügen
 	if ((cell->Flags & CF_CHECKED) && (cell->pItem->Path[0]!='\0'))
 		ml->AddFolder(cell->pItem->Path, it, !(cell->Flags & CF_HASCHILDREN));
 
 	// Unterordner
-	if (cell->Flags & CF_HASCHILDREN)
+	col++;
+	if ((cell->Flags & CF_HASCHILDREN) && (col<m_Cols))
 	{
-
+		UINT LastRow = GetChildRect(CPoint(col-1, row));
+		for (UINT r=row; r<=LastRow; r++)
+			if (m_Tree[MAKEPOS(r, col)].pItem)
+				PopulateMigrationList(ml, it2, r, col);
 	}
+
+	// Template freigeben
+	if (it2!=it)
+		LFFreeItemDescriptor(it2);
 }
 
 void CTreeView::ResetScrollbars()

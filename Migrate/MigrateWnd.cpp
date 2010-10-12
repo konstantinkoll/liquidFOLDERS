@@ -193,6 +193,9 @@ void CMigrateWnd::OnMigrate()
 		if (LFImportFiles(StoreID, ml.m_Items[a].List, ml.m_Items[a].Template, ml.m_Items[a].Resolve==TRUE, DeleteSource==TRUE)==LFCancel)
 			break;
 
+	// Ergebnis zeigen
+	// TODO
+
 	LFFreeItemDescriptor(it);
 }
 
