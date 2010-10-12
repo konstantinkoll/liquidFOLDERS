@@ -25,11 +25,11 @@ CMigrationList::~CMigrationList()
 		}
 }
 
-bool CMigrationList::AddFolder(wchar_t* path, LFItemDescriptor* it, BOOL Resolve)
+bool CMigrationList::AddFolder(wchar_t* path, LFItemDescriptor* it, BOOL Recursive)
 {
 	ASSERT(path);
 
-	ML_Entry entry = { L"", LFAllocFileImportList(), LFAllocItemDescriptor(it), Resolve };
+	ML_Entry entry = { L"", LFAllocFileImportList(), LFAllocItemDescriptor(it), Recursive };
 	wcscpy_s(entry.Path, MAX_PATH, path);
 	LFAddImportPath(entry.List, path);
 

@@ -190,7 +190,7 @@ void CMigrateWnd::OnMigrate()
 
 	// Migration starten
 	for (UINT a=0; a<ml.m_ItemCount; a++)
-		if (LFImportFiles(StoreID, ml.m_Items[a].List, ml.m_Items[a].Template, ml.m_Items[a].Resolve==TRUE, DeleteSource==TRUE)==LFCancel)
+		if (LFImportFiles(StoreID, ml.m_Items[a].List, ml.m_Items[a].Template, ml.m_Items[a].Recursive==TRUE, DeleteSource==TRUE)==LFCancel)
 			break;
 
 	// Ergebnis zeigen

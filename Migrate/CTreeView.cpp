@@ -359,14 +359,29 @@ void CTreeView::AdjustScrollbars()
 	int oldVScrollPos = m_VScrollPos;
 	m_VScrollMax = max(0, m_VertInc);
 	m_VScrollPos = min(m_VScrollPos, m_VScrollMax);
-	SetScrollRange(SB_VERT, 0, m_VScrollMax, FALSE);
-	SetScrollPos(SB_VERT, m_VScrollPos, TRUE);
+
+	SCROLLINFO si;
+	ZeroMemory(&si, sizeof(si));
+	si.cbSize = sizeof(SCROLLINFO);
+	si.fMask = SIF_PAGE | SIF_RANGE | SIF_POS;
+	si.nPage = rect.Height()-m_HeaderHeight;
+	si.nMin = 0;
+	si.nMax = ScrollHeight;
+	si.nPos = m_VScrollPos;
+	SetScrollInfo(SB_VERT, &si);
 
 	int oldHScrollPos = m_HScrollPos;
 	m_HScrollMax = max(0, m_HorzInc);
 	m_HScrollPos = min(m_HScrollPos, m_HScrollMax);
-	SetScrollRange(SB_HORZ, 0, m_HScrollMax, FALSE);
-	SetScrollPos(SB_HORZ, m_HScrollPos, TRUE);
+
+	ZeroMemory(&si, sizeof(si));
+	si.cbSize = sizeof(SCROLLINFO);
+	si.fMask = SIF_PAGE | SIF_RANGE | SIF_POS;
+	si.nPage = rect.Width();
+	si.nMin = 0;
+	si.nMax = ScrollWidth;
+	si.nPos = m_HScrollPos;
+	SetScrollInfo(SB_HORZ, &si);
 
 	if ((oldVScrollPos!=m_VScrollPos) || (oldHScrollPos!=m_HScrollPos))
 		Invalidate();
@@ -1619,7 +1634,7 @@ void CTreeView::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 		nInc = max(1, rect.Height()-(int)m_HeaderHeight);
 		break;
 	case SB_THUMBTRACK:
-		nInc = nPos - m_VScrollPos;
+		nInc = nPos-m_VScrollPos;
 		break;
 	}
 
@@ -1654,7 +1669,7 @@ void CTreeView::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 		nInc = 64;
 		break;
 	case SB_THUMBTRACK:
-		nInc = nPos - m_HScrollPos;
+		nInc = nPos-m_HScrollPos;
 		break;
 	}
 
