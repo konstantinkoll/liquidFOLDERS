@@ -5,6 +5,7 @@
 #pragma once
 #include "LFCommDlg.h"
 #include "CTreeView.h"
+#include "CMigrationList.h"
 
 
 // CMainView
@@ -20,6 +21,7 @@ public:
 	int Create(CWnd* _pParentWnd, UINT nID);
 	void ClearRoot();
 	void SetRoot(LPITEMIDLIST pidl, BOOL Update, BOOL ExpandAll);
+	void PopulateMigrationList(CMigrationList* ml, LFItemDescriptor* it);
 
 protected:
 	CTaskbar m_wndTaskbar;

@@ -70,6 +70,12 @@ void CMainView::SetRoot(LPITEMIDLIST pidl, BOOL Update, BOOL ExpandAll)
 	m_wndTree.EnableWindow(TRUE);
 }
 
+void CMainView::PopulateMigrationList(CMigrationList* ml, LFItemDescriptor* it)
+{
+	if (m_IsRootSet)
+		m_wndTree.PopulateMigrationList(ml, it);
+}
+
 void CMainView::AdjustLayout()
 {
 	CRect rect;

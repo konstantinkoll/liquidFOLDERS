@@ -141,11 +141,7 @@ void CMigrateWnd::OnSelectRoot()
 
 void CMigrateWnd::OnMigrate()
 {
-	// Create snapshow
-	CMigrationList ml;
-
-
-	// Choose story if none is selected
+	// Choose store if none is selected
 	if (m_wndStore.IsEmpty())
 	{
 		LFChooseStoreDlg dlg(this, LFCSD_Mounted);
@@ -172,6 +168,10 @@ void CMigrateWnd::OnMigrate()
 		return;
 	}
 
+	// Create snapshow
+	CMigrationList ml;
+	m_wndMainView.PopulateMigrationList(&ml, it);
+
 	// UAC warning if source files should be deleted
 	CButton* btn = (CButton*)m_wndBottomArea.GetDlgItem(IDC_DELETESOURCE);
 	BOOL DeleteSource = btn->GetCheck();
@@ -189,7 +189,9 @@ void CMigrateWnd::OnMigrate()
 	}
 
 	// Migration starten
-	MessageBox(_T("Not implemented!"));
+	for (UINT a=0; a<ml.m_ItemCount; a++)
+		if (LFImportFiles(StoreID, ml.m_Items[a].List, ml.m_Items[a].Template, ml.m_Items[a].Resolve==TRUE, DeleteSource==TRUE)==LFCancel)
+			break;
 
 	LFFreeItemDescriptor(it);
 }

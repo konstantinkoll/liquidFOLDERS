@@ -298,6 +298,26 @@ void CTreeView::EditLabel(CPoint item)
 	p_Edit->SetFocus();
 }
 
+void CTreeView::PopulateMigrationList(CMigrationList* ml, LFItemDescriptor* it, UINT row, UINT col)
+{
+	if ((row>=m_Rows) || (col>=m_Cols))
+		return;
+
+	Cell* cell = &m_Tree[MAKEPOS(row, col)];
+	if (!cell->pItem)
+		return;
+
+	// Ordner hinzufügen
+	if ((cell->Flags & CF_CHECKED) && (cell->pItem->Path[0]!='\0'))
+		ml->AddFolder(cell->pItem->Path, it, !(cell->Flags & CF_HASCHILDREN));
+
+	// Unterordner
+	if (cell->Flags & CF_HASCHILDREN)
+	{
+
+	}
+}
+
 void CTreeView::ResetScrollbars()
 {
 	ScrollWindowEx(0, m_VScrollPos, NULL, NULL, NULL, NULL, SW_INVALIDATE);

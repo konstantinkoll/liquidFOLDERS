@@ -4,6 +4,7 @@
 
 #pragma once
 #include "LFCommDlg.h"
+#include "CMigrationList.h"
 
 
 // CTreeView
@@ -64,6 +65,7 @@ public:
 	void ShowProperties(CPoint item=CPoint(-1, -1));
 	void AutosizeColumns();
 	void EditLabel(CPoint item=CPoint(-1, -1));
+	void PopulateMigrationList(CMigrationList* ml, LFItemDescriptor* it, UINT row=0, UINT col=0);
 
 protected:
 	Cell* m_Tree;
