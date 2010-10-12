@@ -353,11 +353,11 @@ void CTreeView::AdjustScrollbars()
 	for (UINT col=0; col<m_Cols; col++)
 		ScrollWidth += m_ColumnWidth[col];
 
-	int m_VertInc = (ScrollHeight-rect.Height()+(int)m_HeaderHeight);
-	int m_HorzInc = (ScrollWidth-rect.Width());
+	int m_VertRange = (ScrollHeight-rect.Height()+(int)m_HeaderHeight);
+	int m_HorzRange = (ScrollWidth-rect.Width());
 
 	int oldVScrollPos = m_VScrollPos;
-	m_VScrollMax = max(0, m_VertInc);
+	m_VScrollMax = max(0, m_VertRange);
 	m_VScrollPos = min(m_VScrollPos, m_VScrollMax);
 
 	SCROLLINFO si;
@@ -371,7 +371,7 @@ void CTreeView::AdjustScrollbars()
 	SetScrollInfo(SB_VERT, &si);
 
 	int oldHScrollPos = m_HScrollPos;
-	m_HScrollMax = max(0, m_HorzInc);
+	m_HScrollMax = max(0, m_HorzRange);
 	m_HScrollPos = min(m_HScrollPos, m_HScrollMax);
 
 	ZeroMemory(&si, sizeof(si));
