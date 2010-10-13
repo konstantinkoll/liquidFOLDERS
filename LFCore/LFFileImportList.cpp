@@ -7,6 +7,8 @@
 LFFileImportList::LFFileImportList()
 	: DynArray()
 {
+	m_FileCount = 0;
+	m_FileSize = 0;
 }
 
 LFFileImportList::~LFFileImportList()
@@ -62,18 +64,16 @@ void LFFileImportList::Resolve(bool recursive)
 					if (hFind!=INVALID_HANDLE_VALUE)
 					{
 FileFound:
-						if (((FindFileData.dwFileAttributes & (FILE_ATTRIBUTE_DEVICE | FILE_ATTRIBUTE_VIRTUAL))==0) &&
-							(wcscmp(FindFileData.cFileName, L".")!=0) && (wcscmp(FindFileData.cFileName, L"..")!=0))
+						if (((FindFileData.dwFileAttributes & (FILE_ATTRIBUTE_DEVICE | FILE_ATTRIBUTE_VIRTUAL | FILE_ATTRIBUTE_SYSTEM))==0) &&
+							(wcscmp(FindFileData.cFileName, L".")!=0) && (wcscmp(FindFileData.cFileName, L"..")!=0) &&
+							((!(FindFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) || (recursive)))
 						{
 							wchar_t fn[MAX_PATH];
 							wcscpy_s(fn, MAX_PATH, m_Items[a]);
 							wcscat_s(fn, MAX_PATH, L"\\");
 							wcscat_s(fn, MAX_PATH, FindFileData.cFileName);
 
-							DWORD attr = GetFileAttributes(m_Items[a]);
-							if (attr!=INVALID_FILE_ATTRIBUTES)
-								if ((!(attr & FILE_ATTRIBUTE_DIRECTORY)) || (recursive))
-									AddPath(fn);
+							AddPath(fn);
 						}
 					}
 

@@ -317,7 +317,7 @@ void CTreeView::PopulateMigrationList(CMigrationList* ml, LFItemDescriptor* it, 
 
 	// Ordner hinzufügen
 	if ((cell->Flags & CF_CHECKED) && (cell->pItem->Path[0]!='\0'))
-		ml->AddFolder(cell->pItem->Path, it, !(cell->Flags & CF_HASCHILDREN));
+		ml->AddFolder(cell->pItem->Name, cell->pItem->Path, it, cell->pItem->IconIDNormal, !(cell->Flags & CF_HASCHILDREN));
 
 	// Unterordner
 	col++;

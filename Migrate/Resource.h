@@ -45,8 +45,9 @@
 #define IDS_EXCLUDEBRANCH               1021
 #define IDS_REPORTTAB0                  1022
 #define IDS_REPORTTAB1                  1023
-#define IDS_REPORTSTATUS_SINGULAR       1024
-#define IDS_REPORTSTATUS_PLURAL         1025
+#define IDS_REPORTSTATUS_NOFILES        1024
+#define IDS_REPORTSTATUS_ONEFILE        1025
+#define IDS_REPORTSTATUS_FILES          1026
 #define IDD_BOTTOMAREA                  2000
 #define IDC_MIGRATE                     2001
 #define IDC_DELETESOURCE                2002
@@ -59,9 +60,8 @@
 #define IDD_REPORT                      2400
 #define IDC_TABS                        2401
 #define IDC_FOLDERLIST                  2402
-#define IDC_STATUS0                     2403
-#define IDC_STATUS1                     2404
-#define IDC_STATUS2                     2405
+#define IDC_STATUS1                     2403
+#define IDC_STATUS2                     2404
 
 // Next default values for new objects
 // 

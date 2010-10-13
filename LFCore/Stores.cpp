@@ -987,7 +987,10 @@ LFCore_API unsigned int LFImportFiles(char* key, LFFileImportList* il, LFItemDes
 		}
 
 	if (store[0]=='\0')
+	{
+		il->m_LastError = LFNoDefaultStore;
 		return LFNoDefaultStore;
+	}
 
 	// Importliste vorbereiten
 	il->Resolve(recursive);
@@ -1028,6 +1031,9 @@ LFCore_API unsigned int LFImportFiles(char* key, LFFileImportList* il, LFItemDes
 					break;
 				}
 
+				il->m_FileCount++;
+				il->m_FileSize += i->CoreAttributes.FileSize;
+
 				if (idx1)
 					idx1->AddItem(i);
 				if (idx2)
@@ -1042,5 +1048,6 @@ LFCore_API unsigned int LFImportFiles(char* key, LFFileImportList* il, LFItemDes
 		ReleaseMutexForStore(StoreLock);
 	}
 
+	il->m_LastError = res;
 	return res;
 }

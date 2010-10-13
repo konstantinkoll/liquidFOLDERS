@@ -25,7 +25,6 @@ public:
 	bool m_HasCategories;
 	bool m_HidingItems;
 	DWORD m_QueryTime;
-	unsigned int m_LastError;
 	unsigned int m_FileCount;
 	unsigned int m_StoreCount;
 	__int64 m_FileSize;

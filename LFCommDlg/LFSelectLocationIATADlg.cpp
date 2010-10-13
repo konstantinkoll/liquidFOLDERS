@@ -116,8 +116,7 @@ BOOL LFSelectLocationIATADlg::OnInitDialog()
 
 	// Liste konfigurieren
 	CListCtrl* l = (CListCtrl*)GetDlgItem(IDC_AIRPORTS);
-	UINT dwExStyle = LVS_EX_FULLROWSELECT | LVS_EX_DOUBLEBUFFER | LVS_EX_GRIDLINES;
-	l->SetExtendedStyle(l->GetExtendedStyle() | dwExStyle);
+	l->SetExtendedStyle(l->GetExtendedStyle() | LVS_EX_FULLROWSELECT | LVS_EX_DOUBLEBUFFER | LVS_EX_GRIDLINES);
 
 	LV_COLUMN lvc;
 	ZeroMemory(&lvc, sizeof(lvc));
