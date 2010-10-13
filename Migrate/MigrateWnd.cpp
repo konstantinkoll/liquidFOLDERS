@@ -9,6 +9,7 @@
 #include "LFCore.h"
 #include "DeleteFilesDlg.h"
 #include "CMigrationList.h"
+#include "ReportDlg.h"
 
 
 CMigrateWnd::CMigrateWnd()
@@ -171,6 +172,7 @@ void CMigrateWnd::OnMigrate()
 	// Create snapshow
 	CMigrationList ml;
 	m_wndMainView.PopulateMigrationList(&ml, it);
+	LFFreeItemDescriptor(it);
 
 	// UAC warning if source files should be deleted
 	CButton* btn = (CButton*)m_wndBottomArea.GetDlgItem(IDC_DELETESOURCE);
@@ -189,14 +191,19 @@ void CMigrateWnd::OnMigrate()
 	}
 
 	// Migration starten
+	ReportList Results[2];
 	for (UINT a=0; a<ml.m_ItemCount; a++)
-		if (LFImportFiles(StoreID, ml.m_Items[a].List, ml.m_Items[a].Template, ml.m_Items[a].Recursive==TRUE, DeleteSource==TRUE)==LFCancel)
+	{
+		UINT res = LFImportFiles(StoreID, ml.m_Items[a].List, ml.m_Items[a].Template, ml.m_Items[a].Recursive==TRUE, DeleteSource==TRUE);
+		if (res==LFCancel)
 			break;
 
-	// Ergebnis zeigen
-	// TODO
+		Results[res==LFOk ? 0 : 1].AddItem(&ml.m_Items[a]);
+	}
 
-	LFFreeItemDescriptor(it);
+	// Ergebnis zeigen
+	ReportDlg repdlg(this, &Results[0], &Results[1]);
+	repdlg.DoModal();
 }
 
 LRESULT CMigrateWnd::OnStoresChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)

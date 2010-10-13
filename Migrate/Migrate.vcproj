@@ -409,6 +409,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ReportDlg.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\stdafx.cpp"
 				>
 				<FileConfiguration
@@ -499,6 +503,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ReportDlg.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Resource.h"
 				>
 			</File>
@@ -533,11 +541,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\TaskReport_Tiny.ico"
+				>
+			</File>
+			<File
 				RelativePath=".\res\Tasks.bmp"
 				>
 			</File>
 			<File
 				RelativePath=".\res\TreeWidgets.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Warning.bmp"
 				>
 			</File>
 		</Filter>

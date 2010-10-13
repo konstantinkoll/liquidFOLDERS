@@ -1400,6 +1400,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Ribbon\TaskReport_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\TaskReport_32.png"
+				>
+			</File>
+			<File
 				RelativePath="Ribbon\Time_16.png"
 				>
 			</File>
@@ -2074,6 +2082,10 @@
 		</File>
 		<File
 			RelativePath=".\Table_Tiny.ico"
+			>
+		</File>
+		<File
+			RelativePath=".\TaskReport_Tiny.ico"
 			>
 		</File>
 		<File
