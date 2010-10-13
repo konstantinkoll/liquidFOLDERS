@@ -1177,10 +1177,13 @@ void CTreeView::ExpandColumn(UINT col)
 		if (m_Tree[MAKEPOS(row, col)].Flags & CF_CANEXPAND)
 			Expand(row, col, FALSE, FALSE);
 
+
 	for (UINT a=(int)col+1; a<m_Cols; a++)
 		AutosizeColumn(a, TRUE);
 
 	SetRedraw(TRUE);
+	m_wndHeader.Invalidate();
+
 	AdjustScrollbars();
 	Invalidate();
 }
