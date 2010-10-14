@@ -370,13 +370,20 @@ void CTreeView::PopulateMigrationList(CMigrationList* ml, LFItemDescriptor* it, 
 	LFItemDescriptor* it2 = it;
 	if (m_ColumnMapping[col]!=-1)
 	{
-		it2 = LFAllocItemDescriptor(it);
-		// TODO
+		LFVariantData v;
+		v.Attr = m_ColumnMapping[col];
+		LFVariantDataFromString(&v, cell->pItem->Name);
+
+		if (!v.IsNull)
+		{
+			it2 = LFAllocItemDescriptor(it);
+			LFSetAttributeVariantData(it2, &v);
+		}
 	}
 
 	// Ordner hinzufügen
 	if ((cell->Flags & CF_CHECKED) && (cell->pItem->Path[0]!='\0'))
-		ml->AddFolder(cell->pItem->Name, cell->pItem->Path, it, cell->pItem->IconIDNormal, !(cell->Flags & CF_HASCHILDREN));
+		ml->AddFolder(cell->pItem->Name, cell->pItem->Path, it2, cell->pItem->IconIDNormal, !(cell->Flags & CF_HASCHILDREN));
 
 	// Unterordner
 	col++;

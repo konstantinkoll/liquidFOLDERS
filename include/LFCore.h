@@ -145,11 +145,14 @@ LFCore_API void LFAttributeToString(LFItemDescriptor* i, unsigned int attr, wcha
 // Konvertiert eine LFVariantData-Struktur in eine Zeichenkette
 LFCore_API void LFVariantDataToString(LFVariantData* v, wchar_t* str, size_t cCount);
 
+// Erzeugt eine LFVariantData-Struktur aus einer Zeichenkette
+LFCore_API void LFVariantDataFromString(LFVariantData* v, wchar_t* str);
+
 // Erzeugt eine neutrale LFVariantData-Struktur (Null-Element)
 // v->Attr muss gesetzt sein
 LFCore_API void LFGetNullVariantData(LFVariantData* v);
 
-// Prüft, ob eine LVVariantData-Strultur Null ist
+// Prüft, ob eine LVVariantData-Struktur Null ist
 LFCore_API bool LFIsNullVariantData(LFVariantData* v);
 
 // Prüft, ob ein Dateiattribut gleich einer LFVariantData-Struktur ist

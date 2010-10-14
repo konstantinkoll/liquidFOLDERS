@@ -1,6 +1,7 @@
 #include "StdAfx.h"
 #include "LFItemDescriptor.h"
 #include "LFVariantData.h"
+#include "LFCore.h"
 #include <assert.h>
 #include <cmath>
 #include <hash_map>
@@ -320,6 +321,25 @@ LFCore_API void LFVariantDataToString(LFVariantData* v, wchar_t* str, size_t cCo
 		assert(v->Type<LFTypeCount);
 		ToString(&v->Value, v->Type, str, cCount);
 	}
+}
+
+LFCore_API void LFVariantDataFromString(LFVariantData* v, wchar_t* str)
+{
+	LFGetNullVariantData(v);
+
+	if (str)
+		switch (v->Type)
+		{
+		case LFTypeUnicodeString:
+			v->IsNull = false;
+			wcscpy_s(v->UnicodeArray, 256, str);
+			break;
+		case LFTypeUnicodeArray:
+			v->IsNull = false;
+			wcscpy_s(v->UnicodeArray, 256, str);
+			LFSanitizeUnicodeArray(v->UnicodeArray, 256);
+			break;
+		}
 }
 
 LFCore_API void LFGetNullVariantData(LFVariantData* v)
