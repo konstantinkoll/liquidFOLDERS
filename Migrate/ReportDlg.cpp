@@ -46,6 +46,12 @@ void ReportDlg::SetPage(int page)
 
 	li->SetRedraw(TRUE);
 	li->Invalidate();
+
+	if (!m_Lists[m_Page]->m_ItemCount)
+	{
+		GetDlgItem(IDC_STATUS1)->SetWindowText(_T(""));
+		GetDlgItem(IDC_STATUS2)->SetWindowText(_T(""));
+	}
 }
 
 
@@ -88,6 +94,7 @@ BOOL ReportDlg::OnInitDialog()
 	CListCtrl* li = (CListCtrl*)GetDlgItem(IDC_FOLDERLIST);
 	li->SetExtendedStyle(li->GetExtendedStyle() | LVS_EX_FULLROWSELECT | LVS_EX_DOUBLEBUFFER | LVS_EX_GRIDLINES);
 	li->SetImageList(&theApp.m_SystemImageListSmall, LVSIL_SMALL);
+	li->SetFont(&theApp.m_DefaultFont, FALSE);
 	li->InsertColumn(0, theApp.m_Attributes[LFAttrFileName]->Name);
 	li->SetWindowPos(&wndTop, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOOWNERZORDER);
 
@@ -95,7 +102,8 @@ BOOL ReportDlg::OnInitDialog()
 	GetDlgItem(IDC_UNCHECKMIGRATED)->EnableWindow(m_Lists[0]->m_ItemCount);
 
 	// Seite
-	SetPage(0);
+	tabs->SetCurSel(m_Lists[1]->m_ItemCount ? 1 : 0);
+	SetPage(tabs->GetCurSel());
 
 	return TRUE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird
 }

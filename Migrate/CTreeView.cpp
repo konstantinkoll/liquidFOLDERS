@@ -385,11 +385,8 @@ void CTreeView::AdjustScrollbars()
 	for (UINT col=0; col<m_Cols; col++)
 		ScrollWidth += m_ColumnWidth[col];
 
-	int m_VertRange = (ScrollHeight-rect.Height()+(int)m_HeaderHeight);
-	int m_HorzRange = (ScrollWidth-rect.Width());
-
 	int oldVScrollPos = m_VScrollPos;
-	m_VScrollMax = max(0, m_VertRange);
+	m_VScrollMax = max(0, ScrollHeight-rect.Height()+(int)m_HeaderHeight);
 	m_VScrollPos = min(m_VScrollPos, m_VScrollMax);
 
 	SCROLLINFO si;
@@ -403,7 +400,7 @@ void CTreeView::AdjustScrollbars()
 	SetScrollInfo(SB_VERT, &si);
 
 	int oldHScrollPos = m_HScrollPos;
-	m_HScrollMax = max(0, m_HorzRange);
+	m_HScrollMax = max(0, ScrollWidth-rect.Width());
 	m_HScrollPos = min(m_HScrollPos, m_HScrollMax);
 
 	ZeroMemory(&si, sizeof(si));
@@ -1647,6 +1644,8 @@ void CTreeView::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 	CRect rect;
 	GetClientRect(&rect);
 
+	SCROLLINFO si;
+
 	int nInc = 0;
 	switch (nSBCode)
 	{
@@ -1669,7 +1668,12 @@ void CTreeView::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 		nInc = max(1, rect.Height()-(int)m_HeaderHeight);
 		break;
 	case SB_THUMBTRACK:
-		nInc = nPos-m_VScrollPos;
+		ZeroMemory(&si, sizeof(si));
+		si.cbSize = sizeof(SCROLLINFO);
+		si.fMask = SIF_TRACKPOS;
+		GetScrollInfo(SB_VERT, &si);
+
+		nInc = si.nTrackPos-m_VScrollPos;
 		break;
 	}
 
@@ -1678,7 +1682,12 @@ void CTreeView::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 	{
 		m_VScrollPos += nInc;
 		ScrollWindowEx(0, -nInc, NULL, NULL, NULL, NULL, SW_INVALIDATE);
-		SetScrollPos(SB_VERT, m_VScrollPos, TRUE);
+
+		ZeroMemory(&si, sizeof(si));
+		si.cbSize = sizeof(SCROLLINFO);
+		si.fMask = SIF_POS;
+		si.nPos = m_VScrollPos;
+		SetScrollInfo(SB_VERT, &si);
 	}
 
 	CWnd::OnVScroll(nSBCode, nPos, pScrollBar);
@@ -1686,6 +1695,8 @@ void CTreeView::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 
 void CTreeView::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 {
+	SCROLLINFO si;
+
 	int nInc = 0;
 	switch (nSBCode)
 	{
@@ -1704,7 +1715,12 @@ void CTreeView::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 		nInc = 64;
 		break;
 	case SB_THUMBTRACK:
-		nInc = nPos-m_HScrollPos;
+		ZeroMemory(&si, sizeof(si));
+		si.cbSize = sizeof(SCROLLINFO);
+		si.fMask = SIF_TRACKPOS;
+		GetScrollInfo(SB_HORZ, &si);
+
+		nInc = si.nTrackPos-m_HScrollPos;
 		break;
 	}
 
@@ -1713,7 +1729,12 @@ void CTreeView::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 	{
 		m_HScrollPos += nInc;
 		ScrollWindowEx(-nInc, 0, NULL, NULL, NULL, NULL, SW_INVALIDATE | SW_SCROLLCHILDREN);
-		SetScrollPos(SB_HORZ, m_HScrollPos, TRUE);
+
+		ZeroMemory(&si, sizeof(si));
+		si.cbSize = sizeof(SCROLLINFO);
+		si.fMask = SIF_POS;
+		si.nPos = m_HScrollPos;
+		SetScrollInfo(SB_HORZ, &si);
 	}
 
 	CWnd::OnHScroll(nSBCode, nPos, pScrollBar);
@@ -2327,8 +2348,18 @@ LRESULT CTreeView::OnChooseProperty(WPARAM wParam, LPARAM /*lParam*/)
 	ChoosePropertyDlg dlg(theApp.m_pMainWnd, m_ColumnMapping[(int)wParam]);
 	if (dlg.DoModal()!=IDCANCEL)
 	{
-		m_ColumnMapping[(int)wParam] = dlg.m_Attr;
-		UpdateColumnCaption((UINT)wParam);
+		for (UINT a=0; a<MaxColumns; a++)
+			if (a==(UINT)wParam)
+			{
+				m_ColumnMapping[(UINT)wParam] = dlg.m_Attr;
+				UpdateColumnCaption((UINT)wParam);
+			}
+			else
+				if ((m_ColumnMapping[a]==dlg.m_Attr) && (theApp.m_Attributes[dlg.m_Attr]->Type!=LFTypeUnicodeArray))
+				{
+					m_ColumnMapping[a] = -1;
+					UpdateColumnCaption(a);
+				}
 	}
 
 	return NULL;
