@@ -269,6 +269,8 @@ void CTreeView::EditLabel(CPoint item)
 	if (!(m_Tree[MAKEPOSI(item)].Flags & CF_CANRENAME))
 		return;
 
+	EnsureVisible(item);
+
 	int y = m_HeaderHeight+item.y*m_RowHeight;
 	int x = 0;
 	for (int a=0; a<item.x; a++)
@@ -296,6 +298,14 @@ void CTreeView::EditLabel(CPoint item)
 	p_Edit->SetSel(0, wcslen(Name));
 	p_Edit->SetFont(&theApp.m_DefaultFont);
 	p_Edit->SetFocus();
+}
+
+void CTreeView::EnsureVisible(CPoint item)
+{
+	if ((item.x==-1) || (item.y==-1))
+		item = m_SelectedItem;
+	if ((item.x==-1) || (item.y==-1) || (item.x>=(int)m_Cols) || (item.y>=(int)m_Rows))
+		return;
 }
 
 void CTreeView::PopulateMigrationList(CMigrationList* ml, LFItemDescriptor* it, UINT row, UINT col)
@@ -977,8 +987,9 @@ void CTreeView::SelectItem(CPoint Item)
 		return;
 
 	InvalidateItem(m_SelectedItem);
-	InvalidateItem(Item);
 	m_SelectedItem = Item;
+	EnsureVisible(Item);
+	InvalidateItem(Item);
 	m_EditLabel = CPoint(-1, -1);
 
 	ReleaseCapture();
@@ -2351,8 +2362,8 @@ LRESULT CTreeView::OnChooseProperty(WPARAM wParam, LPARAM /*lParam*/)
 		for (UINT a=0; a<MaxColumns; a++)
 			if (a==(UINT)wParam)
 			{
-				m_ColumnMapping[(UINT)wParam] = dlg.m_Attr;
-				UpdateColumnCaption((UINT)wParam);
+				m_ColumnMapping[a] = dlg.m_Attr;
+				UpdateColumnCaption(a);
 			}
 			else
 				if ((m_ColumnMapping[a]==dlg.m_Attr) && (theApp.m_Attributes[dlg.m_Attr]->Type!=LFTypeUnicodeArray))
