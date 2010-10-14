@@ -306,7 +306,56 @@ void CTreeView::EnsureVisible(CPoint item)
 		item = m_SelectedItem;
 	if ((item.x==-1) || (item.y==-1) || (item.x>=(int)m_Cols) || (item.y>=(int)m_Rows))
 		return;
-}
+
+	CRect rect;
+	GetClientRect(&rect);
+
+	SCROLLINFO si;
+	int nInc;
+
+	// Vertikal
+	nInc = 0;
+	if ((int)((item.y+1)*m_RowHeight)>m_VScrollPos+rect.Height()-(int)m_HeaderHeight)
+		nInc = (item.y+1)*m_RowHeight-rect.Height()+(int)m_HeaderHeight-m_VScrollPos;
+	if ((int)(item.y*m_RowHeight)<m_VScrollPos+nInc)
+		nInc = item.y*m_RowHeight-m_VScrollPos;
+
+	nInc = max(-m_VScrollPos, min(nInc, m_VScrollMax-m_VScrollPos));
+	if (nInc)
+	{
+		m_VScrollPos += nInc;
+		ScrollWindowEx(0, -nInc, NULL, NULL, NULL, NULL, SW_INVALIDATE);
+
+		ZeroMemory(&si, sizeof(si));
+		si.cbSize = sizeof(SCROLLINFO);
+		si.fMask = SIF_POS;
+		si.nPos = m_VScrollPos;
+		SetScrollInfo(SB_VERT, &si);
+	}
+
+	// Horizontal
+	int x = 0;
+	for (int a=0; a<item.x; a++)
+		x += m_ColumnWidth[a];
+
+	nInc = 0;
+	if (x+m_ColumnWidth[item.x]>m_HScrollPos+rect.Width())
+		nInc = x+m_ColumnWidth[item.x]-rect.Width()-m_HScrollPos;
+	if (x<m_HScrollPos+nInc)
+		nInc = x-m_HScrollPos;
+
+	nInc = max(-m_HScrollPos, min(nInc, m_HScrollMax-m_HScrollPos));
+	if (nInc)
+	{
+		m_HScrollPos += nInc;
+		ScrollWindowEx(-nInc, 0, NULL, NULL, NULL, NULL, SW_INVALIDATE);
+
+		ZeroMemory(&si, sizeof(si));
+		si.cbSize = sizeof(SCROLLINFO);
+		si.fMask = SIF_POS;
+		si.nPos = m_VScrollPos;
+		SetScrollInfo(SB_HORZ, &si);
+	}}
 
 void CTreeView::PopulateMigrationList(CMigrationList* ml, LFItemDescriptor* it, UINT row, UINT col)
 {

@@ -351,7 +351,7 @@ void CGlasWindow::OnGetMinMaxInfo(MINMAXINFO* lpMMI)
 			((m_Margins.cxLeftWidth>0) ? m_Margins.cxLeftWidth : 0)+
 			((m_Margins.cxRightWidth>0) ? m_Margins.cxRightWidth : 0));
 		lpMMI->ptMinTrackSize.y = max(lpMMI->ptMinTrackSize.y, 
-			128+GetSystemMetrics(SM_CYCAPTION)+
+			256+GetSystemMetrics(SM_CYCAPTION)+
 			((m_Margins.cyTopHeight>0) ? m_Margins.cyTopHeight : 0)+
 			((m_Margins.cyBottomHeight>0) ? m_Margins.cyBottomHeight : 0));
 	}
