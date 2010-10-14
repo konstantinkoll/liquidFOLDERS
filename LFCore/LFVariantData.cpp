@@ -327,19 +327,64 @@ LFCore_API void LFVariantDataFromString(LFVariantData* v, wchar_t* str)
 {
 	LFGetNullVariantData(v);
 
-	if (str)
+	if ((str) && (v->Attr<LFAttributeCount))
+	{
+		size_t sz = wcslen(str);
+
 		switch (v->Type)
 		{
 		case LFTypeUnicodeString:
 			v->IsNull = false;
-			wcscpy_s(v->UnicodeArray, 256, str);
+			wcscpy_s(v->UnicodeString, 256, str);
 			break;
 		case LFTypeUnicodeArray:
 			v->IsNull = false;
 			wcscpy_s(v->UnicodeArray, 256, str);
 			LFSanitizeUnicodeArray(v->UnicodeArray, 256);
 			break;
+		case LFTypeAnsiString:
+			v->IsNull = false;
+			WideCharToMultiByte(CP_ACP, 0, str, sz, v->AnsiString, 256, NULL, NULL);
+			break;
+		case LFTypeFourCC:
+			if (sz>=4)
+			{
+				v->IsNull = false;
+				v->FourCC = (str[0]>0xFF ? L'_' : str[0]) |
+					((str[1]>0xFF ? L'_' : str[1])<<8) |
+					((str[2]>0xFF ? L'_' : str[2])<<16) |
+					((str[3]>0xFF ? L'_' : str[3])<<24);
+			}
+			break;
+		case LFTypeRating:
+			if ((str[0]>=L'0') && (str[0]<=L'5'))
+				if ((sz==1) || (sz==L' '))
+				{
+					v->IsNull = false;
+					v->Rating = (unsigned char)((str[0]-L'0')*2);
+					return;
+				}
+			if ((sz>=1) && (sz<=5))
+			{
+				bool same = true;
+				for (unsigned int a=1; a<sz; a++)
+					same &= (str[a]==str[a-1]);
+				if (same)
+				{
+					v->IsNull = false;
+					v->Rating = (unsigned char)(sz*2);
+					return;
+				}
+			}
+			break;
+		case LFTypeUINT:
+			break;
+		case LFTypeINT64:
+			break;
+		case LFTypeDouble:
+			break;
 		}
+	}
 }
 
 LFCore_API void LFGetNullVariantData(LFVariantData* v)
