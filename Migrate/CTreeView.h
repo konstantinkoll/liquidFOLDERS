@@ -66,6 +66,8 @@ public:
 	void AutosizeColumns();
 	void EditLabel(CPoint item=CPoint(-1, -1));
 	void PopulateMigrationList(CMigrationList* ml, LFItemDescriptor* it, UINT row=0, UINT col=0);
+	void UncheckMigrated(CReportList* rl);
+	BOOL FoldersChecked();
 
 protected:
 	Cell* m_Tree;

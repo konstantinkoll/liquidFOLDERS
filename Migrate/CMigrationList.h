@@ -20,6 +20,8 @@ struct ML_Entry
 	BOOL Recursive;
 };
 
+typedef DynArray<ML_Entry*> CReportList;
+
 class CMigrationList : public DynArray<ML_Entry>
 {
 public:

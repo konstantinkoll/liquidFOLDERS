@@ -142,6 +142,18 @@ void CMigrateWnd::OnSelectRoot()
 
 void CMigrateWnd::OnMigrate()
 {
+	// Folders checked?
+	if (!m_wndMainView.FoldersChecked())
+	{
+		CString caption;
+		CString message;
+		ENSURE(caption.LoadString(IDS_NOFOLDERS_CAPTION));
+		ENSURE(message.LoadString(IDS_NOFOLDERS_MESSAGE));
+		MessageBox(message, caption, MB_OK | MB_ICONINFORMATION);
+
+		return;
+	}
+
 	// Choose store if none is selected
 	if (m_wndStore.IsEmpty())
 	{
@@ -169,7 +181,7 @@ void CMigrateWnd::OnMigrate()
 		return;
 	}
 
-	// Create snapshow
+	// Create snapshot
 	CMigrationList ml;
 	m_wndMainView.PopulateMigrationList(&ml, it);
 	LFFreeItemDescriptor(it);
@@ -191,7 +203,7 @@ void CMigrateWnd::OnMigrate()
 	}
 
 	// Migration starten
-	ReportList Results[2];
+	CReportList Results[2];
 	for (UINT a=0; a<ml.m_ItemCount; a++)
 	{
 		UINT res = LFImportFiles(StoreID, ml.m_Items[a].List, ml.m_Items[a].Template, ml.m_Items[a].Recursive==TRUE, DeleteSource==TRUE);
@@ -203,7 +215,9 @@ void CMigrateWnd::OnMigrate()
 
 	// Ergebnis zeigen
 	ReportDlg repdlg(this, &Results[0], &Results[1]);
-	repdlg.DoModal();
+	if (repdlg.DoModal()==IDOK)
+		if (repdlg.m_UncheckMigrated)
+			m_wndMainView.UncheckMigrated(&Results[0]);
 }
 
 LRESULT CMigrateWnd::OnStoresChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)

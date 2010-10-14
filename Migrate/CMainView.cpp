@@ -76,6 +76,17 @@ void CMainView::PopulateMigrationList(CMigrationList* ml, LFItemDescriptor* it)
 		m_wndTree.PopulateMigrationList(ml, it);
 }
 
+void CMainView::UncheckMigrated(CReportList* rl)
+{
+	if (m_IsRootSet)
+		m_wndTree.UncheckMigrated(rl);
+}
+
+BOOL CMainView::FoldersChecked()
+{
+	return m_IsRootSet ? m_wndTree.FoldersChecked() : FALSE;
+}
+
 void CMainView::AdjustLayout()
 {
 	CRect rect;

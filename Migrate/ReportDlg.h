@@ -11,16 +11,17 @@
 // ReportDlg
 //
 
-typedef DynArray<ML_Entry*> ReportList;
-
 class ReportDlg : public CDialog
 {
 public:
-	ReportDlg(CWnd* pParent, ReportList* Successful, ReportList* WithErrors);
+	ReportDlg(CWnd* pParent, CReportList* Successful, CReportList* WithErrors);
 
-	ReportList* m_Lists[2];
+	virtual void DoDataExchange(CDataExchange* pDX);
+
+	BOOL m_UncheckMigrated;
 
 protected:
+	CReportList* m_Lists[2];
 	int m_Page;
 
 	void SetPage(int page);

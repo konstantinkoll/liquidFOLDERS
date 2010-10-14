@@ -10,7 +10,7 @@
 // ReportDlg
 //
 
-ReportDlg::ReportDlg(CWnd* pParent, ReportList* Successful, ReportList* WithErrors)
+ReportDlg::ReportDlg(CWnd* pParent, CReportList* Successful, CReportList* WithErrors)
 	: CDialog(IDD_REPORT, pParent)
 {
 	ASSERT(Successful);
@@ -19,6 +19,12 @@ ReportDlg::ReportDlg(CWnd* pParent, ReportList* Successful, ReportList* WithErro
 	m_Lists[0] = Successful;
 	m_Lists[1] = WithErrors;
 	m_Page = 0;
+	m_UncheckMigrated = TRUE;
+}
+
+void ReportDlg::DoDataExchange(CDataExchange* pDX)
+{
+	DDX_Check(pDX, IDC_UNCHECKMIGRATED, m_UncheckMigrated);
 }
 
 void ReportDlg::SetPage(int page)
@@ -85,6 +91,10 @@ BOOL ReportDlg::OnInitDialog()
 	li->InsertColumn(0, theApp.m_Attributes[LFAttrFileName]->Name);
 	li->SetWindowPos(&wndTop, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOOWNERZORDER);
 
+	// Checkbox
+	GetDlgItem(IDC_UNCHECKMIGRATED)->EnableWindow(m_Lists[0]->m_ItemCount);
+
+	// Seite
 	SetPage(0);
 
 	return TRUE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird
@@ -95,7 +105,7 @@ HBRUSH ReportDlg::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 	// Call base class version at first, else it will override changes
 	HBRUSH hbr = CDialog::OnCtlColor(pDC, pWnd, nCtlColor);
 
-	if (nCtlColor==CTLCOLOR_STATIC)
+	if ((nCtlColor==CTLCOLOR_STATIC) && (pWnd->GetDlgCtrlID()!=IDC_UNCHECKMIGRATED))
 	{
 		pDC->SetBkColor(0xFFFFFF);
 

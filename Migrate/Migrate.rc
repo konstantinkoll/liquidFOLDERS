@@ -153,8 +153,7 @@ EXSTYLE WS_EX_CONTROLPARENT
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "&Anderes Verzeichnis...",IDOK,7,7,93,14
-    CONTROL         "Alle &Unterverzeichnisse zeigen",IDC_EXPANDALL,
-                    "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,114,9,120,10
+    CONTROL         "Alle &Unterverzeichnisse zeigen",IDC_EXPANDALL,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,114,9,120,10
 END
 
 IDD_CHOOSEPROPERTY DIALOGEX 0, 0, 219, 236
@@ -186,12 +185,14 @@ STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS
 CAPTION "Abschlussbericht"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
+    CONTROL         "Erfolgreich importierte Verzeichnisse &abwählen",IDC_UNCHECKMIGRATED,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,287,250,10
     DEFPUSHBUTTON   "OK",IDOK,267,285,50,14,WS_GROUP
     CONTROL         "",IDC_TABS,"SysTabControl32",WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_GROUP | WS_TABSTOP,7,7,310,270
     LTEXT           "Verzeichnisse:",IDC_STATIC,14,27,296,8
     CONTROL         "",IDC_FOLDERLIST,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_ALIGNLEFT | LVS_OWNERDATA | LVS_NOSORTHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,14,37,296,214
-    CONTROL         "X",IDC_STATUS1,"Static",SS_LEFTNOWORDWRAP | SS_PATHELLIPSIS | WS_GROUP,14,253,296,8
-    CONTROL         "X",IDC_STATUS2,"Static",SS_LEFTNOWORDWRAP | SS_ENDELLIPSIS | WS_GROUP,14,262,296,8
+    CONTROL         "",IDC_STATUS1,"Static",SS_LEFTNOWORDWRAP | SS_PATHELLIPSIS | WS_GROUP,14,253,296,8
+    CONTROL         "",IDC_STATUS2,"Static",SS_LEFTNOWORDWRAP | SS_ENDELLIPSIS | WS_GROUP,14,262,296,8
 END
 
 
@@ -273,15 +274,15 @@ BEGIN
     IDS_NOROOT_HINT         "Klicken Sie oben, um ein Verzeichnis auszuwählen."
     IDS_FOLDER_CAPTION      "Quelle:"
     IDS_FOLDER_HINT         "Hier klicken, um ein Verzeichnis auszuwählen"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_STORE_CAPTION       "Ziel:"
     IDS_STORE_HINT          "Hier klicken, um einen Store auszuwählen"
     IDS_BROWSEFORFOLDER_CAPTION "Quellverzeichnis"
     IDS_BROWSEFORFOLDER_HINT 
-                            "Sie können später Unterordner und Eigenschaften wählen."
+                            "Sie können Unterordner und Eigenschaften später auswählen."
+END
+
+STRINGTABLE 
+BEGIN
     IDS_FOLDERCATEGORY1     "Eigene Dateien"
     IDS_FOLDERCATEGORY2     "Bibliotheken"
     IDS_FOLDERCATEGORY3     "Gemeinsame Dokumente"
@@ -290,17 +291,16 @@ BEGIN
     IDS_NOPROPERTY          "Hier klicken um eine Eigenschaft zu wählen"
     IDS_CHOOSEPROPERTY      "Eigenschaft aus&wählen..."
     IDS_EXPANDBRANCH        "Alle &Unterverzeichnisse zeigen"
-    IDS_INCLUDEBRANCH       "Zweig &markien"
-    IDS_EXCLUDEBRANCH       "Zweig aus&schließen"
+    IDS_INCLUDEBRANCH       "Zweig &markieren"
+    IDS_EXCLUDEBRANCH       "Zweig ab&wählen"
     IDS_REPORTTAB0          "Erfolgreich importierte Verzeichnisse (%d)"
     IDS_REPORTTAB1          "Verzeichnisse mit Fehlern (%d)"
-END
-
-STRINGTABLE 
-BEGIN
-    IDS_REPORTSTATUS_NOFILES "Es wurden keine Dateien in diesem Verzeichnis gefunden."
+    IDS_REPORTSTATUS_NOFILES 
+                            "Es wurden keine Dateien in diesem Verzeichnis gefunden."
     IDS_REPORTSTATUS_ONEFILE "%d Datei (%s) wurde erfolgreich importiert."
     IDS_REPORTSTATUS_FILES  "Alle %d Dateien (%s) wurden erfolgreich importiert."
+    IDS_NOFOLDERS_CAPTION   "Migration starten"
+    IDS_NOFOLDERS_MESSAGE   "Bitte wählen Sie mindestens ein Verzeichnis aus, indem Sie in der Baumansicht auf die Checkboxen links neben den Verzeichnissymbolen klicken."
 END
 
 #endif    // Deutsch (neutral) resources
@@ -398,12 +398,14 @@ STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS
 CAPTION "Migration report"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
+    CONTROL         "&Uncheck successfully migrated folders",IDC_UNCHECKMIGRATED,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,287,250,10
     DEFPUSHBUTTON   "OK",IDOK,267,285,50,14,WS_GROUP
     CONTROL         "",IDC_TABS,"SysTabControl32",WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_GROUP | WS_TABSTOP,7,7,310,270
     LTEXT           "Folders:",IDC_STATIC,14,27,296,8
     CONTROL         "",IDC_FOLDERLIST,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_ALIGNLEFT | LVS_OWNERDATA | LVS_NOSORTHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,14,37,296,214
-    CONTROL         "X",IDC_STATUS1,"Static",SS_LEFTNOWORDWRAP | SS_PATHELLIPSIS | WS_GROUP,14,253,296,8
-    CONTROL         "X",IDC_STATUS2,"Static",SS_LEFTNOWORDWRAP | SS_ENDELLIPSIS | WS_GROUP,14,262,296,8
+    CONTROL         "",IDC_STATUS1,"Static",SS_LEFTNOWORDWRAP | SS_PATHELLIPSIS | WS_GROUP,14,253,296,8
+    CONTROL         "",IDC_STATUS2,"Static",SS_LEFTNOWORDWRAP | SS_ENDELLIPSIS | WS_GROUP,14,262,296,8
 END
 
 
@@ -485,15 +487,15 @@ BEGIN
     IDS_NOROOT_HINT         "Click above to select a folder for browsing."
     IDS_FOLDER_CAPTION      "Source:"
     IDS_FOLDER_HINT         "Click here to select a folder"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_STORE_CAPTION       "Destination store:"
     IDS_STORE_HINT          "Click here to select the destination store"
     IDS_BROWSEFORFOLDER_CAPTION "Root folder"
     IDS_BROWSEFORFOLDER_HINT 
                             "You can select subfolders and attribute mappings later."
+END
+
+STRINGTABLE 
+BEGIN
     IDS_FOLDERCATEGORY1     "Personal folders"
     IDS_FOLDERCATEGORY2     "Libraries"
     IDS_FOLDERCATEGORY3     "Shared folders"
@@ -506,13 +508,11 @@ BEGIN
     IDS_EXCLUDEBRANCH       "&Exclude branch"
     IDS_REPORTTAB0          "Successfully migrated folders (%d)"
     IDS_REPORTTAB1          "Folders with errors (%d)"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_REPORTSTATUS_NOFILES "There were no files in this folder."
     IDS_REPORTSTATUS_ONEFILE "%d file (%s) was successfully imported."
     IDS_REPORTSTATUS_FILES  "All %d files (%s) were successfully imported."
+    IDS_NOFOLDERS_CAPTION   "Start migration"
+    IDS_NOFOLDERS_MESSAGE   "Please select at least one folder in the tree view by clicking on the checkboxes left to the folder icons."
 END
 
 #endif    // Englisch (neutral) resources

@@ -22,6 +22,8 @@ public:
 	void ClearRoot();
 	void SetRoot(LPITEMIDLIST pidl, BOOL Update, BOOL ExpandAll);
 	void PopulateMigrationList(CMigrationList* ml, LFItemDescriptor* it);
+	void UncheckMigrated(CReportList* rl);
+	BOOL FoldersChecked();
 
 protected:
 	CTaskbar m_wndTaskbar;

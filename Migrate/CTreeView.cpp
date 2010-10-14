@@ -334,6 +334,38 @@ void CTreeView::PopulateMigrationList(CMigrationList* ml, LFItemDescriptor* it, 
 		LFFreeItemDescriptor(it2);
 }
 
+void CTreeView::UncheckMigrated(CReportList* rl)
+{
+	for (UINT row=0; row<m_Rows; row++)
+		for (UINT col=0; col<m_Cols; col++)
+		{
+			Cell* cell = &m_Tree[MAKEPOS(row, col)];
+
+			if (cell->pItem)
+			{
+				for (UINT a=0; a<rl->m_ItemCount; a++)
+					if (wcscmp(cell->pItem->Path, rl->m_Items[a]->Path)==0)
+						cell->Flags &= ~CF_CHECKED;
+			}
+		}
+
+	Invalidate();
+}
+
+BOOL CTreeView::FoldersChecked()
+{
+	for (UINT row=0; row<m_Rows; row++)
+		for (UINT col=0; col<m_Cols; col++)
+		{
+			Cell* cell = &m_Tree[MAKEPOS(row, col)];
+
+			if ((cell->pItem) && (cell->Flags & CF_CHECKED))
+				return TRUE;
+		}
+
+	return FALSE;
+}
+
 void CTreeView::ResetScrollbars()
 {
 	ScrollWindowEx(0, m_VScrollPos, NULL, NULL, NULL, NULL, SW_INVALIDATE);

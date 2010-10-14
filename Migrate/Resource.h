@@ -44,9 +44,12 @@
 #define IDS_REPORTSTATUS_NOFILES        1020
 #define IDS_REPORTSTATUS_ONEFILE        1021
 #define IDS_REPORTSTATUS_FILES          1022
+#define IDS_NOFOLDERS_CAPTION           1023
+#define IDS_NOFOLDERS_MESSAGE           1024
 #define IDD_BOTTOMAREA                  2000
 #define IDC_MIGRATE                     2001
 #define IDC_DELETESOURCE                2002
+#define IDC_CHECK1                      2018
 #define IDD_CHOOSEFOLDER                2100
 #define IDC_EXPANDALL                   2101
 #define IDD_CHOOSEPROPERTY              2200
@@ -58,6 +61,7 @@
 #define IDC_FOLDERLIST                  2402
 #define IDC_STATUS1                     2403
 #define IDC_STATUS2                     2404
+#define IDC_UNCHECKMIGRATED             2405
 
 // Next default values for new objects
 // 
@@ -65,7 +69,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        2009
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         2018
+#define _APS_NEXT_CONTROL_VALUE         2019
 #define _APS_NEXT_SYMED_VALUE           2007
 #endif
 #endif
