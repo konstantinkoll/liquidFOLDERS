@@ -73,6 +73,7 @@ BOOL OnStoresChanged(HWND hWnd)
 	nid.uFlags = NIF_TIP | NIF_GUID | NIF_MESSAGE | NIF_GUID | NIF_SHOWTIP;
 	nid.guidItem = __uuidof(LFIcon);
 	nid.uVersion = NOTIFYICON_VERSION_4;
+	nid.uCallbackMessage = WMAPP_NOTIFYCALLBACK;
 	PrepareTrayTip(nid.szTip, 128);
 	Shell_NotifyIcon(NIM_ADD, &nid);
 
