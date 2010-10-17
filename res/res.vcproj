@@ -888,6 +888,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Ribbon\ISBN_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\ISBN_32.png"
+				>
+			</File>
+			<File
 				RelativePath=".\Ribbon\Key_16.png"
 				>
 			</File>
