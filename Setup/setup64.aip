@@ -300,6 +300,7 @@
     <ROW Dialog_="VerifyRepairDlg" Control="TitleIcon" Type="Icon" X="10" Y="10" Width="36" Height="36" Attributes="7340033" Text="[InstallLogoIcon]" Control_Next="PushButton_Cancel"/>
     <ROW Dialog_="VerifyRemoveDlg" Control="PushButton_Cancel" Type="PushButton" X="380" Y="330" Width="56" Height="17" Attributes="3" Text="[ButtonText_Cancel]" Control_Next="Bitmap" TextLocId="-"/>
     <ROW Dialog_="VerifyRepairDlg" Control="PushButton_Cancel" Type="PushButton" X="380" Y="330" Width="56" Height="17" Attributes="3" Text="[ButtonText_Cancel]" Control_Next="Bitmap" TextLocId="-"/>
+    <ROW Dialog_="ShortcutsDlg" Control="Title" Type="Text" X="55" Y="23" Width="202" Height="40" Attributes="196611" Text="Anwendungsverknüpfungen erstellen" TextStyle="TitleFont" Control_Next="DesktopShortcutsCheckBox" TextLocId="Azure.Control.Text.ShortcutsDlg#Title" MsiKey="ShortcutsDlg#Title"/>
     <ATTRIBUTE name="FixedSizeBitmaps" value="0"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiControlEventComponent">
