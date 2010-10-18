@@ -426,7 +426,8 @@ void CFileDropWnd::OnChooseDefaultStore()
 {
 	LFChooseStoreDlg dlg(this, LFCSD_ChooseDefault);
 	if (dlg.DoModal()==IDOK)
-		LFErrorBox(LFMakeDefaultStore(dlg.StoreID, NULL), m_hWnd);
+		if (dlg.StoreID[0]!='\0')
+			LFErrorBox(LFMakeDefaultStore(dlg.StoreID, NULL), m_hWnd);
 }
 
 void CFileDropWnd::OnImportFolder()

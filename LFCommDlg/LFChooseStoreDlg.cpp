@@ -20,6 +20,7 @@ extern LFMessageIDs* MessageIDs;
 LFChooseStoreDlg::LFChooseStoreDlg(CWnd* pParentWnd, UINT Mode)
 	: LFDialog(Mode==LFCSD_ChooseDefault ? IDD_CHOOSEDEFAULTSTORE : IDD_CHOOSESTORE, LFDS_White, pParentWnd)
 {
+	StoreID[0] = '\0';
 	p_Result = NULL;
 	m_Mode = Mode;
 }
