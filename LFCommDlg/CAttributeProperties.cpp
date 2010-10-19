@@ -342,10 +342,11 @@ BOOL CAttributePropertyGPS::IsEditable()
 
 void CAttributePropertyGPS::OnClickButton(CPoint /*point*/)
 {
-	LFSelectLocationGPSDlg dlg(NULL, &p_Data->GeoCoordinates);
+	LFSelectLocationGPSDlg dlg(NULL, p_Data->GeoCoordinates);
 
 	if (dlg.DoModal()==IDOK)
 	{
+		p_Data->GeoCoordinates = dlg.m_Location;
 		p_Data->IsNull = false;
 
 		wchar_t tmpStr[256];

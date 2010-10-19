@@ -14,11 +14,11 @@
 class AFX_EXT_CLASS LFSelectLocationGPSDlg : public CDialog
 {
 public:
-	LFSelectLocationGPSDlg(CWnd* pParentWnd, LFGeoCoordinates* pCoord);
+	LFSelectLocationGPSDlg(CWnd* pParentWnd, const LFGeoCoordinates Location);
 
 	virtual void DoDataExchange(CDataExchange* pDX);
 
-	LFGeoCoordinates* m_pCoord;
+	LFGeoCoordinates m_Location;
 
 protected:
 	afx_msg BOOL OnInitDialog();
@@ -26,6 +26,8 @@ protected:
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
 	afx_msg void OnUpdateEdit(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnReset();
+	afx_msg void OnLatitudeChanged();
+	afx_msg void OnLongitudeChanged();
 	DECLARE_MESSAGE_MAP()
 
 private:

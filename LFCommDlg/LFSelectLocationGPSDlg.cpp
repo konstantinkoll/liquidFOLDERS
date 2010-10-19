@@ -35,10 +35,10 @@ double StringToCoord(CString str)
 
 extern AFX_EXTENSION_MODULE LFCommDlgDLL;
 
-LFSelectLocationGPSDlg::LFSelectLocationGPSDlg(CWnd* pParentWnd, LFGeoCoordinates* pCoord)
+LFSelectLocationGPSDlg::LFSelectLocationGPSDlg(CWnd* pParentWnd, const LFGeoCoordinates Location)
 	: CDialog(IDD_SELECTGPS, pParentWnd)
 {
-	m_pCoord = pCoord;
+	m_Location = Location;
 }
 
 void LFSelectLocationGPSDlg::DoDataExchange(CDataExchange* pDX)
@@ -49,11 +49,11 @@ void LFSelectLocationGPSDlg::DoDataExchange(CDataExchange* pDX)
 	{
 		CString strLat;
 		GetDlgItem(IDC_LATITUDE)->GetWindowText(strLat);
-		m_pCoord->Latitude = StringToCoord(strLat);
+		m_Location.Latitude = StringToCoord(strLat);
 
 		CString strLon;
 		GetDlgItem(IDC_LONGITUDE)->GetWindowText(strLon);
-		m_pCoord->Longitude = StringToCoord(strLon);
+		m_Location.Longitude = StringToCoord(strLon);
 	}
 }
 
@@ -63,6 +63,8 @@ BEGIN_MESSAGE_MAP(LFSelectLocationGPSDlg, CDialog)
 	ON_WM_TIMER()
 	ON_NOTIFY(MAP_UPDATE_LOCATION, IDC_MAP_SELECTION, OnUpdateEdit)
 	ON_BN_CLICKED(IDC_RESET, OnReset)
+	ON_EN_KILLFOCUS(IDC_LATITUDE, OnLatitudeChanged)
+	ON_EN_KILLFOCUS(IDC_LONGITUDE, OnLongitudeChanged)
 END_MESSAGE_MAP()
 
 BOOL LFSelectLocationGPSDlg::OnInitDialog()
@@ -76,7 +78,7 @@ BOOL LFSelectLocationGPSDlg::OnInitDialog()
 	SetIcon(hIcon, TRUE);
 
 	m_Map.ModifyStyle(0, WS_BORDER);
-	m_Map.SetGeoCoordinates(*m_pCoord);
+	m_Map.SetGeoCoordinates(m_Location);
 	SetTimer(1, 500, NULL);
 
 	return TRUE;
@@ -103,12 +105,12 @@ void LFSelectLocationGPSDlg::OnTimer(UINT_PTR nIDEvent)
 void LFSelectLocationGPSDlg::OnUpdateEdit(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	tagGPSDATA* pTag = (tagGPSDATA*)pNMHDR;
-	*m_pCoord = *pTag->pCoord;
+	m_Location = *pTag->pCoord;
 
 	wchar_t tmpStr[256];
-	LFGeoCoordinateToString(m_pCoord->Latitude, tmpStr, 256, true, false);
+	LFGeoCoordinateToString(m_Location.Latitude, tmpStr, 256, true, false);
 	GetDlgItem(IDC_LATITUDE)->SetWindowText(tmpStr);
-	LFGeoCoordinateToString(m_pCoord->Longitude, tmpStr, 256, false, false);
+	LFGeoCoordinateToString(m_Location.Longitude, tmpStr, 256, false, false);
 	GetDlgItem(IDC_LONGITUDE)->SetWindowText(tmpStr);
 
 	*pResult = 0;
@@ -116,6 +118,24 @@ void LFSelectLocationGPSDlg::OnUpdateEdit(NMHDR* pNMHDR, LRESULT* pResult)
 
 void LFSelectLocationGPSDlg::OnReset()
 {
-	m_pCoord->Latitude = m_pCoord->Longitude = 0.0;
+	m_Location.Latitude = m_Location.Longitude = 0.0;
 	EndDialog(IDOK);
+}
+
+void LFSelectLocationGPSDlg::OnLatitudeChanged()
+{
+	CString strLat;
+	GetDlgItem(IDC_LATITUDE)->GetWindowText(strLat);
+	m_Location.Latitude = StringToCoord(strLat);
+
+	m_Map.SetGeoCoordinates(m_Location);
+}
+
+void LFSelectLocationGPSDlg::OnLongitudeChanged()
+{
+	CString strLon;
+	GetDlgItem(IDC_LONGITUDE)->GetWindowText(strLon);
+	m_Location.Longitude = StringToCoord(strLon);
+
+	m_Map.SetGeoCoordinates(m_Location);
 }
