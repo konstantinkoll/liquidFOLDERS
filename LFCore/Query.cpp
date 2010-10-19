@@ -818,7 +818,7 @@ LFCore_API LFSearchResult* LFQuery(LFFilter* filter)
 		if ((filter->Name[0]==L'\0') && (res->m_Context!=LFContextDefault))
 			LoadString(LFCoreModuleHandle, res->m_Context+IDS_FirstContext, filter->Name, 256);
 
-		GetLocalTime(&filter->Result.Time);
+		GetSystemTime(&filter->Result.Time);
 		filter->Result.ItemCount = res->m_ItemCount;
 		filter->Result.FileCount = res->m_FileCount;
 		filter->Result.FileSize = res->m_FileSize;

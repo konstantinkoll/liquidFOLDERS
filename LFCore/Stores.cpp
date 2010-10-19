@@ -465,9 +465,7 @@ LFCore_API unsigned int LFCreateStore(LFStoreDescriptor* s, bool MakeDefault, HW
 		return LFMutexError;
 
 	// CreateTime und MaintenanceTime setzen
-	SYSTEMTIME st;
-	GetLocalTime(&st);
-	SystemTimeToFileTime(&st, &s->CreationTime);
+	GetSystemTimeAsFileTime(&s->CreationTime);
 	s->MaintenanceTime = s->CreationTime;
 	s->NeedsCheck = false;
 
@@ -820,9 +818,7 @@ unsigned int RunMaintenance(LFStoreDescriptor* s, bool scheduled)
 			return res;
 	}
 
-	SYSTEMTIME st;
-	GetLocalTime(&st);
-	SystemTimeToFileTime(&st, &s->MaintenanceTime);
+	GetSystemTimeAsFileTime(&s->MaintenanceTime);
 	s->NeedsCheck = false;
 
 	return LFOk;
@@ -1008,7 +1004,7 @@ LFCore_API unsigned int LFImportFiles(char* key, LFFileImportList* il, LFItemDes
 			{
 				LFItemDescriptor* i = LFAllocItemDescriptor(it);
 				i->CoreAttributes.Flags = LFFlagNew;
-				SetNameExtFromFile(i, il->m_Items[a]);
+				SetNameExtAddFromFile(i, il->m_Items[a]);
 				SetAttributesFromFile(i, il->m_Items[a]);
 
 				char CopyToA[MAX_PATH];

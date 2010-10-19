@@ -218,13 +218,10 @@ void SetAttributesFromFile(LFItemDescriptor* i, wchar_t* fn)
 
 	if (hFind!=INVALID_HANDLE_VALUE)
 	{
-		FILETIME lft;
-		FileTimeToLocalFileTime(&ffd.ftCreationTime, &lft);
-		SetAttribute(i, LFAttrCreationTime, &lft);
-		FileTimeToLocalFileTime(&ffd.ftCreationTime, &lft);
-		SetAttribute(i, LFAttrFileTime, &lft);
 		__int64 size = (((__int64)ffd.nFileSizeHigh) << 32)+ffd.nFileSizeLow;
 		SetAttribute(i, LFAttrFileSize, &size);
+		SetAttribute(i, LFAttrCreationTime, &ffd.ftCreationTime);
+		SetAttribute(i, LFAttrFileTime, &ffd.ftLastWriteTime);
 	}
 
 	FindClose(hFind);
@@ -235,7 +232,7 @@ void SetAttributesFromFile(LFItemDescriptor* i, wchar_t* fn)
 	// TODO: weitere Attribute
 }
 
-void SetNameExtFromFile(LFItemDescriptor* i, wchar_t* fn)
+void SetNameExtAddFromFile(LFItemDescriptor* i, wchar_t* fn)
 {
 	i->Type = (i->Type & !LFTypeMask) | LFTypeFile;
 
@@ -268,4 +265,9 @@ void SetNameExtFromFile(LFItemDescriptor* i, wchar_t* fn)
 		}
 
 	SetAttribute(i, LFAttrFileName, Name);
+
+	// Added
+	FILETIME ft;
+	GetSystemTimeAsFileTime(&ft);
+	SetAttribute(i, LFAttrAddTime, &ft);
 }

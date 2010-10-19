@@ -534,8 +534,10 @@ BOOL CAttributePropertyTime::OnEdit(LPPOINT lptClick)
 		CRect rectSpin;
 		AdjustInPlaceEditRect(rectEdit, rectSpin);
 
-		SYSTEMTIME st;
-		FileTimeToSystemTime(&p_Data->Time, &st);
+		SYSTEMTIME stUTC;
+		SYSTEMTIME stLocal;
+		FileTimeToSystemTime(&p_Data->Time, &stUTC);
+		SystemTimeToTzSpecificLocalTime(NULL, &stUTC, &stLocal);
 
 		int pos = lptClick->x-m_pWndList->GetLeftColumnWidth();
 
@@ -547,7 +549,7 @@ BOOL CAttributePropertyTime::OnEdit(LPPOINT lptClick)
 			DWORD dwStyle = WS_VISIBLE | WS_CHILD | DTS_SHORTDATEFORMAT;
 			rectEdit.InflateRect(4, 4, 0, 3);
 			pWndDateTime->Create(dwStyle, rectEdit, m_pWndList, AFX_PROPLIST_ID_INPLACE);
-			pWndDateTime->SetTime(&st);
+			pWndDateTime->SetTime(&stLocal);
 			m_pWndInPlace = pWndDateTime;
 		}
 
@@ -559,7 +561,7 @@ BOOL CAttributePropertyTime::OnEdit(LPPOINT lptClick)
 			DWORD dwStyle = WS_VISIBLE | WS_CHILD | DTS_TIMEFORMAT;
 			rectEdit.InflateRect(7-LeftTime, 4, 0, 3);
 			pWndDateTime->Create(dwStyle, rectEdit, m_pWndList, AFX_PROPLIST_ID_INPLACE);
-			pWndDateTime->SetTime(&st);
+			pWndDateTime->SetTime(&stLocal);
 			m_pWndInPlace = pWndDateTime;
 		}
 
@@ -583,10 +585,13 @@ BOOL CAttributePropertyTime::OnUpdateValue()
 
 	CDateTimeCtrl* pProp = (CDateTimeCtrl*)m_pWndInPlace;
 
-	SYSTEMTIME st;
-	pProp->GetTime(&st);
+	SYSTEMTIME stLocal;
+	SYSTEMTIME stUTC;
+	pProp->GetTime(&stLocal);
+	TzSpecificLocalTimeToSystemTime(NULL, &stLocal, &stUTC);
+
 	FILETIME ft;
-	SystemTimeToFileTime(&st, &ft);
+	SystemTimeToFileTime(&stUTC, &ft);
 
 	if ((ft.dwHighDateTime!=p_Data->Time.dwHighDateTime) || (ft.dwLowDateTime!=p_Data->Time.dwLowDateTime))
 	{

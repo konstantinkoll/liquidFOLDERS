@@ -165,9 +165,26 @@ BOOL CFileItem::GetColumnValueEx(VARIANT* value, CShellColumn& column)
 			}
 			else
 			{
-				FILETIME ft;
-				LocalFileTimeToFileTime(&Attrs.CreationTime, &ft);
-				CUtils::SetVariantFILETIME(value, ft);
+				CUtils::SetVariantFILETIME(value, Attrs.CreationTime);
+				return TRUE;
+			}
+		}
+		else
+		{
+			return FALSE;
+		}
+		break;
+	case LFAttrAddTime:
+		if ((Attrs.AddTime.dwHighDateTime) || (Attrs.AddTime.dwHighDateTime))
+		{
+			if (value->vt==VT_BSTR)
+			{
+				LFTimeToString(Attrs.AddTime, tmpBuf, 256);
+				tmpStr = tmpBuf;
+			}
+			else
+			{
+				CUtils::SetVariantFILETIME(value, Attrs.AddTime);
 				return TRUE;
 			}
 		}
@@ -186,9 +203,26 @@ BOOL CFileItem::GetColumnValueEx(VARIANT* value, CShellColumn& column)
 			}
 			else
 			{
-				FILETIME ft;
-				LocalFileTimeToFileTime(&Attrs.FileTime, &ft);
-				CUtils::SetVariantFILETIME(value, ft);
+				CUtils::SetVariantFILETIME(value, Attrs.FileTime);
+				return TRUE;
+			}
+		}
+		else
+		{
+			return FALSE;
+		}
+		break;
+	case LFAttrArchiveTime:
+		if ((Attrs.ArchiveTime.dwHighDateTime) || (Attrs.ArchiveTime.dwHighDateTime))
+		{
+			if (value->vt==VT_BSTR)
+			{
+				LFTimeToString(Attrs.ArchiveTime, tmpBuf, 256);
+				tmpStr = tmpBuf;
+			}
+			else
+			{
+				CUtils::SetVariantFILETIME(value, Attrs.ArchiveTime);
 				return TRUE;
 			}
 		}

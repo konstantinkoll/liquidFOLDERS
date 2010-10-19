@@ -93,12 +93,16 @@ bool DateCategorizer::Compare(LFItemDescriptor* i1, LFItemDescriptor* i2)
 {
 	assert(AttrTypes[attr]==LFTypeTime);
 
-	SYSTEMTIME st1;
-	SYSTEMTIME st2;
-	FileTimeToSystemTime((FILETIME*)i1->AttributeValues[attr], &st1);
-	FileTimeToSystemTime((FILETIME*)i2->AttributeValues[attr], &st2);
+	SYSTEMTIME stUTC1;
+	SYSTEMTIME stUTC2;
+	SYSTEMTIME stLocal1;
+	SYSTEMTIME stLocal2;
+	FileTimeToSystemTime((FILETIME*)i1->AttributeValues[attr], &stUTC1);
+	FileTimeToSystemTime((FILETIME*)i2->AttributeValues[attr], &stUTC2);
+	SystemTimeToTzSpecificLocalTime(NULL, &stUTC1, &stLocal1);
+	SystemTimeToTzSpecificLocalTime(NULL, &stUTC2, &stLocal2);
 
-	return (st1.wDay==st2.wDay) && (st1.wMonth==st2.wMonth) && (st1.wYear==st2.wYear);
+	return (stLocal1.wDay==stLocal2.wDay) && (stLocal1.wMonth==stLocal2.wMonth) && (stLocal1.wYear==stLocal2.wYear);
 }
 
 void DateCategorizer::CustomizeFolder(LFItemDescriptor* folder, LFItemDescriptor* i)
@@ -109,10 +113,15 @@ void DateCategorizer::CustomizeFolder(LFItemDescriptor* folder, LFItemDescriptor
 		FILETIME ft = *((FILETIME*)i->AttributeValues[attr]);
 		LFTimeToString(ft, Name, 256, 1);
 
-		SYSTEMTIME st;
-		FileTimeToSystemTime(&ft, &st);
-		st.wHour = st.wMinute = st.wSecond = st.wMilliseconds = 0;
-		SystemTimeToFileTime(&st, &ft);
+		SYSTEMTIME stUTC;
+		SYSTEMTIME stLocal;
+		FileTimeToSystemTime(&ft, &stUTC);
+		SystemTimeToTzSpecificLocalTime(NULL, &stUTC, &stLocal);
+
+		stLocal.wHour = stLocal.wMinute = stLocal.wSecond = stLocal.wMilliseconds = 0;
+
+		TzSpecificLocalTimeToSystemTime(NULL, &stLocal, &stUTC);
+		SystemTimeToFileTime(&stUTC, &ft);
 		SetAttribute(folder, attr, &ft);
 
 		SetAttribute(folder, LFAttrFileName, Name);
@@ -129,10 +138,16 @@ LFFilterCondition* DateCategorizer::GetCondition(LFItemDescriptor* i)
 	c->AttrData.IsNull = false;
 
 	FILETIME ft = *((FILETIME*)i->AttributeValues[attr]);
-	SYSTEMTIME st;
-	FileTimeToSystemTime(&ft, &st);
-	st.wHour = st.wMinute = st.wSecond = st.wMilliseconds = 0;
-	SystemTimeToFileTime(&st, &c->AttrData.Time);
+
+	SYSTEMTIME stUTC;
+	SYSTEMTIME stLocal;
+	FileTimeToSystemTime(&ft, &stUTC);
+	SystemTimeToTzSpecificLocalTime(NULL, &stUTC, &stLocal);
+
+	stLocal.wHour = stLocal.wMinute = stLocal.wSecond = stLocal.wMilliseconds = 0;
+
+	TzSpecificLocalTimeToSystemTime(NULL, &stLocal, &stUTC);
+	SystemTimeToFileTime(&stUTC, &c->AttrData.Time);
 
 	return c;
 }

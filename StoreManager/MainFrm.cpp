@@ -1415,11 +1415,7 @@ BOOL CMainFrame::UpdateTrashFlag(BOOL Trash, BOOL All)
 	value2.IsNull = false;
 
 	if (Trash)
-	{
-		SYSTEMTIME st;
-		GetLocalTime(&st);
-		SystemTimeToFileTime(&st, &value2.Time);
-	}
+		GetSystemTimeAsFileTime(&value2.Time);
 
 	LFTransactionList* tl = BuildTransactionList(All);
 	LFTransactionUpdate(tl, GetSafeHwnd(), &value1, &value2);

@@ -572,9 +572,7 @@ unsigned int FindStores(char** keys)
 unsigned int UpdateStore(LFStoreDescriptor* s, bool MakeDefault)
 {
 	// FileTime setzen
-	SYSTEMTIME st;
-	GetLocalTime(&st);
-	SystemTimeToFileTime(&st, &s->FileTime);
+	GetSystemTimeAsFileTime(&s->FileTime);
 
 	// Cache aktualisieren
 	LFStoreDescriptor* slot = FindStore(s->StoreID);
