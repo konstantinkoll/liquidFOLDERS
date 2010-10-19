@@ -534,10 +534,17 @@ BOOL CAttributePropertyTime::OnEdit(LPPOINT lptClick)
 		CRect rectSpin;
 		AdjustInPlaceEditRect(rectEdit, rectSpin);
 
-		SYSTEMTIME stUTC;
 		SYSTEMTIME stLocal;
-		FileTimeToSystemTime(&p_Data->Time, &stUTC);
-		SystemTimeToTzSpecificLocalTime(NULL, &stUTC, &stLocal);
+		if ((!p_Data->Time.dwHighDateTime) && (!p_Data->Time.dwLowDateTime))
+		{
+			GetLocalTime(&stLocal);
+		}
+		else
+		{
+			SYSTEMTIME stUTC;
+			FileTimeToSystemTime(&p_Data->Time, &stUTC);
+			SystemTimeToTzSpecificLocalTime(NULL, &stUTC, &stLocal);
+		}
 
 		int pos = lptClick->x-m_pWndList->GetLeftColumnWidth();
 
