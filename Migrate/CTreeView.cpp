@@ -1946,6 +1946,9 @@ void CTreeView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 	if (m_Rows)
 	{
+		CRect rect;
+		GetClientRect(&rect);
+
 		CPoint item(m_SelectedItem);
 
 		switch (nChar)
@@ -2019,12 +2022,32 @@ void CTreeView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 				}
 
 			break;
+		case VK_PRIOR:
+			for (int row=item.y-1; row>=0; row--)
+				if (m_Tree[MAKEPOS(row, item.x)].pItem)
+				{
+					item.y = row;
+					if (row<=m_SelectedItem.y-rect.Height()/(int)m_RowHeight)
+						break;
+				}
+
+			break;
 		case VK_DOWN:
 			for (int row=item.y+1; row<(int)m_Rows; row++)
 				if (m_Tree[MAKEPOS(row, item.x)].pItem)
 				{
 					item.y = row;
 					break;
+				}
+
+			break;
+		case VK_NEXT:
+			for (int row=item.y+1; row<(int)m_Rows; row++)
+				if (m_Tree[MAKEPOS(row, item.x)].pItem)
+				{
+					item.y = row;
+					if (row>=m_SelectedItem.y+rect.Height()/(int)m_RowHeight)
+						break;
 				}
 
 			break;
