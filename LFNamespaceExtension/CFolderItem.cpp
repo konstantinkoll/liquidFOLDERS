@@ -304,7 +304,7 @@ BOOL CFolderItem::GetChildren(CGetChildrenEventArgs& e)
 			LFItemDescriptor* i = res->m_Items[a];
 
 			if ((((i->Type & LFTypeMask)==LFTypeStore) || (((i->Type & LFTypeMask)==LFTypeVirtual) &&
-				(i->CategoryID!=LFCategoryHousekeeping))) && (e.childrenType & NSECT_Folders))
+				(i->CategoryID!=LFItemCategoryHousekeeping))) && (e.childrenType & NSECT_Folders))
 			{
 				FolderSerialization d = { 0 };
 				d.Level = data.Level+1;

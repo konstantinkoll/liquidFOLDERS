@@ -340,6 +340,12 @@ LFCore_API void LFVariantDataFromString(LFVariantData* v, wchar_t* str)
 		unsigned int LonSec;
 		wchar_t LonCh;
 
+		unsigned int Date1;
+		wchar_t DateCh1;
+		unsigned int Date2;
+		wchar_t DateCh2;
+		unsigned int Date3;
+
 		unsigned int Hour;
 		unsigned int Min;
 		unsigned int Sec;
@@ -441,6 +447,22 @@ LFCore_API void LFVariantDataFromString(LFVariantData* v, wchar_t* str)
 						v->GeoCoordinates.Longitude -= v->GeoCoordinates.Longitude;
 					v->IsNull = false;
 				}
+			break;
+		case LFTypeTime:
+			switch (swscanf_s(str, L"%u%c%u%c%u", &Date1, &DateCh1, 1, &Date2, &DateCh2, 1, &Date3))
+			{
+			case 1:
+			case 2:
+				v->IsNull = false;
+				break;
+			case 3:
+			case 4:
+				v->IsNull = false;
+				break;
+			case 5:
+				v->IsNull = false;
+				break;
+			}
 			break;
 		case LFTypeDuration:
 			if (swscanf_s(str, L"%d:%d:%d", &Hour, &Min, &Sec)==3)

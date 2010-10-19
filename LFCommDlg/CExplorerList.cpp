@@ -267,9 +267,9 @@ void CExplorerList::OnContextMenu(CWnd* /*pWnd*/, CPoint pos)
 				PopupMenu->SetDefaultItem(0, TRUE);
 
 			LFItemDescriptor* i = p_Result->m_Items[pInfo.iItem];
-			if (((i->Type & LFTypeMask)!=LFTypeStore) || (i->CategoryID!=LFCategoryInternalStores) || (i->Type & LFTypeDefaultStore))
+			if (((i->Type & LFTypeMask)!=LFTypeStore) || (i->CategoryID!=LFItemCategoryInternalStores) || (i->Type & LFTypeDefaultStore))
 				PopupMenu->EnableMenuItem(IDM_STORE_MAKEDEFAULT, MF_GRAYED | MF_DISABLED);
-			if (((i->Type & LFTypeMask)!=LFTypeStore) || (i->CategoryID!=LFCategoryExternalStores) || (i->Type & LFTypeNotMounted))
+			if (((i->Type & LFTypeMask)!=LFTypeStore) || (i->CategoryID!=LFItemCategoryExternalStores) || (i->Type & LFTypeNotMounted))
 				PopupMenu->EnableMenuItem(IDM_STORE_MAKEHYBRID, MF_GRAYED | MF_DISABLED);
 		}
 

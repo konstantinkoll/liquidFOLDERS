@@ -476,21 +476,21 @@ LFCore_API LFDomainDescriptor* LFGetDomainInfo(unsigned int ID)
 
 	if ((ID==LFDomainTrash) || (ID==LFDomainUnknown))
 	{
-		d->CategoryID = LFCategoryHousekeeping;
+		d->CategoryID = LFItemCategoryHousekeeping;
 	}
 	else
 		if ((ID==LFDomainAllMediaFiles) || ((ID>=LFDomainAudio) && (ID<=LFDomainVideos)))
 		{
-			d->CategoryID = LFCategoryMediaTypes;
+			d->CategoryID = LFItemCategoryMediaTypes;
 		}
 		else
 			if ((ID==LFDomainAllFiles) || (ID==LFDomainFilters) || (ID==LFDomainFavorites))
 			{
-				d->CategoryID = LFCategoryStore;
+				d->CategoryID = LFItemCategoryStore;
 			}
 			else
 			{
-				d->CategoryID = LFCategoryOtherTypes;
+				d->CategoryID = LFItemCategoryOtherTypes;
 			}
 
 	const unsigned int Icons[LFDomainCount] = { IDI_FLD_All, IDI_FLD_All, IDI_FLD_Favorites, IDI_FLD_Trash, IDI_FLD_Default,

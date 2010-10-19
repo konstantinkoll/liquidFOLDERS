@@ -143,7 +143,7 @@ void LFSearchResult::AddDrives(LFFilter* filter)
 			d->IconID = LFGetDriveIcon(cDrive, sfi.dwAttributes!=0);
 			if (!sfi.dwAttributes)
 				d->Type |= LFTypeGhosted | LFTypeNotMounted;
-			d->CategoryID = LFCategoryDrives;
+			d->CategoryID = LFItemCategoryDrives;
 			SetAttribute(d, LFAttrFileName, sfi.szDisplayName);
 			char key[] = " :";
 			key[0] = cDrive;
@@ -163,7 +163,7 @@ void LFSearchResult::AddBacklink(char* StoreID, LFFilter* f)
 	wchar_t BacklinkDescription[256];
 	LoadString(LFCoreModuleHandle, IDS_BacklinkDescription, BacklinkDescription, 256);
 
-	LFItemDescriptor* d = AllocFolderDescriptor(BacklinkName, NULL, BacklinkDescription, StoreID, "BACK", NULL, IDI_FLD_Back, LFCategoryStore, 0, f);
+	LFItemDescriptor* d = AllocFolderDescriptor(BacklinkName, NULL, BacklinkDescription, StoreID, "BACK", NULL, IDI_FLD_Back, LFItemCategoryStore, 0, f);
 	d->CoreAttributes.FileSize = -1;
 
 	if (!AddItemDescriptor(d))

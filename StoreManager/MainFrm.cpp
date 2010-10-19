@@ -1002,7 +1002,7 @@ void CMainFrame::OnStoreBackup()
 				for (UINT a=0; a<CookedFiles->m_ItemCount; a++)
 				{
 					LFItemDescriptor* i = CookedFiles->m_Items[a];
-					if ((i->Type & LFTypeStore) && (i->CategoryID<=LFCategoryHybridStores))
+					if ((i->Type & LFTypeStore) && (i->CategoryID<=LFItemCategoryHybridStores))
 					{
 						LFStoreDescriptor s;
 						if (LFGetStoreSettings(i->StoreID, &s)==LFOk)
@@ -1093,13 +1093,13 @@ void CMainFrame::OnUpdateStoreCommands(CCmdUI* pCmdUI)
 			case ID_STORE_MAKEDEFAULT:
 				if (f)
 					b = (f->Type & LFTypeStore) &&
-						(f->CategoryID==LFCategoryInternalStores) &&
+						(f->CategoryID==LFItemCategoryInternalStores) &&
 						((f->Type & LFTypeDefaultStore)==0);
 				break;
 			case ID_STORE_MAKEHYBRID:
 				if (f)
 					b = (f->Type & LFTypeStore) &&
-						(f->CategoryID==LFCategoryExternalStores);
+						(f->CategoryID==LFItemCategoryExternalStores);
 				break;
 			case ID_STORE_BACKUP:
 				b = TRUE;

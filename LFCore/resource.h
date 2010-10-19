@@ -48,6 +48,7 @@
 #define IDS_LFCategoryMediaTypes        1006
 #define IDS_LFCategoryDocuments         1007
 #define IDS_LFCategoryHousekeeping      1008
+#define IDS_LFCategoryNight             1009
 #define IDS_FirstAttrCategory           1050
 #define IDS_LFCategoryBasic             1050
 #define IDS_LFCategoryGeotagging        1051

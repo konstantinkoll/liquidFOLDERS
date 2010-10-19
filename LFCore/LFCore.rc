@@ -131,6 +131,7 @@ BEGIN
     IDS_LFCategoryMediaTypes "Media"
     IDS_LFCategoryDocuments "Documents"
     IDS_LFCategoryHousekeeping "Housekeeping"
+    IDS_LFCategoryNight     "Night\nUntil 6am"
 END
 
 STRINGTABLE 
