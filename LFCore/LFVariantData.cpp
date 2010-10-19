@@ -157,10 +157,6 @@ void ToString(void* value, unsigned int type, wchar_t* str, size_t cCount)
 	assert(str);
 
 	if (value)
-	{
-		size_t sz;
-		wchar_t FlagString[6];
-
 		switch (type)
 		{
 		case LFTypeUnicodeString:
@@ -168,8 +164,7 @@ void ToString(void* value, unsigned int type, wchar_t* str, size_t cCount)
 			wcscpy_s(str, cCount, (wchar_t*)value);
 			return;
 		case LFTypeAnsiString:
-			sz = strlen((char*)value)+1;
-			MultiByteToWideChar(CP_ACP, 0, (char*)value, (int)sz, str, (int)cCount);
+			MultiByteToWideChar(CP_ACP, 0, (char*)value, (int)(strlen((char*)value)+1), str, (int)cCount);
 			return;
 		case LFTypeFourCC:
 			LFFourCCToString(*((unsigned int*)value), str, cCount);
@@ -191,6 +186,7 @@ void ToString(void* value, unsigned int type, wchar_t* str, size_t cCount)
 			LFDoubleToString(*((double*)value), str, cCount);
 			return;
 		case LFTypeFlags:
+			wchar_t FlagString[6];
 			FlagString[0] = (*((unsigned int*)value) & LFFlagLink) ? 'L' : '-';
 			FlagString[1] = (*((unsigned int*)value) & LFFlagNew) ? 'N' : '-';
 			FlagString[2] = (*((unsigned int*)value) & LFFlagTrash) ? 'T' : '-';
@@ -211,7 +207,6 @@ void ToString(void* value, unsigned int type, wchar_t* str, size_t cCount)
 		default:
 			assert(false);
 		}
-	}
 
 	wcscpy_s(str, cCount, L"");
 }
@@ -325,11 +320,29 @@ LFCore_API void LFVariantDataToString(LFVariantData* v, wchar_t* str, size_t cCo
 
 LFCore_API void LFVariantDataFromString(LFVariantData* v, wchar_t* str)
 {
+	assert(v);
+
 	LFGetNullVariantData(v);
 
 	if ((str) && (v->Attr<LFAttributeCount))
 	{
 		size_t sz = wcslen(str);
+
+		wchar_t tmpBuf[256];
+		wchar_t* dst = &tmpBuf[0];
+
+		unsigned int LatDeg;
+		unsigned int LatMin;
+		unsigned int LatSec;
+		wchar_t LatCh;
+		unsigned int LonDeg;
+		unsigned int LonMin;
+		unsigned int LonSec;
+		wchar_t LonCh;
+
+		unsigned int Hour;
+		unsigned int Min;
+		unsigned int Sec;
 
 		switch (v->Type)
 		{
@@ -378,10 +391,63 @@ LFCore_API void LFVariantDataFromString(LFVariantData* v, wchar_t* str)
 			}
 			break;
 		case LFTypeUINT:
+			if (swscanf_s(str, L"%d", &v->UINT)==1)
+				v->IsNull = false;
 			break;
 		case LFTypeINT64:
+			for (wchar_t* src = &str[0]; src<&tmpBuf[255]; src++)
+			{
+				switch (*src)
+				{
+				case L'0':
+				case L'1':
+				case L'2':
+				case L'3':
+				case L'4':
+				case L'5':
+				case L'6':
+				case L'7':
+				case L'8':
+				case L'9':
+					*(dst++) = *src;
+				case L'.':
+				case L',':
+					break;
+				default:
+					*dst = L'\0';
+					break;
+				}
+			}
+			if (swscanf_s(tmpBuf, L"%d", &v->INT64)==1)
+				v->IsNull = false;
+			break;
+		case LFTypeFraction:
+			if (swscanf_s(str, L"%u/%u", &v->Fraction.Num, &v->Fraction.Denum)==2)
+				v->IsNull = false;
 			break;
 		case LFTypeDouble:
+			if (swscanf_s(str, L"%f", &v->Double)==1)
+				v->IsNull = false;
+			break;
+		case LFTypeGeoCoordinates:
+			if (swscanf_s(str, L"%u°%u\'%u\"%c, %u°%u\'%u\"%c", &LatDeg, &LatMin, &LatSec, &LatCh, 1, &LonDeg, &LonMin, &LonSec, &LonCh, 1)==8)
+				if (((LatCh==L'N') || (LatCh==L'S')) && ((LonCh==L'W') || (LonCh==L'E')))
+				{
+					v->GeoCoordinates.Latitude = LatDeg+(LatMin/60.0)+(LatSec/3600.0);
+					if (LatCh==L'N')
+						v->GeoCoordinates.Latitude -= v->GeoCoordinates.Latitude;
+					v->GeoCoordinates.Longitude = LonDeg+(LonMin/60.0)+(LonSec/3600.0);
+					if (LatCh==L'W')
+						v->GeoCoordinates.Longitude -= v->GeoCoordinates.Longitude;
+					v->IsNull = false;
+				}
+			break;
+		case LFTypeDuration:
+			if (swscanf_s(str, L"%d:%d:%d", &Hour, &Min, &Sec)==3)
+			{
+				v->Duration = Hour*3600+Min*60+Sec;
+				v->IsNull = false;
+			}
 			break;
 		}
 	}
