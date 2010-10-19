@@ -162,8 +162,6 @@ void LFItemTemplateDlg::OnSkip()
 
 void LFItemTemplateDlg::DoDataExchange(CDataExchange* pDX)
 {
-	CDialog::DoDataExchange(pDX);
-
 	DDX_Control(pDX, IDC_INSPECTOR, m_Inspector);
 
 	if (pDX->m_bSaveAndValidate)

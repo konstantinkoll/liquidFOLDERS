@@ -327,16 +327,16 @@ CAPTION "GPS-Koordinaten"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     CONTROL         "",IDC_MAP_SELECTION,"CMapSelectionCtrl",WS_BORDER | WS_GROUP,14,59,416,200
-    DEFPUSHBUTTON   "OK",IDOK,330,274,50,14,WS_GROUP
+    DEFPUSHBUTTON   "OK",IDOK,258,274,50,14,WS_GROUP
+    PUSHBUTTON      "Zurücksetzen",IDC_RESET,315,274,65,14,WS_GROUP
     PUSHBUTTON      "Abbrechen",IDCANCEL,387,274,50,14,WS_GROUP
     GROUPBOX        "Koordinaten",IDC_STATIC,7,7,430,35,WS_GROUP
     GROUPBOX        "Karte",IDC_STATIC,7,48,430,219,WS_GROUP
-    LTEXT           "© NASA’s Earth Observatory",IDC_STATIC,7,279,318,9
+    LTEXT           "© NASA’s Earth Observatory",IDC_STATIC,7,279,247,9
     EDITTEXT        IDC_LATITUDE,39,19,73,14,ES_AUTOHSCROLL
     LTEXT           "Breite:",IDC_STATIC,14,21,23,8,0,WS_EX_RIGHT
     EDITTEXT        IDC_LONGITUDE,163,19,73,14,ES_AUTOHSCROLL
     LTEXT           "Länge:",IDC_STATIC,121,21,40,8,0,WS_EX_RIGHT
-    LTEXT           "Zum Löschen der GPS-Koordinaten müssen Breite und Länge auf 0° gesetzt werden.",IDC_STATIC,249,17,181,18
 END
 
 IDD_JUMPTOIATA DIALOGEX 0, 0, 588, 305
@@ -898,16 +898,16 @@ CAPTION "Select GPS location"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     CONTROL         "",IDC_MAP_SELECTION,"CMapSelectionCtrl",WS_BORDER | WS_GROUP,14,59,416,200
-    DEFPUSHBUTTON   "OK",IDOK,330,274,50,14,WS_GROUP
+    DEFPUSHBUTTON   "OK",IDOK,273,274,50,14,WS_GROUP
+    PUSHBUTTON      "Reset",IDC_RESET,330,274,50,14,WS_GROUP
     PUSHBUTTON      "Cancel",IDCANCEL,387,274,50,14,WS_GROUP
     GROUPBOX        "Coordinates",IDC_STATIC,7,7,430,35,WS_GROUP
     GROUPBOX        "Map",IDC_STATIC,7,48,430,219,WS_GROUP
-    LTEXT           "© NASA’s Earth Observatory",IDC_STATIC,7,279,318,9
+    LTEXT           "© NASA’s Earth Observatory",IDC_STATIC,7,279,263,9
     EDITTEXT        IDC_LATITUDE,46,19,73,14,ES_AUTOHSCROLL
     LTEXT           "Latitude:",IDC_STATIC,14,21,30,8,0,WS_EX_RIGHT
     EDITTEXT        IDC_LONGITUDE,163,19,73,14,ES_AUTOHSCROLL
     LTEXT           "Longitude:",IDC_STATIC,121,21,40,8,0,WS_EX_RIGHT
-    LTEXT           "To remove the GPS location from the selected files, set both latitude and longitude to 0°.",IDC_STATIC,249,17,181,18
 END
 
 IDD_JUMPTOIATA DIALOGEX 0, 0, 588, 305
@@ -1462,16 +1462,16 @@ CAPTION "Seleccionar ubicación GPS"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     CONTROL         "",IDC_MAP_SELECTION,"CMapSelectionCtrl",WS_BORDER | WS_GROUP,14,59,416,200
-    DEFPUSHBUTTON   "OK",IDOK,330,274,50,14,WS_GROUP
+    DEFPUSHBUTTON   "OK",IDOK,273,274,50,14,WS_GROUP
+    PUSHBUTTON      "Resetaurar",IDC_RESET,330,274,50,14,WS_GROUP
     PUSHBUTTON      "Cancelar",IDCANCEL,387,274,50,14,WS_GROUP
     GROUPBOX        "Coordenadas",IDC_STATIC,7,7,430,35,WS_GROUP
     GROUPBOX        "Mapa",IDC_STATIC,7,48,430,219,WS_GROUP
-    LTEXT           "© NASA’s Earth Observatory",IDC_STATIC,7,279,318,9
+    LTEXT           "© NASA’s Earth Observatory",IDC_STATIC,7,279,263,9
     EDITTEXT        IDC_LATITUDE,41,19,73,14,ES_AUTOHSCROLL
     LTEXT           "Latitud:",IDC_STATIC,14,21,25,8,0,WS_EX_RIGHT
     EDITTEXT        IDC_LONGITUDE,163,19,73,14,ES_AUTOHSCROLL
     LTEXT           "Longitud:",IDC_STATIC,121,21,40,8,0,WS_EX_RIGHT
-    LTEXT           "Para eliminar la ubicación GPS de los archivos seleccionados, fijar tanto latitud como longitud en 0°.",IDC_STATIC,249,17,181,18
 END
 
 IDD_JUMPTOIATA DIALOGEX 0, 0, 588, 305
@@ -2035,16 +2035,16 @@ CAPTION "Choisissez l'endroit GPS"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     CONTROL         "",IDC_MAP_SELECTION,"CMapSelectionCtrl",WS_BORDER | WS_GROUP,14,59,416,200
-    DEFPUSHBUTTON   "OK",IDOK,330,274,50,14,WS_GROUP
+    DEFPUSHBUTTON   "OK",IDOK,273,274,50,14,WS_GROUP
+    PUSHBUTTON      "Vider",IDC_RESET,330,274,50,14,WS_GROUP
     PUSHBUTTON      "Annuler",IDCANCEL,387,274,50,14,WS_GROUP
     GROUPBOX        "Coordonnées",IDC_STATIC,7,7,430,35,WS_GROUP
     GROUPBOX        "Carte",IDC_STATIC,7,48,430,219,WS_GROUP
-    LTEXT           "© NASA’s Earth Observatory",IDC_STATIC,7,279,318,9
+    LTEXT           "© NASA’s Earth Observatory",IDC_STATIC,7,279,263,9
     EDITTEXT        IDC_LATITUDE,46,19,73,14,ES_AUTOHSCROLL
     LTEXT           "Latitude:",IDC_STATIC,14,21,30,8,0,WS_EX_RIGHT
     EDITTEXT        IDC_LONGITUDE,163,19,73,14,ES_AUTOHSCROLL
     LTEXT           "Longitude:",IDC_STATIC,121,21,40,8,0,WS_EX_RIGHT
-    LTEXT           "Pour enlever l'endroit GPS des fichiers choisis, jeu tous les deux latitude et longitude à 0°.",IDC_STATIC,249,17,181,18
 END
 
 IDD_JUMPTOIATA DIALOGEX 0, 0, 588, 305

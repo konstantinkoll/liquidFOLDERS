@@ -7,6 +7,29 @@
 #include "Resource.h"
 
 
+double StringToCoord(CString str)
+{
+	UINT Deg;
+	UINT Min;
+	UINT Sec;
+	wchar_t Ch;
+	double Res = 0;
+
+	int Scanned = swscanf_s(str, L"%u°%u\'%u\"%c", &Deg, &Min, &Sec, &Ch, 1);
+	if (Scanned>=1)
+		Res += Deg;
+	if (Scanned>=2)
+		Res += Min/60.0;
+	if (Scanned>=3)
+		Res += Sec/3600.0;
+	if (Scanned>=4)
+		if ((Ch==L'N') || (Ch==L'W'))
+			Res = -Res;
+
+	return Res;
+}
+
+
 // LFSelectLocationGPSDlg
 //
 
@@ -20,9 +43,18 @@ LFSelectLocationGPSDlg::LFSelectLocationGPSDlg(CWnd* pParentWnd, LFGeoCoordinate
 
 void LFSelectLocationGPSDlg::DoDataExchange(CDataExchange* pDX)
 {
-	CDialog::DoDataExchange(pDX);
-
 	DDX_Control(pDX, IDC_MAP_SELECTION, m_Map);
+
+	if (pDX->m_bSaveAndValidate)
+	{
+		CString strLat;
+		GetDlgItem(IDC_LATITUDE)->GetWindowText(strLat);
+		m_pCoord->Latitude = StringToCoord(strLat);
+
+		CString strLon;
+		GetDlgItem(IDC_LONGITUDE)->GetWindowText(strLon);
+		m_pCoord->Longitude = StringToCoord(strLon);
+	}
 }
 
 
@@ -30,6 +62,7 @@ BEGIN_MESSAGE_MAP(LFSelectLocationGPSDlg, CDialog)
 	ON_WM_DESTROY()
 	ON_WM_TIMER()
 	ON_NOTIFY(MAP_UPDATE_LOCATION, IDC_MAP_SELECTION, OnUpdateEdit)
+	ON_BN_CLICKED(IDC_RESET, OnReset)
 END_MESSAGE_MAP()
 
 BOOL LFSelectLocationGPSDlg::OnInitDialog()
@@ -79,4 +112,10 @@ void LFSelectLocationGPSDlg::OnUpdateEdit(NMHDR* pNMHDR, LRESULT* pResult)
 	GetDlgItem(IDC_LONGITUDE)->SetWindowText(tmpStr);
 
 	*pResult = 0;
+}
+
+void LFSelectLocationGPSDlg::OnReset()
+{
+	m_pCoord->Latitude = m_pCoord->Longitude = 0.0;
+	EndDialog(IDOK);
 }

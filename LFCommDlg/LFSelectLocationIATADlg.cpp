@@ -144,8 +144,6 @@ BOOL LFSelectLocationIATADlg::OnInitDialog()
 
 void LFSelectLocationIATADlg::DoDataExchange(CDataExchange* pDX)
 {
-	CDialog::DoDataExchange(pDX);
-
 	DDX_Control(pDX, IDC_MAP_PREVIEW, m_Map);
 
 	if (m_nIDTemplate==IDD_SELECTIATA)

@@ -25,6 +25,7 @@ protected:
 	afx_msg void OnDestroy();
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
 	afx_msg void OnUpdateEdit(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnReset();
 	DECLARE_MESSAGE_MAP()
 
 private:

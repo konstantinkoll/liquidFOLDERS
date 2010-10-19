@@ -115,8 +115,6 @@ BOOL LFEditTagsDlg::OnInitDialog()
 
 void LFEditTagsDlg::DoDataExchange(CDataExchange* pDX)
 {
-	CDialog::DoDataExchange(pDX);
-
 	DDX_Control(pDX, IDC_TAGS, m_TagEdit);
 	DDX_Control(pDX, IDC_TAGLIST, m_TagList);
 

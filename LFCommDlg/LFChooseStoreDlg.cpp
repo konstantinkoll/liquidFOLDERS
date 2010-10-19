@@ -33,8 +33,6 @@ LFChooseStoreDlg::~LFChooseStoreDlg()
 
 void LFChooseStoreDlg::DoDataExchange(CDataExchange* pDX)
 {
-	LFDialog::DoDataExchange(pDX);
-
 	if (pDX->m_bSaveAndValidate)
 	{
 		int idx = GetSelectedStore();
