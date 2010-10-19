@@ -22,6 +22,7 @@ CMigrateApp::CMigrateApp()
 {
 }
 
+
 // Das einzige CMigrateApp-Objekt
 
 CMigrateApp theApp;

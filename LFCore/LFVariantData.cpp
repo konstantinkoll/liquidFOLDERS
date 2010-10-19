@@ -347,6 +347,9 @@ LFCore_API void LFVariantDataFromString(LFVariantData* v, wchar_t* str)
 		unsigned int Date2;
 		wchar_t DateCh2;
 		unsigned int Date3;
+		SYSTEMTIME stLocal;
+		SYSTEMTIME stUTC;
+		bool YearFirst;
 
 		unsigned int Hour;
 		unsigned int Min;
@@ -451,19 +454,72 @@ LFCore_API void LFVariantDataFromString(LFVariantData* v, wchar_t* str)
 				}
 			break;
 		case LFTypeTime:
+			ZeroMemory(&stLocal, sizeof(stLocal));
 			switch (swscanf_s(str, L"%u%c%u%c%u", &Date1, &DateCh1, 1, &Date2, &DateCh2, 1, &Date3))
 			{
 			case 1:
 			case 2:
-				v->IsNull = false;
+				if ((Date1>1600) && (Date1<0x10000))
+				{
+					stLocal.wYear = (WORD)Date1;
+					stLocal.wMonth = stLocal.wDay = 1;
+
+					TzSpecificLocalTimeToSystemTime(NULL, &stLocal, &stUTC);
+					SystemTimeToFileTime(&stUTC, &v->Time);
+					v->IsNull = !((v->Time.dwHighDateTime) || (v->Time.dwLowDateTime));
+				}
 				break;
 			case 3:
 			case 4:
-				v->IsNull = false;
+				if ((Date1>=0) && (Date1<=12) && (Date2>1600) && (Date2<0x10000))
+					std::swap(Date1, Date2);
+				if ((Date1>1600) && (Date1<0x10000) && (Date2>=0) && (Date2<=12))
+				{
+					stLocal.wYear = (WORD)Date1;
+					stLocal.wMonth = (WORD)Date2;
+					stLocal.wDay = 1;
+
+					TzSpecificLocalTimeToSystemTime(NULL, &stLocal, &stUTC);
+					SystemTimeToFileTime(&stUTC, &v->Time);
+					v->IsNull = !((v->Time.dwHighDateTime) || (v->Time.dwLowDateTime));
+				}
 				break;
 			case 5:
-				v->IsNull = false;
-				break;
+				if ((DateCh1==DateCh2) && (Date1>0) && (Date2>0) && (Date3>0))
+				{
+					YearFirst = (Date1>1600) && (Date1<0x10000);
+					if (YearFirst)
+					{
+						if ((DateCh1=='/') || ((Date2>12) && (Date3<=12)))
+							std::swap(Date2, Date3);
+						if ((Date2<=12) && (Date3<=31))
+						{
+							stLocal.wYear = (WORD)Date1;
+							stLocal.wMonth = (WORD)Date2;
+							stLocal.wDay = (WORD)Date3;
+
+							TzSpecificLocalTimeToSystemTime(NULL, &stLocal, &stUTC);
+							SystemTimeToFileTime(&stUTC, &v->Time);
+							v->IsNull = !((v->Time.dwHighDateTime) || (v->Time.dwLowDateTime));
+						}
+					}
+					else
+						if ((Date3>1600) && (Date3<0x10000))
+						{
+							if ((DateCh1=='/') || ((Date1>12) && (Date2<=12)))
+								std::swap(Date1, Date2);
+							if ((Date1<=31) && (Date2<=12))
+							{
+								stLocal.wYear = (WORD)Date3;
+								stLocal.wMonth = (WORD)Date2;
+								stLocal.wDay = (WORD)Date1;
+
+								TzSpecificLocalTimeToSystemTime(NULL, &stLocal, &stUTC);
+								SystemTimeToFileTime(&stUTC, &v->Time);
+								v->IsNull = !((v->Time.dwHighDateTime) || (v->Time.dwLowDateTime));
+							}
+						}
+				}
 			}
 			break;
 		case LFTypeDuration:
