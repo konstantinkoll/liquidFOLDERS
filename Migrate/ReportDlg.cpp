@@ -73,7 +73,16 @@ BOOL ReportDlg::OnInitDialog()
 	SetIcon(hIcon, FALSE);		// Kleines Symbol verwenden
 
 	// Icons
-	m_Icons.Create(IDB_WARNING);
+	m_Icons.Create(16, 16, ILC_COLOR32, 1, 1);
+
+	HMODULE hModIcons = LoadLibrary(_T("LFCOMMDLG.DLL"));
+	if (hModIcons)
+	{
+		hIcon = (HICON)LoadImage(hModIcons, IDI_EXCLAMATION, IMAGE_ICON, 16, 16, LR_DEFAULTCOLOR);
+		FreeLibrary(hModIcons);
+
+		m_Icons.Add(hIcon);
+	}
 
 	// Tabs
 	CTabCtrl* tabs = (CTabCtrl*)GetDlgItem(IDC_TABS);
@@ -134,7 +143,7 @@ void ReportDlg::OnGetDispInfo(NMHDR* pNMHDR, LRESULT* /*pResult*/)
 	LV_DISPINFO* pDispInfo = (LV_DISPINFO*)pNMHDR;
 	LV_ITEM* pItem = &pDispInfo->item;
 
-	ML_Entry* pFolder = m_Lists[m_Page]->m_Items[pItem->iItem];
+	ML_Item* pFolder = m_Lists[m_Page]->m_Items[pItem->iItem];
 
 	if (pItem->mask & LVIF_TEXT)
 		pItem->pszText = pFolder->Name;
@@ -149,7 +158,7 @@ void ReportDlg::OnItemChanged(NMHDR* pNMHDR, LRESULT* /*pResult*/)
 
 	if ((pNMListView->uChanged & LVIF_STATE) && (pNMListView->uNewState & LVIS_SELECTED))
 	{
-		ML_Entry* pFolder = m_Lists[m_Page]->m_Items[pNMListView->iItem];
+		ML_Item* pFolder = m_Lists[m_Page]->m_Items[pNMListView->iItem];
 
 		GetDlgItem(IDC_STATUS1)->SetWindowText(pFolder->Path);
 

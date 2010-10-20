@@ -6,7 +6,6 @@
 #define IDB_ABOUTICON                   129
 #define IDB_TASKS                       130
 #define IDB_TREEWIDGETS                 131
-#define IDB_WARNING                     132
 #define ID_VIEW_SELECTROOT              400
 #define ID_VIEW_SELECTROOT_TASKBAR      401
 #define ID_VIEW_EXPAND                  402
@@ -57,11 +56,10 @@
 #define IDD_DELETEFILES                 2300
 #define IDD_CHOOSEPROPERTY1             2301
 #define IDD_REPORT                      2400
-#define IDC_TABS                        2401
-#define IDC_FOLDERLIST                  2402
-#define IDC_STATUS1                     2403
-#define IDC_STATUS2                     2404
-#define IDC_UNCHECKMIGRATED             2405
+#define IDC_FOLDERLIST                  2401
+#define IDC_STATUS1                     2402
+#define IDC_STATUS2                     2403
+#define IDC_UNCHECKMIGRATED             2404
 
 // Next default values for new objects
 // 

@@ -441,22 +441,16 @@ BEGIN
     LTEXT           "Nicht vorhandene Eigenschaften werden mit den Angaben unten ergänzt.\nFalls dies nicht gewünscht wird, klicken Sie bitte auf „Überspringen“.",IDC_STATIC,14,16,249,18
 END
 
-IDD_STOREMAINTENANCE DIALOGEX 0, 0, 200, 95
+IDD_STOREMAINTENANCE DIALOGEX 0, 0, 324, 299
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
 CAPTION "Wartungsarbeiten"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    GROUPBOX        "Zusammenfassung",IDC_STATIC,7,7,186,61
-    LTEXT           "Erfolgreich gewartet:",IDC_STATIC,14,17,105,8
-    LTEXT           "X",IDC_SERVICED,125,17,60,8,SS_ENDELLIPSIS
-    LTEXT           "Kein Zugriff (schreibgeschützt):",IDC_STATIC,14,33,105,8
-    LTEXT           "X",IDC_WRITEPROTECTED,125,33,60,8,SS_ENDELLIPSIS
-    LTEXT           "Zu wenig freier Speicherplatz:",IDC_STATIC,14,43,105,8
-    LTEXT           "X",IDC_NOFREESPACE,125,43,60,8,SS_ENDELLIPSIS
-    LTEXT           "Noch immer fehlerhaft:",IDC_STATIC,14,53,105,8
-    LTEXT           "X",IDC_ERROR,125,53,60,8,SS_ENDELLIPSIS
-    DEFPUSHBUTTON   "OK",IDOK,143,74,50,14,WS_GROUP
-    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ | WS_GROUP,14,29,172,1
+    DEFPUSHBUTTON   "OK",IDOK,267,278,50,14,WS_GROUP
+    CONTROL         "",IDC_TABS,"SysTabControl32",WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_GROUP | WS_TABSTOP,7,7,310,263
+    LTEXT           "Stores:",IDC_STATIC,14,27,296,8
+    CONTROL         "",IDC_STORELIST,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_ALIGNLEFT | LVS_OWNERDATA | LVS_NOSORTHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,14,37,296,216
+    CONTROL         "",IDC_STATUS,"Static",SS_LEFTNOWORDWRAP | SS_PATHELLIPSIS | WS_GROUP,14,255,296,8
 END
 
 IDD_EDITTAGS DIALOGEX 0, 0, 348, 238
@@ -688,6 +682,8 @@ BEGIN
     IDS_CHOOSEDEFAULTSTORE_CAPTION "Interne Stores"
     IDS_CHOOSEDEFAULTSTORE_HINT 
                             "Nur interne Stores können als Standard-Store ausgewählt werden."
+    IDS_MAINTENANCETAB0     "Erfolgreich gewartet"
+    IDS_MAINTENANCETAB1     "Fehler"
 END
 
 STRINGTABLE 
@@ -997,22 +993,16 @@ BEGIN
     LTEXT           "Missing file properties will be set using the values below.\nIf you don't want your files to be amended, press ""Skip"".",IDC_STATIC,14,16,249,18
 END
 
-IDD_STOREMAINTENANCE DIALOGEX 0, 0, 200, 95
+IDD_STOREMAINTENANCE DIALOGEX 0, 0, 324, 299
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
 CAPTION "Scheduled maintenance"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    GROUPBOX        "Summary",IDC_STATIC,7,7,186,61
-    LTEXT           "Successfully serviced:",IDC_STATIC,14,17,105,8
-    LTEXT           "X",IDC_SERVICED,125,17,60,8,SS_ENDELLIPSIS
-    LTEXT           "No access (write protected):",IDC_STATIC,14,33,105,8
-    LTEXT           "X",IDC_WRITEPROTECTED,125,33,60,8,SS_ENDELLIPSIS
-    LTEXT           "Not enough free disc space:",IDC_STATIC,14,43,105,8
-    LTEXT           "X",IDC_NOFREESPACE,125,43,60,8,SS_ENDELLIPSIS
-    LTEXT           "Beyond repair (still errors):",IDC_STATIC,14,53,105,8
-    LTEXT           "X",IDC_ERROR,125,53,60,8,SS_ENDELLIPSIS
-    DEFPUSHBUTTON   "OK",IDOK,143,74,50,14,WS_GROUP
-    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ | WS_GROUP,14,29,172,1
+    DEFPUSHBUTTON   "OK",IDOK,267,278,50,14,WS_GROUP
+    CONTROL         "",IDC_TABS,"SysTabControl32",WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_GROUP | WS_TABSTOP,7,7,310,263
+    LTEXT           "Stores:",IDC_STATIC,14,27,296,8
+    CONTROL         "",IDC_STORELIST,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_ALIGNLEFT | LVS_OWNERDATA | LVS_NOSORTHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,14,37,296,216
+    CONTROL         "",IDC_STATUS,"Static",SS_LEFTNOWORDWRAP | SS_PATHELLIPSIS | WS_GROUP,14,255,296,8
 END
 
 IDD_ENTERLICENSEKEY DIALOGEX 0, 0, 350, 263
@@ -1251,6 +1241,8 @@ BEGIN
     IDS_CHOOSEDEFAULTSTORE_CAPTION "Internal stores"
     IDS_CHOOSEDEFAULTSTORE_HINT 
                             "Only internal stores are suitable default stores."
+    IDS_MAINTENANCETAB0     "Successfully serviced"
+    IDS_MAINTENANCETAB1     "Errors"
 END
 
 STRINGTABLE 
@@ -1561,22 +1553,16 @@ BEGIN
     LTEXT           "Las propiedades faltantes del archivo serán establecidos usando los valores que a continuación se enlistan. Si usted no quiere que sus archivos sean corregidos, presione ""Omitir"".",IDC_STATIC,14,16,249,26
 END
 
-IDD_STOREMAINTENANCE DIALOGEX 0, 0, 230, 95
+IDD_STOREMAINTENANCE DIALOGEX 0, 0, 324, 299
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
 CAPTION "Mantenimiento programado"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    GROUPBOX        "Sumario",IDC_STATIC,7,7,216,61
-    LTEXT           "Revisión satisfactoria:",IDC_STATIC,14,17,135,8
-    LTEXT           "X",IDC_SERVICED,155,17,60,8,SS_ENDELLIPSIS
-    LTEXT           "Sin acceso (protegido contra escritura):",IDC_STATIC,14,33,135,8
-    LTEXT           "X",IDC_WRITEPROTECTED,155,33,60,8,SS_ENDELLIPSIS
-    LTEXT           "Sin suficiente espacio libre en disco:",IDC_STATIC,14,43,135,8
-    LTEXT           "X",IDC_NOFREESPACE,155,43,60,8,SS_ENDELLIPSIS
-    LTEXT           "Sin reparación (aún con errores):",IDC_STATIC,14,53,135,8
-    LTEXT           "X",IDC_ERROR,155,53,60,8,SS_ENDELLIPSIS
-    DEFPUSHBUTTON   "OK",IDOK,173,74,50,14,WS_GROUP
-    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ | WS_GROUP,14,29,202,1
+    DEFPUSHBUTTON   "OK",IDOK,267,278,50,14,WS_GROUP
+    CONTROL         "",IDC_TABS,"SysTabControl32",WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_GROUP | WS_TABSTOP,7,7,310,263
+    LTEXT           "Stores:",IDC_STATIC,14,27,296,8
+    CONTROL         "",IDC_STORELIST,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_ALIGNLEFT | LVS_OWNERDATA | LVS_NOSORTHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,14,37,296,216
+    CONTROL         "",IDC_STATUS,"Static",SS_LEFTNOWORDWRAP | SS_PATHELLIPSIS | WS_GROUP,14,255,296,8
 END
 
 IDD_ENTERLICENSEKEY DIALOGEX 0, 0, 350, 263
@@ -1823,6 +1809,8 @@ BEGIN
     IDS_CHOOSEDEFAULTSTORE_CAPTION "Stores internos"
     IDS_CHOOSEDEFAULTSTORE_HINT 
                             "Se puede selecionar solamente stores internos como store predeterminado."
+    IDS_MAINTENANCETAB0     "Revisión satisfactoria"
+    IDS_MAINTENANCETAB1     "Errores"
 END
 
 STRINGTABLE 
@@ -2134,22 +2122,16 @@ BEGIN
     LTEXT           "Les qualités de fichier manquants seront mis en utilisant les valeurs si-dessous.\nSi vous ne voulez pas que vos fichiers soient amendés, appuyez ""Omettre"".",IDC_STATIC,14,16,263,18
 END
 
-IDD_STOREMAINTENANCE DIALOGEX 0, 0, 220, 95
+IDD_STOREMAINTENANCE DIALOGEX 0, 0, 324, 299
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
 CAPTION "Travail d'entretien"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    GROUPBOX        "Résumé",IDC_STATIC,7,7,206,61
-    LTEXT           "Entretenu avec succès:",IDC_STATIC,14,17,125,8
-    LTEXT           "X",IDC_SERVICED,145,17,60,8,SS_ENDELLIPSIS
-    LTEXT           "Aucun accès (protégé en écriture):",IDC_STATIC,14,33,125,8
-    LTEXT           "X",IDC_WRITEPROTECTED,145,33,60,8,SS_ENDELLIPSIS
-    LTEXT           "Trop peu de mémoire libre",IDC_STATIC,14,43,125,8
-    LTEXT           "X",IDC_NOFREESPACE,145,43,60,8,SS_ENDELLIPSIS
-    LTEXT           "Encore plein de défauts:",IDC_STATIC,14,53,125,8
-    LTEXT           "X",IDC_ERROR,145,53,60,8,SS_ENDELLIPSIS
-    DEFPUSHBUTTON   "OK",IDOK,163,74,50,14,WS_GROUP
-    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ | WS_GROUP,14,29,192,1
+    DEFPUSHBUTTON   "OK",IDOK,267,278,50,14,WS_GROUP
+    CONTROL         "",IDC_TABS,"SysTabControl32",WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_GROUP | WS_TABSTOP,7,7,310,263
+    LTEXT           "Stores:",IDC_STATIC,14,27,296,8
+    CONTROL         "",IDC_STORELIST,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_ALIGNLEFT | LVS_OWNERDATA | LVS_NOSORTHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,14,37,296,216
+    CONTROL         "",IDC_STATUS,"Static",SS_LEFTNOWORDWRAP | SS_PATHELLIPSIS | WS_GROUP,14,255,296,8
 END
 
 IDD_ENTERLICENSEKEY DIALOGEX 0, 0, 350, 263
@@ -2397,6 +2379,8 @@ BEGIN
     IDS_CHOOSEDEFAULTSTORE_CAPTION "Stores internes"
     IDS_CHOOSEDEFAULTSTORE_HINT 
                             "Seulement stores internes pouvoir choisisse comme store standard."
+    IDS_MAINTENANCETAB0     "Entretenu avec succès"
+    IDS_MAINTENANCETAB1     "Erreurs"
 END
 
 STRINGTABLE 

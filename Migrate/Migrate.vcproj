@@ -552,10 +552,6 @@
 				RelativePath=".\res\TreeWidgets.bmp"
 				>
 			</File>
-			<File
-				RelativePath=".\res\Warning.bmp"
-				>
-			</File>
 		</Filter>
 		<File
 			RelativePath="..\include\liquidFOLDERS32.manifest.xml"

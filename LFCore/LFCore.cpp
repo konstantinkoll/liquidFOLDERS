@@ -749,6 +749,18 @@ LFCore_API bool LFAddItemDescriptor(LFTransactionList* tl, LFItemDescriptor* i, 
 }
 
 
+LFCore_API LFMaintenanceList* LFAllocMaintenanceList()
+{
+	return new LFMaintenanceList();
+}
+
+LFCore_API void LFFreeMaintenanceList(LFMaintenanceList* ml)
+{
+	if (ml)
+		delete ml;
+}
+
+
 LFCore_API LFStoreDescriptor* LFAllocStoreDescriptor()
 {
 	LFStoreDescriptor* s = new LFStoreDescriptor;

@@ -59,7 +59,7 @@ inline bool CIndex::LoadTable(unsigned int ID, unsigned int* res)
 	if (res)
 		*res = Tables[ID]->OpenStatus;
 
-	return (Tables[ID]->OpenStatus!=HeapError) && (Tables[ID]->OpenStatus!=HeapCannotCreate);
+	return (Tables[ID]->OpenStatus!=HeapError) && (Tables[ID]->OpenStatus!=HeapNoAccess) && (Tables[ID]->OpenStatus!=HeapCannotCreate);
 }
 
 bool CIndex::Create()
@@ -86,9 +86,12 @@ unsigned int CIndex::Check(bool scheduled)
 		LoadTable(a, &tres[a]);
 		switch (tres[a])
 		{
-		case HeapCannotCreate:
+		case HeapNoAccess:
+			return IndexNoAccess;
 		case HeapError:
 			return IndexError;
+		case HeapCannotCreate:
+			return IndexCannotCreate;
 		case HeapCreated:
 			if (a==IDMaster)
 				return IndexCompleteReindexRequired;
@@ -248,7 +251,7 @@ void CIndex::Update(LFTransactionList* tl, LFVariantData* value1, LFVariantData*
 							}
 							else
 							{
-								tl->m_Items[a].LastError = tl->m_LastError = LFIndexAccessError;
+								tl->m_Items[a].LastError = tl->m_LastError = LFIndexTableLoadError;
 							}
 
 						tl->m_Items[a].Processed = true;
@@ -319,7 +322,7 @@ void CIndex::Delete(LFTransactionList* tl, char* DatPath)
 							}
 							else
 							{
-								tl->m_Items[a].LastError = tl->m_LastError = LFIndexAccessError;
+								tl->m_Items[a].LastError = tl->m_LastError = LFIndexTableLoadError;
 							}
 
 						// Master
@@ -352,7 +355,7 @@ void CIndex::Retrieve(LFFilter* f, LFSearchResult* res)
 
 	if (!LoadTable(IDMaster))
 	{
-		res->m_LastError = LFIndexAccessError;
+		res->m_LastError = LFIndexTableLoadError;
 		return;
 	}
 
@@ -386,7 +389,7 @@ void CIndex::Retrieve(LFFilter* f, LFSearchResult* res)
 				}
 				else
 				{
-					res->m_LastError = LFIndexAccessError;
+					res->m_LastError = LFIndexTableLoadError;
 				}
 
 			if (pass!=1)
@@ -405,7 +408,7 @@ void CIndex::Retrieve(LFFilter* f, LFSearchResult* res)
 unsigned int CIndex::RetrieveStats(unsigned int* cnt, __int64* size)
 {
 	if (!LoadTable(IDMaster))
-		return LFIndexAccessError;
+		return LFIndexTableLoadError;
 
 	int ID = 0;
 	LFCoreAttributes* PtrM;

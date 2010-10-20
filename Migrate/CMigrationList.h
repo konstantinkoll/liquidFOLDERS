@@ -11,7 +11,7 @@
 // CMigrationList
 //
 
-struct ML_Entry
+struct ML_Item
 {
 	wchar_t Name[256];
 	wchar_t Path[MAX_PATH];
@@ -21,9 +21,9 @@ struct ML_Entry
 	BOOL Recursive;
 };
 
-typedef DynArray<ML_Entry*> CReportList;
+typedef DynArray<ML_Item*> CReportList;
 
-class CMigrationList : public DynArray<ML_Entry>
+class CMigrationList : public DynArray<ML_Item>
 {
 public:
 	CMigrationList();

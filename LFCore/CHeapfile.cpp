@@ -31,7 +31,7 @@ CHeapfile::CHeapfile(char* Path, char* Filename, unsigned int _ElementSize, unsi
 	hFile = CreateFileA(IdxFilename, GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_SEQUENTIAL_SCAN, NULL);
 	if (hFile==INVALID_HANDLE_VALUE)
 	{
-		OpenStatus = HeapError;
+		OpenStatus = HeapNoAccess;
 	}
 	else
 	{

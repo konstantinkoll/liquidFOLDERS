@@ -2,7 +2,7 @@
 #include "liquidFOLDERS.h"
 #include "DynArray.h"
 
-struct LFTL_Entry
+struct LFTL_Item
 {
 	LFItemDescriptor* Item;
 	unsigned int LastError;
@@ -11,7 +11,7 @@ struct LFTL_Entry
 };
 
 
-class LFTransactionList : public DynArray<LFTL_Entry>
+class LFTransactionList : public DynArray<LFTL_Item>
 {
 public:
 	LFTransactionList();

@@ -967,13 +967,13 @@ void CMainFrame::OnStoreImportFolder()
 
 void CMainFrame::OnStoreMaintenance()
 {
-	LFMaintenanceDlgParameters p;
-	ZeroMemory(&p, sizeof(p));
+	LFMaintenanceList* ml = LFStoreMaintenance();
+	LFErrorBox(ml->m_LastError);
 
-	LFErrorBox(LFStoreMaintenance(&p.Repaired, &p.NoAccess, &p.NoFreeSpace, &p.RepairError), GetSafeHwnd());
-
-	LFStoreMaintenanceDlg dlg(&p, this);
+	LFStoreMaintenanceDlg dlg(ml, this);
 	dlg.DoModal();
+
+	LFFreeMaintenanceList(ml);
 
 	OnNavigateReload();
 }

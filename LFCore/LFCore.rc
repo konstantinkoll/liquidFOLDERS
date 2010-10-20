@@ -201,12 +201,14 @@ END
 
 STRINGTABLE 
 BEGIN
+    IDS_LFOk                "Ok"
+    IDS_LFCancel            "Canceled"
     IDS_LFErrorMemoryError  "Memory error"
     IDS_LFErrorIllegalQuery "The filter describes an illegal request."
     IDS_LFErrorIllegalStoreDescriptor "The store settings are not valid."
     IDS_LFErrorStoreNotFound 
                             "The selected store is not mounted or not present."
-    IDS_LFErrorDriveNotReady "Physical drive not ready!"
+    IDS_LFErrorDriveNotReady "The drive is not ready!"
     IDS_LFErrorDriveWriteProtected "The drive is write protected."
     IDS_LFErrorIllegalPhysFolder "The physical folder is not accessible."
 END
@@ -226,10 +228,14 @@ BEGIN
                             "At least one of the selected items does not support this operation."
     IDS_LFErrorIllegalValue "At least one of the property values is illegal."
     IDS_LFErrorIndexNotCreated "The store index could not be created."
-    IDS_LFErrorIndexAccessError 
-                            "The store index cannot be accessed. Please run scheduled maintenance."
+    IDS_LFErrorIndexTableLoadError 
+                            "An index table cannot be loaded. Please run scheduled maintenance."
     IDS_LFErrorIndexRepairError 
                             "The store index is damaged and could not be repaired (write protected disc ?)."
+    IDS_LFErrorIndexAccessError 
+                            "The store cannot be accessed. Please check the access rights of the store's directory."
+    IDS_LFErrorIndexCreateError 
+                            "The store index cannot be created (write protected disc ?)."
     IDS_LFErrorNotEnoughFreeDisc 
                             "There is not enough free disc space."
     IDS_LFErrorCannotDeleteFile 

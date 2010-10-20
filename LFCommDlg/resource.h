@@ -60,6 +60,8 @@
 #define IDS_CHOOSESTORE_HINT            20316
 #define IDS_CHOOSEDEFAULTSTORE_CAPTION  20317
 #define IDS_CHOOSEDEFAULTSTORE_HINT     20318
+#define IDS_MAINTENANCETAB0             20319
+#define IDS_MAINTENANCETAB1             20320
 #define IDD_ABOUT                       21000
 #define IDC_RIBBONCOLORCOMBO            21001
 #define IDC_TEXTUREFRAME                21002
@@ -142,10 +144,8 @@
 #define IDC_ALPHABETICALLY              21803
 #define IDC_RESET                       21804
 #define IDD_STOREMAINTENANCE            21900
-#define IDC_SERVICED                    21901
-#define IDC_WRITEPROTECTED              21902
-#define IDC_NOFREESPACE                 21903
-#define IDC_ERROR                       21904
+#define IDC_TABS                        21901
+#define IDC_STATUS                      21902
 #define IDD_EDITTAGS                    22000
 #define IDC_TAGS                        22001
 #define IDC_ADDTAGS                     22002

@@ -21,9 +21,9 @@ bool LFTransactionList::AddItemDescriptor(LFItemDescriptor* i, unsigned int User
 {
 	assert(i);
 
-	LFTL_Entry entry = { i, LFOk, UserData, false };
+	LFTL_Item item = { i, LFOk, UserData, false };
 
-	if (!DynArray::AddItem(entry))
+	if (!DynArray::AddItem(item))
 		return false;
 
 	i->RefCount++;

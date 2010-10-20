@@ -3,7 +3,6 @@
 //
 
 #pragma once
-#include "LFCommDlg.h"
 #include "Migrate.h"
 #include "CMigrationList.h"
 
@@ -34,5 +33,5 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
-	CImageListTransparent m_Icons;
+	CImageList m_Icons;
 };

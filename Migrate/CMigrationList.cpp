@@ -3,7 +3,6 @@
 //
 
 #include "StdAfx.h"
-#include "..\\include\\LFCore.h"
 #include "CMigrationList.h"
 
 
@@ -29,14 +28,14 @@ bool CMigrationList::AddFolder(wchar_t* name, wchar_t* path, LFItemDescriptor* i
 {
 	ASSERT(path);
 
-	ML_Entry entry = { L"", L"", Icon, LFAllocFileImportList(), LFAllocItemDescriptor(it), Recursive };
-	wcscpy_s(entry.Name, 256, name);
-	wcscpy_s(entry.Path, MAX_PATH, path);
-	LFAddImportPath(entry.List, path);
+	ML_Item item = { L"", L"", Icon, LFAllocFileImportList(), LFAllocItemDescriptor(it), Recursive };
+	wcscpy_s(item.Name, 256, name);
+	wcscpy_s(item.Path, MAX_PATH, path);
+	LFAddImportPath(item.List, path);
 
-	if (!DynArray::AddItem(entry))
+	if (!DynArray::AddItem(item))
 	{
-		LFFreeFileImportList(entry.List);
+		LFFreeFileImportList(item.List);
 		LFFreeItemDescriptor(it);
 		return false;
 	}

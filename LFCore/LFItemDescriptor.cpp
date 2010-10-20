@@ -289,7 +289,7 @@ LFCore_API LFItemDescriptor* LFAllocItemDescriptor(LFStoreDescriptor* s)
 	}
 	else
 	{
-		d->IconID = (s->StoreMode==LFStoreModeInternal ? IDI_STORE_Internal : IDI_STORE_Bag);
+		d->IconID = (s->StoreMode==LFStoreModeInternal ? IDI_STORE_Internal : s->StoreMode==LFStoreModeRemote ? IDI_STORE_Server : IDI_STORE_Bag);
 		if ((s->StoreMode==LFStoreModeHybrid) || (s->StoreMode==LFStoreModeExternal))
 			if (wcscmp(s->LastSeen, L"")!=0)
 			{
@@ -306,8 +306,7 @@ LFCore_API LFItemDescriptor* LFAllocItemDescriptor(LFStoreDescriptor* s)
 		d->Type |= LFTypeGhosted | LFTypeNotMounted;
 	}
 	else
-		// TODO
-		if ((s->IndexVersion<CurIdxVersion) /*|| (s->MaintenanceTime<)*/)
+		if (s->IndexVersion<CurIdxVersion)
 			d->Type |= LFTypeRequiresMaintenance;
 
 	d->CategoryID = s->StoreMode;

@@ -10,9 +10,11 @@
 #define IndexOk                        0
 #define IndexPartiallyRepaired         1
 #define IndexFullyRepaired             2
-#define IndexError                     3
-#define IndexCompleteReindexRequired   4
-#define IndexNotEnoughFreeDiscSpace    5
+#define IndexNoAccess                  3
+#define IndexError                     4
+#define IndexCannotCreate              5
+#define IndexCompleteReindexRequired   6
+#define IndexNotEnoughFreeDiscSpace    7
 
 class CIndex
 {

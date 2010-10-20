@@ -11,11 +11,12 @@
 #define HeapSignature                  "LFIDX"
 
 #define HeapOk                         0
-#define HeapError                      1
-#define HeapCreated                    2
-#define HeapCannotCreate               3
-#define HeapMaintenanceRecommended     4
-#define HeapMaintenanceRequired        5
+#define HeapNoAccess                   1
+#define HeapError                      2
+#define HeapCreated                    3
+#define HeapCannotCreate               4
+#define HeapMaintenanceRecommended     5
+#define HeapMaintenanceRequired        6
 
 struct HeapfileHeader
 {

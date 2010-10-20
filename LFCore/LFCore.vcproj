@@ -430,6 +430,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\LFMaintenanceList.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\LFSearchResult.cpp"
 				>
 			</File>
@@ -561,6 +565,10 @@
 			</File>
 			<File
 				RelativePath=".\LFItemDescriptor.h"
+				>
+			</File>
+			<File
+				RelativePath=".\LFMaintenanceList.h"
 				>
 			</File>
 			<File

@@ -507,6 +507,7 @@ struct LFItemDescriptor
 #define LFStoreModeInternal             0
 #define LFStoreModeHybrid               1
 #define LFStoreModeExternal             2
+#define LFStoreModeRemote               3
 
 struct LFStoreDescriptor
 {
@@ -549,16 +550,19 @@ struct LFStoreDescriptor
 #define LFIllegalItemType               16
 #define LFIllegalValue                  17
 #define LFIndexNotCreated               18
-#define LFIndexAccessError              19
+#define LFIndexTableLoadError           19
 #define LFIndexRepairError              20
-#define LFNotEnoughFreeDiscSpace        21
-#define LFCannotDeleteFile              22
-#define LFCannotCopyIndex               23
-#define LFNoFileBody                    24
+#define LFIndexAccessError              21
+#define LFIndexCreateError              22
+#define LFNotEnoughFreeDiscSpace        23
+#define LFCannotDeleteFile              24
+#define LFCannotCopyIndex               25
+#define LFNoFileBody                    26
 
 
-// Structures and classes from LFCore.DLL
+// Structures and classes from LFCore.dll
 
 #include "..\\LFCore\\LFFileImportList.h"
+#include "..\\LFCore\\LFMaintenanceList.h"
 #include "..\\LFCore\\LFSearchResult.h"
 #include "..\\LFCore\\LFTransactionList.h"

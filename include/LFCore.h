@@ -207,10 +207,11 @@ LFCore_API void LFSortSearchResult(LFSearchResult* res, unsigned int attr, bool 
 LFCore_API LFSearchResult* LFGroupSearchResult(LFSearchResult* res, unsigned int attr, bool descending, bool categories, unsigned int icon, bool groupone, LFFilter* f);
 
 
+
 // Neue Datei-Importliste erzeugen
 LFCore_API LFFileImportList* LFAllocFileImportList();
 
-// Existierendes LFFileImportList freigeben
+// Existierende LFFileImportList freigeben
 LFCore_API void LFFreeFileImportList(LFFileImportList* il);
 
 // String zur LFFileImportList hinzufügen
@@ -221,11 +222,19 @@ LFCore_API bool LFAddImportPath(LFFileImportList* il, wchar_t* path);
 // Neue Transaktionsliste erzeugen
 LFCore_API LFTransactionList* LFAllocTransactionList();
 
-// Existierendes LFTransactionList freigeben
+// Existierende LFTransactionList freigeben
 LFCore_API void LFFreeTransactionList(LFTransactionList* tl);
 
 // LFItemDescriptor zur LFTransactionList hinzufügen
 LFCore_API bool LFAddItemDescriptor(LFTransactionList* tl, LFItemDescriptor* i, unsigned int UserData=0);
+
+
+
+// Neue LFMaintenanceList erzeugen
+LFCore_API LFMaintenanceList* LFAllocMaintenanceList();
+
+// Existierende LFMaintenanceList freigeben
+LFCore_API void LFFreeMaintenanceList(LFMaintenanceList* ml);
 
 
 
@@ -324,7 +333,7 @@ LFCore_API bool LFAskDeleteStore(LFStoreDescriptor* s, HWND hWnd=NULL);
 LFCore_API unsigned int LFStoreMaintenance(char* key);
 
 // Startet geplante Wartungsarbeiten für alle Store
-LFCore_API unsigned int LFStoreMaintenance(unsigned int* Repaired=NULL, unsigned int* NoAccess=NULL, unsigned int* NoFreeSpace=NULL, unsigned int* RepairError=NULL);
+LFCore_API LFMaintenanceList* LFStoreMaintenance();
 
 // Gibt an, ob ein Default Stores verfügbar ist
 LFCore_API bool LFDefaultStoreAvailable();

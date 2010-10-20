@@ -9,24 +9,26 @@
 // LFStoreMaintenanceDlg
 //
 
-struct LFMaintenanceDlgParameters
-{
-	UINT Repaired;
-	UINT NoAccess;
-	UINT NoFreeSpace;
-	UINT RepairError;
-};
+typedef DynArray<LFML_Item*> CMaintenanceReportList;
 
 class AFX_EXT_CLASS LFStoreMaintenanceDlg : public CDialog
 {
 public:
-	LFStoreMaintenanceDlg(LFMaintenanceDlgParameters* pParameters, CWnd* pParentWnd=NULL);
+	LFStoreMaintenanceDlg(LFMaintenanceList* ml, CWnd* pParentWnd=NULL);
 
 protected:
-	LFMaintenanceDlgParameters* parameters;
+	CMaintenanceReportList m_Lists[2];
+	int m_Page;
 
-	void SetNumber(UINT ID, UINT Number);
+	void SetPage(int page);
 
 	afx_msg BOOL OnInitDialog();
+	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
+	afx_msg void OnTabChanged(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnGetDispInfo(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnItemChanged(NMHDR* pNMHDR, LRESULT* pResult);
 	DECLARE_MESSAGE_MAP()
+
+private:
+	CImageList m_Icons;
 };

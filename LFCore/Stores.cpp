@@ -789,6 +789,12 @@ unsigned int RunMaintenance(LFStoreDescriptor* s, bool scheduled)
 	CIndex* idx = new CIndex((s->StoreMode!=LFStoreModeHybrid) ? s->IdxPathMain : s->IdxPathAux, s->StoreID, s->DatPath);
 	switch (idx->Check(scheduled))
 	{
+	case IndexNoAccess:
+		delete idx;
+		return LFIndexAccessError;
+	case IndexCannotCreate:
+		delete idx;
+		return LFIndexCreateError;
 	case IndexNotEnoughFreeDiscSpace:
 		delete idx;
 		return LFNotEnoughFreeDiscSpace;
@@ -849,10 +855,15 @@ LFCore_API unsigned int LFStoreMaintenance(char* key)
 	return res;
 }
 
-LFCore_API unsigned int LFStoreMaintenance(unsigned int* Repaired, unsigned int* NoAccess, unsigned int* NoFreeSpace, unsigned int* RepairError)
+LFCore_API LFMaintenanceList* LFStoreMaintenance()
 {
+	LFMaintenanceList* ml = LFAllocMaintenanceList();
+
 	if (!GetMutex(Mutex_Stores))
-		return LFMutexError;
+	{
+		ml->m_LastError = LFMutexError;
+		return ml;
+	}
 
 	char* keys;
 	unsigned int count = FindStores(&keys);
@@ -866,7 +877,8 @@ LFCore_API unsigned int LFStoreMaintenance(unsigned int* Repaired, unsigned int*
 			if (!GetMutex(Mutex_Stores))
 			{
 				free(keys);
-				return LFMutexError;
+				ml->m_LastError = LFMutexError;
+				return ml;
 			}
 
 			HANDLE StoreLock = NULL;
@@ -876,25 +888,7 @@ LFCore_API unsigned int LFStoreMaintenance(unsigned int* Repaired, unsigned int*
 			if ((!slot) || (!StoreLock))
 				continue;
 
-			switch (LFStoreMaintenance(ptr))
-			{
-			case LFOk:
-				if (Repaired)
-					(*Repaired)++;
-				break;
-			case LFIllegalPhysicalPath:
-			case LFDriveWriteProtected:
-				if (NoAccess)
-					(*NoAccess)++;
-				break;
-			case LFNotEnoughFreeDiscSpace:
-				if (NoFreeSpace)
-					(*NoFreeSpace)++;
-				break;
-			default:
-				if (RepairError)
-					(*RepairError)++;
-			}
+			ml->AddStore(LFStoreMaintenance(ptr), slot->StoreName, ptr, slot->StoreMode==LFStoreModeInternal ? IDI_STORE_Internal : slot->StoreMode==LFStoreModeRemote ? IDI_STORE_Server : IDI_STORE_Bag);
 			ReleaseMutexForStore(StoreLock);
 
 			ptr += LFKeySize;
@@ -903,7 +897,7 @@ LFCore_API unsigned int LFStoreMaintenance(unsigned int* Repaired, unsigned int*
 		free(keys);
 	}
 
-	return LFOk;
+	return ml;
 }
 
 unsigned int OpenStore(LFStoreDescriptor* s, bool WriteAccess, CIndex* &Index1, CIndex* &Index2)
