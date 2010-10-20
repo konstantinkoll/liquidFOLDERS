@@ -582,8 +582,21 @@ void LFSearchResult::GroupArray(unsigned int attr, unsigned int icon, LFFilter* 
 			wchar_t tag[256];
 			while (GetNextTag(&tagarray, tag, 256))
 			{
+				bool first = true;
 				for (wchar_t* ptr = tag; *ptr; ptr++)
-					*ptr = (wchar_t)tolower(*ptr);
+					switch (*ptr)
+					{
+					case L' ':
+					case L',':
+					case L':':
+					case L';':
+					case L'|':
+						first = true;
+						break;
+					default:
+						*ptr = first ? (wchar_t)toupper(*ptr) : (wchar_t)tolower(*ptr);
+						first = false;
+					}
 
 				filetags[tag] = 1;
 				found = true;

@@ -268,6 +268,7 @@ bool IsNullValue(unsigned int attr, void* v)
 bool GetNextTag(wchar_t** tagarray, wchar_t* tag, size_t cCount)
 {
 	wchar_t* start = NULL;
+	bool quotation = false;
 
 	while (**tagarray!=L'\0')
 	{
@@ -278,10 +279,25 @@ bool GetNextTag(wchar_t** tagarray, wchar_t* tag, size_t cCount)
 		case L':':
 		case L';':
 		case L'|':
-			if (start)
+			if ((start) && (!quotation))
 			{
-				wcsncpy_s(tag, cCount, start, *tagarray-start);
+				wcsncpy_s(tag, cCount, start, ((*tagarray)++)-start);
 				return true;
+			}
+			break;
+		case L'"':
+			if (quotation)
+			{
+				quotation = false;
+				if (start)
+				{
+					wcsncpy_s(tag, cCount, start, ((*tagarray)++)-start);
+					return true;
+				}
+			}
+			else
+			{
+				quotation = !start;
 			}
 			break;
 		default:
@@ -706,13 +722,25 @@ LFCore_API void LFSanitizeUnicodeArray(wchar_t* buf, size_t cCount)
 	typedef stdext::hash_map<std::wstring, unsigned int> hashcount;
 	hashcount tags;
 
-	wchar_t tag[256];
+	wchar_t tag[259];
 	wchar_t* tagarray = buf;
 	while (GetNextTag(&tagarray, tag, 256))
 	{
+		bool first = true;
 		for (wchar_t* ptr = tag; *ptr; ptr++)
-			*ptr = (wchar_t)tolower(*ptr);
-		tag[0] = (wchar_t)toupper(tag[0]);
+			switch (*ptr)
+			{
+			case L' ':
+			case L',':
+			case L':':
+			case L';':
+			case L'|':
+				first = true;
+				break;
+			default:
+				*ptr = first ? (wchar_t)toupper(*ptr) : (wchar_t)tolower(*ptr);
+				first = false;
+			}
 
 		tags[tag] = 1;
 	}
@@ -720,8 +748,22 @@ LFCore_API void LFSanitizeUnicodeArray(wchar_t* buf, size_t cCount)
 	buf[0] = L'\0';
 	for (hashcount::iterator it=tags.begin(); it!=tags.end(); it++)
 	{
+		tag[0] = L'\0';
 		if (buf[0]!=L'\0')
-			wcscat_s(buf, cCount, L" ");
-		wcscat_s(buf, cCount, it->first.c_str());
+			wcscpy_s(tag, cCount, L" ");
+
+		if (it->first.find_first_of(L" ,:;|")!=std::wstring::npos)
+		{
+			wcscat_s(tag, 259, L"\"");
+			wcscat_s(tag, 259, it->first.c_str());
+			wcscat_s(tag, 259, L"\"");
+		}
+		else
+		{
+			wcscat_s(tag, 256, it->first.c_str());
+		}
+
+		if (wcslen(buf)+wcslen(tag)<=255)
+			wcscat_s(buf, cCount, tag);
 	}
 }
