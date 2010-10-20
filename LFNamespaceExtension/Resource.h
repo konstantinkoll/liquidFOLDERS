@@ -22,7 +22,6 @@
 #define IDS_FILES_Plural                1009
 #define IDS_CAPT_CreateLink             1010
 #define IDS_TEXT_CreateLink             1011
-#define IDS_LINK_DefaultStore           1012
 #define IDS_MENU_CreateNewStore         2000
 #define IDS_HINT_CreateNewStore         2001
 #define IDS_MENU_MakeDefaultStore       2002

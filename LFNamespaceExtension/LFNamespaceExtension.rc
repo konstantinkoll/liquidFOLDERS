@@ -112,7 +112,6 @@ BEGIN
     IDS_FILES_Plural        "%d files"
     IDS_CAPT_CreateLink     "Shortcut"
     IDS_TEXT_CreateLink     "You cannot create a shortcut here. Would you like to place it on the desktop ?"
-    IDS_LINK_DefaultStore   "Default Store"
 END
 
 STRINGTABLE 
