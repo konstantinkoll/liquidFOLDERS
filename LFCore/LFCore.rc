@@ -125,7 +125,7 @@ BEGIN
     IDS_LFCategoryExternalStores 
                             "Externe Stores\nDiese Stores befinden sich vollständig auf Wechseldatenträgern."
     IDS_LFCategoryRemoteStores 
-                            "Netzkwerk-Stores\nDiese Stores befinden sich auf anderen Computern."
+                            "Netzwerk-Stores\nDiese Stores befinden sich auf anderen Computern."
     IDS_LFCategoryDrives    "Wechseldatenträger\nWählen Sie einen dieser Datenträger, um einen externen Store oder Hybrid-Store anzulegen."
     IDS_LFCategoryStore     "Dieser Store"
     IDS_LFCategoryMediaTypes "Multimedia"
@@ -208,7 +208,7 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_LFOk                "Ok"
+    IDS_LFOk                "OK"
     IDS_LFCancel            "Abgebrochen"
     IDS_LFErrorMemoryError  "Speicherfehler"
     IDS_LFErrorIllegalQuery "Der Filter beschreibt eine ungültige Abfrage."
@@ -221,7 +221,8 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_LFErrorIllegalPhysFolder "Auf das physische Verzeichnis kann nicht zugegriffen werden."
+    IDS_LFErrorIllegalPhysFolder 
+                            "Auf das physische Verzeichnis kann nicht zugegriffen werden."
     IDS_LFErrorRegistryError "Auf die Registry kann nicht zugegriffen werden."
     IDS_LFErrorIllegalKey   "Die Store- oder Datei-ID ist ungültig."
     IDS_LFErrorNoDefaultStore "Zur Zeit ist kein Standard-Store festgelegt."
@@ -242,13 +243,14 @@ BEGIN
                             "Auf den Store kann nicht zugegriffen werden. Bitte prüfen Sie die Sicherheitseinstellungen für das Verzeichnis."
     IDS_LFErrorIndexCreateError 
                             "Der Index kann nicht erstellt werden (Datenträger schreibgeschützt ?)."
-    IDS_LFErrorNotEnoughFreeDisc "Auf dem Datenträger ist nicht mehr ausreichend Speicherplatz frei."
+    IDS_LFErrorNotEnoughFreeDisc 
+                            "Auf dem Datenträger ist nicht mehr ausreichend Speicherplatz frei."
+    IDS_LFErrorCannotDeleteFile 
+                            "Einige Dateien können nicht gelöscht werden, da sie noch in Gebrauch sind."
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_LFErrorCannotDeleteFile 
-                            "Einige Dateien können nicht gelöscht werden, da sie noch in Gebrauch sind."
     IDS_LFErrorCannotCopyIndex 
                             "Der Index kann nicht aktualisiert werden (Datenträger schreibgeschützt ?)."
     IDS_LFErrorNoFileBody   "Der eigentliche Dateikörper befindet sich nicht im Store."
@@ -324,7 +326,7 @@ END
 STRINGTABLE 
 BEGIN
     IDS_DomainAllFiles      "Alle Dateien\nAlle Dateien in diesem Store"
-    IDS_DomainAllMediaFiles "Alle Multimedia-Datein\nAll Audio-Dateien, Bilder, Fotos und Videos"
+    IDS_DomainAllMediaFiles "Alle Multimedia-Dateien\nAll Audio-Dateien, Bilder, Fotos und Videos"
     IDS_DomainFavorites     "Favoriten\nAlle Dateien mit Bewertung"
     IDS_DomainTrash         "Papierkorb\nGelöschte Dateien"
     IDS_DomainUnknown       "Unbekannte Dateiformate\nDateien, die noch keiner Kategorie zugeordner wurden"
@@ -464,7 +466,7 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_LFOk                "Ok"
+    IDS_LFOk                "OK"
     IDS_LFCancel            "Canceled"
     IDS_LFErrorMemoryError  "Memory error"
     IDS_LFErrorIllegalQuery "The filter describes an illegal request."
@@ -499,12 +501,12 @@ BEGIN
     IDS_LFErrorIndexCreateError 
                             "The store index cannot be created (write protected disc ?)."
     IDS_LFErrorNotEnoughFreeDisc "There is not enough free disc space."
+    IDS_LFErrorCannotDeleteFile 
+                            "Some files cannot be deleted because they are still in use."
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_LFErrorCannotDeleteFile 
-                            "Some files cannot be deleted because they are still in use."
     IDS_LFErrorCannotCopyIndex 
                             "The index cannot be updated (write protected disc ?)."
     IDS_LFErrorNoFileBody   "The actual file body is not present in the store."
@@ -611,6 +613,264 @@ BEGIN
 END
 
 #endif    // Englisch (neutral) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// Französisch (neutral) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_FRA)
+#ifdef _WIN32
+LANGUAGE LANG_FRENCH, SUBLANG_NEUTRAL
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE 
+BEGIN
+    IDS_LFCategoryInternalStores 
+                            "Stores internes\nCes stores résident sur un lecteur interne et sont toujours disponibles."
+    IDS_LFCategoryHybridStores 
+                            "Stores hybrides\nCes stores peuvent être fouillés, même quand le lecteur amovible n'est pas raccordé."
+    IDS_LFCategoryExternalStores 
+                            "Stores externes\nCes stores résident entièrement sur les lecteurs amovibles."
+    IDS_LFCategoryRemoteStores 
+                            "Netzwerk-Stores\nDiese Stores befinden sich auf anderen Computern."
+    IDS_LFCategoryDrives    "Lecteurs amovibles\nChoisissez un d'entre ceux-ci pour créer un nouveau store externe ou hybride."
+    IDS_LFCategoryStore     "Ce store"
+    IDS_LFCategoryMediaTypes "Multimédia"
+    IDS_LFCategoryDocuments "Documents"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_LFCategoryHousekeeping "Ménage"
+    IDS_LFCategoryNight     "Nacht\nBis 6 Uhr"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_LFCategoryBasic     "Fondamental"
+    IDS_LFCategoryGeotagging "Geodata"
+    IDS_LFCategoryVisual    "Visuel"
+    IDS_LFCategoryPhotographic "Photos"
+    IDS_LFCategoryAudio     "Audio"
+    IDS_LFCategoryTimebased "Basé sur le temps"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_LFCategoryBibliographic "Bibliographique"
+    IDS_LFCategoryWorkflow  "Vorgang"
+    IDS_LFCategoryInternal  "Utilisation interne"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_LFContextStores     "Stores"
+    IDS_LFContextStoreHome  "Store-Übersicht"
+    IDS_LFContextClipboard  "Zwischenablage"
+    IDS_LFContextDefault    "Défault"
+    IDS_LFContextHousekeeping "Verwaltung"
+    IDS_LFContextTrash      "Déchets"
+    IDS_LFContextSubfolderDefault "Unterordner"
+    IDS_LFContextSubfolderDay "Tag"
+    IDS_LFContextSubfolderLocation "Ort"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_BacklinkName        "En arrière"
+    IDS_BacklinkDescription "Un niveau plus en haut"
+    IDS_StoreDefaultName    "Store nouveau"
+    IDS_LastSeen            "Dernier monté de %s"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_SeenOn              "Monté sur %s"
+    IDS_ErrorCaption        "Erreur"
+    IDS_DeleteStoreCaption  "Effacez le store ""%s"""
+    IDS_DeleteStoreMessage  "Voulez-vous vraiment effacer ce store ?"
+    IDS_HintSingular        "%d fichier"
+    IDS_HintPlural          "%d fichiers"
+    IDS_Rating1             "Schlecht"
+    IDS_Rating2             "Ausreichend"
+    IDS_Rating3             "Gut"
+    IDS_Rating4             "Ausgezeichnet"
+    IDS_Rating5             "Exzellent"
+    IDS_Priority1           "Sehr niedrig"
+    IDS_Priority2           "Niedrig"
+    IDS_Priority3           "Normal"
+    IDS_Priority4           "Hoch"
+    IDS_Priority5           "Dringend"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_Size1               "Winzig(< 32 KB)"
+    IDS_Size2               "Klein (< 128 KB)"
+    IDS_Size3               "Mittel (< 1 MB)"
+    IDS_Size4               "Groß (< 16 MB)"
+    IDS_Size5               "Sehr groß (< 128 MB)"
+    IDS_Size6               "Riesig (128 MB und größer)"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_LFOk                "OK"
+    IDS_LFCancel            "Abgebrochen"
+    IDS_LFErrorMemoryError  "Speicherfehler"
+    IDS_LFErrorIllegalQuery "Der Filter beschreibt eine ungültige Abfrage."
+    IDS_LFErrorIllegalStoreDescriptor "Die Store-Einstellungen sind ungültig."
+    IDS_LFErrorStoreNotFound 
+                            "Der gewählte Store ist nicht eingebunden oder nicht vorhanden."
+    IDS_LFErrorDriveNotReady "Der Datenträger ist nicht bereit!"
+    IDS_LFErrorDriveWriteProtected "Der Datenträger ist schreibgeschützt."
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_LFErrorIllegalPhysFolder 
+                            "Auf das physische Verzeichnis kann nicht zugegriffen werden."
+    IDS_LFErrorRegistryError "Auf die Registry kann nicht zugegriffen werden."
+    IDS_LFErrorIllegalKey   "Die Store- oder Datei-ID ist ungültig."
+    IDS_LFErrorNoDefaultStore "Zur Zeit ist kein Standard-Store festgelegt."
+    IDS_LFErrorTooManyStores 
+                            "Sie haben bereits die maximale Anzahl an Stores erzeugt!"
+    IDS_LFErrorStoreNotMounted "Der Store ist zur Zeit nicht eingebunden."
+    IDS_LFErrorMutexError   "liquidFOLDERS wird zur Zeit von einem anderen Prozess blockiert."
+    IDS_LFErrorIllegalAttribute 
+                            "Eine der gewählten Dateien verfügt nicht über die Eigenschaft."
+    IDS_LFErrorIllegalItemType 
+                            "Eine der gewählten Dateien unterstützt diese Operation nicht."
+    IDS_LFErrorIllegalValue "Eine der Eigenschaften hat einen ungültigen Wert."
+    IDS_LFErrorIndexTableLoadError 
+                            "Eine Index-Tabelle kann nicht geladen werden. Bitte führen Sie die Wartungsarbeiten aus."
+    IDS_LFErrorIndexRepairError 
+                            "Der Index ist beschädigt und kann leider nicht repariert werden (Datenträger schreibgeschützt ?)."
+    IDS_LFErrorIndexAccessError 
+                            "Auf den Store kann nicht zugegriffen werden. Bitte prüfen Sie die Sicherheitseinstellungen für das Verzeichnis."
+    IDS_LFErrorIndexCreateError 
+                            "Der Index kann nicht erstellt werden (Datenträger schreibgeschützt ?)."
+    IDS_LFErrorNotEnoughFreeDisc 
+                            "Auf dem Datenträger ist nicht mehr ausreichend Speicherplatz frei."
+    IDS_LFErrorCannotDeleteFile 
+                            "Einige Dateien können nicht gelöscht werden, da sie noch in Gebrauch sind."
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_LFErrorCannotCopyIndex 
+                            "Der Index kann nicht aktualisiert werden (Datenträger schreibgeschützt ?)."
+    IDS_LFErrorNoFileBody   "Der eigentliche Dateikörper befindet sich nicht im Store."
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_AttrFileName        "Nom"
+    IDS_AttrStoreID         "ID du store"
+    IDS_AttrFileID          "ID du fichier"
+    IDS_AttrComment         "Commentaire"
+    IDS_AttrDescription     "Beschreibung"
+    IDS_AttrCreationTime    "Temp de création"
+    IDS_AttrFileTime        "Verändert am"
+    IDS_AttrAddTime         "Hinzugefügt am"
+    IDS_AttrDeleteTime      "Gelöscht am"
+    IDS_AttrArchiveTime     "Archiviert am"
+    IDS_AttrFileFormat      "Format de fichier"
+    IDS_AttrFileCount       "Dateianzahl"
+    IDS_AttrFileSize        "Grandeur"
+    IDS_AttrFlags           "Attribute"
+    IDS_AttrURL             "Adresse URL"
+    IDS_AttrTags            "Schlagworte"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_AttrRating          "Estimation"
+    IDS_AttrPriority        "Priorité"
+    IDS_AttrLocationName    "Nom d'endroit"
+    IDS_AttrLocationIATA    "Code d'aéroport d'IATA"
+    IDS_AttrLocationGPS     "GPS-Koordinaten"
+    IDS_AttrHeight          "Altitude"
+    IDS_AttrWidth           "Latitude"
+    IDS_AttrResolution      "Résolution"
+    IDS_AttrAspectRatio     "Seitenverhältnis"
+    IDS_AttrVideoCodec      "Codec de vidèo"
+    IDS_AttrRoll            "Rouleau"
+    IDS_AttrExposure        "Exposition"
+    IDS_AttrFocus           "Foyer"
+    IDS_AttrAperture        "Ouverture"
+    IDS_AttrChip            "Chip"
+    IDS_AttrAlbum           "Album"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_AttrChannels        "Canaux"
+    IDS_AttrSamplerate      "Vitesse d'exploration"
+    IDS_AttrAudioCodec      "Codec d'audio"
+    IDS_AttrDuration        "Durée"
+    IDS_AttrBitrate         "Débit binaire"
+    IDS_AttrArtist          "Artiste ou auteur"
+    IDS_AttrTitle           "Titre"
+    IDS_AttrCopyright       "Copyright"
+    IDS_AttrISBN            "ISBN"
+    IDS_AttrLanguage        "Langue"
+    IDS_AttrPages           "Comte de page ou imge"
+    IDS_AttrRecordingTime   "Temp d'enregistrement"
+    IDS_AttrRecordingEquipment "Équipement"
+    IDS_AttrSignature       "Signature"
+    IDS_AttrFrom            "De"
+    IDS_AttrTo              "À"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_AttrResponsible     "Personne responsable"
+    IDS_AttrDueTime         "Dû le"
+    IDS_AttrDoneTime        "Fini le"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_DomainAllFiles      "Tous les fichiers\nTous les fichiers dans ce store"
+    IDS_DomainAllMediaFiles "Tous les fichiers multimédias\nTous les fichiers audio, les images, les photos et les vidéos"
+    IDS_DomainFavorites     "Favoris\nTous les fichiers qui sont estimés"
+    IDS_DomainTrash         "Déchets\nLes fichiers marqués pour la radiation finale"
+    IDS_DomainUnknown       "Unbekannte Dateiformate\nDateien, die noch keiner Kategorie zugeordner wurden"
+    IDS_DomainFilters       "Filtres\nFiltres définis par l'utilisateur"
+    IDS_DomainAudio         "Audio"
+    IDS_DomainPhotos        "Photos\nSeulement photos de JPEG et RAW"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_DomainPictures      "Images\nInclut des photos JPEG et RAW"
+    IDS_DomainVideos        "Vidéos"
+    IDS_DomainArchives      "Archives"
+    IDS_DomainContacts      "Contacte"
+    IDS_DomainDocuments     "Documents\nDocuments de bureau"
+    IDS_DomainEvents        "Événements et tâches"
+    IDS_DomainFonts         "Fontes"
+    IDS_DomainGeodata       "Geodata\nItinéraires de Flightmap, extensions de Google Earth"
+    IDS_DomainMessages      "Messages"
+    IDS_DomainPresentations "Présentations"
+    IDS_DomainSpreadsheets  "Tableur"
+    IDS_DomainWeb           "Pages Web"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_DefaultStore        "Store défaut"
+END
+
+#endif    // Französisch (neutral) resources
 /////////////////////////////////////////////////////////////////////////////
 
 
