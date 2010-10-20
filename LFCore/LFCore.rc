@@ -854,7 +854,7 @@ BEGIN
     IDS_DomainPictures      "Images\nInclut des photos JPEG et RAW"
     IDS_DomainVideos        "Vidéos"
     IDS_DomainArchives      "Archives"
-    IDS_DomainContacts      "Contacte"
+    IDS_DomainContacts      "Contacts"
     IDS_DomainDocuments     "Documents\nDocuments de bureau"
     IDS_DomainEvents        "Événements et tâches"
     IDS_DomainFonts         "Fontes"
