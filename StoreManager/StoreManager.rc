@@ -217,7 +217,7 @@ CAPTION "Details für „%s“ auswählen"
 FONT 8, "MS Shell Dlg", 400, 0, 0x0
 BEGIN
     GROUPBOX        "Details",IDC_STATIC,7,7,194,241
-    LTEXT           "Wählen Sie die Dateils für diesen Kontext:",IDC_STATIC,14,17,183,9
+    LTEXT           "Wählen Sie die Details für diesen Kontext:",IDC_STATIC,14,17,183,9
     CONTROL         "",IDC_VIEWATTRIBUTES,"SysListView32",LVS_SMALLICON | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_NOCOLUMNHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,14,27,118,213
     PUSHBUTTON      "Nach &oben",IDC_MOVEUP,137,27,58,14,WS_GROUP
     PUSHBUTTON      "Nach &unten",IDC_MOVEDOWN,137,46,58,14,WS_GROUP
