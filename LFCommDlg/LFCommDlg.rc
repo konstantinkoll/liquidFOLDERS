@@ -1429,7 +1429,7 @@ BEGIN
     LTEXT           "Observaciones:",IDC_STATIC,14,167,199,9
     LTEXT           "(Todos los archivos y el índice están almacenados de manera local en esta computadora)",IDC_STATIC,49,27,167,19
     LTEXT           "(Todos los archivos y el índice están almacenados de manera externa con una copia local del índice)",IDC_STATIC,49,65,167,17
-    LTEXT           "(Todos los archivos y el índice están almacenados de manera esterna)",IDC_STATIC,49,95,167,17
+    LTEXT           "(Todos los archivos y el índice están almacenados de manera externa)",IDC_STATIC,49,95,167,17
     CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ | WS_GROUP,14,48,201,1
 END
 
