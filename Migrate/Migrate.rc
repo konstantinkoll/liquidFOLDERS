@@ -299,6 +299,10 @@ BEGIN
     IDS_REPORTSTATUS_ONEFILE "%d Datei (%s) wurde erfolgreich importiert."
     IDS_REPORTSTATUS_FILES  "Alle %d Dateien (%s) wurden erfolgreich importiert."
     IDS_NOFOLDERS_CAPTION   "Migration starten"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_NOFOLDERS_MESSAGE   "Bitte wählen Sie mindestens ein Verzeichnis aus, indem Sie in der Baumansicht auf die Checkboxen links neben den Verzeichnissymbolen klicken."
 END
 
@@ -511,10 +515,226 @@ BEGIN
     IDS_REPORTSTATUS_ONEFILE "%d file (%s) was successfully imported."
     IDS_REPORTSTATUS_FILES  "All %d files (%s) were successfully imported."
     IDS_NOFOLDERS_CAPTION   "Start migration"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_NOFOLDERS_MESSAGE   "Please select at least one folder in the tree view by clicking on the checkboxes left to the folder icons."
 END
 
 #endif    // Englisch (neutral) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// Spanisch (neutral) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ESP)
+#ifdef _WIN32
+LANGUAGE LANG_SPANISH, SUBLANG_NEUTRAL
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+IDM_BACKGROUND MENU
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "Ajustar &todas las columnas",       ID_VIEW_AUTOSIZEALL
+        MENUITEM SEPARATOR
+        MENUITEM "Seleccionar &carpeta raíz...",      ID_VIEW_SELECTROOT
+    END
+END
+
+IDM_HEADER MENU
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "Autoajustar &todas las columnas",   ID_VIEW_AUTOSIZEALL
+        MENUITEM "Autoajustar &columna",              ID_VIEW_AUTOSIZE
+        MENUITEM SEPARATOR
+        MENUITEM "&Expandir columna",                 ID_VIEW_EXPANDCOLUMN
+        MENUITEM SEPARATOR
+        MENUITEM "Escoger &propiedad...",             IDD_CHOOSEPROPERTY
+        MENUITEM "&Restaurar propiedad",              ID_VIEW_RESETPROPERTY
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_BOTTOMAREA DIALOGEX 0, 0, 161, 28
+STYLE DS_SETFONT | DS_FIXEDSYS | DS_CONTROL | WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN
+EXSTYLE WS_EX_CONTROLPARENT
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "&Migrar archivos",IDC_MIGRATE,7,7,58,14,WS_DISABLED
+    CONTROL         "&Eliminar archivos fuente",IDC_DELETESOURCE,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,79,9,75,10
+END
+
+IDD_CHOOSEFOLDER DIALOGEX 0, 0, 206, 28
+STYLE DS_SETFONT | DS_FIXEDSYS | DS_CONTROL | WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN
+EXSTYLE WS_EX_CONTROLPARENT
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "Escoger &otra carpeta...",IDOK,7,7,88,14
+    CONTROL         "Expandir &todas las subcarpetas",IDC_EXPANDALL,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,109,9,90,10
+END
+
+IDD_CHOOSEPROPERTY DIALOGEX 0, 0, 204, 236
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
+CAPTION "Escoger propiedad"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "",IDC_ATTRIBUTES,"SysListView32",LVS_LIST | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SORTASCENDING | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_ALIGNLEFT | LVS_NOCOLUMNHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,14,37,176,161
+    DEFPUSHBUTTON   "OK",IDOK,31,214,50,14,WS_GROUP
+    PUSHBUTTON      "Restaurar",IDC_RESET,89,214,50,14,WS_GROUP
+    PUSHBUTTON      "Cancelar",IDCANCEL,147,214,50,14,WS_GROUP
+    GROUPBOX        "Propiedades disponibles",IDC_STATIC,7,7,190,200,WS_GROUP
+    LTEXT           "Sólo las propiedades editables por el usuario y que pueden ser extraídas de los nombres de la carpeta están listadas aquí.",IDC_STATIC,14,17,176,17
+END
+
+IDD_DELETEFILES DIALOGEX 0, 0, 277, 98
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
+CAPTION "Eliminar archivos de origen"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    LTEXT           "Por favor confirme que realmente quiere eliminar todos los archivos fuente.",IDC_CAPTION,7,31,263,8
+    CONTROL         "&Eliminar archivos fuente",IDC_DELETESOURCE,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,51,263,10
+    DEFPUSHBUTTON   "OK",IDOK,162,77,50,14,WS_GROUP
+    PUSHBUTTON      "Cancelar",IDCANCEL,220,77,50,14,WS_GROUP
+END
+
+IDD_REPORT DIALOGEX 0, 0, 324, 308
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
+CAPTION "Reporte de migración"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "&No seleccionar satisfactoriamente carpetas migradas",IDC_UNCHECKMIGRATED,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,289,250,10
+    DEFPUSHBUTTON   "OK",IDOK,267,287,50,14,WS_GROUP
+    CONTROL         "",IDC_TABS,"SysTabControl32",WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_GROUP | WS_TABSTOP,7,7,310,272
+    LTEXT           "Carpetas:",IDC_STATIC,14,27,296,8
+    CONTROL         "",IDC_FOLDERLIST,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_ALIGNLEFT | LVS_OWNERDATA | LVS_NOSORTHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,14,37,296,216
+    CONTROL         "",IDC_STATUS1,"Static",SS_LEFTNOWORDWRAP | SS_PATHELLIPSIS | WS_GROUP,14,255,296,8
+    CONTROL         "",IDC_STATUS2,"Static",SS_LEFTNOWORDWRAP | SS_ENDELLIPSIS | WS_GROUP,14,264,296,8
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO
+BEGIN
+    IDD_BOTTOMAREA, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 154
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 21
+    END
+
+    IDD_CHOOSEFOLDER, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 199
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 21
+    END
+
+    IDD_CHOOSEPROPERTY, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 197
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 228
+    END
+
+    IDD_DELETEFILES, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 270
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 91
+    END
+
+    IDD_REPORT, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 317
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 301
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE
+BEGIN
+    IDR_APPLICATION         "Asistente de migración"
+END
+
+STRINGTABLE
+BEGIN
+    ID_VIEW_SELECTROOT_TASKBAR
+                            "Abre un diálogo en donde usted puede seleccionar la carpeta raíz a visualizarse en la vista principal de abajo.\nSeleccionar carpeta raíz"
+    ID_VIEW_EXPAND          "Añade todas las subcarpetas de la carpeta seleccionada.\nExpander"
+    ID_VIEW_OPEN            "Abre la carpeta seleccionada.\nAbrir"
+    ID_VIEW_RENAME          "Renombra la carpeta seleccionada.\nRenombrar"
+    ID_VIEW_DELETE          "Elimina la carpeta seleccionada.\nEliminar"
+    ID_VIEW_PROPERTIES      "Visualiza las propiedades de la carpeta seleccionada.\nPropiedades"
+END
+
+STRINGTABLE
+BEGIN
+    IDS_NOROOT_CAPTION      "Usted no ha seleccionado todavía una carpeta raíz"
+    IDS_NOROOT_HINT         "Dar click arriba para seleccionar una carpeta para navegar."
+    IDS_FOLDER_CAPTION      "fuente:"
+    IDS_FOLDER_HINT         "Dar click aquí para seleccionar una carpeta"
+    IDS_STORE_CAPTION       "Store destino:"
+    IDS_STORE_HINT          "Dar click aquí para seleccionar el store destino"
+    IDS_BROWSEFORFOLDER_CAPTION "Carpeta raíz"
+    IDS_BROWSEFORFOLDER_HINT
+                            "Usted puede seleccionar subcarpetas y atribuir proyecciones después."
+END
+
+STRINGTABLE
+BEGIN
+    IDS_FOLDERCATEGORY1     "carpetas personales"
+    IDS_FOLDERCATEGORY2     "Bibliotecas"
+    IDS_FOLDERCATEGORY3     "carpetas compartidas"
+    IDS_FOLDERCATEGORY4     "Almacenamiento desmontable"
+    IDS_NOTHINGTODISPLAY    "No hay nada a visualizar."
+    IDS_NOPROPERTY          "Dar click aquí para escoger una propiedad"
+    IDS_CHOOSEPROPERTY      "Escoger &propiedad..."
+    IDS_EXPANDBRANCH        "Expandir &ramificación"
+    IDS_INCLUDEBRANCH       "&Incluir ramificación"
+    IDS_EXCLUDEBRANCH       "&Excluir ramificación"
+    IDS_REPORTTAB0          "Carpetas migradas satisfactoriamente (%d)"
+    IDS_REPORTTAB1          "Carpetas con errores (%d)"
+    IDS_REPORTSTATUS_NOFILES "No había archivos en esta carpeta."
+    IDS_REPORTSTATUS_ONEFILE "%d archivo (%s) fue importado satisfactoriamente."
+    IDS_REPORTSTATUS_FILES  "Todos los%d archivos (%s) fueron importados satisfactoriamente."
+    IDS_NOFOLDERS_CAPTION   "Iniciar migración"
+    IDS_NOFOLDERS_MESSAGE   "Por favor seleccionar al menos una carpeta en la vista de árbol al dar click en las casillas a la izquierda de los iconos de la carpeta."
+END
+
+#endif    // Spanisch (neutral) resources
 /////////////////////////////////////////////////////////////////////////////
 
 
