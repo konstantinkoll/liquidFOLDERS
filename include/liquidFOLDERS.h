@@ -549,15 +549,14 @@ struct LFStoreDescriptor
 #define LFIllegalAttribute              15
 #define LFIllegalItemType               16
 #define LFIllegalValue                  17
-#define LFIndexNotCreated               18
-#define LFIndexTableLoadError           19
-#define LFIndexRepairError              20
-#define LFIndexAccessError              21
-#define LFIndexCreateError              22
-#define LFNotEnoughFreeDiscSpace        23
-#define LFCannotDeleteFile              24
-#define LFCannotCopyIndex               25
-#define LFNoFileBody                    26
+#define LFIndexTableLoadError           18
+#define LFIndexRepairError              19
+#define LFIndexAccessError              20
+#define LFIndexCreateError              21
+#define LFNotEnoughFreeDiscSpace        22
+#define LFCannotDeleteFile              23
+#define LFCannotCopyIndex               24
+#define LFNoFileBody                    25
 
 
 // Structures and classes from LFCore.dll

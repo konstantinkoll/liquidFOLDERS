@@ -228,7 +228,7 @@ void CreateStoreIndex(char* _Path, char* _StoreID, char* _DatPath, unsigned int 
 
 	CIndex idx(_Path, _StoreID, _DatPath);
 	if (!idx.Create())
-		res = LFIndexNotCreated;
+		res = LFIndexCreateError;
 }
 
 void GetFileLocation(char* _Path, char* _FileID, char* _FileFormat, char* dst, size_t cCount)
