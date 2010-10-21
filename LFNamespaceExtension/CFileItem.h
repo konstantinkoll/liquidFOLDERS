@@ -15,8 +15,6 @@ public:
 	CFileItem();
 	CFileItem(LPCTSTR _StoreID, LFCoreAttributes* _Attrs);
 
-	virtual ~CFileItem();
-
 	virtual NSEItemAttributes GetAttributes(NSEItemAttributes requested);
 	virtual void Serialize(CArchive& ar);
 	virtual void GetDisplayName(CString& displayName);

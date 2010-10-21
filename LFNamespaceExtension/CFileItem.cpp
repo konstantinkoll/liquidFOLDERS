@@ -23,10 +23,6 @@ CFileItem::CFileItem(LPCTSTR _StoreID, LFCoreAttributes* _Attrs)
 	Attrs = *_Attrs;
 }
 
-CFileItem::~CFileItem()
-{
-}
-
 NSEItemAttributes CFileItem::GetAttributes(NSEItemAttributes requested)
 {
 	const UINT mask = NSEIA_FileSystem;
@@ -406,7 +402,7 @@ BOOL CFileItem::GetFileDescriptor(FILEDESCRIPTOR* fd)
 	}
 	while (*ptr++!=L'\0');
 
-	fd->dwFlags = FD_PROGRESSUI | FD_WRITESTIME | FD_CREATETIME | FD_FILESIZE;
+	fd->dwFlags = FD_WRITESTIME | FD_CREATETIME | FD_FILESIZE;
 
 	fd->ftCreationTime = Attrs.CreationTime;
 	fd->ftLastWriteTime = Attrs.FileTime;

@@ -705,6 +705,10 @@ BOOL CFolderItem::GetColumnValueEx(VARIANT* value, CShellColumn& column)
 			return FALSE;
 		}
 		break;
+	case LFAttrAddTime:
+	case LFAttrArchiveTime:
+	case LFAttrDeleteTime:
+		return FALSE;
 	case LFAttrFileFormat:
 		CUtils::SetVariantCString(value, data.Format);
 		break;
@@ -725,7 +729,34 @@ BOOL CFolderItem::GetColumnValueEx(VARIANT* value, CShellColumn& column)
 		}
 		break;
 	default:
-		return FALSE;
+		{
+			const GUID ShellDetails = { 0x28636AA6, 0x953D, 0x11D2, { 0xB5, 0xD6, 0x00, 0xC0, 0x4F, 0xD9, 0x18, 0xD0 } };
+			if (column.fmtid==ShellDetails)
+			{
+				switch (column.pid)
+				{
+				case 2:
+					SAFEARRAYBOUND rgsabound;
+					rgsabound.cElements = sizeof(SHDESCRIPTIONID);
+					rgsabound.lLbound = 0;
+
+					value->parray = SafeArrayCreate(VT_UI1, 1, &rgsabound);
+					((SHDESCRIPTIONID*)value->parray->pvData)->clsid = guid;
+					((SHDESCRIPTIONID*)value->parray->pvData)->dwDescriptionId = 20;
+					value->vt = VT_ARRAY | VT_UI1;
+					break;
+				case 9:
+					CUtils::SetVariantINT(value, -1);
+					break;
+				case 11:
+					CUtils::SetVariantLPCTSTR(value, "Folder");
+					break;
+				default:
+					return FALSE;
+				}
+			}
+			return FALSE;
+		}
 	}
 
 	return TRUE;
@@ -1058,8 +1089,9 @@ BOOL CFolderItem::GetFileDescriptor(FILEDESCRIPTOR* fd)
 {
 	_tcscpy(fd->cFileName, data.DisplayName);
 
-	fd->dwFlags = FD_ATTRIBUTES | FD_PROGRESSUI;
+	fd->dwFlags = FD_ATTRIBUTES | FD_CLSID;
 	fd->dwFileAttributes = FILE_ATTRIBUTE_DIRECTORY;
+	fd->clsid = guid;
 
 	switch (data.Level)
 	{
