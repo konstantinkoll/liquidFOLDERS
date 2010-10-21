@@ -198,7 +198,8 @@ bool CheckCondition(void* value, LFFilterCondition* c)
 	ULARGE_INTEGER uli2;
 	size_t len1;
 	size_t len2;
-	SYSTEMTIME st;
+	SYSTEMTIME stUTC;
+	SYSTEMTIME stLocal;
 	FILETIME ft;
 	wchar_t* tagarray;
 	wchar_t tag[256];
@@ -388,9 +389,11 @@ bool CheckCondition(void* value, LFFilterCondition* c)
 		switch (c->Compare)
 		{
 		case LFFilterCompareSubfolder:
-			FileTimeToSystemTime((FILETIME*)value, &st);
-			st.wHour = st.wMinute = st.wSecond = st.wMilliseconds = 0;
-			SystemTimeToFileTime(&st, &ft);
+			FileTimeToSystemTime((FILETIME*)value, &stUTC);
+			SystemTimeToTzSpecificLocalTime(NULL, &stUTC, &stLocal);
+			stLocal.wHour = stLocal.wMinute = stLocal.wSecond = stLocal.wMilliseconds = 0;
+			TzSpecificLocalTimeToSystemTime(NULL, &stLocal, &stUTC);
+			SystemTimeToFileTime(&stUTC, &ft);
 			return memcmp(&ft, &c->AttrData.Time, sizeof(FILETIME))==0;
 		case LFFilterCompareIsEqual:
 			return memcmp(value, &c->AttrData.Time, sizeof(FILETIME))==0;

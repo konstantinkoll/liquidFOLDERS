@@ -567,7 +567,7 @@ BOOL CFolderItem::GetColumn(CShellColumn& column, int index)
 	column.fmt = theApp.m_Attributes[index]->FormatRight ? NSESCF_Right : NSESCF_Left;
 	column.categorizerType = NSECT_Alphabetical;
 	column.index = index;
-	column.defaultVisible = (index!=LFAttrStoreID) && (index!=LFAttrFileID) && (index!=LFAttrFileCount);
+	column.defaultVisible = (index!=LFAttrStoreID) && (index!=LFAttrFileID) && (index!=LFAttrFileCount) && (index!=LFAttrAddTime) && (index!=LFAttrArchiveTime);
 	if (theApp.m_Attributes[index]->ShPropertyMapping.ID)
 	{
 		column.fmtid = theApp.m_Attributes[index]->ShPropertyMapping.Schema;
@@ -626,6 +626,11 @@ BOOL CFolderItem::GetColumn(CShellColumn& column, int index)
 		if ((data.Level!=LevelRoot) && (data.Level!=LevelAttrValue))
 			column.state = NSECS_Hidden;
 		break;
+	case LFAttrAddTime:
+	case LFAttrArchiveTime:
+		if (data.Level!=LevelAttrValue)
+			column.state = NSECS_Hidden;
+		break;
 	case LFAttrDeleteTime:
 	case LFAttrFlags:
 		column.categorizerType = NSECT_String;
@@ -659,7 +664,7 @@ BOOL CFolderItem::GetColumnValueEx(VARIANT* value, CShellColumn& column)
 		CUtils::SetVariantCString(value, data.Comment);
 		break;
 	case LFAttrCreationTime:
-		if ((data.CreationTime.dwHighDateTime) || (data.CreationTime.dwHighDateTime))
+		if ((data.CreationTime.dwHighDateTime) || (data.CreationTime.dwLowDateTime))
 		{
 			if (value->vt==VT_BSTR)
 			{
@@ -679,7 +684,7 @@ BOOL CFolderItem::GetColumnValueEx(VARIANT* value, CShellColumn& column)
 		}
 		break;
 	case LFAttrFileTime:
-		if ((data.FileTime.dwHighDateTime) || (data.FileTime.dwHighDateTime))
+		if ((data.FileTime.dwHighDateTime) || (data.FileTime.dwLowDateTime))
 		{
 			if (value->vt==VT_BSTR)
 			{
@@ -804,7 +809,7 @@ void CFolderItem::GetMenuItems(CGetMenuitemsEventArgs& e)
 
 			ENSURE(tmpStr.LoadString(IDS_MENU_ImportFolder));
 			ENSURE(tmpHint.LoadString(IDS_HINT_ImportFolder));
-			e.menu->AddItem(tmpStr, _T(VERB_IMPORTFOLDER), tmpHint)->SetEnabled(!(f->data.Type & LFTypeNotMounted));
+			e.menu->AddItem(tmpStr, _T(VERB_IMPORTFOLDER), tmpHint)->SetEnabled((!(f->data.Type & LFTypeNotMounted)) && (!theApp.m_PathRunCmd.IsEmpty()));
 		}
 
 		if ((!(e.flags & NSEQCF_NoDefault)) && (e.children->GetCount()>=1))

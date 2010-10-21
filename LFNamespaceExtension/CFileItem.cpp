@@ -156,7 +156,7 @@ BOOL CFileItem::GetColumnValueEx(VARIANT* value, CShellColumn& column)
 		tmpStr = Attrs.Comment;
 		break;
 	case LFAttrCreationTime:
-		if ((Attrs.CreationTime.dwHighDateTime) || (Attrs.CreationTime.dwHighDateTime))
+		if ((Attrs.CreationTime.dwHighDateTime) || (Attrs.CreationTime.dwLowDateTime))
 		{
 			if (value->vt==VT_BSTR)
 			{
@@ -175,7 +175,7 @@ BOOL CFileItem::GetColumnValueEx(VARIANT* value, CShellColumn& column)
 		}
 		break;
 	case LFAttrAddTime:
-		if ((Attrs.AddTime.dwHighDateTime) || (Attrs.AddTime.dwHighDateTime))
+		if ((Attrs.AddTime.dwHighDateTime) || (Attrs.AddTime.dwLowDateTime))
 		{
 			if (value->vt==VT_BSTR)
 			{
@@ -194,7 +194,7 @@ BOOL CFileItem::GetColumnValueEx(VARIANT* value, CShellColumn& column)
 		}
 		break;
 	case LFAttrFileTime:
-		if ((Attrs.FileTime.dwHighDateTime) || (Attrs.FileTime.dwHighDateTime))
+		if ((Attrs.FileTime.dwHighDateTime) || (Attrs.FileTime.dwLowDateTime))
 		{
 			if (value->vt==VT_BSTR)
 			{
@@ -213,7 +213,7 @@ BOOL CFileItem::GetColumnValueEx(VARIANT* value, CShellColumn& column)
 		}
 		break;
 	case LFAttrArchiveTime:
-		if ((Attrs.ArchiveTime.dwHighDateTime) || (Attrs.ArchiveTime.dwHighDateTime))
+		if ((Attrs.ArchiveTime.dwHighDateTime) || (Attrs.ArchiveTime.dwLowDateTime))
 		{
 			if (value->vt==VT_BSTR)
 			{
