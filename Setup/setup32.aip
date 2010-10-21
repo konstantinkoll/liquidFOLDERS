@@ -442,6 +442,7 @@
     <ROW Registry="StoreManager" Root="2" Key="Software\liquidFOLDERS" Name="StoreManager" Value="[#StoreManager.exe]" Component_="StoreManager.exe"/>
     <ROW Registry="System.PropList.DetailsPaneNullSelect" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}" Name="System.PropList.DetailsPaneNullSelect" Value="prop:" Component_="LFNamespaceExtension.dll"/>
     <ROW Registry="System.PropList.DetailsPaneNullSelectTitle" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}" Name="System.PropList.DetailsPaneNullSelectTitle" Value="prop:~System.ItemNameDisplay;~System.ItemTypeText" Component_="LFNamespaceExtension.dll"/>
+    <ROW Registry="System.PropList.PreviewTitle" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}" Name="System.PropList.PreviewTitle" Value="prop:~System.ItemNameDisplay;~System.ItemTypeText" Component_="LFNamespaceExtension.dll"/>
     <ROW Registry="ThreadingModel" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}\InProcServer32" Name="ThreadingModel" Value="Both" Component_="LFNamespaceExtension.dll"/>
     <ROW Registry="ThreadingModel_1" Root="0" Key="CLSID\{3F2D914E-FE57-414F-9F88-A377C7841DA4}\InProcServer32" Name="ThreadingModel" Value="Both" Component_="LFNamespaceExtension.dll"/>
     <ROW Registry="ThreadingModel_2" Root="0" Key="CLSID\{3F2D914D-FE57-414F-9F88-A377C7841DA4}\InProcServer32" Name="ThreadingModel" Value="Both" Component_="LFNamespaceExtension.dll"/>
