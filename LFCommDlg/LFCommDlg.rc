@@ -1613,7 +1613,7 @@ FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     GROUPBOX        "Etiquetas",IDC_STATIC,7,7,334,54
     EDITTEXT        IDC_TAGS,14,21,320,14,ES_AUTOHSCROLL | WS_GROUP
-    LTEXT           "Las etiquetas están separadas por espacios ó comas.\n",IDC_STATIC,14,39,319,17
+    LTEXT           "Las etiquetas están separadas por espacios ó comas.\nMúltiples palabras pueden ser combinadas dentro de una etiqueta usando comillas.",IDC_STATIC,14,39,319,17
     GROUPBOX        "Sugerencias",IDC_STATIC,7,68,334,149
     LTEXT           "Éstas etiquetas ya han sido asignadas a archivos dentro de este store (dar click en una etiqueta para añadirla):",IDC_STATIC,14,79,240,16
     PUSHBUTTON      "&Añadir etiquetas",IDC_ADDTAGS,259,80,75,14,WS_DISABLED
