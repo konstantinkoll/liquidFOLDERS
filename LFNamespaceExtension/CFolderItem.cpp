@@ -742,7 +742,7 @@ BOOL CFolderItem::GetColumnValueEx(VARIANT* value, CShellColumn& column)
 
 					value->parray = SafeArrayCreate(VT_UI1, 1, &rgsabound);
 					((SHDESCRIPTIONID*)value->parray->pvData)->clsid = guid;
-					((SHDESCRIPTIONID*)value->parray->pvData)->dwDescriptionId = 20;
+					((SHDESCRIPTIONID*)value->parray->pvData)->dwDescriptionId = (data.CategoryID==LFItemCategoryRemoteStores) ? SHDID_COMPUTER_NETDRIVE : 20;
 					value->vt = VT_ARRAY | VT_UI1;
 					break;
 				case 9:
