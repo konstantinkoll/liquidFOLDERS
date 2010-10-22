@@ -124,7 +124,11 @@ NSEItemAttributes CFolderItem::GetAttributes(NSEItemAttributes requested)
 	UINT mask = NSEIA_CFOLDERITEM;
 
 	if (data.Level==LevelStores)
-		mask |= NSEIA_CanRename | NSEIA_CanDelete | NSEIA_HasPropSheet;
+	{
+		mask |= NSEIA_CanRename;
+		if (!theApp.m_PathRunCmd.IsEmpty())
+			mask |= NSEIA_CanDelete | NSEIA_HasPropSheet;
+	}
 	if (data.Level<LevelAttrValue)
 		mask |= NSEIA_HasSubFolder;
 	if (data.Level>LevelRoot)
@@ -648,6 +652,50 @@ BOOL CFolderItem::GetColumn(CShellColumn& column, int index)
 
 BOOL CFolderItem::GetColumnValueEx(VARIANT* value, CShellColumn& column)
 {
+	if (column.fmtid==FMTID_ShellDetails)
+		switch (column.pid)
+		{
+		case 2:
+			SAFEARRAYBOUND rgsabound;
+			rgsabound.cElements = sizeof(SHDESCRIPTIONID);
+			rgsabound.lLbound = 0;
+
+			value->parray = SafeArrayCreate(VT_UI1, 1, &rgsabound);
+			((SHDESCRIPTIONID*)value->parray->pvData)->clsid = guid;
+			((SHDESCRIPTIONID*)value->parray->pvData)->dwDescriptionId = (data.CategoryID==LFItemCategoryRemoteStores) ? SHDID_COMPUTER_NETDRIVE : 20;
+			value->vt = VT_ARRAY | VT_UI1;
+			return TRUE;
+		case 9:
+			CUtils::SetVariantINT(value, -1);
+			return TRUE;
+		case 11:
+			CUtils::SetVariantLPCTSTR(value, "Folder");
+			return TRUE;
+		default:
+			return FALSE;
+		}
+
+	if (column.fmtid==FMTID_Volume)
+		switch (column.pid)
+		{
+		case 4:
+			CUtils::SetVariantLPCTSTR(value, "liquidFOLDERS");
+			return TRUE;
+		default:
+			return FALSE;
+		}
+
+	const GUID FMTID_Preview = { 0xC9944A21, 0xA406, 0x48FE, { 0x82, 0x25, 0xAE, 0xC7, 0xE2, 0x4C, 0x21, 0x1B } };
+	if (column.fmtid==FMTID_Preview)
+		switch (column.pid)
+		{
+		case 6:
+			CUtils::SetVariantLPCTSTR(value, "prop:~System.ItemNameDisplay;~System.ItemTypeText");
+			return TRUE;
+		default:
+			return FALSE;
+		}
+
 	switch (column.index)
 	{
 	case LFAttrFileName:
