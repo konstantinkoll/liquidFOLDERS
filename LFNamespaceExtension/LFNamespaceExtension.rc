@@ -100,7 +100,7 @@ LANGUAGE LANG_ENGLISH, SUBLANG_NEUTRAL
 
 STRINGTABLE 
 BEGIN
-    IDS_InfoTip             "liquidFOLDERS stores and files"
+    IDS_InfoTip             "Stores and files"
     IDS_AttributeComment    "LArrange files by %s"
     IDS_AllFiles            "All files"
     IDS_AllFilesComment     "Show all files"

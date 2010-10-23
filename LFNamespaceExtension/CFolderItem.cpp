@@ -100,6 +100,8 @@ void CFolderItem::GetExtensionTargetInfo(CExtensionTargetInfo& info)
 	nti->iconFile = theApp.m_CoreFile;
 	nti->iconIndex = IDI_FLD_Default-1;
 	nti->AddRootNodeProperty(_T("SortOrderIndex"), (UINT)64);
+	nti->AddRootNodeProperty(_T("System.ItemType"), _T("Folder"));
+	nti->AddRootNodeProperty(_T("System.PerceivedType"), (UINT)8);
 	nti->AddRootNodeProperty(_T("System.PropList.DetailsPaneNullSelect"), _T("prop:"));
 	nti->AddRootNodeProperty(_T("System.PropList.DetailsPaneNullSelectTitle"), _T("prop:~System.ItemNameDisplay;~System.ItemTypeText"));
 	nti->AddRootNodeProperty(_T("System.PropList.PreviewTitle"), _T("prop:~System.ItemNameDisplay;~System.ItemTypeText"));
@@ -113,6 +115,8 @@ void CFolderItem::GetExtensionTargetInfo(CExtensionTargetInfo& info)
 	nti->iconFile = theApp.m_CoreFile;
 	nti->iconIndex = IDI_FLD_Default-1;
 	nti->AddRootNodeProperty(_T("SortOrderIndex"), (UINT)64);
+	nti->AddRootNodeProperty(_T("System.ItemType"), _T("Folder"));
+	nti->AddRootNodeProperty(_T("System.PerceivedType"), (UINT)8);
 	nti->AddRootNodeProperty(_T("System.PropList.DetailsPaneNullSelect"), _T("prop:"));
 	nti->AddRootNodeProperty(_T("System.PropList.DetailsPaneNullSelectTitle"), _T("prop:~System.ItemNameDisplay;~System.ItemTypeText"));
 	nti->AddRootNodeProperty(_T("System.PropList.PreviewTitle"), _T("prop:~System.ItemNameDisplay;~System.ItemTypeText"));
