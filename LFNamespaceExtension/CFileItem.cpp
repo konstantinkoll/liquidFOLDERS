@@ -271,12 +271,16 @@ BOOL CFileItem::GetColumnValueEx(VARIANT* value, CShellColumn& column)
 		{
 			tmpStr = _T(".");
 			tmpStr.Append(Attrs.FileFormat);
+
+			SHFILEINFO sfi;
+			if (SUCCEEDED(SHGetFileInfo(tmpStr, FILE_ATTRIBUTE_NORMAL, &sfi, sizeof(sfi), SHGFI_TYPENAME | SHGFI_USEFILEATTRIBUTES)))
+			{
+				tmpStr = sfi.szTypeName;
+				CUtils::SetVariantCString(value, tmpStr);
+				break;
+			}
 		}
-		else
-		{
-			return FALSE;
-		}
-		break;
+		return FALSE;
 	case LFAttrFileSize:
 		if (value->vt==VT_BSTR)
 		{
