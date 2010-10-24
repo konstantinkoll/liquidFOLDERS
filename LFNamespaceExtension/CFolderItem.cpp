@@ -25,6 +25,31 @@ CString FrmtAttrStr(CString Mask, CString Name)
 	return tmpStr;
 }
 
+CShellMenuItem* InsertItem(CShellMenu* menu, UINT ResID, CString verb, int pos)
+{
+	CString tmpStr;
+	CString tmpHint;
+	ENSURE(tmpStr.LoadString(ResID));
+	ENSURE(tmpStr.LoadString(ResID+1));
+
+	return menu->InsertItem(tmpStr, verb, tmpHint, pos);
+}
+
+void AddSeparator(CShellMenu* menu)
+{
+	menu->AddItem("")->SetSeparator(TRUE);
+}
+
+CShellMenuItem* AddItem(CShellMenu* menu, UINT ResID, CString verb)
+{
+	CString tmpStr;
+	CString tmpHint;
+	ENSURE(tmpStr.LoadString(ResID));
+	ENSURE(tmpStr.LoadString(ResID+1));
+
+	return menu->AddItem(tmpStr, verb, tmpHint);
+}
+
 
 IMPLEMENT_DYNCREATE(CFolderItem, CNSEFolder)
 
@@ -845,21 +870,13 @@ BOOL CFolderItem::IsValid()
 
 void CFolderItem::GetMenuItems(CGetMenuitemsEventArgs& e)
 {
-	CString tmpStr;
-	CString tmpHint;
-
 	// All items can be opened
 	if (e.children->GetCount()>=1)
 	{
 		if (data.Level==LevelAttrValue)
 		{
-			ENSURE(tmpStr.LoadString(IDS_MENU_OpenWith));
-			ENSURE(tmpHint.LoadString(IDS_HINT_OpenWith));
-			e.menu->InsertItem(tmpStr, _T(VERB_OPENWITH), tmpHint, 0);
-
-			ENSURE(tmpStr.LoadString(IDS_MENU_Open));
-			ENSURE(tmpHint.LoadString(IDS_HINT_Open));
-			e.menu->InsertItem(tmpStr, _T(VERB_OPEN), tmpHint, 0)->SetDefaultItem((e.flags & NSEQCF_NoDefault)==0);
+			InsertItem(e.menu, IDS_MENU_OpenWith, _T(VERB_OPENWITH), 0);
+			InsertItem(e.menu, IDS_MENU_Open, _T(VERB_OPEN), 0);
 		}
 		else
 		{
@@ -872,30 +889,20 @@ void CFolderItem::GetMenuItems(CGetMenuitemsEventArgs& e)
 			{
 				if (e.flags & NSEQCF_NoDefault)
 				{
-					ENSURE(tmpStr.LoadString(IDS_MENU_Open));
-					ENSURE(tmpHint.LoadString(IDS_HINT_Open));
-					e.menu->InsertItem(tmpStr, _T(VERB_OPEN), tmpHint, 0);
+					InsertItem(e.menu, IDS_MENU_Open, _T(VERB_OPEN), 0);
 				}
 				else
 				{
-					ENSURE(tmpStr.LoadString(IDS_MENU_Explore));
-					ENSURE(tmpHint.LoadString(IDS_HINT_Explore));
-					e.menu->InsertItem(tmpStr, _T(e.flags & NSEQCF_Explore ? VERB_OPEN : VERB_EXPLORE), tmpHint, 0)->SetDefaultItem((e.flags & (NSEQCF_Explore | NSEQCF_NoDefault))==NSEQCF_Explore);
-
-					ENSURE(tmpStr.LoadString(IDS_MENU_Open));
-					ENSURE(tmpHint.LoadString(IDS_HINT_Open));
-					e.menu->InsertItem(tmpStr, _T(e.flags & NSEQCF_Explore ? VERB_OPENNEWWINDOW : VERB_OPEN), tmpHint, 0)->SetDefaultItem((e.flags & (NSEQCF_Explore | NSEQCF_NoDefault))==0);
+					InsertItem(e.menu, IDS_MENU_Explore, _T(e.flags & NSEQCF_Explore ? VERB_OPEN : VERB_EXPLORE), 0)->SetDefaultItem((e.flags & (NSEQCF_Explore | NSEQCF_NoDefault))==NSEQCF_Explore);
+					InsertItem(e.menu, IDS_MENU_Open, _T(e.flags & NSEQCF_Explore ? VERB_OPENNEWWINDOW : VERB_OPEN), 0)->SetDefaultItem((e.flags & (NSEQCF_Explore | NSEQCF_NoDefault))==0);
 				}
 			}
 			else
 			{
-				ENSURE(tmpStr.LoadString(IDS_MENU_OpenNewWindow));
-				ENSURE(tmpHint.LoadString(IDS_HINT_OpenNewWindow));
-				e.menu->InsertItem(tmpStr, _T(VERB_OPENNEWWINDOW), tmpHint, 0);
+				if (!(e.flags & NSEQCF_NoDefault))
+					InsertItem(e.menu, IDS_MENU_OpenNewWindow, _T(VERB_OPENNEWWINDOW), 0);
 
-				ENSURE(tmpStr.LoadString(IDS_MENU_Open));
-				ENSURE(tmpHint.LoadString(IDS_HINT_Open));
-				e.menu->InsertItem(tmpStr, _T(VERB_OPEN), tmpHint, 0)->SetDefaultItem((e.flags & NSEQCF_NoDefault)==0);
+				InsertItem(e.menu, IDS_MENU_Open, _T(VERB_OPEN), 0)->SetDefaultItem((e.flags & NSEQCF_NoDefault)==0);
 			}
 		}
 	}
@@ -905,63 +912,37 @@ void CFolderItem::GetMenuItems(CGetMenuitemsEventArgs& e)
 	case LevelRoot:
 		if (e.children->GetCount()==0)
 		{
-			e.menu->AddItem(_T(""))->SetSeparator(TRUE);
+			AddSeparator(e.menu);
 
-			ENSURE(tmpStr.LoadString(IDS_MENU_CreateNewStore));
-			ENSURE(tmpHint.LoadString(IDS_HINT_CreateNewStore));
-
-			CShellMenuItem* item = e.menu->AddItem(tmpStr, _T(VERB_CREATENEWSTORE), tmpHint);
+			CShellMenuItem* item = AddItem(e.menu, IDS_MENU_CreateNewStore, _T(VERB_CREATENEWSTORE));
 			item->SetEnabled(!theApp.m_PathRunCmd.IsEmpty());
 			theApp.SetCoreMenuIcon(item, IDI_STORE_Internal);
 		}
 
 		if (e.children->GetCount()==1)
 		{
-			e.menu->AddItem(_T(""))->SetSeparator(TRUE);
-
 			CFolderItem* f = (CFolderItem*)e.children->GetHead();
 
-			ENSURE(tmpStr.LoadString(IDS_MENU_MakeDefaultStore));
-			ENSURE(tmpHint.LoadString(IDS_HINT_MakeDefaultStore));
-			e.menu->AddItem(tmpStr, _T(VERB_MAKEDEFAULTSTORE), tmpHint)->SetEnabled(f->data.CategoryID==LFStoreModeInternal);
-
-			ENSURE(tmpStr.LoadString(IDS_MENU_MakeHybridStore));
-			ENSURE(tmpHint.LoadString(IDS_HINT_MakeHybridStore));
-			e.menu->AddItem(tmpStr, _T(VERB_MAKEHYBRIDSTORE), tmpHint)->SetEnabled(f->data.CategoryID==LFStoreModeExternal);
-
-			e.menu->AddItem(_T(""))->SetSeparator(TRUE);
-
-			ENSURE(tmpStr.LoadString(IDS_MENU_ImportFolder));
-			ENSURE(tmpHint.LoadString(IDS_HINT_ImportFolder));
-			e.menu->AddItem(tmpStr, _T(VERB_IMPORTFOLDER), tmpHint)->SetEnabled((!(f->data.Type & LFTypeNotMounted)) && (!theApp.m_PathRunCmd.IsEmpty()));
+			AddSeparator(e.menu);
+			AddItem(e.menu, IDS_MENU_MakeDefaultStore, _T(VERB_MAKEDEFAULTSTORE))->SetEnabled(f->data.CategoryID==LFStoreModeInternal);
+			AddItem(e.menu, IDS_MENU_MakeHybridStore, _T(VERB_MAKEHYBRIDSTORE))->SetEnabled(f->data.CategoryID==LFStoreModeExternal);
+			AddSeparator(e.menu);
+			AddItem(e.menu, IDS_MENU_ImportFolder, _T(VERB_IMPORTFOLDER))->SetEnabled((!(f->data.Type & LFTypeNotMounted)) && (!theApp.m_PathRunCmd.IsEmpty()));
 		}
 
 		if ((!(e.flags & NSEQCF_NoDefault)) && (e.children->GetCount()>=1))
 		{
-			e.menu->AddItem(_T(""))->SetSeparator(TRUE);
-
-			ENSURE(tmpStr.LoadString(IDS_MENU_CreateLink));
-			ENSURE(tmpHint.LoadString(IDS_HINT_CreateLink));
-			e.menu->AddItem(tmpStr, _T(VERB_CREATELINK), tmpHint);
-
-			ENSURE(tmpStr.LoadString(IDS_MENU_Delete));
-			ENSURE(tmpHint.LoadString(IDS_HINT_Delete));
-			e.menu->AddItem(tmpStr, _T(VERB_DELETE), tmpHint)->SetEnabled(!theApp.m_PathRunCmd.IsEmpty());
+			AddSeparator(e.menu);
+			AddItem(e.menu, IDS_MENU_CreateLink, _T(VERB_CREATELINK));
+			AddItem(e.menu, IDS_MENU_Delete, _T(VERB_DELETE))->SetEnabled(!theApp.m_PathRunCmd.IsEmpty());
 
 			if (e.children->GetCount()==1)
 			{
 				if (e.flags & NSEQCF_CanRename)
-				{
-					ENSURE(tmpStr.LoadString(IDS_MENU_Rename));
-					ENSURE(tmpHint.LoadString(IDS_HINT_Rename));
-					e.menu->AddItem(tmpStr, _T(VERB_RENAME), tmpHint);
-				}
+					AddItem(e.menu, IDS_MENU_Rename, _T(VERB_RENAME));
 
-				e.menu->AddItem(_T(""))->SetSeparator(TRUE);
-
-				ENSURE(tmpStr.LoadString(IDS_MENU_Properties));
-				ENSURE(tmpHint.LoadString(IDS_HINT_Properties));
-				e.menu->AddItem(tmpStr, _T(VERB_PROPERTIES), tmpHint)->SetEnabled(!theApp.m_PathRunCmd.IsEmpty());;
+				AddSeparator(e.menu);
+				AddItem(e.menu, IDS_MENU_Properties, _T(VERB_PROPERTIES))->SetEnabled(!theApp.m_PathRunCmd.IsEmpty());;
 			}
 		}
 		break;
@@ -970,11 +951,8 @@ void CFolderItem::GetMenuItems(CGetMenuitemsEventArgs& e)
 	case LevelAttribute:
 		if ((!(e.flags & NSEQCF_NoDefault)) && (e.children->GetCount()>=1))
 		{
-			e.menu->AddItem(_T(""))->SetSeparator(TRUE);
-
-			ENSURE(tmpStr.LoadString(IDS_MENU_CreateLink));
-			ENSURE(tmpHint.LoadString(IDS_HINT_CreateLink));
-			e.menu->AddItem(tmpStr, _T(VERB_CREATELINK), tmpHint);
+			AddSeparator(e.menu);
+			AddItem(e.menu, IDS_MENU_CreateLink, _T(VERB_CREATELINK));
 		}
 		break;
 	}

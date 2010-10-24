@@ -138,7 +138,7 @@ BEGIN
     IDS_MENU_Rename         "&Rename"
     IDS_HINT_Rename         "Renames the selected item."
     IDS_MENU_Properties     "&Properties"
-    IDS_HINT_Properties     "Shows information about the selected item."
+    IDS_HINT_Properties     "Displays the properties of the selected items."
     IDS_MENU_ImportFolder   "Import &folder..."
     IDS_HINT_ImportFolder   "Imports a folder and all its subfolders into the selected store."
     IDS_MENU_StoreManager   "Open &StoreManager"
