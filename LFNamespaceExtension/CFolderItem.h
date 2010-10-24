@@ -94,7 +94,7 @@ public:
 	virtual BOOL OnImportFolder(CExecuteMenuitemsEventArgs& e);
 	virtual BOOL OnProperties(CExecuteMenuitemsEventArgs& e);
 	virtual BOOL OnOpen(CExecuteMenuitemsEventArgs& e);
-	virtual BOOL OnExplore(CExecuteMenuitemsEventArgs& e);
+	virtual BOOL OnExplorer(CExecuteMenuitemsEventArgs& e);
 	virtual BOOL OnOpenWith(CExecuteMenuitemsEventArgs& e);
 	virtual void DragOver(CNSEDragEventArgs& e);
 	virtual void DragEnter(CNSEDragEventArgs& e);

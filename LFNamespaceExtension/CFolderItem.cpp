@@ -1011,7 +1011,7 @@ BOOL CFolderItem::OnExecuteMenuItem(CExecuteMenuitemsEventArgs& e)
 		return OnCreateNewStore(e.hWnd);
 
 	if ((e.menuItem->GetVerb()==_T(VERB_EXPLORE)) || (e.menuItem->GetVerb()==_T(VERB_OPENNEWWINDOW)))
-		return OnExplore(e);
+		return OnExplorer(e);
 
 	if (e.menuItem->GetVerb()==_T(VERB_OPENWITH))
 		return OnOpenWith(e);
@@ -1298,24 +1298,19 @@ BOOL CFolderItem::OnImportFolder(CExecuteMenuitemsEventArgs& e)
 
 BOOL CFolderItem::OnProperties(CExecuteMenuitemsEventArgs& e)
 {
-	switch (data.Level)
+	if ((!theApp.m_PathRunCmd.IsEmpty()) && (data.Level==LevelRoot))
 	{
-	case LevelRoot:
-		if (!theApp.m_PathRunCmd.IsEmpty())
+		POSITION pos = e.children->GetHeadPosition();
+		if (pos)
 		{
-			POSITION pos = e.children->GetHeadPosition();
-			if (pos)
+			CNSEItem* item = (CNSEItem*)e.children->GetNext(pos);
+			if (IS(item, CFolderItem))
 			{
-				CNSEItem* item = (CNSEItem*)e.children->GetNext(pos);
-				if (IS(item, CFolderItem))
-				{
-					CString id = AS(item, CFolderItem)->data.StoreID;
-					ShellExecute(e.hWnd, "open", theApp.m_PathRunCmd, _T("STOREPROPERTIES ")+id, NULL, SW_SHOW);
-					return TRUE;
-				}
+				CString id = AS(item, CFolderItem)->data.StoreID;
+				ShellExecute(e.hWnd, "open", theApp.m_PathRunCmd, _T("STOREPROPERTIES ")+id, NULL, SW_SHOW);
+				return TRUE;
 			}
 		}
-		break;
 	}
 
 	return FALSE;
@@ -1329,6 +1324,7 @@ BOOL CFolderItem::OnOpen(CExecuteMenuitemsEventArgs& e)
 		CNSEItem* item = (CFileItem*)e.children->GetNext(pos);
 
 		if (IS(item, CFolderItem))
+		{
 			if (!CUtils::BrowseTo(item->GetPIDLAbsolute(), e.hWnd))
 			{
 				SHELLEXECUTEINFO sei;
@@ -1342,6 +1338,9 @@ BOOL CFolderItem::OnOpen(CExecuteMenuitemsEventArgs& e)
 				sei.lpVerb = _T("open");
 				ShellExecuteEx(&sei);
 			}
+
+			return TRUE;
+		}
 
 		if (IS(item, CFileItem))
 		{
@@ -1367,7 +1366,7 @@ BOOL CFolderItem::OnOpen(CExecuteMenuitemsEventArgs& e)
 	return FALSE;
 }
 
-BOOL CFolderItem::OnExplore(CExecuteMenuitemsEventArgs& e)
+BOOL CFolderItem::OnExplorer(CExecuteMenuitemsEventArgs& e)
 {
 	if (e.children->GetCount()==1)
 	{
@@ -1386,6 +1385,8 @@ BOOL CFolderItem::OnExplore(CExecuteMenuitemsEventArgs& e)
 			sei.nShow = SW_SHOWNORMAL;
 			sei.lpVerb = e.menuItem->GetVerb();
 			ShellExecuteEx(&sei);
+
+			return TRUE;
 		}
 	}
 
@@ -1468,7 +1469,7 @@ void CFolderItem::OnCreateShortcut(CNSEItem* Item, const CString& LinkFilename, 
 	do
 	{
 		PathLink = strPath;
-		PathLink += _T("\\") + LinkFilename + NumberStr + _T(".lnk");
+		PathLink += _T("\\")+LinkFilename+NumberStr+_T(".lnk");
 		NumberStr.Format(_T(" (%d)"), ++Number);
 	}
 	while (_access(PathLink, 0)==0);
@@ -1505,26 +1506,12 @@ void CFolderItem::OnCreateShortcut(CNSEItem* Item, const CString& LinkFilename, 
 
 void CFolderItem::DragOver(CNSEDragEventArgs& e)
 {
-	if (data.Level==LevelRoot)
-	{
-		e.effect = DROPEFFECT_NONE;
-	}
-	else
-	{
-		e.effect = (e.keyState & MK_CONTROL) ? DROPEFFECT_MOVE : DROPEFFECT_COPY;
-	}
+	e.effect = (data.Level==LevelRoot) ? DROPEFFECT_NONE : (e.keyState & MK_CONTROL) ? DROPEFFECT_MOVE : DROPEFFECT_COPY;
 }
 
 void CFolderItem::DragEnter(CNSEDragEventArgs& e)
 {
-	if (data.Level==LevelRoot)
-	{
-		e.effect = DROPEFFECT_NONE;
-	}
-	else
-	{
-		e.effect = (e.keyState & MK_CONTROL) ? DROPEFFECT_MOVE : DROPEFFECT_COPY;
-	}
+	e.effect = (data.Level==LevelRoot) ? DROPEFFECT_NONE : (e.keyState & MK_CONTROL) ? DROPEFFECT_MOVE : DROPEFFECT_COPY;
 }
 
 
@@ -1541,7 +1528,7 @@ void CFolderItem::DragEnter(CNSEDragEventArgs& e)
 // the child items.
 void CFolderItem::InitDataObject(CInitDataObjectEventArgs& e)
 {
-	if (e.children->GetCount() <= 0)
+	if (e.children->GetCount()<=0)
 		return;
 
 	// Use streams to transfer namespace extension items.
@@ -1591,8 +1578,8 @@ void CFolderItem::OnExternalDrop(CNSEDragEventArgs& /*e*/)
 			}
 		}
 	}*/
-	this->RefreshView();
 
+	this->RefreshView();
 }
 
 // Called when a drop occurs over the item.
