@@ -856,6 +856,10 @@ void CFolderItem::GetMenuItems(CGetMenuitemsEventArgs& e)
 			ENSURE(tmpStr.LoadString(IDS_MENU_OpenWith));
 			ENSURE(tmpHint.LoadString(IDS_HINT_OpenWith));
 			e.menu->InsertItem(tmpStr, _T(VERB_OPENWITH), tmpHint, 0);
+
+			ENSURE(tmpStr.LoadString(IDS_MENU_Open));
+			ENSURE(tmpHint.LoadString(IDS_HINT_Open));
+			e.menu->InsertItem(tmpStr, _T(VERB_OPEN), tmpHint, 0)->SetDefaultItem((e.flags & NSEQCF_NoDefault)==0);
 		}
 		else
 		{
@@ -866,21 +870,34 @@ void CFolderItem::GetMenuItems(CGetMenuitemsEventArgs& e)
 
 			if (osInfo.dwMajorVersion<6)
 			{
-				ENSURE(tmpStr.LoadString(IDS_MENU_Explore));
-				ENSURE(tmpHint.LoadString(IDS_HINT_Explore));
-				e.menu->InsertItem(tmpStr, _T(VERB_EXPLORE), tmpHint, 0);
+				if (e.flags & NSEQCF_NoDefault)
+				{
+					ENSURE(tmpStr.LoadString(IDS_MENU_Open));
+					ENSURE(tmpHint.LoadString(IDS_HINT_Open));
+					e.menu->InsertItem(tmpStr, _T(VERB_OPEN), tmpHint, 0);
+				}
+				else
+				{
+					ENSURE(tmpStr.LoadString(IDS_MENU_Explore));
+					ENSURE(tmpHint.LoadString(IDS_HINT_Explore));
+					e.menu->InsertItem(tmpStr, _T(e.flags & NSEQCF_Explore ? VERB_OPEN : VERB_EXPLORE), tmpHint, 0)->SetDefaultItem((e.flags & (NSEQCF_Explore | NSEQCF_NoDefault))==NSEQCF_Explore);
+
+					ENSURE(tmpStr.LoadString(IDS_MENU_Open));
+					ENSURE(tmpHint.LoadString(IDS_HINT_Open));
+					e.menu->InsertItem(tmpStr, _T(e.flags & NSEQCF_Explore ? VERB_OPENNEWWINDOW : VERB_OPEN), tmpHint, 0)->SetDefaultItem((e.flags & (NSEQCF_Explore | NSEQCF_NoDefault))==0);
+				}
 			}
 			else
 			{
 				ENSURE(tmpStr.LoadString(IDS_MENU_OpenNewWindow));
 				ENSURE(tmpHint.LoadString(IDS_HINT_OpenNewWindow));
 				e.menu->InsertItem(tmpStr, _T(VERB_OPENNEWWINDOW), tmpHint, 0);
+
+				ENSURE(tmpStr.LoadString(IDS_MENU_Open));
+				ENSURE(tmpHint.LoadString(IDS_HINT_Open));
+				e.menu->InsertItem(tmpStr, _T(VERB_OPEN), tmpHint, 0)->SetDefaultItem((e.flags & NSEQCF_NoDefault)==0);
 			}
 		}
-
-		ENSURE(tmpStr.LoadString(IDS_MENU_Open));
-		ENSURE(tmpHint.LoadString(IDS_HINT_Open));
-		e.menu->InsertItem(tmpStr, _T(VERB_OPEN), tmpHint, 0)->SetDefaultItem(!(e.flags & NSEQCF_NoDefault));
 	}
 
 	switch (data.Level)
@@ -1010,8 +1027,21 @@ BOOL CFolderItem::OnExecuteMenuItem(CExecuteMenuitemsEventArgs& e)
 	if (e.menuItem->GetVerb()==_T(VERB_CREATENEWSTORE))
 		return OnCreateNewStore(e.hWnd);
 
-	if ((e.menuItem->GetVerb()==_T(VERB_EXPLORE)) || (e.menuItem->GetVerb()==_T(VERB_OPENNEWWINDOW)))
+	if (e.menuItem->GetVerb()==_T(VERB_EXPLORE))
 		return OnExplorer(e);
+
+	if (e.menuItem->GetVerb()==_T(VERB_OPENNEWWINDOW))
+	{
+		OSVERSIONINFO osInfo;
+		ZeroMemory(&osInfo, sizeof(OSVERSIONINFO));
+		osInfo.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
+		GetVersionEx(&osInfo);
+
+		if (osInfo.dwMajorVersion<6)
+			e.menuItem->SetVerb(_T(VERB_OPEN));
+
+		return OnExplorer(e);
+	}
 
 	if (e.menuItem->GetVerb()==_T(VERB_OPENWITH))
 		return OnOpenWith(e);
