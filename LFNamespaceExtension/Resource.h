@@ -30,24 +30,28 @@
 #define IDS_HINT_MakeHybridStore        2005
 #define IDS_MENU_Open                   2006
 #define IDS_HINT_Open                   2007
-#define IDS_MENU_OpenWith               2008
-#define IDS_HINT_OpenWith               2009
-#define IDS_MENU_CreateLink             2010
-#define IDS_HINT_CreateLink             2011
-#define IDS_MENU_Delete                 2012
-#define IDS_HINT_Delete                 2013
-#define IDS_MENU_Rename                 2014
-#define IDS_HINT_Rename                 2015
-#define IDS_MENU_Properties             2016
-#define IDS_HINT_Properties             2017
-#define IDS_MENU_ImportFolder           2018
-#define IDS_HINT_ImportFolder           2019
-#define IDS_MENU_StoreManager           2020
-#define IDS_HINT_StoreManager           2021
-#define IDS_MENU_Migrate                2022
-#define IDS_HINT_Migrate                2023
-#define IDS_MENU_About                  2024
-#define IDS_HINT_About                  2025
+#define IDS_MENU_Explore                2008
+#define IDS_HINT_Explore                2009
+#define IDS_MENU_OpenNewWindow          2010
+#define IDS_HINT_OpenNewWindow          2011
+#define IDS_MENU_OpenWith               2012
+#define IDS_HINT_OpenWith               2013
+#define IDS_MENU_CreateLink             2014
+#define IDS_HINT_CreateLink             2015
+#define IDS_MENU_Delete                 2016
+#define IDS_HINT_Delete                 2017
+#define IDS_MENU_Rename                 2018
+#define IDS_HINT_Rename                 2019
+#define IDS_MENU_Properties             2020
+#define IDS_HINT_Properties             2021
+#define IDS_MENU_ImportFolder           2022
+#define IDS_HINT_ImportFolder           2023
+#define IDS_MENU_StoreManager           2024
+#define IDS_HINT_StoreManager           2025
+#define IDS_MENU_Migrate                2026
+#define IDS_HINT_Migrate                2027
+#define IDS_MENU_About                  2028
+#define IDS_HINT_About                  2029
 
 // Next default values for new objects
 // 

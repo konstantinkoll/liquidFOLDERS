@@ -857,6 +857,26 @@ void CFolderItem::GetMenuItems(CGetMenuitemsEventArgs& e)
 			ENSURE(tmpHint.LoadString(IDS_HINT_OpenWith));
 			e.menu->InsertItem(tmpStr, _T(VERB_OPENWITH), tmpHint, 0);
 		}
+		else
+		{
+			OSVERSIONINFO osInfo;
+			ZeroMemory(&osInfo, sizeof(OSVERSIONINFO));
+			osInfo.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
+			GetVersionEx(&osInfo);
+
+			if (osInfo.dwMajorVersion<6)
+			{
+				ENSURE(tmpStr.LoadString(IDS_MENU_Explore));
+				ENSURE(tmpHint.LoadString(IDS_HINT_Explore));
+				e.menu->InsertItem(tmpStr, _T(VERB_EXPLORE), tmpHint, 0);
+			}
+			else
+			{
+				ENSURE(tmpStr.LoadString(IDS_MENU_OpenNewWindow));
+				ENSURE(tmpHint.LoadString(IDS_HINT_OpenNewWindow));
+				e.menu->InsertItem(tmpStr, _T(VERB_OPENNEWWINDOW), tmpHint, 0);
+			}
+		}
 
 		ENSURE(tmpStr.LoadString(IDS_MENU_Open));
 		ENSURE(tmpHint.LoadString(IDS_HINT_Open));
@@ -989,6 +1009,9 @@ BOOL CFolderItem::OnExecuteMenuItem(CExecuteMenuitemsEventArgs& e)
 
 	if (e.menuItem->GetVerb()==_T(VERB_CREATENEWSTORE))
 		return OnCreateNewStore(e.hWnd);
+
+	if ((e.menuItem->GetVerb()==_T(VERB_EXPLORE)) || (e.menuItem->GetVerb()==_T(VERB_OPENNEWWINDOW)))
+		return OnExplore(e);
 
 	if (e.menuItem->GetVerb()==_T(VERB_OPENWITH))
 		return OnOpenWith(e);
@@ -1344,6 +1367,31 @@ BOOL CFolderItem::OnOpen(CExecuteMenuitemsEventArgs& e)
 	return FALSE;
 }
 
+BOOL CFolderItem::OnExplore(CExecuteMenuitemsEventArgs& e)
+{
+	if (e.children->GetCount()==1)
+	{
+		POSITION pos = e.children->GetHeadPosition();
+		CNSEItem* item = (CFileItem*)e.children->GetNext(pos);
+
+		if (IS(item, CFolderItem))
+		{
+			SHELLEXECUTEINFO sei;
+			ZeroMemory(&sei, sizeof(sei));
+			sei.cbSize = sizeof(sei);
+			sei.fMask = SEE_MASK_IDLIST | SEE_MASK_CLASSNAME;
+			sei.lpIDList = item->GetPIDLAbsolute();
+			sei.lpClass = _T("folder");
+			sei.hwnd = GetViewWindow();
+			sei.nShow = SW_SHOWNORMAL;
+			sei.lpVerb = e.menuItem->GetVerb();
+			ShellExecuteEx(&sei);
+		}
+	}
+
+	return FALSE;
+}
+
 BOOL CFolderItem::OnOpenWith(CExecuteMenuitemsEventArgs& e)
 {
 	if (e.children->GetCount()==1)
@@ -1427,9 +1475,7 @@ void CFolderItem::OnCreateShortcut(CNSEItem* Item, const CString& LinkFilename, 
 
 	// Get a pointer to the IShellLink interface
 	IShellLink* psl;
-	HRESULT hres = CoCreateInstance(CLSID_ShellLink, NULL, CLSCTX_INPROC_SERVER, IID_IShellLink, (PVOID *)&psl);
-
-	if (SUCCEEDED(hres))
+	if (SUCCEEDED(CoCreateInstance(CLSID_ShellLink, NULL, CLSCTX_INPROC_SERVER, IID_IShellLink, (PVOID *)&psl)))
 	{
 		// Never use icon for default store
 		if (Icon==IDI_STORE_Default)
@@ -1442,18 +1488,17 @@ void CFolderItem::OnCreateShortcut(CNSEItem* Item, const CString& LinkFilename, 
 		// Query IShellLink for the IPersistFile interface for saving the 
 		// shortcut in persistent storage
 		IPersistFile* ppf;
-		hres = psl->QueryInterface(IID_IPersistFile, (PVOID*)&ppf);
-
-		if (SUCCEEDED(hres))
+		if (SUCCEEDED(psl->QueryInterface(IID_IPersistFile, (PVOID*)&ppf)))
 		{
 			// Ensure that the string is ANSI
 			wchar_t wsz[MAX_PATH];
 			MultiByteToWideChar(CP_ACP, 0, (LPCSTR)PathLink, -1, wsz, MAX_PATH);
 
 			// Save the link by calling IPersistFile::Save
-			hres = ppf->Save(wsz, TRUE);
+			ppf->Save(wsz, TRUE);
 			ppf->Release();
 		}
+
 		psl->Release();
 	}
 }

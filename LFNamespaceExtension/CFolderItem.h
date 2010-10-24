@@ -18,6 +18,8 @@
 #define VERB_MAKEDEFAULTSTORE   "defaultstore"
 #define VERB_MAKEHYBRIDSTORE    "hybridstore"
 #define VERB_OPEN               "open"
+#define VERB_EXPLORE            "explore"
+#define VERB_OPENNEWWINDOW      "opennewwindow"
 #define VERB_OPENWITH           "openwith"
 #define VERB_RENAME             "rename"
 #define VERB_DELETE             "delete"
@@ -92,6 +94,7 @@ public:
 	virtual BOOL OnImportFolder(CExecuteMenuitemsEventArgs& e);
 	virtual BOOL OnProperties(CExecuteMenuitemsEventArgs& e);
 	virtual BOOL OnOpen(CExecuteMenuitemsEventArgs& e);
+	virtual BOOL OnExplore(CExecuteMenuitemsEventArgs& e);
 	virtual BOOL OnOpenWith(CExecuteMenuitemsEventArgs& e);
 	virtual void DragOver(CNSEDragEventArgs& e);
 	virtual void DragEnter(CNSEDragEventArgs& e);
