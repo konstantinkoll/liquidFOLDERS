@@ -1,5 +1,9 @@
 
+// MenuIcons.cpp: Implementierung von Methoden zur Darstellung von Menu-Icons
+//
+
 #include "stdafx.h"
+
 
 void SetMenuItemBitmap(HMENU hMenu, UINT item, HBITMAP hBmp)
 {

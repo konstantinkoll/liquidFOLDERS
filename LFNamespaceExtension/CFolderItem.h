@@ -1,8 +1,14 @@
 
+// CFolderItem.h: Schnittstelle der Klasse CFolderItem
+//
+
 #pragma once
 #include "LFCore.h"
 #include <eznamespaceextensions.h>
 
+
+// CFolderItem
+//
 
 #define LevelRoot        0
 #define LevelStores      1

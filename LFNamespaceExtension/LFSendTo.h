@@ -1,6 +1,13 @@
 
+// LFSendTo.h: Schnittstelle der Klasse LFSendTo
+//
+
 #pragma once
 #include <ezshellextensions.h>
+
+
+// LFSendTo
+//
 
 class LFSendTo : public CSendToExtension
 {

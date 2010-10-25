@@ -15,6 +15,9 @@
 #include <shlobj.h>
 
 
+IMPLEMENT_DYNCREATE(CFolderItem, CNSEFolder)
+
+
 CString FrmtAttrStr(CString Mask, CString Name)
 {
 	if ((Mask[0]=='L') && (Name[0]>='A') && (Name[0]<='Z') && (Name[1]>'Z'))
@@ -25,33 +28,6 @@ CString FrmtAttrStr(CString Mask, CString Name)
 	return tmpStr;
 }
 
-CShellMenuItem* InsertItem(CShellMenu* menu, UINT ResID, CString verb, int pos)
-{
-	CString tmpStr;
-	CString tmpHint;
-	ENSURE(tmpStr.LoadString(ResID));
-	ENSURE(tmpStr.LoadString(ResID+1));
-
-	return menu->InsertItem(tmpStr, verb, tmpHint, pos);
-}
-
-void AddSeparator(CShellMenu* menu)
-{
-	menu->AddItem("")->SetSeparator(TRUE);
-}
-
-CShellMenuItem* AddItem(CShellMenu* menu, UINT ResID, CString verb)
-{
-	CString tmpStr;
-	CString tmpHint;
-	ENSURE(tmpStr.LoadString(ResID));
-	ENSURE(tmpStr.LoadString(ResID+1));
-
-	return menu->AddItem(tmpStr, verb, tmpHint);
-}
-
-
-IMPLEMENT_DYNCREATE(CFolderItem, CNSEFolder)
 
 // The GUID of the class representing the root folder is used as the GUID for the namespace extension
 // 3F2D914F-FE57-414F-9F88-A377C7841DA4
@@ -969,27 +945,16 @@ void CFolderItem::OnMergeFrameMenu(CMergeFrameMenuEventArgs& e)
 
 	CShellMenu* subMenu = item->GetSubMenu();
 
-	CString tmpStr;
-	CString tmpHint;
-	ENSURE(tmpStr.LoadString(IDS_MENU_About));
-	ENSURE(tmpHint.LoadString(IDS_HINT_About));
+	AddItem(subMenu, IDS_MENU_About, _T(VERB_ABOUT))->SetEnabled(!theApp.m_PathRunCmd.IsEmpty());
+	AddSeparator(subMenu);
 
-	subMenu->AddItem(tmpStr, _T(VERB_ABOUT), tmpHint)->SetEnabled(!theApp.m_PathRunCmd.IsEmpty());
-
-	subMenu->AddItem(_T(""))->SetSeparator(TRUE);
-
-	ENSURE(tmpStr.LoadString(IDS_MENU_StoreManager));
-	ENSURE(tmpHint.LoadString(IDS_HINT_StoreManager));
-
-	item = subMenu->AddItem(tmpStr, _T(VERB_STOREMANAGER), tmpHint);
+	item = AddItem(subMenu, IDS_MENU_StoreManager, _T(VERB_STOREMANAGER));
 	item->SetEnabled(!theApp.m_PathStoreManager.IsEmpty());
 	HICON hIcon = (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IDI_StoreManager), IMAGE_ICON, cx, cy, LR_DEFAULTCOLOR);
 	item->SetBitmap(IconToBitmap(hIcon, cx, cy));
 	DestroyIcon(hIcon);
 
-	ENSURE(tmpStr.LoadString(IDS_MENU_Migrate));
-	ENSURE(tmpHint.LoadString(IDS_HINT_Migrate));
-	item = subMenu->AddItem(tmpStr, _T(VERB_MIGRATE), tmpHint);
+	item = AddItem(subMenu, IDS_MENU_Migrate, _T(VERB_MIGRATE));
 	item->SetEnabled(!theApp.m_PathMigrate.IsEmpty());
 	hIcon = (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IDI_Migrate), IMAGE_ICON, cx, cy, LR_DEFAULTCOLOR);
 	item->SetBitmap(IconToBitmap(hIcon, cx, cy));

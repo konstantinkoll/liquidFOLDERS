@@ -1,4 +1,7 @@
 
+// CDriveMenu.cpp: Implementierung der Klasse CDriveMenu
+//
+
 #include "stdafx.h"
 #include "LFCore.h"
 #include "LFNamespaceExtension.h"
@@ -6,19 +9,11 @@
 #include "MenuIcons.h"
 #include "resource.h"
 
-#define HIDA_GetPIDLFolder(pida) (LPITEMIDLIST)(((LPBYTE)pida)+(pida)->aoffset[0])
-#define HIDA_GetPIDLItem(pida, i) (LPITEMIDLIST)(((LPBYTE)pida)+(pida)->aoffset[i+1])
-
 
 IMPLEMENT_DYNCREATE(CDriveMenu, CContextMenuExtension)
-
-// The GUID and ProgID of the shell extension
 IMPLEMENT_OLECREATE_EX(CDriveMenu, _T("LFNamespaceExtension.DriveMenu"),
-	0x3f2d914e, 0xfe57, 0x414f, 0x9f, 0x88, 0xa3, 0x77, 0xc7, 0x84, 0x1d, 0xa4)
+	0x3F2D914E, 0xFE57, 0x414F, 0x9F, 0x88, 0xA3, 0x77, 0xC7, 0x84, 0x1D, 0xA4)
 
-
-// This function is called when you register the shell extension dll file
-// using the regsvr32.exe or similar utility
 
 //The classfactory is nested in your class and has a name formed
 //by concatenating the class name with "Factory".
@@ -41,8 +36,11 @@ BOOL CDriveMenu::CDriveMenuFactory::UpdateRegistry(BOOL bRegister)
 }
 
 
-// Class CDriveMenu
+// CDriveMenu
 //
+
+#define HIDA_GetPIDLFolder(pida) (LPITEMIDLIST)(((LPBYTE)pida)+(pida)->aoffset[0])
+#define HIDA_GetPIDLItem(pida, i) (LPITEMIDLIST)(((LPBYTE)pida)+(pida)->aoffset[i+1])
 
 CDriveMenu::CDriveMenu()
 {

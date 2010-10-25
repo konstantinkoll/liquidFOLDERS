@@ -1,6 +1,13 @@
 
+// CDriveMenu.h: Schnittstelle der Klasse CDriveMenu
+//
+
 #pragma once
 #include <ezshellextensions.h>
+
+
+// CDriveMenu
+//
 
 #define VERB_CREATENEWSTOREDRIVE     "newstoredrive"
 

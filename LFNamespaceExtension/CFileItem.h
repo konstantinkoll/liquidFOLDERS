@@ -1,8 +1,19 @@
 
+// CFileItem.h: Schnittstelle der Klasse CFileItem
+//
+
 #pragma once
 #include "liquidFOLDERS.h"
 #include <eznamespaceextensions.h>
 
+
+CShellMenuItem* InsertItem(CShellMenu* menu, UINT ResID, CString verb, int pos);
+void AddSeparator(CShellMenu* menu);
+CShellMenuItem* AddItem(CShellMenu* menu, UINT ResID, CString verb);
+
+
+// CFileItem
+//
 
 class CFileItem : public CNSEItem
 {

@@ -1,6 +1,8 @@
 
+// Commands.h: Schnittstelle der Klassen für Toolbar-Befehle
+//
+
 #pragma once
-#include "LFCore.h"
 
 
 // CmdImportFolder

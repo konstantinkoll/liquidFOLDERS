@@ -1,5 +1,5 @@
 
-// LFNamespaceExtension.cpp : Defines the initialization routines for the DLL.
+// LFNamespaceExtension.cpp : definiert die Initalisierung der DLL
 //
 
 #include "stdafx.h"
@@ -11,6 +11,9 @@
 #include <ezshellextensions.h>
 #include <io.h>
 
+
+// LFNamespaceExtensionApp
+//
 
 LFNamespaceExtensionApp::LFNamespaceExtensionApp()
 {
@@ -174,6 +177,7 @@ void LFNamespaceExtensionApp::SetCoreMenuIcon(void* item, UINT ResID)
 
 
 // Registrierung mit dem Explorer
+//
 
 STDAPI DllRegisterServer(void)
 {

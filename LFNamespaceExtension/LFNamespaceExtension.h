@@ -1,9 +1,16 @@
 
+// LFNamespaceExtension.h : deklariert die Initalisierung der DLL
+//
+
 #pragma once
 #include "resource.h"
 #include "liquidFOLDERS.h"
 #include <objbase.h>
 #include <shlguid.h>
+
+
+// LFNamespaceExtensionApp
+//
 
 #define LFNamespaceExtensionVersion   1
 
