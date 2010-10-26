@@ -1,4 +1,7 @@
 
+// CFileItem.cpp: Implementierung der Klasse CFileItem
+//
+
 #include "stdafx.h"
 #include "LFNamespaceExtension.h"
 #include "CFolderItem.h"
@@ -7,15 +10,12 @@
 #include <shlwapi.h>
 
 
-IMPLEMENT_DYNCREATE(CFileItem, CNSEItem)
-
-
 CShellMenuItem* InsertItem(CShellMenu* menu, UINT ResID, CString verb, int pos)
 {
 	CString tmpStr;
 	CString tmpHint;
 	ENSURE(tmpStr.LoadString(ResID));
-	ENSURE(tmpStr.LoadString(ResID+1));
+	ENSURE(tmpHint.LoadString(ResID+1));
 
 	return menu->InsertItem(tmpStr, verb, tmpHint, pos);
 }
@@ -30,10 +30,13 @@ CShellMenuItem* AddItem(CShellMenu* menu, UINT ResID, CString verb)
 	CString tmpStr;
 	CString tmpHint;
 	ENSURE(tmpStr.LoadString(ResID));
-	ENSURE(tmpStr.LoadString(ResID+1));
+	ENSURE(tmpHint.LoadString(ResID+1));
 
 	return menu->AddItem(tmpStr, verb, tmpHint);
 }
+
+
+IMPLEMENT_DYNCREATE(CFileItem, CNSEItem)
 
 
 // CFileItem
@@ -100,8 +103,7 @@ void CFileItem::GetDisplayNameEx(CString& displayName, DisplayNameFlags flags)
 void CFileItem::GetIconFileAndIndex(CGetIconFileAndIndexEventArgs& e)
 {
 	char Path[MAX_PATH];
-	UINT res = LFGetFileLocation((char*)(LPCSTR)StoreID, &Attrs, Path, MAX_PATH);
-	if (res==LFOk)
+	if (LFGetFileLocation((char*)(LPCSTR)StoreID, &Attrs, Path, MAX_PATH)==LFOk)
 	{
 		e.iconExtractMode = NSEIEM_SystemImageListIndexFromPath;
 		e.iconFile = Path;

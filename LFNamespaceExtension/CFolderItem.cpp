@@ -15,9 +15,6 @@
 #include <shlobj.h>
 
 
-IMPLEMENT_DYNCREATE(CFolderItem, CNSEFolder)
-
-
 CString FrmtAttrStr(CString Mask, CString Name)
 {
 	if ((Mask[0]=='L') && (Name[0]>='A') && (Name[0]<='Z') && (Name[1]>'Z'))
@@ -29,14 +26,10 @@ CString FrmtAttrStr(CString Mask, CString Name)
 }
 
 
-// The GUID of the class representing the root folder is used as the GUID for the namespace extension
-// 3F2D914F-FE57-414F-9F88-A377C7841DA4
+IMPLEMENT_DYNCREATE(CFolderItem, CNSEFolder)
 IMPLEMENT_OLECREATE_EX(CFolderItem, _T("LFNamespaceExtension.RootFolder"),
 	0x3F2D914F, 0xFE57, 0x414F, 0x9F, 0x88, 0xA3, 0x77, 0xC7, 0x84, 0x1D, 0xA4)
 
-
-// This function is called when you register the namespace extension dll file
-// using the regsvr32.exe or similar utility
 
 // The classfactory is nested in your class and has a name formed
 // by concatenating the class name with "Factory".
@@ -73,7 +66,7 @@ BOOL CFolderItem::CFolderItemFactory::UpdateRegistry(BOOL bRegister)
 }
 
 
-// Class CFolderItem
+// CFolderItem
 //
 
 CFolderItem::CFolderItem()
@@ -852,7 +845,7 @@ void CFolderItem::GetMenuItems(CGetMenuitemsEventArgs& e)
 		if (data.Level==LevelAttrValue)
 		{
 			InsertItem(e.menu, IDS_MENU_OpenWith, _T(VERB_OPENWITH), 0);
-			InsertItem(e.menu, IDS_MENU_Open, _T(VERB_OPEN), 0);
+			InsertItem(e.menu, IDS_MENU_Open, _T(VERB_OPEN), 0)->SetDefaultItem((e.flags & NSEQCF_NoDefault)==0);
 		}
 		else
 		{
@@ -918,7 +911,7 @@ void CFolderItem::GetMenuItems(CGetMenuitemsEventArgs& e)
 					AddItem(e.menu, IDS_MENU_Rename, _T(VERB_RENAME));
 
 				AddSeparator(e.menu);
-				AddItem(e.menu, IDS_MENU_Properties, _T(VERB_PROPERTIES))->SetEnabled(!theApp.m_PathRunCmd.IsEmpty());;
+				AddItem(e.menu, IDS_MENU_Properties, _T(VERB_PROPERTIES))->SetEnabled(!theApp.m_PathRunCmd.IsEmpty());
 			}
 		}
 		break;
@@ -929,6 +922,20 @@ void CFolderItem::GetMenuItems(CGetMenuitemsEventArgs& e)
 		{
 			AddSeparator(e.menu);
 			AddItem(e.menu, IDS_MENU_CreateLink, _T(VERB_CREATELINK));
+		}
+		break;
+	case LevelAttrValue:
+		if ((!(e.flags & NSEQCF_NoDefault)) && (e.children->GetCount()>=1))
+		{
+			// TODO
+			AddSeparator(e.menu);
+			//AddItem(e.menu, IDS_MENU_CreateLink, _T(VERB_CREATELINK));
+			//AddItem(e.menu, IDS_MENU_Delete, _T(VERB_DELETE));
+			//if ((e.children->GetCount()==1) && (e.flags & NSEQCF_CanRename))
+			//		AddItem(e.menu, IDS_MENU_Rename, _T(VERB_RENAME));
+
+			AddSeparator(e.menu);
+			//AddItem(e.menu, IDS_MENU_Properties, _T(VERB_PROPERTIES))->SetEnabled(!theApp.m_PathRunCmd.IsEmpty());
 		}
 		break;
 	}
