@@ -10,14 +10,14 @@
 // CFolderItem
 //
 
-#define LevelRoot        0
-#define LevelStores      1
-#define LevelStoreHome   2
-#define LevelAttribute   3
-#define LevelAttrValue   4
-#define LevelFile        5
+#define LevelRoot               0
+#define LevelStores             1
+#define LevelStoreHome          2
+#define LevelAttribute          3
+#define LevelAttrValue          4
+#define LevelFile               5
 
-#define NSEIA_CFOLDERITEM   NSEIA_CanLink | NSEIA_FileSysAncestor | NSEIA_Browsable | NSEIA_Folder
+#define NSEIA_CFOLDERITEM       NSEIA_CanLink | NSEIA_FileSysAncestor | NSEIA_Browsable | NSEIA_Folder
 
 #define VERB_CREATELINK         "link"
 #define VERB_CREATENEWSTORE     "newstore"
