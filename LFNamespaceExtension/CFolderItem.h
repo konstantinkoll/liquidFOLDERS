@@ -7,6 +7,9 @@
 #include <eznamespaceextensions.h>
 
 
+BOOL RunPath(HWND hWnd, CString path, CString parameter=_T(""));
+
+
 // CFolderItem
 //
 
@@ -64,16 +67,19 @@ public:
 	DECLARE_DYNCREATE(CFolderItem)
 	DECLARE_OLECREATE_EX(CFolderItem)
 
-	FolderSerialization data;
-
 	CFolderItem();
-	CFolderItem(FolderSerialization &_data);
+	CFolderItem(FolderSerialization& _data);
 
+	// Registration and class IDs
 	virtual void GetCLSID(LPCLSID pCLSID);
 	virtual void GetExtensionTargetInfo(CExtensionTargetInfo& info);
 	virtual NSEItemAttributes GetAttributes(NSEItemAttributes requested);
+
+	// PIDL generation
 	virtual void Serialize(CArchive& ar);
 	virtual CNSEItem* DeserializeChild(CArchive& ar);
+
+	// Child enumeration
 	virtual BOOL GetChildren(CGetChildrenEventArgs& e);
 	virtual void GetDisplayName(CString& displayName);
 	virtual void GetDisplayNameEx(CString& displayName, DisplayNameFlags flags);
@@ -107,10 +113,6 @@ public:
 	virtual void DragOver(CNSEDragEventArgs& e);
 	virtual void DragEnter(CNSEDragEventArgs& e);
 
-	BOOL OnCreateNewStore(HWND hWnd=NULL);
-	BOOL OnStoreManager(HWND hWnd=NULL);
-	BOOL OnFileDrop(HWND hWnd=NULL);
-	BOOL OnMigrate(HWND hWnd=NULL);
 	void OnCreateShortcut(CNSEItem* Item, const CString& LinkFilename, const CString& Description, UINT Icon);
 	void UpdateItems();
 
@@ -118,4 +120,8 @@ public:
 	virtual void InitDataObject(CInitDataObjectEventArgs& e);
 	virtual void OnExternalDrop(CNSEDragEventArgs& e);
 	virtual void DragDrop(CNSEDragEventArgs& e);
+
+	FolderSerialization data;
+
+protected:
 };

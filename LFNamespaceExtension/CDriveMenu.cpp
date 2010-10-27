@@ -126,12 +126,12 @@ void CDriveMenu::OnGetMenuItems(CGetMenuitemsEventArgs& e)
 
 	if (Add)
 	{
+		e.menu->AddItem(_T(""))->SetSeparator(TRUE);
+
 		CString tmpStr;
 		CString tmpHint;
 		ENSURE(tmpStr.LoadString(IDS_MENU_CreateNewStore));
 		ENSURE(tmpHint.LoadString(IDS_HINT_CreateNewStore));
-
-		e.menu->AddItem(_T(""))->SetSeparator(TRUE);
 
 		CShellMenuItem* item = e.menu->AddItem(tmpStr, _T(VERB_CREATENEWSTOREDRIVE), tmpHint);
 		item->SetEnabled(!theApp.m_PathRunCmd.IsEmpty());
@@ -159,15 +159,13 @@ BOOL CDriveMenu::OnExecuteMenuItem(CExecuteItemEventArgs& e)
 		if ((Drive>='A') && (Drive<='Z'))
 		{
 			CString id(Drive);
-			ShellExecute(NULL, "open", theApp.m_PathRunCmd, _T("NEWSTOREDRIVE ")+id, NULL, SW_SHOW);
-
+			ShellExecute(NULL, _T("open"), theApp.m_PathRunCmd, _T("NEWSTOREDRIVE ")+id, NULL, SW_SHOW);
 			return TRUE;
 		}
 
 		if (Drive=='\1')
 		{
-			ShellExecute(NULL, "open", theApp.m_PathRunCmd, _T("NEWSTORE"), NULL, SW_SHOW);
-
+			ShellExecute(NULL, _T("open"), theApp.m_PathRunCmd, _T("NEWSTORE"), NULL, SW_SHOW);
 			return TRUE;
 		}
 	}

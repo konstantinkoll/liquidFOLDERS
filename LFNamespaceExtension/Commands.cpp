@@ -52,7 +52,7 @@ BOOL CmdImportFolder::Invoke(CPtrList* nseItems)
 		if (IS(item, CFolderItem))
 		{
 			CString id = AS(item, CFolderItem)->data.StoreID;
-			ShellExecute(NULL, "open", theApp.m_PathRunCmd, _T("IMPORTFOLDER ")+id, NULL, SW_SHOW);
+			ShellExecute(NULL, _T("open"), theApp.m_PathRunCmd, _T("IMPORTFOLDER ")+id, NULL, SW_SHOW);
 			return TRUE;
 		}
 	}
@@ -107,7 +107,7 @@ BOOL CmdProperties::Invoke(CPtrList* nseItems)
 		if (IS(item, CFolderItem))
 		{
 			CString id = AS(item, CFolderItem)->data.StoreID;
-			ShellExecute(NULL, "open", theApp.m_PathRunCmd, _T("STOREPROPERTIES ")+id, NULL, SW_SHOW);
+			ShellExecute(NULL, _T("open"), theApp.m_PathRunCmd, _T("STOREPROPERTIES ")+id, NULL, SW_SHOW);
 			return TRUE;
 		}
 	}
@@ -155,7 +155,7 @@ ExplorerCommandState CmdCreateNewStore::GetState(CPtrList* /*nseItems*/)
 
 BOOL CmdCreateNewStore::Invoke(CPtrList* /*nseItems*/)
 {
-	return ((CFolderItem*)nseFolder)->OnCreateNewStore();
+	return RunPath(NULL, theApp.m_PathRunCmd, _T("NEWSTORE"));
 }
 
 CString CmdCreateNewStore::GetIcon(CPtrList* /*nseItems*/)
@@ -198,7 +198,7 @@ ExplorerCommandState CmdStoreManager::GetState(CPtrList* /*nseItems*/)
 
 BOOL CmdStoreManager::Invoke(CPtrList* /*nseItems*/)
 {
-	return ((CFolderItem*)nseFolder)->OnStoreManager();
+	return RunPath(NULL, theApp.m_PathStoreManager);
 }
 
 CString CmdStoreManager::GetIcon(CPtrList* /*nseItems*/)
@@ -241,13 +241,56 @@ ExplorerCommandState CmdMigrate::GetState(CPtrList* /*nseItems*/)
 
 BOOL CmdMigrate::Invoke(CPtrList* /*nseItems*/)
 {
-	return ((CFolderItem*)nseFolder)->OnMigrate();
+	return RunPath(NULL, theApp.m_PathMigrate);
 }
 
 CString CmdMigrate::GetIcon(CPtrList* /*nseItems*/)
 {
 	CString tmpStr(theApp.m_ThisFile);
 	tmpStr.Append(_T(",4"));
+
+	return tmpStr;
+}
+
+
+// CmdFileDrop
+//
+
+CmdFileDrop::CmdFileDrop()
+{
+	static const GUID GFileDrop = { 0xDFDFF069, 0xF883, 0x43BC, { 0x85, 0xD3, 0x4C, 0x17, 0x6B, 0xE1, 0xAA, 0x2D } };
+	guid = GFileDrop;
+}
+
+CString CmdFileDrop::GetCaption(CPtrList* /*nseItems*/)
+{
+	CString caption;
+	ENSURE(caption.LoadString(IDS_MENU_FileDrop));
+	caption.Remove('&');
+	return caption;
+}
+
+CString CmdFileDrop::GetToolTip(CPtrList* /*nseItems*/)
+{
+	CString hint;
+	ENSURE(hint.LoadString(IDS_HINT_FileDrop));
+	return hint;
+}
+
+ExplorerCommandState CmdFileDrop::GetState(CPtrList* /*nseItems*/)
+{
+	return (!theApp.m_PathFileDrop.IsEmpty()) ? ECS_Enabled : ECS_Disabled;
+}
+
+BOOL CmdFileDrop::Invoke(CPtrList* /*nseItems*/)
+{
+	return RunPath(NULL, theApp.m_PathFileDrop);
+}
+
+CString CmdFileDrop::GetIcon(CPtrList* /*nseItems*/)
+{
+	CString tmpStr(theApp.m_ThisFile);
+	tmpStr.Append(_T(",5"));
 
 	return tmpStr;
 }

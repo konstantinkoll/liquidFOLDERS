@@ -5,7 +5,6 @@
 #include "CFolderItem.h"
 #include "Commands.h"
 #include "LFCore.h"
-#include "liquidFOLDERS.h"
 #include "CCategoryCategorizer.h"
 #include "CAttributeCategorizer.h"
 #include "MenuIcons.h"
@@ -64,6 +63,17 @@ void AddPathItem(CShellMenu* menu, UINT ResID, CString verb, CString path, UINT 
 	DestroyIcon(hIcon);
 }
 
+BOOL RunPath(HWND hWnd, CString path, CString parameter)
+{
+	if (!path.IsEmpty())
+	{
+		ShellExecute(hWnd, _T("open"), path, parameter, NULL, SW_SHOW);
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
 
 IMPLEMENT_DYNCREATE(CFolderItem, CNSEFolder)
 IMPLEMENT_OLECREATE_EX(CFolderItem, _T("LFNamespaceExtension.RootFolder"),
@@ -113,10 +123,13 @@ CFolderItem::CFolderItem()
 	data.Level = LevelRoot;
 }
 
-CFolderItem::CFolderItem(FolderSerialization &_data)
+CFolderItem::CFolderItem(FolderSerialization& _data)
 {
 	data = _data;
 }
+
+
+// Registration and class IDs
 
 void CFolderItem::GetCLSID(LPCLSID pCLSID)
 {
@@ -175,6 +188,9 @@ NSEItemAttributes CFolderItem::GetAttributes(NSEItemAttributes requested)
 
 	return (NSEItemAttributes)(requested & mask);
 }
+
+
+// PIDL generation
 
 void CFolderItem::Serialize(CArchive& ar)
 {
@@ -252,6 +268,9 @@ CNSEItem* CFolderItem::DeserializeChild(CArchive& ar)
 
 	return NULL;
 }
+
+
+// Child enumeration
 
 BOOL CFolderItem::GetChildren(CGetChildrenEventArgs& e)
 {
@@ -1005,7 +1024,7 @@ BOOL CFolderItem::OnExecuteMenuItem(CExecuteMenuitemsEventArgs& e)
 		return OnImportFolder(e);
 
 	if (e.menuItem->GetVerb()==_T(VERB_CREATENEWSTORE))
-		return OnCreateNewStore(e.hWnd);
+		return RunPath(e.hWnd, theApp.m_PathRunCmd, _T("NEWSTORE"));
 
 	if (e.menuItem->GetVerb()==_T(VERB_EXPLORE))
 		return OnExplorer(e);
@@ -1085,29 +1104,28 @@ void CFolderItem::OnExecuteFrameCommand(CExecuteFrameCommandEventArgs& e)
 	if(e.menuItem)
 	{
 		if (e.menuItem->GetVerb()==_T(VERB_ABOUT))
-			if (!theApp.m_PathRunCmd.IsEmpty())
-				ShellExecute(NULL, "open", theApp.m_PathRunCmd, "ABOUTEXTENSION", NULL, SW_SHOW);
+			RunPath(NULL, theApp.m_PathRunCmd, "ABOUTEXTENSION");
 
 		if (e.menuItem->GetVerb()==_T(VERB_STOREMANAGER))
-			OnStoreManager();
+			RunPath(NULL, theApp.m_PathStoreManager);
 
 		if (e.menuItem->GetVerb()==_T(VERB_MIGRATE))
-			OnMigrate();
+			RunPath(NULL, theApp.m_PathMigrate);
 
 		if (e.menuItem->GetVerb()==_T(VERB_FILEDROP))
-			OnFileDrop();
+			RunPath(NULL, theApp.m_PathFileDrop);
 	}
 	else
 		switch (e.toolbarButtonIndex)
 		{
 		case 1:
-			OnStoreManager();
+			RunPath(NULL, theApp.m_PathStoreManager);
 			break;
 		case 2:
-			OnMigrate();
+			RunPath(NULL, theApp.m_PathMigrate);
 			break;
 		case 3:
-			OnFileDrop();
+			RunPath(NULL, theApp.m_PathFileDrop);
 			break;
 		}
 }
@@ -1256,6 +1274,7 @@ void CFolderItem::GetToolbarCommands(CPtrList& commands)
 
 	commands.AddTail(new CmdStoreManager());
 	commands.AddTail(new CmdMigrate());
+	commands.AddTail(new CmdFileDrop());
 }
 
 BOOL CFolderItem::OnChangeName(CChangeNameEventArgs& e)
@@ -1290,7 +1309,7 @@ BOOL CFolderItem::OnDelete(CExecuteMenuitemsEventArgs& e)
 				if (IS(item, CFolderItem))
 				{
 					CString id = AS(item, CFolderItem)->data.StoreID;
-					ShellExecute(e.hWnd, "open", theApp.m_PathRunCmd, _T("DELETESTORE ")+id, NULL, SW_SHOW);
+					ShellExecute(e.hWnd, _T("open"), theApp.m_PathRunCmd, _T("DELETESTORE ")+id, NULL, SW_SHOW);
 					return TRUE;
 				}
 			}
@@ -1315,7 +1334,7 @@ BOOL CFolderItem::OnImportFolder(CExecuteMenuitemsEventArgs& e)
 				if (IS(item, CFolderItem))
 				{
 					CString id = AS(item, CFolderItem)->data.StoreID;
-					ShellExecute(e.hWnd, "open", theApp.m_PathRunCmd, _T("IMPORTFOLDER ")+id, NULL, SW_SHOW);
+					ShellExecute(e.hWnd, _T("open"), theApp.m_PathRunCmd, _T("IMPORTFOLDER ")+id, NULL, SW_SHOW);
 					return TRUE;
 				}
 			}
@@ -1337,7 +1356,7 @@ BOOL CFolderItem::OnProperties(CExecuteMenuitemsEventArgs& e)
 			if (IS(item, CFolderItem))
 			{
 				CString id = AS(item, CFolderItem)->data.StoreID;
-				ShellExecute(e.hWnd, "open", theApp.m_PathRunCmd, _T("STOREPROPERTIES ")+id, NULL, SW_SHOW);
+				ShellExecute(e.hWnd, _T("open"), theApp.m_PathRunCmd, _T("STOREPROPERTIES ")+id, NULL, SW_SHOW);
 				return TRUE;
 			}
 		}
@@ -1381,12 +1400,12 @@ BOOL CFolderItem::OnOpen(CExecuteMenuitemsEventArgs& e)
 				LFErrorBox(res);
 			}
 			else
-				if (ShellExecuteA(e.hWnd, "open", Path, "", "", SW_SHOW)==(HINSTANCE)SE_ERR_NOASSOC)
+				if (ShellExecuteA(e.hWnd, _T("open"), Path, "", "", SW_SHOW)==(HINSTANCE)SE_ERR_NOASSOC)
 				{
 					char Cmd[300];
 					strcpy_s(Cmd, 300, "shell32.dll,OpenAs_RunDLL ");
 					strcat_s(Cmd, 300, Path);
-					ShellExecuteA(e.hWnd, "open", "rundll32.exe", Cmd, Path, SW_SHOW);
+					ShellExecuteA(e.hWnd, _T("open"), "rundll32.exe", Cmd, Path, SW_SHOW);
 				}
 
 			return TRUE;
@@ -1443,55 +1462,11 @@ BOOL CFolderItem::OnOpenWith(CExecuteMenuitemsEventArgs& e)
 				char Cmd[300];
 				strcpy_s(Cmd, 300, "shell32.dll,OpenAs_RunDLL ");
 				strcat_s(Cmd, 300, Path);
-				ShellExecuteA(e.hWnd, "open", "rundll32.exe", Cmd, Path, SW_SHOW);
+				ShellExecuteA(e.hWnd, _T("open"), "rundll32.exe", Cmd, Path, SW_SHOW);
 			}
 
 			return TRUE;
 		}
-	}
-
-	return FALSE;
-}
-
-BOOL CFolderItem::OnCreateNewStore(HWND hWnd)
-{
-	if (!theApp.m_PathRunCmd.IsEmpty())
-	{
-		ShellExecute(hWnd, "open", theApp.m_PathRunCmd, "NEWSTORE", NULL, SW_SHOW);
-		return TRUE;
-	}
-
-	return FALSE;
-}
-
-BOOL CFolderItem::OnStoreManager(HWND hWnd)
-{
-	if (!theApp.m_PathStoreManager.IsEmpty())
-	{
-		ShellExecute(hWnd, "open", theApp.m_PathStoreManager, "", NULL, SW_SHOW);
-		return TRUE;
-	}
-
-	return FALSE;
-}
-
-BOOL CFolderItem::OnFileDrop(HWND hWnd)
-{
-	if (!theApp.m_PathFileDrop.IsEmpty())
-	{
-		ShellExecute(hWnd, "open", theApp.m_PathFileDrop, "", NULL, SW_SHOW);
-		return TRUE;
-	}
-
-	return FALSE;
-}
-
-BOOL CFolderItem::OnMigrate(HWND hWnd)
-{
-	if (!theApp.m_PathMigrate.IsEmpty())
-	{
-		ShellExecute(hWnd, "open", theApp.m_PathMigrate, "", NULL, SW_SHOW);
-		return TRUE;
 	}
 
 	return FALSE;

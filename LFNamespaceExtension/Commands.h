@@ -84,3 +84,20 @@ public:
 	virtual BOOL Invoke(CPtrList* nseItems);
 	virtual CString GetIcon(CPtrList* nseItems);
 };
+
+
+// CmdFileDrop
+//
+
+
+class CmdFileDrop : public CExplorerCommand
+{
+public:
+	CmdFileDrop();
+
+	virtual CString GetCaption(CPtrList* nseItems);
+	virtual CString GetToolTip(CPtrList* nseItems);
+	virtual ExplorerCommandState GetState(CPtrList* nseItems);
+	virtual BOOL Invoke(CPtrList* nseItems);
+	virtual CString GetIcon(CPtrList* nseItems);
+};
