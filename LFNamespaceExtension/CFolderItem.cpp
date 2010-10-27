@@ -904,7 +904,7 @@ void CFolderItem::GetMenuItems(CGetMenuitemsEventArgs& e)
 				}
 				else
 				{
-					InsertItem(e.menu, IDS_MENU_Explore, _T(e.flags & NSEQCF_Explore ? VERB_OPEN : VERB_EXPLORE), 1)->SetDefaultItem((e.flags & (NSEQCF_Explore | NSEQCF_NoDefault))==NSEQCF_Explore);
+					InsertItem(e.menu, IDS_MENU_Explore, _T(e.flags & NSEQCF_Explore ? VERB_OPEN : VERB_EXPLORE), data.Level==LevelRoot ? 1 : 0)->SetDefaultItem((e.flags & (NSEQCF_Explore | NSEQCF_NoDefault))==NSEQCF_Explore);
 					InsertItem(e.menu, IDS_MENU_Open, _T(e.flags & NSEQCF_Explore ? VERB_OPENNEWWINDOW : VERB_OPEN))->SetDefaultItem((e.flags & (NSEQCF_Explore | NSEQCF_NoDefault))==0);
 				}
 			}

@@ -103,7 +103,7 @@ LANGUAGE LANG_GERMAN, SUBLANG_NEUTRAL
 STRINGTABLE 
 BEGIN
     IDS_InfoTip             "Stores und Dateien"
-    IDS_AttributeComment    "UDateien nach &s anordnen"
+    IDS_AttributeComment    "UDateien nach %s anordnen"
     IDS_AllFiles            "Alle Dateien"
     IDS_AllFilesComment     "Zeigt alle Dateien"
     IDS_Store               "Store"
@@ -348,13 +348,13 @@ LANGUAGE LANG_FRENCH, SUBLANG_NEUTRAL
 STRINGTABLE 
 BEGIN
     IDS_InfoTip             "Stores und Dateien"
-    IDS_AttributeComment    "UDateien nach &s anordnen"
+    IDS_AttributeComment    "LDateien nach %s anordnen"
     IDS_AllFiles            "Alle Dateien"
     IDS_AllFilesComment     "Zeigt alle Dateien"
     IDS_Store               "Store"
     IDS_Folder              "Virtueller Ordner"
-    IDS_NULLFOLDER_NameMask "UOhne %s"
-    IDS_NULLFOLDER_CommentMask "UAlle Dateien ohne %s"
+    IDS_NULLFOLDER_NameMask "LOhne %s"
+    IDS_NULLFOLDER_CommentMask "LAlle Dateien ohne %s"
 END
 
 STRINGTABLE 
