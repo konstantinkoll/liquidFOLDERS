@@ -158,8 +158,8 @@ BEGIN
         MENUITEM "Als &Standard-Store setzen",  IDM_STORE_MAKEDEFAULT
         MENUITEM "Zu &Hybrid-Store machen",     IDM_STORE_MAKEHYBRID
         MENUITEM SEPARATOR
-        MENUITEM "&Umbenennen",                 IDM_STORE_RENAME
         MENUITEM "&Löschen",                    IDM_STORE_DELETE
+        MENUITEM "&Umbenennen",                 IDM_STORE_RENAME
         MENUITEM SEPARATOR
         MENUITEM "&Eigenschaften",              IDM_STORE_PROPERTIES
     END
@@ -731,8 +731,8 @@ BEGIN
         MENUITEM "Make default &store",         IDM_STORE_MAKEDEFAULT
         MENUITEM "Make &hybrid store",          IDM_STORE_MAKEHYBRID
         MENUITEM SEPARATOR
-        MENUITEM "&Rename",                     IDM_STORE_RENAME
         MENUITEM "&Delete",                     IDM_STORE_DELETE
+        MENUITEM "&Rename",                     IDM_STORE_RENAME
         MENUITEM SEPARATOR
         MENUITEM "&Properties",                 IDM_STORE_PROPERTIES
     END
@@ -1294,8 +1294,8 @@ BEGIN
         MENUITEM "Establecer al &store predeterminado", IDM_STORE_MAKEDEFAULT
         MENUITEM "Convertir al store &híbrido", IDM_STORE_MAKEHYBRID
         MENUITEM SEPARATOR
-        MENUITEM "&Renombrar",                  IDM_STORE_RENAME
         MENUITEM "&Eliminar",                   IDM_STORE_DELETE
+        MENUITEM "&Renombrar",                  IDM_STORE_RENAME
         MENUITEM SEPARATOR
         MENUITEM "&Propiedades",                IDM_STORE_PROPERTIES
     END
@@ -1866,8 +1866,8 @@ BEGIN
         MENUITEM "Faites store &standard",      IDM_STORE_MAKEDEFAULT
         MENUITEM "Faites store &hybride",       IDM_STORE_MAKEHYBRID
         MENUITEM SEPARATOR
-        MENUITEM "&Renommer",                   IDM_STORE_RENAME
         MENUITEM "&Effacer",                    IDM_STORE_DELETE
+        MENUITEM "&Renommer",                   IDM_STORE_RENAME
         MENUITEM SEPARATOR
         MENUITEM "&Propriétés",                 IDM_STORE_PROPERTIES
     END

@@ -108,7 +108,7 @@ BEGIN
         MENUITEM "&Über Watchdog",              ID_APP_ABOUT
         MENUITEM SEPARATOR
         MENUITEM "&StoreManager starten",       ID_APP_NEWSTOREMANAGER
-        MENUITEM "&Migrations-Assistent starten", ID_APP_NEWMIGRATE
+        MENUITEM "&Migrations-Assistenten starten", ID_APP_NEWMIGRATE
         MENUITEM "&FileDrop starten",           ID_APP_NEWFILEDROP
         MENUITEM SEPARATOR
         MENUITEM "&Beenden",                    ID_APP_EXIT

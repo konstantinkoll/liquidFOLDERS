@@ -33,6 +33,7 @@
 #define VERB_PROPERTIES         "properties"
 #define VERB_IMPORTFOLDER       "importfolder"
 #define VERB_STOREMANAGER       "storemanager"
+#define VERB_FILEDROP           "filedrop"
 #define VERB_MIGRATE            "migrate"
 #define VERB_ABOUT              "about"
 
@@ -108,6 +109,7 @@ public:
 
 	BOOL OnCreateNewStore(HWND hWnd=NULL);
 	BOOL OnStoreManager(HWND hWnd=NULL);
+	BOOL OnFileDrop(HWND hWnd=NULL);
 	BOOL OnMigrate(HWND hWnd=NULL);
 	void OnCreateShortcut(CNSEItem* Item, const CString& LinkFilename, const CString& Description, UINT Icon);
 	void UpdateItems();

@@ -50,6 +50,20 @@ CShellMenuItem* AddItem(CShellMenu* menu, UINT ResID, CString verb)
 	return menu->AddItem(tmpStr, verb, tmpHint);
 }
 
+void AddPathItem(CShellMenu* menu, UINT ResID, CString verb, CString path, UINT IconID)
+{
+	int cx;
+	int cy;
+	theApp.GetIconSize(cx, cy);
+
+	CShellMenuItem* item =AddItem(menu, ResID, verb);
+	item->SetEnabled(!path.IsEmpty());
+
+	HICON hIcon = (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IconID), IMAGE_ICON, cx, cy, LR_DEFAULTCOLOR);
+	item->SetBitmap(IconToBitmap(hIcon, cx, cy));
+	DestroyIcon(hIcon);
+}
+
 
 IMPLEMENT_DYNCREATE(CFolderItem, CNSEFolder)
 IMPLEMENT_OLECREATE_EX(CFolderItem, _T("LFNamespaceExtension.RootFolder"),
@@ -881,17 +895,16 @@ void CFolderItem::GetMenuItems(CGetMenuitemsEventArgs& e)
 
 			if (osInfo.dwMajorVersion<6)
 			{
+				if (data.Level==LevelRoot)
+					InsertItem(e.menu, IDS_MENU_OpenStoreManager, _T(VERB_OPENSTOREMANAGER));
+
 				if (e.flags & NSEQCF_NoDefault)
 				{
 					InsertItem(e.menu, IDS_MENU_Open, _T(VERB_OPEN));
 				}
 				else
 				{
-					InsertItem(e.menu, IDS_MENU_Explore, _T(e.flags & NSEQCF_Explore ? VERB_OPEN : VERB_EXPLORE))->SetDefaultItem((e.flags & (NSEQCF_Explore | NSEQCF_NoDefault))==NSEQCF_Explore);
-
-					if (data.Level==LevelRoot)
-						InsertItem(e.menu, IDS_MENU_OpenStoreManager, _T(VERB_OPENSTOREMANAGER));
-
+					InsertItem(e.menu, IDS_MENU_Explore, _T(e.flags & NSEQCF_Explore ? VERB_OPEN : VERB_EXPLORE), 1)->SetDefaultItem((e.flags & (NSEQCF_Explore | NSEQCF_NoDefault))==NSEQCF_Explore);
 					InsertItem(e.menu, IDS_MENU_Open, _T(e.flags & NSEQCF_Explore ? VERB_OPENNEWWINDOW : VERB_OPEN))->SetDefaultItem((e.flags & (NSEQCF_Explore | NSEQCF_NoDefault))==0);
 				}
 			}
@@ -958,15 +971,15 @@ void CFolderItem::GetMenuItems(CGetMenuitemsEventArgs& e)
 	case LevelAttrValue:
 		if ((!(e.flags & NSEQCF_NoDefault)) && (e.children->GetCount()>=1))
 		{
-			// TODO
 			AddSeparator(e.menu);
-			//AddItem(e.menu, IDS_MENU_CreateLink, _T(VERB_CREATELINK));
-			//AddItem(e.menu, IDS_MENU_Delete, _T(VERB_DELETE));
-			//if ((e.children->GetCount()==1) && (e.flags & NSEQCF_CanRename))
-			//		AddItem(e.menu, IDS_MENU_Rename, _T(VERB_RENAME));
+			AddItem(e.menu, IDS_MENU_CreateLink, _T(VERB_CREATELINK));
+			AddItem(e.menu, IDS_MENU_Delete, _T(VERB_DELETE));
+			if ((e.children->GetCount()==1) && (e.flags & NSEQCF_CanRename))
+					AddItem(e.menu, IDS_MENU_Rename, _T(VERB_RENAME));
 
 			AddSeparator(e.menu);
-			//AddItem(e.menu, IDS_MENU_Properties, _T(VERB_PROPERTIES))->SetEnabled(!theApp.m_PathRunCmd.IsEmpty());
+			AddItem(e.menu, IDS_MENU_Properties, _T(VERB_PROPERTIES))->SetEnabled(FALSE);
+			// AddItem(e.menu, IDS_MENU_Properties, _T(VERB_PROPERTIES))->SetEnabled(!theApp.m_PathRunCmd.IsEmpty());
 		}
 		break;
 	}
@@ -974,10 +987,6 @@ void CFolderItem::GetMenuItems(CGetMenuitemsEventArgs& e)
 
 void CFolderItem::OnMergeFrameMenu(CMergeFrameMenuEventArgs& e)
 {
-	int cx;
-	int cy;
-	theApp.GetIconSize(cx, cy);
-
 	CShellMenuItem* item = e.menu->AddItem(_T("&liquidFOLDERS"));
 	item->SetHasSubMenu(TRUE);
 
@@ -985,19 +994,9 @@ void CFolderItem::OnMergeFrameMenu(CMergeFrameMenuEventArgs& e)
 
 	AddItem(subMenu, IDS_MENU_About, _T(VERB_ABOUT))->SetEnabled(!theApp.m_PathRunCmd.IsEmpty());
 	AddSeparator(subMenu);
-
-	item = AddItem(subMenu, IDS_MENU_StoreManager, _T(VERB_STOREMANAGER));
-	item->SetEnabled(!theApp.m_PathStoreManager.IsEmpty());
-	HICON hIcon = (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IDI_StoreManager), IMAGE_ICON, cx, cy, LR_DEFAULTCOLOR);
-	item->SetBitmap(IconToBitmap(hIcon, cx, cy));
-	DestroyIcon(hIcon);
-
-	item = AddItem(subMenu, IDS_MENU_Migrate, _T(VERB_MIGRATE));
-	item->SetEnabled(!theApp.m_PathMigrate.IsEmpty());
-	hIcon = (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IDI_Migrate), IMAGE_ICON, cx, cy, LR_DEFAULTCOLOR);
-	item->SetBitmap(IconToBitmap(hIcon, cx, cy));
-	DestroyIcon(hIcon);
-
+	AddPathItem(subMenu, IDS_MENU_StoreManager, _T(VERB_STOREMANAGER), theApp.m_PathStoreManager, IDI_StoreManager);
+	AddPathItem(subMenu, IDS_MENU_Migrate, _T(VERB_MIGRATE), theApp.m_PathMigrate, IDI_Migrate);
+	AddPathItem(subMenu, IDS_MENU_FileDrop, _T(VERB_FILEDROP), theApp.m_PathFileDrop, IDI_FileDrop);
 }
 
 BOOL CFolderItem::OnExecuteMenuItem(CExecuteMenuitemsEventArgs& e)
@@ -1094,6 +1093,9 @@ void CFolderItem::OnExecuteFrameCommand(CExecuteFrameCommandEventArgs& e)
 
 		if (e.menuItem->GetVerb()==_T(VERB_MIGRATE))
 			OnMigrate();
+
+		if (e.menuItem->GetVerb()==_T(VERB_FILEDROP))
+			OnFileDrop();
 	}
 	else
 		switch (e.toolbarButtonIndex)
@@ -1103,6 +1105,9 @@ void CFolderItem::OnExecuteFrameCommand(CExecuteFrameCommandEventArgs& e)
 			break;
 		case 2:
 			OnMigrate();
+			break;
+		case 3:
+			OnFileDrop();
 			break;
 		}
 }
@@ -1211,7 +1216,7 @@ BOOL CFolderItem::GetFileDescriptor(FILEDESCRIPTOR* fd)
 void CFolderItem::GetToolbarButtons(CPtrList& commands)
 {
 
-	if ((!theApp.m_PathStoreManager.IsEmpty()) || (!theApp.m_PathMigrate.IsEmpty()))
+	if ((!theApp.m_PathStoreManager.IsEmpty()) || (!theApp.m_PathFileDrop.IsEmpty()) || (!theApp.m_PathMigrate.IsEmpty()))
 	{
 		CString tmpStr;
 
@@ -1229,6 +1234,13 @@ void CFolderItem::GetToolbarButtons(CPtrList& commands)
 			ENSURE(tmpStr.LoadString(IDS_MENU_Migrate));
 			tmpStr.Remove('&');
 			commands.AddTail(new CShellToolbarButton(tmpStr, NSESTBT_Normal, (INT_PTR)IDB_Migrate));
+		}
+
+		if (!theApp.m_PathFileDrop.IsEmpty())
+		{
+			ENSURE(tmpStr.LoadString(IDS_MENU_FileDrop));
+			tmpStr.Remove('&');
+			commands.AddTail(new CShellToolbarButton(tmpStr, NSESTBT_Normal, (INT_PTR)IDB_FileDrop));
 		}
 	}
 }
@@ -1457,6 +1469,17 @@ BOOL CFolderItem::OnStoreManager(HWND hWnd)
 	if (!theApp.m_PathStoreManager.IsEmpty())
 	{
 		ShellExecute(hWnd, "open", theApp.m_PathStoreManager, "", NULL, SW_SHOW);
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
+BOOL CFolderItem::OnFileDrop(HWND hWnd)
+{
+	if (!theApp.m_PathFileDrop.IsEmpty())
+	{
+		ShellExecute(hWnd, "open", theApp.m_PathFileDrop, "", NULL, SW_SHOW);
 		return TRUE;
 	}
 

@@ -431,6 +431,14 @@
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
 			<File
+				RelativePath=".\res\FileDrop_24.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\FileDrop_Small.ico"
+				>
+			</File>
+			<File
 				RelativePath=".\res\FolderAdd_Tiny.ico"
 				>
 			</File>

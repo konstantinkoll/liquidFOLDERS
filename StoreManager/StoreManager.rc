@@ -335,13 +335,13 @@ BEGIN
     BEGIN
         MENUITEM "&Open",                       ID_ITEMS_OPEN
         MENUITEM SEPARATOR
-        MENUITEM "Import &folder...",           ID_STORE_IMPORTFOLDER
-        MENUITEM SEPARATOR
-        MENUITEM "&Delete...",                  ID_STORE_DELETE
-        MENUITEM "&Rename",                     ID_STORE_RENAME
         MENUITEM "Make default &store",         ID_STORE_MAKEDEFAULT
         MENUITEM "Make &hybrid store",          ID_STORE_MAKEHYBRID
         MENUITEM SEPARATOR
+        MENUITEM "&Delete...",                  ID_STORE_DELETE
+        MENUITEM "&Rename",                     ID_STORE_RENAME
+        MENUITEM SEPARATOR
+        MENUITEM "Import &folder...",           ID_STORE_IMPORTFOLDER
         MENUITEM "&Properties",                 ID_STORE_PROPERTIES
     END
 END

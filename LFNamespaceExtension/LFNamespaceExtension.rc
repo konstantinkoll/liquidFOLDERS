@@ -67,6 +67,7 @@ END
 
 IDB_StoreManager        BITMAP                  "res\\StoreManager_24.bmp"
 IDB_Migrate             BITMAP                  "res\\Migrate_24.bmp"
+IDB_FileDrop            BITMAP                  "res\\FileDrop_24.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -80,6 +81,7 @@ IDI_StoreProperties     ICON                    "res\\StoreProperties_Tiny.ico"
 IDI_NewStore            ICON                    "res\\StoreNew_Tiny.ico"
 IDI_StoreManager        ICON                    "res\\StoreManager_Small.ico"
 IDI_Migrate             ICON                    "res\\Migrate_Small.ico"
+IDI_FileDrop            ICON                    "res\\FileDrop_Small.ico"
 #endif    // Neutral resources
 /////////////////////////////////////////////////////////////////////////////
 
@@ -107,7 +109,7 @@ BEGIN
     IDS_Store               "Store"
     IDS_Folder              "Virtueller Ordner"
     IDS_NULLFOLDER_NameMask "UOhne %s"
-    IDS_NULLFOLDER_CommentMask "UAll Dateien ohne %s"
+    IDS_NULLFOLDER_CommentMask "UAlle Dateien ohne %s"
 END
 
 STRINGTABLE 
@@ -120,7 +122,7 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_MENU_CreateNewStore "&Neuen Store erstellen..."
+    IDS_MENU_CreateNewStore "&Neuen Store anlegen..."
     IDS_HINT_CreateNewStore "Erstellt einen neuen Store für Ihre Dateien."
     IDS_MENU_MakeDefaultStore "Als &Standard-Store setzen"
     IDS_HINT_MakeDefaultStore 
@@ -132,11 +134,11 @@ BEGIN
     IDS_HINT_Open           "Öffnet das ausgewählte Element."
     IDS_MENU_Explore        "&Explorer"
     IDS_HINT_Explore        "Öffent das ausgewählte Element im Explorer."
-    IDS_MENU_OpenStoreManager "Store&Manager"
+    IDS_MENU_OpenStoreManager "Im Store&Manager öffnen"
     IDS_HINT_OpenStoreManager 
                             "Öffnet das ausgewählte Element im StoreManager."
-    IDS_MENU_OpenNewWindow  "Open in &new window"
-    IDS_HINT_OpenNewWindow  "Opens the selected item in a new window."
+    IDS_MENU_OpenNewWindow  "In neuem &Fenster öffnen"
+    IDS_HINT_OpenNewWindow  "Öffnet das ausgewählte Element in einem neuen Fenster."
     IDS_MENU_OpenWith       "Öffnen &mit..."
     IDS_HINT_OpenWith       "Wählen Sie das Programm, mit dem Sie diese Datei öffnen möchten."
 END
@@ -151,14 +153,16 @@ BEGIN
     IDS_HINT_Rename         "Benennt die ausgewählten Elemente um."
     IDS_MENU_Properties     "E&igenschaften"
     IDS_HINT_Properties     "Zeigt die Eigenschaften der ausgewählten Elemente."
-    IDS_MENU_ImportFolder   "&Ordner importieren..."
+    IDS_MENU_ImportFolder   "&Verzeichnis importieren..."
     IDS_HINT_ImportFolder   "Importiert einen Ordner und alle Unterordner in den ausgewählten Store."
     IDS_MENU_StoreManager   "&StoreManager starten"
     IDS_HINT_StoreManager   "Startet den liquidFOLDERS StoreManager."
-    IDS_MENU_Migrate        "&Migrations-Assistent starten"
+    IDS_MENU_Migrate        "&Migrations-Assistenten starten"
     IDS_HINT_Migrate        "Startet den liquidFOLDERS Migrations-Assistenten."
+    IDS_MENU_FileDrop       "&FileDrop starten"
+    IDS_HINT_FileDrop       "Startet den liquidFOLDERS FileDrop."
     IDS_MENU_About          "Über &Explorer-Erweiterung"
-    IDS_HINT_About          "Zeigt Informationen und einstellungen an."
+    IDS_HINT_About          "Zeigt Informationen und Einstellungen an."
 END
 
 #endif    // Deutsch (neutral) resources
@@ -230,12 +234,14 @@ BEGIN
     IDS_HINT_Rename         "Renames the selected items."
     IDS_MENU_Properties     "&Properties"
     IDS_HINT_Properties     "Displays the properties of the selected items."
-    IDS_MENU_ImportFolder   "Import &folder..."
+    IDS_MENU_ImportFolder   "&Import folder..."
     IDS_HINT_ImportFolder   "Imports a folder and all its subfolders into the selected store."
     IDS_MENU_StoreManager   "Open &StoreManager"
     IDS_HINT_StoreManager   "Opens the liquidFOLDERS StoreManager."
     IDS_MENU_Migrate        "Open &Migration Wizard"
     IDS_HINT_Migrate        "Opens the liquidFOLDERS Migration Wizard."
+    IDS_MENU_FileDrop       "Open &FileDrop"
+    IDS_HINT_FileDrop       "Opens the liquidFOLDERS FileDrop."
     IDS_MENU_About          "About &Explorer Extension"
     IDS_HINT_About          "Displays liquidFOLDERS information and settings."
 END
@@ -280,11 +286,11 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_MENU_CreateNewStore "Create &new store..."
+    IDS_MENU_CreateNewStore "Crear &nuevo store..."
     IDS_HINT_CreateNewStore "Creates a new store for your files."
-    IDS_MENU_MakeDefaultStore "Make &default store"
+    IDS_MENU_MakeDefaultStore "Establecer al &store predeterminado"
     IDS_HINT_MakeDefaultStore "Makes the selected store the default store."
-    IDS_MENU_MakeHybridStore "Make &hybrid store"
+    IDS_MENU_MakeHybridStore "Convertir al store &híbrido"
     IDS_HINT_MakeHybridStore 
                             "Converts the selected store into a hybrid store."
     IDS_MENU_Open           "&Open"
@@ -303,19 +309,21 @@ STRINGTABLE
 BEGIN
     IDS_MENU_CreateLink     "Create &shortcut"
     IDS_HINT_CreateLink     "Creates a shortcut for the selected items."
-    IDS_MENU_Delete         "&Delete"
+    IDS_MENU_Delete         "&Eliminar"
     IDS_HINT_Delete         "Deletes the selected items."
-    IDS_MENU_Rename         "&Rename"
+    IDS_MENU_Rename         "&Renombrar"
     IDS_HINT_Rename         "Renames the selected items."
-    IDS_MENU_Properties     "&Properties"
+    IDS_MENU_Properties     "&Propiedades"
     IDS_HINT_Properties     "Displays the properties of the selected items."
-    IDS_MENU_ImportFolder   "Import &folder..."
+    IDS_MENU_ImportFolder   "&Importar carpeta..."
     IDS_HINT_ImportFolder   "Imports a folder and all its subfolders into the selected store."
     IDS_MENU_StoreManager   "Open &StoreManager"
     IDS_HINT_StoreManager   "Opens the liquidFOLDERS StoreManager."
     IDS_MENU_Migrate        "Open &Migration Wizard"
     IDS_HINT_Migrate        "Opens the liquidFOLDERS Migration Wizard."
-    IDS_MENU_About          "About &Explorer Extension"
+    IDS_MENU_FileDrop       "Open &FileDrop"
+    IDS_HINT_FileDrop       "Opens the liquidFOLDERS FileDrop."
+    IDS_MENU_About          "Sobre Suplemento del &Explorer"
     IDS_HINT_About          "Displays liquidFOLDERS information and settings."
 END
 
@@ -346,7 +354,7 @@ BEGIN
     IDS_Store               "Store"
     IDS_Folder              "Virtueller Ordner"
     IDS_NULLFOLDER_NameMask "UOhne %s"
-    IDS_NULLFOLDER_CommentMask "UAll Dateien ohne %s"
+    IDS_NULLFOLDER_CommentMask "UAlle Dateien ohne %s"
 END
 
 STRINGTABLE 
@@ -359,23 +367,23 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_MENU_CreateNewStore "&Neuen Store erstellen..."
+    IDS_MENU_CreateNewStore "Créez un store &nouveau..."
     IDS_HINT_CreateNewStore "Erstellt einen neuen Store für Ihre Dateien."
-    IDS_MENU_MakeDefaultStore "Als &Standard-Store setzen"
+    IDS_MENU_MakeDefaultStore "Faites store &standard"
     IDS_HINT_MakeDefaultStore 
                             "Setzt den ausgewählten Store als Standard-Store."
-    IDS_MENU_MakeHybridStore "Zu &Hybrid-Store machen"
+    IDS_MENU_MakeHybridStore "Faites store &hybride"
     IDS_HINT_MakeHybridStore 
                             "Konvertiert den ausgewählten Store in einen Hybrid-Store."
     IDS_MENU_Open           "Ö&ffnen"
     IDS_HINT_Open           "Öffnet das ausgewählte Element."
     IDS_MENU_Explore        "&Explorer"
     IDS_HINT_Explore        "Öffent das ausgewählte Element im Explorer."
-    IDS_MENU_OpenStoreManager "Store&Manager"
+    IDS_MENU_OpenStoreManager "Im Store&Manager öffnen"
     IDS_HINT_OpenStoreManager 
                             "Öffnet das ausgewählte Element im StoreManager."
-    IDS_MENU_OpenNewWindow  "Open in &new window"
-    IDS_HINT_OpenNewWindow  "Opens the selected item in a new window."
+    IDS_MENU_OpenNewWindow  "In neuem &Fenster öffnen"
+    IDS_HINT_OpenNewWindow  "Öffnet das ausgewählte Element in einem neuen Fenster."
     IDS_MENU_OpenWith       "Öffnen &mit..."
     IDS_HINT_OpenWith       "Wählen Sie das Programm, mit dem Sie diese Datei öffnen möchten."
 END
@@ -384,20 +392,22 @@ STRINGTABLE
 BEGIN
     IDS_MENU_CreateLink     "&Verknüpfung erstellen"
     IDS_HINT_CreateLink     "Erstellt eine Verknüpfung für die ausgewählten Elemente."
-    IDS_MENU_Delete         "&Löschen"
+    IDS_MENU_Delete         "&Effacer"
     IDS_HINT_Delete         "Löscht die ausgewählten Elemente."
-    IDS_MENU_Rename         "&Umbenennen"
+    IDS_MENU_Rename         "&Renommer"
     IDS_HINT_Rename         "Benennt die ausgewählten Elemente um."
-    IDS_MENU_Properties     "E&igenschaften"
+    IDS_MENU_Properties     "&Propriétés"
     IDS_HINT_Properties     "Zeigt die Eigenschaften der ausgewählten Elemente."
-    IDS_MENU_ImportFolder   "&Ordner importieren..."
-    IDS_HINT_ImportFolder   "Importiert einen Ordner und alle Unterordner in den ausgewählten Store."
+    IDS_MENU_ImportFolder   "&Importer dossier..."
+    IDS_HINT_ImportFolder   "Importiert ein Verzeichnis und alle Unterverzeichnisse in den ausgewählten Store."
     IDS_MENU_StoreManager   "&StoreManager starten"
     IDS_HINT_StoreManager   "Startet den liquidFOLDERS StoreManager."
     IDS_MENU_Migrate        "&Migrations-Assistent starten"
     IDS_HINT_Migrate        "Startet den liquidFOLDERS Migrations-Assistenten."
-    IDS_MENU_About          "Über &Explorer-Erweiterung"
-    IDS_HINT_About          "Zeigt Informationen und einstellungen an."
+    IDS_MENU_FileDrop       "&FileDrop starten"
+    IDS_HINT_FileDrop       "Startet den liquidFOLDERS FileDrop."
+    IDS_MENU_About          "Concernant l'extension de l'&Explorer"
+    IDS_HINT_About          "Zeigt Informationen und Einstellungen an."
 END
 
 #endif    // Französisch (neutral) resources
