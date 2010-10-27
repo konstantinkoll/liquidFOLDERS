@@ -25,6 +25,31 @@ CString FrmtAttrStr(CString Mask, CString Name)
 	return tmpStr;
 }
 
+CShellMenuItem* InsertItem(CShellMenu* menu, UINT ResID, CString verb, int pos=0)
+{
+	CString tmpStr;
+	CString tmpHint;
+	ENSURE(tmpStr.LoadString(ResID));
+	ENSURE(tmpHint.LoadString(ResID+1));
+
+	return menu->InsertItem(tmpStr, verb, tmpHint, pos);
+}
+
+void AddSeparator(CShellMenu* menu)
+{
+	menu->AddItem("")->SetSeparator(TRUE);
+}
+
+CShellMenuItem* AddItem(CShellMenu* menu, UINT ResID, CString verb)
+{
+	CString tmpStr;
+	CString tmpHint;
+	ENSURE(tmpStr.LoadString(ResID));
+	ENSURE(tmpHint.LoadString(ResID+1));
+
+	return menu->AddItem(tmpStr, verb, tmpHint);
+}
+
 
 IMPLEMENT_DYNCREATE(CFolderItem, CNSEFolder)
 IMPLEMENT_OLECREATE_EX(CFolderItem, _T("LFNamespaceExtension.RootFolder"),
@@ -844,8 +869,8 @@ void CFolderItem::GetMenuItems(CGetMenuitemsEventArgs& e)
 	{
 		if (data.Level==LevelAttrValue)
 		{
-			InsertItem(e.menu, IDS_MENU_OpenWith, _T(VERB_OPENWITH), 0);
-			InsertItem(e.menu, IDS_MENU_Open, _T(VERB_OPEN), 0)->SetDefaultItem((e.flags & NSEQCF_NoDefault)==0);
+			InsertItem(e.menu, IDS_MENU_OpenWith, _T(VERB_OPENWITH));
+			InsertItem(e.menu, IDS_MENU_Open, _T(VERB_OPEN))->SetDefaultItem((e.flags & NSEQCF_NoDefault)==0);
 		}
 		else
 		{
@@ -858,20 +883,26 @@ void CFolderItem::GetMenuItems(CGetMenuitemsEventArgs& e)
 			{
 				if (e.flags & NSEQCF_NoDefault)
 				{
-					InsertItem(e.menu, IDS_MENU_Open, _T(VERB_OPEN), 0);
+					InsertItem(e.menu, IDS_MENU_Open, _T(VERB_OPEN));
 				}
 				else
 				{
-					InsertItem(e.menu, IDS_MENU_Explore, _T(e.flags & NSEQCF_Explore ? VERB_OPEN : VERB_EXPLORE), 0)->SetDefaultItem((e.flags & (NSEQCF_Explore | NSEQCF_NoDefault))==NSEQCF_Explore);
-					InsertItem(e.menu, IDS_MENU_Open, _T(e.flags & NSEQCF_Explore ? VERB_OPENNEWWINDOW : VERB_OPEN), 0)->SetDefaultItem((e.flags & (NSEQCF_Explore | NSEQCF_NoDefault))==0);
+					InsertItem(e.menu, IDS_MENU_Explore, _T(e.flags & NSEQCF_Explore ? VERB_OPEN : VERB_EXPLORE))->SetDefaultItem((e.flags & (NSEQCF_Explore | NSEQCF_NoDefault))==NSEQCF_Explore);
+
+					if (data.Level==LevelRoot)
+						InsertItem(e.menu, IDS_MENU_OpenStoreManager, _T(VERB_OPENSTOREMANAGER));
+
+					InsertItem(e.menu, IDS_MENU_Open, _T(e.flags & NSEQCF_Explore ? VERB_OPENNEWWINDOW : VERB_OPEN))->SetDefaultItem((e.flags & (NSEQCF_Explore | NSEQCF_NoDefault))==0);
 				}
 			}
 			else
 			{
 				if (!(e.flags & NSEQCF_NoDefault))
-					InsertItem(e.menu, IDS_MENU_OpenNewWindow, _T(VERB_OPENNEWWINDOW), 0);
+					InsertItem(e.menu, IDS_MENU_OpenNewWindow, _T(VERB_OPENNEWWINDOW));
+				if (data.Level==LevelRoot)
+					InsertItem(e.menu, IDS_MENU_OpenStoreManager, _T(VERB_OPENSTOREMANAGER));
 
-				InsertItem(e.menu, IDS_MENU_Open, _T(VERB_OPEN), 0)->SetDefaultItem((e.flags & NSEQCF_NoDefault)==0);
+				InsertItem(e.menu, IDS_MENU_Open, _T(VERB_OPEN))->SetDefaultItem((e.flags & NSEQCF_NoDefault)==0);
 			}
 		}
 	}
@@ -1016,17 +1047,24 @@ BOOL CFolderItem::OnExecuteMenuItem(CExecuteMenuitemsEventArgs& e)
 
 	if (e.menuItem->GetVerb()==_T(VERB_CREATELINK))
 	{
-		// Ask if link should be created on desktop
-		CString tmpStr;
-		CString tmpCaption;
+		OSVERSIONINFO osInfo;
+		ZeroMemory(&osInfo, sizeof(OSVERSIONINFO));
+		osInfo.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
+		GetVersionEx(&osInfo);
 
-		ENSURE(tmpStr.LoadString(IDS_TEXT_CreateLink));
-		ENSURE(tmpCaption.LoadString(IDS_CAPT_CreateLink));
+		if (osInfo.dwMajorVersion<6)
+		{
+			// Ask if link should be created on desktop
+			CString tmpStr;
+			CString tmpCaption;
+			ENSURE(tmpStr.LoadString(IDS_TEXT_CreateLink));
+			ENSURE(tmpCaption.LoadString(IDS_CAPT_CreateLink));
 
-		if (MessageBox(GetViewWindow(), tmpStr, tmpCaption, MB_YESNO | MB_ICONQUESTION)==IDNO)
-			return FALSE;
+			if (MessageBox(GetViewWindow(), tmpStr, tmpCaption, MB_YESNO | MB_ICONQUESTION)==IDNO)
+				return FALSE;
+		}
 
-		// Create link on desktop
+		// Create shortcut on desktop
 		POSITION pos = e.children->GetHeadPosition();
 		while(pos)
 		{

@@ -7,11 +7,6 @@
 #include <eznamespaceextensions.h>
 
 
-CShellMenuItem* InsertItem(CShellMenu* menu, UINT ResID, CString verb, int pos);
-void AddSeparator(CShellMenu* menu);
-CShellMenuItem* AddItem(CShellMenu* menu, UINT ResID, CString verb);
-
-
 // CFileItem
 //
 

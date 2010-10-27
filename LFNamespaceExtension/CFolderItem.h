@@ -25,6 +25,7 @@
 #define VERB_MAKEHYBRIDSTORE    "hybridstore"
 #define VERB_OPEN               "open"
 #define VERB_EXPLORE            "explore"
+#define VERB_OPENSTOREMANAGER   "openstoremanager"
 #define VERB_OPENNEWWINDOW      "opennewwindow"
 #define VERB_OPENWITH           "openwith"
 #define VERB_RENAME             "rename"

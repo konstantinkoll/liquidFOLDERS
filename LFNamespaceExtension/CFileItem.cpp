@@ -10,32 +10,6 @@
 #include <shlwapi.h>
 
 
-CShellMenuItem* InsertItem(CShellMenu* menu, UINT ResID, CString verb, int pos)
-{
-	CString tmpStr;
-	CString tmpHint;
-	ENSURE(tmpStr.LoadString(ResID));
-	ENSURE(tmpHint.LoadString(ResID+1));
-
-	return menu->InsertItem(tmpStr, verb, tmpHint, pos);
-}
-
-void AddSeparator(CShellMenu* menu)
-{
-	menu->AddItem("")->SetSeparator(TRUE);
-}
-
-CShellMenuItem* AddItem(CShellMenu* menu, UINT ResID, CString verb)
-{
-	CString tmpStr;
-	CString tmpHint;
-	ENSURE(tmpStr.LoadString(ResID));
-	ENSURE(tmpHint.LoadString(ResID+1));
-
-	return menu->AddItem(tmpStr, verb, tmpHint);
-}
-
-
 IMPLEMENT_DYNCREATE(CFileItem, CNSEItem)
 
 

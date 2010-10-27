@@ -784,6 +784,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Ribbon\FolderAdd_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\FolderAdd_32.png"
+				>
+			</File>
+			<File
 				RelativePath=".\Ribbon\FolderError_16.png"
 				>
 			</File>

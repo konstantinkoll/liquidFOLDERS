@@ -85,6 +85,87 @@ IDI_Migrate             ICON                    "res\\Migrate_Small.ico"
 
 
 /////////////////////////////////////////////////////////////////////////////
+// Deutsch (neutral) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_DEU)
+#ifdef _WIN32
+LANGUAGE LANG_GERMAN, SUBLANG_NEUTRAL
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE 
+BEGIN
+    IDS_InfoTip             "Stores und Dateien"
+    IDS_AttributeComment    "UDateien nach &s anordnen"
+    IDS_AllFiles            "Alle Dateien"
+    IDS_AllFilesComment     "Zeigt alle Dateien"
+    IDS_Store               "Store"
+    IDS_Folder              "Virtueller Ordner"
+    IDS_NULLFOLDER_NameMask "UOhne %s"
+    IDS_NULLFOLDER_CommentMask "UAll Dateien ohne %s"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_FILES_Singular      "%d Datei"
+    IDS_FILES_Plural        "%d Dateien"
+    IDS_CAPT_CreateLink     "Verknüpfung"
+    IDS_TEXT_CreateLink     "An dieser Stelle kann keine Verknüpfung erstellt werden.\nMöchten Sie die Verknüpfung stattdessen auf dem Desktop erstellen?"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_MENU_CreateNewStore "&Neuen Store erstellen..."
+    IDS_HINT_CreateNewStore "Erstellt einen neuen Store für Ihre Dateien."
+    IDS_MENU_MakeDefaultStore "Als &Standard-Store setzen"
+    IDS_HINT_MakeDefaultStore 
+                            "Setzt den ausgewählten Store als Standard-Store."
+    IDS_MENU_MakeHybridStore "Zu &Hybrid-Store machen"
+    IDS_HINT_MakeHybridStore 
+                            "Konvertiert den ausgewählten Store in einen Hybrid-Store."
+    IDS_MENU_Open           "Ö&ffnen"
+    IDS_HINT_Open           "Öffnet das ausgewählte Element."
+    IDS_MENU_Explore        "&Explorer"
+    IDS_HINT_Explore        "Öffent das ausgewählte Element im Explorer."
+    IDS_MENU_OpenStoreManager "Store&Manager"
+    IDS_HINT_OpenStoreManager 
+                            "Öffnet das ausgewählte Element im StoreManager."
+    IDS_MENU_OpenNewWindow  "Open in &new window"
+    IDS_HINT_OpenNewWindow  "Opens the selected item in a new window."
+    IDS_MENU_OpenWith       "Öffnen &mit..."
+    IDS_HINT_OpenWith       "Wählen Sie das Programm, mit dem Sie diese Datei öffnen möchten."
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_MENU_CreateLink     "&Verknüpfung erstellen"
+    IDS_HINT_CreateLink     "Erstellt eine Verknüpfung für die ausgewählten Elemente."
+    IDS_MENU_Delete         "&Löschen"
+    IDS_HINT_Delete         "Löscht die ausgewählten Elemente."
+    IDS_MENU_Rename         "&Umbenennen"
+    IDS_HINT_Rename         "Benennt die ausgewählten Elemente um."
+    IDS_MENU_Properties     "E&igenschaften"
+    IDS_HINT_Properties     "Zeigt die Eigenschaften der ausgewählten Elemente."
+    IDS_MENU_ImportFolder   "&Ordner importieren..."
+    IDS_HINT_ImportFolder   "Importiert einen Ordner und alle Unterordner in den ausgewählten Store."
+    IDS_MENU_StoreManager   "&StoreManager starten"
+    IDS_HINT_StoreManager   "Startet den liquidFOLDERS StoreManager."
+    IDS_MENU_Migrate        "&Migrations-Assistent starten"
+    IDS_HINT_Migrate        "Startet den liquidFOLDERS Migrations-Assistenten."
+    IDS_MENU_About          "Über &Explorer-Erweiterung"
+    IDS_HINT_About          "Zeigt Informationen und einstellungen an."
+END
+
+#endif    // Deutsch (neutral) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
 // Englisch (neutral) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
@@ -108,10 +189,93 @@ BEGIN
     IDS_Folder              "Virtual folder"
     IDS_NULLFOLDER_NameMask "LWithout %s"
     IDS_NULLFOLDER_CommentMask "LAll files without %s"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_FILES_Singular      "%d file"
     IDS_FILES_Plural        "%d files"
     IDS_CAPT_CreateLink     "Shortcut"
-    IDS_TEXT_CreateLink     "You cannot create a shortcut here. Would you like to place it on the desktop ?"
+    IDS_TEXT_CreateLink     "Windows cannot create a shortcut here.\nDo you want the shortcut to be placed on the desktop instead?"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_MENU_CreateNewStore "Create &new store..."
+    IDS_HINT_CreateNewStore "Creates a new store for your files."
+    IDS_MENU_MakeDefaultStore "Make default &store"
+    IDS_HINT_MakeDefaultStore "Makes the selected store the default store."
+    IDS_MENU_MakeHybridStore "Make &hybrid store"
+    IDS_HINT_MakeHybridStore 
+                            "Converts the selected store into a hybrid store."
+    IDS_MENU_Open           "&Open"
+    IDS_HINT_Open           "Opens the selected item."
+    IDS_MENU_Explore        "&Explore"
+    IDS_HINT_Explore        "Explores the selected item."
+    IDS_MENU_OpenStoreManager "Open in Store&Manager"
+    IDS_HINT_OpenStoreManager "Opens the selected item in the StoreManager."
+    IDS_MENU_OpenNewWindow  "Open in &new window"
+    IDS_HINT_OpenNewWindow  "Opens the selected item in a new window."
+    IDS_MENU_OpenWith       "Open &with..."
+    IDS_HINT_OpenWith       "Choose a program to open this file with."
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_MENU_CreateLink     "Create &shortcut"
+    IDS_HINT_CreateLink     "Creates a shortcut for the selected items."
+    IDS_MENU_Delete         "&Delete"
+    IDS_HINT_Delete         "Deletes the selected items."
+    IDS_MENU_Rename         "&Rename"
+    IDS_HINT_Rename         "Renames the selected items."
+    IDS_MENU_Properties     "&Properties"
+    IDS_HINT_Properties     "Displays the properties of the selected items."
+    IDS_MENU_ImportFolder   "Import &folder..."
+    IDS_HINT_ImportFolder   "Imports a folder and all its subfolders into the selected store."
+    IDS_MENU_StoreManager   "Open &StoreManager"
+    IDS_HINT_StoreManager   "Opens the liquidFOLDERS StoreManager."
+    IDS_MENU_Migrate        "Open &Migration Wizard"
+    IDS_HINT_Migrate        "Opens the liquidFOLDERS Migration Wizard."
+    IDS_MENU_About          "About &Explorer Extension"
+    IDS_HINT_About          "Displays liquidFOLDERS information and settings."
+END
+
+#endif    // Englisch (neutral) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// Spanisch (neutral) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ESP)
+#ifdef _WIN32
+LANGUAGE LANG_SPANISH, SUBLANG_NEUTRAL
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE 
+BEGIN
+    IDS_InfoTip             "Stores and files"
+    IDS_AttributeComment    "LArrange files by %s"
+    IDS_AllFiles            "All files"
+    IDS_AllFilesComment     "Shows all files"
+    IDS_Store               "Store"
+    IDS_Folder              "Virtual folder"
+    IDS_NULLFOLDER_NameMask "LWithout %s"
+    IDS_NULLFOLDER_CommentMask "LAll files without %s"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_FILES_Singular      "%d file"
+    IDS_FILES_Plural        "%d files"
+    IDS_CAPT_CreateLink     "Acceso directo"
+    IDS_TEXT_CreateLink     "Windows no puede crear un acceso directo aquí.\n¿Desea que el acceso directo a colocarse en el escritorio en su lugar?"
 END
 
 STRINGTABLE 
@@ -127,16 +291,22 @@ BEGIN
     IDS_HINT_Open           "Opens the selected item."
     IDS_MENU_Explore        "&Explore"
     IDS_HINT_Explore        "Explores the selected item."
+    IDS_MENU_OpenStoreManager "Open in Store&Manager"
+    IDS_HINT_OpenStoreManager "Opens the selected item in the StoreManager."
     IDS_MENU_OpenNewWindow  "Open in &new window"
     IDS_HINT_OpenNewWindow  "Opens the selected item in a new window."
     IDS_MENU_OpenWith       "Open &with..."
     IDS_HINT_OpenWith       "Choose a program to open this file with."
+END
+
+STRINGTABLE 
+BEGIN
     IDS_MENU_CreateLink     "Create &shortcut"
     IDS_HINT_CreateLink     "Creates a shortcut for the selected items."
     IDS_MENU_Delete         "&Delete"
     IDS_HINT_Delete         "Deletes the selected items."
     IDS_MENU_Rename         "&Rename"
-    IDS_HINT_Rename         "Renames the selected item."
+    IDS_HINT_Rename         "Renames the selected items."
     IDS_MENU_Properties     "&Properties"
     IDS_HINT_Properties     "Displays the properties of the selected items."
     IDS_MENU_ImportFolder   "Import &folder..."
@@ -149,7 +319,88 @@ BEGIN
     IDS_HINT_About          "Displays liquidFOLDERS information and settings."
 END
 
-#endif    // Englisch (neutral) resources
+#endif    // Spanisch (neutral) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// Französisch (neutral) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_FRA)
+#ifdef _WIN32
+LANGUAGE LANG_FRENCH, SUBLANG_NEUTRAL
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE 
+BEGIN
+    IDS_InfoTip             "Stores und Dateien"
+    IDS_AttributeComment    "UDateien nach &s anordnen"
+    IDS_AllFiles            "Alle Dateien"
+    IDS_AllFilesComment     "Zeigt alle Dateien"
+    IDS_Store               "Store"
+    IDS_Folder              "Virtueller Ordner"
+    IDS_NULLFOLDER_NameMask "UOhne %s"
+    IDS_NULLFOLDER_CommentMask "UAll Dateien ohne %s"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_FILES_Singular      "%d Datei"
+    IDS_FILES_Plural        "%d Dateien"
+    IDS_CAPT_CreateLink     "Raccourci"
+    IDS_TEXT_CreateLink     "Windows ne peut pas créer un raccourci ici.\nVoulez-vous que le raccourci à être mis sur le Bureau à la place ?"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_MENU_CreateNewStore "&Neuen Store erstellen..."
+    IDS_HINT_CreateNewStore "Erstellt einen neuen Store für Ihre Dateien."
+    IDS_MENU_MakeDefaultStore "Als &Standard-Store setzen"
+    IDS_HINT_MakeDefaultStore 
+                            "Setzt den ausgewählten Store als Standard-Store."
+    IDS_MENU_MakeHybridStore "Zu &Hybrid-Store machen"
+    IDS_HINT_MakeHybridStore 
+                            "Konvertiert den ausgewählten Store in einen Hybrid-Store."
+    IDS_MENU_Open           "Ö&ffnen"
+    IDS_HINT_Open           "Öffnet das ausgewählte Element."
+    IDS_MENU_Explore        "&Explorer"
+    IDS_HINT_Explore        "Öffent das ausgewählte Element im Explorer."
+    IDS_MENU_OpenStoreManager "Store&Manager"
+    IDS_HINT_OpenStoreManager 
+                            "Öffnet das ausgewählte Element im StoreManager."
+    IDS_MENU_OpenNewWindow  "Open in &new window"
+    IDS_HINT_OpenNewWindow  "Opens the selected item in a new window."
+    IDS_MENU_OpenWith       "Öffnen &mit..."
+    IDS_HINT_OpenWith       "Wählen Sie das Programm, mit dem Sie diese Datei öffnen möchten."
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_MENU_CreateLink     "&Verknüpfung erstellen"
+    IDS_HINT_CreateLink     "Erstellt eine Verknüpfung für die ausgewählten Elemente."
+    IDS_MENU_Delete         "&Löschen"
+    IDS_HINT_Delete         "Löscht die ausgewählten Elemente."
+    IDS_MENU_Rename         "&Umbenennen"
+    IDS_HINT_Rename         "Benennt die ausgewählten Elemente um."
+    IDS_MENU_Properties     "E&igenschaften"
+    IDS_HINT_Properties     "Zeigt die Eigenschaften der ausgewählten Elemente."
+    IDS_MENU_ImportFolder   "&Ordner importieren..."
+    IDS_HINT_ImportFolder   "Importiert einen Ordner und alle Unterordner in den ausgewählten Store."
+    IDS_MENU_StoreManager   "&StoreManager starten"
+    IDS_HINT_StoreManager   "Startet den liquidFOLDERS StoreManager."
+    IDS_MENU_Migrate        "&Migrations-Assistent starten"
+    IDS_HINT_Migrate        "Startet den liquidFOLDERS Migrations-Assistenten."
+    IDS_MENU_About          "Über &Explorer-Erweiterung"
+    IDS_HINT_About          "Zeigt Informationen und einstellungen an."
+END
+
+#endif    // Französisch (neutral) resources
 /////////////////////////////////////////////////////////////////////////////
 
 
@@ -189,14 +440,4 @@ END
 #endif    // Deutsch (Deutschland) resources
 /////////////////////////////////////////////////////////////////////////////
 
-
-
-#ifndef APSTUDIO_INVOKED
-/////////////////////////////////////////////////////////////////////////////
-//
-// Generated from the TEXTINCLUDE 3 resource.
-//
-
-/////////////////////////////////////////////////////////////////////////////
-#endif    // not APSTUDIO_INVOKED
 
