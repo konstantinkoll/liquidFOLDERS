@@ -67,61 +67,85 @@ public:
 	DECLARE_DYNCREATE(CFolderItem)
 	DECLARE_OLECREATE_EX(CFolderItem)
 
+	// IPersistFolder
 	CFolderItem();
 	CFolderItem(FolderSerialization& _data);
 
-	// Registration and class IDs
 	virtual void GetCLSID(LPCLSID pCLSID);
-	virtual void GetExtensionTargetInfo(CExtensionTargetInfo& info);
-	virtual NSEItemAttributes GetAttributes(NSEItemAttributes requested);
 
-	// PIDL generation
+	// Registration
+	virtual void GetExtensionTargetInfo(CExtensionTargetInfo& info);
+
+	// PIDL handling
 	virtual void Serialize(CArchive& ar);
 	virtual CNSEItem* DeserializeChild(CArchive& ar);
 
-	// Child enumeration
+	// IEnumIDList
 	virtual BOOL GetChildren(CGetChildrenEventArgs& e);
+	virtual BOOL IsValid();
+
+	// IMoniker
 	virtual void GetDisplayName(CString& displayName);
 	virtual void GetDisplayNameEx(CString& displayName, DisplayNameFlags flags);
-	virtual CNSEItem* GetChildFromDisplayNameEx(CGetChildFromDisplayNameEventArgs& e);
+
+	// IExtractIcon
 	virtual void GetIconFileAndIndex(CGetIconFileAndIndexEventArgs& e);
+
+	// IQueryInfo
 	virtual void GetInfoTip(CString& infotip);
+
+	// IContextMenu
+	virtual void GetMenuItems(CGetMenuitemsEventArgs& e);
+	virtual BOOL OnExecuteMenuItem(CExecuteMenuitemsEventArgs& e);
+
+	// IShellBrowser
+	virtual void GetToolbarButtons(CPtrList& commands);
+	virtual void OnMergeFrameMenu(CMergeFrameMenuEventArgs& e);
+	virtual void OnExecuteFrameCommand(CExecuteFrameCommandEventArgs& e);
+
+	// IExplorerCommandProvider
+	virtual void GetToolbarCommands(CPtrList& commands);
+
+	// ICategoryProvider
+	virtual CCategorizer* GetCategorizer(CShellColumn &column);
+
+	// IColumnProvider
+	virtual BOOL GetColumn(CShellColumn& column, int index);
+
+	// IShellFolder2
+	virtual BOOL GetColumnValueEx(VARIANT* value, CShellColumn& column);
+
+	// IShellFolder
+	virtual NSEItemAttributes GetAttributes(NSEItemAttributes requested);
+	virtual int CompareTo(CNSEItem* otherItem, CShellColumn& column);
+	virtual BOOL OnOpen(CExecuteMenuitemsEventArgs& e);
+	virtual BOOL OnDelete(CExecuteMenuitemsEventArgs& e);
+	virtual BOOL OnChangeName(CChangeNameEventArgs& e);
+
+	// IDropSource
+	virtual void InitDataObject(CInitDataObjectEventArgs& e);
+	virtual BOOL GetFileDescriptor(FILEDESCRIPTOR* fd);
+	virtual void OnExternalDrop(CNSEDragEventArgs& e);
+
+	// IDropTarget
+	virtual void DragEnter(CNSEDragEventArgs& e);
+	virtual void DragOver(CNSEDragEventArgs& e);
+	virtual void DragDrop(CNSEDragEventArgs& e);
+
+	// Exposed property handlers
 	virtual int GetXPTaskPaneColumnIndices(UINT* indices);
 	virtual int GetTileViewColumnIndices(UINT* indices);
 	virtual int GetPreviewDetailsColumnIndices(UINT* indices);
 	virtual int GetContentViewColumnIndices(UINT* indices);
-	virtual CCategorizer* GetCategorizer(CShellColumn &column);
 	virtual FolderThemes GetFolderTheme();
-	virtual BOOL GetColumn(CShellColumn& column, int index);
-	virtual BOOL GetColumnValueEx(VARIANT* value, CShellColumn& column);
-	virtual BOOL IsValid();
-	virtual void GetMenuItems(CGetMenuitemsEventArgs& e);
-	virtual void OnMergeFrameMenu(CMergeFrameMenuEventArgs& e);
-	virtual BOOL OnExecuteMenuItem(CExecuteMenuitemsEventArgs& e);
-	virtual void OnExecuteFrameCommand(CExecuteFrameCommandEventArgs& e);
-	virtual int CompareTo(CNSEItem* otherItem, CShellColumn& column);
-	virtual BOOL GetFileDescriptor(FILEDESCRIPTOR* fd);
-	virtual void GetToolbarButtons(CPtrList& commands);
-	virtual void GetToolbarCommands(CPtrList& commands);
-	virtual BOOL OnChangeName(CChangeNameEventArgs& e);
-	virtual BOOL OnDelete(CExecuteMenuitemsEventArgs& e);
-	virtual BOOL OnImportFolder(CExecuteMenuitemsEventArgs& e);
-	virtual BOOL OnProperties(CExecuteMenuitemsEventArgs& e);
-	virtual BOOL OnOpen(CExecuteMenuitemsEventArgs& e);
-	virtual BOOL OnExplorer(CExecuteMenuitemsEventArgs& e);
-	virtual BOOL OnOpenWith(CExecuteMenuitemsEventArgs& e);
-	virtual void DragOver(CNSEDragEventArgs& e);
-	virtual void DragEnter(CNSEDragEventArgs& e);
-
-	void OnCreateShortcut(CNSEItem* Item, const CString& LinkFilename, const CString& Description, UINT Icon);
-	void UpdateItems();
-
-	// TODO
-	virtual void InitDataObject(CInitDataObjectEventArgs& e);
-	virtual void OnExternalDrop(CNSEDragEventArgs& e);
-	virtual void DragDrop(CNSEDragEventArgs& e);
 
 	FolderSerialization data;
 
 protected:
+	BOOL OnImportFolder(CExecuteMenuitemsEventArgs& e);
+	BOOL OnProperties(CExecuteMenuitemsEventArgs& e);
+	BOOL OnExplorer(CExecuteMenuitemsEventArgs& e);
+	BOOL OnOpenWith(CExecuteMenuitemsEventArgs& e);
+
+	void CreateShortcut(CNSEItem* Item, const CString& LinkFilename, const CString& Description, UINT Icon);
 };

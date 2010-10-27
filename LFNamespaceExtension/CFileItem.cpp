@@ -66,12 +66,11 @@ void CFileItem::GetDisplayNameEx(CString& displayName, DisplayNameFlags flags)
 		}
 
 	displayName = Attrs.FileName;
-	if (((flags & NSEDNF_ForParsing)!=0) || (!theApp.HideFileExt()))
-		if (Attrs.FileFormat[0]!='\0')
-		{
-			displayName += '.';
-			displayName += Attrs.FileFormat;
-		}
+	if ((!(flags & NSEDNF_ForEditing)) && (Attrs.FileFormat[0]!='\0') && ((flags & NSEDNF_ForParsing) || (!theApp.HideFileExt())))
+	{
+		displayName += '.';
+		displayName += Attrs.FileFormat;
+	}
 }
 
 void CFileItem::GetIconFileAndIndex(CGetIconFileAndIndexEventArgs& e)
