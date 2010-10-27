@@ -28,7 +28,7 @@ CFileItem::CFileItem(LPCTSTR _StoreID, LFCoreAttributes* _Attrs)
 
 NSEItemAttributes CFileItem::GetAttributes(NSEItemAttributes requested)
 {
-	const UINT mask = NSEIA_FileSystem;
+	const UINT mask = NSEIA_FileSystem | NSEIA_CanRename | NSEIA_CanDelete;
 
 	return (NSEItemAttributes)(requested & mask);
 }

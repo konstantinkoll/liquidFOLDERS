@@ -131,14 +131,14 @@ BEGIN
     IDS_HINT_MakeHybridStore 
                             "Konvertiert den ausgewählten Store in einen Hybrid-Store."
     IDS_MENU_Open           "Ö&ffnen"
-    IDS_HINT_Open           "Öffnet das ausgewählte Element."
+    IDS_HINT_Open           "Öffnet das ausgewählte Objekt."
     IDS_MENU_Explore        "&Explorer"
-    IDS_HINT_Explore        "Öffent das ausgewählte Element im Explorer."
+    IDS_HINT_Explore        "Öffent das ausgewählte Objekt im Explorer."
     IDS_MENU_OpenStoreManager "Im Store&Manager öffnen"
     IDS_HINT_OpenStoreManager 
-                            "Öffnet das ausgewählte Element im StoreManager."
+                            "Öffnet das ausgewählte Objekt im StoreManager."
     IDS_MENU_OpenNewWindow  "In neuem &Fenster öffnen"
-    IDS_HINT_OpenNewWindow  "Öffnet das ausgewählte Element in einem neuen Fenster."
+    IDS_HINT_OpenNewWindow  "Öffnet das ausgewählte Objekt in einem neuen Fenster."
     IDS_MENU_OpenWith       "Öffnen &mit..."
     IDS_HINT_OpenWith       "Wählen Sie das Programm, mit dem Sie diese Datei öffnen möchten."
 END
@@ -146,13 +146,13 @@ END
 STRINGTABLE 
 BEGIN
     IDS_MENU_CreateLink     "&Verknüpfung erstellen"
-    IDS_HINT_CreateLink     "Erstellt eine Verknüpfung für die ausgewählten Elemente."
+    IDS_HINT_CreateLink     "Erstellt eine Verknüpfung für die ausgewählten Objekte."
     IDS_MENU_Delete         "&Löschen"
-    IDS_HINT_Delete         "Löscht die ausgewählten Elemente."
+    IDS_HINT_Delete         "Löscht die ausgewählten Objekte."
     IDS_MENU_Rename         "&Umbenennen"
-    IDS_HINT_Rename         "Benennt die ausgewählten Elemente um."
+    IDS_HINT_Rename         "Benennt die ausgewählten Objekte um."
     IDS_MENU_Properties     "E&igenschaften"
-    IDS_HINT_Properties     "Zeigt die Eigenschaften der ausgewählten Elemente."
+    IDS_HINT_Properties     "Zeigt die Eigenschaften der ausgewählten Objekte."
     IDS_MENU_ImportFolder   "&Verzeichnis importieren..."
     IDS_HINT_ImportFolder   "Importiert einen Ordner und alle Unterordner in den ausgewählten Store."
     IDS_MENU_StoreManager   "&StoreManager starten"
