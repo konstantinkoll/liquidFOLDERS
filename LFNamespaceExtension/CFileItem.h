@@ -39,4 +39,8 @@ public:
 
 	// TODO
 	virtual BOOL OnChangeName(CChangeNameEventArgs& e);
+
+
+	// Other
+	BOOL SetShellLink(IShellLink* psl);
 };

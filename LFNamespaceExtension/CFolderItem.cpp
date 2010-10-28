@@ -602,6 +602,8 @@ void CFolderItem::GetMenuItems(CGetMenuitemsEventArgs& e)
 		}
 		break;
 	case LevelStores:
+		if (e.children->GetCount()==0)
+			AddItem(e.menu, IDS_MENU_ImportFolder, _T(VERB_IMPORTFOLDER))->SetEnabled(!theApp.m_PathRunCmd.IsEmpty());
 	case LevelStoreHome:
 	case LevelAttribute:
 		if ((!(e.flags & NSEQCF_NoDefault)) && (e.children->GetCount()>=1))
@@ -694,11 +696,7 @@ BOOL CFolderItem::OnExecuteMenuItem(CExecuteMenuitemsEventArgs& e)
 		POSITION pos = e.children->GetHeadPosition();
 		while(pos)
 		{
-			CNSEItem* item = (CNSEItem*)e.children->GetNext(pos);
-			CString name;
-			item->GetDisplayName(name);
-			if (IS(item, CFolderItem))
-				CreateShortcut(item, name, AS(item, CFolderItem)->data.Description, AS(item, CFolderItem)->data.Icon);
+			CreateShortcut((CNSEItem*)e.children->GetNext(pos));
 		}
 
 		return TRUE;
@@ -1257,7 +1255,8 @@ BOOL CFolderItem::OnChangeName(CChangeNameEventArgs& e)
 	UINT res = LFSetStoreAttributes(&key[0], name, NULL);
 	LFErrorBox(res);
 
-	return (res==LFOk);
+	// TODO
+	return FALSE;
 }
 
 
@@ -1507,29 +1506,90 @@ FolderThemes CFolderItem::GetFolderTheme()
 
 // Other
 
-BOOL CFolderItem::OnImportFolder(CExecuteMenuitemsEventArgs& e)
+BOOL CFolderItem::SetShellLink(IShellLink* psl)
 {
-	switch (data.Level)
+	psl->SetIDList(GetPIDLAbsolute());
+	psl->SetIconLocation(theApp.m_CoreFile, (data.Icon==IDI_STORE_Default ? IDI_STORE_Internal : data.Icon)-1);
+	psl->SetShowCmd(SW_SHOWNORMAL);
+	psl->SetDescription(data.Comment);
+	return TRUE;
+}
+
+void CFolderItem::CreateShortcut(CNSEItem* Item)
+{
+	// Get a pointer to the IShellLink interface
+	IShellLink* psl;
+	if (SUCCEEDED(CoCreateInstance(CLSID_ShellLink, NULL, CLSCTX_INPROC_SERVER, IID_IShellLink, (PVOID *)&psl)))
 	{
-	case LevelRoot:
-		if (!theApp.m_PathRunCmd.IsEmpty())
+		BOOL res = FALSE;
+		if (IS(Item, CFolderItem))
+			res = AS(Item, CFolderItem)->SetShellLink(psl);
+		if (IS(Item, CFileItem))
+			res = AS(Item, CFileItem)->SetShellLink(psl);
+
+		if (res)
 		{
-			POSITION pos = e.children->GetHeadPosition();
-			if (pos)
+			CString LinkFilename;
+			Item->GetDisplayName(LinkFilename);
+
+			// Get the fully qualified file name for the link file
+			TCHAR strPath[MAX_PATH];
+			SHGetSpecialFolderPath(NULL, strPath, CSIDL_DESKTOPDIRECTORY, FALSE);
+			CString PathLink;
+			CString NumberStr = "";
+			int Number = 1;
+
+			// Check if link file exists; if not, append number
+			do
 			{
-				CNSEItem* item = (CNSEItem*)e.children->GetNext(pos);
-				if (IS(item, CFolderItem))
-				{
-					CString id = AS(item, CFolderItem)->data.StoreID;
-					ShellExecute(e.hWnd, _T("open"), theApp.m_PathRunCmd, _T("IMPORTFOLDER ")+id, NULL, SW_SHOW);
-					return TRUE;
-				}
+				PathLink = strPath;
+				PathLink += _T("\\")+LinkFilename+NumberStr+_T(".lnk");
+				NumberStr.Format(_T(" (%d)"), ++Number);
+			}
+			while (_access(PathLink, 0)==0);
+
+			// Query IShellLink for the IPersistFile interface for saving the 
+			// shortcut in persistent storage
+			IPersistFile* ppf;
+			if (SUCCEEDED(psl->QueryInterface(IID_IPersistFile, (PVOID*)&ppf)))
+			{
+				// Ensure that the string is ANSI
+				wchar_t wsz[MAX_PATH];
+				MultiByteToWideChar(CP_ACP, 0, (LPCSTR)PathLink, -1, wsz, MAX_PATH);
+
+				// Save the link by calling IPersistFile::Save
+				ppf->Save(wsz, TRUE);
+				ppf->Release();
 			}
 		}
-		break;
+
+		psl->Release();
+	}
+}
+
+BOOL CFolderItem::OnImportFolder(CExecuteMenuitemsEventArgs& e)
+{
+	CString StoreID;
+	if (data.Level==LevelRoot)
+	{
+		POSITION pos = e.children->GetHeadPosition();
+		if (pos)
+		{
+			CNSEItem* item = (CNSEItem*)e.children->GetNext(pos);
+			if (IS(item, CFolderItem))
+				StoreID = AS(item, CFolderItem)->data.StoreID;
+		}
+	}
+	else
+	{
+		StoreID = data.StoreID;
 	}
 
-	return FALSE;
+	if ((StoreID.IsEmpty()) || (theApp.m_PathRunCmd.IsEmpty()))
+		return FALSE;
+
+	ShellExecute(e.hWnd, _T("open"), theApp.m_PathRunCmd, _T("IMPORTFOLDER ")+StoreID, NULL, SW_SHOW);
+	return TRUE;
 }
 
 BOOL CFolderItem::OnProperties(CExecuteMenuitemsEventArgs& e)
@@ -1609,52 +1669,3 @@ BOOL CFolderItem::OnOpenWith(CExecuteMenuitemsEventArgs& e)
 
 	return FALSE;
 }
-
-void CFolderItem::CreateShortcut(CNSEItem* Item, const CString& LinkFilename, const CString& Description, UINT Icon)
-{
-	// Get the fully qualified file name for the link file
-	TCHAR strPath[MAX_PATH];
-	SHGetSpecialFolderPath(NULL, strPath, CSIDL_DESKTOPDIRECTORY, FALSE);
-	CString PathLink;
-	CString NumberStr = "";
-	int Number = 1;
-
-	// Check if link file exists; if not, append number
-	do
-	{
-		PathLink = strPath;
-		PathLink += _T("\\")+LinkFilename+NumberStr+_T(".lnk");
-		NumberStr.Format(_T(" (%d)"), ++Number);
-	}
-	while (_access(PathLink, 0)==0);
-
-	// Get a pointer to the IShellLink interface
-	IShellLink* psl;
-	if (SUCCEEDED(CoCreateInstance(CLSID_ShellLink, NULL, CLSCTX_INPROC_SERVER, IID_IShellLink, (PVOID *)&psl)))
-	{
-		// Never use icon for default store
-		if (Icon==IDI_STORE_Default)
-			Icon = IDI_STORE_Internal;
-
-		psl->SetIDList(Item->GetPIDLAbsolute());
-		psl->SetIconLocation(theApp.m_CoreFile, Icon-1);
-		psl->SetDescription((LPCSTR)Description);
-
-		// Query IShellLink for the IPersistFile interface for saving the 
-		// shortcut in persistent storage
-		IPersistFile* ppf;
-		if (SUCCEEDED(psl->QueryInterface(IID_IPersistFile, (PVOID*)&ppf)))
-		{
-			// Ensure that the string is ANSI
-			wchar_t wsz[MAX_PATH];
-			MultiByteToWideChar(CP_ACP, 0, (LPCSTR)PathLink, -1, wsz, MAX_PATH);
-
-			// Save the link by calling IPersistFile::Save
-			ppf->Save(wsz, TRUE);
-			ppf->Release();
-		}
-
-		psl->Release();
-	}
-}
-

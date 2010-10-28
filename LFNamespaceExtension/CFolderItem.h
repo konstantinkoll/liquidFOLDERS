@@ -139,13 +139,15 @@ public:
 	virtual int GetContentViewColumnIndices(UINT* indices);
 	virtual FolderThemes GetFolderTheme();
 
+	// Other
+	BOOL SetShellLink(IShellLink* psl);
+
 	FolderSerialization data;
 
 protected:
+	void CreateShortcut(CNSEItem* Item);
 	BOOL OnImportFolder(CExecuteMenuitemsEventArgs& e);
 	BOOL OnProperties(CExecuteMenuitemsEventArgs& e);
 	BOOL OnExplorer(CExecuteMenuitemsEventArgs& e);
 	BOOL OnOpenWith(CExecuteMenuitemsEventArgs& e);
-
-	void CreateShortcut(CNSEItem* Item, const CString& LinkFilename, const CString& Description, UINT Icon);
 };

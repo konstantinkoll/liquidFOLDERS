@@ -28,7 +28,7 @@ CFileItem::CFileItem(LPCTSTR _StoreID, LFCoreAttributes* _Attrs)
 
 NSEItemAttributes CFileItem::GetAttributes(NSEItemAttributes requested)
 {
-	const UINT mask = NSEIA_FileSystem | NSEIA_CanRename | NSEIA_CanDelete;
+	const UINT mask = NSEIA_FileSystem | NSEIA_CanRename | NSEIA_CanDelete | NSEIA_CanLink;
 
 	return (NSEItemAttributes)(requested & mask);
 }
@@ -438,25 +438,21 @@ GotRet:
 
 BOOL CFileItem::GetFileDescriptor(FILEDESCRIPTOR* fd)
 {
-	wchar_t* ptr = &Attrs.FileName[0];
-	UINT wpos = 0;
-	do
+	UINT res = LFGetFileLocation((char*)(LPCSTR)StoreID, &Attrs, fd->cFileName, MAX_PATH);
+	if (res==LFOk)
 	{
-		fd->cFileName[wpos++] = (*ptr<=0xFF ? (char)*ptr : '?');
+		fd->dwFlags = FD_WRITESTIME | FD_CREATETIME | FD_FILESIZE;
+
+		fd->ftCreationTime = Attrs.CreationTime;
+		fd->ftLastWriteTime = Attrs.FileTime;
+
+		LARGE_INTEGER sz;
+		sz.QuadPart = Attrs.FileSize;
+		fd->nFileSizeHigh = sz.HighPart;
+		fd->nFileSizeLow = sz.LowPart;
 	}
-	while (*ptr++!=L'\0');
 
-	fd->dwFlags = FD_WRITESTIME | FD_CREATETIME | FD_FILESIZE;
-
-	fd->ftCreationTime = Attrs.CreationTime;
-	fd->ftLastWriteTime = Attrs.FileTime;
-
-	LARGE_INTEGER sz;
-	sz.QuadPart = Attrs.FileSize;
-	fd->nFileSizeHigh = sz.HighPart;
-	fd->nFileSizeLow = sz.LowPart;
-
-	return TRUE;
+	return (res==LFOk);
 }
 
 LPSTREAM CFileItem::GetStream()
@@ -507,6 +503,29 @@ BOOL CFileItem::OnChangeName(CChangeNameEventArgs& /*e*/)
 		ret = FALSE; // failure
 	}
 	return ret;*/
+
+	return FALSE;
+}
+
+
+
+
+
+
+
+
+// Other
+
+BOOL CFileItem::SetShellLink(IShellLink* psl)
+{
+	char Path[MAX_PATH];
+	if (LFGetFileLocation((char*)(LPCSTR)StoreID, &Attrs, Path, MAX_PATH)==LFOk)
+	{
+		psl->SetPath(Path);
+		psl->SetIconLocation(Path, 0);
+		psl->SetShowCmd(SW_SHOWNORMAL);
+		return TRUE;
+	}
 
 	return FALSE;
 }
