@@ -1257,30 +1257,7 @@ void CFolderItem::InitDataObject(CInitDataObjectEventArgs& e)
 	if (e.children->GetCount()<=0)
 		return;
 
-	// Use streams to transfer namespace extension items.
 	e.dataObject->SetHasFileData();
-
-	//// Alternate way : Use the CF_HDROP data format
-
-	//	CStringArray files;
-	//
-	//	POSITION pos = e.children->GetHeadPosition();
-	//	while(pos)
-	//	{
-	//		CNSEItem* temp = (CNSEItem*)e.children->GetNext(pos);
-	//		if(IS(temp,CFolderItem))
-	//		{
-	//			CFolderItem* folder = AS(temp,CFolderItem);
-	//			files.Add(folder->fullPath);
-	//		}
-	//		else if(IS(temp,CFileItem))
-	//		{
-	//			CFileItem* file = AS(temp,CFileItem);
-	//			files.Add(file->fullPath);
-	//		}
-	//	}
-	//
-	//	e.dataObject->SetHDROPData(&files);
 }
 
 BOOL CFolderItem::GetFileDescriptor(FILEDESCRIPTOR* fd)
