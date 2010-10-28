@@ -273,6 +273,11 @@ void CIndex::Update(LFTransactionList* tl, LFVariantData* value1, LFVariantData*
 
 bool CIndex::DeleteFile(LFCoreAttributes* PtrM, char* DatPath)
 {
+	if (!DatPath)
+		return true;
+	if (DatPath[0]=='\0')
+		return true;
+
 	char Path[MAX_PATH];
 	GetFileLocation(DatPath, PtrM->FileID, PtrM->FileFormat, Path, MAX_PATH);
 
@@ -303,7 +308,7 @@ void CIndex::Delete(LFTransactionList* tl, char* DatPath)
 				if ((strcmp(i->StoreID, StoreID)==0) && (strcmp(i->CoreAttributes.FileID, PtrM->FileID)==0))
 				{
 					// Files with "link" flag do not posses a file body
-					if ((!tl->m_Items[a].Processed) && ((PtrM->Flags & LFFlagLink)==0) && (DatPath[0]!='\0'))
+					if ((!tl->m_Items[a].Processed) && ((PtrM->Flags & LFFlagLink)==0))
 						if (DeleteFile(PtrM, DatPath))
 						{
 							tl->m_Changes = true;
@@ -348,7 +353,7 @@ void CIndex::Delete(LFTransactionList* tl, char* DatPath)
 	}
 }
 
-void CIndex::Delete(LFFileIDList* il, char* DatPath)
+void CIndex::Delete(LFFileIDList* il, bool PutInTrash, char* DatPath)
 {
 	assert(il);
 
@@ -369,20 +374,14 @@ void CIndex::Delete(LFFileIDList* il, char* DatPath)
 			if ((strcmp(il->m_Items[a].StoreID, StoreID)==0) && (strcmp(il->m_Items[a].FileID, PtrM->FileID)==0))
 			{
 				// Files with "link" flag do not posses a file body
-				if ((!il->m_Items[a].Processed) && ((PtrM->Flags & LFFlagLink)==0) && (DatPath[0]!='\0'))
-					if (DeleteFile(PtrM, DatPath))
-					{
-						il->m_Changes = true;
-					}
-					else
-					{
+				if ((!il->m_Items[a].Processed) && ((PtrM->Flags & LFFlagLink)==0) && (!PutInTrash))
+					if (!DeleteFile(PtrM, DatPath))
 						il->m_Items[a].LastError = il->m_LastError = LFCannotDeleteFile;
-					}
 
 				if (il->m_Items[a].LastError==LFOk)
 				{
 					// Slave
-					if ((PtrM->SlaveID) && (PtrM->SlaveID<IdxTableCount))
+					if ((PtrM->SlaveID) && (PtrM->SlaveID<IdxTableCount) && (PutInTrash))
 						if (LoadTable(PtrM->SlaveID))
 						{
 							Tables[PtrM->SlaveID]->Invalidate(PtrM->FileID, IDs[PtrM->SlaveID]);
@@ -393,7 +392,16 @@ void CIndex::Delete(LFFileIDList* il, char* DatPath)
 						}
 
 					// Master
-					Tables[IDMaster]->Invalidate(PtrM);
+					if (PutInTrash)
+					{
+						PtrM->Flags |= LFFlagTrash;
+						GetSystemTimeAsFileTime(&PtrM->DeleteTime);
+						Tables[IDMaster]->MakeDirty();
+					}
+					else
+					{
+						Tables[IDMaster]->Invalidate(PtrM);
+					}
 				}
 
 				il->m_Items[a].Processed = true;
@@ -407,6 +415,31 @@ void CIndex::Delete(LFFileIDList* il, char* DatPath)
 			il->m_Items[a].LastError = il->m_LastError = LFIllegalKey;
 			il->m_Items[a].Processed = true;
 		}
+}
+
+unsigned int CIndex::Rename(char* FileID, wchar_t* NewName, char* /*DatPath*/)
+{
+	assert(FileID);
+	assert(NewName);
+
+	if (!LoadTable(IDMaster))
+		return LFIndexRepairError;
+
+	// Items aktualisieren
+	int ID = 0;
+	LFCoreAttributes* PtrM;
+
+	while (Tables[IDMaster]->FindNext(ID, (void*&)PtrM))
+		if (strcmp(FileID, PtrM->FileID)==0)
+		{
+			PtrM->Flags &= ~LFFlagNew;
+			wcscpy_s(PtrM->FileName, 256, NewName);
+
+			Tables[IDMaster]->MakeDirty();
+			return LFOk;
+		}
+
+	return LFIllegalKey;
 }
 
 void CIndex::Retrieve(LFFilter* f, LFSearchResult* res)

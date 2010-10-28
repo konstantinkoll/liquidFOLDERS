@@ -28,8 +28,9 @@ public:
 	void AddItem(LFItemDescriptor* i);
 	void Update(LFItemDescriptor* i, bool IncludeSlaves=true);
 	void Update(LFTransactionList* tl, LFVariantData* value1, LFVariantData* value2=NULL, LFVariantData* value3=NULL);
-	void Delete(LFTransactionList* tl, char* DatPath);
-	void Delete(LFFileIDList* il, char* DatPath);
+	void Delete(LFTransactionList* tl, char* DatPath=NULL);
+	void Delete(LFFileIDList* il, bool PutInTrash=true, char* DatPath=NULL);
+	unsigned int Rename(char* FileID, wchar_t* NewName, char* DatPath=NULL);
 	void Retrieve(LFFilter* f, LFSearchResult* res);
 	unsigned int RetrieveStats(unsigned int* cnt, __int64* size);
 

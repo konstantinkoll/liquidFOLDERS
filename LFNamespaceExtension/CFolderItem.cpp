@@ -1256,6 +1256,7 @@ BOOL CFolderItem::OnDelete(CExecuteMenuitemsEventArgs& e)
 		res = TRUE;
 	}
 
+	LFErrorBox(il->m_LastError);
 	LFFreeFileIDList(il);
 	return res;
 }
@@ -1314,29 +1315,40 @@ BOOL CFolderItem::GetFileDescriptor(FILEDESCRIPTOR* fd)
 	return TRUE;
 }
 
-void CFolderItem::OnExternalDrop(CNSEDragEventArgs& /*e*/)
+void CFolderItem::OnExternalDrop(CNSEDragEventArgs& e)
 {
-/*	if(e.data->ShouldDeleteSource() && e.data->DidValidDrop())
+	if (e.data->ShouldDeleteSource() && e.data->DidValidDrop())
 	{
-		// Delete every file/folder for which the delete command was executed.
-		CPtrList* temp = e.data->GetChildren();
-		POSITION pos = temp->GetHeadPosition();
-		while(pos)
+		LFFileIDList* il = LFAllocFileIDList();
+
+		POSITION pos = e.data->GetChildren()->GetHeadPosition();
+		while (pos)
 		{
-			CNSEItem* item = (CNSEItem*)temp->GetNext(pos);
-			if (IS(item,CFileItem))
+			CNSEItem* item = (CNSEItem*)e.data->GetChildren()->GetNext(pos);
+
+			if (IS(item, CFileItem))
 			{
-				CFileItem* c = AS(item,CFileItem);
-				if(DeleteDirectory(c->fullPath))
-				{
-					// Remove from the Windows Explorer view
-					c->Delete();
-				}
+				char StoreID[LFKeySize];
+				char FileID[LFKeySize];
+				strcpy_s(StoreID, LFKeySize, AS(item, CFileItem)->StoreID);
+				strcpy_s(FileID, LFKeySize, AS(item, CFileItem)->Attrs.FileID);
+
+				LFAddFileID(il, StoreID, FileID, item);
 			}
 		}
-	}*/
 
-	this->RefreshView();
+		if (il->m_ItemCount)
+		{
+			LFTransactionDelete(il, false);
+
+			for (UINT a=0; a<il->m_ItemCount; a++)
+				if ((il->m_Items[a].Processed) && (il->m_Items[a].LastError==LFOk))
+					((CFileItem*)il->m_Items[a].UserData)->Delete();
+		}
+
+		LFErrorBox(il->m_LastError);
+		LFFreeFileIDList(il);
+	}
 }
 
 
@@ -1354,7 +1366,7 @@ void CFolderItem::DragOver(CNSEDragEventArgs& e)
 
 void CFolderItem::DragDrop(CNSEDragEventArgs& e)
 {
-	MessageBox(e.hWnd, _T("Not implemented"), _T("Drop"), 0);
+	MessageBox(e.hWnd, _T("Not implemented yet"), _T("Drop"), 0);
 	// If file drop data is present, do the copy/move
 /*	CStringArray files;
 	if (e.data->GetHDROPData(&files))

@@ -382,7 +382,10 @@ LFCore_API void LFTransactionUpdate(LFTransactionList* tl, HWND hWndSource, LFVa
 LFCore_API void LFTransactionDelete(LFTransactionList* tl);
 
 // Löscht alle Dateien in il
-LFCore_API void LFTransactionDelete(LFFileIDList* il);
+LFCore_API void LFTransactionDelete(LFFileIDList* il, bool PutInTrash=true);
+
+// Benennt die Datei um
+LFCore_API unsigned int LFTransactionRename(char* StoreID, char* FileID, wchar_t* NewName);
 
 
 //

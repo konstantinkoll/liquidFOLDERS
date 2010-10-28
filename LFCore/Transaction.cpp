@@ -139,7 +139,7 @@ LFCore_API void LFTransactionDelete(LFTransactionList* tl)
 					}
 					if (idx2)
 					{
-						idx2->Delete(tl, &slot->DatPath[0]);
+						idx2->Delete(tl);
 						delete idx2;
 					}
 
@@ -167,7 +167,7 @@ LFCore_API void LFTransactionDelete(LFTransactionList* tl)
 			}
 }
 
-LFCore_API void LFTransactionDelete(LFFileIDList* il)
+LFCore_API void LFTransactionDelete(LFFileIDList* il, bool PutInTrash)
 {
 	assert(il);
 
@@ -189,12 +189,12 @@ LFCore_API void LFTransactionDelete(LFFileIDList* il)
 			{
 				if (idx1)
 				{
-					idx1->Delete(il, &slot->DatPath[0]);
+					idx1->Delete(il, PutInTrash, &slot->DatPath[0]);
 					delete idx1;
 				}
 				if (idx2)
 				{
-					idx2->Delete(il, &slot->DatPath[0]);
+					idx2->Delete(il, PutInTrash, &slot->DatPath[0]);
 					delete idx2;
 				}
 
@@ -211,4 +211,36 @@ LFCore_API void LFTransactionDelete(LFFileIDList* il)
 					}
 			}
 		}
+}
+
+LFCore_API unsigned int LFTransactionRename(char* StoreID, char* FileID, wchar_t* NewName)
+{
+	assert(StoreID);
+	assert(FileID);
+	assert(NewName);
+
+	CIndex* idx1;
+	CIndex* idx2;
+	LFStoreDescriptor* slot;
+	HANDLE StoreLock = NULL;
+	unsigned int res = OpenStore(StoreID, true, idx1, idx2, &slot, &StoreLock);
+
+	if (res==LFOk)
+	{
+		if (idx1)
+		{
+			res = idx1->Rename(FileID, NewName, &slot->DatPath[0]);
+			delete idx1;
+		}
+		if (idx2)
+		{
+			if (res==LFOk)
+				res = idx2->Rename(FileID, NewName);
+			delete idx2;
+		}
+
+		ReleaseMutexForStore(StoreLock);
+	}
+
+	return res;
 }

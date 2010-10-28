@@ -311,29 +311,27 @@ BOOL CFileItem::GetColumnValueEx(VARIANT* value, CShellColumn& column)
 
 // IShellFolder
 
-BOOL CFileItem::OnChangeName(CChangeNameEventArgs& /*e*/)
+BOOL CFileItem::OnChangeName(CChangeNameEventArgs& e)
 {
-	/*BOOL ret = FALSE;
-	
-	try
-	{
-		TCHAR temp[MAX_PATH];
-		_tcscpy(temp,fullPath);
-		PathRemoveFileSpec(temp);
-		CString parentFolder = temp;
-		CString newName = PathCombineNSE(parentFolder, e.newName);
-		MoveFile(fullPath, newName);
-		fullPath = newName;
-		name = e.newName; // store new name
-		ret = TRUE; // success!
-	}
-	catch(...)
-	{
-		ret = FALSE; // failure
-	}
-	return ret;*/
+	char StoreID[LFKeySize];
+	char FileID[LFKeySize];
+	strcpy_s(StoreID, LFKeySize, this->StoreID);
+	strcpy_s(FileID, LFKeySize, Attrs.FileID);
 
-	return FALSE;
+	USES_CONVERSION;
+	LPWSTR name = T2W(e.newName);
+
+	UINT res = LFTransactionRename(StoreID, FileID, name);
+	if (res==LFOk)
+	{
+		wcscpy_s(Attrs.FileName, 256, name);
+	}
+	else
+	{
+		LFErrorBox(res);
+	}
+
+	return (res==LFOk);
 }
 
 
