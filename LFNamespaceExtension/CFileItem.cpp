@@ -442,21 +442,21 @@ GotRet:
 
 BOOL CFileItem::GetFileDescriptor(FILEDESCRIPTOR* fd)
 {
-	UINT res = LFGetFileLocation((char*)(LPCSTR)StoreID, &Attrs, fd->cFileName, MAX_PATH);
-	if (res==LFOk)
-	{
-		fd->dwFlags = FD_WRITESTIME | FD_CREATETIME | FD_FILESIZE;
+	CString Path;
+	GetDisplayNameEx(Path, (DisplayNameFlags)(NSEDNF_InFolder | NSEDNF_ForParsing));
+	strcpy_s(fd->cFileName, MAX_PATH, Path);
 
-		fd->ftCreationTime = Attrs.CreationTime;
-		fd->ftLastWriteTime = Attrs.FileTime;
+	fd->dwFlags = FD_WRITESTIME | FD_CREATETIME | FD_FILESIZE;
 
-		LARGE_INTEGER sz;
-		sz.QuadPart = Attrs.FileSize;
-		fd->nFileSizeHigh = sz.HighPart;
-		fd->nFileSizeLow = sz.LowPart;
-	}
+	fd->ftCreationTime = Attrs.CreationTime;
+	fd->ftLastWriteTime = Attrs.FileTime;
 
-	return (res==LFOk);
+	LARGE_INTEGER sz;
+	sz.QuadPart = Attrs.FileSize;
+	fd->nFileSizeHigh = sz.HighPart;
+	fd->nFileSizeLow = sz.LowPart;
+
+	return TRUE;
 }
 
 LPSTREAM CFileItem::GetStream()
