@@ -561,6 +561,7 @@ struct LFStoreDescriptor
 
 // Structures and classes from LFCore.dll
 
+#include "..\\LFCore\\LFFileIDList.h"
 #include "..\\LFCore\\LFFileImportList.h"
 #include "..\\LFCore\\LFMaintenanceList.h"
 #include "..\\LFCore\\LFSearchResult.h"

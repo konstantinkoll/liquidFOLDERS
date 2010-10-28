@@ -1,8 +1,10 @@
+
 #include "StdAfx.h"
 #include "..\\include\\LFCore.h"
 #include "LFFileImportList.h"
 #include <assert.h>
 #include <malloc.h>
+
 
 LFFileImportList::LFFileImportList()
 	: DynArray()

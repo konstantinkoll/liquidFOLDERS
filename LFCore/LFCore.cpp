@@ -715,6 +715,23 @@ LFCore_API LFSearchResult* LFGroupSearchResult(LFSearchResult* res, unsigned int
 }
 
 
+LFCore_API LFFileIDList* LFAllocFileIDList()
+{
+	return new LFFileIDList();
+}
+
+LFCore_API void LFFreeFileIDList(LFFileIDList* il)
+{
+	if (il)
+		delete il;
+}
+
+LFCore_API bool LFAddFileID(LFFileIDList* il, char* StoreID, char* FileID, void* UserData)
+{
+	return il->AddFileID(StoreID, FileID, UserData);
+}
+
+
 LFCore_API LFFileImportList* LFAllocFileImportList()
 {
 	return new LFFileImportList();

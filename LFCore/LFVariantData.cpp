@@ -1,3 +1,4 @@
+
 #include "StdAfx.h"
 #include "LFItemDescriptor.h"
 #include "LFVariantData.h"

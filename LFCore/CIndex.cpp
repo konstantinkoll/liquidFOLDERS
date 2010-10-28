@@ -217,7 +217,6 @@ void CIndex::Update(LFTransactionList* tl, LFVariantData* value1, LFVariantData*
 			LFItemDescriptor* i = tl->m_Items[a].Item;
 			if ((i->Type & LFTypeMask)==LFTypeFile)
 				if ((strcmp(i->StoreID, StoreID)==0) && (strcmp(i->CoreAttributes.FileID, PtrM->FileID)==0))
-				{
 					if (tl->m_Items[a].LastError==LFOk)
 					{
 						// Attribute setzen
@@ -256,7 +255,6 @@ void CIndex::Update(LFTransactionList* tl, LFVariantData* value1, LFVariantData*
 
 						tl->m_Items[a].Processed = true;
 					}
-				}
 		}
 	}
 
@@ -271,6 +269,14 @@ void CIndex::Update(LFTransactionList* tl, LFVariantData* value1, LFVariantData*
 				tl->m_Items[a].Processed = true;
 			}
 	}
+}
+
+bool CIndex::DeleteFile(LFCoreAttributes* PtrM, char* DatPath)
+{
+	char Path[MAX_PATH];
+	GetFileLocation(DatPath, PtrM->FileID, PtrM->FileFormat, Path, MAX_PATH);
+
+	return DeleteFileA(Path)==TRUE;
 }
 
 void CIndex::Delete(LFTransactionList* tl, char* DatPath)
@@ -297,12 +303,8 @@ void CIndex::Delete(LFTransactionList* tl, char* DatPath)
 				if ((strcmp(i->StoreID, StoreID)==0) && (strcmp(i->CoreAttributes.FileID, PtrM->FileID)==0))
 				{
 					// Files with "link" flag do not posses a file body
-					if ((!tl->m_Items[a].Processed) && ((i->CoreAttributes.Flags & LFFlagLink)==0))
-					{
-						char Path[MAX_PATH];
-						GetFileLocation(DatPath, PtrM->FileID, PtrM->FileFormat, Path, MAX_PATH);
-
-						if (DeleteFileA(Path))
+					if ((!tl->m_Items[a].Processed) && ((PtrM->Flags & LFFlagLink)==0) && (DatPath[0]!='\0'))
+						if (DeleteFile(PtrM, DatPath))
 						{
 							tl->m_Changes = true;
 						}
@@ -310,7 +312,6 @@ void CIndex::Delete(LFTransactionList* tl, char* DatPath)
 						{
 							tl->m_Items[a].LastError = tl->m_LastError = LFCannotDeleteFile;
 						}
-					}
 
 					if (tl->m_Items[a].LastError==LFOk)
 					{
@@ -345,6 +346,67 @@ void CIndex::Delete(LFTransactionList* tl, char* DatPath)
 				tl->m_Items[a].Processed = true;
 			}
 	}
+}
+
+void CIndex::Delete(LFFileIDList* il, char* DatPath)
+{
+	assert(il);
+
+	if (!LoadTable(IDMaster))
+	{
+		il->m_LastError = LFIndexRepairError;
+		return;
+	}
+
+	// Items löschen
+	int IDs[IdxTableCount];
+	ZeroMemory(IDs, sizeof(IDs));
+	LFCoreAttributes* PtrM;
+
+	while (Tables[IDMaster]->FindNext(IDs[IDMaster], (void*&)PtrM))
+	{
+		for (unsigned int a=0; a<il->m_ItemCount; a++)
+			if ((strcmp(il->m_Items[a].StoreID, StoreID)==0) && (strcmp(il->m_Items[a].FileID, PtrM->FileID)==0))
+			{
+				// Files with "link" flag do not posses a file body
+				if ((!il->m_Items[a].Processed) && ((PtrM->Flags & LFFlagLink)==0) && (DatPath[0]!='\0'))
+					if (DeleteFile(PtrM, DatPath))
+					{
+						il->m_Changes = true;
+					}
+					else
+					{
+						il->m_Items[a].LastError = il->m_LastError = LFCannotDeleteFile;
+					}
+
+				if (il->m_Items[a].LastError==LFOk)
+				{
+					// Slave
+					if ((PtrM->SlaveID) && (PtrM->SlaveID<IdxTableCount))
+						if (LoadTable(PtrM->SlaveID))
+						{
+							Tables[PtrM->SlaveID]->Invalidate(PtrM->FileID, IDs[PtrM->SlaveID]);
+						}
+						else
+						{
+							il->m_Items[a].LastError = il->m_LastError = LFIndexTableLoadError;
+						}
+
+					// Master
+					Tables[IDMaster]->Invalidate(PtrM);
+				}
+
+				il->m_Items[a].Processed = true;
+			}
+	}
+
+	// Ungültige Items finden
+	for (unsigned int a=0; a<il->m_ItemCount; a++)
+		if ((strcmp(il->m_Items[a].StoreID, StoreID)==0) && (!il->m_Items[a].Processed))
+		{
+			il->m_Items[a].LastError = il->m_LastError = LFIllegalKey;
+			il->m_Items[a].Processed = true;
+		}
 }
 
 void CIndex::Retrieve(LFFilter* f, LFSearchResult* res)

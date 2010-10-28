@@ -4,6 +4,7 @@
 #include "Mutex.h"
 #include "Stores.h"
 #include "Transaction.h"
+#include <assert.h>
 #include <shlobj.h>
 
 
@@ -63,7 +64,7 @@ LFCore_API void LFTransactionUpdate(LFTransactionList* tl, HWND hWndSource, LFVa
 					CIndex* idx1;
 					CIndex* idx2;
 					HANDLE StoreLock = NULL;
-					unsigned int res = OpenStore(tl->m_Items->Item->StoreID, true, idx1, idx2, NULL, &StoreLock);
+					unsigned int res = OpenStore(tl->m_Items[a].Item->StoreID, true, idx1, idx2, NULL, &StoreLock);
 
 					if (res==LFOk)
 					{
@@ -112,6 +113,8 @@ LFCore_API void LFTransactionUpdate(LFTransactionList* tl, HWND hWndSource, LFVa
 
 LFCore_API void LFTransactionDelete(LFTransactionList* tl)
 {
+	assert(tl);
+
 	// Reset processed flag
 	for (unsigned int a=0; a<tl->m_ItemCount; a++)
 		tl->m_Items[a].Processed = false;
@@ -125,7 +128,7 @@ LFCore_API void LFTransactionDelete(LFTransactionList* tl)
 				CIndex* idx2;
 				LFStoreDescriptor* slot;
 				HANDLE StoreLock = NULL;
-				unsigned int res = OpenStore(tl->m_Items->Item->StoreID, true, idx1, idx2, &slot, &StoreLock);
+				unsigned int res = OpenStore(tl->m_Items[a].Item->StoreID, true, idx1, idx2, &slot, &StoreLock);
 
 				if (res==LFOk)
 				{
@@ -162,4 +165,50 @@ LFCore_API void LFTransactionDelete(LFTransactionList* tl)
 				tl->m_LastError = tl->m_Items[a].LastError = LFIllegalItemType;
 				tl->m_Items[a].Processed = true;
 			}
+}
+
+LFCore_API void LFTransactionDelete(LFFileIDList* il)
+{
+	assert(il);
+
+	// Reset processed flag
+	for (unsigned int a=0; a<il->m_ItemCount; a++)
+		il->m_Items[a].Processed = false;
+
+	// Process
+	for (unsigned int a=0; a<il->m_ItemCount; a++)
+		if ((il->m_Items[a].LastError==LFOk) && (!il->m_Items[a].Processed))
+		{
+			CIndex* idx1;
+			CIndex* idx2;
+			LFStoreDescriptor* slot;
+			HANDLE StoreLock = NULL;
+			unsigned int res = OpenStore(il->m_Items[a].StoreID, true, idx1, idx2, &slot, &StoreLock);
+
+			if (res==LFOk)
+			{
+				if (idx1)
+				{
+					idx1->Delete(il, &slot->DatPath[0]);
+					delete idx1;
+				}
+				if (idx2)
+				{
+					idx2->Delete(il, &slot->DatPath[0]);
+					delete idx2;
+				}
+
+				ReleaseMutexForStore(StoreLock);
+			}
+			else
+			{
+				// Cannot open index, so mark all subsequent files in the same store as processed
+				for (unsigned int b=a; b<il->m_ItemCount; b++)
+					if ((strcmp(il->m_Items[b].StoreID, il->m_Items[a].StoreID)==0) && (!il->m_Items[b].Processed))
+					{
+						il->m_Items[b].LastError = il->m_LastError = res;
+						il->m_Items[b].Processed = true;
+					}
+			}
+		}
 }

@@ -422,6 +422,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\LFFileIDList.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\LFFileImportList.cpp"
 				>
 			</File>
@@ -557,6 +561,10 @@
 			</File>
 			<File
 				RelativePath="..\include\LFCore.h"
+				>
+			</File>
+			<File
+				RelativePath=".\LFFileIDList.h"
 				>
 			</File>
 			<File

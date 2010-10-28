@@ -318,7 +318,6 @@ void CHeapfile::Update(LFItemDescriptor* i, int& Next)
 		Update(i, Ptr);
 }
 
-
 void CHeapfile::Update(LFItemDescriptor* i)
 {
 	assert(i);

@@ -1208,45 +1208,73 @@ BOOL CFolderItem::OnOpen(CExecuteMenuitemsEventArgs& e)
 
 BOOL CFolderItem::OnDelete(CExecuteMenuitemsEventArgs& e)
 {
-	switch (data.Level)
+	if (!e.children->GetCount())
+		return FALSE;
+
+	// Folder
+	if ((data.Level==LevelRoot) && (!theApp.m_PathRunCmd.IsEmpty()))
 	{
-	case LevelRoot:
-		if (!theApp.m_PathRunCmd.IsEmpty())
+		POSITION pos = e.children->GetHeadPosition();
+		CNSEItem* item = (CNSEItem*)e.children->GetNext(pos);
+
+		if (IS(item, CFolderItem))
 		{
-			POSITION pos = e.children->GetHeadPosition();
-			if (pos)
-			{
-				CNSEItem* item = (CNSEItem*)e.children->GetNext(pos);
-				if (IS(item, CFolderItem))
-				{
-					CString id = AS(item, CFolderItem)->data.StoreID;
-					ShellExecute(e.hWnd, _T("open"), theApp.m_PathRunCmd, _T("DELETESTORE ")+id, NULL, SW_SHOW);
-					return TRUE;
-				}
-			}
+			CString id = AS(item, CFolderItem)->data.StoreID;
+			ShellExecute(e.hWnd, _T("open"), theApp.m_PathRunCmd, _T("DELETESTORE ")+id, NULL, SW_SHOW);
+			return TRUE;
 		}
-		break;
 	}
 
-	return FALSE;
+	// Files
+	BOOL res = FALSE;
+	LFFileIDList* il = LFAllocFileIDList();
+
+	POSITION pos = e.children->GetHeadPosition();
+	while (pos)
+	{
+		CNSEItem* item = (CNSEItem*)e.children->GetNext(pos);
+
+		if (IS(item, CFileItem))
+		{
+			char StoreID[LFKeySize];
+			char FileID[LFKeySize];
+			strcpy_s(StoreID, LFKeySize, AS(item, CFileItem)->StoreID);
+			strcpy_s(FileID, LFKeySize, AS(item, CFileItem)->Attrs.FileID);
+
+			LFAddFileID(il, StoreID, FileID, item);
+		}
+	}
+
+	if (il->m_ItemCount)
+	{
+		LFTransactionDelete(il);
+
+		for (UINT a=0; a<il->m_ItemCount; a++)
+			if ((il->m_Items[a].Processed) && (il->m_Items[a].LastError==LFOk))
+				((CFileItem*)il->m_Items[a].UserData)->Delete();
+
+		res = TRUE;
+	}
+
+	LFFreeFileIDList(il);
+	return res;
 }
 
 BOOL CFolderItem::OnChangeName(CChangeNameEventArgs& e)
 {
 	// Stores sind die einzigen CFolderItem, die umbenannt werden können
-	if (data.Level!=LevelStores)
-		return FALSE;
+	if (data.Level==LevelStores)
+	{
+		char key[LFKeySize];
+		strcpy_s(key, LFKeySize, data.StoreID);
 
-	char key[LFKeySize];
-	strcpy_s(key, LFKeySize, data.StoreID);
-	USES_CONVERSION;
-	LPWSTR name = T2W(e.newName);
+		USES_CONVERSION;
+		LPWSTR name = T2W(e.newName);
 
-	UINT res = LFSetStoreAttributes(&key[0], name, NULL);
-	LFErrorBox(res);
+		LFErrorBox(LFSetStoreAttributes(&key[0], name, NULL));
+	}
 
-	// TODO
-	return FALSE;
+	return FALSE;	// TODO
 }
 
 
@@ -1254,10 +1282,8 @@ BOOL CFolderItem::OnChangeName(CChangeNameEventArgs& e)
 
 void CFolderItem::InitDataObject(CInitDataObjectEventArgs& e)
 {
-	if (e.children->GetCount()<=0)
-		return;
-
-	e.dataObject->SetHasFileData();
+	if (e.children->GetCount()>0)
+		e.dataObject->SetHasFileData();
 }
 
 BOOL CFolderItem::GetFileDescriptor(FILEDESCRIPTOR* fd)

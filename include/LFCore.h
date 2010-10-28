@@ -208,6 +208,17 @@ LFCore_API LFSearchResult* LFGroupSearchResult(LFSearchResult* res, unsigned int
 
 
 
+// Neue Dateiliste erzeugen
+LFCore_API LFFileIDList* LFAllocFileIDList();
+
+// Existierende LFFileIDList freigeben
+LFCore_API void LFFreeFileIDList(LFFileIDList* il);
+
+// String zur LFFileIDList hinzufügen
+LFCore_API bool LFAddFileID(LFFileIDList* il, char* StoreID, char* FileID, void* UserData=NULL);
+
+
+
 // Neue Datei-Importliste erzeugen
 LFCore_API LFFileImportList* LFAllocFileImportList();
 
@@ -369,6 +380,9 @@ LFCore_API void LFTransactionUpdate(LFTransactionList* tl, HWND hWndSource, LFVa
 
 // Löscht alle Dateien in tl
 LFCore_API void LFTransactionDelete(LFTransactionList* tl);
+
+// Löscht alle Dateien in il
+LFCore_API void LFTransactionDelete(LFFileIDList* il);
 
 
 //
