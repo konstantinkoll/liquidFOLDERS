@@ -157,11 +157,6 @@ BOOL LFNamespaceExtensionApp::GetApplicationPath(CString App, CString& Path)
 
 void LFNamespaceExtensionApp::GetIconSize(int& cx, int& cy)
 {
-	OSVERSIONINFO osInfo;
-	ZeroMemory(&osInfo, sizeof(OSVERSIONINFO));
-	osInfo.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
-	GetVersionEx(&osInfo);
-
 	cx = GetSystemMetrics((osInfo.dwMajorVersion<6) ? SM_CXMENUCHECK : SM_CXSMICON);
 	cy = GetSystemMetrics((osInfo.dwMajorVersion<6) ? SM_CYMENUCHECK : SM_CYSMICON);
 }

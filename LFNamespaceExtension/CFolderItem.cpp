@@ -522,19 +522,12 @@ void CFolderItem::GetMenuItems(CGetMenuitemsEventArgs& e)
 {
 	// All items can be opened
 	if (e.children->GetCount()>=1)
-	{
 		if (data.Level==LevelAttrValue)
 		{
 			InsertItem(e.menu, IDS_MENU_OpenWith, _T(VERB_OPENWITH));
 			InsertItem(e.menu, IDS_MENU_Open, _T(VERB_OPEN))->SetDefaultItem((e.flags & NSEQCF_NoDefault)==0);
 		}
 		else
-		{
-			OSVERSIONINFO osInfo;
-			ZeroMemory(&osInfo, sizeof(OSVERSIONINFO));
-			osInfo.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
-			GetVersionEx(&osInfo);
-
 			if (osInfo.dwMajorVersion<6)
 			{
 				if (data.Level==LevelRoot)
@@ -559,8 +552,6 @@ void CFolderItem::GetMenuItems(CGetMenuitemsEventArgs& e)
 
 				InsertItem(e.menu, IDS_MENU_Open, _T(VERB_OPEN))->SetDefaultItem((e.flags & NSEQCF_NoDefault)==0);
 			}
-		}
-	}
 
 	switch (data.Level)
 	{
@@ -603,7 +594,11 @@ void CFolderItem::GetMenuItems(CGetMenuitemsEventArgs& e)
 		break;
 	case LevelStores:
 		if (e.children->GetCount()==0)
+		{
 			AddItem(e.menu, IDS_MENU_ImportFolder, _T(VERB_IMPORTFOLDER))->SetEnabled(!theApp.m_PathRunCmd.IsEmpty());
+			AddSeparator(e.menu);
+			AddItem(e.menu, IDS_MENU_Properties, _T(VERB_PROPERTIES))->SetEnabled(!theApp.m_PathRunCmd.IsEmpty());
+		}
 	case LevelStoreHome:
 	case LevelAttribute:
 		if ((!(e.flags & NSEQCF_NoDefault)) && (e.children->GetCount()>=1))
@@ -641,11 +636,6 @@ BOOL CFolderItem::OnExecuteMenuItem(CExecuteMenuitemsEventArgs& e)
 
 	if (e.menuItem->GetVerb()==_T(VERB_OPENNEWWINDOW))
 	{
-		OSVERSIONINFO osInfo;
-		ZeroMemory(&osInfo, sizeof(OSVERSIONINFO));
-		osInfo.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
-		GetVersionEx(&osInfo);
-
 		if (osInfo.dwMajorVersion<6)
 			e.menuItem->SetVerb(_T(VERB_OPEN));
 
@@ -1594,23 +1584,27 @@ BOOL CFolderItem::OnImportFolder(CExecuteMenuitemsEventArgs& e)
 
 BOOL CFolderItem::OnProperties(CExecuteMenuitemsEventArgs& e)
 {
-	if ((!theApp.m_PathRunCmd.IsEmpty()) && (data.Level==LevelRoot))
+	CString StoreID;
+	if (data.Level==LevelRoot)
 	{
 		POSITION pos = e.children->GetHeadPosition();
 		if (pos)
 		{
 			CNSEItem* item = (CNSEItem*)e.children->GetNext(pos);
 			if (IS(item, CFolderItem))
-			{
-				CString id = AS(item, CFolderItem)->data.StoreID;
-				ShellExecute(e.hWnd, _T("open"), theApp.m_PathRunCmd, _T("STOREPROPERTIES ")+id, NULL, SW_SHOW);
-				return TRUE;
-			}
+				StoreID = AS(item, CFolderItem)->data.StoreID;
 		}
 	}
+	else
+	{
+		StoreID = data.StoreID;
+	}
 
-	return FALSE;
-}
+	if ((StoreID.IsEmpty()) || (theApp.m_PathRunCmd.IsEmpty()))
+		return FALSE;
+
+	ShellExecute(e.hWnd, _T("open"), theApp.m_PathRunCmd, _T("STOREPROPERTIES ")+StoreID, NULL, SW_SHOW);
+	return TRUE;}
 
 
 BOOL CFolderItem::OnExplorer(CExecuteMenuitemsEventArgs& e)

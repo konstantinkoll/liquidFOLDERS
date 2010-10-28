@@ -16,6 +16,8 @@ IMPLEMENT_DYNCREATE(CFileItem, CNSEItem)
 // CFileItem
 //
 
+// IPersist
+
 CFileItem::CFileItem()
 {
 }
@@ -26,12 +28,8 @@ CFileItem::CFileItem(LPCTSTR _StoreID, LFCoreAttributes* _Attrs)
 	Attrs = *_Attrs;
 }
 
-NSEItemAttributes CFileItem::GetAttributes(NSEItemAttributes requested)
-{
-	const UINT mask = NSEIA_FileSystem | NSEIA_CanRename | NSEIA_CanDelete | NSEIA_CanLink;
 
-	return (NSEItemAttributes)(requested & mask);
-}
+// PIDL handling
 
 void CFileItem::Serialize(CArchive& ar)
 {
@@ -42,6 +40,17 @@ void CFileItem::Serialize(CArchive& ar)
 	ar.Write(&Attrs, sizeof(LFCoreAttributes));
 }
 
+
+// IEnumIDList
+
+BOOL CFileItem::IsValid()
+{
+	return AS(GetParentFolder(), CFolderItem)->IsValid();
+}
+
+
+// IMoniker
+
 void CFileItem::GetDisplayName(CString& displayName)
 {
 	displayName = Attrs.FileName;
@@ -49,29 +58,23 @@ void CFileItem::GetDisplayName(CString& displayName)
 
 void CFileItem::GetDisplayNameEx(CString& displayName, DisplayNameFlags flags)
 {
-	if ((flags & NSEDNF_InFolder)==0)
-		if ((flags & NSEDNF_ForParsing)!=0)
-		{
-			char Path[MAX_PATH];
-			UINT res = LFGetFileLocation((char*)(LPCSTR)StoreID, &Attrs, Path, MAX_PATH);
-			if (res!=LFOk)
-			{
-				LFErrorBox(res);
-			}
-			else
-			{
-				displayName = Path;
-			}
-			return;
-		}
+	if ((flags & (NSEDNF_InFolder | NSEDNF_ForParsing))==NSEDNF_ForParsing)
+	{
+		char Path[MAX_PATH];
+		displayName = (LFGetFileLocation((char*)(LPCSTR)StoreID, &Attrs, Path, MAX_PATH)==LFOk) ? Path : _T("?");
+		return;
+	}
 
 	displayName = Attrs.FileName;
-	if ((!(flags & NSEDNF_ForEditing)) && (Attrs.FileFormat[0]!='\0') && ((flags & NSEDNF_ForParsing) || (!theApp.HideFileExt())))
+	if ((!(flags & NSEDNF_ForEditing)) && (Attrs.FileFormat[0]!='\0') && ((flags & NSEDNF_ForParsing) || (!(flags & NSEDNF_InFolder)) || (!theApp.HideFileExt())))
 	{
 		displayName += '.';
 		displayName += Attrs.FileFormat;
 	}
 }
+
+
+// IExtractIcon
 
 void CFileItem::GetIconFileAndIndex(CGetIconFileAndIndexEventArgs& e)
 {
@@ -89,48 +92,16 @@ void CFileItem::GetIconFileAndIndex(CGetIconFileAndIndexEventArgs& e)
 	}
 }
 
+
+// IQueryInfo
+
 void CFileItem::GetInfoTip(CString& infotip)
 {
 	infotip = Attrs.Comment;
 }
 
-int CFileItem::GetXPTaskPaneColumnIndices(UINT* indices)
-{
-	indices[0] = LFAttrFileName;
-	indices[1] = LFAttrComment;
-	indices[2] = LFAttrCreationTime;
-	indices[3] = LFAttrFileTime;
-	indices[4] = LFAttrFileSize;
 
-	return 5;
-}
-
-int CFileItem::GetTileViewColumnIndices(UINT* indices)
-{
-	indices[0] = LFAttrComment;
-	indices[1] = LFAttrFileTime;
-	indices[2] = LFAttrFileSize;
-
-	return 3;
-}
-
-int CFileItem::GetPreviewDetailsColumnIndices(UINT* indices)
-{
-	indices[0] = LFAttrComment;
-	indices[1] = LFAttrCreationTime;
-	indices[2] = LFAttrFileTime;
-	indices[3] = LFAttrFileSize;
-	indices[4] = LFAttrURL;
-	indices[5] = LFAttrTags;
-	indices[6] = LFAttrRating;
-
-	return 7;
-}
-
-int CFileItem::GetContentViewColumnIndices(UINT* indices)
-{
-	return GetXPTaskPaneColumnIndices(indices);
-}
+// IShellFolder2
 
 BOOL CFileItem::GetColumnValueEx(VARIANT* value, CShellColumn& column)
 {
@@ -337,9 +308,40 @@ BOOL CFileItem::GetColumnValueEx(VARIANT* value, CShellColumn& column)
 	return TRUE;
 }
 
-BOOL CFileItem::IsValid()
+
+// IShellFolder
+
+BOOL CFileItem::OnChangeName(CChangeNameEventArgs& /*e*/)
 {
-	return TRUE;
+	/*BOOL ret = FALSE;
+	
+	try
+	{
+		TCHAR temp[MAX_PATH];
+		_tcscpy(temp,fullPath);
+		PathRemoveFileSpec(temp);
+		CString parentFolder = temp;
+		CString newName = PathCombineNSE(parentFolder, e.newName);
+		MoveFile(fullPath, newName);
+		fullPath = newName;
+		name = e.newName; // store new name
+		ret = TRUE; // success!
+	}
+	catch(...)
+	{
+		ret = FALSE; // failure
+	}
+	return ret;*/
+
+	return FALSE;
+}
+
+
+// IShellItem
+
+NSEItemAttributes CFileItem::GetAttributes(NSEItemAttributes requested)
+{
+	return (NSEItemAttributes)(requested & NSEIA_FileSystem | NSEIA_CanRename | NSEIA_CanDelete | NSEIA_CanLink);
 }
 
 int CFileItem::CompareTo(CNSEItem* otherItem, CShellColumn& column)
@@ -433,8 +435,10 @@ GotRet:
 
 	// Compare file IDs
 	return strcmp(Attrs.FileID, dir2->Attrs.FileID);
-
 }
+
+
+// IDropSource
 
 BOOL CFileItem::GetFileDescriptor(FILEDESCRIPTOR* fd)
 {
@@ -474,44 +478,45 @@ LPSTREAM CFileItem::GetStream()
 }
 
 
+// Exposed property handlers
 
-
-
-
-
-
-// The OnChangeName function is called when the item has been renamed in Windows Explorer.
-// This function should return true of the renaming was successfully applied.
-BOOL CFileItem::OnChangeName(CChangeNameEventArgs& /*e*/)
+int CFileItem::GetXPTaskPaneColumnIndices(UINT* indices)
 {
-	/*BOOL ret = FALSE;
-	
-	try
-	{
-		TCHAR temp[MAX_PATH];
-		_tcscpy(temp,fullPath);
-		PathRemoveFileSpec(temp);
-		CString parentFolder = temp;
-		CString newName = PathCombineNSE(parentFolder, e.newName);
-		MoveFile(fullPath, newName);
-		fullPath = newName;
-		name = e.newName; // store new name
-		ret = TRUE; // success!
-	}
-	catch(...)
-	{
-		ret = FALSE; // failure
-	}
-	return ret;*/
+	indices[0] = LFAttrFileName;
+	indices[1] = LFAttrComment;
+	indices[2] = LFAttrCreationTime;
+	indices[3] = LFAttrFileTime;
+	indices[4] = LFAttrFileSize;
 
-	return FALSE;
+	return 5;
 }
 
+int CFileItem::GetTileViewColumnIndices(UINT* indices)
+{
+	indices[0] = LFAttrComment;
+	indices[1] = LFAttrFileTime;
+	indices[2] = LFAttrFileSize;
 
+	return 3;
+}
 
+int CFileItem::GetPreviewDetailsColumnIndices(UINT* indices)
+{
+	indices[0] = LFAttrComment;
+	indices[1] = LFAttrCreationTime;
+	indices[2] = LFAttrFileTime;
+	indices[3] = LFAttrFileSize;
+	indices[4] = LFAttrURL;
+	indices[5] = LFAttrTags;
+	indices[6] = LFAttrRating;
 
+	return 7;
+}
 
-
+int CFileItem::GetContentViewColumnIndices(UINT* indices)
+{
+	return GetXPTaskPaneColumnIndices(indices);
+}
 
 
 // Other
