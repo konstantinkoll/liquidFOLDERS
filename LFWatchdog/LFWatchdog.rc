@@ -193,7 +193,7 @@ IDM_TRAY MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "&Sobre Watchdog",  ,          ID_APP_ABOUT
+        MENUITEM "&Acerca Watchdog",            ID_APP_ABOUT
         MENUITEM SEPARATOR
         MENUITEM "Empezar &StoreManager",       ID_APP_NEWSTOREMANAGER
         MENUITEM "Empezar Asistente de &Migración", ID_APP_NEWMIGRATE

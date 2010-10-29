@@ -202,7 +202,7 @@ BEGIN
         MENUITEM "&Importar carpeta...",        ID_APP_IMPORTFOLDER
         MENUITEM "&Propiedades",                ID_APP_STOREPROPERTIES
         MENUITEM SEPARATOR
-        MENUITEM "&Sobre FileDrop",             ID_APP_ABOUT
+        MENUITEM "&Acerca FileDrop",            ID_APP_ABOUT
         MENUITEM "Siempre &arriba",             SC_ALWAYSONTOP
         MENUITEM SEPARATOR
         MENUITEM "Empezar &StoreManager",       ID_APP_NEWSTOREMANAGER
