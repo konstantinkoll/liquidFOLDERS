@@ -900,7 +900,6 @@ BOOL CFolderItem::GetColumn(CShellColumn& column, int index)
 		LFAttrFileName | LFAttrStoreID | LFAttrComment | LFAttrDescription | LFAttrFileFormat | LFAttrFileSize | LFAttrFileCount,
 		(UINT)~(LFAttrDeleteTime | LFAttrFlags)
 	};
-
 	if (!(AttrMask[Attrs.Level] & (1<<index)))
 		column.state = NSECS_Hidden;
 

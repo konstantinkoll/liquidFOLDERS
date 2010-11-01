@@ -351,7 +351,7 @@ int CFileItem::CompareTo(CNSEItem* otherItem, CShellColumn& column)
 
 	CString str1;
 	CString str2;
-	int ret;
+	int ret = 0;
 
 	switch (column.index)
 	{
