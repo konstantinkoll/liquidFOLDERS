@@ -18,7 +18,6 @@ BOOL RunPath(HWND hWnd, CString path, CString parameter=_T(""));
 #define LevelStoreHome          2
 #define LevelAttribute          3
 #define LevelAttrValue          4
-#define LevelFile               5
 
 #define NSEIA_CFOLDERITEM       NSEIA_CanLink | NSEIA_FileSysAncestor | NSEIA_Browsable | NSEIA_Folder
 

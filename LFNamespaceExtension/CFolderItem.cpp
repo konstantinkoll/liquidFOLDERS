@@ -890,43 +890,19 @@ BOOL CFolderItem::GetColumn(CShellColumn& column, int index)
 			column.categorizerType = NSECT_Alphabetical;
 		}
 
-	switch (index)
+	// Hidden columns
+	ASSERT(LFLastCoreAttribute<=31);
+	const UINT AttrMask[5] =
 	{
-	case LFAttrFileID:
-		if (Attrs.Level<LevelAttrValue)
-			column.state = NSECS_Hidden;
-		break;
-	case LFAttrComment:
-		if (Attrs.Level==LevelAttribute)
-			column.state = NSECS_Hidden;
-		break;
-	case LFAttrDescription:
-		if ((Attrs.Level==LevelStoreHome) || (Attrs.Level==LevelAttrValue))
-			column.state = NSECS_Hidden;
-		break;
-	case LFAttrFileCount:
-		if ((Attrs.Level==LevelRoot) || (Attrs.Level==LevelStoreHome) || (Attrs.Level==LevelAttrValue))
-			column.state = NSECS_Hidden;
-		break;
-	case LFAttrFileSize:
-		if ((Attrs.Level==LevelRoot) || (Attrs.Level==LevelStoreHome))
-			column.state = NSECS_Hidden;
-		break;
-	case LFAttrCreationTime:
-	case LFAttrFileTime:
-		if ((Attrs.Level!=LevelRoot) && (Attrs.Level!=LevelAttrValue))
-			column.state = NSECS_Hidden;
-		break;
-	case LFAttrAddTime:
-	case LFAttrArchiveTime:
-		if (Attrs.Level!=LevelAttrValue)
-			column.state = NSECS_Hidden;
-		break;
-	case LFAttrDeleteTime:
-	case LFAttrFlags:
+		LFAttrFileName | LFAttrStoreID | LFAttrComment | LFAttrDescription | LFAttrCreationTime | LFAttrFileTime | LFAttrFileFormat,
+		LFAttrFileName | LFAttrStoreID | LFAttrComment | LFAttrDescription | LFAttrFileFormat | LFAttrFileSize | LFAttrFileCount,
+		LFAttrFileName | LFAttrStoreID | LFAttrComment,
+		LFAttrFileName | LFAttrStoreID | LFAttrComment | LFAttrDescription | LFAttrFileFormat | LFAttrFileSize | LFAttrFileCount,
+		(UINT)~(LFAttrDeleteTime | LFAttrFlags)
+	};
+
+	if (!(AttrMask[Attrs.Level] & (1<<index)))
 		column.state = NSECS_Hidden;
-		break;
-	}
 
 	return TRUE;
 }
