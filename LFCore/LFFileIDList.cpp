@@ -13,8 +13,8 @@ LFFileIDList::LFFileIDList()
 
 bool LFFileIDList::AddFileID(char* StoreID, char* FileID, void* UserData)
 {
-	assert(_StoreID);
-	assert(_FileID);
+	assert(StoreID);
+	assert(FileID);
 
 	LFFIL_Item item;
 	ZeroMemory(&item, sizeof(item));
