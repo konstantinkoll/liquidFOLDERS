@@ -468,15 +468,16 @@ void InitStoreCache()
 			CreateDir(tmpStr);
 
 			// Stores aus der Registry
+			StoreCount = 0;
 			LoadRegistry();
-
-			// Externe Laufwerke mounten
-			MountExternal();
 
 			Initialized = true;
 		}
 
 		ReleaseMutex(Mutex_Stores);
+
+		// Externe Laufwerke mounten
+		MountExternal();
 	}
 }
 
