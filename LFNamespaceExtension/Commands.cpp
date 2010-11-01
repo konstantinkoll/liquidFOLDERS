@@ -51,7 +51,7 @@ BOOL CmdImportFolder::Invoke(CPtrList* nseItems)
 		CNSEItem* item = (CNSEItem*)nseItems->GetNext(pos);
 		if (IS(item, CFolderItem))
 		{
-			CString id = AS(item, CFolderItem)->data.StoreID;
+			CString id = AS(item, CFolderItem)->Attrs.StoreID;
 			ShellExecute(NULL, _T("open"), theApp.m_PathRunCmd, _T("IMPORTFOLDER ")+id, NULL, SW_SHOW);
 			return TRUE;
 		}
@@ -106,7 +106,7 @@ BOOL CmdProperties::Invoke(CPtrList* nseItems)
 		CNSEItem* item = (CNSEItem*)nseItems->GetNext(pos);
 		if (IS(item, CFolderItem))
 		{
-			CString id = AS(item, CFolderItem)->data.StoreID;
+			CString id = AS(item, CFolderItem)->Attrs.StoreID;
 			ShellExecute(NULL, _T("open"), theApp.m_PathRunCmd, _T("STOREPROPERTIES ")+id, NULL, SW_SHOW);
 			return TRUE;
 		}

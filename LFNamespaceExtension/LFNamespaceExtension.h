@@ -25,11 +25,13 @@ public:
 	BOOL HideFileExt();
 	void GetIconSize(int& cx, int& cy);
 	void SetCoreMenuIcon(void* item, UINT ResID);
+	CString FrmtAttrStr(CString Mask, CString Name);
 
 	CString m_PathRunCmd;
 	CString m_PathStoreManager;
 	CString m_PathMigrate;
 	CString m_PathFileDrop;
+	CString m_Categories[3][6];
 	TCHAR m_CoreFile[MAX_PATH];
 	TCHAR m_ThisFile[MAX_PATH];
 	LFAttributeDescriptor* m_Attributes[LFAttributeCount];

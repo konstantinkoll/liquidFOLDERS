@@ -69,7 +69,7 @@ public:
 
 	// IPersistFolder
 	CFolderItem();
-	CFolderItem(FolderSerialization& _data);
+	CFolderItem(FolderSerialization& _Attrs);
 
 	virtual void GetCLSID(LPCLSID pCLSID);
 
@@ -142,7 +142,7 @@ public:
 	// Other
 	BOOL SetShellLink(IShellLink* psl);
 
-	FolderSerialization data;
+	FolderSerialization Attrs;
 
 protected:
 	void CreateShortcut(CNSEItem* Item);

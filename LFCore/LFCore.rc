@@ -198,7 +198,7 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_Size1               "Winzig(< 32 KB)"
+    IDS_Size1               "Winzig (< 32 KB)"
     IDS_Size2               "Klein (< 128 KB)"
     IDS_Size3               "Mittel (< 1 MB)"
     IDS_Size4               "Groß (< 16 MB)"
@@ -971,7 +971,7 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_Size1               "Winzig(< 32 KB)"
+    IDS_Size1               "Winzig (< 32 KB)"
     IDS_Size2               "Klein (< 128 KB)"
     IDS_Size3               "Mittel (< 1 MB)"
     IDS_Size4               "Groß (< 16 MB)"

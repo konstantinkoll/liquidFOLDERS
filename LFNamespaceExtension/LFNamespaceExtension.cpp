@@ -5,6 +5,7 @@
 #include "stdafx.h"
 #include "LFNamespaceExtension.h"
 #include "LFCore.h"
+#include "..\\LFCore\\resource.h"
 #include "MenuIcons.h"
 #include "afxsettingsstore.h"
 #include <eznamespaceextensions.h>
@@ -29,11 +30,22 @@ LFNamespaceExtensionApp::LFNamespaceExtensionApp()
 	if (hModCore)
 	{
 		GetModuleFileName(hModCore, m_CoreFile, MAX_PATH);
+
+		for (UINT a=0; a<5; a++)
+		{
+			ENSURE(m_Categories[0][a+1].LoadString(hModCore, IDS_Rating1+a));
+			ENSURE(m_Categories[1][a+1].LoadString(hModCore, IDS_Priority1+a));
+			ENSURE(m_Categories[2][a+1].LoadString(hModCore, IDS_Size1+a));
+		}
+
 		FreeLibrary(hModCore);
 	}
 	else
 	{
 		strcpy_s(m_CoreFile, MAX_PATH, "LFCORE.DLL");
+
+		for (UINT a=1; a<6; a++)
+			m_Categories[0][a] = m_Categories[1][a] = m_Categories[2][a] = _T("?");
 	}
 
 	// Get attribute information
@@ -103,6 +115,14 @@ BOOL LFNamespaceExtensionApp::InitInstance()
 	if (!GetApplicationPath(_T("Migrate"), m_PathMigrate))
 		m_PathMigrate.Empty();
 
+	// Strings
+	CString sortStr;
+	ENSURE(sortStr.LoadString(IDS_NULLFOLDER_NameMask));
+
+	m_Categories[0][0] = FrmtAttrStr(sortStr, CString(m_Attributes[LFAttrRating]->Name));
+	m_Categories[1][0] = FrmtAttrStr(sortStr, CString(m_Attributes[LFAttrPriority]->Name));
+	m_Categories[2][0] = FrmtAttrStr(sortStr, CString(m_Attributes[LFAttrFileSize]->Name));
+
 	return CWinApp::InitInstance();
 }
 
@@ -170,6 +190,16 @@ void LFNamespaceExtensionApp::SetCoreMenuIcon(void* item, UINT ResID)
 	HICON hIcon = LFGetIcon(ResID, cx, cy);
 	((EZNamespaceExtensionsMFC::CShellMenuItem*)item)->SetBitmap(IconToBitmap(hIcon, cx, cy));
 	DestroyIcon(hIcon);
+}
+
+CString LFNamespaceExtensionApp::FrmtAttrStr(CString Mask, CString Name)
+{
+	if ((Mask[0]=='L') && (Name[0]>='A') && (Name[0]<='Z') && (Name[1]>'Z'))
+		Name = Name.MakeLower().Mid(0,1)+Name.Mid(1, Name.GetLength()-1);
+
+	CString tmpStr;
+	tmpStr.Format(Mask.Mid(1, Mask.GetLength()-1), Name);
+	return tmpStr;
 }
 
 

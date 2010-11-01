@@ -161,6 +161,7 @@ unsigned int GetSizeCategory(const __int64 sz)
 		return 3;
 	if (sz<131072*1024)
 		return 4;
+
 	return 5;
 }
 
