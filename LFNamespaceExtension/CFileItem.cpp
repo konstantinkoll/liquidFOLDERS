@@ -476,6 +476,7 @@ BOOL CFileItem::SetShellLink(IShellLink* psl)
 		psl->SetPath(tmpBuf);
 		psl->SetIconLocation(tmpBuf, 0);
 		psl->SetShowCmd(SW_SHOWNORMAL);
+
 		return TRUE;
 	}
 

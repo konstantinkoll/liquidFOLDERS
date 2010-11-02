@@ -1521,6 +1521,7 @@ BOOL CFolderItem::SetShellLink(IShellLink* psl)
 	psl->SetIconLocation(theApp.m_CoreFile, (Attrs.Icon==IDI_STORE_Default ? IDI_STORE_Internal : Attrs.Icon)-1);
 	psl->SetShowCmd(SW_SHOWNORMAL);
 	psl->SetDescription(Attrs.Comment);
+
 	return TRUE;
 }
 
