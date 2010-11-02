@@ -48,8 +48,8 @@ struct FolderSerialization
 	CString DisplayName;
 	CString Description;
 	CString Comment;
-	CString StoreID;
-	CString FileID;
+	char StoreID[LFKeySize];
+	char FileID[LFKeySize];
 	UINT DomainID;
 	UCHAR Compare;
 	LFVariantData Value;
@@ -57,7 +57,6 @@ struct FolderSerialization
 	FILETIME FileTime;
 	UINT Count;
 	INT64 Size;
-	CString Format;
 };
 
 class CFolderItem : public CNSEFolder

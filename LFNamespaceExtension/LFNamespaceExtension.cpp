@@ -116,6 +116,9 @@ BOOL LFNamespaceExtensionApp::InitInstance()
 		m_PathMigrate.Empty();
 
 	// Strings
+	ENSURE(m_Store.LoadString(IDS_Store));
+	ENSURE(m_Folder.LoadString(IDS_Folder));
+
 	CString sortStr;
 	ENSURE(sortStr.LoadString(IDS_NULLFOLDER_NameMask));
 

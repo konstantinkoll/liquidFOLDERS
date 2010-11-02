@@ -17,7 +17,9 @@ public:
 
 	// IPersist
 	CFileItem();
-	CFileItem(LPCTSTR _StoreID, LFCoreAttributes* _Attrs);
+	CFileItem(char* _StoreID, LFCoreAttributes* _Attrs);
+	CFileItem(LFItemDescriptor* _Item);
+	~CFileItem();
 
 	// PIDL handling
 	virtual void Serialize(CArchive& ar);
@@ -58,6 +60,5 @@ public:
 	// Other
 	BOOL SetShellLink(IShellLink* psl);
 
-	CString StoreID;
-	LFCoreAttributes Attrs;
+	LFItemDescriptor* Item;
 };

@@ -20,12 +20,25 @@ IMPLEMENT_DYNCREATE(CFileItem, CNSEItem)
 
 CFileItem::CFileItem()
 {
+	Item = LFAllocItemDescriptor();
 }
 
-CFileItem::CFileItem(LPCTSTR _StoreID, LFCoreAttributes* _Attrs)
+CFileItem::CFileItem(char* _StoreID, LFCoreAttributes* Attrs)
 {
-	StoreID = _StoreID;
-	Attrs = *_Attrs;
+	Item = LFAllocItemDescriptor(Attrs);
+	strcpy_s(Item->StoreID, LFKeySize, _StoreID);
+}
+
+CFileItem::CFileItem(LFItemDescriptor* _Item)
+{
+	Item = _Item;
+	Item->RefCount++;
+}
+
+CFileItem::~CFileItem()
+{
+	if (Item)
+		LFFreeItemDescriptor(Item);
 }
 
 
@@ -35,9 +48,9 @@ void CFileItem::Serialize(CArchive& ar)
 {
 	ar << (BYTE)LFNamespaceExtensionVersion;
 	ar << (BYTE)0;
-	ar << StoreID;
+	ar.Write(&Item->StoreID, sizeof(Item->StoreID));
 	ar << (UINT)sizeof(LFCoreAttributes);
-	ar.Write(&Attrs, sizeof(LFCoreAttributes));
+	ar.Write(&Item->CoreAttributes, sizeof(LFCoreAttributes));
 }
 
 
@@ -53,7 +66,7 @@ BOOL CFileItem::IsValid()
 
 void CFileItem::GetDisplayName(CString& displayName)
 {
-	displayName = Attrs.FileName;
+	displayName = Item->CoreAttributes.FileName;
 }
 
 void CFileItem::GetDisplayNameEx(CString& displayName, DisplayNameFlags flags)
@@ -61,15 +74,15 @@ void CFileItem::GetDisplayNameEx(CString& displayName, DisplayNameFlags flags)
 	if ((flags & (NSEDNF_InFolder | NSEDNF_ForParsing))==NSEDNF_ForParsing)
 	{
 		char Path[MAX_PATH];
-		displayName = (LFGetFileLocation((char*)(LPCSTR)StoreID, &Attrs, Path, MAX_PATH)==LFOk) ? Path : _T("?");
+		displayName = (LFGetFileLocation(Item->StoreID, &Item->CoreAttributes, Path, MAX_PATH)==LFOk) ? Path : _T("?");
 		return;
 	}
 
-	displayName = Attrs.FileName;
-	if ((!(flags & NSEDNF_ForEditing)) && (Attrs.FileFormat[0]!='\0') && ((flags & NSEDNF_ForParsing) || (!(flags & NSEDNF_InFolder)) || (!theApp.HideFileExt())))
+	displayName = Item->CoreAttributes.FileName;
+	if ((!(flags & NSEDNF_ForEditing)) && (Item->CoreAttributes.FileFormat[0]!='\0') && ((flags & NSEDNF_ForParsing) || (!(flags & NSEDNF_InFolder)) || (!theApp.HideFileExt())))
 	{
 		displayName += '.';
-		displayName += Attrs.FileFormat;
+		displayName += Item->CoreAttributes.FileFormat;
 	}
 }
 
@@ -79,7 +92,7 @@ void CFileItem::GetDisplayNameEx(CString& displayName, DisplayNameFlags flags)
 void CFileItem::GetIconFileAndIndex(CGetIconFileAndIndexEventArgs& e)
 {
 	char Path[MAX_PATH];
-	if (LFGetFileLocation((char*)(LPCSTR)StoreID, &Attrs, Path, MAX_PATH)==LFOk)
+	if (LFGetFileLocation(Item->StoreID, &Item->CoreAttributes, Path, MAX_PATH)==LFOk)
 	{
 		e.iconExtractMode = NSEIEM_SystemImageListIndexFromPath;
 		e.iconFile = Path;
@@ -97,7 +110,7 @@ void CFileItem::GetIconFileAndIndex(CGetIconFileAndIndexEventArgs& e)
 
 void CFileItem::GetInfoTip(CString& infotip)
 {
-	infotip = Attrs.Comment;
+	infotip = Item->CoreAttributes.Comment;
 }
 
 
@@ -121,11 +134,11 @@ BOOL CFileItem::GetColumnValueEx(VARIANT* value, CShellColumn& column)
 			CUtils::SetVariantINT(value, 0);
 			return TRUE;
 		case 11:
-			if (Attrs.FileFormat[0]!='\0')
+			if (Item->CoreAttributes.FileFormat[0]!='\0')
 			{
 				char Extension[256];
 				strcpy_s(Extension, 256, ".");
-				strcat_s(Extension, Attrs.FileFormat);
+				strcat_s(Extension, Item->CoreAttributes.FileFormat);
 				CUtils::SetVariantLPCTSTR(value, Extension);
 				return TRUE;
 			}
@@ -144,168 +157,85 @@ BOOL CFileItem::GetColumnValueEx(VARIANT* value, CShellColumn& column)
 			return FALSE;
 		}
 
-	CString tmpStr;
-	UINT tmpInt;
-	wchar_t tmpBuf[256];
-
-	switch (column.index)
+	if (column.index==LFAttrFileFormat)
 	{
-	case LFAttrFileName:
-		tmpStr = Attrs.FileName;
-		break;
-	case LFAttrFileID:
-		tmpStr = Attrs.FileID;
-		break;
-	case LFAttrStoreID:
-		tmpStr = StoreID;
-		break;
-	case LFAttrComment:
-		tmpStr = Attrs.Comment;
-		break;
-	case LFAttrCreationTime:
-		if ((Attrs.CreationTime.dwHighDateTime) || (Attrs.CreationTime.dwLowDateTime))
+		if (Item->CoreAttributes.FileFormat[0]!='\0')
 		{
-			if (value->vt==VT_BSTR)
-			{
-				LFTimeToString(Attrs.CreationTime, tmpBuf, 256);
-				tmpStr = tmpBuf;
-			}
-			else
-			{
-				CUtils::SetVariantFILETIME(value, Attrs.CreationTime);
-				return TRUE;
-			}
-		}
-		else
-		{
-			return FALSE;
-		}
-		break;
-	case LFAttrAddTime:
-		if ((Attrs.AddTime.dwHighDateTime) || (Attrs.AddTime.dwLowDateTime))
-		{
-			if (value->vt==VT_BSTR)
-			{
-				LFTimeToString(Attrs.AddTime, tmpBuf, 256);
-				tmpStr = tmpBuf;
-			}
-			else
-			{
-				CUtils::SetVariantFILETIME(value, Attrs.AddTime);
-				return TRUE;
-			}
-		}
-		else
-		{
-			return FALSE;
-		}
-		break;
-	case LFAttrFileTime:
-		if ((Attrs.FileTime.dwHighDateTime) || (Attrs.FileTime.dwLowDateTime))
-		{
-			if (value->vt==VT_BSTR)
-			{
-				LFTimeToString(Attrs.FileTime, tmpBuf, 256);
-				tmpStr = tmpBuf;
-			}
-			else
-			{
-				CUtils::SetVariantFILETIME(value, Attrs.FileTime);
-				return TRUE;
-			}
-		}
-		else
-		{
-			return FALSE;
-		}
-		break;
-	case LFAttrArchiveTime:
-		if ((Attrs.ArchiveTime.dwHighDateTime) || (Attrs.ArchiveTime.dwLowDateTime))
-		{
-			if (value->vt==VT_BSTR)
-			{
-				LFTimeToString(Attrs.ArchiveTime, tmpBuf, 256);
-				tmpStr = tmpBuf;
-			}
-			else
-			{
-				CUtils::SetVariantFILETIME(value, Attrs.ArchiveTime);
-				return TRUE;
-			}
-		}
-		else
-		{
-			return FALSE;
-		}
-		break;
-	case LFAttrFileFormat:
-		if (Attrs.FileFormat[0]!='\0')
-		{
-			tmpStr = _T(".");
-			tmpStr.Append(Attrs.FileFormat);
+			CString tmpStr = _T(".");
+			tmpStr.Append(Item->CoreAttributes.FileFormat);
 
 			SHFILEINFO sfi;
 			if (SUCCEEDED(SHGetFileInfo(tmpStr, FILE_ATTRIBUTE_NORMAL, &sfi, sizeof(sfi), SHGFI_TYPENAME | SHGFI_USEFILEATTRIBUTES)))
 			{
-				tmpStr = sfi.szTypeName;
+				CString tmpStr = sfi.szTypeName;
 				CUtils::SetVariantCString(value, tmpStr);
-				break;
+				return TRUE;
 			}
 		}
-		return FALSE;
-	case LFAttrFileSize:
-		if (value->vt==VT_BSTR)
-		{
-			LFINT64ToString(Attrs.FileSize, tmpBuf, 256);
-			tmpStr = tmpBuf;
-		}
-		else
-		{
-			CUtils::SetVariantINT64(value, Attrs.FileSize);
-			return TRUE;
-		}
-		break;
-	case LFAttrURL:
-		tmpStr = Attrs.URL;
-		break;
-	case LFAttrTags:
-		tmpStr = Attrs.Tags;
-		break;
-	case LFAttrRating:
-		if (value->vt==VT_BSTR)
-		{
-			if (Attrs.Rating>1)
-				tmpStr.Format(_T("%d"), Attrs.Rating/2);
-		}
-		else
-		{
-			tmpInt = Attrs.Rating*10;
-			if (tmpInt>99)
-				tmpInt = 99;
-			CUtils::SetVariantUINT(value, tmpInt);
-			return TRUE;
-		}
-		break;
-	case LFAttrPriority:
-		if (Attrs.Priority>1)
-			tmpStr.Format(_T("%d"), Attrs.Priority/2);
-		break;
-	case LFAttrLocationName:
-		tmpStr = Attrs.LocationName;
-		break;
-	case LFAttrLocationIATA:
-		tmpStr = Attrs.LocationIATA;
-		break;
-	case LFAttrLocationGPS:
-		LFGeoCoordinatesToString(Attrs.LocationGPS, tmpBuf, 256, false);
-		tmpStr = tmpBuf;
-		break;
-	default:
+
 		return FALSE;
 	}
 
-	CUtils::SetVariantCString(value, tmpStr);
-	return TRUE;
+	UINT Type = theApp.m_Attributes[column.index]->Type==LFTypeUnicodeString;
+	if ((value->vt!=VT_BSTR) && ((Type==LFTypeAnsiString) || (Type==LFTypeRating) || (Type==LFTypeUINT) || (Type==LFTypeINT64) || (Type==LFTypeDouble) || (Type==LFTypeTime)))
+	{
+		LFVariantData v;
+		v.Attr = column.index;
+		LFGetAttributeVariantData(Item, &v);
+
+		if (!v.IsNull)
+		{
+			CString tmpStr;
+			UINT tmpInt;
+
+			switch (theApp.m_Attributes[column.index]->Type)
+			{
+			case LFTypeAnsiString:
+				CUtils::SetVariantLPCTSTR(value, v.AnsiString);
+				return TRUE;
+			case LFTypeRating:
+				tmpInt = Item->CoreAttributes.Rating*10;
+				if (tmpInt>99)
+					tmpInt = 99;
+				CUtils::SetVariantUINT(value, tmpInt);
+				return TRUE;
+			case LFTypeUINT:
+				CUtils::SetVariantUINT(value, v.UINT);
+				return TRUE;
+			case LFTypeINT64:
+				CUtils::SetVariantUINT64(value, v.INT64);
+				return TRUE;
+			case LFTypeDouble:
+				CUtils::SetVariantDOUBLE(value, v.Double);
+				return TRUE;
+			case LFTypeTime:
+				CUtils::SetVariantFILETIME(value, v.Time);
+				return TRUE;
+			}
+		}
+	}
+	else
+	{
+		wchar_t tmpBuf[256];
+
+		switch (column.index)
+		{
+		case LFAttrRating:
+			CUtils::SetVariantCString(value, theApp.m_Categories[0][Item->CoreAttributes.Rating/2]);
+			break;
+		case LFAttrPriority:
+			CUtils::SetVariantCString(value, theApp.m_Categories[1][Item->CoreAttributes.Priority/2]);
+			break;
+		default:
+			LFAttributeToString(Item, column.index, tmpBuf, 256);
+			CString tmpStr(tmpBuf);
+			CUtils::SetVariantCString(value, tmpStr);
+		}
+
+		return TRUE;
+	}
+
+	return FALSE;
 }
 
 
@@ -313,18 +243,13 @@ BOOL CFileItem::GetColumnValueEx(VARIANT* value, CShellColumn& column)
 
 BOOL CFileItem::OnChangeName(CChangeNameEventArgs& e)
 {
-	char StoreID[LFKeySize];
-	char FileID[LFKeySize];
-	strcpy_s(StoreID, LFKeySize, this->StoreID);
-	strcpy_s(FileID, LFKeySize, Attrs.FileID);
-
 	USES_CONVERSION;
 	LPWSTR name = T2W(e.newName);
 
-	UINT res = LFTransactionRename(StoreID, FileID, name);
+	UINT res = LFTransactionRename(Item->StoreID, Item->CoreAttributes.FileID, name);
 	if (res==LFOk)
 	{
-		wcscpy_s(Attrs.FileName, 256, name);
+		wcscpy_s(Item->CoreAttributes.FileName, 256, name);
 	}
 	else
 	{
@@ -347,7 +272,7 @@ int CFileItem::CompareTo(CNSEItem* otherItem, CShellColumn& column)
 	if (IS(otherItem, CFolderItem))
 		return 1;
 
-	CFileItem* dir2 = AS(otherItem, CFileItem);
+	CFileItem* file2 = AS(otherItem, CFileItem);
 
 	CString str1;
 	CString str2;
@@ -356,56 +281,56 @@ int CFileItem::CompareTo(CNSEItem* otherItem, CShellColumn& column)
 	switch (column.index)
 	{
 	case LFAttrFileName:
-		str1 = Attrs.FileName;
-		str2 = dir2->Attrs.FileName;
+		str1 = Item->CoreAttributes.FileName;
+		str2 = file2->Item->CoreAttributes.FileName;
 		break;
 	case LFAttrStoreID:
-		str1 = StoreID;
-		str2 = dir2->StoreID;
+		str1 = Item->StoreID;
+		str2 = file2->Item->StoreID;
 		break;
 	case LFAttrFileID:
-		str1 = Attrs.FileID;
-		str2 = dir2->Attrs.FileID;
+		str1 = Item->CoreAttributes.FileID;
+		str2 = file2->Item->CoreAttributes.FileID;
 		break;
 	case LFAttrComment:
-		str1 = Attrs.Comment;
-		str2 = dir2->Attrs.Comment;
+		str1 = Item->CoreAttributes.Comment;
+		str2 = file2->Item->CoreAttributes.Comment;
 		break;
 	case LFAttrCreationTime:
-		ret = CompareFileTime(&Attrs.CreationTime, &dir2->Attrs.CreationTime);
+		ret = CompareFileTime(&Item->CoreAttributes.CreationTime, &file2->Item->CoreAttributes.CreationTime);
 		goto GotRet;
 	case LFAttrFileTime:
-		ret = CompareFileTime(&Attrs.FileTime, &dir2->Attrs.FileTime);
+		ret = CompareFileTime(&Item->CoreAttributes.FileTime, &file2->Item->CoreAttributes.FileTime);
 		goto GotRet;
 	case LFAttrFileSize:
-		if (Attrs.FileSize<dir2->Attrs.FileSize)
+		if (Item->CoreAttributes.FileSize<file2->Item->CoreAttributes.FileSize)
 			return -1;
-		if (Attrs.FileSize>dir2->Attrs.FileSize)
+		if (Item->CoreAttributes.FileSize>file2->Item->CoreAttributes.FileSize)
 			return 1;
 		goto GotRet;
 	case LFAttrURL:
-		str1 = Attrs.URL;
-		str2 = dir2->Attrs.URL;
+		str1 = Item->CoreAttributes.URL;
+		str2 = file2->Item->CoreAttributes.URL;
 		break;
 	case LFAttrRating:
-		if (Attrs.Rating<dir2->Attrs.Rating)
+		if (Item->CoreAttributes.Rating<file2->Item->CoreAttributes.Rating)
 			return -1;
-		if (Attrs.Rating>dir2->Attrs.Rating)
+		if (Item->CoreAttributes.Rating>file2->Item->CoreAttributes.Rating)
 			return 1;
 		goto GotRet;
 	case LFAttrPriority:
-		if (Attrs.Priority<dir2->Attrs.Priority)
+		if (Item->CoreAttributes.Priority<file2->Item->CoreAttributes.Priority)
 			return -1;
-		if (Attrs.Priority>dir2->Attrs.Priority)
+		if (Item->CoreAttributes.Priority>file2->Item->CoreAttributes.Priority)
 			return 1;
 		goto GotRet;
 	case LFAttrLocationName:
-		str1 = Attrs.LocationName;
-		str2 = dir2->Attrs.LocationName;
+		str1 = Item->CoreAttributes.LocationName;
+		str2 = file2->Item->CoreAttributes.LocationName;
 		break;
 	case LFAttrLocationIATA:
-		str1 = Attrs.LocationIATA;
-		str2 = dir2->Attrs.LocationIATA;
+		str1 = Item->CoreAttributes.LocationIATA;
+		str2 = file2->Item->CoreAttributes.LocationIATA;
 		break;
 	}
 
@@ -422,17 +347,17 @@ GotRet:
 		return ret;
 
 	// Compare file names
-	ret = wcscmp(Attrs.FileName, dir2->Attrs.FileName);
+	ret = wcscmp(Item->CoreAttributes.FileName, file2->Item->CoreAttributes.FileName);
 	if (ret)
 		return ret;
 
 	// Compare store IDs
-	ret = StoreID.Compare(dir2->StoreID);
+	ret = strcmp(Item->StoreID, file2->Item->StoreID);
 	if (ret)
 		return ret;
 
 	// Compare file IDs
-	return strcmp(Attrs.FileID, dir2->Attrs.FileID);
+	return strcmp(Item->CoreAttributes.FileID, file2->Item->CoreAttributes.FileID);
 }
 
 
@@ -446,11 +371,11 @@ BOOL CFileItem::GetFileDescriptor(FILEDESCRIPTOR* fd)
 
 	fd->dwFlags = FD_WRITESTIME | FD_CREATETIME | FD_FILESIZE;
 
-	fd->ftCreationTime = Attrs.CreationTime;
-	fd->ftLastWriteTime = Attrs.FileTime;
+	fd->ftCreationTime = Item->CoreAttributes.CreationTime;
+	fd->ftLastWriteTime = Item->CoreAttributes.FileTime;
 
 	LARGE_INTEGER sz;
-	sz.QuadPart = Attrs.FileSize;
+	sz.QuadPart = Item->CoreAttributes.FileSize;
 	fd->nFileSizeHigh = sz.HighPart;
 	fd->nFileSizeLow = sz.LowPart;
 
@@ -462,7 +387,7 @@ LPSTREAM CFileItem::GetStream()
 	LPSTREAM ret = NULL;
 
 	char Path[MAX_PATH];
-	UINT res = LFGetFileLocation((char*)(LPCSTR)StoreID, &Attrs, Path, MAX_PATH);
+	UINT res = LFGetFileLocation(Item->StoreID, &Item->CoreAttributes, Path, MAX_PATH);
 	if (res!=LFOk)
 	{
 		LFErrorBox(res);
@@ -522,7 +447,7 @@ int CFileItem::GetContentViewColumnIndices(UINT* indices)
 BOOL CFileItem::SetShellLink(IShellLink* psl)
 {
 	char Path[MAX_PATH];
-	if (LFGetFileLocation((char*)(LPCSTR)StoreID, &Attrs, Path, MAX_PATH)==LFOk)
+	if (LFGetFileLocation(Item->StoreID, &Item->CoreAttributes, Path, MAX_PATH)==LFOk)
 	{
 		psl->SetPath(Path);
 		psl->SetIconLocation(Path, 0);

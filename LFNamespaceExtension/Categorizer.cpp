@@ -139,9 +139,9 @@ DWORD CRatingCategorizer::OnGetCategory(CNSEItem* child)
 			switch (this->column.index)
 			{
 			case LFAttrRating:
-				return AS(child, CFileItem)->Attrs.Rating/2;
+				return AS(child, CFileItem)->Item->CoreAttributes.Rating/2;
 			case LFAttrPriority:
-				return AS(child, CFileItem)->Attrs.Priority/2;
+				return AS(child, CFileItem)->Item->CoreAttributes.Priority/2;
 			}
 
 	return 0;
@@ -184,7 +184,7 @@ DWORD CSizeCategorizer::OnGetCategory(CNSEItem* child)
 		__int64 sz = 0;
 
 		if (IS(child, CFileItem))
-			sz = AS(child, CFileItem)->Attrs.FileSize;
+			sz = AS(child, CFileItem)->Item->CoreAttributes.FileSize;
 
 		if (IS(child, CFolderItem))
 			sz = AS(child, CFolderItem)->Attrs.Size;

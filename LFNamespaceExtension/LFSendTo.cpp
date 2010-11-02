@@ -63,7 +63,7 @@ UINT LFSendTo::OnDragDrop(CDragDropEventArgs& /*e*/)
 	CStringArray* files = GetFiles();
 
 	// TODO
-	MessageBox(NULL, _T("Not implemented yet"), _T("Send to"), 0);
+	MessageBox(NULL, _T("IDropTarget not implemented yet"), _T("Send to"), 0);
 
 	return DROPEFFECT_COPY;
 }

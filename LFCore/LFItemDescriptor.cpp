@@ -273,6 +273,16 @@ LFCore_API LFItemDescriptor* LFAllocItemDescriptor(LFItemDescriptor* i)
 	return d;
 }
 
+LFCore_API LFItemDescriptor* LFAllocItemDescriptor(LFCoreAttributes* attr)
+{
+	assert(attr);
+
+	LFItemDescriptor* d = LFAllocItemDescriptor();
+	d->CoreAttributes = *attr;
+
+	return d;
+}
+
 LFCore_API LFItemDescriptor* LFAllocItemDescriptor(LFStoreDescriptor* s)
 {
 	assert(s);
