@@ -60,13 +60,13 @@ void CFileItem::Serialize(CArchive& ar)
 		v[a].Type = theApp.m_Attributes[a]->Type;
 		LFGetAttributeVariantData(Item, &v[a]);
 
-		if (!v[a].IsNull)
+		if (!LFIsNullVariantData(&v[a]))
 			Count++;
 	}
 
 	ar << Count;
 	for (UINT a=LFLastCoreAttribute+1; a<LFAttributeCount; a++)
-		if (!v[a].IsNull)
+		if (!LFIsNullVariantData(&v[a]))
 			ar.Write(&v[a], sizeof(LFVariantData));
 }
 
@@ -193,64 +193,65 @@ BOOL CFileItem::GetColumnValueEx(VARIANT* value, CShellColumn& column)
 		return FALSE;
 	}
 
-	UINT Type = theApp.m_Attributes[column.index]->Type==LFTypeUnicodeString;
-	if ((value->vt!=VT_BSTR) && ((Type==LFTypeAnsiString) || (Type==LFTypeRating) || (Type==LFTypeUINT) || (Type==LFTypeINT64) || (Type==LFTypeDouble) || (Type==LFTypeTime)))
+	if ((column.index>=0) && (column.index<LFAttributeCount))
 	{
-		LFVariantData v;
-		v.Attr = column.index;
-		v.Type = theApp.m_Attributes[column.index]->Type;
-		LFGetAttributeVariantData(Item, &v);
-
-		if (!v.IsNull)
+		UCHAR Type = theApp.m_Attributes[column.index]->Type;
+		if ((value->vt!=VT_BSTR) && ((Type==LFTypeAnsiString) || (Type==LFTypeRating) || (Type==LFTypeUINT) || (Type==LFTypeINT64) || (Type==LFTypeDouble) || (Type==LFTypeTime)))
 		{
-			CString tmpStr;
-			UINT tmpInt;
+			LFVariantData v;
+			v.Attr = column.index;
+			v.Type = Type;
+			LFGetAttributeVariantData(Item, &v);
 
-			switch (theApp.m_Attributes[column.index]->Type)
+			if (!LFIsNullVariantData(&v))
 			{
-			case LFTypeAnsiString:
-				CUtils::SetVariantLPCTSTR(value, v.AnsiString);
-				return TRUE;
-			case LFTypeRating:
-				tmpInt = Item->CoreAttributes.Rating*10;
-				if (tmpInt>99)
-					tmpInt = 99;
-				CUtils::SetVariantUINT(value, tmpInt);
-				return TRUE;
-			case LFTypeUINT:
-				CUtils::SetVariantUINT(value, v.UINT);
-				return TRUE;
-			case LFTypeINT64:
-				CUtils::SetVariantUINT64(value, v.INT64);
-				return TRUE;
-			case LFTypeDouble:
-				CUtils::SetVariantDOUBLE(value, v.Double);
-				return TRUE;
-			case LFTypeTime:
-				CUtils::SetVariantFILETIME(value, v.Time);
-				return TRUE;
+				CString tmpStr;
+				UINT tmpInt;
+
+				switch (Type)
+				{
+				case LFTypeAnsiString:
+					CUtils::SetVariantLPCTSTR(value, v.AnsiString);
+					return TRUE;
+				case LFTypeRating:
+					tmpInt = Item->CoreAttributes.Rating*10;
+					CUtils::SetVariantUINT(value, tmpInt>99 ? 99 : tmpInt);
+					return TRUE;
+				case LFTypeUINT:
+					CUtils::SetVariantUINT(value, v.UINT);
+					return TRUE;
+				case LFTypeINT64:
+					CUtils::SetVariantUINT64(value, v.INT64);
+					return TRUE;
+				case LFTypeDouble:
+					CUtils::SetVariantDOUBLE(value, v.Double);
+					return TRUE;
+				case LFTypeTime:
+					CUtils::SetVariantFILETIME(value, v.Time);
+					return TRUE;
+				}
 			}
 		}
-	}
-	else
-	{
-		wchar_t tmpBuf[256];
-
-		switch (column.index)
+		else
 		{
-		case LFAttrRating:
-			CUtils::SetVariantCString(value, theApp.m_Categories[0][Item->CoreAttributes.Rating/2]);
-			break;
-		case LFAttrPriority:
-			CUtils::SetVariantCString(value, theApp.m_Categories[1][Item->CoreAttributes.Priority/2]);
-			break;
-		default:
-			LFAttributeToString(Item, column.index, tmpBuf, 256);
-			CString tmpStr(tmpBuf);
-			CUtils::SetVariantCString(value, tmpStr);
-		}
+			wchar_t tmpBuf[256];
 
-		return TRUE;
+			switch (column.index)
+			{
+			case LFAttrRating:
+				CUtils::SetVariantCString(value, theApp.m_Categories[0][Item->CoreAttributes.Rating/2]);
+				break;
+			case LFAttrPriority:
+				CUtils::SetVariantCString(value, theApp.m_Categories[1][Item->CoreAttributes.Priority/2]);
+				break;
+			default:
+				LFAttributeToString(Item, column.index, tmpBuf, 256);
+				CString tmpStr(tmpBuf);
+				CUtils::SetVariantCString(value, tmpStr);
+			}
+
+			return TRUE;
+		}
 	}
 
 	return FALSE;
@@ -443,15 +444,24 @@ int CFileItem::GetTileViewColumnIndices(UINT* indices)
 
 int CFileItem::GetPreviewDetailsColumnIndices(UINT* indices)
 {
-	indices[0] = LFAttrComment;
-	indices[1] = LFAttrCreationTime;
-	indices[2] = LFAttrFileTime;
-	indices[3] = LFAttrFileSize;
-	indices[4] = LFAttrURL;
-	indices[5] = LFAttrTags;
+	indices[0] = LFAttrArtist;
+	indices[1] = LFAttrTitle;
+	indices[2] = LFAttrRecordingTime;
+	indices[3] = LFAttrDuration;
+	indices[4] = LFAttrTags;
+	indices[5] = LFAttrPages;
 	indices[6] = LFAttrRating;
+	indices[7] = LFAttrLanguage;
+	indices[8] = LFAttrWidth;
+	indices[9] = LFAttrHeight;
+	indices[10] = LFAttrFileSize;
+	indices[11] = LFAttrComment;
+	indices[12] = LFAttrRecordingEquipment;
+	indices[13] = LFAttrBitrate;
+	indices[14] = LFAttrCreationTime;
+	indices[15] = LFAttrFileTime;
 
-	return 7;
+	return 16;
 }
 
 int CFileItem::GetContentViewColumnIndices(UINT* indices)

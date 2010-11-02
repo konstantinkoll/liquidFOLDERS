@@ -828,14 +828,12 @@ BOOL CFolderItem::GetColumn(CShellColumn& column, int index)
 	switch (Attrs.Level)
 	{
 	case LevelRoot:
+	case LevelStoreHome:
 		LastColumn = LFAttrFileFormat;
 		break;
 	case LevelStores:
 	case LevelAttribute:
 		LastColumn = LFAttrFileSize;
-		break;
-	case LevelStoreHome:
-		LastColumn = LFAttrComment;
 		break;
 	default:
 		LastColumn = LFAttributeCount-1;
@@ -905,7 +903,7 @@ BOOL CFolderItem::GetColumn(CShellColumn& column, int index)
 	{
 		(1<<LFAttrFileName) | (1<<LFAttrStoreID) | (1<<LFAttrComment) | (1<<LFAttrDescription) | (1<<LFAttrCreationTime) | (1<<LFAttrFileTime) | (1<<LFAttrFileFormat),
 		(1<<LFAttrFileName) | (1<<LFAttrStoreID) | (1<<LFAttrComment) | (1<<LFAttrDescription) | (1<<LFAttrFileFormat) | (1<<LFAttrFileSize) | (1<<LFAttrFileCount),
-		(1<<LFAttrFileName) | (1<<LFAttrStoreID) | (1<<LFAttrComment),
+		(1<<LFAttrFileName) | (1<<LFAttrStoreID) | (1<<LFAttrComment) | (1<<LFAttrFileFormat),
 		(1<<LFAttrFileName) | (1<<LFAttrStoreID) | (1<<LFAttrComment) | (1<<LFAttrDescription) | (1<<LFAttrFileFormat) | (1<<LFAttrFileSize) | (1<<LFAttrFileCount),
 		(UINT)~((1<<LFAttrDescription) | (1<<LFAttrDeleteTime) | (1<<LFAttrFileCount) | (1<<LFAttrFlags))
 	};
