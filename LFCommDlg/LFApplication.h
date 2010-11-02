@@ -53,7 +53,7 @@ public:
 	LFApplication(UINT _HasGUI);
 	virtual ~LFApplication();
 
-	CString path;
+	CString m_Path;
 	LFMessageIDs* p_MessageIDs;
 	LFAttributeDescriptor* m_Attributes[LFAttributeCount];
 	wchar_t* m_AttrCategories[LFAttrCategoryCount];

@@ -34,8 +34,8 @@ public:
 	CString m_Categories[3][6];
 	CString m_Store;
 	CString m_Folder;
-	TCHAR m_CoreFile[MAX_PATH];
-	TCHAR m_ThisFile[MAX_PATH];
+	wchar_t m_CoreFile[MAX_PATH];
+	wchar_t m_ThisFile[MAX_PATH];
 	LFAttributeDescriptor* m_Attributes[LFAttributeCount];
 	LFDomainDescriptor* m_Domains[LFDomainCount];
 	LFItemCategoryDescriptor* m_ItemCategories[LFItemCategoryCount];

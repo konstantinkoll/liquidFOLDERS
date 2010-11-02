@@ -28,6 +28,7 @@ CString CmdImportFolder::GetCaption(CPtrList* /*nseItems*/)
 	CString caption;
 	ENSURE(caption.LoadString(IDS_MENU_ImportFolder));
 	caption.Remove('&');
+
 	return caption;
 }
 
@@ -35,6 +36,7 @@ CString CmdImportFolder::GetToolTip(CPtrList* /*nseItems*/)
 {
 	CString hint;
 	ENSURE(hint.LoadString(IDS_HINT_ImportFolder));
+
 	return hint;
 }
 
@@ -51,7 +53,7 @@ BOOL CmdImportFolder::Invoke(CPtrList* nseItems)
 		CNSEItem* item = (CNSEItem*)nseItems->GetNext(pos);
 		if (IS(item, CFolderItem))
 		{
-			CString id = AS(item, CFolderItem)->Attrs.StoreID;
+			CString id(AS(item, CFolderItem)->Attrs.StoreID);
 			ShellExecute(NULL, _T("open"), theApp.m_PathRunCmd, _T("IMPORTFOLDER ")+id, NULL, SW_SHOW);
 			return TRUE;
 		}
@@ -83,6 +85,7 @@ CString CmdProperties::GetCaption(CPtrList* /*nseItems*/)
 	CString caption;
 	ENSURE(caption.LoadString(IDS_MENU_Properties));
 	caption.Remove('&');
+
 	return caption;
 }
 
@@ -90,6 +93,7 @@ CString CmdProperties::GetToolTip(CPtrList* /*nseItems*/)
 {
 	CString hint;
 	ENSURE(hint.LoadString(IDS_HINT_Properties));
+
 	return hint;
 }
 
@@ -106,7 +110,7 @@ BOOL CmdProperties::Invoke(CPtrList* nseItems)
 		CNSEItem* item = (CNSEItem*)nseItems->GetNext(pos);
 		if (IS(item, CFolderItem))
 		{
-			CString id = AS(item, CFolderItem)->Attrs.StoreID;
+			CString id(AS(item, CFolderItem)->Attrs.StoreID);
 			ShellExecute(NULL, _T("open"), theApp.m_PathRunCmd, _T("STOREPROPERTIES ")+id, NULL, SW_SHOW);
 			return TRUE;
 		}
@@ -138,6 +142,7 @@ CString CmdCreateNewStore::GetCaption(CPtrList* /*nseItems*/)
 	CString caption;
 	ENSURE(caption.LoadString(IDS_MENU_CreateNewStore));
 	caption.Remove('&');
+
 	return caption;
 }
 
@@ -145,6 +150,7 @@ CString CmdCreateNewStore::GetToolTip(CPtrList* /*nseItems*/)
 {
 	CString hint;
 	ENSURE(hint.LoadString(IDS_HINT_CreateNewStore));
+
 	return hint;
 }
 
@@ -267,6 +273,7 @@ CString CmdFileDrop::GetCaption(CPtrList* /*nseItems*/)
 	CString caption;
 	ENSURE(caption.LoadString(IDS_MENU_FileDrop));
 	caption.Remove('&');
+
 	return caption;
 }
 
@@ -274,6 +281,7 @@ CString CmdFileDrop::GetToolTip(CPtrList* /*nseItems*/)
 {
 	CString hint;
 	ENSURE(hint.LoadString(IDS_HINT_FileDrop));
+
 	return hint;
 }
 

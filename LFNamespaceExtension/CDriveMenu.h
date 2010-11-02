@@ -25,5 +25,5 @@ public:
 	virtual BOOL OnExecuteMenuItem(CExecuteItemEventArgs& e);
 
 protected:
-	char Drive;
+	wchar_t Drive;
 };

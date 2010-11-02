@@ -91,7 +91,7 @@ void CFileItem::GetDisplayNameEx(CString& displayName, DisplayNameFlags flags)
 	if ((flags & (NSEDNF_InFolder | NSEDNF_ForParsing))==NSEDNF_ForParsing)
 	{
 		char Path[MAX_PATH];
-		displayName = (LFGetFileLocation(Item->StoreID, &Item->CoreAttributes, Path, MAX_PATH)==LFOk) ? Path : _T("?");
+		displayName = (LFGetFileLocation(Item->StoreID, &Item->CoreAttributes, Path, MAX_PATH)==LFOk) ? Path : "?";
 		return;
 	}
 
@@ -153,10 +153,9 @@ BOOL CFileItem::GetColumnValueEx(VARIANT* value, CShellColumn& column)
 		case 11:
 			if (Item->CoreAttributes.FileFormat[0]!='\0')
 			{
-				char Extension[256];
-				strcpy_s(Extension, 256, ".");
-				strcat_s(Extension, Item->CoreAttributes.FileFormat);
-				CUtils::SetVariantLPCTSTR(value, Extension);
+				CString tmpStr(Item->CoreAttributes.FileFormat);
+				tmpStr.Insert(0, _T("."));
+				CUtils::SetVariantCString(value, tmpStr);
 				return TRUE;
 			}
 		default:
@@ -168,7 +167,7 @@ BOOL CFileItem::GetColumnValueEx(VARIANT* value, CShellColumn& column)
 		switch (column.pid)
 		{
 		case 6:
-			CUtils::SetVariantLPCTSTR(value, "prop:~System.ItemNameDisplay;~System.ItemTypeText");
+			CUtils::SetVariantLPCTSTR(value, _T("prop:~System.ItemNameDisplay;~System.ItemTypeText"));
 			return TRUE;
 		default:
 			return FALSE;
@@ -178,8 +177,8 @@ BOOL CFileItem::GetColumnValueEx(VARIANT* value, CShellColumn& column)
 	{
 		if (Item->CoreAttributes.FileFormat[0]!='\0')
 		{
-			CString tmpStr = _T(".");
-			tmpStr.Append(Item->CoreAttributes.FileFormat);
+			CString tmpStr(Item->CoreAttributes.FileFormat);
+			tmpStr.Insert(0, _T("."));
 
 			SHFILEINFO sfi;
 			if (SUCCEEDED(SHGetFileInfo(tmpStr, FILE_ATTRIBUTE_NORMAL, &sfi, sizeof(sfi), SHGFI_TYPENAME | SHGFI_USEFILEATTRIBUTES)))
@@ -196,7 +195,7 @@ BOOL CFileItem::GetColumnValueEx(VARIANT* value, CShellColumn& column)
 	if ((column.index>=0) && (column.index<LFAttributeCount))
 	{
 		UCHAR Type = theApp.m_Attributes[column.index]->Type;
-		if ((value->vt!=VT_BSTR) && ((Type==LFTypeAnsiString) || (Type==LFTypeRating) || (Type==LFTypeUINT) || (Type==LFTypeINT64) || (Type==LFTypeDouble) || (Type==LFTypeTime)))
+		if ((value->vt!=VT_BSTR) && ((Type==LFTypeRating) || (Type==LFTypeUINT) || (Type==LFTypeINT64) || (Type==LFTypeDouble) || (Type==LFTypeTime)))
 		{
 			LFVariantData v;
 			v.Attr = column.index;
@@ -210,9 +209,6 @@ BOOL CFileItem::GetColumnValueEx(VARIANT* value, CShellColumn& column)
 
 				switch (Type)
 				{
-				case LFTypeAnsiString:
-					CUtils::SetVariantLPCTSTR(value, v.AnsiString);
-					return TRUE;
 				case LFTypeRating:
 					tmpInt = Item->CoreAttributes.Rating*10;
 					CUtils::SetVariantUINT(value, tmpInt>99 ? 99 : tmpInt);
@@ -262,13 +258,10 @@ BOOL CFileItem::GetColumnValueEx(VARIANT* value, CShellColumn& column)
 
 BOOL CFileItem::OnChangeName(CChangeNameEventArgs& e)
 {
-	USES_CONVERSION;
-	LPWSTR name = T2W(e.newName);
-
-	UINT res = LFTransactionRename(Item->StoreID, Item->CoreAttributes.FileID, name);
+	UINT res = LFTransactionRename(Item->StoreID, Item->CoreAttributes.FileID, e.newName.GetBuffer());
 	if (res==LFOk)
 	{
-		wcscpy_s(Item->CoreAttributes.FileName, 256, name);
+		wcscpy_s(Item->CoreAttributes.FileName, 256, e.newName);
 	}
 	else
 	{
@@ -386,7 +379,7 @@ BOOL CFileItem::GetFileDescriptor(FILEDESCRIPTOR* fd)
 {
 	CString Path;
 	GetDisplayNameEx(Path, (DisplayNameFlags)(NSEDNF_InFolder | NSEDNF_ForParsing));
-	strcpy_s(fd->cFileName, MAX_PATH, Path);
+	wcscpy_s(fd->cFileName, MAX_PATH, Path);
 
 	fd->dwFlags = FD_WRITESTIME | FD_CREATETIME | FD_FILESIZE;
 
@@ -477,8 +470,11 @@ BOOL CFileItem::SetShellLink(IShellLink* psl)
 	char Path[MAX_PATH];
 	if (LFGetFileLocation(Item->StoreID, &Item->CoreAttributes, Path, MAX_PATH)==LFOk)
 	{
-		psl->SetPath(Path);
-		psl->SetIconLocation(Path, 0);
+		wchar_t tmpBuf[MAX_PATH];
+		MultiByteToWideChar(CP_ACP, 0, Path, (int)(strlen(Path)+1), tmpBuf, MAX_PATH);
+
+		psl->SetPath(tmpBuf);
+		psl->SetIconLocation(tmpBuf, 0);
 		psl->SetShowCmd(SW_SHOWNORMAL);
 		return TRUE;
 	}

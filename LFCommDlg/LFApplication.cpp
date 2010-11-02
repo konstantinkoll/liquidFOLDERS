@@ -131,7 +131,7 @@ LFApplication::LFApplication(UINT _HasGUI)
 	GetModuleFileName(NULL, szPathName, MAX_PATH);
 	LPTSTR pszFileName = _tcsrchr(szPathName, '\\')+1;
 	*pszFileName = '\0';
-	path = szPathName;
+	m_Path = szPathName;
 
 	// Rating and Priority bitmaps
 	for (UINT a=0; a<=LFMaxRating; a++)
@@ -278,8 +278,8 @@ BOOL LFApplication::InitInstance()
 		ReleaseMutex(mutex);
 		CloseHandle(mutex);
 
-		if (_access(path+"LFWatchdog.exe", 0)==0)
-			ShellExecute(NULL, _T("open"), path+"LFWatchdog.exe", NULL, NULL, SW_SHOW);
+		if (_waccess(m_Path+_T("LFWatchdog.exe"), 0)==0)
+			ShellExecute(NULL, _T("open"), m_Path+_T("LFWatchdog.exe"), NULL, NULL, SW_SHOW);
 	}
 	#endif
 
@@ -327,13 +327,13 @@ void LFApplication::OnUpdateAppCommands(CCmdUI* pCmdUI)
 	switch (pCmdUI->m_nID)
 	{
 	case ID_APP_NEWFILEDROP:
-		pCmdUI->Enable(_access(path+"FileDrop.exe", 0)==0);
+		pCmdUI->Enable(_waccess(m_Path+_T("FileDrop.exe"), 0)==0);
 		break;
 	case ID_APP_NEWMIGRATE:
-		pCmdUI->Enable(_access(path+"Migrate.exe", 0)==0);
+		pCmdUI->Enable(_waccess(m_Path+_T("Migrate.exe"), 0)==0);
 		break;
 	case ID_APP_NEWSTOREMANAGER:
-		pCmdUI->Enable(_access(path+"StoreManager.exe", 0)==0);
+		pCmdUI->Enable(_waccess(m_Path+_T("StoreManager.exe"), 0)==0);
 		break;
 	case ID_APP_PURCHASE:
 	case ID_APP_ENTERLICENSEKEY:
@@ -371,17 +371,17 @@ void LFApplication::OnAppSupport()
 
 void LFApplication::OnAppNewFileDrop()
 {
-	ShellExecute(m_pActiveWnd->GetSafeHwnd(), _T("open"), path+"FileDrop.exe", NULL, NULL, SW_SHOW);
+	ShellExecute(m_pActiveWnd->GetSafeHwnd(), _T("open"), m_Path+_T("FileDrop.exe"), NULL, NULL, SW_SHOW);
 }
 
 void LFApplication::OnAppNewMigrate()
 {
-	ShellExecute(m_pActiveWnd->GetSafeHwnd(), _T("open"), path+"Migrate.exe", NULL, NULL, SW_SHOW);
+	ShellExecute(m_pActiveWnd->GetSafeHwnd(), _T("open"), m_Path+_T("Migrate.exe"), NULL, NULL, SW_SHOW);
 }
 
 void LFApplication::OnAppNewStoreManager()
 {
-	ShellExecute(m_pActiveWnd->GetSafeHwnd(), _T("open"), path+"StoreManager.exe", NULL, NULL, SW_SHOW);
+	ShellExecute(m_pActiveWnd->GetSafeHwnd(), _T("open"), m_Path+_T("StoreManager.exe"), NULL, NULL, SW_SHOW);
 }
 
 CString LFApplication::GetGlobalRegPath()

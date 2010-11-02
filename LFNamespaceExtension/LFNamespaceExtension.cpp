@@ -26,7 +26,7 @@ LFNamespaceExtensionApp::LFNamespaceExtensionApp()
 	// Dateinamen mit Icons
 	GetModuleFileName((HINSTANCE)&__ImageBase, m_ThisFile, MAX_PATH);
 
-	HMODULE hModCore = LoadLibrary("LFCORE.DLL");
+	HMODULE hModCore = LoadLibrary(_T("LFCORE.DLL"));
 	if (hModCore)
 	{
 		GetModuleFileName(hModCore, m_CoreFile, MAX_PATH);
@@ -42,7 +42,7 @@ LFNamespaceExtensionApp::LFNamespaceExtensionApp()
 	}
 	else
 	{
-		strcpy_s(m_CoreFile, MAX_PATH, "LFCORE.DLL");
+		wcscpy_s(m_CoreFile, MAX_PATH, L"LFCORE.DLL");
 
 		for (UINT a=1; a<6; a++)
 			m_Categories[0][a] = m_Categories[1][a] = m_Categories[2][a] = _T("?");
@@ -152,7 +152,7 @@ BOOL LFNamespaceExtensionApp::GetApplicationPath(CString App, CString& Path)
 
 	if (reg.Open(_T("Software\\liquidFOLDERS\\")))
 		if (reg.Read(App, Path))
-			if (_access(Path, 0)==0)
+			if (_waccess(Path, 0)==0)
 				return TRUE;
 
 	// Modulpfad probieren
@@ -163,11 +163,11 @@ BOOL LFNamespaceExtensionApp::GetApplicationPath(CString App, CString& Path)
 
 	Path.Append(App);
 	Path.Append(_T(".exe"));
-	if (_access(Path, 0)==0)
+	if (_waccess(Path, 0)==0)
 		return TRUE;
 
 	// Festen Pfad probieren
-	char tmpStr[MAX_PATH];
+	wchar_t tmpStr[MAX_PATH];
 	if (!SHGetSpecialFolderPath(NULL, tmpStr, CSIDL_PROGRAM_FILES, FALSE))
 		return FALSE;
 
@@ -175,7 +175,7 @@ BOOL LFNamespaceExtensionApp::GetApplicationPath(CString App, CString& Path)
 	Path.Append(_T("\\liquidFOLDERS\\"));
 	Path.Append(App);
 	Path.Append(_T(".exe"));
-	return (_access(Path, 0)==0);
+	return (_waccess(Path, 0)==0);
 }
 
 void LFNamespaceExtensionApp::GetIconSize(int& cx, int& cy)

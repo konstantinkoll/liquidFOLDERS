@@ -25,7 +25,7 @@ CShellMenuItem* InsertItem(CShellMenu* menu, UINT ResID, CString verb, int pos=0
 
 void AddSeparator(CShellMenu* menu)
 {
-	menu->AddItem("")->SetSeparator(TRUE);
+	menu->AddItem(_T(""))->SetSeparator(TRUE);
 }
 
 CShellMenuItem* AddItem(CShellMenu* menu, UINT ResID, CString verb)
@@ -65,7 +65,7 @@ BOOL RunPath(HWND hWnd, CString path, CString parameter)
 
 
 IMPLEMENT_DYNCREATE(CFolderItem, CNSEFolder)
-IMPLEMENT_OLECREATE_EX(CFolderItem, _T("LFNamespaceExtension.RootFolder"),
+IMPLEMENT_OLECREATE_EX(CFolderItem, "LFNamespaceExtension.RootFolder",
 	0x3F2D914F, 0xFE57, 0x414F, 0x9F, 0x88, 0xA3, 0x77, 0xC7, 0x84, 0x1D, 0xA4)
 
 
@@ -374,7 +374,7 @@ BOOL CFolderItem::GetChildren(CGetChildrenEventArgs& e)
 		f = LFAllocFilter();
 		f->Mode = LFFilterModeStoreHome;
 		f->HideEmptyDomains = true;
-		strcpy_s(f->StoreID, LFKeySize, (LPCTSTR)Attrs.StoreID);
+		strcpy_s(f->StoreID, LFKeySize, Attrs.StoreID);
 		ConvertSearchResult(e, LFQuery(f));
 		break;
 	case LevelStoreHome:
@@ -421,7 +421,7 @@ BOOL CFolderItem::GetChildren(CGetChildrenEventArgs& e)
 	case LevelAttribute:
 		f = LFAllocFilter();
 		f->Mode = LFFilterModeDirectoryTree;
-		strcpy_s(f->StoreID, LFKeySize, (LPCTSTR)Attrs.StoreID);
+		strcpy_s(f->StoreID, LFKeySize, Attrs.StoreID);
 		f->DomainID = (unsigned char)Attrs.DomainID;
 		base = LFQuery(f);
 		ConvertSearchResult(e, LFGroupSearchResult(base, atoi(Attrs.FileID), false, false, Attrs.Icon, atoi(Attrs.FileID)!=LFAttrFileName, f));
@@ -429,7 +429,7 @@ BOOL CFolderItem::GetChildren(CGetChildrenEventArgs& e)
 	case LevelAttrValue:
 		f = LFAllocFilter();
 		f->Mode = LFFilterModeDirectoryTree;
-		strcpy_s(f->StoreID, LFKeySize, (LPCTSTR)Attrs.StoreID);
+		strcpy_s(f->StoreID, LFKeySize, Attrs.StoreID);
 		f->DomainID = (unsigned char)Attrs.DomainID;
 		f->ConditionList = LFAllocFilterCondition();
 		f->ConditionList->Next = NULL;
@@ -461,12 +461,9 @@ BOOL CFolderItem::IsValid()
 	if (Attrs.Level>LevelStores)
 		return TRUE;
 
-	wchar_t wsz[256];
-	MultiByteToWideChar(CP_ACP, 0, (LPCSTR)Attrs.DisplayName, -1, wsz, 256);
-	if (wcscmp(wsz, store.StoreName)!=0)
+	if (wcscmp(Attrs.DisplayName, store.StoreName)!=0)
 		return FALSE;
-	MultiByteToWideChar(CP_ACP, 0, (LPCSTR)Attrs.Comment, -1, wsz, 256);
-	if (wcscmp(wsz, store.Comment)!=0)
+	if (wcscmp(Attrs.Comment, store.Comment)!=0)
 		return FALSE;
 
 	return (memcmp(&Attrs.CreationTime, &store.CreationTime, sizeof(FILETIME))==0) &&
@@ -546,8 +543,8 @@ void CFolderItem::GetMenuItems(CGetMenuitemsEventArgs& e)
 				}
 				else
 				{
-					InsertItem(e.menu, IDS_MENU_Explore, _T(e.flags & NSEQCF_Explore ? VERB_OPEN : VERB_EXPLORE), Attrs.Level==LevelRoot ? 1 : 0)->SetDefaultItem((e.flags & (NSEQCF_Explore | NSEQCF_NoDefault))==NSEQCF_Explore);
-					InsertItem(e.menu, IDS_MENU_Open, _T(e.flags & NSEQCF_Explore ? VERB_OPENNEWWINDOW : VERB_OPEN))->SetDefaultItem((e.flags & (NSEQCF_Explore | NSEQCF_NoDefault))==0);
+					InsertItem(e.menu, IDS_MENU_Explore, e.flags & NSEQCF_Explore ? _T(VERB_OPEN) : _T(VERB_EXPLORE), Attrs.Level==LevelRoot ? 1 : 0)->SetDefaultItem((e.flags & (NSEQCF_Explore | NSEQCF_NoDefault))==NSEQCF_Explore);
+					InsertItem(e.menu, IDS_MENU_Open, e.flags & NSEQCF_Explore ? _T(VERB_OPENNEWWINDOW) : _T(VERB_OPEN))->SetDefaultItem((e.flags & (NSEQCF_Explore | NSEQCF_NoDefault))==0);
 				}
 			}
 			else
@@ -756,7 +753,7 @@ void CFolderItem::OnExecuteFrameCommand(CExecuteFrameCommandEventArgs& e)
 	if(e.menuItem)
 	{
 		if (e.menuItem->GetVerb()==_T(VERB_ABOUT))
-			RunPath(NULL, theApp.m_PathRunCmd, "ABOUTEXTENSION");
+			RunPath(NULL, theApp.m_PathRunCmd, _T("ABOUTEXTENSION"));
 
 		if (e.menuItem->GetVerb()==_T(VERB_STOREMANAGER))
 			RunPath(NULL, theApp.m_PathStoreManager);
@@ -944,7 +941,7 @@ BOOL CFolderItem::GetColumnValueEx(VARIANT* value, CShellColumn& column)
 			CUtils::SetVariantINT(value, -1);
 			return TRUE;
 		case 11:
-			CUtils::SetVariantLPCTSTR(value, "Folder");
+			CUtils::SetVariantLPCTSTR(value, _T("Folder"));
 			return TRUE;
 		default:
 			return FALSE;
@@ -954,7 +951,7 @@ BOOL CFolderItem::GetColumnValueEx(VARIANT* value, CShellColumn& column)
 		switch (column.pid)
 		{
 		case 4:
-			CUtils::SetVariantLPCTSTR(value, "liquidFOLDERS");
+			CUtils::SetVariantLPCTSTR(value, _T("liquidFOLDERS"));
 			return TRUE;
 		default:
 			return FALSE;
@@ -965,7 +962,7 @@ BOOL CFolderItem::GetColumnValueEx(VARIANT* value, CShellColumn& column)
 		switch (column.pid)
 		{
 		case 6:
-			CUtils::SetVariantLPCTSTR(value, "prop:~System.ItemNameDisplay;~System.ItemTypeText");
+			CUtils::SetVariantLPCTSTR(value, _T("prop:~System.ItemNameDisplay;~System.ItemTypeText"));
 			return TRUE;
 		default:
 			return FALSE;
@@ -989,7 +986,7 @@ BOOL CFolderItem::GetColumnValueEx(VARIANT* value, CShellColumn& column)
 			CUtils::SetVariantINT(value, -1);
 			break;
 		case 11:
-			CUtils::SetVariantLPCTSTR(value, "Folder");
+			CUtils::SetVariantLPCTSTR(value, _T("Folder"));
 			break;
 		default:
 			return FALSE;
@@ -1001,11 +998,17 @@ BOOL CFolderItem::GetColumnValueEx(VARIANT* value, CShellColumn& column)
 		CUtils::SetVariantCString(value, Attrs.DisplayName);
 		break;
 	case LFAttrFileID:
-		CUtils::SetVariantLPCTSTR(value, Attrs.FileID);
-		break;
+		{
+			CString tmpStr(Attrs.FileID);
+			CUtils::SetVariantLPCTSTR(value, tmpStr);
+			break;
+		}
 	case LFAttrStoreID:
-		CUtils::SetVariantLPCTSTR(value, Attrs.StoreID);
-		break;
+		{
+			CString tmpStr(Attrs.StoreID);
+			CUtils::SetVariantLPCTSTR(value, tmpStr);
+			break;
+		}
 	case LFAttrDescription:
 		CUtils::SetVariantCString(value, Attrs.Description);
 		break;
@@ -1209,12 +1212,12 @@ BOOL CFolderItem::OnOpen(CExecuteMenuitemsEventArgs& e)
 				LFErrorBox(res);
 			}
 			else
-				if (ShellExecuteA(e.hWnd, _T("open"), Path, "", "", SW_SHOW)==(HINSTANCE)SE_ERR_NOASSOC)
+				if (ShellExecuteA(e.hWnd, "open", Path, "", "", SW_SHOW)==(HINSTANCE)SE_ERR_NOASSOC)
 				{
 					char Cmd[300];
 					strcpy_s(Cmd, 300, "shell32.dll,OpenAs_RunDLL ");
 					strcat_s(Cmd, 300, Path);
-					ShellExecuteA(e.hWnd, _T("open"), "rundll32.exe", Cmd, Path, SW_SHOW);
+					ShellExecuteA(e.hWnd, "open", "rundll32.exe", Cmd, Path, SW_SHOW);
 				}
 		}
 
@@ -1237,7 +1240,7 @@ BOOL CFolderItem::OnDelete(CExecuteMenuitemsEventArgs& e)
 
 		if (IS(item, CFolderItem))
 		{
-			CString id = AS(item, CFolderItem)->Attrs.StoreID;
+			CString id(AS(item, CFolderItem)->Attrs.StoreID);
 			ShellExecute(e.hWnd, _T("open"), theApp.m_PathRunCmd, _T("DELETESTORE ")+id, NULL, SW_SHOW);
 			return TRUE;
 		}
@@ -1280,10 +1283,7 @@ BOOL CFolderItem::OnChangeName(CChangeNameEventArgs& e)
 		char key[LFKeySize];
 		strcpy_s(key, LFKeySize, Attrs.StoreID);
 
-		USES_CONVERSION;
-		LPWSTR name = T2W(e.newName);
-
-		LFErrorBox(LFSetStoreAttributes(&key[0], name, NULL));
+		LFErrorBox(LFSetStoreAttributes(&key[0], e.newName.GetBuffer(), NULL));
 	}
 
 	return FALSE;
@@ -1545,7 +1545,7 @@ void CFolderItem::CreateShortcut(CNSEItem* Item)
 			TCHAR strPath[MAX_PATH];
 			SHGetSpecialFolderPath(NULL, strPath, CSIDL_DESKTOPDIRECTORY, FALSE);
 			CString PathLink;
-			CString NumberStr = "";
+			CString NumberStr;
 			int Number = 1;
 
 			// Check if link file exists; if not, append number
@@ -1555,19 +1555,15 @@ void CFolderItem::CreateShortcut(CNSEItem* Item)
 				PathLink += _T("\\")+LinkFilename+NumberStr+_T(".lnk");
 				NumberStr.Format(_T(" (%d)"), ++Number);
 			}
-			while (_access(PathLink, 0)==0);
+			while (_waccess(PathLink, 0)==0);
 
 			// Query IShellLink for the IPersistFile interface for saving the 
 			// shortcut in persistent storage
 			IPersistFile* ppf;
 			if (SUCCEEDED(psl->QueryInterface(IID_IPersistFile, (PVOID*)&ppf)))
 			{
-				// Ensure that the string is ANSI
-				wchar_t wsz[MAX_PATH];
-				MultiByteToWideChar(CP_ACP, 0, (LPCSTR)PathLink, -1, wsz, MAX_PATH);
-
 				// Save the link by calling IPersistFile::Save
-				ppf->Save(wsz, TRUE);
+				ppf->Save(PathLink, TRUE);
 				ppf->Release();
 			}
 		}
@@ -1673,7 +1669,7 @@ BOOL CFolderItem::OnOpenWith(CExecuteMenuitemsEventArgs& e)
 				char Cmd[300];
 				strcpy_s(Cmd, 300, "shell32.dll,OpenAs_RunDLL ");
 				strcat_s(Cmd, 300, Path);
-				ShellExecuteA(e.hWnd, _T("open"), "rundll32.exe", Cmd, Path, SW_SHOW);
+				ShellExecuteA(e.hWnd, "open", "rundll32.exe", Cmd, Path, SW_SHOW);
 			}
 
 			return TRUE;
