@@ -258,30 +258,133 @@ CNSEItem* CFolderItem::DeserializeChild(CArchive& ar)
 
 // IEnumIDList
 
+void CFolderItem::ConvertSearchResult(CGetChildrenEventArgs& e, LFSearchResult* res)
+{
+	if (!res)
+		return;
+
+	if (res->m_LastError!=LFOk)
+	{
+		LFErrorBox(res->m_LastError);
+		LFFreeSearchResult(res);
+		return;
+	}
+
+	UINT NullCount = 0;
+	INT64 NullSize = 0;
+
+	for (UINT a=0; a<res->m_ItemCount; a++)
+	{
+		LFItemDescriptor* i = res->m_Items[a];
+
+		// Stores
+		if ((((i->Type & LFTypeMask)==LFTypeStore) || (((i->Type & LFTypeMask)==LFTypeVirtual) &&
+			(i->CategoryID!=LFItemCategoryHousekeeping))) && (e.childrenType & NSECT_Folders))
+		{
+			FolderSerialization d = { 0 };
+			d.Level = Attrs.Level+1;
+			d.Icon = i->IconID;
+			d.Type = i->Type;
+			d.CategoryID = i->CategoryID;
+			d.DisplayName = i->CoreAttributes.FileName;
+			d.Description = i->Description;
+			d.Comment = i->CoreAttributes.Comment;
+			strcpy_s(d.StoreID, LFKeySize, i->StoreID);
+			strcpy_s(d.FileID, LFKeySize, i->CoreAttributes.FileID);
+			d.DomainID = Attrs.DomainID;
+			d.Count = i->AggregateCount;
+			d.Size = i->CoreAttributes.FileSize;
+
+			switch (Attrs.Level)
+			{
+			case LevelRoot:
+				d.CreationTime = i->CoreAttributes.CreationTime;
+				d.FileTime = i->CoreAttributes.FileTime;
+				break;
+			case LevelStores:
+				d.DomainID = atoi(d.FileID);
+				break;
+			case LevelAttribute:
+				if (i->NextFilter)
+					if (i->NextFilter->ConditionList)
+					{
+						d.Compare = i->NextFilter->ConditionList->Compare;
+						d.Value = i->NextFilter->ConditionList->AttrData;
+					}
+			}
+
+			e.children->AddTail(new CFolderItem(d));
+		}
+
+		// Files
+		if ((i->Type & LFTypeMask)==LFTypeFile)
+			if ((Attrs.Level==LevelAttribute) && (atoi(Attrs.FileID)!=LFAttrFileName))
+			{
+				NullCount++;
+				NullSize += i->CoreAttributes.FileSize;
+			}
+			else
+				if (e.childrenType & NSECT_NonFolders)
+					e.children->AddTail(new CFileItem(i));
+	}
+
+	// Special folder if files exist that do not contain a certain property
+	if ((NullCount) && (e.childrenType & NSECT_Folders))
+	{
+		UINT attr = atoi(Attrs.FileID);
+
+		FolderSerialization d = { 0 };
+		d.Level = Attrs.Level+1;
+		d.Icon = IDI_FLD_Default;
+		d.Type = LFTypeVirtual;
+		d.CategoryID = LFAttrCategoryCount;
+		strcpy_s(d.StoreID, LFKeySize, Attrs.StoreID);
+		strcpy_s(d.FileID, LFKeySize, "NULL");
+		d.DomainID = Attrs.DomainID;
+		d.Count = NullCount;
+		d.Size = NullSize;
+		d.Compare = LFFilterCompareIsNull;
+		d.Value.Attr = attr;
+
+		CString tmpStr;
+		ENSURE(tmpStr.LoadString(IDS_NULLFOLDER_NameMask));
+		d.DisplayName = theApp.FrmtAttrStr(tmpStr, CString(theApp.m_Attributes[attr]->Name));
+		ENSURE(tmpStr.LoadString(IDS_NULLFOLDER_CommentMask));
+		d.Comment = theApp.FrmtAttrStr(tmpStr, CString(theApp.m_Attributes[attr]->Name));
+		ENSURE(tmpStr.LoadString(NullCount==1 ? IDS_FILES_Singular : IDS_FILES_Plural));
+		d.Description.Format(tmpStr, NullCount);
+
+		e.children->AddTail(new CFolderItem(d));
+	}
+
+	LFFreeSearchResult(res);
+}
+
 BOOL CFolderItem::GetChildren(CGetChildrenEventArgs& e)
 {
 	LFFilter* f = NULL;
 	LFSearchResult* base = NULL;
-	LFSearchResult* res = NULL;
 
 	switch (Attrs.Level)
 	{
 	case LevelRoot:
-		res = LFQuery(NULL);
+		ConvertSearchResult(e, LFQuery(NULL));
 		break;
 	case LevelStores:
 		f = LFAllocFilter();
 		f->Mode = LFFilterModeStoreHome;
 		f->HideEmptyDomains = true;
 		strcpy_s(f->StoreID, LFKeySize, (LPCTSTR)Attrs.StoreID);
-		res = LFQuery(f);
+		ConvertSearchResult(e, LFQuery(f));
 		break;
 	case LevelStoreHome:
+		// This level is created by the namespace extension, and does not exist in the core tree structure
 		if (e.childrenType & NSECT_Folders)
 		{
 			CString sortStr;
 			ENSURE(sortStr.LoadString(IDS_AttributeComment));
 
+			// All files, regardless of attributes
 			FolderSerialization d = { 0 };
 			d.Level = Attrs.Level+2;
 			d.Icon = IDI_FLD_All;
@@ -295,6 +398,7 @@ BOOL CFolderItem::GetChildren(CGetChildrenEventArgs& e)
 
 			e.children->AddTail(new CFolderItem(d));
 
+			// Important attributes
 			for (UINT a=0; a<LFAttributeCount; a++)
 				if (theApp.m_Domains[Attrs.DomainID]->ImportantAttributes->IsSet(a))
 				{
@@ -320,7 +424,7 @@ BOOL CFolderItem::GetChildren(CGetChildrenEventArgs& e)
 		strcpy_s(f->StoreID, LFKeySize, (LPCTSTR)Attrs.StoreID);
 		f->DomainID = (unsigned char)Attrs.DomainID;
 		base = LFQuery(f);
-		res = LFGroupSearchResult(base, atoi(Attrs.FileID), false, false, Attrs.Icon, atoi(Attrs.FileID)!=LFAttrFileName, f);
+		ConvertSearchResult(e, LFGroupSearchResult(base, atoi(Attrs.FileID), false, false, Attrs.Icon, atoi(Attrs.FileID)!=LFAttrFileName, f));
 		break;
 	case LevelAttrValue:
 		f = LFAllocFilter();
@@ -331,109 +435,14 @@ BOOL CFolderItem::GetChildren(CGetChildrenEventArgs& e)
 		f->ConditionList->Next = NULL;
 		f->ConditionList->Compare = Attrs.Compare;
 		f->ConditionList->AttrData = Attrs.Value;
-		res = LFQuery(f);
+		ConvertSearchResult(e, LFQuery(f));
 		break;
-	}
-
-	if (res)
-	{
-		if (res->m_LastError!=LFOk)
-		{
-			LFErrorBox(res->m_LastError);
-			LFFreeSearchResult(res);
-			return FALSE;
-		}
-
-		UINT NullCount = 0;
-		INT64 NullSize = 0;
-
-		for (UINT a=0; a<res->m_ItemCount; a++)
-		{
-			LFItemDescriptor* i = res->m_Items[a];
-
-			if ((((i->Type & LFTypeMask)==LFTypeStore) || (((i->Type & LFTypeMask)==LFTypeVirtual) &&
-				(i->CategoryID!=LFItemCategoryHousekeeping))) && (e.childrenType & NSECT_Folders))
-			{
-				FolderSerialization d = { 0 };
-				d.Level = Attrs.Level+1;
-				d.Icon = i->IconID;
-				d.Type = i->Type;
-				d.CategoryID = i->CategoryID;
-				d.DisplayName = i->CoreAttributes.FileName;
-				d.Description = i->Description;
-				d.Comment = i->CoreAttributes.Comment;
-				strcpy_s(d.StoreID, LFKeySize, i->StoreID);
-				strcpy_s(d.FileID, LFKeySize, i->CoreAttributes.FileID);
-				d.DomainID = Attrs.DomainID;
-				d.Count = i->AggregateCount;
-				d.Size = i->CoreAttributes.FileSize;
-
-				switch (Attrs.Level)
-				{
-				case LevelRoot:
-					d.CreationTime = i->CoreAttributes.CreationTime;
-					d.FileTime = i->CoreAttributes.FileTime;
-					break;
-				case LevelStores:
-					d.DomainID = atoi(d.FileID);
-					break;
-				case LevelAttribute:
-					if (i->NextFilter)
-						if (i->NextFilter->ConditionList)
-						{
-							d.Compare = i->NextFilter->ConditionList->Compare;
-							d.Value = i->NextFilter->ConditionList->AttrData;
-						}
-				}
-
-				e.children->AddTail(new CFolderItem(d));
-			}
-
-			if ((i->Type & LFTypeMask)==LFTypeFile)
-				if ((Attrs.Level==LevelAttribute) && (atoi(Attrs.FileID)!=LFAttrFileName))
-				{
-					NullCount++;
-					NullSize += i->CoreAttributes.FileSize;
-				}
-				else
-					if (e.childrenType & NSECT_NonFolders)
-						e.children->AddTail(new CFileItem(i));
-		}
-		LFFreeSearchResult(res);
-
-		if ((NullCount) && (e.childrenType & NSECT_Folders))
-		{
-			UINT attr = atoi(Attrs.FileID);
-
-			FolderSerialization d = { 0 };
-			d.Level = Attrs.Level+1;
-			d.Icon = IDI_FLD_Default;
-			d.Type = LFTypeVirtual;
-			d.CategoryID = LFAttrCategoryCount;
-			strcpy_s(d.StoreID, LFKeySize, Attrs.StoreID);
-			strcpy_s(d.FileID, LFKeySize, "NULL");
-			d.DomainID = Attrs.DomainID;
-			d.Count = NullCount;
-			d.Size = NullSize;
-			d.Compare = LFFilterCompareIsNull;
-			d.Value.Attr = attr;
-
-			CString tmpStr;
-			ENSURE(tmpStr.LoadString(IDS_NULLFOLDER_NameMask));
-			d.DisplayName = theApp.FrmtAttrStr(tmpStr, CString(theApp.m_Attributes[attr]->Name));
-			ENSURE(tmpStr.LoadString(IDS_NULLFOLDER_CommentMask));
-			d.Comment = theApp.FrmtAttrStr(tmpStr, CString(theApp.m_Attributes[attr]->Name));
-			ENSURE(tmpStr.LoadString(NullCount==1 ? IDS_FILES_Singular : IDS_FILES_Plural));
-			d.Description.Format(tmpStr, NullCount);
-
-			e.children->AddTail(new CFolderItem(d));
-		}
 	}
 
 	if (f)
 		LFFreeFilter(f);
-
 	LFFreeSearchResult(base);
+
 	return TRUE;
 }
 

@@ -79,6 +79,7 @@ public:
 	virtual CNSEItem* DeserializeChild(CArchive& ar);
 
 	// IEnumIDList
+	virtual void ConvertSearchResult(CGetChildrenEventArgs& e, LFSearchResult* res);
 	virtual BOOL GetChildren(CGetChildrenEventArgs& e);
 	virtual BOOL IsValid();
 
