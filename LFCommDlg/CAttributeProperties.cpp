@@ -464,6 +464,7 @@ CPropDateTimeCtrl::CPropDateTimeCtrl(CAttributePropertyTime *pProp, COLORREF clr
 	m_pProp = pProp;
 }
 
+
 BEGIN_MESSAGE_MAP(CPropDateTimeCtrl, CDateTimeCtrl)
 	ON_WM_KILLFOCUS()
 	ON_WM_CTLCOLOR_REFLECT()
@@ -473,7 +474,7 @@ END_MESSAGE_MAP()
 
 void CPropDateTimeCtrl::OnKillFocus(CWnd* pNewWnd)
 {
-	if(pNewWnd!=NULL && IsChild(pNewWnd))
+	if ((pNewWnd) && (IsChild(pNewWnd)))
 		return;
 
 	CDateTimeCtrl::OnKillFocus(pNewWnd);
@@ -495,7 +496,7 @@ void CPropDateTimeCtrl::HScroll(UINT /*nSBCode*/, UINT /*nPos*/)
 
 LRESULT CPropDateTimeCtrl::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
 {
-	if (message>=WM_MOUSEFIRST && message<=WM_MOUSELAST)
+	if ((message>=WM_MOUSEFIRST) && (message<=WM_MOUSELAST))
 	{
 		POINT pt;
 		GetCursorPos(&pt);

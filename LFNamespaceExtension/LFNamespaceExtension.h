@@ -12,7 +12,7 @@
 // LFNamespaceExtensionApp
 //
 
-#define LFNamespaceExtensionVersion   1
+#define LFNamespaceExtensionVersion   2
 
 class LFNamespaceExtensionApp : public CWinApp
 {

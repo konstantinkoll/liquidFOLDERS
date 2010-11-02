@@ -51,6 +51,23 @@ void CFileItem::Serialize(CArchive& ar)
 	ar.Write(&Item->StoreID, sizeof(Item->StoreID));
 	ar << (UINT)sizeof(LFCoreAttributes);
 	ar.Write(&Item->CoreAttributes, sizeof(LFCoreAttributes));
+
+	LFVariantData v[LFAttributeCount];
+	UINT Count = 0;
+	for (UINT a=LFLastCoreAttribute+1; a<LFAttributeCount; a++)
+	{
+		v[a].Attr = a;
+		v[a].Type = theApp.m_Attributes[a]->Type;
+		LFGetAttributeVariantData(Item, &v[a]);
+
+		if (!v[a].IsNull)
+			Count++;
+	}
+
+	ar << Count;
+	for (UINT a=LFLastCoreAttribute+1; a<LFAttributeCount; a++)
+		if (!v[a].IsNull)
+			ar.Write(&v[a], sizeof(LFVariantData));
 }
 
 
@@ -181,6 +198,7 @@ BOOL CFileItem::GetColumnValueEx(VARIANT* value, CShellColumn& column)
 	{
 		LFVariantData v;
 		v.Attr = column.index;
+		v.Type = theApp.m_Attributes[column.index]->Type;
 		LFGetAttributeVariantData(Item, &v);
 
 		if (!v.IsNull)

@@ -213,7 +213,18 @@ CNSEItem* CFolderItem::DeserializeChild(CArchive& ar)
 			LFCoreAttributes Attrs = { 0 };
 			ar.Read(&Attrs, min(Size, sizeof(LFCoreAttributes)));
 
-			return new CFileItem(StoreID, &Attrs);
+			CFileItem* f = new CFileItem(StoreID, &Attrs);
+
+			UINT Count;
+			ar >> Count;
+			for (UINT a=0; a<Count; a++)
+			{
+				LFVariantData v;
+				ar.Read(&v, sizeof(LFVariantData));
+				LFSetAttributeVariantData(f->Item, &v);
+			}
+
+			return f;
 		}
 	case 1:
 		{
