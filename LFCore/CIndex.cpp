@@ -381,7 +381,7 @@ void CIndex::Delete(LFFileIDList* il, bool PutInTrash, char* DatPath)
 				if (il->m_Items[a].LastError==LFOk)
 				{
 					// Slave
-					if ((PtrM->SlaveID) && (PtrM->SlaveID<IdxTableCount) && (PutInTrash))
+					if ((PtrM->SlaveID) && (PtrM->SlaveID<IdxTableCount) && (!PutInTrash))
 						if (LoadTable(PtrM->SlaveID))
 						{
 							Tables[PtrM->SlaveID]->Invalidate(PtrM->FileID, IDs[PtrM->SlaveID]);
