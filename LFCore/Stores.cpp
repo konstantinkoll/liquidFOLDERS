@@ -2,6 +2,7 @@
 #include "..\\include\\LFCore.h"
 #include "LFItemDescriptor.h"
 #include "Mutex.h"
+#include "PIDL.h"
 #include "ShellProperties.h"
 #include "Stores.h"
 #include "StoreCache.h"
@@ -295,47 +296,22 @@ unsigned int PrepareImport(LFStoreDescriptor* slot, LFItemDescriptor* i, char* D
 	return ((res==ERROR_SUCCESS) || (res==ERROR_ALREADY_EXISTS)) ? LFOk : LFIllegalPhysicalPath;
 }
 
-bool GetPIDLFromStore(char* StoreID, LPITEMIDLIST* ppidl)
-{
-	*ppidl = NULL;
-
-	IShellFolder* pDesktop = NULL;
-	if (FAILED(SHGetDesktopFolder(&pDesktop)))
-		return false;
-
-	wchar_t Key[LFKeySize+1];
-	if (StoreID)
-	{
-		wcscpy_s(Key, LFKeySize+1, L"\\");
-		MultiByteToWideChar(CP_ACP, 0, StoreID, (int)(strlen(StoreID)+1), &Key[1], LFKeySize);
-	}
-	else
-	{
-		Key[0] = L'\0';
-	}
-
-	wchar_t Path[MAX_PATH];
-	ULONG chEaten = 0;
-	ULONG dwAttributes = SFGAO_FOLDER;
-
-	wcscpy_s(Path, MAX_PATH, L"::{3F2D914F-FE57-414F-9F88-A377C7841DA4}");
-	wcscat_s(Path, MAX_PATH, Key);
-
-	bool res = SUCCEEDED(pDesktop->ParseDisplayName(NULL, NULL, Path, &chEaten, ppidl, &dwAttributes));
-	pDesktop->Release();
-	return res;
-}
-
 void SendLFNotifyMessage(unsigned int Msg, unsigned int Flags, HWND hWndSource)
 {
 	SendNotifyMessage(HWND_BROADCAST, Msg, (WPARAM)Flags, (LPARAM)hWndSource);
 }
 
-void SendShellNotifyMessage(unsigned int Msg, char* StoreID, LPITEMIDLIST oldpidl)
+void SendShellNotifyMessage(unsigned int Msg, char* StoreID, LPITEMIDLIST oldpidl, LPITEMIDLIST oldpidlDelegate)
 {
 	LPITEMIDLIST pidl;
-	if (GetPIDLFromStore(StoreID, &pidl))
+	LPITEMIDLIST pidlDelegate;
+	if (GetPIDLForStore(StoreID, &pidl, &pidlDelegate))
+	{
 		SHChangeNotify(Msg, SHCNF_IDLIST | SHCNF_FLUSH, oldpidl ? oldpidl : pidl, (Msg==SHCNE_RENAMEFOLDER) ? pidl : NULL);
+
+		if (pidlDelegate)
+			SHChangeNotify(Msg, SHCNF_IDLIST | SHCNF_FLUSH, oldpidlDelegate ? oldpidlDelegate : pidlDelegate, (Msg==SHCNE_RENAMEFOLDER) ? pidlDelegate : NULL);
+	}
 }
 
 
@@ -635,7 +611,8 @@ LFCore_API unsigned int LFSetStoreAttributes(char* key, wchar_t* name, wchar_t* 
 			return LFIllegalValue;
 
 	LPITEMIDLIST oldpidl;
-	GetPIDLFromStore(key, &oldpidl);
+	LPITEMIDLIST oldpidlDelegate;
+	GetPIDLForStore(key, &oldpidl, &oldpidlDelegate);
 
 	if (!GetMutex(Mutex_Stores))
 		return LFMutexError;
@@ -669,7 +646,10 @@ LFCore_API unsigned int LFSetStoreAttributes(char* key, wchar_t* name, wchar_t* 
 		if (comment)
 			SendShellNotifyMessage(SHCNE_UPDATEITEM, key);
 		if (name)
+		{
 			SendShellNotifyMessage(SHCNE_RENAMEFOLDER, key, oldpidl);
+			SendShellNotifyMessage(SHCNE_RENAMEFOLDER, key, oldpidlDelegate);
+		}
 	}
 
 	return res;

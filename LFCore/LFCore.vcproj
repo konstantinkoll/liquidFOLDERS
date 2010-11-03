@@ -458,6 +458,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\PIDL.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\Query.cpp"
 				>
 			</File>
@@ -601,6 +605,10 @@
 			</File>
 			<File
 				RelativePath=".\Mutex.h"
+				>
+			</File>
+			<File
+				RelativePath=".\PIDL.h"
 				>
 			</File>
 			<File
