@@ -649,6 +649,7 @@ LFCore_API unsigned int LFSetStoreAttributes(char* key, wchar_t* name, wchar_t* 
 		{
 			SendShellNotifyMessage(SHCNE_RENAMEFOLDER, key, oldpidl);
 			SendShellNotifyMessage(SHCNE_RENAMEFOLDER, key, oldpidlDelegate);
+			SendShellNotifyMessage(SHCNE_UPDATEDIR);
 		}
 	}
 
