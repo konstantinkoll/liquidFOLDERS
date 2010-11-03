@@ -544,7 +544,7 @@ void CFolderItem::GetInfoTip(CString& infotip)
 void CFolderItem::GetMenuItems(CGetMenuitemsEventArgs& e)
 {
 	// All items can be opened
-	if (e.children->GetCount()>=1)
+	if (e.children->GetCount()==1)
 		if (Attrs.Level==LevelAttrValue)
 		{
 			InsertItem(e.menu, IDS_MENU_OpenWith, _T(VERB_OPENWITH));
@@ -603,10 +603,11 @@ void CFolderItem::GetMenuItems(CGetMenuitemsEventArgs& e)
 		{
 			AddSeparator(e.menu);
 			AddItem(e.menu, IDS_MENU_CreateLink, _T(VERB_CREATELINK));
-			AddItem(e.menu, IDS_MENU_Delete, _T(VERB_DELETE))->SetEnabled(!theApp.m_PathRunCmd.IsEmpty());
 
 			if (e.children->GetCount()==1)
 			{
+				AddItem(e.menu, IDS_MENU_Delete, _T(VERB_DELETE))->SetEnabled(!theApp.m_PathRunCmd.IsEmpty());
+
 				if (e.flags & NSEQCF_CanRename)
 					AddItem(e.menu, IDS_MENU_Rename, _T(VERB_RENAME));
 
