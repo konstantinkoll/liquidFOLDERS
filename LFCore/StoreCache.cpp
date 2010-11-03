@@ -40,7 +40,7 @@ bool IsStoreMounted(LFStoreDescriptor* s)
 	if (!s)
 		return false;
 
-	return (strcmp(s->DatPath, "")!=0);
+	return (s->DatPath[0]!='\0');
 }
 
 void AppendGUID(LFStoreDescriptor* s, char* p)
@@ -371,7 +371,7 @@ void ChooseNewDefaultStore()
 		}
 
 	// Alten Default Store löschen
-	strcpy_s(DefaultStore, LFKeySize, "");
+	DefaultStore[0] = '\0';
 
 	HKEY hive;
 	if (RegOpenKeyA(HKEY_CURRENT_USER, LFStoresHive, &hive)==ERROR_SUCCESS)
@@ -709,30 +709,29 @@ LFCore_API unsigned int LFMountDrive(char d, bool InternalCall)
 			f[0] = d;
 			strcat_s(f, MAX_PATH, ffd.cFileName);
 
-			LFStoreDescriptor* s = LFAllocStoreDescriptor();
-			if (LoadStoreSettingsFromFile(f, s)==true)
+			LFStoreDescriptor s = { 0 };
+			if (LoadStoreSettingsFromFile(f, &s)==true)
 			{
 				if (!GetMutex(Mutex_Stores))
 				{
-					LFFreeStoreDescriptor(s);
 					res = LFMutexError;
 					continue;
 				}
 
 				// Lokal gültigen Schlüssel eintragen
-				CreateStoreKey(s->StoreID);
+				CreateStoreKey(s.StoreID);
 
 				// Store mit der selben GUID suchen
-				LFStoreDescriptor* slot = FindStore(s->guid);
+				LFStoreDescriptor* slot = FindStore(s.guid);
 				if (!slot)
 				{
 					// Nicht gefunden: der Store wird hier als externer Store behandelt
-					s->StoreMode = LFStoreModeExternal;
+					s.StoreMode = LFStoreModeExternal;
 
 					// Zum Cache hinzufügen
 					if (StoreCount<MaxStores)
 					{
-						StoreCache[StoreCount] = *s;
+						StoreCache[StoreCount] = s;
 						slot = &StoreCache[StoreCount++];		// Slot zeigt auf Eintrag
 					}
 					else
@@ -750,15 +749,15 @@ LFCore_API unsigned int LFMountDrive(char d, bool InternalCall)
 					else
 					{
 						// Name, Kommentar und Dateizeit aktualisieren
-						wcscpy_s(slot->StoreName, 256, s->StoreName);
-						wcscpy_s(slot->Comment, 256, s->Comment);
-						slot->FileTime = s->FileTime;
+						wcscpy_s(slot->StoreName, 256, s.StoreName);
+						wcscpy_s(slot->Comment, 256, s.Comment);
+						slot->FileTime = s.FileTime;
 					}
 				}
 
 				if (slot)
 				{
-					strcpy_s(slot->DatPath, MAX_PATH, s->DatPath);
+					strcpy_s(slot->DatPath, MAX_PATH, s.DatPath);
 					slot->DatPath[0] = d;
 					slot->NeedsCheck = true;
 
@@ -777,6 +776,10 @@ LFCore_API unsigned int LFMountDrive(char d, bool InternalCall)
 
 					ReleaseMutex(Mutex_Stores);
 					res = CopyDir(slot->IdxPathMain, slot->IdxPathAux);
+
+					if (!InternalCall)
+						SendShellNotifyMessage(SHCNE_UPDATEITEM, slot->StoreID);
+
 					ReleaseMutexForStore(StoreLock);
 					goto Finish2;
 				}
@@ -786,9 +789,8 @@ Finish1:
 Finish2:
 				;
 			}
-
-			LFFreeStoreDescriptor(s);
-		} while (FindNextFileA(hFind, &ffd));
+		}
+		while (FindNextFileA(hFind, &ffd));
 
 	FindClose(hFind);
 
@@ -810,6 +812,9 @@ LFCore_API unsigned int LFUnmountDrive(char d, bool InternalCall)
 	DriveTypes[d-'A'] = DRIVE_UNKNOWN;
 	unsigned int res = LFOk;
 
+	char NotifyIDs[MaxStores][LFKeySize];
+	unsigned int NotifyCount = 0;
+
 	for (unsigned int a=0; a<StoreCount; a++)
 		if (IsStoreMounted(&StoreCache[a]))
 			if ((StoreCache[a].DatPath[0]==d) && (StoreCache[a].StoreMode!=LFStoreModeInternal))
@@ -824,8 +829,8 @@ LFCore_API unsigned int LFUnmountDrive(char d, bool InternalCall)
 				switch (StoreCache[a].StoreMode)
 				{
 				case LFStoreModeHybrid:
-					strcpy_s(StoreCache[a].DatPath, MAX_PATH, "");
-					strcpy_s(StoreCache[a].IdxPathMain, MAX_PATH, "");
+					StoreCache[a].DatPath[0] = StoreCache[a].IdxPathMain[0] = '\0';
+					strcpy_s(NotifyIDs[NotifyCount++], LFKeySize, StoreCache[a].StoreID);
 					changeOccured = true;
 					break;
 				case LFStoreModeExternal:
@@ -858,6 +863,8 @@ LFCore_API unsigned int LFUnmountDrive(char d, bool InternalCall)
 	if (!InternalCall)
 	{
 		SendLFNotifyMessage(changeOccured ? LFMessages.StoresChanged : LFMessages.DrivesChanged, changeOccured ? LFMSGF_ExtHybStores : 0, NULL);
+		for (unsigned int a=0; a<NotifyCount; a++)
+			SendShellNotifyMessage(SHCNE_UPDATEITEM, NotifyIDs[a]);
 		SendShellNotifyMessage(SHCNE_UPDATEDIR);
 	}
 

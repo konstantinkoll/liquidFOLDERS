@@ -11,7 +11,6 @@
 #include <malloc.h>
 #include <objbase.h>
 #include <shellapi.h>
-#include <shlobj.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 
@@ -296,19 +295,13 @@ unsigned int PrepareImport(LFStoreDescriptor* slot, LFItemDescriptor* i, char* D
 	return ((res==ERROR_SUCCESS) || (res==ERROR_ALREADY_EXISTS)) ? LFOk : LFIllegalPhysicalPath;
 }
 
-void SendLFNotifyMessage(unsigned int Msg, unsigned int Flags, HWND hWndSource)
+bool GetPIDLFromStore(char* StoreID, LPITEMIDLIST* ppidl)
 {
-	SendNotifyMessage(HWND_BROADCAST, Msg, (WPARAM)Flags, (LPARAM)hWndSource);
-}
+	*ppidl = NULL;
 
-void SendShellNotifyMessage(unsigned int Msg, char* StoreID)
-{
-	ULONG chEaten;
-	ULONG dwAttributes;
-	LPITEMIDLIST pidl = NULL;
 	IShellFolder* pDesktop = NULL;
 	if (FAILED(SHGetDesktopFolder(&pDesktop)))
-		return;
+		return false;
 
 	wchar_t Key[LFKeySize+1];
 	if (StoreID)
@@ -322,17 +315,27 @@ void SendShellNotifyMessage(unsigned int Msg, char* StoreID)
 	}
 
 	wchar_t Path[MAX_PATH];
+	ULONG chEaten = 0;
+	ULONG dwAttributes = SFGAO_FOLDER;
+
 	wcscpy_s(Path, MAX_PATH, L"::{3F2D914F-FE57-414F-9F88-A377C7841DA4}");
 	wcscat_s(Path, MAX_PATH, Key);
-	if (SUCCEEDED(pDesktop->ParseDisplayName(NULL, NULL, Path, &chEaten, &pidl, &dwAttributes)))
-		SHChangeNotify(Msg, SHCNF_FLUSH, pidl, (Msg==SHCNE_RENAMEFOLDER) ? pidl : NULL);
 
-	wcscpy_s(Path, MAX_PATH, L"::{20D04FE0-3AEA-1069-A2D8-08002B30309D}");
-	wcscat_s(Path, MAX_PATH, Key);
-	if (SUCCEEDED(pDesktop->ParseDisplayName(NULL, NULL, Path, &chEaten, &pidl, &dwAttributes)))
-		SHChangeNotify(Msg, SHCNF_FLUSH, pidl, (Msg==SHCNE_RENAMEFOLDER) ? pidl : NULL);
-
+	bool res = SUCCEEDED(pDesktop->ParseDisplayName(NULL, NULL, Path, &chEaten, ppidl, &dwAttributes));
 	pDesktop->Release();
+	return res;
+}
+
+void SendLFNotifyMessage(unsigned int Msg, unsigned int Flags, HWND hWndSource)
+{
+	SendNotifyMessage(HWND_BROADCAST, Msg, (WPARAM)Flags, (LPARAM)hWndSource);
+}
+
+void SendShellNotifyMessage(unsigned int Msg, char* StoreID, LPITEMIDLIST oldpidl)
+{
+	LPITEMIDLIST pidl;
+	if (GetPIDLFromStore(StoreID, &pidl))
+		SHChangeNotify(Msg, SHCNF_IDLIST | SHCNF_FLUSH, oldpidl ? oldpidl : pidl, (Msg==SHCNE_RENAMEFOLDER) ? pidl : NULL);
 }
 
 
@@ -523,6 +526,9 @@ LFCore_API unsigned int LFMakeDefaultStore(char* key, HWND hWndSource, bool Inte
 	unsigned int res = LFIllegalKey;
 	LFStoreDescriptor* slot = FindStore(key);
 
+	char OldDefaultStore[LFKeySize];
+	strcpy_s(OldDefaultStore, LFKeySize, DefaultStore);
+
 	if (slot)
 		if (slot->StoreMode!=LFStoreModeInternal)
 		{
@@ -551,8 +557,9 @@ LFCore_API unsigned int LFMakeDefaultStore(char* key, HWND hWndSource, bool Inte
 		if (res==LFOk)
 		{
 			SendLFNotifyMessage(LFMessages.DefaultStoreChanged, LFMSGF_IntStores, hWndSource);
-			SendShellNotifyMessage(SHCNE_UPDATEDIR);
-			SendShellNotifyMessage(SHCNE_UPDATEITEM);
+			SendShellNotifyMessage(SHCNE_UPDATEITEM, DefaultStore);
+			if ((strcmp(DefaultStore, OldDefaultStore)!=0) && (OldDefaultStore[0]!='\0'))
+				SendShellNotifyMessage(SHCNE_UPDATEITEM, OldDefaultStore);
 		}
 	}
 
@@ -608,8 +615,8 @@ LFCore_API unsigned int LFMakeHybridStore(char* key, HWND hWndSource)
 	if (res==LFOk)
 	{
 		SendLFNotifyMessage(LFMessages.StoreAttributesChanged, LFMSGF_ExtHybStores, hWndSource);
+		SendShellNotifyMessage(SHCNE_UPDATEITEM, key);
 		SendShellNotifyMessage(SHCNE_UPDATEDIR);
-		SendShellNotifyMessage(SHCNE_UPDATEITEM);
 	}
 
 	return res;
@@ -627,6 +634,9 @@ LFCore_API unsigned int LFSetStoreAttributes(char* key, wchar_t* name, wchar_t* 
 		if (wcscmp(name, L"")==0)
 			return LFIllegalValue;
 
+	LPITEMIDLIST oldpidl;
+	GetPIDLFromStore(key, &oldpidl);
+
 	if (!GetMutex(Mutex_Stores))
 		return LFMutexError;
 
@@ -635,10 +645,18 @@ LFCore_API unsigned int LFSetStoreAttributes(char* key, wchar_t* name, wchar_t* 
 	if (slot)
 	{
 		if (name)
+			if (wcscmp(name, slot->StoreName)==0)
+				name = NULL;
+		if (name)
 			wcscpy_s(slot->StoreName, 256, name);
+
+		if (comment)
+			if (wcscmp(comment, slot->Comment)==0)
+				comment = NULL;
 		if (comment)
 			wcscpy_s(slot->Comment, 256, comment);
-		res = UpdateStore(slot);
+
+		res = (name || comment) ? UpdateStore(slot) : LFOk;
 	}
 
 	unsigned int Mode = slot->StoreMode;
@@ -646,16 +664,12 @@ LFCore_API unsigned int LFSetStoreAttributes(char* key, wchar_t* name, wchar_t* 
 
 	if (res==LFOk)
 	{
-		if (name)
-			SendShellNotifyMessage(SHCNE_RENAMEFOLDER, key);
-		if (comment)
-			SendShellNotifyMessage(SHCNE_UPDATEITEM);
-
 		if (!InternalCall)
-		{
 			SendLFNotifyMessage(LFMessages.StoreAttributesChanged, Mode==LFStoreModeInternal ? LFMSGF_IntStores : LFMSGF_ExtHybStores, hWndSource);
-			SendShellNotifyMessage(SHCNE_UPDATEDIR);
-		}
+		if (comment)
+			SendShellNotifyMessage(SHCNE_UPDATEITEM, key);
+		if (name)
+			SendShellNotifyMessage(SHCNE_RENAMEFOLDER, key, oldpidl);
 	}
 
 	return res;
