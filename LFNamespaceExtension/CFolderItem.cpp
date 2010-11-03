@@ -1383,7 +1383,7 @@ void CFolderItem::DragOver(CNSEDragEventArgs& e)
 
 void CFolderItem::DragDrop(CNSEDragEventArgs& e)
 {
-	MessageBox(e.hWnd, _T("IDropTarget not implemented yet"), _T("Drop"), 0);
+	MessageBox(e.hWnd, _T("IDropTarget not implemented yet!\nPlease drop your items on a FileDrop or StoreManager window."), _T("Drop"), 0);
 	// If file drop data is present, do the copy/move
 /*	CStringArray files;
 	if (e.data->GetHDROPData(&files))
