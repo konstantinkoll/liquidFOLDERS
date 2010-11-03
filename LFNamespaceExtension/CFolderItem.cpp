@@ -119,6 +119,42 @@ CFolderItem::CFolderItem(FolderSerialization& _Attrs)
 	Attrs = _Attrs;
 }
 
+CFolderItem::CFolderItem(UINT Level, LFItemDescriptor* i)
+{
+	Attrs.Level = Level;
+	Attrs.Icon = i->IconID;
+	Attrs.Type = i->Type;
+	Attrs.CategoryID = i->CategoryID;
+	Attrs.DisplayName = i->CoreAttributes.FileName;
+	Attrs.Description = i->Description;
+	Attrs.Comment = i->CoreAttributes.Comment;
+	strcpy_s(Attrs.StoreID, LFKeySize, i->StoreID);
+	strcpy_s(Attrs.FileID, LFKeySize, i->CoreAttributes.FileID);
+	Attrs.DomainID = Attrs.DomainID;
+	Attrs.Count = i->AggregateCount;
+	Attrs.Size = i->CoreAttributes.FileSize;
+
+	switch (Level)
+	{
+	case LevelStores:
+		Attrs.CreationTime = i->CoreAttributes.CreationTime;
+		Attrs.FileTime = i->CoreAttributes.FileTime;
+		break;
+	case LevelStoreHome:
+		Attrs.DomainID = atoi(i->CoreAttributes.FileID);
+		break;
+	case LevelAttrValue:
+		if (i->NextFilter)
+			if (i->NextFilter->ConditionList)
+			{
+				Attrs.Compare = i->NextFilter->ConditionList->Compare;
+				Attrs.Value = i->NextFilter->ConditionList->AttrData;
+			}
+	}
+
+	LFFreeItemDescriptor(i);
+}
+
 void CFolderItem::GetCLSID(LPCLSID pCLSID)
 {
 	*pCLSID = guid;
@@ -277,43 +313,12 @@ void CFolderItem::ConvertSearchResult(CGetChildrenEventArgs& e, LFSearchResult* 
 	{
 		LFItemDescriptor* i = res->m_Items[a];
 
-		// Stores
+		// Stores and folders
 		if ((((i->Type & LFTypeMask)==LFTypeStore) || (((i->Type & LFTypeMask)==LFTypeVirtual) &&
 			(i->CategoryID!=LFItemCategoryHousekeeping))) && (e.childrenType & NSECT_Folders))
 		{
-			FolderSerialization d = { 0 };
-			d.Level = Attrs.Level+1;
-			d.Icon = i->IconID;
-			d.Type = i->Type;
-			d.CategoryID = i->CategoryID;
-			d.DisplayName = i->CoreAttributes.FileName;
-			d.Description = i->Description;
-			d.Comment = i->CoreAttributes.Comment;
-			strcpy_s(d.StoreID, LFKeySize, i->StoreID);
-			strcpy_s(d.FileID, LFKeySize, i->CoreAttributes.FileID);
-			d.DomainID = Attrs.DomainID;
-			d.Count = i->AggregateCount;
-			d.Size = i->CoreAttributes.FileSize;
-
-			switch (Attrs.Level)
-			{
-			case LevelRoot:
-				d.CreationTime = i->CoreAttributes.CreationTime;
-				d.FileTime = i->CoreAttributes.FileTime;
-				break;
-			case LevelStores:
-				d.DomainID = atoi(d.FileID);
-				break;
-			case LevelAttribute:
-				if (i->NextFilter)
-					if (i->NextFilter->ConditionList)
-					{
-						d.Compare = i->NextFilter->ConditionList->Compare;
-						d.Value = i->NextFilter->ConditionList->AttrData;
-					}
-			}
-
-			e.children->AddTail(new CFolderItem(d));
+			i->RefCount++;
+			e.children->AddTail(new CFolderItem(Attrs.Level+1, i));
 		}
 
 		// Files
@@ -500,24 +505,7 @@ CNSEItem* CFolderItem::GetChildFromDisplayName(CGetChildFromDisplayNameEventArgs
 	if (LFGetStoreSettings(key, &store)!=LFOk)
 		return NULL;
 
-	LFItemDescriptor* i = LFAllocItemDescriptor(&store);
-
-	FolderSerialization d = { 0 };
-	d.Level = LevelStores;
-	d.Icon = i->IconID;
-	d.Type = i->Type;
-	d.CategoryID = i->CategoryID;
-	d.DisplayName = i->CoreAttributes.FileName;
-	d.Description = i->Description;
-	d.Comment = i->CoreAttributes.Comment;
-	strcpy_s(d.StoreID, LFKeySize, i->StoreID);
-	strcpy_s(d.FileID, LFKeySize, i->CoreAttributes.FileID);
-	d.CreationTime = i->CoreAttributes.CreationTime;
-	d.FileTime = i->CoreAttributes.FileTime;
-
-	LFFreeItemDescriptor(i);
-
-	return new CFolderItem(d);
+	return new CFolderItem(LevelStores, LFAllocItemDescriptor(&store));
 }
 
 

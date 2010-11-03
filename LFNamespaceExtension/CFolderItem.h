@@ -68,6 +68,7 @@ public:
 	// IPersistFolder
 	CFolderItem();
 	CFolderItem(FolderSerialization& _Attrs);
+	CFolderItem(UINT Level, LFItemDescriptor* i);
 
 	virtual void GetCLSID(LPCLSID pCLSID);
 
