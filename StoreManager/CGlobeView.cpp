@@ -444,7 +444,7 @@ void CGlobeView::OnGoogleEarth()
 	// Dateinamen finden
 	TCHAR Pathname[MAX_PATH];
 	if (!GetTempPath(MAX_PATH, Pathname))
-		_tcscpy_s(Pathname, MAX_PATH, theApp.path);
+		_tcscpy_s(Pathname, MAX_PATH, theApp.m_Path);
 
 	CString szTempName;
 	srand(rand());
