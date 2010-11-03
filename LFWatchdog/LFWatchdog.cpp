@@ -171,11 +171,11 @@ void ShowMenu(HWND hTargetWnd)
 	SetMenuDefaultItem(hSubMenu, ID_APP_ABOUT, 0);
 	if (AboutWindow)
 		EnableMenuItem(hSubMenu, ID_APP_ABOUT, MF_BYCOMMAND | MF_GRAYED);
-	if (_access(theApp.path+"StoreManager.exe", 0)!=0)
+	if (_waccess(theApp.m_Path+_T("StoreManager.exe"), 0)!=0)
 		EnableMenuItem(hSubMenu, ID_APP_NEWSTOREMANAGER, MF_BYCOMMAND | MF_GRAYED);
-	if (_access(theApp.path+"Migrate.exe", 0)!=0)
+	if (_waccess(theApp.m_Path+_T("Migrate.exe"), 0)!=0)
 		EnableMenuItem(hSubMenu, ID_APP_NEWMIGRATE, MF_BYCOMMAND | MF_GRAYED);
-	if (_access(theApp.path+"FileDrop.exe", 0)!=0)
+	if (_waccess(theApp.m_Path+_T("FileDrop.exe"), 0)!=0)
 		EnableMenuItem(hSubMenu, ID_APP_NEWFILEDROP, MF_BYCOMMAND | MF_GRAYED);
 
 	POINT pos;
