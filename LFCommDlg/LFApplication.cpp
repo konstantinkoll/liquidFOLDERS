@@ -255,11 +255,12 @@ BOOL LFApplication::InitInstance()
 	GetTooltipManager()->SetTooltipParams(AFX_TOOLTIP_TYPE_ALL, RUNTIME_CLASS(CMFCToolTipCtrl), &ttParams);
 
 	InitShellManager();
-	if (HasGUI==HasGUI_None)
-		return TRUE;
 
 	// OLE Initialisieren
 	ENSURE(AfxOleInit());
+
+	if (HasGUI==HasGUI_None)
+		return TRUE;
 
 	SetRegistryKey(_T("liquidFOLDERS"));
 	LoadStdProfileSettings();
@@ -288,9 +289,8 @@ BOOL LFApplication::InitInstance()
 	{
 		WriteGlobalInt(_T("FirstRun"), 0);
 
-		LFWelcomeDlg* dlg = new LFWelcomeDlg();
-		dlg->DoModal();
-		delete dlg;
+		LFWelcomeDlg dlg;
+		dlg.DoModal();
 	}
 
 	return TRUE;
