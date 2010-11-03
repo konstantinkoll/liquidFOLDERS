@@ -452,22 +452,10 @@ BOOL CFolderItem::IsValid()
 		return TRUE;
 
 	LFStoreDescriptor store;
-	char key[LFKeySize];
-	strcpy_s(key, LFKeySize, Attrs.StoreID);
-
-	if (LFGetStoreSettings(key, &store)!=LFOk)
+	if (LFGetStoreSettings(Attrs.StoreID, &store)!=LFOk)
 		return FALSE;
 
-	if (Attrs.Level>LevelStores)
-		return TRUE;
-
-	if (wcscmp(Attrs.DisplayName, store.StoreName)!=0)
-		return FALSE;
-	if (wcscmp(Attrs.Comment, store.Comment)!=0)
-		return FALSE;
-
-	return (memcmp(&Attrs.CreationTime, &store.CreationTime, sizeof(FILETIME))==0) &&
-		(memcmp(&Attrs.FileTime, &store.FileTime, sizeof(FILETIME))==0);
+	return (Attrs.Level>LevelStores);
 }
 
 
@@ -489,16 +477,47 @@ void CFolderItem::GetDisplayNameEx(CString& displayName, DisplayNameFlags flags)
 			WCHAR buf[39];
 			StringFromGUID2(guid, buf, 39);
 			CString id(buf);
-			displayName = id;
+			displayName = _T("::")+id;
 
 			if (Attrs.Level>LevelRoot)
-				displayName += '\\'+Attrs.StoreID;
+				displayName.Append(_T("\\")+CString(Attrs.StoreID));
 		}
 		else
 		{
-			if (Attrs.Level>LevelRoot)
-				displayName = Attrs.StoreID;
+			displayName = (Attrs.Level>LevelRoot) ? Attrs.StoreID : 0;
 		}
+}
+
+CNSEItem* CFolderItem::GetChildFromDisplayName(CGetChildFromDisplayNameEventArgs& e)
+{
+	if (Attrs.Level!=LevelRoot)
+		return NULL;
+
+	char key[LFKeySize];
+	WideCharToMultiByte(CP_ACP, 0, e.displayName, wcslen(e.displayName)+1, key, LFKeySize, NULL, NULL);
+
+	LFStoreDescriptor store;
+	if (LFGetStoreSettings(key, &store)!=LFOk)
+		return NULL;
+
+	LFItemDescriptor* i = LFAllocItemDescriptor(&store);
+
+	FolderSerialization d = { 0 };
+	d.Level = LevelStores;
+	d.Icon = i->IconID;
+	d.Type = i->Type;
+	d.CategoryID = i->CategoryID;
+	d.DisplayName = i->CoreAttributes.FileName;
+	d.Description = i->Description;
+	d.Comment = i->CoreAttributes.Comment;
+	strcpy_s(d.StoreID, LFKeySize, i->StoreID);
+	strcpy_s(d.FileID, LFKeySize, i->CoreAttributes.FileID);
+	d.CreationTime = i->CoreAttributes.CreationTime;
+	d.FileTime = i->CoreAttributes.FileTime;
+
+	LFFreeItemDescriptor(i);
+
+	return new CFolderItem(d);
 }
 
 
@@ -656,10 +675,8 @@ BOOL CFolderItem::OnExecuteMenuItem(CExecuteMenuitemsEventArgs& e)
 		if (IS(temp, CFolderItem))
 		{
 			CFolderItem* folder = AS(temp, CFolderItem);
-			char key[LFKeySize];
-			strcpy_s(key, LFKeySize, folder->Attrs.StoreID);
 
-			UINT res = (e.menuItem->GetVerb()==_T(VERB_MAKEDEFAULTSTORE)) ? LFMakeDefaultStore(&key[0]) : LFMakeHybridStore(&key[0]);
+			UINT res = (e.menuItem->GetVerb()==_T(VERB_MAKEDEFAULTSTORE)) ? LFMakeDefaultStore(folder->Attrs.StoreID) : LFMakeHybridStore(folder->Attrs.StoreID);
 			LFErrorBox(res);
 			return (res==LFOk);
 		}
@@ -1280,10 +1297,17 @@ BOOL CFolderItem::OnChangeName(CChangeNameEventArgs& e)
 	// Stores sind die einzigen CFolderItem, die umbenannt werden können
 	if (Attrs.Level==LevelStores)
 	{
-		char key[LFKeySize];
-		strcpy_s(key, LFKeySize, Attrs.StoreID);
+		UINT res = LFSetStoreAttributes(Attrs.StoreID, e.newName.GetBuffer(), NULL);
+		if (res==LFOk)
+		{
+			Attrs.DisplayName = e.newName;
+		}
+		else
+		{
+			LFErrorBox(res);
+		}
 
-		LFErrorBox(LFSetStoreAttributes(&key[0], e.newName.GetBuffer(), NULL));
+		return (res==LFOk);
 	}
 
 	return FALSE;

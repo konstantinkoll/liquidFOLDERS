@@ -86,6 +86,7 @@ public:
 	// IMoniker
 	virtual void GetDisplayName(CString& displayName);
 	virtual void GetDisplayNameEx(CString& displayName, DisplayNameFlags flags);
+	virtual CNSEItem* GetChildFromDisplayName(CGetChildFromDisplayNameEventArgs& e);
 
 	// IExtractIcon
 	virtual void GetIconFileAndIndex(CGetIconFileAndIndexEventArgs& e);
