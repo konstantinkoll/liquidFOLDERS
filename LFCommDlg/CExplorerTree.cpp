@@ -651,7 +651,7 @@ CEdit* CExplorerTree::EditLabel(HTREEITEM hItem)
 					if (strret.uType==STRRET_WSTR)
 					{
 						edit->SetWindowText(strret.pOleStr);
-						edit->SetSel(0, wcslen(strret.pOleStr));
+						edit->SetSel(0, (int)wcslen(strret.pOleStr));
 					}
 
 				pParentFolder->Release();

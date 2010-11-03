@@ -499,7 +499,7 @@ CNSEItem* CFolderItem::GetChildFromDisplayName(CGetChildFromDisplayNameEventArgs
 		return NULL;
 
 	char key[LFKeySize];
-	WideCharToMultiByte(CP_ACP, 0, e.displayName, wcslen(e.displayName)+1, key, LFKeySize, NULL, NULL);
+	WideCharToMultiByte(CP_ACP, 0, e.displayName, (int)(wcslen(e.displayName)+1), key, LFKeySize, NULL, NULL);
 
 	LFStoreDescriptor store;
 	if (LFGetStoreSettings(key, &store)!=LFOk)

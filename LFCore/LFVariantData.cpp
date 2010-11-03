@@ -385,7 +385,7 @@ LFCore_API void LFVariantDataFromString(LFVariantData* v, wchar_t* str)
 			break;
 		case LFTypeAnsiString:
 			v->IsNull = false;
-			WideCharToMultiByte(CP_ACP, 0, str, sz, v->AnsiString, 256, NULL, NULL);
+			WideCharToMultiByte(CP_ACP, 0, str, (int)sz, v->AnsiString, 256, NULL, NULL);
 			break;
 		case LFTypeFourCC:
 			if (sz>=4)

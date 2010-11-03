@@ -40,7 +40,7 @@ void CDropdownListCtrl::OnCustomDraw(NMHDR* pNMHDR, LRESULT* pResult)
 			SetBkColor(lplvcd->clrTextBk);
 
 			CRect rect;
-			GetItemRect(lplvcd->nmcd.dwItemSpec, rect, LVIR_BOUNDS);
+			GetItemRect((int)lplvcd->nmcd.dwItemSpec, rect, LVIR_BOUNDS);
 			::FillRect(lplvcd->nmcd.hdc, rect, CreateSolidBrush(lplvcd->clrTextBk));
 			*pResult = CDRF_NOTIFYPOSTPAINT;
 			break;
@@ -54,7 +54,7 @@ void CDropdownListCtrl::OnCustomDraw(NMHDR* pNMHDR, LRESULT* pResult)
 			SetBkColor(GetSysColor(COLOR_WINDOW));
 
 			CRect rect;
-			GetItemRect(lplvcd->nmcd.dwItemSpec, rect, LVIR_BOUNDS);
+			GetItemRect((int)lplvcd->nmcd.dwItemSpec, rect, LVIR_BOUNDS);
 			DrawFocusRect(lplvcd->nmcd.hdc, rect);
 
 			*pResult = CDRF_SKIPDEFAULT;
