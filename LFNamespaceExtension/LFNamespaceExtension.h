@@ -22,10 +22,10 @@ public:
 
 	virtual BOOL InitInstance();
 
-	BOOL HideFileExt();
-	void GetIconSize(INT& cx, INT& cy);
-	void SetCoreMenuIcon(void* item, UINT ResID);
-	CString FrmtAttrStr(CString Mask, CString Name);
+	static BOOL HideFileExt();
+	static void GetIconSize(INT& cx, INT& cy);
+	static void SetCoreMenuIcon(void* item, UINT ResID);
+	static CString FrmtAttrStr(CString Mask, CString Name);
 
 	CString m_PathRunCmd;
 	CString m_PathStoreManager;
@@ -42,7 +42,7 @@ public:
 	WCHAR* m_AttrCategoryNames[LFAttrCategoryCount+1];
 
 protected:
-	BOOL GetApplicationPath(CString App, CString& Path);
+	static BOOL GetApplicationPath(CString App, CString& Path);
 };
 
 EXTERN_C IMAGE_DOS_HEADER __ImageBase;

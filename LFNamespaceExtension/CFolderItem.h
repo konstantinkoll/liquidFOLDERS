@@ -51,12 +51,13 @@ struct FolderSerialization
 	CHAR StoreID[LFKeySize];
 	CHAR FileID[LFKeySize];
 	UINT DomainID;
-	UCHAR Compare;
-	LFVariantData Value;
-	FILETIME CreationTime;
-	FILETIME FileTime;
 	UINT Count;
 	INT64 Size;
+	FILETIME CreationTime;
+	FILETIME FileTime;
+	UCHAR Compare;
+	LFVariantData Value;
+
 };
 
 class CFolderItem : public CNSEFolder
@@ -147,7 +148,7 @@ public:
 
 protected:
 	void CreateShortcut(CNSEItem* Item);
-	BOOL OnImportFolder(CExecuteMenuitemsEventArgs& e);
+	BOOL RunStoreCommand(CExecuteMenuitemsEventArgs& e, CString Path, CString Parameter);
 	BOOL OnProperties(CExecuteMenuitemsEventArgs& e);
 	BOOL OnExplorer(CExecuteMenuitemsEventArgs& e);
 	BOOL OnOpenWith(CExecuteMenuitemsEventArgs& e);

@@ -13,50 +13,50 @@
 #include <shlobj.h>
 
 
-CShellMenuItem* InsertItem(CShellMenu* menu, UINT ResID, CString verb, INT pos=0)
+CShellMenuItem* InsertItem(CShellMenu* Menu, UINT ResID, CString Verb, INT Pos=0)
 {
 	CString tmpStr;
 	CString tmpHint;
 	ENSURE(tmpStr.LoadString(ResID));
 	ENSURE(tmpHint.LoadString(ResID+1));
 
-	return menu->InsertItem(tmpStr, verb, tmpHint, pos);
+	return Menu->InsertItem(tmpStr, Verb, tmpHint, Pos);
 }
 
-void AddSeparator(CShellMenu* menu)
+void AddSeparator(CShellMenu* Menu)
 {
-	menu->AddItem(_T(""))->SetSeparator(TRUE);
+	Menu->AddItem(_T(""))->SetSeparator(TRUE);
 }
 
-CShellMenuItem* AddItem(CShellMenu* menu, UINT ResID, CString verb)
+CShellMenuItem* AddItem(CShellMenu* Menu, UINT ResID, CString Verb)
 {
 	CString tmpStr;
 	CString tmpHint;
 	ENSURE(tmpStr.LoadString(ResID));
 	ENSURE(tmpHint.LoadString(ResID+1));
 
-	return menu->AddItem(tmpStr, verb, tmpHint);
+	return Menu->AddItem(tmpStr, Verb, tmpHint);
 }
 
-void AddPathItem(CShellMenu* menu, UINT ResID, CString verb, CString path, UINT IconID)
+void AddPathItem(CShellMenu* Menu, UINT ResID, CString Verb, CString Path, UINT IconID)
 {
 	INT cx;
 	INT cy;
 	theApp.GetIconSize(cx, cy);
 
-	CShellMenuItem* item =AddItem(menu, ResID, verb);
-	item->SetEnabled(!path.IsEmpty());
+	CShellMenuItem* item =AddItem(Menu, ResID, Verb);
+	item->SetEnabled(!Path.IsEmpty());
 
 	HICON hIcon = (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IconID), IMAGE_ICON, cx, cy, LR_DEFAULTCOLOR);
 	item->SetBitmap(IconToBitmap(hIcon, cx, cy));
 	DestroyIcon(hIcon);
 }
 
-BOOL RunPath(HWND hWnd, CString path, CString parameter)
+BOOL RunPath(HWND hWnd, CString Path, CString Parameter)
 {
-	if (!path.IsEmpty())
+	if (!Path.IsEmpty())
 	{
-		ShellExecute(hWnd, _T("open"), path, parameter, NULL, SW_SHOW);
+		ShellExecute(hWnd, _T("open"), Path, Parameter, NULL, SW_SHOW);
 		return TRUE;
 	}
 
@@ -249,7 +249,6 @@ CNSEItem* CFolderItem::DeserializeChild(CArchive& ar)
 	case 1:
 		{
 			FolderSerialization Attrs;
-			ZeroMemory(&Attrs, sizeof(Attrs));
 			ar.Read(&Attrs, sizeof(Attrs));
 
 			return new CFolderItem(Attrs);
@@ -365,8 +364,8 @@ BOOL CFolderItem::GetChildren(CGetChildrenEventArgs& e)
 			d.Icon = IDI_FLD_All;
 			d.Type = LFTypeVirtual;
 			d.CategoryID = LFAttrCategoryCount;
-			ENSURE(LoadString(NULL, IDS_AllFiles, d.DisplayName, 256));
-			ENSURE(LoadString(NULL, IDS_AllFilesComment, d.Comment, 256));
+			ENSURE(LoadString(AfxGetResourceHandle(), IDS_AllFiles, d.DisplayName, 256));
+			ENSURE(LoadString(AfxGetResourceHandle(), IDS_AllFilesComment, d.Comment, 256));
 			strcpy_s(d.StoreID, LFKeySize, Attrs.StoreID);
 			strcpy_s(d.FileID, LFKeySize, "ALL");
 			d.DomainID = Attrs.DomainID;
@@ -384,11 +383,10 @@ BOOL CFolderItem::GetChildren(CGetChildrenEventArgs& e)
 					d.Type = LFTypeVirtual;
 					d.CategoryID = theApp.m_Attributes[a]->Category;
 					wcscpy_s(d.DisplayName, 256, theApp.m_Attributes[a]->Name);
-					swprintf_s(d.Comment, sortStr, theApp.m_Attributes[a]->Name);
+					wcscpy_s(d.Comment, 256, theApp.FrmtAttrStr(sortStr, theApp.m_Attributes[a]->Name));
 					strcpy_s(d.StoreID, LFKeySize, Attrs.StoreID);
 					sprintf_s(d.FileID, LFKeySize, "%d", a);
 					d.DomainID = Attrs.DomainID;
-					d.Compare = LFFilterCompareSubfolder;
 
 					e.children->AddTail(new CFolderItem(d));
 				}
@@ -516,7 +514,7 @@ void CFolderItem::GetMenuItems(CGetMenuitemsEventArgs& e)
 			if (osInfo.dwMajorVersion<6)
 			{
 				if (Attrs.Level==LevelRoot)
-					InsertItem(e.menu, IDS_MENU_OpenStoreManager, _T(VERB_OPENSTOREMANAGER));
+					InsertItem(e.menu, IDS_MENU_OpenStoreManager, _T(VERB_OPENSTOREMANAGER))->SetEnabled(!theApp.m_PathStoreManager.IsEmpty());
 
 				if (e.flags & NSEQCF_NoDefault)
 				{
@@ -533,7 +531,7 @@ void CFolderItem::GetMenuItems(CGetMenuitemsEventArgs& e)
 				if (!(e.flags & NSEQCF_NoDefault))
 					InsertItem(e.menu, IDS_MENU_OpenNewWindow, _T(VERB_OPENNEWWINDOW));
 				if (Attrs.Level==LevelRoot)
-					InsertItem(e.menu, IDS_MENU_OpenStoreManager, _T(VERB_OPENSTOREMANAGER));
+					InsertItem(e.menu, IDS_MENU_OpenStoreManager, _T(VERB_OPENSTOREMANAGER))->SetEnabled(!theApp.m_PathStoreManager.IsEmpty());
 
 				InsertItem(e.menu, IDS_MENU_Open, _T(VERB_OPEN))->SetDefaultItem((e.flags & NSEQCF_NoDefault)==0);
 			}
@@ -612,7 +610,7 @@ void CFolderItem::GetMenuItems(CGetMenuitemsEventArgs& e)
 BOOL CFolderItem::OnExecuteMenuItem(CExecuteMenuitemsEventArgs& e)
 {
 	if (e.menuItem->GetVerb()==_T(VERB_IMPORTFOLDER))
-		return OnImportFolder(e);
+		return RunStoreCommand(e, theApp.m_PathRunCmd, _T("IMPORTFOLDER "));
 
 	if (e.menuItem->GetVerb()==_T(VERB_CREATENEWSTORE))
 		return RunPath(e.hWnd, theApp.m_PathRunCmd, _T("NEWSTORE"));
@@ -627,6 +625,9 @@ BOOL CFolderItem::OnExecuteMenuItem(CExecuteMenuitemsEventArgs& e)
 
 		return OnExplorer(e);
 	}
+
+	if (e.menuItem->GetVerb()==_T(VERB_OPENSTOREMANAGER))
+		return RunStoreCommand(e, theApp.m_PathStoreManager, _T(""));
 
 	if (e.menuItem->GetVerb()==_T(VERB_OPENWITH))
 		return OnOpenWith(e);
@@ -1211,9 +1212,8 @@ BOOL CFolderItem::OnDelete(CExecuteMenuitemsEventArgs& e)
 
 		if (IS(item, CFolderItem))
 		{
-			CString id(AS(item, CFolderItem)->Attrs.StoreID);
-			ShellExecute(e.hWnd, _T("open"), theApp.m_PathRunCmd, _T("DELETESTORE ")+id, NULL, SW_SHOW);
-			return TRUE;
+			CString StoreID(AS(item, CFolderItem)->Attrs.StoreID);
+			return RunPath(e.hWnd, theApp.m_PathRunCmd, _T("DELETESTORE ")+StoreID);
 		}
 	}
 
@@ -1551,7 +1551,7 @@ void CFolderItem::CreateShortcut(CNSEItem* Item)
 	}
 }
 
-BOOL CFolderItem::OnImportFolder(CExecuteMenuitemsEventArgs& e)
+BOOL CFolderItem::RunStoreCommand(CExecuteMenuitemsEventArgs& e, CString Path, CString Parameter)
 {
 	CString StoreID;
 	if (Attrs.Level==LevelRoot)
@@ -1569,37 +1569,16 @@ BOOL CFolderItem::OnImportFolder(CExecuteMenuitemsEventArgs& e)
 		StoreID = Attrs.StoreID;
 	}
 
-	if ((StoreID.IsEmpty()) || (theApp.m_PathRunCmd.IsEmpty()))
+	if ((StoreID.IsEmpty()) || (Path.IsEmpty()))
 		return FALSE;
 
-	ShellExecute(e.hWnd, _T("open"), theApp.m_PathRunCmd, _T("IMPORTFOLDER ")+StoreID, NULL, SW_SHOW);
-	return TRUE;
+	return RunPath(e.hWnd, Path, Parameter+StoreID);
 }
 
 BOOL CFolderItem::OnProperties(CExecuteMenuitemsEventArgs& e)
 {
-	CString StoreID;
-	if (Attrs.Level==LevelRoot)
-	{
-		POSITION pos = e.children->GetHeadPosition();
-		if (pos)
-		{
-			CNSEItem* item = (CNSEItem*)e.children->GetNext(pos);
-			if (IS(item, CFolderItem))
-				StoreID = AS(item, CFolderItem)->Attrs.StoreID;
-		}
-	}
-	else
-	{
-		StoreID = Attrs.StoreID;
-	}
-
-	if ((StoreID.IsEmpty()) || (theApp.m_PathRunCmd.IsEmpty()))
-		return FALSE;
-
-	ShellExecute(e.hWnd, _T("open"), theApp.m_PathRunCmd, _T("STOREPROPERTIES ")+StoreID, NULL, SW_SHOW);
-	return TRUE;}
-
+	return RunStoreCommand(e, theApp.m_PathRunCmd, _T("STOREPROPERTIES "));
+}
 
 BOOL CFolderItem::OnExplorer(CExecuteMenuitemsEventArgs& e)
 {
