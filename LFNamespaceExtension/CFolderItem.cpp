@@ -479,13 +479,16 @@ void CFolderItem::GetDisplayNameEx(CString& displayName, DisplayNameFlags flags)
 	if ((flags & (NSEDNF_ForParsing | NSEDNF_ForAddressBar))==NSEDNF_ForParsing)
 		if (!(flags & NSEDNF_InFolder))
 		{
-			WCHAR buf[39];
-			StringFromGUID2(guid, buf, 39);
-			CString id(buf);
-			displayName = _T("::")+id;
+			wchar_t buf[41] = L"::";
+			StringFromGUID2(guid, &buf[2], 39);
+			displayName = buf;
 
 			if (Attrs.Level>LevelRoot)
+			{
 				displayName.Append(_T("\\")+CString(Attrs.StoreID));
+				if (Attrs.Level>LevelStores)
+					displayName += _T("\\VFOLDER");
+			}
 		}
 		else
 		{
