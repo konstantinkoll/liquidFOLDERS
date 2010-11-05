@@ -12,7 +12,7 @@
 class AFX_EXT_CLASS LFStoreDeleteDlg : public LFDialog
 {
 public:
-	LFStoreDeleteDlg(CWnd* pParentWnd, wchar_t* _StoreName);
+	LFStoreDeleteDlg(CWnd* pParentWnd, WCHAR* _StoreName);
 
 protected:
 	afx_msg BOOL OnInitDialog();
@@ -20,6 +20,6 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
-	wchar_t* StoreName;
+	WCHAR* StoreName;
 	CFont BoldFont;
 };

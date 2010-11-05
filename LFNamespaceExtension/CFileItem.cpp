@@ -23,7 +23,7 @@ CFileItem::CFileItem()
 	Item = LFAllocItemDescriptor();
 }
 
-CFileItem::CFileItem(char* _StoreID, LFCoreAttributes* Attrs)
+CFileItem::CFileItem(CHAR* _StoreID, LFCoreAttributes* Attrs)
 {
 	Item = LFAllocItemDescriptor(Attrs);
 	strcpy_s(Item->StoreID, LFKeySize, _StoreID);
@@ -90,7 +90,7 @@ void CFileItem::GetDisplayNameEx(CString& displayName, DisplayNameFlags flags)
 {
 	if ((flags & (NSEDNF_InFolder | NSEDNF_ForParsing))==NSEDNF_ForParsing)
 	{
-		char Path[MAX_PATH];
+		CHAR Path[MAX_PATH];
 		displayName = (LFGetFileLocation(Item->StoreID, &Item->CoreAttributes, Path, MAX_PATH)==LFOk) ? Path : "?";
 		return;
 	}
@@ -108,7 +108,7 @@ void CFileItem::GetDisplayNameEx(CString& displayName, DisplayNameFlags flags)
 
 void CFileItem::GetIconFileAndIndex(CGetIconFileAndIndexEventArgs& e)
 {
-	char Path[MAX_PATH];
+	CHAR Path[MAX_PATH];
 	if (LFGetFileLocation(Item->StoreID, &Item->CoreAttributes, Path, MAX_PATH)==LFOk)
 	{
 		e.iconExtractMode = NSEIEM_SystemImageListIndexFromPath;
@@ -230,7 +230,7 @@ BOOL CFileItem::GetColumnValueEx(VARIANT* value, CShellColumn& column)
 		}
 		else
 		{
-			wchar_t tmpBuf[256];
+			WCHAR tmpBuf[256];
 
 			switch (column.index)
 			{
@@ -279,7 +279,7 @@ NSEItemAttributes CFileItem::GetAttributes(NSEItemAttributes requested)
 	return (NSEItemAttributes)(requested & NSEIA_FileSystem | NSEIA_CanRename | NSEIA_CanDelete | NSEIA_CanLink);
 }
 
-int CFileItem::CompareTo(CNSEItem* otherItem, CShellColumn& column)
+INT CFileItem::CompareTo(CNSEItem* otherItem, CShellColumn& column)
 {
 	if (IS(otherItem, CFolderItem))
 		return 1;
@@ -288,7 +288,7 @@ int CFileItem::CompareTo(CNSEItem* otherItem, CShellColumn& column)
 
 	CString str1;
 	CString str2;
-	int ret = 0;
+	INT ret = 0;
 
 	switch (column.index)
 	{
@@ -398,7 +398,7 @@ LPSTREAM CFileItem::GetStream()
 {
 	LPSTREAM ret = NULL;
 
-	char Path[MAX_PATH];
+	CHAR Path[MAX_PATH];
 	UINT res = LFGetFileLocation(Item->StoreID, &Item->CoreAttributes, Path, MAX_PATH);
 	if (res!=LFOk)
 	{
@@ -415,7 +415,7 @@ LPSTREAM CFileItem::GetStream()
 
 // Exposed property handlers
 
-int CFileItem::GetXPTaskPaneColumnIndices(UINT* indices)
+INT CFileItem::GetXPTaskPaneColumnIndices(UINT* indices)
 {
 	indices[0] = LFAttrFileName;
 	indices[1] = LFAttrComment;
@@ -426,7 +426,7 @@ int CFileItem::GetXPTaskPaneColumnIndices(UINT* indices)
 	return 5;
 }
 
-int CFileItem::GetTileViewColumnIndices(UINT* indices)
+INT CFileItem::GetTileViewColumnIndices(UINT* indices)
 {
 	indices[0] = LFAttrComment;
 	indices[1] = LFAttrFileTime;
@@ -435,7 +435,7 @@ int CFileItem::GetTileViewColumnIndices(UINT* indices)
 	return 3;
 }
 
-int CFileItem::GetPreviewDetailsColumnIndices(UINT* indices)
+INT CFileItem::GetPreviewDetailsColumnIndices(UINT* indices)
 {
 	indices[0] = LFAttrArtist;
 	indices[1] = LFAttrTitle;
@@ -457,7 +457,7 @@ int CFileItem::GetPreviewDetailsColumnIndices(UINT* indices)
 	return 16;
 }
 
-int CFileItem::GetContentViewColumnIndices(UINT* indices)
+INT CFileItem::GetContentViewColumnIndices(UINT* indices)
 {
 	return GetXPTaskPaneColumnIndices(indices);
 }
@@ -467,11 +467,11 @@ int CFileItem::GetContentViewColumnIndices(UINT* indices)
 
 BOOL CFileItem::SetShellLink(IShellLink* psl)
 {
-	char Path[MAX_PATH];
+	CHAR Path[MAX_PATH];
 	if (LFGetFileLocation(Item->StoreID, &Item->CoreAttributes, Path, MAX_PATH)==LFOk)
 	{
-		wchar_t tmpBuf[MAX_PATH];
-		MultiByteToWideChar(CP_ACP, 0, Path, (int)(strlen(Path)+1), tmpBuf, MAX_PATH);
+		WCHAR tmpBuf[MAX_PATH];
+		MultiByteToWideChar(CP_ACP, 0, Path, (INT)(strlen(Path)+1), tmpBuf, MAX_PATH);
 
 		psl->SetPath(tmpBuf);
 		psl->SetIconLocation(tmpBuf, 0);

@@ -42,7 +42,7 @@ void CAttributeCategorizer::OnGetCategoryName(CString& categoryName, DWORD categ
 	}
 }
 
-int CAttributeCategorizer::OnCompareCategories(DWORD catID1, DWORD catID2)
+INT CAttributeCategorizer::OnCompareCategories(DWORD catID1, DWORD catID2)
 {
 	return wcscmp(theApp.m_AttrCategoryNames[catID1], theApp.m_AttrCategoryNames[catID2]);
 }
@@ -81,9 +81,9 @@ void CCategoryCategorizer::OnGetCategoryName(CString& categoryName, DWORD catego
 	}
 }
 
-int CCategoryCategorizer::OnCompareCategories(DWORD catID1, DWORD catID2)
+INT CCategoryCategorizer::OnCompareCategories(DWORD catID1, DWORD catID2)
 {
-	return (int)catID1-(int)catID2;
+	return (INT)catID1-(INT)catID2;
 }
 
 
@@ -118,7 +118,7 @@ void CFolderCategorizer::OnGetCategoryName(CString& categoryName, DWORD category
 	}
 }
 
-int CFolderCategorizer::OnCompareCategories(DWORD catID1, DWORD catID2)
+INT CFolderCategorizer::OnCompareCategories(DWORD catID1, DWORD catID2)
 {
 	return wcscmp(theApp.m_AttrCategoryNames[catID1], theApp.m_AttrCategoryNames[catID2]);
 }
@@ -163,9 +163,9 @@ void CRatingCategorizer::OnGetCategoryName(CString& categoryName, DWORD category
 	categoryName = _T("?");
 }
 
-int CRatingCategorizer::OnCompareCategories(DWORD catID1, DWORD catID2)
+INT CRatingCategorizer::OnCompareCategories(DWORD catID1, DWORD catID2)
 {
-	return (int)catID2-(int)catID1;
+	return (INT)catID2-(INT)catID1;
 }
 
 
@@ -181,7 +181,7 @@ DWORD CSizeCategorizer::OnGetCategory(CNSEItem* child)
 {
 	if (child)
 	{
-		__int64 sz = 0;
+		INT64 sz = 0;
 
 		if (IS(child, CFileItem))
 			sz = AS(child, CFileItem)->Item->CoreAttributes.FileSize;
@@ -218,7 +218,7 @@ void CSizeCategorizer::OnGetCategoryName(CString& categoryName, DWORD categoryID
 	}
 }
 
-int CSizeCategorizer::OnCompareCategories(DWORD catID1, DWORD catID2)
+INT CSizeCategorizer::OnCompareCategories(DWORD catID1, DWORD catID2)
 {
-	return (int)catID1-(int)catID2;
+	return (INT)catID1-(INT)catID2;
 }

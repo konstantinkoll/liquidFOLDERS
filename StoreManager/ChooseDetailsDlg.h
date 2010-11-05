@@ -13,7 +13,7 @@
 class ChooseDetailsDlg : public LFAttributeListDlg
 {
 public:
-	ChooseDetailsDlg(CWnd* pParentWnd, LFViewParameters* View, int Context, UINT nIDTemplate=IDD_CHOOSEDETAILS);
+	ChooseDetailsDlg(CWnd* pParentWnd, LFViewParameters* View, INT Context, UINT nIDTemplate=IDD_CHOOSEDETAILS);
 
 	virtual void DoDataExchange(CDataExchange* pDX);
 
@@ -33,7 +33,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
-	void SwapItems(int FocusItem, int NewPos);
+	void SwapItems(INT FocusItem, INT NewPos);
 
 	UINT m_Template;
 };

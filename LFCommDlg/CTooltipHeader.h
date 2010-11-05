@@ -16,7 +16,7 @@ public:
 
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 
-	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
+	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnPaint();
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
@@ -31,9 +31,9 @@ protected:
 
 private:
 	BOOL m_Hover;
-	int m_HoverItem;
-	int m_PressedItem;
-	int m_TrackItem;
-	int m_TooltipItem;
-	wchar_t m_TooltipTextBuffer[256];
+	INT m_HoverItem;
+	INT m_PressedItem;
+	INT m_TrackItem;
+	INT m_TooltipItem;
+	WCHAR m_TooltipTextBuffer[256];
 };

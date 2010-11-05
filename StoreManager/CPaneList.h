@@ -14,14 +14,14 @@ class CPaneList : public CListCtrl
 public:
 	CPaneList();
 
-	virtual BOOL SetWindowPos(const CWnd* pWndInsertAfter, int x, int y, int cx, int cy, UINT nFlags);
+	virtual BOOL SetWindowPos(const CWnd* pWndInsertAfter, INT x, INT y, INT cx, INT cy, UINT nFlags);
 
-	void SetTileSize(int cx=-1);
+	void SetTileSize(INT cx=-1);
 	void SetContextMenu(UINT _MenuResID);
 	void EnableGroupView(BOOL fEnable);
 
 protected:
-	void DrawItem(int nID, CDC* pDC, CMFCVisualManager* dm);
+	void DrawItem(INT nID, CDC* pDC, CMFCVisualManager* dm);
 
 	afx_msg void OnCustomDraw(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg BOOL OnBeginLabelEdit(NMHDR* pNMHDR, LRESULT* pResult);
@@ -34,6 +34,6 @@ protected:
 private:
 	OSVERSIONINFO osInfo;
 	UINT MenuResID;
-	int LastWidth;
-	int Editing;
+	INT LastWidth;
+	INT Editing;
 };

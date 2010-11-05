@@ -157,7 +157,7 @@ BOOL LFNamespaceExtensionApp::GetApplicationPath(CString App, CString& Path)
 
 	// Modulpfad probieren
 	Path = theApp.m_ThisFile;
-	int pos = Path.ReverseFind('\\');
+	INT pos = Path.ReverseFind('\\');
 	if (pos)
 		Path = Path.Left(pos+1);
 
@@ -167,7 +167,7 @@ BOOL LFNamespaceExtensionApp::GetApplicationPath(CString App, CString& Path)
 		return TRUE;
 
 	// Festen Pfad probieren
-	wchar_t tmpStr[MAX_PATH];
+	WCHAR tmpStr[MAX_PATH];
 	if (!SHGetSpecialFolderPath(NULL, tmpStr, CSIDL_PROGRAM_FILES, FALSE))
 		return FALSE;
 
@@ -178,7 +178,7 @@ BOOL LFNamespaceExtensionApp::GetApplicationPath(CString App, CString& Path)
 	return (_waccess(Path, 0)==0);
 }
 
-void LFNamespaceExtensionApp::GetIconSize(int& cx, int& cy)
+void LFNamespaceExtensionApp::GetIconSize(INT& cx, INT& cy)
 {
 	cx = GetSystemMetrics((osInfo.dwMajorVersion<6) ? SM_CXMENUCHECK : SM_CXSMICON);
 	cy = GetSystemMetrics((osInfo.dwMajorVersion<6) ? SM_CYMENUCHECK : SM_CYSMICON);
@@ -186,8 +186,8 @@ void LFNamespaceExtensionApp::GetIconSize(int& cx, int& cy)
 
 void LFNamespaceExtensionApp::SetCoreMenuIcon(void* item, UINT ResID)
 {
-	int cx;
-	int cy;
+	INT cx;
+	INT cy;
 	GetIconSize(cx, cy);
 
 	HICON hIcon = LFGetIcon(ResID, cx, cy);

@@ -29,11 +29,11 @@ struct ItemData
 {
 	LPITEMIDLIST pidlFQ;
 	LPITEMIDLIST pidlRel;
-	wchar_t Name[256];
-	int IconIDNormal;
-	int IconIDSelected;
-	int Width;
-	wchar_t Path[MAX_PATH];
+	WCHAR Name[256];
+	INT IconIDNormal;
+	INT IconIDSelected;
+	INT Width;
+	WCHAR Path[MAX_PATH];
 };
 
 struct Cell
@@ -74,8 +74,8 @@ protected:
 	Cell* m_Tree;
 	CEdit* p_Edit;
 	CTooltipHeader m_wndHeader;
-	int m_ColumnWidth[MaxColumns];
-	int m_ColumnMapping[MaxColumns];
+	INT m_ColumnWidth[MaxColumns];
+	INT m_ColumnMapping[MaxColumns];
 	HTHEME hThemeList;
 	HTHEME hThemeButton;
 	HTHEME hThemeTree;
@@ -114,18 +114,18 @@ protected:
 	void FreeTree();
 	BOOL HitTest(CPoint point, CPoint* item, BOOL* cbhot, CPoint* exphot);
 	void InvalidateItem(CPoint item);
-	void TrackMenu(UINT nID, CPoint point, int col=-1);
+	void TrackMenu(UINT nID, CPoint point, INT col=-1);
 	void SelectItem(CPoint Item);
 	void DeletePath(LPWSTR Path);
 	void AddPath(LPWSTR Path, LPWSTR Parent);
 	void UpdatePath(LPWSTR Path1, LPWSTR Path2, IShellFolder* pDesktop);
 
-	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
+	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();
 	afx_msg LRESULT OnThemeChanged();
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnPaint();
-	afx_msg void OnSize(UINT nType, int cx, int cy);
+	afx_msg void OnSize(UINT nType, INT cx, INT cy);
 	afx_msg void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
 	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
 	afx_msg BOOL OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message);
@@ -156,10 +156,10 @@ private:
 	CImageList m_DefaultGlyphs;
 	ULONG m_ulSHChangeNotifyRegister;
 	BOOL m_SpacePressed;
-	int m_HScrollMax;
-	int m_VScrollMax;
-	int m_HScrollPos;
-	int m_VScrollPos;
+	INT m_HScrollMax;
+	INT m_VScrollMax;
+	INT m_HScrollPos;
+	INT m_VScrollPos;
 
 	void SetWidgetSize();
 	UINT GetChildRect(CPoint item);

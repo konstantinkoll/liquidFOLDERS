@@ -97,7 +97,7 @@ void CRunCmdApp::OnStoreCreate()
 	LFFreeStoreDescriptor(s);
 }
 
-void CRunCmdApp::OnStoreCreateDrive(char Drive)
+void CRunCmdApp::OnStoreCreateDrive(CHAR Drive)
 {
 	LFStoreDescriptor* s = LFAllocStoreDescriptor();
 
@@ -110,7 +110,7 @@ void CRunCmdApp::OnStoreCreateDrive(char Drive)
 
 void CRunCmdApp::OnStoreDelete(CString ID)
 {
-	char StoreID[LFKeySize];
+	CHAR StoreID[LFKeySize];
 	wcstombs_s(NULL, StoreID, ID, LFKeySize);
 
 	LFStoreDescriptor* store = LFAllocStoreDescriptor();
@@ -125,7 +125,7 @@ void CRunCmdApp::OnStoreDelete(CString ID)
 
 void CRunCmdApp::OnImportFolder(CString ID)
 {
-	char StoreID[LFKeySize];
+	CHAR StoreID[LFKeySize];
 	wcstombs_s(NULL, StoreID, ID, LFKeySize);
 
 	LFImportFolder(StoreID, CWnd::GetForegroundWindow());
@@ -133,7 +133,7 @@ void CRunCmdApp::OnImportFolder(CString ID)
 
 void CRunCmdApp::OnStoreProperties(CString ID)
 {
-	char StoreID[LFKeySize];
+	CHAR StoreID[LFKeySize];
 	wcstombs_s(NULL, StoreID, ID, LFKeySize);
 
 	LFStorePropertiesDlg dlg(StoreID, CWnd::GetForegroundWindow());

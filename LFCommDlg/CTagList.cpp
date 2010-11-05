@@ -23,15 +23,15 @@ CTagList::~CTagList()
 			delete m_BgBitmaps[a];
 }
 
-void CTagList::CreateRoundRectangle(CRect rect, int rad, GraphicsPath& path)
+void CTagList::CreateRoundRectangle(CRect rect, INT rad, GraphicsPath& path)
 {
 	path.Reset();
 
-	int l = rect.left;
-	int t = rect.top;
-	int w = rect.Width()-1;
-	int h = rect.Height()-1;
-	int d = rad<<1;
+	INT l = rect.left;
+	INT t = rect.top;
+	INT w = rect.Width()-1;
+	INT h = rect.Height()-1;
+	INT d = rad<<1;
 
 	path.AddArc(l, t, d, d, 180, 90);
 	path.AddLine(l+rad, t, l+w-rad, t);
@@ -60,7 +60,7 @@ void CTagList::OnCustomDraw(NMHDR* pNMHDR, LRESULT* pResult)
 		*pResult = CDRF_NOTIFYITEMDRAW;
 		break;
 	case CDDS_ITEMPREPAINT:
-		DrawItem((int)lplvcd->nmcd.dwItemSpec, CDC::FromHandle(lplvcd->nmcd.hdc));
+		DrawItem((INT)lplvcd->nmcd.dwItemSpec, CDC::FromHandle(lplvcd->nmcd.hdc));
 		*pResult = CDRF_SKIPDEFAULT;
 		break;
 	default:
@@ -68,7 +68,7 @@ void CTagList::OnCustomDraw(NMHDR* pNMHDR, LRESULT* pResult)
 	}
 }
 
-void CTagList::DrawItem(int nID, CDC* pDC)
+void CTagList::DrawItem(INT nID, CDC* pDC)
 {
 	COLORREF bkCol = GetBkColor();
 	COLORREF selCol;
@@ -158,7 +158,7 @@ void CTagList::DrawItem(int nID, CDC* pDC)
 	// Count
 	CFont* pOldFont = pDC->SelectObject(&pApp->m_SmallFont);
 	rectBounds.DeflateRect(5, 0);
-	int L = pDC->GetTextExtent(item.pszText).cx;
+	INT L = pDC->GetTextExtent(item.pszText).cx;
 	pDC->SetTextColor((State & LVIS_SELECTED) ? texCol : ((texCol>>1) & 0x7F7F7F) + ((pDC->GetPixel(rectBounds.right, rectBounds.top+10)>>1) & 0x7F7F7F));
 	pDC->DrawText(item.pszText, -1, rectBounds, DT_NOPREFIX | DT_END_ELLIPSIS | DT_SINGLELINE | DT_RIGHT | DT_VCENTER);
 	pDC->SelectObject(pOldFont);

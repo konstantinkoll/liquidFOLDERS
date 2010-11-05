@@ -19,7 +19,7 @@ CTaskButton::CTaskButton()
 	m_Hover = FALSE;
 }
 
-BOOL CTaskButton::Create(CString Caption, CString TooltipHeader, CString TooltipHint, CMFCToolBarImages* Icons, int IconID, CWnd* pParentWnd, UINT nID)
+BOOL CTaskButton::Create(CString Caption, CString TooltipHeader, CString TooltipHint, CMFCToolBarImages* Icons, INT IconID, CWnd* pParentWnd, UINT nID)
 {
 	m_Caption = Caption;
 	m_TooltipHeader = TooltipHeader;
@@ -55,9 +55,9 @@ BOOL CTaskButton::PreTranslateMessage(MSG* pMsg)
 	return CButton::PreTranslateMessage(pMsg);
 }
 
-int CTaskButton::GetPreferredWidth()
+INT CTaskButton::GetPreferredWidth()
 {
-	int l = 2*(BORDER+2)+1;
+	INT l = 2*(BORDER+2)+1;
 
 	if ((m_Icons) && (m_IconID!=-1))
 		l += 16+(m_Caption.IsEmpty() ? 0 : BORDER);
@@ -88,7 +88,7 @@ BEGIN_MESSAGE_MAP(CTaskButton, CButton)
 	ON_WM_MOUSEHOVER()
 END_MESSAGE_MAP()
 
-int CTaskButton::OnCreate(LPCREATESTRUCT lpCreateStruct)
+INT CTaskButton::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if (CButton::OnCreate(lpCreateStruct)==-1)
 		return -1;

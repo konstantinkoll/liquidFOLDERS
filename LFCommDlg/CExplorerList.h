@@ -19,10 +19,10 @@ class AFX_EXT_CLASS CExplorerList : public CListCtrl
 public:
 	CExplorerList();
 
-	void AddCategory(int ID, CString name, CString hint=_T(""));
+	void AddCategory(INT ID, CString name, CString hint=_T(""));
 	void AddItemCategories();
-	void AddColumn(int ID, CString name);
-	void AddColumn(int ID, UINT attr);
+	void AddColumn(INT ID, CString name);
+	void AddColumn(INT ID, UINT attr);
 	void AddStoreColumns();
 	void SetSearchResult(LFSearchResult* result);
 	void SetMenus(UINT _ItemMenuID=0, BOOL _HighlightFirst=FALSE, UINT _BackgroundMenuID=0);
@@ -30,7 +30,7 @@ public:
 	void ShowFooter(IListViewFooterCallback* pCallbackObject);
 	void RemoveFooter();
 	void SetFooterText(LPCWSTR pText);
-	void InsertFooterButton(int insertAt, LPCWSTR pText, LPCWSTR pUnknown, UINT iconIndex, LONG lParam);
+	void InsertFooterButton(INT insertAt, LPCWSTR pText, LPCWSTR pUnknown, UINT iconIndex, LONG lParam);
 
 protected:
 	LFApplication* p_App;
@@ -41,7 +41,7 @@ protected:
 	BOOL m_HighlightFirst;
 	UINT m_BackgroundMenuID;
 
-	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
+	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();
 	afx_msg LRESULT OnThemeChanged();
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint pos);

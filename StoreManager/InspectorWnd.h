@@ -65,8 +65,8 @@ protected:
 	BOOL m_ShowIcon;
 	BOOL m_Alphabetic;
 
-	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
-	afx_msg void OnSize(UINT nType, int cx, int cy);
+	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
+	afx_msg void OnSize(UINT nType, INT cx, INT cy);
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
 	afx_msg void OnPaint();
 	afx_msg LRESULT OnPropertyChanged(WPARAM wparam, LPARAM lparam);
@@ -97,6 +97,6 @@ private:
 	CString TypeName;
 
 	void AddValue(LFItemDescriptor* i, UINT Attr, BOOL Editable=TRUE);
-	void AddValueVirtual(UINT Attr, char* Value);
-	void AddValueVirtual(UINT Attr, wchar_t* Value);
+	void AddValueVirtual(UINT Attr, CHAR* Value);
+	void AddValueVirtual(UINT Attr, WCHAR* Value);
 };

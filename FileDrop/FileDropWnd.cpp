@@ -62,7 +62,7 @@ BOOL CFileDropWnd::PreTranslateMessage(MSG* pMsg)
 
 void CFileDropWnd::UpdateStore()
 {
-	char* key = LFGetDefaultStore();
+	CHAR* key = LFGetDefaultStore();
 	if (*key!='\0')
 	{
 		StoreValid = (LFGetStoreSettings(key, &m_Store)==LFOk);
@@ -83,7 +83,7 @@ void CFileDropWnd::UpdateStore()
 	}
 }
 
-void CFileDropWnd::SetWindowRect(int x, int y, BOOL TopMost)
+void CFileDropWnd::SetWindowRect(INT x, INT y, BOOL TopMost)
 {
 	UINT Flags = SWP_NOSIZE | SWP_FRAMECHANGED;
 
@@ -142,7 +142,7 @@ BEGIN_MESSAGE_MAP(CFileDropWnd, CGlasWindow)
 	ON_REGISTERED_MESSAGE(theApp.WakeupMsg, OnWakeup)
 END_MESSAGE_MAP()
 
-int CFileDropWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
+INT CFileDropWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if (CGlasWindow::OnCreate(lpCreateStruct)==-1)
 		return -1;
@@ -403,7 +403,7 @@ void CFileDropWnd::OnSysCommand(UINT nID, LPARAM lParam)
 	}
 }
 
-void CFileDropWnd::OnMove(int x, int y)
+void CFileDropWnd::OnMove(INT x, INT y)
 {
 	CGlasWindow::OnMove(x, y);
 

@@ -31,16 +31,16 @@ struct LFViewParameters
 {
 	UINT Mode;
 	BOOL FullRowSelect;
-	int ColumnOrder[LFAttributeCount];
-	int ColumnWidth[LFAttributeCount];
+	INT ColumnOrder[LFAttributeCount];
+	INT ColumnWidth[LFAttributeCount];
 
 	UINT SortBy;
 	BOOL Descending;
 	BOOL AutoDirs;
 
-	int GlobeLatitude;
-	int GlobeLongitude;
-	int GlobeZoom;
+	INT GlobeLatitude;
+	INT GlobeLongitude;
+	INT GlobeZoom;
 	BOOL GlobeShowBubbles;
 	BOOL GlobeShowAirportNames;
 	BOOL GlobeShowGPS;
@@ -70,21 +70,21 @@ public:
 	CFileView();
 	virtual ~CFileView();
 
-	virtual void SelectItem(int n, BOOL select=TRUE, BOOL InternalCall=FALSE);
-	virtual int GetFocusItem();
-	virtual int GetSelectedItem();
-	virtual int GetNextSelectedItem(int n);
-	virtual void EditLabel(int n);							// Direkt in der Liste neuen Dateinamen setzen
+	virtual void SelectItem(INT n, BOOL select=TRUE, BOOL InternalCall=FALSE);
+	virtual INT GetFocusItem();
+	virtual INT GetSelectedItem();
+	virtual INT GetNextSelectedItem(INT n);
+	virtual void EditLabel(INT n);							// Direkt in der Liste neuen Dateinamen setzen
 	virtual BOOL IsEditing();								// Liefert zurück ob gerade editiert wird
 	virtual BOOL HasCategories();
 	virtual void OnContextMenu(CPoint point);				// Kontextmenü für das View
-	virtual void OnItemContextMenu(int idx, CPoint point);	// Kontextmenu für ein Item
+	virtual void OnItemContextMenu(INT idx, CPoint point);	// Kontextmenu für ein Item
 
-	void Create(LFSearchResult* _result, UINT _ViewID, int _FocusItem=0, BOOL _EnableHover=TRUE, BOOL _EnableShiftSelection=TRUE);
-	void OnUpdateViewOptions(int _ActiveContextID=-1, int _ViewID=-1, BOOL Force=FALSE);
-	void OnUpdateSearchResult(LFSearchResult* _result, int _FocusItem);
+	void Create(LFSearchResult* _result, UINT _ViewID, INT _FocusItem=0, BOOL _EnableHover=TRUE, BOOL _EnableShiftSelection=TRUE);
+	void OnUpdateViewOptions(INT _ActiveContextID=-1, INT _ViewID=-1, BOOL Force=FALSE);
+	void OnUpdateSearchResult(LFSearchResult* _result, INT _FocusItem);
 	BOOL HandleDefaultKeys(UINT nChar, UINT nRepCnt, UINT nFlags);
-	int GetFontHeight();
+	INT GetFontHeight();
 
 protected:
 	LFViewParameters m_ViewParameters;
@@ -97,18 +97,18 @@ protected:
 	BOOL HideFileExt;
 	BOOL EnableHover;
 	BOOL EnableShiftSelection;
-	int FocusItem;
-	int SelectionAnchor;
-	int HoverItem;
+	INT FocusItem;
+	INT SelectionAnchor;
+	INT HoverItem;
 
 	virtual void SetViewOptions(UINT _ViewID, BOOL Force);
 	virtual void SetSearchResult(LFSearchResult* _result);
-	virtual BOOL IsSelected(int n);
-	virtual int ItemAtPosition(CPoint point);
-	virtual void InvalidateItem(int n);
+	virtual BOOL IsSelected(INT n);
+	virtual INT ItemAtPosition(CPoint point);
+	virtual void InvalidateItem(INT n);
 	virtual CMenu* GetContextMenu();
 
-	void SetFocusItem(int _FocusItem, BOOL ShiftSelect);
+	void SetFocusItem(INT _FocusItem, BOOL ShiftSelect);
 	void AppendContextMenu(CMenu* menu);
 
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);

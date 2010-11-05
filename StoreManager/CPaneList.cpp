@@ -70,7 +70,7 @@ void CPaneList::OnCustomDraw(NMHDR* pNMHDR, LRESULT* pResult)
 			return;
 		}
 
-		DrawItem((int)lplvcd->nmcd.dwItemSpec, CDC::FromHandle(lplvcd->nmcd.hdc), dm);
+		DrawItem((INT)lplvcd->nmcd.dwItemSpec, CDC::FromHandle(lplvcd->nmcd.hdc), dm);
 		*pResult = CDRF_SKIPDEFAULT;
 		break;
 	default:
@@ -143,7 +143,7 @@ void CPaneList::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 	if ((nChar==VK_F2) && (GetKeyState(VK_CONTROL)>=0) && (GetKeyState(VK_SHIFT)>=0))
 	{
-		int idx = GetNextItem(-1, LVNI_SELECTED | LVNI_FOCUSED);
+		INT idx = GetNextItem(-1, LVNI_SELECTED | LVNI_FOCUSED);
 		if (idx!=-1)
 		{
 			EditLabel(idx);
@@ -160,18 +160,18 @@ void CPaneList::OnNcCalcSize(BOOL bCalcValidRects, NCCALCSIZE_PARAMS FAR* lpncsp
 	CListCtrl::OnNcCalcSize(bCalcValidRects, lpncsp);
 }
 
-void CPaneList::DrawItem(int nID, CDC* pDC, CMFCVisualManager* dm)
+void CPaneList::DrawItem(INT nID, CDC* pDC, CMFCVisualManager* dm)
 {
 	CRect rect;
 	CImageList* img;
-	int H;
+	INT H;
 	COLORREF oldCol;
 	COLORREF bkCol = GetBkColor();
 
 	// Background
 	CRect rectBounds;
 	GetItemRect(nID, rectBounds, LVIR_BOUNDS);
-	int oldMode = pDC->SetBkMode(TRANSPARENT);
+	INT oldMode = pDC->SetBkMode(TRANSPARENT);
 
 	UINT State = GetItemState(nID, LVIS_SELECTED | LVIS_FOCUSED | LVIS_CUT);
 	if ((State & (LVIS_SELECTED | LVIS_FOCUSED)) && ((State & LVIS_SELECTED) || ((GetFocus()==this) && (!(GetExtendedStyle() & LVS_EX_ONECLICKACTIVATE))) || (GetStyle() & LVS_SHOWSELALWAYS)))
@@ -204,8 +204,8 @@ void CPaneList::DrawItem(int nID, CDC* pDC, CMFCVisualManager* dm)
 		if (img)
 			if (img->GetImageInfo(item.iImage, &ImageInfo))
 			{
-				int w = ImageInfo.rcImage.right-ImageInfo.rcImage.left;
-				int h = ImageInfo.rcImage.bottom-ImageInfo.rcImage.top;
+				INT w = ImageInfo.rcImage.right-ImageInfo.rcImage.left;
+				INT h = ImageInfo.rcImage.bottom-ImageInfo.rcImage.top;
 				GetItemRect(nID, &rect, LVIR_ICON);
 				if (GetView()==LV_VIEW_TILE)
 				{
@@ -266,7 +266,7 @@ void CPaneList::DrawItem(int nID, CDC* pDC, CMFCVisualManager* dm)
 	pDC->SetBkMode(oldMode);
 }
 
-BOOL CPaneList::SetWindowPos(const CWnd* pWndInsertAfter, int x, int y, int cx, int cy, UINT nFlags)
+BOOL CPaneList::SetWindowPos(const CWnd* pWndInsertAfter, INT x, INT y, INT cx, INT cy, UINT nFlags)
 {
 
 	if (cx<LastWidth)
@@ -282,7 +282,7 @@ BOOL CPaneList::SetWindowPos(const CWnd* pWndInsertAfter, int x, int y, int cx, 
 	}
 }
 
-void CPaneList::SetTileSize(int cx)
+void CPaneList::SetTileSize(INT cx)
 {
 	if (cx==-1)
 	{

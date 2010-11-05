@@ -14,7 +14,7 @@
 
 extern AFX_EXTENSION_MODULE LFCommDlgDLL;
 
-LFSelectLocationIATADlg::LFSelectLocationIATADlg(CWnd* pParentWnd, UINT nIDTemplate, char* _Airport)
+LFSelectLocationIATADlg::LFSelectLocationIATADlg(CWnd* pParentWnd, UINT nIDTemplate, CHAR* _Airport)
 	: CDialog(nIDTemplate, pParentWnd)
 {
 	m_nIDTemplate = nIDTemplate;
@@ -43,7 +43,7 @@ void LFSelectLocationIATADlg::LoadCountry(UINT country, BOOL SelectFirst)
 
 	m_nAirports = 0;
 
-	int idx = LFIATAGetNextAirportByCountry(country, -1, &m_Airports[m_nAirports]);
+	INT idx = LFIATAGetNextAirportByCountry(country, -1, &m_Airports[m_nAirports]);
 	while ((idx!=-1) && (m_nAirports<MaxAirportsPerCountry))
 		idx = LFIATAGetNextAirportByCountry(country, idx, &m_Airports[++m_nAirports]);
 
@@ -51,10 +51,10 @@ void LFSelectLocationIATADlg::LoadCountry(UINT country, BOOL SelectFirst)
 	li->SetColumnWidth(0, LVSCW_AUTOSIZE_USEHEADER);
 	li->SetColumnWidth(1, LVSCW_AUTOSIZE_USEHEADER);
 
-	int sel = 0;
+	INT sel = 0;
 	if ((!SelectFirst) && (m_Airport))
 	{
-		for (int a=0; a<m_nAirports; a++)
+		for (INT a=0; a<m_nAirports; a++)
 			if (m_Airports[a]==m_Airport)
 			{
 				sel = a;
@@ -72,7 +72,7 @@ void LFSelectLocationIATADlg::LoadCountry(UINT country, BOOL SelectFirst)
 void LFSelectLocationIATADlg::UpdatePreview()
 {
 	CListCtrl* li = (CListCtrl*)GetDlgItem(IDC_AIRPORTS);
-	int idx = li->GetNextItem(-1, LVIS_SELECTED);
+	INT idx = li->GetNextItem(-1, LVIS_SELECTED);
 
 	m_Airport = m_Airports[idx];
 	m_Map.Update(m_Airport);
@@ -172,7 +172,7 @@ void LFSelectLocationIATADlg::OnCustomDraw(NMHDR* pNMHDR, LRESULT* pResult)
 	else
 		if (CDDS_ITEMPREPAINT==pLVCD->nmcd.dwDrawStage)
 		{
-			int idx = (int)pLVCD->nmcd.dwItemSpec;
+			INT idx = (INT)pLVCD->nmcd.dwItemSpec;
 
 			if (strcmp(m_Airports[idx]->Code, m_Airports[idx]->MetroCode)==0)
 				pLVCD->clrText = 0xFF0000;
@@ -186,12 +186,12 @@ void LFSelectLocationIATADlg::OnGetDispInfo(NMHDR* pNMHDR, LRESULT* /*pResult*/)
 	LV_DISPINFO* pDispInfo = (LV_DISPINFO*)pNMHDR;
 	LV_ITEM* pItem = &pDispInfo->item;
 
-	int idx = pItem->iItem;
+	INT idx = pItem->iItem;
 
 	if (pItem->mask & LVIF_TEXT)
 	{
-		char* src = (pItem->iSubItem==0) ? &m_Airports[idx]->Code[0] : &m_Airports[idx]->Name[0];
-		int sz = (int)strlen(src)+1;
+		CHAR* src = (pItem->iSubItem==0) ? &m_Airports[idx]->Code[0] : &m_Airports[idx]->Name[0];
+		INT sz = (INT)strlen(src)+1;
 		MultiByteToWideChar(CP_ACP, 0, src, sz, m_Buffer, sz);
 		pItem->pszText = (LPWSTR)m_Buffer;
 	}
@@ -210,7 +210,7 @@ void LFSelectLocationIATADlg::OnItemChanged(NMHDR* pNMHDR, LRESULT* /*pResult*/)
 		UpdatePreview();
 }
 
-int LFSelectLocationIATADlg::Compare(int col, int n1, int n2)
+INT LFSelectLocationIATADlg::Compare(INT col, INT n1, INT n2)
 {
 	switch (col)
 	{
@@ -223,11 +223,11 @@ int LFSelectLocationIATADlg::Compare(int col, int n1, int n2)
 	}
 }
 
-void LFSelectLocationIATADlg::Heap(int col, int wurzel, int anz)
+void LFSelectLocationIATADlg::Heap(INT col, INT wurzel, INT anz)
 {
 	while (wurzel<=anz/2-1)
 	{
-		int idx = (wurzel+1)*2-1;
+		INT idx = (wurzel+1)*2-1;
 		if (idx+1<anz)
 			if (Compare(col, idx, idx+1)<0)
 				idx++;
@@ -248,11 +248,11 @@ void LFSelectLocationIATADlg::OnSortItems(NMHDR* pNMHDR, LRESULT* pResult)
 	if (m_nAirports>1)
 	{
 		NMLISTVIEW *pLV = (NMLISTVIEW*)pNMHDR;
-		int col = pLV->iItem;
+		INT col = pLV->iItem;
 
-		for (int a=m_nAirports/2-1; a>=0; a--)
+		for (INT a=m_nAirports/2-1; a>=0; a--)
 			Heap(col, a, m_nAirports);
-		for (int a=m_nAirports-1; a>0; )
+		for (INT a=m_nAirports-1; a>0; )
 		{
 			std::swap(m_Airports[0], m_Airports[a]);
 			Heap(col, 0, a--);
@@ -275,7 +275,7 @@ void LFSelectLocationIATADlg::OnReportError()
 {
 	CString Subject = _T("IATA database error");
 
-	int idx = ((CListCtrl*)GetDlgItem(IDC_AIRPORTS))->GetNextItem(-1, LVIS_SELECTED);
+	INT idx = ((CListCtrl*)GetDlgItem(IDC_AIRPORTS))->GetNextItem(-1, LVIS_SELECTED);
 	if (idx!=-1)
 	{
 		CString Code(m_Airports[idx]->Code);

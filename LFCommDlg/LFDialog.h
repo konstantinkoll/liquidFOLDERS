@@ -42,7 +42,7 @@ protected:
 	afx_msg BOOL OnInitDialog();
 	afx_msg void OnDestroy();
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
-	afx_msg void OnSize(UINT nType, int cx, int cy);
+	afx_msg void OnSize(UINT nType, INT cx, INT cy);
 	afx_msg LRESULT OnThemeChanged();
 	afx_msg void OnSysColorChange();
 	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
@@ -55,11 +55,11 @@ private:
 	HICON hIconL;
 	HICON hIconS;
 	HICON hIconShield;
-	int ShieldSize;
-	int UACHeight;
+	INT ShieldSize;
+	INT UACHeight;
 	CBitmap BackBuffer;
-	int BackBufferL;
-	int BackBufferH;
+	INT BackBufferL;
+	INT BackBufferH;
 	HBRUSH hBackgroundBrush;
 	std::list<CWnd*> BottomControls;
 	CPoint LastSize;

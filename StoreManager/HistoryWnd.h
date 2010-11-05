@@ -11,11 +11,11 @@
 struct BreadcrumbItem {
 	BreadcrumbItem* next;
 	LFFilter* filter;
-	int focus;
+	INT focus;
 };
 
-void AddBreadcrumbItem(BreadcrumbItem** bi, LFFilter* f, int focus);
-void ConsumeBreadcrumbItem(BreadcrumbItem** bi, LFFilter** f, int* focus);
+void AddBreadcrumbItem(BreadcrumbItem** bi, LFFilter* f, INT focus);
+void ConsumeBreadcrumbItem(BreadcrumbItem** bi, LFFilter** f, INT* focus);
 void DeleteBreadcrumbs(BreadcrumbItem** bi);
 
 
@@ -35,12 +35,12 @@ public:
 protected:
 	CMFCToolBar m_wndToolBar;
 	CImageListTransparent m_Icons;
-	int m_CurrentItem;
+	INT m_CurrentItem;
 
 	void AddFilterItem(LFFilter* f, BOOL append, BOOL focus=FALSE);
 
-	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
-	afx_msg void OnSize(UINT nType, int cx, int cy);
+	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
+	afx_msg void OnSize(UINT nType, INT cx, INT cy);
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
 	afx_msg void OnPaint();
 	afx_msg void OnGotoHistory();

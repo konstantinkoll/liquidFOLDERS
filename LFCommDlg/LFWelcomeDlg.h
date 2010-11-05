@@ -17,7 +17,7 @@ public:
 	virtual void DoDataExchange(CDataExchange* pDX);
 
 protected:
-	void CreateStore(int ID);
+	void CreateStore(INT ID);
 
 	afx_msg BOOL OnInitDialog();
 	DECLARE_MESSAGE_MAP()

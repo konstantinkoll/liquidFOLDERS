@@ -15,7 +15,7 @@ LFDropTarget::LFDropTarget()
 	m_SkipTemplate = FALSE;
 }
 
-BOOL LFDropTarget::Register(CWnd* pWnd, char* StoreID)
+BOOL LFDropTarget::Register(CWnd* pWnd, CHAR* StoreID)
 {
 	strcpy_s(m_StoreID, LFKeySize, StoreID);
 
@@ -75,7 +75,7 @@ BOOL LFDropTarget::OnDrop(CWnd* /*pWnd*/, COleDataObject* pDataObject, DROPEFFEC
 	// Dateien durchlaufen
 	BOOL success = TRUE;
 	UINT uNumFiles = DragQueryFile(hDrop, (UINT)-1, NULL, 0);
-	wchar_t szNextFile[MAX_PATH];
+	WCHAR szNextFile[MAX_PATH];
 
 	LFFileImportList* il = LFAllocFileImportList();
 	for (UINT uFile=0; uFile<uNumFiles; uFile++)

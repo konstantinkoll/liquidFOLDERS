@@ -20,7 +20,7 @@ public:
 protected:
 	LFSearchResult* result;
 
-	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
+	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();
 	afx_msg LRESULT OnUpdateStores(WPARAM wParam, LPARAM lParam);
 	afx_msg void OnItemChanged(NMHDR* pNMHDR, LRESULT* pResult);
@@ -44,8 +44,8 @@ public:
 
 	void SetItem(LFItemDescriptor* _item, BOOL Repaint=TRUE, UINT NotifyCode=NM_SELCHANGED);
 	void SetItem(LFStoreDescriptor* s, BOOL Repaint=TRUE, UINT NotifyCode=NM_SELCHANGED);
-	void SetItem(char* Key, BOOL Repaint=TRUE);
-	BOOL GetStoreID(char* StoreID);
+	void SetItem(CHAR* Key, BOOL Repaint=TRUE);
+	BOOL GetStoreID(CHAR* StoreID);
 	void Update();
 
 protected:

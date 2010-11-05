@@ -14,7 +14,7 @@
 #define WM_USER_MEDIACHANGED                WM_USER+1
 #define WMAPP_NOTIFYCALLBACK                WM_APP+1
 
-wchar_t const szWindowClass[] = L"LFWatchdog";
+WCHAR const szWindowClass[] = L"LFWatchdog";
 ULONG ulSHChangeNotifyRegister;
 BOOL AboutWindow = FALSE;
 BOOL ReceivedDoubleclk = FALSE;
@@ -24,18 +24,18 @@ BOOL ReceivedDoubleclk = FALSE;
 class __declspec(uuid("F144CA00-1A4F-11DF-8A39-0800200C9A66")) LFIcon;
 
 
-void PrepareTrayTip(wchar_t* Buf, size_t cCount)
+void PrepareTrayTip(WCHAR* Buf, size_t cCount)
 {
 	UINT Stores = LFGetStoreCount();
 
-	wchar_t Mask[256];
+	WCHAR Mask[256];
 	ENSURE(LoadString(AfxGetResourceHandle(), (Stores==1) ? IDS_TOOLTIP_SINGULAR : IDS_TOOLTIP_PLURAL, Mask, 256));
 	swprintf(Buf, cCount, Mask, Stores);
 }
 
 BOOL AddNotificationIcon(HWND hWnd)
 {
-	int sz = GetSystemMetrics(SM_CXSMICON);
+	INT sz = GetSystemMetrics(SM_CXSMICON);
 
 	NOTIFYICONDATA nid;
 	ZeroMemory(&nid, sizeof(nid));
@@ -107,7 +107,7 @@ LRESULT OnMediaChanged(HWND /*hWnd*/, WPARAM wParam, LPARAM lParam)
 	} SHNOTIFYSTRUCT;
 
 	SHNOTIFYSTRUCT *shns = (SHNOTIFYSTRUCT*)wParam;
-	char sPath[MAX_PATH];
+	CHAR sPath[MAX_PATH];
 
 	switch(lParam)
 	{
@@ -320,7 +320,7 @@ BOOL CWatchdogApp::InitInstance()
 	return FALSE;
 }
 
-int CWatchdogApp::ExitInstance()
+INT CWatchdogApp::ExitInstance()
 {
 	LFApplication::ExitInstance();
 	CloseHandle(sessionMutex);

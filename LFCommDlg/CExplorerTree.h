@@ -52,9 +52,9 @@ protected:
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 
 	CString OnGetItemText(ExplorerTreeItemData* pItem);
-	int OnGetItemIcon(ExplorerTreeItemData* pItem, BOOL bSelected);
+	INT OnGetItemIcon(ExplorerTreeItemData* pItem, BOOL bSelected);
 	HTREEITEM InsertItem(LPITEMIDLIST pidlFQ, LPITEMIDLIST pidlRel, ULONG dwAttributes=SFGAO_HASSUBFOLDER, HTREEITEM hParent=TVI_ROOT);
-	HTREEITEM InsertItem(wchar_t* Path, HTREEITEM hParent=TVI_ROOT);
+	HTREEITEM InsertItem(WCHAR* Path, HTREEITEM hParent=TVI_ROOT);
 	BOOL GetChildItems(HTREEITEM hParentItem);
 	void EnumObjects(HTREEITEM hParentItem, LPITEMIDLIST pidlParent);
 	BOOL ChildrenContainPath(HTREEITEM hParentItem, LPWSTR Path);

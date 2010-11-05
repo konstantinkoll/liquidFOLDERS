@@ -10,7 +10,7 @@
 
 struct Tag
 {
-	int cnt;
+	INT cnt;
 	BOOL selected;
 	UINT fontsize;
 	COLORREF color;
@@ -28,11 +28,11 @@ public:
 	CTagcloudView();
 	virtual ~CTagcloudView();
 
-	virtual void SelectItem(int n, BOOL select=TRUE, BOOL InternalCall=FALSE);
-	virtual int GetSelectedItem();
-	virtual int GetNextSelectedItem(int n);
+	virtual void SelectItem(INT n, BOOL select=TRUE, BOOL InternalCall=FALSE);
+	virtual INT GetSelectedItem();
+	virtual INT GetNextSelectedItem(INT n);
 
-	void Create(CWnd* _pParentWnd, LFSearchResult* _result, int _FocusItem);
+	void Create(CWnd* _pParentWnd, LFSearchResult* _result, INT _FocusItem);
 
 protected:
 	CFont m_Fonts[20];
@@ -41,15 +41,15 @@ protected:
 
 	virtual void SetViewOptions(UINT _ViewID, BOOL Force);
 	virtual void SetSearchResult(LFSearchResult* _result);
-	virtual BOOL IsSelected(int n);
-	virtual int ItemAtPosition(CPoint point);
-	virtual void InvalidateItem(int n);
+	virtual BOOL IsSelected(INT n);
+	virtual INT ItemAtPosition(CPoint point);
+	virtual void InvalidateItem(INT n);
 	virtual CMenu* GetContextMenu();
 
-	CFont* GetFont(int idx);
+	CFont* GetFont(INT idx);
 	void AdjustLayout();
 
-	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
+	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();
 	afx_msg void OnSortValue();
 	afx_msg void OnSortCount();
@@ -59,7 +59,7 @@ protected:
 	afx_msg void OnUseOpacity();
 	afx_msg void OnUpdateCommands(CCmdUI* pCmdUI);
 	afx_msg LRESULT OnThemeChanged();
-	afx_msg void OnSize(UINT nType, int cx, int cy);
+	afx_msg void OnSize(UINT nType, INT cx, INT cy);
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnPaint();
 	afx_msg void OnSetFocus(CWnd* pOldWnd);

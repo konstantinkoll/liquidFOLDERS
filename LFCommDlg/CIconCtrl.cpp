@@ -43,7 +43,7 @@ CIconCtrl::~CIconCtrl()
 		DestroyIcon(m_Icon);
 }
 
-void CIconCtrl::SetIcon(HICON _icon, int _cx, int _cy)
+void CIconCtrl::SetIcon(HICON _icon, INT _cx, INT _cy)
 {
 	m_Icon = _icon;
 	m_IconSizeX = _cx;
@@ -56,7 +56,7 @@ void CIconCtrl::SetCoreIcon(UINT nID)
 {
 	CRect rect;
 	GetClientRect(rect);
-	int sz = min(rect.Width(), rect.Height());
+	INT sz = min(rect.Width(), rect.Height());
 
 	HICON hIcon = NULL;
 	m_IconSizeX = m_IconSizeY = (sz>=64) ? 64 : (sz>=48) ? 48 : (sz>=32) ? 32 : (sz>=24) ? 24 : 16;

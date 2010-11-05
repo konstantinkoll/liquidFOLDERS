@@ -14,7 +14,7 @@ public:
 	CBottomArea();
 
 protected:
-	afx_msg int OnCreate(LPCREATESTRUCT lpcs);
+	afx_msg INT OnCreate(LPCREATESTRUCT lpcs);
 	afx_msg void OnDestroy();
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnPaint();

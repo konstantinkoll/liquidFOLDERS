@@ -24,7 +24,7 @@ public:
 	LFChooseStoreDlg(CWnd* pParentWnd, UINT Mode);
 	~LFChooseStoreDlg();
 
-	char StoreID[LFKeySize];
+	CHAR StoreID[LFKeySize];
 
 	virtual void AdjustLayout();
 	virtual void DoDataExchange(CDataExchange* pDX);

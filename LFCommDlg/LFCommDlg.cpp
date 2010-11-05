@@ -7,15 +7,15 @@
 #include "LFCommDlg.h"
 
 
-LFCommDlg_API void CreateRoundRectangle(CRect rect, int rad, GraphicsPath& path)
+LFCommDlg_API void CreateRoundRectangle(CRect rect, INT rad, GraphicsPath& path)
 {
 	path.Reset();
 
-	int l = rect.left;
-	int t = rect.top;
-	int w = rect.Width();
-	int h = rect.Height();
-	int d = rad<<1;
+	INT l = rect.left;
+	INT t = rect.top;
+	INT w = rect.Width();
+	INT h = rect.Height();
+	INT d = rad<<1;
 
 	path.AddArc(l, t, d, d, 180, 90);
 	path.AddLine(l+rad, t, l+w-rad, t);
@@ -33,7 +33,7 @@ LFCommDlg_API void TooltipDataFromPIDL(LPITEMIDLIST pidl, CImageList* icons, HIC
 	LFApplication* pApp = (LFApplication*)AfxGetApp();
 
 	SHFILEINFO sfi;
-	if (SUCCEEDED(SHGetFileInfo((wchar_t*)pidl, 0, &sfi, sizeof(SHFILEINFO), SHGFI_PIDL | SHGFI_DISPLAYNAME | SHGFI_TYPENAME | SHGFI_SYSICONINDEX | SHGFI_LARGEICON)))
+	if (SUCCEEDED(SHGetFileInfo((WCHAR*)pidl, 0, &sfi, sizeof(SHFILEINFO), SHGFI_PIDL | SHGFI_DISPLAYNAME | SHGFI_TYPENAME | SHGFI_SYSICONINDEX | SHGFI_LARGEICON)))
 	{
 		hIcon = icons->ExtractIcon(sfi.iIcon);
 		caption = sfi.szDisplayName;
@@ -47,10 +47,10 @@ LFCommDlg_API void TooltipDataFromPIDL(LPITEMIDLIST pidl, CImageList* icons, HIC
 			if (SUCCEEDED(SHGetDataFromIDList(pParentFolder, Child, SHGDFIL_FINDDATA, &ffd, sizeof(WIN32_FIND_DATA))))
 			{
 				FILETIME lft;
-				wchar_t tmpBuf1[256];
+				WCHAR tmpBuf1[256];
 				FileTimeToLocalFileTime(&ffd.ftCreationTime, &lft);
 				LFTimeToString(lft, tmpBuf1, 256);
-				wchar_t tmpBuf2[256];
+				WCHAR tmpBuf2[256];
 				FileTimeToLocalFileTime(&ffd.ftLastWriteTime, &lft);
 				LFTimeToString(lft, tmpBuf2, 256);
 
@@ -115,7 +115,7 @@ LFCommDlg_API void DrawControlBorder(CWnd* pWnd)
 	dc.Draw3dRect(rect, 0x000000, GetSysColor(COLOR_3DFACE));
 }
 
-LFCommDlg_API void LFImportFolder(char* StoreID, CWnd* pParentWnd)
+LFCommDlg_API void LFImportFolder(CHAR* StoreID, CWnd* pParentWnd)
 {
 	CString caption;
 	ENSURE(caption.LoadString(IDS_IMPORTFOLDER_CAPTION));

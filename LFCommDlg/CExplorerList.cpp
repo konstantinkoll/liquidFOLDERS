@@ -19,7 +19,7 @@ CExplorerList::CExplorerList()
 	m_ItemMenuID = m_BackgroundMenuID = 0;
 }
 
-void CExplorerList::AddCategory(int ID, CString name, CString hint)
+void CExplorerList::AddCategory(INT ID, CString name, CString hint)
 {
 	LVGROUP lvg;
 	ZeroMemory(&lvg, sizeof(lvg));
@@ -44,7 +44,7 @@ void CExplorerList::AddItemCategories()
 		AddCategory(a, p_App->m_ItemCategories[a]->Name, p_App->m_ItemCategories[a]->Hint);
 }
 
-void CExplorerList::AddColumn(int ID, CString name)
+void CExplorerList::AddColumn(INT ID, CString name)
 {
 	LV_COLUMN lvc;
 	ZeroMemory(&lvc, sizeof(lvc));
@@ -56,7 +56,7 @@ void CExplorerList::AddColumn(int ID, CString name)
 	InsertColumn(ID, &lvc);
 }
 
-void CExplorerList::AddColumn(int ID, UINT attr)
+void CExplorerList::AddColumn(INT ID, UINT attr)
 {
 	LV_COLUMN lvc;
 	ZeroMemory(&lvc, sizeof(lvc));
@@ -107,9 +107,9 @@ void CExplorerList::SetSearchResult(LFSearchResult* result)
 			lvi.iGroupId = result->m_Items[a]->CategoryID;
 			lvi.state = (result->m_Items[a]->Type & LFTypeGhosted) ? LVIS_CUT : 0;
 			lvi.stateMask = LVIS_CUT;
-			int idx = InsertItem(&lvi);
+			INT idx = InsertItem(&lvi);
 
-			wchar_t tmpStr[256];
+			WCHAR tmpStr[256];
 			SetItemText(idx, 1, result->m_Items[a]->CoreAttributes.Comment);
 			LFAttributeToString(result->m_Items[a], LFAttrCreationTime, tmpStr, 256);
 			SetItemText(idx, 2, tmpStr);
@@ -160,7 +160,7 @@ void CExplorerList::SetFooterText(LPCWSTR pText)
 		p_FooterHandler->SetIntroText(pText);
 }
 
-void CExplorerList::InsertFooterButton(int insertAt, LPCWSTR pText, LPCWSTR pUnknown, UINT iconIndex, LONG lParam)
+void CExplorerList::InsertFooterButton(INT insertAt, LPCWSTR pText, LPCWSTR pUnknown, UINT iconIndex, LONG lParam)
 {
 	if (p_FooterHandler)
 		p_FooterHandler->InsertButton(insertAt, pText, pUnknown, iconIndex, lParam);
@@ -175,7 +175,7 @@ BEGIN_MESSAGE_MAP(CExplorerList, CListCtrl)
 	ON_WM_KEYDOWN()
 END_MESSAGE_MAP()
 
-int CExplorerList::OnCreate(LPCREATESTRUCT lpCreateStruct)
+INT CExplorerList::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if (CListCtrl::OnCreate(lpCreateStruct)==-1)
 		return -1;

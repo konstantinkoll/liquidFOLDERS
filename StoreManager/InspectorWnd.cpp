@@ -32,8 +32,8 @@ void CInspectorWnd::AdjustLayout()
 	CRect rectClient;
 	GetClientRect(rectClient);
 
-	int heightTlb = m_wndToolBar.CalcFixedLayout(FALSE, TRUE).cy;
-	int heightIcn = m_ShowIcon ? m_wndIconCtrl.GetPreferredHeight(rectClient.Width()) : 0;
+	INT heightTlb = m_wndToolBar.CalcFixedLayout(FALSE, TRUE).cy;
+	INT heightIcn = m_ShowIcon ? m_wndIconCtrl.GetPreferredHeight(rectClient.Width()) : 0;
 
 	m_wndToolBar.SetWindowPos(NULL, rectClient.left, rectClient.top, rectClient.Width(), heightTlb, SWP_NOACTIVATE | SWP_NOZORDER);
 	m_wndIconCtrl.SetWindowPos(NULL, rectClient.left, rectClient.top + heightTlb, rectClient.Width(), heightIcn, SWP_NOACTIVATE | SWP_NOZORDER);
@@ -130,7 +130,7 @@ void CInspectorWnd::UpdateAdd(LFItemDescriptor* i, LFSearchResult* raw)
 		if ((i->FirstAggregate!=-1) && (i->LastAggregate!=-1))
 		{
 			AddValue(i, LFAttrFileCount);
-			for (int a=i->FirstAggregate; a<=i->LastAggregate; a++)
+			for (INT a=i->FirstAggregate; a<=i->LastAggregate; a++)
 				for (UINT b=0; b<LFAttributeCount; b++)
 					if ((raw->m_Items[a]->AttributeValues[b]) && (b!=LFAttrFileName) && (b!=LFAttrDescription) && (b!=LFAttrDeleteTime) && (b!=LFAttrFileCount))
 						AddValue(raw->m_Items[a], b);
@@ -161,7 +161,7 @@ void CInspectorWnd::UpdateAdd(LFItemDescriptor* i, LFSearchResult* raw)
 		StringFromGUID2(s.guid, szGUID, MAX_PATH);
 		AddValueVirtual(AttrGUID, szGUID);
 
-		wchar_t tmpStr[256];
+		WCHAR tmpStr[256];
 		LFTimeToString(s.MaintenanceTime, tmpStr, 256);
 		AddValueVirtual(AttrMaintenanceTime, tmpStr);
 
@@ -274,7 +274,7 @@ void CInspectorWnd::UpdateFinish()
 			pAttributes[a]->ResetOriginalValue();
 			if (a<LFAttributeCount)
 			{
-				wchar_t tmpStr[256];
+				WCHAR tmpStr[256];
 				LFVariantDataToString(&AttributeValues[a], tmpStr, 256);
 				((CAttributeProperty*)pAttributes[a])->SetValue(tmpStr, AttributeStatus[a]==StatusMultiple);
 			}
@@ -307,7 +307,7 @@ BEGIN_MESSAGE_MAP(CInspectorWnd, CDockablePane)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_INSPECTOR_TOGGLEICON, ID_INSPECTOR_EXPORT, OnUpdateCommands)
 END_MESSAGE_MAP()
 
-int CInspectorWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
+INT CInspectorWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if (CDockablePane::OnCreate(lpCreateStruct)==-1)
 		return -1;
@@ -388,7 +388,7 @@ int CInspectorWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	return 0;
 }
 
-void CInspectorWnd::OnSize(UINT nType, int cx, int cy)
+void CInspectorWnd::OnSize(UINT nType, INT cx, INT cy)
 {
 	CDockablePane::OnSize(nType, cx, cy);
 	AdjustLayout();
@@ -552,16 +552,16 @@ void CInspectorWnd::AddValue(LFItemDescriptor* i, UINT Attr, BOOL Editable)
 			}
 }
 
-void CInspectorWnd::AddValueVirtual(UINT Attr, char* Value)
+void CInspectorWnd::AddValueVirtual(UINT Attr, CHAR* Value)
 {
-	wchar_t tmpStr[256];
+	WCHAR tmpStr[256];
 	size_t sz = max(strlen(Value)+1, 256);
-	MultiByteToWideChar(CP_ACP, 0, Value, (int)sz, (LPWSTR)tmpStr, (int)sz);
+	MultiByteToWideChar(CP_ACP, 0, Value, (INT)sz, (LPWSTR)tmpStr, (INT)sz);
 
 	AddValueVirtual(Attr, &tmpStr[0]);
 }
 
-void CInspectorWnd::AddValueVirtual(UINT Attr, wchar_t* Value)
+void CInspectorWnd::AddValueVirtual(UINT Attr, WCHAR* Value)
 {
 	switch (AttributeStatus[Attr])
 	{

@@ -16,7 +16,7 @@
 
 extern AFX_EXTENSION_MODULE LFCommDlgDLL;
 
-LFStoreNewDriveDlg::LFStoreNewDriveDlg(CWnd* pParentWnd, char Drive, LFStoreDescriptor* pStore)
+LFStoreNewDriveDlg::LFStoreNewDriveDlg(CWnd* pParentWnd, CHAR Drive, LFStoreDescriptor* pStore)
 	: CDialog(IDD_STORENEWDRIVE, pParentWnd)
 {
 	m_pStore = pStore;
@@ -34,7 +34,7 @@ void LFStoreNewDriveDlg::DoDataExchange(CDataExchange* pDX)
 	if (pDX->m_bSaveAndValidate)
 	{
 		// Pfad zusammenbauen
-		char Path[MAX_PATH];
+		CHAR Path[MAX_PATH];
 		m_PathTree.GetSelectedPathA(Path);
 		if (Path[0])
 			if (Path[strlen(Path)-1]!='\\')
@@ -105,7 +105,7 @@ void LFStoreNewDriveDlg::OnDestroy()
 LRESULT LFStoreNewDriveDlg::OnShellChange(WPARAM /*wParam*/, LPARAM /*lParam*/)
 {
 	// Wenn das Laufwerk nicht mehr vorhanden ist, Dialog schlieﬂen
-	wchar_t szDriveRoot[] = L" :\\";
+	WCHAR szDriveRoot[] = L" :\\";
 	szDriveRoot[0] = m_Drive;
 
 	UINT uDriveType = GetDriveType(szDriveRoot);

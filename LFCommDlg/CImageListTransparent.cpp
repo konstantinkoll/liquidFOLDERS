@@ -13,7 +13,7 @@ CImageListTransparent::CImageListTransparent()
 {
 }
 
-void CImageListTransparent::Create(UINT ID, HINSTANCE hinstRes, UINT first, int last, int cx, int cy)
+void CImageListTransparent::Create(UINT ID, HINSTANCE hinstRes, UINT first, INT last, INT cx, INT cy)
 {
 	CMFCToolBarImages tmp;
 	tmp.SetImageSize(CSize(cx, cy));
@@ -24,7 +24,7 @@ void CImageListTransparent::Create(UINT ID, HINSTANCE hinstRes, UINT first, int 
 
 	CImageList::Create(cx, cy, ILC_COLOR32, last-first+1, 4);
 
-		for (UINT a=first; (int)a<=last; a++)
+		for (UINT a=first; (INT)a<=last; a++)
 		{
 			HICON h = tmp.ExtractIcon(a);
 			Add(h);

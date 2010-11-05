@@ -7,8 +7,8 @@ const IID IID_IListViewFooterCallback = {0x88EB9442, 0x913B, 0x4AB4, {0xA7, 0x41
 class IListViewFooterCallback : public IUnknown
 {
 public:
-	virtual HRESULT STDMETHODCALLTYPE OnButtonClicked(int itemIndex, LPARAM lParam, PINT pRemoveFooter) = 0;
-	virtual HRESULT STDMETHODCALLTYPE OnDestroyButton(int itemIndex, LPARAM lParam) = 0;
+	virtual HRESULT STDMETHODCALLTYPE OnButtonClicked(INT itemIndex, LPARAM lParam, PINT pRemoveFooter) = 0;
+	virtual HRESULT STDMETHODCALLTYPE OnDestroyButton(INT itemIndex, LPARAM lParam) = 0;
 };
 
 
@@ -17,10 +17,10 @@ class IListViewFooter : public IUnknown
 public:
 	virtual HRESULT STDMETHODCALLTYPE IsVisible(PINT pVisible) = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetFooterFocus(PINT pItemIndex) = 0;
-	virtual HRESULT STDMETHODCALLTYPE SetFooterFocus(int itemIndex) = 0;
+	virtual HRESULT STDMETHODCALLTYPE SetFooterFocus(INT itemIndex) = 0;
 	virtual HRESULT STDMETHODCALLTYPE SetIntroText(LPCWSTR pText) = 0;
 	virtual HRESULT STDMETHODCALLTYPE Show(IListViewFooterCallback* pCallbackObject) = 0;
 	virtual HRESULT STDMETHODCALLTYPE RemoveAllButtons(void) = 0;
-	virtual HRESULT STDMETHODCALLTYPE InsertButton(int insertAt, LPCWSTR pText, LPCWSTR pUnknown, UINT iconIndex, LONG lParam) = 0;
-	virtual HRESULT STDMETHODCALLTYPE GetButtonLParam(int itemIndex, LONG* pLParam) = 0;
+	virtual HRESULT STDMETHODCALLTYPE InsertButton(INT insertAt, LPCWSTR pText, LPCWSTR pUnknown, UINT iconIndex, LONG lParam) = 0;
+	virtual HRESULT STDMETHODCALLTYPE GetButtonLParam(INT itemIndex, LONG* pLParam) = 0;
 };

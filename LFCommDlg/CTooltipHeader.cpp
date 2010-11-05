@@ -55,7 +55,7 @@ BEGIN_MESSAGE_MAP(CTooltipHeader, CHeaderCtrl)
 	ON_WM_MOUSEHOVER()
 END_MESSAGE_MAP()
 
-int CTooltipHeader::OnCreate(LPCREATESTRUCT lpCreateStruct)
+INT CTooltipHeader::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if (CHeaderCtrl::OnCreate(lpCreateStruct)==-1)
 		return -1;
@@ -94,13 +94,13 @@ void CTooltipHeader::OnPaint()
 	CFont* pOldFont = dc.SelectObject(GetFont());
 	Graphics g(dc);
 
-	for (int a=0; a<GetItemCount(); a++)
+	for (INT a=0; a<GetItemCount(); a++)
 	{
 		CRect rectItem;
 		if (GetItemRect(a, rectItem))
 		{
 			HDITEM hdi;
-			wchar_t lpBuffer[256];
+			WCHAR lpBuffer[256];
 			hdi.mask = HDI_TEXT | HDI_STATE | HDI_FORMAT;
 			hdi.pszText = lpBuffer;
 			hdi.cchTextMax = 256;
@@ -198,7 +198,7 @@ void CTooltipHeader::OnLButtonDown(UINT nFlags, CPoint point)
 {
 	HDHITTESTINFO htt;
 	htt.pt = point;
-	int idx = HitTest(&htt);
+	INT idx = HitTest(&htt);
 	m_PressedItem = (htt.flags==HHT_ONHEADER) ? idx : -1;
 	m_TrackItem = ((htt.flags==HHT_ONDIVIDER) || (htt.flags==HHT_ONDIVOPEN)) ? idx : -1;
 

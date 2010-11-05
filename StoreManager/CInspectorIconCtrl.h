@@ -23,12 +23,12 @@ public:
 
 	BOOL Create(CWnd* pParentWnd, UINT nID);
 	void SetStatus(UINT _status, HICON _icon=NULL, CString _description=_T(""));
-	int GetPreferredHeight(int cx);
+	INT GetPreferredHeight(INT cx);
 
 protected:
 	UINT m_Status;
 	HICON m_Icon;
-	int m_IconSize;
+	INT m_IconSize;
 	CString m_Description;
 	CGdiPlusBitmapResource* m_Empty;
 	CGdiPlusBitmapResource* m_Multiple;
@@ -37,7 +37,7 @@ protected:
 	afx_msg void OnPaint();
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
-	afx_msg void OnSize(UINT nType, int cx, int cy);
+	afx_msg void OnSize(UINT nType, INT cx, INT cy);
 	DECLARE_MESSAGE_MAP()
 
 private:

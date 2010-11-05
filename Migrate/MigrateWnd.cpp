@@ -79,7 +79,7 @@ BEGIN_MESSAGE_MAP(CMigrateWnd, CGlasWindow)
 	ON_NOTIFY(NM_SELUPDATE, 1, OnRootUpdate)
 END_MESSAGE_MAP()
 
-int CMigrateWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
+INT CMigrateWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if (CGlasWindow::OnCreate(lpCreateStruct)==-1)
 		return -1;
@@ -165,7 +165,7 @@ void CMigrateWnd::OnMigrate()
 	}
 
 	// Paranoid: does the store really exist?
-	char StoreID[LFKeySize];
+	CHAR StoreID[LFKeySize];
 	if (!m_wndStore.GetStoreID(StoreID))
 	{
 		LFErrorBox(LFStoreNotFound, m_hWnd);

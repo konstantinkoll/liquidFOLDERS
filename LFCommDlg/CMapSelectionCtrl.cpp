@@ -150,10 +150,10 @@ void CMapSelectionCtrl::OnPaint()
 
 	if (blink)
 	{
-		int cx = (int)((m_Coord.Longitude+180)*rect.Width()/360)+1;
-		int cy = (int)((m_Coord.Latitude+90)*rect.Height()/180)+1;
-		int h = m_Indicator->m_pBitmap->GetHeight();
-		int l = m_Indicator->m_pBitmap->GetWidth();
+		INT cx = (INT)((m_Coord.Longitude+180)*rect.Width()/360)+1;
+		INT cy = (INT)((m_Coord.Latitude+90)*rect.Height()/180)+1;
+		INT h = m_Indicator->m_pBitmap->GetHeight();
+		INT l = m_Indicator->m_pBitmap->GetWidth();
 		g.DrawImage(m_Indicator->m_pBitmap, cx-l/2, cy-h/2);
 	}
 

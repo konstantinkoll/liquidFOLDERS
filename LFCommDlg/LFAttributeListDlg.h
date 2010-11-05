@@ -19,13 +19,13 @@ protected:
 	virtual void TestAttribute(UINT attr, BOOL& add, BOOL& check);
 
 	void PrepareListCtrl(CListCtrl* li, BOOL check);
-	void PrepareListCtrl(int nID, BOOL check);
-	void FinalizeListCtrl(CListCtrl* li, int focus=-1, BOOL sort=TRUE);
-	void FinalizeListCtrl(UINT nID, int focus=-1, BOOL sort=TRUE);
+	void PrepareListCtrl(INT nID, BOOL check);
+	void FinalizeListCtrl(CListCtrl* li, INT focus=-1, BOOL sort=TRUE);
+	void FinalizeListCtrl(UINT nID, INT focus=-1, BOOL sort=TRUE);
 	void AddAttribute(CListCtrl* li, UINT attr);
 	void AddAttribute(UINT nID, UINT attr);
-	void PopulateListCtrl(CListCtrl* li, BOOL check, int focus=-1, BOOL sort=TRUE);
-	void PopulateListCtrl(int nID, BOOL check, int focus=-1, BOOL sort=TRUE);
+	void PopulateListCtrl(CListCtrl* li, BOOL check, INT focus=-1, BOOL sort=TRUE);
+	void PopulateListCtrl(INT nID, BOOL check, INT focus=-1, BOOL sort=TRUE);
 
 	LFApplication* p_App;
 

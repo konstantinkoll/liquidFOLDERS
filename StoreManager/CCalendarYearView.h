@@ -17,7 +17,7 @@ public:
 	CCalendarYearView();
 	virtual ~CCalendarYearView();
 
-	void Create(CWnd* _pParentWnd, LFSearchResult* _result, int _FocusItem);
+	void Create(CWnd* _pParentWnd, LFSearchResult* _result, INT _FocusItem);
 
 protected:
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);

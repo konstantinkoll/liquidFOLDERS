@@ -40,7 +40,7 @@ public:
 	CImageList m_Icons16;
 
 	virtual BOOL InitInstance();
-	virtual int ExitInstance();
+	virtual INT ExitInstance();
 	virtual void SetApplicationLook(UINT nID);
 
 	void AddFrame(CMainFrame* pFrame);
@@ -48,22 +48,22 @@ public:
 	void ReplaceMainFrame(CMainFrame* pFrame);
 	CMainFrame* GetClipboard(BOOL ForceNew);
 	void CloseAllFrames(BOOL leaveOne=FALSE);
-	void OpenChildViews(int context, BOOL UpdateViewOptions=FALSE);
-	void UpdateViewOptions(int context=-1);
-	void UpdateSortOptions(int context);
-	void Reload(int context);
+	void OpenChildViews(INT context, BOOL UpdateViewOptions=FALSE);
+	void UpdateViewOptions(INT context=-1);
+	void UpdateSortOptions(INT context);
+	void Reload(INT context);
 	void GetBinary(LPCTSTR lpszEntry, void* pData, UINT size);
-	void ToggleAttribute(LFViewParameters* vp, UINT attr, int ColumnCount=-1);
+	void ToggleAttribute(LFViewParameters* vp, UINT attr, INT ColumnCount=-1);
 	HBITMAP GetGLTexture(UINT nID);
 	void FreeGLTexture(UINT nID);
 	static void GetRibbonColors(COLORREF* back, COLORREF* text=NULL, COLORREF* highlight=NULL);
-	static CMFCRibbonButton* CommandButton(UINT nID, int nSmallImageIndex=-1, int nLargeImageIndex=-1, BOOL bAlwaysShowDescription=FALSE, BOOL bInsertSpace=FALSE);
+	static CMFCRibbonButton* CommandButton(UINT nID, INT nSmallImageIndex=-1, INT nLargeImageIndex=-1, BOOL bAlwaysShowDescription=FALSE, BOOL bInsertSpace=FALSE);
 	static CMFCRibbonCheckBox* CommandCheckBox(UINT nID);
 
 protected:
 	virtual void OnClosingMainFrame(CFrameImpl* pFrameImpl);
-	void LoadViewOptions(int context);
-	void SaveViewOptions(int context);
+	void LoadViewOptions(INT context);
+	void SaveViewOptions(INT context);
 
 	afx_msg void OnAppAbout();
 	afx_msg void OnAppNewView();

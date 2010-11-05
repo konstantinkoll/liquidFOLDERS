@@ -15,7 +15,7 @@ AFX_EXTENSION_MODULE LFCommDlgDLL = { NULL, NULL };
 LFMessageIDs* MessageIDs = LFGetMessageIDs();
 CString strMultiple;
 
-extern "C" int APIENTRY
+extern "C" INT APIENTRY
 DllMain(HINSTANCE hInstance, DWORD dwReason, LPVOID lpReserved)
 {
 	// Entfernen Sie dies, wenn Sie lpReserved verwenden.

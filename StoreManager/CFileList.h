@@ -24,22 +24,22 @@ public:
 	~CFileList();
 
 	BOOL Create(CFileView* pViewWnd, BOOL _OwnerData);
-	int GetFontHeight();
+	INT GetFontHeight();
 	void SetHeader(BOOL sorting=FALSE, BOOL selectCol=TRUE);
-	BOOL SetColumnWidth(int nCol, int cx);
+	BOOL SetColumnWidth(INT nCol, INT cx);
 
 protected:
 	CFileView* View;
 	BOOL OwnerData;
 	BOOL Editing;
-	int LastSortBy;
+	INT LastSortBy;
 	UINT ColumnCount;
 	UINT ColumnMapping[LFAttributeCount];
 	UINT TooltipCount;
 
 	void CreateColumns();
 	void AddColumn(UINT attr);
-	int FindColumn(UINT attr);
+	INT FindColumn(UINT attr);
 
 	afx_msg void OnGetDispInfo(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnCustomDraw(NMHDR* pNMHDR, LRESULT* pResult);
@@ -56,10 +56,10 @@ protected:
 	afx_msg void OnHeaderResize(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnHeaderCanReorder(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnHeaderReorder(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnSize(UINT nType, int cx, int cy);
+	afx_msg void OnSize(UINT nType, INT cx, INT cy);
 	DECLARE_MESSAGE_MAP()
 
 private:
 	UINT ItemChanged;
-	wchar_t m_StrBuffer[LFAttributeCount][300];
+	WCHAR m_StrBuffer[LFAttributeCount][300];
 };

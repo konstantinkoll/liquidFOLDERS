@@ -6,7 +6,7 @@
 #include "LFCommDlg.h"
 
 
-int CALLBACK CompareProc(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort)
+INT CALLBACK CompareProc(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort)
 {
 	ExplorerTreeItemData* pItem1 = (ExplorerTreeItemData*)lParam1;
 	ExplorerTreeItemData* pItem2 = (ExplorerTreeItemData*)lParam2;
@@ -158,7 +158,7 @@ CString CExplorerTree::OnGetItemText(ExplorerTreeItemData* pItem)
 	return _T("?");
 }
 
-int CExplorerTree::OnGetItemIcon(ExplorerTreeItemData* pItem, BOOL bSelected)
+INT CExplorerTree::OnGetItemIcon(ExplorerTreeItemData* pItem, BOOL bSelected)
 {
 	ASSERT(pItem);
 
@@ -198,7 +198,7 @@ HTREEITEM CExplorerTree::InsertItem(LPITEMIDLIST pidlFQ, LPITEMIDLIST pidlRel, U
 	return CTreeCtrl::InsertItem(&tvInsert);
 }
 
-HTREEITEM CExplorerTree::InsertItem(wchar_t* Path, HTREEITEM hParent)
+HTREEITEM CExplorerTree::InsertItem(WCHAR* Path, HTREEITEM hParent)
 {
 	IShellFolder* pDesktop = NULL;
 	if (FAILED(SHGetDesktopFolder(&pDesktop)))
@@ -240,10 +240,10 @@ void CExplorerTree::PopulateTree()
 		if ((m_RootPath==CETR_InternalDrives) || (m_RootPath==CETR_ExternalDrives))
 		{
 			DWORD DrivesOnSystem = LFGetLogicalDrives(m_RootPath==CETR_InternalDrives ? LFGLD_Internal | LFGLD_Network : LFGLD_External);
-			wchar_t szDriveRoot[] = L" :\\";
+			WCHAR szDriveRoot[] = L" :\\";
 			BOOL First = TRUE;
 
-			for (char cDrive='A'; cDrive<='Z'; cDrive++, DrivesOnSystem>>=1)
+			for (CHAR cDrive='A'; cDrive<='Z'; cDrive++, DrivesOnSystem>>=1)
 			{
 				if (!(DrivesOnSystem & 1))
 					continue;
@@ -288,7 +288,7 @@ BOOL CExplorerTree::ChildrenContainPath(HTREEITEM hParentItem, LPWSTR Path)
 		{
 			ExplorerTreeItemData* pItem = (ExplorerTreeItemData*)tvItem.lParam;
 
-			wchar_t tmpPath[MAX_PATH];
+			WCHAR tmpPath[MAX_PATH];
 			if (SHGetPathFromIDList(pItem->pidlFQ, tmpPath))
 				if (wcscmp(tmpPath, Path)==0)
 					return TRUE;
@@ -325,7 +325,7 @@ BOOL CExplorerTree::DeletePath(LPWSTR Path)
 			ExplorerTreeItemData* pItem = (ExplorerTreeItemData*)tvItem.lParam;
 			BOOL AddChildren = TRUE;
 
-			wchar_t tmpPath[MAX_PATH];
+			WCHAR tmpPath[MAX_PATH];
 			if (SHGetPathFromIDList(pItem->pidlFQ, tmpPath))
 				if (wcscmp(tmpPath, Path)==0)
 				{
@@ -397,7 +397,7 @@ BOOL CExplorerTree::AddPath(LPWSTR Path, LPWSTR Parent)
 			ExplorerTreeItemData* pItem = (ExplorerTreeItemData*)tvItem.lParam;
 			BOOL AddChildren = TRUE;
 
-			wchar_t tmpPath[MAX_PATH];
+			WCHAR tmpPath[MAX_PATH];
 			if (SHGetPathFromIDList(pItem->pidlFQ, tmpPath))
 				if (wcscmp(tmpPath, Parent)==0)
 				{
@@ -478,7 +478,7 @@ void CExplorerTree::UpdatePath(LPWSTR Path1, LPWSTR Path2, IShellFolder* pDeskto
 		{
 			ExplorerTreeItemData* pItem = (ExplorerTreeItemData*)tvItem.lParam;
 
-			wchar_t tmpPath[MAX_PATH];
+			WCHAR tmpPath[MAX_PATH];
 			if (SHGetPathFromIDList(pItem->pidlFQ, tmpPath))
 				if (wcscmp(tmpPath, Path1)==0)
 				{
@@ -603,7 +603,7 @@ void CExplorerTree::EnumObjects(HTREEITEM hParentItem, LPITEMIDLIST pidlParent)
 			// Don't include file junctions
 			LPITEMIDLIST pidlFQ = p_App->GetShellManager()->ConcatenateItem(pidlParent, pidlTemp);
 
-			wchar_t Path[MAX_PATH];
+			WCHAR Path[MAX_PATH];
 			if (SUCCEEDED(SHGetPathFromIDListW(pidlFQ, Path)))
 			{
 				DWORD attr = GetFileAttributesW(Path);
@@ -651,7 +651,7 @@ CEdit* CExplorerTree::EditLabel(HTREEITEM hItem)
 					if (strret.uType==STRRET_WSTR)
 					{
 						edit->SetWindowText(strret.pOleStr);
-						edit->SetSel(0, (int)wcslen(strret.pOleStr));
+						edit->SetSel(0, (INT)wcslen(strret.pOleStr));
 					}
 
 				pParentFolder->Release();
@@ -810,7 +810,7 @@ void CExplorerTree::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 				else
 					if (idCmd)
 					{
-						char Verb[256] = "";
+						CHAR Verb[256] = "";
 						pcm->GetCommandString(idCmd-1, GCS_VERBA, NULL, Verb, 256);
 
 						if (strcmp(Verb, "rename")==0)
@@ -1048,10 +1048,10 @@ LRESULT CExplorerTree::OnShellChange(WPARAM wParam, LPARAM lParam)
 {
 	LPITEMIDLIST* pidls = (LPITEMIDLIST*)wParam;
 
-	wchar_t Path1[MAX_PATH] = L"";
-	wchar_t Path2[MAX_PATH] = L"";
-	wchar_t Parent1[MAX_PATH] = L"";
-	wchar_t Parent2[MAX_PATH] = L"";
+	WCHAR Path1[MAX_PATH] = L"";
+	WCHAR Path2[MAX_PATH] = L"";
+	WCHAR Parent1[MAX_PATH] = L"";
+	WCHAR Parent2[MAX_PATH] = L"";
 
 	IShellFolder* pDesktop = NULL;
 	if (FAILED(SHGetDesktopFolder(&pDesktop)))
@@ -1060,7 +1060,7 @@ LRESULT CExplorerTree::OnShellChange(WPARAM wParam, LPARAM lParam)
 	SHGetPathFromIDList(pidls[0], Path1);
 
 	wcscpy_s(Parent1, MAX_PATH, Path1);
-	wchar_t* last = wcsrchr(Parent1, L'\\');
+	WCHAR* last = wcsrchr(Parent1, L'\\');
 	if (last<=&Parent1[2])
 		last = &Parent1[3];
 	*last = '\0';

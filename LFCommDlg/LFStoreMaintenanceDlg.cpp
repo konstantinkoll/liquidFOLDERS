@@ -25,7 +25,7 @@ LFStoreMaintenanceDlg::LFStoreMaintenanceDlg(LFMaintenanceList* ml, CWnd* pParen
 	m_Page = 0;
 }
 
-void LFStoreMaintenanceDlg::SetPage(int page)
+void LFStoreMaintenanceDlg::SetPage(INT page)
 {
 	ASSERT((page==0) || (page==1));
 
@@ -86,7 +86,7 @@ BOOL LFStoreMaintenanceDlg::OnInitDialog()
 		CString tmpStr;
 		tmpStr.Format(mask, m_Lists[a].m_ItemCount);
 
-		tabs->InsertItem(a, tmpStr, (int)a-1);
+		tabs->InsertItem(a, tmpStr, (INT)a-1);
 	}
 
 	// Liste
@@ -154,7 +154,7 @@ void LFStoreMaintenanceDlg::OnItemChanged(NMHDR* pNMHDR, LRESULT* /*pResult*/)
 		}
 		else
 		{
-			wchar_t* tmpStr = LFGetErrorText(pStore->Result);
+			WCHAR* tmpStr = LFGetErrorText(pStore->Result);
 			GetDlgItem(IDC_STATUS)->SetWindowText(tmpStr);
 			free(tmpStr);
 		}

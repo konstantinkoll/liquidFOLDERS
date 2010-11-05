@@ -94,7 +94,7 @@ BOOL LFAboutDlg::OnInitDialog()
 	// Radiobuttons für die Texturgröße einstellen
 	BOOL bEnable[5];
 
-	for (int a=LFTextureAuto; a<=LFTexture8192; a++)
+	for (INT a=LFTextureAuto; a<=LFTexture8192; a++)
 	{
 		bEnable[a] = (parameters->TextureSize!=LFTextureNone) && ((a<=LFTexture1024) || (parameters->MaxTextureSize>=a));
 		((CButton*)GetDlgItem(IDC_TEXTURE_AUTO+a))->EnableWindow(bEnable[a]);
@@ -223,7 +223,7 @@ void LFAboutDlg::DoDataExchange(CDataExchange* pDX)
 				break;
 			}
 
-		int Look = ((CComboBox*)GetDlgItem(IDC_RIBBONCOLORCOMBO))->GetCurSel()+1;
+		INT Look = ((CComboBox*)GetDlgItem(IDC_RIBBONCOLORCOMBO))->GetCurSel()+1;
 		if ((Look!=parameters->RibbonColor) && (parameters->RibbonColor!=ID_VIEW_APPLOOK_OFF_2007_NONE))
 		{
 			parameters->RibbonColor = Look;

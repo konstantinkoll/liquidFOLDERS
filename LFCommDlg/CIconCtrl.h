@@ -14,13 +14,13 @@ public:
 	CIconCtrl();
 	~CIconCtrl();
 
-	void SetIcon(HICON _icon, int _cx, int _cy);
+	void SetIcon(HICON _icon, INT _cx, INT _cy);
 	void SetCoreIcon(UINT nID);
 
 protected:
 	HICON m_Icon;
-	int m_IconSizeX;
-	int m_IconSizeY;
+	INT m_IconSizeX;
+	INT m_IconSizeY;
 
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnPaint();

@@ -46,7 +46,7 @@ BOOL CMigrateApp::InitInstance()
 	return TRUE;
 }
 
-int CMigrateApp::ExitInstance()
+INT CMigrateApp::ExitInstance()
 {
 	WriteInt(_T("ExpandAll"), m_ExpandAll);
 	WriteInt(_T("DeleteImported"), m_DeleteImported);

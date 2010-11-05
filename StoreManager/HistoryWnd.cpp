@@ -9,7 +9,7 @@
 // Breadcrumbs
 //
 
-void AddBreadcrumbItem(BreadcrumbItem** bi, LFFilter* f, int focus)
+void AddBreadcrumbItem(BreadcrumbItem** bi, LFFilter* f, INT focus)
 {
 	BreadcrumbItem* add = new BreadcrumbItem;
 	add->next = *bi;
@@ -18,7 +18,7 @@ void AddBreadcrumbItem(BreadcrumbItem** bi, LFFilter* f, int focus)
 	*bi = add;
 }
 
-void ConsumeBreadcrumbItem(BreadcrumbItem** bi, LFFilter** f, int* focus)
+void ConsumeBreadcrumbItem(BreadcrumbItem** bi, LFFilter** f, INT* focus)
 {
 	*f = NULL;
 	*focus = -1;
@@ -68,7 +68,7 @@ void CHistoryWnd::AddFilterItem(LFFilter* f, BOOL append, BOOL focus)
 	lvi.iItem = append ? m_wndList.GetItemCount() : 0;
 	lvi.pszText = f->Name;
 	lvi.iImage = f->Result.FilterType;
-	int idx = m_wndList.InsertItem(&lvi);
+	INT idx = m_wndList.InsertItem(&lvi);
 
 	TCHAR dateStr[256];
 	GetDateFormat(LOCALE_USER_DEFAULT, DATE_SHORTDATE, &f->Result.Time, NULL, dateStr, sizeof(dateStr)/sizeof(TCHAR));
@@ -86,7 +86,7 @@ void CHistoryWnd::AddFilterItem(LFFilter* f, BOOL append, BOOL focus)
 	if (f->Result.FileCount)
 	{
 		ENSURE(fmt.LoadStringW(f->Result.FileCount==1 ? IDS_FILES_SINGULAR : IDS_FILES_PLURAL));
-		wchar_t SizeBuf[256];
+		WCHAR SizeBuf[256];
 		LFINT64ToString(f->Result.FileSize, SizeBuf, 256);
 		CString fStr;
 		fStr.Format(fmt, f->Result.FileCount, SizeBuf);
@@ -140,7 +140,7 @@ BEGIN_MESSAGE_MAP(CHistoryWnd, CDockablePane)
 	ON_NOTIFY(NM_DBLCLK, ID_HISTORYLIST, OnNotifyGotoHistory)
 END_MESSAGE_MAP()
 
-int CHistoryWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
+INT CHistoryWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if (CDockablePane::OnCreate(lpCreateStruct)==-1)
 		return -1;
@@ -182,14 +182,14 @@ int CHistoryWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	return 0;
 }
 
-void CHistoryWnd::OnSize(UINT nType, int cx, int cy)
+void CHistoryWnd::OnSize(UINT nType, INT cx, INT cy)
 {
 	CDockablePane::OnSize(nType, cx, cy);
 
 	CRect rectClient;
 	GetClientRect(rectClient);
 
-	int heightTlb = m_wndToolBar.CalcFixedLayout(FALSE, TRUE).cy;
+	INT heightTlb = m_wndToolBar.CalcFixedLayout(FALSE, TRUE).cy;
 
 	m_wndToolBar.SetWindowPos(NULL, rectClient.left, rectClient.top, rectClient.Width(), heightTlb, SWP_NOACTIVATE | SWP_NOZORDER);
 	m_wndList.SetWindowPos(NULL, rectClient.left, rectClient.top+heightTlb, rectClient.Width(), rectClient.Height()-heightTlb, SWP_NOACTIVATE | SWP_NOZORDER);
@@ -212,7 +212,7 @@ void CHistoryWnd::OnPaint()
 void CHistoryWnd::OnGotoHistory()
 {
 	CFrameWnd* w = GetParentFrame();
-	int idx = m_wndList.GetNextItem(-1, LVNI_FOCUSED);
+	INT idx = m_wndList.GetNextItem(-1, LVNI_FOCUSED);
 
 	if ((idx>-1) && (m_CurrentItem>-1) && (w))
 		if (idx==m_CurrentItem)

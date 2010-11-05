@@ -18,9 +18,9 @@ public:
 
 protected:
 	CMaintenanceReportList m_Lists[2];
-	int m_Page;
+	INT m_Page;
 
-	void SetPage(int page);
+	void SetPage(INT page);
 
 	afx_msg BOOL OnInitDialog();
 	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);

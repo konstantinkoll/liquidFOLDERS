@@ -19,7 +19,7 @@ CAbstractListView::~CAbstractListView()
 {
 }
 
-void CAbstractListView::SelectItem(int n, BOOL select, BOOL InternalCall)
+void CAbstractListView::SelectItem(INT n, BOOL select, BOOL InternalCall)
 {
 	if (InternalCall)
 		m_FileList.ItemChanged = 1;
@@ -30,27 +30,27 @@ void CAbstractListView::SelectItem(int n, BOOL select, BOOL InternalCall)
 		m_FileList.ItemChanged &= 2;
 }
 
-int CAbstractListView::GetFocusItem()
+INT CAbstractListView::GetFocusItem()
 {
 	return m_FileList.GetNextItem(-1, LVNI_FOCUSED);
 }
 
-int CAbstractListView::GetSelectedItem()
+INT CAbstractListView::GetSelectedItem()
 {
 	return m_FileList.GetNextItem(-1, LVNI_FOCUSED | LVNI_SELECTED);
 }
 
-int CAbstractListView::GetNextSelectedItem(int n)
+INT CAbstractListView::GetNextSelectedItem(INT n)
 {
 	return m_FileList.GetNextItem(n, LVNI_SELECTED);
 }
 
-void CAbstractListView::EditLabel(int n)
+void CAbstractListView::EditLabel(INT n)
 {
 	m_FileList.EditLabel(n);
 }
 
-BOOL CAbstractListView::IsSelected(int n)
+BOOL CAbstractListView::IsSelected(INT n)
 {
 	return m_FileList.GetItemState(n, LVIS_SELECTED);
 }

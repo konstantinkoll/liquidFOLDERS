@@ -27,7 +27,7 @@ CAttributeProperty::CAttributeProperty(LFVariantData* _pData, CAttributeProperty
 	m_UseDependencies = 0;
 	MaxLength = p_App->m_Attributes[_pData->Attr]->cCharacters;
 
-	wchar_t tmpStr[256];
+	WCHAR tmpStr[256];
 	LFVariantDataToString(_pData, tmpStr, 256);
 	SetValue(tmpStr, FALSE);
 }
@@ -184,7 +184,7 @@ void CAttributeProperty::OnDrawValue(CDC* pDC, CRect rect)
 // CAttributePropertyTags
 //
 
-CAttributePropertyTags::CAttributePropertyTags(LFVariantData* _pData, char* _StoreID)
+CAttributePropertyTags::CAttributePropertyTags(LFVariantData* _pData, CHAR* _StoreID)
 	: CAttributeProperty(_pData)
 {
 	SetStore(_StoreID);
@@ -221,7 +221,7 @@ BOOL CAttributePropertyTags::OnUpdateValue()
 	if ((strText.IsEmpty()) && (p_Data->Attr==LFAttrFileName))
 		return FALSE;
 
-	wchar_t tmpStr[256];
+	WCHAR tmpStr[256];
 	wcscpy_s(tmpStr, 256, strText);
 	LFSanitizeUnicodeArray(tmpStr, 256);
 	strText = tmpStr;
@@ -239,7 +239,7 @@ BOOL CAttributePropertyTags::OnUpdateValue()
 	return TRUE;
 }
 
-void CAttributePropertyTags::SetStore(char* _StoreID)
+void CAttributePropertyTags::SetStore(CHAR* _StoreID)
 {
 	StoreIDValid = (_StoreID!=NULL);
 	if (_StoreID)
@@ -272,7 +272,7 @@ void CAttributePropertyIATA::OnClickButton(CPoint /*point*/)
 				ASSERT((*p_DependentProp1)->p_Data->Attr==LFAttrLocationName);
 				size_t sz = strlen(dlg.m_Airport->Name)+1;
 				(*p_DependentProp1)->p_Data->IsNull = false;
-				MultiByteToWideChar(CP_ACP, 0, dlg.m_Airport->Name, (int)sz, (*p_DependentProp1)->p_Data->UnicodeString, (int)sz);
+				MultiByteToWideChar(CP_ACP, 0, dlg.m_Airport->Name, (INT)sz, (*p_DependentProp1)->p_Data->UnicodeString, (INT)sz);
 				(*p_DependentProp1)->SetDependentValue((*p_DependentProp1)->p_Data->UnicodeString);
 				m_UseDependencies |= 1;
 			}
@@ -281,7 +281,7 @@ void CAttributePropertyIATA::OnClickButton(CPoint /*point*/)
 				ASSERT((*p_DependentProp2)->p_Data->Attr==LFAttrLocationGPS);
 				(*p_DependentProp2)->p_Data->IsNull = false;
 				(*p_DependentProp2)->p_Data->GeoCoordinates = dlg.m_Airport->Location;
-				wchar_t tmpStr[256];
+				WCHAR tmpStr[256];
 				LFGeoCoordinatesToString(dlg.m_Airport->Location, tmpStr, 256, true);
 				(*p_DependentProp2)->SetDependentValue(tmpStr);
 				m_UseDependencies |= 2;
@@ -349,7 +349,7 @@ void CAttributePropertyGPS::OnClickButton(CPoint /*point*/)
 		p_Data->GeoCoordinates = dlg.m_Location;
 		p_Data->IsNull = false;
 
-		wchar_t tmpStr[256];
+		WCHAR tmpStr[256];
 		LFGeoCoordinatesToString(p_Data->GeoCoordinates, &tmpStr[0], 256, true);
 		SetValue(tmpStr, FALSE);
 	}
@@ -369,17 +369,17 @@ BOOL CAttributePropertyRating::OnEdit(LPPOINT lptClick)
 	if (lptClick)
 	{
 		Multiple = FALSE;
-		int pos = lptClick->x-m_pWndList->GetLeftColumnWidth();
+		INT pos = lptClick->x-m_pWndList->GetLeftColumnWidth();
 
-		int rating = 2*(pos/18)+(pos%18>=7);
+		INT rating = 2*(pos/18)+(pos%18>=7);
 		if (rating<0)
 			rating = 0;
 		if (rating>LFMaxRating)
 			rating = LFMaxRating;
 
-		if (p_Data->Rating!=(unsigned char)rating)
+		if (p_Data->Rating!=(UCHAR)rating)
 		{
-			p_Data->Rating = (unsigned char)rating;
+			p_Data->Rating = (UCHAR)rating;
 			p_Data->IsNull = false;
 			Redraw();
 			m_pWndList->OnPropertyChanged(this);
@@ -397,7 +397,7 @@ BOOL CAttributePropertyRating::OnSetCursor() const
 BOOL CAttributePropertyRating::PushChar(UINT nChar)
 {
 	Multiple = FALSE;
-	int rating = p_Data->Rating;
+	INT rating = p_Data->Rating;
 
 	// + -
 	switch (nChar)
@@ -423,9 +423,9 @@ BOOL CAttributePropertyRating::PushChar(UINT nChar)
 	if (rating>LFMaxRating)
 		rating = LFMaxRating;
 
-	if (p_Data->Rating!=(unsigned char)rating)
+	if (p_Data->Rating!=(UCHAR)rating)
 	{
-		p_Data->Rating = (unsigned char)rating;
+		p_Data->Rating = (UCHAR)rating;
 		p_Data->IsNull = false;
 		Redraw();
 		m_pWndList->OnPropertyChanged(this);
@@ -444,8 +444,8 @@ void CAttributePropertyRating::OnDrawValue(CDC* pDC, CRect rect)
 	UCHAR level = Multiple ? 0 : p_Data->Rating;
 	HBITMAP hbmOld = (HBITMAP)SelectObject(hdcMem, p_Data->Attr==LFAttrRating ? p_App->m_RatingBitmaps[level] : p_App->m_PriorityBitmaps[level]);
 
-	int w = min(rect.Width()-6, RatingBitmapWidth);
-	int h = min(rect.Height(), RatingBitmapHeight);
+	INT w = min(rect.Width()-6, RatingBitmapWidth);
+	INT h = min(rect.Height(), RatingBitmapHeight);
 	BLENDFUNCTION LF = { AC_SRC_OVER, 0, 0xFF, AC_SRC_ALPHA };
 	AlphaBlend(pDC->m_hDC, rect.left+6, rect.top+(rect.Height()-h)/2, w, h, hdcMem, 0, 0, w, h, LF);
 
@@ -547,7 +547,7 @@ BOOL CAttributePropertyTime::OnEdit(LPPOINT lptClick)
 			SystemTimeToTzSpecificLocalTime(NULL, &stUTC, &stLocal);
 		}
 
-		int pos = lptClick->x-m_pWndList->GetLeftColumnWidth();
+		INT pos = lptClick->x-m_pWndList->GetLeftColumnWidth();
 
 		if ((pos>=LeftDate) && (pos<=RightDate))
 		{
@@ -604,7 +604,7 @@ BOOL CAttributePropertyTime::OnUpdateValue()
 	if ((ft.dwHighDateTime!=p_Data->Time.dwHighDateTime) || (ft.dwLowDateTime!=p_Data->Time.dwLowDateTime))
 	{
 		p_Data->Time = ft;
-		wchar_t tmpStr[256];
+		WCHAR tmpStr[256];
 		LFTimeToString(ft, tmpStr, 256);
 		m_varValue = tmpStr;
 		Redraw();
@@ -631,8 +631,8 @@ void CAttributePropertyTime::OnDrawValue(CDC* pDC, CRect rect)
 	COLORREF oldColor = (COLORREF)-1;
 	rect.DeflateRect(AFX_TEXT_MARGIN, 0);
 
-	wchar_t tmpStr1[256];
-	wchar_t tmpStr2[256];
+	WCHAR tmpStr1[256];
+	WCHAR tmpStr2[256];
 
 	if (((p_Data->Time.dwHighDateTime) || (p_Data->Time.dwLowDateTime)) && (!Multiple))
 	{

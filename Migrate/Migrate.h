@@ -15,7 +15,7 @@ public:
 	CMigrateApp();
 
 	virtual BOOL InitInstance();
-	virtual int ExitInstance();
+	virtual INT ExitInstance();
 
 	BOOL m_ExpandAll;
 	BOOL m_DeleteImported;

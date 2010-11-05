@@ -36,7 +36,7 @@ CStoreManagerApp::CStoreManagerApp()
 	if (RegOpenKeyExA(HKEY_CURRENT_USER, "SOFTWARE\\GOOGLE\\GOOGLE EARTH PLUS", 0, KEY_ALL_ACCESS, &hKey)==ERROR_SUCCESS)
 	{
 		DWORD dwType = REG_SZ;
-		char lszValue[255];
+		CHAR lszValue[255];
 		DWORD dwSize = 255;
 
 		if (RegQueryValueExA(hKey, "InstallLocation", NULL, &dwType, (LPBYTE)&lszValue, &dwSize)==ERROR_SUCCESS)
@@ -111,16 +111,16 @@ BOOL CStoreManagerApp::InitInstance()
 	SetRegistryBase(oldBase);
 	SetApplicationLook(m_nAppLook);
 
-	for (int a=0; a<LFContextCount; a++)
+	for (INT a=0; a<LFContextCount; a++)
 		LoadViewOptions(a);
 
 	OnAppNewView();
 	return TRUE;
 }
 
-int CStoreManagerApp::ExitInstance()
+INT CStoreManagerApp::ExitInstance()
 {
-	for (int a=0; a<LFContextCount; a++)
+	for (INT a=0; a<LFContextCount; a++)
 	{
 		SaveViewOptions(a);
 		delete m_AllowedViews[a];
@@ -315,7 +315,7 @@ void CStoreManagerApp::OnAppExit()
 	LFApplication::OnAppExit();
 }
 
-void CStoreManagerApp::OpenChildViews(int context, BOOL UpdateViewOptions)
+void CStoreManagerApp::OpenChildViews(INT context, BOOL UpdateViewOptions)
 {
 	std::list<CMainFrame*>::iterator ppFrame = m_listMainFrames.begin();
 	while (ppFrame!=m_listMainFrames.end())
@@ -333,7 +333,7 @@ void CStoreManagerApp::OpenChildViews(int context, BOOL UpdateViewOptions)
 	}
 }
 
-void CStoreManagerApp::UpdateViewOptions(int context)
+void CStoreManagerApp::UpdateViewOptions(INT context)
 {
 	std::list<CMainFrame*>::iterator ppFrame = m_listMainFrames.begin();
 	while (ppFrame!=m_listMainFrames.end())
@@ -344,7 +344,7 @@ void CStoreManagerApp::UpdateViewOptions(int context)
 	}
 }
 
-void CStoreManagerApp::UpdateSortOptions(int context)
+void CStoreManagerApp::UpdateSortOptions(INT context)
 {
 	std::list<CMainFrame*>::iterator ppFrame = m_listMainFrames.begin();
 	while (ppFrame!=m_listMainFrames.end())
@@ -355,7 +355,7 @@ void CStoreManagerApp::UpdateSortOptions(int context)
 	}
 }
 
-void CStoreManagerApp::Reload(int context)
+void CStoreManagerApp::Reload(INT context)
 {
 	std::list<CMainFrame*>::iterator ppFrame = m_listMainFrames.begin();
 	while (ppFrame!=m_listMainFrames.end())
@@ -380,7 +380,7 @@ void CStoreManagerApp::GetBinary(LPCTSTR lpszEntry, void* pData, UINT size)
 	}
 }
 
-void CStoreManagerApp::LoadViewOptions(int context)
+void CStoreManagerApp::LoadViewOptions(INT context)
 {
 	CString oldBase = GetRegistryBase();
 	CString base;
@@ -449,7 +449,7 @@ void CStoreManagerApp::LoadViewOptions(int context)
 	SetRegistryBase(oldBase);
 }
 
-void CStoreManagerApp::SaveViewOptions(int context)
+void CStoreManagerApp::SaveViewOptions(INT context)
 {
 	CString oldBase = GetRegistryBase();
 	CString base;
@@ -482,9 +482,9 @@ void CStoreManagerApp::SaveViewOptions(int context)
 	SetRegistryBase(oldBase);
 }
 
-void CStoreManagerApp::ToggleAttribute(LFViewParameters* vp, UINT attr, int ColumnCount)
+void CStoreManagerApp::ToggleAttribute(LFViewParameters* vp, UINT attr, INT ColumnCount)
 {
-	int colId = 0;
+	INT colId = 0;
 
 	if (ColumnCount==-1)
 	{
@@ -501,24 +501,24 @@ void CStoreManagerApp::ToggleAttribute(LFViewParameters* vp, UINT attr, int Colu
 	vp->ColumnWidth[attr] = (vp->ColumnWidth[attr] ? 0 : theApp.m_Attributes[attr]->RecommendedWidth);
 	if (vp->ColumnWidth[attr])
 	{
-		for (int a=0; a<ColumnCount; a++)
+		for (INT a=0; a<ColumnCount; a++)
 			if (vp->ColumnOrder[a]>=colId)
 				vp->ColumnOrder[a]++;
 		vp->ColumnOrder[ColumnCount] = colId;
 	}
 	else
 	{
-		int col = 0;
-		for (int a=0; a<ColumnCount; a++)
+		INT col = 0;
+		for (INT a=0; a<ColumnCount; a++)
 			if (vp->ColumnOrder[a]==colId)
 			{
 				col = a;
 				break;
 			}
 
-		for (int a=col; a<ColumnCount-1; a++)
+		for (INT a=col; a<ColumnCount-1; a++)
 			vp->ColumnOrder[a] = vp->ColumnOrder[a+1];
-		for (int a=0; a<ColumnCount-1; a++)
+		for (INT a=0; a<ColumnCount-1; a++)
 			if (vp->ColumnOrder[a]>colId)
 				vp->ColumnOrder[a]--;
 	}
@@ -603,7 +603,7 @@ void CStoreManagerApp::GetRibbonColors(COLORREF* back, COLORREF* text, COLORREF*
 		}
 }
 
-CMFCRibbonButton* CStoreManagerApp::CommandButton(UINT nID, int nSmallImageIndex, int nLargeImageIndex, BOOL bAlwaysShowDescription, BOOL bInsertSpace)
+CMFCRibbonButton* CStoreManagerApp::CommandButton(UINT nID, INT nSmallImageIndex, INT nLargeImageIndex, BOOL bAlwaysShowDescription, BOOL bInsertSpace)
 {
 	return new CMFCRibbonButton(nID, GetCommandName(nID, bInsertSpace), nSmallImageIndex, nLargeImageIndex, bAlwaysShowDescription);
 }

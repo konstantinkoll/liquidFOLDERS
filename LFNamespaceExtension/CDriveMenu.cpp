@@ -67,7 +67,7 @@ BOOL CDriveMenu::OnInitialize(LPDATAOBJECT dataObject)
 		if (hDrop)
 		{
 			UINT uNumFiles = DragQueryFile(hDrop, (UINT)-1, NULL, 0);
-			wchar_t szNextFile[MAX_PATH];
+			WCHAR szNextFile[MAX_PATH];
 
 			for (UINT uFile=0; uFile<uNumFiles; uFile++)
 				if (DragQueryFile(hDrop, uFile, szNextFile, MAX_PATH))
@@ -139,8 +139,8 @@ void CDriveMenu::OnGetMenuItems(CGetMenuitemsEventArgs& e)
 		HMODULE hModCore = LoadLibrary(_T("LFCORE.DLL"));
 		if (hModCore)
 		{
-			int cx;
-			int cy;
+			INT cx;
+			INT cy;
 			theApp.GetIconSize(cx, cy);
 
 			HICON hIcon = (HICON)LoadImage(hModCore, MAKEINTRESOURCE((Drive==L'\1') ? IDI_STORE_Internal : IDI_STORE_Bag), IMAGE_ICON, cx, cy, LR_DEFAULTCOLOR);

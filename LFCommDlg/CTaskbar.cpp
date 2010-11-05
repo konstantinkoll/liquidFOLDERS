@@ -51,13 +51,13 @@ UINT CTaskbar::GetPreferredHeight()
 	return h;
 }
 
-CTaskButton* CTaskbar::AddButton(UINT nID, int IconID, BOOL bForceIcon, BOOL bAddRight)
+CTaskButton* CTaskbar::AddButton(UINT nID, INT IconID, BOOL bForceIcon, BOOL bAddRight)
 {
 	CString Caption;
 	CString Hint;
 	ENSURE(Caption.LoadString(nID));
 
-	int pos = Caption.Find(L'\n');
+	INT pos = Caption.Find(L'\n');
 	if (pos!=-1)
 	{
 		Hint = Caption.Left(pos);
@@ -92,16 +92,16 @@ void CTaskbar::AdjustLayout()
 	CRect rect;
 	GetClientRect(rect);
 
-	int Row = BORDER-1;
-	int h = rect.Height()-2*BORDER+(IsCtrlThemed() ? 1 : 2);
+	INT Row = BORDER-1;
+	INT h = rect.Height()-2*BORDER+(IsCtrlThemed() ? 1 : 2);
 
-	int RPos = rect.right+2*BORDER-BORDERLEFT;
+	INT RPos = rect.right+2*BORDER-BORDERLEFT;
 	std::list<CTaskButton*>::reverse_iterator ppBtnR = ButtonsRight.rbegin();
 	while (ppBtnR!=ButtonsRight.rend())
 	{
 		if ((*ppBtnR)->IsWindowEnabled())
 		{
-			int l = (*ppBtnR)->GetPreferredWidth();
+			INT l = (*ppBtnR)->GetPreferredWidth();
 			RPos -= l+BORDER;
 			if (RPos>=BORDERLEFT)
 			{
@@ -122,13 +122,13 @@ void CTaskbar::AdjustLayout()
 		ppBtnR++;
 	}
 
-	int LPos = rect.left+BORDERLEFT-BORDER;
+	INT LPos = rect.left+BORDERLEFT-BORDER;
 	std::list<CTaskButton*>::iterator ppBtn = ButtonsLeft.begin();
 	while (ppBtn!=ButtonsLeft.end())
 	{
 		if ((*ppBtn)->IsWindowEnabled())
 		{
-			int l = (*ppBtn)->GetPreferredWidth();
+			INT l = (*ppBtn)->GetPreferredWidth();
 			if (LPos+l+BORDERLEFT-BORDER<RPos)
 			{
 				(*ppBtn)->SetWindowPos(NULL, LPos, Row, l, h, SWP_NOZORDER | SWP_NOACTIVATE);
@@ -313,7 +313,7 @@ HBRUSH CTaskbar::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 	return hbr;
 }
 
-void CTaskbar::OnSize(UINT nType, int cx, int cy)
+void CTaskbar::OnSize(UINT nType, INT cx, INT cy)
 {
 	CWnd::OnSize(nType, cx, cy);
 	AdjustLayout();
@@ -372,7 +372,7 @@ void CTaskbar::OnContextMenu(CWnd* /*pWnd*/, CPoint pos)
 	{
 		if ((*ppBtn)->IsWindowEnabled())
 		{
-			wchar_t Text[256];
+			WCHAR Text[256];
 			(*ppBtn)->GetWindowText(Text, 256);
 			menu.AppendMenu(0, (*ppBtn)->GetDlgCtrlID(), Text);
 		}
@@ -387,7 +387,7 @@ void CTaskbar::OnContextMenu(CWnd* /*pWnd*/, CPoint pos)
 	{
 		if ((*ppBtn)->IsWindowEnabled())
 		{
-			wchar_t Text[256];
+			WCHAR Text[256];
 			(*ppBtn)->GetWindowText(Text, 256);
 			menu.AppendMenu(0, (*ppBtn)->GetDlgCtrlID(), Text);
 		}

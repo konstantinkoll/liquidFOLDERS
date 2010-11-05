@@ -83,7 +83,7 @@ BEGIN_MESSAGE_MAP(CExplorerHeader, CWnd)
 	ON_WM_PAINT()
 END_MESSAGE_MAP()
 
-int CExplorerHeader::OnCreate(LPCREATESTRUCT lpCreateStruct)
+INT CExplorerHeader::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if (CWnd::OnCreate(lpCreateStruct)==-1)
 		return -1;

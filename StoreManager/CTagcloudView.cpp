@@ -23,7 +23,7 @@ CTagcloudView::CTagcloudView()
 	hTheme = NULL;
 
 	CString face = theApp.GetDefaultFontFace();
-	for (int a=0; a<20; a++)
+	for (INT a=0; a<20; a++)
 		m_Fonts[a].CreateFont(-(a*2+10), 0, 0, 0, FW_NORMAL, 0, 0, 0, ANSI_CHARSET,
 			OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, a>=4 ? ANTIALIASED_QUALITY : CLEARTYPE_QUALITY,
 			DEFAULT_PITCH | FF_DONTCARE, face);
@@ -36,7 +36,7 @@ CTagcloudView::~CTagcloudView()
 		delete[] m_Tags;
 }
 
-void CTagcloudView::Create(CWnd* _pParentWnd, LFSearchResult* _result, int _FocusItem)
+void CTagcloudView::Create(CWnd* _pParentWnd, LFSearchResult* _result, INT _FocusItem)
 {
 	CString className = AfxRegisterWndClass(CS_DBLCLKS);
 
@@ -86,8 +86,8 @@ void CTagcloudView::SetSearchResult(LFSearchResult* _result)
 			LFSortSearchResult(_result, m_ViewParameters.TagcloudCanonical ? m_ViewParameters.SortBy : LFAttrFileCount, m_ViewParameters.TagcloudCanonical==FALSE);
 			m_Tags = new Tag[_result->m_ItemCount];
 
-			int minimum = -1;
-			int maximum = -1;
+			INT minimum = -1;
+			INT maximum = -1;
 
 			// Find items
 			for (UINT a=0; a<_result->m_ItemCount; a++)
@@ -108,7 +108,7 @@ void CTagcloudView::SetSearchResult(LFSearchResult* _result)
 			}
 
 			// Calculate display properties
-			int delta = maximum-minimum+1;
+			INT delta = maximum-minimum+1;
 			for (UINT a=0; a<_result->m_ItemCount; a++)
 				if (m_Tags[a].cnt)
 					if ((m_ViewParameters.TagcloudOmitRare) && (delta>1) && (m_Tags[a].cnt==minimum))
@@ -166,7 +166,7 @@ void CTagcloudView::SetSearchResult(LFSearchResult* _result)
 	Invalidate();
 }
 
-void CTagcloudView::SelectItem(int n, BOOL select, BOOL InternalCall)
+void CTagcloudView::SelectItem(INT n, BOOL select, BOOL InternalCall)
 {
 	if (m_Tags)
 	{
@@ -181,7 +181,7 @@ void CTagcloudView::SelectItem(int n, BOOL select, BOOL InternalCall)
 	}
 }
 
-int CTagcloudView::GetSelectedItem()
+INT CTagcloudView::GetSelectedItem()
 {
 	if ((m_Tags) && (FocusItem!=-1))
 		if (m_Tags[FocusItem].selected)
@@ -190,7 +190,7 @@ int CTagcloudView::GetSelectedItem()
 	return -1;
 }
 
-int CTagcloudView::GetNextSelectedItem(int n)
+INT CTagcloudView::GetNextSelectedItem(INT n)
 {
 	if (m_Tags)
 	{
@@ -205,12 +205,12 @@ int CTagcloudView::GetNextSelectedItem(int n)
 	return -1;
 }
 
-BOOL CTagcloudView::IsSelected(int n)
+BOOL CTagcloudView::IsSelected(INT n)
 {
 	return (m_Tags && (n>=0)? m_Tags[n].selected : FALSE);
 }
 
-int CTagcloudView::ItemAtPosition(CPoint point)
+INT CTagcloudView::ItemAtPosition(CPoint point)
 {
 	if ((m_Tags) && (result))
 		for (UINT a=0; a<result->m_ItemCount; a++)
@@ -224,7 +224,7 @@ int CTagcloudView::ItemAtPosition(CPoint point)
 	return -1;
 }
 
-void CTagcloudView::InvalidateItem(int n)
+void CTagcloudView::InvalidateItem(INT n)
 {
 	if ((m_Tags) && (result) && (n!=-1))
 		InvalidateRect(&m_Tags[n].rect, FALSE);
@@ -237,7 +237,7 @@ CMenu* CTagcloudView::GetContextMenu()
 	return menu;
 }
 
-CFont* CTagcloudView::GetFont(int idx)
+CFont* CTagcloudView::GetFont(INT idx)
 {
 	return &m_Fonts[(m_ViewParameters.TagcloudUseSize ? m_Tags[idx].fontsize : DefaultFontSize)];
 }
@@ -253,14 +253,14 @@ void CTagcloudView::AdjustLayout()
 		if (!rectClient.Width())
 			return;
 
-		int row = Gutter;
-		int col = 0;
-		int rowheight = 0;
-		int rowstart = 0;
+		INT row = Gutter;
+		INT col = 0;
+		INT rowheight = 0;
+		INT rowstart = 0;
 
 #define CenterRow(last) for (UINT b=rowstart; b<=last; b++) \
 	if (m_Tags[b].cnt) { \
-	int offs = (rowheight-(m_Tags[b].rect.bottom-m_Tags[b].rect.top))/2; m_Tags[b].rect.bottom += offs; m_Tags[b].rect.top += offs; \
+	INT offs = (rowheight-(m_Tags[b].rect.bottom-m_Tags[b].rect.top))/2; m_Tags[b].rect.bottom += offs; m_Tags[b].rect.top += offs; \
 	offs = (rectClient.Width()-col)/2; m_Tags[b].rect.left += offs; m_Tags[b].rect.right += offs; \
 	}
 
@@ -314,7 +314,7 @@ BEGIN_MESSAGE_MAP(CTagcloudView, CFileView)
 	ON_WM_SYSCOLORCHANGE()
 END_MESSAGE_MAP()
 
-int CTagcloudView::OnCreate(LPCREATESTRUCT lpCreateStruct)
+INT CTagcloudView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if (CFileView::OnCreate(lpCreateStruct)==-1)
 		return -1;
@@ -412,7 +412,7 @@ LRESULT CTagcloudView::OnThemeChanged()
 	return TRUE;
 }
 
-void CTagcloudView::OnSize(UINT nType, int cx, int cy)
+void CTagcloudView::OnSize(UINT nType, INT cx, INT cy)
 {
 	CFileView::OnSize(nType, cx, cy);
 
@@ -454,12 +454,12 @@ void CTagcloudView::OnPaint()
 
 				COLORREF color = m_ViewParameters.TagcloudUseColors ? m_Tags[a].color : text;
 
-				if ((m_Tags[a].selected) || (HoverItem==(int)a))
+				if ((m_Tags[a].selected) || (HoverItem==(INT)a))
 				{
 					if (hTheme)
 					{
-						const int StateIDs[4] = { LISS_NORMAL, LISS_HOT, GetFocus()!=this ? LISS_SELECTEDNOTFOCUS : LISS_SELECTED, LISS_HOTSELECTED };
-						UINT state = (m_Tags[a].selected ? 2 : 0) | (HoverItem==(int)a ? 1 : 0);
+						const INT StateIDs[4] = { LISS_NORMAL, LISS_HOT, GetFocus()!=this ? LISS_SELECTEDNOTFOCUS : LISS_SELECTED, LISS_HOTSELECTED };
+						UINT state = (m_Tags[a].selected ? 2 : 0) | (HoverItem==(INT)a ? 1 : 0);
 						theApp.zDrawThemeBackground(hTheme, dc.m_hDC, LVP_LISTITEM, StateIDs[state], rect, rect);
 					}
 					else
@@ -480,7 +480,7 @@ void CTagcloudView::OnPaint()
 
 				dc.DrawText(result->m_Items[a]->CoreAttributes.FileName, -1, rect, TextFormat | DT_CENTER | DT_VCENTER);
 
-				if (((int)a==FocusItem) && (GetFocus()==this) && ((!hTheme) || (!m_Tags[a].selected)))
+				if (((INT)a==FocusItem) && (GetFocus()==this) && ((!hTheme) || (!m_Tags[a].selected)))
 				{
 					if (hTheme)
 						rect.DeflateRect(1, 1);

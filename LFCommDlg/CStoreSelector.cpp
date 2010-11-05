@@ -29,7 +29,7 @@ BEGIN_MESSAGE_MAP(CStoreDropdownWindow, CDropdownWindow)
 	ON_BN_CLICKED(IDOK, OnCreateNewStore)
 END_MESSAGE_MAP()
 
-int CStoreDropdownWindow::OnCreate(LPCREATESTRUCT lpCreateStruct)
+INT CStoreDropdownWindow::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if (CDropdownWindow::OnCreate(lpCreateStruct)==-1)
 		return -1;
@@ -168,7 +168,7 @@ void CStoreSelector::SetItem(LFStoreDescriptor* s, BOOL Repaint, UINT NotifyCode
 	}
 }
 
-void CStoreSelector::SetItem(char* Key, BOOL Repaint)
+void CStoreSelector::SetItem(CHAR* Key, BOOL Repaint)
 {
 	if (Key)
 	{
@@ -185,7 +185,7 @@ void CStoreSelector::SetItem(char* Key, BOOL Repaint)
 	}
 }
 
-BOOL CStoreSelector::GetStoreID(char* StoreID)
+BOOL CStoreSelector::GetStoreID(CHAR* StoreID)
 {
 	if (m_IsEmpty)
 	{
@@ -199,7 +199,7 @@ BOOL CStoreSelector::GetStoreID(char* StoreID)
 
 void CStoreSelector::Update()
 {
-	char StoreID[LFKeySize];
+	CHAR StoreID[LFKeySize];
 	if (GetStoreID(StoreID))
 	{
 		LFStoreDescriptor* s = LFAllocStoreDescriptor();
@@ -219,8 +219,8 @@ void CStoreSelector::GetTooltipData(HICON& hIcon, CSize& size, CString& caption,
 {
 	hIcon = p_App->m_CoreImageListLarge.ExtractIcon(item->IconID-1);
 	
-	int cx = GetSystemMetrics(SM_CXICON);
-	int cy = GetSystemMetrics(SM_CYICON);
+	INT cx = GetSystemMetrics(SM_CXICON);
+	INT cy = GetSystemMetrics(SM_CYICON);
 	ImageList_GetIconSize(p_App->m_CoreImageListLarge, &cx, &cy);
 	size.SetSize(cx, cy);
 
@@ -239,10 +239,10 @@ void CStoreSelector::GetTooltipData(HICON& hIcon, CSize& size, CString& caption,
 		hint.Append(_T("\n"));
 
 	FILETIME lft;
-	wchar_t tmpBuf1[256];
+	WCHAR tmpBuf1[256];
 	FileTimeToLocalFileTime(&item->CoreAttributes.CreationTime, &lft);
 	LFTimeToString(lft, tmpBuf1, 256);
-	wchar_t tmpBuf2[256];
+	WCHAR tmpBuf2[256];
 	FileTimeToLocalFileTime(&item->CoreAttributes.FileTime, &lft);
 	LFTimeToString(lft, tmpBuf2, 256);
 

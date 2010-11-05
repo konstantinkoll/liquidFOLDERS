@@ -16,9 +16,9 @@ class CMainView : public CWnd
 public:
 	CMainView();
 
-	virtual BOOL OnCmdMsg(UINT nID, int nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo);
+	virtual BOOL OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo);
 
-	int Create(CWnd* _pParentWnd, UINT nID);
+	INT Create(CWnd* _pParentWnd, UINT nID);
 	void ClearRoot();
 	void SetRoot(LPITEMIDLIST pidl, BOOL Update, BOOL ExpandAll);
 	void PopulateMigrationList(CMigrationList* ml, LFItemDescriptor* it);
@@ -37,9 +37,9 @@ protected:
 
 	void AdjustLayout();
 
-	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
+	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
-	afx_msg void OnSize(UINT nType, int cx, int cy);
+	afx_msg void OnSize(UINT nType, INT cx, INT cy);
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
 	afx_msg void OnAutosizeAll();
 	afx_msg void OnSelectRoot();

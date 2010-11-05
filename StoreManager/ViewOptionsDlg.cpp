@@ -40,7 +40,7 @@ BOOL ViewOptionsDlg::OnInitDialog()
 	ChooseDetailsDlg::OnInitDialog();
 
 	// View-Liste füllen
-	CStringW tmpStr;
+	CString tmpStr;
 
 	CListCtrl* l = (CListCtrl*)GetDlgItem(IDC_VIEWMODES);
 
@@ -50,7 +50,7 @@ BOOL ViewOptionsDlg::OnInitDialog()
 	lvg.mask = LVGF_HEADER | LVGF_GROUPID | LVGF_ALIGN;
 	ENSURE(tmpStr.LoadString(IDS_VIEWGROUP1));
 	lvg.pszHeader = tmpStr.GetBuffer();
-	lvg.cchHeader = (int)wcslen(lvg.pszHeader);
+	lvg.cchHeader = (INT)wcslen(lvg.pszHeader);
 	lvg.uAlign = LVGA_HEADER_LEFT;
 	lvg.state = LVGS_COLLAPSIBLE;
 	if (theApp.OSVersion>=OS_Vista)
@@ -60,7 +60,7 @@ BOOL ViewOptionsDlg::OnInitDialog()
 	}
 	l->InsertGroup(lvg.iGroupId, &lvg);
 
-	for (int a=0; a<2; a++)
+	for (INT a=0; a<2; a++)
 	{
 		lvg.iGroupId = a;
 		ENSURE(tmpStr.LoadString(IDS_VIEWGROUP1+a));
@@ -110,7 +110,7 @@ void ViewOptionsDlg::OnViewModeChange(NMHDR* pNMHDR, LRESULT* pResult)
 	// Attribute
 	if (pNMListView->uNewState & LVIS_SELECTED)
 	{
-		int vm = (int)pNMListView->lParam;
+		INT vm = (INT)pNMListView->lParam;
 		BOOL enable = (vm==LFViewDetails) || (vm==LFViewCalendarDay);
 
 		m_ShowAttributes.EnableWindow(enable);

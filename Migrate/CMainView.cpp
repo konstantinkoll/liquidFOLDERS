@@ -17,7 +17,7 @@ CMainView::CMainView()
 	m_IsRootSet = FALSE;
 }
 
-int CMainView::Create(CWnd* _pParentWnd, UINT nID)
+INT CMainView::Create(CWnd* _pParentWnd, UINT nID)
 {
 	CString className = AfxRegisterWndClass(CS_DBLCLKS, LoadCursor(NULL, IDC_ARROW));
 
@@ -27,7 +27,7 @@ int CMainView::Create(CWnd* _pParentWnd, UINT nID)
 	return CWnd::CreateEx(WS_EX_CONTROLPARENT, className, _T(""), dwStyle, rect, _pParentWnd, nID);
 }
 
-BOOL CMainView::OnCmdMsg(UINT nID, int nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo)
+BOOL CMainView::OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo)
 {
 	if (CWnd::OnCmdMsg(nID, nCode, pExtra, pHandlerInfo))
 		return TRUE;
@@ -58,7 +58,7 @@ void CMainView::SetRoot(LPITEMIDLIST pidl, BOOL Update, BOOL ExpandAll)
 	CString caption;
 	CString hint;
 	SHFILEINFO sfi;
-	if (SUCCEEDED(SHGetFileInfo((wchar_t*)pidl, 0, &sfi, sizeof(SHFILEINFO), SHGFI_PIDL | SHGFI_DISPLAYNAME | SHGFI_TYPENAME)))
+	if (SUCCEEDED(SHGetFileInfo((WCHAR*)pidl, 0, &sfi, sizeof(SHFILEINFO), SHGFI_PIDL | SHGFI_DISPLAYNAME | SHGFI_TYPENAME)))
 	{
 		caption = sfi.szDisplayName;
 		hint = sfi.szTypeName;
@@ -120,7 +120,7 @@ BEGIN_MESSAGE_MAP(CMainView, CWnd)
 	ON_NOTIFY(TVN_SELCHANGED, 3, OnSelectionChanged)
 END_MESSAGE_MAP()
 
-int CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
+INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if (CWnd::OnCreate(lpCreateStruct)==-1)
 		return -1;
@@ -159,7 +159,7 @@ BOOL CMainView::OnEraseBkgnd(CDC* /*pDC*/)
 	return TRUE;
 }
 
-void CMainView::OnSize(UINT nType, int cx, int cy)
+void CMainView::OnSize(UINT nType, INT cx, INT cy)
 {
 	CWnd::OnSize(nType, cx, cy);
 	AdjustLayout();

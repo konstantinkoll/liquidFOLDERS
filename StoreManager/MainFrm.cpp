@@ -27,7 +27,7 @@
 class CTextureComboBox : public CMFCRibbonComboBox
 {
 public:
-	CTextureComboBox(UINT nID, int nWidth)
+	CTextureComboBox(UINT nID, INT nWidth)
 		: CMFCRibbonComboBox(nID, FALSE, nWidth)
 	{
 		AddItem(_T("Automatic"));
@@ -35,10 +35,10 @@ public:
 		AddItem(_T("2048×2048"));
 		AddItem(_T("4096×4096"));
 		AddItem(_T("8192×4096"));
-		SelectItem((int)theApp.m_nTextureSize);
+		SelectItem((INT)theApp.m_nTextureSize);
 	}
 
-	virtual void OnSelectItem(int nItem)
+	virtual void OnSelectItem(INT nItem)
 	{
 		theApp.m_nTextureSize = nItem;
 		theApp.UpdateViewOptions();
@@ -180,7 +180,7 @@ BOOL CMainFrame::PreCreateWindow(CREATESTRUCT& cs)
 	return TRUE;
 }
 
-int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
+INT CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if (CFrameWndEx::OnCreate(lpCreateStruct)==-1)
 		return -1;
@@ -332,7 +332,7 @@ void CMainFrame::OnDestroy()
 	theApp.KillFrame(this);
 }
 
-BOOL CMainFrame::OnCmdMsg(UINT nID, int nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo)
+BOOL CMainFrame::OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo)
 {
 	// Ansichtsfenster erhält ersten Eindruck vom Befehl
 	if (m_wndView)
@@ -390,7 +390,7 @@ void CMainFrame::OnUpdateAppCommands(CCmdUI* pCmdUI)
 		break;
 	case ID_APP_VIEW_CALENDAR_YEAR:
 		view = pCmdUI->m_nID-ID_APP_VIEW_LARGEICONS+LFViewLargeIcons;
-		pCmdUI->SetCheck((ActiveViewID==(int)view) || (ActiveViewID==(int)view+1));
+		pCmdUI->SetCheck((ActiveViewID==(INT)view) || (ActiveViewID==(INT)view+1));
 		pCmdUI->Enable(theApp.m_AllowedViews[ActiveContextID]->IsSet(view) || theApp.m_AllowedViews[ActiveContextID]->IsSet(view+1));
 		break;
 	case ID_APP_VIEW_LARGEICONS:
@@ -405,7 +405,7 @@ void CMainFrame::OnUpdateAppCommands(CCmdUI* pCmdUI)
 	case ID_APP_VIEW_TAGCLOUD:
 	case ID_APP_VIEW_TIMELINE:
 		view = pCmdUI->m_nID-ID_APP_VIEW_LARGEICONS+LFViewLargeIcons;
-		pCmdUI->SetCheck(ActiveViewID==(int)view);
+		pCmdUI->SetCheck(ActiveViewID==(INT)view);
 		pCmdUI->Enable(theApp.m_AllowedViews[ActiveContextID]->IsSet(view));
 	}
 }
@@ -423,7 +423,7 @@ void CMainFrame::OnSort(UINT nID)
 	}
 }
 
-BOOL CMainFrame::AttributeAllowedForSorting(int attr)
+BOOL CMainFrame::AttributeAllowedForSorting(INT attr)
 {
 	return theApp.m_Contexts[ActiveContextID]->AllowedAttributes->IsSet(attr);
 }
@@ -578,10 +578,10 @@ void CMainFrame::OnClipRemove()
 
 	if (RawFiles)
 	{
-		int idx = GetNextSelectedItem(-1);
+		INT idx = GetNextSelectedItem(-1);
 		while (idx!=-1)
 		{
-			int pos = CookedFiles->m_Items[idx]->Position;
+			INT pos = CookedFiles->m_Items[idx]->Position;
 			if (pos!=-1)
 				RawFiles->m_Items[pos]->DeleteFlag = true;
 
@@ -602,14 +602,14 @@ void CMainFrame::Remember(CMainFrame* clip)
 
 	if (CookedFiles)
 	{
-		int idx = GetNextSelectedItem(-1);
+		INT idx = GetNextSelectedItem(-1);
 		BOOL changes = FALSE;
 		while (idx!=-1)
 		{
 			LFItemDescriptor* i = CookedFiles->m_Items[idx];
 			if (((i->Type & LFTypeMask)==LFTypeVirtual) && (i->FirstAggregate!=-1) && (i->LastAggregate!=-1))
 			{
-				for (int a=i->FirstAggregate; a<=i->LastAggregate; a++)
+				for (INT a=i->FirstAggregate; a<=i->LastAggregate; a++)
 					if (clip->AddClipItem(RawFiles->m_Items[a]))
 						changes = TRUE;
 			}
@@ -664,7 +664,7 @@ void CMainFrame::OnUpdateClipCommands(CCmdUI* pCmdUI)
 
 void CMainFrame::OnItemsOpen()
 {
-	int idx = GetSelectedItem();
+	INT idx = GetSelectedItem();
 
 	if (idx!=-1)
 	{
@@ -685,8 +685,8 @@ void CMainFrame::OnItemsOpen()
 		{
 			if (!(i->Type & LFTypeNotMounted))
 			{
-				char Path[MAX_PATH];
-				unsigned int res;
+				CHAR Path[MAX_PATH];
+				UINT res;
 
 				switch (i->Type & LFTypeMask)
 				{
@@ -718,7 +718,7 @@ void CMainFrame::OnItemsOpen()
 
 void CMainFrame::OnItemsOpenWith()
 {
-	int idx = GetSelectedItem();
+	INT idx = GetSelectedItem();
 
 	if (idx!=-1)
 	{
@@ -726,11 +726,11 @@ void CMainFrame::OnItemsOpenWith()
 
 		if ((!i->NextFilter) && ((i->Type & (LFTypeNotMounted | LFTypeMask))==LFTypeFile))
 		{
-			char Path[MAX_PATH];
-			unsigned int res = LFGetFileLocation(i, Path, MAX_PATH);
+			CHAR Path[MAX_PATH];
+			UINT res = LFGetFileLocation(i, Path, MAX_PATH);
 			if (res==LFOk)
 			{
-				char Cmd[300];
+				CHAR Cmd[300];
 				strcpy_s(Cmd, 300, "shell32.dll,OpenAs_RunDLL ");
 				strcat_s(Cmd, 300, Path);
 				ShellExecuteA(GetSafeHwnd(), "open", "rundll32.exe", Cmd, Path, SW_SHOW);
@@ -747,7 +747,7 @@ void CMainFrame::OnItemsOpenWith()
 
 void CMainFrame::OnItemsDelete()
 {
-	int i;
+	INT i;
 
 	if (CookedFiles)
 		switch (CookedFiles->m_Context)
@@ -781,7 +781,7 @@ void CMainFrame::OnItemsRename()
 void CMainFrame::OnUpdateItemCommands(CCmdUI* pCmdUI)
 {
 	BOOL b = FALSE;
-	int i = GetSelectedItem();
+	INT i = GetSelectedItem();
 	LFItemDescriptor* f = (i==-1 ? NULL : CookedFiles->m_Items[i]);
 
 	switch (pCmdUI->m_nID)
@@ -885,9 +885,9 @@ void CMainFrame::OnStoreNewInternal()
 	LFFreeStoreDescriptor(s);
 }
 
-void CMainFrame::OnStoreNewDrive(char drv)
+void CMainFrame::OnStoreNewDrive(CHAR drv)
 {
-	int i = GetSelectedItem();
+	INT i = GetSelectedItem();
 
 	if (i!=-1)
 	{
@@ -903,7 +903,7 @@ void CMainFrame::OnStoreNewDrive(char drv)
 
 void CMainFrame::OnStoreNewDrive()
 {
-	int i = GetSelectedItem();
+	INT i = GetSelectedItem();
 
 	if (i!=-1)
 		OnStoreNewDrive(CookedFiles->m_Items[i]->CoreAttributes.FileID[0]);
@@ -911,7 +911,7 @@ void CMainFrame::OnStoreNewDrive()
 
 void CMainFrame::OnStoreMakeDefault()
 {
-	int i = GetSelectedItem();
+	INT i = GetSelectedItem();
 
 	if (i!=-1)
 		LFErrorBox(LFMakeDefaultStore(CookedFiles->m_Items[i]->StoreID), GetSafeHwnd());
@@ -919,7 +919,7 @@ void CMainFrame::OnStoreMakeDefault()
 
 void CMainFrame::OnStoreMakeHybrid()
 {
-	int i = GetSelectedItem();
+	INT i = GetSelectedItem();
 
 	if (i!=-1)
 		LFErrorBox(LFMakeHybridStore(CookedFiles->m_Items[i]->StoreID), GetSafeHwnd());
@@ -941,14 +941,14 @@ CString MakeHex(BYTE* x, UINT bCount)
 
 void CEscape(CString &s)
 {
-	for (int a = s.GetLength()-1; a>=0; a--)
+	for (INT a = s.GetLength()-1; a>=0; a--)
 		if ((s[a]=='\\') || (s[a]=='\"'))
 			s.Insert(a, '\\');
 }
 
 void CMainFrame::OnStoreProperties()
 {
-	int i = GetSelectedItem();
+	INT i = GetSelectedItem();
 
 	if (i!=-1)
 	{
@@ -959,7 +959,7 @@ void CMainFrame::OnStoreProperties()
 
 void CMainFrame::OnStoreImportFolder()
 {
-	int i = GetSelectedItem();
+	INT i = GetSelectedItem();
 
 	if (i!=-1)
 		LFImportFolder(CookedFiles->m_Items[i]->StoreID, this);
@@ -1062,7 +1062,7 @@ void CMainFrame::OnUpdateStoreCommands(CCmdUI* pCmdUI)
 	if (CookedFiles)
 		if (CookedFiles->m_Context==LFContextStores)
 		{
-			int i = GetSelectedItem();
+			INT i = GetSelectedItem();
 			LFItemDescriptor* f = (i==-1 ? NULL : CookedFiles->m_Items[i]);
 
 			switch (pCmdUI->m_nID)
@@ -1117,7 +1117,7 @@ void CMainFrame::UpdateViewOptions()
 		{
 			CMFCRibbonBaseElement* cbx = m_wndRibbonBar.FindByID(ID_GLOBE_TEXTURESIZE, FALSE, TRUE);
 			if (cbx)
-				((CTextureComboBox*)cbx)->SelectItem((int)theApp.m_nTextureSize);
+				((CTextureComboBox*)cbx)->SelectItem((INT)theApp.m_nTextureSize);
 		}
 
 		m_wndView->OnUpdateViewOptions();
@@ -1129,7 +1129,7 @@ void CMainFrame::UpdateSortOptions()
 	CookFiles(ActiveContextID);
 }
 
-void CMainFrame::UpdateSearchResult(BOOL SetEmpty, int FocusItem)
+void CMainFrame::UpdateSearchResult(BOOL SetEmpty, INT FocusItem)
 {
 	if ((!SetEmpty) && (CookedFiles))
 	{
@@ -1144,7 +1144,7 @@ void CMainFrame::UpdateSearchResult(BOOL SetEmpty, int FocusItem)
 		// - Wenn ein anderer Kontext mit ggf. anderen Views gewünscht wird
 		// - Wenn im Kontext die Ansicht auf "automatisch" steht
 		// - Wenn sich für die Liste das Kategorien-Flag ändert (wg. virtual mode)
-		BOOL change = (ActiveContextID!=CookedFiles->m_ContextView) || (ActiveViewID!=(int)SelectViewMode(ActiveViewParameters->Mode));
+		BOOL change = (ActiveContextID!=CookedFiles->m_ContextView) || (ActiveViewID!=(INT)SelectViewMode(ActiveViewParameters->Mode));
 		BOOL force = FALSE;
 		if ((!change) && (m_wndView) && (ActiveViewID>=LFViewLargeIcons) && (ActiveViewID<=LFViewPreview))
 		{
@@ -1178,17 +1178,17 @@ void CMainFrame::OnChangeChildView(UINT nID)
 	theApp.OpenChildViews(ActiveContextID);
 }
 
-int CMainFrame::GetFocusItem()
+INT CMainFrame::GetFocusItem()
 {
 	return (m_wndView ? m_wndView->GetFocusItem() : -1);
 }
 
-int CMainFrame::GetSelectedItem()
+INT CMainFrame::GetSelectedItem()
 {
 	return (m_wndView ? m_wndView->GetSelectedItem() : -1);
 }
 
-int CMainFrame::GetNextSelectedItem(int n)
+INT CMainFrame::GetNextSelectedItem(INT n)
 {
 	return (m_wndView ? m_wndView->GetNextSelectedItem(n) : -1);
 }
@@ -1196,7 +1196,7 @@ int CMainFrame::GetNextSelectedItem(int n)
 void CMainFrame::OnUpdateSelection()
 {
 	// Focus
-	int i = GetFocusItem();
+	INT i = GetFocusItem();
 
 	if (m_sbHint)
 		if (i==-1)
@@ -1222,7 +1222,7 @@ void CMainFrame::OnUpdateSelection()
 	i = GetNextSelectedItem(-1);
 	FilesSelected = FALSE;
 	UINT Count = 0;
-	__int64 Size = 0;
+	INT64 Size = 0;
 
 	while (i>=0)
 	{
@@ -1232,7 +1232,7 @@ void CMainFrame::OnUpdateSelection()
 		FilesSelected |= ((item->Type & LFTypeMask)==LFTypeFile) ||
 						(((item->Type & LFTypeMask)==LFTypeVirtual) && (item->FirstAggregate!=-1) && (item->LastAggregate!=-1));
 		Count++;
-		Size += *(__int64*)item->AttributeValues[LFAttrFileSize];
+		Size += *(INT64*)item->AttributeValues[LFAttrFileSize];
 		i = GetNextSelectedItem(i);
 	}
 
@@ -1241,7 +1241,7 @@ void CMainFrame::OnUpdateSelection()
 	if (m_sbItemCount)
 	{
 		CString maskStr;
-		wchar_t sizeStr[256];
+		WCHAR sizeStr[256];
 		CString tmpStr;
 		if (Count)
 		{
@@ -1277,7 +1277,7 @@ void CMainFrame::OnUpdateFileCount()
 			CString maskStr;
 			ENSURE(maskStr.LoadString(CookedFiles->m_FileCount==1 ? IDS_FILES_SINGULAR : IDS_FILES_PLURAL));
 			
-			wchar_t sizeStr[256];
+			WCHAR sizeStr[256];
 			StrFormatByteSizeW(CookedFiles->m_FileSize, sizeStr, 256);
 
 			tmpStr.Format(maskStr, CookedFiles->m_FileCount, sizeStr);
@@ -1326,7 +1326,7 @@ BOOL CMainFrame::RenameSingleItem(UINT n, CString Name)
 	return result;
 }
 
-void CMainFrame::AddTransactionItem(LFTransactionList* tl, LFItemDescriptor* i, unsigned int UserData)
+void CMainFrame::AddTransactionItem(LFTransactionList* tl, LFItemDescriptor* i, UINT UserData)
 {
 	switch (i->Type & LFTypeMask)
 	{
@@ -1336,7 +1336,7 @@ void CMainFrame::AddTransactionItem(LFTransactionList* tl, LFItemDescriptor* i, 
 		break;
 	case LFTypeVirtual:
 		if ((i->FirstAggregate!=-1) && (i->LastAggregate!=-1))
-			for (int a=i->FirstAggregate; a<=i->LastAggregate; a++)
+			for (INT a=i->FirstAggregate; a<=i->LastAggregate; a++)
 				LFAddItemDescriptor(tl, RawFiles->m_Items[a], UserData);
 		break;
 	}
@@ -1352,12 +1352,12 @@ LFTransactionList* CMainFrame::BuildTransactionList(BOOL All)
 
 		if (All)
 		{
-			for (unsigned int a=0; a<CookedFiles->m_ItemCount; a++)
+			for (UINT a=0; a<CookedFiles->m_ItemCount; a++)
 				AddTransactionItem(tl, CookedFiles->m_Items[a], a);
 		}
 		else
 		{
-			int idx = GetNextSelectedItem(-1);
+			INT idx = GetNextSelectedItem(-1);
 			while (idx!=-1)
 			{
 				AddTransactionItem(tl, CookedFiles->m_Items[idx], idx);
@@ -1489,7 +1489,7 @@ LRESULT CMainFrame::OnNavigateBack(WPARAM wParam, LPARAM /*lParam*/)
 	if (ActiveFilter)
 	{
 		LFFilter* f = ActiveFilter;
-		int focus = GetFocusItem();
+		INT focus = GetFocusItem();
 		ActiveFilter = NULL;
 
 		UINT steps = (UINT)wParam;
@@ -1511,7 +1511,7 @@ LRESULT CMainFrame::OnNavigateForward(WPARAM wParam, LPARAM /*lParam*/)
 	if (ActiveFilter)
 	{
 		LFFilter* f = ActiveFilter;
-		int focus = GetFocusItem();
+		INT focus = GetFocusItem();
 		ActiveFilter = NULL;
 
 		UINT steps = (UINT)wParam;
@@ -2086,7 +2086,7 @@ void CMainFrame::InitializeRibbon()
 	m_wndRibbonBar.AddToTabs(new CMFCRibbonButton(ID_APP_HELP, NULL, m_PanelImages.ExtractIcon(0)));
 }
 
-void CMainFrame::ShowCaptionBar(LPCWSTR Icon, LPCWSTR Message, int Command)
+void CMainFrame::ShowCaptionBar(LPCWSTR Icon, LPCWSTR Message, INT Command)
 {
 	// Text und Icon
 	m_wndCaptionBar.SetText(Message, CMFCCaptionBar::ALIGN_LEFT);
@@ -2100,7 +2100,7 @@ void CMainFrame::ShowCaptionBar(LPCWSTR Icon, LPCWSTR Message, int Command)
 
 		CString strTemp;
 		ENSURE(strTemp.LoadString(Command));
-		int y = strTemp.Find('\n');
+		INT y = strTemp.Find('\n');
 		if (!y)
 			y = strTemp.GetLength();
 		m_wndCaptionBar.SetButtonToolTip(strTemp.Left(y));
@@ -2120,9 +2120,9 @@ void CMainFrame::ShowCaptionBar(LPCWSTR Icon, LPCWSTR Message, int Command)
 	}
 }
 
-void CMainFrame::ShowCaptionBar(LPCWSTR Icon, UINT res, int Command)
+void CMainFrame::ShowCaptionBar(LPCWSTR Icon, UINT res, INT Command)
 {
-	wchar_t* message = LFGetErrorText(res);
+	WCHAR* message = LFGetErrorText(res);
 	ShowCaptionBar(Icon, message, Command);
 	free(message);
 }
@@ -2149,7 +2149,7 @@ UINT CMainFrame::SelectViewMode(UINT ViewID)
 	return ViewID;
 }
 
-BOOL CMainFrame::OpenChildView(int FocusItem, BOOL Force, BOOL AllowChangeSort)
+BOOL CMainFrame::OpenChildView(INT FocusItem, BOOL Force, BOOL AllowChangeSort)
 {
 	UINT ViewID = SelectViewMode(ActiveViewParameters->Mode);
 
@@ -2280,7 +2280,7 @@ BOOL CMainFrame::OpenChildView(int FocusItem, BOOL Force, BOOL AllowChangeSort)
 	return (pNewView!=NULL);
 }
 
-void CMainFrame::NavigateTo(LFFilter* f, UINT NavMode, int FocusItem, int FirstAggregate, int LastAggregate)
+void CMainFrame::NavigateTo(LFFilter* f, UINT NavMode, INT FocusItem, INT FirstAggregate, INT LastAggregate)
 {
 	if (NavMode<NAVMODE_RELOAD)
 		theApp.PlayNavigateSound();
@@ -2304,7 +2304,7 @@ void CMainFrame::NavigateTo(LFFilter* f, UINT NavMode, int FocusItem, int FirstA
 	ActiveFilter->HideEmptyDrives = (theApp.m_HideEmptyDrives==TRUE);
 	ActiveFilter->HideEmptyDomains = (theApp.m_HideEmptyDomains==TRUE);
 
-	int OldContext = -1;
+	INT OldContext = -1;
 	LFSearchResult* victim = NULL;
 
 	if (RawFiles)
@@ -2342,7 +2342,7 @@ void CMainFrame::NavigateTo(LFFilter* f, UINT NavMode, int FocusItem, int FirstA
 		}
 }
 
-void CMainFrame::CookFiles(int recipe, int FocusItem)
+void CMainFrame::CookFiles(INT recipe, INT FocusItem)
 {
 	// Das alte Suchergebnis wird in Victim gespeichert, damit das View niemals eine ungültige
 	// Referenz hat. Erst nach UpdateSearchResult() kann das ggf. vorhandene alte Suchergebnis

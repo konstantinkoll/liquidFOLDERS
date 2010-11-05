@@ -59,12 +59,12 @@ void CFileList::SetHeader(BOOL sorting, BOOL selectCol)
 		CreateColumns();
 
 	// Alte Markierung löschen
-	if ((LastSortBy!=(int)View->pViewParameters->SortBy) && (LastSortBy!=-1))
+	if ((LastSortBy!=(INT)View->pViewParameters->SortBy) && (LastSortBy!=-1))
 	{
 		HDITEM hdi;
 		hdi.mask = HDI_FORMAT;
 
-		int col = FindColumn(LastSortBy);
+		INT col = FindColumn(LastSortBy);
 		if (col!=-1)
 		{
 			pHdr->GetItem(col, &hdi);
@@ -74,7 +74,7 @@ void CFileList::SetHeader(BOOL sorting, BOOL selectCol)
 	}
 
 	// Markierung setzen
-	int col = FindColumn(View->pViewParameters->SortBy);
+	INT col = FindColumn(View->pViewParameters->SortBy);
 	if (col!=-1)
 	{
 		HDITEM hdi;
@@ -96,7 +96,7 @@ void CFileList::SetHeader(BOOL sorting, BOOL selectCol)
 
 }
 
-BOOL CFileList::SetColumnWidth(int nCol, int cx)
+BOOL CFileList::SetColumnWidth(INT nCol, INT cx)
 {
 	if (theApp.m_Attributes[ColumnMapping[nCol]]->Type==LFTypeRating)
 		cx = RatingBitmapWidth+12;
@@ -106,7 +106,7 @@ BOOL CFileList::SetColumnWidth(int nCol, int cx)
 
 void CFileList::CreateColumns()
 {
-	for (int a=ColumnCount-1; a>=0; a--)
+	for (INT a=ColumnCount-1; a>=0; a--)
 		DeleteColumn(a);
 	ColumnCount = 0;
 
@@ -150,7 +150,7 @@ void CFileList::AddColumn(UINT attr)
 }
 
 
-int CFileList::FindColumn(UINT attr)
+INT CFileList::FindColumn(UINT attr)
 {
 	for (UINT a=0; a<ColumnCount; a++)
 		if (ColumnMapping[a]==attr)
@@ -218,7 +218,7 @@ void CFileList::OnGetDispInfo(NMHDR* pNMHDR, LRESULT* /*pResult*/)
 void CFileList::OnCustomDraw(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	LPNMLVCUSTOMDRAW lplvcd = (LPNMLVCUSTOMDRAW)pNMHDR;
-	int col;
+	INT col;
 	UINT attr;
 
 	switch(lplvcd->nmcd.dwDrawStage)
@@ -231,7 +231,7 @@ void CFileList::OnCustomDraw(NMHDR* pNMHDR, LRESULT* pResult)
 			if (lplvcd->nmcd.dwItemSpec<View->result->m_ItemCount)
 				if (View->result->m_Items[lplvcd->nmcd.dwItemSpec]->CoreAttributes.Flags & LFFlagMissing)
 					lplvcd->clrText = 0x0000FF;
-		if ((hTheme) && (GetItemState((int)lplvcd->nmcd.dwItemSpec, LVIS_SELECTED)))
+		if ((hTheme) && (GetItemState((INT)lplvcd->nmcd.dwItemSpec, LVIS_SELECTED)))
 			lplvcd->nmcd.uItemState &= ~CDIS_FOCUS;
 		*pResult = CDRF_NOTIFYSUBITEMDRAW;
 		break;
@@ -244,9 +244,9 @@ void CFileList::OnCustomDraw(NMHDR* pNMHDR, LRESULT* pResult)
 		if ((theApp.m_Attributes[attr]->Type==LFTypeRating) && (View->result))
 		{
 			CRect rect;
-			GetSubItemRect((int)lplvcd->nmcd.dwItemSpec, col, LVIR_BOUNDS, rect);
-			UINT iState = GetItemState((int)lplvcd->nmcd.dwItemSpec, LVIS_SELECTED);
-			BOOL hot = GetHotItem()==(int)lplvcd->nmcd.dwItemSpec;
+			GetSubItemRect((INT)lplvcd->nmcd.dwItemSpec, col, LVIR_BOUNDS, rect);
+			UINT iState = GetItemState((INT)lplvcd->nmcd.dwItemSpec, LVIS_SELECTED);
+			BOOL hot = GetHotItem()==(INT)lplvcd->nmcd.dwItemSpec;
 
 			COLORREF clr = GetBkColor();
 			if ((GetExtendedStyle() & LVS_EX_FULLROWSELECT) && (!hTheme) && (iState))
@@ -258,9 +258,9 @@ void CFileList::OnCustomDraw(NMHDR* pNMHDR, LRESULT* pResult)
 			if ((GetExtendedStyle() & LVS_EX_FULLROWSELECT) && (hTheme) && (hot || iState))
 			{
 				CRect rectBounds;
-				GetItemRect((int)lplvcd->nmcd.dwItemSpec, rectBounds, LVIR_BOUNDS);
+				GetItemRect((INT)lplvcd->nmcd.dwItemSpec, rectBounds, LVIR_BOUNDS);
 
-				const int StateIDs[4] = { LISS_NORMAL, LISS_HOT, GetFocus()!=this ? LISS_SELECTEDNOTFOCUS : LISS_SELECTED, LISS_HOTSELECTED };
+				const INT StateIDs[4] = { LISS_NORMAL, LISS_HOT, GetFocus()!=this ? LISS_SELECTEDNOTFOCUS : LISS_SELECTED, LISS_HOTSELECTED };
 				theApp.zDrawThemeBackground(hTheme, lplvcd->nmcd.hdc, LVP_LISTITEM, StateIDs[iState | hot], rectBounds, rect);
 			}
 
@@ -274,8 +274,8 @@ void CFileList::OnCustomDraw(NMHDR* pNMHDR, LRESULT* pResult)
 				HDC hdcMem = CreateCompatibleDC(lplvcd->nmcd.hdc);
 				HBITMAP hbmOld = (HBITMAP)SelectObject(hdcMem, attr==LFAttrRating ? theApp.m_RatingBitmaps[level] : theApp.m_PriorityBitmaps[level]);
 
-				int w = min(rect.Width(), RatingBitmapWidth);
-				int h = min(rect.Height(), RatingBitmapHeight);
+				INT w = min(rect.Width(), RatingBitmapWidth);
+				INT h = min(rect.Height(), RatingBitmapHeight);
 				BLENDFUNCTION LF = { AC_SRC_OVER, 0, 0xFF, AC_SRC_ALPHA };
 				AlphaBlend(lplvcd->nmcd.hdc, rect.left, rect.top+(rect.Height()-h)/2, w, h, hdcMem, 0, 0, w, h, LF);
 
@@ -403,9 +403,9 @@ void CFileList::OnBeginLabelEdit(NMHDR* pNMHDR, LRESULT* pResult)
 	CEdit* Edit = GetEditControl();
 	if (Edit)
 	{
-		wchar_t* Label = i->CoreAttributes.FileName;
+		WCHAR* Label = i->CoreAttributes.FileName;
 		Edit->SetWindowText(Label);
-		Edit->SetSel(0, (int)wcslen(Label));
+		Edit->SetSel(0, (INT)wcslen(Label));
 	}
 
 	Editing = TRUE;
@@ -444,7 +444,7 @@ void CFileList::OnColumnClick(NMHDR* pNMHDR, LRESULT* /*pResult*/)
 	NM_LISTVIEW* pNM = (NM_LISTVIEW*)pNMHDR;
 	UINT attr = ColumnMapping[pNM->iSubItem];
 
-	if ((int)View->pViewParameters->SortBy==attr)
+	if ((INT)View->pViewParameters->SortBy==attr)
 	{
 		View->pViewParameters->Descending ^= 1;
 	}
@@ -525,7 +525,7 @@ void CFileList::OnHeaderReorder(NMHDR* pNMHDR, LRESULT* pResult)
 			}
 
 		// 2. Spalte an der neuen Stelle einfügen
-		for (int a=ColumnCount-1; a>pHdr->pitem->iOrder; a--)
+		for (INT a=ColumnCount-1; a>pHdr->pitem->iOrder; a--)
 			View->pViewParameters->ColumnOrder[a] = View->pViewParameters->ColumnOrder[a-1];
 		View->pViewParameters->ColumnOrder[pHdr->pitem->iOrder] = pHdr->iItem;
 
@@ -539,7 +539,7 @@ void CFileList::OnHeaderReorder(NMHDR* pNMHDR, LRESULT* pResult)
 	}
 }
 
-void CFileList::OnSize(UINT nType, int cx, int cy)
+void CFileList::OnSize(UINT nType, INT cx, INT cy)
 {
 	CExplorerList::OnSize(nType, cx, cy);
 	Invalidate();

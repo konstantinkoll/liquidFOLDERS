@@ -10,7 +10,7 @@
 // ChooseDetailsDlg
 //
 
-ChooseDetailsDlg::ChooseDetailsDlg(CWnd* pParentWnd, LFViewParameters* View, int Context, UINT nIDTemplate)
+ChooseDetailsDlg::ChooseDetailsDlg(CWnd* pParentWnd, LFViewParameters* View, INT Context, UINT nIDTemplate)
 	: LFAttributeListDlg(nIDTemplate, pParentWnd)
 {
 	ASSERT(View);
@@ -29,7 +29,7 @@ void ChooseDetailsDlg::DoDataExchange(CDataExchange* pDX)
 		ZeroMemory(present, sizeof(present));
 
 		// Angezeigte Attribute
-		for (int a=0; a<m_ShowAttributes.GetItemCount(); a++)
+		for (INT a=0; a<m_ShowAttributes.GetItemCount(); a++)
 		{
 			UINT attr = (UINT)m_ShowAttributes.GetItemData(a);
 			present[attr] = TRUE;
@@ -38,18 +38,18 @@ void ChooseDetailsDlg::DoDataExchange(CDataExchange* pDX)
 		}
 
 		// Nicht angezeigte Attribute
-		for (int a=0; a<LFAttributeCount; a++)
+		for (INT a=0; a<LFAttributeCount; a++)
 			if ((!theApp.m_Attributes[a]->AlwaysVisible) && (!present[a]))
 				p_View->ColumnWidth[a] = 0;
 
 		// Reihenfolge
 		p_View->ColumnOrder[0] = 0;
 		UINT cnt = 1;
-		for (int a=0; a<m_ShowAttributes.GetItemCount(); a++)
+		for (INT a=0; a<m_ShowAttributes.GetItemCount(); a++)
 			if (m_ShowAttributes.GetCheck(a))
 			{
 				UINT colID = 0;
-				for (int b=0; b<m_ShowAttributes.GetItemCount(); b++)
+				for (INT b=0; b<m_ShowAttributes.GetItemCount(); b++)
 					if ((m_ShowAttributes.GetCheck(b)) && (m_ShowAttributes.GetItemData(b)<=m_ShowAttributes.GetItemData(a)))
 						colID++;
 				p_View->ColumnOrder[cnt++] = colID;
@@ -67,7 +67,7 @@ void ChooseDetailsDlg::TestAttribute(UINT attr, BOOL& add, BOOL& check)
 	check = (p_View->ColumnWidth[attr]);
 }
 
-void ChooseDetailsDlg::SwapItems(int FocusItem, int NewPos)
+void ChooseDetailsDlg::SwapItems(INT FocusItem, INT NewPos)
 {
 	TCHAR text1[256];
 	LVITEM i1;
@@ -131,7 +131,7 @@ BOOL ChooseDetailsDlg::OnInitDialog()
 
 	for (UINT a=0; a<LFAttributeCount; a++)
 	{
-		int cnt = 0;
+		INT cnt = 0;
 		for (UINT b=0; b<LFAttributeCount; b++)
 			if (p_View->ColumnWidth[b])
 				if ((cnt++)==p_View->ColumnOrder[a])
@@ -152,7 +152,7 @@ BOOL ChooseDetailsDlg::OnInitDialog()
 void ChooseDetailsDlg::OnSelectionChange(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	NM_LISTVIEW* pNMListView = (NM_LISTVIEW*)pNMHDR;
-	int idx = (int)pNMListView->iItem;
+	INT idx = (INT)pNMListView->iItem;
 
 	if (pNMListView->uNewState & LVIS_SELECTED)
 	{
@@ -165,26 +165,26 @@ void ChooseDetailsDlg::OnSelectionChange(NMHDR* pNMHDR, LRESULT* pResult)
 
 void ChooseDetailsDlg::OnMoveUp()
 {
-	int idx = m_ShowAttributes.GetNextItem(-1, LVIS_SELECTED);
+	INT idx = m_ShowAttributes.GetNextItem(-1, LVIS_SELECTED);
 	if (idx>0)
 		SwapItems(idx, idx-1);
 }
 
 void ChooseDetailsDlg::OnMoveDown()
 {
-	int idx = m_ShowAttributes.GetNextItem(-1, LVIS_SELECTED);
+	INT idx = m_ShowAttributes.GetNextItem(-1, LVIS_SELECTED);
 	if (idx<m_ShowAttributes.GetItemCount()-1)
 		SwapItems(idx, idx+1);
 }
 
 void ChooseDetailsDlg::OnCheckAll()
 {
-	for (int a=0; a<m_ShowAttributes.GetItemCount(); a++)
+	for (INT a=0; a<m_ShowAttributes.GetItemCount(); a++)
 		m_ShowAttributes.SetCheck(a);
 }
 
 void ChooseDetailsDlg::OnUncheckAll()
 {
-	for (int a=0; a<m_ShowAttributes.GetItemCount(); a++)
+	for (INT a=0; a<m_ShowAttributes.GetItemCount(); a++)
 		m_ShowAttributes.SetCheck(a, FALSE);
 }

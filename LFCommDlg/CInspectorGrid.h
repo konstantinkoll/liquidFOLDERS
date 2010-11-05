@@ -18,7 +18,7 @@ public:
 
 	CFont* GetBoldFnt();
 	CFont* GetItalicFnt();
-	int GetLeftMargin();
+	INT GetLeftMargin();
 
 protected:
 	CFont m_fontItalic;

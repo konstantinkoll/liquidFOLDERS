@@ -20,12 +20,12 @@ CCaptionBar::~CCaptionBar()
 		DestroyIcon(m_hIcon);
 }
 
-BOOL CCaptionBar::LoadState(LPCTSTR /*lpszProfileName*/, int /*nIndex*/, UINT /*uiID*/)
+BOOL CCaptionBar::LoadState(LPCTSTR /*lpszProfileName*/, INT /*nIndex*/, UINT /*uiID*/)
 {
 	return TRUE;
 }
 
-BOOL CCaptionBar::SaveState(LPCTSTR /*lpszProfileName*/, int /*nIndex*/, UINT /*uiID*/)
+BOOL CCaptionBar::SaveState(LPCTSTR /*lpszProfileName*/, INT /*nIndex*/, UINT /*uiID*/)
 {
 	return TRUE;
 }

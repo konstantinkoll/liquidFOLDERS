@@ -12,7 +12,7 @@
 
 extern AFX_EXTENSION_MODULE LFCommDlgDLL;
 
-LFItemTemplateDlg::LFItemTemplateDlg(CWnd* pParentWnd, LFItemDescriptor* pItem, char* _StoreID)
+LFItemTemplateDlg::LFItemTemplateDlg(CWnd* pParentWnd, LFItemDescriptor* pItem, CHAR* _StoreID)
 	: CDialog(IDD_ITEMTEMPLATE, pParentWnd)
 {
 	m_pItem = pItem;
@@ -33,7 +33,7 @@ LFItemTemplateDlg::LFItemTemplateDlg(CWnd* pParentWnd, LFItemDescriptor* pItem, 
 
 	if (reg.Open(_T("Software\\liquidFOLDERS\\Template")))
 	{
-		int count = 0;
+		INT count = 0;
 		if (reg.Read(_T("AttrCount"), count))
 			if (count==LFAttributeCount)
 				for (UINT a=0; a<LFAttributeCount; a++)

@@ -17,11 +17,11 @@ public:
 	CAbstractListView();
 	virtual ~CAbstractListView();
 
-	virtual void SelectItem(int n, BOOL select, BOOL InternalCall);
-	virtual int GetFocusItem();
-	virtual int GetSelectedItem();
-	virtual int GetNextSelectedItem(int n);
-	virtual void EditLabel(int n);
+	virtual void SelectItem(INT n, BOOL select, BOOL InternalCall);
+	virtual INT GetFocusItem();
+	virtual INT GetSelectedItem();
+	virtual INT GetNextSelectedItem(INT n);
+	virtual void EditLabel(INT n);
 	virtual BOOL IsEditing();
 	virtual BOOL HasCategories();
 
@@ -30,7 +30,7 @@ public:
 protected:
 	CFileList m_FileList;
 
-	virtual BOOL IsSelected(int n);
+	virtual BOOL IsSelected(INT n);
 
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
 	afx_msg void OnToggleAttribute(UINT nID);

@@ -26,13 +26,13 @@ void CCalendarDayView::AdjustLayout()
 	CRect rectClient;
 	GetClientRect(rectClient);
 
-	int heightDay = 30;
+	INT heightDay = 30;
 
 	m_CalendarHeaderCtrl.SetWindowPos(NULL, rectClient.left, rectClient.top, rectClient.Width(), heightDay, SWP_NOACTIVATE | SWP_NOZORDER);
 	m_FileList.SetWindowPos(NULL, rectClient.left, rectClient.top + heightDay, rectClient.Width(), rectClient.Height() - heightDay, SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
-void CCalendarDayView::Create(CWnd* _pParentWnd, LFSearchResult* _result, int _FocusItem)
+void CCalendarDayView::Create(CWnd* _pParentWnd, LFSearchResult* _result, INT _FocusItem)
 {
 	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS);
 
@@ -133,7 +133,7 @@ BEGIN_MESSAGE_MAP(CCalendarDayView, CAbstractListView)
 	ON_WM_SIZE()
 END_MESSAGE_MAP()
 
-int CCalendarDayView::OnCreate(LPCREATESTRUCT lpCreateStruct)
+INT CCalendarDayView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if (CFileView::OnCreate(lpCreateStruct)==-1)
 		return -1;
@@ -149,7 +149,7 @@ int CCalendarDayView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	return 0;
 }
 
-void CCalendarDayView::OnSize(UINT nType, int cx, int cy)
+void CCalendarDayView::OnSize(UINT nType, INT cx, INT cy)
 {
 	CWnd::OnSize(nType, cx, cy);
 	AdjustLayout();

@@ -46,7 +46,7 @@ CFont* CInspectorGrid::GetItalicFnt()
 	return &m_fontItalic;
 }
 
-int CInspectorGrid::GetLeftMargin()
+INT CInspectorGrid::GetLeftMargin()
 {
 	return m_nEditLeftMargin;
 }

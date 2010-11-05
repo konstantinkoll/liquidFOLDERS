@@ -19,7 +19,7 @@ public:
 	CCalendarDayView();
 	virtual ~CCalendarDayView();
 
-	void Create(CWnd* _pParentWnd, LFSearchResult* _result, int _FocusItem);
+	void Create(CWnd* _pParentWnd, LFSearchResult* _result, INT _FocusItem);
 
 protected:
 	CCalendarHeaderCtrl m_CalendarHeaderCtrl;
@@ -29,7 +29,7 @@ protected:
 
 	void AdjustLayout();
 
-	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
-	afx_msg void OnSize(UINT nType, int cx, int cy);
+	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
+	afx_msg void OnSize(UINT nType, INT cx, INT cy);
 	DECLARE_MESSAGE_MAP()
 };

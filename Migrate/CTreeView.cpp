@@ -155,7 +155,7 @@ void CTreeView::SetRoot(LPITEMIDLIST pidl, BOOL Update, BOOL ExpandAll)
 		InsertRow(0);
 		m_Tree->Flags |= CF_CHECKED;
 
-		for (int col=m_wndHeader.GetItemCount()-1; col>=0; col--)
+		for (INT col=m_wndHeader.GetItemCount()-1; col>=0; col--)
 		{
 			m_wndHeader.DeleteItem(col);
 			m_ColumnWidth[col] = MINWIDTH;
@@ -192,7 +192,7 @@ void CTreeView::SetBranchCheck(BOOL Check, CPoint item)
 {
 	if ((item.x==-1) || (item.y==-1))
 		item = m_SelectedItem;
-	if ((item.x==-1) || (item.y==-1) || (item.x>=(int)m_Cols) || (item.y>=(int)m_Rows))
+	if ((item.x==-1) || (item.y==-1) || (item.x>=(INT)m_Cols) || (item.y>=(INT)m_Rows))
 		return;
 
 	UINT LastRow = GetChildRect(item);
@@ -223,7 +223,7 @@ void CTreeView::ExpandFolder(CPoint item, BOOL ExpandAll)
 {
 	if ((item.x==-1) || (item.y==-1))
 		item = m_SelectedItem;
-	if ((item.x==-1) || (item.y==-1) || (item.x>=(int)m_Cols) || (item.y>=(int)m_Rows))
+	if ((item.x==-1) || (item.y==-1) || (item.x>=(INT)m_Cols) || (item.y>=(INT)m_Rows))
 		return;
 
 	if (m_Tree[MAKEPOSI(item)].Flags & CF_CANEXPAND)
@@ -264,19 +264,19 @@ void CTreeView::EditLabel(CPoint item)
 {
 	if ((item.x==-1) || (item.y==-1))
 		item = m_SelectedItem;
-	if ((item.x==-1) || (item.y==-1) || (item.x>=(int)m_Cols) || (item.y>=(int)m_Rows))
+	if ((item.x==-1) || (item.y==-1) || (item.x>=(INT)m_Cols) || (item.y>=(INT)m_Rows))
 		return;
 	if (!(m_Tree[MAKEPOSI(item)].Flags & CF_CANRENAME))
 		return;
 
 	EnsureVisible(item);
 
-	int y = m_HeaderHeight+item.y*m_RowHeight;
-	int x = 0;
-	for (int a=0; a<item.x; a++)
+	INT y = m_HeaderHeight+item.y*m_RowHeight;
+	INT x = 0;
+	for (INT a=0; a<item.x; a++)
 		x += m_ColumnWidth[a];
 
-	wchar_t Name[MAX_PATH];
+	WCHAR Name[MAX_PATH];
 	wcscpy_s(Name, MAX_PATH, m_Tree[MAKEPOSI(item)].pItem->Name);
 
 	IShellFolder* pParentFolder = NULL;
@@ -295,7 +295,7 @@ void CTreeView::EditLabel(CPoint item)
 	p_Edit = new CEdit();
 	p_Edit->Create(WS_CHILD | WS_VISIBLE | WS_BORDER | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | ES_AUTOHSCROLL, rect, this, 2);
 	p_Edit->SetWindowText(Name);
-	p_Edit->SetSel(0, (int)wcslen(Name));
+	p_Edit->SetSel(0, (INT)wcslen(Name));
 	p_Edit->SetFont(&theApp.m_DefaultFont);
 	p_Edit->SetFocus();
 }
@@ -304,20 +304,20 @@ void CTreeView::EnsureVisible(CPoint item)
 {
 	if ((item.x==-1) || (item.y==-1))
 		item = m_SelectedItem;
-	if ((item.x==-1) || (item.y==-1) || (item.x>=(int)m_Cols) || (item.y>=(int)m_Rows))
+	if ((item.x==-1) || (item.y==-1) || (item.x>=(INT)m_Cols) || (item.y>=(INT)m_Rows))
 		return;
 
 	CRect rect;
 	GetClientRect(&rect);
 
 	SCROLLINFO si;
-	int nInc;
+	INT nInc;
 
 	// Vertikal
 	nInc = 0;
-	if ((int)((item.y+1)*m_RowHeight)>m_VScrollPos+rect.Height()-(int)m_HeaderHeight)
-		nInc = (item.y+1)*m_RowHeight-rect.Height()+(int)m_HeaderHeight-m_VScrollPos;
-	if ((int)(item.y*m_RowHeight)<m_VScrollPos+nInc)
+	if ((INT)((item.y+1)*m_RowHeight)>m_VScrollPos+rect.Height()-(INT)m_HeaderHeight)
+		nInc = (item.y+1)*m_RowHeight-rect.Height()+(INT)m_HeaderHeight-m_VScrollPos;
+	if ((INT)(item.y*m_RowHeight)<m_VScrollPos+nInc)
 		nInc = item.y*m_RowHeight-m_VScrollPos;
 
 	nInc = max(-m_VScrollPos, min(nInc, m_VScrollMax-m_VScrollPos));
@@ -334,8 +334,8 @@ void CTreeView::EnsureVisible(CPoint item)
 	}
 
 	// Horizontal
-	int x = 0;
-	for (int a=0; a<item.x; a++)
+	INT x = 0;
+	for (INT a=0; a<item.x; a++)
 		x += m_ColumnWidth[a];
 
 	nInc = 0;
@@ -446,13 +446,13 @@ void CTreeView::AdjustScrollbars()
 	CRect rect;
 	GetClientRect(&rect);
 
-	int ScrollHeight = m_Rows*m_RowHeight;
-	int ScrollWidth = (m_Cols<MaxColumns) ? GUTTER : 0;
+	INT ScrollHeight = m_Rows*m_RowHeight;
+	INT ScrollWidth = (m_Cols<MaxColumns) ? GUTTER : 0;
 	for (UINT col=0; col<m_Cols; col++)
 		ScrollWidth += m_ColumnWidth[col];
 
-	int oldVScrollPos = m_VScrollPos;
-	m_VScrollMax = max(0, ScrollHeight-rect.Height()+(int)m_HeaderHeight);
+	INT oldVScrollPos = m_VScrollPos;
+	m_VScrollMax = max(0, ScrollHeight-rect.Height()+(INT)m_HeaderHeight);
 	m_VScrollPos = min(m_VScrollPos, m_VScrollMax);
 
 	SCROLLINFO si;
@@ -465,7 +465,7 @@ void CTreeView::AdjustScrollbars()
 	si.nPos = m_VScrollPos;
 	SetScrollInfo(SB_VERT, &si);
 
-	int oldHScrollPos = m_HScrollPos;
+	INT oldHScrollPos = m_HScrollPos;
 	m_HScrollMax = max(0, ScrollWidth-rect.Width());
 	m_HScrollPos = min(m_HScrollPos, m_HScrollMax);
 
@@ -511,7 +511,7 @@ BOOL CTreeView::InsertRow(UINT row)
 	ZeroMemory(&m_Tree[MAKEPOS(row, 0)], MaxColumns*sizeof(Cell));
 	m_Rows++;
 	m_HotItem.x = m_HotItem.y = -1;
-	if (m_SelectedItem.y>=(int)row)
+	if (m_SelectedItem.y>=(INT)row)
 		m_SelectedItem.y++;
 
 	return TRUE;
@@ -522,7 +522,7 @@ void CTreeView::RemoveRows(UINT first, UINT last)
 	if (first>last)
 		return;
 
-	if ((m_HotItem.y>=(int)first) && (m_HotItem.y<=(int)last))
+	if ((m_HotItem.y>=(INT)first) && (m_HotItem.y<=(INT)last))
 		m_TooltipCtrl.Deactivate();
 
 	for (UINT row=first; row<=last; row++)
@@ -531,7 +531,7 @@ void CTreeView::RemoveRows(UINT first, UINT last)
 
 	memcpy(&m_Tree[MAKEPOS(first, 0)], &m_Tree[MAKEPOS(last+1, 0)], (m_Rows-last)*MaxColumns*sizeof(Cell));
 
-	if (m_SelectedItem.y>(int)last)
+	if (m_SelectedItem.y>(INT)last)
 		m_SelectedItem.y -= last-first+1;
 	m_HotItem.x = m_HotItem.y = -1;
 	m_Rows -= last-first+1;
@@ -616,7 +616,7 @@ void CTreeView::SetItem(UINT row, UINT col, LPITEMIDLIST pidlRel, LPITEMIDLIST p
 
 	CDC* pDC = GetWindowDC();
 	CFont* pOldFont = pDC->SelectObject(&theApp.m_DefaultFont);
-	CSize sz = pDC->GetTextExtent(cell->pItem->Name, (int)wcslen(cell->pItem->Name));
+	CSize sz = pDC->GetTextExtent(cell->pItem->Name, (INT)wcslen(cell->pItem->Name));
 	pDC->SelectObject(pOldFont);
 	ReleaseDC(pDC);
 
@@ -642,12 +642,12 @@ void CTreeView::RemoveItem(UINT row, UINT col)
 	}
 
 	UINT LastRow = GetChildRect(CPoint(col, row));
-	if (((m_SelectedItem.y>=(int)row+1) && (m_SelectedItem.y<=(int)LastRow)) || ((m_SelectedItem.y==(int)row) && (m_SelectedItem.x>=(int)col)))
+	if (((m_SelectedItem.y>=(INT)row+1) && (m_SelectedItem.y<=(INT)LastRow)) || ((m_SelectedItem.y==(INT)row) && (m_SelectedItem.x>=(INT)col)))
 	{
 		CPoint item(m_SelectedItem);
 
 		item.x = col-1;
-		for (int r=row; r>=0; r--)
+		for (INT r=row; r>=0; r--)
 			if (m_Tree[MAKEPOS(r, item.x)].pItem)
 			{
 				item.y = r;
@@ -748,7 +748,7 @@ UINT CTreeView::EnumObjects(UINT row, UINT col, BOOL ExpandAll, BOOL FirstInstan
 			// Don't include file junctions
 			LPITEMIDLIST pidlFQ = theApp.GetShellManager()->ConcatenateItem(m_Tree[MAKEPOS(row, col)].pItem->pidlFQ, pidlTemp);
 
-			wchar_t Path[MAX_PATH];
+			WCHAR Path[MAX_PATH];
 			if (SUCCEEDED(SHGetPathFromIDListW(pidlFQ, Path)))
 			{
 				DWORD attr = GetFileAttributesW(Path);
@@ -805,13 +805,13 @@ void CTreeView::Expand(UINT row, UINT col, BOOL ExpandAll, BOOL AutosizeHeader)
 	EnumObjects(row, col, ExpandAll);
 
 	if (AutosizeHeader)
-		for (UINT a=(int)col+1; a<m_Cols; a++)
+		for (UINT a=(INT)col+1; a<m_Cols; a++)
 			AutosizeColumn(a, TRUE);
 
 	AdjustScrollbars();
 	Invalidate();
 
-	if ((m_SelectedItem.x==(int)col) && (m_SelectedItem.y==(int)row))
+	if ((m_SelectedItem.x==(INT)col) && (m_SelectedItem.y==(INT)row))
 		NotifyOwner();
 }
 
@@ -823,7 +823,7 @@ void CTreeView::Collapse(UINT row, UINT col)
 	m_Tree[MAKEPOS(row, col)].Flags |= CF_CANEXPAND;
 
 	UINT LastRow = GetChildRect(CPoint(col, row));
-	if (((m_SelectedItem.y>=(int)row+1) && (m_SelectedItem.y<=(int)LastRow)) || ((m_SelectedItem.y==(int)row) && (m_SelectedItem.x>(int)col)))
+	if (((m_SelectedItem.y>=(INT)row+1) && (m_SelectedItem.y<=(INT)LastRow)) || ((m_SelectedItem.y==(INT)row) && (m_SelectedItem.x>(INT)col)))
 		m_SelectedItem = CPoint(col, row);
 
 	RemoveRows(row+1, LastRow);
@@ -834,7 +834,7 @@ void CTreeView::Collapse(UINT row, UINT col)
 	AdjustScrollbars();
 	Invalidate();
 
-	if ((m_SelectedItem.x==(int)col) && (m_SelectedItem.y==(int)row))
+	if ((m_SelectedItem.x==(INT)col) && (m_SelectedItem.y==(INT)row))
 		NotifyOwner();
 }
 
@@ -874,9 +874,9 @@ BOOL CTreeView::HitTest(CPoint point, CPoint* item, BOOL* cbhot, CPoint* exphot)
 	BOOL onexpando = FALSE;
 
 	point.y -= m_HeaderHeight-m_VScrollPos;
-	int row = (point.y>=0) ? point.y/m_RowHeight : -1;
-	int col = -1;
-	int x = -m_HScrollPos;
+	INT row = (point.y>=0) ? point.y/m_RowHeight : -1;
+	INT col = -1;
+	INT x = -m_HScrollPos;
 
 	if (row!=-1)
 	{
@@ -885,7 +885,7 @@ BOOL CTreeView::HitTest(CPoint point, CPoint* item, BOOL* cbhot, CPoint* exphot)
 			if ((point.x>=x) && (point.x<x+m_ColumnWidth[a]))
 			{
 				col = a;
-				onitem = (point.x>=x+GUTTER) && (col<(int)m_Cols);
+				onitem = (point.x>=x+GUTTER) && (col<(INT)m_Cols);
 				break;
 			}
 
@@ -893,7 +893,7 @@ BOOL CTreeView::HitTest(CPoint point, CPoint* item, BOOL* cbhot, CPoint* exphot)
 		}
 	}
 
-	if ((row>=0) && (row<(int)m_Rows) && (col!=-1))
+	if ((row>=0) && (row<(INT)m_Rows) && (col!=-1))
 	{
 		if (onitem)
 		{
@@ -932,7 +932,7 @@ void CTreeView::InvalidateItem(CPoint item)
 {
 	if ((item.x!=-1) && (item.y!=-1))
 	{
-		int x = -m_HScrollPos;
+		INT x = -m_HScrollPos;
 		for (UINT a=0; a<(UINT)item.x; a++)
 			x += m_ColumnWidth[a];
 
@@ -941,7 +941,7 @@ void CTreeView::InvalidateItem(CPoint item)
 	}
 }
 
-void CTreeView::TrackMenu(UINT nID, CPoint point, int col)
+void CTreeView::TrackMenu(UINT nID, CPoint point, INT col)
 {
 	CMenu menu;
 	ENSURE(menu.LoadMenu(nID));
@@ -1012,7 +1012,7 @@ UINT CTreeView::GetChildRect(CPoint item)
 
 	while (row<m_Rows)
 	{
-		for (int col=0; col<=item.x; col++)
+		for (INT col=0; col<=item.x; col++)
 			if (m_Tree[MAKEPOS(row+1, col)].pItem)
 				return row;
 
@@ -1055,14 +1055,14 @@ void CTreeView::SelectItem(CPoint Item)
 void CTreeView::DeletePath(LPWSTR Path)
 {
 	CPoint item(0, 0);
-	while ((item.x<(int)m_Cols) && (item.y<(int)m_Rows))
+	while ((item.x<(INT)m_Cols) && (item.y<(INT)m_Rows))
 	{
 		if (m_Tree[MAKEPOSI(item)].pItem)
 			if (wcscmp(m_Tree[MAKEPOSI(item)].pItem->Path, Path)==0)
 				RemoveItem(item.y, item.x);
 
 		item.y++;
-		if (item.y>=(int)m_Rows)
+		if (item.y>=(INT)m_Rows)
 		{
 			item.x++;
 			item.y = 0;
@@ -1073,7 +1073,7 @@ void CTreeView::DeletePath(LPWSTR Path)
 void CTreeView::AddPath(LPWSTR Path, LPWSTR Parent)
 {
 	CPoint item(0, 0);
-	while ((item.x<min((int)m_Cols, MaxColumns-1)) && (item.y<(int)m_Rows))
+	while ((item.x<min((INT)m_Cols, MaxColumns-1)) && (item.y<(INT)m_Rows))
 	{
 		if (m_Tree[MAKEPOSI(item)].pItem)
 			if (wcscmp(m_Tree[MAKEPOSI(item)].pItem->Path, Parent)==0)
@@ -1087,7 +1087,7 @@ void CTreeView::AddPath(LPWSTR Path, LPWSTR Parent)
 					if (SUCCEEDED(SHBindToParent(pidlFQ, IID_IShellFolder, (void**)&pParentFolder, &pidlRel)))
 					{
 						CPoint add(item.x+1, item.y);
-						if ((int)m_Cols<=item.x)
+						if ((INT)m_Cols<=item.x)
 							m_Cols = item.x+1;
 
 						UINT Flags = 0;
@@ -1099,7 +1099,7 @@ void CTreeView::AddPath(LPWSTR Path, LPWSTR Parent)
 						{
 							UINT LastRow = GetChildRect(item);
 							BOOL Insert = TRUE;
-							while (add.y<=(int)LastRow)
+							while (add.y<=(INT)LastRow)
 							{
 								if (m_Tree[MAKEPOSI(add)].pItem)
 									if (wcscmp(m_Tree[MAKEPOSI(add)].pItem->Path, Path)==0)
@@ -1116,11 +1116,11 @@ void CTreeView::AddPath(LPWSTR Path, LPWSTR Parent)
 								InsertRow(add.y);
 
 								Flags = CF_ISSIBLING;
-								for (int row=add.y-1; row>item.y; row--)
+								for (INT row=add.y-1; row>item.y; row--)
 									m_Tree[MAKEPOS(row, add.x)].Flags |= CF_HASSIBLINGS | CF_ISSIBLING;
 
-								if (add.y<(int)m_Rows-1)
-									for (UINT col=1; (int)col<add.x; col++)
+								if (add.y<(INT)m_Rows-1)
+									for (UINT col=1; (INT)col<add.x; col++)
 									if (m_Tree[MAKEPOS(add.y+1, col)].Flags & CF_ISSIBLING)
 									{
 										m_Tree[MAKEPOS(add.y, col)].Flags |= CF_HASSIBLINGS;
@@ -1147,7 +1147,7 @@ void CTreeView::AddPath(LPWSTR Path, LPWSTR Parent)
 		}
 
 		item.y++;
-		if (item.y>=(int)m_Rows)
+		if (item.y>=(INT)m_Rows)
 		{
 			item.x++;
 			item.y = 0;
@@ -1158,7 +1158,7 @@ void CTreeView::AddPath(LPWSTR Path, LPWSTR Parent)
 void CTreeView::UpdatePath(LPWSTR Path1, LPWSTR Path2, IShellFolder* pDesktop)
 {
 	CPoint item(0, 0);
-	while ((item.x<(int)m_Cols) && (item.y<(int)m_Rows))
+	while ((item.x<(INT)m_Cols) && (item.y<(INT)m_Rows))
 	{
 		if (m_Tree[MAKEPOSI(item)].pItem)
 			if (wcscmp(m_Tree[MAKEPOSI(item)].pItem->Path, Path1)==0)
@@ -1181,7 +1181,7 @@ void CTreeView::UpdatePath(LPWSTR Path1, LPWSTR Path2, IShellFolder* pDesktop)
 			}
 
 		item.y++;
-		if (item.y>=(int)m_Rows)
+		if (item.y>=(INT)m_Rows)
 		{
 			item.x++;
 			item.y = 0;
@@ -1193,7 +1193,7 @@ BOOL CTreeView::ExecuteContextMenu(CPoint& item, LPCSTR verb)
 {
 	if ((item.x==-1) || (item.y==-1))
 		item = m_SelectedItem;
-	if ((item.x==-1) || (item.y==-1) || (item.x>=(int)m_Cols) || (item.y>=(int)m_Rows))
+	if ((item.x==-1) || (item.y==-1) || (item.x>=(INT)m_Cols) || (item.y>=(INT)m_Rows))
 		return FALSE;
 
 	DestroyEdit();
@@ -1274,7 +1274,7 @@ void CTreeView::ExpandColumn(UINT col)
 			Expand(row, col, FALSE, FALSE);
 
 
-	for (UINT a=(int)col+1; a<m_Cols; a++)
+	for (UINT a=(INT)col+1; a<m_Cols; a++)
 		AutosizeColumn(a, TRUE);
 
 	SetRedraw(TRUE);
@@ -1288,7 +1288,7 @@ void CTreeView::AutosizeColumn(UINT col, BOOL OnlyEnlarge)
 {
 	DestroyEdit();
 
-	int Width = 0;
+	INT Width = 0;
 	for (UINT row=0; row<m_Rows; row++)
 		if (m_Tree[MAKEPOS(row, col)].pItem)
 			Width = max(Width, m_Tree[MAKEPOS(row, col)].pItem->Width);
@@ -1296,7 +1296,7 @@ void CTreeView::AutosizeColumn(UINT col, BOOL OnlyEnlarge)
 	Width += GUTTER+2*BORDER+m_CheckboxSize.cx+m_IconSize.cx+3*MARGIN;
 	m_ColumnWidth[col] = min(OnlyEnlarge ? max(Width, m_ColumnWidth[col]) : Width, MAXWIDTH);
 
-	if (m_wndHeader.GetItemCount()>(int)col)
+	if (m_wndHeader.GetItemCount()>(INT)col)
 	{
 		HDITEM HdItem;
 		HdItem.mask = HDI_WIDTH;
@@ -1304,9 +1304,9 @@ void CTreeView::AutosizeColumn(UINT col, BOOL OnlyEnlarge)
 		m_wndHeader.SetItem(col, &HdItem);
 	}
 	else
-		while (m_wndHeader.GetItemCount()<=(int)col)
+		while (m_wndHeader.GetItemCount()<=(INT)col)
 		{
-			int idx = m_wndHeader.GetItemCount();
+			INT idx = m_wndHeader.GetItemCount();
 			CString caption = GetColumnCaption(idx);
 
 			HDITEM HdItem;
@@ -1398,7 +1398,7 @@ BEGIN_MESSAGE_MAP(CTreeView, CWnd)
 	ON_MESSAGE(WM_SHELLCHANGE, OnShellChange)
 END_MESSAGE_MAP()
 
-int CTreeView::OnCreate(LPCREATESTRUCT lpCreateStruct)
+INT CTreeView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if (CWnd::OnCreate(lpCreateStruct)==-1)
 		return -1;
@@ -1514,8 +1514,8 @@ void CTreeView::OnPaint()
 
 /*	if (m_HotItemColumn!=-1)
 	{
-		int x = 0;
-		for (int col=0; col<m_HotItemColumn; col++)
+		INT x = 0;
+		for (INT col=0; col<m_HotItemColumn; col++)
 			x += m_ColumnWidth[col];
 
 		COLORREF selCol = GetSysColor(COLOR_HIGHLIGHT);
@@ -1533,12 +1533,12 @@ void CTreeView::OnPaint()
 	CPen pen(PS_COSMETIC | PS_ALTERNATE, 1, &brsh);
 	CPen* pOldPen = dc.SelectObject(&pen);
 
-	int start = m_VScrollPos/m_RowHeight;
-	int y = m_HeaderHeight-(m_VScrollPos % m_RowHeight);
+	INT start = m_VScrollPos/m_RowHeight;
+	INT y = m_HeaderHeight-(m_VScrollPos % m_RowHeight);
 	Cell* curCell = &m_Tree[MAKEPOS(start, 0)];
 	for (UINT row=start; row<m_Rows; row++)
 	{
-		int x = -m_HScrollPos;
+		INT x = -m_HScrollPos;
 		for (UINT col=0; col<MaxColumns; col++)
 		{
 			CRect rectItem(x, y, x+m_ColumnWidth[col], y+m_RowHeight);
@@ -1547,8 +1547,8 @@ void CTreeView::OnPaint()
 			{
 				rectItem.left += GUTTER;
 
-				BOOL Hot = (m_HotItem.x==(int)col) && (m_HotItem.y==(int)row);
-				BOOL Selected = (m_SelectedItem.x==(int)col) && (m_SelectedItem.y==(int)row);
+				BOOL Hot = (m_HotItem.x==(INT)col) && (m_HotItem.y==(INT)row);
+				BOOL Selected = (m_SelectedItem.x==(INT)col) && (m_SelectedItem.y==(INT)row);
 
 				if (curCell->pItem)
 				{
@@ -1556,7 +1556,7 @@ void CTreeView::OnPaint()
 					{
 						if (Hot | Selected)
 						{
-							const int StateIDs[4] = { LISS_NORMAL, LISS_HOT, GetFocus()!=this ? LISS_SELECTEDNOTFOCUS : LISS_SELECTED, LISS_HOTSELECTED };
+							const INT StateIDs[4] = { LISS_NORMAL, LISS_HOT, GetFocus()!=this ? LISS_SELECTEDNOTFOCUS : LISS_SELECTED, LISS_HOTSELECTED };
 							UINT State = 0;
 							if (Hot)
 								State |= 1;
@@ -1589,7 +1589,7 @@ void CTreeView::OnPaint()
 					CRect rectButton(x+GUTTER+BORDER, y+(m_RowHeight-m_CheckboxSize.cy)/2, x+GUTTER+BORDER+m_CheckboxSize.cx, y+(m_RowHeight-m_CheckboxSize.cy)/2+m_CheckboxSize.cy);
 					if (hThemeButton)
 					{
-						int uiStyle;
+						INT uiStyle;
 						if (curCell->pItem->Path[0])
 						{
 							uiStyle = (Selected && (m_SpacePressed || m_CheckboxPressed)) ? CBS_UNCHECKEDPRESSED : (Hot && m_CheckboxHot) ? CBS_UNCHECKEDHOT : CBS_UNCHECKEDNORMAL;
@@ -1623,7 +1623,7 @@ void CTreeView::OnPaint()
 
 					if (curCell->Flags & (CF_HASCHILDREN | CF_CANEXPAND))
 					{
-						int right = x+GUTTER+BORDER+m_CheckboxSize.cx+m_IconSize.cx+2*MARGIN+curCell->pItem->Width+1;
+						INT right = x+GUTTER+BORDER+m_CheckboxSize.cx+m_IconSize.cx+2*MARGIN+curCell->pItem->Width+1;
 						if (right<x+m_ColumnWidth[col])
 						{
 							dc.MoveTo(x+m_ColumnWidth[col], y+m_RowHeight/2);
@@ -1662,7 +1662,7 @@ void CTreeView::OnPaint()
 								rectGlyph.OffsetRect(1-m_GlyphSize.cx/4, 0);
 							}
 
-							BOOL Hot = (m_HotExpando.x==(int)col) && (m_HotExpando.y==(int)row) && (theApp.OSVersion>OS_XP);
+							BOOL Hot = (m_HotExpando.x==(INT)col) && (m_HotExpando.y==(INT)row) && (theApp.OSVersion>OS_XP);
 							theApp.zDrawThemeBackground(hThemeTree, dc, Hot ? TVP_HOTGLYPH : TVP_GLYPH, (curCell-1)->Flags & CF_CANEXPAND ? GLPS_CLOSED : GLPS_OPENED, rectGlyph, rectGlyph);
 						}
 						else
@@ -1700,7 +1700,7 @@ void CTreeView::OnPaint()
 	dc.SelectObject(pOldBitmap);
 }
 
-void CTreeView::OnSize(UINT nType, int cx, int cy)
+void CTreeView::OnSize(UINT nType, INT cx, INT cy)
 {
 	CWnd::OnSize(nType, cx, cy);
 	AdjustLayout();
@@ -1713,7 +1713,7 @@ void CTreeView::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 
 	SCROLLINFO si;
 
-	int nInc = 0;
+	INT nInc = 0;
 	switch (nSBCode)
 	{
 	case SB_TOP:
@@ -1723,16 +1723,16 @@ void CTreeView::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 		nInc = m_VScrollMax-m_VScrollPos;
 		break;
 	case SB_LINEUP:
-		nInc = -((int)m_RowHeight);
+		nInc = -((INT)m_RowHeight);
 		break;
 	case SB_LINEDOWN:
 		nInc = m_RowHeight;
 		break;
 	case SB_PAGEUP:
-		nInc = min(-1, -(rect.Height()-(int)m_HeaderHeight));
+		nInc = min(-1, -(rect.Height()-(INT)m_HeaderHeight));
 		break;
 	case SB_PAGEDOWN:
-		nInc = max(1, rect.Height()-(int)m_HeaderHeight);
+		nInc = max(1, rect.Height()-(INT)m_HeaderHeight);
 		break;
 	case SB_THUMBTRACK:
 		ZeroMemory(&si, sizeof(si));
@@ -1764,7 +1764,7 @@ void CTreeView::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 {
 	SCROLLINFO si;
 
-	int nInc = 0;
+	INT nInc = 0;
 	switch (nSBCode)
 	{
 	case SB_TOP:
@@ -1909,7 +1909,7 @@ BOOL CTreeView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 	if (!rect.PtInRect(pt))
 		return FALSE;
 
-	int nInc = max(-m_VScrollPos, min(-zDelta*(int)m_RowHeight/WHEEL_DELTA, m_VScrollMax-m_VScrollPos));
+	INT nInc = max(-m_VScrollPos, min(-zDelta*(INT)m_RowHeight/WHEEL_DELTA, m_VScrollMax-m_VScrollPos));
 	if (nInc)
 	{
 		m_VScrollPos += nInc;
@@ -1930,7 +1930,7 @@ void CTreeView::OnMouseHWheel(UINT nFlags, short zDelta, CPoint pt)
 	if (!rect.PtInRect(pt))
 		return;
 
-	int nInc = max(-m_HScrollPos, min(zDelta*64/WHEEL_DELTA, m_HScrollMax-m_HScrollPos));
+	INT nInc = max(-m_HScrollPos, min(zDelta*64/WHEEL_DELTA, m_HScrollMax-m_HScrollPos));
 	if (nInc)
 	{
 		m_HScrollPos += nInc;
@@ -1990,7 +1990,7 @@ void CTreeView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 				if (item.x)
 				{
 					item.x--;
-					for (int row=item.y; row>=0; row--)
+					for (INT row=item.y; row>=0; row--)
 						if (m_Tree[MAKEPOS(row, item.x)].pItem)
 						{
 							item.y = row;
@@ -2003,8 +2003,8 @@ void CTreeView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 			if (m_Tree[MAKEPOSI(item)].Flags & CF_CANEXPAND)
 				Expand(item.y, item.x, FALSE);
 
-			if ((item.x<(int)m_Cols-1) && (GetKeyState(VK_CONTROL)>=0))
-				for (int row=item.y; row<(int)m_Rows; row++)
+			if ((item.x<(INT)m_Cols-1) && (GetKeyState(VK_CONTROL)>=0))
+				for (INT row=item.y; row<(INT)m_Rows; row++)
 					if (m_Tree[MAKEPOS(row, item.x+1)].pItem)
 					{
 						item.x++;
@@ -2014,7 +2014,7 @@ void CTreeView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 
 			break;
 		case VK_UP:
-			for (int row=item.y-1; row>=0; row--)
+			for (INT row=item.y-1; row>=0; row--)
 				if (m_Tree[MAKEPOS(row, item.x)].pItem)
 				{
 					item.y = row;
@@ -2023,17 +2023,17 @@ void CTreeView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 
 			break;
 		case VK_PRIOR:
-			for (int row=item.y-1; row>=0; row--)
+			for (INT row=item.y-1; row>=0; row--)
 				if (m_Tree[MAKEPOS(row, item.x)].pItem)
 				{
 					item.y = row;
-					if (row<=m_SelectedItem.y-rect.Height()/(int)m_RowHeight)
+					if (row<=m_SelectedItem.y-rect.Height()/(INT)m_RowHeight)
 						break;
 				}
 
 			break;
 		case VK_DOWN:
-			for (int row=item.y+1; row<(int)m_Rows; row++)
+			for (INT row=item.y+1; row<(INT)m_Rows; row++)
 				if (m_Tree[MAKEPOS(row, item.x)].pItem)
 				{
 					item.y = row;
@@ -2042,11 +2042,11 @@ void CTreeView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 
 			break;
 		case VK_NEXT:
-			for (int row=item.y+1; row<(int)m_Rows; row++)
+			for (INT row=item.y+1; row<(INT)m_Rows; row++)
 				if (m_Tree[MAKEPOS(row, item.x)].pItem)
 				{
 					item.y = row;
-					if (row>=m_SelectedItem.y+rect.Height()/(int)m_RowHeight)
+					if (row>=m_SelectedItem.y+rect.Height()/(INT)m_RowHeight)
 						break;
 				}
 
@@ -2057,7 +2057,7 @@ void CTreeView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 				item.x = item.y = 0;
 			}
 			else
-				for (int col=item.x; col>=0; col--)
+				for (INT col=item.x; col>=0; col--)
 					if (m_Tree[MAKEPOS(item.y, col)].pItem)
 					{
 						item.x = col;
@@ -2085,7 +2085,7 @@ void CTreeView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 				}
 			}
 			else
-				for (int col=item.x; col<(int)m_Cols; col++)
+				for (INT col=item.x; col<(INT)m_Cols; col++)
 					if (m_Tree[MAKEPOS(item.y, col)].pItem)
 					{
 						item.x = col;
@@ -2230,7 +2230,7 @@ void CTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 		item = m_SelectedItem;
 
 		point.x = GUTTER;
-		for (int a=0; a<item.x; a++)
+		for (INT a=0; a<item.x; a++)
 			point.x += m_ColumnWidth[a];
 		point.y = (item.y+1)*m_RowHeight+m_HeaderHeight+1;
 		ClientToScreen(&point);
@@ -2255,7 +2255,7 @@ void CTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 		}
 	}
 
-	if ((item.x==-1) || (item.y==-1) || (item.x>=(int)m_Cols) || (item.y>=(int)m_Rows))
+	if ((item.x==-1) || (item.y==-1) || (item.x>=(INT)m_Cols) || (item.y>=(INT)m_Rows))
 		return;
 
 	Cell* cell = &m_Tree[MAKEPOSI(item)];
@@ -2342,7 +2342,7 @@ void CTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 					break;
 				default:
 					{
-						char Verb[256] = "";
+						CHAR Verb[256] = "";
 						pcm->GetCommandString(idCmd-1, GCS_VERBA, NULL, Verb, 256);
 
 						if (strcmp(Verb, "rename")==0)
@@ -2432,10 +2432,10 @@ void CTreeView::OnDestroyEdit()
 
 LRESULT CTreeView::OnChooseProperty(WPARAM wParam, LPARAM /*lParam*/)
 {
-	ASSERT((int)wParam>0);
-	ASSERT((int)wParam<MaxColumns);
+	ASSERT((INT)wParam>0);
+	ASSERT((INT)wParam<MaxColumns);
 
-	ChoosePropertyDlg dlg(theApp.m_pMainWnd, m_ColumnMapping[(int)wParam]);
+	ChoosePropertyDlg dlg(theApp.m_pMainWnd, m_ColumnMapping[(INT)wParam]);
 	if (dlg.DoModal()!=IDCANCEL)
 	{
 		for (UINT a=0; a<MaxColumns; a++)
@@ -2459,10 +2459,10 @@ LRESULT CTreeView::OnShellChange(WPARAM wParam, LPARAM lParam)
 {
 	LPITEMIDLIST* pidls = (LPITEMIDLIST*)wParam;
 
-	wchar_t Path1[MAX_PATH] = L"";
-	wchar_t Path2[MAX_PATH] = L"";
-	wchar_t Parent1[MAX_PATH] = L"";
-	wchar_t Parent2[MAX_PATH] = L"";
+	WCHAR Path1[MAX_PATH] = L"";
+	WCHAR Path2[MAX_PATH] = L"";
+	WCHAR Parent1[MAX_PATH] = L"";
+	WCHAR Parent2[MAX_PATH] = L"";
 
 	IShellFolder* pDesktop = NULL;
 	if (FAILED(SHGetDesktopFolder(&pDesktop)))
@@ -2471,7 +2471,7 @@ LRESULT CTreeView::OnShellChange(WPARAM wParam, LPARAM lParam)
 	SHGetPathFromIDList(pidls[0], Path1);
 
 	wcscpy_s(Parent1, MAX_PATH, Path1);
-	wchar_t* last = wcsrchr(Parent1, L'\\');
+	WCHAR* last = wcsrchr(Parent1, L'\\');
 	if (last<=&Parent1[2])
 		last = &Parent1[3];
 	*last = '\0';

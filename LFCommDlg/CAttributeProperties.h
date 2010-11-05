@@ -34,7 +34,7 @@ public:
 
 protected:
 	LFApplication* p_App;
-	int MaxLength;
+	INT MaxLength;
 };
 
 
@@ -44,16 +44,16 @@ protected:
 class AFX_EXT_CLASS CAttributePropertyTags : public CAttributeProperty
 {
 public:
-	CAttributePropertyTags(LFVariantData* _pData, char* _StoreID=NULL);
+	CAttributePropertyTags(LFVariantData* _pData, CHAR* _StoreID=NULL);
 
 	virtual BOOL HasButton() const;
 	virtual void OnClickButton(CPoint point);
 	virtual BOOL OnUpdateValue();
 
-	void SetStore(char* _StoreID);
+	void SetStore(CHAR* _StoreID);
 
 protected:
-	char StoreID[LFKeySize];
+	CHAR StoreID[LFKeySize];
 	BOOL StoreIDValid;
 };
 
@@ -136,8 +136,8 @@ public:
 	virtual void OnDrawValue(CDC* pDC, CRect rect);
 
 protected:
-	int LeftDate;
-	int RightDate;
-	int LeftTime;
-	int RightTime;
+	INT LeftDate;
+	INT RightDate;
+	INT LeftTime;
+	INT RightTime;
 };

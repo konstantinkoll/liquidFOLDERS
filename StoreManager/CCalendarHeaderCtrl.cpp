@@ -92,7 +92,7 @@ void CCalendarHeaderCtrl::OnPaint()
 }
 
 
-void CCalendarHeaderCtrl::OnSize(UINT nType, int cx, int cy)
+void CCalendarHeaderCtrl::OnSize(UINT nType, INT cx, INT cy)
 {
 	CWnd::OnSize(nType, cx, cy);
 }

@@ -17,7 +17,7 @@ public:
 	CWatchdogApp();
 
 	virtual BOOL InitInstance();
-	virtual int ExitInstance();
+	virtual INT ExitInstance();
 
 protected:
 	HANDLE sessionMutex;

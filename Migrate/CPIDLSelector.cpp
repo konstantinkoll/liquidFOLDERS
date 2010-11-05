@@ -22,7 +22,7 @@ BOOL CPIDLDropdownWindow::AddPIDL(LPITEMIDLIST pidl, UINT Category, BOOL FreeOnF
 		return FALSE;
 
 	SHFILEINFO sfi;
-	if (FAILED(SHGetFileInfo((wchar_t*)pidl, 0, &sfi, sizeof(SHFILEINFO), SHGFI_PIDL | SHGFI_DISPLAYNAME | SHGFI_ATTRIBUTES | SHGFI_SYSICONINDEX)))
+	if (FAILED(SHGetFileInfo((WCHAR*)pidl, 0, &sfi, sizeof(SHFILEINFO), SHGFI_PIDL | SHGFI_DISPLAYNAME | SHGFI_ATTRIBUTES | SHGFI_SYSICONINDEX)))
 	{
 		if (FreeOnFail)
 			theApp.GetShellManager()->FreeItem(pidl);
@@ -55,7 +55,7 @@ void CPIDLDropdownWindow::AddKnownFolder(REFKNOWNFOLDERID rfid, UINT Category)
 		AddPIDL(pidl, Category);
 }
 
-void CPIDLDropdownWindow::AddPath(wchar_t* Path, UINT Category)
+void CPIDLDropdownWindow::AddPath(WCHAR* Path, UINT Category)
 {
 	IShellFolder* Desktop;
 	if (SUCCEEDED(SHGetDesktopFolder(&Desktop)))
@@ -70,14 +70,14 @@ void CPIDLDropdownWindow::AddPath(wchar_t* Path, UINT Category)
 	}
 }
 
-void CPIDLDropdownWindow::AddCSIDL(int CSIDL, UINT Category)
+void CPIDLDropdownWindow::AddCSIDL(INT CSIDL, UINT Category)
 {
-	wchar_t Path[MAX_PATH];
+	WCHAR Path[MAX_PATH];
 	if (SUCCEEDED(SHGetFolderPath(NULL, CSIDL, NULL, NULL, Path)))
 		AddPath(Path, Category);
 }
 
-void CPIDLDropdownWindow::AddChildren(wchar_t* Path, UINT Category)
+void CPIDLDropdownWindow::AddChildren(WCHAR* Path, UINT Category)
 {
 	IShellFolder* Desktop;
 	if (SUCCEEDED(SHGetDesktopFolder(&Desktop)))
@@ -109,7 +109,7 @@ void CPIDLDropdownWindow::AddChildren(wchar_t* Path, UINT Category)
 					// Don't include file junctions
 					LPITEMIDLIST pidlFQ = theApp.GetShellManager()->ConcatenateItem(pidl, pidlTemp);
 
-					wchar_t Path[MAX_PATH];
+					WCHAR Path[MAX_PATH];
 					if (SUCCEEDED(SHGetPathFromIDListW(pidlFQ, Path)))
 					{
 						DWORD attr = GetFileAttributesW(Path);
@@ -170,12 +170,12 @@ void CPIDLDropdownWindow::PopulateList()
 	// Drives
 	UINT Drives = LFGetLogicalDrives(LFGLD_External);
 
-	for (wchar_t cDrive=L'A'; cDrive<=L'Z'; cDrive++, Drives>>=1)
+	for (WCHAR cDrive=L'A'; cDrive<=L'Z'; cDrive++, Drives>>=1)
 	{
 		if (!(Drives & 1))
 			continue;
 
-		wchar_t Drive[4] = L" :\\";
+		WCHAR Drive[4] = L" :\\";
 		Drive[0] = cDrive;
 		AddPath(Drive, 3);
 	}
@@ -189,7 +189,7 @@ BEGIN_MESSAGE_MAP(CPIDLDropdownWindow, CDropdownWindow)
 	ON_BN_CLICKED(IDOK, OnChooseFolder)
 END_MESSAGE_MAP()
 
-int CPIDLDropdownWindow::OnCreate(LPCREATESTRUCT lpCreateStruct)
+INT CPIDLDropdownWindow::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if (CDropdownWindow::OnCreate(lpCreateStruct)==-1)
 		return -1;
@@ -220,7 +220,7 @@ int CPIDLDropdownWindow::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 void CPIDLDropdownWindow::OnDestroy()
 {
-	for (int a=0; a<m_wndList.GetItemCount(); a++)
+	for (INT a=0; a<m_wndList.GetItemCount(); a++)
 	{
 		LPITEMIDLIST pidl = (LPITEMIDLIST)m_wndList.GetItemData(a);
 		if (pidl)
@@ -291,7 +291,7 @@ void CPIDLSelector::SetItem(LPITEMIDLIST _pidl, BOOL Repaint, UINT NotifyCode)
 	if (pidl)
 	{
 		SHFILEINFO sfi;
-		if (SUCCEEDED(SHGetFileInfo((wchar_t*)pidl, 0, &sfi, sizeof(SHFILEINFO), SHGFI_PIDL | SHGFI_DISPLAYNAME | SHGFI_ICON | SHGFI_SMALLICON | SHGFI_OPENICON)))
+		if (SUCCEEDED(SHGetFileInfo((WCHAR*)pidl, 0, &sfi, sizeof(SHFILEINFO), SHGFI_PIDL | SHGFI_DISPLAYNAME | SHGFI_ICON | SHGFI_SMALLICON | SHGFI_OPENICON)))
 		{
 			CDropdownSelector::SetItem(sfi.hIcon, sfi.szDisplayName, Repaint, NotifyCode);
 		}
@@ -306,7 +306,7 @@ void CPIDLSelector::SetItem(LPITEMIDLIST _pidl, BOOL Repaint, UINT NotifyCode)
 	}
 }
 
-void CPIDLSelector::SetItem(IShellFolder* pDesktop, wchar_t* Path, BOOL Repaint, UINT NotifyCode)
+void CPIDLSelector::SetItem(IShellFolder* pDesktop, WCHAR* Path, BOOL Repaint, UINT NotifyCode)
 {
 	ULONG chEaten;
 	ULONG dwAttributes;
@@ -335,7 +335,7 @@ BEGIN_MESSAGE_MAP(CPIDLSelector, CDropdownSelector)
 	ON_MESSAGE(WM_SHELLCHANGE, OnShellChange)
 END_MESSAGE_MAP()
 
-int CPIDLSelector::OnCreate(LPCREATESTRUCT lpCreateStruct)
+INT CPIDLSelector::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if (CDropdownSelector::OnCreate(lpCreateStruct)==-1)
 		return -1;
@@ -368,16 +368,16 @@ LRESULT CPIDLSelector::OnShellChange(WPARAM wParam, LPARAM lParam)
 	if (m_IsEmpty)
 		return NULL;
 
-	wchar_t CurrentPath[MAX_PATH] = L"";
+	WCHAR CurrentPath[MAX_PATH] = L"";
 	if (!SHGetPathFromIDList(pidl, CurrentPath))
 		return NULL;
 
 	LPITEMIDLIST* pidls = (LPITEMIDLIST*)wParam;
 
-	wchar_t Path1[MAX_PATH] = L"";
-	wchar_t Path2[MAX_PATH] = L"";
-	wchar_t Parent1[MAX_PATH] = L"";
-	wchar_t Parent2[MAX_PATH] = L"";
+	WCHAR Path1[MAX_PATH] = L"";
+	WCHAR Path2[MAX_PATH] = L"";
+	WCHAR Parent1[MAX_PATH] = L"";
+	WCHAR Parent2[MAX_PATH] = L"";
 
 	IShellFolder* pDesktop = NULL;
 	if (SUCCEEDED(SHGetDesktopFolder(&pDesktop)))
@@ -385,7 +385,7 @@ LRESULT CPIDLSelector::OnShellChange(WPARAM wParam, LPARAM lParam)
 		SHGetPathFromIDList(pidls[0], Path1);
 
 		wcscpy_s(Parent1, MAX_PATH, Path1);
-		wchar_t* last = wcsrchr(Parent1, L'\\');
+		WCHAR* last = wcsrchr(Parent1, L'\\');
 		if (last>&Parent1[2])
 			*last = '\0';
 

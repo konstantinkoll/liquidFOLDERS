@@ -61,12 +61,12 @@ void CMapPreviewCtrl::Update(LFAirport* _Airport)
 		if (_Airport)
 		{
 			FontFamily fontFamily(((LFApplication*)AfxGetApp())->GetDefaultFontFace());
-			wchar_t pszBuf[4];
+			WCHAR pszBuf[4];
 			MultiByteToWideChar(CP_ACP, 0, m_Airport->Code, 4, pszBuf, 4);
 
 			StringFormat strformat;
 			m_TextPath.Reset();
-			m_TextPath.AddString(pszBuf, (int)wcslen(pszBuf), &fontFamily, FontStyleRegular, 21, Gdiplus::Point(0, 0), &strformat);
+			m_TextPath.AddString(pszBuf, (INT)wcslen(pszBuf), &fontFamily, FontStyleRegular, 21, Gdiplus::Point(0, 0), &strformat);
 
 			m_FirstPathDraw = TRUE;
 		}
@@ -116,12 +116,12 @@ void CMapPreviewCtrl::OnPaint()
 	if (m_Airport)
 		m_Location = m_Airport->Location;
 
-	int L = Map2->m_pBitmap->GetWidth();
-	int H = Map2->m_pBitmap->GetHeight();
-	int LocX = (int)(((m_Location.Longitude+180.0)*L)/360.0);
-	int LocY = (int)(((m_Location.Latitude+90.0)*H)/180.0);
-	int PosX = -LocX+rect.Width()/2;
-	int PosY = -LocY+rect.Height()/2;
+	INT L = Map2->m_pBitmap->GetWidth();
+	INT H = Map2->m_pBitmap->GetHeight();
+	INT LocX = (INT)(((m_Location.Longitude+180.0)*L)/360.0);
+	INT LocY = (INT)(((m_Location.Latitude+90.0)*H)/180.0);
+	INT PosX = -LocX+rect.Width()/2;
+	INT PosY = -LocY+rect.Height()/2;
 	if (PosY>1)
 	{
 		PosY = 1;
@@ -150,8 +150,8 @@ void CMapPreviewCtrl::OnPaint()
 			Rect tr;
 			m_TextPath.GetBounds(&tr);
 
-			int FntX = LocX+m_Indicator->m_pBitmap->GetWidth();
-			int FntY = LocY-tr.Y;
+			INT FntX = LocX+m_Indicator->m_pBitmap->GetWidth();
+			INT FntY = LocY-tr.Y;
 
 			if (FntY<10)
 			{

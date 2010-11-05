@@ -10,7 +10,7 @@
 // ChoosePropertyDlg
 //
 
-ChoosePropertyDlg::ChoosePropertyDlg(CWnd* pParent, int Attr)
+ChoosePropertyDlg::ChoosePropertyDlg(CWnd* pParent, INT Attr)
 	: LFAttributeListDlg(IDD_CHOOSEPROPERTY, pParent)
 {
 	m_Attr = Attr;

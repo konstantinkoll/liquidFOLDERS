@@ -39,7 +39,7 @@ void LFWelcomeDlg::DoDataExchange(CDataExchange* pDX)
 	}
 }
 
-void LFWelcomeDlg::CreateStore(int ID)
+void LFWelcomeDlg::CreateStore(INT ID)
 {
 	LFStoreDescriptor* s = LFAllocStoreDescriptor();
 	s->AutoLocation = TRUE;

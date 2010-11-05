@@ -52,8 +52,8 @@ void LFLicenseDlg::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 
 	if (icon)
 	{
-		int l = icon->m_pBitmap->GetWidth();
-		int h = icon->m_pBitmap->GetHeight();
+		INT l = icon->m_pBitmap->GetWidth();
+		INT h = icon->m_pBitmap->GetHeight();
 		g.DrawImage(icon->m_pBitmap, 16, 16, l, h);
 	}
 }

@@ -13,9 +13,9 @@
 
 struct ML_Item
 {
-	wchar_t Name[256];
-	wchar_t Path[MAX_PATH];
-	int Icon;
+	WCHAR Name[256];
+	WCHAR Path[MAX_PATH];
+	INT Icon;
 	LFFileImportList* List;
 	LFItemDescriptor* Template;
 	BOOL Recursive;
@@ -29,5 +29,5 @@ public:
 	CMigrationList();
 	~CMigrationList();
 
-	bool AddFolder(wchar_t* name, wchar_t* path, LFItemDescriptor* it, int Icon, BOOL Recursive);
+	bool AddFolder(WCHAR* name, WCHAR* path, LFItemDescriptor* it, INT Icon, BOOL Recursive);
 };

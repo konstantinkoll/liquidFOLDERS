@@ -16,11 +16,11 @@ public:
 
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 
-	BOOL Create(CString Caption, CString TooltipHeader, CString TooltipHint, CMFCToolBarImages* Icons, int IconID, CWnd* pParentWnd, UINT nID);
-	int GetPreferredWidth();
+	BOOL Create(CString Caption, CString TooltipHeader, CString TooltipHint, CMFCToolBarImages* Icons, INT IconID, CWnd* pParentWnd, UINT nID);
+	INT GetPreferredWidth();
 
 protected:
-	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
+	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnPaint();
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
@@ -34,6 +34,6 @@ private:
 	CString m_TooltipHint;
 	LFTooltip m_TooltipCtrl;
 	CMFCToolBarImages* m_Icons;
-	int m_IconID;
+	INT m_IconID;
 	BOOL m_Hover;
 };

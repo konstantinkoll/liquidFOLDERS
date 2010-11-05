@@ -23,7 +23,7 @@ BEGIN_MESSAGE_MAP(CBottomArea, CDialogBar)
 	ON_WM_CTLCOLOR()
 END_MESSAGE_MAP()
 
-int CBottomArea::OnCreate(LPCREATESTRUCT lpcs)
+INT CBottomArea::OnCreate(LPCREATESTRUCT lpcs)
 {
 	if (CWnd::OnCreate(lpcs)==-1)
 		return -1;

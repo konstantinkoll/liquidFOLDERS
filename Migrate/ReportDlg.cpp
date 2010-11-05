@@ -27,7 +27,7 @@ void ReportDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Check(pDX, IDC_UNCHECKMIGRATED, m_UncheckMigrated);
 }
 
-void ReportDlg::SetPage(int page)
+void ReportDlg::SetPage(INT page)
 {
 	ASSERT((page==0) || (page==1));
 
@@ -96,7 +96,7 @@ BOOL ReportDlg::OnInitDialog()
 		CString tmpStr;
 		tmpStr.Format(mask, m_Lists[a]->m_ItemCount);
 
-		tabs->InsertItem(a, tmpStr, (int)a-1);
+		tabs->InsertItem(a, tmpStr, (INT)a-1);
 	}
 
 	// Liste
@@ -170,7 +170,7 @@ void ReportDlg::OnItemChanged(NMHDR* pNMHDR, LRESULT* /*pResult*/)
 				CString mask;
 				ENSURE(mask.LoadString(pFolder->List->m_FileCount==1 ? IDS_REPORTSTATUS_ONEFILE : IDS_REPORTSTATUS_FILES));
 
-				wchar_t tmpBuf[256];
+				WCHAR tmpBuf[256];
 				LFINT64ToString(pFolder->List->m_FileSize, tmpBuf, 256);
 				tmpStr.Format(mask, pFolder->List->m_FileCount, tmpBuf);
 			}
@@ -183,7 +183,7 @@ void ReportDlg::OnItemChanged(NMHDR* pNMHDR, LRESULT* /*pResult*/)
 		}
 		else
 		{
-			wchar_t* tmpStr = LFGetErrorText(pFolder->List->m_LastError);
+			WCHAR* tmpStr = LFGetErrorText(pFolder->List->m_LastError);
 			GetDlgItem(IDC_STATUS2)->SetWindowText(tmpStr);
 			free(tmpStr);
 		}

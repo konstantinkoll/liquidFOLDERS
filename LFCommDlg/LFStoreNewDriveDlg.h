@@ -14,7 +14,7 @@
 class AFX_EXT_CLASS LFStoreNewDriveDlg : public CDialog
 {
 public:
-	LFStoreNewDriveDlg(CWnd* pParentWnd, char Drive, LFStoreDescriptor* pStore);
+	LFStoreNewDriveDlg(CWnd* pParentWnd, CHAR Drive, LFStoreDescriptor* pStore);
 
 	virtual void DoDataExchange(CDataExchange* pDX);
 
@@ -22,7 +22,7 @@ protected:
 	CIconCtrl m_IconHybrid;
 	CIconCtrl m_IconExternal;
 	CExplorerTree m_PathTree;
-	char m_Drive;
+	CHAR m_Drive;
 
 	afx_msg BOOL OnInitDialog();
 	afx_msg void OnDestroy();

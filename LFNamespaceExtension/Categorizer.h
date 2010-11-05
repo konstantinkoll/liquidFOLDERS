@@ -18,7 +18,7 @@ public:
 protected:
 	virtual DWORD OnGetCategory(CNSEItem* child);
 	virtual void OnGetCategoryName(CString& categoryName, DWORD categoryID);
-	virtual int OnCompareCategories(DWORD catID1, DWORD catID2);
+	virtual INT OnCompareCategories(DWORD catID1, DWORD catID2);
 };
 
 
@@ -33,7 +33,7 @@ public:
 protected:
 	virtual DWORD OnGetCategory(CNSEItem* child);
 	virtual void OnGetCategoryName(CString& categoryName, DWORD categoryID);
-	virtual int OnCompareCategories(DWORD catID1, DWORD catID2);
+	virtual INT OnCompareCategories(DWORD catID1, DWORD catID2);
 };
 
 
@@ -48,7 +48,7 @@ public:
 protected:
 	virtual DWORD OnGetCategory(CNSEItem* child);
 	virtual void OnGetCategoryName(CString& categoryName, DWORD categoryID);
-	virtual int OnCompareCategories(DWORD catID1, DWORD catID2);
+	virtual INT OnCompareCategories(DWORD catID1, DWORD catID2);
 };
 
 
@@ -63,7 +63,7 @@ public:
 protected:
 	virtual DWORD OnGetCategory(CNSEItem* child);
 	virtual void OnGetCategoryName(CString& categoryName, DWORD categoryID);
-	virtual int OnCompareCategories(DWORD catID1, DWORD catID2);
+	virtual INT OnCompareCategories(DWORD catID1, DWORD catID2);
 };
 
 
@@ -78,5 +78,5 @@ public:
 protected:
 	virtual DWORD OnGetCategory(CNSEItem* child);
 	virtual void OnGetCategoryName(CString& categoryName, DWORD categoryID);
-	virtual int OnCompareCategories(DWORD catID1, DWORD catID2);
+	virtual INT OnCompareCategories(DWORD catID1, DWORD catID2);
 };

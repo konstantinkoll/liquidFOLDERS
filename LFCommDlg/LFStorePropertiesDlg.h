@@ -13,7 +13,7 @@
 class AFX_EXT_CLASS LFStorePropertiesDlg : public CDialog
 {
 public:
-	LFStorePropertiesDlg(char* _StoreID, CWnd* pParentWnd=NULL);
+	LFStorePropertiesDlg(CHAR* _StoreID, CWnd* pParentWnd=NULL);
 
 	virtual void DoDataExchange(CDataExchange* pDX);
 

@@ -89,7 +89,7 @@ BOOL CGlasWindow::PreTranslateMessage(MSG* pMsg)
 	return CWnd::PreTranslateMessage(pMsg);
 }
 
-BOOL CGlasWindow::OnCmdMsg(UINT nID, int nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo)
+BOOL CGlasWindow::OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo)
 {
 	if (CWnd::OnCmdMsg(nID, nCode, pExtra, pHandlerInfo))
 		return TRUE;
@@ -196,7 +196,7 @@ BEGIN_MESSAGE_MAP(CGlasWindow, CWnd)
 	ON_WM_RBUTTONUP()
 END_MESSAGE_MAP()
 
-int CGlasWindow::OnCreate(LPCREATESTRUCT lpCreateStruct)
+INT CGlasWindow::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if (CWnd::OnCreate(lpCreateStruct)==-1)
 		return -1;
@@ -334,7 +334,7 @@ void CGlasWindow::OnEnable(BOOL bEnable)
 	}
 }
 
-void CGlasWindow::OnSize(UINT nType, int cx, int cy)
+void CGlasWindow::OnSize(UINT nType, INT cx, INT cy)
 {
 	CWnd::OnSize(nType, cx, cy);
 	AdjustLayout();

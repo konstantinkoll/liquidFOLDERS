@@ -27,7 +27,7 @@ LFStoreNewDlg::LFStoreNewDlg(CWnd* pParentWnd, LFStoreDescriptor* pStore)
 
 void LFStoreNewDlg::SetOkButton()
 {
-	char Path[MAX_PATH];
+	CHAR Path[MAX_PATH];
 	GetDlgItem(IDOK)->EnableWindow((!m_PathTree.IsWindowEnabled()) || (m_PathTree.GetSelectedPathA(Path)));
 }
 
@@ -48,7 +48,7 @@ void LFStoreNewDlg::DoDataExchange(CDataExchange* pDX)
 	if (pDX->m_bSaveAndValidate)
 	{
 		// Pfad zusammenbauen
-		char Path[MAX_PATH];
+		CHAR Path[MAX_PATH];
 		m_PathTree.GetSelectedPathA(Path);
 		if (Path[0])
 			if (Path[strlen(Path)-1]!='\\')

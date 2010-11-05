@@ -32,7 +32,7 @@ void CFilterWnd::AddConditionItem(BOOL focus)
 	lvi.iItem = m_wndList.GetItemCount();
 	lvi.pszText = L"Property";
 	lvi.iImage = -1;
-	int idx = m_wndList.InsertItem(&lvi);
+	INT idx = m_wndList.InsertItem(&lvi);
 
 	m_wndList.SetItemText(idx, 1, L"Condition");
 	m_wndList.SetItemText(idx, 2, L"Value");
@@ -67,7 +67,7 @@ BEGIN_MESSAGE_MAP(CFilterWnd, CDockablePane)
 	ON_UPDATE_COMMAND_UI(IDOK, OnUpdateCommands)
 END_MESSAGE_MAP()
 
-int CFilterWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
+INT CFilterWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if (CDockablePane::OnCreate(lpCreateStruct)==-1)
 		return -1;
@@ -135,7 +135,7 @@ int CFilterWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	tmp.Load(IDB_HISTORYICONS);
 	m_Icons = new CImageList();
 	m_Icons->Create(32, 32, ILC_COLOR32, 2, 1);
-		for (int a=0; a<tmp.GetCount(); a++)
+		for (INT a=0; a<tmp.GetCount(); a++)
 		{
 			HICON h = tmp.ExtractIcon(a);
 			m_Icons->Add(h);
@@ -149,20 +149,20 @@ int CFilterWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	return 0;
 }
 
-void CFilterWnd::OnSize(UINT nType, int cx, int cy)
+void CFilterWnd::OnSize(UINT nType, INT cx, INT cy)
 {
 	CDockablePane::OnSize(nType, cx, cy);
 
 	CRect rectClient;
 	GetClientRect(rectClient);
 
-	const int borderBtn = 4;
+	const INT borderBtn = 4;
 	LOGFONT lFont;
 	CFont::FromHandle((HFONT)GetStockObject(DEFAULT_GUI_FONT))->GetLogFont(&lFont);
 
-	int heightTxt = abs(lFont.lfHeight);
-	int heightTlb = m_wndToolBar.CalcFixedLayout(FALSE, TRUE).cy;
-	int heightBtn = 2*borderBtn+heightTxt+15;
+	INT heightTxt = abs(lFont.lfHeight);
+	INT heightTlb = m_wndToolBar.CalcFixedLayout(FALSE, TRUE).cy;
+	INT heightBtn = 2*borderBtn+heightTxt+15;
 
 	CRect rectCombo;
 	m_wndStoreCombo.GetWindowRect(&rectCombo);

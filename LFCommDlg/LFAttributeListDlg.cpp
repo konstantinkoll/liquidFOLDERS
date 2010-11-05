@@ -7,10 +7,10 @@
 #include "resource.h"
 
 
-static int CALLBACK MyCompareProc(LPARAM lParam1, LPARAM lParam2, LPARAM /*lParamSort*/)
+static INT CALLBACK MyCompareProc(LPARAM lParam1, LPARAM lParam2, LPARAM /*lParamSort*/)
 {
 	LFApplication* pApp = (LFApplication*)AfxGetApp();
-	return wcscmp(pApp->m_Attributes[(int)lParam1]->Name, pApp->m_Attributes[(int)lParam2]->Name);
+	return wcscmp(pApp->m_Attributes[(INT)lParam1]->Name, pApp->m_Attributes[(INT)lParam2]->Name);
 }
 
 
@@ -40,7 +40,7 @@ void LFAttributeListDlg::PrepareListCtrl(CListCtrl* li, BOOL check)
 	li->SetImageList(&m_AttributeIcons, LVSIL_SMALL);
 }
 
-void LFAttributeListDlg::PrepareListCtrl(int nID, BOOL check)
+void LFAttributeListDlg::PrepareListCtrl(INT nID, BOOL check)
 {
 	PrepareListCtrl((CListCtrl*)GetDlgItem(nID), check);
 }
@@ -82,17 +82,17 @@ void LFAttributeListDlg::AddAttribute(UINT nID, UINT attr)
 	AddAttribute((CListCtrl*)GetDlgItem(nID), attr);
 }
 
-void LFAttributeListDlg::FinalizeListCtrl(CListCtrl* li, int focus, BOOL sort)
+void LFAttributeListDlg::FinalizeListCtrl(CListCtrl* li, INT focus, BOOL sort)
 {
 	li->SetColumnWidth(0, LVSCW_AUTOSIZE);
 
 	if (sort)
 		li->SortItems(MyCompareProc, 0);
 
-	int select = 0;
+	INT select = 0;
 	if (focus!=-1)
 		for (UINT a=0; a<(UINT)li->GetItemCount(); a++)
-			if ((int)li->GetItemData(a)==focus)
+			if ((INT)li->GetItemData(a)==focus)
 			{
 				select = a;
 				break;
@@ -100,12 +100,12 @@ void LFAttributeListDlg::FinalizeListCtrl(CListCtrl* li, int focus, BOOL sort)
 	li->SetItemState(select, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
 }
 
-void LFAttributeListDlg::FinalizeListCtrl(UINT nID, int focus, BOOL sort)
+void LFAttributeListDlg::FinalizeListCtrl(UINT nID, INT focus, BOOL sort)
 {
 	FinalizeListCtrl((CListCtrl*)GetDlgItem(nID), focus, sort);
 }
 
-void LFAttributeListDlg::PopulateListCtrl(CListCtrl* li, BOOL check, int focus, BOOL sort)
+void LFAttributeListDlg::PopulateListCtrl(CListCtrl* li, BOOL check, INT focus, BOOL sort)
 {
 	PrepareListCtrl(li, check);
 
@@ -115,7 +115,7 @@ void LFAttributeListDlg::PopulateListCtrl(CListCtrl* li, BOOL check, int focus, 
 	FinalizeListCtrl(li, focus, sort);
 }
 
-void LFAttributeListDlg::PopulateListCtrl(int nID, BOOL check, int focus, BOOL sort)
+void LFAttributeListDlg::PopulateListCtrl(INT nID, BOOL check, INT focus, BOOL sort)
 {
 	PopulateListCtrl((CListCtrl*)GetDlgItem(nID), check, focus, sort);
 }

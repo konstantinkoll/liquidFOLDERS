@@ -20,9 +20,9 @@ public:
 
 protected:
 	void UpdateStore();
-	void SetWindowRect(int x, int y, BOOL TopMost);
+	void SetWindowRect(INT x, INT y, BOOL TopMost);
 
-	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
+	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnClose();
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
@@ -32,7 +32,7 @@ protected:
 	afx_msg void OnRButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint pos);
 	afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
-	afx_msg void OnMove(int x, int y);
+	afx_msg void OnMove(INT x, INT y);
 	afx_msg void OnAlwaysOnTop();
 	afx_msg void OnChooseDefaultStore();
 	afx_msg void OnImportFolder();
@@ -51,8 +51,8 @@ protected:
 	CImageList m_Dropzone;
 	LFStoreDescriptor m_Store;
 	CString Label;
-	int PosX;
-	int PosY;
+	INT PosX;
+	INT PosY;
 	BOOL AlwaysOnTop;
 	BOOL MouseInWnd;
 	BOOL Grabbed;

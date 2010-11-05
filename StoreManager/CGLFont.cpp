@@ -22,7 +22,7 @@ CGLFont::~CGLFont()
 BOOL CGLFont::Create(CString face, UINT size, BOOL bold, BOOL italic)
 {
 	CFont font;
-	font.CreateFont(-(int)size, 0, 0, 0, bold ? FW_BOLD : FW_NORMAL, (BYTE)italic, 0, 0, ANSI_CHARSET,
+	font.CreateFont(-(INT)size, 0, 0, 0, bold ? FW_BOLD : FW_NORMAL, (BYTE)italic, 0, 0, ANSI_CHARSET,
 		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
 		face);
 	return Create(&font);
@@ -51,8 +51,8 @@ BOOL CGLFont::Create(CFont* font)
 		BITMAPINFO bmi;
 		ZeroMemory(&bmi.bmiHeader, sizeof(BITMAPINFOHEADER));
 		bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-		bmi.bmiHeader.biWidth = (int)m_TexSize;
-		bmi.bmiHeader.biHeight = -(int)m_TexSize;
+		bmi.bmiHeader.biWidth = (INT)m_TexSize;
+		bmi.bmiHeader.biHeight = -(INT)m_TexSize;
 		bmi.bmiHeader.biPlanes = 1;
 		bmi.bmiHeader.biCompression = BI_RGB;
 		bmi.bmiHeader.biBitCount = 32;
@@ -90,26 +90,26 @@ BOOL CGLFont::Create(CFont* font)
 	return ok;
 }
 
-UINT CGLFont::Render(wchar_t* pStr, int xs, int ys, int cCount)
+UINT CGLFont::Render(WCHAR* pStr, INT xs, INT ys, INT cCount)
 {
 	if (!pStr)
 		return 0;
 
 	if (cCount<0)
-		cCount = (int)wcslen(pStr);
+		cCount = (INT)wcslen(pStr);
 
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, m_TexID);
 	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
 	glBegin (GL_QUADS);
-	int x = xs;
-	int y = ys;
+	INT x = xs;
+	INT y = ys;
 	UINT h = 0;
 
 	while ((cCount>0) && (*pStr))
 	{
-		wchar_t ch = *pStr;
+		WCHAR ch = *pStr;
 		if ((ch==2013) || (ch==8211))
 			ch = 150;
 		if ((ch==2014) || (ch==8212))
@@ -133,7 +133,7 @@ UINT CGLFont::Render(wchar_t* pStr, int xs, int ys, int cCount)
 	return h;
 }
 
-UINT CGLFont::RenderChar(UCHAR ch, int x, int y, UINT* pHeight)
+UINT CGLFont::RenderChar(UCHAR ch, INT x, INT y, UINT* pHeight)
 {
 	ASSERT(pHeight);
 
@@ -142,8 +142,8 @@ UINT CGLFont::RenderChar(UCHAR ch, int x, int y, UINT* pHeight)
 	float tx2 = TexCoords[ch][2];
 	float ty2 = TexCoords[ch][3];
 
-	UINT w = (int)((tx2-tx1)*m_TexSize);
-	UINT h = (int)((ty2-ty1)*m_TexSize);
+	UINT w = (INT)((tx2-tx1)*m_TexSize);
+	UINT h = (INT)((ty2-ty1)*m_TexSize);
 
 	glTexCoord2f(tx1, ty2);
 	glVertex2i(x, y+h);
@@ -161,19 +161,19 @@ UINT CGLFont::RenderChar(UCHAR ch, int x, int y, UINT* pHeight)
 	return w;
 }
 
-UINT CGLFont::GetTextWidth(wchar_t* pStr, int cCount)
+UINT CGLFont::GetTextWidth(WCHAR* pStr, INT cCount)
 {
 	if (!pStr)
 		return 0;
 
 	if (cCount<0)
-		cCount = (int)wcslen(pStr);
+		cCount = (INT)wcslen(pStr);
 
 	float w = 0;
 
 	while ((cCount>0) && (*pStr))
 	{
-		wchar_t ch = *pStr;
+		WCHAR ch = *pStr;
 		if ((ch==2013) || (ch==8211))
 			ch = 150;
 		if ((ch==2014) || (ch==8212))
@@ -195,7 +195,7 @@ UINT CGLFont::GetTextWidth(wchar_t* pStr, int cCount)
 	return (UINT)w;
 }
 
-UINT CGLFont::GetTextHeight(wchar_t* pStr)
+UINT CGLFont::GetTextHeight(WCHAR* pStr)
 {
 	return (pStr ? m_LineHeight : 0);
 }
@@ -203,15 +203,15 @@ UINT CGLFont::GetTextHeight(wchar_t* pStr)
 CGLFont::PaintResult CGLFont::PaintAlphabet(HDC hDC, BOOL bMeasureOnly)
 {
 	SIZE size;
-	char str[2] = "x";
+	CHAR str[2] = "x";
 
 	if (!GetTextExtentPoint32A(hDC, str, 1, &size))
 		return Fail;
-	m_Spacing = (int)ceil((double)size.cy/3);
+	m_Spacing = (INT)ceil((double)size.cy/3);
 	m_LineHeight = max(m_LineHeight, (UINT)size.cy);
 
-	int x = m_Spacing;
-	int y = 0;
+	INT x = m_Spacing;
+	INT y = 0;
 
 	for (UCHAR c = 32; c < 255; c++)
 	{
@@ -224,7 +224,7 @@ CGLFont::PaintResult CGLFont::PaintAlphabet(HDC hDC, BOOL bMeasureOnly)
 			x = m_Spacing;
 			y += size.cy+1;
 		}
-		if (y+size.cy>(int)m_TexSize)
+		if (y+size.cy>(INT)m_TexSize)
 			return MoreData;
 
 		if (!bMeasureOnly)

@@ -22,17 +22,17 @@
 typedef HRESULT(__stdcall* PFNSETWINDOWTHEME)(HWND hwnd, LPCWSTR pszSubAppName, LPCWSTR pszSubIdList);
 typedef HRESULT(__stdcall* PFNCLOSETHEMEDATA)(HTHEME hTheme);
 typedef HTHEME(__stdcall* PFNOPENTHEMEDATA)(HWND hwnd, LPCWSTR pszClassList);
-typedef HRESULT(__stdcall* PFNDRAWTHEMEBACKGROUND)(HTHEME hTheme, HDC hdc, int iPartId,
-							int iStateId, const RECT* pRect, const RECT* pClipRect);
-typedef HRESULT(__stdcall* PFNDRAWTHEMETEXT)(HTHEME hTheme, HDC hdc, int iPartId,
-							int iStateId, LPCWSTR pszText, int iCharCount, DWORD dwTextFlags,
+typedef HRESULT(__stdcall* PFNDRAWTHEMEBACKGROUND)(HTHEME hTheme, HDC hdc, INT iPartId,
+							INT iStateId, const RECT* pRect, const RECT* pClipRect);
+typedef HRESULT(__stdcall* PFNDRAWTHEMETEXT)(HTHEME hTheme, HDC hdc, INT iPartId,
+							INT iStateId, LPCWSTR pszText, INT iCharCount, DWORD dwTextFlags,
 							DWORD dwTextFlags2, const RECT* pRect);
-typedef HRESULT(__stdcall* PFNDRAWTHEMETEXTEX)(HTHEME hTheme, HDC hdc, int iPartId,
-							int iStateId, LPCWSTR pszText, int iCharCount, DWORD dwTextFlags,
+typedef HRESULT(__stdcall* PFNDRAWTHEMETEXTEX)(HTHEME hTheme, HDC hdc, INT iPartId,
+							INT iStateId, LPCWSTR pszText, INT iCharCount, DWORD dwTextFlags,
 							const RECT* pRect, const DTTOPTS* pOptions);
-typedef HRESULT(__stdcall* PFNGETTHEMESYSFONT)(HTHEME hTheme, int iFontID, LOGFONT* plf);
-typedef HRESULT(__stdcall* PFNGETTHEMESYSCOLOR)(HTHEME hTheme, int iColorID);
-typedef HRESULT (__stdcall* PFNGETTHEMEPARTSIZE)(HTHEME hTheme, HDC hdc, int iPartId, int iStateId,
+typedef HRESULT(__stdcall* PFNGETTHEMESYSFONT)(HTHEME hTheme, INT iFontID, LOGFONT* plf);
+typedef HRESULT(__stdcall* PFNGETTHEMESYSCOLOR)(HTHEME hTheme, INT iColorID);
+typedef HRESULT (__stdcall* PFNGETTHEMEPARTSIZE)(HTHEME hTheme, HDC hdc, INT iPartId, INT iStateId,
 							LPRECT prc, THEMESIZE eSize, SIZE *psz);
 typedef HRESULT (__stdcall* PFNSETWINDOWTHEMEATTRIBUTE)(HWND hWnd, WINDOWTHEMEATTRIBUTETYPE eAttribute,
 							void* pAttribute, DWORD cdAttribute);
@@ -56,7 +56,7 @@ public:
 	CString m_Path;
 	LFMessageIDs* p_MessageIDs;
 	LFAttributeDescriptor* m_Attributes[LFAttributeCount];
-	wchar_t* m_AttrCategories[LFAttrCategoryCount];
+	WCHAR* m_AttrCategories[LFAttrCategoryCount];
 	LFContextDescriptor* m_Contexts[LFContextCount];
 	LFItemCategoryDescriptor* m_ItemCategories[LFItemCategoryCount];
 	CImageList m_SystemImageListSmall;
@@ -93,15 +93,15 @@ public:
 	BOOL m_AeroLibLoaded;
 
 	virtual BOOL InitInstance();
-	virtual int ExitInstance();
+	virtual INT ExitInstance();
 
 	CString GetDefaultFontFace();
 	void SendMail(CString Subject=_T(""));
-	int GetGlobalInt(LPCTSTR lpszEntry, int nDefault=0);
+	INT GetGlobalInt(LPCTSTR lpszEntry, INT nDefault=0);
 	CString GetGlobalString(LPCTSTR lpszEntry, LPCTSTR lpszDefault=_T(""));
-	BOOL WriteGlobalInt(LPCTSTR lpszEntry, int nValue);
+	BOOL WriteGlobalInt(LPCTSTR lpszEntry, INT nValue);
 	BOOL WriteGlobalString(LPCTSTR lpszEntry, LPCTSTR lpszValue);
-	static void ExtractCoreIcons(HINSTANCE hModIcons, int size, CImageList* li);
+	static void ExtractCoreIcons(HINSTANCE hModIcons, INT size, CImageList* li);
 	static UINT DeleteStore(LFItemDescriptor* store, CWnd* pParentWnd=NULL, CWnd* pOwnerWnd=NULL);
 	static UINT DeleteStore(LFStoreDescriptor* store, CWnd* pParentWnd=NULL, CWnd* pOwnerWnd=NULL);
 	static void PlayNavigateSound();

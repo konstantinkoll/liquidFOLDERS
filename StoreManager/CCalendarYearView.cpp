@@ -20,7 +20,7 @@ CCalendarYearView::~CCalendarYearView()
 {
 }
 
-void CCalendarYearView::Create(CWnd* _pParentWnd, LFSearchResult* _result, int _FocusItem)
+void CCalendarYearView::Create(CWnd* _pParentWnd, LFSearchResult* _result, INT _FocusItem)
 {
 	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS);
 

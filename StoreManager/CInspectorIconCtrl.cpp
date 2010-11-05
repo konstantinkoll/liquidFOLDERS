@@ -76,9 +76,9 @@ void CInspectorIconCtrl::SetStatus(UINT _status, HICON _icon, CString _descripti
 	Invalidate();
 }
 
-int CInspectorIconCtrl::GetPreferredHeight(int cx)
+INT CInspectorIconCtrl::GetPreferredHeight(INT cx)
 {
-	int Height = (cx>128 ? 128 : cx);
+	INT Height = (cx>128 ? 128 : cx);
 	if (Height<16)
 		Height = 16;
 
@@ -116,8 +116,8 @@ void CInspectorIconCtrl::OnPaint()
 
 	dc.FillSolidRect(rect, afxGlobalData.clrBarFace);
 
-	int cx = (rect.Width()-m_IconSize)/2;
-	const int cy = 4;
+	INT cx = (rect.Width()-m_IconSize)/2;
+	const INT cy = 4;
 
 	if (m_Status==StatusUsed)
 	{
@@ -161,7 +161,7 @@ void CInspectorIconCtrl::OnLButtonDown(UINT /*nFlags*/, CPoint /*point*/)
 	OnSetFocus(NULL);
 }
 
-void CInspectorIconCtrl::OnSize(UINT nType, int cx, int cy)
+void CInspectorIconCtrl::OnSize(UINT nType, INT cx, INT cy)
 {
 	CWnd::OnSize(nType, cx, cy);
 

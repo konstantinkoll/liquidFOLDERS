@@ -12,10 +12,10 @@ double StringToCoord(CString str)
 	UINT Deg;
 	UINT Min;
 	UINT Sec;
-	wchar_t Ch;
+	WCHAR Ch;
 	double Res = 0;
 
-	int Scanned = swscanf_s(str, L"%u°%u\'%u\"%c", &Deg, &Min, &Sec, &Ch, 1);
+	INT Scanned = swscanf_s(str, L"%u°%u\'%u\"%c", &Deg, &Min, &Sec, &Ch, 1);
 	if (Scanned>=1)
 		Res += Deg;
 	if (Scanned>=2)
@@ -107,7 +107,7 @@ void LFSelectLocationGPSDlg::OnUpdateEdit(NMHDR* pNMHDR, LRESULT* pResult)
 	tagGPSDATA* pTag = (tagGPSDATA*)pNMHDR;
 	m_Location = *pTag->pCoord;
 
-	wchar_t tmpStr[256];
+	WCHAR tmpStr[256];
 	LFGeoCoordinateToString(m_Location.Latitude, tmpStr, 256, true, false);
 	GetDlgItem(IDC_LATITUDE)->SetWindowText(tmpStr);
 	LFGeoCoordinateToString(m_Location.Longitude, tmpStr, 256, false, false);

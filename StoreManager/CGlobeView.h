@@ -18,17 +18,17 @@ struct Location
 	BOOL valid;
 	BOOL selected;
 	double world[3];
-	int screenpoint[2];
-	int screenlabel[4];
+	INT screenpoint[2];
+	INT screenlabel[4];
 	GLfloat alpha;
-	wchar_t coordstring[32];
+	WCHAR coordstring[32];
 };
 
 struct LocalSettings
 {
 	GLfloat Latitude;
 	GLfloat Longitude;
-	int GlobeZoom;
+	INT GlobeZoom;
 };
 
 class CGlobeView : public CFileView
@@ -40,11 +40,11 @@ public:
 	LocalSettings m_LocalSettings;
 	BOOL m_CameraChanged;
 
-	virtual void SelectItem(int n, BOOL select=TRUE, BOOL InternalCall=FALSE);
-	virtual int GetSelectedItem();
-	virtual int GetNextSelectedItem(int n);
+	virtual void SelectItem(INT n, BOOL select=TRUE, BOOL InternalCall=FALSE);
+	virtual INT GetSelectedItem();
+	virtual INT GetNextSelectedItem(INT n);
 
-	void Create(CWnd* pParentWnd, LFSearchResult* _result, int _FocusItem);
+	void Create(CWnd* pParentWnd, LFSearchResult* _result, INT _FocusItem);
 
 protected:
 	CClientDC* m_pDC;
@@ -53,8 +53,8 @@ protected:
 	CTexture* m_TextureGlobe;
 	CGLFont m_SpecialFont;
 	CGLFont m_Fonts[2];
-	int m_Width;
-	int m_Height;
+	INT m_Width;
+	INT m_Height;
 	BOOL m_Grabbed;
 	CPoint m_GrabPoint;
 	CString YouLookAt;
@@ -65,8 +65,8 @@ protected:
 
 	virtual void SetViewOptions(UINT _ViewID, BOOL Force);
 	virtual void SetSearchResult(LFSearchResult* _result);
-	virtual BOOL IsSelected(int n);
-	virtual int ItemAtPosition(CPoint point);
+	virtual BOOL IsSelected(INT n);
+	virtual INT ItemAtPosition(CPoint point);
 	virtual CMenu* GetContextMenu();
 
 	void Init();
@@ -80,9 +80,9 @@ protected:
 	void DrawScene(BOOL InternalCall=FALSE);
 	void CalcAndDrawPoints();
 	void CalcAndDrawLabel();
-	void DrawLabel(Location* loc, UINT cCaption, wchar_t* caption, wchar_t* subcaption, wchar_t* coordinates, wchar_t* description, BOOL focused);
+	void DrawLabel(Location* loc, UINT cCaption, WCHAR* caption, WCHAR* subcaption, WCHAR* coordinates, WCHAR* description, BOOL focused);
 
-	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
+	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();
 	afx_msg void OnZoomIn();
 	afx_msg void OnZoomOut();
@@ -104,7 +104,7 @@ protected:
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg BOOL OnMouseWheel(UINT nFlags, short zDelta, CPoint pt);
 	afx_msg BOOL OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message);
-	afx_msg void OnSize(UINT nType, int cx, int cy);
+	afx_msg void OnSize(UINT nType, INT cx, INT cy);
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnPaint();
@@ -127,7 +127,7 @@ private:
 	UINT m_AnimCounter;
 	LPCTSTR lpszCursorName;
 	CPoint m_CursorPos;
-	int m_nTexture;
+	INT m_nTexture;
 	BOOL m_LockUpdate;
 
 	BOOL CursorOnGlobe(CPoint point);

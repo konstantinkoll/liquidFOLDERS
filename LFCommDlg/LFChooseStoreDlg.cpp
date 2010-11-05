@@ -35,7 +35,7 @@ void LFChooseStoreDlg::DoDataExchange(CDataExchange* pDX)
 {
 	if (pDX->m_bSaveAndValidate)
 	{
-		int idx = GetSelectedStore();
+		INT idx = GetSelectedStore();
 		strcpy_s(StoreID, LFKeySize, idx!=-1 ? p_Result->m_Items[idx]->StoreID : "");
 	}
 }
@@ -58,14 +58,14 @@ void LFChooseStoreDlg::AdjustLayout()
 	CRect borders(0, 0, 7, 7);
 	MapDialogRect(&borders);
 
-	int borderLeft = (p_App->OSVersion==OS_XP) ? 0 : (m_Mode>=LFCSD_Internal) ? borders.Width() : borders.Width()/2;
-	int borderRight = (m_Mode>=LFCSD_Internal) ? 0 : 1;
+	INT borderLeft = (p_App->OSVersion==OS_XP) ? 0 : (m_Mode>=LFCSD_Internal) ? borders.Width() : borders.Width()/2;
+	INT borderRight = (m_Mode>=LFCSD_Internal) ? 0 : 1;
 	m_wndExplorerList.SetWindowPos(NULL, rect.left+borderLeft, rect.top+ExplorerHeight, rect.Width()-borderLeft-borderRight, rect.Height()-ExplorerHeight, SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
 void LFChooseStoreDlg::UpdateOkButton()
 {
-	int idx = GetSelectedStore();
+	INT idx = GetSelectedStore();
 	BOOL bEnable = (idx!=-1);
 
 	if (bEnable)
@@ -167,10 +167,10 @@ LRESULT LFChooseStoreDlg::OnUpdateStores(WPARAM wParam, LPARAM lParam)
 	UINT Mask = LFMSGF_IntStores | (m_Mode<LFCSD_Internal ? LFMSGF_ExtHybStores : 0);
 	if ((wParam & Mask) && (m_hWnd!=(HWND)lParam))
 	{
-		char StoreID[LFKeySize] = "";
+		CHAR StoreID[LFKeySize] = "";
 		if (p_Result)
 		{
-			int idx = m_wndExplorerList.GetNextItem(-1, LVIS_SELECTED);
+			INT idx = m_wndExplorerList.GetNextItem(-1, LVIS_SELECTED);
 			if (idx!=-1)
 				strcpy_s(StoreID, LFKeySize, p_Result->m_Items[idx]->StoreID);
 
@@ -184,7 +184,7 @@ LRESULT LFChooseStoreDlg::OnUpdateStores(WPARAM wParam, LPARAM lParam)
 
 		m_wndExplorerList.SetSearchResult(p_Result);
 
-		int idx = -1;
+		INT idx = -1;
 		for (UINT a=0; a<p_Result->m_ItemCount; a++)
 			if (((idx==-1) && (p_Result->m_Items[a]->Type & LFTypeDefaultStore)) || (!strcmp(StoreID, p_Result->m_Items[a]->StoreID)))
 				idx = a;
@@ -248,35 +248,35 @@ void LFChooseStoreDlg::OnNewStore()
 
 void LFChooseStoreDlg::OnMakeDefault()
 {
-	int idx = GetSelectedStore();
+	INT idx = GetSelectedStore();
 	if (idx!=-1)
 		LFErrorBox(LFMakeDefaultStore(p_Result->m_Items[idx]->StoreID, NULL), m_hWnd);
 }
 
 void LFChooseStoreDlg::OnMakeHybrid()
 {
-	int idx = GetSelectedStore();
+	INT idx = GetSelectedStore();
 	if (idx!=-1)
 		LFErrorBox(LFMakeHybridStore(p_Result->m_Items[idx]->StoreID, NULL), m_hWnd);
 }
 
 void LFChooseStoreDlg::OnRename()
 {
-	int idx = GetSelectedStore();
+	INT idx = GetSelectedStore();
 	if (idx!=-1)
 		m_wndExplorerList.EditLabel(idx);
 }
 
 void LFChooseStoreDlg::OnDelete()
 {
-	int idx = GetSelectedStore();
+	INT idx = GetSelectedStore();
 	if (idx!=-1)
 		LFErrorBox(((LFApplication*)AfxGetApp())->DeleteStore(p_Result->m_Items[idx], this));
 }
 
 void LFChooseStoreDlg::OnProperties()
 {
-	int idx = GetSelectedStore();
+	INT idx = GetSelectedStore();
 	if (idx!=-1)
 	{
 		LFStorePropertiesDlg dlg(p_Result->m_Items[idx]->StoreID, this);

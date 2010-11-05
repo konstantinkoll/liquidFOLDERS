@@ -15,7 +15,7 @@
 extern AFX_EXTENSION_MODULE LFCommDlgDLL;
 extern LFMessageIDs* MessageIDs;
 
-LFStorePropertiesDlg::LFStorePropertiesDlg(char* _StoreID, CWnd* pParentWnd)
+LFStorePropertiesDlg::LFStorePropertiesDlg(CHAR* _StoreID, CWnd* pParentWnd)
 	: CDialog(IDD_STOREPROPERTIES, pParentWnd)
 {
 	if (LFGetStoreSettings(_StoreID, &store)==LFOk)
@@ -92,7 +92,7 @@ LRESULT LFStorePropertiesDlg::OnUpdateStore(WPARAM /*wParam*/, LPARAM /*lParam*/
 		edit2->EnableWindow(TRUE);
 		GetDlgItem(IDOK)->EnableWindow(TRUE);
 
-		wchar_t tmpStr[256];
+		WCHAR tmpStr[256];
 		LFTimeToString(store.CreationTime, tmpStr, 256);
 		GetDlgItem(IDC_CREATED)->SetWindowText(tmpStr);
 		LFTimeToString(store.FileTime, tmpStr, 256);
@@ -108,15 +108,15 @@ LRESULT LFStorePropertiesDlg::OnUpdateStore(WPARAM /*wParam*/, LPARAM /*lParam*/
 		GetDlgItem(IDC_LASTSEEN)->SetWindowText(store.LastSeen);
 
 		size_t sz = strlen(store.DatPath)+1;
-		MultiByteToWideChar(CP_ACP, 0, store.DatPath, (int)sz, (LPWSTR)tmpStr, (int)sz);
+		MultiByteToWideChar(CP_ACP, 0, store.DatPath, (INT)sz, (LPWSTR)tmpStr, (INT)sz);
 		GetDlgItem(IDC_DATPATH)->SetWindowText(tmpStr);
 
 		sz = strlen(store.IdxPathMain)+1;
-		MultiByteToWideChar(CP_ACP, 0, store.IdxPathMain, (int)sz, (LPWSTR)tmpStr, (int)sz);
+		MultiByteToWideChar(CP_ACP, 0, store.IdxPathMain, (INT)sz, (LPWSTR)tmpStr, (INT)sz);
 		GetDlgItem(IDC_IDXPATHMAIN)->SetWindowText(tmpStr);
 
 		sz = strlen(store.IdxPathAux)+1;
-		MultiByteToWideChar(CP_ACP, 0, store.IdxPathAux, (int)sz, (LPWSTR)tmpStr, (int)sz);
+		MultiByteToWideChar(CP_ACP, 0, store.IdxPathAux, (INT)sz, (LPWSTR)tmpStr, (INT)sz);
 		GetDlgItem(IDC_IDXPATHAUX)->SetWindowText(tmpStr);
 
 		LFUINTToString(store.IndexVersion, tmpStr, 256);

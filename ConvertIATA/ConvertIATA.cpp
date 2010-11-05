@@ -15,7 +15,7 @@ CString path;
 
 using namespace std;
 
-int Compare(CString s1, CString s2)
+INT Compare(CString s1, CString s2)
 {
 	s1.Replace('Ä', 'A');
 	s1.Replace('Ö', 'O');
@@ -39,7 +39,7 @@ double GetCoord(CString s)
 {
 	USES_CONVERSION;
 
-	int curPos = s.Find("*");
+	INT curPos = s.Find("*");
 	double c = atof(s.Mid(0, curPos));
 	s = s.Mid(curPos+1);
 
@@ -62,12 +62,12 @@ void ConvertFile(CString LanguageSuffix)
 	CString tmpStr;
 
 	// Daten
-	int CountryCount = 0;
+	INT CountryCount = 0;
 	CString CountryNames[512];
 
 	struct Airport
 	{
-		int CountryID;
+		INT CountryID;
 		CString Code;
 		CString MetroCode;
 		CString Name;
@@ -87,14 +87,14 @@ void ConvertFile(CString LanguageSuffix)
 	{
 		tmpStr.OemToAnsi();
 
-		int curPos= 0;
+		INT curPos= 0;
 		CString NamesAndCodes = tmpStr.Tokenize(";", curPos);
 		CString Dummy = tmpStr.Tokenize(";", curPos);
 		CString Coord = "";
 		if (curPos!=-1)
 			Coord = tmpStr.Tokenize(";", curPos);
 
-		int CountryPos = NamesAndCodes.Find(", ", 0);
+		INT CountryPos = NamesAndCodes.Find(", ", 0);
 		if (CountryPos)
 		{
 			Airports[AirportCount].Code = NamesAndCodes.Mid(0, 3);
@@ -105,8 +105,8 @@ void ConvertFile(CString LanguageSuffix)
 			CString Country = NamesAndCodes.Mid(CountryPos+2);
 			NamesAndCodes.Truncate(CountryPos);
 
-			int CountryID = -1;
-			for (int a=0; a<CountryCount; a++)
+			INT CountryID = -1;
+			for (INT a=0; a<CountryCount; a++)
 				if (Country==CountryNames[a])
 				{
 					CountryID = a;
@@ -122,10 +122,10 @@ void ConvertFile(CString LanguageSuffix)
 				}
 				else
 				{
-					for (int InsertPos=0; InsertPos<=CountryCount; InsertPos++)
+					for (INT InsertPos=0; InsertPos<=CountryCount; InsertPos++)
 						if ((InsertPos==CountryCount) || (Compare(CountryNames[InsertPos],Country)>0))
 						{
-							for (int a=CountryCount; a>InsertPos; a--)
+							for (INT a=CountryCount; a>InsertPos; a--)
 								CountryNames[a] = CountryNames[a-1];
 							CountryID = InsertPos;
 							CountryNames[InsertPos] = Country;
@@ -181,7 +181,7 @@ void ConvertFile(CString LanguageSuffix)
 	output.WriteString(tmpStr);
 	tmpStr.Format("LFCountry Countries_%s[CountryCount_%s] = {\n", LanguageSuffix, LanguageSuffix);
 	output.WriteString(tmpStr);
-	for (int a=0; a<CountryCount; a++)
+	for (INT a=0; a<CountryCount; a++)
 	{
 		CString Delimiter = (a<CountryCount-1) ? "," : "";
 		tmpStr.Format("\t{ %3d, \"%s\" }%s\n", a, CountryNames[a], Delimiter);
@@ -209,7 +209,7 @@ void ConvertFile(CString LanguageSuffix)
 	output.Close();
 }
 
-int _tmain(int /*argc*/, TCHAR* /*argv[]*/, TCHAR* /*envp[]*/)
+INT _tmain(INT /*argc*/, TCHAR* /*argv[]*/, TCHAR* /*envp[]*/)
 {
 	// MFC initialisieren und drucken. Bei Fehlschlag Fehlermeldung aufrufen.
 	if (!AfxWinInit(::GetModuleHandle(NULL), NULL, ::GetCommandLine(), 0))

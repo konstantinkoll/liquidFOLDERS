@@ -23,7 +23,7 @@ public:
 	virtual BOOL InitInstance();
 
 	BOOL HideFileExt();
-	void GetIconSize(int& cx, int& cy);
+	void GetIconSize(INT& cx, INT& cy);
 	void SetCoreMenuIcon(void* item, UINT ResID);
 	CString FrmtAttrStr(CString Mask, CString Name);
 
@@ -34,12 +34,12 @@ public:
 	CString m_Categories[3][6];
 	CString m_Store;
 	CString m_Folder;
-	wchar_t m_CoreFile[MAX_PATH];
-	wchar_t m_ThisFile[MAX_PATH];
+	WCHAR m_CoreFile[MAX_PATH];
+	WCHAR m_ThisFile[MAX_PATH];
 	LFAttributeDescriptor* m_Attributes[LFAttributeCount];
 	LFDomainDescriptor* m_Domains[LFDomainCount];
 	LFItemCategoryDescriptor* m_ItemCategories[LFItemCategoryCount];
-	wchar_t* m_AttrCategoryNames[LFAttrCategoryCount+1];
+	WCHAR* m_AttrCategoryNames[LFAttrCategoryCount+1];
 
 protected:
 	BOOL GetApplicationPath(CString App, CString& Path);

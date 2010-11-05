@@ -20,7 +20,7 @@ public:
 
 	BOOL Create(CWnd* pParentWnd, UINT ResID, UINT nID);
 	UINT GetPreferredHeight();
-	CTaskButton* AddButton(UINT nID, int IconID, BOOL bForceIcon=FALSE, BOOL bAddRight=FALSE);
+	CTaskButton* AddButton(UINT nID, INT IconID, BOOL bForceIcon=FALSE, BOOL bAddRight=FALSE);
 	void AdjustLayout();
 
 protected:
@@ -29,7 +29,7 @@ protected:
 	afx_msg void OnPaint();
 	afx_msg void OnSysColorChange();
 	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
-	afx_msg void OnSize(UINT nType, int cx, int cy);
+	afx_msg void OnSize(UINT nType, INT cx, INT cy);
 	afx_msg void OnIdleUpdateCmdUI();
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint pos);
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
@@ -38,8 +38,8 @@ protected:
 private:
 	CMFCToolBarImages Icons;
 	CBitmap BackBuffer;
-	int BackBufferL;
-	int BackBufferH;
+	INT BackBufferL;
+	INT BackBufferH;
 	HBRUSH hBackgroundBrush;
 	list<CTaskButton*> ButtonsLeft;
 	list<CTaskButton*> ButtonsRight;

@@ -48,8 +48,8 @@ struct FolderSerialization
 	CString DisplayName;
 	CString Description;
 	CString Comment;
-	char StoreID[LFKeySize];
-	char FileID[LFKeySize];
+	CHAR StoreID[LFKeySize];
+	CHAR FileID[LFKeySize];
 	UINT DomainID;
 	UCHAR Compare;
 	LFVariantData Value;
@@ -111,14 +111,14 @@ public:
 	virtual CCategorizer* GetCategorizer(CShellColumn &column);
 
 	// IColumnProvider
-	virtual BOOL GetColumn(CShellColumn& column, int index);
+	virtual BOOL GetColumn(CShellColumn& column, INT index);
 
 	// IShellFolder2
 	virtual BOOL GetColumnValueEx(VARIANT* value, CShellColumn& column);
 
 	// IShellFolder
 	virtual NSEItemAttributes GetAttributes(NSEItemAttributes requested);
-	virtual int CompareTo(CNSEItem* otherItem, CShellColumn& column);
+	virtual INT CompareTo(CNSEItem* otherItem, CShellColumn& column);
 	virtual BOOL OnOpen(CExecuteMenuitemsEventArgs& e);
 	virtual BOOL OnDelete(CExecuteMenuitemsEventArgs& e);
 	virtual BOOL OnChangeName(CChangeNameEventArgs& e);
@@ -134,10 +134,10 @@ public:
 	virtual void DragDrop(CNSEDragEventArgs& e);
 
 	// Exposed property handlers
-	virtual int GetXPTaskPaneColumnIndices(UINT* indices);
-	virtual int GetTileViewColumnIndices(UINT* indices);
-	virtual int GetPreviewDetailsColumnIndices(UINT* indices);
-	virtual int GetContentViewColumnIndices(UINT* indices);
+	virtual INT GetXPTaskPaneColumnIndices(UINT* indices);
+	virtual INT GetTileViewColumnIndices(UINT* indices);
+	virtual INT GetPreviewDetailsColumnIndices(UINT* indices);
+	virtual INT GetContentViewColumnIndices(UINT* indices);
 	virtual FolderThemes GetFolderTheme();
 
 	// Other

@@ -26,7 +26,7 @@ protected:
 	CMainView m_wndMainView;
 	CBottomArea m_wndBottomArea;
 
-	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
+	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
 	afx_msg void OnIdleUpdateCmdUI();
 	afx_msg void OnSelectRoot();

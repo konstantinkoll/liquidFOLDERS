@@ -17,14 +17,14 @@ CMigrationList::CMigrationList()
 CMigrationList::~CMigrationList()
 {
 	if (m_Items)
-		for (unsigned int a=0; a<m_ItemCount; a++)
+		for (UINT a=0; a<m_ItemCount; a++)
 		{
 			LFFreeFileImportList(m_Items[a].List);
 			LFFreeItemDescriptor(m_Items[a].Template);
 		}
 }
 
-bool CMigrationList::AddFolder(wchar_t* name, wchar_t* path, LFItemDescriptor* it, int Icon, BOOL Recursive)
+bool CMigrationList::AddFolder(WCHAR* name, WCHAR* path, LFItemDescriptor* it, INT Icon, BOOL Recursive)
 {
 	ASSERT(path);
 

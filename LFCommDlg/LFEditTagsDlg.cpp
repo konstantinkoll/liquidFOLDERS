@@ -12,7 +12,7 @@
 
 extern AFX_EXTENSION_MODULE LFCommDlgDLL;
 
-LFEditTagsDlg::LFEditTagsDlg(CWnd* pParentWnd, CString _Tags, char* _StoreID)
+LFEditTagsDlg::LFEditTagsDlg(CWnd* pParentWnd, CString _Tags, CHAR* _StoreID)
 	: CDialog(IDD_EDITTAGS, pParentWnd)
 {
 	m_Tags = _Tags;
@@ -82,7 +82,7 @@ BOOL LFEditTagsDlg::OnInitDialog()
 		LFFreeSearchResult(base);
 		LFFreeFilter(f);
 
-		for (unsigned int a=0; a<res->m_ItemCount; a++)
+		for (UINT a=0; a<res->m_ItemCount; a++)
 		{
 			LFItemDescriptor* i = res->m_Items[a];
 			if (((i->Type & LFTypeMask)==LFTypeVirtual) && (i->AggregateCount))
@@ -95,7 +95,7 @@ BOOL LFEditTagsDlg::OnInitDialog()
 				lvi.puColumns = puColumns;
 				lvi.iItem = a;
 				lvi.pszText = i->CoreAttributes.FileName;
-				int idx = m_TagList.InsertItem(&lvi);
+				INT idx = m_TagList.InsertItem(&lvi);
 
 				CString cnt;
 				cnt.Format(_T("%d"), i->AggregateCount);
@@ -140,7 +140,7 @@ void LFEditTagsDlg::OnAddTags()
 	CString Tags;
 	m_TagEdit.GetWindowText(Tags);
 
-	int idx = m_TagList.GetNextItem(-1, LVNI_SELECTED);
+	INT idx = m_TagList.GetNextItem(-1, LVNI_SELECTED);
 	while (idx!=-1)
 	{
 		CString toAdd = m_TagList.GetItemText(idx, 0);
@@ -153,7 +153,7 @@ void LFEditTagsDlg::OnAddTags()
 		idx = m_TagList.GetNextItem(idx, LVNI_SELECTED);
 	}
 
-	wchar_t tmpStr[512];
+	WCHAR tmpStr[512];
 	wcscpy_s(tmpStr, 512, Tags);
 	LFSanitizeUnicodeArray(tmpStr, 512);
 

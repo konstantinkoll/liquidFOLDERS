@@ -57,7 +57,7 @@ void CalculateWorldCoords(double lat, double lon, double result[])
 	result[2] = sin(lat_r);
 }
 
-CString CookAttributeString(wchar_t* attr)
+CString CookAttributeString(WCHAR* attr)
 {
 	CString tmpStr(attr);
 	tmpStr.Replace(_T("<"), _T("_"));
@@ -69,7 +69,7 @@ CString CookAttributeString(wchar_t* attr)
 
 void WriteGoogleAttribute(CStdioFile* f, LFItemDescriptor* i, UINT attr)
 {
-	wchar_t tmpStr[256];
+	WCHAR tmpStr[256];
 	LFAttributeToString(i, attr, tmpStr, 256);
 
 	if (tmpStr[0]!='\0')
@@ -119,7 +119,7 @@ CGlobeView::~CGlobeView()
 		delete[] m_Locations;
 }
 
-void CGlobeView::Create(CWnd* _pParentWnd, LFSearchResult* _result, int _FocusItem)
+void CGlobeView::Create(CWnd* _pParentWnd, LFSearchResult* _result, INT _FocusItem)
 {
 	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS | CS_OWNDC, hCursor);
 
@@ -161,7 +161,7 @@ void CGlobeView::SetSearchResult(LFSearchResult* _result)
 		if (_result->m_ItemCount)
 		{
 			m_Locations = new Location[_result->m_ItemCount];
-			int FirstItem = -1;
+			INT FirstItem = -1;
 
 			// Compute locations
 			for (UINT a=0; a<_result->m_ItemCount; a++)
@@ -174,7 +174,7 @@ void CGlobeView::SetSearchResult(LFSearchResult* _result)
 				if (m_ViewParameters.SortBy==LFAttrLocationIATA)
 				{
 					LFAirport* airport;
-					if (LFIATAGetAirportByCode((char*)_result->m_Items[a]->AttributeValues[LFAttrLocationIATA], &airport))
+					if (LFIATAGetAirportByCode((CHAR*)_result->m_Items[a]->AttributeValues[LFAttrLocationIATA], &airport))
 						coord = airport->Location;
 				}
 				else
@@ -210,7 +210,7 @@ void CGlobeView::SetSearchResult(LFSearchResult* _result)
 	UpdateScene(TRUE);
 }
 
-void CGlobeView::SelectItem(int n, BOOL select, BOOL InternalCall)
+void CGlobeView::SelectItem(INT n, BOOL select, BOOL InternalCall)
 {
 	if (m_Locations)
 	{
@@ -224,7 +224,7 @@ void CGlobeView::SelectItem(int n, BOOL select, BOOL InternalCall)
 	}
 }
 
-int CGlobeView::GetSelectedItem()
+INT CGlobeView::GetSelectedItem()
 {
 	if ((m_Locations) && (FocusItem!=-1))
 		if (m_Locations[FocusItem].selected)
@@ -233,7 +233,7 @@ int CGlobeView::GetSelectedItem()
 	return -1;
 }
 
-int CGlobeView::GetNextSelectedItem(int n)
+INT CGlobeView::GetNextSelectedItem(INT n)
 {
 	if (m_Locations)
 	{
@@ -248,17 +248,17 @@ int CGlobeView::GetNextSelectedItem(int n)
 	return -1;
 }
 
-BOOL CGlobeView::IsSelected(int n)
+BOOL CGlobeView::IsSelected(INT n)
 {
 	return (m_Locations && (n>=0)? m_Locations[n].selected : FALSE);
 }
 
-int CGlobeView::ItemAtPosition(CPoint point)
+INT CGlobeView::ItemAtPosition(CPoint point)
 {
 	if ((!m_Locations) || (!result) || (!m_ViewParameters.GlobeShowBubbles))
 		return -1;
 
-	int res = -1;
+	INT res = -1;
 	float alpha = 0.0f;
 	for (UINT a=0; a<result->m_ItemCount; a++)
 	{
@@ -350,7 +350,7 @@ void CGlobeView::UpdateCursor()
 	SetCursor(hCursor);
 }
 
-int CGlobeView::OnCreate(LPCREATESTRUCT lpCreateStruct)
+INT CGlobeView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if (CFileView::OnCreate(lpCreateStruct)==-1)
 		return -1;
@@ -414,8 +414,8 @@ void CGlobeView::OnScaleToFit()
 
 void CGlobeView::OnSaveCamera()
 {
-	pViewParameters->GlobeLatitude = (int)(m_LocalSettings.Latitude*1000.0f);
-	pViewParameters->GlobeLongitude = (int)(m_LocalSettings.Longitude*1000.0f);
+	pViewParameters->GlobeLatitude = (INT)(m_LocalSettings.Latitude*1000.0f);
+	pViewParameters->GlobeLongitude = (INT)(m_LocalSettings.Longitude*1000.0f);
 	pViewParameters->GlobeZoom = m_LocalSettings.GlobeZoom;
 	m_CameraChanged = FALSE;
 
@@ -465,7 +465,7 @@ void CGlobeView::OnGoogleEarth()
 			f.WriteString(_T("<Style id=\"B\"><IconStyle><scale>1.0</scale><Icon><href>http://maps.google.com/mapfiles/kml/pal4/icon57.png</href></Icon></IconStyle><LabelStyle><scale>1</scale></LabelStyle></Style>\n"));
 			f.WriteString(_T("<StyleMap id=\"C\"><Pair><key>normal</key><styleUrl>#A</styleUrl></Pair><Pair><key>highlight</key><styleUrl>#B</styleUrl></Pair></StyleMap>\n"));
 
-			int i = GetNextSelectedItem(-1);
+			INT i = GetNextSelectedItem(-1);
 			while (i>-1)
 			{
 				LFGeoCoordinates c = result->m_Items[i]->CoreAttributes.LocationGPS;
@@ -612,7 +612,7 @@ void CGlobeView::OnUpdateCommands(CCmdUI* pCmdUI)
 
 void CGlobeView::OnLButtonDown(UINT nFlags, CPoint point)
 {
-	int n = ItemAtPosition(point);
+	INT n = ItemAtPosition(point);
 	if (n==-1)
 	{
 		if (GetFocus()!=this)
@@ -627,7 +627,7 @@ void CGlobeView::OnLButtonDown(UINT nFlags, CPoint point)
 				m_AnimCounter = 0;
 				m_LocalSettings.Latitude = m_Latitude;
 				m_LocalSettings.Longitude = m_Longitude;
-				m_LocalSettings.GlobeZoom = (int)(m_Zoom*100.f);
+				m_LocalSettings.GlobeZoom = (INT)(m_Zoom*100.f);
 			}
 
 			SetCapture();
@@ -696,7 +696,7 @@ BOOL CGlobeView::OnSetCursor(CWnd* /*pWnd*/, UINT /*nHitTest*/, UINT /*message*/
 	return TRUE;
 }
 
-void CGlobeView::OnSize(UINT nType, int cx, int cy)
+void CGlobeView::OnSize(UINT nType, INT cx, INT cy)
 {
 	CFileView::OnSize(nType, cx, cy);
 
@@ -800,7 +800,7 @@ void CGlobeView::Init()
 		return;
 
 	PIXELFORMATDESCRIPTOR pfd;
-	int n = GetPixelFormat(m_pDC->GetSafeHdc());
+	INT n = GetPixelFormat(m_pDC->GetSafeHdc());
 	DescribePixelFormat(m_pDC->GetSafeHdc(), n, sizeof(pfd), &pfd);
 
 	m_hrc = wglCreateContext(m_pDC->GetSafeHdc());
@@ -876,7 +876,7 @@ Smaller:
 	if (tex>theApp.m_nMaxTextureSize)
 		tex = theApp.m_nMaxTextureSize;
 
-	if ((int)tex!=m_nTexture)
+	if ((INT)tex!=m_nTexture)
 	{
 		SetCursor(LoadCursor(NULL, IDC_WAIT));
 
@@ -966,7 +966,7 @@ BOOL CGlobeView::SetupPixelFormat()
 		0, 0, 0                         // layer masks ignored
 	};
 
-	int pixelformat = ChoosePixelFormat(m_pDC->GetSafeHdc(), &pfd);
+	INT pixelformat = ChoosePixelFormat(m_pDC->GetSafeHdc(), &pfd);
 	return pixelformat ? SetPixelFormat(m_pDC->GetSafeHdc(), pixelformat, &pfd) : FALSE;
 }
 
@@ -1164,11 +1164,11 @@ void CGlobeView::DrawScene(BOOL InternalCall)
 	// Statuszeile
 	if (m_Height>=STATUSBAR_HEIGHT)
 	{
-		wchar_t Copyright[] = L"© NASA's Earth Observatory";
-		int CopyrightX = -1;
+		WCHAR Copyright[] = L"© NASA's Earth Observatory";
+		INT CopyrightX = -1;
 		UINT CopyrightWidth = m_SpecialFont.GetTextWidth(Copyright);
 
-		if (m_Width>=(int)CopyrightWidth)
+		if (m_Width>=(INT)CopyrightWidth)
 		{
 			glEnable2D();
 
@@ -1183,11 +1183,11 @@ void CGlobeView::DrawScene(BOOL InternalCall)
 			glColor4d(backcol[0], backcol[1], backcol[2], 0.65f);
 			glRecti(0, m_Height-STATUSBAR_HEIGHT, m_Width, m_Height);
 
-			wchar_t Viewpoint[256];
-			int ViewpointX = -1;
+			WCHAR Viewpoint[256];
+			INT ViewpointX = -1;
 			if (m_ViewParameters.GlobeShowViewpoint)
 			{
-				wchar_t Coord[256];
+				WCHAR Coord[256];
 				LFGeoCoordinates c;
 				c.Latitude = -m_Latitude;
 				c.Longitude = (m_Longitude>180.0) ? 360-m_Longitude : -m_Longitude;
@@ -1196,7 +1196,7 @@ void CGlobeView::DrawScene(BOOL InternalCall)
 				swprintf(Viewpoint, 256, YouLookAt, Coord);
 				UINT ViewpointWidth = m_SpecialFont.GetTextWidth(Viewpoint);
 
-				if (m_Width>=(int)(CopyrightWidth+ViewpointWidth+60))
+				if (m_Width>=(INT)(CopyrightWidth+ViewpointWidth+60))
 				{
 					UINT Spare = m_Width-CopyrightWidth-ViewpointWidth;
 					CopyrightX = Spare/3;
@@ -1252,8 +1252,8 @@ void CGlobeView::CalcAndDrawPoints()
 				GLdouble x = (mvp[0][0]*m_Locations[a].world[0] + mvp[1][0]*m_Locations[a].world[1] + mvp[2][0]*m_Locations[a].world[2] + mvp[3][0])*szx/w;
 				GLdouble y = -(mvp[0][1]*m_Locations[a].world[0] + mvp[1][1]*m_Locations[a].world[1] + mvp[2][1]*m_Locations[a].world[2] + mvp[3][1])*szy/w;
 
-				m_Locations[a].screenpoint[0] = (int)(x+szx+0.5f);
-				m_Locations[a].screenpoint[1] = (int)(y+szy+0.5f);
+				m_Locations[a].screenpoint[0] = (INT)(x+szx+0.5f);
+				m_Locations[a].screenpoint[1] = (INT)(y+szy+0.5f);
 
 				m_Locations[a].alpha = 1.0f;
 				GLfloat psize = 9.5f;
@@ -1297,11 +1297,11 @@ void CGlobeView::CalcAndDrawLabel()
 			if (m_Locations[a].alpha>0.0f)
 			{
 				// Beschriftung
-				wchar_t* caption = result->m_Items[a]->CoreAttributes.FileName;
+				WCHAR* caption = result->m_Items[a]->CoreAttributes.FileName;
 				UINT cCaption = (UINT)wcslen(caption);
-				wchar_t* subcaption = NULL;
-				wchar_t* coordinates = (m_ViewParameters.GlobeShowGPS ? m_Locations[a].coordstring : NULL);
-				wchar_t* description = (m_ViewParameters.GlobeShowHints ? result->m_Items[a]->Description : NULL);
+				WCHAR* subcaption = NULL;
+				WCHAR* coordinates = (m_ViewParameters.GlobeShowGPS ? m_Locations[a].coordstring : NULL);
+				WCHAR* description = (m_ViewParameters.GlobeShowHints ? result->m_Items[a]->Description : NULL);
 				if (description)
 					if (*description==L'\0')
 						description = NULL;
@@ -1323,13 +1323,13 @@ void CGlobeView::CalcAndDrawLabel()
 					break;
 				}
 
-				DrawLabel(&m_Locations[a], cCaption, caption, subcaption, coordinates, description, FocusItem==(int)a);
+				DrawLabel(&m_Locations[a], cCaption, caption, subcaption, coordinates, description, FocusItem==(INT)a);
 			}
 
 	glDisable2D();
 }
 
-void CGlobeView::DrawLabel(Location* loc, UINT cCaption, wchar_t* caption, wchar_t* subcaption, wchar_t* coordinates, wchar_t* description, BOOL focused)
+void CGlobeView::DrawLabel(Location* loc, UINT cCaption, WCHAR* caption, WCHAR* subcaption, WCHAR* coordinates, WCHAR* description, BOOL focused)
 {
 	ASSERT(ARROWSIZE>3);
 
@@ -1366,18 +1366,18 @@ void CGlobeView::DrawLabel(Location* loc, UINT cCaption, wchar_t* caption, wchar
 	height += 3;
 
 	// Position
-	int top = (loc->screenpoint[1]<m_Height/2 ? -1 : 1);
+	INT top = (loc->screenpoint[1]<m_Height/2 ? -1 : 1);
 
 	loc->screenlabel[0] = loc->screenpoint[0]-ARROWSIZE-((width-2*ARROWSIZE)*(m_Width-loc->screenpoint[0])/m_Width);
 	loc->screenlabel[1] = loc->screenpoint[1]+(ARROWSIZE-2)*top-(top<0 ? height : 0);
 	loc->screenlabel[2] = loc->screenlabel[0]+width;
 	loc->screenlabel[3] = loc->screenlabel[1]+height;
 
-	int x = loc->screenlabel[0];
-	int y = loc->screenlabel[1];
+	INT x = loc->screenlabel[0];
+	INT y = loc->screenlabel[1];
 
 	// Schatten
-	for (int s=3; s>0; s--)
+	for (INT s=3; s>0; s--)
 	{
 		glColor4f(0.0f, 0.0f, 0.0f, loc->alpha/(s+2.5f));
 		glBegin(GL_LINES);
@@ -1411,7 +1411,7 @@ void CGlobeView::DrawLabel(Location* loc, UINT cCaption, wchar_t* caption, wchar
 	// Pfeil
 	glBegin(GL_TRIANGLES);
 	GLfloat alpha = pow(loc->alpha, 3);
-	for (int a=0; a<=3; a++)
+	for (INT a=0; a<=3; a++)
 	{
 		switch (a)
 		{

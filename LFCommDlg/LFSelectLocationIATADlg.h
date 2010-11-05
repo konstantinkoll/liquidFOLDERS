@@ -15,7 +15,7 @@
 class AFX_EXT_CLASS LFSelectLocationIATADlg : public CDialog
 {
 public:
-	LFSelectLocationIATADlg(CWnd* pParentWnd, UINT nIDTemplate, char* _Airport=NULL);
+	LFSelectLocationIATADlg(CWnd* pParentWnd, UINT nIDTemplate, CHAR* _Airport=NULL);
 
 	virtual void DoDataExchange(CDataExchange* pDX);
 
@@ -31,13 +31,13 @@ protected:
 private:
 	CMapPreviewCtrl m_Map;
 	LFAirport* m_Airports[MaxAirportsPerCountry];
-	int m_nAirports;
+	INT m_nAirports;
 	UINT m_nIDTemplate;
-	wchar_t m_Buffer[256];
+	WCHAR m_Buffer[256];
 	LFApplication* p_App;
 
-	int Compare(int col, int n1, int n2);
-	void Heap(int col, int wurzel, int anz);
+	INT Compare(INT col, INT n1, INT n2);
+	void Heap(INT col, INT wurzel, INT anz);
 
 	afx_msg BOOL OnInitDialog();
 	afx_msg void OnCustomDraw(NMHDR* pNMHDR, LRESULT* pResult);

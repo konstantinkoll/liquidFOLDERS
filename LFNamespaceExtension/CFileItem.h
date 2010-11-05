@@ -17,7 +17,7 @@ public:
 
 	// IPersist
 	CFileItem();
-	CFileItem(char* _StoreID, LFCoreAttributes* _Attrs);
+	CFileItem(CHAR* _StoreID, LFCoreAttributes* _Attrs);
 	CFileItem(LFItemDescriptor* _Item);
 	~CFileItem();
 
@@ -45,17 +45,17 @@ public:
 
 	// IShellItem
 	virtual NSEItemAttributes GetAttributes(NSEItemAttributes requested);
-	virtual int CompareTo(CNSEItem* otherItem, CShellColumn& column);
+	virtual INT CompareTo(CNSEItem* otherItem, CShellColumn& column);
 
 	// IDropSource
 	virtual BOOL GetFileDescriptor(FILEDESCRIPTOR* fd);
 	virtual LPSTREAM GetStream();
 
 	// Exposed property handlers
-	virtual int GetXPTaskPaneColumnIndices(UINT* indices);
-	int GetTileViewColumnIndices(UINT* indices);
-	int GetPreviewDetailsColumnIndices(UINT* indices);
-	virtual int GetContentViewColumnIndices(UINT* indices);
+	virtual INT GetXPTaskPaneColumnIndices(UINT* indices);
+	INT GetTileViewColumnIndices(UINT* indices);
+	INT GetPreviewDetailsColumnIndices(UINT* indices);
+	virtual INT GetContentViewColumnIndices(UINT* indices);
 
 	// Other
 	BOOL SetShellLink(IShellLink* psl);

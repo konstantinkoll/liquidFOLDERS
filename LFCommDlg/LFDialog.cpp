@@ -45,7 +45,7 @@ void LFDialog::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 
 	CRect layout;
 	GetLayoutRect(layout);
-	int Line = layout.bottom;
+	INT Line = layout.bottom;
 
 	BOOL Themed = IsCtrlThemed();
 	switch (m_Design)
@@ -54,13 +54,13 @@ void LFDialog::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 		{
 			if (Themed)
 			{
-				int l = backdrop->m_pBitmap->GetWidth();
-				int h = backdrop->m_pBitmap->GetHeight();
+				INT l = backdrop->m_pBitmap->GetWidth();
+				INT h = backdrop->m_pBitmap->GetHeight();
 				if ((l<rect.Width()) || (h<rect.Height()))
 				{
 					double f = max((double)rect.Width()/l, (double)rect.Height()/h);
-					l = (int)(l*f);
-					h = (int)(h*f);
+					l = (INT)(l*f);
+					h = (INT)(h*f);
 				}
 				g.DrawImage(backdrop->m_pBitmap, rect.Width()-l, rect.Height()-h, l, h);
 
@@ -80,8 +80,8 @@ void LFDialog::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 				dc.FillSolidRect(rect, GetSysColor(COLOR_3DFACE));
 			}
 
-			int l = logo->m_pBitmap->GetWidth();
-			int h = logo->m_pBitmap->GetHeight();
+			INT l = logo->m_pBitmap->GetWidth();
+			INT h = logo->m_pBitmap->GetHeight();
 			g.DrawImage(logo->m_pBitmap, rect.Width()-l-8, 8, l, h);
 
 			break;
@@ -296,7 +296,7 @@ BOOL LFDialog::OnEraseBkgnd(CDC* pDC)
 	return TRUE;
 }
 
-void LFDialog::OnSize(UINT nType, int cx, int cy)
+void LFDialog::OnSize(UINT nType, INT cx, INT cy)
 {
 	CDialog::OnSize(nType, cx, cy);
 

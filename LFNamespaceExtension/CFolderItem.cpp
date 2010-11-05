@@ -13,7 +13,7 @@
 #include <shlobj.h>
 
 
-CShellMenuItem* InsertItem(CShellMenu* menu, UINT ResID, CString verb, int pos=0)
+CShellMenuItem* InsertItem(CShellMenu* menu, UINT ResID, CString verb, INT pos=0)
 {
 	CString tmpStr;
 	CString tmpHint;
@@ -40,8 +40,8 @@ CShellMenuItem* AddItem(CShellMenu* menu, UINT ResID, CString verb)
 
 void AddPathItem(CShellMenu* menu, UINT ResID, CString verb, CString path, UINT IconID)
 {
-	int cx;
-	int cy;
+	INT cx;
+	INT cy;
 	theApp.GetIconSize(cx, cy);
 
 	CShellMenuItem* item =AddItem(menu, ResID, verb);
@@ -212,8 +212,8 @@ void CFolderItem::Serialize(CArchive& ar)
 	ar << Attrs.DisplayName;
 	ar << Attrs.Description;
 	ar << Attrs.Comment;
-	ar.Write(&Attrs.StoreID, LFKeySize*sizeof(char));
-	ar.Write(&Attrs.FileID, LFKeySize*sizeof(char));
+	ar.Write(&Attrs.StoreID, LFKeySize*sizeof(CHAR));
+	ar.Write(&Attrs.FileID, LFKeySize*sizeof(CHAR));
 	ar << Attrs.DomainID;
 	ar << Attrs.Compare;
 	ar.Write(&Attrs.Value, sizeof(LFVariantData));
@@ -240,7 +240,7 @@ CNSEItem* CFolderItem::DeserializeChild(CArchive& ar)
 	{
 	case 0:
 		{
-			char StoreID[LFKeySize];
+			CHAR StoreID[LFKeySize];
 			ar.Read(&StoreID, sizeof(StoreID));
 
 			UINT Size;
@@ -272,8 +272,8 @@ CNSEItem* CFolderItem::DeserializeChild(CArchive& ar)
 			ar >> Attrs.DisplayName;
 			ar >> Attrs.Description;
 			ar >> Attrs.Comment;
-			ar.Read(&Attrs.StoreID, LFKeySize*sizeof(char));
-			ar.Read(&Attrs.FileID, LFKeySize*sizeof(char));
+			ar.Read(&Attrs.StoreID, LFKeySize*sizeof(CHAR));
+			ar.Read(&Attrs.FileID, LFKeySize*sizeof(CHAR));
 			ar >> Attrs.DomainID;
 			ar >> Attrs.Compare;
 			ar.Read(&Attrs.Value, sizeof(LFVariantData));
@@ -427,7 +427,7 @@ BOOL CFolderItem::GetChildren(CGetChildrenEventArgs& e)
 		f = LFAllocFilter();
 		f->Mode = LFFilterModeDirectoryTree;
 		strcpy_s(f->StoreID, LFKeySize, Attrs.StoreID);
-		f->DomainID = (unsigned char)Attrs.DomainID;
+		f->DomainID = (UCHAR)Attrs.DomainID;
 		base = LFQuery(f);
 		ConvertSearchResult(e, LFGroupSearchResult(base, atoi(Attrs.FileID), false, false, Attrs.Icon, atoi(Attrs.FileID)!=LFAttrFileName, f));
 		break;
@@ -435,7 +435,7 @@ BOOL CFolderItem::GetChildren(CGetChildrenEventArgs& e)
 		f = LFAllocFilter();
 		f->Mode = LFFilterModeDirectoryTree;
 		strcpy_s(f->StoreID, LFKeySize, Attrs.StoreID);
-		f->DomainID = (unsigned char)Attrs.DomainID;
+		f->DomainID = (UCHAR)Attrs.DomainID;
 		f->ConditionList = LFAllocFilterCondition();
 		f->ConditionList->Next = NULL;
 		f->ConditionList->Compare = Attrs.Compare;
@@ -479,7 +479,7 @@ void CFolderItem::GetDisplayNameEx(CString& displayName, DisplayNameFlags flags)
 	if ((flags & (NSEDNF_ForParsing | NSEDNF_ForAddressBar))==NSEDNF_ForParsing)
 		if (!(flags & NSEDNF_InFolder))
 		{
-			wchar_t buf[41] = L"::";
+			WCHAR buf[41] = L"::";
 			StringFromGUID2(guid, &buf[2], 39);
 			displayName = buf;
 
@@ -501,8 +501,8 @@ CNSEItem* CFolderItem::GetChildFromDisplayName(CGetChildFromDisplayNameEventArgs
 	if (Attrs.Level!=LevelRoot)
 		return NULL;
 
-	char key[LFKeySize];
-	WideCharToMultiByte(CP_ACP, 0, e.displayName, (int)(wcslen(e.displayName)+1), key, LFKeySize, NULL, NULL);
+	CHAR key[LFKeySize];
+	WideCharToMultiByte(CP_ACP, 0, e.displayName, (INT)(wcslen(e.displayName)+1), key, LFKeySize, NULL, NULL);
 
 	LFStoreDescriptor store;
 	if (LFGetStoreSettings(key, &store)!=LFOk)
@@ -836,10 +836,10 @@ CCategorizer* CFolderItem::GetCategorizer(CShellColumn& column)
 
 // IColumnProvider
 
-BOOL CFolderItem::GetColumn(CShellColumn& column, int index)
+BOOL CFolderItem::GetColumn(CShellColumn& column, INT index)
 {
 	// Determine last column for level
-	int LastColumn;
+	INT LastColumn;
 	switch (Attrs.Level)
 	{
 	case LevelRoot:
@@ -1029,7 +1029,7 @@ BOOL CFolderItem::GetColumnValueEx(VARIANT* value, CShellColumn& column)
 		{
 			if (value->vt==VT_BSTR)
 			{
-				wchar_t tmpBuf[256];
+				WCHAR tmpBuf[256];
 				LFTimeToString(Attrs.CreationTime, tmpBuf, 256);
 				CString tmpStr(tmpBuf);
 				CUtils::SetVariantCString(value, tmpStr);
@@ -1049,7 +1049,7 @@ BOOL CFolderItem::GetColumnValueEx(VARIANT* value, CShellColumn& column)
 		{
 			if (value->vt==VT_BSTR)
 			{
-				wchar_t tmpBuf[256];
+				WCHAR tmpBuf[256];
 				LFTimeToString(Attrs.FileTime, tmpBuf, 256);
 				CString tmpStr(tmpBuf);
 				CUtils::SetVariantCString(value, tmpStr);
@@ -1077,7 +1077,7 @@ BOOL CFolderItem::GetColumnValueEx(VARIANT* value, CShellColumn& column)
 	case LFAttrFileSize:
 		if (value->vt==VT_BSTR)
 		{
-			wchar_t tmpBuf[256];
+			WCHAR tmpBuf[256];
 			LFINT64ToString(Attrs.Size, tmpBuf, 256);
 			CString tmpStr(tmpBuf);
 			CUtils::SetVariantCString(value, tmpStr);
@@ -1117,7 +1117,7 @@ NSEItemAttributes CFolderItem::GetAttributes(NSEItemAttributes requested)
 	return (NSEItemAttributes)(requested & mask);
 }
 
-int CFolderItem::CompareTo(CNSEItem* otherItem, CShellColumn& column)
+INT CFolderItem::CompareTo(CNSEItem* otherItem, CShellColumn& column)
 {
 	if (IS(otherItem, CFileItem))
 		return -1;
@@ -1126,7 +1126,7 @@ int CFolderItem::CompareTo(CNSEItem* otherItem, CShellColumn& column)
 
 	CString str1;
 	CString str2;
-	int ret = 0;
+	INT ret = 0;
 
 	switch (column.index)
 	{
@@ -1214,7 +1214,7 @@ BOOL CFolderItem::OnOpen(CExecuteMenuitemsEventArgs& e)
 
 		if (IS(item, CFileItem))
 		{
-			char Path[MAX_PATH];
+			CHAR Path[MAX_PATH];
 			UINT res = LFGetFileLocation(AS(item, CFileItem)->Item->StoreID, &AS(item, CFileItem)->Item->CoreAttributes, Path, MAX_PATH);
 			if (res!=LFOk)
 			{
@@ -1223,7 +1223,7 @@ BOOL CFolderItem::OnOpen(CExecuteMenuitemsEventArgs& e)
 			else
 				if (ShellExecuteA(e.hWnd, "open", Path, "", "", SW_SHOW)==(HINSTANCE)SE_ERR_NOASSOC)
 				{
-					char Cmd[300];
+					CHAR Cmd[300];
 					strcpy_s(Cmd, 300, "shell32.dll,OpenAs_RunDLL ");
 					strcat_s(Cmd, 300, Path);
 					ShellExecuteA(e.hWnd, "open", "rundll32.exe", Cmd, Path, SW_SHOW);
@@ -1391,7 +1391,7 @@ void CFolderItem::DragDrop(CNSEDragEventArgs& e)
 /*	CStringArray files;
 	if (e.data->GetHDROPData(&files))
 	{
-		for(int i=0;i<files.GetSize();i++)
+		for(INT i=0;i<files.GetSize();i++)
 		{
 			CString file = files[i];
 			CString fileName = PathFindFileName(file);
@@ -1430,7 +1430,7 @@ void CFolderItem::DragDrop(CNSEDragEventArgs& e)
 
 // Exposed property handlers
 
-int CFolderItem::GetXPTaskPaneColumnIndices(UINT* indices)
+INT CFolderItem::GetXPTaskPaneColumnIndices(UINT* indices)
 {
 	indices[0] = LFAttrFileName;
 	indices[1] = LFAttrComment;
@@ -1454,7 +1454,7 @@ int CFolderItem::GetXPTaskPaneColumnIndices(UINT* indices)
 	return 3;
 }
 
-int CFolderItem::GetTileViewColumnIndices(UINT* indices)
+INT CFolderItem::GetTileViewColumnIndices(UINT* indices)
 {
 	indices[0] = LFAttrComment;
 	indices[1] = LFAttrDescription;
@@ -1473,7 +1473,7 @@ int CFolderItem::GetTileViewColumnIndices(UINT* indices)
 	return 2;
 }
 
-int CFolderItem::GetPreviewDetailsColumnIndices(UINT* indices)
+INT CFolderItem::GetPreviewDetailsColumnIndices(UINT* indices)
 {
 	indices[0] = LFAttrComment;
 	indices[1] = LFAttrDescription;
@@ -1496,7 +1496,7 @@ int CFolderItem::GetPreviewDetailsColumnIndices(UINT* indices)
 	return 2;
 }
 
-int CFolderItem::GetContentViewColumnIndices(UINT* indices)
+INT CFolderItem::GetContentViewColumnIndices(UINT* indices)
 {
 	return GetXPTaskPaneColumnIndices(indices);
 }
@@ -1563,7 +1563,7 @@ void CFolderItem::CreateShortcut(CNSEItem* Item)
 			SHGetSpecialFolderPath(NULL, strPath, CSIDL_DESKTOPDIRECTORY, FALSE);
 			CString PathLink;
 			CString NumberStr;
-			int Number = 1;
+			INT Number = 1;
 
 			// Check if link file exists; if not, append number
 			do
@@ -1675,7 +1675,7 @@ BOOL CFolderItem::OnOpenWith(CExecuteMenuitemsEventArgs& e)
 
 		if (IS(item, CFileItem))
 		{
-			char Path[MAX_PATH];
+			CHAR Path[MAX_PATH];
 			UINT res = LFGetFileLocation(AS(item, CFileItem)->Item->StoreID, &AS(item, CFileItem)->Item->CoreAttributes, Path, MAX_PATH);
 			if (res!=LFOk)
 			{
@@ -1683,7 +1683,7 @@ BOOL CFolderItem::OnOpenWith(CExecuteMenuitemsEventArgs& e)
 			}
 			else
 			{
-				char Cmd[300];
+				CHAR Cmd[300];
 				strcpy_s(Cmd, 300, "shell32.dll,OpenAs_RunDLL ");
 				strcat_s(Cmd, 300, Path);
 				ShellExecuteA(e.hWnd, "open", "rundll32.exe", Cmd, Path, SW_SHOW);

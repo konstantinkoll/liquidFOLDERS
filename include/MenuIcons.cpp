@@ -20,7 +20,7 @@ void SetMenuItemBitmap(HMENU hMenu, UINT item, HBITMAP hBmp)
 	SetMenuInfo(hMenu, &mi);
 }
 
-HBITMAP IconToBitmap(HICON hIcon, int cx, int cy)
+HBITMAP IconToBitmap(HICON hIcon, INT cx, INT cy)
 {
 	if (!hIcon)
 		return NULL;
@@ -56,7 +56,7 @@ HBITMAP IconToBitmap(HICON hIcon, int cx, int cy)
 	return bmp;
 }
 
-HBITMAP SetMenuItemIcon(HMENU hMenu, UINT item, HICON hIcon, int cx, int cy)
+HBITMAP SetMenuItemIcon(HMENU hMenu, UINT item, HICON hIcon, INT cx, INT cy)
 {
 	HBITMAP bmp = IconToBitmap(hIcon, cx, cy);
 	SetMenuItemBitmap(hMenu, item, bmp);
@@ -66,8 +66,8 @@ HBITMAP SetMenuItemIcon(HMENU hMenu, UINT item, HICON hIcon, int cx, int cy)
 
 HBITMAP SetMenuItemIcon(HMENU hMenu, UINT item, WORD ResID)
 {
-	int cx = GetSystemMetrics(SM_CXSMICON);
-	int cy = GetSystemMetrics(SM_CYSMICON);
+	INT cx = GetSystemMetrics(SM_CXSMICON);
+	INT cy = GetSystemMetrics(SM_CYSMICON);
 	HICON hIcon = (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(ResID), IMAGE_ICON, cx, cy, LR_DEFAULTCOLOR);
 
 	HBITMAP res = SetMenuItemIcon(hMenu, item, hIcon, cx, cy);

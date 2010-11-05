@@ -9,7 +9,7 @@
 CTexture::CTexture()
 {
 	m_ID = 0;
-	m_SGISMIP = strstr((char*)glGetString(GL_EXTENSIONS), "SGIS_generate_mipmap")!=NULL;
+	m_SGISMIP = strstr((CHAR*)glGetString(GL_EXTENSIONS), "SGIS_generate_mipmap")!=NULL;
 }
 
 CTexture::~CTexture()

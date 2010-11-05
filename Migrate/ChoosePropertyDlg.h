@@ -13,11 +13,11 @@
 class ChoosePropertyDlg : public LFAttributeListDlg
 {
 public:
-	ChoosePropertyDlg(CWnd* pParent, int Attr=-1);
+	ChoosePropertyDlg(CWnd* pParent, INT Attr=-1);
 
 	virtual void DoDataExchange(CDataExchange* pDX);
 
-	int m_Attr;
+	INT m_Attr;
 
 protected:
 	virtual void TestAttribute(UINT attr, BOOL& add, BOOL& check);

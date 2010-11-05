@@ -42,7 +42,7 @@ CFileView::~CFileView()
 {
 }
 
-void CFileView::Create(LFSearchResult* _result, UINT _ViewID, int _FocusItem, BOOL _EnableHover, BOOL _EnableShiftSelection)
+void CFileView::Create(LFSearchResult* _result, UINT _ViewID, INT _FocusItem, BOOL _EnableHover, BOOL _EnableShiftSelection)
 {
 	EnableHover = _EnableHover;
 	EnableShiftSelection = _EnableShiftSelection;
@@ -51,7 +51,7 @@ void CFileView::Create(LFSearchResult* _result, UINT _ViewID, int _FocusItem, BO
 	OnUpdateSearchResult(_result, _FocusItem);
 }
 
-void CFileView::OnUpdateViewOptions(int _ActiveContextID, int _ViewID, BOOL Force)
+void CFileView::OnUpdateViewOptions(INT _ActiveContextID, INT _ViewID, BOOL Force)
 {
 	if (_ActiveContextID>=0)
 		ActiveContextID = _ActiveContextID;
@@ -67,7 +67,7 @@ void CFileView::OnUpdateViewOptions(int _ActiveContextID, int _ViewID, BOOL Forc
 	ViewID = _ViewID;
 }
 
-void CFileView::OnUpdateSearchResult(LFSearchResult* _result, int _FocusItem)
+void CFileView::OnUpdateSearchResult(LFSearchResult* _result, INT _FocusItem)
 {
 	if (_result)
 	{
@@ -77,8 +77,8 @@ void CFileView::OnUpdateSearchResult(LFSearchResult* _result, int _FocusItem)
 		pViewParameters = &theApp.m_Views[ActiveContextID];
 		m_ViewParameters.SortBy = pViewParameters->SortBy;
 
-		if (_FocusItem>(int)_result->m_ItemCount-1)
-			_FocusItem = (int)_result->m_ItemCount-1;
+		if (_FocusItem>(INT)_result->m_ItemCount-1)
+			_FocusItem = (INT)_result->m_ItemCount-1;
 		FocusItem = _FocusItem;
 		HideFileExt = theApp.HideFileExt();
 	}
@@ -96,11 +96,11 @@ void CFileView::OnUpdateSearchResult(LFSearchResult* _result, int _FocusItem)
 	result = _result;
 }
 
-void CFileView::SelectItem(int /*n*/, BOOL /*select*/, BOOL /*InternalCall*/)
+void CFileView::SelectItem(INT /*n*/, BOOL /*select*/, BOOL /*InternalCall*/)
 {
 }
 
-void CFileView::SetFocusItem(int _FocusItem, BOOL ShiftSelect)
+void CFileView::SetFocusItem(INT _FocusItem, BOOL ShiftSelect)
 {
 	if (ShiftSelect && EnableShiftSelection)
 	{
@@ -108,14 +108,14 @@ void CFileView::SetFocusItem(int _FocusItem, BOOL ShiftSelect)
 			SelectionAnchor = FocusItem;
 
 		for (UINT a=0; a<result->m_ItemCount; a++)
-			SelectItem(a, (((int)a>=_FocusItem) && ((int)a<=SelectionAnchor)) || (((int)a>=SelectionAnchor) && ((int)a<=_FocusItem)), TRUE);
+			SelectItem(a, (((INT)a>=_FocusItem) && ((INT)a<=SelectionAnchor)) || (((INT)a>=SelectionAnchor) && ((INT)a<=_FocusItem)), TRUE);
 	}
 	else
 	{
 		SelectionAnchor = -1;
 
 		for (UINT a=0; a<result->m_ItemCount; a++)
-			SelectItem(a, (int)a==_FocusItem, TRUE);
+			SelectItem(a, (INT)a==_FocusItem, TRUE);
 	}
 
 	FocusItem = _FocusItem;
@@ -123,17 +123,17 @@ void CFileView::SetFocusItem(int _FocusItem, BOOL ShiftSelect)
 	GetParentFrame()->SendMessage(WM_COMMAND, ID_APP_UPDATESELECTION);
 }
 
-int CFileView::GetFocusItem()
+INT CFileView::GetFocusItem()
 {
 	return FocusItem;
 }
 
-int CFileView::GetSelectedItem()
+INT CFileView::GetSelectedItem()
 {
 	return -1;
 }
 
-int CFileView::GetNextSelectedItem(int /*n*/)
+INT CFileView::GetNextSelectedItem(INT /*n*/)
 {
 	return -1;
 }
@@ -147,22 +147,22 @@ void CFileView::SetSearchResult(LFSearchResult* /*_result*/)
 {
 }
 
-BOOL CFileView::IsSelected(int /*n*/)
+BOOL CFileView::IsSelected(INT /*n*/)
 {
 	return FALSE;
 }
 
-int CFileView::ItemAtPosition(CPoint /*point*/)
+INT CFileView::ItemAtPosition(CPoint /*point*/)
 {
 	return -1;
 }
 
-void CFileView::InvalidateItem(int /*n*/)
+void CFileView::InvalidateItem(INT /*n*/)
 {
 	Invalidate();
 }
 
-void CFileView::EditLabel(int /*n*/)
+void CFileView::EditLabel(INT /*n*/)
 {
 }
 
@@ -253,7 +253,7 @@ void CFileView::OnContextMenu(CPoint point)
 	}
 }
 
-void CFileView::OnItemContextMenu(int idx, CPoint point)
+void CFileView::OnItemContextMenu(INT idx, CPoint point)
 {
 	UINT nID = 0;
 	UINT cmdDefault = 0;
@@ -358,7 +358,7 @@ BOOL CFileView::HandleDefaultKeys(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags*/)
 	return FALSE;
 }
 
-int CFileView::GetFontHeight()
+INT CFileView::GetFontHeight()
 {
 	LOGFONT lf;
 	theApp.m_DefaultFont.GetLogFont(&lf);
@@ -385,7 +385,7 @@ END_MESSAGE_MAP()
 
 void CFileView::OnLButtonDown(UINT nFlags, CPoint point)
 {
-	int n = ItemAtPosition(point);
+	INT n = ItemAtPosition(point);
 	if (n!=-1)
 	{
 		if (nFlags & MK_CONTROL)
@@ -407,7 +407,7 @@ void CFileView::OnLButtonDown(UINT nFlags, CPoint point)
 
 void CFileView::OnLButtonUp(UINT nFlags, CPoint point)
 {
-	int n = ItemAtPosition(point);
+	INT n = ItemAtPosition(point);
 	if (n!=-1)
 	{
 		if (GetFocus()!=this)
@@ -427,7 +427,7 @@ void CFileView::OnLButtonDblClk(UINT /*nFlags*/, CPoint /*point*/)
 
 void CFileView::OnRButtonDown(UINT nFlags, CPoint point)
 {
-	int n = ItemAtPosition(point);
+	INT n = ItemAtPosition(point);
 	if (n!=-1)
 	{
 		if (!(nFlags & (MK_SHIFT | MK_CONTROL)))
@@ -436,7 +436,7 @@ void CFileView::OnRButtonDown(UINT nFlags, CPoint point)
 				FocusItem = n;
 
 				for (UINT a=0; a<result->m_ItemCount; a++)
-					SelectItem(a, (int)a==n, TRUE);
+					SelectItem(a, (INT)a==n, TRUE);
 
 				Invalidate();
 			}
@@ -457,7 +457,7 @@ void CFileView::OnRButtonDown(UINT nFlags, CPoint point)
 
 void CFileView::OnRButtonUp(UINT nFlags, CPoint point)
 {
-	int n = ItemAtPosition(point);
+	INT n = ItemAtPosition(point);
 	if (n!=-1)
 	{
 		if (GetFocus()!=this)
@@ -497,7 +497,7 @@ void CFileView::OnMouseMove(UINT /*nFlags*/, CPoint point)
 			MouseInView = TRUE;
 		}
 
-		int idx = ItemAtPosition(point);
+		INT idx = ItemAtPosition(point);
 		if (idx!=HoverItem)
 		{
 			std::swap(idx, HoverItem);
@@ -511,7 +511,7 @@ void CFileView::OnMouseLeave()
 {
 	if (HoverItem!=-1)
 	{
-		int idx = HoverItem;
+		INT idx = HoverItem;
 		HoverItem = -1;
 		InvalidateItem(idx);
 	}

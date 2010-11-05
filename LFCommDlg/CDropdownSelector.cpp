@@ -32,7 +32,7 @@ void CDropdownListCtrl::OnCustomDraw(NMHDR* pNMHDR, LRESULT* pResult)
 		*pResult = CDRF_NOTIFYITEMDRAW;
 		break;
 	case CDDS_ITEMPREPAINT:
-		if ((!hTheme) && (GetHotItem()==(int)lplvcd->nmcd.dwItemSpec))
+		if ((!hTheme) && (GetHotItem()==(INT)lplvcd->nmcd.dwItemSpec))
 		{
 			lplvcd->nmcd.uItemState |= CDIS_SELECTED;
 			lplvcd->clrTextBk = lplvcd->clrFace = GetSysColor(COLOR_HIGHLIGHT);
@@ -40,7 +40,7 @@ void CDropdownListCtrl::OnCustomDraw(NMHDR* pNMHDR, LRESULT* pResult)
 			SetBkColor(lplvcd->clrTextBk);
 
 			CRect rect;
-			GetItemRect((int)lplvcd->nmcd.dwItemSpec, rect, LVIR_BOUNDS);
+			GetItemRect((INT)lplvcd->nmcd.dwItemSpec, rect, LVIR_BOUNDS);
 			::FillRect(lplvcd->nmcd.hdc, rect, CreateSolidBrush(lplvcd->clrTextBk));
 			*pResult = CDRF_NOTIFYPOSTPAINT;
 			break;
@@ -49,12 +49,12 @@ void CDropdownListCtrl::OnCustomDraw(NMHDR* pNMHDR, LRESULT* pResult)
 		*pResult = CDRF_DODEFAULT;
 		break;
 	case CDDS_ITEMPOSTPAINT:
-		if ((!hTheme) && (GetHotItem()==(int)lplvcd->nmcd.dwItemSpec))
+		if ((!hTheme) && (GetHotItem()==(INT)lplvcd->nmcd.dwItemSpec))
 		{
 			SetBkColor(GetSysColor(COLOR_WINDOW));
 
 			CRect rect;
-			GetItemRect((int)lplvcd->nmcd.dwItemSpec, rect, LVIR_BOUNDS);
+			GetItemRect((INT)lplvcd->nmcd.dwItemSpec, rect, LVIR_BOUNDS);
 			DrawFocusRect(lplvcd->nmcd.hdc, rect);
 
 			*pResult = CDRF_SKIPDEFAULT;
@@ -75,7 +75,7 @@ void CDropdownListCtrl::OnLButtonDown(UINT /*nFlags*/, CPoint /*point*/)
 
 void CDropdownListCtrl::OnLButtonUp(UINT /*nFlags*/, CPoint point)
 {
-	int idx = GetHotItem();
+	INT idx = GetHotItem();
 	if (idx!=-1)
 	{
 		CRect rect;
@@ -142,7 +142,7 @@ BEGIN_MESSAGE_MAP(CDropdownWindow, CWnd)
 	ON_WM_SIZE()
 END_MESSAGE_MAP()
 
-int CDropdownWindow::OnCreate(LPCREATESTRUCT lpCreateStruct)
+INT CDropdownWindow::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if (CWnd::OnCreate(lpCreateStruct)==-1)
 		return -1;
@@ -170,7 +170,7 @@ int CDropdownWindow::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	return 0;
 }
 
-void CDropdownWindow::OnSize(UINT nType, int cx, int cy)
+void CDropdownWindow::OnSize(UINT nType, INT cx, INT cy)
 {
 	CWnd::OnSize(nType, cx, cy);
 	AdjustLayout();
@@ -318,7 +318,7 @@ BEGIN_MESSAGE_MAP(CDropdownSelector, CWnd)
 	ON_WM_KILLFOCUS()
 END_MESSAGE_MAP()
 
-int CDropdownSelector::OnCreate(LPCREATESTRUCT lpCreateStruct)
+INT CDropdownSelector::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if (CWnd::OnCreate(lpCreateStruct)==-1)
 		return -1;
@@ -475,8 +475,8 @@ void CDropdownSelector::OnPaint()
 
 		if (m_Icon)
 		{
-			int cx = GetSystemMetrics(SM_CXSMICON);
-			int cy = GetSystemMetrics(SM_CYSMICON);
+			INT cx = GetSystemMetrics(SM_CXSMICON);
+			INT cy = GetSystemMetrics(SM_CYSMICON);
 
 			if (rtext.left+cx<rtext.right)
 			{
@@ -505,9 +505,9 @@ void CDropdownSelector::OnPaint()
 	BITMAP bm;
 	GetObject(bmp, sizeof(BITMAP), &bm);
 	BYTE* pBits = ((BYTE*)bm.bmBits)+4*(rcontent.top*rclient.Width()+rcontent.left);
-	for (int row=rcontent.top; row<rcontent.bottom; row++)
+	for (INT row=rcontent.top; row<rcontent.bottom; row++)
 	{
-		for (int col=rcontent.left; col<rcontent.right; col++)
+		for (INT col=rcontent.left; col<rcontent.right; col++)
 		{
 			*(pBits+3) = Alpha;
 			pBits += 4;

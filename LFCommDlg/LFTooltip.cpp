@@ -80,7 +80,7 @@ void LFTooltip::Track(CPoint point, HICON hIcon, CSize szIcon, const CString& st
 		while (!strText.IsEmpty())
 		{
 			CString Line;
-			int pos = strText.Find('\n');
+			INT pos = strText.Find('\n');
 			if (pos==-1)
 			{
 				Line = strText;
@@ -263,7 +263,7 @@ void LFTooltip::OnPaint()
 
 	if (m_Themed)
 	{
-		const int nOffset = 2;
+		const INT nOffset = 2;
 
 		dc.MoveTo(rect.left+nOffset, rect.top);
 		dc.LineTo(rect.right-nOffset-1, rect.top);

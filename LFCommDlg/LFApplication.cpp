@@ -143,7 +143,7 @@ LFApplication::LFApplication(UINT _HasGUI)
 	// Fonts
 	CString face = GetDefaultFontFace();
 
-	int sz = 8;
+	INT sz = 8;
 	LOGFONT lf;
 	if (SystemParametersInfo(SPI_GETICONTITLELOGFONT, sizeof(LOGFONT), &lf, 0))
 		sz = abs(lf.lfHeight);
@@ -170,8 +170,8 @@ LFApplication::LFApplication(UINT _HasGUI)
 	HINSTANCE hModIcons = LoadLibrary(_T("LFCORE.DLL"));
 	if (hModIcons)
 	{
-		int cx = GetSystemMetrics(SM_CXSMICON);
-		int cy = GetSystemMetrics(SM_CYSMICON);
+		INT cx = GetSystemMetrics(SM_CXSMICON);
+		INT cy = GetSystemMetrics(SM_CYSMICON);
 		ImageList_GetIconSize(m_SystemImageListSmall, &cx, &cy);
 		ExtractCoreIcons(hModIcons, cy, &m_CoreImageListSmall);
 
@@ -296,7 +296,7 @@ BOOL LFApplication::InitInstance()
 	return TRUE;
 }
 
-int LFApplication::ExitInstance()
+INT LFApplication::ExitInstance()
 {
 	CWinAppEx::ExitInstance();
 	GdiplusShutdown(m_gdiplusToken);
@@ -398,11 +398,11 @@ CString LFApplication::GetGlobalRegPath()
 	return strReg;
 }
 
-int LFApplication::GetGlobalInt(LPCTSTR lpszEntry, int nDefault)
+INT LFApplication::GetGlobalInt(LPCTSTR lpszEntry, INT nDefault)
 {
 	ENSURE(lpszEntry);
 
-	int nRet = nDefault;
+	INT nRet = nDefault;
 
 	CSettingsStoreSP regSP;
 	CSettingsStore& reg = regSP.Create(FALSE, TRUE);
@@ -429,7 +429,7 @@ CString LFApplication::GetGlobalString(LPCTSTR lpszEntry, LPCTSTR lpszDefault)
 	return strRet;
 }
 
-BOOL LFApplication::WriteGlobalInt(LPCTSTR lpszEntry, int nValue)
+BOOL LFApplication::WriteGlobalInt(LPCTSTR lpszEntry, INT nValue)
 {
 	ENSURE(lpszEntry);
 
@@ -456,7 +456,7 @@ BOOL LFApplication::WriteGlobalString(LPCTSTR lpszEntry, LPCTSTR lpszValue)
 	return FALSE;
 }
 
-void LFApplication::ExtractCoreIcons(HINSTANCE hModIcons, int size, CImageList* li)
+void LFApplication::ExtractCoreIcons(HINSTANCE hModIcons, INT size, CImageList* li)
 {
 	li->Create(size, size, ILC_COLOR32, IDI_LastIcon, 1);
 
@@ -535,7 +535,7 @@ CString LFApplication::GetCommandName(UINT nID, BOOL bInsertSpace)
 	CString tmpStr = _T("?");
 	tmpStr.LoadString(nID);
 
-	int pos = tmpStr.Find(L'\n');
+	INT pos = tmpStr.Find(L'\n');
 	if (pos!=-1)
 		tmpStr.Delete(0, pos+1);
 

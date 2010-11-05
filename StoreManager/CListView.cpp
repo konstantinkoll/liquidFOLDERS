@@ -21,7 +21,7 @@ CListView::~CListView()
 {
 }
 
-void CListView::Create(CWnd* pParentWnd, LFSearchResult* _result, UINT _ViewID, int _FocusItem)
+void CListView::Create(CWnd* pParentWnd, LFSearchResult* _result, UINT _ViewID, INT _FocusItem)
 {
 	m_HasCategories = _result->m_HasCategories;
 
@@ -98,7 +98,7 @@ void CListView::SetSearchResult(LFSearchResult* _result)
 				lvi.iImage = _result->m_Items[a]->IconID-1;
 				lvi.iGroupId = _result->m_Items[a]->CategoryID;
 				lvi.state = ((_result->m_Items[a]->Type & LFTypeGhosted) ? LVIS_CUT : 0) |
-							(((int)a==FocusItem) ? LVIS_FOCUSED : 0);
+							(((INT)a==FocusItem) ? LVIS_FOCUSED : 0);
 				lvi.stateMask = LVIS_CUT | LVIS_FOCUSED;
 				m_FileList.InsertItem(&lvi);
 			}
@@ -145,7 +145,7 @@ void CListView::SetSearchResult(LFSearchResult* _result)
 				CString tmpStr;
 				ENSURE(tmpStr.LoadString(cmd));
 
-				int pos = tmpStr.Find('\n');
+				INT pos = tmpStr.Find('\n');
 				if (pos!=-1)
 				{
 					if (footerStr.IsEmpty())
@@ -196,17 +196,17 @@ void CListView::SetViewOptions(UINT _ViewID, BOOL Force)
 	if (Force || (_ViewID!=ViewID))
 	{
 		CImageList* icons = NULL;
-		int nImageList = LVSIL_NORMAL;
+		INT nImageList = LVSIL_NORMAL;
 
 		switch (_ViewID)
 		{
 		case LFViewLargeIcons:
 		case LFViewPreview:
 			icons = &theApp.m_Icons128;
-			m_FileList.SetIconSpacing(140, 140+(int)(GetFontHeight()*2.5));
+			m_FileList.SetIconSpacing(140, 140+(INT)(GetFontHeight()*2.5));
 			break;
 		case LFViewSmallIcons:
-			m_FileList.SetIconSpacing(32+(int)(GetFontHeight()*8), (int)(GetFontHeight()*8));
+			m_FileList.SetIconSpacing(32+(INT)(GetFontHeight()*8), (INT)(GetFontHeight()*8));
 		case LFViewTiles:
 			icons = &theApp.m_Icons48;
 			break;
@@ -220,7 +220,7 @@ void CListView::SetViewOptions(UINT _ViewID, BOOL Force)
 	// View
 	if (Force || (_ViewID!=ViewID))
 	{
-		int iView = LV_VIEW_ICON;
+		INT iView = LV_VIEW_ICON;
 		switch (_ViewID)
 		{
 		case LFViewList:
@@ -240,7 +240,7 @@ void CListView::SetViewOptions(UINT _ViewID, BOOL Force)
 			if ((theApp.OSVersion==OS_XP) && (m_FileList.OwnerData))  // Only for virtual lists on Windows XP
 			{
 				tvi.dwMask |= LVTVIM_LABELMARGIN;
-				tvi.rcLabelMargin.bottom = (int)(GetFontHeight()*1.3);
+				tvi.rcLabelMargin.bottom = (INT)(GetFontHeight()*1.3);
 				tvi.rcLabelMargin.top = -18;
 				tvi.rcLabelMargin.left = 1;
 				tvi.rcLabelMargin.right = 1;
@@ -275,7 +275,7 @@ BEGIN_MESSAGE_MAP(CListView, CAbstractListView)
 	ON_WM_SIZE()
 END_MESSAGE_MAP()
 
-int CListView::OnCreate(LPCREATESTRUCT lpCreateStruct)
+INT CListView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if (CFileView::OnCreate(lpCreateStruct)==-1)
 		return -1;
@@ -324,7 +324,7 @@ int CListView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	return 0;
 }
 
-void CListView::OnSize(UINT nType, int cx, int cy)
+void CListView::OnSize(UINT nType, INT cx, INT cy)
 {
 	CWnd::OnSize(nType, cx, cy);
 	AdjustLayout();
@@ -338,7 +338,7 @@ END_INTERFACE_MAP()
 
 IMPLEMENT_IUNKNOWN(CListView, FooterCallback)
 
-STDMETHODIMP CListView::XFooterCallback::OnButtonClicked(int /*itemIndex*/, LPARAM lParam, PINT pRemoveFooter)
+STDMETHODIMP CListView::XFooterCallback::OnButtonClicked(INT /*itemIndex*/, LPARAM lParam, PINT pRemoveFooter)
 {
 	METHOD_PROLOGUE(CListView, FooterCallback);
 	pThis->GetParentFrame()->PostMessage(WM_COMMAND, (WPARAM)lParam);
@@ -346,7 +346,7 @@ STDMETHODIMP CListView::XFooterCallback::OnButtonClicked(int /*itemIndex*/, LPAR
 	return S_OK;
 }
 
-STDMETHODIMP CListView::XFooterCallback::OnDestroyButton(int /*itemIndex*/, LPARAM /*lParam*/)
+STDMETHODIMP CListView::XFooterCallback::OnDestroyButton(INT /*itemIndex*/, LPARAM /*lParam*/)
 {
 	METHOD_PROLOGUE(CListView, FooterCallback);
 	return S_OK;

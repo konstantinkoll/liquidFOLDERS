@@ -17,9 +17,9 @@ struct LFAboutDlgParameters
 	CString appname;
 	CString build;
 	CGdiPlusBitmapResource* icon;
-	int TextureSize;
-	int MaxTextureSize;
-	int RibbonColor;
+	INT TextureSize;
+	INT MaxTextureSize;
+	INT RibbonColor;
 	BOOL HideEmptyDrives;
 	BOOL HideEmptyDomains;
 
