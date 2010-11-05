@@ -41,13 +41,13 @@ BOOL RunPath(HWND hWnd, CString path, CString parameter=_T(""));
 
 struct FolderSerialization
 {
-	UINT Level;
+	UCHAR Level;
 	UINT Icon;
 	UINT Type;
 	UINT CategoryID;
-	CString DisplayName;
-	CString Description;
-	CString Comment;
+	WCHAR DisplayName[256];
+	WCHAR Description[256];
+	WCHAR Comment[256];
 	CHAR StoreID[LFKeySize];
 	CHAR FileID[LFKeySize];
 	UINT DomainID;
@@ -68,7 +68,7 @@ public:
 	// IPersistFolder
 	CFolderItem();
 	CFolderItem(FolderSerialization& _Attrs);
-	CFolderItem(UINT Level, LFItemDescriptor* i);
+	CFolderItem(UCHAR Level, LFItemDescriptor* i);
 
 	virtual void GetCLSID(LPCLSID pCLSID);
 

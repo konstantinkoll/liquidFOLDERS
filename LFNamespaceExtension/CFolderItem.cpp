@@ -119,15 +119,16 @@ CFolderItem::CFolderItem(FolderSerialization& _Attrs)
 	Attrs = _Attrs;
 }
 
-CFolderItem::CFolderItem(UINT Level, LFItemDescriptor* i)
+CFolderItem::CFolderItem(UCHAR Level, LFItemDescriptor* i)
 {
+	ZeroMemory(&Attrs, sizeof(Attrs));
 	Attrs.Level = Level;
 	Attrs.Icon = i->IconID;
 	Attrs.Type = i->Type;
 	Attrs.CategoryID = i->CategoryID;
-	Attrs.DisplayName = i->CoreAttributes.FileName;
-	Attrs.Description = i->Description;
-	Attrs.Comment = i->CoreAttributes.Comment;
+	wcscpy_s(Attrs.DisplayName, 256, i->CoreAttributes.FileName);
+	wcscpy_s(Attrs.Description, 256, i->Description);
+	wcscpy_s(Attrs.Comment, 256, i->CoreAttributes.Comment);
 	strcpy_s(Attrs.StoreID, LFKeySize, i->StoreID);
 	strcpy_s(Attrs.FileID, LFKeySize, i->CoreAttributes.FileID);
 	Attrs.DomainID = Attrs.DomainID;
@@ -205,24 +206,7 @@ void CFolderItem::Serialize(CArchive& ar)
 {
 	ar << (BYTE)LFNamespaceExtensionVersion;
 	ar << (BYTE)1;
-	ar << Attrs.Level;
-	ar << Attrs.Icon;
-	ar << Attrs.Type;
-	ar << Attrs.CategoryID;
-	ar << Attrs.DisplayName;
-	ar << Attrs.Description;
-	ar << Attrs.Comment;
-	ar.Write(&Attrs.StoreID, LFKeySize*sizeof(CHAR));
-	ar.Write(&Attrs.FileID, LFKeySize*sizeof(CHAR));
-	ar << Attrs.DomainID;
-	ar << Attrs.Compare;
-	ar.Write(&Attrs.Value, sizeof(LFVariantData));
-	ar << Attrs.CreationTime.dwHighDateTime;
-	ar << Attrs.CreationTime.dwLowDateTime;
-	ar << Attrs.FileTime.dwHighDateTime;
-	ar << Attrs.FileTime.dwLowDateTime;
-	ar << Attrs.Count;
-	ar << Attrs.Size;
+	ar.Write(&Attrs, sizeof(Attrs));
 }
 
 CNSEItem* CFolderItem::DeserializeChild(CArchive& ar)
@@ -264,25 +248,9 @@ CNSEItem* CFolderItem::DeserializeChild(CArchive& ar)
 		}
 	case 1:
 		{
-			FolderSerialization Attrs = { 0 };
-			ar >> Attrs.Level;
-			ar >> Attrs.Icon;
-			ar >> Attrs.Type;
-			ar >> Attrs.CategoryID;
-			ar >> Attrs.DisplayName;
-			ar >> Attrs.Description;
-			ar >> Attrs.Comment;
-			ar.Read(&Attrs.StoreID, LFKeySize*sizeof(CHAR));
-			ar.Read(&Attrs.FileID, LFKeySize*sizeof(CHAR));
-			ar >> Attrs.DomainID;
-			ar >> Attrs.Compare;
-			ar.Read(&Attrs.Value, sizeof(LFVariantData));
-			ar >> Attrs.CreationTime.dwHighDateTime;
-			ar >> Attrs.CreationTime.dwLowDateTime;
-			ar >> Attrs.FileTime.dwHighDateTime;
-			ar >> Attrs.FileTime.dwLowDateTime;
-			ar >> Attrs.Count;
-			ar >> Attrs.Size;
+			FolderSerialization Attrs;
+			ZeroMemory(&Attrs, sizeof(Attrs));
+			ar.Read(&Attrs, sizeof(Attrs));
 
 			return new CFolderItem(Attrs);
 		}
@@ -338,7 +306,8 @@ void CFolderItem::ConvertSearchResult(CGetChildrenEventArgs& e, LFSearchResult* 
 	{
 		UINT attr = atoi(Attrs.FileID);
 
-		FolderSerialization d = { 0 };
+		FolderSerialization d;
+		ZeroMemory(&d, sizeof(d));
 		d.Level = Attrs.Level+1;
 		d.Icon = IDI_FLD_Default;
 		d.Type = LFTypeVirtual;
@@ -353,11 +322,11 @@ void CFolderItem::ConvertSearchResult(CGetChildrenEventArgs& e, LFSearchResult* 
 
 		CString tmpStr;
 		ENSURE(tmpStr.LoadString(IDS_NULLFOLDER_NameMask));
-		d.DisplayName = theApp.FrmtAttrStr(tmpStr, CString(theApp.m_Attributes[attr]->Name));
+		wcscpy_s(d.DisplayName, 256, theApp.FrmtAttrStr(tmpStr, CString(theApp.m_Attributes[attr]->Name)));
 		ENSURE(tmpStr.LoadString(IDS_NULLFOLDER_CommentMask));
-		d.Comment = theApp.FrmtAttrStr(tmpStr, CString(theApp.m_Attributes[attr]->Name));
+		wcscpy_s(d.Comment, 256, theApp.FrmtAttrStr(tmpStr, CString(theApp.m_Attributes[attr]->Name)));
 		ENSURE(tmpStr.LoadString(NullCount==1 ? IDS_FILES_Singular : IDS_FILES_Plural));
-		d.Description.Format(tmpStr, NullCount);
+		swprintf_s(d.Description, tmpStr, NullCount);
 
 		e.children->AddTail(new CFolderItem(d));
 	}
@@ -390,13 +359,14 @@ BOOL CFolderItem::GetChildren(CGetChildrenEventArgs& e)
 			ENSURE(sortStr.LoadString(IDS_AttributeComment));
 
 			// All files, regardless of attributes
-			FolderSerialization d = { 0 };
+			FolderSerialization d;
+			ZeroMemory(&d, sizeof(d));
 			d.Level = Attrs.Level+2;
 			d.Icon = IDI_FLD_All;
 			d.Type = LFTypeVirtual;
 			d.CategoryID = LFAttrCategoryCount;
-			d.DisplayName.LoadString(IDS_AllFiles);
-			d.Comment.LoadString(IDS_AllFilesComment);
+			ENSURE(LoadString(NULL, IDS_AllFiles, d.DisplayName, 256));
+			ENSURE(LoadString(NULL, IDS_AllFilesComment, d.Comment, 256));
 			strcpy_s(d.StoreID, LFKeySize, Attrs.StoreID);
 			strcpy_s(d.FileID, LFKeySize, "ALL");
 			d.DomainID = Attrs.DomainID;
@@ -407,13 +377,14 @@ BOOL CFolderItem::GetChildren(CGetChildrenEventArgs& e)
 			for (UINT a=0; a<LFAttributeCount; a++)
 				if (theApp.m_Domains[Attrs.DomainID]->ImportantAttributes->IsSet(a))
 				{
-					FolderSerialization d = { 0 };
+					FolderSerialization d ;
+					ZeroMemory(&d, sizeof(d));
 					d.Level = Attrs.Level+1;
 					d.Icon = theApp.m_Attributes[a]->IconID;
 					d.Type = LFTypeVirtual;
 					d.CategoryID = theApp.m_Attributes[a]->Category;
-					d.DisplayName = theApp.m_Attributes[a]->Name;
-					d.Comment = theApp.FrmtAttrStr(sortStr, CString(theApp.m_Attributes[a]->Name));
+					wcscpy_s(d.DisplayName, 256, theApp.m_Attributes[a]->Name);
+					swprintf_s(d.Comment, sortStr, theApp.m_Attributes[a]->Name);
 					strcpy_s(d.StoreID, LFKeySize, Attrs.StoreID);
 					sprintf_s(d.FileID, LFKeySize, "%d", a);
 					d.DomainID = Attrs.DomainID;
@@ -1004,25 +975,19 @@ BOOL CFolderItem::GetColumnValueEx(VARIANT* value, CShellColumn& column)
 	switch (column.index)
 	{
 	case LFAttrFileName:
-		CUtils::SetVariantCString(value, Attrs.DisplayName);
+		CUtils::SetVariantLPCTSTR(value, Attrs.DisplayName);
 		break;
 	case LFAttrFileID:
-		{
-			CString tmpStr(Attrs.FileID);
-			CUtils::SetVariantLPCTSTR(value, tmpStr);
-			break;
-		}
+		CUtils::SetVariantLPCTSTR(value, CString(Attrs.FileID));
+		break;
 	case LFAttrStoreID:
-		{
-			CString tmpStr(Attrs.StoreID);
-			CUtils::SetVariantLPCTSTR(value, tmpStr);
-			break;
-		}
+		CUtils::SetVariantLPCTSTR(value, CString(Attrs.StoreID));
+		break;
 	case LFAttrDescription:
-		CUtils::SetVariantCString(value, Attrs.Description);
+		CUtils::SetVariantLPCTSTR(value, Attrs.Description);
 		break;
 	case LFAttrComment:
-		CUtils::SetVariantCString(value, Attrs.Comment);
+		CUtils::SetVariantLPCTSTR(value, Attrs.Comment);
 		break;
 	case LFAttrCreationTime:
 		if ((Attrs.CreationTime.dwHighDateTime) || (Attrs.CreationTime.dwLowDateTime))
@@ -1031,8 +996,7 @@ BOOL CFolderItem::GetColumnValueEx(VARIANT* value, CShellColumn& column)
 			{
 				WCHAR tmpBuf[256];
 				LFTimeToString(Attrs.CreationTime, tmpBuf, 256);
-				CString tmpStr(tmpBuf);
-				CUtils::SetVariantCString(value, tmpStr);
+				CUtils::SetVariantLPCTSTR(value, tmpBuf);
 			}
 			else
 			{
@@ -1051,8 +1015,7 @@ BOOL CFolderItem::GetColumnValueEx(VARIANT* value, CShellColumn& column)
 			{
 				WCHAR tmpBuf[256];
 				LFTimeToString(Attrs.FileTime, tmpBuf, 256);
-				CString tmpStr(tmpBuf);
-				CUtils::SetVariantCString(value, tmpStr);
+				CUtils::SetVariantLPCTSTR(value, tmpBuf);
 			}
 			else
 			{
@@ -1079,8 +1042,7 @@ BOOL CFolderItem::GetColumnValueEx(VARIANT* value, CShellColumn& column)
 		{
 			WCHAR tmpBuf[256];
 			LFINT64ToString(Attrs.Size, tmpBuf, 256);
-			CString tmpStr(tmpBuf);
-			CUtils::SetVariantCString(value, tmpStr);
+			CUtils::SetVariantLPCTSTR(value, tmpBuf);
 		}
 		else
 		{
@@ -1177,7 +1139,7 @@ GotRet:
 		return ret;
 
 	// Compare file names
-	ret = Attrs.DisplayName.CompareNoCase(dir2->Attrs.DisplayName);
+	ret = _wcsicmp(Attrs.DisplayName, dir2->Attrs.DisplayName);
 	if (ret)
 		return ret;
 
@@ -1292,7 +1254,7 @@ BOOL CFolderItem::OnChangeName(CChangeNameEventArgs& e)
 		UINT res = LFSetStoreAttributes(Attrs.StoreID, e.newName.GetBuffer(), NULL);
 		if (res==LFOk)
 		{
-			Attrs.DisplayName = e.newName;
+			wcscpy_s(Attrs.DisplayName, 256, e.newName);
 		}
 		else
 		{
