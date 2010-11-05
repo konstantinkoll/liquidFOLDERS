@@ -492,7 +492,7 @@ void CFolderItem::GetDisplayNameEx(CString& displayName, DisplayNameFlags flags)
 		}
 		else
 		{
-			displayName = (Attrs.Level>LevelRoot) ? Attrs.StoreID : 0;
+			displayName = (Attrs.Level>LevelRoot) ? Attrs.StoreID : (Attrs.Level>LevelStores) ? "VFOLDER" : "";
 		}
 }
 

@@ -531,13 +531,12 @@ LFCore_API unsigned int LFMakeDefaultStore(char* key, HWND hWndSource, bool Inte
 		ReleaseMutex(Mutex_Stores);
 
 		if (res==LFOk)
-		{
 			SendLFNotifyMessage(LFMessages.DefaultStoreChanged, LFMSGF_IntStores, hWndSource);
-			SendShellNotifyMessage(SHCNE_UPDATEITEM, DefaultStore);
-			if ((strcmp(DefaultStore, OldDefaultStore)!=0) && (OldDefaultStore[0]!='\0'))
-				SendShellNotifyMessage(SHCNE_UPDATEITEM, OldDefaultStore);
-		}
 	}
+
+	SendShellNotifyMessage(SHCNE_UPDATEITEM, DefaultStore);
+	if ((strcmp(DefaultStore, OldDefaultStore)!=0) && (OldDefaultStore[0]!='\0'))
+		SendShellNotifyMessage(SHCNE_UPDATEITEM, OldDefaultStore);
 
 	return res;
 }
