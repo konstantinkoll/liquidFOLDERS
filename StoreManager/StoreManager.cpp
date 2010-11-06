@@ -45,6 +45,9 @@ CStoreManagerApp::CStoreManagerApp()
 		RegCloseKey(hKey);
 	}
 
+	// Nag screen
+	m_NagCounter = 20;
+
 	// Load icons
 	HINSTANCE hModIcons = LoadLibrary(_T("LFCORE.DLL"));
 	if (hModIcons)

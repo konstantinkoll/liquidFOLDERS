@@ -2371,6 +2371,13 @@ void CMainFrame::CookFiles(INT recipe, INT FocusItem)
 
 	if ((Victim) && (Victim!=RawFiles))
 		LFFreeSearchResult(Victim);
+
+	if (!LFIsLicensed())
+		if ((++theApp.m_NagCounter)>25)
+		{
+			theApp.m_NagCounter = 0;
+			MessageBox(_T("You are using an unregistered copy of liquidFOLDERS. liquidFOLDERS is shareware -\nif you decide to use it regulary, you are required to purchase a license from our website!"), _T("Unregistered copy"));
+		}
 }
 
 void CMainFrame::UpdateHistory()

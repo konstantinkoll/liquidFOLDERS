@@ -25,6 +25,7 @@ public:
 	UINT m_nAppLook;
 	UINT m_nTextureSize;
 	UINT m_nMaxTextureSize;
+	UINT m_NagCounter;
 	BOOL m_GlobeHQModel;
 	BOOL m_GlobeLighting;
 	BOOL m_HideEmptyDrives;
