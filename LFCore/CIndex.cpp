@@ -266,6 +266,7 @@ bool CIndex::UpdateFileLocation(LFItemDescriptor* i, bool Exists)
 			GetFileLocation(DatPath, PtrM, tmpPath, 2*MAX_PATH);
 			if (FileExists(tmpPath))
 			{
+				wcscpy_s(i->CoreAttributes.FileName, 256, PtrM->FileName);
 				i->CoreAttributes.Flags &= ~LFFlagMissing;
 			}
 			else
