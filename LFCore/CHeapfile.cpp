@@ -237,7 +237,7 @@ bool CHeapfile::FindNext(int& Next, void*& Ptr)
 		P = (char*)Buffer+(Next-FirstInBuffer)*Hdr.ElementSize+KeyOffset;
 		Next++;
 	}
-	while (*P==0);
+	while (*P=='\0');
 
 	Ptr = P-KeyOffset;
 	return true;

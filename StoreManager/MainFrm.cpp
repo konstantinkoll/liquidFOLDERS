@@ -694,7 +694,7 @@ void CMainFrame::OnItemsOpen()
 					OnStoreNewDrive(i->CoreAttributes.FileID[0]);
 					break;
 				case LFTypeFile:
-					res = LFGetFileLocation(i, Path, MAX_PATH);
+					res = LFGetFileLocation(i, Path, MAX_PATH, true);
 					if (res==LFOk)
 					{
 						if (ShellExecute(NULL, _T("open"), Path, NULL, NULL, SW_SHOW)==(HINSTANCE)SE_ERR_NOASSOC)
@@ -727,7 +727,7 @@ void CMainFrame::OnItemsOpenWith()
 		if ((!i->NextFilter) && ((i->Type & (LFTypeNotMounted | LFTypeMask))==LFTypeFile))
 		{
 			WCHAR Path[MAX_PATH];
-			UINT res = LFGetFileLocation(i, Path, MAX_PATH);
+			UINT res = LFGetFileLocation(i, Path, MAX_PATH, true);
 			if (res==LFOk)
 			{
 				WCHAR Cmd[300];

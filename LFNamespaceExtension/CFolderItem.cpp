@@ -1178,7 +1178,7 @@ BOOL CFolderItem::OnOpen(CExecuteMenuitemsEventArgs& e)
 		if (IS(item, CFileItem))
 		{
 			WCHAR Path[MAX_PATH];
-			UINT res = LFGetFileLocation(AS(item, CFileItem)->Item, Path, MAX_PATH);
+			UINT res = LFGetFileLocation(AS(item, CFileItem)->Item, Path, MAX_PATH, true);
 			if (res!=LFOk)
 			{
 				LFErrorBox(res);
@@ -1617,7 +1617,7 @@ BOOL CFolderItem::OnOpenWith(CExecuteMenuitemsEventArgs& e)
 		if (IS(item, CFileItem))
 		{
 			WCHAR Path[MAX_PATH];
-			UINT res = LFGetFileLocation(AS(item, CFileItem)->Item, Path, MAX_PATH);
+			UINT res = LFGetFileLocation(AS(item, CFileItem)->Item, Path, MAX_PATH, true);
 			if (res!=LFOk)
 			{
 				LFErrorBox(res);

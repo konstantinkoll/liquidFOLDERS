@@ -81,6 +81,7 @@ RegisteredFile Registry[] = {
 	{ "m2a",   LFDomainAudio },
 	{ "m2v",   LFDomainVideos },
 	{ "m4v",   LFDomainVideos },
+	{ "mht",   LFDomainWeb },
 	{ "mjp",   LFDomainVideos },
 	{ "mjpeg", LFDomainVideos },
 	{ "mjpg",  LFDomainVideos },

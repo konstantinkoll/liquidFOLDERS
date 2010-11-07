@@ -26,6 +26,7 @@ CFileItem::CFileItem()
 CFileItem::CFileItem(CHAR* _StoreID, LFCoreAttributes* Attrs)
 {
 	Item = LFAllocItemDescriptor(Attrs);
+	Item->Type = LFTypeFile;
 	strcpy_s(Item->StoreID, LFKeySize, _StoreID);
 }
 
@@ -37,8 +38,7 @@ CFileItem::CFileItem(LFItemDescriptor* _Item)
 
 CFileItem::~CFileItem()
 {
-	if (Item)
-		LFFreeItemDescriptor(Item);
+	LFFreeItemDescriptor(Item);
 }
 
 
@@ -91,7 +91,7 @@ void CFileItem::GetDisplayNameEx(CString& displayName, DisplayNameFlags flags)
 	if ((flags & (NSEDNF_InFolder | NSEDNF_ForParsing))==NSEDNF_ForParsing)
 	{
 		WCHAR Path[MAX_PATH];
-		displayName = (LFGetFileLocation(Item, Path, MAX_PATH)==LFOk) ? Path : _T("?");
+		displayName = (LFGetFileLocation(Item, Path, MAX_PATH, false)==LFOk) ? Path : _T("?");
 		return;
 	}
 
@@ -402,7 +402,7 @@ LPSTREAM CFileItem::GetStream()
 	LPSTREAM ret = NULL;
 
 	WCHAR Path[MAX_PATH];
-	UINT res = LFGetFileLocation(Item, Path, MAX_PATH);
+	UINT res = LFGetFileLocation(Item, Path, MAX_PATH, true);
 	if (res!=LFOk)
 	{
 		LFErrorBox(res);
@@ -471,7 +471,7 @@ INT CFileItem::GetContentViewColumnIndices(UINT* indices)
 BOOL CFileItem::SetShellLink(IShellLink* psl)
 {
 	WCHAR Path[MAX_PATH];
-	if (LFGetFileLocation(Item, Path, MAX_PATH)==LFOk)
+	if (LFGetFileLocation(Item, Path, MAX_PATH, true)==LFOk)
 	{
 		psl->SetPath(Path);
 		psl->SetIconLocation(Path, 0);

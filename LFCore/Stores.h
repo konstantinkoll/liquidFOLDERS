@@ -9,7 +9,7 @@ void RemoveDir(LPWSTR lpPath);
 bool DirFreeSpace(LPWSTR lpPathSrc, unsigned int Required);
 unsigned int CopyDir(LPWSTR lpPathSrc, LPWSTR lpPathDst);
 unsigned int ValidateStoreDirectories(LFStoreDescriptor* s);
-void GetFileLocation(wchar_t* _Path, char* _FileID, char* _FileFormat, wchar_t* dst, size_t cCount);
+void GetFileLocation(wchar_t* DatPath, LFCoreAttributes* ca, wchar_t* dst, size_t cCount);
 bool FileExists(LPWSTR lpPath);
 bool GetPIDLForStore(char* StoreID, LPITEMIDLIST* ppidl, LPITEMIDLIST* ppidlDelegate);
 void SendLFNotifyMessage(unsigned int Msg, unsigned int Flags, HWND hWndSource);
