@@ -194,6 +194,8 @@ bool CIndex::RenamePhysicalFile(LFCoreAttributes* PtrM, wchar_t* NewName, wchar_
 	wchar_t Path2[2*MAX_PATH];
 	GetFileLocation(DatPath, PtrM, Path2, 2*MAX_PATH);
 
+	if (FileExists(Path2))
+		return true;
 	if (MoveFile(Path1, Path2))
 		return true;
 
