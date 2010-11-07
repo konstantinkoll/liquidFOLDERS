@@ -32,7 +32,7 @@ class LFCore_API CHeapfile
 	friend class CIndex;
 
 public:
-	CHeapfile(char* Path, char* Filename, unsigned int _ElementSize, unsigned int _KeyOffset=0);
+	CHeapfile(wchar_t* Path, wchar_t* Filename, unsigned int _ElementSize, unsigned int _KeyOffset=0);
 	virtual ~CHeapfile();
 
 	virtual void GetFromItemDescriptor(void* PtrDst, LFItemDescriptor* i) = 0;
@@ -76,6 +76,6 @@ protected:
 	void ElementToBuffer(int ID);
 
 private:
-	char IdxFilename[MAX_PATH];
+	wchar_t IdxFilename[MAX_PATH];
 	HANDLE hFile;
 };

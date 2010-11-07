@@ -293,10 +293,7 @@ LFCore_API bool LFPassesFilter(LFItemDescriptor* i, LFFilter* filter);
 //
 
 // Gibt den physischen Pfad einer Datei zurück
-LFCore_API unsigned int LFGetFileLocation(char* StoreID, LFCoreAttributes* ca, char* dst, size_t cCount);
-
-// Gibt den physischen Pfad einer Datei zurück
-LFCore_API unsigned int LFGetFileLocation(LFItemDescriptor* i, char* dst, size_t cCount);
+LFCore_API unsigned int LFGetFileLocation(LFItemDescriptor* i, wchar_t* dst, size_t cCount, bool extended=false);
 
 // Gibt die Daten eines Stores zurück
 LFCore_API unsigned int LFGetStoreSettings(char* key, LFStoreDescriptor* s);
@@ -356,7 +353,7 @@ LFCore_API bool LFDefaultStoreAvailable();
 LFCore_API char* LFGetDefaultStore();
 
 // Gibt den Standardnamen des Default Stores zurück
-LFCore_API void LFGetDefaultStoreName(char* name, size_t cCount);
+LFCore_API void LFGetDefaultStoreName(wchar_t* name, size_t cCount);
 
 // Gibt die Anzahl aller Stores zurück
 LFCore_API unsigned int LFGetStoreCount();

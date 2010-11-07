@@ -90,8 +90,8 @@ void CFileItem::GetDisplayNameEx(CString& displayName, DisplayNameFlags flags)
 {
 	if ((flags & (NSEDNF_InFolder | NSEDNF_ForParsing))==NSEDNF_ForParsing)
 	{
-		CHAR Path[MAX_PATH];
-		displayName = (LFGetFileLocation(Item->StoreID, &Item->CoreAttributes, Path, MAX_PATH)==LFOk) ? Path : "?";
+		WCHAR Path[MAX_PATH];
+		displayName = (LFGetFileLocation(Item, Path, MAX_PATH)==LFOk) ? Path : _T("?");
 		return;
 	}
 
@@ -108,11 +108,14 @@ void CFileItem::GetDisplayNameEx(CString& displayName, DisplayNameFlags flags)
 
 void CFileItem::GetIconFileAndIndex(CGetIconFileAndIndexEventArgs& e)
 {
-	CHAR Path[MAX_PATH];
-	if (LFGetFileLocation(Item->StoreID, &Item->CoreAttributes, Path, MAX_PATH)==LFOk)
+	WCHAR tmpBuf[LFExtSize+2] = L"*.";
+	MultiByteToWideChar(CP_ACP, 0, Item->CoreAttributes.FileFormat, (int)(strlen(Item->CoreAttributes.FileFormat)+1), &tmpBuf[2], LFExtSize);
+
+	SHFILEINFO sfi;
+	if (SUCCEEDED(SHGetFileInfo(tmpBuf, 0, &sfi, sizeof(SHFILEINFO), SHGFI_SYSICONINDEX | SHGFI_USEFILEATTRIBUTES)))
 	{
-		e.iconExtractMode = NSEIEM_SystemImageListIndexFromPath;
-		e.iconFile = Path;
+		e.iconExtractMode = NSEIEM_SystemImageListIndexSpecified;
+		e.iconIndex = sfi.iIcon;
 	}
 	else
 	{
@@ -276,7 +279,7 @@ BOOL CFileItem::OnChangeName(CChangeNameEventArgs& e)
 
 NSEItemAttributes CFileItem::GetAttributes(NSEItemAttributes requested)
 {
-	return (NSEItemAttributes)(requested & NSEIA_FileSystem | NSEIA_CanRename | NSEIA_CanDelete | NSEIA_CanLink);
+	return (NSEItemAttributes)(requested & (NSEIA_FileSystem | NSEIA_CanRename | NSEIA_CanDelete | NSEIA_CanLink));
 }
 
 INT CFileItem::CompareTo(CNSEItem* otherItem, CShellColumn& column)
@@ -398,15 +401,15 @@ LPSTREAM CFileItem::GetStream()
 {
 	LPSTREAM ret = NULL;
 
-	CHAR Path[MAX_PATH];
-	UINT res = LFGetFileLocation(Item->StoreID, &Item->CoreAttributes, Path, MAX_PATH);
+	WCHAR Path[MAX_PATH];
+	UINT res = LFGetFileLocation(Item, Path, MAX_PATH);
 	if (res!=LFOk)
 	{
 		LFErrorBox(res);
 	}
 	else
 	{
-		SHCreateStreamOnFileA(Path, STGM_READ, &ret);
+		SHCreateStreamOnFile(Path, STGM_READ, &ret);
 	}
 
 	return ret;
@@ -467,14 +470,11 @@ INT CFileItem::GetContentViewColumnIndices(UINT* indices)
 
 BOOL CFileItem::SetShellLink(IShellLink* psl)
 {
-	CHAR Path[MAX_PATH];
-	if (LFGetFileLocation(Item->StoreID, &Item->CoreAttributes, Path, MAX_PATH)==LFOk)
+	WCHAR Path[MAX_PATH];
+	if (LFGetFileLocation(Item, Path, MAX_PATH)==LFOk)
 	{
-		WCHAR tmpBuf[MAX_PATH];
-		MultiByteToWideChar(CP_ACP, 0, Path, (INT)(strlen(Path)+1), tmpBuf, MAX_PATH);
-
-		psl->SetPath(tmpBuf);
-		psl->SetIconLocation(tmpBuf, 0);
+		psl->SetPath(Path);
+		psl->SetIconLocation(Path, 0);
 		psl->SetShowCmd(SW_SHOWNORMAL);
 
 		return TRUE;

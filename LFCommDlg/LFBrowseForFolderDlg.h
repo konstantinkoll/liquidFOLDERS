@@ -21,7 +21,7 @@ public:
 	virtual void AdjustLayout();
 
 	LPITEMIDLIST m_FolderPIDL;
-	TCHAR m_FolderPath[MAX_PATH];
+	WCHAR m_FolderPath[MAX_PATH];
 
 protected:
 	LFApplication* p_App;

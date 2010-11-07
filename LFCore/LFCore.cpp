@@ -176,17 +176,17 @@ LFCore_API void LFCreateSendTo(bool force)
 
 	if (force)
 	{
-		char Path[MAX_PATH];
-		if (SHGetSpecialFolderPathA(NULL, Path, CSIDL_SENDTO, TRUE))
+		wchar_t Path[MAX_PATH];
+		if (SHGetSpecialFolderPath(NULL, Path, CSIDL_SENDTO, TRUE))
 		{
-			char Name[256];
+			wchar_t Name[256];
 			LFGetDefaultStoreName(Name, 256);
 
-			strcat_s(Path, MAX_PATH, "\\");
-			strcat_s(Path, MAX_PATH, Name);
-			strcat_s(Path, MAX_PATH, ".LFSendTo");
+			wcscat_s(Path, MAX_PATH, L"\\");
+			wcscat_s(Path, MAX_PATH, Name);
+			wcscat_s(Path, MAX_PATH, L".LFSendTo");
 
-			HANDLE hFile = CreateFileA(Path, GENERIC_WRITE, 0, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+			HANDLE hFile = CreateFile(Path, GENERIC_WRITE, 0, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 			if (hFile!=INVALID_HANDLE_VALUE)
 				CloseHandle(hFile);
 		}

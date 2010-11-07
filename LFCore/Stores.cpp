@@ -26,7 +26,7 @@ static char KeyChars[38] = { LFKeyChars };
 // Verzeichnis-Funktionen
 //
 
-DWORD CreateDir(LPCSTR lpPath)
+DWORD CreateDir(LPWSTR lpPath)
 {
 	SECURITY_ATTRIBUTES sa;
 	SECURITY_DESCRIPTOR sd;
@@ -79,7 +79,7 @@ DWORD CreateDir(LPCSTR lpPath)
 	sa.lpSecurityDescriptor = &sd;
 	sa.bInheritHandle = TRUE;
 
-	CreateDirectoryA(lpPath, &sa);
+	CreateDirectory(lpPath, &sa);
 	dwError = GetLastError();
 
 Cleanup:
@@ -92,67 +92,67 @@ Cleanup:
 	return dwError;
 }
 
-void RemoveDir(LPCSTR lpPath)
+void RemoveDir(LPWSTR lpPath)
 {
 	// Dateien löschen
-	char DirSpec[MAX_PATH];
-	strcpy_s(DirSpec, MAX_PATH, lpPath);
-	strcat_s(DirSpec, "*");
+	wchar_t DirSpec[MAX_PATH];
+	wcscpy_s(DirSpec, 2*MAX_PATH, lpPath);
+	wcscat_s(DirSpec, L"*");
 
-	WIN32_FIND_DATAA FindFileData;
-	HANDLE hFind = FindFirstFileA(DirSpec, &FindFileData);
+	WIN32_FIND_DATA FindFileData;
+	HANDLE hFind = FindFirstFile(DirSpec, &FindFileData);
 
 	if (hFind!=INVALID_HANDLE_VALUE)
 	{
 FileFound:
 		if ((FindFileData.dwFileAttributes & (FILE_ATTRIBUTE_DIRECTORY | FILE_ATTRIBUTE_DEVICE | FILE_ATTRIBUTE_VIRTUAL))==0)
 		{
-			char fn[MAX_PATH];
-			strcpy_s(fn, MAX_PATH, lpPath);
-			strcat_s(fn, MAX_PATH, FindFileData.cFileName);
-			DeleteFileA(fn);
+			wchar_t fn[MAX_PATH];
+			wcscpy_s(fn, MAX_PATH, lpPath);
+			wcscat_s(fn, MAX_PATH, FindFileData.cFileName);
+			DeleteFile(fn);
 		}
 
-		if (FindNextFileA(hFind, &FindFileData)!=0)
+		if (FindNextFile(hFind, &FindFileData)!=0)
 			goto FileFound;
 
 		FindClose(hFind);
 	}
 
 	// Verzeichnis löschen
-	RemoveDirectoryA(lpPath);
+	RemoveDirectory(lpPath);
 }
 
-unsigned int CopyDir(LPCSTR lpPathSrc, LPCSTR lpPathDst)
+unsigned int CopyDir(LPWSTR lpPathSrc, LPWSTR lpPathDst)
 {
-	char DirSpec[MAX_PATH];
-	strcpy_s(DirSpec, MAX_PATH, lpPathSrc);
-	strcat_s(DirSpec, MAX_PATH, "*");
+	wchar_t DirSpec[MAX_PATH];
+	wcscpy_s(DirSpec, MAX_PATH, lpPathSrc);
+	wcscat_s(DirSpec, MAX_PATH, L"*");
 
-	WIN32_FIND_DATAA FindFileData;
-	HANDLE hFind = FindFirstFileA(DirSpec, &FindFileData);
+	WIN32_FIND_DATA FindFileData;
+	HANDLE hFind = FindFirstFile(DirSpec, &FindFileData);
 
 	if (hFind!=INVALID_HANDLE_VALUE)
 	{
 FileFound:
 		if ((FindFileData.dwFileAttributes & (FILE_ATTRIBUTE_DIRECTORY | FILE_ATTRIBUTE_DEVICE | FILE_ATTRIBUTE_VIRTUAL))==0)
 		{
-			char fns[MAX_PATH];
-			strcpy_s(fns, MAX_PATH, lpPathSrc);
-			strcat_s(fns, MAX_PATH, FindFileData.cFileName);
+			wchar_t fns[MAX_PATH];
+			wcscpy_s(fns, MAX_PATH, lpPathSrc);
+			wcscat_s(fns, MAX_PATH, FindFileData.cFileName);
 
-			char fnd[MAX_PATH];
-			strcpy_s(fnd, MAX_PATH, lpPathDst);
-			strcat_s(fnd, MAX_PATH, FindFileData.cFileName);
+			wchar_t fnd[MAX_PATH];
+			wcscpy_s(fnd, MAX_PATH, lpPathDst);
+			wcscat_s(fnd, MAX_PATH, FindFileData.cFileName);
 
-			if (!CopyFileA(fns, fnd, FALSE))
+			if (!CopyFile(fns, fnd, FALSE))
 			{
 				FindClose(hFind);
 				return LFCannotCopyIndex;
 			}
 		}
 
-		if (FindNextFileA(hFind, &FindFileData)!=0)
+		if (FindNextFile(hFind, &FindFileData)!=0)
 			goto FileFound;
 
 		FindClose(hFind);
@@ -161,40 +161,40 @@ FileFound:
 	return LFOk;
 }
 
-bool DirFreeSpace(LPCSTR lpPathSrc, unsigned int Required)
+bool DirFreeSpace(LPWSTR lpPathSrc, unsigned int Required)
 {
 	ULARGE_INTEGER FreeBytesAvailable;
-	if (!GetDiskFreeSpaceExA(lpPathSrc, &FreeBytesAvailable, NULL, NULL))
+	if (!GetDiskFreeSpaceEx(lpPathSrc, &FreeBytesAvailable, NULL, NULL))
 		return false;
 
 	return FreeBytesAvailable.QuadPart>=Required;
 }
 
-bool DirWriteable(LPCSTR lpPath)
+bool DirWriteable(LPWSTR lpPath)
 {
-	char Filename[MAX_PATH];
-	strcpy_s(Filename, MAX_PATH, lpPath);
-	strcat_s(Filename, MAX_PATH, "LF_TEST.BIN");
+	wchar_t Filename[MAX_PATH];
+	wcscpy_s(Filename, MAX_PATH, lpPath);
+	wcscat_s(Filename, MAX_PATH, L"LF_TEST.BIN");
 
-	HANDLE h = CreateFileA(Filename, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+	HANDLE h = CreateFile(Filename, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 	if (h==INVALID_HANDLE_VALUE)
 		return false;
 
 	CloseHandle(h);
-	return DeleteFileA(Filename)==TRUE;
+	return DeleteFile(Filename)==TRUE;
 }
 
 unsigned int ValidateStoreDirectories(LFStoreDescriptor* s)
 {
 	// Store phys. anlegen
-	if (s->DatPath[0]!='\0')
+	if (s->DatPath[0]!=L'\0')
 	{
 		DWORD res = CreateDir(s->DatPath);
 			if ((res!=ERROR_SUCCESS) && (res!=ERROR_ALREADY_EXISTS))
 				return LFIllegalPhysicalPath;
 	}
 
-	if (s->DatPath[0]!='\0')
+	if (s->DatPath[0]!=L'\0')
 	{
 		DWORD res = CreateDir(s->IdxPathMain);
 			if ((res!=ERROR_SUCCESS) && (res!=ERROR_ALREADY_EXISTS))
@@ -202,13 +202,13 @@ unsigned int ValidateStoreDirectories(LFStoreDescriptor* s)
 
 		// Store auf externen Medien verstecken
 		if ((s->StoreMode!=LFStoreModeInternal) && (res==ERROR_SUCCESS))
-			SetFileAttributesA(s->DatPath, FILE_ATTRIBUTE_HIDDEN);
+			SetFileAttributes(s->DatPath, FILE_ATTRIBUTE_HIDDEN);
 	}
 
 	// Hilfsindex anlegen
 	if (s->StoreMode==LFStoreModeHybrid)
 	{
-		char tmpStr[MAX_PATH];
+		wchar_t tmpStr[MAX_PATH];
 		GetAutoPath(s, tmpStr);
 		DWORD res = CreateDir(tmpStr);
 		if ((res!=ERROR_SUCCESS) && (res!=ERROR_ALREADY_EXISTS))
@@ -221,9 +221,9 @@ unsigned int ValidateStoreDirectories(LFStoreDescriptor* s)
 	return LFOk;
 }
 
-void CreateStoreIndex(char* _Path, char* _StoreID, char* _DatPath, unsigned int &res)
+void CreateStoreIndex(wchar_t* _Path, char* _StoreID, wchar_t* _DatPath, unsigned int &res)
 {
-	if (_Path[0]=='\0')
+	if (_Path[0]==L'\0')
 		return;
 
 	CIndex idx(_Path, _StoreID, _DatPath);
@@ -231,26 +231,33 @@ void CreateStoreIndex(char* _Path, char* _StoreID, char* _DatPath, unsigned int 
 		res = LFIndexCreateError;
 }
 
-void GetFileLocation(char* _Path, char* _FileID, char* _FileFormat, char* dst, size_t cCount)
+void GetFileLocation(wchar_t* _Path, char* _FileID, char* _FileFormat, wchar_t* dst, size_t cCount)
 {
-	char buf[3] = " \\";
-	buf[0] = _FileID[0];
+	wchar_t buf1[3] = L" \\";
+	buf1[0] = _FileID[0];
 
-	strcpy_s(dst, cCount, _Path);
-	strcat_s(dst, cCount, buf);
-	strcat_s(dst, cCount, &_FileID[1]);
+	wchar_t buf2[LFKeySize-1];
+	MultiByteToWideChar(CP_ACP, 0, &_FileID[1], (int)(strlen(&_FileID[1])+1), buf2, LFKeySize-1);
+
+	wcscpy_s(dst, cCount, L"\\\\?\\");
+	wcscat_s(dst, cCount, _Path);
+	wcscat_s(dst, cCount, buf1);
+	wcscat_s(dst, cCount, buf2);
 
 	if (_FileFormat[0]!='\0')
 	{
-		strcat_s(dst, cCount, ".");
-		strcat_s(dst, cCount, _FileFormat);
+		wchar_t buf3[LFExtSize];
+		MultiByteToWideChar(CP_ACP, 0, _FileFormat, (int)(strlen(_FileFormat)+1), buf3, LFExtSize);
+
+		wcscat_s(dst, cCount, L".");
+		wcscat_s(dst, cCount, buf3);
 	}
 }
 
-bool FileExists(char* path)
+bool FileExists(LPWSTR lpPath)
 {
-	WIN32_FIND_DATAA FindFileData;
-	HANDLE hFind = FindFirstFileA(path, &FindFileData);
+	WIN32_FIND_DATA FindFileData;
+	HANDLE hFind = FindFirstFile(lpPath, &FindFileData);
 
 	bool res = (hFind!=INVALID_HANDLE_VALUE);
 	if (res)
@@ -259,7 +266,7 @@ bool FileExists(char* path)
 	return res;
 }
 
-unsigned int PrepareImport(LFStoreDescriptor* slot, LFItemDescriptor* i, char* Dst, size_t cCount)
+unsigned int PrepareImport(LFStoreDescriptor* slot, LFItemDescriptor* i, wchar_t* Dst, size_t cCount)
 {
 	SetAttribute(i, LFAttrStoreID, slot->StoreID);
 
@@ -267,7 +274,7 @@ unsigned int PrepareImport(LFStoreDescriptor* slot, LFItemDescriptor* i, char* D
 	GetSystemTime(&st);
 	srand(st.wMilliseconds*rand());
 
-	char Path[MAX_PATH];
+	wchar_t Path[2*MAX_PATH];
 
 	do
 	{
@@ -278,19 +285,19 @@ unsigned int PrepareImport(LFStoreDescriptor* slot, LFItemDescriptor* i, char* D
 		}
 
 		i->CoreAttributes.FileID[LFKeyLength] = 0;
-		GetFileLocation(slot->DatPath, i->CoreAttributes.FileID, "*", Path, MAX_PATH);
+		GetFileLocation(slot->DatPath, i->CoreAttributes.FileID, "*", Path, 2*MAX_PATH);
 	}
 	while (FileExists(Path));
 
 	if (Dst)
 	{
-		GetFileLocation(slot->DatPath, i->CoreAttributes.FileID, i->CoreAttributes.FileFormat, Path, MAX_PATH);
-		strcpy_s(Dst, cCount, Path);
+		GetFileLocation(slot->DatPath, i->CoreAttributes.FileID, i->CoreAttributes.FileFormat, Path, 2*MAX_PATH);
+		wcscpy_s(Dst, cCount, Path);
 	}
 
-	char* LastBackslash = strrchr(Path, '\\');
+	wchar_t* LastBackslash = wcsrchr(Path, L'\\');
 	if (LastBackslash)
-		*LastBackslash = '\0';
+		*LastBackslash = L'\0';
 
 	DWORD res = CreateDir(Path);
 	return ((res==ERROR_SUCCESS) || (res==ERROR_ALREADY_EXISTS)) ? LFOk : LFIllegalPhysicalPath;
@@ -318,14 +325,14 @@ void SendShellNotifyMessage(unsigned int Msg, char* StoreID, LPITEMIDLIST oldpid
 // Stores
 //
 
-LFCore_API unsigned int LFGetFileLocation(char* StoreID, LFCoreAttributes* ca, char* dst, size_t cCount)
+LFCore_API unsigned int LFGetFileLocation(LFItemDescriptor* i, wchar_t* dst, size_t cCount, bool extended)
 {
-	if (StoreID=='\0')
+	if (((i->Type & LFTypeMask)!=LFTypeFile) || (i->StoreID[0]=='\0'))
 		return LFIllegalKey;
 
-	if (ca->Flags & LFFlagLink)
+	if (i->CoreAttributes.Flags & LFFlagLink)
 	{
-		*dst = '\0';
+		*dst = L'\0';
 		return LFOk;
 	}
 
@@ -333,23 +340,62 @@ LFCore_API unsigned int LFGetFileLocation(char* StoreID, LFCoreAttributes* ca, c
 		return LFMutexError;
 
 	unsigned int res = LFIllegalKey;
-	LFStoreDescriptor* slot = FindStore(StoreID);
+	LFStoreDescriptor* slot = FindStore(i->StoreID);
 
 	if (slot)
 		if (IsStoreMounted(slot))
 		{
-			GetFileLocation(slot->DatPath, ca->FileID, ca->FileFormat, dst, cCount);
+			wchar_t tmpPath[2*MAX_PATH];
+			GetFileLocation(slot->DatPath, i->CoreAttributes.FileID, i->CoreAttributes.FileFormat, tmpPath, 2*MAX_PATH);
 
-			if (FileExists(dst))
+			unsigned int flags = i->CoreAttributes.Flags;
+
+			if (FileExists(tmpPath))
 			{
-				ca->Flags &= ~LFFlagMissing;
+				i->CoreAttributes.Flags &= ~LFFlagMissing;
 				res = LFOk;
 			}
 			else
 			{
-				ca->Flags |= LFFlagMissing;
+				i->CoreAttributes.Flags |= LFFlagMissing;
 				res = LFNoFileBody;
 			}
+
+			if (flags!=i->CoreAttributes.Flags)
+			{
+				// Update index
+				CIndex* idx1;
+				CIndex* idx2;
+				HANDLE StoreLock = NULL;
+				if (OpenStore(i->StoreID, true, idx1, idx2, NULL, &StoreLock)==LFOk)
+				{
+					if (idx1)
+					{
+						idx1->Update(i, false);
+						delete idx1;
+					}
+					if (idx2)
+					{
+						idx2->Update(i, false);
+						delete idx2;
+					}
+					ReleaseMutexForStore(StoreLock);
+				}
+			}
+
+			if (extended)
+			{
+				wcscpy_s(dst, cCount, tmpPath);
+			}
+			else
+				if (wcslen(&tmpPath[4])<=MAX_PATH)
+				{
+					wcscpy_s(dst, cCount, &tmpPath[4]);
+				}
+				else
+				{
+					GetShortPathName(&tmpPath[4], dst, cCount);
+				}
 		}
 		else
 		{
@@ -357,39 +403,6 @@ LFCore_API unsigned int LFGetFileLocation(char* StoreID, LFCoreAttributes* ca, c
 		}
 
 	ReleaseMutex(Mutex_Stores);
-	return res;
-}
-
-LFCore_API unsigned int LFGetFileLocation(LFItemDescriptor* i, char* dst, size_t cCount)
-{
-	if ((i->Type & LFTypeMask)!=LFTypeFile)
-		return LFIllegalKey;
-
-	unsigned int flags = i->CoreAttributes.Flags;
-	unsigned int res = LFGetFileLocation(i->StoreID, &i->CoreAttributes, dst, cCount);
-
-	if (flags!=i->CoreAttributes.Flags)
-	{
-		// Update index
-		CIndex* idx1;
-		CIndex* idx2;
-		HANDLE StoreLock = NULL;
-		if (OpenStore(i->StoreID, true, idx1, idx2, NULL, &StoreLock)==LFOk)
-		{
-			if (idx1)
-			{
-				idx1->Update(i, false);
-				delete idx1;
-			}
-			if (idx2)
-			{
-				idx2->Update(i, false);
-				delete idx2;
-			}
-			ReleaseMutexForStore(StoreLock);
-		}
-	}
-
 	return res;
 }
 
@@ -670,11 +683,11 @@ LFCore_API unsigned int LFDeleteStore(char* key, HWND hWndSource)
 	LFStoreDescriptor* slot = FindStore(key, &StoreLock);
 	if ((slot) && (StoreLock))
 	{
-		if (slot->DatPath[0]!='\0')
+		if (slot->DatPath[0]!=L'\0')
 		{
-			char Path[MAX_PATH];
-			strcpy_s(Path, MAX_PATH, slot->DatPath);
-			strcat_s(Path, MAX_PATH, "*");
+			wchar_t Path[MAX_PATH];
+			wcscpy_s(Path, MAX_PATH, slot->DatPath);
+			wcscat_s(Path, MAX_PATH, L"*");
 
 			if (FileExists(Path))
 				if (!DirWriteable(slot->DatPath))
@@ -695,30 +708,30 @@ LFCore_API unsigned int LFDeleteStore(char* key, HWND hWndSource)
 			SendLFNotifyMessage(LFMessages.StoresChanged, victim.StoreMode==LFStoreModeInternal ? LFMSGF_IntStores : LFMSGF_ExtHybStores, hWndSource);
 			SendShellNotifyMessage(SHCNE_UPDATEDIR);
 
-			if (victim.IdxPathAux[0]!='\0')
+			if (victim.IdxPathAux[0]!=L'\0')
 			{
-				char path[MAX_PATH];
+				wchar_t path[MAX_PATH];
 				GetAutoPath(&victim, path);
 
 				RemoveDir(victim.IdxPathAux);
 				RemoveDir(path);
 			}
 
-			if (victim.IdxPathMain[0]!='\0')
+			if (victim.IdxPathMain[0]!=L'\0')
 				RemoveDir(victim.IdxPathMain);
 
-			if (victim.DatPath[0]!='\0')
+			if (victim.DatPath[0]!=L'\0')
 			{
 				for (unsigned a=0; a<sizeof(KeyChars); a++)
 				{
-					char subpath[3];
+					wchar_t subpath[3];
 					subpath[0] = KeyChars[a];
-					subpath[1] = '\\';
-					subpath[2] = '\0';
+					subpath[1] = L'\\';
+					subpath[2] = L'\0';
 
-					char path[MAX_PATH];
-					strcpy_s(path, MAX_PATH, victim.DatPath);
-					strcat_s(path, MAX_PATH, subpath);
+					wchar_t path[MAX_PATH];
+					wcscpy_s(path, MAX_PATH, victim.DatPath);
+					wcscat_s(path, MAX_PATH, subpath);
 
 					RemoveDir(path);
 				}
@@ -995,19 +1008,15 @@ LFCore_API unsigned int LFImportFiles(char* key, LFFileImportList* il, LFItemDes
 				SetNameExtAddFromFile(i, il->m_Items[a]);
 				SetAttributesFromFile(i, il->m_Items[a]);
 
-				char CopyToA[MAX_PATH];
-				res = PrepareImport(slot, i, CopyToA, MAX_PATH);
+				wchar_t CopyTo[2*MAX_PATH];
+				res = PrepareImport(slot, i, CopyTo, 2*MAX_PATH);
 				if (res!=LFOk)
 				{
 					LFFreeItemDescriptor(i);
 					break;
 				}
 
-				wchar_t CopyToW[MAX_PATH];
-				size_t sz = strlen(CopyToA)+1;
-				MultiByteToWideChar(CP_ACP, 0, CopyToA, (int)sz, &CopyToW[0], (int)sz);
-
-				BOOL shres = move ? MoveFile(il->m_Items[a], CopyToW) : CopyFile(il->m_Items[a], CopyToW, FALSE);
+				BOOL shres = move ? MoveFile(il->m_Items[a], CopyTo) : CopyFile(il->m_Items[a], CopyTo, FALSE);
 				if (!shres)
 				{
 					LFFreeItemDescriptor(i);

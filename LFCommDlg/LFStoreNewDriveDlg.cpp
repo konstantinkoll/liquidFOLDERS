@@ -34,11 +34,11 @@ void LFStoreNewDriveDlg::DoDataExchange(CDataExchange* pDX)
 	if (pDX->m_bSaveAndValidate)
 	{
 		// Pfad zusammenbauen
-		CHAR Path[MAX_PATH];
-		m_PathTree.GetSelectedPathA(Path);
+		WCHAR Path[MAX_PATH];
+		m_PathTree.GetSelectedPath(Path);
 		if (Path[0])
-			if (Path[strlen(Path)-1]!='\\')
-				strcat_s(Path, MAX_PATH, "\\");
+			if (Path[wcslen(Path)-1]!=L'\\')
+				wcscat_s(Path, MAX_PATH, L"\\");
 
 		// LFStoreDescriptor ausfüllen
 		GetDlgItem(IDC_STORENAME)->GetWindowText(m_pStore->StoreName, 256);
@@ -46,7 +46,7 @@ void LFStoreNewDriveDlg::DoDataExchange(CDataExchange* pDX)
 
 		m_pStore->StoreMode = ((CButton*)GetDlgItem(IDC_HYBRIDSTORE))->GetCheck() ? LFStoreModeHybrid : LFStoreModeExternal;
 		m_pStore->AutoLocation = FALSE;
-		strcpy_s(m_pStore->DatPath, MAX_PATH, Path);
+		wcscpy_s(m_pStore->DatPath, MAX_PATH, Path);
 	}
 }
 

@@ -9,15 +9,15 @@
 #include <stdio.h>
 
 
-CHeapfile::CHeapfile(char* Path, char* Filename, unsigned int _ElementSize, unsigned int _KeyOffset)
+CHeapfile::CHeapfile(wchar_t* Path, wchar_t* Filename, unsigned int _ElementSize, unsigned int _KeyOffset)
 {
 	assert(sizeof(HeapfileHeader)==512);
 	assert(_ElementSize);
 	ZeroMemory(&Hdr, sizeof(HeapfileHeader));
 	Buffer = NULL;
 
-	strcpy_s(IdxFilename, MAX_PATH, Path);
-	strcat_s(IdxFilename, MAX_PATH, Filename);
+	wcscpy_s(IdxFilename, MAX_PATH, Path);
+	wcscat_s(IdxFilename, MAX_PATH, Filename);
 
 	if (_KeyOffset==0)
 	{
@@ -28,7 +28,7 @@ CHeapfile::CHeapfile(char* Path, char* Filename, unsigned int _ElementSize, unsi
 	RequestedElementSize = _ElementSize;
 	ItemCount = 0;
 
-	hFile = CreateFileA(IdxFilename, GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_SEQUENTIAL_SCAN, NULL);
+	hFile = CreateFile(IdxFilename, GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_SEQUENTIAL_SCAN, NULL);
 	if (hFile==INVALID_HANDLE_VALUE)
 	{
 		OpenStatus = HeapNoAccess;
@@ -145,7 +145,7 @@ inline void CHeapfile::AllocBuffer()
 inline bool CHeapfile::OpenFile()
 {
 	if (hFile==INVALID_HANDLE_VALUE)
-		hFile = CreateFileA(IdxFilename, GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_SEQUENTIAL_SCAN, NULL);
+		hFile = CreateFile(IdxFilename, GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_SEQUENTIAL_SCAN, NULL);
 
 	return (hFile!=INVALID_HANDLE_VALUE);
 }
@@ -370,11 +370,11 @@ bool CHeapfile::Compact()
 	if ((!Hdr.NeedsCompaction) && (OpenStatus!=HeapMaintenanceRequired) && (OpenStatus!=HeapMaintenanceRecommended))
 		return true;
 
-	char BufFilename[MAX_PATH];
-	strcpy_s(BufFilename, MAX_PATH, IdxFilename);
-	strcat_s(BufFilename, MAX_PATH, ".part");
+	wchar_t BufFilename[MAX_PATH];
+	wcscpy_s(BufFilename, MAX_PATH, IdxFilename);
+	wcscat_s(BufFilename, MAX_PATH, L".part");
 
-	HANDLE hOutput = CreateFileA(BufFilename, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_SEQUENTIAL_SCAN, NULL);
+	HANDLE hOutput = CreateFile(BufFilename, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_SEQUENTIAL_SCAN, NULL);
 	if (hOutput==INVALID_HANDLE_VALUE)
 		return false;
 
@@ -383,7 +383,7 @@ bool CHeapfile::Compact()
 	NewHdr.NeedsCompaction = false;
 	NewHdr.Version = CurIdxVersion;
 
-	#define ABORT { CloseHandle(hOutput); DeleteFileA(BufFilename); return false; }
+	#define ABORT { CloseHandle(hOutput); DeleteFile(BufFilename); return false; }
 
 	DWORD Written;
 	if (!WriteFile(hOutput, &NewHdr, sizeof(HeapfileHeader), &Written, NULL))
@@ -430,9 +430,9 @@ bool CHeapfile::Compact()
 	CloseHandle(hOutput);
 	CloseFile();
 
-	if (!DeleteFileA(IdxFilename))
+	if (!DeleteFile(IdxFilename))
 		return false;
-	if (!MoveFileA(BufFilename, IdxFilename))
+	if (!MoveFile(BufFilename, IdxFilename))
 		return false;
 
 	if (KeyOffset==Hdr.ElementSize-LFKeySize)

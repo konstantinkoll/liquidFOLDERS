@@ -522,9 +522,9 @@ struct LFStoreDescriptor
 	FILETIME FileTime;
 	FILETIME MaintenanceTime;
 	unsigned int IndexVersion;
-	char DatPath[MAX_PATH];
-	char IdxPathMain[MAX_PATH];					// Volatile
-	char IdxPathAux[MAX_PATH];					// Volatile
+	wchar_t DatPath[MAX_PATH];
+	wchar_t IdxPathMain[MAX_PATH];				// Volatile
+	wchar_t IdxPathAux[MAX_PATH];				// Volatile
 	bool NeedsCheck;							// Volatile
 };
 

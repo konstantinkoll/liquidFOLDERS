@@ -44,7 +44,7 @@ LFSendTo::LFSendTo()
 
 void LFSendTo::GetExtensionTargetInfo(CSendToExtensionTargetInfo& info)
 {
-	CHAR Name[256];
+	WCHAR Name[256];
 	LFGetDefaultStoreName(Name, 256);
 
 	info.description = Name;

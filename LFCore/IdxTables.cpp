@@ -22,7 +22,7 @@ inline void ZeroCopy(void* _Dst, rsize_t _DstSize, void* _Src, rsize_t _SrcSize)
 // CIdxTableMaster
 //
 
-CIdxTableMaster::CIdxTableMaster(char* Path, char* Filename)
+CIdxTableMaster::CIdxTableMaster(wchar_t* Path, wchar_t* Filename)
 	: CHeapfile(Path, Filename, sizeof(LFCoreAttributes), offsetof(LFCoreAttributes, FileID))
 {
 }
@@ -51,7 +51,7 @@ void CIdxTableMaster::WriteToItemDescriptor(LFItemDescriptor* i, void* PtrSrc)
 // CIdxTableDocuments
 //
 
-CIdxTableDocuments::CIdxTableDocuments(char* Path, char* Filename)
+CIdxTableDocuments::CIdxTableDocuments(wchar_t* Path, wchar_t* Filename)
 	: CHeapfile(Path, Filename, sizeof(LFDocumentAttributes))
 {
 }
@@ -112,7 +112,7 @@ void CIdxTableDocuments::WriteToItemDescriptor(LFItemDescriptor* i, void* PtrSrc
 // CIdxTableMails
 //
 
-CIdxTableMails::CIdxTableMails(char* Path, char* Filename)
+CIdxTableMails::CIdxTableMails(wchar_t* Path, wchar_t* Filename)
 	: CHeapfile(Path, Filename, sizeof(LFMailAttributes))
 {
 }
@@ -167,7 +167,7 @@ void CIdxTableMails::WriteToItemDescriptor(LFItemDescriptor* i, void* PtrSrc)
 // CIdxTableAudio
 //
 
-CIdxTableAudio::CIdxTableAudio(char* Path, char* Filename)
+CIdxTableAudio::CIdxTableAudio(wchar_t* Path, wchar_t* Filename)
 	: CHeapfile(Path, Filename, sizeof(LFAudioAttributes))
 {
 }
@@ -230,7 +230,7 @@ void CIdxTableAudio::WriteToItemDescriptor(LFItemDescriptor* i, void* PtrSrc)
 // CIdxTablePictures
 //
 
-CIdxTablePictures::CIdxTablePictures(char* Path, char* Filename)
+CIdxTablePictures::CIdxTablePictures(wchar_t* Path, wchar_t* Filename)
 	: CHeapfile(Path, Filename, sizeof(LFPictureAttributes))
 {
 }
@@ -297,7 +297,7 @@ void CIdxTablePictures::WriteToItemDescriptor(LFItemDescriptor* i, void* PtrSrc)
 // CIdxTableVideos
 //
 
-CIdxTableVideos::CIdxTableVideos(char* Path, char* Filename)
+CIdxTableVideos::CIdxTableVideos(wchar_t* Path, wchar_t* Filename)
 	: CHeapfile(Path, Filename, sizeof(LFVideoAttributes))
 {
 }

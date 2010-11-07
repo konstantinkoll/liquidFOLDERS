@@ -105,7 +105,7 @@ struct LFVideoAttributes
 class CIdxTableMaster : public CHeapfile
 {
 public:
-	CIdxTableMaster(char* Path, char* Filename);
+	CIdxTableMaster(wchar_t* Path, wchar_t* Filename);
 	virtual ~CIdxTableMaster();
 
 	virtual void GetFromItemDescriptor(void* PtrDst, LFItemDescriptor* i);
@@ -119,7 +119,7 @@ public:
 class CIdxTableDocuments : public CHeapfile
 {
 public:
-	CIdxTableDocuments(char* Path, char* Filename);
+	CIdxTableDocuments(wchar_t* Path, wchar_t* Filename);
 	virtual ~CIdxTableDocuments();
 
 	virtual void GetFromItemDescriptor(void* PtrDst, LFItemDescriptor* i);
@@ -133,7 +133,7 @@ public:
 class CIdxTableMails : public CHeapfile
 {
 public:
-	CIdxTableMails(char* Path, char* Filename);
+	CIdxTableMails(wchar_t* Path, wchar_t* Filename);
 	virtual ~CIdxTableMails();
 
 	virtual void GetFromItemDescriptor(void* PtrDst, LFItemDescriptor* i);
@@ -147,7 +147,7 @@ public:
 class CIdxTableAudio : public CHeapfile
 {
 public:
-	CIdxTableAudio(char* Path, char* Filename);
+	CIdxTableAudio(wchar_t* Path, wchar_t* Filename);
 	virtual ~CIdxTableAudio();
 
 	virtual void GetFromItemDescriptor(void* PtrDst, LFItemDescriptor* i);
@@ -161,7 +161,7 @@ public:
 class CIdxTablePictures : public CHeapfile
 {
 public:
-	CIdxTablePictures(char* Path, char* Filename);
+	CIdxTablePictures(wchar_t* Path, wchar_t* Filename);
 	virtual ~CIdxTablePictures();
 
 	virtual void GetFromItemDescriptor(void* PtrDst, LFItemDescriptor* i);
@@ -175,7 +175,7 @@ public:
 class CIdxTableVideos : public CHeapfile
 {
 public:
-	CIdxTableVideos(char* Path, char* Filename);
+	CIdxTableVideos(wchar_t* Path, wchar_t* Filename);
 	virtual ~CIdxTableVideos();
 
 	virtual void GetFromItemDescriptor(void* PtrDst, LFItemDescriptor* i);

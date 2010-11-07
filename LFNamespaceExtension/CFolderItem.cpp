@@ -1177,19 +1177,19 @@ BOOL CFolderItem::OnOpen(CExecuteMenuitemsEventArgs& e)
 
 		if (IS(item, CFileItem))
 		{
-			CHAR Path[MAX_PATH];
-			UINT res = LFGetFileLocation(AS(item, CFileItem)->Item->StoreID, &AS(item, CFileItem)->Item->CoreAttributes, Path, MAX_PATH);
+			WCHAR Path[MAX_PATH];
+			UINT res = LFGetFileLocation(AS(item, CFileItem)->Item, Path, MAX_PATH);
 			if (res!=LFOk)
 			{
 				LFErrorBox(res);
 			}
 			else
-				if (ShellExecuteA(e.hWnd, "open", Path, "", "", SW_SHOW)==(HINSTANCE)SE_ERR_NOASSOC)
+				if (ShellExecute(e.hWnd, _T("open"), Path, _T(""), _T(""), SW_SHOW)==(HINSTANCE)SE_ERR_NOASSOC)
 				{
-					CHAR Cmd[300];
-					strcpy_s(Cmd, 300, "shell32.dll,OpenAs_RunDLL ");
-					strcat_s(Cmd, 300, Path);
-					ShellExecuteA(e.hWnd, "open", "rundll32.exe", Cmd, Path, SW_SHOW);
+					WCHAR Cmd[300];
+					wcscpy_s(Cmd, 300, L"shell32.dll,OpenAs_RunDLL ");
+					wcscat_s(Cmd, 300, Path);
+					ShellExecute(e.hWnd, _T("open"), _T("rundll32.exe"), Cmd, Path, SW_SHOW);
 				}
 		}
 
@@ -1616,18 +1616,18 @@ BOOL CFolderItem::OnOpenWith(CExecuteMenuitemsEventArgs& e)
 
 		if (IS(item, CFileItem))
 		{
-			CHAR Path[MAX_PATH];
-			UINT res = LFGetFileLocation(AS(item, CFileItem)->Item->StoreID, &AS(item, CFileItem)->Item->CoreAttributes, Path, MAX_PATH);
+			WCHAR Path[MAX_PATH];
+			UINT res = LFGetFileLocation(AS(item, CFileItem)->Item, Path, MAX_PATH);
 			if (res!=LFOk)
 			{
 				LFErrorBox(res);
 			}
 			else
 			{
-				CHAR Cmd[300];
-				strcpy_s(Cmd, 300, "shell32.dll,OpenAs_RunDLL ");
-				strcat_s(Cmd, 300, Path);
-				ShellExecuteA(e.hWnd, "open", "rundll32.exe", Cmd, Path, SW_SHOW);
+				WCHAR Cmd[300];
+				wcscpy_s(Cmd, 300, L"shell32.dll,OpenAs_RunDLL ");
+				wcscat_s(Cmd, 300, Path);
+				ShellExecute(e.hWnd, _T("open"), _T("rundll32.exe"), Cmd, Path, SW_SHOW);
 			}
 
 			return TRUE;

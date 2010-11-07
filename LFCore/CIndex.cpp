@@ -8,11 +8,11 @@
 #include <assert.h>
 
 
-CIndex::CIndex(char* _Path, char* _StoreID, char* _DatPath)
+CIndex::CIndex(wchar_t* _Path, char* _StoreID, wchar_t* _DatPath)
 {
-	strcpy_s(Path, MAX_PATH, _Path);
+	wcscpy_s(Path, MAX_PATH, _Path);
 	strcpy_s(StoreID, LFKeySize, _StoreID);
-	strcpy_s(DatPath, MAX_PATH, _DatPath);
+	wcscpy_s(DatPath, MAX_PATH, _DatPath);
 	ZeroMemory(Tables, sizeof(Tables));
 }
 
@@ -31,22 +31,22 @@ inline bool CIndex::LoadTable(unsigned int ID, unsigned int* res)
 		switch (ID)
 		{
 		case IDMaster:
-			Tables[ID] = new CIdxTableMaster(Path, "Master.idx");
+			Tables[ID] = new CIdxTableMaster(Path, L"Master.idx");
 			break;
 		case IDSlaveDocuments:
-			Tables[ID] = new CIdxTableDocuments(Path, "Documents.idx");
+			Tables[ID] = new CIdxTableDocuments(Path, L"Docs.idx");
 			break;
 		case IDSlaveMails:
-			Tables[ID] = new CIdxTableMails(Path, "Mails.idx");
+			Tables[ID] = new CIdxTableMails(Path, L"Mails.idx");
 			break;
 		case IDSlaveAudio:
-			Tables[ID] = new CIdxTableAudio(Path, "Audio.idx");
+			Tables[ID] = new CIdxTableAudio(Path, L"Audio.idx");
 			break;
 		case IDSlavePictures:
-			Tables[ID] = new CIdxTablePictures(Path, "Pictures.idx");
+			Tables[ID] = new CIdxTablePictures(Path, L"Pictures.idx");
 			break;
 		case IDSlaveVideos:
-			Tables[ID] = new CIdxTableVideos(Path, "Videos.idx");
+			Tables[ID] = new CIdxTableVideos(Path, L"Videos.idx");
 			break;
 		default:
 			assert(false);
@@ -123,8 +123,8 @@ unsigned int CIndex::Check(bool scheduled)
 			// Ist der Dateikörper noch vorhanden?
 			if ((!(PtrM->Flags & LFFlagLink)) && (DatPath[0]!='\0'))
 			{
-				char FilePath[MAX_PATH];
-				GetFileLocation(DatPath, PtrM->FileID, PtrM->FileFormat, FilePath, MAX_PATH);
+				wchar_t FilePath[2*MAX_PATH];
+				GetFileLocation(DatPath, PtrM->FileID, PtrM->FileFormat, FilePath, 2*MAX_PATH);
 
 				unsigned int Flags = FileExists(FilePath) ? 0 : LFFlagMissing;
 				if ((Flags & LFFlagMissing)!=(PtrM->Flags & LFFlagMissing))
@@ -271,20 +271,20 @@ void CIndex::Update(LFTransactionList* tl, LFVariantData* value1, LFVariantData*
 	}
 }
 
-bool CIndex::DeleteFile(LFCoreAttributes* PtrM, char* DatPath)
+bool CIndex::DeletePhysicalFile(LFCoreAttributes* PtrM, wchar_t* DatPath)
 {
 	if (!DatPath)
 		return true;
 	if (DatPath[0]=='\0')
 		return true;
 
-	char Path[MAX_PATH];
-	GetFileLocation(DatPath, PtrM->FileID, PtrM->FileFormat, Path, MAX_PATH);
+	wchar_t Path[2*MAX_PATH];
+	GetFileLocation(DatPath, PtrM->FileID, PtrM->FileFormat, Path, 2*MAX_PATH);
 
-	return DeleteFileA(Path)==TRUE;
+	return DeleteFile(Path)==TRUE;
 }
 
-void CIndex::Delete(LFTransactionList* tl, char* DatPath)
+void CIndex::Delete(LFTransactionList* tl, wchar_t* DatPath)
 {
 	assert(tl);
 
@@ -309,7 +309,7 @@ void CIndex::Delete(LFTransactionList* tl, char* DatPath)
 				{
 					// Files with "link" flag do not posses a file body
 					if ((!tl->m_Items[a].Processed) && ((PtrM->Flags & LFFlagLink)==0))
-						if (DeleteFile(PtrM, DatPath))
+						if (DeletePhysicalFile(PtrM, DatPath))
 						{
 							tl->m_Changes = true;
 						}
@@ -353,7 +353,7 @@ void CIndex::Delete(LFTransactionList* tl, char* DatPath)
 	}
 }
 
-void CIndex::Delete(LFFileIDList* il, bool PutInTrash, char* DatPath)
+void CIndex::Delete(LFFileIDList* il, bool PutInTrash, wchar_t* DatPath)
 {
 	assert(il);
 
@@ -375,7 +375,7 @@ void CIndex::Delete(LFFileIDList* il, bool PutInTrash, char* DatPath)
 			{
 				// Files with "link" flag do not posses a file body
 				if ((!il->m_Items[a].Processed) && ((PtrM->Flags & LFFlagLink)==0) && (!PutInTrash))
-					if (!DeleteFile(PtrM, DatPath))
+					if (!DeletePhysicalFile(PtrM, DatPath))
 						il->m_Items[a].LastError = il->m_LastError = LFCannotDeleteFile;
 
 				if (il->m_Items[a].LastError==LFOk)
@@ -417,7 +417,7 @@ void CIndex::Delete(LFFileIDList* il, bool PutInTrash, char* DatPath)
 		}
 }
 
-unsigned int CIndex::Rename(char* FileID, wchar_t* NewName, char* /*DatPath*/)
+unsigned int CIndex::Rename(char* FileID, wchar_t* NewName, wchar_t* /*DatPath*/)
 {
 	assert(FileID);
 	assert(NewName);

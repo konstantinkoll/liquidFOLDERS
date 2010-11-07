@@ -19,7 +19,7 @@
 class CIndex
 {
 public:
-	CIndex(char* _Path, char* _StoreID, char* _DatPath);
+	CIndex(wchar_t* _Path, char* _StoreID, wchar_t* _DatPath);
 	~CIndex();
 
 	bool Create();
@@ -28,19 +28,19 @@ public:
 	void AddItem(LFItemDescriptor* i);
 	void Update(LFItemDescriptor* i, bool IncludeSlaves=true);
 	void Update(LFTransactionList* tl, LFVariantData* value1, LFVariantData* value2=NULL, LFVariantData* value3=NULL);
-	void Delete(LFTransactionList* tl, char* DatPath=NULL);
-	void Delete(LFFileIDList* il, bool PutInTrash=true, char* DatPath=NULL);
-	unsigned int Rename(char* FileID, wchar_t* NewName, char* DatPath=NULL);
+	void Delete(LFTransactionList* tl, wchar_t* DatPath=NULL);
+	void Delete(LFFileIDList* il, bool PutInTrash=true, wchar_t* DatPath=NULL);
+	unsigned int Rename(char* FileID, wchar_t* NewName, wchar_t* DatPath=NULL);
 	void Retrieve(LFFilter* f, LFSearchResult* res);
 	unsigned int RetrieveStats(unsigned int* cnt, __int64* size);
 
 protected:
 	bool LoadTable(unsigned int ID, unsigned int* res=NULL);
-	bool DeleteFile(LFCoreAttributes* PtrM, char* DatPath);
+	bool DeletePhysicalFile(LFCoreAttributes* PtrM, wchar_t* DatPath);
 
 private:
 	CHeapfile* Tables[IdxTableCount];
-	char Path[MAX_PATH];
+	wchar_t Path[MAX_PATH];
 	char StoreID[LFKeySize];
-	char DatPath[MAX_PATH];
+	wchar_t DatPath[MAX_PATH];
 };

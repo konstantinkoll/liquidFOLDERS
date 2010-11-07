@@ -685,7 +685,7 @@ void CMainFrame::OnItemsOpen()
 		{
 			if (!(i->Type & LFTypeNotMounted))
 			{
-				CHAR Path[MAX_PATH];
+				WCHAR Path[MAX_PATH];
 				UINT res;
 
 				switch (i->Type & LFTypeMask)
@@ -697,7 +697,7 @@ void CMainFrame::OnItemsOpen()
 					res = LFGetFileLocation(i, Path, MAX_PATH);
 					if (res==LFOk)
 					{
-						if (ShellExecuteA(NULL, "open", Path, NULL, NULL, SW_SHOW)==(HINSTANCE)SE_ERR_NOASSOC)
+						if (ShellExecute(NULL, _T("open"), Path, NULL, NULL, SW_SHOW)==(HINSTANCE)SE_ERR_NOASSOC)
 							OnItemsOpenWith();
 					}
 					else
@@ -726,14 +726,14 @@ void CMainFrame::OnItemsOpenWith()
 
 		if ((!i->NextFilter) && ((i->Type & (LFTypeNotMounted | LFTypeMask))==LFTypeFile))
 		{
-			CHAR Path[MAX_PATH];
+			WCHAR Path[MAX_PATH];
 			UINT res = LFGetFileLocation(i, Path, MAX_PATH);
 			if (res==LFOk)
 			{
-				CHAR Cmd[300];
-				strcpy_s(Cmd, 300, "shell32.dll,OpenAs_RunDLL ");
-				strcat_s(Cmd, 300, Path);
-				ShellExecuteA(GetSafeHwnd(), "open", "rundll32.exe", Cmd, Path, SW_SHOW);
+				WCHAR Cmd[300];
+				wcscpy_s(Cmd, 300, L"shell32.dll,OpenAs_RunDLL ");
+				wcscat_s(Cmd, 300, Path);
+				ShellExecute(GetSafeHwnd(), _T("open"), _T("rundll32.exe"), Cmd, Path, SW_SHOW);
 			}
 			else
 			{

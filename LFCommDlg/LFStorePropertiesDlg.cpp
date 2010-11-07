@@ -106,18 +106,9 @@ LRESULT LFStorePropertiesDlg::OnUpdateStore(WPARAM /*wParam*/, LPARAM /*lParam*/
 
 		GetDlgItem(IDC_LASTSEENCAPTION)->EnableWindow(store.StoreMode!=LFStoreModeInternal);
 		GetDlgItem(IDC_LASTSEEN)->SetWindowText(store.LastSeen);
-
-		size_t sz = strlen(store.DatPath)+1;
-		MultiByteToWideChar(CP_ACP, 0, store.DatPath, (INT)sz, (LPWSTR)tmpStr, (INT)sz);
-		GetDlgItem(IDC_DATPATH)->SetWindowText(tmpStr);
-
-		sz = strlen(store.IdxPathMain)+1;
-		MultiByteToWideChar(CP_ACP, 0, store.IdxPathMain, (INT)sz, (LPWSTR)tmpStr, (INT)sz);
-		GetDlgItem(IDC_IDXPATHMAIN)->SetWindowText(tmpStr);
-
-		sz = strlen(store.IdxPathAux)+1;
-		MultiByteToWideChar(CP_ACP, 0, store.IdxPathAux, (INT)sz, (LPWSTR)tmpStr, (INT)sz);
-		GetDlgItem(IDC_IDXPATHAUX)->SetWindowText(tmpStr);
+		GetDlgItem(IDC_DATPATH)->SetWindowText(store.DatPath);
+		GetDlgItem(IDC_IDXPATHMAIN)->SetWindowText(store.IdxPathMain);
+		GetDlgItem(IDC_IDXPATHAUX)->SetWindowText(store.IdxPathAux);
 
 		LFUINTToString(store.IndexVersion, tmpStr, 256);
 		GetDlgItem(IDC_IDXVERSION)->SetWindowText(tmpStr);

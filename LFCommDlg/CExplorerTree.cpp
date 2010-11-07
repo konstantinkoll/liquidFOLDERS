@@ -82,16 +82,10 @@ LPITEMIDLIST CExplorerTree::GetSelectedPIDL()
 	return pItem->pidlFQ;
 }
 
-BOOL CExplorerTree::GetSelectedPathA(LPSTR Path)
+BOOL CExplorerTree::GetSelectedPath(LPWSTR Path)
 {
 	LPITEMIDLIST pidl = GetSelectedPIDL();
-	return pidl ? SHGetPathFromIDListA(pidl, Path) : FALSE;
-}
-
-BOOL CExplorerTree::GetSelectedPathW(LPWSTR Path)
-{
-	LPITEMIDLIST pidl = GetSelectedPIDL();
-	return pidl ? SHGetPathFromIDListW(pidl, Path) : FALSE;
+	return pidl ? SHGetPathFromIDList(pidl, Path) : FALSE;
 }
 
 LRESULT CExplorerTree::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)

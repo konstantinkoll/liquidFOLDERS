@@ -27,8 +27,8 @@ LFStoreNewDlg::LFStoreNewDlg(CWnd* pParentWnd, LFStoreDescriptor* pStore)
 
 void LFStoreNewDlg::SetOkButton()
 {
-	CHAR Path[MAX_PATH];
-	GetDlgItem(IDOK)->EnableWindow((!m_PathTree.IsWindowEnabled()) || (m_PathTree.GetSelectedPathA(Path)));
+	WCHAR Path[MAX_PATH];
+	GetDlgItem(IDOK)->EnableWindow((!m_PathTree.IsWindowEnabled()) || (m_PathTree.GetSelectedPath(Path)));
 }
 
 void LFStoreNewDlg::PopulateTreeCtrl()
@@ -48,11 +48,11 @@ void LFStoreNewDlg::DoDataExchange(CDataExchange* pDX)
 	if (pDX->m_bSaveAndValidate)
 	{
 		// Pfad zusammenbauen
-		CHAR Path[MAX_PATH];
-		m_PathTree.GetSelectedPathA(Path);
+		WCHAR Path[MAX_PATH];
+		m_PathTree.GetSelectedPath(Path);
 		if (Path[0])
-			if (Path[strlen(Path)-1]!='\\')
-				strcat_s(Path, MAX_PATH, "\\");
+			if (Path[wcslen(Path)-1]!=L'\\')
+				wcscat_s(Path, MAX_PATH, L"\\");
 
 		// LFStoreDescriptor ausfüllen
 		GetDlgItem(IDC_STORENAME)->GetWindowText(m_pStore->StoreName, 256);
@@ -63,13 +63,13 @@ void LFStoreNewDlg::DoDataExchange(CDataExchange* pDX)
 		{
 			MakeDefault = ((CButton*)GetDlgItem(IDC_MAKEDEFAULT))->GetCheck()!=0;
 			m_pStore->AutoLocation = ((CButton*)GetDlgItem(IDC_AUTOPATH))->GetCheck()!=0;
-			strcpy_s(m_pStore->DatPath, MAX_PATH, m_pStore->AutoLocation ? "" : Path);
+			wcscpy_s(m_pStore->DatPath, MAX_PATH, m_pStore->AutoLocation ? L"" : Path);
 		}
 		else
 		{
 			MakeDefault = FALSE;
 			m_pStore->AutoLocation = FALSE;
-			strcpy_s(m_pStore->DatPath, MAX_PATH, Path);
+			wcscpy_s(m_pStore->DatPath, MAX_PATH, Path);
 		}
 	}
 }

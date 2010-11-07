@@ -31,8 +31,7 @@ public:
 	virtual void PreSubclassWindow();
 
 	LPITEMIDLIST GetSelectedPIDL();
-	BOOL GetSelectedPathA(LPSTR Path);
-	BOOL GetSelectedPathW(LPWSTR Path);
+	BOOL GetSelectedPath(LPWSTR Path);
 	void PopulateTree();
 	void SetRootPath(CString RootPath);
 	void SetOnlyFilesystem(BOOL OnlyFilesystem);
