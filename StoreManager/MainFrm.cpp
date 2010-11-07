@@ -816,8 +816,8 @@ void CMainFrame::OnUpdateItemCommands(CCmdUI* pCmdUI)
 
 void CMainFrame::OnEmptyTrash()
 {
-	DeleteFiles(TRUE);
-	theApp.PlayTrashSound();
+	if (DeleteFiles(TRUE))
+		theApp.PlayTrashSound();
 }
 
 void CMainFrame::OnRestoreSelectedFiles()
