@@ -120,8 +120,9 @@
 #define IDS_LFErrorIndexCreateError     3021
 #define IDS_LFErrorNotEnoughFreeDisc    3022
 #define IDS_LFErrorCannotDeleteFile     3023
-#define IDS_LFErrorCannotCopyIndex      3024
-#define IDS_LFErrorNoFileBody           3025
+#define IDS_LFErrorCannotRenameFile     3024
+#define IDS_LFErrorCannotCopyIndex      3025
+#define IDS_LFErrorNoFileBody           3026
 #define IDS_FirstAttribute              4000
 #define IDS_AttrFileName                4000
 #define IDS_AttrStoreID                 4001

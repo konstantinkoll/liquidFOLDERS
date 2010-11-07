@@ -251,6 +251,8 @@ END
 
 STRINGTABLE 
 BEGIN
+    IDS_LFErrorCannotRenameFile 
+                            "Einige Dateien können nicht umbenannt werden, da sie noch in Gebrauch sind."
     IDS_LFErrorCannotCopyIndex 
                             "Der Index kann nicht aktualisiert werden (Datenträger schreibgeschützt ?)."
     IDS_LFErrorNoFileBody   "Der eigentliche Dateikörper befindet sich nicht im Store."
@@ -507,6 +509,8 @@ END
 
 STRINGTABLE 
 BEGIN
+    IDS_LFErrorCannotRenameFile 
+                            "Some files cannot be renamed because they are still in use."
     IDS_LFErrorCannotCopyIndex 
                             "The index cannot be updated (write protected disc ?)."
     IDS_LFErrorNoFileBody   "The actual file body is not present in the store."
@@ -766,6 +770,8 @@ END
 
 STRINGTABLE 
 BEGIN
+    IDS_LFErrorCannotRenameFile 
+                            "Algunos archivos no pueden ser renombrados porque aún se encuentran en uso."
     IDS_LFErrorCannotCopyIndex 
                             "El índice no puede ser actualizado (¿disco protegido contra escritura?)."
     IDS_LFErrorNoFileBody   "El cuerpo actual del archivo no está presente en el store."
@@ -1024,6 +1030,8 @@ END
 
 STRINGTABLE 
 BEGIN
+    IDS_LFErrorCannotRenameFile 
+                            "Einige Dateien können nicht umbenannt werden, da sie noch in Gebrauch sind."
     IDS_LFErrorCannotCopyIndex 
                             "Der Index kann nicht aktualisiert werden (Datenträger schreibgeschützt ?)."
     IDS_LFErrorNoFileBody   "Der eigentliche Dateikörper befindet sich nicht im Store."

@@ -224,6 +224,7 @@ void CIndex::Update(LFItemDescriptor* i, bool IncludeSlaves)
 			if (!RenamePhysicalFile(PtrM, i->CoreAttributes.FileName, DatPath))
 			{
 				i->CoreAttributes.Flags |= LFFlagMissing;
+				wcscpy_s(i->CoreAttributes.FileName, 256, PtrM->FileName);
 			}
 			else
 			{
@@ -265,7 +266,6 @@ bool CIndex::UpdateFileLocation(LFItemDescriptor* i, bool Exists)
 			GetFileLocation(DatPath, PtrM, tmpPath, 2*MAX_PATH);
 			if (FileExists(tmpPath))
 			{
-				wcscpy_s(i->CoreAttributes.FileName, 256, PtrM->FileName);
 				i->CoreAttributes.Flags &= ~LFFlagMissing;
 			}
 			else
@@ -325,7 +325,8 @@ void CIndex::Update(LFTransactionList* tl, LFVariantData* value1, LFVariantData*
 						if (wcscmp(i->CoreAttributes.FileName, PtrM->FileName)!=0)
 							if (!RenamePhysicalFile(PtrM, i->CoreAttributes.FileName, DatPath))
 							{
-								i->CoreAttributes.Flags |= LFFlagMissing;
+								wcscpy_s(i->CoreAttributes.FileName, 256, PtrM->FileName);
+								tl->m_Items[a].LastError = tl->m_LastError = LFCannotRenameFile;
 							}
 							else
 							{
@@ -434,7 +435,8 @@ void CIndex::Delete(LFTransactionList* tl, wchar_t* DatPath)
 							}
 
 						// Master
-						Tables[IDMaster]->Invalidate(PtrM);
+						if (tl->m_Items[a].LastError==LFOk)
+							Tables[IDMaster]->Invalidate(PtrM);
 					}
 
 					tl->m_Items[a].Processed = true;
@@ -538,6 +540,10 @@ unsigned int CIndex::Rename(char* FileID, wchar_t* NewName, wchar_t* DatPath)
 
 			Tables[IDMaster]->MakeDirty();
 			return LFOk;
+		}
+		else
+		{
+			return LFCannotRenameFile;
 		}
 
 	return LFIllegalKey;
