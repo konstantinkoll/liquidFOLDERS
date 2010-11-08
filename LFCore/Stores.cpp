@@ -92,7 +92,7 @@ Cleanup:
 	return dwError;
 }
 
-void RemoveDir(LPWSTR lpPath)
+bool RemoveDir(LPWSTR lpPath)
 {
 	// Dateien löschen
 	wchar_t DirSpec[MAX_PATH];
@@ -110,7 +110,12 @@ FileFound:
 			wchar_t fn[MAX_PATH];
 			wcscpy_s(fn, MAX_PATH, lpPath);
 			wcscat_s(fn, MAX_PATH, FindFileData.cFileName);
-			DeleteFile(fn);
+
+			if (!DeleteFile(fn))
+			{
+				FindClose(hFind);
+				return false;
+			}
 		}
 
 		if (FindNextFile(hFind, &FindFileData)!=0)
@@ -120,7 +125,7 @@ FileFound:
 	}
 
 	// Verzeichnis löschen
-	RemoveDirectory(lpPath);
+	return (RemoveDirectory(lpPath)==TRUE);
 }
 
 unsigned int CopyDir(LPWSTR lpPathSrc, LPWSTR lpPathDst)

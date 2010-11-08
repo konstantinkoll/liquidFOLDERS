@@ -37,8 +37,8 @@ public:
 
 protected:
 	bool LoadTable(unsigned int ID, unsigned int* res=NULL);
-	bool RenamePhysicalFile(LFCoreAttributes* PtrM, wchar_t* NewName, wchar_t* DatPath);
-	bool DeletePhysicalFile(LFCoreAttributes* PtrM, wchar_t* DatPath);
+	unsigned int RenamePhysicalFile(LFCoreAttributes* PtrM, wchar_t* NewName, wchar_t* DatPath);
+	unsigned int DeletePhysicalFile(LFCoreAttributes* PtrM, wchar_t* DatPath);
 
 private:
 	CHeapfile* Tables[IdxTableCount];

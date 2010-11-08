@@ -43,9 +43,12 @@ LFCore_API void LFTransactionUpdate(LFTransactionList* tl, HWND hWndSource, LFVa
 {
 	bool StoresUpdated = false;
 
-	// Reset processed flag
+	// Reset
 	for (unsigned int a=0; a<tl->m_ItemCount; a++)
+	{
+		tl->m_Items[a].LastError = LFOk;
 		tl->m_Items[a].Processed = false;
+	}
 
 	// Process
 	for (unsigned int a=0; a<tl->m_ItemCount; a++)
@@ -115,9 +118,12 @@ LFCore_API void LFTransactionDelete(LFTransactionList* tl)
 {
 	assert(tl);
 
-	// Reset processed flag
+	// Reset
 	for (unsigned int a=0; a<tl->m_ItemCount; a++)
+	{
+		tl->m_Items[a].LastError = LFOk;
 		tl->m_Items[a].Processed = false;
+	}
 
 	// Process
 	for (unsigned int a=0; a<tl->m_ItemCount; a++)
@@ -171,9 +177,12 @@ LFCore_API void LFTransactionDelete(LFFileIDList* il, bool PutInTrash)
 {
 	assert(il);
 
-	// Reset processed flag
+	// Reset
 	for (unsigned int a=0; a<il->m_ItemCount; a++)
+	{
+		il->m_Items[a].LastError = LFOk;
 		il->m_Items[a].Processed = false;
+	}
 
 	// Process
 	for (unsigned int a=0; a<il->m_ItemCount; a++)
