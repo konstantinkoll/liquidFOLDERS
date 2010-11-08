@@ -94,6 +94,8 @@ Cleanup:
 
 bool RemoveDir(LPWSTR lpPath)
 {
+	bool res = true;
+
 	// Dateien löschen
 	wchar_t DirSpec[MAX_PATH];
 	wcscpy_s(DirSpec, 2*MAX_PATH, lpPath);
@@ -105,16 +107,25 @@ bool RemoveDir(LPWSTR lpPath)
 	if (hFind!=INVALID_HANDLE_VALUE)
 	{
 FileFound:
-		if ((FindFileData.dwFileAttributes & (FILE_ATTRIBUTE_DIRECTORY | FILE_ATTRIBUTE_DEVICE | FILE_ATTRIBUTE_VIRTUAL))==0)
+		if ((FindFileData.dwFileAttributes & (FILE_ATTRIBUTE_DEVICE | FILE_ATTRIBUTE_VIRTUAL))==0)
 		{
 			wchar_t fn[MAX_PATH];
 			wcscpy_s(fn, MAX_PATH, lpPath);
 			wcscat_s(fn, MAX_PATH, FindFileData.cFileName);
 
-			if (!DeleteFile(fn))
+			if (FindFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
 			{
-				FindClose(hFind);
-				return false;
+				if ((wcscmp(FindFileData.cFileName, L".")!=0) && (wcscmp(FindFileData.cFileName, L"..")!=0))
+				{
+					wcscat_s(fn, MAX_PATH, L"\\");
+					if (!RemoveDir(fn))
+						res = false;
+				}
+			}
+			else
+			{
+				if (!DeleteFile(fn))
+					res = false;
 			}
 		}
 
@@ -125,7 +136,11 @@ FileFound:
 	}
 
 	// Verzeichnis löschen
-	return (RemoveDirectory(lpPath)==TRUE);
+	if (res)
+		if (!RemoveDirectory(lpPath))
+			res = false;
+
+	return res;
 }
 
 unsigned int CopyDir(LPWSTR lpPathSrc, LPWSTR lpPathDst)
@@ -744,32 +759,11 @@ LFCore_API unsigned int LFDeleteStore(char* key, HWND hWndSource)
 			{
 				wchar_t path[MAX_PATH];
 				GetAutoPath(&victim, path);
-
-				RemoveDir(victim.IdxPathAux);
 				RemoveDir(path);
 			}
 
-			if (victim.IdxPathMain[0]!=L'\0')
-				RemoveDir(victim.IdxPathMain);
-
 			if (victim.DatPath[0]!=L'\0')
-			{
-				for (unsigned a=0; a<sizeof(KeyChars); a++)
-				{
-					wchar_t subpath[3];
-					subpath[0] = KeyChars[a];
-					subpath[1] = L'\\';
-					subpath[2] = L'\0';
-
-					wchar_t path[MAX_PATH];
-					wcscpy_s(path, MAX_PATH, victim.DatPath);
-					wcscat_s(path, MAX_PATH, subpath);
-
-					RemoveDir(path);
-				}
-
 				RemoveDir(victim.DatPath);
-			}
 		}
 	}
 	else
@@ -788,7 +782,7 @@ LFCore_API bool LFAskDeleteStore(LFItemDescriptor* s, HWND hWnd)
 	wchar_t caption[256];
 	wchar_t tmp[256];
 	LoadString(LFCoreModuleHandle, IDS_DeleteStoreCaption, tmp, 256);
-	swprintf_s(caption, 256 , tmp, s->CoreAttributes.FileName);
+	swprintf_s(caption, 256, tmp, s->CoreAttributes.FileName);
 
 	wchar_t msg[256];
 	LoadString(LFCoreModuleHandle, IDS_DeleteStoreMessage, msg, 256);
@@ -801,7 +795,7 @@ LFCore_API bool LFAskDeleteStore(LFStoreDescriptor* s, HWND hWnd)
 	wchar_t caption[256];
 	wchar_t tmp[256];
 	LoadString(LFCoreModuleHandle, IDS_DeleteStoreCaption, tmp, 256);
-	swprintf_s(caption, 256 , tmp, s->StoreName);
+	swprintf_s(caption, 256, tmp, s->StoreName);
 
 	wchar_t msg[256];
 	LoadString(LFCoreModuleHandle, IDS_DeleteStoreMessage, msg, 256);
