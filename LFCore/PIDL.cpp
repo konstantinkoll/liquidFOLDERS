@@ -18,6 +18,16 @@ LPITEMIDLIST AllocPIDL(unsigned int sz)
 	return pidl;
 }
 
+void FreePIDL(LPITEMIDLIST pidl)
+{
+	LPMALLOC pMalloc;
+	if (SUCCEEDED(SHGetMalloc(&pMalloc)))
+	{
+		pMalloc->Free(pidl);
+		pMalloc->Release();
+	}
+}
+
 LPITEMIDLIST Next(LPITEMIDLIST pidl)
 {
 	LPBYTE lpMem = (LPBYTE)pidl;

@@ -77,9 +77,9 @@ unsigned char AttrTypes[LFAttributeCount] = {
 	LFTypeAnsiString,			// LFAttrLocationIATA
 	LFTypeGeoCoordinates,		// LFAttrLocationGPS
 
-	LFTypeUINT,					// LFAttrHeight
 	LFTypeUINT,					// LFAttrWidth
-	LFTypeUINT,					// LFAttrResolution
+	LFTypeUINT,					// LFAttrHeight
+	LFTypeDouble,				// LFAttrDimension
 	LFTypeDouble,				// LFAttrAspectRatio
 	LFTypeFourCC,				// LFAttrVideoCodec
 	LFTypeUnicodeString,		// LFAttrRoll

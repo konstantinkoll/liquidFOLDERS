@@ -699,7 +699,7 @@ BEGIN
     ID_SORT_LOCATIONGPS     "Sorts the search result by GPS location.\nSort by GPS location"
     ID_SORT_HEIGHT          "Sorts the search result by height.\nSort by height"
     ID_SORT_WIDTH           "Sorts the search result by width.\nSort by width"
-    ID_SORT_RESOLUTION      "Sorts the search result by resolution.\nSort by resolution"
+    ID_SORT_DIMENSION       "Sorts the search result by dimension.\nSort by dimension"
     ID_SORT_ASPECTRATIO     "Sorts the search result by aspect ratio.\nSort by aspect ratio"
     ID_SORT_ROLL            "Sorts the search result by roll name.\nSort by roll"
     ID_SORT_DURATION        "Sorts the search result by duration.\nSort by duration"

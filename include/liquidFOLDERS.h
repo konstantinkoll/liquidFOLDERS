@@ -178,9 +178,9 @@ struct LFContextDescriptor
 #define LFAttrLocationIATA             19
 #define LFAttrLocationGPS              20
 
-#define LFAttrHeight                   21
-#define LFAttrWidth                    22
-#define LFAttrResolution               23
+#define LFAttrWidth                    21
+#define LFAttrHeight                   22
+#define LFAttrDimension                23
 #define LFAttrAspectRatio              24
 #define LFAttrVideoCodec               25
 #define LFAttrRoll                     26

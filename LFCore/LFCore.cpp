@@ -248,7 +248,7 @@ LFCore_API LFAttributeDescriptor* LFGetAttributeInfo(unsigned int ID)
 	else
 	{
 		SetRange(a->Category, ID, LFAttrLocationName, LFAttrLocationGPS, LFAttrCategoryGeotags);
-		SetRange(a->Category, ID, LFAttrHeight, LFAttrRoll, LFAttrCategoryVisual);
+		SetRange(a->Category, ID, LFAttrWidth, LFAttrRoll, LFAttrCategoryVisual);
 		SetRange(a->Category, ID, LFAttrExposure, LFAttrChip, LFAttrCategoryPhotographic);
 		SetRange(a->Category, ID, LFAttrAlbum, LFAttrAudioCodec, LFAttrCategoryAudio);
 		SetRange(a->Category, ID, LFAttrDuration, LFAttrBitrate, LFAttrCategoryTimebased);
@@ -272,7 +272,7 @@ LFCore_API LFAttributeDescriptor* LFGetAttributeInfo(unsigned int ID)
 	case LFAttrFileSize:
 	case LFAttrHeight:
 	case LFAttrWidth:
-	case LFAttrResolution:
+	case LFAttrDimension:
 	case LFAttrAspectRatio:
 	case LFAttrVideoCodec:
 	case LFAttrExposure:

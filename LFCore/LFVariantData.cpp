@@ -69,7 +69,7 @@ LFCore_API void LFFractionToString(const LFFraction frac, wchar_t* str, size_t c
 
 LFCore_API void LFDoubleToString(const double d, wchar_t* str, size_t cCount)
 {
-	swprintf(str, cCount, L"%f", d);
+	swprintf(str, cCount, L"%.2f", d);
 }
 
 LFCore_API void LFGeoCoordinateToString(const double c, wchar_t* str, size_t cCount, bool IsLatitude, bool FillZero)
@@ -226,6 +226,17 @@ LFCore_API void LFAttributeToString(LFItemDescriptor* i, unsigned int attr, wcha
 	}
 	else
 	{
+		if (i->AttributeValues[attr])
+			switch (attr)
+			{
+			case LFAttrBitrate:
+				swprintf(str, cCount, L"%d kBit/s", *((unsigned int*)i->AttributeValues[attr])/1000);
+				return;
+			case LFAttrDimension:
+				swprintf(str, cCount, L"%.1f MP", *((double*)i->AttributeValues[attr]));
+				return;
+			}
+
 		ToString(i->AttributeValues[attr], AttrTypes[attr], str, cCount);
 	}
 }

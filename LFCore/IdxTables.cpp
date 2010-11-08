@@ -291,6 +291,21 @@ void CIdxTablePictures::WriteToItemDescriptor(LFItemDescriptor* i, void* PtrSrc)
 	i->AttributeValues[LFAttrChip] = ((LFPictureAttributes*)i->Slave)->Chip;
 	i->AttributeValues[LFAttrRecordingTime] = &((LFPictureAttributes*)i->Slave)->RecordingTime;
 	i->AttributeValues[LFAttrLanguage] = ((LFPictureAttributes*)i->Slave)->Language;
+
+	if ((i->AttributeValues[LFAttrWidth]) && (i->AttributeValues[LFAttrHeight]))
+	{
+		unsigned int w = *((unsigned int*)i->AttributeValues[LFAttrWidth]);
+		unsigned int h = *((unsigned int*)i->AttributeValues[LFAttrHeight]);
+
+		if ((w) && (h))
+		{
+			double dimension = ((double)w*h)/((double)1000000);
+			SetAttribute(i, LFAttrDimension, &dimension);
+
+			double aspect = ((double)w)/((double)h);
+			SetAttribute(i, LFAttrAspectRatio, &aspect);
+		}
+	}
 }
 
 

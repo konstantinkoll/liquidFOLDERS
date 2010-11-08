@@ -128,9 +128,9 @@
 #define ID_SORT_LOCATIONNAME            718
 #define ID_SORT_LOCATIONIATA            719
 #define ID_SORT_LOCATIONGPS             720
-#define ID_SORT_HEIGHT                  721
-#define ID_SORT_WIDTH                   722
-#define ID_SORT_RESOLUTION              723
+#define ID_SORT_WIDTH                   721
+#define ID_SORT_HEIGHT                  722
+#define ID_SORT_DIMENSION               723
 #define ID_SORT_ASPECTRATIO             724
 #define ID_SORT_ROLL                    726
 #define ID_SORT_DURATION                735
@@ -154,7 +154,7 @@
 #define ID_DROP_NAME                    820
 #define ID_DROP_TIME                    821
 #define ID_DROP_LOCATION                822
-#define ID_DROP_RESOLUTION              823
+#define ID_DROP_DIMENSION               823
 #define ID_TRASH_EMPTY                  830
 #define ID_TRASH_RESTORESELECTED        831
 #define ID_TRASH_RESTOREALL             833

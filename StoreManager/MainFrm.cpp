@@ -70,7 +70,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_ITEMS_SHOWINSPECTOR, ID_ITEMS_RENAME, OnUpdateItemCommands)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_TRASH_EMPTY, ID_TRASH_RESTOREALL, OnUpdateTrashCommands)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_STORE_NEW, ID_STORE_BACKUP, OnUpdateStoreCommands)
-	ON_UPDATE_COMMAND_UI_RANGE(ID_DROP_NAME, ID_DROP_RESOLUTION, OnUpdateDropCommands)
+	ON_UPDATE_COMMAND_UI_RANGE(ID_DROP_NAME, ID_DROP_DIMENSION, OnUpdateDropCommands)
 
 	ON_COMMAND(ID_APP_CLOSE, OnClose)
 	ON_COMMAND(ID_APP_CLOSEOTHERS, OnCloseOthers)
@@ -469,14 +469,14 @@ void CMainFrame::OnUpdateDropCommands(CCmdUI* pCmdUI)
 			AttributeAllowedForSorting(LFAttrLocationIATA) ||
 			AttributeAllowedForSorting(LFAttrLocationGPS));
 		break;
-	case ID_DROP_RESOLUTION:
-		pCmdUI->SetCheck((ActiveViewParameters->SortBy==LFAttrResolution) ||
-			(ActiveViewParameters->SortBy==LFAttrHeight) ||
+	case ID_DROP_DIMENSION:
+		pCmdUI->SetCheck((ActiveViewParameters->SortBy==LFAttrDimension) ||
 			(ActiveViewParameters->SortBy==LFAttrWidth) ||
+			(ActiveViewParameters->SortBy==LFAttrHeight) ||
 			(ActiveViewParameters->SortBy==LFAttrAspectRatio));
-		pCmdUI->Enable(AttributeAllowedForSorting(LFAttrResolution) ||
-			AttributeAllowedForSorting(LFAttrHeight) ||
+		pCmdUI->Enable(AttributeAllowedForSorting(LFAttrDimension) ||
 			AttributeAllowedForSorting(LFAttrWidth) ||
+			AttributeAllowedForSorting(LFAttrHeight) ||
 			AttributeAllowedForSorting(LFAttrAspectRatio));
 		break;
 	default:
@@ -1743,17 +1743,17 @@ void CMainFrame::InitializeRibbon()
 			pPanelArrange->Add(new CMFCRibbonButton(ID_SORT_DURATION, theApp.m_Attributes[LFAttrDuration]->Name, 32, 32));
 			pPanelArrange->Add(new CMFCRibbonButton(ID_SORT_LANGUAGE, theApp.m_Attributes[LFAttrLanguage]->Name, 33, 33));
 
-			CMFCRibbonButton* pBtnSortResolution = new CMFCRibbonButton(ID_DROP_RESOLUTION, theApp.m_Attributes[LFAttrResolution]->Name, 34, 34);
+			CMFCRibbonButton* pBtnSortResolution = new CMFCRibbonButton(ID_DROP_DIMENSION, theApp.m_Attributes[LFAttrDimension]->Name, 34, 34);
 			pBtnSortResolution->SetDefaultCommand(FALSE);
 
 				strTemp = "By overall dimension";
 				pBtnSortResolution->AddSubItem(new CMFCRibbonLabel(strTemp));
 				pBtnSortResolution->AddSubItem(new CMFCRibbonButton(ID_SORT_ASPECTRATIO, theApp.m_Attributes[LFAttrAspectRatio]->Name, 37, 37));
-				pBtnSortResolution->AddSubItem(new CMFCRibbonButton(ID_SORT_RESOLUTION, theApp.m_Attributes[LFAttrResolution]->Name, 34, 34));
+				pBtnSortResolution->AddSubItem(new CMFCRibbonButton(ID_SORT_DIMENSION, theApp.m_Attributes[LFAttrDimension]->Name, 34, 34));
 				strTemp = "By edge";
 				pBtnSortResolution->AddSubItem(new CMFCRibbonLabel(strTemp));
-				pBtnSortResolution->AddSubItem(new CMFCRibbonButton(ID_SORT_HEIGHT, theApp.m_Attributes[LFAttrHeight]->Name, 35, 35));
-				pBtnSortResolution->AddSubItem(new CMFCRibbonButton(ID_SORT_WIDTH, theApp.m_Attributes[LFAttrWidth]->Name, 36, 36));
+				pBtnSortResolution->AddSubItem(new CMFCRibbonButton(ID_SORT_WIDTH, theApp.m_Attributes[LFAttrWidth]->Name, 35, 35));
+				pBtnSortResolution->AddSubItem(new CMFCRibbonButton(ID_SORT_HEIGHT, theApp.m_Attributes[LFAttrHeight]->Name, 36, 36));
 
 			pPanelArrange->Add(pBtnSortResolution);
 			pPanelArrange->Add(new CMFCRibbonButton(ID_SORT_TAGS, theApp.m_Attributes[LFAttrTags]->Name, 38, 38));

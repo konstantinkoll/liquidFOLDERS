@@ -1,8 +1,14 @@
 #include "StdAfx.h"
 #include "IdxTables.h"
+#include "PIDL.h"
 #include "ShellProperties.h"
 #include <assert.h>
+#include <shlobj.h>
 #include <shlwapi.h>
+
+
+extern unsigned char AttrTypes[];
+
 
 static const GUID PropertyStorage =
 	{ 0xB725f130, 0x47Ef, 0x101A, { 0xA5, 0xF1, 0x02, 0x60, 0x8C, 0x9E, 0xEB, 0xAC } };
@@ -94,9 +100,9 @@ LFShellProperty AttrProperties[LFAttributeCount] = {
 	{ 0, 0 },						// LFAttrLocationIATA
 	{ 0, 0 },						// LFAttrLocationGPS
 
-	{ PropertyImage, 4 },			// LFAttrHeight
 	{ PropertyImage, 3 },			// LFAttrWidth
-	{ 0, 0 },						// LFAttrResolution
+	{ PropertyImage, 4 },			// LFAttrHeight
+	{ 0, 0 },						// LFAttrDimension
 	{ 0, 0 },						// LFAttrAspectRatio
 	{ PropertyVideo, 44 },			// LFAttrVideoCodec
 	{ PropertyPhoto, 18248 },		// LFAttrRoll
@@ -121,7 +127,7 @@ LFShellProperty AttrProperties[LFAttributeCount] = {
 	{ 0, 0 },						// LFAttrLanguage
 	{ PropertyDocuments, 14 },		// LFAttrPages
 	{ PropertyUnnamed4, 100 },		// LFAttrRecordingTime
-	{ 0, 0 },						// LFAttrRecordingEquipment
+	{ PropertyPhoto, 272 },			// LFAttrRecordingEquipment
 	{ 0, 0 },						// LFAttrSignature
 
 	{ 0, 0 },						// LFAttrFrom
@@ -201,7 +207,9 @@ void SetFileDomainAndSlave(LFItemDescriptor* i)
 	// Domain
 	if (!i->CoreAttributes.DomainID)
 		i->CoreAttributes.DomainID = GetHardcodedDomain(i->CoreAttributes.FileFormat);
+
 	// TODO: Benutzer-Einstellungen abfragen
+
 	if (!i->CoreAttributes.DomainID)
 		i->CoreAttributes.DomainID = GetPerceivedDomain(i->CoreAttributes.FileFormat);
 
@@ -210,11 +218,72 @@ void SetFileDomainAndSlave(LFItemDescriptor* i)
 	i->CoreAttributes.SlaveID = DomainSlaves[i->CoreAttributes.DomainID];
 }
 
+bool GetShellProperty(IShellFolder2* pParentFolder, LPCITEMIDLIST pidlRel, GUID Schema, UINT ID, LFItemDescriptor*i, UINT attr)
+{
+	SHCOLUMNID column = { Schema, ID };
+	VARIANT value = { 0 };
+	
+	if (FAILED(pParentFolder->GetDetailsEx(pidlRel, &column, &value)))
+		return false;
+
+	switch (value.vt)
+	{
+	case VT_BSTR:
+		if ((AttrTypes[attr]==LFTypeUnicodeString) || (AttrTypes[attr]==LFTypeUnicodeArray))
+			SetAttribute(i, attr, value.pbstrVal);
+		break;
+	case VT_I4:
+		if ((AttrTypes[attr]==LFTypeUINT) && (value.intVal>=0))
+			SetAttribute(i, attr, &value.intVal);
+		break;
+	case VT_UI4:
+		switch (AttrTypes[attr])
+		{
+		case LFTypeUINT:
+		case LFTypeFourCC:
+			SetAttribute(i, attr, &value.uintVal);
+			break;
+		}
+		break;
+	case VT_I8:
+	case VT_UI8:
+		switch (AttrTypes[attr])
+		{
+		case LFTypeINT64:
+			SetAttribute(i, attr, &value.ullVal);
+			break;
+		case LFTypeDuration:
+			value.ullVal /= 10000;
+			UINT Duration = (value.ullVal>0xFFFFFFFF) ? 0xFFFFFFFF : (UINT)value.ullVal;
+			SetAttribute(i, attr, &Duration);
+			break;
+		}
+		break;
+	case VT_R8:
+		if (AttrTypes[attr]==LFTypeDouble)
+			SetAttribute(i, attr, &value.dblVal);
+		break;
+	case VT_DATE:
+		if (AttrTypes[attr]==LFTypeTime)
+		{
+			SYSTEMTIME st;
+			FILETIME ft;
+			VariantTimeToSystemTime(value.date, &st);
+			SystemTimeToFileTime(&st, &ft);
+			SetAttribute(i, attr, &ft);
+		}
+		break;
+	}
+	
+	VariantClear(&value);
+	return (value.vt!=0);
+}
+
 void SetAttributesFromFile(LFItemDescriptor* i, wchar_t* fn)
 {
 	// Attribute des Dateisystems
-	WIN32_FIND_DATAW ffd;
-	HANDLE hFind = FindFirstFileW(fn, &ffd);
+	WIN32_FIND_DATA ffd;
+	HANDLE hFind = FindFirstFile(fn, &ffd);
 
 	if (hFind!=INVALID_HANDLE_VALUE)
 	{
@@ -228,6 +297,42 @@ void SetAttributesFromFile(LFItemDescriptor* i, wchar_t* fn)
 
 	// Domain und Slave
 	SetFileDomainAndSlave(i);
+
+	// Shell properties
+	IShellFolder* pDesktop;
+	if (SUCCEEDED(SHGetDesktopFolder(&pDesktop)))
+	{
+		LPITEMIDLIST pidlFQ;
+		if (SUCCEEDED(pDesktop->ParseDisplayName(NULL, NULL, fn, NULL, &pidlFQ, NULL)))
+		{
+			IShellFolder2* pParentFolder = NULL;
+			LPCITEMIDLIST pidlRel = NULL;
+			if (SUCCEEDED(SHBindToParent(pidlFQ, IID_IShellFolder2, (void**)&pParentFolder, &pidlRel)))
+			{
+				for (unsigned int a=0; a<LFAttributeCount; a++)
+					if ((AttrProperties[a].ID) && (a!=LFAttrFileName) && (a!=LFAttrFileSize) && (a!=LFAttrFileFormat) && (a!=LFAttrCreationTime) && (a!=LFAttrFileTime))
+						GetShellProperty(pParentFolder, pidlRel, AttrProperties[a].Schema, AttrProperties[a].ID, i, a);
+
+				// Besondere Eigenschaften
+				GetShellProperty(pParentFolder, pidlRel, PropertyAudio, 4, i, LFAttrBitrate);
+				GetShellProperty(pParentFolder, pidlRel, PropertyAudio, 5, i, LFAttrSamplerate);
+				GetShellProperty(pParentFolder, pidlRel, PropertyAudio, 7, i, LFAttrChannels);
+				GetShellProperty(pParentFolder, pidlRel, PropertyAudio, 10, i, LFAttrAudioCodec);
+
+				GetShellProperty(pParentFolder, pidlRel, PropertyPhoto, 36867, i, LFAttrRecordingTime);
+
+				GetShellProperty(pParentFolder, pidlRel, PropertyVideo, 3, i, LFAttrWidth);
+				GetShellProperty(pParentFolder, pidlRel, PropertyVideo, 4, i, LFAttrHeight);
+				GetShellProperty(pParentFolder, pidlRel, PropertyVideo, 8, i, LFAttrBitrate);
+
+				pParentFolder->Release();
+			}
+
+			FreePIDL(pidlFQ);
+		}
+
+		pDesktop->Release();
+	}
 
 	// TODO: weitere Attribute
 }

@@ -145,9 +145,9 @@
 #define IDS_AttrLocationName            4018
 #define IDS_AttrLocationIATA            4019
 #define IDS_AttrLocationGPS             4020
-#define IDS_AttrHeight                  4021
-#define IDS_AttrWidth                   4022
-#define IDS_AttrResolution              4023
+#define IDS_AttrWidth                   4021
+#define IDS_AttrHeight                  4022
+#define IDS_AttrDimension               4023
 #define IDS_AttrAspectRatio             4024
 #define IDS_AttrVideoCodec              4025
 #define IDS_AttrRoll                    4026
