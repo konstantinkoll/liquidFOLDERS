@@ -20,11 +20,14 @@ LPITEMIDLIST AllocPIDL(unsigned int sz)
 
 void FreePIDL(LPITEMIDLIST pidl)
 {
-	LPMALLOC pMalloc;
-	if (SUCCEEDED(SHGetMalloc(&pMalloc)))
+	if (pidl)
 	{
-		pMalloc->Free(pidl);
-		pMalloc->Release();
+		LPMALLOC pMalloc;
+		if (SUCCEEDED(SHGetMalloc(&pMalloc)))
+		{
+			pMalloc->Free(pidl);
+			pMalloc->Release();
+		}
 	}
 }
 

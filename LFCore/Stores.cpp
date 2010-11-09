@@ -360,9 +360,13 @@ void SendShellNotifyMessage(unsigned int Msg, char* StoreID, LPITEMIDLIST oldpid
 	if (GetPIDLForStore(StoreID, &pidl, &pidlDelegate))
 	{
 		SHChangeNotify(Msg, SHCNF_IDLIST | SHCNF_FLUSH, oldpidl ? oldpidl : pidl, (Msg==SHCNE_RENAMEFOLDER) ? pidl : NULL);
+		FreePIDL(pidl);
 
 		if (pidlDelegate)
+		{
 			SHChangeNotify(Msg, SHCNF_IDLIST | SHCNF_FLUSH, oldpidlDelegate ? oldpidlDelegate : pidlDelegate, (Msg==SHCNE_RENAMEFOLDER) ? pidlDelegate : NULL);
+			FreePIDL(pidlDelegate);
+		}
 	}
 }
 
@@ -674,7 +678,11 @@ LFCore_API unsigned int LFSetStoreAttributes(char* key, wchar_t* name, wchar_t* 
 	GetPIDLForStore(key, &oldpidl, &oldpidlDelegate);
 
 	if (!GetMutex(Mutex_Stores))
+	{
+		FreePIDL(oldpidl);
+		FreePIDL(oldpidlDelegate);
 		return LFMutexError;
+	}
 
 	unsigned int res = LFIllegalKey;
 	LFStoreDescriptor* slot = FindStore(key);
@@ -712,6 +720,8 @@ LFCore_API unsigned int LFSetStoreAttributes(char* key, wchar_t* name, wchar_t* 
 		}
 	}
 
+	FreePIDL(oldpidl);
+	FreePIDL(oldpidlDelegate);
 	return res;
 }
 
