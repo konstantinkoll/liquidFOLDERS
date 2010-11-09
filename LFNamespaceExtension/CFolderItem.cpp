@@ -516,11 +516,7 @@ void CFolderItem::GetMenuItems(CGetMenuitemsEventArgs& e)
 			}
 			else
 			{
-				if (!(e.flags & NSEQCF_NoDefault))
-					InsertItem(e.menu, IDS_MENU_OpenNewWindow, _T(VERB_OPENNEWWINDOW));
-				if (Attrs.Level==LevelRoot)
-					InsertItem(e.menu, IDS_MENU_OpenStoreManager, _T(VERB_OPENSTOREMANAGER))->SetEnabled(!theApp.m_PathStoreManager.IsEmpty());
-
+				InsertItem(e.menu, (e.menu->GetItemCount() && (!(e.flags & NSEQCF_NoDefault))) ? IDS_MENU_OpenStoreManager : IDS_MENU_OpenNewWindow, _T(VERB_OPENSTOREMANAGER))->SetEnabled(!theApp.m_PathStoreManager.IsEmpty());
 				InsertItem(e.menu, IDS_MENU_Open, _T(VERB_OPEN))->SetDefaultItem((e.flags & NSEQCF_NoDefault)==0);
 			}
 
