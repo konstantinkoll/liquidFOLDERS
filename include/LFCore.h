@@ -142,6 +142,12 @@ LFCore_API void LFTimeToString(const FILETIME t, wchar_t* str, size_t cCount, un
 // Konvertiert eine Zeitdauer in eine Zeichenkette
 LFCore_API void LFDurationToString(unsigned int d, wchar_t* str, size_t cCount);
 
+// Konvertiert eine Bitrate in eine Zeichenkette
+LFCore_API void LFBitrateToString(const unsigned int r, wchar_t* str, size_t cCount);
+
+// Konvertiert eine Megapixel-Angabe in eine Zeichenkette
+LFCore_API void LFMegapixelToString(const double d, wchar_t* str, size_t cCount);
+
 // Konvertiert ein Attribut in eine Zeichenkette
 LFCore_API void LFAttributeToString(LFItemDescriptor* i, unsigned int attr, wchar_t* str, size_t cCount);
 

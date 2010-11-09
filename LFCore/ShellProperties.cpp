@@ -233,7 +233,7 @@ bool GetShellProperty(IShellFolder2* pParentFolder, LPCITEMIDLIST pidlRel, GUID 
 			SetAttribute(i, attr, value.pbstrVal);
 		break;
 	case VT_I4:
-		if ((AttrTypes[attr]==LFTypeUINT) && (value.intVal>=0))
+		if (((AttrTypes[attr]==LFTypeUINT) || (AttrTypes[attr]==LFTypeBitrate)) && (value.intVal>=0))
 			SetAttribute(i, attr, &value.intVal);
 		break;
 	case VT_UI4:

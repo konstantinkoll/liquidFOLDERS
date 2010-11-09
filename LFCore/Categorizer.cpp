@@ -52,9 +52,15 @@ LFItemDescriptor* CCategorizer::GetFolder(LFItemDescriptor* i, LFFilter* f)
 	return folder;
 }
 
-bool CCategorizer::Compare(LFItemDescriptor* /*i1*/, LFItemDescriptor* /*i2*/)
+bool CCategorizer::Compare(LFItemDescriptor* i1, LFItemDescriptor* i2)
 {
-	return false;
+	wchar_t First[256];
+	wchar_t Second[256];
+
+	LFAttributeToString(i1, attr, First, 256);
+	LFAttributeToString(i2, attr, Second, 256);
+
+	return (wcscmp(First, Second)==0);
 }
 
 void CCategorizer::CustomizeFolder(LFItemDescriptor* folder, LFItemDescriptor* i)
@@ -326,6 +332,64 @@ LFFilterCondition* NameCategorizer::GetCondition(LFItemDescriptor* i)
 
 	if (!GetNamePrefix((wchar_t*)i->AttributeValues[attr], &c->AttrData.UnicodeString[0]))
 		LFGetAttributeVariantData(i, &c->AttrData);
+
+	return c;
+}
+
+
+// BitrateCategorizer
+//
+
+BitrateCategorizer::BitrateCategorizer(unsigned int _attr)
+	: CCategorizer(_attr)
+{
+}
+
+bool BitrateCategorizer::Compare(LFItemDescriptor* i1, LFItemDescriptor* i2)
+{
+	assert(AttrTypes[attr]==LFTypeBitrate);
+
+	return ((*((unsigned int*)i1->AttributeValues[attr])+500)/1000)==((*((unsigned int*)i2->AttributeValues[attr])+500)/1000);
+}
+
+
+// MegapixelCategorizer
+//
+
+MegapixelCategorizer::MegapixelCategorizer(unsigned int _attr)
+	: CCategorizer(_attr)
+{
+}
+
+bool MegapixelCategorizer::Compare(LFItemDescriptor* i1, LFItemDescriptor* i2)
+{
+	assert(AttrTypes[attr]==LFTypeMegapixel);
+
+	return (unsigned int)*((double*)i1->AttributeValues[attr])==(unsigned int)*((double*)i2->AttributeValues[attr]);
+}
+
+void MegapixelCategorizer::CustomizeFolder(LFItemDescriptor* folder, LFItemDescriptor* i)
+{
+	if (i->AttributeValues[attr])
+	{
+		unsigned int dimension = (unsigned int)*((double*)i->AttributeValues[attr]);
+		double d = dimension;
+
+		wchar_t Name[256];
+		swprintf_s(Name, 256, L"%d Megapixel", dimension);
+		SetAttribute(folder, LFAttrFileName, Name);
+		SetAttribute(folder, attr, &d);
+	}
+}
+
+LFFilterCondition* MegapixelCategorizer::GetCondition(LFItemDescriptor* i)
+{
+	LFFilterCondition* c = LFAllocFilterCondition();
+	c->Compare = LFFilterCompareSubfolder;
+	c->AttrData.Attr = attr;
+	c->AttrData.Type = AttrTypes[attr];
+	c->AttrData.IsNull = false;
+	c->AttrData.Megapixel = (unsigned int)*((double*)i->AttributeValues[attr]);
 
 	return c;
 }

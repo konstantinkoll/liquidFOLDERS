@@ -283,8 +283,6 @@ bool CheckCondition(void* value, LFFilterCondition* c)
 			return false;
 		}
 	case LFTypeFourCC:
-	case LFTypeUINT:
-	case LFTypeDuration:
 		switch (c->Compare)
 		{
 		case LFFilterCompareSubfolder:
@@ -292,21 +290,6 @@ bool CheckCondition(void* value, LFFilterCondition* c)
 			return *(unsigned int*)value==c->AttrData.UINT;
 		case LFFilterCompareIsNotEqual:
 			return *(unsigned int*)value!=c->AttrData.UINT;
-		case LFFilterCompareIsAboveOrEqual:
-			return *(unsigned int*)value>=c->AttrData.UINT;
-		case LFFilterCompareIsBelowOrEqual:
-			return *(unsigned int*)value<=c->AttrData.UINT;
-		default:
-			assert(false);
-			return false;
-		}
-	case LFTypeFlags:
-		switch (c->Compare)
-		{
-		case LFFilterCompareIsEqual:
-			return (*(unsigned int*)value & c->AttrData.Flags.Mask)==(c->AttrData.Flags.Flags & c->AttrData.Flags.Mask);
-		case LFFilterCompareIsNotEqual:
-			return (*(unsigned int*)value & c->AttrData.Flags.Mask)!=(c->AttrData.Flags.Flags & c->AttrData.Flags.Mask);
 		default:
 			assert(false);
 			return false;
@@ -324,6 +307,22 @@ bool CheckCondition(void* value, LFFilterCondition* c)
 			return *(unsigned char*)value>=c->AttrData.Rating;
 		case LFFilterCompareIsBelowOrEqual:
 			return *(unsigned char*)value<=c->AttrData.Rating;
+		default:
+			assert(false);
+			return false;
+		}
+	case LFTypeUINT:
+		switch (c->Compare)
+		{
+		case LFFilterCompareSubfolder:
+		case LFFilterCompareIsEqual:
+			return *(unsigned int*)value==c->AttrData.UINT;
+		case LFFilterCompareIsNotEqual:
+			return *(unsigned int*)value!=c->AttrData.UINT;
+		case LFFilterCompareIsAboveOrEqual:
+			return *(unsigned int*)value>=c->AttrData.UINT;
+		case LFFilterCompareIsBelowOrEqual:
+			return *(unsigned int*)value<=c->AttrData.UINT;
 		default:
 			assert(false);
 			return false;
@@ -363,13 +362,24 @@ bool CheckCondition(void* value, LFFilterCondition* c)
 		{
 		case LFFilterCompareSubfolder:
 		case LFFilterCompareIsEqual:
-			return *(__int64*)value==c->AttrData.Double;
+			return *(double*)value==c->AttrData.Double;
 		case LFFilterCompareIsNotEqual:
-			return *(__int64*)value!=c->AttrData.Double;
+			return *(double*)value!=c->AttrData.Double;
 		case LFFilterCompareIsAboveOrEqual:
-			return *(__int64*)value>=c->AttrData.Double;
+			return *(double*)value>=c->AttrData.Double;
 		case LFFilterCompareIsBelowOrEqual:
-			return *(__int64*)value<=c->AttrData.Double;
+			return *(double*)value<=c->AttrData.Double;
+		default:
+			assert(false);
+			return false;
+		}
+	case LFTypeFlags:
+		switch (c->Compare)
+		{
+		case LFFilterCompareIsEqual:
+			return (*(unsigned int*)value & c->AttrData.Flags.Mask)==(c->AttrData.Flags.Flags & c->AttrData.Flags.Mask);
+		case LFFilterCompareIsNotEqual:
+			return (*(unsigned int*)value & c->AttrData.Flags.Mask)!=(c->AttrData.Flags.Flags & c->AttrData.Flags.Mask);
 		default:
 			assert(false);
 			return false;
@@ -416,11 +426,43 @@ bool CheckCondition(void* value, LFFilterCondition* c)
 			assert(false);
 			return false;
 		}
-	default:
-		assert(false);
+	case LFTypeDuration:
+	case LFTypeBitrate:
+		switch (c->Compare)
+		{
+		case LFFilterCompareSubfolder:
+		case LFFilterCompareIsEqual:
+			return ((*(unsigned int*)value+500)/1000)==((c->AttrData.UINT+500)/1000);
+		case LFFilterCompareIsNotEqual:
+			return ((*(unsigned int*)value+500)/1000)!=((c->AttrData.UINT+500)/1000);
+		case LFFilterCompareIsAboveOrEqual:
+			return *(unsigned int*)value>=c->AttrData.UINT;
+		case LFFilterCompareIsBelowOrEqual:
+			return *(unsigned int*)value<=c->AttrData.UINT;
+		default:
+			assert(false);
+			return false;
+		}
+	case LFTypeMegapixel:
+		switch (c->Compare)
+		{
+		case LFFilterCompareSubfolder:
+		case LFFilterCompareIsEqual:
+			return (unsigned int)*((double*)value)==(unsigned int)c->AttrData.Megapixel;
+		case LFFilterCompareIsNotEqual:
+			return (unsigned int)*((double*)value)!=(unsigned int)c->AttrData.Megapixel;
+		case LFFilterCompareIsAboveOrEqual:
+			return *(double*)value>=c->AttrData.Megapixel;
+		case LFFilterCompareIsBelowOrEqual:
+			return *(double*)value<=c->AttrData.Megapixel;
+		default:
+			assert(false);
+			return false;
+		}
 	}
 
 	// Something fishy is going on - play it safe and include the file
+	assert(false);
 	return true;
 }
 

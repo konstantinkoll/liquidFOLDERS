@@ -460,7 +460,7 @@ void CFileList::OnColumnClick(NMHDR* pNMHDR, LRESULT* /*pResult*/)
 		}
 
 		View->pViewParameters->SortBy = attr;
-		View->pViewParameters->Descending = (theApp.m_Attributes[attr]->Type==LFTypeRating) || (theApp.m_Attributes[attr]->Type==LFTypeTime);
+		View->pViewParameters->Descending = (theApp.m_Attributes[attr]->Type==LFTypeRating) || (theApp.m_Attributes[attr]->Type==LFTypeTime) || (theApp.m_Attributes[attr]->Type==LFTypeMegapixel);
 	}
 
 	theApp.UpdateSortOptions(View->ActiveContextID);

@@ -232,9 +232,11 @@ struct LFContextDescriptor
 #define LFTypeFlags                     9
 #define LFTypeGeoCoordinates           10
 #define LFTypeTime                     11
-#define LFTypeDuration                 12
+#define LFTypeBitrate                  12
+#define LFTypeDuration                 13
+#define LFTypeMegapixel                14
 
-#define LFTypeCount                    13
+#define LFTypeCount                    15
 #define LFMaxRating                    10
 
 
@@ -266,6 +268,8 @@ struct LFVariantData
 		LFGeoCoordinates GeoCoordinates;
 		FILETIME Time;
 		unsigned int Duration;
+		unsigned int Bitrate;
+		double Megapixel;
 	};
 };
 

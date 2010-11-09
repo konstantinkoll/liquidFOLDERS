@@ -150,8 +150,18 @@ LFCore_API void LFTimeToString(const FILETIME t, wchar_t* str, size_t cCount, un
 
 LFCore_API void LFDurationToString(unsigned int d, wchar_t* str, size_t cCount)
 {
-	d = (d+999)/1000;
+	d = (d+500)/1000;
 	swprintf(str, cCount, L"%02d:%02d:%02d", d/3600, (d/60)%60, d%60);
+}
+
+LFCore_API void LFBitrateToString(const unsigned int r, wchar_t* str, size_t cCount)
+{
+	swprintf(str, cCount, L"%d kBit/s", (r+500)/1000);
+}
+
+LFCore_API void LFMegapixelToString(const double d, wchar_t* str, size_t cCount)
+{
+	swprintf(str, cCount, L"%.1f Megapixel", d);
 }
 
 void ToString(void* value, unsigned int type, wchar_t* str, size_t cCount)
@@ -207,6 +217,12 @@ void ToString(void* value, unsigned int type, wchar_t* str, size_t cCount)
 		case LFTypeDuration:
 			LFDurationToString(*((unsigned int*)value), str, cCount);
 			return;
+		case LFTypeBitrate:
+			LFBitrateToString(*((unsigned int*)value), str, cCount);
+			return;
+		case LFTypeMegapixel:
+			LFMegapixelToString(*((double*)value), str, cCount);
+			return;
 		default:
 			assert(false);
 		}
@@ -226,17 +242,6 @@ LFCore_API void LFAttributeToString(LFItemDescriptor* i, unsigned int attr, wcha
 	}
 	else
 	{
-		if (i->AttributeValues[attr])
-			switch (attr)
-			{
-			case LFAttrBitrate:
-				swprintf(str, cCount, L"%d kBit/s", *((unsigned int*)i->AttributeValues[attr])/1000);
-				return;
-			case LFAttrDimension:
-				swprintf(str, cCount, L"%.1f MP", *((double*)i->AttributeValues[attr]));
-				return;
-			}
-
 		ToString(i->AttributeValues[attr], AttrTypes[attr], str, cCount);
 	}
 }
@@ -260,6 +265,7 @@ bool IsNullValue(unsigned int attr, void* v)
 	case LFTypeUINT:
 	case LFTypeFlags:
 	case LFTypeDuration:
+	case LFTypeBitrate:
 		return (*(unsigned int*)v)==0;
 	case LFTypeRating:
 		return (*(unsigned char*)v)==0;
@@ -269,7 +275,8 @@ bool IsNullValue(unsigned int attr, void* v)
 	case LFTypeFraction:
 		return (((LFFraction*)v)->Num==0) || (((LFFraction*)v)->Denum==0);
 	case LFTypeDouble:
-		return (*(double*)v)==0;
+	case LFTypeMegapixel:
+		return (*(double*)v)==-1;
 	case LFTypeGeoCoordinates:
 		return (((LFGeoCoordinates*)v)->Latitude==0) && (((LFGeoCoordinates*)v)->Longitude==0);
 	}
@@ -465,6 +472,7 @@ LFCore_API void LFVariantDataFromString(LFVariantData* v, wchar_t* str)
 				v->IsNull = false;
 			break;
 		case LFTypeDouble:
+		case LFTypeMegapixel:
 			if (swscanf_s(str, L"%f", &v->Double)==1)
 				v->IsNull = false;
 			break;
@@ -553,7 +561,14 @@ LFCore_API void LFVariantDataFromString(LFVariantData* v, wchar_t* str)
 		case LFTypeDuration:
 			if (swscanf_s(str, L"%d:%d:%d", &Hour, &Min, &Sec)==3)
 			{
-				v->Duration = Hour*3600+Min*60+Sec;
+				v->Duration = 1000*(Hour*3600+Min*60+Sec);
+				v->IsNull = false;
+			}
+			break;
+		case LFTypeBitrate:
+			if (swscanf_s(str, L"%d", &v->Bitrate)==1)
+			{
+				v->Bitrate *= 1000;
 				v->IsNull = false;
 			}
 			break;
@@ -575,6 +590,9 @@ LFCore_API void LFGetNullVariantData(LFVariantData* v)
 		break;
 	case LFTypeGeoCoordinates:
 		v->GeoCoordinates.Latitude = v->GeoCoordinates.Longitude = 0;
+		break;
+	case LFTypeMegapixel:
+		v->Double = -1;
 		break;
 	default:
 		ZeroMemory(v->UnicodeString, 512);
@@ -617,6 +635,7 @@ LFCore_API bool LFIsVariantDataEqual(LFVariantData* v1, LFVariantData* v2)
 	case LFTypeUINT:
 	case LFTypeFlags:
 	case LFTypeDuration:
+	case LFTypeBitrate:
 		return v1->UINT==v2->UINT;
 	case LFTypeRating:
 		return v1->Rating==v2->Rating;
@@ -625,6 +644,7 @@ LFCore_API bool LFIsVariantDataEqual(LFVariantData* v1, LFVariantData* v2)
 	case LFTypeFraction:
 		return (v1->Fraction.Num==v2->Fraction.Num) && (v1->Fraction.Denum==v2->Fraction.Denum);
 	case LFTypeDouble:
+	case LFTypeMegapixel:
 		return (v1->Double==v2->Double);
 	case LFTypeGeoCoordinates:
 		return (v1->GeoCoordinates.Latitude==v2->GeoCoordinates.Latitude) && (v1->GeoCoordinates.Longitude==v2->GeoCoordinates.Longitude);
@@ -661,6 +681,7 @@ LFCore_API bool LFIsEqualToVariantData(LFItemDescriptor* i, LFVariantData* v)
 		case LFTypeUINT:
 		case LFTypeFlags:
 		case LFTypeDuration:
+		case LFTypeBitrate:
 			return *(unsigned int*)i->AttributeValues[v->Attr]==v->UINT;
 		case LFTypeRating:
 			return *(unsigned char*)i->AttributeValues[v->Attr]==v->Rating;
@@ -669,6 +690,7 @@ LFCore_API bool LFIsEqualToVariantData(LFItemDescriptor* i, LFVariantData* v)
 		case LFTypeFraction:
 			return memcmp(i->AttributeValues[v->Attr], &v->Fraction, sizeof(LFFraction))==0;
 		case LFTypeDouble:
+		case LFTypeMegapixel:
 			return (*(double*)i->AttributeValues[v->Attr]==v->Double);
 		case LFTypeGeoCoordinates:
 			return memcmp(i->AttributeValues[v->Attr], &v->GeoCoordinates, sizeof(LFGeoCoordinates))==0;

@@ -19,6 +19,25 @@ inline void ZeroCopy(void* _Dst, rsize_t _DstSize, void* _Src, rsize_t _SrcSize)
 	}
 }
 
+inline void CalcVisualAttributes(LFItemDescriptor* i)
+{
+	if ((i->AttributeValues[LFAttrWidth]) && (i->AttributeValues[LFAttrHeight]))
+	{
+		unsigned int w = *((unsigned int*)i->AttributeValues[LFAttrWidth]);
+		unsigned int h = *((unsigned int*)i->AttributeValues[LFAttrHeight]);
+
+		if ((w) && (h))
+		{
+			double dimension = ((double)w*h)/((double)1000000);
+			SetAttribute(i, LFAttrDimension, &dimension);
+
+			double aspect = ((double)w)/((double)h);
+			SetAttribute(i, LFAttrAspectRatio, &aspect);
+		}
+	}
+}
+
+
 // CIdxTableMaster
 //
 
@@ -292,20 +311,7 @@ void CIdxTablePictures::WriteToItemDescriptor(LFItemDescriptor* i, void* PtrSrc)
 	i->AttributeValues[LFAttrRecordingTime] = &((LFPictureAttributes*)i->Slave)->RecordingTime;
 	i->AttributeValues[LFAttrLanguage] = ((LFPictureAttributes*)i->Slave)->Language;
 
-	if ((i->AttributeValues[LFAttrWidth]) && (i->AttributeValues[LFAttrHeight]))
-	{
-		unsigned int w = *((unsigned int*)i->AttributeValues[LFAttrWidth]);
-		unsigned int h = *((unsigned int*)i->AttributeValues[LFAttrHeight]);
-
-		if ((w) && (h))
-		{
-			double dimension = ((double)w*h)/((double)1000000);
-			SetAttribute(i, LFAttrDimension, &dimension);
-
-			double aspect = ((double)w)/((double)h);
-			SetAttribute(i, LFAttrAspectRatio, &aspect);
-		}
-	}
+	CalcVisualAttributes(i);
 }
 
 
@@ -377,4 +383,6 @@ void CIdxTableVideos::WriteToItemDescriptor(LFItemDescriptor* i, void* PtrSrc)
 	i->AttributeValues[LFAttrBitrate] = &((LFVideoAttributes*)i->Slave)->Bitrate;
 	i->AttributeValues[LFAttrRecordingTime] = &((LFVideoAttributes*)i->Slave)->RecordingTime;
 	i->AttributeValues[LFAttrLanguage] = ((LFVideoAttributes*)i->Slave)->Language;
+
+	CalcVisualAttributes(i);
 }

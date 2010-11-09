@@ -118,13 +118,41 @@ protected:
 };
 
 
-// UnicodeCategorizer
+// NameCategorizer
 //
 
 class NameCategorizer : public CCategorizer
 {
 public:
 	NameCategorizer(unsigned int _attr);
+
+protected:
+	virtual bool Compare(LFItemDescriptor* i1, LFItemDescriptor* i2);
+	virtual void CustomizeFolder(LFItemDescriptor* folder, LFItemDescriptor* i);
+	virtual LFFilterCondition* GetCondition(LFItemDescriptor* i);
+};
+
+
+// BitrateCategorizer
+//
+
+class BitrateCategorizer : public CCategorizer
+{
+public:
+	BitrateCategorizer(unsigned int _attr);
+
+protected:
+	virtual bool Compare(LFItemDescriptor* i1, LFItemDescriptor* i2);
+};
+
+
+// MegapixelCategorizer
+//
+
+class MegapixelCategorizer : public CCategorizer
+{
+public:
+	MegapixelCategorizer(unsigned int _attr);
 
 protected:
 	virtual bool Compare(LFItemDescriptor* i1, LFItemDescriptor* i2);

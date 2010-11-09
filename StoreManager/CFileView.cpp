@@ -9,16 +9,16 @@
 
 BOOL AttributeSortableInView(UINT Attr, UINT ViewMode)
 {
-	BOOL b = TRUE;
+	BOOL b = theApp.m_Attributes[Attr]->Sortable;
 	switch (ViewMode)
 	{
 	case LFViewCalendarYear:
 	case LFViewCalendarDay:
 	case LFViewTimeline:
-		b = (theApp.m_Attributes[Attr]->Type==LFTypeTime);
+		b &= (theApp.m_Attributes[Attr]->Type==LFTypeTime);
 		break;
 	case LFViewGlobe:
-		b = ((Attr==LFAttrLocationIATA) || (Attr==LFAttrLocationGPS));
+		b &= ((Attr==LFAttrLocationIATA) || (Attr==LFAttrLocationGPS));
 		break;
 	}
 	return b;

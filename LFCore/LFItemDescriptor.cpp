@@ -42,16 +42,18 @@ size_t AttrSizes[LFTypeCount] = {
 	0,							// LFTypeUnicodeString
 	0,							// LFTypeUnicodeArray
 	0,							// LFTypeAnsiString
-	sizeof(UINT),				// LFTypeFourCC
+	sizeof(unsigned int),		// LFTypeFourCC
 	sizeof(unsigned char),		// LFTypeRating
-	sizeof(UINT),				// LFTypeUINT
+	sizeof(unsigned int),		// LFTypeUINT
 	sizeof(__int64),			// LFTypeINT64
 	sizeof(LFFraction),			// LFTypeFraction
 	sizeof(double),				// LFTypeDouble
-	sizeof(UINT),				// LFTypeFlags
+	sizeof(unsigned int),		// LFTypeFlags
 	sizeof(LFGeoCoordinates),	// LFTypeGeoCoordinates
 	sizeof(FILETIME),			// LFTypeTime
 	sizeof(UINT),				// LFTypeDuration
+	sizeof(unsigned int),		// LFTypeBitrate,
+	sizeof(double)				// LFTypeMegapixel
 };
 
 unsigned char AttrTypes[LFAttributeCount] = {
@@ -79,7 +81,7 @@ unsigned char AttrTypes[LFAttributeCount] = {
 
 	LFTypeUINT,					// LFAttrWidth
 	LFTypeUINT,					// LFAttrHeight
-	LFTypeDouble,				// LFAttrDimension
+	LFTypeMegapixel,			// LFAttrDimension
 	LFTypeDouble,				// LFAttrAspectRatio
 	LFTypeFourCC,				// LFAttrVideoCodec
 	LFTypeUnicodeString,		// LFAttrRoll
@@ -95,7 +97,7 @@ unsigned char AttrTypes[LFAttributeCount] = {
 	LFTypeFourCC,				// LFAttrAudioCodec
 
 	LFTypeDuration,				// LFAttrDuration
-	LFTypeUINT,					// LFAttrBitrate
+	LFTypeBitrate,				// LFAttrBitrate
 
 	LFTypeUnicodeString,		// LFAttrArtist
 	LFTypeUnicodeString,		// LFAttrTitle

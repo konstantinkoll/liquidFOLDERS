@@ -273,7 +273,6 @@ int LFSearchResult::Compare(int eins, int zwei, unsigned int attr, bool descendi
 			break;
 		case LFTypeFourCC:
 		case LFTypeUINT:
-		case LFTypeDuration:
 			eins32 = *(unsigned int*)d1->AttributeValues[Sort];
 			zwei32 = *(unsigned int*)d2->AttributeValues[Sort];
 			if (eins32<zwei32)
@@ -353,6 +352,29 @@ int LFSearchResult::Compare(int eins, int zwei, unsigned int attr, bool descendi
 			break;
 		case LFTypeTime:
 			cmp = CompareFileTime((FILETIME*)d1->AttributeValues[Sort], (FILETIME*)d2->AttributeValues[Sort]);
+			break;
+		case LFTypeDuration:
+		case LFTypeBitrate:
+			eins32 = *(unsigned int*)d1->AttributeValues[Sort]/1000;
+			zwei32 = *(unsigned int*)d2->AttributeValues[Sort]/1000;
+			if (eins32<zwei32)
+			{
+				cmp = -1;
+			}
+			else
+				if (eins32>zwei32)
+					cmp = 1;
+			break;
+		case LFTypeMegapixel:
+			einsDbl = (double)((int)(*(double*)d1->AttributeValues[Sort]*10))/(double)10;
+			zweiDbl = (double)((int)(*(double*)d2->AttributeValues[Sort]*10))/(double)10;
+			if (einsDbl<zweiDbl)
+			{
+				cmp = -1;
+			}
+			else
+				if (einsDbl>zweiDbl)
+					cmp = 1;
 			break;
 		default:
 			assert(FALSE);
@@ -492,6 +514,15 @@ void LFSearchResult::Group(unsigned int attr, unsigned int icon, bool groupone, 
 		case LFTypeTime:
 			c = new DateCategorizer(attr);
 			break;
+		case LFTypeBitrate:
+			c = new BitrateCategorizer(attr);
+			break;
+		case LFTypeMegapixel:
+			c = new MegapixelCategorizer(attr);
+			break;
+		default:
+			// Generic (slow) categorizer that compares the string representation of attributes
+			c = new CCategorizer(attr);
 		}
 	}
 
