@@ -24,9 +24,6 @@ public:
 	// PIDL handling
 	virtual void Serialize(CArchive& ar);
 
-	// IEnumIDList
-	virtual BOOL IsValid();
-
 	// IMoniker
 	virtual void GetDisplayName(CString& displayName);
 	virtual void GetDisplayNameEx(CString& displayName, DisplayNameFlags flags);

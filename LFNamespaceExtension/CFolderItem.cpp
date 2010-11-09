@@ -420,18 +420,6 @@ BOOL CFolderItem::GetChildren(CGetChildrenEventArgs& e)
 	return TRUE;
 }
 
-BOOL CFolderItem::IsValid()
-{
-	if (Attrs.Level==LevelRoot)
-		return TRUE;
-
-	LFStoreDescriptor store;
-	if (LFGetStoreSettings(Attrs.StoreID, &store)!=LFOk)
-		return FALSE;
-
-	return (Attrs.Level>LevelStores);
-}
-
 
 // IMoniker
 

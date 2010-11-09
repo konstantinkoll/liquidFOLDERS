@@ -83,7 +83,6 @@ public:
 	// IEnumIDList
 	virtual void ConvertSearchResult(CGetChildrenEventArgs& e, LFSearchResult* res);
 	virtual BOOL GetChildren(CGetChildrenEventArgs& e);
-	virtual BOOL IsValid();
 
 	// IMoniker
 	virtual void GetDisplayName(CString& displayName);

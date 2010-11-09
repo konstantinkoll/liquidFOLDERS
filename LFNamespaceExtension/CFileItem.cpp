@@ -71,14 +71,6 @@ void CFileItem::Serialize(CArchive& ar)
 }
 
 
-// IEnumIDList
-
-BOOL CFileItem::IsValid()
-{
-	return AS(GetParentFolder(), CFolderItem)->IsValid();
-}
-
-
 // IMoniker
 
 void CFileItem::GetDisplayName(CString& displayName)
