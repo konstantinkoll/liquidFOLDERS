@@ -33,13 +33,13 @@ CStoreManagerApp::CStoreManagerApp()
 	path_GoogleEarth = "";
 
 	HKEY hKey;
-	if (RegOpenKeyExA(HKEY_CURRENT_USER, "SOFTWARE\\GOOGLE\\GOOGLE EARTH PLUS", 0, KEY_ALL_ACCESS, &hKey)==ERROR_SUCCESS)
+	if (RegOpenKeyEx(HKEY_CURRENT_USER, _T("Software\\Google\\Google Earth Plus"), 0, KEY_ALL_ACCESS, &hKey)==ERROR_SUCCESS)
 	{
 		DWORD dwType = REG_SZ;
 		CHAR lszValue[255];
 		DWORD dwSize = 255;
 
-		if (RegQueryValueExA(hKey, "InstallLocation", NULL, &dwType, (LPBYTE)&lszValue, &dwSize)==ERROR_SUCCESS)
+		if (RegQueryValueEx(hKey, _T("InstallLocation"), NULL, &dwType, (LPBYTE)&lszValue, &dwSize)==ERROR_SUCCESS)
 			path_GoogleEarth = lszValue;
 
 		RegCloseKey(hKey);

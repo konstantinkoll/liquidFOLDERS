@@ -166,7 +166,7 @@ void LFAboutDlg::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 
 	dc.SetTextColor(0x000000);
 	dc.SetBkMode(TRANSPARENT);
-	dc.DrawTextW(parameters->appname, -1, r, 0);
+	dc.DrawText(parameters->appname+_T(" (Beta1)"), -1, r, 0);
 	r.top += 45;
 
 	DeleteObject(font);
@@ -176,7 +176,7 @@ void LFAboutDlg::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 		DEFAULT_PITCH | FF_DONTCARE, _T("Arial"));
 	dc.SelectObject(font);
 
-	dc.DrawTextW(parameters->copyright, -1, r, 0);
+	dc.DrawText(parameters->copyright, -1, r, 0);
 	r.top += 25;
 
 	dc.DrawText(_T("Version ")+parameters->version+_T(" (")+parameters->build+_T(")"), -1, r, 0);
