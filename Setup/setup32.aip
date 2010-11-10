@@ -354,6 +354,7 @@
     <ROW Action="AI_RunFinishActions" Type="1" Source="aicustact.dll" Target="RunFinishActions" WithoutSeq="true"/>
     <ROW Action="AI_STORE_LOCATION" Type="51" Source="ARPINSTALLLOCATION" Target="[APPDIR]"/>
     <ROW Action="LFRunCmd.exe" Type="1682" Source="LFRunCmd.exe" Target="INSTALL"/>
+    <ROW Action="LFWatchdog.exe" Type="1746" Source="LFWatchdog.exe"/>
     <ROW Action="SET_APPDIR" Type="307" Source="APPDIR" Target="[ProgramFilesFolder][Manufacturer]\[ProductName]" MultiBuildTarget="DefaultBuild:[ProgramFilesFolder][ProductName]"/>
     <ROW Action="SET_SHORTCUTDIR" Type="307" Source="SHORTCUTDIR" Target="[ProgramMenuFolder][ProductName]"/>
     <ROW Action="SET_TARGETDIR_TO_APPDIR" Type="51" Source="TARGETDIR" Target="[APPDIR]"/>
@@ -383,7 +384,8 @@
     <ROW Action="AI_DELETE_SHORTCUTS" Condition="NOT (REMOVE=&quot;ALL&quot;)" Sequence="1401"/>
     <ROW Action="AI_DEL_EMPTY_SHORTCUTDIR" Condition="NOT (REMOVE=&quot;ALL&quot;)" Sequence="6402" AdditionalSeq="AI_DATA_SETTER"/>
     <ROW Action="AI_DATA_SETTER" Condition="NOT (REMOVE=&quot;ALL&quot;)" Sequence="6401"/>
-    <ROW Action="LFRunCmd.exe" Sequence="5969"/>
+    <ROW Action="LFRunCmd.exe" Sequence="5970"/>
+    <ROW Action="LFWatchdog.exe" Sequence="5969"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiInstallUISequenceComponent">
     <ROW Action="AI_RESTORE_LOCATION" Condition="APPDIR=&quot;&quot;" Sequence="749"/>
@@ -441,11 +443,11 @@
     <ROW Registry="Publisher" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="Publisher" Value="liquidFOLDERS" Component_="AI_CustomARPName"/>
     <ROW Registry="SortOrderIndex" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}" Name="SortOrderIndex" Value="#64" Component_="LFNamespaceExtension.dll"/>
     <ROW Registry="StoreManager" Root="2" Key="Software\liquidFOLDERS" Name="StoreManager" Value="[#StoreManager.exe]" Component_="StoreManager.exe"/>
-    <ROW Registry="System.PropList.DetailsPaneNullSelect" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}" Name="System.PropList.DetailsPaneNullSelect" Value="prop:" Component_="LFNamespaceExtension.dll"/>
-    <ROW Registry="System.PropList.DetailsPaneNullSelectTitle" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}" Name="System.PropList.DetailsPaneNullSelectTitle" Value="prop:~System.ItemNameDisplay;~System.ItemTypeText" Component_="LFNamespaceExtension.dll"/>
     <ROW Registry="System.ItemType" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}" Name="System.ItemType" Value="Folder" Component_="LFNamespaceExtension.dll"/>
     <ROW Registry="System.ItemTypeText" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}" Name="System.ItemTypeText" Value="#%@&quot;[#LFNamespaceExtension.dll]&quot;,-1000" Component_="LFNamespaceExtension.dll"/>
     <ROW Registry="System.PerceivedType" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}" Name="System.PerceivedType" Value="#8" Component_="LFNamespaceExtension.dll"/>
+    <ROW Registry="System.PropList.DetailsPaneNullSelect" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}" Name="System.PropList.DetailsPaneNullSelect" Value="prop:" Component_="LFNamespaceExtension.dll"/>
+    <ROW Registry="System.PropList.DetailsPaneNullSelectTitle" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}" Name="System.PropList.DetailsPaneNullSelectTitle" Value="prop:~System.ItemNameDisplay;~System.ItemTypeText" Component_="LFNamespaceExtension.dll"/>
     <ROW Registry="System.PropList.PreviewTitle" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}" Name="System.PropList.PreviewTitle" Value="prop:~System.ItemNameDisplay;~System.ItemTypeText" Component_="LFNamespaceExtension.dll"/>
     <ROW Registry="ThreadingModel" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}\InProcServer32" Name="ThreadingModel" Value="Both" Component_="LFNamespaceExtension.dll"/>
     <ROW Registry="ThreadingModel_1" Root="0" Key="CLSID\{3F2D914E-FE57-414F-9F88-A377C7841DA4}\InProcServer32" Name="ThreadingModel" Value="Both" Component_="LFNamespaceExtension.dll"/>
