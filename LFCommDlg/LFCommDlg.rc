@@ -2179,20 +2179,20 @@ BEGIN
     DEFPUSHBUTTON   "Créez un store &nouveau...",IDOK,7,7,102,14
 END
 
-IDD_EDITTAGS DIALOGEX 0, 0, 348, 238
+IDD_EDITTAGS DIALOGEX 0, 0, 348, 245
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
 CAPTION "Adapter des mots-clé"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    GROUPBOX        "Des mots-clé enregistrés",IDC_STATIC,7,7,334,47
+    GROUPBOX        "Des mots-clé enregistrés",IDC_STATIC,7,7,334,54
     EDITTEXT        IDC_TAGS,14,21,320,14,ES_AUTOHSCROLL | WS_GROUP
-    LTEXT           "Des mots-clé sont séparés par l'interligne ou les virgules.",IDC_STATIC,14,39,319,10
-    GROUPBOX        "Des propositions",IDC_STATIC,7,62,334,148
-    LTEXT           "Ces mots-clé étaient déjà donnés à des fichiers dans même stores (cliquez sur un mot-clé pour l'ajouter):",IDC_STATIC,14,73,260,16
-    PUSHBUTTON      "&Ajouter",IDC_ADDTAGS,279,73,55,14,WS_DISABLED
-    CONTROL         "",IDC_TAGLIST,"SysListView32",LVS_SHOWSELALWAYS | LVS_NOLABELWRAP | WS_BORDER | WS_GROUP | WS_TABSTOP,14,93,320,109
-    DEFPUSHBUTTON   "OK",IDOK,234,217,50,14,WS_GROUP
-    PUSHBUTTON      "Annuler",IDCANCEL,291,217,50,14,WS_GROUP
+    LTEXT           "Des mots-clé sont séparés par l'interligne ou les virgules.\nPlusieurs mots peuvent être résumés avec le guillemet.",IDC_STATIC,14,39,319,17
+    GROUPBOX        "Des propositions",IDC_STATIC,7,68,334,149
+    LTEXT           "Ces mots-clé étaient déjà donnés à des fichiers dans même stores (cliquez sur un mot-clé pour l'ajouter):",IDC_STATIC,14,79,260,16
+    PUSHBUTTON      "&Ajouter",IDC_ADDTAGS,279,80,55,14,WS_DISABLED
+    CONTROL         "",IDC_TAGLIST,"SysListView32",LVS_SHOWSELALWAYS | LVS_NOLABELWRAP | WS_BORDER | WS_GROUP | WS_TABSTOP,14,101,320,109
+    DEFPUSHBUTTON   "OK",IDOK,234,224,50,14,WS_GROUP
+    PUSHBUTTON      "Annuler",IDCANCEL,291,224,50,14,WS_GROUP
 END
 
 
