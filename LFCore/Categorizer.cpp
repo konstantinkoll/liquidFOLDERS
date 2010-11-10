@@ -220,6 +220,22 @@ bool AnsiCategorizer::Compare(LFItemDescriptor* i1, LFItemDescriptor* i2)
 }
 
 
+// UINTCategorizer
+//
+
+UINTCategorizer::UINTCategorizer(unsigned int _attr)
+	: CCategorizer(_attr)
+{
+}
+
+bool UINTCategorizer::Compare(LFItemDescriptor* i1, LFItemDescriptor* i2)
+{
+	assert(AttrTypes[attr]==LFTypeUINT);
+
+	return *((unsigned int*)i1->AttributeValues[attr])==*((unsigned int*)i2->AttributeValues[attr]);
+}
+
+
 // IATACategorizer
 //
 
@@ -337,17 +353,17 @@ LFFilterCondition* NameCategorizer::GetCondition(LFItemDescriptor* i)
 }
 
 
-// BitrateCategorizer
+// DurationBitrateCategorizer
 //
 
-BitrateCategorizer::BitrateCategorizer(unsigned int _attr)
+DurationBitrateCategorizer::DurationBitrateCategorizer(unsigned int _attr)
 	: CCategorizer(_attr)
 {
 }
 
-bool BitrateCategorizer::Compare(LFItemDescriptor* i1, LFItemDescriptor* i2)
+bool DurationBitrateCategorizer::Compare(LFItemDescriptor* i1, LFItemDescriptor* i2)
 {
-	assert(AttrTypes[attr]==LFTypeBitrate);
+	assert((AttrTypes[attr]==LFTypeDuration) || (AttrTypes[attr]==LFTypeBitrate));
 
 	return ((*((unsigned int*)i1->AttributeValues[attr])+500)/1000)==((*((unsigned int*)i2->AttributeValues[attr])+500)/1000);
 }

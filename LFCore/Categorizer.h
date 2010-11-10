@@ -78,6 +78,19 @@ protected:
 };
 
 
+// UINTCategorizer
+//
+
+class UINTCategorizer : public CCategorizer
+{
+public:
+	UINTCategorizer(unsigned int _attr);
+
+protected:
+	virtual bool Compare(LFItemDescriptor* i1, LFItemDescriptor* i2);
+};
+
+
 // IATACategorizer
 //
 
@@ -133,13 +146,13 @@ protected:
 };
 
 
-// BitrateCategorizer
+// DurationBitrateCategorizer
 //
 
-class BitrateCategorizer : public CCategorizer
+class DurationBitrateCategorizer : public CCategorizer
 {
 public:
-	BitrateCategorizer(unsigned int _attr);
+	DurationBitrateCategorizer(unsigned int _attr);
 
 protected:
 	virtual bool Compare(LFItemDescriptor* i1, LFItemDescriptor* i2);

@@ -505,6 +505,9 @@ void LFSearchResult::Group(unsigned int attr, unsigned int icon, bool groupone, 
 		case LFTypeAnsiString:
 			c = new AnsiCategorizer(attr);
 			break;
+		case LFTypeUINT:
+			c = new UINTCategorizer(attr);
+			break;
 		case LFTypeRating:
 			c = new RatingCategorizer(attr);
 			break;
@@ -514,8 +517,9 @@ void LFSearchResult::Group(unsigned int attr, unsigned int icon, bool groupone, 
 		case LFTypeTime:
 			c = new DateCategorizer(attr);
 			break;
+		case LFTypeDuration:
 		case LFTypeBitrate:
-			c = new BitrateCategorizer(attr);
+			c = new DurationBitrateCategorizer(attr);
 			break;
 		case LFTypeMegapixel:
 			c = new MegapixelCategorizer(attr);
