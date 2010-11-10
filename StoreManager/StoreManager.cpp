@@ -117,7 +117,20 @@ BOOL CStoreManagerApp::InitInstance()
 	for (INT a=0; a<LFContextCount; a++)
 		LoadViewOptions(a);
 
-	OnAppNewView();
+	char StoreID[LFKeySize];
+	char* RootStore = NULL;
+
+	if (__argc==2)
+		if (wcslen(__wargv[1])==LFKeySize-1)
+		{
+			WideCharToMultiByte(CP_ACP, 0, __wargv[1], wcslen(__wargv[1]), StoreID, LFKeySize, NULL, NULL);
+			RootStore = StoreID;
+		}
+
+	CMainFrame* pFrame = new CMainFrame(RootStore);
+	pFrame->LoadFrame(IDR_MAINFRAME, WS_OVERLAPPEDWINDOW);
+	pFrame->ShowWindow(SW_SHOW);
+
 	return TRUE;
 }
 
@@ -307,7 +320,7 @@ void CStoreManagerApp::OnAppNewView()
 
 void CStoreManagerApp::OnAppNewClipboard()
 {
-	CMainFrame* pFrame = new CMainFrame(TRUE);
+	CMainFrame* pFrame = new CMainFrame(NULL, TRUE);
 	pFrame->LoadFrame(IDR_MAINFRAME, WS_OVERLAPPEDWINDOW);
 	pFrame->ShowWindow(SW_SHOW);
 }

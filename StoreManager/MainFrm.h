@@ -88,7 +88,7 @@ private:
 class CMainFrame : public CFrameWndEx
 {
 public:
-	CMainFrame(BOOL _IsClipboard = FALSE);
+	CMainFrame(char* RootStore=NULL, BOOL _IsClipboard = FALSE);
 	virtual ~CMainFrame();
 
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);

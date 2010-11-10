@@ -129,23 +129,26 @@ END_MESSAGE_MAP()
 
 // CMainFrame-Erstellung/Zerstörung
 
-LFFilter* GetRootFilter()
+LFFilter* GetRootFilter(char* RootStore=NULL)
 {
 	LFFilter* f = LFAllocFilter();
-	f->Mode = LFFilterModeStores;
+	f->Mode = RootStore ? LFFilterModeStoreHome : LFFilterModeStores;
 	f->Options.AddBacklink = true;
 	f->Options.AddDrives = true;
 	f->HideEmptyDrives = (theApp.m_HideEmptyDrives==TRUE);
 
+	if (RootStore)
+		strcpy_s(f->StoreID, LFKeySize, RootStore);
+
 	return f;
 }
 
-CMainFrame::CMainFrame(BOOL _IsClipboard)
+CMainFrame::CMainFrame(char* RootStore, BOOL _IsClipboard)
 {
 	IsClipboard = _IsClipboard;
 	ActiveViewID = -1;
 	ActiveContextID = -1;
-	ActiveFilter = GetRootFilter();
+	ActiveFilter = GetRootFilter(RootStore);
 	ActiveViewParameters = &theApp.m_Views[LFContextDefault];
 	RawFiles = NULL;
 	CookedFiles = NULL;
