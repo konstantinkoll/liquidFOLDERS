@@ -228,17 +228,18 @@ void CIndex::Update(LFItemDescriptor* i, bool IncludeSlaves)
 	if (Tables[IDMaster]->FindKey(i->CoreAttributes.FileID, ID, (void*&)PtrM))
 	{
 		// Phys. Datei umbenennen ?
-		if (wcscmp(i->CoreAttributes.FileName, PtrM->FileName)!=0)
-			switch (RenamePhysicalFile(PtrM, i->CoreAttributes.FileName, DatPath))
-			{
-			case LFOk:
-				i->CoreAttributes.Flags &= ~LFFlagMissing;
-				break;
-			case LFNoFileBody:
-				i->CoreAttributes.Flags |= LFFlagMissing;
-			default:
-				wcscpy_s(i->CoreAttributes.FileName, 256, PtrM->FileName);
-			}
+		if (!(PtrM->Flags & LFFlagLink))
+			if (wcscmp(i->CoreAttributes.FileName, PtrM->FileName)!=0)
+				switch (RenamePhysicalFile(PtrM, i->CoreAttributes.FileName, DatPath))
+				{
+				case LFOk:
+					i->CoreAttributes.Flags &= ~LFFlagMissing;
+					break;
+				case LFNoFileBody:
+					i->CoreAttributes.Flags |= LFFlagMissing;
+				default:
+					wcscpy_s(i->CoreAttributes.FileName, 256, PtrM->FileName);
+				}
 
 		Tables[IDMaster]->Update(i, PtrM);
 	}
@@ -253,7 +254,8 @@ bool CIndex::UpdateFileLocation(LFItemDescriptor* i, bool Exists)
 {
 	assert(i);
 
-	i->CoreAttributes.Flags &= ~LFFlagNew;
+	if (i->CoreAttributes.Flags & LFFlagLink)
+		return true;
 
 	// Master
 	if (!LoadTable(IDMaster))
@@ -335,21 +337,22 @@ void CIndex::Update(LFTransactionList* tl, LFVariantData* value1, LFVariantData*
 					}
 
 					// Phys. Datei umbenennen ?
-					if (wcscmp(i->CoreAttributes.FileName, PtrM->FileName)!=0)
-					{
-						unsigned int res = RenamePhysicalFile(PtrM, i->CoreAttributes.FileName, DatPath);
-						switch (res)
+					if (!(PtrM->Flags & LFFlagLink))
+						if (wcscmp(i->CoreAttributes.FileName, PtrM->FileName)!=0)
 						{
-						case LFOk:
-							i->CoreAttributes.Flags &= ~LFFlagMissing;
-							break;
-						case LFNoFileBody:
-							i->CoreAttributes.Flags |= LFFlagMissing;
-						default:
-							wcscpy_s(i->CoreAttributes.FileName, 256, PtrM->FileName);
-							tl->m_Items[a].LastError = tl->m_LastError = res;
+							unsigned int res = RenamePhysicalFile(PtrM, i->CoreAttributes.FileName, DatPath);
+							switch (res)
+							{
+							case LFOk:
+								i->CoreAttributes.Flags &= ~LFFlagMissing;
+								break;
+							case LFNoFileBody:
+								i->CoreAttributes.Flags |= LFFlagMissing;
+							default:
+								wcscpy_s(i->CoreAttributes.FileName, 256, PtrM->FileName);
+								tl->m_Items[a].LastError = tl->m_LastError = res;
+							}
 						}
-					}
 
 					// Master
 					Tables[IDMaster]->Update(i, PtrM);
@@ -427,7 +430,7 @@ void CIndex::Delete(LFTransactionList* tl, wchar_t* DatPath)
 				if ((strcmp(i->StoreID, StoreID)==0) && (strcmp(i->CoreAttributes.FileID, PtrM->FileID)==0))
 				{
 					// Files with "link" flag do not posses a file body
-					if ((PtrM->Flags & LFFlagLink)==0)
+					if (!(PtrM->Flags & LFFlagLink))
 					{
 						unsigned int res = DeletePhysicalFile(PtrM, DatPath);
 						if (res!=LFOk)
@@ -500,7 +503,7 @@ void CIndex::Delete(LFFileIDList* il, bool PutInTrash, wchar_t* DatPath)
 				else
 				{
 					// Files with "link" flag do not posses a file body
-					if ((PtrM->Flags & LFFlagLink)==0)
+					if (!(PtrM->Flags & LFFlagLink))
 					{
 						unsigned int res = DeletePhysicalFile(PtrM, DatPath);
 						if (res!=LFOk)
@@ -553,14 +556,23 @@ unsigned int CIndex::Rename(char* FileID, wchar_t* NewName, wchar_t* DatPath)
 	{
 		PtrM->Flags &= ~LFFlagNew;
 
-		unsigned int res = RenamePhysicalFile(PtrM, NewName, DatPath);
-		switch (res)
+		unsigned int res = LFOk;
+		if (!(PtrM->Flags & LFFlagLink))
 		{
-		case LFOk:
+			res = RenamePhysicalFile(PtrM, NewName, DatPath);
+			switch (res)
+			{
+			case LFOk:
+				PtrM->Flags &= ~LFFlagMissing;
+				break;
+			case LFNoFileBody:
+				PtrM->Flags |= LFFlagMissing;
+			}
+		}
+		else
+		{
+			wcscpy_s(PtrM->FileName, 256, NewName);
 			PtrM->Flags &= ~LFFlagMissing;
-			break;
-		case LFNoFileBody:
-			PtrM->Flags |= LFFlagMissing;
 		}
 
 		Tables[IDMaster]->MakeDirty();
