@@ -364,75 +364,71 @@ LANGUAGE LANG_FRENCH, SUBLANG_NEUTRAL
 // String Table
 //
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
-    IDS_InfoTip             "Stores und Dateien"
-    IDS_AttributeComment    "LDateien nach %s anordnen"
-    IDS_AllFiles            "Alle Dateien"
-    IDS_AllFilesComment     "Zeigt alle Dateien"
-    IDS_Store               "Store"
-    IDS_Folder              "Virtueller Ordner"
-    IDS_Folders             "Virtuelle Ordner"
-    IDS_Files               "Dateien"
-    IDS_NULLFOLDER_NameMask "LOhne %s"
-    IDS_NULLFOLDER_CommentMask "LAlle Dateien ohne %s"
+    IDS_InfoTip            "Stores et fichiers"
+    IDS_AttributeComment    "LDisposer des fichiers d'après %s"
+    IDS_AllFiles            "Tous les fichiers"
+    IDS_AllFilesComment    "Montre tous les fichiers"
+    IDS_Store              "Store"
+    IDS_Folder              "Dossier virtuel"
+    IDS_Folders             "Dossiers virtuelles"
+    IDS_Files               "Fichiers"
+    IDS_NULLFOLDER_NameMask "LSans %s"
+    IDS_NULLFOLDER_CommentMask "LTous les fichiers sans %s"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
-    IDS_FILES_Singular      "%d Datei"
-    IDS_FILES_Plural        "%d Dateien"
-    IDS_CAPT_CreateLink     "Raccourci"
-    IDS_TEXT_CreateLink     "Windows ne peut pas créer un raccourci ici.\nVoulez-vous que le raccourci à être mis sur le Bureau à la place ?"
+    IDS_FILES_Singular      "%d Fichier"
+    IDS_FILES_Plural        "%d Fichiers"
+    IDS_CAPT_CreateLink    "Raccourci"
+    IDS_TEXT_CreateLink    "Windows ne peut pas créer un raccourci ici.\nVoulez-vous que le raccourci à être mis sur le Bureau à la place ?"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_MENU_CreateNewStore "Créez un store &nouveau..."
-    IDS_HINT_CreateNewStore "Erstellt einen neuen Store für Ihre Dateien."
+    IDS_HINT_CreateNewStore "Crée un nouveau store pour vos fichiers."
     IDS_MENU_MakeDefaultStore "Faites store &standard"
-    IDS_HINT_MakeDefaultStore 
-                            "Setzt den ausgewählten Store als Standard-Store."
-END
-
-STRINGTABLE 
-BEGIN
+    IDS_HINT_MakeDefaultStore
+                            "Met le store choisi comme le store standard."
     IDS_MENU_MakeHybridStore "Faites store &hybride"
-    IDS_HINT_MakeHybridStore 
-                            "Konvertiert den ausgewählten Store in einen Hybrid-Store."
-    IDS_MENU_Open           "Ö&ffnen"
-    IDS_HINT_Open           "Öffnet das ausgewählte Element."
-    IDS_MENU_Explore        "&Explorer"
-    IDS_HINT_Explore        "Öffent das ausgewählte Element im Explorer."
-    IDS_MENU_OpenStoreManager "Im Store&Manager öffnen"
-    IDS_HINT_OpenStoreManager 
-                            "Öffnet das ausgewählte Element im StoreManager."
-    IDS_MENU_OpenNewWindow  "In neuem &Fenster öffnen"
-    IDS_HINT_OpenNewWindow  "Öffnet das ausgewählte Element in einem neuen Fenster."
-    IDS_MENU_OpenWith       "Öffnen &mit..."
-    IDS_HINT_OpenWith       "Wählen Sie das Programm, mit dem Sie diese Datei öffnen möchten."
-    IDS_MENU_CreateLink     "&Verknüpfung erstellen"
-    IDS_HINT_CreateLink     "Erstellt eine Verknüpfung für die ausgewählten Elemente."
-    IDS_MENU_Delete         "&Effacer"
-    IDS_HINT_Delete         "Löscht die ausgewählten Elemente."
+    IDS_HINT_MakeHybridStore
+                            "Convertit le store choisi dans un store hybride."
+    IDS_MENU_Open          "&Ouvrir"
+    IDS_HINT_Open          "Ouvre l'élément choisi."
+    IDS_MENU_Explore        "&Explorateur"
+    IDS_HINT_Explore        "Ouvre l'élément choisi dans Explorateur."
+    IDS_MENU_OpenStoreManager "Ouvrir dans le &store manager"
+    IDS_HINT_OpenStoreManager
+                            "Ouvre l'élément choisi dans le store manager."
+    IDS_MENU_OpenNewWindow  "Ouvrir dans une nouvelle &fenêtre"
+    IDS_HINT_OpenNewWindow  "Ouvre l'élément choisi dans une nouvelle fenêtre."
+    IDS_MENU_OpenWith      "Ouvrir &avec..."
+    IDS_HINT_OpenWith      "Choisissez le programme avec quoi vous voudriez ouvrir ce fichier."
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
-    IDS_MENU_Rename         "&Renommer"
-    IDS_HINT_Rename         "Benennt die ausgewählten Elemente um."
-    IDS_MENU_Properties     "&Propriétés"
-    IDS_HINT_Properties     "Zeigt die Eigenschaften der ausgewählten Elemente."
-    IDS_MENU_ImportFolder   "&Importer dossier..."
-    IDS_HINT_ImportFolder   "Importiert ein Verzeichnis und alle Unterverzeichnisse in den ausgewählten Store."
-    IDS_MENU_StoreManager   "&StoreManager starten"
-    IDS_HINT_StoreManager   "Startet den liquidFOLDERS StoreManager."
-    IDS_MENU_FileDrop       "&FileDrop starten"
-    IDS_HINT_FileDrop       "Startet den liquidFOLDERS FileDrop."
-    IDS_MENU_Migrate        "&Migrations-Assistent starten"
-    IDS_HINT_Migrate        "Startet den liquidFOLDERS Migrations-Assistenten."
+    IDS_MENU_CreateLink    "&Créer un raccourci"
+    IDS_HINT_CreateLink    "Crée un raccourci pour les éléments choisis."
+    IDS_MENU_Delete        "&Effacer"
+    IDS_HINT_Delete        "Efface les éléments choisis."
+    IDS_MENU_Rename        "&Renommer"
+    IDS_HINT_Rename        "Renomme les éléments choisis."
+    IDS_MENU_Properties    "&Propriétés"
+    IDS_HINT_Properties    "Montre les qualités des éléments choisis."
+    IDS_MENU_ImportFolder  "&Importer dossier..."
+    IDS_HINT_ImportFolder  "Importe un dossier et tous les sous-dossiers dans le store choisi."
+    IDS_MENU_StoreManager  "&Lancer StoreManager"
+    IDS_HINT_StoreManager  "Lance liquidFOLDERS StoreManager."
+    IDS_MENU_Migrate        "&Lancer l'assistant de migration"
+    IDS_HINT_Migrate        "Lance liquidFOLDERS l'assistant de migration."
+    IDS_MENU_FileDrop      "&Lancer FileDrop"
+    IDS_HINT_FileDrop      "Lance liquidFOLDERS FileDrop."
     IDS_MENU_About          "Concernant l'extension de l'&Explorer"
-    IDS_HINT_About          "Zeigt Informationen und Einstellungen an."
+    IDS_HINT_About          "Indique des informations et des paramètres."
 END
 
 #endif    // Französisch (neutral) resources

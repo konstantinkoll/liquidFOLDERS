@@ -285,8 +285,8 @@ BEGIN
     IDS_AttrLocationName    "Ortsname"
     IDS_AttrLocationIATA    "IATA Flughafen-Code"
     IDS_AttrLocationGPS     "GPS-Koordinaten"
-    IDS_AttrHeight          "Höhe"
     IDS_AttrWidth           "Breite"
+    IDS_AttrHeight          "Höhe"
     IDS_AttrDimension       "Auflösung"
     IDS_AttrAspectRatio     "Seitenverhältnis"
     IDS_AttrVideoCodec      "Video-Codec"
@@ -543,8 +543,8 @@ BEGIN
     IDS_AttrLocationName    "Location name"
     IDS_AttrLocationIATA    "IATA airport code"
     IDS_AttrLocationGPS     "GPS location"
-    IDS_AttrHeight          "Height"
     IDS_AttrWidth           "Width"
+    IDS_AttrHeight          "Height"
     IDS_AttrDimension       "Dimension"
     IDS_AttrAspectRatio     "Aspect ratio"
     IDS_AttrVideoCodec      "Video codec"
@@ -804,8 +804,8 @@ BEGIN
     IDS_AttrLocationName    "Nombre de ubicación"
     IDS_AttrLocationIATA    "Código de aeropuerto IATA"
     IDS_AttrLocationGPS     "Ubicación GPS"
-    IDS_AttrHeight          "Altura"
     IDS_AttrWidth           "Anchura"
+    IDS_AttrHeight          "Altura"
     IDS_AttrDimension       "Dimensión"
     IDS_AttrAspectRatio     "Proporción de alto y ancho"
     IDS_AttrVideoCodec      "Códec de video"
@@ -985,56 +985,57 @@ BEGIN
     IDS_Size6               "Immense (et supérieur à 128 MB)"
 END
 
-STRINGTABLE
+STRINGTABLE 
 BEGIN
     IDS_LFOk                "OK"
     IDS_LFCancel            "Annulé"
     IDS_LFErrorMemoryError  "Faute de mémoire"
     IDS_LFErrorIllegalQuery "Le filtre décrit une interrogation non valable."
-    IDS_LFErrorIllegalStoreDescriptor "Les paramètres du store sont non valables."
-    IDS_LFErrorStoreNotFound
+    IDS_LFErrorIllegalStoreDescriptor 
+                            "Les paramètres du store sont non valables."
+    IDS_LFErrorStoreNotFound 
                             "Le store choisi n'est pas relié ou pas disponible."
     IDS_LFErrorDriveNotReady "Le support de données n'est pas prêt!"
-    IDS_LFErrorDriveWriteProtected "Le support de données est protégé en écriture."
+    IDS_LFErrorDriveWriteProtected 
+                            "Le support de données est protégé en écriture."
 END
 
-STRINGTABLE
+STRINGTABLE 
 BEGIN
-    IDS_LFErrorIllegalPhysFolder
-                            "Il n'y a pas accès au dossier physique."
+    IDS_LFErrorIllegalPhysFolder "Il n'y a pas accès au dossier physique."
     IDS_LFErrorRegistryError "Il n'ya pas accès au registry."
-    IDS_LFErrorIllegalKey  "Le store- ou le fichier-ID est non valable."
+    IDS_LFErrorIllegalKey   "Le store- ou le fichier-ID est non valable."
     IDS_LFErrorNoDefaultStore "A présent aucun store de norme n'est fixé."
-    IDS_LFErrorTooManyStores
+    IDS_LFErrorTooManyStores 
                             "Vous avez déjà produit le nombre maximum de stores!"
     IDS_LFErrorStoreNotMounted "Le store n'est pas relié à présent."
-    IDS_LFErrorMutexError  "liquidFOLDERS est bloqué à présent par un autre procès."
-    IDS_LFErrorIllegalAttribute
+    IDS_LFErrorMutexError   "liquidFOLDERS est bloqué à présent par un autre procès."
+    IDS_LFErrorIllegalAttribute 
                             "L'un des fichiers choisis ne dispose pas de la qualité."
-    IDS_LFErrorIllegalItemType
+    IDS_LFErrorIllegalItemType 
                             "L'un des fichiers choisis ne soutient pas cette opération."
     IDS_LFErrorIllegalValue "L'une des qualités a une valeur non valable."
-    IDS_LFErrorIndexTableLoadError
+    IDS_LFErrorIndexTableLoadError 
                             "Un tableau d'index ne peut pas être chargé. S'il vous plaît, exécutez le travail d'entretien."
-    IDS_LFErrorIndexRepairError
+    IDS_LFErrorIndexRepairError 
                             "L'index est endommagé et ne peut pas être réparé malheureusement (Est-ce que le support de données est protégé en écriture ?)."
-    IDS_LFErrorIndexAccessError
+    IDS_LFErrorIndexAccessError 
                             "Il n'ya pas accès au store. S'il vous plaît, contrôlez les paramètres de sécurité du dossier."
-    IDS_LFErrorIndexCreateError
+    IDS_LFErrorIndexCreateError 
                             "L'index ne peut pas être créé (Est-ce que le support de données est protégé en écriture ?)."
-    IDS_LFErrorNotEnoughFreeDisc
+    IDS_LFErrorNotEnoughFreeDisc 
                             "Sur le support de données, la cellule de mémoire n'est plus libre suffisamment."
-    IDS_LFErrorCannotDeleteFile
+    IDS_LFErrorCannotDeleteFile 
                             "Certains fichiers ne peuvent pas être effacés, puisqu'ils sont encore dans l'usage."
-    IDS_LFErrorCannotRenameFile
-                            "Certains fichiers ne peuvent pas être renombrés, puisqu'ils sont encore dans l'usage."
 END
 
-STRINGTABLE
+STRINGTABLE 
 BEGIN
-    IDS_LFErrorCannotCopyIndex
+    IDS_LFErrorCannotRenameFile 
+                            "Certains fichiers ne peuvent pas être renommées, puisqu'ils sont encore dans l'usage."
+    IDS_LFErrorCannotCopyIndex 
                             "L'index ne peut pas être actualisé (Est-ce que le support de données est protégé en écriture ?)."
-    IDS_LFErrorNoFileBody  "Le véritable corps de fichier ne se trouve pas dans le store."
+    IDS_LFErrorNoFileBody   "Le véritable corps de fichier ne se trouve pas dans le store."
 END
 
 STRINGTABLE 
@@ -1064,8 +1065,8 @@ BEGIN
     IDS_AttrLocationName    "Nom d'endroit"
     IDS_AttrLocationIATA    "Code d'aéroport d'IATA"
     IDS_AttrLocationGPS     "Coordonnées GPS"
-    IDS_AttrHeight          "Altitude"
     IDS_AttrWidth           "Latitude"
+    IDS_AttrHeight          "Altitude"
     IDS_AttrDimension       "Dimension"
     IDS_AttrAspectRatio     "Rapport largeur"
     IDS_AttrVideoCodec      "Codec de vidèo"
