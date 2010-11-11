@@ -490,6 +490,9 @@
     <ROW FileKey="_" Component_="LFCore.dll" DirProperty="APPDIR" InstallMode="2"/>
     <ROW FileKey="__1" Component_="LFCore.dll" DirProperty="SHORTCUTDIR" InstallMode="2"/>
   </COMPONENT>
+  <COMPONENT cid="caphyon.advinst.msicomp.MsiRemoveRegComponent">
+    <ROW RemoveRegistry="_" Root="1" Key="Software\liquidFOLDERS\StoreManager\Workspace" Name="-" Component_="StoreManager.exe"/>
+  </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiShortsComponent">
     <ROW Shortcut="FileDrop" Directory_="SHORTCUTDIR" Name="FileDrop" Component_="FileDrop.exe" Target="[#FileDrop.exe]" Description="FileDrop" Hotkey="0" IconIndex="0" ShowCmd="1" WkDir="APPDIR"/>
     <ROW Shortcut="Migration_Wizard" Directory_="SHORTCUTDIR" Name="Migrat~1|Migration Wizard" Component_="Migrate.exe" Target="[#Migrate.exe]" Description="Migration Wizard" Hotkey="0" IconIndex="0" ShowCmd="1" WkDir="APPDIR"/>
