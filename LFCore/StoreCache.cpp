@@ -33,7 +33,7 @@ extern HMODULE LFCoreModuleHandle;
 extern LFMessageIDs LFMessages;
 extern unsigned int DriveTypes[26];
 
-#define AppPath L"\\liquidFOLDERS\\"
+#define AppPath L"liquidFOLDERS\\"
 
 bool IsStoreMounted(LFStoreDescriptor* s)
 {
@@ -60,8 +60,7 @@ void AppendGUID(LFStoreDescriptor* s, wchar_t* p)
 
 void GetAutoPath(LFStoreDescriptor* s, wchar_t* p)
 {
-	SHGetSpecialFolderPath(NULL, p, CSIDL_APPDATA, TRUE);
-	wcscat_s(p, MAX_PATH, AppPath);
+	SHGetFolderPathAndSubDir(NULL, CSIDL_APPDATA | CSIDL_FLAG_CREATE, 0, SHGFP_TYPE_CURRENT, AppPath, p);
 	AppendGUID(s, p);
 }
 
@@ -458,9 +457,7 @@ void InitStoreCache()
 
 			// Anwendungsordner anlegen
 			wchar_t tmpStr[MAX_PATH];
-			SHGetSpecialFolderPath(NULL, tmpStr, CSIDL_APPDATA, TRUE);
-			wcscat_s(tmpStr, MAX_PATH, AppPath);
-			CreateDir(tmpStr);
+			SHGetFolderPathAndSubDir(NULL, CSIDL_APPDATA | CSIDL_FLAG_CREATE, 0, SHGFP_TYPE_CURRENT, AppPath, tmpStr);
 
 			// Stores aus der Registry
 			StoreCount = 0;
