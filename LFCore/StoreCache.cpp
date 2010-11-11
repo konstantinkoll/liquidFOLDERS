@@ -64,18 +64,6 @@ void GetAutoPath(LFStoreDescriptor* s, wchar_t* p)
 	AppendGUID(s, p);
 }
 
-bool FolderExists(char* path)
-{
-	if (_access(path, 0)==0)
-	{
-		struct stat status;
-		stat(path, &status);
-		return ((status.st_mode & S_IFDIR)!=0);
-	}
-
-	return false;
-}
-
 unsigned int GetKeyFileFromStoreDescriptor(LFStoreDescriptor* s, wchar_t* f)
 {
 	if (!s)
