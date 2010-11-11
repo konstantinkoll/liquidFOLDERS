@@ -409,9 +409,6 @@ void CStoreManagerApp::LoadViewOptions(INT context)
 	case LFContextStores:
 		DefaultView = LFViewLargeIcons;
 		break;
-	case LFContextStoreHome:
-		DefaultView = LFViewSmallIcons;
-		break;
 	case LFContextClipboard:
 		DefaultView = LFViewTiles;
 		break;
