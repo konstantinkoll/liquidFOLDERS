@@ -950,10 +950,10 @@ void CTreeView::TrackMenu(UINT nID, CPoint point, INT col)
 	ASSERT(popup);
 
 	if (!col)
-	{
 		popup->EnableMenuItem(IDD_CHOOSEPROPERTY, MF_GRAYED | MF_DISABLED);
+
+	if ((!col) || (m_ColumnMapping[col]==-1))
 		popup->EnableMenuItem(ID_VIEW_RESETPROPERTY, MF_GRAYED | MF_DISABLED);
-	}
 
 	BOOL Enable = FALSE;
 	for (UINT row=0; row<m_Rows; row++)
