@@ -123,7 +123,7 @@ BOOL CStoreManagerApp::InitInstance()
 	if (__argc==2)
 		if (wcslen(__wargv[1])==LFKeySize-1)
 		{
-			WideCharToMultiByte(CP_ACP, 0, __wargv[1], wcslen(__wargv[1]), StoreID, LFKeySize, NULL, NULL);
+			WideCharToMultiByte(CP_ACP, 0, __wargv[1], (INT)wcslen(__wargv[1]), StoreID, LFKeySize, NULL, NULL);
 			RootStore = StoreID;
 		}
 

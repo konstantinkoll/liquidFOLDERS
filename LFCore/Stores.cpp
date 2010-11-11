@@ -445,7 +445,7 @@ LFCore_API unsigned int LFGetFileLocation(LFItemDescriptor* i, wchar_t* dst, siz
 					}
 					else
 					{
-						GetShortPathName(&tmpPath[4], dst, cCount);
+						GetShortPathName(&tmpPath[4], dst, (DWORD)cCount);
 					}
 		}
 		else
