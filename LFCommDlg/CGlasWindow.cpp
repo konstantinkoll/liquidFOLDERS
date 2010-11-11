@@ -58,7 +58,7 @@ BOOL CGlasWindow::PreTranslateMessage(MSG* pMsg)
 			case WM_KEYDOWN:
 			case WM_KEYUP:
 				p_PopupWindow->SendMessage(pMsg->message, pMsg->wParam, pMsg->lParam);
-				return TRUE;
+				break;
 			case WM_LBUTTONDOWN:
 			case WM_RBUTTONDOWN:
 			case WM_MBUTTONDOWN:

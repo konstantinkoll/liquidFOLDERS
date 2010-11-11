@@ -627,6 +627,13 @@ void CDropdownSelector::OnKeyDown(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags*/)
 			OnOpenDropdown();
 			ReleaseCapture();
 		}
+		break;
+	case VK_ESCAPE:
+	case VK_UP:
+	case VK_TAB:
+		if (m_Dropped)
+			OnCloseDropdown();
+		break;
 	}
 }
 
@@ -668,7 +675,6 @@ LRESULT CDropdownSelector::OnOpenDropdown(WPARAM /*wParam*/, LPARAM /*lParam*/)
 
 	p_DropWindow->SetWindowPos(&wndTopMost, rectDrop.left, rectDrop.top, rectDrop.Width(), rectDrop.Height(), SWP_SHOWWINDOW | SWP_NOACTIVATE);
 	((CGlasWindow*)GetParent())->RegisterPopupWindow(p_DropWindow);
-	p_DropWindow->SetFocus();
 
 	Invalidate();
 	return TRUE;
