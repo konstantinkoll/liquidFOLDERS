@@ -269,9 +269,9 @@ bool CIndex::UpdateFileLocation(LFItemDescriptor* i, bool Exists)
 	{
 		if (Exists)
 		{
-			if (PtrM->Flags & LFFlagMissing)
+			if (PtrM->Flags & (LFFlagNew | LFFlagMissing))
 			{
-				i->CoreAttributes.Flags &= ~LFFlagMissing;
+				i->CoreAttributes.Flags &= ~(LFFlagNew | LFFlagMissing);
 				Tables[IDMaster]->Update(i, PtrM);
 			}
 		}
@@ -282,7 +282,7 @@ bool CIndex::UpdateFileLocation(LFItemDescriptor* i, bool Exists)
 			if (FileExists(tmpPath))
 			{
 				i->CoreAttributes = *PtrM;
-				i->CoreAttributes.Flags &= ~LFFlagMissing;
+				i->CoreAttributes.Flags &= ~(LFFlagNew | LFFlagMissing);
 			}
 			else
 			{

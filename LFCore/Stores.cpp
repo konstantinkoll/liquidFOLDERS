@@ -403,7 +403,7 @@ LFCore_API unsigned int LFGetFileLocation(LFItemDescriptor* i, wchar_t* dst, siz
 				unsigned int Flags = i->CoreAttributes.Flags;
 				bool Exists = FileExists(tmpPath);
 
-				if ((!Exists) || (Flags & LFFlagMissing))
+				if ((!Exists) || (Flags & (LFFlagNew | LFFlagMissing)))
 				{
 					// Update index
 					CIndex* idx1;
