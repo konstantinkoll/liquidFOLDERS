@@ -33,7 +33,7 @@ extern HMODULE LFCoreModuleHandle;
 extern LFMessageIDs LFMessages;
 extern unsigned int DriveTypes[26];
 
-#define AppPath L"liquidFOLDERS\\"
+#define AppPath L"Stores\\"
 
 bool IsStoreMounted(LFStoreDescriptor* s)
 {
