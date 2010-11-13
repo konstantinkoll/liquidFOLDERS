@@ -3,14 +3,13 @@
 //
 
 #include "stdafx.h"
+#include "Migrate.h"
 #include "CStoreSelector.h"
 #include "resource.h"
 
 
 // CStoreDropdownWindow
 //
-
-extern LFMessageIDs* MessageIDs;
 
 CStoreDropdownWindow::CStoreDropdownWindow()
 	: CDropdownWindow()
@@ -22,9 +21,9 @@ CStoreDropdownWindow::CStoreDropdownWindow()
 BEGIN_MESSAGE_MAP(CStoreDropdownWindow, CDropdownWindow)
 	ON_WM_CREATE()
 	ON_WM_DESTROY()
-	ON_REGISTERED_MESSAGE(MessageIDs->StoresChanged, OnUpdateStores)
-	ON_REGISTERED_MESSAGE(MessageIDs->StoreAttributesChanged, OnUpdateStores)
-	ON_REGISTERED_MESSAGE(MessageIDs->DefaultStoreChanged, OnUpdateStores)
+	ON_REGISTERED_MESSAGE(theApp.MessageIDs->StoresChanged, OnUpdateStores)
+	ON_REGISTERED_MESSAGE(theApp.MessageIDs->StoreAttributesChanged, OnUpdateStores)
+	ON_REGISTERED_MESSAGE(theApp.MessageIDs->DefaultStoreChanged, OnUpdateStores)
 	ON_NOTIFY(LVN_ITEMCHANGED, 1, OnItemChanged)
 	ON_BN_CLICKED(IDOK, OnCreateNewStore)
 END_MESSAGE_MAP()
@@ -51,7 +50,7 @@ INT CStoreDropdownWindow::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndList.EnableGroupView(TRUE);
 	m_wndList.SetView(LV_VIEW_TILE);
 
-	SendMessage(MessageIDs->StoresChanged, LFMSGF_IntStores | LFMSGF_ExtHybStores);
+	SendMessage(theApp.MessageIDs->StoresChanged, LFMSGF_IntStores | LFMSGF_ExtHybStores);
 
 	return 0;
 }

@@ -10,7 +10,7 @@
 // CStoreDropdownWindow
 //
 
-class AFX_EXT_CLASS CStoreDropdownWindow : public CDropdownWindow
+class CStoreDropdownWindow : public CDropdownWindow
 {
 public:
 	CStoreDropdownWindow();
@@ -32,7 +32,7 @@ protected:
 // CStoreSelector
 //
 
-class AFX_EXT_CLASS CStoreSelector : public CDropdownSelector
+class CStoreSelector : public CDropdownSelector
 {
 public:
 	CStoreSelector();
