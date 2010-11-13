@@ -27,6 +27,7 @@ protected:
 	void OnStoreDelete(CString ID);
 	void OnImportFolder(CString ID);
 	void OnStoreProperties(CString ID);
+	void OnMaintainAll();
 };
 
 extern CRunCmdApp theApp;

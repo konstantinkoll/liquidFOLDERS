@@ -38,7 +38,7 @@ CShellMenuItem* AddItem(CShellMenu* Menu, UINT ResID, CString Verb)
 	return Menu->AddItem(tmpStr, Verb, tmpHint);
 }
 
-void AddPathItem(CShellMenu* Menu, UINT ResID, CString Verb, CString Path, UINT IconID)
+void AddPathItem(CShellMenu* Menu, UINT ResID, CString Verb, CString Path, INT IconID)
 {
 	INT cx;
 	INT cy;
@@ -530,6 +530,8 @@ void CFolderItem::GetMenuItems(CGetMenuitemsEventArgs& e)
 			CShellMenuItem* item = AddItem(e.menu, IDS_MENU_CreateNewStore, _T(VERB_CREATENEWSTORE));
 			item->SetEnabled(!theApp.m_PathRunCmd.IsEmpty());
 			theApp.SetCoreMenuIcon(item, IDI_STORE_Internal);
+
+			AddItem(e.menu, IDS_MENU_MaintainAll, _T(VERB_MAINTAINALL))->SetEnabled(!theApp.m_PathRunCmd.IsEmpty());
 		}
 
 		if (e.children->GetCount()==1)
@@ -541,6 +543,7 @@ void CFolderItem::GetMenuItems(CGetMenuitemsEventArgs& e)
 			AddItem(e.menu, IDS_MENU_MakeHybridStore, _T(VERB_MAKEHYBRIDSTORE))->SetEnabled(f->Attrs.CategoryID==LFStoreModeExternal);
 			AddSeparator(e.menu);
 			AddItem(e.menu, IDS_MENU_ImportFolder, _T(VERB_IMPORTFOLDER))->SetEnabled((!(f->Attrs.Type & LFTypeNotMounted)) && (!theApp.m_PathRunCmd.IsEmpty()));
+			AddItem(e.menu, IDS_MENU_Maintain, _T(VERB_MAINTAIN))->SetEnabled(!theApp.m_PathRunCmd.IsEmpty());
 		}
 
 		if ((!(e.flags & NSEQCF_NoDefault)) && (e.children->GetCount()>=1))
@@ -564,6 +567,7 @@ void CFolderItem::GetMenuItems(CGetMenuitemsEventArgs& e)
 		if (e.children->GetCount()==0)
 		{
 			AddItem(e.menu, IDS_MENU_ImportFolder, _T(VERB_IMPORTFOLDER))->SetEnabled(!theApp.m_PathRunCmd.IsEmpty());
+			AddItem(e.menu, IDS_MENU_Maintain, _T(VERB_MAINTAIN))->SetEnabled(!theApp.m_PathRunCmd.IsEmpty());
 			AddSeparator(e.menu);
 			AddItem(e.menu, IDS_MENU_Properties, _T(VERB_PROPERTIES))->SetEnabled(!theApp.m_PathRunCmd.IsEmpty());
 		}
@@ -598,6 +602,9 @@ BOOL CFolderItem::OnExecuteMenuItem(CExecuteMenuitemsEventArgs& e)
 
 	if (e.menuItem->GetVerb()==_T(VERB_CREATENEWSTORE))
 		return RunPath(e.hWnd, theApp.m_PathRunCmd, _T("NEWSTORE"));
+
+	if (e.menuItem->GetVerb()==_T(VERB_MAINTAINALL))
+		RunPath(NULL, theApp.m_PathRunCmd, _T("MAINTAINALL"));
 
 	if (e.menuItem->GetVerb()==_T(VERB_EXPLORE))
 		return OnExplorer(e);
@@ -661,6 +668,21 @@ BOOL CFolderItem::OnExecuteMenuItem(CExecuteMenuitemsEventArgs& e)
 		return TRUE;
 	}
 
+	if (e.menuItem->GetVerb()==_T(VERB_MAINTAIN))
+	{
+		POSITION pos = e.children->GetHeadPosition();
+		CNSEItem* temp = (CNSEItem*)e.children->GetNext(pos);
+		if (IS(temp, CFolderItem))
+		{
+			CFolderItem* folder = AS(temp, CFolderItem);
+
+			LFErrorBox(LFStoreMaintenance(folder->Attrs.StoreID));
+			return TRUE;
+		}
+
+		return FALSE;
+	}
+
 	return FALSE;
 }
 
@@ -701,24 +723,26 @@ void CFolderItem::GetToolbarButtons(CPtrList& commands)
 
 void CFolderItem::OnMergeFrameMenu(CMergeFrameMenuEventArgs& e)
 {
-	CShellMenuItem* item = e.menu->AddItem(_T("&liquidFOLDERS"));
+	CShellMenuItem* item = e.menu->AddItem(_T("&liquidFOLDERS"), _T(""), _T(""));
 	item->SetHasSubMenu(TRUE);
 
 	CShellMenu* subMenu = item->GetSubMenu();
 
-	AddItem(subMenu, IDS_MENU_About, _T(VERB_ABOUT))->SetEnabled(!theApp.m_PathRunCmd.IsEmpty());
+	AddItem(subMenu, IDS_MENU_MaintainAll, _T(VERB_MAINTAINALL))->SetEnabled(!theApp.m_PathRunCmd.IsEmpty());
 	AddSeparator(subMenu);
 	AddPathItem(subMenu, IDS_MENU_StoreManager, _T(VERB_STOREMANAGER), theApp.m_PathStoreManager, IDI_StoreManager);
 	AddPathItem(subMenu, IDS_MENU_Migrate, _T(VERB_MIGRATE), theApp.m_PathMigrate, IDI_Migrate);
 	AddPathItem(subMenu, IDS_MENU_FileDrop, _T(VERB_FILEDROP), theApp.m_PathFileDrop, IDI_FileDrop);
+	AddSeparator(subMenu);
+	AddItem(subMenu, IDS_MENU_About, _T(VERB_ABOUT))->SetEnabled(!theApp.m_PathRunCmd.IsEmpty());
 }
 
 void CFolderItem::OnExecuteFrameCommand(CExecuteFrameCommandEventArgs& e)
 {
 	if(e.menuItem)
 	{
-		if (e.menuItem->GetVerb()==_T(VERB_ABOUT))
-			RunPath(NULL, theApp.m_PathRunCmd, _T("ABOUTEXTENSION"));
+		if (e.menuItem->GetVerb()==_T(VERB_MAINTAINALL))
+			RunPath(NULL, theApp.m_PathRunCmd, _T("MAINTAINALL"));
 
 		if (e.menuItem->GetVerb()==_T(VERB_STOREMANAGER))
 			RunPath(NULL, theApp.m_PathStoreManager);
@@ -728,6 +752,9 @@ void CFolderItem::OnExecuteFrameCommand(CExecuteFrameCommandEventArgs& e)
 
 		if (e.menuItem->GetVerb()==_T(VERB_FILEDROP))
 			RunPath(NULL, theApp.m_PathFileDrop);
+
+		if (e.menuItem->GetVerb()==_T(VERB_ABOUT))
+			RunPath(NULL, theApp.m_PathRunCmd, _T("ABOUTEXTENSION"));
 	}
 	else
 		switch (e.toolbarButtonIndex)

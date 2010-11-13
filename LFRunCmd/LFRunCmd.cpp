@@ -50,18 +50,20 @@ BOOL CRunCmdApp::InitInstance()
 				OnAppAbout(IDS_EXTENSIONABOUT, IDB_EXTENSIONABOUTICON);
 			if (command==_T("NEWSTORE"))
 				OnStoreCreate();
+			if (command==_T("MAINTAINALL"))
+				OnMaintainAll();
 			if (command==_T("INSTALL"))
 				LFCreateSendTo(true);
 			break;
 		case 3:
 			if (command==_T("NEWSTOREDRIVE"))
-				OnStoreCreateDrive(*__targv[2] & 0xFF);
+				OnStoreCreateDrive(*__wargv[2] & 0xFF);
 			if (command==_T("DELETESTORE"))
-				OnStoreDelete(__targv[2]);
+				OnStoreDelete(__wargv[2]);
 			if (command==_T("IMPORTFOLDER"))
-				OnImportFolder(__targv[2]);
+				OnImportFolder(__wargv[2]);
 			if (command==_T("STOREPROPERTIES"))
-				OnStoreProperties(__targv[2]);
+				OnStoreProperties(__wargv[2]);
 		}
 	}
 
@@ -138,4 +140,15 @@ void CRunCmdApp::OnStoreProperties(CString ID)
 
 	LFStorePropertiesDlg dlg(StoreID, CWnd::GetForegroundWindow());
 	dlg.DoModal();
+}
+
+void CRunCmdApp::OnMaintainAll()
+{
+	LFMaintenanceList* ml = LFStoreMaintenance();
+	LFErrorBox(ml->m_LastError);
+
+	LFStoreMaintenanceDlg dlg(ml, CWnd::GetForegroundWindow());
+	dlg.DoModal();
+
+	LFFreeMaintenanceList(ml);
 }
