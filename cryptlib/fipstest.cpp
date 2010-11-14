@@ -69,7 +69,7 @@ void X917RNG_KnownAnswerTest(
 	StringSource(seed, true, new HexDecoder(new StringSink(decodedSeed)));
 	StringSource(deterministicTimeVector, true, new HexDecoder(new StringSink(decodedDeterministicTimeVector)));
 
-	AutoSeededX917RNG<CIPHER> rng;
+	AutoSeededX917RNG<CIPHER> rng(false, false);
 	rng.Reseed((const byte *)decodedKey.data(), decodedKey.size(), (const byte *)decodedSeed.data(), (const byte *)decodedDeterministicTimeVector.data());
 	KnownAnswerTest(rng, output);
 #else
@@ -154,15 +154,10 @@ void MAC_KnownAnswerTest(const char *key, const char *message, const char *diges
 template <class SCHEME>
 void SignatureKnownAnswerTest(const char *key, const char *message, const char *signature, SCHEME *dummy = NULL)
 {
-#ifdef OS_RNG_AVAILABLE
-	DefaultAutoSeededRNG rng;
-#else
-	RandomNumberGenerator &rng = NullRNG();
-#endif
-
 	typename SCHEME::Signer signer(StringSource(key, true, new HexDecoder).Ref());
 	typename SCHEME::Verifier verifier(signer);
 
+	RandomPool rng;
 	EqualityComparisonFilter comparison;
 
 	StringSource(message, true, new SignerFilter(rng, signer, new ChannelSwitch(comparison, "0")));
@@ -180,11 +175,7 @@ void EncryptionPairwiseConsistencyTest(const PK_Encryptor &encryptor, const PK_D
 {
 	try
 	{
-#ifdef OS_RNG_AVAILABLE
-		DefaultAutoSeededRNG rng;
-#else
-		RandomNumberGenerator &rng = NullRNG();
-#endif
+		RandomPool rng;
 		const char *testMessage ="test message";
 		std::string ciphertext, decrypted;
 
@@ -220,11 +211,7 @@ void SignaturePairwiseConsistencyTest(const PK_Signer &signer, const PK_Verifier
 {
 	try
 	{
-#ifdef OS_RNG_AVAILABLE
-		DefaultAutoSeededRNG rng;
-#else
-		RandomNumberGenerator &rng = NullRNG();
-#endif
+		RandomPool rng;
 
 		StringSource(
 			"test message", 
@@ -307,7 +294,7 @@ bool IntegrityCheckModule(const char *moduleFilename, const byte *expectedModule
 	if (!moduleStream)
 	{
 #ifdef CRYPTOPP_WIN32_AVAILABLE
-		OutputDebugString(L"Crypto++ DLL integrity check failed. Cannot open file for reading.");
+		OutputDebugString("Crypto++ DLL integrity check failed. Cannot open file for reading.");
 #endif
 		return false;
 	}
@@ -401,7 +388,7 @@ bool IntegrityCheckModule(const char *moduleFilename, const byte *expectedModule
 	// hash from disk instead
 	if (!VerifyBufsEqual(expectedModuleMac, actualMac, macSize))
 	{
-		OutputDebugString(L"In memory integrity check failed. This may be caused by debug breakpoints or DLL relocation.\n");
+		OutputDebugString("In memory integrity check failed. This may be caused by debug breakpoints or DLL relocation.\n");
 		moduleStream.clear();
 		moduleStream.seekg(0);
 		verifier.Initialize(MakeParameters(Name::OutputBuffer(), ByteArrayParameter(actualMac, (unsigned int)actualMac.size())));
@@ -420,7 +407,7 @@ bool IntegrityCheckModule(const char *moduleFilename, const byte *expectedModule
 #ifdef CRYPTOPP_WIN32_AVAILABLE
 	std::string hexMac;
 	HexEncoder(new StringSink(hexMac)).PutMessageEnd(actualMac, actualMac.size());
-	OutputDebugString(((L"Crypto++ DLL integrity check failed. Actual MAC is: " + hexMac) + "\n").c_str());
+	OutputDebugString((("Crypto++ DLL integrity check failed. Actual MAC is: " + hexMac) + "\n").c_str());
 #endif
 	return false;
 }
