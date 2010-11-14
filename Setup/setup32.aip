@@ -332,9 +332,9 @@
     <ROW Dialog_="VerifyRepairDlg" Control_="PushButton_Cancel" Event="EndDialog" Argument="Exit" Condition="1" Ordering="1"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiCreateFolderComponent">
-    <ROW Directory_="SHORTCUTDIR" Component_="SHORTCUTDIR"/>
-    <ROW Directory_="Quick_Launch_DIR" Component_="Quick_Launch"/>
     <ROW Directory_="AppDataFolder" Component_="AppDataFolder"/>
+    <ROW Directory_="Quick_Launch_DIR" Component_="Quick_Launch"/>
+    <ROW Directory_="SHORTCUTDIR" Component_="SHORTCUTDIR"/>
     <ROW Directory_="STOREDIR" Component_="STOREDIR"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiCustActComponent">
