@@ -1,4 +1,4 @@
-Backdrop-Einfärbung für das About-Fenster:
+  Backdrop-Einfärbung für das About-Fenster:
 - GIMP "Helligkeit/Kontrast"
   - Helligkeit: -55
 - GIMP "Einfärben"
