@@ -82,7 +82,7 @@
   <COMPONENT cid="caphyon.advinst.msicomp.MsiFeatsComponent">
     <ROW Feature="FileDrop" Title="FileDrop" Description="FileDrop" Display="3" Level="1" Directory_="APPDIR" Attributes="8" Components="FileDrop.exe AI_CustomARPName AI_DisableModify"/>
     <ROW Feature="MigrationWizard" Title="MigrationWizard" Description="Migration Wizard" Display="5" Level="1" Directory_="APPDIR" Attributes="8" Components="Migrate.exe AI_CustomARPName AI_DisableModify"/>
-    <ROW Feature="liquidFOLDERS" Title="liquidFOLDERS" Description="liquidFOLDERS" Display="0" Level="1" Directory_="APPDIR" Attributes="24" Components="LFCommDlg.dll LFCore.dll LFNamespaceExtension.dll StoreManager.exe SHORTCUTDIR AI_CustomARPName AI_DisableModify LFWatchdog.exe Quick_Launch AIShRegAnswer AI_ExePath LFRunCmd.exe STOREDIR AppDataFolder"/>
+    <ROW Feature="liquidFOLDERS" Title="liquidFOLDERS" Description="liquidFOLDERS" Display="0" Level="1" Directory_="APPDIR" Attributes="24" Components="LFCommDlg.dll LFCore.dll LFNamespaceExtension.dll StoreManager.exe SHORTCUTDIR AI_CustomARPName AI_DisableModify LFWatchdog.exe Quick_Launch AIShRegAnswer AI_ExePath LFRunCmd.exe AppDataFolder STOREDIR"/>
     <ATTRIBUTE name="CurrentFeature" value="liquidFOLDERS"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiFilesComponent">
@@ -150,6 +150,7 @@
     <ROW Name="Info.ico" SourcePath="Setup\Info.ico"/>
     <ROW Name="Install.ico" SourcePath="Setup\Install.ico"/>
     <ROW Name="ResourceCleaner.dll" SourcePath="&lt;AI_CUSTACTS&gt;ResourceCleaner.dll"/>
+    <ROW Name="RestartExplorer.exe" SourcePath="Setup\RestartExplorer.exe"/>
     <ROW Name="Shortcuts.ico" SourcePath="Setup\Shortcuts.ico"/>
     <ROW Name="Tools.ico" SourcePath="Setup\Tools.ico"/>
     <ROW Name="Wait.ico" SourcePath="Setup\Wait.ico"/>
@@ -342,6 +343,7 @@
     <ROW Action="AI_AiRemoveFilesDeferred" Type="11265" Source="ResourceCleaner.dll" Target="OnAiRemoveFiles" WithoutSeq="true"/>
     <ROW Action="AI_AiRemoveFilesImmediate" Type="1" Source="ResourceCleaner.dll" Target="OnAiRemoveFilesImmediate"/>
     <ROW Action="AI_DATA_SETTER" Type="51" Source="AI_DEL_EMPTY_SHORTCUTDIR" Target="[SHORTCUTDIR]"/>
+    <ROW Action="AI_DATA_SETTER_1" Type="307" Source="CustomActionData" Target="LFWatchdog.exe"/>
     <ROW Action="AI_DELETE_SHORTCUTS" Type="1" Source="aicustact.dll" Target="DeleteShortcuts"/>
     <ROW Action="AI_DEL_EMPTY_SHORTCUTDIR" Type="3073" Source="aicustact.dll" Target="DeleteEmptyDirectory"/>
     <ROW Action="AI_DOWNGRADE" Type="19" Target="4010"/>
@@ -360,9 +362,11 @@
     <ROW Action="AI_STORE_LOCATION" Type="51" Source="ARPINSTALLLOCATION" Target="[APPDIR]"/>
     <ROW Action="LFRunCmd.exe" Type="1682" Source="LFRunCmd.exe" Target="INSTALL"/>
     <ROW Action="LFWatchdog.exe" Type="1746" Source="LFWatchdog.exe"/>
+    <ROW Action="RestartExplorer.exe" Type="322" Source="RestartExplorer.exe"/>
     <ROW Action="SET_APPDIR" Type="307" Source="APPDIR" Target="[ProgramFilesFolder][Manufacturer]\[ProductName]" MultiBuildTarget="DefaultBuild:[ProgramFiles64Folder][ProductName]"/>
     <ROW Action="SET_SHORTCUTDIR" Type="307" Source="SHORTCUTDIR" Target="[ProgramMenuFolder][ProductName]"/>
     <ROW Action="SET_TARGETDIR_TO_APPDIR" Type="51" Source="TARGETDIR" Target="[APPDIR]"/>
+    <ROW Action="StopProcess" Type="321" Source="aicustact.dll" Target="StopProcess"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiDialogComponent">
     <ROW Dialog="ExitDialog" HCentering="50" VCentering="50" Width="450" Height="360" Attributes="3" Title="[ProductName] [Setup]" Control_First="Bitmap" Control_Default="LaunchProdCheckBox" Control_Cancel="Finish" TitleLocId="Dialog.ExitDialog" MsiKey="ExitDialog"/>
@@ -376,8 +380,8 @@
     <ROW Action="AI_RESTORE_LOCATION" Condition="APPDIR=&quot;&quot;" Sequence="749"/>
     <ROW Action="AI_STORE_LOCATION" Condition="Not Installed" Sequence="1501"/>
     <ROW Action="AI_PREPARE_UPGRADE" Condition="AI_UPGRADE=&quot;No&quot; AND (Not Installed)" Sequence="1399"/>
-    <ROW Action="AI_ResolveKnownFolders" Sequence="52"/>
-    <ROW Action="AI_GetArpIconPath" Sequence="51"/>
+    <ROW Action="AI_ResolveKnownFolders" Sequence="55"/>
+    <ROW Action="AI_GetArpIconPath" Sequence="54"/>
     <ROW Action="AI_DeleteCadLzma" Condition="SETUPEXEDIR=&quot;&quot; AND Installed AND (REMOVE&lt;&gt;&quot;ALL&quot;) AND (NOT PATCH)" Sequence="199" Builds="DefaultBuild"/>
     <ROW Action="AI_DeleteRCadLzma" Condition="SETUPEXEDIR=&quot;&quot; AND Installed AND (REMOVE&lt;&gt;&quot;ALL&quot;) AND (NOT PATCH)" Sequence="198" Builds="DefaultBuild"/>
     <ROW Action="AI_ExtractCadLzma" Condition="SETUPEXEDIR=&quot;&quot; AND Installed AND (REMOVE&lt;&gt;&quot;ALL&quot;) AND (NOT PATCH)" Sequence="197" Builds="DefaultBuild"/>
@@ -391,10 +395,16 @@
     <ROW Action="AI_DATA_SETTER" Condition="NOT (REMOVE=&quot;ALL&quot;)" Sequence="6401"/>
     <ROW Action="LFRunCmd.exe" Sequence="5970"/>
     <ROW Action="LFWatchdog.exe" Sequence="5969"/>
+    <ROW Action="RestartExplorer.exe" Condition="(REMOVE=&quot;ALL&quot;)" Sequence="51"/>
+    <ROW Action="StopProcess" Condition="(REMOVE=&quot;ALL&quot;)" Sequence="53" AdditionalSeq="AI_DATA_SETTER_1"/>
+    <ROW Action="AI_DATA_SETTER_1" Condition="(REMOVE=&quot;ALL&quot;)" Sequence="52"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiInstallUISequenceComponent">
     <ROW Action="AI_RESTORE_LOCATION" Condition="APPDIR=&quot;&quot;" Sequence="749"/>
-    <ROW Action="AI_ResolveKnownFolders" Sequence="51"/>
+    <ROW Action="AI_ResolveKnownFolders" Sequence="54"/>
+    <ROW Action="RestartExplorer.exe" Condition="(REMOVE=&quot;ALL&quot;)" Sequence="51"/>
+    <ROW Action="StopProcess" Condition="(REMOVE=&quot;ALL&quot;)" Sequence="53" AdditionalSeq="AI_DATA_SETTER_1"/>
+    <ROW Action="AI_DATA_SETTER_1" Condition="(REMOVE=&quot;ALL&quot;)" Sequence="52"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiLaunchConditionsComponent">
     <ROW Condition="Version9X OR VersionNT64" Description="[ProductName] kann nicht auf [WindowsFamilyNT] installiert werden." DescriptionLocId="AI.LaunchCondition.NoNT" IsPredefined="true" Builds="DefaultBuild"/>
