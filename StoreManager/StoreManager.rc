@@ -303,6 +303,289 @@ BEGIN
 END
 #endif    // APSTUDIO_INVOKED
 
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE 
+BEGIN
+    IDR_MAINFRAME           "StoreManager"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_APP_EXIT             "Beendet den StoreManager.\nBeenden"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_APP_NEWVIEW          "Öffnet ein neues StoreManager-Fenster.\nNeues Fenster"
+    ID_APP_NEWCLIPBOARD     "Öffnet ein Ablage-Fenster, in dem Sie Dateien kurzzeitig zur weiteren Verwendung ablegen können.\nNeue Ablage"
+    ID_APP_CLOSE            "Schließt dieses Fenster.\nSchließen"
+    ID_APP_CLOSEOTHERS      "Schließt alle StoreManager-Fenster außer diesem.\nAlle anderen schließen"
+    ID_APP_VIEWOPTIONS      "Öffnet ein Fenster mit weiteren Ansichts-Optionen.\nAnzeigen als"
+    ID_APP_SORTOPTIONS      "Öffnet ein Fenster mit weiteren Sortier-Optionen.\nAnordnen nach"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_VIEWGROUP1          "Einfache Ansichten"
+    IDS_VIEWGROUP2          "Fortgeschirrtene Ansichten"
+    IDS_CONTEXTMENU_SORTOPTIONS "&Anordnen nach..."
+    IDS_CONTEXTMENU_AUTODIRS "In &Unterordner gruppieren"
+    IDS_CONTEXTMENU_VIEWOPTIONS "An&zeigen als..."
+    IDS_CONTEXTMENU_STORE_NEW "&Neuen Store anlegen..."
+    IDS_CONTEXTMENU_TRASH_RESTOREALL "&Alle wiederherstellen"
+    IDS_CONTEXTMENU_UNKNOWN_REGISTER "Dateiformate re&gistrieren..."
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_ITEMS_SINGULAR      "%d Objekt"
+    IDS_ITEMS_PLURAL        "%d Objekte"
+    IDS_SELECTED_SINGULAR   "%d Objekt ausgewählt, %s"
+    IDS_SELECTED_PLURAL     "%d Objekte ausgewählt, %s"
+    IDS_NOFILES             "Keine Dateien"
+    IDS_FILES_SINGULAR      "%d Datei, %s"
+    IDS_FILES_PLURAL        "%d Dateien, %s"
+    IDS_REGFILEFILTER       "Registrierungsdateien"
+    IDS_TXTFILEFILTER       "Textdateien"
+    IDS_ATTRIBUTENOTSORTABLE "Nach diese Eigenschaft kann nicht sortiert werden."
+    IDS_NOITEMSSELECTED     "Keine Objekte ausgewählt"
+    IDS_MULTIPLETYPESSELECTED "Unterschiedliche Typen, %d Objekte"
+    IDS_MOREATTRIBUTES      "&Weitere Eigenschaften..."
+    IDS_TYPE_DRIVE_SINGULAR "%d Wechseldatenträger"
+    IDS_TYPE_DRIVE_PLURAL   "%d Wechseldatenträger"
+    IDS_TYPE_STORE_SINGULAR "%d Store"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_TYPE_STORE_PLURAL   "%d Stores"
+    IDS_TYPE_FILE_SINGULAR  "%d Datei"
+    IDS_TYPE_FILE_PLURAL    "%d Dateien"
+    IDS_TYPE_VIRTUAL_SINGULAR "%d virtueller Ordner"
+    IDS_TYPE_VIRTUAL_PLURAL "%d virtuelle Ordner"
+    IDS_REQUIRESMAINTENANCE "Dieser Store muss gewartet werden."
+    IDS_NOSTORES            "Zur Zeit sind keine Stores verfügbar."
+    IDS_YOULOOKAT           "Sie schauen auf %s"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_VATTR_DRIVELETTER   "Laufwerksbuchstaben"
+    IDS_VATTR_MAINTENANCETIME "Letzte Wartungsarbeiten"
+    IDS_VATTR_LASTSEEN      "Zuletzt eingebunden"
+    IDS_VATTR_GUID          "GUID"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_VATTR_PATH_DAT      "Datenpfad"
+    IDS_VATTR_PATH_IDX_MAIN "Hauptindex"
+    IDS_VATTR_PATH_IDX_AUX  "Hilfsindex"
+    IDS_VATTR_INDEXVERSION  "Index-Version"
+    IDS_VATTR_IATA_NAME     "IATA Flughafen-Name"
+    IDS_VATTR_IATA_COUNTRY  "Land/Gebiet"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_APP_VIEW_LARGEICONS  "Große Symbole"
+    ID_APP_VIEW_SMALLICONS  "Kleine Symbole"
+    ID_APP_VIEW_LIST        "Liste"
+    ID_APP_VIEW_DETAILS     "Details"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_APP_VIEW_TILES       "Kacheln"
+    ID_APP_VIEW_SEARCHRESULT 
+                            "Suchergebnis"
+    ID_APP_VIEW_PREVIEW     "Vorschau"
+    ID_APP_VIEW_CALENDAR_YEAR "Kalender"
+    ID_APP_VIEW_CALENDAR_DAY "Kalender"
+    ID_APP_VIEW_GLOBE       "Globus"
+    ID_APP_VIEW_TAGCLOUD    "Wortwolke"
+    ID_APP_VIEW_TIMELINE    "Zeitstrahl"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_VIEW_SELECTALL       "Alle auswählen (Ctrl+A)"
+    ID_VIEW_SELECTNONE      "Nichts auswhälen (Ctrl+N)"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_VIEW_AUTOSIZECOLUMNS "Automatische Spalten&breite"
+    ID_VIEW_CHOOSEDETAILS   "Details aus&wählen..."
+    ID_VIEW_AUTODIRS        "Gruppieren"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_SORT_FILENAME        "Name"
+    ID_SORT_COMMENT         "Kommentar"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_SORT_CREATIONTIME    "Erstellt"
+    ID_SORT_FILETIME        "Verändert"
+    ID_SORT_TAGS            "Schlagworte"
+    ID_SORT_RATING          "Bewertung"
+    ID_SORT_LOCATIONNAME    "Ortsname"
+    ID_SORT_LOCATIONIATA    "IATA-Code"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_SORT_LOCATIONGPS     "GPS-Koordinaten"
+    ID_SORT_WIDTH           "Breite"
+    ID_SORT_HEIGHT          "Höhe"
+    ID_SORT_DIMENSION       "Abmessungen"
+    ID_SORT_ASPECTRATIO     "Seitenverhältnis"
+    ID_SORT_ROLL            "Rolle"
+    ID_SORT_DURATION        "Dauer"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_SORT_ARTIST          "Autor/Künstler"
+    ID_SORT_TITLE           "Titel"
+    ID_SORT_LANGUAGE        "Sprache"
+    ID_SORT_RECORDINGTIME   "Aufgenommen am"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_NAV_FIRST            "Returns to the first location.\nFirst"
+    ID_NAV_BACKONE          "Returns to the previous location.\nBack (Backspace)"
+    ID_NAV_FORWARDONE       "Returns to the next location.\nForward"
+    ID_NAV_LAST             "Returns to the last location.\nLast"
+    ID_NAV_RELOAD           "Reloads the current view.\nReload"
+    ID_NAV_RELOAD_SHOWALL   "Empty domains are not included.\nShow all"
+    ID_NAV_SHOWHISTORY      "Shows the history pane.\nHistory pane"
+    ID_NAV_STORES           "Displays all stores.\nStores"
+    ID_NAV_HOME             "Opens the default store.\nDefault store"
+    ID_NAV_GOTOHISTORY      "Returns to the selected location.\nGoto history"
+    ID_NAV_CLEARHISTORY     "Removes all locations from the history except the current one.\nClear history"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_INSPECTOR_TOGGLEICON "Shows or hides the icon area.\nIcon area"
+    ID_INSPECTOR_TREEVIEW   "Shows all properties in a tree.\nTree view"
+    ID_INSPECTOR_ALPHABETIC "Shows all properties sorted alphabetically.\nAlphabetic view"
+    ID_INSPECTOR_EXPANDALL  "Expands all property groups.\nExpand all"
+    ID_INSPECTOR_EXPORT     "Saves the properties as a text file.\nExport properties"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_FILTER_CLEAR         "Removes all conditions from the filter.\nClear filter"
+    ID_FILTER_EDITCONDITION "Edit the selected condition.\nEdit condition"
+    ID_FILTER_REMOVECONDITION 
+                            "Removes the selected conditions from the filter.\nRemove conditions"
+    ID_FILTER_SAVE          "Saves the filter.\nSave filter"
+    ID_FILTER_SAVEAS        "Saves the filter and prompts for a file name.\nSave filter as"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_GLOBE_ZOOMIN         "Zooms into the globe.\nZoom in"
+    ID_GLOBE_ZOOMOUT        "Zooms out of the globe.\nZoom out"
+    ID_GLOBE_SCALETOFIT     "Zooms the globe to touch the sides of the containing window.\nFit to window"
+    ID_GLOBE_SAVECAMERA     "Saves the current viewpoint to the view settings of the active context.\nSave viewpoint"
+    ID_GLOBE_JUMPTOLOCATION "Centers the globe on a specific location.\nJump to location"
+    ID_GLOBE_GOOGLEEARTH    "Opens the selected places in Google Earth. Google Earth must be installed on this computer.\nOpen in Google Earth"
+    ID_GLOBE_TEXTURESIZE    "Selects the size of the 3D texture used for the earth's 3D model.\nTexture size"
+    ID_GLOBE_HQMODEL        "Selects a 3D model of the earth with greater detail, but also greater hardware requirements.\nHQ Model"
+    ID_GLOBE_LIGHTING       "Enables or disables lighting. Lighting makes the 3D model of the earth more realistic, but is also more demanding on your graphics card.\nLighting"
+    ID_GLOBE_SHOWBUBBLES    "Shows or hides the details of each folder.\nShow details"
+    ID_GLOBE_SHOWAIRPORTNAMES 
+                            "Shows or hides the airport name of each folder.\nShow airport names"
+    ID_GLOBE_SHOWGPS        "Shows or hides the GPS location of each folder.\nShow GPS locations"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_GLOBE_SHOWHINTS      "Shows or hides the hint text of each folder.\nShow hints"
+    ID_GLOBE_SHOWSPOTS      "Shows or hides the location spot of each folder.\nShow spots"
+    ID_GLOBE_SHOWVIEWPOINT  "Shows or hides the viewpoint coordinates in the globe's status bar.\nShow viewpoint"
+    ID_TAGCLOUD_SORTVALUE   "Sort tags by value.\nSort by value"
+    ID_TAGCLOUD_SORTCOUNT   "Sort tags by count.\nSort by count"
+    ID_TAGCLOUD_OMITRARE    "Removes rare tags from the search result.\nOmit rare tags"
+    ID_TAGCLOUD_USESIZE     "Shows tags in different font sizes depending on their count.\nUse font size"
+    ID_TAGCLOUD_USECOLORS   "Shows tags in different colors depending on their count.\nUse color"
+    ID_TAGCLOUD_USEOPACITY  "Shows tags in different opacities depending on their count.\nUse opacity"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_CLIP_COPY            "Copies all selected files to the Windows clipboard.\nCopy"
+    ID_CLIP_PASTE           "Imports all files from the Windows clipboard to the current store.\nPaste"
+    ID_CLIP_REMOVE          "Removes the selected files from this clipboard window.\nRemove from clipboard"
+    ID_CLIP_REMEMBERLAST    "Adds the selected files to the last clipboard window.\nLast clipboard"
+    ID_CLIP_REMEMBERNEW     "Adds the selected files to a new clipboard window.\nNew clipboard"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_ITEMS_SHOWINSPECTOR  "Inspektor"
+    ID_ITEMS_OPEN           "Öffnen (Eingabetaste)"
+    ID_ITEMS_DELETE         "Löschen (Entf)"
+    ID_ITEMS_RENAME         "Umbenennen (F2)"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_TRASH_EMPTY          "Papierkorb leeren"
+    ID_TRASH_RESTORESELECTED "Wiederherstellen"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_TRASH_RESTOREALL     "Alle wiederherstellen"
+    ID_UNKNOWN_REGISTER     "Registers unknown file formats to make them appear in a regular domain.\nRegister formats"
+    ID_UNKNOWN_SENDDB       "Sends a list of user-registered file formats to customer support. This allows us to include them in future releases of our software.\nSend registred formats to customer support"
+    ID_UNKNOWN_EDITDB       "Allows you to edit all user-registered file formats.\nEdit registered formats"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_STORE_NEW            "Neuen Store anlegen"
+    ID_STORE_NEWINTERNAL    "Internen Store"
+    ID_STORE_NEWDRIVE       "Externen/Hybrid-Store"
+    ID_STORE_DELETE         "Löschen"
+    ID_STORE_RENAME         "Umbenennen (F2)"
+    ID_STORE_MAKEDEFAULT    "Als Standard-Store setzen"
+    ID_STORE_MAKEHYBRID     "In Hybrid-Store konvertieren"
+    ID_STORE_IMPORTFOLDER   "Ordner importieren"
+    ID_STORE_PROPERTIES     "Eigenschaften"
+    ID_STORE_MAINTENANCE    "Wartungsarbeiten durchführen"
+    ID_STORE_BACKUP         "Einstellungen sichern"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_SUBFOLDERS_MANDATORY "Unterordner sind erforderlich."
+    IDS_SUBFOLDERS_NOTAVAIL "Unterordner sind hier nicht verfügbar."
+    IDS_GROUPBOX_SORT       "Nach dieser Eigenschaft sortieren"
+    IDS_GROUPBOX_GROUP      "Nach dieser Eigenschaft gruppieren"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_PANE_CAPTIONBAR      "Titelleiste"
+    ID_PANE_FILTERWND       "Filter"
+    ID_PANE_INSPECTORWND    "Inspektor"
+    ID_PANE_HISTORYWND      "Verlauf"
+END
+
 #endif    // Deutsch (neutral) resources
 /////////////////////////////////////////////////////////////////////////////
 
@@ -697,8 +980,8 @@ END
 STRINGTABLE 
 BEGIN
     ID_SORT_LOCATIONGPS     "Sorts the search result by GPS location.\nSort by GPS location"
-    ID_SORT_HEIGHT          "Sorts the search result by height.\nSort by height"
     ID_SORT_WIDTH           "Sorts the search result by width.\nSort by width"
+    ID_SORT_HEIGHT          "Sorts the search result by height.\nSort by height"
     ID_SORT_DIMENSION       "Sorts the search result by dimension.\nSort by dimension"
     ID_SORT_ASPECTRATIO     "Sorts the search result by aspect ratio.\nSort by aspect ratio"
     ID_SORT_ROLL            "Sorts the search result by roll name.\nSort by roll"
