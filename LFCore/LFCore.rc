@@ -152,7 +152,7 @@ STRINGTABLE
 BEGIN
     IDS_LFCategoryBibliographic "Bibliographisch"
     IDS_LFCategoryWorkflow  "Vorgang"
-    IDS_LFCategoryInternal  "Interer Gebrauch"
+    IDS_LFCategoryInternal  "Interner Gebrauch"
 END
 
 STRINGTABLE 
