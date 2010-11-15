@@ -9,14 +9,13 @@
 
 
 // CRunCmdApp:
-// Siehe RunCmd.cpp für die Implementierung dieser Klasse
+// Siehe LFRunCmd.cpp für die Implementierung dieser Klasse
 //
 
 class CRunCmdApp : public LFApplication
 {
 public:
 	CRunCmdApp();
-	virtual ~CRunCmdApp();
 
 	virtual BOOL InitInstance();
 
@@ -27,6 +26,7 @@ protected:
 	void OnStoreDelete(CString ID);
 	void OnImportFolder(CString ID);
 	void OnStoreProperties(CString ID);
+	void OnMaintain(CString ID);
 	void OnMaintainAll();
 };
 

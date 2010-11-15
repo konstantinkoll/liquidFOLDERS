@@ -17,10 +17,6 @@ CRunCmdApp::CRunCmdApp()
 {
 }
 
-CRunCmdApp::~CRunCmdApp()
-{
-}
-
 
 // Das einzige CRunCmdApp-Objekt
 
@@ -62,6 +58,8 @@ BOOL CRunCmdApp::InitInstance()
 				OnStoreDelete(__wargv[2]);
 			if (command==_T("IMPORTFOLDER"))
 				OnImportFolder(__wargv[2]);
+			if (command==_T("MAINTAIN"))
+				OnMaintain(__wargv[2]);
 			if (command==_T("STOREPROPERTIES"))
 				OnStoreProperties(__wargv[2]);
 		}
@@ -140,6 +138,20 @@ void CRunCmdApp::OnStoreProperties(CString ID)
 
 	LFStorePropertiesDlg dlg(StoreID, CWnd::GetForegroundWindow());
 	dlg.DoModal();
+}
+
+void CRunCmdApp::OnMaintain(CString ID)
+{
+	CHAR StoreID[LFKeySize];
+	wcstombs_s(NULL, StoreID, ID, LFKeySize);
+
+	LFMaintenanceList* ml = LFStoreMaintenance(StoreID);
+	LFErrorBox(ml->m_LastError);
+
+	LFStoreMaintenanceDlg dlg(ml, CWnd::GetForegroundWindow());
+	dlg.DoModal();
+
+	LFFreeMaintenanceList(ml);
 }
 
 void CRunCmdApp::OnMaintainAll()

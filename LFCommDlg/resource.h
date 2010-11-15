@@ -90,10 +90,12 @@
 #define IDM_STORES                      21204
 #define IDM_STORE_MAKEDEFAULT           21205
 #define IDM_STORE_MAKEHYBRID            21206
-#define IDM_STORE_RENAME                21207
-#define IDM_STORE_DELETE                21208
-#define IDM_STORE_PROPERTIES            21209
-#define IDM_CREATENEWSTORE              21210
+#define IDM_STORE_MAINTAIN              21207
+#define IDM_STORE_RENAME                21208
+#define IDM_STORE_DELETE                21209
+#define IDM_STORE_PROPERTIES            21210
+#define IDM_CREATENEWSTORE              21211
+#define IDM_MAINTAINALL                 21212
 #define IDD_STORENEW                    21300
 #define IDC_INTERNALSTORE               21301
 #define IDC_HYBRIDSTORE                 21302

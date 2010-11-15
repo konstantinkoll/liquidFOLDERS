@@ -5,6 +5,7 @@
 #include "StdAfx.h"
 #include "LFChooseStoreDlg.h"
 #include "LFStoreNewDlg.h"
+#include "LFStoreMaintenanceDlg.h"
 #include "LFStorePropertiesDlg.h"
 #include "Resource.h"
 
@@ -86,11 +87,13 @@ BEGIN_MESSAGE_MAP(LFChooseStoreDlg, LFDialog)
 	ON_NOTIFY(LVN_ITEMCHANGED, IDC_STORELIST, OnItemChanged)
 	ON_NOTIFY(LVN_ENDLABELEDIT, IDC_STORELIST, OnEndLabelEdit)
 	ON_BN_CLICKED(IDC_NEWSTORE, OnNewStore)
+	ON_COMMAND(IDM_MAINTAINALL, OnMaintainAll)
 	ON_REGISTERED_MESSAGE(MessageIDs->StoresChanged, OnUpdateStores)
 	ON_REGISTERED_MESSAGE(MessageIDs->StoreAttributesChanged, OnUpdateStores)
 	ON_REGISTERED_MESSAGE(MessageIDs->DefaultStoreChanged, OnUpdateStores)
 	ON_COMMAND(IDM_STORE_MAKEDEFAULT, OnMakeDefault)
 	ON_COMMAND(IDM_STORE_MAKEHYBRID, OnMakeHybrid)
+	ON_COMMAND(IDM_STORE_MAINTAIN, OnMaintain)
 	ON_COMMAND(IDM_STORE_RENAME, OnRename)
 	ON_COMMAND(IDM_STORE_DELETE, OnDelete)
 	ON_COMMAND(IDM_STORE_PROPERTIES, OnProperties)
@@ -246,6 +249,17 @@ void LFChooseStoreDlg::OnNewStore()
 	LFFreeStoreDescriptor(s);
 }
 
+void LFChooseStoreDlg::OnMaintainAll()
+{
+	LFMaintenanceList* ml = LFStoreMaintenance();
+	LFErrorBox(ml->m_LastError);
+
+	LFStoreMaintenanceDlg dlg(ml, this);
+	dlg.DoModal();
+
+	LFFreeMaintenanceList(ml);
+}
+
 void LFChooseStoreDlg::OnMakeDefault()
 {
 	INT idx = GetSelectedStore();
@@ -258,6 +272,21 @@ void LFChooseStoreDlg::OnMakeHybrid()
 	INT idx = GetSelectedStore();
 	if (idx!=-1)
 		LFErrorBox(LFMakeHybridStore(p_Result->m_Items[idx]->StoreID, NULL), m_hWnd);
+}
+
+void LFChooseStoreDlg::OnMaintain()
+{
+	INT idx = GetSelectedStore();
+	if (idx!=-1)
+	{
+		LFMaintenanceList* ml = LFStoreMaintenance(p_Result->m_Items[idx]->StoreID);
+		LFErrorBox(ml->m_LastError);
+
+		LFStoreMaintenanceDlg dlg(ml, this);
+		dlg.DoModal();
+
+		LFFreeMaintenanceList(ml);
+	}
 }
 
 void LFChooseStoreDlg::OnRename()

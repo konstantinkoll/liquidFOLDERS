@@ -158,6 +158,8 @@ BEGIN
         MENUITEM "Als &Standard-Store setzen",  IDM_STORE_MAKEDEFAULT
         MENUITEM "Zu &Hybrid-Store machen",     IDM_STORE_MAKEHYBRID
         MENUITEM SEPARATOR
+        MENUITEM "&Wartungsarbeiten durchführen", IDM_STORE_MAINTAIN
+        MENUITEM SEPARATOR
         MENUITEM "&Löschen",                    IDM_STORE_DELETE
         MENUITEM "&Umbenennen",                 IDM_STORE_RENAME
         MENUITEM SEPARATOR
@@ -170,6 +172,7 @@ BEGIN
     POPUP "POPUP"
     BEGIN
         MENUITEM "&Neuen Store anlegen...",     IDC_NEWSTORE
+        MENUITEM "&Wartungsarbeiten durchführen", IDM_MAINTAINALL
     END
 END
 
@@ -731,6 +734,8 @@ BEGIN
         MENUITEM "Make default &store",         IDM_STORE_MAKEDEFAULT
         MENUITEM "Make &hybrid store",          IDM_STORE_MAKEHYBRID
         MENUITEM SEPARATOR
+        MENUITEM "Run &maintenance",            IDM_STORE_MAINTAIN
+        MENUITEM SEPARATOR
         MENUITEM "&Delete",                     IDM_STORE_DELETE
         MENUITEM "&Rename",                     IDM_STORE_RENAME
         MENUITEM SEPARATOR
@@ -743,6 +748,7 @@ BEGIN
     POPUP "POPUP"
     BEGIN
         MENUITEM "Create &new store...",        IDC_NEWSTORE
+        MENUITEM "Run &maintenance",            IDM_MAINTAINALL
     END
 END
 
@@ -1294,6 +1300,8 @@ BEGIN
         MENUITEM "Establecer al &store predeterminado", IDM_STORE_MAKEDEFAULT
         MENUITEM "Convertir al store &híbrido", IDM_STORE_MAKEHYBRID
         MENUITEM SEPARATOR
+        MENUITEM "Ejecutar &mantenimiento",     IDM_STORE_MAINTAIN
+        MENUITEM SEPARATOR
         MENUITEM "&Eliminar",                   IDM_STORE_DELETE
         MENUITEM "&Renombrar",                  IDM_STORE_RENAME
         MENUITEM SEPARATOR
@@ -1306,6 +1314,7 @@ BEGIN
     POPUP "POPUP"
     BEGIN
         MENUITEM "Crear &nuevo store...",       IDC_NEWSTORE
+        MENUITEM "Ejecutar &mantenimiento",     IDM_MAINTAINALL
     END
 END
 
@@ -1866,6 +1875,8 @@ BEGIN
         MENUITEM "Faites store &standard",      IDM_STORE_MAKEDEFAULT
         MENUITEM "Faites store &hybride",       IDM_STORE_MAKEHYBRID
         MENUITEM SEPARATOR
+        MENUITEM "Exécuter des &travails d'entretien", IDM_STORE_MAINTAIN
+        MENUITEM SEPARATOR
         MENUITEM "&Effacer",                    IDM_STORE_DELETE
         MENUITEM "&Renommer",                   IDM_STORE_RENAME
         MENUITEM SEPARATOR
@@ -1878,6 +1889,7 @@ BEGIN
     POPUP "POPUP"
     BEGIN
         MENUITEM "Créez un store &nouveau...",  IDC_NEWSTORE
+        MENUITEM "Exécuter des &travails d'entretien", IDM_MAINTAINALL
     END
 END
 

@@ -45,8 +45,10 @@ protected:
 	afx_msg void OnItemChanged(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnEndLabelEdit(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnNewStore();
+	afx_msg void OnMaintainAll();
 	afx_msg void OnMakeDefault();
 	afx_msg void OnMakeHybrid();
+	afx_msg void OnMaintain();
 	afx_msg void OnRename();
 	afx_msg void OnDelete();
 	afx_msg void OnProperties();

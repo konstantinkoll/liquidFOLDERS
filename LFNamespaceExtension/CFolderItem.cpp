@@ -600,6 +600,9 @@ BOOL CFolderItem::OnExecuteMenuItem(CExecuteMenuitemsEventArgs& e)
 	if (e.menuItem->GetVerb()==_T(VERB_IMPORTFOLDER))
 		return RunStoreCommand(e, theApp.m_PathRunCmd, _T("IMPORTFOLDER "));
 
+	if (e.menuItem->GetVerb()==_T(VERB_MAINTAIN))
+		return RunStoreCommand(e, theApp.m_PathRunCmd, _T("MAINTAIN "));
+
 	if (e.menuItem->GetVerb()==_T(VERB_CREATENEWSTORE))
 		return RunPath(e.hWnd, theApp.m_PathRunCmd, _T("NEWSTORE"));
 
@@ -666,21 +669,6 @@ BOOL CFolderItem::OnExecuteMenuItem(CExecuteMenuitemsEventArgs& e)
 		}
 
 		return TRUE;
-	}
-
-	if (e.menuItem->GetVerb()==_T(VERB_MAINTAIN))
-	{
-		POSITION pos = e.children->GetHeadPosition();
-		CNSEItem* temp = (CNSEItem*)e.children->GetNext(pos);
-		if (IS(temp, CFolderItem))
-		{
-			CFolderItem* folder = AS(temp, CFolderItem);
-
-			LFErrorBox(LFStoreMaintenance(folder->Attrs.StoreID));
-			return TRUE;
-		}
-
-		return FALSE;
 	}
 
 	return FALSE;

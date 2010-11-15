@@ -873,29 +873,35 @@ unsigned int RunMaintenance(LFStoreDescriptor* s, bool scheduled)
 	return LFOk;
 }
 
-LFCore_API unsigned int LFStoreMaintenance(char* key)
+LFCore_API LFMaintenanceList* LFStoreMaintenance(char* key)
 {
-	if (!key)
-		return LFIllegalKey;
-	if (key[0]=='\0')
-		return LFIllegalKey;
+	LFMaintenanceList* ml = LFAllocMaintenanceList();
 
 	if (!GetMutex(Mutex_Stores))
-		return LFMutexError;
+	{
+		ml->m_LastError = LFMutexError;
+		return ml;
+	}
 
 	HANDLE StoreLock = NULL;
 	LFStoreDescriptor* slot = FindStore(key, &StoreLock);
 	ReleaseMutex(Mutex_Stores);
 
 	if (!slot)
-		return LFIllegalKey;
+	{
+		ml->m_LastError = LFIllegalKey;
+		return ml;
+	}
 	if (!StoreLock)
-		return LFMutexError;
+	{
+		ml->m_LastError = LFMutexError;
+		return ml;
+	}
 
-	unsigned int res = RunMaintenance(slot, true);
+	ml->AddStore(RunMaintenance(slot, true), slot->StoreName, key, slot->StoreMode==LFStoreModeInternal ? IDI_STORE_Internal : slot->StoreMode==LFStoreModeRemote ? IDI_STORE_Server : IDI_STORE_Bag);
 	ReleaseMutexForStore(StoreLock);
 
-	return res;
+	return ml;
 }
 
 LFCore_API LFMaintenanceList* LFStoreMaintenance()
@@ -931,7 +937,7 @@ LFCore_API LFMaintenanceList* LFStoreMaintenance()
 			if ((!slot) || (!StoreLock))
 				continue;
 
-			ml->AddStore(LFStoreMaintenance(ptr), slot->StoreName, ptr, slot->StoreMode==LFStoreModeInternal ? IDI_STORE_Internal : slot->StoreMode==LFStoreModeRemote ? IDI_STORE_Server : IDI_STORE_Bag);
+			ml->AddStore(RunMaintenance(slot, true), slot->StoreName, ptr, slot->StoreMode==LFStoreModeInternal ? IDI_STORE_Internal : slot->StoreMode==LFStoreModeRemote ? IDI_STORE_Server : IDI_STORE_Bag);
 			ReleaseMutexForStore(StoreLock);
 
 			ptr += LFKeySize;
