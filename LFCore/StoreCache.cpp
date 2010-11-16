@@ -33,7 +33,6 @@ extern HMODULE LFCoreModuleHandle;
 extern LFMessageIDs LFMessages;
 extern unsigned int DriveTypes[26];
 
-#define AppPath L"Stores\\"
 
 bool IsStoreMounted(LFStoreDescriptor* s)
 {
@@ -60,7 +59,8 @@ void AppendGUID(LFStoreDescriptor* s, wchar_t* p)
 
 void GetAutoPath(LFStoreDescriptor* s, wchar_t* p)
 {
-	SHGetFolderPathAndSubDir(NULL, CSIDL_APPDATA | CSIDL_FLAG_CREATE, 0, SHGFP_TYPE_CURRENT, AppPath, p);
+	SHGetFolderPathAndSubDir(NULL, CSIDL_APPDATA | CSIDL_FLAG_CREATE, 0, SHGFP_TYPE_CURRENT, L"Stores", p);
+	wcscat_s(p, MAX_PATH, L"\\");
 	AppendGUID(s, p);
 }
 
@@ -442,10 +442,6 @@ void InitStoreCache()
 				RegQueryValueExA(k, "DefaultStore", NULL, &type, (BYTE*)DefaultStore, &sz);
 				RegCloseKey(k);
 			}
-
-			// Anwendungsordner anlegen
-			wchar_t tmpStr[MAX_PATH];
-			SHGetFolderPathAndSubDir(NULL, CSIDL_APPDATA | CSIDL_FLAG_CREATE, 0, SHGFP_TYPE_CURRENT, AppPath, tmpStr);
 
 			// Stores aus der Registry
 			StoreCount = 0;
