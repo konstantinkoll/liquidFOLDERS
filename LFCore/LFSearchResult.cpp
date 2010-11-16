@@ -496,6 +496,9 @@ void LFSearchResult::Group(unsigned int attr, unsigned int icon, bool groupone, 
 			c = new NameCategorizer(attr);
 			break;
 		}
+	case LFAttrURL:
+		c = new URLCategorizer(attr);
+		break;
 	default:
 		switch (AttrTypes[attr])
 		{

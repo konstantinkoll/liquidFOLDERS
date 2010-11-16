@@ -74,6 +74,22 @@ unsigned char GetRatingCategory(const unsigned char rating)
 	return (rating==1) ? 1 : rating>>1;
 }
 
+unsigned int GetSizeCategory(const __int64 sz)
+{
+	if (sz<32*1024)
+		return 0;
+	if (sz<128*1024)
+		return 1;
+	if (sz<1024*1024)
+		return 2;
+	if (sz<16384*1024)
+		return 3;
+	if (sz<131072*1024)
+		return 4;
+
+	return 5;
+}
+
 bool GetNamePrefix(wchar_t* FullName, wchar_t* Buffer)
 {
 #define Choose if ((P2) && ((!P1) || (P2<P1))) P1 = P2;
@@ -149,20 +165,17 @@ Skip:
 	return (P1!=NULL);
 }
 
-unsigned int GetSizeCategory(const __int64 sz)
+void GetServer(char* URL, char* Server)
 {
-	if (sz<32*1024)
-		return 0;
-	if (sz<128*1024)
-		return 1;
-	if (sz<1024*1024)
-		return 2;
-	if (sz<16384*1024)
-		return 3;
-	if (sz<131072*1024)
-		return 4;
+	char* Pos = strstr(URL, "://");
+	if (Pos)
+		URL = Pos+3;
 
-	return 5;
+	strcpy_s(Server, 256, URL);
+
+	Pos = strchr(Server, '/');
+	if (Pos)
+		*Pos = '\0';
 }
 
 
@@ -204,6 +217,7 @@ bool CheckCondition(void* value, LFFilterCondition* c)
 	FILETIME ft;
 	wchar_t* tagarray;
 	wchar_t tag[256];
+	char Server[256];
 
 	switch (c->AttrData.Type)
 	{
@@ -259,6 +273,11 @@ bool CheckCondition(void* value, LFFilterCondition* c)
 		switch (c->Compare)
 		{
 		case LFFilterCompareSubfolder:
+			if (c->AttrData.Attr==LFAttrURL)
+			{
+				GetServer((char*)value, Server);
+				return _stricmp(Server, c->AttrData.AnsiString)==0;
+			}
 		case LFFilterCompareIsEqual:
 			return _stricmp((char*)value, c->AttrData.AnsiString)==0;
 		case LFFilterCompareIsNotEqual:

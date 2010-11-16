@@ -318,8 +318,8 @@ bool NameCategorizer::Compare(LFItemDescriptor* i1, LFItemDescriptor* i2)
 	wchar_t Prefix1[256];
 	wchar_t Prefix2[256];
 
-	bool res1 = GetNamePrefix((wchar_t*)i1->AttributeValues[attr], &Prefix1[0]);
-	bool res2 = GetNamePrefix((wchar_t*)i2->AttributeValues[attr], &Prefix2[0]);
+	bool res1 = GetNamePrefix((wchar_t*)i1->AttributeValues[attr], Prefix1);
+	bool res2 = GetNamePrefix((wchar_t*)i2->AttributeValues[attr], Prefix2);
 
 	return (res1 & res2) ? wcscmp(Prefix1, Prefix2)==0 : false;
 }
@@ -346,7 +346,7 @@ LFFilterCondition* NameCategorizer::GetCondition(LFItemDescriptor* i)
 	c->AttrData.Type = AttrTypes[attr];
 	c->AttrData.IsNull = false;
 
-	if (!GetNamePrefix((wchar_t*)i->AttributeValues[attr], &c->AttrData.UnicodeString[0]))
+	if (!GetNamePrefix((wchar_t*)i->AttributeValues[attr], c->AttrData.UnicodeString))
 		LFGetAttributeVariantData(i, &c->AttrData);
 
 	return c;
@@ -406,6 +406,57 @@ LFFilterCondition* MegapixelCategorizer::GetCondition(LFItemDescriptor* i)
 	c->AttrData.Type = AttrTypes[attr];
 	c->AttrData.IsNull = false;
 	c->AttrData.Megapixel = (unsigned int)*((double*)i->AttributeValues[attr]);
+
+	return c;
+}
+
+
+// URLCategorizer
+//
+
+URLCategorizer::URLCategorizer(unsigned int _attr)
+	: CCategorizer(_attr)
+{
+}
+
+bool URLCategorizer::Compare(LFItemDescriptor* i1, LFItemDescriptor* i2)
+{
+	assert(AttrTypes[attr]==LFTypeAnsiString);
+
+	char Server1[256];
+	char Server2[256];
+
+	GetServer((char*)i1->AttributeValues[attr], Server1);
+	GetServer((char*)i2->AttributeValues[attr], Server2);
+
+	return strcmp(Server1, Server2)==0;
+}
+
+void URLCategorizer::CustomizeFolder(LFItemDescriptor* folder, LFItemDescriptor* i)
+{
+	if (i->AttributeValues[attr])
+	{
+		char Server[256];
+		GetServer((char*)i->AttributeValues[attr], Server);
+
+		wchar_t Name[256];
+		MultiByteToWideChar(CP_ACP, 0, Server, (int)(strlen(Server)+1), Name, 256);
+
+		SetAttribute(folder, LFAttrFileName, Name);
+		SetAttribute(folder, attr, Server);
+	}
+}
+
+LFFilterCondition* URLCategorizer::GetCondition(LFItemDescriptor* i)
+{
+	LFFilterCondition* c = LFAllocFilterCondition();
+	c->Compare = LFFilterCompareSubfolder;
+
+	c->AttrData.Attr = attr;
+	c->AttrData.Type = AttrTypes[attr];
+	c->AttrData.IsNull = false;
+
+	GetServer((char*)i->AttributeValues[attr], c->AttrData.AnsiString);
 
 	return c;
 }

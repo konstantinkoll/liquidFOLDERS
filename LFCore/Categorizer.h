@@ -172,3 +172,18 @@ protected:
 	virtual void CustomizeFolder(LFItemDescriptor* folder, LFItemDescriptor* i);
 	virtual LFFilterCondition* GetCondition(LFItemDescriptor* i);
 };
+
+
+// URLCategorizer
+//
+
+class URLCategorizer : public CCategorizer
+{
+public:
+	URLCategorizer(unsigned int _attr);
+
+protected:
+	virtual bool Compare(LFItemDescriptor* i1, LFItemDescriptor* i2);
+	virtual void CustomizeFolder(LFItemDescriptor* folder, LFItemDescriptor* i);
+	virtual LFFilterCondition* GetCondition(LFItemDescriptor* i);
+};
