@@ -101,7 +101,7 @@ void CFileItem::GetDisplayNameEx(CString& displayName, DisplayNameFlags flags)
 void CFileItem::GetIconFileAndIndex(CGetIconFileAndIndexEventArgs& e)
 {
 	WCHAR tmpBuf[LFExtSize+2] = L"*.";
-	MultiByteToWideChar(CP_ACP, 0, Item->CoreAttributes.FileFormat, (int)(strlen(Item->CoreAttributes.FileFormat)+1), &tmpBuf[2], LFExtSize);
+	MultiByteToWideChar(CP_ACP, 0, Item->CoreAttributes.FileFormat, -1, &tmpBuf[2], LFExtSize);
 
 	SHFILEINFO sfi;
 	if (SUCCEEDED(SHGetFileInfo(tmpBuf, 0, &sfi, sizeof(SHFILEINFO), SHGFI_SYSICONINDEX | SHGFI_USEFILEATTRIBUTES)))

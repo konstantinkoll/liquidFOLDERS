@@ -169,9 +169,8 @@ unsigned char GetHardcodedDomain(char* ext)
 unsigned char GetPerceivedDomain(char* ext)
 {
 	wchar_t ExtW[17];
-	size_t sz = strlen(ext)+1;
 	ExtW[0] = '.';
-	MultiByteToWideChar(CP_ACP, 0, ext, (int)sz, &ExtW[1], (int)sz);
+	MultiByteToWideChar(CP_ACP, 0, ext, -1, &ExtW[1], 16);
 
 	PERCEIVED Type;
 	PERCEIVEDFLAG Flag;

@@ -440,7 +440,7 @@ void URLCategorizer::CustomizeFolder(LFItemDescriptor* folder, LFItemDescriptor*
 		GetServer((char*)i->AttributeValues[attr], Server);
 
 		wchar_t Name[256];
-		MultiByteToWideChar(CP_ACP, 0, Server, (int)(strlen(Server)+1), Name, 256);
+		MultiByteToWideChar(CP_ACP, 0, Server, -1, Name, 256);
 
 		SetAttribute(folder, LFAttrFileName, Name);
 		SetAttribute(folder, attr, Server);

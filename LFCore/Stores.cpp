@@ -269,7 +269,7 @@ void GetFilePath(wchar_t* DatPath, LFCoreAttributes* ca, wchar_t* dst, size_t cC
 	buf1[0] = ca->FileID[0];
 
 	wchar_t buf2[LFKeySize-1];
-	MultiByteToWideChar(CP_ACP, 0, &ca->FileID[1], (int)(strlen(&ca->FileID[1])+1), buf2, LFKeySize-1);
+	MultiByteToWideChar(CP_ACP, 0, &ca->FileID[1], -1, buf2, LFKeySize-1);
 
 	wcscpy_s(dst, cCount, L"\\\\?\\");
 	wcscat_s(dst, cCount, DatPath);
@@ -289,7 +289,7 @@ void GetFileLocation(wchar_t* DatPath, LFCoreAttributes* ca, wchar_t* dst, size_
 	if (ca->FileFormat[0]!='\0')
 	{
 		wchar_t buf2[LFExtSize];
-		MultiByteToWideChar(CP_ACP, 0, ca->FileFormat, (int)(strlen(ca->FileFormat)+1), buf2, LFExtSize);
+		MultiByteToWideChar(CP_ACP, 0, ca->FileFormat, -1, buf2, LFExtSize);
 
 		wcscat_s(dst, cCount, L".");
 		wcscat_s(dst, cCount, buf2);

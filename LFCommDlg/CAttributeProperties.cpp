@@ -87,7 +87,7 @@ BOOL CAttributeProperty::OnUpdateValue()
 			wcscpy_s(p_Data->UnicodeString, 256, strText);
 			break;
 		case LFTypeAnsiString:
-			WideCharToMultiByte(CP_ACP, 0, strText, strText.GetLength(), p_Data->AnsiString, 256, NULL, NULL);
+			WideCharToMultiByte(CP_ACP, 0, strText, -1, p_Data->AnsiString, 256, NULL, NULL);
 			break;
 		}
 
@@ -272,7 +272,7 @@ void CAttributePropertyIATA::OnClickButton(CPoint /*point*/)
 				ASSERT((*p_DependentProp1)->p_Data->Attr==LFAttrLocationName);
 				size_t sz = strlen(dlg.m_Airport->Name)+1;
 				(*p_DependentProp1)->p_Data->IsNull = false;
-				MultiByteToWideChar(CP_ACP, 0, dlg.m_Airport->Name, (INT)sz, (*p_DependentProp1)->p_Data->UnicodeString, (INT)sz);
+				MultiByteToWideChar(CP_ACP, 0, dlg.m_Airport->Name, -1, (*p_DependentProp1)->p_Data->UnicodeString, 256);
 				(*p_DependentProp1)->SetDependentValue((*p_DependentProp1)->p_Data->UnicodeString);
 				m_UseDependencies |= 1;
 			}
@@ -312,7 +312,7 @@ BOOL CAttributePropertyIATA::OnUpdateValue()
 	{
 		m_varValue = (LPCTSTR)strText;
 		p_Data->IsNull = false;
-		WideCharToMultiByte(CP_ACP, 0, strText, strText.GetLength()+1, p_Data->AnsiString, 256, NULL, NULL);
+		WideCharToMultiByte(CP_ACP, 0, strText, -1, p_Data->AnsiString, 256, NULL, NULL);
 
 		Multiple = FALSE;
 		m_pWndList->OnPropertyChanged(this);

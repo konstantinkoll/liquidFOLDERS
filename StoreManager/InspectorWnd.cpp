@@ -555,8 +555,7 @@ void CInspectorWnd::AddValue(LFItemDescriptor* i, UINT Attr, BOOL Editable)
 void CInspectorWnd::AddValueVirtual(UINT Attr, CHAR* Value)
 {
 	WCHAR tmpStr[256];
-	size_t sz = max(strlen(Value)+1, 256);
-	MultiByteToWideChar(CP_ACP, 0, Value, (INT)sz, (LPWSTR)tmpStr, (INT)sz);
+	MultiByteToWideChar(CP_ACP, 0, Value, -1, tmpStr, 256);
 
 	AddValueVirtual(Attr, &tmpStr[0]);
 }

@@ -118,14 +118,12 @@ void CustomizeFolderForAirport(LFItemDescriptor* i, LFAirport* airport)
 	strcat_s(tmpStr2, 256, tmpStr1);
 
 	// Dateiname in Unicode
-	size_t sz = strlen(tmpStr2)+1;
 	wchar_t tmpStr3[256];
-	MultiByteToWideChar(CP_ACP, 0, tmpStr2, (int)sz, tmpStr3, (int)sz);
+	MultiByteToWideChar(CP_ACP, 0, tmpStr2, -1, tmpStr3, 256);
 	SetAttribute(i, LFAttrFileName, tmpStr3);
 
 	// Ortsname in Unicode
-	sz = strlen(tmpStr1)+1;
-	MultiByteToWideChar(CP_ACP, 0, tmpStr1, (int)sz, tmpStr3, (int)sz);
+	MultiByteToWideChar(CP_ACP, 0, tmpStr1, -1, tmpStr3, 256);
 	SetAttribute(i, LFAttrLocationName, tmpStr3);
 
 	// Weitere Attribute

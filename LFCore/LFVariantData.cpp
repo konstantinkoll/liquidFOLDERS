@@ -177,7 +177,7 @@ void ToString(void* value, unsigned int type, wchar_t* str, size_t cCount)
 			wcscpy_s(str, cCount, (wchar_t*)value);
 			return;
 		case LFTypeAnsiString:
-			MultiByteToWideChar(CP_ACP, 0, (char*)value, (int)(strlen((char*)value)+1), str, (int)cCount);
+			MultiByteToWideChar(CP_ACP, 0, (char*)value, -1, str, (int)cCount);
 			return;
 		case LFTypeFourCC:
 			LFFourCCToString(*((unsigned int*)value), str, cCount);
@@ -403,7 +403,7 @@ LFCore_API void LFVariantDataFromString(LFVariantData* v, wchar_t* str)
 			break;
 		case LFTypeAnsiString:
 			v->IsNull = false;
-			WideCharToMultiByte(CP_ACP, 0, str, (int)sz, v->AnsiString, 256, NULL, NULL);
+			WideCharToMultiByte(CP_ACP, 0, str, -1, v->AnsiString, 256, NULL, NULL);
 			break;
 		case LFTypeFourCC:
 			if (sz>=4)

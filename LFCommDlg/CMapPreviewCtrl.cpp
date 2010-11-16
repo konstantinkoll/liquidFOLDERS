@@ -62,7 +62,7 @@ void CMapPreviewCtrl::Update(LFAirport* _Airport)
 		{
 			FontFamily fontFamily(((LFApplication*)AfxGetApp())->GetDefaultFontFace());
 			WCHAR pszBuf[4];
-			MultiByteToWideChar(CP_ACP, 0, m_Airport->Code, 4, pszBuf, 4);
+			MultiByteToWideChar(CP_ACP, 0, m_Airport->Code, -1, pszBuf, 4);
 
 			StringFormat strformat;
 			m_TextPath.Reset();

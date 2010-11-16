@@ -191,8 +191,7 @@ void LFSelectLocationIATADlg::OnGetDispInfo(NMHDR* pNMHDR, LRESULT* /*pResult*/)
 	if (pItem->mask & LVIF_TEXT)
 	{
 		CHAR* src = (pItem->iSubItem==0) ? &m_Airports[idx]->Code[0] : &m_Airports[idx]->Name[0];
-		INT sz = (INT)strlen(src)+1;
-		MultiByteToWideChar(CP_ACP, 0, src, sz, m_Buffer, sz);
+		MultiByteToWideChar(CP_ACP, 0, src, -1, m_Buffer, 256);
 		pItem->pszText = (LPWSTR)m_Buffer;
 	}
 }
