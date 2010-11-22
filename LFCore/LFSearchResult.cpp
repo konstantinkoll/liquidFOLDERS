@@ -490,15 +490,15 @@ void LFSearchResult::Group(unsigned int attr, unsigned int icon, bool groupone, 
 	case LFAttrLocationIATA:
 		c = new IATACategorizer(attr);
 		break;
+	case LFAttrURL:
+		c = new URLCategorizer(attr);
+		break;
 	case LFAttrFileName:
 		if (!groupone)
 		{
 			c = new NameCategorizer(attr);
 			break;
 		}
-	case LFAttrURL:
-		c = new URLCategorizer(attr);
-		break;
 	default:
 		switch (AttrTypes[attr])
 		{
