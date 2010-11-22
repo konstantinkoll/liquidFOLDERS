@@ -18,7 +18,7 @@ BOOL AttributeSortableInView(UINT Attr, UINT ViewMode)
 		b &= (theApp.m_Attributes[Attr]->Type==LFTypeTime);
 		break;
 	case LFViewGlobe:
-		b &= ((Attr==LFAttrLocationIATA) || (Attr==LFAttrLocationGPS));
+		b &= ((Attr==LFAttrLocationIATA) || (theApp.m_Attributes[Attr]->Type==LFTypeGeoCoordinates));
 		break;
 	}
 	return b;
