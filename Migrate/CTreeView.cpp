@@ -29,10 +29,9 @@ CTreeView::CTreeView()
 	p_Edit = NULL;
 	m_Allocated = m_Rows = m_Cols = 0;
 	hThemeList = hThemeButton = hThemeTree = NULL;
-	m_SelectedItem.x = m_SelectedItem.y = m_HotItem.x = m_HotItem.y = m_HotExpando.x = m_HotExpando.y = -1;
+	m_SelectedItem.x = m_SelectedItem.y = m_HotItem.x = m_HotItem.y = m_HotExpando.x = m_HotExpando.y = m_EditLabel.x = m_EditLabel.y = -1;
 	m_CheckboxHot = m_CheckboxPressed = m_Hover = m_SpacePressed = FALSE;
 	m_pContextMenu2 = NULL;
-	m_EditLabel = CPoint(-1, -1);
 
 	for (UINT a=0; a<MaxColumns; a++)
 		m_ColumnMapping[a] = -1;
