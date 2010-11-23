@@ -899,7 +899,7 @@ void CExplorerTree::OnMouseHover(UINT nFlags, CPoint point)
 				CSize size(0, 0);
 				CString caption;
 				CString hint;
-				TooltipDataFromPIDL(pItem->pidlFQ, &p_App->m_SystemImageListLarge, hIcon, size, caption, hint);
+				TooltipDataFromPIDL(pItem->pidlFQ, &p_App->m_SystemImageListExtraLarge, hIcon, size, caption, hint);
 
 				ClientToScreen(&point);
 				m_TooltipCtrl.Track(point, hIcon, size, caption, hint);

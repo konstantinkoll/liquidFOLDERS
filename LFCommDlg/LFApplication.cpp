@@ -6,6 +6,7 @@
 #include "afxwinappex.h"
 #include "LFCore.h"
 #include "LFCommDlg.h"
+#include <commoncontrols.h>
 #include <io.h>
 #include <mmsystem.h>
 
@@ -162,9 +163,15 @@ LFApplication::LFApplication(UINT _HasGUI)
 		face);
 
 	// System image lists
-	SHFILEINFO shfi;
-	m_SystemImageListSmall.Attach((HIMAGELIST)SHGetFileInfo(_T(""), NULL, &shfi, sizeof(shfi), SHGFI_SYSICONINDEX | SHGFI_SMALLICON));
-	m_SystemImageListLarge.Attach((HIMAGELIST)SHGetFileInfo(_T(""), NULL, &shfi, sizeof(shfi), SHGFI_SYSICONINDEX | SHGFI_LARGEICON));
+	IImageList* il;
+	if (SUCCEEDED(SHGetImageList(SHIL_SYSSMALL, IID_IImageList, (void**)&il)))
+		m_SystemImageListSmall.Attach((HIMAGELIST)il);
+	if (SUCCEEDED(SHGetImageList(SHIL_LARGE, IID_IImageList, (void**)&il)))
+		m_SystemImageListLarge.Attach((HIMAGELIST)il);
+	if (SUCCEEDED(SHGetImageList(SHIL_EXTRALARGE, IID_IImageList, (void**)&il)))
+		m_SystemImageListExtraLarge.Attach((HIMAGELIST)il);
+	if (SUCCEEDED(SHGetImageList(OSVersion<OS_Vista ? SHIL_EXTRALARGE : SHIL_JUMBO, IID_IImageList, (void**)&il)))
+		m_SystemImageListJumbo.Attach((HIMAGELIST)il);
 
 	// Core image lists
 	HINSTANCE hModIcons = LoadLibrary(_T("LFCORE.DLL"));
@@ -179,6 +186,12 @@ LFApplication::LFApplication(UINT _HasGUI)
 		cy = GetSystemMetrics(SM_CYICON);
 		ImageList_GetIconSize(m_SystemImageListLarge, &cx, &cy);
 		ExtractCoreIcons(hModIcons, cy, &m_CoreImageListLarge);
+
+		cx = cy = 48;
+		ImageList_GetIconSize(m_SystemImageListExtraLarge, &cx, &cy);
+		ExtractCoreIcons(hModIcons, cy, &m_CoreImageListExtraLarge);
+
+		ExtractCoreIcons(hModIcons, 128, &m_CoreImageListJumbo);
 
 		FreeLibrary(hModIcons);
 	}

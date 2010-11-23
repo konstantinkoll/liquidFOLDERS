@@ -1883,7 +1883,7 @@ void CTreeView::OnMouseHover(UINT nFlags, CPoint point)
 					CSize size(0, 0);
 					CString caption;
 					CString hint;
-					TooltipDataFromPIDL(m_Tree[MAKEPOSI(m_HotItem)].pItem->pidlFQ, &theApp.m_SystemImageListLarge, hIcon, size, caption, hint);
+					TooltipDataFromPIDL(m_Tree[MAKEPOSI(m_HotItem)].pItem->pidlFQ, &theApp.m_SystemImageListExtraLarge, hIcon, size, caption, hint);
 
 					ClientToScreen(&point);
 					m_TooltipCtrl.Track(point, hIcon, size, caption, hint);

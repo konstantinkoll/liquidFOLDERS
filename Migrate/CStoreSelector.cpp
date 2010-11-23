@@ -216,11 +216,11 @@ void CStoreSelector::Update()
 
 void CStoreSelector::GetTooltipData(HICON& hIcon, CSize& size, CString& caption, CString& hint)
 {
-	hIcon = p_App->m_CoreImageListLarge.ExtractIcon(item->IconID-1);
+	hIcon = p_App->m_CoreImageListExtraLarge.ExtractIcon(item->IconID-1);
 	
-	INT cx = GetSystemMetrics(SM_CXICON);
-	INT cy = GetSystemMetrics(SM_CYICON);
-	ImageList_GetIconSize(p_App->m_CoreImageListLarge, &cx, &cy);
+	INT cx = 48;
+	INT cy = 48;
+	ImageList_GetIconSize(p_App->m_CoreImageListExtraLarge, &cx, &cy);
 	size.SetSize(cx, cy);
 
 	caption = item->CoreAttributes.FileName;

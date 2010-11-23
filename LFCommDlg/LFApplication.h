@@ -61,8 +61,12 @@ public:
 	LFItemCategoryDescriptor* m_ItemCategories[LFItemCategoryCount];
 	CImageList m_SystemImageListSmall;
 	CImageList m_SystemImageListLarge;
+	CImageList m_SystemImageListExtraLarge;
+	CImageList m_SystemImageListJumbo;
 	CImageList m_CoreImageListSmall;
 	CImageList m_CoreImageListLarge;
+	CImageList m_CoreImageListExtraLarge;
+	CImageList m_CoreImageListJumbo;
 	HBITMAP m_RatingBitmaps[LFMaxRating+1];
 	HBITMAP m_PriorityBitmaps[LFMaxRating+1];
 	CFont m_DefaultFont;
