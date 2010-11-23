@@ -29,7 +29,6 @@ public:
 	unsigned int m_StoreCount;
 	__int64 m_FileSize;
 	int m_Context;
-	int m_ContextView;
 	char m_StoreID[LFKeySize];
 	bool m_RawCopy;
 

@@ -208,6 +208,6 @@ private:
 	void ShowCaptionBar(LPCWSTR Icon, UINT res, INT Command=0);
 	void InitializeRibbon();
 	void NavigateTo(LFFilter* f, UINT NavMode=NAVMODE_NORMAL, INT FocusItem=0, INT FirstAggregate=-1, INT LastAggregate=-1);
-	void CookFiles(INT recipe, INT FocusItem=0);
+	void CookFiles(INT FocusItem=0);
 	void UpdateHistory();
 };

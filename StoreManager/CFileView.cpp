@@ -47,7 +47,7 @@ void CFileView::Create(LFSearchResult* _result, UINT _ViewID, INT _FocusItem, BO
 	EnableHover = _EnableHover;
 	EnableShiftSelection = _EnableShiftSelection;
 
-	OnUpdateViewOptions(_result->m_ContextView, _ViewID, TRUE);
+	OnUpdateViewOptions(_result->m_Context, _ViewID, TRUE);
 	OnUpdateSearchResult(_result, _FocusItem);
 }
 
@@ -73,7 +73,7 @@ void CFileView::OnUpdateSearchResult(LFSearchResult* _result, INT _FocusItem)
 	{
 		m_DropTarget.Register(this, _result->m_StoreID);
 
-		ActiveContextID = _result->m_ContextView;
+		ActiveContextID = _result->m_Context;
 		pViewParameters = &theApp.m_Views[ActiveContextID];
 		m_ViewParameters.SortBy = pViewParameters->SortBy;
 

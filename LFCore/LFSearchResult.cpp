@@ -23,7 +23,6 @@ LFSearchResult::LFSearchResult(int ctx)
 {
 	m_RawCopy = true;
 	m_Context = ctx;
-	m_ContextView = ctx;
 	m_HidingItems = false;
 	m_HasCategories = false;
 	m_QueryTime = 0;
@@ -40,7 +39,6 @@ LFSearchResult::LFSearchResult(LFSearchResult* res)
 	m_RawCopy = false;
 	m_LastError = res->m_LastError;
 	m_Context = res->m_Context;
-	m_ContextView = res->m_ContextView;
 	m_HidingItems = res->m_HidingItems;
 	m_HasCategories = res->m_HasCategories;
 	m_QueryTime = res->m_QueryTime;

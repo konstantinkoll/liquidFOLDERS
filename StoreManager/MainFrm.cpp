@@ -594,7 +594,7 @@ void CMainFrame::OnClipRemove()
 		LFRemoveFlaggedItemDescriptors(RawFiles);
 		UpdateHistory();
 		SendMessage(WM_COMMAND, ID_VIEW_SELECTNONE);
-		CookFiles(ActiveContextID, GetFocusItem());
+		CookFiles(GetFocusItem());
 	}
 }
 
@@ -624,7 +624,7 @@ void CMainFrame::Remember(CMainFrame* clip)
 		}
 
 		if (changes)
-			clip->CookFiles(clip->RawFiles->m_Context, clip->GetFocusItem());
+			clip->CookFiles(clip->GetFocusItem());
 	}
 }
 
@@ -1129,7 +1129,7 @@ void CMainFrame::UpdateViewOptions()
 
 void CMainFrame::UpdateSortOptions()
 {
-	CookFiles(ActiveContextID);
+	CookFiles();
 }
 
 void CMainFrame::UpdateSearchResult(BOOL SetEmpty, INT FocusItem)
@@ -1147,7 +1147,7 @@ void CMainFrame::UpdateSearchResult(BOOL SetEmpty, INT FocusItem)
 		// - Wenn ein anderer Kontext mit ggf. anderen Views gewünscht wird
 		// - Wenn im Kontext die Ansicht auf "automatisch" steht
 		// - Wenn sich für die Liste das Kategorien-Flag ändert (wg. virtual mode)
-		BOOL change = (ActiveContextID!=CookedFiles->m_ContextView) || (ActiveViewID!=(INT)SelectViewMode(ActiveViewParameters->Mode));
+		BOOL change = (ActiveContextID!=CookedFiles->m_Context) || (ActiveViewID!=(INT)SelectViewMode(ActiveViewParameters->Mode));
 		BOOL force = FALSE;
 		if ((!change) && (m_wndView) && (ActiveViewID>=LFViewLargeIcons) && (ActiveViewID<=LFViewPreview))
 		{
@@ -1156,7 +1156,7 @@ void CMainFrame::UpdateSearchResult(BOOL SetEmpty, INT FocusItem)
 		}
 		if (change)
 		{
-			ActiveContextID = CookedFiles->m_ContextView;
+			ActiveContextID = CookedFiles->m_Context;
 			ActiveViewParameters = &theApp.m_Views[ActiveContextID];
 			if (OpenChildView(FocusItem, force))
 				return;
@@ -1432,7 +1432,7 @@ BOOL CMainFrame::UpdateTrashFlag(BOOL Trash, BOOL All)
 		LFRemoveFlaggedItemDescriptors(RawFiles);
 		UpdateHistory();
 		SendMessage(WM_COMMAND, ID_VIEW_SELECTNONE);
-		CookFiles(ActiveContextID, GetFocusItem());
+		CookFiles(GetFocusItem());
 	}
 
 	if (tl->m_LastError>LFCancel)
@@ -1457,7 +1457,7 @@ BOOL CMainFrame::DeleteFiles(BOOL All)
 		LFRemoveFlaggedItemDescriptors(RawFiles);
 		UpdateHistory();
 		SendMessage(WM_COMMAND, ID_VIEW_SELECTNONE);
-		CookFiles(ActiveContextID, GetFocusItem());
+		CookFiles(GetFocusItem());
 	}
 
 	if (tl->m_LastError>LFCancel)
@@ -2330,7 +2330,7 @@ void CMainFrame::NavigateTo(LFFilter* f, UINT NavMode, INT FocusItem, INT FirstA
 		RawFiles = LFQuery(ActiveFilter);
 	}
 
-	CookFiles(((OldContext!=RawFiles->m_Context) || (ActiveContextID==-1)) ? RawFiles->m_Context : ActiveContextID, FocusItem);
+	CookFiles(FocusItem);
 
 	if (CookedFiles->m_LastError>LFCancel)
 	{
@@ -2345,14 +2345,14 @@ void CMainFrame::NavigateTo(LFFilter* f, UINT NavMode, INT FocusItem, INT FirstA
 		}
 }
 
-void CMainFrame::CookFiles(INT recipe, INT FocusItem)
+void CMainFrame::CookFiles(INT FocusItem)
 {
 	// Das alte Suchergebnis wird in Victim gespeichert, damit das View niemals eine ungültige
 	// Referenz hat. Erst nach UpdateSearchResult() kann das ggf. vorhandene alte Suchergebnis
 	// gelöscht werden.
 	LFSearchResult* Victim = CookedFiles;
 
-	LFViewParameters* vp = &theApp.m_Views[recipe];
+	LFViewParameters* vp = &theApp.m_Views[RawFiles->m_Context];
 	LFAttributeDescriptor* attr = theApp.m_Attributes[vp->SortBy];
 
 	if (((!IsClipboard) && (vp->AutoDirs) && (!ActiveFilter->Options.IsSubfolder)) || (vp->Mode>LFViewPreview))
@@ -2366,7 +2366,6 @@ void CMainFrame::CookFiles(INT recipe, INT FocusItem)
 		LFSortSearchResult(RawFiles, vp->SortBy, vp->Descending==TRUE, true);
 		CookedFiles = RawFiles;
 	}
-	CookedFiles->m_ContextView = recipe;
 
 	UpdateSearchResult(FALSE, FocusItem);
 	UpdateHistory();
