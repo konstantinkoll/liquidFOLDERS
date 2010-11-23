@@ -54,7 +54,7 @@ public:
 	CTreeView();
 	~CTreeView();
 
-	BOOL Create(CWnd* _pParentWnd, UINT nID);
+	BOOL Create(CWnd* pParentWnd, UINT nID);
 	void AdjustLayout();
 	void ClearRoot();
 	void SetRoot(LPITEMIDLIST pidl, BOOL Update, BOOL ExpandAll);

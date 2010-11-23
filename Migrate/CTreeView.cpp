@@ -48,14 +48,14 @@ CTreeView::~CTreeView()
 		pDesktop->Release();
 }
 
-BOOL CTreeView::Create(CWnd* _pParentWnd, UINT nID)
+BOOL CTreeView::Create(CWnd* pParentWnd, UINT nID)
 {
 	CString className = AfxRegisterWndClass(CS_DBLCLKS, LoadCursor(NULL, IDC_ARROW));
 
 	const DWORD dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_TABSTOP | WS_HSCROLL | WS_VSCROLL;
 	CRect rect;
 	rect.SetRectEmpty();
-	return CWnd::Create(className, _T(""), dwStyle, rect, _pParentWnd, nID);
+	return CWnd::Create(className, _T(""), dwStyle, rect, pParentWnd, nID);
 }
 
 LRESULT CTreeView::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
