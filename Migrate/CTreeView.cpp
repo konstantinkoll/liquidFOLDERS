@@ -1512,19 +1512,6 @@ void CTreeView::OnPaint()
 	COLORREF bkCol = Themed ? 0xFFFFFF : GetSysColor(COLOR_WINDOW);
 	dc.FillSolidRect(rect, bkCol);
 
-/*	if (m_HotItemColumn!=-1)
-	{
-		INT x = 0;
-		for (INT col=0; col<m_HotItemColumn; col++)
-			x += m_ColumnWidth[col];
-
-		COLORREF selCol = GetSysColor(COLOR_HIGHLIGHT);
-		COLORREF col = ((selCol & 0xFF)/12)+((bkCol & 0xFF)*11/12)+
-			(((((selCol>>8) & 0xFF)/12)+(((bkCol>>8) & 0xFF)*11/12))<<8)+
-			(((((selCol>>16) & 0xFF)/12)+(((bkCol>>16) & 0xFF)*11/12))<<16);
-		dc.FillSolidRect(x, rect.top, m_ColumnWidth[m_HotItemColumn], rect.Height(), col);
-	}*/
-
 	CFont* pOldFont = dc.SelectObject(&theApp.m_DefaultFont);
 
 	LOGBRUSH brsh;
