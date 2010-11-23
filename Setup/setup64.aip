@@ -62,21 +62,21 @@
     <ROW Directory="TARGETDIR" DefaultDir="SourceDir"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiCompsComponent">
-    <ROW Component="AIShRegAnswer" ComponentId="{3A9CF3DB-A5C0-4432-8610-A39401D06D3E}" Directory_="APPDIR" Attributes="4" KeyPath="AIShRegAnswer"/>
-    <ROW Component="AI_CustomARPName" ComponentId="{DD5C3246-58C0-4609-98A5-C77D22F76065}" Directory_="APPDIR" Attributes="4" KeyPath="DisplayName"/>
-    <ROW Component="AI_DisableModify" ComponentId="{C0DC78FA-77DF-4F73-B4AA-18AA98E73FFB}" Directory_="APPDIR" Attributes="4" KeyPath="NoModify"/>
-    <ROW Component="AI_ExePath" ComponentId="{201869D9-7416-435F-A2AF-8C16BC7991E4}" Directory_="APPDIR" Attributes="4" KeyPath="AI_ExePath"/>
-    <ROW Component="FileDrop.exe" ComponentId="{2112C382-EC69-4377-8231-86BD5FAB6DB3}" Directory_="APPDIR" Attributes="0" KeyPath="FileDrop.exe"/>
-    <ROW Component="LFCommDlg.dll" ComponentId="{79E36DCC-424C-43F8-8B66-0B18C1199F8A}" Directory_="APPDIR" Attributes="0" KeyPath="LFCommDlg.dll"/>
-    <ROW Component="LFCore.dll" ComponentId="{6B3B9330-53CC-4DCC-A85C-B719B1D7B018}" Directory_="System64Folder" Attributes="0" KeyPath="LFCore.dll"/>
-    <ROW Component="LFNamespaceExtension.dll" ComponentId="{958C10FB-58FF-4E2B-A9A7-CA1F4A13EC25}" Directory_="System64Folder" Attributes="0" KeyPath="LFNamespaceExtension.dll"/>
-    <ROW Component="LFRunCmd.exe" ComponentId="{01CB7339-06B5-457E-980A-0D771FD2928C}" Directory_="APPDIR" Attributes="0" KeyPath="LFRunCmd.exe"/>
-    <ROW Component="LFWatchdog.exe" ComponentId="{8B20F94F-7420-4E03-98DD-DA9A19F0C59E}" Directory_="APPDIR" Attributes="0" KeyPath="LFWatchdog.exe"/>
-    <ROW Component="Migrate.exe" ComponentId="{0D89D6BC-65FF-455A-BA9B-AFBD4F05BDE3}" Directory_="APPDIR" Attributes="0" KeyPath="Migrate.exe"/>
-    <ROW Component="Quick_Launch" ComponentId="{304CC4C3-1A53-46C6-B2CE-40BE6BF512B0}" Directory_="Quick_Launch_DIR" Attributes="0"/>
-    <ROW Component="SHORTCUTDIR" ComponentId="{252E79F3-5959-444B-A7EA-CD698BA212E7}" Directory_="SHORTCUTDIR" Attributes="0"/>
-    <ROW Component="STOREDIR" ComponentId="{23F624B4-230B-4D30-ADB8-4C51BF177D6C}" Directory_="STOREDIR" Attributes="16"/>
-    <ROW Component="StoreManager.exe" ComponentId="{CD94E9D9-3367-4F36-BB82-B2FCDDE6250E}" Directory_="APPDIR" Attributes="0" KeyPath="StoreManager.exe"/>
+    <ROW Component="AIShRegAnswer" ComponentId="{3A9CF3DB-A5C0-4432-8610-A39401D06D3E}" Directory_="APPDIR" Attributes="772" KeyPath="AIShRegAnswer"/>
+    <ROW Component="AI_CustomARPName" ComponentId="{DD5C3246-58C0-4609-98A5-C77D22F76065}" Directory_="APPDIR" Attributes="772" KeyPath="DisplayName"/>
+    <ROW Component="AI_DisableModify" ComponentId="{C0DC78FA-77DF-4F73-B4AA-18AA98E73FFB}" Directory_="APPDIR" Attributes="772" KeyPath="NoModify"/>
+    <ROW Component="AI_ExePath" ComponentId="{201869D9-7416-435F-A2AF-8C16BC7991E4}" Directory_="APPDIR" Attributes="772" KeyPath="AI_ExePath"/>
+    <ROW Component="FileDrop.exe" ComponentId="{2112C382-EC69-4377-8231-86BD5FAB6DB3}" Directory_="APPDIR" Attributes="768" KeyPath="FileDrop.exe"/>
+    <ROW Component="LFCommDlg.dll" ComponentId="{79E36DCC-424C-43F8-8B66-0B18C1199F8A}" Directory_="APPDIR" Attributes="768" KeyPath="LFCommDlg.dll"/>
+    <ROW Component="LFCore.dll" ComponentId="{6B3B9330-53CC-4DCC-A85C-B719B1D7B018}" Directory_="System64Folder" Attributes="768" KeyPath="LFCore.dll"/>
+    <ROW Component="LFNamespaceExtension.dll" ComponentId="{958C10FB-58FF-4E2B-A9A7-CA1F4A13EC25}" Directory_="System64Folder" Attributes="768" KeyPath="LFNamespaceExtension.dll"/>
+    <ROW Component="LFRunCmd.exe" ComponentId="{01CB7339-06B5-457E-980A-0D771FD2928C}" Directory_="APPDIR" Attributes="768" KeyPath="LFRunCmd.exe"/>
+    <ROW Component="LFWatchdog.exe" ComponentId="{8B20F94F-7420-4E03-98DD-DA9A19F0C59E}" Directory_="APPDIR" Attributes="768" KeyPath="LFWatchdog.exe"/>
+    <ROW Component="Migrate.exe" ComponentId="{0D89D6BC-65FF-455A-BA9B-AFBD4F05BDE3}" Directory_="APPDIR" Attributes="768" KeyPath="Migrate.exe"/>
+    <ROW Component="Quick_Launch" ComponentId="{304CC4C3-1A53-46C6-B2CE-40BE6BF512B0}" Directory_="Quick_Launch_DIR" Attributes="768"/>
+    <ROW Component="SHORTCUTDIR" ComponentId="{252E79F3-5959-444B-A7EA-CD698BA212E7}" Directory_="SHORTCUTDIR" Attributes="768"/>
+    <ROW Component="STOREDIR" ComponentId="{23F624B4-230B-4D30-ADB8-4C51BF177D6C}" Directory_="STOREDIR" Attributes="784"/>
+    <ROW Component="StoreManager.exe" ComponentId="{CD94E9D9-3367-4F36-BB82-B2FCDDE6250E}" Directory_="APPDIR" Attributes="768" KeyPath="StoreManager.exe"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiFeatsComponent">
     <ROW Feature="FileDrop" Title="FileDrop" Description="FileDrop" Display="3" Level="1" Directory_="APPDIR" Attributes="8" Components="FileDrop.exe AI_CustomARPName AI_DisableModify"/>
