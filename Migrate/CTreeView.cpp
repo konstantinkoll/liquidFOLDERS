@@ -83,6 +83,7 @@ BOOL CTreeView::PreTranslateMessage(MSG* pMsg)
 		if (p_Edit)
 			switch (pMsg->wParam)
 			{
+			case VK_EXECUTE:
 			case VK_RETURN:
 				DestroyEdit(TRUE);
 			case VK_ESCAPE:
@@ -1955,6 +1956,7 @@ void CTreeView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 		case VK_F2:
 			EditLabel();
 			break;
+		case VK_EXECUTE:
 		case VK_RETURN:
 			if (m_Tree[MAKEPOSI(item)].Flags & CF_CANEXPAND)
 			{
