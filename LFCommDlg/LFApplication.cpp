@@ -170,8 +170,9 @@ LFApplication::LFApplication(UINT _HasGUI)
 		m_SystemImageListLarge.Attach((HIMAGELIST)il);
 	if (SUCCEEDED(SHGetImageList(SHIL_EXTRALARGE, IID_IImageList, (void**)&il)))
 		m_SystemImageListExtraLarge.Attach((HIMAGELIST)il);
-	if (SUCCEEDED(SHGetImageList(OSVersion<OS_Vista ? SHIL_EXTRALARGE : SHIL_JUMBO, IID_IImageList, (void**)&il)))
-		m_SystemImageListJumbo.Attach((HIMAGELIST)il);
+	if (OSVersion>=OS_Vista)
+		if (SUCCEEDED(SHGetImageList(SHIL_JUMBO, IID_IImageList, (void**)&il)))
+			m_SystemImageListJumbo.Attach((HIMAGELIST)il);
 
 	// Core image lists
 	HINSTANCE hModIcons = LoadLibrary(_T("LFCORE.DLL"));
