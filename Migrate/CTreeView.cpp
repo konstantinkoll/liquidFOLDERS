@@ -267,9 +267,15 @@ void CTreeView::EditLabel(CPoint item)
 	if ((item.x==-1) || (item.y==-1))
 		item = m_SelectedItem;
 	if ((item.x==-1) || (item.y==-1) || (item.x>=(INT)m_Cols) || (item.y>=(INT)m_Rows))
+	{
+		m_EditLabel.x = m_EditLabel.y = -1;
 		return;
+	}
 	if (!(m_Tree[MAKEPOSI(item)].Flags & CF_CANRENAME))
+	{
+		m_EditLabel.x = m_EditLabel.y = -1;
 		return;
+	}
 
 	EnsureVisible(item);
 
