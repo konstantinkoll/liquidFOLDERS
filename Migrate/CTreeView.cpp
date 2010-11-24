@@ -91,6 +91,10 @@ BOOL CTreeView::PreTranslateMessage(MSG* pMsg)
 				return TRUE;
 			}
 		break;
+	case WM_MOUSEWHEEL:
+	case WM_MOUSEHWHEEL:
+		if (p_Edit)
+			return TRUE;
 	case WM_LBUTTONDOWN:
 	case WM_RBUTTONDOWN:
 	case WM_MBUTTONDOWN:
@@ -103,8 +107,6 @@ BOOL CTreeView::PreTranslateMessage(MSG* pMsg)
 	case WM_NCLBUTTONUP:
 	case WM_NCRBUTTONUP:
 	case WM_NCMBUTTONUP:
-	case WM_MOUSEWHEEL:
-	case WM_MOUSEHWHEEL:
 		m_TooltipCtrl.Deactivate();
 		break;
 	}
