@@ -1569,7 +1569,10 @@ void CTreeView::OnPaint()
 							dc.SetTextColor(GetSysColor(GetFocus()==this ? COLOR_HIGHLIGHTTEXT : COLOR_WINDOWTEXT));
 
 							if (GetFocus()==this)
+							{
+								dc.SetBkColor(0x000000);
 								dc.DrawFocusRect(rectItem);
+							}
 						}
 						else
 						{
