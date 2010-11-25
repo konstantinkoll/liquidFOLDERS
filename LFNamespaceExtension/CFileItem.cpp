@@ -432,22 +432,22 @@ INT CFileItem::GetTileViewColumnIndices(UINT* indices)
 
 INT CFileItem::GetPreviewDetailsColumnIndices(UINT* indices)
 {
-	indices[0] = LFAttrArtist;
-	indices[1] = LFAttrTitle;
-	indices[2] = LFAttrRecordingTime;
-	indices[3] = LFAttrDuration;
-	indices[4] = LFAttrTags;
-	indices[5] = LFAttrPages;
-	indices[6] = LFAttrRating;
-	indices[7] = LFAttrLanguage;
-	indices[8] = LFAttrWidth;
-	indices[9] = LFAttrHeight;
-	indices[10] = LFAttrFileSize;
-	indices[11] = LFAttrComment;
-	indices[12] = LFAttrRecordingEquipment;
-	indices[13] = LFAttrBitrate;
-	indices[14] = LFAttrCreationTime;
-	indices[15] = LFAttrFileTime;
+	indices[0] = LFAttrComment;
+	indices[1] = LFAttrArtist;
+	indices[2] = LFAttrTitle;
+	indices[3] = LFAttrRecordingTime;
+	indices[4] = LFAttrDuration;
+	indices[5] = LFAttrTags;
+	indices[6] = LFAttrPages;
+	indices[7] = LFAttrRating;
+	indices[8] = LFAttrLanguage;
+	indices[9] = LFAttrWidth;
+	indices[10] = LFAttrHeight;
+	indices[11] = LFAttrRecordingEquipment;
+	indices[12] = LFAttrBitrate;
+	indices[13] = LFAttrCreationTime;
+	indices[14] = LFAttrFileTime;
+	indices[15] = LFAttrFileSize;
 
 	return 16;
 }
