@@ -1834,13 +1834,20 @@ void CTreeView::OnMouseMove(UINT nFlags, CPoint point)
 		if ((m_TooltipCtrl.IsWindowVisible()) && (Item!=m_HotItem))
 			m_TooltipCtrl.Deactivate();
 
-	InvalidateItem(m_HotItem);
-	InvalidateItem(m_HotExpando);
-
 	if (!Dragging)
 	{
-		m_HotItem = Item;
-		m_HotExpando = Expando;
+		if (m_HotItem!=Item)
+		{
+			InvalidateItem(m_HotItem);
+			m_HotItem = Item;
+			InvalidateItem(m_HotItem);
+		}
+		if (m_HotExpando!=Expando)
+		{
+			InvalidateItem(m_HotExpando);
+			m_HotExpando = Expando;
+			InvalidateItem(m_HotExpando);
+		}
 
 		if ((OnItem) && (nFlags & MK_RBUTTON))
 		{
@@ -1848,10 +1855,8 @@ void CTreeView::OnMouseMove(UINT nFlags, CPoint point)
 			m_SelectedItem = m_HotItem;
 		}
 	}
-	m_CheckboxPressed = (Item==m_SelectedItem) && Pressed && Dragging;
 
-	InvalidateItem(m_HotItem);
-	InvalidateItem(m_HotExpando);
+	m_CheckboxPressed = (Item==m_SelectedItem) && Pressed && Dragging;
 }
 
 void CTreeView::OnMouseLeave()

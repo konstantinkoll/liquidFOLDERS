@@ -63,10 +63,11 @@ LFCommDlg_API void TooltipDataFromPIDL(LPITEMIDLIST pidl, CImageList* icons, HIC
 			pParentFolder->Release();
 		}
 
-		IMAGEINFO ii;
-		icons->GetImageInfo(0, &ii);
-		size.cx = ii.rcImage.right-ii.rcImage.left;
-		size.cy = ii.rcImage.bottom-ii.rcImage.top;
+		INT cx = 48;
+		INT cy = 48;
+		ImageList_GetIconSize(*icons, &cx, &cy);
+		size.cx = cx;
+		size.cy = cy;
 	}
 }
 
