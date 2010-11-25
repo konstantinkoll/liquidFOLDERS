@@ -29,6 +29,7 @@ protected:
 	CSize m_szIcon;
 	CString m_strCaption;
 	CString m_strText;
+	INT m_TextHeight;
 
 	afx_msg void OnDestroy();
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);

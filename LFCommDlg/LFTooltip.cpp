@@ -76,6 +76,7 @@ void LFTooltip::Track(CPoint point, HICON hIcon, CSize szIcon, const CString& st
 	if (!strText.IsEmpty())
 	{
 		CFont* pOldFont = dc.SelectObject(&afxGlobalData.fontTooltip);
+		m_TextHeight = 0;
 
 		while (!strText.IsEmpty())
 		{
@@ -88,13 +89,15 @@ void LFTooltip::Track(CPoint point, HICON hIcon, CSize szIcon, const CString& st
 			}
 			else
 			{
-				Line = strText.Left(pos+1);
+				Line = strText.Left(pos);
 				strText.Delete(0, pos+1);
 			}
 
 			CSize szText = dc.GetTextExtent(Line);
 			sz.cx = max(sz.cx, szText.cx);
 			sz.cy += szText.cy;
+
+			m_TextHeight = max(m_TextHeight, szText.cy);
 		}
 
 		dc.SelectObject(pOldFont);
@@ -108,6 +111,8 @@ void LFTooltip::Track(CPoint point, HICON hIcon, CSize szIcon, const CString& st
 
 	sz.cx += 2*(AFX_TEXT_MARGIN+3);
 	sz.cy += 2*(AFX_TEXT_MARGIN+2);
+	if (sz.cx>m_TextHeight*25)
+		sz.cx = m_TextHeight*25;
 
 	// Position
 	CRect rect;
@@ -299,7 +304,7 @@ void LFTooltip::OnPaint()
 	if (!m_strCaption.IsEmpty())
 	{
 		CFont* pOldFont = dc.SelectObject(&afxGlobalData.fontBold);
-		dc.DrawText(m_strCaption, rect, DT_LEFT | DT_SINGLELINE);
+		dc.DrawText(m_strCaption, rect, DT_LEFT | DT_SINGLELINE | DT_END_ELLIPSIS);
 		rect.top += dc.GetTextExtent(m_strCaption).cy+AFX_TEXT_MARGIN;
 		dc.SelectObject(pOldFont);
 	}
@@ -307,7 +312,27 @@ void LFTooltip::OnPaint()
 	if (!m_strText.IsEmpty())
 	{
 		CFont* pOldFont = dc.SelectObject(&afxGlobalData.fontTooltip);
-		dc.DrawText(m_strText, rect, DT_LEFT);
+		CString strText = m_strText;
+
+		while (!strText.IsEmpty())
+		{
+			CString Line;
+			INT pos = strText.Find('\n');
+			if (pos==-1)
+			{
+				Line = strText;
+				strText.Empty();
+			}
+			else
+			{
+				Line = strText.Left(pos);
+				strText.Delete(0, pos+1);
+			}
+
+			dc.DrawText(Line, rect, DT_LEFT | DT_SINGLELINE | DT_END_ELLIPSIS);
+			rect.top += m_TextHeight;
+		}
+
 		dc.SelectObject(pOldFont);
 	}
 }

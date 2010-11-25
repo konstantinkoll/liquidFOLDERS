@@ -270,7 +270,6 @@ void CAttributePropertyIATA::OnClickButton(CPoint /*point*/)
 			if ((p_DependentProp1) && (dlg.m_IATA_OverwriteName))
 			{
 				ASSERT((*p_DependentProp1)->p_Data->Attr==LFAttrLocationName);
-				size_t sz = strlen(dlg.m_Airport->Name)+1;
 				(*p_DependentProp1)->p_Data->IsNull = false;
 				MultiByteToWideChar(CP_ACP, 0, dlg.m_Airport->Name, -1, (*p_DependentProp1)->p_Data->UnicodeString, 256);
 				(*p_DependentProp1)->SetDependentValue((*p_DependentProp1)->p_Data->UnicodeString);
