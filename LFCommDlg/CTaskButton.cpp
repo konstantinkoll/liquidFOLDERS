@@ -171,7 +171,7 @@ void CTaskButton::OnPaint()
 						}
 						else
 						{
-							c1 = Color(0x40, 0xFF, 0xFF, 0xFF);
+							c1 = Color(0x80, 0xFF, 0xFF, 0xFF);
 							c2 = Color(0x00, 0xFF, 0xFF, 0xFF);
 						}
 
@@ -179,7 +179,7 @@ void CTaskButton::OnPaint()
 						g.FillRectangle(&brush, rectBounds.left, rectBounds.top, rectBounds.Width(), rectBounds.Height());
 					}
 
-					pen.SetColor(Color(0x58, 0xFF, 0xFF, 0xFF));
+					pen.SetColor(Color(0x80, 0xFF, 0xFF, 0xFF));
 					g.DrawPath(&pen, &path);
 				}
 

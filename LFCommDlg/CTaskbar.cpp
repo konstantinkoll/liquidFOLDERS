@@ -229,11 +229,11 @@ BOOL CTaskbar::OnEraseBkgnd(CDC* pDC)
 
 					UINT line = rect.Height()/2;
 
-					LinearGradientBrush brush3(Point(0, 0), Point(0, line), Color(128, 0xFF, 0xFF, 0xFF), Color(24, 0xFF, 0xFF, 0xFF));
+					LinearGradientBrush brush3(Point(0, 0), Point(0, line), Color(144, 0xFF, 0xFF, 0xFF), Color(48, 0xFF, 0xFF, 0xFF));
 					g.FillRectangle(&brush3, 0, 0, rect.right, line);
 
-					LinearGradientBrush brush4(Point(0, line), Point(0, rect.bottom-1), Color(0, 0xFF, 0xFF, 0xFF), c3);
-					g.FillRectangle(&brush4, 0, line+1, rect.right, rect.bottom-line-2);
+					LinearGradientBrush brush4(Point(0, rect.bottom-line*2/3), Point(0, rect.bottom-1), Color(0, 0xFF, 0xFF, 0xFF), c3);
+					g.FillRectangle(&brush4, 0, rect.bottom-line*2/3+1, rect.right, rect.bottom-line-2);
 
 					SolidBrush brush5(Color(64, 0xFF, 0xFF, 0xFF));
 					g.FillRectangle(&brush5, 0, 0, rect.right, 1);
