@@ -682,7 +682,6 @@ LFCore_API LFSearchResult* LFGroupSearchResult(LFSearchResult* res, unsigned int
 	if (f->Options.IsSubfolder)
 		return res;
 
-
 	// Special treatment for string arrays
 	if (AttrTypes[attr]==LFTypeUnicodeArray)
 	{
