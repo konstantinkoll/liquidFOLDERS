@@ -200,7 +200,20 @@ bool UnicodeCategorizer::Compare(LFItemDescriptor* i1, LFItemDescriptor* i2)
 {
 	assert(AttrTypes[attr]==LFTypeUnicodeString);
 
-	return wcscmp((wchar_t*)i1->AttributeValues[attr], (wchar_t*)i2->AttributeValues[attr])==0;
+	return attr ? wcscmp((wchar_t*)i1->AttributeValues[attr], (wchar_t*)i2->AttributeValues[attr])==0 :
+		_wcsicmp((wchar_t*)i1->AttributeValues[attr], (wchar_t*)i2->AttributeValues[attr])==0;
+}
+
+LFFilterCondition* UnicodeCategorizer::GetCondition(LFItemDescriptor* i)
+{
+	LFFilterCondition* c = LFAllocFilterCondition();
+	c->Compare = attr ? LFFilterCompareSubfolder : LFFilterCompareIsEqual;
+
+	c->AttrData.Attr = attr;
+	c->AttrData.Type = AttrTypes[attr];
+	LFGetAttributeVariantData(i, &c->AttrData);
+
+	return c;
 }
 
 

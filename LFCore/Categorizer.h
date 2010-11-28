@@ -62,6 +62,7 @@ public:
 
 protected:
 	virtual bool Compare(LFItemDescriptor* i1, LFItemDescriptor* i2);
+	virtual LFFilterCondition* GetCondition(LFItemDescriptor* i);
 };
 
 
