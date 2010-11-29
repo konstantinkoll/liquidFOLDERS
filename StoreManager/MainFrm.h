@@ -119,7 +119,6 @@ protected:
 	CMFCRibbonStatusBar  m_wndStatusBar;
 	CMFCRibbonBaseElement* m_sbFileCount;
 	CMFCRibbonBaseElement* m_sbItemCount;
-	CMFCRibbonBaseElement* m_sbHint;
 	CCaptionBar m_wndCaptionBar;
 	CFilterWnd* m_wndFilter;
 	CHistoryWnd* m_wndHistory;

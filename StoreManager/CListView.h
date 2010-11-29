@@ -3,36 +3,35 @@
 //
 
 #pragma once
-#include "liquidFOLDERS.h"
-#include "StoreManager.h"
-#include "CAbstractListView.h"
+#include "CGridView.h"
+#include <hash_map>
 
 
 // CListView
+//
 
-class CListView : public CAbstractListView
+typedef stdext::hash_map<std::string, std::wstring> HashExtensions;
+
+class CListView : public CGridView
 {
 public:
-	CListView();
-	virtual ~CListView();
-
-	void Create(CWnd* pParentWnd, LFSearchResult* _result, UINT _ViewID, INT _FocusItem);
+	CListView(UINT DataSize=sizeof(FVItemData));
 
 protected:
-	virtual void SetViewOptions(UINT _ViewID, BOOL Force);
-	virtual void SetSearchResult(LFSearchResult* _result);
+	virtual void SetViewOptions(BOOL Force);
+	virtual void SetSearchResult(LFSearchResult* Result);
+	virtual void AdjustLayout();
+	virtual void DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed);
 
-	void AdjustLayout();
+	void DrawIcon(CDC& dc, CRect& rect, LFItemDescriptor* i, FVItemData* d);
 
-	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
-	afx_msg void OnSize(UINT nType, INT cx, INT cy);
-	DECLARE_MESSAGE_MAP()
+private:
+	HashExtensions m_Extensions;
+	CImageList* m_Icons[2];
+	SIZE m_IconSize[2];
 
-	DECLARE_INTERFACE_MAP()
-	BEGIN_INTERFACE_PART(FooterCallback, IListViewFooterCallback)
-		STDMETHOD(OnButtonClicked)(INT, LPARAM, PINT);
-		STDMETHOD(OnDestroyButton)(INT, LPARAM);
-	END_INTERFACE_PART(FooterCallback)
-
-	BOOL m_HasCategories;
+	void AttributeToString(LFItemDescriptor* i, UINT Attr, WCHAR* tmpStr, size_t cCount);
+	void DrawTileRows(CDC& dc, CRect& rect, LFItemDescriptor* i, FVItemData* d, INT* Rows, BOOL Themed);
+	void DrawProperty(CDC& dc, CRect& rect, LFItemDescriptor* i, FVItemData* d, UINT Attr, BOOL Themed);
+	INT GetMaxLabelWidth();
 };

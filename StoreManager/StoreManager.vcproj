@@ -374,27 +374,7 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\CAbstractListView.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\CCalendarDayView.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\CCalendarHeaderCtrl.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\CCalendarYearView.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\CCaptionBar.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\CFileList.cpp"
 				>
 			</File>
 			<File
@@ -407,6 +387,10 @@
 			</File>
 			<File
 				RelativePath=".\CGlobeView.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\CGridView.cpp"
 				>
 			</File>
 			<File
@@ -435,10 +419,6 @@
 			</File>
 			<File
 				RelativePath=".\CTextures.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\CTimelineView.cpp"
 				>
 			</File>
 			<File
@@ -512,27 +492,7 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath=".\CAbstractListView.h"
-				>
-			</File>
-			<File
-				RelativePath=".\CCalendarDayView.h"
-				>
-			</File>
-			<File
-				RelativePath=".\CCalendarHeaderCtrl.h"
-				>
-			</File>
-			<File
-				RelativePath=".\CCalendarYearView.h"
-				>
-			</File>
-			<File
 				RelativePath=".\CCaptionBar.h"
-				>
-			</File>
-			<File
-				RelativePath=".\CFileList.h"
 				>
 			</File>
 			<File
@@ -545,6 +505,10 @@
 			</File>
 			<File
 				RelativePath=".\CGlobeView.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CGridView.h"
 				>
 			</File>
 			<File
@@ -573,10 +537,6 @@
 			</File>
 			<File
 				RelativePath=".\CTextures.h"
-				>
-			</File>
-			<File
-				RelativePath=".\CTimelineView.h"
 				>
 			</File>
 			<File

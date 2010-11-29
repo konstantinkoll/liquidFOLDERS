@@ -35,16 +35,13 @@ class CGlobeView : public CFileView
 {
 public:
 	CGlobeView();
-	virtual ~CGlobeView();
 
 	LocalSettings m_LocalSettings;
 	BOOL m_CameraChanged;
 
 	virtual void SelectItem(INT n, BOOL select=TRUE, BOOL InternalCall=FALSE);
-	virtual INT GetSelectedItem();
-	virtual INT GetNextSelectedItem(INT n);
 
-	void Create(CWnd* pParentWnd, LFSearchResult* _result, INT _FocusItem);
+	BOOL Create(CWnd* pParentWnd, UINT nID, LFSearchResult* Result, INT FocusItem=0);
 
 protected:
 	CClientDC* m_pDC;
@@ -63,11 +60,10 @@ protected:
 	COLORREF m_ColorHighlight;
 	Location* m_Locations;
 
-	virtual void SetViewOptions(UINT _ViewID, BOOL Force);
-	virtual void SetSearchResult(LFSearchResult* _result);
-	virtual BOOL IsSelected(INT n);
+	virtual void SetViewOptions(BOOL Force);
+	virtual void SetSearchResult(LFSearchResult* Result);
 	virtual INT ItemAtPosition(CPoint point);
-	virtual CMenu* GetContextMenu();
+	//virtual CMenu* GetContextMenu();
 
 	void Init();
 	void PrepareFont(BOOL large, BOOL granny);
@@ -108,9 +104,6 @@ protected:
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnPaint();
-	afx_msg void OnSetFocus(CWnd* pOldWnd);
-	afx_msg void OnKillFocus(CWnd* pNewWnd);
-	afx_msg void OnSysColorChange();
 	DECLARE_MESSAGE_MAP()
 
 private:

@@ -34,11 +34,6 @@ public:
 	list<CMainFrame*> m_listClipboardFrames;
 	LFViewParameters m_Views[LFContextCount];
 	LFBitArray* m_AllowedViews[LFContextCount];
-	CImageList m_Icons128;
-	CImageList m_Icons64;
-	CImageList m_Icons48;
-	CImageList m_Icons24;
-	CImageList m_Icons16;
 
 	virtual BOOL InitInstance();
 	virtual INT ExitInstance();

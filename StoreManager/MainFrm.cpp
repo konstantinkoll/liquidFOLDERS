@@ -5,15 +5,10 @@
 #include "stdafx.h"
 #include "StoreManager.h"
 #include "MainFrm.h"
-#include "liquidFOLDERS.h"
 #include "LFCore.h"
-#include "CFileView.h"
 #include "CListView.h"
-#include "CCalendarYearView.h"
-#include "CCalendarDayView.h"
 #include "CGlobeView.h"
 #include "CTagcloudView.h"
-#include "CTimelineView.h"
 #include "SortOptionsDlg.h"
 #include "ViewOptionsDlg.h"
 #include "ChooseDetailsDlg.h"
@@ -59,7 +54,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoreAttributesChanged, OnStoresChanged)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->DefaultStoreChanged, OnStoresChanged)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->LookChanged, OnLookChanged)
-	ON_COMMAND(ID_APP_UPDATESELECTION, OnUpdateSelection)
+	ON_MESSAGE_VOID(WM_UPDATESELECTION, OnUpdateSelection)
 
 	ON_UPDATE_COMMAND_UI_RANGE(ID_APP_NEWVIEW, ID_APP_VIEW_TIMELINE, OnUpdateAppCommands)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_AUTODIRS, OnUpdateAppCommands)
@@ -158,7 +153,6 @@ CMainFrame::CMainFrame(char* RootStore, BOOL _IsClipboard)
 	m_wndFilter = NULL;
 	m_wndHistory = NULL;
 	m_sbItemCount = NULL;
-	m_sbHint = NULL;
 }
 
 CMainFrame::~CMainFrame()
@@ -216,13 +210,10 @@ INT CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	m_sbFileCount = new CMFCRibbonStatusBarPane(ID_PANE_STATUSBAR_FILECOUNT, _T(""), TRUE);
 	m_sbItemCount = new CMFCRibbonStatusBarPane(ID_PANE_STATUSBAR_ITEMCOUNT, _T(""), TRUE);
-	m_sbHint = new CMFCRibbonStatusBarPane(ID_PANE_STATUSBAR_HINT, _T(""), TRUE);
 
 	m_wndStatusBar.AddElement(m_sbFileCount, _T("File count"));
 	m_wndStatusBar.AddSeparator();
 	m_wndStatusBar.AddElement(m_sbItemCount, _T("Item count"));
-	m_wndStatusBar.AddSeparator();
-	m_wndStatusBar.AddElement(m_sbHint, _T("Hint"));
 
 	CMFCRibbonButtonsGroup* pGroupPanels = new CMFCRibbonButtonsGroup();
 	if (!IsClipboard)
@@ -1123,7 +1114,7 @@ void CMainFrame::UpdateViewOptions()
 				((CTextureComboBox*)cbx)->SelectItem((INT)theApp.m_nTextureSize);
 		}
 
-		m_wndView->OnUpdateViewOptions();
+		m_wndView->UpdateViewOptions();
 	}
 }
 
@@ -1148,17 +1139,11 @@ void CMainFrame::UpdateSearchResult(BOOL SetEmpty, INT FocusItem)
 		// - Wenn im Kontext die Ansicht auf "automatisch" steht
 		// - Wenn sich für die Liste das Kategorien-Flag ändert (wg. virtual mode)
 		BOOL change = (ActiveContextID!=CookedFiles->m_Context) || (ActiveViewID!=(INT)SelectViewMode(ActiveViewParameters->Mode));
-		BOOL force = FALSE;
-		if ((!change) && (m_wndView) && (ActiveViewID>=LFViewLargeIcons) && (ActiveViewID<=LFViewPreview))
-		{
-			change |= (m_wndView->HasCategories()!=(CookedFiles->m_HasCategories==true));
-			force = TRUE;
-		}
 		if (change)
 		{
 			ActiveContextID = CookedFiles->m_Context;
 			ActiveViewParameters = &theApp.m_Views[ActiveContextID];
-			if (OpenChildView(FocusItem, force))
+			if (OpenChildView(FocusItem))
 				return;
 		}
 		#ifndef _DEBUG
@@ -1171,7 +1156,7 @@ void CMainFrame::UpdateSearchResult(BOOL SetEmpty, INT FocusItem)
 	}
 
 	if (m_wndView)
-		m_wndView->OnUpdateSearchResult(SetEmpty ? NULL : CookedFiles, FocusItem);
+		m_wndView->UpdateSearchResult(SetEmpty ? NULL : CookedFiles, FocusItem);
 	OnUpdateSelection();
 }
 
@@ -1198,31 +1183,9 @@ INT CMainFrame::GetNextSelectedItem(INT n)
 
 void CMainFrame::OnUpdateSelection()
 {
-	// Focus
-	INT i = GetFocusItem();
-
-	if (m_sbHint)
-		if (i==-1)
-		{
-			m_sbHint->SetText(_T(""));
-		}
-		else
-		{
-			CString tmpStr;
-			if ((CookedFiles->m_Items[i]->Type & (LFTypeStore | LFTypeRequiresMaintenance))==(LFTypeStore | LFTypeRequiresMaintenance))
-			{
-				ENSURE(tmpStr.LoadString(IDS_REQUIRESMAINTENANCE));
-			}
-			else
-			{
-				tmpStr = CookedFiles->m_Items[i]->Description;
-			}
-			m_sbHint->SetText(tmpStr);
-		}
-
 	// Selection
 	m_wndInspector.UpdateStart(ActiveFilter);
-	i = GetNextSelectedItem(-1);
+	INT i = GetNextSelectedItem(-1);
 	FilesSelected = FALSE;
 	UINT Count = 0;
 	INT64 Size = 0;
@@ -1260,11 +1223,7 @@ void CMainFrame::OnUpdateSelection()
 		}
 		tmpStr.Format(maskStr, Count, sizeStr);
 		m_sbItemCount->SetText(tmpStr);
-	}
 
-	if ((m_sbHint) || (m_sbItemCount))
-	{
-		// Update
 		m_wndStatusBar.RecalcLayout();
 		m_wndStatusBar.Invalidate();
 	}
@@ -1318,7 +1277,7 @@ BOOL CMainFrame::RenameSingleItem(UINT n, CString Name)
 		LFTransactionUpdate(tl, GetSafeHwnd(), &value);
 
 		if (tl->m_Changes)
-			m_wndView->OnUpdateSearchResult(CookedFiles, GetFocusItem());
+			m_wndView->UpdateSearchResult(CookedFiles, GetFocusItem());
 
 		if (tl->m_LastError>LFCancel)
 			ShowCaptionBar(IDI_ERROR, tl->m_LastError);
@@ -1389,7 +1348,7 @@ BOOL CMainFrame::UpdateSelectedItems(LFVariantData* value1, LFVariantData* value
 			}
 
 		if (tl->m_Changes)
-			m_wndView->OnUpdateSearchResult(CookedFiles, GetFocusItem());
+			m_wndView->UpdateSearchResult(CookedFiles, GetFocusItem());
 		if (deselected)
 			OnUpdateSelection();
 	}
@@ -2187,15 +2146,27 @@ BOOL CMainFrame::OpenChildView(INT FocusItem, BOOL Force, BOOL AllowChangeSort)
 	case LFViewTiles:
 	case LFViewSearchResult:
 	case LFViewPreview:
-		if ((m_wndView) && (CookedFiles))
-			Force |= (m_wndView->HasCategories()!=(CookedFiles->m_HasCategories==true));
 		if ((Force) || (ActiveViewID<LFViewLargeIcons) || (ActiveViewID>LFViewPreview))
 		{
 			pNewView = new CListView();
-			((CListView*)pNewView)->Create(this, CookedFiles, ViewID, FocusItem);
+			((CListView*)pNewView)->Create(this, AFX_IDW_PANE_FIRST, CookedFiles, FocusItem);
 		}
 		break;
-	case LFViewCalendarYear:
+	case LFViewGlobe:
+		if ((Force) || (ActiveViewID!=LFViewGlobe))
+		{
+			pNewView = new CGlobeView();
+			((CGlobeView*)pNewView)->Create(this, AFX_IDW_PANE_FIRST, CookedFiles, FocusItem);
+		}
+		break;
+	case LFViewTagcloud:
+		if ((Force) || (ActiveViewID!=LFViewTagcloud))
+		{
+			pNewView = new CTagcloudView();
+			((CTagcloudView*)pNewView)->Create(this, AFX_IDW_PANE_FIRST, CookedFiles, FocusItem);
+		}
+		break;
+	/*case LFViewCalendarYear:
 		if ((Force) || (ActiveViewID!=LFViewCalendarYear))
 		{
 			pNewView = new CCalendarYearView();
@@ -2209,27 +2180,13 @@ BOOL CMainFrame::OpenChildView(INT FocusItem, BOOL Force, BOOL AllowChangeSort)
 			((CCalendarDayView*)pNewView)->Create(this, CookedFiles, FocusItem);
 		}
 		break;
-	case LFViewGlobe:
-		if ((Force) || (ActiveViewID!=LFViewGlobe))
-		{
-			pNewView = new CGlobeView();
-			((CGlobeView*)pNewView)->Create(this, CookedFiles, FocusItem);
-		}
-		break;
-	case LFViewTagcloud:
-		if ((Force) || (ActiveViewID!=LFViewTagcloud))
-		{
-			pNewView = new CTagcloudView();
-			((CTagcloudView*)pNewView)->Create(this, CookedFiles, FocusItem);
-		}
-		break;
 	case LFViewTimeline:
 		if ((Force) || (ActiveViewID!=LFViewTimeline))
 		{
 			pNewView = new CTimelineView();
 			((CTimelineView*)pNewView)->Create(this, CookedFiles, FocusItem);
 		}
-		break;
+		break;*/
 	}
 
 	// Altes View entfernen, neues View setzen
@@ -2266,7 +2223,7 @@ BOOL CMainFrame::OpenChildView(INT FocusItem, BOOL Force, BOOL AllowChangeSort)
 	}
 	else
 	{
-		m_wndView->OnUpdateViewOptions(ActiveContextID, ViewID);
+		m_wndView->UpdateViewOptions(ActiveContextID, ViewID);
 	}
 
 	ActiveViewID = ViewID;

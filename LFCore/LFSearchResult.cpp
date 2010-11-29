@@ -227,6 +227,10 @@ int LFSearchResult::Compare(int eins, int zwei, unsigned int attr, bool descendi
 	if ((d1->IconID!=IDI_FLD_Back) && (d2->IconID==IDI_FLD_Back))
 		return 1;
 
+	// Kategorien
+	if ((categories) && (d1->CategoryID!=d2->CategoryID))
+		return (int)d1->CategoryID-(int)d2->CategoryID;
+
 	// Wenn zwei Laufwerke anhand des Namens verglichen werden sollen, Laufwerksbuchstaben nehmen
 	unsigned int Sort = attr;
 	unsigned int SortSecond = LFAttrFileName;

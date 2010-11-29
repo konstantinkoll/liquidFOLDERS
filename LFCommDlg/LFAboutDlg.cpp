@@ -166,7 +166,7 @@ void LFAboutDlg::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 
 	dc.SetTextColor(0x000000);
 	dc.SetBkMode(TRANSPARENT);
-	dc.DrawText(parameters->appname+_T(" (Beta2)"), -1, r, 0);
+	dc.DrawText(parameters->appname+_T(" (Beta)"), -1, r, 0);
 	r.top += 45;
 
 	DeleteObject(font);

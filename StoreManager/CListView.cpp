@@ -4,350 +4,416 @@
 
 #include "stdafx.h"
 #include "CListView.h"
-#include "Resource.h"
 #include "StoreManager.h"
-#include "LFCore.h"
-#include "LFCommDlg.h"
+#include <string>
 
 
 // CListView
+//
 
-CListView::CListView()
+#define GetItemData(idx)                   ((FVItemData*)(m_ItemData+idx*m_DataSize))
+#define PADDING                            2
+#define DrawLabel(dc, rect, i, format)     dc.DrawText(GetLabel(i), -1, rect, DT_END_ELLIPSIS | format);
+#define SwitchColor(dc, d)                 if ((Themed) && ((hThemeList) || (!d->Selected))) dc.SetTextColor(0x808080);
+#define PrepareBlend()                     INT w = min(rect.Width(), RatingBitmapWidth); \
+                                           INT h = min(rect.Height(), RatingBitmapHeight); \
+                                           BLENDFUNCTION BF = { AC_SRC_OVER, 0, 0xFF, AC_SRC_ALPHA };
+#define Blend(dc, rect, level, bitmaps)    { HDC hdcMem = CreateCompatibleDC(dc); \
+                                           HBITMAP hbmOld = (HBITMAP)SelectObject(hdcMem, bitmaps[level>LFMaxRating ? 0 : level]); \
+                                           AlphaBlend(dc, rect.left, rect.top+1, w, h, hdcMem, 0, 0, w, h, BF); \
+                                           SelectObject(hdcMem, hbmOld); \
+                                           DeleteDC(hdcMem); }
+#define RIGHTCOLUMN                        215
+
+CListView::CListView(UINT DataSize)
+	: CGridView(DataSize)
 {
-	RibbonColor = 0;
+	m_Icons[0] = m_Icons[1] = NULL;
 }
 
-CListView::~CListView()
+void CListView::SetViewOptions(BOOL Force)
 {
+	if ((p_ViewParameters->Mode!=m_ViewParameters.Mode) || (Force))
+	{
+		INT cx;
+		INT cy;
+
+		switch (p_ViewParameters->Mode)
+		{
+		case LFViewLargeIcons:
+		case LFViewPreview:
+			m_Icons[0] = &theApp.m_CoreImageListJumbo;
+			m_Icons[1] = (theApp.OSVersion<OS_Vista) ? &theApp.m_SystemImageListExtraLarge : &theApp.m_SystemImageListJumbo;
+			cx = cy = 128;
+			break;
+		case LFViewSmallIcons:
+			m_Icons[0] = &theApp.m_CoreImageListLarge;
+			m_Icons[1] = &theApp.m_SystemImageListLarge;
+			cx = cy = 32;
+			break;
+		case LFViewTiles:
+		case LFViewSearchResult:
+			m_Icons[0] = &theApp.m_CoreImageListExtraLarge;
+			m_Icons[1] = &theApp.m_SystemImageListExtraLarge;
+			cx = cy = 48;
+			break;
+		default:
+			m_Icons[0] = &theApp.m_CoreImageListSmall;
+			m_Icons[1] = &theApp.m_SystemImageListSmall;
+			cx = cy = 16;
+		}
+
+		ImageList_GetIconSize(*m_Icons[0], &cx, &cy);
+		m_IconSize[0].cx = cx;
+		m_IconSize[0].cy = cy;
+
+		ImageList_GetIconSize(*m_Icons[1], &cx, &cy);
+		m_IconSize[1].cx = min(cx, 128);
+		m_IconSize[1].cy = min(cy, 128);
+	}
 }
 
-void CListView::Create(CWnd* pParentWnd, LFSearchResult* _result, UINT _ViewID, INT _FocusItem)
+void CListView::SetSearchResult(LFSearchResult* Result)
 {
-	m_HasCategories = _result->m_HasCategories;
+	m_Extensions.empty();
 
-	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS);
+	if (Result)
+		for (UINT a=0; a<Result->m_ItemCount; a++)
+		{
+			LFItemDescriptor* i = Result->m_Items[a];
+			if ((i->Type & LFTypeMask)==LFTypeFile)
+				if (m_Extensions.count(i->CoreAttributes.FileFormat)==0)
+				{
+					CString Ext = _T("*.");
+					Ext += i->CoreAttributes.FileFormat;
 
-	const DWORD dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN;
-	CRect rect;
-	rect.SetRectEmpty();
-	CWnd::Create(className, _T(""), dwStyle, rect, pParentWnd, AFX_IDW_PANE_FIRST);
-
-	CFileView::Create(_result, _ViewID, _FocusItem, FALSE, FALSE);
+					SHFILEINFO sfi;
+					if (SUCCEEDED(SHGetFileInfo(Ext, 0, &sfi, sizeof(sfi), SHGFI_TYPENAME | SHGFI_USEFILEATTRIBUTES)))
+						m_Extensions[i->CoreAttributes.FileFormat] = sfi.szTypeName;
+				}
+		}
 }
 
 void CListView::AdjustLayout()
 {
-	CRect rectClient;
-	GetClientRect(rectClient);
+	GVArrange gva = { 0, 0, 17, 2, PADDING, 1, -1 };
 
-	m_FileList.SetWindowPos(NULL, rectClient.left, rectClient.top, rectClient.Width(), rectClient.Height(), SWP_NOACTIVATE | SWP_NOZORDER);
+	switch (m_ViewParameters.Mode)
+	{
+	case LFViewLargeIcons:
+	case LFViewSmallIcons:
+	case LFViewPreview:
+		gva.cx = max(m_IconSize[0].cx, m_FontHeight[0]*10);
+		gva.cy = m_IconSize[0].cy+m_FontHeight[0]*2+PADDING;
+		gva.guttery = 1;
+		ArrangeHorizontal(gva);
+		break;
+	case LFViewList:
+		gva.cx = max(140, min(240, m_IconSize[0].cx+PADDING+GetMaxLabelWidth()));
+		gva.cy = max(m_IconSize[0].cy, m_FontHeight[0]);
+		ArrangeVertical(gva);
+		break;
+	case LFViewDetails:
+	case LFViewCalendarDay:
+		gva.cx = 140;
+		gva.cy = max(m_IconSize[0].cy, m_FontHeight[0]);
+		ArrangeHorizontal(gva, FALSE, TRUE);
+		break;
+	case LFViewTiles:
+		gva.cx = 240;
+		gva.cy = max(m_IconSize[0].cy, m_FontHeight[0]*3+max(m_FontHeight[0], 18));
+		gva.gutterx = gva.guttery = 3;
+		ArrangeHorizontal(gva, FALSE);
+		break;
+	case LFViewSearchResult:
+		gva.cy = 2+max(m_IconSize[0].cy, max(m_FontHeight[0]*3+m_FontHeight[1], m_FontHeight[0]*2+max(m_FontHeight[0], 18)*2+1));
+		ArrangeHorizontal(gva, FALSE, TRUE, TRUE);
+		break;
+	}
 }
 
-void CListView::SetSearchResult(LFSearchResult* _result)
+void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed)
 {
-	m_FileList.ItemChanged = 1;
+	PrepareSysIcon(idx);
 
-	// Items
-	if (m_FileList.OwnerData)
-	{
-		if (_result)
-		{
-			if (result)
-				m_FileList.SetItemState(FocusItem, LVIS_FOCUSED, LVIS_FOCUSED);
-			m_FileList.SetItemCountEx(_result->m_ItemCount, 0);
-			if (!result)
-				m_FileList.SetItemState(FocusItem, LVIS_FOCUSED, LVIS_FOCUSED);
-			m_FileList.EnsureVisible(FocusItem, FALSE);
-		}
-		else
-		{
-			m_FileList.SetItemCountEx(0, 0);
-		}
-	}
-	else
-	{
-		m_FileList.DeleteAllItems();
+	LFItemDescriptor* i = p_Result->m_Items[idx];
+	FVItemData* d = GetItemData(idx);
+	INT Rows[4];
+	BOOL Right = FALSE;
 
-		if (_result)
+	CRect rect(rectItem);
+	rect.DeflateRect(PADDING, PADDING);
+
+	CRect rectIcon(rect);
+	CRect rectLabel(rect);
+	CRect rectLeft(rect);
+	CRect rectRight(rect);
+
+	switch (m_ViewParameters.Mode)
+	{
+	case LFViewLargeIcons:
+	case LFViewSmallIcons:
+	case LFViewPreview:
+		rectIcon.bottom = rectIcon.top+m_IconSize[0].cy;
+		DrawIcon(dc, rectIcon, i, d);
+		rectLabel.top += m_IconSize[0].cy+PADDING;
+		DrawLabel(dc, rectLabel, i, DT_CENTER | DT_WORDBREAK);
+		break;
+	case LFViewDetails:
+	case LFViewCalendarDay:
+		rectIcon.right = rectIcon.left+m_IconSize[0].cx;
+		DrawIcon(dc, rectIcon, i, d);
+		break;
+	case LFViewList:
+		rectIcon.right = rectIcon.left+m_IconSize[0].cx;
+		DrawIcon(dc, rectIcon, i, d);
+		rectLabel.left += m_IconSize[0].cx+PADDING;
+		DrawLabel(dc, rectLabel, i, DT_LEFT | DT_SINGLELINE);
+		break;
+	case LFViewTiles:
+		rectIcon.right = rectIcon.left+m_IconSize[0].cx;
+		DrawIcon(dc, rectIcon, i, d);
+		rectLabel.left += m_IconSize[0].cx+m_FontHeight[0]/2;
+
+		Rows[0] = LFAttrFileName;
+		switch (i->Type & LFTypeMask)
 		{
-			// Change or append items
-			UINT puColumns[3];
-			if (_result->m_Context==LFContextStoreHome)
+		case LFTypeStore:
+		case LFTypeDrive:
+			Rows[1] = LFAttrComment;
+			Rows[2] = LFAttrDescription;
+			Rows[3] = LFAttrCreationTime;
+			break;
+		case LFTypeFile:
+			Rows[1] = LFAttrFileTime;
+			Rows[2] = LFAttrFileSize;
+			Rows[3] = LFAttrRating;
+			break;
+		case LFTypeVirtual:
+			if (m_Context==LFContextStoreHome)
 			{
-				puColumns[0] = 1;
-				puColumns[1] = 3;
-				puColumns[2] = 4;
+				Rows[1] = LFAttrComment;
+				Rows[2] = LFAttrDescription;
+				Rows[3] = LFAttrFileSize;
 			}
 			else
 			{
-				puColumns[0] = 1;
-				puColumns[1] = 2;
-				puColumns[2] = 3;
+				Rows[1] = LFAttrDescription;
+				Rows[2] = LFAttrFileSize;
+				Rows[3] = -1;
 			}
-
-			LVITEM lvi;
-			ZeroMemory(&lvi, sizeof(lvi));
-			lvi.mask = LVIF_TEXT | LVIF_IMAGE | LVIF_GROUPID | LVIF_COLUMNS | LVIF_STATE;
-			lvi.puColumns = puColumns;
-
-			for (UINT a=0; a<_result->m_ItemCount; a++)
-			{
-				lvi.iItem = a;
-				lvi.cColumns = (_result->m_Context==LFContextStoreHome) ? _result->m_Items[a]->Description[0]!='\0' ? 4 : 2 : 3;
-				lvi.pszText = (LPWSTR)_result->m_Items[a]->CoreAttributes.FileName;
-				lvi.iImage = _result->m_Items[a]->IconID-1;
-				lvi.iGroupId = _result->m_Items[a]->CategoryID;
-				lvi.state = ((_result->m_Items[a]->Type & LFTypeGhosted) ? LVIS_CUT : 0) |
-							(((INT)a==FocusItem) ? LVIS_FOCUSED : 0);
-				lvi.stateMask = LVIS_CUT | LVIS_FOCUSED;
-				m_FileList.InsertItem(&lvi);
-			}
+			break;
 		}
-	}
 
-	// Sortierung
-	if (ViewID==LFViewDetails)
-		m_FileList.SetHeader(TRUE);
+		DrawTileRows(dc, rectLabel, i, d, Rows, Themed);
+		break;
+	case LFViewSearchResult:
+		rectIcon.right = rectIcon.left+m_IconSize[0].cx;
+		DrawIcon(dc, rectIcon, i, d);
 
-	// Footer
-	if (m_FileList.SupportsFooter())
-	{
-		m_FileList.RemoveFooter();
+		rectLeft.left += m_IconSize[0].cx+m_FontHeight[0]/2;
+		rectLeft.top++;
+		Right = (rect.Width()>600) && (((i->Type & LFTypeMask)==LFTypeStore) || ((i->Type & LFTypeMask)==LFTypeFile));
+		if (Right)
+			rectLeft.right -= RIGHTCOLUMN+2*PADDING;
 
-		if (_result)
+		DrawProperty(dc, rectLeft, i, d, LFAttrFileName, Themed);
+		switch (i->Type & LFTypeMask)
 		{
-			UINT cmd = 0;
-			UINT icon = 0;
-			CString footerStr;
-			CString btnStr;
-
-			switch (_result->m_Context)
+		case LFTypeStore:
+		case LFTypeDrive:
+			DrawProperty(dc, rectLeft, i, d, LFAttrComment, Themed);
+			DrawProperty(dc, rectLeft, i, d, LFAttrDescription, Themed);
+			break;
+		case LFTypeFile:
+			DrawProperty(dc, rectLeft, i, d, LFAttrComment, Themed);
+			DrawProperty(dc, rectLeft, i, d, LFAttrTags, Themed);
+			DrawProperty(dc, rectLeft, i, d, LFAttrFileFormat, Themed);
+			break;
+		case LFTypeVirtual:
+			if (m_Context==LFContextStoreHome)
 			{
-			case LFContextStores:
-				if (!_result->m_StoreCount)
-				{
-					cmd = ID_STORE_NEW;
-					icon = IDI_STORE_Default-1;
-					footerStr.LoadString(IDS_NOSTORES);
-				}
+				DrawProperty(dc, rectLeft, i, d, LFAttrComment, Themed);
+				DrawProperty(dc, rectLeft, i, d, LFAttrDescription, Themed);
+				DrawProperty(dc, rectLeft, i, d, LFAttrFileSize, Themed);
+			}
+			else
+			{
+				DrawProperty(dc, rectLeft, i, d, LFAttrDescription, Themed);
+				DrawProperty(dc, rectLeft, i, d, LFAttrFileSize, Themed);
+			}
+			break;
+		}
+
+		if (Right)
+		{
+			rectRight.left = rectLeft.right+2*PADDING;
+			rectRight.top += 1+m_FontHeight[1]-m_FontHeight[0];
+
+			switch (i->Type & LFTypeMask)
+			{
+			case LFTypeStore:
+				DrawProperty(dc, rectRight, i, d, LFAttrCreationTime, Themed);
+				DrawProperty(dc, rectRight, i, d, LFAttrFileTime, Themed);
 				break;
-			case LFContextStoreHome:
-				if (_result->m_HidingItems)
-				{
-					cmd = ID_NAV_RELOAD_SHOWALL;
-					icon = IDI_FLD_Default-1;
-				}
+			case LFTypeFile:
+				DrawProperty(dc, rectRight, i, d, LFAttrFileTime, Themed);
+				DrawProperty(dc, rectRight, i, d, LFAttrFileSize, Themed);
+				DrawProperty(dc, rectRight, i, d, LFAttrRating, Themed);
+				DrawProperty(dc, rectRight, i, d, LFAttrPriority, Themed);
 				break;
 			}
-
-			if (cmd)
-			{
-				CString tmpStr;
-				ENSURE(tmpStr.LoadString(cmd));
-
-				INT pos = tmpStr.Find('\n');
-				if (pos!=-1)
-				{
-					if (footerStr.IsEmpty())
-						footerStr = tmpStr.Mid(0, pos-1);
-					if (btnStr.IsEmpty())
-						btnStr = tmpStr.Mid(pos+1);
-				}
-
-				m_FileList.SetFooterText(footerStr);
-				m_FileList.InsertFooterButton(0, btnStr, NULL, icon, cmd);
-				IListViewFooterCallback* i = NULL;
-				if (m_xFooterCallback.QueryInterface(IID_IListViewFooterCallback, (LPVOID*)&i)==NOERROR)
-					m_FileList.ShowFooter(i);
-			}
 		}
-	}
 
-	m_FileList.ItemChanged = 0;
+		break;
+	}
 }
 
-void CListView::SetViewOptions(UINT _ViewID, BOOL Force)
+void CListView::DrawIcon(CDC& dc, CRect& rect, LFItemDescriptor* i, FVItemData* d)
 {
-	// Font
-	if (Force)
-	{
-		m_FileList.SetFont(&theApp.m_DefaultFont);
-
-		if (_ViewID==LFViewDetails)
-		{
-			CHeaderCtrl * pHdrCtrl = m_FileList.GetHeaderCtrl();
-			if (pHdrCtrl)
-			{
-				pHdrCtrl->SetFont(NULL);
-				pHdrCtrl->SetFont(&theApp.m_DefaultFont);
-			}
-		}
-	}
-
-	// Categories
-	if (Force || (_ViewID!=ViewID))
-		m_FileList.EnableGroupView((!m_FileList.OwnerData) && (_ViewID!=LFViewList));
-
-	// Farbe
-	if (Force)
-		OnSysColorChange();
-
-	// Icons
-	if (Force || (_ViewID!=ViewID))
-	{
-		CImageList* icons = NULL;
-		INT nImageList = LVSIL_NORMAL;
-
-		switch (_ViewID)
-		{
-		case LFViewLargeIcons:
-		case LFViewPreview:
-			icons = &theApp.m_Icons128;
-			m_FileList.SetIconSpacing(140, 140+(INT)(GetFontHeight()*2.5));
-			break;
-		case LFViewSmallIcons:
-			m_FileList.SetIconSpacing(32+(INT)(GetFontHeight()*8), (INT)(GetFontHeight()*8));
-		case LFViewTiles:
-			icons = &theApp.m_Icons48;
-			break;
-		default:
-			icons = &theApp.m_Icons16;
-			nImageList = LVSIL_SMALL;
-		}
-		m_FileList.SetImageList(icons, nImageList);
-	}
-
-	// View
-	if (Force || (_ViewID!=ViewID))
-	{
-		INT iView = LV_VIEW_ICON;
-		switch (_ViewID)
-		{
-		case LFViewList:
-			iView = LV_VIEW_LIST;
-			break;
-		case LFViewDetails:
-			iView = LV_VIEW_DETAILS;
-			break;
-		case LFViewTiles:
-			LVTILEVIEWINFO tvi;
-			ZeroMemory(&tvi, sizeof(tvi));
-			tvi.cbSize = sizeof(LVTILEVIEWINFO);
-			tvi.cLines = 3;
-			tvi.dwFlags = LVTVIF_FIXEDWIDTH;
-			tvi.dwMask = LVTVIM_COLUMNS | LVTVIM_TILESIZE;
-			tvi.sizeTile.cx = 240;
-			if ((theApp.OSVersion==OS_XP) && (m_FileList.OwnerData))  // Only for virtual lists on Windows XP
-			{
-				tvi.dwMask |= LVTVIM_LABELMARGIN;
-				tvi.rcLabelMargin.bottom = (INT)(GetFontHeight()*1.3);
-				tvi.rcLabelMargin.top = -18;
-				tvi.rcLabelMargin.left = 1;
-				tvi.rcLabelMargin.right = 1;
-			}
-			m_FileList.SetTileViewInfo(&tvi);
-			m_FileList.SetView(LV_VIEW_LIST);
-			m_FileList.SetSelectedColumn(-1);
-			iView = LV_VIEW_TILE;
-		}
-
-		m_FileList.ModifyStyle(_ViewID!=LFViewList ? LVS_ALIGNLEFT : 0, _ViewID==LFViewList ? LVS_ALIGNLEFT : 0);
-		if (theApp.OSVersion==OS_XP)
-			m_FileList.SetExtendedStyle(m_FileList.GetExtendedStyle() & !LVS_EX_BORDERSELECT | FileListExtendedStyles | (_ViewID==LFViewPreview ? LVS_EX_BORDERSELECT : 0));
-
-		m_FileList.SetView(iView);
-		m_FileList.CreateColumns();
-		m_FileList.EnsureVisible(FocusItem, FALSE);
-	}
-	else
-		if (_ViewID==LFViewDetails)
-			m_FileList.SetHeader();
-
-	// Full row select
-	if (Force || (_ViewID!=ViewID) || (pViewParameters->FullRowSelect!=m_ViewParameters.FullRowSelect))
-		if (_ViewID==LFViewDetails)
-			m_FileList.SetExtendedStyle(m_FileList.GetExtendedStyle() & !LVS_EX_FULLROWSELECT | FileListExtendedStyles | (pViewParameters->FullRowSelect ? LVS_EX_FULLROWSELECT : 0));
+	const INT List = (d->SysIconIndex>=0) ? 1 : 0;
+	rect.OffsetRect((rect.Width()-m_IconSize[List].cx)/2, (rect.Height()-m_IconSize[List].cy)/2);
+	m_Icons[List]->DrawEx(&dc, (d->SysIconIndex>=0) ? d->SysIconIndex : i->IconID-1, rect.TopLeft(), m_IconSize[List], CLR_NONE, 0xFFFFFF, (i->Type & LFTypeGhosted) ? ILD_BLEND50 : ILD_TRANSPARENT);
 }
 
-
-BEGIN_MESSAGE_MAP(CListView, CAbstractListView)
-	ON_WM_CREATE()
-	ON_WM_SIZE()
-END_MESSAGE_MAP()
-
-INT CListView::OnCreate(LPCREATESTRUCT lpCreateStruct)
+void CListView::AttributeToString(LFItemDescriptor* i, UINT Attr, WCHAR* tmpStr, size_t cCount)
 {
-	if (CFileView::OnCreate(lpCreateStruct)==-1)
-		return -1;
-
-	if (!m_FileList.Create(this, !m_HasCategories))
-		return -1;
-
-	m_FileList.SetImageList(&theApp.m_Icons16, LVSIL_FOOTER);
-
-	if (m_HasCategories)
+	switch (Attr)
 	{
-		LVGROUP lvg;
-		ZeroMemory(&lvg, sizeof(lvg));
-		lvg.cbSize = sizeof(lvg);
-		lvg.mask = LVGF_HEADER | LVGF_GROUPID | LVGF_ALIGN;
-		lvg.uAlign = LVGA_HEADER_LEFT;
-		if (theApp.OSVersion>=OS_Vista)
-		{
-			lvg.mask |= LVGF_STATE;
-			lvg.state = LVGS_COLLAPSIBLE;
-			lvg.stateMask = 0;
-		}
+	case LFAttrFileName:
+		wcscpy_s(tmpStr, cCount, GetLabel(i));
+		break;
+	case LFAttrFileFormat:
+		wcscpy_s(tmpStr, cCount, m_Extensions[i->CoreAttributes.FileFormat].c_str());
+		break;
+	default:
+		LFAttributeToString(i, Attr, tmpStr, cCount);
+	}
+}
 
-		for (UINT a=0; a<LFItemCategoryCount; a++)
-		{
-			lvg.iGroupId = a;
-			lvg.pszHeader = theApp.m_ItemCategories[a]->Name;
+void CListView::DrawTileRows(CDC& dc, CRect& rect, LFItemDescriptor* i, FVItemData* d, INT* Rows, BOOL Themed)
+{
+	WCHAR tmpStr[4][256];
+	UINT Cnt = 0;
+	UINT Height = 0;
 
-			if (theApp.OSVersion>=OS_Vista)
+	for (UINT a=0; a<4; a++)
+	{
+		tmpStr[a][0] = L'\0';
+
+		if (Rows[a]!=-1)
+			if (Rows[a]==LFAttrRating)
 			{
-				lvg.pszSubtitle = theApp.m_ItemCategories[a]->Hint;
-				if (*lvg.pszSubtitle==L'\0')
+				Cnt++;
+				Height += 18;
+			}
+			else
+			{
+				AttributeToString(i, Rows[a], tmpStr[a], 256);
+				if (tmpStr[a][0]!=L'\0')
 				{
-					lvg.mask &= ~LVGF_SUBTITLE;
-				}
-				else
-				{
-					lvg.mask |= LVGF_SUBTITLE;
+					Cnt++;
+					Height += m_FontHeight[0];
 				}
 			}
-
-			m_FileList.InsertGroup(a, &lvg);
-		}
 	}
 
-	return 0;
+	rect.top += (rect.Height()-Height)/2;
+	rect.bottom = rect.top+m_FontHeight[0];
+
+	for (UINT a=0; a<4; a++)
+	{
+		if (Rows[a]==LFAttrRating)
+		{
+			PrepareBlend();
+			Blend(dc, rect, i->CoreAttributes.Rating, theApp.m_RatingBitmaps);
+			rect.OffsetRect(0, 18);
+		}
+		else
+			if (tmpStr[a][0]!=L'\0')
+			{
+				dc.DrawText(tmpStr[a], -1, rect, DT_LEFT | DT_SINGLELINE | DT_END_ELLIPSIS);
+				rect.OffsetRect(0, m_FontHeight[0]);
+			}
+
+		if (Rows[a]==LFAttrFileName)
+			SwitchColor(dc, d);
+	}
 }
 
-void CListView::OnSize(UINT nType, INT cx, INT cy)
+void CListView::DrawProperty(CDC& dc, CRect& rect, LFItemDescriptor* i, FVItemData* d, UINT Attr, BOOL Themed)
 {
-	CWnd::OnSize(nType, cx, cy);
-	AdjustLayout();
+	CFont* pOldFont;
+	WCHAR tmpStr[256];
+
+	switch (Attr)
+	{
+	case LFAttrFileName:
+		pOldFont = dc.SelectObject(&theApp.m_LargeFont);
+		DrawLabel(dc, rect, i, DT_LEFT | DT_SINGLELINE);
+		dc.SelectObject(pOldFont);
+
+		rect.OffsetRect(0, m_FontHeight[1]);
+		break;
+	case LFAttrRating:
+	case LFAttrPriority:
+		{
+			PrepareBlend();
+			if (Attr==LFAttrRating)
+			{
+				Blend(dc, rect, i->CoreAttributes.Rating, theApp.m_RatingBitmaps);
+			}
+			else
+			{
+				Blend(dc, rect, i->CoreAttributes.Priority, theApp.m_PriorityBitmaps);
+			}
+		}
+
+		rect.OffsetRect(0, 18);
+		break;
+	default:
+		AttributeToString(i, Attr, tmpStr, 256);
+		if (tmpStr[0]!=L'\0')
+		{
+			COLORREF oldColor = dc.GetTextColor();
+
+			CRect rectText(rect);
+			if ((Attr!=LFAttrComment) && (Attr!=LFAttrDescription))
+			{
+				CString tmpCaption(theApp.m_Attributes[Attr]->Name);
+				tmpCaption += _T(": ");
+				dc.DrawText(tmpCaption, -1, rectText, DT_LEFT | DT_SINGLELINE);
+				rectText.left += dc.GetTextExtent(tmpCaption, tmpCaption.GetLength()).cx;
+			}
+
+			SwitchColor(dc, d);
+			dc.DrawText(tmpStr, -1, rectText, DT_LEFT | DT_SINGLELINE | DT_END_ELLIPSIS);
+			dc.SetTextColor(oldColor);
+		}
+
+		rect.OffsetRect(0, m_FontHeight[0]);
+		break;
+	}
 }
 
-
-BEGIN_INTERFACE_MAP(CListView, CAbstractListView)
-	INTERFACE_PART(CListView, IID_IUnknown, FooterCallback)
-	INTERFACE_PART(CListView, IID_IListViewFooterCallback, FooterCallback)
-END_INTERFACE_MAP()
-
-IMPLEMENT_IUNKNOWN(CListView, FooterCallback)
-
-STDMETHODIMP CListView::XFooterCallback::OnButtonClicked(INT /*itemIndex*/, LPARAM lParam, PINT pRemoveFooter)
+INT CListView::GetMaxLabelWidth()
 {
-	METHOD_PROLOGUE(CListView, FooterCallback);
-	pThis->GetParentFrame()->PostMessage(WM_COMMAND, (WPARAM)lParam);
-	*pRemoveFooter = (lParam==ID_NAV_RELOAD_SHOWALL);
-	return S_OK;
-}
+	INT Width = 0;
 
-STDMETHODIMP CListView::XFooterCallback::OnDestroyButton(INT /*itemIndex*/, LPARAM /*lParam*/)
-{
-	METHOD_PROLOGUE(CListView, FooterCallback);
-	return S_OK;
+	if (p_Result)
+	{
+		CDC* dc = GetWindowDC();
+		CFont* pOldFont = dc->SelectObject(&theApp.m_DefaultFont);
+
+		for (INT a=0; a<(INT)p_Result->m_ItemCount; a++)
+		{
+			CString label = GetLabel(p_Result->m_Items[a]);
+			Width = max(Width, dc->GetTextExtent(label, label.GetLength()).cx);
+		}
+	
+		dc->SelectObject(pOldFont);
+		ReleaseDC(dc);
+	}
+
+	return Width;
 }

@@ -56,7 +56,6 @@
 #define ID_APP_CLOSEOTHERS              253
 #define ID_APP_VIEWOPTIONS              254
 #define ID_APP_SORTOPTIONS              255
-#define ID_APP_UPDATESELECTION          256
 #define ID_APP_VIEW_LARGEICONS          300
 #define ID_APP_VIEW_SMALLICONS          301
 #define ID_APP_VIEW_LIST                302
@@ -93,7 +92,6 @@
 #define ID_PANE_HISTORYWND              503
 #define ID_PANE_STATUSBAR_FILECOUNT     504
 #define ID_PANE_STATUSBAR_ITEMCOUNT     505
-#define ID_PANE_STATUSBAR_HINT          506
 #define ID_HISTORYLIST                  510
 #define ID_FILTER_CLEAR                 520
 #define ID_FILTER_EDITCONDITION         521
@@ -220,6 +218,7 @@
 #define IDS_IMPORTFOLDER                1030
 #define IDS_NOSTORES                    1031
 #define IDS_YOULOOKAT                   1032
+#define IDS_NOTHINGTODISPLAY            1033
 #define IDS_VATTR_FIRST                 1100
 #define IDS_VATTR_DRIVELETTER           1100
 #define IDS_VATTR_MAINTENANCETIME       1101
@@ -239,7 +238,6 @@
 #define IDC_MOVEDOWN                    2005
 #define IDD_VIEWOPTIONS                 2050
 #define IDC_VIEWMODES                   2051
-#define IDC_FULLROWSELECT               2052
 #define IDD_SORTOPTIONS                 2100
 #define IDC_SORTATTRIBUTE               2101
 #define IDC_ASCENDING                   2102

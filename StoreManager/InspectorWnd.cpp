@@ -215,7 +215,7 @@ void CInspectorWnd::UpdateFinish()
 		TypeName.Format(tmpStr, Count);
 	}
 
-	m_wndIconCtrl.SetStatus(IconStatus, (IconStatus==StatusUsed ? theApp.m_Icons128.ExtractIcon(IconID-1) : NULL), TypeName);
+	m_wndIconCtrl.SetStatus(IconStatus, (IconStatus==StatusUsed ? theApp.m_CoreImageListJumbo.ExtractIcon(IconID-1) : NULL), TypeName);
 
 	m_wndPropList.SetRedraw(FALSE);
 

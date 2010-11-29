@@ -28,142 +28,281 @@ BOOL AttributeSortableInView(UINT Attr, UINT ViewMode)
 // CFileView
 //
 
-CFileView::CFileView()
+#define GetItemData(idx)     ((FVItemData*)(m_ItemData+idx*m_DataSize))
+#define IsSelected(idx)      GetItemData(idx)->Selected
+#define ChangedItem(idx)     { InvalidateItem(idx); GetOwner()->PostMessage(WM_UPDATESELECTION); }
+#define ChangedItems()       { Invalidate(); GetOwner()->PostMessage(WM_UPDATESELECTION); }
+
+CFileView::CFileView(UINT DataSize, BOOL EnableScrolling, BOOL EnableHover, BOOL EnableTooltip, BOOL EnableShiftSelection)
 	: CWnd()
 {
-	ActiveContextID = LFContextDefault;
-	ViewID = LFViewTiles;
-	result = NULL;
-	FocusItem = HoverItem = SelectionAnchor = -1;
-	MouseInView = FALSE;
+	ASSERT(DataSize>=sizeof(FVItemData));
+
+	p_Result = NULL;
+	m_ItemData = NULL;
+	m_FocusItem = m_HotItem = m_SelectionAnchor = m_EditLabel = -1;
+	m_Context = LFContextDefault;
+	m_HeaderHeight = m_FontHeight[0] = m_FontHeight[1] = m_HScrollMax = m_VScrollMax = m_HScrollPos = m_VScrollPos = 0;
+	m_DataSize = DataSize;
+	m_Hover = FALSE;
+	hThemeList = NULL;
+
+	m_EnableScrolling = EnableScrolling;
+	m_EnableHover = EnableHover;
+	m_EnableTooltip = EnableTooltip;
+	m_EnableShiftSelection = EnableShiftSelection;
 }
 
 CFileView::~CFileView()
 {
+	if (m_ItemData)
+		free(m_ItemData);
 }
 
-void CFileView::Create(LFSearchResult* _result, UINT _ViewID, INT _FocusItem, BOOL _EnableHover, BOOL _EnableShiftSelection)
+BOOL CFileView::Create(CWnd* pParentWnd, UINT nID, LFSearchResult* Result, INT FocusItem, UINT nClassStyle)
 {
-	EnableHover = _EnableHover;
-	EnableShiftSelection = _EnableShiftSelection;
+	CString className = AfxRegisterWndClass(nClassStyle, LoadCursor(NULL, IDC_ARROW));
 
-	OnUpdateViewOptions(_result->m_Context, _ViewID, TRUE);
-	OnUpdateSearchResult(_result, _FocusItem);
+	DWORD dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_TABSTOP;
+	if (m_EnableScrolling)
+		dwStyle |= WS_HSCROLL | WS_VSCROLL;
+
+	CRect rect;
+	rect.SetRectEmpty();
+	if (!CWnd::Create(className, _T(""), dwStyle, rect, pParentWnd, nID))
+		return FALSE;
+
+	UpdateViewOptions(Result->m_Context, TRUE);
+	UpdateSearchResult(Result, FocusItem);
+	return TRUE;
 }
 
-void CFileView::OnUpdateViewOptions(INT _ActiveContextID, INT _ViewID, BOOL Force)
+BOOL CFileView::PreTranslateMessage(MSG* pMsg)
 {
-	if (_ActiveContextID>=0)
-		ActiveContextID = _ActiveContextID;
-	pViewParameters = &theApp.m_Views[ActiveContextID];
-
-	if (_ViewID<0)
-		_ViewID = ViewID;
-
-	SetViewOptions(_ViewID, Force);
-
-	m_ViewParameters = *pViewParameters;
-	RibbonColor = theApp.m_nAppLook;
-	ViewID = _ViewID;
-}
-
-void CFileView::OnUpdateSearchResult(LFSearchResult* _result, INT _FocusItem)
-{
-	if (_result)
+	switch (pMsg->message)
 	{
-		m_DropTarget.Register(this, _result->m_StoreID);
+	case WM_KEYDOWN:
+		/*if (p_Edit)
+			switch (pMsg->wParam)
+			{
+			case VK_EXECUTE:
+			case VK_RETURN:
+				DestroyEdit(TRUE);
+			case VK_ESCAPE:
+				DestroyEdit();
+				return TRUE;
+			}*/
+		break;
+	case WM_MOUSEWHEEL:
+	case WM_MOUSEHWHEEL:
+		/*if (p_Edit)
+			return TRUE;*/
+	case WM_LBUTTONDOWN:
+	case WM_RBUTTONDOWN:
+	case WM_MBUTTONDOWN:
+	case WM_LBUTTONUP:
+	case WM_RBUTTONUP:
+	case WM_MBUTTONUP:
+	case WM_NCLBUTTONDOWN:
+	case WM_NCRBUTTONDOWN:
+	case WM_NCMBUTTONDOWN:
+	case WM_NCLBUTTONUP:
+	case WM_NCRBUTTONUP:
+	case WM_NCMBUTTONUP:
+		m_TooltipCtrl.Deactivate();
+		break;
+	}
 
-		ActiveContextID = _result->m_Context;
-		pViewParameters = &theApp.m_Views[ActiveContextID];
-		m_ViewParameters.SortBy = pViewParameters->SortBy;
+	return CWnd::PreTranslateMessage(pMsg);
+}
 
-		if (_FocusItem>(INT)_result->m_ItemCount-1)
-			_FocusItem = (INT)_result->m_ItemCount-1;
-		FocusItem = _FocusItem;
-		HideFileExt = theApp.HideFileExt();
+void CFileView::UpdateViewOptions(INT Context, BOOL Force)
+{
+	if (Context>=0)
+		m_Context = Context;
+	p_ViewParameters = &theApp.m_Views[m_Context];
+
+	SetViewOptions(Force);
+
+	BOOL Arrange = (m_ViewParameters.Mode!=p_ViewParameters->Mode);
+	m_ViewParameters = *p_ViewParameters;
+
+	if (Arrange)
+	{
+		AdjustLayout();
 	}
 	else
 	{
+		Invalidate();
+	}
+}
+
+void CFileView::UpdateSearchResult(LFSearchResult* Result, INT FocusItem)
+{
+	void* victim = m_ItemData;
+
+	if (Result)
+	{
+		size_t sz = Result->m_ItemCount*m_DataSize;
+		m_ItemData = (BYTE*)malloc(sz);
+		ZeroMemory(m_ItemData, sz);
+		for (UINT a=0; a<Result->m_ItemCount; a++)
+			GetItemData(a)->SysIconIndex = -1;
+
+		m_DropTarget.Register(this, Result->m_StoreID);
+
+		m_Context = Result->m_Context;
+		p_ViewParameters = &theApp.m_Views[m_Context];
+		m_ViewParameters.SortBy = p_ViewParameters->SortBy;
+
+		if (FocusItem>=(INT)Result->m_ItemCount)
+			FocusItem = (INT)Result->m_ItemCount-1;
+		m_FocusItem = FocusItem;
+		m_HideFileExt = theApp.HideFileExt();
+	}
+	else
+	{
+		m_ItemData = NULL;
+
 		m_DropTarget.Revoke();
 		m_pDropTarget = NULL;
 
-		FocusItem = -1;
+		m_FocusItem = -1;
 	}
 
-	SetSearchResult(_result);
+	SetSearchResult(Result);
 
-	SetCursor(LoadCursor(NULL, _result ? IDC_ARROW : IDC_WAIT));
-	result = _result;
-}
+	p_Result = Result;
+	free(victim);
 
-void CFileView::SelectItem(INT /*n*/, BOOL /*select*/, BOOL /*InternalCall*/)
-{
-}
-
-void CFileView::SetFocusItem(INT _FocusItem, BOOL ShiftSelect)
-{
-	if (ShiftSelect && EnableShiftSelection)
+	if (p_Result)
 	{
-		if (SelectionAnchor==-1)
-			SelectionAnchor = FocusItem;
-
-		for (UINT a=0; a<result->m_ItemCount; a++)
-			SelectItem(a, (((INT)a>=_FocusItem) && ((INT)a<=SelectionAnchor)) || (((INT)a>=SelectionAnchor) && ((INT)a<=_FocusItem)), TRUE);
+		AdjustLayout();
 	}
 	else
 	{
-		SelectionAnchor = -1;
-
-		for (UINT a=0; a<result->m_ItemCount; a++)
-			SelectItem(a, (INT)a==_FocusItem, TRUE);
+		Invalidate();
 	}
 
-	FocusItem = _FocusItem;
+	SetCursor(LoadCursor(NULL, Result ? IDC_ARROW : IDC_WAIT));
+}
+
+void CFileView::SetViewOptions(BOOL /*Force*/)
+{
+}
+
+void CFileView::SetSearchResult(LFSearchResult* /*Result*/)
+{
+}
+
+void CFileView::AdjustLayout()
+{
 	Invalidate();
-	GetParentFrame()->SendMessage(WM_COMMAND, ID_APP_UPDATESELECTION);
 }
 
 INT CFileView::GetFocusItem()
 {
-	return FocusItem;
+	return m_FocusItem;
 }
 
 INT CFileView::GetSelectedItem()
 {
+	if (p_Result)
+	{
+		FVItemData* d = GetItemData(m_FocusItem);
+		return d->Selected ? m_FocusItem : -1;
+	}
+
 	return -1;
 }
 
-INT CFileView::GetNextSelectedItem(INT /*n*/)
+INT CFileView::GetNextSelectedItem(INT idx)
 {
+	if (p_Result)
+	{
+		ASSERT(idx>=-1);
+
+		while (++idx<(INT)p_Result->m_ItemCount)
+			if (GetItemData(idx)->Selected)
+				return idx;
+	}
+
 	return -1;
 }
 
-
-void CFileView::SetViewOptions(UINT /*_ViewID*/, BOOL /*Force*/)
+void CFileView::SelectItem(INT idx, BOOL Select, BOOL InternalCall)
 {
+	if (p_Result)
+	{
+		ASSERT(idx<(INT)p_Result->m_ItemCount);
+
+		GetItemData(idx)->Selected = Select;
+		if (!InternalCall)
+			ChangedItem(idx);
+	}
 }
 
-void CFileView::SetSearchResult(LFSearchResult* /*_result*/)
+void CFileView::EnsureVisible(INT idx)
 {
+	if (!m_EnableScrolling)
+		return;
 }
 
-BOOL CFileView::IsSelected(INT /*n*/)
+void CFileView::SetFocusItem(INT FocusItem, BOOL ShiftSelect)
 {
-	return FALSE;
+	if (ShiftSelect && m_EnableShiftSelection)
+	{
+		if (m_SelectionAnchor==-1)
+			m_SelectionAnchor = m_FocusItem;
+
+		for (INT a=0; a<(INT)p_Result->m_ItemCount; a++)
+			SelectItem(a, ((a>=FocusItem) && (a<=m_SelectionAnchor)) || ((a>=m_SelectionAnchor) && (a<=FocusItem)), TRUE);
+	}
+	else
+	{
+		m_SelectionAnchor = -1;
+
+		for (INT a=0; a<(INT)p_Result->m_ItemCount; a++)
+			SelectItem(a, a==FocusItem, TRUE);
+	}
+
+	m_FocusItem = FocusItem;
+	m_EditLabel = -1;
+	EnsureVisible(m_FocusItem);
+
+	ChangedItems();
 }
 
-INT CFileView::ItemAtPosition(CPoint /*point*/)
+RECT CFileView::GetItemRect(INT idx)
 {
+	RECT rect = GetItemData(idx)->Rect;
+	OffsetRect(&rect, -m_HScrollPos, -m_VScrollPos+m_HeaderHeight);
+	return rect;
+}
+
+INT CFileView::ItemAtPosition(CPoint point)
+{
+	if (p_Result)
+	{
+		point.Offset(m_HScrollPos, m_VScrollPos-m_HeaderHeight);
+
+		for (INT a=0; a<(INT)p_Result->m_ItemCount; a++)
+			if (PtInRect(&GetItemData(a)->Rect, point))
+				return a;
+	}
+
 	return -1;
 }
 
-void CFileView::InvalidateItem(INT /*n*/)
+void CFileView::InvalidateItem(INT idx)
 {
-	Invalidate();
+	RECT rect = GetItemRect(idx);
+	InvalidateRect(&rect);
 }
 
-void CFileView::EditLabel(INT /*n*/)
+void CFileView::EditLabel(INT /*idx*/)
 {
+	m_EditLabel = -1;
 }
 
 BOOL CFileView::IsEditing()
@@ -171,12 +310,68 @@ BOOL CFileView::IsEditing()
 	return FALSE;
 }
 
-BOOL CFileView::HasCategories()
+void CFileView::DrawItemBackground(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed)
 {
-	return FALSE;
+	BOOL Hot = (m_HotItem==idx);
+	BOOL Selected = IsSelected(idx);
+
+	if (hThemeList)
+	{
+		dc.SetTextColor(0x000000);
+
+		if (Hot | Selected)
+		{
+			const INT StateIDs[4] = { LISS_NORMAL, LISS_HOT, GetFocus()!=this ? LISS_SELECTEDNOTFOCUS : LISS_SELECTED, LISS_HOTSELECTED };
+			UINT State = 0;
+			if (Hot)
+				State |= 1;
+			if (Selected)
+				State |= 2;
+				theApp.zDrawThemeBackground(hThemeList, dc, LVP_LISTITEM, StateIDs[State], rectItem, rectItem);
+		}
+		else
+			if (GetFocus()==this)
+			{
+				dc.SetBkColor(0xFFFFFF);
+				dc.DrawFocusRect(rectItem);
+			}
+	}
+	else
+	{
+		if (Selected)
+		{
+			dc.FillSolidRect(rectItem, GetSysColor(GetFocus()==this ? COLOR_HIGHLIGHT : COLOR_3DFACE));
+			dc.SetTextColor(GetSysColor(GetFocus()==this ? COLOR_HIGHLIGHTTEXT : COLOR_BTNTEXT));
+			dc.SetBkColor(0x000000);
+		}
+		else
+		{
+			dc.SetTextColor(Themed ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT));
+			dc.SetBkColor(0xFFFFFF);
+		}
+
+		if ((idx==m_FocusItem) && (GetFocus()==this))
+			dc.DrawFocusRect(rectItem);
+	}
 }
 
-CMenu* CFileView::GetContextMenu()
+void CFileView::PrepareSysIcon(INT idx)
+{
+	if ((p_Result->m_Items[idx]->Type & LFTypeMask)!=LFTypeFile)
+		return;
+
+	FVItemData* d = GetItemData(idx);
+	if (d->SysIconIndex!=-1)
+		return;
+
+	char Ext[LFExtSize+2] = "*.";
+	strcat_s(Ext, LFExtSize+2, p_Result->m_Items[idx]->CoreAttributes.FileFormat);
+
+	SHFILEINFOA sfi;
+	d->SysIconIndex = SUCCEEDED(SHGetFileInfoA(Ext, 0, &sfi, sizeof(sfi), SHGFI_SYSICONINDEX | SHGFI_SMALLICON | SHGFI_USEFILEATTRIBUTES)) ? sfi.iIcon : -2;
+}
+
+/*CMenu* CFileView::GetContextMenu()
 {
 	return NULL;
 }
@@ -297,85 +492,152 @@ void CFileView::OnItemContextMenu(INT idx, CPoint point)
 		pPopupMenu->Create(this, point.x, point.y, (HMENU)(*menu.GetSubMenu(0)));
 		pPopupMenu->SetDefaultItem(cmdDefault);
 	}
+}*/
+
+void CFileView::ResetScrollbars()
+{
+	if (m_EnableScrolling)
+	{
+		ScrollWindowEx(0, m_VScrollPos, NULL, NULL, NULL, NULL, SW_INVALIDATE);
+		ScrollWindowEx(m_HScrollPos, 0, NULL, NULL, NULL, NULL, SW_INVALIDATE | SW_SCROLLCHILDREN);
+		m_VScrollPos = m_HScrollPos = 0;
+		SetScrollPos(SB_VERT, m_VScrollPos, TRUE);
+		SetScrollPos(SB_HORZ, m_HScrollPos, TRUE);
+	}
 }
 
-BOOL CFileView::HandleDefaultKeys(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags*/)
+void CFileView::AdjustScrollbars()
 {
-	switch(nChar)
+	if (!m_EnableScrolling)
+		return;
+
+	CRect rect;
+	GetClientRect(&rect);
+
+	INT oldVScrollPos = m_VScrollPos;
+	m_VScrollMax = max(0, m_ScrollHeight-rect.Height()+(INT)m_HeaderHeight);
+	m_VScrollPos = min(m_VScrollPos, m_VScrollMax);
+
+	SCROLLINFO si;
+	ZeroMemory(&si, sizeof(si));
+	si.cbSize = sizeof(SCROLLINFO);
+	si.fMask = SIF_PAGE | SIF_RANGE | SIF_POS;
+	si.nPage = rect.Height()-m_HeaderHeight;
+	si.nMin = 0;
+	si.nMax = m_ScrollHeight;
+	si.nPos = m_VScrollPos;
+	SetScrollInfo(SB_VERT, &si);
+
+	INT oldHScrollPos = m_HScrollPos;
+	m_HScrollMax = max(0, m_ScrollWidth-rect.Width());
+	m_HScrollPos = min(m_HScrollPos, m_HScrollMax);
+
+	ZeroMemory(&si, sizeof(si));
+	si.cbSize = sizeof(SCROLLINFO);
+	si.fMask = SIF_PAGE | SIF_RANGE | SIF_POS;
+	si.nPage = rect.Width();
+	si.nMin = 0;
+	si.nMax = m_ScrollWidth;
+	si.nPos = m_HScrollPos;
+	SetScrollInfo(SB_HORZ, &si);
+
+	if ((oldVScrollPos!=m_VScrollPos) || (oldHScrollPos!=m_HScrollPos))
+		Invalidate();
+}
+
+CString CFileView::GetLabel(LFItemDescriptor* i)
+{
+	CString label = i->CoreAttributes.FileName;
+	if ((i->Type & LFTypeMask)==LFTypeFile)
+		if ((!m_HideFileExt) && (i->CoreAttributes.FileFormat[0]!='\0'))
+		{
+			label += _T(".");
+			label += i->CoreAttributes.FileFormat;
+		}
+
+	return label;
+}
+
+void CFileView::AppendAttribute(LFItemDescriptor* i, UINT attr, CString& str)
+{
+	wchar_t tmpStr[256];
+	LFAttributeToString(i, attr, tmpStr, 256);
+
+	if (tmpStr[0]!=L'\0')
 	{
-	case 'A':
-		if ((GetKeyState(VK_CONTROL)<0) && (GetKeyState(VK_SHIFT)>=0))
+		if (!str.IsEmpty())
+			str += _T("\n");
+		if ((attr!=LFAttrComment) && (attr!=LFAttrDescription))
 		{
-			GetParentFrame()->SendMessage(WM_COMMAND, ID_VIEW_SELECTALL);
-			return TRUE;
+			str += theApp.m_Attributes[attr]->Name;
+			str += _T(": ");
 		}
+
+		str += tmpStr;
+	}
+}
+
+CString CFileView::GetHint(LFItemDescriptor* i)
+{
+	CString hint;
+
+	switch (i->Type & LFTypeMask)
+	{
+	case LFTypeDrive:
+		AppendAttribute(i, LFAttrDescription, hint);
 		break;
-	case 'N':
-		if ((GetKeyState(VK_CONTROL)<0) && (GetKeyState(VK_SHIFT)>=0))
-		{
-			GetParentFrame()->SendMessage(WM_COMMAND, ID_VIEW_SELECTNONE);
-			return TRUE;
-		}
+	case LFTypeStore:
+		AppendAttribute(i, LFAttrComment, hint);
+		AppendAttribute(i, LFAttrDescription, hint);
+		AppendAttribute(i, LFAttrCreationTime, hint);
+		AppendAttribute(i, LFAttrFileTime, hint);
 		break;
-	case VK_SPACE:
-		if (GetKeyState(VK_SHIFT)>=0)
-		{
-			SelectItem(GetFocusItem(), FALSE);
-			return TRUE;
-		}
+	case LFTypeVirtual:
+		AppendAttribute(i, LFAttrComment, hint);
+		AppendAttribute(i, LFAttrDescription, hint);
+		if (i->CoreAttributes.FileSize>0)
+			AppendAttribute(i, LFAttrFileSize, hint);
 		break;
-	case VK_F2:
-		if ((GetKeyState(VK_CONTROL)>=0) && (GetKeyState(VK_SHIFT)>=0))
-		{
-			EditLabel(GetFocusItem());
-			return TRUE;
-		}
-		break;
-	case VK_BACK:
-		if ((GetKeyState(VK_CONTROL)>=0) && (GetKeyState(VK_SHIFT)>=0))
-		{
-			GetParentFrame()->SendMessage(WM_COMMAND, ID_NAV_BACK);
-			return TRUE;
-		}
-		break;
-	case VK_EXECUTE:
-	case VK_RETURN:
-		if ((GetKeyState(VK_CONTROL)>=0) && (GetKeyState(VK_SHIFT)>=0))
-		{
-			GetParentFrame()->SendMessage(WM_COMMAND, ID_ITEMS_OPEN);
-			return TRUE;
-		}
-		break;
-	case VK_DELETE:
-		if ((GetKeyState(VK_CONTROL)>=0) && (GetKeyState(VK_SHIFT)>=0))
-		{
-			GetParentFrame()->SendMessage(WM_COMMAND, ID_ITEMS_DELETE);
-			return TRUE;
-		}
+	case LFTypeFile:
+		AppendAttribute(i, LFAttrComment, hint);
+		AppendAttribute(i, LFAttrArtist, hint);
+		AppendAttribute(i, LFAttrTitle, hint);
+		AppendAttribute(i, LFAttrRecordingTime, hint);
+		AppendAttribute(i, LFAttrDuration, hint);
+		AppendAttribute(i, LFAttrTags, hint);
+		AppendAttribute(i, LFAttrPages, hint);
+		AppendAttribute(i, LFAttrWidth, hint);
+		AppendAttribute(i, LFAttrHeight, hint);
+		AppendAttribute(i, LFAttrRecordingEquipment, hint);
+		AppendAttribute(i, LFAttrBitrate, hint);
+		AppendAttribute(i, LFAttrCreationTime, hint);
+		AppendAttribute(i, LFAttrFileTime, hint);
+		AppendAttribute(i, LFAttrFileSize, hint);
 		break;
 	}
 
-	return FALSE;
-}
-
-INT CFileView::GetFontHeight()
-{
-	LOGFONT lf;
-	theApp.m_DefaultFont.GetLogFont(&lf);
-
-	return abs(lf.lfHeight);
+	return hint;
 }
 
 
 BEGIN_MESSAGE_MAP(CFileView, CWnd)
+	ON_WM_CREATE()
+	ON_WM_DESTROY()
+	ON_WM_THEMECHANGED()
+	ON_WM_SYSCOLORCHANGE()
+	ON_WM_ERASEBKGND()
+	ON_WM_SIZE()
+	ON_WM_MOUSEMOVE()
+	ON_WM_MOUSELEAVE()
+	ON_WM_MOUSEHOVER()
+	ON_WM_KEYDOWN()
 	ON_WM_LBUTTONDOWN()
 	ON_WM_LBUTTONUP()
 	ON_WM_LBUTTONDBLCLK()
 	ON_WM_RBUTTONDOWN()
 	ON_WM_RBUTTONUP()
-	ON_WM_MOUSEMOVE()
-	ON_WM_MOUSELEAVE()
-	ON_WM_KEYDOWN()
+	ON_WM_SETFOCUS()
+	ON_WM_KILLFOCUS()
 	ON_WM_SETCURSOR()
 	ON_COMMAND(ID_VIEW_SELECTALL, OnSelectAll)
 	ON_COMMAND(ID_VIEW_SELECTNONE, OnSelectNone)
@@ -383,20 +645,211 @@ BEGIN_MESSAGE_MAP(CFileView, CWnd)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->ItemsDropped, OnItemsDropped)
 END_MESSAGE_MAP()
 
+INT CFileView::OnCreate(LPCREATESTRUCT lpCreateStruct)
+{
+	if (CWnd::OnCreate(lpCreateStruct)==-1)
+		return -1;
+
+	m_TooltipCtrl.Create(this);
+
+	if (theApp.m_ThemeLibLoaded)
+		if (theApp.OSVersion>=OS_Vista)
+		{
+			theApp.zSetWindowTheme(GetSafeHwnd(), L"explorer", NULL);
+			hThemeList = theApp.zOpenThemeData(GetSafeHwnd(), VSCLASS_LISTVIEW);
+		}
+
+	if (m_EnableScrolling)
+		ResetScrollbars();
+
+	CDC* dc = GetWindowDC();
+	CFont* pOldFont = dc->SelectObject(&theApp.m_DefaultFont);
+	m_FontHeight[0] = dc->GetTextExtent(_T("Wy"), 2).cy;
+	dc->SelectObject(&theApp.m_LargeFont);
+	m_FontHeight[1] = dc->GetTextExtent(_T("Wy"), 2).cy;
+	dc->SelectObject(pOldFont);
+	ReleaseDC(dc);
+
+	return 0;
+}
+
+void CFileView::OnDestroy()
+{
+	if (hThemeList)
+		theApp.zCloseThemeData(hThemeList);
+
+	CWnd::OnDestroy();
+}
+
+LRESULT CFileView::OnThemeChanged()
+{
+	if (theApp.m_ThemeLibLoaded)
+	{
+		if (hThemeList)
+			theApp.zCloseThemeData(hThemeList);
+
+		if (theApp.OSVersion>=OS_Vista)
+			hThemeList = theApp.zOpenThemeData(GetSafeHwnd(), VSCLASS_LISTVIEW);
+	}
+
+	return TRUE;
+}
+
+void CFileView::OnSysColorChange()
+{
+	Invalidate();
+}
+
+BOOL CFileView::OnEraseBkgnd(CDC* /*pDC*/)
+{
+	return TRUE;
+}
+
+void CFileView::OnSize(UINT nType, INT cx, INT cy)
+{
+	CWnd::OnSize(nType, cx, cy);
+	AdjustLayout();
+}
+
+void CFileView::OnMouseMove(UINT /*nFlags*/, CPoint point)
+{
+	if (m_EnableHover)
+	{
+		INT Item = ItemAtPosition(point);
+
+		if (!m_Hover)
+		{
+			m_Hover = TRUE;
+
+			TRACKMOUSEEVENT tme;
+			tme.cbSize = sizeof(TRACKMOUSEEVENT);
+			tme.dwFlags = TME_LEAVE | TME_HOVER;
+			tme.dwHoverTime = LFHOVERTIME;
+			tme.hwndTrack = m_hWnd;
+			TrackMouseEvent(&tme);
+		}
+		else
+			if ((m_TooltipCtrl.IsWindowVisible()) && (Item!=m_HotItem))
+				m_TooltipCtrl.Deactivate();
+
+		if (m_HotItem!=Item)
+		{
+			InvalidateItem(m_HotItem);
+			m_HotItem = Item;
+			InvalidateItem(m_HotItem);
+		}
+	}
+}
+
+void CFileView::OnMouseLeave()
+{
+	m_TooltipCtrl.Deactivate();
+	InvalidateItem(m_HotItem);
+
+	m_Hover = FALSE;
+	m_HotItem = -1;
+}
+
+void CFileView::OnMouseHover(UINT nFlags, CPoint point)
+{
+	if ((nFlags & (MK_LBUTTON | MK_MBUTTON | MK_RBUTTON | MK_XBUTTON1 | MK_XBUTTON2))==0)
+	{
+		if ((m_HotItem!=-1) && (!IsEditing()))
+			if (m_HotItem==m_EditLabel)
+			{
+				m_TooltipCtrl.Deactivate();
+				EditLabel(m_EditLabel);
+			}
+			else
+				if (!m_TooltipCtrl.IsWindowVisible() && m_EnableTooltip)
+				{
+					PrepareSysIcon(m_HotItem);
+
+					LFItemDescriptor* i = p_Result->m_Items[m_HotItem];
+					FVItemData* d = GetItemData(m_HotItem);
+
+					HICON hIcon = (d->SysIconIndex>=0) ? theApp.m_SystemImageListExtraLarge.ExtractIcon(d->SysIconIndex) : theApp.m_CoreImageListExtraLarge.ExtractIcon(i->IconID-1);
+
+					INT cx = 48;
+					INT cy = 48;
+					ImageList_GetIconSize(theApp.m_SystemImageListExtraLarge, &cx, &cy);
+					CSize sz(cx, cy);
+
+					ClientToScreen(&point);
+					m_TooltipCtrl.Track(point, hIcon, sz, GetLabel(i), GetHint(i));
+				}
+	}
+	else
+	{
+		m_TooltipCtrl.Deactivate();
+	}
+
+	TRACKMOUSEEVENT tme;
+	tme.cbSize = sizeof(TRACKMOUSEEVENT);
+	tme.dwFlags = TME_LEAVE | TME_HOVER;
+	tme.dwHoverTime = LFHOVERTIME;
+	tme.hwndTrack = m_hWnd;
+	TrackMouseEvent(&tme);
+}
+
+void CFileView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
+{
+	switch(nChar)
+	{
+	case 'A':
+		if ((GetKeyState(VK_CONTROL)<0) && (GetKeyState(VK_SHIFT)>=0))
+			GetParentFrame()->SendMessage(WM_COMMAND, ID_VIEW_SELECTALL);
+		break;
+	case 'N':
+		if ((GetKeyState(VK_CONTROL)<0) && (GetKeyState(VK_SHIFT)>=0))
+			GetParentFrame()->SendMessage(WM_COMMAND, ID_VIEW_SELECTNONE);
+		break;
+	case VK_SPACE:
+		if (GetKeyState(VK_SHIFT)>=0)
+			SelectItem(GetFocusItem(), FALSE);
+		break;
+	case VK_F2:
+		if ((GetKeyState(VK_CONTROL)>=0) && (GetKeyState(VK_SHIFT)>=0))
+			EditLabel(GetFocusItem());
+		break;
+	case VK_BACK:
+		if ((GetKeyState(VK_CONTROL)>=0) && (GetKeyState(VK_SHIFT)>=0))
+			GetParentFrame()->SendMessage(WM_COMMAND, ID_NAV_BACK);
+		break;
+	case VK_EXECUTE:
+	case VK_RETURN:
+		if ((GetKeyState(VK_CONTROL)>=0) && (GetKeyState(VK_SHIFT)>=0))
+			GetParentFrame()->SendMessage(WM_COMMAND, ID_ITEMS_OPEN);
+		break;
+	case VK_DELETE:
+		if ((GetKeyState(VK_CONTROL)>=0) && (GetKeyState(VK_SHIFT)>=0))
+			GetParentFrame()->SendMessage(WM_COMMAND, ID_ITEMS_DELETE);
+		break;
+	default:
+		CWnd::OnKeyDown(nChar, nRepCnt, nFlags);
+	}
+}
+
 void CFileView::OnLButtonDown(UINT nFlags, CPoint point)
 {
-	INT n = ItemAtPosition(point);
-	if (n!=-1)
+	INT idx = ItemAtPosition(point);
+	if (idx!=-1)
 	{
 		if (nFlags & MK_CONTROL)
 		{
-			FocusItem = n;
-			SelectItem(n, !IsSelected(n));
+			InvalidateItem(m_FocusItem);
+			m_FocusItem = idx;
+			SelectItem(idx, !IsSelected(idx));
 		}
 		else
-		{
-			SetFocusItem(n, nFlags & MK_SHIFT);
-		}
+			if ((m_FocusItem==idx) && (IsSelected(idx)))
+			{
+				m_EditLabel = idx;
+			}
+			else
+			{
+				SetFocusItem(idx, nFlags & MK_SHIFT);
+			}
 	}
 	else
 	{
@@ -407,8 +860,8 @@ void CFileView::OnLButtonDown(UINT nFlags, CPoint point)
 
 void CFileView::OnLButtonUp(UINT nFlags, CPoint point)
 {
-	INT n = ItemAtPosition(point);
-	if (n!=-1)
+	INT idx = ItemAtPosition(point);
+	if (idx!=-1)
 	{
 		if (GetFocus()!=this)
 			SetFocus();
@@ -416,7 +869,7 @@ void CFileView::OnLButtonUp(UINT nFlags, CPoint point)
 	else
 	{
 		if (!(nFlags & MK_CONTROL))
-			GetParentFrame()->SendMessage(WM_COMMAND, ID_VIEW_SELECTNONE);
+			OnSelectNone();
 	}
 }
 
@@ -427,25 +880,25 @@ void CFileView::OnLButtonDblClk(UINT /*nFlags*/, CPoint /*point*/)
 
 void CFileView::OnRButtonDown(UINT nFlags, CPoint point)
 {
-	INT n = ItemAtPosition(point);
-	if (n!=-1)
+	INT idx = ItemAtPosition(point);
+	if (idx!=-1)
 	{
 		if (!(nFlags & (MK_SHIFT | MK_CONTROL)))
-			if (!IsSelected(n))
+			if (!IsSelected(idx))
 			{
-				FocusItem = n;
+				m_FocusItem = idx;
 
-				for (UINT a=0; a<result->m_ItemCount; a++)
-					SelectItem(a, (INT)a==n, TRUE);
+				for (INT a=0; a<(INT)p_Result->m_ItemCount; a++)
+					SelectItem(a, a==idx, TRUE);
 
-				Invalidate();
+				ChangedItems();
 			}
 			else
-				if (FocusItem!=n)
+				if (m_FocusItem!=idx)
 				{
-					std::swap(FocusItem, n);
-					InvalidateItem(n);
-					InvalidateItem(FocusItem);
+					InvalidateItem(m_FocusItem);
+					m_FocusItem = idx;
+					InvalidateItem(m_FocusItem);
 				}
 	}
 	else
@@ -457,92 +910,59 @@ void CFileView::OnRButtonDown(UINT nFlags, CPoint point)
 
 void CFileView::OnRButtonUp(UINT nFlags, CPoint point)
 {
-	INT n = ItemAtPosition(point);
-	if (n!=-1)
+	INT idx = ItemAtPosition(point);
+	if (idx!=-1)
 	{
 		if (GetFocus()!=this)
 			SetFocus();
 
-		if (IsSelected(n))
+		if (IsSelected(idx))
 		{
-			Invalidate();
-			GetParentFrame()->SendMessage(WM_COMMAND, ID_APP_UPDATESELECTION);
-
-			ClientToScreen(&point);
-			OnItemContextMenu(n, point);
+			ChangedItems();
 			return;
 		}
 	}
 
 	if (!(nFlags & MK_CONTROL))
-		GetParentFrame()->SendMessage(WM_COMMAND, ID_VIEW_SELECTNONE);
-
-	ClientToScreen(&point);
-	OnContextMenu(point);
+		OnSelectNone();
 }
 
-void CFileView::OnMouseMove(UINT /*nFlags*/, CPoint point)
+void CFileView::OnSetFocus(CWnd* /*pOldWnd*/)
 {
-	if (EnableHover)
-	{
-		if (!MouseInView)
-		{
-			TRACKMOUSEEVENT tme;
-			ZeroMemory(&tme, sizeof(tme));
-			tme.cbSize = sizeof(TRACKMOUSEEVENT);
-			tme.dwFlags = TME_LEAVE;
-			tme.hwndTrack = GetSafeHwnd();
-			TrackMouseEvent(&tme);
-
-			MouseInView = TRUE;
-		}
-
-		INT idx = ItemAtPosition(point);
-		if (idx!=HoverItem)
-		{
-			std::swap(idx, HoverItem);
-			InvalidateItem(idx);
-			InvalidateItem(HoverItem);
-		}
-	}
+	Invalidate();
 }
 
-void CFileView::OnMouseLeave()
+void CFileView::OnKillFocus(CWnd* /*pNewWnd*/)
 {
-	if (HoverItem!=-1)
-	{
-		INT idx = HoverItem;
-		HoverItem = -1;
-		InvalidateItem(idx);
-	}
-
-	MouseInView = FALSE;
-}
-
-void CFileView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
-{
-	if (!HandleDefaultKeys(nChar, nRepCnt, nFlags))
-		CWnd::OnKeyDown(nChar, nRepCnt, nFlags);
+	Invalidate();
 }
 
 BOOL CFileView::OnSetCursor(CWnd* /*pWnd*/, UINT /*nHitTest*/, UINT /*message*/)
 {
-	SetCursor(LoadCursor(NULL, result ? IDC_ARROW : IDC_WAIT));
+	SetCursor(LoadCursor(NULL, p_Result ? IDC_ARROW : IDC_WAIT));
 	return TRUE;
 }
 
 void CFileView::OnSelectAll()
 {
-	if (result)
-		for (UINT a=0; a<result->m_ItemCount; a++)
-			SelectItem(a, TRUE, a<result->m_ItemCount-1);
+	if (p_Result)
+	{
+		for (INT a=0; a<(INT)p_Result->m_ItemCount; a++)
+			SelectItem(a, TRUE, TRUE);
+
+		ChangedItems();
+	}
 }
 
 void CFileView::OnSelectNone()
 {
-	if (result)
-		for (UINT a=0; a<result->m_ItemCount; a++)
-			SelectItem(a, FALSE, a<result->m_ItemCount-1);
+	if (p_Result)
+	{
+		for (INT a=0; a<(INT)p_Result->m_ItemCount; a++)
+			SelectItem(a, FALSE, TRUE);
+
+		ChangedItems();
+	}
 }
 
 void CFileView::OnUpdateCommands(CCmdUI* pCmdUI)
@@ -552,8 +972,8 @@ void CFileView::OnUpdateCommands(CCmdUI* pCmdUI)
 	{
 	case ID_VIEW_SELECTALL:
 	case ID_VIEW_SELECTNONE:
-		if (result)
-			b = (result->m_ItemCount>0);
+		if (p_Result)
+			b = (p_Result->m_ItemCount>0);
 		break;
 	}
 
@@ -562,8 +982,8 @@ void CFileView::OnUpdateCommands(CCmdUI* pCmdUI)
 
 LRESULT CFileView::OnItemsDropped(WPARAM /*wParam*/, LPARAM /*lParam*/)
 {
-	if (result)
-		if (result->m_Context!=LFContextStores)
+	if (p_Result)
+		if (p_Result->m_Context!=LFContextStores)
 			GetParentFrame()->SendMessage(WM_COMMAND, ID_NAV_RELOAD);
 
 	return NULL;

@@ -57,7 +57,6 @@
     <ROW Directory="ProgramMenuFolder" Directory_Parent="TARGETDIR" DefaultDir="Progra~1|ProgramMenuFolder" IsPseudoRoot="1"/>
     <ROW Directory="Quick_Launch_DIR" Directory_Parent="Internet_Explorer_DIR" DefaultDir="QuickL~1|Quick Launch"/>
     <ROW Directory="SHORTCUTDIR" Directory_Parent="TARGETDIR" DefaultDir="SHORTC~1|SHORTCUTDIR" IsPseudoRoot="1"/>
-    <ROW Directory="STOREDIR" Directory_Parent="AppDataFolder" DefaultDir="Stores"/>
     <ROW Directory="SystemFolder" Directory_Parent="TARGETDIR" DefaultDir="System~1|SystemFolder" IsPseudoRoot="1"/>
     <ROW Directory="TARGETDIR" DefaultDir="SourceDir"/>
   </COMPONENT>
@@ -75,13 +74,12 @@
     <ROW Component="Migrate.exe" ComponentId="{0D89D6BC-65FF-455A-BA9B-AFBD4F05BDE3}" Directory_="APPDIR" Attributes="0" KeyPath="Migrate.exe"/>
     <ROW Component="Quick_Launch" ComponentId="{304CC4C3-1A53-46C6-B2CE-40BE6BF512B0}" Directory_="Quick_Launch_DIR" Attributes="0"/>
     <ROW Component="SHORTCUTDIR" ComponentId="{252E79F3-5959-444B-A7EA-CD698BA212E7}" Directory_="SHORTCUTDIR" Attributes="0"/>
-    <ROW Component="STOREDIR" ComponentId="{23F624B4-230B-4D30-ADB8-4C51BF177D6C}" Directory_="STOREDIR" Attributes="16"/>
     <ROW Component="StoreManager.exe" ComponentId="{CD94E9D9-3367-4F36-BB82-B2FCDDE6250E}" Directory_="APPDIR" Attributes="0" KeyPath="StoreManager.exe"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiFeatsComponent">
     <ROW Feature="FileDrop" Title="FileDrop" Description="FileDrop" Display="3" Level="1" Directory_="APPDIR" Attributes="8" Components="FileDrop.exe AI_CustomARPName AI_DisableModify"/>
     <ROW Feature="MigrationWizard" Title="MigrationWizard" Description="Migration Wizard" Display="5" Level="1" Directory_="APPDIR" Attributes="8" Components="Migrate.exe AI_CustomARPName AI_DisableModify"/>
-    <ROW Feature="liquidFOLDERS" Title="liquidFOLDERS" Description="liquidFOLDERS" Display="0" Level="1" Directory_="APPDIR" Attributes="24" Components="LFCommDlg.dll LFCore.dll LFNamespaceExtension.dll StoreManager.exe SHORTCUTDIR AI_CustomARPName AI_DisableModify LFWatchdog.exe Quick_Launch AIShRegAnswer AI_ExePath LFRunCmd.exe STOREDIR"/>
+    <ROW Feature="liquidFOLDERS" Title="liquidFOLDERS" Description="liquidFOLDERS" Display="0" Level="1" Directory_="APPDIR" Attributes="24" Components="LFCommDlg.dll LFCore.dll LFNamespaceExtension.dll StoreManager.exe SHORTCUTDIR AI_CustomARPName AI_DisableModify LFWatchdog.exe Quick_Launch AIShRegAnswer AI_ExePath LFRunCmd.exe"/>
     <ATTRIBUTE name="CurrentFeature" value="liquidFOLDERS"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiFilesComponent">
@@ -334,7 +332,6 @@
   <COMPONENT cid="caphyon.advinst.msicomp.MsiCreateFolderComponent">
     <ROW Directory_="Quick_Launch_DIR" Component_="Quick_Launch"/>
     <ROW Directory_="SHORTCUTDIR" Component_="SHORTCUTDIR"/>
-    <ROW Directory_="STOREDIR" Component_="STOREDIR"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiCustActComponent">
     <ROW Action="AI_AiRemoveFilesCommit" Type="11777" Source="ResourceCleaner.dll" Target="OnAiRemoveFiles" WithoutSeq="true"/>
@@ -409,9 +406,6 @@
     <ROW Condition="Version9X OR VersionNT64 OR (VersionNT &gt;= 501)" Description="[ProductName] benötigt zur Installation mindestens [WindowsTypeNT]." DescriptionLocId="AI.LaunchCondition.NoSpecificNT" IsPredefined="true" Builds="DefaultBuild"/>
     <ROW Condition="VersionMsi &gt;= WIMinVersion" Description="[ProductName] kann nicht auf Systemen mit Windows Installer Version kleiner als [WIMinVersion] installiert werden." DescriptionLocId="AI.LaunchCondition.WI" IsPredefined="true" Builds="DefaultBuild"/>
     <ROW Condition="VersionNT" Description="[ProductName] kann nicht auf [WindowsFamily9X] installiert werden." DescriptionLocId="AI.LaunchCondition.No9X" IsPredefined="true" Builds="DefaultBuild"/>
-  </COMPONENT>
-  <COMPONENT cid="caphyon.advinst.msicomp.MsiLockPermComponent">
-    <ROW LockObject="STOREDIR" Table="CreateFolder" User="[USERNAME]" Permission="1880096767"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiMergeModsComponent">
     <ROW Module="Microsoft_VC90_CRT_x86.msm" Path="Setup\MSM_x86\Microsoft_VC90_CRT_x86.msm" Feature="liquidFOLDERS" Directory="APPDIR"/>

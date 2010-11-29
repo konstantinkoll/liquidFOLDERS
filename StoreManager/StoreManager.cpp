@@ -47,19 +47,6 @@ CStoreManagerApp::CStoreManagerApp()
 
 	// Nag screen
 	m_NagCounter = 20;
-
-	// Load icons
-	HINSTANCE hModIcons = LoadLibrary(_T("LFCORE.DLL"));
-	if (hModIcons)
-	{
-		ExtractCoreIcons(hModIcons, 128, &m_Icons128);
-		ExtractCoreIcons(hModIcons, 64, &m_Icons64);
-		ExtractCoreIcons(hModIcons, 48, &m_Icons48);
-		ExtractCoreIcons(hModIcons, 24, &m_Icons24);
-		ExtractCoreIcons(hModIcons, 16, &m_Icons16);
-
-		FreeLibrary(hModIcons);
-	}
 }
 
 CStoreManagerApp::~CStoreManagerApp()
@@ -91,7 +78,6 @@ BOOL CStoreManagerApp::InitInstance()
 			(*m_AllowedViews[a]) += LFViewCalendarDay;
 
 		// TODO
-		(*m_AllowedViews[a]) -= LFViewSearchResult;
 		(*m_AllowedViews[a]) -= LFViewCalendarYear;
 		(*m_AllowedViews[a]) -= LFViewTimeline;
 	}
@@ -420,7 +406,6 @@ void CStoreManagerApp::LoadViewOptions(INT context)
 	}
 
 	m_Views[context].Mode = GetInt(_T("Viewmode"), DefaultView);
-	m_Views[context].FullRowSelect = GetInt(_T("FullRowSelect"), FALSE);
 	m_Views[context].SortBy = GetInt(_T("SortBy"), LFAttrFileName);
 	m_Views[context].Descending = GetInt(_T("Descending"), FALSE);
 	m_Views[context].AutoDirs = GetInt(_T("AutoDirs"), TRUE);
@@ -470,7 +455,6 @@ void CStoreManagerApp::SaveViewOptions(INT context)
 	SetRegistryBase(base);
 
 	WriteInt(_T("Viewmode"), m_Views[context].Mode);
-	WriteInt(_T("FullRowSelect"), m_Views[context].FullRowSelect);
 	WriteInt(_T("SortBy"), m_Views[context].SortBy);
 	WriteInt(_T("Descending"), m_Views[context].Descending);
 	WriteInt(_T("AutoDirs"), m_Views[context].AutoDirs);

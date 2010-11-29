@@ -87,6 +87,7 @@ void WriteGoogleAttribute(CStdioFile* f, LFItemDescriptor* i, UINT attr)
 //
 
 CGlobeView::CGlobeView()
+	: CFileView(sizeof(FVItemData), FALSE, FALSE, FALSE, FALSE)
 {
 	m_pDC = NULL;
 	m_hrc = NULL;
@@ -94,8 +95,7 @@ CGlobeView::CGlobeView()
 	m_TextureGlobe = NULL;
 	m_Width = 0;
 	m_Height = 0;
-	m_GlobeList[FALSE] = -1;
-	m_GlobeList[TRUE] = -1;
+	m_GlobeList[FALSE] = m_GlobeList[TRUE] = -1;
 	m_Latitude = 0.0f;
 	m_Longitude = 0.0f;
 	m_Zoom = -1.0f;
@@ -113,58 +113,44 @@ CGlobeView::CGlobeView()
 	m_LockUpdate = FALSE;
 }
 
-CGlobeView::~CGlobeView()
+BOOL CGlobeView::Create(CWnd* pParentWnd, UINT nID, LFSearchResult* Result, INT FocusItem)
 {
-	if (m_Locations)
-		delete[] m_Locations;
+	return CFileView::Create(pParentWnd, nID, Result, FocusItem, CS_DBLCLKS | CS_OWNDC);
 }
 
-void CGlobeView::Create(CWnd* _pParentWnd, LFSearchResult* _result, INT _FocusItem)
-{
-	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS | CS_OWNDC, hCursor);
-
-	const DWORD dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN;
-	CRect rect;
-	rect.SetRectEmpty();
-	CWnd::Create(className, _T(""), dwStyle, rect, _pParentWnd, AFX_IDW_PANE_FIRST);
-
-	CFileView::Create(_result, LFViewGlobe, _FocusItem, FALSE, FALSE);
-}
-
-void CGlobeView::SetViewOptions(UINT /*_ViewID*/, BOOL Force)
+void CGlobeView::SetViewOptions(BOOL Force)
 {
 	if (Force)
 	{
-		m_LocalSettings.Latitude = pViewParameters->GlobeLatitude/1000.0f;
-		m_LocalSettings.Longitude = pViewParameters->GlobeLongitude/1000.0f;
-		m_LocalSettings.GlobeZoom = pViewParameters->GlobeZoom;
-	}
+		m_LocalSettings.Latitude = p_ViewParameters->GlobeLatitude/1000.0f;
+		m_LocalSettings.Longitude = p_ViewParameters->GlobeLongitude/1000.0f;
+		m_LocalSettings.GlobeZoom = p_ViewParameters->GlobeZoom;
 
-	if (Force || (theApp.m_nAppLook!=RibbonColor))
 		theApp.GetRibbonColors(&m_ColorBack, &m_ColorText, &m_ColorHighlight);
+	}
 
 	PrepareTexture();
 	PrepareModel(theApp.m_GlobeHQModel);
 
-	m_ViewParameters = *pViewParameters;
+	m_ViewParameters = *p_ViewParameters;
 	UpdateScene(TRUE);
 }
 
-void CGlobeView::SetSearchResult(LFSearchResult* _result)
+void CGlobeView::SetSearchResult(LFSearchResult* Result)
 {
-	UINT VictimCount = result ? result->m_ItemCount : 0;
+	UINT VictimCount = p_Result ? p_Result->m_ItemCount : 0;
 	Location* Victim = m_Locations;
 	m_Locations = NULL;
 
-	result = _result;
-	if (_result)
-		if (_result->m_ItemCount)
+	p_Result = Result;
+	if (Result)
+		if (Result->m_ItemCount)
 		{
-			m_Locations = new Location[_result->m_ItemCount];
+			m_Locations = new Location[Result->m_ItemCount];
 			INT FirstItem = -1;
 
 			// Compute locations
-			for (UINT a=0; a<_result->m_ItemCount; a++)
+			for (UINT a=0; a<Result->m_ItemCount; a++)
 			{
 				ZeroMemory(&m_Locations[a], sizeof(Location));
 				if (a<VictimCount)
@@ -174,12 +160,12 @@ void CGlobeView::SetSearchResult(LFSearchResult* _result)
 				if (m_ViewParameters.SortBy==LFAttrLocationIATA)
 				{
 					LFAirport* airport;
-					if (LFIATAGetAirportByCode((CHAR*)_result->m_Items[a]->AttributeValues[LFAttrLocationIATA], &airport))
+					if (LFIATAGetAirportByCode((CHAR*)Result->m_Items[a]->AttributeValues[LFAttrLocationIATA], &airport))
 						coord = airport->Location;
 				}
 				else
-					if (_result->m_Items[a]->AttributeValues[m_ViewParameters.SortBy])
-						coord = *((LFGeoCoordinates*)_result->m_Items[a]->AttributeValues[m_ViewParameters.SortBy]);
+					if (Result->m_Items[a]->AttributeValues[m_ViewParameters.SortBy])
+						coord = *((LFGeoCoordinates*)Result->m_Items[a]->AttributeValues[m_ViewParameters.SortBy]);
 
 				if ((coord.Latitude!=0.0) || (coord.Longitude!=0))
 				{
@@ -191,17 +177,6 @@ void CGlobeView::SetSearchResult(LFSearchResult* _result)
 						FirstItem = a;
 				}
 			}
-
-			// Set focus
-			if (!m_Locations[FocusItem].valid)
-				for (UINT a=(UINT)FocusItem; a<_result->m_ItemCount; a++)
-					if (m_Locations[a].valid)
-					{
-						FocusItem = a;
-						break;
-					}
-			if (!m_Locations[FocusItem].valid)
-				FocusItem = FirstItem;
 		}
 
 	if (Victim)
@@ -219,49 +194,19 @@ void CGlobeView::SelectItem(INT n, BOOL select, BOOL InternalCall)
 		if (!InternalCall)
 		{
 			DrawScene(TRUE);
-			GetParentFrame()->SendMessage(WM_COMMAND, ID_APP_UPDATESELECTION);
+			GetOwner()->PostMessage(WM_UPDATESELECTION);
 		}
 	}
 }
 
-INT CGlobeView::GetSelectedItem()
-{
-	if ((m_Locations) && (FocusItem!=-1))
-		if (m_Locations[FocusItem].selected)
-			return FocusItem;
-
-	return -1;
-}
-
-INT CGlobeView::GetNextSelectedItem(INT n)
-{
-	if (m_Locations)
-	{
-		if (n<-1)
-			n = -1;
-
-		for (UINT a=(UINT)(n+1); a<result->m_ItemCount; a++)
-			if (m_Locations[a].selected)
-				return a;
-	}
-
-	return -1;
-}
-
-BOOL CGlobeView::IsSelected(INT n)
-{
-	return (m_Locations && (n>=0)? m_Locations[n].selected : FALSE);
-}
-
 INT CGlobeView::ItemAtPosition(CPoint point)
 {
-	if ((!m_Locations) || (!result) || (!m_ViewParameters.GlobeShowBubbles))
+	if ((!m_Locations) || (!p_Result) || (!m_ViewParameters.GlobeShowBubbles))
 		return -1;
 
 	INT res = -1;
 	float alpha = 0.0f;
-	for (UINT a=0; a<result->m_ItemCount; a++)
-	{
+	for (UINT a=0; a<p_Result->m_ItemCount; a++)
 		if (m_Locations[a].valid)
 			if ((m_Locations[a].alpha>0.1f) && ((m_Locations[a].alpha>alpha-0.05f) || (m_Locations[a].alpha>0.75f)))
 				if ((point.x>=m_Locations[a].screenlabel[0]) &&
@@ -272,17 +217,16 @@ INT CGlobeView::ItemAtPosition(CPoint point)
 					res = a;
 					alpha = m_Locations[a].alpha;
 				}
-	}
 
 	return res;
 }
 
-CMenu* CGlobeView::GetContextMenu()
+/*CMenu* CGlobeView::GetContextMenu()
 {
 	CMenu* menu = new CMenu();
 	menu->LoadMenu(IDM_GLOBE);
 	return menu;
-}
+}*/
 
 BOOL CGlobeView::CursorOnGlobe(CPoint point)
 {
@@ -414,9 +358,9 @@ void CGlobeView::OnScaleToFit()
 
 void CGlobeView::OnSaveCamera()
 {
-	pViewParameters->GlobeLatitude = (INT)(m_LocalSettings.Latitude*1000.0f);
-	pViewParameters->GlobeLongitude = (INT)(m_LocalSettings.Longitude*1000.0f);
-	pViewParameters->GlobeZoom = m_LocalSettings.GlobeZoom;
+	p_ViewParameters->GlobeLatitude = (INT)(m_LocalSettings.Latitude*1000.0f);
+	p_ViewParameters->GlobeLongitude = (INT)(m_LocalSettings.Longitude*1000.0f);
+	p_ViewParameters->GlobeZoom = m_LocalSettings.GlobeZoom;
 	m_CameraChanged = FALSE;
 
 	// Kein Broadcase an andere Fenster
@@ -468,19 +412,19 @@ void CGlobeView::OnGoogleEarth()
 			INT i = GetNextSelectedItem(-1);
 			while (i>-1)
 			{
-				LFGeoCoordinates c = result->m_Items[i]->CoreAttributes.LocationGPS;
+				LFGeoCoordinates c = p_Result->m_Items[i]->CoreAttributes.LocationGPS;
 				if ((c.Latitude!=0) || (c.Longitude!=0))
 				{
 					f.WriteString(_T("<Placemark>\n<name>"));
-					f.WriteString(CookAttributeString(result->m_Items[i]->CoreAttributes.FileName));
+					f.WriteString(CookAttributeString(p_Result->m_Items[i]->CoreAttributes.FileName));
 					f.WriteString(_T("</name>\n<description>"));
-					WriteGoogleAttribute(&f, result->m_Items[i], LFAttrLocationName);
-					WriteGoogleAttribute(&f, result->m_Items[i], LFAttrLocationIATA);
-					WriteGoogleAttribute(&f, result->m_Items[i], LFAttrLocationGPS);
-					WriteGoogleAttribute(&f, result->m_Items[i], LFAttrArtist);
-					WriteGoogleAttribute(&f, result->m_Items[i], LFAttrRoll);
-					WriteGoogleAttribute(&f, result->m_Items[i], LFAttrRecordingTime);
-					WriteGoogleAttribute(&f, result->m_Items[i], LFAttrComment);
+					WriteGoogleAttribute(&f, p_Result->m_Items[i], LFAttrLocationName);
+					WriteGoogleAttribute(&f, p_Result->m_Items[i], LFAttrLocationIATA);
+					WriteGoogleAttribute(&f, p_Result->m_Items[i], LFAttrLocationGPS);
+					WriteGoogleAttribute(&f, p_Result->m_Items[i], LFAttrArtist);
+					WriteGoogleAttribute(&f, p_Result->m_Items[i], LFAttrRoll);
+					WriteGoogleAttribute(&f, p_Result->m_Items[i], LFAttrRecordingTime);
+					WriteGoogleAttribute(&f, p_Result->m_Items[i], LFAttrComment);
 					f.WriteString(_T("&lt;div&gt;</description>\n"));
 
 					f.WriteString(_T("<styleUrl>#C</styleUrl>\n"));
@@ -507,55 +451,55 @@ void CGlobeView::OnGoogleEarth()
 void CGlobeView::OnHQModel()
 {
 	theApp.m_GlobeHQModel = !theApp.m_GlobeHQModel;
-	theApp.UpdateViewOptions(ActiveContextID);
+	theApp.UpdateViewOptions(m_Context);
 }
 
 void CGlobeView::OnLighting()
 {
 	theApp.m_GlobeLighting = !theApp.m_GlobeLighting;
-	theApp.UpdateViewOptions(ActiveContextID);
+	theApp.UpdateViewOptions(m_Context);
 }
 
 void CGlobeView::OnShowBubbles()
 {
-	pViewParameters->GlobeShowBubbles = !pViewParameters->GlobeShowBubbles;
-	if (!pViewParameters->GlobeShowBubbles)
-		pViewParameters->GlobeShowSpots = TRUE;
+	p_ViewParameters->GlobeShowBubbles = !p_ViewParameters->GlobeShowBubbles;
+	if (!p_ViewParameters->GlobeShowBubbles)
+		p_ViewParameters->GlobeShowSpots = TRUE;
 
-	theApp.UpdateViewOptions(ActiveContextID);
+	theApp.UpdateViewOptions(m_Context);
 }
 
 void CGlobeView::OnShowAirportNames()
 {
-	pViewParameters->GlobeShowAirportNames = !pViewParameters->GlobeShowAirportNames;
-	theApp.UpdateViewOptions(ActiveContextID);
+	p_ViewParameters->GlobeShowAirportNames = !p_ViewParameters->GlobeShowAirportNames;
+	theApp.UpdateViewOptions(m_Context);
 }
 
 void CGlobeView::OnShowGPS()
 {
-	pViewParameters->GlobeShowGPS = !pViewParameters->GlobeShowGPS;
-	theApp.UpdateViewOptions(ActiveContextID);
+	p_ViewParameters->GlobeShowGPS = !p_ViewParameters->GlobeShowGPS;
+	theApp.UpdateViewOptions(m_Context);
 }
 
 void CGlobeView::OnShowHints()
 {
-	pViewParameters->GlobeShowHints = !pViewParameters->GlobeShowHints;
-	theApp.UpdateViewOptions(ActiveContextID);
+	p_ViewParameters->GlobeShowHints = !p_ViewParameters->GlobeShowHints;
+	theApp.UpdateViewOptions(m_Context);
 }
 
 void CGlobeView::OnShowSpots()
 {
-	pViewParameters->GlobeShowSpots = !pViewParameters->GlobeShowSpots;
-	if (!pViewParameters->GlobeShowSpots)
-		pViewParameters->GlobeShowBubbles = TRUE;
+	p_ViewParameters->GlobeShowSpots = !p_ViewParameters->GlobeShowSpots;
+	if (!p_ViewParameters->GlobeShowSpots)
+		p_ViewParameters->GlobeShowBubbles = TRUE;
 
-	theApp.UpdateViewOptions(ActiveContextID);
+	theApp.UpdateViewOptions(m_Context);
 }
 
 void CGlobeView::OnShowViewpoint()
 {
-	pViewParameters->GlobeShowViewpoint = !pViewParameters->GlobeShowViewpoint;
-	theApp.UpdateViewOptions(ActiveContextID);
+	p_ViewParameters->GlobeShowViewpoint = !p_ViewParameters->GlobeShowViewpoint;
+	theApp.UpdateViewOptions(m_Context);
 }
 
 void CGlobeView::OnUpdateCommands(CCmdUI* pCmdUI)
@@ -698,8 +642,6 @@ BOOL CGlobeView::OnSetCursor(CWnd* /*pWnd*/, UINT /*nHitTest*/, UINT /*message*/
 
 void CGlobeView::OnSize(UINT nType, INT cx, INT cy)
 {
-	CFileView::OnSize(nType, cx, cy);
-
 	if (cy>0)
 	{
 		m_Width = cx;
@@ -712,6 +654,8 @@ void CGlobeView::OnSize(UINT nType, INT cx, INT cy)
 		glLoadIdentity();
 		gluPerspective(3.0f, (GLdouble)cx/cy, 0.1f, 500.0f);
 	}
+
+	CFileView::OnSize(nType, cx, cy);
 }
 
 void CGlobeView::OnTimer(UINT_PTR nIDEvent)
@@ -741,22 +685,7 @@ BOOL CGlobeView::OnEraseBkgnd(CDC* /*pDC*/)
 void CGlobeView::OnPaint()
 {
 	DrawScene();
-	CWnd::OnPaint();
-}
-
-void CGlobeView::OnSetFocus(CWnd* /*pOldWnd*/)
-{
-	DrawScene();
-}
-
-void CGlobeView::OnKillFocus(CWnd* /*pNewWnd*/)
-{
-	DrawScene();
-}
-
-void CGlobeView::OnSysColorChange()
-{
-	DrawScene();
+	CFileView::OnPaint();
 }
 
 
@@ -827,7 +756,7 @@ void CGlobeView::Init()
 
 	// Fonts
 	m_Fonts[FALSE].Create(&theApp.m_DefaultFont);
-	m_Fonts[TRUE].Create(&theApp.m_CaptionFont);
+	m_Fonts[TRUE].Create(&theApp.m_LargeFont);
 	m_SpecialFont.Create(&theApp.m_SmallFont);
 }
 
@@ -1240,7 +1169,7 @@ void CGlobeView::CalcAndDrawPoints()
 	GLdouble szx = m_Width/2.0;
 	GLdouble szy = m_Height/2.0;
 
-	for (UINT a=0; a<result->m_ItemCount; a++)
+	for (UINT a=0; a<p_Result->m_ItemCount; a++)
 		if (m_Locations[a].valid)
 		{
 			m_Locations[a].alpha = 0.0f;
@@ -1292,16 +1221,16 @@ void CGlobeView::CalcAndDrawLabel()
 
 	glEnable2D();
 
-	for (UINT a=0; a<result->m_ItemCount; a++)
+	for (UINT a=0; a<p_Result->m_ItemCount; a++)
 		if (m_Locations[a].valid)
 			if (m_Locations[a].alpha>0.0f)
 			{
 				// Beschriftung
-				WCHAR* caption = result->m_Items[a]->CoreAttributes.FileName;
+				WCHAR* caption = p_Result->m_Items[a]->CoreAttributes.FileName;
 				UINT cCaption = (UINT)wcslen(caption);
 				WCHAR* subcaption = NULL;
 				WCHAR* coordinates = (m_ViewParameters.GlobeShowGPS ? m_Locations[a].coordstring : NULL);
-				WCHAR* description = (m_ViewParameters.GlobeShowHints ? result->m_Items[a]->Description : NULL);
+				WCHAR* description = (m_ViewParameters.GlobeShowHints ? p_Result->m_Items[a]->Description : NULL);
 				if (description)
 					if (*description==L'\0')
 						description = NULL;
@@ -1323,7 +1252,7 @@ void CGlobeView::CalcAndDrawLabel()
 					break;
 				}
 
-				DrawLabel(&m_Locations[a], cCaption, caption, subcaption, coordinates, description, FocusItem==(INT)a);
+				DrawLabel(&m_Locations[a], cCaption, caption, subcaption, coordinates, description, m_FocusItem==(INT)a);
 			}
 
 	glDisable2D();

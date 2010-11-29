@@ -18,7 +18,6 @@ ViewOptionsDlg::ViewOptionsDlg(CWnd* pParentWnd, LFViewParameters* View, UINT Co
 void ViewOptionsDlg::DoDataExchange(CDataExchange* pDX)
 {
 	ChooseDetailsDlg::DoDataExchange(pDX);
-	DDX_Check(pDX, IDC_FULLROWSELECT, p_View->FullRowSelect);
 
 	if (pDX->m_bSaveAndValidate)
 	{
@@ -116,7 +115,6 @@ void ViewOptionsDlg::OnViewModeChange(NMHDR* pNMHDR, LRESULT* pResult)
 		m_ShowAttributes.EnableWindow(enable);
 		GetDlgItem(IDC_CHECKALL)->EnableWindow(enable);
 		GetDlgItem(IDC_UNCHECKALL)->EnableWindow(enable);
-		GetDlgItem(IDC_FULLROWSELECT)->EnableWindow(enable);
 
 		NM_LISTVIEW nmlv;
 		LRESULT res;

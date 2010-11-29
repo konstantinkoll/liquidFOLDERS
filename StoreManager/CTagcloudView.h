@@ -3,54 +3,41 @@
 //
 
 #pragma once
-#include "liquidFOLDERS.h"
-#include "StoreManager.h"
-#include "CFileView.h"
+#include "CGridView.h"
 
 
-struct Tag
+// Item data
+
+struct TagcloudItemData
 {
-	INT cnt;
-	BOOL selected;
-	UINT fontsize;
-	COLORREF color;
-	UINT alpha;
-	RECT rect;
+	FVItemData Hdr;
+	INT Cnt;
+	COLORREF Color;
+	UINT FontSize;
+	UINT Alpha;
 };
 
 
 // CTagcloudView
 //
 
-class CTagcloudView : public CFileView
+class CTagcloudView : public CGridView
 {
 public:
 	CTagcloudView();
-	virtual ~CTagcloudView();
-
-	virtual void SelectItem(INT n, BOOL select=TRUE, BOOL InternalCall=FALSE);
-	virtual INT GetSelectedItem();
-	virtual INT GetNextSelectedItem(INT n);
-
-	void Create(CWnd* _pParentWnd, LFSearchResult* _result, INT _FocusItem);
 
 protected:
 	CFont m_Fonts[20];
-	Tag* m_Tags;
-	HTHEME hTheme;
 
-	virtual void SetViewOptions(UINT _ViewID, BOOL Force);
-	virtual void SetSearchResult(LFSearchResult* _result);
-	virtual BOOL IsSelected(INT n);
-	virtual INT ItemAtPosition(CPoint point);
-	virtual void InvalidateItem(INT n);
-	virtual CMenu* GetContextMenu();
+	virtual void SetViewOptions(BOOL Force);
+	virtual void SetSearchResult(LFSearchResult* Result);
+	virtual void AdjustLayout();
+	virtual void DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed);
+	//virtual CMenu* GetContextMenu();
 
 	CFont* GetFont(INT idx);
-	void AdjustLayout();
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
-	afx_msg void OnDestroy();
 	afx_msg void OnSortValue();
 	afx_msg void OnSortCount();
 	afx_msg void OnOmitRare();
@@ -58,12 +45,5 @@ protected:
 	afx_msg void OnUseColors();
 	afx_msg void OnUseOpacity();
 	afx_msg void OnUpdateCommands(CCmdUI* pCmdUI);
-	afx_msg LRESULT OnThemeChanged();
-	afx_msg void OnSize(UINT nType, INT cx, INT cy);
-	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
-	afx_msg void OnPaint();
-	afx_msg void OnSetFocus(CWnd* pOldWnd);
-	afx_msg void OnKillFocus(CWnd* pNewWnd);
-	afx_msg void OnSysColorChange();
 	DECLARE_MESSAGE_MAP()
 };
