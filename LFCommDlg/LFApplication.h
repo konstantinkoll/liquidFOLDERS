@@ -72,6 +72,7 @@ public:
 	CFont m_DefaultFont;
 	CFont m_ItalicFont;
 	CFont m_SmallFont;
+	CFont m_LargeFont;
 	CFont m_CaptionFont;
 	LFMessageIDs* MessageIDs;
 	BOOL IsLicensed;
