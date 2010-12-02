@@ -22,7 +22,8 @@ CTaskbar::CTaskbar()
 BOOL CTaskbar::Create(CWnd* pParentWnd, UINT ResID, UINT nID)
 {
 	Icons.SetImageSize(CSize(16, 16));
-	Icons.Load(ResID);
+	if (ResID)
+		Icons.Load(ResID);
 
 	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, LoadCursor(NULL, IDC_ARROW));
 
@@ -34,10 +35,7 @@ BOOL CTaskbar::Create(CWnd* pParentWnd, UINT ResID, UINT nID)
 
 LRESULT CTaskbar::DefWindowProc(UINT message, WPARAM wParam, LPARAM lParam)
 {
-	if (message==WM_COMMAND)
-		return GetParent()->SendMessage(message, wParam, lParam);
-
-	return CWnd::DefWindowProc(message, wParam, lParam);
+	return (message==WM_COMMAND) ? GetOwner()->SendMessage(message, wParam, lParam) : CWnd::DefWindowProc(message, wParam, lParam);
 }
 
 UINT CTaskbar::GetPreferredHeight()
