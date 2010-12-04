@@ -8,6 +8,7 @@
 #include "HistoryWnd.h"
 #include "liquidFOLDERS.h"
 #include "CCaptionBar.h"
+#include "CMainView.h"
 #include "CFileView.h"
 
 
@@ -101,7 +102,6 @@ public:
 	BOOL UpdateSelectedItems(LFVariantData* value1, LFVariantData* value2=NULL, LFVariantData* value3=NULL);
 	BOOL UpdateTrashFlag(BOOL Trash, BOOL All=FALSE);
 	BOOL DeleteFiles(BOOL All=FALSE);
-	INT GetFocusItem();
 	UINT SelectViewMode(UINT ViewID=LFViewDetails);
 	BOOL OpenChildView(INT FocusItem=0, BOOL Force=FALSE, BOOL AllowChangeSort=FALSE);
 
@@ -116,14 +116,13 @@ protected:
 	CMFCRibbonApplicationButton m_MainButton;
 	//CMFCRibbonComboBox* m_cbxActiveContext;
 	CMFCToolBarImages m_PanelImages;
-	CMFCRibbonStatusBar  m_wndStatusBar;
-	CMFCRibbonBaseElement* m_sbFileCount;
-	CMFCRibbonBaseElement* m_sbItemCount;
+	CMFCRibbonStatusBar m_wndStatusBar;
 	CCaptionBar m_wndCaptionBar;
 	CFilterWnd* m_wndFilter;
 	CHistoryWnd* m_wndHistory;
 	CInspectorWnd m_wndInspector;
-	CFileView* m_wndView;
+	CMainView m_wndMainView;
+	//CFileView* p_FileView;
 	BOOL FilesSelected;
 	BreadcrumbItem* m_BreadcrumbBack;
 	BreadcrumbItem* m_BreadcrumbForward;
@@ -178,7 +177,6 @@ protected:
 	afx_msg void OnUpdateStoreCommands(CCmdUI* pCmdUI);
 	afx_msg void OnChangeChildView(UINT nID);
 	afx_msg void OnUpdateSelection();
-	afx_msg void OnUpdateFileCount();
 	afx_msg void OnNavigateFirst();
 	afx_msg void OnNavigateBackOne();
 	afx_msg LRESULT OnNavigateBack(WPARAM wParam, LPARAM lParam);
@@ -200,8 +198,6 @@ private:
 	void Remember(CMainFrame* clip);
 	void BackupStores(BOOL all=FALSE);
 	void OnStoreNewDrive(CHAR drv);
-	INT GetSelectedItem();
-	INT GetNextSelectedItem(INT n);
 	void AddTransactionItem(LFTransactionList* tl, LFItemDescriptor* i, UINT UserData);
 	void ShowCaptionBar(LPCWSTR Icon, LPCWSTR Message, INT Command=0);
 	void ShowCaptionBar(LPCWSTR Icon, UINT res, INT Command=0);

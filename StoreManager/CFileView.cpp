@@ -40,7 +40,7 @@ CFileView::CFileView(UINT DataSize, BOOL EnableScrolling, BOOL EnableHover, BOOL
 
 	p_Result = NULL;
 	m_ItemData = NULL;
-	m_FocusItem = m_HotItem = m_SelectionAnchor = m_EditLabel = -1;
+	m_FocusItem = m_HotItem = m_SelectionAnchor = m_EditLabel = m_Context = -1;
 	m_Context = LFContextDefault;
 	m_HeaderHeight = m_FontHeight[0] = m_FontHeight[1] = m_HScrollMax = m_VScrollMax = m_HScrollPos = m_VScrollPos = 0;
 	m_DataSize = DataSize;
@@ -72,7 +72,7 @@ BOOL CFileView::Create(CWnd* pParentWnd, UINT nID, LFSearchResult* Result, INT F
 	if (!CWnd::Create(className, _T(""), dwStyle, rect, pParentWnd, nID))
 		return FALSE;
 
-	UpdateViewOptions(Result->m_Context, TRUE);
+	UpdateViewOptions(Result ? Result->m_Context : LFContextDefault, TRUE);
 	UpdateSearchResult(Result, FocusItem);
 	return TRUE;
 }
@@ -296,8 +296,11 @@ INT CFileView::ItemAtPosition(CPoint point)
 
 void CFileView::InvalidateItem(INT idx)
 {
-	RECT rect = GetItemRect(idx);
-	InvalidateRect(&rect);
+	if (idx>=0)
+	{
+		RECT rect = GetItemRect(idx);
+		InvalidateRect(&rect);
+	}
 }
 
 void CFileView::EditLabel(INT /*idx*/)

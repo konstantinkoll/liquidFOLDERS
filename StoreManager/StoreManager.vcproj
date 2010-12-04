@@ -406,6 +406,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CMainView.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\CPaneList.cpp"
 				>
 			</File>
@@ -521,6 +525,10 @@
 			</File>
 			<File
 				RelativePath=".\CListView.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CMainView.h"
 				>
 			</File>
 			<File

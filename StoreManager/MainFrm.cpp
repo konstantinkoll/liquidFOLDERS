@@ -6,9 +6,6 @@
 #include "StoreManager.h"
 #include "MainFrm.h"
 #include "LFCore.h"
-#include "CListView.h"
-#include "CGlobeView.h"
-#include "CTagcloudView.h"
 #include "SortOptionsDlg.h"
 #include "ViewOptionsDlg.h"
 #include "ChooseDetailsDlg.h"
@@ -147,12 +144,10 @@ CMainFrame::CMainFrame(char* RootStore, BOOL _IsClipboard)
 	ActiveViewParameters = &theApp.m_Views[LFContextDefault];
 	RawFiles = NULL;
 	CookedFiles = NULL;
-	m_wndView = NULL;
 	m_BreadcrumbBack = NULL;
 	m_BreadcrumbForward = NULL;
 	m_wndFilter = NULL;
 	m_wndHistory = NULL;
-	m_sbItemCount = NULL;
 }
 
 CMainFrame::~CMainFrame()
@@ -207,13 +202,6 @@ INT CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	// Statusleiste erstellen
 	if (!m_wndStatusBar.Create(this))
 		return -1;
-
-	m_sbFileCount = new CMFCRibbonStatusBarPane(ID_PANE_STATUSBAR_FILECOUNT, _T(""), TRUE);
-	m_sbItemCount = new CMFCRibbonStatusBarPane(ID_PANE_STATUSBAR_ITEMCOUNT, _T(""), TRUE);
-
-	m_wndStatusBar.AddElement(m_sbFileCount, _T("File count"));
-	m_wndStatusBar.AddSeparator();
-	m_wndStatusBar.AddElement(m_sbItemCount, _T("Item count"));
 
 	CMFCRibbonButtonsGroup* pGroupPanels = new CMFCRibbonButtonsGroup();
 	if (!IsClipboard)
@@ -277,6 +265,10 @@ INT CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (!m_wndCaptionBar.Create(WS_CHILD | WS_CLIPSIBLINGS, this, ID_PANE_CAPTIONBAR, -1, TRUE))
 		return -1;
 
+	// Hauptansicht erstellen
+	if (!m_wndMainView.Create(this, AFX_IDW_PANE_FIRST))
+		return -1;
+
 	// Entweder leeres Suchergebnis oder Stores-Kontext öffnen
 	if (IsClipboard)
 	{
@@ -294,8 +286,9 @@ INT CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 void CMainFrame::OnSetFocus(CWnd* /*pOldWnd*/)
 {
 	theApp.m_pMainWnd = this;
-	if (m_wndView)
-		m_wndView->SetFocus();
+
+	if (IsWindow(m_wndMainView))
+		m_wndMainView.SetFocus();
 }
 
 void CMainFrame::OnClose()
@@ -316,11 +309,6 @@ void CMainFrame::OnDestroy()
 		m_wndHistory->DestroyWindow();
 		delete m_wndHistory;
 	}
-	if (m_wndView)
-	{
-		m_wndView->DestroyWindow();
-		delete m_wndView;
-	}
 
 	CFrameWndEx::OnDestroy();
 	theApp.KillFrame(this);
@@ -329,9 +317,8 @@ void CMainFrame::OnDestroy()
 BOOL CMainFrame::OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo)
 {
 	// Ansichtsfenster erhält ersten Eindruck vom Befehl
-	if (m_wndView)
-		if (m_wndView->OnCmdMsg(nID, nCode, pExtra, pHandlerInfo))
-			return TRUE;
+	if (m_wndMainView.OnCmdMsg(nID, nCode, pExtra, pHandlerInfo))
+		return TRUE;
 
 	// Andernfalls die Standardbehandlung durchführen
 	return CFrameWndEx::OnCmdMsg(nID, nCode, pExtra, pHandlerInfo);
@@ -572,20 +559,20 @@ void CMainFrame::OnClipRemove()
 
 	if (RawFiles)
 	{
-		INT idx = GetNextSelectedItem(-1);
+		INT idx = m_wndMainView.GetNextSelectedItem(-1);
 		while (idx!=-1)
 		{
 			INT pos = CookedFiles->m_Items[idx]->Position;
 			if (pos!=-1)
 				RawFiles->m_Items[pos]->DeleteFlag = true;
 
-			idx = GetNextSelectedItem(idx);
+			idx = m_wndMainView.GetNextSelectedItem(idx);
 		}
 
 		LFRemoveFlaggedItemDescriptors(RawFiles);
 		UpdateHistory();
 		SendMessage(WM_COMMAND, ID_VIEW_SELECTNONE);
-		CookFiles(GetFocusItem());
+		CookFiles(m_wndMainView.GetFocusItem());
 	}
 }
 
@@ -596,7 +583,7 @@ void CMainFrame::Remember(CMainFrame* clip)
 
 	if (CookedFiles)
 	{
-		INT idx = GetNextSelectedItem(-1);
+		INT idx = m_wndMainView.GetNextSelectedItem(-1);
 		BOOL changes = FALSE;
 		while (idx!=-1)
 		{
@@ -611,11 +598,11 @@ void CMainFrame::Remember(CMainFrame* clip)
 				if (clip->AddClipItem(CookedFiles->m_Items[idx]))
 					changes = TRUE;
 
-			idx = GetNextSelectedItem(idx);
+			idx = m_wndMainView.GetNextSelectedItem(idx);
 		}
 
 		if (changes)
-			clip->CookFiles(clip->GetFocusItem());
+			clip->CookFiles(clip->m_wndMainView.GetFocusItem());
 	}
 }
 
@@ -641,7 +628,7 @@ void CMainFrame::OnUpdateClipCommands(CCmdUI* pCmdUI)
 		b = (!IsClipboard) && FALSE;
 		break;
 	case ID_CLIP_REMOVE:
-		b = (IsClipboard) && (GetNextSelectedItem(-1)!=-1);
+		b = (IsClipboard) && (m_wndMainView.GetNextSelectedItem(-1)!=-1);
 		break;
 	case ID_CLIP_REMEMBERLAST:
 	case ID_CLIP_REMEMBERNEW:
@@ -658,7 +645,7 @@ void CMainFrame::OnUpdateClipCommands(CCmdUI* pCmdUI)
 
 void CMainFrame::OnItemsOpen()
 {
-	INT idx = GetSelectedItem();
+	INT idx = m_wndMainView.GetSelectedItem();
 
 	if (idx!=-1)
 	{
@@ -696,8 +683,7 @@ void CMainFrame::OnItemsOpen()
 					}
 					else
 					{
-						if (m_wndView)
-							m_wndView->Invalidate();
+						m_wndMainView.Invalidate();
 						LFErrorBox(res, GetSafeHwnd());
 					}
 					break;
@@ -712,7 +698,7 @@ void CMainFrame::OnItemsOpen()
 
 void CMainFrame::OnItemsOpenWith()
 {
-	INT idx = GetSelectedItem();
+	INT idx = m_wndMainView.GetSelectedItem();
 
 	if (idx!=-1)
 	{
@@ -731,8 +717,7 @@ void CMainFrame::OnItemsOpenWith()
 			}
 			else
 			{
-				if (m_wndView)
-					m_wndView->Invalidate();
+				m_wndMainView.Invalidate();
 				LFErrorBox(res, GetSafeHwnd());
 			}
 		}
@@ -747,7 +732,7 @@ void CMainFrame::OnItemsDelete()
 		switch (CookedFiles->m_Context)
 		{
 		case LFContextStores:
-			i = GetSelectedItem();
+			i = m_wndMainView.GetSelectedItem();
 			if (i!=-1)
 			{
 				LFItemDescriptor* store = LFAllocItemDescriptor(CookedFiles->m_Items[i]);
@@ -765,17 +750,17 @@ void CMainFrame::OnItemsDelete()
 
 void CMainFrame::OnItemsRename()
 {
-	if (m_wndView)
+/*	if (m_wndMainView.p_wndFileView)
 	{
-		m_wndView->SetFocus();
-		m_wndView->EditLabel(GetSelectedItem());
-	}
+		m_wndMainView.p_wndFileView->SetFocus();
+		m_wndMainView.p_wndFileView->EditLabel(GetSelectedItem());
+	}*/
 }
 
 void CMainFrame::OnUpdateItemCommands(CCmdUI* pCmdUI)
 {
 	BOOL b = FALSE;
-	INT i = GetSelectedItem();
+	INT i = m_wndMainView.GetSelectedItem();
 	LFItemDescriptor* f = (i==-1 ? NULL : CookedFiles->m_Items[i]);
 
 	switch (pCmdUI->m_nID)
@@ -795,13 +780,13 @@ void CMainFrame::OnUpdateItemCommands(CCmdUI* pCmdUI)
 		break;
 	case ID_ITEMS_DELETE:
 		if (CookedFiles)
-			b = (CookedFiles->m_Context==LFContextStores) ? f ? (f->Type & LFTypeStore) : FALSE : FilesSelected;
+			b = (CookedFiles->m_Context==LFContextStores) ? f ? ((f->Type & LFTypeMask)==LFTypeStore) : FALSE : FilesSelected;
 		break;
 	case ID_ITEMS_RENAME:
 		if (CookedFiles)
-			b = f ? (CookedFiles->m_Context==LFContextStores) ? (f->Type & LFTypeStore) && (ActiveViewID>=LFViewLargeIcons) && (ActiveViewID<=LFViewPreview) : (f->Type & LFTypeMask)==LFTypeFile : FALSE;
-		if ((b) && (m_wndView))
-			b ^= m_wndView->IsEditing();
+			b = f ? (CookedFiles->m_Context==LFContextStores) ? ((f->Type & LFTypeMask)==LFTypeStore) && (ActiveViewID>=LFViewLargeIcons) && (ActiveViewID<=LFViewPreview) : (f->Type & LFTypeMask)==LFTypeFile : FALSE;
+//		if ((b) && (m_wndMainView.p_wndFileView))
+//			b ^= m_wndMainView.p_wndFileView->IsEditing();
 		break;
 	}
 
@@ -864,14 +849,14 @@ void CMainFrame::OnStoreNewInternal()
 	UINT res = LFCreateStore(s);
 	LFErrorBox(res, GetSafeHwnd());
 
-	if ((res==LFOk) && (CookedFiles) && (m_wndView))
+	if ((res==LFOk) && (CookedFiles))
 		for (UINT a=0; a<CookedFiles->m_ItemCount; a++)
 		{
 			LFItemDescriptor* i = CookedFiles->m_Items[a];
 			if ((strcmp(s->StoreID, i->StoreID)==0) && ((i->Type & LFTypeMask)==LFTypeStore))
 			{
-				m_wndView->SetFocus();
-				m_wndView->EditLabel(a);
+				m_wndMainView.SetFocus();
+				//m_wndMainView.p_wndFileView->EditLabel(a);
 				break;
 			}
 		}
@@ -881,7 +866,7 @@ void CMainFrame::OnStoreNewInternal()
 
 void CMainFrame::OnStoreNewDrive(CHAR drv)
 {
-	INT i = GetSelectedItem();
+	INT i = m_wndMainView.GetSelectedItem();
 
 	if (i!=-1)
 	{
@@ -897,7 +882,7 @@ void CMainFrame::OnStoreNewDrive(CHAR drv)
 
 void CMainFrame::OnStoreNewDrive()
 {
-	INT i = GetSelectedItem();
+	INT i = m_wndMainView.GetSelectedItem();
 
 	if (i!=-1)
 		OnStoreNewDrive(CookedFiles->m_Items[i]->CoreAttributes.FileID[0]);
@@ -905,7 +890,7 @@ void CMainFrame::OnStoreNewDrive()
 
 void CMainFrame::OnStoreMakeDefault()
 {
-	INT i = GetSelectedItem();
+	INT i = m_wndMainView.GetSelectedItem();
 
 	if (i!=-1)
 		LFErrorBox(LFMakeDefaultStore(CookedFiles->m_Items[i]->StoreID), GetSafeHwnd());
@@ -913,7 +898,7 @@ void CMainFrame::OnStoreMakeDefault()
 
 void CMainFrame::OnStoreMakeHybrid()
 {
-	INT i = GetSelectedItem();
+	INT i = m_wndMainView.GetSelectedItem();
 
 	if (i!=-1)
 		LFErrorBox(LFMakeHybridStore(CookedFiles->m_Items[i]->StoreID), GetSafeHwnd());
@@ -942,7 +927,7 @@ void CEscape(CString &s)
 
 void CMainFrame::OnStoreProperties()
 {
-	INT i = GetSelectedItem();
+	INT i = m_wndMainView.GetSelectedItem();
 
 	if (i!=-1)
 	{
@@ -953,7 +938,7 @@ void CMainFrame::OnStoreProperties()
 
 void CMainFrame::OnStoreImportFolder()
 {
-	INT i = GetSelectedItem();
+	INT i = m_wndMainView.GetSelectedItem();
 
 	if (i!=-1)
 		LFImportFolder(CookedFiles->m_Items[i]->StoreID, this);
@@ -1056,7 +1041,7 @@ void CMainFrame::OnUpdateStoreCommands(CCmdUI* pCmdUI)
 	if (CookedFiles)
 		if (CookedFiles->m_Context==LFContextStores)
 		{
-			INT i = GetSelectedItem();
+			INT i = m_wndMainView.GetSelectedItem();
 			LFItemDescriptor* f = (i==-1 ? NULL : CookedFiles->m_Items[i]);
 
 			switch (pCmdUI->m_nID)
@@ -1072,8 +1057,8 @@ void CMainFrame::OnUpdateStoreCommands(CCmdUI* pCmdUI)
 			case ID_STORE_RENAME:
 				if (f)
 					b = (f->Type & LFTypeStore) && (ActiveViewID>=LFViewLargeIcons) && (ActiveViewID<=LFViewPreview);
-				if ((b) && (m_wndView))
-					b ^= m_wndView->IsEditing();
+//				if ((b) && (m_wndMainView.p_wndFileView))
+//					b ^= m_wndMainView.p_wndFileView->IsEditing();
 				break;
 			case ID_STORE_IMPORTFOLDER:
 				if (f)
@@ -1105,17 +1090,14 @@ void CMainFrame::OnUpdateStoreCommands(CCmdUI* pCmdUI)
 
 void CMainFrame::UpdateViewOptions()
 {
-	if (m_wndView)
+	if (ActiveViewID==LFViewGlobe)
 	{
-		if (ActiveViewID==LFViewGlobe)
-		{
-			CMFCRibbonBaseElement* cbx = m_wndRibbonBar.FindByID(ID_GLOBE_TEXTURESIZE, FALSE, TRUE);
-			if (cbx)
-				((CTextureComboBox*)cbx)->SelectItem((INT)theApp.m_nTextureSize);
-		}
-
-		m_wndView->UpdateViewOptions();
+		CMFCRibbonBaseElement* cbx = m_wndRibbonBar.FindByID(ID_GLOBE_TEXTURESIZE, FALSE, TRUE);
+		if (cbx)
+			((CTextureComboBox*)cbx)->SelectItem((INT)theApp.m_nTextureSize);
 	}
+
+	m_wndMainView.UpdateViewOptions(ActiveContextID);
 }
 
 void CMainFrame::UpdateSortOptions()
@@ -1155,8 +1137,7 @@ void CMainFrame::UpdateSearchResult(BOOL SetEmpty, INT FocusItem)
 		#endif
 	}
 
-	if (m_wndView)
-		m_wndView->UpdateSearchResult(SetEmpty ? NULL : CookedFiles, FocusItem);
+	m_wndMainView.UpdateSearchResult(SetEmpty ? NULL : CookedFiles, FocusItem);
 	OnUpdateSelection();
 }
 
@@ -1166,29 +1147,12 @@ void CMainFrame::OnChangeChildView(UINT nID)
 	theApp.OpenChildViews(ActiveContextID);
 }
 
-INT CMainFrame::GetFocusItem()
-{
-	return (m_wndView ? m_wndView->GetFocusItem() : -1);
-}
-
-INT CMainFrame::GetSelectedItem()
-{
-	return (m_wndView ? m_wndView->GetSelectedItem() : -1);
-}
-
-INT CMainFrame::GetNextSelectedItem(INT n)
-{
-	return (m_wndView ? m_wndView->GetNextSelectedItem(n) : -1);
-}
-
 void CMainFrame::OnUpdateSelection()
 {
 	// Selection
 	m_wndInspector.UpdateStart(ActiveFilter);
-	INT i = GetNextSelectedItem(-1);
+	INT i = m_wndMainView.GetNextSelectedItem(-1);
 	FilesSelected = FALSE;
-	UINT Count = 0;
-	INT64 Size = 0;
 
 	while (i>=0)
 	{
@@ -1197,64 +1161,11 @@ void CMainFrame::OnUpdateSelection()
 		m_wndInspector.UpdateAdd(item, RawFiles);
 		FilesSelected |= ((item->Type & LFTypeMask)==LFTypeFile) ||
 						(((item->Type & LFTypeMask)==LFTypeVirtual) && (item->FirstAggregate!=-1) && (item->LastAggregate!=-1));
-		Count++;
-		Size += *(INT64*)item->AttributeValues[LFAttrFileSize];
-		i = GetNextSelectedItem(i);
+
+		i = m_wndMainView.GetNextSelectedItem(i);
 	}
 
 	m_wndInspector.UpdateFinish();
-
-	if (m_sbItemCount)
-	{
-		CString maskStr;
-		WCHAR sizeStr[256];
-		CString tmpStr;
-		if (Count)
-		{
-			ENSURE(maskStr.LoadString(Count==1 ? IDS_SELECTED_SINGULAR : IDS_SELECTED_PLURAL));
-			StrFormatByteSizeW(Size, sizeStr, 256);
-		}
-		else
-		{
-			if (CookedFiles)
-				Count = CookedFiles->m_ItemCount;
-	
-			ENSURE(maskStr.LoadString(Count==1 ? IDS_ITEMS_SINGULAR : IDS_ITEMS_PLURAL));
-		}
-		tmpStr.Format(maskStr, Count, sizeStr);
-		m_sbItemCount->SetText(tmpStr);
-
-		m_wndStatusBar.RecalcLayout();
-		m_wndStatusBar.Invalidate();
-	}
-}
-
-void CMainFrame::OnUpdateFileCount()
-{
-	if (m_sbFileCount)
-	{
-		CString tmpStr;
-		if (CookedFiles->m_FileCount)
-		{
-			CString maskStr;
-			ENSURE(maskStr.LoadString(CookedFiles->m_FileCount==1 ? IDS_FILES_SINGULAR : IDS_FILES_PLURAL));
-			
-			WCHAR sizeStr[256];
-			StrFormatByteSizeW(CookedFiles->m_FileSize, sizeStr, 256);
-
-			tmpStr.Format(maskStr, CookedFiles->m_FileCount, sizeStr);
-		}
-		else
-		{
-			ENSURE(tmpStr.LoadString(IDS_NOFILES));
-		}
-		m_sbFileCount->SetText(tmpStr);
-
-		// Update
-		m_wndStatusBar.RecalcLayout();
-		m_wndStatusBar.Invalidate();
-	}
-
 }
 
 BOOL CMainFrame::RenameSingleItem(UINT n, CString Name)
@@ -1277,7 +1188,7 @@ BOOL CMainFrame::RenameSingleItem(UINT n, CString Name)
 		LFTransactionUpdate(tl, GetSafeHwnd(), &value);
 
 		if (tl->m_Changes)
-			m_wndView->UpdateSearchResult(CookedFiles, GetFocusItem());
+			m_wndMainView.UpdateSearchResult(CookedFiles, m_wndMainView.GetFocusItem());
 
 		if (tl->m_LastError>LFCancel)
 			ShowCaptionBar(IDI_ERROR, tl->m_LastError);
@@ -1319,11 +1230,11 @@ LFTransactionList* CMainFrame::BuildTransactionList(BOOL All)
 		}
 		else
 		{
-			INT idx = GetNextSelectedItem(-1);
+			INT idx = m_wndMainView.GetNextSelectedItem(-1);
 			while (idx!=-1)
 			{
 				AddTransactionItem(tl, CookedFiles->m_Items[idx], idx);
-				idx = GetNextSelectedItem(idx);
+				idx = m_wndMainView.GetNextSelectedItem(idx);
 			}
 		}
 	}
@@ -1336,19 +1247,19 @@ BOOL CMainFrame::UpdateSelectedItems(LFVariantData* value1, LFVariantData* value
 	LFTransactionList* tl = BuildTransactionList();
 	LFTransactionUpdate(tl, GetSafeHwnd(), value1, value2, value3);
 
-	if (m_wndView)
+	if (m_wndMainView.p_wndFileView)
 	{
 		BOOL deselected = FALSE;
 
 		for (UINT a=0; a<tl->m_ItemCount; a++)
 			if (tl->m_Items[a].LastError!=LFOk)
 			{
-				m_wndView->SelectItem(tl->m_Items[a].UserData, FALSE, TRUE);
+//				m_wndMainView.p_wndFileView->SelectItem(tl->m_Items[a].UserData, FALSE, TRUE);
 				deselected = TRUE;
 			}
 
 		if (tl->m_Changes)
-			m_wndView->UpdateSearchResult(CookedFiles, GetFocusItem());
+			m_wndMainView.UpdateSearchResult(CookedFiles, m_wndMainView.GetFocusItem());
 		if (deselected)
 			OnUpdateSelection();
 	}
@@ -1382,17 +1293,14 @@ BOOL CMainFrame::UpdateTrashFlag(BOOL Trash, BOOL All)
 	LFTransactionList* tl = BuildTransactionList(All);
 	LFTransactionUpdate(tl, GetSafeHwnd(), &value1, &value2);
 
-	if (m_wndView)
-	{
-		for (UINT a=0; a<tl->m_ItemCount; a++)
-			if (tl->m_Items[a].LastError==LFOk)
-				tl->m_Items[a].Item->DeleteFlag = true;
+	for (UINT a=0; a<tl->m_ItemCount; a++)
+		if (tl->m_Items[a].LastError==LFOk)
+			tl->m_Items[a].Item->DeleteFlag = true;
 
-		LFRemoveFlaggedItemDescriptors(RawFiles);
-		UpdateHistory();
-		SendMessage(WM_COMMAND, ID_VIEW_SELECTNONE);
-		CookFiles(GetFocusItem());
-	}
+	LFRemoveFlaggedItemDescriptors(RawFiles);
+	UpdateHistory();
+	SendMessage(WM_COMMAND, ID_VIEW_SELECTNONE);
+	CookFiles(m_wndMainView.GetFocusItem());
 
 	if (tl->m_LastError>LFCancel)
 		ShowCaptionBar(IDI_ERROR, tl->m_LastError);
@@ -1407,7 +1315,7 @@ BOOL CMainFrame::DeleteFiles(BOOL All)
 	LFTransactionList* tl = BuildTransactionList(All);
 	LFTransactionDelete(tl);
 
-	if (m_wndView)
+	if (m_wndMainView.p_wndFileView)
 	{
 		for (UINT a=0; a<tl->m_ItemCount; a++)
 			if (tl->m_Items[a].LastError==LFOk)
@@ -1416,7 +1324,7 @@ BOOL CMainFrame::DeleteFiles(BOOL All)
 		LFRemoveFlaggedItemDescriptors(RawFiles);
 		UpdateHistory();
 		SendMessage(WM_COMMAND, ID_VIEW_SELECTNONE);
-		CookFiles(GetFocusItem());
+		CookFiles(m_wndMainView.GetFocusItem());
 	}
 
 	if (tl->m_LastError>LFCancel)
@@ -1451,7 +1359,7 @@ LRESULT CMainFrame::OnNavigateBack(WPARAM wParam, LPARAM /*lParam*/)
 	if (ActiveFilter)
 	{
 		LFFilter* f = ActiveFilter;
-		INT focus = GetFocusItem();
+		INT focus = m_wndMainView.GetFocusItem();
 		ActiveFilter = NULL;
 
 		UINT steps = (UINT)wParam;
@@ -1473,7 +1381,7 @@ LRESULT CMainFrame::OnNavigateForward(WPARAM wParam, LPARAM /*lParam*/)
 	if (ActiveFilter)
 	{
 		LFFilter* f = ActiveFilter;
-		INT focus = GetFocusItem();
+		INT focus = m_wndMainView.GetFocusItem();
 		ActiveFilter = NULL;
 
 		UINT steps = (UINT)wParam;
@@ -1512,7 +1420,7 @@ void CMainFrame::OnNavigateLast()
 void CMainFrame::OnNavigateReload()
 {
 	if (ActiveFilter)
-		NavigateTo(LFAllocFilter(ActiveFilter), NAVMODE_RELOAD, GetFocusItem());
+		NavigateTo(LFAllocFilter(ActiveFilter), NAVMODE_RELOAD, m_wndMainView.GetFocusItem());
 }
 
 void CMainFrame::OnNavigateReloadShowAll()
@@ -1522,7 +1430,7 @@ void CMainFrame::OnNavigateReloadShowAll()
 		LFFilter* f = LFAllocFilter(ActiveFilter);
 		f->UnhideAll = true;
 
-		NavigateTo(f, NAVMODE_RELOAD, GetFocusItem());
+		NavigateTo(f, NAVMODE_RELOAD, m_wndMainView.GetFocusItem());
 	}
 }
 
@@ -2134,97 +2042,13 @@ BOOL CMainFrame::OpenChildView(INT FocusItem, BOOL Force, BOOL AllowChangeSort)
 			theApp.UpdateSortOptions(ActiveContextID);
 	}
 
+	ActiveViewParameters->Mode = ViewID;
 	ASSERT(AttributeSortableInView(ActiveViewParameters->SortBy, ViewID));
-	CFileView* pNewView = NULL;
 
-	switch (ViewID)
-	{
-	case LFViewLargeIcons:
-	case LFViewSmallIcons:
-	case LFViewList:
-	case LFViewDetails:
-	case LFViewTiles:
-	case LFViewSearchResult:
-	case LFViewPreview:
-		if ((Force) || (ActiveViewID<LFViewLargeIcons) || (ActiveViewID>LFViewPreview))
-		{
-			pNewView = new CListView();
-			((CListView*)pNewView)->Create(this, AFX_IDW_PANE_FIRST, CookedFiles, FocusItem);
-		}
-		break;
-	case LFViewGlobe:
-		if ((Force) || (ActiveViewID!=LFViewGlobe))
-		{
-			pNewView = new CGlobeView();
-			((CGlobeView*)pNewView)->Create(this, AFX_IDW_PANE_FIRST, CookedFiles, FocusItem);
-		}
-		break;
-	case LFViewTagcloud:
-		if ((Force) || (ActiveViewID!=LFViewTagcloud))
-		{
-			pNewView = new CTagcloudView();
-			((CTagcloudView*)pNewView)->Create(this, AFX_IDW_PANE_FIRST, CookedFiles, FocusItem);
-		}
-		break;
-	/*case LFViewCalendarYear:
-		if ((Force) || (ActiveViewID!=LFViewCalendarYear))
-		{
-			pNewView = new CCalendarYearView();
-			((CCalendarYearView*)pNewView)->Create(this, CookedFiles, FocusItem);
-		}
-		break;
-	case LFViewCalendarDay:
-		if ((Force) || (ActiveViewID!=LFViewCalendarDay))
-		{
-			pNewView = new CCalendarDayView();
-			((CCalendarDayView*)pNewView)->Create(this, CookedFiles, FocusItem);
-		}
-		break;
-	case LFViewTimeline:
-		if ((Force) || (ActiveViewID!=LFViewTimeline))
-		{
-			pNewView = new CTimelineView();
-			((CTimelineView*)pNewView)->Create(this, CookedFiles, FocusItem);
-		}
-		break;*/
-	}
+	m_wndMainView.UpdateViewOptions(ActiveContextID);
+	m_wndMainView.UpdateSearchResult(CookedFiles, FocusItem);
 
-	// Altes View entfernen, neues View setzen
-	if (pNewView)
-	{
-		CWnd* pVictim = m_wndView;
-		CRect oldRect;
-		if (pVictim)
-		{
-			WINDOWPLACEMENT wp;
-			pVictim->GetWindowPlacement(&wp);
-			oldRect = wp.rcNormalPosition;
-
-			pVictim->ShowWindow(SW_HIDE);
-			SetWindowLong(pVictim->m_hWnd, GWL_ID, AFX_IDW_PANE_LAST);
-		}
-
-		m_wndView = pNewView;
-
-		if (GetActiveWindow()==this)
-			if (GetFocus()!=&m_wndHistory->m_wndList)
-				m_wndView->SetFocus();
-
-		if (pVictim)
-		{
-			m_wndView->SetWindowPos(NULL, oldRect.left, oldRect.top, oldRect.Width(), oldRect.Height(), SWP_NOZORDER | SWP_NOACTIVATE);
-
-			pVictim->DestroyWindow();
-			delete pVictim;
-		}
-
-		m_wndView->ShowWindow(SW_SHOW);
-		OnUpdateSelection();
-	}
-	else
-	{
-		m_wndView->UpdateViewOptions(ActiveContextID, ViewID);
-	}
+	OnUpdateSelection();
 
 	ActiveViewID = ViewID;
 
@@ -2237,7 +2061,7 @@ BOOL CMainFrame::OpenChildView(INT FocusItem, BOOL Force, BOOL AllowChangeSort)
 	m_wndRibbonBar.Update();
 	#endif
 
-	return (pNewView!=NULL);
+	return TRUE;
 }
 
 void CMainFrame::NavigateTo(LFFilter* f, UINT NavMode, INT FocusItem, INT FirstAggregate, INT LastAggregate)
@@ -2248,7 +2072,7 @@ void CMainFrame::NavigateTo(LFFilter* f, UINT NavMode, INT FocusItem, INT FirstA
 	if (ActiveFilter)
 		if (NavMode==NAVMODE_NORMAL)
 		{
-			AddBreadcrumbItem(&m_BreadcrumbBack, ActiveFilter, GetFocusItem());
+			AddBreadcrumbItem(&m_BreadcrumbBack, ActiveFilter, m_wndMainView.GetFocusItem());
 			DeleteBreadcrumbs(&m_BreadcrumbForward);
 		}
 		else
@@ -2326,7 +2150,6 @@ void CMainFrame::CookFiles(INT FocusItem)
 
 	UpdateSearchResult(FALSE, FocusItem);
 	UpdateHistory();
-	OnUpdateFileCount();
 
 	if ((Victim) && (Victim!=RawFiles))
 		LFFreeSearchResult(Victim);

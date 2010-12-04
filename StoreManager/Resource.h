@@ -90,8 +90,6 @@
 #define ID_PANE_FILTERWND               501
 #define ID_PANE_INSPECTORWND            502
 #define ID_PANE_HISTORYWND              503
-#define ID_PANE_STATUSBAR_FILECOUNT     504
-#define ID_PANE_STATUSBAR_ITEMCOUNT     505
 #define ID_HISTORYLIST                  510
 #define ID_FILTER_CLEAR                 520
 #define ID_FILTER_EDITCONDITION         521
