@@ -33,5 +33,5 @@ private:
 	void AttributeToString(LFItemDescriptor* i, UINT Attr, WCHAR* tmpStr, size_t cCount);
 	void DrawTileRows(CDC& dc, CRect& rect, LFItemDescriptor* i, FVItemData* d, INT* Rows, BOOL Themed);
 	void DrawProperty(CDC& dc, CRect& rect, LFItemDescriptor* i, FVItemData* d, UINT Attr, BOOL Themed);
-	INT GetMaxLabelWidth();
+	INT GetMaxLabelWidth(INT Max);
 };

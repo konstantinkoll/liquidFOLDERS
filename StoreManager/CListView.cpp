@@ -109,7 +109,9 @@ void CListView::AdjustLayout()
 		ArrangeHorizontal(gva);
 		break;
 	case LFViewList:
-		gva.cx = max(140, min(240, m_IconSize[0].cx+PADDING+GetMaxLabelWidth()));
+		gva.cx = m_IconSize[0].cx+PADDING+GetMaxLabelWidth(240-m_IconSize[0].cx-PADDING);
+		if (gva.cx<140)
+			gva.cx = 140;
 		gva.cy = max(m_IconSize[0].cy, m_FontHeight[0]);
 		ArrangeVertical(gva);
 		break;
@@ -396,7 +398,7 @@ void CListView::DrawProperty(CDC& dc, CRect& rect, LFItemDescriptor* i, FVItemDa
 	}
 }
 
-INT CListView::GetMaxLabelWidth()
+INT CListView::GetMaxLabelWidth(INT Max)
 {
 	INT Width = 0;
 
@@ -408,7 +410,18 @@ INT CListView::GetMaxLabelWidth()
 		for (INT a=0; a<(INT)p_Result->m_ItemCount; a++)
 		{
 			CString label = GetLabel(p_Result->m_Items[a]);
-			Width = max(Width, dc->GetTextExtent(label, label.GetLength()).cx);
+			INT cx = dc->GetTextExtent(label, label.GetLength()).cx;
+
+			if (cx>Width)
+			{
+				Width = cx;
+
+				if (Width>=Max)
+				{
+					Width = Max;
+					break;
+				}
+			}
 		}
 	
 		dc->SelectObject(pOldFont);
