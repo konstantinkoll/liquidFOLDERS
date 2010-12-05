@@ -18,15 +18,13 @@
 #define RibbonCategory_Home                 0
 #define RibbonCategory_View                 1
 #define RibbonCategory_Items                2
-#define RibbonCategory_EMail_Mail           3
-#define RibbonCategory_EMail_Contacts       4
-#define RibbonCategory_UnknownFileFormats   5
-#define RibbonCategory_View_Calendar        6
-#define RibbonCategory_View_Globe           7
-#define RibbonCategory_View_Tagcloud        8
-#define RibbonCategory_View_Timeline        9
-#define RibbonCategory_Stores               10
-#define RibbonCategory_Trash                11
+#define RibbonCategory_UnknownFileFormats   3
+#define RibbonCategory_View_Calendar        4
+#define RibbonCategory_View_Globe           5
+#define RibbonCategory_View_Tagcloud        6
+#define RibbonCategory_View_Timeline        7
+#define RibbonCategory_Stores               8
+#define RibbonCategory_Trash                9
 
 #define RibbonDefaultCategory               RibbonCategory_View
 

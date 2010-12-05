@@ -341,14 +341,14 @@ void CMainFrame::OnViewOptions()
 {
 	ViewOptionsDlg dlg(this, ActiveViewParameters, ActiveContextID);
 	if (dlg.DoModal()==IDOK)
-		theApp.OpenChildViews(ActiveContextID, TRUE);
+		theApp.UpdateViewOptions(ActiveContextID);
 }
 
 void CMainFrame::OnChooseDetails()
 {
 	ChooseDetailsDlg dlg(this, ActiveViewParameters, ActiveContextID);
 	if (dlg.DoModal()==IDOK)
-		theApp.OpenChildViews(ActiveContextID, TRUE);
+		theApp.UpdateViewOptions(ActiveContextID);
 }
 
 void CMainFrame::OnToggleAutoDirs()
@@ -1144,7 +1144,7 @@ void CMainFrame::UpdateSearchResult(BOOL SetEmpty, INT FocusItem)
 void CMainFrame::OnChangeChildView(UINT nID)
 {
 	ActiveViewParameters->Mode = nID-ID_APP_VIEW_LARGEICONS+LFViewLargeIcons;
-	theApp.OpenChildViews(ActiveContextID);
+	theApp.UpdateViewOptions(ActiveContextID);
 }
 
 void CMainFrame::OnUpdateSelection()
@@ -1732,41 +1732,6 @@ void CMainFrame::InitializeRibbon()
 
 			pPanelFileShare->Add(pBtnSyndicate);*/
 
-	strTemp = "Mail";
-	strCtx = "EMail";
-	CMFCRibbonCategory* pCategoryEmail = m_wndRibbonBar.AddContextCategory(strTemp, strCtx, 3, AFX_CategoryColor_Green, IDB_RIBBONEMAIL_16, IDB_RIBBONEMAIL_32);
-	
-		strTemp = "Mail";
-		CMFCRibbonPanel* pPanelEmail = pCategoryEmail->AddPanel(strTemp, m_PanelImages.ExtractIcon(0));
-
-			strTemp = "Reply";
-			pPanelEmail->Add(new CMFCRibbonButton(ID_APP_ABOUT, strTemp, 0, 0));
-			strTemp = "Reply all";
-			pPanelEmail->Add(new CMFCRibbonButton(ID_APP_ABOUT, strTemp, 1, 1));
-			strTemp = "Forward";
-			pPanelEmail->Add(new CMFCRibbonButton(ID_APP_ABOUT, strTemp, 2, 2));
-			strTemp = "Forward All";
-			pPanelEmail->Add(new CMFCRibbonButton(ID_APP_ABOUT, strTemp, 3, 3));
-
-	strTemp = "Contacts";
-	CMFCRibbonCategory* pCategoryEmailContacts = m_wndRibbonBar.AddContextCategory(strTemp, strCtx, 3, AFX_CategoryColor_Green, IDB_RIBBONCONTACTS_16, IDB_RIBBONCONTACTS_32);
-	
-		strTemp = "Contacts";
-		CMFCRibbonPanel* pPanelContacts = pCategoryEmailContacts->AddPanel(strTemp, m_PanelImages.ExtractIcon(0));
-
-			strTemp = "Show Contacts";
-			pPanelContacts->Add(new CMFCRibbonButton(ID_APP_ABOUT, strTemp, 0, 0));
-			strTemp = "Add Contact";
-			pPanelContacts->Add(new CMFCRibbonButton(ID_APP_ABOUT, strTemp, 1, 1));
-			strTemp = "Delete Contact";
-			pPanelContacts->Add(new CMFCRibbonButton(ID_APP_ABOUT, strTemp, 2, 2));
-			strTemp = "Edit Contact";
-			pPanelContacts->Add(new CMFCRibbonButton(ID_APP_ABOUT, strTemp, 3, 3));
-			strTemp = "Search Contact";
-			pPanelContacts->Add(new CMFCRibbonButton(ID_APP_ABOUT, strTemp, 4, 4));
-			strTemp = "Send contact";
-			pPanelContacts->Add(new CMFCRibbonButton(ID_APP_ABOUT, strTemp, 5, 5));
-
 	if (!IsClipboard)
 	{
 		strTemp = "Register";
@@ -1933,8 +1898,6 @@ void CMainFrame::InitializeRibbon()
 
 	// Im Debug-Modus alle Kategorien anzeigen
 	#ifdef _DEBUG
-	m_wndRibbonBar.ShowCategory(RibbonCategory_EMail_Mail);
-	m_wndRibbonBar.ShowCategory(RibbonCategory_EMail_Contacts);
 	m_wndRibbonBar.ShowCategory(RibbonCategory_View_Calendar);
 	m_wndRibbonBar.ShowCategory(RibbonCategory_View_Globe);
 	m_wndRibbonBar.ShowCategory(RibbonCategory_View_Tagcloud);

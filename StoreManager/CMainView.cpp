@@ -117,7 +117,7 @@ BOOL CMainView::CreateFileView(UINT ViewID, INT FocusItem)
 
 void CMainView::UpdateViewOptions(INT Context)
 {
-	if ((Context==m_ContextID) && (p_wndFileView))
+	if (((Context==m_ContextID) || (Context==-1)) && (p_wndFileView))
 		if (!CreateFileView(theApp.m_Views[Context].Mode, GetFocusItem()))
 			p_wndFileView->UpdateViewOptions(Context);
 }
@@ -142,7 +142,6 @@ void CMainView::UpdateSearchResult(LFSearchResult* Result, INT FocusItem)
 
 		// Header
 		BOOL ShowHeader = m_ShowHeader;
-		CString Caption;
 		CString Hint;
 		CString Mask;
 		WCHAR tmpBuf[256];
@@ -150,8 +149,8 @@ void CMainView::UpdateSearchResult(LFSearchResult* Result, INT FocusItem)
 		switch (m_ContextID)
 		{
 		case LFContextStores:
-			ENSURE(Mask.LoadString(Result->m_ItemCount==1 ? IDS_ITEMS_SINGULAR : IDS_ITEMS_PLURAL));
-			Hint.Format(Mask, Result->m_ItemCount);
+			ENSURE(Mask.LoadString(Result->m_ItemCount==1 ? IDS_STORES_SINGULAR : IDS_STORES_PLURAL));
+			Hint.Format(Mask, Result->m_StoreCount);
 			m_ShowHeader = TRUE;
 			break;
 		case LFContextStoreHome:
@@ -172,7 +171,7 @@ void CMainView::UpdateSearchResult(LFSearchResult* Result, INT FocusItem)
 		if (m_ShowHeader)
 		{
 			m_wndExplorerHeader.SetColors(m_ContextID<=LFContextClipboard ? 0x126E00 : 0x993300, (COLORREF)-1, FALSE);
-			m_wndExplorerHeader.SetText(Caption, Hint);
+			m_wndExplorerHeader.SetText(Result->m_Name, Hint);
 		}
 
 		// View

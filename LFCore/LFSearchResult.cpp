@@ -21,12 +21,14 @@ extern unsigned int DriveTypes[];
 LFSearchResult::LFSearchResult(int ctx)
 	: DynArray()
 {
+	assert(ctx<LFContextCount);
+
+	LoadString(LFCoreModuleHandle, IDS_FirstContext+ctx, m_Name, 256);
 	m_RawCopy = true;
 	m_Context = ctx;
-	m_HidingItems = false;
 	m_HasCategories = false;
+	m_HidingItems = false;
 	m_QueryTime = 0;
-	m_Items = NULL;
 	m_FileCount = 0;
 	m_FileSize = 0;
 	m_StoreCount = 0;
@@ -36,13 +38,15 @@ LFSearchResult::LFSearchResult(int ctx)
 LFSearchResult::LFSearchResult(LFSearchResult* res)
 	: DynArray()
 {
-	m_RawCopy = false;
-	m_LastError = res->m_LastError;
-	m_Context = res->m_Context;
-	m_HidingItems = res->m_HidingItems;
-	m_HasCategories = res->m_HasCategories;
-	m_QueryTime = res->m_QueryTime;
 	m_Items = (LFItemDescriptor**)_aligned_malloc(res->m_ItemCount*sizeof(LFItemDescriptor*), Dyn_MemoryAlignment);
+	m_LastError = res->m_LastError;
+
+	wcscpy_s(m_Name, 256, res->m_Name);
+	m_RawCopy = false;
+	m_Context = res->m_Context;
+	m_HasCategories = res->m_HasCategories;
+	m_HidingItems = res->m_HidingItems;
+	m_QueryTime = res->m_QueryTime;
 	m_FileCount = res->m_FileCount;
 	m_FileSize = res->m_FileSize;
 	m_StoreCount = res->m_StoreCount;
@@ -112,6 +116,7 @@ bool LFSearchResult::AddStoreDescriptor(LFStoreDescriptor* s, LFFilter* f)
 	else
 	{
 		m_StoreCount++;
+		f->Result.StoreCount++;
 	}
 
 	return res;

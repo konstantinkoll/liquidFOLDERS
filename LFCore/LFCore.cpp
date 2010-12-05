@@ -453,14 +453,12 @@ LFCore_API LFDomainDescriptor* LFGetDomainInfo(unsigned int ID)
 
 	wchar_t tmpStr[256];
 	LoadString(LFCoreModuleHandle, IDS_FirstDomain+ID, tmpStr, 256);
-
-	for (unsigned int a=0; a<wcslen(tmpStr); a++)
-		if (tmpStr[a]==L'\n')
-		{
-			wcsncpy_s(d->Comment, 256, &tmpStr[a+1], wcslen(tmpStr)-a-1);
-			tmpStr[a] = L'\0';
-			break;
-		}
+	wchar_t* brk = wcschr(tmpStr, L'\n');
+	if (brk)
+	{
+		wcscpy_s(d->Comment, 256, brk+1);
+		*brk = L'\0';
+	}
 
 	wcscpy_s(d->DomainName, 64, tmpStr);
 

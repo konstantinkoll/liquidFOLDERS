@@ -690,22 +690,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\Ribbon_Contacts_16.bmp"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Ribbon_Contacts_32.bmp"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Ribbon_Email_16.bmp"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Ribbon_Email_32.bmp"
-				>
-			</File>
-			<File
 				RelativePath=".\res\Ribbon_Files_16.bmp"
 				>
 			</File>

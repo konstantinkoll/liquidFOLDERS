@@ -22,15 +22,16 @@ public:
 	void GroupArray(unsigned int attr, unsigned int icon, LFFilter* f);
 	void SetContext(LFFilter* f);
 
+	wchar_t m_Name[256];
+	bool m_RawCopy;
+	int m_Context;
 	bool m_HasCategories;
 	bool m_HidingItems;
 	DWORD m_QueryTime;
 	unsigned int m_FileCount;
-	unsigned int m_StoreCount;
 	__int64 m_FileSize;
-	int m_Context;
+	unsigned int m_StoreCount;
 	char m_StoreID[LFKeySize];
-	bool m_RawCopy;
 
 private:
 	int Compare(int eins, int zwei, unsigned int attr, bool descending, bool categories);

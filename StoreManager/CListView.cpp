@@ -96,7 +96,7 @@ void CListView::SetSearchResult(LFSearchResult* Result)
 
 void CListView::AdjustLayout()
 {
-	GVArrange gva = { 0, 0, 17, 2, PADDING, 1, -1 };
+	GVArrange gva = { 0, 0, 16-PADDING, 2, PADDING, 1, -1 };
 
 	switch (m_ViewParameters.Mode)
 	{

@@ -404,6 +404,7 @@ struct LFFilterResult
 {
 	SYSTEMTIME Time;
 	unsigned int ItemCount;
+	unsigned int StoreCount;
 	unsigned int FileCount;
 	__int64 FileSize;
 	int FilterType;

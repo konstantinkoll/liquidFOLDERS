@@ -317,24 +317,6 @@ void CStoreManagerApp::OnAppExit()
 	LFApplication::OnAppExit();
 }
 
-void CStoreManagerApp::OpenChildViews(INT context, BOOL UpdateViewOptions)
-{
-	std::list<CMainFrame*>::iterator ppFrame = m_listMainFrames.begin();
-	while (ppFrame!=m_listMainFrames.end())
-	{
-		if ((*ppFrame)->ActiveContextID==context)
-		{
-			(*ppFrame)->OpenChildView(0, FALSE, TRUE);
-		}
-		else
-		{
-			if (UpdateViewOptions)
-				(*ppFrame)->UpdateViewOptions();
-		}
-		ppFrame++;
-	}
-}
-
 void CStoreManagerApp::UpdateViewOptions(INT context)
 {
 	std::list<CMainFrame*>::iterator ppFrame = m_listMainFrames.begin();

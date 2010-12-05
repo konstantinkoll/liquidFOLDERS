@@ -75,10 +75,6 @@ IDB_RIBBONSTORES_16     BITMAP                  "res\\Ribbon_Stores_16.bmp"
 IDB_RIBBONSTORES_32     BITMAP                  "res\\Ribbon_Stores_32.bmp"
 IDB_RIBBONCALENDAR_32   BITMAP                  "res\\Ribbon_Calendar_32.bmp"
 IDB_RIBBONCALENDAR_16   BITMAP                  "res\\Ribbon_Calendar_16.bmp"
-IDB_RIBBONEMAIL_32      BITMAP                  "res\\Ribbon_Email_32.bmp"
-IDB_RIBBONEMAIL_16      BITMAP                  "res\\Ribbon_Email_16.bmp"
-IDB_RIBBONCONTACTS_32   BITMAP                  "res\\Ribbon_Contacts_32.bmp"
-IDB_RIBBONCONTACTS_16   BITMAP                  "res\\Ribbon_Contacts_16.bmp"
 IDB_RIBBONGLOBE_32      BITMAP                  "res\\Ribbon_Globe_32.bmp"
 IDB_RIBBONGLOBE_16      BITMAP                  "res\\Ribbon_Globe_16.bmp"
 IDB_RIBBONTRASH_32      BITMAP                  "res\\Ribbon_Trash_32.bmp"
@@ -594,11 +590,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_ITEMS_SINGULAR      "%d item"
-    IDS_ITEMS_PLURAL        "%d items"
-    IDS_SELECTED_SINGULAR   "%d item selected (%s)"
-    IDS_SELECTED_PLURAL     "%d items selected (%s)"
-    IDS_NOFILES             "No files"
     IDS_FILES_SINGULAR      "%d file (%s)"
     IDS_FILES_PLURAL        "%d files (%s)"
     IDS_REGFILEFILTER       "Registry files"
@@ -620,7 +611,6 @@ BEGIN
     IDS_TYPE_VIRTUAL_SINGULAR "%d virtual folder"
     IDS_TYPE_VIRTUAL_PLURAL "%d virtual folders"
     IDS_REQUIRESMAINTENANCE "This store requires scheduled maintenance."
-    IDS_NOSTORES            "There are no stores available right now."
     IDS_YOULOOKAT           "You look at %s"
     IDS_NOTHINGTODISPLAY    "There is nothing to display."
 END

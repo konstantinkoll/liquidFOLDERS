@@ -44,7 +44,6 @@ public:
 	void ReplaceMainFrame(CMainFrame* pFrame);
 	CMainFrame* GetClipboard(BOOL ForceNew);
 	void CloseAllFrames(BOOL leaveOne=FALSE);
-	void OpenChildViews(INT context, BOOL UpdateViewOptions=FALSE);
 	void UpdateViewOptions(INT context=-1);
 	void UpdateSortOptions(INT context);
 	void Reload(INT context);

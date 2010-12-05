@@ -631,10 +631,13 @@ LFSearchResult* QueryDomains(LFFilter* filter)
 
 	CIndex* idx1;
 	CIndex* idx2;
+	LFStoreDescriptor* slot;
 	HANDLE StoreLock = NULL;
-	res->m_LastError = OpenStore(&filter->StoreID[0], false, idx1, idx2, NULL, &StoreLock);
+	res->m_LastError = OpenStore(&filter->StoreID[0], false, idx1, idx2, &slot, &StoreLock);
 	if (res->m_LastError==LFOk)
 	{
+		wcscpy_s(res->m_Name, 256, slot->StoreName);
+
 		unsigned int cnt[LFDomainCount] = { 0 };
 		__int64 size[LFDomainCount] = { 0 };
 		if (idx1)
@@ -767,11 +770,47 @@ void FinishTreeQuery(LFFilter* filter, LFSearchResult* res)
 	}
 }
 
+inline void PrepareSearchResult(LFSearchResult* res, LFFilter* filter)
+{
+	wchar_t name[256];
+	int ctx = LFContextDefault;
+
+	if ((filter->Options.IsSubfolder) && (filter->ConditionList))
+	{
+		wcscpy_s(name, 256, filter->Name);
+		unsigned int attr = filter->ConditionList->AttrData.Attr;
+		ctx = (attr==LFAttrLocationName) || (attr==LFAttrLocationIATA) || (attr==LFAttrLocationGPS) ? LFContextSubfolderLocation :
+			((filter->ConditionList->Compare==LFFilterCompareSubfolder) && (AttrTypes[attr]==LFTypeTime)) ? LFContextSubfolderDay : LFContextSubfolderDefault;
+	}
+	else
+	{
+		assert(filter->DomainID<LFDomainCount);
+		LoadString(LFCoreModuleHandle, IDS_FirstDomain+filter->DomainID, name, 256);
+		wchar_t* brk = wcschr(name, L'\n');
+		if (brk)
+			*brk = L'\0';
+
+		switch (filter->DomainID)
+		{
+		case LFDomainTrash:
+			ctx = LFContextTrash;
+			break;
+		case LFDomainUnknown:
+			ctx = LFContextHousekeeping;
+			break;
+		}
+	}
+
+	res->m_LastError = LFOk;
+	res->m_Context = ctx;
+	wcscpy_s(res->m_Name, 256, name);
+	strcpy_s(res->m_StoreID, LFKeySize, filter->StoreID);
+}
+
 LFSearchResult* QueryTree(LFFilter* filter)
 {
-	LFSearchResult* res = new LFSearchResult(LFContextDefault);
-	res->m_LastError = LFOk;
-	strcpy_s(res->m_StoreID, LFKeySize, filter->StoreID);
+	LFSearchResult* res = LFAllocSearchResult(LFContextDefault);
+	PrepareSearchResult(res, filter);
 
 	if (RetrieveStore(filter->StoreID, filter, res, filter->Options.AddBacklink))
 	{
@@ -787,9 +826,8 @@ LFSearchResult* QueryTree(LFFilter* filter)
 
 LFSearchResult* QuerySearch(LFFilter* filter)
 {
-	LFSearchResult* res = new LFSearchResult(LFContextDefault);
-	res->m_LastError = LFOk;
-	strcpy_s(res->m_StoreID, LFKeySize, filter->StoreID);
+	LFSearchResult* res = LFAllocSearchResult(LFContextDefault);
+	PrepareSearchResult(res, filter);
 
 	bool success = false;
 	if (filter->StoreID[0]=='\0')
@@ -903,6 +941,8 @@ LFCore_API LFSearchResult* LFQuery(LFFilter* filter, LFSearchResult* base, int f
 		(first<=last) && (first>=0) && (first<(int)base->m_ItemCount) && (last>=0) && (last<(int)base->m_ItemCount))
 	{
 		res = base;
+		PrepareSearchResult(res, filter);
+
 		res->m_LastError = LFOk;
 		strcpy_s(res->m_StoreID, LFKeySize, filter->StoreID);
 
@@ -913,10 +953,13 @@ LFCore_API LFSearchResult* LFQuery(LFFilter* filter, LFSearchResult* base, int f
 	else
 	{
 		res = new LFSearchResult(LFContextSubfolderDefault);
+		PrepareSearchResult(res, filter);
+
 		res->m_LastError = LFIllegalQuery;
 		filter->Result.FilterType = LFFilterTypeIllegalRequest;
 	}
 
+	wcscpy_s(res->m_Name, 256, filter->Name);
 	res->m_QueryTime = GetTickCount()-start;
 	return res;
 }

@@ -78,24 +78,24 @@ void CHistoryWnd::AddFilterItem(LFFilter* f, BOOL append, BOOL focus)
 	tmpStr = dateStr;
 	tmpStr += L", ";
 	tmpStr += timeStr;
-	m_wndList.SetItemText(idx, 1, tmpStr);
+	m_wndList.SetItemText(idx, 2, tmpStr);
 
-	CString fmt;
-	ENSURE(fmt.LoadStringW(f->Result.ItemCount==1 ? IDS_ITEMS_SINGULAR : IDS_ITEMS_PLURAL));
-	tmpStr.Format(fmt, f->Result.ItemCount);
-	if (f->Result.FileCount)
+	CString Hint;
+	CString Mask;
+	if (f->Mode==LFFilterModeStores)
 	{
-		ENSURE(fmt.LoadStringW(f->Result.FileCount==1 ? IDS_FILES_SINGULAR : IDS_FILES_PLURAL));
-		WCHAR SizeBuf[256];
-		LFINT64ToString(f->Result.FileSize, SizeBuf, 256);
-		CString fStr;
-		fStr.Format(fmt, f->Result.FileCount, SizeBuf);
-		tmpStr.Append(L" (");
-		tmpStr.Append(fStr);
-		tmpStr.Append(L")");
+		ENSURE(Mask.LoadString(f->Result.StoreCount==1 ? IDS_STORES_SINGULAR : IDS_STORES_PLURAL));
+		Hint.Format(Mask, f->Result.StoreCount);
+	}
+	else
+	{
+		WCHAR tmpBuf[256];
+		ENSURE(Mask.LoadString(f->Result.FileCount==1 ? IDS_FILES_SINGULAR : IDS_FILES_PLURAL));
+		LFINT64ToString(f->Result.FileSize, tmpBuf, 256);
+		Hint.Format(Mask, f->Result.FileCount, tmpBuf);
 	}
 
-	m_wndList.SetItemText(idx, 2, tmpStr);
+	m_wndList.SetItemText(idx, 1, Hint);
 
 	if (focus)
 	{
