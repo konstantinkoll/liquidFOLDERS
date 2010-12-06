@@ -4,13 +4,10 @@
 
 #pragma once
 #include "CGridView.h"
-#include <hash_map>
 
 
 // CListView
 //
-
-typedef stdext::hash_map<std::string, std::wstring> HashExtensions;
 
 class CListView : public CGridView
 {
@@ -26,7 +23,6 @@ protected:
 	void DrawIcon(CDC& dc, CRect& rect, LFItemDescriptor* i, FVItemData* d);
 
 private:
-	HashExtensions m_Extensions;
 	CImageList* m_Icons[2];
 	SIZE m_IconSize[2];
 

@@ -5,7 +5,6 @@
 #include "stdafx.h"
 #include "CListView.h"
 #include "StoreManager.h"
-#include <string>
 
 
 // CListView
@@ -75,28 +74,26 @@ void CListView::SetViewOptions(BOOL Force)
 
 void CListView::SetSearchResult(LFSearchResult* Result)
 {
-	m_Extensions.empty();
-
 	if (Result)
 		for (UINT a=0; a<Result->m_ItemCount; a++)
 		{
 			LFItemDescriptor* i = Result->m_Items[a];
 			if ((i->Type & LFTypeMask)==LFTypeFile)
-				if (m_Extensions.count(i->CoreAttributes.FileFormat)==0)
+				if (theApp.m_Extensions.count(i->CoreAttributes.FileFormat)==0)
 				{
 					CString Ext = _T("*.");
 					Ext += i->CoreAttributes.FileFormat;
 
 					SHFILEINFO sfi;
 					if (SUCCEEDED(SHGetFileInfo(Ext, 0, &sfi, sizeof(sfi), SHGFI_TYPENAME | SHGFI_USEFILEATTRIBUTES)))
-						m_Extensions[i->CoreAttributes.FileFormat] = sfi.szTypeName;
+						theApp.m_Extensions[i->CoreAttributes.FileFormat] = sfi.szTypeName;
 				}
 		}
 }
 
 void CListView::AdjustLayout()
 {
-	GVArrange gva = { 0, 0, 16-PADDING, 2, PADDING, 1, -1 };
+	GVArrange gva = { 0, 0, 15-PADDING, 2, PADDING, 1, -1 };
 
 	switch (m_ViewParameters.Mode)
 	{
@@ -286,7 +283,7 @@ void CListView::AttributeToString(LFItemDescriptor* i, UINT Attr, WCHAR* tmpStr,
 		wcscpy_s(tmpStr, cCount, GetLabel(i));
 		break;
 	case LFAttrFileFormat:
-		wcscpy_s(tmpStr, cCount, m_Extensions[i->CoreAttributes.FileFormat].c_str());
+		wcscpy_s(tmpStr, cCount, theApp.m_Extensions[i->CoreAttributes.FileFormat].c_str());
 		break;
 	default:
 		LFAttributeToString(i, Attr, tmpStr, cCount);

@@ -10,19 +10,21 @@
 #include "CGLFont.h"
 
 
+// Item data
+
+struct GlobeItemData
+{
+	FVItemData Hdr;
+	BOOL Valid;
+	double World[3];
+	INT ScreenPoint[2];
+	GLfloat Alpha;
+	WCHAR CoordString[32];
+};
+
+
 // CGlobeView
 //
-
-struct Location
-{
-	BOOL valid;
-	BOOL selected;
-	double world[3];
-	INT screenpoint[2];
-	INT screenlabel[4];
-	GLfloat alpha;
-	WCHAR coordstring[32];
-};
 
 struct LocalSettings
 {
@@ -38,8 +40,6 @@ public:
 
 	LocalSettings m_LocalSettings;
 	BOOL m_CameraChanged;
-
-	virtual void SelectItem(INT n, BOOL select=TRUE, BOOL InternalCall=FALSE);
 
 	BOOL Create(CWnd* pParentWnd, UINT nID, LFSearchResult* Result, INT FocusItem=0);
 
@@ -58,7 +58,6 @@ protected:
 	COLORREF m_ColorBack;
 	COLORREF m_ColorText;
 	COLORREF m_ColorHighlight;
-	Location* m_Locations;
 
 	virtual void SetViewOptions(BOOL Force);
 	virtual void SetSearchResult(LFSearchResult* Result);
@@ -76,7 +75,7 @@ protected:
 	void DrawScene(BOOL InternalCall=FALSE);
 	void CalcAndDrawPoints();
 	void CalcAndDrawLabel();
-	void DrawLabel(Location* loc, UINT cCaption, WCHAR* caption, WCHAR* subcaption, WCHAR* coordinates, WCHAR* description, BOOL focused);
+	void DrawLabel(GlobeItemData* d, UINT cCaption, WCHAR* caption, WCHAR* subcaption, WCHAR* coordinates, WCHAR* description, BOOL focused);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();

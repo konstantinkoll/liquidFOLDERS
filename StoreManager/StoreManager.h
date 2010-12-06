@@ -7,8 +7,9 @@
 #include "MainFrm.h"
 #include "liquidFOLDERS.h"
 #include "LFCommDlg.h"
+#include <hash_map>
 #include <list>
-using std::list;
+#include <string>
 
 
 // CStoreManagerApp:
@@ -30,8 +31,9 @@ public:
 	BOOL m_GlobeLighting;
 	BOOL m_HideEmptyDrives;
 	BOOL m_HideEmptyDomains;
-	list<CMainFrame*> m_listMainFrames;
-	list<CMainFrame*> m_listClipboardFrames;
+	std::list<CMainFrame*> m_listMainFrames;
+	std::list<CMainFrame*> m_listClipboardFrames;
+	stdext::hash_map<std::string, std::wstring> m_Extensions;
 	LFViewParameters m_Views[LFContextCount];
 	LFBitArray* m_AllowedViews[LFContextCount];
 

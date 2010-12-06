@@ -86,8 +86,11 @@ void WriteGoogleAttribute(CStdioFile* f, LFItemDescriptor* i, UINT attr)
 // CGlobeView
 //
 
+#define GetItemData(idx)     ((GlobeItemData*)(m_ItemData+idx*m_DataSize))
+
+
 CGlobeView::CGlobeView()
-	: CFileView(sizeof(FVItemData), FALSE, FALSE, FALSE, FALSE)
+	: CFileView(sizeof(GlobeItemData), FALSE, FALSE, FALSE, FALSE)
 {
 	m_pDC = NULL;
 	m_hrc = NULL;
@@ -102,7 +105,6 @@ CGlobeView::CGlobeView()
 	m_Scale = 0.7f;
 	m_Radius = 0.0f;
 	m_Grabbed = FALSE;
-	m_Locations = NULL;
 	m_CameraChanged = FALSE;
 	lpszCursorName = NULL;
 	m_CursorPos.x = 0;
@@ -138,24 +140,14 @@ void CGlobeView::SetViewOptions(BOOL Force)
 
 void CGlobeView::SetSearchResult(LFSearchResult* Result)
 {
-	UINT VictimCount = p_Result ? p_Result->m_ItemCount : 0;
-	Location* Victim = m_Locations;
-	m_Locations = NULL;
-
 	p_Result = Result;
+
 	if (Result)
 		if (Result->m_ItemCount)
 		{
-			m_Locations = new Location[Result->m_ItemCount];
-			INT FirstItem = -1;
-
 			// Compute locations
 			for (UINT a=0; a<Result->m_ItemCount; a++)
 			{
-				ZeroMemory(&m_Locations[a], sizeof(Location));
-				if (a<VictimCount)
-					m_Locations[a].selected = Victim[a].selected;
-
 				LFGeoCoordinates coord = { 0.0, 0.0 };
 				if (m_ViewParameters.SortBy==LFAttrLocationIATA)
 				{
@@ -169,54 +161,38 @@ void CGlobeView::SetSearchResult(LFSearchResult* Result)
 
 				if ((coord.Latitude!=0.0) || (coord.Longitude!=0))
 				{
-					CalculateWorldCoords(coord.Latitude, coord.Longitude, m_Locations[a].world);
-					LFGeoCoordinatesToString(coord, m_Locations[a].coordstring, 32, false);
+					GlobeItemData* d = GetItemData(a);
+					CalculateWorldCoords(coord.Latitude, coord.Longitude, d->World);
+					LFGeoCoordinatesToString(coord, d->CoordString, 32, false);
 
-					m_Locations[a].valid = TRUE;
-					if (FirstItem==-1)
-						FirstItem = a;
+					d->Valid = TRUE;
 				}
 			}
 		}
 
-	if (Victim)
-		delete[] Victim;
-
 	UpdateScene(TRUE);
-}
-
-void CGlobeView::SelectItem(INT n, BOOL select, BOOL InternalCall)
-{
-	if (m_Locations)
-	{
-		m_Locations[n].selected = select;
-
-		if (!InternalCall)
-		{
-			DrawScene(TRUE);
-			GetOwner()->PostMessage(WM_UPDATESELECTION);
-		}
-	}
 }
 
 INT CGlobeView::ItemAtPosition(CPoint point)
 {
-	if ((!m_Locations) || (!p_Result) || (!m_ViewParameters.GlobeShowBubbles))
+	if ((!p_Result) || (!m_ViewParameters.GlobeShowBubbles))
 		return -1;
 
 	INT res = -1;
 	float alpha = 0.0f;
+
 	for (UINT a=0; a<p_Result->m_ItemCount; a++)
-		if (m_Locations[a].valid)
-			if ((m_Locations[a].alpha>0.1f) && ((m_Locations[a].alpha>alpha-0.05f) || (m_Locations[a].alpha>0.75f)))
-				if ((point.x>=m_Locations[a].screenlabel[0]) &&
-					(point.x<m_Locations[a].screenlabel[2]) &&
-					(point.y>=m_Locations[a].screenlabel[1]) &&
-					(point.y<m_Locations[a].screenlabel[3]))
+	{
+		GlobeItemData* d = GetItemData(a);
+
+		if (d->Valid)
+			if ((d->Alpha>0.1f) && ((d->Alpha>alpha-0.05f) || (d->Alpha>0.75f)))
+				if (PtInRect(&d->Hdr.Rect, point))
 				{
 					res = a;
-					alpha = m_Locations[a].alpha;
+					alpha = d->Alpha;
 				}
+	}
 
 	return res;
 }
@@ -1079,16 +1055,17 @@ void CGlobeView::DrawScene(BOOL InternalCall)
 		glDisable(GL_LIGHT0);
 	}
 
-	if (m_Locations)
-	{
-		// Punkte und Schilder zeichnen
-		CalcAndDrawPoints();
-		glDisable(GL_FOG);
+	if (p_Result)
+		if (p_Result->m_ItemCount)
+		{
+			// Punkte und Schilder zeichnen
+			CalcAndDrawPoints();
+			glDisable(GL_FOG);
 
-		// Label
-		if (m_ViewParameters.GlobeShowBubbles)
-			CalcAndDrawLabel();
-	}
+			// Label
+			if (m_ViewParameters.GlobeShowBubbles)
+				CalcAndDrawLabel();
+		}
 
 	// Statuszeile
 	if (m_Height>=STATUSBAR_HEIGHT)
@@ -1170,26 +1147,28 @@ void CGlobeView::CalcAndDrawPoints()
 	GLdouble szy = m_Height/2.0;
 
 	for (UINT a=0; a<p_Result->m_ItemCount; a++)
-		if (m_Locations[a].valid)
+	{
+		GlobeItemData* d = GetItemData(a);
+		if (d->Valid)
 		{
-			m_Locations[a].alpha = 0.0f;
+			d->Alpha = 0.0f;
 
-			GLdouble z = modelview[0][2]*m_Locations[a].world[0] + modelview[1][2]*m_Locations[a].world[1] + modelview[2][2]*m_Locations[a].world[2];
+			GLdouble z = modelview[0][2]*d->World[0] + modelview[1][2]*d->World[1] + modelview[2][2]*d->World[2];
 			if ((z>m_FogEnd) && (m_Width) && (m_Height))
 			{
-				GLdouble w = mvp[0][3]*m_Locations[a].world[0] + mvp[1][3]*m_Locations[a].world[1] + mvp[2][3]*m_Locations[a].world[2] + mvp[3][3];
-				GLdouble x = (mvp[0][0]*m_Locations[a].world[0] + mvp[1][0]*m_Locations[a].world[1] + mvp[2][0]*m_Locations[a].world[2] + mvp[3][0])*szx/w;
-				GLdouble y = -(mvp[0][1]*m_Locations[a].world[0] + mvp[1][1]*m_Locations[a].world[1] + mvp[2][1]*m_Locations[a].world[2] + mvp[3][1])*szy/w;
+				GLdouble w = mvp[0][3]*d->World[0] + mvp[1][3]*d->World[1] + mvp[2][3]*d->World[2] + mvp[3][3];
+				GLdouble x = (mvp[0][0]*d->World[0] + mvp[1][0]*d->World[1] + mvp[2][0]*d->World[2] + mvp[3][0])*szx/w;
+				GLdouble y = -(mvp[0][1]*d->World[0] + mvp[1][1]*d->World[1] + mvp[2][1]*d->World[2] + mvp[3][1])*szy/w;
 
-				m_Locations[a].screenpoint[0] = (INT)(x+szx+0.5f);
-				m_Locations[a].screenpoint[1] = (INT)(y+szy+0.5f);
+				d->ScreenPoint[0] = (INT)(x+szx+0.5f);
+				d->ScreenPoint[1] = (INT)(y+szy+0.5f);
 
-				m_Locations[a].alpha = 1.0f;
+				d->Alpha = 1.0f;
 				GLfloat psize = 9.5f;
 				if (z<m_FogStart)
 				{
-					m_Locations[a].alpha -= (GLfloat)((m_FogStart-z)/(m_FogStart-m_FogEnd));
-					psize *= max(m_Locations[a].alpha, 0.25f);
+					d->Alpha -= (GLfloat)((m_FogStart-z)/(m_FogStart-m_FogEnd));
+					psize *= max(d->Alpha, 0.25f);
 				}
 
 				if (m_ViewParameters.GlobeShowSpots)
@@ -1198,18 +1177,19 @@ void CGlobeView::CalcAndDrawPoints()
 					glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 					glPointSize(psize);
 					glBegin(GL_POINTS);
-					glVertex3dv(m_Locations[a].world);
+					glVertex3dv(d->World);
 					glEnd();
 
 					// Rot
 					glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
 					glPointSize(psize*0.66f);
 					glBegin(GL_POINTS);
-					glVertex3dv(m_Locations[a].world);
+					glVertex3dv(d->World);
 					glEnd();
 				}
 			}
 		}
+	}
 }
 
 void CGlobeView::CalcAndDrawLabel()
@@ -1222,14 +1202,17 @@ void CGlobeView::CalcAndDrawLabel()
 	glEnable2D();
 
 	for (UINT a=0; a<p_Result->m_ItemCount; a++)
-		if (m_Locations[a].valid)
-			if (m_Locations[a].alpha>0.0f)
+	{
+		GlobeItemData* d = GetItemData(a);
+
+		if (d->Valid)
+			if (d->Alpha>0.0f)
 			{
 				// Beschriftung
 				WCHAR* caption = p_Result->m_Items[a]->CoreAttributes.FileName;
 				UINT cCaption = (UINT)wcslen(caption);
 				WCHAR* subcaption = NULL;
-				WCHAR* coordinates = (m_ViewParameters.GlobeShowGPS ? m_Locations[a].coordstring : NULL);
+				WCHAR* coordinates = (m_ViewParameters.GlobeShowGPS ? d->CoordString : NULL);
 				WCHAR* description = (m_ViewParameters.GlobeShowHints ? p_Result->m_Items[a]->Description : NULL);
 				if (description)
 					if (*description==L'\0')
@@ -1247,24 +1230,25 @@ void CGlobeView::CalcAndDrawLabel()
 					}
 					break;
 				case LFAttrLocationGPS:
-					if ((wcscmp(caption, m_Locations[a].coordstring)==0) && (m_ViewParameters.GlobeShowGPS))
+					if ((wcscmp(caption, d->CoordString)==0) && (m_ViewParameters.GlobeShowGPS))
 						coordinates = NULL;
 					break;
 				}
 
-				DrawLabel(&m_Locations[a], cCaption, caption, subcaption, coordinates, description, m_FocusItem==(INT)a);
+				DrawLabel(d, cCaption, caption, subcaption, coordinates, description, m_FocusItem==(INT)a);
 			}
+	}
 
 	glDisable2D();
 }
 
-void CGlobeView::DrawLabel(Location* loc, UINT cCaption, WCHAR* caption, WCHAR* subcaption, WCHAR* coordinates, WCHAR* description, BOOL focused)
+void CGlobeView::DrawLabel(GlobeItemData* d, UINT cCaption, WCHAR* caption, WCHAR* subcaption, WCHAR* coordinates, WCHAR* description, BOOL focused)
 {
 	ASSERT(ARROWSIZE>3);
 
 	COLORREF BaseColorRef = GetSysColor(COLOR_WINDOW);
 	COLORREF TextColorRef = GetSysColor(COLOR_WINDOWTEXT);
-	if (loc->selected)
+	if (d->Hdr.Selected)
 		if (this==GetFocus())
 		{
 			BaseColorRef = GetSysColor(COLOR_HIGHLIGHT);
@@ -1295,20 +1279,17 @@ void CGlobeView::DrawLabel(Location* loc, UINT cCaption, WCHAR* caption, WCHAR* 
 	height += 3;
 
 	// Position
-	INT top = (loc->screenpoint[1]<m_Height/2 ? -1 : 1);
+	INT top = (d->ScreenPoint[1]<m_Height/2) ? -1 : 1;
 
-	loc->screenlabel[0] = loc->screenpoint[0]-ARROWSIZE-((width-2*ARROWSIZE)*(m_Width-loc->screenpoint[0])/m_Width);
-	loc->screenlabel[1] = loc->screenpoint[1]+(ARROWSIZE-2)*top-(top<0 ? height : 0);
-	loc->screenlabel[2] = loc->screenlabel[0]+width;
-	loc->screenlabel[3] = loc->screenlabel[1]+height;
-
-	INT x = loc->screenlabel[0];
-	INT y = loc->screenlabel[1];
+	INT x = d->Hdr.Rect.left = d->ScreenPoint[0]-ARROWSIZE-((width-2*ARROWSIZE)*(m_Width-d->ScreenPoint[0])/m_Width);
+	INT y = d->Hdr.Rect.top = d->ScreenPoint[1]+(ARROWSIZE-2)*top-(top<0 ? height : 0);
+	d->Hdr.Rect.right = x+width;
+	d->Hdr.Rect.bottom = y+height;
 
 	// Schatten
 	for (INT s=3; s>0; s--)
 	{
-		glColor4f(0.0f, 0.0f, 0.0f, loc->alpha/(s+2.5f));
+		glColor4f(0.0f, 0.0f, 0.0f, d->Alpha/(s+2.5f));
 		glBegin(GL_LINES);
 		glVertex2i(x+2, y+height+s);
 		glVertex2i(x+width+s, y+height+s);
@@ -1317,13 +1298,13 @@ void CGlobeView::DrawLabel(Location* loc, UINT cCaption, WCHAR* caption, WCHAR* 
 		glEnd();
 	}
 
-	glColor4f(0.0f, 0.0f, 0.0f, loc->alpha/2.5f);
+	glColor4f(0.0f, 0.0f, 0.0f, d->Alpha/2.5f);
 	glBegin(GL_LINES);
 	glVertex2i(x+width, y+height);
 	glVertex2i(x+width+1, y+height);
 
 	// Grauer Rand
-	glColor4f(BaseColor[0]/2, BaseColor[1]/2, BaseColor[2]/2, loc->alpha);
+	glColor4f(BaseColor[0]/2, BaseColor[1]/2, BaseColor[2]/2, d->Alpha);
 	glEnable(GL_LINE_STIPPLE);
 	glLineStipple(1, 0xFFFF);
 	glVertex2i(x, y-1);						// Oben
@@ -1339,7 +1320,7 @@ void CGlobeView::DrawLabel(Location* loc, UINT cCaption, WCHAR* caption, WCHAR* 
 
 	// Pfeil
 	glBegin(GL_TRIANGLES);
-	GLfloat alpha = pow(loc->alpha, 3);
+	GLfloat alpha = pow(d->Alpha, 3);
 	for (INT a=0; a<=3; a++)
 	{
 		switch (a)
@@ -1354,12 +1335,12 @@ void CGlobeView::DrawLabel(Location* loc, UINT cCaption, WCHAR* caption, WCHAR* 
 			glColor4f(BaseColor[0], BaseColor[1], BaseColor[2], alpha/2);
 			break;
 		default:
-			glColor4f(BaseColor[0], BaseColor[1], BaseColor[2], loc->alpha);
+			glColor4f(BaseColor[0], BaseColor[1], BaseColor[2], d->Alpha);
 		}
 
-		glVertex2i(loc->screenpoint[0], loc->screenpoint[1]+(a-2)*top);
-		glVertex2i(loc->screenpoint[0]+(ARROWSIZE-a)*top, loc->screenpoint[1]+(ARROWSIZE-2)*top);
-		glVertex2i(loc->screenpoint[0]-(ARROWSIZE-a)*top, loc->screenpoint[1]+(ARROWSIZE-2)*top);
+		glVertex2i(d->ScreenPoint[0], d->ScreenPoint[1]+(a-2)*top);
+		glVertex2i(d->ScreenPoint[0]+(ARROWSIZE-a)*top, d->ScreenPoint[1]+(ARROWSIZE-2)*top);
+		glVertex2i(d->ScreenPoint[0]-(ARROWSIZE-a)*top, d->ScreenPoint[1]+(ARROWSIZE-2)*top);
 	}
 	glEnd();
 
@@ -1367,7 +1348,7 @@ void CGlobeView::DrawLabel(Location* loc, UINT cCaption, WCHAR* caption, WCHAR* 
 	glRecti(x, y, x+width, y+height);
 	if ((focused) && (GetFocus()==this))
 	{
-		glColor4f(1.0f-BaseColor[0], 1.0f-BaseColor[1], 1.0f-BaseColor[2], loc->alpha);
+		glColor4f(1.0f-BaseColor[0], 1.0f-BaseColor[1], 1.0f-BaseColor[2], d->Alpha);
 		glEnable(GL_LINE_STIPPLE);
 		glLineStipple(1, 0xAAAA);
 		glBegin(GL_LINE_LOOP);
@@ -1381,13 +1362,13 @@ void CGlobeView::DrawLabel(Location* loc, UINT cCaption, WCHAR* caption, WCHAR* 
 
 	x += 3;
 
-	glColor4f(TextColor[0], TextColor[1], TextColor[2], loc->alpha);
+	glColor4f(TextColor[0], TextColor[1], TextColor[2], d->Alpha);
 	y += m_Fonts[TRUE].Render(caption, x, y, cCaption);
 	if (subcaption)
 		y += m_Fonts[FALSE].Render(subcaption, x, y);
 
-	if ((!loc->selected) && (BaseColorRef==0xFFFFFF) && (TextColorRef==0x000000))
-		glColor4f(TextColor[0], TextColor[1], TextColor[2], loc->alpha/2);
+	if ((!d->Hdr.Selected) && (BaseColorRef==0xFFFFFF) && (TextColorRef==0x000000))
+		glColor4f(TextColor[0], TextColor[1], TextColor[2], d->Alpha/2);
 	if (coordinates)
 		y += m_Fonts[FALSE].Render(coordinates, x, y);
 	if (description)
