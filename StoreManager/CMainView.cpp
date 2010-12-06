@@ -39,6 +39,15 @@ INT CMainView::Create(CWnd* _pParentWnd, UINT nID)
 	return CWnd::CreateEx(WS_EX_CONTROLPARENT, className, _T(""), dwStyle, rect, _pParentWnd, nID);
 }
 
+BOOL CMainView::OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo)
+{
+	if (p_wndFileView)
+		if (p_wndFileView->OnCmdMsg(nID, nCode, pExtra, pHandlerInfo))
+			return TRUE;
+
+	return CWnd::OnCmdMsg(nID, nCode, pExtra, pHandlerInfo);
+}
+
 BOOL CMainView::CreateFileView(UINT ViewID, INT FocusItem)
 {
 	CFileView* pNewView = NULL;
@@ -185,15 +194,6 @@ void CMainView::UpdateSearchResult(LFSearchResult* Result, INT FocusItem)
 		}
 	}
 }
-
-
-/*BOOL CMainView::OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo)
-{
-	if (CWnd::OnCmdMsg(nID, nCode, pExtra, pHandlerInfo))
-		return TRUE;
-
-	return GetParent()->OnCmdMsg(nID, nCode, pExtra, pHandlerInfo);
-}*/
 
 void CMainView::AdjustLayout()
 {

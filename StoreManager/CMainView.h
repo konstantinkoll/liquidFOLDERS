@@ -16,7 +16,7 @@ public:
 	CMainView();
 	~CMainView();
 
-	//virtual BOOL OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo);
+	virtual BOOL OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo);
 
 	INT Create(CWnd* _pParentWnd, UINT nID);
 	void UpdateViewOptions(INT Context);
