@@ -197,12 +197,12 @@ INT CGlobeView::ItemAtPosition(CPoint point)
 	return res;
 }
 
-/*CMenu* CGlobeView::GetContextMenu()
+CMenu* CGlobeView::GetBackgroundContextMenu()
 {
 	CMenu* menu = new CMenu();
 	menu->LoadMenu(IDM_GLOBE);
 	return menu;
-}*/
+}
 
 BOOL CGlobeView::CursorOnGlobe(CPoint point)
 {

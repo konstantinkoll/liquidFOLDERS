@@ -41,6 +41,7 @@ INT CMainView::Create(CWnd* _pParentWnd, UINT nID)
 
 BOOL CMainView::OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo)
 {
+	// The file view gets the command first
 	if (p_wndFileView)
 		if (p_wndFileView->OnCmdMsg(nID, nCode, pExtra, pHandlerInfo))
 			return TRUE;
@@ -294,22 +295,20 @@ void CMainView::OnUpdateTaskbar(CCmdUI* pCmdUI)
 	pCmdUI->Enable(TRUE);
 }
 
-void CMainView::OnContextMenu(CWnd* /*pWnd*/, CPoint pos)
+void CMainView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 {
-	if ((pos.x==-1) && (pos.y==-1))
+	if (!p_wndFileView)
+		return;
+
+	CMenu* pMenu = p_wndFileView->GetBackgroundContextMenu();
+	if (pMenu)
 	{
-		pos.x = pos.y = 0;
-		ClientToScreen(&pos);
+		CMenu* pPopup = pMenu->GetSubMenu(0);
+		if (pPopup)
+		{
+			pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, GetOwner(), NULL);
+		}
+
+		delete pMenu;
 	}
-
-/*	CMenu menu;
-	ENSURE(menu.LoadMenu(IDM_BACKGROUND));
-
-	CMenu* popup = menu.GetSubMenu(0);
-	ASSERT(popup);
-
-	if (!m_IsRootSet)
-		popup->EnableMenuItem(ID_VIEW_AUTOSIZEALL, MF_BYCOMMAND | MF_DISABLED | MF_GRAYED);
-
-	popup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, pos.x, pos.y, this, NULL);*/
 }

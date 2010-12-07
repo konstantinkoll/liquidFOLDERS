@@ -303,6 +303,53 @@ void CFileView::InvalidateItem(INT idx)
 	}
 }
 
+CMenu* CFileView::GetBackgroundContextMenu()
+{
+	CMenu* pMenu = new CMenu();
+
+	switch (m_Context)
+	{
+	case LFContextStores:
+		pMenu->LoadMenu(IDM_STORES);
+		break;
+	default:
+		pMenu->CreatePopupMenu();
+	}
+
+	return pMenu;
+}
+
+CMenu* CFileView::GetItemContextMenu(INT idx)
+{
+	UINT nID = 0;
+	UINT cmdDefault = 0;
+	LFItemDescriptor* f = p_Result->m_Items[idx];
+
+	switch (f->Type & LFTypeMask)
+	{
+	case LFTypeVirtual:
+		nID = ((f->FirstAggregate!=-1) && (f->LastAggregate!=-1)) ? IDM_VIRTUAL_GROUP : IDM_VIRTUAL_EMPTY;
+		cmdDefault = ID_ITEMS_OPEN;
+		break;
+	case LFTypeDrive:
+		nID = IDM_DRIVE;
+		cmdDefault = ID_STORE_NEWDRIVE;
+		break;
+	case LFTypeStore:
+		nID = IDM_STORE;
+		cmdDefault = ID_ITEMS_OPEN;
+		break;
+	case LFTypeFile:
+		nID = (m_Context==LFContextTrash) ? IDM_FILE_TRASH : IDM_FILE;
+		cmdDefault = ID_ITEMS_OPEN;
+		break;
+	}
+
+	CMenu* pMenu = new CMenu();
+	pMenu->LoadMenu(nID);
+	return pMenu;
+}
+
 void CFileView::EditLabel(INT /*idx*/)
 {
 	m_EditLabel = -1;
@@ -419,36 +466,6 @@ void CFileView::AppendContextMenu(CMenu* menu)
 			menu->AppendMenu(MF_STRING, ID_UNKNOWN_REGISTER, tmpStr);
 			break;
 		}
-}
-
-void CFileView::OnContextMenu(CPoint point)
-{
-	CMenu* menu = GetContextMenu();
-	CMenu* popup;
-
-	if (!menu)
-	{
-		popup = new CMenu();
-		popup->CreatePopupMenu();
-	}
-	else
-	{
-		popup = menu->GetSubMenu(0);
-	}
-
-	AppendContextMenu(popup);
-
-	CMFCPopupMenu* pPopupMenu = new CMFCPopupMenu();
-	pPopupMenu->Create(this, point.x, point.y, (HMENU)*popup);
-
-	if (menu)
-	{
-		delete menu;
-	}
-	else
-	{
-		delete popup;
-	}
 }
 
 void CFileView::OnItemContextMenu(INT idx, CPoint point)
@@ -642,6 +659,7 @@ BEGIN_MESSAGE_MAP(CFileView, CWnd)
 	ON_WM_SETFOCUS()
 	ON_WM_KILLFOCUS()
 	ON_WM_SETCURSOR()
+	ON_WM_CONTEXTMENU()
 	ON_COMMAND(ID_VIEW_SELECTALL, OnSelectAll)
 	ON_COMMAND(ID_VIEW_SELECTNONE, OnSelectNone)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_VIEW_SELECTALL, ID_VIEW_SELECTNONE, OnUpdateCommands)
@@ -918,16 +936,12 @@ void CFileView::OnRButtonUp(UINT nFlags, CPoint point)
 	{
 		if (GetFocus()!=this)
 			SetFocus();
-
-		if (IsSelected(idx))
-		{
-			ChangedItems();
-			return;
-		}
 	}
+	else
+		if (!(nFlags & MK_CONTROL))
+			OnSelectNone();
 
-	if (!(nFlags & MK_CONTROL))
-		OnSelectNone();
+	CWnd::OnRButtonUp(nFlags, point);
 }
 
 void CFileView::OnSetFocus(CWnd* /*pOldWnd*/)
@@ -944,6 +958,44 @@ BOOL CFileView::OnSetCursor(CWnd* /*pWnd*/, UINT /*nHitTest*/, UINT /*message*/)
 {
 	SetCursor(LoadCursor(NULL, p_Result ? IDC_ARROW : IDC_WAIT));
 	return TRUE;
+}
+
+void CFileView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
+{
+	INT idx = -1;
+	if ((point.x==-1) && (point.y==-1))
+	{
+		idx = GetSelectedItem();
+
+		FVItemData* d = GetItemData(idx);
+		point.x = d->Rect.left-m_HScrollPos;
+		point.y = d->Rect.top-m_VScrollPos;
+		ClientToScreen(&point);
+	}
+	else
+	{
+		CPoint ptClient(point);
+		ScreenToClient(&ptClient);
+
+		idx = ItemAtPosition(ptClient);
+	}
+
+	if (idx==-1)
+	{
+		GetParent()->SendMessage(WM_CONTEXTMENU, (WPARAM)m_hWnd, MAKELPARAM(point.x, point.y));
+	}
+	else
+	{
+		CMenu* pMenu = GetItemContextMenu(idx);
+		if (pMenu)
+		{
+			CMenu* pPopup = pMenu->GetSubMenu(0);
+			if (pPopup)
+				pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, GetOwner(), NULL);
+
+			delete pMenu;
+		}
+	}
 }
 
 void CFileView::OnSelectAll()

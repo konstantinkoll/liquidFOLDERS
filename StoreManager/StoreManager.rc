@@ -324,29 +324,34 @@ BEGIN
     END
 END
 
-IDM_STORE MENU 
+IDM_VIRTUAL_EMPTY MENU 
 BEGIN
     POPUP "POPUP"
     BEGIN
         MENUITEM "&Open",                       ID_ITEMS_OPEN
-        MENUITEM SEPARATOR
-        MENUITEM "Make default &store",         ID_STORE_MAKEDEFAULT
-        MENUITEM "Make &hybrid store",          ID_STORE_MAKEHYBRID
-        MENUITEM SEPARATOR
-        MENUITEM "Import &folder...",           ID_STORE_IMPORTFOLDER
-        MENUITEM SEPARATOR
-        MENUITEM "&Delete...",                  ID_STORE_DELETE
-        MENUITEM "&Rename",                     ID_STORE_RENAME
-        MENUITEM SEPARATOR
-        MENUITEM "&Properties",                 ID_STORE_PROPERTIES
     END
 END
 
-IDM_DOMAIN MENU 
+IDM_VIRTUAL_GROUP MENU 
 BEGIN
     POPUP "POPUP"
     BEGIN
         MENUITEM "&Open",                       ID_ITEMS_OPEN
+        MENUITEM "Re&member",                   ID_CLIP_REMEMBERLAST
+        MENUITEM SEPARATOR
+        MENUITEM "&Delete",                     ID_ITEMS_DELETE
+    END
+END
+
+IDM_VIRTUAL_GLOBE MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "&Open",                       ID_ITEMS_OPEN
+        MENUITEM "Open in &Google Earth...",    ID_GLOBE_GOOGLEEARTH
+        MENUITEM "Re&member",                   ID_CLIP_REMEMBERLAST
+        MENUITEM SEPARATOR
+        MENUITEM "&Delete",                     ID_ITEMS_DELETE
     END
 END
 
@@ -375,48 +380,6 @@ BEGIN
     END
 END
 
-IDM_VIRTUAL MENU 
-BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "&Open",                       ID_ITEMS_OPEN
-        MENUITEM "Re&member",                   ID_CLIP_REMEMBERLAST
-        MENUITEM SEPARATOR
-        MENUITEM "&Delete",                     ID_ITEMS_DELETE
-    END
-END
-
-IDM_VIRTUAL_TRASH MENU 
-BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "&Open",                       ID_ITEMS_OPEN
-        MENUITEM SEPARATOR
-        MENUITEM "&Delete",                     ID_ITEMS_DELETE
-        MENUITEM "Re&store",                    ID_TRASH_RESTORESELECTED
-    END
-END
-
-IDM_VIRTUAL_GLOBE MENU 
-BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "&Open",                       ID_ITEMS_OPEN
-        MENUITEM "Open in &Google Earth...",    ID_GLOBE_GOOGLEEARTH
-        MENUITEM "Re&member",                   ID_CLIP_REMEMBERLAST
-        MENUITEM SEPARATOR
-        MENUITEM "&Delete",                     ID_ITEMS_DELETE
-    END
-END
-
-IDM_BACK MENU 
-BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "&One level up",               ID_ITEMS_OPEN
-    END
-END
-
 IDM_GLOBE MENU 
 BEGIN
     POPUP "POPUP"
@@ -430,7 +393,6 @@ BEGIN
         MENUITEM "Show &airport names",         ID_GLOBE_SHOWAIRPORTNAMES
         MENUITEM "Show G&PS locations",         ID_GLOBE_SHOWGPS
         MENUITEM "Show &hints",                 ID_GLOBE_SHOWHINTS
-        MENUITEM SEPARATOR
     END
 END
 
@@ -441,7 +403,6 @@ BEGIN
         MENUITEM "Use &font size",              ID_TAGCLOUD_USESIZE
         MENUITEM "Use &color",                  ID_TAGCLOUD_USECOLORS
         MENUITEM "Use &opacity",                ID_TAGCLOUD_USEOPACITY
-        MENUITEM SEPARATOR
     END
 END
 

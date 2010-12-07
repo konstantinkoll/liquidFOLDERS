@@ -41,6 +41,8 @@ public:
 	LocalSettings m_LocalSettings;
 	BOOL m_CameraChanged;
 
+	virtual CMenu* GetBackgroundContextMenu();
+
 	BOOL Create(CWnd* pParentWnd, UINT nID, LFSearchResult* Result, INT FocusItem=0);
 
 protected:
@@ -62,7 +64,6 @@ protected:
 	virtual void SetViewOptions(BOOL Force);
 	virtual void SetSearchResult(LFSearchResult* Result);
 	virtual INT ItemAtPosition(CPoint point);
-	//virtual CMenu* GetContextMenu();
 
 	void Init();
 	void PrepareFont(BOOL large, BOOL granny);

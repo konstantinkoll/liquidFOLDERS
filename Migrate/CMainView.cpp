@@ -29,10 +29,11 @@ INT CMainView::Create(CWnd* _pParentWnd, UINT nID)
 
 BOOL CMainView::OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo)
 {
+	// If we don't handle the command, ask our owner
 	if (CWnd::OnCmdMsg(nID, nCode, pExtra, pHandlerInfo))
 		return TRUE;
 
-	return GetParent()->OnCmdMsg(nID, nCode, pExtra, pHandlerInfo);
+	return GetOwner()->OnCmdMsg(nID, nCode, pExtra, pHandlerInfo);
 }
 
 void CMainView::ClearRoot()

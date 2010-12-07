@@ -26,6 +26,8 @@ class CTagcloudView : public CGridView
 public:
 	CTagcloudView();
 
+	virtual CMenu* GetBackgroundContextMenu();
+
 protected:
 	CFont m_Fonts[20];
 
@@ -33,7 +35,6 @@ protected:
 	virtual void SetSearchResult(LFSearchResult* Result);
 	virtual void AdjustLayout();
 	virtual void DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed);
-	//virtual CMenu* GetContextMenu();
 
 	CFont* GetFont(INT idx);
 

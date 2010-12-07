@@ -316,11 +316,10 @@ void CMainFrame::OnDestroy()
 
 BOOL CMainFrame::OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo)
 {
-	// Ansichtsfenster erhält ersten Eindruck vom Befehl
+	// The main view gets the command first
 	if (m_wndMainView.OnCmdMsg(nID, nCode, pExtra, pHandlerInfo))
 		return TRUE;
 
-	// Andernfalls die Standardbehandlung durchführen
 	return CFrameWndEx::OnCmdMsg(nID, nCode, pExtra, pHandlerInfo);
 }
 
@@ -1753,27 +1752,17 @@ void CMainFrame::InitializeRibbon()
 			CMFCRibbonPanel* pPanelCalendarNavigate = pCategoryCalendar->AddPanel(strTemp, m_PanelImages.ExtractIcon(0));
 
 				strTemp = "Back";
-				pPanelCalendarNavigate->Add(new CMFCRibbonButton(ID_APP_ABOUT, strTemp, 5, 5));
+				pPanelCalendarNavigate->Add(new CMFCRibbonButton(ID_APP_ABOUT, strTemp, 2, 2));
 				strTemp = "Forward";
-				pPanelCalendarNavigate->Add(new CMFCRibbonButton(ID_APP_ABOUT, strTemp, 6, 6));
-
-			strTemp = "Commands";
-			CMFCRibbonPanel* pPanelCalendarCommands = pCategoryCalendar->AddPanel(strTemp, m_PanelImages.ExtractIcon(0));
-
-				strTemp = "Add Event";
-				pPanelCalendarCommands->Add(new CMFCRibbonButton(ID_APP_ABOUT, strTemp, 0, 0));
-				strTemp = "Delete Event";
-				pPanelCalendarCommands->Add(new CMFCRibbonButton(ID_APP_ABOUT, strTemp, 1, 1));
-				strTemp = "Edit Event";
-				pPanelCalendarCommands->Add(new CMFCRibbonButton(ID_APP_ABOUT, strTemp, 2, 2));
+				pPanelCalendarNavigate->Add(new CMFCRibbonButton(ID_APP_ABOUT, strTemp, 3, 3));
 
 			strTemp = "Search";
 			CMFCRibbonPanel* pPanelCalendarSearch = pCategoryCalendar->AddPanel(strTemp, m_PanelImages.ExtractIcon(0));
 
 				strTemp = "Go To Date";
-				pPanelCalendarSearch->Add(new CMFCRibbonButton(ID_APP_ABOUT, strTemp, 3, 3));
+				pPanelCalendarSearch->Add(new CMFCRibbonButton(ID_APP_ABOUT, strTemp, 0, 0));
 				strTemp = "Search";
-				pPanelCalendarSearch->Add(new CMFCRibbonButton(ID_APP_ABOUT, strTemp, 4, 4));
+				pPanelCalendarSearch->Add(new CMFCRibbonButton(ID_APP_ABOUT, strTemp, 1, 1));
 
 		strTemp = "Globe";
 		CMFCRibbonCategory* pCategoryGlobe = m_wndRibbonBar.AddContextCategory(strTemp, strCtx, 2, AFX_CategoryColor_Indigo, IDB_RIBBONGLOBE_16, IDB_RIBBONGLOBE_32);

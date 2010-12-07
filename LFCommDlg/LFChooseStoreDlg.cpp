@@ -86,8 +86,8 @@ BEGIN_MESSAGE_MAP(LFChooseStoreDlg, LFDialog)
 	ON_NOTIFY(NM_DBLCLK, IDC_STORELIST, OnDoubleClick)
 	ON_NOTIFY(LVN_ITEMCHANGED, IDC_STORELIST, OnItemChanged)
 	ON_NOTIFY(LVN_ENDLABELEDIT, IDC_STORELIST, OnEndLabelEdit)
-	ON_BN_CLICKED(IDC_NEWSTORE, OnNewStore)
-	ON_COMMAND(IDM_MAINTAINALL, OnMaintainAll)
+	ON_BN_CLICKED(IDM_STORES_CREATENEW, OnNewStore)
+	ON_COMMAND(IDM_STORES_MAINTAINALL, OnMaintainAll)
 	ON_REGISTERED_MESSAGE(MessageIDs->StoresChanged, OnUpdateStores)
 	ON_REGISTERED_MESSAGE(MessageIDs->StoreAttributesChanged, OnUpdateStores)
 	ON_REGISTERED_MESSAGE(MessageIDs->DefaultStoreChanged, OnUpdateStores)
@@ -140,7 +140,7 @@ BOOL LFChooseStoreDlg::OnInitDialog()
 
 	m_wndExplorerList.AddStoreColumns();
 	m_wndExplorerList.AddItemCategories();
-	m_wndExplorerList.SetMenus(IDM_STORES, m_Mode==LFCSD_ChooseDefault, IDM_CREATENEWSTORE);
+	m_wndExplorerList.SetMenus(IDM_STORE, m_Mode==LFCSD_ChooseDefault, IDM_STORES);
 	m_wndExplorerList.EnableGroupView(m_Mode<LFCSD_Internal);
 	m_wndExplorerList.SetView(LV_VIEW_TILE);
 	m_wndExplorerList.SetFocus();
@@ -148,7 +148,7 @@ BOOL LFChooseStoreDlg::OnInitDialog()
 	SendMessage(MessageIDs->StoresChanged, LFMSGF_IntStores | LFMSGF_ExtHybStores);
 
 	AdjustLayout();
-	AddBottomControl(IDC_NEWSTORE);
+	AddBottomControl(IDM_STORES_CREATENEW);
 
 	return FALSE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird
 }

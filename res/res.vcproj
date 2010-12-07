@@ -496,30 +496,6 @@
 				>
 			</File>
 			<File
-				RelativePath="Ribbon\Calendar_AddEvent_16.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\Calendar_AddEvent_32.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\Calendar_DeleteEvent_16.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\Calendar_DeleteEvent_32.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\Calendar_EditEvent_16.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\Calendar_EditEvent_32.png"
-				>
-			</File>
-			<File
 				RelativePath="Ribbon\Calendar_GoToDate_16.png"
 				>
 			</File>

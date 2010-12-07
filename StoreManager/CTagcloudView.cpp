@@ -202,12 +202,12 @@ void CTagcloudView::DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed)
 	dc.SelectObject(pOldFont);
 }
 
-/*CMenu* CTagcloudView::GetContextMenu()
+CMenu* CTagcloudView::GetBackgroundContextMenu()
 {
 	CMenu* menu = new CMenu();
 	menu->LoadMenu(IDM_TAGCLOUD);
 	return menu;
-}*/
+}
 
 CFont* CTagcloudView::GetFont(INT idx)
 {

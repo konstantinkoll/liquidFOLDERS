@@ -79,10 +79,9 @@ public:
 	CFileView(UINT DataSize=sizeof(FVItemData), BOOL EnableScrolling=TRUE, BOOL EnableHover=TRUE, BOOL EnableTooltip=TRUE, BOOL EnableShiftSelection=TRUE);
 	virtual ~CFileView();
 
+	virtual CMenu* GetBackgroundContextMenu();
 	virtual void EditLabel(INT idx);
 	virtual BOOL IsEditing();
-	//virtual void OnContextMenu(CPoint point);
-	//virtual void OnItemContextMenu(INT idx, CPoint point);
 
 	BOOL Create(CWnd* pParentWnd, UINT nID, LFSearchResult* Result, INT FocusItem=0, UINT nClassStyle=CS_DBLCLKS);
 	void UpdateViewOptions(INT Context=-1, BOOL Force=FALSE);
@@ -124,13 +123,12 @@ protected:
 	virtual void AdjustLayout();
 	virtual INT ItemAtPosition(CPoint point);
 	virtual void InvalidateItem(INT idx);
-	//virtual CMenu* GetContextMenu();
+	virtual CMenu* GetItemContextMenu(INT idx);
 
 	void SetFocusItem(INT FocusItem, BOOL ShiftSelect);
 	RECT GetItemRect(INT idx);
 	void DrawItemBackground(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed);
 	void PrepareSysIcon(INT idx);
-	//void AppendContextMenu(CMenu* menu);
 	void ResetScrollbars();
 	void AdjustScrollbars();
 	CString GetLabel(LFItemDescriptor* i);
@@ -153,6 +151,7 @@ protected:
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
 	afx_msg void OnKillFocus(CWnd* pNewWnd);
 	afx_msg BOOL OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message);
+	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	afx_msg void OnSelectAll();
 	afx_msg void OnSelectNone();
 	afx_msg void OnUpdateCommands(CCmdUI* pCmdUI);
