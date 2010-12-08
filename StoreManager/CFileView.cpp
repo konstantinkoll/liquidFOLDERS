@@ -316,6 +316,7 @@ CMenu* CFileView::GetBackgroundContextMenu()
 		break;
 	default:
 		pMenu->CreatePopupMenu();
+		pMenu->AppendMenu(MF_POPUP, (UINT_PTR)CreateMenu(), _T("POPUP"));
 	}
 
 	return pMenu;
