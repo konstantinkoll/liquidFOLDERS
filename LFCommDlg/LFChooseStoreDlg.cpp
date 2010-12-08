@@ -97,6 +97,7 @@ BEGIN_MESSAGE_MAP(LFChooseStoreDlg, LFDialog)
 	ON_COMMAND(IDM_STORE_RENAME, OnRename)
 	ON_COMMAND(IDM_STORE_DELETE, OnDelete)
 	ON_COMMAND(IDM_STORE_PROPERTIES, OnProperties)
+	ON_UPDATE_COMMAND_UI_RANGE(IDM_STORE_MAKEDEFAULT, IDM_STORE_PROPERTIES, OnUpdateCommands)
 END_MESSAGE_MAP()
 
 BOOL LFChooseStoreDlg::OnInitDialog()
@@ -311,4 +312,31 @@ void LFChooseStoreDlg::OnProperties()
 		LFStorePropertiesDlg dlg(p_Result->m_Items[idx]->StoreID, this);
 		dlg.DoModal();
 	}
+}
+
+void LFChooseStoreDlg::OnUpdateCommands(CCmdUI* pCmdUI)
+{
+	BOOL b = FALSE;
+
+	INT idx = GetSelectedStore();
+	if (idx!=-1)
+	{
+		LFItemDescriptor* i = p_Result->m_Items[idx];
+		b = ((i->Type & LFTypeMask)==LFTypeStore);
+
+		switch (pCmdUI->m_nID)
+		{
+		case IDM_STORE_MAKEDEFAULT:
+			b = (i->CategoryID==LFItemCategoryInternalStores) && (!(i->Type & LFTypeDefaultStore));
+			break;
+		case IDM_STORE_MAKEHYBRID:
+			b = (i->CategoryID==LFItemCategoryExternalStores) && (!(i->Type & LFTypeNotMounted));
+			break;
+		case IDM_STORE_IMPORTFOLDER:
+			b = FALSE;
+			break;
+		}
+	}
+
+	pCmdUI->Enable(b);
 }

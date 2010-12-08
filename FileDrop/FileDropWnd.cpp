@@ -136,6 +136,7 @@ BEGIN_MESSAGE_MAP(CFileDropWnd, CGlasWindow)
 	ON_COMMAND(ID_APP_ABOUT, OnAbout)
 	ON_COMMAND(ID_APP_NEWSTOREMANAGER, OnNewStoreManager)
 	ON_COMMAND(ID_APP_EXIT, OnQuit)
+	ON_UPDATE_COMMAND_UI_RANGE(ID_APP_CHOOSEDEFAULTSTORE, ID_APP_STOREPROPERTIES, OnUpdateCommands)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoresChanged, OnStoresChanged)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoreAttributesChanged, OnStoresChanged)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->DefaultStoreChanged, OnStoresChanged)
@@ -374,19 +375,19 @@ void CFileDropWnd::OnContextMenu(CWnd* /*pWnd*/, CPoint pos)
 		ClientToScreen(&pos);
 	}
 
-	CMenu* popup = menu.GetSubMenu(0);
-	ASSERT(popup);
+	CMenu* pPopup = menu.GetSubMenu(0);
+	ASSERT_VALID(pPopup);
 
-	HBITMAP bmp = SetMenuItemIcon(*popup, 7, ID_APP_NEWSTOREMANAGER);
-	SetMenuItemBitmap(*popup, 8, HBMMENU_POPUP_CLOSE);
+	HBITMAP bmp = SetMenuItemIcon(*pPopup, 7, ID_APP_NEWSTOREMANAGER);
+	SetMenuItemBitmap(*pPopup, 8, HBMMENU_POPUP_CLOSE);
 
-	popup->CheckMenuItem(SC_ALWAYSONTOP, AlwaysOnTop ? MF_CHECKED : MF_UNCHECKED);
-	popup->EnableMenuItem(ID_APP_IMPORTFOLDER, StoreValid ? MF_ENABLED : MF_GRAYED);
-	popup->EnableMenuItem(ID_APP_STOREPROPERTIES, StoreValid ? MF_ENABLED : MF_GRAYED);
-	popup->EnableMenuItem(ID_APP_NEWSTOREMANAGER, (_waccess(theApp.m_Path+_T("StoreManager.exe"), 0)==0) ? MF_ENABLED : MF_GRAYED);
+	pPopup->CheckMenuItem(SC_ALWAYSONTOP, AlwaysOnTop ? MF_CHECKED : MF_UNCHECKED);
+	//pPopup->EnableMenuItem(ID_APP_IMPORTFOLDER, StoreValid ? MF_ENABLED : MF_GRAYED);
+	//pPopup->EnableMenuItem(ID_APP_STOREPROPERTIES, StoreValid ? MF_ENABLED : MF_GRAYED);
+	//pPopup->EnableMenuItem(ID_APP_NEWSTOREMANAGER, (_waccess(theApp.m_Path+_T("StoreManager.exe"), 0)==0) ? MF_ENABLED : MF_GRAYED);
 
-	popup->SetDefaultItem(ID_APP_CHOOSEDEFAULTSTORE);
-	popup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, pos.x, pos.y, this);
+	pPopup->SetDefaultItem(ID_APP_CHOOSEDEFAULTSTORE);
+	pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, pos.x, pos.y, this);
 
 	DeleteObject(bmp);
 }
@@ -468,6 +469,16 @@ void CFileDropWnd::OnNewStoreManager()
 	theApp.OnAppNewStoreManager();
 }
 
+void CFileDropWnd::OnQuit()
+{
+	PostQuitMessage(0);
+}
+
+void CFileDropWnd::OnUpdateCommands(CCmdUI* pCmdUI)
+{
+	pCmdUI->Enable((pCmdUI->m_nID==ID_APP_CHOOSEDEFAULTSTORE) ? TRUE : StoreValid);
+}
+
 LRESULT CFileDropWnd::OnStoresChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)
 {
 	UpdateStore();
@@ -483,9 +494,4 @@ LRESULT CFileDropWnd::OnWakeup(WPARAM /*wParam*/, LPARAM /*lParam*/)
 
 	SetForegroundWindow();
 	return 24878;
-}
-
-void CFileDropWnd::OnQuit()
-{
-	PostQuitMessage(0);
 }

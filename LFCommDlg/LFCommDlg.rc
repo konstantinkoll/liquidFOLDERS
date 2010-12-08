@@ -158,6 +158,7 @@ BEGIN
         MENUITEM "Als &Standard-Store setzen",  IDM_STORE_MAKEDEFAULT
         MENUITEM "Zu &Hybrid-Store machen",     IDM_STORE_MAKEHYBRID
         MENUITEM SEPARATOR
+        MENUITEM "&Verzeichnis importieren...", IDM_STORE_IMPORTFOLDER
         MENUITEM "&Wartungsarbeiten durchführen", IDM_STORE_MAINTAIN
         MENUITEM SEPARATOR
         MENUITEM "&Löschen",                    IDM_STORE_DELETE
@@ -734,6 +735,7 @@ BEGIN
         MENUITEM "Make default &store",         IDM_STORE_MAKEDEFAULT
         MENUITEM "Make &hybrid store",          IDM_STORE_MAKEHYBRID
         MENUITEM SEPARATOR
+        MENUITEM "&Import folder...",           IDM_STORE_IMPORTFOLDER
         MENUITEM "Run &maintenance",            IDM_STORE_MAINTAIN
         MENUITEM SEPARATOR
         MENUITEM "&Delete",                     IDM_STORE_DELETE
@@ -1300,6 +1302,7 @@ BEGIN
         MENUITEM "Establecer al &store predeterminado", IDM_STORE_MAKEDEFAULT
         MENUITEM "Convertir al store &híbrido", IDM_STORE_MAKEHYBRID
         MENUITEM SEPARATOR
+        MENUITEM "&Importar carpeta...",        IDM_STORE_IMPORTFOLDER
         MENUITEM "Ejecutar &mantenimiento",     IDM_STORE_MAINTAIN
         MENUITEM SEPARATOR
         MENUITEM "&Eliminar",                   IDM_STORE_DELETE
@@ -1875,6 +1878,7 @@ BEGIN
         MENUITEM "Faites store &standard",      IDM_STORE_MAKEDEFAULT
         MENUITEM "Faites store &hybride",       IDM_STORE_MAKEHYBRID
         MENUITEM SEPARATOR
+        MENUITEM "&Importer dossier...",        IDM_STORE_IMPORTFOLDER
         MENUITEM "Exécuter des &travails d'entretien", IDM_STORE_MAINTAIN
         MENUITEM SEPARATOR
         MENUITEM "&Effacer",                    IDM_STORE_DELETE

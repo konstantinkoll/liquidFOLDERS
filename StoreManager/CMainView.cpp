@@ -9,6 +9,28 @@
 #include "CTagcloudView.h"
 
 
+CString MakeHex(BYTE* x, UINT bCount)
+{
+	CString tmpStr;
+	for (UINT a=0; a<bCount; a++)
+	{
+		CString digit;
+		digit.Format(_T("%.2x"), x[a]);
+		tmpStr += digit;
+		if (a<bCount-1)
+			tmpStr += _T(",");
+	}
+	return tmpStr;
+}
+
+void CEscape(CString &s)
+{
+	for (INT a = s.GetLength()-1; a>=0; a--)
+		if ((s[a]==L'\\') || (s[a]==L'\"'))
+			s.Insert(a, L'\\');
+}
+
+
 // CMainView
 //
 
@@ -234,8 +256,24 @@ BEGIN_MESSAGE_MAP(CMainView, CWnd)
 	ON_WM_ERASEBKGND()
 	ON_WM_SIZE()
 	ON_WM_SETFOCUS()
-	//ON_UPDATE_COMMAND_UI_RANGE(ID_VIEW_SELECTROOT, ID_VIEW_PROPERTIES, OnUpdateTaskbar)
 	ON_WM_CONTEXTMENU()
+
+/*	ON_COMMAND(ID_STORE_NEW, OnStoreNew)
+	ON_COMMAND(ID_STORE_NEWINTERNAL, OnStoreNewInternal)
+	ON_COMMAND(ID_STORE_NEWDRIVE, OnStoreNewDrive)*/
+	ON_COMMAND(IDM_STORE_MAKEDEFAULT, OnStoreMakeDefault)
+	ON_COMMAND(IDM_STORE_MAKEHYBRID, OnStoreMakeHybrid)
+	ON_COMMAND(IDM_STORE_IMPORTFOLDER, OnStoreImportFolder)
+	ON_COMMAND(IDM_STORE_MAINTAIN, OnStoreMaintain)
+	ON_COMMAND(IDM_STORE_DELETE, OnStoreDelete)
+	ON_COMMAND(IDM_STORE_RENAME, OnStoreRename)
+	ON_COMMAND(IDM_STORE_PROPERTIES, OnStoreProperties)
+	ON_UPDATE_COMMAND_UI_RANGE(IDM_STORE_MAKEDEFAULT, IDM_STORE_PROPERTIES, OnUpdateStoreCommands)
+
+	ON_COMMAND(IDM_STORES_CREATENEW, OnStoresCreateNew)
+	ON_COMMAND(IDM_STORES_MAINTAINALL, OnStoresMaintainAll)
+	ON_COMMAND(IDM_STORES_BACKUP, OnStoresBackup)
+	ON_UPDATE_COMMAND_UI_RANGE(IDM_STORES_CREATENEW, IDM_STORES_BACKUP, OnUpdateStoresCommands)
 END_MESSAGE_MAP()
 
 INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -290,11 +328,6 @@ void CMainView::OnSetFocus(CWnd* /*pOldWnd*/)
 	m_wndTaskbar.SetFocus();
 }
 
-void CMainView::OnUpdateTaskbar(CCmdUI* pCmdUI)
-{
-	pCmdUI->Enable(TRUE);
-}
-
 void CMainView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 {
 	if (!p_wndFileView)
@@ -304,11 +337,326 @@ void CMainView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 	if (pMenu)
 	{
 		CMenu* pPopup = pMenu->GetSubMenu(0);
-		if (pPopup)
-		{
-			pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, GetOwner(), NULL);
-		}
+		ASSERT_VALID(pPopup);
 
+		pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, GetOwner(), NULL);
 		delete pMenu;
 	}
+}
+
+
+// Store
+//
+
+void CMainView::OnStoreMakeDefault()
+{
+	INT idx = GetSelectedItem();
+	if (idx!=-1)
+		LFErrorBox(LFMakeDefaultStore(p_Result->m_Items[idx]->StoreID, NULL), m_hWnd);
+}
+
+void CMainView::OnStoreMakeHybrid()
+{
+	INT idx = GetSelectedItem();
+	if (idx!=-1)
+		LFErrorBox(LFMakeHybridStore(p_Result->m_Items[idx]->StoreID, NULL), m_hWnd);
+}
+
+void CMainView::OnStoreImportFolder()
+{
+	INT idx = GetSelectedItem();
+	if (idx!=-1)
+		LFImportFolder(p_Result->m_Items[idx]->StoreID, this);
+}
+
+void CMainView::OnStoreMaintain()
+{
+	INT idx = GetSelectedItem();
+	if (idx!=-1)
+	{
+		LFMaintenanceList* ml = LFStoreMaintenance(p_Result->m_Items[idx]->StoreID);
+		LFErrorBox(ml->m_LastError);
+
+		LFStoreMaintenanceDlg dlg(ml, this);
+		dlg.DoModal();
+
+		LFFreeMaintenanceList(ml);
+	}
+}
+
+void CMainView::OnStoreRename()
+{
+	INT idx = GetSelectedItem();
+	if ((idx!=-1) && (p_wndFileView))
+		p_wndFileView->EditLabel(idx);
+}
+
+void CMainView::OnStoreDelete()
+{
+	INT idx = GetSelectedItem();
+	if (idx!=-1)
+		LFErrorBox(((LFApplication*)AfxGetApp())->DeleteStore(p_Result->m_Items[idx], this));
+}
+
+void CMainView::OnStoreProperties()
+{
+	INT idx = GetSelectedItem();
+	if (idx!=-1)
+	{
+		LFStorePropertiesDlg dlg(p_Result->m_Items[idx]->StoreID, this);
+		dlg.DoModal();
+	}
+}
+
+
+
+/*
+
+void CMainFrame::OnStoreNewDrive(CHAR drv)
+{
+	INT i = m_wndMainView.GetSelectedItem();
+
+	if (i!=-1)
+	{
+		LFStoreDescriptor* s = LFAllocStoreDescriptor();
+
+		LFStoreNewDriveDlg dlg(this, drv, s);
+		if (dlg.DoModal()==IDOK)
+			LFErrorBox(LFCreateStore(s, FALSE), m_hWnd);
+
+		LFFreeStoreDescriptor(s);
+	}
+}
+
+void CMainFrame::OnStoreNewDrive()
+{
+	INT i = m_wndMainView.GetSelectedItem();
+
+	if (i!=-1)
+		OnStoreNewDrive(CookedFiles->m_Items[i]->CoreAttributes.FileID[0]);
+}
+
+void CMainFrame::OnStoreMaintenance()
+{
+	LFMaintenanceList* ml = LFStoreMaintenance();
+	LFErrorBox(ml->m_LastError);
+
+	LFStoreMaintenanceDlg dlg(ml, this);
+	dlg.DoModal();
+
+	LFFreeMaintenanceList(ml);
+
+	OnNavigateReload();
+}
+
+void CMainFrame::OnStoreBackup()
+{
+	CString tmpStr;
+	ENSURE(tmpStr.LoadString(IDS_REGFILEFILTER));
+	tmpStr += _T(" (*.reg)|*.reg||");
+
+	CFileDialog dlg(FALSE, _T(".reg"), NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, tmpStr, this);
+
+	if (dlg.DoModal()==IDOK)
+	{
+		CStdioFile f;
+		if (!f.Open(dlg.GetFileName(), CFile::modeCreate | CFile::modeWrite))
+		{
+			LFErrorBox(LFDriveNotReady, GetSafeHwnd());
+		}
+		else
+		{
+			try
+			{
+				f.WriteString(_T("Windows Registry Editor Version 5.00\n"));
+
+				for (UINT a=0; a<CookedFiles->m_ItemCount; a++)
+				{
+					LFItemDescriptor* i = CookedFiles->m_Items[a];
+					if ((i->Type & LFTypeStore) && (i->CategoryID<=LFItemCategoryHybridStores))
+					{
+						LFStoreDescriptor s;
+						if (LFGetStoreSettings(i->StoreID, &s)==LFOk)
+						{
+							// Header
+							tmpStr = _T("\n[HKEY_CURRENT_USER\\Software\\liquidFOLDERS\\Stores\\");
+							tmpStr += s.StoreID;
+							f.WriteString(tmpStr+_T("]\n"));
+
+							// Name
+							tmpStr = s.StoreName;
+							CEscape(tmpStr);
+							f.WriteString(_T("\"Name\"=\"")+tmpStr+_T("\"\n"));
+
+							// Mode
+							tmpStr.Format(_T("\"Mode\"=dword:%.8x\n"), s.StoreMode);
+							f.WriteString(tmpStr);
+
+							// AutoLocation
+							tmpStr.Format(_T("\"AutoLocation\"=dword:%.8x\n"), s.AutoLocation);
+							f.WriteString(tmpStr);
+
+							if (!s.AutoLocation)
+							{
+								// Path
+								tmpStr = s.DatPath;
+								CEscape(tmpStr);
+								f.WriteString(_T("\"Path\"=\"")+tmpStr+_T("\"\n"));
+							}
+
+							// GUID
+							f.WriteString(_T("\"GUID\"=hex:")+MakeHex((BYTE*)&s.guid, sizeof(s.guid))+_T("\n"));
+
+							// CreationTime
+							f.WriteString(_T("\"CreationTime\"=hex:")+MakeHex((BYTE*)&s.CreationTime, sizeof(s.CreationTime))+_T("\n"));
+
+							// FileTime
+							f.WriteString(_T("\"FileTime\"=hex:")+MakeHex((BYTE*)&s.FileTime, sizeof(s.FileTime))+_T("\n"));
+						}
+					}
+				}
+			}
+			catch(CFileException ex)
+			{
+				LFErrorBox(LFDriveNotReady, GetSafeHwnd());
+			}
+
+			f.Close();
+		}
+	}
+}*/
+
+
+void CMainView::OnUpdateStoreCommands(CCmdUI* pCmdUI)
+{
+	BOOL b = FALSE;
+
+	INT idx = GetSelectedItem();
+	if (idx!=-1)
+	{
+		LFItemDescriptor* i = p_Result->m_Items[idx];
+		if ((i->Type & LFTypeMask)==LFTypeStore)
+			switch (pCmdUI->m_nID)
+			{
+			case IDM_STORE_MAKEDEFAULT:
+				b = (i->CategoryID==LFItemCategoryInternalStores) && (!(i->Type & LFTypeDefaultStore));
+				break;
+			case IDM_STORE_MAKEHYBRID:
+				b = (i->CategoryID==LFItemCategoryExternalStores) && (!(i->Type & LFTypeNotMounted));
+				break;
+			case IDM_STORE_IMPORTFOLDER:
+				b = !(i->Type & LFTypeNotMounted);
+				break;
+			}
+	}
+
+	pCmdUI->Enable(b);
+}
+
+
+// Stores
+//
+
+void CMainView::OnStoresCreateNew()
+{
+	LFStoreDescriptor* s = LFAllocStoreDescriptor();
+
+	LFStoreNewDlg dlg(this, s);
+	if (dlg.DoModal()==IDOK)
+		LFErrorBox(LFCreateStore(s, dlg.MakeDefault));
+
+	LFFreeStoreDescriptor(s);
+}
+
+void CMainView::OnStoresMaintainAll()
+{
+	LFMaintenanceList* ml = LFStoreMaintenance();
+	LFErrorBox(ml->m_LastError);
+
+	LFStoreMaintenanceDlg dlg(ml, this);
+	dlg.DoModal();
+
+	LFFreeMaintenanceList(ml);
+}
+
+void CMainView::OnStoresBackup()
+{
+	CString tmpStr;
+	ENSURE(tmpStr.LoadString(IDS_REGFILEFILTER));
+	tmpStr += _T(" (*.reg)|*.reg||");
+
+	CFileDialog dlg(FALSE, _T(".reg"), NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, tmpStr, this);
+
+	if (dlg.DoModal()==IDOK)
+	{
+		CStdioFile f;
+		if (!f.Open(dlg.GetFileName(), CFile::modeCreate | CFile::modeWrite))
+		{
+			LFErrorBox(LFDriveNotReady, GetSafeHwnd());
+		}
+		else
+		{
+			try
+			{
+				f.WriteString(_T("Windows Registry Editor Version 5.00\n"));
+
+				for (UINT a=0; a<p_Result->m_ItemCount; a++)
+				{
+					LFItemDescriptor* i = p_Result->m_Items[a];
+					if ((i->Type & LFTypeStore) && (i->CategoryID<=LFItemCategoryHybridStores))
+					{
+						LFStoreDescriptor s;
+						if (LFGetStoreSettings(i->StoreID, &s)==LFOk)
+						{
+							// Header
+							tmpStr = _T("\n[HKEY_CURRENT_USER\\Software\\liquidFOLDERS\\Stores\\");
+							tmpStr += s.StoreID;
+							f.WriteString(tmpStr+_T("]\n"));
+
+							// Name
+							tmpStr = s.StoreName;
+							CEscape(tmpStr);
+							f.WriteString(_T("\"Name\"=\"")+tmpStr+_T("\"\n"));
+
+							// Mode
+							tmpStr.Format(_T("\"Mode\"=dword:%.8x\n"), s.StoreMode);
+							f.WriteString(tmpStr);
+
+							// AutoLocation
+							tmpStr.Format(_T("\"AutoLocation\"=dword:%.8x\n"), s.AutoLocation);
+							f.WriteString(tmpStr);
+
+							if (!s.AutoLocation)
+							{
+								// Path
+								tmpStr = s.DatPath;
+								CEscape(tmpStr);
+								f.WriteString(_T("\"Path\"=\"")+tmpStr+_T("\"\n"));
+							}
+
+							// GUID
+							f.WriteString(_T("\"GUID\"=hex:")+MakeHex((BYTE*)&s.guid, sizeof(s.guid))+_T("\n"));
+
+							// CreationTime
+							f.WriteString(_T("\"CreationTime\"=hex:")+MakeHex((BYTE*)&s.CreationTime, sizeof(s.CreationTime))+_T("\n"));
+
+							// FileTime
+							f.WriteString(_T("\"FileTime\"=hex:")+MakeHex((BYTE*)&s.FileTime, sizeof(s.FileTime))+_T("\n"));
+						}
+					}
+				}
+			}
+			catch(CFileException ex)
+			{
+				LFErrorBox(LFDriveNotReady, m_hWnd);
+			}
+
+			f.Close();
+		}
+	}
+}
+
+void CMainView::OnUpdateStoresCommands(CCmdUI* pCmdUI)
+{
+	pCmdUI->Enable(pCmdUI->m_nID==IDM_STORES_CREATENEW || LFGetStoreCount());
 }

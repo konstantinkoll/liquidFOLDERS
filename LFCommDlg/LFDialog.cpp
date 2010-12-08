@@ -189,7 +189,7 @@ BEGIN_MESSAGE_MAP(LFDialog, CDialog)
 	ON_WM_THEMECHANGED()
 	ON_WM_SYSCOLORCHANGE()
 	ON_WM_CTLCOLOR()
-	ON_WM_DESTROY()
+	ON_WM_INITMENUPOPUP()
 	ON_BN_CLICKED(IDC_ENTERLICENSEKEY, OnEnterLicenseKey)
 END_MESSAGE_MAP()
 
@@ -351,6 +351,69 @@ HBRUSH LFDialog::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 	}
 
 	return hbr;
+}
+
+void LFDialog::OnInitMenuPopup(CMenu* pPopupMenu, UINT /*nIndex*/, BOOL /*bSysMenu*/)
+{
+	ASSERT(pPopupMenu);
+
+	CCmdUI state;
+	state.m_pMenu = pPopupMenu;
+	ASSERT(state.m_pOther==NULL);
+	ASSERT(state.m_pParentMenu==NULL);
+
+	HMENU hParentMenu;
+	if (AfxGetThreadState()->m_hTrackingMenu==pPopupMenu->m_hMenu)
+	{
+		state.m_pParentMenu = pPopupMenu;
+	}
+	else
+	{
+		hParentMenu = ::GetMenu(m_hWnd);
+		if (hParentMenu)
+		{
+			INT nIndexMax = GetMenuItemCount(hParentMenu);
+			for (INT nIndex=0; nIndex<nIndexMax; nIndex++)
+				if (GetSubMenu(hParentMenu, nIndex)==pPopupMenu->m_hMenu)
+				{
+					state.m_pParentMenu = CMenu::FromHandle(hParentMenu);
+					break;
+				}
+		}
+	}
+
+	state.m_nIndexMax = pPopupMenu->GetMenuItemCount();
+	for (state.m_nIndex=0; state.m_nIndex<state.m_nIndexMax; state.m_nIndex++)
+	{
+		state.m_nID = pPopupMenu->GetMenuItemID(state.m_nIndex);
+		if (!state.m_nID)
+			continue;
+
+		ASSERT(!state.m_pOther);
+		ASSERT(state.m_pMenu);
+		if (state.m_nID ==(UINT)-1)
+		{
+			state.m_pSubMenu = pPopupMenu->GetSubMenu(state.m_nIndex);
+			if ((!state.m_pSubMenu) || ((state.m_nID=state.m_pSubMenu->GetMenuItemID(0))== 0) || (state.m_nID==(UINT)-1))
+				continue;
+
+			state.DoUpdate(this, TRUE);
+		}
+		else
+		{
+			state.m_pSubMenu = NULL;
+			state.DoUpdate(this, FALSE);
+		}
+
+		UINT nCount = pPopupMenu->GetMenuItemCount();
+		if (nCount<state.m_nIndexMax)
+		{
+			state.m_nIndex -= (state.m_nIndexMax-nCount);
+			while ((state.m_nIndex<nCount) && (pPopupMenu->GetMenuItemID(state.m_nIndex)==state.m_nID))
+				state.m_nIndex++;
+		}
+		state.m_nIndexMax = nCount;
+	}
 }
 
 void LFDialog::OnEnterLicenseKey()

@@ -52,5 +52,6 @@ protected:
 	afx_msg void OnRename();
 	afx_msg void OnDelete();
 	afx_msg void OnProperties();
+	afx_msg void OnUpdateCommands(CCmdUI* pCmdUI);
 	DECLARE_MESSAGE_MAP()
 };

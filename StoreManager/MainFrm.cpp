@@ -61,7 +61,6 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_CLIP_COPY, ID_CLIP_REMEMBERNEW, OnUpdateClipCommands)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_ITEMS_SHOWINSPECTOR, ID_ITEMS_RENAME, OnUpdateItemCommands)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_TRASH_EMPTY, ID_TRASH_RESTOREALL, OnUpdateTrashCommands)
-	ON_UPDATE_COMMAND_UI_RANGE(ID_STORE_NEW, ID_STORE_BACKUP, OnUpdateStoreCommands)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_DROP_NAME, ID_DROP_DIMENSION, OnUpdateDropCommands)
 
 	ON_COMMAND(ID_APP_CLOSE, OnClose)
@@ -104,18 +103,6 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_COMMAND(ID_TRASH_EMPTY, OnEmptyTrash)
 	ON_COMMAND(ID_TRASH_RESTORESELECTED, OnRestoreSelectedFiles)
 	ON_COMMAND(ID_TRASH_RESTOREALL, OnRestoreAllFiles)
-
-	ON_COMMAND(ID_STORE_NEW, OnStoreNew)
-	ON_COMMAND(ID_STORE_NEWINTERNAL, OnStoreNewInternal)
-	ON_COMMAND(ID_STORE_NEWDRIVE, OnStoreNewDrive)
-	ON_COMMAND(ID_STORE_DELETE, OnItemsDelete)
-	ON_COMMAND(ID_STORE_RENAME, OnItemsRename)
-	ON_COMMAND(ID_STORE_MAKEDEFAULT, OnStoreMakeDefault)
-	ON_COMMAND(ID_STORE_MAKEHYBRID, OnStoreMakeHybrid)
-	ON_COMMAND(ID_STORE_IMPORTFOLDER, OnStoreImportFolder)
-	ON_COMMAND(ID_STORE_PROPERTIES, OnStoreProperties)
-	ON_COMMAND(ID_STORE_MAINTENANCE, OnStoreMaintenance)
-	ON_COMMAND(ID_STORE_BACKUP, OnStoreBackup)
 END_MESSAGE_MAP()
 
 
@@ -671,7 +658,7 @@ void CMainFrame::OnItemsOpen()
 				switch (i->Type & LFTypeMask)
 				{
 				case LFTypeDrive:
-					OnStoreNewDrive(i->CoreAttributes.FileID[0]);
+					SendMessage(WM_COMMAND, IDM_DRIVE_CREATENEWSTORE);
 					break;
 				case LFTypeFile:
 					res = LFGetFileLocation(i, Path, MAX_PATH, true);
@@ -725,20 +712,9 @@ void CMainFrame::OnItemsOpenWith()
 
 void CMainFrame::OnItemsDelete()
 {
-	INT i;
-
 	if (CookedFiles)
 		switch (CookedFiles->m_Context)
 		{
-		case LFContextStores:
-			i = m_wndMainView.GetSelectedItem();
-			if (i!=-1)
-			{
-				LFItemDescriptor* store = LFAllocItemDescriptor(CookedFiles->m_Items[i]);
-				LFErrorBox(theApp.DeleteStore(store, this));
-				LFFreeItemDescriptor(store);
-			}
-			break;
 		case LFContextTrash:
 			DeleteFiles();
 			break;
@@ -824,265 +800,6 @@ void CMainFrame::OnUpdateTrashCommands(CCmdUI* pCmdUI)
 				b = FilesSelected;
 				break;
 			}
-
-	pCmdUI->Enable(b);
-}
-
-void CMainFrame::OnStoreNew()
-{
-	LFStoreDescriptor* s = LFAllocStoreDescriptor();
-
-	LFStoreNewDlg dlg(this, s);
-	if (dlg.DoModal()==IDOK)
-		LFErrorBox(LFCreateStore(s, dlg.MakeDefault), m_hWnd);
-
-	LFFreeStoreDescriptor(s);
-}
-
-void CMainFrame::OnStoreNewInternal()
-{
-	LFStoreDescriptor* s = LFAllocStoreDescriptor();
-	s->AutoLocation = TRUE;
-	s->StoreMode = LFStoreModeInternal;
-
-	UINT res = LFCreateStore(s);
-	LFErrorBox(res, GetSafeHwnd());
-
-	if ((res==LFOk) && (CookedFiles))
-		for (UINT a=0; a<CookedFiles->m_ItemCount; a++)
-		{
-			LFItemDescriptor* i = CookedFiles->m_Items[a];
-			if ((strcmp(s->StoreID, i->StoreID)==0) && ((i->Type & LFTypeMask)==LFTypeStore))
-			{
-				m_wndMainView.SetFocus();
-				//m_wndMainView.p_wndFileView->EditLabel(a);
-				break;
-			}
-		}
-
-	LFFreeStoreDescriptor(s);
-}
-
-void CMainFrame::OnStoreNewDrive(CHAR drv)
-{
-	INT i = m_wndMainView.GetSelectedItem();
-
-	if (i!=-1)
-	{
-		LFStoreDescriptor* s = LFAllocStoreDescriptor();
-
-		LFStoreNewDriveDlg dlg(this, drv, s);
-		if (dlg.DoModal()==IDOK)
-			LFErrorBox(LFCreateStore(s, FALSE), m_hWnd);
-
-		LFFreeStoreDescriptor(s);
-	}
-}
-
-void CMainFrame::OnStoreNewDrive()
-{
-	INT i = m_wndMainView.GetSelectedItem();
-
-	if (i!=-1)
-		OnStoreNewDrive(CookedFiles->m_Items[i]->CoreAttributes.FileID[0]);
-}
-
-void CMainFrame::OnStoreMakeDefault()
-{
-	INT i = m_wndMainView.GetSelectedItem();
-
-	if (i!=-1)
-		LFErrorBox(LFMakeDefaultStore(CookedFiles->m_Items[i]->StoreID), GetSafeHwnd());
-}
-
-void CMainFrame::OnStoreMakeHybrid()
-{
-	INT i = m_wndMainView.GetSelectedItem();
-
-	if (i!=-1)
-		LFErrorBox(LFMakeHybridStore(CookedFiles->m_Items[i]->StoreID), GetSafeHwnd());
-}
-
-CString MakeHex(BYTE* x, UINT bCount)
-{
-	CString tmpStr;
-	for (UINT a=0; a<bCount; a++)
-	{
-		CString digit;
-		digit.Format(_T("%.2x"), x[a]);
-		tmpStr += digit;
-		if (a<bCount-1)
-			tmpStr += _T(",");
-	}
-	return tmpStr;
-}
-
-void CEscape(CString &s)
-{
-	for (INT a = s.GetLength()-1; a>=0; a--)
-		if ((s[a]=='\\') || (s[a]=='\"'))
-			s.Insert(a, '\\');
-}
-
-void CMainFrame::OnStoreProperties()
-{
-	INT i = m_wndMainView.GetSelectedItem();
-
-	if (i!=-1)
-	{
-		LFStorePropertiesDlg dlg(CookedFiles->m_Items[i]->StoreID, this);
-		dlg.DoModal();
-	}
-}
-
-void CMainFrame::OnStoreImportFolder()
-{
-	INT i = m_wndMainView.GetSelectedItem();
-
-	if (i!=-1)
-		LFImportFolder(CookedFiles->m_Items[i]->StoreID, this);
-}
-
-void CMainFrame::OnStoreMaintenance()
-{
-	LFMaintenanceList* ml = LFStoreMaintenance();
-	LFErrorBox(ml->m_LastError);
-
-	LFStoreMaintenanceDlg dlg(ml, this);
-	dlg.DoModal();
-
-	LFFreeMaintenanceList(ml);
-
-	OnNavigateReload();
-}
-
-void CMainFrame::OnStoreBackup()
-{
-	CString tmpStr;
-	ENSURE(tmpStr.LoadString(IDS_REGFILEFILTER));
-	tmpStr += _T(" (*.reg)|*.reg||");
-
-	CFileDialog dlg(FALSE, _T(".reg"), NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, tmpStr, this);
-
-	if (dlg.DoModal()==IDOK)
-	{
-		CStdioFile f;
-		if (!f.Open(dlg.GetFileName(), CFile::modeCreate | CFile::modeWrite))
-		{
-			LFErrorBox(LFDriveNotReady, GetSafeHwnd());
-		}
-		else
-		{
-			try
-			{
-				f.WriteString(_T("Windows Registry Editor Version 5.00\n"));
-
-				for (UINT a=0; a<CookedFiles->m_ItemCount; a++)
-				{
-					LFItemDescriptor* i = CookedFiles->m_Items[a];
-					if ((i->Type & LFTypeStore) && (i->CategoryID<=LFItemCategoryHybridStores))
-					{
-						LFStoreDescriptor s;
-						if (LFGetStoreSettings(i->StoreID, &s)==LFOk)
-						{
-							// Header
-							tmpStr = _T("\n[HKEY_CURRENT_USER\\Software\\liquidFOLDERS\\Stores\\");
-							tmpStr += s.StoreID;
-							f.WriteString(tmpStr+_T("]\n"));
-
-							// Name
-							tmpStr = s.StoreName;
-							CEscape(tmpStr);
-							f.WriteString(_T("\"Name\"=\"")+tmpStr+_T("\"\n"));
-
-							// Mode
-							tmpStr.Format(_T("\"Mode\"=dword:%.8x\n"), s.StoreMode);
-							f.WriteString(tmpStr);
-
-							// AutoLocation
-							tmpStr.Format(_T("\"AutoLocation\"=dword:%.8x\n"), s.AutoLocation);
-							f.WriteString(tmpStr);
-
-							if (!s.AutoLocation)
-							{
-								// Path
-								tmpStr = s.DatPath;
-								CEscape(tmpStr);
-								f.WriteString(_T("\"Path\"=\"")+tmpStr+_T("\"\n"));
-							}
-
-							// GUID
-							f.WriteString(_T("\"GUID\"=hex:")+MakeHex((BYTE*)&s.guid, sizeof(s.guid))+_T("\n"));
-
-							// CreationTime
-							f.WriteString(_T("\"CreationTime\"=hex:")+MakeHex((BYTE*)&s.CreationTime, sizeof(s.CreationTime))+_T("\n"));
-
-							// FileTime
-							f.WriteString(_T("\"FileTime\"=hex:")+MakeHex((BYTE*)&s.FileTime, sizeof(s.FileTime))+_T("\n"));
-						}
-					}
-				}
-			}
-			catch(CFileException ex)
-			{
-				LFErrorBox(LFDriveNotReady, GetSafeHwnd());
-			}
-
-			f.Close();
-		}
-	}
-}
-
-void CMainFrame::OnUpdateStoreCommands(CCmdUI* pCmdUI)
-{
-	BOOL b = (pCmdUI->m_nID==ID_STORE_MAINTENANCE) ? LFGetStoreCount() : FALSE;
-
-	if (CookedFiles)
-		if (CookedFiles->m_Context==LFContextStores)
-		{
-			INT i = m_wndMainView.GetSelectedItem();
-			LFItemDescriptor* f = (i==-1 ? NULL : CookedFiles->m_Items[i]);
-
-			switch (pCmdUI->m_nID)
-			{
-			case ID_STORE_NEW:
-			case ID_STORE_NEWINTERNAL:
-				b = TRUE;
-				break;
-			case ID_STORE_NEWDRIVE:
-				if (f)
-					b = (f->Type & LFTypeDrive) && (!(f->Type & LFTypeNotMounted));
-				break;
-			case ID_STORE_RENAME:
-				if (f)
-					b = (f->Type & LFTypeStore) && (ActiveViewID>=LFViewLargeIcons) && (ActiveViewID<=LFViewPreview);
-//				if ((b) && (m_wndMainView.p_wndFileView))
-//					b ^= m_wndMainView.p_wndFileView->IsEditing();
-				break;
-			case ID_STORE_IMPORTFOLDER:
-				if (f)
-					b = (f->Type & LFTypeStore) && (!(f->Type & LFTypeNotMounted));
-				break;
-			case ID_STORE_DELETE:
-			case ID_STORE_PROPERTIES:
-				if (f)
-					b = (f->Type & LFTypeStore);
-				break;
-			case ID_STORE_MAKEDEFAULT:
-				if (f)
-					b = (f->Type & LFTypeStore) &&
-						(f->CategoryID==LFItemCategoryInternalStores) &&
-						((f->Type & LFTypeDefaultStore)==0);
-				break;
-			case ID_STORE_MAKEHYBRID:
-				if (f)
-					b = (f->Type & LFTypeStore) &&
-						(f->CategoryID==LFItemCategoryExternalStores);
-				break;
-			case ID_STORE_BACKUP:
-				b = TRUE;
-			}
-		}
 
 	pCmdUI->Enable(b);
 }
@@ -1832,23 +1549,17 @@ void CMainFrame::InitializeRibbon()
 			CMFCRibbonPanel* pPanelStoresStores = pCategoryStores->AddPanel(strTemp, m_PanelImages.ExtractIcon(11));
 
 				strTemp = "Create";
-				CMFCRibbonButton* pBtnStoreNew = theApp.CommandButton(ID_STORE_NEW, 0, 0, TRUE);
-
-					pBtnStoreNew->AddSubItem(new CMFCRibbonLabel(theApp.GetCommandName(ID_STORE_NEW)));
-					pBtnStoreNew->AddSubItem(theApp.CommandButton(ID_STORE_NEWINTERNAL, 1, 1, TRUE));
-					pBtnStoreNew->AddSubItem(theApp.CommandButton(ID_STORE_NEWDRIVE, 2, 2, TRUE));
-
-				pPanelStoresStores->Add(pBtnStoreNew);
-				pPanelStoresStores->Add(theApp.CommandButton(ID_STORE_DELETE, 4, 4));
-				pPanelStoresStores->Add(theApp.CommandButton(ID_STORE_RENAME, 5, 5));
+				pPanelStoresStores->Add(theApp.CommandButton(IDM_STORES_CREATENEW, 0, 0));
+				pPanelStoresStores->Add(theApp.CommandButton(IDM_STORE_DELETE, 4, 4));
+				pPanelStoresStores->Add(theApp.CommandButton(IDM_STORE_RENAME, 5, 5));
 				pPanelStoresStores->AddSeparator();
-				pPanelStoresStores->Add(theApp.CommandButton(ID_STORE_MAKEDEFAULT, 6, 6));
-				pPanelStoresStores->Add(theApp.CommandButton(ID_STORE_MAKEHYBRID, 7, 7));
+				pPanelStoresStores->Add(theApp.CommandButton(IDM_STORE_MAKEDEFAULT, 6, 6));
+				pPanelStoresStores->Add(theApp.CommandButton(IDM_STORE_MAKEHYBRID, 7, 7));
 
 			strTemp = "Import files";
 			CMFCRibbonPanel* pPanelStoresImport = pCategoryStores->AddPanel(strTemp, m_PanelImages.ExtractIcon(8));
 
-				pPanelStoresImport->Add(theApp.CommandButton(ID_STORE_IMPORTFOLDER, 8, 8));
+				pPanelStoresImport->Add(theApp.CommandButton(IDM_STORE_IMPORTFOLDER, 8, 8));
 				pPanelStoresImport->AddSeparator();
 				pPanelStoresImport->Add(theApp.CommandButton(ID_APP_NEWMIGRATE, 9, 9, FALSE, TRUE));
 				pPanelStoresImport->Add(theApp.CommandButton(ID_APP_NEWFILEDROP, 10, 10));
@@ -1856,10 +1567,10 @@ void CMainFrame::InitializeRibbon()
 			strTemp = "Housekeeping";
 			CMFCRibbonPanel* pPanelStoresHousekeeping = pCategoryStores->AddPanel(strTemp, m_PanelImages.ExtractIcon(12));
 
-				pPanelStoresHousekeeping->Add(theApp.CommandButton(ID_STORE_PROPERTIES, 11, 11));
+				pPanelStoresHousekeeping->Add(theApp.CommandButton(IDM_STORE_PROPERTIES, 11, 11));
 				pPanelStoresHousekeeping->AddSeparator();
-				pPanelStoresHousekeeping->Add(theApp.CommandButton(ID_STORE_MAINTENANCE, 12, 12));
-				pPanelStoresHousekeeping->Add(theApp.CommandButton(ID_STORE_BACKUP, 13, 13));
+				pPanelStoresHousekeeping->Add(theApp.CommandButton(IDM_STORES_MAINTAINALL, 12, 12));
+				pPanelStoresHousekeeping->Add(theApp.CommandButton(IDM_STORES_BACKUP, 13, 13));
 
 		strTemp = "Deleted files";
 		strCtx = "Trash";
@@ -2068,7 +1779,7 @@ void CMainFrame::NavigateTo(LFFilter* f, UINT NavMode, INT FocusItem, INT FirstA
 	if (CookedFiles->m_LastError>LFCancel)
 	{
 		theApp.PlayWarningSound();
-		ShowCaptionBar(ActiveFilter->Result.FilterType==LFFilterTypeError ? IDI_ERROR : IDI_EXCLAMATION, CookedFiles->m_LastError, CookedFiles->m_LastError==LFIndexAccessError ? ID_STORE_MAINTENANCE : 0);
+		ShowCaptionBar(ActiveFilter->Result.FilterType==LFFilterTypeError ? IDI_ERROR : IDI_EXCLAMATION, CookedFiles->m_LastError, CookedFiles->m_LastError==LFIndexAccessError ? IDM_STORES_MAINTAINALL : 0);
 	}
 	else
 		if (m_wndCaptionBar.IsVisible())

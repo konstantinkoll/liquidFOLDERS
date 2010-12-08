@@ -40,6 +40,7 @@ protected:
 	afx_msg void OnAbout();
 	afx_msg void OnNewStoreManager();
 	afx_msg void OnQuit();
+	afx_msg void OnUpdateCommands(CCmdUI* pCmdUI);
 	afx_msg LRESULT OnStoresChanged(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnWakeup(WPARAM wParam, LPARAM lParam);
 	DECLARE_MESSAGE_MAP()

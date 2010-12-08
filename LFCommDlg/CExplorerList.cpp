@@ -258,22 +258,13 @@ void CExplorerList::OnContextMenu(CWnd* /*pWnd*/, CPoint pos)
 		Menu.LoadMenu(MenuID);
 		ASSERT_VALID(&Menu);
 
-		CMenu* PopupMenu = Menu.GetSubMenu(0);
-		ASSERT_VALID(PopupMenu);
+		CMenu* pPopup = Menu.GetSubMenu(0);
+		ASSERT_VALID(pPopup);
 
-		if (pInfo.iItem!=-1)
-		{
-			if (m_HighlightFirst)
-				PopupMenu->SetDefaultItem(0, TRUE);
+		if ((pInfo.iItem!=-1) && (m_HighlightFirst))
+			pPopup->SetDefaultItem(0, TRUE);
 
-			LFItemDescriptor* i = p_Result->m_Items[pInfo.iItem];
-			if (((i->Type & LFTypeMask)!=LFTypeStore) || (i->CategoryID!=LFItemCategoryInternalStores) || (i->Type & LFTypeDefaultStore))
-				PopupMenu->EnableMenuItem(IDM_STORE_MAKEDEFAULT, MF_GRAYED | MF_DISABLED);
-			if (((i->Type & LFTypeMask)!=LFTypeStore) || (i->CategoryID!=LFItemCategoryExternalStores) || (i->Type & LFTypeNotMounted))
-				PopupMenu->EnableMenuItem(IDM_STORE_MAKEHYBRID, MF_GRAYED | MF_DISABLED);
-		}
-
-		TrackPopupMenu(PopupMenu->GetSafeHmenu(), TPM_LEFTALIGN | TPM_RIGHTBUTTON, pos.x, pos.y, 0, GetOwner()->GetSafeHwnd(), NULL);
+		pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, pos.x, pos.y, GetOwner());
 	}
 }
 

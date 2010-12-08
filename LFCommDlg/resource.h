@@ -97,6 +97,7 @@
 #define IDM_STORES                      21211
 #define IDM_STORES_CREATENEW            21212
 #define IDM_STORES_MAINTAINALL          21213
+#define IDM_STORES_BACKUP               21214
 #define IDD_STORENEW                    21300
 #define IDC_INTERNALSTORE               21301
 #define IDC_HYBRIDSTORE                 21302

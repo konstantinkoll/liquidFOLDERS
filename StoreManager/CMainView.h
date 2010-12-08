@@ -44,6 +44,20 @@ protected:
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
 	afx_msg void OnUpdateTaskbar(CCmdUI* pCmdUI);
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
+
+	afx_msg void OnStoreMakeDefault();
+	afx_msg void OnStoreMakeHybrid();
+	afx_msg void OnStoreImportFolder();
+	afx_msg void OnStoreMaintain();
+	afx_msg void OnStoreRename();
+	afx_msg void OnStoreDelete();
+	afx_msg void OnStoreProperties();
+	afx_msg void OnUpdateStoreCommands(CCmdUI* pCmdUI);
+
+	afx_msg void OnStoresCreateNew();
+	afx_msg void OnStoresMaintainAll();
+	afx_msg void OnStoresBackup();
+	afx_msg void OnUpdateStoresCommands(CCmdUI* pCmdUI);
 	DECLARE_MESSAGE_MAP()
 
 private:

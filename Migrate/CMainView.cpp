@@ -251,13 +251,13 @@ void CMainView::OnContextMenu(CWnd* /*pWnd*/, CPoint pos)
 	CMenu menu;
 	ENSURE(menu.LoadMenu(IDM_BACKGROUND));
 
-	CMenu* popup = menu.GetSubMenu(0);
-	ASSERT(popup);
+	CMenu* pPopup = menu.GetSubMenu(0);
+	ASSERT(pPopup);
 
-	if (!m_IsRootSet)
-		popup->EnableMenuItem(ID_VIEW_AUTOSIZEALL, MF_BYCOMMAND | MF_DISABLED | MF_GRAYED);
+//	if (!m_IsRootSet)
+//		pPopup->EnableMenuItem(ID_VIEW_AUTOSIZEALL, MF_BYCOMMAND | MF_DISABLED | MF_GRAYED);
 
-	popup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, pos.x, pos.y, this, NULL);
+	pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, pos.x, pos.y, this);
 }
 
 void CMainView::OnSelectionChanged(NMHDR* pNMHDR, LRESULT* /*pResult*/)

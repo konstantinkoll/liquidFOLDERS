@@ -320,7 +320,7 @@ IDM_DRIVE MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "Create &new store...",        ID_STORE_NEWDRIVE
+        MENUITEM "Create &new store...",        IDM_DRIVE_CREATENEWSTORE
     END
 END
 
@@ -760,17 +760,17 @@ END
 
 STRINGTABLE 
 BEGIN
-    ID_STORE_NEW            "Creates a new store with user-defined settings.\nCreate new store"
-    ID_STORE_NEWINTERNAL    "Creates a new internal store.\nInternal store"
-    ID_STORE_NEWDRIVE       "Creates a new external or hybrid store on the selected drive.\nExternal/hybrid store"
-    ID_STORE_DELETE         "Deletes the selected store.\nDelete"
-    ID_STORE_RENAME         "Renames the selected store.\nRename (F2)"
-    ID_STORE_MAKEDEFAULT    "Makes the selected internal store the default store.\nMake default"
-    ID_STORE_MAKEHYBRID     "Converts the selected store into a hybrid store. This allows you to search the store, even when it is not mounted.\nMake hybrid"
-    ID_STORE_IMPORTFOLDER   "Copies files from a folder and all its subfolders into the selected store. For more sophisticated options, please open the Migration Wizard. Contrary to desktop search engines, files get physically copied into the store—and not just indexed.\nImport folder"
-    ID_STORE_PROPERTIES     "Shows the properties of the selected store.\nProperties"
-    ID_STORE_MAINTENANCE    "Runs scheduled maintenance on all stores.\nRun maintenance"
-    ID_STORE_BACKUP         "Saves important settings from the registry (including store properties and file format assignments) to a .reg file.\nBackup settings"
+    IDM_DRIVE_CREATENEWSTORE "Creates a new external or hybrid store on the selected drive.\nExternal/hybrid store"
+    IDM_STORE_DELETE        "Deletes the selected store.\nDelete"
+    IDM_STORE_RENAME        "Renames the selected store.\nRename (F2)"
+    IDM_STORE_MAKEDEFAULT   "Makes the selected internal store the default store.\nMake default"
+    IDM_STORE_MAKEHYBRID    "Converts the selected store into a hybrid store. This allows you to search the store, even when it is not mounted.\nMake hybrid"
+    IDM_STORE_IMPORTFOLDER  "Copies files from a folder and all its subfolders into the selected store. For more sophisticated options, please open the Migration Wizard. Contrary to desktop search engines, files get physically copied into the store—and not just indexed.\nImport folder"
+    IDM_STORE_PROPERTIES    "Shows the properties of the selected store.\nProperties"
+    IDM_STORE_MAINTAIN      "Runs scheduled maintenance on all stores.\nRun maintenance"
+    IDM_STORES_CREATENEW    "Creates a new store.\nCreate new store"
+    IDM_STORES_MAINTAINALL  "Runs scheduled maintenance on all stores.\nRun maintenance"
+    IDM_STORES_BACKUP       "Saves important settings from the registry (including store properties and file format assignments) to a .reg file.\nBackup settings"
 END
 
 STRINGTABLE 

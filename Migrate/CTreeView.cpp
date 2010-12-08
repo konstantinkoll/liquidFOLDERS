@@ -954,14 +954,14 @@ void CTreeView::TrackMenu(UINT nID, CPoint point, INT col)
 	CMenu menu;
 	ENSURE(menu.LoadMenu(nID));
 
-	CMenu* popup = menu.GetSubMenu(0);
-	ASSERT(popup);
+	CMenu* pPopup = menu.GetSubMenu(0);
+	ASSERT_VALID(pPopup);
 
-	if (!col)
-		popup->EnableMenuItem(IDD_CHOOSEPROPERTY, MF_GRAYED | MF_DISABLED);
+	//if (!col)
+	//	pPopup->EnableMenuItem(IDD_CHOOSEPROPERTY, MF_GRAYED | MF_DISABLED);
 
-	if ((!col) || (m_ColumnMapping[col]==-1))
-		popup->EnableMenuItem(ID_VIEW_RESETPROPERTY, MF_GRAYED | MF_DISABLED);
+	//if ((!col) || (m_ColumnMapping[col]==-1))
+	//	pPopup->EnableMenuItem(ID_VIEW_RESETPROPERTY, MF_GRAYED | MF_DISABLED);
 
 	BOOL Enable = FALSE;
 	for (UINT row=0; row<m_Rows; row++)
@@ -971,10 +971,10 @@ void CTreeView::TrackMenu(UINT nID, CPoint point, INT col)
 			break;
 		}
 
-	if (!Enable)
-		popup->EnableMenuItem(ID_VIEW_EXPANDCOLUMN, MF_GRAYED | MF_DISABLED);
+	//if (!Enable)
+	//	pPopup->EnableMenuItem(ID_VIEW_EXPANDCOLUMN, MF_GRAYED | MF_DISABLED);
 
-	switch (popup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RETURNCMD | TPM_RIGHTBUTTON, point.x, point.y, this, NULL))
+	switch (pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RETURNCMD | TPM_RIGHTBUTTON, point.x, point.y, this))
 	{
 	case ID_VIEW_AUTOSIZE:
 		AutosizeColumn(col);

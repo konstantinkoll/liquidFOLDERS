@@ -246,6 +246,8 @@ void CFileView::EnsureVisible(INT idx)
 {
 	if (!m_EnableScrolling)
 		return;
+
+	//TODO
 }
 
 void CFileView::SetFocusItem(INT FocusItem, BOOL ShiftSelect)
@@ -333,7 +335,7 @@ CMenu* CFileView::GetItemContextMenu(INT idx)
 		break;
 	case LFTypeDrive:
 		nID = IDM_DRIVE;
-		cmdDefault = ID_STORE_NEWDRIVE;
+		cmdDefault = IDM_DRIVE_CREATENEWSTORE;
 		break;
 	case LFTypeStore:
 		nID = IDM_STORE;
@@ -347,6 +349,7 @@ CMenu* CFileView::GetItemContextMenu(INT idx)
 
 	CMenu* pMenu = new CMenu();
 	pMenu->LoadMenu(nID);
+	pMenu->GetSubMenu(0)->SetDefaultItem(cmdDefault);
 	return pMenu;
 }
 
@@ -990,9 +993,9 @@ void CFileView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 		if (pMenu)
 		{
 			CMenu* pPopup = pMenu->GetSubMenu(0);
-			if (pPopup)
-				pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, GetOwner(), NULL);
+			ASSERT_VALID(pPopup);
 
+			pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, GetOwner(), NULL);
 			delete pMenu;
 		}
 	}
