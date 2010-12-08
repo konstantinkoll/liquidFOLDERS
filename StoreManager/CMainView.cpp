@@ -547,6 +547,8 @@ void CMainView::OnUpdateStoreCommands(CCmdUI* pCmdUI)
 			case IDM_STORE_IMPORTFOLDER:
 				b = !(i->Type & LFTypeNotMounted);
 				break;
+			default:
+				b = TRUE;
 			}
 	}
 
