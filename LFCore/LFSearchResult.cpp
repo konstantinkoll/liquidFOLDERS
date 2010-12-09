@@ -116,7 +116,8 @@ bool LFSearchResult::AddStoreDescriptor(LFStoreDescriptor* s, LFFilter* f)
 	else
 	{
 		m_StoreCount++;
-		f->Result.StoreCount++;
+		if (f)
+			f->Result.StoreCount++;
 	}
 
 	return res;

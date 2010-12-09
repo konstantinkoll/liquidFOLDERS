@@ -56,14 +56,16 @@
 #define IDS_HINT_Maintain               1127
 #define IDS_MENU_MaintainAll            1128
 #define IDS_HINT_MaintainAll            1129
-#define IDS_MENU_StoreManager           1130
-#define IDS_HINT_StoreManager           1131
-#define IDS_MENU_FileDrop               1132
-#define IDS_HINT_FileDrop               1133
-#define IDS_MENU_Migrate                1134
-#define IDS_HINT_Migrate                1135
-#define IDS_MENU_About                  1136
-#define IDS_HINT_About                  1137
+#define IDS_MENU_Backup                 1130
+#define IDS_HINT_Backup                 1131
+#define IDS_MENU_StoreManager           1132
+#define IDS_HINT_StoreManager           1133
+#define IDS_MENU_FileDrop               1134
+#define IDS_HINT_FileDrop               1135
+#define IDS_MENU_Migrate                1136
+#define IDS_HINT_Migrate                1137
+#define IDS_MENU_About                  1138
+#define IDS_HINT_About                  1139
 
 // Next default values for new objects
 // 

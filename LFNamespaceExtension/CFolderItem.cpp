@@ -534,6 +534,8 @@ void CFolderItem::GetMenuItems(CGetMenuitemsEventArgs& e)
 			theApp.SetCoreMenuIcon(item, IDI_STORE_Internal);
 
 			AddItem(e.menu, IDS_MENU_MaintainAll, _T(VERB_MAINTAINALL))->SetEnabled(!theApp.m_PathRunCmd.IsEmpty());
+			AddSeparator(e.menu);
+			AddItem(e.menu, IDS_MENU_Backup, _T(VERB_BACKUP))->SetEnabled(!theApp.m_PathRunCmd.IsEmpty());
 		}
 
 		if (e.children->GetCount()==1)
@@ -611,6 +613,9 @@ BOOL CFolderItem::OnExecuteMenuItem(CExecuteMenuitemsEventArgs& e)
 	if (e.menuItem->GetVerb()==_T(VERB_MAINTAINALL))
 		RunPath(NULL, theApp.m_PathRunCmd, _T("MAINTAINALL"));
 
+	if (e.menuItem->GetVerb()==_T(VERB_BACKUP))
+		RunPath(NULL, theApp.m_PathRunCmd, _T("BACKUP"));
+
 	if (e.menuItem->GetVerb()==_T(VERB_EXPLORE))
 		return OnExplorer(e);
 
@@ -666,9 +671,7 @@ BOOL CFolderItem::OnExecuteMenuItem(CExecuteMenuitemsEventArgs& e)
 		// Create shortcut on desktop
 		POSITION pos = e.children->GetHeadPosition();
 		while(pos)
-		{
 			CreateShortcut((CNSEItem*)e.children->GetNext(pos));
-		}
 
 		return TRUE;
 	}
