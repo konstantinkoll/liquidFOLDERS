@@ -666,6 +666,16 @@ LFCore_API unsigned int LFGetStoreCount()
 	return res;
 }
 
+LFCore_API unsigned int LFGetStores(char** keys, unsigned int* count)
+{
+	if (!GetMutex(Mutex_Stores))
+		return LFMutexError;
+
+	*count = FindStores(keys);
+	ReleaseMutex(Mutex_Stores);
+
+	return LFOk;
+}
 
 LFCore_API unsigned int LFMountDrive(char d, bool InternalCall)
 {

@@ -364,6 +364,9 @@ LFCore_API void LFGetDefaultStoreName(wchar_t* name, size_t cCount);
 // Gibt die Anzahl aller Stores zurück
 LFCore_API unsigned int LFGetStoreCount();
 
+// Gibt die IDs aller Stores zurück
+LFCore_API unsigned int LFGetStores(char** keys, unsigned int* count);
+
 // Mountet alle Hybrid-Stores und externen Stores auf Laufwerk d
 LFCore_API unsigned int LFMountDrive(char d, bool InternalCall=false);
 
