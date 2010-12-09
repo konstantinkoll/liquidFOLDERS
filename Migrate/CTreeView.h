@@ -42,12 +42,6 @@ struct Cell
 	UINT Flags;
 };
 
-struct tagTreeView
-{
-	NMHDR hdr;
-	Cell* pCell;
-};
-
 class CTreeView : public CWnd
 {
 public:
@@ -170,7 +164,6 @@ private:
 
 	void SetWidgetSize();
 	UINT GetChildRect(CPoint item);
-	void NotifyOwner();
 	BOOL ExecuteContextMenu(CPoint& item, LPCSTR verb);
 	CString GetColumnCaption(UINT col);
 	void UpdateColumnCaption(UINT col);

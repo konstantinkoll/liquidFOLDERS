@@ -143,8 +143,6 @@ void CTreeView::ClearRoot()
 	ResetScrollbars();
 	AdjustLayout();
 	Invalidate();
-
-	NotifyOwner();
 }
 
 void CTreeView::SetRoot(LPITEMIDLIST pidl, BOOL Update, BOOL ExpandAll)
@@ -187,7 +185,6 @@ void CTreeView::SetRoot(LPITEMIDLIST pidl, BOOL Update, BOOL ExpandAll)
 	m_wndHeader.ModifyStyle(HDS_HIDDEN, 0);
 	AdjustLayout();
 	Invalidate();
-	NotifyOwner();
 }
 
 void CTreeView::SetBranchCheck(BOOL Check, CPoint item)
@@ -818,9 +815,6 @@ void CTreeView::Expand(UINT row, UINT col, BOOL ExpandAll, BOOL AutosizeHeader)
 
 	AdjustScrollbars();
 	Invalidate();
-
-	if ((m_SelectedItem.x==(INT)col) && (m_SelectedItem.y==(INT)row))
-		NotifyOwner();
 }
 
 void CTreeView::Collapse(UINT row, UINT col)
@@ -841,9 +835,6 @@ void CTreeView::Collapse(UINT row, UINT col)
 
 	AdjustScrollbars();
 	Invalidate();
-
-	if ((m_SelectedItem.x==(INT)col) && (m_SelectedItem.y==(INT)row))
-		NotifyOwner();
 }
 
 void CTreeView::FreeItem(Cell* cell)
@@ -1030,18 +1021,6 @@ UINT CTreeView::GetChildRect(CPoint item)
 	return row-1;
 }
 
-void CTreeView::NotifyOwner()
-{
-	tagTreeView tag;
-	ZeroMemory(&tag, sizeof(tag));
-	tag.hdr.hwndFrom = m_hWnd;
-	tag.hdr.idFrom = GetDlgCtrlID();
-	tag.hdr.code = TVN_SELCHANGED;
-	tag.pCell = ((m_SelectedItem.x==-1) || (m_SelectedItem.y==-1)) ? NULL : &m_Tree[MAKEPOSI(m_SelectedItem)];
-
-	GetOwner()->SendMessage(WM_NOTIFY, tag.hdr.idFrom, LPARAM(&tag));
-}
-
 void CTreeView::SelectItem(CPoint Item)
 {
 	if (Item==m_SelectedItem)
@@ -1057,7 +1036,6 @@ void CTreeView::SelectItem(CPoint Item)
 	m_EditLabel = CPoint(-1, -1);
 
 	ReleaseCapture();
-	NotifyOwner();
 }
 
 void CTreeView::DeletePath(LPWSTR Path)
