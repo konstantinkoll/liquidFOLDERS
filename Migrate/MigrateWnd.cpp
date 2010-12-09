@@ -40,6 +40,15 @@ BOOL CMigrateWnd::Create()
 	return CGlasWindow::Create(WS_MINIMIZEBOX | WS_MAXIMIZEBOX, className, caption, rect);
 }
 
+BOOL CMigrateWnd::OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo)
+{
+	// The main view gets the command first
+	if (m_wndMainView.OnCmdMsg(nID, nCode, pExtra, pHandlerInfo))
+		return TRUE;
+
+	return CGlasWindow::OnCmdMsg(nID, nCode, pExtra, pHandlerInfo);
+}
+
 void CMigrateWnd::AdjustLayout()
 {
 	if (!IsWindow(m_wndFolder))
@@ -70,7 +79,7 @@ BEGIN_MESSAGE_MAP(CMigrateWnd, CGlasWindow)
 	ON_WM_CREATE()
 	ON_WM_SETFOCUS()
 	ON_MESSAGE_VOID(WM_IDLEUPDATECMDUI, OnIdleUpdateCmdUI)
-	ON_COMMAND(ID_VIEW_SELECTROOT, OnSelectRoot)
+	ON_COMMAND(IDM_VIEW_SELECTROOT, OnSelectRoot)
 	ON_COMMAND(IDC_MIGRATE, OnMigrate)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoresChanged, OnStoresChanged)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoreAttributesChanged, OnStoresChanged)

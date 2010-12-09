@@ -957,11 +957,11 @@ void CTreeView::TrackMenu(UINT nID, CPoint point, INT col)
 	CMenu* pPopup = menu.GetSubMenu(0);
 	ASSERT_VALID(pPopup);
 
-	//if (!col)
-	//	pPopup->EnableMenuItem(IDD_CHOOSEPROPERTY, MF_GRAYED | MF_DISABLED);
+	if (!col)
+		pPopup->EnableMenuItem(IDD_CHOOSEPROPERTY, MF_GRAYED | MF_DISABLED);
 
-	//if ((!col) || (m_ColumnMapping[col]==-1))
-	//	pPopup->EnableMenuItem(ID_VIEW_RESETPROPERTY, MF_GRAYED | MF_DISABLED);
+	if ((!col) || (m_ColumnMapping[col]==-1))
+		pPopup->EnableMenuItem(IDM_TREE_RESETPROPERTY, MF_GRAYED | MF_DISABLED);
 
 	BOOL Enable = FALSE;
 	for (UINT row=0; row<m_Rows; row++)
@@ -971,26 +971,26 @@ void CTreeView::TrackMenu(UINT nID, CPoint point, INT col)
 			break;
 		}
 
-	//if (!Enable)
-	//	pPopup->EnableMenuItem(ID_VIEW_EXPANDCOLUMN, MF_GRAYED | MF_DISABLED);
+	if (!Enable)
+		pPopup->EnableMenuItem(IDM_TREE_EXPANDCOLUMN, MF_GRAYED | MF_DISABLED);
 
-	switch (pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RETURNCMD | TPM_RIGHTBUTTON, point.x, point.y, this))
+	switch (pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON | TPM_RETURNCMD, point.x, point.y, this))
 	{
-	case ID_VIEW_AUTOSIZE:
+	case IDM_TREE_AUTOSIZE:
 		AutosizeColumn(col);
 		AdjustScrollbars();
 		Invalidate();
 		break;
-	case ID_VIEW_AUTOSIZEALL:
+	case IDM_VIEW_AUTOSIZEALL:
 		AutosizeColumns();
 		break;
-	case ID_VIEW_EXPANDCOLUMN:
+	case IDM_TREE_EXPANDCOLUMN:
 		ExpandColumn(col);
 		break;
 	case IDD_CHOOSEPROPERTY:
 		PostMessage(IDD_CHOOSEPROPERTY, (WPARAM)col);
 		break;
-	case ID_VIEW_RESETPROPERTY:
+	case IDM_TREE_RESETPROPERTY:
 		m_ColumnMapping[col] = -1;
 		UpdateColumnCaption(col);
 		break;
@@ -1403,6 +1403,13 @@ BEGIN_MESSAGE_MAP(CTreeView, CWnd)
 	ON_NOTIFY(HDN_ITEMCLICK, 1, OnItemClick)
 	ON_EN_KILLFOCUS(2, OnDestroyEdit)
 	ON_MESSAGE(IDD_CHOOSEPROPERTY, OnChooseProperty)
+	ON_COMMAND(IDM_VIEW_OPEN, OnOpen)
+	ON_COMMAND(IDM_VIEW_DELETE, OnDelete)
+	ON_COMMAND(IDM_VIEW_RENAME, OnRename)
+	ON_COMMAND(IDM_VIEW_PROPERTIES, OnProperties)
+	ON_COMMAND(IDM_VIEW_AUTOSIZEALL, OnAutosizeAll)
+	ON_COMMAND(IDM_VIEW_EXPAND, OnExpand)
+	ON_UPDATE_COMMAND_UI_RANGE(IDM_VIEW_OPEN, IDM_VIEW_EXPAND, OnUpdateCommands)
 	ON_MESSAGE(WM_SHELLCHANGE, OnShellChange)
 END_MESSAGE_MAP()
 
@@ -2457,6 +2464,67 @@ LRESULT CTreeView::OnChooseProperty(WPARAM wParam, LPARAM /*lParam*/)
 	}
 
 	return NULL;
+}
+
+void CTreeView::OnOpen()
+{
+	OpenFolder();
+}
+
+void CTreeView::OnDelete()
+{
+	DeleteFolder();
+}
+
+void CTreeView::OnRename()
+{
+	EditLabel();
+}
+
+void CTreeView::OnProperties()
+{
+	ShowProperties();
+}
+
+void CTreeView::OnAutosizeAll()
+{
+	AutosizeColumns();
+}
+
+void CTreeView::OnExpand()
+{
+	ExpandFolder();
+}
+
+void CTreeView::OnUpdateCommands(CCmdUI* pCmdUI)
+{
+	BOOL b = FALSE;
+
+	if ((m_SelectedItem.x!=-1) && (m_SelectedItem.y!=-1))
+	{
+		Cell* cell = &m_Tree[MAKEPOSI(m_SelectedItem)];
+
+		switch (pCmdUI->m_nID)
+		{
+		case IDM_VIEW_DELETE:
+			b = (cell->Flags & CF_CANDELETE);
+			break;
+		case IDM_VIEW_RENAME:
+			b = (cell->Flags & CF_CANRENAME);
+			break;
+		case IDM_VIEW_PROPERTIES:
+			b = (cell->Flags & CF_HASPROPSHEET);
+			break;
+		case IDM_VIEW_AUTOSIZEALL:
+			b = TRUE;
+			break;
+		case IDM_VIEW_EXPAND:
+			b = (cell->Flags & CF_CANEXPAND);
+			break;
+		}
+	}
+
+	pCmdUI->Enable(b);
 }
 
 LRESULT CTreeView::OnShellChange(WPARAM wParam, LPARAM lParam)

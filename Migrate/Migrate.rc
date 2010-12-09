@@ -111,9 +111,9 @@ IDM_BACKGROUND MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "&Alle Spaltenbreiten anpassen", ID_VIEW_AUTOSIZEALL
+        MENUITEM "&Alle Spaltenbreiten anpassen", IDM_VIEW_AUTOSIZEALL
         MENUITEM SEPARATOR
-        MENUITEM "&Quellverzeichnis...",        ID_VIEW_SELECTROOT
+        MENUITEM "&Quellverzeichnis...",        IDM_VIEW_SELECTROOT
     END
 END
 
@@ -121,13 +121,13 @@ IDM_HEADER MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "&Alle Spaltenbreiten anpassen", ID_VIEW_AUTOSIZEALL
-        MENUITEM "&Spaltenbreite anpassen",     ID_VIEW_AUTOSIZE
+        MENUITEM "&Alle Spaltenbreiten anpassen", IDM_VIEW_AUTOSIZEALL
+        MENUITEM "&Spaltenbreite anpassen",     IDM_TREE_AUTOSIZE
         MENUITEM SEPARATOR
-        MENUITEM "Ganze Spalte &erweitern",     ID_VIEW_EXPANDCOLUMN
+        MENUITEM "Ganze Spalte &erweitern",     IDM_TREE_EXPANDCOLUMN
         MENUITEM SEPARATOR
         MENUITEM "Eigenschaft aus&wählen...",   IDD_CHOOSEPROPERTY
-        MENUITEM "&Zurücksetzen",               ID_VIEW_RESETPROPERTY
+        MENUITEM "&Zurücksetzen",               IDM_TREE_RESETPROPERTY
     END
 END
 
@@ -258,13 +258,21 @@ END
 
 STRINGTABLE 
 BEGIN
-    ID_VIEW_SELECTROOT_TASKBAR 
+    IDM_VIEW_SELECTROOT_TASKBAR 
                             "Öffnet ein Fenster, in dem Sie ein Verzeichnis zur Anzeige auswählen können.\nQuellverzeichnis"
-    ID_VIEW_EXPAND          "Zeigt alle Unterverzeichnisse an.\nErweitern"
-    ID_VIEW_OPEN            "Äffnet das ausgewählte Verzeichnis.\nÖffnen"
-    ID_VIEW_RENAME          "Benennt das ausgewählte Verzeichnis um.\nUmbenennen"
-    ID_VIEW_DELETE          "Löscht das ausgewählte Verzeichnis.\nLöschen"
-    ID_VIEW_PROPERTIES      "Zeigt die Eigenschaften des ausgewählten Verzeichnisses.\nEigenschaften"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_VIEW_OPEN           "Öffnet das ausgewählte Verzeichnis.\nÖffnen"
+    IDM_VIEW_DELETE         "Löscht das ausgewählte Verzeichnis.\nLöschen"
+    IDM_VIEW_RENAME         "Benennt das ausgewählte Verzeichnis um.\nUmbenennen"
+    IDM_VIEW_PROPERTIES     "Zeigt die Eigenschaften des ausgewählten Verzeichnisses.\nEigenschaften"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_VIEW_EXPAND         "Zeigt alle Unterverzeichnisse an.\nErweitern"
 END
 
 STRINGTABLE 
@@ -328,9 +336,9 @@ IDM_BACKGROUND MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "Autosize &all columns",       ID_VIEW_AUTOSIZEALL
+        MENUITEM "Autosize &all columns",       IDM_VIEW_AUTOSIZEALL
         MENUITEM SEPARATOR
-        MENUITEM "Select &root folder...",      ID_VIEW_SELECTROOT
+        MENUITEM "Select &root folder...",      IDM_VIEW_SELECTROOT
     END
 END
 
@@ -338,13 +346,13 @@ IDM_HEADER MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "Autosize &all columns",       ID_VIEW_AUTOSIZEALL
-        MENUITEM "Autosize &column",            ID_VIEW_AUTOSIZE
+        MENUITEM "Autosize &all columns",       IDM_VIEW_AUTOSIZEALL
+        MENUITEM "Autosize &column",            IDM_TREE_AUTOSIZE
         MENUITEM SEPARATOR
-        MENUITEM "&Expand column",              ID_VIEW_EXPANDCOLUMN
+        MENUITEM "&Expand column",              IDM_TREE_EXPANDCOLUMN
         MENUITEM SEPARATOR
         MENUITEM "Choose &property...",         IDD_CHOOSEPROPERTY
-        MENUITEM "&Reset property",             ID_VIEW_RESETPROPERTY
+        MENUITEM "&Reset property",             IDM_TREE_RESETPROPERTY
     END
 END
 
@@ -475,13 +483,21 @@ END
 
 STRINGTABLE 
 BEGIN
-    ID_VIEW_SELECTROOT_TASKBAR 
+    IDM_VIEW_SELECTROOT_TASKBAR 
                             "Opens a dialog where you can select the root folder to display in the main view below.\nSelect root folder"
-    ID_VIEW_EXPAND          "Adds all subfolders of the selected folder.\nExpand"
-    ID_VIEW_OPEN            "Opens the selected folder.\nOpen"
-    ID_VIEW_RENAME          "Renames the selected folder.\nRename"
-    ID_VIEW_DELETE          "Deletes the selected folder.\nDelete"
-    ID_VIEW_PROPERTIES      "Displays the properties of the selected folder.\nProperties"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_VIEW_OPEN           "Opens the selected folder.\nOpen"
+    IDM_VIEW_DELETE         "Deletes the selected folder.\nDelete"
+    IDM_VIEW_RENAME         "Renames the selected folder.\nRename"
+    IDM_VIEW_PROPERTIES     "Displays the properties of the selected folder.\nProperties"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_VIEW_EXPAND         "Adds all subfolders of the selected folder.\nExpand"
 END
 
 STRINGTABLE 
@@ -544,9 +560,9 @@ IDM_BACKGROUND MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "Ajustar &todas las columnas", ID_VIEW_AUTOSIZEALL
+        MENUITEM "Ajustar &todas las columnas", IDM_VIEW_AUTOSIZEALL
         MENUITEM SEPARATOR
-        MENUITEM "Seleccionar &carpeta raíz...", ID_VIEW_SELECTROOT
+        MENUITEM "Seleccionar &carpeta raíz...", IDM_VIEW_SELECTROOT
     END
 END
 
@@ -554,13 +570,13 @@ IDM_HEADER MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "Autoajustar &todas las columnas", ID_VIEW_AUTOSIZEALL
-        MENUITEM "Autoajustar &columna",        ID_VIEW_AUTOSIZE
+        MENUITEM "Autoajustar &todas las columnas", IDM_VIEW_AUTOSIZEALL
+        MENUITEM "Autoajustar &columna",        IDM_TREE_AUTOSIZE
         MENUITEM SEPARATOR
-        MENUITEM "&Expandir columna",           ID_VIEW_EXPANDCOLUMN
+        MENUITEM "&Expandir columna",           IDM_TREE_EXPANDCOLUMN
         MENUITEM SEPARATOR
         MENUITEM "Escoger &propiedad...",       IDD_CHOOSEPROPERTY
-        MENUITEM "&Restaurar propiedad",        ID_VIEW_RESETPROPERTY
+        MENUITEM "&Restaurar propiedad",        IDM_TREE_RESETPROPERTY
     END
 END
 
@@ -691,13 +707,21 @@ END
 
 STRINGTABLE 
 BEGIN
-    ID_VIEW_SELECTROOT_TASKBAR 
+    IDM_VIEW_SELECTROOT_TASKBAR 
                             "Abre un diálogo en donde usted puede seleccionar la carpeta raíz a visualizarse en la vista principal de abajo.\nSeleccionar carpeta raíz"
-    ID_VIEW_EXPAND          "Añade todas las subcarpetas de la carpeta seleccionada.\nExpander"
-    ID_VIEW_OPEN            "Abre la carpeta seleccionada.\nAbrir"
-    ID_VIEW_RENAME          "Renombra la carpeta seleccionada.\nRenombrar"
-    ID_VIEW_DELETE          "Elimina la carpeta seleccionada.\nEliminar"
-    ID_VIEW_PROPERTIES      "Visualiza las propiedades de la carpeta seleccionada.\nPropiedades"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_VIEW_OPEN           "Abre la carpeta seleccionada.\nAbrir"
+    IDM_VIEW_DELETE         "Elimina la carpeta seleccionada.\nEliminar"
+    IDM_VIEW_RENAME         "Renombra la carpeta seleccionada.\nRenombrar"
+    IDM_VIEW_PROPERTIES     "Visualiza las propiedades de la carpeta seleccionada.\nPropiedades"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_VIEW_EXPAND         "Añade todas las subcarpetas de la carpeta seleccionada.\nExpander"
 END
 
 STRINGTABLE 
@@ -761,9 +785,9 @@ IDM_BACKGROUND MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "&Adapter tous les larges de colonnes", ID_VIEW_AUTOSIZEALL
+        MENUITEM "&Adapter tous les larges de colonnes", IDM_VIEW_AUTOSIZEALL
         MENUITEM SEPARATOR
-        MENUITEM "&Dossier de source...",       ID_VIEW_SELECTROOT
+        MENUITEM "&Dossier de source...",       IDM_VIEW_SELECTROOT
     END
 END
 
@@ -771,13 +795,13 @@ IDM_HEADER MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "&Adapter tous les larges de colonnes", ID_VIEW_AUTOSIZEALL
-        MENUITEM "&Adapter le large de colonne", ID_VIEW_AUTOSIZE
+        MENUITEM "&Adapter tous les larges de colonnes", IDM_VIEW_AUTOSIZEALL
+        MENUITEM "&Adapter le large de colonne", IDM_TREE_AUTOSIZE
         MENUITEM SEPARATOR
-        MENUITEM "Élargir &toute la colonne",   ID_VIEW_EXPANDCOLUMN
+        MENUITEM "Élargir &toute la colonne",   IDM_TREE_EXPANDCOLUMN
         MENUITEM SEPARATOR
         MENUITEM "Choisir la &qualité...",      IDD_CHOOSEPROPERTY
-        MENUITEM "&Reculer",                    ID_VIEW_RESETPROPERTY
+        MENUITEM "&Reculer",                    IDM_TREE_RESETPROPERTY
     END
 END
 
@@ -910,13 +934,21 @@ END
 
 STRINGTABLE 
 BEGIN
-    ID_VIEW_SELECTROOT_TASKBAR 
+    IDM_VIEW_SELECTROOT_TASKBAR 
                             "Si ouvre une fenêtre dans quoi vous pouvez choisir un dossier à l'annonce.\nDossier de source"
-    ID_VIEW_EXPAND          "Indique toutes les sous-dossiers.\nÉlargir"
-    ID_VIEW_OPEN            "Ouvre le dossier choisi.\nOuvrir"
-    ID_VIEW_RENAME          "Renomme le dossier choisi.\nRenommer"
-    ID_VIEW_DELETE          "Efface le dossier choisi.\nEffacer"
-    ID_VIEW_PROPERTIES      "Montre les qualités du dossier choisi.\nQualités"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_VIEW_OPEN           "Ouvre le dossier choisi.\nOuvrir"
+    IDM_VIEW_DELETE         "Efface le dossier choisi.\nEffacer"
+    IDM_VIEW_RENAME         "Renomme le dossier choisi.\nRenommer"
+    IDM_VIEW_PROPERTIES     "Montre les qualités du dossier choisi.\nQualités"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_VIEW_EXPAND         "Indique toutes les sous-dossiers.\nÉlargir"
 END
 
 STRINGTABLE 

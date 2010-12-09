@@ -246,7 +246,7 @@ void CPIDLDropdownWindow::OnChooseFolder()
 	theApp.m_ExpandAll = ((CButton*)m_wndBottomArea.GetDlgItem(IDC_EXPANDALL))->GetCheck();
 	GetOwner()->PostMessage(WM_CLOSEDROPDOWN);
 
-	theApp.m_pMainWnd->SendMessage(WM_COMMAND, ID_VIEW_SELECTROOT);
+	theApp.m_pMainWnd->SendMessage(WM_COMMAND, IDM_VIEW_SELECTROOT);
 }
 
 

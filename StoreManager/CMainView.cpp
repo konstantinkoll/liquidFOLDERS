@@ -68,6 +68,10 @@ BOOL CMainView::OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* 
 		if (p_wndFileView->OnCmdMsg(nID, nCode, pExtra, pHandlerInfo))
 			return TRUE;
 
+	// Check application commands
+	if (theApp.OnCmdMsg(nID, nCode, pExtra, pHandlerInfo))
+		return TRUE;
+
 	return CWnd::OnCmdMsg(nID, nCode, pExtra, pHandlerInfo);
 }
 

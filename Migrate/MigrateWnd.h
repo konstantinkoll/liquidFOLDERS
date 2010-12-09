@@ -16,6 +16,7 @@ public:
 	CMigrateWnd();
 	~CMigrateWnd();
 
+	virtual BOOL OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo);
 	virtual void AdjustLayout();
 
 	BOOL Create();

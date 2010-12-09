@@ -148,6 +148,13 @@ protected:
 	afx_msg void OnItemClick(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnDestroyEdit();
 	afx_msg LRESULT OnChooseProperty(WPARAM wParam, LPARAM lParam);
+	afx_msg void OnOpen();
+	afx_msg void OnDelete();
+	afx_msg void OnRename();
+	afx_msg void OnProperties();
+	afx_msg void OnAutosizeAll();
+	afx_msg void OnExpand();
+	afx_msg void OnUpdateCommands(CCmdUI* pCmdUI);
 	afx_msg LRESULT OnShellChange(WPARAM wParam, LPARAM lParam);
 	DECLARE_MESSAGE_MAP()
 

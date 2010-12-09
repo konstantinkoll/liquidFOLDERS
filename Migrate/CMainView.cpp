@@ -29,16 +29,20 @@ INT CMainView::Create(CWnd* _pParentWnd, UINT nID)
 
 BOOL CMainView::OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo)
 {
-	// If we don't handle the command, ask our owner
-	if (CWnd::OnCmdMsg(nID, nCode, pExtra, pHandlerInfo))
+	// The file view gets the command first
+	if (m_wndTree.OnCmdMsg(nID, nCode, pExtra, pHandlerInfo))
 		return TRUE;
 
-	return GetOwner()->OnCmdMsg(nID, nCode, pExtra, pHandlerInfo);
+	// Check application commands
+	if (theApp.OnCmdMsg(nID, nCode, pExtra, pHandlerInfo))
+		return TRUE;
+
+	return CWnd::OnCmdMsg(nID, nCode, pExtra, pHandlerInfo);
 }
 
 void CMainView::ClearRoot()
 {
-	m_IsRootSet = m_SelectedCanExpand = m_SelectedHasPropSheet = m_SelectedCanRename = m_SelectedCanDelete = FALSE;
+	m_IsRootSet = FALSE;
 
 	CString caption;
 	CString hint;
@@ -54,7 +58,6 @@ void CMainView::ClearRoot()
 void CMainView::SetRoot(LPITEMIDLIST pidl, BOOL Update, BOOL ExpandAll)
 {
 	m_IsRootSet = TRUE;
-	m_SelectedCanExpand = m_SelectedHasPropSheet = m_SelectedCanRename = m_SelectedCanDelete = FALSE;
 
 	CString caption;
 	CString hint;
@@ -108,17 +111,9 @@ BEGIN_MESSAGE_MAP(CMainView, CWnd)
 	ON_WM_ERASEBKGND()
 	ON_WM_SIZE()
 	ON_WM_SETFOCUS()
-	ON_COMMAND(ID_VIEW_AUTOSIZEALL, OnAutosizeAll)
-	ON_COMMAND(ID_VIEW_SELECTROOT, OnSelectRoot)
-	ON_COMMAND(ID_VIEW_SELECTROOT_TASKBAR, OnSelectRoot)
-	ON_COMMAND(ID_VIEW_EXPAND, OnExpand)
-	ON_COMMAND(ID_VIEW_OPEN, OnOpen)
-	ON_COMMAND(ID_VIEW_RENAME, OnRename)
-	ON_COMMAND(ID_VIEW_DELETE, OnDelete)
-	ON_COMMAND(ID_VIEW_PROPERTIES, OnProperties)
-	ON_UPDATE_COMMAND_UI_RANGE(ID_VIEW_SELECTROOT, ID_VIEW_PROPERTIES, OnUpdateTaskbar)
 	ON_WM_CONTEXTMENU()
-	ON_NOTIFY(TVN_SELCHANGED, 3, OnSelectionChanged)
+	ON_COMMAND(IDM_VIEW_SELECTROOT_TASKBAR, OnSelectRoot)
+	ON_UPDATE_COMMAND_UI(IDM_VIEW_SELECTROOT_TASKBAR, OnUpdateCommands)
 END_MESSAGE_MAP()
 
 INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -130,12 +125,12 @@ INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (!m_wndTaskbar.Create(this, IDB_TASKS, 1))
 		return -1;
 
-	m_wndTaskbar.AddButton(ID_VIEW_SELECTROOT_TASKBAR, 0);
-	m_wndTaskbar.AddButton(ID_VIEW_EXPAND, 1);
-	m_wndTaskbar.AddButton(ID_VIEW_OPEN, 2, TRUE);
-	m_wndTaskbar.AddButton(ID_VIEW_RENAME, 3);
-	m_wndTaskbar.AddButton(ID_VIEW_DELETE, 4);
-	m_wndTaskbar.AddButton(ID_VIEW_PROPERTIES, 5);
+	m_wndTaskbar.AddButton(IDM_VIEW_SELECTROOT_TASKBAR, 0);
+	m_wndTaskbar.AddButton(IDM_VIEW_EXPAND, 1);
+	m_wndTaskbar.AddButton(IDM_VIEW_OPEN, 2, TRUE);
+	m_wndTaskbar.AddButton(IDM_VIEW_DELETE, 3);
+	m_wndTaskbar.AddButton(IDM_VIEW_RENAME, 4);
+	m_wndTaskbar.AddButton(IDM_VIEW_PROPERTIES, 5);
 	m_wndTaskbar.AddButton(ID_APP_NEWSTOREMANAGER, 6, TRUE);
 
 	m_wndTaskbar.AddButton(ID_APP_PURCHASE, 7, TRUE, TRUE);
@@ -178,68 +173,6 @@ void CMainView::OnSetFocus(CWnd* /*pOldWnd*/)
 	}
 }
 
-void CMainView::OnAutosizeAll()
-{
-	m_wndTree.AutosizeColumns();
-}
-
-void CMainView::OnSelectRoot()
-{
-	GetOwner()->SendMessage(WM_COMMAND, ID_VIEW_SELECTROOT);
-}
-
-void CMainView::OnExpand()
-{
-	m_wndTree.ExpandFolder();
-}
-
-void CMainView::OnOpen()
-{
-	m_wndTree.OpenFolder();
-}
-
-void CMainView::OnRename()
-{
-	m_wndTree.EditLabel();
-}
-
-void CMainView::OnDelete()
-{
-	m_wndTree.DeleteFolder();
-}
-
-void CMainView::OnProperties()
-{
-	m_wndTree.ShowProperties();
-}
-
-void CMainView::OnUpdateTaskbar(CCmdUI* pCmdUI)
-{
-	switch (pCmdUI->m_nID)
-	{
-	case ID_VIEW_SELECTROOT:
-		pCmdUI->Enable(TRUE);
-		break;
-	case ID_VIEW_SELECTROOT_TASKBAR:
-		pCmdUI->Enable(!m_IsRootSet);
-		break;
-	case ID_VIEW_EXPAND:
-		pCmdUI->Enable(m_IsRootSet && m_SelectedCanExpand);
-		break;
-	case ID_VIEW_RENAME:
-		pCmdUI->Enable(m_IsRootSet && m_SelectedCanRename);
-		break;
-	case ID_VIEW_DELETE:
-		pCmdUI->Enable(m_IsRootSet && m_SelectedCanDelete);
-		break;
-	case ID_VIEW_PROPERTIES:
-		pCmdUI->Enable(m_IsRootSet && m_SelectedHasPropSheet);
-		break;
-	default:
-		pCmdUI->Enable(m_IsRootSet);
-	}
-}
-
 void CMainView::OnContextMenu(CWnd* /*pWnd*/, CPoint pos)
 {
 	if ((pos.x==-1) && (pos.y==-1))
@@ -252,27 +185,17 @@ void CMainView::OnContextMenu(CWnd* /*pWnd*/, CPoint pos)
 	ENSURE(menu.LoadMenu(IDM_BACKGROUND));
 
 	CMenu* pPopup = menu.GetSubMenu(0);
-	ASSERT(pPopup);
+	ASSERT_VALID(pPopup);
 
-//	if (!m_IsRootSet)
-//		pPopup->EnableMenuItem(ID_VIEW_AUTOSIZEALL, MF_BYCOMMAND | MF_DISABLED | MF_GRAYED);
-
-	pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, pos.x, pos.y, this);
+	pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, pos.x, pos.y, GetOwner());
 }
 
-void CMainView::OnSelectionChanged(NMHDR* pNMHDR, LRESULT* /*pResult*/)
+void CMainView::OnSelectRoot()
 {
-	tagTreeView* pNMTreeView = (tagTreeView*)pNMHDR;
+	GetOwner()->SendMessage(WM_COMMAND, IDM_VIEW_SELECTROOT);
+}
 
-	if (pNMTreeView->pCell)
-	{
-		m_SelectedCanExpand = (pNMTreeView->pCell->Flags & CF_CANEXPAND);
-		m_SelectedHasPropSheet = (pNMTreeView->pCell->Flags & CF_HASPROPSHEET);
-		m_SelectedCanRename = (pNMTreeView->pCell->Flags & CF_CANRENAME);
-		m_SelectedCanDelete = (pNMTreeView->pCell->Flags & CF_CANDELETE);
-
-		return;
-	}
-
-	m_SelectedCanExpand = m_SelectedHasPropSheet = m_SelectedCanRename = m_SelectedCanDelete = FALSE;
+void CMainView::OnUpdateCommands(CCmdUI* pCmdUI)
+{
+	pCmdUI->Enable(!m_IsRootSet);
 }

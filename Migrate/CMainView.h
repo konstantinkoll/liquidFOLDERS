@@ -30,10 +30,6 @@ protected:
 	CExplorerHeader m_wndExplorerHeader;
 	CTreeView m_wndTree;
 	BOOL m_IsRootSet;
-	BOOL m_SelectedCanExpand;
-	BOOL m_SelectedHasPropSheet;
-	BOOL m_SelectedCanRename;
-	BOOL m_SelectedCanDelete;
 
 	void AdjustLayout();
 
@@ -41,15 +37,8 @@ protected:
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnSize(UINT nType, INT cx, INT cy);
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
-	afx_msg void OnAutosizeAll();
-	afx_msg void OnSelectRoot();
-	afx_msg void OnExpand();
-	afx_msg void OnOpen();
-	afx_msg void OnRename();
-	afx_msg void OnDelete();
-	afx_msg void OnProperties();
-	afx_msg void OnUpdateTaskbar(CCmdUI* pCmdUI);
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint pos);
-	afx_msg void OnSelectionChanged(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnSelectRoot();
+	afx_msg void OnUpdateCommands(CCmdUI* pCmdUI);
 	DECLARE_MESSAGE_MAP()
 };
