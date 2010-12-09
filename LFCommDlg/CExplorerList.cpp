@@ -13,7 +13,6 @@ CExplorerList::CExplorerList()
 	: CListCtrl()
 {
 	p_App = (LFApplication*)AfxGetApp();
-	p_FooterHandler = NULL;
 	p_Result = NULL;
 	hTheme = NULL;
 	m_ItemMenuID = m_BackgroundMenuID = 0;
@@ -131,41 +130,6 @@ void CExplorerList::SetMenus(UINT _ItemMenuID, BOOL _HighlightFirst, UINT _Backg
 	m_BackgroundMenuID = _BackgroundMenuID;
 }
 
-BOOL CExplorerList::SupportsFooter()
-{
-	return (p_FooterHandler!=NULL);
-}
-
-void CExplorerList::ShowFooter(IListViewFooterCallback* pCallbackObject)
-{
-	if (p_FooterHandler)
-		p_FooterHandler->Show(pCallbackObject);
-}
-
-void CExplorerList::RemoveFooter()
-{
-	if (p_FooterHandler)
-	{
-		BOOL Visible;
-		p_FooterHandler->IsVisible(&Visible);
-
-		if (Visible)
-			p_FooterHandler->RemoveAllButtons();
-	}
-}
-
-void CExplorerList::SetFooterText(LPCWSTR pText)
-{
-	if (p_FooterHandler)
-		p_FooterHandler->SetIntroText(pText);
-}
-
-void CExplorerList::InsertFooterButton(INT insertAt, LPCWSTR pText, LPCWSTR pUnknown, UINT iconIndex, LONG lParam)
-{
-	if (p_FooterHandler)
-		p_FooterHandler->InsertButton(insertAt, pText, pUnknown, iconIndex, lParam);
-}
-
 
 BEGIN_MESSAGE_MAP(CExplorerList, CListCtrl)
 	ON_WM_CREATE()
@@ -196,9 +160,6 @@ INT CExplorerList::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	tvi.dwMask = LVTVIM_COLUMNS | LVTVIM_TILESIZE;
 	tvi.sizeTile.cx = 218;
 	SetTileViewInfo(&tvi);
-
-	if (p_App->OSVersion>=OS_Vista)
-		SendMessage(0x10BD, (WPARAM)&IID_IListViewFooter, (LPARAM)&p_FooterHandler);
 
 	return 0;
 }

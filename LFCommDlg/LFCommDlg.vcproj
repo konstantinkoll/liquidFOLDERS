@@ -681,10 +681,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\IListViewFooter.h"
-				>
-			</File>
-			<File
 				RelativePath=".\LFAboutDlg.h"
 				>
 			</File>
