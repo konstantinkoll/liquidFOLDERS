@@ -553,7 +553,6 @@ STRINGTABLE
 BEGIN
     IDS_FILES_SINGULAR      "%d file (%s)"
     IDS_FILES_PLURAL        "%d files (%s)"
-    IDS_REGFILEFILTER       "Registry files"
     IDS_TXTFILEFILTER       "Text files"
     IDS_ATTRIBUTENOTSORTABLE "This property is not suitable for sorting."
     IDS_NOITEMSSELECTED     "No items selected"

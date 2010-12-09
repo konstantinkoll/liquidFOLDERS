@@ -63,8 +63,6 @@ void CMigrateApp::OnAppAbout()
 	p.icon->Load(IDB_ABOUTICON, _T("PNG"), AfxGetResourceHandle());
 	p.TextureSize = -1;
 	p.RibbonColor = ID_VIEW_APPLOOK_OFF_2007_NONE;
-	p.HideEmptyDrives = -1;
-	p.HideEmptyDomains = -1;
 
 	LFAboutDlg dlg(&p, m_pMainWnd);
 	dlg.DoModal();

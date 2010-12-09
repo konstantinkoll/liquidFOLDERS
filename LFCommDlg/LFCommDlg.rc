@@ -174,6 +174,8 @@ BEGIN
     BEGIN
         MENUITEM "&Neuen Store anlegen...",     IDM_STORES_CREATENEW
         MENUITEM "&Wartungsarbeiten durchführen", IDM_STORES_MAINTAINALL
+        MENUITEM SEPARATOR
+        MENUITEM "&Registry-Einstellungen sichern", IDM_STORES_BACKUP
     END
 END
 
@@ -198,11 +200,6 @@ BEGIN
     COMBOBOX        IDC_RIBBONCOLORCOMBO,258,182,138,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
     GROUPBOX        "Globus-Textur",IDC_TEXTUREFRAME,171,169,71,81,WS_GROUP
     GROUPBOX        "Farbschema",IDC_STATIC,251,169,152,35,WS_GROUP
-    GROUPBOX        "StoreManager",IDC_STATIC,251,210,152,40,WS_GROUP
-    CONTROL         "Nur &eingebundene Laufwerke zeigen",IDC_HIDEEMPTYDRIVES,
-                    "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,258,221,138,10
-    CONTROL         "Nur &Domains mit Dateien zeigen",IDC_HIDEEMPTYDOMAINS,
-                    "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,258,234,138,10
     GROUPBOX        "Lizenz",IDC_STATIC,7,169,155,81,WS_GROUP
     LTEXT           "Name:",IDC_STATIC,15,179,141,8
     LTEXT           "X",IDC_NAME,15,189,141,8
@@ -692,6 +689,7 @@ END
 STRINGTABLE 
 BEGIN
     IDS_MAINTENANCETAB1     "Fehler"
+    IDS_REGFILEFILTER       "Registrierungsdateien"
 END
 
 STRINGTABLE 
@@ -751,6 +749,8 @@ BEGIN
     BEGIN
         MENUITEM "Create &new store...",        IDM_STORES_CREATENEW
         MENUITEM "Run &maintenance",            IDM_STORES_MAINTAINALL
+        MENUITEM SEPARATOR
+        MENUITEM "Backup &registry settings",   IDM_STORES_BACKUP
     END
 END
 
@@ -775,9 +775,6 @@ BEGIN
     COMBOBOX        IDC_RIBBONCOLORCOMBO,258,182,128,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
     GROUPBOX        "Globe texture",IDC_TEXTUREFRAME,171,169,71,81,WS_GROUP
     GROUPBOX        "Ribbon color",IDC_STATIC,251,169,142,35,WS_GROUP
-    GROUPBOX        "StoreManager",IDC_STATIC,251,210,142,40,WS_GROUP
-    CONTROL         "Hide un&mounted drives",IDC_HIDEEMPTYDRIVES,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,258,221,128,10
-    CONTROL         "Hide empty &domains",IDC_HIDEEMPTYDOMAINS,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,258,234,128,10
     GROUPBOX        "License",IDC_STATIC,7,169,155,81,WS_GROUP
     LTEXT           "Name:",IDC_STATIC,15,179,141,8
     LTEXT           "X",IDC_NAME,15,189,141,8
@@ -1259,6 +1256,7 @@ END
 STRINGTABLE 
 BEGIN
     IDS_MAINTENANCETAB1     "Errors"
+    IDS_REGFILEFILTER       "Registry files"
 END
 
 STRINGTABLE 
@@ -1318,6 +1316,8 @@ BEGIN
     BEGIN
         MENUITEM "Crear &nuevo store...",       IDM_STORES_CREATENEW
         MENUITEM "Ejecutar &mantenimiento",     IDM_STORES_MAINTAINALL
+        MENUITEM SEPARATOR
+        MENUITEM "Backup &registry settings",   IDM_STORES_BACKUP
     END
 END
 
@@ -1342,10 +1342,6 @@ BEGIN
     COMBOBOX        IDC_RIBBONCOLORCOMBO,258,182,128,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
     GROUPBOX        "Textura del globo",IDC_TEXTUREFRAME,171,169,71,81,WS_GROUP
     GROUPBOX        "Esquema de color",IDC_STATIC,251,169,142,35,WS_GROUP
-    GROUPBOX        "StoreManager",IDC_STATIC,251,210,142,40,WS_GROUP
-    CONTROL         "Solo platinas &encuadenadas",IDC_HIDEEMPTYDRIVES,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,258,221,128,10
-    CONTROL         "Solamente &dominios con archivos",IDC_HIDEEMPTYDOMAINS,
-                    "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,258,234,128,10
     GROUPBOX        "Licensia",IDC_STATIC,7,169,155,81,WS_GROUP
     LTEXT           "Nombre:",IDC_STATIC,15,179,141,8
     LTEXT           "X",IDC_NAME,15,189,141,8
@@ -1835,6 +1831,7 @@ END
 STRINGTABLE 
 BEGIN
     IDS_MAINTENANCETAB1     "Errores"
+    IDS_REGFILEFILTER       "Archivos de Registro"
 END
 
 STRINGTABLE 
@@ -1894,6 +1891,8 @@ BEGIN
     BEGIN
         MENUITEM "Créez un store &nouveau...",  IDM_STORES_CREATENEW
         MENUITEM "Exécuter des &travails d'entretien", IDM_STORES_MAINTAINALL
+        MENUITEM SEPARATOR
+        MENUITEM "Backup &registry settings",   IDM_STORES_BACKUP
     END
 END
 
@@ -1918,11 +1917,6 @@ BEGIN
     COMBOBOX        IDC_RIBBONCOLORCOMBO,258,182,148,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
     GROUPBOX        "Texture du globe",IDC_TEXTUREFRAME,171,169,71,81,WS_GROUP
     GROUPBOX        "Schéma de couleurs",IDC_STATIC,251,169,162,35,WS_GROUP
-    GROUPBOX        "StoreManager",IDC_STATIC,251,210,162,40,WS_GROUP
-    CONTROL         "Presenter seulement les lecteurs &engagée",IDC_HIDEEMPTYDRIVES,
-                    "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,258,221,148,10
-    CONTROL         "Presenter seulemont &domains avec fichiers",IDC_HIDEEMPTYDOMAINS,
-                    "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,258,234,148,10
     GROUPBOX        "Licence",IDC_STATIC,7,169,155,81,WS_GROUP
     LTEXT           "Nom:",IDC_STATIC,15,179,141,8
     LTEXT           "X",IDC_NAME,15,189,141,8
@@ -2413,6 +2407,7 @@ END
 STRINGTABLE 
 BEGIN
     IDS_MAINTENANCETAB1     "Erreurs"
+    IDS_REGFILEFILTER       "Fichiers de Registre"
 END
 
 STRINGTABLE 

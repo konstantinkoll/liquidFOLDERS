@@ -21,13 +21,13 @@ public:
 
 protected:
 	void OnAppAbout(UINT ResIDName, UINT ResIDPicture);
-	void OnStoreCreate();
-	void OnStoreCreateDrive(CHAR Drive);
+	void OnStoresCreate();
+	void OnStoresCreateDrive(CHAR Drive);
+	void OnStoresMaintainAll();
 	void OnStoreDelete(CString ID);
-	void OnImportFolder(CString ID);
+	void OnStoreImportFolder(CString ID);
+	void OnStoreMaintain(CString ID);
 	void OnStoreProperties(CString ID);
-	void OnMaintain(CString ID);
-	void OnMaintainAll();
 };
 
 extern CRunCmdApp theApp;

@@ -3,10 +3,7 @@
 //
 
 #include "StdAfx.h"
-#include "LFChooseStoreDlg.h"
-#include "LFStoreNewDlg.h"
-#include "LFStoreMaintenanceDlg.h"
-#include "LFStorePropertiesDlg.h"
+#include "LFCommDlg.h"
 #include "Resource.h"
 
 
@@ -86,18 +83,20 @@ BEGIN_MESSAGE_MAP(LFChooseStoreDlg, LFDialog)
 	ON_NOTIFY(NM_DBLCLK, IDC_STORELIST, OnDoubleClick)
 	ON_NOTIFY(LVN_ITEMCHANGED, IDC_STORELIST, OnItemChanged)
 	ON_NOTIFY(LVN_ENDLABELEDIT, IDC_STORELIST, OnEndLabelEdit)
-	ON_BN_CLICKED(IDM_STORES_CREATENEW, OnNewStore)
-	ON_COMMAND(IDM_STORES_MAINTAINALL, OnMaintainAll)
 	ON_REGISTERED_MESSAGE(MessageIDs->StoresChanged, OnUpdateStores)
 	ON_REGISTERED_MESSAGE(MessageIDs->StoreAttributesChanged, OnUpdateStores)
 	ON_REGISTERED_MESSAGE(MessageIDs->DefaultStoreChanged, OnUpdateStores)
-	ON_COMMAND(IDM_STORE_MAKEDEFAULT, OnMakeDefault)
-	ON_COMMAND(IDM_STORE_MAKEHYBRID, OnMakeHybrid)
-	ON_COMMAND(IDM_STORE_MAINTAIN, OnMaintain)
-	ON_COMMAND(IDM_STORE_RENAME, OnRename)
-	ON_COMMAND(IDM_STORE_DELETE, OnDelete)
-	ON_COMMAND(IDM_STORE_PROPERTIES, OnProperties)
-	ON_UPDATE_COMMAND_UI_RANGE(IDM_STORE_MAKEDEFAULT, IDM_STORE_PROPERTIES, OnUpdateCommands)
+	ON_COMMAND(IDM_STORES_CREATENEW, OnStoresCreateNew)
+	ON_COMMAND(IDM_STORES_MAINTAINALL, OnStoresMaintainAll)
+	ON_COMMAND(IDM_STORES_BACKUP, OnStoresBackup)
+	ON_UPDATE_COMMAND_UI_RANGE(IDM_STORES_CREATENEW, IDM_STORES_BACKUP, OnUpdateStoresCommands)
+	ON_COMMAND(IDM_STORE_MAKEDEFAULT, OnStoreMakeDefault)
+	ON_COMMAND(IDM_STORE_MAKEHYBRID, OnStoreMakeHybrid)
+	ON_COMMAND(IDM_STORE_MAINTAIN, OnStoreMaintain)
+	ON_COMMAND(IDM_STORE_DELETE, OnStoreDelete)
+	ON_COMMAND(IDM_STORE_RENAME, OnStoreRename)
+	ON_COMMAND(IDM_STORE_PROPERTIES, OnStoreProperties)
+	ON_UPDATE_COMMAND_UI_RANGE(IDM_STORE_MAKEDEFAULT, IDM_STORE_PROPERTIES, OnUpdateStoreCommands)
 END_MESSAGE_MAP()
 
 BOOL LFChooseStoreDlg::OnInitDialog()
@@ -239,7 +238,7 @@ void LFChooseStoreDlg::OnEndLabelEdit(NMHDR* pNMHDR, LRESULT* pResult)
 		}
 }
 
-void LFChooseStoreDlg::OnNewStore()
+void LFChooseStoreDlg::OnStoresCreateNew()
 {
 	LFStoreDescriptor* s = LFAllocStoreDescriptor();
 
@@ -250,7 +249,7 @@ void LFChooseStoreDlg::OnNewStore()
 	LFFreeStoreDescriptor(s);
 }
 
-void LFChooseStoreDlg::OnMaintainAll()
+void LFChooseStoreDlg::OnStoresMaintainAll()
 {
 	LFMaintenanceList* ml = LFStoreMaintenance();
 	LFErrorBox(ml->m_LastError);
@@ -261,21 +260,31 @@ void LFChooseStoreDlg::OnMaintainAll()
 	LFFreeMaintenanceList(ml);
 }
 
-void LFChooseStoreDlg::OnMakeDefault()
+void LFChooseStoreDlg::OnStoresBackup()
+{
+	LFBackupStores(this);
+}
+
+void LFChooseStoreDlg::OnUpdateStoresCommands(CCmdUI* pCmdUI)
+{
+	pCmdUI->Enable(pCmdUI->m_nID==IDM_STORES_CREATENEW || LFGetStoreCount());
+}
+
+void LFChooseStoreDlg::OnStoreMakeDefault()
 {
 	INT idx = GetSelectedStore();
 	if (idx!=-1)
 		LFErrorBox(LFMakeDefaultStore(p_Result->m_Items[idx]->StoreID, NULL), m_hWnd);
 }
 
-void LFChooseStoreDlg::OnMakeHybrid()
+void LFChooseStoreDlg::OnStoreMakeHybrid()
 {
 	INT idx = GetSelectedStore();
 	if (idx!=-1)
 		LFErrorBox(LFMakeHybridStore(p_Result->m_Items[idx]->StoreID, NULL), m_hWnd);
 }
 
-void LFChooseStoreDlg::OnMaintain()
+void LFChooseStoreDlg::OnStoreMaintain()
 {
 	INT idx = GetSelectedStore();
 	if (idx!=-1)
@@ -290,21 +299,21 @@ void LFChooseStoreDlg::OnMaintain()
 	}
 }
 
-void LFChooseStoreDlg::OnRename()
-{
-	INT idx = GetSelectedStore();
-	if (idx!=-1)
-		m_wndExplorerList.EditLabel(idx);
-}
-
-void LFChooseStoreDlg::OnDelete()
+void LFChooseStoreDlg::OnStoreDelete()
 {
 	INT idx = GetSelectedStore();
 	if (idx!=-1)
 		LFErrorBox(((LFApplication*)AfxGetApp())->DeleteStore(p_Result->m_Items[idx], this));
 }
 
-void LFChooseStoreDlg::OnProperties()
+void LFChooseStoreDlg::OnStoreRename()
+{
+	INT idx = GetSelectedStore();
+	if (idx!=-1)
+		m_wndExplorerList.EditLabel(idx);
+}
+
+void LFChooseStoreDlg::OnStoreProperties()
 {
 	INT idx = GetSelectedStore();
 	if (idx!=-1)
@@ -314,7 +323,7 @@ void LFChooseStoreDlg::OnProperties()
 	}
 }
 
-void LFChooseStoreDlg::OnUpdateCommands(CCmdUI* pCmdUI)
+void LFChooseStoreDlg::OnUpdateStoreCommands(CCmdUI* pCmdUI)
 {
 	BOOL b = FALSE;
 

@@ -108,28 +108,6 @@ BOOL LFAboutDlg::OnInitDialog()
 		ShowCancel = TRUE;
 	}
 
-	// Laufwerke einstellen
-	if (parameters->HideEmptyDrives==-1)
-	{
-		GetDlgItem(IDC_HIDEEMPTYDRIVES)->EnableWindow(FALSE);
-	}
-	else
-	{
-		((CButton*)GetDlgItem(IDC_HIDEEMPTYDRIVES))->SetCheck(parameters->HideEmptyDrives);
-		ShowCancel = TRUE;
-	}
-
-	// Domains einstellen
-	if (parameters->HideEmptyDomains==-1)
-	{
-		GetDlgItem(IDC_HIDEEMPTYDOMAINS)->EnableWindow(FALSE);
-	}
-	else
-	{
-		((CButton*)GetDlgItem(IDC_HIDEEMPTYDOMAINS))->SetCheck(parameters->HideEmptyDomains);
-		ShowCancel = TRUE;
-	}
-
 	// Ggf. "Abbrechen" verschwinden lassen
 	if (!ShowCancel)
 	{
@@ -229,8 +207,5 @@ void LFAboutDlg::DoDataExchange(CDataExchange* pDX)
 			parameters->RibbonColor = Look;
 			::SendNotifyMessage(HWND_BROADCAST, LFGetMessageIDs()->LookChanged, Look, 0);
 		}
-
-		parameters->HideEmptyDrives = ((CButton*)GetDlgItem(IDC_HIDEEMPTYDRIVES))->GetCheck();
-		parameters->HideEmptyDomains = ((CButton*)GetDlgItem(IDC_HIDEEMPTYDOMAINS))->GetCheck();
 	}
 }

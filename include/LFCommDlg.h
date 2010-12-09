@@ -46,3 +46,4 @@ LFCommDlg_API BOOL IsCtrlThemed();
 LFCommDlg_API void DrawControlBorder(CWnd* pWnd);
 
 LFCommDlg_API void LFImportFolder(CHAR* StoreID, CWnd* pParentWnd=NULL);
+LFCommDlg_API void LFBackupStores(CWnd* pParentWnd=NULL);

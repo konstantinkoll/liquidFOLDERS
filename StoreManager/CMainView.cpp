@@ -9,28 +9,6 @@
 #include "CTagcloudView.h"
 
 
-CString MakeHex(BYTE* x, UINT bCount)
-{
-	CString tmpStr;
-	for (UINT a=0; a<bCount; a++)
-	{
-		CString digit;
-		digit.Format(_T("%.2x"), x[a]);
-		tmpStr += digit;
-		if (a<bCount-1)
-			tmpStr += _T(",");
-	}
-	return tmpStr;
-}
-
-void CEscape(CString &s)
-{
-	for (INT a = s.GetLength()-1; a>=0; a--)
-		if ((s[a]==L'\\') || (s[a]==L'\"'))
-			s.Insert(a, L'\\');
-}
-
-
 // CMainView
 //
 
@@ -587,79 +565,7 @@ void CMainView::OnStoresMaintainAll()
 
 void CMainView::OnStoresBackup()
 {
-	CString tmpStr;
-	ENSURE(tmpStr.LoadString(IDS_REGFILEFILTER));
-	tmpStr += _T(" (*.reg)|*.reg||");
-
-	CFileDialog dlg(FALSE, _T(".reg"), NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, tmpStr, this);
-
-	if (dlg.DoModal()==IDOK)
-	{
-		CStdioFile f;
-		if (!f.Open(dlg.GetFileName(), CFile::modeCreate | CFile::modeWrite))
-		{
-			LFErrorBox(LFDriveNotReady, GetSafeHwnd());
-		}
-		else
-		{
-			try
-			{
-				f.WriteString(_T("Windows Registry Editor Version 5.00\n"));
-
-				for (UINT a=0; a<p_Result->m_ItemCount; a++)
-				{
-					LFItemDescriptor* i = p_Result->m_Items[a];
-					if ((i->Type & LFTypeStore) && (i->CategoryID<=LFItemCategoryHybridStores))
-					{
-						LFStoreDescriptor s;
-						if (LFGetStoreSettings(i->StoreID, &s)==LFOk)
-						{
-							// Header
-							tmpStr = _T("\n[HKEY_CURRENT_USER\\Software\\liquidFOLDERS\\Stores\\");
-							tmpStr += s.StoreID;
-							f.WriteString(tmpStr+_T("]\n"));
-
-							// Name
-							tmpStr = s.StoreName;
-							CEscape(tmpStr);
-							f.WriteString(_T("\"Name\"=\"")+tmpStr+_T("\"\n"));
-
-							// Mode
-							tmpStr.Format(_T("\"Mode\"=dword:%.8x\n"), s.StoreMode);
-							f.WriteString(tmpStr);
-
-							// AutoLocation
-							tmpStr.Format(_T("\"AutoLocation\"=dword:%.8x\n"), s.AutoLocation);
-							f.WriteString(tmpStr);
-
-							if (!s.AutoLocation)
-							{
-								// Path
-								tmpStr = s.DatPath;
-								CEscape(tmpStr);
-								f.WriteString(_T("\"Path\"=\"")+tmpStr+_T("\"\n"));
-							}
-
-							// GUID
-							f.WriteString(_T("\"GUID\"=hex:")+MakeHex((BYTE*)&s.guid, sizeof(s.guid))+_T("\n"));
-
-							// CreationTime
-							f.WriteString(_T("\"CreationTime\"=hex:")+MakeHex((BYTE*)&s.CreationTime, sizeof(s.CreationTime))+_T("\n"));
-
-							// FileTime
-							f.WriteString(_T("\"FileTime\"=hex:")+MakeHex((BYTE*)&s.FileTime, sizeof(s.FileTime))+_T("\n"));
-						}
-					}
-				}
-			}
-			catch(CFileException ex)
-			{
-				LFErrorBox(LFDriveNotReady, m_hWnd);
-			}
-
-			f.Close();
-		}
-	}
+	LFBackupStores(this);
 }
 
 void CMainView::OnUpdateStoresCommands(CCmdUI* pCmdUI)

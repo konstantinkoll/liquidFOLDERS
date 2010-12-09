@@ -266,8 +266,6 @@ void CStoreManagerApp::OnAppAbout()
 	p.TextureSize = m_nTextureSize;
 	p.MaxTextureSize = m_nMaxTextureSize;
 	p.RibbonColor = m_nAppLook;
-	p.HideEmptyDrives = m_HideEmptyDrives;
-	p.HideEmptyDomains = m_HideEmptyDomains;
 
 	LFAboutDlg dlg(&p, m_pActiveWnd);
 	if (dlg.DoModal()==IDOK)
@@ -277,20 +275,6 @@ void CStoreManagerApp::OnAppAbout()
 		{
 			m_nTextureSize = p.TextureSize;
 			UpdateViewOptions();
-		}
-
-		// Laufwerke
-		if (p.HideEmptyDrives!=m_HideEmptyDrives)
-		{
-			m_HideEmptyDrives = p.HideEmptyDrives;
-			Reload(LFContextStores);
-		}
-
-		// Domains
-		if (p.HideEmptyDomains!=m_HideEmptyDomains)
-		{
-			m_HideEmptyDomains = p.HideEmptyDomains;
-			Reload(LFContextStoreHome);
 		}
 	}
 

@@ -20,8 +20,6 @@ struct LFAboutDlgParameters
 	INT TextureSize;
 	INT MaxTextureSize;
 	INT RibbonColor;
-	BOOL HideEmptyDrives;
-	BOOL HideEmptyDomains;
 
 	// Von LFCommDlg gesetzt
 	CString version;

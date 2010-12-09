@@ -44,22 +44,24 @@ BOOL CRunCmdApp::InitInstance()
 				OnAppAbout(IDS_ABOUT, IDB_ABOUTICON);
 			if (command==_T("ABOUTEXTENSION"))
 				OnAppAbout(IDS_EXTENSIONABOUT, IDB_EXTENSIONABOUTICON);
+			if (command==_T("BACKUP"))
+				LFBackupStores(CWnd::GetForegroundWindow());
 			if (command==_T("NEWSTORE"))
-				OnStoreCreate();
+				OnStoresCreate();
 			if (command==_T("MAINTAINALL"))
-				OnMaintainAll();
+				OnStoresMaintainAll();
 			if (command==_T("INSTALL"))
 				LFCreateSendTo(true);
 			break;
 		case 3:
 			if (command==_T("NEWSTOREDRIVE"))
-				OnStoreCreateDrive(*__wargv[2] & 0xFF);
+				OnStoresCreateDrive(*__wargv[2] & 0xFF);
 			if (command==_T("DELETESTORE"))
 				OnStoreDelete(__wargv[2]);
 			if (command==_T("IMPORTFOLDER"))
-				OnImportFolder(__wargv[2]);
+				OnStoreImportFolder(__wargv[2]);
 			if (command==_T("MAINTAIN"))
-				OnMaintain(__wargv[2]);
+				OnStoreMaintain(__wargv[2]);
 			if (command==_T("STOREPROPERTIES"))
 				OnStoreProperties(__wargv[2]);
 		}
@@ -77,8 +79,6 @@ void CRunCmdApp::OnAppAbout(UINT ResIDName, UINT ResIDPicture)
 	p.icon->Load(ResIDPicture, _T("PNG"), AfxGetResourceHandle());
 	p.TextureSize = -1;
 	p.RibbonColor = ID_VIEW_APPLOOK_OFF_2007_NONE;
-	p.HideEmptyDrives = -1;
-	p.HideEmptyDomains = -1;
 
 	LFAboutDlg dlg(&p, CWnd::GetForegroundWindow());
 	dlg.DoModal();
@@ -86,7 +86,7 @@ void CRunCmdApp::OnAppAbout(UINT ResIDName, UINT ResIDPicture)
 	delete p.icon;
 }
 
-void CRunCmdApp::OnStoreCreate()
+void CRunCmdApp::OnStoresCreate()
 {
 	LFStoreDescriptor* s = LFAllocStoreDescriptor();
 
@@ -97,7 +97,7 @@ void CRunCmdApp::OnStoreCreate()
 	LFFreeStoreDescriptor(s);
 }
 
-void CRunCmdApp::OnStoreCreateDrive(CHAR Drive)
+void CRunCmdApp::OnStoresCreateDrive(CHAR Drive)
 {
 	LFStoreDescriptor* s = LFAllocStoreDescriptor();
 
@@ -106,6 +106,17 @@ void CRunCmdApp::OnStoreCreateDrive(CHAR Drive)
 		LFErrorBox(LFCreateStore(s, FALSE));
 
 	LFFreeStoreDescriptor(s);
+}
+
+void CRunCmdApp::OnStoresMaintainAll()
+{
+	LFMaintenanceList* ml = LFStoreMaintenance();
+	LFErrorBox(ml->m_LastError);
+
+	LFStoreMaintenanceDlg dlg(ml, CWnd::GetForegroundWindow());
+	dlg.DoModal();
+
+	LFFreeMaintenanceList(ml);
 }
 
 void CRunCmdApp::OnStoreDelete(CString ID)
@@ -123,7 +134,7 @@ void CRunCmdApp::OnStoreDelete(CString ID)
 	LFErrorBox(res);
 }
 
-void CRunCmdApp::OnImportFolder(CString ID)
+void CRunCmdApp::OnStoreImportFolder(CString ID)
 {
 	CHAR StoreID[LFKeySize];
 	wcstombs_s(NULL, StoreID, ID, LFKeySize);
@@ -131,16 +142,7 @@ void CRunCmdApp::OnImportFolder(CString ID)
 	LFImportFolder(StoreID, CWnd::GetForegroundWindow());
 }
 
-void CRunCmdApp::OnStoreProperties(CString ID)
-{
-	CHAR StoreID[LFKeySize];
-	wcstombs_s(NULL, StoreID, ID, LFKeySize);
-
-	LFStorePropertiesDlg dlg(StoreID, CWnd::GetForegroundWindow());
-	dlg.DoModal();
-}
-
-void CRunCmdApp::OnMaintain(CString ID)
+void CRunCmdApp::OnStoreMaintain(CString ID)
 {
 	CHAR StoreID[LFKeySize];
 	wcstombs_s(NULL, StoreID, ID, LFKeySize);
@@ -154,13 +156,11 @@ void CRunCmdApp::OnMaintain(CString ID)
 	LFFreeMaintenanceList(ml);
 }
 
-void CRunCmdApp::OnMaintainAll()
+void CRunCmdApp::OnStoreProperties(CString ID)
 {
-	LFMaintenanceList* ml = LFStoreMaintenance();
-	LFErrorBox(ml->m_LastError);
+	CHAR StoreID[LFKeySize];
+	wcstombs_s(NULL, StoreID, ID, LFKeySize);
 
-	LFStoreMaintenanceDlg dlg(ml, CWnd::GetForegroundWindow());
+	LFStorePropertiesDlg dlg(StoreID, CWnd::GetForegroundWindow());
 	dlg.DoModal();
-
-	LFFreeMaintenanceList(ml);
 }

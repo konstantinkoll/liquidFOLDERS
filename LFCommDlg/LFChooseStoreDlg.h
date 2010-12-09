@@ -44,14 +44,16 @@ protected:
 	afx_msg void OnDoubleClick(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnItemChanged(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnEndLabelEdit(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnNewStore();
-	afx_msg void OnMaintainAll();
-	afx_msg void OnMakeDefault();
-	afx_msg void OnMakeHybrid();
-	afx_msg void OnMaintain();
-	afx_msg void OnRename();
-	afx_msg void OnDelete();
-	afx_msg void OnProperties();
-	afx_msg void OnUpdateCommands(CCmdUI* pCmdUI);
+	afx_msg void OnStoresCreateNew();
+	afx_msg void OnStoresMaintainAll();
+	afx_msg void OnStoresBackup();
+	afx_msg void OnUpdateStoresCommands(CCmdUI* pCmdUI);
+	afx_msg void OnStoreMakeDefault();
+	afx_msg void OnStoreMakeHybrid();
+	afx_msg void OnStoreMaintain();
+	afx_msg void OnStoreDelete();
+	afx_msg void OnStoreRename();
+	afx_msg void OnStoreProperties();
+	afx_msg void OnUpdateStoreCommands(CCmdUI* pCmdUI);
 	DECLARE_MESSAGE_MAP()
 };
