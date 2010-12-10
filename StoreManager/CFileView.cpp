@@ -277,8 +277,15 @@ void CFileView::SetFocusItem(INT FocusItem, BOOL ShiftSelect)
 
 RECT CFileView::GetItemRect(INT idx)
 {
-	RECT rect = GetItemData(idx)->Rect;
-	OffsetRect(&rect, -m_HScrollPos, -m_VScrollPos+m_HeaderHeight);
+	RECT rect = { 0, 0, 0, 0 };
+
+	if (p_Result)
+		if ((idx>=0) && (idx<(INT)p_Result->m_ItemCount))
+		{
+			rect = GetItemData(idx)->Rect;
+			OffsetRect(&rect, -m_HScrollPos, -m_VScrollPos+m_HeaderHeight);
+		}
+
 	return rect;
 }
 
@@ -298,11 +305,12 @@ INT CFileView::ItemAtPosition(CPoint point)
 
 void CFileView::InvalidateItem(INT idx)
 {
-	if ((p_Result) && (idx>=0))
-	{
-		RECT rect = GetItemRect(idx);
-		InvalidateRect(&rect);
-	}
+	if (p_Result)
+		if ((idx>=0) && (idx<(INT)p_Result->m_ItemCount))
+		{
+			RECT rect = GetItemRect(idx);
+			InvalidateRect(&rect);
+		}
 }
 
 CMenu* CFileView::GetBackgroundContextMenu()

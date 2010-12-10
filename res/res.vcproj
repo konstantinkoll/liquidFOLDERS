@@ -608,14 +608,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Ribbon\DisplayOptions_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\DisplayOptions_32.png"
-				>
-			</File>
-			<File
 				RelativePath=".\Ribbon\EditCondition_16.png"
 				>
 			</File>
@@ -808,27 +800,11 @@
 				>
 			</File>
 			<File
-				RelativePath="Ribbon\Housekeeping_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\Housekeeping_32.png"
-				>
-			</File>
-			<File
 				RelativePath="Ribbon\Inspector_16.png"
 				>
 			</File>
 			<File
 				RelativePath=".\Ribbon\Inspector_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\ISBN_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\ISBN_32.png"
 				>
 			</File>
 			<File
@@ -941,6 +917,14 @@
 			</File>
 			<File
 				RelativePath=".\Ribbon\LFAttrHeight_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\LFAttrISBN_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\LFAttrISBN_32.png"
 				>
 			</File>
 			<File
@@ -1088,43 +1072,11 @@
 				>
 			</File>
 			<File
-				RelativePath="Ribbon\PagePreview_16.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\PagePreview_32.png"
-				>
-			</File>
-			<File
 				RelativePath=".\Ribbon\Paste_16.png"
 				>
 			</File>
 			<File
 				RelativePath=".\Ribbon\Paste_32.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\Print_16.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\Print_32.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\PrintDirectly_16.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\PrintDirectly_32.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\PrintOptions_16.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\PrintOptions_32.png"
 				>
 			</File>
 			<File
@@ -1176,22 +1128,6 @@
 				>
 			</File>
 			<File
-				RelativePath="Ribbon\SelectAll_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\SelectAll_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\SelectNone_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\SelectNone_32.png"
-				>
-			</File>
-			<File
 				RelativePath=".\Ribbon\SendFiles_16.png"
 				>
 			</File>
@@ -1232,14 +1168,6 @@
 				>
 			</File>
 			<File
-				RelativePath="Ribbon\StoreBackup_16.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\StoreBackup_32.png"
-				>
-			</File>
-			<File
 				RelativePath="Ribbon\StoreDefault_16.png"
 				>
 			</File>
@@ -1253,14 +1181,6 @@
 			</File>
 			<File
 				RelativePath="Ribbon\StoreDelete_32.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\StoreMakeHybrid_16.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\StoreMakeHybrid_32.png"
 				>
 			</File>
 			<File
@@ -1336,14 +1256,6 @@
 				>
 			</File>
 			<File
-				RelativePath="Ribbon\TrashFull_16.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\TrashFull_32.png"
-				>
-			</File>
-			<File
 				RelativePath=".\Ribbon\TreeExpand_16.png"
 				>
 			</File>
@@ -1381,14 +1293,6 @@
 			</File>
 			<File
 				RelativePath=".\Ribbon\UndeleteFile_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\Unknown_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\Unknown_32.png"
 				>
 			</File>
 			<File

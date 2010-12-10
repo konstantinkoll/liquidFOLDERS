@@ -45,6 +45,11 @@ protected:
 	afx_msg void OnUpdateTaskbar(CCmdUI* pCmdUI);
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 
+	afx_msg void OnStoresCreateNew();
+	afx_msg void OnStoresMaintainAll();
+	afx_msg void OnStoresBackup();
+	afx_msg void OnUpdateStoresCommands(CCmdUI* pCmdUI);
+
 	afx_msg void OnStoreMakeDefault();
 	afx_msg void OnStoreMakeHybrid();
 	afx_msg void OnStoreImportFolder();
@@ -53,11 +58,6 @@ protected:
 	afx_msg void OnStoreDelete();
 	afx_msg void OnStoreProperties();
 	afx_msg void OnUpdateStoreCommands(CCmdUI* pCmdUI);
-
-	afx_msg void OnStoresCreateNew();
-	afx_msg void OnStoresMaintainAll();
-	afx_msg void OnStoresBackup();
-	afx_msg void OnUpdateStoresCommands(CCmdUI* pCmdUI);
 	DECLARE_MESSAGE_MAP()
 
 private:

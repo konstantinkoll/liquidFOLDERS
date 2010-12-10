@@ -825,13 +825,6 @@ void CMainFrame::UpdateSearchResult(BOOL SetEmpty, INT FocusItem)
 {
 	if ((!SetEmpty) && (CookedFiles))
 	{
-		// Im Debug-Modus bleiben alle Kategorien sichtbar
-		#ifndef _DEBUG
-		m_wndRibbonBar.ShowCategory(RibbonCategory_Stores, (CookedFiles->m_Context==LFContextStores) && (ActiveFilter->Result.FilterType==LFFilterTypeStores), TRUE);
-		m_wndRibbonBar.ShowCategory(RibbonCategory_Trash, (CookedFiles->m_Context==LFContextTrash) && (ActiveFilter->Result.FilterType==LFFilterTypeTrash), TRUE);
-		m_wndRibbonBar.ShowCategory(RibbonCategory_UnknownFileFormats, (CookedFiles->m_Context==LFContextHousekeeping) && (ActiveFilter->Result.FilterType==LFFilterTypeUnknownFileFormats), TRUE);
-		#endif
-
 		// ChildView austauschen:
 		// - Wenn ein anderer Kontext mit ggf. anderen Views gewünscht wird
 		// - Wenn im Kontext die Ansicht auf "automatisch" steht
@@ -1450,17 +1443,6 @@ void CMainFrame::InitializeRibbon()
 
 	if (!IsClipboard)
 	{
-		strTemp = "Register";
-		strCtx = "Unknown file formats";
-		CMFCRibbonCategory* pCategoryUnknownFileFormats = m_wndRibbonBar.AddContextCategory(strTemp, strCtx, 5, AFX_CategoryColor_Green, IDB_RIBBONUNKNOWNFILEFORMATS_16, IDB_RIBBONUNKNOWNFILEFORMATS_32);
-
-			CMFCRibbonPanel* pPanelRegister = pCategoryUnknownFileFormats->AddPanel(strTemp, m_PanelImages.ExtractIcon(15));
-			pPanelRegister->EnableLaunchButton(ID_UNKNOWN_EDITDB, 2);
-
-			pPanelRegister->Add(theApp.CommandButton(ID_UNKNOWN_REGISTER, 0, 0));
-				pPanelRegister->AddSeparator();
-				pPanelRegister->Add(theApp.CommandButton(ID_UNKNOWN_SENDDB, 1, 1));
-
 		strCtx = "View";
 		strTemp = "Calendar";
 		CMFCRibbonCategory* pCategoryCalendar = m_wndRibbonBar.AddContextCategory(strTemp, strCtx, 2, AFX_CategoryColor_Indigo, IDB_RIBBONCALENDAR_16, IDB_RIBBONCALENDAR_32);
@@ -1540,48 +1522,6 @@ void CMainFrame::InitializeRibbon()
 
 		strTemp = "Timeline";
 		CMFCRibbonCategory* pCategoryTimeline = m_wndRibbonBar.AddContextCategory(strTemp, strCtx, 2, AFX_CategoryColor_Indigo, IDB_RIBBONVIEW_16, IDB_RIBBONVIEW_32);
-
-		strCtx = "Stores";
-		strTemp = "Manage";
-		CMFCRibbonCategory* pCategoryStores = m_wndRibbonBar.AddContextCategory(strTemp, strCtx, 7, AFX_CategoryColor_Yellow, IDB_RIBBONSTORES_16, IDB_RIBBONSTORES_32);
-
-			strTemp = "Stores";
-			CMFCRibbonPanel* pPanelStoresStores = pCategoryStores->AddPanel(strTemp, m_PanelImages.ExtractIcon(11));
-
-				strTemp = "Create";
-				pPanelStoresStores->Add(theApp.CommandButton(IDM_STORES_CREATENEW, 0, 0));
-				pPanelStoresStores->Add(theApp.CommandButton(IDM_STORE_DELETE, 4, 4));
-				pPanelStoresStores->Add(theApp.CommandButton(IDM_STORE_RENAME, 5, 5));
-				pPanelStoresStores->AddSeparator();
-				pPanelStoresStores->Add(theApp.CommandButton(IDM_STORE_MAKEDEFAULT, 6, 6));
-				pPanelStoresStores->Add(theApp.CommandButton(IDM_STORE_MAKEHYBRID, 7, 7));
-
-			strTemp = "Import files";
-			CMFCRibbonPanel* pPanelStoresImport = pCategoryStores->AddPanel(strTemp, m_PanelImages.ExtractIcon(8));
-
-				pPanelStoresImport->Add(theApp.CommandButton(IDM_STORE_IMPORTFOLDER, 8, 8));
-				pPanelStoresImport->AddSeparator();
-				pPanelStoresImport->Add(theApp.CommandButton(ID_APP_NEWMIGRATE, 9, 9, FALSE, TRUE));
-				pPanelStoresImport->Add(theApp.CommandButton(ID_APP_NEWFILEDROP, 10, 10));
-
-			strTemp = "Housekeeping";
-			CMFCRibbonPanel* pPanelStoresHousekeeping = pCategoryStores->AddPanel(strTemp, m_PanelImages.ExtractIcon(12));
-
-				pPanelStoresHousekeeping->Add(theApp.CommandButton(IDM_STORE_PROPERTIES, 11, 11));
-				pPanelStoresHousekeeping->AddSeparator();
-				pPanelStoresHousekeeping->Add(theApp.CommandButton(IDM_STORES_MAINTAINALL, 12, 12));
-				pPanelStoresHousekeeping->Add(theApp.CommandButton(IDM_STORES_BACKUP, 13, 13));
-
-		strTemp = "Deleted files";
-		strCtx = "Trash";
-		CMFCRibbonCategory* pCategoryTrash = m_wndRibbonBar.AddContextCategory(strTemp, strCtx, 4, AFX_CategoryColor_Red, IDB_RIBBONTRASH_16, IDB_RIBBONTRASH_32);
-
-			CMFCRibbonPanel* pPanelDeletedFiles = pCategoryTrash->AddPanel(strTemp, m_PanelImages.ExtractIcon(14));
-
-				pPanelDeletedFiles->Add(theApp.CommandButton(ID_TRASH_EMPTY, 0, 0));
-				pPanelDeletedFiles->AddSeparator();
-				pPanelDeletedFiles->Add(theApp.CommandButton(ID_TRASH_RESTORESELECTED, 1, 1));
-				pPanelDeletedFiles->Add(theApp.CommandButton(ID_TRASH_RESTOREALL, 2, 2));
 	}
 
 	m_wndRibbonBar.SetActiveCategory(m_wndRibbonBar.GetCategory(RibbonDefaultCategory));
@@ -1602,9 +1542,6 @@ void CMainFrame::InitializeRibbon()
 	m_wndRibbonBar.ShowCategory(RibbonCategory_View_Globe);
 	m_wndRibbonBar.ShowCategory(RibbonCategory_View_Tagcloud);
 	m_wndRibbonBar.ShowCategory(RibbonCategory_View_Timeline);
-	m_wndRibbonBar.ShowCategory(RibbonCategory_Stores);
-	m_wndRibbonBar.ShowCategory(RibbonCategory_Trash);
-	m_wndRibbonBar.ShowCategory(RibbonCategory_UnknownFileFormats);
 	#endif
 
 	// Symbolleistenbefehle für Schnellzugriff hinzufügen

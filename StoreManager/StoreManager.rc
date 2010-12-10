@@ -71,21 +71,16 @@ IDB_RIBBONVIEW_16       BITMAP                  "res\\Ribbon_View_16.bmp"
 IDB_RIBBONVIEW_32       BITMAP                  "res\\Ribbon_View_32.bmp"
 IDB_RIBBONITEMS_16      BITMAP                  "res\\Ribbon_Items_16.bmp"
 IDB_RIBBONITEMS_32      BITMAP                  "res\\Ribbon_Items_32.bmp"
-IDB_RIBBONSTORES_16     BITMAP                  "res\\Ribbon_Stores_16.bmp"
-IDB_RIBBONSTORES_32     BITMAP                  "res\\Ribbon_Stores_32.bmp"
 IDB_RIBBONCALENDAR_32   BITMAP                  "res\\Ribbon_Calendar_32.bmp"
 IDB_RIBBONCALENDAR_16   BITMAP                  "res\\Ribbon_Calendar_16.bmp"
 IDB_RIBBONGLOBE_32      BITMAP                  "res\\Ribbon_Globe_32.bmp"
 IDB_RIBBONGLOBE_16      BITMAP                  "res\\Ribbon_Globe_16.bmp"
-IDB_RIBBONTRASH_32      BITMAP                  "res\\Ribbon_Trash_32.bmp"
-IDB_RIBBONTRASH_16      BITMAP                  "res\\Ribbon_Trash_16.bmp"
 IDB_RIBBONTAGCLOUD_32   BITMAP                  "res\\Ribbon_Tagcloud_32.bmp"
 IDB_RIBBONTAGCLOUD_16   BITMAP                  "res\\Ribbon_Tagcloud_16.bmp"
-IDB_RIBBONUNKNOWNFILEFORMATS_32 BITMAP                  "res\\Ribbon_UnknownFileFormats_32.bmp"
-IDB_RIBBONUNKNOWNFILEFORMATS_16 BITMAP                  "res\\Ribbon_UnknownFileFormats_16.bmp"
 ID_PANE_HISTORYWND      BITMAP                  "res\\Toolbar_History.bmp"
 ID_PANE_INSPECTORWND    BITMAP                  "res\\Toolbar_Inspector.bmp"
 ID_PANE_FILTERWND       BITMAP                  "res\\Toolbar_Filter.bmp"
+IDB_TASKS               BITMAP                  "res\\Tasks.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -357,8 +352,6 @@ BEGIN
     END
 END
 
-
-
 IDM_VIRTUAL_EMPTY MENU 
 BEGIN
     POPUP "POPUP"
@@ -411,7 +404,7 @@ BEGIN
         MENUITEM "Open &with...",               ID_ITEMS_OPENWITH
         MENUITEM SEPARATOR
         MENUITEM "&Delete",                     ID_ITEMS_DELETE
-        MENUITEM "Re&store",                    ID_TRASH_RESTORESELECTED
+        MENUITEM "Re&store",                    IDM_TRASH_RESTORESELECTED
     END
 END
 
@@ -595,16 +588,16 @@ BEGIN
     IDS_TYPE_DRIVE_SINGULAR "%d removable drive"
     IDS_TYPE_DRIVE_PLURAL   "%d removable drives"
     IDS_TYPE_STORE_SINGULAR "%d store"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_TYPE_STORE_PLURAL   "%d stores"
     IDS_TYPE_FILE_SINGULAR  "%d file"
     IDS_TYPE_FILE_PLURAL    "%d files"
     IDS_TYPE_VIRTUAL_SINGULAR "%d virtual folder"
     IDS_TYPE_VIRTUAL_PLURAL "%d virtual folders"
     IDS_REQUIRESMAINTENANCE "This store requires scheduled maintenance."
+END
+
+STRINGTABLE 
+BEGIN
     IDS_YOULOOKAT           "You look at %s"
     IDS_NOTHINGTODISPLAY    "There is nothing to display."
 END
@@ -779,31 +772,36 @@ END
 
 STRINGTABLE 
 BEGIN
-    ID_TRASH_EMPTY          "Permanently deletes all files from the trash.\nEmpty trash"
-    ID_TRASH_RESTORESELECTED "Restores the selected files.\nRestore selected"
+    IDM_TRASH_RESTOREALL    "Restores all files from the trash.\nRestore all"
+    IDM_TRASH_EMPTY         "Permanently deletes all files from the trash.\nEmpty trash"
+    IDM_TRASH_RESTORESELECTED "Restores the selected files.\nRestore"
 END
 
 STRINGTABLE 
 BEGIN
-    ID_TRASH_RESTOREALL     "Restores all files.\nRestore all"
-    ID_UNKNOWN_REGISTER     "Registers unknown file formats to make them appear in a regular domain.\nRegister formats"
-    ID_UNKNOWN_SENDDB       "Sends a list of user-registered file formats to customer support. This allows us to include them in future releases of our software.\nSend registred formats to customer support"
-    ID_UNKNOWN_EDITDB       "Allows you to edit all user-registered file formats.\nEdit registered formats"
+    IDM_HOUSEKEEPING_REGISTER 
+                            "Registers unknown file formats to make them appear in a regular domain.\nRegister formats"
+    IDM_HOUSEKEEPING_SEND   "Sends a list of user-registered file formats to customer support. This allows us to include them in future releases of our software.\nSend registred formats to customer support"
 END
 
 STRINGTABLE 
 BEGIN
-    IDM_DRIVE_CREATENEWSTORE "Creates a new external or hybrid store on the selected drive.\nExternal/hybrid store"
+    IDM_STORE_MAKEDEFAULT   "Makes the selected store the default store.\nMake default store"
+    IDM_STORE_IMPORTFOLDER  "Imports a folder and all its subfolders into the selected store.\nImport folder"
+    IDM_STORE_RENAME        "Renames the selected store.\nRename"
     IDM_STORE_DELETE        "Deletes the selected store.\nDelete"
-    IDM_STORE_RENAME        "Renames the selected store.\nRename (F2)"
-    IDM_STORE_MAKEDEFAULT   "Makes the selected internal store the default store.\nMake default"
-    IDM_STORE_MAKEHYBRID    "Converts the selected store into a hybrid store. This allows you to search the store, even when it is not mounted.\nMake hybrid"
-    IDM_STORE_IMPORTFOLDER  "Copies files from a folder and all its subfolders into the selected store. For more sophisticated options, please open the Migration Wizard. Contrary to desktop search engines, files get physically copied into the store—and not just indexed.\nImport folder"
-    IDM_STORE_PROPERTIES    "Shows the properties of the selected store.\nProperties"
-    IDM_STORE_MAINTAIN      "Runs scheduled maintenance on all stores.\nRun maintenance"
-    IDM_STORES_CREATENEW    "Creates a new store.\nCreate new store"
-    IDM_STORES_MAINTAINALL  "Runs scheduled maintenance on all stores.\nRun maintenance"
-    IDM_STORES_BACKUP       "Saves important settings from the registry (including store properties and file format assignments) to a .reg file.\nBackup settings"
+    IDM_STORE_PROPERTIES    "Displays the properties of the selected store.\nProperties"
+    IDM_STORES_CREATENEW    "Creates a new store for your files.\nCreate new store"
+    IDM_STORES_MAINTAINALL  "Executes maintenance work on all stores.\nRun maintenance"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_HOME_IMPORTFOLDER   "Imports a folder and all its subfolders into this selected store.\nImport folder"
+END
+
+STRINGTABLE 
+BEGIN
     IDM_STORES_HIDEEMPTYDRIVES "&Hide unmounted drives"
 END
 

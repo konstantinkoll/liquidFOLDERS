@@ -18,13 +18,10 @@
 #define RibbonCategory_Home                 0
 #define RibbonCategory_View                 1
 #define RibbonCategory_Items                2
-#define RibbonCategory_UnknownFileFormats   3
-#define RibbonCategory_View_Calendar        4
-#define RibbonCategory_View_Globe           5
-#define RibbonCategory_View_Tagcloud        6
-#define RibbonCategory_View_Timeline        7
-#define RibbonCategory_Stores               8
-#define RibbonCategory_Trash                9
+#define RibbonCategory_View_Calendar        3
+#define RibbonCategory_View_Globe           4
+#define RibbonCategory_View_Tagcloud        5
+#define RibbonCategory_View_Timeline        6
 
 #define RibbonDefaultCategory               RibbonCategory_View
 

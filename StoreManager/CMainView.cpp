@@ -259,21 +259,28 @@ INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 
 	// Task bar
-	if (!m_wndTaskbar.Create(this, 0, 1))
+	if (!m_wndTaskbar.Create(this, IDB_TASKS, 1))
 		return -1;
 
-/*	m_wndTaskbar.AddButton(ID_VIEW_SELECTROOT_TASKBAR, 0);
-	m_wndTaskbar.AddButton(ID_VIEW_EXPAND, 1);
-	m_wndTaskbar.AddButton(ID_VIEW_OPEN, 2, TRUE);
-	m_wndTaskbar.AddButton(ID_VIEW_RENAME, 3);
-	m_wndTaskbar.AddButton(ID_VIEW_DELETE, 4);
-	m_wndTaskbar.AddButton(ID_VIEW_PROPERTIES, 5);
-	m_wndTaskbar.AddButton(ID_APP_NEWSTOREMANAGER, 6, TRUE);
+	m_wndTaskbar.AddButton(IDM_STORES_CREATENEW, 1);
+	m_wndTaskbar.AddButton(IDM_STORES_MAINTAINALL, 2);
+	m_wndTaskbar.AddButton(IDM_STORE_DELETE, 3);
+	m_wndTaskbar.AddButton(IDM_STORE_RENAME, 4);
+	m_wndTaskbar.AddButton(IDM_STORE_PROPERTIES, 5);
+	m_wndTaskbar.AddButton(IDM_STORE_MAKEDEFAULT, 6);
+	m_wndTaskbar.AddButton(IDM_STORE_IMPORTFOLDER, 7);
+	m_wndTaskbar.AddButton(IDM_HOME_IMPORTFOLDER, 7);
+	m_wndTaskbar.AddButton(IDM_HOUSEKEEPING_REGISTER, 8);
+	m_wndTaskbar.AddButton(IDM_HOUSEKEEPING_SEND, 28);
+	m_wndTaskbar.AddButton(IDM_TRASH_RESTOREALL, 9);
+	m_wndTaskbar.AddButton(IDM_TRASH_EMPTY, 10);
+	m_wndTaskbar.AddButton(IDM_TRASH_RESTORESELECTED, 11);
+	m_wndTaskbar.AddButton(ID_APP_NEWFILEDROP, 25, TRUE);
 
-	m_wndTaskbar.AddButton(ID_APP_PURCHASE, 7, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_ENTERLICENSEKEY, 8, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_SUPPORT, 9, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_ABOUT, 10, TRUE, TRUE);*/
+	m_wndTaskbar.AddButton(ID_APP_PURCHASE, 26, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_ENTERLICENSEKEY, 27, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_SUPPORT, 28, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_ABOUT, 29, TRUE, TRUE);
 
 	// Explorer header
 	if (!m_wndExplorerHeader.Create(this, 2))
@@ -345,6 +352,47 @@ void CMainView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 		pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, GetOwner(), NULL);
 		delete pMenu;
 	}
+}
+
+
+// Stores
+//
+
+void CMainView::OnStoresCreateNew()
+{
+	LFStoreDescriptor* s = LFAllocStoreDescriptor();
+
+	LFStoreNewDlg dlg(this, s);
+	if (dlg.DoModal()==IDOK)
+		LFErrorBox(LFCreateStore(s, dlg.MakeDefault));
+
+	LFFreeStoreDescriptor(s);
+}
+
+void CMainView::OnStoresMaintainAll()
+{
+	LFMaintenanceList* ml = LFStoreMaintenance();
+	LFErrorBox(ml->m_LastError);
+
+	LFStoreMaintenanceDlg dlg(ml, this);
+	dlg.DoModal();
+
+	LFFreeMaintenanceList(ml);
+}
+
+void CMainView::OnStoresBackup()
+{
+	LFBackupStores(this);
+}
+
+void CMainView::OnUpdateStoresCommands(CCmdUI* pCmdUI)
+{
+	BOOL b = (p_Result) && (m_Context==LFContextStores);
+	
+	if (pCmdUI->m_nID!=IDM_STORES_CREATENEW)
+		b &= (LFGetStoreCount()>0);
+
+	pCmdUI->Enable(b);
 }
 
 
@@ -556,40 +604,4 @@ void CMainView::OnUpdateStoreCommands(CCmdUI* pCmdUI)
 	}
 
 	pCmdUI->Enable(b);
-}
-
-
-// Stores
-//
-
-void CMainView::OnStoresCreateNew()
-{
-	LFStoreDescriptor* s = LFAllocStoreDescriptor();
-
-	LFStoreNewDlg dlg(this, s);
-	if (dlg.DoModal()==IDOK)
-		LFErrorBox(LFCreateStore(s, dlg.MakeDefault));
-
-	LFFreeStoreDescriptor(s);
-}
-
-void CMainView::OnStoresMaintainAll()
-{
-	LFMaintenanceList* ml = LFStoreMaintenance();
-	LFErrorBox(ml->m_LastError);
-
-	LFStoreMaintenanceDlg dlg(ml, this);
-	dlg.DoModal();
-
-	LFFreeMaintenanceList(ml);
-}
-
-void CMainView::OnStoresBackup()
-{
-	LFBackupStores(this);
-}
-
-void CMainView::OnUpdateStoresCommands(CCmdUI* pCmdUI)
-{
-	pCmdUI->Enable(pCmdUI->m_nID==IDM_STORES_CREATENEW || LFGetStoreCount());
 }

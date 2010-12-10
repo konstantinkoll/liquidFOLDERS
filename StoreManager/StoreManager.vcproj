@@ -722,35 +722,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\Ribbon_Stores_16.bmp"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Ribbon_Stores_32.bmp"
-				>
-			</File>
-			<File
 				RelativePath=".\res\Ribbon_Tagcloud_16.bmp"
 				>
 			</File>
 			<File
 				RelativePath=".\res\Ribbon_Tagcloud_32.bmp"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Ribbon_Trash_16.bmp"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Ribbon_Trash_32.bmp"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Ribbon_UnknownFileFormats_16.bmp"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Ribbon_UnknownFileFormats_32.bmp"
 				>
 			</File>
 			<File
@@ -779,6 +755,10 @@
 			</File>
 			<File
 				RelativePath=".\res\Table_Tiny.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Tasks.bmp"
 				>
 			</File>
 			<File
