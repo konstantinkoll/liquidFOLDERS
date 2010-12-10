@@ -316,6 +316,39 @@ LANGUAGE LANG_ENGLISH, SUBLANG_NEUTRAL
 // Menu
 //
 
+IDM_HOME MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "&Hide empty folders",         IDM_HOME_HIDEEMPTY
+        MENUITEM SEPARATOR
+        MENUITEM "&Import folder...",           IDM_HOME_IMPORTFOLDER
+        MENUITEM "Run &maintenance",            IDM_HOME_MAINTAIN
+        MENUITEM SEPARATOR
+        MENUITEM "&Properties",                 IDM_HOME_PROPERTIES
+    END
+END
+
+IDM_HOUSEKEEPING MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM SEPARATOR
+        MENUITEM "Re&gister unknown file formats", IDM_HOUSEKEEPING_REGISTER
+        MENUITEM "&Send information",           IDM_HOUSEKEEPING_SEND
+    END
+END
+
+IDM_TRASH MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM SEPARATOR
+        MENUITEM "&Restore all",                IDM_TRASH_RESTOREALL
+        MENUITEM "&Empty trash",                IDM_TRASH_EMPTY
+    END
+END
+
 IDM_DRIVE MENU 
 BEGIN
     POPUP "POPUP"
@@ -323,6 +356,8 @@ BEGIN
         MENUITEM "Create &new store...",        IDM_DRIVE_CREATENEWSTORE
     END
 END
+
+
 
 IDM_VIRTUAL_EMPTY MENU 
 BEGIN
@@ -541,10 +576,9 @@ STRINGTABLE
 BEGIN
     IDS_VIEWGROUP1          "Basic views"
     IDS_VIEWGROUP2          "Enhanced views"
-    IDS_CONTEXTMENU_SORTOPTIONS "&Arrange by..."
+    IDS_CONTEXTMENU_SORTOPTIONS "&Arrange ""%s"" by..."
     IDS_CONTEXTMENU_AUTODIRS "&Group into subfolders"
-    IDS_CONTEXTMENU_VIEWOPTIONS "&Display as..."
-    IDS_CONTEXTMENU_STORE_NEW "Create &new store..."
+    IDS_CONTEXTMENU_VIEWOPTIONS "&Display ""%s"" as..."
     IDS_CONTEXTMENU_TRASH_RESTOREALL "Restore &all"
     IDS_CONTEXTMENU_UNKNOWN_REGISTER "Re&gister formats..."
 END
@@ -770,6 +804,7 @@ BEGIN
     IDM_STORES_CREATENEW    "Creates a new store.\nCreate new store"
     IDM_STORES_MAINTAINALL  "Runs scheduled maintenance on all stores.\nRun maintenance"
     IDM_STORES_BACKUP       "Saves important settings from the registry (including store properties and file format assignments) to a .reg file.\nBackup settings"
+    IDM_STORES_HIDEEMPTYDRIVES "&Hide unmounted drives"
 END
 
 STRINGTABLE 

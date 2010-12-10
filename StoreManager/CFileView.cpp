@@ -298,7 +298,7 @@ INT CFileView::ItemAtPosition(CPoint point)
 
 void CFileView::InvalidateItem(INT idx)
 {
-	if (idx>=0)
+	if ((p_Result) && (idx>=0))
 	{
 		RECT rect = GetItemRect(idx);
 		InvalidateRect(&rect);
@@ -314,6 +314,15 @@ CMenu* CFileView::GetBackgroundContextMenu()
 	case LFContextStores:
 		pMenu->LoadMenu(IDM_STORES);
 		break;
+	case LFContextStoreHome:
+		pMenu->LoadMenu(IDM_HOME);
+		break;
+	case LFContextHousekeeping:
+		pMenu->LoadMenu(IDM_HOUSEKEEPING);
+		break;
+	case LFContextTrash:
+		pMenu->LoadMenu(IDM_TRASH);
+		break;
 	default:
 		pMenu->CreatePopupMenu();
 		pMenu->AppendMenu(MF_POPUP, (UINT_PTR)CreateMenu(), _T("POPUP"));
@@ -325,32 +334,27 @@ CMenu* CFileView::GetBackgroundContextMenu()
 CMenu* CFileView::GetItemContextMenu(INT idx)
 {
 	UINT nID = 0;
-	UINT cmdDefault = 0;
 	LFItemDescriptor* f = p_Result->m_Items[idx];
 
 	switch (f->Type & LFTypeMask)
 	{
 	case LFTypeVirtual:
 		nID = ((f->FirstAggregate!=-1) && (f->LastAggregate!=-1)) ? IDM_VIRTUAL_GROUP : IDM_VIRTUAL_EMPTY;
-		cmdDefault = ID_ITEMS_OPEN;
 		break;
 	case LFTypeDrive:
 		nID = IDM_DRIVE;
-		cmdDefault = IDM_DRIVE_CREATENEWSTORE;
 		break;
 	case LFTypeStore:
 		nID = IDM_STORE;
-		cmdDefault = ID_ITEMS_OPEN;
 		break;
 	case LFTypeFile:
 		nID = (m_Context==LFContextTrash) ? IDM_FILE_TRASH : IDM_FILE;
-		cmdDefault = ID_ITEMS_OPEN;
 		break;
 	}
 
 	CMenu* pMenu = new CMenu();
 	pMenu->LoadMenu(nID);
-	pMenu->GetSubMenu(0)->SetDefaultItem(cmdDefault);
+	pMenu->GetSubMenu(0)->SetDefaultItem(0, TRUE);
 	return pMenu;
 }
 

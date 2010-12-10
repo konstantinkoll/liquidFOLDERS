@@ -34,15 +34,6 @@
 #define IDB_RIBBONUNKNOWNFILEFORMATS_32 157
 #define IDB_INSPECTOR                   158
 #define IDB_MULTIPLE                    159
-#define IDM_DRIVE                       200
-#define IDM_VIRTUAL_EMPTY               201
-#define IDM_VIRTUAL_GROUP               202
-#define IDM_VIRTUAL_GLOBE               203
-#define IDM_FILE                        204
-#define IDM_FILE_TRASH                  205
-#define IDM_GLOBE                       206
-#define IDM_TAGCLOUD                    207
-#define IDM_HISTORY                     208
 #define ID_APP_NEWVIEW                  250
 #define ID_APP_NEWCLIPBOARD             251
 #define ID_APP_CLOSE                    252
@@ -129,7 +120,6 @@
 #define ID_SORT_RECORDINGTIME           743
 #define ID_SORT_DUETIME                 749
 #define ID_SORT_DONETIME                750
-#define IDM_DRIVE_CREATENEWSTORE        800
 #define ID_DROP_NAME                    820
 #define ID_DROP_TIME                    821
 #define ID_DROP_LOCATION                822
@@ -171,7 +161,6 @@
 #define IDS_CONTEXTMENU_SORTOPTIONS     1002
 #define IDS_CONTEXTMENU_AUTODIRS        1003
 #define IDS_CONTEXTMENU_VIEWOPTIONS     1004
-#define IDS_CONTEXTMENU_STORE_NEW       1005
 #define IDS_CONTEXTMENU_TRASH_RESTOREALL 1006
 #define IDS_CONTEXTMENU_UNKNOWN_REGISTER 1007
 #define IDS_FILES_SINGULAR              1008
@@ -223,7 +212,30 @@
 #define IDC_ATTRBOX                     2108
 #define IDS_GROUPBOX_SORT               2109
 #define IDS_GROUPBOX_GROUP              2110
+#define IDM_STORES_HIDEEMPTYDRIVES      3000
+#define IDM_HOME                        3100
+#define IDM_HOME_HIDEEMPTY              3101
+#define IDM_HOME_IMPORTFOLDER           3102
+#define IDM_HOME_MAINTAIN               3103
+#define IDM_HOME_PROPERTIES             3104
+#define IDM_HOUSEKEEPING                3200
+#define IDM_HOUSEKEEPING_REGISTER       3201
+#define IDM_HOUSEKEEPING_SEND           3202
+#define IDM_TRASH                       3300
+#define IDM_TRASH_RESTOREALL            3301
+#define IDM_TRASH_EMPTY                 3302
+#define IDM_DRIVE                       3400
+#define IDM_DRIVE_CREATENEWSTORE        3401
 #define ID_TOGGLE_ATTRIBUTE             50000
+
+#define IDM_VIRTUAL_EMPTY               201
+#define IDM_VIRTUAL_GROUP               202
+#define IDM_VIRTUAL_GLOBE               203
+#define IDM_FILE                        204
+#define IDM_FILE_TRASH                  205
+#define IDM_GLOBE                       206
+#define IDM_TAGCLOUD                    207
+#define IDM_HISTORY                     208
 
 // Next default values for new objects
 // 

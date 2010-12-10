@@ -32,7 +32,7 @@ protected:
 	CTaskbar m_wndTaskbar;
 	CExplorerHeader m_wndExplorerHeader;
 	LFSearchResult* p_Result;
-	INT m_ContextID;
+	INT m_Context;
 	INT m_ViewID;
 	BOOL m_ShowHeader;
 

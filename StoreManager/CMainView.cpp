@@ -16,7 +16,7 @@ CMainView::CMainView()
 {
 	p_wndFileView = NULL;
 	p_Result = NULL;
-	m_ContextID = m_ViewID = -1;
+	m_Context = m_ViewID = -1;
 	m_ShowHeader = FALSE;
 }
 
@@ -131,7 +131,7 @@ BOOL CMainView::CreateFileView(UINT ViewID, INT FocusItem)
 
 void CMainView::UpdateViewOptions(INT Context)
 {
-	if (((Context==m_ContextID) || (Context==-1)) && (p_wndFileView))
+	if (((Context==m_Context) || (Context==-1)) && (p_wndFileView))
 		if (!CreateFileView(theApp.m_Views[Context].Mode, GetFocusItem()))
 			p_wndFileView->UpdateViewOptions(Context);
 }
@@ -152,7 +152,7 @@ void CMainView::UpdateSearchResult(LFSearchResult* Result, INT FocusItem)
 	else
 	{
 		// Context
-		m_ContextID = Result->m_Context;
+		m_Context = Result->m_Context;
 
 		// Header
 		BOOL ShowHeader = m_ShowHeader;
@@ -160,7 +160,7 @@ void CMainView::UpdateSearchResult(LFSearchResult* Result, INT FocusItem)
 		CString Mask;
 		WCHAR tmpBuf[256];
 
-		switch (m_ContextID)
+		switch (m_Context)
 		{
 		case LFContextStores:
 			ENSURE(Mask.LoadString(Result->m_ItemCount==1 ? IDS_STORES_SINGULAR : IDS_STORES_PLURAL));
@@ -184,14 +184,14 @@ void CMainView::UpdateSearchResult(LFSearchResult* Result, INT FocusItem)
 
 		if (m_ShowHeader)
 		{
-			m_wndExplorerHeader.SetColors(m_ContextID<=LFContextClipboard ? 0x126E00 : 0x993300, (COLORREF)-1, FALSE);
+			m_wndExplorerHeader.SetColors(m_Context<=LFContextClipboard ? 0x126E00 : 0x993300, (COLORREF)-1, FALSE);
 			m_wndExplorerHeader.SetText(Result->m_Name, Hint);
 		}
 
 		// View
 		if (!CreateFileView(theApp.m_Views[p_Result->m_Context].Mode, FocusItem))
 		{
-			p_wndFileView->UpdateViewOptions(m_ContextID);
+			p_wndFileView->UpdateViewOptions(m_Context);
 			p_wndFileView->UpdateSearchResult(Result, FocusItem);
 
 			if (ShowHeader!=m_ShowHeader)
@@ -205,9 +205,7 @@ void CMainView::AdjustLayout()
 	CRect rect;
 	GetClientRect(rect);
 
-	// TODO
-	//const UINT TaskHeight = m_wndTaskbar.GetPreferredHeight();
-	const UINT TaskHeight = 0;
+	const UINT TaskHeight = m_wndTaskbar.GetPreferredHeight();
 	m_wndTaskbar.SetWindowPos(NULL, rect.left, rect.top, rect.Width(), TaskHeight, SWP_NOACTIVATE | SWP_NOZORDER);
 
 	const UINT ExplorerHeight = m_ShowHeader ? m_wndExplorerHeader.GetPreferredHeight() : 0;
@@ -240,9 +238,6 @@ BEGIN_MESSAGE_MAP(CMainView, CWnd)
 	ON_WM_SETFOCUS()
 	ON_WM_CONTEXTMENU()
 
-/*	ON_COMMAND(ID_STORE_NEW, OnStoreNew)
-	ON_COMMAND(ID_STORE_NEWINTERNAL, OnStoreNewInternal)
-	ON_COMMAND(ID_STORE_NEWDRIVE, OnStoreNewDrive)*/
 	ON_COMMAND(IDM_STORE_MAKEDEFAULT, OnStoreMakeDefault)
 	ON_COMMAND(IDM_STORE_MAKEHYBRID, OnStoreMakeHybrid)
 	ON_COMMAND(IDM_STORE_IMPORTFOLDER, OnStoreImportFolder)
@@ -320,6 +315,32 @@ void CMainView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 	{
 		CMenu* pPopup = pMenu->GetSubMenu(0);
 		ASSERT_VALID(pPopup);
+
+		CString tmpStr;
+		if (m_Context==LFContextStores)
+		{
+			pPopup->InsertMenu(0, MF_SEPARATOR | MF_BYPOSITION);
+
+			ENSURE(tmpStr.LoadString(IDM_STORES_HIDEEMPTYDRIVES));
+			pPopup->InsertMenu(0, MF_STRING | MF_BYPOSITION, IDM_STORES_HIDEEMPTYDRIVES, tmpStr);
+		}
+
+		CString mask;
+		ENSURE(mask.LoadString(IDS_CONTEXTMENU_VIEWOPTIONS));
+		tmpStr.Format(mask, theApp.m_Contexts[m_Context]->Name);
+		pPopup->InsertMenu(0, MF_STRING | MF_BYPOSITION, ID_APP_VIEWOPTIONS, tmpStr);
+
+		pPopup->InsertMenu(0, MF_SEPARATOR | MF_BYPOSITION);
+
+		if (theApp.m_Contexts[m_Context]->AllowGroups)
+		{
+			ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_AUTODIRS));
+			pPopup->InsertMenu(0, MF_STRING | MF_BYPOSITION, ID_VIEW_AUTODIRS, tmpStr);
+		}
+
+		ENSURE(mask.LoadString(IDS_CONTEXTMENU_SORTOPTIONS));
+		tmpStr.Format(mask, theApp.m_Contexts[m_Context]->Name);
+		pPopup->InsertMenu(0, MF_STRING | MF_BYPOSITION, ID_APP_SORTOPTIONS, tmpStr);
 
 		pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, GetOwner(), NULL);
 		delete pMenu;
