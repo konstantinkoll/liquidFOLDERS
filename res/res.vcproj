@@ -712,35 +712,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Ribbon\FolderError_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\FolderError_32.png"
-				>
-			</File>
-			<File
 				RelativePath=".\Ribbon\FolderProperties_16.png"
 				>
 			</File>
 			<File
 				RelativePath=".\Ribbon\FolderProperties_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\FolderUnknown_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\FolderUnknown_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\FolderWarning_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\FolderWarning_32.png"
 				>
 			</File>
 			<File
