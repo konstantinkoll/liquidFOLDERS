@@ -50,6 +50,15 @@ protected:
 	afx_msg void OnStoresBackup();
 	afx_msg void OnUpdateStoresCommands(CCmdUI* pCmdUI);
 
+	afx_msg void OnHomeImportFolder();
+	afx_msg void OnHomeMaintain();
+	afx_msg void OnHomeProperties();
+	afx_msg void OnUpdateHomeCommands(CCmdUI* pCmdUI);
+
+	afx_msg void OnUpdateHousekeepingCommands(CCmdUI* pCmdUI);
+
+	afx_msg void OnUpdateTrashCommands(CCmdUI* pCmdUI);
+
 	afx_msg void OnStoreMakeDefault();
 	afx_msg void OnStoreMakeHybrid();
 	afx_msg void OnStoreImportFolder();

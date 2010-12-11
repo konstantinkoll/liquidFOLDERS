@@ -203,7 +203,7 @@
 #define IDS_GROUPBOX_GROUP              2110
 #define IDM_STORES_HIDEEMPTYDRIVES      3000
 #define IDM_HOME                        3100
-#define IDM_HOME_HIDEEMPTY              3101
+#define IDM_HOME_HIDEEMPTYDOMAINS       3101
 #define IDM_HOME_IMPORTFOLDER           3102
 #define IDM_HOME_MAINTAIN               3103
 #define IDM_HOME_PROPERTIES             3104
@@ -211,8 +211,8 @@
 #define IDM_HOUSEKEEPING_REGISTER       3201
 #define IDM_HOUSEKEEPING_SEND           3202
 #define IDM_TRASH                       3300
-#define IDM_TRASH_RESTOREALL            3301
-#define IDM_TRASH_EMPTY                 3302
+#define IDM_TRASH_EMPTY                 3301
+#define IDM_TRASH_RESTOREALL            3302
 #define IDM_TRASH_RESTORESELECTED       3303
 #define IDM_DRIVE                       3400
 #define IDM_DRIVE_CREATENEWSTORE        3401

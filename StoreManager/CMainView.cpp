@@ -238,6 +238,21 @@ BEGIN_MESSAGE_MAP(CMainView, CWnd)
 	ON_WM_SETFOCUS()
 	ON_WM_CONTEXTMENU()
 
+	ON_COMMAND(IDM_STORES_CREATENEW, OnStoresCreateNew)
+	ON_COMMAND(IDM_STORES_MAINTAINALL, OnStoresMaintainAll)
+	ON_COMMAND(IDM_STORES_BACKUP, OnStoresBackup)
+	ON_UPDATE_COMMAND_UI_RANGE(IDM_STORES_CREATENEW, IDM_STORES_BACKUP, OnUpdateStoresCommands)
+	ON_UPDATE_COMMAND_UI(IDM_STORES_HIDEEMPTYDRIVES, OnUpdateStoresCommands)
+
+	ON_COMMAND(IDM_HOME_IMPORTFOLDER, OnHomeImportFolder)
+	ON_COMMAND(IDM_HOME_MAINTAIN, OnHomeMaintain)
+	ON_COMMAND(IDM_HOME_PROPERTIES, OnHomeProperties)
+	ON_UPDATE_COMMAND_UI_RANGE(IDM_HOME_HIDEEMPTYDOMAINS, IDM_HOME_PROPERTIES, OnUpdateHomeCommands)
+
+	ON_UPDATE_COMMAND_UI_RANGE(IDM_HOUSEKEEPING_REGISTER, IDM_HOUSEKEEPING_SEND, OnUpdateHousekeepingCommands)
+
+	ON_UPDATE_COMMAND_UI_RANGE(IDM_TRASH_EMPTY, IDM_TRASH_RESTORESELECTED, OnUpdateTrashCommands)
+
 	ON_COMMAND(IDM_STORE_MAKEDEFAULT, OnStoreMakeDefault)
 	ON_COMMAND(IDM_STORE_MAKEHYBRID, OnStoreMakeHybrid)
 	ON_COMMAND(IDM_STORE_IMPORTFOLDER, OnStoreImportFolder)
@@ -246,11 +261,6 @@ BEGIN_MESSAGE_MAP(CMainView, CWnd)
 	ON_COMMAND(IDM_STORE_RENAME, OnStoreRename)
 	ON_COMMAND(IDM_STORE_PROPERTIES, OnStoreProperties)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_STORE_MAKEDEFAULT, IDM_STORE_PROPERTIES, OnUpdateStoreCommands)
-
-	ON_COMMAND(IDM_STORES_CREATENEW, OnStoresCreateNew)
-	ON_COMMAND(IDM_STORES_MAINTAINALL, OnStoresMaintainAll)
-	ON_COMMAND(IDM_STORES_BACKUP, OnStoresBackup)
-	ON_UPDATE_COMMAND_UI_RANGE(IDM_STORES_CREATENEW, IDM_STORES_BACKUP, OnUpdateStoresCommands)
 END_MESSAGE_MAP()
 
 INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -263,7 +273,7 @@ INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 
 	m_wndTaskbar.AddButton(IDM_STORES_CREATENEW, 1);
-	m_wndTaskbar.AddButton(IDM_STORES_MAINTAINALL, 2);
+	m_wndTaskbar.AddButton(IDM_STORES_MAINTAINALL, 2, TRUE);
 	m_wndTaskbar.AddButton(IDM_STORE_DELETE, 3);
 	m_wndTaskbar.AddButton(IDM_STORE_RENAME, 4);
 	m_wndTaskbar.AddButton(IDM_STORE_PROPERTIES, 5);
@@ -271,9 +281,9 @@ INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndTaskbar.AddButton(IDM_STORE_IMPORTFOLDER, 7);
 	m_wndTaskbar.AddButton(IDM_HOME_IMPORTFOLDER, 7);
 	m_wndTaskbar.AddButton(IDM_HOUSEKEEPING_REGISTER, 8);
-	m_wndTaskbar.AddButton(IDM_HOUSEKEEPING_SEND, 28);
-	m_wndTaskbar.AddButton(IDM_TRASH_RESTOREALL, 9);
-	m_wndTaskbar.AddButton(IDM_TRASH_EMPTY, 10);
+	m_wndTaskbar.AddButton(IDM_HOUSEKEEPING_SEND, 28, TRUE);
+	m_wndTaskbar.AddButton(IDM_TRASH_EMPTY, 9, TRUE);
+	m_wndTaskbar.AddButton(IDM_TRASH_RESTOREALL, 10);
 	m_wndTaskbar.AddButton(IDM_TRASH_RESTORESELECTED, 11);
 	m_wndTaskbar.AddButton(ID_APP_NEWFILEDROP, 25, TRUE);
 
@@ -356,7 +366,6 @@ void CMainView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 
 
 // Stores
-//
 
 void CMainView::OnStoresCreateNew()
 {
@@ -388,16 +397,90 @@ void CMainView::OnStoresBackup()
 void CMainView::OnUpdateStoresCommands(CCmdUI* pCmdUI)
 {
 	BOOL b = (p_Result) && (m_Context==LFContextStores);
-	
-	if (pCmdUI->m_nID!=IDM_STORES_CREATENEW)
+
+	switch (pCmdUI->m_nID)
+	{
+	case IDM_STORES_HIDEEMPTYDRIVES:
+		pCmdUI->SetCheck(theApp.m_HideEmptyDrives);
+	case IDM_STORES_CREATENEW:
+		break;
+	default:
 		b &= (LFGetStoreCount()>0);
+	}
+
+	pCmdUI->Enable(b);
+}
+
+
+// Home
+
+void CMainView::OnHomeImportFolder()
+{
+	if (p_Result)
+		LFImportFolder(p_Result->m_StoreID, this);
+}
+
+void CMainView::OnHomeMaintain()
+{
+	if (p_Result)
+	{
+		LFMaintenanceList* ml = LFStoreMaintenance(p_Result->m_StoreID);
+		LFErrorBox(ml->m_LastError);
+
+		LFStoreMaintenanceDlg dlg(ml, this);
+		dlg.DoModal();
+
+		LFFreeMaintenanceList(ml);
+	}
+}
+
+void CMainView::OnHomeProperties()
+{
+	if (p_Result)
+	{
+		LFStorePropertiesDlg dlg(p_Result->m_StoreID, this);
+		dlg.DoModal();
+	}
+}
+
+void CMainView::OnUpdateHomeCommands(CCmdUI* pCmdUI)
+{
+	BOOL b = (p_Result) && (m_Context==LFContextStoreHome);
+
+	if (pCmdUI->m_nID==IDM_HOME_HIDEEMPTYDOMAINS)
+		pCmdUI->SetCheck(theApp.m_HideEmptyDomains);
+
+	pCmdUI->Enable(b);
+}
+
+
+// Housekeeping
+
+void CMainView::OnUpdateHousekeepingCommands(CCmdUI* pCmdUI)
+{
+	BOOL b = (p_Result) && (m_Context==LFContextHousekeeping);
+
+	if ((p_Result) && (pCmdUI->m_nID==IDM_HOUSEKEEPING_REGISTER))
+		b &= (p_Result->m_ItemCount>0);
+
+	pCmdUI->Enable(b);
+}
+
+
+// Trash
+
+void CMainView::OnUpdateTrashCommands(CCmdUI* pCmdUI)
+{
+	BOOL b = (p_Result) && (m_Context==LFContextTrash);
+	
+	if (pCmdUI->m_nID==IDM_TRASH_RESTORESELECTED)
+		b &= FALSE; //TODO
 
 	pCmdUI->Enable(b);
 }
 
 
 // Store
-//
 
 void CMainView::OnStoreMakeDefault()
 {
@@ -485,96 +568,6 @@ void CMainFrame::OnStoreNewDrive()
 
 	if (i!=-1)
 		OnStoreNewDrive(CookedFiles->m_Items[i]->CoreAttributes.FileID[0]);
-}
-
-void CMainFrame::OnStoreMaintenance()
-{
-	LFMaintenanceList* ml = LFStoreMaintenance();
-	LFErrorBox(ml->m_LastError);
-
-	LFStoreMaintenanceDlg dlg(ml, this);
-	dlg.DoModal();
-
-	LFFreeMaintenanceList(ml);
-
-	OnNavigateReload();
-}
-
-void CMainFrame::OnStoreBackup()
-{
-	CString tmpStr;
-	ENSURE(tmpStr.LoadString(IDS_REGFILEFILTER));
-	tmpStr += _T(" (*.reg)|*.reg||");
-
-	CFileDialog dlg(FALSE, _T(".reg"), NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, tmpStr, this);
-
-	if (dlg.DoModal()==IDOK)
-	{
-		CStdioFile f;
-		if (!f.Open(dlg.GetFileName(), CFile::modeCreate | CFile::modeWrite))
-		{
-			LFErrorBox(LFDriveNotReady, GetSafeHwnd());
-		}
-		else
-		{
-			try
-			{
-				f.WriteString(_T("Windows Registry Editor Version 5.00\n"));
-
-				for (UINT a=0; a<CookedFiles->m_ItemCount; a++)
-				{
-					LFItemDescriptor* i = CookedFiles->m_Items[a];
-					if ((i->Type & LFTypeStore) && (i->CategoryID<=LFItemCategoryHybridStores))
-					{
-						LFStoreDescriptor s;
-						if (LFGetStoreSettings(i->StoreID, &s)==LFOk)
-						{
-							// Header
-							tmpStr = _T("\n[HKEY_CURRENT_USER\\Software\\liquidFOLDERS\\Stores\\");
-							tmpStr += s.StoreID;
-							f.WriteString(tmpStr+_T("]\n"));
-
-							// Name
-							tmpStr = s.StoreName;
-							CEscape(tmpStr);
-							f.WriteString(_T("\"Name\"=\"")+tmpStr+_T("\"\n"));
-
-							// Mode
-							tmpStr.Format(_T("\"Mode\"=dword:%.8x\n"), s.StoreMode);
-							f.WriteString(tmpStr);
-
-							// AutoLocation
-							tmpStr.Format(_T("\"AutoLocation\"=dword:%.8x\n"), s.AutoLocation);
-							f.WriteString(tmpStr);
-
-							if (!s.AutoLocation)
-							{
-								// Path
-								tmpStr = s.DatPath;
-								CEscape(tmpStr);
-								f.WriteString(_T("\"Path\"=\"")+tmpStr+_T("\"\n"));
-							}
-
-							// GUID
-							f.WriteString(_T("\"GUID\"=hex:")+MakeHex((BYTE*)&s.guid, sizeof(s.guid))+_T("\n"));
-
-							// CreationTime
-							f.WriteString(_T("\"CreationTime\"=hex:")+MakeHex((BYTE*)&s.CreationTime, sizeof(s.CreationTime))+_T("\n"));
-
-							// FileTime
-							f.WriteString(_T("\"FileTime\"=hex:")+MakeHex((BYTE*)&s.FileTime, sizeof(s.FileTime))+_T("\n"));
-						}
-					}
-				}
-			}
-			catch(CFileException ex)
-			{
-				LFErrorBox(LFDriveNotReady, GetSafeHwnd());
-			}
-
-			f.Close();
-		}
-	}
 }*/
 
 

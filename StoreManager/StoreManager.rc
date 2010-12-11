@@ -315,7 +315,7 @@ IDM_HOME MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "&Hide empty folders",         IDM_HOME_HIDEEMPTY
+        MENUITEM "&Hide empty folders",         IDM_HOME_HIDEEMPTYDOMAINS
         MENUITEM SEPARATOR
         MENUITEM "&Import folder...",           IDM_HOME_IMPORTFOLDER
         MENUITEM "Run &maintenance",            IDM_HOME_MAINTAIN
@@ -781,7 +781,7 @@ STRINGTABLE
 BEGIN
     IDM_HOUSEKEEPING_REGISTER 
                             "Registers unknown file formats to make them appear in a regular domain.\nRegister formats"
-    IDM_HOUSEKEEPING_SEND   "Sends a list of user-registered file formats to customer support. This allows us to include them in future releases of our software.\nSend registred formats to customer support"
+    IDM_HOUSEKEEPING_SEND   "Sends a list of user-registered file formats to customer support. This allows us to include them in future releases of our software.\nSend list"
 END
 
 STRINGTABLE 

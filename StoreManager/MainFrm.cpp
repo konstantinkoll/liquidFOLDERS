@@ -60,7 +60,6 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_PANE_FILTERWND, ID_PANE_HISTORYWND, OnUpdatePaneCommands)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_CLIP_COPY, ID_CLIP_REMEMBERNEW, OnUpdateClipCommands)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_ITEMS_SHOWINSPECTOR, ID_ITEMS_RENAME, OnUpdateItemCommands)
-	ON_UPDATE_COMMAND_UI_RANGE(ID_TRASH_EMPTY, ID_TRASH_RESTOREALL, OnUpdateTrashCommands)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_DROP_NAME, ID_DROP_DIMENSION, OnUpdateDropCommands)
 
 	ON_COMMAND(ID_APP_CLOSE, OnClose)
@@ -99,10 +98,6 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_COMMAND(ID_ITEMS_OPENWITH, OnItemsOpenWith)
 	ON_COMMAND(ID_ITEMS_DELETE, OnItemsDelete)
 	ON_COMMAND(ID_ITEMS_RENAME, OnItemsRename)
-
-	ON_COMMAND(ID_TRASH_EMPTY, OnEmptyTrash)
-	ON_COMMAND(ID_TRASH_RESTORESELECTED, OnRestoreSelectedFiles)
-	ON_COMMAND(ID_TRASH_RESTOREALL, OnRestoreAllFiles)
 END_MESSAGE_MAP()
 
 
@@ -782,26 +777,6 @@ void CMainFrame::OnRestoreSelectedFiles()
 void CMainFrame::OnRestoreAllFiles()
 {
 	UpdateTrashFlag(FALSE, TRUE);
-}
-
-void CMainFrame::OnUpdateTrashCommands(CCmdUI* pCmdUI)
-{
-	BOOL b = FALSE;
-
-	if (CookedFiles)
-		if (CookedFiles->m_Context==LFContextTrash)
-			switch (pCmdUI->m_nID)
-			{
-			case ID_TRASH_EMPTY:
-			case ID_TRASH_RESTOREALL:
-				b = (CookedFiles->m_FileCount);
-				break;
-			case ID_TRASH_RESTORESELECTED:
-				b = FilesSelected;
-				break;
-			}
-
-	pCmdUI->Enable(b);
 }
 
 void CMainFrame::UpdateViewOptions()
