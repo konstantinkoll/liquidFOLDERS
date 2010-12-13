@@ -1224,20 +1224,6 @@ void CMainFrame::InitializeRibbon()
 				pPanelPlaces->Add(theApp.CommandButton(ID_NAV_HOME, 7, 7));
 		}
 
-		strTemp = "liquidFOLDERS";
-		CMFCRibbonPanel* pPanelliquidFOLDERS = pCategoryHome->AddPanel(strTemp, m_PanelImages.ExtractIcon(0));
-		pPanelliquidFOLDERS->EnableLaunchButton(ID_APP_ABOUT, 12);
-
-			pPanelliquidFOLDERS->Add(theApp.CommandButton(ID_APP_HELP, 8, 8));
-			pPanelliquidFOLDERS->Add(theApp.CommandButton(ID_APP_SUPPORT, 9, 9));
-
-			if (!LFIsLicensed())
-			{
-				pPanelliquidFOLDERS->AddSeparator();
-				pPanelliquidFOLDERS->Add(theApp.CommandButton(ID_APP_PURCHASE, 10, 10));
-				pPanelliquidFOLDERS->Add(theApp.CommandButton(ID_APP_ENTERLICENSEKEY, 11, 11));
-			}
-
 	strTemp = "View";
 	CMFCRibbonCategory* pCategoryView = m_wndRibbonBar.AddCategory(strTemp, IDB_RIBBONVIEW_16, IDB_RIBBONVIEW_32);
 
@@ -1475,7 +1461,6 @@ void CMainFrame::InitializeRibbon()
 	m_wndRibbonBar.ShowCategory(RibbonCategory_View_Calendar);
 	m_wndRibbonBar.ShowCategory(RibbonCategory_View_Globe);
 	m_wndRibbonBar.ShowCategory(RibbonCategory_View_Tagcloud);
-	m_wndRibbonBar.ShowCategory(RibbonCategory_View_Timeline);
 	#endif
 
 	// Symbolleistenbefehle für Schnellzugriff hinzufügen
@@ -1591,7 +1576,6 @@ BOOL CMainFrame::OpenChildView(INT FocusItem, BOOL Force, BOOL AllowChangeSort)
 	m_wndRibbonBar.ShowCategory(RibbonCategory_View_Calendar, (ViewID>=LFViewCalendarYear) && (ViewID<=LFViewCalendarDay));
 	m_wndRibbonBar.ShowCategory(RibbonCategory_View_Globe, ViewID==LFViewGlobe);
 	m_wndRibbonBar.ShowCategory(RibbonCategory_View_Tagcloud, ViewID==LFViewTagcloud);
-	m_wndRibbonBar.ShowCategory(RibbonCategory_View_Timeline, ViewID==LFViewTimeline);
 	m_wndRibbonBar.Update();
 	#endif
 

@@ -21,7 +21,6 @@
 #define RibbonCategory_View_Calendar        3
 #define RibbonCategory_View_Globe           4
 #define RibbonCategory_View_Tagcloud        5
-#define RibbonCategory_View_Timeline        6
 
 #define RibbonDefaultCategory               RibbonCategory_View
 
