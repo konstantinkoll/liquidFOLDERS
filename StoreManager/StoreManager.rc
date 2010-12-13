@@ -347,6 +347,8 @@ BEGIN
     POPUP "POPUP"
     BEGIN
         MENUITEM "Create &new store...",        IDM_DRIVE_CREATENEWSTORE
+        MENUITEM SEPARATOR
+        MENUITEM "&Properties",                 IDM_DRIVE_PROPERTIES
     END
 END
 
@@ -755,6 +757,7 @@ BEGIN
     IDM_STORE_PROPERTIES    "Displays the properties of the selected store.\nProperties"
     IDM_STORES_CREATENEW    "Creates a new store for your files.\nCreate new store"
     IDM_STORES_MAINTAINALL  "Executes maintenance work on all stores.\nRun maintenance"
+    IDM_DRIVE_PROPERTIES    "Displays the properties of the selected drive.\nProperties"
 END
 
 STRINGTABLE 

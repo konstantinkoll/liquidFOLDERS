@@ -233,6 +233,46 @@ INT CMainView::GetNextSelectedItem(INT n)
 	return p_wndFileView ? p_wndFileView->GetNextSelectedItem(n) : -1;
 }
 
+void CMainView::ExecuteContextMenu(CHAR Drive, LPCSTR verb)
+{
+	WCHAR Path[4] = L" :\\";
+	Path[0] = Drive;
+
+	LPITEMIDLIST pidlFQ = SHSimpleIDListFromPath(Path);
+	LPCITEMIDLIST pidlRel = NULL;
+
+	IShellFolder* pParentFolder = NULL;
+	if (FAILED(SHBindToParent(pidlFQ, IID_IShellFolder, (void**)&pParentFolder, &pidlRel)))
+		return;
+
+	IContextMenu* pcm = NULL;
+	if (SUCCEEDED(pParentFolder->GetUIObjectOf(GetSafeHwnd(), 1, &pidlRel, IID_IContextMenu, NULL, (void**)&pcm)))
+	{
+		HMENU hPopup = CreatePopupMenu();
+		if (hPopup)
+		{
+			UINT uFlags = CMF_NORMAL | CMF_EXPLORE;
+			if (SUCCEEDED(pcm->QueryContextMenu(hPopup, 0, 1, 0x6FFF, uFlags)))
+			{
+				CWaitCursor wait;
+
+				CMINVOKECOMMANDINFO cmi;
+				cmi.cbSize = sizeof(CMINVOKECOMMANDINFO);
+				cmi.fMask = 0;
+				cmi.hwnd = GetSafeHwnd();
+				cmi.lpVerb = verb;
+				cmi.lpParameters = NULL;
+				cmi.lpDirectory = NULL;
+				cmi.nShow = SW_SHOWNORMAL;
+				cmi.dwHotKey = 0;
+				cmi.hIcon = NULL;
+
+				pcm->InvokeCommand(&cmi);
+			}
+		}
+	}
+}
+
 
 BEGIN_MESSAGE_MAP(CMainView, CWnd)
 	ON_WM_CREATE()
@@ -259,6 +299,10 @@ BEGIN_MESSAGE_MAP(CMainView, CWnd)
 
 	ON_UPDATE_COMMAND_UI(IDM_ITEM_OPEN, OnUpdateItemCommands)
 
+	ON_COMMAND(IDM_DRIVE_CREATENEWSTORE, OnDriveCreateNewStore)
+	ON_COMMAND(IDM_DRIVE_PROPERTIES, OnDriveProperties)
+	ON_UPDATE_COMMAND_UI_RANGE(IDM_DRIVE_CREATENEWSTORE, IDM_DRIVE_PROPERTIES, OnUpdateDriveCommands)
+
 	ON_COMMAND(IDM_STORE_MAKEDEFAULT, OnStoreMakeDefault)
 	ON_COMMAND(IDM_STORE_MAKEHYBRID, OnStoreMakeHybrid)
 	ON_COMMAND(IDM_STORE_IMPORTFOLDER, OnStoreImportFolder)
@@ -282,22 +326,27 @@ INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndTaskbar.AddButton(IDM_STORES_MAINTAINALL, 1, TRUE);
 	m_wndTaskbar.AddButton(IDM_HOME_IMPORTFOLDER, 2);
 	m_wndTaskbar.AddButton(IDM_HOUSEKEEPING_REGISTER, 3);
-	m_wndTaskbar.AddButton(IDM_HOUSEKEEPING_SEND, 28, TRUE);
+	m_wndTaskbar.AddButton(IDM_HOUSEKEEPING_SEND, 21, TRUE);
 	m_wndTaskbar.AddButton(IDM_TRASH_EMPTY, 4, TRUE);
 	m_wndTaskbar.AddButton(IDM_TRASH_RESTOREALL, 5);
 	m_wndTaskbar.AddButton(IDM_TRASH_RESTORESELECTED, 6);
 	m_wndTaskbar.AddButton(IDM_ITEM_OPEN, 7);
-	m_wndTaskbar.AddButton(IDM_STORE_DELETE, 8);
-	m_wndTaskbar.AddButton(IDM_STORE_RENAME, 9);
-	m_wndTaskbar.AddButton(IDM_STORE_PROPERTIES, 10);
-	m_wndTaskbar.AddButton(IDM_STORE_MAKEDEFAULT, 11);
+	m_wndTaskbar.AddButton(IDM_DRIVE_PROPERTIES, 8);
+	m_wndTaskbar.AddButton(IDM_STORE_DELETE, 9);
+	m_wndTaskbar.AddButton(IDM_STORE_RENAME, 10);
+	m_wndTaskbar.AddButton(IDM_STORE_PROPERTIES, 11);
+	m_wndTaskbar.AddButton(IDM_STORE_MAKEDEFAULT, 12);
 	m_wndTaskbar.AddButton(IDM_STORE_IMPORTFOLDER, 2);
-	m_wndTaskbar.AddButton(ID_APP_NEWFILEDROP, 25, TRUE);
+/*	m_wndTaskbar.AddButton(IDM_FILE_REMEMBER, 13);
+	m_wndTaskbar.AddButton(IDM_FILE_DELETE, 15);
+	m_wndTaskbar.AddButton(IDM_FILE_REANME, 16);
+	m_wndTaskbar.AddButton(IDM_FILE_SEND, 17);*/
+	m_wndTaskbar.AddButton(ID_APP_NEWFILEDROP, 18, TRUE);
 
-	m_wndTaskbar.AddButton(ID_APP_PURCHASE, 26, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_ENTERLICENSEKEY, 27, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_SUPPORT, 28, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_ABOUT, 29, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_PURCHASE, 19, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_ENTERLICENSEKEY, 20, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_SUPPORT, 21, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_ABOUT, 22, TRUE, TRUE);
 
 	// Explorer header
 	if (!m_wndExplorerHeader.Create(this, 2))
@@ -520,8 +569,54 @@ void CMainView::OnUpdateItemCommands(CCmdUI* pCmdUI)
 		{
 		case IDM_ITEM_OPEN:
 			b = (i->NextFilter!=NULL) ||
-				((i->Type & (LFTypeMask | LFTypeNotMounted))==LFTypeDrive) ||
 				((i->Type & (LFTypeMask | LFTypeNotMounted))==LFTypeFile);
+			break;
+		}
+	}
+
+	pCmdUI->Enable(b);
+}
+
+
+// Drive
+
+void CMainView::OnDriveCreateNewStore()
+{
+	INT idx = GetSelectedItem();
+	if (idx!=-1)
+	{
+		LFStoreDescriptor* s = LFAllocStoreDescriptor();
+
+		LFStoreNewDriveDlg dlg(this, p_CookedFiles->m_Items[idx]->CoreAttributes.FileID[0], s);
+		if (dlg.DoModal()==IDOK)
+			LFErrorBox(LFCreateStore(s, FALSE), GetSafeHwnd());
+
+		LFFreeStoreDescriptor(s);
+	}
+}
+
+void CMainView::OnDriveProperties()
+{
+	INT idx = GetSelectedItem();
+	if (idx!=-1)
+		ExecuteContextMenu(p_CookedFiles->m_Items[idx]->CoreAttributes.FileID[0], "properties");
+}
+
+void CMainView::OnUpdateDriveCommands(CCmdUI* pCmdUI)
+{
+	BOOL b = FALSE;
+
+	INT idx = GetSelectedItem();
+	if (idx!=-1)
+	{
+		LFItemDescriptor* i = p_CookedFiles->m_Items[idx];
+		switch (pCmdUI->m_nID)
+		{
+		case IDM_DRIVE_CREATENEWSTORE:
+			b = ((i->Type & (LFTypeMask | LFTypeNotMounted))==LFTypeDrive);
+			break;
+		case IDM_DRIVE_PROPERTIES:
+			b = ((i->Type & LFTypeMask)==LFTypeDrive);
 			break;
 		}
 	}
@@ -536,14 +631,14 @@ void CMainView::OnStoreMakeDefault()
 {
 	INT idx = GetSelectedItem();
 	if (idx!=-1)
-		LFErrorBox(LFMakeDefaultStore(p_CookedFiles->m_Items[idx]->StoreID, NULL), m_hWnd);
+		LFErrorBox(LFMakeDefaultStore(p_CookedFiles->m_Items[idx]->StoreID, NULL), GetSafeHwnd());
 }
 
 void CMainView::OnStoreMakeHybrid()
 {
 	INT idx = GetSelectedItem();
 	if (idx!=-1)
-		LFErrorBox(LFMakeHybridStore(p_CookedFiles->m_Items[idx]->StoreID, NULL), m_hWnd);
+		LFErrorBox(LFMakeHybridStore(p_CookedFiles->m_Items[idx]->StoreID, NULL), GetSafeHwnd());
 }
 
 void CMainView::OnStoreImportFolder()
@@ -591,35 +686,6 @@ void CMainView::OnStoreProperties()
 		dlg.DoModal();
 	}
 }
-
-
-
-/*
-
-void CMainFrame::OnStoreNewDrive(CHAR drv)
-{
-	INT i = m_wndMainView.GetSelectedItem();
-
-	if (i!=-1)
-	{
-		LFStoreDescriptor* s = LFAllocStoreDescriptor();
-
-		LFStoreNewDriveDlg dlg(this, drv, s);
-		if (dlg.DoModal()==IDOK)
-			LFErrorBox(LFCreateStore(s, FALSE), m_hWnd);
-
-		LFFreeStoreDescriptor(s);
-	}
-}
-
-void CMainFrame::OnStoreNewDrive()
-{
-	INT i = m_wndMainView.GetSelectedItem();
-
-	if (i!=-1)
-		OnStoreNewDrive(CookedFiles->m_Items[i]->CoreAttributes.FileID[0]);
-}*/
-
 
 void CMainView::OnUpdateStoreCommands(CCmdUI* pCmdUI)
 {

@@ -810,13 +810,6 @@ void CMainFrame::UpdateSearchResult(BOOL SetEmpty, INT FocusItem)
 			if (OpenChildView(FocusItem))
 				return;
 		}
-		#ifndef _DEBUG
-		else
-		{
-			// Erst hinterher updaten, wenn OpenChildView() nicht aufgerufen wurde (dort wird Update() auch aufgerufen)
-			m_wndRibbonBar.Update();
-		}
-		#endif
 	}
 
 	m_wndMainView.UpdateSearchResult(SetEmpty ? NULL : RawFiles, SetEmpty ? NULL : CookedFiles, FocusItem);
@@ -1537,7 +1530,6 @@ BOOL CMainFrame::OpenChildView(INT FocusItem, BOOL Force, BOOL AllowChangeSort)
 	m_wndRibbonBar.ShowCategory(RibbonCategory_View_Calendar, (ViewID>=LFViewCalendarYear) && (ViewID<=LFViewCalendarDay));
 	m_wndRibbonBar.ShowCategory(RibbonCategory_View_Globe, ViewID==LFViewGlobe);
 	m_wndRibbonBar.ShowCategory(RibbonCategory_View_Tagcloud, ViewID==LFViewTagcloud);
-	m_wndRibbonBar.Update();
 	#endif
 
 	return TRUE;

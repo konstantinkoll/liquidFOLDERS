@@ -211,6 +211,7 @@
 #define IDM_ITEM_OPEN                   4000
 #define IDM_DRIVE                       4100
 #define IDM_DRIVE_CREATENEWSTORE        4101
+#define IDM_DRIVE_PROPERTIES            4102
 #define ID_TOGGLE_ATTRIBUTE             50000
 
 #define IDM_VIRTUAL_GLOBE               203

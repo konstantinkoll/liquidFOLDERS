@@ -38,8 +38,6 @@ protected:
 	BOOL m_ShowHeader;
 	BOOL m_FilesSelected;
 
-	void AdjustLayout();
-
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnSize(UINT nType, INT cx, INT cy);
@@ -64,6 +62,11 @@ protected:
 
 	afx_msg void OnUpdateItemCommands(CCmdUI* pCmdUI);
 
+	afx_msg void OnDriveCreateNewStore();
+	afx_msg void OnDriveFormat();
+	afx_msg void OnDriveProperties();
+	afx_msg void OnUpdateDriveCommands(CCmdUI* pCmdUI);
+
 	afx_msg void OnStoreMakeDefault();
 	afx_msg void OnStoreMakeHybrid();
 	afx_msg void OnStoreImportFolder();
@@ -77,4 +80,6 @@ protected:
 
 private:
 	BOOL CreateFileView(UINT ViewID, INT FocusItem);
+	void AdjustLayout();
+	void ExecuteContextMenu(CHAR Drive, LPCSTR verb);
 };

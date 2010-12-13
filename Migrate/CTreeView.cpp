@@ -1193,7 +1193,7 @@ BOOL CTreeView::ExecuteContextMenu(CPoint& item, LPCSTR verb)
 		return FALSE;
 
 	IContextMenu* pcm = NULL;
-	if (SUCCEEDED(pParentFolder->GetUIObjectOf(theApp.m_pMainWnd->GetSafeHwnd(), 1, (LPCITEMIDLIST*)&cell->pItem->pidlRel, IID_IContextMenu, NULL, (void**)&pcm)))
+	if (SUCCEEDED(pParentFolder->GetUIObjectOf(GetSafeHwnd(), 1, (LPCITEMIDLIST*)&cell->pItem->pidlRel, IID_IContextMenu, NULL, (void**)&pcm)))
 	{
 		HMENU hPopup = CreatePopupMenu();
 		if (hPopup)
@@ -1206,7 +1206,7 @@ BOOL CTreeView::ExecuteContextMenu(CPoint& item, LPCSTR verb)
 				CMINVOKECOMMANDINFO cmi;
 				cmi.cbSize = sizeof(CMINVOKECOMMANDINFO);
 				cmi.fMask = 0;
-				cmi.hwnd = theApp.m_pMainWnd->GetSafeHwnd();
+				cmi.hwnd = GetSafeHwnd();
 				cmi.lpVerb = verb;
 				cmi.lpParameters = NULL;
 				cmi.lpDirectory = NULL;
@@ -2256,7 +2256,7 @@ void CTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 		return;
 
 	IContextMenu* pcm = NULL;
-	if (SUCCEEDED(pParentFolder->GetUIObjectOf(theApp.m_pMainWnd->GetSafeHwnd(), 1, (LPCITEMIDLIST*)&cell->pItem->pidlRel, IID_IContextMenu, NULL, (void**)&pcm)))
+	if (SUCCEEDED(pParentFolder->GetUIObjectOf(GetSafeHwnd(), 1, (LPCITEMIDLIST*)&cell->pItem->pidlRel, IID_IContextMenu, NULL, (void**)&pcm)))
 	{
 		HMENU hPopup = CreatePopupMenu();
 		if (hPopup)
@@ -2345,7 +2345,7 @@ void CTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 							CMINVOKECOMMANDINFO cmi;
 							cmi.cbSize = sizeof(CMINVOKECOMMANDINFO);
 							cmi.fMask = 0;
-							cmi.hwnd = theApp.m_pMainWnd->GetSafeHwnd();
+							cmi.hwnd = GetSafeHwnd();
 							cmi.lpVerb = (LPCSTR)(INT_PTR)(idCmd-1);
 							cmi.lpParameters = NULL;
 							cmi.lpDirectory = NULL;
