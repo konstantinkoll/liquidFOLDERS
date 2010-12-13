@@ -315,7 +315,7 @@ IDM_HOME MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "&Hide empty folders",         IDM_HOME_HIDEEMPTYDOMAINS
+        MENUITEM "&Hide empty domains",         IDM_HOME_HIDEEMPTYDOMAINS
         MENUITEM SEPARATOR
         MENUITEM "&Import folder...",           IDM_HOME_IMPORTFOLDER
         MENUITEM "Run &maintenance",            IDM_HOME_MAINTAIN

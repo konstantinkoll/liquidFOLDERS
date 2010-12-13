@@ -592,14 +592,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Ribbon\Delicious_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\Delicious_32.png"
-				>
-			</File>
-			<File
 				RelativePath="Ribbon\Descending_16.png"
 				>
 			</File>
@@ -637,14 +629,6 @@
 			</File>
 			<File
 				RelativePath=".\Ribbon\Explorer_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\Facebook_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\Facebook_32.png"
 				>
 			</File>
 			<File
@@ -688,14 +672,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Ribbon\Flickr_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\Flickr_32.png"
-				>
-			</File>
-			<File
 				RelativePath="Ribbon\Folder_16.png"
 				>
 			</File>
@@ -733,14 +709,6 @@
 			</File>
 			<File
 				RelativePath=".\Ribbon\Globe_FitToWindow_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\Google_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\Google_32.png"
 				>
 			</File>
 			<File
@@ -1008,14 +976,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Ribbon\MisterWong_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\MisterWong_32.png"
-				>
-			</File>
-			<File
 				RelativePath="Ribbon\Navigate_16.png"
 				>
 			</File>
@@ -1112,14 +1072,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Ribbon\Slideshare_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\Slideshare_32.png"
-				>
-			</File>
-			<File
 				RelativePath=".\Ribbon\SortCount_16.png"
 				>
 			</File>
@@ -1188,15 +1140,7 @@
 				>
 			</File>
 			<File
-				RelativePath="Ribbon\Support_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\Syndicate_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\Syndicate_32.png"
+				RelativePath=".\Ribbon\Support_32.png"
 				>
 			</File>
 			<File
@@ -1248,14 +1192,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Ribbon\Twitter_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\Twitter_32.png"
-				>
-			</File>
-			<File
 				RelativePath=".\Ribbon\UndeleteAllFiles_16.png"
 				>
 			</File>
@@ -1269,14 +1205,6 @@
 			</File>
 			<File
 				RelativePath=".\Ribbon\UndeleteFile_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\Upload_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\Upload_32.png"
 				>
 			</File>
 			<File
@@ -1381,14 +1309,6 @@
 			</File>
 			<File
 				RelativePath=".\Ribbon\Welcome_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\YouTube_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\YouTube_32.png"
 				>
 			</File>
 			<File

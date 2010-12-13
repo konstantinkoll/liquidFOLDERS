@@ -126,8 +126,7 @@ CMainFrame::CMainFrame(char* RootStore, BOOL _IsClipboard)
 	ActiveViewParameters = &theApp.m_Views[LFContextDefault];
 	RawFiles = NULL;
 	CookedFiles = NULL;
-	m_BreadcrumbBack = NULL;
-	m_BreadcrumbForward = NULL;
+	m_BreadcrumbBack = m_BreadcrumbForward = NULL;
 	m_wndFilter = NULL;
 	m_wndHistory = NULL;
 }
@@ -1375,46 +1374,6 @@ void CMainFrame::InitializeRibbon()
 			pPanelItemsBasic->AddSeparator();
 			pPanelItemsBasic->Add(theApp.CommandButton(ID_ITEMS_DELETE, 8, 8));
 			pPanelItemsBasic->Add(theApp.CommandButton(ID_ITEMS_RENAME, 9, 9));
-
-		/*strTemp = "Share";
-		CMFCRibbonPanel* pPanelFileShare = pCategoryItems->AddPanel(strTemp, m_PanelImages.ExtractIcon(0));
-
-			strTemp = "Send";
-			pPanelFileShare->Add(new CMFCRibbonButton(ID_APP_ABOUT, strTemp, 11, 11));
-
-			strTemp = "Upload";
-			CMFCRibbonButton* pBtnUpload = new CMFCRibbonButton(0, strTemp, 12, 12);
-			pBtnUpload->SetDefaultCommand(FALSE);
-
-				strTemp = "Upload to";
-				pBtnUpload->AddSubItem(new CMFCRibbonLabel(strTemp));
-				strTemp = "Flickr";
-				pBtnUpload->AddSubItem(new CMFCRibbonButton(ID_APP_ABOUT, strTemp, 13, 13));
-				strTemp = "Slideshare";
-				pBtnUpload->AddSubItem(new CMFCRibbonButton(ID_APP_ABOUT, strTemp, 14, 14));
-				strTemp = "YouTube";
-				pBtnUpload->AddSubItem(new CMFCRibbonButton(ID_APP_ABOUT, strTemp, 15, 15));
-
-			pPanelFileShare->Add(pBtnUpload);
-
-			strTemp = "Syndicate";
-			CMFCRibbonButton* pBtnSyndicate = new CMFCRibbonButton(0, strTemp, 16, 16);
-			pBtnSyndicate->SetDefaultCommand(FALSE);
-
-				strTemp = "Syndicate URL on";
-				pBtnSyndicate ->AddSubItem(new CMFCRibbonLabel(strTemp));
-				strTemp = "Delicious";
-				pBtnSyndicate ->AddSubItem(new CMFCRibbonButton(ID_APP_ABOUT, strTemp, 17, 17));
-				strTemp = "Facebook";
-				pBtnSyndicate ->AddSubItem(new CMFCRibbonButton(ID_APP_ABOUT, strTemp, 18, 18));
-				strTemp = "Google";
-				pBtnSyndicate ->AddSubItem(new CMFCRibbonButton(ID_APP_ABOUT, strTemp, 19, 19));
-				strTemp = "Mr. Wong";
-				pBtnSyndicate ->AddSubItem(new CMFCRibbonButton(ID_APP_ABOUT, strTemp, 20, 20));
-				strTemp = "Twitter";
-				pBtnSyndicate ->AddSubItem(new CMFCRibbonButton(ID_APP_ABOUT, strTemp, 21, 21));
-
-			pPanelFileShare->Add(pBtnSyndicate);*/
 
 	if (!IsClipboard)
 	{

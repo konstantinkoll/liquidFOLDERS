@@ -272,19 +272,20 @@ INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (!m_wndTaskbar.Create(this, IDB_TASKS, 1))
 		return -1;
 
-	m_wndTaskbar.AddButton(IDM_STORES_CREATENEW, 1);
-	m_wndTaskbar.AddButton(IDM_STORES_MAINTAINALL, 2, TRUE);
-	m_wndTaskbar.AddButton(IDM_STORE_DELETE, 3);
-	m_wndTaskbar.AddButton(IDM_STORE_RENAME, 4);
-	m_wndTaskbar.AddButton(IDM_STORE_PROPERTIES, 5);
-	m_wndTaskbar.AddButton(IDM_STORE_MAKEDEFAULT, 6);
-	m_wndTaskbar.AddButton(IDM_STORE_IMPORTFOLDER, 7);
-	m_wndTaskbar.AddButton(IDM_HOME_IMPORTFOLDER, 7);
-	m_wndTaskbar.AddButton(IDM_HOUSEKEEPING_REGISTER, 8);
+	m_wndTaskbar.AddButton(IDM_STORES_CREATENEW, 0);
+	m_wndTaskbar.AddButton(IDM_STORES_MAINTAINALL, 1, TRUE);
+	m_wndTaskbar.AddButton(IDM_HOME_IMPORTFOLDER, 2);
+	m_wndTaskbar.AddButton(IDM_HOUSEKEEPING_REGISTER, 3);
 	m_wndTaskbar.AddButton(IDM_HOUSEKEEPING_SEND, 28, TRUE);
-	m_wndTaskbar.AddButton(IDM_TRASH_EMPTY, 9, TRUE);
-	m_wndTaskbar.AddButton(IDM_TRASH_RESTOREALL, 10);
-	m_wndTaskbar.AddButton(IDM_TRASH_RESTORESELECTED, 11);
+	m_wndTaskbar.AddButton(IDM_TRASH_EMPTY, 4, TRUE);
+	m_wndTaskbar.AddButton(IDM_TRASH_RESTOREALL, 5);
+	m_wndTaskbar.AddButton(IDM_TRASH_RESTORESELECTED, 6);
+	m_wndTaskbar.AddButton(ID_ITEMS_OPEN, 7);
+	m_wndTaskbar.AddButton(IDM_STORE_DELETE, 8);
+	m_wndTaskbar.AddButton(IDM_STORE_RENAME, 9);
+	m_wndTaskbar.AddButton(IDM_STORE_PROPERTIES, 10);
+	m_wndTaskbar.AddButton(IDM_STORE_MAKEDEFAULT, 11);
+	m_wndTaskbar.AddButton(IDM_STORE_IMPORTFOLDER, 2);
 	m_wndTaskbar.AddButton(ID_APP_NEWFILEDROP, 25, TRUE);
 
 	m_wndTaskbar.AddButton(ID_APP_PURCHASE, 26, TRUE, TRUE);
