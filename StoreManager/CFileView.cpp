@@ -341,28 +341,36 @@ CMenu* CFileView::GetBackgroundContextMenu()
 
 CMenu* CFileView::GetItemContextMenu(INT idx)
 {
-	UINT nID = 0;
-	LFItemDescriptor* f = p_Result->m_Items[idx];
+	CMenu* pMenu = new CMenu();
 
-	switch (f->Type & LFTypeMask)
+	LFItemDescriptor* item = p_Result->m_Items[idx];
+	switch (item->Type & LFTypeMask)
 	{
-	case LFTypeVirtual:
-		nID = ((f->FirstAggregate!=-1) && (f->LastAggregate!=-1)) ? IDM_VIRTUAL_GROUP : IDM_VIRTUAL_EMPTY;
-		break;
 	case LFTypeDrive:
-		nID = IDM_DRIVE;
+		pMenu->LoadMenu(IDM_DRIVE);
 		break;
 	case LFTypeStore:
-		nID = IDM_STORE;
+		pMenu->LoadMenu(IDM_STORE);
+		pMenu->GetSubMenu(0)->InsertMenu(0, MF_SEPARATOR | MF_BYPOSITION);
 		break;
+	case LFTypeVirtual:
+		if ((item->FirstAggregate==-1) || (item->LastAggregate==-1))
+			break;
 	case LFTypeFile:
-		nID = (m_Context==LFContextTrash) ? IDM_FILE_TRASH : IDM_FILE;
+		pMenu->LoadMenu((m_Context==LFContextTrash) ? IDM_FILE_TRASH : IDM_FILE);
 		break;
 	}
 
-	CMenu* pMenu = new CMenu();
-	pMenu->LoadMenu(nID);
-	pMenu->GetSubMenu(0)->SetDefaultItem(0, TRUE);
+	if (!IsMenu(*pMenu))
+	{
+		pMenu->CreatePopupMenu();
+		pMenu->AppendMenu(MF_POPUP, (UINT_PTR)CreateMenu(), _T("POPUP"));
+	}
+
+	CMenu* pPopup = pMenu->GetSubMenu(0);
+	ASSERT_VALID(pPopup);
+
+	pPopup->SetDefaultItem(0, TRUE);
 	return pMenu;
 }
 

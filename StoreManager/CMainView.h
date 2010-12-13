@@ -20,7 +20,7 @@ public:
 
 	INT Create(CWnd* _pParentWnd, UINT nID);
 	void UpdateViewOptions(INT Context);
-	void UpdateSearchResult(LFSearchResult* Result, INT FocusItem);
+	void UpdateSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, INT FocusItem);
 	INT GetFocusItem();
 	INT GetSelectedItem();
 	INT GetNextSelectedItem(INT n);
@@ -31,10 +31,12 @@ public:
 protected:
 	CTaskbar m_wndTaskbar;
 	CExplorerHeader m_wndExplorerHeader;
-	LFSearchResult* p_Result;
+	LFSearchResult* p_RawFiles;
+	LFSearchResult* p_CookedFiles;
 	INT m_Context;
 	INT m_ViewID;
 	BOOL m_ShowHeader;
+	BOOL m_FilesSelected;
 
 	void AdjustLayout();
 
@@ -44,6 +46,7 @@ protected:
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
 	afx_msg void OnUpdateTaskbar(CCmdUI* pCmdUI);
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
+	afx_msg void OnUpdateSelection();
 
 	afx_msg void OnStoresCreateNew();
 	afx_msg void OnStoresMaintainAll();
@@ -59,6 +62,8 @@ protected:
 
 	afx_msg void OnUpdateTrashCommands(CCmdUI* pCmdUI);
 
+	afx_msg void OnUpdateItemCommands(CCmdUI* pCmdUI);
+
 	afx_msg void OnStoreMakeDefault();
 	afx_msg void OnStoreMakeHybrid();
 	afx_msg void OnStoreImportFolder();
@@ -67,6 +72,7 @@ protected:
 	afx_msg void OnStoreDelete();
 	afx_msg void OnStoreProperties();
 	afx_msg void OnUpdateStoreCommands(CCmdUI* pCmdUI);
+
 	DECLARE_MESSAGE_MAP()
 
 private:

@@ -69,8 +69,6 @@ IDB_RIBBONHOME_16       BITMAP                  "res\\Ribbon_Home_16.bmp"
 IDB_RIBBONHOME_32       BITMAP                  "res\\Ribbon_Home_32.bmp"
 IDB_RIBBONVIEW_16       BITMAP                  "res\\Ribbon_View_16.bmp"
 IDB_RIBBONVIEW_32       BITMAP                  "res\\Ribbon_View_32.bmp"
-IDB_RIBBONITEMS_16      BITMAP                  "res\\Ribbon_Items_16.bmp"
-IDB_RIBBONITEMS_32      BITMAP                  "res\\Ribbon_Items_32.bmp"
 IDB_RIBBONCALENDAR_32   BITMAP                  "res\\Ribbon_Calendar_32.bmp"
 IDB_RIBBONCALENDAR_16   BITMAP                  "res\\Ribbon_Calendar_16.bmp"
 IDB_RIBBONGLOBE_32      BITMAP                  "res\\Ribbon_Globe_32.bmp"
@@ -352,30 +350,11 @@ BEGIN
     END
 END
 
-IDM_VIRTUAL_EMPTY MENU 
-BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "&Open",                       ID_ITEMS_OPEN
-    END
-END
-
-IDM_VIRTUAL_GROUP MENU 
-BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "&Open",                       ID_ITEMS_OPEN
-        MENUITEM "Re&member",                   ID_CLIP_REMEMBERLAST
-        MENUITEM SEPARATOR
-        MENUITEM "&Delete",                     ID_ITEMS_DELETE
-    END
-END
-
 IDM_VIRTUAL_GLOBE MENU 
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "&Open",                       ID_ITEMS_OPEN
+        MENUITEM "&Open",                       IDM_ITEM_OPEN
         MENUITEM "Open in &Google Earth...",    ID_GLOBE_GOOGLEEARTH
         MENUITEM "Re&member",                   ID_CLIP_REMEMBERLAST
         MENUITEM SEPARATOR
@@ -387,9 +366,6 @@ IDM_FILE MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "&Open",                       ID_ITEMS_OPEN
-        MENUITEM "Open &with...",               ID_ITEMS_OPENWITH
-        MENUITEM "Re&member",                   ID_CLIP_REMEMBERLAST
         MENUITEM SEPARATOR
         MENUITEM "&Delete",                     ID_ITEMS_DELETE
         MENUITEM "&Rename",                     ID_ITEMS_RENAME
@@ -400,8 +376,6 @@ IDM_FILE_TRASH MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "&Open",                       ID_ITEMS_OPEN
-        MENUITEM "Open &with...",               ID_ITEMS_OPENWITH
         MENUITEM SEPARATOR
         MENUITEM "&Delete",                     ID_ITEMS_DELETE
         MENUITEM "Re&store",                    IDM_TRASH_RESTORESELECTED
@@ -431,14 +405,6 @@ BEGIN
         MENUITEM "Use &font size",              ID_TAGCLOUD_USESIZE
         MENUITEM "Use &color",                  ID_TAGCLOUD_USECOLORS
         MENUITEM "Use &opacity",                ID_TAGCLOUD_USEOPACITY
-    END
-END
-
-IDM_HISTORY MENU 
-BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "&Goto history...",            ID_NAV_GOTOHISTORY
     END
 END
 
@@ -572,8 +538,6 @@ BEGIN
     IDS_CONTEXTMENU_SORTOPTIONS "&Arrange ""%s"" by..."
     IDS_CONTEXTMENU_AUTODIRS "&Group into subfolders"
     IDS_CONTEXTMENU_VIEWOPTIONS "&Display ""%s"" as..."
-    IDS_CONTEXTMENU_TRASH_RESTOREALL "Restore &all"
-    IDS_CONTEXTMENU_UNKNOWN_REGISTER "Re&gister formats..."
 END
 
 STRINGTABLE 
@@ -593,7 +557,6 @@ BEGIN
     IDS_TYPE_FILE_PLURAL    "%d files"
     IDS_TYPE_VIRTUAL_SINGULAR "%d virtual folder"
     IDS_TYPE_VIRTUAL_PLURAL "%d virtual folders"
-    IDS_REQUIRESMAINTENANCE "This store requires scheduled maintenance."
 END
 
 STRINGTABLE 
@@ -765,7 +728,6 @@ END
 STRINGTABLE 
 BEGIN
     ID_ITEMS_SHOWINSPECTOR  "Shows the inspector pane.\nInspector pane"
-    ID_ITEMS_OPEN           "Opens the selected item.\nOpen (Enter)"
     ID_ITEMS_DELETE         "Deletes the selected files.\nDelete (Del)"
     ID_ITEMS_RENAME         "Renames the selected file.\nRename (F2)"
 END
@@ -802,6 +764,7 @@ END
 
 STRINGTABLE 
 BEGIN
+    IDM_ITEM_OPEN           "Opens the selected item.\nOpen"
     IDM_STORES_HIDEEMPTYDRIVES "&Hide unmounted drives"
 END
 

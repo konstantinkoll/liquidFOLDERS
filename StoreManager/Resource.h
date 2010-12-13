@@ -16,8 +16,6 @@
 #define IDB_APPMENU_16                  139
 #define IDB_RIBBONHOME_32               140
 #define IDB_RIBBONHOME_16               141
-#define IDB_RIBBONITEMS_32              142
-#define IDB_RIBBONITEMS_16              143
 #define IDB_RIBBONVIEW_32               144
 #define IDB_RIBBONVIEW_16               145
 #define IDB_RIBBONCALENDAR_32           148
@@ -150,27 +148,23 @@
 #define IDS_CONTEXTMENU_SORTOPTIONS     1002
 #define IDS_CONTEXTMENU_AUTODIRS        1003
 #define IDS_CONTEXTMENU_VIEWOPTIONS     1004
-#define IDS_CONTEXTMENU_TRASH_RESTOREALL 1006
-#define IDS_CONTEXTMENU_UNKNOWN_REGISTER 1007
-#define IDS_FILES_SINGULAR              1008
-#define IDS_FILES_PLURAL                1009
-#define IDS_TXTFILEFILTER               1010
-#define IDS_ATTRIBUTENOTSORTABLE        1011
-#define IDS_NOITEMSSELECTED             1012
-#define IDS_MULTIPLETYPESSELECTED       1013
-#define IDS_MOREATTRIBUTES              1014
-#define IDS_TYPE_DRIVE_SINGULAR         1015
-#define IDS_TYPE_DRIVE_PLURAL           1016
-#define IDS_TYPE_STORE_SINGULAR         1017
-#define IDS_TYPE_STORE_PLURAL           1018
-#define IDS_TYPE_FILE_SINGULAR          1019
-#define IDS_TYPE_FILE_PLURAL            1020
-#define IDS_TYPE_VIRTUAL_SINGULAR       1021
-#define IDS_TYPE_VIRTUAL_PLURAL         1022
-#define IDS_REQUIRESMAINTENANCE         1023
-#define IDS_IMPORTFOLDER                1024
-#define IDS_YOULOOKAT                   1025
-#define IDS_NOTHINGTODISPLAY            1026
+#define IDS_FILES_SINGULAR              1005
+#define IDS_FILES_PLURAL                1006
+#define IDS_TXTFILEFILTER               1007
+#define IDS_ATTRIBUTENOTSORTABLE        1008
+#define IDS_NOITEMSSELECTED             1009
+#define IDS_MULTIPLETYPESSELECTED       1010
+#define IDS_MOREATTRIBUTES              1011
+#define IDS_TYPE_DRIVE_SINGULAR         1012
+#define IDS_TYPE_DRIVE_PLURAL           1013
+#define IDS_TYPE_STORE_SINGULAR         1014
+#define IDS_TYPE_STORE_PLURAL           1015
+#define IDS_TYPE_FILE_SINGULAR          1016
+#define IDS_TYPE_FILE_PLURAL            1017
+#define IDS_TYPE_VIRTUAL_SINGULAR       1018
+#define IDS_TYPE_VIRTUAL_PLURAL         1019
+#define IDS_YOULOOKAT                   1020
+#define IDS_NOTHINGTODISPLAY            1021
 #define IDS_VATTR_FIRST                 1100
 #define IDS_VATTR_DRIVELETTER           1100
 #define IDS_VATTR_MAINTENANCETIME       1101
@@ -214,18 +208,16 @@
 #define IDM_TRASH_EMPTY                 3301
 #define IDM_TRASH_RESTOREALL            3302
 #define IDM_TRASH_RESTORESELECTED       3303
-#define IDM_DRIVE                       3400
-#define IDM_DRIVE_CREATENEWSTORE        3401
+#define IDM_ITEM_OPEN                   4000
+#define IDM_DRIVE                       4100
+#define IDM_DRIVE_CREATENEWSTORE        4101
 #define ID_TOGGLE_ATTRIBUTE             50000
 
-#define IDM_VIRTUAL_EMPTY               201
-#define IDM_VIRTUAL_GROUP               202
 #define IDM_VIRTUAL_GLOBE               203
 #define IDM_FILE                        204
 #define IDM_FILE_TRASH                  205
 #define IDM_GLOBE                       206
 #define IDM_TAGCLOUD                    207
-#define IDM_HISTORY                     208
 
 // Next default values for new objects
 // 

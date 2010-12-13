@@ -690,14 +690,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\Ribbon_Files_16.bmp"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Ribbon_Files_32.bmp"
-				>
-			</File>
-			<File
 				RelativePath=".\res\Ribbon_Globe_16.bmp"
 				>
 			</File>
@@ -711,14 +703,6 @@
 			</File>
 			<File
 				RelativePath=".\res\Ribbon_Home_32.bmp"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Ribbon_Items_16.bmp"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Ribbon_Items_32.bmp"
 				>
 			</File>
 			<File

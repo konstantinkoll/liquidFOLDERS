@@ -15,7 +15,7 @@
 CMainView::CMainView()
 {
 	p_wndFileView = NULL;
-	p_Result = NULL;
+	p_RawFiles = p_CookedFiles = NULL;
 	m_Context = m_ViewID = -1;
 	m_ShowHeader = FALSE;
 }
@@ -69,42 +69,42 @@ BOOL CMainView::CreateFileView(UINT ViewID, INT FocusItem)
 		if ((m_ViewID<LFViewLargeIcons) || (m_ViewID>LFViewPreview))
 		{
 			pNewView = new CListView();
-			((CListView*)pNewView)->Create(this, 3, p_Result, FocusItem);
+			((CListView*)pNewView)->Create(this, 3, p_CookedFiles, FocusItem);
 		}
 		break;
 	case LFViewGlobe:
 		if (m_ViewID!=LFViewGlobe)
 		{
 			pNewView = new CGlobeView();
-			((CGlobeView*)pNewView)->Create(this, 3, p_Result, FocusItem);
+			((CGlobeView*)pNewView)->Create(this, 3, p_CookedFiles, FocusItem);
 		}
 		break;
 	case LFViewTagcloud:
 		if (m_ViewID!=LFViewTagcloud)
 		{
 			pNewView = new CTagcloudView();
-			((CTagcloudView*)pNewView)->Create(this, 3, p_Result, FocusItem);
+			((CTagcloudView*)pNewView)->Create(this, 3, p_CookedFiles, FocusItem);
 		}
 		break;
 	/*case LFViewCalendarYear:
 		if (m_ViewID!=LFViewCalendarYear)
 		{
 			pNewView = new CCalendarYearView();
-			((CCalendarYearView*)pNewView)->Create(this, p_Result, FocusItem);
+			((CCalendarYearView*)pNewView)->Create(this, p_CookedFiles, FocusItem);
 		}
 		break;
 	case LFViewCalendarDay:
 		if (m_ViewID!=LFViewCalendarDay)
 		{
 			pNewView = new CCalendarDayView();
-			((CCalendarDayView*)pNewView)->Create(this, p_Result, FocusItem);
+			((CCalendarDayView*)pNewView)->Create(this, p_CookedFiles, FocusItem);
 		}
 		break;
 	case LFViewTimeline:
 		if (m_ViewID!=LFViewTimeline)
 		{
 			pNewView = new CTimelineView();
-			((CTimelineView*)pNewView)->Create(this, p_Result, FocusItem);
+			((CTimelineView*)pNewView)->Create(this, p_CookedFiles, FocusItem);
 		}
 		break;*/
 	}
@@ -121,7 +121,7 @@ BOOL CMainView::CreateFileView(UINT ViewID, INT FocusItem)
 		}
 
 		p_wndFileView = pNewView;
-		p_wndFileView->SetOwner(GetParent());	// TODO
+		p_wndFileView->SetOwner(GetOwner());
 		p_wndFileView->SetFocus();
 		AdjustLayout();
 	}
@@ -136,11 +136,12 @@ void CMainView::UpdateViewOptions(INT Context)
 			p_wndFileView->UpdateViewOptions(Context);
 }
 
-void CMainView::UpdateSearchResult(LFSearchResult* Result, INT FocusItem)
+void CMainView::UpdateSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, INT FocusItem)
 {
-	p_Result = Result;
+	p_RawFiles = pRawFiles;
+	p_CookedFiles = pCookedFiles;
 
-	if (!Result)
+	if (!pCookedFiles)
 	{
 		// Header
 		m_wndExplorerHeader.SetText(_T(""), _T(""));
@@ -152,7 +153,7 @@ void CMainView::UpdateSearchResult(LFSearchResult* Result, INT FocusItem)
 	else
 	{
 		// Context
-		m_Context = Result->m_Context;
+		m_Context = pCookedFiles->m_Context;
 
 		// Header
 		BOOL ShowHeader = m_ShowHeader;
@@ -163,8 +164,8 @@ void CMainView::UpdateSearchResult(LFSearchResult* Result, INT FocusItem)
 		switch (m_Context)
 		{
 		case LFContextStores:
-			ENSURE(Mask.LoadString(Result->m_ItemCount==1 ? IDS_STORES_SINGULAR : IDS_STORES_PLURAL));
-			Hint.Format(Mask, Result->m_StoreCount);
+			ENSURE(Mask.LoadString(pCookedFiles->m_ItemCount==1 ? IDS_STORES_SINGULAR : IDS_STORES_PLURAL));
+			Hint.Format(Mask, pCookedFiles->m_StoreCount);
 			m_ShowHeader = TRUE;
 			break;
 		case LFContextStoreHome:
@@ -173,9 +174,9 @@ void CMainView::UpdateSearchResult(LFSearchResult* Result, INT FocusItem)
 		case LFContextTrash:
 		case LFContextSubfolderDay:
 		case LFContextSubfolderLocation:
-			ENSURE(Mask.LoadString(Result->m_FileCount==1 ? IDS_FILES_SINGULAR : IDS_FILES_PLURAL));
-			LFINT64ToString(Result->m_FileSize, tmpBuf, 256);
-			Hint.Format(Mask, Result->m_FileCount, tmpBuf);
+			ENSURE(Mask.LoadString(pCookedFiles->m_FileCount==1 ? IDS_FILES_SINGULAR : IDS_FILES_PLURAL));
+			LFINT64ToString(pCookedFiles->m_FileSize, tmpBuf, 256);
+			Hint.Format(Mask, pCookedFiles->m_FileCount, tmpBuf);
 			m_ShowHeader = TRUE;
 			break;
 		default:
@@ -185,19 +186,21 @@ void CMainView::UpdateSearchResult(LFSearchResult* Result, INT FocusItem)
 		if (m_ShowHeader)
 		{
 			m_wndExplorerHeader.SetColors(m_Context<=LFContextClipboard ? 0x126E00 : 0x993300, (COLORREF)-1, FALSE);
-			m_wndExplorerHeader.SetText(Result->m_Name, Hint);
+			m_wndExplorerHeader.SetText(pCookedFiles->m_Name, Hint);
 		}
 
 		// View
-		if (!CreateFileView(theApp.m_Views[p_Result->m_Context].Mode, FocusItem))
+		if (!CreateFileView(theApp.m_Views[pCookedFiles->m_Context].Mode, FocusItem))
 		{
 			p_wndFileView->UpdateViewOptions(m_Context);
-			p_wndFileView->UpdateSearchResult(Result, FocusItem);
+			p_wndFileView->UpdateSearchResult(pCookedFiles, FocusItem);
 
 			if (ShowHeader!=m_ShowHeader)
 				AdjustLayout();
 		}
 	}
+
+	OnUpdateSelection();
 }
 
 void CMainView::AdjustLayout()
@@ -237,6 +240,7 @@ BEGIN_MESSAGE_MAP(CMainView, CWnd)
 	ON_WM_SIZE()
 	ON_WM_SETFOCUS()
 	ON_WM_CONTEXTMENU()
+	ON_MESSAGE_VOID(WM_UPDATESELECTION, OnUpdateSelection)
 
 	ON_COMMAND(IDM_STORES_CREATENEW, OnStoresCreateNew)
 	ON_COMMAND(IDM_STORES_MAINTAINALL, OnStoresMaintainAll)
@@ -252,6 +256,8 @@ BEGIN_MESSAGE_MAP(CMainView, CWnd)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_HOUSEKEEPING_REGISTER, IDM_HOUSEKEEPING_SEND, OnUpdateHousekeepingCommands)
 
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_TRASH_EMPTY, IDM_TRASH_RESTORESELECTED, OnUpdateTrashCommands)
+
+	ON_UPDATE_COMMAND_UI(IDM_ITEM_OPEN, OnUpdateItemCommands)
 
 	ON_COMMAND(IDM_STORE_MAKEDEFAULT, OnStoreMakeDefault)
 	ON_COMMAND(IDM_STORE_MAKEHYBRID, OnStoreMakeHybrid)
@@ -280,7 +286,7 @@ INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndTaskbar.AddButton(IDM_TRASH_EMPTY, 4, TRUE);
 	m_wndTaskbar.AddButton(IDM_TRASH_RESTOREALL, 5);
 	m_wndTaskbar.AddButton(IDM_TRASH_RESTORESELECTED, 6);
-	m_wndTaskbar.AddButton(ID_ITEMS_OPEN, 7);
+	m_wndTaskbar.AddButton(IDM_ITEM_OPEN, 7);
 	m_wndTaskbar.AddButton(IDM_STORE_DELETE, 8);
 	m_wndTaskbar.AddButton(IDM_STORE_RENAME, 9);
 	m_wndTaskbar.AddButton(IDM_STORE_PROPERTIES, 10);
@@ -365,6 +371,25 @@ void CMainView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 	}
 }
 
+void CMainView::OnUpdateSelection()
+{
+	INT idx = GetNextSelectedItem(-1);
+	m_FilesSelected = FALSE;
+
+	while (idx>=0)
+	{
+		LFItemDescriptor* item = p_CookedFiles->m_Items[idx];
+
+		m_FilesSelected |= ((item->Type & LFTypeMask)==LFTypeFile) ||
+						(((item->Type & LFTypeMask)==LFTypeVirtual) && (item->FirstAggregate!=-1) && (item->LastAggregate!=-1));
+
+		idx = GetNextSelectedItem(idx);
+	}
+
+	// TODO
+	((CMainFrame*)GetParent())->OnUpdateSelection();
+}
+
 
 // Stores
 
@@ -397,7 +422,7 @@ void CMainView::OnStoresBackup()
 
 void CMainView::OnUpdateStoresCommands(CCmdUI* pCmdUI)
 {
-	BOOL b = (p_Result) && (m_Context==LFContextStores);
+	BOOL b = (p_CookedFiles) && (m_Context==LFContextStores);
 
 	switch (pCmdUI->m_nID)
 	{
@@ -417,15 +442,15 @@ void CMainView::OnUpdateStoresCommands(CCmdUI* pCmdUI)
 
 void CMainView::OnHomeImportFolder()
 {
-	if (p_Result)
-		LFImportFolder(p_Result->m_StoreID, this);
+	if (p_CookedFiles)
+		LFImportFolder(p_CookedFiles->m_StoreID, this);
 }
 
 void CMainView::OnHomeMaintain()
 {
-	if (p_Result)
+	if (p_CookedFiles)
 	{
-		LFMaintenanceList* ml = LFStoreMaintenance(p_Result->m_StoreID);
+		LFMaintenanceList* ml = LFStoreMaintenance(p_CookedFiles->m_StoreID);
 		LFErrorBox(ml->m_LastError);
 
 		LFStoreMaintenanceDlg dlg(ml, this);
@@ -437,16 +462,16 @@ void CMainView::OnHomeMaintain()
 
 void CMainView::OnHomeProperties()
 {
-	if (p_Result)
+	if (p_CookedFiles)
 	{
-		LFStorePropertiesDlg dlg(p_Result->m_StoreID, this);
+		LFStorePropertiesDlg dlg(p_CookedFiles->m_StoreID, this);
 		dlg.DoModal();
 	}
 }
 
 void CMainView::OnUpdateHomeCommands(CCmdUI* pCmdUI)
 {
-	BOOL b = (p_Result) && (m_Context==LFContextStoreHome);
+	BOOL b = (p_CookedFiles) && (m_Context==LFContextStoreHome);
 
 	if (pCmdUI->m_nID==IDM_HOME_HIDEEMPTYDOMAINS)
 		pCmdUI->SetCheck(theApp.m_HideEmptyDomains);
@@ -459,10 +484,10 @@ void CMainView::OnUpdateHomeCommands(CCmdUI* pCmdUI)
 
 void CMainView::OnUpdateHousekeepingCommands(CCmdUI* pCmdUI)
 {
-	BOOL b = (p_Result) && (m_Context==LFContextHousekeeping);
+	BOOL b = (p_CookedFiles) && (m_Context==LFContextHousekeeping);
 
-	if ((p_Result) && (pCmdUI->m_nID==IDM_HOUSEKEEPING_REGISTER))
-		b &= (p_Result->m_ItemCount>0);
+	if ((p_CookedFiles) && (pCmdUI->m_nID==IDM_HOUSEKEEPING_REGISTER))
+		b &= (p_CookedFiles->m_ItemCount>0);
 
 	pCmdUI->Enable(b);
 }
@@ -472,10 +497,34 @@ void CMainView::OnUpdateHousekeepingCommands(CCmdUI* pCmdUI)
 
 void CMainView::OnUpdateTrashCommands(CCmdUI* pCmdUI)
 {
-	BOOL b = (p_Result) && (m_Context==LFContextTrash);
+	BOOL b = (p_CookedFiles) && (m_Context==LFContextTrash);
 	
 	if (pCmdUI->m_nID==IDM_TRASH_RESTORESELECTED)
 		b &= FALSE; //TODO
+
+	pCmdUI->Enable(b);
+}
+
+
+// Item
+
+void CMainView::OnUpdateItemCommands(CCmdUI* pCmdUI)
+{
+	BOOL b = FALSE;
+
+	INT idx = GetSelectedItem();
+	if (idx!=-1)
+	{
+		LFItemDescriptor* i = p_CookedFiles->m_Items[idx];
+		switch (pCmdUI->m_nID)
+		{
+		case IDM_ITEM_OPEN:
+			b = (i->NextFilter!=NULL) ||
+				((i->Type & (LFTypeMask | LFTypeNotMounted))==LFTypeDrive) ||
+				((i->Type & (LFTypeMask | LFTypeNotMounted))==LFTypeFile);
+			break;
+		}
+	}
 
 	pCmdUI->Enable(b);
 }
@@ -487,21 +536,21 @@ void CMainView::OnStoreMakeDefault()
 {
 	INT idx = GetSelectedItem();
 	if (idx!=-1)
-		LFErrorBox(LFMakeDefaultStore(p_Result->m_Items[idx]->StoreID, NULL), m_hWnd);
+		LFErrorBox(LFMakeDefaultStore(p_CookedFiles->m_Items[idx]->StoreID, NULL), m_hWnd);
 }
 
 void CMainView::OnStoreMakeHybrid()
 {
 	INT idx = GetSelectedItem();
 	if (idx!=-1)
-		LFErrorBox(LFMakeHybridStore(p_Result->m_Items[idx]->StoreID, NULL), m_hWnd);
+		LFErrorBox(LFMakeHybridStore(p_CookedFiles->m_Items[idx]->StoreID, NULL), m_hWnd);
 }
 
 void CMainView::OnStoreImportFolder()
 {
 	INT idx = GetSelectedItem();
 	if (idx!=-1)
-		LFImportFolder(p_Result->m_Items[idx]->StoreID, this);
+		LFImportFolder(p_CookedFiles->m_Items[idx]->StoreID, this);
 }
 
 void CMainView::OnStoreMaintain()
@@ -509,7 +558,7 @@ void CMainView::OnStoreMaintain()
 	INT idx = GetSelectedItem();
 	if (idx!=-1)
 	{
-		LFMaintenanceList* ml = LFStoreMaintenance(p_Result->m_Items[idx]->StoreID);
+		LFMaintenanceList* ml = LFStoreMaintenance(p_CookedFiles->m_Items[idx]->StoreID);
 		LFErrorBox(ml->m_LastError);
 
 		LFStoreMaintenanceDlg dlg(ml, this);
@@ -530,7 +579,7 @@ void CMainView::OnStoreDelete()
 {
 	INT idx = GetSelectedItem();
 	if (idx!=-1)
-		LFErrorBox(((LFApplication*)AfxGetApp())->DeleteStore(p_Result->m_Items[idx], this));
+		LFErrorBox(((LFApplication*)AfxGetApp())->DeleteStore(p_CookedFiles->m_Items[idx], this));
 }
 
 void CMainView::OnStoreProperties()
@@ -538,7 +587,7 @@ void CMainView::OnStoreProperties()
 	INT idx = GetSelectedItem();
 	if (idx!=-1)
 	{
-		LFStorePropertiesDlg dlg(p_Result->m_Items[idx]->StoreID, this);
+		LFStorePropertiesDlg dlg(p_CookedFiles->m_Items[idx]->StoreID, this);
 		dlg.DoModal();
 	}
 }
@@ -579,7 +628,7 @@ void CMainView::OnUpdateStoreCommands(CCmdUI* pCmdUI)
 	INT idx = GetSelectedItem();
 	if (idx!=-1)
 	{
-		LFItemDescriptor* i = p_Result->m_Items[idx];
+		LFItemDescriptor* i = p_CookedFiles->m_Items[idx];
 		if ((i->Type & LFTypeMask)==LFTypeStore)
 			switch (pCmdUI->m_nID)
 			{

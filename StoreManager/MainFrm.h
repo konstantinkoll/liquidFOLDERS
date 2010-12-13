@@ -17,60 +17,11 @@
 
 #define RibbonCategory_Home                 0
 #define RibbonCategory_View                 1
-#define RibbonCategory_Items                2
-#define RibbonCategory_View_Calendar        3
-#define RibbonCategory_View_Globe           4
-#define RibbonCategory_View_Tagcloud        5
+#define RibbonCategory_View_Calendar        2
+#define RibbonCategory_View_Globe           3
+#define RibbonCategory_View_Tagcloud        4
 
 #define RibbonDefaultCategory               RibbonCategory_View
-
-
-class CAdvancedRibbonBar : public CMFCRibbonBar
-{
-public:
-	CAdvancedRibbonBar()
-	{
-		ChangeOccured = FALSE;
-		nActivate = -1;
-	}
-
-	void CAdvancedRibbonBar::ShowCategory(INT nIndex, BOOL bShow=TRUE, BOOL bActivate=FALSE)
-	{
-		if (nIndex<this->GetCategoryCount())
-			if (GetCategory(nIndex)->IsVisible()!=bShow)
-			{
-				ChangeOccured = TRUE;
-				CMFCRibbonBar::ShowCategory(nIndex, bShow);
-
-				if ((bActivate) && (bShow))
-					nActivate = nIndex;
-			}
-	}
-
-	void CAdvancedRibbonBar::Update()
-	{
-		if (ChangeOccured)
-		{
-			if (!GetActiveCategory()->IsVisible())
-			{
-				SetActiveCategory(GetCategory(RibbonDefaultCategory));
-			}
-			else
-			{
-				RecalcLayout();
-				if (nActivate!=-1)
-					SetActiveCategory(GetCategory(nActivate));
-			}
-
-			ChangeOccured = FALSE;
-			nActivate = -1;
-		}
-	}
-
-private:
-	BOOL ChangeOccured;
-	INT nActivate;
-};
 
 
 // CMainFrame
@@ -92,6 +43,7 @@ public:
 	BOOL AddClipItem(LFItemDescriptor* i);
 	void UpdateViewOptions();
 	void UpdateSortOptions();
+	void OnUpdateSelection();
 	BOOL RenameSingleItem(UINT n, CString Name);
 	BOOL UpdateSelectedItems(LFVariantData* value1, LFVariantData* value2=NULL, LFVariantData* value3=NULL);
 	BOOL UpdateTrashFlag(BOOL Trash, BOOL All=FALSE);
@@ -106,9 +58,8 @@ protected:
 	void UpdateSearchResult(BOOL SetEmpty, INT FocusItem);
 	LFTransactionList* BuildTransactionList(BOOL All=FALSE);
 
-	CAdvancedRibbonBar m_wndRibbonBar;
+	CMFCRibbonBar m_wndRibbonBar;
 	CMFCRibbonApplicationButton m_MainButton;
-	//CMFCRibbonComboBox* m_cbxActiveContext;
 	CMFCToolBarImages m_PanelImages;
 	CMFCRibbonStatusBar m_wndStatusBar;
 	CCaptionBar m_wndCaptionBar;
@@ -116,7 +67,6 @@ protected:
 	CHistoryWnd* m_wndHistory;
 	CInspectorWnd m_wndInspector;
 	CMainView m_wndMainView;
-	//CFileView* p_FileView;
 	BOOL FilesSelected;
 	BreadcrumbItem* m_BreadcrumbBack;
 	BreadcrumbItem* m_BreadcrumbForward;
@@ -160,7 +110,6 @@ protected:
 	afx_msg void OnRestoreAllFiles();
 	afx_msg void OnUpdateTrashCommands(CCmdUI* pCmdUI);
 	afx_msg void OnChangeChildView(UINT nID);
-	afx_msg void OnUpdateSelection();
 	afx_msg void OnNavigateFirst();
 	afx_msg void OnNavigateBackOne();
 	afx_msg LRESULT OnNavigateBack(WPARAM wParam, LPARAM lParam);

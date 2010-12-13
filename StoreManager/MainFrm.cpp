@@ -51,7 +51,6 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoreAttributesChanged, OnStoresChanged)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->DefaultStoreChanged, OnStoresChanged)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->LookChanged, OnLookChanged)
-	ON_MESSAGE_VOID(WM_UPDATESELECTION, OnUpdateSelection)
 
 	ON_UPDATE_COMMAND_UI_RANGE(ID_APP_NEWVIEW, ID_APP_VIEW_TIMELINE, OnUpdateAppCommands)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_AUTODIRS, OnUpdateAppCommands)
@@ -820,7 +819,7 @@ void CMainFrame::UpdateSearchResult(BOOL SetEmpty, INT FocusItem)
 		#endif
 	}
 
-	m_wndMainView.UpdateSearchResult(SetEmpty ? NULL : CookedFiles, FocusItem);
+	m_wndMainView.UpdateSearchResult(SetEmpty ? NULL : RawFiles, SetEmpty ? NULL : CookedFiles, FocusItem);
 	OnUpdateSelection();
 }
 
@@ -871,7 +870,7 @@ BOOL CMainFrame::RenameSingleItem(UINT n, CString Name)
 		LFTransactionUpdate(tl, GetSafeHwnd(), &value);
 
 		if (tl->m_Changes)
-			m_wndMainView.UpdateSearchResult(CookedFiles, m_wndMainView.GetFocusItem());
+			m_wndMainView.UpdateSearchResult(RawFiles, CookedFiles, m_wndMainView.GetFocusItem());
 
 		if (tl->m_LastError>LFCancel)
 			ShowCaptionBar(IDI_ERROR, tl->m_LastError);
@@ -942,7 +941,7 @@ BOOL CMainFrame::UpdateSelectedItems(LFVariantData* value1, LFVariantData* value
 			}
 
 		if (tl->m_Changes)
-			m_wndMainView.UpdateSearchResult(CookedFiles, m_wndMainView.GetFocusItem());
+			m_wndMainView.UpdateSearchResult(RawFiles, CookedFiles, m_wndMainView.GetFocusItem());
 		if (deselected)
 			OnUpdateSelection();
 	}
@@ -1323,44 +1322,6 @@ void CMainFrame::InitializeRibbon()
 				pPanelDisplay->Add(theApp.CommandButton(ID_APP_VIEW_TIMELINE, 10, 10));
 			}
 
-	strTemp = "Items";
-	CMFCRibbonCategory* pCategoryItems = m_wndRibbonBar.AddCategory(strTemp, IDB_RIBBONITEMS_16, IDB_RIBBONITEMS_32);
-
-		strTemp = "Clipboard";
-		CMFCRibbonPanel* pPanelClipboard = pCategoryItems->AddPanel(strTemp, m_PanelImages.ExtractIcon(9));
-
-			pPanelClipboard->Add(theApp.CommandButton(ID_CLIP_COPY, 0, 0));
-			pPanelClipboard->Add(theApp.CommandButton(ID_VIEW_SELECTALL, 1));
-			pPanelClipboard->Add(theApp.CommandButton(ID_VIEW_SELECTNONE, 2));
-			if (IsClipboard)
-			{
-				pPanelClipboard->Add(theApp.CommandButton(ID_CLIP_REMOVE, 3));
-			}
-			else
-			{
-				pPanelClipboard->Add(theApp.CommandButton(ID_CLIP_PASTE, 4));
-				pPanelClipboard->AddSeparator();
-
-				strTemp = "Remember";
-				CMFCRibbonButton* pBtnRemember = new CMFCRibbonButton(ID_CLIP_REMEMBERLAST, strTemp, 5, 5);
-
-					strTemp = "Add files to";
-					pBtnRemember->AddSubItem(new CMFCRibbonLabel(strTemp));
-					pBtnRemember->AddSubItem(theApp.CommandButton(ID_CLIP_REMEMBERLAST, 5, 5));
-					pBtnRemember->AddSubItem(theApp.CommandButton(ID_CLIP_REMEMBERNEW, 6, 6));
-
-				pPanelClipboard->Add(pBtnRemember);
-			}
-
-		strTemp = "Basic";
-		CMFCRibbonPanel* pPanelItemsBasic = pCategoryItems->AddPanel(strTemp, m_PanelImages.ExtractIcon(3));
-		pPanelItemsBasic->EnableLaunchButton(ID_ITEMS_SHOWINSPECTOR, 10);
-
-			pPanelItemsBasic->Add(theApp.CommandButton(ID_ITEMS_OPEN, 7, 7));
-			pPanelItemsBasic->AddSeparator();
-			pPanelItemsBasic->Add(theApp.CommandButton(ID_ITEMS_DELETE, 8, 8));
-			pPanelItemsBasic->Add(theApp.CommandButton(ID_ITEMS_RENAME, 9, 9));
-
 	if (!IsClipboard)
 	{
 		strCtx = "View";
@@ -1565,7 +1526,7 @@ BOOL CMainFrame::OpenChildView(INT FocusItem, BOOL Force, BOOL AllowChangeSort)
 	ASSERT(AttributeSortableInView(ActiveViewParameters->SortBy, ViewID));
 
 	m_wndMainView.UpdateViewOptions(ActiveContextID);
-	m_wndMainView.UpdateSearchResult(CookedFiles, FocusItem);
+	m_wndMainView.UpdateSearchResult(RawFiles, CookedFiles, FocusItem);
 
 	OnUpdateSelection();
 

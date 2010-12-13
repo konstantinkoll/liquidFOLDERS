@@ -159,7 +159,6 @@ INT CHistoryWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	const DWORD dwExStyle = LVS_EX_DOUBLEBUFFER | LVS_EX_LABELTIP;
 	m_wndList.SetExtendedStyle(dwExStyle);
-	m_wndList.SetContextMenu(IDM_HISTORY);
 
 	LV_COLUMN lvc;
 	ZeroMemory(&lvc, sizeof(lvc));
