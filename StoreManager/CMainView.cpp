@@ -273,6 +273,49 @@ void CMainView::ExecuteContextMenu(CHAR Drive, LPCSTR verb)
 	}
 }
 
+void CMainView::AddTransactionItem(LFTransactionList* tl, LFItemDescriptor* item, UINT UserData)
+{
+	switch (item->Type & LFTypeMask)
+	{
+	case LFTypeFile:
+	case LFTypeStore:
+		LFAddItemDescriptor(tl, item, UserData);
+		break;
+	case LFTypeVirtual:
+		if ((item->FirstAggregate!=-1) && (item->LastAggregate!=-1))
+			for (INT a=item->FirstAggregate; a<=item->LastAggregate; a++)
+				LFAddItemDescriptor(tl, p_RawFiles->m_Items[a], UserData);
+		break;
+	}
+}
+
+LFTransactionList* CMainView::BuildTransactionList(BOOL All)
+{
+	LFTransactionList* tl = NULL;
+
+	if ((p_RawFiles) && (p_CookedFiles))
+	{
+		tl = LFAllocTransactionList();
+
+		if (All)
+		{
+			for (UINT a=0; a<p_CookedFiles->m_ItemCount; a++)
+				AddTransactionItem(tl, p_CookedFiles->m_Items[a], a);
+		}
+		else
+		{
+			INT idx = GetNextSelectedItem(-1);
+			while (idx!=-1)
+			{
+				AddTransactionItem(tl, p_CookedFiles->m_Items[idx], idx);
+				idx = GetNextSelectedItem(idx);
+			}
+		}
+	}
+
+	return tl;
+}
+
 
 BEGIN_MESSAGE_MAP(CMainView, CWnd)
 	ON_WM_CREATE()
@@ -311,6 +354,8 @@ BEGIN_MESSAGE_MAP(CMainView, CWnd)
 	ON_COMMAND(IDM_STORE_RENAME, OnStoreRename)
 	ON_COMMAND(IDM_STORE_PROPERTIES, OnStoreProperties)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_STORE_MAKEDEFAULT, IDM_STORE_PROPERTIES, OnUpdateStoreCommands)
+
+	ON_COMMAND(IDM_FILE_OPENWITH, OnFileOpenWith)
 END_MESSAGE_MAP()
 
 INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -322,31 +367,35 @@ INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (!m_wndTaskbar.Create(this, IDB_TASKS, 1))
 		return -1;
 
+	m_wndTaskbar.SetOwner(GetOwner());
+
 	m_wndTaskbar.AddButton(IDM_STORES_CREATENEW, 0);
 	m_wndTaskbar.AddButton(IDM_STORES_MAINTAINALL, 1, TRUE);
 	m_wndTaskbar.AddButton(IDM_HOME_IMPORTFOLDER, 2);
 	m_wndTaskbar.AddButton(IDM_HOUSEKEEPING_REGISTER, 3);
-	m_wndTaskbar.AddButton(IDM_HOUSEKEEPING_SEND, 21, TRUE);
+	m_wndTaskbar.AddButton(IDM_HOUSEKEEPING_SEND, 22, TRUE);
 	m_wndTaskbar.AddButton(IDM_TRASH_EMPTY, 4, TRUE);
 	m_wndTaskbar.AddButton(IDM_TRASH_RESTOREALL, 5);
 	m_wndTaskbar.AddButton(IDM_TRASH_RESTORESELECTED, 6);
 	m_wndTaskbar.AddButton(IDM_ITEM_OPEN, 7);
-	m_wndTaskbar.AddButton(IDM_DRIVE_PROPERTIES, 8);
-	m_wndTaskbar.AddButton(IDM_STORE_DELETE, 9);
-	m_wndTaskbar.AddButton(IDM_STORE_RENAME, 10);
-	m_wndTaskbar.AddButton(IDM_STORE_PROPERTIES, 11);
-	m_wndTaskbar.AddButton(IDM_STORE_MAKEDEFAULT, 12);
+	m_wndTaskbar.AddButton(ID_GLOBE_GOOGLEEARTH, 8);
+	m_wndTaskbar.AddButton(IDM_DRIVE_PROPERTIES, 9);
+	m_wndTaskbar.AddButton(IDM_STORE_DELETE, 10);
+	m_wndTaskbar.AddButton(IDM_STORE_RENAME, 11);
+	m_wndTaskbar.AddButton(IDM_STORE_PROPERTIES, 12);
+	m_wndTaskbar.AddButton(IDM_STORE_MAKEDEFAULT, 13);
 	m_wndTaskbar.AddButton(IDM_STORE_IMPORTFOLDER, 2);
-/*	m_wndTaskbar.AddButton(IDM_FILE_REMEMBER, 13);
-	m_wndTaskbar.AddButton(IDM_FILE_DELETE, 15);
-	m_wndTaskbar.AddButton(IDM_FILE_REANME, 16);
-	m_wndTaskbar.AddButton(IDM_FILE_SEND, 17);*/
-	m_wndTaskbar.AddButton(ID_APP_NEWFILEDROP, 18, TRUE);
+	m_wndTaskbar.AddButton(IDM_FILE_REMEMBER, 14);
+	m_wndTaskbar.AddButton(IDM_FILE_REMOVE, 15);
+	m_wndTaskbar.AddButton(IDM_FILE_DELETE, 16);
+	m_wndTaskbar.AddButton(IDM_FILE_RENAME, 17);
+	m_wndTaskbar.AddButton(IDM_FILE_SEND, 18);
+	m_wndTaskbar.AddButton(ID_APP_NEWFILEDROP, 19, TRUE);
 
-	m_wndTaskbar.AddButton(ID_APP_PURCHASE, 19, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_ENTERLICENSEKEY, 20, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_SUPPORT, 21, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_ABOUT, 22, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_PURCHASE, 20, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_ENTERLICENSEKEY, 21, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_SUPPORT, 22, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_ABOUT, 23, TRUE, TRUE);
 
 	// Explorer header
 	if (!m_wndExplorerHeader.Create(this, 2))
@@ -564,12 +613,12 @@ void CMainView::OnUpdateItemCommands(CCmdUI* pCmdUI)
 	INT idx = GetSelectedItem();
 	if (idx!=-1)
 	{
-		LFItemDescriptor* i = p_CookedFiles->m_Items[idx];
+		LFItemDescriptor* item = p_CookedFiles->m_Items[idx];
 		switch (pCmdUI->m_nID)
 		{
 		case IDM_ITEM_OPEN:
-			b = (i->NextFilter!=NULL) ||
-				((i->Type & (LFTypeMask | LFTypeNotMounted))==LFTypeFile);
+			b = (item->NextFilter!=NULL) ||
+				((item->Type & (LFTypeMask | LFTypeNotMounted))==LFTypeFile);
 			break;
 		}
 	}
@@ -609,14 +658,14 @@ void CMainView::OnUpdateDriveCommands(CCmdUI* pCmdUI)
 	INT idx = GetSelectedItem();
 	if (idx!=-1)
 	{
-		LFItemDescriptor* i = p_CookedFiles->m_Items[idx];
+		LFItemDescriptor* item = p_CookedFiles->m_Items[idx];
 		switch (pCmdUI->m_nID)
 		{
 		case IDM_DRIVE_CREATENEWSTORE:
-			b = ((i->Type & (LFTypeMask | LFTypeNotMounted))==LFTypeDrive);
+			b = ((item->Type & (LFTypeMask | LFTypeNotMounted))==LFTypeDrive);
 			break;
 		case IDM_DRIVE_PROPERTIES:
-			b = ((i->Type & LFTypeMask)==LFTypeDrive);
+			b = ((item->Type & LFTypeMask)==LFTypeDrive);
 			break;
 		}
 	}
@@ -694,18 +743,18 @@ void CMainView::OnUpdateStoreCommands(CCmdUI* pCmdUI)
 	INT idx = GetSelectedItem();
 	if (idx!=-1)
 	{
-		LFItemDescriptor* i = p_CookedFiles->m_Items[idx];
-		if ((i->Type & LFTypeMask)==LFTypeStore)
+		LFItemDescriptor* item = p_CookedFiles->m_Items[idx];
+		if ((item->Type & LFTypeMask)==LFTypeStore)
 			switch (pCmdUI->m_nID)
 			{
 			case IDM_STORE_MAKEDEFAULT:
-				b = (i->CategoryID==LFItemCategoryInternalStores) && (!(i->Type & LFTypeDefaultStore));
+				b = (item->CategoryID==LFItemCategoryInternalStores) && (!(item->Type & LFTypeDefaultStore));
 				break;
 			case IDM_STORE_MAKEHYBRID:
-				b = (i->CategoryID==LFItemCategoryExternalStores) && (!(i->Type & LFTypeNotMounted));
+				b = (item->CategoryID==LFItemCategoryExternalStores) && (!(item->Type & LFTypeNotMounted));
 				break;
 			case IDM_STORE_IMPORTFOLDER:
-				b = !(i->Type & LFTypeNotMounted);
+				b = !(item->Type & LFTypeNotMounted);
 				break;
 			default:
 				b = TRUE;
@@ -713,4 +762,28 @@ void CMainView::OnUpdateStoreCommands(CCmdUI* pCmdUI)
 	}
 
 	pCmdUI->Enable(b);
+}
+
+
+// File
+
+void CMainView::OnFileOpenWith()
+{
+	INT idx = GetSelectedItem();
+	if (idx!=-1)
+	{
+		WCHAR Path[MAX_PATH];
+		UINT res = LFGetFileLocation(p_CookedFiles->m_Items[idx], Path, MAX_PATH, true);
+		if (res==LFOk)
+		{
+			WCHAR Cmd[300];
+			wcscpy_s(Cmd, 300, L"shell32.dll,OpenAs_RunDLL ");
+			wcscat_s(Cmd, 300, Path);
+			ShellExecute(GetSafeHwnd(), _T("open"), _T("rundll32.exe"), Cmd, Path, SW_SHOW);
+		}
+		else
+		{
+			LFErrorBox(res, GetSafeHwnd());
+		}
+	}
 }

@@ -156,8 +156,6 @@ BEGIN
     BUTTON      ID_NAV_RELOAD
     SEPARATOR
     BUTTON      ID_NAV_GOTOHISTORY
-    SEPARATOR
-    BUTTON      ID_NAV_CLEARHISTORY
 END
 
 ID_PANE_INSPECTORWND TOOLBAR  16, 16
@@ -352,25 +350,13 @@ BEGIN
     END
 END
 
-IDM_VIRTUAL_GLOBE MENU 
-BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "&Open",                       IDM_ITEM_OPEN
-        MENUITEM "Open in &Google Earth...",    ID_GLOBE_GOOGLEEARTH
-        MENUITEM "Re&member",                   ID_CLIP_REMEMBERLAST
-        MENUITEM SEPARATOR
-        MENUITEM "&Delete",                     ID_ITEMS_DELETE
-    END
-END
-
 IDM_FILE MENU 
 BEGIN
     POPUP "POPUP"
     BEGIN
         MENUITEM SEPARATOR
-        MENUITEM "&Delete",                     ID_ITEMS_DELETE
-        MENUITEM "&Rename",                     ID_ITEMS_RENAME
+        MENUITEM "&Delete",                     IDM_FILE_DELETE
+        MENUITEM "&Rename",                     IDM_FILE_RENAME
     END
 END
 
@@ -379,7 +365,7 @@ BEGIN
     POPUP "POPUP"
     BEGIN
         MENUITEM SEPARATOR
-        MENUITEM "&Delete",                     ID_ITEMS_DELETE
+        MENUITEM "&Delete",                     IDM_FILE_DELETE
         MENUITEM "Re&store",                    IDM_TRASH_RESTORESELECTED
     END
 END
@@ -544,6 +530,11 @@ END
 
 STRINGTABLE 
 BEGIN
+    IDS_CONTEXTMENU_OPEN    "&Open"
+    IDS_CONTEXTMENU_OPENWITH "Open &with..."
+    IDS_CONTEXTMENU_OPENGOOGLEEARTH "Open in &Google Earth"
+    IDS_CONTEXTMENU_REMEMBER "Re&member"
+    IDS_CONTEXTMENU_REMOVE  "Re&move from clipboard"
     IDS_FILES_SINGULAR      "%d file (%s)"
     IDS_FILES_PLURAL        "%d files (%s)"
     IDS_TXTFILEFILTER       "Text files"
@@ -666,7 +657,6 @@ BEGIN
     ID_NAV_STORES           "Displays all stores.\nStores"
     ID_NAV_HOME             "Opens the default store.\nDefault store"
     ID_NAV_GOTOHISTORY      "Returns to the selected location.\nGoto history"
-    ID_NAV_CLEARHISTORY     "Removes all locations from the history except the current one.\nClear history"
 END
 
 STRINGTABLE 
@@ -720,18 +710,11 @@ END
 
 STRINGTABLE 
 BEGIN
-    ID_CLIP_COPY            "Copies all selected files to the Windows clipboard.\nCopy"
-    ID_CLIP_PASTE           "Imports all files from the Windows clipboard to the current store.\nPaste"
-    ID_CLIP_REMOVE          "Removes the selected files from this clipboard window.\nRemove from clipboard"
-    ID_CLIP_REMEMBERLAST    "Adds the selected files to the last clipboard window.\nLast clipboard"
-    ID_CLIP_REMEMBERNEW     "Adds the selected files to a new clipboard window.\nNew clipboard"
-END
-
-STRINGTABLE 
-BEGIN
-    ID_ITEMS_SHOWINSPECTOR  "Shows the inspector pane.\nInspector pane"
-    ID_ITEMS_DELETE         "Deletes the selected files.\nDelete (Del)"
-    ID_ITEMS_RENAME         "Renames the selected file.\nRename (F2)"
+    IDM_FILE_REMEMBER       "Adds the selected files to the clipboard window.\nRemember"
+    IDM_FILE_REMOVE         "Removes the selected files from the clipboard window.\nRemove"
+    IDM_FILE_DELETE         "Deletes the selected files.\nDelete"
+    IDM_FILE_RENAME         "Renames the selected file.\nRename"
+    IDM_FILE_SEND           "Sends the selected files by mail.\nSend"
 END
 
 STRINGTABLE 

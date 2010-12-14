@@ -64,6 +64,7 @@ protected:
 	virtual void SetViewOptions(BOOL Force);
 	virtual void SetSearchResult(LFSearchResult* Result);
 	virtual INT ItemAtPosition(CPoint point);
+	virtual CMenu* GetItemContextMenu(INT idx);
 
 	void Init();
 	void PrepareFont(BOOL large, BOOL granny);

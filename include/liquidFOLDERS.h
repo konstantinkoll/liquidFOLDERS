@@ -468,15 +468,16 @@ struct LFCoreAttributes
 
 // Item structure
 
-#define LFTypeDefaultStore              0x0001
-#define LFTypeNotMounted                0x0002
-#define LFTypeGhosted                   0x0004
-#define LFTypeRequiresMaintenance       0x0008
-#define LFTypeDrive                     0x0100
-#define LFTypeStore                     0x0200
-#define LFTypeFile                      0x0400
-#define LFTypeVirtual                   0x0800
-#define LFTypeMask                      0xFF00
+#define LFTypeDefaultStore              0x00000001
+#define LFTypeNotMounted                0x00000002
+#define LFTypeGhosted                   0x00000004
+#define LFTypeRequiresMaintenance       0x00000008
+
+#define LFTypeDrive                     0x10000000
+#define LFTypeStore                     0x20000000
+#define LFTypeFile                      0x40000000
+#define LFTypeVirtual                   0x80000000
+#define LFTypeMask                      0xF0000000
 
 #define LFFlagTrash                     0x0001
 #define LFFlagNew                       0x0002

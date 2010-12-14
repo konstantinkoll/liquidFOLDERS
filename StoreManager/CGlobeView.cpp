@@ -199,9 +199,23 @@ INT CGlobeView::ItemAtPosition(CPoint point)
 
 CMenu* CGlobeView::GetBackgroundContextMenu()
 {
-	CMenu* menu = new CMenu();
-	menu->LoadMenu(IDM_GLOBE);
-	return menu;
+	CMenu* pMenu = new CMenu();
+	pMenu->LoadMenu(IDM_GLOBE);
+	return pMenu;
+}
+
+CMenu* CGlobeView::GetItemContextMenu(INT idx)
+{
+	CMenu* pMenu = CFileView::GetItemContextMenu(idx);
+	
+	CMenu* pPopup = pMenu->GetSubMenu(0);
+	ASSERT_VALID(pPopup);
+
+	CString tmpStr;
+	ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_OPENGOOGLEEARTH));
+	pPopup->InsertMenu(1, MF_STRING | MF_BYPOSITION, ID_GLOBE_GOOGLEEARTH, tmpStr);
+
+	return pMenu;
 }
 
 BOOL CGlobeView::CursorOnGlobe(CPoint point)

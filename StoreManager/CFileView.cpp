@@ -30,8 +30,8 @@ BOOL AttributeSortableInView(UINT Attr, UINT ViewMode)
 
 #define GetItemData(idx)     ((FVItemData*)(m_ItemData+idx*m_DataSize))
 #define IsSelected(idx)      GetItemData(idx)->Selected
-#define ChangedItem(idx)     { InvalidateItem(idx); GetOwner()->PostMessage(WM_UPDATESELECTION); }
-#define ChangedItems()       { Invalidate(); GetOwner()->PostMessage(WM_UPDATESELECTION); }
+#define ChangedItem(idx)     { InvalidateItem(idx); GetParent()->PostMessage(WM_UPDATESELECTION); }	// TODO
+#define ChangedItems()       { Invalidate(); GetParent()->PostMessage(WM_UPDATESELECTION); }		// TODO
 
 CFileView::CFileView(UINT DataSize, BOOL EnableScrolling, BOOL EnableHover, BOOL EnableTooltip, BOOL EnableShiftSelection)
 	: CWnd()
@@ -146,8 +146,21 @@ void CFileView::UpdateSearchResult(LFSearchResult* Result, INT FocusItem)
 		size_t sz = Result->m_ItemCount*m_DataSize;
 		m_ItemData = (BYTE*)malloc(sz);
 		ZeroMemory(m_ItemData, sz);
+
 		for (UINT a=0; a<Result->m_ItemCount; a++)
-			GetItemData(a)->SysIconIndex = -1;
+		{
+			FVItemData* d = GetItemData(a);
+			d->SysIconIndex = -1;
+			
+			if ((victim) && (p_Result))
+				if (a<p_Result->m_ItemCount)
+				{
+					BYTE* v = (BYTE*)victim;
+					v += ((BYTE*)d)-((BYTE*)m_ItemData);
+
+					d->Selected = ((FVItemData*)v)->Selected;
+				}
+		}
 
 		m_DropTarget.Register(this, Result->m_StoreID);
 
@@ -369,6 +382,36 @@ CMenu* CFileView::GetItemContextMenu(INT idx)
 
 	CMenu* pPopup = pMenu->GetSubMenu(0);
 	ASSERT_VALID(pPopup);
+
+	if ((item->Type & LFTypeMask)!=LFTypeDrive)
+	{
+		CString tmpStr;
+
+		if (((item->Type & LFTypeMask)==LFTypeFile) || (((item->Type & LFTypeMask)==LFTypeVirtual) && (item->FirstAggregate!=-1) && (item->LastAggregate!=-1)))
+		{
+			if (m_Context==LFContextClipboard)
+			{
+				ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_REMOVE));
+				pPopup->InsertMenu(0, MF_STRING | MF_BYPOSITION, IDM_FILE_REMOVE, tmpStr);
+			}
+			else
+			{
+				ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_REMEMBER));
+				pPopup->InsertMenu(0, MF_STRING | MF_BYPOSITION, IDM_FILE_REMEMBER, tmpStr);
+			}
+
+			pPopup->InsertMenu(0, MF_SEPARATOR | MF_BYPOSITION);
+		}
+
+		if ((item->Type & LFTypeMask)==LFTypeFile)
+		{
+			ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_OPENWITH));
+			pPopup->InsertMenu(0, MF_STRING | MF_BYPOSITION, IDM_FILE_OPENWITH, tmpStr);
+		}
+
+		ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_OPEN));
+		pPopup->InsertMenu(0, MF_STRING | MF_BYPOSITION, IDM_ITEM_OPEN, tmpStr);
+	}
 
 	pPopup->SetDefaultItem(0, TRUE);
 	return pMenu;
@@ -687,6 +730,7 @@ BEGIN_MESSAGE_MAP(CFileView, CWnd)
 	ON_COMMAND(ID_VIEW_SELECTALL, OnSelectAll)
 	ON_COMMAND(ID_VIEW_SELECTNONE, OnSelectNone)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_VIEW_SELECTALL, ID_VIEW_SELECTNONE, OnUpdateCommands)
+	ON_UPDATE_COMMAND_UI(ID_APP_NEWFILEDROP, OnUpdateCommands)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->ItemsDropped, OnItemsDropped)
 END_MESSAGE_MAP()
 
@@ -843,11 +887,11 @@ void CFileView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 	{
 	case 'A':
 		if ((GetKeyState(VK_CONTROL)<0) && (GetKeyState(VK_SHIFT)>=0))
-			GetParentFrame()->SendMessage(WM_COMMAND, ID_VIEW_SELECTALL);
+			GetOwner()->SendMessage(WM_COMMAND, ID_VIEW_SELECTALL);
 		break;
 	case 'N':
 		if ((GetKeyState(VK_CONTROL)<0) && (GetKeyState(VK_SHIFT)>=0))
-			GetParentFrame()->SendMessage(WM_COMMAND, ID_VIEW_SELECTNONE);
+			GetOwner()->SendMessage(WM_COMMAND, ID_VIEW_SELECTNONE);
 		break;
 	case VK_SPACE:
 		if (GetKeyState(VK_SHIFT)>=0)
@@ -859,16 +903,16 @@ void CFileView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 		break;
 	case VK_BACK:
 		if ((GetKeyState(VK_CONTROL)>=0) && (GetKeyState(VK_SHIFT)>=0))
-			GetParentFrame()->SendMessage(WM_COMMAND, ID_NAV_BACK);
+			GetOwner()->PostMessage(WM_COMMAND, ID_NAV_BACK);
 		break;
 	case VK_EXECUTE:
 	case VK_RETURN:
 		if ((GetKeyState(VK_CONTROL)>=0) && (GetKeyState(VK_SHIFT)>=0))
-			GetParentFrame()->SendMessage(WM_COMMAND, ID_ITEMS_OPEN);
+			GetOwner()->PostMessage(WM_COMMAND, IDM_ITEM_OPEN);
 		break;
 	case VK_DELETE:
 		if ((GetKeyState(VK_CONTROL)>=0) && (GetKeyState(VK_SHIFT)>=0))
-			GetParentFrame()->SendMessage(WM_COMMAND, ID_ITEMS_DELETE);
+			GetOwner()->PostMessage(WM_COMMAND, IDM_FILE_DELETE);
 		break;
 	default:
 		CWnd::OnKeyDown(nChar, nRepCnt, nFlags);
@@ -920,7 +964,7 @@ void CFileView::OnLButtonUp(UINT nFlags, CPoint point)
 
 void CFileView::OnLButtonDblClk(UINT /*nFlags*/, CPoint /*point*/)
 {
-	GetParentFrame()->SendMessage(WM_COMMAND, ID_ITEMS_OPEN);
+	GetOwner()->SendMessage(WM_COMMAND, IDM_ITEM_OPEN);
 }
 
 void CFileView::OnRButtonDown(UINT nFlags, CPoint point)
@@ -1053,6 +1097,9 @@ void CFileView::OnUpdateCommands(CCmdUI* pCmdUI)
 	case ID_VIEW_SELECTNONE:
 		if (p_Result)
 			b = (p_Result->m_ItemCount>0);
+		break;
+	case ID_APP_NEWFILEDROP:
+		b = (m_Context<=LFContextStoreHome);
 		break;
 	}
 

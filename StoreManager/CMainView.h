@@ -76,10 +76,13 @@ protected:
 	afx_msg void OnStoreProperties();
 	afx_msg void OnUpdateStoreCommands(CCmdUI* pCmdUI);
 
+	afx_msg void OnFileOpenWith();
 	DECLARE_MESSAGE_MAP()
 
 private:
 	BOOL CreateFileView(UINT ViewID, INT FocusItem);
 	void AdjustLayout();
 	void ExecuteContextMenu(CHAR Drive, LPCSTR verb);
+	void AddTransactionItem(LFTransactionList* tl, LFItemDescriptor* item, UINT UserData);
+	LFTransactionList* BuildTransactionList(BOOL All=FALSE);
 };

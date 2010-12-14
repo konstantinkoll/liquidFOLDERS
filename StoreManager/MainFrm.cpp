@@ -46,19 +46,12 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_WM_SETFOCUS()
 	ON_WM_CLOSE()
 	ON_WM_DESTROY()
-	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->DrivesChanged, OnDrivesChanged)
-	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoresChanged, OnStoresChanged)
-	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoreAttributesChanged, OnStoresChanged)
-	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->DefaultStoreChanged, OnStoresChanged)
-	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->LookChanged, OnLookChanged)
 
 	ON_UPDATE_COMMAND_UI_RANGE(ID_APP_NEWVIEW, ID_APP_VIEW_TIMELINE, OnUpdateAppCommands)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_AUTODIRS, OnUpdateAppCommands)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_SORT_FILENAME, ID_SORT_FILENAME+99, OnUpdateSortCommands)
-	ON_UPDATE_COMMAND_UI_RANGE(ID_NAV_FIRST, ID_NAV_CLEARHISTORY, OnUpdateNavCommands)
+	ON_UPDATE_COMMAND_UI_RANGE(ID_NAV_FIRST, ID_NAV_GOTOHISTORY, OnUpdateNavCommands)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_PANE_FILTERWND, ID_PANE_HISTORYWND, OnUpdatePaneCommands)
-	ON_UPDATE_COMMAND_UI_RANGE(ID_CLIP_COPY, ID_CLIP_REMEMBERNEW, OnUpdateClipCommands)
-	ON_UPDATE_COMMAND_UI_RANGE(ID_ITEMS_SHOWINSPECTOR, ID_ITEMS_RENAME, OnUpdateItemCommands)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_DROP_NAME, ID_DROP_DIMENSION, OnUpdateDropCommands)
 
 	ON_COMMAND(ID_APP_CLOSE, OnClose)
@@ -86,17 +79,14 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_COMMAND(ID_NAV_SHOWHISTORY, OnShowHistoryWnd)
 	ON_COMMAND(ID_NAV_STORES, OnNavigateStores)
 	ON_COMMAND(ID_NAV_HOME, OnNavigateHome)
-	ON_COMMAND(ID_NAV_CLEARHISTORY, OnClearHistory)
 
-	ON_COMMAND(ID_CLIP_REMOVE, OnClipRemove)
-	ON_COMMAND(ID_CLIP_REMEMBERLAST, OnClipRememberLast)
-	ON_COMMAND(ID_CLIP_REMEMBERNEW, OnClipRememberNew)
+	ON_COMMAND(IDM_ITEM_OPEN, OnItemOpen)
 
-	ON_COMMAND(ID_ITEMS_SHOWINSPECTOR, OnShowInspectorWnd)
-	ON_COMMAND(ID_ITEMS_OPEN, OnItemsOpen)
-	ON_COMMAND(ID_ITEMS_OPENWITH, OnItemsOpenWith)
-	ON_COMMAND(ID_ITEMS_DELETE, OnItemsDelete)
-	ON_COMMAND(ID_ITEMS_RENAME, OnItemsRename)
+	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->DrivesChanged, OnDrivesChanged)
+	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoresChanged, OnStoresChanged)
+	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoreAttributesChanged, OnStoresChanged)
+	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->DefaultStoreChanged, OnStoresChanged)
+	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->LookChanged, OnLookChanged)
 END_MESSAGE_MAP()
 
 
@@ -454,16 +444,6 @@ void CMainFrame::OnToggleFilterWnd()
 	}
 }
 
-void CMainFrame::OnShowInspectorWnd()
-{
-	if (!m_wndInspector.IsVisible())
-	{
-		m_wndInspector.ShowPane(TRUE, FALSE, TRUE);
-		RecalcLayout(FALSE);
-	}
-	m_wndInspector.SetFocus();
-}
-
 void CMainFrame::OnToggleInspectorWnd()
 {
 	BOOL b = m_wndInspector.IsVisible() ? FALSE : TRUE;
@@ -532,7 +512,7 @@ BOOL CMainFrame::AddClipItem(LFItemDescriptor* i)
 	return TRUE;
 }
 
-void CMainFrame::OnClipRemove()
+/*void CMainFrame::OnClipRemove()
 {
 	ASSERT(IsClipboard);
 
@@ -622,86 +602,6 @@ void CMainFrame::OnUpdateClipCommands(CCmdUI* pCmdUI)
 	pCmdUI->Enable(b);
 }
 
-void CMainFrame::OnItemsOpen()
-{
-	INT idx = m_wndMainView.GetSelectedItem();
-
-	if (idx!=-1)
-	{
-		LFItemDescriptor* i = CookedFiles->m_Items[idx];
-
-		if (i->NextFilter)
-		{
-			if (((i->Type & LFTypeMask)==LFTypeVirtual) && (strcmp(i->CoreAttributes.FileID, "BACK")==0) && (m_BreadcrumbBack))
-				if (m_BreadcrumbBack->filter->Mode==i->NextFilter->Mode)
-				{
-					OnNavigateBackOne();
-					return;
-				}
-
-			NavigateTo(LFAllocFilter(i->NextFilter), NAVMODE_NORMAL, 0, i->FirstAggregate, i->LastAggregate);
-		}
-		else
-		{
-			if (!(i->Type & LFTypeNotMounted))
-			{
-				WCHAR Path[MAX_PATH];
-				UINT res;
-
-				switch (i->Type & LFTypeMask)
-				{
-				case LFTypeDrive:
-					SendMessage(WM_COMMAND, IDM_DRIVE_CREATENEWSTORE);
-					break;
-				case LFTypeFile:
-					res = LFGetFileLocation(i, Path, MAX_PATH, true);
-					if (res==LFOk)
-					{
-						if (ShellExecute(NULL, _T("open"), Path, NULL, NULL, SW_SHOW)==(HINSTANCE)SE_ERR_NOASSOC)
-							OnItemsOpenWith();
-					}
-					else
-					{
-						m_wndMainView.Invalidate();
-						LFErrorBox(res, GetSafeHwnd());
-					}
-					break;
-				default:
-					ASSERT(FALSE);
-					break;
-				}
-			}
-		}
-	}
-}
-
-void CMainFrame::OnItemsOpenWith()
-{
-	INT idx = m_wndMainView.GetSelectedItem();
-
-	if (idx!=-1)
-	{
-		LFItemDescriptor* i = CookedFiles->m_Items[idx];
-
-		if ((!i->NextFilter) && ((i->Type & (LFTypeNotMounted | LFTypeMask))==LFTypeFile))
-		{
-			WCHAR Path[MAX_PATH];
-			UINT res = LFGetFileLocation(i, Path, MAX_PATH, true);
-			if (res==LFOk)
-			{
-				WCHAR Cmd[300];
-				wcscpy_s(Cmd, 300, L"shell32.dll,OpenAs_RunDLL ");
-				wcscat_s(Cmd, 300, Path);
-				ShellExecute(GetSafeHwnd(), _T("open"), _T("rundll32.exe"), Cmd, Path, SW_SHOW);
-			}
-			else
-			{
-				m_wndMainView.Invalidate();
-				LFErrorBox(res, GetSafeHwnd());
-			}
-		}
-	}
-}
 
 void CMainFrame::OnItemsDelete()
 {
@@ -718,11 +618,11 @@ void CMainFrame::OnItemsDelete()
 
 void CMainFrame::OnItemsRename()
 {
-/*	if (m_wndMainView.p_wndFileView)
+	if (m_wndMainView.p_wndFileView)
 	{
 		m_wndMainView.p_wndFileView->SetFocus();
 		m_wndMainView.p_wndFileView->EditLabel(GetSelectedItem());
-	}*/
+	}
 }
 
 void CMainFrame::OnUpdateItemCommands(CCmdUI* pCmdUI)
@@ -775,7 +675,7 @@ void CMainFrame::OnRestoreSelectedFiles()
 void CMainFrame::OnRestoreAllFiles()
 {
 	UpdateTrashFlag(FALSE, TRUE);
-}
+}*/
 
 void CMainFrame::UpdateViewOptions()
 {
@@ -813,34 +713,12 @@ void CMainFrame::UpdateSearchResult(BOOL SetEmpty, INT FocusItem)
 	}
 
 	m_wndMainView.UpdateSearchResult(SetEmpty ? NULL : RawFiles, SetEmpty ? NULL : CookedFiles, FocusItem);
-	OnUpdateSelection();
 }
 
 void CMainFrame::OnChangeChildView(UINT nID)
 {
 	ActiveViewParameters->Mode = nID-ID_APP_VIEW_LARGEICONS+LFViewLargeIcons;
 	theApp.UpdateViewOptions(ActiveContextID);
-}
-
-void CMainFrame::OnUpdateSelection()
-{
-	// Selection
-	m_wndInspector.UpdateStart(ActiveFilter);
-	INT i = m_wndMainView.GetNextSelectedItem(-1);
-	FilesSelected = FALSE;
-
-	while (i>=0)
-	{
-		LFItemDescriptor* item = CookedFiles->m_Items[i];
-
-		m_wndInspector.UpdateAdd(item, RawFiles);
-		FilesSelected |= ((item->Type & LFTypeMask)==LFTypeFile) ||
-						(((item->Type & LFTypeMask)==LFTypeVirtual) && (item->FirstAggregate!=-1) && (item->LastAggregate!=-1));
-
-		i = m_wndMainView.GetNextSelectedItem(i);
-	}
-
-	m_wndInspector.UpdateFinish();
 }
 
 BOOL CMainFrame::RenameSingleItem(UINT n, CString Name)
@@ -874,52 +752,9 @@ BOOL CMainFrame::RenameSingleItem(UINT n, CString Name)
 	return result;
 }
 
-void CMainFrame::AddTransactionItem(LFTransactionList* tl, LFItemDescriptor* i, UINT UserData)
-{
-	switch (i->Type & LFTypeMask)
-	{
-	case LFTypeFile:
-	case LFTypeStore:
-		LFAddItemDescriptor(tl, i, UserData);
-		break;
-	case LFTypeVirtual:
-		if ((i->FirstAggregate!=-1) && (i->LastAggregate!=-1))
-			for (INT a=i->FirstAggregate; a<=i->LastAggregate; a++)
-				LFAddItemDescriptor(tl, RawFiles->m_Items[a], UserData);
-		break;
-	}
-}
-
-LFTransactionList* CMainFrame::BuildTransactionList(BOOL All)
-{
-	LFTransactionList* tl = NULL;
-
-	if ((RawFiles) && (CookedFiles))
-	{
-		tl = LFAllocTransactionList();
-
-		if (All)
-		{
-			for (UINT a=0; a<CookedFiles->m_ItemCount; a++)
-				AddTransactionItem(tl, CookedFiles->m_Items[a], a);
-		}
-		else
-		{
-			INT idx = m_wndMainView.GetNextSelectedItem(-1);
-			while (idx!=-1)
-			{
-				AddTransactionItem(tl, CookedFiles->m_Items[idx], idx);
-				idx = m_wndMainView.GetNextSelectedItem(idx);
-			}
-		}
-	}
-
-	return tl;
-}
-
 BOOL CMainFrame::UpdateSelectedItems(LFVariantData* value1, LFVariantData* value2, LFVariantData* value3)
 {
-	LFTransactionList* tl = BuildTransactionList();
+/*	LFTransactionList* tl = BuildTransactionList();
 	LFTransactionUpdate(tl, GetSafeHwnd(), value1, value2, value3);
 
 	if (m_wndMainView.p_wndFileView)
@@ -929,7 +764,7 @@ BOOL CMainFrame::UpdateSelectedItems(LFVariantData* value1, LFVariantData* value
 		for (UINT a=0; a<tl->m_ItemCount; a++)
 			if (tl->m_Items[a].LastError!=LFOk)
 			{
-//				m_wndMainView.p_wndFileView->SelectItem(tl->m_Items[a].UserData, FALSE, TRUE);
+				m_wndMainView.p_wndFileView->SelectItem(tl->m_Items[a].UserData, FALSE, TRUE);
 				deselected = TRUE;
 			}
 
@@ -944,12 +779,13 @@ BOOL CMainFrame::UpdateSelectedItems(LFVariantData* value1, LFVariantData* value
 
 	BOOL changes = tl->m_Changes;
 	LFFreeTransactionList(tl);
-	return changes;
+	return changes;*/
+	return TRUE;
 }
 
 BOOL CMainFrame::UpdateTrashFlag(BOOL Trash, BOOL All)
 {
-	LFVariantData value1;
+/*	LFVariantData value1;
 	value1.Attr = LFAttrFlags;
 	LFGetNullVariantData(&value1);
 
@@ -982,12 +818,13 @@ BOOL CMainFrame::UpdateTrashFlag(BOOL Trash, BOOL All)
 
 	BOOL changes = tl->m_Changes;
 	LFFreeTransactionList(tl);
-	return changes;
+	return changes;*/
+	return TRUE;
 }
 
 BOOL CMainFrame::DeleteFiles(BOOL All)
 {
-	LFTransactionList* tl = BuildTransactionList(All);
+/*	LFTransactionList* tl = BuildTransactionList(All);
 	LFTransactionDelete(tl);
 
 	if (m_wndMainView.p_wndFileView)
@@ -1007,7 +844,8 @@ BOOL CMainFrame::DeleteFiles(BOOL All)
 
 	BOOL changes = tl->m_Changes;
 	LFFreeTransactionList(tl);
-	return changes;
+	return changes;*/
+	return TRUE;
 }
 
 void CMainFrame::OnNavigateFirst()
@@ -1157,9 +995,6 @@ void CMainFrame::OnUpdateNavCommands(CCmdUI* pCmdUI)
 				b = FALSE;
 		if (!LFDefaultStoreAvailable())
 			b = FALSE;
-		break;
-	case ID_NAV_CLEARHISTORY:
-		b &= (m_BreadcrumbBack!=NULL) || (m_BreadcrumbForward!=NULL);
 		break;
 	}
 
@@ -1350,11 +1185,6 @@ void CMainFrame::InitializeRibbon()
 				pPanelGlobeView->AddSeparator();
 				pPanelGlobeView->Add(theApp.CommandButton(ID_GLOBE_SAVECAMERA, 3, 3));
 
-			strTemp = "Places";
-			CMFCRibbonPanel* pPanelGlobePlaces = pCategoryGlobe->AddPanel(strTemp, m_PanelImages.ExtractIcon(17));
-
-				pPanelGlobePlaces->Add(theApp.CommandButton(ID_GLOBE_GOOGLEEARTH, 5, 5));
-
 			strTemp = "Display options";
 			CMFCRibbonPanel* pPanelGlobeOptions = pCategoryGlobe->AddPanel(strTemp, m_PanelImages.ExtractIcon(4));
 
@@ -1368,7 +1198,7 @@ void CMainFrame::InitializeRibbon()
 				pPanelGlobeOptions->Add(new CMFCRibbonLabel(strTemp));
 				pPanelGlobeOptions->Add(new CTextureComboBox(ID_GLOBE_TEXTURESIZE, 100));
 				pPanelGlobeOptions->AddSeparator();
-				pPanelGlobeOptions->Add(theApp.CommandButton(ID_GLOBE_SHOWBUBBLES, 6, 6));
+				pPanelGlobeOptions->Add(theApp.CommandButton(ID_GLOBE_SHOWBUBBLES, 5, 5));
 				pPanelGlobeOptions->Add(theApp.CommandCheckBox(ID_GLOBE_SHOWAIRPORTNAMES));
 				pPanelGlobeOptions->Add(theApp.CommandCheckBox(ID_GLOBE_SHOWGPS));
 				pPanelGlobeOptions->Add(theApp.CommandCheckBox(ID_GLOBE_SHOWHINTS));
@@ -1393,9 +1223,6 @@ void CMainFrame::InitializeRibbon()
 				pPanelTagcloudOptions->Add(theApp.CommandCheckBox(ID_TAGCLOUD_USESIZE));
 				pPanelTagcloudOptions->Add(theApp.CommandCheckBox(ID_TAGCLOUD_USECOLORS));
 				pPanelTagcloudOptions->Add(theApp.CommandCheckBox(ID_TAGCLOUD_USEOPACITY));
-
-		strTemp = "Timeline";
-		CMFCRibbonCategory* pCategoryTimeline = m_wndRibbonBar.AddContextCategory(strTemp, strCtx, 2, AFX_CategoryColor_Indigo, IDB_RIBBONVIEW_16, IDB_RIBBONVIEW_32);
 	}
 
 	m_wndRibbonBar.SetActiveCategory(m_wndRibbonBar.GetCategory(RibbonDefaultCategory));
@@ -1530,6 +1357,7 @@ BOOL CMainFrame::OpenChildView(INT FocusItem, BOOL Force, BOOL AllowChangeSort)
 	m_wndRibbonBar.ShowCategory(RibbonCategory_View_Calendar, (ViewID>=LFViewCalendarYear) && (ViewID<=LFViewCalendarDay));
 	m_wndRibbonBar.ShowCategory(RibbonCategory_View_Globe, ViewID==LFViewGlobe);
 	m_wndRibbonBar.ShowCategory(RibbonCategory_View_Tagcloud, ViewID==LFViewTagcloud);
+	m_wndRibbonBar.RecalcLayout();
 	#endif
 
 	return TRUE;
@@ -1648,6 +1476,72 @@ void CMainFrame::UpdateHistory()
 	if (m_wndFilter)
 		m_wndFilter->UpdateList();
 }
+
+
+void CMainFrame::OnUpdateSelection()
+{
+	m_wndInspector.UpdateStart(ActiveFilter);
+	INT i = m_wndMainView.GetNextSelectedItem(-1);
+
+	while (i>=0)
+	{
+		m_wndInspector.UpdateAdd(CookedFiles->m_Items[i], RawFiles);
+		i = m_wndMainView.GetNextSelectedItem(i);
+	}
+
+	m_wndInspector.UpdateFinish();
+}
+
+void CMainFrame::OnItemOpen()
+{
+	INT idx = m_wndMainView.GetSelectedItem();
+	if (idx!=-1)
+	{
+		LFItemDescriptor* i = CookedFiles->m_Items[idx];
+
+		if (i->NextFilter)
+		{
+			if (((i->Type & LFTypeMask)==LFTypeVirtual) && (strcmp(i->CoreAttributes.FileID, "BACK")==0) && (m_BreadcrumbBack))
+				if (m_BreadcrumbBack->filter->Mode==i->NextFilter->Mode)
+				{
+					OnNavigateBackOne();
+					return;
+				}
+
+			NavigateTo(LFAllocFilter(i->NextFilter), NAVMODE_NORMAL, 0, i->FirstAggregate, i->LastAggregate);
+		}
+		else
+		{
+			if (!(i->Type & LFTypeNotMounted))
+			{
+				WCHAR Path[MAX_PATH];
+				UINT res;
+
+				switch (i->Type & LFTypeMask)
+				{
+				case LFTypeDrive:
+					SendMessage(WM_COMMAND, IDM_DRIVE_CREATENEWSTORE);
+					break;
+				case LFTypeFile:
+					res = LFGetFileLocation(i, Path, MAX_PATH, true);
+					if (res==LFOk)
+					{
+						if (ShellExecute(NULL, _T("open"), Path, NULL, NULL, SW_SHOW)==(HINSTANCE)SE_ERR_NOASSOC)
+							SendMessage(WM_COMMAND, IDM_FILE_OPENWITH);
+					}
+					else
+					{
+						LFErrorBox(res, GetSafeHwnd());
+					}
+					break;
+				default:
+					ASSERT(FALSE);
+				}
+			}
+		}
+	}
+}
+
 
 LRESULT CMainFrame::OnDrivesChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)
 {

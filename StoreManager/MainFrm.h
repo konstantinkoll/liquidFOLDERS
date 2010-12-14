@@ -34,7 +34,7 @@
 class CMainFrame : public CFrameWndEx
 {
 public:
-	CMainFrame(char* RootStore=NULL, BOOL _IsClipboard = FALSE);
+	CMainFrame(char* RootStore=NULL, BOOL _IsClipboard=FALSE);
 	virtual ~CMainFrame();
 
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
@@ -43,20 +43,19 @@ public:
 	BOOL AddClipItem(LFItemDescriptor* i);
 	void UpdateViewOptions();
 	void UpdateSortOptions();
-	void OnUpdateSelection();
 	BOOL RenameSingleItem(UINT n, CString Name);
 	BOOL UpdateSelectedItems(LFVariantData* value1, LFVariantData* value2=NULL, LFVariantData* value3=NULL);
 	BOOL UpdateTrashFlag(BOOL Trash, BOOL All=FALSE);
 	BOOL DeleteFiles(BOOL All=FALSE);
 	UINT SelectViewMode(UINT ViewID=LFViewDetails);
 	BOOL OpenChildView(INT FocusItem=0, BOOL Force=FALSE, BOOL AllowChangeSort=FALSE);
+	void OnUpdateSelection();
 
 	BOOL IsClipboard;
 	INT ActiveContextID;
 
 protected:
 	void UpdateSearchResult(BOOL SetEmpty, INT FocusItem);
-	LFTransactionList* BuildTransactionList(BOOL All=FALSE);
 
 	CMFCRibbonBar m_wndRibbonBar;
 	CMFCRibbonApplicationButton m_MainButton;
@@ -67,7 +66,6 @@ protected:
 	CHistoryWnd* m_wndHistory;
 	CInspectorWnd m_wndInspector;
 	CMainView m_wndMainView;
-	BOOL FilesSelected;
 	BreadcrumbItem* m_BreadcrumbBack;
 	BreadcrumbItem* m_BreadcrumbForward;
 	INT ActiveViewID;
@@ -91,24 +89,22 @@ protected:
 	afx_msg void OnUpdateDropCommands(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateNavCommands(CCmdUI* pCmdUI);
 	afx_msg void OnToggleFilterWnd();
-	afx_msg void OnShowInspectorWnd();
 	afx_msg void OnToggleInspectorWnd();
 	afx_msg void OnShowHistoryWnd();
 	afx_msg void OnToggleHistoryWnd();
 	afx_msg void OnUpdatePaneCommands(CCmdUI* pCmdUI);
-	afx_msg void OnClipRemove();
+
+	/*afx_msg void OnClipRemove();
 	afx_msg void OnClipRememberLast();
 	afx_msg void OnClipRememberNew();
-	afx_msg void OnUpdateClipCommands(CCmdUI* pCmdUI);
-	afx_msg void OnItemsOpen();
 	afx_msg void OnItemsOpenWith();
 	afx_msg void OnItemsDelete();
 	afx_msg void OnItemsRename();
-	afx_msg void OnUpdateItemCommands(CCmdUI* pCmdUI);
 	afx_msg void OnEmptyTrash();
 	afx_msg void OnRestoreSelectedFiles();
 	afx_msg void OnRestoreAllFiles();
-	afx_msg void OnUpdateTrashCommands(CCmdUI* pCmdUI);
+	afx_msg void OnUpdateTrashCommands(CCmdUI* pCmdUI);*/
+
 	afx_msg void OnChangeChildView(UINT nID);
 	afx_msg void OnNavigateFirst();
 	afx_msg void OnNavigateBackOne();
@@ -121,6 +117,9 @@ protected:
 	afx_msg void OnNavigateStores();
 	afx_msg void OnNavigateHome();
 	afx_msg void OnClearHistory();
+
+	afx_msg void OnItemOpen();
+
 	afx_msg LRESULT OnDrivesChanged(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnStoresChanged(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnLookChanged(WPARAM wParam, LPARAM lParam);
@@ -129,8 +128,6 @@ protected:
 private:
 	BOOL AttributeAllowedForSorting(INT attr);
 	void Remember(CMainFrame* clip);
-	void BackupStores(BOOL all=FALSE);
-	void OnStoreNewDrive(CHAR drv);
 	void AddTransactionItem(LFTransactionList* tl, LFItemDescriptor* i, UINT UserData);
 	void ShowCaptionBar(LPCWSTR Icon, LPCWSTR Message, INT Command=0);
 	void ShowCaptionBar(LPCWSTR Icon, UINT res, INT Command=0);
