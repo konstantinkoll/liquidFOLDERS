@@ -947,13 +947,6 @@ void CMainFrame::OnNavigateReloadShowAll()
 	}
 }
 
-void CMainFrame::OnClearHistory()
-{
-	DeleteBreadcrumbs(&m_BreadcrumbBack);
-	DeleteBreadcrumbs(&m_BreadcrumbForward);
-	UpdateHistory();
-}
-
 void CMainFrame::OnNavigateStores()
 {
 	NavigateTo(GetRootFilter());

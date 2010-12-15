@@ -191,16 +191,16 @@ void CInspectorWnd::UpdateFinish()
 		switch (TypeID)
 		{
 		case LFTypeDrive:
-			SID = IDS_TYPE_DRIVE_SINGULAR;
+			SID = IDS_DRIVES_SINGULAR;
 			break;
 		case LFTypeStore:
-			SID = IDS_TYPE_STORE_SINGULAR;
+			SID = IDS_STORES_SINGULAR;
 			break;
 		case LFTypeFile:
-			SID = IDS_TYPE_FILE_SINGULAR;
+			SID = IDS_FILES_SINGULAR;
 			break;
 		case LFTypeVirtual:
-			SID = IDS_TYPE_VIRTUAL_SINGULAR;
+			SID = IDS_FOLDERS_SINGULAR;
 			break;
 		}
 

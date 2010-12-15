@@ -103,8 +103,8 @@ BOOL CStoreManagerApp::InitInstance()
 	for (INT a=0; a<LFContextCount; a++)
 		LoadViewOptions(a);
 
-	char StoreID[LFKeySize];
-	char* RootStore = NULL;
+	CHAR StoreID[LFKeySize];
+	CHAR* RootStore = NULL;
 
 	if (__argc==2)
 		if (wcslen(__wargv[1])==LFKeySize-1)
@@ -564,6 +564,29 @@ void CStoreManagerApp::GetRibbonColors(COLORREF* back, COLORREF* text, COLORREF*
 			if (highlight)
 				*highlight = (COLORREF)0x8B4215;
 		}
+}
+
+CString CStoreManagerApp::GetCommandName(UINT nID, BOOL bInsertSpace)
+{
+	CString tmpStr = _T("?");
+	tmpStr.LoadString(nID);
+
+	INT pos = tmpStr.Find(L'\n');
+	if (pos!=-1)
+		tmpStr.Delete(0, pos+1);
+
+	pos = tmpStr.Find(_T(" ("));
+	if (pos!=-1)
+		tmpStr.Delete(pos, tmpStr.GetLength()-pos);
+
+	if (bInsertSpace)
+	{
+		pos = tmpStr.Find(L'-');
+		if ((pos!=-1) && (tmpStr.Find(L' ')==-1))
+			tmpStr.Insert(pos+1, L' ');
+	}
+
+	return tmpStr;
 }
 
 CMFCRibbonButton* CStoreManagerApp::CommandButton(UINT nID, INT nSmallImageIndex, INT nLargeImageIndex, BOOL bAlwaysShowDescription, BOOL bInsertSpace)

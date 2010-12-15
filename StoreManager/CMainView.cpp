@@ -176,7 +176,10 @@ void CMainView::UpdateSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pC
 		case LFContextSubfolderLocation:
 			ENSURE(Mask.LoadString(pCookedFiles->m_FileCount==1 ? IDS_FILES_SINGULAR : IDS_FILES_PLURAL));
 			LFINT64ToString(pCookedFiles->m_FileSize, tmpBuf, 256);
-			Hint.Format(Mask, pCookedFiles->m_FileCount, tmpBuf);
+			Hint.Format(Mask, pCookedFiles->m_FileCount);
+			Hint.Append(_T(" ("));
+			Hint.Append(tmpBuf);
+			Hint.Append(_T(")"));
 			m_ShowHeader = TRUE;
 			break;
 		default:

@@ -113,7 +113,6 @@ public:
 	static void PlayWarningSound();
 	static void PlayTrashSound();
 	static BOOL HideFileExt();
-	static CString GetCommandName(UINT nID, BOOL bInsertSpace=FALSE);
 
 	afx_msg void OnAppNewFileDrop();
 	afx_msg void OnAppNewMigrate();

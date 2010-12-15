@@ -668,6 +668,12 @@ END
 STRINGTABLE 
 BEGIN
     IDS_STORES_PLURAL       "%d Stores"
+    IDS_DRIVES_SINGULAR     "%d Laufwerk"
+    IDS_DRIVES_PLURAL       "%d Laufwerke"
+    IDS_FOLDERS_SINGULAR    "%d virtueller Ordner"
+    IDS_FOLDERS_PLURAL      "%d virtuelle Ordner"
+    IDS_FILES_SINGULAR      "%d Datei"
+    IDS_FILES_PLURAL        "%d Dateien"
     IDS_INVALIDLICENSE      "Die eingegebene Lizenz ist ungültig oder abgelaufen!"
     IDS_LICFILEFILTER       "Lizenzdateien"
     IDS_LICENSEVALID_CAPTION "Lizenz akzeptiert"
@@ -1235,6 +1241,12 @@ END
 STRINGTABLE 
 BEGIN
     IDS_STORES_PLURAL       "%d stores"
+    IDS_DRIVES_SINGULAR     "%d drive"
+    IDS_DRIVES_PLURAL       "%d drives"
+    IDS_FOLDERS_SINGULAR    "%d virtual folder"
+    IDS_FOLDERS_PLURAL      "%d virtual folders"
+    IDS_FILES_SINGULAR      "%d file"
+    IDS_FILES_PLURAL        "%d files"
     IDS_INVALIDLICENSE      "The license key you've entered is invalid or has expired!"
     IDS_LICFILEFILTER       "License files"
     IDS_LICENSEVALID_CAPTION "License valid"
@@ -1810,6 +1822,12 @@ END
 STRINGTABLE 
 BEGIN
     IDS_STORES_PLURAL       "%d stores"
+    IDS_DRIVES_SINGULAR     "%d unidad"
+    IDS_DRIVES_PLURAL       "%d unidas"
+    IDS_FOLDERS_SINGULAR    "%d carpeta virtual"
+    IDS_FOLDERS_PLURAL      "%d carpetas virtual"
+    IDS_FILES_SINGULAR      "%d archivo"
+    IDS_FILES_PLURAL        "%d archivos"
     IDS_INVALIDLICENSE      "La licencia que usted ha ingresado no es válida o ha expirado!"
     IDS_LICFILEFILTER       "Archivos de licencia"
     IDS_LICENSEVALID_CAPTION "Licencia válida"
@@ -2386,6 +2404,12 @@ END
 STRINGTABLE 
 BEGIN
     IDS_STORES_PLURAL       "%d stores"
+    IDS_DRIVES_SINGULAR     "%d lecteur"
+    IDS_DRIVES_PLURAL       "%d lecteurs"
+    IDS_FOLDERS_SINGULAR    "%d dossier virtuel"
+    IDS_FOLDERS_PLURAL      "%d dossiers virtuelles"
+    IDS_FILES_SINGULAR      "%d fichier"
+    IDS_FILES_PLURAL        "%d fichiers"
     IDS_INVALIDLICENSE      "La licence entrée est non valable ou s'est terminée!"
     IDS_LICFILEFILTER       "Fichiers de licence"
     IDS_LICENSEVALID_CAPTION "La licence est acceptée"

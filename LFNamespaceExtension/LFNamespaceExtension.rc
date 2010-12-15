@@ -398,8 +398,8 @@ END
 
 STRINGTABLE
 BEGIN
-    IDS_FILES_Singular      "%d Fichier"
-    IDS_FILES_Plural        "%d Fichiers"
+    IDS_FILES_Singular      "%d fichier"
+    IDS_FILES_Plural        "%d fichiers"
     IDS_CAPT_CreateLink     "Raccourci"
     IDS_TEXT_CreateLink     "Windows ne peut pas créer un raccourci ici.\nVoulez-vous que le raccourci à être mis sur le Bureau à la place ?"
 END

@@ -72,6 +72,8 @@ struct FVItemData
 //
 
 #define WM_UPDATESELECTION    WM_USER+100
+#define WM_SELECTALL          WM_USER+101
+#define WM_SELECTNONE         WM_USER+102
 
 class CFileView : public CWnd
 {

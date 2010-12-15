@@ -535,21 +535,11 @@ BEGIN
     IDS_CONTEXTMENU_OPENGOOGLEEARTH "Open in &Google Earth"
     IDS_CONTEXTMENU_REMEMBER "Re&member"
     IDS_CONTEXTMENU_REMOVE  "Re&move from clipboard"
-    IDS_FILES_SINGULAR      "%d file (%s)"
-    IDS_FILES_PLURAL        "%d files (%s)"
     IDS_TXTFILEFILTER       "Text files"
     IDS_ATTRIBUTENOTSORTABLE "This property is not suitable for sorting."
     IDS_NOITEMSSELECTED     "No items selected"
     IDS_MULTIPLETYPESSELECTED "Multiple types, %d items"
     IDS_MOREATTRIBUTES      "&More properties..."
-    IDS_TYPE_DRIVE_SINGULAR "%d removable drive"
-    IDS_TYPE_DRIVE_PLURAL   "%d removable drives"
-    IDS_TYPE_STORE_SINGULAR "%d store"
-    IDS_TYPE_STORE_PLURAL   "%d stores"
-    IDS_TYPE_FILE_SINGULAR  "%d file"
-    IDS_TYPE_FILE_PLURAL    "%d files"
-    IDS_TYPE_VIRTUAL_SINGULAR "%d virtual folder"
-    IDS_TYPE_VIRTUAL_PLURAL "%d virtual folders"
 END
 
 STRINGTABLE 
@@ -595,12 +585,6 @@ BEGIN
     ID_APP_VIEW_GLOBE       "Places file on a globe depening on their location property.\nGlobe"
     ID_APP_VIEW_TAGCLOUD    "Displays files as tag cloud. This is the only view that can show files sorted by their tags.\nTag cloud"
     ID_APP_VIEW_TIMELINE    "Displays files on a timeline.\nTimeline"
-END
-
-STRINGTABLE 
-BEGIN
-    ID_VIEW_SELECTALL       "Selects all items for further processing.\nSelect all (Ctrl+A)"
-    ID_VIEW_SELECTNONE      "Deselects all items.\nSelect none (Ctrl+N)"
 END
 
 STRINGTABLE 

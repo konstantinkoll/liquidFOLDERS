@@ -488,99 +488,6 @@ void CFileView::PrepareSysIcon(INT idx)
 	d->SysIconIndex = SUCCEEDED(SHGetFileInfoA(Ext, 0, &sfi, sizeof(sfi), SHGFI_SYSICONINDEX | SHGFI_SMALLICON | SHGFI_USEFILEATTRIBUTES)) ? sfi.iIcon : -2;
 }
 
-/*CMenu* CFileView::GetContextMenu()
-{
-	return NULL;
-}
-
-void CFileView::AppendContextMenu(CMenu* menu)
-{
-	CString tmpStr;
-
-	UINT Mode = ((CMainFrame*)GetParentFrame())->SelectViewMode(m_ViewParameters.Mode);
-	if ((Mode==LFViewDetails) || (Mode==LFViewCalendarDay))
-	{
-		ENSURE(tmpStr.LoadString(ID_VIEW_AUTOSIZECOLUMNS));
-		menu->AppendMenu(MF_BYPOSITION | MF_STRING, ID_VIEW_AUTOSIZECOLUMNS, tmpStr);
-		ENSURE(tmpStr.LoadString(ID_VIEW_CHOOSEDETAILS));
-		menu->AppendMenu(MF_BYPOSITION | MF_STRING, ID_VIEW_CHOOSEDETAILS, tmpStr);
-		menu->AppendMenu(MF_SEPARATOR);
-	}
-
-	ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_SORTOPTIONS));
-	menu->AppendMenu(MF_STRING, ID_APP_SORTOPTIONS, tmpStr);
-	ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_AUTODIRS));
-	menu->AppendMenu(MF_STRING, ID_VIEW_AUTODIRS, tmpStr);
-	ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_VIEWOPTIONS));
-	menu->AppendMenu(MF_STRING, ID_APP_VIEWOPTIONS, tmpStr);
-
-	if (result)
-		switch (result->m_Context)
-		{
-		case LFContextStores:
-			menu->AppendMenu(MF_SEPARATOR);
-			ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_STORE_NEW));
-			menu->AppendMenu(MF_STRING, ID_STORE_NEW, tmpStr);
-			break;
-		case LFContextTrash:
-			menu->AppendMenu(MF_SEPARATOR);
-			ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_TRASH_RESTOREALL));
-			menu->AppendMenu(MF_STRING, ID_TRASH_RESTOREALL, tmpStr);
-			break;
-		case LFContextHousekeeping:
-			menu->AppendMenu(MF_SEPARATOR);
-			ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_UNKNOWN_REGISTER));
-			menu->AppendMenu(MF_STRING, ID_UNKNOWN_REGISTER, tmpStr);
-			break;
-		}
-}
-
-void CFileView::OnItemContextMenu(INT idx, CPoint point)
-{
-	UINT nID = 0;
-	UINT cmdDefault = 0;
-	LFItemDescriptor* f = result->m_Items[idx];
-	switch (f->Type & LFTypeMask)
-	{
-	case LFTypeVirtual:
-		nID = (f->IconID==IDI_FLD_Back ? IDM_BACK : m_ViewParameters.Mode==LFViewGlobe ? IDM_VIRTUAL_GLOBE : (ActiveContextID==LFContextTrash) ? IDM_VIRTUAL_TRASH : (ActiveContextID==LFContextStoreHome) ? IDM_DOMAIN : IDM_VIRTUAL);
-		cmdDefault = ID_ITEMS_OPEN;
-		break;
-	case LFTypeDrive:
-		nID = IDM_DRIVE;
-		cmdDefault = ID_STORE_NEWDRIVE;
-		break;
-	case LFTypeStore:
-		nID = IDM_STORE;
-		cmdDefault = ID_ITEMS_OPEN;
-		break;
-	case LFTypeFile:
-		nID = (ActiveContextID==LFContextTrash) ? IDM_FILE_TRASH : IDM_FILE;
-		cmdDefault = ID_ITEMS_OPEN;
-		break;
-	}
-
-	if (nID)
-	{
-		CMenu menu;
-		menu.LoadMenu(nID);
-		ASSERT_VALID(&menu);
-
-		if ((nID==IDM_FILE) && (ActiveContextID==LFContextHousekeeping))
-		{
-			CString tmpStr;
-			ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_UNKNOWN_REGISTER));
-
-			menu.GetSubMenu(0)->AppendMenu(MF_SEPARATOR);
-			menu.GetSubMenu(0)->AppendMenu(MF_STRING, ID_UNKNOWN_REGISTER, tmpStr);
-		}
-
-		CMFCPopupMenu* pPopupMenu = new CMFCPopupMenu();
-		pPopupMenu->Create(this, point.x, point.y, (HMENU)(*menu.GetSubMenu(0)));
-		pPopupMenu->SetDefaultItem(cmdDefault);
-	}
-}*/
-
 void CFileView::ResetScrollbars()
 {
 	if (m_EnableScrolling)
@@ -727,9 +634,8 @@ BEGIN_MESSAGE_MAP(CFileView, CWnd)
 	ON_WM_KILLFOCUS()
 	ON_WM_SETCURSOR()
 	ON_WM_CONTEXTMENU()
-	ON_COMMAND(ID_VIEW_SELECTALL, OnSelectAll)
-	ON_COMMAND(ID_VIEW_SELECTNONE, OnSelectNone)
-	ON_UPDATE_COMMAND_UI_RANGE(ID_VIEW_SELECTALL, ID_VIEW_SELECTNONE, OnUpdateCommands)
+	ON_MESSAGE_VOID(WM_SELECTALL, OnSelectAll)
+	ON_MESSAGE_VOID(WM_SELECTNONE, OnSelectNone)
 	ON_UPDATE_COMMAND_UI(ID_APP_NEWFILEDROP, OnUpdateCommands)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->ItemsDropped, OnItemsDropped)
 END_MESSAGE_MAP()
@@ -887,11 +793,11 @@ void CFileView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 	{
 	case 'A':
 		if ((GetKeyState(VK_CONTROL)<0) && (GetKeyState(VK_SHIFT)>=0))
-			GetOwner()->SendMessage(WM_COMMAND, ID_VIEW_SELECTALL);
+			OnSelectAll();
 		break;
 	case 'N':
 		if ((GetKeyState(VK_CONTROL)<0) && (GetKeyState(VK_SHIFT)>=0))
-			GetOwner()->SendMessage(WM_COMMAND, ID_VIEW_SELECTNONE);
+			OnSelectNone();
 		break;
 	case VK_SPACE:
 		if (GetKeyState(VK_SHIFT)>=0)
@@ -1090,27 +996,14 @@ void CFileView::OnSelectNone()
 
 void CFileView::OnUpdateCommands(CCmdUI* pCmdUI)
 {
-	BOOL b = FALSE;
-	switch (pCmdUI->m_nID)
-	{
-	case ID_VIEW_SELECTALL:
-	case ID_VIEW_SELECTNONE:
-		if (p_Result)
-			b = (p_Result->m_ItemCount>0);
-		break;
-	case ID_APP_NEWFILEDROP:
-		b = (m_Context<=LFContextStoreHome);
-		break;
-	}
-
-	pCmdUI->Enable(b);
+	pCmdUI->Enable(m_Context<=LFContextStoreHome);
 }
 
 LRESULT CFileView::OnItemsDropped(WPARAM /*wParam*/, LPARAM /*lParam*/)
 {
 	if (p_Result)
 		if (p_Result->m_Context!=LFContextStores)
-			GetParentFrame()->SendMessage(WM_COMMAND, ID_NAV_RELOAD);
+			GetOwner()->SendMessage(WM_COMMAND, ID_NAV_RELOAD);
 
 	return NULL;
 }
