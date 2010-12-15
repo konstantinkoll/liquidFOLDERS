@@ -75,7 +75,6 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_COMMAND(ID_NAV_FORWARDONE, OnNavigateForwardOne)
 	ON_COMMAND(ID_NAV_LAST, OnNavigateLast)
 	ON_COMMAND(ID_NAV_RELOAD, OnNavigateReload)
-	ON_COMMAND(ID_NAV_RELOAD_SHOWALL, OnNavigateReloadShowAll)
 	ON_COMMAND(ID_NAV_SHOWHISTORY, OnShowHistoryWnd)
 	ON_COMMAND(ID_NAV_STORES, OnNavigateStores)
 	ON_COMMAND(ID_NAV_HOME, OnNavigateHome)
@@ -336,7 +335,7 @@ void CMainFrame::OnUpdateAppCommands(CCmdUI* pCmdUI)
 		break;
 	case ID_VIEW_AUTODIRS:
 		pCmdUI->SetCheck((ActiveViewParameters->AutoDirs) || (ActiveContextID>=LFContextSubfolderDefault));
-		pCmdUI->Enable((theApp.m_Contexts[ActiveContextID]->AllowGroups) && (SelectViewMode(ActiveViewParameters->Mode)<=LFViewPreview));
+		pCmdUI->Enable((theApp.m_Contexts[ActiveContextID]->AllowGroups) && (ActiveViewParameters->Mode<=LFViewPreview));
 		break;
 	case ID_APP_VIEW_CALENDAR_YEAR:
 		view = pCmdUI->m_nID-ID_APP_VIEW_LARGEICONS+LFViewLargeIcons;
@@ -367,7 +366,6 @@ void CMainFrame::OnSort(UINT nID)
 	{
 		ActiveViewParameters->SortBy = nID;
 		ActiveViewParameters->Descending = (theApp.m_Attributes[nID]->Type==LFTypeRating) || (theApp.m_Attributes[nID]->Type==LFTypeTime);
-		ActiveViewParameters->Mode = SelectViewMode(ActiveViewParameters->Mode);
 
 		theApp.UpdateSortOptions(ActiveContextID);
 	}
@@ -686,33 +684,36 @@ void CMainFrame::UpdateViewOptions()
 			((CTextureComboBox*)cbx)->SelectItem((INT)theApp.m_nTextureSize);
 	}
 
-	m_wndMainView.UpdateViewOptions(ActiveContextID);
+	if ((ActiveViewID>LFViewPreview)!=(ActiveViewParameters->Mode>LFViewPreview))
+	{
+		CookFiles();
+	}
+	else
+	{
+		m_wndMainView.UpdateViewOptions(ActiveContextID);
+	}
+
+	ActiveViewID = ActiveViewParameters->Mode;
 }
 
 void CMainFrame::UpdateSortOptions()
 {
 	CookFiles();
+
+	ActiveViewID = ActiveViewParameters->Mode;
 }
 
 void CMainFrame::UpdateSearchResult(BOOL SetEmpty, INT FocusItem)
 {
 	if ((!SetEmpty) && (CookedFiles))
 	{
-		// ChildView austauschen:
-		// - Wenn ein anderer Kontext mit ggf. anderen Views gewünscht wird
-		// - Wenn im Kontext die Ansicht auf "automatisch" steht
-		// - Wenn sich für die Liste das Kategorien-Flag ändert (wg. virtual mode)
-		BOOL change = (ActiveContextID!=CookedFiles->m_Context) || (ActiveViewID!=(INT)SelectViewMode(ActiveViewParameters->Mode));
-		if (change)
-		{
-			ActiveContextID = CookedFiles->m_Context;
-			ActiveViewParameters = &theApp.m_Views[ActiveContextID];
-			if (OpenChildView(FocusItem))
-				return;
-		}
+		ActiveContextID = CookedFiles->m_Context;
+		ActiveViewParameters = &theApp.m_Views[ActiveContextID];
 	}
 
 	m_wndMainView.UpdateSearchResult(SetEmpty ? NULL : RawFiles, SetEmpty ? NULL : CookedFiles, FocusItem);
+
+	ActiveViewID = ActiveViewParameters->Mode;
 }
 
 void CMainFrame::OnChangeChildView(UINT nID)
@@ -934,17 +935,6 @@ void CMainFrame::OnNavigateReload()
 {
 	if (ActiveFilter)
 		NavigateTo(LFAllocFilter(ActiveFilter), NAVMODE_RELOAD, m_wndMainView.GetFocusItem());
-}
-
-void CMainFrame::OnNavigateReloadShowAll()
-{
-	if (ActiveFilter)
-	{
-		LFFilter* f = LFAllocFilter(ActiveFilter);
-		f->UnhideAll = true;
-
-		NavigateTo(f, NAVMODE_RELOAD, m_wndMainView.GetFocusItem());
-	}
 }
 
 void CMainFrame::OnNavigateStores()
@@ -1289,7 +1279,7 @@ void CMainFrame::ShowCaptionBar(LPCWSTR Icon, UINT res, INT Command)
 	ShowCaptionBar(Icon, message, Command);
 	free(message);
 }
-
+/*
 UINT CMainFrame::SelectViewMode(UINT ViewID)
 {
 	if (ViewID>=LFViewCount)
@@ -1312,7 +1302,7 @@ UINT CMainFrame::SelectViewMode(UINT ViewID)
 	return ViewID;
 }
 
-BOOL CMainFrame::OpenChildView(INT FocusItem, BOOL Force, BOOL AllowChangeSort)
+/*BOOL CMainFrame::OpenChildView(INT FocusItem, BOOL Force, BOOL AllowChangeSort)
 {
 	UINT ViewID = SelectViewMode(ActiveViewParameters->Mode);
 
@@ -1345,16 +1335,16 @@ BOOL CMainFrame::OpenChildView(INT FocusItem, BOOL Force, BOOL AllowChangeSort)
 
 	ActiveViewID = ViewID;
 
+	return TRUE;
+}
+
 	// Im Debug-Modus bleiben alle Kategorien sichtbar
-	#ifndef _DEBUG
+/*	#ifndef _DEBUG
 	m_wndRibbonBar.ShowCategory(RibbonCategory_View_Calendar, (ViewID>=LFViewCalendarYear) && (ViewID<=LFViewCalendarDay));
 	m_wndRibbonBar.ShowCategory(RibbonCategory_View_Globe, ViewID==LFViewGlobe);
 	m_wndRibbonBar.ShowCategory(RibbonCategory_View_Tagcloud, ViewID==LFViewTagcloud);
 	m_wndRibbonBar.RecalcLayout();
-	#endif
-
-	return TRUE;
-}
+	#endif*/
 
 void CMainFrame::NavigateTo(LFFilter* f, UINT NavMode, INT FocusItem, INT FirstAggregate, INT LastAggregate)
 {

@@ -301,24 +301,85 @@ void CStoreManagerApp::OnAppExit()
 	LFApplication::OnAppExit();
 }
 
-void CStoreManagerApp::UpdateViewOptions(INT context)
+BOOL CStoreManagerApp::SanitizeSortBy(LFViewParameters* vp, INT context)
 {
-	std::list<CMainFrame*>::iterator ppFrame = m_listMainFrames.begin();
-	while (ppFrame!=m_listMainFrames.end())
+	BOOL Modified = FALSE;
+
+	// Enforce valid view mode
+	if ((vp->Mode>=LFViewCount) || (!theApp.m_AllowedViews[context]->IsSet(vp->Mode)))
 	{
-		if (((*ppFrame)->ActiveContextID==context) || (context==-1))
-			(*ppFrame)->UpdateViewOptions();
-		ppFrame++;
+		vp->Mode = LFViewTiles;
+		Modified = TRUE;
 	}
+
+	// Choose other view mode if neccessary
+	if (!AttributeSortableInView(vp->SortBy, vp->Mode))
+		for (UINT a=0; a<=LFViewTimeline; a++)
+			if ((theApp.m_AllowedViews[context]->IsSet(a)) && (AttributeSortableInView(vp->SortBy, a)))
+			{
+				vp->Mode = a;
+				Modified = TRUE;
+				break;
+			}
+
+	return Modified;
+}
+
+BOOL CStoreManagerApp::SanitizeViewMode(LFViewParameters* vp, INT context)
+{
+	BOOL Modified = FALSE;
+
+	// Enforce valid view mode
+	if ((vp->Mode>=LFViewCount) || (!theApp.m_AllowedViews[context]->IsSet(vp->Mode)))
+	{
+		vp->Mode = LFViewTiles;
+		Modified = TRUE;
+	}
+
+	// Choose other sorting if neccessary
+	if (!AttributeSortableInView(vp->SortBy, vp->Mode))
+	{
+		for (UINT a=0; a<LFAttributeCount; a++)
+			if (AttributeSortableInView(a, vp->Mode))
+			{
+				vp->SortBy = a;
+				Modified = TRUE;
+				break;
+			}
+	}
+
+	return Modified;
 }
 
 void CStoreManagerApp::UpdateSortOptions(INT context)
 {
+	SanitizeSortBy(&theApp.m_Views[context], context);
+
 	std::list<CMainFrame*>::iterator ppFrame = m_listMainFrames.begin();
 	while (ppFrame!=m_listMainFrames.end())
 	{
 		if ((*ppFrame)->ActiveContextID==context)
 			(*ppFrame)->UpdateSortOptions();
+		ppFrame++;
+	}
+}
+
+void CStoreManagerApp::UpdateViewOptions(INT context)
+{
+	BOOL Modified = (context!=-1) ? SanitizeViewMode(&theApp.m_Views[context], context) : FALSE;
+
+	std::list<CMainFrame*>::iterator ppFrame = m_listMainFrames.begin();
+	while (ppFrame!=m_listMainFrames.end())
+	{
+		if (((*ppFrame)->ActiveContextID==context) || (context==-1))
+			if (Modified)
+			{
+				(*ppFrame)->UpdateSortOptions();
+			}
+			else
+			{
+				(*ppFrame)->UpdateViewOptions();
+			}
 		ppFrame++;
 	}
 }

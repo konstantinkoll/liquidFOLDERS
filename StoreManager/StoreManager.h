@@ -46,9 +46,13 @@ public:
 	void ReplaceMainFrame(CMainFrame* pFrame);
 	CMainFrame* GetClipboard(BOOL ForceNew);
 	void CloseAllFrames(BOOL leaveOne=FALSE);
-	void UpdateViewOptions(INT context=-1);
+
+	BOOL SanitizeSortBy(LFViewParameters* vp, INT context);
+	BOOL SanitizeViewMode(LFViewParameters* vp, INT context);
 	void UpdateSortOptions(INT context);
+	void UpdateViewOptions(INT context=-1);
 	void Reload(INT context);
+
 	void GetBinary(LPCTSTR lpszEntry, void* pData, UINT size);
 	void ToggleAttribute(LFViewParameters* vp, UINT attr, INT ColumnCount=-1);
 	HBITMAP GetGLTexture(UINT nID);

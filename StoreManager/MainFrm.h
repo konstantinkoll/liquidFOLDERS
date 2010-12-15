@@ -47,8 +47,6 @@ public:
 	BOOL UpdateSelectedItems(LFVariantData* value1, LFVariantData* value2=NULL, LFVariantData* value3=NULL);
 	BOOL UpdateTrashFlag(BOOL Trash, BOOL All=FALSE);
 	BOOL DeleteFiles(BOOL All=FALSE);
-	UINT SelectViewMode(UINT ViewID=LFViewDetails);
-	BOOL OpenChildView(INT FocusItem=0, BOOL Force=FALSE, BOOL AllowChangeSort=FALSE);
 	void OnUpdateSelection();
 
 	BOOL IsClipboard;
@@ -113,7 +111,6 @@ protected:
 	afx_msg void OnNavigateForwardOne();
 	afx_msg void OnNavigateLast();
 	afx_msg void OnNavigateReload();
-	afx_msg void OnNavigateReloadShowAll();
 	afx_msg void OnNavigateStores();
 	afx_msg void OnNavigateHome();
 

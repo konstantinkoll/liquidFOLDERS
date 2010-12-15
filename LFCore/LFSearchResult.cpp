@@ -27,7 +27,6 @@ LFSearchResult::LFSearchResult(int ctx)
 	m_RawCopy = true;
 	m_Context = ctx;
 	m_HasCategories = false;
-	m_HidingItems = false;
 	m_QueryTime = 0;
 	m_FileCount = 0;
 	m_FileSize = 0;
@@ -45,7 +44,6 @@ LFSearchResult::LFSearchResult(LFSearchResult* res)
 	m_RawCopy = false;
 	m_Context = res->m_Context;
 	m_HasCategories = res->m_HasCategories;
-	m_HidingItems = res->m_HidingItems;
 	m_QueryTime = res->m_QueryTime;
 	m_FileCount = res->m_FileCount;
 	m_FileSize = res->m_FileSize;
@@ -137,11 +135,8 @@ void LFSearchResult::AddDrives(LFFilter* filter)
 		SHFILEINFO sfi;
 		if (SHGetFileInfo(szDriveRoot, 0, &sfi, sizeof(SHFILEINFO), SHGFI_DISPLAYNAME | SHGFI_TYPENAME | SHGFI_ATTRIBUTES))
 		{
-			if ((!sfi.dwAttributes) && (filter->HideEmptyDrives) && (!filter->UnhideAll))
-			{
-				m_HidingItems = true;
+			if ((!sfi.dwAttributes) && (filter->HideEmptyDrives))
 				continue;
-			}
 
 			LFItemDescriptor* d = LFAllocItemDescriptor();
 			d->Type = LFTypeDrive;

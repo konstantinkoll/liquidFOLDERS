@@ -26,7 +26,6 @@ public:
 	bool m_RawCopy;
 	int m_Context;
 	bool m_HasCategories;
-	bool m_HidingItems;
 	DWORD m_QueryTime;
 	unsigned int m_FileCount;
 	__int64 m_FileSize;

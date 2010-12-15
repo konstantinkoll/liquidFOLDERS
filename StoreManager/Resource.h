@@ -55,7 +55,6 @@
 #define ID_NAV_FORWARDONE               404
 #define ID_NAV_LAST                     405
 #define ID_NAV_RELOAD                   406
-#define ID_NAV_RELOAD_SHOWALL           407
 #define ID_NAV_SHOWHISTORY              408
 #define ID_NAV_STORES                   409
 #define ID_NAV_HOME                     410

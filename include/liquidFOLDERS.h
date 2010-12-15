@@ -423,7 +423,6 @@ struct LFFilter
 	unsigned int Mode;
 	LFFilterOptions Options;
 
-	bool UnhideAll;							// Disables the next two flags
 	bool HideEmptyDrives;					// For LFFilterModeStores
 	bool HideEmptyDomains;					// For LFFilterModeStoreHome
 
