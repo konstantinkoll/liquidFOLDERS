@@ -317,7 +317,7 @@ BOOL CStoreManagerApp::SanitizeSortBy(LFViewParameters* vp, INT context)
 		for (UINT a=0; a<=LFViewTimeline; a++)
 			if ((theApp.m_AllowedViews[context]->IsSet(a)) && (AttributeSortableInView(vp->SortBy, a)))
 			{
-				vp->Mode = a;
+				vp->Mode = (a<=LFViewTiles) ? LFViewTiles : a;
 				Modified = TRUE;
 				break;
 			}
