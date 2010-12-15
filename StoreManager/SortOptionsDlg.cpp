@@ -73,7 +73,7 @@ BOOL SortOptionsDlg::OnInitDialog()
 		GetDlgItem(IDC_AUTODIRS)->EnableWindow(FALSE);
 
 		CString tmpStr;
-		ENSURE(tmpStr.LoadString(p_View->AutoDirs ? IDS_SUBFOLDERS_MANDATORY : IDS_SUBFOLDERS_NOTAVAIL));
+		ENSURE(tmpStr.LoadString(p_View->Mode>LFViewPreview ? IDS_SUBFOLDERS_MANDATORY : IDS_SUBFOLDERS_NOTAVAIL));
 		GetDlgItem(IDC_SUBFOLDERHINT)->SetWindowText(tmpStr);
 	}
 
