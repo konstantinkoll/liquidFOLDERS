@@ -675,6 +675,17 @@ void CMainFrame::OnRestoreAllFiles()
 	UpdateTrashFlag(FALSE, TRUE);
 }*/
 
+void CMainFrame::UpdateRibbon()
+{
+	// Im Debug-Modus bleiben alle Kategorien sichtbar
+	#ifndef _DEBUG
+	m_wndRibbonBar.ShowCategory(RibbonCategory_View_Calendar, (ActiveViewID>=LFViewCalendarYear) && (ActiveViewID<=LFViewCalendarDay));
+	m_wndRibbonBar.ShowCategory(RibbonCategory_View_Globe, ActiveViewID==LFViewGlobe);
+	m_wndRibbonBar.ShowCategory(RibbonCategory_View_Tagcloud, ActiveViewID==LFViewTagcloud);
+	m_wndRibbonBar.RecalcLayout();
+	#endif
+}
+
 void CMainFrame::UpdateViewOptions()
 {
 	if (ActiveViewID==LFViewGlobe)
@@ -694,6 +705,7 @@ void CMainFrame::UpdateViewOptions()
 	}
 
 	ActiveViewID = ActiveViewParameters->Mode;
+	UpdateRibbon();
 }
 
 void CMainFrame::UpdateSortOptions()
@@ -701,6 +713,7 @@ void CMainFrame::UpdateSortOptions()
 	CookFiles();
 
 	ActiveViewID = ActiveViewParameters->Mode;
+	UpdateRibbon();
 }
 
 void CMainFrame::UpdateSearchResult(BOOL SetEmpty, INT FocusItem)
@@ -714,6 +727,7 @@ void CMainFrame::UpdateSearchResult(BOOL SetEmpty, INT FocusItem)
 	m_wndMainView.UpdateSearchResult(SetEmpty ? NULL : RawFiles, SetEmpty ? NULL : CookedFiles, FocusItem);
 
 	ActiveViewID = ActiveViewParameters->Mode;
+	UpdateRibbon();
 }
 
 void CMainFrame::OnChangeChildView(UINT nID)
@@ -1279,72 +1293,6 @@ void CMainFrame::ShowCaptionBar(LPCWSTR Icon, UINT res, INT Command)
 	ShowCaptionBar(Icon, message, Command);
 	free(message);
 }
-/*
-UINT CMainFrame::SelectViewMode(UINT ViewID)
-{
-	if (ViewID>=LFViewCount)
-		ViewID = LFViewTiles;
-	if (CookedFiles)
-		if (!theApp.m_AllowedViews[CookedFiles->m_Context]->IsSet(ViewID))
-			ViewID = LFViewTiles;
-
-	if (!AttributeSortableInView(ActiveViewParameters->SortBy, ViewID))
-		for (UINT a=0; a<=LFViewTimeline; a++)
-			if (AttributeSortableInView(ActiveViewParameters->SortBy, a))
-			{
-				if (!CookedFiles)
-					return a;
-
-				if (theApp.m_AllowedViews[CookedFiles->m_Context]->IsSet(a))
-					return a;
-			}
-
-	return ViewID;
-}
-
-/*BOOL CMainFrame::OpenChildView(INT FocusItem, BOOL Force, BOOL AllowChangeSort)
-{
-	UINT ViewID = SelectViewMode(ActiveViewParameters->Mode);
-
-	if (AllowChangeSort)
-	{
-		if (!AttributeSortableInView(ActiveViewParameters->SortBy, ActiveViewParameters->Mode))
-		{
-			for (UINT a=0; a<LFAttributeCount; a++)
-			if (AttributeSortableInView(a, ActiveViewParameters->Mode))
-			{
-				ActiveViewParameters->SortBy = a;
-				break;
-			}
-
-			theApp.UpdateSortOptions(ActiveContextID);
-			return FALSE;
-		}
-
-		if ((ViewID>LFViewPreview)!=(ActiveViewID>LFViewPreview))
-			theApp.UpdateSortOptions(ActiveContextID);
-	}
-
-	ActiveViewParameters->Mode = ViewID;
-	ASSERT(AttributeSortableInView(ActiveViewParameters->SortBy, ViewID));
-
-	m_wndMainView.UpdateViewOptions(ActiveContextID);
-	m_wndMainView.UpdateSearchResult(RawFiles, CookedFiles, FocusItem);
-
-	OnUpdateSelection();
-
-	ActiveViewID = ViewID;
-
-	return TRUE;
-}
-
-	// Im Debug-Modus bleiben alle Kategorien sichtbar
-/*	#ifndef _DEBUG
-	m_wndRibbonBar.ShowCategory(RibbonCategory_View_Calendar, (ViewID>=LFViewCalendarYear) && (ViewID<=LFViewCalendarDay));
-	m_wndRibbonBar.ShowCategory(RibbonCategory_View_Globe, ViewID==LFViewGlobe);
-	m_wndRibbonBar.ShowCategory(RibbonCategory_View_Tagcloud, ViewID==LFViewTagcloud);
-	m_wndRibbonBar.RecalcLayout();
-	#endif*/
 
 void CMainFrame::NavigateTo(LFFilter* f, UINT NavMode, INT FocusItem, INT FirstAggregate, INT LastAggregate)
 {
