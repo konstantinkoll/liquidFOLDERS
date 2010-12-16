@@ -319,6 +319,8 @@ void CTaskbar::OnSize(UINT nType, INT cx, INT cy)
 
 void CTaskbar::OnIdleUpdateCmdUI()
 {
+	SetRedraw(FALSE);
+
 	BOOL Update = FALSE;
 
 	std::list<CTaskButton*>::iterator ppBtn = ButtonsRight.begin();
@@ -329,9 +331,11 @@ void CTaskbar::OnIdleUpdateCmdUI()
 		CCmdUI cmdUI;
 		cmdUI.m_nID = (*ppBtn)->GetDlgCtrlID();
 		cmdUI.m_pOther = *ppBtn;
-		cmdUI.DoUpdate(GetParent(), TRUE);
+		cmdUI.DoUpdate(GetOwner(), TRUE);
 
-		Update |= ((*ppBtn)->IsWindowEnabled()!=Enabled);
+		if ((*ppBtn)->IsWindowEnabled()!=Enabled)
+			Update = TRUE;
+
 		ppBtn++;
 	}
 
@@ -343,11 +347,15 @@ void CTaskbar::OnIdleUpdateCmdUI()
 		CCmdUI cmdUI;
 		cmdUI.m_nID = (*ppBtn)->GetDlgCtrlID();
 		cmdUI.m_pOther = *ppBtn;
-		cmdUI.DoUpdate(GetParent(), TRUE);
+		cmdUI.DoUpdate(GetOwner(), TRUE);
 
-		Update |= ((*ppBtn)->IsWindowEnabled()!=Enabled);
+		if ((*ppBtn)->IsWindowEnabled()!=Enabled)
+			Update = TRUE;
+
 		ppBtn++;
 	}
+
+	SetRedraw(TRUE);
 
 	if (Update)
 		AdjustLayout();
