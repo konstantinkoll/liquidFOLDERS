@@ -317,8 +317,7 @@ void CGlasWindow::OnActivateApp(BOOL bActive, DWORD dwThreadID)
 	if (GetDesign()==GWD_THEMED)
 	{
 		Invalidate();
-		if (bActive)
-			RedrawWindow(NULL, NULL, RDW_ALLCHILDREN | RDW_UPDATENOW | RDW_INVALIDATE);
+		RedrawWindow(NULL, NULL, RDW_ALLCHILDREN | RDW_UPDATENOW | RDW_INVALIDATE);
 	}
 }
 
