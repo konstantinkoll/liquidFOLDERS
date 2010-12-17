@@ -25,7 +25,7 @@ struct ItemCategory
 {
 	WCHAR Caption[256];
 	WCHAR Hint[256];
-	RECT rect;
+	RECT Rect;
 };
 
 class CGridView : public CFileView
@@ -47,5 +47,5 @@ protected:
 private:
 	DynArray<ItemCategory> m_Categories;
 
-	void DrawCategory(CDC& dc, ItemCategory* ic, BOOL Themed);
+	void DrawCategory(CDC& dc, LPRECT rectCategory, ItemCategory* ic, BOOL Themed);
 };

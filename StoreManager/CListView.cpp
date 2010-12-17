@@ -69,12 +69,28 @@ void CListView::SetViewOptions(BOOL Force)
 		ImageList_GetIconSize(*m_Icons[1], &cx, &cy);
 		m_IconSize[1].cx = min(cx, 128);
 		m_IconSize[1].cy = min(cy, 128);
+
+		AdjustHeader(((p_ViewParameters->Mode==LFViewDetails) || (p_ViewParameters->Mode==LFViewCalendarDay)) && (p_Result));
+	}
+
+	if ((!(m_wndHeader.GetStyle() & HDS_HIDDEN)) || (Force))
+	{
+		m_wndHeader.SetOrderArray(LFAttributeCount, p_ViewParameters->ColumnOrder);
+
+		for (UINT a=0; a<LFAttributeCount; a++)
+		{
+			HDITEM HdItem;
+			HdItem.mask = HDI_WIDTH;
+			HdItem.cxy = p_ViewParameters->ColumnWidth[a];
+			m_wndHeader.SetItem(a, &HdItem);
+		}
 	}
 }
 
 void CListView::SetSearchResult(LFSearchResult* Result)
 {
 	if (Result)
+	{
 		for (UINT a=0; a<Result->m_ItemCount; a++)
 		{
 			LFItemDescriptor* i = Result->m_Items[a];
@@ -89,10 +105,44 @@ void CListView::SetSearchResult(LFSearchResult* Result)
 						theApp.m_Extensions[i->CoreAttributes.FileFormat] = sfi.szTypeName;
 				}
 		}
+
+		AdjustHeader((m_ViewParameters.Mode==LFViewDetails) || (m_ViewParameters.Mode==LFViewCalendarDay));
+	}
+	else
+	{
+		AdjustHeader(FALSE);
+	}
+}
+
+void CListView::AdjustHeader(BOOL bShow)
+{
+	if (bShow)
+	{
+		m_wndHeader.ModifyStyle(HDS_HIDDEN, 0);
+	}
+	else
+	{
+		m_wndHeader.ModifyStyle(0, HDS_HIDDEN);
+	}
 }
 
 void CListView::AdjustLayout()
 {
+	// Header
+	CRect rect;
+	GetClientRect(rect);
+
+	WINDOWPOS wp;
+	HDLAYOUT HdLayout;
+	HdLayout.prc = &rect;
+	HdLayout.pwpos = &wp;
+	m_wndHeader.Layout(&HdLayout);
+
+	wp.cx = 13-PADDING-m_HScrollPos;
+	m_HeaderHeight = wp.cy + (wp.cy ? 4 : 0);
+
+
+	// Items
 	GVArrange gva = { 0, 0, 15-PADDING, 2, PADDING, 1, -1 };
 
 	switch (m_ViewParameters.Mode)
@@ -130,6 +180,10 @@ void CListView::AdjustLayout()
 		ArrangeHorizontal(gva, FALSE, TRUE, TRUE);
 		break;
 	}
+
+	// Header
+	m_HScrollMax = 1000;
+	m_wndHeader.SetWindowPos(NULL, wp.cx, wp.y, wp.cx+m_HScrollMax, m_HeaderHeight, wp.flags | SWP_NOZORDER | SWP_NOACTIVATE);
 }
 
 void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed)
@@ -427,4 +481,36 @@ INT CListView::GetMaxLabelWidth(INT Max)
 	}
 
 	return Width;
+}
+
+
+BEGIN_MESSAGE_MAP(CListView, CGridView)
+	ON_WM_CREATE()
+//	ON_NOTIFY(HDN_BEGINDRAG, 1, OnBeginDrag)
+//	ON_NOTIFY(HDN_ITEMCHANGING, 1, OnItemChanging)
+//	ON_NOTIFY(HDN_ITEMCLICK, 1, OnItemClick)
+//	ON_EN_KILLFOCUS(2, OnDestroyEdit)
+END_MESSAGE_MAP()
+
+INT CListView::OnCreate(LPCREATESTRUCT lpCreateStruct)
+{
+	if (CGridView::OnCreate(lpCreateStruct)==-1)
+		return -1;
+
+	const DWORD dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | HDS_FLAT | HDS_HIDDEN | HDS_HORZ | HDS_FULLDRAG | HDS_BUTTONS | CCS_TOP | CCS_NOMOVEY | CCS_NODIVIDER;
+	CRect rect;
+	rect.SetRectEmpty();
+	if (!m_wndHeader.Create(dwStyle, rect, this, 1))
+		return -1;
+
+	for (UINT a=0; a<LFAttributeCount; a++)
+	{
+		HDITEM HdItem;
+		HdItem.mask = HDI_TEXT | HDI_FORMAT;
+		HdItem.pszText = theApp.m_Attributes[a]->Name;
+		HdItem.fmt = HDF_STRING;
+		m_wndHeader.InsertItem(a, &HdItem);
+	}
+
+	return 0;
 }

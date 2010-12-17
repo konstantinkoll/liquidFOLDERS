@@ -24,9 +24,9 @@ void CGridView::DrawItem(CDC& /*dc*/, LPRECT /*rectItem*/, INT /*idx*/, BOOL /*T
 {
 }
 
-void CGridView::DrawCategory(CDC& dc, ItemCategory* ic, BOOL Themed)
+void CGridView::DrawCategory(CDC& dc, LPRECT rectCategory, ItemCategory* ic, BOOL Themed)
 {
-	CRect rect(ic->rect);
+	CRect rect(rectCategory);
 	rect.DeflateRect(0, CategoryPadding);
 	rect.left += CategoryPadding;
 
@@ -73,7 +73,7 @@ void CGridView::AddItemCategory(WCHAR* Caption, WCHAR* Hint)
 void CGridView::ResetItemCategories()
 {
 	for (UINT a=0; a<m_Categories.m_ItemCount; a++)
-		ZeroMemory(&m_Categories.m_Items[a].rect, sizeof(RECT));
+		ZeroMemory(&m_Categories.m_Items[a].Rect, sizeof(RECT));
 }
 
 void CGridView::ArrangeHorizontal(GVArrange& gva, BOOL Justify, BOOL ForceBreak, BOOL MaxWidth)
@@ -121,7 +121,7 @@ void CGridView::ArrangeHorizontal(GVArrange& gva, BOOL Justify, BOOL ForceBreak,
 					y += 8;
 
 				category = p_Result->m_Items[a]->CategoryID;
-				LPRECT rect = &m_Categories.m_Items[category].rect;
+				LPRECT rect = &m_Categories.m_Items[category].Rect;
 				rect->left = x;
 				rect->top = y;
 				rect->right = rectClient.right-gva.guttery;
@@ -179,7 +179,7 @@ void CGridView::ArrangeVertical(GVArrange& gva)
 
 	INT category = -1;
 	INT lastleft = x;
-#define FinishCategory if (category!=-1) { m_Categories.m_Items[category].rect.right = lastleft+l; }
+#define FinishCategory if (category!=-1) { m_Categories.m_Items[category].Rect.right = lastleft+l; }
 
 	for (INT a=0; a<(INT)p_Result->m_ItemCount; a++)
 	{
@@ -197,7 +197,7 @@ void CGridView::ArrangeVertical(GVArrange& gva)
 					x += 8;
 
 				category = p_Result->m_Items[a]->CategoryID;
-				LPRECT rect = &m_Categories.m_Items[category].rect;
+				LPRECT rect = &m_Categories.m_Items[category].Rect;
 				rect->left = x;
 				rect->top = gva.my;
 				rect->bottom = rect->top+2*CategoryPadding+m_FontHeight[1];
@@ -262,17 +262,22 @@ void CGridView::OnPaint()
 
 			for (UINT a=0; a<p_Result->m_ItemCount; a++)
 			{
-				FVItemData* d = GetItemData(a);
-				if (IntersectRect(&rectIntersect, &d->Rect, rectUpdate))
+				CRect rect(GetItemData(a)->Rect);
+				rect.OffsetRect(-m_HScrollPos, -m_VScrollPos+(INT)m_HeaderHeight);
+				if (IntersectRect(&rectIntersect, rect, rectUpdate))
 				{
-					DrawItemBackground(dc, &d->Rect, a, Themed);
-					DrawItem(dc, &d->Rect, a, Themed);
+					DrawItemBackground(dc, rect, a, Themed);
+					DrawItem(dc, rect, a, Themed);
 				}
 			}
 
 			for (UINT a=0; a<m_Categories.m_ItemCount; a++)
-				if (IntersectRect(&rectIntersect, &m_Categories.m_Items[a].rect, rectUpdate))
-					DrawCategory(dc, &m_Categories.m_Items[a], Themed);
+			{
+				CRect rect(m_Categories.m_Items[a].Rect);
+				rect.OffsetRect(-m_HScrollPos, -m_VScrollPos+(INT)m_HeaderHeight);
+				if (IntersectRect(&rectIntersect, rect, rectUpdate))
+					DrawCategory(dc, rect, &m_Categories.m_Items[a], Themed);
+			}
 		}
 
 	if (Nothing)

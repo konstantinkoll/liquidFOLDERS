@@ -117,6 +117,10 @@ protected:
 	INT m_EditLabel;
 	INT m_ScrollWidth;
 	INT m_ScrollHeight;
+	INT m_HScrollPos;
+	INT m_VScrollPos;
+	INT m_HScrollMax;
+	INT m_VScrollMax;
 	BOOL m_Hover;
 
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
@@ -161,11 +165,6 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
-	INT m_HScrollMax;
-	INT m_VScrollMax;
-	INT m_HScrollPos;
-	INT m_VScrollPos;
-
 	void AppendAttribute(LFItemDescriptor* i, UINT attr, CString& str);
 	CString GetHint(LFItemDescriptor* i);
 };
