@@ -124,7 +124,7 @@ struct LFAirport
 
 struct LFItemCategoryDescriptor
 {
-	wchar_t Name[64];
+	wchar_t Caption[256];
 	wchar_t Hint[256];
 };
 
@@ -148,7 +148,7 @@ struct LFItemCategoryDescriptor
 
 struct LFContextDescriptor
 {
-	wchar_t Name[64];
+	wchar_t Name[256];
 	bool AllowGroups;
 	LFBitArray* AllowedAttributes;
 };

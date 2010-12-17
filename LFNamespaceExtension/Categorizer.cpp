@@ -77,7 +77,7 @@ void CCategoryCategorizer::OnGetCategoryName(CString& categoryName, DWORD catego
 	}
 	else
 	{
-		categoryName = theApp.m_ItemCategories[categoryID]->Name;
+		categoryName = theApp.m_ItemCategories[categoryID]->Caption;
 	}
 }
 

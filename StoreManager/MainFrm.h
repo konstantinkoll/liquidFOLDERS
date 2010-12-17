@@ -31,18 +31,23 @@
 #define NAVMODE_HISTORY       1
 #define NAVMODE_RELOAD        2
 
+#define WM_UPDATEVIEWOPTIONS     WM_USER+200
+#define WM_UPDATESORTOPTIONS     WM_USER+201
+#define WM_RELOAD                WM_USER+202
+#define WM_COOKFILES             WM_USER+203
+
 class CMainFrame : public CFrameWndEx
 {
 public:
 	CMainFrame(char* RootStore=NULL, BOOL _IsClipboard=FALSE);
 	virtual ~CMainFrame();
+	afx_msg void OnUpdateViewOptions();
+	afx_msg void OnUpdateSortOptions();
 
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
 	virtual BOOL OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo);
 
 	BOOL AddClipItem(LFItemDescriptor* i);
-	void UpdateViewOptions();
-	void UpdateSortOptions();
 	BOOL RenameSingleItem(UINT n, CString Name);
 	BOOL UpdateSelectedItems(LFVariantData* value1, LFVariantData* value2=NULL, LFVariantData* value3=NULL);
 	BOOL UpdateTrashFlag(BOOL Trash, BOOL All=FALSE);

@@ -510,7 +510,7 @@ void CGlobeView::OnUpdateCommands(CCmdUI* pCmdUI)
 		b = m_CameraChanged;
 		break;
 	case ID_GLOBE_GOOGLEEARTH:
-		b = (GetNextSelectedItem(-1)!=-1) && (theApp.path_GoogleEarth!="");
+		b = (GetNextSelectedItem(-1)!=-1) && (theApp.m_PathGoogleEarth.GetLength());
 		break;
 	case ID_GLOBE_HQMODEL:
 		pCmdUI->SetCheck(theApp.m_GlobeHQModel);

@@ -40,7 +40,7 @@ void CExplorerList::AddCategory(INT ID, CString name, CString hint)
 void CExplorerList::AddItemCategories()
 {
 	for (UINT a=0; a<LFItemCategoryCount; a++)
-		AddCategory(a, p_App->m_ItemCategories[a]->Name, p_App->m_ItemCategories[a]->Hint);
+		AddCategory(a, p_App->m_ItemCategories[a]->Caption, p_App->m_ItemCategories[a]->Hint);
 }
 
 void CExplorerList::AddColumn(INT ID, CString name)

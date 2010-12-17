@@ -81,6 +81,9 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 
 	ON_COMMAND(IDM_ITEM_OPEN, OnItemOpen)
 
+	ON_MESSAGE_VOID(WM_UPDATEVIEWOPTIONS, OnUpdateViewOptions)
+	ON_MESSAGE_VOID(WM_UPDATEVIEWOPTIONS, OnUpdateSortOptions)
+
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->DrivesChanged, OnDrivesChanged)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoresChanged, OnStoresChanged)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoreAttributesChanged, OnStoresChanged)
@@ -247,7 +250,7 @@ INT CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	{
 		RawFiles = LFQuery(ActiveFilter);
 	}
-	CookFiles(RawFiles->m_Context);
+	CookFiles();
 
 	return 0;
 }
@@ -674,47 +677,6 @@ void CMainFrame::OnRestoreAllFiles()
 {
 	UpdateTrashFlag(FALSE, TRUE);
 }*/
-
-void CMainFrame::UpdateRibbon()
-{
-	// Im Debug-Modus bleiben alle Kategorien sichtbar
-	#ifndef _DEBUG
-	m_wndRibbonBar.ShowCategory(RibbonCategory_View_Calendar, (ActiveViewID>=LFViewCalendarYear) && (ActiveViewID<=LFViewCalendarDay));
-	m_wndRibbonBar.ShowCategory(RibbonCategory_View_Globe, ActiveViewID==LFViewGlobe);
-	m_wndRibbonBar.ShowCategory(RibbonCategory_View_Tagcloud, ActiveViewID==LFViewTagcloud);
-	m_wndRibbonBar.RecalcLayout();
-	#endif
-}
-
-void CMainFrame::UpdateViewOptions()
-{
-	if (ActiveViewID==LFViewGlobe)
-	{
-		CMFCRibbonBaseElement* cbx = m_wndRibbonBar.FindByID(ID_GLOBE_TEXTURESIZE, FALSE, TRUE);
-		if (cbx)
-			((CTextureComboBox*)cbx)->SelectItem((INT)theApp.m_nTextureSize);
-	}
-
-	if ((ActiveViewID>LFViewPreview)!=(ActiveViewParameters->Mode>LFViewPreview))
-	{
-		CookFiles();
-	}
-	else
-	{
-		m_wndMainView.UpdateViewOptions(ActiveContextID);
-	}
-
-	ActiveViewID = ActiveViewParameters->Mode;
-	UpdateRibbon();
-}
-
-void CMainFrame::UpdateSortOptions()
-{
-	CookFiles();
-
-	ActiveViewID = ActiveViewParameters->Mode;
-	UpdateRibbon();
-}
 
 void CMainFrame::UpdateSearchResult(BOOL SetEmpty, INT FocusItem)
 {
@@ -1409,20 +1371,6 @@ void CMainFrame::UpdateHistory()
 }
 
 
-void CMainFrame::OnUpdateSelection()
-{
-	m_wndInspector.UpdateStart(ActiveFilter);
-	INT i = m_wndMainView.GetNextSelectedItem(-1);
-
-	while (i>=0)
-	{
-		m_wndInspector.UpdateAdd(CookedFiles->m_Items[i], RawFiles);
-		i = m_wndMainView.GetNextSelectedItem(i);
-	}
-
-	m_wndInspector.UpdateFinish();
-}
-
 void CMainFrame::OnItemOpen()
 {
 	INT idx = m_wndMainView.GetSelectedItem();
@@ -1471,6 +1419,65 @@ void CMainFrame::OnItemOpen()
 			}
 		}
 	}
+}
+
+
+// TODO
+void CMainFrame::UpdateRibbon()
+{
+	// Im Debug-Modus bleiben alle Kategorien sichtbar
+	/*#ifndef _DEBUG
+	m_wndRibbonBar.ShowCategory(RibbonCategory_View_Calendar, (ActiveViewID>=LFViewCalendarYear) && (ActiveViewID<=LFViewCalendarDay));
+	m_wndRibbonBar.ShowCategory(RibbonCategory_View_Globe, ActiveViewID==LFViewGlobe);
+	m_wndRibbonBar.ShowCategory(RibbonCategory_View_Tagcloud, ActiveViewID==LFViewTagcloud);
+	m_wndRibbonBar.RecalcLayout();
+	#endif*/
+}
+
+// TODO
+void CMainFrame::OnUpdateSelection()
+{
+	m_wndInspector.UpdateStart(ActiveFilter);
+	INT i = m_wndMainView.GetNextSelectedItem(-1);
+
+	while (i>=0)
+	{
+		m_wndInspector.UpdateAdd(CookedFiles->m_Items[i], RawFiles);
+		i = m_wndMainView.GetNextSelectedItem(i);
+	}
+
+	m_wndInspector.UpdateFinish();
+}
+
+
+void CMainFrame::OnUpdateViewOptions()
+{
+	if (ActiveViewID==LFViewGlobe)
+	{
+		CMFCRibbonBaseElement* cbx = m_wndRibbonBar.FindByID(ID_GLOBE_TEXTURESIZE, FALSE, TRUE);
+		if (cbx)
+			((CTextureComboBox*)cbx)->SelectItem((INT)theApp.m_nTextureSize);
+	}
+
+	if ((ActiveViewID>LFViewPreview)!=(ActiveViewParameters->Mode>LFViewPreview))
+	{
+		CookFiles();
+	}
+	else
+	{
+		m_wndMainView.UpdateViewOptions(ActiveContextID);
+	}
+
+	ActiveViewID = ActiveViewParameters->Mode;
+	UpdateRibbon();
+}
+
+void CMainFrame::OnUpdateSortOptions()
+{
+	CookFiles();
+
+	ActiveViewID = ActiveViewParameters->Mode;
+	UpdateRibbon();
 }
 
 

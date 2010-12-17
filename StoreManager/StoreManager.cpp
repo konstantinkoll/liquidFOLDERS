@@ -29,28 +29,8 @@ CStoreManagerApp::CStoreManagerApp()
 	ZeroMemory(&m_GLTextureCache, sizeof(m_GLTextureCache));
 	ZeroMemory(&m_GLTextureBinds, sizeof(m_GLTextureBinds));
 
-	// Pfad zu Google Earth
-	path_GoogleEarth = "";
-
-	HKEY hKey;
-	if (RegOpenKeyEx(HKEY_CURRENT_USER, _T("Software\\Google\\Google Earth Plus"), 0, KEY_ALL_ACCESS, &hKey)==ERROR_SUCCESS)
-	{
-		DWORD dwType = REG_SZ;
-		CHAR lszValue[255];
-		DWORD dwSize = 255;
-
-		if (RegQueryValueEx(hKey, _T("InstallLocation"), NULL, &dwType, (LPBYTE)&lszValue, &dwSize)==ERROR_SUCCESS)
-			path_GoogleEarth = lszValue;
-
-		RegCloseKey(hKey);
-	}
-
 	// Nag screen
 	m_NagCounter = 20;
-}
-
-CStoreManagerApp::~CStoreManagerApp()
-{
 }
 
 
@@ -76,12 +56,22 @@ BOOL CStoreManagerApp::InitInstance()
 
 		if (a==LFContextSubfolderDay)
 			(*m_AllowedViews[a]) += LFViewCalendarDay;
-
-		// TODO
-		(*m_AllowedViews[a]) -= LFViewCalendarYear;
-		(*m_AllowedViews[a]) -= LFViewTimeline;
 	}
 
+	// Pfad zu Google Earth
+	HKEY hKey;
+	if (RegOpenKeyEx(HKEY_CURRENT_USER, _T("Software\\Google\\Google Earth Plus"), 0, KEY_ALL_ACCESS, &hKey)==ERROR_SUCCESS)
+	{
+		DWORD dwType = REG_SZ;
+		CHAR lszValue[255];
+		DWORD dwSize = 255;
+
+		if (RegQueryValueEx(hKey, _T("InstallLocation"), NULL, &dwType, (LPBYTE)&lszValue, &dwSize)==ERROR_SUCCESS)
+			m_PathGoogleEarth = lszValue;
+
+		RegCloseKey(hKey);
+	}
+	
 	// Registry auslesen
 	CString oldBase = GetRegistryBase();
 	SetRegistryBase(_T("Settings"));
@@ -90,7 +80,7 @@ BOOL CStoreManagerApp::InitInstance()
 	m_GlobeHQModel = GetInt(_T("GlobeHQModel"), TRUE);
 	m_GlobeLighting = GetInt(_T("GlobeLighting"), TRUE);
 	m_nTextureSize = GetInt(_T("TextureSize"), 0);
-	m_nMaxTextureSize = GetInt(_T("MaxTextureSize"), LFTexture8192);
+	m_nMaxTextureSize = GetInt(_T("MaxTextureSize"), LFTexture4096);
 	if (m_nTextureSize<0)
 		m_nTextureSize = 0;
 	if (m_nTextureSize>m_nMaxTextureSize)
@@ -140,6 +130,7 @@ INT CStoreManagerApp::ExitInstance()
 
 	return LFApplication::ExitInstance();
 }
+
 
 void CStoreManagerApp::AddFrame(CMainFrame* pFrame)
 {
@@ -251,7 +242,7 @@ void CStoreManagerApp::SetApplicationLook(UINT nID)
 	while (ppFrame!=m_listMainFrames.end())
 	{
 		(*ppFrame)->RedrawWindow(NULL, NULL, RDW_ALLCHILDREN | RDW_INVALIDATE | RDW_UPDATENOW | RDW_FRAME | RDW_ERASE);
-		(*ppFrame)->UpdateViewOptions();
+		(*ppFrame)->PostMessage(WM_UPDATEVIEWOPTIONS);
 		ppFrame++;
 	}
 }
@@ -300,6 +291,7 @@ void CStoreManagerApp::OnAppExit()
 	CloseAllFrames();
 	LFApplication::OnAppExit();
 }
+
 
 BOOL CStoreManagerApp::SanitizeSortBy(LFViewParameters* vp, INT context)
 {
@@ -351,49 +343,37 @@ BOOL CStoreManagerApp::SanitizeViewMode(LFViewParameters* vp, INT context)
 	return Modified;
 }
 
-void CStoreManagerApp::UpdateSortOptions(INT context)
+void CStoreManagerApp::Broadcast(INT context, UINT cmdMsg)
 {
-	SanitizeSortBy(&theApp.m_Views[context], context);
-
 	std::list<CMainFrame*>::iterator ppFrame = m_listMainFrames.begin();
 	while (ppFrame!=m_listMainFrames.end())
 	{
-		if ((*ppFrame)->ActiveContextID==context)
-			(*ppFrame)->UpdateSortOptions();
+		if (((*ppFrame)->ActiveContextID==context) || (context==-1))
+			(*ppFrame)->PostMessage(cmdMsg);
+
 		ppFrame++;
 	}
+}
+
+void CStoreManagerApp::UpdateSortOptions(INT context)
+{
+	SanitizeSortBy(&theApp.m_Views[context], context);
+	Broadcast(context, WM_UPDATESORTOPTIONS);
 }
 
 void CStoreManagerApp::UpdateViewOptions(INT context)
 {
 	BOOL Modified = (context!=-1) ? SanitizeViewMode(&theApp.m_Views[context], context) : FALSE;
-
-	std::list<CMainFrame*>::iterator ppFrame = m_listMainFrames.begin();
-	while (ppFrame!=m_listMainFrames.end())
-	{
-		if (((*ppFrame)->ActiveContextID==context) || (context==-1))
-			if (Modified)
-			{
-				(*ppFrame)->UpdateSortOptions();
-			}
-			else
-			{
-				(*ppFrame)->UpdateViewOptions();
-			}
-		ppFrame++;
-	}
+	Broadcast(context, Modified ? WM_UPDATESORTOPTIONS : WM_UPDATEVIEWOPTIONS);
 }
 
 void CStoreManagerApp::Reload(INT context)
 {
-	std::list<CMainFrame*>::iterator ppFrame = m_listMainFrames.begin();
-	while (ppFrame!=m_listMainFrames.end())
-	{
-		if ((*ppFrame)->ActiveContextID==context)
-			(*ppFrame)->PostMessage(WM_COMMAND, ID_NAV_RELOAD);
-		ppFrame++;
-	}
+	Broadcast(context, ID_NAV_RELOAD);
 }
+
+
+// Registry and view settings
 
 void CStoreManagerApp::GetBinary(LPCTSTR lpszEntry, void* pData, UINT size)
 {
@@ -548,6 +528,9 @@ void CStoreManagerApp::ToggleAttribute(LFViewParameters* vp, UINT attr, INT Colu
 	}
 }
 
+
+// OpenGL
+
 HBITMAP CStoreManagerApp::GetGLTexture(UINT nID)
 {
 	nID--;
@@ -576,6 +559,9 @@ void CStoreManagerApp::FreeGLTexture(UINT nID)
 {
 	m_GLTextureBinds[nID-1]--;
 }
+
+
+// Ribbon slack
 
 void CStoreManagerApp::GetRibbonColors(COLORREF* back, COLORREF* text, COLORREF* highlight)
 {

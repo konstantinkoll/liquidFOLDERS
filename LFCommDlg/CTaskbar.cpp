@@ -146,6 +146,8 @@ void CTaskbar::AdjustLayout()
 
 		ppBtn++;
 	}
+
+	Invalidate();
 }
 
 

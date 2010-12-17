@@ -121,7 +121,7 @@ BEGIN
     IDS_LFCategoryInternalStores 
                             "Interne Stores\nDiese Stores befinden sich auf einem internen Laufwerk und sind immer verfügbar."
     IDS_LFCategoryHybridStores 
-                            "Hybrid-Stores\nDiese Stores können durchsucht werden, selbst wenn das gerade Laufwerk nicht angeschlossen ist."
+                            "Hybrid-Stores\nDiese Stores können durchsucht werden, selbst wenn das Laufwerk gerade nicht angeschlossen ist."
     IDS_LFCategoryExternalStores 
                             "Externe Stores\nDiese Stores befinden sich vollständig auf Wechseldatenträgern."
     IDS_LFCategoryRemoteStores 

@@ -364,7 +364,7 @@ LFCore_API LFContextDescriptor* LFGetContextInfo(unsigned int ID)
 		return NULL;
 
 	LFContextDescriptor* c = LFAllocContextDescriptor();
-	LoadString(LFCoreModuleHandle, ID+IDS_FirstContext, c->Name, 64);
+	LoadString(LFCoreModuleHandle, ID+IDS_FirstContext, c->Name, 256);
 	c->AllowGroups = (ID>LFContextClipboard) && (ID<LFContextHousekeeping);
 
 	c->AllowedAttributes = new LFBitArray(LFAttributeCount);
@@ -418,12 +418,12 @@ LFCore_API LFItemCategoryDescriptor* LFGetItemCategoryInfo(unsigned int ID)
 	if (ID>=LFItemCategoryCount)
 		return NULL;
 
-	wchar_t tmpStr[256+64+1];
-	LoadString(LFCoreModuleHandle, ID+IDS_FirstItemCategory, tmpStr, 256+64+1);
+	wchar_t tmpStr[256+256+1];
+	LoadString(LFCoreModuleHandle, ID+IDS_FirstItemCategory, tmpStr, 256+256+1);
 	size_t sz = wcscspn(tmpStr, L"\n");
 
 	LFItemCategoryDescriptor* c = LFAllocItemCategoryDescriptor();
-	wcsncpy_s(c->Name, 64, tmpStr, sz);
+	wcsncpy_s(c->Caption, 256, tmpStr, sz);
 	if (sz<wcslen(tmpStr))
 		wcscpy_s(c->Hint, 256, &tmpStr[sz+1]);
 

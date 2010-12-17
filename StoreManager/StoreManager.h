@@ -20,9 +20,8 @@ class CStoreManagerApp : public LFApplication
 {
 public:
 	CStoreManagerApp();
-	virtual ~CStoreManagerApp();
 
-	CString path_GoogleEarth;
+	CString m_PathGoogleEarth;
 	UINT m_nAppLook;
 	UINT m_nTextureSize;
 	UINT m_nMaxTextureSize;
@@ -39,7 +38,8 @@ public:
 
 	virtual BOOL InitInstance();
 	virtual INT ExitInstance();
-	virtual void SetApplicationLook(UINT nID);
+		virtual void OnClosingMainFrame(CFrameImpl* pFrameImpl);	// Axe
+		virtual void SetApplicationLook(UINT nID);					// Axe
 
 	void AddFrame(CMainFrame* pFrame);
 	void KillFrame(CMainFrame* pFrame);
@@ -49,21 +49,22 @@ public:
 
 	BOOL SanitizeSortBy(LFViewParameters* vp, INT context);
 	BOOL SanitizeViewMode(LFViewParameters* vp, INT context);
+	void Broadcast(INT context, UINT cmdMsg);
 	void UpdateSortOptions(INT context);
 	void UpdateViewOptions(INT context=-1);
 	void Reload(INT context);
 
 	void GetBinary(LPCTSTR lpszEntry, void* pData, UINT size);
 	void ToggleAttribute(LFViewParameters* vp, UINT attr, INT ColumnCount=-1);
+
 	HBITMAP GetGLTexture(UINT nID);
 	void FreeGLTexture(UINT nID);
-	static void GetRibbonColors(COLORREF* back, COLORREF* text=NULL, COLORREF* highlight=NULL);
-	static CString GetCommandName(UINT nID, BOOL bInsertSpace=FALSE);
-	static CMFCRibbonButton* CommandButton(UINT nID, INT nSmallImageIndex=-1, INT nLargeImageIndex=-1, BOOL bAlwaysShowDescription=FALSE, BOOL bInsertSpace=FALSE);
-	static CMFCRibbonCheckBox* CommandCheckBox(UINT nID);
+		static void GetRibbonColors(COLORREF* back, COLORREF* text=NULL, COLORREF* highlight=NULL);	// Axe
+		static CString GetCommandName(UINT nID, BOOL bInsertSpace=FALSE);							// Axe
+		static CMFCRibbonButton* CommandButton(UINT nID, INT nSmallImageIndex=-1, INT nLargeImageIndex=-1, BOOL bAlwaysShowDescription=FALSE, BOOL bInsertSpace=FALSE);	// Axe
+		static CMFCRibbonCheckBox* CommandCheckBox(UINT nID);										// Axe
 
 protected:
-	virtual void OnClosingMainFrame(CFrameImpl* pFrameImpl);
 	void LoadViewOptions(INT context);
 	void SaveViewOptions(INT context);
 
@@ -74,8 +75,6 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
-	void GetMaxTextureSize();
-
 	HBITMAP m_GLTextureCache[4];
 	UINT m_GLTextureBinds[4];
 };

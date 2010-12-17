@@ -118,6 +118,8 @@ void CTagcloudView::SetSearchResult(LFSearchResult* Result)
 
 void CTagcloudView::AdjustLayout()
 {
+	ResetItemCategories();
+
 	if (p_Result)
 	{
 		CClientDC dc(this);
