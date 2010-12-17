@@ -166,25 +166,56 @@ void CGridView::ArrangeVertical(GVArrange& gva)
 	if (!rectClient.Width())
 		return;
 
+	INT top = gva.my;
+	if (p_Result->m_HasCategories)
+		top += 2*CategoryPadding+m_FontHeight[1]+4;
+
 	INT x = gva.mx;
-	INT y = gva.my;
+	INT y = top;
 	const INT l = gva.cx+2*gva.padding;
 	const INT h = gva.cy+2*gva.padding;
 	ASSERT(l>0);
 	ASSERT(h>0);
 
+	INT category = -1;
+	INT lastleft = x;
+#define FinishCategory if (category!=-1) { m_Categories.m_Items[category].rect.right = lastleft+l; }
+
 	for (INT a=0; a<(INT)p_Result->m_ItemCount; a++)
 	{
+		if (p_Result->m_HasCategories)
+			if ((INT)p_Result->m_Items[a]->CategoryID!=category)
+			{
+				FinishCategory;
+
+				if (y>top)
+				{
+					y = top;
+					x += l+gva.gutterx;
+				}
+				if (x>gva.mx)
+					x += 8;
+
+				category = p_Result->m_Items[a]->CategoryID;
+				LPRECT rect = &m_Categories.m_Items[category].rect;
+				rect->left = x;
+				rect->top = gva.my;
+				rect->bottom = rect->top+2*CategoryPadding+m_FontHeight[1];
+			}
+
 		FVItemData* d = GetItemData(a);
-		d->Rect.left = x;
+		d->Rect.left = lastleft = x;
 		d->Rect.top = y;
 		d->Rect.right = x+l;
 		d->Rect.bottom = y+h;
 
+		if (a==(INT)p_Result->m_ItemCount-1)
+			FinishCategory;
+
 		y += h+gva.guttery;
 		if (y+h>rectClient.Height())
 		{
-			y = gva.my;
+			y = top;
 			x += l+gva.gutterx;
 		}
 	}

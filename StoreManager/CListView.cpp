@@ -110,6 +110,7 @@ void CListView::AdjustLayout()
 		if (gva.cx<140)
 			gva.cx = 140;
 		gva.cy = max(m_IconSize[0].cy, m_FontHeight[0]);
+		gva.gutterx = 6;
 		ArrangeVertical(gva);
 		break;
 	case LFViewDetails:
