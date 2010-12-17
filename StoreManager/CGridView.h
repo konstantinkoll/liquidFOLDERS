@@ -33,9 +33,6 @@ class CGridView : public CFileView
 public:
 	CGridView(UINT DataSize=sizeof(FVItemData));
 
-	virtual void EditLabel(INT idx);
-	virtual BOOL IsEditing();
-
 protected:
 	virtual void DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed);
 

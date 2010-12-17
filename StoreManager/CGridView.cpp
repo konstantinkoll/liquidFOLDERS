@@ -20,16 +20,6 @@ CGridView::CGridView(UINT DataSize)
 		AddItemCategory(theApp.m_ItemCategories[a]->Caption, theApp.m_ItemCategories[a]->Hint);
 }
 
-void CGridView::EditLabel(INT idx)
-{
-	m_EditLabel = -1;
-}
-
-BOOL CGridView::IsEditing()
-{
-	return FALSE;
-}
-
 void CGridView::DrawItem(CDC& /*dc*/, LPRECT /*rectItem*/, INT /*idx*/, BOOL /*Themed*/)
 {
 }
