@@ -486,20 +486,16 @@ void CStoreManagerApp::SaveViewOptions(INT context)
 	SetRegistryBase(oldBase);
 }
 
-void CStoreManagerApp::ToggleAttribute(LFViewParameters* vp, UINT attr, INT ColumnCount)
+void CStoreManagerApp::ToggleAttribute(LFViewParameters* vp, UINT attr)
 {
 	INT colId = 0;
-
-	if (ColumnCount==-1)
+	INT ColumnCount = 0;
+	for (UINT a=0; a<LFAttributeCount; a++)
 	{
-		ColumnCount++;
-		for (UINT a=0; a<LFAttributeCount; a++)
-		{
-			if (a==attr)
-				colId = ColumnCount;
-			if (vp->ColumnWidth[a])
-				ColumnCount++;
-		}
+		if (a==attr)
+			colId = ColumnCount;
+		if (vp->ColumnWidth[a])
+			ColumnCount++;
 	}
 
 	vp->ColumnWidth[attr] = (vp->ColumnWidth[attr] ? 0 : theApp.m_Attributes[attr]->RecommendedWidth);

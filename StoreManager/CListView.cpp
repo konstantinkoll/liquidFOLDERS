@@ -69,22 +69,9 @@ void CListView::SetViewOptions(BOOL Force)
 		ImageList_GetIconSize(*m_Icons[1], &cx, &cy);
 		m_IconSize[1].cx = min(cx, 128);
 		m_IconSize[1].cy = min(cy, 128);
-
-		AdjustHeader(((p_ViewParameters->Mode==LFViewDetails) || (p_ViewParameters->Mode==LFViewCalendarDay)) && (p_Result));
 	}
 
-	if ((!(m_wndHeader.GetStyle() & HDS_HIDDEN)) || (Force))
-	{
-		m_wndHeader.SetOrderArray(LFAttributeCount, p_ViewParameters->ColumnOrder);
-
-		for (UINT a=0; a<LFAttributeCount; a++)
-		{
-			HDITEM HdItem;
-			HdItem.mask = HDI_WIDTH;
-			HdItem.cxy = p_ViewParameters->ColumnWidth[a];
-			m_wndHeader.SetItem(a, &HdItem);
-		}
-	}
+	AdjustHeader(((p_ViewParameters->Mode==LFViewDetails) || (p_ViewParameters->Mode==LFViewCalendarDay)) && (p_Result));
 }
 
 void CListView::SetSearchResult(LFSearchResult* Result)
@@ -118,7 +105,21 @@ void CListView::AdjustHeader(BOOL bShow)
 {
 	if (bShow)
 	{
+		m_wndHeader.SetRedraw(FALSE);
+
+		VERIFY(m_wndHeader.SetOrderArray(LFAttributeCount, p_ViewParameters->ColumnOrder));
+
+		for (UINT a=0; a<LFAttributeCount; a++)
+		{
+			HDITEM HdItem;
+			HdItem.mask = HDI_WIDTH;
+			HdItem.cxy = p_ViewParameters->ColumnWidth[a];
+			m_wndHeader.SetItem(a, &HdItem);
+		}
+
 		m_wndHeader.ModifyStyle(HDS_HIDDEN, 0);
+		m_wndHeader.SetRedraw(TRUE);
+		m_wndHeader.Invalidate();
 	}
 	else
 	{
@@ -165,7 +166,9 @@ void CListView::AdjustLayout()
 		break;
 	case LFViewDetails:
 	case LFViewCalendarDay:
-		gva.cx = 140;
+		gva.cx = -2*gva.padding;
+		for (UINT a=0; a<LFAttributeCount; a++)
+			gva.cx += m_ViewParameters.ColumnWidth[a];
 		gva.cy = max(m_IconSize[0].cy, m_FontHeight[0]);
 		ArrangeHorizontal(gva, FALSE, TRUE);
 		break;
@@ -486,9 +489,11 @@ INT CListView::GetMaxLabelWidth(INT Max)
 
 BEGIN_MESSAGE_MAP(CListView, CGridView)
 	ON_WM_CREATE()
-//	ON_NOTIFY(HDN_BEGINDRAG, 1, OnBeginDrag)
-//	ON_NOTIFY(HDN_ITEMCHANGING, 1, OnItemChanging)
-//	ON_NOTIFY(HDN_ITEMCLICK, 1, OnItemClick)
+	ON_NOTIFY(HDN_BEGINDRAG, 1, OnBeginDrag)
+	ON_NOTIFY(HDN_BEGINTRACK, 1, OnBeginTrack)
+	ON_NOTIFY(HDN_ENDDRAG, 1, OnEndDrag)
+	ON_NOTIFY(HDN_ITEMCHANGING, 1, OnItemChanging)
+	ON_NOTIFY(HDN_ITEMCLICK, 1, OnItemClick)
 //	ON_EN_KILLFOCUS(2, OnDestroyEdit)
 END_MESSAGE_MAP()
 
@@ -513,4 +518,100 @@ INT CListView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	}
 
 	return 0;
+}
+
+void CListView::OnBeginDrag(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	LPNMHEADER pHdr = (LPNMHEADER)pNMHDR;
+
+	*pResult = (pHdr->iItem==LFAttrFileName);
+}
+
+void CListView::OnEndDrag(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	LPNMHEADER pHdr = (LPNMHEADER)pNMHDR;
+
+	if (pHdr->pitem->mask & HDI_ORDER)
+	{
+		if (pHdr->pitem->iOrder==LFAttrFileName)
+			pHdr->pitem->iOrder = 1;
+		if (pHdr->iItem==LFAttrFileName)
+			pHdr->pitem->iOrder = 0;
+
+		// GetColumnOrderArray() enthält noch die alte Reihenfolge, daher:
+		// 1. Spalte an der alten Stelle löschen
+		for (UINT a=0; a<LFAttributeCount; a++)
+			if (p_ViewParameters->ColumnOrder[a]==pHdr->iItem)
+			{
+				for (UINT b=a; b<LFAttributeCount-1; b++)
+					p_ViewParameters->ColumnOrder[b] = p_ViewParameters->ColumnOrder[b+1];
+				break;
+			}
+
+		// 2. Spalte an der neuen Stelle einfügen
+		for (INT a=LFAttributeCount-1; a>pHdr->pitem->iOrder; a--)
+			p_ViewParameters->ColumnOrder[a] = p_ViewParameters->ColumnOrder[a-1];
+
+		p_ViewParameters->ColumnOrder[pHdr->pitem->iOrder] = pHdr->iItem;
+		UpdateViewOptions(m_Context);
+
+		*pResult = FALSE;
+	}
+}
+
+void CListView::OnBeginTrack(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	LPNMHEADER pHdr = (LPNMHEADER)pNMHDR;
+
+	if (pHdr->pitem->mask & HDI_WIDTH)
+		*pResult = (theApp.m_Attributes[pHdr->iItem]->Type==LFTypeRating) || (m_ViewParameters.ColumnWidth[pHdr->iItem]==0);
+}
+
+void CListView::OnItemChanging(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	LPNMHEADER pHdr = (LPNMHEADER)pNMHDR;
+
+	if (pHdr->pitem->mask & HDI_WIDTH)
+	{
+		if (pHdr->pitem->cxy<32)
+		{
+			pHdr->pitem->cxy = (pHdr->iItem==LFAttrFileName) ? 32 : 0;
+		}
+		else
+			if (theApp.m_Attributes[pHdr->iItem]->Type==LFTypeRating)
+				pHdr->pitem->cxy = RatingBitmapWidth+12;
+
+		m_ViewParameters.ColumnWidth[pHdr->iItem] = p_ViewParameters->ColumnWidth[pHdr->iItem] = pHdr->pitem->cxy;
+		AdjustLayout();
+
+		*pResult = FALSE;
+	}
+}
+
+void CListView::OnItemClick(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	LPNMHEADER pHdr = (LPNMHEADER)pNMHDR;
+	UINT attr = pHdr->iItem;
+
+	if (!AttributeSortableInView(attr, m_ViewParameters.Mode))
+	{
+		CString msg;
+		ENSURE(msg.LoadString(IDS_ATTRIBUTENOTSORTABLE));
+		MessageBox(msg, theApp.m_Attributes[attr]->Name, MB_OK | MB_ICONWARNING);
+	
+		return;
+	}
+
+	if (p_ViewParameters->SortBy==attr)
+	{
+		p_ViewParameters->Descending ^= 1;
+	}
+	else
+	{
+		p_ViewParameters->SortBy = attr;
+		p_ViewParameters->Descending = (theApp.m_Attributes[attr]->Type==LFTypeRating) || (theApp.m_Attributes[attr]->Type==LFTypeTime) || (theApp.m_Attributes[attr]->Type==LFTypeMegapixel);
+	}
+	theApp.UpdateSortOptions(m_Context);
+
+	*pResult = NULL;
 }

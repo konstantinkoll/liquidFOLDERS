@@ -24,6 +24,11 @@ protected:
 	void DrawIcon(CDC& dc, CRect& rect, LFItemDescriptor* i, FVItemData* d);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
+	afx_msg void OnBeginDrag(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnEndDrag(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnBeginTrack(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnItemChanging(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnItemClick(NMHDR* pNMHDR, LRESULT* pResult);
 	DECLARE_MESSAGE_MAP()
 
 	CTooltipHeader m_wndHeader;
@@ -31,6 +36,8 @@ protected:
 private:
 	CImageList* m_Icons[2];
 	SIZE m_IconSize[2];
+	UINT ColumnMapping[LFAttributeCount];
+	UINT ColumnCount;
 
 	void AdjustHeader(BOOL bShow);
 	void AttributeToString(LFItemDescriptor* i, UINT Attr, WCHAR* tmpStr, size_t cCount);

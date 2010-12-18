@@ -55,7 +55,7 @@ public:
 	void Reload(INT context);
 
 	void GetBinary(LPCTSTR lpszEntry, void* pData, UINT size);
-	void ToggleAttribute(LFViewParameters* vp, UINT attr, INT ColumnCount=-1);
+	void ToggleAttribute(LFViewParameters* vp, UINT attr);
 
 	HBITMAP GetGLTexture(UINT nID);
 	void FreeGLTexture(UINT nID);

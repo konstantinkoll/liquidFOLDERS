@@ -25,39 +25,29 @@ void ChooseDetailsDlg::DoDataExchange(CDataExchange* pDX)
 
 	if (pDX->m_bSaveAndValidate)
 	{
-		BOOL present[LFAttributeCount];
-		ZeroMemory(present, sizeof(present));
+		// Breite
+		INT OldWidth[LFAttributeCount];
+		memcpy(&OldWidth, &p_View->ColumnWidth, sizeof(OldWidth));
+		ZeroMemory(&p_View->ColumnWidth, sizeof(p_View->ColumnWidth));
 
-		// Angezeigte Attribute
 		for (INT a=0; a<m_ShowAttributes.GetItemCount(); a++)
 		{
 			UINT attr = (UINT)m_ShowAttributes.GetItemData(a);
-			present[attr] = TRUE;
-			if (m_ShowAttributes.GetCheck(a)!=(p_View->ColumnWidth[attr]!=0))
-				theApp.ToggleAttribute(p_View, attr);
+			p_View->ColumnWidth[attr] = m_ShowAttributes.GetCheck(a) ? OldWidth[attr] ? OldWidth[attr] : theApp.m_Attributes[attr]->RecommendedWidth : 0;
 		}
-
-		// Nicht angezeigte Attribute
-		for (INT a=0; a<LFAttributeCount; a++)
-			if ((!theApp.m_Attributes[a]->AlwaysVisible) && (!present[a]))
-				p_View->ColumnWidth[a] = 0;
 
 		// Reihenfolge
 		p_View->ColumnOrder[0] = 0;
+		p_View->ColumnWidth[0] = OldWidth[0];
 		UINT cnt = 1;
+
 		for (INT a=0; a<m_ShowAttributes.GetItemCount(); a++)
 			if (m_ShowAttributes.GetCheck(a))
-			{
-				UINT colID = 0;
-				for (INT b=0; b<m_ShowAttributes.GetItemCount(); b++)
-					if ((m_ShowAttributes.GetCheck(b)) && (m_ShowAttributes.GetItemData(b)<=m_ShowAttributes.GetItemData(a)))
-						colID++;
-				p_View->ColumnOrder[cnt++] = colID;
-			}
+				p_View->ColumnOrder[cnt++] = m_ShowAttributes.GetItemData(a);
 
-		// Nicht belegte Spalten
-		for (UINT a=cnt; a<LFAttributeCount; a++)
-			p_View->ColumnOrder[a] = a;
+		for (INT a=0; a<LFAttributeCount; a++)
+			if (!p_View->ColumnWidth[a])
+				p_View->ColumnOrder[cnt++] = a;
 	}
 }
 
@@ -130,19 +120,12 @@ BOOL ChooseDetailsDlg::OnInitDialog()
 	PrepareListCtrl(&m_ShowAttributes, TRUE);
 
 	for (UINT a=0; a<LFAttributeCount; a++)
-	{
-		INT cnt = 0;
-		for (UINT b=0; b<LFAttributeCount; b++)
-			if (p_View->ColumnWidth[b])
-				if ((cnt++)==p_View->ColumnOrder[a])
-				{
-					AddAttribute(&m_ShowAttributes, b);
-					break;
-				}
-	}
+		if (p_View->ColumnWidth[p_View->ColumnOrder[a]])
+			AddAttribute(&m_ShowAttributes, p_View->ColumnOrder[a]);
+
 	for (UINT a=0; a<LFAttributeCount; a++)
-		if (!p_View->ColumnWidth[a])
-			AddAttribute(&m_ShowAttributes, a);
+		if (!p_View->ColumnWidth[p_View->ColumnOrder[a]])
+			AddAttribute(&m_ShowAttributes, p_View->ColumnOrder[a]);
 
 	FinalizeListCtrl(&m_ShowAttributes, -1, FALSE);
 
