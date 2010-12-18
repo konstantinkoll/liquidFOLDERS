@@ -370,6 +370,18 @@ BEGIN
     END
 END
 
+IDM_DETAILS MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "Size all &columns to fit",    IDM_DETAILS_AUTOSIZEALL
+        MENUITEM "Size column to &fit",         IDM_DETAILS_AUTOSIZE
+        MENUITEM SEPARATOR
+        MENUITEM SEPARATOR
+        MENUITEM "&More...",                    IDM_DETAILS_CHOOSE
+    END
+END
+
 IDM_GLOBE MENU 
 BEGIN
     POPUP "POPUP"
@@ -535,6 +547,7 @@ BEGIN
     IDS_CONTEXTMENU_OPENGOOGLEEARTH "Open in &Google Earth"
     IDS_CONTEXTMENU_REMEMBER "Re&member"
     IDS_CONTEXTMENU_REMOVE  "Re&move from clipboard"
+    IDS_CONTEXTMENU_AUTOSIZEALL "Size all &columns to fit"
     IDS_TXTFILEFILTER       "Text files"
     IDS_ATTRIBUTENOTSORTABLE "This property is not suitable for sorting."
     IDS_NOITEMSSELECTED     "No items selected"

@@ -49,8 +49,10 @@ protected:
 	afx_msg void OnStoresCreateNew();
 	afx_msg void OnStoresMaintainAll();
 	afx_msg void OnStoresBackup();
+	afx_msg void OnStoresHideEmptyDrives();
 	afx_msg void OnUpdateStoresCommands(CCmdUI* pCmdUI);
 
+	afx_msg void OnHomeHideEmptyDomains();
 	afx_msg void OnHomeImportFolder();
 	afx_msg void OnHomeMaintain();
 	afx_msg void OnHomeProperties();

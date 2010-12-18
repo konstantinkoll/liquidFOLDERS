@@ -336,7 +336,7 @@ IDM_BACKGROUND MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "Autosize &all columns",       IDM_VIEW_AUTOSIZEALL
+        MENUITEM "Size all &columns to fit",     IDM_VIEW_AUTOSIZEALL
         MENUITEM SEPARATOR
         MENUITEM "Select &root folder...",      IDM_VIEW_SELECTROOT
     END
@@ -346,8 +346,8 @@ IDM_HEADER MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "Autosize &all columns",       IDM_VIEW_AUTOSIZEALL
-        MENUITEM "Autosize &column",            IDM_TREE_AUTOSIZE
+        MENUITEM "Size all &columns to fit",    IDM_VIEW_AUTOSIZEALL
+        MENUITEM "Size column to &fit",         IDM_TREE_AUTOSIZE
         MENUITEM SEPARATOR
         MENUITEM "&Expand column",              IDM_TREE_EXPANDCOLUMN
         MENUITEM SEPARATOR

@@ -331,9 +331,11 @@ BEGIN_MESSAGE_MAP(CMainView, CWnd)
 	ON_COMMAND(IDM_STORES_CREATENEW, OnStoresCreateNew)
 	ON_COMMAND(IDM_STORES_MAINTAINALL, OnStoresMaintainAll)
 	ON_COMMAND(IDM_STORES_BACKUP, OnStoresBackup)
+	ON_COMMAND(IDM_STORES_HIDEEMPTYDRIVES, OnStoresHideEmptyDrives)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_STORES_CREATENEW, IDM_STORES_BACKUP, OnUpdateStoresCommands)
 	ON_UPDATE_COMMAND_UI(IDM_STORES_HIDEEMPTYDRIVES, OnUpdateStoresCommands)
 
+	ON_COMMAND(IDM_HOME_HIDEEMPTYDOMAINS, OnHomeHideEmptyDomains)
 	ON_COMMAND(IDM_HOME_IMPORTFOLDER, OnHomeImportFolder)
 	ON_COMMAND(IDM_HOME_MAINTAIN, OnHomeMaintain)
 	ON_COMMAND(IDM_HOME_PROPERTIES, OnHomeProperties)
@@ -450,6 +452,12 @@ void CMainView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 			pPopup->InsertMenu(0, MF_STRING | MF_BYPOSITION, IDM_STORES_HIDEEMPTYDRIVES, tmpStr);
 		}
 
+		if ((m_ViewID==LFViewDetails) || (m_ViewID==LFViewCalendarDay))
+		{
+			ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_AUTOSIZEALL));
+			pPopup->InsertMenu(0, MF_STRING | MF_BYPOSITION, IDM_DETAILS_AUTOSIZEALL, tmpStr);
+		}
+
 		CString mask;
 		ENSURE(mask.LoadString(IDS_CONTEXTMENU_VIEWOPTIONS));
 		tmpStr.Format(mask, theApp.m_Contexts[m_Context]->Name);
@@ -521,6 +529,12 @@ void CMainView::OnStoresBackup()
 	LFBackupStores(this);
 }
 
+void CMainView::OnStoresHideEmptyDrives()
+{
+	theApp.m_HideEmptyDrives = !theApp.m_HideEmptyDrives;
+	theApp.Reload(LFContextStores);
+}
+
 void CMainView::OnUpdateStoresCommands(CCmdUI* pCmdUI)
 {
 	BOOL b = (p_CookedFiles) && (m_Context==LFContextStores);
@@ -540,6 +554,12 @@ void CMainView::OnUpdateStoresCommands(CCmdUI* pCmdUI)
 
 
 // Home
+
+void CMainView::OnHomeHideEmptyDomains()
+{
+	theApp.m_HideEmptyDomains = !theApp.m_HideEmptyDomains;
+	theApp.Reload(LFContextStoreHome);
+}
 
 void CMainView::OnHomeImportFolder()
 {

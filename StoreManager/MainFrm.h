@@ -84,7 +84,6 @@ protected:
 	afx_msg void OnCloseOthers();
 	afx_msg void OnSortOptions();
 	afx_msg void OnViewOptions();
-	afx_msg void OnChooseDetails();
 	afx_msg void OnToggleAutoDirs();
 	afx_msg void OnUpdateAppCommands(CCmdUI* pCmdUI);
 	afx_msg void OnSort(UINT nID);

@@ -49,13 +49,10 @@ public:
 
 	BOOL SanitizeSortBy(LFViewParameters* vp, INT context);
 	BOOL SanitizeViewMode(LFViewParameters* vp, INT context);
-	void Broadcast(INT context, UINT cmdMsg);
+	void Broadcast(INT context, UINT cmdMsg, WPARAM wParam=NULL, LPARAM lParam=NULL);
 	void UpdateSortOptions(INT context);
 	void UpdateViewOptions(INT context=-1);
 	void Reload(INT context);
-
-	void GetBinary(LPCTSTR lpszEntry, void* pData, UINT size);
-	void ToggleAttribute(LFViewParameters* vp, UINT attr);
 
 	HBITMAP GetGLTexture(UINT nID);
 	void FreeGLTexture(UINT nID);
@@ -65,6 +62,7 @@ public:
 		static CMFCRibbonCheckBox* CommandCheckBox(UINT nID);										// Axe
 
 protected:
+	void GetBinary(LPCTSTR lpszEntry, void* pData, UINT size);
 	void LoadViewOptions(INT context);
 	void SaveViewOptions(INT context);
 

@@ -151,7 +151,7 @@ void CFileView::UpdateSearchResult(LFSearchResult* Result, INT FocusItem)
 		{
 			FVItemData* d = GetItemData(a);
 			d->SysIconIndex = -1;
-			
+
 			if ((victim) && (p_Result))
 				if (a<p_Result->m_ItemCount)
 				{
@@ -171,6 +171,7 @@ void CFileView::UpdateSearchResult(LFSearchResult* Result, INT FocusItem)
 		if (FocusItem>=(INT)Result->m_ItemCount)
 			FocusItem = (INT)Result->m_ItemCount-1;
 		m_FocusItem = FocusItem;
+		m_HotItem = -1;
 		m_HideFileExt = theApp.HideFileExt();
 	}
 	else
@@ -180,7 +181,7 @@ void CFileView::UpdateSearchResult(LFSearchResult* Result, INT FocusItem)
 		m_DropTarget.Revoke();
 		m_pDropTarget = NULL;
 
-		m_FocusItem = -1;
+		m_FocusItem = m_HotItem = -1;
 	}
 
 	SetSearchResult(Result);

@@ -4,6 +4,7 @@
 
 #include "stdafx.h"
 #include "CListView.h"
+#include "ChooseDetailsDlg.h"
 #include "StoreManager.h"
 
 
@@ -28,6 +29,7 @@ CListView::CListView(UINT DataSize)
 	: CGridView(DataSize)
 {
 	m_Icons[0] = m_Icons[1] = NULL;
+	m_IgnoreItemChange = FALSE;
 }
 
 void CListView::SetViewOptions(BOOL Force)
@@ -106,6 +108,7 @@ void CListView::AdjustHeader(BOOL bShow)
 	if (bShow)
 	{
 		m_wndHeader.SetRedraw(FALSE);
+		m_IgnoreItemChange = TRUE;
 
 		VERIFY(m_wndHeader.SetOrderArray(LFAttributeCount, p_ViewParameters->ColumnOrder));
 
@@ -114,12 +117,18 @@ void CListView::AdjustHeader(BOOL bShow)
 			HDITEM HdItem;
 			HdItem.mask = HDI_WIDTH;
 			HdItem.cxy = p_ViewParameters->ColumnWidth[a];
+
+			if ((theApp.m_Attributes[a]->Type==LFTypeRating) && (HdItem.cxy))
+				HdItem.cxy = p_ViewParameters->ColumnWidth[a] = RatingBitmapWidth+12;
+
 			m_wndHeader.SetItem(a, &HdItem);
 		}
 
 		m_wndHeader.ModifyStyle(HDS_HIDDEN, 0);
 		m_wndHeader.SetRedraw(TRUE);
 		m_wndHeader.Invalidate();
+
+		m_IgnoreItemChange = FALSE;
 	}
 	else
 	{
@@ -185,7 +194,7 @@ void CListView::AdjustLayout()
 	}
 
 	// Header
-	m_HScrollMax = 1000;
+	m_HScrollMax = 1000;	// TODO
 	m_wndHeader.SetWindowPos(NULL, wp.cx, wp.y, wp.cx+m_HScrollMax, m_HeaderHeight, wp.flags | SWP_NOZORDER | SWP_NOACTIVATE);
 }
 
@@ -489,6 +498,11 @@ INT CListView::GetMaxLabelWidth(INT Max)
 
 BEGIN_MESSAGE_MAP(CListView, CGridView)
 	ON_WM_CREATE()
+	ON_WM_CONTEXTMENU()
+	ON_COMMAND_RANGE(IDM_TOGGLE_ATTRIBUTE, IDM_TOGGLE_ATTRIBUTE+LFAttributeCount-1, OnToggleAttribute)
+	ON_UPDATE_COMMAND_UI_RANGE(IDM_TOGGLE_ATTRIBUTE, IDM_TOGGLE_ATTRIBUTE+LFAttributeCount-1, OnUpdateToggleCommands)
+	ON_COMMAND(IDM_DETAILS_CHOOSE, OnChooseDetails)
+	ON_UPDATE_COMMAND_UI_RANGE(IDM_DETAILS_AUTOSIZEALL, IDM_DETAILS_CHOOSE, OnUpdateDetailsCommands)
 	ON_NOTIFY(HDN_BEGINDRAG, 1, OnBeginDrag)
 	ON_NOTIFY(HDN_BEGINTRACK, 1, OnBeginTrack)
 	ON_NOTIFY(HDN_ENDDRAG, 1, OnEndDrag)
@@ -518,6 +532,57 @@ INT CListView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	}
 
 	return 0;
+}
+
+void CListView::OnContextMenu(CWnd* pWnd, CPoint point)
+{
+	if (pWnd->GetSafeHwnd()==m_wndHeader)
+	{
+		CMenu menu;
+		menu.LoadMenu(IDM_DETAILS);
+
+		CMenu* pPopup = menu.GetSubMenu(0);
+		ASSERT_VALID(pPopup);
+
+		for (INT a=LFLastCoreAttribute-1; a>=0; a--)
+			if ((a!=LFAttrStoreID) && (a!=LFAttrFileID) && (theApp.m_Contexts[m_Context]->AllowedAttributes->IsSet(a)))
+				pPopup->InsertMenu(3, MF_BYPOSITION | MF_STRING, IDM_TOGGLE_ATTRIBUTE+a, theApp.m_Attributes[a]->Name);
+
+		pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, GetOwner(), NULL);
+		return;
+	}
+
+	CGridView::OnContextMenu(pWnd, point);
+}
+
+void CListView::OnToggleAttribute(UINT nID)
+{
+	UINT attr = nID-IDM_TOGGLE_ATTRIBUTE;
+	ASSERT(attr<LFAttributeCount);
+
+	p_ViewParameters->ColumnWidth[attr] = p_ViewParameters->ColumnWidth[attr] ? 0 : theApp.m_Attributes[attr]->RecommendedWidth;
+	theApp.UpdateViewOptions(m_Context);
+}
+
+void CListView::OnUpdateToggleCommands(CCmdUI* pCmdUI)
+{
+	UINT attr = pCmdUI->m_nID-IDM_TOGGLE_ATTRIBUTE;
+	ASSERT(attr<LFAttributeCount);
+
+	pCmdUI->SetCheck(m_ViewParameters.ColumnWidth[attr]);
+	pCmdUI->Enable(!theApp.m_Attributes[attr]->AlwaysVisible);
+}
+
+void CListView::OnChooseDetails()
+{
+	ChooseDetailsDlg dlg(this, p_ViewParameters, m_Context);
+	if (dlg.DoModal()==IDOK)
+		theApp.UpdateViewOptions(m_Context);
+}
+
+void CListView::OnUpdateDetailsCommands(CCmdUI* pCmdUI)
+{
+	pCmdUI->Enable((m_ViewParameters.Mode==LFViewDetails) || (m_ViewParameters.Mode==LFViewCalendarDay));
 }
 
 void CListView::OnBeginDrag(NMHDR* pNMHDR, LRESULT* pResult)
@@ -571,15 +636,10 @@ void CListView::OnItemChanging(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	LPNMHEADER pHdr = (LPNMHEADER)pNMHDR;
 
-	if (pHdr->pitem->mask & HDI_WIDTH)
+	if ((pHdr->pitem->mask & HDI_WIDTH) && (!m_IgnoreItemChange))
 	{
 		if (pHdr->pitem->cxy<32)
-		{
 			pHdr->pitem->cxy = (pHdr->iItem==LFAttrFileName) ? 32 : 0;
-		}
-		else
-			if (theApp.m_Attributes[pHdr->iItem]->Type==LFTypeRating)
-				pHdr->pitem->cxy = RatingBitmapWidth+12;
 
 		m_ViewParameters.ColumnWidth[pHdr->iItem] = p_ViewParameters->ColumnWidth[pHdr->iItem] = pHdr->pitem->cxy;
 		AdjustLayout();

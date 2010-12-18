@@ -343,13 +343,13 @@ BOOL CStoreManagerApp::SanitizeViewMode(LFViewParameters* vp, INT context)
 	return Modified;
 }
 
-void CStoreManagerApp::Broadcast(INT context, UINT cmdMsg)
+void CStoreManagerApp::Broadcast(INT context, UINT cmdMsg, WPARAM wParam, LPARAM lParam)
 {
 	std::list<CMainFrame*>::iterator ppFrame = m_listMainFrames.begin();
 	while (ppFrame!=m_listMainFrames.end())
 	{
 		if (((*ppFrame)->ActiveContextID==context) || (context==-1))
-			(*ppFrame)->PostMessage(cmdMsg);
+			(*ppFrame)->PostMessage(cmdMsg, wParam, lParam);
 
 		ppFrame++;
 	}
@@ -369,7 +369,7 @@ void CStoreManagerApp::UpdateViewOptions(INT context)
 
 void CStoreManagerApp::Reload(INT context)
 {
-	Broadcast(context, ID_NAV_RELOAD);
+	Broadcast(context, WM_COMMAND, ID_NAV_RELOAD);
 }
 
 
@@ -484,44 +484,6 @@ void CStoreManagerApp::SaveViewOptions(INT context)
 	WriteBinary(_T("ColumnWidth"), (LPBYTE)m_Views[context].ColumnWidth, sizeof(m_Views[context].ColumnWidth));
 
 	SetRegistryBase(oldBase);
-}
-
-void CStoreManagerApp::ToggleAttribute(LFViewParameters* vp, UINT attr)
-{
-	INT colId = 0;
-	INT ColumnCount = 0;
-	for (UINT a=0; a<LFAttributeCount; a++)
-	{
-		if (a==attr)
-			colId = ColumnCount;
-		if (vp->ColumnWidth[a])
-			ColumnCount++;
-	}
-
-	vp->ColumnWidth[attr] = (vp->ColumnWidth[attr] ? 0 : theApp.m_Attributes[attr]->RecommendedWidth);
-	if (vp->ColumnWidth[attr])
-	{
-		for (INT a=0; a<ColumnCount; a++)
-			if (vp->ColumnOrder[a]>=colId)
-				vp->ColumnOrder[a]++;
-		vp->ColumnOrder[ColumnCount] = colId;
-	}
-	else
-	{
-		INT col = 0;
-		for (INT a=0; a<ColumnCount; a++)
-			if (vp->ColumnOrder[a]==colId)
-			{
-				col = a;
-				break;
-			}
-
-		for (INT a=col; a<ColumnCount-1; a++)
-			vp->ColumnOrder[a] = vp->ColumnOrder[a+1];
-		for (INT a=0; a<ColumnCount-1; a++)
-			if (vp->ColumnOrder[a]>colId)
-				vp->ColumnOrder[a]--;
-	}
 }
 
 

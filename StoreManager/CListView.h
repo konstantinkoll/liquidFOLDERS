@@ -24,6 +24,11 @@ protected:
 	void DrawIcon(CDC& dc, CRect& rect, LFItemDescriptor* i, FVItemData* d);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
+	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
+	afx_msg void OnToggleAttribute(UINT nID);
+	afx_msg void OnUpdateToggleCommands(CCmdUI* pCmdUI);
+	afx_msg void OnChooseDetails();
+	afx_msg void OnUpdateDetailsCommands(CCmdUI* pCmdUI);
 	afx_msg void OnBeginDrag(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnEndDrag(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnBeginTrack(NMHDR* pNMHDR, LRESULT* pResult);
@@ -36,8 +41,7 @@ protected:
 private:
 	CImageList* m_Icons[2];
 	SIZE m_IconSize[2];
-	UINT ColumnMapping[LFAttributeCount];
-	UINT ColumnCount;
+	BOOL m_IgnoreItemChange;
 
 	void AdjustHeader(BOOL bShow);
 	void AttributeToString(LFItemDescriptor* i, UINT Attr, WCHAR* tmpStr, size_t cCount);

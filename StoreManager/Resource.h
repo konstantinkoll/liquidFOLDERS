@@ -139,13 +139,14 @@
 #define IDS_CONTEXTMENU_OPENGOOGLEEARTH 1007
 #define IDS_CONTEXTMENU_REMEMBER        1008
 #define IDS_CONTEXTMENU_REMOVE          1009
-#define IDS_TXTFILEFILTER               1012
-#define IDS_ATTRIBUTENOTSORTABLE        1013
-#define IDS_NOITEMSSELECTED             1014
-#define IDS_MULTIPLETYPESSELECTED       1015
-#define IDS_MOREATTRIBUTES              1016
-#define IDS_YOULOOKAT                   1017
-#define IDS_NOTHINGTODISPLAY            1018
+#define IDS_CONTEXTMENU_AUTOSIZEALL     1010
+#define IDS_TXTFILEFILTER               1011
+#define IDS_ATTRIBUTENOTSORTABLE        1012
+#define IDS_NOITEMSSELECTED             1013
+#define IDS_MULTIPLETYPESSELECTED       1014
+#define IDS_MOREATTRIBUTES              1015
+#define IDS_YOULOOKAT                   1016
+#define IDS_NOTHINGTODISPLAY            1017
 #define IDS_VATTR_FIRST                 1100
 #define IDS_VATTR_DRIVELETTER           1100
 #define IDS_VATTR_MAINTENANCETIME       1101
@@ -201,9 +202,13 @@
 #define IDM_FILE_RENAME                 4205
 #define IDM_FILE_SEND                   4206
 #define IDM_FILE_TRASH                  4300
-#define IDM_GLOBE                       5000
-#define IDM_TAGCLOUD                    5100
-#define ID_TOGGLE_ATTRIBUTE             50000
+#define IDM_DETAILS                     5000
+#define IDM_DETAILS_AUTOSIZEALL         5001
+#define IDM_DETAILS_AUTOSIZE            5002
+#define IDM_DETAILS_CHOOSE              5003
+#define IDM_GLOBE                       5100
+#define IDM_TAGCLOUD                    5200
+#define IDM_TOGGLE_ATTRIBUTE            6000
 
 
 // Next default values for new objects

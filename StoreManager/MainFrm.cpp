@@ -8,7 +8,6 @@
 #include "LFCore.h"
 #include "SortOptionsDlg.h"
 #include "ViewOptionsDlg.h"
-#include "ChooseDetailsDlg.h"
 #include "LFCommDlg.h"
 #include <io.h>
 
@@ -58,7 +57,6 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_COMMAND(ID_APP_CLOSEOTHERS, OnCloseOthers)
 	ON_COMMAND(ID_APP_SORTOPTIONS, OnSortOptions)
 	ON_COMMAND(ID_APP_VIEWOPTIONS, OnViewOptions)
-	ON_COMMAND(ID_VIEW_CHOOSEDETAILS, OnChooseDetails)
 	ON_COMMAND(ID_VIEW_AUTODIRS, OnToggleAutoDirs)
 
 	ON_COMMAND_RANGE(ID_APP_VIEW_LARGEICONS, ID_APP_VIEW_TIMELINE, OnChangeChildView)
@@ -311,13 +309,6 @@ void CMainFrame::OnSortOptions()
 void CMainFrame::OnViewOptions()
 {
 	ViewOptionsDlg dlg(this, ActiveViewParameters, ActiveContextID);
-	if (dlg.DoModal()==IDOK)
-		theApp.UpdateViewOptions(ActiveContextID);
-}
-
-void CMainFrame::OnChooseDetails()
-{
-	ChooseDetailsDlg dlg(this, ActiveViewParameters, ActiveContextID);
 	if (dlg.DoModal()==IDOK)
 		theApp.UpdateViewOptions(ActiveContextID);
 }
@@ -1207,8 +1198,6 @@ void CMainFrame::InitializeRibbon()
 	CList<UINT, UINT> lstQATCmds;
 	lstQATCmds.AddTail(ID_NAV_BACKONE);
 	lstQATCmds.AddTail(ID_NAV_FORWARDONE);
-	lstQATCmds.AddTail(ID_NAV_STORES);
-	lstQATCmds.AddTail(ID_NAV_HOME);
 	m_wndRibbonBar.SetQuickAccessCommands(lstQATCmds);
 
 	// Hilfe hinzufügen
