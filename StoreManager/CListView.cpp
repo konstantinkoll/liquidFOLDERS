@@ -119,7 +119,7 @@ void CListView::AdjustHeader(BOOL bShow)
 			HdItem.cxy = p_ViewParameters->ColumnWidth[a];
 
 			if ((theApp.m_Attributes[a]->Type==LFTypeRating) && (HdItem.cxy))
-				HdItem.cxy = p_ViewParameters->ColumnWidth[a] = RatingBitmapWidth+12;
+				HdItem.cxy = p_ViewParameters->ColumnWidth[a] = RatingBitmapWidth+3*PADDING;
 
 			m_wndHeader.SetItem(a, &HdItem);
 		}
@@ -230,7 +230,7 @@ void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed)
 		rectIcon.right = rectIcon.left+m_IconSize[0].cx;
 		DrawIcon(dc, rectIcon, i, d);
 
-		rectLabel.right = rectLabel.left+m_ViewParameters.ColumnWidth[0]-2*PADDING;
+		rectLabel.right = rectLabel.left+m_ViewParameters.ColumnWidth[0]-3*PADDING;
 		rectLabel.left = rectIcon.right+PADDING;
 
 		for (UINT a=0; a<LFAttributeCount; a++)
@@ -240,8 +240,8 @@ void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed)
 			{
 				if (attr)
 				{
-					rectLabel.left = rectLabel.right+PADDING;
-					rectLabel.right = rectLabel.left+m_ViewParameters.ColumnWidth[attr]-PADDING;
+					rectLabel.left = rectLabel.right+3*PADDING;
+					rectLabel.right = rectLabel.left+m_ViewParameters.ColumnWidth[attr]-3*PADDING;
 				}
 				DrawColumn(dc, rectLabel, i, attr);
 			}
