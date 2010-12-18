@@ -801,12 +801,12 @@ void CFileView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 			OnSelectNone();
 		break;
 	case VK_SPACE:
-		if (GetKeyState(VK_SHIFT)>=0)
-			SelectItem(GetFocusItem(), FALSE);
+		if (m_FocusItem!=-1)
+			SelectItem(m_FocusItem, (GetKeyState(VK_CONTROL)>=0) ? TRUE : !GetItemData(m_FocusItem)->Selected);
 		break;
 	case VK_F2:
 		if ((GetKeyState(VK_CONTROL)>=0) && (GetKeyState(VK_SHIFT)>=0))
-			EditLabel(GetFocusItem());
+			EditLabel(m_FocusItem);
 		break;
 	case VK_BACK:
 		if ((GetKeyState(VK_CONTROL)>=0) && (GetKeyState(VK_SHIFT)>=0))
