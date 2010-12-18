@@ -101,11 +101,11 @@ void CTooltipHeader::OnPaint()
 		{
 			HDITEM hdi;
 			WCHAR lpBuffer[256];
-			hdi.mask = HDI_TEXT | HDI_STATE | HDI_FORMAT;
+			hdi.mask = HDI_TEXT | HDI_STATE | HDI_FORMAT | HDI_WIDTH;
 			hdi.pszText = lpBuffer;
 			hdi.cchTextMax = 256;
 
-			if (GetItem(a, &hdi))
+			if (GetItem(a, &hdi) && (hdi.cxy))
 				if (lpBuffer[0]!=L'\0')
 				{
 					if (Themed)
