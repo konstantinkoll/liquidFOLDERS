@@ -229,6 +229,23 @@ void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed)
 	case LFViewCalendarDay:
 		rectIcon.right = rectIcon.left+m_IconSize[0].cx;
 		DrawIcon(dc, rectIcon, i, d);
+
+		rectLabel.right = rectLabel.left+m_ViewParameters.ColumnWidth[0];
+		rectLabel.left += m_IconSize[0].cx+PADDING;
+
+		for (UINT a=0; a<LFAttributeCount; a++)
+		{
+			UINT attr = m_ViewParameters.ColumnOrder[a];
+			if (m_ViewParameters.ColumnWidth[attr])
+			{
+				if (attr)
+				{
+					rectLabel.left = rectLabel.right+1;
+					rectLabel.right = rectLabel.left+m_ViewParameters.ColumnWidth[attr];
+				}
+				DrawColumn(dc, rectLabel, i, attr);
+			}
+		}
 		break;
 	case LFViewList:
 		rectIcon.right = rectIcon.left+m_IconSize[0].cx;
@@ -407,10 +424,42 @@ void CListView::DrawTileRows(CDC& dc, CRect& rect, LFItemDescriptor* i, FVItemDa
 	}
 }
 
+void CListView::DrawColumn(CDC& dc, CRect& rect, LFItemDescriptor* i, UINT Attr)
+{
+	if (theApp.m_Attributes[Attr]->Type==LFTypeRating)
+	{
+		if (i->AttributeValues[Attr])
+		{
+			UCHAR Rating = *((UCHAR*)i->AttributeValues[Attr]);
+			if (((i->Type & LFTypeMask)==LFTypeFile) || (Rating))
+			{
+				PrepareBlend();
+				if (Attr==LFAttrRating)
+				{
+					Blend(dc, rect, Rating, theApp.m_RatingBitmaps);
+				}
+				else
+				{
+					Blend(dc, rect, Rating, theApp.m_PriorityBitmaps);
+				}
+			}
+		}
+
+		return;
+	}
+
+	WCHAR tmpStr[256];
+	AttributeToString(i, Attr, tmpStr, 256);
+	if (tmpStr[0]!=L'\0')
+	{
+		CRect rectText(rect);
+		dc.DrawText(tmpStr, -1, rectText, DT_LEFT | DT_SINGLELINE | DT_END_ELLIPSIS);
+	}
+}
+
 void CListView::DrawProperty(CDC& dc, CRect& rect, LFItemDescriptor* i, FVItemData* d, UINT Attr, BOOL Themed)
 {
 	CFont* pOldFont;
-	WCHAR tmpStr[256];
 
 	switch (Attr)
 	{
@@ -438,6 +487,7 @@ void CListView::DrawProperty(CDC& dc, CRect& rect, LFItemDescriptor* i, FVItemDa
 		rect.OffsetRect(0, 18);
 		break;
 	default:
+		WCHAR tmpStr[256];
 		AttributeToString(i, Attr, tmpStr, 256);
 		if (tmpStr[0]!=L'\0')
 		{

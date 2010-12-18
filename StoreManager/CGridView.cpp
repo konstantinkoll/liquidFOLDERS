@@ -262,8 +262,7 @@ void CGridView::OnPaint()
 
 			for (UINT a=0; a<p_Result->m_ItemCount; a++)
 			{
-				CRect rect(GetItemData(a)->Rect);
-				rect.OffsetRect(-m_HScrollPos, -m_VScrollPos+(INT)m_HeaderHeight);
+				CRect rect(GetItemRect(a));
 				if (IntersectRect(&rectIntersect, rect, rectUpdate))
 				{
 					DrawItemBackground(dc, rect, a, Themed);
