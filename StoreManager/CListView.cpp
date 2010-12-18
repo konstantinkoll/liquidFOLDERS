@@ -230,8 +230,8 @@ void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed)
 		rectIcon.right = rectIcon.left+m_IconSize[0].cx;
 		DrawIcon(dc, rectIcon, i, d);
 
-		rectLabel.right = rectLabel.left+m_ViewParameters.ColumnWidth[0];
-		rectLabel.left += m_IconSize[0].cx+PADDING;
+		rectLabel.right = rectLabel.left+m_ViewParameters.ColumnWidth[0]-2*PADDING;
+		rectLabel.left = rectIcon.right+PADDING;
 
 		for (UINT a=0; a<LFAttributeCount; a++)
 		{
@@ -240,8 +240,8 @@ void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed)
 			{
 				if (attr)
 				{
-					rectLabel.left = rectLabel.right+1;
-					rectLabel.right = rectLabel.left+m_ViewParameters.ColumnWidth[attr];
+					rectLabel.left = rectLabel.right+PADDING;
+					rectLabel.right = rectLabel.left+m_ViewParameters.ColumnWidth[attr]-PADDING;
 				}
 				DrawColumn(dc, rectLabel, i, attr);
 			}
@@ -453,7 +453,7 @@ void CListView::DrawColumn(CDC& dc, CRect& rect, LFItemDescriptor* i, UINT Attr)
 	if (tmpStr[0]!=L'\0')
 	{
 		CRect rectText(rect);
-		dc.DrawText(tmpStr, -1, rectText, DT_LEFT | DT_SINGLELINE | DT_END_ELLIPSIS);
+		dc.DrawText(tmpStr, -1, rectText, (theApp.m_Attributes[Attr]->FormatRight ? DT_RIGHT : DT_LEFT) | DT_SINGLELINE | DT_END_ELLIPSIS);
 	}
 }
 
