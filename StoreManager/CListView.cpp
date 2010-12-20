@@ -32,9 +32,6 @@ CListView::CListView(UINT DataSize)
 	m_IgnoreItemChange = FALSE;
 
 	WCHAR tmpStr[256];
-	ENSURE(LoadString(NULL, IDS_NULLCATEGORY, tmpStr, 256));
-	AddItemCategory(tmpStr, L"");
-
 	SYSTEMTIME st;
 	ZeroMemory(&st, sizeof(st));
 

@@ -555,7 +555,6 @@ BEGIN
     IDS_MOREATTRIBUTES      "&More properties..."
     IDS_YOULOOKAT           "You look at %s"
     IDS_NOTHINGTODISPLAY    "There is nothing to display."
-    IDS_NULLCATEGORY        "Not set"
 END
 
 STRINGTABLE 

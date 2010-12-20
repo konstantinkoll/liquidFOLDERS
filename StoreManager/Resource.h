@@ -146,7 +146,6 @@
 #define IDS_MOREATTRIBUTES              1015
 #define IDS_YOULOOKAT                   1016
 #define IDS_NOTHINGTODISPLAY            1017
-#define IDS_NULLCATEGORY                1018
 #define IDS_VATTR_FIRST                 1100
 #define IDS_VATTR_DRIVELETTER           1100
 #define IDS_VATTR_MAINTENANCETIME       1101
