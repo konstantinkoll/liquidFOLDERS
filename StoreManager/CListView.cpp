@@ -14,7 +14,7 @@
 #define GetItemData(idx)                   ((FVItemData*)(m_ItemData+idx*m_DataSize))
 #define PADDING                            2
 #define DrawLabel(dc, rect, i, format)     dc.DrawText(GetLabel(i), -1, rect, DT_END_ELLIPSIS | format);
-#define SwitchColor(dc, d)                 if ((Themed) && ((hThemeList) || (!d->Selected))) dc.SetTextColor(0x808080);
+#define SwitchColor(dc, d)                 if ((Themed) && (!(i->CoreAttributes.Flags & LFFlagMissing)) && ((hThemeList) || (!d->Selected))) dc.SetTextColor(0x808080);
 #define PrepareBlend()                     INT w = min(rect.Width(), RatingBitmapWidth); \
                                            INT h = min(rect.Height(), RatingBitmapHeight); \
                                            BLENDFUNCTION BF = { AC_SRC_OVER, 0, 0xFF, AC_SRC_ALPHA };
