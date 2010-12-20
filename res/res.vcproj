@@ -640,14 +640,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Ribbon\FileDrop_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\FileDrop_32.png"
-				>
-			</File>
-			<File
 				RelativePath="Ribbon\Filter_16.png"
 				>
 			</File>

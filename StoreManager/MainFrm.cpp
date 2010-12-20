@@ -962,16 +962,11 @@ void CMainFrame::InitializeRibbon()
 		pMainPanel->Add(theApp.CommandButton(ID_APP_NEWVIEW, 0, 0));
 		pMainPanel->Add(theApp.CommandButton(ID_APP_NEWCLIPBOARD, 1, 1));
 		pMainPanel->Add(new CMFCRibbonSeparator(TRUE));
-		pMainPanel->Add(theApp.CommandButton(ID_APP_NEWMIGRATE, 2, 2));
-		pMainPanel->Add(theApp.CommandButton(ID_APP_NEWFILEDROP, 3, 3));
-		pMainPanel->Add(new CMFCRibbonSeparator(TRUE));
-		pMainPanel->Add(theApp.CommandButton(ID_APP_CLOSEOTHERS, 4, 4));
-		pMainPanel->Add(theApp.CommandButton(ID_APP_CLOSE, 5, 5));
+		pMainPanel->Add(theApp.CommandButton(ID_APP_CLOSEOTHERS, 2, 2));
+		pMainPanel->Add(theApp.CommandButton(ID_APP_CLOSE, 3, 3));
 
-		strTemp = "About";
-		pMainPanel->AddToBottom(new CMFCRibbonMainPanelButton(ID_APP_ABOUT, strTemp, 6));
 		strTemp = "Exit";
-		pMainPanel->AddToBottom(new CMFCRibbonMainPanelButton(ID_APP_EXIT, strTemp, 7));
+		pMainPanel->AddToBottom(new CMFCRibbonMainPanelButton(ID_APP_EXIT, strTemp, 4));
 
 	strTemp = "Home";
 	CMFCRibbonCategory* pCategoryHome = m_wndRibbonBar.AddCategory(strTemp, IDB_RIBBONHOME_16, IDB_RIBBONHOME_32);
