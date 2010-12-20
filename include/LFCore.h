@@ -210,10 +210,10 @@ LFCore_API void LFRemoveItemDescriptor(LFSearchResult* res, unsigned int idx);
 LFCore_API void LFRemoveFlaggedItemDescriptors(LFSearchResult* res);
 
 // Sortiert LFSearchResult
-LFCore_API void LFSortSearchResult(LFSearchResult* res, unsigned int attr, bool descending, bool categories=false);
+LFCore_API void LFSortSearchResult(LFSearchResult* res, unsigned int attr, bool descending);
 
 // Gruppiert LFSearchResult und liefert Kopie zurück
-LFCore_API LFSearchResult* LFGroupSearchResult(LFSearchResult* res, unsigned int attr, bool descending, bool categories, unsigned int icon, bool groupone, LFFilter* f);
+LFCore_API LFSearchResult* LFGroupSearchResult(LFSearchResult* res, unsigned int attr, bool descending, unsigned int icon, bool groupone, LFFilter* f);
 
 
 

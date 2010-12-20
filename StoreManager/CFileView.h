@@ -16,13 +16,12 @@
 #define LFViewTiles                     4
 #define LFViewSearchResult              5
 #define LFViewPreview                   6
-#define LFViewCalendarYear              7
-#define LFViewCalendarDay               8
-#define LFViewGlobe                     9
-#define LFViewTagcloud                  10
-#define LFViewTimeline                  11
+#define LFViewCalendar                  7
+#define LFViewGlobe                     8
+#define LFViewTagcloud                  9
+#define LFViewTimeline                  10
 
-#define LFViewCount                     12
+#define LFViewCount                     11
 
 
 BOOL AttributeSortableInView(UINT Attr, UINT ViewMode);

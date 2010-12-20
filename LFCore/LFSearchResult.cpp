@@ -26,6 +26,7 @@ LFSearchResult::LFSearchResult(int ctx)
 	LoadString(LFCoreModuleHandle, IDS_FirstContext+ctx, m_Name, 256);
 	m_RawCopy = true;
 	m_Context = ctx;
+	m_GroupAttribute = 0;
 	m_HasCategories = false;
 	m_QueryTime = 0;
 	m_FileCount = 0;
@@ -43,6 +44,7 @@ LFSearchResult::LFSearchResult(LFSearchResult* res)
 	wcscpy_s(m_Name, 256, res->m_Name);
 	m_RawCopy = false;
 	m_Context = res->m_Context;
+	m_GroupAttribute = res->m_GroupAttribute;
 	m_HasCategories = res->m_HasCategories;
 	m_QueryTime = res->m_QueryTime;
 	m_FileCount = res->m_FileCount;
@@ -217,7 +219,7 @@ void LFSearchResult::KeepRange(int first, int last)
 		RemoveItemDescriptor((unsigned int)a);
 }
 
-int LFSearchResult::Compare(int eins, int zwei, unsigned int attr, bool descending, bool categories)
+int LFSearchResult::Compare(int eins, int zwei, unsigned int attr, bool descending)
 {
 	LFItemDescriptor* d1 = m_Items[eins];
 	LFItemDescriptor* d2 = m_Items[zwei];
@@ -229,13 +231,13 @@ int LFSearchResult::Compare(int eins, int zwei, unsigned int attr, bool descendi
 		return 1;
 
 	// Kategorien
-	if ((categories) && (d1->CategoryID!=d2->CategoryID))
+	if ((m_HasCategories) && (d1->CategoryID!=d2->CategoryID))
 		return (int)d1->CategoryID-(int)d2->CategoryID;
 
 	// Wenn zwei Laufwerke anhand des Namens verglichen werden sollen, Laufwerksbuchstaben nehmen
 	unsigned int Sort = attr;
 	unsigned int SortSecond = LFAttrFileName;
-	if (((d1->Type & LFTypeMask)==LFTypeDrive) && ((d2->Type & LFTypeMask)==LFTypeDrive) && (categories))
+	if (((d1->Type & LFTypeMask)==LFTypeDrive) && ((d2->Type & LFTypeMask)==LFTypeDrive))
 		if (Sort==LFAttrFileName)
 		{
 			Sort = LFAttrFileID;
@@ -405,16 +407,16 @@ int LFSearchResult::Compare(int eins, int zwei, unsigned int attr, bool descendi
 	return cmp;
 }
 
-void LFSearchResult::Heap(int wurzel, int anz, unsigned int attr, bool descending, bool categories)
+void LFSearchResult::Heap(int wurzel, int anz, unsigned int attr, bool descending)
 {
 	while (wurzel<=anz/2-1)
 	{
 		int idx = (wurzel+1)*2-1;
 		if (idx+1<anz)
-			if (Compare(idx, idx+1, attr, descending, categories)<0)
+			if (Compare(idx, idx+1, attr, descending)<0)
 				idx++;
 
-		if (Compare(wurzel, idx, attr, descending, categories)<0)
+		if (Compare(wurzel, idx, attr, descending)<0)
 		{
 			std::swap(m_Items[wurzel], m_Items[idx]);
 			wurzel = idx;
@@ -426,16 +428,16 @@ void LFSearchResult::Heap(int wurzel, int anz, unsigned int attr, bool descendin
 	}
 }
 
-void LFSearchResult::Sort(unsigned int attr, bool descending, bool categories)
+void LFSearchResult::Sort(unsigned int attr, bool descending)
 {
 	if (m_ItemCount>1)
 	{
 		for (int a=m_ItemCount/2-1; a>=0; a--)
-			Heap(a, m_ItemCount, attr, descending, categories);
+			Heap(a, m_ItemCount, attr, descending);
 		for (int a=m_ItemCount-1; a>0; )
 		{
 			std::swap(m_Items[0], m_Items[a]);
-			Heap(0, a--, attr, descending, categories);
+			Heap(0, a--, attr, descending);
 		}
 	}
 }

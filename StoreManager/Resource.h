@@ -40,11 +40,10 @@
 #define ID_APP_VIEW_TILES               304
 #define ID_APP_VIEW_SEARCHRESULT        305
 #define ID_APP_VIEW_PREVIEW             306
-#define ID_APP_VIEW_CALENDAR_YEAR       307
-#define ID_APP_VIEW_CALENDAR_DAY        308
-#define ID_APP_VIEW_GLOBE               309
-#define ID_APP_VIEW_TAGCLOUD            310
-#define ID_APP_VIEW_TIMELINE            311
+#define ID_APP_VIEW_CALENDAR            307
+#define ID_APP_VIEW_GLOBE               308
+#define ID_APP_VIEW_TAGCLOUD            309
+#define ID_APP_VIEW_TIMELINE            310
 #define ID_VIEW_AUTOSIZECOLUMNS         352
 #define ID_VIEW_CHOOSEDETAILS           353
 #define ID_VIEW_AUTODIRS                354
@@ -147,6 +146,7 @@
 #define IDS_MOREATTRIBUTES              1015
 #define IDS_YOULOOKAT                   1016
 #define IDS_NOTHINGTODISPLAY            1017
+#define IDS_NULLCATEGORY                1018
 #define IDS_VATTR_FIRST                 1100
 #define IDS_VATTR_DRIVELETTER           1100
 #define IDS_VATTR_MAINTENANCETIME       1101

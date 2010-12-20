@@ -400,7 +400,7 @@ BOOL CFolderItem::GetChildren(CGetChildrenEventArgs& e)
 		strcpy_s(f->StoreID, LFKeySize, Attrs.StoreID);
 		f->DomainID = (UCHAR)Attrs.DomainID;
 		base = LFQuery(f);
-		ConvertSearchResult(e, LFGroupSearchResult(base, atoi(Attrs.FileID), false, false, Attrs.Icon, atoi(Attrs.FileID)!=LFAttrFileName, f));
+		ConvertSearchResult(e, LFGroupSearchResult(base, atoi(Attrs.FileID), false, Attrs.Icon, atoi(Attrs.FileID)!=LFAttrFileName, f));
 		break;
 	case LevelAttrValue:
 		f = LFAllocFilter();

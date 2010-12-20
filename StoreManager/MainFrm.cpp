@@ -331,11 +331,6 @@ void CMainFrame::OnUpdateAppCommands(CCmdUI* pCmdUI)
 		pCmdUI->SetCheck((ActiveViewParameters->AutoDirs) || (ActiveContextID>=LFContextSubfolderDefault));
 		pCmdUI->Enable((theApp.m_Contexts[ActiveContextID]->AllowGroups) && (ActiveViewParameters->Mode<=LFViewPreview));
 		break;
-	case ID_APP_VIEW_CALENDAR_YEAR:
-		view = pCmdUI->m_nID-ID_APP_VIEW_LARGEICONS+LFViewLargeIcons;
-		pCmdUI->SetCheck((ActiveViewID==(INT)view) || (ActiveViewID==(INT)view+1));
-		pCmdUI->Enable(theApp.m_AllowedViews[ActiveContextID]->IsSet(view) || theApp.m_AllowedViews[ActiveContextID]->IsSet(view+1));
-		break;
 	case ID_APP_VIEW_LARGEICONS:
 	case ID_APP_VIEW_SMALLICONS:
 	case ID_APP_VIEW_LIST:
@@ -343,7 +338,7 @@ void CMainFrame::OnUpdateAppCommands(CCmdUI* pCmdUI)
 	case ID_APP_VIEW_TILES:
 	case ID_APP_VIEW_SEARCHRESULT:
 	case ID_APP_VIEW_PREVIEW:
-	case ID_APP_VIEW_CALENDAR_DAY:
+	case ID_APP_VIEW_CALENDAR:
 	case ID_APP_VIEW_GLOBE:
 	case ID_APP_VIEW_TAGCLOUD:
 	case ID_APP_VIEW_TIMELINE:
@@ -1094,7 +1089,7 @@ void CMainFrame::InitializeRibbon()
 			if (!IsClipboard)
 			{
 				pPanelDisplay->AddSeparator();
-				pPanelDisplay->Add(theApp.CommandButton(ID_APP_VIEW_CALENDAR_YEAR, 7, 7));
+				pPanelDisplay->Add(theApp.CommandButton(ID_APP_VIEW_CALENDAR, 7, 7));
 				pPanelDisplay->Add(theApp.CommandButton(ID_APP_VIEW_GLOBE, 8, 8));
 				pPanelDisplay->Add(theApp.CommandButton(ID_APP_VIEW_TAGCLOUD, 9, 9));
 				pPanelDisplay->Add(theApp.CommandButton(ID_APP_VIEW_TIMELINE, 10, 10));
@@ -1319,13 +1314,13 @@ void CMainFrame::CookFiles(INT FocusItem)
 
 	if (((!IsClipboard) && (vp->AutoDirs) && (!ActiveFilter->Options.IsSubfolder)) || (vp->Mode>LFViewPreview))
 	{
-		CookedFiles = LFGroupSearchResult(RawFiles, vp->SortBy, vp->Descending==TRUE, true, attr->IconID,
+		CookedFiles = LFGroupSearchResult(RawFiles, vp->SortBy, vp->Descending==TRUE, attr->IconID,
 			(vp->Mode>LFViewPreview) || ((attr->Type!=LFTypeTime) && (vp->SortBy!=LFAttrFileName) && (vp->SortBy!=LFAttrStoreID) && (vp->SortBy!=LFAttrFileID)),
 			ActiveFilter);
 	}
 	else
 	{
-		LFSortSearchResult(RawFiles, vp->SortBy, vp->Descending==TRUE, true);
+		LFSortSearchResult(RawFiles, vp->SortBy, vp->Descending==TRUE);
 		CookedFiles = RawFiles;
 	}
 

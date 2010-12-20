@@ -44,6 +44,8 @@ protected:
 	afx_msg void OnPaint();
 	DECLARE_MESSAGE_MAP()
 
+	BOOL m_HasCategories;
+
 private:
 	DynArray<ItemCategory> m_Categories;
 

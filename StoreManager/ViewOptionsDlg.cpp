@@ -84,7 +84,7 @@ BOOL ViewOptionsDlg::OnInitDialog()
 			CString tmpStr = theApp.GetCommandName(ID_APP_VIEW_LARGEICONS+a);
 			lvi.lParam = (LPARAM)a;
 			lvi.pszText = tmpStr.GetBuffer();
-			lvi.iImage = (a>LFViewCalendarYear) ? a-1 : a;
+			lvi.iImage = a;
 			lvi.state = lvi.stateMask = (a==p_View->Mode) ? LVIS_SELECTED | LVIS_FOCUSED : 0;
 			l->InsertItem(&lvi);
 		}
@@ -110,7 +110,7 @@ void ViewOptionsDlg::OnViewModeChange(NMHDR* pNMHDR, LRESULT* pResult)
 	if (pNMListView->uNewState & LVIS_SELECTED)
 	{
 		INT vm = (INT)pNMListView->lParam;
-		BOOL enable = (vm==LFViewDetails) || (vm==LFViewCalendarDay);
+		BOOL enable = (vm==LFViewDetails);
 
 		m_ShowAttributes.EnableWindow(enable);
 		GetDlgItem(IDC_CHECKALL)->EnableWindow(enable);

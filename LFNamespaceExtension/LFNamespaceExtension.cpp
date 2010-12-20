@@ -31,11 +31,13 @@ LFNamespaceExtensionApp::LFNamespaceExtensionApp()
 	{
 		GetModuleFileName(hModCore, m_CoreFile, MAX_PATH);
 
-		for (UINT a=0; a<5; a++)
+		ENSURE(m_Categories[2][0].LoadString(hModCore, IDS_Size1));
+
+		for (UINT a=1; a<6; a++)
 		{
-			ENSURE(m_Categories[0][a+1].LoadString(hModCore, IDS_Rating1+a));
-			ENSURE(m_Categories[1][a+1].LoadString(hModCore, IDS_Priority1+a));
-			ENSURE(m_Categories[2][a+1].LoadString(hModCore, IDS_Size1+a));
+			ENSURE(m_Categories[0][a].LoadString(hModCore, IDS_Rating1+a-1));
+			ENSURE(m_Categories[1][a].LoadString(hModCore, IDS_Priority1+a-1));
+			ENSURE(m_Categories[2][a].LoadString(hModCore, IDS_Size1+a));
 		}
 
 		FreeLibrary(hModCore);
@@ -124,7 +126,6 @@ BOOL LFNamespaceExtensionApp::InitInstance()
 
 	m_Categories[0][0] = FrmtAttrStr(sortStr, CString(m_Attributes[LFAttrRating]->Name));
 	m_Categories[1][0] = FrmtAttrStr(sortStr, CString(m_Attributes[LFAttrPriority]->Name));
-	m_Categories[2][0] = FrmtAttrStr(sortStr, CString(m_Attributes[LFAttrFileSize]->Name));
 
 	return CWinApp::InitInstance();
 }

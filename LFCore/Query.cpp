@@ -773,6 +773,8 @@ inline void PrepareSearchResult(LFSearchResult* res, LFFilter* filter)
 
 	if ((filter->Options.IsSubfolder) && (filter->ConditionList))
 	{
+		res->m_GroupAttribute = filter->Options.GroupAttribute;
+
 		wcscpy_s(name, 256, filter->Name);
 		unsigned int attr = filter->ConditionList->AttrData.Attr;
 		ctx = (attr==LFAttrLocationName) || (attr==LFAttrLocationIATA) || (attr==LFAttrLocationGPS) ? LFContextSubfolderLocation :

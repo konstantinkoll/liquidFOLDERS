@@ -668,24 +668,27 @@ LFCore_API void LFRemoveFlaggedItemDescriptors(LFSearchResult* res)
 	res->RemoveFlaggedItemDescriptors();
 }
 
-LFCore_API void LFSortSearchResult(LFSearchResult* res, unsigned int attr, bool descending, bool categories)
+LFCore_API void LFSortSearchResult(LFSearchResult* res, unsigned int attr, bool descending)
 {
-	res->Sort(attr, descending, categories);
+	res->Sort(attr, descending);
 }
 
-LFCore_API LFSearchResult* LFGroupSearchResult(LFSearchResult* res, unsigned int attr, bool descending, bool categories, unsigned int icon, bool groupone, LFFilter* f)
+LFCore_API LFSearchResult* LFGroupSearchResult(LFSearchResult* res, unsigned int attr, bool descending, unsigned int icon, bool groupone, LFFilter* f)
 {
 	assert(f);
 
 	if (f->Options.IsSubfolder)
+	{
+		res->Sort(attr, descending);
 		return res;
+	}
 
 	// Special treatment for string arrays
 	if (AttrTypes[attr]==LFTypeUnicodeArray)
 	{
 		LFSearchResult* cooked = new LFSearchResult(res);
 		cooked->GroupArray(attr, icon, f);
-		cooked->Sort(attr, descending, categories);
+		cooked->Sort(attr, descending);
 		return cooked;
 	}
 
@@ -699,7 +702,7 @@ LFCore_API LFSearchResult* LFGroupSearchResult(LFSearchResult* res, unsigned int
 					res->m_Items[a]->AttributeValues[LFAttrLocationGPS] = &airport->Location;
 			}
 
-	res->Sort(attr, descending, categories);
+	res->Sort(attr, descending);
 	LFSearchResult* cooked = new LFSearchResult(res);
 	cooked->Group(attr, icon, groupone, f);
 

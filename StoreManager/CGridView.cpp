@@ -109,8 +109,8 @@ void CGridView::ArrangeHorizontal(GVArrange& gva, BOOL Justify, BOOL ForceBreak,
 
 	for (INT a=0; a<(INT)p_Result->m_ItemCount; a++)
 	{
-		if (p_Result->m_HasCategories)
-			if ((INT)p_Result->m_Items[a]->CategoryID!=category)
+		if (m_HasCategories)
+			if (((INT)p_Result->m_Items[a]->CategoryID!=category) && (p_Result->m_Items[a]->IconID!=IDI_FLD_Back))
 			{
 				if (x>gva.mx)
 				{
@@ -167,7 +167,7 @@ void CGridView::ArrangeVertical(GVArrange& gva)
 		return;
 
 	INT top = gva.my;
-	if (p_Result->m_HasCategories)
+	if (m_HasCategories)
 		top += 2*CategoryPadding+m_FontHeight[1]+4;
 
 	INT x = gva.mx;
@@ -183,8 +183,8 @@ void CGridView::ArrangeVertical(GVArrange& gva)
 
 	for (INT a=0; a<(INT)p_Result->m_ItemCount; a++)
 	{
-		if (p_Result->m_HasCategories)
-			if ((INT)p_Result->m_Items[a]->CategoryID!=category)
+		if (m_HasCategories)
+			if (((INT)p_Result->m_Items[a]->CategoryID!=category) && (p_Result->m_Items[a]->IconID!=IDI_FLD_Back))
 			{
 				FinishCategory;
 

@@ -49,4 +49,5 @@ private:
 	void DrawColumn(CDC& dc, CRect& rect, LFItemDescriptor* i, UINT Attr);
 	void DrawProperty(CDC& dc, CRect& rect, LFItemDescriptor* i, FVItemData* d, UINT Attr, BOOL Themed);
 	INT GetMaxLabelWidth(INT Max);
+	void SortCategories(LFSearchResult* Result);
 };

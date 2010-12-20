@@ -396,8 +396,11 @@ struct LFFilterOptions
 	bool AddDrives;							// If true, drives are added
 
 	// For LFFilterModeDirectoryTree and above
-	bool IsSubfolder;						// If true, you are already inside a grouped subdirectory
 	bool IgnoreSlaves;						// If true, returns only core attributes
+	bool IsSubfolder;						// If true, you are already inside a grouped subdirectory
+
+	// For subfolders
+	unsigned int GroupAttribute;			// Attribute on which parent folder was grouped
 };
 
 struct LFFilterResult

@@ -126,12 +126,7 @@ LFCore_API void LFTimeToString(const FILETIME t, wchar_t* str, size_t cCount, un
 		SystemTimeToTzSpecificLocalTime(NULL, &stUTC, &stLocal);
 
 		if (mask & 1)
-		{
-			int cDate = GetDateFormat(LOCALE_USER_DEFAULT, DATE_SHORTDATE, &stLocal, NULL, NULL, 0);
-			if (cDate>256)
-				cDate = 256;
-			GetDateFormat(LOCALE_USER_DEFAULT, DATE_SHORTDATE, &stLocal, NULL, str, cDate);
-		}
+			GetDateFormat(LOCALE_USER_DEFAULT, DATE_SHORTDATE, &stLocal, NULL, str, cCount);
 
 		if (mask==3)
 			wcscat_s(str, cCount, L", ");
@@ -139,10 +134,7 @@ LFCore_API void LFTimeToString(const FILETIME t, wchar_t* str, size_t cCount, un
 		if (mask & 2)
 		{
 			wchar_t tmpStr[256];
-			int cTime = GetTimeFormat(LOCALE_USER_DEFAULT, TIME_FORCE24HOURFORMAT, &stLocal, NULL, NULL, 0);
-			if (cTime>256)
-				cTime = 256;
-			GetTimeFormat(LOCALE_USER_DEFAULT, TIME_FORCE24HOURFORMAT, &stLocal, NULL, tmpStr, cTime);
+			GetTimeFormat(LOCALE_USER_DEFAULT, TIME_FORCE24HOURFORMAT, &stLocal, NULL, tmpStr, 256);
 			wcscat_s(str, cCount, tmpStr);
 		}
 	}

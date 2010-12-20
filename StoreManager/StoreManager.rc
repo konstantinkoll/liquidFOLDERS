@@ -243,7 +243,7 @@ BEGIN
     CONTROL         "",IDC_VIEWMODES,"SysListView32",LVS_SMALLICON | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | WS_BORDER | WS_GROUP | WS_TABSTOP,14,27,160,201
     GROUPBOX        "Ansichten",IDC_STATIC,7,7,174,228,WS_GROUP
     LTEXT           "Alle Ansichten für diesen Kontext:",IDC_STATIC,14,17,160,8
-    GROUPBOX        "Details für Listen",IDC_STATIC,189,7,196,228
+    GROUPBOX        "Details",IDC_STATIC,189,7,196,228
     LTEXT           "Wählen Sie die Details für diesen Kontext:",IDC_STATIC,196,17,183,9
     CONTROL         "",IDC_VIEWATTRIBUTES,"SysListView32",LVS_SMALLICON | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_NOCOLUMNHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,196,27,118,201
     PUSHBUTTON      "Nach &oben",IDC_MOVEUP,320,27,58,14,WS_GROUP
@@ -422,7 +422,7 @@ BEGIN
     CONTROL         "",IDC_VIEWMODES,"SysListView32",LVS_SMALLICON | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | WS_BORDER | WS_GROUP | WS_TABSTOP,14,27,160,201
     GROUPBOX        "Views",IDC_STATIC,7,7,174,228,WS_GROUP
     LTEXT           "All views available in this context:",IDC_STATIC,14,17,160,8
-    GROUPBOX        "Report details",IDC_STATIC,189,7,196,228
+    GROUPBOX        "Details",IDC_STATIC,189,7,196,228
     LTEXT           "Choose the details for this context:",IDC_STATIC,196,17,183,9
     CONTROL         "",IDC_VIEWATTRIBUTES,"SysListView32",LVS_SMALLICON | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_NOCOLUMNHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,196,27,118,201
     PUSHBUTTON      "Move &up",IDC_MOVEUP,320,27,58,14,WS_GROUP
@@ -538,13 +538,13 @@ BEGIN
     IDS_CONTEXTMENU_SORTOPTIONS "&Arrange ""%s"" by..."
     IDS_CONTEXTMENU_AUTODIRS "&Group into subfolders"
     IDS_CONTEXTMENU_VIEWOPTIONS "&Display ""%s"" as..."
+    IDS_CONTEXTMENU_OPEN    "&Open"
+    IDS_CONTEXTMENU_OPENWITH "Open &with..."
+    IDS_CONTEXTMENU_OPENGOOGLEEARTH "Open in &Google Earth"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_CONTEXTMENU_OPEN    "&Open"
-    IDS_CONTEXTMENU_OPENWITH "Open &with..."
-    IDS_CONTEXTMENU_OPENGOOGLEEARTH "Open in &Google Earth"
     IDS_CONTEXTMENU_REMEMBER "Re&member"
     IDS_CONTEXTMENU_REMOVE  "Re&move from clipboard"
     IDS_CONTEXTMENU_AUTOSIZEALL "Size all &columns to fit"
@@ -553,12 +553,9 @@ BEGIN
     IDS_NOITEMSSELECTED     "No items selected"
     IDS_MULTIPLETYPESSELECTED "Multiple types, %d items"
     IDS_MOREATTRIBUTES      "&More properties..."
-END
-
-STRINGTABLE 
-BEGIN
     IDS_YOULOOKAT           "You look at %s"
     IDS_NOTHINGTODISPLAY    "There is nothing to display."
+    IDS_NULLCATEGORY        "Not set"
 END
 
 STRINGTABLE 
@@ -593,8 +590,7 @@ BEGIN
     ID_APP_VIEW_SEARCHRESULT 
                             "Displays files as wide tiles, including a decent sized icon and detailed information.\nSearch result"
     ID_APP_VIEW_PREVIEW     "Displays files as preview images.\nPreview"
-    ID_APP_VIEW_CALENDAR_YEAR "Places files on a calendar.\nCalendar"
-    ID_APP_VIEW_CALENDAR_DAY "Places files on a calendar.\nCalendar"
+    ID_APP_VIEW_CALENDAR    "Places files on a calendar.\nCalendar"
     ID_APP_VIEW_GLOBE       "Places file on a globe depening on their location property.\nGlobe"
     ID_APP_VIEW_TAGCLOUD    "Displays files as tag cloud. This is the only view that can show files sorted by their tags.\nTag cloud"
     ID_APP_VIEW_TIMELINE    "Displays files on a timeline.\nTimeline"
@@ -715,8 +711,8 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDM_TRASH_RESTOREALL    "Restores all files from the trash.\nRestore all"
     IDM_TRASH_EMPTY         "Permanently deletes all files from the trash.\nEmpty trash"
+    IDM_TRASH_RESTOREALL    "Restores all files from the trash.\nRestore all"
     IDM_TRASH_RESTORESELECTED "Restores the selected files.\nRestore"
 END
 
@@ -736,6 +732,10 @@ BEGIN
     IDM_STORE_PROPERTIES    "Displays the properties of the selected store.\nProperties"
     IDM_STORES_CREATENEW    "Creates a new store for your files.\nCreate new store"
     IDM_STORES_MAINTAINALL  "Executes maintenance work on all stores.\nRun maintenance"
+END
+
+STRINGTABLE 
+BEGIN
     IDM_DRIVE_PROPERTIES    "Displays the properties of the selected drive.\nProperties"
 END
 
@@ -747,6 +747,10 @@ END
 STRINGTABLE 
 BEGIN
     IDM_ITEM_OPEN           "Opens the selected item.\nOpen"
+END
+
+STRINGTABLE 
+BEGIN
     IDM_STORES_HIDEEMPTYDRIVES "&Hide unmounted drives"
 END
 
@@ -829,7 +833,7 @@ BEGIN
     CONTROL         "",IDC_VIEWMODES,"SysListView32",LVS_SMALLICON | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | WS_BORDER | WS_GROUP | WS_TABSTOP,14,27,160,201
     GROUPBOX        "Vistas",IDC_STATIC,7,7,174,228,WS_GROUP
     LTEXT           "Todas las vistas disponibles en este contexto:",IDC_STATIC,14,17,160,8
-    GROUPBOX        "Reportar detalles",IDC_STATIC,189,7,216,228
+    GROUPBOX        "Detalles",IDC_STATIC,189,7,216,228
     LTEXT           "Escoger detalles para este contexto:",IDC_STATIC,196,17,203,9
     CONTROL         "",IDC_VIEWATTRIBUTES,"SysListView32",LVS_SMALLICON | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_NOCOLUMNHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,196,27,118,201
     PUSHBUTTON      "&Subir",IDC_MOVEUP,320,27,78,14,WS_GROUP
@@ -939,7 +943,7 @@ BEGIN
     CONTROL         "",IDC_VIEWMODES,"SysListView32",LVS_SMALLICON | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | WS_BORDER | WS_GROUP | WS_TABSTOP,14,27,160,201
     GROUPBOX        "Affichages",IDC_STATIC,7,7,174,228,WS_GROUP
     LTEXT           "Tous les affichages pour ce contexte :",IDC_STATIC,14,17,160,8
-    GROUPBOX        "Détails pour des listes",IDC_STATIC,189,7,196,228
+    GROUPBOX        "Détails",IDC_STATIC,189,7,196,228
     LTEXT           "Choisissez les détails pour ce contexte:",IDC_STATIC,196,17,183,9
     CONTROL         "",IDC_VIEWATTRIBUTES,"SysListView32",LVS_SMALLICON | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_NOCOLUMNHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,196,27,118,201
     PUSHBUTTON      "En &haut",IDC_MOVEUP,320,27,58,14,WS_GROUP

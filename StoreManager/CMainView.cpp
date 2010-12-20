@@ -4,8 +4,8 @@
 
 #include "stdafx.h"
 #include "CMainView.h"
-#include "CListView.h"
 #include "CGlobeView.h"
+#include "CListView.h"
 #include "CTagcloudView.h"
 
 
@@ -91,13 +91,6 @@ BOOL CMainView::CreateFileView(UINT ViewID, INT FocusItem)
 		{
 			pNewView = new CCalendarYearView();
 			((CCalendarYearView*)pNewView)->Create(this, p_CookedFiles, FocusItem);
-		}
-		break;
-	case LFViewCalendarDay:
-		if (m_ViewID!=LFViewCalendarDay)
-		{
-			pNewView = new CCalendarDayView();
-			((CCalendarDayView*)pNewView)->Create(this, p_CookedFiles, FocusItem);
 		}
 		break;
 	case LFViewTimeline:
@@ -452,7 +445,7 @@ void CMainView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 			pPopup->InsertMenu(0, MF_STRING | MF_BYPOSITION, IDM_STORES_HIDEEMPTYDRIVES, tmpStr);
 		}
 
-		if ((m_ViewID==LFViewDetails) || (m_ViewID==LFViewCalendarDay))
+		if (m_ViewID==LFViewDetails)
 		{
 			ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_AUTOSIZEALL));
 			pPopup->InsertMenu(0, MF_STRING | MF_BYPOSITION, IDM_DETAILS_AUTOSIZEALL, tmpStr);

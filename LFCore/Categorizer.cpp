@@ -38,6 +38,7 @@ LFItemDescriptor* CCategorizer::GetFolder(LFItemDescriptor* i, LFFilter* f)
 	{
 		folder->NextFilter = LFAllocFilter(f);
 		folder->NextFilter->Options.IsSubfolder = true;
+		folder->NextFilter->Options.GroupAttribute = attr;
 
 		LFFilterCondition* c = GetCondition(i);
 		c->Next = folder->NextFilter->ConditionList;

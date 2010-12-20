@@ -11,7 +11,6 @@
 #include <list>
 #include <string>
 
-
 // CStoreManagerApp:
 // Siehe StoreManager.cpp für die Implementierung dieser Klasse
 //

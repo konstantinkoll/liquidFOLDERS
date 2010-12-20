@@ -51,11 +51,7 @@ BOOL CStoreManagerApp::InitInstance()
 
 		UINT cnt = ((a>LFContextClipboard) && (a<LFContextSubfolderDefault)) ? LFViewCount-1 : (a>LFContextStoreHome) ? LFViewPreview : LFViewSearchResult;
 		for (UINT b=0; b<=cnt; b++)
-			if (b!=LFViewCalendarDay)
-				(*m_AllowedViews[a]) += b;
-
-		if (a==LFContextSubfolderDay)
-			(*m_AllowedViews[a]) += LFViewCalendarDay;
+			(*m_AllowedViews[a]) += b;
 	}
 
 	// Pfad zu Google Earth
@@ -403,10 +399,11 @@ void CStoreManagerApp::LoadViewOptions(INT context)
 		DefaultView = LFViewLargeIcons;
 		break;
 	case LFContextClipboard:
-		DefaultView = LFViewTiles;
+		DefaultView = LFViewSearchResult;
 		break;
-	case LFContextSubfolderDay:
-		DefaultView = LFViewCalendarDay;
+	case LFContextHousekeeping:
+	case LFContextTrash:
+		DefaultView = LFViewTiles;
 		break;
 	default:
 		DefaultView = LFViewDetails;

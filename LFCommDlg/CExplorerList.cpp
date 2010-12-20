@@ -85,7 +85,7 @@ void CExplorerList::SetSearchResult(LFSearchResult* result)
 	p_Result = result;
 	if (result)
 	{
-		LFSortSearchResult(result, LFAttrFileName, false, IsGroupViewEnabled()==TRUE);
+		LFSortSearchResult(result, LFAttrFileName, false);
 		LFErrorBox(result->m_LastError, GetParent()->GetSafeHwnd());
 
 		UINT puColumns[2];

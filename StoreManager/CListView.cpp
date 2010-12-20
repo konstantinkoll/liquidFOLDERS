@@ -30,6 +30,20 @@ CListView::CListView(UINT DataSize)
 {
 	m_Icons[0] = m_Icons[1] = NULL;
 	m_IgnoreItemChange = FALSE;
+
+	WCHAR tmpStr[256];
+	ENSURE(LoadString(NULL, IDS_NULLCATEGORY, tmpStr, 256));
+	AddItemCategory(tmpStr, L"");
+
+	SYSTEMTIME st;
+	ZeroMemory(&st, sizeof(st));
+
+	for (WORD a=6; a<24; a++)
+	{
+		st.wHour = a;
+		GetTimeFormat(LOCALE_USER_DEFAULT, TIME_NOMINUTESORSECONDS, &st, NULL, tmpStr, 256);
+		AddItemCategory(tmpStr, L"");
+	}
 }
 
 void CListView::SetViewOptions(BOOL Force)
@@ -73,17 +87,34 @@ void CListView::SetViewOptions(BOOL Force)
 		m_IconSize[1].cy = min(cy, 128);
 	}
 
-	AdjustHeader(((p_ViewParameters->Mode==LFViewDetails) || (p_ViewParameters->Mode==LFViewCalendarDay)) && (p_Result));
+	AdjustHeader((p_ViewParameters->Mode==LFViewDetails) && (p_Result));
 }
 
 void CListView::SetSearchResult(LFSearchResult* Result)
 {
 	if (Result)
 	{
+		m_HasCategories = Result->m_HasCategories;
+
 		for (UINT a=0; a<Result->m_ItemCount; a++)
 		{
 			LFItemDescriptor* i = Result->m_Items[a];
 			if ((i->Type & LFTypeMask)==LFTypeFile)
+			{
+				// Category
+				if (!Result->m_HasCategories)
+					if (Result->m_Context==LFContextSubfolderDay)
+					{
+						SYSTEMTIME stUTC;
+						SYSTEMTIME stLocal;
+						FileTimeToSystemTime((FILETIME*)i->AttributeValues[Result->m_GroupAttribute], &stUTC);
+						SystemTimeToTzSpecificLocalTime(NULL, &stUTC, &stLocal);
+
+						i->CategoryID = stLocal.wHour<6 ? LFItemCategoryNight : LFItemCategoryCount+stLocal.wHour-6;
+						m_HasCategories = TRUE;
+					}
+
+				// Icon
 				if (theApp.m_Extensions.count(i->CoreAttributes.FileFormat)==0)
 				{
 					CString Ext = _T("*.");
@@ -93,9 +124,13 @@ void CListView::SetSearchResult(LFSearchResult* Result)
 					if (SUCCEEDED(SHGetFileInfo(Ext, 0, &sfi, sizeof(sfi), SHGFI_TYPENAME | SHGFI_USEFILEATTRIBUTES)))
 						theApp.m_Extensions[i->CoreAttributes.FileFormat] = sfi.szTypeName;
 				}
+			}
 		}
 
-		AdjustHeader((m_ViewParameters.Mode==LFViewDetails) || (m_ViewParameters.Mode==LFViewCalendarDay));
+		if (m_HasCategories!=(Result->m_HasCategories==true))
+			SortCategories(Result);
+
+		AdjustHeader(m_ViewParameters.Mode==LFViewDetails);
 	}
 	else
 	{
@@ -174,7 +209,6 @@ void CListView::AdjustLayout()
 		ArrangeVertical(gva);
 		break;
 	case LFViewDetails:
-	case LFViewCalendarDay:
 		gva.cx = -2*gva.padding;
 		for (UINT a=0; a<LFAttributeCount; a++)
 			gva.cx += m_ViewParameters.ColumnWidth[a];
@@ -226,7 +260,6 @@ void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed)
 		DrawLabel(dc, rectLabel, i, DT_CENTER | DT_WORDBREAK);
 		break;
 	case LFViewDetails:
-	case LFViewCalendarDay:
 		rectIcon.right = rectIcon.left+m_IconSize[0].cx;
 		DrawIcon(dc, rectIcon, i, d);
 
@@ -545,6 +578,20 @@ INT CListView::GetMaxLabelWidth(INT Max)
 	return Width;
 }
 
+void CListView::SortCategories(LFSearchResult* Result)
+{
+	ASSERT(Result);
+	DynArray<LFItemDescriptor*> Buckets[LFItemCategoryCount+18];
+
+	for (UINT a=0; a<Result->m_ItemCount; a++)
+		Buckets[Result->m_Items[a]->CategoryID].AddItem(Result->m_Items[a]);
+
+	UINT Ptr = 0;
+	for (UINT a=0; a<LFItemCategoryCount+18; a++)
+		for (UINT b=0; b<Buckets[a].m_ItemCount; b++)
+			Result->m_Items[Ptr++] = Buckets[a].m_Items[b];
+}
+
 
 BEGIN_MESSAGE_MAP(CListView, CGridView)
 	ON_WM_CREATE()
@@ -632,7 +679,7 @@ void CListView::OnChooseDetails()
 
 void CListView::OnUpdateDetailsCommands(CCmdUI* pCmdUI)
 {
-	pCmdUI->Enable((m_ViewParameters.Mode==LFViewDetails) || (m_ViewParameters.Mode==LFViewCalendarDay));
+	pCmdUI->Enable(m_ViewParameters.Mode==LFViewDetails);
 }
 
 void CListView::OnBeginDrag(NMHDR* pNMHDR, LRESULT* pResult)
@@ -714,7 +761,7 @@ void CListView::OnItemClick(NMHDR* pNMHDR, LRESULT* pResult)
 
 	if (p_ViewParameters->SortBy==attr)
 	{
-		p_ViewParameters->Descending ^= 1;
+		p_ViewParameters->Descending = !p_ViewParameters->Descending;
 	}
 	else
 	{
