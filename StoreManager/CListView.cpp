@@ -29,7 +29,7 @@ CListView::CListView(UINT DataSize)
 	: CGridView(DataSize)
 {
 	m_Icons[0] = m_Icons[1] = NULL;
-	m_IgnoreItemChange = FALSE;
+	m_IgnoreHeaderItemChange = FALSE;
 
 	WCHAR tmpStr[256];
 	SYSTEMTIME st;
@@ -140,7 +140,7 @@ void CListView::AdjustHeader(BOOL bShow)
 	if (bShow)
 	{
 		m_wndHeader.SetRedraw(FALSE);
-		m_IgnoreItemChange = TRUE;
+		m_IgnoreHeaderItemChange = TRUE;
 
 		VERIFY(m_wndHeader.SetOrderArray(LFAttributeCount, p_ViewParameters->ColumnOrder));
 
@@ -151,7 +151,7 @@ void CListView::AdjustHeader(BOOL bShow)
 			HdItem.cxy = p_ViewParameters->ColumnWidth[a];
 
 			if ((theApp.m_Attributes[a]->Type==LFTypeRating) && (HdItem.cxy))
-				HdItem.cxy = p_ViewParameters->ColumnWidth[a] = RatingBitmapWidth+3*PADDING;
+				HdItem.cxy = p_ViewParameters->ColumnWidth[a] = RatingBitmapWidth+4*PADDING;
 
 			m_wndHeader.SetItem(a, &HdItem);
 		}
@@ -160,7 +160,7 @@ void CListView::AdjustHeader(BOOL bShow)
 		m_wndHeader.SetRedraw(TRUE);
 		m_wndHeader.Invalidate();
 
-		m_IgnoreItemChange = FALSE;
+		m_IgnoreHeaderItemChange = FALSE;
 	}
 	else
 	{
@@ -730,7 +730,7 @@ void CListView::OnItemChanging(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	LPNMHEADER pHdr = (LPNMHEADER)pNMHDR;
 
-	if ((pHdr->pitem->mask & HDI_WIDTH) && (!m_IgnoreItemChange))
+	if ((pHdr->pitem->mask & HDI_WIDTH) && (!m_IgnoreHeaderItemChange))
 	{
 		if (pHdr->pitem->cxy<32)
 			pHdr->pitem->cxy = (pHdr->iItem==LFAttrFileName) ? 32 : 0;

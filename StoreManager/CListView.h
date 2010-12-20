@@ -41,7 +41,7 @@ protected:
 private:
 	CImageList* m_Icons[2];
 	SIZE m_IconSize[2];
-	BOOL m_IgnoreItemChange;
+	BOOL m_IgnoreHeaderItemChange;
 
 	void AdjustHeader(BOOL bShow);
 	void AttributeToString(LFItemDescriptor* i, UINT Attr, WCHAR* tmpStr, size_t cCount);
