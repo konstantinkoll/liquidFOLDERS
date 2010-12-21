@@ -339,13 +339,13 @@ BOOL CStoreManagerApp::SanitizeViewMode(LFViewParameters* vp, INT context)
 	return Modified;
 }
 
-void CStoreManagerApp::Broadcast(INT context, UINT cmdMsg, WPARAM wParam, LPARAM lParam)
+void CStoreManagerApp::Broadcast(INT context, UINT cmdMsg)
 {
 	std::list<CMainFrame*>::iterator ppFrame = m_listMainFrames.begin();
 	while (ppFrame!=m_listMainFrames.end())
 	{
 		if (((*ppFrame)->ActiveContextID==context) || (context==-1))
-			(*ppFrame)->PostMessage(cmdMsg, wParam, lParam);
+			(*ppFrame)->PostMessage(cmdMsg);
 
 		ppFrame++;
 	}
@@ -365,7 +365,7 @@ void CStoreManagerApp::UpdateViewOptions(INT context)
 
 void CStoreManagerApp::Reload(INT context)
 {
-	Broadcast(context, WM_COMMAND, ID_NAV_RELOAD);
+	Broadcast(context, WM_RELOAD);
 }
 
 

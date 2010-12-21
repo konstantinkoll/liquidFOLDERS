@@ -18,8 +18,6 @@
 #define IDB_RIBBONHOME_16               141
 #define IDB_RIBBONVIEW_32               144
 #define IDB_RIBBONVIEW_16               145
-#define IDB_RIBBONCALENDAR_32           148
-#define IDB_RIBBONCALENDAR_16           149
 #define IDB_RIBBONGLOBE_16              150
 #define IDB_RIBBONGLOBE_32              151
 #define IDB_RIBBONTAGCLOUD_16           154
@@ -54,10 +52,9 @@
 #define ID_NAV_FORWARDONE               404
 #define ID_NAV_LAST                     405
 #define ID_NAV_RELOAD                   406
-#define ID_NAV_SHOWHISTORY              408
-#define ID_NAV_STORES                   409
-#define ID_NAV_HOME                     410
-#define ID_NAV_GOTOHISTORY              411
+#define ID_NAV_STORES                   408
+#define ID_NAV_HOME                     409
+#define ID_NAV_GOTOHISTORY              410
 #define ID_PANE_CAPTIONBAR              500
 #define ID_PANE_FILTERWND               501
 #define ID_PANE_INSPECTORWND            502
@@ -188,7 +185,6 @@
 #define IDM_TRASH                       3300
 #define IDM_TRASH_EMPTY                 3301
 #define IDM_TRASH_RESTOREALL            3302
-#define IDM_TRASH_RESTORESELECTED       3303
 #define IDM_ITEM_OPEN                   4000
 #define IDM_DRIVE                       4100
 #define IDM_DRIVE_CREATENEWSTORE        4101
@@ -200,6 +196,7 @@
 #define IDM_FILE_DELETE                 4204
 #define IDM_FILE_RENAME                 4205
 #define IDM_FILE_SEND                   4206
+#define IDM_FILE_RESTORE                4207
 #define IDM_FILE_TRASH                  4300
 #define IDM_DETAILS                     5000
 #define IDM_DETAILS_AUTOSIZEALL         5001

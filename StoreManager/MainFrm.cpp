@@ -73,7 +73,6 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_COMMAND(ID_NAV_FORWARDONE, OnNavigateForwardOne)
 	ON_COMMAND(ID_NAV_LAST, OnNavigateLast)
 	ON_COMMAND(ID_NAV_RELOAD, OnNavigateReload)
-	ON_COMMAND(ID_NAV_SHOWHISTORY, OnShowHistoryWnd)
 	ON_COMMAND(ID_NAV_STORES, OnNavigateStores)
 	ON_COMMAND(ID_NAV_HOME, OnNavigateHome)
 
@@ -81,6 +80,8 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 
 	ON_MESSAGE_VOID(WM_UPDATEVIEWOPTIONS, OnUpdateViewOptions)
 	ON_MESSAGE_VOID(WM_UPDATESORTOPTIONS, OnUpdateSortOptions)
+	ON_MESSAGE_VOID(WM_RELOAD, OnNavigateReload)
+	ON_MESSAGE(WM_COOKFILES, OnCookFiles)
 
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->DrivesChanged, OnDrivesChanged)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoresChanged, OnStoresChanged)
@@ -248,7 +249,7 @@ INT CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	{
 		RawFiles = LFQuery(ActiveFilter);
 	}
-	CookFiles();
+	OnCookFiles();
 
 	return 0;
 }
@@ -438,19 +439,6 @@ void CMainFrame::OnToggleInspectorWnd()
 	RecalcLayout(FALSE);
 }
 
-void CMainFrame::OnShowHistoryWnd()
-{
-	if (m_wndHistory)
-	{
-		if (!m_wndHistory->IsVisible())
-		{
-			m_wndHistory->ShowPane(TRUE, FALSE, TRUE);
-			RecalcLayout(FALSE);
-		}
-		m_wndHistory->SetFocus();
-	}
-}
-
 void CMainFrame::OnToggleHistoryWnd()
 {
 	if (m_wndHistory)
@@ -562,47 +550,6 @@ void CMainFrame::OnClipRememberNew()
 	Remember(theApp.GetClipboard(TRUE));
 }
 
-void CMainFrame::OnUpdateClipCommands(CCmdUI* pCmdUI)
-{
-	BOOL b = FALSE;
-	switch (pCmdUI->m_nID)
-	{
-	case ID_CLIP_COPY:
-		b = FilesSelected;
-		break;
-	case ID_CLIP_PASTE:
-		b = (!IsClipboard) && FALSE;
-		break;
-	case ID_CLIP_REMOVE:
-		b = (IsClipboard) && (m_wndMainView.GetNextSelectedItem(-1)!=-1);
-		break;
-	case ID_CLIP_REMEMBERLAST:
-	case ID_CLIP_REMEMBERNEW:
-		b = (!IsClipboard)
-		#ifndef _DEBUG
-		&& FilesSelected
-		#endif
-		;
-		break;
-	}
-
-	pCmdUI->Enable(b);
-}
-
-
-void CMainFrame::OnItemsDelete()
-{
-	if (CookedFiles)
-		switch (CookedFiles->m_Context)
-		{
-		case LFContextTrash:
-			DeleteFiles();
-			break;
-		default:
-			UpdateTrashFlag(TRUE);
-		}
-}
-
 void CMainFrame::OnItemsRename()
 {
 	if (m_wndMainView.p_wndFileView)
@@ -610,59 +557,8 @@ void CMainFrame::OnItemsRename()
 		m_wndMainView.p_wndFileView->SetFocus();
 		m_wndMainView.p_wndFileView->EditLabel(GetSelectedItem());
 	}
-}
-
-void CMainFrame::OnUpdateItemCommands(CCmdUI* pCmdUI)
-{
-	BOOL b = FALSE;
-	INT i = m_wndMainView.GetSelectedItem();
-	LFItemDescriptor* f = (i==-1 ? NULL : CookedFiles->m_Items[i]);
-
-	switch (pCmdUI->m_nID)
-	{
-	case ID_ITEMS_SHOWINSPECTOR:
-		b = TRUE;
-		break;
-	case ID_ITEMS_OPEN:
-		if (f)
-			b = (f->NextFilter!=NULL) ||
-				((f->Type & (LFTypeMask | LFTypeNotMounted))==LFTypeDrive) ||
-				((f->Type & (LFTypeMask | LFTypeNotMounted))==LFTypeFile);
-		break;
-	case ID_ITEMS_OPENWITH:
-		if (f)
-			b = (!f->NextFilter) && ((f->Type & (LFTypeMask | LFTypeNotMounted))==LFTypeFile);
-		break;
-	case ID_ITEMS_DELETE:
-		if (CookedFiles)
-			b = (CookedFiles->m_Context==LFContextStores) ? f ? ((f->Type & LFTypeMask)==LFTypeStore) : FALSE : FilesSelected;
-		break;
-	case ID_ITEMS_RENAME:
-		if (CookedFiles)
-			b = f ? (CookedFiles->m_Context==LFContextStores) ? ((f->Type & LFTypeMask)==LFTypeStore) && (ActiveViewID>=LFViewLargeIcons) && (ActiveViewID<=LFViewPreview) : (f->Type & LFTypeMask)==LFTypeFile : FALSE;
-//		if ((b) && (m_wndMainView.p_wndFileView))
-//			b ^= m_wndMainView.p_wndFileView->IsEditing();
-		break;
-	}
-
-	pCmdUI->Enable(b);
-}
-
-void CMainFrame::OnEmptyTrash()
-{
-	if (DeleteFiles(TRUE))
-		theApp.PlayTrashSound();
-}
-
-void CMainFrame::OnRestoreSelectedFiles()
-{
-	UpdateTrashFlag(FALSE);
-}
-
-void CMainFrame::OnRestoreAllFiles()
-{
-	UpdateTrashFlag(FALSE, TRUE);
 }*/
+
 
 void CMainFrame::UpdateSearchResult(BOOL SetEmpty, INT FocusItem)
 {
@@ -735,71 +631,6 @@ BOOL CMainFrame::UpdateSelectedItems(LFVariantData* value1, LFVariantData* value
 			m_wndMainView.UpdateSearchResult(RawFiles, CookedFiles, m_wndMainView.GetFocusItem());
 		if (deselected)
 			OnUpdateSelection();
-	}
-
-	if (tl->m_LastError>LFCancel)
-		ShowCaptionBar(IDI_ERROR, tl->m_LastError);
-
-	BOOL changes = tl->m_Changes;
-	LFFreeTransactionList(tl);
-	return changes;*/
-	return TRUE;
-}
-
-BOOL CMainFrame::UpdateTrashFlag(BOOL Trash, BOOL All)
-{
-/*	LFVariantData value1;
-	value1.Attr = LFAttrFlags;
-	LFGetNullVariantData(&value1);
-
-	value1.IsNull = false;
-	value1.Flags.Flags = Trash ? LFFlagTrash : 0;
-	value1.Flags.Mask = LFFlagTrash;
-
-	LFVariantData value2;
-	value2.Attr = LFAttrDeleteTime;
-	LFGetNullVariantData(&value2);
-	value2.IsNull = false;
-
-	if (Trash)
-		GetSystemTimeAsFileTime(&value2.Time);
-
-	LFTransactionList* tl = BuildTransactionList(All);
-	LFTransactionUpdate(tl, GetSafeHwnd(), &value1, &value2);
-
-	for (UINT a=0; a<tl->m_ItemCount; a++)
-		if (tl->m_Items[a].LastError==LFOk)
-			tl->m_Items[a].Item->DeleteFlag = true;
-
-	LFRemoveFlaggedItemDescriptors(RawFiles);
-	UpdateHistory();
-	SendMessage(WM_COMMAND, ID_VIEW_SELECTNONE);
-	CookFiles(m_wndMainView.GetFocusItem());
-
-	if (tl->m_LastError>LFCancel)
-		ShowCaptionBar(IDI_ERROR, tl->m_LastError);
-
-	BOOL changes = tl->m_Changes;
-	LFFreeTransactionList(tl);
-	return changes;*/
-	return TRUE;
-}
-
-BOOL CMainFrame::DeleteFiles(BOOL All)
-{
-/*	LFTransactionList* tl = BuildTransactionList(All);
-	LFTransactionDelete(tl);
-
-	if (m_wndMainView.p_wndFileView)
-	{
-		for (UINT a=0; a<tl->m_ItemCount; a++)
-			if (tl->m_Items[a].LastError==LFOk)
-				tl->m_Items[a].Item->DeleteFlag = true;
-
-		LFRemoveFlaggedItemDescriptors(RawFiles);
-		UpdateHistory();
-		SendMessage(WM_COMMAND, ID_VIEW_SELECTNONE);
-		CookFiles(m_wndMainView.GetFocusItem());
 	}
 
 	if (tl->m_LastError>LFCancel)
@@ -975,7 +806,6 @@ void CMainFrame::InitializeRibbon()
 		{
 			strTemp = "Navigate";
 			CMFCRibbonPanel* pPanelNavigate = pCategoryHome->AddPanel(strTemp, m_PanelImages.ExtractIcon(5));
-			pPanelNavigate->EnableLaunchButton(ID_NAV_SHOWHISTORY, 5);
 
 				pPanelNavigate->Add(theApp.CommandButton(ID_NAV_FIRST, 0, 0));
 				pPanelNavigate->Add(theApp.CommandButton(ID_NAV_BACKONE, 1, 1));
@@ -1092,26 +922,6 @@ void CMainFrame::InitializeRibbon()
 
 	if (!IsClipboard)
 	{
-		strCtx = "View";
-		strTemp = "Calendar";
-		CMFCRibbonCategory* pCategoryCalendar = m_wndRibbonBar.AddContextCategory(strTemp, strCtx, 2, AFX_CategoryColor_Indigo, IDB_RIBBONCALENDAR_16, IDB_RIBBONCALENDAR_32);
-
-			strTemp = "Navigate";
-			CMFCRibbonPanel* pPanelCalendarNavigate = pCategoryCalendar->AddPanel(strTemp, m_PanelImages.ExtractIcon(0));
-
-				strTemp = "Back";
-				pPanelCalendarNavigate->Add(new CMFCRibbonButton(ID_APP_ABOUT, strTemp, 2, 2));
-				strTemp = "Forward";
-				pPanelCalendarNavigate->Add(new CMFCRibbonButton(ID_APP_ABOUT, strTemp, 3, 3));
-
-			strTemp = "Search";
-			CMFCRibbonPanel* pPanelCalendarSearch = pCategoryCalendar->AddPanel(strTemp, m_PanelImages.ExtractIcon(0));
-
-				strTemp = "Go To Date";
-				pPanelCalendarSearch->Add(new CMFCRibbonButton(ID_APP_ABOUT, strTemp, 0, 0));
-				strTemp = "Search";
-				pPanelCalendarSearch->Add(new CMFCRibbonButton(ID_APP_ABOUT, strTemp, 1, 1));
-
 		strTemp = "Globe";
 		CMFCRibbonCategory* pCategoryGlobe = m_wndRibbonBar.AddContextCategory(strTemp, strCtx, 2, AFX_CategoryColor_Indigo, IDB_RIBBONGLOBE_16, IDB_RIBBONGLOBE_32);
 
@@ -1282,7 +1092,7 @@ void CMainFrame::NavigateTo(LFFilter* f, UINT NavMode, INT FocusItem, INT FirstA
 		RawFiles = LFQuery(ActiveFilter);
 	}
 
-	CookFiles(FocusItem);
+	OnCookFiles(FocusItem);
 
 	if (CookedFiles->m_LastError>LFCancel)
 	{
@@ -1294,42 +1104,6 @@ void CMainFrame::NavigateTo(LFFilter* f, UINT NavMode, INT FocusItem, INT FirstA
 		{
 			m_wndCaptionBar.ShowWindow(SW_HIDE);
 			RecalcLayout(FALSE);
-		}
-}
-
-void CMainFrame::CookFiles(INT FocusItem)
-{
-	// Das alte Suchergebnis wird in Victim gespeichert, damit das View niemals eine ungültige
-	// Referenz hat. Erst nach UpdateSearchResult() kann das ggf. vorhandene alte Suchergebnis
-	// gelöscht werden.
-	LFSearchResult* Victim = CookedFiles;
-
-	LFViewParameters* vp = &theApp.m_Views[RawFiles->m_Context];
-	LFAttributeDescriptor* attr = theApp.m_Attributes[vp->SortBy];
-
-	if (((!IsClipboard) && (vp->AutoDirs) && (!ActiveFilter->Options.IsSubfolder)) || (vp->Mode>LFViewPreview))
-	{
-		CookedFiles = LFGroupSearchResult(RawFiles, vp->SortBy, vp->Descending==TRUE, attr->IconID,
-			(vp->Mode>LFViewPreview) || ((attr->Type!=LFTypeTime) && (vp->SortBy!=LFAttrFileName) && (vp->SortBy!=LFAttrStoreID) && (vp->SortBy!=LFAttrFileID)),
-			ActiveFilter);
-	}
-	else
-	{
-		LFSortSearchResult(RawFiles, vp->SortBy, vp->Descending==TRUE);
-		CookedFiles = RawFiles;
-	}
-
-	UpdateSearchResult(FALSE, FocusItem);
-	UpdateHistory();
-
-	if ((Victim) && (Victim!=RawFiles))
-		LFFreeSearchResult(Victim);
-
-	if (!LFIsLicensed())
-		if ((++theApp.m_NagCounter)>25)
-		{
-			theApp.m_NagCounter = 0;
-			MessageBox(_T("You are using an unregistered copy of liquidFOLDERS. liquidFOLDERS is shareware -\nif you decide to use it regulary, you are required to purchase a license from our website!"), _T("Unregistered copy"));
 		}
 }
 
@@ -1348,6 +1122,10 @@ void CMainFrame::UpdateHistory()
 	if (m_wndFilter)
 		m_wndFilter->UpdateList();
 }
+
+
+
+
 
 
 void CMainFrame::OnItemOpen()
@@ -1400,17 +1178,28 @@ void CMainFrame::OnItemOpen()
 	}
 }
 
-
 // TODO
 void CMainFrame::UpdateRibbon()
 {
 	// Im Debug-Modus bleiben alle Kategorien sichtbar
-	/*#ifndef _DEBUG
-	m_wndRibbonBar.ShowCategory(RibbonCategory_View_Calendar, (ActiveViewID>=LFViewCalendarYear) && (ActiveViewID<=LFViewCalendarDay));
-	m_wndRibbonBar.ShowCategory(RibbonCategory_View_Globe, ActiveViewID==LFViewGlobe);
-	m_wndRibbonBar.ShowCategory(RibbonCategory_View_Tagcloud, ActiveViewID==LFViewTagcloud);
-	m_wndRibbonBar.RecalcLayout();
-	#endif*/
+	#ifndef _DEBUG
+	if (!IsClipboard)
+	{
+		BOOL change = FALSE;
+		if (m_wndRibbonBar.GetCategory(RibbonCategory_View_Globe)->IsVisible()!=(ActiveViewID==LFViewGlobe))
+		{
+			m_wndRibbonBar.ShowCategory(RibbonCategory_View_Globe, ActiveViewID==LFViewGlobe);
+			change = TRUE;
+		}
+		if (m_wndRibbonBar.GetCategory(RibbonCategory_View_Tagcloud)->IsVisible()!=(ActiveViewID==LFViewTagcloud))
+		{
+			m_wndRibbonBar.ShowCategory(RibbonCategory_View_Tagcloud, ActiveViewID==LFViewTagcloud);
+			change = TRUE;
+		}
+		if (change)
+			m_wndRibbonBar.RecalcLayout();
+	}
+	#endif
 }
 
 // TODO
@@ -1429,6 +1218,11 @@ void CMainFrame::OnUpdateSelection()
 }
 
 
+
+
+
+
+
 void CMainFrame::OnUpdateViewOptions()
 {
 	if (ActiveViewID==LFViewGlobe)
@@ -1440,7 +1234,7 @@ void CMainFrame::OnUpdateViewOptions()
 
 	if ((ActiveViewID>LFViewPreview)!=(ActiveViewParameters->Mode>LFViewPreview))
 	{
-		CookFiles();
+		OnCookFiles();
 	}
 	else
 	{
@@ -1453,10 +1247,45 @@ void CMainFrame::OnUpdateViewOptions()
 
 void CMainFrame::OnUpdateSortOptions()
 {
-	CookFiles();
+	OnCookFiles();
 
 	ActiveViewID = ActiveViewParameters->Mode;
 	UpdateRibbon();
+}
+
+LRESULT CMainFrame::OnCookFiles(WPARAM wParam, LPARAM /*lParam*/)
+{
+	LFSearchResult* Victim = CookedFiles;
+
+	LFViewParameters* vp = &theApp.m_Views[RawFiles->m_Context];
+	LFAttributeDescriptor* attr = theApp.m_Attributes[vp->SortBy];
+
+	if (((!IsClipboard) && (vp->AutoDirs) && (!ActiveFilter->Options.IsSubfolder)) || (vp->Mode>LFViewPreview))
+	{
+		CookedFiles = LFGroupSearchResult(RawFiles, vp->SortBy, vp->Descending==TRUE, attr->IconID,
+			(vp->Mode>LFViewPreview) || ((attr->Type!=LFTypeTime) && (vp->SortBy!=LFAttrFileName) && (vp->SortBy!=LFAttrStoreID) && (vp->SortBy!=LFAttrFileID)),
+			ActiveFilter);
+	}
+	else
+	{
+		LFSortSearchResult(RawFiles, vp->SortBy, vp->Descending==TRUE);
+		CookedFiles = RawFiles;
+	}
+
+	UpdateSearchResult(FALSE, (INT)wParam);
+	UpdateHistory();
+
+	if ((Victim) && (Victim!=RawFiles))
+		LFFreeSearchResult(Victim);
+
+	if (!LFIsLicensed())
+		if ((++theApp.m_NagCounter)>25)
+		{
+			theApp.m_NagCounter = 0;
+			MessageBox(_T("You are using an unregistered copy of liquidFOLDERS. liquidFOLDERS is shareware -\nif you decide to use it regulary, you are required to purchase a license from our website!"), _T("Unregistered copy"));
+		}
+
+	return CookedFiles->m_LastError;
 }
 
 

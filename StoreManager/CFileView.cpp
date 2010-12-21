@@ -138,7 +138,7 @@ void CFileView::UpdateViewOptions(INT Context, BOOL Force)
 
 void CFileView::UpdateSearchResult(LFSearchResult* Result, INT FocusItem)
 {
-	void* victim = m_ItemData;
+	void* Victim = m_ItemData;
 
 	if (Result)
 	{
@@ -151,10 +151,10 @@ void CFileView::UpdateSearchResult(LFSearchResult* Result, INT FocusItem)
 			FVItemData* d = GetItemData(a);
 			d->SysIconIndex = -1;
 
-			if ((victim) && (p_Result))
+			if ((Victim) && (p_Result))
 				if (a<p_Result->m_ItemCount)
 				{
-					BYTE* v = (BYTE*)victim;
+					BYTE* v = (BYTE*)Victim;
 					v += ((BYTE*)d)-((BYTE*)m_ItemData);
 
 					d->Selected = ((FVItemData*)v)->Selected;
@@ -167,9 +167,7 @@ void CFileView::UpdateSearchResult(LFSearchResult* Result, INT FocusItem)
 		p_ViewParameters = &theApp.m_Views[m_Context];
 		m_ViewParameters.SortBy = p_ViewParameters->SortBy;
 
-		if (FocusItem>=(INT)Result->m_ItemCount)
-			FocusItem = (INT)Result->m_ItemCount-1;
-		m_FocusItem = FocusItem;
+		m_FocusItem = min(FocusItem, (INT)Result->m_ItemCount-1);
 		m_HotItem = -1;
 		m_HideFileExt = theApp.HideFileExt();
 	}
@@ -186,7 +184,7 @@ void CFileView::UpdateSearchResult(LFSearchResult* Result, INT FocusItem)
 	SetSearchResult(Result);
 
 	p_Result = Result;
-	free(victim);
+	free(Victim);
 
 	if (p_Result)
 	{
@@ -388,20 +386,19 @@ CMenu* CFileView::GetItemContextMenu(INT idx)
 		CString tmpStr;
 
 		if (((item->Type & LFTypeMask)==LFTypeFile) || (((item->Type & LFTypeMask)==LFTypeVirtual) && (item->FirstAggregate!=-1) && (item->LastAggregate!=-1)))
-		{
 			if (m_Context==LFContextClipboard)
 			{
 				ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_REMOVE));
 				pPopup->InsertMenu(0, MF_STRING | MF_BYPOSITION, IDM_FILE_REMOVE, tmpStr);
+					pPopup->InsertMenu(0, MF_SEPARATOR | MF_BYPOSITION);
 			}
 			else
-			{
-				ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_REMEMBER));
-				pPopup->InsertMenu(0, MF_STRING | MF_BYPOSITION, IDM_FILE_REMEMBER, tmpStr);
-			}
-
-			pPopup->InsertMenu(0, MF_SEPARATOR | MF_BYPOSITION);
-		}
+				if (m_Context!=LFContextTrash)
+				{
+					ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_REMEMBER));
+					pPopup->InsertMenu(0, MF_STRING | MF_BYPOSITION, IDM_FILE_REMEMBER, tmpStr);
+					pPopup->InsertMenu(0, MF_SEPARATOR | MF_BYPOSITION);
+				}
 
 		if ((item->Type & LFTypeMask)==LFTypeFile)
 		{

@@ -196,7 +196,7 @@ void LFSearchResult::RemoveItemDescriptor(unsigned int idx, bool updatecount)
 void LFSearchResult::RemoveFlaggedItemDescriptors(bool updatecount)
 {
 	unsigned int idx = 0;
-	
+
 	while (idx<m_ItemCount)
 	{
 		if (m_Items[idx]->DeleteFlag)

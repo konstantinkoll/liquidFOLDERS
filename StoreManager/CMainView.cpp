@@ -4,13 +4,17 @@
 
 #include "stdafx.h"
 #include "CMainView.h"
+#include "CCalendarView.h"
 #include "CGlobeView.h"
 #include "CListView.h"
 #include "CTagcloudView.h"
+#include "CTimelineView.h"
 
 
 // CMainView
 //
+
+#define FileViewID     3
 
 CMainView::CMainView()
 {
@@ -69,37 +73,37 @@ BOOL CMainView::CreateFileView(UINT ViewID, INT FocusItem)
 		if ((m_ViewID<LFViewLargeIcons) || (m_ViewID>LFViewPreview))
 		{
 			pNewView = new CListView();
-			((CListView*)pNewView)->Create(this, 3, p_CookedFiles, FocusItem);
+			((CListView*)pNewView)->Create(this, FileViewID, p_CookedFiles, FocusItem);
+		}
+		break;
+	case LFViewCalendar:
+		if (m_ViewID!=LFViewCalendar)
+		{
+			pNewView = new CCalendarView();
+			((CCalendarView*)pNewView)->Create(this, FileViewID, p_CookedFiles, FocusItem);
 		}
 		break;
 	case LFViewGlobe:
 		if (m_ViewID!=LFViewGlobe)
 		{
 			pNewView = new CGlobeView();
-			((CGlobeView*)pNewView)->Create(this, 3, p_CookedFiles, FocusItem);
+			((CGlobeView*)pNewView)->Create(this, FileViewID, p_CookedFiles, FocusItem);
 		}
 		break;
 	case LFViewTagcloud:
 		if (m_ViewID!=LFViewTagcloud)
 		{
 			pNewView = new CTagcloudView();
-			((CTagcloudView*)pNewView)->Create(this, 3, p_CookedFiles, FocusItem);
-		}
-		break;
-	/*case LFViewCalendarYear:
-		if (m_ViewID!=LFViewCalendarYear)
-		{
-			pNewView = new CCalendarYearView();
-			((CCalendarYearView*)pNewView)->Create(this, p_CookedFiles, FocusItem);
+			((CTagcloudView*)pNewView)->Create(this, FileViewID, p_CookedFiles, FocusItem);
 		}
 		break;
 	case LFViewTimeline:
 		if (m_ViewID!=LFViewTimeline)
 		{
 			pNewView = new CTimelineView();
-			((CTimelineView*)pNewView)->Create(this, p_CookedFiles, FocusItem);
+			((CTimelineView*)pNewView)->Create(this, FileViewID, p_CookedFiles, FocusItem);
 		}
-		break;*/
+		break;
 	}
 
 	m_ViewID = ViewID;
@@ -197,6 +201,12 @@ void CMainView::UpdateSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pC
 	}
 
 	OnUpdateSelection();
+}
+
+void CMainView::ShowCaptionBar(LPCWSTR Icon, UINT res, UINT Command)
+{
+	// TODO
+	((CMainFrame*)GetParent())->ShowCaptionBar(Icon, res, Command);
 }
 
 void CMainView::AdjustLayout()
@@ -312,6 +322,66 @@ LFTransactionList* CMainView::BuildTransactionList(BOOL All)
 	return tl;
 }
 
+void CMainView::RemoveTransactedItems(LFTransactionList* tl)
+{
+	ASSERT(p_RawFiles);
+
+	for (UINT a=0; a<tl->m_ItemCount; a++)
+		if (tl->m_Items[a].LastError==LFOk)
+			tl->m_Items[a].Item->DeleteFlag = true;
+
+	LFRemoveFlaggedItemDescriptors(p_RawFiles);
+	// TODO
+	//UpdateHistory();
+	if (p_wndFileView)
+		p_wndFileView->SendMessage(WM_SELECTNONE);
+	GetOwner()->SendMessage(WM_COOKFILES, GetFocusItem());
+}
+
+BOOL CMainView::UpdateTrashFlag(BOOL Trash, BOOL All)
+{
+	LFVariantData value1;
+	value1.Attr = LFAttrFlags;
+	LFGetNullVariantData(&value1);
+
+	value1.IsNull = false;
+	value1.Flags.Flags = Trash ? LFFlagTrash : 0;
+	value1.Flags.Mask = LFFlagTrash;
+
+	LFVariantData value2;
+	value2.Attr = LFAttrDeleteTime;
+	LFGetNullVariantData(&value2);
+	value2.IsNull = false;
+
+	if (Trash)
+		GetSystemTimeAsFileTime(&value2.Time);
+
+	LFTransactionList* tl = BuildTransactionList(All);
+	LFTransactionUpdate(tl, NULL, &value1, &value2);
+	RemoveTransactedItems(tl);
+
+	if (tl->m_LastError>LFCancel)
+		ShowCaptionBar(IDI_ERROR, tl->m_LastError);
+
+	BOOL changes = tl->m_Changes;
+	LFFreeTransactionList(tl);
+	return changes;
+}
+
+BOOL CMainView::DeleteFiles(BOOL All)
+{
+	LFTransactionList* tl = BuildTransactionList(All);
+	LFTransactionDelete(tl);
+	RemoveTransactedItems(tl);
+
+	if (tl->m_LastError>LFCancel)
+		ShowCaptionBar(IDI_ERROR, tl->m_LastError);
+
+	BOOL changes = tl->m_Changes;
+	LFFreeTransactionList(tl);
+	return changes;
+}
+
 
 BEGIN_MESSAGE_MAP(CMainView, CWnd)
 	ON_WM_CREATE()
@@ -334,9 +404,13 @@ BEGIN_MESSAGE_MAP(CMainView, CWnd)
 	ON_COMMAND(IDM_HOME_PROPERTIES, OnHomeProperties)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_HOME_HIDEEMPTYDOMAINS, IDM_HOME_PROPERTIES, OnUpdateHomeCommands)
 
+	ON_COMMAND(IDM_HOUSEKEEPING_REGISTER, OnHousekeepingRegister)
+	ON_COMMAND(IDM_HOUSEKEEPING_SEND, OnHousekeepingSend)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_HOUSEKEEPING_REGISTER, IDM_HOUSEKEEPING_SEND, OnUpdateHousekeepingCommands)
 
-	ON_UPDATE_COMMAND_UI_RANGE(IDM_TRASH_EMPTY, IDM_TRASH_RESTORESELECTED, OnUpdateTrashCommands)
+	ON_COMMAND(IDM_TRASH_EMPTY, OnTrashEmpty)
+	ON_COMMAND(IDM_TRASH_RESTOREALL, OnTrashRestoreAll)
+	ON_UPDATE_COMMAND_UI_RANGE(IDM_TRASH_EMPTY, IDM_TRASH_RESTOREALL, OnUpdateTrashCommands)
 
 	ON_UPDATE_COMMAND_UI(IDM_ITEM_OPEN, OnUpdateItemCommands)
 
@@ -354,6 +428,10 @@ BEGIN_MESSAGE_MAP(CMainView, CWnd)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_STORE_MAKEDEFAULT, IDM_STORE_PROPERTIES, OnUpdateStoreCommands)
 
 	ON_COMMAND(IDM_FILE_OPENWITH, OnFileOpenWith)
+	ON_COMMAND(IDM_FILE_DELETE, OnFileDelete)
+	ON_COMMAND(IDM_FILE_SEND, OnFileSend)
+	ON_COMMAND(IDM_FILE_RESTORE, OnFileRestore)
+	ON_UPDATE_COMMAND_UI_RANGE(IDM_FILE_OPENWITH, IDM_FILE_RESTORE, OnUpdateFileCommands)
 END_MESSAGE_MAP()
 
 INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -374,20 +452,20 @@ INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndTaskbar.AddButton(IDM_HOUSEKEEPING_SEND, 22, TRUE);
 	m_wndTaskbar.AddButton(IDM_TRASH_EMPTY, 4, TRUE);
 	m_wndTaskbar.AddButton(IDM_TRASH_RESTOREALL, 5);
-	m_wndTaskbar.AddButton(IDM_TRASH_RESTORESELECTED, 6);
-	m_wndTaskbar.AddButton(IDM_ITEM_OPEN, 7);
-	m_wndTaskbar.AddButton(ID_GLOBE_GOOGLEEARTH, 8);
-	m_wndTaskbar.AddButton(IDM_DRIVE_PROPERTIES, 9);
-	m_wndTaskbar.AddButton(IDM_STORE_DELETE, 10);
-	m_wndTaskbar.AddButton(IDM_STORE_RENAME, 11);
-	m_wndTaskbar.AddButton(IDM_STORE_PROPERTIES, 12);
-	m_wndTaskbar.AddButton(IDM_STORE_MAKEDEFAULT, 13);
+	m_wndTaskbar.AddButton(IDM_ITEM_OPEN, 6);
+	m_wndTaskbar.AddButton(ID_GLOBE_GOOGLEEARTH, 7);
+	m_wndTaskbar.AddButton(IDM_DRIVE_PROPERTIES, 8);
+	m_wndTaskbar.AddButton(IDM_STORE_DELETE, 9);
+	m_wndTaskbar.AddButton(IDM_STORE_RENAME, 10);
+	m_wndTaskbar.AddButton(IDM_STORE_PROPERTIES, 11);
+	m_wndTaskbar.AddButton(IDM_STORE_MAKEDEFAULT, 12);
 	m_wndTaskbar.AddButton(IDM_STORE_IMPORTFOLDER, 2);
-	m_wndTaskbar.AddButton(IDM_FILE_REMEMBER, 14);
-	m_wndTaskbar.AddButton(IDM_FILE_REMOVE, 15);
-	m_wndTaskbar.AddButton(IDM_FILE_DELETE, 16);
-	m_wndTaskbar.AddButton(IDM_FILE_RENAME, 17);
-	m_wndTaskbar.AddButton(IDM_FILE_SEND, 18);
+	m_wndTaskbar.AddButton(IDM_FILE_REMEMBER, 13);
+	m_wndTaskbar.AddButton(IDM_FILE_REMOVE, 14);
+	m_wndTaskbar.AddButton(IDM_FILE_DELETE, 15);
+	m_wndTaskbar.AddButton(IDM_FILE_RENAME, 16);
+	m_wndTaskbar.AddButton(IDM_FILE_SEND, 17);
+	m_wndTaskbar.AddButton(IDM_FILE_RESTORE, 18);
 	m_wndTaskbar.AddButton(ID_APP_NEWFILEDROP, 19, TRUE);
 
 	m_wndTaskbar.AddButton(ID_APP_PURCHASE, 20, TRUE, TRUE);
@@ -596,6 +674,16 @@ void CMainView::OnUpdateHomeCommands(CCmdUI* pCmdUI)
 
 // Housekeeping
 
+void CMainView::OnHousekeepingRegister()
+{
+	MessageBox(_T("Coming soon!"));
+}
+
+void CMainView::OnHousekeepingSend()
+{
+	MessageBox(_T("Coming soon!"));
+}
+
 void CMainView::OnUpdateHousekeepingCommands(CCmdUI* pCmdUI)
 {
 	BOOL b = (p_CookedFiles) && (m_Context==LFContextHousekeeping);
@@ -609,14 +697,20 @@ void CMainView::OnUpdateHousekeepingCommands(CCmdUI* pCmdUI)
 
 // Trash
 
+void CMainView::OnTrashEmpty()
+{
+	if (DeleteFiles(TRUE))
+		theApp.PlayTrashSound();
+}
+
+void CMainView::OnTrashRestoreAll()
+{
+	UpdateTrashFlag(FALSE, TRUE);
+}
+
 void CMainView::OnUpdateTrashCommands(CCmdUI* pCmdUI)
 {
-	BOOL b = (p_CookedFiles) && (m_Context==LFContextTrash);
-	
-	if (pCmdUI->m_nID==IDM_TRASH_RESTORESELECTED)
-		b &= FALSE; //TODO
-
-	pCmdUI->Enable(b);
+	pCmdUI->Enable(((m_Context==LFContextTrash) && (p_CookedFiles)) ? p_CookedFiles->m_FileCount : FALSE);
 }
 
 
@@ -802,4 +896,64 @@ void CMainView::OnFileOpenWith()
 			LFErrorBox(res, GetSafeHwnd());
 		}
 	}
+}
+
+void CMainView::OnFileDelete()
+{
+	if (p_CookedFiles)
+		if (p_CookedFiles->m_Context==LFContextTrash)
+		{
+			DeleteFiles();
+		}
+		else
+		{
+			UpdateTrashFlag(TRUE);
+		}
+}
+
+void CMainView::OnFileSend()
+{
+	MessageBox(_T("Coming soon!"));
+}
+
+void CMainView::OnFileRestore()
+{
+	UpdateTrashFlag(FALSE);
+}
+
+void CMainView::OnUpdateFileCommands(CCmdUI* pCmdUI)
+{
+	BOOL b = FALSE;
+
+	INT idx = GetSelectedItem();
+	LFItemDescriptor* item = (idx==-1) ? NULL : p_CookedFiles->m_Items[idx];
+
+	switch (pCmdUI->m_nID)
+	{
+	case IDM_FILE_OPENWITH:
+		if (item)
+			b = ((item->Type & LFTypeMask)==LFTypeFile);
+		break;
+	case IDM_FILE_RENAME:
+		if ((item) && (m_Context!=LFContextTrash))
+			b = ((item->Type & LFTypeMask)==LFTypeFile);
+		break;
+	case IDM_FILE_REMEMBER:
+		b = m_FilesSelected && (m_Context!=LFContextClipboard) && (m_Context!=LFContextTrash);
+		break;
+	case IDM_FILE_REMOVE:
+		b = m_FilesSelected && (m_Context==LFContextClipboard);
+		break;
+	case IDM_FILE_DELETE:
+		b = m_FilesSelected;
+		break;
+	case IDM_FILE_SEND:
+		b = m_FilesSelected && (m_Context!=LFContextTrash);
+		break;
+	case IDM_FILE_RESTORE:
+		b = m_FilesSelected && (m_Context==LFContextTrash);
+		break;
+	}
+
+	pCmdUI->Enable(b);
 }

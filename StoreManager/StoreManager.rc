@@ -69,8 +69,6 @@ IDB_RIBBONHOME_16       BITMAP                  "res\\Ribbon_Home_16.bmp"
 IDB_RIBBONHOME_32       BITMAP                  "res\\Ribbon_Home_32.bmp"
 IDB_RIBBONVIEW_16       BITMAP                  "res\\Ribbon_View_16.bmp"
 IDB_RIBBONVIEW_32       BITMAP                  "res\\Ribbon_View_32.bmp"
-IDB_RIBBONCALENDAR_32   BITMAP                  "res\\Ribbon_Calendar_32.bmp"
-IDB_RIBBONCALENDAR_16   BITMAP                  "res\\Ribbon_Calendar_16.bmp"
 IDB_RIBBONGLOBE_32      BITMAP                  "res\\Ribbon_Globe_32.bmp"
 IDB_RIBBONGLOBE_16      BITMAP                  "res\\Ribbon_Globe_16.bmp"
 IDB_RIBBONTAGCLOUD_32   BITMAP                  "res\\Ribbon_Tagcloud_32.bmp"
@@ -357,6 +355,8 @@ BEGIN
         MENUITEM SEPARATOR
         MENUITEM "&Delete",                     IDM_FILE_DELETE
         MENUITEM "&Rename",                     IDM_FILE_RENAME
+        MENUITEM SEPARATOR
+        MENUITEM "&Send",                       IDM_FILE_SEND
     END
 END
 
@@ -366,7 +366,7 @@ BEGIN
     BEGIN
         MENUITEM SEPARATOR
         MENUITEM "&Delete",                     IDM_FILE_DELETE
-        MENUITEM "Re&store",                    IDM_TRASH_RESTORESELECTED
+        MENUITEM "Re&store",                    IDM_FILE_RESTORE
     END
 END
 
@@ -644,7 +644,6 @@ BEGIN
     ID_NAV_FORWARDONE       "Returns to the next location.\nForward"
     ID_NAV_LAST             "Returns to the last location.\nLast"
     ID_NAV_RELOAD           "Reloads the current view.\nReload"
-    ID_NAV_SHOWHISTORY      "Shows the history pane.\nHistory pane"
     ID_NAV_STORES           "Displays all stores.\nStores"
     ID_NAV_HOME             "Opens the default store.\nDefault store"
     ID_NAV_GOTOHISTORY      "Returns to the selected location.\nGoto history"
@@ -706,13 +705,13 @@ BEGIN
     IDM_FILE_DELETE         "Deletes the selected files.\nDelete"
     IDM_FILE_RENAME         "Renames the selected file.\nRename"
     IDM_FILE_SEND           "Sends the selected files by mail.\nSend"
+    IDM_FILE_RESTORE        "Restores the selected files.\nRestore"
 END
 
 STRINGTABLE 
 BEGIN
     IDM_TRASH_EMPTY         "Permanently deletes all files from the trash.\nEmpty trash"
     IDM_TRASH_RESTOREALL    "Restores all files from the trash.\nRestore all"
-    IDM_TRASH_RESTORESELECTED "Restores the selected files.\nRestore"
 END
 
 STRINGTABLE 

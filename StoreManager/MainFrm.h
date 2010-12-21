@@ -17,9 +17,8 @@
 
 #define RibbonCategory_Home                 0
 #define RibbonCategory_View                 1
-#define RibbonCategory_View_Calendar        2
-#define RibbonCategory_View_Globe           3
-#define RibbonCategory_View_Tagcloud        4
+#define RibbonCategory_View_Globe           2
+#define RibbonCategory_View_Tagcloud        3
 
 #define RibbonDefaultCategory               RibbonCategory_View
 
@@ -41,8 +40,6 @@ class CMainFrame : public CFrameWndEx
 public:
 	CMainFrame(char* RootStore=NULL, BOOL _IsClipboard=FALSE);
 	virtual ~CMainFrame();
-	afx_msg void OnUpdateViewOptions();
-	afx_msg void OnUpdateSortOptions();
 
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
 	virtual BOOL OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo);
@@ -50,9 +47,8 @@ public:
 	BOOL AddClipItem(LFItemDescriptor* i);
 	BOOL RenameSingleItem(UINT n, CString Name);
 	BOOL UpdateSelectedItems(LFVariantData* value1, LFVariantData* value2=NULL, LFVariantData* value3=NULL);
-	BOOL UpdateTrashFlag(BOOL Trash, BOOL All=FALSE);
-	BOOL DeleteFiles(BOOL All=FALSE);
 	void OnUpdateSelection();
+	void ShowCaptionBar(LPCWSTR Icon, UINT res, INT Command=0);
 
 	BOOL IsClipboard;
 	INT ActiveContextID;
@@ -101,11 +97,7 @@ protected:
 	afx_msg void OnClipRememberNew();
 	afx_msg void OnItemsOpenWith();
 	afx_msg void OnItemsDelete();
-	afx_msg void OnItemsRename();
-	afx_msg void OnEmptyTrash();
-	afx_msg void OnRestoreSelectedFiles();
-	afx_msg void OnRestoreAllFiles();
-	afx_msg void OnUpdateTrashCommands(CCmdUI* pCmdUI);*/
+	afx_msg void OnItemsRename();*/
 
 	afx_msg void OnChangeChildView(UINT nID);
 	afx_msg void OnNavigateFirst();
@@ -120,6 +112,10 @@ protected:
 
 	afx_msg void OnItemOpen();
 
+	afx_msg void OnUpdateViewOptions();
+	afx_msg void OnUpdateSortOptions();
+	afx_msg LRESULT OnCookFiles(WPARAM wParam=0, LPARAM lParam=NULL);
+
 	afx_msg LRESULT OnDrivesChanged(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnStoresChanged(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnLookChanged(WPARAM wParam, LPARAM lParam);
@@ -130,10 +126,8 @@ private:
 	void Remember(CMainFrame* clip);
 	void AddTransactionItem(LFTransactionList* tl, LFItemDescriptor* i, UINT UserData);
 	void ShowCaptionBar(LPCWSTR Icon, LPCWSTR Message, INT Command=0);
-	void ShowCaptionBar(LPCWSTR Icon, UINT res, INT Command=0);
 	void InitializeRibbon();
 	void UpdateRibbon();
 	void NavigateTo(LFFilter* f, UINT NavMode=NAVMODE_NORMAL, INT FocusItem=0, INT FirstAggregate=-1, INT LastAggregate=-1);
-	void CookFiles(INT FocusItem=0);
 	void UpdateHistory();
 };

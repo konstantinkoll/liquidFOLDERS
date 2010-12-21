@@ -25,18 +25,22 @@ public:
 	INT GetSelectedItem();
 	INT GetNextSelectedItem(INT n);
 
-	// TODO
-	CFileView* p_wndFileView;
-
 protected:
 	CTaskbar m_wndTaskbar;
 	CExplorerHeader m_wndExplorerHeader;
+	CFileView* p_wndFileView;
 	LFSearchResult* p_RawFiles;
 	LFSearchResult* p_CookedFiles;
 	INT m_Context;
 	INT m_ViewID;
 	BOOL m_ShowHeader;
 	BOOL m_FilesSelected;
+
+	LFTransactionList* BuildTransactionList(BOOL All=FALSE);
+	void RemoveTransactedItems(LFTransactionList* tl);
+	BOOL UpdateTrashFlag(BOOL Trash, BOOL All=FALSE);
+	BOOL DeleteFiles(BOOL All=FALSE);
+	void ShowCaptionBar(LPCWSTR Icon, UINT res, UINT Command=0);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
@@ -58,8 +62,12 @@ protected:
 	afx_msg void OnHomeProperties();
 	afx_msg void OnUpdateHomeCommands(CCmdUI* pCmdUI);
 
+	afx_msg void OnHousekeepingRegister();
+	afx_msg void OnHousekeepingSend();
 	afx_msg void OnUpdateHousekeepingCommands(CCmdUI* pCmdUI);
 
+	afx_msg void OnTrashEmpty();
+	afx_msg void OnTrashRestoreAll();
 	afx_msg void OnUpdateTrashCommands(CCmdUI* pCmdUI);
 
 	afx_msg void OnUpdateItemCommands(CCmdUI* pCmdUI);
@@ -79,6 +87,10 @@ protected:
 	afx_msg void OnUpdateStoreCommands(CCmdUI* pCmdUI);
 
 	afx_msg void OnFileOpenWith();
+	afx_msg void OnFileDelete();
+	afx_msg void OnFileSend();
+	afx_msg void OnFileRestore();
+	afx_msg void OnUpdateFileCommands(CCmdUI* pCmdUI);
 	DECLARE_MESSAGE_MAP()
 
 private:
@@ -86,5 +98,4 @@ private:
 	void AdjustLayout();
 	void ExecuteContextMenu(CHAR Drive, LPCSTR verb);
 	void AddTransactionItem(LFTransactionList* tl, LFItemDescriptor* item, UINT UserData);
-	LFTransactionList* BuildTransactionList(BOOL All=FALSE);
 };

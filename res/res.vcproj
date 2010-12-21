@@ -496,22 +496,6 @@
 				>
 			</File>
 			<File
-				RelativePath="Ribbon\Calendar_GoToDate_16.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\Calendar_GoToDate_32.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\Calendar_Search_16.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\Calendar_Search_32.png"
-				>
-			</File>
-			<File
 				RelativePath="Ribbon\CalendarBack_16.png"
 				>
 			</File>
@@ -525,6 +509,14 @@
 			</File>
 			<File
 				RelativePath="Ribbon\CalendarForward_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\CalendarGotoDate_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\CalendarGotoDate_32.png"
 				>
 			</File>
 			<File

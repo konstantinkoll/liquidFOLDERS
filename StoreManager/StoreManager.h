@@ -48,7 +48,7 @@ public:
 
 	BOOL SanitizeSortBy(LFViewParameters* vp, INT context);
 	BOOL SanitizeViewMode(LFViewParameters* vp, INT context);
-	void Broadcast(INT context, UINT cmdMsg, WPARAM wParam=NULL, LPARAM lParam=NULL);
+	void Broadcast(INT context, UINT cmdMsg);
 	void UpdateSortOptions(INT context);
 	void UpdateViewOptions(INT context=-1);
 	void Reload(INT context);

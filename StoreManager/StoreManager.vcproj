@@ -374,6 +374,10 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath=".\CCalendarView.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\CCaptionBar.cpp"
 				>
 			</File>
@@ -423,6 +427,10 @@
 			</File>
 			<File
 				RelativePath=".\CTextures.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\CTimelineView.cpp"
 				>
 			</File>
 			<File
@@ -496,6 +504,10 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
+				RelativePath=".\CCalendarView.h"
+				>
+			</File>
+			<File
 				RelativePath=".\CCaptionBar.h"
 				>
 			</File>
@@ -545,6 +557,10 @@
 			</File>
 			<File
 				RelativePath=".\CTextures.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CTimelineView.h"
 				>
 			</File>
 			<File
@@ -679,14 +695,6 @@
 			</File>
 			<File
 				RelativePath=".\res\Panel_16.bmp"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Ribbon_Calendar_16.bmp"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Ribbon_Calendar_32.bmp"
 				>
 			</File>
 			<File
