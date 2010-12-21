@@ -173,8 +173,8 @@ BEGIN
     POPUP "POPUP"
     BEGIN
         MENUITEM "&Neuen Store anlegen...",     IDM_STORES_CREATENEW
-        MENUITEM "&Wartungsarbeiten durchführen", IDM_STORES_MAINTAINALL
         MENUITEM SEPARATOR
+        MENUITEM "&Wartungsarbeiten durchführen", IDM_STORES_MAINTAINALL
         MENUITEM "&Registry-Einstellungen sichern", IDM_STORES_BACKUP
     END
 END
@@ -754,8 +754,8 @@ BEGIN
     POPUP "POPUP"
     BEGIN
         MENUITEM "Create &new store...",        IDM_STORES_CREATENEW
-        MENUITEM "Run &maintenance",            IDM_STORES_MAINTAINALL
         MENUITEM SEPARATOR
+        MENUITEM "Run &maintenance",            IDM_STORES_MAINTAINALL
         MENUITEM "Backup &registry settings",   IDM_STORES_BACKUP
     END
 END
@@ -1327,8 +1327,8 @@ BEGIN
     POPUP "POPUP"
     BEGIN
         MENUITEM "Crear &nuevo store...",       IDM_STORES_CREATENEW
-        MENUITEM "Ejecutar &mantenimiento",     IDM_STORES_MAINTAINALL
         MENUITEM SEPARATOR
+        MENUITEM "Ejecutar &mantenimiento",     IDM_STORES_MAINTAINALL
         MENUITEM "Backup &registry settings",   IDM_STORES_BACKUP
     END
 END
@@ -1908,8 +1908,8 @@ BEGIN
     POPUP "POPUP"
     BEGIN
         MENUITEM "Créez un store &nouveau...",  IDM_STORES_CREATENEW
-        MENUITEM "Exécuter des &travails d'entretien", IDM_STORES_MAINTAINALL
         MENUITEM SEPARATOR
+        MENUITEM "Exécuter des &travails d'entretien", IDM_STORES_MAINTAINALL
         MENUITEM "Backup &registry settings",   IDM_STORES_BACKUP
     END
 END

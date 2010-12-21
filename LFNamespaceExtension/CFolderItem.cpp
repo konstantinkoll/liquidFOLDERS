@@ -533,8 +533,8 @@ void CFolderItem::GetMenuItems(CGetMenuitemsEventArgs& e)
 			item->SetEnabled(!theApp.m_PathRunCmd.IsEmpty());
 			theApp.SetCoreMenuIcon(item, IDI_STORE_Internal);
 
-			AddItem(e.menu, IDS_MENU_MaintainAll, _T(VERB_MAINTAINALL))->SetEnabled(!theApp.m_PathRunCmd.IsEmpty());
 			AddSeparator(e.menu);
+			AddItem(e.menu, IDS_MENU_MaintainAll, _T(VERB_MAINTAINALL))->SetEnabled(!theApp.m_PathRunCmd.IsEmpty());
 			AddItem(e.menu, IDS_MENU_Backup, _T(VERB_BACKUP))->SetEnabled(!theApp.m_PathRunCmd.IsEmpty());
 		}
 
