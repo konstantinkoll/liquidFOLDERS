@@ -87,6 +87,7 @@ protected:
 	afx_msg void OnUpdateStoreCommands(CCmdUI* pCmdUI);
 
 	afx_msg void OnFileOpenWith();
+	afx_msg void OnFileRemove();
 	afx_msg void OnFileDelete();
 	afx_msg void OnFileSend();
 	afx_msg void OnFileRestore();

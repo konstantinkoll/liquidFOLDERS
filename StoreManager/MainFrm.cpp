@@ -487,30 +487,7 @@ BOOL CMainFrame::AddClipItem(LFItemDescriptor* i)
 	return TRUE;
 }
 
-/*void CMainFrame::OnClipRemove()
-{
-	ASSERT(IsClipboard);
-
-	if (RawFiles)
-	{
-		INT idx = m_wndMainView.GetNextSelectedItem(-1);
-		while (idx!=-1)
-		{
-			INT pos = CookedFiles->m_Items[idx]->Position;
-			if (pos!=-1)
-				RawFiles->m_Items[pos]->DeleteFlag = true;
-
-			idx = m_wndMainView.GetNextSelectedItem(idx);
-		}
-
-		LFRemoveFlaggedItemDescriptors(RawFiles);
-		UpdateHistory();
-		SendMessage(WM_COMMAND, ID_VIEW_SELECTNONE);
-		CookFiles(m_wndMainView.GetFocusItem());
-	}
-}
-
-void CMainFrame::Remember(CMainFrame* clip)
+/*void CMainFrame::Remember(CMainFrame* clip)
 {
 	ASSERT(!IsClipboard);
 	ASSERT(clip);
@@ -543,11 +520,6 @@ void CMainFrame::Remember(CMainFrame* clip)
 void CMainFrame::OnClipRememberLast()
 {
 	Remember(theApp.GetClipboard(FALSE));
-}
-
-void CMainFrame::OnClipRememberNew()
-{
-	Remember(theApp.GetClipboard(TRUE));
 }
 
 void CMainFrame::OnItemsRename()

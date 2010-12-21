@@ -324,7 +324,8 @@ LFTransactionList* CMainView::BuildTransactionList(BOOL All)
 
 void CMainView::RemoveTransactedItems(LFTransactionList* tl)
 {
-	ASSERT(p_RawFiles);
+	if (!p_RawFiles)
+		return;
 
 	for (UINT a=0; a<tl->m_ItemCount; a++)
 		if (tl->m_Items[a].LastError==LFOk)
@@ -428,6 +429,7 @@ BEGIN_MESSAGE_MAP(CMainView, CWnd)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_STORE_MAKEDEFAULT, IDM_STORE_PROPERTIES, OnUpdateStoreCommands)
 
 	ON_COMMAND(IDM_FILE_OPENWITH, OnFileOpenWith)
+	ON_COMMAND(IDM_FILE_REMOVE, OnFileRemove)
 	ON_COMMAND(IDM_FILE_DELETE, OnFileDelete)
 	ON_COMMAND(IDM_FILE_SEND, OnFileSend)
 	ON_COMMAND(IDM_FILE_RESTORE, OnFileRestore)
@@ -898,6 +900,13 @@ void CMainView::OnFileOpenWith()
 	}
 }
 
+void CMainView::OnFileRemove()
+{
+	LFTransactionList* tl = BuildTransactionList();
+	RemoveTransactedItems(tl);
+	LFFreeTransactionList(tl);
+}
+
 void CMainView::OnFileDelete()
 {
 	if (p_CookedFiles)
@@ -934,10 +943,6 @@ void CMainView::OnUpdateFileCommands(CCmdUI* pCmdUI)
 		if (item)
 			b = ((item->Type & LFTypeMask)==LFTypeFile);
 		break;
-	case IDM_FILE_RENAME:
-		if ((item) && (m_Context!=LFContextTrash))
-			b = ((item->Type & LFTypeMask)==LFTypeFile);
-		break;
 	case IDM_FILE_REMEMBER:
 		b = m_FilesSelected && (m_Context!=LFContextClipboard) && (m_Context!=LFContextTrash);
 		break;
@@ -946,6 +951,10 @@ void CMainView::OnUpdateFileCommands(CCmdUI* pCmdUI)
 		break;
 	case IDM_FILE_DELETE:
 		b = m_FilesSelected;
+		break;
+	case IDM_FILE_RENAME:
+		if ((item) && (m_Context!=LFContextTrash))
+			b = ((item->Type & LFTypeMask)==LFTypeFile);
 		break;
 	case IDM_FILE_SEND:
 		b = m_FilesSelected && (m_Context!=LFContextTrash);
