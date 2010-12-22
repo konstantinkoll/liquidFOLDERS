@@ -446,12 +446,22 @@ void CFileView::DrawItemBackground(CDC& dc, LPRECT rectItem, INT idx, BOOL Theme
 				State |= 2;
 				theApp.zDrawThemeBackground(hThemeList, dc, LVP_LISTITEM, StateIDs[State], rectItem, rectItem);
 		}
-		else
-			if (GetFocus()==this)
-			{
-				dc.SetBkColor(0xFFFFFF);
-				dc.DrawFocusRect(rectItem);
-			}
+
+		if ((GetFocus()==this) && (m_FocusItem==idx) && (!Selected))
+		{
+			CRect rect(rectItem);
+			rect.bottom--;
+			rect.right--;
+
+			Graphics g(dc);
+			g.SetSmoothingMode(SmoothingModeAntiAlias);
+
+			GraphicsPath path;
+			CreateRoundRectangle(rect, 2, path);
+
+			Pen pen(Color(0xFF, 0x7D, 0xA2, 0xCE));
+			g.DrawPath(&pen, &path);
+		}
 	}
 	else
 	{
