@@ -43,7 +43,7 @@ void ChooseDetailsDlg::DoDataExchange(CDataExchange* pDX)
 
 		for (INT a=0; a<m_ShowAttributes.GetItemCount(); a++)
 			if (m_ShowAttributes.GetCheck(a))
-				p_View->ColumnOrder[cnt++] = m_ShowAttributes.GetItemData(a);
+				p_View->ColumnOrder[cnt++] = (INT)m_ShowAttributes.GetItemData(a);
 
 		for (INT a=0; a<LFAttributeCount; a++)
 			if (!p_View->ColumnWidth[a])

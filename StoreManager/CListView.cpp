@@ -148,8 +148,14 @@ void CListView::AdjustHeader(BOOL bShow)
 			HdItem.mask = HDI_WIDTH;
 			HdItem.cxy = p_ViewParameters->ColumnWidth[a];
 
-			if ((theApp.m_Attributes[a]->Type==LFTypeRating) && (HdItem.cxy))
-				HdItem.cxy = p_ViewParameters->ColumnWidth[a] = RatingBitmapWidth+4*PADDING;
+			if (HdItem.cxy)
+				if (theApp.m_Attributes[a]->Type==LFTypeRating)
+				{
+					HdItem.cxy = p_ViewParameters->ColumnWidth[a] = RatingBitmapWidth+4*PADDING;
+				}
+				else
+					if (HdItem.cxy<32)
+						p_ViewParameters->ColumnWidth[a] = HdItem.cxy = 32;
 
 			m_wndHeader.SetItem(a, &HdItem);
 		}
@@ -595,7 +601,7 @@ INT CListView::GetMaxColumnWidth(UINT Col, INT Max)
 		{
 			WCHAR tmpStr[256];
 			LFAttributeToString(p_Result->m_Items[a], Col, tmpStr, 256);
-			INT cx = dc->GetTextExtent(tmpStr, wcslen(tmpStr)).cx;
+			INT cx = (INT)dc->GetTextExtent(tmpStr, wcslen(tmpStr)).cx;
 
 			if (cx>Width)
 			{
