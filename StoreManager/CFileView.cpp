@@ -1079,6 +1079,16 @@ void CFileView::OnRButtonUp(UINT nFlags, CPoint point)
 	{
 		if (GetFocus()!=this)
 			SetFocus();
+
+		if (!GetItemData(idx)->Selected)
+		{
+			m_FocusItem = idx;
+
+			for (INT a=0; a<(INT)p_Result->m_ItemCount; a++)
+				SelectItem(a, a==idx, TRUE);
+
+			ChangedItems();
+		}
 	}
 	else
 		if (!(nFlags & MK_CONTROL))
