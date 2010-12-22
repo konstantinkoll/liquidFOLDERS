@@ -1329,7 +1329,7 @@ BEGIN
         MENUITEM "Crear &nuevo store...",       IDM_STORES_CREATENEW
         MENUITEM SEPARATOR
         MENUITEM "Ejecutar &mantenimiento",     IDM_STORES_MAINTAINALL
-        MENUITEM "Backup &registry settings",   IDM_STORES_BACKUP
+        MENUITEM "Respaldo configuración del &registro", IDM_STORES_BACKUP
     END
 END
 
