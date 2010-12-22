@@ -125,9 +125,8 @@ void CGridView::ArrangeHorizontal(GVArrange& gva, BOOL Justify, BOOL ForceBreak,
 
 				category = p_Result->m_Items[a]->CategoryID;
 				LPRECT rect = &m_Categories.m_Items[category].Rect;
-				rect->left = x;
+				rect->left = rect->right = x;
 				rect->top = y;
-				rect->right = rectWindow.right-gva.guttery;
 				rect->bottom = rect->top+2*CategoryPadding+m_FontHeight[1];
 				if (m_Categories.m_Items[category].Hint[0]!=L'\0')
 					rect->bottom += m_FontHeight[0];
@@ -150,7 +149,7 @@ void CGridView::ArrangeHorizontal(GVArrange& gva, BOOL Justify, BOOL ForceBreak,
 		if ((x+l>rectWindow.Width()) || (ForceBreak))
 		{
 			if (MaxWidth)
-				d->Rect.right = rectWindow.right-gva.gutterx;
+				d->Rect.right = rectWindow.Width()-gva.gutterx;
 
 			x = gva.mx;
 			y += h+gva.guttery;
@@ -159,6 +158,11 @@ void CGridView::ArrangeHorizontal(GVArrange& gva, BOOL Justify, BOOL ForceBreak,
 				// TODO
 		}
 	}
+
+	// Adjust categories to calculated width
+	for (UINT a=0; a<m_Categories.m_ItemCount; a++)
+		if (m_Categories.m_Items[a].Rect.right)
+			m_Categories.m_Items[a].Rect.right = max(m_ScrollWidth, rectWindow.Width())-gva.gutterx;
 
 	AdjustScrollbars();
 	Invalidate();
