@@ -90,6 +90,9 @@ void CGridView::ArrangeHorizontal(GVArrange& gva, BOOL Justify, BOOL ForceBreak,
 	if (!rectWindow.Width())
 		return;
 
+	BOOL HasScrollbars = FALSE;
+
+Restart:
 	m_ScrollWidth = m_ScrollHeight = 0;
 
 	INT x = gva.mx;
@@ -99,6 +102,7 @@ void CGridView::ArrangeHorizontal(GVArrange& gva, BOOL Justify, BOOL ForceBreak,
 	ASSERT(l>0);
 	ASSERT(h>0);
 	m_RowHeight = h+gva.guttery;
+#define CheckRestartH if ((x>rectWindow.Width()) && (!HasScrollbars)) { HasScrollbars = TRUE; goto Restart; }
 
 	INT category = -1;
 
@@ -133,7 +137,10 @@ void CGridView::ArrangeHorizontal(GVArrange& gva, BOOL Justify, BOOL ForceBreak,
 
 				y = rect->bottom+4;
 				if (y+h+gva.guttery>m_ScrollHeight)
+				{
 					m_ScrollHeight = y+h+gva.guttery;
+					CheckRestartH;
+				}
 			}
 
 		FVItemData* d = GetItemData(a);
@@ -154,8 +161,10 @@ void CGridView::ArrangeHorizontal(GVArrange& gva, BOOL Justify, BOOL ForceBreak,
 			x = gva.mx;
 			y += h+gva.guttery;
 			if (y>m_ScrollHeight)
+			{
 				m_ScrollHeight = y;
-				// TODO
+				CheckRestartH;
+			}
 		}
 	}
 
@@ -186,6 +195,9 @@ void CGridView::ArrangeVertical(GVArrange& gva)
 	if (m_HasCategories)
 		top += 2*CategoryPadding+m_FontHeight[1]+4;
 
+	BOOL HasScrollbars = FALSE;
+
+Restart:
 	m_ScrollWidth = m_ScrollHeight = 0;
 
 	INT x = gva.mx;
@@ -195,6 +207,7 @@ void CGridView::ArrangeVertical(GVArrange& gva)
 	ASSERT(l>0);
 	ASSERT(h>0);
 	m_RowHeight = h+gva.guttery;
+#define CheckRestartV if ((y>rectWindow.Height()) && (!HasScrollbars)) { HasScrollbars = TRUE; goto Restart; }
 
 	INT category = -1;
 	INT lastleft = x;
@@ -222,7 +235,10 @@ void CGridView::ArrangeVertical(GVArrange& gva)
 				rect->bottom = rect->top+2*CategoryPadding+m_FontHeight[1];
 
 				if (x+l+gva.gutterx>m_ScrollWidth)
+				{
 					m_ScrollWidth = x+l+gva.gutterx;
+					CheckRestartV;
+				}
 			}
 
 		FVItemData* d = GetItemData(a);
@@ -243,8 +259,10 @@ void CGridView::ArrangeVertical(GVArrange& gva)
 			y = top;
 			x += l+gva.gutterx;
 			if (x>m_ScrollWidth)
+			{
 				m_ScrollWidth = x;
-				// TODO
+				CheckRestartV;
+			}
 		}
 	}
 
