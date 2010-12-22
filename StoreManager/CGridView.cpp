@@ -85,10 +85,12 @@ void CGridView::ArrangeHorizontal(GVArrange& gva, BOOL Justify, BOOL ForceBreak,
 
 	CClientDC dc(this);
 
-	CRect rectClient;
-	GetClientRect(rectClient);
-	if (!rectClient.Width())
+	CRect rectWindow;
+	GetWindowRect(rectWindow);
+	if (!rectWindow.Width())
 		return;
+
+	m_ScrollWidth = m_ScrollHeight = 0;
 
 	INT x = gva.mx;
 	INT y = gva.my;
@@ -102,7 +104,7 @@ void CGridView::ArrangeHorizontal(GVArrange& gva, BOOL Justify, BOOL ForceBreak,
 	INT gutter = 0;
 	if ((Justify) && (!ForceBreak))
 	{
-		INT w = (rectClient.Width()-gva.mx-gva.gutterx);
+		INT w = (rectWindow.Width()-gva.mx-gva.gutterx);
 		INT c = w/(l+gva.gutterx);
 		gutter = c>1 ? (w-l-gva.gutterx)/(c-1)-(l+gva.gutterx) : 0;
 	}
@@ -124,7 +126,7 @@ void CGridView::ArrangeHorizontal(GVArrange& gva, BOOL Justify, BOOL ForceBreak,
 				LPRECT rect = &m_Categories.m_Items[category].Rect;
 				rect->left = x;
 				rect->top = y;
-				rect->right = rectClient.right-gva.guttery;
+				rect->right = rectWindow.right-gva.guttery;
 				rect->bottom = rect->top+2*CategoryPadding+m_FontHeight[1];
 				if (m_Categories.m_Items[category].Hint[0]!=L'\0')
 					rect->bottom += m_FontHeight[0];
@@ -139,16 +141,23 @@ void CGridView::ArrangeHorizontal(GVArrange& gva, BOOL Justify, BOOL ForceBreak,
 		d->Rect.bottom = y+h;
 
 		x += l+gva.gutterx;
-		if ((x+l>rectClient.Width()) || (ForceBreak))
+		if (x>m_ScrollWidth)
+			m_ScrollWidth = x;
+
+		if ((x+l>rectWindow.Width()) || (ForceBreak))
 		{
 			if (MaxWidth)
-				d->Rect.right = rectClient.right-gva.gutterx;
+				d->Rect.right = rectWindow.right-gva.gutterx;
 
 			x = gva.mx;
 			y += h+gva.guttery;
+			if (y>m_ScrollHeight)
+				m_ScrollHeight = y;
+				// TODO
 		}
 	}
 
+	AdjustScrollbars();
 	Invalidate();
 }
 
@@ -161,14 +170,16 @@ void CGridView::ArrangeVertical(GVArrange& gva)
 
 	CClientDC dc(this);
 
-	CRect rectClient;
-	GetClientRect(rectClient);
-	if (!rectClient.Width())
+	CRect rectWindow;
+	GetWindowRect(rectWindow);
+	if (!rectWindow.Width())
 		return;
 
 	INT top = gva.my;
 	if (m_HasCategories)
 		top += 2*CategoryPadding+m_FontHeight[1]+4;
+
+	m_ScrollWidth = m_ScrollHeight = 0;
 
 	INT x = gva.mx;
 	INT y = top;
@@ -201,6 +212,9 @@ void CGridView::ArrangeVertical(GVArrange& gva)
 				rect->left = x;
 				rect->top = gva.my;
 				rect->bottom = rect->top+2*CategoryPadding+m_FontHeight[1];
+
+				if (x+l+gva.gutterx>m_ScrollWidth)
+					m_ScrollWidth = x+l+gva.gutterx;
 			}
 
 		FVItemData* d = GetItemData(a);
@@ -213,13 +227,20 @@ void CGridView::ArrangeVertical(GVArrange& gva)
 			FinishCategory;
 
 		y += h+gva.guttery;
-		if (y+h>rectClient.Height())
+		if (y>m_ScrollHeight)
+			m_ScrollHeight = y;
+
+		if (y+h>rectWindow.Height())
 		{
 			y = top;
 			x += l+gva.gutterx;
+			if (x>m_ScrollWidth)
+				m_ScrollWidth = x;
+				// TODO
 		}
 	}
 
+	AdjustScrollbars();
 	Invalidate();
 }
 

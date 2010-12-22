@@ -182,7 +182,7 @@ void CListView::AdjustLayout()
 	HdLayout.pwpos = &wp;
 	m_wndHeader.Layout(&HdLayout);
 
-	wp.cx = 13-PADDING-m_HScrollPos;
+	wp.x = 13-PADDING-m_HScrollPos;
 	m_HeaderHeight = wp.cy + (wp.cy ? 4 : 0);
 
 
@@ -227,8 +227,8 @@ void CListView::AdjustLayout()
 	}
 
 	// Header
-	m_HScrollMax = 1000;	// TODO
-	m_wndHeader.SetWindowPos(NULL, wp.cx, wp.y, wp.cx+m_HScrollMax, m_HeaderHeight, wp.flags | SWP_NOZORDER | SWP_NOACTIVATE);
+	m_wndHeader.SetWindowPos(NULL, wp.x-m_HScrollPos, wp.y, wp.cx+m_HScrollMax, m_HeaderHeight, wp.flags | SWP_NOZORDER | SWP_NOACTIVATE);
+	m_wndHeader.Invalidate();
 }
 
 void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed)

@@ -211,6 +211,7 @@ void CFileView::SetSearchResult(LFSearchResult* /*Result*/)
 
 void CFileView::AdjustLayout()
 {
+	AdjustScrollbars();
 	Invalidate();
 }
 
@@ -634,6 +635,8 @@ BEGIN_MESSAGE_MAP(CFileView, CWnd)
 	ON_WM_SYSCOLORCHANGE()
 	ON_WM_ERASEBKGND()
 	ON_WM_SIZE()
+	ON_WM_VSCROLL()
+	ON_WM_HSCROLL()
 	ON_WM_MOUSEMOVE()
 	ON_WM_MOUSELEAVE()
 	ON_WM_MOUSEHOVER()
@@ -715,8 +718,112 @@ BOOL CFileView::OnEraseBkgnd(CDC* /*pDC*/)
 
 void CFileView::OnSize(UINT nType, INT cx, INT cy)
 {
+	SetRedraw(FALSE);
 	CWnd::OnSize(nType, cx, cy);
+	SetRedraw(TRUE);
+
 	AdjustLayout();
+}
+
+void CFileView::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
+{
+	CRect rect;
+	GetClientRect(&rect);
+
+	SCROLLINFO si;
+
+	INT nInc = 0;
+	switch (nSBCode)
+	{
+	case SB_TOP:
+		nInc = -m_VScrollPos;
+		break;
+	case SB_BOTTOM:
+		nInc = m_VScrollMax-m_VScrollPos;
+		break;
+	case SB_LINEUP:
+		//nInc = -((INT)m_RowHeight);
+		break;
+	case SB_LINEDOWN:
+		//nInc = m_RowHeight;
+		break;
+	case SB_PAGEUP:
+		nInc = min(-1, -(rect.Height()-(INT)m_HeaderHeight));
+		break;
+	case SB_PAGEDOWN:
+		nInc = max(1, rect.Height()-(INT)m_HeaderHeight);
+		break;
+	case SB_THUMBTRACK:
+		ZeroMemory(&si, sizeof(si));
+		si.cbSize = sizeof(SCROLLINFO);
+		si.fMask = SIF_TRACKPOS;
+		GetScrollInfo(SB_VERT, &si);
+
+		nInc = si.nTrackPos-m_VScrollPos;
+		break;
+	}
+
+	nInc = max(-m_VScrollPos, min(nInc, m_VScrollMax-m_VScrollPos));
+	if (nInc)
+	{
+		m_VScrollPos += nInc;
+		ScrollWindowEx(0, -nInc, NULL, NULL, NULL, NULL, SW_INVALIDATE);
+
+		ZeroMemory(&si, sizeof(si));
+		si.cbSize = sizeof(SCROLLINFO);
+		si.fMask = SIF_POS;
+		si.nPos = m_VScrollPos;
+		SetScrollInfo(SB_VERT, &si);
+	}
+
+	CWnd::OnVScroll(nSBCode, nPos, pScrollBar);
+}
+
+void CFileView::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
+{
+	SCROLLINFO si;
+
+	INT nInc = 0;
+	switch (nSBCode)
+	{
+	case SB_TOP:
+		nInc = -m_HScrollPos;
+		break;
+	case SB_BOTTOM:
+		nInc = m_HScrollMax-m_HScrollPos;
+		break;
+	case SB_PAGEUP:
+	case SB_LINEUP:
+		nInc = -64;
+		break;
+	case SB_PAGEDOWN:
+	case SB_LINEDOWN:
+		nInc = 64;
+		break;
+	case SB_THUMBTRACK:
+		ZeroMemory(&si, sizeof(si));
+		si.cbSize = sizeof(SCROLLINFO);
+		si.fMask = SIF_TRACKPOS;
+		GetScrollInfo(SB_HORZ, &si);
+
+		nInc = si.nTrackPos-m_HScrollPos;
+		break;
+	}
+
+	nInc = max(-m_HScrollPos, min(nInc, m_HScrollMax-m_HScrollPos));
+	if (nInc)
+	{
+		m_HScrollPos += nInc;
+		ScrollWindowEx(-nInc, 0, NULL, NULL, NULL, NULL, SW_INVALIDATE | SW_SCROLLCHILDREN);
+
+		ZeroMemory(&si, sizeof(si));
+		si.cbSize = sizeof(SCROLLINFO);
+		si.fMask = SIF_POS;
+		si.nPos = m_HScrollPos;
+		SetScrollInfo(SB_HORZ, &si);
+	}
+
+	CWnd::OnHScroll(nSBCode, nPos, pScrollBar);
 }
 
 void CFileView::OnMouseMove(UINT /*nFlags*/, CPoint point)
