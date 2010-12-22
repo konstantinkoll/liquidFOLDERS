@@ -86,23 +86,24 @@ void CGridView::ArrangeHorizontal(GVArrange& gva, BOOL Justify, BOOL ForceBreak,
 	CClientDC dc(this);
 
 	CRect rectWindow;
-	GetWindowRect(rectWindow);
+	GetWindowRect(&rectWindow);
 	if (!rectWindow.Width())
 		return;
 
-	BOOL HasScrollbars = FALSE;
-
-Restart:
-	m_ScrollWidth = m_ScrollHeight = 0;
-
-	INT x = gva.mx;
-	INT y = gva.my;
 	const INT l = gva.cx+2*gva.padding;
 	const INT h = gva.cy+2*gva.padding;
 	ASSERT(l>0);
 	ASSERT(h>0);
 	m_RowHeight = h+gva.guttery;
-#define CheckRestartH if ((x>rectWindow.Width()) && (!HasScrollbars)) { HasScrollbars = TRUE; goto Restart; }
+
+	BOOL HasScrollbars = FALSE;
+
+Restart:
+	m_ScrollWidth = m_ScrollHeight = 0;
+#define CheckRestartH if ((m_ScrollHeight>rectWindow.Height()) && (!HasScrollbars)) { HasScrollbars = TRUE; rectWindow.right -= GetSystemMetrics(SM_CXVSCROLL); goto Restart; }
+
+	INT x = gva.mx;
+	INT y = gva.my;
 
 	INT category = -1;
 
@@ -138,7 +139,7 @@ Restart:
 				y = rect->bottom+4;
 				if (y+h+gva.guttery>m_ScrollHeight)
 				{
-					m_ScrollHeight = y+h+gva.guttery;
+					m_ScrollHeight = y+h+gva.guttery-1;
 					CheckRestartH;
 				}
 			}
@@ -151,9 +152,9 @@ Restart:
 
 		x += l+gva.gutterx;
 		if (x>m_ScrollWidth)
-			m_ScrollWidth = x;
+			m_ScrollWidth = x-1;
 
-		if ((x+l>rectWindow.Width()) || (ForceBreak))
+		if ((x+l+gva.gutterx>rectWindow.Width()) || (ForceBreak))
 		{
 			if (MaxWidth)
 				d->Rect.right = rectWindow.Width()-gva.gutterx;
@@ -162,7 +163,7 @@ Restart:
 			y += h+gva.guttery;
 			if (y>m_ScrollHeight)
 			{
-				m_ScrollHeight = y;
+				m_ScrollHeight = y-1;
 				CheckRestartH;
 			}
 		}
@@ -187,7 +188,7 @@ void CGridView::ArrangeVertical(GVArrange& gva)
 	CClientDC dc(this);
 
 	CRect rectWindow;
-	GetWindowRect(rectWindow);
+	GetWindowRect(&rectWindow);
 	if (!rectWindow.Width())
 		return;
 
@@ -195,19 +196,20 @@ void CGridView::ArrangeVertical(GVArrange& gva)
 	if (m_HasCategories)
 		top += 2*CategoryPadding+m_FontHeight[1]+4;
 
-	BOOL HasScrollbars = FALSE;
-
-Restart:
-	m_ScrollWidth = m_ScrollHeight = 0;
-
-	INT x = gva.mx;
-	INT y = top;
 	const INT l = gva.cx+2*gva.padding;
 	const INT h = gva.cy+2*gva.padding;
 	ASSERT(l>0);
 	ASSERT(h>0);
 	m_RowHeight = h+gva.guttery;
-#define CheckRestartV if ((y>rectWindow.Height()) && (!HasScrollbars)) { HasScrollbars = TRUE; goto Restart; }
+
+	BOOL HasScrollbars = FALSE;
+
+Restart:
+	m_ScrollWidth = m_ScrollHeight = 0;
+#define CheckRestartV if ((m_ScrollWidth>rectWindow.Width()) && (!HasScrollbars)) { HasScrollbars = TRUE; rectWindow.bottom -= GetSystemMetrics(SM_CXHSCROLL); goto Restart; }
+
+	INT x = gva.mx;
+	INT y = top;
 
 	INT category = -1;
 	INT lastleft = x;
@@ -236,7 +238,7 @@ Restart:
 
 				if (x+l+gva.gutterx>m_ScrollWidth)
 				{
-					m_ScrollWidth = x+l+gva.gutterx;
+					m_ScrollWidth = x+l+gva.gutterx-1;
 					CheckRestartV;
 				}
 			}
@@ -252,15 +254,15 @@ Restart:
 
 		y += h+gva.guttery;
 		if (y>m_ScrollHeight)
-			m_ScrollHeight = y;
+			m_ScrollHeight = y-1;
 
-		if (y+h>rectWindow.Height())
+		if (y+h+gva.guttery>rectWindow.Height())
 		{
 			y = top;
 			x += l+gva.gutterx;
 			if (x>m_ScrollWidth)
 			{
-				m_ScrollWidth = x;
+				m_ScrollWidth = x-1;
 				CheckRestartV;
 			}
 		}

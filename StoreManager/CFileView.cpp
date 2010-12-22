@@ -520,7 +520,7 @@ void CFileView::AdjustScrollbars()
 		return;
 
 	CRect rect;
-	GetClientRect(&rect);
+	GetWindowRect(&rect);
 
 	INT oldVScrollPos = m_VScrollPos;
 	m_VScrollMax = max(0, m_ScrollHeight-rect.Height()+(INT)m_HeaderHeight);
@@ -535,6 +535,9 @@ void CFileView::AdjustScrollbars()
 	si.nMax = m_ScrollHeight;
 	si.nPos = m_VScrollPos;
 	SetScrollInfo(SB_VERT, &si);
+
+	if (m_ScrollHeight>rect.Height())
+		rect.right -= GetSystemMetrics(SM_CXVSCROLL);
 
 	INT oldHScrollPos = m_HScrollPos;
 	m_HScrollMax = max(0, m_ScrollWidth-rect.Width());

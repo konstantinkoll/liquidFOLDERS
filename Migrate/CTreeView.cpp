@@ -449,7 +449,7 @@ void CTreeView::ResetScrollbars()
 void CTreeView::AdjustScrollbars()
 {
 	CRect rect;
-	GetClientRect(&rect);
+	GetWindowRect(&rect);
 
 	INT ScrollHeight = m_Rows*m_RowHeight;
 	INT ScrollWidth = (m_Cols<MaxColumns) ? GUTTER : 0;
@@ -469,6 +469,9 @@ void CTreeView::AdjustScrollbars()
 	si.nMax = ScrollHeight;
 	si.nPos = m_VScrollPos;
 	SetScrollInfo(SB_VERT, &si);
+
+	if (ScrollHeight>rect.Height())
+		rect.right -= GetSystemMetrics(SM_CXVSCROLL);
 
 	INT oldHScrollPos = m_HScrollPos;
 	m_HScrollMax = max(0, ScrollWidth-rect.Width());
