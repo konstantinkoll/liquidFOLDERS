@@ -124,22 +124,41 @@ void CTagcloudView::AdjustLayout()
 	{
 		CClientDC dc(this);
 
-		CRect rectClient;
-		GetClientRect(rectClient);
-		if (!rectClient.Width())
+		CRect rectWindow;
+		GetWindowRect(&rectWindow);
+		if (!rectWindow.Width())
 			return;
-
-		INT x = 0;
-		INT y = GUTTER;
-		INT rowheight = 0;
-		INT rowstart = 0;
 
 #define CenterRow(last) for (UINT b=rowstart; b<=last; b++) \
 	{ \
 		TagcloudItemData* d = GetItemData(b); \
 		if (d->Cnt) \
-			OffsetRect(&d->Hdr.Rect, (rectClient.Width()+GUTTER-x)/2, (rowheight-(d->Hdr.Rect.bottom-d->Hdr.Rect.top))/2); \
+		{ \
+			OffsetRect(&d->Hdr.Rect, (rectWindow.Width()+GUTTER-x)/2, (rowheight-(d->Hdr.Rect.bottom-d->Hdr.Rect.top))/2); \
+			if (d->Hdr.Rect.right-1>m_ScrollWidth) \
+				m_ScrollWidth = d->Hdr.Rect.right-1; \
+			if (d->Hdr.Rect.bottom-1>m_ScrollHeight) \
+			{ \
+				m_ScrollHeight = d->Hdr.Rect.bottom-1; \
+				if ((m_ScrollHeight>=rectWindow.Height()) && (!HasScrollbars)) \
+				{ \
+					HasScrollbars = TRUE; \
+					rectWindow.right -= GetSystemMetrics(SM_CXVSCROLL); \
+					goto Restart; \
+				} \
+			} \
+		} \
 	}
+
+		BOOL HasScrollbars = FALSE;
+
+Restart:
+		m_ScrollWidth = m_ScrollHeight = 0;
+
+		INT x = 0;
+		INT y = GUTTER;
+		INT rowheight = 0;
+		INT rowstart = 0;
 
 		for (UINT a=0; a<p_Result->m_ItemCount; a++)
 		{
@@ -148,12 +167,12 @@ void CTagcloudView::AdjustLayout()
 			{
 				LFItemDescriptor* i = p_Result->m_Items[a];
 
-				CRect rect(0, 0, rectClient.Width()-2*GUTTER, 128);
+				CRect rect(0, 0, rectWindow.Width()-2*GUTTER, 128);
 				dc.SelectObject(GetFont(a));
 				dc.DrawText(i->CoreAttributes.FileName, -1, rect, TextFormat | DT_CALCRECT);
 				rect.InflateRect(5, 4);
 
-				if (x+rect.Width()+2*GUTTER>rectClient.Width())
+				if (x+rect.Width()+2*GUTTER>rectWindow.Width())
 				{
 					y += rowheight+GUTTER;
 					if (a)
@@ -174,9 +193,13 @@ void CTagcloudView::AdjustLayout()
 		if (p_Result->m_ItemCount)
 			CenterRow(p_Result->m_ItemCount-1);
 	}
+	else
+	{
+		m_ScrollWidth = m_ScrollHeight = 0;
+	}
 
-	Invalidate();
-}
+	AdjustScrollbars();
+	Invalidate();}
 
 void CTagcloudView::DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed)
 {

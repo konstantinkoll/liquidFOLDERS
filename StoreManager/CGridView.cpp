@@ -81,7 +81,10 @@ void CGridView::ArrangeHorizontal(GVArrange& gva, BOOL Justify, BOOL ForceBreak,
 	ResetItemCategories();
 
 	if (!p_Result)
+	{
+		m_ScrollWidth = m_ScrollHeight = 0;
 		return;
+	}
 
 	CClientDC dc(this);
 

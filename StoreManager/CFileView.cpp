@@ -930,6 +930,10 @@ void CFileView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 		if ((GetKeyState(VK_CONTROL)>=0) && (GetKeyState(VK_SHIFT)>=0))
 			EditLabel(m_FocusItem);
 		break;
+	case VK_F5:
+		if ((GetKeyState(VK_CONTROL)>=0) && (GetKeyState(VK_SHIFT)>=0))
+			GetOwner()->PostMessage(WM_RELOAD);
+		break;
 	case VK_BACK:
 		if ((GetKeyState(VK_CONTROL)>=0) && (GetKeyState(VK_SHIFT)>=0))
 			GetOwner()->PostMessage(WM_COMMAND, ID_NAV_BACK);
