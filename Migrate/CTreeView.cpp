@@ -2229,7 +2229,7 @@ void CTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 		CPoint ptClient(point);
 		ScreenToClient(&ptClient);
 
-		if (pWnd->GetSafeHwnd()==m_wndHeader.GetSafeHwnd())
+		if (pWnd->GetSafeHwnd()==m_wndHeader)
 		{
 			HDHITTESTINFO htt;
 			htt.pt = ptClient;

@@ -41,8 +41,6 @@
 #define ID_APP_VIEW_GLOBE               308
 #define ID_APP_VIEW_TAGCLOUD            309
 #define ID_APP_VIEW_TIMELINE            310
-#define ID_VIEW_AUTOSIZECOLUMNS         352
-#define ID_VIEW_CHOOSEDETAILS           353
 #define ID_VIEW_AUTODIRS                354
 #define ID_NAV_FIRST                    400
 #define ID_NAV_BACKONE                  401
@@ -203,7 +201,7 @@
 #define IDM_DETAILS_CHOOSE              5003
 #define IDM_GLOBE                       5100
 #define IDM_TAGCLOUD                    5200
-#define IDM_TOGGLE_ATTRIBUTE            6000
+#define IDM_DETAILS_TOGGLEATTRIBUTE     6000
 
 
 // Next default values for new objects

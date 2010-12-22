@@ -24,11 +24,13 @@
                                            SelectObject(hdcMem, hbmOld); \
                                            DeleteDC(hdcMem); }
 #define RIGHTCOLUMN                        215
+#define MAXAUTOWIDTH                       400
 
 CListView::CListView(UINT DataSize)
 	: CGridView(DataSize)
 {
 	m_Icons[0] = m_Icons[1] = NULL;
+	m_HeaderItemClicked = -1;
 	m_IgnoreHeaderItemChange = FALSE;
 
 	WCHAR tmpStr[256];
@@ -575,6 +577,46 @@ INT CListView::GetMaxLabelWidth(INT Max)
 	return Width;
 }
 
+INT CListView::GetMaxColumnWidth(UINT Col, INT Max)
+{
+	INT Width = 0;
+
+	if (p_Result)
+	{
+		CDC* dc = GetWindowDC();
+		CFont* pOldFont = dc->SelectObject(&theApp.m_DefaultFont);
+
+		for (INT a=0; a<(INT)p_Result->m_ItemCount; a++)
+		{
+			WCHAR tmpStr[256];
+			LFAttributeToString(p_Result->m_Items[a], Col, tmpStr, 256);
+			INT cx = dc->GetTextExtent(tmpStr, wcslen(tmpStr)).cx;
+
+			if (cx>Width)
+			{
+				Width = cx;
+
+				if (Width>=Max)
+				{
+					Width = Max;
+					break;
+				}
+			}
+		}
+	
+		dc->SelectObject(pOldFont);
+		ReleaseDC(dc);
+	}
+
+	return Width;
+}
+
+void CListView::AutosizeColumn(UINT Col)
+{
+	m_ViewParameters.ColumnWidth[Col] = p_ViewParameters->ColumnWidth[Col] = 3*PADDING + 
+		((Col==LFAttrFileName) ? m_IconSize[0].cx+PADDING+GetMaxLabelWidth(MAXAUTOWIDTH) : (theApp.m_Attributes[Col]->Type==LFTypeRating) ? RatingBitmapWidth+2*PADDING : GetMaxColumnWidth(Col, MAXAUTOWIDTH));
+}
+
 void CListView::SortCategories(LFSearchResult* Result)
 {
 	ASSERT(Result);
@@ -593,8 +635,10 @@ void CListView::SortCategories(LFSearchResult* Result)
 BEGIN_MESSAGE_MAP(CListView, CGridView)
 	ON_WM_CREATE()
 	ON_WM_CONTEXTMENU()
-	ON_COMMAND_RANGE(IDM_TOGGLE_ATTRIBUTE, IDM_TOGGLE_ATTRIBUTE+LFAttributeCount-1, OnToggleAttribute)
-	ON_UPDATE_COMMAND_UI_RANGE(IDM_TOGGLE_ATTRIBUTE, IDM_TOGGLE_ATTRIBUTE+LFAttributeCount-1, OnUpdateToggleCommands)
+	ON_COMMAND_RANGE(IDM_DETAILS_TOGGLEATTRIBUTE, IDM_DETAILS_TOGGLEATTRIBUTE+LFAttributeCount-1, OnToggleAttribute)
+	ON_UPDATE_COMMAND_UI_RANGE(IDM_DETAILS_TOGGLEATTRIBUTE, IDM_DETAILS_TOGGLEATTRIBUTE+LFAttributeCount-1, OnUpdateToggleCommands)
+	ON_COMMAND(IDM_DETAILS_AUTOSIZEALL, OnAutosizeAll)
+	ON_COMMAND(IDM_DETAILS_AUTOSIZE, OnAutosize)
 	ON_COMMAND(IDM_DETAILS_CHOOSE, OnChooseDetails)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_DETAILS_AUTOSIZEALL, IDM_DETAILS_CHOOSE, OnUpdateDetailsCommands)
 	ON_NOTIFY(HDN_BEGINDRAG, 1, OnBeginDrag)
@@ -640,7 +684,14 @@ void CListView::OnContextMenu(CWnd* pWnd, CPoint point)
 
 		for (INT a=LFLastCoreAttribute-1; a>=0; a--)
 			if ((a!=LFAttrStoreID) && (a!=LFAttrFileID) && (theApp.m_Contexts[m_Context]->AllowedAttributes->IsSet(a)))
-				pPopup->InsertMenu(3, MF_BYPOSITION | MF_STRING, IDM_TOGGLE_ATTRIBUTE+a, theApp.m_Attributes[a]->Name);
+				pPopup->InsertMenu(3, MF_BYPOSITION | MF_STRING, IDM_DETAILS_TOGGLEATTRIBUTE+a, theApp.m_Attributes[a]->Name);
+
+		CPoint ptClient(point);
+		ScreenToClient(&ptClient);
+
+		HDHITTESTINFO htt;
+		htt.pt = ptClient;
+		m_HeaderItemClicked = m_wndHeader.HitTest(&htt);
 
 		pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, GetOwner(), NULL);
 		return;
@@ -651,7 +702,7 @@ void CListView::OnContextMenu(CWnd* pWnd, CPoint point)
 
 void CListView::OnToggleAttribute(UINT nID)
 {
-	UINT attr = nID-IDM_TOGGLE_ATTRIBUTE;
+	UINT attr = nID-IDM_DETAILS_TOGGLEATTRIBUTE;
 	ASSERT(attr<LFAttributeCount);
 
 	p_ViewParameters->ColumnWidth[attr] = p_ViewParameters->ColumnWidth[attr] ? 0 : theApp.m_Attributes[attr]->RecommendedWidth;
@@ -660,11 +711,31 @@ void CListView::OnToggleAttribute(UINT nID)
 
 void CListView::OnUpdateToggleCommands(CCmdUI* pCmdUI)
 {
-	UINT attr = pCmdUI->m_nID-IDM_TOGGLE_ATTRIBUTE;
+	UINT attr = pCmdUI->m_nID-IDM_DETAILS_TOGGLEATTRIBUTE;
 	ASSERT(attr<LFAttributeCount);
 
 	pCmdUI->SetCheck(m_ViewParameters.ColumnWidth[attr]);
 	pCmdUI->Enable(!theApp.m_Attributes[attr]->AlwaysVisible);
+}
+
+void CListView::OnAutosizeAll()
+{
+	for (UINT a=0; a<LFAttributeCount; a++)
+		if (m_ViewParameters.ColumnWidth[a])
+			AutosizeColumn(a);
+
+	AdjustHeader(TRUE);
+	AdjustLayout();
+}
+
+void CListView::OnAutosize()
+{
+	if (m_HeaderItemClicked!=-1)
+	{
+		AutosizeColumn(m_HeaderItemClicked);
+		AdjustHeader(TRUE);
+		AdjustLayout();
+	}
 }
 
 void CListView::OnChooseDetails()
@@ -676,7 +747,12 @@ void CListView::OnChooseDetails()
 
 void CListView::OnUpdateDetailsCommands(CCmdUI* pCmdUI)
 {
-	pCmdUI->Enable(m_ViewParameters.Mode==LFViewDetails);
+	BOOL b = (m_ViewParameters.Mode==LFViewDetails);
+
+	if (pCmdUI->m_nID==IDM_DETAILS_AUTOSIZE)
+		b &= (m_HeaderItemClicked!=-1);
+
+	pCmdUI->Enable(b);
 }
 
 void CListView::OnBeginDrag(NMHDR* pNMHDR, LRESULT* pResult)

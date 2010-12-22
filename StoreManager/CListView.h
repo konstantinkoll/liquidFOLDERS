@@ -27,6 +27,8 @@ protected:
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	afx_msg void OnToggleAttribute(UINT nID);
 	afx_msg void OnUpdateToggleCommands(CCmdUI* pCmdUI);
+	afx_msg void OnAutosizeAll();
+	afx_msg void OnAutosize();
 	afx_msg void OnChooseDetails();
 	afx_msg void OnUpdateDetailsCommands(CCmdUI* pCmdUI);
 	afx_msg void OnBeginDrag(NMHDR* pNMHDR, LRESULT* pResult);
@@ -41,6 +43,7 @@ protected:
 private:
 	CImageList* m_Icons[2];
 	SIZE m_IconSize[2];
+	INT m_HeaderItemClicked;
 	BOOL m_IgnoreHeaderItemChange;
 
 	void AdjustHeader(BOOL bShow);
@@ -49,5 +52,7 @@ private:
 	void DrawColumn(CDC& dc, CRect& rect, LFItemDescriptor* i, UINT Attr);
 	void DrawProperty(CDC& dc, CRect& rect, LFItemDescriptor* i, FVItemData* d, UINT Attr, BOOL Themed);
 	INT GetMaxLabelWidth(INT Max);
+	INT GetMaxColumnWidth(UINT Col, INT Max);
+	void AutosizeColumn(UINT Col);
 	void SortCategories(LFSearchResult* Result);
 };

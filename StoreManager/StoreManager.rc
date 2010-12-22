@@ -596,8 +596,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    ID_VIEW_AUTOSIZECOLUMNS "Autosize &columns"
-    ID_VIEW_CHOOSEDETAILS   "Ch&oose details..."
     ID_VIEW_AUTODIRS        "Enables or disables grouping of similar files into subfolders for this context. Grouping is not available in all contexts, and cannot be turned off in subfolders or advanced view modes.\nGroup into subfolders"
 END
 
