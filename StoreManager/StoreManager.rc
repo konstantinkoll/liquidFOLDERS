@@ -524,7 +524,6 @@ END
 STRINGTABLE 
 BEGIN
     ID_APP_NEWVIEW          "Opens a new StoreManager window.\nNew view"
-    ID_APP_NEWCLIPBOARD     "Opens a new clipboard window where you can temporarily drop files for further use.\nNew clipboard"
     ID_APP_CLOSE            "Closes this window.\nClose"
     ID_APP_CLOSEOTHERS      "Closes all StoreManager windows except this one.\nClose all others"
     ID_APP_VIEWOPTIONS      "Opens a dialog window with further display options.\nDisplay as"

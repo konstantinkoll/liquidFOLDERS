@@ -1317,14 +1317,6 @@
 			>
 		</File>
 		<File
-			RelativePath=".\Clipboard_16.png"
-			>
-		</File>
-		<File
-			RelativePath=".\Clipboard_32.png"
-			>
-		</File>
-		<File
 			RelativePath=".\Clipboard_Small.ico"
 			>
 		</File>
@@ -1650,10 +1642,6 @@
 		</File>
 		<File
 			RelativePath=".\Registry_Tiny.ico"
-			>
-		</File>
-		<File
-			RelativePath="Ribbon Client Area.txt"
 			>
 		</File>
 		<File

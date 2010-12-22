@@ -26,11 +26,10 @@
 #define IDB_MULTIPLE                    159
 #define IDB_TASKS                       160
 #define ID_APP_NEWVIEW                  250
-#define ID_APP_NEWCLIPBOARD             251
-#define ID_APP_CLOSE                    252
-#define ID_APP_CLOSEOTHERS              253
-#define ID_APP_VIEWOPTIONS              254
-#define ID_APP_SORTOPTIONS              255
+#define ID_APP_CLOSE                    251
+#define ID_APP_CLOSEOTHERS              252
+#define ID_APP_VIEWOPTIONS              253
+#define ID_APP_SORTOPTIONS              254
 #define ID_APP_VIEW_LARGEICONS          300
 #define ID_APP_VIEW_SMALLICONS          301
 #define ID_APP_VIEW_LIST                302

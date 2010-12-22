@@ -29,9 +29,9 @@ public:
 	BOOL m_GlobeLighting;
 	BOOL m_HideEmptyDrives;
 	BOOL m_HideEmptyDomains;
-	std::list<CMainFrame*> m_listMainFrames;
-	std::list<CMainFrame*> m_listClipboardFrames;
 	stdext::hash_map<std::string, std::wstring> m_Extensions;
+	std::list<CMainFrame*> m_listMainFrames;
+	CMainFrame* p_Clipboard;
 	LFViewParameters m_Views[LFContextCount];
 	LFBitArray* m_AllowedViews[LFContextCount];
 
@@ -43,7 +43,7 @@ public:
 	void AddFrame(CMainFrame* pFrame);
 	void KillFrame(CMainFrame* pFrame);
 	void ReplaceMainFrame(CMainFrame* pFrame);
-	CMainFrame* GetClipboard(BOOL ForceNew);
+	CMainFrame* GetClipboard();
 	void CloseAllFrames(BOOL leaveOne=FALSE);
 
 	BOOL SanitizeSortBy(LFViewParameters* vp, INT context);
@@ -67,7 +67,6 @@ protected:
 
 	afx_msg void OnAppAbout();
 	afx_msg void OnAppNewView();
-	afx_msg void OnAppNewClipboard();
 	afx_msg void OnAppExit();
 	DECLARE_MESSAGE_MAP()
 

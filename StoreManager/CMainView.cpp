@@ -429,6 +429,7 @@ BEGIN_MESSAGE_MAP(CMainView, CWnd)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_STORE_MAKEDEFAULT, IDM_STORE_PROPERTIES, OnUpdateStoreCommands)
 
 	ON_COMMAND(IDM_FILE_OPENWITH, OnFileOpenWith)
+	ON_COMMAND(IDM_FILE_REMEMBER, OnFileRemember)
 	ON_COMMAND(IDM_FILE_REMOVE, OnFileRemove)
 	ON_COMMAND(IDM_FILE_DELETE, OnFileDelete)
 	ON_COMMAND(IDM_FILE_SEND, OnFileSend)
@@ -898,6 +899,41 @@ void CMainView::OnFileOpenWith()
 			LFErrorBox(res, GetSafeHwnd());
 		}
 	}
+}
+
+void CMainView::OnFileRemember()
+{
+	ASSERT(!IsClipboard);
+	ASSERT(clip);
+
+	CMainFrame* pClipboard = theApp.GetClipboard();
+	BOOL changes = FALSE;
+
+	INT idx = GetNextSelectedItem(-1);
+	while (idx!=-1)
+	{
+		LFItemDescriptor* item = p_CookedFiles->m_Items[idx];
+		switch (item->Type & LFTypeMask)
+		{
+		case LFTypeVirtual:
+			if ((item->FirstAggregate!=-1) && (item->LastAggregate!=-1))
+			{
+				for (INT a=item->FirstAggregate; a<=item->LastAggregate; a++)
+					if (pClipboard->AddClipItem(p_RawFiles->m_Items[a]))
+						changes = TRUE;
+			}
+			break;
+		case LFTypeFile:
+			if (pClipboard->AddClipItem(item))
+				changes = TRUE;
+			break;
+		}
+
+		idx = GetNextSelectedItem(idx);
+	}
+
+	if (changes)
+		pClipboard->SendMessage(WM_COOKFILES);
 }
 
 void CMainView::OnFileRemove()

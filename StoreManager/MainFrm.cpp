@@ -473,11 +473,6 @@ BOOL CMainFrame::AddClipItem(LFItemDescriptor* i)
 {
 	ASSERT(IsClipboard);
 
-	#ifndef _DEBUG
-	if ((i->Type & LFTypeMask)!=LFTypeFile)
-		return FALSE;
-	#endif
-
 	for (UINT a=0; a<RawFiles->m_ItemCount; a++)
 		if ((strcmp(i->StoreID, RawFiles->m_Items[a]->StoreID)==0) &&
 			(strcmp(i->CoreAttributes.FileID, RawFiles->m_Items[a]->CoreAttributes.FileID)==0))
@@ -487,42 +482,7 @@ BOOL CMainFrame::AddClipItem(LFItemDescriptor* i)
 	return TRUE;
 }
 
-/*void CMainFrame::Remember(CMainFrame* clip)
-{
-	ASSERT(!IsClipboard);
-	ASSERT(clip);
-
-	if (CookedFiles)
-	{
-		INT idx = m_wndMainView.GetNextSelectedItem(-1);
-		BOOL changes = FALSE;
-		while (idx!=-1)
-		{
-			LFItemDescriptor* i = CookedFiles->m_Items[idx];
-			if (((i->Type & LFTypeMask)==LFTypeVirtual) && (i->FirstAggregate!=-1) && (i->LastAggregate!=-1))
-			{
-				for (INT a=i->FirstAggregate; a<=i->LastAggregate; a++)
-					if (clip->AddClipItem(RawFiles->m_Items[a]))
-						changes = TRUE;
-			}
-			else
-				if (clip->AddClipItem(CookedFiles->m_Items[idx]))
-					changes = TRUE;
-
-			idx = m_wndMainView.GetNextSelectedItem(idx);
-		}
-
-		if (changes)
-			clip->CookFiles(clip->m_wndMainView.GetFocusItem());
-	}
-}
-
-void CMainFrame::OnClipRememberLast()
-{
-	Remember(theApp.GetClipboard(FALSE));
-}
-
-void CMainFrame::OnItemsRename()
+/*void CMainFrame::OnItemsRename()
 {
 	if (m_wndMainView.p_wndFileView)
 	{
@@ -763,13 +723,12 @@ void CMainFrame::InitializeRibbon()
 	CMFCRibbonMainPanel* pMainPanel = m_wndRibbonBar.AddMainCategory(strTemp, IDB_APPMENU_16, IDB_APPMENU_32);
 
 		pMainPanel->Add(theApp.CommandButton(ID_APP_NEWVIEW, 0, 0));
-		pMainPanel->Add(theApp.CommandButton(ID_APP_NEWCLIPBOARD, 1, 1));
 		pMainPanel->Add(new CMFCRibbonSeparator(TRUE));
-		pMainPanel->Add(theApp.CommandButton(ID_APP_CLOSEOTHERS, 2, 2));
-		pMainPanel->Add(theApp.CommandButton(ID_APP_CLOSE, 3, 3));
+		pMainPanel->Add(theApp.CommandButton(ID_APP_CLOSEOTHERS, 1, 1));
+		pMainPanel->Add(theApp.CommandButton(ID_APP_CLOSE, 2, 2));
 
 		strTemp = "Exit";
-		pMainPanel->AddToBottom(new CMFCRibbonMainPanelButton(ID_APP_EXIT, strTemp, 4));
+		pMainPanel->AddToBottom(new CMFCRibbonMainPanelButton(ID_APP_EXIT, strTemp, 3));
 
 	strTemp = "Home";
 	CMFCRibbonCategory* pCategoryHome = m_wndRibbonBar.AddCategory(strTemp, IDB_RIBBONHOME_16, IDB_RIBBONHOME_32);

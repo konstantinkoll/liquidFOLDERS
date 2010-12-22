@@ -100,6 +100,7 @@ protected:
 	LFSearchResult* p_Result;
 	UINT m_DataSize;
 	BYTE* m_ItemData;
+	UINT m_ItemDataAllocated;
 	LFDropTarget m_DropTarget;
 	HTHEME hThemeList;
 	LFTooltip m_TooltipCtrl;

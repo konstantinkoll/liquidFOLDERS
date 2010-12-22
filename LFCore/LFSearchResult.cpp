@@ -82,9 +82,6 @@ bool LFSearchResult::AddItemDescriptor(LFItemDescriptor* i)
 	if (!DynArray::AddItem(i))
 		return false;
 
-	if (m_RawCopy)
-		i->Position = m_ItemCount-1;
-
 	if ((i->Type & LFTypeFile)==LFTypeFile)
 	{
 		m_FileCount++;
@@ -186,11 +183,7 @@ void LFSearchResult::RemoveItemDescriptor(unsigned int idx, bool updatecount)
 	LFFreeItemDescriptor(m_Items[idx]);
 
 	if (idx<--m_ItemCount)
-	{
 		m_Items[idx] = m_Items[m_ItemCount];
-		if (m_RawCopy)
-			m_Items[idx]->Position = idx;
-	}
 }
 
 void LFSearchResult::RemoveFlaggedItemDescriptors(bool updatecount)

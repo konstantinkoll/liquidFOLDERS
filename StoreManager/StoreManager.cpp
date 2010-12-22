@@ -16,7 +16,6 @@
 BEGIN_MESSAGE_MAP(CStoreManagerApp, LFApplication)
 	ON_COMMAND(ID_APP_ABOUT, OnAppAbout)
 	ON_COMMAND(ID_APP_NEWVIEW, OnAppNewView)
-	ON_COMMAND(ID_APP_NEWCLIPBOARD, OnAppNewClipboard)
 	ON_COMMAND(ID_APP_EXIT, OnAppExit)
 END_MESSAGE_MAP()
 
@@ -133,15 +132,17 @@ void CStoreManagerApp::AddFrame(CMainFrame* pFrame)
 	if (!m_pMainWnd)
 		m_pMainWnd = pFrame;
 	m_listMainFrames.push_back(pFrame);
+
 	if (pFrame->IsClipboard)
-		m_listClipboardFrames.push_back(pFrame);
+		p_Clipboard = pFrame;
 }
 
 void CStoreManagerApp::KillFrame(CMainFrame* pFrame)
 {
 	m_listMainFrames.remove(pFrame);
+
 	if (pFrame->IsClipboard)
-		m_listClipboardFrames.remove(pFrame);
+		p_Clipboard = NULL;
 }
 
 void CStoreManagerApp::ReplaceMainFrame(CMainFrame* pFrame)
@@ -161,12 +162,16 @@ void CStoreManagerApp::ReplaceMainFrame(CMainFrame* pFrame)
 	}
 }
 
-CMainFrame* CStoreManagerApp::GetClipboard(BOOL ForceNew)
+CMainFrame* CStoreManagerApp::GetClipboard()
 {
-	if ((ForceNew) || (m_listClipboardFrames.empty()))
-		OnAppNewClipboard();
+	if (!p_Clipboard)
+	{
+		p_Clipboard = new CMainFrame(NULL, TRUE);
+		p_Clipboard->LoadFrame(IDR_MAINFRAME, WS_OVERLAPPEDWINDOW);
+		p_Clipboard->ShowWindow(SW_SHOW);
+	}
 
-	return m_listClipboardFrames.back();
+	return p_Clipboard;
 }
 
 void CStoreManagerApp::CloseAllFrames(BOOL leaveOne)
@@ -271,13 +276,6 @@ void CStoreManagerApp::OnAppAbout()
 void CStoreManagerApp::OnAppNewView()
 {
 	CMainFrame* pFrame = new CMainFrame();
-	pFrame->LoadFrame(IDR_MAINFRAME, WS_OVERLAPPEDWINDOW);
-	pFrame->ShowWindow(SW_SHOW);
-}
-
-void CStoreManagerApp::OnAppNewClipboard()
-{
-	CMainFrame* pFrame = new CMainFrame(NULL, TRUE);
 	pFrame->LoadFrame(IDR_MAINFRAME, WS_OVERLAPPEDWINDOW);
 	pFrame->ShowWindow(SW_SHOW);
 }

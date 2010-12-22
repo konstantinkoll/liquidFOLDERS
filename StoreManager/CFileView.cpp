@@ -39,6 +39,7 @@ CFileView::CFileView(UINT DataSize, BOOL EnableScrolling, BOOL EnableHover, BOOL
 
 	p_Result = NULL;
 	m_ItemData = NULL;
+	m_ItemDataAllocated = 0;
 	m_FocusItem = m_HotItem = m_SelectionAnchor = m_EditLabel = m_Context = -1;
 	m_Context = LFContextDefault;
 	m_HeaderHeight = m_FontHeight[0] = m_FontHeight[1] = m_HScrollMax = m_VScrollMax = m_HScrollPos = m_VScrollPos = 0;
@@ -139,11 +140,13 @@ void CFileView::UpdateViewOptions(INT Context, BOOL Force)
 void CFileView::UpdateSearchResult(LFSearchResult* Result, INT FocusItem)
 {
 	void* Victim = m_ItemData;
+	UINT VictimAllocated = m_ItemDataAllocated;
 
 	if (Result)
 	{
 		size_t sz = Result->m_ItemCount*m_DataSize;
 		m_ItemData = (BYTE*)malloc(sz);
+		m_ItemDataAllocated = Result->m_ItemCount;
 		ZeroMemory(m_ItemData, sz);
 
 		for (UINT a=0; a<Result->m_ItemCount; a++)
@@ -151,14 +154,13 @@ void CFileView::UpdateSearchResult(LFSearchResult* Result, INT FocusItem)
 			FVItemData* d = GetItemData(a);
 			d->SysIconIndex = -1;
 
-			if ((Victim) && (p_Result))
-				if (a<p_Result->m_ItemCount)
-				{
-					BYTE* v = (BYTE*)Victim;
-					v += ((BYTE*)d)-((BYTE*)m_ItemData);
+			if ((a<VictimAllocated) && (Result->m_Context!=LFContextClipboard))
+			{
+				BYTE* v = (BYTE*)Victim;
+				v += ((BYTE*)d)-((BYTE*)m_ItemData);
 
-					d->Selected = ((FVItemData*)v)->Selected;
-				}
+				d->Selected = ((FVItemData*)v)->Selected;
+			}
 		}
 
 		m_DropTarget.Register(this, Result->m_StoreID);
@@ -174,6 +176,7 @@ void CFileView::UpdateSearchResult(LFSearchResult* Result, INT FocusItem)
 	else
 	{
 		m_ItemData = NULL;
+		m_ItemDataAllocated = 0;
 
 		m_DropTarget.Revoke();
 		m_pDropTarget = NULL;

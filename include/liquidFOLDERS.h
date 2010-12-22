@@ -500,7 +500,6 @@ struct LFItemDescriptor
 	void* AttributeValues[LFAttributeCount];
 
 	// Internal use only
-	int Position;
 	int FirstAggregate;
 	int LastAggregate;
 	int AggregateCount;
