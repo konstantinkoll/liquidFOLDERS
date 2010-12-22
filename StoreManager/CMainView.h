@@ -24,6 +24,7 @@ public:
 	INT GetFocusItem();
 	INT GetSelectedItem();
 	INT GetNextSelectedItem(INT n);
+	void SelectNone();
 
 protected:
 	CTaskbar m_wndTaskbar;

@@ -87,6 +87,8 @@ CTaskButton* CTaskbar::AddButton(UINT nID, INT IconID, BOOL bForceIcon, BOOL bAd
 
 void CTaskbar::AdjustLayout()
 {
+	SetRedraw(FALSE);
+
 	CRect rect;
 	GetClientRect(rect);
 
@@ -104,7 +106,6 @@ void CTaskbar::AdjustLayout()
 			if (RPos>=BORDERLEFT)
 			{
 				(*ppBtnR)->SetWindowPos(NULL, RPos, Row, l, h, SWP_NOZORDER | SWP_NOACTIVATE);
-				(*ppBtnR)->Invalidate();
 				(*ppBtnR)->ShowWindow(SW_SHOW);
 			}
 			else
@@ -130,7 +131,6 @@ void CTaskbar::AdjustLayout()
 			if (LPos+l+BORDERLEFT-BORDER<RPos)
 			{
 				(*ppBtn)->SetWindowPos(NULL, LPos, Row, l, h, SWP_NOZORDER | SWP_NOACTIVATE);
-				(*ppBtn)->Invalidate();
 				(*ppBtn)->ShowWindow(SW_SHOW);
 			}
 			else
@@ -147,7 +147,8 @@ void CTaskbar::AdjustLayout()
 		ppBtn++;
 	}
 
-	Invalidate();
+	SetRedraw(TRUE);
+	RedrawWindow(NULL, NULL, RDW_INVALIDATE | RDW_ALLCHILDREN);
 }
 
 
@@ -321,7 +322,7 @@ void CTaskbar::OnSize(UINT nType, INT cx, INT cy)
 
 void CTaskbar::OnIdleUpdateCmdUI()
 {
-	SetRedraw(FALSE);
+	//SetRedraw(FALSE);
 
 	BOOL Update = FALSE;
 
@@ -357,7 +358,7 @@ void CTaskbar::OnIdleUpdateCmdUI()
 		ppBtn++;
 	}
 
-	SetRedraw(TRUE);
+//	SetRedraw(TRUE);
 
 	if (Update)
 		AdjustLayout();

@@ -29,7 +29,7 @@ BOOL CTaskButton::Create(CString Caption, CString TooltipHeader, CString Tooltip
 
 	CRect rect;
 	rect.SetRectEmpty();
-	return CButton::Create(TooltipHeader, WS_VISIBLE | WS_TABSTOP | WS_GROUP, rect, pParentWnd, nID);
+	return CButton::Create(TooltipHeader, WS_VISIBLE | WS_TABSTOP | WS_GROUP | BS_OWNERDRAW, rect, pParentWnd, nID);
 }
 
 BOOL CTaskButton::PreTranslateMessage(MSG* pMsg)
@@ -53,6 +53,10 @@ BOOL CTaskButton::PreTranslateMessage(MSG* pMsg)
 	}
 
 	return CButton::PreTranslateMessage(pMsg);
+}
+
+void CTaskButton::DrawItem(LPDRAWITEMSTRUCT)
+{
 }
 
 INT CTaskButton::GetPreferredWidth()

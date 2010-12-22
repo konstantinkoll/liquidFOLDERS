@@ -500,6 +500,7 @@ void CMainFrame::UpdateSearchResult(BOOL SetEmpty, INT FocusItem)
 		ActiveViewParameters = &theApp.m_Views[ActiveContextID];
 	}
 
+	m_wndMainView.SelectNone();
 	m_wndMainView.UpdateSearchResult(SetEmpty ? NULL : RawFiles, SetEmpty ? NULL : CookedFiles, FocusItem);
 
 	ActiveViewID = ActiveViewParameters->Mode;
@@ -853,6 +854,7 @@ void CMainFrame::InitializeRibbon()
 
 	if (!IsClipboard)
 	{
+		strCtx = "View";
 		strTemp = "Globe";
 		CMFCRibbonCategory* pCategoryGlobe = m_wndRibbonBar.AddContextCategory(strTemp, strCtx, 2, AFX_CategoryColor_Indigo, IDB_RIBBONGLOBE_16, IDB_RIBBONGLOBE_32);
 
@@ -920,7 +922,6 @@ void CMainFrame::InitializeRibbon()
 
 	// Im Debug-Modus alle Kategorien anzeigen
 	#ifdef _DEBUG
-	m_wndRibbonBar.ShowCategory(RibbonCategory_View_Calendar);
 	m_wndRibbonBar.ShowCategory(RibbonCategory_View_Globe);
 	m_wndRibbonBar.ShowCategory(RibbonCategory_View_Tagcloud);
 	#endif
@@ -1165,6 +1166,7 @@ void CMainFrame::OnUpdateViewOptions()
 
 	if ((ActiveViewID>LFViewPreview)!=(ActiveViewParameters->Mode>LFViewPreview))
 	{
+		m_wndMainView.SendMessage(WM_SELECTNONE);
 		OnCookFiles();
 	}
 	else
@@ -1178,7 +1180,7 @@ void CMainFrame::OnUpdateViewOptions()
 
 void CMainFrame::OnUpdateSortOptions()
 {
-	OnCookFiles();
+	OnCookFiles(m_wndMainView.GetFocusItem());
 
 	ActiveViewID = ActiveViewParameters->Mode;
 	UpdateRibbon();

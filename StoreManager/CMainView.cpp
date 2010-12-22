@@ -239,6 +239,12 @@ INT CMainView::GetNextSelectedItem(INT n)
 	return p_wndFileView ? p_wndFileView->GetNextSelectedItem(n) : -1;
 }
 
+void CMainView::SelectNone()
+{
+	if (p_wndFileView)
+		p_wndFileView->SendMessage(WM_SELECTNONE);
+}
+
 void CMainView::ExecuteContextMenu(CHAR Drive, LPCSTR verb)
 {
 	WCHAR Path[4] = L" :\\";
@@ -334,8 +340,6 @@ void CMainView::RemoveTransactedItems(LFTransactionList* tl)
 	LFRemoveFlaggedItemDescriptors(p_RawFiles);
 	// TODO
 	//UpdateHistory();
-	if (p_wndFileView)
-		p_wndFileView->SendMessage(WM_SELECTNONE);
 	GetOwner()->SendMessage(WM_COOKFILES, GetFocusItem());
 }
 
@@ -569,8 +573,7 @@ void CMainView::OnUpdateSelection()
 		idx = GetNextSelectedItem(idx);
 	}
 
-	GetOwner()->SendMessage(WM_KICKIDLE);
-	m_wndTaskbar.SendMessage(WM_IDLEUPDATECMDUI);
+	m_wndTaskbar.PostMessage(WM_IDLEUPDATECMDUI);
 
 	// TODO
 	((CMainFrame*)GetParent())->OnUpdateSelection();
@@ -906,9 +909,6 @@ void CMainView::OnFileOpenWith()
 
 void CMainView::OnFileRemember()
 {
-	ASSERT(!IsClipboard);
-	ASSERT(clip);
-
 	CMainFrame* pClipboard = theApp.GetClipboard();
 	BOOL changes = FALSE;
 

@@ -15,6 +15,7 @@ public:
 	CTaskButton();
 
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
+	virtual void DrawItem(LPDRAWITEMSTRUCT);
 
 	BOOL Create(CString Caption, CString TooltipHeader, CString TooltipHint, CMFCToolBarImages* Icons, INT IconID, CWnd* pParentWnd, UINT nID);
 	INT GetPreferredWidth();
