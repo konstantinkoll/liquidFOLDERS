@@ -98,6 +98,7 @@ void CGridView::ArrangeHorizontal(GVArrange& gva, BOOL Justify, BOOL ForceBreak,
 	const INT h = gva.cy+2*gva.padding;
 	ASSERT(l>0);
 	ASSERT(h>0);
+	m_RowHeight = h+gva.guttery;
 
 	INT category = -1;
 
@@ -132,6 +133,8 @@ void CGridView::ArrangeHorizontal(GVArrange& gva, BOOL Justify, BOOL ForceBreak,
 					rect->bottom += m_FontHeight[0];
 
 				y = rect->bottom+4;
+				if (y+h+gva.guttery>m_ScrollHeight)
+					m_ScrollHeight = y+h+gva.guttery;
 			}
 
 		FVItemData* d = GetItemData(a);
@@ -187,6 +190,7 @@ void CGridView::ArrangeVertical(GVArrange& gva)
 	const INT h = gva.cy+2*gva.padding;
 	ASSERT(l>0);
 	ASSERT(h>0);
+	m_RowHeight = h+gva.guttery;
 
 	INT category = -1;
 	INT lastleft = x;

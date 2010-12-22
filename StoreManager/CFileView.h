@@ -121,6 +121,7 @@ protected:
 	INT m_VScrollPos;
 	INT m_HScrollMax;
 	INT m_VScrollMax;
+	INT m_RowHeight;
 	BOOL m_Hover;
 
 	virtual BOOL PreTranslateMessage(MSG* pMsg);

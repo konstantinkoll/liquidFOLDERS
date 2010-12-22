@@ -675,7 +675,7 @@ INT CFileView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	CDC* dc = GetWindowDC();
 	CFont* pOldFont = dc->SelectObject(&theApp.m_DefaultFont);
-	m_FontHeight[0] = dc->GetTextExtent(_T("Wy"), 2).cy;
+	m_FontHeight[0] = m_RowHeight = dc->GetTextExtent(_T("Wy"), 2).cy;
 	dc->SelectObject(&theApp.m_LargeFont);
 	m_FontHeight[1] = dc->GetTextExtent(_T("Wy"), 2).cy;
 	dc->SelectObject(pOldFont);
@@ -742,10 +742,10 @@ void CFileView::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 		nInc = m_VScrollMax-m_VScrollPos;
 		break;
 	case SB_LINEUP:
-		//nInc = -((INT)m_RowHeight);
+		nInc = -m_RowHeight;
 		break;
 	case SB_LINEDOWN:
-		//nInc = m_RowHeight;
+		nInc = m_RowHeight;
 		break;
 	case SB_PAGEUP:
 		nInc = min(-1, -(rect.Height()-(INT)m_HeaderHeight));
