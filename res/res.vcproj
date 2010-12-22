@@ -696,6 +696,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Ribbon\Grouping_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\Grouping_32.png"
+				>
+			</File>
+			<File
 				RelativePath="Ribbon\History_16.png"
 				>
 			</File>
