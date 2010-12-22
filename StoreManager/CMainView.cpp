@@ -923,11 +923,9 @@ void CMainView::OnFileRemember()
 		{
 		case LFTypeVirtual:
 			if ((item->FirstAggregate!=-1) && (item->LastAggregate!=-1))
-			{
 				for (INT a=item->FirstAggregate; a<=item->LastAggregate; a++)
 					if (pClipboard->AddClipItem(p_RawFiles->m_Items[a]))
 						changes = TRUE;
-			}
 			break;
 		case LFTypeFile:
 			if (pClipboard->AddClipItem(item))

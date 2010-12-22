@@ -921,9 +921,12 @@ void CMainFrame::InitializeRibbon()
 	*/
 
 	// Im Debug-Modus alle Kategorien anzeigen
-	#ifdef _DEBUG
-	m_wndRibbonBar.ShowCategory(RibbonCategory_View_Globe);
-	m_wndRibbonBar.ShowCategory(RibbonCategory_View_Tagcloud);
+		#ifdef _DEBUG
+	if (!IsClipboard)
+	{
+		m_wndRibbonBar.ShowCategory(RibbonCategory_View_Globe);
+		m_wndRibbonBar.ShowCategory(RibbonCategory_View_Tagcloud);
+	}
 	#endif
 
 	// Symbolleistenbefehle für Schnellzugriff hinzufügen
