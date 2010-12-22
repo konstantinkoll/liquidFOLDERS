@@ -29,8 +29,8 @@ BOOL AttributeSortableInView(UINT Attr, UINT ViewMode)
 
 #define GetItemData(idx)     ((FVItemData*)(m_ItemData+idx*m_DataSize))
 #define IsSelected(idx)      GetItemData(idx)->Selected
-#define ChangedItem(idx)     { InvalidateItem(idx); GetParent()->PostMessage(WM_UPDATESELECTION); }	// TODO
-#define ChangedItems()       { Invalidate(); GetParent()->PostMessage(WM_UPDATESELECTION); }		// TODO
+#define ChangedItem(idx)     { InvalidateItem(idx); GetParent()->PostMessage(WM_UPDATESELECTION); }
+#define ChangedItems()       { Invalidate(); GetParent()->PostMessage(WM_UPDATESELECTION); }
 
 CFileView::CFileView(UINT DataSize, BOOL EnableScrolling, BOOL EnableHover, BOOL EnableTooltip, BOOL EnableShiftSelection)
 	: CWnd()

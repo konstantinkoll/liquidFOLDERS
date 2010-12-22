@@ -569,6 +569,9 @@ void CMainView::OnUpdateSelection()
 		idx = GetNextSelectedItem(idx);
 	}
 
+	GetOwner()->SendMessage(WM_KICKIDLE);
+	m_wndTaskbar.SendMessage(WM_IDLEUPDATECMDUI);
+
 	// TODO
 	((CMainFrame*)GetParent())->OnUpdateSelection();
 }

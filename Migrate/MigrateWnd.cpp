@@ -233,7 +233,7 @@ LRESULT CMigrateWnd::OnStoresChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)
 {
 	m_wndStore.Update();
 
-	PostMessage(WM_KICKIDLE);
+	PostMessage(WM_IDLEUPDATECMDUI);
 
 	return NULL;
 }
@@ -250,12 +250,12 @@ void CMigrateWnd::OnRootChanged(NMHDR* /*pNMHDR*/, LRESULT* /*pResult*/)
 	}
 
 	m_wndMainView.SetFocus();
-	PostMessage(WM_KICKIDLE);
+	PostMessage(WM_IDLEUPDATECMDUI);
 }
 
 void CMigrateWnd::OnRootUpdate(NMHDR* /*pNMHDR*/, LRESULT* /*pResult*/)
 {
 	m_wndMainView.SetRoot(m_wndFolder.pidl, TRUE, FALSE);
 
-	PostMessage(WM_KICKIDLE);
+	PostMessage(WM_IDLEUPDATECMDUI);
 }
