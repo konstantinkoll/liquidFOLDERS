@@ -643,6 +643,8 @@ BEGIN_MESSAGE_MAP(CFileView, CWnd)
 	ON_WM_MOUSEMOVE()
 	ON_WM_MOUSELEAVE()
 	ON_WM_MOUSEHOVER()
+	ON_WM_MOUSEWHEEL()
+	ON_WM_MOUSEHWHEEL()
 	ON_WM_KEYDOWN()
 	ON_WM_LBUTTONDOWN()
 	ON_WM_LBUTTONUP()
@@ -908,6 +910,46 @@ void CFileView::OnMouseHover(UINT nFlags, CPoint point)
 	tme.dwHoverTime = LFHOVERTIME;
 	tme.hwndTrack = m_hWnd;
 	TrackMouseEvent(&tme);
+}
+
+BOOL CFileView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
+{
+	CRect rect;
+	GetWindowRect(&rect);
+	if (!rect.PtInRect(pt))
+		return FALSE;
+
+	INT nInc = max(-m_VScrollPos, min(-zDelta*(INT)m_RowHeight/WHEEL_DELTA, m_VScrollMax-m_VScrollPos));
+	if (nInc)
+	{
+		m_VScrollPos += nInc;
+		ScrollWindowEx(0, -nInc, NULL, NULL, NULL, NULL, SW_INVALIDATE);
+		SetScrollPos(SB_VERT, m_VScrollPos, TRUE);
+
+		ScreenToClient(&pt);
+		OnMouseMove(nFlags, pt);
+	}
+
+	return TRUE;
+}
+
+void CFileView::OnMouseHWheel(UINT nFlags, short zDelta, CPoint pt)
+{
+	CRect rect;
+	GetWindowRect(&rect);
+	if (!rect.PtInRect(pt))
+		return;
+
+	INT nInc = max(-m_HScrollPos, min(zDelta*64/WHEEL_DELTA, m_HScrollMax-m_HScrollPos));
+	if (nInc)
+	{
+		m_HScrollPos += nInc;
+		ScrollWindowEx(-nInc, 0, NULL, NULL, NULL, NULL, SW_INVALIDATE);
+		SetScrollPos(SB_HORZ, m_HScrollPos, TRUE);
+
+		ScreenToClient(&pt);
+		OnMouseMove(nFlags, pt);
+	}
 }
 
 void CFileView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)

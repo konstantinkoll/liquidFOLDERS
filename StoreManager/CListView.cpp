@@ -128,13 +128,9 @@ void CListView::SetSearchResult(LFSearchResult* Result)
 
 		if (m_HasCategories!=(Result->m_HasCategories==true))
 			SortCategories(Result);
+	}
 
-		AdjustHeader(m_ViewParameters.Mode==LFViewDetails);
-	}
-	else
-	{
-		AdjustHeader(FALSE);
-	}
+	AdjustHeader(m_ViewParameters.Mode==LFViewDetails);
 }
 
 void CListView::AdjustHeader(BOOL bShow)
