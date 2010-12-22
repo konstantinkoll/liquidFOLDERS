@@ -500,7 +500,6 @@ void CMainFrame::UpdateSearchResult(BOOL SetEmpty, INT FocusItem)
 		ActiveViewParameters = &theApp.m_Views[ActiveContextID];
 	}
 
-	m_wndMainView.SelectNone();
 	m_wndMainView.UpdateSearchResult(SetEmpty ? NULL : RawFiles, SetEmpty ? NULL : CookedFiles, FocusItem);
 
 	ActiveViewID = ActiveViewParameters->Mode;
@@ -1169,7 +1168,7 @@ void CMainFrame::OnUpdateViewOptions()
 
 	if ((ActiveViewID>LFViewPreview)!=(ActiveViewParameters->Mode>LFViewPreview))
 	{
-		m_wndMainView.SendMessage(WM_SELECTNONE);
+		m_wndMainView.SelectNone();
 		OnCookFiles();
 	}
 	else
@@ -1183,6 +1182,7 @@ void CMainFrame::OnUpdateViewOptions()
 
 void CMainFrame::OnUpdateSortOptions()
 {
+	m_wndMainView.SelectNone();
 	OnCookFiles(m_wndMainView.GetFocusItem());
 
 	ActiveViewID = ActiveViewParameters->Mode;
