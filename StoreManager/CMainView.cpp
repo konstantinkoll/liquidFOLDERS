@@ -138,6 +138,9 @@ void CMainView::UpdateSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pC
 	p_RawFiles = pRawFiles;
 	p_CookedFiles = pCookedFiles;
 
+	if (FocusItem<0)
+		FocusItem = 0;
+
 	if (!pCookedFiles)
 	{
 		// Header
