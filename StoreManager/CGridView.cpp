@@ -100,7 +100,6 @@ void CGridView::ArrangeHorizontal(GVArrange& gva, BOOL Justify, BOOL ForceBreak,
 
 Restart:
 	m_ScrollWidth = m_ScrollHeight = 0;
-#define CheckRestartH if ((m_ScrollHeight>rectWindow.Height()) && (!HasScrollbars)) { HasScrollbars = TRUE; rectWindow.right -= GetSystemMetrics(SM_CXVSCROLL); goto Restart; }
 
 	INT x = gva.mx;
 	INT y = gva.my;
@@ -137,11 +136,6 @@ Restart:
 					rect->bottom += m_FontHeight[0];
 
 				y = rect->bottom+4;
-				if (y+h+gva.guttery>m_ScrollHeight)
-				{
-					m_ScrollHeight = y+h+gva.guttery-1;
-					CheckRestartH;
-				}
 			}
 
 		FVItemData* d = GetItemData(a);
@@ -154,6 +148,17 @@ Restart:
 		if (x>m_ScrollWidth)
 			m_ScrollWidth = x-1;
 
+		if (y+h+gva.guttery-1>m_ScrollHeight)
+		{
+			m_ScrollHeight = y+h+gva.guttery-1;
+			if ((m_ScrollHeight>=rectWindow.Height()) && (!HasScrollbars))
+			{
+				HasScrollbars = TRUE;
+				rectWindow.right -= GetSystemMetrics(SM_CXVSCROLL);
+				goto Restart;
+			}
+		}
+
 		if ((x+l+gva.gutterx>rectWindow.Width()) || (ForceBreak))
 		{
 			if (MaxWidth)
@@ -161,11 +166,6 @@ Restart:
 
 			x = gva.mx;
 			y += h+gva.guttery;
-			if (y>m_ScrollHeight)
-			{
-				m_ScrollHeight = y-1;
-				CheckRestartH;
-			}
 		}
 	}
 
@@ -206,7 +206,6 @@ void CGridView::ArrangeVertical(GVArrange& gva)
 
 Restart:
 	m_ScrollWidth = m_ScrollHeight = 0;
-#define CheckRestartV if ((m_ScrollWidth>rectWindow.Width()) && (!HasScrollbars)) { HasScrollbars = TRUE; rectWindow.bottom -= GetSystemMetrics(SM_CXHSCROLL); goto Restart; }
 
 	INT x = gva.mx;
 	INT y = top;
@@ -235,12 +234,6 @@ Restart:
 				rect->left = x;
 				rect->top = gva.my;
 				rect->bottom = rect->top+2*CategoryPadding+m_FontHeight[1];
-
-				if (x+l+gva.gutterx>m_ScrollWidth)
-				{
-					m_ScrollWidth = x+l+gva.gutterx-1;
-					CheckRestartV;
-				}
 			}
 
 		FVItemData* d = GetItemData(a);
@@ -256,15 +249,21 @@ Restart:
 		if (y>m_ScrollHeight)
 			m_ScrollHeight = y-1;
 
+		if (x+l+gva.gutterx-1>m_ScrollWidth)
+		{
+			m_ScrollWidth = x+l+gva.gutterx-1;
+			if ((m_ScrollWidth>=rectWindow.Width()) && (!HasScrollbars))
+			{
+				HasScrollbars = TRUE;
+				rectWindow.bottom -= GetSystemMetrics(SM_CXHSCROLL);
+				goto Restart;
+			}
+		}
+
 		if (y+h+gva.guttery>rectWindow.Height())
 		{
 			y = top;
 			x += l+gva.gutterx;
-			if (x>m_ScrollWidth)
-			{
-				m_ScrollWidth = x-1;
-				CheckRestartV;
-			}
 		}
 	}
 
