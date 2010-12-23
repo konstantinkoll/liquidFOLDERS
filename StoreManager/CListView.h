@@ -44,6 +44,7 @@ private:
 	CImageList* m_Icons[2];
 	SIZE m_IconSize[2];
 	INT m_HeaderItemClicked;
+	INT m_HeaderItemSort;
 	BOOL m_IgnoreHeaderItemChange;
 
 	void AdjustHeader(BOOL bShow);

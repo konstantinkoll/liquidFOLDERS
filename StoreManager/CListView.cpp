@@ -31,7 +31,7 @@ CListView::CListView(UINT DataSize)
 	: CGridView(DataSize)
 {
 	m_Icons[0] = m_Icons[1] = NULL;
-	m_HeaderItemClicked = -1;
+	m_HeaderItemClicked = m_HeaderItemSort = -1;
 	m_IgnoreHeaderItemChange = FALSE;
 
 	WCHAR tmpStr[256];
@@ -166,14 +166,16 @@ void CListView::AdjustHeader(BOOL bShow)
 		HDITEM hdi;
 		hdi.mask = HDI_FORMAT;
 
-		if (m_ViewParameters.SortBy!=p_ViewParameters->SortBy)
+		if ((m_HeaderItemSort!=(INT)p_ViewParameters->SortBy) && (m_HeaderItemSort!=-1))
 		{
 			hdi.fmt = 0;
-			m_wndHeader.SetItem(m_ViewParameters.SortBy, &hdi);
+			m_wndHeader.SetItem(m_HeaderItemSort, &hdi);
 		}
 
 		hdi.fmt = p_ViewParameters->Descending ? HDF_SORTDOWN : HDF_SORTUP;
 		m_wndHeader.SetItem(p_ViewParameters->SortBy, &hdi);
+
+		m_HeaderItemSort = p_ViewParameters->SortBy;
 
 		m_wndHeader.ModifyStyle(HDS_HIDDEN, 0);
 		m_wndHeader.SetRedraw(TRUE);
