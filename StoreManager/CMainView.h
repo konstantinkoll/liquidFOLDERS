@@ -25,6 +25,7 @@ public:
 	INT GetSelectedItem();
 	INT GetNextSelectedItem(INT n);
 	void SelectNone();
+	BOOL UpdateItems(LFVariantData* value1, LFVariantData* value2, LFVariantData* value3); // TODO (protected)
 
 protected:
 	CTaskbar m_wndTaskbar;

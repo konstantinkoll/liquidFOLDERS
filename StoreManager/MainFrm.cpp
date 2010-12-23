@@ -545,33 +545,7 @@ BOOL CMainFrame::RenameSingleItem(UINT n, CString Name)
 
 BOOL CMainFrame::UpdateSelectedItems(LFVariantData* value1, LFVariantData* value2, LFVariantData* value3)
 {
-/*	LFTransactionList* tl = BuildTransactionList();
-	LFTransactionUpdate(tl, GetSafeHwnd(), value1, value2, value3);
-
-	if (m_wndMainView.p_wndFileView)
-	{
-		BOOL deselected = FALSE;
-
-		for (UINT a=0; a<tl->m_ItemCount; a++)
-			if (tl->m_Items[a].LastError!=LFOk)
-			{
-				m_wndMainView.p_wndFileView->SelectItem(tl->m_Items[a].UserData, FALSE, TRUE);
-				deselected = TRUE;
-			}
-
-		if (tl->m_Changes)
-			m_wndMainView.UpdateSearchResult(RawFiles, CookedFiles, m_wndMainView.GetFocusItem());
-		if (deselected)
-			OnUpdateSelection();
-	}
-
-	if (tl->m_LastError>LFCancel)
-		ShowCaptionBar(IDI_ERROR, tl->m_LastError);
-
-	BOOL changes = tl->m_Changes;
-	LFFreeTransactionList(tl);
-	return changes;*/
-	return TRUE;
+	return m_wndMainView.UpdateItems(value1, value2, value3);
 }
 
 void CMainFrame::OnNavigateFirst()

@@ -365,7 +365,7 @@ BOOL CMainView::UpdateTrashFlag(BOOL Trash, BOOL All)
 		GetSystemTimeAsFileTime(&value2.Time);
 
 	LFTransactionList* tl = BuildTransactionList(All);
-	LFTransactionUpdate(tl, NULL, &value1, &value2);
+	LFTransactionUpdate(tl, GetOwner()->GetSafeHwnd(), &value1, &value2);
 	RemoveTransactedItems(tl);
 
 	if (tl->m_LastError>LFCancel)
@@ -381,6 +381,36 @@ BOOL CMainView::DeleteFiles(BOOL All)
 	LFTransactionList* tl = BuildTransactionList(All);
 	LFTransactionDelete(tl);
 	RemoveTransactedItems(tl);
+
+	if (tl->m_LastError>LFCancel)
+		ShowCaptionBar(IDI_ERROR, tl->m_LastError);
+
+	BOOL changes = tl->m_Changes;
+	LFFreeTransactionList(tl);
+	return changes;
+}
+
+BOOL CMainView::UpdateItems(LFVariantData* value1, LFVariantData* value2, LFVariantData* value3)
+{
+	LFTransactionList* tl = BuildTransactionList();
+	LFTransactionUpdate(tl, GetOwner()->GetSafeHwnd(), value1, value2, value3);
+
+	if (p_wndFileView)
+	{
+		BOOL deselected = FALSE;
+
+		for (UINT a=0; a<tl->m_ItemCount; a++)
+			if (tl->m_Items[a].LastError!=LFOk)
+			{
+				p_wndFileView->SelectItem(tl->m_Items[a].UserData, FALSE, TRUE);
+				deselected = TRUE;
+			}
+
+		if (tl->m_Changes)
+			UpdateSearchResult(p_RawFiles, p_CookedFiles, GetFocusItem());
+		if (deselected)
+			OnUpdateSelection();
+	}
 
 	if (tl->m_LastError>LFCancel)
 		ShowCaptionBar(IDI_ERROR, tl->m_LastError);

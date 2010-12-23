@@ -639,7 +639,7 @@ INT CListView::GetMaxColumnWidth(UINT Col, INT Max)
 
 void CListView::AutosizeColumn(UINT Col)
 {
-	m_ViewParameters.ColumnWidth[Col] = p_ViewParameters->ColumnWidth[Col] = 3*PADDING + 
+	m_ViewParameters.ColumnWidth[Col] = p_ViewParameters->ColumnWidth[Col] = 3*PADDING +
 		((Col==LFAttrFileName) ? m_IconSize[0].cx+PADDING+GetMaxLabelWidth(MAXAUTOWIDTH) : (theApp.m_Attributes[Col]->Type==LFTypeRating) ? RatingBitmapWidth+PADDING : GetMaxColumnWidth(Col, MAXAUTOWIDTH));
 
 	if (m_ViewParameters.ColumnWidth[Col]<MINWIDTH)

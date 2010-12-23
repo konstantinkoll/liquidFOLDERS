@@ -91,14 +91,6 @@ protected:
 	afx_msg void OnShowHistoryWnd();
 	afx_msg void OnToggleHistoryWnd();
 	afx_msg void OnUpdatePaneCommands(CCmdUI* pCmdUI);
-
-	/*afx_msg void OnClipRemove();
-	afx_msg void OnClipRememberLast();
-	afx_msg void OnClipRememberNew();
-	afx_msg void OnItemsOpenWith();
-	afx_msg void OnItemsDelete();
-	afx_msg void OnItemsRename();*/
-
 	afx_msg void OnChangeChildView(UINT nID);
 	afx_msg void OnNavigateFirst();
 	afx_msg void OnNavigateBackOne();
