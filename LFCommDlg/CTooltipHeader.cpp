@@ -187,7 +187,7 @@ void CTooltipHeader::OnPaint()
 
 					if ((!Themed) && (hdi.fmt & (HDF_SORTDOWN | HDF_SORTUP)))
 					{
-						rectItem.left += dc.GetTextExtent(lpBuffer, wcslen(lpBuffer)).cx+2;
+						rectItem.left += (INT)dc.GetTextExtent(lpBuffer, wcslen(lpBuffer)).cx+2;
 						if (rectItem.left+5<rectItem.right)
 							m_SortIndicators.Draw(&dc, (hdi.fmt & HDF_SORTUP) ? 2 : 3, CPoint(rectItem.left, rectItem.top+(rectItem.Height()-3)/2), ILD_TRANSPARENT);
 					}
