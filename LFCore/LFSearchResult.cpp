@@ -82,10 +82,15 @@ bool LFSearchResult::AddItemDescriptor(LFItemDescriptor* i)
 	if (!DynArray::AddItem(i))
 		return false;
 
-	if ((i->Type & LFTypeFile)==LFTypeFile)
+	switch (i->Type & LFTypeFile)
 	{
+	case LFTypeStore:
+		m_StoreCount--;
+		break;
+	case LFTypeFile:
 		m_FileCount++;
 		m_FileSize += i->CoreAttributes.FileSize;
+		break;
 	}
 
 	return true;
@@ -113,8 +118,6 @@ bool LFSearchResult::AddStoreDescriptor(LFStoreDescriptor* s, LFFilter* f)
 	else
 	{
 		m_StoreCount++;
-		if (f)
-			f->Result.StoreCount++;
 	}
 
 	return res;
