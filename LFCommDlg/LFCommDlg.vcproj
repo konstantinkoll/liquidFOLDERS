@@ -971,6 +971,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\SortIndicators.bmp"
+				>
+			</File>
+			<File
 				RelativePath=".\res\Store_Default_Tiny.ico"
 				>
 			</File>

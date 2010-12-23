@@ -11,7 +11,7 @@
 //
 
 #define GetItemData(idx)     ((FVItemData*)(m_ItemData+idx*m_DataSize))
-#define CategoryPadding      3
+#define CategoryPadding      2
 
 CGridView::CGridView(UINT DataSize)
 	: CFileView(DataSize)

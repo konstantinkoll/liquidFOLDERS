@@ -25,6 +25,7 @@
                                            DeleteDC(hdcMem); }
 #define RIGHTCOLUMN                        215
 #define MAXAUTOWIDTH                       400
+#define MINWIDTH                           32
 
 CListView::CListView(UINT DataSize)
 	: CGridView(DataSize)
@@ -142,6 +143,7 @@ void CListView::AdjustHeader(BOOL bShow)
 
 		VERIFY(m_wndHeader.SetOrderArray(LFAttributeCount, p_ViewParameters->ColumnOrder));
 
+		// Width
 		for (UINT a=0; a<LFAttributeCount; a++)
 		{
 			HDITEM HdItem;
@@ -154,11 +156,24 @@ void CListView::AdjustHeader(BOOL bShow)
 					HdItem.cxy = p_ViewParameters->ColumnWidth[a] = RatingBitmapWidth+4*PADDING;
 				}
 				else
-					if (HdItem.cxy<32)
-						p_ViewParameters->ColumnWidth[a] = HdItem.cxy = 32;
+					if (HdItem.cxy<MINWIDTH)
+						p_ViewParameters->ColumnWidth[a] = HdItem.cxy = MINWIDTH;
 
 			m_wndHeader.SetItem(a, &HdItem);
 		}
+
+		// Sort indicator
+		HDITEM hdi;
+		hdi.mask = HDI_FORMAT;
+
+		if (m_ViewParameters.SortBy!=p_ViewParameters->SortBy)
+		{
+			hdi.fmt = 0;
+			m_wndHeader.SetItem(m_ViewParameters.SortBy, &hdi);
+		}
+
+		hdi.fmt = p_ViewParameters->Descending ? HDF_SORTDOWN : HDF_SORTUP;
+		m_wndHeader.SetItem(p_ViewParameters->SortBy, &hdi);
 
 		m_wndHeader.ModifyStyle(HDS_HIDDEN, 0);
 		m_wndHeader.SetRedraw(TRUE);
@@ -626,6 +641,9 @@ void CListView::AutosizeColumn(UINT Col)
 {
 	m_ViewParameters.ColumnWidth[Col] = p_ViewParameters->ColumnWidth[Col] = 3*PADDING + 
 		((Col==LFAttrFileName) ? m_IconSize[0].cx+PADDING+GetMaxLabelWidth(MAXAUTOWIDTH) : (theApp.m_Attributes[Col]->Type==LFTypeRating) ? RatingBitmapWidth+PADDING : GetMaxColumnWidth(Col, MAXAUTOWIDTH));
+
+	if (m_ViewParameters.ColumnWidth[Col]<MINWIDTH)
+		m_ViewParameters.ColumnWidth[Col] = MINWIDTH;
 }
 
 void CListView::SortCategories(LFSearchResult* Result)
@@ -770,7 +788,7 @@ void CListView::OnBeginDrag(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	LPNMHEADER pHdr = (LPNMHEADER)pNMHDR;
 
-	*pResult = (pHdr->iItem==LFAttrFileName);
+	*pResult = (pHdr->iItem==LFAttrFileName) || (m_ViewParameters.ColumnWidth[pHdr->iItem]==0);
 }
 
 void CListView::OnEndDrag(NMHDR* pNMHDR, LRESULT* pResult)

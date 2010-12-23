@@ -105,6 +105,7 @@ IDB_PRIORITY9           BITMAP                  "res\\Priority9.bmp"
 IDB_PRIORITY10          BITMAP                  "res\\Priority10.bmp"
 IDB_EXPLORERGRADIENT    BITMAP                  "res\\ExplorerGradient.bmp"
 IDB_ATTRIBUTEICONS      BITMAP                  "res\\Attributes.bmp"
+IDB_SORTINDICATORS      BITMAP                  "res\\SortIndicators.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
 //

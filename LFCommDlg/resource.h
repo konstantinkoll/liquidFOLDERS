@@ -40,6 +40,7 @@
 #define IDB_PRIORITY8                   20128
 #define IDB_PRIORITY9                   20129
 #define IDB_PRIORITY10                  20130
+#define IDB_SORTINDICATORS              20131
 #define IDI_READY                       20200
 #define IDS_HELPURL                     20300
 #define IDS_PURCHASEURL                 20301

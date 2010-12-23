@@ -62,6 +62,8 @@ INT CTooltipHeader::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	SetFont(&((LFApplication*)AfxGetApp())->m_DefaultFont);
 
+	m_SortIndicators.Create(IDB_SORTINDICATORS, NULL, 0, 3, 7, 4);
+
 	// Tooltip
 	m_TooltipCtrl.Create(this);
 
@@ -139,6 +141,11 @@ void CTooltipHeader::OnPaint()
 								g.FillRectangle(&brush1, rectItem.right-1, rectItem.top, 1, rectItem.Height());
 							}
 
+						if (hdi.fmt & (HDF_SORTDOWN | HDF_SORTUP))
+							m_SortIndicators.Draw(&dc, (hdi.fmt & HDF_SORTUP) ? 0 : 1, CPoint(rectItem.left+(rectItem.Width()-7)/2, rectItem.top+2), ILD_TRANSPARENT);
+
+						rectItem.bottom -= 3;
+						rectItem.top = rectItem.bottom-dc.GetTextExtent(_T("Wy"), 2).cy;
 					}
 					else
 					{
@@ -159,8 +166,7 @@ void CTooltipHeader::OnPaint()
 						rectItem.InflateRect(1, 1);
 					}
 
-					rectItem.DeflateRect(5, 1);
-					rectItem.top--;
+					rectItem.DeflateRect(4, 0);
 
 					UINT nFormat = DT_SINGLELINE | DT_END_ELLIPSIS | DT_VCENTER;
 					switch (hdi.fmt & HDF_JUSTIFYMASK)
@@ -178,6 +184,13 @@ void CTooltipHeader::OnPaint()
 
 					dc.SetTextColor(Themed ? 0x7A604C : GetSysColor(COLOR_WINDOWTEXT));
 					dc.DrawText(lpBuffer, -1, rectItem, nFormat);
+
+					if ((!Themed) && (hdi.fmt & (HDF_SORTDOWN | HDF_SORTUP)))
+					{
+						rectItem.left += dc.GetTextExtent(lpBuffer, wcslen(lpBuffer)).cx+2;
+						if (rectItem.left+5<rectItem.right)
+							m_SortIndicators.Draw(&dc, (hdi.fmt & HDF_SORTUP) ? 2 : 3, CPoint(rectItem.left, rectItem.top+(rectItem.Height()-3)/2), ILD_TRANSPARENT);
+					}
 				}
 				else
 					if (IsCtrlThemed())
@@ -260,15 +273,16 @@ void CTooltipHeader::OnMouseHover(UINT nFlags, CPoint point)
 			if (!m_TooltipCtrl.IsWindowVisible())
 			{
 				HDITEMW i;
+				WCHAR TooltipTextBuffer[256];
 				i.mask = HDI_TEXT;
-				i.pszText = m_TooltipTextBuffer;
+				i.pszText = TooltipTextBuffer;
 				i.cchTextMax = 256;
 
 				if (GetItem(m_TooltipItem, &i))
-					if (m_TooltipTextBuffer[0]!=L'\0')
+					if (TooltipTextBuffer[0]!=L'\0')
 					{
 						ClientToScreen(&point);
-						m_TooltipCtrl.Track(point, NULL, NULL, _T(""), m_TooltipTextBuffer);
+						m_TooltipCtrl.Track(point, NULL, NULL, _T(""), TooltipTextBuffer);
 					}
 			}
 	}

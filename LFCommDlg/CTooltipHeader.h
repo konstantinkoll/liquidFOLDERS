@@ -27,6 +27,7 @@ public:
 	DECLARE_MESSAGE_MAP()
 
 protected:
+	CImageListTransparent m_SortIndicators;
 	LFTooltip m_TooltipCtrl;
 
 private:
@@ -35,5 +36,4 @@ private:
 	INT m_PressedItem;
 	INT m_TrackItem;
 	INT m_TooltipItem;
-	WCHAR m_TooltipTextBuffer[256];
 };
