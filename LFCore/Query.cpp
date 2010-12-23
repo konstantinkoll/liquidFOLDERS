@@ -921,6 +921,7 @@ LFCore_API LFSearchResult* LFQuery(LFFilter* filter)
 
 		GetSystemTime(&filter->Result.Time);
 		filter->Result.ItemCount = res->m_ItemCount;
+		filter->Result.StoreCount = res->m_StoreCount;
 		filter->Result.FileCount = res->m_FileCount;
 		filter->Result.FileSize = res->m_FileSize;
 	}
