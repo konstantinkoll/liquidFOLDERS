@@ -469,6 +469,7 @@ BEGIN_MESSAGE_MAP(CMainView, CWnd)
 	ON_COMMAND(IDM_FILE_REMEMBER, OnFileRemember)
 	ON_COMMAND(IDM_FILE_REMOVE, OnFileRemove)
 	ON_COMMAND(IDM_FILE_DELETE, OnFileDelete)
+	ON_COMMAND(IDM_FILE_RENAME, OnFileRename)
 	ON_COMMAND(IDM_FILE_SEND, OnFileSend)
 	ON_COMMAND(IDM_FILE_RESTORE, OnFileRestore)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_FILE_OPENWITH, IDM_FILE_RESTORE, OnUpdateFileCommands)
@@ -988,6 +989,13 @@ void CMainView::OnFileDelete()
 		{
 			UpdateTrashFlag(TRUE);
 		}
+}
+
+void CMainView::OnFileRename()
+{
+	INT idx = GetSelectedItem();
+	if ((idx!=-1) && (p_wndFileView))
+		p_wndFileView->EditLabel(idx);
 }
 
 void CMainView::OnFileSend()

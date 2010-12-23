@@ -182,6 +182,7 @@ void CFileView::UpdateSearchResult(LFSearchResult* Result, INT FocusItem)
 		m_pDropTarget = NULL;
 
 		m_FocusItem = m_HotItem = -1;
+		m_HScrollPos = m_VScrollPos = 0;
 	}
 
 	SetSearchResult(Result);
@@ -262,7 +263,56 @@ void CFileView::EnsureVisible(INT idx)
 	if (!m_EnableScrolling)
 		return;
 
-	//TODO
+	CRect rect;
+	GetClientRect(&rect);
+
+	RECT rectItem = GetItemRect(idx);
+
+	SCROLLINFO si;
+	INT nInc;
+
+	// Vertikal
+	nInc = 0;
+	if (rectItem.bottom>rect.Height())
+		nInc = rectItem.bottom-rect.Height();
+	if (rectItem.top<nInc)
+		nInc = rectItem.top;
+
+	nInc = max(-m_VScrollPos, min(nInc, m_VScrollMax-m_VScrollPos));
+	if (nInc)
+	{
+		m_VScrollPos += nInc;
+		ScrollWindowEx(0, -nInc, NULL, NULL, NULL, NULL, SW_INVALIDATE);
+
+		ZeroMemory(&si, sizeof(si));
+		si.cbSize = sizeof(SCROLLINFO);
+		si.fMask = SIF_POS;
+		si.nPos = m_VScrollPos;
+		SetScrollInfo(SB_VERT, &si);
+	}
+
+	// Horizontal
+	if (m_ViewParameters.Mode!=LFViewDetails)
+	{
+		nInc = 0;
+		if (rectItem.right>rect.Width())
+			nInc = rectItem.right-rect.Width();
+		if (rectItem.left<nInc)
+			nInc = rectItem.left;
+
+		nInc = max(-m_HScrollPos, min(nInc, m_HScrollMax-m_HScrollPos));
+		if (nInc)
+		{
+			m_HScrollPos += nInc;
+			ScrollWindowEx(-nInc, 0, NULL, NULL, NULL, NULL, SW_INVALIDATE);
+	
+			ZeroMemory(&si, sizeof(si));
+			si.cbSize = sizeof(SCROLLINFO);
+			si.fMask = SIF_POS;
+			si.nPos = m_VScrollPos;
+			SetScrollInfo(SB_HORZ, &si);
+		}
+	}
 }
 
 void CFileView::SetFocusItem(INT FocusItem, BOOL ShiftSelect)
@@ -418,9 +468,11 @@ CMenu* CFileView::GetItemContextMenu(INT idx)
 	return pMenu;
 }
 
-void CFileView::EditLabel(INT /*idx*/)
+void CFileView::EditLabel(INT idx)
 {
 	m_EditLabel = -1;
+
+	SetFocus();
 }
 
 BOOL CFileView::IsEditing()

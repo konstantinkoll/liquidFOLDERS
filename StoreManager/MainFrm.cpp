@@ -482,14 +482,6 @@ BOOL CMainFrame::AddClipItem(LFItemDescriptor* i)
 	return TRUE;
 }
 
-/*void CMainFrame::OnItemsRename()
-{
-	if (m_wndMainView.p_wndFileView)
-	{
-		m_wndMainView.p_wndFileView->SetFocus();
-		m_wndMainView.p_wndFileView->EditLabel(GetSelectedItem());
-	}
-}*/
 
 
 void CMainFrame::UpdateSearchResult(BOOL SetEmpty, INT FocusItem)

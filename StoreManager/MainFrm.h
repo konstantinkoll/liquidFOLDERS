@@ -116,7 +116,6 @@ protected:
 private:
 	BOOL AttributeAllowedForSorting(INT attr);
 	void Remember(CMainFrame* clip);
-	void AddTransactionItem(LFTransactionList* tl, LFItemDescriptor* i, UINT UserData);
 	void ShowCaptionBar(LPCWSTR Icon, LPCWSTR Message, INT Command=0);
 	void InitializeRibbon();
 	void UpdateRibbon();

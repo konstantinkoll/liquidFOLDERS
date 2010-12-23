@@ -360,7 +360,8 @@ void CTreeView::EnsureVisible(CPoint item)
 		si.fMask = SIF_POS;
 		si.nPos = m_VScrollPos;
 		SetScrollInfo(SB_HORZ, &si);
-	}}
+	}
+}
 
 void CTreeView::PopulateMigrationList(CMigrationList* ml, LFItemDescriptor* it, UINT row, UINT col)
 {
