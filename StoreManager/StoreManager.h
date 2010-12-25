@@ -55,7 +55,6 @@ public:
 
 	HBITMAP GetGLTexture(UINT nID);
 	void FreeGLTexture(UINT nID);
-		static void GetRibbonColors(COLORREF* back, COLORREF* text=NULL, COLORREF* highlight=NULL);	// Axe
 		static CString GetCommandName(UINT nID, BOOL bInsertSpace=FALSE);							// Axe
 		static CMFCRibbonButton* CommandButton(UINT nID, INT nSmallImageIndex=-1, INT nLargeImageIndex=-1, BOOL bAlwaysShowDescription=FALSE, BOOL bInsertSpace=FALSE);	// Axe
 		static CMFCRibbonCheckBox* CommandCheckBox(UINT nID);										// Axe

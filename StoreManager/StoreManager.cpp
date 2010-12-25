@@ -519,56 +519,6 @@ void CStoreManagerApp::FreeGLTexture(UINT nID)
 
 // Ribbon slack
 
-void CStoreManagerApp::GetRibbonColors(COLORREF* back, COLORREF* text, COLORREF* highlight)
-{
-#if (_MFC_VER>=0x1000)
-	if (m_nAppLook==ID_VIEW_APPLOOK_WINDOWS_7)
-	{
-		if (back)
-			*back = (COLORREF)0xCAD4E3;
-		if (text)
-			*text = (COLORREF)0x000000;
-		if (highlight)
-			*highlight = (COLORREF)0x003399;
-	}
-	else
-#endif
-		switch (CMFCVisualManagerOffice2007::GetStyle())
-		{
-		case CMFCVisualManagerOffice2007::Office2007_Silver:
-			if (back)
-				*back = (COLORREF)0xDDD4D0;
-			if (text)
-				*text = (COLORREF)0x000000;
-			if (highlight)
-				*highlight = (COLORREF)0x5C534C;
-			break;
-		case CMFCVisualManagerOffice2007::Office2007_ObsidianBlack:
-			if (back)
-				*back = (COLORREF)0x535353;
-			if (text)
-				*text = (COLORREF)0xFFFFFF;
-			if (highlight)
-				*highlight = (COLORREF)0xFFFFFF;
-			break;
-		case CMFCVisualManagerOffice2007::Office2007_Aqua:
-			if (back)
-				*back = (COLORREF)0xD9CAC4;
-			if (text)
-				*text = (COLORREF)0x000000;
-			if (highlight)
-				*highlight = (COLORREF)0x6E1500;
-			break;
-		default:
-			if (back)
-				*back = (COLORREF)0xFFDBBF;
-			if (text)
-				*text = (COLORREF)0x000000;
-			if (highlight)
-				*highlight = (COLORREF)0x8B4215;
-		}
-}
-
 CString CStoreManagerApp::GetCommandName(UINT nID, BOOL bInsertSpace)
 {
 	CString tmpStr = _T("?");

@@ -374,11 +374,8 @@ IDM_GLOBE MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "Zoom &in",                    ID_GLOBE_ZOOMIN
-        MENUITEM "Zoom &out",                   ID_GLOBE_ZOOMOUT
-        MENUITEM "Fit &window",                 ID_GLOBE_SCALETOFIT
-        MENUITEM SEPARATOR
-        MENUITEM "Jump to &location...",        ID_GLOBE_JUMPTOLOCATION
+        MENUITEM "Jump to &location...",        IDM_GLOBE_JUMPTOLOCATION
+        MENUITEM "Size globe to &fit",          IDM_GLOBE_AUTOSIZE
         MENUITEM SEPARATOR
         MENUITEM "Show &airport names",         ID_GLOBE_SHOWAIRPORTNAMES
         MENUITEM "Show G&PS locations",         ID_GLOBE_SHOWGPS
@@ -655,12 +652,12 @@ END
 
 STRINGTABLE 
 BEGIN
-    ID_GLOBE_ZOOMIN         "Zooms into the globe.\nZoom in"
-    ID_GLOBE_ZOOMOUT        "Zooms out of the globe.\nZoom out"
-    ID_GLOBE_SCALETOFIT     "Zooms the globe to touch the sides of the containing window.\nFit to window"
-    ID_GLOBE_SAVECAMERA     "Saves the current viewpoint to the view settings of the active context.\nSave viewpoint"
-    ID_GLOBE_JUMPTOLOCATION "Centers the globe on a specific location.\nJump to location"
-    ID_GLOBE_GOOGLEEARTH    "Opens the selected places in Google Earth. Google Earth must be installed on this computer.\nOpen in Google Earth"
+    IDM_GLOBE_ZOOMIN         "Zooms into the globe.\nZoom in"
+    IDM_GLOBE_ZOOMOUT        "Zooms out of the globe.\nZoom out"
+    IDM_GLOBE_AUTOSIZE       "Zooms the globe to touch the sides of the containing window.\nFit to window"
+    ID_GLOBE_SAVECAMERA      "Saves the current viewpoint to the view settings of the active context.\nSave viewpoint"
+    IDM_GLOBE_JUMPTOLOCATION "Centers the globe on a specific location.\nJump to location"
+    IDM_GLOBE_GOOGLEEARTH   "Opens the selected locations in Google Earth.\nOpen in Google Earth"
     ID_GLOBE_TEXTURESIZE    "Selects the size of the 3D texture used for the earth's 3D model.\nTexture size"
     ID_GLOBE_HQMODEL        "Selects a 3D model of the earth with greater detail, but also greater hardware requirements.\nHQ Model"
     ID_GLOBE_LIGHTING       "Enables or disables lighting. Lighting makes the 3D model of the earth more realistic, but is also more demanding on your graphics card.\nLighting"

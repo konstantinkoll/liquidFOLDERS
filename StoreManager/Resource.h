@@ -96,12 +96,12 @@
 #define ID_DROP_TIME                    821
 #define ID_DROP_LOCATION                822
 #define ID_DROP_DIMENSION               823
-#define ID_GLOBE_ZOOMIN                 900
-#define ID_GLOBE_ZOOMOUT                901
-#define ID_GLOBE_SCALETOFIT             902
+#define IDM_GLOBE_ZOOMIN                900
+#define IDM_GLOBE_ZOOMOUT               901
+#define IDM_GLOBE_AUTOSIZE              902
 #define ID_GLOBE_SAVECAMERA             903
-#define ID_GLOBE_JUMPTOLOCATION         904
-#define ID_GLOBE_GOOGLEEARTH            905
+#define IDM_GLOBE_JUMPTOLOCATION        904
+#define IDM_GLOBE_GOOGLEEARTH           905
 #define ID_GLOBE_TEXTURESIZE            906
 #define ID_GLOBE_HQMODEL                907
 #define ID_GLOBE_LIGHTING               908

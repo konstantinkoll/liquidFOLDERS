@@ -128,7 +128,9 @@ void CGlobeView::SetViewOptions(BOOL Force)
 		m_LocalSettings.Longitude = p_ViewParameters->GlobeLongitude/1000.0f;
 		m_LocalSettings.GlobeZoom = p_ViewParameters->GlobeZoom;
 
-		theApp.GetRibbonColors(&m_ColorBack, &m_ColorText, &m_ColorHighlight);
+		m_ColorBack = 0xFFFFFF;
+		m_ColorText = 0x000000;
+		m_ColorHighlight = 0x993300;
 	}
 
 	PrepareTexture();
@@ -213,7 +215,7 @@ CMenu* CGlobeView::GetItemContextMenu(INT idx)
 
 	CString tmpStr;
 	ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_OPENGOOGLEEARTH));
-	pPopup->InsertMenu(1, MF_STRING | MF_BYPOSITION, ID_GLOBE_GOOGLEEARTH, tmpStr);
+	pPopup->InsertMenu(1, MF_STRING | MF_BYPOSITION, IDM_GLOBE_GOOGLEEARTH, tmpStr);
 
 	return pMenu;
 }
@@ -230,12 +232,12 @@ BOOL CGlobeView::CursorOnGlobe(CPoint point)
 BEGIN_MESSAGE_MAP(CGlobeView, CFileView)
 	ON_WM_CREATE()
 	ON_WM_DESTROY()
-	ON_COMMAND(ID_GLOBE_ZOOMIN, OnZoomIn)
-	ON_COMMAND(ID_GLOBE_ZOOMOUT, OnZoomOut)
-	ON_COMMAND(ID_GLOBE_SCALETOFIT, OnScaleToFit)
+	ON_COMMAND(IDM_GLOBE_ZOOMIN, OnZoomIn)
+	ON_COMMAND(IDM_GLOBE_ZOOMOUT, OnZoomOut)
+	ON_COMMAND(IDM_GLOBE_AUTOSIZE, OnScaleToFit)
 	ON_COMMAND(ID_GLOBE_SAVECAMERA, OnSaveCamera)
-	ON_COMMAND(ID_GLOBE_JUMPTOLOCATION, OnJumpToLocation)
-	ON_COMMAND(ID_GLOBE_GOOGLEEARTH, OnGoogleEarth)
+	ON_COMMAND(IDM_GLOBE_JUMPTOLOCATION, OnJumpToLocation)
+	ON_COMMAND(IDM_GLOBE_GOOGLEEARTH, OnGoogleEarth)
 	ON_COMMAND(ID_GLOBE_HQMODEL, OnHQModel)
 	ON_COMMAND(ID_GLOBE_LIGHTING, OnLighting)
 	ON_COMMAND(ID_GLOBE_SHOWBUBBLES, OnShowBubbles)
@@ -244,7 +246,7 @@ BEGIN_MESSAGE_MAP(CGlobeView, CFileView)
 	ON_COMMAND(ID_GLOBE_SHOWHINTS, OnShowHints)
 	ON_COMMAND(ID_GLOBE_SHOWSPOTS, OnShowSpots)
 	ON_COMMAND(ID_GLOBE_SHOWVIEWPOINT, OnShowViewpoint)
-	ON_UPDATE_COMMAND_UI_RANGE(ID_GLOBE_ZOOMIN, ID_GLOBE_SHOWVIEWPOINT, OnUpdateCommands)
+	ON_UPDATE_COMMAND_UI_RANGE(IDM_GLOBE_ZOOMIN, ID_GLOBE_SHOWVIEWPOINT, OnUpdateCommands)
 	ON_WM_LBUTTONDOWN()
 	ON_WM_LBUTTONUP()
 	ON_WM_MOUSEMOVE()
@@ -497,19 +499,19 @@ void CGlobeView::OnUpdateCommands(CCmdUI* pCmdUI)
 	BOOL b = TRUE;
 	switch (pCmdUI->m_nID)
 	{
-	case ID_GLOBE_ZOOMIN:
+	case IDM_GLOBE_ZOOMIN:
 		b = m_LocalSettings.GlobeZoom>0;
 		break;
-	case ID_GLOBE_ZOOMOUT:
+	case IDM_GLOBE_ZOOMOUT:
 		b = m_LocalSettings.GlobeZoom<100;
 		break;
-	case ID_GLOBE_SCALETOFIT:
+	case IDM_GLOBE_AUTOSIZE:
 		b = m_LocalSettings.GlobeZoom!=60;
 		break;
 	case ID_GLOBE_SAVECAMERA:
 		b = m_CameraChanged;
 		break;
-	case ID_GLOBE_GOOGLEEARTH:
+	case IDM_GLOBE_GOOGLEEARTH:
 		b = (GetNextSelectedItem(-1)!=-1) && (theApp.m_PathGoogleEarth.GetLength());
 		break;
 	case ID_GLOBE_HQMODEL:

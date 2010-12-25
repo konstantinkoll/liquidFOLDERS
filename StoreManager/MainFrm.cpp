@@ -825,13 +825,8 @@ void CMainFrame::InitializeRibbon()
 
 			strTemp = "View";
 			CMFCRibbonPanel* pPanelGlobeView = pCategoryGlobe->AddPanel(strTemp, m_PanelImages.ExtractIcon(13));
-			pPanelGlobeView->EnableLaunchButton(ID_GLOBE_JUMPTOLOCATION, 4);
 
-				pPanelGlobeView->Add(theApp.CommandButton(ID_GLOBE_ZOOMIN, 0, 0));
-				pPanelGlobeView->Add(theApp.CommandButton(ID_GLOBE_ZOOMOUT, 1, 1));
-				pPanelGlobeView->Add(theApp.CommandButton(ID_GLOBE_SCALETOFIT, 2, 2));
-				pPanelGlobeView->AddSeparator();
-				pPanelGlobeView->Add(theApp.CommandButton(ID_GLOBE_SAVECAMERA, 3, 3));
+				pPanelGlobeView->Add(theApp.CommandButton(ID_GLOBE_SAVECAMERA, 0, 0));
 
 			strTemp = "Display options";
 			CMFCRibbonPanel* pPanelGlobeOptions = pCategoryGlobe->AddPanel(strTemp, m_PanelImages.ExtractIcon(4));
@@ -846,7 +841,7 @@ void CMainFrame::InitializeRibbon()
 				pPanelGlobeOptions->Add(new CMFCRibbonLabel(strTemp));
 				pPanelGlobeOptions->Add(new CTextureComboBox(ID_GLOBE_TEXTURESIZE, 100));
 				pPanelGlobeOptions->AddSeparator();
-				pPanelGlobeOptions->Add(theApp.CommandButton(ID_GLOBE_SHOWBUBBLES, 5, 5));
+				pPanelGlobeOptions->Add(theApp.CommandButton(ID_GLOBE_SHOWBUBBLES, 1, 1));
 				pPanelGlobeOptions->Add(theApp.CommandCheckBox(ID_GLOBE_SHOWAIRPORTNAMES));
 				pPanelGlobeOptions->Add(theApp.CommandCheckBox(ID_GLOBE_SHOWGPS));
 				pPanelGlobeOptions->Add(theApp.CommandCheckBox(ID_GLOBE_SHOWHINTS));
