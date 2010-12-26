@@ -60,9 +60,9 @@ protected:
 	UINT m_GridArrange;
 
 private:
-	DynArray<ItemCategory> m_Categories;
-
 	void DrawCategory(CDC& dc, LPRECT rectCategory, ItemCategory* ic, BOOL Themed);
 	void HandleHorizontalKeys(UINT nChar, UINT nRepCnt, UINT nFlags);
 	void HandleVerticalKeys(UINT nChar, UINT nRepCnt, UINT nFlags);
+
+	DynArray<ItemCategory> m_Categories;
 };

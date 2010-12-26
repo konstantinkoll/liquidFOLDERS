@@ -358,7 +358,7 @@ void CTreeView::EnsureVisible(CPoint item)
 		ZeroMemory(&si, sizeof(si));
 		si.cbSize = sizeof(SCROLLINFO);
 		si.fMask = SIF_POS;
-		si.nPos = m_VScrollPos;
+		si.nPos = m_HScrollPos;
 		SetScrollInfo(SB_HORZ, &si);
 	}
 }

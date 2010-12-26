@@ -257,7 +257,7 @@ Restart:
 
 		GridItemData* d = GetItemData(a);
 		d->Column = col;
-		d->Row = row;
+		d->Row = row++;
 		d->Hdr.Rect.left = lastleft = x;
 		d->Hdr.Rect.top = y;
 		d->Hdr.Rect.right = x+l;
@@ -311,7 +311,7 @@ void CGridView::HandleHorizontalKeys(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags
 		switch (nChar)
 		{
 		case VK_LEFT:
-			for (INT a=item-1; a>0; a--)
+			for (INT a=item-1; a>=0; a--)
 			{
 				GridItemData* d = GetItemData(a);
 				if (d->Row<row)
@@ -453,8 +453,162 @@ void CGridView::HandleHorizontalKeys(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags
 	}
 }
 
-void CGridView::HandleVerticalKeys(UINT nChar, UINT nRepCnt, UINT nFlags)
+void CGridView::HandleVerticalKeys(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags*/)
 {
+	if (p_Result)
+	{
+		CRect rect;
+		GetClientRect(&rect);
+
+		INT item = m_FocusItem;
+		INT col = GetItemData(item)->Column;
+		INT row = GetItemData(item)->Row;
+		INT left = GetItemData(item)->Hdr.Rect.left;
+		INT right = GetItemData(item)->Hdr.Rect.right;
+
+		switch (nChar)
+		{
+		case VK_LEFT:
+			for (INT a=item-1; a>=0; a--)
+			{
+				GridItemData* d = GetItemData(a);
+				if ((d->Column<col) && (d->Hdr.Rect.right))
+				{
+					item = a;
+					if (d->Row<=row)
+						break;
+				}
+				if (d->Column<col-1)
+					break;
+			}
+
+			break;
+		case VK_PRIOR:
+			for (INT a=item-1; a>=0; a--)
+			{
+				GridItemData* d = GetItemData(a);
+				if ((d->Column<col) && (d->Row<=row) && (d->Hdr.Rect.right))
+				{
+					item = a;
+					if (d->Hdr.Rect.left<=right-rect.Width())
+						break;
+				}
+			}
+
+			break;
+		case VK_RIGHT:
+			for (INT a=item+1; a<(INT)p_Result->m_ItemCount; a++)
+			{
+				GridItemData* d = GetItemData(a);
+				if ((d->Column>col) && (d->Hdr.Rect.right))
+				{
+					item = a;
+					if (d->Row>=row)
+						break;
+				}
+				if (d->Column>col+1)
+					break;
+			}
+
+			break;
+		case VK_NEXT:
+			for (INT a=item+1; a<(INT)p_Result->m_ItemCount; a++)
+			{
+				GridItemData* d = GetItemData(a);
+				if ((d->Column>col) && (d->Row<=row) && (d->Hdr.Rect.right))
+				{
+					item = a;
+					if (d->Hdr.Rect.right>=left+rect.Width())
+						break;
+				}
+			}
+
+			break;
+		case VK_UP:
+			for (INT a=item-1; a>=0; a--)
+			{
+				GridItemData* d = GetItemData(a);
+				if (d->Column<col)
+					break;
+				if (d->Hdr.Rect.right)
+				{
+					item = a;
+					break;
+				}
+			}
+
+			break;
+		case VK_DOWN:
+			for (INT a=item+1; a<(INT)p_Result->m_ItemCount; a++)
+			{
+				GridItemData* d = GetItemData(a);
+				if (d->Column>col)
+					break;
+				if (d->Hdr.Rect.right)
+				{
+					item = a;
+					break;
+				}
+			}
+
+			break;
+		case VK_HOME:
+			if (GetKeyState(VK_CONTROL)<0)
+			{
+				for (INT a=0; a<(INT)p_Result->m_ItemCount; a++)
+					if (GetItemData(a)->Hdr.Rect.right)
+					{
+						item = a;
+						break;
+					}
+			}
+			else
+				for (INT a=item-1; a>=0; a--)
+				{
+					GridItemData* d = GetItemData(a);
+					if (d->Hdr.Rect.right)
+						if (d->Column==col)
+						{
+							item = a;
+						}
+						else
+						{
+							break;
+						}
+				}
+
+			break;
+		case VK_END:
+			if (GetKeyState(VK_CONTROL)<0)
+			{
+				for (INT a=(INT)p_Result->m_ItemCount-1; a>=0; a--)
+					if (GetItemData(a)->Hdr.Rect.right)
+					{
+						item = a;
+						break;
+					}
+			}
+			else
+				for (INT a=item+1; a<(INT)p_Result->m_ItemCount; a++)
+				{
+					GridItemData* d = GetItemData(a);
+					if (d->Hdr.Rect.right)
+						if (d->Column==col)
+						{
+							item = a;
+						}
+						else
+						{
+							break;
+						}
+				}
+
+			break;
+		}
+
+		if (item!=m_FocusItem)
+			SetFocusItem(item, GetKeyState(VK_SHIFT)<0);
+	}
 }
 
 
