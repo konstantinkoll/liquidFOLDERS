@@ -504,37 +504,6 @@ void CMainFrame::OnChangeChildView(UINT nID)
 	theApp.UpdateViewOptions(ActiveContextID);
 }
 
-BOOL CMainFrame::RenameSingleItem(UINT n, CString Name)
-{
-	ASSERT(theApp.m_Attributes[LFAttrFileName]->Type==LFTypeUnicodeString);
-
-	BOOL result = FALSE;
-
-	if (Name!="")
-	{
-		LFTransactionList* tl = LFAllocTransactionList();
-		LFAddItemDescriptor(tl, CookedFiles->m_Items[n]);
-
-		LFVariantData value;
-		value.Attr = LFAttrFileName;
-		value.Type = LFTypeUnicodeString;
-		value.IsNull = false;
-		wcscpy_s(value.UnicodeString, 256, Name.GetBuffer());
-
-		LFTransactionUpdate(tl, GetSafeHwnd(), &value);
-
-		if (tl->m_Changes)
-			m_wndMainView.UpdateSearchResult(RawFiles, CookedFiles, m_wndMainView.GetFocusItem());
-
-		if (tl->m_LastError>LFCancel)
-			ShowCaptionBar(IDI_ERROR, tl->m_LastError);
-
-		LFFreeTransactionList(tl);
-	}
-
-	return result;
-}
-
 BOOL CMainFrame::UpdateSelectedItems(LFVariantData* value1, LFVariantData* value2, LFVariantData* value3)
 {
 	return m_wndMainView.UpdateItems(value1, value2, value3);

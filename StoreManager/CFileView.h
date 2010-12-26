@@ -73,11 +73,12 @@ struct FVItemData
 #define WM_UPDATESELECTION    WM_USER+100
 #define WM_SELECTALL          WM_USER+101
 #define WM_SELECTNONE         WM_USER+102
+#define WM_RENAMEITEM         WM_USER+103
 
 class CFileView : public CWnd
 {
 public:
-	CFileView(UINT DataSize=sizeof(FVItemData), BOOL EnableScrolling=TRUE, BOOL EnableHover=TRUE, BOOL EnableTooltip=TRUE, BOOL EnableShiftSelection=TRUE);
+	CFileView(UINT DataSize=sizeof(FVItemData), BOOL EnableScrolling=TRUE, BOOL EnableHover=TRUE, BOOL EnableTooltip=TRUE, BOOL EnableShiftSelection=TRUE, BOOL EnableLabelEdit=TRUE);
 	virtual ~CFileView();
 
 	virtual CMenu* GetBackgroundContextMenu();
@@ -98,6 +99,7 @@ protected:
 	LFViewParameters m_ViewParameters;
 	LFViewParameters* p_ViewParameters;
 	LFSearchResult* p_Result;
+	CEdit* p_Edit;
 	UINT m_DataSize;
 	BYTE* m_ItemData;
 	UINT m_ItemDataAllocated;
@@ -110,6 +112,7 @@ protected:
 	BOOL m_EnableHover;
 	BOOL m_EnableTooltip;
 	BOOL m_EnableShiftSelection;
+	BOOL m_EnableLabelEdit;
 	BOOL m_HideFileExt;
 	INT m_FocusItem;
 	INT m_HotItem;
@@ -128,6 +131,7 @@ protected:
 	virtual void SetViewOptions(BOOL Force);
 	virtual void SetSearchResult(LFSearchResult* Result);
 	virtual void AdjustLayout();
+	virtual RECT GetLabelRect(INT idx);
 	virtual INT ItemAtPosition(CPoint point);
 	virtual void InvalidateItem(INT idx);
 	virtual CMenu* GetItemContextMenu(INT idx);
@@ -166,10 +170,12 @@ protected:
 	afx_msg void OnSelectAll();
 	afx_msg void OnSelectNone();
 	afx_msg void OnUpdateCommands(CCmdUI* pCmdUI);
+	afx_msg void OnDestroyEdit();
 	afx_msg LRESULT OnItemsDropped(WPARAM wParam, LPARAM lParam);
 	DECLARE_MESSAGE_MAP()
 
 private:
 	void AppendAttribute(LFItemDescriptor* i, UINT attr, CString& str);
 	CString GetHint(LFItemDescriptor* i);
+	void DestroyEdit(BOOL Accept=FALSE);
 };

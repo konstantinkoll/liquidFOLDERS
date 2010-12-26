@@ -17,7 +17,7 @@
 
 
 CTagcloudView::CTagcloudView()
-	: CGridView(sizeof(TagcloudItemData))
+	: CGridView(sizeof(TagcloudItemData), FALSE)
 {
 }
 

@@ -13,8 +13,8 @@
 #define GetItemData(idx)     ((GridItemData*)(m_ItemData+(idx)*m_DataSize))
 #define CategoryPadding      2
 
-CGridView::CGridView(UINT DataSize)
-	: CFileView(DataSize)
+CGridView::CGridView(UINT DataSize, BOOL EnableLabelEdit)
+	: CFileView(DataSize, TRUE, TRUE, TRUE, TRUE, EnableLabelEdit)
 {
 	for (UINT a=0; a<LFItemCategoryCount; a++)
 		AddItemCategory(theApp.m_ItemCategories[a]->Caption, theApp.m_ItemCategories[a]->Hint);

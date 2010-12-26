@@ -19,6 +19,7 @@ protected:
 	virtual void SetViewOptions(BOOL Force);
 	virtual void SetSearchResult(LFSearchResult* Result);
 	virtual void AdjustLayout();
+	virtual RECT GetLabelRect(INT idx);
 	virtual void DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed);
 
 	void DrawIcon(CDC& dc, CRect& rect, LFItemDescriptor* i, GridItemData* d);

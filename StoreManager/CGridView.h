@@ -42,7 +42,7 @@ struct ItemCategory
 class CGridView : public CFileView
 {
 public:
-	CGridView(UINT DataSize=sizeof(GridItemData));
+	CGridView(UINT DataSize=sizeof(GridItemData), BOOL EnableLabelEdit=TRUE);
 
 protected:
 	virtual void DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed);

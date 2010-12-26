@@ -249,6 +249,29 @@ void CListView::AdjustLayout()
 	m_wndHeader.Invalidate();
 }
 
+RECT CListView::GetLabelRect(INT idx)
+{
+	RECT rect = GetItemRect(idx);
+
+	switch (m_ViewParameters.Mode)
+	{
+	case LFViewLargeIcons:
+	case LFViewSmallIcons:
+	case LFViewPreview:
+		rect.top += m_IconSize[0].cy+2*PADDING;
+		break;
+	case LFViewDetails:
+		rect.right = rect.left+m_ViewParameters.ColumnWidth[0]-3*PADDING;
+	case LFViewList:
+	case LFViewTiles:
+	case LFViewSearchResult:
+		rect.left += m_IconSize[0].cx+2*PADDING;
+		break;
+	}
+
+	return rect;
+}
+
 void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed)
 {
 	PrepareSysIcon(idx);
@@ -273,6 +296,10 @@ void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed)
 	case LFViewPreview:
 		rectIcon.bottom = rectIcon.top+m_IconSize[0].cy;
 		DrawIcon(dc, rectIcon, i, d);
+
+		if (idx==m_EditLabel)
+			break;
+
 		rectLabel.top += m_IconSize[0].cy+PADDING;
 		DrawLabel(dc, rectLabel, i, DT_CENTER | DT_WORDBREAK);
 		break;
@@ -293,19 +320,28 @@ void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed)
 					rectLabel.left = rectLabel.right+3*PADDING;
 					rectLabel.right = rectLabel.left+m_ViewParameters.ColumnWidth[attr]-3*PADDING;
 				}
-				DrawColumn(dc, rectLabel, i, attr);
+				if ((attr!=LFAttrFileName) || (idx!=m_EditLabel))
+					DrawColumn(dc, rectLabel, i, attr);
 			}
 		}
 		break;
 	case LFViewList:
 		rectIcon.right = rectIcon.left+m_IconSize[0].cx;
 		DrawIcon(dc, rectIcon, i, d);
+
+		if (idx==m_EditLabel)
+			break;
+
 		rectLabel.left += m_IconSize[0].cx+PADDING;
 		DrawLabel(dc, rectLabel, i, DT_LEFT | DT_SINGLELINE);
 		break;
 	case LFViewTiles:
 		rectIcon.right = rectIcon.left+m_IconSize[0].cx;
 		DrawIcon(dc, rectIcon, i, d);
+
+		if (idx==m_EditLabel)
+			break;
+
 		rectLabel.left += m_IconSize[0].cx+m_FontHeight[0]/2;
 
 		Rows[0] = LFAttrFileName;
@@ -343,6 +379,9 @@ void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed)
 	case LFViewSearchResult:
 		rectIcon.right = rectIcon.left+m_IconSize[0].cx;
 		DrawIcon(dc, rectIcon, i, d);
+
+		if (idx==m_EditLabel)
+			break;
 
 		rectLeft.left += m_IconSize[0].cx+m_FontHeight[0]/2;
 		rectLeft.top++;
@@ -677,7 +716,6 @@ BEGIN_MESSAGE_MAP(CListView, CGridView)
 	ON_NOTIFY(HDN_ENDDRAG, 1, OnEndDrag)
 	ON_NOTIFY(HDN_ITEMCHANGING, 1, OnItemChanging)
 	ON_NOTIFY(HDN_ITEMCLICK, 1, OnItemClick)
-//	ON_EN_KILLFOCUS(2, OnDestroyEdit)
 END_MESSAGE_MAP()
 
 INT CListView::OnCreate(LPCREATESTRUCT lpCreateStruct)

@@ -32,12 +32,13 @@ BOOL AttributeSortableInView(UINT Attr, UINT ViewMode)
 #define ChangedItem(idx)     { InvalidateItem(idx); GetParent()->SendMessage(WM_UPDATESELECTION); }
 #define ChangedItems()       { Invalidate(); GetParent()->SendMessage(WM_UPDATESELECTION); }
 
-CFileView::CFileView(UINT DataSize, BOOL EnableScrolling, BOOL EnableHover, BOOL EnableTooltip, BOOL EnableShiftSelection)
+CFileView::CFileView(UINT DataSize, BOOL EnableScrolling, BOOL EnableHover, BOOL EnableTooltip, BOOL EnableShiftSelection, BOOL EnableLabelEdit)
 	: CWnd()
 {
 	ASSERT(DataSize>=sizeof(FVItemData));
 
 	p_Result = NULL;
+	p_Edit = NULL;
 	m_ItemData = NULL;
 	m_ItemDataAllocated = 0;
 	m_FocusItem = m_HotItem = m_SelectionAnchor = m_EditLabel = m_Context = -1;
@@ -51,10 +52,13 @@ CFileView::CFileView(UINT DataSize, BOOL EnableScrolling, BOOL EnableHover, BOOL
 	m_EnableHover = EnableHover;
 	m_EnableTooltip = EnableTooltip;
 	m_EnableShiftSelection = EnableShiftSelection;
+	m_EnableLabelEdit = EnableLabelEdit;
 }
 
 CFileView::~CFileView()
 {
+	DestroyEdit();
+
 	if (m_ItemData)
 		free(m_ItemData);
 }
@@ -82,7 +86,7 @@ BOOL CFileView::PreTranslateMessage(MSG* pMsg)
 	switch (pMsg->message)
 	{
 	case WM_KEYDOWN:
-		/*if (p_Edit)
+		if (p_Edit)
 			switch (pMsg->wParam)
 			{
 			case VK_EXECUTE:
@@ -91,12 +95,12 @@ BOOL CFileView::PreTranslateMessage(MSG* pMsg)
 			case VK_ESCAPE:
 				DestroyEdit();
 				return TRUE;
-			}*/
+			}
 		break;
 	case WM_MOUSEWHEEL:
 	case WM_MOUSEHWHEEL:
-		/*if (p_Edit)
-			return TRUE;*/
+		if (p_Edit)
+			return TRUE;
 	case WM_LBUTTONDOWN:
 	case WM_RBUTTONDOWN:
 	case WM_MBUTTONDOWN:
@@ -118,10 +122,13 @@ BOOL CFileView::PreTranslateMessage(MSG* pMsg)
 
 void CFileView::UpdateViewOptions(INT Context, BOOL Force)
 {
+	DestroyEdit();
+
 	if (Context>=0)
 		m_Context = Context;
 	p_ViewParameters = &theApp.m_Views[m_Context];
 
+	m_EditLabel = -1;
 	SetViewOptions(Force);
 
 	BOOL Arrange = (m_ViewParameters.Mode!=p_ViewParameters->Mode);
@@ -139,6 +146,8 @@ void CFileView::UpdateViewOptions(INT Context, BOOL Force)
 
 void CFileView::UpdateSearchResult(LFSearchResult* Result, INT FocusItem)
 {
+	DestroyEdit();
+
 	void* Victim = m_ItemData;
 	UINT VictimAllocated = m_ItemDataAllocated;
 
@@ -185,6 +194,7 @@ void CFileView::UpdateSearchResult(LFSearchResult* Result, INT FocusItem)
 		m_HScrollPos = m_VScrollPos = 0;
 	}
 
+	m_EditLabel = -1;
 	SetSearchResult(Result);
 
 	p_Result = Result;
@@ -355,6 +365,11 @@ RECT CFileView::GetItemRect(INT idx)
 	return rect;
 }
 
+RECT CFileView::GetLabelRect(INT idx)
+{
+	return GetItemRect(idx);
+}
+
 INT CFileView::ItemAtPosition(CPoint point)
 {
 	if (p_Result)
@@ -473,12 +488,35 @@ void CFileView::EditLabel(INT idx)
 {
 	m_EditLabel = -1;
 
-	SetFocus();
+	if ((m_EnableLabelEdit) && (p_Result))
+	{
+		LFItemDescriptor* item = p_Result->m_Items[idx];
+		if (((item->Type & LFTypeMask)==LFTypeStore) || ((item->Type & LFTypeMask)==LFTypeFile))
+		{
+			m_EditLabel = idx;
+			InvalidateItem(idx);
+			EnsureVisible(idx);
+
+			CRect rect(GetLabelRect(idx));
+			if (rect.Height()>m_FontHeight[0]+4)
+			{
+				rect.top += (rect.Height()-m_FontHeight[0]-4)/2;
+				rect.bottom = rect.top+m_FontHeight[0]+4;
+			}
+
+			p_Edit = new CEdit();
+			p_Edit->Create(WS_CHILD | WS_VISIBLE | WS_BORDER | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | ES_AUTOHSCROLL, rect, this, 2);
+			p_Edit->SetWindowText(item->CoreAttributes.FileName);
+			p_Edit->SetSel(0, (INT)wcslen(item->CoreAttributes.FileName));
+			p_Edit->SetFont(&theApp.m_DefaultFont);
+			p_Edit->SetFocus();
+		}
+	}
 }
 
 BOOL CFileView::IsEditing()
 {
-	return FALSE;
+	return (p_Edit!=NULL);
 }
 
 void CFileView::DrawItemBackground(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed)
@@ -683,6 +721,25 @@ CString CFileView::GetHint(LFItemDescriptor* i)
 	return hint;
 }
 
+void CFileView::DestroyEdit(BOOL Accept)
+{
+	if (p_Edit)
+	{
+		CEdit* victim = p_Edit;
+		p_Edit = NULL;
+
+		CString Name;
+		victim->GetWindowText(Name);
+		victim->DestroyWindow();
+		delete victim;
+
+		if ((Accept) && (!Name.IsEmpty()) && (m_EditLabel!=-1))
+			GetParent()->SendMessage(WM_RENAMEITEM, (WPARAM)m_EditLabel, (LPARAM)Name.GetBuffer());
+
+		m_EditLabel = -1;
+	}
+}
+
 
 BEGIN_MESSAGE_MAP(CFileView, CWnd)
 	ON_WM_CREATE()
@@ -711,6 +768,7 @@ BEGIN_MESSAGE_MAP(CFileView, CWnd)
 	ON_MESSAGE_VOID(WM_SELECTALL, OnSelectAll)
 	ON_MESSAGE_VOID(WM_SELECTNONE, OnSelectNone)
 	ON_UPDATE_COMMAND_UI(ID_APP_NEWFILEDROP, OnUpdateCommands)
+	ON_EN_KILLFOCUS(2, OnDestroyEdit)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->ItemsDropped, OnItemsDropped)
 END_MESSAGE_MAP()
 
@@ -1231,6 +1289,11 @@ void CFileView::OnSelectNone()
 void CFileView::OnUpdateCommands(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable(m_Context<=LFContextStoreHome);
+}
+
+void CFileView::OnDestroyEdit()
+{
+	DestroyEdit(TRUE);
 }
 
 LRESULT CFileView::OnItemsDropped(WPARAM /*wParam*/, LPARAM /*lParam*/)

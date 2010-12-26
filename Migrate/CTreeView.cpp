@@ -1350,9 +1350,9 @@ void CTreeView::DestroyEdit(BOOL Accept)
 					}
 				}
 		}
-
-		m_EditLabel.x = m_EditLabel.y = -1;
 	}
+
+	m_EditLabel.x = m_EditLabel.y = -1;
 }
 
 

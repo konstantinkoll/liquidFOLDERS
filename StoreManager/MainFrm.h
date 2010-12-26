@@ -44,7 +44,6 @@ public:
 	virtual BOOL OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo);
 
 	BOOL AddClipItem(LFItemDescriptor* i);
-	BOOL RenameSingleItem(UINT n, CString Name);
 	BOOL UpdateSelectedItems(LFVariantData* value1, LFVariantData* value2=NULL, LFVariantData* value3=NULL);
 	void OnUpdateSelection();
 	void ShowCaptionBar(LPCWSTR Icon, UINT res, INT Command=0);

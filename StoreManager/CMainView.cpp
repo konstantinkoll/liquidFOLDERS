@@ -416,6 +416,7 @@ BEGIN_MESSAGE_MAP(CMainView, CWnd)
 	ON_WM_RBUTTONUP()
 	ON_WM_CONTEXTMENU()
 	ON_MESSAGE_VOID(WM_UPDATESELECTION, OnUpdateSelection)
+	ON_MESSAGE(WM_RENAMEITEM, OnRenameItem)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoreAttributesChanged, OnStoreAttributesChanged)
 
 	ON_COMMAND(IDM_STORES_CREATENEW, OnStoresCreateNew)
@@ -539,12 +540,12 @@ void CMainView::OnSetFocus(CWnd* /*pOldWnd*/)
 	m_wndTaskbar.SetFocus();
 }
 
-void CMainView::OnLButtonDown(UINT nFlags, CPoint point)
+void CMainView::OnLButtonDown(UINT /*nFlags*/, CPoint /*point*/)
 {
 	if (p_wndFileView)
 		p_wndFileView->SendMessage(WM_SELECTNONE);
 
-	CWnd::OnLButtonDown(nFlags, point);
+	SetFocus();
 }
 
 void CMainView::OnRButtonUp(UINT nFlags, CPoint point)
@@ -637,6 +638,30 @@ void CMainView::OnUpdateSelection()
 
 	// TODO
 	((CMainFrame*)GetParent())->OnUpdateSelection();
+}
+
+LRESULT CMainView::OnRenameItem(WPARAM wParam, LPARAM lParam)
+{
+	LFTransactionList* tl = LFAllocTransactionList();
+	LFAddItemDescriptor(tl, p_CookedFiles->m_Items[(UINT)wParam]);
+
+	LFVariantData value;
+	value.Attr = LFAttrFileName;
+	value.Type = LFTypeUnicodeString;
+	value.IsNull = false;
+	wcscpy_s(value.UnicodeString, 256, (WCHAR*)lParam);
+
+	LFTransactionUpdate(tl, GetSafeHwnd(), &value);
+
+	if (tl->m_Changes)
+		UpdateSearchResult(p_RawFiles, p_CookedFiles, GetFocusItem());
+
+	if (tl->m_LastError>LFCancel)
+		ShowCaptionBar(IDI_ERROR, tl->m_LastError);
+
+	BOOL changes = tl->m_Changes;
+	LFFreeTransactionList(tl);
+	return changes;
 }
 
 LRESULT CMainView::OnStoreAttributesChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)
