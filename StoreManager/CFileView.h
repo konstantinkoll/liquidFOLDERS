@@ -99,7 +99,6 @@ protected:
 	LFViewParameters m_ViewParameters;
 	LFViewParameters* p_ViewParameters;
 	LFSearchResult* p_Result;
-	CEdit* p_Edit;
 	UINT m_DataSize;
 	BYTE* m_ItemData;
 	UINT m_ItemDataAllocated;
@@ -178,4 +177,6 @@ private:
 	void AppendAttribute(LFItemDescriptor* i, UINT attr, CString& str);
 	CString GetHint(LFItemDescriptor* i);
 	void DestroyEdit(BOOL Accept=FALSE);
+
+	CEdit* p_Edit;
 };

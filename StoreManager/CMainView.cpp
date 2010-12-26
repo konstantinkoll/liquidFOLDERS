@@ -976,6 +976,9 @@ void CMainView::OnUpdateStoreCommands(CCmdUI* pCmdUI)
 			case IDM_STORE_IMPORTFOLDER:
 				b = !(item->Type & LFTypeNotMounted);
 				break;
+			case IDM_STORE_RENAME:
+				b = !p_wndFileView->IsEditing();
+				break;
 			default:
 				b = TRUE;
 			}
@@ -1100,6 +1103,8 @@ void CMainView::OnUpdateFileCommands(CCmdUI* pCmdUI)
 	case IDM_FILE_RENAME:
 		if ((item) && (m_Context!=LFContextTrash))
 			b = ((item->Type & LFTypeMask)==LFTypeFile);
+		if (p_wndFileView)
+			b &= !p_wndFileView->IsEditing();
 		break;
 	case IDM_FILE_SEND:
 		b = m_FilesSelected && (m_Context!=LFContextTrash);

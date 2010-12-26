@@ -297,7 +297,7 @@ void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed)
 		rectIcon.bottom = rectIcon.top+m_IconSize[0].cy;
 		DrawIcon(dc, rectIcon, i, d);
 
-		if (idx==m_EditLabel)
+		if (IsEditing() && (idx==m_EditLabel))
 			break;
 
 		rectLabel.top += m_IconSize[0].cy+PADDING;
@@ -320,7 +320,7 @@ void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed)
 					rectLabel.left = rectLabel.right+3*PADDING;
 					rectLabel.right = rectLabel.left+m_ViewParameters.ColumnWidth[attr]-3*PADDING;
 				}
-				if ((attr!=LFAttrFileName) || (idx!=m_EditLabel))
+				if ((attr!=LFAttrFileName) || (!IsEditing()) || (idx!=m_EditLabel))
 					DrawColumn(dc, rectLabel, i, attr);
 			}
 		}
@@ -329,7 +329,7 @@ void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed)
 		rectIcon.right = rectIcon.left+m_IconSize[0].cx;
 		DrawIcon(dc, rectIcon, i, d);
 
-		if (idx==m_EditLabel)
+		if (IsEditing() && (idx==m_EditLabel))
 			break;
 
 		rectLabel.left += m_IconSize[0].cx+PADDING;
@@ -339,7 +339,7 @@ void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed)
 		rectIcon.right = rectIcon.left+m_IconSize[0].cx;
 		DrawIcon(dc, rectIcon, i, d);
 
-		if (idx==m_EditLabel)
+		if (IsEditing() && (idx==m_EditLabel))
 			break;
 
 		rectLabel.left += m_IconSize[0].cx+m_FontHeight[0]/2;
@@ -380,7 +380,7 @@ void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed)
 		rectIcon.right = rectIcon.left+m_IconSize[0].cx;
 		DrawIcon(dc, rectIcon, i, d);
 
-		if (idx==m_EditLabel)
+		if (IsEditing() && (idx==m_EditLabel))
 			break;
 
 		rectLeft.left += m_IconSize[0].cx+m_FontHeight[0]/2;
