@@ -87,6 +87,15 @@ void CListView::SetViewOptions(BOOL Force)
 		m_IconSize[1].cy = min(cy, 128);
 	}
 
+	if ((p_ViewParameters->Mode==LFViewDetails) && (p_Result))
+		for (UINT a=0; a<LFAttributeCount; a++)
+			if (p_ViewParameters->ColumnWidth[a]!=m_ViewParameters.ColumnWidth[a])
+			{
+				m_ViewParameters = *p_ViewParameters;
+				AdjustLayout();
+				break;
+			}
+
 	AdjustHeader((p_ViewParameters->Mode==LFViewDetails) && (p_Result));
 }
 
