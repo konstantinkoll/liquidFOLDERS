@@ -41,7 +41,7 @@ CListView::CListView(UINT DataSize)
 	for (WORD a=6; a<24; a++)
 	{
 		st.wHour = a;
-		GetTimeFormat(LOCALE_USER_DEFAULT, TIME_NOMINUTESORSECONDS, &st, NULL, tmpStr, 256);
+		GetTimeFormat(LOCALE_USER_DEFAULT, TIME_NOSECONDS, &st, NULL, tmpStr, 256);
 		AddItemCategory(tmpStr, L"");
 	}
 }
