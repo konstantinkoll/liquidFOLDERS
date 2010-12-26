@@ -81,6 +81,8 @@ BEGIN_MESSAGE_MAP(CExplorerHeader, CWnd)
 	ON_WM_DESTROY()
 	ON_WM_ERASEBKGND()
 	ON_WM_PAINT()
+	ON_WM_LBUTTONDOWN()
+	ON_WM_RBUTTONUP()
 END_MESSAGE_MAP()
 
 INT CExplorerHeader::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -180,4 +182,18 @@ void CExplorerHeader::OnPaint()
 
 	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);
 	dc.SelectObject(pOldBitmap);
+}
+
+void CExplorerHeader::OnLButtonDown(UINT nFlags, CPoint point)
+{
+	ClientToScreen(&point);
+	GetParent()->ScreenToClient(&point);
+	GetParent()->SendMessage(WM_LBUTTONDOWN, (WPARAM)nFlags, MAKELPARAM(point.x, point.y));
+}
+
+void CExplorerHeader::OnRButtonUp(UINT nFlags, CPoint point)
+{
+	ClientToScreen(&point);
+	GetParent()->ScreenToClient(&point);
+	GetParent()->SendMessage(WM_RBUTTONUP, (WPARAM)nFlags, MAKELPARAM(point.x, point.y));
 }

@@ -426,6 +426,8 @@ BEGIN_MESSAGE_MAP(CMainView, CWnd)
 	ON_WM_ERASEBKGND()
 	ON_WM_SIZE()
 	ON_WM_SETFOCUS()
+	ON_WM_LBUTTONDOWN()
+	ON_WM_RBUTTONUP()
 	ON_WM_CONTEXTMENU()
 	ON_MESSAGE_VOID(WM_UPDATESELECTION, OnUpdateSelection)
 
@@ -548,6 +550,22 @@ void CMainView::OnSetFocus(CWnd* /*pOldWnd*/)
 		}
 
 	m_wndTaskbar.SetFocus();
+}
+
+void CMainView::OnLButtonDown(UINT nFlags, CPoint point)
+{
+	if (p_wndFileView)
+		p_wndFileView->SendMessage(WM_SELECTNONE);
+
+	CWnd::OnLButtonDown(nFlags, point);
+}
+
+void CMainView::OnRButtonUp(UINT nFlags, CPoint point)
+{
+	if (p_wndFileView)
+		p_wndFileView->SendMessage(WM_SELECTNONE);
+
+	CWnd::OnRButtonUp(nFlags, point);
 }
 
 void CMainView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
