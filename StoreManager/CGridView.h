@@ -45,6 +45,10 @@ public:
 	CGridView(UINT DataSize=sizeof(GridItemData), BOOL EnableLabelEdit=TRUE);
 
 protected:
+	BOOL m_HasCategories;
+	BOOL m_ForceNothing;
+	UINT m_GridArrange;
+
 	virtual void DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed);
 
 	void AddItemCategory(WCHAR* Caption, WCHAR* Name);
@@ -55,15 +59,10 @@ protected:
 	afx_msg void OnPaint();
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 	DECLARE_MESSAGE_MAP()
-
-	BOOL m_HasCategories;
-	BOOL m_ForceNothing;
-	UINT m_GridArrange;
-
 private:
+	DynArray<ItemCategory> m_Categories;
+
 	void DrawCategory(CDC& dc, LPRECT rectCategory, ItemCategory* ic, BOOL Themed);
 	void HandleHorizontalKeys(UINT nChar, UINT nRepCnt, UINT nFlags);
 	void HandleVerticalKeys(UINT nChar, UINT nRepCnt, UINT nFlags);
-
-	DynArray<ItemCategory> m_Categories;
 };

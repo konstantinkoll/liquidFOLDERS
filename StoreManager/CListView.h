@@ -16,13 +16,13 @@ public:
 	CListView(UINT DataSize=sizeof(GridItemData));
 
 protected:
+	CTooltipHeader m_wndHeader;
+
 	virtual void SetViewOptions(BOOL Force);
 	virtual void SetSearchResult(LFSearchResult* Result);
 	virtual void AdjustLayout();
 	virtual RECT GetLabelRect(INT idx);
 	virtual void DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed);
-
-	void DrawIcon(CDC& dc, CRect& rect, LFItemDescriptor* i, GridItemData* d);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
@@ -39,8 +39,6 @@ protected:
 	afx_msg void OnItemClick(NMHDR* pNMHDR, LRESULT* pResult);
 	DECLARE_MESSAGE_MAP()
 
-	CTooltipHeader m_wndHeader;
-
 private:
 	CImageList* m_Icons[2];
 	SIZE m_IconSize[2];
@@ -49,6 +47,7 @@ private:
 	BOOL m_IgnoreHeaderItemChange;
 
 	void AdjustHeader(BOOL bShow);
+	void DrawIcon(CDC& dc, CRect& rect, LFItemDescriptor* i);
 	void AttributeToString(LFItemDescriptor* i, UINT Attr, WCHAR* tmpStr, size_t cCount);
 	void DrawTileRows(CDC& dc, CRect& rect, LFItemDescriptor* i, GridItemData* d, INT* Rows, BOOL Themed);
 	void DrawColumn(CDC& dc, CRect& rect, LFItemDescriptor* i, UINT Attr);

@@ -161,7 +161,6 @@ void CFileView::UpdateSearchResult(LFSearchResult* Result, INT FocusItem)
 		for (UINT a=0; a<Result->m_ItemCount; a++)
 		{
 			FVItemData* d = GetItemData(a);
-			d->SysIconIndex = -1;
 
 			if ((a<VictimAllocated) && (Result->m_Context!=LFContextClipboard))
 			{
@@ -577,20 +576,12 @@ void CFileView::DrawItemBackground(CDC& dc, LPRECT rectItem, INT idx, BOOL Theme
 	}
 }
 
-void CFileView::PrepareSysIcon(INT idx)
+void CFileView::PrepareFormatData(INT idx)
 {
 	if ((p_Result->m_Items[idx]->Type & LFTypeMask)!=LFTypeFile)
 		return;
 
-	FVItemData* d = GetItemData(idx);
-	if (d->SysIconIndex!=-1)
-		return;
-
-	char Ext[LFExtSize+2] = "*.";
-	strcat_s(Ext, LFExtSize+2, p_Result->m_Items[idx]->CoreAttributes.FileFormat);
-
-	SHFILEINFOA sfi;
-	d->SysIconIndex = SUCCEEDED(SHGetFileInfoA(Ext, 0, &sfi, sizeof(sfi), SHGFI_SYSICONINDEX | SHGFI_SMALLICON | SHGFI_USEFILEATTRIBUTES)) ? sfi.iIcon : -2;
+	theApp.PrepareFormatData(p_Result->m_Items[idx]->CoreAttributes.FileFormat);
 }
 
 void CFileView::ResetScrollbars()
@@ -996,12 +987,12 @@ void CFileView::OnMouseHover(UINT nFlags, CPoint point)
 			else
 				if (!m_TooltipCtrl.IsWindowVisible() && m_EnableTooltip)
 				{
-					PrepareSysIcon(m_HotItem);
+					PrepareFormatData(m_HotItem);
 
 					LFItemDescriptor* i = p_Result->m_Items[m_HotItem];
-					FVItemData* d = GetItemData(m_HotItem);
+					INT SysIconIndex = (((i->Type & LFTypeMask)==LFTypeFile) && (i->CoreAttributes.FileFormat[0]!='\0')) ? theApp.m_FileFormats[i->CoreAttributes.FileFormat].SysIconIndex : -1;
 
-					HICON hIcon = (d->SysIconIndex>=0) ? theApp.m_SystemImageListExtraLarge.ExtractIcon(d->SysIconIndex) : theApp.m_CoreImageListExtraLarge.ExtractIcon(i->IconID-1);
+					HICON hIcon = (SysIconIndex>=0) ? theApp.m_SystemImageListExtraLarge.ExtractIcon(SysIconIndex) : theApp.m_CoreImageListExtraLarge.ExtractIcon(i->IconID-1);
 
 					INT cx = 48;
 					INT cy = 48;

@@ -109,8 +109,6 @@ void CListView::SetSearchResult(LFSearchResult* Result)
 		{
 			LFItemDescriptor* i = Result->m_Items[a];
 			if ((i->Type & LFTypeMask)==LFTypeFile)
-			{
-				// Category
 				if (!Result->m_HasCategories)
 					if (Result->m_Context==LFContextSubfolderDay)
 					{
@@ -122,18 +120,6 @@ void CListView::SetSearchResult(LFSearchResult* Result)
 						i->CategoryID = stLocal.wHour<6 ? LFItemCategoryNight : LFItemCategoryCount+stLocal.wHour-6;
 						m_HasCategories = TRUE;
 					}
-
-				// Icon
-				if (theApp.m_Extensions.count(i->CoreAttributes.FileFormat)==0)
-				{
-					CString Ext = _T("*.");
-					Ext += i->CoreAttributes.FileFormat;
-
-					SHFILEINFO sfi;
-					if (SUCCEEDED(SHGetFileInfo(Ext, 0, &sfi, sizeof(sfi), SHGFI_TYPENAME | SHGFI_USEFILEATTRIBUTES)))
-						theApp.m_Extensions[i->CoreAttributes.FileFormat] = sfi.szTypeName;
-				}
-			}
 		}
 
 		if (m_HasCategories!=(Result->m_HasCategories==true))
@@ -283,7 +269,7 @@ RECT CListView::GetLabelRect(INT idx)
 
 void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed)
 {
-	PrepareSysIcon(idx);
+	PrepareFormatData(idx);
 
 	LFItemDescriptor* i = p_Result->m_Items[idx];
 	GridItemData* d = GetItemData(idx);
@@ -304,7 +290,7 @@ void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed)
 	case LFViewSmallIcons:
 	case LFViewPreview:
 		rectIcon.bottom = rectIcon.top+m_IconSize[0].cy;
-		DrawIcon(dc, rectIcon, i, d);
+		DrawIcon(dc, rectIcon, i);
 
 		if (IsEditing() && (idx==m_EditLabel))
 			break;
@@ -314,7 +300,7 @@ void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed)
 		break;
 	case LFViewDetails:
 		rectIcon.right = rectIcon.left+m_IconSize[0].cx;
-		DrawIcon(dc, rectIcon, i, d);
+		DrawIcon(dc, rectIcon, i);
 
 		rectLabel.right = rectLabel.left+m_ViewParameters.ColumnWidth[0]-3*PADDING;
 		rectLabel.left = rectIcon.right+PADDING;
@@ -336,7 +322,7 @@ void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed)
 		break;
 	case LFViewList:
 		rectIcon.right = rectIcon.left+m_IconSize[0].cx;
-		DrawIcon(dc, rectIcon, i, d);
+		DrawIcon(dc, rectIcon, i);
 
 		if (IsEditing() && (idx==m_EditLabel))
 			break;
@@ -346,7 +332,7 @@ void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed)
 		break;
 	case LFViewTiles:
 		rectIcon.right = rectIcon.left+m_IconSize[0].cx;
-		DrawIcon(dc, rectIcon, i, d);
+		DrawIcon(dc, rectIcon, i);
 
 		if (IsEditing() && (idx==m_EditLabel))
 			break;
@@ -387,7 +373,7 @@ void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed)
 		break;
 	case LFViewSearchResult:
 		rectIcon.right = rectIcon.left+m_IconSize[0].cx;
-		DrawIcon(dc, rectIcon, i, d);
+		DrawIcon(dc, rectIcon, i);
 
 		if (IsEditing() && (idx==m_EditLabel))
 			break;
@@ -450,18 +436,21 @@ void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed)
 	}
 }
 
-void CListView::DrawIcon(CDC& dc, CRect& rect, LFItemDescriptor* i, GridItemData* d)
+void CListView::DrawIcon(CDC& dc, CRect& rect, LFItemDescriptor* i)
 {
-	const INT List = (d->Hdr.SysIconIndex>=0) ? 1 : 0;
+	INT SysIconIndex = (((i->Type & LFTypeMask)==LFTypeFile) && (i->CoreAttributes.FileFormat[0]!='\0')) ? theApp.m_FileFormats[i->CoreAttributes.FileFormat].SysIconIndex : -1;
+
+	const INT List = (SysIconIndex>=0) ? 1 : 0;
 	rect.OffsetRect((rect.Width()-m_IconSize[List].cx)/2, (rect.Height()-m_IconSize[List].cy)/2);
 
 	if ((m_IconSize[List].cx<128) || (List==0))
 	{
-		m_Icons[List]->DrawEx(&dc, (List==1) ? d->Hdr.SysIconIndex : i->IconID-1, rect.TopLeft(), m_IconSize[List], CLR_NONE, 0xFFFFFF, (i->Type & LFTypeGhosted) ? ILD_BLEND50 : ILD_TRANSPARENT);
+		m_Icons[List]->DrawEx(&dc, (List==1) ? SysIconIndex : i->IconID-1, rect.TopLeft(), m_IconSize[List], CLR_NONE, 0xFFFFFF, (i->Type & LFTypeGhosted) ? ILD_BLEND50 : ILD_TRANSPARENT);
 	}
 	else
 	{
-		HICON hIcon = m_Icons[List]->ExtractIcon(d->Hdr.SysIconIndex);
+		// TODO
+		HICON hIcon = m_Icons[List]->ExtractIcon(SysIconIndex);
 		DrawIconEx(dc, rect.left, rect.top, hIcon, m_IconSize[1].cx, m_IconSize[1].cy, 0, NULL, DI_NORMAL);
 		DestroyIcon(hIcon);
 	}
@@ -475,7 +464,7 @@ void CListView::AttributeToString(LFItemDescriptor* i, UINT Attr, WCHAR* tmpStr,
 		wcscpy_s(tmpStr, cCount, GetLabel(i));
 		break;
 	case LFAttrFileFormat:
-		wcscpy_s(tmpStr, cCount, theApp.m_Extensions[i->CoreAttributes.FileFormat].c_str());
+		wcscpy_s(tmpStr, cCount, theApp.m_FileFormats[i->CoreAttributes.FileFormat].FormatName);
 		break;
 	default:
 		LFAttributeToString(i, Attr, tmpStr, cCount);

@@ -63,7 +63,6 @@ struct FVItemData
 {
 	RECT Rect;
 	BOOL Selected;
-	INT SysIconIndex;
 };
 
 
@@ -138,7 +137,7 @@ protected:
 	void SetFocusItem(INT FocusItem, BOOL ShiftSelect);
 	RECT GetItemRect(INT idx);
 	void DrawItemBackground(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed);
-	void PrepareSysIcon(INT idx);
+	void PrepareFormatData(INT idx);
 	void ResetScrollbars();
 	void AdjustScrollbars();
 	CString GetLabel(LFItemDescriptor* i);
@@ -174,9 +173,9 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
+	CEdit* p_Edit;
+
 	void AppendAttribute(LFItemDescriptor* i, UINT attr, CString& str);
 	CString GetHint(LFItemDescriptor* i);
 	void DestroyEdit(BOOL Accept=FALSE);
-
-	CEdit* p_Edit;
 };

@@ -89,7 +89,6 @@ void CTagcloudView::SetSearchResult(LFSearchResult* Result)
 				if ((m_ViewParameters.TagcloudHideRare) && (Delta>1) && (d->Cnt==Minimum))
 				{
 					ZeroMemory(d, sizeof(TagcloudItemData));
-					d->Hdr.Hdr.SysIconIndex = -1;
 				}
 				else
 					if (Delta==1)

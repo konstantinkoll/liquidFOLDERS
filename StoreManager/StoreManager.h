@@ -15,6 +15,12 @@
 // Siehe StoreManager.cpp für die Implementierung dieser Klasse
 //
 
+struct FormatData
+{
+	INT SysIconIndex;
+	WCHAR FormatName[80];
+};
+
 class CStoreManagerApp : public LFApplication
 {
 public:
@@ -29,7 +35,7 @@ public:
 	BOOL m_GlobeLighting;
 	BOOL m_HideEmptyDrives;
 	BOOL m_HideEmptyDomains;
-	stdext::hash_map<std::string, std::wstring> m_Extensions;
+	stdext::hash_map<std::string, FormatData> m_FileFormats;
 	std::list<CMainFrame*> m_listMainFrames;
 	CMainFrame* p_Clipboard;
 	LFViewParameters m_Views[LFContextCount];
@@ -52,6 +58,7 @@ public:
 	void UpdateSortOptions(INT context);
 	void UpdateViewOptions(INT context=-1);
 	void Reload(INT context);
+	void PrepareFormatData(CHAR* FileFormat);
 
 	HBITMAP GetGLTexture(UINT nID);
 	void FreeGLTexture(UINT nID);
