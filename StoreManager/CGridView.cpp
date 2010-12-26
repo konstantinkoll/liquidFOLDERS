@@ -299,9 +299,14 @@ void CGridView::HandleHorizontalKeys(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags
 {
 	if (p_Result)
 	{
+		CRect rect;
+		GetClientRect(&rect);
+
 		INT item = m_FocusItem;
 		INT col = GetItemData(item)->Column;
 		INT row = GetItemData(item)->Row;
+		INT top = GetItemData(item)->Hdr.Rect.top;
+		INT bottom = GetItemData(item)->Hdr.Rect.bottom;
 
 		switch (nChar)
 		{
@@ -309,7 +314,9 @@ void CGridView::HandleHorizontalKeys(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags
 			for (INT a=item-1; a>0; a--)
 			{
 				GridItemData* d = GetItemData(a);
-				if ((d->Row==row) && (d->Hdr.Rect.right))
+				if (d->Row<row)
+					break;
+				if (d->Hdr.Rect.right)
 				{
 					item = a;
 					break;
@@ -321,7 +328,9 @@ void CGridView::HandleHorizontalKeys(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags
 			for (INT a=item+1; a<(INT)p_Result->m_ItemCount; a++)
 			{
 				GridItemData* d = GetItemData(a);
-				if ((d->Row==row) && (d->Hdr.Rect.right))
+				if (d->Row>row)
+					break;
+				if (d->Hdr.Rect.right)
 				{
 					item = a;
 					break;
@@ -333,56 +342,67 @@ void CGridView::HandleHorizontalKeys(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags
 			for (INT a=item-1; a>=0; a--)
 			{
 				GridItemData* d = GetItemData(a);
-				if (d->Row<row-1)
-					break;
 				if ((d->Row<row) && (d->Hdr.Rect.right))
 				{
 					item = a;
 					if (d->Column<=col)
 						break;
 				}
+				if (d->Row<row-1)
+					break;
 			}
 
 			break;
-		/*case VK_PRIOR:
-			for (INT row=item.y-1; row>=0; row--)
-				if (m_Tree[MAKEPOS(row, item.x)].pItem)
+		case VK_PRIOR:
+			for (INT a=item-1; a>=0; a--)
+			{
+				GridItemData* d = GetItemData(a);
+				if ((d->Row<row) && (d->Column<=col) && (d->Hdr.Rect.right))
 				{
-					item.y = row;
-					if (row<=m_SelectedItem.y-rect.Height()/(INT)m_RowHeight)
+					item = a;
+					if (d->Hdr.Rect.top<=bottom-rect.Height()+(INT)m_HeaderHeight)
 						break;
 				}
+			}
 
-			break;*/
+			break;
 		case VK_DOWN:
 			for (INT a=item+1; a<(INT)p_Result->m_ItemCount; a++)
 			{
 				GridItemData* d = GetItemData(a);
-				if (d->Row>row+1)
-					break;
 				if ((d->Row>row) && (d->Hdr.Rect.right))
 				{
 					item = a;
 					if (d->Column>=col)
 						break;
 				}
+				if (d->Row>row+1)
+					break;
 			}
 
 			break;
-		/*case VK_NEXT:
-			for (INT row=item.y+1; row<(INT)m_Rows; row++)
-				if (m_Tree[MAKEPOS(row, item.x)].pItem)
+		case VK_NEXT:
+			for (INT a=item+1; a<(INT)p_Result->m_ItemCount; a++)
+			{
+				GridItemData* d = GetItemData(a);
+				if ((d->Row>row) && (d->Column<=col) && (d->Hdr.Rect.right))
 				{
-					item.y = row;
-					if (row>=m_SelectedItem.y+rect.Height()/(INT)m_RowHeight)
+					item = a;
+					if (d->Hdr.Rect.bottom>=top+rect.Height()-(INT)m_HeaderHeight)
 						break;
 				}
+			}
 
-			break;*/
+			break;
 		case VK_HOME:
 			if (GetKeyState(VK_CONTROL)<0)
 			{
-				item = 0;
+				for (INT a=0; a<(INT)p_Result->m_ItemCount; a++)
+					if (GetItemData(a)->Hdr.Rect.right)
+					{
+						item = a;
+						break;
+					}
 			}
 			else
 				for (INT a=item-1; a>=0; a--)
@@ -403,7 +423,12 @@ void CGridView::HandleHorizontalKeys(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags
 		case VK_END:
 			if (GetKeyState(VK_CONTROL)<0)
 			{
-				item = p_Result->m_ItemCount-1;
+				for (INT a=(INT)p_Result->m_ItemCount-1; a>=0; a--)
+					if (GetItemData(a)->Hdr.Rect.right)
+					{
+						item = a;
+						break;
+					}
 			}
 			else
 				for (INT a=item+1; a<(INT)p_Result->m_ItemCount; a++)

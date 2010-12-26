@@ -639,7 +639,7 @@ void CMainView::OnUpdateSelection()
 	((CMainFrame*)GetParent())->OnUpdateSelection();
 }
 
-LRESULT CMainView::OnStoreAttributesChanged(WPARAM wParam, LPARAM lParam)
+LRESULT CMainView::OnStoreAttributesChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)
 {
 	if ((p_RawFiles) && (p_CookedFiles) && (m_Context==LFContextStoreHome))
 	{

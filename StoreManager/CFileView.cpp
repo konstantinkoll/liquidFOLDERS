@@ -275,8 +275,8 @@ void CFileView::EnsureVisible(INT idx)
 	nInc = 0;
 	if (rectItem.bottom>rect.Height())
 		nInc = rectItem.bottom-rect.Height();
-	if (rectItem.top<nInc)
-		nInc = rectItem.top;
+	if (rectItem.top<nInc+(INT)m_HeaderHeight)
+		nInc = rectItem.top-(INT)m_HeaderHeight;
 
 	nInc = max(-m_VScrollPos, min(nInc, m_VScrollMax-m_VScrollPos));
 	if (nInc)
