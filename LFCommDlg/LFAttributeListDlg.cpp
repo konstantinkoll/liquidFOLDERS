@@ -57,7 +57,7 @@ void LFAttributeListDlg::AddAttribute(CListCtrl* li, UINT attr)
 		LFAttrFileTime, LFAttrRecordingTime, LFAttrDeleteTime, LFAttrDueTime, LFAttrDoneTime, LFAttrLocationName,
 		LFAttrLocationIATA, LFAttrLocationGPS, LFAttrRating, LFAttrRoll, LFAttrArtist, LFAttrComment,
 		LFAttrDuration, LFAttrLanguage, LFAttrDimension, LFAttrWidth, LFAttrHeight, LFAttrAspectRatio, LFAttrTags,
-		LFAttrStoreID, LFAttrAlbum, LFAttrPriority, LFAttrURL, LFAttrISBN };
+		LFAttrStoreID, LFAttrAlbum, LFAttrPriority, LFAttrURL, LFAttrISBN, LFAttrRecordingEquipment };
 
 	LVITEM lvi;
 	ZeroMemory(&lvi, sizeof(lvi));

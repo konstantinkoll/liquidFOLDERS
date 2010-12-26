@@ -10,7 +10,7 @@
 // CGridView
 //
 
-#define GetItemData(idx)     ((FVItemData*)(m_ItemData+idx*m_DataSize))
+#define GetItemData(idx)     ((GridItemData*)(m_ItemData+(idx)*m_DataSize))
 #define CategoryPadding      2
 
 CGridView::CGridView(UINT DataSize)
@@ -18,6 +18,9 @@ CGridView::CGridView(UINT DataSize)
 {
 	for (UINT a=0; a<LFItemCategoryCount; a++)
 		AddItemCategory(theApp.m_ItemCategories[a]->Caption, theApp.m_ItemCategories[a]->Hint);
+
+	m_HasCategories = FALSE;
+	m_GridArrange = GRIDARRANGE_CUSTOM;
 }
 
 void CGridView::DrawItem(CDC& /*dc*/, LPRECT /*rectItem*/, INT /*idx*/, BOOL /*Themed*/)
@@ -104,6 +107,8 @@ void CGridView::ArrangeHorizontal(GVArrange& gva, BOOL Justify, BOOL ForceBreak,
 Restart:
 	m_ScrollWidth = m_ScrollHeight = 0;
 
+	INT col = 0;
+	INT row = 0;
 	INT x = gva.mx;
 	INT y = gva.my;
 
@@ -124,6 +129,8 @@ Restart:
 			{
 				if (x>gva.mx)
 				{
+					col = 0;
+					row++;
 					x = gva.mx;
 					y += h+gva.guttery;
 				}
@@ -141,11 +148,13 @@ Restart:
 				y = rect->bottom+4;
 			}
 
-		FVItemData* d = GetItemData(a);
-		d->Rect.left = x;
-		d->Rect.top = y;
-		d->Rect.right = x+l;
-		d->Rect.bottom = y+h;
+		GridItemData* d = GetItemData(a);
+		d->Column = col++;
+		d->Row = row;
+		d->Hdr.Rect.left = x;
+		d->Hdr.Rect.top = y;
+		d->Hdr.Rect.right = x+l;
+		d->Hdr.Rect.bottom = y+h;
 
 		x += l+gva.gutterx;
 		if (x>m_ScrollWidth)
@@ -165,8 +174,10 @@ Restart:
 		if ((x+l+gva.gutterx>rectWindow.Width()) || (ForceBreak))
 		{
 			if (MaxWidth)
-				d->Rect.right = rectWindow.Width()-gva.gutterx;
+				d->Hdr.Rect.right = rectWindow.Width()-gva.gutterx;
 
+			col = 0;
+			row++;
 			x = gva.mx;
 			y += h+gva.guttery;
 		}
@@ -177,6 +188,7 @@ Restart:
 		if (m_Categories.m_Items[a].Rect.right)
 			m_Categories.m_Items[a].Rect.right = max(m_ScrollWidth, rectWindow.Width())-gva.gutterx;
 
+	m_GridArrange = GRIDARRANGE_HORIZONTAL;
 	AdjustScrollbars();
 	Invalidate();
 }
@@ -210,6 +222,8 @@ void CGridView::ArrangeVertical(GVArrange& gva)
 Restart:
 	m_ScrollWidth = m_ScrollHeight = 0;
 
+	INT col = 0;
+	INT row = 0;
 	INT x = gva.mx;
 	INT y = top;
 
@@ -226,6 +240,8 @@ Restart:
 
 				if (y>top)
 				{
+					row = 0;
+					col++;
 					y = top;
 					x += l+gva.gutterx;
 				}
@@ -239,11 +255,13 @@ Restart:
 				rect->bottom = rect->top+2*CategoryPadding+m_FontHeight[1];
 			}
 
-		FVItemData* d = GetItemData(a);
-		d->Rect.left = lastleft = x;
-		d->Rect.top = y;
-		d->Rect.right = x+l;
-		d->Rect.bottom = y+h;
+		GridItemData* d = GetItemData(a);
+		d->Column = col;
+		d->Row = row;
+		d->Hdr.Rect.left = lastleft = x;
+		d->Hdr.Rect.top = y;
+		d->Hdr.Rect.right = x+l;
+		d->Hdr.Rect.bottom = y+h;
 
 		if (a==(INT)p_Result->m_ItemCount-1)
 			FinishCategory;
@@ -265,18 +283,159 @@ Restart:
 
 		if (y+h+gva.guttery>rectWindow.Height())
 		{
+			row = 0;
+			col++;
 			y = top;
 			x += l+gva.gutterx;
 		}
 	}
 
+	m_GridArrange = GRIDARRANGE_VERTICAL;
 	AdjustScrollbars();
 	Invalidate();
+}
+
+void CGridView::HandleHorizontalKeys(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags*/)
+{
+	if (p_Result)
+	{
+		INT item = m_FocusItem;
+		INT col = GetItemData(item)->Column;
+		INT row = GetItemData(item)->Row;
+
+		switch (nChar)
+		{
+		case VK_LEFT:
+			for (INT a=item-1; a>0; a--)
+			{
+				GridItemData* d = GetItemData(a);
+				if ((d->Row==row) && (d->Hdr.Rect.right))
+				{
+					item = a;
+					break;
+				}
+			}
+
+			break;
+		case VK_RIGHT:
+			for (INT a=item+1; a<(INT)p_Result->m_ItemCount; a++)
+			{
+				GridItemData* d = GetItemData(a);
+				if ((d->Row==row) && (d->Hdr.Rect.right))
+				{
+					item = a;
+					break;
+				}
+			}
+
+			break;
+		case VK_UP:
+			for (INT a=item-1; a>=0; a--)
+			{
+				GridItemData* d = GetItemData(a);
+				if (d->Row<row-1)
+					break;
+				if ((d->Row<row) && (d->Hdr.Rect.right))
+				{
+					item = a;
+					if (d->Column<=col)
+						break;
+				}
+			}
+
+			break;
+		/*case VK_PRIOR:
+			for (INT row=item.y-1; row>=0; row--)
+				if (m_Tree[MAKEPOS(row, item.x)].pItem)
+				{
+					item.y = row;
+					if (row<=m_SelectedItem.y-rect.Height()/(INT)m_RowHeight)
+						break;
+				}
+
+			break;*/
+		case VK_DOWN:
+			for (INT a=item+1; a<(INT)p_Result->m_ItemCount; a++)
+			{
+				GridItemData* d = GetItemData(a);
+				if (d->Row>row+1)
+					break;
+				if ((d->Row>row) && (d->Hdr.Rect.right))
+				{
+					item = a;
+					if (d->Column>=col)
+						break;
+				}
+			}
+
+			break;
+		/*case VK_NEXT:
+			for (INT row=item.y+1; row<(INT)m_Rows; row++)
+				if (m_Tree[MAKEPOS(row, item.x)].pItem)
+				{
+					item.y = row;
+					if (row>=m_SelectedItem.y+rect.Height()/(INT)m_RowHeight)
+						break;
+				}
+
+			break;*/
+		case VK_HOME:
+			if (GetKeyState(VK_CONTROL)<0)
+			{
+				item = 0;
+			}
+			else
+				for (INT a=item-1; a>=0; a--)
+				{
+					GridItemData* d = GetItemData(a);
+					if (d->Hdr.Rect.right)
+						if (d->Row==row)
+						{
+							item = a;
+						}
+						else
+						{
+							break;
+						}
+				}
+
+			break;
+		case VK_END:
+			if (GetKeyState(VK_CONTROL)<0)
+			{
+				item = p_Result->m_ItemCount-1;
+			}
+			else
+				for (INT a=item+1; a<(INT)p_Result->m_ItemCount; a++)
+				{
+					GridItemData* d = GetItemData(a);
+					if (d->Hdr.Rect.right)
+						if (d->Row==row)
+						{
+							item = a;
+						}
+						else
+						{
+							break;
+						}
+				}
+
+			break;
+		}
+
+		if (item!=m_FocusItem)
+			SetFocusItem(item, GetKeyState(VK_SHIFT)<0);
+	}
+}
+
+void CGridView::HandleVerticalKeys(UINT nChar, UINT nRepCnt, UINT nFlags)
+{
 }
 
 
 BEGIN_MESSAGE_MAP(CGridView, CFileView)
 	ON_WM_PAINT()
+	ON_WM_KEYDOWN()
 END_MESSAGE_MAP()
 
 void CGridView::OnPaint()
@@ -345,4 +504,19 @@ void CGridView::OnPaint()
 	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);
 	dc.SelectObject(pOldFont);
 	dc.SelectObject(pOldBitmap);
+}
+
+void CGridView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
+{
+	CFileView::OnKeyDown(nChar, nRepCnt, nFlags);
+
+	switch (m_GridArrange)
+	{
+	case GRIDARRANGE_HORIZONTAL:
+		HandleHorizontalKeys(nChar, nRepCnt, nFlags);
+		break;
+	case GRIDARRANGE_VERTICAL:
+		HandleVerticalKeys(nChar, nRepCnt, nFlags);
+		break;
+	}
 }

@@ -10,7 +10,7 @@
 
 struct TagcloudItemData
 {
-	FVItemData Hdr;
+	GridItemData Hdr;
 	INT Cnt;
 	COLORREF Color;
 	UINT FontSize;

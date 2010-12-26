@@ -520,14 +520,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Ribbon\Camera_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\Camera_32.png"
-				>
-			</File>
-			<File
 				RelativePath=".\Ribbon\ClearFilter_16.png"
 				>
 			</File>
@@ -885,6 +877,14 @@
 			</File>
 			<File
 				RelativePath=".\Ribbon\LFAttrRating_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\LFAttrRecordingEquipment_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\LFAttrRecordingEquipment_32.png"
 				>
 			</File>
 			<File

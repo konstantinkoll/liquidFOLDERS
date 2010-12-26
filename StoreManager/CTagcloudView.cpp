@@ -10,7 +10,7 @@
 // CTagcloudView
 //
 
-#define GetItemData(idx)     ((TagcloudItemData*)(m_ItemData+idx*m_DataSize))
+#define GetItemData(idx)     ((TagcloudItemData*)(m_ItemData+(idx)*m_DataSize))
 #define DefaultFontSize      2
 #define TextFormat           DT_NOPREFIX | DT_END_ELLIPSIS | DT_SINGLELINE
 #define GUTTER               3
@@ -85,7 +85,7 @@ void CTagcloudView::SetSearchResult(LFSearchResult* Result)
 				if ((m_ViewParameters.TagcloudHideRare) && (Delta>1) && (d->Cnt==Minimum))
 				{
 					ZeroMemory(d, sizeof(TagcloudItemData));
-					d->Hdr.SysIconIndex = -1;
+					d->Hdr.Hdr.SysIconIndex = -1;
 				}
 				else
 					if (Delta==1)
@@ -134,12 +134,12 @@ void CTagcloudView::AdjustLayout()
 		TagcloudItemData* d = GetItemData(b); \
 		if (d->Cnt) \
 		{ \
-			OffsetRect(&d->Hdr.Rect, (rectWindow.Width()+GUTTER-x)/2, (rowheight-(d->Hdr.Rect.bottom-d->Hdr.Rect.top))/2); \
-			if (d->Hdr.Rect.right-1>m_ScrollWidth) \
-				m_ScrollWidth = d->Hdr.Rect.right-1; \
-			if (d->Hdr.Rect.bottom-1>m_ScrollHeight) \
+			OffsetRect(&d->Hdr.Hdr.Rect, (rectWindow.Width()+GUTTER-x)/2, (rowheight-(d->Hdr.Hdr.Rect.bottom-d->Hdr.Hdr.Rect.top))/2); \
+			if (d->Hdr.Hdr.Rect.right-1>m_ScrollWidth) \
+				m_ScrollWidth = d->Hdr.Hdr.Rect.right-1; \
+			if (d->Hdr.Hdr.Rect.bottom-1>m_ScrollHeight) \
 			{ \
-				m_ScrollHeight = d->Hdr.Rect.bottom-1; \
+				m_ScrollHeight = d->Hdr.Hdr.Rect.bottom-1; \
 				if ((m_ScrollHeight>=rectWindow.Height()) && (!HasScrollbars)) \
 				{ \
 					HasScrollbars = TRUE; \
@@ -155,6 +155,8 @@ void CTagcloudView::AdjustLayout()
 Restart:
 		m_ScrollWidth = m_ScrollHeight = 0;
 
+		INT col = 0;
+		INT row = 0;
 		INT x = 0;
 		INT y = GUTTER;
 		INT rowheight = 0;
@@ -174,6 +176,8 @@ Restart:
 
 				if (x+rect.Width()+2*GUTTER>rectWindow.Width())
 				{
+					col = 0;
+					row++;
 					y += rowheight+GUTTER;
 					if (a)
 						CenterRow(a-1);
@@ -183,7 +187,9 @@ Restart:
 				}
 
 				rect.MoveToXY(x, y);
-				d->Hdr.Rect = rect;
+				d->Hdr.Column = col++;
+				d->Hdr.Row = row;
+				d->Hdr.Hdr.Rect = rect;
 
 				x += rect.Width()+GUTTER;
 				rowheight = max(rowheight, rect.Height());
@@ -198,8 +204,10 @@ Restart:
 		m_ScrollWidth = m_ScrollHeight = 0;
 	}
 
+	m_GridArrange = GRIDARRANGE_HORIZONTAL;
 	AdjustScrollbars();
-	Invalidate();}
+	Invalidate();
+}
 
 void CTagcloudView::DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed)
 {
@@ -208,7 +216,7 @@ void CTagcloudView::DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed)
 
 	COLORREF color = m_ViewParameters.TagcloudUseColors ? d->Color : Themed ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT);
 
-	if ((d->Hdr.Selected) && (!hThemeList))
+	if ((d->Hdr.Hdr.Selected) && (!hThemeList))
 	{
 		color = GetSysColor(GetFocus()==this ? COLOR_HIGHLIGHTTEXT : COLOR_BTNTEXT);
 	}

@@ -13,7 +13,7 @@
 class CListView : public CGridView
 {
 public:
-	CListView(UINT DataSize=sizeof(FVItemData));
+	CListView(UINT DataSize=sizeof(GridItemData));
 
 protected:
 	virtual void SetViewOptions(BOOL Force);
@@ -21,7 +21,7 @@ protected:
 	virtual void AdjustLayout();
 	virtual void DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed);
 
-	void DrawIcon(CDC& dc, CRect& rect, LFItemDescriptor* i, FVItemData* d);
+	void DrawIcon(CDC& dc, CRect& rect, LFItemDescriptor* i, GridItemData* d);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
@@ -49,9 +49,9 @@ private:
 
 	void AdjustHeader(BOOL bShow);
 	void AttributeToString(LFItemDescriptor* i, UINT Attr, WCHAR* tmpStr, size_t cCount);
-	void DrawTileRows(CDC& dc, CRect& rect, LFItemDescriptor* i, FVItemData* d, INT* Rows, BOOL Themed);
+	void DrawTileRows(CDC& dc, CRect& rect, LFItemDescriptor* i, GridItemData* d, INT* Rows, BOOL Themed);
 	void DrawColumn(CDC& dc, CRect& rect, LFItemDescriptor* i, UINT Attr);
-	void DrawProperty(CDC& dc, CRect& rect, LFItemDescriptor* i, FVItemData* d, UINT Attr, BOOL Themed);
+	void DrawProperty(CDC& dc, CRect& rect, LFItemDescriptor* i, GridItemData* d, UINT Attr, BOOL Themed);
 	INT GetMaxLabelWidth(INT Max);
 	INT GetMaxColumnWidth(UINT Col, INT Max);
 	void AutosizeColumn(UINT Col);

@@ -335,9 +335,9 @@ void CFileView::SetFocusItem(INT FocusItem, BOOL ShiftSelect)
 
 	m_FocusItem = FocusItem;
 	m_EditLabel = -1;
-	EnsureVisible(m_FocusItem);
 
 	ChangedItems();
+	EnsureVisible(m_FocusItem);
 }
 
 RECT CFileView::GetItemRect(INT idx)

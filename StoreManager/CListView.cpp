@@ -11,10 +11,10 @@
 // CListView
 //
 
-#define GetItemData(idx)                   ((FVItemData*)(m_ItemData+idx*m_DataSize))
+#define GetItemData(idx)                   ((GridItemData*)(m_ItemData+(idx)*m_DataSize))
 #define PADDING                            2
 #define DrawLabel(dc, rect, i, format)     dc.DrawText(GetLabel(i), -1, rect, DT_END_ELLIPSIS | format);
-#define SwitchColor(dc, d)                 if ((Themed) && (!(i->CoreAttributes.Flags & LFFlagMissing)) && ((hThemeList) || (!d->Selected))) dc.SetTextColor(0x808080);
+#define SwitchColor(dc, d)                 if ((Themed) && (!(i->CoreAttributes.Flags & LFFlagMissing)) && ((hThemeList) || (!d->Hdr.Selected))) dc.SetTextColor(0x808080);
 #define PrepareBlend()                     INT w = min(rect.Width(), RatingBitmapWidth); \
                                            INT h = min(rect.Height(), RatingBitmapHeight); \
                                            BLENDFUNCTION BF = { AC_SRC_OVER, 0, 0xFF, AC_SRC_ALPHA };
@@ -254,7 +254,7 @@ void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed)
 	PrepareSysIcon(idx);
 
 	LFItemDescriptor* i = p_Result->m_Items[idx];
-	FVItemData* d = GetItemData(idx);
+	GridItemData* d = GetItemData(idx);
 	INT Rows[4];
 	BOOL Right = FALSE;
 
@@ -402,18 +402,18 @@ void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed)
 	}
 }
 
-void CListView::DrawIcon(CDC& dc, CRect& rect, LFItemDescriptor* i, FVItemData* d)
+void CListView::DrawIcon(CDC& dc, CRect& rect, LFItemDescriptor* i, GridItemData* d)
 {
-	const INT List = (d->SysIconIndex>=0) ? 1 : 0;
+	const INT List = (d->Hdr.SysIconIndex>=0) ? 1 : 0;
 	rect.OffsetRect((rect.Width()-m_IconSize[List].cx)/2, (rect.Height()-m_IconSize[List].cy)/2);
 
 	if ((m_IconSize[List].cx<128) || (List==0))
 	{
-		m_Icons[List]->DrawEx(&dc, (List==1) ? d->SysIconIndex : i->IconID-1, rect.TopLeft(), m_IconSize[List], CLR_NONE, 0xFFFFFF, (i->Type & LFTypeGhosted) ? ILD_BLEND50 : ILD_TRANSPARENT);
+		m_Icons[List]->DrawEx(&dc, (List==1) ? d->Hdr.SysIconIndex : i->IconID-1, rect.TopLeft(), m_IconSize[List], CLR_NONE, 0xFFFFFF, (i->Type & LFTypeGhosted) ? ILD_BLEND50 : ILD_TRANSPARENT);
 	}
 	else
 	{
-		HICON hIcon = m_Icons[List]->ExtractIcon(d->SysIconIndex);
+		HICON hIcon = m_Icons[List]->ExtractIcon(d->Hdr.SysIconIndex);
 		DrawIconEx(dc, rect.left, rect.top, hIcon, m_IconSize[1].cx, m_IconSize[1].cy, 0, NULL, DI_NORMAL);
 		DestroyIcon(hIcon);
 	}
@@ -434,7 +434,7 @@ void CListView::AttributeToString(LFItemDescriptor* i, UINT Attr, WCHAR* tmpStr,
 	}
 }
 
-void CListView::DrawTileRows(CDC& dc, CRect& rect, LFItemDescriptor* i, FVItemData* d, INT* Rows, BOOL Themed)
+void CListView::DrawTileRows(CDC& dc, CRect& rect, LFItemDescriptor* i, GridItemData* d, INT* Rows, BOOL Themed)
 {
 	WCHAR tmpStr[4][256];
 	UINT Cnt = 0;
@@ -517,7 +517,7 @@ void CListView::DrawColumn(CDC& dc, CRect& rect, LFItemDescriptor* i, UINT Attr)
 	}
 }
 
-void CListView::DrawProperty(CDC& dc, CRect& rect, LFItemDescriptor* i, FVItemData* d, UINT Attr, BOOL Themed)
+void CListView::DrawProperty(CDC& dc, CRect& rect, LFItemDescriptor* i, GridItemData* d, UINT Attr, BOOL Themed)
 {
 	CFont* pOldFont;
 
