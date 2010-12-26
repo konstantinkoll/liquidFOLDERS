@@ -90,7 +90,7 @@ void WriteGoogleAttribute(CStdioFile* f, LFItemDescriptor* i, UINT attr)
 
 
 CGlobeView::CGlobeView()
-	: CFileView(sizeof(GlobeItemData), FALSE, FALSE, FALSE, FALSE)
+	: CFileView(sizeof(GlobeItemData), FALSE, FALSE, TRUE, FALSE)
 {
 	m_pDC = NULL;
 	m_hrc = NULL;
@@ -256,9 +256,6 @@ BEGIN_MESSAGE_MAP(CGlobeView, CFileView)
 	ON_WM_TIMER()
 	ON_WM_ERASEBKGND()
 	ON_WM_PAINT()
-	ON_WM_SETFOCUS()
-	ON_WM_KILLFOCUS()
-	ON_WM_SYSCOLORCHANGE()
 END_MESSAGE_MAP()
 
 void CGlobeView::UpdateCursor()
@@ -654,13 +651,7 @@ void CGlobeView::OnTimer(UINT_PTR nIDEvent)
 {
 	if (nIDEvent==1)
 		if (UpdateScene())
-		{
-			// Schatten aktualisieren
-			CRect rect;
-			GetClientRect(rect);
-			ClientToScreen(rect);
-			CMFCPopupMenu::UpdateAllShadows(rect);
-		}
+			m_TooltipCtrl.Deactivate();
 
 	CWnd::OnTimer(nIDEvent);
 

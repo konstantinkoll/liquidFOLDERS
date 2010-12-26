@@ -193,6 +193,7 @@ void CFileView::UpdateSearchResult(LFSearchResult* Result, INT FocusItem)
 	if (p_Result)
 	{
 		AdjustLayout();
+		EnsureVisible(m_FocusItem);
 	}
 	else
 	{
@@ -885,7 +886,7 @@ void CFileView::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 
 void CFileView::OnMouseMove(UINT /*nFlags*/, CPoint point)
 {
-	if (m_EnableHover)
+	if (m_EnableHover || m_EnableTooltip)
 	{
 		INT Item = ItemAtPosition(point);
 
@@ -906,9 +907,11 @@ void CFileView::OnMouseMove(UINT /*nFlags*/, CPoint point)
 
 		if (m_HotItem!=Item)
 		{
-			InvalidateItem(m_HotItem);
+			if (m_EnableHover)
+				InvalidateItem(m_HotItem);
 			m_HotItem = Item;
-			InvalidateItem(m_HotItem);
+			if (m_EnableHover)
+				InvalidateItem(m_HotItem);
 		}
 	}
 }

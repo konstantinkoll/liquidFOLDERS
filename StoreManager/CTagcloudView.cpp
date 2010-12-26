@@ -113,6 +113,15 @@ void CTagcloudView::SetSearchResult(LFSearchResult* Result)
 							}
 					}
 		}
+
+		// Focus item
+		if (!GetItemData(m_FocusItem)->Cnt)
+			for (UINT a=0; a<Result->m_ItemCount; a++)
+				if (GetItemData(a)->Cnt)
+				{
+					m_FocusItem = a;
+					break;
+				}
 	}
 }
 
