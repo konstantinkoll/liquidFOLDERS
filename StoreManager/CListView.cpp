@@ -839,8 +839,8 @@ void CListView::OnItemChanging(NMHDR* pNMHDR, LRESULT* pResult)
 
 	if ((pHdr->pitem->mask & HDI_WIDTH) && (!m_IgnoreHeaderItemChange))
 	{
-		if (pHdr->pitem->cxy<32)
-			pHdr->pitem->cxy = (pHdr->iItem==LFAttrFileName) ? 32 : 0;
+		if (pHdr->pitem->cxy<MINWIDTH)
+			pHdr->pitem->cxy = (pHdr->iItem==LFAttrFileName) ? MINWIDTH : 0;
 
 		m_ViewParameters.ColumnWidth[pHdr->iItem] = p_ViewParameters->ColumnWidth[pHdr->iItem] = pHdr->pitem->cxy;
 		AdjustLayout();
