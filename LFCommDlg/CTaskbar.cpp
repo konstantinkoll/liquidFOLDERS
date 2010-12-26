@@ -322,8 +322,6 @@ void CTaskbar::OnSize(UINT nType, INT cx, INT cy)
 
 void CTaskbar::OnIdleUpdateCmdUI()
 {
-	//SetRedraw(FALSE);
-
 	BOOL Update = FALSE;
 
 	std::list<CTaskButton*>::iterator ppBtn = ButtonsRight.begin();
@@ -357,8 +355,6 @@ void CTaskbar::OnIdleUpdateCmdUI()
 
 		ppBtn++;
 	}
-
-//	SetRedraw(TRUE);
 
 	if (Update)
 		AdjustLayout();

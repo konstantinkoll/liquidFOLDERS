@@ -848,24 +848,6 @@ void CMainFrame::InitializeRibbon()
 				pPanelGlobeOptions->AddSeparator();
 				pPanelGlobeOptions->Add(theApp.CommandCheckBox(ID_GLOBE_SHOWSPOTS));
 				pPanelGlobeOptions->Add(theApp.CommandCheckBox(ID_GLOBE_SHOWVIEWPOINT));
-
-		strTemp = "Tagcloud";
-		CMFCRibbonCategory* pCategoryTagcloud = m_wndRibbonBar.AddContextCategory(strTemp, strCtx, 2, AFX_CategoryColor_Indigo, IDB_RIBBONTAGCLOUD_16, IDB_RIBBONTAGCLOUD_32);
-
-			strTemp = "Tags";
-			CMFCRibbonPanel* pPanelTagcloudTags = pCategoryTagcloud->AddPanel(strTemp, m_PanelImages.ExtractIcon(18));
-
-				pPanelTagcloudTags->Add(theApp.CommandButton(ID_TAGCLOUD_SORTVALUE, 0, 0));
-				pPanelTagcloudTags->Add(theApp.CommandButton(ID_TAGCLOUD_SORTCOUNT, 1, 1));
-				pPanelTagcloudTags->AddSeparator();
-				pPanelTagcloudTags->Add(theApp.CommandCheckBox(ID_TAGCLOUD_OMITRARE));
-
-			strTemp = "Display options";
-			CMFCRibbonPanel* pPanelTagcloudOptions = pCategoryTagcloud->AddPanel(strTemp, m_PanelImages.ExtractIcon(4));
-
-				pPanelTagcloudOptions->Add(theApp.CommandCheckBox(ID_TAGCLOUD_USESIZE));
-				pPanelTagcloudOptions->Add(theApp.CommandCheckBox(ID_TAGCLOUD_USECOLORS));
-				pPanelTagcloudOptions->Add(theApp.CommandCheckBox(ID_TAGCLOUD_USEOPACITY));
 	}
 
 	m_wndRibbonBar.SetActiveCategory(m_wndRibbonBar.GetCategory(RibbonDefaultCategory));
@@ -883,10 +865,7 @@ void CMainFrame::InitializeRibbon()
 	// Im Debug-Modus alle Kategorien anzeigen
 		#ifdef _DEBUG
 	if (!IsClipboard)
-	{
 		m_wndRibbonBar.ShowCategory(RibbonCategory_View_Globe);
-		m_wndRibbonBar.ShowCategory(RibbonCategory_View_Tagcloud);
-	}
 	#endif
 
 	// Symbolleistenbefehle für Schnellzugriff hinzufügen
@@ -1084,11 +1063,6 @@ void CMainFrame::UpdateRibbon()
 		if (m_wndRibbonBar.GetCategory(RibbonCategory_View_Globe)->IsVisible()!=(ActiveViewID==LFViewGlobe))
 		{
 			m_wndRibbonBar.ShowCategory(RibbonCategory_View_Globe, ActiveViewID==LFViewGlobe);
-			change = TRUE;
-		}
-		if (m_wndRibbonBar.GetCategory(RibbonCategory_View_Tagcloud)->IsVisible()!=(ActiveViewID==LFViewTagcloud))
-		{
-			m_wndRibbonBar.ShowCategory(RibbonCategory_View_Tagcloud, ActiveViewID==LFViewTagcloud);
 			change = TRUE;
 		}
 		if (change)

@@ -424,7 +424,7 @@ void CStoreManagerApp::LoadViewOptions(INT context)
 	m_Views[context].GlobeShowSpots = GetInt(_T("GlobeShowSpots"), TRUE);
 	m_Views[context].GlobeShowViewpoint = GetInt(_T("GlobeShowViewpoint"), FALSE);
 	m_Views[context].TagcloudCanonical = GetInt(_T("TagcloudSortCanonical"), TRUE);
-	m_Views[context].TagcloudOmitRare = GetInt(_T("TagcloudOmitRare"), FALSE);
+	m_Views[context].TagcloudHideRare = GetInt(_T("TagcloudHideRare"), FALSE);
 	m_Views[context].TagcloudUseSize = GetInt(_T("TagcloudUseSize"), TRUE);
 	m_Views[context].TagcloudUseColors = GetInt(_T("TagcloudUseColors"), TRUE);
 	m_Views[context].TagcloudUseOpacity = GetInt(_T("TagcloudUseOpacity"), FALSE);
@@ -473,7 +473,7 @@ void CStoreManagerApp::SaveViewOptions(INT context)
 	WriteInt(_T("GlobeShowSpots"), m_Views[context].GlobeShowSpots);
 	WriteInt(_T("GlobeShowViewpoint"), m_Views[context].GlobeShowViewpoint);
 	WriteInt(_T("TagcloudSortCanonical"), m_Views[context].TagcloudCanonical);
-	WriteInt(_T("TagcloudOmitRare"), m_Views[context].TagcloudOmitRare);
+	WriteInt(_T("TagcloudHideRare"), m_Views[context].TagcloudHideRare);
 	WriteInt(_T("TagcloudUseSize"), m_Views[context].TagcloudUseSize);
 	WriteInt(_T("TagcloudUseColors"), m_Views[context].TagcloudUseColors);
 	WriteInt(_T("TagcloudUseOpacity"), m_Views[context].TagcloudUseOpacity);

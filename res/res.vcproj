@@ -1032,19 +1032,19 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Ribbon\SortCount_16.png"
+				RelativePath=".\Ribbon\SortByCount_16.png"
 				>
 			</File>
 			<File
-				RelativePath=".\Ribbon\SortCount_32.png"
+				RelativePath=".\Ribbon\SortByCount_32.png"
 				>
 			</File>
 			<File
-				RelativePath=".\Ribbon\SortNames_16.png"
+				RelativePath=".\Ribbon\SortByValue_16.png"
 				>
 			</File>
 			<File
-				RelativePath=".\Ribbon\SortNames_32.png"
+				RelativePath=".\Ribbon\SortByValue_32.png"
 				>
 			</File>
 			<File

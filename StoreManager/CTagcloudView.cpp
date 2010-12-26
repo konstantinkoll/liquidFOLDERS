@@ -27,7 +27,7 @@ void CTagcloudView::SetViewOptions(BOOL Force)
 
 	if ((Force) || (m_ViewParameters.TagcloudCanonical!=p_ViewParameters->TagcloudCanonical))
 		Changes = 2;
-	if ((Force) || (m_ViewParameters.TagcloudOmitRare!=p_ViewParameters->TagcloudOmitRare))
+	if ((Force) || (m_ViewParameters.TagcloudHideRare!=p_ViewParameters->TagcloudHideRare))
 		Changes = 2;
 	if ((Force) || (m_ViewParameters.TagcloudUseSize!=p_ViewParameters->TagcloudUseSize))
 		Changes = 1;
@@ -82,7 +82,7 @@ void CTagcloudView::SetSearchResult(LFSearchResult* Result)
 		{
 			TagcloudItemData* d = GetItemData(a);
 			if (d->Cnt)
-				if ((m_ViewParameters.TagcloudOmitRare) && (Delta>1) && (d->Cnt==Minimum))
+				if ((m_ViewParameters.TagcloudHideRare) && (Delta>1) && (d->Cnt==Minimum))
 				{
 					ZeroMemory(d, sizeof(TagcloudItemData));
 					d->Hdr.SysIconIndex = -1;
@@ -242,13 +242,13 @@ CFont* CTagcloudView::GetFont(INT idx)
 
 BEGIN_MESSAGE_MAP(CTagcloudView, CGridView)
 	ON_WM_CREATE()
-	ON_COMMAND(ID_TAGCLOUD_SORTVALUE, OnSortValue)
-	ON_COMMAND(ID_TAGCLOUD_SORTCOUNT, OnSortCount)
-	ON_COMMAND(ID_TAGCLOUD_OMITRARE, OnOmitRare)
-	ON_COMMAND(ID_TAGCLOUD_USESIZE, OnUseSize)
-	ON_COMMAND(ID_TAGCLOUD_USECOLORS, OnUseColors)
-	ON_COMMAND(ID_TAGCLOUD_USEOPACITY, OnUseOpacity)
-	ON_UPDATE_COMMAND_UI_RANGE(ID_TAGCLOUD_SORTVALUE, ID_TAGCLOUD_USEOPACITY, OnUpdateCommands)
+	ON_COMMAND(IDM_TAGCLOUD_SORTVALUE, OnSortValue)
+	ON_COMMAND(IDM_TAGCLOUD_SORTCOUNT, OnSortCount)
+	ON_COMMAND(IDM_TAGCLOUD_HIDERARE, OnHideRare)
+	ON_COMMAND(IDM_TAGCLOUD_USESIZE, OnUseSize)
+	ON_COMMAND(IDM_TAGCLOUD_USECOLORS, OnUseColors)
+	ON_COMMAND(IDM_TAGCLOUD_USEOPACITY, OnUseOpacity)
+	ON_UPDATE_COMMAND_UI_RANGE(IDM_TAGCLOUD_SORTVALUE, IDM_TAGCLOUD_USEOPACITY, OnUpdateCommands)
 END_MESSAGE_MAP()
 
 INT CTagcloudView::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -277,9 +277,9 @@ void CTagcloudView::OnSortCount()
 	theApp.UpdateViewOptions(m_Context);
 }
 
-void CTagcloudView::OnOmitRare()
+void CTagcloudView::OnHideRare()
 {
-	p_ViewParameters->TagcloudOmitRare = !p_ViewParameters->TagcloudOmitRare;
+	p_ViewParameters->TagcloudHideRare = !p_ViewParameters->TagcloudHideRare;
 	theApp.UpdateViewOptions(m_Context);
 }
 
@@ -306,22 +306,26 @@ void CTagcloudView::OnUpdateCommands(CCmdUI* pCmdUI)
 	BOOL b = TRUE;
 	switch (pCmdUI->m_nID)
 	{
-	case ID_TAGCLOUD_SORTVALUE:
+	case IDM_TAGCLOUD_SORTVALUE:
 		pCmdUI->SetCheck(m_ViewParameters.TagcloudCanonical);
+		if (!pCmdUI->m_pMenu)
+			b = !m_ViewParameters.TagcloudCanonical;
 		break;
-	case ID_TAGCLOUD_SORTCOUNT:
+	case IDM_TAGCLOUD_SORTCOUNT:
 		pCmdUI->SetCheck(!m_ViewParameters.TagcloudCanonical);
+		if (!pCmdUI->m_pMenu)
+			b = m_ViewParameters.TagcloudCanonical;
 		break;
-	case ID_TAGCLOUD_OMITRARE:
-		pCmdUI->SetCheck(m_ViewParameters.TagcloudOmitRare);
+	case IDM_TAGCLOUD_HIDERARE:
+		pCmdUI->SetCheck(m_ViewParameters.TagcloudHideRare);
 		break;
-	case ID_TAGCLOUD_USESIZE:
+	case IDM_TAGCLOUD_USESIZE:
 		pCmdUI->SetCheck(m_ViewParameters.TagcloudUseSize);
 		break;
-	case ID_TAGCLOUD_USECOLORS:
+	case IDM_TAGCLOUD_USECOLORS:
 		pCmdUI->SetCheck(m_ViewParameters.TagcloudUseColors);
 		break;
-	case ID_TAGCLOUD_USEOPACITY:
+	case IDM_TAGCLOUD_USEOPACITY:
 		pCmdUI->SetCheck(m_ViewParameters.TagcloudUseOpacity);
 	}
 

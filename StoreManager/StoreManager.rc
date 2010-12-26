@@ -71,8 +71,6 @@ IDB_RIBBONVIEW_16       BITMAP                  "res\\Ribbon_View_16.bmp"
 IDB_RIBBONVIEW_32       BITMAP                  "res\\Ribbon_View_32.bmp"
 IDB_RIBBONGLOBE_32      BITMAP                  "res\\Ribbon_Globe_32.bmp"
 IDB_RIBBONGLOBE_16      BITMAP                  "res\\Ribbon_Globe_16.bmp"
-IDB_RIBBONTAGCLOUD_32   BITMAP                  "res\\Ribbon_Tagcloud_32.bmp"
-IDB_RIBBONTAGCLOUD_16   BITMAP                  "res\\Ribbon_Tagcloud_16.bmp"
 ID_PANE_HISTORYWND      BITMAP                  "res\\Toolbar_History.bmp"
 ID_PANE_INSPECTORWND    BITMAP                  "res\\Toolbar_Inspector.bmp"
 ID_PANE_FILTERWND       BITMAP                  "res\\Toolbar_Filter.bmp"
@@ -297,7 +295,6 @@ IDM_HOME MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "&Hide empty domains",         IDM_HOME_HIDEEMPTYDOMAINS
         MENUITEM SEPARATOR
         MENUITEM "&Import folder...",           IDM_HOME_IMPORTFOLDER
         MENUITEM "Run &maintenance",            IDM_HOME_MAINTAIN
@@ -387,10 +384,18 @@ IDM_TAGCLOUD MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "Use &font size",              ID_TAGCLOUD_USESIZE
-        MENUITEM "Use &color",                  ID_TAGCLOUD_USECOLORS
-        MENUITEM "Use &opacity",                ID_TAGCLOUD_USEOPACITY
+        MENUITEM "Use &font size",              IDM_TAGCLOUD_USESIZE
+        MENUITEM "Use &color",                  IDM_TAGCLOUD_USECOLORS
+        MENUITEM "Use &opacity",                IDM_TAGCLOUD_USEOPACITY
     END
+END
+
+IDM_TAGCLOUD_SORT MENU 
+BEGIN
+    MENUITEM "Sort by &value",              IDM_TAGCLOUD_SORTVALUE
+    MENUITEM "Sort by &count",              IDM_TAGCLOUD_SORTCOUNT
+    MENUITEM SEPARATOR
+    MENUITEM "&Hide rare tags",             IDM_TAGCLOUD_HIDERARE
 END
 
 
@@ -654,7 +659,7 @@ STRINGTABLE
 BEGIN
     IDM_GLOBE_ZOOMIN         "Zooms into the globe.\nZoom in"
     IDM_GLOBE_ZOOMOUT        "Zooms out of the globe.\nZoom out"
-    IDM_GLOBE_AUTOSIZE       "Zooms the globe to touch the sides of the containing window.\nFit to window"
+    IDM_GLOBE_AUTOSIZE       "Resizes the globe to touch the edges of the window.\nSize to fit"
     ID_GLOBE_SAVECAMERA      "Saves the current viewpoint to the view settings of the active context.\nSave viewpoint"
     IDM_GLOBE_JUMPTOLOCATION "Centers the globe on a specific location.\nJump to location"
     IDM_GLOBE_GOOGLEEARTH   "Opens the selected locations in Google Earth.\nOpen in Google Earth"
@@ -672,12 +677,9 @@ BEGIN
     ID_GLOBE_SHOWHINTS      "Shows or hides the hint text of each folder.\nShow hints"
     ID_GLOBE_SHOWSPOTS      "Shows or hides the location spot of each folder.\nShow spots"
     ID_GLOBE_SHOWVIEWPOINT  "Shows or hides the viewpoint coordinates in the globe's status bar.\nShow viewpoint"
-    ID_TAGCLOUD_SORTVALUE   "Sort tags by value.\nSort by value"
-    ID_TAGCLOUD_SORTCOUNT   "Sort tags by count.\nSort by count"
-    ID_TAGCLOUD_OMITRARE    "Removes rare tags from the search result.\nOmit rare tags"
-    ID_TAGCLOUD_USESIZE     "Shows tags in different font sizes depending on their count.\nUse font size"
-    ID_TAGCLOUD_USECOLORS   "Shows tags in different colors depending on their count.\nUse color"
-    ID_TAGCLOUD_USEOPACITY  "Shows tags in different opacities depending on their count.\nUse opacity"
+    IDM_TAGCLOUD_SORT       "&Sort by"
+    IDM_TAGCLOUD_SORTVALUE  "Arranges the tags in their canonic order.\nSort by value"
+    IDM_TAGCLOUD_SORTCOUNT  "Arranges the tags by their file count.\nSort by count"
 END
 
 STRINGTABLE 
@@ -732,6 +734,7 @@ END
 STRINGTABLE 
 BEGIN
     IDM_STORES_HIDEEMPTYDRIVES "&Hide unmounted drives"
+    IDM_HOME_HIDEEMPTYDOMAINS  "&Hide empty domains"
 END
 
 STRINGTABLE 

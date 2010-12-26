@@ -41,7 +41,7 @@ protected:
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnSortValue();
 	afx_msg void OnSortCount();
-	afx_msg void OnOmitRare();
+	afx_msg void OnHideRare();
 	afx_msg void OnUseSize();
 	afx_msg void OnUseColors();
 	afx_msg void OnUseOpacity();

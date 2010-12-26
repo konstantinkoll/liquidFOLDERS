@@ -18,13 +18,11 @@
 #define IDB_RIBBONHOME_16               141
 #define IDB_RIBBONVIEW_32               144
 #define IDB_RIBBONVIEW_16               145
-#define IDB_RIBBONGLOBE_16              150
-#define IDB_RIBBONGLOBE_32              151
-#define IDB_RIBBONTAGCLOUD_16           154
-#define IDB_RIBBONTAGCLOUD_32           155
-#define IDB_INSPECTOR                   158
-#define IDB_MULTIPLE                    159
-#define IDB_TASKS                       160
+#define IDB_RIBBONGLOBE_16              146
+#define IDB_RIBBONGLOBE_32              147
+#define IDB_INSPECTOR                   148
+#define IDB_MULTIPLE                    149
+#define IDB_TASKS                       150
 #define ID_APP_NEWVIEW                  250
 #define ID_APP_CLOSE                    251
 #define ID_APP_CLOSEOTHERS              252
@@ -111,12 +109,6 @@
 #define ID_GLOBE_SHOWHINTS              912
 #define ID_GLOBE_SHOWSPOTS              913
 #define ID_GLOBE_SHOWVIEWPOINT          914
-#define ID_TAGCLOUD_SORTVALUE           920
-#define ID_TAGCLOUD_SORTCOUNT           921
-#define ID_TAGCLOUD_OMITRARE            922
-#define ID_TAGCLOUD_USESIZE             923
-#define ID_TAGCLOUD_USECOLORS           924
-#define ID_TAGCLOUD_USEOPACITY          925
 #define IDB_FIRSTTEXTURE                990
 #define IDB_BLUEMARBLE_1024             990
 #define IDB_BLUEMARBLE_2048             991
@@ -201,6 +193,13 @@
 #define IDM_DETAILS_CHOOSE              5003
 #define IDM_GLOBE                       5100
 #define IDM_TAGCLOUD                    5200
+#define IDM_TAGCLOUD_SORTVALUE          5201
+#define IDM_TAGCLOUD_SORTCOUNT          5202
+#define IDM_TAGCLOUD_HIDERARE           5203
+#define IDM_TAGCLOUD_USESIZE            5204
+#define IDM_TAGCLOUD_USECOLORS          5205
+#define IDM_TAGCLOUD_USEOPACITY         5206
+#define IDM_TAGCLOUD_SORT               5207
 #define IDM_DETAILS_TOGGLEATTRIBUTE     6000
 
 

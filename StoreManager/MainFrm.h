@@ -18,7 +18,6 @@
 #define RibbonCategory_Home                 0
 #define RibbonCategory_View                 1
 #define RibbonCategory_View_Globe           2
-#define RibbonCategory_View_Tagcloud        3
 
 #define RibbonDefaultCategory               RibbonCategory_View
 

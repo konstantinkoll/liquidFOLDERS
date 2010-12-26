@@ -490,33 +490,35 @@ INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndTaskbar.AddButton(IDM_STORES_MAINTAINALL, 1, TRUE);
 	m_wndTaskbar.AddButton(IDM_HOME_IMPORTFOLDER, 2);
 	m_wndTaskbar.AddButton(IDM_HOUSEKEEPING_REGISTER, 3);
-	m_wndTaskbar.AddButton(IDM_HOUSEKEEPING_SEND, 26, TRUE);
+	m_wndTaskbar.AddButton(IDM_HOUSEKEEPING_SEND, 28, TRUE);
 	m_wndTaskbar.AddButton(IDM_TRASH_EMPTY, 4, TRUE);
 	m_wndTaskbar.AddButton(IDM_TRASH_RESTOREALL, 5);
 	m_wndTaskbar.AddButton(IDM_GLOBE_JUMPTOLOCATION, 6);
 	m_wndTaskbar.AddButton(IDM_GLOBE_ZOOMIN, 7);
 	m_wndTaskbar.AddButton(IDM_GLOBE_ZOOMOUT, 8);
 	m_wndTaskbar.AddButton(IDM_GLOBE_AUTOSIZE, 9);
-	m_wndTaskbar.AddButton(IDM_ITEM_OPEN, 10);
-	m_wndTaskbar.AddButton(IDM_GLOBE_GOOGLEEARTH, 11);
-	m_wndTaskbar.AddButton(IDM_DRIVE_PROPERTIES, 12);
-	m_wndTaskbar.AddButton(IDM_STORE_DELETE, 13);
-	m_wndTaskbar.AddButton(IDM_STORE_RENAME, 14);
-	m_wndTaskbar.AddButton(IDM_STORE_PROPERTIES, 15);
-	m_wndTaskbar.AddButton(IDM_STORE_MAKEDEFAULT, 16);
+	m_wndTaskbar.AddButton(IDM_TAGCLOUD_SORTVALUE, 10);
+	m_wndTaskbar.AddButton(IDM_TAGCLOUD_SORTCOUNT, 11);
+	m_wndTaskbar.AddButton(IDM_ITEM_OPEN, 12);
+	m_wndTaskbar.AddButton(IDM_GLOBE_GOOGLEEARTH, 13);
+	m_wndTaskbar.AddButton(IDM_DRIVE_PROPERTIES, 14);
+	m_wndTaskbar.AddButton(IDM_STORE_DELETE, 15);
+	m_wndTaskbar.AddButton(IDM_STORE_RENAME, 16);
+	m_wndTaskbar.AddButton(IDM_STORE_PROPERTIES, 17);
+	m_wndTaskbar.AddButton(IDM_STORE_MAKEDEFAULT, 18);
 	m_wndTaskbar.AddButton(IDM_STORE_IMPORTFOLDER, 2);
-	m_wndTaskbar.AddButton(IDM_FILE_REMEMBER, 17);
-	m_wndTaskbar.AddButton(IDM_FILE_REMOVE, 18);
-	m_wndTaskbar.AddButton(IDM_FILE_DELETE, 19);
-	m_wndTaskbar.AddButton(IDM_FILE_RENAME, 20);
-	m_wndTaskbar.AddButton(IDM_FILE_SEND, 21);
-	m_wndTaskbar.AddButton(IDM_FILE_RESTORE, 22);
-	m_wndTaskbar.AddButton(ID_APP_NEWFILEDROP, 23, TRUE);
+	m_wndTaskbar.AddButton(IDM_FILE_REMEMBER, 19);
+	m_wndTaskbar.AddButton(IDM_FILE_REMOVE, 20);
+	m_wndTaskbar.AddButton(IDM_FILE_DELETE, 21);
+	m_wndTaskbar.AddButton(IDM_FILE_RENAME, 22);
+	m_wndTaskbar.AddButton(IDM_FILE_SEND, 23);
+	m_wndTaskbar.AddButton(IDM_FILE_RESTORE, 24);
+	m_wndTaskbar.AddButton(ID_APP_NEWFILEDROP, 25, TRUE);
 
-	m_wndTaskbar.AddButton(ID_APP_PURCHASE, 24, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_ENTERLICENSEKEY, 25, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_SUPPORT, 26, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_ABOUT, 27, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_PURCHASE, 26, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_ENTERLICENSEKEY, 27, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_SUPPORT, 28, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_ABOUT, 29, TRUE, TRUE);
 
 	// Explorer header
 	if (!m_wndExplorerHeader.Create(this, 2))
@@ -559,19 +561,16 @@ void CMainView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 		CMenu* pPopup = pMenu->GetSubMenu(0);
 		ASSERT_VALID(pPopup);
 
-		CString tmpStr;
 		if (m_Context==LFContextStores)
-		{
 			pPopup->InsertMenu(0, MF_SEPARATOR | MF_BYPOSITION);
 
-			ENSURE(tmpStr.LoadString(IDM_STORES_HIDEEMPTYDRIVES));
-			pPopup->InsertMenu(0, MF_STRING | MF_BYPOSITION, IDM_STORES_HIDEEMPTYDRIVES, tmpStr);
-		}
-
-		if (m_ViewID==LFViewDetails)
+		CString tmpStr;
+		switch (m_ViewID)
 		{
+		case LFViewDetails:
 			ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_AUTOSIZEALL));
 			pPopup->InsertMenu(0, MF_STRING | MF_BYPOSITION, IDM_DETAILS_AUTOSIZEALL, tmpStr);
+			break;
 		}
 
 		CString mask;
@@ -580,6 +579,24 @@ void CMainView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 		pPopup->InsertMenu(0, MF_STRING | MF_BYPOSITION, ID_APP_VIEWOPTIONS, tmpStr);
 
 		pPopup->InsertMenu(0, MF_SEPARATOR | MF_BYPOSITION);
+
+		switch (m_Context)
+		{
+		case LFContextStores:
+			ENSURE(tmpStr.LoadString(IDM_STORES_HIDEEMPTYDRIVES));
+			pPopup->InsertMenu(0, MF_STRING | MF_BYPOSITION, IDM_STORES_HIDEEMPTYDRIVES, tmpStr);
+			break;
+		case LFContextStoreHome:
+			ENSURE(tmpStr.LoadString(IDM_HOME_HIDEEMPTYDOMAINS));
+			pPopup->InsertMenu(0, MF_STRING | MF_BYPOSITION, IDM_HOME_HIDEEMPTYDOMAINS, tmpStr);
+			break;
+		}
+
+		if (m_ViewID==LFViewTagcloud)
+		{
+			ENSURE(tmpStr.LoadString(IDM_TAGCLOUD_SORT));
+			pPopup->InsertMenu(0, MF_STRING | MF_BYPOSITION | MF_POPUP, (UINT_PTR)LoadMenu(NULL, MAKEINTRESOURCE(IDM_TAGCLOUD_SORT)), tmpStr);
+		}
 
 		if (theApp.m_Contexts[m_Context]->AllowGroups)
 		{
