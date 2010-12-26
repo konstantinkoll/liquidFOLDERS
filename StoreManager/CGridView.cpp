@@ -307,6 +307,7 @@ void CGridView::HandleHorizontalKeys(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags
 		INT row = GetItemData(item)->Row;
 		INT top = GetItemData(item)->Hdr.Rect.top;
 		INT bottom = GetItemData(item)->Hdr.Rect.bottom;
+		INT tmprow = -1;
 
 		switch (nChar)
 		{
@@ -357,7 +358,7 @@ void CGridView::HandleHorizontalKeys(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags
 			for (INT a=item-1; a>=0; a--)
 			{
 				GridItemData* d = GetItemData(a);
-				if ((d->Row<row) && (d->Column<=col) && (d->Hdr.Rect.right))
+				if ((d->Row<=row) && (d->Column<=col) && (d->Hdr.Rect.right))
 				{
 					item = a;
 					if (d->Hdr.Rect.top<=bottom-rect.Height()+(INT)m_HeaderHeight)
@@ -385,12 +386,19 @@ void CGridView::HandleHorizontalKeys(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags
 			for (INT a=item+1; a<(INT)p_Result->m_ItemCount; a++)
 			{
 				GridItemData* d = GetItemData(a);
-				if ((d->Row>row) && (d->Column<=col) && (d->Hdr.Rect.right))
-				{
-					item = a;
+				if (d->Row!=GetItemData(a-1)->Row)
 					if (d->Hdr.Rect.bottom>=top+rect.Height()-(INT)m_HeaderHeight)
-						break;
-				}
+						if (tmprow==-1)
+						{
+							tmprow = d->Row;
+						}
+						else
+						{
+							if (d->Row>tmprow)
+								break;
+						}
+				if (((tmprow==-1) || (d->Column<=col)) && (d->Hdr.Rect.right))
+					item = a;
 			}
 
 			break;
@@ -465,6 +473,7 @@ void CGridView::HandleVerticalKeys(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags*/
 		INT row = GetItemData(item)->Row;
 		INT left = GetItemData(item)->Hdr.Rect.left;
 		INT right = GetItemData(item)->Hdr.Rect.right;
+		INT tmpcol = -1;
 
 		switch (nChar)
 		{
@@ -487,7 +496,7 @@ void CGridView::HandleVerticalKeys(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags*/
 			for (INT a=item-1; a>=0; a--)
 			{
 				GridItemData* d = GetItemData(a);
-				if ((d->Column<col) && (d->Row<=row) && (d->Hdr.Rect.right))
+				if ((d->Column<=col) && (d->Row<=row) && (d->Hdr.Rect.right))
 				{
 					item = a;
 					if (d->Hdr.Rect.left<=right-rect.Width())
@@ -515,12 +524,19 @@ void CGridView::HandleVerticalKeys(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags*/
 			for (INT a=item+1; a<(INT)p_Result->m_ItemCount; a++)
 			{
 				GridItemData* d = GetItemData(a);
-				if ((d->Column>col) && (d->Row<=row) && (d->Hdr.Rect.right))
-				{
-					item = a;
+				if (d->Column!=GetItemData(a-1)->Column)
 					if (d->Hdr.Rect.right>=left+rect.Width())
-						break;
-				}
+						if (tmpcol==-1)
+						{
+							tmpcol = d->Column;
+						}
+						else
+						{
+							if (d->Column>tmpcol)
+								break;
+						}
+				if (((tmpcol==-1) || (d->Row<=row)) && (d->Hdr.Rect.right))
+					item = a;
 			}
 
 			break;
