@@ -655,7 +655,7 @@ INT CListView::GetMaxColumnWidth(UINT Col, INT Max)
 		{
 			WCHAR tmpStr[256];
 			LFAttributeToString(p_Result->m_Items[a], Col, tmpStr, 256);
-			INT cx = (INT)dc->GetTextExtent(tmpStr, wcslen(tmpStr)).cx;
+			INT cx = dc->GetTextExtent(tmpStr, (INT)wcslen(tmpStr)).cx;
 
 			if (cx>Width)
 			{
