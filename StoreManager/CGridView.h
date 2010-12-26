@@ -57,6 +57,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 	BOOL m_HasCategories;
+	BOOL m_ForceNothing;
 	UINT m_GridArrange;
 
 private:

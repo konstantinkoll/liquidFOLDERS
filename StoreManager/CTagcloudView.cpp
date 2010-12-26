@@ -53,6 +53,8 @@ void CTagcloudView::SetViewOptions(BOOL Force)
 
 void CTagcloudView::SetSearchResult(LFSearchResult* Result)
 {
+	m_ForceNothing = FALSE;
+
 	if (Result)
 	{
 		LFSortSearchResult(Result, m_ViewParameters.TagcloudCanonical ? m_ViewParameters.SortBy : LFAttrFileCount, m_ViewParameters.TagcloudCanonical==FALSE);
@@ -75,6 +77,8 @@ void CTagcloudView::SetSearchResult(LFSearchResult* Result)
 				Maximum = (Maximum==-1) ? d->Cnt : max(Maximum, d->Cnt);
 			}
 		}
+
+		m_ForceNothing = (Minimum==-1);
 
 		// Calculate display properties
 		INT Delta = Maximum-Minimum+1;

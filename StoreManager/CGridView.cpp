@@ -19,7 +19,7 @@ CGridView::CGridView(UINT DataSize, BOOL EnableLabelEdit)
 	for (UINT a=0; a<LFItemCategoryCount; a++)
 		AddItemCategory(theApp.m_ItemCategories[a]->Caption, theApp.m_ItemCategories[a]->Hint);
 
-	m_HasCategories = FALSE;
+	m_HasCategories = m_ForceNothing = FALSE;
 	m_GridArrange = GRIDARRANGE_CUSTOM;
 }
 
@@ -667,16 +667,17 @@ void CGridView::OnPaint()
 				}
 			}
 
-			for (UINT a=0; a<m_Categories.m_ItemCount; a++)
-			{
-				CRect rect(m_Categories.m_Items[a].Rect);
-				rect.OffsetRect(-m_HScrollPos, -m_VScrollPos+(INT)m_HeaderHeight);
-				if (IntersectRect(&rectIntersect, rect, rectUpdate))
-					DrawCategory(dc, rect, &m_Categories.m_Items[a], Themed);
-			}
+			if (m_HasCategories)
+				for (UINT a=0; a<m_Categories.m_ItemCount; a++)
+				{
+					CRect rect(m_Categories.m_Items[a].Rect);
+					rect.OffsetRect(-m_HScrollPos, -m_VScrollPos+(INT)m_HeaderHeight);
+					if (IntersectRect(&rectIntersect, rect, rectUpdate))
+						DrawCategory(dc, rect, &m_Categories.m_Items[a], Themed);
+				}
 		}
 
-	if (Nothing)
+	if (Nothing || m_ForceNothing)
 	{
 		CRect rectText(rect);
 		rectText.top += m_HeaderHeight+6;
