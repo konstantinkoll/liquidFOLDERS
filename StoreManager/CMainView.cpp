@@ -21,7 +21,6 @@ CMainView::CMainView()
 	p_wndFileView = NULL;
 	p_RawFiles = p_CookedFiles = NULL;
 	m_Context = m_ViewID = -1;
-	m_ShowHeader = FALSE;
 }
 
 CMainView::~CMainView()
@@ -126,6 +125,38 @@ BOOL CMainView::CreateFileView(UINT ViewID, INT FocusItem)
 	return (pNewView!=NULL);
 }
 
+void CMainView::SetHeader()
+{
+	if (!p_CookedFiles)
+	{
+		m_wndExplorerHeader.SetText(_T(""), _T(""));
+	}
+	else
+	{
+		CString Hint;
+		CString Mask;
+		WCHAR tmpBuf[256];
+
+		if (m_Context==LFContextStores)
+		{
+			ENSURE(Mask.LoadString(p_CookedFiles->m_ItemCount==1 ? IDS_STORES_SINGULAR : IDS_STORES_PLURAL));
+			Hint.Format(Mask, p_CookedFiles->m_StoreCount);
+		}
+		else
+		{
+			ENSURE(Mask.LoadString(p_CookedFiles->m_FileCount==1 ? IDS_FILES_SINGULAR : IDS_FILES_PLURAL));
+			LFINT64ToString(p_CookedFiles->m_FileSize, tmpBuf, 256);
+			Hint.Format(Mask, p_CookedFiles->m_FileCount);
+			Hint.Append(_T(" ("));
+			Hint.Append(tmpBuf);
+			Hint.Append(_T(")"));
+		}
+
+		m_wndExplorerHeader.SetColors(m_Context<=LFContextClipboard ? 0x126E00 : 0x993300, (COLORREF)-1, FALSE);
+		m_wndExplorerHeader.SetText(p_CookedFiles->m_Name, Hint);
+	}
+}
+
 void CMainView::UpdateViewOptions(INT Context)
 {
 	if (((Context==m_Context) || (Context==-1)) && (p_wndFileView))
@@ -143,66 +174,21 @@ void CMainView::UpdateSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pC
 
 	if (!pCookedFiles)
 	{
-		// Header
-		m_wndExplorerHeader.SetText(_T(""), _T(""));
-
-		// View
 		if (p_wndFileView)
 			p_wndFileView->UpdateSearchResult(NULL, -1);
 	}
 	else
 	{
-		// Context
 		m_Context = pCookedFiles->m_Context;
 
-		// Header
-		BOOL ShowHeader = m_ShowHeader;
-		CString Hint;
-		CString Mask;
-		WCHAR tmpBuf[256];
-
-		switch (m_Context)
-		{
-		case LFContextStores:
-			ENSURE(Mask.LoadString(pCookedFiles->m_ItemCount==1 ? IDS_STORES_SINGULAR : IDS_STORES_PLURAL));
-			Hint.Format(Mask, pCookedFiles->m_StoreCount);
-			m_ShowHeader = TRUE;
-			break;
-		case LFContextStoreHome:
-		case LFContextClipboard:
-		case LFContextHousekeeping:
-		case LFContextTrash:
-		case LFContextSubfolderDay:
-		case LFContextSubfolderLocation:
-			ENSURE(Mask.LoadString(pCookedFiles->m_FileCount==1 ? IDS_FILES_SINGULAR : IDS_FILES_PLURAL));
-			LFINT64ToString(pCookedFiles->m_FileSize, tmpBuf, 256);
-			Hint.Format(Mask, pCookedFiles->m_FileCount);
-			Hint.Append(_T(" ("));
-			Hint.Append(tmpBuf);
-			Hint.Append(_T(")"));
-			m_ShowHeader = TRUE;
-			break;
-		default:
-			m_ShowHeader = FALSE;
-		}
-
-		if (m_ShowHeader)
-		{
-			m_wndExplorerHeader.SetColors(m_Context<=LFContextClipboard ? 0x126E00 : 0x993300, (COLORREF)-1, FALSE);
-			m_wndExplorerHeader.SetText(pCookedFiles->m_Name, Hint);
-		}
-
-		// View
 		if (!CreateFileView(theApp.m_Views[pCookedFiles->m_Context].Mode, FocusItem))
 		{
 			p_wndFileView->UpdateViewOptions(m_Context);
 			p_wndFileView->UpdateSearchResult(pCookedFiles, FocusItem);
-
-			if (ShowHeader!=m_ShowHeader)
-				AdjustLayout();
 		}
 	}
 
+	SetHeader();
 	OnUpdateSelection();
 }
 
@@ -220,7 +206,7 @@ void CMainView::AdjustLayout()
 	const UINT TaskHeight = m_wndTaskbar.GetPreferredHeight();
 	m_wndTaskbar.SetWindowPos(NULL, rect.left, rect.top, rect.Width(), TaskHeight, SWP_NOACTIVATE | SWP_NOZORDER);
 
-	const UINT ExplorerHeight = m_ShowHeader ? m_wndExplorerHeader.GetPreferredHeight() : 0;
+	const UINT ExplorerHeight = m_wndExplorerHeader.GetPreferredHeight();
 	m_wndExplorerHeader.SetWindowPos(NULL, rect.left, rect.top+TaskHeight, rect.Width(), ExplorerHeight, SWP_NOACTIVATE | SWP_NOZORDER);
 
 	if (p_wndFileView)
@@ -430,6 +416,7 @@ BEGIN_MESSAGE_MAP(CMainView, CWnd)
 	ON_WM_RBUTTONUP()
 	ON_WM_CONTEXTMENU()
 	ON_MESSAGE_VOID(WM_UPDATESELECTION, OnUpdateSelection)
+	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoreAttributesChanged, OnStoreAttributesChanged)
 
 	ON_COMMAND(IDM_STORES_CREATENEW, OnStoresCreateNew)
 	ON_COMMAND(IDM_STORES_MAINTAINALL, OnStoresMaintainAll)
@@ -650,6 +637,22 @@ void CMainView::OnUpdateSelection()
 
 	// TODO
 	((CMainFrame*)GetParent())->OnUpdateSelection();
+}
+
+LRESULT CMainView::OnStoreAttributesChanged(WPARAM wParam, LPARAM lParam)
+{
+	if ((p_RawFiles) && (p_CookedFiles) && (m_Context==LFContextStoreHome))
+	{
+		LFStoreDescriptor s;
+		if (LFGetStoreSettings(p_RawFiles->m_StoreID, &s)==LFOk)
+		{
+			wcscpy_s(p_RawFiles->m_Name, 256, s.StoreName);
+			wcscpy_s(p_CookedFiles->m_Name, 256, s.StoreName);
+			SetHeader();
+		}
+	}
+
+	return NULL;
 }
 
 

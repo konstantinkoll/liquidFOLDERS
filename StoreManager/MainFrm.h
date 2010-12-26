@@ -109,6 +109,7 @@ protected:
 
 	afx_msg LRESULT OnDrivesChanged(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnStoresChanged(WPARAM wParam, LPARAM lParam);
+	afx_msg LRESULT OnStoreAttributesChanged(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnLookChanged(WPARAM wParam, LPARAM lParam);
 	DECLARE_MESSAGE_MAP()
 

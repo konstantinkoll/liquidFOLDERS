@@ -85,7 +85,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->DrivesChanged, OnDrivesChanged)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoresChanged, OnStoresChanged)
-	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoreAttributesChanged, OnStoresChanged)
+	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoreAttributesChanged, OnStoreAttributesChanged)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->DefaultStoreChanged, OnStoresChanged)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->LookChanged, OnLookChanged)
 END_MESSAGE_MAP()
@@ -1163,20 +1163,39 @@ LRESULT CMainFrame::OnCookFiles(WPARAM wParam, LPARAM /*lParam*/)
 LRESULT CMainFrame::OnDrivesChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)
 {
 	if (CookedFiles)
-		if (CookedFiles->m_Context==LFContextStores)
-			OnNavigateReload();
+		switch (CookedFiles->m_Context)
+		{
+		case LFContextStores:
+			PostMessage(WM_RELOAD);
+			break;
+		}
 
 	return NULL;
 }
 
 LRESULT CMainFrame::OnStoresChanged(WPARAM /*wParam*/, LPARAM lParam)
 {
-	if (CookedFiles)
+	if ((CookedFiles) && (GetSafeHwnd()!=(HWND)lParam))
 		switch (CookedFiles->m_Context)
 		{
 		case LFContextStores:
-			if (GetSafeHwnd()!=(HWND)lParam)
-				OnNavigateReload();
+			PostMessage(WM_RELOAD);
+			break;
+		}
+
+	return NULL;
+}
+
+LRESULT CMainFrame::OnStoreAttributesChanged(WPARAM wParam, LPARAM lParam)
+{
+	if ((CookedFiles) && (GetSafeHwnd()!=(HWND)lParam))
+		switch (CookedFiles->m_Context)
+		{
+		case LFContextStores:
+			PostMessage(WM_RELOAD);
+			break;
+		case LFContextStoreHome:
+			m_wndMainView.PostMessage(theApp.p_MessageIDs->StoreAttributesChanged, wParam, lParam);
 			break;
 		}
 

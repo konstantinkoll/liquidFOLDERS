@@ -35,7 +35,6 @@ protected:
 	LFSearchResult* p_CookedFiles;
 	INT m_Context;
 	INT m_ViewID;
-	BOOL m_ShowHeader;
 	BOOL m_FilesSelected;
 
 	LFTransactionList* BuildTransactionList(BOOL All=FALSE);
@@ -52,6 +51,7 @@ protected:
 	afx_msg void OnRButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	afx_msg void OnUpdateSelection();
+	afx_msg LRESULT OnStoreAttributesChanged(WPARAM wParam, LPARAM lParam);
 
 	afx_msg void OnStoresCreateNew();
 	afx_msg void OnStoresMaintainAll();
@@ -101,6 +101,7 @@ protected:
 
 private:
 	BOOL CreateFileView(UINT ViewID, INT FocusItem);
+	void SetHeader();
 	void AdjustLayout();
 	void ExecuteContextMenu(CHAR Drive, LPCSTR verb);
 	void AddTransactionItem(LFTransactionList* tl, LFItemDescriptor* item, UINT UserData);
