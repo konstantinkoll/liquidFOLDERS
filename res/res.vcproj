@@ -1377,10 +1377,6 @@
 			>
 		</File>
 		<File
-			RelativePath=".\Delicious.png"
-			>
-		</File>
-		<File
 			RelativePath="Descending_16.bmp"
 			>
 		</File>
@@ -1421,10 +1417,6 @@
 			>
 		</File>
 		<File
-			RelativePath=".\Facebook.png"
-			>
-		</File>
-		<File
 			RelativePath=".\Field_Tiny.ico"
 			>
 		</File>
@@ -1449,10 +1441,6 @@
 			>
 		</File>
 		<File
-			RelativePath=".\Flickr.png"
-			>
-		</File>
-		<File
 			RelativePath=".\Folder_Tiny.ico"
 			>
 		</File>
@@ -1462,10 +1450,6 @@
 		</File>
 		<File
 			RelativePath=".\Google Earth.png"
-			>
-		</File>
-		<File
-			RelativePath=".\Google.png"
 			>
 		</File>
 		<File
@@ -1574,10 +1558,6 @@
 		</File>
 		<File
 			RelativePath=".\Migrate_Small.ico"
-			>
-		</File>
-		<File
-			RelativePath=".\MisterWong.png"
 			>
 		</File>
 		<File
@@ -1709,10 +1689,6 @@
 			>
 		</File>
 		<File
-			RelativePath=".\Slideshare.png"
-			>
-		</File>
-		<File
 			RelativePath=".\SortIndicators.bmp"
 			>
 		</File>
@@ -1769,10 +1745,6 @@
 			>
 		</File>
 		<File
-			RelativePath=".\Twitter.png"
-			>
-		</File>
-		<File
 			RelativePath=".\Wait.ico"
 			>
 		</File>
@@ -1794,10 +1766,6 @@
 		</File>
 		<File
 			RelativePath=".\Welcome_Small.ico"
-			>
-		</File>
-		<File
-			RelativePath=".\YouTube.png"
 			>
 		</File>
 	</Files>
