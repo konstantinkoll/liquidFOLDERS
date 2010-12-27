@@ -428,14 +428,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Other\Store_Full.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\Other\Store_Full.png"
-				>
-			</File>
-			<File
 				RelativePath=".\Other\Unlink.ico"
 				>
 			</File>
@@ -1288,6 +1280,54 @@
 				>
 			</File>
 		</Filter>
+		<Filter
+			Name="Stores"
+			>
+			<File
+				RelativePath=".\Stores\Store_Bag.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\Stores\Store_Bag.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Stores\Store_Default.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\Stores\Store_Default.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Stores\Store_Default_Tiny.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\Stores\Store_Empty.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\Stores\Store_Empty.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Stores\Store_Full.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\Stores\Store_Full.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Stores\Store_Server.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\Stores\Store_Server.png"
+				>
+			</File>
+		</Filter>
 		<File
 			RelativePath=".\About_Small.ico"
 			>
@@ -1678,42 +1718,6 @@
 		</File>
 		<File
 			RelativePath=".\SortOptions_Tiny.ico"
-			>
-		</File>
-		<File
-			RelativePath=".\Store_Bag.ico"
-			>
-		</File>
-		<File
-			RelativePath=".\Store_Bag.png"
-			>
-		</File>
-		<File
-			RelativePath="Store_Default.ico"
-			>
-		</File>
-		<File
-			RelativePath="Store_Default.png"
-			>
-		</File>
-		<File
-			RelativePath=".\Store_Default_Tiny.ico"
-			>
-		</File>
-		<File
-			RelativePath="Store_Empty.ico"
-			>
-		</File>
-		<File
-			RelativePath="Store_Empty.png"
-			>
-		</File>
-		<File
-			RelativePath=".\Store_Server.ico"
-			>
-		</File>
-		<File
-			RelativePath=".\Store_Server.png"
 			>
 		</File>
 		<File
