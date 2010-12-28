@@ -152,6 +152,22 @@ void CMainView::SetHeader()
 			Hint.Append(_T(")"));
 		}
 
+		if (m_Context==LFContextStoreHome)
+		{
+			LFStoreDescriptor s;
+			if (LFGetStoreSettings(p_RawFiles->m_StoreID, &s)==LFOk)
+			{
+				wcscpy_s(p_RawFiles->m_Name, 256, s.StoreName);
+				wcscpy_s(p_CookedFiles->m_Name, 256, s.StoreName);
+
+				if (s.Comment[0]!=L'\0')
+				{
+					Hint.Insert(0, _T(" – "));
+					Hint.Insert(0, s.Comment);
+				}
+			}
+		}
+
 		m_wndExplorerHeader.SetColors(m_Context<=LFContextClipboard ? 0x126E00 : 0x993300, (COLORREF)-1, FALSE);
 		m_wndExplorerHeader.SetText(p_CookedFiles->m_Name, Hint);
 	}
@@ -667,15 +683,7 @@ LRESULT CMainView::OnRenameItem(WPARAM wParam, LPARAM lParam)
 LRESULT CMainView::OnStoreAttributesChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)
 {
 	if ((p_RawFiles) && (p_CookedFiles) && (m_Context==LFContextStoreHome))
-	{
-		LFStoreDescriptor s;
-		if (LFGetStoreSettings(p_RawFiles->m_StoreID, &s)==LFOk)
-		{
-			wcscpy_s(p_RawFiles->m_Name, 256, s.StoreName);
-			wcscpy_s(p_CookedFiles->m_Name, 256, s.StoreName);
-			SetHeader();
-		}
-	}
+		SetHeader();
 
 	return NULL;
 }
