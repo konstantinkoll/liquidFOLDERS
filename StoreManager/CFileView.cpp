@@ -726,9 +726,9 @@ void CFileView::DestroyEdit(BOOL Accept)
 
 		if ((Accept) && (!Name.IsEmpty()) && (m_EditLabel!=-1))
 			GetParent()->SendMessage(WM_RENAMEITEM, (WPARAM)m_EditLabel, (LPARAM)Name.GetBuffer());
-
-		m_EditLabel = -1;
 	}
+
+	m_EditLabel = -1;
 }
 
 
@@ -1143,6 +1143,8 @@ void CFileView::OnLButtonUp(UINT nFlags, CPoint point)
 
 void CFileView::OnLButtonDblClk(UINT /*nFlags*/, CPoint /*point*/)
 {
+	DestroyEdit();
+
 	GetOwner()->SendMessage(WM_COMMAND, IDM_ITEM_OPEN);
 }
 
