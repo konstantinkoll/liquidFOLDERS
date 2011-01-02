@@ -139,19 +139,19 @@ void LFAboutDlg::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 
 	HFONT font = CreateFont(40, 0, 0, 0, FW_BOLD, FALSE, FALSE, FALSE, ANSI_CHARSET,
 		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, ANTIALIASED_QUALITY,
-		DEFAULT_PITCH | FF_DONTCARE, _T("Arial"));
+		DEFAULT_PITCH | FF_DONTCARE, ((LFApplication*)AfxGetApp())->GetDefaultFontFace());
 	HGDIOBJ oldFont =dc.SelectObject(font);
 
 	dc.SetTextColor(0x000000);
 	dc.SetBkMode(TRANSPARENT);
-	dc.DrawText(parameters->appname+_T(" (Beta2)"), -1, r, 0);
+	dc.DrawText(parameters->appname+_T(" (Beta3)"), -1, r, 0);
 	r.top += 45;
 
 	DeleteObject(font);
 
 	font = CreateFont(25, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, ANSI_CHARSET,
 		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY,
-		DEFAULT_PITCH | FF_DONTCARE, _T("Arial"));
+		DEFAULT_PITCH | FF_DONTCARE, ((LFApplication*)AfxGetApp())->GetDefaultFontFace());
 	dc.SelectObject(font);
 
 	dc.DrawText(parameters->copyright, -1, r, 0);
