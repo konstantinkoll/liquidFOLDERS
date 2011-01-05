@@ -1026,12 +1026,6 @@ void CGlobeView::DrawScene(BOOL InternalCall)
 		glLightfv(GL_LIGHT0, GL_DIFFUSE, lDiffuse);
 		glLightfv(GL_LIGHT0, GL_SPECULAR, lSpecular);
 
-		GLfloat LightPosition[3];
-		LightPosition[0] = 100.0f;
-		LightPosition[1] = 0.0f;
-		LightPosition[2] = 0.0f;
-		glLightfv(GL_LIGHT0, GL_POSITION, LightPosition);
-
 		glEnable(GL_LIGHT0);
 		glEnable(GL_LIGHTING);
 		glEnable(GL_NORMALIZE);
