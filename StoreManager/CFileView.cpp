@@ -45,7 +45,7 @@ CFileView::CFileView(UINT DataSize, BOOL EnableScrolling, BOOL EnableHover, BOOL
 	m_Context = LFContextDefault;
 	m_HeaderHeight = m_FontHeight[0] = m_FontHeight[1] = m_HScrollMax = m_VScrollMax = m_HScrollPos = m_VScrollPos = 0;
 	m_DataSize = DataSize;
-	m_Hover = FALSE;
+	m_Hover = m_ShowFocusRect = FALSE;
 	hThemeList = NULL;
 
 	m_EnableScrolling = EnableScrolling;
@@ -191,6 +191,8 @@ void CFileView::UpdateSearchResult(LFSearchResult* Result, INT FocusItem)
 
 		m_FocusItem = m_HotItem = -1;
 		m_HScrollPos = m_VScrollPos = 0;
+
+		m_ShowFocusRect = FALSE;
 	}
 
 	m_EditLabel = -1;
@@ -538,21 +540,37 @@ void CFileView::DrawItemBackground(CDC& dc, LPRECT rectItem, INT idx, BOOL Theme
 				theApp.zDrawThemeBackground(hThemeList, dc, LVP_LISTITEM, StateIDs[State], rectItem, rectItem);
 		}
 
-		if ((GetFocus()==this) && (m_FocusItem==idx) && (!Selected))
-		{
-			CRect rect(rectItem);
-			rect.bottom--;
-			rect.right--;
+		if ((GetFocus()==this) && (m_FocusItem==idx))
+			switch (theApp.OSVersion)
+			{
+			case OS_Seven:
+				if (!Selected)
+				{
+					CRect rect(rectItem);
+					rect.bottom--;
+					rect.right--;
 
-			Graphics g(dc);
-			g.SetSmoothingMode(SmoothingModeAntiAlias);
+					Graphics g(dc);
+					g.SetSmoothingMode(SmoothingModeAntiAlias);
 
-			GraphicsPath path;
-			CreateRoundRectangle(rect, 2, path);
+					GraphicsPath path;
+					CreateRoundRectangle(rect, 2, path);
 
-			Pen pen(Color(0xFF, 0x7D, 0xA2, 0xCE));
-			g.DrawPath(&pen, &path);
-		}
+					Pen pen(Color(0xFF, 0x7D, 0xA2, 0xCE));
+					g.DrawPath(&pen, &path);
+				}
+				break;
+			case OS_Vista:
+				if (m_ShowFocusRect)
+				{
+					CRect rect(rectItem);
+					rect.DeflateRect(1, 1);
+
+					dc.SetBkColor(0xFFFFFF);
+					dc.DrawFocusRect(rect);
+				}
+				break;
+			}
 	}
 	else
 	{
@@ -1058,6 +1076,12 @@ void CFileView::OnMouseHWheel(UINT nFlags, short zDelta, CPoint pt)
 
 void CFileView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
+	if (!m_ShowFocusRect)
+	{
+		m_ShowFocusRect = TRUE;
+		InvalidateItem(m_FocusItem);
+	}
+
 	switch(nChar)
 	{
 	case 'A':

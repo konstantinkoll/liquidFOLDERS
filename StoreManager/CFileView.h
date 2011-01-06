@@ -112,6 +112,7 @@ protected:
 	BOOL m_EnableShiftSelection;
 	BOOL m_EnableLabelEdit;
 	BOOL m_HideFileExt;
+	BOOL m_ShowFocusRect;
 	INT m_FocusItem;
 	INT m_HotItem;
 	INT m_SelectionAnchor;
