@@ -165,6 +165,7 @@
 #define IDC_SHELLTREE                   22102
 #define IDD_CREATENEWSTORE              22200
 #define IDD_REGISTRY                    22300
+#define IDI_SHIELD_VISTA                32519
 
 // Next default values for new objects
 // 

@@ -223,7 +223,7 @@ BOOL LFDialog::OnInitDialog()
 		// Schild
 		UACHeight = MulDiv(40, LOWORD(GetDialogBaseUnits()), 8);
 		ShieldSize = (UACHeight<24) ? 16 : (UACHeight<32) ? 24 : (UACHeight<48) ? 32 : 48;
-		hIconShield = (HICON)LoadImage(LFCommDlgDLL.hResource, IDI_SHIELD, IMAGE_ICON, ShieldSize, ShieldSize, LR_DEFAULTCOLOR);
+		hIconShield = (HICON)LoadImage(LFCommDlgDLL.hResource, (p_App->OSVersion==OS_Vista) ? MAKEINTRESOURCE(IDI_SHIELD_VISTA) : IDI_SHIELD, IMAGE_ICON, ShieldSize, ShieldSize, LR_DEFAULTCOLOR);
 
 		p_App->PlayWarningSound();
 		break;

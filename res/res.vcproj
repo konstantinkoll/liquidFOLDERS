@@ -1681,7 +1681,11 @@
 			>
 		</File>
 		<File
-			RelativePath=".\Shield.ico"
+			RelativePath=".\Shield_7.ico"
+			>
+		</File>
+		<File
+			RelativePath=".\Shield_Vista.ico"
 			>
 		</File>
 		<File
