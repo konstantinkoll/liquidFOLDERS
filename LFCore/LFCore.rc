@@ -180,7 +180,7 @@ STRINGTABLE
 BEGIN
     IDS_SeenOn              "Eingebunden auf %s"
     IDS_ErrorCaption        "Fehler"
-    IDS_DeleteStoreCaption  "Store ""%s"" löschen"
+    IDS_DeleteStoreCaption  "Store „%s“ löschen"
     IDS_DeleteStoreMessage  "Möchten Sie diesen Store wirklich löschen ?"
     IDS_HintSingular        "%d Datei"
     IDS_HintPlural          "%d Dateien"

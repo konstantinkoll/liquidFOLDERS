@@ -1076,7 +1076,7 @@ void CFileView::OnMouseHWheel(UINT nFlags, short zDelta, CPoint pt)
 
 void CFileView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
-	if (!m_ShowFocusRect)
+	if ((!m_ShowFocusRect) && (theApp.OSVersion==OS_Vista))
 	{
 		m_ShowFocusRect = TRUE;
 		InvalidateItem(m_FocusItem);
