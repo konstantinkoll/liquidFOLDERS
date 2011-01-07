@@ -378,10 +378,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CCaptionBar.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\CFileView.cpp"
 				>
 			</File>
@@ -505,10 +501,6 @@
 			>
 			<File
 				RelativePath=".\CCalendarView.h"
-				>
-			</File>
-			<File
-				RelativePath=".\CCaptionBar.h"
 				>
 			</File>
 			<File

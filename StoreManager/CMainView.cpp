@@ -208,10 +208,20 @@ void CMainView::UpdateSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pC
 	OnUpdateSelection();
 }
 
-void CMainView::ShowCaptionBar(LPCWSTR Icon, UINT res, UINT Command)
+void CMainView::DismissNotification()
+{
+}
+
+void CMainView::ShowNotification(LPCWSTR Icon, CString Message, UINT Command)
 {
 	// TODO
-	((CMainFrame*)GetParent())->ShowCaptionBar(Icon, res, Command);
+}
+
+void CMainView::ShowNotification(LPCWSTR Icon, UINT ResID, UINT Command)
+{
+	WCHAR* Message = LFGetErrorText(ResID);
+	ShowNotification(Icon, Message, Command);
+	free(Message);
 }
 
 void CMainView::AdjustLayout()
@@ -371,7 +381,7 @@ BOOL CMainView::UpdateTrashFlag(BOOL Trash, BOOL All)
 	RemoveTransactedItems(tl);
 
 	if (tl->m_LastError>LFCancel)
-		ShowCaptionBar(IDI_ERROR, tl->m_LastError);
+		ShowNotification(IDI_ERROR, tl->m_LastError);
 
 	BOOL changes = tl->m_Changes;
 	LFFreeTransactionList(tl);
@@ -385,7 +395,7 @@ BOOL CMainView::DeleteFiles(BOOL All)
 	RemoveTransactedItems(tl);
 
 	if (tl->m_LastError>LFCancel)
-		ShowCaptionBar(IDI_ERROR, tl->m_LastError);
+		ShowNotification(IDI_ERROR, tl->m_LastError);
 
 	BOOL changes = tl->m_Changes;
 	LFFreeTransactionList(tl);
@@ -415,7 +425,7 @@ BOOL CMainView::UpdateItems(LFVariantData* value1, LFVariantData* value2, LFVari
 	}
 
 	if (tl->m_LastError>LFCancel)
-		ShowCaptionBar(IDI_ERROR, tl->m_LastError);
+		ShowNotification(IDI_ERROR, tl->m_LastError);
 
 	BOOL changes = tl->m_Changes;
 	LFFreeTransactionList(tl);
@@ -673,7 +683,7 @@ LRESULT CMainView::OnRenameItem(WPARAM wParam, LPARAM lParam)
 		UpdateSearchResult(p_RawFiles, p_CookedFiles, GetFocusItem());
 
 	if (tl->m_LastError>LFCancel)
-		ShowCaptionBar(IDI_ERROR, tl->m_LastError);
+		ShowNotification(IDI_ERROR, tl->m_LastError);
 
 	BOOL changes = tl->m_Changes;
 	LFFreeTransactionList(tl);

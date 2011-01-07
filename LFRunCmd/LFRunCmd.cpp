@@ -73,17 +73,16 @@ BOOL CRunCmdApp::InitInstance()
 void CRunCmdApp::OnAppAbout(UINT ResIDName, UINT ResIDPicture)
 {
 	LFAboutDlgParameters p;
-	ENSURE(p.appname.LoadString(ResIDName));
-	p.build = __TIMESTAMP__;
-	p.icon = new CGdiPlusBitmapResource();
-	p.icon->Load(ResIDPicture, _T("PNG"), AfxGetResourceHandle());
+	ENSURE(p.AppName.LoadString(ResIDName));
+	p.Build = __TIMESTAMP__;
+	p.Icon = new CGdiPlusBitmapResource();
+	p.Icon->Load(ResIDPicture, _T("PNG"), AfxGetResourceHandle());
 	p.TextureSize = -1;
-	p.RibbonColor = ID_VIEW_APPLOOK_OFF_2007_NONE;
 
 	LFAboutDlg dlg(&p, CWnd::GetForegroundWindow());
 	dlg.DoModal();
 
-	delete p.icon;
+	delete p.Icon;
 }
 
 void CRunCmdApp::OnStoresCreate()

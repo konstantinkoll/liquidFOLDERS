@@ -449,17 +449,16 @@ void CFileDropWnd::OnStoreProperties()
 void CFileDropWnd::OnAbout()
 {
 	LFAboutDlgParameters p;
-	p.appname = "FileDrop";
-	p.build = __TIMESTAMP__;
-	p.icon = new CGdiPlusBitmapResource();
-	p.icon->Load(IDB_ABOUTICON, _T("PNG"), AfxGetResourceHandle());
+	p.AppName = "FileDrop";
+	p.Build = __TIMESTAMP__;
+	p.Icon = new CGdiPlusBitmapResource();
+	p.Icon->Load(IDB_ABOUTICON, _T("PNG"), AfxGetResourceHandle());
 	p.TextureSize = -1;
-	p.RibbonColor = ID_VIEW_APPLOOK_OFF_2007_NONE;
 
 	LFAboutDlg dlg(&p, this);
 	dlg.DoModal();
 
-	delete p.icon;
+	delete p.Icon;
 }
 
 void CFileDropWnd::OnNewStoreManager()

@@ -80,10 +80,12 @@ BOOL CStoreManagerApp::InitInstance()
 		m_nTextureSize = 0;
 	if (m_nTextureSize>m_nMaxTextureSize)
 		m_nTextureSize = m_nMaxTextureSize;
-	m_nAppLook = GetGlobalInt(_T("ApplicationLook"), ID_VIEW_APPLOOK_OFF_2007_BLUE);
 
 	SetRegistryBase(oldBase);
-	SetApplicationLook(m_nAppLook);
+
+	CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerOffice2007));
+	CMFCVisualManagerOffice2007::SetStyle(CMFCVisualManagerOffice2007::Office2007_LunaBlue);
+	CDockingManager::SetDockingMode(DT_IMMEDIATE);
 
 	for (INT a=0; a<LFContextCount; a++)
 		LoadViewOptions(a);
@@ -203,61 +205,15 @@ void CStoreManagerApp::OnClosingMainFrame(CFrameImpl* pFrame)
 		SaveState(NULL, pFrame);
 }
 
-void CStoreManagerApp::SetApplicationLook(UINT nID)
-{
-	if (nID!=m_nAppLook)
-	{
-		m_nAppLook = nID;
-		WriteGlobalInt(_T("ApplicationLook"), nID);
-	}
-
-	switch (m_nAppLook)
-	{
-	case ID_VIEW_APPLOOK_OFF_2007_BLACK:
-		CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerOffice2007));
-		CMFCVisualManagerOffice2007::SetStyle(CMFCVisualManagerOffice2007::Office2007_ObsidianBlack);
-		break;
-	case ID_VIEW_APPLOOK_OFF_2007_SILVER:
-		CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerOffice2007));
-		CMFCVisualManagerOffice2007::SetStyle(CMFCVisualManagerOffice2007::Office2007_Silver);
-		break;
-	case ID_VIEW_APPLOOK_OFF_2007_AQUA:
-		CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerOffice2007));
-		CMFCVisualManagerOffice2007::SetStyle(CMFCVisualManagerOffice2007::Office2007_Aqua);
-		break;
-#if (_MFC_VER>=0x1000)
-	case ID_VIEW_APPLOOK_WINDOWS_7:
-		CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerWindows7));
-		break;
-#endif
-	default:
-		CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerOffice2007));
-		CMFCVisualManagerOffice2007::SetStyle(CMFCVisualManagerOffice2007::Office2007_LunaBlue);
-		break;
-	}
-
-	CDockingManager::SetDockingMode(DT_IMMEDIATE);
-
-	// Alle Fenster neu zeichnen
-	std::list<CMainFrame*>::iterator ppFrame = m_listMainFrames.begin();
-	while (ppFrame!=m_listMainFrames.end())
-	{
-		(*ppFrame)->RedrawWindow(NULL, NULL, RDW_ALLCHILDREN | RDW_INVALIDATE | RDW_UPDATENOW | RDW_FRAME | RDW_ERASE);
-		(*ppFrame)->PostMessage(WM_UPDATEVIEWOPTIONS);
-		ppFrame++;
-	}
-}
-
 void CStoreManagerApp::OnAppAbout()
 {
 	LFAboutDlgParameters p;
-	p.appname = "StoreManager";
-	p.build = __TIMESTAMP__;
-	p.icon = new CGdiPlusBitmapResource();
-	p.icon->Load(IDB_ABOUTICON, _T("PNG"), AfxGetResourceHandle());
+	p.AppName = "StoreManager";
+	p.Build = __TIMESTAMP__;
+	p.Icon = new CGdiPlusBitmapResource();
+	p.Icon->Load(IDB_ABOUTICON, _T("PNG"), AfxGetResourceHandle());
 	p.TextureSize = m_nTextureSize;
 	p.MaxTextureSize = m_nMaxTextureSize;
-	p.RibbonColor = m_nAppLook;
 
 	LFAboutDlg dlg(&p, m_pActiveWnd);
 	if (dlg.DoModal()==IDOK)
@@ -270,7 +226,7 @@ void CStoreManagerApp::OnAppAbout()
 		}
 	}
 
-	delete p.icon;
+	delete p.Icon;
 }
 
 void CStoreManagerApp::OnAppNewView()

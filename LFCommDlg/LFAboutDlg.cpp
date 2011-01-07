@@ -40,18 +40,18 @@ LFAboutDlg::LFAboutDlg(LFAboutDlgParameters* pParameters, CWnd* pParent)
 				if (VerQueryValue(lpInfo, TEXT("\\"), &valPtr, &valLen))
 				{
 					VS_FIXEDFILEINFO* pFinfo = (VS_FIXEDFILEINFO*)valPtr;
-					parameters->version.Format(_T("%d.%d.%d"), 
+					parameters->Version.Format(_T("%d.%d.%d"), 
 						(pFinfo->dwProductVersionMS >> 16) & 0xFF,
 						(pFinfo->dwProductVersionMS) & 0xFF,
 						(pFinfo->dwProductVersionLS >> 16) & 0xFF);
 				}
 				if (VerQueryValue(lpInfo,TEXT("StringFileInfo\\000004E4\\LegalCopyright"),(void**)&valData,&valLen))
 				{
-					parameters->copyright=valData;
+					parameters->Copyright = valData;
 				}
 				else
 				{
-					parameters->copyright="© liquidFOLDERS";
+					parameters->Copyright="© liquidFOLDERS";
 				}
 			}
 			delete[] lpInfo;
@@ -71,25 +71,10 @@ BOOL LFAboutDlg::OnInitDialog()
 	CString text;
 	GetWindowText(text);
 	CString caption;
-	caption.Format(text, parameters->appname);
+	caption.Format(text, parameters->AppName);
 	SetWindowText(caption);
 
 	BOOL ShowCancel = FALSE;
-
-	// Combobox einstellen
-	CComboBox* cbx = (CComboBox*)GetDlgItem(IDC_RIBBONCOLORCOMBO);
-	if (parameters->RibbonColor==ID_VIEW_APPLOOK_OFF_2007_NONE)
-	{
-		cbx->EnableWindow(FALSE);
-	}
-	else
-	{
-	#if (_MFC_VER>=0x1000)
-		cbx->AddString(_T("Windows 7"));
-	#endif
-		cbx->SetCurSel(parameters->RibbonColor-1);
-		ShowCancel = TRUE;
-	}
 
 	// Radiobuttons für die Texturgröße einstellen
 	BOOL bEnable[5];
@@ -130,38 +115,36 @@ void LFAboutDlg::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 {
 	LFDialog::OnEraseBkgnd(dc, g, rect);
 
-	if (parameters->icon)
-		g.DrawImage(parameters->icon->m_pBitmap, 16, 16, parameters->icon->m_pBitmap->GetWidth(), parameters->icon->m_pBitmap->GetHeight());
+	if (parameters->Icon)
+		g.DrawImage(parameters->Icon->m_pBitmap, 16, 16, parameters->Icon->m_pBitmap->GetWidth(), parameters->Icon->m_pBitmap->GetHeight());
 
-	CRect r = rect;
+	CRect r(rect);
 	r.top = 172;
 	r.left = 16;
 
-	HFONT font = CreateFont(40, 0, 0, 0, FW_BOLD, FALSE, FALSE, FALSE, ANSI_CHARSET,
+	CFont font1;
+	font1.CreateFont(40, 0, 0, 0, FW_BOLD, FALSE, FALSE, FALSE, ANSI_CHARSET,
 		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, ANTIALIASED_QUALITY,
 		DEFAULT_PITCH | FF_DONTCARE, ((LFApplication*)AfxGetApp())->GetDefaultFontFace());
-	HGDIOBJ oldFont =dc.SelectObject(font);
+	CFont* pOldFont = dc.SelectObject(&font1);
 
 	dc.SetTextColor(0x000000);
 	dc.SetBkMode(TRANSPARENT);
-	dc.DrawText(parameters->appname+_T(" (Beta3)"), -1, r, 0);
+	dc.DrawText(parameters->AppName+_T(" (Beta3)"), -1, r, 0);
 	r.top += 45;
 
-	DeleteObject(font);
-
-	font = CreateFont(25, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, ANSI_CHARSET,
+	CFont font2;
+	font2.CreateFont(25, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, ANSI_CHARSET,
 		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY,
 		DEFAULT_PITCH | FF_DONTCARE, ((LFApplication*)AfxGetApp())->GetDefaultFontFace());
-	dc.SelectObject(font);
+	dc.SelectObject(&font2);
 
-	dc.DrawText(parameters->copyright, -1, r, 0);
+	dc.DrawText(parameters->Copyright, -1, r, 0);
 	r.top += 25;
 
-	dc.DrawText(_T("Version ")+parameters->version+_T(" (")+parameters->build+_T(")"), -1, r, 0);
-	r.top += 25;
+	dc.DrawText(_T("Version ")+parameters->Version+_T(" (")+parameters->Build+_T(")"), -1, r, 0);
 
-	dc.SelectObject(oldFont);
-	DeleteObject(font);
+	dc.SelectObject(pOldFont);
 }
 
 void LFAboutDlg::CheckLicenseKey(LFLicense* License)
@@ -193,19 +176,10 @@ void LFAboutDlg::CheckLicenseKey(LFLicense* License)
 void LFAboutDlg::DoDataExchange(CDataExchange* pDX)
 {
 	if (pDX->m_bSaveAndValidate)
-	{
 		for (UINT a=LFTextureAuto; a<=LFTexture8192; a++)
 			if (((CButton*)GetDlgItem(IDC_TEXTURE_AUTO+a))->GetCheck())
 			{
 				parameters->TextureSize = a;
 				break;
 			}
-
-		INT Look = ((CComboBox*)GetDlgItem(IDC_RIBBONCOLORCOMBO))->GetCurSel()+1;
-		if ((Look!=parameters->RibbonColor) && (parameters->RibbonColor!=ID_VIEW_APPLOOK_OFF_2007_NONE))
-		{
-			parameters->RibbonColor = Look;
-			::SendNotifyMessage(HWND_BROADCAST, LFGetMessageIDs()->LookChanged, Look, 0);
-		}
-	}
 }

@@ -7,7 +7,6 @@
 #include "InspectorWnd.h"
 #include "HistoryWnd.h"
 #include "liquidFOLDERS.h"
-#include "CCaptionBar.h"
 #include "CMainView.h"
 #include "CFileView.h"
 
@@ -46,7 +45,6 @@ public:
 	BOOL AddClipItem(LFItemDescriptor* i);
 	BOOL UpdateSelectedItems(LFVariantData* value1, LFVariantData* value2=NULL, LFVariantData* value3=NULL);
 	void OnUpdateSelection();
-	void ShowCaptionBar(LPCWSTR Icon, UINT res, INT Command=0);
 
 	BOOL IsClipboard;
 	INT ActiveContextID;
@@ -58,7 +56,6 @@ protected:
 	CMFCRibbonApplicationButton m_MainButton;
 	CMFCToolBarImages m_PanelImages;
 	CMFCRibbonStatusBar m_wndStatusBar;
-	CCaptionBar m_wndCaptionBar;
 	CFilterWnd* m_wndFilter;
 	CHistoryWnd* m_wndHistory;
 	CInspectorWnd m_wndInspector;
@@ -109,13 +106,11 @@ protected:
 	afx_msg LRESULT OnDrivesChanged(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnStoresChanged(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnStoreAttributesChanged(WPARAM wParam, LPARAM lParam);
-	afx_msg LRESULT OnLookChanged(WPARAM wParam, LPARAM lParam);
 	DECLARE_MESSAGE_MAP()
 
 private:
 	BOOL AttributeAllowedForSorting(INT attr);
 	void Remember(CMainFrame* clip);
-	void ShowCaptionBar(LPCWSTR Icon, LPCWSTR Message, INT Command=0);
 	void InitializeRibbon();
 	void UpdateRibbon();
 	void NavigateTo(LFFilter* f, UINT NavMode=NAVMODE_NORMAL, INT FocusItem=0, INT FirstAggregate=-1, INT LastAggregate=-1);

@@ -199,9 +199,7 @@ BEGIN
     CONTROL         "&2048×2048",IDC_TEXTURE_2048,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,178,208,57,10
     CONTROL         "&4096×4096",IDC_TEXTURE_4096,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,178,221,57,10
     CONTROL         "&8192×4096",IDC_TEXTURE_8192,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,178,234,57,10
-    COMBOBOX        IDC_RIBBONCOLORCOMBO,258,182,138,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
     GROUPBOX        "Globus-Textur",IDC_TEXTUREFRAME,171,169,71,81,WS_GROUP
-    GROUPBOX        "Farbschema",IDC_STATIC,251,169,152,35,WS_GROUP
     GROUPBOX        "Lizenz",IDC_STATIC,7,169,155,81,WS_GROUP
     LTEXT           "Name:",IDC_STATIC,15,179,141,8
     LTEXT           "X",IDC_NAME,15,189,141,8
@@ -637,25 +635,6 @@ END
 
 /////////////////////////////////////////////////////////////////////////////
 //
-// Dialog Info
-//
-
-IDD_ABOUT DLGINIT
-BEGIN
-    IDC_RIBBONCOLORCOMBO, 0x403, 5, 0
-0x6c42, 0x7561, "\000" 
-    IDC_RIBBONCOLORCOMBO, 0x403, 7, 0
-0x6953, 0x626c, 0x7265, "\000" 
-    IDC_RIBBONCOLORCOMBO, 0x403, 8, 0
-0x6353, 0x7768, 0x7261, 0x007a, 
-    IDC_RIBBONCOLORCOMBO, 0x403, 10, 0
-0x7141, 0x6175, 0x616d, 0x6972, 0x006e, 
-    0
-END
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
 // String Table
 //
 
@@ -780,9 +759,7 @@ BEGIN
     CONTROL         "&2048×2048",IDC_TEXTURE_2048,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,178,208,57,10
     CONTROL         "&4096×4096",IDC_TEXTURE_4096,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,178,221,57,10
     CONTROL         "&8192×4096",IDC_TEXTURE_8192,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,178,234,57,10
-    COMBOBOX        IDC_RIBBONCOLORCOMBO,258,182,128,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
     GROUPBOX        "Globe texture",IDC_TEXTUREFRAME,171,169,71,81,WS_GROUP
-    GROUPBOX        "Ribbon color",IDC_STATIC,251,169,142,35,WS_GROUP
     GROUPBOX        "License",IDC_STATIC,7,169,155,81,WS_GROUP
     LTEXT           "Name:",IDC_STATIC,15,179,141,8
     LTEXT           "X",IDC_NAME,15,189,141,8
@@ -1210,25 +1187,6 @@ END
 
 /////////////////////////////////////////////////////////////////////////////
 //
-// Dialog Info
-//
-
-IDD_ABOUT DLGINIT
-BEGIN
-    IDC_RIBBONCOLORCOMBO, 0x403, 5, 0
-0x6c42, 0x6575, "\000" 
-    IDC_RIBBONCOLORCOMBO, 0x403, 7, 0
-0x6953, 0x766c, 0x7265, "\000" 
-    IDC_RIBBONCOLORCOMBO, 0x403, 6, 0
-0x6c42, 0x6361, 0x006b, 
-    IDC_RIBBONCOLORCOMBO, 0x403, 5, 0
-0x7141, 0x6175, "\000" 
-    0
-END
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
 // String Table
 //
 
@@ -1353,9 +1311,7 @@ BEGIN
     CONTROL         "&2048×2048",IDC_TEXTURE_2048,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,178,208,57,10
     CONTROL         "&4096×4096",IDC_TEXTURE_4096,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,178,221,57,10
     CONTROL         "&8192×4096",IDC_TEXTURE_8192,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,178,234,57,10
-    COMBOBOX        IDC_RIBBONCOLORCOMBO,258,182,128,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
     GROUPBOX        "Textura del globo",IDC_TEXTUREFRAME,171,169,71,81,WS_GROUP
-    GROUPBOX        "Esquema de color",IDC_STATIC,251,169,142,35,WS_GROUP
     GROUPBOX        "Licensia",IDC_STATIC,7,169,155,81,WS_GROUP
     LTEXT           "Nombre:",IDC_STATIC,15,179,141,8
     LTEXT           "X",IDC_NAME,15,189,141,8
@@ -1791,25 +1747,6 @@ END
 
 /////////////////////////////////////////////////////////////////////////////
 //
-// Dialog Info
-//
-
-IDD_ABOUT DLGINIT
-BEGIN
-    IDC_RIBBONCOLORCOMBO, 0x403, 5, 0
-0x7a41, 0x6c75, "\000" 
-    IDC_RIBBONCOLORCOMBO, 0x403, 6, 0
-0x6c50, 0x7461, 0x0061, 
-    IDC_RIBBONCOLORCOMBO, 0x403, 6, 0
-0x654e, 0x7267, 0x006f, 
-    IDC_RIBBONCOLORCOMBO, 0x403, 11, 0
-0x6741, 0x6175, 0x616d, 0x6972, 0x616e, "\000" 
-    0
-END
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
 // String Table
 //
 
@@ -1934,9 +1871,7 @@ BEGIN
     CONTROL         "&2048×2048",IDC_TEXTURE_2048,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,178,208,57,10
     CONTROL         "&4096×4096",IDC_TEXTURE_4096,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,178,221,57,10
     CONTROL         "&8192×4096",IDC_TEXTURE_8192,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,178,234,57,10
-    COMBOBOX        IDC_RIBBONCOLORCOMBO,258,182,148,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
     GROUPBOX        "Texture du globe",IDC_TEXTUREFRAME,171,169,71,81,WS_GROUP
-    GROUPBOX        "Schéma de couleurs",IDC_STATIC,251,169,162,35,WS_GROUP
     GROUPBOX        "Licence",IDC_STATIC,7,169,155,81,WS_GROUP
     LTEXT           "Nom:",IDC_STATIC,15,179,141,8
     LTEXT           "X",IDC_NAME,15,189,141,8
@@ -2369,25 +2304,6 @@ BEGIN
     END
 END
 #endif    // APSTUDIO_INVOKED
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Dialog Info
-//
-
-IDD_ABOUT DLGINIT
-BEGIN
-    IDC_RIBBONCOLORCOMBO, 0x403, 5, 0
-0x6c42, 0x7565, "\000" 
-    IDC_RIBBONCOLORCOMBO, 0x403, 7, 0
-0x7241, 0x6567, 0x746e, "\000" 
-    IDC_RIBBONCOLORCOMBO, 0x403, 5, 0
-0x6f4e, 0x7269, "\000" 
-    IDC_RIBBONCOLORCOMBO, 0x403, 13, 0
-0x6941, 0x7567, 0x2d65, 0x616d, 0x6972, 0x656e, "\000" 
-    0
-END
 
 
 /////////////////////////////////////////////////////////////////////////////

@@ -27,7 +27,6 @@ public:
 	CStoreManagerApp();
 
 	CString m_PathGoogleEarth;
-	UINT m_nAppLook;
 	UINT m_nTextureSize;
 	UINT m_nMaxTextureSize;
 	UINT m_NagCounter;
@@ -44,7 +43,6 @@ public:
 	virtual BOOL InitInstance();
 	virtual INT ExitInstance();
 		virtual void OnClosingMainFrame(CFrameImpl* pFrameImpl);	// Axe
-		virtual void SetApplicationLook(UINT nID);					// Axe
 
 	void AddFrame(CMainFrame* pFrame);
 	void KillFrame(CMainFrame* pFrame);

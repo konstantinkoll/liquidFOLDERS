@@ -14,16 +14,15 @@
 struct LFAboutDlgParameters
 {
 	// Vom Aufrufer zu setzen
-	CString appname;
-	CString build;
-	CGdiPlusBitmapResource* icon;
+	CString AppName;
+	CString Build;
+	CGdiPlusBitmapResource* Icon;
 	INT TextureSize;
 	INT MaxTextureSize;
-	INT RibbonColor;
 
 	// Von LFCommDlg gesetzt
-	CString version;
-	CString copyright;
+	CString Version;
+	CString Copyright;
 };
 
 class AFX_EXT_CLASS LFAboutDlg : public LFDialog

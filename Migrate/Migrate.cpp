@@ -57,15 +57,14 @@ INT CMigrateApp::ExitInstance()
 void CMigrateApp::OnAppAbout()
 {
 	LFAboutDlgParameters p;
-	ENSURE(p.appname.LoadString(IDR_APPLICATION));
-	p.build = __TIMESTAMP__;
-	p.icon = new CGdiPlusBitmapResource();
-	p.icon->Load(IDB_ABOUTICON, _T("PNG"), AfxGetResourceHandle());
+	ENSURE(p.AppName.LoadString(IDR_APPLICATION));
+	p.Build = __TIMESTAMP__;
+	p.Icon = new CGdiPlusBitmapResource();
+	p.Icon->Load(IDB_ABOUTICON, _T("PNG"), AfxGetResourceHandle());
 	p.TextureSize = -1;
-	p.RibbonColor = ID_VIEW_APPLOOK_OFF_2007_NONE;
 
 	LFAboutDlg dlg(&p, m_pMainWnd);
 	dlg.DoModal();
 
-	delete p.icon;
+	delete p.Icon;
 }

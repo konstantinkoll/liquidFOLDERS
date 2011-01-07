@@ -21,6 +21,9 @@ public:
 	INT Create(CWnd* _pParentWnd, UINT nID);
 	void UpdateViewOptions(INT Context);
 	void UpdateSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, INT FocusItem);
+	void DismissNotification();
+	void ShowNotification(LPCWSTR Icon, CString Message, UINT Command=0);
+	void ShowNotification(LPCWSTR Icon, UINT ResID, UINT Command=0);
 	INT GetFocusItem();
 	INT GetSelectedItem();
 	INT GetNextSelectedItem(INT n);
@@ -41,7 +44,6 @@ protected:
 	void RemoveTransactedItems(LFTransactionList* tl);
 	BOOL UpdateTrashFlag(BOOL Trash, BOOL All=FALSE);
 	BOOL DeleteFiles(BOOL All=FALSE);
-	void ShowCaptionBar(LPCWSTR Icon, UINT res, UINT Command=0);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);

@@ -3,12 +3,8 @@
 // Used by LFCore.rc
 //
 #define IDI_FLD_Default                 1
-#define ID_VIEW_APPLOOK_OFF_2007_BLUE   1
-#define ID_VIEW_APPLOOK_OFF_2007_SILVER 2
 #define IDI_FLD_All                     2
-#define ID_VIEW_APPLOOK_OFF_2007_BLACK  3
 #define IDI_FLD_Archive                 3
-#define ID_VIEW_APPLOOK_OFF_2007_AQUA   4
 #define IDI_FLD_Audio                   4
 #define IDI_FLD_Back                    5
 #define IDI_FLD_Calendar                6

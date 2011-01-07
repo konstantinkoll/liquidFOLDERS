@@ -87,7 +87,6 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoresChanged, OnStoresChanged)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoreAttributesChanged, OnStoreAttributesChanged)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->DefaultStoreChanged, OnStoresChanged)
-	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->LookChanged, OnLookChanged)
 END_MESSAGE_MAP()
 
 
@@ -231,10 +230,6 @@ INT CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndInspector.SetIcon(m_PanelImages.ExtractIcon(2), FALSE);
 	m_wndInspector.EnableDocking(CBRS_ALIGN_ANY | CBRS_FLOAT_MULTI);
 	DockPane(&m_wndInspector, AFX_IDW_DOCKBAR_RIGHT);
-
-	// Titelleiste erstellen
-	if (!m_wndCaptionBar.Create(WS_CHILD | WS_CLIPSIBLINGS, this, ID_PANE_CAPTIONBAR, -1, TRUE))
-		return -1;
 
 	// Hauptansicht erstellen
 	if (!m_wndMainView.Create(this, AFX_IDW_PANE_FIRST))
@@ -847,7 +842,7 @@ void CMainFrame::InitializeRibbon()
 	m_wndRibbonBar.AddToTabs(new CMFCRibbonButton(ID_APP_HELP, NULL, m_PanelImages.ExtractIcon(0)));
 }
 
-void CMainFrame::ShowCaptionBar(LPCWSTR Icon, LPCWSTR Message, INT Command)
+/*void CMainFrame::ShowCaptionBar(LPCWSTR Icon, LPCWSTR Message, INT Command)
 {
 	// Text und Icon
 	m_wndCaptionBar.SetText(Message, CMFCCaptionBar::ALIGN_LEFT);
@@ -879,14 +874,7 @@ void CMainFrame::ShowCaptionBar(LPCWSTR Icon, LPCWSTR Message, INT Command)
 		m_wndCaptionBar.ShowWindow(SW_SHOW);
 		RecalcLayout(FALSE);
 	}
-}
-
-void CMainFrame::ShowCaptionBar(LPCWSTR Icon, UINT res, INT Command)
-{
-	WCHAR* message = LFGetErrorText(res);
-	ShowCaptionBar(Icon, message, Command);
-	free(message);
-}
+}*/
 
 void CMainFrame::NavigateTo(LFFilter* f, UINT NavMode, INT FocusItem, INT FirstAggregate, INT LastAggregate)
 {
@@ -940,14 +928,12 @@ void CMainFrame::NavigateTo(LFFilter* f, UINT NavMode, INT FocusItem, INT FirstA
 	if (CookedFiles->m_LastError>LFCancel)
 	{
 		theApp.PlayWarningSound();
-		ShowCaptionBar(ActiveFilter->Result.FilterType==LFFilterTypeError ? IDI_ERROR : IDI_EXCLAMATION, CookedFiles->m_LastError, CookedFiles->m_LastError==LFIndexAccessError ? IDM_STORES_MAINTAINALL : 0);
+//		ShowCaptionBar(ActiveFilter->Result.FilterType==LFFilterTypeError ? IDI_ERROR : IDI_EXCLAMATION, CookedFiles->m_LastError, CookedFiles->m_LastError==LFIndexAccessError ? IDM_STORES_MAINTAINALL : 0);
 	}
 	else
-		if (m_wndCaptionBar.IsVisible())
-		{
-			m_wndCaptionBar.ShowWindow(SW_HIDE);
-			RecalcLayout(FALSE);
-		}
+	{
+		m_wndMainView.DismissNotification();
+	}
 }
 
 void CMainFrame::UpdateHistory()
@@ -1167,19 +1153,6 @@ LRESULT CMainFrame::OnStoreAttributesChanged(WPARAM wParam, LPARAM lParam)
 			m_wndMainView.PostMessage(theApp.p_MessageIDs->StoreAttributesChanged, wParam, lParam);
 			break;
 		}
-
-	return NULL;
-}
-
-LRESULT CMainFrame::OnLookChanged(WPARAM wParam, LPARAM /*lParam*/)
-{
-	if (this==theApp.m_pMainWnd)
-	{
-		theApp.SetApplicationLook((UINT)wParam);
-	#if (_MFC_VER>=0x1000)
-		m_wndRibbonBar.SetWindows7Look((UINT)wParam==ID_VIEW_APPLOOK_WINDOWS_7);
-	#endif
-	}
 
 	return NULL;
 }
