@@ -219,7 +219,7 @@ unsigned int SaveStoreSettingsToRegistry(LFStoreDescriptor* s)
 		if (RegSetValueEx(k, L"IndexVersion", 0, REG_DWORD, (BYTE*)&s->IndexVersion, sizeof(unsigned int))!=ERROR_SUCCESS)
 			res = LFRegistryError;
 		if ((s->StoreMode==LFStoreModeInternal) && (!s->AutoLocation))
-			if (RegSetValueEx(k, L"Path", 0, REG_SZ, (BYTE*)s->DatPath, (DWORD)wcslen(s->DatPath))!=ERROR_SUCCESS)
+			if (RegSetValueEx(k, L"Path", 0, REG_SZ, (BYTE*)s->DatPath, (DWORD)wcslen(s->DatPath)*sizeof(wchar_t))!=ERROR_SUCCESS)
 				res = LFRegistryError;
 		RegCloseKey(k);
 	}
