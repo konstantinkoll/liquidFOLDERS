@@ -38,5 +38,5 @@ protected:
 	afx_msg BOOL OnInitDialog();
 	DECLARE_MESSAGE_MAP()
 
-	LFAboutDlgParameters* parameters;
+	LFAboutDlgParameters* p_Parameters;
 };

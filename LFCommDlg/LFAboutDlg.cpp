@@ -16,11 +16,11 @@ using namespace Gdiplus;
 
 extern AFX_EXTENSION_MODULE LFCommDlgDLL;
 
-LFAboutDlg::LFAboutDlg(LFAboutDlgParameters* pParameters, CWnd* pParent)
+LFAboutDlg::LFAboutDlg(LFAboutDlgParameters* p, CWnd* pParent)
 	: LFDialog(IDD_ABOUT, LFDS_Default, pParent)
 {
-	ASSERT(pParameters!=NULL);
-	parameters = pParameters;
+	ASSERT(pp_Parameters!=NULL);
+	p_Parameters = p;
 
 	CString modFilename;
 	if (GetModuleFileName(AfxGetInstanceHandle(), modFilename.GetBuffer(MAX_PATH), MAX_PATH) > 0)
@@ -40,18 +40,18 @@ LFAboutDlg::LFAboutDlg(LFAboutDlgParameters* pParameters, CWnd* pParent)
 				if (VerQueryValue(lpInfo, TEXT("\\"), &valPtr, &valLen))
 				{
 					VS_FIXEDFILEINFO* pFinfo = (VS_FIXEDFILEINFO*)valPtr;
-					parameters->Version.Format(_T("%d.%d.%d"), 
+					p_Parameters->Version.Format(_T("%d.%d.%d"), 
 						(pFinfo->dwProductVersionMS >> 16) & 0xFF,
 						(pFinfo->dwProductVersionMS) & 0xFF,
 						(pFinfo->dwProductVersionLS >> 16) & 0xFF);
 				}
 				if (VerQueryValue(lpInfo,TEXT("StringFileInfo\\000004E4\\LegalCopyright"),(void**)&valData,&valLen))
 				{
-					parameters->Copyright = valData;
+					p_Parameters->Copyright = valData;
 				}
 				else
 				{
-					parameters->Copyright="© liquidFOLDERS";
+					p_Parameters->Copyright="© liquidFOLDERS";
 				}
 			}
 			delete[] lpInfo;
@@ -71,7 +71,7 @@ BOOL LFAboutDlg::OnInitDialog()
 	CString text;
 	GetWindowText(text);
 	CString caption;
-	caption.Format(text, parameters->AppName);
+	caption.Format(text, p_Parameters->AppName);
 	SetWindowText(caption);
 
 	BOOL ShowCancel = FALSE;
@@ -81,15 +81,15 @@ BOOL LFAboutDlg::OnInitDialog()
 
 	for (INT a=LFTextureAuto; a<=LFTexture8192; a++)
 	{
-		bEnable[a] = (parameters->TextureSize!=LFTextureNone) && ((a<=LFTexture1024) || (parameters->MaxTextureSize>=a));
+		bEnable[a] = (p_Parameters->TextureSize!=LFTextureNone) && ((a<=LFTexture1024) || (p_Parameters->MaxTextureSize>=a));
 		((CButton*)GetDlgItem(IDC_TEXTURE_AUTO+a))->EnableWindow(bEnable[a]);
 	}
 
-	if (parameters->TextureSize!=-1)
+	if (p_Parameters->TextureSize!=-1)
 	{
-		if ((!bEnable[parameters->TextureSize]) || (parameters->TextureSize>LFTexture8192))
-			parameters->TextureSize = LFTextureAuto;
-		((CButton*)GetDlgItem(IDC_TEXTURE_AUTO+parameters->TextureSize))->SetCheck(TRUE);
+		if ((!bEnable[p_Parameters->TextureSize]) || (p_Parameters->TextureSize>LFTexture8192))
+			p_Parameters->TextureSize = LFTextureAuto;
+		((CButton*)GetDlgItem(IDC_TEXTURE_AUTO+p_Parameters->TextureSize))->SetCheck(TRUE);
 		ShowCancel = TRUE;
 	}
 
@@ -115,8 +115,8 @@ void LFAboutDlg::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 {
 	LFDialog::OnEraseBkgnd(dc, g, rect);
 
-	if (parameters->Icon)
-		g.DrawImage(parameters->Icon->m_pBitmap, 16, 16, parameters->Icon->m_pBitmap->GetWidth(), parameters->Icon->m_pBitmap->GetHeight());
+	if (p_Parameters->Icon)
+		g.DrawImage(p_Parameters->Icon->m_pBitmap, 16, 16, p_Parameters->Icon->m_pBitmap->GetWidth(), p_Parameters->Icon->m_pBitmap->GetHeight());
 
 	CRect r(rect);
 	r.top = 172;
@@ -130,7 +130,7 @@ void LFAboutDlg::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 
 	dc.SetTextColor(0x000000);
 	dc.SetBkMode(TRANSPARENT);
-	dc.DrawText(parameters->AppName+_T(" (Beta3)"), -1, r, 0);
+	dc.DrawText(p_Parameters->AppName+_T(" (Beta3)"), -1, r, 0);
 	r.top += 45;
 
 	CFont font2;
@@ -139,10 +139,10 @@ void LFAboutDlg::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 		DEFAULT_PITCH | FF_DONTCARE, ((LFApplication*)AfxGetApp())->GetDefaultFontFace());
 	dc.SelectObject(&font2);
 
-	dc.DrawText(parameters->Copyright, -1, r, 0);
+	dc.DrawText(p_Parameters->Copyright, -1, r, 0);
 	r.top += 25;
 
-	dc.DrawText(_T("Version ")+parameters->Version+_T(" (")+parameters->Build+_T(")"), -1, r, 0);
+	dc.DrawText(_T("Version ")+p_Parameters->Version+_T(" (")+p_Parameters->Build+_T(")"), -1, r, 0);
 
 	dc.SelectObject(pOldFont);
 }
@@ -179,7 +179,7 @@ void LFAboutDlg::DoDataExchange(CDataExchange* pDX)
 		for (UINT a=LFTextureAuto; a<=LFTexture8192; a++)
 			if (((CButton*)GetDlgItem(IDC_TEXTURE_AUTO+a))->GetCheck())
 			{
-				parameters->TextureSize = a;
+				p_Parameters->TextureSize = a;
 				break;
 			}
 }
