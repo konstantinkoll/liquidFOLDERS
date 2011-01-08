@@ -115,7 +115,7 @@ IDB_SORTINDICATORS      BITMAP                  "res\\SortIndicators.bmp"
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
 IDI_READY               ICON                    "res\\Ready.ico"
-IDI_INFO                ICON                    "res\\Info.ico"
+IDI_INFORMATION         ICON                    "res\\Info.ico"
 IDI_WARNING             ICON                    "res\\Warning.ico"
 IDI_ERROR               ICON                    "res\\Error.ico"
 IDI_SHIELD              ICON                    "res\\Shield_7.ico"

@@ -23,8 +23,8 @@ LFDialog::LFDialog(UINT nIDTemplate, UINT _Design, CWnd* pParent)
 	p_App = (LFApplication*)AfxGetApp();
 	hIconS = hIconL = hIconShield = NULL;
 	hBackgroundBrush = NULL;
-	backdrop = logo = NULL;
-	BackBufferL = BackBufferH = UACHeight = 0;
+	m_Backdrop = m_Logo = NULL;
+	m_BackBufferL = m_BackBufferH = m_UACHeight = 0;
 }
 
 void LFDialog::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
@@ -54,52 +54,52 @@ void LFDialog::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 		{
 			if (Themed)
 			{
-				INT l = backdrop->m_pBitmap->GetWidth();
-				INT h = backdrop->m_pBitmap->GetHeight();
+				INT l = m_Backdrop->m_pBitmap->GetWidth();
+				INT h = m_Backdrop->m_pBitmap->GetHeight();
 				if ((l<rect.Width()) || (h<rect.Height()))
 				{
 					double f = max((double)rect.Width()/l, (double)rect.Height()/h);
 					l = (INT)(l*f);
 					h = (INT)(h*f);
 				}
-				g.DrawImage(backdrop->m_pBitmap, rect.Width()-l, rect.Height()-h, l, h);
+				g.DrawImage(m_Backdrop->m_pBitmap, rect.Width()-l, rect.Height()-h, l, h);
 
 				SolidBrush brush1(Color(180, 255, 255, 255));
-				g.FillRectangle(&brush1, 0, 0, BackBufferL, Line);
+				g.FillRectangle(&brush1, 0, 0, m_BackBufferL, Line);
 				brush1.SetColor(Color(224, 205, 250, 255));
-				g.FillRectangle(&brush1, 0, Line++, BackBufferL, 1);
+				g.FillRectangle(&brush1, 0, Line++, m_BackBufferL, 1);
 				brush1.SetColor(Color(180, 183, 210, 240));
-				g.FillRectangle(&brush1, 0, Line++, BackBufferL, 1);
+				g.FillRectangle(&brush1, 0, Line++, m_BackBufferL, 1);
 				brush1.SetColor(Color(224, 247, 250, 254));
-				g.FillRectangle(&brush1, 0, Line, BackBufferL, 1);
+				g.FillRectangle(&brush1, 0, Line, m_BackBufferL, 1);
 				LinearGradientBrush brush2(Point(0, Line++), Point(0, rect.Height()), Color(128, 255, 255, 255), Color(64, 128, 192, 255));
-				g.FillRectangle(&brush2, 0, Line, BackBufferL, rect.Height()-Line);
+				g.FillRectangle(&brush2, 0, Line, m_BackBufferL, rect.Height()-Line);
 			}
 			else
 			{
 				dc.FillSolidRect(rect, GetSysColor(COLOR_3DFACE));
 			}
 
-			INT l = logo->m_pBitmap->GetWidth();
-			INT h = logo->m_pBitmap->GetHeight();
-			g.DrawImage(logo->m_pBitmap, rect.Width()-l-8, 8, l, h);
+			INT l = m_Logo->m_pBitmap->GetWidth();
+			INT h = m_Logo->m_pBitmap->GetHeight();
+			g.DrawImage(m_Logo->m_pBitmap, rect.Width()-l-8, 8, l, h);
 
 			break;
 		}
 	case LFDS_White:
 	case LFDS_UAC:
 		{
-			dc.FillSolidRect(0, 0, BackBufferL, Line, 0xFFFFFF);
+			dc.FillSolidRect(0, 0, m_BackBufferL, Line, 0xFFFFFF);
 			if (Themed)
 			{
-				dc.FillSolidRect(0, Line++, BackBufferL, 1, 0xDFDFDF);
-				dc.FillSolidRect(0, Line, BackBufferL, rect.Height()-Line, 0xF0F0F0);
-				dc.FillSolidRect(0, btn.bottom+borders.Height()+1, BackBufferL, 1, 0xDFDFDF);
-				dc.FillSolidRect(0, btn.bottom+borders.Height()+2, BackBufferL, 1, 0xFFFFFF);
+				dc.FillSolidRect(0, Line++, m_BackBufferL, 1, 0xDFDFDF);
+				dc.FillSolidRect(0, Line, m_BackBufferL, rect.Height()-Line, 0xF0F0F0);
+				dc.FillSolidRect(0, btn.bottom+borders.Height()+1, m_BackBufferL, 1, 0xDFDFDF);
+				dc.FillSolidRect(0, btn.bottom+borders.Height()+2, m_BackBufferL, 1, 0xFFFFFF);
 			}
 			else
 			{
-				dc.FillSolidRect(0, Line++, BackBufferL, rect.Height()-Line, GetSysColor(COLOR_3DFACE));
+				dc.FillSolidRect(0, Line++, m_BackBufferL, rect.Height()-Line, GetSysColor(COLOR_3DFACE));
 			}
 
 			if (m_Design!=LFDS_UAC)
@@ -107,21 +107,21 @@ void LFDialog::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 
 			if (Themed)
 			{
-				LinearGradientBrush brush2(Point(0, 0), Point(BackBufferL, 0), Color(4, 80, 130), Color(28, 120, 133));
-				g.FillRectangle(&brush2, 0, 0, BackBufferL, UACHeight);
+				LinearGradientBrush brush2(Point(0, 0), Point(m_BackBufferL, 0), Color(4, 80, 130), Color(28, 120, 133));
+				g.FillRectangle(&brush2, 0, 0, m_BackBufferL, m_UACHeight);
 				dc.SetTextColor(0xFFFFFF);
 			}
 			else
 			{
-				dc.FillSolidRect(0, 0, BackBufferL, UACHeight, GetSysColor(COLOR_HIGHLIGHT));
+				dc.FillSolidRect(0, 0, m_BackBufferL, m_UACHeight, GetSysColor(COLOR_HIGHLIGHT));
 				dc.SetTextColor(GetSysColor(COLOR_HIGHLIGHTTEXT));
 			}
 
-			DrawIconEx(dc.m_hDC, borders.right, (UACHeight-ShieldSize)/2, hIconShield, ShieldSize, ShieldSize, 0, NULL, DI_NORMAL);
+			DrawIconEx(dc.m_hDC, borders.right, (m_UACHeight-m_ShieldSize)/2, hIconShield, m_ShieldSize, m_ShieldSize, 0, NULL, DI_NORMAL);
 
 			CRect rectText(rect);
-			rectText.left = borders.right+ShieldSize;
-			rectText.bottom = UACHeight;
+			rectText.left = borders.right+m_ShieldSize;
+			rectText.bottom = m_UACHeight;
 
 			CString tmpStr;
 			ENSURE(tmpStr.LoadString(IDS_UACMESSAGE));
@@ -151,7 +151,7 @@ void LFDialog::AddBottomControl(CWnd* pChildWnd)
 {
 	ASSERT(pChildWnd);
 
-	BottomControls.push_back(pChildWnd);
+	m_BottomControls.push_back(pChildWnd);
 }
 
 void LFDialog::AddBottomControl(UINT nID)
@@ -178,7 +178,7 @@ void LFDialog::GetLayoutRect(LPRECT lpRect) const
 	lpRect->bottom = btn.top-borders.Height()-(m_Design==LFDS_Blue ? 3 : 1);
 
 	if (m_Design==LFDS_UAC)
-		lpRect->top = UACHeight;
+		lpRect->top = m_UACHeight;
 }
 
 
@@ -211,19 +211,19 @@ BOOL LFDialog::OnInitDialog()
 	{
 	case LFDS_Blue:
 		// Hintergrundbild laden
-		backdrop = new CGdiPlusBitmapResource();
-		backdrop->Load(IDB_BACKDROP, _T("PNG"), LFCommDlgDLL.hResource);
+		m_Backdrop = new CGdiPlusBitmapResource();
+		m_Backdrop->Load(IDB_BACKDROP, _T("PNG"), LFCommDlgDLL.hResource);
 
-		// Logo laden
-		logo = new CGdiPlusBitmapResource();
-		logo->Load(IDB_LOGO, _T("PNG"), LFCommDlgDLL.hResource);
+		// m_Logo laden
+		m_Logo = new CGdiPlusBitmapResource();
+		m_Logo->Load(IDB_LOGO, _T("PNG"), LFCommDlgDLL.hResource);
 
 		break;
 	case LFDS_UAC:
 		// Schild
-		UACHeight = MulDiv(40, LOWORD(GetDialogBaseUnits()), 8);
-		ShieldSize = (UACHeight<24) ? 16 : (UACHeight<32) ? 24 : (UACHeight<48) ? 32 : 48;
-		hIconShield = (HICON)LoadImage(LFCommDlgDLL.hResource, (p_App->OSVersion==OS_Vista) ? MAKEINTRESOURCE(IDI_SHIELD_VISTA) : IDI_SHIELD, IMAGE_ICON, ShieldSize, ShieldSize, LR_DEFAULTCOLOR);
+		m_UACHeight = MulDiv(40, LOWORD(GetDialogBaseUnits()), 8);
+		m_ShieldSize = (m_UACHeight<24) ? 16 : (m_UACHeight<32) ? 24 : (m_UACHeight<48) ? 32 : 48;
+		hIconShield = (HICON)LoadImage(LFCommDlgDLL.hResource, (p_App->OSVersion==OS_Vista) ? MAKEINTRESOURCE(IDI_SHIELD_VISTA) : IDI_SHIELD, IMAGE_ICON, m_ShieldSize, m_ShieldSize, LR_DEFAULTCOLOR);
 
 		p_App->PlayWarningSound();
 		break;
@@ -231,7 +231,7 @@ BOOL LFDialog::OnInitDialog()
 
 	CRect rect;
 	GetClientRect(rect);
-	LastSize = CPoint(rect.Width(), rect.Height());
+	m_LastSize = CPoint(rect.Width(), rect.Height());
 
 	AddBottomControl(IDOK);
 	AddBottomControl(IDCANCEL);
@@ -241,10 +241,10 @@ BOOL LFDialog::OnInitDialog()
 
 void LFDialog::OnDestroy()
 {
-	if (backdrop)
-		delete backdrop;
-	if (logo)
-		delete logo;
+	if (m_Backdrop)
+		delete m_Backdrop;
+	if (m_Logo)
+		delete m_Logo;
 	if (hIconL)
 		DestroyIcon(hIconL);
 	if (hIconS)
@@ -267,27 +267,27 @@ BOOL LFDialog::OnEraseBkgnd(CDC* pDC)
 	dc.SetBkMode(TRANSPARENT);
 
 	CBitmap* pOldBitmap;
-	if ((BackBufferL!=rect.Width()) || (BackBufferH!=rect.Height()))
+	if ((m_BackBufferL!=rect.Width()) || (m_BackBufferH!=rect.Height()))
 	{
-		BackBufferL = rect.Width();
-		BackBufferH = rect.Height();
+		m_BackBufferL = rect.Width();
+		m_BackBufferH = rect.Height();
 
-		BackBuffer.DeleteObject();
-		BackBuffer.CreateCompatibleBitmap(pDC, rect.Width(), rect.Height());
-		pOldBitmap = dc.SelectObject(&BackBuffer);
+		m_BackBuffer.DeleteObject();
+		m_BackBuffer.CreateCompatibleBitmap(pDC, rect.Width(), rect.Height());
+		pOldBitmap = dc.SelectObject(&m_BackBuffer);
 
-		Graphics g(dc.m_hDC);
+		Graphics g(dc);
 		g.SetCompositingMode(CompositingModeSourceOver);
 
 		OnEraseBkgnd(dc, g, rect);
 
 		if (hBackgroundBrush)
 			DeleteObject(hBackgroundBrush);
-		hBackgroundBrush = CreatePatternBrush(BackBuffer);
+		hBackgroundBrush = CreatePatternBrush(m_BackBuffer);
 	}
 	else
 	{
-		pOldBitmap = dc.SelectObject(&BackBuffer);
+		pOldBitmap = dc.SelectObject(&m_BackBuffer);
 	}
 
 	pDC->BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);
@@ -300,12 +300,12 @@ void LFDialog::OnSize(UINT nType, INT cx, INT cy)
 {
 	CDialog::OnSize(nType, cx, cy);
 
-	CPoint diff(cx-LastSize.x, cy-LastSize.y);
-	LastSize.x = cx;
-	LastSize.y = cy;
+	CPoint diff(cx-m_LastSize.x, cy-m_LastSize.y);
+	m_LastSize.x = cx;
+	m_LastSize.y = cy;
 
-	std::list<CWnd*>::iterator ppWnd = BottomControls.begin();
-	while (ppWnd!=BottomControls.end())
+	std::list<CWnd*>::iterator ppWnd = m_BottomControls.begin();
+	while (ppWnd!=m_BottomControls.end())
 	{
 		CRect rect;
 		(*ppWnd)->GetWindowRect(rect);
@@ -317,20 +317,20 @@ void LFDialog::OnSize(UINT nType, INT cx, INT cy)
 
 	AdjustLayout();
 
-	BackBufferL = BackBufferH = 0;
+	m_BackBufferL = m_BackBufferH = 0;
 	Invalidate();
 }
 
 LRESULT LFDialog::OnThemeChanged()
 {
-	BackBufferL = BackBufferH = 0;
+	m_BackBufferL = m_BackBufferH = 0;
 	return TRUE;
 }
 
 void LFDialog::OnSysColorChange()
 {
 	if (!IsCtrlThemed())
-		BackBufferL = BackBufferH = 0;
+		m_BackBufferL = m_BackBufferH = 0;
 }
 
 HBRUSH LFDialog::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)

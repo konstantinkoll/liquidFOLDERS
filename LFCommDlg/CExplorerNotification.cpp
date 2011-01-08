@@ -1,0 +1,167 @@
+
+// CExplorerNotification.cpp: Implementierung der Klasse CExplorerNotification
+//
+
+#include "stdafx.h"
+#include "LFCommDlg.h"
+
+
+// CExplorerNotification
+//
+
+extern AFX_EXTENSION_MODULE LFCommDlgDLL;
+
+#define BORDERX     8
+#define BORDERY     4
+
+CExplorerNotification::CExplorerNotification()
+	: CWnd()
+{
+	m_Dismissed = TRUE;
+	hIcon = NULL;
+	p_App = (LFApplication*)AfxGetApp();
+
+	m_IconCX = GetSystemMetrics(SM_CXICON);
+	m_IconCY = GetSystemMetrics(SM_CYICON);
+	ImageList_GetIconSize(p_App->m_SystemImageListLarge, &m_IconCX, &m_IconCY);
+}
+
+BOOL CExplorerNotification::Create(CWnd* pParentWnd, UINT nID)
+{
+	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, LoadCursor(NULL, IDC_ARROW));
+
+	const DWORD dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_BORDER;
+	CRect rect;
+	rect.SetRectEmpty();
+	return CWnd::Create(className, _T(""), dwStyle, rect, pParentWnd, nID);
+}
+
+UINT CExplorerNotification::GetPreferredHeight()
+{
+	return m_IconCY/16+2*BORDERY+m_IconCY+2;
+}
+
+void CExplorerNotification::SetNotification(UINT Type, CString Text, UINT Command)
+{
+	switch (Type)
+	{
+	case ENT_READY:
+		m_FirstCol = 0x00E600;
+		m_SecondCol = 0x00AF00;
+		hIcon = (HICON)LoadImage(LFCommDlgDLL.hResource, MAKEINTRESOURCE(IDI_READY), IMAGE_ICON, m_IconCX, m_IconCY, LR_DEFAULTCOLOR);
+		break;
+	case ENT_INFO:
+		m_FirstCol = 0xFF8E6F;
+		m_SecondCol = 0xF26120;
+		hIcon = (HICON)LoadImage(LFCommDlgDLL.hResource, IDI_INFORMATION, IMAGE_ICON, m_IconCX, m_IconCY, LR_DEFAULTCOLOR);
+		break;
+	case ENT_WARNING:
+		m_FirstCol = 0x49CEFF;
+		m_SecondCol = 0x00B1F2;
+		hIcon = (HICON)LoadImage(LFCommDlgDLL.hResource, IDI_WARNING, IMAGE_ICON, m_IconCX, m_IconCY, LR_DEFAULTCOLOR);
+		break;
+	case ENT_SHIELD:
+		m_FirstCol = 0x49CEFF;
+		m_SecondCol = 0x00B1F2;
+		hIcon = (HICON)LoadImage(LFCommDlgDLL.hResource, IDI_SHIELD, IMAGE_ICON, m_IconCX, m_IconCY, LR_DEFAULTCOLOR);
+		break;
+	default:
+		m_FirstCol = 0x0000E6;
+		m_SecondCol = 0x0000AF;
+		hIcon = (HICON)LoadImage(LFCommDlgDLL.hResource, IDI_ERROR, IMAGE_ICON, m_IconCX, m_IconCY, LR_DEFAULTCOLOR);
+	}
+
+	m_Text = Text;
+
+	ShowWindow(SW_SHOW);
+	Invalidate();
+
+	if (Type!=ENT_READY)
+		p_App->PlayWarningSound();
+}
+
+void CExplorerNotification::DismissNotification()
+{
+	if (!m_Dismissed)
+	{
+		ShowWindow(SW_HIDE);
+
+		if (hIcon)
+		{
+			DestroyIcon(hIcon);
+			hIcon = NULL;
+		}
+
+		m_Dismissed = TRUE;
+	}
+}
+
+
+BEGIN_MESSAGE_MAP(CExplorerNotification, CWnd)
+	ON_WM_DESTROY()
+	ON_WM_ERASEBKGND()
+	ON_WM_PAINT()
+	ON_WM_LBUTTONDOWN()
+END_MESSAGE_MAP()
+
+void CExplorerNotification::OnDestroy()
+{
+	CWnd::OnDestroy();
+
+	if (hIcon)
+		DestroyIcon(hIcon);
+}
+
+BOOL CExplorerNotification::OnEraseBkgnd(CDC* /*pDC*/)
+{
+	return TRUE;
+}
+
+void CExplorerNotification::OnPaint()
+{
+	CPaintDC pDC(this);
+
+	CRect rectClient;
+	GetClientRect(rectClient);
+
+	CDC dc;
+	dc.CreateCompatibleDC(&pDC);
+	dc.SetBkMode(TRANSPARENT);
+
+	CBitmap buffer;
+	buffer.CreateCompatibleBitmap(&pDC, rectClient.Width(), rectClient.Height());
+	CBitmap* pOldBitmap = dc.SelectObject(&buffer);
+
+	BOOL Themed = IsCtrlThemed();
+
+	dc.FillSolidRect(rectClient, Themed ? 0xFFFFFF : GetSysColor(COLOR_WINDOW));
+
+	CRect rect(rectClient);
+	rect.DeflateRect(1, 1);
+
+	Graphics g(dc);
+	LinearGradientBrush brush(Point(0, 0), Point(rect.Width()+1, 0), Color(255, m_FirstCol & 0xFF, (m_FirstCol>>8) & 0xFF, (m_FirstCol>>16) & 0xFF), Color(255, m_SecondCol & 0xFF, (m_SecondCol>>8) & 0xFF, (m_SecondCol>>16) & 0xFF));
+	g.FillRectangle(&brush, rect.top, rect.left, rect.Width(), m_IconCY/16);
+	rect.top += m_IconCY/16;
+
+	DrawIconEx(dc, rect.left+BORDERX, rect.top+(rect.Height()-m_IconCY)/2, hIcon, m_IconCX, m_IconCY, 0, NULL, DI_NORMAL);
+	rect.left += 2*BORDERX+m_IconCX;
+	rect.right -= BORDERX;
+
+	CRect rectText(rect);
+
+	CFont* pOldFont = dc.SelectObject(&p_App->m_DefaultFont);
+	dc.SetTextColor(Themed ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT));
+	dc.DrawText(m_Text, rectText, DT_WORDBREAK | DT_VCENTER | DT_END_ELLIPSIS | DT_CALCRECT);
+	if (rect.Height()>rectText.Height())
+		rect.top += (rect.Height()-rectText.Height())/2;
+	dc.DrawText(m_Text, rect, DT_WORDBREAK | DT_VCENTER | DT_END_ELLIPSIS);
+	dc.SelectObject(pOldFont);
+
+	pDC.BitBlt(0, 0, rectClient.Width(), rectClient.Height(), &dc, 0, 0, SRCCOPY);
+	dc.SelectObject(pOldBitmap);
+}
+
+void CExplorerNotification::OnLButtonDown(UINT nFlags, CPoint point)
+{
+}

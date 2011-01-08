@@ -4,6 +4,7 @@
 #include "..\LFCommDlg\CDropdownSelector.h"
 #include "..\LFCommDlg\CExplorerHeader.h"
 #include "..\LFCommDlg\CExplorerList.h"
+#include "..\LFCommDlg\CExplorerNotification.h"
 #include "..\LFCommDlg\CExplorerTree.h"
 #include "..\LFCommDlg\CGdiPlusBitmap.h"
 #include "..\LFCommDlg\CGlasWindow.h"

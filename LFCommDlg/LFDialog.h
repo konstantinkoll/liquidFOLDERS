@@ -51,17 +51,17 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
-	CGdiPlusBitmapResource* backdrop;
-	CGdiPlusBitmapResource* logo;
+	CGdiPlusBitmapResource* m_Backdrop;
+	CGdiPlusBitmapResource* m_Logo;
 	HICON hIconL;
 	HICON hIconS;
 	HICON hIconShield;
-	INT ShieldSize;
-	INT UACHeight;
-	CBitmap BackBuffer;
-	INT BackBufferL;
-	INT BackBufferH;
+	INT m_ShieldSize;
+	INT m_UACHeight;
+	CBitmap m_BackBuffer;
+	INT m_BackBufferL;
+	INT m_BackBufferH;
 	HBRUSH hBackgroundBrush;
-	std::list<CWnd*> BottomControls;
-	CPoint LastSize;
+	std::list<CWnd*> m_BottomControls;
+	CPoint m_LastSize;
 };

@@ -399,6 +399,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CExplorerNotification.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\CExplorerTree.cpp"
 				>
 			</File>
@@ -630,6 +634,10 @@
 			</File>
 			<File
 				RelativePath=".\CExplorerList.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CExplorerNotification.h"
 				>
 			</File>
 			<File

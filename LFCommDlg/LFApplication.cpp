@@ -266,10 +266,13 @@ BOOL LFApplication::InitInstance()
 
 	CWinAppEx::InitInstance();
 
-	InitTooltipManager();
-	CMFCToolTipInfo ttParams;
-	ttParams.m_bVislManagerTheme = TRUE;
-	GetTooltipManager()->SetTooltipParams(AFX_TOOLTIP_TYPE_ALL, RUNTIME_CLASS(CMFCToolTipCtrl), &ttParams);
+	if (HasGUI==HasGUI_Ribbon)
+	{
+		InitTooltipManager();
+		CMFCToolTipInfo ttParams;
+		ttParams.m_bVislManagerTheme = TRUE;
+		GetTooltipManager()->SetTooltipParams(AFX_TOOLTIP_TYPE_ALL, RUNTIME_CLASS(CMFCToolTipCtrl), &ttParams);
+	}
 
 	InitShellManager();
 

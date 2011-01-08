@@ -58,7 +58,7 @@ unsigned int GetDriveBus(char d)
 			&dwOutBytes, NULL))
 			res = pDevDesc->BusType;
 
-		delete pDevDesc;
+		delete[] pDevDesc;
 		CloseHandle(hDevice);
 	}
 
