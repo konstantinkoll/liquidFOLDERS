@@ -112,7 +112,6 @@ private:
 	BOOL AttributeAllowedForSorting(INT attr);
 	void Remember(CMainFrame* clip);
 	void InitializeRibbon();
-	void UpdateRibbon();
 	void NavigateTo(LFFilter* f, UINT NavMode=NAVMODE_NORMAL, INT FocusItem=0, INT FirstAggregate=-1, INT LastAggregate=-1);
 	void UpdateHistory();
 };

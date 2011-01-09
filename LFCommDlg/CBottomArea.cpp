@@ -9,37 +9,11 @@
 // CBottomArea
 //
 
-CBottomArea::CBottomArea()
-{
-	hBackgroundBrush = NULL;
-}
-
-
 BEGIN_MESSAGE_MAP(CBottomArea, CDialogBar)
-	ON_WM_CREATE()
-	ON_WM_DESTROY()
 	ON_WM_ERASEBKGND()
 	ON_WM_PAINT()
 	ON_WM_CTLCOLOR()
 END_MESSAGE_MAP()
-
-INT CBottomArea::OnCreate(LPCREATESTRUCT lpcs)
-{
-	if (CWnd::OnCreate(lpcs)==-1)
-		return -1;
-
-	hBackgroundBrush = CreateSolidBrush(0xF0F0F0);
-
-	return 0;
-}
-
-void CBottomArea::OnDestroy()
-{
-	if (hBackgroundBrush)
-		DeleteObject(hBackgroundBrush);
-
-	CWnd::OnDestroy();
-}
 
 BOOL CBottomArea::OnEraseBkgnd(CDC* /*pDC*/)
 {
@@ -73,7 +47,8 @@ HBRUSH CBottomArea::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 		if ((nCtlColor==CTLCOLOR_BTN) || (nCtlColor==CTLCOLOR_STATIC))
 		{
 			pDC->SetBkMode(TRANSPARENT);
-			hbr = hBackgroundBrush;
+			pDC->SetDCBrushColor(0xF0F0F0);
+			hbr = (HBRUSH)GetStockObject(DC_BRUSH);
 		}
 
 	return hbr;

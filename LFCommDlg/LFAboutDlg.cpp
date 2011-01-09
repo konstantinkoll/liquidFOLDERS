@@ -19,7 +19,7 @@ extern AFX_EXTENSION_MODULE LFCommDlgDLL;
 LFAboutDlg::LFAboutDlg(LFAboutDlgParameters* p, CWnd* pParent)
 	: LFDialog(IDD_ABOUT, LFDS_Default, pParent)
 {
-	ASSERT(pp_Parameters!=NULL);
+	ASSERT(p);
 	p_Parameters = p;
 
 	CString modFilename;
@@ -37,7 +37,7 @@ LFAboutDlg::LFAboutDlg(LFAboutDlgParameters* p, CWnd* pParent)
 				UINT valLen = MAX_PATH;
 				LPVOID valPtr = NULL;
 				LPCWSTR valData = NULL;
-				if (VerQueryValue(lpInfo, TEXT("\\"), &valPtr, &valLen))
+				if (VerQueryValue(lpInfo, _T("\\"), &valPtr, &valLen))
 				{
 					VS_FIXEDFILEINFO* pFinfo = (VS_FIXEDFILEINFO*)valPtr;
 					p_Parameters->Version.Format(_T("%d.%d.%d"), 
@@ -45,13 +45,13 @@ LFAboutDlg::LFAboutDlg(LFAboutDlgParameters* p, CWnd* pParent)
 						(pFinfo->dwProductVersionMS) & 0xFF,
 						(pFinfo->dwProductVersionLS >> 16) & 0xFF);
 				}
-				if (VerQueryValue(lpInfo,TEXT("StringFileInfo\\000004E4\\LegalCopyright"),(void**)&valData,&valLen))
+				if (VerQueryValue(lpInfo, _T("StringFileInfo\\000004E4\\LegalCopyright"), (void**)&valData, &valLen))
 				{
 					p_Parameters->Copyright = valData;
 				}
 				else
 				{
-					p_Parameters->Copyright="© liquidFOLDERS";
+					p_Parameters->Copyright = _T("© liquidFOLDERS");
 				}
 			}
 			delete[] lpInfo;

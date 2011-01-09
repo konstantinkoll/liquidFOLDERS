@@ -28,10 +28,14 @@ public:
 protected:
 	BOOL m_Dismissed;
 
+	void AdjustLayout();
+
 	afx_msg void OnDestroy();
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnPaint();
+	afx_msg void OnSize(UINT nType, INT cx, INT cy);
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
+	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
 	DECLARE_MESSAGE_MAP()
 
 private:
@@ -41,6 +45,10 @@ private:
 	HICON hIcon;
 	INT m_IconCX;
 	INT m_IconCY;
+	INT m_GradientCY;
 	CString m_Text;
+	CRect m_RectClose;
+	BOOL m_CloseHover;
+	BOOL m_ClosePressed;
 	UINT m_Command;
 };

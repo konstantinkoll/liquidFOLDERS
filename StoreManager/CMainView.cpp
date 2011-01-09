@@ -210,17 +210,18 @@ void CMainView::UpdateSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pC
 
 void CMainView::DismissNotification()
 {
+	m_wndExplorerNotification.DismissNotification();
 }
 
-void CMainView::ShowNotification(LPCWSTR Icon, CString Message, UINT Command)
+void CMainView::ShowNotification(UINT Type, CString Message, UINT Command)
 {
-	// TODO
+	m_wndExplorerNotification.SetNotification(Type, Message, Command);
 }
 
-void CMainView::ShowNotification(LPCWSTR Icon, UINT ResID, UINT Command)
+void CMainView::ShowNotification(UINT Type, UINT ResID, UINT Command)
 {
 	WCHAR* Message = LFGetErrorText(ResID);
-	ShowNotification(Icon, Message, Command);
+	ShowNotification(Type, Message, Command);
 	free(Message);
 }
 
@@ -234,6 +235,9 @@ void CMainView::AdjustLayout()
 
 	const UINT ExplorerHeight = m_wndExplorerHeader.GetPreferredHeight();
 	m_wndExplorerHeader.SetWindowPos(NULL, rect.left, rect.top+TaskHeight, rect.Width(), ExplorerHeight, SWP_NOACTIVATE | SWP_NOZORDER);
+
+	const UINT NotificationHeight = m_wndExplorerNotification.GetPreferredHeight();
+	m_wndExplorerNotification.SetWindowPos(&wndTop, rect.left+32, rect.bottom-NotificationHeight, rect.Width()-64, NotificationHeight, SWP_NOACTIVATE);
 
 	if (p_wndFileView)
 		p_wndFileView->SetWindowPos(NULL, rect.left, rect.top+TaskHeight+ExplorerHeight, rect.Width(), rect.Height()-ExplorerHeight-TaskHeight, SWP_NOACTIVATE | SWP_NOZORDER);
@@ -381,7 +385,7 @@ BOOL CMainView::UpdateTrashFlag(BOOL Trash, BOOL All)
 	RemoveTransactedItems(tl);
 
 	if (tl->m_LastError>LFCancel)
-		ShowNotification(IDI_ERROR, tl->m_LastError);
+		ShowNotification(ENT_ERROR, tl->m_LastError);
 
 	BOOL changes = tl->m_Changes;
 	LFFreeTransactionList(tl);
@@ -395,7 +399,7 @@ BOOL CMainView::DeleteFiles(BOOL All)
 	RemoveTransactedItems(tl);
 
 	if (tl->m_LastError>LFCancel)
-		ShowNotification(IDI_ERROR, tl->m_LastError);
+		ShowNotification(ENT_ERROR, tl->m_LastError);
 
 	BOOL changes = tl->m_Changes;
 	LFFreeTransactionList(tl);
@@ -425,7 +429,7 @@ BOOL CMainView::UpdateItems(LFVariantData* value1, LFVariantData* value2, LFVari
 	}
 
 	if (tl->m_LastError>LFCancel)
-		ShowNotification(IDI_ERROR, tl->m_LastError);
+		ShowNotification(ENT_ERROR, tl->m_LastError);
 
 	BOOL changes = tl->m_Changes;
 	LFFreeTransactionList(tl);
@@ -538,6 +542,10 @@ INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	// Explorer header
 	if (!m_wndExplorerHeader.Create(this, 2))
+		return -1;
+
+	// Explorer notification
+	if (!m_wndExplorerNotification.Create(this, 4))
 		return -1;
 
 	return 0;
@@ -683,7 +691,7 @@ LRESULT CMainView::OnRenameItem(WPARAM wParam, LPARAM lParam)
 		UpdateSearchResult(p_RawFiles, p_CookedFiles, GetFocusItem());
 
 	if (tl->m_LastError>LFCancel)
-		ShowNotification(IDI_ERROR, tl->m_LastError);
+		ShowNotification(ENT_ERROR, tl->m_LastError);
 
 	BOOL changes = tl->m_Changes;
 	LFFreeTransactionList(tl);

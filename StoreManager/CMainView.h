@@ -22,8 +22,8 @@ public:
 	void UpdateViewOptions(INT Context);
 	void UpdateSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, INT FocusItem);
 	void DismissNotification();
-	void ShowNotification(LPCWSTR Icon, CString Message, UINT Command=0);
-	void ShowNotification(LPCWSTR Icon, UINT ResID, UINT Command=0);
+	void ShowNotification(UINT Type, CString Message, UINT Command=0);
+	void ShowNotification(UINT Type, UINT ResID, UINT Command=0);
 	INT GetFocusItem();
 	INT GetSelectedItem();
 	INT GetNextSelectedItem(INT n);
@@ -34,6 +34,7 @@ protected:
 	CTaskbar m_wndTaskbar;
 	CExplorerHeader m_wndExplorerHeader;
 	CFileView* p_wndFileView;
+	CExplorerNotification m_wndExplorerNotification;
 	LFSearchResult* p_RawFiles;
 	LFSearchResult* p_CookedFiles;
 	INT m_Context;

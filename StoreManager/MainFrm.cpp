@@ -245,6 +245,7 @@ INT CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		RawFiles = LFQuery(ActiveFilter);
 	}
 	OnCookFiles();
+	m_wndMainView.ShowNotification(ENT_WARNING, _T("This is a test for the new notification bar."));
 
 	return 0;
 }
@@ -490,7 +491,6 @@ void CMainFrame::UpdateSearchResult(BOOL SetEmpty, INT FocusItem)
 	m_wndMainView.UpdateSearchResult(SetEmpty ? NULL : RawFiles, SetEmpty ? NULL : CookedFiles, FocusItem);
 
 	ActiveViewID = ActiveViewParameters->Mode;
-	UpdateRibbon();
 }
 
 void CMainFrame::OnChangeChildView(UINT nID)
@@ -927,12 +927,12 @@ void CMainFrame::NavigateTo(LFFilter* f, UINT NavMode, INT FocusItem, INT FirstA
 
 	if (CookedFiles->m_LastError>LFCancel)
 	{
-		theApp.PlayWarningSound();
-//		ShowCaptionBar(ActiveFilter->Result.FilterType==LFFilterTypeError ? IDI_ERROR : IDI_EXCLAMATION, CookedFiles->m_LastError, CookedFiles->m_LastError==LFIndexAccessError ? IDM_STORES_MAINTAINALL : 0);
+		m_wndMainView.ShowNotification(ActiveFilter->Result.FilterType==LFFilterTypeError ? ENT_ERROR : ENT_WARNING, CookedFiles->m_LastError, CookedFiles->m_LastError==LFIndexAccessError ? IDM_STORES_MAINTAINALL : 0);
 	}
 	else
 	{
-		m_wndMainView.DismissNotification();
+//		m_wndMainView.DismissNotification();
+		m_wndMainView.ShowNotification(ENT_INFO, _T("Test"));
 	}
 }
 
@@ -1008,25 +1008,6 @@ void CMainFrame::OnItemOpen()
 }
 
 // TODO
-void CMainFrame::UpdateRibbon()
-{
-	// Im Debug-Modus bleiben alle Kategorien sichtbar
-	#ifndef _DEBUG
-	if (!IsClipboard)
-	{
-		BOOL change = FALSE;
-		if (m_wndRibbonBar.GetCategory(RibbonCategory_View_Globe)->IsVisible()!=(ActiveViewID==LFViewGlobe))
-		{
-			m_wndRibbonBar.ShowCategory(RibbonCategory_View_Globe, ActiveViewID==LFViewGlobe);
-			change = TRUE;
-		}
-		if (change)
-			m_wndRibbonBar.RecalcLayout();
-	}
-	#endif
-}
-
-// TODO
 void CMainFrame::OnUpdateSelection()
 {
 	m_wndInspector.UpdateStart(ActiveFilter);
@@ -1067,7 +1048,6 @@ void CMainFrame::OnUpdateViewOptions()
 	}
 
 	ActiveViewID = ActiveViewParameters->Mode;
-	UpdateRibbon();
 }
 
 void CMainFrame::OnUpdateSortOptions()
@@ -1076,7 +1056,6 @@ void CMainFrame::OnUpdateSortOptions()
 	OnCookFiles(m_wndMainView.GetFocusItem());
 
 	ActiveViewID = ActiveViewParameters->Mode;
-	UpdateRibbon();
 }
 
 LRESULT CMainFrame::OnCookFiles(WPARAM wParam, LPARAM /*lParam*/)

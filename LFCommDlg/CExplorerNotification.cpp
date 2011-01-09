@@ -24,6 +24,9 @@ CExplorerNotification::CExplorerNotification()
 	m_IconCX = GetSystemMetrics(SM_CXICON);
 	m_IconCY = GetSystemMetrics(SM_CYICON);
 	ImageList_GetIconSize(p_App->m_SystemImageListLarge, &m_IconCX, &m_IconCY);
+
+	m_GradientCY = max(m_IconCY/16,2);
+	m_CloseHover = m_ClosePressed = FALSE;
 }
 
 BOOL CExplorerNotification::Create(CWnd* pParentWnd, UINT nID)
@@ -38,7 +41,7 @@ BOOL CExplorerNotification::Create(CWnd* pParentWnd, UINT nID)
 
 UINT CExplorerNotification::GetPreferredHeight()
 {
-	return m_IconCY/16+2*BORDERY+m_IconCY+2;
+	return m_GradientCY+2*BORDERY+m_IconCY+2;
 }
 
 void CExplorerNotification::SetNotification(UINT Type, CString Text, UINT Command)
@@ -96,12 +99,25 @@ void CExplorerNotification::DismissNotification()
 	}
 }
 
+void CExplorerNotification::AdjustLayout()
+{
+	CSize sz = CMenuImages::Size();
+	GetClientRect(m_RectClose);
+
+	m_RectClose.top += m_GradientCY+BORDERY+1;
+	m_RectClose.bottom = m_RectClose.top+sz.cy;
+	m_RectClose.right -= BORDERY-1;
+	m_RectClose.left = m_RectClose.right-sz.cx;
+}
+
 
 BEGIN_MESSAGE_MAP(CExplorerNotification, CWnd)
 	ON_WM_DESTROY()
 	ON_WM_ERASEBKGND()
 	ON_WM_PAINT()
+	ON_WM_SIZE()
 	ON_WM_LBUTTONDOWN()
+	ON_WM_CTLCOLOR()
 END_MESSAGE_MAP()
 
 void CExplorerNotification::OnDestroy()
@@ -141,12 +157,14 @@ void CExplorerNotification::OnPaint()
 
 	Graphics g(dc);
 	LinearGradientBrush brush(Point(0, 0), Point(rect.Width()+1, 0), Color(255, m_FirstCol & 0xFF, (m_FirstCol>>8) & 0xFF, (m_FirstCol>>16) & 0xFF), Color(255, m_SecondCol & 0xFF, (m_SecondCol>>8) & 0xFF, (m_SecondCol>>16) & 0xFF));
-	g.FillRectangle(&brush, rect.top, rect.left, rect.Width(), m_IconCY/16);
-	rect.top += m_IconCY/16;
+	g.FillRectangle(&brush, rect.top, rect.left, rect.Width(), m_GradientCY);
+	rect.top += m_GradientCY;
 
 	DrawIconEx(dc, rect.left+BORDERX, rect.top+(rect.Height()-m_IconCY)/2, hIcon, m_IconCX, m_IconCY, 0, NULL, DI_NORMAL);
 	rect.left += 2*BORDERX+m_IconCX;
-	rect.right -= BORDERX;
+	rect.right = m_RectClose.left-BORDERX;
+
+	CMenuImages::Draw(&dc, CMenuImages::IdClose, m_RectClose, (!Themed || m_ClosePressed) ? CMenuImages::ImageBlack : m_CloseHover ? CMenuImages::ImageDkGray : CMenuImages::ImageLtGray);
 
 	CRect rectText(rect);
 
@@ -162,6 +180,24 @@ void CExplorerNotification::OnPaint()
 	dc.SelectObject(pOldBitmap);
 }
 
+void CExplorerNotification::OnSize(UINT nType, INT cx, INT cy)
+{
+	CWnd::OnSize(nType, cx, cy);
+	AdjustLayout();
+}
+
 void CExplorerNotification::OnLButtonDown(UINT nFlags, CPoint point)
 {
+}
+
+HBRUSH CExplorerNotification::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
+{
+	// Call base class version at first, else it will override changes
+	HBRUSH hbr = CWnd::OnCtlColor(pDC, pWnd, nCtlColor);
+
+	pDC->SetBkMode(TRANSPARENT);
+	pDC->SetDCBrushColor(IsCtrlThemed() ? 0xFFFFFF : GetSysColor(COLOR_WINDOW));
+	hbr = (HBRUSH)GetStockObject(DC_BRUSH);
+
+	return hbr;
 }
