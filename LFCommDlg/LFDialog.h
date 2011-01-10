@@ -36,8 +36,10 @@ protected:
 	virtual void OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect);
 	virtual void CheckLicenseKey(LFLicense* License=NULL);
 
-	void AddBottomControl(CWnd* pChildWnd);
-	void AddBottomControl(UINT nID);
+	void SetBottomLeftControl(CWnd* pChildWnd);
+	void SetBottomLeftControl(UINT nID);
+	void AddBottomRightControl(CWnd* pChildWnd);
+	void AddBottomRightControl(UINT nID);
 
 	afx_msg BOOL OnInitDialog();
 	afx_msg void OnDestroy();
@@ -62,6 +64,7 @@ private:
 	INT m_BackBufferL;
 	INT m_BackBufferH;
 	HBRUSH hBackgroundBrush;
-	std::list<CWnd*> m_BottomControls;
+	CWnd* p_BottomLeftControl;
+	std::list<CWnd*> m_BottomRightControls;
 	CPoint m_LastSize;
 };

@@ -815,16 +815,6 @@ void CMainFrame::InitializeRibbon()
 
 	m_wndRibbonBar.SetActiveCategory(m_wndRibbonBar.GetCategory(RibbonDefaultCategory));
 
-	/*
-	AFX_CategoryColor_Red
-	AFX_CategoryColor_Orange
-	AFX_CategoryColor_Yellow
-	AFX_CategoryColor_Green
-	AFX_CategoryColor_Blue
-	AFX_CategoryColor_Indigo
-	AFX_CategoryColor_Violet
-	*/
-
 	// Alle Kategorien anzeigen
 	if (!IsClipboard)
 		m_wndRibbonBar.ShowCategory(RibbonCategory_View_Globe);

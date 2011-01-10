@@ -123,7 +123,7 @@ LFCommDlg_API void LFImportFolder(CHAR* StoreID, CWnd* pParentWnd)
 	CString hint;
 	ENSURE(hint.LoadString(IDS_IMPORTFOLDER_HINT));
 
-	LFBrowseForFolderDlg dlg(TRUE, _T(""), pParentWnd, caption, hint);
+	LFBrowseForFolderDlg dlg(TRUE, TRUE, _T(""), pParentWnd, caption, hint);
 	if (dlg.DoModal()==IDOK)
 	{
 		LFFileImportList* il = LFAllocFileImportList();
@@ -133,7 +133,7 @@ LFCommDlg_API void LFImportFolder(CHAR* StoreID, CWnd* pParentWnd)
 		LFItemDescriptor* it = LFAllocItemDescriptor();
 		LFItemTemplateDlg tdlg(pParentWnd, it, StoreID);
 		if (tdlg.DoModal()!=IDCANCEL)
-			LFErrorBox(LFImportFiles(StoreID, il, it), pParentWnd->GetSafeHwnd());
+			LFErrorBox(LFImportFiles(StoreID, il, it, true, dlg.m_DeleteSource==TRUE), pParentWnd->GetSafeHwnd());
 
 		LFFreeItemDescriptor(it);
 		LFFreeFileImportList(il);

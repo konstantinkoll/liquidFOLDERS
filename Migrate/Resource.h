@@ -47,8 +47,6 @@
 #define IDS_NOFOLDERS_MESSAGE           1024
 #define IDD_BOTTOMAREA                  2000
 #define IDC_MIGRATE                     2001
-#define IDC_DELETESOURCE                2002
-#define IDC_CHECK1                      2018
 #define IDD_CHOOSEFOLDER                2100
 #define IDC_EXPANDALL                   2101
 #define IDD_CHOOSEPROPERTY              2200

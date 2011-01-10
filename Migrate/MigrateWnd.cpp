@@ -144,7 +144,7 @@ void CMigrateWnd::OnSelectRoot()
 	CString hint;
 	ENSURE(hint.LoadString(IDS_BROWSEFORFOLDER_HINT));
 
-	LFBrowseForFolderDlg dlg(FALSE, _T(""), this, caption, hint);
+	LFBrowseForFolderDlg dlg(FALSE, FALSE, _T(""), this, caption, hint);
 	if (dlg.DoModal()==IDOK)
 		m_wndFolder.SetItem(dlg.m_FolderPIDL);
 }

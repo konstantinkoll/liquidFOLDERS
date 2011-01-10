@@ -817,8 +817,7 @@ EXSTYLE WS_EX_CONTROLPARENT
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "&Lancer la migration",IDC_MIGRATE,7,7,83,14,WS_DISABLED
-    CONTROL         "&Effacer des fichiers de source",IDC_DELETESOURCE,
-                    "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,104,9,120,10
+    CONTROL         "&Effacer des fichiers de source",IDC_DELETESOURCE,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,104,9,120,10
 END
 
 IDD_CHOOSEFOLDER DIALOGEX 0, 0, 221, 28
@@ -860,8 +859,7 @@ STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS
 CAPTION "Rapport final"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    CONTROL         "Abandonner &les dossiers importées avec succès",IDC_UNCHECKMIGRATED,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,289,250,10
+    CONTROL         "Abandonner &les dossiers importées avec succès",IDC_UNCHECKMIGRATED,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,289,250,10
     DEFPUSHBUTTON   "OK",IDOK,267,287,50,14,WS_GROUP
     CONTROL         "",IDC_TABS,"SysTabControl32",WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_GROUP | WS_TABSTOP,7,7,310,272
     LTEXT           "Dossiers:",IDC_STATIC,14,27,296,8

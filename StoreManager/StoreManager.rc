@@ -200,7 +200,7 @@ END
 
 IDD_SORTOPTIONS DIALOGEX 0, 0, 289, 319
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
-CAPTION "„%s“ anordnen nach"
+CAPTION "„%s“ organisieren nach"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     CONTROL         "",IDC_SORTATTRIBUTE,"SysListView32",LVS_LIST | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SORTASCENDING | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_ALIGNLEFT | LVS_NOCOLUMNHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,14,27,261,206
@@ -392,10 +392,10 @@ END
 
 IDM_TAGCLOUD_SORT MENU 
 BEGIN
-    MENUITEM "Sort by &value",              IDM_TAGCLOUD_SORTVALUE
-    MENUITEM "Sort by &count",              IDM_TAGCLOUD_SORTCOUNT
+    MENUITEM "Sort by &value",                  IDM_TAGCLOUD_SORTVALUE
+    MENUITEM "Sort by &count",                  IDM_TAGCLOUD_SORTCOUNT
     MENUITEM SEPARATOR
-    MENUITEM "&Hide rare tags",             IDM_TAGCLOUD_HIDERARE
+    MENUITEM "&Hide rare tags",                 IDM_TAGCLOUD_HIDERARE
 END
 
 
@@ -425,7 +425,7 @@ END
 
 IDD_SORTOPTIONS DIALOGEX 0, 0, 289, 319
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
-CAPTION "Arrange ""%s"" by"
+CAPTION "Organize ""%s"" by"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     CONTROL         "",IDC_SORTATTRIBUTE,"SysListView32",LVS_LIST | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SORTASCENDING | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_ALIGNLEFT | LVS_NOCOLUMNHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,14,27,261,206
@@ -517,14 +517,14 @@ BEGIN
     ID_APP_CLOSE            "Closes this window.\nClose"
     ID_APP_CLOSEOTHERS      "Closes all StoreManager windows except this one.\nClose all others"
     ID_APP_VIEWOPTIONS      "Opens a dialog window with further display options.\nDisplay as"
-    ID_APP_SORTOPTIONS      "Opens a dialog window with further arrangement options.\nArrange by"
+    ID_APP_SORTOPTIONS      "Opens a dialog window with further sort options.\nOrganize by"
 END
 
 STRINGTABLE 
 BEGIN
     IDS_VIEWGROUP1          "Basic views"
     IDS_VIEWGROUP2          "Enhanced views"
-    IDS_CONTEXTMENU_SORTOPTIONS "&Arrange ""%s"" by..."
+    IDS_CONTEXTMENU_SORTOPTIONS "&Organize ""%s"" by..."
     IDS_CONTEXTMENU_AUTODIRS "&Group into subfolders"
     IDS_CONTEXTMENU_VIEWOPTIONS "&Display ""%s"" as..."
     IDS_CONTEXTMENU_OPEN    "&Open"
@@ -743,7 +743,7 @@ BEGIN
     IDS_SUBFOLDERS_MANDATORY "Subfolders are mandatory for this view."
     IDS_SUBFOLDERS_NOTAVAIL "Subfolders are not available in this context."
     IDS_GROUPBOX_SORT       "Sort items by this property"
-    IDS_GROUPBOX_GROUP      "Arrange items by this property"
+    IDS_GROUPBOX_GROUP      "Organize items by this property"
 END
 
 STRINGTABLE 
@@ -789,7 +789,7 @@ END
 
 IDD_SORTOPTIONS DIALOGEX 0, 0, 289, 319
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
-CAPTION "Ordenar ""%s"" por"
+CAPTION "Organizar ""%s"" por"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     CONTROL         "",IDC_SORTATTRIBUTE,"SysListView32",LVS_LIST | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SORTASCENDING | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_ALIGNLEFT | LVS_NOCOLUMNHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,14,27,261,206
@@ -898,7 +898,7 @@ END
 
 IDD_SORTOPTIONS DIALOGEX 0, 0, 299, 319
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
-CAPTION """%s"" disposer après"
+CAPTION """%s"" organiser après"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     CONTROL         "",IDC_SORTATTRIBUTE,"SysListView32",LVS_LIST | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SORTASCENDING | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_ALIGNLEFT | LVS_NOCOLUMNHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,14,27,271,206

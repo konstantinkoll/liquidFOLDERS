@@ -148,7 +148,7 @@ BOOL LFChooseStoreDlg::OnInitDialog()
 	SendMessage(MessageIDs->StoresChanged, LFMSGF_IntStores | LFMSGF_ExtHybStores);
 
 	AdjustLayout();
-	AddBottomControl(IDM_STORES_CREATENEW);
+	AddBottomRightControl(IDM_STORES_CREATENEW);
 
 	return FALSE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird
 }

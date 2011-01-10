@@ -162,6 +162,7 @@
 #define IDD_BROWSEFORFOLDER             22100
 #define IDC_EXPLORERHEADER              22101
 #define IDC_SHELLTREE                   22102
+#define IDC_DELETESOURCE                22103
 #define IDD_CREATENEWSTORE              22200
 #define IDD_REGISTRY                    22300
 #define IDI_SHIELD_VISTA                32519

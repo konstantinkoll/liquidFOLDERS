@@ -25,6 +25,7 @@ LFDialog::LFDialog(UINT nIDTemplate, UINT _Design, CWnd* pParent)
 	hBackgroundBrush = NULL;
 	m_Backdrop = m_Logo = NULL;
 	m_BackBufferL = m_BackBufferH = m_UACHeight = 0;
+	p_BottomLeftControl = NULL;
 }
 
 void LFDialog::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
@@ -147,18 +148,32 @@ void LFDialog::CheckLicenseKey(LFLicense* License)
 	}
 }
 
-void LFDialog::AddBottomControl(CWnd* pChildWnd)
+void LFDialog::SetBottomLeftControl(CWnd* pChildWnd)
 {
 	ASSERT(pChildWnd);
 
-	m_BottomControls.push_back(pChildWnd);
+	p_BottomLeftControl = pChildWnd;
 }
 
-void LFDialog::AddBottomControl(UINT nID)
+void LFDialog::SetBottomLeftControl(UINT nID)
 {
 	CWnd* pChildWnd = GetDlgItem(nID);
 	if (pChildWnd)
-		AddBottomControl(pChildWnd);
+		SetBottomLeftControl(pChildWnd);
+}
+
+void LFDialog::AddBottomRightControl(CWnd* pChildWnd)
+{
+	ASSERT(pChildWnd);
+
+	m_BottomRightControls.push_back(pChildWnd);
+}
+
+void LFDialog::AddBottomRightControl(UINT nID)
+{
+	CWnd* pChildWnd = GetDlgItem(nID);
+	if (pChildWnd)
+		AddBottomRightControl(pChildWnd);
 }
 
 void LFDialog::AdjustLayout()
@@ -233,8 +248,8 @@ BOOL LFDialog::OnInitDialog()
 	GetClientRect(rect);
 	m_LastSize = CPoint(rect.Width(), rect.Height());
 
-	AddBottomControl(IDOK);
-	AddBottomControl(IDCANCEL);
+	AddBottomRightControl(IDOK);
+	AddBottomRightControl(IDCANCEL);
 
 	return TRUE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird
 }
@@ -304,8 +319,10 @@ void LFDialog::OnSize(UINT nType, INT cx, INT cy)
 	m_LastSize.x = cx;
 	m_LastSize.y = cy;
 
-	std::list<CWnd*>::iterator ppWnd = m_BottomControls.begin();
-	while (ppWnd!=m_BottomControls.end())
+	INT MaxRight = cx;
+
+	std::list<CWnd*>::iterator ppWnd = m_BottomRightControls.begin();
+	while (ppWnd!=m_BottomRightControls.end())
 	{
 		CRect rect;
 		(*ppWnd)->GetWindowRect(rect);
@@ -313,6 +330,17 @@ void LFDialog::OnSize(UINT nType, INT cx, INT cy)
 
 		(*ppWnd)->SetWindowPos(NULL, rect.left+diff.x, rect.top+diff.y, rect.Width(), rect.Height(), SWP_NOSIZE | SWP_NOACTIVATE | SWP_NOZORDER);
 		ppWnd++;
+
+		MaxRight = min(MaxRight, rect.left+diff.x);
+	}
+
+	if (p_BottomLeftControl)
+	{
+		CRect rect;
+		p_BottomLeftControl->GetWindowRect(rect);
+		ScreenToClient(&rect);
+
+		p_BottomLeftControl->SetWindowPos(NULL, rect.left, rect.top+diff.y, MaxRight-2*rect.left, rect.Height(), SWP_NOACTIVATE | SWP_NOZORDER);
 	}
 
 	AdjustLayout();
