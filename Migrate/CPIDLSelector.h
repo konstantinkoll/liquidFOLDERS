@@ -11,8 +11,6 @@
 class CPIDLDropdownWindow : public CDropdownWindow
 {
 public:
-	CPIDLDropdownWindow();
-
 	void PopulateList();
 
 protected:

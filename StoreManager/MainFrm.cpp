@@ -245,7 +245,6 @@ INT CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		RawFiles = LFQuery(ActiveFilter);
 	}
 	OnCookFiles();
-	m_wndMainView.ShowNotification(ENT_WARNING, _T("This is a test for the new notification bar."));
 
 	return 0;
 }
@@ -826,11 +825,9 @@ void CMainFrame::InitializeRibbon()
 	AFX_CategoryColor_Violet
 	*/
 
-	// Im Debug-Modus alle Kategorien anzeigen
-		#ifdef _DEBUG
+	// Alle Kategorien anzeigen
 	if (!IsClipboard)
 		m_wndRibbonBar.ShowCategory(RibbonCategory_View_Globe);
-	#endif
 
 	// Symbolleistenbefehle für Schnellzugriff hinzufügen
 	CList<UINT, UINT> lstQATCmds;
@@ -842,39 +839,6 @@ void CMainFrame::InitializeRibbon()
 	m_wndRibbonBar.AddToTabs(new CMFCRibbonButton(ID_APP_HELP, NULL, m_PanelImages.ExtractIcon(0)));
 }
 
-/*void CMainFrame::ShowCaptionBar(LPCWSTR Icon, LPCWSTR Message, INT Command)
-{
-	// Text und Icon
-	m_wndCaptionBar.SetText(Message, CMFCCaptionBar::ALIGN_LEFT);
-	m_wndCaptionBar.SetIcon(Icon, CMFCCaptionBar::ALIGN_LEFT);
-	m_wndCaptionBar.Invalidate();
-
-	// Button
-	if (Command)
-	{
-		m_wndCaptionBar.SetButton(theApp.GetCommandName(Command)+_T("..."), Command, CMFCCaptionBar::ALIGN_LEFT, FALSE);
-
-		CString strTemp;
-		ENSURE(strTemp.LoadString(Command));
-		INT y = strTemp.Find('\n');
-		if (!y)
-			y = strTemp.GetLength();
-		m_wndCaptionBar.SetButtonToolTip(strTemp.Left(y));
-		m_wndCaptionBar.EnableButton(TRUE);
-	}
-	else
-	{
-		m_wndCaptionBar.SetButton(_T(" "), 0, CMFCCaptionBar::ALIGN_LEFT, FALSE);
-		m_wndCaptionBar.EnableButton(FALSE);
-	}
-
-	// Balken sichtbar machen
-	if (!m_wndCaptionBar.IsVisible())
-	{
-		m_wndCaptionBar.ShowWindow(SW_SHOW);
-		RecalcLayout(FALSE);
-	}
-}*/
 
 void CMainFrame::NavigateTo(LFFilter* f, UINT NavMode, INT FocusItem, INT FirstAggregate, INT LastAggregate)
 {
@@ -927,12 +891,11 @@ void CMainFrame::NavigateTo(LFFilter* f, UINT NavMode, INT FocusItem, INT FirstA
 
 	if (CookedFiles->m_LastError>LFCancel)
 	{
-		m_wndMainView.ShowNotification(ActiveFilter->Result.FilterType==LFFilterTypeError ? ENT_ERROR : ENT_WARNING, CookedFiles->m_LastError, CookedFiles->m_LastError==LFIndexAccessError ? IDM_STORES_MAINTAINALL : 0);
+		m_wndMainView.ShowNotification(ActiveFilter->Result.FilterType==LFFilterTypeError ? ENT_ERROR : ENT_WARNING, CookedFiles->m_LastError, CookedFiles->m_LastError==LFIndexAccessError ? IDM_STORES_REPAIRCORRUPTEDINDEX : 0);
 	}
 	else
 	{
-//		m_wndMainView.DismissNotification();
-		m_wndMainView.ShowNotification(ENT_INFO, _T("Test"));
+		m_wndMainView.DismissNotification();
 	}
 }
 

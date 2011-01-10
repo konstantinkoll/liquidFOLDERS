@@ -11,11 +11,6 @@
 // CPIDLDropdownWindow
 //
 
-CPIDLDropdownWindow::CPIDLDropdownWindow()
-	: CDropdownWindow()
-{
-}
-
 BOOL CPIDLDropdownWindow::AddPIDL(LPITEMIDLIST pidl, UINT Category, BOOL FreeOnFail)
 {
 	if (!pidl)

@@ -5,7 +5,6 @@
 #pragma once
 #include "CMainView.h"
 #include "CPIDLSelector.h"
-#include "CStoreSelector.h"
 
 
 // CMigrateWnd

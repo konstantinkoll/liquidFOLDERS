@@ -714,6 +714,7 @@ BEGIN
     IDM_STORE_PROPERTIES    "Displays the properties of the selected store.\nProperties"
     IDM_STORES_CREATENEW    "Creates a new store for your files.\nCreate new store"
     IDM_STORES_MAINTAINALL  "Executes maintenance work on all stores.\nRun maintenance"
+    IDM_STORES_REPAIRCORRUPTEDINDEX "Run maintenance"
 END
 
 STRINGTABLE 
@@ -747,7 +748,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    ID_PANE_CAPTIONBAR      "Shows or hides the caption bar.\nCaption bar"
     ID_PANE_FILTERWND       "Shows or hides the filter pane.\nFilter pane"
     ID_PANE_INSPECTORWND    "Shows or hides the inspector pane.\nInspector pane"
     ID_PANE_HISTORYWND      "Shows or hides the history pane.\nHistory pane"

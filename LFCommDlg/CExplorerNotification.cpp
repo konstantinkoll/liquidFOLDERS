@@ -76,18 +76,43 @@ void CExplorerNotification::SetNotification(UINT Type, CString Text, UINT Comman
 
 	m_Text = Text;
 
+	if (Command)
+	{
+		ENSURE(m_CommandText.LoadString(Command));
+
+		INT pos = m_CommandText.Find(L'\n');
+		if (pos!=-1)
+			m_CommandText.Delete(0, pos+1);
+
+		m_CommandButton.SetWindowText(m_CommandText);
+		m_CommandButton.EnableWindow(TRUE);
+		m_CommandButton.ShowWindow(SW_SHOW);
+	}
+	else
+	{
+		m_CommandButton.ShowWindow(SW_HIDE);
+		m_CommandButton.EnableWindow(FALSE);
+	}
+	m_Command = Command;
+
+	AdjustLayout();
 	ShowWindow(SW_SHOW);
 	Invalidate();
 
 	if (Type!=ENT_READY)
 		p_App->PlayWarningSound();
+
+	m_Dismissed = FALSE;
 }
 
 void CExplorerNotification::DismissNotification()
 {
 	if (!m_Dismissed)
 	{
+		ReleaseCapture();
 		ShowWindow(SW_HIDE);
+		m_CommandButton.EnableWindow(FALSE);
+		m_Command = 0;
 
 		if (hIcon)
 		{
@@ -101,24 +126,68 @@ void CExplorerNotification::DismissNotification()
 
 void CExplorerNotification::AdjustLayout()
 {
+	// Close button
 	CSize sz = CMenuImages::Size();
 	GetClientRect(m_RectClose);
+	CRect rectClient(m_RectClose);
 
 	m_RectClose.top += m_GradientCY+BORDERY+1;
 	m_RectClose.bottom = m_RectClose.top+sz.cy;
 	m_RectClose.right -= BORDERY-1;
 	m_RectClose.left = m_RectClose.right-sz.cx;
+
+	// Command button
+	if (m_Command)
+	{
+		CSize sz;
+
+		CDC* dc = GetDC();
+		HGDIOBJ hOldFont = SelectObject(*dc, GetStockObject(DEFAULT_GUI_FONT));
+		sz = dc->GetTextExtent(m_CommandText);
+		dc->SelectObject(hOldFont);
+		ReleaseDC(dc);
+
+		const UINT Height = MulDiv(11, HIWORD(GetDialogBaseUnits()), 8)+1;
+		const UINT Width = sz.cx+Height+BORDERX;
+		m_RightMargin = m_RectClose.left-BORDERX-Width;
+
+		m_CommandButton.SetWindowPos(NULL, m_RightMargin, m_GradientCY+1+(rectClient.Height()-m_GradientCY-2-Height)/2, Width, Height, SWP_NOACTIVATE | SWP_NOZORDER);
+	}
+	else
+	{
+		m_RightMargin = m_RectClose.left;
+	}
 }
 
 
 BEGIN_MESSAGE_MAP(CExplorerNotification, CWnd)
+	ON_WM_CREATE()
 	ON_WM_DESTROY()
 	ON_WM_ERASEBKGND()
 	ON_WM_PAINT()
 	ON_WM_SIZE()
+	ON_WM_MOUSEMOVE()
+	ON_WM_MOUSELEAVE()
 	ON_WM_LBUTTONDOWN()
+	ON_WM_LBUTTONUP()
 	ON_WM_CTLCOLOR()
+	ON_BN_CLICKED(1, OnButtonClicked)
 END_MESSAGE_MAP()
+
+INT CExplorerNotification::OnCreate(LPCREATESTRUCT lpCreateStruct)
+{
+	if (CWnd::OnCreate(lpCreateStruct)==-1)
+		return -1;
+
+	CRect rect;
+	rect.SetRectEmpty();
+	if (!m_CommandButton.Create(_T(""), WS_CHILD | WS_DISABLED | WS_GROUP | WS_TABSTOP, rect, this, 1))
+		return -1;
+
+	m_CommandButton.SendMessage(WM_SETFONT, (WPARAM)GetStockObject(DEFAULT_GUI_FONT));
+
+	return 0;
+}
 
 void CExplorerNotification::OnDestroy()
 {
@@ -162,9 +231,9 @@ void CExplorerNotification::OnPaint()
 
 	DrawIconEx(dc, rect.left+BORDERX, rect.top+(rect.Height()-m_IconCY)/2, hIcon, m_IconCX, m_IconCY, 0, NULL, DI_NORMAL);
 	rect.left += 2*BORDERX+m_IconCX;
-	rect.right = m_RectClose.left-BORDERX;
+	rect.right = m_RightMargin-BORDERX;
 
-	CMenuImages::Draw(&dc, CMenuImages::IdClose, m_RectClose, (!Themed || m_ClosePressed) ? CMenuImages::ImageBlack : m_CloseHover ? CMenuImages::ImageDkGray : CMenuImages::ImageLtGray);
+	CMenuImages::Draw(&dc, CMenuImages::IdClose, m_RectClose, (!Themed || m_ClosePressed) ? CMenuImages::ImageDkGray : m_CloseHover ? CMenuImages::ImageGray : CMenuImages::ImageLtGray);
 
 	CRect rectText(rect);
 
@@ -186,8 +255,50 @@ void CExplorerNotification::OnSize(UINT nType, INT cx, INT cy)
 	AdjustLayout();
 }
 
-void CExplorerNotification::OnLButtonDown(UINT nFlags, CPoint point)
+void CExplorerNotification::OnMouseMove(UINT /*nFlags*/, CPoint point)
 {
+	if (m_CloseHover!=m_RectClose.PtInRect(point))
+	{
+		m_CloseHover = m_RectClose.PtInRect(point);
+		InvalidateRect(m_RectClose);
+	}
+
+	TRACKMOUSEEVENT tme;
+	tme.cbSize = sizeof(TRACKMOUSEEVENT);
+	tme.dwFlags = TME_LEAVE;
+	tme.hwndTrack = m_hWnd;
+	TrackMouseEvent(&tme);
+}
+
+void CExplorerNotification::OnMouseLeave()
+{
+	if (m_CloseHover)
+	{
+		m_CloseHover = FALSE;
+		InvalidateRect(m_RectClose);
+	}
+}
+
+void CExplorerNotification::OnLButtonDown(UINT /*nFlags*/, CPoint point)
+{
+	if (m_RectClose.PtInRect(point))
+	{
+		m_ClosePressed = TRUE;
+		InvalidateRect(m_RectClose);
+
+		SetCapture();
+	}
+}
+
+void CExplorerNotification::OnLButtonUp(UINT /*nFlags*/, CPoint point)
+{
+	if (m_RectClose.PtInRect(point))
+		DismissNotification();
+
+	m_ClosePressed = FALSE;
+	InvalidateRect(m_RectClose);
+
+	ReleaseCapture();
 }
 
 HBRUSH CExplorerNotification::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
@@ -200,4 +311,13 @@ HBRUSH CExplorerNotification::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 	hbr = (HBRUSH)GetStockObject(DC_BRUSH);
 
 	return hbr;
+}
+
+void CExplorerNotification::OnButtonClicked()
+{
+	if (m_Command)
+	{
+		GetOwner()->PostMessage(WM_COMMAND, m_Command);
+		DismissNotification();
+	}
 }

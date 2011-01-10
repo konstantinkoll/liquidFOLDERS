@@ -10,7 +10,7 @@
 // CStoreDropdownWindow
 //
 
-class CStoreDropdownWindow : public CDropdownWindow
+class AFX_EXT_CLASS CStoreDropdownWindow : public CDropdownWindow
 {
 public:
 	CStoreDropdownWindow();
@@ -18,7 +18,7 @@ public:
 	void PopulateList();
 
 protected:
-	LFSearchResult* result;
+	LFSearchResult* p_Result;
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();
@@ -32,7 +32,7 @@ protected:
 // CStoreSelector
 //
 
-class CStoreSelector : public CDropdownSelector
+class AFX_EXT_CLASS CStoreSelector : public CDropdownSelector
 {
 public:
 	CStoreSelector();

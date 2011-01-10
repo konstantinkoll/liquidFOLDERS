@@ -3,7 +3,6 @@
 //
 
 #include "stdafx.h"
-#include "Migrate.h"
 #include "CStoreSelector.h"
 #include "resource.h"
 
@@ -11,19 +10,21 @@
 // CStoreDropdownWindow
 //
 
+extern LFMessageIDs* MessageIDs;
+
 CStoreDropdownWindow::CStoreDropdownWindow()
 	: CDropdownWindow()
 {
-	result = NULL;
+	p_Result = NULL;
 }
 
 
 BEGIN_MESSAGE_MAP(CStoreDropdownWindow, CDropdownWindow)
 	ON_WM_CREATE()
 	ON_WM_DESTROY()
-	ON_REGISTERED_MESSAGE(theApp.MessageIDs->StoresChanged, OnUpdateStores)
-	ON_REGISTERED_MESSAGE(theApp.MessageIDs->StoreAttributesChanged, OnUpdateStores)
-	ON_REGISTERED_MESSAGE(theApp.MessageIDs->DefaultStoreChanged, OnUpdateStores)
+	ON_REGISTERED_MESSAGE(MessageIDs->StoresChanged, OnUpdateStores)
+	ON_REGISTERED_MESSAGE(MessageIDs->StoreAttributesChanged, OnUpdateStores)
+	ON_REGISTERED_MESSAGE(MessageIDs->DefaultStoreChanged, OnUpdateStores)
 	ON_NOTIFY(LVN_ITEMCHANGED, 1, OnItemChanged)
 	ON_BN_CLICKED(IDOK, OnCreateNewStore)
 END_MESSAGE_MAP()
@@ -37,11 +38,13 @@ INT CStoreDropdownWindow::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndList.SetImageList(&pApp->m_CoreImageListSmall, LVSIL_SMALL);
 	m_wndList.SetImageList(&pApp->m_CoreImageListLarge, LVSIL_NORMAL);
 
-	IMAGEINFO ii;
-	pApp->m_CoreImageListLarge.GetImageInfo(0, &ii);
+	INT cx = GetSystemMetrics(SM_CXSMICON);
+	INT cy = GetSystemMetrics(SM_CYSMICON);
+	ImageList_GetIconSize(pApp->m_CoreImageListLarge, &cx, &cy);
+
 	CDC* dc = GetWindowDC();
 	CFont* pOldFont = dc->SelectObject(&pApp->m_DefaultFont);
-	m_wndList.SetIconSpacing(CXDropdownListIconSpacing, ii.rcImage.bottom-ii.rcImage.top+dc->GetTextExtent(_T("Wy"), 2).cy*2+4);
+	m_wndList.SetIconSpacing(CXDropdownListIconSpacing, cy+dc->GetTextExtent(_T("Wy"), 2).cy*2+4);
 	dc->SelectObject(pOldFont);
 	ReleaseDC(dc);
 
@@ -50,28 +53,28 @@ INT CStoreDropdownWindow::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndList.EnableGroupView(TRUE);
 	m_wndList.SetView(LV_VIEW_TILE);
 
-	SendMessage(theApp.MessageIDs->StoresChanged, LFMSGF_IntStores | LFMSGF_ExtHybStores);
+	SendMessage(MessageIDs->StoresChanged, LFMSGF_IntStores | LFMSGF_ExtHybStores);
 
 	return 0;
 }
 
 void CStoreDropdownWindow::OnDestroy()
 {
-	LFFreeSearchResult(result);
+	LFFreeSearchResult(p_Result);
 
 	CDropdownWindow::OnDestroy();
 }
 
 LRESULT CStoreDropdownWindow::OnUpdateStores(WPARAM /*wParam*/, LPARAM /*lParam*/)
 {
-	if (result)
-		LFFreeSearchResult(result);
+	if (p_Result)
+		LFFreeSearchResult(p_Result);
 
 	LFFilter* filter = LFAllocFilter();
-	result = LFQuery(filter);
+	p_Result = LFQuery(filter);
 	LFFreeFilter(filter);
 
-	m_wndList.SetSearchResult(result);
+	m_wndList.SetSearchResult(p_Result);
 
 	return NULL;
 }
@@ -81,7 +84,7 @@ void CStoreDropdownWindow::OnItemChanged(NMHDR* pNMHDR, LRESULT* /*pResult*/)
 	NM_LISTVIEW* pNMListView = (NM_LISTVIEW*)pNMHDR;
 
 	if ((pNMListView->uChanged & LVIF_STATE) && (pNMListView->uNewState & LVIS_SELECTED))
-		GetOwner()->SendMessage(WM_SETITEM, NULL, (LPARAM)result->m_Items[pNMListView->iItem]);
+		GetOwner()->SendMessage(WM_SETITEM, NULL, (LPARAM)p_Result->m_Items[pNMListView->iItem]);
 }
 
 void CStoreDropdownWindow::OnCreateNewStore()

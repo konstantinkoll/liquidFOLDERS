@@ -12,6 +12,7 @@
 #include "..\LFCommDlg\CImageListTransparent.h"
 #include "..\LFCommDlg\CInspectorGrid.h"
 #include "..\LFCommDlg\CMapPreviewCtrl.h"
+#include "..\LFCommDlg\CStoreSelector.h"
 #include "..\LFCommDlg\CTagList.h"
 #include "..\LFCommDlg\CTaskbar.h"
 #include "..\LFCommDlg\CTaskButton.h"

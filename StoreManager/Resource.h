@@ -50,10 +50,9 @@
 #define ID_NAV_STORES                   408
 #define ID_NAV_HOME                     409
 #define ID_NAV_GOTOHISTORY              410
-#define ID_PANE_CAPTIONBAR              500
-#define ID_PANE_FILTERWND               501
-#define ID_PANE_INSPECTORWND            502
-#define ID_PANE_HISTORYWND              503
+#define ID_PANE_FILTERWND               500
+#define ID_PANE_INSPECTORWND            501
+#define ID_PANE_HISTORYWND              502
 #define ID_HISTORYLIST                  510
 #define ID_FILTER_CLEAR                 520
 #define ID_FILTER_EDITCONDITION         521
@@ -163,6 +162,7 @@
 #define IDS_GROUPBOX_SORT               2109
 #define IDS_GROUPBOX_GROUP              2110
 #define IDM_STORES_HIDEEMPTYDRIVES      3000
+#define IDM_STORES_REPAIRCORRUPTEDINDEX 3001
 #define IDM_HOME                        3100
 #define IDM_HOME_HIDEEMPTYDOMAINS       3101
 #define IDM_HOME_IMPORTFOLDER           3102
