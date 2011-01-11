@@ -392,7 +392,6 @@ void CStoreManagerApp::LoadViewOptions(INT context)
 	m_Views[context].GlobeLatitude = GetInt(_T("GlobeLatitude"), 1);
 	m_Views[context].GlobeLongitude = GetInt(_T("GlobeLongitude"), 1);
 	m_Views[context].GlobeZoom = GetInt(_T("GlobeZoom"), 70);
-	m_Views[context].GlobeShowBubbles = GetInt(_T("GlobeShowBubbles"), TRUE);
 	m_Views[context].GlobeShowAirportNames = GetInt(_T("GlobeShowAirportNames"), TRUE);
 	m_Views[context].GlobeShowGPS = GetInt(_T("GlobeShowGPS"), TRUE);
 	m_Views[context].GlobeShowHints = GetInt(_T("GlobeShowHints"), TRUE);
@@ -441,7 +440,6 @@ void CStoreManagerApp::SaveViewOptions(INT context)
 	WriteInt(_T("GlobeLatitude"), m_Views[context].GlobeLatitude);
 	WriteInt(_T("GlobeLongitude"), m_Views[context].GlobeLongitude);
 	WriteInt(_T("GlobeZoom"), m_Views[context].GlobeZoom);
-	WriteInt(_T("GlobeShowBubbles"), m_Views[context].GlobeShowBubbles);
 	WriteInt(_T("GlobeShowAirportNames"), m_Views[context].GlobeShowAirportNames);
 	WriteInt(_T("GlobeShowGPS"), m_Views[context].GlobeShowGPS);
 	WriteInt(_T("GlobeShowHints"), m_Views[context].GlobeShowHints);

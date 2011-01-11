@@ -131,10 +131,8 @@ END
 
 ID_PANE_HISTORYWND TOOLBAR  16, 16
 BEGIN
-    BUTTON      ID_NAV_FIRST
-    BUTTON      ID_NAV_BACKONE
-    BUTTON      ID_NAV_FORWARDONE
-    BUTTON      ID_NAV_LAST
+    BUTTON      ID_NAV_BACK
+    BUTTON      ID_NAV_FORWARD
     BUTTON      ID_NAV_RELOAD
     SEPARATOR
     BUTTON      ID_NAV_GOTOHISTORY
@@ -369,7 +367,7 @@ IDM_GLOBE MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "Globe o&ptions...",           IDM_GLOBE_AUTOSIZE
+        MENUITEM "Globe o&ptions...",           IDM_GLOBE_OPTIONS
         MENUITEM "Size globe to &fit",          IDM_GLOBE_AUTOSIZE
         MENUITEM SEPARATOR
         MENUITEM "Jump to &location...",        IDM_GLOBE_JUMPTOLOCATION
@@ -622,10 +620,8 @@ END
 
 STRINGTABLE 
 BEGIN
-    ID_NAV_FIRST            "Returns to the first location.\nFirst"
-    ID_NAV_BACKONE          "Returns to the previous location.\nBack (Backspace)"
-    ID_NAV_FORWARDONE       "Returns to the next location.\nForward"
-    ID_NAV_LAST             "Returns to the last location.\nLast"
+    ID_NAV_BACK             "Returns to the previous location.\nBack (Backspace)"
+    ID_NAV_FORWARD          "Returns to the next location.\nForward"
     ID_NAV_RELOAD           "Reloads the current view.\nReload"
     ID_NAV_STORES           "Displays all stores.\nStores"
     ID_NAV_HOME             "Opens the default store.\nDefault store"
@@ -656,23 +652,12 @@ BEGIN
     IDM_GLOBE_ZOOMIN         "Zooms into the globe.\nZoom in"
     IDM_GLOBE_ZOOMOUT        "Zooms out of the globe.\nZoom out"
     IDM_GLOBE_AUTOSIZE       "Resizes the globe to touch the edges of the window.\nSize to fit"
-    ID_GLOBE_SAVECAMERA      "Saves the current viewpoint to the view settings of the active context.\nSave viewpoint"
     IDM_GLOBE_JUMPTOLOCATION "Centers the globe on a specific location.\nJump to location"
     IDM_GLOBE_GOOGLEEARTH   "Opens the selected locations in Google Earth.\nOpen in Google Earth"
-    ID_GLOBE_TEXTURESIZE    "Selects the size of the 3D texture used for the earth's 3D model.\nTexture size"
-    ID_GLOBE_HQMODEL        "Selects a 3D model of the earth with greater detail, but also greater hardware requirements.\nHQ Model"
-    ID_GLOBE_LIGHTING       "Enables or disables lighting. Lighting makes the 3D model of the earth more realistic, but is also more demanding on your graphics card.\nLighting"
-    ID_GLOBE_SHOWBUBBLES    "Shows or hides the details of each folder.\nShow details"
-    ID_GLOBE_SHOWAIRPORTNAMES 
-                            "Shows or hides the airport name of each folder.\nShow airport names"
-    ID_GLOBE_SHOWGPS        "Shows or hides the GPS location of each folder.\nShow GPS locations"
 END
 
 STRINGTABLE 
 BEGIN
-    ID_GLOBE_SHOWHINTS      "Shows or hides the hint text of each folder.\nShow hints"
-    ID_GLOBE_SHOWSPOTS      "Shows or hides the location spot of each folder.\nShow spots"
-    ID_GLOBE_SHOWVIEWPOINT  "Shows or hides the viewpoint coordinates in the globe's status bar.\nShow viewpoint"
     IDM_TAGCLOUD_SORT       "&Sort by"
     IDM_TAGCLOUD_SORTVALUE  "Arranges the tags in their canonic order.\nSort by value"
     IDM_TAGCLOUD_SORTCOUNT  "Arranges the tags by their file count.\nSort by count"

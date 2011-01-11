@@ -42,7 +42,6 @@ struct LFViewParameters
 	INT GlobeLatitude;
 	INT GlobeLongitude;
 	INT GlobeZoom;
-	BOOL GlobeShowBubbles;
 	BOOL GlobeShowAirportNames;
 	BOOL GlobeShowGPS;
 	BOOL GlobeShowHints;

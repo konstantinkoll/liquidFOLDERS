@@ -11,16 +11,6 @@
 #include "CFileView.h"
 
 
-// Ribbon
-//
-
-#define RibbonCategory_Home                 0
-#define RibbonCategory_View                 1
-#define RibbonCategory_View_Globe           2
-
-#define RibbonDefaultCategory               RibbonCategory_View
-
-
 // CMainFrame
 //
 
@@ -87,12 +77,8 @@ protected:
 	afx_msg void OnToggleHistoryWnd();
 	afx_msg void OnUpdatePaneCommands(CCmdUI* pCmdUI);
 	afx_msg void OnChangeChildView(UINT nID);
-	afx_msg void OnNavigateFirst();
-	afx_msg void OnNavigateBackOne();
-	afx_msg LRESULT OnNavigateBack(WPARAM wParam, LPARAM lParam);
-	afx_msg LRESULT OnNavigateForward(WPARAM wParam, LPARAM lParam);
-	afx_msg void OnNavigateForwardOne();
-	afx_msg void OnNavigateLast();
+	afx_msg void OnNavigateBack();
+	afx_msg void OnNavigateForward();
 	afx_msg void OnNavigateReload();
 	afx_msg void OnNavigateStores();
 	afx_msg void OnNavigateHome();

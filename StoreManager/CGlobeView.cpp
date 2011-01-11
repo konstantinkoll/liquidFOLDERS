@@ -177,7 +177,7 @@ void CGlobeView::SetSearchResult(LFSearchResult* Result)
 
 INT CGlobeView::ItemAtPosition(CPoint point)
 {
-	if ((!p_Result) || (!m_ViewParameters.GlobeShowBubbles))
+	if (!p_Result)
 		return -1;
 
 	INT res = -1;
@@ -234,19 +234,11 @@ BEGIN_MESSAGE_MAP(CGlobeView, CFileView)
 	ON_WM_DESTROY()
 	ON_COMMAND(IDM_GLOBE_ZOOMIN, OnZoomIn)
 	ON_COMMAND(IDM_GLOBE_ZOOMOUT, OnZoomOut)
-	ON_COMMAND(IDM_GLOBE_AUTOSIZE, OnScaleToFit)
-	ON_COMMAND(ID_GLOBE_SAVECAMERA, OnSaveCamera)
+	ON_COMMAND(IDM_GLOBE_AUTOSIZE, OnAutosize)
+	ON_COMMAND(IDM_GLOBE_OPTIONS, OnOptions)
 	ON_COMMAND(IDM_GLOBE_JUMPTOLOCATION, OnJumpToLocation)
 	ON_COMMAND(IDM_GLOBE_GOOGLEEARTH, OnGoogleEarth)
-	ON_COMMAND(ID_GLOBE_HQMODEL, OnHQModel)
-	ON_COMMAND(ID_GLOBE_LIGHTING, OnLighting)
-	ON_COMMAND(ID_GLOBE_SHOWBUBBLES, OnShowBubbles)
-	ON_COMMAND(ID_GLOBE_SHOWAIRPORTNAMES, OnShowAirportNames)
-	ON_COMMAND(ID_GLOBE_SHOWGPS, OnShowGPS)
-	ON_COMMAND(ID_GLOBE_SHOWHINTS, OnShowHints)
-	ON_COMMAND(ID_GLOBE_SHOWSPOTS, OnShowSpots)
-	ON_COMMAND(ID_GLOBE_SHOWVIEWPOINT, OnShowViewpoint)
-	ON_UPDATE_COMMAND_UI_RANGE(IDM_GLOBE_ZOOMIN, ID_GLOBE_SHOWVIEWPOINT, OnUpdateCommands)
+	ON_UPDATE_COMMAND_UI_RANGE(IDM_GLOBE_ZOOMIN, IDM_GLOBE_GOOGLEEARTH, OnUpdateCommands)
 	ON_WM_LBUTTONDOWN()
 	ON_WM_LBUTTONUP()
 	ON_WM_MOUSEMOVE()
@@ -338,21 +330,15 @@ void CGlobeView::OnZoomOut()
 	}
 }
 
-void CGlobeView::OnScaleToFit()
+void CGlobeView::OnAutosize()
 {
 	m_LocalSettings.GlobeZoom = 60;
 	m_CameraChanged = TRUE;
 	UpdateScene();
 }
 
-void CGlobeView::OnSaveCamera()
+void CGlobeView::OnOptions()
 {
-	p_ViewParameters->GlobeLatitude = (INT)(m_LocalSettings.Latitude*1000.0f);
-	p_ViewParameters->GlobeLongitude = (INT)(m_LocalSettings.Longitude*1000.0f);
-	p_ViewParameters->GlobeZoom = m_LocalSettings.GlobeZoom;
-	m_CameraChanged = FALSE;
-
-	// Kein Broadcase an andere Fenster
 }
 
 void CGlobeView::OnJumpToLocation()
@@ -437,59 +423,6 @@ void CGlobeView::OnGoogleEarth()
 		f.Close();
 	}
 }
-void CGlobeView::OnHQModel()
-{
-	theApp.m_GlobeHQModel = !theApp.m_GlobeHQModel;
-	theApp.UpdateViewOptions(m_Context);
-}
-
-void CGlobeView::OnLighting()
-{
-	theApp.m_GlobeLighting = !theApp.m_GlobeLighting;
-	theApp.UpdateViewOptions(m_Context);
-}
-
-void CGlobeView::OnShowBubbles()
-{
-	p_ViewParameters->GlobeShowBubbles = !p_ViewParameters->GlobeShowBubbles;
-	if (!p_ViewParameters->GlobeShowBubbles)
-		p_ViewParameters->GlobeShowSpots = TRUE;
-
-	theApp.UpdateViewOptions(m_Context);
-}
-
-void CGlobeView::OnShowAirportNames()
-{
-	p_ViewParameters->GlobeShowAirportNames = !p_ViewParameters->GlobeShowAirportNames;
-	theApp.UpdateViewOptions(m_Context);
-}
-
-void CGlobeView::OnShowGPS()
-{
-	p_ViewParameters->GlobeShowGPS = !p_ViewParameters->GlobeShowGPS;
-	theApp.UpdateViewOptions(m_Context);
-}
-
-void CGlobeView::OnShowHints()
-{
-	p_ViewParameters->GlobeShowHints = !p_ViewParameters->GlobeShowHints;
-	theApp.UpdateViewOptions(m_Context);
-}
-
-void CGlobeView::OnShowSpots()
-{
-	p_ViewParameters->GlobeShowSpots = !p_ViewParameters->GlobeShowSpots;
-	if (!p_ViewParameters->GlobeShowSpots)
-		p_ViewParameters->GlobeShowBubbles = TRUE;
-
-	theApp.UpdateViewOptions(m_Context);
-}
-
-void CGlobeView::OnShowViewpoint()
-{
-	p_ViewParameters->GlobeShowViewpoint = !p_ViewParameters->GlobeShowViewpoint;
-	theApp.UpdateViewOptions(m_Context);
-}
 
 void CGlobeView::OnUpdateCommands(CCmdUI* pCmdUI)
 {
@@ -505,38 +438,10 @@ void CGlobeView::OnUpdateCommands(CCmdUI* pCmdUI)
 	case IDM_GLOBE_AUTOSIZE:
 		b = m_LocalSettings.GlobeZoom!=60;
 		break;
-	case ID_GLOBE_SAVECAMERA:
-		b = m_CameraChanged;
+	case IDM_GLOBE_OPTIONS:
 		break;
 	case IDM_GLOBE_GOOGLEEARTH:
-		b = (GetNextSelectedItem(-1)!=-1) && (theApp.m_PathGoogleEarth.GetLength());
-		break;
-	case ID_GLOBE_HQMODEL:
-		pCmdUI->SetCheck(theApp.m_GlobeHQModel);
-		break;
-	case ID_GLOBE_LIGHTING:
-		pCmdUI->SetCheck(theApp.m_GlobeLighting);
-		break;
-	case ID_GLOBE_SHOWBUBBLES:
-		pCmdUI->SetCheck(m_ViewParameters.GlobeShowBubbles);
-		break;
-	case ID_GLOBE_SHOWAIRPORTNAMES:
-		pCmdUI->SetCheck(m_ViewParameters.GlobeShowAirportNames);
-		b = m_ViewParameters.GlobeShowBubbles && (m_ViewParameters.SortBy==LFAttrLocationIATA);
-		break;
-	case ID_GLOBE_SHOWGPS:
-		pCmdUI->SetCheck(m_ViewParameters.GlobeShowGPS);
-		b = m_ViewParameters.GlobeShowBubbles;
-		break;
-	case ID_GLOBE_SHOWHINTS:
-		pCmdUI->SetCheck(m_ViewParameters.GlobeShowHints);
-		b = m_ViewParameters.GlobeShowBubbles;
-		break;
-	case ID_GLOBE_SHOWSPOTS:
-		pCmdUI->SetCheck(m_ViewParameters.GlobeShowSpots);
-		break;
-	case ID_GLOBE_SHOWVIEWPOINT:
-		pCmdUI->SetCheck(m_ViewParameters.GlobeShowViewpoint);
+		b = (GetNextSelectedItem(-1)!=-1) && (!theApp.m_PathGoogleEarth.IsEmpty());
 		break;
 	}
 
@@ -1009,8 +914,8 @@ void CGlobeView::DrawScene(BOOL InternalCall)
 	GLfloat zoomfactor = m_Zoom+0.4f;
 	m_Scale /= zoomfactor*zoomfactor;
 	m_Radius = 0.49f*m_Height*m_Scale;
-	m_FogStart = 0.35f*m_Scale;
-	m_FogEnd = 0.1f*m_Scale;
+	m_FogStart = 0.40f*m_Scale;
+	m_FogEnd = 0.025f*m_Scale;
 
 	// Globus zeichnen
 	glMatrixMode(GL_MODELVIEW);
@@ -1064,8 +969,7 @@ void CGlobeView::DrawScene(BOOL InternalCall)
 			glDisable(GL_FOG);
 
 			// Label
-			if (m_ViewParameters.GlobeShowBubbles)
-				CalcAndDrawLabel();
+			CalcAndDrawLabel();
 		}
 
 	// Statuszeile

@@ -9,32 +9,6 @@
 #include "SortOptionsDlg.h"
 #include "ViewOptionsDlg.h"
 #include "LFCommDlg.h"
-#include <io.h>
-
-
-// CTextureComboBox
-//
-
-class CTextureComboBox : public CMFCRibbonComboBox
-{
-public:
-	CTextureComboBox(UINT nID, INT nWidth)
-		: CMFCRibbonComboBox(nID, FALSE, nWidth)
-	{
-		AddItem(_T("Automatic"));
-		AddItem(_T("1024×1024"));
-		AddItem(_T("2048×2048"));
-		AddItem(_T("4096×4096"));
-		AddItem(_T("8192×4096"));
-		SelectItem((INT)theApp.m_nTextureSize);
-	}
-
-	virtual void OnSelectItem(INT nItem)
-	{
-		theApp.m_nTextureSize = nItem;
-		theApp.UpdateViewOptions();
-	}
-};
 
 
 // CMainFrame
@@ -49,7 +23,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_APP_NEWVIEW, ID_APP_VIEW_TIMELINE, OnUpdateAppCommands)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_AUTODIRS, OnUpdateAppCommands)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_SORT_FILENAME, ID_SORT_FILENAME+99, OnUpdateSortCommands)
-	ON_UPDATE_COMMAND_UI_RANGE(ID_NAV_FIRST, ID_NAV_GOTOHISTORY, OnUpdateNavCommands)
+	ON_UPDATE_COMMAND_UI_RANGE(ID_NAV_BACK, ID_NAV_GOTOHISTORY, OnUpdateNavCommands)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_PANE_FILTERWND, ID_PANE_HISTORYWND, OnUpdatePaneCommands)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_DROP_NAME, ID_DROP_DIMENSION, OnUpdateDropCommands)
 
@@ -66,12 +40,8 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_COMMAND(ID_PANE_INSPECTORWND, OnToggleInspectorWnd)
 	ON_COMMAND(ID_PANE_HISTORYWND, OnToggleHistoryWnd)
 
-	ON_COMMAND(ID_NAV_FIRST, OnNavigateFirst)
-	ON_COMMAND(ID_NAV_BACKONE, OnNavigateBackOne)
-	ON_MESSAGE(ID_NAV_BACK, OnNavigateBack)
-	ON_MESSAGE(ID_NAV_FORWARD, OnNavigateForward)
-	ON_COMMAND(ID_NAV_FORWARDONE, OnNavigateForwardOne)
-	ON_COMMAND(ID_NAV_LAST, OnNavigateLast)
+	ON_COMMAND(ID_NAV_BACK, OnNavigateBack)
+	ON_COMMAND(ID_NAV_FORWARD, OnNavigateForward)
 	ON_COMMAND(ID_NAV_RELOAD, OnNavigateReload)
 	ON_COMMAND(ID_NAV_STORES, OnNavigateStores)
 	ON_COMMAND(ID_NAV_HOME, OnNavigateHome)
@@ -503,26 +473,7 @@ BOOL CMainFrame::UpdateSelectedItems(LFVariantData* value1, LFVariantData* value
 	return m_wndMainView.UpdateItems(value1, value2, value3);
 }
 
-void CMainFrame::OnNavigateFirst()
-{
-	UINT steps = 0;
-	BreadcrumbItem* i = m_BreadcrumbBack;
-
-	while (i)
-	{
-		i = i->next;
-		steps++;
-	}
-
-	OnNavigateBack((WPARAM)steps, 0);
-}
-
-void CMainFrame::OnNavigateBackOne()
-{
-	OnNavigateBack(1, 0);
-}
-
-LRESULT CMainFrame::OnNavigateBack(WPARAM wParam, LPARAM /*lParam*/)
+void CMainFrame::OnNavigateBack()
 {
 	if (ActiveFilter)
 	{
@@ -530,21 +481,14 @@ LRESULT CMainFrame::OnNavigateBack(WPARAM wParam, LPARAM /*lParam*/)
 		INT focus = m_wndMainView.GetFocusItem();
 		ActiveFilter = NULL;
 
-		UINT steps = (UINT)wParam;
-		while (steps)
-		{
-			AddBreadcrumbItem(&m_BreadcrumbForward, f, focus);
-			ConsumeBreadcrumbItem(&m_BreadcrumbBack, &f, &focus);
-			steps--;
-		}
+		AddBreadcrumbItem(&m_BreadcrumbForward, f, focus);
+		ConsumeBreadcrumbItem(&m_BreadcrumbBack, &f, &focus);
 	
 		NavigateTo(f, NAVMODE_HISTORY, focus);
 	}
-
-	return 0;
 }
 
-LRESULT CMainFrame::OnNavigateForward(WPARAM wParam, LPARAM /*lParam*/)
+void CMainFrame::OnNavigateForward()
 {
 	if (ActiveFilter)
 	{
@@ -552,37 +496,11 @@ LRESULT CMainFrame::OnNavigateForward(WPARAM wParam, LPARAM /*lParam*/)
 		INT focus = m_wndMainView.GetFocusItem();
 		ActiveFilter = NULL;
 
-		UINT steps = (UINT)wParam;
-		while (steps)
-		{
-			AddBreadcrumbItem(&m_BreadcrumbBack, f, focus);
-			ConsumeBreadcrumbItem(&m_BreadcrumbForward, &f, &focus);
-			steps--;
-		}
+		AddBreadcrumbItem(&m_BreadcrumbBack, f, focus);
+		ConsumeBreadcrumbItem(&m_BreadcrumbForward, &f, &focus);
 
 		NavigateTo(f, NAVMODE_HISTORY, focus);
 	}
-
-	return 0;
-}
-
-void CMainFrame::OnNavigateForwardOne()
-{
-	OnNavigateForward(1, 0);
-}
-
-void CMainFrame::OnNavigateLast()
-{
-	UINT steps = 0;
-	BreadcrumbItem* i = m_BreadcrumbForward;
-
-	while (i)
-	{
-		i = i->next;
-		steps++;
-	}
-
-	OnNavigateForward((WPARAM)steps, 0);
 }
 
 void CMainFrame::OnNavigateReload()
@@ -611,14 +529,10 @@ void CMainFrame::OnUpdateNavCommands(CCmdUI* pCmdUI)
 
 	switch (pCmdUI->m_nID)
 	{
-	case ID_NAV_FIRST:
-	case ID_NAV_BACKONE:
 	case ID_NAV_BACK:
 		b &= (m_BreadcrumbBack!=NULL);
 		break;
 	case ID_NAV_FORWARD:
-	case ID_NAV_FORWARDONE:
-	case ID_NAV_LAST:
 		b &= (m_BreadcrumbForward!=NULL);
 		break;
 	case ID_NAV_STORES:
@@ -667,18 +581,16 @@ void CMainFrame::InitializeRibbon()
 			strTemp = "Navigate";
 			CMFCRibbonPanel* pPanelNavigate = pCategoryHome->AddPanel(strTemp, m_PanelImages.ExtractIcon(5));
 
-				pPanelNavigate->Add(theApp.CommandButton(ID_NAV_FIRST, 0, 0));
-				pPanelNavigate->Add(theApp.CommandButton(ID_NAV_BACKONE, 1, 1));
-				pPanelNavigate->Add(theApp.CommandButton(ID_NAV_FORWARDONE, 2, 2));
-				pPanelNavigate->Add(theApp.CommandButton(ID_NAV_LAST, 3, 3));
+				pPanelNavigate->Add(theApp.CommandButton(ID_NAV_BACK, 0, 0));
+				pPanelNavigate->Add(theApp.CommandButton(ID_NAV_FORWARD, 1, 1));
 				pPanelNavigate->AddSeparator();
-				pPanelNavigate->Add(theApp.CommandButton(ID_NAV_RELOAD, 4, 4));
+				pPanelNavigate->Add(theApp.CommandButton(ID_NAV_RELOAD, 2, 2));
 
 			strTemp = "Places";
 			CMFCRibbonPanel* pPanelPlaces = pCategoryHome->AddPanel(strTemp, m_PanelImages.ExtractIcon(16));
 
-				pPanelPlaces->Add(theApp.CommandButton(ID_NAV_STORES, 6, 6));
-				pPanelPlaces->Add(theApp.CommandButton(ID_NAV_HOME, 7, 7));
+				pPanelPlaces->Add(theApp.CommandButton(ID_NAV_STORES, 3, 3));
+				pPanelPlaces->Add(theApp.CommandButton(ID_NAV_HOME, 4, 4));
 		}
 
 	strTemp = "View";
@@ -780,49 +692,12 @@ void CMainFrame::InitializeRibbon()
 				pPanelDisplay->Add(theApp.CommandButton(ID_APP_VIEW_TIMELINE, 10, 10));
 			}
 
-	if (!IsClipboard)
-	{
-		strCtx = "View";
-		strTemp = "Globe";
-		CMFCRibbonCategory* pCategoryGlobe = m_wndRibbonBar.AddContextCategory(strTemp, strCtx, 2, AFX_CategoryColor_Indigo, 0, 0);
-
-			strTemp = "View";
-			CMFCRibbonPanel* pPanelGlobeView = pCategoryGlobe->AddPanel(strTemp, m_PanelImages.ExtractIcon(13));
-
-				pPanelGlobeView->Add(theApp.CommandButton(ID_GLOBE_SAVECAMERA, 0, 0));
-
-			strTemp = "Display options";
-			CMFCRibbonPanel* pPanelGlobeOptions = pCategoryGlobe->AddPanel(strTemp, m_PanelImages.ExtractIcon(4));
-
-					CMFCRibbonButtonsGroup* p3DOptions = new CMFCRibbonButtonsGroup();
-					p3DOptions->AddButton(theApp.CommandButton(ID_GLOBE_HQMODEL));
-					p3DOptions->AddButton(theApp.CommandButton(ID_GLOBE_LIGHTING));
-
-				pPanelGlobeOptions->Add(p3DOptions);
-
-				strTemp = "Texture size:";
-				pPanelGlobeOptions->Add(new CMFCRibbonLabel(strTemp));
-				pPanelGlobeOptions->Add(new CTextureComboBox(ID_GLOBE_TEXTURESIZE, 100));
-				pPanelGlobeOptions->AddSeparator();
-				pPanelGlobeOptions->Add(theApp.CommandButton(ID_GLOBE_SHOWBUBBLES, 1, 1));
-				pPanelGlobeOptions->Add(theApp.CommandCheckBox(ID_GLOBE_SHOWAIRPORTNAMES));
-				pPanelGlobeOptions->Add(theApp.CommandCheckBox(ID_GLOBE_SHOWGPS));
-				pPanelGlobeOptions->Add(theApp.CommandCheckBox(ID_GLOBE_SHOWHINTS));
-				pPanelGlobeOptions->AddSeparator();
-				pPanelGlobeOptions->Add(theApp.CommandCheckBox(ID_GLOBE_SHOWSPOTS));
-				pPanelGlobeOptions->Add(theApp.CommandCheckBox(ID_GLOBE_SHOWVIEWPOINT));
-	}
-
-	m_wndRibbonBar.SetActiveCategory(m_wndRibbonBar.GetCategory(RibbonDefaultCategory));
-
-	// Alle Kategorien anzeigen
-	if (!IsClipboard)
-		m_wndRibbonBar.ShowCategory(RibbonCategory_View_Globe);
+	m_wndRibbonBar.SetActiveCategory(m_wndRibbonBar.GetCategory(1));
 
 	// Symbolleistenbefehle für Schnellzugriff hinzufügen
 	CList<UINT, UINT> lstQATCmds;
-	lstQATCmds.AddTail(ID_NAV_BACKONE);
-	lstQATCmds.AddTail(ID_NAV_FORWARDONE);
+	lstQATCmds.AddTail(ID_NAV_BACK);
+	lstQATCmds.AddTail(ID_NAV_FORWARD);
 	m_wndRibbonBar.SetQuickAccessCommands(lstQATCmds);
 
 	// Hilfe hinzufügen
@@ -922,7 +797,7 @@ void CMainFrame::OnItemOpen()
 			if (((i->Type & LFTypeMask)==LFTypeVirtual) && (strcmp(i->CoreAttributes.FileID, "BACK")==0) && (m_BreadcrumbBack))
 				if (m_BreadcrumbBack->filter->Mode==i->NextFilter->Mode)
 				{
-					OnNavigateBackOne();
+					OnNavigateBack();
 					return;
 				}
 
@@ -983,13 +858,6 @@ void CMainFrame::OnUpdateSelection()
 
 void CMainFrame::OnUpdateViewOptions()
 {
-	if (ActiveViewID==LFViewGlobe)
-	{
-		CMFCRibbonBaseElement* cbx = m_wndRibbonBar.FindByID(ID_GLOBE_TEXTURESIZE, FALSE, TRUE);
-		if (cbx)
-			((CTextureComboBox*)cbx)->SelectItem((INT)theApp.m_nTextureSize);
-	}
-
 	if ((ActiveViewID>LFViewPreview)!=(ActiveViewParameters->Mode>LFViewPreview))
 	{
 		m_wndMainView.SelectNone();
