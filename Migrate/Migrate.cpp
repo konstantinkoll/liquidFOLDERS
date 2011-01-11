@@ -61,7 +61,6 @@ void CMigrateApp::OnAppAbout()
 	p.Build = __TIMESTAMP__;
 	p.Icon = new CGdiPlusBitmapResource();
 	p.Icon->Load(IDB_ABOUTICON, _T("PNG"), AfxGetResourceHandle());
-	p.TextureSize = -1;
 
 	LFAboutDlg dlg(&p, m_pMainWnd);
 	dlg.DoModal();

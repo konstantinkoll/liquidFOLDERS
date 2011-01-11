@@ -76,23 +76,6 @@ BOOL LFAboutDlg::OnInitDialog()
 
 	BOOL ShowCancel = FALSE;
 
-	// Radiobuttons für die Texturgröße einstellen
-	BOOL bEnable[5];
-
-	for (INT a=LFTextureAuto; a<=LFTexture8192; a++)
-	{
-		bEnable[a] = (p_Parameters->TextureSize!=LFTextureNone) && ((a<=LFTexture1024) || (p_Parameters->MaxTextureSize>=a));
-		((CButton*)GetDlgItem(IDC_TEXTURE_AUTO+a))->EnableWindow(bEnable[a]);
-	}
-
-	if (p_Parameters->TextureSize!=-1)
-	{
-		if ((!bEnable[p_Parameters->TextureSize]) || (p_Parameters->TextureSize>LFTexture8192))
-			p_Parameters->TextureSize = LFTextureAuto;
-		((CButton*)GetDlgItem(IDC_TEXTURE_AUTO+p_Parameters->TextureSize))->SetCheck(TRUE);
-		ShowCancel = TRUE;
-	}
-
 	// Ggf. "Abbrechen" verschwinden lassen
 	if (!ShowCancel)
 	{
@@ -171,15 +154,4 @@ void LFAboutDlg::CheckLicenseKey(LFLicense* License)
 		GetDlgItem(IDC_QUANTITY)->ShowWindow(SW_SHOW);
 		GetDlgItem(IDC_QUANTITY)->SetWindowText(License->Quantity);
 	}
-}
-
-void LFAboutDlg::DoDataExchange(CDataExchange* pDX)
-{
-	if (pDX->m_bSaveAndValidate)
-		for (UINT a=LFTextureAuto; a<=LFTexture8192; a++)
-			if (((CButton*)GetDlgItem(IDC_TEXTURE_AUTO+a))->GetCheck())
-			{
-				p_Parameters->TextureSize = a;
-				break;
-			}
 }

@@ -17,8 +17,6 @@ struct LFAboutDlgParameters
 	CString AppName;
 	CString Build;
 	CGdiPlusBitmapResource* Icon;
-	INT TextureSize;
-	INT MaxTextureSize;
 
 	// Von LFCommDlg gesetzt
 	CString Version;
@@ -33,7 +31,6 @@ public:
 protected:
 	virtual void OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect);
 	virtual void CheckLicenseKey(LFLicense* License=NULL);
-	virtual void DoDataExchange(CDataExchange* pDX);
 
 	afx_msg BOOL OnInitDialog();
 	DECLARE_MESSAGE_MAP()

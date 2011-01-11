@@ -212,19 +212,9 @@ void CStoreManagerApp::OnAppAbout()
 	p.Build = __TIMESTAMP__;
 	p.Icon = new CGdiPlusBitmapResource();
 	p.Icon->Load(IDB_ABOUTICON, _T("PNG"), AfxGetResourceHandle());
-	p.TextureSize = m_nTextureSize;
-	p.MaxTextureSize = m_nMaxTextureSize;
 
 	LFAboutDlg dlg(&p, m_pActiveWnd);
-	if (dlg.DoModal()==IDOK)
-	{
-		// Textur
-		if (m_nTextureSize!=(UINT)p.TextureSize)
-		{
-			m_nTextureSize = p.TextureSize;
-			UpdateViewOptions();
-		}
-	}
+	dlg.DoModal();
 
 	delete p.Icon;
 }

@@ -348,12 +348,14 @@ void CGlobeView::OnJumpToLocation()
 	if (dlg.DoModal()==IDOK)
 	{
 		ASSERT(dlg.m_Airport);
+
 		m_AnimCounter = ANIMLENGTH;
 		m_AnimStartLatitude = m_Latitude;
 		m_AnimStartLongitude = m_Longitude;
 		m_LocalSettings.Latitude = (GLfloat)-dlg.m_Airport->Location.Latitude;
 		m_LocalSettings.Longitude = (GLfloat)-dlg.m_Airport->Location.Longitude;
 		m_CameraChanged = TRUE;
+
 		UpdateScene();
 	}
 }

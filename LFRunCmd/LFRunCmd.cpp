@@ -77,7 +77,6 @@ void CRunCmdApp::OnAppAbout(UINT ResIDName, UINT ResIDPicture)
 	p.Build = __TIMESTAMP__;
 	p.Icon = new CGdiPlusBitmapResource();
 	p.Icon->Load(ResIDPicture, _T("PNG"), AfxGetResourceHandle());
-	p.TextureSize = -1;
 
 	LFAboutDlg dlg(&p, CWnd::GetForegroundWindow());
 	dlg.DoModal();

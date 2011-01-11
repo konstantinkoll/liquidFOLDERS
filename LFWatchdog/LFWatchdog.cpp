@@ -137,7 +137,6 @@ void ShowAboutDlg()
 		p.Build = __TIMESTAMP__;
 		p.Icon = new CGdiPlusBitmapResource();
 		p.Icon->Load(IDB_ABOUTICON, _T("PNG"), AfxGetResourceHandle());
-		p.TextureSize = -1;
 
 		LFAboutDlg dlg(&p, NULL);
 		dlg.DoModal();
