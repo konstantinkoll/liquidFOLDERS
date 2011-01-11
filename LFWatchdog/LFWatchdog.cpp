@@ -131,17 +131,7 @@ void ShowAboutDlg()
 	if (!AboutWindow)
 	{
 		AboutWindow = TRUE;
-
-		LFAboutDlgParameters p;
-		p.AppName = "Watchdog";
-		p.Build = __TIMESTAMP__;
-		p.Icon = new CGdiPlusBitmapResource();
-		p.Icon->Load(IDB_ABOUTICON, _T("PNG"), AfxGetResourceHandle());
-
-		LFAboutDlg dlg(&p, NULL);
-		dlg.DoModal();
-
-		delete p.Icon;
+		LFAbout(_T("Watchdog"), _T(__TIMESTAMP__), IDB_ABOUTICON);
 		AboutWindow = FALSE;
 	}
 }

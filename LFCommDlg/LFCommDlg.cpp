@@ -256,3 +256,9 @@ LFCommDlg_API void LFBackupStores(CWnd* pParentWnd)
 
 	free(Keys);
 }
+
+void LFAbout(CString AppName, CString Build, UINT IconResID, CWnd* pParent)
+{
+	LFAboutDlg dlg(AppName, Build, IconResID, pParent);
+	dlg.DoModal();
+}

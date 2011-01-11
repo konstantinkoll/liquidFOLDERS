@@ -16,43 +16,40 @@ using namespace Gdiplus;
 
 extern AFX_EXTENSION_MODULE LFCommDlgDLL;
 
-LFAboutDlg::LFAboutDlg(LFAboutDlgParameters* p, CWnd* pParent)
+LFAboutDlg::LFAboutDlg(CString AppName, CString Build, UINT IconResID, CWnd* pParent)
 	: LFDialog(IDD_ABOUT, LFDS_Default, pParent)
 {
-	ASSERT(p);
-	p_Parameters = p;
+	m_AppName = AppName;
+	m_Build = Build;
+	ENSURE(m_Icon.Load(IconResID, _T("PNG"), AfxGetResourceHandle()));
 
 	CString modFilename;
-	if (GetModuleFileName(AfxGetInstanceHandle(), modFilename.GetBuffer(MAX_PATH), MAX_PATH) > 0)
+	if (GetModuleFileName(AfxGetInstanceHandle(), modFilename.GetBuffer(MAX_PATH), MAX_PATH)>0)
 	{
 		modFilename.ReleaseBuffer(MAX_PATH);
 		DWORD dwHandle = 0;
 		DWORD dwSize = GetFileVersionInfoSize(modFilename, &dwHandle);
-		if (dwSize > 0)
+		if (dwSize>0)
 		{
 			LPBYTE lpInfo = new BYTE[dwSize];
 			ZeroMemory(lpInfo, dwSize);
+
 			if (GetFileVersionInfo(modFilename, 0, dwSize, lpInfo))
 			{
 				UINT valLen = MAX_PATH;
 				LPVOID valPtr = NULL;
 				LPCWSTR valData = NULL;
+
 				if (VerQueryValue(lpInfo, _T("\\"), &valPtr, &valLen))
 				{
 					VS_FIXEDFILEINFO* pFinfo = (VS_FIXEDFILEINFO*)valPtr;
-					p_Parameters->Version.Format(_T("%d.%d.%d"), 
+					m_Version.Format(_T("%d.%d.%d"), 
 						(pFinfo->dwProductVersionMS >> 16) & 0xFF,
 						(pFinfo->dwProductVersionMS) & 0xFF,
 						(pFinfo->dwProductVersionLS >> 16) & 0xFF);
 				}
-				if (VerQueryValue(lpInfo, _T("StringFileInfo\\000004E4\\LegalCopyright"), (void**)&valData, &valLen))
-				{
-					p_Parameters->Copyright = valData;
-				}
-				else
-				{
-					p_Parameters->Copyright = _T("© liquidFOLDERS");
-				}
+
+				m_Copyright = VerQueryValue(lpInfo, _T("StringFileInfo\\000004E4\\LegalCopyright"), (void**)&valData, &valLen) ? valData : _T("© liquidFOLDERS");
 			}
 			delete[] lpInfo;
 		}
@@ -71,7 +68,7 @@ BOOL LFAboutDlg::OnInitDialog()
 	CString text;
 	GetWindowText(text);
 	CString caption;
-	caption.Format(text, p_Parameters->AppName);
+	caption.Format(text, m_AppName);
 	SetWindowText(caption);
 
 	BOOL ShowCancel = FALSE;
@@ -98,8 +95,7 @@ void LFAboutDlg::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 {
 	LFDialog::OnEraseBkgnd(dc, g, rect);
 
-	if (p_Parameters->Icon)
-		g.DrawImage(p_Parameters->Icon->m_pBitmap, 16, 16, p_Parameters->Icon->m_pBitmap->GetWidth(), p_Parameters->Icon->m_pBitmap->GetHeight());
+	g.DrawImage(m_Icon.m_pBitmap, 16, 16, m_Icon.m_pBitmap->GetWidth(), m_Icon.m_pBitmap->GetHeight());
 
 	CRect r(rect);
 	r.top = 172;
@@ -113,7 +109,7 @@ void LFAboutDlg::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 
 	dc.SetTextColor(0x000000);
 	dc.SetBkMode(TRANSPARENT);
-	dc.DrawText(p_Parameters->AppName+_T(" (Beta3)"), -1, r, 0);
+	dc.DrawText(m_AppName+_T(" (Beta3)"), -1, r, 0);
 	r.top += 45;
 
 	CFont font2;
@@ -122,10 +118,10 @@ void LFAboutDlg::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 		DEFAULT_PITCH | FF_DONTCARE, ((LFApplication*)AfxGetApp())->GetDefaultFontFace());
 	dc.SelectObject(&font2);
 
-	dc.DrawText(p_Parameters->Copyright, -1, r, 0);
+	dc.DrawText(m_Copyright, -1, r, 0);
 	r.top += 25;
 
-	dc.DrawText(_T("Version ")+p_Parameters->Version+_T(" (")+p_Parameters->Build+_T(")"), -1, r, 0);
+	dc.DrawText(_T("Version ")+m_Version+_T(" (")+m_Build+_T(")"), -1, r, 0);
 
 	dc.SelectObject(pOldFont);
 }

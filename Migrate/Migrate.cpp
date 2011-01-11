@@ -56,14 +56,8 @@ INT CMigrateApp::ExitInstance()
 
 void CMigrateApp::OnAppAbout()
 {
-	LFAboutDlgParameters p;
-	ENSURE(p.AppName.LoadString(IDR_APPLICATION));
-	p.Build = __TIMESTAMP__;
-	p.Icon = new CGdiPlusBitmapResource();
-	p.Icon->Load(IDB_ABOUTICON, _T("PNG"), AfxGetResourceHandle());
+	CString AppName;
+	ENSURE(AppName.LoadString(IDR_APPLICATION));
 
-	LFAboutDlg dlg(&p, m_pMainWnd);
-	dlg.DoModal();
-
-	delete p.Icon;
+	LFAbout(AppName, _T(__TIMESTAMP__), IDB_ABOUTICON, m_pMainWnd);
 }

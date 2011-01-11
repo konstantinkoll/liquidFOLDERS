@@ -11,22 +11,10 @@
 // LFAboutDlg
 //
 
-struct LFAboutDlgParameters
-{
-	// Vom Aufrufer zu setzen
-	CString AppName;
-	CString Build;
-	CGdiPlusBitmapResource* Icon;
-
-	// Von LFCommDlg gesetzt
-	CString Version;
-	CString Copyright;
-};
-
 class AFX_EXT_CLASS LFAboutDlg : public LFDialog
 {
 public:
-	LFAboutDlg(LFAboutDlgParameters* pParameters, CWnd* pParent=NULL);
+	LFAboutDlg(CString AppName, CString Build, UINT IconResID, CWnd* pParent=NULL);
 
 protected:
 	virtual void OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect);
@@ -35,5 +23,10 @@ protected:
 	afx_msg BOOL OnInitDialog();
 	DECLARE_MESSAGE_MAP()
 
-	LFAboutDlgParameters* p_Parameters;
+private:
+	CString m_Version;
+	CString m_Copyright;
+	CString m_AppName;
+	CString m_Build;
+	CGdiPlusBitmapResource m_Icon;
 };

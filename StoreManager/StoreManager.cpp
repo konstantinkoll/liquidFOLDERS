@@ -207,16 +207,7 @@ void CStoreManagerApp::OnClosingMainFrame(CFrameImpl* pFrame)
 
 void CStoreManagerApp::OnAppAbout()
 {
-	LFAboutDlgParameters p;
-	p.AppName = "StoreManager";
-	p.Build = __TIMESTAMP__;
-	p.Icon = new CGdiPlusBitmapResource();
-	p.Icon->Load(IDB_ABOUTICON, _T("PNG"), AfxGetResourceHandle());
-
-	LFAboutDlg dlg(&p, m_pActiveWnd);
-	dlg.DoModal();
-
-	delete p.Icon;
+	LFAbout(_T("StoreManager"), _T(__TIMESTAMP__), IDB_ABOUTICON, m_pActiveWnd);
 }
 
 void CStoreManagerApp::OnAppNewView()
