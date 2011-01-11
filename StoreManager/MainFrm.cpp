@@ -784,7 +784,7 @@ void CMainFrame::InitializeRibbon()
 	{
 		strCtx = "View";
 		strTemp = "Globe";
-		CMFCRibbonCategory* pCategoryGlobe = m_wndRibbonBar.AddContextCategory(strTemp, strCtx, 2, AFX_CategoryColor_Indigo, IDB_RIBBONGLOBE_16, IDB_RIBBONGLOBE_32);
+		CMFCRibbonCategory* pCategoryGlobe = m_wndRibbonBar.AddContextCategory(strTemp, strCtx, 2, AFX_CategoryColor_Indigo, 0, 0);
 
 			strTemp = "View";
 			CMFCRibbonPanel* pPanelGlobeView = pCategoryGlobe->AddPanel(strTemp, m_PanelImages.ExtractIcon(13));

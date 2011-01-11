@@ -18,11 +18,9 @@
 #define IDB_RIBBONHOME_16               141
 #define IDB_RIBBONVIEW_32               144
 #define IDB_RIBBONVIEW_16               145
-#define IDB_RIBBONGLOBE_16              146
-#define IDB_RIBBONGLOBE_32              147
-#define IDB_INSPECTOR                   148
-#define IDB_MULTIPLE                    149
-#define IDB_TASKS                       150
+#define IDB_INSPECTOR                   146
+#define IDB_MULTIPLE                    147
+#define IDB_TASKS                       148
 #define ID_APP_NEWVIEW                  250
 #define ID_APP_CLOSE                    251
 #define ID_APP_CLOSEOTHERS              252

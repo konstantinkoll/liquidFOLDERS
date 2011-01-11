@@ -69,8 +69,6 @@ IDB_RIBBONHOME_16       BITMAP                  "res\\Ribbon_Home_16.bmp"
 IDB_RIBBONHOME_32       BITMAP                  "res\\Ribbon_Home_32.bmp"
 IDB_RIBBONVIEW_16       BITMAP                  "res\\Ribbon_View_16.bmp"
 IDB_RIBBONVIEW_32       BITMAP                  "res\\Ribbon_View_32.bmp"
-IDB_RIBBONGLOBE_32      BITMAP                  "res\\Ribbon_Globe_32.bmp"
-IDB_RIBBONGLOBE_16      BITMAP                  "res\\Ribbon_Globe_16.bmp"
 ID_PANE_HISTORYWND      BITMAP                  "res\\Toolbar_History.bmp"
 ID_PANE_INSPECTORWND    BITMAP                  "res\\Toolbar_Inspector.bmp"
 ID_PANE_FILTERWND       BITMAP                  "res\\Toolbar_Filter.bmp"
@@ -371,12 +369,10 @@ IDM_GLOBE MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "Jump to &location...",        IDM_GLOBE_JUMPTOLOCATION
+        MENUITEM "Globe o&ptions...",           IDM_GLOBE_AUTOSIZE
         MENUITEM "Size globe to &fit",          IDM_GLOBE_AUTOSIZE
         MENUITEM SEPARATOR
-        MENUITEM "Show &airport names",         ID_GLOBE_SHOWAIRPORTNAMES
-        MENUITEM "Show G&PS locations",         ID_GLOBE_SHOWGPS
-        MENUITEM "Show &hints",                 ID_GLOBE_SHOWHINTS
+        MENUITEM "Jump to &location...",        IDM_GLOBE_JUMPTOLOCATION
     END
 END
 

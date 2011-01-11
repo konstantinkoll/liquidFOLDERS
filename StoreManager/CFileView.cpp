@@ -1221,8 +1221,10 @@ void CFileView::OnRButtonUp(UINT nFlags, CPoint point)
 		}
 	}
 	else
+	{
 		if (!(nFlags & MK_CONTROL))
 			OnSelectNone();
+	}
 
 	CWnd::OnRButtonUp(nFlags, point);
 }
@@ -1292,6 +1294,7 @@ void CFileView::OnSelectAll()
 			SelectItem(a, TRUE, TRUE);
 
 		ChangedItems();
+		RedrawWindow();
 	}
 }
 
@@ -1303,6 +1306,7 @@ void CFileView::OnSelectNone()
 			SelectItem(a, FALSE, TRUE);
 
 		ChangedItems();
+		RedrawWindow();
 	}
 }
 
