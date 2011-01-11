@@ -596,6 +596,12 @@ void CMainView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 	if (!p_wndFileView)
 		return;
 
+	if ((point.x==-1) && (point.y==-1))
+	{
+		point.x = point.y = 0;
+		ClientToScreen(&point);
+	}
+
 	CMenu* pMenu = p_wndFileView->GetBackgroundContextMenu();
 	if (pMenu)
 	{

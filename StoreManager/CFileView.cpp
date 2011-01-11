@@ -1250,10 +1250,13 @@ void CFileView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 	{
 		idx = GetSelectedItem();
 
-		FVItemData* d = GetItemData(idx);
-		point.x = d->Rect.left-m_HScrollPos;
-		point.y = d->Rect.top-m_VScrollPos;
-		ClientToScreen(&point);
+		if (idx!=-1)
+		{
+			FVItemData* d = GetItemData(idx);
+			point.x = d->Rect.left-m_HScrollPos;
+			point.y = d->Rect.top-m_VScrollPos+m_HeaderHeight;
+			ClientToScreen(&point);
+		}
 	}
 	else
 	{
