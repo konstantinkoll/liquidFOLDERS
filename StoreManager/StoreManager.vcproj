@@ -434,6 +434,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\GlobeOptionsDlg.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\HistoryWnd.cpp"
 				>
 			</File>
@@ -565,6 +569,10 @@
 			</File>
 			<File
 				RelativePath=".\Globe_Low.h"
+				>
+			</File>
+			<File
+				RelativePath=".\GlobeOptionsDlg.h"
 				>
 			</File>
 			<File

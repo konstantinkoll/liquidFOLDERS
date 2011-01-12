@@ -6,6 +6,7 @@
 #include "CGlobeView.h"
 #include "Resource.h"
 #include "LFCore.h"
+#include "GlobeOptionsDlg.h"
 #include <cmath>
 
 #define STATUSBAR_HEIGHT 12
@@ -339,11 +340,14 @@ void CGlobeView::OnAutosize()
 
 void CGlobeView::OnOptions()
 {
+	GlobeOptionsDlg dlg(this, p_ViewParameters, m_Context);
+	if (dlg.DoModal()==IDOK)
+		theApp.UpdateViewOptions();
 }
 
 void CGlobeView::OnJumpToLocation()
 {
-	LFSelectLocationIATADlg dlg(this, IDD_JUMPTOIATA);
+	LFSelectLocationIATADlg dlg(IDD_JUMPTOIATA, this);
 
 	if (dlg.DoModal()==IDOK)
 	{
@@ -944,9 +948,12 @@ void CGlobeView::DrawScene(BOOL InternalCall)
 	glRotatef(m_Longitude, 0.0f, 0.0f, 1.0f);
 	glScalef(m_Scale, m_Scale, m_Scale);
 
-	glEnable(GL_FOG);
-	glFogf(GL_FOG_START, DISTANCE-m_FogStart);
-	glFogf(GL_FOG_END, DISTANCE-m_FogEnd);
+	if (theApp.m_GlobeAtmosphere)
+	{
+		glEnable(GL_FOG);
+		glFogf(GL_FOG_START, DISTANCE-m_FogStart);
+		glFogf(GL_FOG_END, DISTANCE-m_FogEnd);
+	}
 
 	if (m_TextureGlobe)
 	{
@@ -955,6 +962,10 @@ void CGlobeView::DrawScene(BOOL InternalCall)
 	}
 
 	glCallList(m_GlobeList[theApp.m_GlobeHQModel]);
+
+
+	if (theApp.m_GlobeAtmosphere)
+		glDisable(GL_FOG);
 
 	if (theApp.m_GlobeLighting)
 	{
@@ -968,7 +979,6 @@ void CGlobeView::DrawScene(BOOL InternalCall)
 		{
 			// Punkte und Schilder zeichnen
 			CalcAndDrawPoints();
-			glDisable(GL_FOG);
 
 			// Label
 			CalcAndDrawLabel();
@@ -998,7 +1008,7 @@ void CGlobeView::DrawScene(BOOL InternalCall)
 
 			WCHAR Viewpoint[256];
 			INT ViewpointX = -1;
-			if (m_ViewParameters.GlobeShowViewpoint)
+			if (m_ViewParameters.GlobeShowViewport)
 			{
 				WCHAR Coord[256];
 				LFGeoCoordinates c;
@@ -1120,7 +1130,7 @@ void CGlobeView::CalcAndDrawLabel()
 				UINT cCaption = (UINT)wcslen(caption);
 				WCHAR* subcaption = NULL;
 				WCHAR* coordinates = (m_ViewParameters.GlobeShowGPS ? d->CoordString : NULL);
-				WCHAR* description = (m_ViewParameters.GlobeShowHints ? p_Result->m_Items[a]->Description : NULL);
+				WCHAR* description = (m_ViewParameters.GlobeShowDescription ? p_Result->m_Items[a]->Description : NULL);
 				if (description)
 					if (*description==L'\0')
 						description = NULL;
