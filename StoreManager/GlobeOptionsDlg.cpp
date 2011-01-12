@@ -19,6 +19,9 @@ GlobeOptionsDlg::GlobeOptionsDlg(CWnd* pParent, LFViewParameters* View, UINT Con
 
 void GlobeOptionsDlg::DoDataExchange(CDataExchange* pDX)
 {
+	DDX_Control(pDX, IDC_TEXTURESIZE, m_wndTextureSize);
+	DDX_Control(pDX, IDC_VIEWPORT, m_wndViewport);
+
 	DDX_Check(pDX, IDC_HQMODEL, theApp.m_GlobeHQModel);
 	DDX_Check(pDX, IDC_LIGHTING, theApp.m_GlobeLighting);
 	DDX_Check(pDX, IDC_ATMOSPHERE, theApp.m_GlobeAtmosphere);
@@ -28,10 +31,14 @@ void GlobeOptionsDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Check(pDX, IDC_DESCRIPTION, p_View->GlobeShowDescription);
 	DDX_Check(pDX, IDC_VIEWPORT, p_View->GlobeShowViewport);
 	DDX_Check(pDX, IDC_CROSSHAIR, p_View->GlobeShowCrosshair);
+
+	if (pDX->m_bSaveAndValidate)
+		theApp.m_nTextureSize = m_wndTextureSize.GetCurSel();
 }
 
+
 BEGIN_MESSAGE_MAP(GlobeOptionsDlg, CDialog)
-	//ON_BN_CLICKED(IDC_AUTODIRS, OnSetAttrGroupBox)
+	ON_BN_CLICKED(IDC_VIEWPORT, OnViewport)
 END_MESSAGE_MAP()
 
 BOOL GlobeOptionsDlg::OnInitDialog()
@@ -44,5 +51,30 @@ BOOL GlobeOptionsDlg::OnInitDialog()
 	SetIcon(hIcon, TRUE);		// Großes Symbol verwenden
 	SetIcon(hIcon, FALSE);		// Kleines Symbol verwenden
 
+	// Texturgröße
+	CString tmpStr;
+	ENSURE(tmpStr.LoadString(IDS_AUTOMATIC));
+	m_wndTextureSize.AddString(tmpStr);
+	m_wndTextureSize.AddString(_T("1024×1024"));
+	m_wndTextureSize.AddString(_T("2048×2048"));
+	m_wndTextureSize.AddString(_T("4096×4096"));
+	m_wndTextureSize.AddString(_T("8192×4096"));
+	m_wndTextureSize.SetCurSel(theApp.m_nTextureSize);
+
+	// Inaktive Elemente
+	if (p_View->SortBy!=LFAttrLocationIATA)
+	{
+		GetDlgItem(IDC_AIRPORTNAMES)->EnableWindow(FALSE);
+		GetDlgItem(IDC_GPSCOORDINATES)->EnableWindow(FALSE);
+	}
+
+	// Fadenkreuz
+	OnViewport();
+
 	return TRUE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird
+}
+
+void GlobeOptionsDlg::OnViewport()
+{
+	GetDlgItem(IDC_CROSSHAIR)->EnableWindow(m_wndViewport.GetCheck());
 }

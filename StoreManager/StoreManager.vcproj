@@ -682,6 +682,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\GlobeIcons.png"
+				>
+			</File>
+			<File
 				RelativePath=".\res\GlobeOptions_Tiny.ico"
 				>
 			</File>

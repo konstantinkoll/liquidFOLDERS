@@ -21,5 +21,10 @@ protected:
 	UINT m_Context;
 
 	afx_msg BOOL OnInitDialog();
+	afx_msg void OnViewport();
 	DECLARE_MESSAGE_MAP()
+
+private:
+	CComboBox m_wndTextureSize;
+	CButton m_wndViewport;
 };
