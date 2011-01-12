@@ -450,6 +450,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\include\MenuIcons.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\SortOptionsDlg.cpp"
 				>
 			</File>
@@ -597,6 +601,10 @@
 			</File>
 			<File
 				RelativePath=".\MainFrm.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\MenuIcons.h"
 				>
 			</File>
 			<File

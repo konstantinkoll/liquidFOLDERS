@@ -9,6 +9,7 @@
 #include "CListView.h"
 #include "CTagcloudView.h"
 #include "CTimelineView.h"
+#include "StoreManager.h"
 
 
 // CMainView
@@ -654,6 +655,8 @@ void CMainView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 		ENSURE(mask.LoadString(IDS_CONTEXTMENU_SORTOPTIONS));
 		tmpStr.Format(mask, theApp.m_Contexts[m_Context]->Name);
 		pPopup->InsertMenu(0, MF_STRING | MF_BYPOSITION, ID_APP_SORTOPTIONS, tmpStr);
+
+		theApp.SetContextMenuIcon(pPopup, IDM_STORES_CREATENEW, IDI_STORE_Internal);
 
 		pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, GetOwner(), NULL);
 		delete pMenu;

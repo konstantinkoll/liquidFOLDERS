@@ -9,6 +9,7 @@
 #include "..\\LFCore\\resource.h"
 #include "LFCore.h"
 #include "LFCommDlg.h"
+#include "MenuIcons.h"
 
 
 // CStoreManagerApp
@@ -223,6 +224,27 @@ void CStoreManagerApp::OnAppExit()
 {
 	CloseAllFrames();
 	LFApplication::OnAppExit();
+}
+
+
+void CStoreManagerApp::SetContextMenuIcon(CMenu* pMenu, UINT CmdID, UINT ResID)
+{
+	INT cx = GetSystemMetrics((OSVersion==OS_XP) ? SM_CXMENUCHECK : SM_CXSMICON);
+	INT cy = GetSystemMetrics((OSVersion==OS_XP) ? SM_CYMENUCHECK : SM_CYSMICON);
+
+	for (UINT a=0; a<pMenu->GetMenuItemCount(); a++)
+		if (pMenu->GetMenuItemID(a)==CmdID)
+		{
+			HMODULE hModCore = LoadLibrary(_T("LFCORE.DLL"));
+			if (hModCore)
+			{
+				HICON hIcon = (HICON)LoadImage(hModCore, MAKEINTRESOURCE(ResID), IMAGE_ICON, cx, cy, LR_DEFAULTCOLOR);
+				FreeLibrary(hModCore);
+
+				SetMenuItemBitmaps(*pMenu, a, MF_BYPOSITION, IconToBitmap(hIcon, cx, cy), NULL);
+				DestroyIcon(hIcon);
+			}
+		}
 }
 
 
@@ -503,9 +525,4 @@ CString CStoreManagerApp::GetCommandName(UINT nID, BOOL bInsertSpace)
 CMFCRibbonButton* CStoreManagerApp::CommandButton(UINT nID, INT nSmallImageIndex, INT nLargeImageIndex, BOOL bAlwaysShowDescription, BOOL bInsertSpace)
 {
 	return new CMFCRibbonButton(nID, GetCommandName(nID, bInsertSpace), nSmallImageIndex, nLargeImageIndex, bAlwaysShowDescription);
-}
-
-CMFCRibbonCheckBox* CStoreManagerApp::CommandCheckBox(UINT nID)
-{
-	return new CMFCRibbonCheckBox(nID, GetCommandName(nID));
 }

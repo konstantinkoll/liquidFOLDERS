@@ -51,6 +51,8 @@ public:
 	CMainFrame* GetClipboard();
 	void CloseAllFrames(BOOL leaveOne=FALSE);
 
+	void SetContextMenuIcon(CMenu* pMenu, UINT CmdID, UINT ResID);
+
 	BOOL SanitizeSortBy(LFViewParameters* vp, INT context);
 	BOOL SanitizeViewMode(LFViewParameters* vp, INT context);
 	void Broadcast(INT context, UINT cmdMsg);
@@ -63,7 +65,6 @@ public:
 	void FreeGLTexture(UINT nID);
 		static CString GetCommandName(UINT nID, BOOL bInsertSpace=FALSE);							// Axe
 		static CMFCRibbonButton* CommandButton(UINT nID, INT nSmallImageIndex=-1, INT nLargeImageIndex=-1, BOOL bAlwaysShowDescription=FALSE, BOOL bInsertSpace=FALSE);	// Axe
-		static CMFCRibbonCheckBox* CommandCheckBox(UINT nID);										// Axe
 
 protected:
 	void GetBinary(LPCTSTR lpszEntry, void* pData, UINT size);
