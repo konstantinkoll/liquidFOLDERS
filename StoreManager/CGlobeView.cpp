@@ -96,7 +96,7 @@ CGlobeView::CGlobeView()
 	m_pDC = NULL;
 	m_hrc = NULL;
 	hCursor = LoadCursor(NULL, IDC_WAIT);
-	m_TextureGlobe = NULL;
+	m_TextureGlobe = m_TextureIcons = NULL;
 	m_Width = 0;
 	m_Height = 0;
 	m_GlobeList[FALSE] = m_GlobeList[TRUE] = -1;
@@ -297,6 +297,8 @@ void CGlobeView::OnDestroy()
 
 		if (m_TextureGlobe)
 			delete m_TextureGlobe;
+		if (m_TextureIcons)
+			delete m_TextureIcons;
 		if (m_GlobeList[FALSE]!=-1)
 			glDeleteLists(m_GlobeList[FALSE], 1);
 		if (m_GlobeList[TRUE]!=-1)
@@ -649,9 +651,15 @@ void CGlobeView::Init()
 	glHint(GL_FOG_HINT, GL_NICEST);
 
 	// Fonts
-	m_Fonts[FALSE].Create(&theApp.m_DefaultFont);
-	m_Fonts[TRUE].Create(&theApp.m_LargeFont);
-	m_SpecialFont.Create(&theApp.m_SmallFont);
+	m_Fonts[0].Create(&theApp.m_DefaultFont);
+	m_Fonts[1].Create(&theApp.m_LargeFont);
+	m_Fonts[2].Create(&theApp.m_SmallFont);
+
+	// Icons
+	CGdiPlusBitmapResource tex(IDB_GLOBEICONS, _T("PNG"));
+	m_TextureIcons = new GLTextureGdiPlusBitmap(&tex);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 }
 
 void CGlobeView::PrepareTexture()
@@ -708,7 +716,7 @@ Smaller:
 
 		if (m_TextureGlobe)
 			delete m_TextureGlobe;
-		m_TextureGlobe = new CTextureBlueMarble(tex);
+		m_TextureGlobe = new GLTextureBlueMarble(tex);
 
 		m_LockUpdate = FALSE;
 		SetCursor(hCursor);
@@ -789,8 +797,8 @@ BOOL CGlobeView::SetupPixelFormat()
 		0, 0, 0                         // layer masks ignored
 	};
 
-	INT pixelformat = ChoosePixelFormat(m_pDC->GetSafeHdc(), &pfd);
-	return pixelformat ? SetPixelFormat(m_pDC->GetSafeHdc(), pixelformat, &pfd) : FALSE;
+	INT pixelformat = ChoosePixelFormat(*m_pDC, &pfd);
+	return pixelformat ? SetPixelFormat(*m_pDC, pixelformat, &pfd) : FALSE;
 }
 
 void CGlobeView::Normalize()
@@ -963,7 +971,6 @@ void CGlobeView::DrawScene(BOOL InternalCall)
 
 	glCallList(m_GlobeList[theApp.m_GlobeHQModel]);
 
-
 	if (theApp.m_GlobeAtmosphere)
 		glDisable(GL_FOG);
 
@@ -973,6 +980,27 @@ void CGlobeView::DrawScene(BOOL InternalCall)
 		glDisable(GL_LIGHTING);
 		glDisable(GL_LIGHT0);
 	}
+
+
+
+	glEnable2D();
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, m_TextureIcons->GetID());
+	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+
+	glBegin(GL_QUADS);
+	glTexCoord2d(0.0, 0.0);
+	glVertex2d(100, 100);
+	glTexCoord2d(-1.0, 0.0);
+	glVertex2d(228, 100);
+	glTexCoord2d(-1.0, -1.0);
+	glVertex2d(228, 228);
+	glTexCoord2d(0.0, -1.0);
+	glVertex2d(100, 228);
+	glEnd();
+	glDisable(GL_TEXTURE_2D);
+	glDisable2D();
+
 
 	if (p_Result)
 		if (p_Result->m_ItemCount)
@@ -989,7 +1017,7 @@ void CGlobeView::DrawScene(BOOL InternalCall)
 	{
 		WCHAR Copyright[] = L"© NASA's Earth Observatory";
 		INT CopyrightX = -1;
-		UINT CopyrightWidth = m_SpecialFont.GetTextWidth(Copyright);
+		UINT CopyrightWidth = m_Fonts[2].GetTextWidth(Copyright);
 
 		if (m_Width>=(INT)CopyrightWidth)
 		{
@@ -1017,7 +1045,7 @@ void CGlobeView::DrawScene(BOOL InternalCall)
 				LFGeoCoordinatesToString(c, Coord, 256, true);
 
 				swprintf(Viewpoint, 256, YouLookAt, Coord);
-				UINT ViewpointWidth = m_SpecialFont.GetTextWidth(Viewpoint);
+				UINT ViewpointWidth = m_Fonts[2].GetTextWidth(Viewpoint);
 
 				if (m_Width>=(INT)(CopyrightWidth+ViewpointWidth+60))
 				{
@@ -1028,23 +1056,22 @@ void CGlobeView::DrawScene(BOOL InternalCall)
 			}
 
 			if (CopyrightX==-1)
-				CopyrightX = (m_Width-m_SpecialFont.GetTextWidth(&Copyright[0]))>>1;
+				CopyrightX = (m_Width-m_Fonts[2].GetTextWidth(&Copyright[0]))>>1;
 
 			// Text
 			GLfloat highlightcol[4];
 			ColorRef2GLColor(highlightcol, m_ColorHighlight);
 			glColor4d(highlightcol[0], highlightcol[1], highlightcol[2], 1.0f);
 
-			m_SpecialFont.Render(Copyright, CopyrightX, m_Height-STATUSBAR_HEIGHT);
+			m_Fonts[2].Render(Copyright, CopyrightX, m_Height-STATUSBAR_HEIGHT);
 			if (ViewpointX!=-1)
-				m_SpecialFont.Render(Viewpoint, ViewpointX, m_Height-STATUSBAR_HEIGHT);
+				m_Fonts[2].Render(Viewpoint, ViewpointX, m_Height-STATUSBAR_HEIGHT);
 
 			glDisable2D();
 		}
 	}
 
-	glFinish();
-	SwapBuffers(m_pDC->GetSafeHdc());
+	SwapBuffers(*m_pDC);
 
 	m_LockUpdate = FALSE;
 }
@@ -1182,17 +1209,17 @@ void CGlobeView::DrawLabel(GlobeItemData* d, UINT cCaption, WCHAR* caption, WCHA
 	ColorRef2GLColor(&TextColor[0], TextColorRef);
 
 	// Breite
-	UINT width = m_Fonts[TRUE].GetTextWidth(caption, cCaption);
-	width = max(width, m_Fonts[FALSE].GetTextWidth(subcaption));
-	width = max(width, m_Fonts[FALSE].GetTextWidth(coordinates));
-	width = max(width, m_Fonts[FALSE].GetTextWidth(description));
+	UINT width = m_Fonts[1].GetTextWidth(caption, cCaption);
+	width = max(width, m_Fonts[0].GetTextWidth(subcaption));
+	width = max(width, m_Fonts[0].GetTextWidth(coordinates));
+	width = max(width, m_Fonts[0].GetTextWidth(description));
 	width += 8;
 
 	// Höhe
-	UINT height = m_Fonts[TRUE].GetTextHeight(caption);
-	height += m_Fonts[FALSE].GetTextHeight(subcaption);
-	height += m_Fonts[FALSE].GetTextHeight(coordinates);
-	height += m_Fonts[FALSE].GetTextHeight(description);
+	UINT height = m_Fonts[1].GetTextHeight(caption);
+	height += m_Fonts[0].GetTextHeight(subcaption);
+	height += m_Fonts[0].GetTextHeight(coordinates);
+	height += m_Fonts[0].GetTextHeight(description);
 	height += 3;
 
 	// Position
@@ -1280,14 +1307,14 @@ void CGlobeView::DrawLabel(GlobeItemData* d, UINT cCaption, WCHAR* caption, WCHA
 	x += 3;
 
 	glColor4f(TextColor[0], TextColor[1], TextColor[2], d->Alpha);
-	y += m_Fonts[TRUE].Render(caption, x, y, cCaption);
+	y += m_Fonts[1].Render(caption, x, y, cCaption);
 	if (subcaption)
-		y += m_Fonts[FALSE].Render(subcaption, x, y);
+		y += m_Fonts[0].Render(subcaption, x, y);
 
 	if ((!d->Hdr.Selected) && (BaseColorRef==0xFFFFFF) && (TextColorRef==0x000000))
 		glColor4f(TextColor[0], TextColor[1], TextColor[2], d->Alpha/2);
 	if (coordinates)
-		y += m_Fonts[FALSE].Render(coordinates, x, y);
+		y += m_Fonts[0].Render(coordinates, x, y);
 	if (description)
-		y += m_Fonts[FALSE].Render(description, x, y);
+		y += m_Fonts[0].Render(description, x, y);
 }

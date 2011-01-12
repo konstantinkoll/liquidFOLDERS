@@ -41,17 +41,24 @@ IDD_GLOBEOPTIONS        ICON                    "res\\GlobeOptions_Tiny.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //
+// JPG
+//
+
+IDB_BLUEMARBLE_1024     JPG                     "res\\BlueMarble_1024.jpg"
+IDB_BLUEMARBLE_2048     JPG                     "res\\BlueMarble_2048.jpg"
+IDB_BLUEMARBLE_4096     JPG                     "res\\BlueMarble_4096.jpg"
+IDB_BLUEMARBLE_8192     JPG                     "res\\BlueMarble_8192.jpg"
+
+/////////////////////////////////////////////////////////////////////////////
+//
 // PNG
 //
 
 IDB_ABOUTICON           PNG                     "res\\StoreManager_About.png"
 IDB_INSPECTOR           PNG                     "res\\Inspector_Grey.png"
 IDB_MULTIPLE            PNG                     "res\\Multiple.png"
-IDB_BLUEMARBLE_1024     PNG                     "res\\BlueMarble_1024.jpg"
-IDB_BLUEMARBLE_2048     PNG                     "res\\BlueMarble_2048.jpg"
-IDB_BLUEMARBLE_4096     PNG                     "res\\BlueMarble_4096.jpg"
-IDB_BLUEMARBLE_8192     PNG                     "res\\BlueMarble_8192.jpg"
 IDB_HISTORYICONS        PNG                     "res\\HistoryIcons.png"
+IDB_GLOBEICONS          PNG                     "res\\GlobeIcons.png"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -70,7 +77,6 @@ IDB_RIBBONHOME_16       BITMAP                  "res\\Ribbon_Home_16.bmp"
 IDB_RIBBONHOME_32       BITMAP                  "res\\Ribbon_Home_32.bmp"
 IDB_RIBBONVIEW_16       BITMAP                  "res\\Ribbon_View_16.bmp"
 IDB_RIBBONVIEW_32       BITMAP                  "res\\Ribbon_View_32.bmp"
-ID_PANE_HISTORYWND      BITMAP                  "res\\Toolbar_History.bmp"
 ID_PANE_INSPECTORWND    BITMAP                  "res\\Toolbar_Inspector.bmp"
 ID_PANE_FILTERWND       BITMAP                  "res\\Toolbar_Filter.bmp"
 IDB_TASKS               BITMAP                  "res\\Tasks.bmp"

@@ -61,8 +61,6 @@ public:
 	void Reload(INT context);
 	void PrepareFormatData(CHAR* FileFormat);
 
-	HBITMAP GetGLTexture(UINT nID);
-	void FreeGLTexture(UINT nID);
 		static CString GetCommandName(UINT nID, BOOL bInsertSpace=FALSE);							// Axe
 		static CMFCRibbonButton* CommandButton(UINT nID, INT nSmallImageIndex=-1, INT nLargeImageIndex=-1, BOOL bAlwaysShowDescription=FALSE, BOOL bInsertSpace=FALSE);	// Axe
 
@@ -75,10 +73,6 @@ protected:
 	afx_msg void OnAppNewView();
 	afx_msg void OnAppExit();
 	DECLARE_MESSAGE_MAP()
-
-private:
-	HBITMAP m_GLTextureCache[4];
-	UINT m_GLTextureBinds[4];
 };
 
 extern CStoreManagerApp theApp;

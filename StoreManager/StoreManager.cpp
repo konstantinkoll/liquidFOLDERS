@@ -26,10 +26,6 @@ END_MESSAGE_MAP()
 CStoreManagerApp::CStoreManagerApp()
 	: LFApplication(HasGUI_Ribbon)
 {
-	ZeroMemory(&m_GLTextureCache, sizeof(m_GLTextureCache));
-	ZeroMemory(&m_GLTextureBinds, sizeof(m_GLTextureBinds));
-
-	// Nag screen
 	m_NagCounter = 20;
 }
 
@@ -462,38 +458,6 @@ void CStoreManagerApp::SaveViewOptions(INT context)
 	WriteBinary(_T("ColumnWidth"), (LPBYTE)m_Views[context].ColumnWidth, sizeof(m_Views[context].ColumnWidth));
 
 	SetRegistryBase(oldBase);
-}
-
-
-// OpenGL
-
-HBITMAP CStoreManagerApp::GetGLTexture(UINT nID)
-{
-	nID--;
-
-	// Release all other textures
-	for (UINT a=0; a<4; a++)
-		if ((m_GLTextureCache[a]) && (!m_GLTextureBinds[a]) && (a!=nID))
-		{
-			DeleteObject(m_GLTextureCache[a]);
-			m_GLTextureCache[a] = NULL;
-		}
-
-	if (!m_GLTextureCache[nID])
-	{
-		CGdiPlusBitmapResource* texture = new CGdiPlusBitmapResource();
-		texture->Load(nID+IDB_BLUEMARBLE_1024, _T("PNG"));
-		texture->m_pBitmap->GetHBITMAP(NULL, &m_GLTextureCache[nID]);
-		delete texture;
-	}
-
-	m_GLTextureBinds[nID]++;
-	return m_GLTextureCache[nID];
-}
-
-void CStoreManagerApp::FreeGLTexture(UINT nID)
-{
-	m_GLTextureBinds[nID-1]--;
 }
 
 

@@ -10,10 +10,11 @@ class AFX_EXT_CLASS CGdiPlusBitmap
 public:
 	CGdiPlusBitmap();
 	CGdiPlusBitmap(LPCWSTR pFile);
-	virtual ~CGdiPlusBitmap();
+	~CGdiPlusBitmap();
 
-	void Empty();
-	bool Load(LPCWSTR pFile);
+	virtual void Empty();
+
+	BOOL Load(LPCWSTR pFile);
 
 	Gdiplus::Bitmap* m_pBitmap;
 };
@@ -26,15 +27,15 @@ class AFX_EXT_CLASS CGdiPlusBitmapResource : public CGdiPlusBitmap
 {
 public:
 	CGdiPlusBitmapResource();
-	CGdiPlusBitmapResource(LPCTSTR pName, LPCTSTR pType = RT_RCDATA, HMODULE hInst = NULL);
-	CGdiPlusBitmapResource(UINT id, LPCTSTR pType = RT_RCDATA, HMODULE hInst = NULL);
-	CGdiPlusBitmapResource(UINT id, UINT type, HMODULE hInst = NULL);
-	virtual ~CGdiPlusBitmapResource();
+	CGdiPlusBitmapResource(LPCTSTR pName, LPCTSTR pType=RT_RCDATA, HMODULE hInst=NULL);
+	CGdiPlusBitmapResource(UINT id, LPCTSTR pType=RT_RCDATA, HMODULE hInst=NULL);
+	CGdiPlusBitmapResource(UINT id, UINT type, HMODULE hInst=NULL);
 
-	void Empty();
-	bool Load(LPCTSTR pName, LPCTSTR pType = RT_RCDATA, HMODULE hInst = NULL);
-	bool Load(UINT id, LPCTSTR pType = RT_RCDATA, HMODULE hInst = NULL);
-	bool Load(UINT id, UINT type, HMODULE hInst = NULL);
+	virtual void Empty();
+
+	BOOL Load(LPCTSTR pName, LPCTSTR pType = RT_RCDATA, HMODULE hInst=NULL);
+	BOOL Load(UINT id, LPCTSTR pType = RT_RCDATA, HMODULE hInst=NULL);
+	BOOL Load(UINT id, UINT type, HMODULE hInst=NULL);
 
 protected:
 	HGLOBAL m_hBuffer;

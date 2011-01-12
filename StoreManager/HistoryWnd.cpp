@@ -146,13 +146,6 @@ INT CHistoryWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 	SetRedraw(FALSE);
 
-	if (!m_wndToolBar.Create(this, AFX_DEFAULT_TOOLBAR_STYLE))
-		return -1;
-
-	m_wndToolBar.LoadToolBar(ID_PANE_HISTORYWND, 0, 0, TRUE);
-	m_wndToolBar.SetPaneStyle(m_wndToolBar.GetPaneStyle() | CBRS_TOOLTIPS | CBRS_FLYBY);
-	m_wndToolBar.SetPaneStyle(m_wndToolBar.GetPaneStyle() & ~(CBRS_GRIPPER | CBRS_SIZE_DYNAMIC | CBRS_BORDER_TOP | CBRS_BORDER_BOTTOM | CBRS_BORDER_LEFT | CBRS_BORDER_RIGHT));
-
 	const DWORD dwViewStyle = WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | LVS_NOCOLUMNHEADER | LVS_SHOWSELALWAYS | LVS_SINGLESEL;
 	if (!m_wndList.Create(dwViewStyle, CRect(0, 0, 0, 0), this, ID_HISTORYLIST))
 		return -1;
@@ -188,10 +181,7 @@ void CHistoryWnd::OnSize(UINT nType, INT cx, INT cy)
 	CRect rectClient;
 	GetClientRect(rectClient);
 
-	INT heightTlb = m_wndToolBar.CalcFixedLayout(FALSE, TRUE).cy;
-
-	m_wndToolBar.SetWindowPos(NULL, rectClient.left, rectClient.top, rectClient.Width(), heightTlb, SWP_NOACTIVATE | SWP_NOZORDER);
-	m_wndList.SetWindowPos(NULL, rectClient.left, rectClient.top+heightTlb, rectClient.Width(), rectClient.Height()-heightTlb, SWP_NOACTIVATE | SWP_NOZORDER);
+	m_wndList.SetWindowPos(NULL, rectClient.left, rectClient.top, rectClient.Width(), rectClient.Height(), SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
 void CHistoryWnd::OnSetFocus(CWnd* pOldWnd)

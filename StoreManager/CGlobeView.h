@@ -6,8 +6,8 @@
 #include "liquidFOLDERS.h"
 #include "StoreManager.h"
 #include "CFileView.h"
-#include "CTextures.h"
-#include "CGLFont.h"
+#include "GLTexture.h"
+#include "GLFont.h"
 
 
 // Item data
@@ -49,9 +49,9 @@ protected:
 	CClientDC* m_pDC;
 	HGLRC m_hrc;
 	HCURSOR hCursor;
-	CTexture* m_TextureGlobe;
-	CGLFont m_SpecialFont;
-	CGLFont m_Fonts[2];
+	GLTexture* m_TextureGlobe;
+	GLTexture* m_TextureIcons;
+	GLFont m_Fonts[3];
 	INT m_Width;
 	INT m_Height;
 	BOOL m_Grabbed;
