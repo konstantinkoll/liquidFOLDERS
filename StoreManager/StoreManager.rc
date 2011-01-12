@@ -37,6 +37,7 @@ IDR_CLIPBOARD           ICON                    "res\\Clipboard_Small.ico"
 IDD_VIEWOPTIONS         ICON                    "res\\ViewOptions_Tiny.ico"
 IDD_SORTOPTIONS         ICON                    "res\\SortOptions_Tiny.ico"
 IDD_CHOOSEDETAILS       ICON                    "res\\Table_Tiny.ico"
+IDD_GLOBEOPTIONS        ICON                    "res\\GlobeOptions_Tiny.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //
