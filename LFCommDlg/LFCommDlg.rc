@@ -1831,7 +1831,7 @@ BEGIN
         MENUITEM "Créez un store &nouveau...",  IDM_STORES_CREATENEW
         MENUITEM SEPARATOR
         MENUITEM "Exécuter des &travails d'entretien", IDM_STORES_MAINTAINALL
-        MENUITEM "Backup &registry settings",   IDM_STORES_BACKUP
+        MENUITEM "Protection de secours paramètres d'en&registrement", IDM_STORES_BACKUP
     END
 END
 
