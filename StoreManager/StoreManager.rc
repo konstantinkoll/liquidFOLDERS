@@ -249,7 +249,7 @@ FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,63,202,50,14
     PUSHBUTTON      "Abbrechen",IDCANCEL,121,202,50,14
-    GROUPBOX        "3D-Einstellungen",IDC_STATIC,7,7,164,69
+    GROUPBOX        "3D-Einstellungen (OpenGL)",IDC_STATIC,7,7,164,69
     GROUPBOX        "Objekte",IDC_STATIC,7,82,164,66
     GROUPBOX        "Sonstiges",IDC_STATIC,7,154,164,40
     LTEXT           "Texturgröße:",IDC_STATIC,14,19,54,8
@@ -500,7 +500,7 @@ FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,63,202,50,14
     PUSHBUTTON      "Cancel",IDCANCEL,121,202,50,14
-    GROUPBOX        "3D settings",IDC_STATIC,7,7,164,69
+    GROUPBOX        "3D settings (OpenGL)",IDC_STATIC,7,7,164,69
     GROUPBOX        "Objects",IDC_STATIC,7,82,164,66
     GROUPBOX        "Miscellaneous",IDC_STATIC,7,154,164,40
     LTEXT           "Texture size:",IDC_STATIC,14,19,54,8
