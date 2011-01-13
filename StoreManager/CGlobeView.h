@@ -26,20 +26,10 @@ struct GlobeItemData
 // CGlobeView
 //
 
-struct LocalSettings
-{
-	GLfloat Latitude;
-	GLfloat Longitude;
-	INT GlobeZoom;
-};
-
 class CGlobeView : public CFileView
 {
 public:
 	CGlobeView();
-
-	LocalSettings m_LocalSettings;
-	BOOL m_CameraChanged;
 
 	virtual CMenu* GetBackgroundContextMenu();
 
@@ -52,6 +42,9 @@ protected:
 	GLTexture* m_TextureGlobe;
 	GLTexture* m_TextureIcons;
 	GLFont m_Fonts[3];
+	GLfloat m_GlobeLatitude;
+	GLfloat m_GlobeLongitude;
+	INT m_GlobeZoom;
 	INT m_Width;
 	INT m_Height;
 	BOOL m_Grabbed;

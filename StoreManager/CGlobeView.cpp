@@ -106,7 +106,6 @@ CGlobeView::CGlobeView()
 	m_Scale = 0.7f;
 	m_Radius = 0.0f;
 	m_Grabbed = FALSE;
-	m_CameraChanged = FALSE;
 	lpszCursorName = NULL;
 	m_CursorPos.x = 0;
 	m_CursorPos.y = 0;
@@ -125,9 +124,9 @@ void CGlobeView::SetViewOptions(BOOL Force)
 {
 	if (Force)
 	{
-		m_LocalSettings.Latitude = p_ViewParameters->GlobeLatitude/1000.0f;
-		m_LocalSettings.Longitude = p_ViewParameters->GlobeLongitude/1000.0f;
-		m_LocalSettings.GlobeZoom = p_ViewParameters->GlobeZoom;
+		m_GlobeLatitude = p_ViewParameters->GlobeLatitude/1000.0f;
+		m_GlobeLongitude = p_ViewParameters->GlobeLongitude/1000.0f;
+		m_GlobeZoom = p_ViewParameters->GlobeZoom;
 
 		m_ColorBack = 0xFFFFFF;
 		m_ColorText = 0x000000;
@@ -310,33 +309,37 @@ void CGlobeView::OnDestroy()
 		delete m_pDC;
 	}
 
+	if (p_ViewParameters)
+	{
+		p_ViewParameters->GlobeLatitude = (INT)(m_GlobeLatitude*1000.0f);
+		p_ViewParameters->GlobeLongitude = (INT)(m_GlobeLongitude*1000.0f);
+		p_ViewParameters->GlobeZoom = m_GlobeZoom;
+	}
+
 	CWnd::OnDestroy();
 }
 
 void CGlobeView::OnZoomIn()
 {
-	if (m_LocalSettings.GlobeZoom>0)
+	if (m_GlobeZoom>0)
 	{
-		m_LocalSettings.GlobeZoom -= 10;
-		m_CameraChanged = TRUE;
+		m_GlobeZoom -= 10;
 		UpdateScene();
 	}
 }
 
 void CGlobeView::OnZoomOut()
 {
-	if (m_LocalSettings.GlobeZoom<100)
+	if (m_GlobeZoom<100)
 	{
-		m_LocalSettings.GlobeZoom += 10;
-		m_CameraChanged = TRUE;
+		m_GlobeZoom += 10;
 		UpdateScene();
 	}
 }
 
 void CGlobeView::OnAutosize()
 {
-	m_LocalSettings.GlobeZoom = 60;
-	m_CameraChanged = TRUE;
+	m_GlobeZoom = 60;
 	UpdateScene();
 }
 
@@ -358,9 +361,8 @@ void CGlobeView::OnJumpToLocation()
 		m_AnimCounter = ANIMLENGTH;
 		m_AnimStartLatitude = m_Latitude;
 		m_AnimStartLongitude = m_Longitude;
-		m_LocalSettings.Latitude = (GLfloat)-dlg.m_Airport->Location.Latitude;
-		m_LocalSettings.Longitude = (GLfloat)-dlg.m_Airport->Location.Longitude;
-		m_CameraChanged = TRUE;
+		m_GlobeLatitude = (GLfloat)-dlg.m_Airport->Location.Latitude;
+		m_GlobeLongitude = (GLfloat)-dlg.m_Airport->Location.Longitude;
 
 		UpdateScene();
 	}
@@ -438,13 +440,13 @@ void CGlobeView::OnUpdateCommands(CCmdUI* pCmdUI)
 	switch (pCmdUI->m_nID)
 	{
 	case IDM_GLOBE_ZOOMIN:
-		b = m_LocalSettings.GlobeZoom>0;
+		b = m_GlobeZoom>0;
 		break;
 	case IDM_GLOBE_ZOOMOUT:
-		b = m_LocalSettings.GlobeZoom<100;
+		b = m_GlobeZoom<100;
 		break;
 	case IDM_GLOBE_AUTOSIZE:
-		b = m_LocalSettings.GlobeZoom!=60;
+		b = m_GlobeZoom!=60;
 		break;
 	case IDM_GLOBE_OPTIONS:
 		break;
@@ -471,9 +473,9 @@ void CGlobeView::OnLButtonDown(UINT nFlags, CPoint point)
 			if (m_AnimCounter)
 			{
 				m_AnimCounter = 0;
-				m_LocalSettings.Latitude = m_Latitude;
-				m_LocalSettings.Longitude = m_Longitude;
-				m_LocalSettings.GlobeZoom = (INT)(m_Zoom*100.f);
+				m_GlobeLatitude = m_Latitude;
+				m_GlobeLongitude = m_Longitude;
+				m_GlobeZoom = (INT)(m_Zoom*100.f);
 			}
 
 			SetCapture();
@@ -508,9 +510,8 @@ void CGlobeView::OnMouseMove(UINT nFlags, CPoint point)
 	{
 		CSize rotate = m_GrabPoint - point;
 		m_GrabPoint = point;
-		m_LocalSettings.Longitude = m_Longitude -= rotate.cx/m_Scale*0.12f;
-		m_LocalSettings.Latitude = m_Latitude -= rotate.cy/m_Scale*0.12f;
-		m_CameraChanged = TRUE;
+		m_GlobeLongitude = m_Longitude -= rotate.cx/m_Scale*0.12f;
+		m_GlobeLatitude = m_Latitude -= rotate.cy/m_Scale*0.12f;
 
 		UpdateScene(TRUE);
 	}
@@ -805,22 +806,22 @@ BOOL CGlobeView::SetupPixelFormat()
 void CGlobeView::Normalize()
 {
 	// Zoom
-	if (m_LocalSettings.GlobeZoom<0)
-		m_LocalSettings.GlobeZoom = 0;
-	if (m_LocalSettings.GlobeZoom>100)
-		m_LocalSettings.GlobeZoom = 100;
+	if (m_GlobeZoom<0)
+		m_GlobeZoom = 0;
+	if (m_GlobeZoom>100)
+		m_GlobeZoom = 100;
 
 	// Nicht über die Pole rollen
-	if (m_LocalSettings.Latitude<-75.0f)
-		m_LocalSettings.Latitude = -75.0f;
-	if (m_LocalSettings.Latitude>75.0f)
-		m_LocalSettings.Latitude = 75.0f;
+	if (m_GlobeLatitude<-75.0f)
+		m_GlobeLatitude = -75.0f;
+	if (m_GlobeLatitude>75.0f)
+		m_GlobeLatitude = 75.0f;
 
 	// Rotation normieren
-	if (m_LocalSettings.Longitude<0.0f)
-		m_LocalSettings.Longitude += 360.0f;
-	if (m_LocalSettings.Longitude>360.0f)
-		m_LocalSettings.Longitude -= 360.0f;
+	if (m_GlobeLongitude<0.0f)
+		m_GlobeLongitude += 360.0f;
+	if (m_GlobeLongitude>360.0f)
+		m_GlobeLongitude -= 360.0f;
 }
 
 BOOL CGlobeView::UpdateScene(BOOL Redraw)
@@ -832,7 +833,7 @@ BOOL CGlobeView::UpdateScene(BOOL Redraw)
 	BOOL res = Redraw;
 	Normalize();
 
-	GLfloat TargetZoom = m_LocalSettings.GlobeZoom/100.0f;
+	GLfloat TargetZoom = m_GlobeZoom/100.0f;
 
 	if (m_Zoom<0)
 	{
@@ -855,17 +856,17 @@ BOOL CGlobeView::UpdateScene(BOOL Redraw)
 
 	if ((m_Latitude==0.0f) && (m_Longitude==0.0f))
 	{
-		res |= (m_Latitude!=m_LocalSettings.Latitude) || (m_Longitude!=m_LocalSettings.Longitude);
-		m_Latitude = m_LocalSettings.Latitude;
-		m_Longitude = m_LocalSettings.Longitude;
+		res |= (m_Latitude!=m_GlobeLatitude) || (m_Longitude!=m_GlobeLongitude);
+		m_Latitude = m_GlobeLatitude;
+		m_Longitude = m_GlobeLongitude;
 	}
 	else
 	{
 		if (m_AnimCounter)
 		{
 			GLfloat f = (GLfloat)((cos(PI*m_AnimCounter/ANIMLENGTH)+1.0)/2.0);
-			m_Latitude = m_AnimStartLatitude*(1.0f-f) + m_LocalSettings.Latitude*f;
-			m_Longitude = m_AnimStartLongitude*(1.0f-f) + m_LocalSettings.Longitude*f;
+			m_Latitude = m_AnimStartLatitude*(1.0f-f) + m_GlobeLatitude*f;
+			m_Longitude = m_AnimStartLongitude*(1.0f-f) + m_GlobeLongitude*f;
 
 			if (TargetZoom<0.6f)
 			{
@@ -882,9 +883,9 @@ BOOL CGlobeView::UpdateScene(BOOL Redraw)
 		}
 		else
 		{
-			res |= (m_Latitude!=m_LocalSettings.Latitude) || (m_Longitude!=m_LocalSettings.Longitude);
-			m_Latitude = m_LocalSettings.Latitude;
-			m_Longitude = m_LocalSettings.Longitude;
+			res |= (m_Latitude!=m_GlobeLatitude) || (m_Longitude!=m_GlobeLongitude);
+			m_Latitude = m_GlobeLatitude;
+			m_Longitude = m_GlobeLongitude;
 		}
 	}
 
