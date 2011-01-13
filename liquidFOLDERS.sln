@@ -198,7 +198,6 @@ Global
 		{04F29F03-25C1-4377-A7B0-6F90552EBB07}.Debug|Win32.Build.0 = Debug|Win32
 		{04F29F03-25C1-4377-A7B0-6F90552EBB07}.Debug|x64.ActiveCfg = Debug|Win32
 		{04F29F03-25C1-4377-A7B0-6F90552EBB07}.Release|Win32.ActiveCfg = Release|Win32
-		{04F29F03-25C1-4377-A7B0-6F90552EBB07}.Release|Win32.Build.0 = Release|Win32
 		{04F29F03-25C1-4377-A7B0-6F90552EBB07}.Release|x64.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
