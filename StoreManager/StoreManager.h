@@ -33,6 +33,7 @@ public:
 	BOOL m_GlobeHQModel;
 	BOOL m_GlobeLighting;
 	BOOL m_GlobeAtmosphere;
+	BOOL m_GlobeShadows;
 	BOOL m_HideEmptyDrives;
 	BOOL m_HideEmptyDomains;
 	stdext::hash_map<std::string, FormatData> m_FileFormats;

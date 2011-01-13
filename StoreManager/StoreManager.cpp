@@ -72,6 +72,7 @@ BOOL CStoreManagerApp::InitInstance()
 	m_GlobeHQModel = GetInt(_T("GlobeHQModel"), TRUE);
 	m_GlobeLighting = GetInt(_T("GlobeLighting"), TRUE);
 	m_GlobeAtmosphere = GetInt(_T("GlobeAtmosphere"), TRUE);
+	m_GlobeShadows = GetInt(_T("GlobeShadows"), TRUE);
 	m_nTextureSize = GetInt(_T("TextureSize"), 0);
 	m_nMaxTextureSize = GetInt(_T("MaxTextureSize"), LFTexture4096);
 	if (m_nTextureSize<0)
@@ -120,6 +121,7 @@ INT CStoreManagerApp::ExitInstance()
 	WriteInt(_T("GlobeHQModel"), m_GlobeHQModel);
 	WriteInt(_T("GlobeLighting"), m_GlobeLighting);
 	WriteInt(_T("GlobeAtmosphere"), m_GlobeAtmosphere);
+	WriteInt(_T("GlobeShadows"), m_GlobeShadows);
 	WriteInt(_T("TextureSize"), m_nTextureSize);
 	WriteInt(_T("MaxTextureSize"), m_nMaxTextureSize);
 	SetRegistryBase(oldBase);

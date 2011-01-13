@@ -1233,21 +1233,28 @@ void CGlobeView::DrawLabel(GlobeItemData* d, UINT cCaption, WCHAR* caption, WCHA
 	d->Hdr.Rect.bottom = y+height;
 
 	// Schatten
-	for (INT s=3; s>0; s--)
+	if (theApp.m_GlobeShadows)
 	{
-		glColor4f(0.0f, 0.0f, 0.0f, d->Alpha/(s+2.5f));
-		glBegin(GL_LINES);
-		glVertex2i(x+2, y+height+s);
-		glVertex2i(x+width+s, y+height+s);
-		glVertex2i(x+width+s, y+2);
-		glVertex2i(x+width+s, y+height+s+1);
-		glEnd();
-	}
+		for (INT s=3; s>0; s--)
+		{
+			glColor4f(0.0f, 0.0f, 0.0f, d->Alpha/(s+2.5f));
+			glBegin(GL_LINES);
+			glVertex2i(x+2, y+height+s);
+			glVertex2i(x+width+s, y+height+s);
+			glVertex2i(x+width+s, y+2);
+			glVertex2i(x+width+s, y+height+s+1);
+			glEnd();
+		}
 
-	glColor4f(0.0f, 0.0f, 0.0f, d->Alpha/2.5f);
-	glBegin(GL_LINES);
-	glVertex2i(x+width, y+height);
-	glVertex2i(x+width+1, y+height);
+		glColor4f(0.0f, 0.0f, 0.0f, d->Alpha/2.5f);
+		glBegin(GL_LINES);
+		glVertex2i(x+width, y+height);
+		glVertex2i(x+width+1, y+height);
+	}
+	else
+	{
+		glBegin(GL_LINES);
+	}
 
 	// Grauer Rand
 	glColor4f(BaseColor[0]/2, BaseColor[1]/2, BaseColor[2]/2, d->Alpha);
