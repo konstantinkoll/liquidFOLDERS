@@ -7,7 +7,7 @@
 #include "Resource.h"
 #include "LFCore.h"
 #include "GlobeOptionsDlg.h"
-#include <cmath>
+#include <math.h>
 
 #define STATUSBAR_HEIGHT 12
 #define DISTANCE 39.0f
@@ -656,8 +656,9 @@ void CGlobeView::Init()
 	m_Fonts[2].Create(&theApp.m_SmallFont);
 
 	// Icons
-	CGdiPlusBitmapResource tex(IDB_GLOBEICONS, _T("PNG"));
-	m_TextureIcons = new GLTextureGdiPlusBitmap(&tex);
+	CGdiPlusBitmapResource tex0(IDB_GLOBEICONS_RGB, _T("PNG"));
+	CGdiPlusBitmapResource tex1(IDB_GLOBEICONS_ALPHA, _T("PNG"));
+	m_TextureIcons = new GLTextureCombine(&tex0, &tex1);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 }

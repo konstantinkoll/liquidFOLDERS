@@ -51,6 +51,19 @@ public:
 };
 
 
+// GLTextureCombine
+//
+
+class GLTextureCombine : public GLTextureGdiPlusBitmap
+{
+public:
+	GLTextureCombine();
+	GLTextureCombine(CGdiPlusBitmap* Texture0, CGdiPlusBitmap* Texture1);
+
+	void SetTextureCombine(CGdiPlusBitmap* Texture0, CGdiPlusBitmap* Texture1);
+};
+
+
 // GLTextureEarthmap
 //
 

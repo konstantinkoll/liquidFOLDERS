@@ -107,6 +107,53 @@ void GLTextureGdiPlusBitmap::SetTextureGdiPlusBitmap(CGdiPlusBitmap* Texture)
 }
 
 
+// GLTextureGdiPlusBitmap
+//
+
+GLTextureCombine::GLTextureCombine()
+{
+}
+
+GLTextureCombine::GLTextureCombine(CGdiPlusBitmap* Texture0, CGdiPlusBitmap* Texture1)
+{
+	SetTextureCombine(Texture0, Texture1);
+}
+
+void GLTextureCombine::SetTextureCombine(CGdiPlusBitmap* Texture0, CGdiPlusBitmap* Texture1)
+{
+	HBITMAP hBMP0;
+	HBITMAP hBMP1;
+	Texture0->m_pBitmap->GetHBITMAP(NULL, &hBMP0);
+	Texture1->m_pBitmap->GetHBITMAP(NULL, &hBMP1);
+
+	if (hBMP1)
+	{
+		BITMAP BMP0;
+		BITMAP BMP1;
+		GetObject(hBMP0, sizeof(BMP0), &BMP0);
+		GetObject(hBMP1, sizeof(BMP1), &BMP1);
+
+		UINT sz = BMP0.bmHeight*BMP0.bmWidth;
+		BYTE* Ptr0 = (BYTE*)BMP0.bmBits;
+		BYTE* Ptr1 = (BYTE*)BMP1.bmBits;
+		for (UINT a=0; a<sz; a++)
+		{
+			Ptr0[3] = Ptr1[0];
+			Ptr0 += 4;
+			Ptr1 += 4;
+		}
+
+		DeleteObject(hBMP1);
+	}
+
+	if (hBMP0)
+	{
+		SetTextureBitmap(hBMP0);
+		DeleteObject(hBMP0);
+	}
+}
+
+
 // GLTextureEarthmap
 //
 

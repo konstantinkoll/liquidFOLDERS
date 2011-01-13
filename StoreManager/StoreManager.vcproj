@@ -682,7 +682,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\GlobeIcons.png"
+				RelativePath=".\res\GlobeIcons_Alpha.png"
+				>
+			</File>
+			<File
+				RelativePath=".\res\GlobeIcons_RGB.png"
 				>
 			</File>
 			<File

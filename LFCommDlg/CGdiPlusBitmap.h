@@ -33,8 +33,8 @@ public:
 
 	virtual void Empty();
 
-	BOOL Load(LPCTSTR pName, LPCTSTR pType = RT_RCDATA, HMODULE hInst=NULL);
-	BOOL Load(UINT id, LPCTSTR pType = RT_RCDATA, HMODULE hInst=NULL);
+	BOOL Load(LPCTSTR pName, LPCTSTR pType=RT_RCDATA, HMODULE hInst=NULL);
+	BOOL Load(UINT id, LPCTSTR pType=RT_RCDATA, HMODULE hInst=NULL);
 	BOOL Load(UINT id, UINT type, HMODULE hInst=NULL);
 
 protected:

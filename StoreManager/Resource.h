@@ -21,7 +21,8 @@
 #define IDB_INSPECTOR                   146
 #define IDB_MULTIPLE                    147
 #define IDB_TASKS                       148
-#define IDB_GLOBEICONS                  149
+#define IDB_GLOBEICONS_RGB              149
+#define IDB_GLOBEICONS_ALPHA            150
 #define ID_APP_NEWVIEW                  250
 #define ID_APP_CLOSE                    251
 #define ID_APP_CLOSEOTHERS              252
