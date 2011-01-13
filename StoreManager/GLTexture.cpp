@@ -133,6 +133,9 @@ void GLTextureCombine::SetTextureCombine(CGdiPlusBitmap* Texture0, CGdiPlusBitma
 		GetObject(hBMP0, sizeof(BMP0), &BMP0);
 		GetObject(hBMP1, sizeof(BMP1), &BMP1);
 
+		ASSERT(BMP0.bmHeight==BMP1.bmHeight);
+		ASSERT(BMP0.bmWidth==BMP1.bmWidth);
+
 		UINT sz = BMP0.bmHeight*BMP0.bmWidth;
 		BYTE* Ptr0 = (BYTE*)BMP0.bmBits;
 		BYTE* Ptr1 = (BYTE*)BMP1.bmBits;

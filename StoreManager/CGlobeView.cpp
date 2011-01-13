@@ -601,7 +601,7 @@ void glEnable2D()
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
 	glLoadIdentity();
-	glTranslatef (0.375, 0.375, 0);
+	glTranslatef(0.375, 0.375, 0);
 
 	glPushAttrib(GL_DEPTH_BUFFER_BIT);
 	glDisable(GL_DEPTH_TEST);
@@ -659,8 +659,6 @@ void CGlobeView::Init()
 	CGdiPlusBitmapResource tex0(IDB_GLOBEICONS_RGB, _T("PNG"));
 	CGdiPlusBitmapResource tex1(IDB_GLOBEICONS_ALPHA, _T("PNG"));
 	m_TextureIcons = new GLTextureCombine(&tex0, &tex1);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 }
 
 void CGlobeView::PrepareTexture()
@@ -987,17 +985,18 @@ void CGlobeView::DrawScene(BOOL InternalCall)
 	glEnable2D();
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, m_TextureIcons->GetID());
-	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+	glColor4d(1.0, 1.0, 1.0, 0.5);
 
 	glBegin(GL_QUADS);
 	glTexCoord2d(0.0, 0.0);
-	glVertex2d(100, 100);
+	glVertex2d(100-0.375, 100-0.375);
 	glTexCoord2d(-1.0, 0.0);
-	glVertex2d(228, 100);
+	glVertex2d(228-0.375, 100-0.375);
 	glTexCoord2d(-1.0, -1.0);
-	glVertex2d(228, 228);
+	glVertex2d(228-0.375, 228-0.375);
 	glTexCoord2d(0.0, -1.0);
-	glVertex2d(100, 228);
+	glVertex2d(100-0.375, 228-0.375);
 	glEnd();
 	glDisable(GL_TEXTURE_2D);
 	glDisable2D();
