@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9,00"
-	Name="CreateGlobe"
-	ProjectGUID="{99C3BF8C-7138-4A75-BBCD-2B727861C8BF}"
-	RootNamespace="CreateGlobe"
+	Name="AlphaMerge"
+	ProjectGUID="{04F29F03-25C1-4377-A7B0-6F90552EBB07}"
+	RootNamespace="AlphaMerge"
 	TargetFrameworkVersion="196613"
 	>
 	<Platforms>
@@ -109,7 +109,7 @@
 	</References>
 	<Files>
 		<File
-			RelativePath=".\CreateGlobe.py"
+			RelativePath=".\AlphaMerge.py"
 			>
 		</File>
 	</Files>
