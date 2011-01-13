@@ -172,7 +172,6 @@ GLTextureBlueMarble::GLTextureBlueMarble(UINT nID)
 		if (m_nIDLoaded)
 		{
 			p_BlueMarble->Release();
-			delete p_BlueMarble;
 			p_BlueMarble = NULL;
 			m_nIDLoaded = 0;
 		}
