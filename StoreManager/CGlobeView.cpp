@@ -659,6 +659,8 @@ void CGlobeView::Init()
 	CGdiPlusBitmapResource tex0(IDB_GLOBEICONS_RGB, _T("PNG"));
 	CGdiPlusBitmapResource tex1(IDB_GLOBEICONS_ALPHA, _T("PNG"));
 	m_TextureIcons = new GLTextureCombine(&tex0, &tex1);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
 }
 
 void CGlobeView::PrepareTexture()
@@ -991,11 +993,11 @@ void CGlobeView::DrawScene(BOOL InternalCall)
 	glBegin(GL_QUADS);
 	glTexCoord2d(0.0, 0.0);
 	glVertex2d(100-0.375, 100-0.375);
-	glTexCoord2d(-1.0, 0.0);
+	glTexCoord2d(1.0, 0.0);
 	glVertex2d(228-0.375, 100-0.375);
-	glTexCoord2d(-1.0, -1.0);
+	glTexCoord2d(1.0, 1.0);
 	glVertex2d(228-0.375, 228-0.375);
-	glTexCoord2d(0.0, -1.0);
+	glTexCoord2d(0.0, 1.0);
 	glVertex2d(100-0.375, 228-0.375);
 	glEnd();
 	glDisable(GL_TEXTURE_2D);
