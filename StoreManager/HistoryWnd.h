@@ -33,7 +33,6 @@ public:
 	void UpdateList(BreadcrumbItem* prev, LFFilter* current, BreadcrumbItem* next);
 
 protected:
-	CMFCToolBar m_wndToolBar;
 	CImageListTransparent m_Icons;
 	INT m_CurrentItem;
 

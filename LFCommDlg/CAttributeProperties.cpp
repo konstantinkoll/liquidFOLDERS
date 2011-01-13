@@ -262,7 +262,7 @@ BOOL CAttributePropertyIATA::HasButton() const
 
 void CAttributePropertyIATA::OnClickButton(CPoint /*point*/)
 {
-	LFSelectLocationIATADlg dlg(NULL, IDD_SELECTIATA, &p_Data->AnsiString[0]);
+	LFSelectLocationIATADlg dlg(IDD_SELECTIATA, CWnd::GetForegroundWindow(), &p_Data->AnsiString[0]);
 
 	if (dlg.DoModal()==IDOK)
 		if (dlg.m_Airport)

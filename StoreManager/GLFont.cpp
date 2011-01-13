@@ -1,34 +1,40 @@
 
+// GLFont.cpp: Implementierung der Klasse GLFont
+//
+
 #pragma once
 #include "stdafx.h"
-#include "CGLFont.h"
+#include "GLFont.h"
 #include <math.h>
-#include <fstream>
 
 
-CGLFont::CGLFont()
+// CTimelineView
+//
+
+GLFont::GLFont()
 {
 	m_TexID = 0;
 	m_TexSize = 128;
 	m_LineHeight = 0;
 }
 
-CGLFont::~CGLFont()
+GLFont::~GLFont()
 {
 	if (m_TexID)
 		glDeleteTextures(1, &m_TexID);
 }
 
-BOOL CGLFont::Create(CString face, UINT size, BOOL bold, BOOL italic)
+BOOL GLFont::Create(CString face, UINT size, BOOL bold, BOOL italic)
 {
 	CFont font;
 	font.CreateFont(-(INT)size, 0, 0, 0, bold ? FW_BOLD : FW_NORMAL, (BYTE)italic, 0, 0, ANSI_CHARSET,
 		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
 		face);
+
 	return Create(&font);
 }
 
-BOOL CGLFont::Create(CFont* font)
+BOOL GLFont::Create(CFont* font)
 {
 	CDC dc;
 	dc.CreateCompatibleDC(NULL);
@@ -78,8 +84,8 @@ BOOL CGLFont::Create(CFont* font)
 
 			glBindTexture(GL_TEXTURE_2D, m_TexID);
 			glTexImage2D(GL_TEXTURE_2D, 0, 4, m_TexSize, m_TexSize, 0, GL_BGRA, GL_UNSIGNED_BYTE, bitmap.bmBits);
-			glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
-			glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		}
 
 		dc.SelectObject(hbmOld);
@@ -90,7 +96,7 @@ BOOL CGLFont::Create(CFont* font)
 	return ok;
 }
 
-UINT CGLFont::Render(WCHAR* pStr, INT xs, INT ys, INT cCount)
+UINT GLFont::Render(WCHAR* pStr, INT xs, INT ys, INT cCount)
 {
 	if (!pStr)
 		return 0;
@@ -119,10 +125,11 @@ UINT CGLFont::Render(WCHAR* pStr, INT xs, INT ys, INT cCount)
 		{
 			x += m_Spacing;
 		}
-		else if (((ch-32)>0) && ((ch-32)<256-32))
-		{
-			x += RenderChar((UCHAR)(ch-32), x, y, &h);
-		}
+		else
+			if (((ch-32)>0) && ((ch-32)<256-32))
+			{
+				x += RenderChar((UCHAR)(ch-32), x, y, &h);
+			}
 
 		pStr++;
 		cCount--;
@@ -133,14 +140,14 @@ UINT CGLFont::Render(WCHAR* pStr, INT xs, INT ys, INT cCount)
 	return h;
 }
 
-UINT CGLFont::RenderChar(UCHAR ch, INT x, INT y, UINT* pHeight)
+UINT GLFont::RenderChar(UCHAR ch, INT x, INT y, UINT* pHeight)
 {
 	ASSERT(pHeight);
 
-	float tx1 = TexCoords[ch][0];
-	float ty1 = TexCoords[ch][1];
-	float tx2 = TexCoords[ch][2];
-	float ty2 = TexCoords[ch][3];
+	GLfloat tx1 = TexCoords[ch][0];
+	GLfloat ty1 = TexCoords[ch][1];
+	GLfloat tx2 = TexCoords[ch][2];
+	GLfloat ty2 = TexCoords[ch][3];
 
 	UINT w = (INT)((tx2-tx1)*m_TexSize);
 	UINT h = (INT)((ty2-ty1)*m_TexSize);
@@ -161,7 +168,7 @@ UINT CGLFont::RenderChar(UCHAR ch, INT x, INT y, UINT* pHeight)
 	return w;
 }
 
-UINT CGLFont::GetTextWidth(WCHAR* pStr, INT cCount)
+UINT GLFont::GetTextWidth(WCHAR* pStr, INT cCount)
 {
 	if (!pStr)
 		return 0;
@@ -169,7 +176,7 @@ UINT CGLFont::GetTextWidth(WCHAR* pStr, INT cCount)
 	if (cCount<0)
 		cCount = (INT)wcslen(pStr);
 
-	float w = 0;
+	GLfloat w = 0;
 
 	while ((cCount>0) && (*pStr))
 	{
@@ -183,10 +190,11 @@ UINT CGLFont::GetTextWidth(WCHAR* pStr, INT cCount)
 		{
 			w += m_Spacing;
 		}
-		else if (((ch-32)>0) && ((ch-32)<256-32))
-		{
-			w += (TexCoords[ch-32][2]-TexCoords[ch-32][0])*m_TexSize;
-		}
+		else
+			if (((ch-32)>0) && ((ch-32)<256-32))
+			{
+				w += (TexCoords[ch-32][2]-TexCoords[ch-32][0])*m_TexSize;
+			}
 
 		pStr++;
 		cCount--;
@@ -195,15 +203,15 @@ UINT CGLFont::GetTextWidth(WCHAR* pStr, INT cCount)
 	return (UINT)w;
 }
 
-UINT CGLFont::GetTextHeight(WCHAR* pStr)
+UINT GLFont::GetTextHeight(WCHAR* pStr)
 {
 	return (pStr ? m_LineHeight : 0);
 }
 
-CGLFont::PaintResult CGLFont::PaintAlphabet(HDC hDC, BOOL bMeasureOnly)
+GLFont::PaintResult GLFont::PaintAlphabet(HDC hDC, BOOL bMeasureOnly)
 {
 	SIZE size;
-	CHAR str[2] = "x";
+	CHAR str[2] = "?";
 
 	if (!GetTextExtentPoint32A(hDC, str, 1, &size))
 		return Fail;
@@ -232,10 +240,10 @@ CGLFont::PaintResult CGLFont::PaintAlphabet(HDC hDC, BOOL bMeasureOnly)
 			if (!ExtTextOutA(hDC, x, y, ETO_OPAQUE, NULL, str, 1, NULL))
 				continue;
 
-			TexCoords[c-32][0] = ((float)(x))/m_TexSize;
-			TexCoords[c-32][1] = ((float)(y))/m_TexSize;
-			TexCoords[c-32][2] = ((float)(x+size.cx))/m_TexSize;
-			TexCoords[c-32][3] = ((float)(y+size.cy))/m_TexSize;
+			TexCoords[c-32][0] = ((GLfloat)(x))/m_TexSize;
+			TexCoords[c-32][1] = ((GLfloat)(y))/m_TexSize;
+			TexCoords[c-32][2] = ((GLfloat)(x+size.cx))/m_TexSize;
+			TexCoords[c-32][3] = ((GLfloat)(y+size.cy))/m_TexSize;
 		}
 
 		x += size.cx+(2*m_Spacing);

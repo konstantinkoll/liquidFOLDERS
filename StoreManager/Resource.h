@@ -21,6 +21,8 @@
 #define IDB_INSPECTOR                   146
 #define IDB_MULTIPLE                    147
 #define IDB_TASKS                       148
+#define IDB_GLOBEICONS_RGB              149
+#define IDB_GLOBEICONS_ALPHA            150
 #define ID_APP_NEWVIEW                  250
 #define ID_APP_CLOSE                    251
 #define ID_APP_CLOSEOTHERS              252
@@ -116,6 +118,7 @@
 #define IDS_MOREATTRIBUTES              1015
 #define IDS_YOULOOKAT                   1016
 #define IDS_NOTHINGTODISPLAY            1017
+#define IDS_AUTOMATIC                   1018
 #define IDS_VATTR_FIRST                 1100
 #define IDS_VATTR_DRIVELETTER           1100
 #define IDS_VATTR_MAINTENANCETIME       1101
@@ -146,6 +149,17 @@
 #define IDC_ATTRBOX                     2108
 #define IDS_GROUPBOX_SORT               2109
 #define IDS_GROUPBOX_GROUP              2110
+#define IDD_GLOBEOPTIONS                2200
+#define IDC_TEXTURESIZE                 2201
+#define IDC_HQMODEL                     2202
+#define IDC_LIGHTING                    2203
+#define IDC_ATMOSPHERE                  2204
+#define IDC_SPOTS                       2205
+#define IDC_AIRPORTNAMES                2206
+#define IDC_GPSCOORDINATES              2207
+#define IDC_DESCRIPTION                 2208
+#define IDC_VIEWPORT                    2209
+#define IDC_CROSSHAIR                   2210
 #define IDM_STORES_HIDEEMPTYDRIVES      3000
 #define IDM_STORES_REPAIRCORRUPTEDINDEX 3001
 #define IDM_HOME                        3100
@@ -187,14 +201,13 @@
 #define IDM_TAGCLOUD_SORT               5207
 #define IDM_DETAILS_TOGGLEATTRIBUTE     6000
 
-
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        2007
+#define _APS_NEXT_RESOURCE_VALUE        2009
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         2012
+#define _APS_NEXT_CONTROL_VALUE         2016
 #define _APS_NEXT_SYMED_VALUE           2007
 #endif
 #endif

@@ -42,11 +42,12 @@ struct LFViewParameters
 	INT GlobeLatitude;
 	INT GlobeLongitude;
 	INT GlobeZoom;
+	BOOL GlobeShowSpots;
 	BOOL GlobeShowAirportNames;
 	BOOL GlobeShowGPS;
-	BOOL GlobeShowHints;
-	BOOL GlobeShowSpots;
-	BOOL GlobeShowViewpoint;
+	BOOL GlobeShowDescription;
+	BOOL GlobeShowViewport;
+	BOOL GlobeShowCrosshair;
 
 	BOOL TagcloudCanonical;
 	BOOL TagcloudHideRare;

@@ -115,9 +115,9 @@ IDB_SORTINDICATORS      BITMAP                  "res\\SortIndicators.bmp"
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
 IDI_READY               ICON                    "res\\Ready.ico"
-IDI_INFORMATION         ICON                    "res\\Info.ico"
-IDI_WARNING             ICON                    "res\\Warning.ico"
-IDI_ERROR               ICON                    "res\\Error.ico"
+32516                   ICON                    "res\\Info.ico"
+32515                   ICON                    "res\\Warning.ico"
+32513                   ICON                    "res\\Error.ico"
 IDI_SHIELD              ICON                    "res\\Shield_7.ico"
 IDI_SHIELD_VISTA        ICON                    "res\\Shield_Vista.ico"
 IDD_ABOUT               ICON                    "res\\About_Small.ico"
@@ -187,13 +187,12 @@ END
 // Dialog
 //
 
-IDD_ABOUT DIALOGEX 0, 0, 410, 287
+IDD_ABOUT DIALOGEX 0, 0, 358, 287
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
 CAPTION "Über %s"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,296,266,50,14,WS_GROUP
-    PUSHBUTTON      "Abbrechen",IDCANCEL,353,266,50,14,WS_GROUP
+    DEFPUSHBUTTON   "OK",IDOK,301,266,50,14,WS_GROUP
     GROUPBOX        "Lizenz",IDC_STATIC,7,169,155,81,WS_GROUP
     LTEXT           "Name:",IDC_STATIC,15,179,141,8
     LTEXT           "X",IDC_NAME,15,189,141,8
@@ -495,7 +494,7 @@ BEGIN
     IDD_ABOUT, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 403
+        RIGHTMARGIN, 351
         TOPMARGIN, 7
         BOTTOMMARGIN, 280
     END
@@ -659,6 +658,10 @@ BEGIN
     IDS_EXPAND              "E&rweitern"
     IDS_COLLAPSE            "&Reduzieren"
     IDS_IMPORTFOLDER_CAPTION "Verzeichnis importieren"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_IMPORTFOLDER_HINT   "Auch alle Unterverzeichnisse werden importiert."
     IDS_CHOOSESTORE_CAPTION "Stores"
     IDS_CHOOSESTORE_HINT    "Nur eingebundene Stores können ausgewählt werden."
@@ -666,10 +669,6 @@ BEGIN
     IDS_CHOOSEDEFAULTSTORE_HINT 
                             "Nur interne Stores können als Standard-Store ausgewählt werden."
     IDS_MAINTENANCETAB0     "Erfolgreich gewartet"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_MAINTENANCETAB1     "Fehler"
     IDS_REGFILEFILTER       "Registrierungsdateien"
 END
@@ -742,13 +741,12 @@ END
 // Dialog
 //
 
-IDD_ABOUT DIALOGEX 0, 0, 400, 287
+IDD_ABOUT DIALOGEX 0, 0, 358, 287
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
 CAPTION "About %s"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,286,266,50,14,WS_GROUP
-    PUSHBUTTON      "Cancel",IDCANCEL,343,266,50,14,WS_GROUP
+    DEFPUSHBUTTON   "OK",IDOK,301,266,50,14,WS_GROUP
     GROUPBOX        "License",IDC_STATIC,7,169,155,81,WS_GROUP
     LTEXT           "Name:",IDC_STATIC,15,179,141,8
     LTEXT           "X",IDC_NAME,15,189,141,8
@@ -1050,7 +1048,7 @@ BEGIN
     IDD_ABOUT, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 393
+        RIGHTMARGIN, 351
         TOPMARGIN, 6
         BOTTOMMARGIN, 280
     END
@@ -1206,6 +1204,10 @@ BEGIN
     IDS_EXPAND              "&Expand"
     IDS_COLLAPSE            "&Collapse"
     IDS_IMPORTFOLDER_CAPTION "Import folder"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_IMPORTFOLDER_HINT   "The folder and all its subfolders will be imported."
     IDS_CHOOSESTORE_CAPTION "Stores"
     IDS_CHOOSESTORE_HINT    "Only mounted stores can be selected."
@@ -1213,10 +1215,6 @@ BEGIN
     IDS_CHOOSEDEFAULTSTORE_HINT 
                             "Only internal stores are suitable default stores."
     IDS_MAINTENANCETAB0     "Successfully serviced"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_MAINTENANCETAB1     "Errors"
     IDS_REGFILEFILTER       "Registry files"
 END
@@ -1289,13 +1287,12 @@ END
 // Dialog
 //
 
-IDD_ABOUT DIALOGEX 0, 0, 400, 287
+IDD_ABOUT DIALOGEX 0, 0, 358, 287
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
 CAPTION "Acerca %s"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,286,266,50,14,WS_GROUP
-    PUSHBUTTON      "Cancelar",IDCANCEL,343,266,50,14,WS_GROUP
+    DEFPUSHBUTTON   "OK",IDOK,301,266,50,14,WS_GROUP
     GROUPBOX        "Licensia",IDC_STATIC,7,169,155,81,WS_GROUP
     LTEXT           "Nombre:",IDC_STATIC,15,179,141,8
     LTEXT           "X",IDC_NAME,15,189,141,8
@@ -1597,7 +1594,7 @@ BEGIN
     IDD_ABOUT, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 393
+        RIGHTMARGIN, 351
         TOPMARGIN, 7
         BOTTOMMARGIN, 280
     END
@@ -1761,6 +1758,10 @@ BEGIN
     IDS_EXPAND              "&Abrir"
     IDS_COLLAPSE            "&Plegar"
     IDS_IMPORTFOLDER_CAPTION "Importar carpeta"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_IMPORTFOLDER_HINT   "La carpeta y todas sus subcarpetas serán importadas."
     IDS_CHOOSESTORE_CAPTION "Stores"
     IDS_CHOOSESTORE_HINT    "Se puede selecionar solamente stores conectado."
@@ -1768,10 +1769,6 @@ BEGIN
     IDS_CHOOSEDEFAULTSTORE_HINT 
                             "Se puede selecionar solamente stores internos como store predeterminado."
     IDS_MAINTENANCETAB0     "Revisión satisfactoria"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_MAINTENANCETAB1     "Errores"
     IDS_REGFILEFILTER       "Archivos de Registro"
 END
@@ -1844,13 +1841,12 @@ END
 // Dialog
 //
 
-IDD_ABOUT DIALOGEX 0, 0, 420, 287
+IDD_ABOUT DIALOGEX 0, 0, 358, 287
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
 CAPTION "Concernant %s"
-FONT 8, "MS Shell Dlg", 420, 0, 0x1
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,306,266,50,14,WS_GROUP
-    PUSHBUTTON      "Annuler",IDCANCEL,363,266,50,14,WS_GROUP
+    DEFPUSHBUTTON   "OK",IDOK,301,266,50,14,WS_GROUP
     GROUPBOX        "Licence",IDC_STATIC,7,169,155,81,WS_GROUP
     LTEXT           "Nom:",IDC_STATIC,15,179,141,8
     LTEXT           "X",IDC_NAME,15,189,141,8
@@ -2105,14 +2101,14 @@ BEGIN
     PUSHBUTTON      "Annuler",IDCANCEL,293,242,50,14,WS_GROUP
 END
 
-
 IDD_BROWSEFORFOLDER DIALOGEX 0, 0, 260, 316
 STYLE DS_SETFONT | DS_FIXEDSYS | WS_MAXIMIZEBOX | WS_POPUP | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
 CAPTION "Choisissez un dossier"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     CONTROL         "",IDC_SHELLTREE,"SysTreeView32",TVS_HASBUTTONS | TVS_EDITLABELS | TVS_DISABLEDRAGDROP | TVS_SHOWSELALWAYS | TVS_NOTOOLTIPS | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_HSCROLL | WS_TABSTOP,0,0,260,288
-    CONTROL         "&Effacer des fichiers de source",IDC_DELETESOURCE,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,297,110,10
+    CONTROL         "&Effacer des fichiers de source",IDC_DELETESOURCE,
+                    "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,297,110,10
     DEFPUSHBUTTON   "OK",IDOK,146,295,50,14,WS_GROUP
     PUSHBUTTON      "Annuler",IDCANCEL,203,295,50,14,WS_GROUP
 END
@@ -2153,7 +2149,7 @@ BEGIN
     IDD_ABOUT, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 413
+        RIGHTMARGIN, 351
         TOPMARGIN, 7
         BOTTOMMARGIN, 280
     END
@@ -2318,6 +2314,10 @@ BEGIN
     IDS_EXPAND              "&Ouvrir"
     IDS_COLLAPSE            "&Fermer"
     IDS_IMPORTFOLDER_CAPTION "Importer dossier"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_IMPORTFOLDER_HINT   "Le dossier et tous ses sous-dossiers seront importés."
     IDS_CHOOSESTORE_CAPTION "Stores"
     IDS_CHOOSESTORE_HINT    "Seulement stores montée pouvoir choisissse."
@@ -2325,10 +2325,6 @@ BEGIN
     IDS_CHOOSEDEFAULTSTORE_HINT 
                             "Seulement stores internes pouvoir choisisse comme store standard."
     IDS_MAINTENANCETAB0     "Entretenu avec succès"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_MAINTENANCETAB1     "Erreurs"
     IDS_REGFILEFILTER       "Fichiers de Registre"
 END

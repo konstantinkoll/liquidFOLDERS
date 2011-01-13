@@ -14,7 +14,7 @@
 
 extern AFX_EXTENSION_MODULE LFCommDlgDLL;
 
-LFSelectLocationIATADlg::LFSelectLocationIATADlg(CWnd* pParentWnd, UINT nIDTemplate, CHAR* _Airport)
+LFSelectLocationIATADlg::LFSelectLocationIATADlg(UINT nIDTemplate, CWnd* pParentWnd, CHAR* _Airport)
 	: CDialog(nIDTemplate, pParentWnd)
 {
 	m_nIDTemplate = nIDTemplate;

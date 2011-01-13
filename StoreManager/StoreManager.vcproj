@@ -382,10 +382,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CGLFont.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\CGlobeView.cpp"
 				>
 			</File>
@@ -422,15 +418,23 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CTextures.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\CTimelineView.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\FilterWnd.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\GLFont.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\GlobeOptionsDlg.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\GLTexture.cpp"
 				>
 			</File>
 			<File
@@ -443,6 +447,10 @@
 			</File>
 			<File
 				RelativePath=".\MainFrm.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\include\MenuIcons.cpp"
 				>
 			</File>
 			<File
@@ -508,10 +516,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CGLFont.h"
-				>
-			</File>
-			<File
 				RelativePath=".\CGlobeView.h"
 				>
 			</File>
@@ -548,10 +552,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CTextures.h"
-				>
-			</File>
-			<File
 				RelativePath=".\CTimelineView.h"
 				>
 			</File>
@@ -560,11 +560,23 @@
 				>
 			</File>
 			<File
+				RelativePath=".\GLFont.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Globe_High.h"
 				>
 			</File>
 			<File
 				RelativePath=".\Globe_Low.h"
+				>
+			</File>
+			<File
+				RelativePath=".\GlobeOptionsDlg.h"
+				>
+			</File>
+			<File
+				RelativePath=".\GLTexture.h"
 				>
 			</File>
 			<File
@@ -589,6 +601,10 @@
 			</File>
 			<File
 				RelativePath=".\MainFrm.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\MenuIcons.h"
 				>
 			</File>
 			<File
@@ -666,6 +682,18 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\GlobeIcons_Alpha.png"
+				>
+			</File>
+			<File
+				RelativePath=".\res\GlobeIcons_RGB.png"
+				>
+			</File>
+			<File
+				RelativePath=".\res\GlobeOptions_Tiny.ico"
+				>
+			</File>
+			<File
 				RelativePath=".\res\Grouping_32.bmp"
 				>
 			</File>
@@ -731,10 +759,6 @@
 			</File>
 			<File
 				RelativePath=".\res\Toolbar_Filter.bmp"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Toolbar_History.bmp"
 				>
 			</File>
 			<File

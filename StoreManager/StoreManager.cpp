@@ -9,6 +9,7 @@
 #include "..\\LFCore\\resource.h"
 #include "LFCore.h"
 #include "LFCommDlg.h"
+#include "MenuIcons.h"
 
 
 // CStoreManagerApp
@@ -25,10 +26,6 @@ END_MESSAGE_MAP()
 CStoreManagerApp::CStoreManagerApp()
 	: LFApplication(HasGUI_Ribbon)
 {
-	ZeroMemory(&m_GLTextureCache, sizeof(m_GLTextureCache));
-	ZeroMemory(&m_GLTextureBinds, sizeof(m_GLTextureBinds));
-
-	// Nag screen
 	m_NagCounter = 20;
 }
 
@@ -74,6 +71,7 @@ BOOL CStoreManagerApp::InitInstance()
 	m_HideEmptyDomains = GetInt(_T("HideEmptyDomains"), FALSE);
 	m_GlobeHQModel = GetInt(_T("GlobeHQModel"), TRUE);
 	m_GlobeLighting = GetInt(_T("GlobeLighting"), TRUE);
+	m_GlobeAtmosphere = GetInt(_T("GlobeAtmosphere"), TRUE);
 	m_nTextureSize = GetInt(_T("TextureSize"), 0);
 	m_nMaxTextureSize = GetInt(_T("MaxTextureSize"), LFTexture4096);
 	if (m_nTextureSize<0)
@@ -121,6 +119,7 @@ INT CStoreManagerApp::ExitInstance()
 	WriteInt(_T("HideEmptyDomains"), m_HideEmptyDomains);
 	WriteInt(_T("GlobeHQModel"), m_GlobeHQModel);
 	WriteInt(_T("GlobeLighting"), m_GlobeLighting);
+	WriteInt(_T("GlobeAtmosphere"), m_GlobeAtmosphere);
 	WriteInt(_T("TextureSize"), m_nTextureSize);
 	WriteInt(_T("MaxTextureSize"), m_nMaxTextureSize);
 	SetRegistryBase(oldBase);
@@ -221,6 +220,27 @@ void CStoreManagerApp::OnAppExit()
 {
 	CloseAllFrames();
 	LFApplication::OnAppExit();
+}
+
+
+void CStoreManagerApp::SetContextMenuIcon(CMenu* pMenu, UINT CmdID, UINT ResID)
+{
+	INT cx = GetSystemMetrics((OSVersion==OS_XP) ? SM_CXMENUCHECK : SM_CXSMICON);
+	INT cy = GetSystemMetrics((OSVersion==OS_XP) ? SM_CYMENUCHECK : SM_CYSMICON);
+
+	for (UINT a=0; a<pMenu->GetMenuItemCount(); a++)
+		if (pMenu->GetMenuItemID(a)==CmdID)
+		{
+			HMODULE hModCore = LoadLibrary(_T("LFCORE.DLL"));
+			if (hModCore)
+			{
+				HICON hIcon = (HICON)LoadImage(hModCore, MAKEINTRESOURCE(ResID), IMAGE_ICON, cx, cy, LR_DEFAULTCOLOR);
+				FreeLibrary(hModCore);
+
+				SetMenuItemBitmaps(*pMenu, a, MF_BYPOSITION, IconToBitmap(hIcon, cx, cy), NULL);
+				DestroyIcon(hIcon);
+			}
+		}
 }
 
 
@@ -373,11 +393,12 @@ void CStoreManagerApp::LoadViewOptions(INT context)
 	m_Views[context].GlobeLatitude = GetInt(_T("GlobeLatitude"), 1);
 	m_Views[context].GlobeLongitude = GetInt(_T("GlobeLongitude"), 1);
 	m_Views[context].GlobeZoom = GetInt(_T("GlobeZoom"), 70);
+	m_Views[context].GlobeShowSpots = GetInt(_T("GlobeShowSpots"), TRUE);
 	m_Views[context].GlobeShowAirportNames = GetInt(_T("GlobeShowAirportNames"), TRUE);
 	m_Views[context].GlobeShowGPS = GetInt(_T("GlobeShowGPS"), TRUE);
-	m_Views[context].GlobeShowHints = GetInt(_T("GlobeShowHints"), TRUE);
-	m_Views[context].GlobeShowSpots = GetInt(_T("GlobeShowSpots"), TRUE);
-	m_Views[context].GlobeShowViewpoint = GetInt(_T("GlobeShowViewpoint"), FALSE);
+	m_Views[context].GlobeShowDescription = GetInt(_T("GlobeShowDescription"), TRUE);
+	m_Views[context].GlobeShowViewport = GetInt(_T("GlobeShowViewport"), FALSE);
+	m_Views[context].GlobeShowCrosshair = GetInt(_T("GlobeShowCrosshair"), TRUE);
 	m_Views[context].TagcloudCanonical = GetInt(_T("TagcloudSortCanonical"), TRUE);
 	m_Views[context].TagcloudHideRare = GetInt(_T("TagcloudHideRare"), FALSE);
 	m_Views[context].TagcloudUseSize = GetInt(_T("TagcloudUseSize"), TRUE);
@@ -421,11 +442,12 @@ void CStoreManagerApp::SaveViewOptions(INT context)
 	WriteInt(_T("GlobeLatitude"), m_Views[context].GlobeLatitude);
 	WriteInt(_T("GlobeLongitude"), m_Views[context].GlobeLongitude);
 	WriteInt(_T("GlobeZoom"), m_Views[context].GlobeZoom);
+	WriteInt(_T("GlobeShowSpots"), m_Views[context].GlobeShowSpots);
 	WriteInt(_T("GlobeShowAirportNames"), m_Views[context].GlobeShowAirportNames);
 	WriteInt(_T("GlobeShowGPS"), m_Views[context].GlobeShowGPS);
-	WriteInt(_T("GlobeShowHints"), m_Views[context].GlobeShowHints);
-	WriteInt(_T("GlobeShowSpots"), m_Views[context].GlobeShowSpots);
-	WriteInt(_T("GlobeShowViewpoint"), m_Views[context].GlobeShowViewpoint);
+	WriteInt(_T("GlobeShowDescription"), m_Views[context].GlobeShowDescription);
+	WriteInt(_T("GlobeShowViewport"), m_Views[context].GlobeShowViewport);
+	WriteInt(_T("GlobeShowCrosshair"), m_Views[context].GlobeShowCrosshair);
 	WriteInt(_T("TagcloudSortCanonical"), m_Views[context].TagcloudCanonical);
 	WriteInt(_T("TagcloudHideRare"), m_Views[context].TagcloudHideRare);
 	WriteInt(_T("TagcloudUseSize"), m_Views[context].TagcloudUseSize);
@@ -436,38 +458,6 @@ void CStoreManagerApp::SaveViewOptions(INT context)
 	WriteBinary(_T("ColumnWidth"), (LPBYTE)m_Views[context].ColumnWidth, sizeof(m_Views[context].ColumnWidth));
 
 	SetRegistryBase(oldBase);
-}
-
-
-// OpenGL
-
-HBITMAP CStoreManagerApp::GetGLTexture(UINT nID)
-{
-	nID--;
-
-	// Release all other textures
-	for (UINT a=0; a<4; a++)
-		if ((m_GLTextureCache[a]) && (!m_GLTextureBinds[a]) && (a!=nID))
-		{
-			DeleteObject(m_GLTextureCache[a]);
-			m_GLTextureCache[a] = NULL;
-		}
-
-	if (!m_GLTextureCache[nID])
-	{
-		CGdiPlusBitmapResource* texture = new CGdiPlusBitmapResource();
-		texture->Load(nID+IDB_BLUEMARBLE_1024, _T("PNG"));
-		texture->m_pBitmap->GetHBITMAP(NULL, &m_GLTextureCache[nID]);
-		delete texture;
-	}
-
-	m_GLTextureBinds[nID]++;
-	return m_GLTextureCache[nID];
-}
-
-void CStoreManagerApp::FreeGLTexture(UINT nID)
-{
-	m_GLTextureBinds[nID-1]--;
 }
 
 
@@ -499,9 +489,4 @@ CString CStoreManagerApp::GetCommandName(UINT nID, BOOL bInsertSpace)
 CMFCRibbonButton* CStoreManagerApp::CommandButton(UINT nID, INT nSmallImageIndex, INT nLargeImageIndex, BOOL bAlwaysShowDescription, BOOL bInsertSpace)
 {
 	return new CMFCRibbonButton(nID, GetCommandName(nID, bInsertSpace), nSmallImageIndex, nLargeImageIndex, bAlwaysShowDescription);
-}
-
-CMFCRibbonCheckBox* CStoreManagerApp::CommandCheckBox(UINT nID)
-{
-	return new CMFCRibbonCheckBox(nID, GetCommandName(nID));
 }

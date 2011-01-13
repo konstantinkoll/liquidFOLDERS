@@ -15,7 +15,7 @@
 class AFX_EXT_CLASS LFSelectLocationIATADlg : public CDialog
 {
 public:
-	LFSelectLocationIATADlg(CWnd* pParentWnd, UINT nIDTemplate, CHAR* _Airport=NULL);
+	LFSelectLocationIATADlg(UINT nIDTemplate, CWnd* pParentWnd, CHAR* _Airport=NULL);
 
 	virtual void DoDataExchange(CDataExchange* pDX);
 

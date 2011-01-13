@@ -1,9 +1,18 @@
 
-class CGLFont
+// GLFont.h: Schnittstelle der Klasse GLFont
+//
+
+#pragma once
+
+
+// GLFont
+//
+
+class GLFont
 {
 public:
-	CGLFont();
-	~CGLFont();
+	GLFont();
+	~GLFont();
 
 	BOOL Create(CString face, UINT size, BOOL bold, BOOL italic);
 	BOOL Create(CFont* font);
@@ -16,7 +25,7 @@ protected:
 	UINT RenderChar(UCHAR ch, INT x, INT y, UINT* pHeight);
 
 private:
-	float TexCoords[256-32][4];
+	GLfloat TexCoords[256-32][4];
 	UINT m_Spacing;
 	UINT m_LineHeight;
 	UINT m_TexSize;
