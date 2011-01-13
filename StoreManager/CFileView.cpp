@@ -1124,6 +1124,8 @@ void CFileView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 
 void CFileView::OnLButtonDown(UINT nFlags, CPoint point)
 {
+	DestroyEdit();
+
 	INT idx = ItemAtPosition(point);
 	if (idx!=-1)
 	{
