@@ -577,7 +577,7 @@ void CGlobeView::DrawScene(BOOL InternalCall)
 			CalcAndDrawSpots(ModelView, Projection);
 
 	// Fadenkreuz zeichnen
-	if (m_ViewParameters.GlobeShowCrosshair)
+	if (m_ViewParameters.GlobeShowViewport && m_ViewParameters.GlobeShowCrosshair)
 		glDrawIcon(m_Width/2.0, m_Height/2.0, 64.0, 1.0, CROSSHAIRS);
 
 	// Icons beenden
