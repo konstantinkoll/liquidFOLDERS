@@ -9,7 +9,6 @@
 #include "GlobeOptionsDlg.h"
 #include <math.h>
 
-#define STATUSBAR_HEIGHT 12
 #define DISTANCE      39.0f
 #define ARROWSIZE     9
 #define PI            3.14159265358979323846
@@ -278,6 +277,87 @@ void CGlobeView::glDrawIcon(GLdouble x, GLdouble y, GLdouble Size, GLdouble Alph
 	glTexCoord2d(s, t+0.5);
 	glVertex2d(x-Size, y+Size);
 }
+
+void CGlobeView::CalcAndDrawSpots(GLdouble ModelView[4][4], GLdouble Projection[4][4])
+{
+	GLdouble SizeX = m_Width/2.0;
+	GLdouble SizeY = m_Height/2.0;
+
+	GLdouble MVP[4][4];
+	MatrixMul(MVP, ModelView, Projection);
+
+	for (UINT a=0; a<p_Result->m_ItemCount; a++)
+	{
+		GlobeItemData* d = GetItemData(a);
+		if (d->Valid)
+		{
+			d->Alpha = 0.0f;
+
+			GLdouble z = ModelView[0][2]*d->World[0] + ModelView[1][2]*d->World[1] + ModelView[2][2]*d->World[2];
+			if ((z>m_FogEnd) && (m_Width) && (m_Height))
+			{
+				GLdouble w = MVP[0][3]*d->World[0] + MVP[1][3]*d->World[1] + MVP[2][3]*d->World[2] + MVP[3][3];
+				GLdouble x = (MVP[0][0]*d->World[0] + MVP[1][0]*d->World[1] + MVP[2][0]*d->World[2] + MVP[3][0])*SizeX/w + SizeX + 0.5;
+				GLdouble y = -(MVP[0][1]*d->World[0] + MVP[1][1]*d->World[1] + MVP[2][1]*d->World[2] + MVP[3][1])*SizeY/w + SizeY + 0.5;
+
+				d->ScreenPoint[0] = (INT)x;
+				d->ScreenPoint[1] = (INT)y;
+				d->Alpha = 1.0f;
+				if (z<m_FogStart)
+					d->Alpha -= (GLfloat)((m_FogStart-z)/(m_FogStart-m_FogEnd));
+
+				if (m_ViewParameters.GlobeShowSpots)
+					glDrawIcon(x, y, 13.0*d->Alpha, d->Alpha, SPOT);
+			}
+		}
+	}
+}
+
+void CGlobeView::DrawStatusBar(INT Height, GLfloat BackColor[], BOOL Themed)
+{
+	WCHAR Copyright[] = L"© NASA's Earth Observatory";
+	INT CopyrightWidth = (INT)m_Fonts[0].GetTextWidth(Copyright);
+	if (m_Width<CopyrightWidth)
+		return;
+
+	WCHAR Viewpoint[256] = L"";
+	INT ViewpointWidth = -1;
+	if (m_ViewParameters.GlobeShowViewport)
+	{
+		WCHAR Coord[256];
+		LFGeoCoordinates c;
+		c.Latitude = -m_Latitude;
+		c.Longitude = (m_Longitude>180.0) ? 360-m_Longitude : -m_Longitude;
+		LFGeoCoordinatesToString(c, Coord, 256, true);
+
+		swprintf(Viewpoint, 256, YouLookAt, Coord);
+
+		ViewpointWidth = (INT)m_Fonts[0].GetTextWidth(Viewpoint);
+		if (m_Width<CopyrightWidth+ViewpointWidth+48)
+			ViewpointWidth = -1;
+	}
+
+	// Kante
+	glColor4f(BackColor[0], BackColor[1], BackColor[2], 0.8f);
+	glBegin(GL_LINES);
+	glVertex2i(0, m_Height-Height);
+	glVertex2i(m_Width, m_Height-Height);
+	glEnd();
+
+	// Füllen
+	glColor4d(BackColor[0], BackColor[1], BackColor[2], 0.65f);
+	glRecti(0, m_Height-Height, m_Width, m_Height);
+
+	// Text
+	GLfloat TextColor[4];
+	ColorRef2GLColor(TextColor, Themed ? 0xCC6600 : GetSysColor(COLOR_WINDOWTEXT));
+	glColor4d(TextColor[0], TextColor[1], TextColor[2], 1.0f);
+
+	INT Gutter = (ViewpointWidth>0) ? (m_Width-CopyrightWidth-ViewpointWidth)/3 : (m_Width-CopyrightWidth)/2;
+	m_Fonts[0].Render(Copyright, Gutter, m_Height-Height);
+	if (ViewpointWidth>0)
+		m_Fonts[0].Render(Viewpoint, m_Width-ViewpointWidth-Gutter, m_Height-Height);
+	}
 
 
 BEGIN_MESSAGE_MAP(CGlobeView, CFileView)
@@ -670,12 +750,11 @@ void CGlobeView::Init()
 
 	glFogi(GL_FOG_MODE, GL_LINEAR);
 	glFogf(GL_FOG_DENSITY, 1.0f);
-	glHint(GL_FOG_HINT, GL_NICEST);
+	glHint(GL_FOG_HINT, GL_FASTEST);
 
 	// Fonts
 	m_Fonts[0].Create(&theApp.m_DefaultFont);
 	m_Fonts[1].Create(&theApp.m_LargeFont);
-	m_Fonts[2].Create(&theApp.m_SmallFont);
 
 	// Icons
 	CGdiPlusBitmapResource tex0(IDB_GLOBEICONS_RGB, _T("PNG"));
@@ -929,17 +1008,17 @@ void CGlobeView::DrawScene(BOOL InternalCall)
 		m_LockUpdate = TRUE;
 	}
 
+	BOOL Themed = IsCtrlThemed();
+
 	wglMakeCurrent(m_pDC->GetSafeHdc(), m_hRC);
 	glRenderMode(GL_RENDER);
 
-	BOOL Themed = IsCtrlThemed();
-
 	// Hintergrund
-	GLfloat backcol[4];
-	ColorRef2GLColor(backcol, Themed ? 0xFFFFFF : GetSysColor(COLOR_WINDOW));
-	glFogfv(GL_FOG_COLOR, backcol);
+	GLfloat BackColor[4];
+	ColorRef2GLColor(BackColor, Themed ? 0xFFFFFF : GetSysColor(COLOR_WINDOW));
+	glFogfv(GL_FOG_COLOR, BackColor);
 
-	glClearColor(backcol[0], backcol[1], backcol[2], 1.0f);
+	glClearColor(BackColor[0], BackColor[1], BackColor[2], 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// Globus berechnen
@@ -1026,7 +1105,7 @@ void CGlobeView::DrawScene(BOOL InternalCall)
 	// Koordinaten bestimmen und Spots zeichnen
 	if (p_Result)
 		if (p_Result->m_ItemCount)
-			CalcAndDrawPoints(ModelView, Projection);
+			CalcAndDrawSpots(ModelView, Projection);
 
 	// Fadenkreuz zeichnen
 	if (m_ViewParameters.GlobeShowCrosshair)
@@ -1041,104 +1120,18 @@ void CGlobeView::DrawScene(BOOL InternalCall)
 		if (p_Result->m_ItemCount)
 			CalcAndDrawLabel();
 
-
 	// Statuszeile
-	if (m_Height>=STATUSBAR_HEIGHT)
-	{
-		WCHAR Copyright[] = L"© NASA's Earth Observatory";
-		INT CopyrightX = -1;
-		UINT CopyrightWidth = m_Fonts[2].GetTextWidth(Copyright);
+	const INT Height = m_FontHeight[0]+1;
+	if (m_Height>=Height)
+		DrawStatusBar(Height, BackColor, Themed);
 
-		if (m_Width>=(INT)CopyrightWidth)
-		{
-			// Kante
-			glColor4d(backcol[0], backcol[1], backcol[2], 0.8f);
-			glBegin(GL_LINES);
-			glVertex2i(0, m_Height-STATUSBAR_HEIGHT);
-			glVertex2i(m_Width, m_Height-STATUSBAR_HEIGHT);
-			glEnd();
-
-			// Füllen
-			glColor4d(backcol[0], backcol[1], backcol[2], 0.65f);
-			glRecti(0, m_Height-STATUSBAR_HEIGHT, m_Width, m_Height);
-
-			WCHAR Viewpoint[256];
-			INT ViewpointX = -1;
-			if (m_ViewParameters.GlobeShowViewport)
-			{
-				WCHAR Coord[256];
-				LFGeoCoordinates c;
-				c.Latitude = -m_Latitude;
-				c.Longitude = (m_Longitude>180.0) ? 360-m_Longitude : -m_Longitude;
-				LFGeoCoordinatesToString(c, Coord, 256, true);
-
-				swprintf(Viewpoint, 256, YouLookAt, Coord);
-				UINT ViewpointWidth = m_Fonts[2].GetTextWidth(Viewpoint);
-
-				if (m_Width>=(INT)(CopyrightWidth+ViewpointWidth+60))
-				{
-					UINT Spare = m_Width-CopyrightWidth-ViewpointWidth;
-					CopyrightX = Spare/3;
-					ViewpointX = m_Width-ViewpointWidth-Spare/3;
-				}
-			}
-
-			if (CopyrightX==-1)
-				CopyrightX = (m_Width-m_Fonts[2].GetTextWidth(&Copyright[0]))>>1;
-
-			// Text
-			GLfloat highlightcol[4];
-			ColorRef2GLColor(highlightcol, Themed ? 0xCC6600 : GetSysColor(COLOR_WINDOWTEXT));
-			glColor4d(highlightcol[0], highlightcol[1], highlightcol[2], 1.0f);
-
-			m_Fonts[2].Render(Copyright, CopyrightX, m_Height-STATUSBAR_HEIGHT);
-			if (ViewpointX!=-1)
-				m_Fonts[2].Render(Viewpoint, ViewpointX, m_Height-STATUSBAR_HEIGHT);
-		}
-	}
-
+	// Beenden
 	glDisable2D();
 
 	SwapBuffers(*m_pDC);
-
 	m_LockUpdate = FALSE;
 }
 
-void CGlobeView::CalcAndDrawPoints(GLdouble ModelView[4][4], GLdouble Projection[4][4])
-{
-	GLdouble szx = m_Width/2.0;
-	GLdouble szy = m_Height/2.0;
-
-	GLdouble MVP[4][4];
-	MatrixMul(MVP, ModelView, Projection);
-
-	for (UINT a=0; a<p_Result->m_ItemCount; a++)
-	{
-		GlobeItemData* d = GetItemData(a);
-		if (d->Valid)
-		{
-			d->Alpha = 0.0f;
-
-			GLdouble z = ModelView[0][2]*d->World[0] + ModelView[1][2]*d->World[1] + ModelView[2][2]*d->World[2];
-			if ((z>m_FogEnd) && (m_Width) && (m_Height))
-			{
-				GLdouble w = MVP[0][3]*d->World[0] + MVP[1][3]*d->World[1] + MVP[2][3]*d->World[2] + MVP[3][3];
-				GLdouble x = (MVP[0][0]*d->World[0] + MVP[1][0]*d->World[1] + MVP[2][0]*d->World[2] + MVP[3][0])*szx/w;
-				GLdouble y = -(MVP[0][1]*d->World[0] + MVP[1][1]*d->World[1] + MVP[2][1]*d->World[2] + MVP[3][1])*szy/w;
-
-				d->ScreenPoint[0] = (INT)(x+szx+0.5f);
-				d->ScreenPoint[1] = (INT)(y+szy+0.5f);
-
-				d->Alpha = 1.0f;
-				if (z<m_FogStart)
-					d->Alpha -= (GLfloat)((m_FogStart-z)/(m_FogStart-m_FogEnd));
-
-				if (m_ViewParameters.GlobeShowSpots)
-					glDrawIcon(x+szx, y+szy, 13.0*d->Alpha, d->Alpha, SPOT);
-			}
-		}
-	}
-}
 
 void CGlobeView::CalcAndDrawLabel()
 {
