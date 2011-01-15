@@ -1243,8 +1243,6 @@ void CGlobeView::DrawLabel(GlobeItemData* d, UINT cCaption, WCHAR* caption, WCHA
 
 	// Grauer Rand
 	glColor4f(BaseColor[0]/2, BaseColor[1]/2, BaseColor[2]/2, d->Alpha);
-	glEnable(GL_LINE_STIPPLE);
-	glLineStipple(1, 0xFFFF);
 	glVertex2i(x, y-1);						// Oben
 	glVertex2i(x+width, y-1);
 	glVertex2i(x, y+height);				// Unten
@@ -1253,7 +1251,6 @@ void CGlobeView::DrawLabel(GlobeItemData* d, UINT cCaption, WCHAR* caption, WCHA
 	glVertex2i(x-1, y+height);
 	glVertex2i(x+width, y);					// Rechts
 	glVertex2i(x+width, y+height);
-	glDisable(GL_LINE_STIPPLE);
 	glEnd();
 
 	// Pfeil
