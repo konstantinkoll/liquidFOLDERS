@@ -1,4 +1,4 @@
-static double globe_high[] = {
+static double GlobeHighNodes[] = {
 0.588104095587, 0.5, 
 0.850650808352, 0.525731112119, 0.0, 
 0.597018722639, 0.512939806356, 
@@ -30721,4 +30721,4 @@ static double globe_high[] = {
 0.269573349829, 0.109305074141, 
 0.0413019828847, -0.334140081748, -0.941618049943, 
 };
-static UINT globe_high_node_count = 15360;
+static UINT GlobeHighCount = 15360;

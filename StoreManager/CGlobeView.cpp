@@ -18,9 +18,9 @@
 
 void ColorRef2GLColor(GLfloat* dst, COLORREF src, GLfloat Alpha=1.0f)
 {
-	dst[0] = (src&0xFF)/255.0f;
-	dst[1] = ((src>>8)&0xFF)/255.0f;
-	dst[2] = ((src>>16)&0xFF)/255.0f;
+	dst[0] = (src & 0xFF)/255.0f;
+	dst[1] = ((src>>8) & 0xFF)/255.0f;
+	dst[2] = ((src>>16) & 0xFF)/255.0f;
 	dst[3] = Alpha;
 }
 
@@ -49,17 +49,19 @@ inline void MatrixMul(GLdouble Result[4][4], GLdouble Left[4][4], GLdouble Right
 	Result[3][3] = Left[3][0]*Right[0][3] + Left[3][1]*Right[1][3] + Left[3][2]*Right[2][3] + Left[3][3]*Right[3][3];
 }
 
-void CalculateWorldCoords(double lat, double lon, double result[])
+inline void CalculateWorldCoords(double lat, double lon, double result[])
 {
 	double lon_r = decToRad(lon);
 	double lat_r = -decToRad(lat);
 
-	result[0] = cos(lat_r)*cos(lon_r);
-	result[1] = cos(lat_r)*sin(lon_r);
+	double c = cos(lat_r);
+
+	result[0] = cos(lon_r)*c;
+	result[1] = sin(lon_r)*c;
 	result[2] = sin(lat_r);
 }
 
-CString CookAttributeString(WCHAR* attr)
+inline CString CookAttributeString(WCHAR* attr)
 {
 	CString tmpStr(attr);
 	tmpStr.Replace(_T("<"), _T("_"));
@@ -82,6 +84,34 @@ void WriteGoogleAttribute(CStdioFile* f, LFItemDescriptor* i, UINT attr)
 		f->WriteString(CookAttributeString(tmpStr));
 		f->WriteString(_T("&lt;br&gt;"));
 	}
+}
+
+BOOL SetupPixelFormat(HDC hDC)
+{
+	PIXELFORMATDESCRIPTOR pfd =
+	{
+		sizeof(PIXELFORMATDESCRIPTOR),	// size of this pfd
+		1,								// version number
+		PFD_DRAW_TO_WINDOW |			// support window
+		PFD_SUPPORT_OPENGL |			// support OpenGL
+		PFD_DOUBLEBUFFER,				// double buffered
+		PFD_TYPE_RGBA,					// RGBA type
+		32,								// 32-bit color depth
+		0, 0, 0, 0, 0, 0,				// color bits ignored
+		0,								// no alpha buffer
+		0,								// shift bit ignored
+		0,								// no accumulation buffer
+		0, 0, 0, 0,						// accum bits ignored
+		0,								// no z-buffer
+		0,								// no stencil buffer
+		0,								// no auxiliary buffer
+		PFD_MAIN_PLANE,					// main layer
+		0,								// reserved
+		0, 0, 0							// layer masks ignored
+	};
+
+	INT PixelFormat = ChoosePixelFormat(hDC, &pfd);
+	return PixelFormat ? SetPixelFormat(hDC, PixelFormat, &pfd) : FALSE;
 }
 
 void glEnable2D()
@@ -151,7 +181,7 @@ CGlobeView::CGlobeView()
 	m_Width = m_Height = 0;
 	m_GlobeModel = -1;
 	m_TextureGlobe = m_TextureIcons = NULL;
-	m_nTexture = -1;
+	m_CurrentGlobeTexture = -1;
 	m_Latitude = m_Longitude = 0.0f;
 	m_Zoom = -1.0f;
 	m_Scale = 1.0f;
@@ -306,6 +336,44 @@ void CGlobeView::UpdateCursor()
 
 // OpenGL
 
+void CGlobeView::PrepareModel()
+{
+	// 3D-Modelle einbinden
+	#include "Globe_Low.h"
+	#include "Globe_High.h"
+	UINT Count = (theApp.m_GlobeHQModel ? GlobeHighCount : GlobeLowCount);
+	GLdouble* Nodes = (theApp.m_GlobeHQModel ? &GlobeHighNodes[0] : &GlobeLowNodes[0]);
+
+	// Display-Liste für das 3D-Modell erstellen
+	m_LockUpdate = TRUE;
+	wglMakeCurrent(*m_pDC, m_hRC);
+
+	m_GlobeModel = glGenLists(1);
+	glNewList(m_GlobeModel, GL_COMPILE);
+	glEnable(GL_CULL_FACE);
+	glBegin(GL_TRIANGLES);
+
+	UINT Pos = 0;
+	for (UINT a=0; a<Count; a++)
+	{
+		GLdouble s = Nodes[Pos++];
+		GLdouble t = Nodes[Pos++];
+		glTexCoord2d(s, t);
+
+		GLdouble x = Nodes[Pos++];
+		GLdouble y = Nodes[Pos++];
+		GLdouble z = Nodes[Pos++];
+		glNormal3d(x, y, z);
+		glVertex3d(x, y, z);
+	}
+
+	glEnd();
+	glDisable(GL_CULL_FACE);
+	glEndList();
+
+	m_LockUpdate = FALSE;
+}
+
 void CGlobeView::CalcAndDrawSpots(GLdouble ModelView[4][4], GLdouble Projection[4][4])
 {
 	GLdouble SizeX = m_Width/2.0;
@@ -459,8 +527,13 @@ void CGlobeView::DrawScene(BOOL InternalCall)
 	// Globus-Textur
 	if (m_TextureGlobe)
 	{
+		glEnable(GL_TEXTURE_2D);
 		glBindTexture(GL_TEXTURE_2D, m_TextureGlobe->GetID());
 		glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, theApp.m_GlobeLighting ? GL_MODULATE : GL_REPLACE);
+	}
+	else
+	{
+		glDisable(GL_TEXTURE_2D);
 	}
 
 	// Modell rendern
@@ -485,10 +558,17 @@ void CGlobeView::DrawScene(BOOL InternalCall)
 	glGetDoublev(GL_PROJECTION_MATRIX, &Projection[0][0]);
 
 	// Für Icons vorbereiten
+	if (m_TextureIcons)
+	{
+		glEnable(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, m_TextureIcons->GetID());
+		glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+	}
+	else
+	{
+		glDisable(GL_TEXTURE_2D);
+	}
 	glEnable2D();
-	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, m_TextureIcons->GetID());
-	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 	glBegin(GL_QUADS);
 
 	// Koordinaten bestimmen und Spots zeichnen
@@ -519,6 +599,27 @@ void CGlobeView::DrawScene(BOOL InternalCall)
 
 	SwapBuffers(*m_pDC);
 	m_LockUpdate = FALSE;
+}
+
+void CGlobeView::Normalize()
+{
+	// Zoom
+	if (m_GlobeZoom<0)
+		m_GlobeZoom = 0;
+	if (m_GlobeZoom>100)
+		m_GlobeZoom = 100;
+
+	// Nicht über die Pole rollen
+	if (m_GlobeLatitude<-75.0f)
+		m_GlobeLatitude = -75.0f;
+	if (m_GlobeLatitude>75.0f)
+		m_GlobeLatitude = 75.0f;
+
+	// Rotation normieren
+	if (m_GlobeLongitude<0.0f)
+		m_GlobeLongitude += 360.0f;
+	if (m_GlobeLongitude>360.0f)
+		m_GlobeLongitude -= 360.0f;
 }
 
 
@@ -854,15 +955,15 @@ void CGlobeView::Init()
 	m_pDC = new CClientDC(this);
 	ASSERT(m_pDC);
 
-	if (!SetupPixelFormat())
+	if (!SetupPixelFormat(*m_pDC))
 		return;
 
 	PIXELFORMATDESCRIPTOR pfd;
-	INT n = GetPixelFormat(m_pDC->GetSafeHdc());
-	DescribePixelFormat(m_pDC->GetSafeHdc(), n, sizeof(pfd), &pfd);
+	INT n = GetPixelFormat(*m_pDC);
+	DescribePixelFormat(*m_pDC, n, sizeof(pfd), &pfd);
 
 	m_hRC = wglCreateContext(m_pDC->GetSafeHdc());
-	wglMakeCurrent(m_pDC->GetSafeHdc(), m_hRC);
+	wglMakeCurrent(*m_pDC, m_hRC);
 
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	glShadeModel(GL_SMOOTH);
@@ -885,47 +986,46 @@ void CGlobeView::Init()
 	m_Fonts[1].Create(&theApp.m_LargeFont);
 
 	// Icons
-	CGdiPlusBitmapResource tex0(IDB_GLOBEICONS_RGB, _T("PNG"));
-	CGdiPlusBitmapResource tex1(IDB_GLOBEICONS_ALPHA, _T("PNG"));
-	m_TextureIcons = new GLTextureCombine(&tex0, &tex1);
+	CGdiPlusBitmapResource Tex0(IDB_GLOBEICONS_RGB, _T("PNG"));
+	CGdiPlusBitmapResource Tex1(IDB_GLOBEICONS_ALPHA, _T("PNG"));
+	m_TextureIcons = new GLTextureCombine(&Tex0, &Tex1);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
 }
 
 void CGlobeView::PrepareTexture()
 {
-	// Textur prüfen
-	UINT tex = theApp.m_nTextureSize;
-
 	// Automatisch höchstens 4096x4096 laden, da quadratisch und von den meisten Grafikkarten unterstützt
-	if (tex==LFTextureAuto)
-		tex = LFTexture4096;
+	UINT Tex = theApp.m_nTextureSize;
+	if (Tex==LFTextureAuto)
+		Tex = LFTexture4096;
 
-	GLint texSize = 1024;
-	glGetIntegerv(GL_MAX_TEXTURE_SIZE, &texSize);
+	// Texture prüfen
+	GLint TexSize = 1024;
+	glGetIntegerv(GL_MAX_TEXTURE_SIZE, &TexSize);
 
 Smaller:
-	glTexImage2D(GL_PROXY_TEXTURE_2D, 0, 4, texSize, texSize, 0, GL_BGRA, GL_UNSIGNED_BYTE, NULL);
-	GLint proxySize = 0;
-	glGetTexLevelParameteriv(GL_PROXY_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &proxySize);
+	glTexImage2D(GL_PROXY_TEXTURE_2D, 0, 4, TexSize, TexSize, 0, GL_BGRA, GL_UNSIGNED_BYTE, NULL);
+	GLint ProxySize = 0;
+	glGetTexLevelParameteriv(GL_PROXY_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &ProxySize);
 
-	if ((proxySize==0) && (texSize>1024))
+	if ((ProxySize==0) && (TexSize>1024))
 	{
-		texSize /= 2;
+		TexSize /= 2;
 		goto Smaller;
 	}
 
-	if (texSize>=8192)
+	if (TexSize>=8192)
 	{
 		theApp.m_nMaxTextureSize = LFTexture8192;
 	}
 	else
-		if (texSize>=4096)
+		if (TexSize>=4096)
 		{
 			theApp.m_nMaxTextureSize = LFTexture4096;
 		}
 		else
-			if (texSize>=2048)
+			if (TexSize>=2048)
 			{
 				theApp.m_nMaxTextureSize = LFTexture2048;
 			}
@@ -934,119 +1034,26 @@ Smaller:
 				theApp.m_nMaxTextureSize = LFTexture1024;
 			}
 
-	if (tex>theApp.m_nMaxTextureSize)
-		tex = theApp.m_nMaxTextureSize;
+	if (Tex>theApp.m_nMaxTextureSize)
+		Tex = theApp.m_nMaxTextureSize;
 
-	if ((INT)tex!=m_nTexture)
+	if ((INT)Tex!=m_CurrentGlobeTexture)
 	{
-		SetCursor(LoadCursor(NULL, IDC_WAIT));
+		SetCursor(theApp.LoadStandardCursor(IDC_WAIT));
 
 		m_LockUpdate = TRUE;
-		wglMakeCurrent(m_pDC->GetSafeHdc(), m_hRC);
+		wglMakeCurrent(*m_pDC, m_hRC);
 
 		if (m_TextureGlobe)
 			delete m_TextureGlobe;
-		m_TextureGlobe = new GLTextureBlueMarble(tex);
+		m_TextureGlobe = new GLTextureBlueMarble(Tex);
 
 		m_LockUpdate = FALSE;
 		SetCursor(hCursor);
 
-		m_nTexture = tex;
+		m_CurrentGlobeTexture = Tex;
 		Invalidate();
 	}
-}
-
-void CGlobeView::PrepareModel()
-{
-	// 3D-Modelle einbinden
-	#include "Globe_Low.h"
-	#include "Globe_High.h"
-	UINT count = (theApp.m_GlobeHQModel ? globe_high_node_count : globe_low_node_count);
-	double* nodes = (theApp.m_GlobeHQModel ? &globe_high[0] : &globe_low[0]);
-
-	// Display-Liste für das 3D-Modell erstellen
-	m_LockUpdate = TRUE;
-	wglMakeCurrent(m_pDC->GetSafeHdc(), m_hRC);
-
-	m_GlobeModel = glGenLists(1);
-	glNewList(m_GlobeModel, GL_COMPILE);
-
-	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_LEQUAL);
-
-	glEnable(GL_TEXTURE_2D);
-
-	glBegin(GL_TRIANGLES);
-
-	UINT pos = 0;
-	for (UINT a=0; a<count; a++)
-	{
-		double u = nodes[pos++];
-		double v = nodes[pos++];
-		glTexCoord2d(u, v);
-
-		double x = nodes[pos++];
-		double y = nodes[pos++];
-		double z = nodes[pos++];
-		glNormal3d(x, y, z);
-		glVertex3d(x, y, z);
-	}
-
-	glEnd();
-	glDisable(GL_TEXTURE_2D);
-	glDisable(GL_DEPTH_TEST);
-	glEndList();
-
-	m_LockUpdate = FALSE;
-}
-
-BOOL CGlobeView::SetupPixelFormat()
-{
-	static PIXELFORMATDESCRIPTOR pfd =
-	{
-		sizeof(PIXELFORMATDESCRIPTOR),  // size of this pfd
-		1,                              // version number
-		PFD_DRAW_TO_WINDOW |            // support window
-		PFD_SUPPORT_OPENGL |            // support OpenGL
-		PFD_DOUBLEBUFFER,               // double buffered
-		PFD_TYPE_RGBA,                  // RGBA type
-		32,                             // 32-bit color depth
-		0, 0, 0, 0, 0, 0,               // color bits ignored
-		0,                              // no alpha buffer
-		0,                              // shift bit ignored
-		0,                              // no accumulation buffer
-		0, 0, 0, 0,                     // accum bits ignored
-		16,                             // 16-bit z-buffer
-		0,                              // no stencil buffer
-		0,                              // no auxiliary buffer
-		PFD_MAIN_PLANE,                 // main layer
-		0,                              // reserved
-		0, 0, 0                         // layer masks ignored
-	};
-
-	INT pixelformat = ChoosePixelFormat(*m_pDC, &pfd);
-	return pixelformat ? SetPixelFormat(*m_pDC, pixelformat, &pfd) : FALSE;
-}
-
-void CGlobeView::Normalize()
-{
-	// Zoom
-	if (m_GlobeZoom<0)
-		m_GlobeZoom = 0;
-	if (m_GlobeZoom>100)
-		m_GlobeZoom = 100;
-
-	// Nicht über die Pole rollen
-	if (m_GlobeLatitude<-75.0f)
-		m_GlobeLatitude = -75.0f;
-	if (m_GlobeLatitude>75.0f)
-		m_GlobeLatitude = 75.0f;
-
-	// Rotation normieren
-	if (m_GlobeLongitude<0.0f)
-		m_GlobeLongitude += 360.0f;
-	if (m_GlobeLongitude>360.0f)
-		m_GlobeLongitude -= 360.0f;
 }
 
 BOOL CGlobeView::UpdateScene(BOOL Redraw)

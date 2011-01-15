@@ -157,7 +157,7 @@ class Triangle:
 
 if __name__ == '__main__':
   out = open('Globe.h', 'w')
-  out.write('static double globe[] = {\n')
+  out.write('static double GlobeNodes[] = {\n')
 
   splits = 4
 
@@ -166,5 +166,5 @@ if __name__ == '__main__':
     tri.split(splits)
     tri.save(out)
   out.write('};\n')
-  out.write('static unsigned int globe_node_count = ' + str(3*20*4**splits) + ';\n\n')
+  out.write('static unsigned int GlobeCount = ' + str(3*20*4**splits) + ';\n\n')
   out.close()

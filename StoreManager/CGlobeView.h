@@ -36,34 +36,32 @@ public:
 	BOOL Create(CWnd* pParentWnd, UINT nID, LFSearchResult* Result, INT FocusItem=0);
 
 protected:
+	GLfloat m_GlobeLatitude;
+	GLfloat m_GlobeLongitude;
+	INT m_GlobeZoom;
+
 	CClientDC* m_pDC;
 	HGLRC m_hRC;
-
 	INT m_Width;
 	INT m_Height;
 	GLTexture* m_TextureGlobe;
 	GLTexture* m_TextureIcons;
 	GLFont m_Fonts[2];
 
-	GLfloat m_GlobeLatitude;
-	GLfloat m_GlobeLongitude;
-	INT m_GlobeZoom;
-
 	virtual void SetViewOptions(BOOL Force);
 	virtual void SetSearchResult(LFSearchResult* Result);
 	virtual INT ItemAtPosition(CPoint point);
 	virtual CMenu* GetItemContextMenu(INT idx);
 
+	void PrepareModel();
 	void CalcAndDrawSpots(GLdouble ModelView[4][4], GLdouble Projection[4][4]);
 	void DrawStatusBar(INT Height, GLfloat BackColor[], BOOL Themed);
 	void DrawScene(BOOL InternalCall=FALSE);
+	void Normalize();
 
 	void Init();
 	void PrepareTexture();
-	void PrepareModel();
 	void Done();
-	BOOL SetupPixelFormat();
-	void Normalize();
 	BOOL UpdateScene(BOOL Redraw=FALSE);
 	void CalcAndDrawLabel();
 	void DrawLabel(GlobeItemData* d, UINT cCaption, WCHAR* caption, WCHAR* subcaption, WCHAR* coordinates, WCHAR* description, BOOL focused);
@@ -92,7 +90,7 @@ private:
 	HCURSOR hCursor;
 
 	GLint m_GlobeModel;
-	INT m_nTexture;
+	INT m_CurrentGlobeTexture;
 
 	GLfloat m_Latitude;
 	GLfloat m_Longitude;
@@ -107,7 +105,7 @@ private:
 	CPoint m_CursorPos;
 	BOOL m_LockUpdate;
 	BOOL m_IsHQModel;
-	
+
 	CPoint m_GrabPoint;
 	BOOL m_Grabbed;
 	CString YouLookAt;

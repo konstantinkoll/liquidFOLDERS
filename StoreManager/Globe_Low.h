@@ -1,4 +1,4 @@
-static double globe_low[] = {
+static double GlobeLowNodes[] = {
 0.588104095587, 0.5, 
 0.850650808352, 0.525731112119, 0.0, 
 0.605962832776, 0.525838936877, 
@@ -7681,4 +7681,4 @@ static double globe_low[] = {
 0.217664659147, 0.133773227831, 
 -0.0823235793093, -0.399607063355, -0.912982487897, 
 };
-static UINT globe_low_node_count = 3840;
+static UINT GlobeLowCount = 3840;
