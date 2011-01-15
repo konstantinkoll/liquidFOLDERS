@@ -41,7 +41,7 @@ protected:
 	INT m_GlobeZoom;
 
 	CClientDC* m_pDC;
-	HGLRC m_hRC;
+	HGLRC hRC;
 	INT m_Width;
 	INT m_Height;
 	GLTexture* m_TextureGlobe;
@@ -59,15 +59,15 @@ protected:
 	void DrawScene(BOOL InternalCall=FALSE);
 	void Normalize();
 
-	void Init();
 	void PrepareTexture();
-	void Done();
 	BOOL UpdateScene(BOOL Redraw=FALSE);
 	void CalcAndDrawLabel();
 	void DrawLabel(GlobeItemData* d, UINT cCaption, WCHAR* caption, WCHAR* subcaption, WCHAR* coordinates, WCHAR* description, BOOL focused);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();
+	afx_msg void OnPaint();
+
 	afx_msg void OnZoomIn();
 	afx_msg void OnZoomOut();
 	afx_msg void OnAutosize();
@@ -82,7 +82,6 @@ protected:
 	afx_msg BOOL OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message);
 	afx_msg void OnSize(UINT nType, INT cx, INT cy);
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
-	afx_msg void OnPaint();
 	DECLARE_MESSAGE_MAP()
 
 private:

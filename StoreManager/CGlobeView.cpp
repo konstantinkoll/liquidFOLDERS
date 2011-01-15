@@ -9,14 +9,14 @@
 #include "GlobeOptionsDlg.h"
 #include <math.h>
 
-#define DISTANCE      39.0f
-#define ARROWSIZE     9
-#define PI            3.14159265358979323846
-#define ANIMLENGTH    200
-#define SPOT          2
-#define CROSSHAIRS    3
+#define DISTANCE       39.0f
+#define ARROWSIZE      9
+#define PI             3.14159265358979323846
+#define ANIMLENGTH     200
+#define SPOT           2
+#define CROSSHAIRS     3
 
-void ColorRef2GLColor(GLfloat* dst, COLORREF src, GLfloat Alpha=1.0f)
+inline void ColorRef2GLColor(GLfloat* dst, COLORREF src, GLfloat Alpha=1.0f)
 {
 	dst[0] = (src & 0xFF)/255.0f;
 	dst[1] = ((src>>8) & 0xFF)/255.0f;
@@ -86,7 +86,7 @@ void WriteGoogleAttribute(CStdioFile* f, LFItemDescriptor* i, UINT attr)
 	}
 }
 
-BOOL SetupPixelFormat(HDC hDC)
+inline BOOL SetupPixelFormat(HDC hDC)
 {
 	PIXELFORMATDESCRIPTOR pfd =
 	{
@@ -174,7 +174,7 @@ CGlobeView::CGlobeView()
 	: CFileView(sizeof(GlobeItemData), FALSE, FALSE, TRUE, FALSE, FALSE)
 {
 	m_pDC = NULL;
-	m_hRC = NULL;
+	hRC = NULL;
 	lpszCursorName = IDC_WAIT;
 	hCursor = theApp.LoadStandardCursor(IDC_WAIT);
 
@@ -346,7 +346,7 @@ void CGlobeView::PrepareModel()
 
 	// Display-Liste für das 3D-Modell erstellen
 	m_LockUpdate = TRUE;
-	wglMakeCurrent(*m_pDC, m_hRC);
+	wglMakeCurrent(*m_pDC, hRC);
 
 	m_GlobeModel = glGenLists(1);
 	glNewList(m_GlobeModel, GL_COMPILE);
@@ -467,7 +467,7 @@ void CGlobeView::DrawScene(BOOL InternalCall)
 
 	BOOL Themed = IsCtrlThemed();
 
-	wglMakeCurrent(m_pDC->GetSafeHdc(), m_hRC);
+	wglMakeCurrent(m_pDC->GetSafeHdc(), hRC);
 	glRenderMode(GL_RENDER);
 
 	// Hintergrund
@@ -648,7 +648,45 @@ INT CGlobeView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CFileView::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
-	Init();
+	m_pDC = new CClientDC(this);
+	if (!m_pDC)
+		return -1;
+
+	if (!SetupPixelFormat(*m_pDC))
+		return -1;
+
+	hRC = wglCreateContext(*m_pDC);
+	wglMakeCurrent(*m_pDC, hRC);
+
+	// 3D-Einstellungen
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	glShadeModel(GL_SMOOTH);
+	glCullFace(GL_BACK);
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	glDisable(GL_LINE_SMOOTH);
+	glLineWidth(1.0f);
+
+	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+
+	glFogi(GL_FOG_MODE, GL_LINEAR);
+	glFogf(GL_FOG_DENSITY, 1.0f);
+	glHint(GL_FOG_HINT, GL_FASTEST);
+
+	// Fonts
+	m_Fonts[0].Create(&theApp.m_DefaultFont);
+	m_Fonts[1].Create(&theApp.m_LargeFont);
+
+	// Icons
+	CGdiPlusBitmapResource Tex0(IDB_GLOBEICONS_RGB, _T("PNG"));
+	CGdiPlusBitmapResource Tex1(IDB_GLOBEICONS_ALPHA, _T("PNG"));
+	m_TextureIcons = new GLTextureCombine(&Tex0, &Tex1);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+
+	// Animations-Timer
 	SetTimer(1, 10, NULL);
 
 	return 0;
@@ -660,7 +698,7 @@ void CGlobeView::OnDestroy()
 
 	if (m_pDC)
 	{
-		wglMakeCurrent(m_pDC->GetSafeHdc(), m_hRC);
+		wglMakeCurrent(*m_pDC, hRC);
 
 		if (m_TextureGlobe)
 			delete m_TextureGlobe;
@@ -670,8 +708,8 @@ void CGlobeView::OnDestroy()
 			glDeleteLists(m_GlobeModel, 1);
 
 		wglMakeCurrent(NULL, NULL);
-		if (m_hRC)
-			wglDeleteContext(m_hRC);
+		if (hRC)
+			wglDeleteContext(hRC);
 		delete m_pDC;
 	}
 
@@ -682,8 +720,15 @@ void CGlobeView::OnDestroy()
 		p_ViewParameters->GlobeZoom = m_GlobeZoom;
 	}
 
-	CWnd::OnDestroy();
+	CFileView::OnDestroy();
 }
+
+void CGlobeView::OnPaint()
+{
+	CPaintDC pDC(this);
+	DrawScene();
+}
+
 
 void CGlobeView::OnZoomIn()
 {
@@ -916,7 +961,7 @@ void CGlobeView::OnSize(UINT nType, INT cx, INT cy)
 		m_Width = cx;
 		m_Height = cy;
 
-		wglMakeCurrent(m_pDC->GetSafeHdc(), m_hRC);
+		wglMakeCurrent(m_pDC->GetSafeHdc(), hRC);
 		glViewport(0, 0, cx, cy);
 
 		glMatrixMode(GL_PROJECTION);
@@ -938,59 +983,6 @@ void CGlobeView::OnTimer(UINT_PTR nIDEvent)
 	// Eat bogus WM_TIMER messages
 	MSG msg;
 	while (PeekMessage(&msg, m_hWnd, WM_TIMER, WM_TIMER, PM_REMOVE));
-}
-
-void CGlobeView::OnPaint()
-{
-	DrawScene();
-	CFileView::OnPaint();
-}
-
-
-// OpenGL-Objekt
-//
-
-void CGlobeView::Init()
-{
-	m_pDC = new CClientDC(this);
-	ASSERT(m_pDC);
-
-	if (!SetupPixelFormat(*m_pDC))
-		return;
-
-	PIXELFORMATDESCRIPTOR pfd;
-	INT n = GetPixelFormat(*m_pDC);
-	DescribePixelFormat(*m_pDC, n, sizeof(pfd), &pfd);
-
-	m_hRC = wglCreateContext(m_pDC->GetSafeHdc());
-	wglMakeCurrent(*m_pDC, m_hRC);
-
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	glShadeModel(GL_SMOOTH);
-	glCullFace(GL_BACK);
-
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-	glDisable(GL_LINE_SMOOTH);
-	glLineWidth(1.0f);
-
-	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
-
-	glFogi(GL_FOG_MODE, GL_LINEAR);
-	glFogf(GL_FOG_DENSITY, 1.0f);
-	glHint(GL_FOG_HINT, GL_FASTEST);
-
-	// Fonts
-	m_Fonts[0].Create(&theApp.m_DefaultFont);
-	m_Fonts[1].Create(&theApp.m_LargeFont);
-
-	// Icons
-	CGdiPlusBitmapResource Tex0(IDB_GLOBEICONS_RGB, _T("PNG"));
-	CGdiPlusBitmapResource Tex1(IDB_GLOBEICONS_ALPHA, _T("PNG"));
-	m_TextureIcons = new GLTextureCombine(&Tex0, &Tex1);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
 }
 
 void CGlobeView::PrepareTexture()
@@ -1042,7 +1034,7 @@ Smaller:
 		SetCursor(theApp.LoadStandardCursor(IDC_WAIT));
 
 		m_LockUpdate = TRUE;
-		wglMakeCurrent(*m_pDC, m_hRC);
+		wglMakeCurrent(*m_pDC, hRC);
 
 		if (m_TextureGlobe)
 			delete m_TextureGlobe;

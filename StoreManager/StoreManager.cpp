@@ -400,7 +400,7 @@ void CStoreManagerApp::LoadViewOptions(INT context)
 	m_Views[context].GlobeShowGPS = GetInt(_T("GlobeShowGPS"), TRUE);
 	m_Views[context].GlobeShowDescription = GetInt(_T("GlobeShowDescription"), TRUE);
 	m_Views[context].GlobeShowViewport = GetInt(_T("GlobeShowViewport"), FALSE);
-	m_Views[context].GlobeShowCrosshair = GetInt(_T("GlobeShowCrosshair"), TRUE);
+	m_Views[context].GlobeShowCrosshair = GetInt(_T("GlobeShowCrosshair"), FALSE);
 	m_Views[context].TagcloudCanonical = GetInt(_T("TagcloudSortCanonical"), TRUE);
 	m_Views[context].TagcloudHideRare = GetInt(_T("TagcloudHideRare"), FALSE);
 	m_Views[context].TagcloudUseSize = GetInt(_T("TagcloudUseSize"), TRUE);
