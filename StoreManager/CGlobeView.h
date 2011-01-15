@@ -37,38 +37,36 @@ public:
 
 protected:
 	CClientDC* m_pDC;
-	HGLRC m_hrc;
-	HCURSOR hCursor;
+	HGLRC m_hRC;
+
+	INT m_Width;
+	INT m_Height;
 	GLTexture* m_TextureGlobe;
 	GLTexture* m_TextureIcons;
 	GLFont m_Fonts[3];
+
 	GLfloat m_GlobeLatitude;
 	GLfloat m_GlobeLongitude;
 	INT m_GlobeZoom;
-	INT m_Width;
-	INT m_Height;
-	BOOL m_Grabbed;
-	CPoint m_GrabPoint;
-	CString YouLookAt;
-	COLORREF m_ColorBack;
-	COLORREF m_ColorText;
-	COLORREF m_ColorHighlight;
 
 	virtual void SetViewOptions(BOOL Force);
 	virtual void SetSearchResult(LFSearchResult* Result);
 	virtual INT ItemAtPosition(CPoint point);
 	virtual CMenu* GetItemContextMenu(INT idx);
 
+	void glDrawIcon(GLdouble x, GLdouble y, GLdouble Size, GLdouble Alpha, UINT ID);
+
+
 	void Init();
 	void PrepareFont(BOOL large, BOOL granny);
 	void PrepareTexture();
-	void PrepareModel(BOOL HQ);
+	void PrepareModel();
 	void Done();
 	BOOL SetupPixelFormat();
 	void Normalize();
 	BOOL UpdateScene(BOOL Redraw=FALSE);
 	void DrawScene(BOOL InternalCall=FALSE);
-	void CalcAndDrawPoints();
+	void CalcAndDrawPoints(GLdouble ModelView[4][4], GLdouble Projection[4][4]);
 	void CalcAndDrawLabel();
 	void DrawLabel(GlobeItemData* d, UINT cCaption, WCHAR* caption, WCHAR* subcaption, WCHAR* coordinates, WCHAR* description, BOOL focused);
 
@@ -93,7 +91,12 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
-	GLint m_GlobeList[2];
+	LPCTSTR lpszCursorName;
+	HCURSOR hCursor;
+
+	GLint m_GlobeModel;
+	INT m_nTexture;
+
 	GLfloat m_Latitude;
 	GLfloat m_Longitude;
 	GLfloat m_Zoom;
@@ -104,10 +107,13 @@ private:
 	GLfloat m_AnimStartLatitude;
 	GLfloat m_AnimStartLongitude;
 	UINT m_AnimCounter;
-	LPCTSTR lpszCursorName;
 	CPoint m_CursorPos;
-	INT m_nTexture;
 	BOOL m_LockUpdate;
+	BOOL m_IsHQModel;
+	
+	CPoint m_GrabPoint;
+	BOOL m_Grabbed;
+	CString YouLookAt;
 
 	BOOL CursorOnGlobe(CPoint point);
 	void UpdateCursor();

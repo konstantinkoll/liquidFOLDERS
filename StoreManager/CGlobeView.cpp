@@ -10,10 +10,12 @@
 #include <math.h>
 
 #define STATUSBAR_HEIGHT 12
-#define DISTANCE 39.0f
-#define ARROWSIZE 9
-#define PI 3.14159265358979323846
-#define ANIMLENGTH 200
+#define DISTANCE      39.0f
+#define ARROWSIZE     9
+#define PI            3.14159265358979323846
+#define ANIMLENGTH    200
+#define SPOT          2
+#define CROSSHAIRS    3
 
 void ColorRef2GLColor(GLfloat* dst, COLORREF src, GLfloat Alpha=1.0f)
 {
@@ -23,12 +25,12 @@ void ColorRef2GLColor(GLfloat* dst, COLORREF src, GLfloat Alpha=1.0f)
 	dst[3] = Alpha;
 }
 
-static inline double decToRad(double dec)
+inline double decToRad(double dec)
 {
 	return dec*(PI/180.0);
 }
 
-static inline void MatrixMul(GLdouble Result[4][4], GLdouble Left[4][4], GLdouble Right[4][4])
+inline void MatrixMul(GLdouble Result[4][4], GLdouble Left[4][4], GLdouble Right[4][4])
 {
 	Result[0][0] = Left[0][0]*Right[0][0] + Left[0][1]*Right[1][0] + Left[0][2]*Right[2][0] + Left[0][3]*Right[3][0];
 	Result[0][1] = Left[0][0]*Right[0][1] + Left[0][1]*Right[1][1] + Left[0][2]*Right[2][1] + Left[0][3]*Right[3][1];
@@ -91,26 +93,25 @@ void WriteGoogleAttribute(CStdioFile* f, LFItemDescriptor* i, UINT attr)
 
 
 CGlobeView::CGlobeView()
-	: CFileView(sizeof(GlobeItemData), FALSE, FALSE, TRUE, FALSE)
+	: CFileView(sizeof(GlobeItemData), FALSE, FALSE, TRUE, FALSE, FALSE)
 {
 	m_pDC = NULL;
-	m_hrc = NULL;
-	hCursor = LoadCursor(NULL, IDC_WAIT);
+	m_hRC = NULL;
+	lpszCursorName = IDC_WAIT;
+	hCursor = theApp.LoadStandardCursor(IDC_WAIT);
+
+	m_Width = m_Height = 0;
+	m_GlobeModel = -1;
 	m_TextureGlobe = m_TextureIcons = NULL;
-	m_Width = 0;
-	m_Height = 0;
-	m_GlobeList[FALSE] = m_GlobeList[TRUE] = -1;
-	m_Latitude = 0.0f;
-	m_Longitude = 0.0f;
+	m_nTexture = -1;
+	m_Latitude = m_Longitude = 0.0f;
 	m_Zoom = -1.0f;
-	m_Scale = 0.7f;
+	m_Scale = 1.0f;
 	m_Radius = 0.0f;
 	m_Grabbed = FALSE;
-	lpszCursorName = NULL;
-	m_CursorPos.x = 0;
-	m_CursorPos.y = 0;
+	m_CursorPos.x = m_CursorPos.y = 0;
 	m_AnimCounter = 0;
-	m_nTexture = -1;
+
 	ENSURE(YouLookAt.LoadString(IDS_YOULOOKAT));
 	m_LockUpdate = FALSE;
 }
@@ -127,14 +128,15 @@ void CGlobeView::SetViewOptions(BOOL Force)
 		m_GlobeLatitude = p_ViewParameters->GlobeLatitude/1000.0f;
 		m_GlobeLongitude = p_ViewParameters->GlobeLongitude/1000.0f;
 		m_GlobeZoom = p_ViewParameters->GlobeZoom;
-
-		m_ColorBack = 0xFFFFFF;
-		m_ColorText = 0x000000;
-		m_ColorHighlight = 0x993300;
 	}
 
 	PrepareTexture();
-	PrepareModel(theApp.m_GlobeHQModel);
+
+	if (Force || (m_IsHQModel!=theApp.m_GlobeHQModel))
+	{
+		PrepareModel();
+		m_IsHQModel = theApp.m_GlobeHQModel;
+	}
 
 	m_ViewParameters = *p_ViewParameters;
 	UpdateScene(TRUE);
@@ -146,8 +148,6 @@ void CGlobeView::SetSearchResult(LFSearchResult* Result)
 
 	if (Result)
 		if (Result->m_ItemCount)
-		{
-			// Compute locations
 			for (UINT a=0; a<Result->m_ItemCount; a++)
 			{
 				LFGeoCoordinates coord = { 0.0, 0.0 };
@@ -159,7 +159,10 @@ void CGlobeView::SetSearchResult(LFSearchResult* Result)
 				}
 				else
 					if (Result->m_Items[a]->AttributeValues[m_ViewParameters.SortBy])
+					{
+						ASSERT(theApp.m_Attributes[m_ViewParameters.SortBy]->Type==LFTypeGeoCoordinates);
 						coord = *((LFGeoCoordinates*)Result->m_Items[a]->AttributeValues[m_ViewParameters.SortBy]);
+					}
 
 				if ((coord.Latitude!=0.0) || (coord.Longitude!=0))
 				{
@@ -170,7 +173,6 @@ void CGlobeView::SetSearchResult(LFSearchResult* Result)
 					d->Valid = TRUE;
 				}
 			}
-		}
 
 	UpdateScene(TRUE);
 }
@@ -228,6 +230,55 @@ BOOL CGlobeView::CursorOnGlobe(CPoint point)
 	return distX*distX+distY*distY<m_Radius*m_Radius;
 }
 
+void CGlobeView::UpdateCursor()
+{
+	LPCTSTR csr;
+	if (m_Grabbed)
+	{
+		csr = IDC_HAND;
+	}
+	else
+	{
+		csr = IDC_ARROW;
+
+		if (CursorOnGlobe(m_CursorPos))
+			if (ItemAtPosition(m_CursorPos)==-1)
+				csr = IDC_HAND;
+	}
+
+	if (csr!=lpszCursorName)
+	{
+		hCursor = theApp.LoadStandardCursor(csr);
+
+		SetCursor(hCursor);
+		lpszCursorName = csr;
+	}
+}
+
+
+// OpenGL
+
+void CGlobeView::glDrawIcon(GLdouble x, GLdouble y, GLdouble Size, GLdouble Alpha, UINT ID)
+{
+	x -= 0.375;
+	y -= 0.375;
+	Size /= 2.0;
+
+	GLdouble s = (ID%2) ? 0.5 : 0.0;
+	GLdouble t = (ID/2) ? 0.5 : 0.0;
+
+	glColor4d(1.0, 1.0, 1.0, Alpha);
+
+	glTexCoord2d(s, t);
+	glVertex2d(x-Size, y-Size);
+	glTexCoord2d(s+0.5, t);
+	glVertex2d(x+Size, y-Size);
+	glTexCoord2d(s+0.5, t+0.5);
+	glVertex2d(x+Size, y+Size);
+	glTexCoord2d(s, t+0.5);
+	glVertex2d(x-Size, y+Size);
+}
+
 
 BEGIN_MESSAGE_MAP(CGlobeView, CFileView)
 	ON_WM_CREATE()
@@ -250,31 +301,6 @@ BEGIN_MESSAGE_MAP(CGlobeView, CFileView)
 	ON_WM_PAINT()
 END_MESSAGE_MAP()
 
-void CGlobeView::UpdateCursor()
-{
-	LPCTSTR csr;
-	if (m_Grabbed)
-	{
-		csr = IDC_HAND;
-	}
-	else
-	{
-		csr = IDC_ARROW;
-
-		if (CursorOnGlobe(m_CursorPos))
-			if (ItemAtPosition(m_CursorPos)==-1)
-				csr = IDC_HAND;
-	}
-
-	if (csr!=lpszCursorName)
-	{
-		hCursor = LoadCursor(NULL, csr);
-		lpszCursorName = csr;
-	}
-
-	SetCursor(hCursor);
-}
-
 INT CGlobeView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if (CFileView::OnCreate(lpCreateStruct)==-1)
@@ -292,20 +318,18 @@ void CGlobeView::OnDestroy()
 
 	if (m_pDC)
 	{
-		wglMakeCurrent(m_pDC->GetSafeHdc(), m_hrc);
+		wglMakeCurrent(m_pDC->GetSafeHdc(), m_hRC);
 
 		if (m_TextureGlobe)
 			delete m_TextureGlobe;
 		if (m_TextureIcons)
 			delete m_TextureIcons;
-		if (m_GlobeList[FALSE]!=-1)
-			glDeleteLists(m_GlobeList[FALSE], 1);
-		if (m_GlobeList[TRUE]!=-1)
-			glDeleteLists(m_GlobeList[TRUE], 1);
+		if (m_GlobeModel!=-1)
+			glDeleteLists(m_GlobeModel, 1);
 
 		wglMakeCurrent(NULL, NULL);
-		if (m_hrc)
-			wglDeleteContext(m_hrc);
+		if (m_hRC)
+			wglDeleteContext(m_hRC);
 		delete m_pDC;
 	}
 
@@ -550,7 +574,7 @@ void CGlobeView::OnSize(UINT nType, INT cx, INT cy)
 		m_Width = cx;
 		m_Height = cy;
 
-		wglMakeCurrent(m_pDC->GetSafeHdc(), m_hrc);
+		wglMakeCurrent(m_pDC->GetSafeHdc(), m_hRC);
 		glViewport(0, 0, cx, cy);
 
 		glMatrixMode(GL_PROJECTION);
@@ -629,8 +653,8 @@ void CGlobeView::Init()
 	INT n = GetPixelFormat(m_pDC->GetSafeHdc());
 	DescribePixelFormat(m_pDC->GetSafeHdc(), n, sizeof(pfd), &pfd);
 
-	m_hrc = wglCreateContext(m_pDC->GetSafeHdc());
-	wglMakeCurrent(m_pDC->GetSafeHdc(), m_hrc);
+	m_hRC = wglCreateContext(m_pDC->GetSafeHdc());
+	wglMakeCurrent(m_pDC->GetSafeHdc(), m_hRC);
 
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	glShadeModel(GL_SMOOTH);
@@ -638,9 +662,6 @@ void CGlobeView::Init()
 
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-	glEnable(GL_POINT_SMOOTH);
-	glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
 
 	glDisable(GL_LINE_SMOOTH);
 	glLineWidth(1.0f);
@@ -714,7 +735,7 @@ Smaller:
 		SetCursor(LoadCursor(NULL, IDC_WAIT));
 
 		m_LockUpdate = TRUE;
-		wglMakeCurrent(m_pDC->GetSafeHdc(), m_hrc);
+		wglMakeCurrent(m_pDC->GetSafeHdc(), m_hRC);
 
 		if (m_TextureGlobe)
 			delete m_TextureGlobe;
@@ -728,51 +749,48 @@ Smaller:
 	}
 }
 
-void CGlobeView::PrepareModel(BOOL HQ)
+void CGlobeView::PrepareModel()
 {
-	if (m_GlobeList[HQ]==-1)
+	// 3D-Modelle einbinden
+	#include "Globe_Low.h"
+	#include "Globe_High.h"
+	UINT count = (theApp.m_GlobeHQModel ? globe_high_node_count : globe_low_node_count);
+	double* nodes = (theApp.m_GlobeHQModel ? &globe_high[0] : &globe_low[0]);
+
+	// Display-Liste für das 3D-Modell erstellen
+	m_LockUpdate = TRUE;
+	wglMakeCurrent(m_pDC->GetSafeHdc(), m_hRC);
+
+	m_GlobeModel = glGenLists(1);
+	glNewList(m_GlobeModel, GL_COMPILE);
+
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LEQUAL);
+
+	glEnable(GL_TEXTURE_2D);
+
+	glBegin(GL_TRIANGLES);
+
+	UINT pos = 0;
+	for (UINT a=0; a<count; a++)
 	{
-		// 3D-Modelle einbinden
-		#include "Globe_Low.h"
-		#include "Globe_High.h"
-		UINT count = (HQ ? globe_high_node_count : globe_low_node_count);
-		double* nodes = (HQ ? &globe_high[0] : &globe_low[0]);
+		double u = nodes[pos++];
+		double v = nodes[pos++];
+		glTexCoord2d(u, v);
 
-		// Display-Liste für das 3D-Modell erstellen
-		m_LockUpdate = TRUE;
-		wglMakeCurrent(m_pDC->GetSafeHdc(), m_hrc);
-
-		m_GlobeList[HQ] = glGenLists(1);
-		glNewList(m_GlobeList[HQ], GL_COMPILE);
-
-		glEnable(GL_DEPTH_TEST);
-		glDepthFunc(GL_LEQUAL);
-
-		glEnable(GL_TEXTURE_2D);
-
-		glBegin(GL_TRIANGLES);
-
-		UINT pos = 0;
-		for (UINT a=0; a<count; a++)
-		{
-			double u = nodes[pos++];
-			double v = nodes[pos++];
-			glTexCoord2d(u, v);
-
-			double x = nodes[pos++];
-			double y = nodes[pos++];
-			double z = nodes[pos++];
-			glNormal3d(x, y, z);
-			glVertex3d(x, y, z);
-		}
-
-		glEnd();
-		glDisable(GL_TEXTURE_2D);
-		glDisable(GL_DEPTH_TEST);
-		glEndList();
-
-		m_LockUpdate = FALSE;
+		double x = nodes[pos++];
+		double y = nodes[pos++];
+		double z = nodes[pos++];
+		glNormal3d(x, y, z);
+		glVertex3d(x, y, z);
 	}
+
+	glEnd();
+	glDisable(GL_TEXTURE_2D);
+	glDisable(GL_DEPTH_TEST);
+	glEndList();
+
+	m_LockUpdate = FALSE;
 }
 
 BOOL CGlobeView::SetupPixelFormat()
@@ -842,12 +860,12 @@ BOOL CGlobeView::UpdateScene(BOOL Redraw)
 	}
 	else
 	{
-		if (m_Zoom<TargetZoom-0.009f)
+		if (m_Zoom<TargetZoom-0.001f)
 		{
 			res = TRUE;
 			m_Zoom += 0.005f;
 		}
-		if (m_Zoom>TargetZoom+0.009f)
+		if (m_Zoom>TargetZoom+0.001f)
 		{
 			res = TRUE;
 			m_Zoom -= 0.005f;
@@ -911,12 +929,14 @@ void CGlobeView::DrawScene(BOOL InternalCall)
 		m_LockUpdate = TRUE;
 	}
 
-	wglMakeCurrent(m_pDC->GetSafeHdc(), m_hrc);
+	wglMakeCurrent(m_pDC->GetSafeHdc(), m_hRC);
 	glRenderMode(GL_RENDER);
+
+	BOOL Themed = IsCtrlThemed();
 
 	// Hintergrund
 	GLfloat backcol[4];
-	ColorRef2GLColor(backcol, m_ColorBack);
+	ColorRef2GLColor(backcol, Themed ? 0xFFFFFF : GetSysColor(COLOR_WINDOW));
 	glFogfv(GL_FOG_COLOR, backcol);
 
 	glClearColor(backcol[0], backcol[1], backcol[2], 1.0f);
@@ -938,6 +958,7 @@ void CGlobeView::DrawScene(BOOL InternalCall)
 	glLoadIdentity();
 	gluLookAt(DISTANCE, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0);
 
+	// Beleuchtung mit FESTER Lichtquelle
 	if (theApp.m_GlobeLighting)
 	{
 		GLfloat lAmbient[] = { 0.9f, 0.9f, 0.9f, 1.0f };
@@ -954,10 +975,12 @@ void CGlobeView::DrawScene(BOOL InternalCall)
 		glLightModelfv(GL_LIGHT_MODEL_AMBIENT, lAmbient);
 	}
 
+	// Rotationsmatrix (erst NACH Lichtquelle)
 	glRotatef(m_Latitude, 0.0f, 1.0f, 0.0f);
 	glRotatef(m_Longitude, 0.0f, 0.0f, 1.0f);
 	glScalef(m_Scale, m_Scale, m_Scale);
 
+	// Atmosphäre/Nebel
 	if (theApp.m_GlobeAtmosphere)
 	{
 		glEnable(GL_FOG);
@@ -965,17 +988,21 @@ void CGlobeView::DrawScene(BOOL InternalCall)
 		glFogf(GL_FOG_END, DISTANCE-m_FogEnd);
 	}
 
+	// Globus-Textur
 	if (m_TextureGlobe)
 	{
 		glBindTexture(GL_TEXTURE_2D, m_TextureGlobe->GetID());
 		glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, theApp.m_GlobeLighting ? GL_MODULATE : GL_REPLACE);
 	}
 
-	glCallList(m_GlobeList[theApp.m_GlobeHQModel]);
+	// Modell rendern
+	glCallList(m_GlobeModel);
 
+	// Atmosphäre aus
 	if (theApp.m_GlobeAtmosphere)
 		glDisable(GL_FOG);
 
+	// Licht aus
 	if (theApp.m_GlobeLighting)
 	{
 		glDisable(GL_NORMALIZE);
@@ -983,37 +1010,37 @@ void CGlobeView::DrawScene(BOOL InternalCall)
 		glDisable(GL_LIGHT0);
 	}
 
+	// Matritzen speichern
+	GLdouble ModelView[4][4];
+	GLdouble Projection[4][4];
+	glGetDoublev(GL_MODELVIEW_MATRIX, &ModelView[0][0]);
+	glGetDoublev(GL_PROJECTION_MATRIX, &Projection[0][0]);
 
-
+	// Für Icons vorbereiten
 	glEnable2D();
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, m_TextureIcons->GetID());
 	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-	glColor4d(1.0, 1.0, 1.0, 0.5);
-
 	glBegin(GL_QUADS);
-	glTexCoord2d(0.0, 0.0);
-	glVertex2d(100-0.375, 100-0.375);
-	glTexCoord2d(1.0, 0.0);
-	glVertex2d(228-0.375, 100-0.375);
-	glTexCoord2d(1.0, 1.0);
-	glVertex2d(228-0.375, 228-0.375);
-	glTexCoord2d(0.0, 1.0);
-	glVertex2d(100-0.375, 228-0.375);
-	glEnd();
-	glDisable(GL_TEXTURE_2D);
-	glDisable2D();
 
-
+	// Koordinaten bestimmen und Spots zeichnen
 	if (p_Result)
 		if (p_Result->m_ItemCount)
-		{
-			// Punkte und Schilder zeichnen
-			CalcAndDrawPoints();
+			CalcAndDrawPoints(ModelView, Projection);
 
-			// Label
+	// Fadenkreuz zeichnen
+	if (m_ViewParameters.GlobeShowCrosshair)
+		glDrawIcon(m_Width/2.0, m_Height/2.0, 64.0, 1.0, CROSSHAIRS);
+
+	// Icons beenden
+	glEnd();
+	glDisable(GL_TEXTURE_2D);
+
+	// Label zeichnen
+	if (p_Result)
+		if (p_Result->m_ItemCount)
 			CalcAndDrawLabel();
-		}
+
 
 	// Statuszeile
 	if (m_Height>=STATUSBAR_HEIGHT)
@@ -1024,8 +1051,6 @@ void CGlobeView::DrawScene(BOOL InternalCall)
 
 		if (m_Width>=(INT)CopyrightWidth)
 		{
-			glEnable2D();
-
 			// Kante
 			glColor4d(backcol[0], backcol[1], backcol[2], 0.8f);
 			glBegin(GL_LINES);
@@ -1063,35 +1088,29 @@ void CGlobeView::DrawScene(BOOL InternalCall)
 
 			// Text
 			GLfloat highlightcol[4];
-			ColorRef2GLColor(highlightcol, m_ColorHighlight);
+			ColorRef2GLColor(highlightcol, Themed ? 0xCC6600 : GetSysColor(COLOR_WINDOWTEXT));
 			glColor4d(highlightcol[0], highlightcol[1], highlightcol[2], 1.0f);
 
 			m_Fonts[2].Render(Copyright, CopyrightX, m_Height-STATUSBAR_HEIGHT);
 			if (ViewpointX!=-1)
 				m_Fonts[2].Render(Viewpoint, ViewpointX, m_Height-STATUSBAR_HEIGHT);
-
-			glDisable2D();
 		}
 	}
+
+	glDisable2D();
 
 	SwapBuffers(*m_pDC);
 
 	m_LockUpdate = FALSE;
 }
 
-void CGlobeView::CalcAndDrawPoints()
+void CGlobeView::CalcAndDrawPoints(GLdouble ModelView[4][4], GLdouble Projection[4][4])
 {
-	GLdouble modelview[4][4];
-	glGetDoublev(GL_MODELVIEW_MATRIX, &modelview[0][0]);
-
-	GLdouble projection[4][4];
-	glGetDoublev(GL_PROJECTION_MATRIX, &projection[0][0]);
-
-	GLdouble mvp[4][4];
-	MatrixMul(mvp, modelview, projection);
-
 	GLdouble szx = m_Width/2.0;
 	GLdouble szy = m_Height/2.0;
+
+	GLdouble MVP[4][4];
+	MatrixMul(MVP, ModelView, Projection);
 
 	for (UINT a=0; a<p_Result->m_ItemCount; a++)
 	{
@@ -1100,40 +1119,22 @@ void CGlobeView::CalcAndDrawPoints()
 		{
 			d->Alpha = 0.0f;
 
-			GLdouble z = modelview[0][2]*d->World[0] + modelview[1][2]*d->World[1] + modelview[2][2]*d->World[2];
+			GLdouble z = ModelView[0][2]*d->World[0] + ModelView[1][2]*d->World[1] + ModelView[2][2]*d->World[2];
 			if ((z>m_FogEnd) && (m_Width) && (m_Height))
 			{
-				GLdouble w = mvp[0][3]*d->World[0] + mvp[1][3]*d->World[1] + mvp[2][3]*d->World[2] + mvp[3][3];
-				GLdouble x = (mvp[0][0]*d->World[0] + mvp[1][0]*d->World[1] + mvp[2][0]*d->World[2] + mvp[3][0])*szx/w;
-				GLdouble y = -(mvp[0][1]*d->World[0] + mvp[1][1]*d->World[1] + mvp[2][1]*d->World[2] + mvp[3][1])*szy/w;
+				GLdouble w = MVP[0][3]*d->World[0] + MVP[1][3]*d->World[1] + MVP[2][3]*d->World[2] + MVP[3][3];
+				GLdouble x = (MVP[0][0]*d->World[0] + MVP[1][0]*d->World[1] + MVP[2][0]*d->World[2] + MVP[3][0])*szx/w;
+				GLdouble y = -(MVP[0][1]*d->World[0] + MVP[1][1]*d->World[1] + MVP[2][1]*d->World[2] + MVP[3][1])*szy/w;
 
 				d->ScreenPoint[0] = (INT)(x+szx+0.5f);
 				d->ScreenPoint[1] = (INT)(y+szy+0.5f);
 
 				d->Alpha = 1.0f;
-				GLfloat psize = 9.5f;
 				if (z<m_FogStart)
-				{
 					d->Alpha -= (GLfloat)((m_FogStart-z)/(m_FogStart-m_FogEnd));
-					psize *= max(d->Alpha, 0.25f);
-				}
 
 				if (m_ViewParameters.GlobeShowSpots)
-				{
-					// Weiß
-					glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-					glPointSize(psize);
-					glBegin(GL_POINTS);
-					glVertex3dv(d->World);
-					glEnd();
-
-					// Rot
-					glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
-					glPointSize(psize*0.66f);
-					glBegin(GL_POINTS);
-					glVertex3dv(d->World);
-					glEnd();
-				}
+					glDrawIcon(x+szx, y+szy, 13.0*d->Alpha, d->Alpha, SPOT);
 			}
 		}
 	}
@@ -1145,8 +1146,6 @@ void CGlobeView::CalcAndDrawLabel()
 	ColorRef2GLColor(labelcol, GetSysColor(COLOR_3DFACE));
 	GLfloat textcol[4];
 	ColorRef2GLColor(textcol, GetSysColor(COLOR_WINDOWTEXT));
-
-	glEnable2D();
 
 	for (UINT a=0; a<p_Result->m_ItemCount; a++)
 	{
@@ -1185,8 +1184,6 @@ void CGlobeView::CalcAndDrawLabel()
 				DrawLabel(d, cCaption, caption, subcaption, coordinates, description, m_FocusItem==(INT)a);
 			}
 	}
-
-	glDisable2D();
 }
 
 void CGlobeView::DrawLabel(GlobeItemData* d, UINT cCaption, WCHAR* caption, WCHAR* subcaption, WCHAR* coordinates, WCHAR* description, BOOL focused)

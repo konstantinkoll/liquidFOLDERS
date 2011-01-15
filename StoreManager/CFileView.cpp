@@ -211,7 +211,7 @@ void CFileView::UpdateSearchResult(LFSearchResult* Result, INT FocusItem)
 		Invalidate();
 	}
 
-	SetCursor(LoadCursor(NULL, Result ? IDC_ARROW : IDC_WAIT));
+	SetCursor(theApp.LoadStandardCursor(Result ? IDC_ARROW : IDC_WAIT));
 }
 
 void CFileView::SetViewOptions(BOOL /*Force*/)
@@ -1243,7 +1243,7 @@ void CFileView::OnKillFocus(CWnd* /*pNewWnd*/)
 
 BOOL CFileView::OnSetCursor(CWnd* /*pWnd*/, UINT /*nHitTest*/, UINT /*message*/)
 {
-	SetCursor(LoadCursor(NULL, p_Result ? IDC_ARROW : IDC_WAIT));
+	SetCursor(theApp.LoadStandardCursor(p_Result ? IDC_ARROW : IDC_WAIT));
 	return TRUE;
 }
 
