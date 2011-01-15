@@ -84,6 +84,55 @@ void WriteGoogleAttribute(CStdioFile* f, LFItemDescriptor* i, UINT attr)
 	}
 }
 
+void glEnable2D()
+{
+	GLint iViewport[4];
+	glGetIntegerv(GL_VIEWPORT, iViewport);
+
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glLoadIdentity();
+	glOrtho(iViewport[0], iViewport[0]+iViewport[2], iViewport[1]+iViewport[3], iViewport[1], -1.0, 1.0);
+
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	glLoadIdentity();
+	glTranslatef(0.375, 0.375, 0);
+
+	glPushAttrib(GL_DEPTH_BUFFER_BIT);
+	glDisable(GL_DEPTH_TEST);
+}
+
+void glDisable2D()
+{
+	glPopAttrib();
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
+	glMatrixMode(GL_MODELVIEW);
+	glPopMatrix();
+}
+
+void glDrawIcon(GLdouble x, GLdouble y, GLdouble Size, GLdouble Alpha, UINT ID)
+{
+	x -= 0.375;
+	y -= 0.375;
+	Size /= 2.0;
+
+	GLdouble s = (ID%2) ? 0.5 : 0.0;
+	GLdouble t = (ID/2) ? 0.5 : 0.0;
+
+	glColor4d(1.0, 1.0, 1.0, Alpha);
+
+	glTexCoord2d(s, t);
+	glVertex2d(x-Size, y-Size);
+	glTexCoord2d(s+0.5, t);
+	glVertex2d(x+Size, y-Size);
+	glTexCoord2d(s+0.5, t+0.5);
+	glVertex2d(x+Size, y+Size);
+	glTexCoord2d(s, t+0.5);
+	glVertex2d(x-Size, y+Size);
+}
+
 
 // CGlobeView
 //
@@ -257,27 +306,6 @@ void CGlobeView::UpdateCursor()
 
 // OpenGL
 
-void CGlobeView::glDrawIcon(GLdouble x, GLdouble y, GLdouble Size, GLdouble Alpha, UINT ID)
-{
-	x -= 0.375;
-	y -= 0.375;
-	Size /= 2.0;
-
-	GLdouble s = (ID%2) ? 0.5 : 0.0;
-	GLdouble t = (ID/2) ? 0.5 : 0.0;
-
-	glColor4d(1.0, 1.0, 1.0, Alpha);
-
-	glTexCoord2d(s, t);
-	glVertex2d(x-Size, y-Size);
-	glTexCoord2d(s+0.5, t);
-	glVertex2d(x+Size, y-Size);
-	glTexCoord2d(s+0.5, t+0.5);
-	glVertex2d(x+Size, y+Size);
-	glTexCoord2d(s, t+0.5);
-	glVertex2d(x-Size, y+Size);
-}
-
 void CGlobeView::CalcAndDrawSpots(GLdouble ModelView[4][4], GLdouble Projection[4][4])
 {
 	GLdouble SizeX = m_Width/2.0;
@@ -338,26 +366,160 @@ void CGlobeView::DrawStatusBar(INT Height, GLfloat BackColor[], BOOL Themed)
 	}
 
 	// Kante
-	glColor4f(BackColor[0], BackColor[1], BackColor[2], 0.8f);
+	glColor4f(BackColor[0], BackColor[1], BackColor[2], 0.9f);
 	glBegin(GL_LINES);
 	glVertex2i(0, m_Height-Height);
 	glVertex2i(m_Width, m_Height-Height);
 	glEnd();
 
 	// Füllen
-	glColor4d(BackColor[0], BackColor[1], BackColor[2], 0.65f);
+	glColor4f(BackColor[0], BackColor[1], BackColor[2], 0.8f);
 	glRecti(0, m_Height-Height, m_Width, m_Height);
 
 	// Text
 	GLfloat TextColor[4];
 	ColorRef2GLColor(TextColor, Themed ? 0xCC6600 : GetSysColor(COLOR_WINDOWTEXT));
-	glColor4d(TextColor[0], TextColor[1], TextColor[2], 1.0f);
+	glColor4f(TextColor[0], TextColor[1], TextColor[2], 1.0f);
 
 	INT Gutter = (ViewpointWidth>0) ? (m_Width-CopyrightWidth-ViewpointWidth)/3 : (m_Width-CopyrightWidth)/2;
+
 	m_Fonts[0].Render(Copyright, Gutter, m_Height-Height);
 	if (ViewpointWidth>0)
 		m_Fonts[0].Render(Viewpoint, m_Width-ViewpointWidth-Gutter, m_Height-Height);
+}
+
+void CGlobeView::DrawScene(BOOL InternalCall)
+{
+	if (!InternalCall)
+	{
+		if (m_LockUpdate)
+			return;
+		m_LockUpdate = TRUE;
 	}
+
+	BOOL Themed = IsCtrlThemed();
+
+	wglMakeCurrent(m_pDC->GetSafeHdc(), m_hRC);
+	glRenderMode(GL_RENDER);
+
+	// Hintergrund
+	GLfloat BackColor[4];
+	ColorRef2GLColor(BackColor, Themed ? 0xFFFFFF : GetSysColor(COLOR_WINDOW));
+	glFogfv(GL_FOG_COLOR, BackColor);
+
+	glClearColor(BackColor[0], BackColor[1], BackColor[2], 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	// Globus berechnen
+	m_Scale = 1.0f;
+	if (m_Height>m_Width)
+		m_Scale = 1-((GLfloat)(m_Height-m_Width))/m_Height;
+
+	GLfloat zoomfactor = m_Zoom+0.4f;
+	m_Scale /= zoomfactor*zoomfactor;
+	m_Radius = 0.49f*m_Height*m_Scale;
+	m_FogStart = 0.40f*m_Scale;
+	m_FogEnd = 0.025f*m_Scale;
+
+	// Globus zeichnen
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	gluLookAt(DISTANCE, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0);
+
+	// Beleuchtung mit FESTER Lichtquelle
+	if (theApp.m_GlobeLighting)
+	{
+		GLfloat lAmbient[] = { 0.9f, 0.9f, 0.9f, 1.0f };
+		GLfloat lDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+		GLfloat lSpecular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+		glLightfv(GL_LIGHT0, GL_AMBIENT, lAmbient);
+		glLightfv(GL_LIGHT0, GL_DIFFUSE, lDiffuse);
+		glLightfv(GL_LIGHT0, GL_SPECULAR, lSpecular);
+
+		glEnable(GL_LIGHT0);
+		glEnable(GL_LIGHTING);
+		glEnable(GL_NORMALIZE);
+
+		glLightModelfv(GL_LIGHT_MODEL_AMBIENT, lAmbient);
+	}
+
+	// Rotationsmatrix (erst NACH Lichtquelle)
+	glRotatef(m_Latitude, 0.0f, 1.0f, 0.0f);
+	glRotatef(m_Longitude, 0.0f, 0.0f, 1.0f);
+	glScalef(m_Scale, m_Scale, m_Scale);
+
+	// Atmosphäre/Nebel
+	if (theApp.m_GlobeAtmosphere)
+	{
+		glEnable(GL_FOG);
+		glFogf(GL_FOG_START, DISTANCE-m_FogStart);
+		glFogf(GL_FOG_END, DISTANCE-m_FogEnd);
+	}
+
+	// Globus-Textur
+	if (m_TextureGlobe)
+	{
+		glBindTexture(GL_TEXTURE_2D, m_TextureGlobe->GetID());
+		glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, theApp.m_GlobeLighting ? GL_MODULATE : GL_REPLACE);
+	}
+
+	// Modell rendern
+	glCallList(m_GlobeModel);
+
+	// Atmosphäre aus
+	if (theApp.m_GlobeAtmosphere)
+		glDisable(GL_FOG);
+
+	// Licht aus
+	if (theApp.m_GlobeLighting)
+	{
+		glDisable(GL_NORMALIZE);
+		glDisable(GL_LIGHTING);
+		glDisable(GL_LIGHT0);
+	}
+
+	// Matritzen speichern
+	GLdouble ModelView[4][4];
+	GLdouble Projection[4][4];
+	glGetDoublev(GL_MODELVIEW_MATRIX, &ModelView[0][0]);
+	glGetDoublev(GL_PROJECTION_MATRIX, &Projection[0][0]);
+
+	// Für Icons vorbereiten
+	glEnable2D();
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, m_TextureIcons->GetID());
+	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+	glBegin(GL_QUADS);
+
+	// Koordinaten bestimmen und Spots zeichnen
+	if (p_Result)
+		if (p_Result->m_ItemCount)
+			CalcAndDrawSpots(ModelView, Projection);
+
+	// Fadenkreuz zeichnen
+	if (m_ViewParameters.GlobeShowCrosshair)
+		glDrawIcon(m_Width/2.0, m_Height/2.0, 64.0, 1.0, CROSSHAIRS);
+
+	// Icons beenden
+	glEnd();
+	glDisable(GL_TEXTURE_2D);
+
+	// Label zeichnen
+	if (p_Result)
+		if (p_Result->m_ItemCount)
+			CalcAndDrawLabel();
+
+	// Statuszeile
+	const INT Height = m_FontHeight[0]+1;
+	if (m_Height>=Height)
+		DrawStatusBar(Height, BackColor, Themed);
+
+	// Beenden
+	glDisable2D();
+
+	SwapBuffers(*m_pDC);
+	m_LockUpdate = FALSE;
+}
 
 
 BEGIN_MESSAGE_MAP(CGlobeView, CFileView)
@@ -693,34 +855,6 @@ void CGlobeView::OnPaint()
 // OpenGL-Objekt
 //
 
-void glEnable2D()
-{
-	GLint iViewport[4];
-	glGetIntegerv(GL_VIEWPORT, iViewport);
-
-	glMatrixMode(GL_PROJECTION);
-	glPushMatrix();
-	glLoadIdentity();
-	glOrtho(iViewport[0], iViewport[0]+iViewport[2], iViewport[1]+iViewport[3], iViewport[1], -1.0, 1.0);
-
-	glMatrixMode(GL_MODELVIEW);
-	glPushMatrix();
-	glLoadIdentity();
-	glTranslatef(0.375, 0.375, 0);
-
-	glPushAttrib(GL_DEPTH_BUFFER_BIT);
-	glDisable(GL_DEPTH_TEST);
-}
-
-void glDisable2D()
-{
-	glPopAttrib();
-	glMatrixMode(GL_PROJECTION);
-	glPopMatrix();
-	glMatrixMode(GL_MODELVIEW);
-	glPopMatrix();
-}
-
 void CGlobeView::Init()
 {
 	m_pDC = new CClientDC(this);
@@ -998,140 +1132,6 @@ BOOL CGlobeView::UpdateScene(BOOL Redraw)
 
 	return res;
 }
-
-void CGlobeView::DrawScene(BOOL InternalCall)
-{
-	if (!InternalCall)
-	{
-		if (m_LockUpdate)
-			return;
-		m_LockUpdate = TRUE;
-	}
-
-	BOOL Themed = IsCtrlThemed();
-
-	wglMakeCurrent(m_pDC->GetSafeHdc(), m_hRC);
-	glRenderMode(GL_RENDER);
-
-	// Hintergrund
-	GLfloat BackColor[4];
-	ColorRef2GLColor(BackColor, Themed ? 0xFFFFFF : GetSysColor(COLOR_WINDOW));
-	glFogfv(GL_FOG_COLOR, BackColor);
-
-	glClearColor(BackColor[0], BackColor[1], BackColor[2], 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	// Globus berechnen
-	m_Scale = 1.0f;
-	if (m_Height>m_Width)
-		m_Scale = 1-((GLfloat)(m_Height-m_Width))/m_Height;
-
-	GLfloat zoomfactor = m_Zoom+0.4f;
-	m_Scale /= zoomfactor*zoomfactor;
-	m_Radius = 0.49f*m_Height*m_Scale;
-	m_FogStart = 0.40f*m_Scale;
-	m_FogEnd = 0.025f*m_Scale;
-
-	// Globus zeichnen
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-	gluLookAt(DISTANCE, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0);
-
-	// Beleuchtung mit FESTER Lichtquelle
-	if (theApp.m_GlobeLighting)
-	{
-		GLfloat lAmbient[] = { 0.9f, 0.9f, 0.9f, 1.0f };
-		GLfloat lDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-		GLfloat lSpecular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-		glLightfv(GL_LIGHT0, GL_AMBIENT, lAmbient);
-		glLightfv(GL_LIGHT0, GL_DIFFUSE, lDiffuse);
-		glLightfv(GL_LIGHT0, GL_SPECULAR, lSpecular);
-
-		glEnable(GL_LIGHT0);
-		glEnable(GL_LIGHTING);
-		glEnable(GL_NORMALIZE);
-
-		glLightModelfv(GL_LIGHT_MODEL_AMBIENT, lAmbient);
-	}
-
-	// Rotationsmatrix (erst NACH Lichtquelle)
-	glRotatef(m_Latitude, 0.0f, 1.0f, 0.0f);
-	glRotatef(m_Longitude, 0.0f, 0.0f, 1.0f);
-	glScalef(m_Scale, m_Scale, m_Scale);
-
-	// Atmosphäre/Nebel
-	if (theApp.m_GlobeAtmosphere)
-	{
-		glEnable(GL_FOG);
-		glFogf(GL_FOG_START, DISTANCE-m_FogStart);
-		glFogf(GL_FOG_END, DISTANCE-m_FogEnd);
-	}
-
-	// Globus-Textur
-	if (m_TextureGlobe)
-	{
-		glBindTexture(GL_TEXTURE_2D, m_TextureGlobe->GetID());
-		glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, theApp.m_GlobeLighting ? GL_MODULATE : GL_REPLACE);
-	}
-
-	// Modell rendern
-	glCallList(m_GlobeModel);
-
-	// Atmosphäre aus
-	if (theApp.m_GlobeAtmosphere)
-		glDisable(GL_FOG);
-
-	// Licht aus
-	if (theApp.m_GlobeLighting)
-	{
-		glDisable(GL_NORMALIZE);
-		glDisable(GL_LIGHTING);
-		glDisable(GL_LIGHT0);
-	}
-
-	// Matritzen speichern
-	GLdouble ModelView[4][4];
-	GLdouble Projection[4][4];
-	glGetDoublev(GL_MODELVIEW_MATRIX, &ModelView[0][0]);
-	glGetDoublev(GL_PROJECTION_MATRIX, &Projection[0][0]);
-
-	// Für Icons vorbereiten
-	glEnable2D();
-	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, m_TextureIcons->GetID());
-	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-	glBegin(GL_QUADS);
-
-	// Koordinaten bestimmen und Spots zeichnen
-	if (p_Result)
-		if (p_Result->m_ItemCount)
-			CalcAndDrawSpots(ModelView, Projection);
-
-	// Fadenkreuz zeichnen
-	if (m_ViewParameters.GlobeShowCrosshair)
-		glDrawIcon(m_Width/2.0, m_Height/2.0, 64.0, 1.0, CROSSHAIRS);
-
-	// Icons beenden
-	glEnd();
-	glDisable(GL_TEXTURE_2D);
-
-	// Label zeichnen
-	if (p_Result)
-		if (p_Result->m_ItemCount)
-			CalcAndDrawLabel();
-
-	// Statuszeile
-	const INT Height = m_FontHeight[0]+1;
-	if (m_Height>=Height)
-		DrawStatusBar(Height, BackColor, Themed);
-
-	// Beenden
-	glDisable2D();
-
-	SwapBuffers(*m_pDC);
-	m_LockUpdate = FALSE;
-}
-
 
 void CGlobeView::CalcAndDrawLabel()
 {

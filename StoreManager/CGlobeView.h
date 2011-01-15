@@ -54,20 +54,17 @@ protected:
 	virtual INT ItemAtPosition(CPoint point);
 	virtual CMenu* GetItemContextMenu(INT idx);
 
-	void glDrawIcon(GLdouble x, GLdouble y, GLdouble Size, GLdouble Alpha, UINT ID);
-
 	void CalcAndDrawSpots(GLdouble ModelView[4][4], GLdouble Projection[4][4]);
 	void DrawStatusBar(INT Height, GLfloat BackColor[], BOOL Themed);
+	void DrawScene(BOOL InternalCall=FALSE);
 
 	void Init();
-	void PrepareFont(BOOL large, BOOL granny);
 	void PrepareTexture();
 	void PrepareModel();
 	void Done();
 	BOOL SetupPixelFormat();
 	void Normalize();
 	BOOL UpdateScene(BOOL Redraw=FALSE);
-	void DrawScene(BOOL InternalCall=FALSE);
 	void CalcAndDrawLabel();
 	void DrawLabel(GlobeItemData* d, UINT cCaption, WCHAR* caption, WCHAR* subcaption, WCHAR* coordinates, WCHAR* description, BOOL focused);
 
