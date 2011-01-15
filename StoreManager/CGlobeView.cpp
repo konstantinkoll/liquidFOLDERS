@@ -539,7 +539,6 @@ BEGIN_MESSAGE_MAP(CGlobeView, CFileView)
 	ON_WM_SETCURSOR()
 	ON_WM_SIZE()
 	ON_WM_TIMER()
-	ON_WM_ERASEBKGND()
 	ON_WM_PAINT()
 END_MESSAGE_MAP()
 
@@ -838,11 +837,6 @@ void CGlobeView::OnTimer(UINT_PTR nIDEvent)
 	// Eat bogus WM_TIMER messages
 	MSG msg;
 	while (PeekMessage(&msg, m_hWnd, WM_TIMER, WM_TIMER, PM_REMOVE));
-}
-
-BOOL CGlobeView::OnEraseBkgnd(CDC* /*pDC*/)
-{
-	return TRUE;
 }
 
 void CGlobeView::OnPaint()
