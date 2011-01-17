@@ -475,6 +475,186 @@ void CGlobeView::CalcAndDrawSpots(GLdouble ModelView[4][4], GLdouble Projection[
 	}
 }
 
+void CGlobeView::CalcAndDrawLabel()
+{
+	for (UINT a=0; a<p_Result->m_ItemCount; a++)
+	{
+		GlobeItemData* d = GetItemData(a);
+
+		if (d->Valid)
+			if (d->Alpha>0.0f)
+			{
+				// Beschriftung
+				WCHAR* Caption = p_Result->m_Items[a]->CoreAttributes.FileName;
+				UINT cCaption = (UINT)wcslen(Caption);
+				WCHAR* Subcaption = NULL;
+				WCHAR* Coordinates = (m_ViewParameters.GlobeShowGPS ? d->CoordString : NULL);
+				WCHAR* Description = (m_ViewParameters.GlobeShowDescription ? p_Result->m_Items[a]->Description : NULL);
+				if (Description)
+					if (*Description==L'\0')
+						Description = NULL;
+
+				// Beschriftung aufbereiten
+				switch (m_ViewParameters.SortBy)
+				{
+				case LFAttrLocationIATA:
+					if (cCaption>6)
+					{
+						if (m_ViewParameters.GlobeShowAirportNames)
+							Subcaption = &Caption[6];
+						cCaption = 3;
+					}
+					break;
+				case LFAttrLocationGPS:
+					if ((wcscmp(Caption, d->CoordString)==0) && (m_ViewParameters.GlobeShowGPS))
+						Coordinates = NULL;
+					break;
+				}
+
+				DrawLabel(d, cCaption, Caption, Subcaption, Coordinates, Description, m_FocusItem==(INT)a);
+			}
+	}
+}
+
+void CGlobeView::DrawLabel(GlobeItemData* d, UINT cCaption, WCHAR* Caption, WCHAR* Subcaption, WCHAR* Coordinates, WCHAR* Description, BOOL Focused)
+{
+	ASSERT(ARROWSIZE>3);
+
+	// Farbe
+	COLORREF BaseColorRef = GetSysColor(COLOR_WINDOW);
+	COLORREF TextColorRef = GetSysColor(COLOR_WINDOWTEXT);
+	if (d->Hdr.Selected)
+		if (this==GetFocus())
+		{
+			BaseColorRef = GetSysColor(COLOR_HIGHLIGHT);
+			TextColorRef = GetSysColor(COLOR_HIGHLIGHTTEXT);
+		}
+		else
+		{
+			BaseColorRef = GetSysColor(COLOR_BTNFACE);
+			TextColorRef = GetSysColor(COLOR_BTNTEXT);
+		}
+
+	GLfloat BaseColor[4];
+	ColorRef2GLColor(&BaseColor[0], BaseColorRef);
+	GLfloat TextColor[4];
+	ColorRef2GLColor(&TextColor[0], TextColorRef);
+
+	// Breite
+	UINT W1 = m_Fonts[1].GetTextWidth(Caption, cCaption);
+	UINT W2 = m_Fonts[0].GetTextWidth(Subcaption);
+	UINT W3 = m_Fonts[0].GetTextWidth(Coordinates);
+	UINT W4 = m_Fonts[0].GetTextWidth(Description);
+	UINT Width = max(W1, max(W2, max(W3, W4)))+8;
+
+	// Höhe
+	UINT Height = 3;
+	Height += m_Fonts[1].GetTextHeight(Caption);
+	Height += m_Fonts[0].GetTextHeight(Subcaption);
+	Height += m_Fonts[0].GetTextHeight(Coordinates);
+	Height += m_Fonts[0].GetTextHeight(Description);
+
+	// Position
+	INT top = (d->ScreenPoint[1]<m_Height/2) ? -1 : 1;
+
+	INT x = d->Hdr.Rect.left = d->ScreenPoint[0]-ARROWSIZE-((Width-2*ARROWSIZE)*(m_Width-d->ScreenPoint[0])/m_Width);
+	INT y = d->Hdr.Rect.top = d->ScreenPoint[1]+(ARROWSIZE-2)*top-(top<0 ? Height : 0);
+	d->Hdr.Rect.right = x+Width;
+	d->Hdr.Rect.bottom = y+Height;
+
+	// Schatten
+	if (theApp.m_GlobeShadows)
+	{
+		for (INT s=3; s>0; s--)
+		{
+			glColor4f(0.0f, 0.0f, 0.0f, d->Alpha/(s+2.5f));
+			glBegin(GL_LINES);
+			glVertex2i(x+2, y+Height+s);
+			glVertex2i(x+Width+s, y+Height+s);
+			glVertex2i(x+Width+s, y+2);
+			glVertex2i(x+Width+s, y+Height+s+1);
+			glEnd();
+		}
+
+		glColor4f(0.0f, 0.0f, 0.0f, d->Alpha/2.5f);
+		glBegin(GL_LINES);
+		glVertex2i(x+Width, y+Height);
+		glVertex2i(x+Width+1, y+Height);
+	}
+	else
+	{
+		glBegin(GL_LINES);
+	}
+
+	// Grauer Rand
+	glColor4f(BaseColor[0]/2, BaseColor[1]/2, BaseColor[2]/2, d->Alpha);
+	glVertex2i(x, y-1);						// Oben
+	glVertex2i(x+Width, y-1);
+	glVertex2i(x, y+Height);				// Unten
+	glVertex2i(x+Width, y+Height);
+	glVertex2i(x-1, y);						// Links
+	glVertex2i(x-1, y+Height);
+	glVertex2i(x+Width, y);					// Rechts
+	glVertex2i(x+Width, y+Height);
+	glEnd();
+
+	// Pfeil
+	glBegin(GL_TRIANGLES);
+	GLfloat alpha = pow(d->Alpha, 3);
+	for (INT a=0; a<=3; a++)
+	{
+		switch (a)
+		{
+		case 0:
+			glColor4f(BaseColor[0]/2, BaseColor[1]/2, BaseColor[2]/2, alpha/2);
+			break;
+		case 1:
+			glColor4f(BaseColor[0]/2, BaseColor[1]/2, BaseColor[2]/2, alpha);
+			break;
+		case 2:
+			glColor4f(BaseColor[0], BaseColor[1], BaseColor[2], alpha/2);
+			break;
+		default:
+			glColor4f(BaseColor[0], BaseColor[1], BaseColor[2], d->Alpha);
+		}
+
+		glVertex2i(d->ScreenPoint[0], d->ScreenPoint[1]+(a-2)*top);
+		glVertex2i(d->ScreenPoint[0]+(ARROWSIZE-a)*top, d->ScreenPoint[1]+(ARROWSIZE-2)*top);
+		glVertex2i(d->ScreenPoint[0]-(ARROWSIZE-a)*top, d->ScreenPoint[1]+(ARROWSIZE-2)*top);
+	}
+	glEnd();
+
+	// Innen
+	glRecti(x, y, x+Width, y+Height);
+	if ((Focused) && (GetFocus()==this))
+	{
+		glColor4f(1.0f-BaseColor[0], 1.0f-BaseColor[1], 1.0f-BaseColor[2], d->Alpha);
+		glEnable(GL_LINE_STIPPLE);
+		glLineStipple(1, 0xAAAA);
+		glBegin(GL_LINE_LOOP);
+		glVertex2i(x, y);
+		glVertex2i(x+Width-1, y);
+		glVertex2i(x+Width-1, y+Height-1);
+		glVertex2i(x, y+Height-1);
+		glEnd();
+		glDisable(GL_LINE_STIPPLE);
+	}
+
+	x += 3;
+
+	glColor4f(TextColor[0], TextColor[1], TextColor[2], d->Alpha);
+	y += m_Fonts[1].Render(Caption, x, y, cCaption);
+	if (Subcaption)
+		y += m_Fonts[0].Render(Subcaption, x, y);
+
+	if ((!d->Hdr.Selected) && (BaseColorRef==0xFFFFFF) && (TextColorRef==0x000000))
+		glColor4f(TextColor[0], TextColor[1], TextColor[2], d->Alpha/2);
+	if (Coordinates)
+		y += m_Fonts[0].Render(Coordinates, x, y);
+	if (Description)
+		y += m_Fonts[0].Render(Description, x, y);
+}
+
 void CGlobeView::DrawStatusBar(INT Height, GLfloat BackColor[], BOOL Themed)
 {
 	WCHAR Copyright[] = L"© NASA's Earth Observatory";
@@ -674,6 +854,7 @@ BOOL CGlobeView::UpdateScene(BOOL Redraw)
 	m_LockUpdate = TRUE;
 
 	BOOL res = Redraw;
+	Normalize();
 
 	// Zoom
 	if (m_GlobeCurrent.Zoom<=m_GlobeTarget.Zoom-5)
@@ -725,8 +906,6 @@ BOOL CGlobeView::UpdateScene(BOOL Redraw)
 		m_GlobeCurrent.Latitude = m_GlobeTarget.Latitude;
 		m_GlobeCurrent.Longitude = m_GlobeTarget.Longitude;
 	}
-
-	Normalize();
 
 	if (res)
 	{
@@ -1129,191 +1308,4 @@ void CGlobeView::OnUpdateCommands(CCmdUI* pCmdUI)
 	}
 
 	pCmdUI->Enable(b);
-}
-
-
-
-
-
-void CGlobeView::CalcAndDrawLabel()
-{
-	GLfloat labelcol[4];
-	ColorRef2GLColor(labelcol, GetSysColor(COLOR_3DFACE));
-	GLfloat textcol[4];
-	ColorRef2GLColor(textcol, GetSysColor(COLOR_WINDOWTEXT));
-
-	for (UINT a=0; a<p_Result->m_ItemCount; a++)
-	{
-		GlobeItemData* d = GetItemData(a);
-
-		if (d->Valid)
-			if (d->Alpha>0.0f)
-			{
-				// Beschriftung
-				WCHAR* caption = p_Result->m_Items[a]->CoreAttributes.FileName;
-				UINT cCaption = (UINT)wcslen(caption);
-				WCHAR* subcaption = NULL;
-				WCHAR* coordinates = (m_ViewParameters.GlobeShowGPS ? d->CoordString : NULL);
-				WCHAR* description = (m_ViewParameters.GlobeShowDescription ? p_Result->m_Items[a]->Description : NULL);
-				if (description)
-					if (*description==L'\0')
-						description = NULL;
-
-				// Beschriftung aufbereiten
-				switch (m_ViewParameters.SortBy)
-				{
-				case LFAttrLocationIATA:
-					if (cCaption>6)
-					{
-						if (m_ViewParameters.GlobeShowAirportNames)
-							subcaption = &caption[6];
-						cCaption = 3;
-					}
-					break;
-				case LFAttrLocationGPS:
-					if ((wcscmp(caption, d->CoordString)==0) && (m_ViewParameters.GlobeShowGPS))
-						coordinates = NULL;
-					break;
-				}
-
-				DrawLabel(d, cCaption, caption, subcaption, coordinates, description, m_FocusItem==(INT)a);
-			}
-	}
-}
-
-void CGlobeView::DrawLabel(GlobeItemData* d, UINT cCaption, WCHAR* caption, WCHAR* subcaption, WCHAR* coordinates, WCHAR* description, BOOL focused)
-{
-	ASSERT(ARROWSIZE>3);
-
-	COLORREF BaseColorRef = GetSysColor(COLOR_WINDOW);
-	COLORREF TextColorRef = GetSysColor(COLOR_WINDOWTEXT);
-	if (d->Hdr.Selected)
-		if (this==GetFocus())
-		{
-			BaseColorRef = GetSysColor(COLOR_HIGHLIGHT);
-			TextColorRef = GetSysColor(COLOR_HIGHLIGHTTEXT);
-		}
-		else
-		{
-			BaseColorRef = GetSysColor(COLOR_BTNFACE);
-			TextColorRef = GetSysColor(COLOR_BTNTEXT);
-		}
-	GLfloat BaseColor[4];
-	ColorRef2GLColor(&BaseColor[0], BaseColorRef);
-	GLfloat TextColor[4];
-	ColorRef2GLColor(&TextColor[0], TextColorRef);
-
-	// Breite
-	UINT width = m_Fonts[1].GetTextWidth(caption, cCaption);
-	width = max(width, m_Fonts[0].GetTextWidth(subcaption));
-	width = max(width, m_Fonts[0].GetTextWidth(coordinates));
-	width = max(width, m_Fonts[0].GetTextWidth(description));
-	width += 8;
-
-	// Höhe
-	UINT height = m_Fonts[1].GetTextHeight(caption);
-	height += m_Fonts[0].GetTextHeight(subcaption);
-	height += m_Fonts[0].GetTextHeight(coordinates);
-	height += m_Fonts[0].GetTextHeight(description);
-	height += 3;
-
-	// Position
-	INT top = (d->ScreenPoint[1]<m_Height/2) ? -1 : 1;
-
-	INT x = d->Hdr.Rect.left = d->ScreenPoint[0]-ARROWSIZE-((width-2*ARROWSIZE)*(m_Width-d->ScreenPoint[0])/m_Width);
-	INT y = d->Hdr.Rect.top = d->ScreenPoint[1]+(ARROWSIZE-2)*top-(top<0 ? height : 0);
-	d->Hdr.Rect.right = x+width;
-	d->Hdr.Rect.bottom = y+height;
-
-	// Schatten
-	if (theApp.m_GlobeShadows)
-	{
-		for (INT s=3; s>0; s--)
-		{
-			glColor4f(0.0f, 0.0f, 0.0f, d->Alpha/(s+2.5f));
-			glBegin(GL_LINES);
-			glVertex2i(x+2, y+height+s);
-			glVertex2i(x+width+s, y+height+s);
-			glVertex2i(x+width+s, y+2);
-			glVertex2i(x+width+s, y+height+s+1);
-			glEnd();
-		}
-
-		glColor4f(0.0f, 0.0f, 0.0f, d->Alpha/2.5f);
-		glBegin(GL_LINES);
-		glVertex2i(x+width, y+height);
-		glVertex2i(x+width+1, y+height);
-	}
-	else
-	{
-		glBegin(GL_LINES);
-	}
-
-	// Grauer Rand
-	glColor4f(BaseColor[0]/2, BaseColor[1]/2, BaseColor[2]/2, d->Alpha);
-	glVertex2i(x, y-1);						// Oben
-	glVertex2i(x+width, y-1);
-	glVertex2i(x, y+height);				// Unten
-	glVertex2i(x+width, y+height);
-	glVertex2i(x-1, y);						// Links
-	glVertex2i(x-1, y+height);
-	glVertex2i(x+width, y);					// Rechts
-	glVertex2i(x+width, y+height);
-	glEnd();
-
-	// Pfeil
-	glBegin(GL_TRIANGLES);
-	GLfloat alpha = pow(d->Alpha, 3);
-	for (INT a=0; a<=3; a++)
-	{
-		switch (a)
-		{
-		case 0:
-			glColor4f(BaseColor[0]/2, BaseColor[1]/2, BaseColor[2]/2, alpha/2);
-			break;
-		case 1:
-			glColor4f(BaseColor[0]/2, BaseColor[1]/2, BaseColor[2]/2, alpha);
-			break;
-		case 2:
-			glColor4f(BaseColor[0], BaseColor[1], BaseColor[2], alpha/2);
-			break;
-		default:
-			glColor4f(BaseColor[0], BaseColor[1], BaseColor[2], d->Alpha);
-		}
-
-		glVertex2i(d->ScreenPoint[0], d->ScreenPoint[1]+(a-2)*top);
-		glVertex2i(d->ScreenPoint[0]+(ARROWSIZE-a)*top, d->ScreenPoint[1]+(ARROWSIZE-2)*top);
-		glVertex2i(d->ScreenPoint[0]-(ARROWSIZE-a)*top, d->ScreenPoint[1]+(ARROWSIZE-2)*top);
-	}
-	glEnd();
-
-	// Innen
-	glRecti(x, y, x+width, y+height);
-	if ((focused) && (GetFocus()==this))
-	{
-		glColor4f(1.0f-BaseColor[0], 1.0f-BaseColor[1], 1.0f-BaseColor[2], d->Alpha);
-		glEnable(GL_LINE_STIPPLE);
-		glLineStipple(1, 0xAAAA);
-		glBegin(GL_LINE_LOOP);
-		glVertex2i(x, y);
-		glVertex2i(x+width-1, y);
-		glVertex2i(x+width-1, y+height-1);
-		glVertex2i(x, y+height-1);
-		glEnd();
-		glDisable(GL_LINE_STIPPLE);
-	}
-
-	x += 3;
-
-	glColor4f(TextColor[0], TextColor[1], TextColor[2], d->Alpha);
-	y += m_Fonts[1].Render(caption, x, y, cCaption);
-	if (subcaption)
-		y += m_Fonts[0].Render(subcaption, x, y);
-
-	if ((!d->Hdr.Selected) && (BaseColorRef==0xFFFFFF) && (TextColorRef==0x000000))
-		glColor4f(TextColor[0], TextColor[1], TextColor[2], d->Alpha/2);
-	if (coordinates)
-		y += m_Fonts[0].Render(coordinates, x, y);
-	if (description)
-		y += m_Fonts[0].Render(description, x, y);
 }
