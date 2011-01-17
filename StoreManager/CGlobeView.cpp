@@ -261,18 +261,18 @@ INT CGlobeView::ItemAtPosition(CPoint point)
 		return -1;
 
 	INT res = -1;
-	float alpha = 0.0f;
+	float Alpha = 0.0f;
 
 	for (UINT a=0; a<p_Result->m_ItemCount; a++)
 	{
 		GlobeItemData* d = GetItemData(a);
 
 		if (d->Valid)
-			if ((d->Alpha>0.1f) && ((d->Alpha>alpha-0.05f) || (d->Alpha>0.75f)))
+			if ((d->Alpha>0.1f) && ((d->Alpha>Alpha-0.05f) || (d->Alpha>0.75f)))
 				if (PtInRect(&d->Hdr.Rect, point))
 				{
 					res = a;
-					alpha = d->Alpha;
+					Alpha = d->Alpha;
 				}
 	}
 
@@ -676,16 +676,18 @@ BOOL CGlobeView::UpdateScene(BOOL Redraw)
 	BOOL res = Redraw;
 
 	// Zoom
-	if (m_GlobeCurrent.Zoom<m_GlobeTarget.Zoom-4)
+	if (m_GlobeCurrent.Zoom<=m_GlobeTarget.Zoom-5)
 	{
 		res = TRUE;
 		m_GlobeCurrent.Zoom += 5;
+		m_HotItem = -1;
 	}
 	else
-		if (m_GlobeCurrent.Zoom>m_GlobeTarget.Zoom+4)
+		if (m_GlobeCurrent.Zoom>=m_GlobeTarget.Zoom+5)
 		{
 			res = TRUE;
 			m_GlobeCurrent.Zoom -= 5;
+			m_HotItem = -1;
 		}
 		else
 		{
@@ -746,6 +748,12 @@ BEGIN_MESSAGE_MAP(CGlobeView, CFileView)
 	ON_WM_PAINT()
 	ON_WM_SIZE()
 	ON_WM_SETCURSOR()
+	ON_WM_MOUSEMOVE()
+	ON_WM_MOUSEWHEEL()
+	ON_WM_MOUSEHOVER()
+	ON_WM_LBUTTONDOWN()
+	ON_WM_LBUTTONUP()
+	ON_WM_TIMER()
 
 	ON_COMMAND(IDM_GLOBE_JUMPTOLOCATION, OnJumpToLocation)
 	ON_COMMAND(IDM_GLOBE_ZOOMIN, OnZoomIn)
@@ -754,11 +762,6 @@ BEGIN_MESSAGE_MAP(CGlobeView, CFileView)
 	ON_COMMAND(IDM_GLOBE_SETTINGS, OnSettings)
 	ON_COMMAND(IDM_GLOBE_GOOGLEEARTH, OnGoogleEarth)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_GLOBE_JUMPTOLOCATION, IDM_GLOBE_GOOGLEEARTH, OnUpdateCommands)
-	ON_WM_LBUTTONDOWN()
-	ON_WM_LBUTTONUP()
-	ON_WM_MOUSEMOVE()
-	ON_WM_MOUSEWHEEL()
-	ON_WM_TIMER()
 END_MESSAGE_MAP()
 
 INT CGlobeView::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -908,6 +911,23 @@ BOOL CGlobeView::OnMouseWheel(UINT /*nFlags*/, short zDelta, CPoint /*pt*/)
 	}
 
 	return TRUE;
+}
+
+void CGlobeView::OnMouseHover(UINT nFlags, CPoint point)
+{
+	if (m_Momentum==0.0f)
+	{
+		CFileView::OnMouseHover(nFlags, point);
+	}
+	else
+	{
+		TRACKMOUSEEVENT tme;
+		tme.cbSize = sizeof(TRACKMOUSEEVENT);
+		tme.dwFlags = TME_LEAVE | TME_HOVER;
+		tme.dwHoverTime = LFHOVERTIME;
+		tme.hwndTrack = m_hWnd;
+		TrackMouseEvent(&tme);
+	}
 }
 
 void CGlobeView::OnLButtonDown(UINT nFlags, CPoint point)
@@ -1098,10 +1118,10 @@ void CGlobeView::OnUpdateCommands(CCmdUI* pCmdUI)
 		b = m_GlobeTarget.Zoom>0;
 		break;
 	case IDM_GLOBE_ZOOMOUT:
-		b = m_GlobeTarget.Zoom<100;
+		b = m_GlobeTarget.Zoom<1000;
 		break;
 	case IDM_GLOBE_AUTOSIZE:
-		b = m_GlobeTarget.Zoom!=60;
+		b = m_GlobeTarget.Zoom!=600;
 		break;
 	case IDM_GLOBE_GOOGLEEARTH:
 		b = (GetNextSelectedItem(-1)!=-1) && (!theApp.m_PathGoogleEarth.IsEmpty());
