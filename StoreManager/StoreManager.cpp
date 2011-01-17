@@ -394,7 +394,7 @@ void CStoreManagerApp::LoadViewOptions(INT context)
 	m_Views[context].AutoDirs = GetInt(_T("AutoDirs"), TRUE);
 	m_Views[context].GlobeLatitude = GetInt(_T("GlobeLatitude"), 1);
 	m_Views[context].GlobeLongitude = GetInt(_T("GlobeLongitude"), 1);
-	m_Views[context].GlobeZoom = GetInt(_T("GlobeZoom"), 70);
+	m_Views[context].GlobeZoom = GetInt(_T("GlobeZoom"), 600);
 	m_Views[context].GlobeShowSpots = GetInt(_T("GlobeShowSpots"), TRUE);
 	m_Views[context].GlobeShowAirportNames = GetInt(_T("GlobeShowAirportNames"), TRUE);
 	m_Views[context].GlobeShowGPS = GetInt(_T("GlobeShowGPS"), TRUE);
