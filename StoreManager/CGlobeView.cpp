@@ -664,7 +664,7 @@ void CGlobeView::DrawStatusBar(INT Height, GLfloat BackColor[], BOOL Themed)
 
 	WCHAR Viewpoint[256] = L"";
 	INT ViewpointWidth = -1;
-	if (m_ViewParameters.GlobeShowViewport)
+	if (theApp.m_GlobeShowViewport)
 	{
 		WCHAR Coord[256];
 		LFGeoCoordinates c;
@@ -680,19 +680,19 @@ void CGlobeView::DrawStatusBar(INT Height, GLfloat BackColor[], BOOL Themed)
 	}
 
 	// Kante
-	glColor4f(BackColor[0], BackColor[1], BackColor[2], 0.9f);
+	glColor4f(BackColor[0], BackColor[1], BackColor[2], theApp.m_GlobeBlackBackground ? 0.6f : 0.9f);
 	glBegin(GL_LINES);
 	glVertex2i(0, m_Height-Height);
 	glVertex2i(m_Width, m_Height-Height);
 	glEnd();
 
 	// Füllen
-	glColor4f(BackColor[0], BackColor[1], BackColor[2], 0.8f);
+	glColor4f(BackColor[0], BackColor[1], BackColor[2], theApp.m_GlobeBlackBackground ? 0.55f : 0.8f);
 	glRecti(0, m_Height-Height, m_Width, m_Height);
 
 	// Text
 	GLfloat TextColor[4];
-	ColorRef2GLColor(TextColor, Themed ? 0xCC6600 : GetSysColor(COLOR_WINDOWTEXT));
+	ColorRef2GLColor(TextColor, theApp.m_GlobeBlackBackground ? 0xFFFFFF : Themed ? 0xCC6600 : GetSysColor(COLOR_WINDOWTEXT));
 	glColor4f(TextColor[0], TextColor[1], TextColor[2], 1.0f);
 
 	INT Gutter = (ViewpointWidth>0) ? (m_Width-CopyrightWidth-ViewpointWidth)/3 : (m_Width-CopyrightWidth)/2;
@@ -718,7 +718,7 @@ void CGlobeView::DrawScene(BOOL InternalCall)
 
 	// Hintergrund
 	GLfloat BackColor[4];
-	ColorRef2GLColor(BackColor, Themed ? 0xFFFFFF : GetSysColor(COLOR_WINDOW));
+	ColorRef2GLColor(BackColor, theApp.m_GlobeBlackBackground ? 0x000000 : Themed ? 0xFFFFFF : GetSysColor(COLOR_WINDOW));
 	glFogfv(GL_FOG_COLOR, BackColor);
 
 	glClearColor(BackColor[0], BackColor[1], BackColor[2], 1.0f);
@@ -823,7 +823,7 @@ void CGlobeView::DrawScene(BOOL InternalCall)
 			CalcAndDrawSpots(ModelView, Projection);
 
 	// Fadenkreuz zeichnen
-	if (m_ViewParameters.GlobeShowViewport && m_ViewParameters.GlobeShowCrosshairs)
+	if (theApp.m_GlobeShowViewport && theApp.m_GlobeShowCrosshairs)
 		glDrawIcon(m_Width/2.0, m_Height/2.0, 64.0, 1.0, CROSSHAIRS);
 
 	// Icons beenden

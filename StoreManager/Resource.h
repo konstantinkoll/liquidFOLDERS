@@ -158,8 +158,9 @@
 #define IDC_AIRPORTNAMES                2207
 #define IDC_GPSCOORDINATES              2208
 #define IDC_DESCRIPTION                 2209
-#define IDC_VIEWPORT                    2210
-#define IDC_CROSSHAIRS                  2211
+#define IDC_BLACKBACKGROUND             2210
+#define IDC_VIEWPORT                    2211
+#define IDC_CROSSHAIRS                  2212
 #define IDM_STORES_HIDEEMPTYDRIVES      3000
 #define IDM_STORES_REPAIRCORRUPTEDINDEX 3001
 #define IDM_HOME                        3100

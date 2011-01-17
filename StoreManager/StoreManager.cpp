@@ -73,6 +73,9 @@ BOOL CStoreManagerApp::InitInstance()
 	m_GlobeLighting = GetInt(_T("GlobeLighting"), TRUE);
 	m_GlobeAtmosphere = GetInt(_T("GlobeAtmosphere"), TRUE);
 	m_GlobeShadows = GetInt(_T("GlobeShadows"), TRUE);
+	m_GlobeBlackBackground = GetInt(_T("GlobeBlackBackground"), FALSE);
+	m_GlobeShowViewport = GetInt(_T("GlobeShowViewport"), FALSE);
+	m_GlobeShowCrosshairs = GetInt(_T("GlobeShowCrosshairs"), FALSE);
 	m_nTextureSize = GetInt(_T("TextureSize"), 0);
 	m_nMaxTextureSize = GetInt(_T("MaxTextureSize"), LFTexture4096);
 	if (m_nTextureSize<0)
@@ -122,6 +125,9 @@ INT CStoreManagerApp::ExitInstance()
 	WriteInt(_T("GlobeLighting"), m_GlobeLighting);
 	WriteInt(_T("GlobeAtmosphere"), m_GlobeAtmosphere);
 	WriteInt(_T("GlobeShadows"), m_GlobeShadows);
+	WriteInt(_T("GlobeBlackBackground"), m_GlobeBlackBackground);
+	WriteInt(_T("GlobeShowViewport"), m_GlobeShowViewport);
+	WriteInt(_T("GlobeShowCrosshairs"), m_GlobeShowCrosshairs);
 	WriteInt(_T("TextureSize"), m_nTextureSize);
 	WriteInt(_T("MaxTextureSize"), m_nMaxTextureSize);
 	SetRegistryBase(oldBase);
@@ -399,8 +405,6 @@ void CStoreManagerApp::LoadViewOptions(INT context)
 	m_Views[context].GlobeShowAirportNames = GetInt(_T("GlobeShowAirportNames"), TRUE);
 	m_Views[context].GlobeShowGPS = GetInt(_T("GlobeShowGPS"), TRUE);
 	m_Views[context].GlobeShowDescription = GetInt(_T("GlobeShowDescription"), TRUE);
-	m_Views[context].GlobeShowViewport = GetInt(_T("GlobeShowViewport"), FALSE);
-	m_Views[context].GlobeShowCrosshairs = GetInt(_T("GlobeShowCrosshairs"), FALSE);
 	m_Views[context].TagcloudCanonical = GetInt(_T("TagcloudSortCanonical"), TRUE);
 	m_Views[context].TagcloudHideRare = GetInt(_T("TagcloudHideRare"), FALSE);
 	m_Views[context].TagcloudUseSize = GetInt(_T("TagcloudUseSize"), TRUE);
@@ -448,8 +452,6 @@ void CStoreManagerApp::SaveViewOptions(INT context)
 	WriteInt(_T("GlobeShowAirportNames"), m_Views[context].GlobeShowAirportNames);
 	WriteInt(_T("GlobeShowGPS"), m_Views[context].GlobeShowGPS);
 	WriteInt(_T("GlobeShowDescription"), m_Views[context].GlobeShowDescription);
-	WriteInt(_T("GlobeShowViewport"), m_Views[context].GlobeShowViewport);
-	WriteInt(_T("GlobeShowCrosshairs"), m_Views[context].GlobeShowCrosshairs);
 	WriteInt(_T("TagcloudSortCanonical"), m_Views[context].TagcloudCanonical);
 	WriteInt(_T("TagcloudHideRare"), m_Views[context].TagcloudHideRare);
 	WriteInt(_T("TagcloudUseSize"), m_Views[context].TagcloudUseSize);

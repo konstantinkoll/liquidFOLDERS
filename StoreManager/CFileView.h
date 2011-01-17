@@ -46,8 +46,6 @@ struct LFViewParameters
 	BOOL GlobeShowAirportNames;
 	BOOL GlobeShowGPS;
 	BOOL GlobeShowDescription;
-	BOOL GlobeShowViewport;
-	BOOL GlobeShowCrosshairs;
 
 	BOOL TagcloudCanonical;
 	BOOL TagcloudHideRare;
