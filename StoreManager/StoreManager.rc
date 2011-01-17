@@ -407,7 +407,7 @@ IDM_GLOBE MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "Globe &settings...",          IDM_GLOBE_OPTIONS
+        MENUITEM "Globe &settings...",          IDM_GLOBE_SETTINGS
         MENUITEM "Size globe to &fit",          IDM_GLOBE_AUTOSIZE
         MENUITEM SEPARATOR
         MENUITEM "Jump to &location...",        IDM_GLOBE_JUMPTOLOCATION

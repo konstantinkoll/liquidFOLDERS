@@ -13,6 +13,8 @@
 #define ARROWSIZE      9
 #define PI             3.14159265358979323846
 #define ANIMLENGTH     200
+#define MOVEDELAY      10
+#define MOVEDIVIDER    8.0f
 #define SPOT           2
 #define CROSSHAIRS     3
 
@@ -182,13 +184,11 @@ CGlobeView::CGlobeView()
 	m_GlobeModel = -1;
 	m_TextureGlobe = m_TextureIcons = NULL;
 	m_CurrentGlobeTexture = -1;
-	m_Latitude = m_Longitude = 0.0f;
-	m_Zoom = -1.0f;
 	m_Scale = 1.0f;
-	m_Radius = 0.0f;
+	m_Radius = m_Momentum = 0.0f;
 	m_Grabbed = FALSE;
 	m_CursorPos.x = m_CursorPos.y = 0;
-	m_AnimCounter = 0;
+	m_AnimCounter = m_MoveCounter = 0;
 
 	ENSURE(YouLookAt.LoadString(IDS_YOULOOKAT));
 	m_LockUpdate = FALSE;
@@ -203,9 +203,9 @@ void CGlobeView::SetViewOptions(BOOL Force)
 {
 	if (Force)
 	{
-		m_GlobeLatitude = p_ViewParameters->GlobeLatitude/1000.0f;
-		m_GlobeLongitude = p_ViewParameters->GlobeLongitude/1000.0f;
-		m_GlobeZoom = p_ViewParameters->GlobeZoom;
+		m_GlobeCurrent.Latitude = m_GlobeTarget.Latitude = p_ViewParameters->GlobeLatitude/1000.0f;
+		m_GlobeCurrent.Longitude = m_GlobeTarget.Longitude = p_ViewParameters->GlobeLongitude/1000.0f;
+		m_GlobeCurrent.Zoom = m_GlobeTarget.Zoom = p_ViewParameters->GlobeZoom;
 	}
 
 	PrepareTexture();
@@ -374,6 +374,72 @@ void CGlobeView::PrepareModel()
 	m_LockUpdate = FALSE;
 }
 
+void CGlobeView::PrepareTexture()
+{
+	// Automatisch höchstens 4096x4096 laden, da quadratisch und von den meisten Grafikkarten unterstützt
+	UINT Tex = theApp.m_nTextureSize;
+	if (Tex==LFTextureAuto)
+		Tex = LFTexture4096;
+
+	// Texture prüfen
+	GLint TexSize = 1024;
+	glGetIntegerv(GL_MAX_TEXTURE_SIZE, &TexSize);
+
+Smaller:
+	glTexImage2D(GL_PROXY_TEXTURE_2D, 0, 4, TexSize, TexSize, 0, GL_BGRA, GL_UNSIGNED_BYTE, NULL);
+	GLint ProxySize = 0;
+	glGetTexLevelParameteriv(GL_PROXY_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &ProxySize);
+
+	if ((ProxySize==0) && (TexSize>1024))
+	{
+		TexSize /= 2;
+		goto Smaller;
+	}
+
+	theApp.m_nMaxTextureSize = (TexSize>=8192) ? LFTexture8192 : (TexSize>=4096) ? LFTexture4096 : (TexSize>=2048) ? LFTexture2048 : LFTexture1024;
+	if (Tex>theApp.m_nMaxTextureSize)
+		Tex = theApp.m_nMaxTextureSize;
+
+	if ((INT)Tex!=m_CurrentGlobeTexture)
+	{
+		SetCursor(theApp.LoadStandardCursor(IDC_WAIT));
+		m_LockUpdate = TRUE;
+
+		wglMakeCurrent(*m_pDC, hRC);
+
+		if (m_TextureGlobe)
+			delete m_TextureGlobe;
+		m_TextureGlobe = new GLTextureBlueMarble(Tex);
+		m_CurrentGlobeTexture = Tex;
+
+		m_LockUpdate = FALSE;
+		SetCursor(hCursor);
+
+		Invalidate();
+	}
+}
+
+void CGlobeView::Normalize()
+{
+	// Zoom
+	if (m_GlobeTarget.Zoom<0)
+		m_GlobeTarget.Zoom = 0;
+	if (m_GlobeTarget.Zoom>1000)
+		m_GlobeTarget.Zoom = 1000;
+
+	// Nicht über die Pole rollen
+	if (m_GlobeTarget.Latitude<-75.0f)
+		m_GlobeTarget.Latitude = -75.0f;
+	if (m_GlobeTarget.Latitude>75.0f)
+		m_GlobeTarget.Latitude = 75.0f;
+
+	// Rotation normieren
+	if (m_GlobeTarget.Longitude<0.0f)
+		m_GlobeTarget.Longitude += 360.0f;
+	if (m_GlobeTarget.Longitude>360.0f)
+		m_GlobeTarget.Longitude -= 360.0f;
+}
+
 void CGlobeView::CalcAndDrawSpots(GLdouble ModelView[4][4], GLdouble Projection[4][4])
 {
 	GLdouble SizeX = m_Width/2.0;
@@ -422,8 +488,8 @@ void CGlobeView::DrawStatusBar(INT Height, GLfloat BackColor[], BOOL Themed)
 	{
 		WCHAR Coord[256];
 		LFGeoCoordinates c;
-		c.Latitude = -m_Latitude;
-		c.Longitude = (m_Longitude>180.0) ? 360-m_Longitude : -m_Longitude;
+		c.Latitude = -m_GlobeCurrent.Latitude;
+		c.Longitude = (m_GlobeCurrent.Longitude>180.0) ? 360-m_GlobeCurrent.Longitude : -m_GlobeCurrent.Longitude;
 		LFGeoCoordinatesToString(c, Coord, 256, true);
 
 		swprintf(Viewpoint, 256, YouLookAt, Coord);
@@ -467,7 +533,7 @@ void CGlobeView::DrawScene(BOOL InternalCall)
 
 	BOOL Themed = IsCtrlThemed();
 
-	wglMakeCurrent(m_pDC->GetSafeHdc(), hRC);
+	wglMakeCurrent(*m_pDC, hRC);
 	glRenderMode(GL_RENDER);
 
 	// Hintergrund
@@ -483,7 +549,7 @@ void CGlobeView::DrawScene(BOOL InternalCall)
 	if (m_Height>m_Width)
 		m_Scale = 1-((GLfloat)(m_Height-m_Width))/m_Height;
 
-	GLfloat zoomfactor = m_Zoom+0.4f;
+	GLfloat zoomfactor = ((m_GlobeCurrent.Zoom+400)/1000.0f);
 	m_Scale /= zoomfactor*zoomfactor;
 	m_Radius = 0.49f*m_Height*m_Scale;
 	m_FogStart = 0.40f*m_Scale;
@@ -512,8 +578,8 @@ void CGlobeView::DrawScene(BOOL InternalCall)
 	}
 
 	// Rotationsmatrix (erst NACH Lichtquelle)
-	glRotatef(m_Latitude, 0.0f, 1.0f, 0.0f);
-	glRotatef(m_Longitude, 0.0f, 0.0f, 1.0f);
+	glRotatef(m_GlobeCurrent.Latitude, 0.0f, 1.0f, 0.0f);
+	glRotatef(m_GlobeCurrent.Longitude, 0.0f, 0.0f, 1.0f);
 	glScalef(m_Scale, m_Scale, m_Scale);
 
 	// Atmosphäre/Nebel
@@ -601,46 +667,98 @@ void CGlobeView::DrawScene(BOOL InternalCall)
 	m_LockUpdate = FALSE;
 }
 
-void CGlobeView::Normalize()
+BOOL CGlobeView::UpdateScene(BOOL Redraw)
 {
+	if (m_LockUpdate)
+		return FALSE;
+	m_LockUpdate = TRUE;
+
+	BOOL res = Redraw;
+
 	// Zoom
-	if (m_GlobeZoom<0)
-		m_GlobeZoom = 0;
-	if (m_GlobeZoom>100)
-		m_GlobeZoom = 100;
+	if (m_GlobeCurrent.Zoom<m_GlobeTarget.Zoom-4)
+	{
+		res = TRUE;
+		m_GlobeCurrent.Zoom += 5;
+	}
+	else
+		if (m_GlobeCurrent.Zoom>m_GlobeTarget.Zoom+4)
+		{
+			res = TRUE;
+			m_GlobeCurrent.Zoom -= 5;
+		}
+		else
+		{
+			res |= (m_GlobeCurrent.Zoom!=m_GlobeTarget.Zoom);
+			m_GlobeCurrent.Zoom = m_GlobeTarget.Zoom;
+		}
 
-	// Nicht über die Pole rollen
-	if (m_GlobeLatitude<-75.0f)
-		m_GlobeLatitude = -75.0f;
-	if (m_GlobeLatitude>75.0f)
-		m_GlobeLatitude = 75.0f;
+	// Animation
+	if (m_AnimCounter)
+	{
+		GLfloat f = (GLfloat)((cos(PI*m_AnimCounter/ANIMLENGTH)+1.0)/2.0);
+		m_GlobeCurrent.Latitude = m_AnimStartLatitude*(1.0f-f) + m_GlobeTarget.Latitude*f;
+		m_GlobeCurrent.Longitude = m_AnimStartLongitude*(1.0f-f) + m_GlobeTarget.Longitude*f;
 
-	// Rotation normieren
-	if (m_GlobeLongitude<0.0f)
-		m_GlobeLongitude += 360.0f;
-	if (m_GlobeLongitude>360.0f)
-		m_GlobeLongitude -= 360.0f;
+		if (m_GlobeTarget.Zoom<600)
+		{
+			INT Dist = 600-m_GlobeTarget.Zoom;
+			INT MaxDist = (INT)((m_GlobeTarget.Zoom+100)*1.2f);
+			if (Dist>MaxDist)
+				Dist = MaxDist;
+
+			GLfloat f = (GLfloat)sin(PI*m_AnimCounter/ANIMLENGTH);
+			m_GlobeCurrent.Zoom = (INT)(m_GlobeTarget.Zoom*(1.0f-f)+(m_GlobeTarget.Zoom+Dist)*f);
+		}
+
+		res = TRUE;
+		m_AnimCounter--;
+	}
+	else
+	{
+		if (m_Momentum!=0.0f)
+			m_GlobeTarget.Longitude += m_Momentum;
+
+		res |= (m_GlobeCurrent.Latitude!=m_GlobeTarget.Latitude) || (m_GlobeCurrent.Longitude!=m_GlobeTarget.Longitude);
+		m_GlobeCurrent.Latitude = m_GlobeTarget.Latitude;
+		m_GlobeCurrent.Longitude = m_GlobeTarget.Longitude;
+	}
+
+	Normalize();
+
+	if (res)
+	{
+		DrawScene(TRUE);
+		UpdateCursor();
+	}
+	else
+	{
+		m_LockUpdate = FALSE;
+	}
+
+	return res;
 }
 
 
 BEGIN_MESSAGE_MAP(CGlobeView, CFileView)
 	ON_WM_CREATE()
 	ON_WM_DESTROY()
+	ON_WM_PAINT()
+	ON_WM_SIZE()
+	ON_WM_SETCURSOR()
+
+	ON_COMMAND(IDM_GLOBE_JUMPTOLOCATION, OnJumpToLocation)
 	ON_COMMAND(IDM_GLOBE_ZOOMIN, OnZoomIn)
 	ON_COMMAND(IDM_GLOBE_ZOOMOUT, OnZoomOut)
 	ON_COMMAND(IDM_GLOBE_AUTOSIZE, OnAutosize)
-	ON_COMMAND(IDM_GLOBE_OPTIONS, OnOptions)
-	ON_COMMAND(IDM_GLOBE_JUMPTOLOCATION, OnJumpToLocation)
+	ON_COMMAND(IDM_GLOBE_SETTINGS, OnSettings)
 	ON_COMMAND(IDM_GLOBE_GOOGLEEARTH, OnGoogleEarth)
-	ON_UPDATE_COMMAND_UI_RANGE(IDM_GLOBE_ZOOMIN, IDM_GLOBE_GOOGLEEARTH, OnUpdateCommands)
+	ON_UPDATE_COMMAND_UI_RANGE(IDM_GLOBE_JUMPTOLOCATION, IDM_GLOBE_GOOGLEEARTH, OnUpdateCommands)
 	ON_WM_LBUTTONDOWN()
 	ON_WM_LBUTTONUP()
 	ON_WM_MOUSEMOVE()
 	ON_WM_MOUSEWHEEL()
-	ON_WM_SETCURSOR()
-	ON_WM_SIZE()
 	ON_WM_TIMER()
-	ON_WM_PAINT()
 END_MESSAGE_MAP()
 
 INT CGlobeView::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -715,9 +833,9 @@ void CGlobeView::OnDestroy()
 
 	if (p_ViewParameters)
 	{
-		p_ViewParameters->GlobeLatitude = (INT)(m_GlobeLatitude*1000.0f);
-		p_ViewParameters->GlobeLongitude = (INT)(m_GlobeLongitude*1000.0f);
-		p_ViewParameters->GlobeZoom = m_GlobeZoom;
+		p_ViewParameters->GlobeLatitude = (INT)(m_GlobeTarget.Latitude*1000.0f);
+		p_ViewParameters->GlobeLongitude = (INT)(m_GlobeTarget.Longitude*1000.0f);
+		p_ViewParameters->GlobeZoom = m_GlobeTarget.Zoom;
 	}
 
 	CFileView::OnDestroy();
@@ -729,37 +847,131 @@ void CGlobeView::OnPaint()
 	DrawScene();
 }
 
-
-void CGlobeView::OnZoomIn()
+void CGlobeView::OnSize(UINT nType, INT cx, INT cy)
 {
-	if (m_GlobeZoom>0)
+	if (cy>0)
 	{
-		m_GlobeZoom -= 10;
-		UpdateScene();
+		m_Width = cx;
+		m_Height = cy;
+
+		wglMakeCurrent(*m_pDC, hRC);
+		glViewport(0, 0, cx, cy);
+
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		gluPerspective(3.0f, (GLdouble)cx/cy, 0.1f, 500.0f);
+	}
+
+	CFileView::OnSize(nType, cx, cy);
+}
+
+BOOL CGlobeView::OnSetCursor(CWnd* /*pWnd*/, UINT /*nHitTest*/, UINT /*message*/)
+{
+	SetCursor(hCursor);
+	return TRUE;
+}
+
+void CGlobeView::OnMouseMove(UINT nFlags, CPoint point)
+{
+	m_CursorPos = point;
+
+	if (m_Grabbed)
+	{
+		m_MoveCounter = 0;
+
+		CSize rotate = m_GrabPoint - point;
+		m_GrabPoint = point;
+
+		m_LastMove = -rotate.cx/m_Scale*0.12f;
+		m_GlobeTarget.Longitude = m_GlobeCurrent.Longitude += m_LastMove;
+		m_GlobeTarget.Latitude = m_GlobeCurrent.Latitude -= rotate.cy/m_Scale*0.12f;
+
+		UpdateScene(TRUE);
+	}
+	else
+	{
+		UpdateCursor();
+	}
+
+	CFileView::OnMouseMove(nFlags, point);
+}
+
+BOOL CGlobeView::OnMouseWheel(UINT /*nFlags*/, short zDelta, CPoint /*pt*/)
+{
+	if (zDelta<0)
+	{
+		OnZoomOut();
+	}
+	else
+	{
+		OnZoomIn();
+	}
+
+	return TRUE;
+}
+
+void CGlobeView::OnLButtonDown(UINT nFlags, CPoint point)
+{
+	INT n = ItemAtPosition(point);
+	if (n==-1)
+	{
+		if (CursorOnGlobe(point))
+		{
+			m_GrabPoint = point;
+			m_Grabbed = TRUE;
+			m_Momentum = m_LastMove = 0.0f;
+
+			if (m_AnimCounter)
+			{
+				m_AnimCounter = 0;
+				m_GlobeTarget = m_GlobeCurrent;
+			}
+
+			SetCapture();
+			UpdateCursor();
+		}
+
+		if (GetFocus()!=this)
+			SetFocus();
+	}
+	else
+	{
+		CFileView::OnLButtonDown(nFlags, point);
 	}
 }
 
-void CGlobeView::OnZoomOut()
+void CGlobeView::OnLButtonUp(UINT nFlags, CPoint point)
 {
-	if (m_GlobeZoom<100)
+	if (m_Grabbed)
 	{
-		m_GlobeZoom += 10;
-		UpdateScene();
+		if (m_MoveCounter<MOVEDELAY)
+			m_Momentum = m_LastMove/MOVEDIVIDER;
+
+		m_Grabbed = FALSE;
+		ReleaseCapture();
+		UpdateCursor();
+	}
+	else
+	{
+		CFileView::OnLButtonUp(nFlags, point);
 	}
 }
 
-void CGlobeView::OnAutosize()
+void CGlobeView::OnTimer(UINT_PTR nIDEvent)
 {
-	m_GlobeZoom = 60;
-	UpdateScene();
+	if (nIDEvent==1)
+		UpdateScene();
+
+	if (m_MoveCounter<1000)
+		m_MoveCounter++;
+
+	CFileView::OnTimer(nIDEvent);
+
+	// Eat bogus WM_TIMER messages
+	MSG msg;
+	while (PeekMessage(&msg, m_hWnd, WM_TIMER, WM_TIMER, PM_REMOVE));
 }
 
-void CGlobeView::OnOptions()
-{
-	GlobeOptionsDlg dlg(this, p_ViewParameters, m_Context);
-	if (dlg.DoModal()==IDOK)
-		theApp.UpdateViewOptions();
-}
 
 void CGlobeView::OnJumpToLocation()
 {
@@ -770,13 +982,45 @@ void CGlobeView::OnJumpToLocation()
 		ASSERT(dlg.m_Airport);
 
 		m_AnimCounter = ANIMLENGTH;
-		m_AnimStartLatitude = m_Latitude;
-		m_AnimStartLongitude = m_Longitude;
-		m_GlobeLatitude = (GLfloat)-dlg.m_Airport->Location.Latitude;
-		m_GlobeLongitude = (GLfloat)-dlg.m_Airport->Location.Longitude;
+		m_AnimStartLatitude = m_GlobeCurrent.Latitude;
+		m_AnimStartLongitude = m_GlobeCurrent.Longitude;
+		m_GlobeTarget.Latitude = (GLfloat)-dlg.m_Airport->Location.Latitude;
+		m_GlobeTarget.Longitude = (GLfloat)-dlg.m_Airport->Location.Longitude;
+		m_Momentum = 0.0f;
 
 		UpdateScene();
 	}
+}
+
+void CGlobeView::OnZoomIn()
+{
+	if (m_GlobeTarget.Zoom>0)
+	{
+		m_GlobeTarget.Zoom -= 100;
+		UpdateScene();
+	}
+}
+
+void CGlobeView::OnZoomOut()
+{
+	if (m_GlobeTarget.Zoom<1000)
+	{
+		m_GlobeTarget.Zoom += 100;
+		UpdateScene();
+	}
+}
+
+void CGlobeView::OnAutosize()
+{
+	m_GlobeTarget.Zoom = 600;
+	UpdateScene();
+}
+
+void CGlobeView::OnSettings()
+{
+	GlobeOptionsDlg dlg(this, p_ViewParameters, m_Context);
+	if (dlg.DoModal()==IDOK)
+		theApp.UpdateViewOptions();
 }
 
 void CGlobeView::OnGoogleEarth()
@@ -835,7 +1079,7 @@ void CGlobeView::OnGoogleEarth()
 
 			f.WriteString(_T("</Document>\n</kml>\n"));
 
-			ShellExecute(GetSafeHwnd(), _T("open"), szTempName, NULL, NULL, SW_SHOW);
+			ShellExecute(m_hWnd, _T("open"), szTempName, NULL, NULL, SW_SHOW);
 		}
 		catch(CFileException ex)
 		{
@@ -851,15 +1095,13 @@ void CGlobeView::OnUpdateCommands(CCmdUI* pCmdUI)
 	switch (pCmdUI->m_nID)
 	{
 	case IDM_GLOBE_ZOOMIN:
-		b = m_GlobeZoom>0;
+		b = m_GlobeTarget.Zoom>0;
 		break;
 	case IDM_GLOBE_ZOOMOUT:
-		b = m_GlobeZoom<100;
+		b = m_GlobeTarget.Zoom<100;
 		break;
 	case IDM_GLOBE_AUTOSIZE:
-		b = m_GlobeZoom!=60;
-		break;
-	case IDM_GLOBE_OPTIONS:
+		b = m_GlobeTarget.Zoom!=60;
 		break;
 	case IDM_GLOBE_GOOGLEEARTH:
 		b = (GetNextSelectedItem(-1)!=-1) && (!theApp.m_PathGoogleEarth.IsEmpty());
@@ -869,262 +1111,9 @@ void CGlobeView::OnUpdateCommands(CCmdUI* pCmdUI)
 	pCmdUI->Enable(b);
 }
 
-void CGlobeView::OnLButtonDown(UINT nFlags, CPoint point)
-{
-	INT n = ItemAtPosition(point);
-	if (n==-1)
-	{
-		if (GetFocus()!=this)
-			SetFocus();
 
-		if (CursorOnGlobe(point))
-		{
-			m_GrabPoint = point;
-			m_Grabbed = TRUE;
-			if (m_AnimCounter)
-			{
-				m_AnimCounter = 0;
-				m_GlobeLatitude = m_Latitude;
-				m_GlobeLongitude = m_Longitude;
-				m_GlobeZoom = (INT)(m_Zoom*100.f);
-			}
 
-			SetCapture();
-			UpdateCursor();
-		}
-	}
-	else
-	{
-		CFileView::OnLButtonDown(nFlags, point);
-	}
-}
 
-void CGlobeView::OnLButtonUp(UINT nFlags, CPoint point)
-{
-	if (m_Grabbed)
-	{
-		m_Grabbed = FALSE;
-		ReleaseCapture();
-		UpdateCursor();
-	}
-	else
-	{
-		CFileView::OnLButtonUp(nFlags, point);
-	}
-}
-
-void CGlobeView::OnMouseMove(UINT nFlags, CPoint point)
-{
-	m_CursorPos = point;
-
-	if (m_Grabbed)
-	{
-		CSize rotate = m_GrabPoint - point;
-		m_GrabPoint = point;
-		m_GlobeLongitude = m_Longitude -= rotate.cx/m_Scale*0.12f;
-		m_GlobeLatitude = m_Latitude -= rotate.cy/m_Scale*0.12f;
-
-		UpdateScene(TRUE);
-	}
-	else
-	{
-		UpdateCursor();
-	}
-
-	CFileView::OnMouseMove(nFlags, point);
-}
-
-BOOL CGlobeView::OnMouseWheel(UINT /*nFlags*/, short zDelta, CPoint /*pt*/)
-{
-	if (zDelta<0)
-	{
-		OnZoomOut();
-	}
-	else
-	{
-		OnZoomIn();
-	}
-
-	return TRUE;
-}
-
-BOOL CGlobeView::OnSetCursor(CWnd* /*pWnd*/, UINT /*nHitTest*/, UINT /*message*/)
-{
-	SetCursor(hCursor);
-	return TRUE;
-}
-
-void CGlobeView::OnSize(UINT nType, INT cx, INT cy)
-{
-	if (cy>0)
-	{
-		m_Width = cx;
-		m_Height = cy;
-
-		wglMakeCurrent(m_pDC->GetSafeHdc(), hRC);
-		glViewport(0, 0, cx, cy);
-
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
-		gluPerspective(3.0f, (GLdouble)cx/cy, 0.1f, 500.0f);
-	}
-
-	CFileView::OnSize(nType, cx, cy);
-}
-
-void CGlobeView::OnTimer(UINT_PTR nIDEvent)
-{
-	if (nIDEvent==1)
-		if (UpdateScene())
-			m_TooltipCtrl.Deactivate();
-
-	CWnd::OnTimer(nIDEvent);
-
-	// Eat bogus WM_TIMER messages
-	MSG msg;
-	while (PeekMessage(&msg, m_hWnd, WM_TIMER, WM_TIMER, PM_REMOVE));
-}
-
-void CGlobeView::PrepareTexture()
-{
-	// Automatisch höchstens 4096x4096 laden, da quadratisch und von den meisten Grafikkarten unterstützt
-	UINT Tex = theApp.m_nTextureSize;
-	if (Tex==LFTextureAuto)
-		Tex = LFTexture4096;
-
-	// Texture prüfen
-	GLint TexSize = 1024;
-	glGetIntegerv(GL_MAX_TEXTURE_SIZE, &TexSize);
-
-Smaller:
-	glTexImage2D(GL_PROXY_TEXTURE_2D, 0, 4, TexSize, TexSize, 0, GL_BGRA, GL_UNSIGNED_BYTE, NULL);
-	GLint ProxySize = 0;
-	glGetTexLevelParameteriv(GL_PROXY_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &ProxySize);
-
-	if ((ProxySize==0) && (TexSize>1024))
-	{
-		TexSize /= 2;
-		goto Smaller;
-	}
-
-	if (TexSize>=8192)
-	{
-		theApp.m_nMaxTextureSize = LFTexture8192;
-	}
-	else
-		if (TexSize>=4096)
-		{
-			theApp.m_nMaxTextureSize = LFTexture4096;
-		}
-		else
-			if (TexSize>=2048)
-			{
-				theApp.m_nMaxTextureSize = LFTexture2048;
-			}
-			else
-			{
-				theApp.m_nMaxTextureSize = LFTexture1024;
-			}
-
-	if (Tex>theApp.m_nMaxTextureSize)
-		Tex = theApp.m_nMaxTextureSize;
-
-	if ((INT)Tex!=m_CurrentGlobeTexture)
-	{
-		SetCursor(theApp.LoadStandardCursor(IDC_WAIT));
-
-		m_LockUpdate = TRUE;
-		wglMakeCurrent(*m_pDC, hRC);
-
-		if (m_TextureGlobe)
-			delete m_TextureGlobe;
-		m_TextureGlobe = new GLTextureBlueMarble(Tex);
-
-		m_LockUpdate = FALSE;
-		SetCursor(hCursor);
-
-		m_CurrentGlobeTexture = Tex;
-		Invalidate();
-	}
-}
-
-BOOL CGlobeView::UpdateScene(BOOL Redraw)
-{
-	if (m_LockUpdate)
-		return FALSE;
-	m_LockUpdate = TRUE;
-
-	BOOL res = Redraw;
-	Normalize();
-
-	GLfloat TargetZoom = m_GlobeZoom/100.0f;
-
-	if (m_Zoom<0)
-	{
-		res |= (m_Zoom!=TargetZoom);
-		m_Zoom = TargetZoom;
-	}
-	else
-	{
-		if (m_Zoom<TargetZoom-0.001f)
-		{
-			res = TRUE;
-			m_Zoom += 0.005f;
-		}
-		if (m_Zoom>TargetZoom+0.001f)
-		{
-			res = TRUE;
-			m_Zoom -= 0.005f;
-		}
-	}
-
-	if ((m_Latitude==0.0f) && (m_Longitude==0.0f))
-	{
-		res |= (m_Latitude!=m_GlobeLatitude) || (m_Longitude!=m_GlobeLongitude);
-		m_Latitude = m_GlobeLatitude;
-		m_Longitude = m_GlobeLongitude;
-	}
-	else
-	{
-		if (m_AnimCounter)
-		{
-			GLfloat f = (GLfloat)((cos(PI*m_AnimCounter/ANIMLENGTH)+1.0)/2.0);
-			m_Latitude = m_AnimStartLatitude*(1.0f-f) + m_GlobeLatitude*f;
-			m_Longitude = m_AnimStartLongitude*(1.0f-f) + m_GlobeLongitude*f;
-
-			if (TargetZoom<0.6f)
-			{
-				GLfloat dist = 0.6f-TargetZoom;
-				if (dist>(TargetZoom+0.1f)*1.2f)
-					dist = (TargetZoom+0.1f)*1.2f;
-
-				f = (GLfloat)sin(PI*m_AnimCounter/ANIMLENGTH);
-				m_Zoom = TargetZoom*(1.0f-f)+(TargetZoom+dist)*f;
-			}
-
-			m_AnimCounter--;
-			res = TRUE;
-		}
-		else
-		{
-			res |= (m_Latitude!=m_GlobeLatitude) || (m_Longitude!=m_GlobeLongitude);
-			m_Latitude = m_GlobeLatitude;
-			m_Longitude = m_GlobeLongitude;
-		}
-	}
-
-	if (res)
-	{
-		DrawScene(TRUE);
-		UpdateCursor();
-	}
-	else
-	{
-		m_LockUpdate = FALSE;
-	}
-
-	return res;
-}
 
 void CGlobeView::CalcAndDrawLabel()
 {

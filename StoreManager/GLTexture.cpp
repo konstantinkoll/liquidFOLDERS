@@ -165,7 +165,7 @@ IPicture* GLTextureBlueMarble::p_BlueMarble = NULL;
 
 GLTextureBlueMarble::GLTextureBlueMarble(UINT nID)
 {
-	nID += IDB_FIRSTTEXTURE-1;
+	nID += IDB_BLUEMARBLE_1024-1;
 
 	if (m_nIDLoaded!=nID)
 	{
