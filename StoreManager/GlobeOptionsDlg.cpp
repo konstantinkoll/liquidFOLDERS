@@ -31,7 +31,7 @@ void GlobeOptionsDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Check(pDX, IDC_GPSCOORDINATES, p_View->GlobeShowGPS);
 	DDX_Check(pDX, IDC_DESCRIPTION, p_View->GlobeShowDescription);
 	DDX_Check(pDX, IDC_VIEWPORT, p_View->GlobeShowViewport);
-	DDX_Check(pDX, IDC_CROSSHAIR, p_View->GlobeShowCrosshair);
+	DDX_Check(pDX, IDC_CROSSHAIRS, p_View->GlobeShowCrosshairs);
 
 	if (pDX->m_bSaveAndValidate)
 		theApp.m_nTextureSize = m_wndTextureSize.GetCurSel();
@@ -77,5 +77,5 @@ BOOL GlobeOptionsDlg::OnInitDialog()
 
 void GlobeOptionsDlg::OnViewport()
 {
-	GetDlgItem(IDC_CROSSHAIR)->EnableWindow(m_wndViewport.GetCheck());
+	GetDlgItem(IDC_CROSSHAIRS)->EnableWindow(m_wndViewport.GetCheck());
 }

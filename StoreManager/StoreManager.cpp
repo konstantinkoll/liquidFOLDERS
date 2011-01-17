@@ -400,7 +400,7 @@ void CStoreManagerApp::LoadViewOptions(INT context)
 	m_Views[context].GlobeShowGPS = GetInt(_T("GlobeShowGPS"), TRUE);
 	m_Views[context].GlobeShowDescription = GetInt(_T("GlobeShowDescription"), TRUE);
 	m_Views[context].GlobeShowViewport = GetInt(_T("GlobeShowViewport"), FALSE);
-	m_Views[context].GlobeShowCrosshair = GetInt(_T("GlobeShowCrosshair"), FALSE);
+	m_Views[context].GlobeShowCrosshairs = GetInt(_T("GlobeShowCrosshairs"), FALSE);
 	m_Views[context].TagcloudCanonical = GetInt(_T("TagcloudSortCanonical"), TRUE);
 	m_Views[context].TagcloudHideRare = GetInt(_T("TagcloudHideRare"), FALSE);
 	m_Views[context].TagcloudUseSize = GetInt(_T("TagcloudUseSize"), TRUE);
@@ -449,7 +449,7 @@ void CStoreManagerApp::SaveViewOptions(INT context)
 	WriteInt(_T("GlobeShowGPS"), m_Views[context].GlobeShowGPS);
 	WriteInt(_T("GlobeShowDescription"), m_Views[context].GlobeShowDescription);
 	WriteInt(_T("GlobeShowViewport"), m_Views[context].GlobeShowViewport);
-	WriteInt(_T("GlobeShowCrosshair"), m_Views[context].GlobeShowCrosshair);
+	WriteInt(_T("GlobeShowCrosshairs"), m_Views[context].GlobeShowCrosshairs);
 	WriteInt(_T("TagcloudSortCanonical"), m_Views[context].TagcloudCanonical);
 	WriteInt(_T("TagcloudHideRare"), m_Views[context].TagcloudHideRare);
 	WriteInt(_T("TagcloudUseSize"), m_Views[context].TagcloudUseSize);

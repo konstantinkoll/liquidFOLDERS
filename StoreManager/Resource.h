@@ -159,7 +159,7 @@
 #define IDC_GPSCOORDINATES              2208
 #define IDC_DESCRIPTION                 2209
 #define IDC_VIEWPORT                    2210
-#define IDC_CROSSHAIR                   2211
+#define IDC_CROSSHAIRS                  2211
 #define IDM_STORES_HIDEEMPTYDRIVES      3000
 #define IDM_STORES_REPAIRCORRUPTEDINDEX 3001
 #define IDM_HOME                        3100
