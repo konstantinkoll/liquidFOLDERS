@@ -520,26 +520,6 @@ void CGlobeView::DrawLabel(GlobeItemData* d, UINT cCaption, WCHAR* Caption, WCHA
 {
 	ASSERT(ARROWSIZE>3);
 
-	// Farbe
-	COLORREF BaseColorRef = GetSysColor(COLOR_WINDOW);
-	COLORREF TextColorRef = GetSysColor(COLOR_WINDOWTEXT);
-	if (d->Hdr.Selected)
-		if (this==GetFocus())
-		{
-			BaseColorRef = GetSysColor(COLOR_HIGHLIGHT);
-			TextColorRef = GetSysColor(COLOR_HIGHLIGHTTEXT);
-		}
-		else
-		{
-			BaseColorRef = GetSysColor(COLOR_BTNFACE);
-			TextColorRef = GetSysColor(COLOR_BTNTEXT);
-		}
-
-	GLfloat BaseColor[4];
-	ColorRef2GLColor(&BaseColor[0], BaseColorRef);
-	GLfloat TextColor[4];
-	ColorRef2GLColor(&TextColor[0], TextColorRef);
-
 	// Breite
 	UINT W1 = m_Fonts[1].GetTextWidth(Caption, cCaption);
 	UINT W2 = m_Fonts[0].GetTextWidth(Subcaption);
@@ -561,6 +541,33 @@ void CGlobeView::DrawLabel(GlobeItemData* d, UINT cCaption, WCHAR* Caption, WCHA
 	INT y = d->Hdr.Rect.top = d->ScreenPoint[1]+(ARROWSIZE-2)*top-(top<0 ? (INT)Height : 0);
 	d->Hdr.Rect.right = x+Width;
 	d->Hdr.Rect.bottom = y+Height;
+
+	// Sichtbar?
+	if ((x+Width+6<0) || (x-1>m_Width) || (y+Height+ARROWSIZE+6<0) || (y-ARROWSIZE-6>m_Height))
+	{
+		d->Alpha = 0.0f;
+		return;
+	}
+
+	// Farben
+	COLORREF BaseColorRef = GetSysColor(COLOR_WINDOW);
+	COLORREF TextColorRef = GetSysColor(COLOR_WINDOWTEXT);
+	if (d->Hdr.Selected)
+		if (this==GetFocus())
+		{
+			BaseColorRef = GetSysColor(COLOR_HIGHLIGHT);
+			TextColorRef = GetSysColor(COLOR_HIGHLIGHTTEXT);
+		}
+		else
+		{
+			BaseColorRef = GetSysColor(COLOR_BTNFACE);
+			TextColorRef = GetSysColor(COLOR_BTNTEXT);
+		}
+
+	GLfloat BaseColor[4];
+	ColorRef2GLColor(&BaseColor[0], BaseColorRef);
+	GLfloat TextColor[4];
+	ColorRef2GLColor(&TextColor[0], TextColorRef);
 
 	// Schatten
 	if (theApp.m_GlobeShadows)
