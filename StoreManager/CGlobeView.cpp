@@ -469,7 +469,7 @@ void CGlobeView::CalcAndDrawSpots(GLdouble ModelView[4][4], GLdouble Projection[
 					d->Alpha -= (GLfloat)((m_FogStart-z)/(m_FogStart-m_FogEnd));
 
 				if (m_ViewParameters.GlobeShowSpots)
-					glDrawIcon(x, y, 13.0*d->Alpha, d->Alpha, SPOT);
+					glDrawIcon(x, y, 6.0+8.0*d->Alpha, d->Alpha, SPOT);
 			}
 		}
 	}
@@ -557,8 +557,8 @@ void CGlobeView::DrawLabel(GlobeItemData* d, UINT cCaption, WCHAR* Caption, WCHA
 	// Position
 	INT top = (d->ScreenPoint[1]<m_Height/2) ? -1 : 1;
 
-	INT x = d->Hdr.Rect.left = d->ScreenPoint[0]-ARROWSIZE-((Width-2*ARROWSIZE)*(m_Width-d->ScreenPoint[0])/m_Width);
-	INT y = d->Hdr.Rect.top = d->ScreenPoint[1]+(ARROWSIZE-2)*top-(top<0 ? Height : 0);
+	INT x = d->Hdr.Rect.left = d->ScreenPoint[0]-ARROWSIZE-(((INT)Width-2*ARROWSIZE)*(m_Width-d->ScreenPoint[0])/m_Width);
+	INT y = d->Hdr.Rect.top = d->ScreenPoint[1]+(ARROWSIZE-2)*top-(top<0 ? (INT)Height : 0);
 	d->Hdr.Rect.right = x+Width;
 	d->Hdr.Rect.bottom = y+Height;
 
@@ -625,7 +625,7 @@ void CGlobeView::DrawLabel(GlobeItemData* d, UINT cCaption, WCHAR* Caption, WCHA
 	glEnd();
 
 	// Innen
-	glRecti(x, y, x+Width, y+Height);
+	glRecti(x, y, x+(INT)Width, y+(INT)Height);
 	if ((Focused) && (GetFocus()==this))
 	{
 		glColor4f(1.0f-BaseColor[0], 1.0f-BaseColor[1], 1.0f-BaseColor[2], d->Alpha);

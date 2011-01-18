@@ -154,13 +154,10 @@ UINT GLFont::RenderChar(UCHAR ch, INT x, INT y, UINT* pHeight)
 
 	glTexCoord2f(tx1, ty2);
 	glVertex2i(x, y+h);
-
 	glTexCoord2f(tx2, ty2);
 	glVertex2i(x+w, y+h);
-
 	glTexCoord2f(tx2, ty1);
 	glVertex2i(x+w, y);
-
 	glTexCoord2f(tx1, ty1);
 	glVertex2i(x, y);
 
