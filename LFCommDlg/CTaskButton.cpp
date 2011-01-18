@@ -55,7 +55,7 @@ BOOL CTaskButton::PreTranslateMessage(MSG* pMsg)
 	return CButton::PreTranslateMessage(pMsg);
 }
 
-void CTaskButton::DrawItem(LPDRAWITEMSTRUCT)
+void CTaskButton::DrawItem(LPDRAWITEMSTRUCT /*lpDrawItemStruct*/)
 {
 }
 
