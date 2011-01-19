@@ -233,8 +233,8 @@ void CStoreManagerApp::OnAppExit()
 
 void CStoreManagerApp::SetContextMenuIcon(CMenu* pMenu, UINT CmdID, UINT ResID)
 {
-	INT cx = GetSystemMetrics((OSVersion==OS_XP) ? SM_CXMENUCHECK : SM_CXSMICON);
-	INT cy = GetSystemMetrics((OSVersion==OS_XP) ? SM_CYMENUCHECK : SM_CYSMICON);
+	INT cx = GetSystemMetrics(SM_CXSMICON);
+	INT cy = GetSystemMetrics(SM_CYSMICON);
 
 	for (UINT a=0; a<pMenu->GetMenuItemCount(); a++)
 		if (pMenu->GetMenuItemID(a)==CmdID)
@@ -245,7 +245,7 @@ void CStoreManagerApp::SetContextMenuIcon(CMenu* pMenu, UINT CmdID, UINT ResID)
 				HICON hIcon = (HICON)LoadImage(hModCore, MAKEINTRESOURCE(ResID), IMAGE_ICON, cx, cy, LR_DEFAULTCOLOR);
 				FreeLibrary(hModCore);
 
-				SetMenuItemBitmaps(*pMenu, a, MF_BYPOSITION, IconToBitmap(hIcon, cx, cy), NULL);
+				SetMenuItemIcon(*pMenu, a, hIcon, cx, cy);
 				DestroyIcon(hIcon);
 			}
 		}
