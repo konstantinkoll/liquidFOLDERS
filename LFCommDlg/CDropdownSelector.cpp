@@ -420,7 +420,7 @@ void CDropdownSelector::OnPaint()
 
 	if (hTheme)
 	{
-		// Hack to achive the same style as Windows Explorer
+		// Hack to achieve the same style as Windows Explorer
 		if (p_App->OSVersion>OS_XP)
 		{
 			rarrow.InflateRect(1, 1);
