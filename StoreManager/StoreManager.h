@@ -55,7 +55,7 @@ public:
 	CMainFrame* GetClipboard();
 	void CloseAllFrames(BOOL leaveOne=FALSE);
 
-	void SetContextMenuIcon(CMenu* pMenu, UINT CmdID, UINT ResID);
+	HBITMAP SetContextMenuIcon(CMenu* pMenu, UINT CmdID, UINT ResID);
 
 	BOOL SanitizeSortBy(LFViewParameters* vp, INT context);
 	BOOL SanitizeViewMode(LFViewParameters* vp, INT context);

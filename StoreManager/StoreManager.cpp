@@ -231,8 +231,9 @@ void CStoreManagerApp::OnAppExit()
 }
 
 
-void CStoreManagerApp::SetContextMenuIcon(CMenu* pMenu, UINT CmdID, UINT ResID)
+HBITMAP CStoreManagerApp::SetContextMenuIcon(CMenu* pMenu, UINT CmdID, UINT ResID)
 {
+	HBITMAP res = NULL;
 	INT cx = GetSystemMetrics(SM_CXSMICON);
 	INT cy = GetSystemMetrics(SM_CYSMICON);
 
@@ -245,10 +246,12 @@ void CStoreManagerApp::SetContextMenuIcon(CMenu* pMenu, UINT CmdID, UINT ResID)
 				HICON hIcon = (HICON)LoadImage(hModCore, MAKEINTRESOURCE(ResID), IMAGE_ICON, cx, cy, LR_DEFAULTCOLOR);
 				FreeLibrary(hModCore);
 
-				SetMenuItemIcon(*pMenu, a, hIcon, cx, cy);
+				res = SetMenuItemIcon(*pMenu, a, hIcon, cx, cy);
 				DestroyIcon(hIcon);
 			}
 		}
+
+	return res;
 }
 
 

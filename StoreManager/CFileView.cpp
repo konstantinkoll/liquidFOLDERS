@@ -1281,10 +1281,12 @@ void CFileView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 			CMenu* pPopup = pMenu->GetSubMenu(0);
 			ASSERT_VALID(pPopup);
 
-			theApp.SetContextMenuIcon(pPopup, IDM_DRIVE_CREATENEWSTORE, IDI_STORE_Bag);
+			HBITMAP bmp = theApp.SetContextMenuIcon(pPopup, IDM_DRIVE_CREATENEWSTORE, IDI_STORE_Bag);
 
 			pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, GetOwner(), NULL);
 			delete pMenu;
+
+			DeleteObject(bmp);
 		}
 	}
 }
