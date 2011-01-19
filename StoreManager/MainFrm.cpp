@@ -20,7 +20,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_WM_CLOSE()
 	ON_WM_DESTROY()
 
-	ON_UPDATE_COMMAND_UI_RANGE(ID_APP_NEWVIEW, ID_APP_VIEW_TIMELINE, OnUpdateAppCommands)
+	ON_UPDATE_COMMAND_UI_RANGE(ID_APP_NEWVIEW, ID_APP_VIEW_TAGCLOUD, OnUpdateAppCommands)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_AUTODIRS, OnUpdateAppCommands)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_SORT_FILENAME, ID_SORT_FILENAME+99, OnUpdateSortCommands)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_NAV_BACK, ID_NAV_GOTOHISTORY, OnUpdateNavCommands)
@@ -33,7 +33,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_COMMAND(ID_APP_VIEWOPTIONS, OnViewOptions)
 	ON_COMMAND(ID_VIEW_AUTODIRS, OnToggleAutoDirs)
 
-	ON_COMMAND_RANGE(ID_APP_VIEW_LARGEICONS, ID_APP_VIEW_TIMELINE, OnChangeChildView)
+	ON_COMMAND_RANGE(ID_APP_VIEW_LARGEICONS, ID_APP_VIEW_TAGCLOUD, OnChangeChildView)
 	ON_COMMAND_RANGE(ID_SORT_FILENAME, ID_SORT_FILENAME+99, OnSort)
 
 	ON_COMMAND(ID_PANE_FILTERWND, OnToggleFilterWnd)
@@ -307,7 +307,6 @@ void CMainFrame::OnUpdateAppCommands(CCmdUI* pCmdUI)
 	case ID_APP_VIEW_CALENDAR:
 	case ID_APP_VIEW_GLOBE:
 	case ID_APP_VIEW_TAGCLOUD:
-	case ID_APP_VIEW_TIMELINE:
 		view = pCmdUI->m_nID-ID_APP_VIEW_LARGEICONS+LFViewLargeIcons;
 		pCmdUI->SetCheck(ActiveViewID==(INT)view);
 		pCmdUI->Enable(theApp.m_AllowedViews[ActiveContextID]->IsSet(view));
@@ -689,7 +688,6 @@ void CMainFrame::InitializeRibbon()
 				pPanelDisplay->Add(theApp.CommandButton(ID_APP_VIEW_CALENDAR, 7, 7));
 				pPanelDisplay->Add(theApp.CommandButton(ID_APP_VIEW_GLOBE, 8, 8));
 				pPanelDisplay->Add(theApp.CommandButton(ID_APP_VIEW_TAGCLOUD, 9, 9));
-				pPanelDisplay->Add(theApp.CommandButton(ID_APP_VIEW_TIMELINE, 10, 10));
 			}
 
 	m_wndRibbonBar.SetActiveCategory(m_wndRibbonBar.GetCategory(1));

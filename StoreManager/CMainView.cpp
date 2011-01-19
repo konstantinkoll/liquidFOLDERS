@@ -8,7 +8,6 @@
 #include "CGlobeView.h"
 #include "CListView.h"
 #include "CTagcloudView.h"
-#include "CTimelineView.h"
 #include "StoreManager.h"
 
 
@@ -95,13 +94,6 @@ BOOL CMainView::CreateFileView(UINT ViewID, INT FocusItem)
 		{
 			pNewView = new CTagcloudView();
 			((CTagcloudView*)pNewView)->Create(this, FileViewID, p_CookedFiles, FocusItem);
-		}
-		break;
-	case LFViewTimeline:
-		if (m_ViewID!=LFViewTimeline)
-		{
-			pNewView = new CTimelineView();
-			((CTimelineView*)pNewView)->Create(this, FileViewID, p_CookedFiles, FocusItem);
 		}
 		break;
 	}

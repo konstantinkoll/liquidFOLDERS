@@ -418,10 +418,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CTimelineView.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\FilterWnd.cpp"
 				>
 			</File>
@@ -549,10 +545,6 @@
 			</File>
 			<File
 				RelativePath=".\CTagcloudView.h"
-				>
-			</File>
-			<File
-				RelativePath=".\CTimelineView.h"
 				>
 			</File>
 			<File

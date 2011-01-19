@@ -42,7 +42,6 @@
 #define ID_APP_VIEW_CALENDAR            307
 #define ID_APP_VIEW_GLOBE               308
 #define ID_APP_VIEW_TAGCLOUD            309
-#define ID_APP_VIEW_TIMELINE            310
 #define ID_VIEW_AUTODIRS                354
 #define ID_NAV_BACK                     400
 #define ID_NAV_FORWARD                  401

@@ -265,7 +265,7 @@ BOOL CStoreManagerApp::SanitizeSortBy(LFViewParameters* vp, INT context)
 
 	// Choose other view mode if neccessary
 	if (!AttributeSortableInView(vp->SortBy, vp->Mode))
-		for (UINT a=0; a<=LFViewTimeline; a++)
+		for (UINT a=0; a<LFViewCount; a++)
 			if ((theApp.m_AllowedViews[context]->IsSet(a)) && (AttributeSortableInView(vp->SortBy, a)))
 			{
 				vp->Mode = (a<=LFViewTiles) ? LFViewTiles : a;

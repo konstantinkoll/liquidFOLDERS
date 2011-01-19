@@ -650,7 +650,6 @@ BEGIN
     ID_APP_VIEW_CALENDAR    "Places files on a calendar.\nCalendar"
     ID_APP_VIEW_GLOBE       "Places file on a globe depening on their location property.\nGlobe"
     ID_APP_VIEW_TAGCLOUD    "Displays files as tag cloud. This is the only view that can show files sorted by their tags.\nTag cloud"
-    ID_APP_VIEW_TIMELINE    "Displays files on a timeline.\nTimeline"
 END
 
 STRINGTABLE 
