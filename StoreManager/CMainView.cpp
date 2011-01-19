@@ -451,6 +451,7 @@ BEGIN_MESSAGE_MAP(CMainView, CWnd)
 	ON_UPDATE_COMMAND_UI(IDM_STORES_HIDEEMPTYDRIVES, OnUpdateStoresCommands)
 
 	ON_COMMAND(IDM_HOME_HIDEEMPTYDOMAINS, OnHomeHideEmptyDomains)
+	ON_COMMAND(IDM_HOME_HIDESTATISTICS, OnHomeHideStatistics)
 	ON_COMMAND(IDM_HOME_IMPORTFOLDER, OnHomeImportFolder)
 	ON_COMMAND(IDM_HOME_MAINTAIN, OnHomeMaintain)
 	ON_COMMAND(IDM_HOME_PROPERTIES, OnHomeProperties)
@@ -627,6 +628,8 @@ void CMainView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 			pPopup->InsertMenu(0, MF_STRING | MF_BYPOSITION, IDM_STORES_HIDEEMPTYDRIVES, tmpStr);
 			break;
 		case LFContextStoreHome:
+			ENSURE(tmpStr.LoadString(IDM_HOME_HIDESTATISTICS));
+			pPopup->InsertMenu(0, MF_STRING | MF_BYPOSITION, IDM_HOME_HIDESTATISTICS, tmpStr);
 			ENSURE(tmpStr.LoadString(IDM_HOME_HIDEEMPTYDOMAINS));
 			pPopup->InsertMenu(0, MF_STRING | MF_BYPOSITION, IDM_HOME_HIDEEMPTYDOMAINS, tmpStr);
 			break;
@@ -772,6 +775,12 @@ void CMainView::OnHomeHideEmptyDomains()
 	theApp.Reload(LFContextStoreHome);
 }
 
+void CMainView::OnHomeHideStatistics()
+{
+	theApp.m_HideStatistics = !theApp.m_HideStatistics;
+	theApp.Reload(LFContextStoreHome);
+}
+
 void CMainView::OnHomeImportFolder()
 {
 	if (p_CookedFiles)
@@ -805,8 +814,15 @@ void CMainView::OnUpdateHomeCommands(CCmdUI* pCmdUI)
 {
 	BOOL b = (p_CookedFiles) && (m_Context==LFContextStoreHome);
 
-	if (pCmdUI->m_nID==IDM_HOME_HIDEEMPTYDOMAINS)
+	switch (pCmdUI->m_nID)
+	{
+	case IDM_HOME_HIDEEMPTYDOMAINS:
 		pCmdUI->SetCheck(theApp.m_HideEmptyDomains);
+		break;
+	case IDM_HOME_HIDESTATISTICS:
+		pCmdUI->SetCheck(theApp.m_HideStatistics);
+		break;
+	}
 
 	pCmdUI->Enable(b);
 }

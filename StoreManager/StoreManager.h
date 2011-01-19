@@ -39,6 +39,7 @@ public:
 	BOOL m_GlobeShowCrosshairs;
 	BOOL m_HideEmptyDrives;
 	BOOL m_HideEmptyDomains;
+	BOOL m_HideStatistics;
 	stdext::hash_map<std::string, FormatData> m_FileFormats;
 	std::list<CMainFrame*> m_listMainFrames;
 	CMainFrame* p_Clipboard;

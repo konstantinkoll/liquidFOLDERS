@@ -786,6 +786,7 @@ END
 STRINGTABLE 
 BEGIN
     IDM_HOME_HIDEEMPTYDOMAINS "&Hide empty domains"
+    IDM_HOME_HIDESTATISTICS "Hide &statistics"
     IDM_HOME_IMPORTFOLDER   "Imports a folder and all its subfolders into this selected store.\nImport folder"
 END
 

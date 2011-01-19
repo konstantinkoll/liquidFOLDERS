@@ -69,6 +69,7 @@ BOOL CStoreManagerApp::InitInstance()
 	SetRegistryBase(_T("Settings"));
 	m_HideEmptyDrives = GetInt(_T("HideEmptyDrives"), FALSE);
 	m_HideEmptyDomains = GetInt(_T("HideEmptyDomains"), FALSE);
+	m_HideStatistics = GetInt(_T("HideStatistics"), FALSE);
 	m_GlobeHQModel = GetInt(_T("GlobeHQModel"), TRUE);
 	m_GlobeLighting = GetInt(_T("GlobeLighting"), TRUE);
 	m_GlobeAtmosphere = GetInt(_T("GlobeAtmosphere"), TRUE);
@@ -121,6 +122,7 @@ INT CStoreManagerApp::ExitInstance()
 	SetRegistryBase(_T("Settings"));
 	WriteInt(_T("HideEmptyDrives"), m_HideEmptyDrives);
 	WriteInt(_T("HideEmptyDomains"), m_HideEmptyDomains);
+	WriteInt(_T("HideStatistics"), m_HideStatistics);
 	WriteInt(_T("GlobeHQModel"), m_GlobeHQModel);
 	WriteInt(_T("GlobeLighting"), m_GlobeLighting);
 	WriteInt(_T("GlobeAtmosphere"), m_GlobeAtmosphere);

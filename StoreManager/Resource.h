@@ -164,9 +164,10 @@
 #define IDM_STORES_REPAIRCORRUPTEDINDEX 3001
 #define IDM_HOME                        3100
 #define IDM_HOME_HIDEEMPTYDOMAINS       3101
-#define IDM_HOME_IMPORTFOLDER           3102
-#define IDM_HOME_MAINTAIN               3103
-#define IDM_HOME_PROPERTIES             3104
+#define IDM_HOME_HIDESTATISTICS         3102
+#define IDM_HOME_IMPORTFOLDER           3103
+#define IDM_HOME_MAINTAIN               3104
+#define IDM_HOME_PROPERTIES             3105
 #define IDM_HOUSEKEEPING                3200
 #define IDM_HOUSEKEEPING_REGISTER       3201
 #define IDM_HOUSEKEEPING_SEND           3202
