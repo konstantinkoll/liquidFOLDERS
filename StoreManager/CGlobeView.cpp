@@ -980,7 +980,7 @@ INT CGlobeView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	glFogi(GL_FOG_MODE, GL_LINEAR);
 	glFogf(GL_FOG_DENSITY, 1.0f);
-	glHint(GL_FOG_HINT, GL_FASTEST);
+	glHint(GL_FOG_HINT, GL_NICEST);
 
 	// Fonts
 	m_Fonts[0].Create(&theApp.m_DefaultFont);
