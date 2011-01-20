@@ -163,7 +163,7 @@ Restart:
 		if (y+h+gva.guttery-1>m_ScrollHeight)
 		{
 			m_ScrollHeight = y+h+max(gva.guttery,0);
-			if ((m_ScrollHeight>=rectWindow.Height()) && (!HasScrollbars))
+			if ((m_ScrollHeight>rectWindow.Height()) && (!HasScrollbars))
 			{
 				HasScrollbars = TRUE;
 				rectWindow.right -= GetSystemMetrics(SM_CXVSCROLL);
@@ -273,7 +273,7 @@ Restart:
 		if (x+l+gva.gutterx-1>m_ScrollWidth)
 		{
 			m_ScrollWidth = x+l+max(gva.gutterx,0);
-			if ((m_ScrollWidth>=rectWindow.Width()) && (!HasScrollbars))
+			if ((m_ScrollWidth>rectWindow.Width()) && (!HasScrollbars))
 			{
 				HasScrollbars = TRUE;
 				rectWindow.bottom -= GetSystemMetrics(SM_CXHSCROLL);

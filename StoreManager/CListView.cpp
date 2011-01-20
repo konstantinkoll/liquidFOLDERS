@@ -188,7 +188,7 @@ void CListView::AdjustLayout()
 {
 	// Header
 	CRect rect;
-	GetClientRect(rect);
+	GetWindowRect(&rect);
 
 	WINDOWPOS wp;
 	HDLAYOUT HdLayout;
@@ -240,7 +240,7 @@ void CListView::AdjustLayout()
 	}
 
 	// Header
-	m_wndHeader.SetWindowPos(NULL, wp.x-m_HScrollPos, wp.y, wp.cx+m_HScrollMax, m_HeaderHeight, wp.flags | SWP_NOZORDER | SWP_NOACTIVATE);
+	m_wndHeader.SetWindowPos(NULL, wp.x-m_HScrollPos, wp.y, wp.cx+m_HScrollMax+GetSystemMetrics(SM_CXVSCROLL), m_HeaderHeight, wp.flags | SWP_NOZORDER | SWP_NOACTIVATE);
 	m_wndHeader.Invalidate();
 }
 

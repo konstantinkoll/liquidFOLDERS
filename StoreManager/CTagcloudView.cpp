@@ -152,7 +152,7 @@ void CTagcloudView::AdjustLayout()
 			if (d->Hdr.Hdr.Rect.bottom-1>m_ScrollHeight) \
 			{ \
 				m_ScrollHeight = d->Hdr.Hdr.Rect.bottom-1; \
-				if ((m_ScrollHeight>=rectWindow.Height()) && (!HasScrollbars)) \
+				if ((m_ScrollHeight>rectWindow.Height()) && (!HasScrollbars)) \
 				{ \
 					HasScrollbars = TRUE; \
 					rectWindow.right -= GetSystemMetrics(SM_CXVSCROLL); \

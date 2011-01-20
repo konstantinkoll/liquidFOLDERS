@@ -129,7 +129,7 @@ void CTreeView::AdjustLayout()
 
 	AdjustScrollbars();
 
-	m_wndHeader.SetWindowPos(NULL, wp.x-m_HScrollPos, wp.y, wp.cx+m_HScrollMax, m_HeaderHeight, wp.flags | SWP_NOZORDER | SWP_NOACTIVATE);
+	m_wndHeader.SetWindowPos(NULL, wp.x-m_HScrollPos, wp.y, wp.cx+m_HScrollMax+GetSystemMetrics(SM_CXVSCROLL), m_HeaderHeight, wp.flags | SWP_NOZORDER | SWP_NOACTIVATE);
 }
 
 void CTreeView::ClearRoot()
@@ -457,6 +457,17 @@ void CTreeView::AdjustScrollbars()
 	for (UINT col=0; col<m_Cols; col++)
 		ScrollWidth += m_ColumnWidth[col];
 
+	BOOL HScroll = FALSE;
+	if (ScrollWidth>rect.Width())
+	{
+		rect.bottom -= GetSystemMetrics(SM_CYHSCROLL);
+		HScroll = TRUE;
+	}
+	if (ScrollHeight>rect.Height()-(INT)m_HeaderHeight)
+		rect.right -= GetSystemMetrics(SM_CXVSCROLL);
+	if ((ScrollWidth>rect.Width()) && (!HScroll))
+		rect.bottom -= GetSystemMetrics(SM_CYHSCROLL);
+
 	INT oldVScrollPos = m_VScrollPos;
 	m_VScrollMax = max(0, ScrollHeight-rect.Height()+(INT)m_HeaderHeight);
 	m_VScrollPos = min(m_VScrollPos, m_VScrollMax);
@@ -467,12 +478,9 @@ void CTreeView::AdjustScrollbars()
 	si.fMask = SIF_PAGE | SIF_RANGE | SIF_POS;
 	si.nPage = rect.Height()-m_HeaderHeight;
 	si.nMin = 0;
-	si.nMax = ScrollHeight;
+	si.nMax = ScrollHeight-1;
 	si.nPos = m_VScrollPos;
 	SetScrollInfo(SB_VERT, &si);
-
-	if (ScrollHeight>rect.Height())
-		rect.right -= GetSystemMetrics(SM_CXVSCROLL);
 
 	INT oldHScrollPos = m_HScrollPos;
 	m_HScrollMax = max(0, ScrollWidth-rect.Width());
@@ -483,7 +491,7 @@ void CTreeView::AdjustScrollbars()
 	si.fMask = SIF_PAGE | SIF_RANGE | SIF_POS;
 	si.nPage = rect.Width();
 	si.nMin = 0;
-	si.nMax = ScrollWidth;
+	si.nMax = ScrollWidth-1;
 	si.nPos = m_HScrollPos;
 	SetScrollInfo(SB_HORZ, &si);
 

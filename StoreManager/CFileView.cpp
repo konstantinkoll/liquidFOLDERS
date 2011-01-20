@@ -621,15 +621,15 @@ void CFileView::AdjustScrollbars()
 	CRect rect;
 	GetWindowRect(&rect);
 
-	BOOL VScroll = FALSE;
+	BOOL HScroll = FALSE;
 	if (m_ScrollWidth>rect.Width())
 	{
 		rect.bottom -= GetSystemMetrics(SM_CYHSCROLL);
-		VScroll = TRUE;
+		HScroll = TRUE;
 	}
 	if (m_ScrollHeight>rect.Height()-(INT)m_HeaderHeight)
 		rect.right -= GetSystemMetrics(SM_CXVSCROLL);
-	if ((m_ScrollWidth>rect.Width()) && (!VScroll))
+	if ((m_ScrollWidth>rect.Width()) && (!HScroll))
 		rect.bottom -= GetSystemMetrics(SM_CYHSCROLL);
 
 	INT oldVScrollPos = m_VScrollPos;
