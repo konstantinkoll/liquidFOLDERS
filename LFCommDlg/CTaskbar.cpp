@@ -73,11 +73,7 @@ CTaskButton* CTaskbar::AddButton(UINT nID, INT IconID, BOOL bForceIcon, BOOL bAd
 	btn->Create(bAddRight ? _T("") : Caption, Caption, Hint, &Icons,
 		bForceIcon || bAddRight || (((LFApplication*)AfxGetApp())->OSVersion<OS_Seven) ? IconID : -1,
 		this, nID);
-
-	CCmdUI cmdUI;
-	cmdUI.m_nID = nID;
-	cmdUI.m_pOther = btn;
-	cmdUI.DoUpdate(GetParent(), TRUE);
+	btn->EnableWindow(FALSE);
 
 	list<CTaskButton*>* li = bAddRight ? &ButtonsRight : &ButtonsLeft;
 	li->push_back(btn);

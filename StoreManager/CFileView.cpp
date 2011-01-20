@@ -1317,7 +1317,7 @@ void CFileView::OnSelectNone()
 
 void CFileView::OnUpdateCommands(CCmdUI* pCmdUI)
 {
-	pCmdUI->Enable(m_Context<=LFContextStoreHome);
+	pCmdUI->Enable((m_Context<=LFContextStoreHome) && (_waccess(theApp.m_Path+_T("FileDrop.exe"), 0)==0));
 }
 
 void CFileView::OnDestroyEdit()
