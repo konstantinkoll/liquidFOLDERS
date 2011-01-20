@@ -621,6 +621,17 @@ void CFileView::AdjustScrollbars()
 	CRect rect;
 	GetWindowRect(&rect);
 
+	BOOL VScroll = FALSE;
+	if (m_ScrollWidth>rect.Width())
+	{
+		rect.bottom -= GetSystemMetrics(SM_CYHSCROLL);
+		VScroll = TRUE;
+	}
+	if (m_ScrollHeight>rect.Height()-(INT)m_HeaderHeight)
+		rect.right -= GetSystemMetrics(SM_CXVSCROLL);
+	if ((m_ScrollWidth>rect.Width()) && (!VScroll))
+		rect.bottom -= GetSystemMetrics(SM_CYHSCROLL);
+
 	INT oldVScrollPos = m_VScrollPos;
 	m_VScrollMax = max(0, m_ScrollHeight-rect.Height()+(INT)m_HeaderHeight);
 	m_VScrollPos = min(m_VScrollPos, m_VScrollMax);
@@ -631,12 +642,9 @@ void CFileView::AdjustScrollbars()
 	si.fMask = SIF_PAGE | SIF_RANGE | SIF_POS;
 	si.nPage = rect.Height()-m_HeaderHeight;
 	si.nMin = 0;
-	si.nMax = m_ScrollHeight;
+	si.nMax = m_ScrollHeight-1;
 	si.nPos = m_VScrollPos;
 	SetScrollInfo(SB_VERT, &si);
-
-	if (m_ScrollHeight>rect.Height())
-		rect.right -= GetSystemMetrics(SM_CXVSCROLL);
 
 	INT oldHScrollPos = m_HScrollPos;
 	m_HScrollMax = max(0, m_ScrollWidth-rect.Width());
@@ -647,7 +655,7 @@ void CFileView::AdjustScrollbars()
 	si.fMask = SIF_PAGE | SIF_RANGE | SIF_POS;
 	si.nPage = rect.Width();
 	si.nMin = 0;
-	si.nMax = m_ScrollWidth;
+	si.nMax = m_ScrollWidth-1;
 	si.nPos = m_HScrollPos;
 	SetScrollInfo(SB_HORZ, &si);
 

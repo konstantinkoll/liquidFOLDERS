@@ -147,8 +147,8 @@ void CTagcloudView::AdjustLayout()
 		if (d->Cnt) \
 		{ \
 			OffsetRect(&d->Hdr.Hdr.Rect, (rectWindow.Width()+GUTTER-x)/2, (rowheight-(d->Hdr.Hdr.Rect.bottom-d->Hdr.Hdr.Rect.top))/2); \
-			if (d->Hdr.Hdr.Rect.right-1>m_ScrollWidth) \
-				m_ScrollWidth = d->Hdr.Hdr.Rect.right-1; \
+			if (d->Hdr.Hdr.Rect.right>m_ScrollWidth) \
+				m_ScrollWidth = d->Hdr.Hdr.Rect.right; \
 			if (d->Hdr.Hdr.Rect.bottom-1>m_ScrollHeight) \
 			{ \
 				m_ScrollHeight = d->Hdr.Hdr.Rect.bottom-1; \
