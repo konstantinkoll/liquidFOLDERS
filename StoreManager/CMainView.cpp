@@ -778,7 +778,7 @@ void CMainView::OnHomeHideEmptyDomains()
 void CMainView::OnHomeHideStatistics()
 {
 	theApp.m_HideStatistics = !theApp.m_HideStatistics;
-	theApp.Reload(LFContextStoreHome);
+	theApp.UpdateViewOptions(LFContextStoreHome);
 }
 
 void CMainView::OnHomeImportFolder()
