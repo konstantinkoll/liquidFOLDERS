@@ -593,6 +593,42 @@ void CFileView::DrawItemBackground(CDC& dc, LPRECT rectItem, INT idx, BOOL Theme
 	}
 }
 
+void CFileView::DrawCategory(CDC& dc, LPRECT rectCategory, ItemCategory* ic, BOOL Themed)
+{
+	CRect rect(rectCategory);
+	rect.DeflateRect(0, CategoryPadding);
+	rect.left += CategoryPadding;
+
+	CFont* pOldFont = dc.SelectObject(&theApp.m_LargeFont);
+	dc.SetTextColor(Themed ? 0x993300 : GetSysColor(COLOR_WINDOWTEXT));
+	dc.DrawText(ic->Caption, -1, rect, DT_LEFT | DT_TOP | DT_SINGLELINE | DT_END_ELLIPSIS);
+
+	CRect rectLine(rect);
+	dc.DrawText(ic->Caption, -1, rectLine, DT_LEFT | DT_TOP | DT_SINGLELINE | DT_END_ELLIPSIS | DT_CALCRECT);
+	rectLine.right += 2*CategoryPadding;
+
+	if (rectLine.right<=rect.right)
+	{
+		CPen pen(PS_SOLID, 1, 0xE2E2E2);
+
+		CPen* pOldPen = dc.SelectObject(&pen);
+		dc.MoveTo(rectLine.right, rect.top+(m_FontHeight[1]+1)/2);
+		dc.LineTo(rect.right, rect.top+(m_FontHeight[1]+1)/2);
+		dc.SelectObject(pOldPen);
+	}
+
+	if (ic->Hint[0]!=L'\0')
+	{
+		rect.top += m_FontHeight[1];
+		dc.SelectObject(&theApp.m_DefaultFont);
+		if (Themed)
+			dc.SetTextColor(((dc.GetTextColor()>>1) & 0x7F7F7F) | 0x808080);
+		dc.DrawText(ic->Hint, -1, rect, DT_LEFT | DT_TOP | DT_SINGLELINE | DT_END_ELLIPSIS);
+	}
+
+	dc.SelectObject(pOldFont);
+}
+
 void CFileView::PrepareFormatData(INT idx)
 {
 	if ((p_Result->m_Items[idx]->Type & LFTypeMask)!=LFTypeFile)

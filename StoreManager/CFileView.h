@@ -7,6 +7,9 @@
 #include "LFCommDlg.h"
 
 
+#define CategoryPadding      2
+
+
 // View IDs
 
 #define LFViewLargeIcons                0
@@ -60,6 +63,13 @@ struct FVItemData
 {
 	RECT Rect;
 	BOOL Selected;
+};
+
+struct ItemCategory
+{
+	WCHAR Caption[256];
+	WCHAR Hint[256];
+	RECT Rect;
 };
 
 
@@ -135,6 +145,7 @@ protected:
 	void SetFocusItem(INT FocusItem, BOOL ShiftSelect);
 	RECT GetItemRect(INT idx);
 	void DrawItemBackground(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed);
+	void DrawCategory(CDC& dc, LPRECT rectCategory, ItemCategory* ic, BOOL Themed);
 	void PrepareFormatData(INT idx);
 	void ResetScrollbars();
 	void AdjustScrollbars();
