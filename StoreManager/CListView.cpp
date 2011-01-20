@@ -197,6 +197,7 @@ void CListView::AdjustLayout()
 	m_wndHeader.Layout(&HdLayout);
 
 	wp.x = 13-PADDING;
+	wp.y = 0;
 	m_HeaderHeight = wp.cy + (wp.cy ? 4 : 0);
 
 	// Items
