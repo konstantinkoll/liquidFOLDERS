@@ -13,11 +13,23 @@
 CCalendarView::CCalendarView()
 	: CFileView()
 {
+	m_HideDays = theApp.m_HideDays;
 }
+
+CMenu* CCalendarView::GetBackgroundContextMenu()
+{
+	CMenu* pMenu = new CMenu();
+	pMenu->LoadMenu(IDM_CALENDAR);
+	return pMenu;
+}
+
 
 
 BEGIN_MESSAGE_MAP(CCalendarView, CFileView)
 	ON_WM_PAINT()
+
+	ON_COMMAND(IDM_CALENDAR_HIDEDAYS, OnHideDays)
+	ON_UPDATE_COMMAND_UI_RANGE(IDM_CALENDAR_HIDEDAYS, IDM_CALENDAR_GOTOYEAR, OnUpdateCommands)
 END_MESSAGE_MAP()
 
 void CCalendarView::OnPaint()
@@ -41,13 +53,31 @@ void CCalendarView::OnPaint()
 
 	CFont* pOldFont = dc.SelectObject(&theApp.m_DefaultFont);
 
-	CRect rectText(rect);
-	rectText.top += m_HeaderHeight+6;
 
-	dc.SetTextColor(Themed ? 0x6D6D6D : GetSysColor(COLOR_3DFACE));
-	dc.DrawText(_T("Coming soon!"), -1, rectText, DT_CENTER | DT_SINGLELINE | DT_END_ELLIPSIS);
+
 
 	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);
 	dc.SelectObject(pOldFont);
 	dc.SelectObject(pOldBitmap);
+}
+
+
+
+void CCalendarView::OnHideDays()
+{
+	theApp.m_HideDays = !theApp.m_HideDays;
+	theApp.UpdateViewOptions();
+}
+
+void CCalendarView::OnUpdateCommands(CCmdUI* pCmdUI)
+{
+	BOOL b = TRUE;
+	switch (pCmdUI->m_nID)
+	{
+	case IDM_CALENDAR_HIDEDAYS:
+		pCmdUI->SetCheck(theApp.m_HideDays);
+		break;
+}
+
+	pCmdUI->Enable(b);
 }

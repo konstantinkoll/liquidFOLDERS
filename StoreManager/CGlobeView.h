@@ -93,6 +93,7 @@ protected:
 private:
 	LPCTSTR lpszCursorName;
 	HCURSOR hCursor;
+	CPoint m_CursorPos;
 
 	GLint m_GlobeModel;
 	BOOL m_IsHQModel;
@@ -108,7 +109,6 @@ private:
 	UINT m_MoveCounter;
 	GLfloat m_LastMove;
 	GLfloat m_Momentum;
-	CPoint m_CursorPos;
 
 	CPoint m_GrabPoint;
 	BOOL m_Grabbed;

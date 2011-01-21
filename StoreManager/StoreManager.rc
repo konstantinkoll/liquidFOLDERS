@@ -332,6 +332,7 @@ IDM_HOME MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
+        MENUITEM "Hide &statistics",            IDM_HOME_HIDESTATISTICS
         MENUITEM SEPARATOR
         MENUITEM "&Import folder...",           IDM_HOME_IMPORTFOLDER
         MENUITEM "Run &maintenance",            IDM_HOME_MAINTAIN
@@ -401,6 +402,16 @@ BEGIN
         MENUITEM SEPARATOR
         MENUITEM SEPARATOR
         MENUITEM "&More...",                    IDM_DETAILS_CHOOSE
+    END
+END
+
+IDM_CALENDAR MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "Hide &days",                  IDM_CALENDAR_HIDEDAYS
+        MENUITEM SEPARATOR
+        MENUITEM "Go to &year...",              IDM_CALENDAR_GOTOYEAR
     END
 END
 
@@ -786,7 +797,6 @@ END
 STRINGTABLE 
 BEGIN
     IDM_HOME_HIDEEMPTYDOMAINS "&Hide empty domains"
-    IDM_HOME_HIDESTATISTICS "Hide &statistics"
     IDM_HOME_IMPORTFOLDER   "Imports a folder and all its subfolders into this selected store.\nImport folder"
 END
 
@@ -797,18 +807,19 @@ END
 
 STRINGTABLE 
 BEGIN
+    IDM_CALENDAR_PREVYEAR   "Displays the previous year.\nPrevious year"
+    IDM_CALENDAR_NEXTYEAR   "Displays the next year.\nNext year"
+    IDM_CALENDAR_GOTOYEAR   "Shows a window that lets you choose a year to display.\nGo to year"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_SUBFOLDERS_MANDATORY "Subfolders are mandatory for this view."
     IDS_SUBFOLDERS_NOTAVAIL "Subfolders are not available in this context."
     IDS_GROUPBOX_SORT       "Sort items by this property"
     IDS_GROUPBOX_GROUP      "Organize items by this property"
 END
 
-STRINGTABLE 
-BEGIN
-    ID_PANE_FILTERWND       "Shows or hides the filter pane.\nFilter pane"
-    ID_PANE_INSPECTORWND    "Shows or hides the inspector pane.\nInspector pane"
-    ID_PANE_HISTORYWND      "Shows or hides the history pane.\nHistory pane"
-END
 
 #endif    // Englisch (neutral) resources
 /////////////////////////////////////////////////////////////////////////////

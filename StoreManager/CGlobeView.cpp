@@ -177,8 +177,10 @@ CGlobeView::CGlobeView()
 {
 	m_pDC = NULL;
 	hRC = NULL;
+
 	lpszCursorName = IDC_WAIT;
 	hCursor = theApp.LoadStandardCursor(IDC_WAIT);
+	m_CursorPos.x = m_CursorPos.y = 0;
 
 	m_Width = m_Height = 0;
 	m_GlobeModel = -1;
@@ -187,7 +189,6 @@ CGlobeView::CGlobeView()
 	m_Scale = 1.0f;
 	m_Radius = m_Momentum = 0.0f;
 	m_Grabbed = FALSE;
-	m_CursorPos.x = m_CursorPos.y = 0;
 	m_AnimCounter = m_MoveCounter = 0;
 
 	ENSURE(YouLookAt.LoadString(IDS_YOULOOKAT));

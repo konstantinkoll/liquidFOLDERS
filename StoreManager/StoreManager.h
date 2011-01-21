@@ -30,6 +30,10 @@ public:
 	UINT m_nTextureSize;
 	UINT m_nMaxTextureSize;
 	UINT m_NagCounter;
+	BOOL m_HideEmptyDrives;
+	BOOL m_HideEmptyDomains;
+	BOOL m_HideStatistics;
+	BOOL m_HideDays;
 	BOOL m_GlobeHQModel;
 	BOOL m_GlobeLighting;
 	BOOL m_GlobeAtmosphere;
@@ -37,9 +41,6 @@ public:
 	BOOL m_GlobeBlackBackground;
 	BOOL m_GlobeShowViewport;
 	BOOL m_GlobeShowCrosshairs;
-	BOOL m_HideEmptyDrives;
-	BOOL m_HideEmptyDomains;
-	BOOL m_HideStatistics;
 	stdext::hash_map<std::string, FormatData> m_FileFormats;
 	std::list<CMainFrame*> m_listMainFrames;
 	CMainFrame* p_Clipboard;
@@ -64,6 +65,7 @@ public:
 	void UpdateSortOptions(INT context);
 	void UpdateViewOptions(INT context=-1);
 	void Reload(INT context);
+	void UpdateSearchResult(INT context);
 	void PrepareFormatData(CHAR* FileFormat);
 
 		static CString GetCommandName(UINT nID, BOOL bInsertSpace=FALSE);							// Axe

@@ -505,35 +505,38 @@ INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndTaskbar.AddButton(IDM_STORES_MAINTAINALL, 1, TRUE);
 	m_wndTaskbar.AddButton(IDM_HOME_IMPORTFOLDER, 2, TRUE);
 	m_wndTaskbar.AddButton(IDM_HOUSEKEEPING_REGISTER, 3, TRUE);
-	m_wndTaskbar.AddButton(IDM_HOUSEKEEPING_SEND, 28, TRUE);
+	m_wndTaskbar.AddButton(IDM_HOUSEKEEPING_SEND, 31, TRUE);
 	m_wndTaskbar.AddButton(IDM_TRASH_EMPTY, 4, TRUE);
 	m_wndTaskbar.AddButton(IDM_TRASH_RESTOREALL, 5, TRUE);
-	m_wndTaskbar.AddButton(IDM_GLOBE_JUMPTOLOCATION, 6, TRUE);
-	m_wndTaskbar.AddButton(IDM_GLOBE_ZOOMIN, 7);
-	m_wndTaskbar.AddButton(IDM_GLOBE_ZOOMOUT, 8);
-	m_wndTaskbar.AddButton(IDM_GLOBE_AUTOSIZE, 9);
-	m_wndTaskbar.AddButton(IDM_TAGCLOUD_SORTVALUE, 10);
-	m_wndTaskbar.AddButton(IDM_TAGCLOUD_SORTCOUNT, 11);
-	m_wndTaskbar.AddButton(IDM_ITEM_OPEN, 12);
-	m_wndTaskbar.AddButton(IDM_GLOBE_GOOGLEEARTH, 13, TRUE);
-	m_wndTaskbar.AddButton(IDM_DRIVE_PROPERTIES, 14);
-	m_wndTaskbar.AddButton(IDM_STORE_DELETE, 15);
-	m_wndTaskbar.AddButton(IDM_STORE_RENAME, 16);
-	m_wndTaskbar.AddButton(IDM_STORE_PROPERTIES, 17);
-	m_wndTaskbar.AddButton(IDM_STORE_MAKEDEFAULT, 18);
+	m_wndTaskbar.AddButton(IDM_CALENDAR_PREVYEAR, 6, TRUE);
+	m_wndTaskbar.AddButton(IDM_CALENDAR_NEXTYEAR, 7, TRUE);
+	m_wndTaskbar.AddButton(IDM_CALENDAR_GOTOYEAR, 8);
+	m_wndTaskbar.AddButton(IDM_GLOBE_JUMPTOLOCATION, 9, TRUE);
+	m_wndTaskbar.AddButton(IDM_GLOBE_ZOOMIN, 10);
+	m_wndTaskbar.AddButton(IDM_GLOBE_ZOOMOUT, 11);
+	m_wndTaskbar.AddButton(IDM_GLOBE_AUTOSIZE, 12);
+	m_wndTaskbar.AddButton(IDM_TAGCLOUD_SORTVALUE, 13);
+	m_wndTaskbar.AddButton(IDM_TAGCLOUD_SORTCOUNT, 14);
+	m_wndTaskbar.AddButton(IDM_ITEM_OPEN, 15);
+	m_wndTaskbar.AddButton(IDM_GLOBE_GOOGLEEARTH, 16, TRUE);
+	m_wndTaskbar.AddButton(IDM_DRIVE_PROPERTIES, 17);
+	m_wndTaskbar.AddButton(IDM_STORE_DELETE, 18);
+	m_wndTaskbar.AddButton(IDM_STORE_RENAME, 19);
+	m_wndTaskbar.AddButton(IDM_STORE_PROPERTIES, 20);
+	m_wndTaskbar.AddButton(IDM_STORE_MAKEDEFAULT, 21);
 	m_wndTaskbar.AddButton(IDM_STORE_IMPORTFOLDER, 2);
-	m_wndTaskbar.AddButton(IDM_FILE_REMEMBER, 19);
-	m_wndTaskbar.AddButton(IDM_FILE_REMOVE, 20);
-	m_wndTaskbar.AddButton(IDM_FILE_DELETE, 21);
-	m_wndTaskbar.AddButton(IDM_FILE_RENAME, 22);
-	m_wndTaskbar.AddButton(IDM_FILE_SEND, 23);
-	m_wndTaskbar.AddButton(IDM_FILE_RESTORE, 24);
-	m_wndTaskbar.AddButton(ID_APP_NEWFILEDROP, 25, TRUE);
+	m_wndTaskbar.AddButton(IDM_FILE_REMEMBER, 22);
+	m_wndTaskbar.AddButton(IDM_FILE_REMOVE, 23);
+	m_wndTaskbar.AddButton(IDM_FILE_DELETE, 24);
+	m_wndTaskbar.AddButton(IDM_FILE_RENAME, 25);
+	m_wndTaskbar.AddButton(IDM_FILE_SEND, 26);
+	m_wndTaskbar.AddButton(IDM_FILE_RESTORE, 27);
+	m_wndTaskbar.AddButton(ID_APP_NEWFILEDROP, 28, TRUE);
 
-	m_wndTaskbar.AddButton(ID_APP_PURCHASE, 26, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_ENTERLICENSEKEY, 27, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_SUPPORT, 28, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_ABOUT, 29, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_PURCHASE, 29, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_ENTERLICENSEKEY, 30, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_SUPPORT, 31, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_ABOUT, 32, TRUE, TRUE);
 
 	// Explorer header
 	if (!m_wndExplorerHeader.Create(this, 2))
@@ -628,8 +631,6 @@ void CMainView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 			pPopup->InsertMenu(0, MF_STRING | MF_BYPOSITION, IDM_STORES_HIDEEMPTYDRIVES, tmpStr);
 			break;
 		case LFContextStoreHome:
-			ENSURE(tmpStr.LoadString(IDM_HOME_HIDESTATISTICS));
-			pPopup->InsertMenu(0, MF_STRING | MF_BYPOSITION, IDM_HOME_HIDESTATISTICS, tmpStr);
 			ENSURE(tmpStr.LoadString(IDM_HOME_HIDEEMPTYDOMAINS));
 			pPopup->InsertMenu(0, MF_STRING | MF_BYPOSITION, IDM_HOME_HIDEEMPTYDOMAINS, tmpStr);
 			break;
@@ -778,7 +779,7 @@ void CMainView::OnHomeHideEmptyDomains()
 void CMainView::OnHomeHideStatistics()
 {
 	theApp.m_HideStatistics = !theApp.m_HideStatistics;
-	theApp.UpdateViewOptions(LFContextStoreHome);
+	theApp.UpdateSearchResult(LFContextStoreHome);
 }
 
 void CMainView::OnHomeImportFolder()
