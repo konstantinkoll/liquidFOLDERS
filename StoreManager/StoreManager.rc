@@ -38,6 +38,7 @@ IDD_VIEWOPTIONS         ICON                    "res\\ViewOptions_Tiny.ico"
 IDD_SORTOPTIONS         ICON                    "res\\SortOptions_Tiny.ico"
 IDD_CHOOSEDETAILS       ICON                    "res\\Table_Tiny.ico"
 IDD_GLOBEOPTIONS        ICON                    "res\\GlobeOptions_Tiny.ico"
+IDD_GOTOYEAR            ICON                    "res\\GotoDate_Tiny.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -267,6 +268,18 @@ BEGIN
     CONTROL         "Fadenkreuz zeigen",IDC_CROSSHAIRS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,204,150,10
 END
 
+IDD_GOTOYEAR DIALOGEX 0, 0, 122, 78
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
+CAPTION "Gehe zu Jahr"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    GROUPBOX        "Jahreskalender",IDC_STATIC,7,7,108,44
+    LTEXT           "Anzuzeigendes Jahr:",IDC_STATIC,14,18,93,8
+    EDITTEXT        IDC_YEAR,14,28,94,14,ES_AUTOHSCROLL | WS_GROUP
+    DEFPUSHBUTTON   "OK",IDOK,7,57,50,14,WS_GROUP
+    PUSHBUTTON      "Abbrechen",IDCANCEL,65,57,50,14,WS_GROUP
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -306,6 +319,14 @@ BEGIN
         RIGHTMARGIN, 171
         TOPMARGIN, 7
         BOTTOMMARGIN, 241
+    END
+
+    IDD_GOTOYEAR, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 115
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 71
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -531,6 +552,18 @@ BEGIN
     CONTROL         "Show cross&hairs",IDC_CROSSHAIRS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,204,150,10
 END
 
+IDD_GOTOYEAR DIALOGEX 0, 0, 122, 78
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
+CAPTION "Gehe zu Jahr"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    GROUPBOX        "Calendar",IDC_STATIC,7,7,108,44
+    LTEXT           "Display this year:",IDC_STATIC,14,18,93,8
+    EDITTEXT        IDC_YEAR,14,28,94,14,ES_AUTOHSCROLL | WS_GROUP
+    DEFPUSHBUTTON   "OK",IDOK,7,57,50,14,WS_GROUP
+    PUSHBUTTON      "Cancel",IDCANCEL,65,57,50,14,WS_GROUP
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -570,6 +603,14 @@ BEGIN
         RIGHTMARGIN, 171
         TOPMARGIN, 7
         BOTTOMMARGIN, 241
+    END
+
+    IDD_GOTOYEAR, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 115
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 71
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -734,11 +775,11 @@ END
 
 STRINGTABLE 
 BEGIN
+    IDM_GLOBE_JUMPTOLOCATION 
+                            "Centers the globe on a specific location.\nJump to location"
     IDM_GLOBE_ZOOMIN        "Zooms into the globe.\nZoom in"
     IDM_GLOBE_ZOOMOUT       "Zooms out of the globe.\nZoom out"
     IDM_GLOBE_AUTOSIZE      "Resizes the globe to touch the edges of the window.\nSize to fit"
-    IDM_GLOBE_JUMPTOLOCATION 
-                            "Centers the globe on a specific location.\nJump to location"
     IDM_GLOBE_GOOGLEEARTH   "Opens the selected locations in Google Earth.\nOpen in Google Earth"
 END
 
@@ -809,6 +850,10 @@ STRINGTABLE
 BEGIN
     IDM_CALENDAR_PREVYEAR   "Displays the previous year.\nPrevious year"
     IDM_CALENDAR_NEXTYEAR   "Displays the next year.\nNext year"
+END
+
+STRINGTABLE 
+BEGIN
     IDM_CALENDAR_GOTOYEAR   "Shows a window that lets you choose a year to display.\nGo to year"
 END
 
@@ -819,7 +864,6 @@ BEGIN
     IDS_GROUPBOX_SORT       "Sort items by this property"
     IDS_GROUPBOX_GROUP      "Organize items by this property"
 END
-
 
 #endif    // Englisch (neutral) resources
 /////////////////////////////////////////////////////////////////////////////

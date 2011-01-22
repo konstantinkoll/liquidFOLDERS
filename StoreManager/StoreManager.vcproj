@@ -686,6 +686,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\GotoDate_Tiny.ico"
+				>
+			</File>
+			<File
 				RelativePath=".\res\Grouping_32.bmp"
 				>
 			</File>

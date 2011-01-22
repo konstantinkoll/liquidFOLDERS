@@ -154,6 +154,8 @@
 #define IDC_BLACKBACKGROUND             2210
 #define IDC_VIEWPORT                    2211
 #define IDC_CROSSHAIRS                  2212
+#define IDD_GOTOYEAR                    2300
+#define IDC_YEAR                        2301
 #define IDM_STORES_HIDEEMPTYDRIVES      3000
 #define IDM_STORES_REPAIRCORRUPTEDINDEX 3001
 #define IDM_HOME                        3100
@@ -211,9 +213,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        2009
+#define _APS_NEXT_RESOURCE_VALUE        2010
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         2016
+#define _APS_NEXT_CONTROL_VALUE         2017
 #define _APS_NEXT_SYMED_VALUE           2007
 #endif
 #endif
