@@ -216,9 +216,6 @@ void CGlobeView::SetViewOptions(BOOL Force)
 		PrepareModel();
 		m_IsHQModel = theApp.m_GlobeHQModel;
 	}
-
-	m_ViewParameters = *p_ViewParameters;
-	UpdateScene(TRUE);
 }
 
 void CGlobeView::SetSearchResult(LFSearchResult* Result)

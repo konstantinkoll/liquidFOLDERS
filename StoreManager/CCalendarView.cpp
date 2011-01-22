@@ -13,7 +13,22 @@
 CCalendarView::CCalendarView()
 	: CFileView()
 {
-	m_HideDays = theApp.m_HideDays;
+	ZeroMemory(&m_Months, sizeof(m_Months));
+	ZeroMemory(&m_Days, sizeof(m_Days));
+}
+
+void CCalendarView::SetViewOptions(BOOL Force)
+{
+	if (Force)
+	{
+		m_Year = 2011;	// TODO
+	}
+
+	if (Force || (m_HideDays!=theApp.m_HideDays))
+	{
+		m_HideDays = theApp.m_HideDays;
+		AdjustLayout();
+	}
 }
 
 CMenu* CCalendarView::GetBackgroundContextMenu()
@@ -23,14 +38,47 @@ CMenu* CCalendarView::GetBackgroundContextMenu()
 	return pMenu;
 }
 
+void CCalendarView::GetMonthSize(LPSIZE Size)
+{
+	Size->cx = Size->cy = 150; // TODO
+}
 
 
 BEGIN_MESSAGE_MAP(CCalendarView, CFileView)
+	ON_WM_CREATE()
 	ON_WM_PAINT()
 
 	ON_COMMAND(IDM_CALENDAR_HIDEDAYS, OnHideDays)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_CALENDAR_HIDEDAYS, IDM_CALENDAR_GOTOYEAR, OnUpdateCommands)
 END_MESSAGE_MAP()
+
+INT CCalendarView::OnCreate(LPCREATESTRUCT lpCreateStruct)
+{
+	if (CFileView::OnCreate(lpCreateStruct)==-1)
+		return -1;
+
+	// Month names
+	for (UINT a=0; a<12; a++)
+	{
+		GetCalendarInfo(LOCALE_USER_DEFAULT, CAL_GREGORIAN, CAL_SMONTHNAME1+a, m_Months[a].Name, 256, NULL);
+		wcscat_s(m_Months[a].Name, 256, L" %d");
+	}
+
+	// Day names
+	for (UINT a=0; a<7; a++)
+	{
+		WCHAR tmpStr[256];
+		GetCalendarInfo(LOCALE_USER_DEFAULT, CAL_GREGORIAN, CAL_SABBREVDAYNAME1+a, tmpStr, 256, NULL);
+		wcsncpy_s(m_Days[a], 3, tmpStr, _TRUNCATE);
+	}
+
+	// First day of week
+	WCHAR DOW[2];
+	GetLocaleInfo(LOCALE_USER_DEFAULT, LOCALE_IFIRSTDAYOFWEEK, DOW, 2);
+	m_FirstDayOfWeek = DOW[0]-L'0';
+
+	return 0;
+}
 
 void CCalendarView::OnPaint()
 {
@@ -77,7 +125,13 @@ void CCalendarView::OnUpdateCommands(CCmdUI* pCmdUI)
 	case IDM_CALENDAR_HIDEDAYS:
 		pCmdUI->SetCheck(theApp.m_HideDays);
 		break;
-}
+	case IDM_CALENDAR_PREVYEAR:
+		b = (m_Year>1900);
+		break;
+	case IDM_CALENDAR_NEXTYEAR:
+		b = (m_Year<2100);
+		break;
+	}
 
 	pCmdUI->Enable(b);
 }
