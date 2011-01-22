@@ -52,8 +52,6 @@ void CGridView::ArrangeHorizontal(GVArrange& gva, BOOL Justify, BOOL ForceBreak,
 		return;
 	}
 
-	CClientDC dc(this);
-
 	CRect rectWindow;
 	GetWindowRect(&rectWindow);
 	if (!rectWindow.Width())
@@ -162,8 +160,6 @@ void CGridView::ArrangeVertical(GVArrange& gva)
 
 	if (!p_Result)
 		return;
-
-	CClientDC dc(this);
 
 	CRect rectWindow;
 	GetWindowRect(&rectWindow);
