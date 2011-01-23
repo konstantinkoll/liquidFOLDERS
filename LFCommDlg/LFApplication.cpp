@@ -15,14 +15,13 @@
 //
 
 BEGIN_MESSAGE_MAP(LFApplication, CWinAppEx)
-	ON_COMMAND(ID_APP_HELP, OnAppHelp)
 	ON_COMMAND(ID_APP_PURCHASE, OnAppPurchase)
 	ON_COMMAND(ID_APP_ENTERLICENSEKEY, OnAppEnterLicenseKey)
 	ON_COMMAND(ID_APP_SUPPORT, OnAppSupport)
 	ON_COMMAND(ID_APP_NEWFILEDROP, OnAppNewFileDrop)
 	ON_COMMAND(ID_APP_NEWMIGRATE, OnAppNewMigrate)
 	ON_COMMAND(ID_APP_NEWSTOREMANAGER, OnAppNewStoreManager)
-	ON_UPDATE_COMMAND_UI_RANGE(ID_APP_HELP, ID_APP_ENTERLICENSEKEY, OnUpdateAppCommands)
+	ON_UPDATE_COMMAND_UI_RANGE(ID_APP_PURCHASE, ID_APP_ENTERLICENSEKEY, OnUpdateAppCommands)
 END_MESSAGE_MAP()
 
 extern AFX_EXTENSION_MODULE LFCommDlgDLL;
@@ -362,13 +361,6 @@ void LFApplication::OnUpdateAppCommands(CCmdUI* pCmdUI)
 	default:
 		pCmdUI->Enable(TRUE);
 	}
-}
-
-void LFApplication::OnAppHelp()
-{
-	CString url;
-	ENSURE(url.LoadString(IDS_HELPURL));
-	ShellExecute(m_pActiveWnd->GetSafeHwnd(), _T("open"), url, NULL, NULL, SW_SHOW);
 }
 
 void LFApplication::OnAppPurchase()

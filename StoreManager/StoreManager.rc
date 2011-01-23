@@ -274,7 +274,7 @@ CAPTION "Gehe zu Jahr"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     GROUPBOX        "Jahreskalender",IDC_STATIC,7,7,108,44
-    LTEXT           "Anzuzeigendes Jahr:",IDC_STATIC,14,18,93,8
+    LTEXT           "Dieses Jahr anzeigen:",IDC_STATIC,14,18,93,8
     EDITTEXT        IDC_YEAR,14,28,94,14,ES_AUTOHSCROLL | WS_GROUP
     DEFPUSHBUTTON   "OK",IDOK,7,57,50,14,WS_GROUP
     PUSHBUTTON      "Abbrechen",IDCANCEL,65,57,50,14,WS_GROUP

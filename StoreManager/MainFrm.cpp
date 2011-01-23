@@ -698,9 +698,6 @@ void CMainFrame::InitializeRibbon()
 	lstQATCmds.AddTail(ID_NAV_BACK);
 	lstQATCmds.AddTail(ID_NAV_FORWARD);
 	m_wndRibbonBar.SetQuickAccessCommands(lstQATCmds);
-
-	// Hilfe hinzufügen
-	m_wndRibbonBar.AddToTabs(new CMFCRibbonButton(ID_APP_HELP, NULL, m_PanelImages.ExtractIcon(0)));
 }
 
 

@@ -121,7 +121,6 @@ public:
 protected:
 	CString GetGlobalRegPath();
 
-	afx_msg void OnAppHelp();
 	afx_msg void OnAppPurchase();
 	afx_msg void OnAppEnterLicenseKey();
 	afx_msg void OnAppSupport();

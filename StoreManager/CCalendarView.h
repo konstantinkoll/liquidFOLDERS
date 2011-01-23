@@ -34,6 +34,8 @@ protected:
 	virtual void SetViewOptions(BOOL Force);
 	virtual void AdjustLayout();
 
+	UINT DaysOfMonth(UINT Month);
+	UINT StartOfMonth(UINT Month);
 	void GetMonthSize(LPSIZE Size);
 	void DrawMonth(CDC& dc, LPRECT rect, INT Month, BOOL Themed);
 
@@ -43,4 +45,7 @@ protected:
 	afx_msg void OnHideDays();
 	afx_msg void OnUpdateCommands(CCmdUI* pCmdUI);
 	DECLARE_MESSAGE_MAP()
+
+private:
+	BOOL IsLeapYear();
 };

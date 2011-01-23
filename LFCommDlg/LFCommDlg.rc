@@ -634,7 +634,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_HELPURL             "http://liquidFOLDERS.net/tour/de/"
     IDS_PURCHASEURL         "http://liquidFOLDERS.net/purchase/de/"
     IDS_ERROR               "Fehler"
     IDS_STORES_SINGULAR     "%d Store"
@@ -680,7 +679,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    ID_APP_HELP             "Öffnet den Standard-Browser und zeigt eine geführte Tour durch liquidFOLDERS an.\nGeführte Tour"
     ID_APP_SUPPORT          "Öffnet das Standard-Mailprogramm für eine  EMail an den Kundenservice.\nEMail an Kundenservice"
     ID_APP_NEWFILEDROP      "Öffnet ein neues FileDrop-Fenster.\nFileDrop starten"
     ID_APP_NEWMIGRATE       "Öffnet den Migrations-Assistenten.\nMigrations-Assistent starten"
@@ -1180,7 +1178,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_HELPURL             "http://liquidFOLDERS.net/tour/en/"
     IDS_PURCHASEURL         "http://liquidFOLDERS.net/purchase/en/"
     IDS_ERROR               "Error"
     IDS_STORES_SINGULAR     "%d store"
@@ -1226,7 +1223,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    ID_APP_HELP             "Opens your standard browser displaying a guided tour to liquidFOLDERS.\nGuided tour"
     ID_APP_SUPPORT          "Opens your standard mail software to contact customer support.\nContact support"
     ID_APP_NEWFILEDROP      "Opens a new FileDrop window.\nOpen FileDrop"
     ID_APP_NEWMIGRATE       "Opens the migration wizard.\nOpen Migration Wizard"
@@ -1734,7 +1730,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_HELPURL             "http://liquidFOLDERS.net/tour/es/"
     IDS_PURCHASEURL         "http://liquidFOLDERS.net/purchase/es/"
     IDS_ERROR               "Error"
     IDS_STORES_SINGULAR     "%d store"
@@ -1780,7 +1775,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    ID_APP_HELP             "Abre su navegador estándar visualizando una visita guiada a liquidFOLDERS.\nVisita guiada"
     ID_APP_SUPPORT          "Abre su software estándar de correo para contactar a servicio al cliente.\nContacto de servicio"
     ID_APP_NEWFILEDROP      "Abre una ventana nueva de FileDrop.\nEmpezar FileDrop"
     ID_APP_NEWMIGRATE       "Abre el asistente de migración.\nEmpezar Asistente de Migración"
@@ -2290,7 +2284,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_HELPURL             "http://liquidFOLDERS.net/tour/fr/"
     IDS_PURCHASEURL         "http://liquidFOLDERS.net/purchase/fr/"
     IDS_ERROR               "Erreur"
     IDS_STORES_SINGULAR     "%d store"
@@ -2336,7 +2329,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    ID_APP_HELP             "Ouvre le standard-browser et indique un tour mené par liquidFOLDERS\nTour mené"
     ID_APP_SUPPORT          "Produis un nouvel e-mail au service aprés-vente.\nE-mail au service aprés-vente"
     ID_APP_NEWFILEDROP      "Ouvre une nouvelle fenêtre de FileDrop.\nCommoncer FileDrop"
     ID_APP_NEWMIGRATE       "Ouvre l'assistant de migration.\nCommmencer l'assistant de migration"
