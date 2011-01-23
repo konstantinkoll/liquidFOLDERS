@@ -52,6 +52,7 @@ protected:
 	afx_msg void OnPaint();
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 	DECLARE_MESSAGE_MAP()
+
 private:
 	DynArray<ItemCategory> m_Categories;
 

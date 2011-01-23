@@ -11,21 +11,21 @@
 // CListView
 //
 
-#define GetItemData(idx)                   ((GridItemData*)(m_ItemData+(idx)*m_DataSize))
-#define PADDING                            2
-#define DrawLabel(dc, rect, i, format)     dc.DrawText(GetLabel(i), -1, rect, DT_END_ELLIPSIS | format);
-#define SwitchColor(dc, d)                 if ((Themed) && (!(i->CoreAttributes.Flags & LFFlagMissing)) && ((hThemeList) || (!d->Hdr.Selected))) dc.SetTextColor(0x808080);
-#define PrepareBlend()                     INT w = min(rect.Width(), RatingBitmapWidth); \
-                                           INT h = min(rect.Height(), RatingBitmapHeight); \
-                                           BLENDFUNCTION BF = { AC_SRC_OVER, 0, 0xFF, AC_SRC_ALPHA };
-#define Blend(dc, rect, level, bitmaps)    { HDC hdcMem = CreateCompatibleDC(dc); \
-                                           HBITMAP hbmOld = (HBITMAP)SelectObject(hdcMem, bitmaps[level>LFMaxRating ? 0 : level]); \
-                                           AlphaBlend(dc, rect.left, rect.top+1, w, h, hdcMem, 0, 0, w, h, BF); \
-                                           SelectObject(hdcMem, hbmOld); \
-                                           DeleteDC(hdcMem); }
-#define RIGHTCOLUMN                        215
-#define MAXAUTOWIDTH                       400
-#define MINWIDTH                           32
+#define GetItemData(idx)                    ((GridItemData*)(m_ItemData+(idx)*m_DataSize))
+#define PADDING                             2
+#define DrawLabel(dc, rect, i, format)      dc.DrawText(GetLabel(i), -1, rect, DT_END_ELLIPSIS | format);
+#define SwitchColor(dc, d)                  if ((Themed) && (!(i->CoreAttributes.Flags & LFFlagMissing)) && ((hThemeList) || (!d->Hdr.Selected))) dc.SetTextColor(0x808080);
+#define PrepareBlend()                      INT w = min(rect.Width(), RatingBitmapWidth); \
+                                            INT h = min(rect.Height(), RatingBitmapHeight); \
+                                            BLENDFUNCTION BF = { AC_SRC_OVER, 0, 0xFF, AC_SRC_ALPHA };
+#define Blend(dc, rect, level, bitmaps)     { HDC hdcMem = CreateCompatibleDC(dc); \
+                                            HBITMAP hbmOld = (HBITMAP)SelectObject(hdcMem, bitmaps[level>LFMaxRating ? 0 : level]); \
+                                            AlphaBlend(dc, rect.left, rect.top+1, w, h, hdcMem, 0, 0, w, h, BF); \
+                                            SelectObject(hdcMem, hbmOld); \
+                                            DeleteDC(hdcMem); }
+#define RIGHTCOLUMN                         215
+#define MAXAUTOWIDTH                        400
+#define MINWIDTH                            32
 
 CListView::CListView(UINT DataSize)
 	: CGridView(DataSize)
