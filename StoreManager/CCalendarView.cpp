@@ -10,11 +10,12 @@
 // CCalendarView
 //
 
-#define GetItemData(idx)     ((GridItemData*)(m_ItemData+(idx)*m_DataSize))
+#define GetItemData(idx)     ((FVItemData*)(m_ItemData+(idx)*m_DataSize))
 #define PADDING              2
 #define MARGINLEFT           15-PADDING
 #define GUTTER               20
 #define COLUMNGUTTER         8
+#define EMPTY                ((UINT)-1)
 
 CCalendarView::CCalendarView()
 	: CFileView()
@@ -62,6 +63,10 @@ Restart:
 
 	for (UINT a=0; a<12; a++)
 	{
+		memset(&m_Months[a].Matrix, EMPTY, sizeof(m_Months[a].Matrix));
+		m_Months[a].SOM = StartOfMonth(a);
+		m_Months[a].DOM = DaysOfMonth(a);
+
 		LPRECT rect = &m_Months[a].Rect;
 		rect->left = x;
 		rect->top = y;
@@ -91,6 +96,36 @@ Restart:
 			y += sz.cy+GUTTER;
 		}
 	}
+
+	if (p_Result)
+		for (UINT a=0; a<p_Result->m_ItemCount; a++)
+		{
+			LFItemDescriptor* i = p_Result->m_Items[a];
+			if (i->AttributeValues[m_ViewParameters.SortBy])
+			{
+				SYSTEMTIME stUTC;
+				SYSTEMTIME stLocal;
+				FileTimeToSystemTime((FILETIME*)i->AttributeValues[m_ViewParameters.SortBy], &stUTC);
+				SystemTimeToTzSpecificLocalTime(NULL, &stUTC, &stLocal);
+
+				if (stLocal.wYear==m_Year)
+				{
+					ASSERT(stLocal.wMonth<=12);
+					ASSERT(stLocal.wDay<=31);
+					CalendarMonth* m = &m_Months[stLocal.wMonth-1];
+
+					m->Matrix[stLocal.wDay-1] = a;
+
+					LPRECT rect = &GetItemData(a)->Rect;
+					rect->left = m->Rect.left+CategoryPadding+((stLocal.wDay+m->SOM-1)%7)*(m_ColumnWidth+COLUMNGUTTER);
+					rect->top = m->Rect.top+m_FontHeight[1]+2*CategoryPadding+((stLocal.wDay+m->SOM-1)/7)*(m_FontHeight[0]+2*PADDING-1);
+					if (!m_HideDays)
+						rect->top += m_FontHeight[0]+CategoryPadding;
+					rect->right = rect->left+m_ColumnWidth;
+					rect->bottom = rect->top+m_FontHeight[0]+2*PADDING;
+				}
+			}
+		}
 
 	AdjustScrollbars();
 	Invalidate();
@@ -184,20 +219,26 @@ void CCalendarView::DrawMonth(CDC& dc, LPRECT rect, INT Month, BOOL Themed)
 	rect->top += CategoryPadding;
 
 	// Matrix
-	COLORREF clrDay = Themed ? 0x808080 : GetSysColor(COLOR_3DFACE);
-	COLORREF clrItem = Themed ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT);
+	COLORREF clrDay = Themed ? 0xA8A8A8 : GetSysColor(COLOR_3DFACE);
 
-	UINT col = StartOfMonth(Month);
+	UINT col = m_Months[Month].SOM;
 	UINT row = 0;
-	for (UINT Day=0; Day<DaysOfMonth(Month); Day++)
+	for (UINT Day=0; Day<m_Months[Month].DOM; Day++)
 	{
 		rectItem.MoveToXY(rect->left+CategoryPadding+col*(m_ColumnWidth+COLUMNGUTTER), rect->top+row*(m_FontHeight[0]+2*PADDING-1));
+		if (m_Months[Month].Matrix[Day]!=EMPTY)
+		{
+			DrawItemBackground(dc, rectItem, (INT)m_Months[Month].Matrix[Day], Themed);
+		}
+		else
+		{
+			dc.SetTextColor(clrDay);
+		}
 
 		CString tmpStr;
 		tmpStr.Format(_T("%d"), Day+1);
 
 		rectItem.right -= PADDING;
-		dc.SetTextColor(clrDay);
 		dc.DrawText(tmpStr, -1, rectItem, DT_SINGLELINE | DT_END_ELLIPSIS | DT_RIGHT | DT_VCENTER);
 		rectItem.right += PADDING;
 

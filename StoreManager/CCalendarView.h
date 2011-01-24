@@ -14,6 +14,9 @@ struct CalendarMonth
 {
 	RECT Rect;
 	WCHAR Name[256];
+	UINT Matrix[31];
+	UINT SOM;			// Start of month
+	UINT DOM;			// Days of month
 };
 
 class CCalendarView : public CFileView
