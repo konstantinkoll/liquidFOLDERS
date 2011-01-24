@@ -627,7 +627,7 @@ END
 
 IDD_GOTOYEAR DIALOGEX 0, 0, 122, 78
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
-CAPTION "Gehe zu Jahr"
+CAPTION "Go to year"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     GROUPBOX        "Calendar",IDC_STATIC,7,7,108,44
@@ -954,6 +954,87 @@ LANGUAGE LANG_SPANISH, SUBLANG_NEUTRAL
 
 /////////////////////////////////////////////////////////////////////////////
 //
+// Menu
+//
+
+IDM_TAGCLOUD_SORT MENU 
+BEGIN
+    MENUITEM "Sort by &value",              IDM_TAGCLOUD_SORTVALUE
+    MENUITEM "Sort by &count",              IDM_TAGCLOUD_SORTCOUNT
+    MENUITEM SEPARATOR
+    MENUITEM "Hide &rare tags",             IDM_TAGCLOUD_HIDERARE
+END
+
+IDM_TAGCLOUD MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "Use &font size",              IDM_TAGCLOUD_USESIZE
+        MENUITEM "Use &color",                  IDM_TAGCLOUD_USECOLORS
+        MENUITEM "Use &opacity",                IDM_TAGCLOUD_USEOPACITY
+    END
+END
+
+IDM_HOUSEKEEPING MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM SEPARATOR
+        MENUITEM "Re&gister unknown file formats", IDM_HOUSEKEEPING_REGISTER
+        MENUITEM "&Send information",           IDM_HOUSEKEEPING_SEND
+    END
+END
+
+IDM_HOME MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "Hide &statistics",            IDM_HOME_HIDESTATISTICS
+        MENUITEM SEPARATOR
+        MENUITEM "&Importar carpeta...",        IDM_HOME_IMPORTFOLDER
+        MENUITEM "Ejecutar &mantenimiento",     IDM_HOME_MAINTAIN
+        MENUITEM SEPARATOR
+        MENUITEM "&Propiedades",                IDM_HOME_PROPERTIES
+    END
+END
+
+IDM_GLOBE MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "Globe &settings...",          IDM_GLOBE_SETTINGS
+        MENUITEM "Size globe to &fit",          IDM_GLOBE_AUTOSIZE
+        MENUITEM SEPARATOR
+        MENUITEM "Seleccionar &ubicación...",   IDM_GLOBE_JUMPTOLOCATION
+    END
+END
+
+IDM_DETAILS MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "Autoajustar &todas las columnas", IDM_DETAILS_AUTOSIZEALL
+        MENUITEM "Autoajustar &columna",        IDM_DETAILS_AUTOSIZE
+        MENUITEM SEPARATOR
+        MENUITEM SEPARATOR
+        MENUITEM "&More...",                    IDM_DETAILS_CHOOSE
+    END
+END
+
+IDM_CALENDAR MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "Hide &captions",              IDM_CALENDAR_HIDECAPTIONS
+        MENUITEM "Hide empty &days",            IDM_CALENDAR_HIDEEMPTYDAYS
+        MENUITEM SEPARATOR
+        MENUITEM "Go to &year...",              IDM_CALENDAR_GOTOYEAR
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
 // Dialog
 //
 
@@ -1013,6 +1094,43 @@ BEGIN
     PUSHBUTTON      "Cancelar",IDCANCEL,355,242,50,14,WS_GROUP
 END
 
+IDD_GLOBEOPTIONS DIALOGEX 0, 0, 178, 248
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Globe settings"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,63,227,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,121,227,50,14
+    GROUPBOX        "3D settings (OpenGL)",IDC_STATIC,7,7,164,81
+    GROUPBOX        "Objects",IDC_STATIC,7,94,164,66
+    GROUPBOX        "Miscellaneous",IDC_STATIC,7,166,164,53
+    LTEXT           "Texture size:",IDC_STATIC,14,19,54,8
+    COMBOBOX        IDC_TEXTURESIZE,71,17,93,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
+    CONTROL         "&High-quality model",IDC_HQMODEL,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,14,36,150,10
+    CONTROL         "&Lighting",IDC_LIGHTING,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,48,150,10
+    CONTROL         "&Atmosphere",IDC_ATMOSPHERE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,60,150,10
+    CONTROL         "&Shadows",IDC_SHADOWS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,73,150,10
+    CONTROL         "Mark &locations",IDC_SPOTS,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,14,105,150,10
+    CONTROL         "Show &airport names",IDC_AIRPORTNAMES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,118,150,10
+    CONTROL         "Show &GPS ccordinates",IDC_GPSCOORDINATES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,131,150,10
+    CONTROL         "Show &description",IDC_DESCRIPTION,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,144,150,10
+    CONTROL         "&Black background",IDC_BLACKBACKGROUND,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,14,178,150,10
+    CONTROL         "Show &camera viewport",IDC_VIEWPORT,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,14,191,150,10
+    CONTROL         "Show cross&hairs",IDC_CROSSHAIRS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,204,150,10
+END
+
+IDD_GOTOYEAR DIALOGEX 0, 0, 122, 78
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
+CAPTION "Go to year"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    GROUPBOX        "Calendar",IDC_STATIC,7,7,108,44
+    LTEXT           "Display this year:",IDC_STATIC,14,18,93,8
+    EDITTEXT        IDC_YEAR,14,28,94,14,ES_AUTOHSCROLL | WS_GROUP
+    DEFPUSHBUTTON   "OK",IDOK,7,57,50,14,WS_GROUP
+    PUSHBUTTON      "Cancel",IDCANCEL,65,57,50,14,WS_GROUP
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -1045,6 +1163,22 @@ BEGIN
         TOPMARGIN, 7
         BOTTOMMARGIN, 256
     END
+
+    IDD_GLOBEOPTIONS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 171
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 241
+    END
+
+    IDD_GOTOYEAR, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 115
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 71
+    END
 END
 #endif    // APSTUDIO_INVOKED
 
@@ -1060,6 +1194,87 @@ END
 LANGUAGE LANG_FRENCH, SUBLANG_NEUTRAL
 #pragma code_page(1252)
 #endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDM_TAGCLOUD_SORT MENU 
+BEGIN
+    MENUITEM "Sortieren nach &Wert",        IDM_TAGCLOUD_SORTVALUE
+    MENUITEM "Sortieren nach &Anzahl",      IDM_TAGCLOUD_SORTCOUNT
+    MENUITEM SEPARATOR
+    MENUITEM "Verstecke &seltene Tags",     IDM_TAGCLOUD_HIDERARE
+END
+
+IDM_TAGCLOUD MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "Benutze Schrift&größe",       IDM_TAGCLOUD_USESIZE
+        MENUITEM "Benutze &Farbe",              IDM_TAGCLOUD_USECOLORS
+        MENUITEM "Benutze &Deckkraft",          IDM_TAGCLOUD_USEOPACITY
+    END
+END
+
+IDM_HOUSEKEEPING MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM SEPARATOR
+        MENUITEM "Unbekannte Formate re&gistrieren", IDM_HOUSEKEEPING_REGISTER
+        MENUITEM "Informationen &senden",       IDM_HOUSEKEEPING_SEND
+    END
+END
+
+IDM_HOME MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "Verstecke &Statistik",        IDM_HOME_HIDESTATISTICS
+        MENUITEM SEPARATOR
+        MENUITEM "&Importer dossier...",        IDM_HOME_IMPORTFOLDER
+        MENUITEM "Exécuter des &travails d'entretien", IDM_HOME_MAINTAIN
+        MENUITEM SEPARATOR
+        MENUITEM "&Propriétés",                 IDM_HOME_PROPERTIES
+    END
+END
+
+IDM_GLOBE MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "Globus-&Einstellungen...",    IDM_GLOBE_SETTINGS
+        MENUITEM "&Größe anpassen",             IDM_GLOBE_AUTOSIZE
+        MENUITEM SEPARATOR
+        MENUITEM "Choisissez l'&endroit...",    IDM_GLOBE_JUMPTOLOCATION
+    END
+END
+
+IDM_DETAILS MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "&Adapter tous les larges de colonnes", IDM_DETAILS_AUTOSIZEALL
+        MENUITEM "&Adapter le large de colonne", IDM_DETAILS_AUTOSIZE
+        MENUITEM SEPARATOR
+        MENUITEM SEPARATOR
+        MENUITEM "&Mehr...",                    IDM_DETAILS_CHOOSE
+    END
+END
+
+IDM_CALENDAR MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "Verstecke &Überschriften",    IDM_CALENDAR_HIDECAPTIONS
+        MENUITEM "Verstecke leere &Tage",       IDM_CALENDAR_HIDEEMPTYDAYS
+        MENUITEM SEPARATOR
+        MENUITEM "&Jahr auswählen...",          IDM_CALENDAR_GOTOYEAR
+    END
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -1123,6 +1338,43 @@ BEGIN
     PUSHBUTTON      "Annuler",IDCANCEL,335,242,50,14,WS_GROUP
 END
 
+IDD_GLOBEOPTIONS DIALOGEX 0, 0, 178, 248
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Globus-Einstellungen"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,63,227,50,14
+    PUSHBUTTON      "Abbrechen",IDCANCEL,121,227,50,14
+    GROUPBOX        "3D-Einstellungen (OpenGL)",IDC_STATIC,7,7,164,81
+    GROUPBOX        "Objekte",IDC_STATIC,7,94,164,66
+    GROUPBOX        "Sonstiges",IDC_STATIC,7,166,164,53
+    LTEXT           "Texturgröße:",IDC_STATIC,14,19,54,8
+    COMBOBOX        IDC_TEXTURESIZE,71,17,93,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
+    CONTROL         "&Hochauflösendes 3D-Modell",IDC_HQMODEL,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,14,36,150,10
+    CONTROL         "&Beleuchtung",IDC_LIGHTING,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,48,150,10
+    CONTROL         "&Atmosphäre",IDC_ATMOSPHERE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,60,150,10
+    CONTROL         "Scha&tten",IDC_SHADOWS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,73,150,10
+    CONTROL         "&Orte markieren",IDC_SPOTS,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,14,105,150,10
+    CONTROL         "&Flughafen-Namen zeigen",IDC_AIRPORTNAMES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,118,150,10
+    CONTROL         "&GPS-Koordinaten zeigen",IDC_GPSCOORDINATES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,131,150,10
+    CONTROL         "Be&schreibung zeigen",IDC_DESCRIPTION,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,144,150,10
+    CONTROL         "Sch&warzer Hintergrund",IDC_BLACKBACKGROUND,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,178,150,10
+    CONTROL         "&Kamera-Perspektive zeigen",IDC_VIEWPORT,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,14,191,150,10
+    CONTROL         "Fadenkreuz zeigen",IDC_CROSSHAIRS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,204,150,10
+END
+
+IDD_GOTOYEAR DIALOGEX 0, 0, 122, 78
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
+CAPTION "Jahr auswählen"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    GROUPBOX        "Jahreskalender",IDC_STATIC,7,7,108,44
+    LTEXT           "Dieses Jahr anzeigen:",IDC_STATIC,14,18,93,8
+    EDITTEXT        IDC_YEAR,14,28,94,14,ES_AUTOHSCROLL | WS_GROUP
+    DEFPUSHBUTTON   "OK",IDOK,7,57,50,14,WS_GROUP
+    PUSHBUTTON      "Abbrechen",IDCANCEL,65,57,50,14,WS_GROUP
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -1154,6 +1406,22 @@ BEGIN
         RIGHTMARGIN, 385
         TOPMARGIN, 7
         BOTTOMMARGIN, 256
+    END
+
+    IDD_GLOBEOPTIONS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 171
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 241
+    END
+
+    IDD_GOTOYEAR, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 115
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 71
     END
 END
 #endif    // APSTUDIO_INVOKED
