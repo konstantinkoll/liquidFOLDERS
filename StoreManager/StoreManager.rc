@@ -138,15 +138,6 @@ END
 // Toolbar
 //
 
-ID_PANE_HISTORYWND TOOLBAR  16, 16
-BEGIN
-    BUTTON      ID_NAV_BACK
-    BUTTON      ID_NAV_FORWARD
-    BUTTON      ID_NAV_RELOAD
-    SEPARATOR
-    BUTTON      ID_NAV_GOTOHISTORY
-END
-
 ID_PANE_INSPECTORWND TOOLBAR  16, 16
 BEGIN
     BUTTON      ID_INSPECTOR_TOGGLEICON
@@ -181,6 +172,87 @@ END
 LANGUAGE LANG_GERMAN, SUBLANG_NEUTRAL
 #pragma code_page(1252)
 #endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDM_TAGCLOUD_SORT MENU 
+BEGIN
+    MENUITEM "Sortieren nach &Wert",        IDM_TAGCLOUD_SORTVALUE
+    MENUITEM "Sortieren nach &Anzahl",      IDM_TAGCLOUD_SORTCOUNT
+    MENUITEM SEPARATOR
+    MENUITEM "Verstecke &seltene Tags",     IDM_TAGCLOUD_HIDERARE
+END
+
+IDM_TAGCLOUD MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "Benutze Schrift&größe",       IDM_TAGCLOUD_USESIZE
+        MENUITEM "Benutze &Farbe",              IDM_TAGCLOUD_USECOLORS
+        MENUITEM "Benutze &Deckkraft",          IDM_TAGCLOUD_USEOPACITY
+    END
+END
+
+IDM_HOUSEKEEPING MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM SEPARATOR
+        MENUITEM "Unbekannte Formate re&gistrieren", IDM_HOUSEKEEPING_REGISTER
+        MENUITEM "Informationen &senden",       IDM_HOUSEKEEPING_SEND
+    END
+END
+
+IDM_GLOBE MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "Globus-&Einstellungen...",    IDM_GLOBE_SETTINGS
+        MENUITEM "Size globe to &fit",          IDM_GLOBE_AUTOSIZE
+        MENUITEM SEPARATOR
+        MENUITEM "&Ort anzeigen...",            IDM_GLOBE_JUMPTOLOCATION
+    END
+END
+
+IDM_DETAILS MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "&Alle Spaltenbreiten anpassen", IDM_DETAILS_AUTOSIZEALL
+        MENUITEM "&Spaltenbreite anpassen",     IDM_DETAILS_AUTOSIZE
+        MENUITEM SEPARATOR
+        MENUITEM SEPARATOR
+        MENUITEM "&Mehr...",                    IDM_DETAILS_CHOOSE
+    END
+END
+
+IDM_CALENDAR MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "Verstecke &Überschriften",    IDM_CALENDAR_HIDECAPTIONS
+        MENUITEM "Verstecke leere &Tage",       IDM_CALENDAR_HIDEEMPTYDAYS
+        MENUITEM SEPARATOR
+        MENUITEM "&Jahr auswählen...",          IDM_CALENDAR_GOTOYEAR
+    END
+END
+
+IDM_HOME MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "Verstecke &Statistik",        IDM_HOME_HIDESTATISTICS
+        MENUITEM SEPARATOR
+        MENUITEM "&Verzeichnis importieren...", IDM_HOME_IMPORTFOLDER
+        MENUITEM "&Wartungsarbeiten durchführen", IDM_HOME_MAINTAIN
+        MENUITEM SEPARATOR
+        MENUITEM "&Eigenschaften",              IDM_HOME_PROPERTIES
+    END
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -270,7 +342,7 @@ END
 
 IDD_GOTOYEAR DIALOGEX 0, 0, 122, 78
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
-CAPTION "Gehe zu Jahr"
+CAPTION "Jahr auswählen"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     GROUPBOX        "Jahreskalender",IDC_STATIC,7,7,108,44
@@ -463,7 +535,7 @@ BEGIN
     MENUITEM "Sort by &value",              IDM_TAGCLOUD_SORTVALUE
     MENUITEM "Sort by &count",              IDM_TAGCLOUD_SORTCOUNT
     MENUITEM SEPARATOR
-    MENUITEM "&Hide rare tags",             IDM_TAGCLOUD_HIDERARE
+    MENUITEM "Hide &rare tags",             IDM_TAGCLOUD_HIDERARE
 END
 
 
@@ -851,11 +923,11 @@ END
 STRINGTABLE 
 BEGIN
     IDM_CALENDAR_PREVYEAR   "Displays the previous year.\nPrevious year"
-    IDM_CALENDAR_NEXTYEAR   "Displays the next year.\nNext year"
 END
 
 STRINGTABLE 
 BEGIN
+    IDM_CALENDAR_NEXTYEAR   "Displays the next year.\nNext year"
     IDM_CALENDAR_GOTOYEAR   "Shows a window that lets you choose a year to display.\nGo to year"
 END
 

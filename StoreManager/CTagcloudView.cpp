@@ -327,12 +327,12 @@ void CTagcloudView::OnUpdateCommands(CCmdUI* pCmdUI)
 	switch (pCmdUI->m_nID)
 	{
 	case IDM_TAGCLOUD_SORTVALUE:
-		pCmdUI->SetCheck(m_ViewParameters.TagcloudCanonical);
+		pCmdUI->SetRadio(m_ViewParameters.TagcloudCanonical);
 		if (!pCmdUI->m_pMenu)
 			b = !m_ViewParameters.TagcloudCanonical;
 		break;
 	case IDM_TAGCLOUD_SORTCOUNT:
-		pCmdUI->SetCheck(!m_ViewParameters.TagcloudCanonical);
+		pCmdUI->SetRadio(!m_ViewParameters.TagcloudCanonical);
 		if (!pCmdUI->m_pMenu)
 			b = m_ViewParameters.TagcloudCanonical;
 		break;
