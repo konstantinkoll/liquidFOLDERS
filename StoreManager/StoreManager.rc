@@ -211,7 +211,7 @@ BEGIN
     POPUP "POPUP"
     BEGIN
         MENUITEM "Globus-&Einstellungen...",    IDM_GLOBE_SETTINGS
-        MENUITEM "Size globe to &fit",          IDM_GLOBE_AUTOSIZE
+        MENUITEM "&Größe anpassen",             IDM_GLOBE_AUTOSIZE
         MENUITEM SEPARATOR
         MENUITEM "&Ort anzeigen...",            IDM_GLOBE_JUMPTOLOCATION
     END
