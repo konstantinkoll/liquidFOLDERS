@@ -430,7 +430,8 @@ IDM_CALENDAR MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "Hide &days",                  IDM_CALENDAR_HIDEDAYS
+        MENUITEM "Hide &captions",              IDM_CALENDAR_HIDECAPTIONS
+        MENUITEM "Hide empty &days",            IDM_CALENDAR_HIDEEMPTYDAYS
         MENUITEM SEPARATOR
         MENUITEM "Go to &year...",              IDM_CALENDAR_GOTOYEAR
     END

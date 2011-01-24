@@ -32,7 +32,8 @@ protected:
 	CalendarMonth m_Months[12];
 	UINT m_Year;
 	INT m_ColumnWidth;
-	BOOL m_HideDays;
+	BOOL m_HideCaptions;
+	BOOL m_HideEmptyDays;
 
 	virtual void SetViewOptions(BOOL Force);
 	virtual void AdjustLayout();
@@ -45,7 +46,8 @@ protected:
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnPaint();
 
-	afx_msg void OnHideDays();
+	afx_msg void OnHideEmptyDays();
+	afx_msg void OnHideCaptions();
 	afx_msg void OnUpdateCommands(CCmdUI* pCmdUI);
 	DECLARE_MESSAGE_MAP()
 

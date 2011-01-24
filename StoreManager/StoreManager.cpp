@@ -70,7 +70,8 @@ BOOL CStoreManagerApp::InitInstance()
 	m_HideEmptyDrives = GetInt(_T("HideEmptyDrives"), FALSE);
 	m_HideEmptyDomains = GetInt(_T("HideEmptyDomains"), FALSE);
 	m_HideStatistics = GetInt(_T("HideStatistics"), FALSE);
-	m_HideDays = GetInt(_T("HideDays"), FALSE);
+	m_HideCaptions = GetInt(_T("HideCaptions"), FALSE);
+	m_HideEmptyDays = GetInt(_T("HideEmptyDays"), FALSE);
 	m_GlobeHQModel = GetInt(_T("GlobeHQModel"), TRUE);
 	m_GlobeLighting = GetInt(_T("GlobeLighting"), TRUE);
 	m_GlobeAtmosphere = GetInt(_T("GlobeAtmosphere"), TRUE);
@@ -124,7 +125,8 @@ INT CStoreManagerApp::ExitInstance()
 	WriteInt(_T("HideEmptyDrives"), m_HideEmptyDrives);
 	WriteInt(_T("HideEmptyDomains"), m_HideEmptyDomains);
 	WriteInt(_T("HideStatistics"), m_HideStatistics);
-	WriteInt(_T("HideDays"), m_HideDays);
+	WriteInt(_T("HideCaptions"), m_HideCaptions);
+	WriteInt(_T("HideEmptyDays"), m_HideEmptyDays);
 	WriteInt(_T("GlobeHQModel"), m_GlobeHQModel);
 	WriteInt(_T("GlobeLighting"), m_GlobeLighting);
 	WriteInt(_T("GlobeAtmosphere"), m_GlobeAtmosphere);

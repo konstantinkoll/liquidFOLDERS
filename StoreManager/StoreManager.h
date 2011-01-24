@@ -33,7 +33,8 @@ public:
 	BOOL m_HideEmptyDrives;
 	BOOL m_HideEmptyDomains;
 	BOOL m_HideStatistics;
-	BOOL m_HideDays;
+	BOOL m_HideCaptions;
+	BOOL m_HideEmptyDays;
 	BOOL m_GlobeHQModel;
 	BOOL m_GlobeLighting;
 	BOOL m_GlobeAtmosphere;

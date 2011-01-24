@@ -188,10 +188,11 @@
 #define IDM_DETAILS_AUTOSIZE            5002
 #define IDM_DETAILS_CHOOSE              5003
 #define IDM_CALENDAR                    5100
-#define IDM_CALENDAR_HIDEDAYS           5101
-#define IDM_CALENDAR_PREVYEAR           5102
-#define IDM_CALENDAR_NEXTYEAR           5103
-#define IDM_CALENDAR_GOTOYEAR           5104
+#define IDM_CALENDAR_HIDECAPTIONS       5101
+#define IDM_CALENDAR_HIDEEMPTYDAYS      5102
+#define IDM_CALENDAR_PREVYEAR           5103
+#define IDM_CALENDAR_NEXTYEAR           5104
+#define IDM_CALENDAR_GOTOYEAR           5105
 #define IDM_GLOBE                       5200
 #define IDM_GLOBE_JUMPTOLOCATION        5201
 #define IDM_GLOBE_ZOOMIN                5202

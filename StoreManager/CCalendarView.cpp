@@ -28,12 +28,18 @@ void CCalendarView::SetViewOptions(BOOL Force)
 {
 	if (Force)
 	{
-		m_Year = 2011;	// TODO
+		m_Year = 2010;	// TODO
 	}
 
-	if (Force || (m_HideDays!=theApp.m_HideDays))
+	if (Force || (m_HideEmptyDays!=theApp.m_HideEmptyDays))
 	{
-		m_HideDays = theApp.m_HideDays;
+		m_HideEmptyDays = theApp.m_HideEmptyDays;
+		Invalidate();
+	}
+
+	if (Force || (m_HideCaptions!=theApp.m_HideCaptions))
+	{
+		m_HideCaptions = theApp.m_HideCaptions;
 		AdjustLayout();
 	}
 }
@@ -54,7 +60,6 @@ Restart:
 	m_ScrollWidth = m_ScrollHeight = 0;
 
 	INT col = 0;
-//	INT row = 0;
 	INT x = MARGINLEFT;
 	INT y = MARGINLEFT;
 
@@ -91,7 +96,6 @@ Restart:
 		if (++col>=MonthsPerRow)
 		{
 			col = 0;
-//			row ++;
 			x = MARGINLEFT;
 			y += sz.cy+GUTTER;
 		}
@@ -119,7 +123,7 @@ Restart:
 					LPRECT rect = &GetItemData(a)->Rect;
 					rect->left = m->Rect.left+CategoryPadding+((stLocal.wDay+m->SOM-1)%7)*(m_ColumnWidth+COLUMNGUTTER);
 					rect->top = m->Rect.top+m_FontHeight[1]+2*CategoryPadding+((stLocal.wDay+m->SOM-1)/7)*(m_FontHeight[0]+2*PADDING-1);
-					if (!m_HideDays)
+					if (!m_HideCaptions)
 						rect->top += m_FontHeight[0]+CategoryPadding;
 					rect->right = rect->left+m_ColumnWidth;
 					rect->bottom = rect->top+m_FontHeight[0]+2*PADDING;
@@ -190,7 +194,7 @@ void CCalendarView::GetMonthSize(LPSIZE Size)
 
 	Size->cx = 7*m_ColumnWidth+6*COLUMNGUTTER;
 	Size->cy = m_FontHeight[1]+4*CategoryPadding+6*(m_FontHeight[0]+2*PADDING-1)+1;
-	if (!m_HideDays)
+	if (!m_HideCaptions)
 		Size->cy += m_FontHeight[0];
 }
 
@@ -205,7 +209,7 @@ void CCalendarView::DrawMonth(CDC& dc, LPRECT rect, INT Month, BOOL Themed)
 	CRect rectItem(0, rect->top, m_ColumnWidth, rect->top+m_FontHeight[0]+2*PADDING);
 
 	// Days
-	if (!m_HideDays)
+	if (!m_HideCaptions)
 	{
 		for (UINT a=0; a<7; a++)
 		{
@@ -225,22 +229,29 @@ void CCalendarView::DrawMonth(CDC& dc, LPRECT rect, INT Month, BOOL Themed)
 	UINT row = 0;
 	for (UINT Day=0; Day<m_Months[Month].DOM; Day++)
 	{
+		BOOL Draw = FALSE;
+
 		rectItem.MoveToXY(rect->left+CategoryPadding+col*(m_ColumnWidth+COLUMNGUTTER), rect->top+row*(m_FontHeight[0]+2*PADDING-1));
 		if (m_Months[Month].Matrix[Day]!=EMPTY)
 		{
 			DrawItemBackground(dc, rectItem, (INT)m_Months[Month].Matrix[Day], Themed);
+			Draw = TRUE;
 		}
 		else
 		{
 			dc.SetTextColor(clrDay);
+			Draw = !m_HideEmptyDays;
 		}
 
-		CString tmpStr;
-		tmpStr.Format(_T("%d"), Day+1);
+		if (Draw)
+		{
+			CString tmpStr;
+			tmpStr.Format(_T("%d"), Day+1);
 
-		rectItem.right -= PADDING;
-		dc.DrawText(tmpStr, -1, rectItem, DT_SINGLELINE | DT_END_ELLIPSIS | DT_RIGHT | DT_VCENTER);
-		rectItem.right += PADDING;
+			rectItem.right -= PADDING;
+			dc.DrawText(tmpStr, -1, rectItem, DT_SINGLELINE | DT_END_ELLIPSIS | DT_RIGHT | DT_VCENTER);
+			rectItem.right += PADDING;
+		}
 
 		if (++col>=7)
 		{
@@ -255,8 +266,9 @@ BEGIN_MESSAGE_MAP(CCalendarView, CFileView)
 	ON_WM_CREATE()
 	ON_WM_PAINT()
 
-	ON_COMMAND(IDM_CALENDAR_HIDEDAYS, OnHideDays)
-	ON_UPDATE_COMMAND_UI_RANGE(IDM_CALENDAR_HIDEDAYS, IDM_CALENDAR_GOTOYEAR, OnUpdateCommands)
+	ON_COMMAND(IDM_CALENDAR_HIDECAPTIONS, OnHideCaptions)
+	ON_COMMAND(IDM_CALENDAR_HIDEEMPTYDAYS, OnHideEmptyDays)
+	ON_UPDATE_COMMAND_UI_RANGE(IDM_CALENDAR_HIDECAPTIONS, IDM_CALENDAR_GOTOYEAR, OnUpdateCommands)
 END_MESSAGE_MAP()
 
 INT CCalendarView::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -328,9 +340,15 @@ void CCalendarView::OnPaint()
 
 
 
-void CCalendarView::OnHideDays()
+void CCalendarView::OnHideCaptions()
 {
-	theApp.m_HideDays = !theApp.m_HideDays;
+	theApp.m_HideCaptions = !theApp.m_HideCaptions;
+	theApp.UpdateViewOptions();
+}
+
+void CCalendarView::OnHideEmptyDays()
+{
+	theApp.m_HideEmptyDays = !theApp.m_HideEmptyDays;
 	theApp.UpdateViewOptions();
 }
 
@@ -339,8 +357,11 @@ void CCalendarView::OnUpdateCommands(CCmdUI* pCmdUI)
 	BOOL b = TRUE;
 	switch (pCmdUI->m_nID)
 	{
-	case IDM_CALENDAR_HIDEDAYS:
-		pCmdUI->SetCheck(theApp.m_HideDays);
+	case IDM_CALENDAR_HIDECAPTIONS:
+		pCmdUI->SetCheck(theApp.m_HideCaptions);
+		break;
+	case IDM_CALENDAR_HIDEEMPTYDAYS:
+		pCmdUI->SetCheck(theApp.m_HideEmptyDays);
 		break;
 	case IDM_CALENDAR_PREVYEAR:
 		b = (m_Year>1900);
