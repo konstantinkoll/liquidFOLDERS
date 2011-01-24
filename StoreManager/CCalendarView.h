@@ -48,6 +48,9 @@ protected:
 
 	afx_msg void OnHideEmptyDays();
 	afx_msg void OnHideCaptions();
+	afx_msg void OnPrevYear();
+	afx_msg void OnNextYear();
+	afx_msg void OnGoToYear();
 	afx_msg void OnUpdateCommands(CCmdUI* pCmdUI);
 	DECLARE_MESSAGE_MAP()
 

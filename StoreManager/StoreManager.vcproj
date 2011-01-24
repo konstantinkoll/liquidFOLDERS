@@ -434,6 +434,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\GoToYearDlg.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\HistoryWnd.cpp"
 				>
 			</File>
@@ -569,6 +573,10 @@
 			</File>
 			<File
 				RelativePath=".\GLTexture.h"
+				>
+			</File>
+			<File
+				RelativePath=".\GoToYearDlg.h"
 				>
 			</File>
 			<File

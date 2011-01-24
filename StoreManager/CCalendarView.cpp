@@ -5,6 +5,7 @@
 #include "stdafx.h"
 #include "CCalendarView.h"
 #include "StoreManager.h"
+#include "GoToYearDlg.h"
 
 
 // CCalendarView
@@ -265,6 +266,9 @@ BEGIN_MESSAGE_MAP(CCalendarView, CFileView)
 
 	ON_COMMAND(IDM_CALENDAR_HIDECAPTIONS, OnHideCaptions)
 	ON_COMMAND(IDM_CALENDAR_HIDEEMPTYDAYS, OnHideEmptyDays)
+	ON_COMMAND(IDM_CALENDAR_PREVYEAR, OnPrevYear)
+	ON_COMMAND(IDM_CALENDAR_NEXTYEAR, OnNextYear)
+	ON_COMMAND(IDM_CALENDAR_GOTOYEAR, OnGoToYear)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_CALENDAR_HIDECAPTIONS, IDM_CALENDAR_GOTOYEAR, OnUpdateCommands)
 END_MESSAGE_MAP()
 
@@ -347,6 +351,28 @@ void CCalendarView::OnHideEmptyDays()
 {
 	theApp.m_HideEmptyDays = !theApp.m_HideEmptyDays;
 	theApp.UpdateViewOptions();
+}
+
+void CCalendarView::OnPrevYear()
+{
+	m_Year--;
+	AdjustLayout();
+}
+
+void CCalendarView::OnNextYear()
+{
+	m_Year++;
+	AdjustLayout();
+}
+
+void CCalendarView::OnGoToYear()
+{
+	GoToYearDlg dlg(this, m_Year);
+	if (dlg.DoModal()==IDOK)
+	{
+		m_Year = dlg.m_Year;
+		AdjustLayout();
+	}
 }
 
 void CCalendarView::OnUpdateCommands(CCmdUI* pCmdUI)
