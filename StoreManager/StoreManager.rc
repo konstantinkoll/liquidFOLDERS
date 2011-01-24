@@ -253,6 +253,16 @@ BEGIN
     END
 END
 
+IDM_DRIVE MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "&Neuen Store anlegen...",     IDM_DRIVE_CREATENEWSTORE
+        MENUITEM SEPARATOR
+        MENUITEM "&Eigenschaften",              IDM_DRIVE_PROPERTIES
+    END
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -1032,6 +1042,16 @@ BEGIN
     END
 END
 
+IDM_DRIVE MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "Crear &nuevo store...",       IDM_DRIVE_CREATENEWSTORE
+        MENUITEM SEPARATOR
+        MENUITEM "&Propiedades",                IDM_DRIVE_PROPERTIES
+    END
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -1272,6 +1292,16 @@ BEGIN
         MENUITEM "Verstecke leere &Tage",       IDM_CALENDAR_HIDEEMPTYDAYS
         MENUITEM SEPARATOR
         MENUITEM "&Jahr auswählen...",          IDM_CALENDAR_GOTOYEAR
+    END
+END
+
+IDM_DRIVE MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "Créez un store &nouveau...",  IDM_DRIVE_CREATENEWSTORE
+        MENUITEM SEPARATOR
+        MENUITEM "&Propriétés",                 IDM_DRIVE_PROPERTIES
     END
 END
 
