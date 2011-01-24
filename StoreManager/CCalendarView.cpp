@@ -229,22 +229,19 @@ void CCalendarView::DrawMonth(CDC& dc, LPRECT rect, INT Month, BOOL Themed)
 	UINT row = 0;
 	for (UINT Day=0; Day<m_Months[Month].DOM; Day++)
 	{
-		BOOL Draw = FALSE;
+		BOOL Item = (m_Months[Month].Matrix[Day]!=EMPTY);
+		if (Item || !m_HideEmptyDays)
+		{
+			rectItem.MoveToXY(rect->left+CategoryPadding+col*(m_ColumnWidth+COLUMNGUTTER), rect->top+row*(m_FontHeight[0]+2*PADDING-1));
+			if (m_Months[Month].Matrix[Day]!=EMPTY)
+			{
+				DrawItemBackground(dc, rectItem, (INT)m_Months[Month].Matrix[Day], Themed);
+			}
+			else
+			{
+				dc.SetTextColor(clrDay);
+			}
 
-		rectItem.MoveToXY(rect->left+CategoryPadding+col*(m_ColumnWidth+COLUMNGUTTER), rect->top+row*(m_FontHeight[0]+2*PADDING-1));
-		if (m_Months[Month].Matrix[Day]!=EMPTY)
-		{
-			DrawItemBackground(dc, rectItem, (INT)m_Months[Month].Matrix[Day], Themed);
-			Draw = TRUE;
-		}
-		else
-		{
-			dc.SetTextColor(clrDay);
-			Draw = !m_HideEmptyDays;
-		}
-
-		if (Draw)
-		{
 			CString tmpStr;
 			tmpStr.Format(_T("%d"), Day+1);
 
