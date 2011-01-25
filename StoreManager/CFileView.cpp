@@ -157,18 +157,16 @@ void CFileView::UpdateSearchResult(LFSearchResult* Result, INT FocusItem)
 		m_ItemDataAllocated = Result->m_ItemCount;
 		ZeroMemory(m_ItemData, sz);
 
-		for (UINT a=0; a<Result->m_ItemCount; a++)
-		{
-			FVItemData* d = GetItemData(a);
-
-			if ((a<VictimAllocated) && (Result->m_Context!=LFContextClipboard))
+		if ((VictimAllocated) && (Result->m_Context!=LFContextClipboard))
+			for (UINT a=0; a<min(VictimAllocated, Result->m_ItemCount); a++)
 			{
+				FVItemData* d = GetItemData(a);
+
 				BYTE* v = (BYTE*)Victim;
 				v += ((BYTE*)d)-((BYTE*)m_ItemData);
 
 				d->Selected = ((FVItemData*)v)->Selected;
 			}
-		}
 
 		m_DropTarget.Register(this, Result->m_StoreID);
 
@@ -202,6 +200,20 @@ void CFileView::UpdateSearchResult(LFSearchResult* Result, INT FocusItem)
 
 	if (p_Result)
 	{
+		BOOL NeedNewFocusItem = !GetItemData(m_FocusItem)->Valid;
+
+		for (UINT a=0; a<p_Result->m_ItemCount; a++)
+		{
+			FVItemData* d = GetItemData(a);
+			d->Selected &= d->Valid;
+
+			if (NeedNewFocusItem && d->Valid)
+			{
+				m_FocusItem = a;
+				NeedNewFocusItem = FALSE;
+			}
+		}
+
 		AdjustLayout();
 		EnsureVisible(m_FocusItem);
 	}
@@ -229,7 +241,13 @@ void CFileView::AdjustLayout()
 
 INT CFileView::GetFocusItem()
 {
-	return m_FocusItem;
+	if (p_Result)
+	{
+		FVItemData* d = GetItemData(m_FocusItem);
+		return (d->Valid) ? m_FocusItem : -1;
+	}
+
+	return -1;
 }
 
 INT CFileView::GetSelectedItem()
@@ -237,7 +255,7 @@ INT CFileView::GetSelectedItem()
 	if (p_Result)
 	{
 		FVItemData* d = GetItemData(m_FocusItem);
-		return d->Selected ? m_FocusItem : -1;
+		return (d->Selected && d->Valid) ? m_FocusItem : -1;
 	}
 
 	return -1;
@@ -250,8 +268,11 @@ INT CFileView::GetNextSelectedItem(INT idx)
 		ASSERT(idx>=-1);
 
 		while (++idx<(INT)p_Result->m_ItemCount)
-			if (GetItemData(idx)->Selected)
+		{
+			FVItemData* d = GetItemData(idx);
+			if (d->Selected && d->Valid)
 				return idx;
+		}
 	}
 
 	return -1;
@@ -263,9 +284,13 @@ void CFileView::SelectItem(INT idx, BOOL Select, BOOL InternalCall)
 	{
 		ASSERT(idx<(INT)p_Result->m_ItemCount);
 
-		GetItemData(idx)->Selected = Select;
-		if (!InternalCall)
-			ChangedItem(idx);
+		FVItemData* d = GetItemData(idx);
+		if (d->Valid)
+		{
+			d->Selected = Select;
+			if (!InternalCall)
+				ChangedItem(idx);
+		}
 	}
 }
 
@@ -820,7 +845,9 @@ BEGIN_MESSAGE_MAP(CFileView, CWnd)
 	ON_WM_CONTEXTMENU()
 	ON_MESSAGE_VOID(WM_SELECTALL, OnSelectAll)
 	ON_MESSAGE_VOID(WM_SELECTNONE, OnSelectNone)
+	ON_COMMAND(IDM_SELECTALL, OnSelectAll)
 	ON_UPDATE_COMMAND_UI(ID_APP_NEWFILEDROP, OnUpdateCommands)
+	ON_UPDATE_COMMAND_UI(IDM_SELECTALL, OnUpdateCommands)
 	ON_EN_KILLFOCUS(2, OnDestroyEdit)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->ItemsDropped, OnItemsDropped)
 END_MESSAGE_MAP()
@@ -1136,6 +1163,10 @@ void CFileView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 		if ((GetKeyState(VK_CONTROL)<0) && (GetKeyState(VK_SHIFT)>=0))
 			OnSelectNone();
 		break;
+	case 'I':
+		if ((GetKeyState(VK_CONTROL)<0) && (GetKeyState(VK_SHIFT)>=0))
+			OnSelectInvert();
+		break;
 	case VK_SPACE:
 		if (m_FocusItem!=-1)
 			SelectItem(m_FocusItem, (GetKeyState(VK_CONTROL)>=0) ? TRUE : !GetItemData(m_FocusItem)->Selected);
@@ -1360,9 +1391,34 @@ void CFileView::OnSelectNone()
 	}
 }
 
+void CFileView::OnSelectInvert()
+{
+	if (p_Result)
+	{
+		for (INT a=0; a<(INT)p_Result->m_ItemCount; a++)
+			SelectItem(a, !IsSelected(a), TRUE);
+
+		ChangedItems();
+		RedrawWindow();
+	}
+}
+
 void CFileView::OnUpdateCommands(CCmdUI* pCmdUI)
 {
-	pCmdUI->Enable((m_Context<=LFContextStoreHome) && (_waccess(theApp.m_Path+_T("FileDrop.exe"), 0)==0));
+	BOOL b = TRUE;
+
+	switch (pCmdUI->m_nID)
+	{
+	case ID_APP_NEWFILEDROP:
+		b = (m_Context<=LFContextStoreHome) && (_waccess(theApp.m_Path+_T("FileDrop.exe"), 0)==0);
+		break;
+	case IDM_SELECTALL:
+	case IDM_SELECTINVERT:
+		b = p_Result ? p_Result->m_ItemCount : FALSE;
+		break;
+	}
+
+	pCmdUI->Enable(b);
 }
 
 void CFileView::OnDestroyEdit()

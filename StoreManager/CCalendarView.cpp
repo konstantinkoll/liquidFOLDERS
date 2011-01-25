@@ -11,15 +11,17 @@
 // CCalendarView
 //
 
-#define GetItemData(idx)     ((FVItemData*)(m_ItemData+(idx)*m_DataSize))
+#define GetItemData(idx)     ((CalendarItemData*)(m_ItemData+(idx)*m_DataSize))
 #define PADDING              2
 #define MARGINLEFT           15-PADDING
 #define GUTTER               20
 #define COLUMNGUTTER         8
 #define EMPTY                ((UINT)-1)
+#define MINYEAR              1900
+#define MAXYEAR              2100
 
 CCalendarView::CCalendarView()
-	: CFileView()
+	: CFileView(sizeof(CalendarItemData))
 {
 	ZeroMemory(&m_Months, sizeof(m_Months));
 	ZeroMemory(&m_Days, sizeof(m_Days));
@@ -43,6 +45,42 @@ void CCalendarView::SetViewOptions(BOOL Force)
 		m_HideCaptions = theApp.m_HideCaptions;
 		AdjustLayout();
 	}
+}
+
+void CCalendarView::SetSearchResult(LFSearchResult* Result)
+{
+	if (Result)
+		for (UINT a=0; a<Result->m_ItemCount; a++)
+		{
+			LFItemDescriptor* i = Result->m_Items[a];
+			if (i->AttributeValues[m_ViewParameters.SortBy])
+				if (*((INT64*)i->AttributeValues[m_ViewParameters.SortBy]))
+				{
+					CalendarItemData* d = GetItemData(a);
+					d->Hdr.Valid = TRUE;
+
+					SYSTEMTIME stUTC;
+					FileTimeToSystemTime((FILETIME*)i->AttributeValues[m_ViewParameters.SortBy], &stUTC);
+					SystemTimeToTzSpecificLocalTime(NULL, &stUTC, &d->Time);
+				}
+		}
+}
+
+void CCalendarView::SetYear(UINT Year)
+{
+	ASSERT(Year>=MINYEAR);
+	ASSERT(Year<=MAXYEAR);
+	m_Year = Year;
+
+	if (p_Result)
+		for (UINT a=0; a<p_Result->m_ItemCount; a++)
+			if (GetItemData(a)->Time.wYear==Year)
+			{
+				m_FocusItem = a;
+				break;
+			}
+
+	AdjustLayout();
 }
 
 void CCalendarView::AdjustLayout()
@@ -105,30 +143,25 @@ Restart:
 	if (p_Result)
 		for (UINT a=0; a<p_Result->m_ItemCount; a++)
 		{
-			LFItemDescriptor* i = p_Result->m_Items[a];
-			if (i->AttributeValues[m_ViewParameters.SortBy])
+			CalendarItemData* d = GetItemData(a);
+			if (d->Time.wYear==m_Year)
 			{
-				SYSTEMTIME stUTC;
-				SYSTEMTIME stLocal;
-				FileTimeToSystemTime((FILETIME*)i->AttributeValues[m_ViewParameters.SortBy], &stUTC);
-				SystemTimeToTzSpecificLocalTime(NULL, &stUTC, &stLocal);
+				ASSERT(d->Time.wMonth<=12);
+				ASSERT(d->Time.wDay<=31);
+				CalendarMonth* m = &m_Months[d->Time.wMonth-1];
 
-				if (stLocal.wYear==m_Year)
-				{
-					ASSERT(stLocal.wMonth<=12);
-					ASSERT(stLocal.wDay<=31);
-					CalendarMonth* m = &m_Months[stLocal.wMonth-1];
+				UINT Day = d->Time.wDay-1;
+				m->Matrix[Day] = a;
 
-					m->Matrix[stLocal.wDay-1] = a;
+				Day += m->SOM;
 
-					LPRECT rect = &GetItemData(a)->Rect;
-					rect->left = m->Rect.left+CategoryPadding+((stLocal.wDay+m->SOM-1)%7)*(m_ColumnWidth+COLUMNGUTTER);
-					rect->top = m->Rect.top+m_FontHeight[1]+2*CategoryPadding+((stLocal.wDay+m->SOM-1)/7)*(m_FontHeight[0]+2*PADDING-1);
-					if (!m_HideCaptions)
-						rect->top += m_FontHeight[0]+CategoryPadding;
-					rect->right = rect->left+m_ColumnWidth;
-					rect->bottom = rect->top+m_FontHeight[0]+2*PADDING;
-				}
+				LPRECT rect = &d->Hdr.Rect;
+				rect->left = m->Rect.left+CategoryPadding+(Day%7)*(m_ColumnWidth+COLUMNGUTTER);
+				rect->top = m->Rect.top+m_FontHeight[1]+2*CategoryPadding+(Day/7)*(m_FontHeight[0]+2*PADDING-1);
+				if (!m_HideCaptions)
+					rect->top += m_FontHeight[0]+CategoryPadding;
+				rect->right = rect->left+m_ColumnWidth;
+				rect->bottom = rect->top+m_FontHeight[0]+2*PADDING;
 			}
 		}
 
@@ -355,24 +388,19 @@ void CCalendarView::OnHideEmptyDays()
 
 void CCalendarView::OnPrevYear()
 {
-	m_Year--;
-	AdjustLayout();
+	SetYear(m_Year-1);
 }
 
 void CCalendarView::OnNextYear()
 {
-	m_Year++;
-	AdjustLayout();
+	SetYear(m_Year+1);
 }
 
 void CCalendarView::OnGoToYear()
 {
 	GoToYearDlg dlg(this, m_Year);
 	if (dlg.DoModal()==IDOK)
-	{
-		m_Year = dlg.m_Year;
-		AdjustLayout();
-	}
+		SetYear(dlg.m_Year);
 }
 
 void CCalendarView::OnUpdateCommands(CCmdUI* pCmdUI)
@@ -387,10 +415,10 @@ void CCalendarView::OnUpdateCommands(CCmdUI* pCmdUI)
 		pCmdUI->SetCheck(theApp.m_HideEmptyDays);
 		break;
 	case IDM_CALENDAR_PREVYEAR:
-		b = (m_Year>1900);
+		b = (m_Year>MINYEAR);
 		break;
 	case IDM_CALENDAR_NEXTYEAR:
-		b = (m_Year<2100);
+		b = (m_Year<MAXYEAR);
 		break;
 	}
 

@@ -183,16 +183,16 @@ BEGIN
     MENUITEM "Sortieren nach &Wert",        IDM_TAGCLOUD_SORTVALUE
     MENUITEM "Sortieren nach &Anzahl",      IDM_TAGCLOUD_SORTCOUNT
     MENUITEM SEPARATOR
-    MENUITEM "Verstecke &seltene Tags",     IDM_TAGCLOUD_HIDERARE
+    MENUITEM "&Seltene Tags verstecken",    IDM_TAGCLOUD_HIDERARE
 END
 
 IDM_TAGCLOUD MENU 
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "Benutze Schrift&größe",       IDM_TAGCLOUD_USESIZE
-        MENUITEM "Benutze &Farbe",              IDM_TAGCLOUD_USECOLORS
-        MENUITEM "Benutze &Deckkraft",          IDM_TAGCLOUD_USEOPACITY
+        MENUITEM "Schrift&größe",           IDM_TAGCLOUD_USESIZE
+        MENUITEM "&Farbe",                  IDM_TAGCLOUD_USECOLORS
+        MENUITEM "&Deckkraft",              IDM_TAGCLOUD_USEOPACITY
     END
 END
 
@@ -233,8 +233,8 @@ IDM_CALENDAR MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "Verstecke &Überschriften",    IDM_CALENDAR_HIDECAPTIONS
-        MENUITEM "Verstecke leere &Tage",       IDM_CALENDAR_HIDEEMPTYDAYS
+        MENUITEM "&Überschriften ausblenden",   IDM_CALENDAR_HIDECAPTIONS
+        MENUITEM "Leere &Tage ausblenden",      IDM_CALENDAR_HIDEEMPTYDAYS
         MENUITEM SEPARATOR
         MENUITEM "&Jahr auswählen...",          IDM_CALENDAR_GOTOYEAR
     END
@@ -244,7 +244,7 @@ IDM_HOME MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "Verstecke &Statistik",        IDM_HOME_HIDESTATISTICS
+        MENUITEM "&Statistik ausblenden",       IDM_HOME_HIDESTATISTICS
         MENUITEM SEPARATOR
         MENUITEM "&Verzeichnis importieren...", IDM_HOME_IMPORTFOLDER
         MENUITEM "&Wartungsarbeiten durchführen", IDM_HOME_MAINTAIN
@@ -727,16 +727,17 @@ STRINGTABLE
 BEGIN
     IDS_VIEWGROUP1          "Basic views"
     IDS_VIEWGROUP2          "Enhanced views"
+    IDS_CONTEXTMENU_SELECTALL "Select &all\tCtrl+A"
     IDS_CONTEXTMENU_SORTOPTIONS "&Organize ""%s"" by..."
     IDS_CONTEXTMENU_AUTODIRS "&Group into subfolders"
     IDS_CONTEXTMENU_VIEWOPTIONS "&Display ""%s"" as..."
     IDS_CONTEXTMENU_OPEN    "&Open"
     IDS_CONTEXTMENU_OPENWITH "Open &with..."
-    IDS_CONTEXTMENU_OPENGOOGLEEARTH "Open in &Google Earth"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_CONTEXTMENU_OPENGOOGLEEARTH "Open in &Google Earth"
     IDS_CONTEXTMENU_REMEMBER "Re&member"
     IDS_CONTEXTMENU_REMOVE  "Re&move from clipboard"
     IDS_CONTEXTMENU_AUTOSIZEALL "Size all &columns to fit"
@@ -933,10 +934,6 @@ END
 STRINGTABLE 
 BEGIN
     IDM_CALENDAR_PREVYEAR   "Displays the previous year.\nPrevious year"
-END
-
-STRINGTABLE 
-BEGIN
     IDM_CALENDAR_NEXTYEAR   "Displays the next year.\nNext year"
     IDM_CALENDAR_GOTOYEAR   "Shows a window that lets you choose a year to display.\nGo to year"
 END

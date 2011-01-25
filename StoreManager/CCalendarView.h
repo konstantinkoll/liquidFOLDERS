@@ -10,6 +10,12 @@
 // CCalendarView
 //
 
+struct CalendarItemData
+{
+	FVItemData Hdr;
+	SYSTEMTIME Time;
+};
+
 struct CalendarMonth
 {
 	RECT Rect;
@@ -36,8 +42,10 @@ protected:
 	BOOL m_HideEmptyDays;
 
 	virtual void SetViewOptions(BOOL Force);
+	virtual void SetSearchResult(LFSearchResult* Result);
 	virtual void AdjustLayout();
 
+	void SetYear(UINT Year);
 	UINT DaysOfMonth(UINT Month);
 	UINT StartOfMonth(UINT Month);
 	void GetMonthSize(LPSIZE Size);

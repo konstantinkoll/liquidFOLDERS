@@ -107,6 +107,9 @@ void CListView::SetSearchResult(LFSearchResult* Result)
 
 		for (UINT a=0; a<Result->m_ItemCount; a++)
 		{
+			GridItemData* d = GetItemData(a);
+			d->Hdr.Valid = TRUE;
+
 			LFItemDescriptor* i = Result->m_Items[a];
 			if ((i->Type & LFTypeMask)==LFTypeFile)
 				if (!Result->m_HasCategories)

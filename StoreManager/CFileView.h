@@ -63,6 +63,7 @@ struct FVItemData
 {
 	RECT Rect;
 	BOOL Selected;
+	BOOL Valid;
 };
 
 struct ItemCategory
@@ -176,6 +177,7 @@ protected:
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	afx_msg void OnSelectAll();
 	afx_msg void OnSelectNone();
+	afx_msg void OnSelectInvert();
 	afx_msg void OnUpdateCommands(CCmdUI* pCmdUI);
 	afx_msg void OnDestroyEdit();
 	afx_msg LRESULT OnItemsDropped(WPARAM wParam, LPARAM lParam);

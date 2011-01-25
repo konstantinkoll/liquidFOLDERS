@@ -71,7 +71,8 @@ void CTagcloudView::SetSearchResult(LFSearchResult* Result)
 			if ((i->Type & LFTypeMask)==LFTypeVirtual)
 				d->Cnt = i->AggregateCount;
 
-			if (d->Cnt)
+			d->Hdr.Hdr.Valid = d->Cnt;
+			if (d->Hdr.Hdr.Valid)
 			{
 				Minimum = (Minimum==-1) ? d->Cnt : min(Minimum, d->Cnt);
 				Maximum = (Maximum==-1) ? d->Cnt : max(Maximum, d->Cnt);
@@ -85,7 +86,7 @@ void CTagcloudView::SetSearchResult(LFSearchResult* Result)
 		for (UINT a=0; a<Result->m_ItemCount; a++)
 		{
 			TagcloudItemData* d = GetItemData(a);
-			if (d->Cnt)
+			if (d->Hdr.Hdr.Valid)
 				if ((m_ViewParameters.TagcloudHideRare) && (Delta>1) && (d->Cnt==Minimum))
 				{
 					ZeroMemory(d, sizeof(TagcloudItemData));
@@ -116,15 +117,6 @@ void CTagcloudView::SetSearchResult(LFSearchResult* Result)
 							}
 					}
 		}
-
-		// Focus item
-		if (!GetItemData(m_FocusItem)->Cnt)
-			for (UINT a=0; a<Result->m_ItemCount; a++)
-				if (GetItemData(a)->Cnt)
-				{
-					m_FocusItem = a;
-					break;
-				}
 	}
 }
 
@@ -144,7 +136,7 @@ void CTagcloudView::AdjustLayout()
 #define CenterRow(last) for (UINT b=rowstart; b<=last; b++) \
 	{ \
 		TagcloudItemData* d = GetItemData(b); \
-		if (d->Cnt) \
+		if (d->Hdr.Hdr.Valid) \
 		{ \
 			OffsetRect(&d->Hdr.Hdr.Rect, (rectWindow.Width()+GUTTER-x)/2, (rowheight-(d->Hdr.Hdr.Rect.bottom-d->Hdr.Hdr.Rect.top))/2); \
 			if (d->Hdr.Hdr.Rect.right>m_ScrollWidth) \
@@ -177,7 +169,7 @@ Restart:
 		for (UINT a=0; a<p_Result->m_ItemCount; a++)
 		{
 			TagcloudItemData* d = GetItemData(a);
-			if (d->Cnt)
+			if (d->Hdr.Hdr.Valid)
 			{
 				LFItemDescriptor* i = p_Result->m_Items[a];
 

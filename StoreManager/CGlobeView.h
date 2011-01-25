@@ -15,8 +15,7 @@
 struct GlobeItemData
 {
 	FVItemData Hdr;
-	BOOL Valid;
-	double World[3];
+	GLdouble World[3];
 	INT ScreenPoint[2];
 	GLfloat Alpha;
 	WCHAR CoordString[32];

@@ -246,7 +246,7 @@ void CGlobeView::SetSearchResult(LFSearchResult* Result)
 					CalculateWorldCoords(coord.Latitude, coord.Longitude, d->World);
 					LFGeoCoordinatesToString(coord, d->CoordString, 32, false);
 
-					d->Valid = TRUE;
+					d->Hdr.Valid = TRUE;
 				}
 			}
 
@@ -265,7 +265,7 @@ INT CGlobeView::ItemAtPosition(CPoint point)
 	{
 		GlobeItemData* d = GetItemData(a);
 
-		if (d->Valid)
+		if (d->Hdr.Valid)
 			if ((d->Alpha>0.1f) && ((d->Alpha>Alpha-0.05f) || (d->Alpha>0.75f)))
 				if (PtInRect(&d->Hdr.Rect, point))
 				{
@@ -449,7 +449,7 @@ void CGlobeView::CalcAndDrawSpots(GLdouble ModelView[4][4], GLdouble Projection[
 	for (UINT a=0; a<p_Result->m_ItemCount; a++)
 	{
 		GlobeItemData* d = GetItemData(a);
-		if (d->Valid)
+		if (d->Hdr.Valid)
 		{
 			d->Alpha = 0.0f;
 
@@ -479,7 +479,7 @@ void CGlobeView::CalcAndDrawLabel()
 	{
 		GlobeItemData* d = GetItemData(a);
 
-		if (d->Valid)
+		if (d->Hdr.Valid)
 			if (d->Alpha>0.0f)
 			{
 				// Beschriftung
