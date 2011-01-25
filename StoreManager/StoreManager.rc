@@ -183,7 +183,7 @@ BEGIN
     MENUITEM "Sortieren nach &Wert",        IDM_TAGCLOUD_SORTVALUE
     MENUITEM "Sortieren nach &Anzahl",      IDM_TAGCLOUD_SORTCOUNT
     MENUITEM SEPARATOR
-    MENUITEM "&Seltene Tags verstecken",    IDM_TAGCLOUD_HIDERARE
+    MENUITEM "&Seltene Tags ausblenden",    IDM_TAGCLOUD_HIDERARE
 END
 
 IDM_TAGCLOUD MENU 
