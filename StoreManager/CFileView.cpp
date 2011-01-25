@@ -846,8 +846,10 @@ BEGIN_MESSAGE_MAP(CFileView, CWnd)
 	ON_MESSAGE_VOID(WM_SELECTALL, OnSelectAll)
 	ON_MESSAGE_VOID(WM_SELECTNONE, OnSelectNone)
 	ON_COMMAND(IDM_SELECTALL, OnSelectAll)
+	ON_COMMAND(IDM_SELECTNONE, OnSelectNone)
+	ON_COMMAND(IDM_SELECTINVERT, OnSelectInvert)
 	ON_UPDATE_COMMAND_UI(ID_APP_NEWFILEDROP, OnUpdateCommands)
-	ON_UPDATE_COMMAND_UI(IDM_SELECTALL, OnUpdateCommands)
+	ON_UPDATE_COMMAND_UI_RANGE(IDM_SELECTALL, IDM_SELECTINVERT, OnUpdateCommands)
 	ON_EN_KILLFOCUS(2, OnDestroyEdit)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->ItemsDropped, OnItemsDropped)
 END_MESSAGE_MAP()
@@ -1413,6 +1415,7 @@ void CFileView::OnUpdateCommands(CCmdUI* pCmdUI)
 		b = (m_Context<=LFContextStoreHome) && (_waccess(theApp.m_Path+_T("FileDrop.exe"), 0)==0);
 		break;
 	case IDM_SELECTALL:
+	case IDM_SELECTNONE:
 	case IDM_SELECTINVERT:
 		b = p_Result ? p_Result->m_ItemCount : FALSE;
 		break;
