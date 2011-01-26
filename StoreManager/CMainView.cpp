@@ -657,12 +657,12 @@ void CMainView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 		ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_SELECTALL));
 		pPopup->InsertMenu(0, MF_STRING | MF_BYPOSITION, IDM_SELECTALL, tmpStr);
 
-		HBITMAP bmp = theApp.SetContextMenuIcon(pPopup, IDM_STORES_CREATENEW, IDI_STORE_Internal);
+		HBITMAP hBmp = theApp.SetContextMenuIcon(pPopup, IDM_STORES_CREATENEW, IDI_STORE_Internal);
 
 		pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, GetOwner(), NULL);
 		delete pMenu;
 
-		DeleteObject(bmp);
+		DeleteObject(hBmp);
 	}
 }
 

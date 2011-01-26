@@ -35,8 +35,8 @@ HBITMAP IconToBitmap(HICON hIcon, INT cx, INT cy)
 	dib.bmiHeader.biBitCount = 32;
 	dib.bmiHeader.biCompression = BI_RGB;
 
-	HBITMAP bmp = CreateDIBSection(hDC, &dib, DIB_RGB_COLORS, NULL, NULL, 0);
-	HBITMAP pOldBitmap = (HBITMAP)SelectObject(hDC, bmp);
+	HBITMAP hBmp = CreateDIBSection(hDC, &dib, DIB_RGB_COLORS, NULL, NULL, 0);
+	HBITMAP pOldBitmap = (HBITMAP)SelectObject(hDC, hBmp);
 
 	OSVERSIONINFO osInfo;
 	ZeroMemory(&osInfo, sizeof(OSVERSIONINFO));
@@ -53,15 +53,15 @@ HBITMAP IconToBitmap(HICON hIcon, INT cx, INT cy)
 	SelectObject(hDC, pOldBitmap);
 	DeleteDC(hDC);
 
-	return bmp;
+	return hBmp;
 }
 
 HBITMAP SetMenuItemIcon(HMENU hMenu, UINT item, HICON hIcon, INT cx, INT cy)
 {
-	HBITMAP bmp = IconToBitmap(hIcon, cx, cy);
-	SetMenuItemBitmap(hMenu, item, bmp);
+	HBITMAP hBmp = IconToBitmap(hIcon, cx, cy);
+	SetMenuItemBitmap(hMenu, item, hBmp);
 
-	return bmp;
+	return hBmp;
 }
 
 HBITMAP SetMenuItemIcon(HMENU hMenu, UINT item, WORD ResID)

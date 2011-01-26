@@ -366,8 +366,8 @@ void CDropdownSelector::OnPaint()
 	dib.bmiHeader.biBitCount = 32;
 	dib.bmiHeader.biCompression = BI_RGB;
 
-	HBITMAP bmp = CreateDIBSection(dc.m_hDC, &dib, DIB_RGB_COLORS, NULL, NULL, 0);
-	HBITMAP hOldBitmap = (HBITMAP)dc.SelectObject(bmp);
+	HBITMAP hBmp = CreateDIBSection(dc.m_hDC, &dib, DIB_RGB_COLORS, NULL, NULL, 0);
+	HBITMAP hOldBitmap = (HBITMAP)dc.SelectObject(hBmp);
 
 	Graphics g(dc);
 
@@ -502,9 +502,9 @@ void CDropdownSelector::OnPaint()
 	}
 
 	// Set alpha
-	BITMAP bm;
-	GetObject(bmp, sizeof(BITMAP), &bm);
-	BYTE* pBits = ((BYTE*)bm.bmBits)+4*(rcontent.top*rclient.Width()+rcontent.left);
+	BITMAP bmp;
+	GetObject(hBmp, sizeof(BITMAP), &bmp);
+	BYTE* pBits = ((BYTE*)bmp.bmBits)+4*(rcontent.top*rclient.Width()+rcontent.left);
 	for (INT row=rcontent.top; row<rcontent.bottom; row++)
 	{
 		for (INT col=rcontent.left; col<rcontent.right; col++)
@@ -518,7 +518,7 @@ void CDropdownSelector::OnPaint()
 	pDC.BitBlt(0, 0, rclient.Width(), rclient.Height(), &dc, 0, 0, SRCCOPY);
 
 	dc.SelectObject(hOldBitmap);
-	DeleteObject(bmp);
+	DeleteObject(hBmp);
 }
 
 LRESULT CDropdownSelector::OnThemeChanged()

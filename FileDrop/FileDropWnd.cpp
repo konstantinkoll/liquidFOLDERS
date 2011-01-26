@@ -236,8 +236,8 @@ BOOL CFileDropWnd::OnEraseBkgnd(CDC* pDC)
 	dib.bmiHeader.biBitCount = 32;
 	dib.bmiHeader.biCompression = BI_RGB;
 
-	HBITMAP bmp = CreateDIBSection(dc, &dib, DIB_RGB_COLORS, NULL, NULL, 0);
-	HBITMAP hOldBitmap = (HBITMAP)dc.SelectObject(bmp);
+	HBITMAP hBmp = CreateDIBSection(dc, &dib, DIB_RGB_COLORS, NULL, NULL, 0);
+	HBITMAP hOldBitmap = (HBITMAP)dc.SelectObject(hBmp);
 
 	// Hintergrund
 	CGlasWindow::OnEraseBkgnd(&dc);
@@ -301,7 +301,7 @@ BOOL CFileDropWnd::OnEraseBkgnd(CDC* pDC)
 	pDC->BitBlt(0, 0, rclient.Width(), rclient.Height(), &dc, 0, 0, SRCCOPY);
 
 	dc.SelectObject(hOldBitmap);
-	DeleteObject(bmp);
+	DeleteObject(hBmp);
 
 	return TRUE;
 }
@@ -378,18 +378,18 @@ void CFileDropWnd::OnContextMenu(CWnd* /*pWnd*/, CPoint pos)
 	CMenu* pPopup = menu.GetSubMenu(0);
 	ASSERT_VALID(pPopup);
 
-	HBITMAP bmp = SetMenuItemIcon(*pPopup, 7, ID_APP_NEWSTOREMANAGER);
+	HBITMAP hBmp = SetMenuItemIcon(*pPopup, 7, ID_APP_NEWSTOREMANAGER);
 	SetMenuItemBitmap(*pPopup, 8, HBMMENU_POPUP_CLOSE);
 
 	pPopup->CheckMenuItem(SC_ALWAYSONTOP, AlwaysOnTop ? MF_CHECKED : MF_UNCHECKED);
-	//pPopup->EnableMenuItem(ID_APP_IMPORTFOLDER, StoreValid ? MF_ENABLED : MF_GRAYED);
-	//pPopup->EnableMenuItem(ID_APP_STOREPROPERTIES, StoreValid ? MF_ENABLED : MF_GRAYED);
-	//pPopup->EnableMenuItem(ID_APP_NEWSTOREMANAGER, (_waccess(theApp.m_Path+_T("StoreManager.exe"), 0)==0) ? MF_ENABLED : MF_GRAYED);
+	pPopup->EnableMenuItem(ID_APP_IMPORTFOLDER, StoreValid ? MF_ENABLED : MF_GRAYED);
+	pPopup->EnableMenuItem(ID_APP_STOREPROPERTIES, StoreValid ? MF_ENABLED : MF_GRAYED);
+	pPopup->EnableMenuItem(ID_APP_NEWSTOREMANAGER, (_waccess(theApp.m_Path+_T("StoreManager.exe"), 0)==0) ? MF_ENABLED : MF_GRAYED);
 
 	pPopup->SetDefaultItem(ID_APP_CHOOSEDEFAULTSTORE);
 	pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, pos.x, pos.y, this);
 
-	DeleteObject(bmp);
+	DeleteObject(hBmp);
 }
 
 void CFileDropWnd::OnSysCommand(UINT nID, LPARAM lParam)
