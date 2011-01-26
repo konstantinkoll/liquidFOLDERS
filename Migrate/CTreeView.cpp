@@ -522,7 +522,7 @@ BOOL CTreeView::InsertRow(UINT row)
 	}
 
 	if (row<m_Rows)
-		for (UINT a=m_Rows; a>=row; a--)
+		for (UINT a=m_Rows-1; a>=row; a--)
 			memcpy(&m_Tree[MAKEPOS(a+1, 0)], &m_Tree[MAKEPOS(a, 0)], MaxColumns*sizeof(Cell));
 
 	ZeroMemory(&m_Tree[MAKEPOS(row, 0)], MaxColumns*sizeof(Cell));
