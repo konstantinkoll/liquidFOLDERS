@@ -16,6 +16,7 @@
 #define MARGINLEFT           15-PADDING
 #define GUTTER               20
 #define COLUMNGUTTER         8
+#define EXTRA                (COLUMNGUTTER/2)
 #define EMPTY                ((UINT)-1)
 #define MINYEAR              1900
 #define MAXYEAR              2100
@@ -234,20 +235,22 @@ void CCalendarView::GetMonthSize(LPSIZE Size)
 
 void CCalendarView::DrawMonth(CDC& dc, LPRECT rect, INT Month, BOOL Themed)
 {
+	ASSERT(GUTTER>COLUMNGUTTER);
+
 	// Header
 	ItemCategory ic = { 0 };
 	swprintf_s(ic.Caption, 256, m_Months[Month].Name, m_Year);
 	DrawCategory(dc, rect, &ic, Themed);
 
 	rect->top += m_FontHeight[1]+CategoryPadding;
-	CRect rectItem(0, rect->top, m_ColumnWidth, rect->top+m_FontHeight[0]+2*PADDING);
+	CRect rectItem(0, rect->top, m_ColumnWidth+2*EXTRA, rect->top+m_FontHeight[0]+2*PADDING);
 
 	// Days
 	if (!m_HideCaptions)
 	{
 		for (UINT a=0; a<7; a++)
 		{
-			rectItem.MoveToX(rect->left+CategoryPadding+a*(m_ColumnWidth+COLUMNGUTTER));
+			rectItem.MoveToX(rect->left+CategoryPadding+a*(m_ColumnWidth+COLUMNGUTTER)-EXTRA);
 			dc.DrawText(m_Days[a], -1, rectItem, DT_SINGLELINE | DT_END_ELLIPSIS | DT_CENTER | DT_TOP);
 		}
 
@@ -255,6 +258,7 @@ void CCalendarView::DrawMonth(CDC& dc, LPRECT rect, INT Month, BOOL Themed)
 	}
 
 	rect->top += CategoryPadding;
+	rectItem.DeflateRect(EXTRA, 0);
 
 	// Matrix
 	COLORREF clrDay = Themed ? 0xA8A8A8 : GetSysColor(COLOR_3DFACE);
