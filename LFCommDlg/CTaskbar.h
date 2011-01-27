@@ -5,7 +5,7 @@
 #pragma once
 #include "CTaskButton.h"
 #include <list>
-using std::list;
+//using std::list;
 
 
 // CTaskbar
@@ -37,10 +37,12 @@ protected:
 
 private:
 	CMFCToolBarImages Icons;
+	CList<CTaskButton*> m_ButtonsLeft;
+	CList<CTaskButton*> m_ButtonsRight;
 	CBitmap BackBuffer;
 	INT BackBufferL;
 	INT BackBufferH;
 	HBRUSH hBackgroundBrush;
-	list<CTaskButton*> ButtonsLeft;
-	list<CTaskButton*> ButtonsRight;
+//	list<CTaskButton*> ButtonsLeft;
+//	list<CTaskButton*> ButtonsRight;
 };

@@ -75,9 +75,7 @@ CTaskButton* CTaskbar::AddButton(UINT nID, INT IconID, BOOL bForceIcon, BOOL bAd
 		this, nID);
 	btn->EnableWindow(FALSE);
 
-	list<CTaskButton*>* li = bAddRight ? &ButtonsRight : &ButtonsLeft;
-	li->push_back(btn);
-
+	(bAddRight ? &m_ButtonsRight : &m_ButtonsLeft)->AddTail(btn);
 	return btn;
 }
 
@@ -92,55 +90,51 @@ void CTaskbar::AdjustLayout()
 	INT h = rect.Height()-2*BORDER+(IsCtrlThemed() ? 1 : 2);
 
 	INT RPos = rect.right+2*BORDER-BORDERLEFT;
-	std::list<CTaskButton*>::reverse_iterator ppBtnR = ButtonsRight.rbegin();
-	while (ppBtnR!=ButtonsRight.rend())
+	for (POSITION p = m_ButtonsRight.GetHeadPosition(); p; )
 	{
-		if ((*ppBtnR)->IsWindowEnabled())
+		CTaskButton* btn = m_ButtonsRight.GetNext(p);
+		if (btn->IsWindowEnabled())
 		{
-			INT l = (*ppBtnR)->GetPreferredWidth();
+			INT l = btn->GetPreferredWidth();
 			RPos -= l+BORDER;
 			if (RPos>=BORDERLEFT)
 			{
-				(*ppBtnR)->SetWindowPos(NULL, RPos, Row, l, h, SWP_NOZORDER | SWP_NOACTIVATE);
-				(*ppBtnR)->ShowWindow(SW_SHOW);
+				btn->SetWindowPos(NULL, RPos, Row, l, h, SWP_NOZORDER | SWP_NOACTIVATE);
+				btn->ShowWindow(SW_SHOW);
 			}
 			else
 			{
-				(*ppBtnR)->ShowWindow(SW_HIDE);
+				btn->ShowWindow(SW_HIDE);
 			}
 		}
 		else
 		{
-			(*ppBtnR)->ShowWindow(SW_HIDE);
+			btn->ShowWindow(SW_HIDE);
 		}
-
-		ppBtnR++;
 	}
 
 	INT LPos = rect.left+BORDERLEFT-BORDER;
-	std::list<CTaskButton*>::iterator ppBtn = ButtonsLeft.begin();
-	while (ppBtn!=ButtonsLeft.end())
+	for (POSITION p = m_ButtonsLeft.GetHeadPosition(); p; )
 	{
-		if ((*ppBtn)->IsWindowEnabled())
+		CTaskButton* btn = m_ButtonsLeft.GetNext(p);
+		if (btn->IsWindowEnabled())
 		{
-			INT l = (*ppBtn)->GetPreferredWidth();
+			INT l = btn->GetPreferredWidth();
 			if (LPos+l+BORDERLEFT-BORDER<RPos)
 			{
-				(*ppBtn)->SetWindowPos(NULL, LPos, Row, l, h, SWP_NOZORDER | SWP_NOACTIVATE);
-				(*ppBtn)->ShowWindow(SW_SHOW);
+				btn->SetWindowPos(NULL, LPos, Row, l, h, SWP_NOZORDER | SWP_NOACTIVATE);
+				btn->ShowWindow(SW_SHOW);
 			}
 			else
 			{
-				(*ppBtn)->ShowWindow(SW_HIDE);
+				btn->ShowWindow(SW_HIDE);
 			}
 			LPos += l+BORDERLEFT;
 		}
 		else
 		{
-			(*ppBtn)->ShowWindow(SW_HIDE);
+			btn->ShowWindow(SW_HIDE);
 		}
-
-		ppBtn++;
 	}
 
 	SetRedraw(TRUE);
@@ -164,20 +158,18 @@ void CTaskbar::OnDestroy()
 {
 	CWnd::OnDestroy();
 
-	std::list<CTaskButton*>::iterator ppBtn = ButtonsRight.begin();
-	while (ppBtn!=ButtonsRight.end())
+	for (POSITION p = m_ButtonsRight.GetHeadPosition(); p; )
 	{
-		(*ppBtn)->DestroyWindow();
-		delete *ppBtn;
-		ppBtn++;
+		CTaskButton* btn = m_ButtonsRight.GetNext(p);
+		btn->DestroyWindow();
+		delete btn;
 	}
 
-	ppBtn = ButtonsLeft.begin();
-	while (ppBtn!=ButtonsLeft.end())
+	for (POSITION p = m_ButtonsLeft.GetHeadPosition(); p; )
 	{
-		(*ppBtn)->DestroyWindow();
-		delete *ppBtn;
-		ppBtn++;
+		CTaskButton* btn = m_ButtonsLeft.GetNext(p);
+		btn->DestroyWindow();
+		delete btn;
 	}
 
 	if (hBackgroundBrush)
@@ -320,36 +312,32 @@ void CTaskbar::OnIdleUpdateCmdUI()
 {
 	BOOL Update = FALSE;
 
-	std::list<CTaskButton*>::iterator ppBtn = ButtonsRight.begin();
-	while (ppBtn!=ButtonsRight.end())
+	for (POSITION p = m_ButtonsRight.GetHeadPosition(); p; )
 	{
-		BOOL Enabled = (*ppBtn)->IsWindowEnabled();
+		CTaskButton* btn = m_ButtonsRight.GetNext(p);
+		BOOL Enabled = btn->IsWindowEnabled();
 
 		CCmdUI cmdUI;
-		cmdUI.m_nID = (*ppBtn)->GetDlgCtrlID();
-		cmdUI.m_pOther = *ppBtn;
+		cmdUI.m_nID = btn->GetDlgCtrlID();
+		cmdUI.m_pOther = btn;
 		cmdUI.DoUpdate(GetOwner(), TRUE);
 
-		if ((*ppBtn)->IsWindowEnabled()!=Enabled)
+		if (btn->IsWindowEnabled()!=Enabled)
 			Update = TRUE;
-
-		ppBtn++;
 	}
 
-	ppBtn = ButtonsLeft.begin();
-	while (ppBtn!=ButtonsLeft.end())
+	for (POSITION p = m_ButtonsLeft.GetHeadPosition(); p; )
 	{
-		BOOL Enabled = (*ppBtn)->IsWindowEnabled();
+		CTaskButton* btn = m_ButtonsLeft.GetNext(p);
+		BOOL Enabled = btn->IsWindowEnabled();
 
 		CCmdUI cmdUI;
-		cmdUI.m_nID = (*ppBtn)->GetDlgCtrlID();
-		cmdUI.m_pOther = *ppBtn;
+		cmdUI.m_nID = btn->GetDlgCtrlID();
+		cmdUI.m_pOther = btn;
 		cmdUI.DoUpdate(GetOwner(), TRUE);
 
-		if ((*ppBtn)->IsWindowEnabled()!=Enabled)
+		if (btn->IsWindowEnabled()!=Enabled)
 			Update = TRUE;
-
-		ppBtn++;
 	}
 
 	if (Update)
@@ -368,31 +356,29 @@ void CTaskbar::OnContextMenu(CWnd* /*pWnd*/, CPoint pos)
 	if (!menu.CreatePopupMenu())
 		return;
 
-	std::list<CTaskButton*>::iterator ppBtn = ButtonsLeft.begin();
-	while (ppBtn!=ButtonsLeft.end())
+	for (POSITION p = m_ButtonsLeft.GetHeadPosition(); p; )
 	{
-		if ((*ppBtn)->IsWindowEnabled())
+		CTaskButton* btn = m_ButtonsLeft.GetNext(p);
+		if (btn->IsWindowEnabled())
 		{
 			WCHAR Text[256];
-			(*ppBtn)->GetWindowText(Text, 256);
-			menu.AppendMenu(0, (*ppBtn)->GetDlgCtrlID(), Text);
+			btn->GetWindowText(Text, 256);
+			menu.AppendMenu(0, btn->GetDlgCtrlID(), Text);
 		}
-		ppBtn++;
 	}
 
 	if (menu.GetMenuItemCount())
 		menu.AppendMenu(MF_SEPARATOR);
 
-	ppBtn = ButtonsRight.begin();
-	while (ppBtn!=ButtonsRight.end())
+	for (POSITION p = m_ButtonsRight.GetHeadPosition(); p; )
 	{
-		if ((*ppBtn)->IsWindowEnabled())
+		CTaskButton* btn = m_ButtonsRight.GetNext(p);
+		if (btn->IsWindowEnabled())
 		{
 			WCHAR Text[256];
-			(*ppBtn)->GetWindowText(Text, 256);
-			menu.AppendMenu(0, (*ppBtn)->GetDlgCtrlID(), Text);
+			btn->GetWindowText(Text, 256);
+			menu.AppendMenu(0, btn->GetDlgCtrlID(), Text);
 		}
-		ppBtn++;
 	}
 
 	menu.TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, pos.x, pos.y, this, NULL);
@@ -400,14 +386,13 @@ void CTaskbar::OnContextMenu(CWnd* /*pWnd*/, CPoint pos)
 
 void CTaskbar::OnSetFocus(CWnd* /*pOldWnd*/)
 {
-	std::list<CTaskButton*>::iterator ppBtn = ButtonsLeft.begin();
-	while (ppBtn!=ButtonsLeft.end())
+	for (POSITION p = m_ButtonsLeft.GetHeadPosition(); p; )
 	{
-		if ((*ppBtn)->IsWindowEnabled())
+		CTaskButton* btn = m_ButtonsLeft.GetNext(p);
+		if (btn->IsWindowEnabled())
 		{
-			(*ppBtn)->SetFocus();
+			btn->SetFocus();
 			break;
 		}
-		ppBtn++;
 	}
 }
