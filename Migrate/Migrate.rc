@@ -795,12 +795,12 @@ IDM_HEADER MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "&Adapter tous les larges de colonnes", IDM_VIEW_AUTOSIZEALL
+        MENUITEM "Adapter &tous les larges de colonnes", IDM_VIEW_AUTOSIZEALL
         MENUITEM "&Adapter le large de colonne", IDM_TREE_AUTOSIZE
         MENUITEM SEPARATOR
-        MENUITEM "Élargir &toute la colonne",   IDM_TREE_EXPANDCOLUMN
+        MENUITEM "Élargir toute la &colonne",   IDM_TREE_EXPANDCOLUMN
         MENUITEM SEPARATOR
-        MENUITEM "Choisir la &qualité...",      IDD_CHOOSEPROPERTY
+        MENUITEM "Choisissez la &qualité...",   IDD_CHOOSEPROPERTY
         MENUITEM "&Reculer",                    IDM_TREE_RESETPROPERTY
     END
 END
@@ -831,7 +831,7 @@ END
 
 IDD_CHOOSEPROPERTY DIALOGEX 0, 0, 219, 236
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
-CAPTION "Choisir la qualité"
+CAPTION "Choisissez la qualité"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     CONTROL         "",IDC_ATTRIBUTES,"SysListView32",LVS_LIST | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SORTASCENDING | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_ALIGNLEFT | LVS_NOCOLUMNHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,14,37,191,161
@@ -970,7 +970,7 @@ BEGIN
     IDS_FOLDERCATEGORY4     "Support de données de changement"
     IDS_NOTHINGTODISPLAY    "Il n'y a rien indiquer."
     IDS_NOPROPERTY          "Cliquez ici pour choisir une qualité"
-    IDS_CHOOSEPROPERTY      "Choisir &la qualité..."
+    IDS_CHOOSEPROPERTY      "Choisissez &la qualité..."
     IDS_EXPANDBRANCH        "Montrer tous &les sous-dossiers"
     IDS_INCLUDEBRANCH       "Marquer &la branche"
     IDS_EXCLUDEBRANCH       "Abandonner &la branche"
