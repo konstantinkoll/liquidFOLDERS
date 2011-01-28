@@ -278,6 +278,8 @@ void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed)
 	INT Rows[4];
 	BOOL Right = FALSE;
 
+	CRect rectClient;
+
 	CRect rect(rectItem);
 	rect.DeflateRect(PADDING, PADDING);
 
@@ -307,6 +309,8 @@ void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed)
 		rectLabel.right = rectLabel.left+m_ViewParameters.ColumnWidth[0]-3*PADDING;
 		rectLabel.left = rectIcon.right+PADDING;
 
+		GetClientRect(&rectClient);
+
 		for (UINT a=0; a<LFAttributeCount; a++)
 		{
 			UINT attr = m_ViewParameters.ColumnOrder[a];
@@ -318,7 +322,8 @@ void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed)
 					rectLabel.right = rectLabel.left+m_ViewParameters.ColumnWidth[attr]-3*PADDING;
 				}
 				if ((attr!=LFAttrFileName) || (!IsEditing()) || (idx!=m_EditLabel))
-					DrawColumn(dc, rectLabel, i, attr);
+					if ((rectLabel.left<=rectClient.right) && (rectLabel.right>=rectClient.left))
+						DrawColumn(dc, rectLabel, i, attr);
 			}
 		}
 		break;
