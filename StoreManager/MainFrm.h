@@ -39,6 +39,7 @@ public:
 
 	BOOL IsClipboard;
 	INT ActiveContextID;
+	INT ActiveViewID;
 
 protected:
 	void UpdateSearchResult(BOOL SetEmpty, INT FocusItem);
@@ -53,7 +54,6 @@ protected:
 	CMainView m_wndMainView;
 	BreadcrumbItem* m_BreadcrumbBack;
 	BreadcrumbItem* m_BreadcrumbForward;
-	INT ActiveViewID;
 	LFViewParameters* ActiveViewParameters;
 	LFFilter* ActiveFilter;
 	LFSearchResult* RawFiles;

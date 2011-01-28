@@ -1224,7 +1224,7 @@ void CGlobeView::OnSettings()
 {
 	GlobeOptionsDlg dlg(this, p_ViewParameters, m_Context);
 	if (dlg.DoModal()==IDOK)
-		theApp.UpdateViewOptions();
+		theApp.UpdateViewOptions(-1, LFViewGlobe);
 }
 
 void CGlobeView::OnGoogleEarth()

@@ -60,13 +60,13 @@ public:
 
 	HBITMAP SetContextMenuIcon(CMenu* pMenu, UINT CmdID, UINT ResID);
 
-	BOOL SanitizeSortBy(LFViewParameters* vp, INT context);
-	BOOL SanitizeViewMode(LFViewParameters* vp, INT context);
-	void Broadcast(INT context, UINT cmdMsg);
-	void UpdateSortOptions(INT context);
-	void UpdateViewOptions(INT context=-1);
-	void Reload(INT context);
-	void UpdateSearchResult(INT context);
+	BOOL SanitizeSortBy(LFViewParameters* vp, INT Context);
+	BOOL SanitizeViewMode(LFViewParameters* vp, INT Context);
+	void Broadcast(INT Context, INT View, UINT cmdMsg);
+	void UpdateSortOptions(INT Context);
+	void UpdateViewOptions(INT Context=-1, INT View=-1);
+	void Reload(INT Context);
+	void UpdateSearchResult(INT Context);
 	void PrepareFormatData(CHAR* FileFormat);
 
 		static CString GetCommandName(UINT nID, BOOL bInsertSpace=FALSE);							// Axe

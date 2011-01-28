@@ -311,38 +311,39 @@ BOOL CStoreManagerApp::SanitizeViewMode(LFViewParameters* vp, INT context)
 	return Modified;
 }
 
-void CStoreManagerApp::Broadcast(INT context, UINT cmdMsg)
+void CStoreManagerApp::Broadcast(INT Context, INT View, UINT cmdMsg)
 {
 	std::list<CMainFrame*>::iterator ppFrame = m_listMainFrames.begin();
 	while (ppFrame!=m_listMainFrames.end())
 	{
-		if (((*ppFrame)->ActiveContextID==context) || (context==-1))
-			(*ppFrame)->PostMessage(cmdMsg);
+		if (((*ppFrame)->ActiveContextID==Context) || (Context==-1))
+			if (((*ppFrame)->ActiveViewID==View) || (View==-1))
+				(*ppFrame)->PostMessage(cmdMsg);
 
 		ppFrame++;
 	}
 }
 
-void CStoreManagerApp::UpdateSortOptions(INT context)
+void CStoreManagerApp::UpdateSortOptions(INT Context)
 {
-	SanitizeSortBy(&theApp.m_Views[context], context);
-	Broadcast(context, WM_UPDATESORTOPTIONS);
+	SanitizeSortBy(&theApp.m_Views[Context], Context);
+	Broadcast(Context, -1, WM_UPDATESORTOPTIONS);
 }
 
-void CStoreManagerApp::UpdateViewOptions(INT context)
+void CStoreManagerApp::UpdateViewOptions(INT Context, INT View)
 {
-	BOOL Modified = (context!=-1) ? SanitizeViewMode(&theApp.m_Views[context], context) : FALSE;
-	Broadcast(context, Modified ? WM_UPDATESORTOPTIONS : WM_UPDATEVIEWOPTIONS);
+	BOOL Modified = (Context!=-1) ? SanitizeViewMode(&theApp.m_Views[Context], Context) : FALSE;
+	Broadcast(Context, Modified ? -1 : View, Modified ? WM_UPDATESORTOPTIONS : WM_UPDATEVIEWOPTIONS);
 }
 
-void CStoreManagerApp::Reload(INT context)
+void CStoreManagerApp::Reload(INT Context)
 {
-	Broadcast(context, WM_RELOAD);
+	Broadcast(Context, -1, WM_RELOAD);
 }
 
-void CStoreManagerApp::UpdateSearchResult(INT context)
+void CStoreManagerApp::UpdateSearchResult(INT Context)
 {
-	Broadcast(context, WM_UPDATESEARCHRESULT);
+	Broadcast(Context, -1, WM_UPDATESEARCHRESULT);
 }
 
 void CStoreManagerApp::PrepareFormatData(CHAR* FileFormat)
