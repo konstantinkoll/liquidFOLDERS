@@ -5,7 +5,6 @@
 #pragma once
 #include "CTaskButton.h"
 #include <list>
-//using std::list;
 
 
 // CTaskbar
@@ -43,6 +42,4 @@ private:
 	INT BackBufferL;
 	INT BackBufferH;
 	HBRUSH hBackgroundBrush;
-//	list<CTaskButton*> ButtonsLeft;
-//	list<CTaskButton*> ButtonsRight;
 };

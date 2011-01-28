@@ -7,7 +7,6 @@
 #include "CGdiPlusBitmap.h"
 #include "liquidFOLDERS.h"
 #include "LFApplication.h"
-#include <list>
 
 
 // LFDialog
@@ -65,6 +64,6 @@ private:
 	INT m_BackBufferH;
 	HBRUSH hBackgroundBrush;
 	CWnd* p_BottomLeftControl;
-	std::list<CWnd*> m_BottomRightControls;
+	CList<CWnd*> m_BottomRightControls;
 	CPoint m_LastSize;
 };

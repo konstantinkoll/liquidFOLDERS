@@ -166,7 +166,7 @@ void LFDialog::AddBottomRightControl(CWnd* pChildWnd)
 {
 	ASSERT(pChildWnd);
 
-	m_BottomRightControls.push_back(pChildWnd);
+	m_BottomRightControls.AddTail(pChildWnd);
 }
 
 void LFDialog::AddBottomRightControl(UINT nID)
@@ -320,18 +320,15 @@ void LFDialog::OnSize(UINT nType, INT cx, INT cy)
 	m_LastSize.y = cy;
 
 	INT MaxRight = cx;
-
-	std::list<CWnd*>::iterator ppWnd = m_BottomRightControls.begin();
-	while (ppWnd!=m_BottomRightControls.end())
+	for (POSITION p = m_BottomRightControls.GetHeadPosition(); p; )
 	{
+		CWnd* pWnd = m_BottomRightControls.GetNext(p);
+
 		CRect rect;
-		(*ppWnd)->GetWindowRect(rect);
+		pWnd->GetWindowRect(rect);
 		ScreenToClient(&rect);
 
-		(*ppWnd)->SetWindowPos(NULL, rect.left+diff.x, rect.top+diff.y, rect.Width(), rect.Height(), SWP_NOSIZE | SWP_NOACTIVATE | SWP_NOZORDER);
-		ppWnd++;
-
-		MaxRight = min(MaxRight, rect.left+diff.x);
+		pWnd->SetWindowPos(NULL, rect.left+diff.x, rect.top+diff.y, rect.Width(), rect.Height(), SWP_NOSIZE | SWP_NOACTIVATE | SWP_NOZORDER);
 	}
 
 	if (p_BottomLeftControl)
