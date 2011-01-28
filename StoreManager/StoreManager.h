@@ -8,7 +8,6 @@
 #include "liquidFOLDERS.h"
 #include "LFCommDlg.h"
 #include <hash_map>
-#include <list>
 #include <string>
 
 // CStoreManagerApp:
@@ -43,7 +42,7 @@ public:
 	BOOL m_GlobeShowViewport;
 	BOOL m_GlobeShowCrosshairs;
 	stdext::hash_map<std::string, FormatData> m_FileFormats;
-	std::list<CMainFrame*> m_listMainFrames;
+	CList<CMainFrame*> m_MainFrames;
 	CMainFrame* p_Clipboard;
 	LFViewParameters m_Views[LFContextCount];
 	LFBitArray* m_AllowedViews[LFContextCount];
@@ -54,9 +53,9 @@ public:
 
 	void AddFrame(CMainFrame* pFrame);
 	void KillFrame(CMainFrame* pFrame);
-	void ReplaceMainFrame(CMainFrame* pFrame);
+	void ReplaceMainFrame(CMainFrame* pVictim);
 	CMainFrame* GetClipboard();
-	void CloseAllFrames(BOOL leaveOne=FALSE);
+	void CloseAllFrames(BOOL LeaveOne=FALSE);
 
 	HBITMAP SetContextMenuIcon(CMenu* pMenu, UINT CmdID, UINT ResID);
 

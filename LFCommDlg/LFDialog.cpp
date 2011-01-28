@@ -320,7 +320,7 @@ void LFDialog::OnSize(UINT nType, INT cx, INT cy)
 	m_LastSize.y = cy;
 
 	INT MaxRight = cx;
-	for (POSITION p = m_BottomRightControls.GetHeadPosition(); p; )
+	for (POSITION p=m_BottomRightControls.GetHeadPosition(); p; )
 	{
 		CWnd* pWnd = m_BottomRightControls.GetNext(p);
 

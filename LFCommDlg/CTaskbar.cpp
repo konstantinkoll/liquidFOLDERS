@@ -90,7 +90,7 @@ void CTaskbar::AdjustLayout()
 	INT h = rect.Height()-2*BORDER+(IsCtrlThemed() ? 1 : 2);
 
 	INT RPos = rect.right+2*BORDER-BORDERLEFT;
-	for (POSITION p = m_ButtonsRight.GetHeadPosition(); p; )
+	for (POSITION p=m_ButtonsRight.GetHeadPosition(); p; )
 	{
 		CTaskButton* btn = m_ButtonsRight.GetNext(p);
 		if (btn->IsWindowEnabled())
@@ -114,7 +114,7 @@ void CTaskbar::AdjustLayout()
 	}
 
 	INT LPos = rect.left+BORDERLEFT-BORDER;
-	for (POSITION p = m_ButtonsLeft.GetHeadPosition(); p; )
+	for (POSITION p=m_ButtonsLeft.GetHeadPosition(); p; )
 	{
 		CTaskButton* btn = m_ButtonsLeft.GetNext(p);
 		if (btn->IsWindowEnabled())
@@ -158,14 +158,14 @@ void CTaskbar::OnDestroy()
 {
 	CWnd::OnDestroy();
 
-	for (POSITION p = m_ButtonsRight.GetHeadPosition(); p; )
+	for (POSITION p=m_ButtonsRight.GetHeadPosition(); p; )
 	{
 		CTaskButton* btn = m_ButtonsRight.GetNext(p);
 		btn->DestroyWindow();
 		delete btn;
 	}
 
-	for (POSITION p = m_ButtonsLeft.GetHeadPosition(); p; )
+	for (POSITION p=m_ButtonsLeft.GetHeadPosition(); p; )
 	{
 		CTaskButton* btn = m_ButtonsLeft.GetNext(p);
 		btn->DestroyWindow();
@@ -312,7 +312,7 @@ void CTaskbar::OnIdleUpdateCmdUI()
 {
 	BOOL Update = FALSE;
 
-	for (POSITION p = m_ButtonsRight.GetHeadPosition(); p; )
+	for (POSITION p=m_ButtonsRight.GetHeadPosition(); p; )
 	{
 		CTaskButton* btn = m_ButtonsRight.GetNext(p);
 		BOOL Enabled = btn->IsWindowEnabled();
@@ -326,7 +326,7 @@ void CTaskbar::OnIdleUpdateCmdUI()
 			Update = TRUE;
 	}
 
-	for (POSITION p = m_ButtonsLeft.GetHeadPosition(); p; )
+	for (POSITION p=m_ButtonsLeft.GetHeadPosition(); p; )
 	{
 		CTaskButton* btn = m_ButtonsLeft.GetNext(p);
 		BOOL Enabled = btn->IsWindowEnabled();
@@ -356,7 +356,7 @@ void CTaskbar::OnContextMenu(CWnd* /*pWnd*/, CPoint pos)
 	if (!menu.CreatePopupMenu())
 		return;
 
-	for (POSITION p = m_ButtonsLeft.GetHeadPosition(); p; )
+	for (POSITION p=m_ButtonsLeft.GetHeadPosition(); p; )
 	{
 		CTaskButton* btn = m_ButtonsLeft.GetNext(p);
 		if (btn->IsWindowEnabled())
@@ -370,7 +370,7 @@ void CTaskbar::OnContextMenu(CWnd* /*pWnd*/, CPoint pos)
 	if (menu.GetMenuItemCount())
 		menu.AppendMenu(MF_SEPARATOR);
 
-	for (POSITION p = m_ButtonsRight.GetHeadPosition(); p; )
+	for (POSITION p=m_ButtonsRight.GetHeadPosition(); p; )
 	{
 		CTaskButton* btn = m_ButtonsRight.GetNext(p);
 		if (btn->IsWindowEnabled())
@@ -386,7 +386,7 @@ void CTaskbar::OnContextMenu(CWnd* /*pWnd*/, CPoint pos)
 
 void CTaskbar::OnSetFocus(CWnd* /*pOldWnd*/)
 {
-	for (POSITION p = m_ButtonsLeft.GetHeadPosition(); p; )
+	for (POSITION p=m_ButtonsLeft.GetHeadPosition(); p; )
 	{
 		CTaskButton* btn = m_ButtonsLeft.GetNext(p);
 		if (btn->IsWindowEnabled())

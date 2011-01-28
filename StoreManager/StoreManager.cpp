@@ -146,7 +146,8 @@ void CStoreManagerApp::AddFrame(CMainFrame* pFrame)
 {
 	if (!m_pMainWnd)
 		m_pMainWnd = pFrame;
-	m_listMainFrames.push_back(pFrame);
+
+	m_MainFrames.AddTail(pFrame);
 
 	if (pFrame->IsClipboard)
 		p_Clipboard = pFrame;
@@ -154,26 +155,25 @@ void CStoreManagerApp::AddFrame(CMainFrame* pFrame)
 
 void CStoreManagerApp::KillFrame(CMainFrame* pFrame)
 {
-	m_listMainFrames.remove(pFrame);
+	//m_MainFrames.remove(pFrame);
 
 	if (pFrame->IsClipboard)
 		p_Clipboard = NULL;
 }
 
-void CStoreManagerApp::ReplaceMainFrame(CMainFrame* pFrame)
+void CStoreManagerApp::ReplaceMainFrame(CMainFrame* pVictim)
 {
-	if (pFrame!=m_pMainWnd)
+	if (pVictim!=m_pMainWnd)
 		return;
 
-	std::list<CMainFrame*>::iterator ppFrame = m_listMainFrames.begin();
-	while (ppFrame!=m_listMainFrames.end())
+	for (POSITION p=m_MainFrames.GetHeadPosition(); p; )
 	{
-		if (*ppFrame!=pFrame)
+		CMainFrame* pFrame = m_MainFrames.GetNext(p);
+		if (pFrame!=pVictim)
 		{
-			m_pMainWnd = *ppFrame;
+			m_pMainWnd = pFrame;
 			break;
 		}
-		ppFrame++;
 	}
 }
 
@@ -189,26 +189,26 @@ CMainFrame* CStoreManagerApp::GetClipboard()
 	return p_Clipboard;
 }
 
-void CStoreManagerApp::CloseAllFrames(BOOL leaveOne)
+void CStoreManagerApp::CloseAllFrames(BOOL LeaveOne)
 {
 	MSG msg;
 
 	// Nachrichten löschen
-	while(PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+	while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
 		DispatchMessage(&msg);
 
-	std::list<CMainFrame*>::iterator ppFrame = m_listMainFrames.begin();
-	while (ppFrame!=m_listMainFrames.end())
+	for (POSITION p=m_MainFrames.GetHeadPosition(); p; )
 	{
-		if ((*ppFrame)!=m_pMainWnd)
-			(*ppFrame)->PostMessage(WM_CLOSE);
-		ppFrame++;
+		CMainFrame* pFrame = m_MainFrames.GetNext(p);
+		if (pFrame!=m_pMainWnd)
+			pFrame->PostMessage(WM_CLOSE);
 
+		// Nachrichten löschen
 		while(PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
 			DispatchMessage(&msg);
 	}
 
-	if ((m_pMainWnd) && (!leaveOne))
+	if ((m_pMainWnd) && (!LeaveOne))
 		m_pMainWnd->PostMessage(WM_CLOSE);
 }
 
@@ -313,14 +313,12 @@ BOOL CStoreManagerApp::SanitizeViewMode(LFViewParameters* vp, INT context)
 
 void CStoreManagerApp::Broadcast(INT Context, INT View, UINT cmdMsg)
 {
-	std::list<CMainFrame*>::iterator ppFrame = m_listMainFrames.begin();
-	while (ppFrame!=m_listMainFrames.end())
+	for (POSITION p=m_MainFrames.GetHeadPosition(); p; )
 	{
-		if (((*ppFrame)->ActiveContextID==Context) || (Context==-1))
-			if (((*ppFrame)->ActiveViewID==View) || (View==-1))
-				(*ppFrame)->PostMessage(cmdMsg);
-
-		ppFrame++;
+		CMainFrame* pFrame = m_MainFrames.GetNext(p);
+		if ((pFrame->ActiveContextID==Context) || (Context==-1))
+			if ((pFrame->ActiveViewID==View) || (View==-1))
+				pFrame->PostMessage(cmdMsg);
 	}
 }
 

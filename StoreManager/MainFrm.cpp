@@ -292,7 +292,7 @@ void CMainFrame::OnUpdateAppCommands(CCmdUI* pCmdUI)
 	switch (pCmdUI->m_nID)
 	{
 	case ID_APP_CLOSEOTHERS:
-		pCmdUI->Enable(theApp.m_listMainFrames.size()>1);
+		pCmdUI->Enable(theApp.m_MainFrames.GetCount()>1);
 		break;
 	case ID_VIEW_AUTODIRS:
 		pCmdUI->SetCheck((ActiveViewParameters->AutoDirs) || (ActiveContextID>=LFContextSubfolderDefault));
