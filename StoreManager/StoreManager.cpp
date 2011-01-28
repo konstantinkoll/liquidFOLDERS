@@ -153,12 +153,21 @@ void CStoreManagerApp::AddFrame(CMainFrame* pFrame)
 		p_Clipboard = pFrame;
 }
 
-void CStoreManagerApp::KillFrame(CMainFrame* pFrame)
+void CStoreManagerApp::KillFrame(CMainFrame* pVictim)
 {
-	//m_MainFrames.remove(pFrame);
-
-	if (pFrame->IsClipboard)
+	if (pVictim->IsClipboard)
 		p_Clipboard = NULL;
+
+	for (POSITION p=m_MainFrames.GetHeadPosition(); p; )
+	{
+		POSITION pl = p;
+		CMainFrame* pFrame = m_MainFrames.GetNext(p);
+		if (pFrame==pVictim)
+		{
+			m_MainFrames.RemoveAt(pl);
+			break;
+		}
+	}
 }
 
 void CStoreManagerApp::ReplaceMainFrame(CMainFrame* pVictim)

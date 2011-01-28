@@ -52,7 +52,7 @@ public:
 		virtual void OnClosingMainFrame(CFrameImpl* pFrameImpl);	// Axe
 
 	void AddFrame(CMainFrame* pFrame);
-	void KillFrame(CMainFrame* pFrame);
+	void KillFrame(CMainFrame* pVictim);
 	void ReplaceMainFrame(CMainFrame* pVictim);
 	CMainFrame* GetClipboard();
 	void CloseAllFrames(BOOL LeaveOne=FALSE);
