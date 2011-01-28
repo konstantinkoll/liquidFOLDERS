@@ -144,7 +144,7 @@ void CMapSelectionCtrl::OnPaint()
 	buffer.CreateCompatibleBitmap(&pDC, rect.Width(), rect.Height());
 	CBitmap* pOldBitmap = dc.SelectObject(&buffer);
 
-	Graphics g(dc.m_hDC);
+	Graphics g(dc);
 	g.SetCompositingMode(CompositingModeSourceOver);
 	g.DrawImage(Map1->m_pBitmap, 0, 0, rect.Width(), rect.Height());
 

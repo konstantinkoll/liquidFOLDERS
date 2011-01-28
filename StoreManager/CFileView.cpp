@@ -655,14 +655,6 @@ void CFileView::DrawCategory(CDC& dc, LPRECT rectCategory, ItemCategory* ic, BOO
 	dc.SelectObject(pOldFont);
 }
 
-void CFileView::PrepareFormatData(INT idx)
-{
-	if ((p_Result->m_Items[idx]->Type & LFTypeMask)!=LFTypeFile)
-		return;
-
-	theApp.PrepareFormatData(p_Result->m_Items[idx]->CoreAttributes.FileFormat);
-}
-
 void CFileView::ResetScrollbars()
 {
 	if (m_EnableScrolling)
@@ -1078,12 +1070,20 @@ void CFileView::OnMouseHover(UINT nFlags, CPoint point)
 			else
 				if (!m_TooltipCtrl.IsWindowVisible() && m_EnableTooltip)
 				{
-					PrepareFormatData(m_HotItem);
+					FormatData fd;
 
 					LFItemDescriptor* i = p_Result->m_Items[m_HotItem];
-					INT SysIconIndex = (((i->Type & LFTypeMask)==LFTypeFile) && (i->CoreAttributes.FileFormat[0]!='\0')) ? theApp.m_FileFormats[i->CoreAttributes.FileFormat].SysIconIndex : -1;
+					if ((i->Type & LFTypeMask)==LFTypeFile)
+					{
+						theApp.m_FileFormats.Lookup(i->CoreAttributes.FileFormat, fd);
+					}
+					else
+					{
+						fd.FormatName[0] = L'\0';
+						fd.SysIconIndex = -1;
+					}
 
-					HICON hIcon = (SysIconIndex>=0) ? theApp.m_SystemImageListExtraLarge.ExtractIcon(SysIconIndex) : theApp.m_CoreImageListExtraLarge.ExtractIcon(i->IconID-1);
+					HICON hIcon = (fd.SysIconIndex>=0) ? theApp.m_SystemImageListExtraLarge.ExtractIcon(fd.SysIconIndex) : theApp.m_CoreImageListExtraLarge.ExtractIcon(i->IconID-1);
 
 					INT cx = 48;
 					INT cy = 48;

@@ -382,6 +382,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CFormatCache.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\CGlobeView.cpp"
 				>
 			</File>
@@ -513,6 +517,10 @@
 			</File>
 			<File
 				RelativePath=".\CFileView.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CFormatCache.h"
 				>
 			</File>
 			<File

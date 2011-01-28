@@ -47,7 +47,7 @@ BOOL GLFont::Create(CFont* font)
 	HFONT hFontOld = (HFONT)dc.SelectObject(font);
 
 	PaintResult p;
-	while (MoreData==(p = PaintAlphabet(dc.m_hDC, TRUE)))
+	while (MoreData==(p = PaintAlphabet(dc, TRUE)))
 		m_TexSize *= 2;
 
 	BOOL ok = (p==Success);
@@ -63,10 +63,10 @@ BOOL GLFont::Create(CFont* font)
 		bmi.bmiHeader.biCompression = BI_RGB;
 		bmi.bmiHeader.biBitCount = 32;
 
-		HBITMAP hbmBitmap = CreateDIBSection(dc.m_hDC, &bmi, DIB_RGB_COLORS, (void**)&pBitmapBits, NULL, 0);
+		HBITMAP hbmBitmap = CreateDIBSection(dc, &bmi, DIB_RGB_COLORS, (void**)&pBitmapBits, NULL, 0);
 		HGDIOBJ hbmOld = dc.SelectObject(hbmBitmap);
 
-		ok = (PaintAlphabet(dc.m_hDC)==Success);
+		ok = (PaintAlphabet(dc)==Success);
 		if (ok)
 		{
 			glGenTextures(1, &m_TexID);

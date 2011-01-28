@@ -114,7 +114,7 @@ void CTagList::DrawItem(INT nID, CDC* pDC)
 		dc.FillSolidRect(rect, bkCol);
 
 		// Border
-		Graphics g(dc.m_hDC);
+		Graphics g(dc);
 		g.SetCompositingMode(CompositingModeSourceOver);
 		g.SetSmoothingMode(SmoothingModeAntiAlias);
 

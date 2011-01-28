@@ -107,7 +107,7 @@ void CMapPreviewCtrl::OnPaint()
 	buffer.CreateCompatibleBitmap(&pDC, rect.Width(), rect.Height());
 	CBitmap* pOldBitmap = dc.SelectObject(&buffer);
 
-	Graphics g(dc.m_hDC);
+	Graphics g(dc);
 	g.SetCompositingMode(CompositingModeSourceOver);
 	g.SetSmoothingMode(SmoothingModeAntiAlias);
 	g.SetInterpolationMode(InterpolationModeHighQualityBicubic);

@@ -273,8 +273,6 @@ RECT CListView::GetLabelRect(INT idx)
 
 void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed)
 {
-	PrepareFormatData(idx);
-
 	LFItemDescriptor* i = p_Result->m_Items[idx];
 	GridItemData* d = GetItemData(idx);
 	INT Rows[4];
@@ -442,22 +440,22 @@ void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed)
 
 void CListView::DrawIcon(CDC& dc, CRect& rect, LFItemDescriptor* i)
 {
-	INT SysIconIndex = (((i->Type & LFTypeMask)==LFTypeFile) && (i->CoreAttributes.FileFormat[0]!='\0')) ? theApp.m_FileFormats[i->CoreAttributes.FileFormat].SysIconIndex : -1;
+	INT SysIconIndex = -1;
 
-	const INT List = (SysIconIndex>=0) ? 1 : 0;
+	if ((i->Type & LFTypeMask)==LFTypeFile)
+	{
+		if (m_ViewParameters.Mode==LFViewLargeIcons)
+		{
+			theApp.m_FileFormats.DrawJumboIcon(dc, rect, i->CoreAttributes.FileFormat, i->Type & LFTypeGhosted);
+			return;
+		}
+
+		SysIconIndex = theApp.m_FileFormats.GetSysIconIndex(i->CoreAttributes.FileFormat);
+	}
+
+	const UINT List = (SysIconIndex>=0) ? 1 : 0;
 	rect.OffsetRect((rect.Width()-m_IconSize[List].cx)/2, (rect.Height()-m_IconSize[List].cy)/2);
-
-	if ((m_IconSize[List].cx<128) || (List==0))
-	{
-		m_Icons[List]->DrawEx(&dc, (List==1) ? SysIconIndex : i->IconID-1, rect.TopLeft(), m_IconSize[List], CLR_NONE, 0xFFFFFF, (i->Type & LFTypeGhosted) ? ILD_BLEND50 : ILD_TRANSPARENT);
-	}
-	else
-	{
-		// TODO
-		HICON hIcon = m_Icons[List]->ExtractIcon(SysIconIndex);
-		DrawIconEx(dc, rect.left, rect.top, hIcon, m_IconSize[1].cx, m_IconSize[1].cy, 0, NULL, DI_NORMAL);
-		DestroyIcon(hIcon);
-	}
+	m_Icons[List]->DrawEx(&dc, (List==1) ? SysIconIndex : i->IconID-1, rect.TopLeft(), m_IconSize[List], CLR_NONE, 0xFFFFFF, (i->Type & LFTypeGhosted) ? ILD_BLEND50 : ILD_TRANSPARENT);
 }
 
 void CListView::AttributeToString(LFItemDescriptor* i, UINT Attr, WCHAR* tmpStr, size_t cCount)
@@ -468,7 +466,7 @@ void CListView::AttributeToString(LFItemDescriptor* i, UINT Attr, WCHAR* tmpStr,
 		wcscpy_s(tmpStr, cCount, GetLabel(i));
 		break;
 	case LFAttrFileFormat:
-		wcscpy_s(tmpStr, cCount, theApp.m_FileFormats[i->CoreAttributes.FileFormat].FormatName);
+//		wcscpy_s(tmpStr, cCount, theApp.m_FileFormats[i->CoreAttributes.FileFormat].FormatName);
 		break;
 	default:
 		LFAttributeToString(i, Attr, tmpStr, cCount);

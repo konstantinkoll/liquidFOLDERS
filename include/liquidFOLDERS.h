@@ -56,6 +56,7 @@ struct LFMessageIDs
 
 #define LFExtSize                       16
 
+
 // Mutex objects
 
 #define LFCM_Watchdog                   "Local\\LFWatchdogMutex"

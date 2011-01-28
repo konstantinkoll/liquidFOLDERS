@@ -439,14 +439,14 @@ void CAttributePropertyRating::OnDrawValue(CDC* pDC, CRect rect)
 	ASSERT_VALID(pDC);
 	ASSERT_VALID(m_pWndList);
 
-	HDC hdcMem = CreateCompatibleDC(pDC->m_hDC);
+	HDC hdcMem = CreateCompatibleDC(*pDC);
 	UCHAR level = Multiple ? 0 : p_Data->Rating;
 	HBITMAP hbmOld = (HBITMAP)SelectObject(hdcMem, p_Data->Attr==LFAttrRating ? p_App->m_RatingBitmaps[level] : p_App->m_PriorityBitmaps[level]);
 
 	INT w = min(rect.Width()-6, RatingBitmapWidth);
 	INT h = min(rect.Height(), RatingBitmapHeight);
 	BLENDFUNCTION LF = { AC_SRC_OVER, 0, 0xFF, AC_SRC_ALPHA };
-	AlphaBlend(pDC->m_hDC, rect.left+6, rect.top+(rect.Height()-h)/2, w, h, hdcMem, 0, 0, w, h, LF);
+	AlphaBlend(*pDC, rect.left+6, rect.top+(rect.Height()-h)/2, w, h, hdcMem, 0, 0, w, h, LF);
 
 	SelectObject(hdcMem, hbmOld);
 	DeleteDC(hdcMem);

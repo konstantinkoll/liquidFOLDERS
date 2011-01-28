@@ -118,7 +118,7 @@ void LFDialog::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 				dc.SetTextColor(GetSysColor(COLOR_HIGHLIGHTTEXT));
 			}
 
-			DrawIconEx(dc.m_hDC, borders.right, (m_UACHeight-m_ShieldSize)/2, hIconShield, m_ShieldSize, m_ShieldSize, 0, NULL, DI_NORMAL);
+			DrawIconEx(dc, borders.right, (m_UACHeight-m_ShieldSize)/2, hIconShield, m_ShieldSize, m_ShieldSize, 0, NULL, DI_NORMAL);
 
 			CRect rectText(rect);
 			rectText.left = borders.right+m_ShieldSize;

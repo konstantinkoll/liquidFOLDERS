@@ -3,10 +3,10 @@
 //
 
 #pragma once
-#include "resource.h"
-#include "MainFrm.h"
-#include "liquidFOLDERS.h"
 #include "LFCommDlg.h"
+#include "CFormatCache.h"
+#include "MainFrm.h"
+#include "resource.h"
 #include <hash_map>
 #include <string>
 
@@ -14,18 +14,18 @@
 // Siehe StoreManager.cpp für die Implementierung dieser Klasse
 //
 
-struct FormatData
-{
-	INT SysIconIndex;
-	WCHAR FormatName[80];
-};
-
 class CStoreManagerApp : public LFApplication
 {
 public:
 	CStoreManagerApp();
 
 	CString m_PathGoogleEarth;
+	CList<CMainFrame*> m_MainFrames;
+	CMainFrame* p_Clipboard;
+	CFormatCache m_FileFormats;
+	LFViewParameters m_Views[LFContextCount];
+	LFBitArray* m_AllowedViews[LFContextCount];
+
 	UINT m_nTextureSize;
 	UINT m_nMaxTextureSize;
 	UINT m_NagCounter;
@@ -41,11 +41,6 @@ public:
 	BOOL m_GlobeBlackBackground;
 	BOOL m_GlobeShowViewport;
 	BOOL m_GlobeShowCrosshairs;
-	stdext::hash_map<std::string, FormatData> m_FileFormats;
-	CList<CMainFrame*> m_MainFrames;
-	CMainFrame* p_Clipboard;
-	LFViewParameters m_Views[LFContextCount];
-	LFBitArray* m_AllowedViews[LFContextCount];
 
 	virtual BOOL InitInstance();
 	virtual INT ExitInstance();
@@ -66,7 +61,6 @@ public:
 	void UpdateViewOptions(INT Context=-1, INT View=-1);
 	void Reload(INT Context);
 	void UpdateSearchResult(INT Context);
-	void PrepareFormatData(CHAR* FileFormat);
 
 		static CString GetCommandName(UINT nID, BOOL bInsertSpace=FALSE);							// Axe
 		static CMFCRibbonButton* CommandButton(UINT nID, INT nSmallImageIndex=-1, INT nLargeImageIndex=-1, BOOL bAlwaysShowDescription=FALSE, BOOL bInsertSpace=FALSE);	// Axe

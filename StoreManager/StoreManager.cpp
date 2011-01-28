@@ -353,25 +353,6 @@ void CStoreManagerApp::UpdateSearchResult(INT Context)
 	Broadcast(Context, -1, WM_UPDATESEARCHRESULT);
 }
 
-void CStoreManagerApp::PrepareFormatData(CHAR* FileFormat)
-{
-	if (m_FileFormats.count(FileFormat))
-		return;
-
-	CString Ext = _T("*.");
-	Ext += FileFormat;
-
-	SHFILEINFO sfi;
-	if (SUCCEEDED(SHGetFileInfo(Ext, 0, &sfi, sizeof(sfi), SHGFI_SYSICONINDEX | SHGFI_SMALLICON | SHGFI_TYPENAME | SHGFI_USEFILEATTRIBUTES)))
-	{
-		FormatData fd;
-		fd.SysIconIndex = sfi.iIcon;
-		wcscpy_s(fd.FormatName, 80, sfi.szTypeName);
-
-		m_FileFormats[FileFormat] = fd;
-	}
-}
-
 
 // Registry and view settings
 

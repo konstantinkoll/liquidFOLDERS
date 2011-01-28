@@ -147,7 +147,6 @@ protected:
 	RECT GetItemRect(INT idx);
 	void DrawItemBackground(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed);
 	void DrawCategory(CDC& dc, LPRECT rectCategory, ItemCategory* ic, BOOL Themed);
-	void PrepareFormatData(INT idx);
 	void ResetScrollbars();
 	void AdjustScrollbars();
 	CString GetLabel(LFItemDescriptor* i);

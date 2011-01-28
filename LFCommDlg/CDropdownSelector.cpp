@@ -366,7 +366,7 @@ void CDropdownSelector::OnPaint()
 	dib.bmiHeader.biBitCount = 32;
 	dib.bmiHeader.biCompression = BI_RGB;
 
-	HBITMAP hBmp = CreateDIBSection(dc.m_hDC, &dib, DIB_RGB_COLORS, NULL, NULL, 0);
+	HBITMAP hBmp = CreateDIBSection(dc, &dib, DIB_RGB_COLORS, NULL, NULL, 0);
 	HBITMAP hOldBitmap = (HBITMAP)dc.SelectObject(hBmp);
 
 	Graphics g(dc);
