@@ -466,7 +466,7 @@ void CListView::AttributeToString(LFItemDescriptor* i, UINT Attr, WCHAR* tmpStr,
 		wcscpy_s(tmpStr, cCount, GetLabel(i));
 		break;
 	case LFAttrFileFormat:
-//		wcscpy_s(tmpStr, cCount, theApp.m_FileFormats[i->CoreAttributes.FileFormat].FormatName);
+		wcscpy_s(tmpStr, cCount, theApp.m_FileFormats.GetTypeName(i->CoreAttributes.FileFormat));
 		break;
 	default:
 		LFAttributeToString(i, Attr, tmpStr, cCount);
