@@ -10,7 +10,7 @@
 
 void fmtcpy(CHAR* Dst, CHAR* Src)
 {
-	ASSERT(Scr);
+	ASSERT(Src);
 	ASSERT(Dst);
 
 	do *(Dst++) = (CHAR)toupper(*Src); while (*(Src++));
