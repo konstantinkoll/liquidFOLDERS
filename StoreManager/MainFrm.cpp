@@ -450,7 +450,7 @@ BOOL CMainFrame::AddClipItem(LFItemDescriptor* i)
 
 
 
-void CMainFrame::UpdateSearchResult(BOOL SetEmpty, INT FocusItem)
+void CMainFrame::UpdateSearchResult(BOOL SetEmpty, FVPersistentData* Data)
 {
 	if ((!SetEmpty) && (CookedFiles))
 	{
@@ -458,7 +458,7 @@ void CMainFrame::UpdateSearchResult(BOOL SetEmpty, INT FocusItem)
 		ActiveViewParameters = &theApp.m_Views[ActiveContextID];
 	}
 
-	m_wndMainView.UpdateSearchResult(SetEmpty ? NULL : RawFiles, SetEmpty ? NULL : CookedFiles, FocusItem);
+	m_wndMainView.UpdateSearchResult(SetEmpty ? NULL : RawFiles, SetEmpty ? NULL : CookedFiles, Data);
 
 	ActiveViewID = ActiveViewParameters->Mode;
 }
@@ -479,13 +479,14 @@ void CMainFrame::OnNavigateBack()
 	if (ActiveFilter)
 	{
 		LFFilter* f = ActiveFilter;
-		INT focus = m_wndMainView.GetFocusItem();
+		FVPersistentData Data;
+		m_wndMainView.GetPersistentData(Data);
 		ActiveFilter = NULL;
 
-		AddBreadcrumbItem(&m_BreadcrumbForward, f, focus);
-		ConsumeBreadcrumbItem(&m_BreadcrumbBack, &f, &focus);
-	
-		NavigateTo(f, NAVMODE_HISTORY, focus);
+		AddBreadcrumbItem(&m_BreadcrumbForward, f, Data);
+		ConsumeBreadcrumbItem(&m_BreadcrumbBack, &f, &Data);
+
+		NavigateTo(f, NAVMODE_HISTORY, &Data);
 	}
 }
 
@@ -494,20 +495,25 @@ void CMainFrame::OnNavigateForward()
 	if (ActiveFilter)
 	{
 		LFFilter* f = ActiveFilter;
-		INT focus = m_wndMainView.GetFocusItem();
+		FVPersistentData Data;
+		m_wndMainView.GetPersistentData(Data);
 		ActiveFilter = NULL;
 
-		AddBreadcrumbItem(&m_BreadcrumbBack, f, focus);
-		ConsumeBreadcrumbItem(&m_BreadcrumbForward, &f, &focus);
+		AddBreadcrumbItem(&m_BreadcrumbBack, f, Data);
+		ConsumeBreadcrumbItem(&m_BreadcrumbForward, &f, &Data);
 
-		NavigateTo(f, NAVMODE_HISTORY, focus);
+		NavigateTo(f, NAVMODE_HISTORY, &Data);
 	}
 }
 
 void CMainFrame::OnNavigateReload()
 {
 	if (ActiveFilter)
-		NavigateTo(LFAllocFilter(ActiveFilter), NAVMODE_RELOAD, m_wndMainView.GetFocusItem());
+	{
+		FVPersistentData Data;
+		m_wndMainView.GetPersistentData(Data);
+		NavigateTo(LFAllocFilter(ActiveFilter), NAVMODE_RELOAD, &Data);
+	}
 }
 
 void CMainFrame::OnNavigateStores()
@@ -702,7 +708,7 @@ void CMainFrame::InitializeRibbon()
 }
 
 
-void CMainFrame::NavigateTo(LFFilter* f, UINT NavMode, INT FocusItem, INT FirstAggregate, INT LastAggregate)
+void CMainFrame::NavigateTo(LFFilter* f, UINT NavMode, FVPersistentData* Data, INT FirstAggregate, INT LastAggregate)
 {
 	if (NavMode<NAVMODE_RELOAD)
 		theApp.PlayNavigateSound();
@@ -710,7 +716,9 @@ void CMainFrame::NavigateTo(LFFilter* f, UINT NavMode, INT FocusItem, INT FirstA
 	if (ActiveFilter)
 		if (NavMode==NAVMODE_NORMAL)
 		{
-			AddBreadcrumbItem(&m_BreadcrumbBack, ActiveFilter, m_wndMainView.GetFocusItem());
+			FVPersistentData Data;
+			m_wndMainView.GetPersistentData(Data);
+			AddBreadcrumbItem(&m_BreadcrumbBack, ActiveFilter, Data);
 			DeleteBreadcrumbs(&m_BreadcrumbForward);
 		}
 		else
@@ -749,7 +757,7 @@ void CMainFrame::NavigateTo(LFFilter* f, UINT NavMode, INT FocusItem, INT FirstA
 		RawFiles = LFQuery(ActiveFilter);
 	}
 
-	OnCookFiles(FocusItem);
+	OnCookFiles((WPARAM)Data);
 
 	if (CookedFiles->m_LastError>LFCancel)
 	{
@@ -871,7 +879,10 @@ void CMainFrame::OnUpdateViewOptions()
 void CMainFrame::OnUpdateSortOptions()
 {
 	m_wndMainView.SelectNone();
-	OnCookFiles(m_wndMainView.GetFocusItem());
+
+	FVPersistentData Data;
+	m_wndMainView.GetPersistentData(Data);
+	OnCookFiles((WPARAM)&Data);
 
 	ActiveViewID = ActiveViewParameters->Mode;
 }
@@ -895,7 +906,7 @@ LRESULT CMainFrame::OnCookFiles(WPARAM wParam, LPARAM /*lParam*/)
 		CookedFiles = RawFiles;
 	}
 
-	UpdateSearchResult(FALSE, (INT)wParam);
+	UpdateSearchResult(FALSE, (FVPersistentData*)wParam);
 	UpdateHistory();
 
 	if ((Victim) && (Victim!=RawFiles))
@@ -913,7 +924,7 @@ LRESULT CMainFrame::OnCookFiles(WPARAM wParam, LPARAM /*lParam*/)
 
 void CMainFrame::OnUpdateSearchResult()
 {
-	UpdateSearchResult(FALSE, m_wndMainView.GetFocusItem());
+	UpdateSearchResult(FALSE, NULL);
 }
 
 void CMainFrame::OnInvalidate()

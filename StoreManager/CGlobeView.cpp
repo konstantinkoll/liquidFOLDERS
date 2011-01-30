@@ -195,9 +195,9 @@ CGlobeView::CGlobeView()
 	m_LockUpdate = FALSE;
 }
 
-BOOL CGlobeView::Create(CWnd* pParentWnd, UINT nID, LFSearchResult* Result, INT FocusItem)
+BOOL CGlobeView::Create(CWnd* pParentWnd, UINT nID, LFSearchResult* Result, FVPersistentData* Data)
 {
-	return CFileView::Create(pParentWnd, nID, Result, FocusItem, CS_DBLCLKS | CS_OWNDC);
+	return CFileView::Create(pParentWnd, nID, Result, Data, CS_DBLCLKS | CS_OWNDC);
 }
 
 void CGlobeView::SetViewOptions(BOOL Force)

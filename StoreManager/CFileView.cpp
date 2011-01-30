@@ -62,7 +62,7 @@ CFileView::~CFileView()
 		free(m_ItemData);
 }
 
-BOOL CFileView::Create(CWnd* pParentWnd, UINT nID, LFSearchResult* Result, INT FocusItem, UINT nClassStyle)
+BOOL CFileView::Create(CWnd* pParentWnd, UINT nID, LFSearchResult* Result, FVPersistentData* Data, UINT nClassStyle)
 {
 	CString className = AfxRegisterWndClass(nClassStyle, LoadCursor(NULL, IDC_ARROW));
 
@@ -76,7 +76,7 @@ BOOL CFileView::Create(CWnd* pParentWnd, UINT nID, LFSearchResult* Result, INT F
 		return FALSE;
 
 	UpdateViewOptions(Result ? Result->m_Context : LFContextDefault, TRUE);
-	UpdateSearchResult(Result, FocusItem);
+	UpdateSearchResult(Result, Data);
 	return TRUE;
 }
 
@@ -143,7 +143,7 @@ void CFileView::UpdateViewOptions(INT Context, BOOL Force)
 	}
 }
 
-void CFileView::UpdateSearchResult(LFSearchResult* Result, INT FocusItem)
+void CFileView::UpdateSearchResult(LFSearchResult* Result, FVPersistentData* Data)
 {
 	DestroyEdit();
 
@@ -174,7 +174,7 @@ void CFileView::UpdateSearchResult(LFSearchResult* Result, INT FocusItem)
 		p_ViewParameters = &theApp.m_Views[m_Context];
 		m_ViewParameters.SortBy = p_ViewParameters->SortBy;
 
-		m_FocusItem = min(FocusItem, (INT)Result->m_ItemCount-1);
+		m_FocusItem = Data ? min(Data->FocusItem, (INT)Result->m_ItemCount-1) : Result->m_ItemCount ? 0 : -1;
 		m_HotItem = -1;
 		m_HideFileExt = theApp.HideFileExt();
 	}
@@ -507,6 +507,12 @@ CMenu* CFileView::GetItemContextMenu(INT idx)
 
 	pPopup->SetDefaultItem(0, TRUE);
 	return pMenu;
+}
+
+void CFileView::GetPersistentData(FVPersistentData& Data)
+{
+	ZeroMemory(&Data, sizeof(Data));
+	Data.FocusItem = m_FocusItem;
 }
 
 void CFileView::EditLabel(INT idx)

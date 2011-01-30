@@ -3,6 +3,7 @@
 #include "liquidFOLDERS.h"
 #include "LFCommDlg.h"
 #include "CPaneList.h"
+#include "CFileView.h"
 
 
 // Breadcrumbs
@@ -11,11 +12,11 @@
 struct BreadcrumbItem {
 	BreadcrumbItem* next;
 	LFFilter* filter;
-	INT focus;
+	FVPersistentData data;
 };
 
-void AddBreadcrumbItem(BreadcrumbItem** bi, LFFilter* f, INT focus);
-void ConsumeBreadcrumbItem(BreadcrumbItem** bi, LFFilter** f, INT* focus);
+void AddBreadcrumbItem(BreadcrumbItem** bi, LFFilter* f, FVPersistentData& data);
+void ConsumeBreadcrumbItem(BreadcrumbItem** bi, LFFilter** f, FVPersistentData* data);
 void DeleteBreadcrumbs(BreadcrumbItem** bi);
 
 

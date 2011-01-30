@@ -20,13 +20,13 @@ public:
 
 	INT Create(CWnd* _pParentWnd, UINT nID);
 	void UpdateViewOptions(INT Context);
-	void UpdateSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, INT FocusItem);
+	void UpdateSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data=NULL);
 	void DismissNotification();
 	void ShowNotification(UINT Type, CString Message, UINT Command=0);
 	void ShowNotification(UINT Type, UINT ResID, UINT Command=0);
-	INT GetFocusItem();
 	INT GetSelectedItem();
 	INT GetNextSelectedItem(INT n);
+	void GetPersistentData(FVPersistentData& Data);
 	void SelectNone();
 	BOOL UpdateItems(LFVariantData* value1, LFVariantData* value2, LFVariantData* value3); // TODO (protected)
 
@@ -106,7 +106,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
-	BOOL CreateFileView(UINT ViewID, INT FocusItem);
+	BOOL CreateFileView(UINT ViewID, FVPersistentData* Data);
 	void SetHeader();
 	void AdjustLayout();
 	void ExecuteContextMenu(CHAR Drive, LPCSTR verb);

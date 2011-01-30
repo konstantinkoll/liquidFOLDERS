@@ -39,7 +39,7 @@ public:
 
 	virtual CMenu* GetBackgroundContextMenu();
 
-	BOOL Create(CWnd* pParentWnd, UINT nID, LFSearchResult* Result, INT FocusItem=0);
+	BOOL Create(CWnd* pParentWnd, UINT nID, LFSearchResult* Result, FVPersistentData* Data=NULL);
 
 protected:
 	GlobeParameters m_GlobeTarget;

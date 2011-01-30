@@ -43,7 +43,7 @@ public:
 	INT ActiveViewID;
 
 protected:
-	void UpdateSearchResult(BOOL SetEmpty, INT FocusItem);
+	void UpdateSearchResult(BOOL SetEmpty, FVPersistentData* Data);
 
 	CMFCRibbonBar m_wndRibbonBar;
 	CMFCRibbonApplicationButton m_MainButton;
@@ -102,6 +102,6 @@ private:
 	BOOL AttributeAllowedForSorting(INT attr);
 	void Remember(CMainFrame* clip);
 	void InitializeRibbon();
-	void NavigateTo(LFFilter* f, UINT NavMode=NAVMODE_NORMAL, INT FocusItem=0, INT FirstAggregate=-1, INT LastAggregate=-1);
+	void NavigateTo(LFFilter* f, UINT NavMode=NAVMODE_NORMAL, FVPersistentData* Data=NULL, INT FirstAggregate=-1, INT LastAggregate=-1);
 	void UpdateHistory();
 };

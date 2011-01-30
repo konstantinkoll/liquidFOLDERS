@@ -32,7 +32,12 @@ void CCalendarView::SetViewOptions(BOOL Force)
 {
 	if (Force)
 	{
-		m_Year = 2010;	// TODO
+		SYSTEMTIME st;
+		GetSystemTime(&st);
+
+		ASSERT(Year>=MINYEAR);
+		ASSERT(Year<=MAXYEAR);
+		m_Year = st.wYear;
 	}
 
 	if (Force || (m_HideEmptyDays!=theApp.m_HideEmptyDays))

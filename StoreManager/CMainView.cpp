@@ -56,7 +56,7 @@ BOOL CMainView::OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* 
 	return CWnd::OnCmdMsg(nID, nCode, pExtra, pHandlerInfo);
 }
 
-BOOL CMainView::CreateFileView(UINT ViewID, INT FocusItem)
+BOOL CMainView::CreateFileView(UINT ViewID, FVPersistentData* Data)
 {
 	CFileView* pNewView = NULL;
 
@@ -72,28 +72,28 @@ BOOL CMainView::CreateFileView(UINT ViewID, INT FocusItem)
 		if ((m_ViewID<LFViewLargeIcons) || (m_ViewID>LFViewPreview))
 		{
 			pNewView = new CListView();
-			((CListView*)pNewView)->Create(this, FileViewID, p_CookedFiles, FocusItem);
+			((CListView*)pNewView)->Create(this, FileViewID, p_CookedFiles, Data);
 		}
 		break;
 	case LFViewCalendar:
 		if (m_ViewID!=LFViewCalendar)
 		{
 			pNewView = new CCalendarView();
-			((CCalendarView*)pNewView)->Create(this, FileViewID, p_CookedFiles, FocusItem);
+			((CCalendarView*)pNewView)->Create(this, FileViewID, p_CookedFiles, Data);
 		}
 		break;
 	case LFViewGlobe:
 		if (m_ViewID!=LFViewGlobe)
 		{
 			pNewView = new CGlobeView();
-			((CGlobeView*)pNewView)->Create(this, FileViewID, p_CookedFiles, FocusItem);
+			((CGlobeView*)pNewView)->Create(this, FileViewID, p_CookedFiles, Data);
 		}
 		break;
 	case LFViewTagcloud:
 		if (m_ViewID!=LFViewTagcloud)
 		{
 			pNewView = new CTagcloudView();
-			((CTagcloudView*)pNewView)->Create(this, FileViewID, p_CookedFiles, FocusItem);
+			((CTagcloudView*)pNewView)->Create(this, FileViewID, p_CookedFiles, Data);
 		}
 		break;
 	}
@@ -169,31 +169,32 @@ void CMainView::SetHeader()
 void CMainView::UpdateViewOptions(INT Context)
 {
 	if (((Context==m_Context) || (Context==-1)) && (p_wndFileView))
-		if (!CreateFileView(theApp.m_Views[Context].Mode, GetFocusItem()))
+	{
+		FVPersistentData Data;
+		GetPersistentData(Data);
+		if (!CreateFileView(theApp.m_Views[Context].Mode, &Data))
 			p_wndFileView->UpdateViewOptions(Context);
+	}
 }
 
-void CMainView::UpdateSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, INT FocusItem)
+void CMainView::UpdateSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data)
 {
 	p_RawFiles = pRawFiles;
 	p_CookedFiles = pCookedFiles;
 
-	if (FocusItem<0)
-		FocusItem = 0;
-
 	if (!pCookedFiles)
 	{
 		if (p_wndFileView)
-			p_wndFileView->UpdateSearchResult(NULL, -1);
+			p_wndFileView->UpdateSearchResult(NULL, NULL);
 	}
 	else
 	{
 		m_Context = pCookedFiles->m_Context;
 
-		if (!CreateFileView(theApp.m_Views[pCookedFiles->m_Context].Mode, FocusItem))
+		if (!CreateFileView(theApp.m_Views[pCookedFiles->m_Context].Mode, Data))
 		{
 			p_wndFileView->UpdateViewOptions(m_Context);
-			p_wndFileView->UpdateSearchResult(pCookedFiles, FocusItem);
+			p_wndFileView->UpdateSearchResult(pCookedFiles, Data);
 		}
 	}
 
@@ -236,11 +237,6 @@ void CMainView::AdjustLayout()
 		p_wndFileView->SetWindowPos(NULL, rect.left, rect.top+TaskHeight+ExplorerHeight, rect.Width(), rect.Height()-ExplorerHeight-TaskHeight, SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
-INT CMainView::GetFocusItem()
-{
-	return p_wndFileView ? p_wndFileView->GetFocusItem() : -1;
-}
-
 INT CMainView::GetSelectedItem()
 {
 	return p_wndFileView ? p_wndFileView->GetSelectedItem() : -1;
@@ -249,6 +245,18 @@ INT CMainView::GetSelectedItem()
 INT CMainView::GetNextSelectedItem(INT n)
 {
 	return p_wndFileView ? p_wndFileView->GetNextSelectedItem(n) : -1;
+}
+
+void CMainView::GetPersistentData(FVPersistentData& Data)
+{
+	if (p_wndFileView)
+	{
+		p_wndFileView->GetPersistentData(Data);
+	}
+	else
+	{
+		ZeroMemory(&Data, sizeof(Data));
+	}
 }
 
 void CMainView::SelectNone()
@@ -352,7 +360,9 @@ void CMainView::RemoveTransactedItems(LFTransactionList* tl)
 	LFRemoveFlaggedItemDescriptors(p_RawFiles);
 	// TODO
 	//UpdateHistory();
-	GetOwner()->SendMessage(WM_COOKFILES, GetFocusItem());
+	FVPersistentData Data;
+	GetPersistentData(Data);
+	GetOwner()->SendMessage(WM_COOKFILES, (WPARAM)&Data);
 }
 
 BOOL CMainView::UpdateTrashFlag(BOOL Trash, BOOL All)
@@ -416,7 +426,7 @@ BOOL CMainView::UpdateItems(LFVariantData* value1, LFVariantData* value2, LFVari
 			}
 
 		if (tl->m_Changes)
-			UpdateSearchResult(p_RawFiles, p_CookedFiles, GetFocusItem());
+			UpdateSearchResult(p_RawFiles, p_CookedFiles);
 		if (deselected)
 			OnUpdateSelection();
 	}
@@ -701,7 +711,7 @@ LRESULT CMainView::OnRenameItem(WPARAM wParam, LPARAM lParam)
 	LFTransactionUpdate(tl, GetSafeHwnd(), &value);
 
 	if (tl->m_Changes)
-		UpdateSearchResult(p_RawFiles, p_CookedFiles, GetFocusItem());
+		UpdateSearchResult(p_RawFiles, p_CookedFiles);
 
 	if (tl->m_LastError>LFCancel)
 		ShowNotification(ENT_ERROR, tl->m_LastError);

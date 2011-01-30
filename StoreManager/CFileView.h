@@ -56,6 +56,12 @@ struct LFViewParameters
 	BOOL TagcloudUseOpacity;
 };
 
+struct FVPersistentData
+{
+	INT FocusItem;
+	UINT Year;
+};
+
 
 // Item data
 
@@ -89,12 +95,13 @@ public:
 	virtual ~CFileView();
 
 	virtual CMenu* GetBackgroundContextMenu();
+	virtual void GetPersistentData(FVPersistentData& Data);
 	virtual void EditLabel(INT idx);
 	virtual BOOL IsEditing();
 
-	BOOL Create(CWnd* pParentWnd, UINT nID, LFSearchResult* Result, INT FocusItem=0, UINT nClassStyle=CS_DBLCLKS);
+	BOOL Create(CWnd* pParentWnd, UINT nID, LFSearchResult* Result, FVPersistentData* Data=NULL, UINT nClassStyle=CS_DBLCLKS);
 	void UpdateViewOptions(INT Context=-1, BOOL Force=FALSE);
-	void UpdateSearchResult(LFSearchResult* Result, INT FocusItem);
+	void UpdateSearchResult(LFSearchResult* Result, FVPersistentData* Data);
 	INT GetFocusItem();
 	INT GetSelectedItem();
 	INT GetNextSelectedItem(INT idx);
