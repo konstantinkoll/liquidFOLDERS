@@ -22,6 +22,8 @@ public:
 	CFormatCache();
 
 	void Lookup(CHAR* FileFormat, FormatData& fd);
+	void Remove(CHAR* FileFormat);
+	void Remove(WCHAR* Path);
 	CString GetTypeName(CHAR* FileFormat);
 	INT GetSysIconIndex(CHAR* FileFormat);
 	void DrawJumboIcon(CDC& dc, CRect& rect, CHAR* FileFormat, BOOL Ghosted=FALSE);

@@ -23,6 +23,7 @@
 #define WM_RELOAD                WM_USER+202
 #define WM_COOKFILES             WM_USER+203
 #define WM_UPDATESEARCHRESULT    WM_USER+204
+#define WM_INVALIDATE            WM_USER+205
 
 class CMainFrame : public CFrameWndEx
 {
@@ -90,6 +91,7 @@ protected:
 	afx_msg void OnUpdateSortOptions();
 	afx_msg LRESULT OnCookFiles(WPARAM wParam=0, LPARAM lParam=NULL);
 	afx_msg void OnUpdateSearchResult();
+	afx_msg void OnInvalidate();
 
 	afx_msg LRESULT OnDrivesChanged(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnStoresChanged(WPARAM wParam, LPARAM lParam);

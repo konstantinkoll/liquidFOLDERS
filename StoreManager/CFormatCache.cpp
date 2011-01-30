@@ -17,7 +17,7 @@ void fmtcpy(CHAR* Dst, CHAR* Src)
 }
 
 
-// CTimelineView
+// CFormatCache
 //
 
 CFormatCache::CFormatCache()

@@ -356,7 +356,7 @@ void SetNameExtAddFromFile(LFItemDescriptor* i, wchar_t* fn)
 			unsigned int cCount = 0;
 			while ((*Ptr!=L'\0') && (cCount<LFExtSize-1))
 			{
-				Ext[cCount++] = (*Ptr<255) ? tolower(*Ptr) & 0xFF : L'_';
+				Ext[cCount++] = (*Ptr<=255) ? tolower(*Ptr) & 0xFF : L'_';
 				*Ptr++;
 			}
 

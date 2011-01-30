@@ -106,22 +106,22 @@ LRESULT OnMediaChanged(HWND /*hWnd*/, WPARAM wParam, LPARAM lParam)
 		DWORD dwItem2;
 	} SHNOTIFYSTRUCT;
 
-	SHNOTIFYSTRUCT *shns = (SHNOTIFYSTRUCT*)wParam;
-	CHAR sPath[MAX_PATH];
+	SHNOTIFYSTRUCT* shns = (SHNOTIFYSTRUCT*)wParam;
+	WCHAR sPath[MAX_PATH];
 
-	switch(lParam)
-	{
-	case SHCNE_DRIVEADD:
-	case SHCNE_MEDIAINSERTED:
-		if (SHGetPathFromIDListA(shns->dwItem1, sPath))
-			LFErrorBox(LFMountDrive(sPath[0]));
-		break;
-	case SHCNE_MEDIAREMOVED:
-	case SHCNE_DRIVEREMOVED:
-		if (SHGetPathFromIDListA(shns->dwItem1, sPath))
-			LFErrorBox(LFUnmountDrive(sPath[0]));
-		break;
-	}
+	if (SHGetPathFromIDList(shns->dwItem1, sPath))
+		if ((sPath[0]>=L'A') && (sPath[0]<=L'Z'))
+			switch(lParam)
+			{
+			case SHCNE_DRIVEADD:
+			case SHCNE_MEDIAINSERTED:
+				LFErrorBox(LFMountDrive((CHAR)sPath[0]));
+				break;
+			case SHCNE_MEDIAREMOVED:
+			case SHCNE_DRIVEREMOVED:
+				LFErrorBox(LFUnmountDrive((CHAR)sPath[0]));
+				break;
+			}
 
 	return NULL;
 }

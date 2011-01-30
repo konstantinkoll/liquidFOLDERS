@@ -53,6 +53,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_MESSAGE_VOID(WM_RELOAD, OnNavigateReload)
 	ON_MESSAGE(WM_COOKFILES, OnCookFiles)
 	ON_MESSAGE_VOID(WM_UPDATESEARCHRESULT, OnUpdateSearchResult)
+	ON_MESSAGE_VOID(WM_INVALIDATE, OnInvalidate)
 
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->DrivesChanged, OnDrivesChanged)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoresChanged, OnStoresChanged)
@@ -913,6 +914,11 @@ LRESULT CMainFrame::OnCookFiles(WPARAM wParam, LPARAM /*lParam*/)
 void CMainFrame::OnUpdateSearchResult()
 {
 	UpdateSearchResult(FALSE, m_wndMainView.GetFocusItem());
+}
+
+void CMainFrame::OnInvalidate()
+{
+	m_wndMainView.Invalidate();
 }
 
 

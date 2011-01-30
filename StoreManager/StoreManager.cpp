@@ -353,6 +353,11 @@ void CStoreManagerApp::UpdateSearchResult(INT Context)
 	Broadcast(Context, -1, WM_UPDATESEARCHRESULT);
 }
 
+void CStoreManagerApp::Invalidate(INT Context)
+{
+	Broadcast(Context, -1, WM_INVALIDATE);
+}
+
 
 // Registry and view settings
 
