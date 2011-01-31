@@ -250,7 +250,7 @@ void LFTooltip::OnPaint()
 	if (m_Themed)
 	{
 		Graphics g(dc);
-		LinearGradientBrush brush(Point(0, rect.top), Point(0, rect.bottom+1), Color(0xFF, 0xFF, 0xFF), Color(0xC9, 0xD9, 0xEF));
+		LinearGradientBrush brush(Point(0, rect.top), Point(0, rect.bottom+1), Color(0xFF, 0xFF, 0xFF), Color(0xE4, 0xE5, 0xF0));
 		g.FillRectangle(&brush, rect.left, rect.top, rect.Width(), rect.Height());
 	}
 	else
