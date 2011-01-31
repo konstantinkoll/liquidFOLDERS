@@ -937,6 +937,7 @@ BEGIN_MESSAGE_MAP(CGlobeView, CFileView)
 	ON_WM_MOUSEHOVER()
 	ON_WM_LBUTTONDOWN()
 	ON_WM_LBUTTONUP()
+	ON_WM_KEYDOWN()
 	ON_WM_TIMER()
 
 	ON_COMMAND(IDM_GLOBE_JUMPTOLOCATION, OnJumpToLocation)
@@ -1158,6 +1159,19 @@ void CGlobeView::OnLButtonUp(UINT nFlags, CPoint point)
 	else
 	{
 		CFileView::OnLButtonUp(nFlags, point);
+	}
+}
+
+void CGlobeView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
+{
+	CFileView::OnKeyDown(nChar, nRepCnt, nFlags);
+
+	switch(nChar)
+	{
+	case 'L':
+		if ((GetKeyState(VK_CONTROL)<0) && (GetKeyState(VK_SHIFT)>=0))
+			OnJumpToLocation();
+		break;
 	}
 }
 

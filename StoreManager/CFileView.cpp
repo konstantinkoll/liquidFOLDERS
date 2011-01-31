@@ -1,4 +1,4 @@
-
+3
 // CFileView.cpp: Implementierung der Klasse CFileView
 //
 
@@ -736,26 +736,31 @@ CString CFileView::GetLabel(LFItemDescriptor* i)
 	return label;
 }
 
-void CFileView::AppendAttribute(LFItemDescriptor* i, UINT attr, CString& str)
+void CFileView::AppendString(UINT attr, CString& str, WCHAR* tmpStr)
 {
-	wchar_t tmpStr[256];
-	LFAttributeToString(i, attr, tmpStr, 256);
-
-	if (tmpStr[0]!=L'\0')
-	{
-		if (!str.IsEmpty())
-			str += _T("\n");
-		if ((attr!=LFAttrComment) && (attr!=LFAttrDescription))
+	if (tmpStr)
+		if (tmpStr[0]!=L'\0')
 		{
-			str += theApp.m_Attributes[attr]->Name;
-			str += _T(": ");
-		}
+			if (!str.IsEmpty())
+				str += _T("\n");
+			if ((attr!=LFAttrComment) && (attr!=LFAttrFileFormat) && (attr!=LFAttrDescription))
+			{
+				str += theApp.m_Attributes[attr]->Name;
+				str += _T(": ");
+			}
 
-		str += tmpStr;
-	}
+			str += tmpStr;
+		}
 }
 
-CString CFileView::GetHint(LFItemDescriptor* i)
+void CFileView::AppendAttribute(LFItemDescriptor* i, UINT attr, CString& str)
+{
+	WCHAR tmpStr[256];
+	LFAttributeToString(i, attr, tmpStr, 256);
+	AppendString(attr, str, tmpStr);
+}
+
+CString CFileView::GetHint(LFItemDescriptor* i, WCHAR* FormatName)
 {
 	CString hint;
 
@@ -778,6 +783,7 @@ CString CFileView::GetHint(LFItemDescriptor* i)
 		break;
 	case LFTypeFile:
 		AppendAttribute(i, LFAttrComment, hint);
+		AppendString(LFAttrFileFormat, hint, FormatName);
 		AppendAttribute(i, LFAttrArtist, hint);
 		AppendAttribute(i, LFAttrTitle, hint);
 		AppendAttribute(i, LFAttrRecordingTime, hint);
@@ -1097,7 +1103,7 @@ void CFileView::OnMouseHover(UINT nFlags, CPoint point)
 					CSize sz(cx, cy);
 
 					ClientToScreen(&point);
-					m_TooltipCtrl.Track(point, hIcon, sz, GetLabel(i), GetHint(i));
+					m_TooltipCtrl.Track(point, hIcon, sz, GetLabel(i), GetHint(i, fd.FormatName));
 				}
 	}
 	else
@@ -1167,13 +1173,13 @@ void CFileView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 		if ((GetKeyState(VK_CONTROL)<0) && (GetKeyState(VK_SHIFT)>=0))
 			OnSelectAll();
 		break;
-	case 'N':
-		if ((GetKeyState(VK_CONTROL)<0) && (GetKeyState(VK_SHIFT)>=0))
-			OnSelectNone();
-		break;
 	case 'I':
 		if ((GetKeyState(VK_CONTROL)<0) && (GetKeyState(VK_SHIFT)>=0))
 			OnSelectInvert();
+		break;
+	case 'N':
+		if ((GetKeyState(VK_CONTROL)<0) && (GetKeyState(VK_SHIFT)>=0))
+			OnSelectNone();
 		break;
 	case VK_SPACE:
 		if (m_FocusItem!=-1)

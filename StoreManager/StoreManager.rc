@@ -213,7 +213,7 @@ BEGIN
         MENUITEM "Globus-&Einstellungen...",    IDM_GLOBE_SETTINGS
         MENUITEM "&Größe anpassen",             IDM_GLOBE_AUTOSIZE
         MENUITEM SEPARATOR
-        MENUITEM "&Ort anzeigen...",            IDM_GLOBE_JUMPTOLOCATION
+        MENUITEM "&Ort anzeigen...\tStrg+L",    IDM_GLOBE_JUMPTOLOCATION
     END
 END
 
@@ -233,10 +233,10 @@ IDM_CALENDAR MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "&Überschriften ausblenden",   IDM_CALENDAR_HIDECAPTIONS
+        MENUITEM "Ü&berschriften ausblenden",   IDM_CALENDAR_HIDECAPTIONS
         MENUITEM "Leere &Tage ausblenden",      IDM_CALENDAR_HIDEEMPTYDAYS
         MENUITEM SEPARATOR
-        MENUITEM "&Jahr auswählen...",          IDM_CALENDAR_GOTOYEAR
+        MENUITEM "&Jahr auswählen...\tStrg+Y",  IDM_CALENDAR_GOTOYEAR
     END
 END
 
@@ -515,7 +515,7 @@ BEGIN
         MENUITEM "Hide &captions",              IDM_CALENDAR_HIDECAPTIONS
         MENUITEM "Hide empty &days",            IDM_CALENDAR_HIDEEMPTYDAYS
         MENUITEM SEPARATOR
-        MENUITEM "Go to &year...",              IDM_CALENDAR_GOTOYEAR
+        MENUITEM "Go to &year...\tCtrl+Y",      IDM_CALENDAR_GOTOYEAR
     END
 END
 
@@ -526,7 +526,7 @@ BEGIN
         MENUITEM "Globe &settings...",          IDM_GLOBE_SETTINGS
         MENUITEM "Size globe to &fit",          IDM_GLOBE_AUTOSIZE
         MENUITEM SEPARATOR
-        MENUITEM "Jump to &location...",        IDM_GLOBE_JUMPTOLOCATION
+        MENUITEM "Jump to &location...\tCtrl+L", IDM_GLOBE_JUMPTOLOCATION
     END
 END
 
@@ -1012,7 +1012,7 @@ BEGIN
         MENUITEM "Configuraciones de &globo...", IDM_GLOBE_SETTINGS
         MENUITEM "Ajustar globo para &adaptar", IDM_GLOBE_AUTOSIZE
         MENUITEM SEPARATOR
-        MENUITEM "Seleccionar &ubicación...",   IDM_GLOBE_JUMPTOLOCATION
+        MENUITEM "Seleccionar &ubicación...\tCtrl+L", IDM_GLOBE_JUMPTOLOCATION
     END
 END
 
@@ -1035,7 +1035,7 @@ BEGIN
         MENUITEM "Ocultar &títulos",            IDM_CALENDAR_HIDECAPTIONS
         MENUITEM "Ocultar días &libres",        IDM_CALENDAR_HIDEEMPTYDAYS
         MENUITEM SEPARATOR
-        MENUITEM "Ir al &año...",               IDM_CALENDAR_GOTOYEAR
+        MENUITEM "Ir al &año...\tCtrl+Y",       IDM_CALENDAR_GOTOYEAR
     END
 END
 
@@ -1266,7 +1266,7 @@ BEGIN
         MENUITEM "Paramètres du &globe...",     IDM_GLOBE_SETTINGS
         MENUITEM "&Adapter la donnée",          IDM_GLOBE_AUTOSIZE
         MENUITEM SEPARATOR
-        MENUITEM "Choisissez l'&endroit...",    IDM_GLOBE_JUMPTOLOCATION
+        MENUITEM "Choisissez l'&endroit...\tCtrl+L",    IDM_GLOBE_JUMPTOLOCATION
     END
 END
 
@@ -1289,7 +1289,7 @@ BEGIN
         MENUITEM "Cache des &titres",           IDM_CALENDAR_HIDECAPTIONS
         MENUITEM "Cache les &jours vides",      IDM_CALENDAR_HIDEEMPTYDAYS
         MENUITEM SEPARATOR
-        MENUITEM "Choisissez l'&année...",      IDM_CALENDAR_GOTOYEAR
+        MENUITEM "Choisissez l'&année...\tCtrl+Y", IDM_CALENDAR_GOTOYEAR
     END
 END
 

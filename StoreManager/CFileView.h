@@ -192,7 +192,8 @@ protected:
 private:
 	CEdit* p_Edit;
 
+	void AppendString(UINT attr, CString& str, WCHAR* tmpStr);
 	void AppendAttribute(LFItemDescriptor* i, UINT attr, CString& str);
-	CString GetHint(LFItemDescriptor* i);
+	CString GetHint(LFItemDescriptor* i, WCHAR* FormatName=NULL);
 	void DestroyEdit(BOOL Accept=FALSE);
 };

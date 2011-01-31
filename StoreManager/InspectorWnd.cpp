@@ -9,6 +9,10 @@
 // CInspectorWnd
 //
 
+#define StatusUnused            0
+#define StatusUsed              1
+#define StatusMultiple          2
+
 CInspectorWnd::CInspectorWnd()
 {
 	Count = 0;
@@ -33,7 +37,7 @@ void CInspectorWnd::AdjustLayout()
 	GetClientRect(rectClient);
 
 	INT heightTlb = m_wndToolBar.CalcFixedLayout(FALSE, TRUE).cy;
-	INT heightIcn = m_ShowIcon ? m_wndIconCtrl.GetPreferredHeight(rectClient.Width()) : 0;
+	INT heightIcn = m_ShowIcon ? m_wndIconCtrl.GetPreferredHeight() : 0;
 
 	m_wndToolBar.SetWindowPos(NULL, rectClient.left, rectClient.top, rectClient.Width(), heightTlb, SWP_NOACTIVATE | SWP_NOZORDER);
 	m_wndIconCtrl.SetWindowPos(NULL, rectClient.left, rectClient.top + heightTlb, rectClient.Width(), heightIcn, SWP_NOACTIVATE | SWP_NOZORDER);
@@ -54,7 +58,6 @@ void CInspectorWnd::UpdateStart(LFFilter* f)
 	Count = 0;
 
 	// Icon
-	m_wndIconCtrl.SetStatus(StatusUnused);
 	IconStatus = StatusUnused;
 
 	// Typ
@@ -211,11 +214,40 @@ void CInspectorWnd::UpdateFinish()
 	if (SID)
 	{
 		CString tmpStr;
-		tmpStr.LoadString(SID);
+		ENSURE(tmpStr.LoadString(SID));
 		TypeName.Format(tmpStr, Count);
 	}
 
-	m_wndIconCtrl.SetStatus(IconStatus, (IconStatus==StatusUsed ? theApp.m_CoreImageListJumbo.ExtractIcon(IconID-1) : NULL), TypeName);
+	switch (IconStatus)
+	{
+	case StatusUnused:
+		m_wndIconCtrl.SetEmpty();
+		break;
+	case StatusMultiple:
+		m_wndIconCtrl.SetMultiple(TypeName);
+		break;
+	default:
+		if (TypeStatus==StatusMultiple)
+		{
+			m_wndIconCtrl.SetMultiple(TypeName);
+		}
+		else
+			if (TypeID==LFTypeFile)
+			{
+				if (AttributeStatus[LFAttrFileFormat]==StatusMultiple)
+				{
+					m_wndIconCtrl.SetMultiple(TypeName);
+				}
+				else
+				{
+					m_wndIconCtrl.SetFormatIcon(AttributeValues[LFAttrFileFormat].AnsiString, TypeName);
+				}
+			}
+			else
+			{
+				m_wndIconCtrl.SetCoreIcon(IconID-1, TypeName);
+			}
+	}
 
 	m_wndPropList.SetRedraw(FALSE);
 

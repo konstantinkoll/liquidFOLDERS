@@ -10,36 +10,37 @@
 // CInspectorIconCtrl
 //
 
-#define StatusUnused            0
-#define StatusUsed              1
-#define StatusMultiple          2
-
+#define IconEmpty         0
+#define IconMultiple      1
+#define IconCore          2
+#define IconExtension     3
+#define IconPreview       4
 
 class CInspectorIconCtrl : public CWnd
 {
 public:
 	CInspectorIconCtrl();
-	~CInspectorIconCtrl();
 
 	BOOL Create(CWnd* pParentWnd, UINT nID);
-	void SetStatus(UINT _status, HICON _icon=NULL, CString _description=_T(""));
-	INT GetPreferredHeight(INT cx);
+	void SetEmpty();
+	void SetMultiple(CString Description=_T(""));
+	void SetCoreIcon(INT IconID, CString Description=_T(""));
+	void SetFormatIcon(CHAR* FileFormat, CString Description=_T(""));
+	//void SetPreview(, CString Description=_T(""));		TODO
+	INT GetPreferredHeight();
 
 protected:
+	CGdiPlusBitmapResource m_Empty;
+	CGdiPlusBitmapResource m_Multiple;
+	CString m_strUnused;
+	CString m_strDescription;
 	UINT m_Status;
-	HICON m_Icon;
-	INT m_IconSize;
-	CString m_Description;
-	CGdiPlusBitmapResource* m_Empty;
-	CGdiPlusBitmapResource* m_Multiple;
+	INT m_IconID;
+	CHAR m_FileFormat[LFExtSize];
 
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnPaint();
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
-	afx_msg void OnSize(UINT nType, INT cx, INT cy);
 	DECLARE_MESSAGE_MAP()
-
-private:
-	CString m_Description_Unused;
 };

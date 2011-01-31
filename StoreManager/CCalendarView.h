@@ -4,7 +4,6 @@
 
 #pragma once
 #include "CFileView.h"
-#include "DynArray.h"
 
 
 // CCalendarView
@@ -53,6 +52,7 @@ protected:
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnPaint();
+	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 
 	afx_msg void OnHideEmptyDays();
 	afx_msg void OnHideCaptions();
