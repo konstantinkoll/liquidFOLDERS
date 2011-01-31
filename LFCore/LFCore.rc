@@ -58,7 +58,6 @@ IDI_DRV_Empty           ICON                    "res\\DRV_Empty.ico"
 IDI_DRV_ExtHD           ICON                    "res\\DRV_ExtHD.ico"
 IDI_DRV_Disconnected    ICON                    "res\\DRV_Disconnected.ico"
 IDI_DRV_Connected       ICON                    "res\\DRV_Connected.ico"
-IDI_FILE_Generic        ICON                    "res\\FILE_Generic.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //

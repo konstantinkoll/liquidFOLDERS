@@ -84,8 +84,8 @@ void CInspectorWnd::UpdateAdd(LFItemDescriptor* i, LFSearchResult* raw)
 	if (IconStatus<StatusMultiple)
 	{
 		UINT _IconID = i->IconID;
-		if (_IconID==IDI_STORE_Default)
-			_IconID=IDI_STORE_Internal;
+		if (IconID==IDI_STORE_Default)
+			IconID=IDI_STORE_Internal;
 
 		switch (IconStatus)
 		{

@@ -86,7 +86,7 @@ Restart:
 	for (INT a=0; a<(INT)p_Result->m_ItemCount; a++)
 	{
 		if (m_HasCategories)
-			if (((INT)p_Result->m_Items[a]->CategoryID!=category) && (p_Result->m_Items[a]->IconID!=IDI_FLD_Back))
+			if ((INT)p_Result->m_Items[a]->CategoryID!=category)
 			{
 				if (x>gva.mx)
 				{
@@ -193,7 +193,7 @@ Restart:
 	for (INT a=0; a<(INT)p_Result->m_ItemCount; a++)
 	{
 		if (m_HasCategories)
-			if (((INT)p_Result->m_Items[a]->CategoryID!=category) && (p_Result->m_Items[a]->IconID!=IDI_FLD_Back))
+			if ((INT)p_Result->m_Items[a]->CategoryID!=category)
 			{
 				FinishCategory;
 

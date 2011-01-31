@@ -161,18 +161,6 @@
 			</File>
 		</Filter>
 		<Filter
-			Name="Files"
-			>
-			<File
-				RelativePath=".\Files\FILE_Generic.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\Files\FILE_Generic.png"
-				>
-			</File>
-		</Filter>
-		<Filter
 			Name="Folders"
 			>
 			<File
@@ -185,10 +173,6 @@
 			</File>
 			<File
 				RelativePath=".\Folders\Audio.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Folders\Back.png"
 				>
 			</File>
 			<File
@@ -221,10 +205,6 @@
 			</File>
 			<File
 				RelativePath=".\Folders\FLD_Audio.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\Folders\FLD_Back.ico"
 				>
 			</File>
 			<File
@@ -365,6 +345,14 @@
 			</File>
 			<File
 				RelativePath=".\Other\ActiveX.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Other\Back.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\Other\Back.png"
 				>
 			</File>
 			<File

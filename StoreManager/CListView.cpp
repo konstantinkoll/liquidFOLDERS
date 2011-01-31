@@ -459,8 +459,12 @@ void CListView::DrawIcon(CDC& dc, CRect& rect, LFItemDescriptor* i)
 	}
 
 	const UINT List = (SysIconIndex>=0) ? 1 : 0;
-	rect.OffsetRect((rect.Width()-m_IconSize[List].cx)/2, (rect.Height()-m_IconSize[List].cy)/2);
-	m_Icons[List]->DrawEx(&dc, (List==1) ? SysIconIndex : i->IconID-1, rect.TopLeft(), m_IconSize[List], CLR_NONE, 0xFFFFFF, (i->Type & LFTypeGhosted) ? ILD_BLEND50 : ILD_TRANSPARENT);
+	const INT IconID = (List==1) ? SysIconIndex : i->IconID-1;
+	if (IconID>=0)
+	{
+		rect.OffsetRect((rect.Width()-m_IconSize[List].cx)/2, (rect.Height()-m_IconSize[List].cy)/2);
+		m_Icons[List]->DrawEx(&dc, IconID, rect.TopLeft(), m_IconSize[List], CLR_NONE, 0xFFFFFF, (i->Type & LFTypeGhosted) ? ILD_BLEND50 : ILD_TRANSPARENT);
+	}
 }
 
 void CListView::AttributeToString(LFItemDescriptor* i, UINT Attr, WCHAR* tmpStr, size_t cCount)

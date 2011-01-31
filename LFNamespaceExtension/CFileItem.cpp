@@ -111,9 +111,7 @@ void CFileItem::GetIconFileAndIndex(CGetIconFileAndIndexEventArgs& e)
 	}
 	else
 	{
-		e.iconExtractMode = NSEIEM_IconFileAndIndex;
-		e.iconFile = theApp.m_CoreFile;
-		e.iconIndex = IDI_FILE_Generic-1;
+		e.iconExtractMode = NSEIEM_None;
 	}
 }
 
