@@ -101,8 +101,8 @@ unsigned int CIndex::Check(bool scheduled)
 		case HeapMaintenanceRequired:
 			if (!Tables[a]->Compact())
 				return IndexError;
-			tres[a] = Tables[a]->OpenStatus;
 			Repaired = true;
+			tres[a] = Tables[a]->OpenStatus;
 			break;
 		}
 

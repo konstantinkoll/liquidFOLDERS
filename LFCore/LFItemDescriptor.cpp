@@ -316,12 +316,9 @@ LFCore_API LFItemDescriptor* LFAllocItemDescriptor(LFStoreDescriptor* s)
 	}
 
 	if (!IsMounted)
-	{
 		d->Type |= LFTypeGhosted | LFTypeNotMounted;
-	}
-	else
-		if (s->IndexVersion<CurIdxVersion)
-			d->Type |= LFTypeRequiresMaintenance;
+	if (s->IndexVersion<CurIdxVersion)
+		d->Type |= LFTypeRequiresMaintenance;
 
 	d->CategoryID = s->StoreMode;
 	d->Type |= LFTypeStore;

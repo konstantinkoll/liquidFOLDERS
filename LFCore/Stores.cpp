@@ -873,7 +873,7 @@ unsigned int RunMaintenance(LFStoreDescriptor* s, bool scheduled)
 	return LFOk;
 }
 
-LFCore_API LFMaintenanceList* LFStoreMaintenance(char* key)
+LFCore_API LFMaintenanceList* LFStoreMaintenance(char* key, HWND hWndSource)
 {
 	LFMaintenanceList* ml = LFAllocMaintenanceList();
 
@@ -901,10 +901,12 @@ LFCore_API LFMaintenanceList* LFStoreMaintenance(char* key)
 	ml->AddStore(RunMaintenance(slot, true), slot->StoreName, key, slot->StoreMode==LFStoreModeInternal ? IDI_STORE_Internal : slot->StoreMode==LFStoreModeRemote ? IDI_STORE_Server : IDI_STORE_Bag);
 	ReleaseMutexForStore(StoreLock);
 
+	SendLFNotifyMessage(LFMessages.StoreAttributesChanged, slot->StoreMode==LFStoreModeInternal ? LFMSGF_IntStores : LFMSGF_ExtHybStores, hWndSource);
+
 	return ml;
 }
 
-LFCore_API LFMaintenanceList* LFStoreMaintenance()
+LFCore_API LFMaintenanceList* LFStoreMaintenance(HWND hWndSource)
 {
 	LFMaintenanceList* ml = LFAllocMaintenanceList();
 
@@ -945,6 +947,8 @@ LFCore_API LFMaintenanceList* LFStoreMaintenance()
 
 		free(keys);
 	}
+
+	SendLFNotifyMessage(LFMessages.StoreAttributesChanged, LFMSGF_IntStores | LFMSGF_ExtHybStores, hWndSource);
 
 	return ml;
 }

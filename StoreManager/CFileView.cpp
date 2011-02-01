@@ -557,7 +557,7 @@ void CFileView::DrawItemBackground(CDC& dc, LPRECT rectItem, INT idx, BOOL Theme
 
 	if (hThemeList)
 	{
-		dc.SetTextColor((p_Result->m_Items[idx]->CoreAttributes.Flags & LFFlagMissing) ? 0x0000FF : 0x000000);
+		dc.SetTextColor((p_Result->m_Items[idx]->CoreAttributes.Flags & LFFlagMissing) ? 0x0000FF : (p_Result->m_Items[idx]->Type & LFTypeRequiresMaintenance) ? 0xFF0000 : 0x000000);
 
 		if (Hot | Selected)
 		{
@@ -619,8 +619,16 @@ void CFileView::DrawItemBackground(CDC& dc, LPRECT rectItem, INT idx, BOOL Theme
 		if ((idx==m_FocusItem) && (GetFocus()==this))
 			dc.DrawFocusRect(rectItem);
 
-		if ((!Selected) && (p_Result->m_Items[idx]->CoreAttributes.Flags & LFFlagMissing))
-			dc.SetTextColor(0x0000FF);
+		if (!Selected)
+			if (p_Result->m_Items[idx]->CoreAttributes.Flags & LFFlagMissing)
+			{
+				dc.SetTextColor(0x0000FF);
+			}
+			else
+				if (p_Result->m_Items[idx]->Type & LFTypeRequiresMaintenance)
+				{
+					dc.SetTextColor(0xFF0000);
+				}
 	}
 }
 

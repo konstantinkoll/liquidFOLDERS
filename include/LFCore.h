@@ -347,10 +347,10 @@ LFCore_API bool LFAskDeleteStore(LFItemDescriptor* s, HWND hWnd=NULL);
 LFCore_API bool LFAskDeleteStore(LFStoreDescriptor* s, HWND hWnd=NULL);
 
 // Startet geplante Wartungsarbeiten für einen Store
-LFCore_API LFMaintenanceList* LFStoreMaintenance(char* key);
+LFCore_API LFMaintenanceList* LFStoreMaintenance(char* key, HWND hWndSource=NULL);
 
 // Startet geplante Wartungsarbeiten für alle Store
-LFCore_API LFMaintenanceList* LFStoreMaintenance();
+LFCore_API LFMaintenanceList* LFStoreMaintenance(HWND hWndSource=NULL);
 
 // Gibt an, ob ein Default Stores verfügbar ist
 LFCore_API bool LFDefaultStoreAvailable();
