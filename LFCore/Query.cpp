@@ -90,6 +90,36 @@ unsigned int GetSizeCategory(const __int64 sz)
 	return 5;
 }
 
+unsigned int GetDurationCategory(const unsigned int duration)
+{
+	if (duration<5*1000)
+		return 0;
+	if (duration<15*1000)
+		return 1;
+	if (duration<30*1000)
+		return 2;
+	if (duration<1*60*1000)
+		return 3;
+	if (duration<2*60*1000)
+		return 4;
+	if (duration<5*60*1000)
+		return 5;
+	if (duration<15*60*1000)
+		return 6;
+	if (duration<30*60*1000)
+		return 7;
+	if (duration<45*60*1000)
+		return 8;
+	if (duration<60*60*1000)
+		return 9;
+	if (duration<90*60*1000)
+		return 10;
+	if (duration<120*60*1000)
+		return 11;
+
+	return 12;
+}
+
 bool GetNamePrefix(wchar_t* FullName, wchar_t* Buffer)
 {
 #define Choose if ((P2) && ((!P1) || (P2<P1))) P1 = P2;
@@ -446,6 +476,22 @@ bool CheckCondition(void* value, LFFilterCondition* c)
 			return false;
 		}
 	case LFTypeDuration:
+		switch (c->Compare)
+		{
+		case LFFilterCompareSubfolder:
+			return GetDurationCategory(*(unsigned int*)value)==GetDurationCategory(c->AttrData.UINT);
+		case LFFilterCompareIsEqual:
+			return *(unsigned int*)value==c->AttrData.UINT;
+		case LFFilterCompareIsNotEqual:
+			return *(unsigned int*)value!=c->AttrData.UINT;
+		case LFFilterCompareIsAboveOrEqual:
+			return *(unsigned int*)value>=c->AttrData.UINT;
+		case LFFilterCompareIsBelowOrEqual:
+			return *(unsigned int*)value<=c->AttrData.UINT;
+		default:
+			assert(false);
+			return false;
+		}
 	case LFTypeBitrate:
 		switch (c->Compare)
 		{

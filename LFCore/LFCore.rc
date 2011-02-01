@@ -203,6 +203,19 @@ BEGIN
     IDS_Size4               "Groﬂ (< 16 MB)"
     IDS_Size5               "Sehr groﬂ (< 128 MB)"
     IDS_Size6               "Riesig (128 MB und grˆﬂer)"
+    IDS_Duration1           "K¸rzer als 5 Sekunden"
+    IDS_Duration2           "5-10 Sekunden"
+    IDS_Duration3           "10-30 Sekunden"
+    IDS_Duration4           "30-60 Sekunden"
+    IDS_Duration5           "1-2 Minuten"
+    IDS_Duration6           "2-5 Minuten"
+    IDS_Duration7           "5-15 Minuten"
+    IDS_Duration8           "15-30 Minuten"
+    IDS_Duration9           "30-45 Minuten"
+    IDS_Duration10          "45-60 Minuten"
+    IDS_Duration11          "60-90 Minuten"
+    IDS_Duration12          "90-120 Minuten"
+    IDS_Duration13          "L‰nger als 2 Stunden"
 END
 
 STRINGTABLE 
@@ -464,6 +477,19 @@ BEGIN
     IDS_Size4               "Large (< 16 MB)"
     IDS_Size5               "Very large (< 128 MB)"
     IDS_Size6               "Huge (128 MB and above)"
+    IDS_Duration1           "Shorter than 5 seconds"
+    IDS_Duration2           "5-10 seconds"
+    IDS_Duration3           "10-30 seconds"
+    IDS_Duration4           "30-60 seconds"
+    IDS_Duration5           "1-2 minutes"
+    IDS_Duration6           "2-5 minutes"
+    IDS_Duration7           "5-15 minutes"
+    IDS_Duration8           "15-30 minutes"
+    IDS_Duration9           "30-45 minutes"
+    IDS_Duration10          "45-60 minutes"
+    IDS_Duration11          "60-90 minutes"
+    IDS_Duration12          "90-120 minutes"
+    IDS_Duration13          "Longer than 2 hours"
 END
 
 STRINGTABLE 
@@ -723,6 +749,19 @@ BEGIN
     IDS_Size4               "Grande (< 16 MB)"
     IDS_Size5               "Extra grande (< 128 MB)"
     IDS_Size6               "Enorme (128 MB y arriba de)"
+    IDS_Duration1           "Shorter than 5 seconds"
+    IDS_Duration2           "5-10 seconds"
+    IDS_Duration3           "10-30 seconds"
+    IDS_Duration4           "30-60 seconds"
+    IDS_Duration5           "1-2 minutes"
+    IDS_Duration6           "2-5 minutes"
+    IDS_Duration7           "5-15 minutes"
+    IDS_Duration8           "15-30 minutes"
+    IDS_Duration9           "30-45 minutes"
+    IDS_Duration10          "45-60 minutes"
+    IDS_Duration11          "60-90 minutes"
+    IDS_Duration12          "90-120 minutes"
+    IDS_Duration13          "Longer than 2 hours"
 END
 
 STRINGTABLE 
@@ -985,6 +1024,19 @@ BEGIN
     IDS_Size4               "Grand (< 16 MB)"
     IDS_Size5               "…norme (< 128 MB)"
     IDS_Size6               "Immense (et supÈrieur ‡ 128 MB)"
+    IDS_Duration1           "K¸rzer als 5 Sekunden"
+    IDS_Duration2           "5-10 Sekunden"
+    IDS_Duration3           "10-30 Sekunden"
+    IDS_Duration4           "30-60 Sekunden"
+    IDS_Duration5           "1-2 Minuten"
+    IDS_Duration6           "2-5 Minuten"
+    IDS_Duration7           "5-15 Minuten"
+    IDS_Duration8           "15-30 Minuten"
+    IDS_Duration9           "30-45 Minuten"
+    IDS_Duration10          "45-60 Minuten"
+    IDS_Duration11          "60-90 Minuten"
+    IDS_Duration12          "90-120 Minuten"
+    IDS_Duration13          "L‰nger als 2 Stunden"
 END
 
 STRINGTABLE 

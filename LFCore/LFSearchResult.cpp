@@ -522,6 +522,8 @@ void LFSearchResult::Group(unsigned int attr, unsigned int icon, bool groupone, 
 			c = new DateCategorizer(attr);
 			break;
 		case LFTypeDuration:
+			c = new DurationCategorizer(attr);
+			break;
 		case LFTypeBitrate:
 			c = new DurationBitrateCategorizer(attr);
 			break;

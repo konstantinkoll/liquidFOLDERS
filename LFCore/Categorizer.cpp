@@ -317,6 +317,33 @@ void SizeCategorizer::CustomizeFolder(LFItemDescriptor* folder, LFItemDescriptor
 }
 
 
+// DurationCategorizer
+//
+
+DurationCategorizer::DurationCategorizer(unsigned int _attr)
+	: CCategorizer(_attr)
+{
+}
+
+bool DurationCategorizer::Compare(LFItemDescriptor* i1, LFItemDescriptor* i2)
+{
+	assert(AttrTypes[attr]==LFTypeINT64);
+
+	return GetDurationCategory(*((unsigned int*)i1->AttributeValues[attr]))==GetDurationCategory(*((unsigned int*)i2->AttributeValues[attr]));
+}
+
+void DurationCategorizer::CustomizeFolder(LFItemDescriptor* folder, LFItemDescriptor* i)
+{
+	if (i->AttributeValues[attr])
+	{
+		wchar_t Name[256];
+		LoadString(LFCoreModuleHandle, IDS_Duration1+GetDurationCategory(*((unsigned int*)i->AttributeValues[attr])), Name, 256);
+		SetAttribute(folder, LFAttrFileName, Name);
+		SetAttribute(folder, attr, i->AttributeValues[attr]);
+	}
+}
+
+
 // NameCategorizer
 //
 

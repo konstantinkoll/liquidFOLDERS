@@ -132,6 +132,20 @@ protected:
 };
 
 
+// DurationCategorizer
+//
+
+class DurationCategorizer : public CCategorizer
+{
+public:
+	DurationCategorizer(unsigned int _attr);
+
+protected:
+	virtual bool Compare(LFItemDescriptor* i1, LFItemDescriptor* i2);
+	virtual void CustomizeFolder(LFItemDescriptor* folder, LFItemDescriptor* i);
+};
+
+
 // NameCategorizer
 //
 
