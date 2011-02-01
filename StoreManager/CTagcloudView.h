@@ -32,7 +32,7 @@ protected:
 	CFont m_Fonts[20];
 
 	virtual void SetViewOptions(BOOL Force);
-	virtual void SetSearchResult(LFSearchResult* Result);
+	virtual void SetSearchResult(LFSearchResult* Result, FVPersistentData* Data);
 	virtual void AdjustLayout();
 	virtual void DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed);
 
@@ -41,7 +41,7 @@ protected:
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnSortValue();
 	afx_msg void OnSortCount();
-	afx_msg void OnHideRare();
+	afx_msg void OnShowRare();
 	afx_msg void OnUseSize();
 	afx_msg void OnUseColors();
 	afx_msg void OnUseOpacity();

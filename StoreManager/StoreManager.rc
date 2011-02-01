@@ -183,7 +183,7 @@ BEGIN
     MENUITEM "Sortieren nach &Wert",        IDM_TAGCLOUD_SORTVALUE
     MENUITEM "Sortieren nach &Anzahl",      IDM_TAGCLOUD_SORTCOUNT
     MENUITEM SEPARATOR
-    MENUITEM "&Seltene Tags ausblenden",    IDM_TAGCLOUD_HIDERARE
+    MENUITEM "&Seltene Tags zeigen",        IDM_TAGCLOUD_SHOWRARE
 END
 
 IDM_TAGCLOUD MENU 
@@ -233,8 +233,8 @@ IDM_CALENDAR MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "Ü&berschriften ausblenden",   IDM_CALENDAR_HIDECAPTIONS
-        MENUITEM "Leere &Tage ausblenden",      IDM_CALENDAR_HIDEEMPTYDAYS
+        MENUITEM "Ü&berschriften anzeigen",     IDM_CALENDAR_SHOWCAPTIONS
+        MENUITEM "Leere &Tage anzeigen",        IDM_CALENDAR_SHOWEMPTYDAYS
         MENUITEM SEPARATOR
         MENUITEM "&Jahr auswählen...\tStrg+Y",  IDM_CALENDAR_GOTOYEAR
     END
@@ -244,7 +244,7 @@ IDM_HOME MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "&Statistik ausblenden",       IDM_HOME_HIDESTATISTICS
+        MENUITEM "&Statistik zeigen",           IDM_HOME_SHOWSTATISTICS
         MENUITEM SEPARATOR
         MENUITEM "&Verzeichnis importieren...", IDM_HOME_IMPORTFOLDER
         MENUITEM "&Wartungsarbeiten durchführen", IDM_HOME_MAINTAIN
@@ -435,7 +435,7 @@ IDM_HOME MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "Hide &statistics",            IDM_HOME_HIDESTATISTICS
+        MENUITEM "Show &statistics",            IDM_HOME_SHOWSTATISTICS
         MENUITEM SEPARATOR
         MENUITEM "&Import folder...",           IDM_HOME_IMPORTFOLDER
         MENUITEM "Run &maintenance",            IDM_HOME_MAINTAIN
@@ -512,8 +512,8 @@ IDM_CALENDAR MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "Hide &captions",              IDM_CALENDAR_HIDECAPTIONS
-        MENUITEM "Hide empty &days",            IDM_CALENDAR_HIDEEMPTYDAYS
+        MENUITEM "Show &captions",              IDM_CALENDAR_SHOWCAPTIONS
+        MENUITEM "Show empty &days",            IDM_CALENDAR_SHOWEMPTYDAYS
         MENUITEM SEPARATOR
         MENUITEM "Go to &year...\tCtrl+Y",      IDM_CALENDAR_GOTOYEAR
     END
@@ -545,7 +545,7 @@ BEGIN
     MENUITEM "Sort by &value",              IDM_TAGCLOUD_SORTVALUE
     MENUITEM "Sort by &count",              IDM_TAGCLOUD_SORTCOUNT
     MENUITEM SEPARATOR
-    MENUITEM "Hide &rare tags",             IDM_TAGCLOUD_HIDERARE
+    MENUITEM "Show &rare tags",             IDM_TAGCLOUD_SHOWRARE
 END
 
 
@@ -911,7 +911,7 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDM_STORES_HIDEEMPTYDRIVES "&Hide unmounted drives"
+    IDM_STORES_SHOWEMPTYDRIVES "Show &unmounted drives"
     IDM_STORES_REPAIRCORRUPTEDINDEX "Run maintenance"
 END
 
@@ -922,7 +922,7 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDM_HOME_HIDEEMPTYDOMAINS "&Hide empty domains"
+    IDM_HOME_SHOWEMPTYDOMAINS "Show &empty domains"
     IDM_HOME_IMPORTFOLDER   "Imports a folder and all its subfolders into this selected store.\nImport folder"
 END
 
@@ -969,7 +969,7 @@ BEGIN
     MENUITEM "Ordenar por &valor",          IDM_TAGCLOUD_SORTVALUE
     MENUITEM "Ordenar por &conteo",         IDM_TAGCLOUD_SORTCOUNT
     MENUITEM SEPARATOR
-    MENUITEM "Ocultar &etiquetas poco comunes", IDM_TAGCLOUD_HIDERARE
+    MENUITEM "Mostrar &etiquetas poco comunes", IDM_TAGCLOUD_SHOWRARE
 END
 
 IDM_TAGCLOUD MENU 
@@ -996,7 +996,7 @@ IDM_HOME MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "Ocultar &estadísticas",       IDM_HOME_HIDESTATISTICS
+        MENUITEM "Mostrar &estadísticas",       IDM_HOME_SHOWSTATISTICS
         MENUITEM SEPARATOR
         MENUITEM "&Importar carpeta...",        IDM_HOME_IMPORTFOLDER
         MENUITEM "Ejecutar &mantenimiento",     IDM_HOME_MAINTAIN
@@ -1032,8 +1032,8 @@ IDM_CALENDAR MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "Ocultar &títulos",            IDM_CALENDAR_HIDECAPTIONS
-        MENUITEM "Ocultar días &libres",        IDM_CALENDAR_HIDEEMPTYDAYS
+        MENUITEM "Mostrar &títulos",            IDM_CALENDAR_SHOWCAPTIONS
+        MENUITEM "Mostrar días &libres",        IDM_CALENDAR_SHOWEMPTYDAYS
         MENUITEM SEPARATOR
         MENUITEM "Ir al &año...\tCtrl+Y",       IDM_CALENDAR_GOTOYEAR
     END
@@ -1223,7 +1223,7 @@ BEGIN
     MENUITEM "Trier par la &valeur",        IDM_TAGCLOUD_SORTVALUE
     MENUITEM "Trier par le &nombre",        IDM_TAGCLOUD_SORTCOUNT
     MENUITEM SEPARATOR
-    MENUITEM "Cache les tags &rares",       IDM_TAGCLOUD_HIDERARE
+    MENUITEM "Indiquer les tags &rares",    IDM_TAGCLOUD_SHOWRARE
 END
 
 IDM_TAGCLOUD MENU 
@@ -1250,7 +1250,7 @@ IDM_HOME MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "Cache la &statistique",       IDM_HOME_HIDESTATISTICS
+        MENUITEM "Indiquer la &statistique",    IDM_HOME_SHOWSTATISTICS
         MENUITEM SEPARATOR
         MENUITEM "&Importer dossier...",        IDM_HOME_IMPORTFOLDER
         MENUITEM "Exécuter des &travails d'entretien", IDM_HOME_MAINTAIN
@@ -1286,8 +1286,8 @@ IDM_CALENDAR MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "Cache des &titres",           IDM_CALENDAR_HIDECAPTIONS
-        MENUITEM "Cache les &jours vides",      IDM_CALENDAR_HIDEEMPTYDAYS
+        MENUITEM "Indiquer des &titres",        IDM_CALENDAR_SHOWCAPTIONS
+        MENUITEM "Indiquer les &jours vides",   IDM_CALENDAR_SHOWEMPTYDAYS
         MENUITEM SEPARATOR
         MENUITEM "Choisissez l'&année...\tCtrl+Y", IDM_CALENDAR_GOTOYEAR
     END

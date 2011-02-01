@@ -158,11 +158,11 @@
 #define IDC_CROSSHAIRS                  2212
 #define IDD_GOTOYEAR                    2300
 #define IDC_YEAR                        2301
-#define IDM_STORES_HIDEEMPTYDRIVES      3000
+#define IDM_STORES_SHOWEMPTYDRIVES      3000
 #define IDM_STORES_REPAIRCORRUPTEDINDEX 3001
 #define IDM_HOME                        3100
-#define IDM_HOME_HIDEEMPTYDOMAINS       3101
-#define IDM_HOME_HIDESTATISTICS         3102
+#define IDM_HOME_SHOWEMPTYDOMAINS       3101
+#define IDM_HOME_SHOWSTATISTICS         3102
 #define IDM_HOME_IMPORTFOLDER           3103
 #define IDM_HOME_MAINTAIN               3104
 #define IDM_HOME_PROPERTIES             3105
@@ -194,8 +194,8 @@
 #define IDM_DETAILS_CHOOSE              5103
 #define IDM_DETAILS_TOGGLEATTRIBUTE     5104
 #define IDM_CALENDAR                    5200
-#define IDM_CALENDAR_HIDECAPTIONS       5201
-#define IDM_CALENDAR_HIDEEMPTYDAYS      5202
+#define IDM_CALENDAR_SHOWCAPTIONS       5201
+#define IDM_CALENDAR_SHOWEMPTYDAYS      5202
 #define IDM_CALENDAR_PREVYEAR           5203
 #define IDM_CALENDAR_NEXTYEAR           5204
 #define IDM_CALENDAR_GOTOYEAR           5205
@@ -209,7 +209,7 @@
 #define IDM_TAGCLOUD                    5400
 #define IDM_TAGCLOUD_SORTVALUE          5401
 #define IDM_TAGCLOUD_SORTCOUNT          5402
-#define IDM_TAGCLOUD_HIDERARE           5403
+#define IDM_TAGCLOUD_SHOWRARE           5403
 #define IDM_TAGCLOUD_USESIZE            5404
 #define IDM_TAGCLOUD_USECOLORS          5405
 #define IDM_TAGCLOUD_USEOPACITY         5406

@@ -50,7 +50,7 @@ struct LFViewParameters
 	BOOL GlobeShowDescription;
 
 	BOOL TagcloudCanonical;
-	BOOL TagcloudHideRare;
+	BOOL TagcloudShowRare;
 	BOOL TagcloudUseSize;
 	BOOL TagcloudUseColors;
 	BOOL TagcloudUseOpacity;

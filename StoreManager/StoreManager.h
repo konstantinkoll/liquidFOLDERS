@@ -29,11 +29,11 @@ public:
 	UINT m_nTextureSize;
 	UINT m_nMaxTextureSize;
 	UINT m_NagCounter;
-	BOOL m_HideEmptyDrives;
-	BOOL m_HideEmptyDomains;
-	BOOL m_HideStatistics;
-	BOOL m_HideCaptions;
-	BOOL m_HideEmptyDays;
+	BOOL m_ShowEmptyDrives;
+	BOOL m_ShowEmptyDomains;
+	BOOL m_ShowStatistics;
+	BOOL m_ShowCaptions;
+	BOOL m_ShowEmptyDays;
 	BOOL m_GlobeHQModel;
 	BOOL m_GlobeLighting;
 	BOOL m_GlobeAtmosphere;

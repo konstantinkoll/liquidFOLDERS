@@ -40,15 +40,15 @@ void CCalendarView::SetViewOptions(BOOL Force)
 		m_Year = st.wYear;
 	}
 
-	if (Force || (m_HideEmptyDays!=theApp.m_HideEmptyDays))
+	if (Force || (m_ShowEmptyDays!=theApp.m_ShowEmptyDays))
 	{
-		m_HideEmptyDays = theApp.m_HideEmptyDays;
+		m_ShowEmptyDays = theApp.m_ShowEmptyDays;
 		Invalidate();
 	}
 
-	if (Force || (m_HideCaptions!=theApp.m_HideCaptions))
+	if (Force || (m_ShowCaptions!=theApp.m_ShowCaptions))
 	{
-		m_HideCaptions = theApp.m_HideCaptions;
+		m_ShowCaptions = theApp.m_ShowCaptions;
 		AdjustLayout();
 	}
 }
@@ -168,7 +168,7 @@ Restart:
 				LPRECT rect = &d->Hdr.Rect;
 				rect->left = m->Rect.left+CategoryPadding+(Day%7)*(m_ColumnWidth+COLUMNGUTTER);
 				rect->top = m->Rect.top+m_FontHeight[1]+2*CategoryPadding+(Day/7)*(m_FontHeight[0]+2*PADDING-1);
-				if (!m_HideCaptions)
+				if (m_ShowCaptions)
 					rect->top += m_FontHeight[0]+CategoryPadding;
 				rect->right = rect->left+m_ColumnWidth;
 				rect->bottom = rect->top+m_FontHeight[0]+2*PADDING;
@@ -245,7 +245,7 @@ void CCalendarView::GetMonthSize(LPSIZE Size)
 
 	Size->cx = 7*m_ColumnWidth+6*COLUMNGUTTER;
 	Size->cy = m_FontHeight[1]+4*CategoryPadding+6*(m_FontHeight[0]+2*PADDING-1)+1;
-	if (!m_HideCaptions)
+	if (m_ShowCaptions)
 		Size->cy += m_FontHeight[0];
 }
 
@@ -262,7 +262,7 @@ void CCalendarView::DrawMonth(CDC& dc, LPRECT rect, INT Month, BOOL Themed)
 	CRect rectItem(0, rect->top, m_ColumnWidth+2*EXTRA, rect->top+m_FontHeight[0]+2*PADDING);
 
 	// Days
-	if (!m_HideCaptions)
+	if (m_ShowCaptions)
 	{
 		for (UINT a=0; a<7; a++)
 		{
@@ -284,7 +284,7 @@ void CCalendarView::DrawMonth(CDC& dc, LPRECT rect, INT Month, BOOL Themed)
 	for (UINT Day=0; Day<m_Months[Month].DOM; Day++)
 	{
 		BOOL Item = (m_Months[Month].Matrix[Day]!=EMPTY);
-		if (Item || !m_HideEmptyDays)
+		if (Item || m_ShowEmptyDays)
 		{
 			rectItem.MoveToXY(rect->left+CategoryPadding+col*(m_ColumnWidth+COLUMNGUTTER), rect->top+row*(m_FontHeight[0]+2*PADDING-1));
 			if (m_Months[Month].Matrix[Day]!=EMPTY)
@@ -318,12 +318,12 @@ BEGIN_MESSAGE_MAP(CCalendarView, CFileView)
 	ON_WM_PAINT()
 	ON_WM_KEYDOWN()
 
-	ON_COMMAND(IDM_CALENDAR_HIDECAPTIONS, OnHideCaptions)
-	ON_COMMAND(IDM_CALENDAR_HIDEEMPTYDAYS, OnHideEmptyDays)
+	ON_COMMAND(IDM_CALENDAR_SHOWCAPTIONS, OnShowCaptions)
+	ON_COMMAND(IDM_CALENDAR_SHOWEMPTYDAYS, OnShowEmptyDays)
 	ON_COMMAND(IDM_CALENDAR_PREVYEAR, OnPrevYear)
 	ON_COMMAND(IDM_CALENDAR_NEXTYEAR, OnNextYear)
 	ON_COMMAND(IDM_CALENDAR_GOTOYEAR, OnGoToYear)
-	ON_UPDATE_COMMAND_UI_RANGE(IDM_CALENDAR_HIDECAPTIONS, IDM_CALENDAR_GOTOYEAR, OnUpdateCommands)
+	ON_UPDATE_COMMAND_UI_RANGE(IDM_CALENDAR_SHOWCAPTIONS, IDM_CALENDAR_GOTOYEAR, OnUpdateCommands)
 END_MESSAGE_MAP()
 
 INT CCalendarView::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -407,15 +407,15 @@ void CCalendarView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 }
 
 
-void CCalendarView::OnHideCaptions()
+void CCalendarView::OnShowCaptions()
 {
-	theApp.m_HideCaptions = !theApp.m_HideCaptions;
+	theApp.m_ShowCaptions = !theApp.m_ShowCaptions;
 	theApp.UpdateViewOptions();
 }
 
-void CCalendarView::OnHideEmptyDays()
+void CCalendarView::OnShowEmptyDays()
 {
-	theApp.m_HideEmptyDays = !theApp.m_HideEmptyDays;
+	theApp.m_ShowEmptyDays = !theApp.m_ShowEmptyDays;
 	theApp.UpdateViewOptions();
 }
 
@@ -441,11 +441,11 @@ void CCalendarView::OnUpdateCommands(CCmdUI* pCmdUI)
 	BOOL b = TRUE;
 	switch (pCmdUI->m_nID)
 	{
-	case IDM_CALENDAR_HIDECAPTIONS:
-		pCmdUI->SetCheck(theApp.m_HideCaptions);
+	case IDM_CALENDAR_SHOWCAPTIONS:
+		pCmdUI->SetCheck(theApp.m_ShowCaptions);
 		break;
-	case IDM_CALENDAR_HIDEEMPTYDAYS:
-		pCmdUI->SetCheck(theApp.m_HideEmptyDays);
+	case IDM_CALENDAR_SHOWEMPTYDAYS:
+		pCmdUI->SetCheck(theApp.m_ShowEmptyDays);
 		break;
 	case IDM_CALENDAR_PREVYEAR:
 		b = (m_Year>MINYEAR);

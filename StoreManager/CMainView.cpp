@@ -455,17 +455,17 @@ BEGIN_MESSAGE_MAP(CMainView, CWnd)
 	ON_COMMAND(IDM_STORES_CREATENEW, OnStoresCreateNew)
 	ON_COMMAND(IDM_STORES_MAINTAINALL, OnStoresMaintainAll)
 	ON_COMMAND(IDM_STORES_BACKUP, OnStoresBackup)
-	ON_COMMAND(IDM_STORES_HIDEEMPTYDRIVES, OnStoresHideEmptyDrives)
+	ON_COMMAND(IDM_STORES_SHOWEMPTYDRIVES, OnStoresShowEmptyDrives)
 	ON_COMMAND(IDM_STORES_REPAIRCORRUPTEDINDEX, OnStoresMaintainAll)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_STORES_CREATENEW, IDM_STORES_BACKUP, OnUpdateStoresCommands)
-	ON_UPDATE_COMMAND_UI(IDM_STORES_HIDEEMPTYDRIVES, OnUpdateStoresCommands)
+	ON_UPDATE_COMMAND_UI(IDM_STORES_SHOWEMPTYDRIVES, OnUpdateStoresCommands)
 
-	ON_COMMAND(IDM_HOME_HIDEEMPTYDOMAINS, OnHomeHideEmptyDomains)
-	ON_COMMAND(IDM_HOME_HIDESTATISTICS, OnHomeHideStatistics)
+	ON_COMMAND(IDM_HOME_SHOWEMPTYDOMAINS, OnHomeShowEmptyDomains)
+	ON_COMMAND(IDM_HOME_SHOWSTATISTICS, OnHomeShowStatistics)
 	ON_COMMAND(IDM_HOME_IMPORTFOLDER, OnHomeImportFolder)
 	ON_COMMAND(IDM_HOME_MAINTAIN, OnHomeMaintain)
 	ON_COMMAND(IDM_HOME_PROPERTIES, OnHomeProperties)
-	ON_UPDATE_COMMAND_UI_RANGE(IDM_HOME_HIDEEMPTYDOMAINS, IDM_HOME_PROPERTIES, OnUpdateHomeCommands)
+	ON_UPDATE_COMMAND_UI_RANGE(IDM_HOME_SHOWEMPTYDOMAINS, IDM_HOME_PROPERTIES, OnUpdateHomeCommands)
 
 	ON_COMMAND(IDM_HOUSEKEEPING_REGISTER, OnHousekeepingRegister)
 	ON_COMMAND(IDM_HOUSEKEEPING_SEND, OnHousekeepingSend)
@@ -637,12 +637,12 @@ void CMainView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 		switch (m_Context)
 		{
 		case LFContextStores:
-			ENSURE(tmpStr.LoadString(IDM_STORES_HIDEEMPTYDRIVES));
-			pPopup->InsertMenu(0, MF_STRING | MF_BYPOSITION, IDM_STORES_HIDEEMPTYDRIVES, tmpStr);
+			ENSURE(tmpStr.LoadString(IDM_STORES_SHOWEMPTYDRIVES));
+			pPopup->InsertMenu(0, MF_STRING | MF_BYPOSITION, IDM_STORES_SHOWEMPTYDRIVES, tmpStr);
 			break;
 		case LFContextStoreHome:
-			ENSURE(tmpStr.LoadString(IDM_HOME_HIDEEMPTYDOMAINS));
-			pPopup->InsertMenu(0, MF_STRING | MF_BYPOSITION, IDM_HOME_HIDEEMPTYDOMAINS, tmpStr);
+			ENSURE(tmpStr.LoadString(IDM_HOME_SHOWEMPTYDOMAINS));
+			pPopup->InsertMenu(0, MF_STRING | MF_BYPOSITION, IDM_HOME_SHOWEMPTYDOMAINS, tmpStr);
 			break;
 		}
 
@@ -759,9 +759,9 @@ void CMainView::OnStoresBackup()
 	LFBackupStores(this);
 }
 
-void CMainView::OnStoresHideEmptyDrives()
+void CMainView::OnStoresShowEmptyDrives()
 {
-	theApp.m_HideEmptyDrives = !theApp.m_HideEmptyDrives;
+	theApp.m_ShowEmptyDrives = !theApp.m_ShowEmptyDrives;
 	theApp.Reload(LFContextStores);
 }
 
@@ -771,8 +771,8 @@ void CMainView::OnUpdateStoresCommands(CCmdUI* pCmdUI)
 
 	switch (pCmdUI->m_nID)
 	{
-	case IDM_STORES_HIDEEMPTYDRIVES:
-		pCmdUI->SetCheck(theApp.m_HideEmptyDrives);
+	case IDM_STORES_SHOWEMPTYDRIVES:
+		pCmdUI->SetCheck(theApp.m_ShowEmptyDrives);
 	case IDM_STORES_CREATENEW:
 		break;
 	default:
@@ -785,15 +785,15 @@ void CMainView::OnUpdateStoresCommands(CCmdUI* pCmdUI)
 
 // Home
 
-void CMainView::OnHomeHideEmptyDomains()
+void CMainView::OnHomeShowEmptyDomains()
 {
-	theApp.m_HideEmptyDomains = !theApp.m_HideEmptyDomains;
+	theApp.m_ShowEmptyDomains = !theApp.m_ShowEmptyDomains;
 	theApp.Reload(LFContextStoreHome);
 }
 
-void CMainView::OnHomeHideStatistics()
+void CMainView::OnHomeShowStatistics()
 {
-	theApp.m_HideStatistics = !theApp.m_HideStatistics;
+	theApp.m_ShowStatistics = !theApp.m_ShowStatistics;
 	theApp.UpdateSearchResult(LFContextStoreHome);
 }
 
@@ -832,11 +832,11 @@ void CMainView::OnUpdateHomeCommands(CCmdUI* pCmdUI)
 
 	switch (pCmdUI->m_nID)
 	{
-	case IDM_HOME_HIDEEMPTYDOMAINS:
-		pCmdUI->SetCheck(theApp.m_HideEmptyDomains);
+	case IDM_HOME_SHOWEMPTYDOMAINS:
+		pCmdUI->SetCheck(theApp.m_ShowEmptyDomains);
 		break;
-	case IDM_HOME_HIDESTATISTICS:
-		pCmdUI->SetCheck(theApp.m_HideStatistics);
+	case IDM_HOME_SHOWSTATISTICS:
+		pCmdUI->SetCheck(theApp.m_ShowStatistics);
 		break;
 	}
 

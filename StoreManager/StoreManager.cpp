@@ -67,11 +67,11 @@ BOOL CStoreManagerApp::InitInstance()
 	// Registry auslesen
 	CString oldBase = GetRegistryBase();
 	SetRegistryBase(_T("Settings"));
-	m_HideEmptyDrives = GetInt(_T("HideEmptyDrives"), FALSE);
-	m_HideEmptyDomains = GetInt(_T("HideEmptyDomains"), FALSE);
-	m_HideStatistics = GetInt(_T("HideStatistics"), FALSE);
-	m_HideCaptions = GetInt(_T("HideCaptions"), FALSE);
-	m_HideEmptyDays = GetInt(_T("HideEmptyDays"), FALSE);
+	m_ShowEmptyDrives = GetInt(_T("ShowEmptyDrives"), TRUE);
+	m_ShowEmptyDomains = GetInt(_T("ShowEmptyDomains"), TRUE);
+	m_ShowStatistics = GetInt(_T("ShowStatistics"), TRUE);
+	m_ShowCaptions = GetInt(_T("ShowCaptions"), TRUE);
+	m_ShowEmptyDays = GetInt(_T("ShowEmptyDays"), TRUE);
 	m_GlobeHQModel = GetInt(_T("GlobeHQModel"), TRUE);
 	m_GlobeLighting = GetInt(_T("GlobeLighting"), TRUE);
 	m_GlobeAtmosphere = GetInt(_T("GlobeAtmosphere"), TRUE);
@@ -122,11 +122,11 @@ INT CStoreManagerApp::ExitInstance()
 
 	CString oldBase = GetRegistryBase();
 	SetRegistryBase(_T("Settings"));
-	WriteInt(_T("HideEmptyDrives"), m_HideEmptyDrives);
-	WriteInt(_T("HideEmptyDomains"), m_HideEmptyDomains);
-	WriteInt(_T("HideStatistics"), m_HideStatistics);
-	WriteInt(_T("HideCaptions"), m_HideCaptions);
-	WriteInt(_T("HideEmptyDays"), m_HideEmptyDays);
+	WriteInt(_T("ShowEmptyDrives"), m_ShowEmptyDrives);
+	WriteInt(_T("ShowEmptyDomains"), m_ShowEmptyDomains);
+	WriteInt(_T("ShowStatistics"), m_ShowStatistics);
+	WriteInt(_T("ShowCaptions"), m_ShowCaptions);
+	WriteInt(_T("ShowEmptyDays"), m_ShowEmptyDays);
 	WriteInt(_T("GlobeHQModel"), m_GlobeHQModel);
 	WriteInt(_T("GlobeLighting"), m_GlobeLighting);
 	WriteInt(_T("GlobeAtmosphere"), m_GlobeAtmosphere);
@@ -414,7 +414,7 @@ void CStoreManagerApp::LoadViewOptions(INT context)
 	m_Views[context].GlobeShowGPS = GetInt(_T("GlobeShowGPS"), TRUE);
 	m_Views[context].GlobeShowDescription = GetInt(_T("GlobeShowDescription"), TRUE);
 	m_Views[context].TagcloudCanonical = GetInt(_T("TagcloudSortCanonical"), TRUE);
-	m_Views[context].TagcloudHideRare = GetInt(_T("TagcloudHideRare"), FALSE);
+	m_Views[context].TagcloudShowRare = GetInt(_T("TagcloudShowRare"), TRUE);
 	m_Views[context].TagcloudUseSize = GetInt(_T("TagcloudUseSize"), TRUE);
 	m_Views[context].TagcloudUseColors = GetInt(_T("TagcloudUseColors"), TRUE);
 	m_Views[context].TagcloudUseOpacity = GetInt(_T("TagcloudUseOpacity"), FALSE);
@@ -461,7 +461,7 @@ void CStoreManagerApp::SaveViewOptions(INT context)
 	WriteInt(_T("GlobeShowGPS"), m_Views[context].GlobeShowGPS);
 	WriteInt(_T("GlobeShowDescription"), m_Views[context].GlobeShowDescription);
 	WriteInt(_T("TagcloudSortCanonical"), m_Views[context].TagcloudCanonical);
-	WriteInt(_T("TagcloudHideRare"), m_Views[context].TagcloudHideRare);
+	WriteInt(_T("TagcloudShowRare"), m_Views[context].TagcloudShowRare);
 	WriteInt(_T("TagcloudUseSize"), m_Views[context].TagcloudUseSize);
 	WriteInt(_T("TagcloudUseColors"), m_Views[context].TagcloudUseColors);
 	WriteInt(_T("TagcloudUseOpacity"), m_Views[context].TagcloudUseOpacity);
