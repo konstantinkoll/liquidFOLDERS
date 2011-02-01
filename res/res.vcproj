@@ -740,6 +740,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Ribbon\LFAttrCustomer_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\LFAttrCustomer_32.png"
+				>
+			</File>
+			<File
 				RelativePath=".\Ribbon\LFAttrDoneTime_16.png"
 				>
 			</File>
