@@ -102,22 +102,24 @@ unsigned int GetDurationCategory(const unsigned int duration)
 		return 3;
 	if (duration<2*60*1000)
 		return 4;
-	if (duration<5*60*1000)
+	if (duration<3*60*1000)
 		return 5;
-	if (duration<15*60*1000)
+	if (duration<5*60*1000)
 		return 6;
-	if (duration<30*60*1000)
+	if (duration<15*60*1000)
 		return 7;
-	if (duration<45*60*1000)
+	if (duration<30*60*1000)
 		return 8;
-	if (duration<60*60*1000)
+	if (duration<45*60*1000)
 		return 9;
-	if (duration<90*60*1000)
+	if (duration<60*60*1000)
 		return 10;
-	if (duration<120*60*1000)
+	if (duration<90*60*1000)
 		return 11;
+	if (duration<120*60*1000)
+		return 12;
 
-	return 12;
+	return 13;
 }
 
 bool GetNamePrefix(wchar_t* FullName, wchar_t* Buffer)

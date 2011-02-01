@@ -93,6 +93,7 @@
 #define IDS_Duration11                  1136
 #define IDS_Duration12                  1137
 #define IDS_Duration13                  1138
+#define IDS_Duration14                  1139
 #define IDS_FirstContext                2000
 #define IDS_LFContextStores             2000
 #define IDS_LFContextStoreHome          2001
