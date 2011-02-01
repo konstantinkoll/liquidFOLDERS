@@ -91,8 +91,9 @@ BOOL CFileView::PreTranslateMessage(MSG* pMsg)
 			case VK_EXECUTE:
 			case VK_RETURN:
 				DestroyEdit(TRUE);
+				return TRUE;
 			case VK_ESCAPE:
-				DestroyEdit();
+				DestroyEdit(FALSE);
 				return TRUE;
 			}
 		break;
@@ -815,6 +816,8 @@ void CFileView::DestroyEdit(BOOL Accept)
 {
 	if (p_Edit)
 	{
+		INT Item = m_EditLabel;
+
 		CEdit* victim = p_Edit;
 		p_Edit = NULL;
 
@@ -823,8 +826,8 @@ void CFileView::DestroyEdit(BOOL Accept)
 		victim->DestroyWindow();
 		delete victim;
 
-		if ((Accept) && (!Name.IsEmpty()) && (m_EditLabel!=-1))
-			GetParent()->SendMessage(WM_RENAMEITEM, (WPARAM)m_EditLabel, (LPARAM)Name.GetBuffer());
+		if ((Accept) && (!Name.IsEmpty()) && (Item!=-1))
+			GetParent()->SendMessage(WM_RENAMEITEM, (WPARAM)Item, (LPARAM)Name.GetBuffer());
 	}
 
 	m_EditLabel = -1;

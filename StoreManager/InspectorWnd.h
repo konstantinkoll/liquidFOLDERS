@@ -47,7 +47,6 @@ class CInspectorWnd : public CDockablePane
 {
 public:
 	CInspectorWnd();
-	virtual ~CInspectorWnd();
 
 	virtual void AdjustLayout();
 	virtual void SaveSettings();

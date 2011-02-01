@@ -27,10 +27,6 @@ CInspectorWnd::CInspectorWnd()
 	}
 }
 
-CInspectorWnd::~CInspectorWnd()
-{
-}
-
 void CInspectorWnd::AdjustLayout()
 {
 	CRect rectClient;

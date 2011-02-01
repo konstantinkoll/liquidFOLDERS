@@ -86,8 +86,9 @@ BOOL CTreeView::PreTranslateMessage(MSG* pMsg)
 			case VK_EXECUTE:
 			case VK_RETURN:
 				DestroyEdit(TRUE);
+				return TRUE;
 			case VK_ESCAPE:
-				DestroyEdit();
+				DestroyEdit(FALSE);
 				return TRUE;
 			}
 		break;
