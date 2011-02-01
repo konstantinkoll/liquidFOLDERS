@@ -6,7 +6,7 @@
 // Version
 //
 
-#define CurIdxVersion                   1
+#define CurIdxVersion                   2
 
 
 // Structures
@@ -34,6 +34,7 @@ struct LFDocumentAttributes
 	char ISBN[32];
 	unsigned int Pages;
 	char Language[3];
+	wchar_t Customer[256];
 };
 
 struct LFMailAttributes
@@ -77,6 +78,7 @@ struct LFPictureAttributes
 	wchar_t Chip[32];
 	FILETIME RecordingTime;
 	char Language[3];
+	wchar_t Customer[256];
 };
 
 struct LFVideoAttributes
@@ -96,6 +98,7 @@ struct LFVideoAttributes
 	unsigned int Bitrate;
 	FILETIME RecordingTime;
 	char Language[3];
+	wchar_t Customer[256];
 };
 
 

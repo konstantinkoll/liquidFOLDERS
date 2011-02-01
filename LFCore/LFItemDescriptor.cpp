@@ -114,6 +114,7 @@ unsigned char AttrTypes[LFAttributeCount] = {
 	LFTypeUnicodeString,		// LFAttrResponsible
 	LFTypeTime,					// LFAttrDueTime
 	LFTypeTime,					// LFAttrDoneTime
+	LFTypeUnicodeString			// LFAttrCustomer
 };
 
 #pragma data_seg()

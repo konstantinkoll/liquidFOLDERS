@@ -170,6 +170,7 @@
 #define IDS_AttrResponsible             4048
 #define IDS_AttrDueTime                 4049
 #define IDS_AttrDoneTime                4050
+#define IDS_AttrCustomer                4051
 #define IDS_FirstDomain                 5000
 #define IDS_DomainAllFiles              5000
 #define IDS_DomainAllMediaFiles         5001

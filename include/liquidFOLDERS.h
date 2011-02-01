@@ -213,8 +213,9 @@ struct LFContextDescriptor
 #define LFAttrResponsible              48
 #define LFAttrDueTime                  49
 #define LFAttrDoneTime                 50
+#define LFAttrCustomer                 51
 
-#define LFAttributeCount               51
+#define LFAttributeCount               52
 #define LFLastCoreAttribute            20
 
 

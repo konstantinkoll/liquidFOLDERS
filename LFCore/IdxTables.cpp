@@ -102,6 +102,7 @@ void CIdxTableDocuments::GetFromItemDescriptor(void* PtrDst, LFItemDescriptor* i
 		GetAttribute(PtrDst, offsetof(LFDocumentAttributes, ISBN), LFAttrISBN, i);
 		GetAttribute(PtrDst, offsetof(LFDocumentAttributes, Pages), LFAttrPages, i);
 		GetAttribute(PtrDst, offsetof(LFDocumentAttributes, Language), LFAttrLanguage, i);
+		GetAttribute(PtrDst, offsetof(LFDocumentAttributes, Customer), LFAttrCustomer, i);
 	}
 }
 
@@ -125,6 +126,7 @@ void CIdxTableDocuments::WriteToItemDescriptor(LFItemDescriptor* i, void* PtrSrc
 	i->AttributeValues[LFAttrISBN] = ((LFDocumentAttributes*)i->Slave)->ISBN;
 	i->AttributeValues[LFAttrPages] = &((LFDocumentAttributes*)i->Slave)->Pages;
 	i->AttributeValues[LFAttrLanguage] = ((LFDocumentAttributes*)i->Slave)->Language;
+	i->AttributeValues[LFAttrCustomer] = ((LFDocumentAttributes*)i->Slave)->Customer;
 }
 
 
@@ -284,6 +286,7 @@ void CIdxTablePictures::GetFromItemDescriptor(void* PtrDst, LFItemDescriptor* i)
 		GetAttribute(PtrDst, offsetof(LFPictureAttributes, Chip), LFAttrChip, i);
 		GetAttribute(PtrDst, offsetof(LFPictureAttributes, RecordingTime), LFAttrRecordingTime, i);
 		GetAttribute(PtrDst, offsetof(LFPictureAttributes, Language), LFAttrLanguage, i);
+		GetAttribute(PtrDst, offsetof(LFPictureAttributes, Customer), LFAttrCustomer, i);
 	}
 }
 
@@ -310,6 +313,7 @@ void CIdxTablePictures::WriteToItemDescriptor(LFItemDescriptor* i, void* PtrSrc)
 	i->AttributeValues[LFAttrChip] = ((LFPictureAttributes*)i->Slave)->Chip;
 	i->AttributeValues[LFAttrRecordingTime] = &((LFPictureAttributes*)i->Slave)->RecordingTime;
 	i->AttributeValues[LFAttrLanguage] = ((LFPictureAttributes*)i->Slave)->Language;
+	i->AttributeValues[LFAttrCustomer] = ((LFPictureAttributes*)i->Slave)->Customer;
 
 	CalcVisualAttributes(i);
 }
@@ -355,6 +359,7 @@ void CIdxTableVideos::GetFromItemDescriptor(void* PtrDst, LFItemDescriptor* i)
 		GetAttribute(PtrDst, offsetof(LFVideoAttributes, Bitrate), LFAttrBitrate, i);
 		GetAttribute(PtrDst, offsetof(LFVideoAttributes, RecordingTime), LFAttrRecordingTime, i);
 		GetAttribute(PtrDst, offsetof(LFVideoAttributes, Language), LFAttrLanguage, i);
+		GetAttribute(PtrDst, offsetof(LFVideoAttributes, Customer), LFAttrCustomer, i);
 	}
 }
 
@@ -383,6 +388,7 @@ void CIdxTableVideos::WriteToItemDescriptor(LFItemDescriptor* i, void* PtrSrc)
 	i->AttributeValues[LFAttrBitrate] = &((LFVideoAttributes*)i->Slave)->Bitrate;
 	i->AttributeValues[LFAttrRecordingTime] = &((LFVideoAttributes*)i->Slave)->RecordingTime;
 	i->AttributeValues[LFAttrLanguage] = ((LFVideoAttributes*)i->Slave)->Language;
+	i->AttributeValues[LFAttrCustomer] = ((LFVideoAttributes*)i->Slave)->Customer;
 
 	CalcVisualAttributes(i);
 }

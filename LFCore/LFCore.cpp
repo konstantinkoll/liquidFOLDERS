@@ -253,7 +253,7 @@ LFCore_API LFAttributeDescriptor* LFGetAttributeInfo(unsigned int ID)
 		SetRange(a->Category, ID, LFAttrAlbum, LFAttrAudioCodec, LFAttrCategoryAudio);
 		SetRange(a->Category, ID, LFAttrDuration, LFAttrBitrate, LFAttrCategoryTimebased);
 		SetRange(a->Category, ID, LFAttrArtist, LFAttrSignature, LFAttrCategoryBibliographic);
-		SetRange(a->Category, ID, LFAttrFrom, LFAttrDoneTime, LFAttrCategoryWorkflow);
+		SetRange(a->Category, ID, LFAttrFrom, LFAttrCustomer, LFAttrCategoryWorkflow);
 		SetRange(a->Category, ID, LFAttrPriority, LFAttrPriority, LFAttrCategoryWorkflow);
 	}
 
@@ -332,6 +332,7 @@ LFCore_API LFAttributeDescriptor* LFGetAttributeInfo(unsigned int ID)
 		break;
 	case LFAttrArtist:
 	case LFAttrResponsible:
+	case LFAttrCustomer:
 		a->IconID = IDI_FLD_Contacts;
 		break;
 	case LFAttrLanguage:
@@ -535,6 +536,7 @@ LFCore_API LFDomainDescriptor* LFGetDomainInfo(unsigned int ID)
 		*(d->ImportantAttributes) += LFAttrTitle;
 		*(d->ImportantAttributes) += LFAttrRecordingTime;
 		*(d->ImportantAttributes) += LFAttrLanguage;
+		*(d->ImportantAttributes) += LFAttrCustomer;
 		break;
 	case LFDomainVideos:
 		*(d->ImportantAttributes) += LFAttrLocationName;
@@ -544,6 +546,7 @@ LFCore_API LFDomainDescriptor* LFGetDomainInfo(unsigned int ID)
 		*(d->ImportantAttributes) += LFAttrDuration;
 		*(d->ImportantAttributes) += LFAttrRecordingTime;
 		*(d->ImportantAttributes) += LFAttrLanguage;
+		*(d->ImportantAttributes) += LFAttrCustomer;
 		break;
 	case LFDomainDocuments:
 	case LFDomainPresentations:
@@ -559,6 +562,7 @@ LFCore_API LFDomainDescriptor* LFGetDomainInfo(unsigned int ID)
 		*(d->ImportantAttributes) += LFAttrDueTime;
 		*(d->ImportantAttributes) += LFAttrDoneTime;
 		*(d->ImportantAttributes) += LFAttrLanguage;
+		*(d->ImportantAttributes) += LFAttrCustomer;
 		break;
 	case LFDomainGeodata:
 		*(d->ImportantAttributes) += LFAttrLocationName;

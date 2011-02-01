@@ -44,6 +44,8 @@ static const GUID PropertyUnnamed5 =
 	{ 0x2CBAA8F5, 0xD81F, 0x47CA, { 0xB1, 0x7A, 0xF8, 0xD8, 0x22, 0x30, 0x01, 0x31 } };
 static const GUID PropertyUnnamed6 =
 	{ 0x43F8D7B7, 0xA444, 0x4F87, { 0x93, 0x83, 0x52, 0x27, 0x1C, 0x9B, 0x91, 0x5C } };
+static const GUID PropertyUnnamed7 =
+	{ 0x276D7BB0, 0x5B34, 0x4FB0, { 0xAA, 0x4B, 0x15, 0x8E, 0xD1, 0x2A, 0x18, 0x09 } };
 
 
 // Der Inhalt dieses Segments wird über alle Instanzen von LFCore geteilt.
@@ -134,7 +136,8 @@ LFShellProperty AttrProperties[LFAttributeCount] = {
 	{ 0, 0 },						// LFAttrTo
 	{ 0, 0 },						// LFAttrResponsible
 	{ PropertyUnnamed1, 100 },		// LFAttrDueTime
-	{ PropertyUnnamed2, 100 }		// LFAttrDoneTime
+	{ PropertyUnnamed2, 100 },		// LFAttrDoneTime
+	{ PropertyUnnamed7, 100 }		// LFAttrClient
 };
 
 #pragma data_seg()
