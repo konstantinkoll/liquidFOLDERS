@@ -651,7 +651,7 @@ LFSearchResult* QueryDomains(LFFilter* filter)
 
 		if (res->m_LastError==LFOk)
 			for (unsigned char a=0; a<LFDomainCount; a++)
-				if ((cnt[a]) || (!filter->HideEmptyDomains))
+				if ((cnt[a]) || (filter->ShowEmptyDomains))
 				{
 					LFDomainDescriptor* d = LFGetDomainInfo(a);
 					char FileID[LFKeySize];

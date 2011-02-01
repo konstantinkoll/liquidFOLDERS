@@ -137,7 +137,7 @@ void LFSearchResult::AddDrives(LFFilter* filter)
 		SHFILEINFO sfi;
 		if (SHGetFileInfo(szDriveRoot, 0, &sfi, sizeof(SHFILEINFO), SHGFI_DISPLAYNAME | SHGFI_TYPENAME | SHGFI_ATTRIBUTES))
 		{
-			if ((!sfi.dwAttributes) && (filter->HideEmptyDrives))
+			if ((!sfi.dwAttributes) && (!filter->ShowEmptyDrives))
 				continue;
 
 			LFItemDescriptor* d = LFAllocItemDescriptor();

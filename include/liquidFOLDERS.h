@@ -426,8 +426,8 @@ struct LFFilter
 	unsigned int Mode;
 	LFFilterOptions Options;
 
-	bool HideEmptyDrives;					// For LFFilterModeStores
-	bool HideEmptyDomains;					// For LFFilterModeStoreHome
+	bool ShowEmptyDrives;					// For LFFilterModeStores
+	bool ShowEmptyDomains;					// For LFFilterModeStoreHome
 
 	char StoreID[LFKeySize];				// For LFFilterModeStoreHome and above
 	unsigned char DomainID;					// For LFFilterModeDirectoryTree and above

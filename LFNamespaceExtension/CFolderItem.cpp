@@ -348,7 +348,6 @@ BOOL CFolderItem::GetChildren(CGetChildrenEventArgs& e)
 	case LevelStores:
 		f = LFAllocFilter();
 		f->Mode = LFFilterModeStoreHome;
-		f->HideEmptyDomains = true;
 		strcpy_s(f->StoreID, LFKeySize, Attrs.StoreID);
 		ConvertSearchResult(e, LFQuery(f));
 		break;

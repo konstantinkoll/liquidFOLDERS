@@ -70,7 +70,7 @@ LFFilter* GetRootFilter(char* RootStore=NULL)
 	f->Mode = RootStore ? LFFilterModeStoreHome : LFFilterModeStores;
 	f->Options.AddBacklink = true;
 	f->Options.AddDrives = true;
-	f->HideEmptyDrives = (theApp.m_ShowEmptyDrives==FALSE);
+	f->ShowEmptyDrives = (theApp.m_ShowEmptyDrives==TRUE);
 
 	if (RootStore)
 		strcpy_s(f->StoreID, LFKeySize, RootStore);
@@ -731,8 +731,8 @@ void CMainFrame::NavigateTo(LFFilter* f, UINT NavMode, FVPersistentData* Data, I
 	if (NavMode<NAVMODE_RELOAD)
 		UpdateSearchResult(TRUE, 0);
 
-	ActiveFilter->HideEmptyDrives = (theApp.m_ShowEmptyDrives==FALSE);
-	ActiveFilter->HideEmptyDomains = (theApp.m_ShowEmptyDomains==FALSE);
+	ActiveFilter->ShowEmptyDrives = (theApp.m_ShowEmptyDrives==TRUE);
+	ActiveFilter->ShowEmptyDomains = (theApp.m_ShowEmptyDomains==TRUE);
 
 	INT OldContext = -1;
 	LFSearchResult* victim = NULL;
