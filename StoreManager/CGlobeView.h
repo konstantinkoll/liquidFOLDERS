@@ -25,19 +25,13 @@ struct GlobeItemData
 // CGlobeView
 //
 
-struct GlobeParameters
-{
-	GLfloat Latitude;
-	GLfloat Longitude;
-	INT Zoom;
-};
-
 class CGlobeView : public CFileView
 {
 public:
 	CGlobeView();
 
 	virtual CMenu* GetBackgroundContextMenu();
+	virtual void GetPersistentData(FVPersistentData& Data);
 
 	BOOL Create(CWnd* pParentWnd, UINT nID, LFSearchResult* Result, FVPersistentData* Data=NULL);
 
@@ -54,7 +48,7 @@ protected:
 	GLFont m_Fonts[2];
 
 	virtual void SetViewOptions(BOOL Force);
-	virtual void SetSearchResult(LFSearchResult* Result);
+	virtual void SetSearchResult(LFSearchResult* Result, FVPersistentData* Data);
 	virtual INT ItemAtPosition(CPoint point);
 	virtual CMenu* GetItemContextMenu(INT idx);
 

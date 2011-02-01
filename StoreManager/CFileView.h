@@ -56,10 +56,19 @@ struct LFViewParameters
 	BOOL TagcloudUseOpacity;
 };
 
+struct GlobeParameters
+{
+	GLfloat Latitude;
+	GLfloat Longitude;
+	INT Zoom;
+};
+
 struct FVPersistentData
 {
 	INT FocusItem;
 	UINT Year;
+	GlobeParameters Location;
+	BOOL LocationValid;
 };
 
 
@@ -143,7 +152,7 @@ protected:
 
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 	virtual void SetViewOptions(BOOL Force);
-	virtual void SetSearchResult(LFSearchResult* Result);
+	virtual void SetSearchResult(LFSearchResult* Result, FVPersistentData* Data);
 	virtual void AdjustLayout();
 	virtual RECT GetLabelRect(INT idx);
 	virtual INT ItemAtPosition(CPoint point);

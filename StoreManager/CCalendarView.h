@@ -30,6 +30,7 @@ public:
 	CCalendarView();
 
 	virtual CMenu* GetBackgroundContextMenu();
+	virtual void GetPersistentData(FVPersistentData& Data);
 
 protected:
 	UINT m_FirstDayOfWeek;
@@ -41,7 +42,7 @@ protected:
 	BOOL m_HideEmptyDays;
 
 	virtual void SetViewOptions(BOOL Force);
-	virtual void SetSearchResult(LFSearchResult* Result);
+	virtual void SetSearchResult(LFSearchResult* Result, FVPersistentData* Data);
 	virtual void AdjustLayout();
 
 	void SetYear(UINT Year);

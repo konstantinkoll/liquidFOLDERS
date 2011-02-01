@@ -193,7 +193,7 @@ void CFileView::UpdateSearchResult(LFSearchResult* Result, FVPersistentData* Dat
 	}
 
 	m_EditLabel = -1;
-	SetSearchResult(Result);
+	SetSearchResult(Result, Data);
 
 	p_Result = Result;
 	free(Victim);
@@ -229,7 +229,7 @@ void CFileView::SetViewOptions(BOOL /*Force*/)
 {
 }
 
-void CFileView::SetSearchResult(LFSearchResult* /*Result*/)
+void CFileView::SetSearchResult(LFSearchResult* /*Result*/, FVPersistentData* /*Data*/)
 {
 }
 

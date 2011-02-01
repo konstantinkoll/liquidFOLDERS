@@ -53,7 +53,7 @@ void CCalendarView::SetViewOptions(BOOL Force)
 	}
 }
 
-void CCalendarView::SetSearchResult(LFSearchResult* Result)
+void CCalendarView::SetSearchResult(LFSearchResult* Result, FVPersistentData* Data)
 {
 	if (Result)
 		for (UINT a=0; a<Result->m_ItemCount; a++)
@@ -70,6 +70,10 @@ void CCalendarView::SetSearchResult(LFSearchResult* Result)
 					SystemTimeToTzSpecificLocalTime(NULL, &stUTC, &d->Time);
 				}
 		}
+
+	if (Data)
+		if ((Data->Year>=MINYEAR) && (Data->Year<=MAXYEAR))
+			m_Year = Data->Year;
 }
 
 void CCalendarView::SetYear(UINT Year)
@@ -180,6 +184,13 @@ CMenu* CCalendarView::GetBackgroundContextMenu()
 	CMenu* pMenu = new CMenu();
 	pMenu->LoadMenu(IDM_CALENDAR);
 	return pMenu;
+}
+
+void CCalendarView::GetPersistentData(FVPersistentData& Data)
+{
+	CFileView::GetPersistentData(Data);
+
+	Data.Year = m_Year;
 }
 
 BOOL CCalendarView::IsLeapYear()

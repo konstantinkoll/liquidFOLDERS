@@ -218,7 +218,7 @@ void CGlobeView::SetViewOptions(BOOL Force)
 	}
 }
 
-void CGlobeView::SetSearchResult(LFSearchResult* Result)
+void CGlobeView::SetSearchResult(LFSearchResult* Result, FVPersistentData* Data)
 {
 	p_Result = Result;
 
@@ -250,6 +250,10 @@ void CGlobeView::SetSearchResult(LFSearchResult* Result)
 				}
 			}
 
+	if (Data)
+		if (Data->LocationValid)
+			m_GlobeCurrent = Data->Location;
+
 	UpdateScene(TRUE);
 }
 
@@ -259,7 +263,7 @@ INT CGlobeView::ItemAtPosition(CPoint point)
 		return -1;
 
 	INT res = -1;
-	float Alpha = 0.0f;
+	GLfloat Alpha = 0.0f;
 
 	for (UINT a=0; a<p_Result->m_ItemCount; a++)
 	{
@@ -298,10 +302,18 @@ CMenu* CGlobeView::GetItemContextMenu(INT idx)
 	return pMenu;
 }
 
+void CGlobeView::GetPersistentData(FVPersistentData& Data)
+{
+	CFileView::GetPersistentData(Data);
+
+	Data.Location = m_GlobeCurrent;
+	Data.LocationValid = TRUE;
+}
+
 BOOL CGlobeView::CursorOnGlobe(CPoint point)
 {
-	double distX = point.x-(double)m_Width/2;
-	double distY = point.y-(double)m_Height/2;
+	GLdouble distX = point.x-(GLdouble)m_Width/2;
+	GLdouble distY = point.y-(GLdouble)m_Height/2;
 
 	return distX*distX+distY*distY<m_Radius*m_Radius;
 }

@@ -99,7 +99,7 @@ void CListView::SetViewOptions(BOOL Force)
 	AdjustHeader((p_ViewParameters->Mode==LFViewDetails) && (p_Result));
 }
 
-void CListView::SetSearchResult(LFSearchResult* Result)
+void CListView::SetSearchResult(LFSearchResult* Result, FVPersistentData* /*Data*/)
 {
 	if (Result)
 	{
