@@ -751,20 +751,20 @@ BEGIN
     IDS_Size4               "Grande (< 16 MB)"
     IDS_Size5               "Extra grande (< 128 MB)"
     IDS_Size6               "Enorme (128 MB y arriba de)"
-    IDS_Duration1           "Shorter than 5 seconds"
-    IDS_Duration2           "5-10 seconds"
-    IDS_Duration3           "10-30 seconds"
-    IDS_Duration4           "30-60 seconds"
-    IDS_Duration5           "1-2 minutes"
-    IDS_Duration6           "2-3 minutes"
-    IDS_Duration7           "3-5 minutes"
-    IDS_Duration8           "5-15 minutes"
-    IDS_Duration9           "15-30 minutes"
-    IDS_Duration10          "30-45 minutes"
-    IDS_Duration11          "45-60 minutes"
-    IDS_Duration12          "60-90 minutes"
-    IDS_Duration13          "90-120 minutes"
-    IDS_Duration14          "Longer than 2 hours"
+    IDS_Duration1           "Menos de 5 segundos"
+    IDS_Duration2           "5-10 segundos"
+    IDS_Duration3           "10-30 segundos"
+    IDS_Duration4           "30-60 segundos"
+    IDS_Duration5           "1-2 minutos"
+    IDS_Duration6           "2-3 minutos"
+    IDS_Duration7           "3-5 minutos"
+    IDS_Duration8           "5-15 minuteo"
+    IDS_Duration9           "15-30 minutos"
+    IDS_Duration10          "30-45 minutos"
+    IDS_Duration11          "45-60 minutos"
+    IDS_Duration12          "60-90 minutos"
+    IDS_Duration13          "90-120 minutos"
+    IDS_Duration14          "Más de 2 horas"
 END
 
 STRINGTABLE 
@@ -885,7 +885,7 @@ BEGIN
     IDS_AttrResponsible     "Responsable"
     IDS_AttrDueTime         "En tiempo"
     IDS_AttrDoneTime        "Finalizado"
-    IDS_AttrCustomer        "Customer or client"
+    IDS_AttrCustomer        "Cliente"
 END
 
 STRINGTABLE 
@@ -1161,7 +1161,7 @@ BEGIN
     IDS_AttrResponsible     "Personne responsable"
     IDS_AttrDueTime         "Dû le"
     IDS_AttrDoneTime        "Fini le"
-    IDS_AttrCustomer        "Customer or client"
+    IDS_AttrCustomer        "Kunde oder Klient"
 END
 
 STRINGTABLE 
