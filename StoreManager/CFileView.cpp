@@ -254,6 +254,27 @@ CBitmap* CFileView::UpdateFooter()
 	return NULL;
 }
 
+CBitmap* CFileView::CreateFooterBitmap(CDC* pDC, INT cx, INT cy, CDC& dcDraw)
+{
+	CBitmap* pBmp = new CBitmap();
+	pBmp->CreateCompatibleBitmap(pDC, cx, cy);
+
+	dcDraw.CreateCompatibleDC(pDC);
+	dcDraw.SelectObject(pBmp);
+
+	CRect rect(0, 0, cx, cy);
+#ifdef DEBUG
+	dcDraw.FillSolidRect(rect, 0xFF00FF);
+	dcDraw.SetTextColor(0xFFFFFF);
+#else
+	BOOL Themed = IsCtrlThemed();
+	dcDraw.FillSolidRect(rect, Themed ? 0xFFFFFF : GetSysColor(COLOR_WINDOW));
+	dcDraw.SetTextColor(Themed ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT));
+#endif
+
+	return pBmp;
+}
+
 INT CFileView::GetFooterHeight()
 {
 	return p_FooterBitmap ? FooterMargin+2*CategoryPadding+m_FontHeight[1]+m_FooterSize.cy : 0;
@@ -712,8 +733,11 @@ void CFileView::DrawFooter(CDC& dc, BOOL Themed)
 	CRect rectClient;
 	GetClientRect(&rectClient);
 
-	CRect rectFooter(m_FooterPos, m_FooterSize);
-	rectFooter.OffsetRect(-m_HScrollPos, -m_VScrollPos+m_HeaderHeight);
+	CDC dcMem;
+	dcMem.CreateCompatibleDC(&dc);
+	CBitmap* pOldBitmap = dcMem.SelectObject(p_FooterBitmap);
+	dc.BitBlt(m_FooterPos.x-m_HScrollPos, m_ScrollHeight-m_FooterSize.cy-m_VScrollPos+m_HeaderHeight, m_FooterSize.cx, m_FooterSize.cy, &dcMem, 0, 0, SRCCOPY);
+	dcMem.SelectObject(pOldBitmap);
 
 	CRect rectCategory(m_FooterPos.x, m_FooterPos.y+FooterMargin, rectClient.Width()-CategoryPadding-1, m_ScrollHeight-m_FooterSize.cy);
 	rectCategory.OffsetRect(-m_HScrollPos, -m_VScrollPos+m_HeaderHeight);

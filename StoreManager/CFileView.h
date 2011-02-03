@@ -164,6 +164,7 @@ protected:
 	virtual void InvalidateItem(INT idx);
 	virtual CMenu* GetItemContextMenu(INT idx);
 
+	CBitmap* CreateFooterBitmap(CDC* pDC, INT cx, INT cy, CDC& dcDraw);
 	INT GetFooterHeight();
 	void SetFocusItem(INT FocusItem, BOOL ShiftSelect);
 	RECT GetItemRect(INT idx);

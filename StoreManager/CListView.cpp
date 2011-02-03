@@ -189,12 +189,16 @@ void CListView::AdjustHeader(BOOL bShow)
 
 CBitmap* CListView::UpdateFooter()
 {
-	ENSURE(m_FooterCaption.LoadStringW(IDS_LEGEND));
+	ENSURE(m_FooterCaption.LoadString(IDS_LEGEND));
 	m_FooterSize.cx = 100;
 	m_FooterSize.cy = 100;
 
-	CBitmap* pBmp = new CBitmap();
-	pBmp->CreateBitmap(100, 100, 1, 24, NULL);
+	CDC* pDC = GetWindowDC();
+	CDC dcDraw;
+
+	CBitmap* pBmp = CreateFooterBitmap(pDC, 100, 100, dcDraw);
+
+	ReleaseDC(pDC);
 
 	return pBmp;
 }
