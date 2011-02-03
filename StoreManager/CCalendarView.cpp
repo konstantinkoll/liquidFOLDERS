@@ -33,7 +33,7 @@ void CCalendarView::SetViewOptions(BOOL Force)
 	if (Force)
 	{
 		SYSTEMTIME st;
-		GetSystemTime(&st);
+		GetLocalTime(&st);
 
 		ASSERT(st.wYear>=MINYEAR);
 		ASSERT(st.wYear<=MAXYEAR);
