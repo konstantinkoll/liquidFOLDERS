@@ -144,7 +144,7 @@ void CTagcloudView::AdjustLayout()
 			if (d->Hdr.Hdr.Rect.bottom-1>m_ScrollHeight) \
 			{ \
 				m_ScrollHeight = d->Hdr.Hdr.Rect.bottom-1; \
-				if ((m_ScrollHeight>rectWindow.Height()) && (!HasScrollbars)) \
+				if ((m_ScrollHeight+fh>rectWindow.Height()) && (!HasScrollbars)) \
 				{ \
 					HasScrollbars = TRUE; \
 					rectWindow.right -= GetSystemMetrics(SM_CXVSCROLL); \
@@ -153,6 +153,8 @@ void CTagcloudView::AdjustLayout()
 			} \
 		} \
 	}
+
+		const INT fh = GetFooterHeight();
 
 		BOOL HasScrollbars = FALSE;
 
@@ -209,8 +211,7 @@ Restart:
 	}
 
 	m_GridArrange = GRIDARRANGE_HORIZONTAL;
-	AdjustScrollbars();
-	Invalidate();
+	CFileView::AdjustLayout();
 }
 
 void CTagcloudView::DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed)

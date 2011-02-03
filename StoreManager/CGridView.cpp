@@ -57,6 +57,7 @@ void CGridView::ArrangeHorizontal(GVArrange& gva, BOOL Justify, BOOL ForceBreak,
 	if (!rectWindow.Width())
 		return;
 
+	const INT fh = GetFooterHeight();
 	const INT l = gva.cx+2*gva.padding;
 	const INT h = gva.cy+2*gva.padding;
 	ASSERT(l>0);
@@ -124,7 +125,7 @@ Restart:
 		if (y+h+gva.guttery-1>m_ScrollHeight)
 		{
 			m_ScrollHeight = y+h+max(gva.guttery, 0);
-			if ((m_ScrollHeight>rectWindow.Height()) && (!HasScrollbars))
+			if ((m_ScrollHeight+fh>rectWindow.Height()) && (!HasScrollbars))
 			{
 				HasScrollbars = TRUE;
 				rectWindow.right -= GetSystemMetrics(SM_CXVSCROLL);
@@ -150,8 +151,7 @@ Restart:
 			m_Categories.m_Items[a].Rect.right = max(m_ScrollWidth, rectWindow.Width())-gva.gutterx;
 
 	m_GridArrange = GRIDARRANGE_HORIZONTAL;
-	AdjustScrollbars();
-	Invalidate();
+	CFileView::AdjustLayout();
 }
 
 void CGridView::ArrangeVertical(GVArrange& gva)
@@ -170,6 +170,7 @@ void CGridView::ArrangeVertical(GVArrange& gva)
 	if (m_HasCategories)
 		top += 2*CategoryPadding+m_FontHeight[1]+4;
 
+	const INT fh = GetFooterHeight();
 	const INT l = gva.cx+2*gva.padding;
 	const INT h = gva.cy+2*gva.padding;
 	ASSERT(l>0);
@@ -240,7 +241,7 @@ Restart:
 			}
 		}
 
-		if (y+h+gva.guttery>rectWindow.Height())
+		if (y+h+gva.guttery+fh>rectWindow.Height())
 		{
 			row = 0;
 			col++;
@@ -250,8 +251,7 @@ Restart:
 	}
 
 	m_GridArrange = GRIDARRANGE_VERTICAL;
-	AdjustScrollbars();
-	Invalidate();
+	CFileView::AdjustLayout();
 }
 
 void CGridView::HandleHorizontalKeys(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags*/)
@@ -634,6 +634,8 @@ void CGridView::OnPaint()
 					if (IntersectRect(&rectIntersect, rect, rectUpdate))
 						DrawCategory(dc, rect, &m_Categories.m_Items[a], Themed);
 				}
+
+			DrawFooter(dc, Themed);
 		}
 
 	if (Nothing || m_ForceNothing)

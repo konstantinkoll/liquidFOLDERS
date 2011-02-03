@@ -750,6 +750,10 @@ BEGIN
     IDS_NOTHINGTODISPLAY    "There is nothing to display."
     IDS_AUTOMATIC           "Choose automatically"
     IDS_ILLEGALYEAR         "You can only display the years 1900 through 2100."
+    IDS_LEGEND              "Legend"
+    IDS_STATISTICS          "Statistics"
+    IDS_STATISTICS_BYCOUNT  "By file count:"
+    IDS_STATISTICS_BYSIZE   "By file size:"
 END
 
 STRINGTABLE 

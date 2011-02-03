@@ -20,6 +20,7 @@ protected:
 
 	virtual void SetViewOptions(BOOL Force);
 	virtual void SetSearchResult(LFSearchResult* Result, FVPersistentData* Data);
+	virtual CBitmap* UpdateFooter();
 	virtual void AdjustLayout();
 	virtual RECT GetLabelRect(INT idx);
 	virtual void DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed);

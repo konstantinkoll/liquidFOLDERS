@@ -175,8 +175,7 @@ Restart:
 			}
 		}
 
-	AdjustScrollbars();
-	Invalidate();
+	CFileView::AdjustLayout();
 }
 
 CMenu* CCalendarView::GetBackgroundContextMenu()

@@ -187,6 +187,18 @@ void CListView::AdjustHeader(BOOL bShow)
 	}
 }
 
+CBitmap* CListView::UpdateFooter()
+{
+	ENSURE(m_FooterCaption.LoadStringW(IDS_LEGEND));
+	m_FooterSize.cx = 100;
+	m_FooterSize.cy = 100;
+
+	CBitmap* pBmp = new CBitmap();
+	pBmp->CreateBitmap(100, 100, 1, 24, NULL);
+
+	return pBmp;
+}
+
 void CListView::AdjustLayout()
 {
 	// Header

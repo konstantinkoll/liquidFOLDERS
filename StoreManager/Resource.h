@@ -113,6 +113,10 @@
 #define IDS_NOTHINGTODISPLAY            1018
 #define IDS_AUTOMATIC                   1019
 #define IDS_ILLEGALYEAR                 1020
+#define IDS_LEGEND                      1021
+#define IDS_STATISTICS                  1022
+#define IDS_STATISTICS_BYCOUNT          1023
+#define IDS_STATISTICS_BYSIZE           1024
 #define IDS_VATTR_FIRST                 1100
 #define IDS_VATTR_DRIVELETTER           1100
 #define IDS_VATTR_MAINTENANCETIME       1101

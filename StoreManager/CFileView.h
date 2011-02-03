@@ -122,6 +122,10 @@ protected:
 	LFViewParameters m_ViewParameters;
 	LFViewParameters* p_ViewParameters;
 	LFSearchResult* p_Result;
+	CString m_FooterCaption;
+	CBitmap* p_FooterBitmap;
+	CPoint m_FooterPos;
+	CSize m_FooterSize;
 	UINT m_DataSize;
 	BYTE* m_ItemData;
 	UINT m_ItemDataAllocated;
@@ -153,16 +157,19 @@ protected:
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 	virtual void SetViewOptions(BOOL Force);
 	virtual void SetSearchResult(LFSearchResult* Result, FVPersistentData* Data);
+	virtual CBitmap* UpdateFooter();
 	virtual void AdjustLayout();
 	virtual RECT GetLabelRect(INT idx);
 	virtual INT ItemAtPosition(CPoint point);
 	virtual void InvalidateItem(INT idx);
 	virtual CMenu* GetItemContextMenu(INT idx);
 
+	INT GetFooterHeight();
 	void SetFocusItem(INT FocusItem, BOOL ShiftSelect);
 	RECT GetItemRect(INT idx);
 	void DrawItemBackground(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed);
 	void DrawCategory(CDC& dc, LPRECT rectCategory, ItemCategory* ic, BOOL Themed);
+	void DrawFooter(CDC& dc, BOOL Themed);
 	void ResetScrollbars();
 	void AdjustScrollbars();
 	CString GetLabel(LFItemDescriptor* i);

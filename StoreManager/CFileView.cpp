@@ -30,6 +30,7 @@ BOOL AttributeSortableInView(UINT Attr, UINT ViewMode)
 #define IsSelected(idx)      GetItemData(idx)->Selected
 #define ChangedItem(idx)     { InvalidateItem(idx); GetParent()->SendMessage(WM_UPDATESELECTION); }
 #define ChangedItems()       { Invalidate(); GetParent()->SendMessage(WM_UPDATESELECTION); }
+#define FooterMargin         8
 
 CFileView::CFileView(UINT DataSize, BOOL EnableScrolling, BOOL EnableHover, BOOL EnableTooltip, BOOL EnableShiftSelection, BOOL EnableLabelEdit)
 	: CWnd()
@@ -43,6 +44,8 @@ CFileView::CFileView(UINT DataSize, BOOL EnableScrolling, BOOL EnableHover, BOOL
 	m_FocusItem = m_HotItem = m_SelectionAnchor = m_EditLabel = m_Context = -1;
 	m_Context = LFContextDefault;
 	m_HeaderHeight = m_FontHeight[0] = m_FontHeight[1] = m_HScrollMax = m_VScrollMax = m_HScrollPos = m_VScrollPos = 0;
+	p_FooterBitmap = NULL;
+	m_FooterPos.x = m_FooterPos.y = m_FooterSize.cx = m_FooterSize.cy = 0;
 	m_DataSize = DataSize;
 	m_Hover = m_ShowFocusRect = FALSE;
 	hThemeList = NULL;
@@ -60,6 +63,8 @@ CFileView::~CFileView()
 
 	if (m_ItemData)
 		free(m_ItemData);
+	if (p_FooterBitmap)
+		delete p_FooterBitmap;
 }
 
 BOOL CFileView::Create(CWnd* pParentWnd, UINT nID, LFSearchResult* Result, FVPersistentData* Data, UINT nClassStyle)
@@ -199,8 +204,18 @@ void CFileView::UpdateSearchResult(LFSearchResult* Result, FVPersistentData* Dat
 	p_Result = Result;
 	free(Victim);
 
+	if (p_FooterBitmap)
+	{
+		delete p_FooterBitmap;
+		p_FooterBitmap = NULL;
+
+		m_FooterPos.x = m_FooterPos.y = m_FooterSize.cx = m_FooterSize.cy = 0;
+	}
+
 	if (p_Result)
 	{
+		p_FooterBitmap = UpdateFooter();
+
 		BOOL NeedNewFocusItem = !GetItemData(m_FocusItem)->Valid;
 
 		for (UINT a=0; a<p_Result->m_ItemCount; a++)
@@ -234,8 +249,27 @@ void CFileView::SetSearchResult(LFSearchResult* /*Result*/, FVPersistentData* /*
 {
 }
 
+CBitmap* CFileView::UpdateFooter()
+{
+	return NULL;
+}
+
+INT CFileView::GetFooterHeight()
+{
+	return p_FooterBitmap ? FooterMargin+2*CategoryPadding+m_FontHeight[1]+m_FooterSize.cy : 0;
+}
+
 void CFileView::AdjustLayout()
 {
+	if (p_FooterBitmap)
+	{
+		m_FooterPos.x = 14-CategoryPadding;
+		m_ScrollWidth = max(m_ScrollWidth, m_FooterPos.x+m_FooterSize.cx);
+
+		m_FooterPos.y = m_ScrollHeight;
+		m_ScrollHeight += GetFooterHeight();
+	}
+
 	AdjustScrollbars();
 	Invalidate();
 }
@@ -670,6 +704,25 @@ void CFileView::DrawCategory(CDC& dc, LPRECT rectCategory, ItemCategory* ic, BOO
 	dc.SelectObject(pOldFont);
 }
 
+void CFileView::DrawFooter(CDC& dc, BOOL Themed)
+{
+	if (!p_FooterBitmap)
+		return;
+
+	CRect rectClient;
+	GetClientRect(&rectClient);
+
+	CRect rectFooter(m_FooterPos, m_FooterSize);
+	rectFooter.OffsetRect(-m_HScrollPos, -m_VScrollPos+m_HeaderHeight);
+
+	CRect rectCategory(m_FooterPos.x, m_FooterPos.y+FooterMargin, rectClient.Width()-CategoryPadding-1, m_ScrollHeight-m_FooterSize.cy);
+	rectCategory.OffsetRect(-m_HScrollPos, -m_VScrollPos+m_HeaderHeight);
+
+	ItemCategory ic = { 0 };
+	wcscpy_s(ic.Caption, 256, m_FooterCaption);
+	DrawCategory(dc, rectCategory, &ic, Themed);
+}
+
 void CFileView::ResetScrollbars()
 {
 	if (m_EnableScrolling)
@@ -916,11 +969,24 @@ LRESULT CFileView::OnThemeChanged()
 			hThemeList = theApp.zOpenThemeData(GetSafeHwnd(), VSCLASS_LISTVIEW);
 	}
 
+	if (p_FooterBitmap)
+		delete p_FooterBitmap;
+
+	p_FooterBitmap = UpdateFooter();
+
 	return TRUE;
 }
 
 void CFileView::OnSysColorChange()
 {
+	if (!IsCtrlThemed())
+	{
+		if (p_FooterBitmap)
+			delete p_FooterBitmap;
+
+		p_FooterBitmap = UpdateFooter();
+	}
+
 	Invalidate();
 }
 
