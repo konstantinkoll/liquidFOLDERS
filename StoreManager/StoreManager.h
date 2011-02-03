@@ -60,8 +60,7 @@ public:
 	void UpdateSortOptions(INT Context);
 	void UpdateViewOptions(INT Context=-1, INT View=-1);
 	void Reload(INT Context);
-	void UpdateSearchResult(INT Context);
-	void Invalidate(INT Context=-1);
+	void UpdateFooter(INT Context);
 
 		static CString GetCommandName(UINT nID, BOOL bInsertSpace=FALSE);							// Axe
 		static CMFCRibbonButton* CommandButton(UINT nID, INT nSmallImageIndex=-1, INT nLargeImageIndex=-1, BOOL bAlwaysShowDescription=FALSE, BOOL bInsertSpace=FALSE);	// Axe

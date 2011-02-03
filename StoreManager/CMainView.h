@@ -21,6 +21,7 @@ public:
 	INT Create(CWnd* _pParentWnd, UINT nID);
 	void UpdateViewOptions(INT Context);
 	void UpdateSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data=NULL);
+	void UpdateFooter();
 	void DismissNotification();
 	void ShowNotification(UINT Type, CString Message, UINT Command=0);
 	void ShowNotification(UINT Type, UINT ResID, UINT Command=0);

@@ -92,7 +92,7 @@ void CListView::SetViewOptions(BOOL Force)
 			if (p_ViewParameters->ColumnWidth[a]!=m_ViewParameters.ColumnWidth[a])
 			{
 				m_ViewParameters = *p_ViewParameters;
-				AdjustLayout();
+				UpdateFooter();
 				break;
 			}
 
@@ -187,8 +187,11 @@ void CListView::AdjustHeader(BOOL bShow)
 	}
 }
 
-CBitmap* CListView::UpdateFooter()
+CBitmap* CListView::RenderFooter()
 {
+	if (!theApp.m_ShowStatistics)
+		return NULL;
+
 	ENSURE(m_FooterCaption.LoadString(IDS_LEGEND));
 	m_FooterSize.cx = 100;
 	m_FooterSize.cy = 100;

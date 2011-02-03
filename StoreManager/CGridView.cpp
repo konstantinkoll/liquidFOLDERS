@@ -148,7 +148,7 @@ Restart:
 	// Adjust categories to calculated width
 	for (UINT a=0; a<m_Categories.m_ItemCount; a++)
 		if (m_Categories.m_Items[a].Rect.right)
-			m_Categories.m_Items[a].Rect.right = max(m_ScrollWidth, rectWindow.Width())-gva.gutterx;
+			m_Categories.m_Items[a].Rect.right = max(m_ScrollWidth, rectWindow.Width())-2;
 
 	m_GridArrange = GRIDARRANGE_HORIZONTAL;
 	CFileView::AdjustLayout();

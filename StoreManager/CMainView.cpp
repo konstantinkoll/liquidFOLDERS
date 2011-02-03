@@ -202,6 +202,12 @@ void CMainView::UpdateSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pC
 	OnUpdateSelection();
 }
 
+void CMainView::UpdateFooter()
+{
+	if (p_wndFileView)
+		p_wndFileView->UpdateFooter();
+}
+
 void CMainView::DismissNotification()
 {
 	m_wndExplorerNotification.DismissNotification();
@@ -794,7 +800,7 @@ void CMainView::OnHomeShowEmptyDomains()
 void CMainView::OnHomeShowStatistics()
 {
 	theApp.m_ShowStatistics = !theApp.m_ShowStatistics;
-	theApp.UpdateSearchResult(LFContextStoreHome);
+	theApp.UpdateFooter(LFContextStoreHome);
 }
 
 void CMainView::OnHomeImportFolder()

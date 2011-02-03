@@ -111,6 +111,7 @@ public:
 	BOOL Create(CWnd* pParentWnd, UINT nID, LFSearchResult* Result, FVPersistentData* Data=NULL, UINT nClassStyle=CS_DBLCLKS);
 	void UpdateViewOptions(INT Context=-1, BOOL Force=FALSE);
 	void UpdateSearchResult(LFSearchResult* Result, FVPersistentData* Data);
+	void UpdateFooter();
 	INT GetFocusItem();
 	INT GetSelectedItem();
 	INT GetNextSelectedItem(INT idx);
@@ -157,14 +158,14 @@ protected:
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 	virtual void SetViewOptions(BOOL Force);
 	virtual void SetSearchResult(LFSearchResult* Result, FVPersistentData* Data);
-	virtual CBitmap* UpdateFooter();
+	virtual CBitmap* RenderFooter();
 	virtual void AdjustLayout();
 	virtual RECT GetLabelRect(INT idx);
 	virtual INT ItemAtPosition(CPoint point);
 	virtual void InvalidateItem(INT idx);
 	virtual CMenu* GetItemContextMenu(INT idx);
 
-	CBitmap* CreateFooterBitmap(CDC* pDC, INT cx, INT cy, CDC& dcDraw);
+	CBitmap* CreateFooterBitmap(CDC* pDC, INT mincx, INT cy, CDC& dcDraw);
 	INT GetFooterHeight();
 	void SetFocusItem(INT FocusItem, BOOL ShiftSelect);
 	RECT GetItemRect(INT idx);
@@ -209,6 +210,7 @@ protected:
 private:
 	CEdit* p_Edit;
 
+	void SetFooter();
 	void AppendString(UINT attr, CString& str, WCHAR* tmpStr);
 	void AppendAttribute(LFItemDescriptor* i, UINT attr, CString& str);
 	CString GetHint(LFItemDescriptor* i, WCHAR* FormatName=NULL);

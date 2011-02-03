@@ -52,8 +52,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_MESSAGE_VOID(WM_UPDATESORTOPTIONS, OnUpdateSortOptions)
 	ON_MESSAGE_VOID(WM_RELOAD, OnNavigateReload)
 	ON_MESSAGE(WM_COOKFILES, OnCookFiles)
-	ON_MESSAGE_VOID(WM_UPDATESEARCHRESULT, OnUpdateSearchResult)
-	ON_MESSAGE_VOID(WM_INVALIDATE, OnInvalidate)
+	ON_MESSAGE_VOID(WM_UPDATEFOOTER, OnUpdateFooter)
 
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->DrivesChanged, OnDrivesChanged)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoresChanged, OnStoresChanged)
@@ -922,14 +921,9 @@ LRESULT CMainFrame::OnCookFiles(WPARAM wParam, LPARAM /*lParam*/)
 	return CookedFiles->m_LastError;
 }
 
-void CMainFrame::OnUpdateSearchResult()
+void CMainFrame::OnUpdateFooter()
 {
-	UpdateSearchResult(FALSE, NULL);
-}
-
-void CMainFrame::OnInvalidate()
-{
-	m_wndMainView.Invalidate();
+	m_wndMainView.UpdateFooter();
 }
 
 

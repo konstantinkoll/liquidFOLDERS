@@ -1,4 +1,4 @@
-3
+
 // CFileView.cpp: Implementierung der Klasse CFileView
 //
 
@@ -141,7 +141,7 @@ void CFileView::UpdateViewOptions(INT Context, BOOL Force)
 
 	if (Arrange)
 	{
-		AdjustLayout();
+		UpdateFooter();
 	}
 	else
 	{
@@ -204,18 +204,10 @@ void CFileView::UpdateSearchResult(LFSearchResult* Result, FVPersistentData* Dat
 	p_Result = Result;
 	free(Victim);
 
-	if (p_FooterBitmap)
-	{
-		delete p_FooterBitmap;
-		p_FooterBitmap = NULL;
-
-		m_FooterPos.x = m_FooterPos.y = m_FooterSize.cx = m_FooterSize.cy = 0;
-	}
+	SetFooter();
 
 	if (p_Result)
 	{
-		p_FooterBitmap = UpdateFooter();
-
 		BOOL NeedNewFocusItem = !GetItemData(m_FocusItem)->Valid;
 
 		for (UINT a=0; a<p_Result->m_ItemCount; a++)
@@ -241,6 +233,12 @@ void CFileView::UpdateSearchResult(LFSearchResult* Result, FVPersistentData* Dat
 	SetCursor(theApp.LoadStandardCursor(Result ? IDC_ARROW : IDC_WAIT));
 }
 
+void CFileView::UpdateFooter()
+{
+	SetFooter();
+	AdjustLayout();
+}
+
 void CFileView::SetViewOptions(BOOL /*Force*/)
 {
 }
@@ -249,28 +247,47 @@ void CFileView::SetSearchResult(LFSearchResult* /*Result*/, FVPersistentData* /*
 {
 }
 
-CBitmap* CFileView::UpdateFooter()
+void CFileView::SetFooter()
+{
+	if (p_FooterBitmap)
+	{
+		delete p_FooterBitmap;
+		p_FooterBitmap = NULL;
+
+		m_FooterPos.x = m_FooterPos.y = m_FooterSize.cx = m_FooterSize.cy = 0;
+	}
+
+	if (p_Result)
+		p_FooterBitmap = RenderFooter();
+}
+
+CBitmap* CFileView::RenderFooter()
 {
 	return NULL;
 }
 
-CBitmap* CFileView::CreateFooterBitmap(CDC* pDC, INT cx, INT cy, CDC& dcDraw)
+CBitmap* CFileView::CreateFooterBitmap(CDC* pDC, INT mincx, INT cy, CDC& dcDraw)
 {
+	CRect rectClient;
+	GetClientRect(&rectClient);
+
+	INT cx = max(mincx, rectClient.Width()-18);
+
 	CBitmap* pBmp = new CBitmap();
 	pBmp->CreateCompatibleBitmap(pDC, cx, cy);
 
 	dcDraw.CreateCompatibleDC(pDC);
 	dcDraw.SelectObject(pBmp);
 
+	BOOL Themed = IsCtrlThemed();
+
 	CRect rect(0, 0, cx, cy);
 #ifdef DEBUG
-	dcDraw.FillSolidRect(rect, 0xFF00FF);
-	dcDraw.SetTextColor(0xFFFFFF);
+	dcDraw.FillSolidRect(rect, 0xFFC0FF);
 #else
-	BOOL Themed = IsCtrlThemed();
 	dcDraw.FillSolidRect(rect, Themed ? 0xFFFFFF : GetSysColor(COLOR_WINDOW));
-	dcDraw.SetTextColor(Themed ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT));
 #endif
+	dcDraw.SetTextColor(Themed ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT));
 
 	return pBmp;
 }
@@ -284,8 +301,14 @@ void CFileView::AdjustLayout()
 {
 	if (p_FooterBitmap)
 	{
-		m_FooterPos.x = 14-CategoryPadding;
+		m_FooterPos.x = 16;
+
+		CRect rect;
+		GetClientRect(&rect);
+		m_FooterSize.cx = max(rect.Width(), m_FooterSize.cx)-m_FooterPos.x;
+
 		m_ScrollWidth = max(m_ScrollWidth, m_FooterPos.x+m_FooterSize.cx);
+		m_FooterSize.cx = m_ScrollWidth-m_FooterPos.x;
 
 		m_FooterPos.y = m_ScrollHeight;
 		m_ScrollHeight += GetFooterHeight();
@@ -739,11 +762,14 @@ void CFileView::DrawFooter(CDC& dc, BOOL Themed)
 	dc.BitBlt(m_FooterPos.x-m_HScrollPos, m_ScrollHeight-m_FooterSize.cy-m_VScrollPos+m_HeaderHeight, m_FooterSize.cx, m_FooterSize.cy, &dcMem, 0, 0, SRCCOPY);
 	dcMem.SelectObject(pOldBitmap);
 
-	CRect rectCategory(m_FooterPos.x, m_FooterPos.y+FooterMargin, rectClient.Width()-CategoryPadding-1, m_ScrollHeight-m_FooterSize.cy);
+	CRect rectCategory(15-CategoryPadding, m_FooterPos.y+FooterMargin, m_FooterPos.x+m_FooterSize.cx-2, m_ScrollHeight-m_FooterSize.cy);
 	rectCategory.OffsetRect(-m_HScrollPos, -m_VScrollPos+m_HeaderHeight);
 
 	ItemCategory ic = { 0 };
 	wcscpy_s(ic.Caption, 256, m_FooterCaption);
+#ifdef DEBUG
+	wcscat_s(ic.Caption, 256, L" (this area is intentionally purple for debugging purposes)");
+#endif
 	DrawCategory(dc, rectCategory, &ic, Themed);
 }
 
@@ -993,10 +1019,7 @@ LRESULT CFileView::OnThemeChanged()
 			hThemeList = theApp.zOpenThemeData(GetSafeHwnd(), VSCLASS_LISTVIEW);
 	}
 
-	if (p_FooterBitmap)
-		delete p_FooterBitmap;
-
-	p_FooterBitmap = UpdateFooter();
+	SetFooter();
 
 	return TRUE;
 }
@@ -1004,12 +1027,7 @@ LRESULT CFileView::OnThemeChanged()
 void CFileView::OnSysColorChange()
 {
 	if (!IsCtrlThemed())
-	{
-		if (p_FooterBitmap)
-			delete p_FooterBitmap;
-
-		p_FooterBitmap = UpdateFooter();
-	}
+		SetFooter();
 
 	Invalidate();
 }
@@ -1025,7 +1043,7 @@ void CFileView::OnSize(UINT nType, INT cx, INT cy)
 	CWnd::OnSize(nType, cx, cy);
 	SetRedraw(TRUE);
 
-	AdjustLayout();
+	UpdateFooter();
 }
 
 void CFileView::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)

@@ -348,14 +348,9 @@ void CStoreManagerApp::Reload(INT Context)
 	Broadcast(Context, -1, WM_RELOAD);
 }
 
-void CStoreManagerApp::UpdateSearchResult(INT Context)
+void CStoreManagerApp::UpdateFooter(INT Context)
 {
-	Broadcast(Context, -1, WM_UPDATESEARCHRESULT);
-}
-
-void CStoreManagerApp::Invalidate(INT Context)
-{
-	Broadcast(Context, -1, WM_INVALIDATE);
+	Broadcast(Context, -1, WM_UPDATEFOOTER);
 }
 
 
