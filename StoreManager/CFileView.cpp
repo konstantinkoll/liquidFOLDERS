@@ -253,12 +253,13 @@ void CFileView::SetFooter()
 	{
 		delete p_FooterBitmap;
 		p_FooterBitmap = NULL;
-
-		m_FooterPos.x = m_FooterPos.y = m_FooterSize.cx = m_FooterSize.cy = 0;
 	}
 
 	if (p_Result)
 		p_FooterBitmap = RenderFooter();
+
+	if (!p_FooterBitmap)
+		m_FooterPos.x = m_FooterPos.y = m_FooterSize.cx = m_FooterSize.cy = 0;
 }
 
 CBitmap* CFileView::RenderFooter()
