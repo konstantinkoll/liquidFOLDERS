@@ -224,7 +224,7 @@ Restart:
 			{
 				LFItemDescriptor* i = p_Result->m_Items[a];
 
-				CRect rect(0, 0, rectWindow.Width()-2*GUTTER, 128);
+				CRect rect(0, 0, rectWindow.Width()-2*GUTTER-10, 128);
 				dc.SelectObject(GetFont(a));
 				dc.DrawText(i->CoreAttributes.FileName, rect, TextFormat | DT_CALCRECT);
 				rect.InflateRect(5, 4);
