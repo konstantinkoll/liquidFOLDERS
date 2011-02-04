@@ -246,7 +246,7 @@ IDM_HOME MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "&Statistik zeigen",           IDM_HOME_SHOWSTATISTICS
+        MENUITEM "&Statistik anzeigen",         IDM_HOME_SHOWSTATISTICS
         MENUITEM SEPARATOR
         MENUITEM "&Verzeichnis importieren...", IDM_HOME_IMPORTFOLDER
         MENUITEM "&Wartungsarbeiten durchführen", IDM_HOME_MAINTAIN
