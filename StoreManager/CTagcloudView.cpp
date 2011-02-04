@@ -149,7 +149,7 @@ CBitmap* CTagcloudView::RenderFooter()
 	LinearGradientBrush brush2(Point(cx/4-1, 0), Point(cx/2, 0), Color(0x80, 0x00, 0x80), Color(0x00, 0x00, 0xFF));
 	g.FillRectangle(&brush2, Rect(cx/4, GraphSpacer, cx/4+1, m_FontHeight[1]));
 
-	LinearGradientBrush brush3(Point(cx/2-1, 0), Point(cx, 0), Color(0x00, 0x00, 0xFF), Color(0x00, 0x80, 0xFF));
+	LinearGradientBrush brush3(Point(cx/2-1, 0), Point(cx, 0), Color(0x00, 0x00, 0xFF), Color(0x00, 0xD0, 0xFF));
 	g.FillRectangle(&brush3, Rect(cx/2, GraphSpacer, cx/2, m_FontHeight[1]));
 
 	CRect rect(0, GraphSpacer, cx, GraphSpacer+m_FontHeight[1]);
