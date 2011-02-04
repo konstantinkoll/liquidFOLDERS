@@ -5,6 +5,7 @@
 #include "stdafx.h"
 #include "CListView.h"
 #include "ChooseDetailsDlg.h"
+#include "FooterGraph.h"
 #include "StoreManager.h"
 
 
@@ -13,8 +14,8 @@
 
 #define GetItemData(idx)                    ((GridItemData*)(m_ItemData+(idx)*m_DataSize))
 #define PADDING                             2
-#define DrawLabel(dc, rect, i, format)      dc.DrawText(GetLabel(i), -1, rect, DT_END_ELLIPSIS | format);
-#define SwitchColor(dc, d)                  if ((Themed) && (!(i->CoreAttributes.Flags & LFFlagMissing)) && ((hThemeList) || (!d->Hdr.Selected))) dc.SetTextColor(0x808080);
+#define DrawLabel(dc, rect, i, format)      dc.DrawText(GetLabel(i), rect, DT_END_ELLIPSIS | format);
+#define SwitchColor(dc, d)                  if ((Themed) && (!(i->CoreAttributes.Flags & LFFlagMissing)) && (!(i->Type & LFTypeRequiresMaintenance)) && ((hThemeList) || (!d->Hdr.Selected))) dc.SetTextColor(0x808080);
 #define PrepareBlend()                      INT w = min(rect.Width(), RatingBitmapWidth); \
                                             INT h = min(rect.Height(), RatingBitmapHeight); \
                                             BLENDFUNCTION BF = { AC_SRC_OVER, 0, 0xFF, AC_SRC_ALPHA };
@@ -32,7 +33,7 @@ CListView::CListView(UINT DataSize)
 {
 	m_Icons[0] = m_Icons[1] = NULL;
 	m_HeaderItemClicked = m_HeaderItemSort = -1;
-	m_IgnoreHeaderItemChange = FALSE;
+	m_IgnoreHeaderItemChange = m_ShowLegend = FALSE;
 
 	WCHAR tmpStr[256];
 	SYSTEMTIME st;
@@ -101,6 +102,8 @@ void CListView::SetViewOptions(BOOL Force)
 
 void CListView::SetSearchResult(LFSearchResult* Result, FVPersistentData* /*Data*/)
 {
+	m_ShowLegend = FALSE;
+
 	if (Result)
 	{
 		m_HasCategories = Result->m_HasCategories;
@@ -111,6 +114,8 @@ void CListView::SetSearchResult(LFSearchResult* Result, FVPersistentData* /*Data
 			d->Hdr.Valid = TRUE;
 
 			LFItemDescriptor* i = Result->m_Items[a];
+			m_ShowLegend |= (i->Type & LFTypeRequiresMaintenance) | (i->CoreAttributes.Flags & LFFlagMissing);
+
 			if ((i->Type & LFTypeMask)==LFTypeFile)
 				if (!Result->m_HasCategories)
 					if (Result->m_Context==LFContextSubfolderDay)
@@ -189,18 +194,35 @@ void CListView::AdjustHeader(BOOL bShow)
 
 CBitmap* CListView::RenderFooter()
 {
-	if (!theApp.m_ShowStatistics)
+#ifndef DEBUG
+	if (!m_ShowLegend)
 		return NULL;
+#endif
+//	if (!theApp.m_ShowStatistics)
+//		return NULL;
+
+	CString colBlue;
+	CString colRed;
+	ENSURE(colBlue.LoadString(IDS_LEGEND_BLUE));
+	ENSURE(colRed.LoadString(IDS_LEGEND_RED));
 
 	ENSURE(m_FooterCaption.LoadString(IDS_LEGEND));
-	m_FooterSize.cx = 100;
-	m_FooterSize.cy = 100;
+	BOOL Themed = IsCtrlThemed();
 
 	CDC* pDC = GetWindowDC();
 	CDC dcDraw;
 
-	CBitmap* pBmp = CreateFooterBitmap(pDC, 100, 100, dcDraw);
+	HGDIOBJ oldFont = pDC->SelectStockObject(DEFAULT_GUI_FONT);
+	INT cx = max(pDC->GetTextExtent(colBlue).cx, pDC->GetTextExtent(colRed).cx)+m_FontHeight[2]+2*GraphSpacer-1;
+	INT cy = 2*(m_FontHeight[2]+GraphSpacer)+GraphSpacer;
 
+	CBitmap* pBmp = CreateFooterBitmap(pDC, cx, cy, dcDraw, Themed);
+	CRect rect(0, GraphSpacer, cx, cy);
+
+	DrawLegend(dcDraw, rect, 0xFF0000, colBlue, Themed);
+	DrawLegend(dcDraw, rect, 0x0000FF, colRed, Themed);
+
+	pDC->SelectObject(oldFont);
 	ReleaseDC(pDC);
 
 	return pBmp;
@@ -542,7 +564,7 @@ void CListView::DrawTileRows(CDC& dc, CRect& rect, LFItemDescriptor* i, GridItem
 		else
 			if (tmpStr[a][0]!=L'\0')
 			{
-				dc.DrawText(tmpStr[a], -1, rect, DT_LEFT | DT_SINGLELINE | DT_END_ELLIPSIS);
+				dc.DrawText(tmpStr[a], rect, DT_LEFT | DT_SINGLELINE | DT_END_ELLIPSIS);
 				rect.OffsetRect(0, m_FontHeight[0]);
 			}
 
@@ -580,7 +602,7 @@ void CListView::DrawColumn(CDC& dc, CRect& rect, LFItemDescriptor* i, UINT Attr)
 	if (tmpStr[0]!=L'\0')
 	{
 		CRect rectText(rect);
-		dc.DrawText(tmpStr, -1, rectText, (theApp.m_Attributes[Attr]->FormatRight ? DT_RIGHT : DT_LEFT) | DT_SINGLELINE | DT_END_ELLIPSIS);
+		dc.DrawText(tmpStr, rectText, (theApp.m_Attributes[Attr]->FormatRight ? DT_RIGHT : DT_LEFT) | DT_SINGLELINE | DT_END_ELLIPSIS);
 	}
 }
 
@@ -625,12 +647,12 @@ void CListView::DrawProperty(CDC& dc, CRect& rect, LFItemDescriptor* i, GridItem
 			{
 				CString tmpCaption(theApp.m_Attributes[Attr]->Name);
 				tmpCaption += _T(": ");
-				dc.DrawText(tmpCaption, -1, rectText, DT_LEFT | DT_SINGLELINE);
+				dc.DrawText(tmpCaption, rectText, DT_LEFT | DT_SINGLELINE);
 				rectText.left += dc.GetTextExtent(tmpCaption, tmpCaption.GetLength()).cx;
 			}
 
 			SwitchColor(dc, d);
-			dc.DrawText(tmpStr, -1, rectText, DT_LEFT | DT_SINGLELINE | DT_END_ELLIPSIS);
+			dc.DrawText(tmpStr, rectText, DT_LEFT | DT_SINGLELINE | DT_END_ELLIPSIS);
 			dc.SetTextColor(oldColor);
 		}
 

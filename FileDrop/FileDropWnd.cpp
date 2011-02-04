@@ -279,17 +279,17 @@ BOOL CFileDropWnd::OnEraseBkgnd(CDC* pDC)
 				Label, -1, textflags, 0, rtext);
 
 			dc.SetTextColor(GetSysColor(COLOR_CAPTIONTEXT));
-			dc.DrawText(Label, -1, rtext, textflags);
+			dc.DrawText(Label, rtext, textflags);
 		}
 
 		dc.SelectObject(oldFont);
 	}
 	else
 	{
-		HGDIOBJ oldFont = dc.SelectObject(GetStockObject(DEFAULT_GUI_FONT));
+		HGDIOBJ oldFont = dc.SelectStockObject(DEFAULT_GUI_FONT);
 
 		dc.SetTextColor(GetSysColor(COLOR_WINDOWTEXT));
-		dc.DrawText(Label, -1, rtext, textflags);
+		dc.DrawText(Label, rtext, textflags);
 
 		dc.SelectObject(oldFont);
 	}

@@ -95,7 +95,7 @@ void LFAboutDlg::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 
 	dc.SetTextColor(0x000000);
 	dc.SetBkMode(TRANSPARENT);
-	dc.DrawText(m_AppName+_T(" (Beta4)"), -1, r, 0);
+	dc.DrawText(m_AppName+_T(" (Beta4)"), r, 0);
 	r.top += 45;
 
 	CFont font2;
@@ -104,10 +104,10 @@ void LFAboutDlg::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 		DEFAULT_PITCH | FF_DONTCARE, ((LFApplication*)AfxGetApp())->GetDefaultFontFace());
 	dc.SelectObject(&font2);
 
-	dc.DrawText(m_Copyright, -1, r, 0);
+	dc.DrawText(m_Copyright, r, 0);
 	r.top += 25;
 
-	dc.DrawText(_T("Version ")+m_Version+_T(" (")+m_Build+_T(")"), -1, r, 0);
+	dc.DrawText(_T("Version ")+m_Version+_T(" (")+m_Build+_T(")"), r, 0);
 
 	dc.SelectObject(pOldFont);
 }

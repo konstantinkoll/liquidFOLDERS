@@ -4,6 +4,7 @@
 
 #include "stdafx.h"
 #include "CTagcloudView.h"
+#include "FooterGraph.h"
 #include "StoreManager.h"
 
 
@@ -29,7 +30,7 @@ void CTagcloudView::SetViewOptions(BOOL Force)
 		Changes = 2;
 	if ((Force) || (m_ViewParameters.TagcloudShowRare!=p_ViewParameters->TagcloudShowRare))
 		Changes = 2;
-	if ((Force) || (m_ViewParameters.TagcloudUseSize!=p_ViewParameters->TagcloudUseSize))
+	if ((Force) || (m_ViewParameters.TagcloudUseSize!=p_ViewParameters->TagcloudUseSize) || (m_ViewParameters.TagcloudUseColors!=p_ViewParameters->TagcloudUseColors))
 		Changes = 1;
 
 	if (p_Result)
@@ -42,7 +43,7 @@ void CTagcloudView::SetViewOptions(BOOL Force)
 			SetSearchResult(p_Result, NULL);
 			GetOwner()->PostMessage(WM_COMMAND, WM_UPDATESELECTION);
 		case 1:
-			AdjustLayout();
+			UpdateFooter();
 			break;
 		case 0:
 			Invalidate();
@@ -120,6 +121,51 @@ void CTagcloudView::SetSearchResult(LFSearchResult* Result, FVPersistentData* /*
 	}
 }
 
+CBitmap* CTagcloudView::RenderFooter()
+{
+	if (!theApp.m_TagcloudShowLegend || !m_ViewParameters.TagcloudUseColors)
+		return NULL;
+
+	CString strCommon;
+	CString strRare;
+	ENSURE(strCommon.LoadString(IDS_LEGEND_COMMON));
+	ENSURE(strRare.LoadString(IDS_LEGEND_RARE));
+
+	ENSURE(m_FooterCaption.LoadString(IDS_LEGEND));
+	BOOL Themed = IsCtrlThemed();
+
+	CDC* pDC = GetWindowDC();
+	CDC dcDraw;
+
+	INT cy = m_FontHeight[1]+m_FontHeight[2]+3*GraphSpacer;
+	CBitmap* pBmp = CreateFooterBitmap(pDC, 250, cy, dcDraw, Themed);
+	INT cx = m_FooterSize.cx-6;
+
+	Graphics g(dcDraw);
+
+	LinearGradientBrush brush1(Point(0, 0), Point(cx/4, 0), Color(0xFF, 0, 0x00), Color(0x80, 0x00, 0x80));
+	g.FillRectangle(&brush1, Rect(0, GraphSpacer, cx/4, m_FontHeight[1]));
+
+	LinearGradientBrush brush2(Point(cx/4-1, 0), Point(cx/2, 0), Color(0x80, 0x00, 0x80), Color(0x00, 0x00, 0xFF));
+	g.FillRectangle(&brush2, Rect(cx/4, GraphSpacer, cx/4+1, m_FontHeight[1]));
+
+	LinearGradientBrush brush3(Point(cx/2-1, 0), Point(cx, 0), Color(0x00, 0x00, 0xFF), Color(0x00, 0x80, 0xFF));
+	g.FillRectangle(&brush3, Rect(cx/2, GraphSpacer, cx/2, m_FontHeight[1]));
+
+	CRect rect(0, GraphSpacer, cx, GraphSpacer+m_FontHeight[1]);
+	Finish(dcDraw, rect, Themed);
+
+	rect.top = rect.bottom+GraphSpacer;
+	rect.bottom = rect.top+m_FontHeight[2];
+
+	dcDraw.DrawText(strCommon, rect, DT_LEFT | DT_VCENTER | DT_SINGLELINE | DT_END_ELLIPSIS);
+	dcDraw.DrawText(strRare, rect, DT_RIGHT | DT_VCENTER | DT_SINGLELINE | DT_END_ELLIPSIS);
+
+	ReleaseDC(pDC);
+
+	return pBmp;
+}
+
 void CTagcloudView::AdjustLayout()
 {
 	ResetItemCategories();
@@ -130,6 +176,9 @@ void CTagcloudView::AdjustLayout()
 
 		CRect rectWindow;
 		GetWindowRect(&rectWindow);
+		if (p_FooterBitmap)
+			if (rectWindow.Width()<m_FooterSize.cx)
+				rectWindow.right = rectWindow.left+m_FooterSize.cx;
 		if (!rectWindow.Width())
 			return;
 
@@ -177,7 +226,7 @@ Restart:
 
 				CRect rect(0, 0, rectWindow.Width()-2*GUTTER, 128);
 				dc.SelectObject(GetFont(a));
-				dc.DrawText(i->CoreAttributes.FileName, -1, rect, TextFormat | DT_CALCRECT);
+				dc.DrawText(i->CoreAttributes.FileName, rect, TextFormat | DT_CALCRECT);
 				rect.InflateRect(5, 4);
 
 				if (x+rect.Width()+2*GUTTER>rectWindow.Width())
@@ -236,7 +285,7 @@ void CTagcloudView::DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed)
 
 	CFont* pOldFont = dc.SelectObject(GetFont(idx));
 	dc.SetTextColor(color);
-	dc.DrawText(i->CoreAttributes.FileName, -1, rectItem, TextFormat | DT_CENTER | DT_VCENTER);
+	dc.DrawText(i->CoreAttributes.FileName, rectItem, TextFormat | DT_CENTER | DT_VCENTER);
 	dc.SelectObject(pOldFont);
 }
 
@@ -258,6 +307,7 @@ BEGIN_MESSAGE_MAP(CTagcloudView, CGridView)
 	ON_COMMAND(IDM_TAGCLOUD_SORTVALUE, OnSortValue)
 	ON_COMMAND(IDM_TAGCLOUD_SORTCOUNT, OnSortCount)
 	ON_COMMAND(IDM_TAGCLOUD_SHOWRARE, OnShowRare)
+	ON_COMMAND(IDM_TAGCLOUD_SHOWLEGEND, OnShowLegend)
 	ON_COMMAND(IDM_TAGCLOUD_USESIZE, OnUseSize)
 	ON_COMMAND(IDM_TAGCLOUD_USECOLORS, OnUseColors)
 	ON_COMMAND(IDM_TAGCLOUD_USEOPACITY, OnUseOpacity)
@@ -296,6 +346,12 @@ void CTagcloudView::OnShowRare()
 	theApp.UpdateViewOptions(m_Context);
 }
 
+void CTagcloudView::OnShowLegend()
+{
+	theApp.m_TagcloudShowLegend = !theApp.m_TagcloudShowLegend;
+	theApp.UpdateFooter(-1, LFViewTagcloud);
+}
+
 void CTagcloudView::OnUseSize()
 {
 	p_ViewParameters->TagcloudUseSize = !p_ViewParameters->TagcloudUseSize;
@@ -331,6 +387,10 @@ void CTagcloudView::OnUpdateCommands(CCmdUI* pCmdUI)
 		break;
 	case IDM_TAGCLOUD_SHOWRARE:
 		pCmdUI->SetCheck(m_ViewParameters.TagcloudShowRare);
+		break;
+	case IDM_TAGCLOUD_SHOWLEGEND:
+		pCmdUI->SetCheck(theApp.m_TagcloudShowLegend);
+		b = m_ViewParameters.TagcloudUseColors;
 		break;
 	case IDM_TAGCLOUD_USESIZE:
 		pCmdUI->SetCheck(m_ViewParameters.TagcloudUseSize);

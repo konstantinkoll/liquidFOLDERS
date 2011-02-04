@@ -54,6 +54,9 @@ void CGridView::ArrangeHorizontal(GVArrange& gva, BOOL Justify, BOOL ForceBreak,
 
 	CRect rectWindow;
 	GetWindowRect(&rectWindow);
+	if (p_FooterBitmap)
+		if (rectWindow.Width()<m_FooterSize.cx)
+			rectWindow.right = rectWindow.left+m_FooterSize.cx;
 	if (!rectWindow.Width())
 		return;
 
@@ -163,6 +166,9 @@ void CGridView::ArrangeVertical(GVArrange& gva)
 
 	CRect rectWindow;
 	GetWindowRect(&rectWindow);
+	if (p_FooterBitmap)
+		if (rectWindow.Width()<m_FooterSize.cx)
+			rectWindow.right = rectWindow.left+m_FooterSize.cx;
 	if (!rectWindow.Width())
 		return;
 
@@ -618,11 +624,16 @@ void CGridView::OnPaint()
 
 			for (UINT a=0; a<p_Result->m_ItemCount; a++)
 			{
-				CRect rect(GetItemRect(a));
-				if (IntersectRect(&rectIntersect, rect, rectUpdate))
+				GridItemData* d = GetItemData(a);
+				if (d->Hdr.Valid)
 				{
-					DrawItemBackground(dc, rect, a, Themed);
-					DrawItem(dc, rect, a, Themed);
+					CRect rect(d->Hdr.Rect);
+					rect.OffsetRect(-m_HScrollPos, -m_VScrollPos+(INT)m_HeaderHeight);
+					if (IntersectRect(&rectIntersect, rect, rectUpdate))
+					{
+						DrawItemBackground(dc, rect, a, Themed);
+						DrawItem(dc, rect, a, Themed);
+					}
 				}
 			}
 
@@ -647,7 +658,7 @@ void CGridView::OnPaint()
 		ENSURE(tmpStr.LoadString(IDS_NOTHINGTODISPLAY));
 
 		dc.SetTextColor(Themed ? 0x6D6D6D : GetSysColor(COLOR_3DFACE));
-		dc.DrawText(tmpStr, -1, rectText, DT_CENTER | DT_SINGLELINE | DT_END_ELLIPSIS);
+		dc.DrawText(tmpStr, rectText, DT_CENTER | DT_SINGLELINE | DT_END_ELLIPSIS);
 	}
 
 	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);

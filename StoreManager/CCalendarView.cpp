@@ -266,7 +266,7 @@ void CCalendarView::DrawMonth(CDC& dc, LPRECT rect, INT Month, BOOL Themed)
 		for (UINT a=0; a<7; a++)
 		{
 			rectItem.MoveToX(rect->left+CategoryPadding+a*(m_ColumnWidth+COLUMNGUTTER)-EXTRA);
-			dc.DrawText(m_Days[a], -1, rectItem, DT_SINGLELINE | DT_END_ELLIPSIS | DT_CENTER | DT_TOP);
+			dc.DrawText(m_Days[a], rectItem, DT_SINGLELINE | DT_END_ELLIPSIS | DT_CENTER | DT_TOP);
 		}
 
 		rect->top += m_FontHeight[0]+CategoryPadding;
@@ -299,7 +299,7 @@ void CCalendarView::DrawMonth(CDC& dc, LPRECT rect, INT Month, BOOL Themed)
 			tmpStr.Format(_T("%d"), Day+1);
 
 			rectItem.right -= PADDING;
-			dc.DrawText(tmpStr, -1, rectItem, DT_SINGLELINE | DT_END_ELLIPSIS | DT_RIGHT | DT_VCENTER);
+			dc.DrawText(tmpStr, rectItem, DT_SINGLELINE | DT_END_ELLIPSIS | DT_RIGHT | DT_VCENTER);
 			rectItem.right += PADDING;
 		}
 
@@ -382,7 +382,7 @@ void CCalendarView::OnPaint()
 	for (UINT a=0; a<12; a++)
 	{
 		CRect rect(m_Months[a].Rect);
-		rect.OffsetRect(-m_HScrollPos, -m_VScrollPos+m_HeaderHeight);
+		rect.OffsetRect(-m_HScrollPos, -m_VScrollPos+(INT)m_HeaderHeight);
 		if (IntersectRect(&rectIntersect, rect, rectUpdate))
 			DrawMonth(dc, rect, a, Themed);
 	}

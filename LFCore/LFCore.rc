@@ -885,7 +885,7 @@ BEGIN
     IDS_AttrResponsible     "Responsable"
     IDS_AttrDueTime         "En tiempo"
     IDS_AttrDoneTime        "Finalizado"
-    IDS_AttrCustomer        "Cliente"
+    IDS_AttrCustomer        "Consumidor ó cliente"
 END
 
 STRINGTABLE 

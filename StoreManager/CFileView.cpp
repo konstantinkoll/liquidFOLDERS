@@ -266,22 +266,23 @@ CBitmap* CFileView::RenderFooter()
 	return NULL;
 }
 
-CBitmap* CFileView::CreateFooterBitmap(CDC* pDC, INT mincx, INT cy, CDC& dcDraw)
+CBitmap* CFileView::CreateFooterBitmap(CDC* pDC, INT mincx, INT cy, CDC& dcDraw, BOOL Themed)
 {
 	CRect rectClient;
 	GetClientRect(&rectClient);
 
-	INT cx = max(mincx, rectClient.Width()-18);
+	m_FooterSize.cx = max(mincx, rectClient.Width()-18);
+	m_FooterSize.cy = cy;
 
 	CBitmap* pBmp = new CBitmap();
-	pBmp->CreateCompatibleBitmap(pDC, cx, cy);
+	pBmp->CreateCompatibleBitmap(pDC, m_FooterSize.cx, m_FooterSize.cy);
 
 	dcDraw.CreateCompatibleDC(pDC);
+	dcDraw.SetBkMode(TRANSPARENT);
 	dcDraw.SelectObject(pBmp);
+	dcDraw.SelectStockObject(DEFAULT_GUI_FONT);
 
-	BOOL Themed = IsCtrlThemed();
-
-	CRect rect(0, 0, cx, cy);
+	CRect rect(0, 0, m_FooterSize.cx, m_FooterSize.cy);
 #ifdef DEBUG
 	dcDraw.FillSolidRect(rect, 0xFFC0FF);
 #else
@@ -305,7 +306,7 @@ void CFileView::AdjustLayout()
 
 		CRect rect;
 		GetClientRect(&rect);
-		m_FooterSize.cx = max(rect.Width(), m_FooterSize.cx)-m_FooterPos.x;
+		m_FooterSize.cx = max(rect.Width()-m_FooterPos.x, m_FooterSize.cx);
 
 		m_ScrollWidth = max(m_ScrollWidth, m_FooterPos.x+m_FooterSize.cx);
 		m_FooterSize.cx = m_ScrollWidth-m_FooterPos.x;
@@ -463,7 +464,7 @@ RECT CFileView::GetItemRect(INT idx)
 		if ((idx>=0) && (idx<(INT)p_Result->m_ItemCount))
 		{
 			rect = GetItemData(idx)->Rect;
-			OffsetRect(&rect, -m_HScrollPos, -m_VScrollPos+m_HeaderHeight);
+			OffsetRect(&rect, -m_HScrollPos, -m_VScrollPos+(INT)m_HeaderHeight);
 		}
 
 	return rect;
@@ -719,10 +720,10 @@ void CFileView::DrawCategory(CDC& dc, LPRECT rectCategory, ItemCategory* ic, BOO
 
 	CFont* pOldFont = dc.SelectObject(&theApp.m_LargeFont);
 	dc.SetTextColor(Themed ? 0x993300 : GetSysColor(COLOR_WINDOWTEXT));
-	dc.DrawText(ic->Caption, -1, rect, DT_LEFT | DT_TOP | DT_SINGLELINE | DT_END_ELLIPSIS);
+	dc.DrawText(ic->Caption, rect, DT_LEFT | DT_TOP | DT_SINGLELINE | DT_END_ELLIPSIS);
 
 	CRect rectLine(rect);
-	dc.DrawText(ic->Caption, -1, rectLine, DT_LEFT | DT_TOP | DT_SINGLELINE | DT_END_ELLIPSIS | DT_CALCRECT);
+	dc.DrawText(ic->Caption, rectLine, DT_LEFT | DT_TOP | DT_SINGLELINE | DT_END_ELLIPSIS | DT_CALCRECT);
 	rectLine.right += 2*CategoryPadding;
 
 	if (rectLine.right<=rect.right)
@@ -742,7 +743,7 @@ void CFileView::DrawCategory(CDC& dc, LPRECT rectCategory, ItemCategory* ic, BOO
 	{
 		rect.top += m_FontHeight[1];
 		dc.SelectObject(&theApp.m_DefaultFont);
-		dc.DrawText(ic->Hint, -1, rect, DT_LEFT | DT_TOP | DT_SINGLELINE | DT_END_ELLIPSIS);
+		dc.DrawText(ic->Hint, rect, DT_LEFT | DT_TOP | DT_SINGLELINE | DT_END_ELLIPSIS);
 	}
 
 	dc.SelectObject(pOldFont);
@@ -759,11 +760,11 @@ void CFileView::DrawFooter(CDC& dc, BOOL Themed)
 	CDC dcMem;
 	dcMem.CreateCompatibleDC(&dc);
 	CBitmap* pOldBitmap = dcMem.SelectObject(p_FooterBitmap);
-	dc.BitBlt(m_FooterPos.x-m_HScrollPos, m_ScrollHeight-m_FooterSize.cy-m_VScrollPos+m_HeaderHeight, m_FooterSize.cx, m_FooterSize.cy, &dcMem, 0, 0, SRCCOPY);
+	dc.BitBlt(m_FooterPos.x-m_HScrollPos, m_ScrollHeight-m_FooterSize.cy-m_VScrollPos+(INT)m_HeaderHeight, m_FooterSize.cx, m_FooterSize.cy, &dcMem, 0, 0, SRCCOPY);
 	dcMem.SelectObject(pOldBitmap);
 
 	CRect rectCategory(15-CategoryPadding, m_FooterPos.y+FooterMargin, m_FooterPos.x+m_FooterSize.cx-2, m_ScrollHeight-m_FooterSize.cy);
-	rectCategory.OffsetRect(-m_HScrollPos, -m_VScrollPos+m_HeaderHeight);
+	rectCategory.OffsetRect(-m_HScrollPos, -m_VScrollPos+(INT)m_HeaderHeight);
 
 	ItemCategory ic = { 0 };
 	wcscpy_s(ic.Caption, 256, m_FooterCaption);
@@ -994,6 +995,8 @@ INT CFileView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_FontHeight[0] = m_RowHeight = dc->GetTextExtent(_T("Wy"), 2).cy;
 	dc->SelectObject(&theApp.m_LargeFont);
 	m_FontHeight[1] = dc->GetTextExtent(_T("Wy"), 2).cy;
+	dc->SelectStockObject(DEFAULT_GUI_FONT);
+	m_FontHeight[2] = dc->GetTextExtent(_T("Wy"), 2).cy;
 	dc->SelectObject(pOldFont);
 	ReleaseDC(dc);
 
@@ -1466,7 +1469,7 @@ void CFileView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 		{
 			FVItemData* d = GetItemData(idx);
 			point.x = d->Rect.left-m_HScrollPos;
-			point.y = d->Rect.top-m_VScrollPos+m_HeaderHeight;
+			point.y = d->Rect.top-m_VScrollPos+(INT)m_HeaderHeight;
 			ClientToScreen(&point);
 		}
 	}

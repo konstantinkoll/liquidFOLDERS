@@ -183,7 +183,7 @@ void CTooltipHeader::OnPaint()
 					}
 
 					dc.SetTextColor(Themed ? 0x7A604C : GetSysColor(COLOR_WINDOWTEXT));
-					dc.DrawText(lpBuffer, -1, rectItem, nFormat);
+					dc.DrawText(lpBuffer, rectItem, nFormat);
 
 					if ((!Themed) && (hdi.fmt & (HDF_SORTDOWN | HDF_SORTUP)))
 					{

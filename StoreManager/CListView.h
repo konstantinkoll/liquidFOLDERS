@@ -17,6 +17,7 @@ public:
 
 protected:
 	CTooltipHeader m_wndHeader;
+	BOOL m_ShowLegend;
 
 	virtual void SetViewOptions(BOOL Force);
 	virtual void SetSearchResult(LFSearchResult* Result, FVPersistentData* Data);

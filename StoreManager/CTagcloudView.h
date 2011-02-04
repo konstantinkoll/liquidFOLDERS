@@ -33,6 +33,7 @@ protected:
 
 	virtual void SetViewOptions(BOOL Force);
 	virtual void SetSearchResult(LFSearchResult* Result, FVPersistentData* Data);
+	virtual CBitmap* RenderFooter();
 	virtual void AdjustLayout();
 	virtual void DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed);
 
@@ -42,6 +43,7 @@ protected:
 	afx_msg void OnSortValue();
 	afx_msg void OnSortCount();
 	afx_msg void OnShowRare();
+	afx_msg void OnShowLegend();
 	afx_msg void OnUseSize();
 	afx_msg void OnUseColors();
 	afx_msg void OnUseOpacity();

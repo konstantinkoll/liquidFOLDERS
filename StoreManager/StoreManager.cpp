@@ -79,6 +79,7 @@ BOOL CStoreManagerApp::InitInstance()
 	m_GlobeBlackBackground = GetInt(_T("GlobeBlackBackground"), FALSE);
 	m_GlobeShowViewport = GetInt(_T("GlobeShowViewport"), FALSE);
 	m_GlobeShowCrosshairs = GetInt(_T("GlobeShowCrosshairs"), FALSE);
+	m_TagcloudShowLegend = GetInt(_T("TagcloudShowLegend"), TRUE);
 	m_nTextureSize = GetInt(_T("TextureSize"), 0);
 	m_nMaxTextureSize = GetInt(_T("MaxTextureSize"), LFTexture4096);
 	if (m_nTextureSize<0)
@@ -134,6 +135,7 @@ INT CStoreManagerApp::ExitInstance()
 	WriteInt(_T("GlobeBlackBackground"), m_GlobeBlackBackground);
 	WriteInt(_T("GlobeShowViewport"), m_GlobeShowViewport);
 	WriteInt(_T("GlobeShowCrosshairs"), m_GlobeShowCrosshairs);
+	WriteInt(_T("TagcloudShowLegend"), m_TagcloudShowLegend);
 	WriteInt(_T("TextureSize"), m_nTextureSize);
 	WriteInt(_T("MaxTextureSize"), m_nMaxTextureSize);
 	SetRegistryBase(oldBase);
@@ -348,9 +350,9 @@ void CStoreManagerApp::Reload(INT Context)
 	Broadcast(Context, -1, WM_RELOAD);
 }
 
-void CStoreManagerApp::UpdateFooter(INT Context)
+void CStoreManagerApp::UpdateFooter(INT Context, INT View)
 {
-	Broadcast(Context, -1, WM_UPDATEFOOTER);
+	Broadcast(Context, View, WM_UPDATEFOOTER);
 }
 
 

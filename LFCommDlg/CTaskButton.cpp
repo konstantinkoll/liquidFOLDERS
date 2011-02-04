@@ -204,11 +204,11 @@ void CTaskButton::OnPaint()
 
 				rectText.OffsetRect(1, 1);
 				dc.SetTextColor(0x000000);
-				dc.DrawText(m_Caption, -1, rectText, DT_SINGLELINE | DT_END_ELLIPSIS | DT_VCENTER);
+				dc.DrawText(m_Caption, rectText, DT_SINGLELINE | DT_END_ELLIPSIS | DT_VCENTER);
 
 				rectText.OffsetRect(-1, -1);
 				dc.SetTextColor(0xFFFFFF);
-				dc.DrawText(m_Caption, -1, rectText, DT_SINGLELINE | DT_END_ELLIPSIS | DT_VCENTER);
+				dc.DrawText(m_Caption, rectText, DT_SINGLELINE | DT_END_ELLIPSIS | DT_VCENTER);
 
 				break;
 			}
@@ -274,7 +274,7 @@ void CTaskButton::OnPaint()
 				}
 
 				dc.SetTextColor(0x5B391E);
-				dc.DrawText(m_Caption, -1, rectText, DT_SINGLELINE | DT_END_ELLIPSIS | DT_VCENTER);
+				dc.DrawText(m_Caption, rectText, DT_SINGLELINE | DT_END_ELLIPSIS | DT_VCENTER);
 
 				break;
 			}
@@ -329,7 +329,7 @@ void CTaskButton::OnPaint()
 		}
 
 		dc.SelectStockObject(DEFAULT_GUI_FONT);
-		dc.DrawText(m_Caption, -1, rectText, DT_SINGLELINE | DT_END_ELLIPSIS | DT_VCENTER);
+		dc.DrawText(m_Caption, rectText, DT_SINGLELINE | DT_END_ELLIPSIS | DT_VCENTER);
 	}
 
 	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);

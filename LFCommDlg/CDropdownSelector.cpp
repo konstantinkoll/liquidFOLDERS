@@ -458,7 +458,7 @@ void CDropdownSelector::OnPaint()
 	{
 		pOldFont = dc.SelectObject(&p_App->m_ItalicFont);
 		dc.SetTextColor(0x808080);
-		dc.DrawText(m_EmptyHint, -1, rtext, DT_SINGLELINE | DT_END_ELLIPSIS | DT_VCENTER);
+		dc.DrawText(m_EmptyHint, rtext, DT_SINGLELINE | DT_END_ELLIPSIS | DT_VCENTER);
 	}
 	else
 	{
@@ -469,7 +469,7 @@ void CDropdownSelector::OnPaint()
 		if (!m_Caption.IsEmpty())
 		{
 			dc.SetTextColor((m_Hover || m_Dropped) ? c1 : c2);
-			dc.DrawText(m_Caption, -1, rtext, DT_SINGLELINE | DT_END_ELLIPSIS | DT_VCENTER);
+			dc.DrawText(m_Caption, rtext, DT_SINGLELINE | DT_END_ELLIPSIS | DT_VCENTER);
 			rtext.left += dc.GetTextExtent(m_Caption, m_Caption.GetLength()).cx+BORDER;
 		}
 
@@ -488,7 +488,7 @@ void CDropdownSelector::OnPaint()
 		if (!m_DisplayName.IsEmpty())
 		{
 			dc.SetTextColor(c1);
-			dc.DrawText(m_DisplayName, -1, rtext, DT_SINGLELINE | DT_END_ELLIPSIS | DT_VCENTER);
+			dc.DrawText(m_DisplayName, rtext, DT_SINGLELINE | DT_END_ELLIPSIS | DT_VCENTER);
 		}
 	}
 

@@ -237,7 +237,7 @@ void CPaneList::DrawItem(INT nID, CDC* pDC, CMFCVisualManager* dm)
 			rect.bottom = rectBounds.bottom-1;
 			nFormat = DT_CENTER | DT_WORDBREAK;
 		}
-		pDC->DrawText(item.pszText, -1, rect, DT_NOPREFIX | DT_END_ELLIPSIS | nFormat);
+		pDC->DrawText(item.pszText, rect, DT_NOPREFIX | DT_END_ELLIPSIS | nFormat);
 
 		if (GetView()==LV_VIEW_TILE)
 		{
@@ -255,7 +255,7 @@ void CPaneList::DrawItem(INT nID, CDC* pDC, CMFCVisualManager* dm)
 				item.pszText = text;
 				GetItem(&item);
 
-				pDC->DrawText(item.pszText, -1, rect, DT_NOPREFIX | DT_SINGLELINE | DT_END_ELLIPSIS);
+				pDC->DrawText(item.pszText, rect, DT_NOPREFIX | DT_SINGLELINE | DT_END_ELLIPSIS);
 			}
 
 			if (oldCol!=(COLORREF)-1)

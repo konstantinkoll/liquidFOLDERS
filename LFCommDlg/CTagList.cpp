@@ -160,7 +160,7 @@ void CTagList::DrawItem(INT nID, CDC* pDC)
 	rectBounds.DeflateRect(5, 0);
 	INT L = pDC->GetTextExtent(item.pszText).cx;
 	pDC->SetTextColor((State & LVIS_SELECTED) ? texCol : ((texCol>>1) & 0x7F7F7F) + ((pDC->GetPixel(rectBounds.right, rectBounds.top+10)>>1) & 0x7F7F7F));
-	pDC->DrawText(item.pszText, -1, rectBounds, DT_NOPREFIX | DT_END_ELLIPSIS | DT_SINGLELINE | DT_RIGHT | DT_VCENTER);
+	pDC->DrawText(item.pszText, rectBounds, DT_NOPREFIX | DT_END_ELLIPSIS | DT_SINGLELINE | DT_RIGHT | DT_VCENTER);
 	pDC->SelectObject(pOldFont);
 
 	// Label
@@ -171,7 +171,7 @@ void CTagList::DrawItem(INT nID, CDC* pDC)
 	pOldFont = pDC->SelectObject(&pApp->m_DefaultFont);
 	rectBounds.right -= L+5;
 	pDC->SetTextColor(texCol);
-	pDC->DrawText(item.pszText, -1, rectBounds, DT_NOPREFIX | DT_END_ELLIPSIS | DT_SINGLELINE | DT_CENTER | DT_VCENTER);
+	pDC->DrawText(item.pszText, rectBounds, DT_NOPREFIX | DT_END_ELLIPSIS | DT_SINGLELINE | DT_CENTER | DT_VCENTER);
 	pDC->SelectObject(pOldFont);
 
 	// FocusRect

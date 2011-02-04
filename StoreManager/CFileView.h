@@ -134,7 +134,7 @@ protected:
 	HTHEME hThemeList;
 	LFTooltip m_TooltipCtrl;
 	UINT m_HeaderHeight;
-	INT m_FontHeight[2];
+	INT m_FontHeight[3];
 	BOOL m_EnableScrolling;
 	BOOL m_EnableHover;
 	BOOL m_EnableTooltip;
@@ -165,7 +165,7 @@ protected:
 	virtual void InvalidateItem(INT idx);
 	virtual CMenu* GetItemContextMenu(INT idx);
 
-	CBitmap* CreateFooterBitmap(CDC* pDC, INT mincx, INT cy, CDC& dcDraw);
+	CBitmap* CreateFooterBitmap(CDC* pDC, INT mincx, INT cy, CDC& dcDraw, BOOL Themed);
 	INT GetFooterHeight();
 	void SetFocusItem(INT FocusItem, BOOL ShiftSelect);
 	RECT GetItemRect(INT idx);

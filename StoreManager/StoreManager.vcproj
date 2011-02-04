@@ -426,6 +426,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\FooterGraph.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\GLFont.cpp"
 				>
 			</File>
@@ -561,6 +565,10 @@
 			</File>
 			<File
 				RelativePath=".\FilterWnd.h"
+				>
+			</File>
+			<File
+				RelativePath=".\FooterGraph.h"
 				>
 			</File>
 			<File

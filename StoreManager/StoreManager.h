@@ -41,6 +41,7 @@ public:
 	BOOL m_GlobeBlackBackground;
 	BOOL m_GlobeShowViewport;
 	BOOL m_GlobeShowCrosshairs;
+	BOOL m_TagcloudShowLegend;
 
 	virtual BOOL InitInstance();
 	virtual INT ExitInstance();
@@ -60,7 +61,7 @@ public:
 	void UpdateSortOptions(INT Context);
 	void UpdateViewOptions(INT Context=-1, INT View=-1);
 	void Reload(INT Context);
-	void UpdateFooter(INT Context);
+	void UpdateFooter(INT Context=-1, INT View=-1);
 
 		static CString GetCommandName(UINT nID, BOOL bInsertSpace=FALSE);							// Axe
 		static CMFCRibbonButton* CommandButton(UINT nID, INT nSmallImageIndex=-1, INT nLargeImageIndex=-1, BOOL bAlwaysShowDescription=FALSE, BOOL bInsertSpace=FALSE);	// Axe

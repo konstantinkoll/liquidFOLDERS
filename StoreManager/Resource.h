@@ -114,9 +114,15 @@
 #define IDS_AUTOMATIC                   1019
 #define IDS_ILLEGALYEAR                 1020
 #define IDS_LEGEND                      1021
-#define IDS_STATISTICS                  1022
-#define IDS_STATISTICS_BYCOUNT          1023
-#define IDS_STATISTICS_BYSIZE           1024
+#define IDS_LEGEND_BLUE                 1022
+#define IDS_LEGEND_RED                  1023
+#define IDS_LEGEND_RARE                 1024
+#define IDS_LEGEND_COMMON               1025
+#define IDS_LEGEND_OLDER                1026
+#define IDS_LEGEND_NEWER                1037
+#define IDS_STATISTICS                  1028
+#define IDS_STATISTICS_BYCOUNT          1029
+#define IDS_STATISTICS_BYSIZE           1030
 #define IDS_VATTR_FIRST                 1100
 #define IDS_VATTR_DRIVELETTER           1100
 #define IDS_VATTR_MAINTENANCETIME       1101
@@ -214,10 +220,11 @@
 #define IDM_TAGCLOUD_SORTVALUE          5401
 #define IDM_TAGCLOUD_SORTCOUNT          5402
 #define IDM_TAGCLOUD_SHOWRARE           5403
-#define IDM_TAGCLOUD_USESIZE            5404
-#define IDM_TAGCLOUD_USECOLORS          5405
-#define IDM_TAGCLOUD_USEOPACITY         5406
-#define IDM_TAGCLOUD_SORT               5407
+#define IDM_TAGCLOUD_SHOWLEGEND         5404
+#define IDM_TAGCLOUD_USESIZE            5405
+#define IDM_TAGCLOUD_USECOLORS          5406
+#define IDM_TAGCLOUD_USEOPACITY         5407
+#define IDM_TAGCLOUD_SORT               5408
 
 // Next default values for new objects
 // 
