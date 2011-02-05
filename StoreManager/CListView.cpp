@@ -236,7 +236,7 @@ CBitmap* CListView::RenderStatistics()
 		LFDomainMessages, LFDomainPresentations, LFDomainSpreadsheets, 0, LFDomainTrash, LFDomainUnknown };
 	INT64 Counts[DomainCount] = { 0 };
 	INT64 Sizes[DomainCount] = { 0 };
-	COLORREF Colors[DomainCount] = { 0xB03000, 0xFFB000, 0x202020, 0x00C0FF, 0x00FFB0, 0xFF4080, 0xD040FF, 0xD0D0D0, 0x0000FF, 0xD00000 };
+	COLORREF Colors[DomainCount] = { 0xB03000, 0xFFB000, 0x202020, 0x00C0FF, 0x00FFB0, 0xFF4080, 0xC028FF, 0xD0D0D0, 0x0000FF, 0xD00000 };
 
 	for (UINT a=0; a<p_Result->m_ItemCount; a++)
 	{
