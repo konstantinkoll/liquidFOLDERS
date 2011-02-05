@@ -246,7 +246,7 @@ IDM_HOME MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "&Statistik anzeigen",         IDM_HOME_SHOWSTATISTICS
+        MENUITEM "&Statistiken anzeigen",       IDM_HOME_SHOWSTATISTICS
         MENUITEM SEPARATOR
         MENUITEM "&Verzeichnis importieren...", IDM_HOME_IMPORTFOLDER
         MENUITEM "&Wartungsarbeiten durchführen", IDM_HOME_MAINTAIN
@@ -806,41 +806,6 @@ END
 STRINGTABLE 
 BEGIN
     ID_VIEW_AUTODIRS        "Enables or disables grouping of similar files into subfolders for this context. Grouping is not available in all contexts, and cannot be turned off in subfolders or advanced view modes.\nGroup into subfolders"
-END
-
-STRINGTABLE 
-BEGIN
-    ID_SORT_FILENAME        "Sorts the search result by file name.\nSort by file name"
-    ID_SORT_COMMENT         "Sorts the search result by comment.\nSort by comment"
-END
-
-STRINGTABLE 
-BEGIN
-    ID_SORT_CREATIONTIME    "Sorts the search result by creation time.\nSort by creation time"
-    ID_SORT_FILETIME        "Sorts the search result by file time.\nSort by file time"
-    ID_SORT_TAGS            "Sorts the search result by tags.\nSort by tags"
-    ID_SORT_RATING          "Sorts the search result by rating.\nSort by rating"
-    ID_SORT_LOCATIONNAME    "Sorts the search result by location name.\nSort by location name"
-    ID_SORT_LOCATIONIATA    "Sorts the search result by IATA airport code.\nSort by IATA airport code"
-END
-
-STRINGTABLE 
-BEGIN
-    ID_SORT_LOCATIONGPS     "Sorts the search result by GPS location.\nSort by GPS location"
-    ID_SORT_WIDTH           "Sorts the search result by width.\nSort by width"
-    ID_SORT_HEIGHT          "Sorts the search result by height.\nSort by height"
-    ID_SORT_DIMENSION       "Sorts the search result by dimension.\nSort by dimension"
-    ID_SORT_ASPECTRATIO     "Sorts the search result by aspect ratio.\nSort by aspect ratio"
-    ID_SORT_ROLL            "Sorts the search result by roll name.\nSort by roll"
-    ID_SORT_DURATION        "Sorts the search result by duration.\nSort by duration"
-END
-
-STRINGTABLE 
-BEGIN
-    ID_SORT_ARTIST          "Sorts the search result by artist.\nSort by artist/author"
-    ID_SORT_TITLE           "Sorts the search result by title.\nSort by title"
-    ID_SORT_LANGUAGE        "Sorts the search result by language.\nSort by language"
-    ID_SORT_RECORDINGTIME   "Sorts the search result by recording time.\nSort by recording time"
 END
 
 STRINGTABLE 
