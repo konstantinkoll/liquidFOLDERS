@@ -352,7 +352,7 @@ struct LFAttributeDescriptor
 
 struct LFDomainDescriptor
 {
-	wchar_t DomainName[64];
+	wchar_t Name[64];
 	wchar_t Comment[256];
 	unsigned int IconID;
 	unsigned int CategoryID;

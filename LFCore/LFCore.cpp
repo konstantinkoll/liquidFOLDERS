@@ -462,7 +462,7 @@ LFCore_API LFDomainDescriptor* LFGetDomainInfo(unsigned int ID)
 		*brk = L'\0';
 	}
 
-	wcscpy_s(d->DomainName, 64, tmpStr);
+	wcscpy_s(d->Name, 256, tmpStr);
 
 	*(d->ImportantAttributes) += LFAttrFileName;
 	*(d->ImportantAttributes) += LFAttrDescription;

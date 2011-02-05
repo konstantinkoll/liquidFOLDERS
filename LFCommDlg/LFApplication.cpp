@@ -200,11 +200,15 @@ LFApplication::LFApplication(UINT _HasGUI)
 	}
 
 	// Get attribute information
+	for (UINT a=0; a<LFAttributeCount; a++)
+		m_Attributes[a] = LFGetAttributeInfo(a);
+
 	for (UINT a=0; a<LFAttrCategoryCount; a++)
 		m_AttrCategories[a] = LFGetAttrCategoryName(a);
 
-	for (UINT a=0; a<LFAttributeCount; a++)
-		m_Attributes[a] = LFGetAttributeInfo(a);
+	// Get domain information
+	for (UINT a=0; a<LFDomainCount; a++)
+		m_Domains[a] = LFGetDomainInfo(a);
 
 	// Get context information
 	for (UINT a=0; a<LFContextCount; a++)
@@ -232,6 +236,8 @@ LFApplication::~LFApplication()
 		LFFreeAttributeDescriptor(m_Attributes[a]);
 	for (UINT a=0; a<LFAttrCategoryCount; a++)
 		delete m_AttrCategories[a];
+	for (UINT a=0; a<LFDomainCount; a++)
+		LFFreeDomainDescriptor(m_Domains[a]);
 	for (UINT a=0; a<LFContextCount; a++)
 		LFFreeContextDescriptor(m_Contexts[a]);
 	for (UINT a=0; a<LFItemCategoryCount; a++)

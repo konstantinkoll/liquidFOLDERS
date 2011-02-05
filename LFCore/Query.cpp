@@ -712,9 +712,9 @@ LFSearchResult* QueryDomains(LFFilter* filter)
 					nf->Options = filter->Options;
 					nf->DomainID = a;
 					strcpy_s(nf->StoreID, LFKeySize, filter->StoreID);
-					wcscpy_s(nf->Name, 256, d->DomainName);
+					wcscpy_s(nf->Name, 256, d->Name);
 
-					if (res->AddItemDescriptor(AllocFolderDescriptor(d->DomainName, d->Comment, Hint, filter->StoreID, FileID, &size[a], d->IconID, d->CategoryID, cnt[a], nf)))
+					if (res->AddItemDescriptor(AllocFolderDescriptor(d->Name, d->Comment, Hint, filter->StoreID, FileID, &size[a], d->IconID, d->CategoryID, cnt[a], nf)))
 						if ((a>=LFFirstSoloDomain) && (a!=LFDomainPhotos))
 						{
 							res->m_FileCount += cnt[a];

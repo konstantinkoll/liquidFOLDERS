@@ -228,13 +228,39 @@ CBitmap* CListView::RenderLegend()
 
 CBitmap* CListView::RenderStatistics()
 {
-	if (!theApp.m_ShowStatistics)
+	if (!p_Result || m_Nothing || !theApp.m_ShowStatistics)
 		return NULL;
 
-	CString colBlue;
-	CString colRed;
-	ENSURE(colBlue.LoadString(IDS_LEGEND_BLUE));
-	ENSURE(colRed.LoadString(IDS_LEGEND_RED));
+#define DomainCount 10
+	const UINT Domains[DomainCount] = { LFDomainAudio, LFDomainPictures, LFDomainVideos, LFDomainDocuments,
+		LFDomainMessages, LFDomainPresentations, LFDomainSpreadsheets, 0, LFDomainTrash, LFDomainUnknown };
+	INT64 Counts[DomainCount] = { 0 };
+	INT64 Sizes[DomainCount] = { 0 };
+	COLORREF Colors[DomainCount] = { 0xB03000, 0xFFB000, 0x202020, 0x00C0FF, 0x00FFB0, 0xFF4080, 0xD040FF, 0xD0D0D0, 0x0000FF, 0xD00000 };
+
+	for (UINT a=0; a<p_Result->m_ItemCount; a++)
+	{
+		GridItemData* d = GetItemData(a);
+		if (d->Hdr.Valid)
+		{
+			LFItemDescriptor* i = p_Result->m_Items[a];
+			if ((i->Type & LFTypeMask)==LFTypeVirtual)
+			{
+				UINT DomainID;
+				if (sscanf_s(i->CoreAttributes.FileID, "%d", &DomainID)==1)
+					if (DomainID>=LFFirstSoloDomain)
+					{
+						INT idx = DomainCount-3;
+						for (UINT a=0; a<DomainCount; a++)
+							if (Domains[a]==DomainID)
+								idx = a;
+
+						Counts[idx] += i->AggregateCount;
+						Sizes[idx] += i->CoreAttributes.FileSize;
+					}
+			}
+		}
+	}
 
 	ENSURE(m_FooterCaption.LoadString(IDS_STATISTICS));
 	BOOL Themed = IsCtrlThemed();
@@ -242,17 +268,36 @@ CBitmap* CListView::RenderStatistics()
 	CDC* pDC = GetWindowDC();
 	CDC dcDraw;
 
-	HGDIOBJ oldFont = pDC->SelectStockObject(DEFAULT_GUI_FONT);
-	INT cx = max(pDC->GetTextExtent(colBlue).cx, pDC->GetTextExtent(colRed).cx)+m_FontHeight[2]+2*GraphSpacer-1;
-	INT cy = 2*(m_FontHeight[2]+GraphSpacer)+GraphSpacer;
+	INT cy = 2*(m_FontHeight[0]+m_FontHeight[1]+3*GraphSpacer)+2*GraphSpacer+DomainCount*(m_FontHeight[2]+GraphSpacer);
+	CBitmap* pBmp = CreateFooterBitmap(pDC, 250, cy, dcDraw, Themed);
+	INT cx = m_FooterSize.cx-6;
 
-	CBitmap* pBmp = CreateFooterBitmap(pDC, cx, cy, dcDraw, Themed);
-	CRect rect(0, GraphSpacer, cx, cy);
+	CRect rect(0, 0, cx, cy);
 
-	DrawLegend(dcDraw, rect, 0xFF0000, colBlue, Themed);
-	DrawLegend(dcDraw, rect, 0x0000FF, colRed, Themed);
+	DrawGraphCaption(dcDraw, rect, IDS_STATISTICS_BYCOUNT);
+	DrawBarChart(dcDraw, rect, Counts, Colors, DomainCount, m_FontHeight[1], Themed);
 
-	pDC->SelectObject(oldFont);
+	DrawGraphCaption(dcDraw, rect, IDS_STATISTICS_BYSIZE);
+	DrawBarChart(dcDraw, rect, Sizes, Colors, DomainCount, m_FontHeight[1], Themed);
+
+	rect.top += 2*GraphSpacer;
+
+	for (INT a=0; a<DomainCount; a++)
+		if (Counts[a] || Sizes[a])
+		{
+			CString tmpStr;
+			if (Domains[a])
+			{
+				tmpStr = theApp.m_Domains[Domains[a]]->Name;
+			}
+			else
+			{
+				ENSURE(tmpStr.LoadString(IDS_STATISTICS_OTHER));
+			}
+
+			DrawChartLegend(dcDraw, rect, Counts[a], Sizes[a], Colors[a], tmpStr, Themed);
+		}
+
 	ReleaseDC(pDC);
 
 	return pBmp;

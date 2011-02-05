@@ -766,6 +766,7 @@ BEGIN
     IDS_STATISTICS          "Statistics"
     IDS_STATISTICS_BYCOUNT  "By file count"
     IDS_STATISTICS_BYSIZE   "By file size"
+    IDS_STATISTICS_OTHER    "Other"
 END
 
 STRINGTABLE 

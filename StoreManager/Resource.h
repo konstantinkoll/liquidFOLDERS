@@ -123,6 +123,7 @@
 #define IDS_STATISTICS                  1028
 #define IDS_STATISTICS_BYCOUNT          1029
 #define IDS_STATISTICS_BYSIZE           1030
+#define IDS_STATISTICS_OTHER            1031
 #define IDS_VATTR_FIRST                 1100
 #define IDS_VATTR_DRIVELETTER           1100
 #define IDS_VATTR_MAINTENANCETIME       1101
