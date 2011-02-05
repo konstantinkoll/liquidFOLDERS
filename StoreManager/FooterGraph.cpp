@@ -8,7 +8,21 @@
 
 void Finish(CDC& dc, CRect rect, BOOL Themed)
 {
+	if (Themed)
+	{
+		Graphics g(dc);
+
+		LinearGradientBrush brush1(Point(rect.left, rect.top), Point(rect.left, rect.top+rect.Height()/2+1), Color(0x10, 0xFF, 0xFF, 0xFF), Color(0x40, 0xFF, 0xFF, 0xFF));
+		g.FillRectangle(&brush1, Rect(rect.left, rect.top, rect.Width(), rect.Height()/2+1));
+
+		INT Line = rect.top+rect.Height()*3/4-2;
+
+		LinearGradientBrush brush2(Point(rect.left, Line), Point(rect.left, rect.bottom+1), Color(0x00, 0x00, 0x00, 0x00), Color(0xC0, 0x00, 0x00, 0x00));
+		g.FillRectangle(&brush2, Rect(rect.left, Line, rect.Width(), rect.bottom-Line));
+	}
+
 	dc.Draw3dRect(rect, 0x000000, 0x000000);
+
 	if (Themed)
 	{
 		const COLORREF clrBack = Themed ? 0xFFFFFF : GetSysColor(COLOR_WINDOW);
