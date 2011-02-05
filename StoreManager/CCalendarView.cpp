@@ -124,7 +124,7 @@ CBitmap* CCalendarView::RenderFooter()
 	CDC dcDraw;
 
 	INT cy = 2*(m_FontHeight[0]+m_FontHeight[1]+3*GraphSpacer)+2*GraphSpacer+5*(m_FontHeight[2]+GraphSpacer);
-	CBitmap* pBmp = CreateFooterBitmap(pDC, 250, cy, dcDraw, Themed);
+	CBitmap* pBmp = CreateFooterBitmap(pDC, 400, cy, dcDraw, Themed);
 	INT cx = m_FooterSize.cx-6;
 
 	CRect rect(0, 0, cx, cy);
