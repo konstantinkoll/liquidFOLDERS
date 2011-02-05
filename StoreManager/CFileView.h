@@ -7,7 +7,7 @@
 #include "LFCommDlg.h"
 
 
-#define CategoryPadding      2
+#define CategoryPadding                 2
 
 
 // View IDs

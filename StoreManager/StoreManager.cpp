@@ -70,8 +70,9 @@ BOOL CStoreManagerApp::InitInstance()
 	m_ShowEmptyDrives = GetInt(_T("ShowEmptyDrives"), TRUE);
 	m_ShowEmptyDomains = GetInt(_T("ShowEmptyDomains"), TRUE);
 	m_ShowStatistics = GetInt(_T("ShowStatistics"), TRUE);
-	m_ShowCaptions = GetInt(_T("ShowCaptions"), TRUE);
-	m_ShowEmptyDays = GetInt(_T("ShowEmptyDays"), TRUE);
+	m_CalendarShowStatistics = GetInt(_T("CalendarShowStatistics"), TRUE);
+	m_CalendarShowCaptions = GetInt(_T("CalendarShowCaptions"), TRUE);
+	m_CalendarShowEmptyDays = GetInt(_T("CalendarShowEmptyDays"), TRUE);
 	m_GlobeHQModel = GetInt(_T("GlobeHQModel"), TRUE);
 	m_GlobeLighting = GetInt(_T("GlobeLighting"), TRUE);
 	m_GlobeAtmosphere = GetInt(_T("GlobeAtmosphere"), TRUE);
@@ -126,8 +127,9 @@ INT CStoreManagerApp::ExitInstance()
 	WriteInt(_T("ShowEmptyDrives"), m_ShowEmptyDrives);
 	WriteInt(_T("ShowEmptyDomains"), m_ShowEmptyDomains);
 	WriteInt(_T("ShowStatistics"), m_ShowStatistics);
-	WriteInt(_T("ShowCaptions"), m_ShowCaptions);
-	WriteInt(_T("ShowEmptyDays"), m_ShowEmptyDays);
+	WriteInt(_T("CalendarShowStatistics"), m_CalendarShowStatistics);
+	WriteInt(_T("CalendarShowCaptions"), m_CalendarShowCaptions);
+	WriteInt(_T("CalendarShowEmptyDays"), m_CalendarShowEmptyDays);
 	WriteInt(_T("GlobeHQModel"), m_GlobeHQModel);
 	WriteInt(_T("GlobeLighting"), m_GlobeLighting);
 	WriteInt(_T("GlobeAtmosphere"), m_GlobeAtmosphere);

@@ -4,21 +4,28 @@
 
 #include "stdafx.h"
 #include "FooterGraph.h"
+#include "StoreManager.h"
 
 
-void Finish(CDC& dc, CRect rect, BOOL Themed)
+void FinishGraph(CDC& dc, CRect rect, BOOL Themed)
 {
 	if (Themed)
 	{
 		Graphics g(dc);
 
-		LinearGradientBrush brush1(Point(rect.left, rect.top), Point(rect.left, rect.top+rect.Height()/2+1), Color(0x10, 0xFF, 0xFF, 0xFF), Color(0x40, 0xFF, 0xFF, 0xFF));
-		g.FillRectangle(&brush1, Rect(rect.left, rect.top, rect.Width(), rect.Height()/2+1));
+		LinearGradientBrush brush1(Point(rect.left, rect.top), Point(rect.left, rect.top+rect.Height()/4+1), Color(0xA0, 0xFF, 0xFF, 0xFF), Color(0x00, 0xFF, 0xFF, 0xFF));
+		g.FillRectangle(&brush1, Rect(rect.left, rect.top, rect.Width(), rect.Height()/4));
 
-		INT Line = rect.top+rect.Height()*3/4-2;
+		LinearGradientBrush brush2(Point(rect.left, rect.top), Point(rect.left, rect.top+rect.Height()/2+1), Color(0x40, 0xFF, 0xFF, 0xFF), Color(0x50, 0xFF, 0xFF, 0xFF));
+		g.FillRectangle(&brush2, Rect(rect.left, rect.top, rect.Width(), rect.Height()/2));
 
-		LinearGradientBrush brush2(Point(rect.left, Line), Point(rect.left, rect.bottom+1), Color(0x00, 0x00, 0x00, 0x00), Color(0xC0, 0x00, 0x00, 0x00));
-		g.FillRectangle(&brush2, Rect(rect.left, Line, rect.Width(), rect.bottom-Line));
+		INT Line = rect.top+rect.Height()/2;
+		LinearGradientBrush brush3(Point(rect.left, Line-1), Point(rect.left, rect.bottom+1), Color(0x40, 0xFF, 0xFF, 0xFF), Color(0x00, 0xFF, 0xFF, 0xFF));
+		g.FillRectangle(&brush3, Rect(rect.left, Line, rect.Width(), rect.bottom-Line));
+
+		Line = rect.top+rect.Height()*3/4-2;
+		LinearGradientBrush brush4(Point(rect.left, Line-1), Point(rect.left, rect.bottom+1), Color(0x00, 0x00, 0x00, 0x00), Color(0xC0, 0x00, 0x00, 0x00));
+		g.FillRectangle(&brush4, Rect(rect.left, Line, rect.Width(), rect.bottom-Line));
 	}
 
 	dc.Draw3dRect(rect, 0x000000, 0x000000);
@@ -62,7 +69,7 @@ void Finish(CDC& dc, CRect rect, BOOL Themed)
 void DrawSolidColor(CDC& dc, CRect rect, COLORREF clr, BOOL Themed)
 {
 	dc.FillSolidRect(rect, clr);
-	Finish(dc, rect, Themed);
+	FinishGraph(dc, rect, Themed);
 }
 
 void DrawLegend(CDC& dc, CRect& rect, COLORREF clr, CString Text, BOOL Themed)
@@ -80,4 +87,68 @@ void DrawLegend(CDC& dc, CRect& rect, COLORREF clr, CString Text, BOOL Themed)
 	dc.DrawText(Text, rectText, DT_LEFT | DT_END_ELLIPSIS | DT_TOP);
 
 	rect.top += Height+GraphSpacer;
+}
+
+void DrawGraphCaption(CDC& dc, CRect& rect, UINT nID)
+{
+	CFont* pOldFont = dc.SelectObject(&theApp.m_DefaultFont);
+
+	INT Height = dc.GetTextExtent(_T("Wy"), 2).cy;
+
+	CString tmpStr;
+	ENSURE(tmpStr.LoadString(nID));
+
+	dc.DrawText(tmpStr+_T(":"), rect, DT_LEFT | DT_END_ELLIPSIS | DT_TOP);
+	dc.SelectObject(pOldFont);
+
+	rect.top += Height+GraphSpacer;
+}
+
+void DrawBarChart(CDC& dc, CRect& rect, INT64* Values, COLORREF* Colors, UINT Count, UINT Height, BOOL Themed)
+{
+	ASSERT(Count>0);
+
+	INT64 Sum = 0;
+	for (UINT a=0; a<Count; a++)
+	{
+		ASSERT(Values[a]>=0);
+		Sum += Values[a];
+	}
+
+	Graphics g(dc);
+	g.SetSmoothingMode(SmoothingModeAntiAlias);
+
+#define Scale(x) (REAL)(x*((INT64)rect.Width()-1)/((REAL)Sum)-0.5)
+
+	INT64 Left = 0;
+	for (UINT a=0; a<Count; a++)
+	{
+		SolidBrush brush(Color(Colors[a] & 0xFF, (Colors[a]>>8) & 0xFF, (Colors[a]>>16) & 0xFF));
+		g.FillRectangle(&brush, RectF(Scale(Left), (REAL)rect.top, Scale(Values[a])+(REAL)1.0, (REAL)Height-1));
+
+		Left += Values[a];
+	}
+
+	FinishGraph(dc, CRect(rect.left, rect.top, rect.right, rect.top+Height), Themed);
+
+	rect.top += Height+2*GraphSpacer;
+}
+
+void DrawChartLegend(CDC& dc, CRect& rect, INT64 Count, INT64 Size, COLORREF clr, CString Legend, BOOL Themed)
+{
+	CString Hint;
+	CString Mask;
+	WCHAR tmpBuf[256];
+
+	ENSURE(Mask.LoadString(Count==1 ? IDS_FILES_SINGULAR : IDS_FILES_PLURAL));
+	LFINT64ToString(Size, tmpBuf, 256);
+	Hint.Format(Mask, Count);
+	Hint.Append(_T(" ("));
+	Hint.Append(tmpBuf);
+	Hint.Append(_T(")"));
+
+	Hint.Insert(0, (GetThreadLocale() & 0x1FF)==LANG_ENGLISH ? _T("—") : _T(" – "));
+	Hint.Insert(0, Legend);
+
+	DrawLegend(dc, rect, clr, Hint, Themed);
 }

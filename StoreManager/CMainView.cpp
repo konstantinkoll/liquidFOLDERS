@@ -103,16 +103,18 @@ BOOL CMainView::CreateFileView(UINT ViewID, FVPersistentData* Data)
 	// Exchange view
 	if (pNewView)
 	{
-		if (p_wndFileView)
-		{
-			p_wndFileView->DestroyWindow();
-			delete p_wndFileView;
-		}
+		CFileView* pVictim = p_wndFileView;
 
 		p_wndFileView = pNewView;
 		p_wndFileView->SetOwner(GetOwner());
 		p_wndFileView->SetFocus();
 		AdjustLayout();
+
+		if (pVictim)
+		{
+			pVictim->DestroyWindow();
+			delete pVictim;
+		}
 	}
 
 	return (pNewView!=NULL);
@@ -155,7 +157,7 @@ void CMainView::SetHeader()
 
 				if (s.Comment[0]!=L'\0')
 				{
-					Hint.Insert(0, _T(" – "));
+					Hint.Insert(0, (GetThreadLocale() & 0x1FF)==LANG_ENGLISH ? _T("—") : _T(" – "));
 					Hint.Insert(0, s.Comment);
 				}
 			}

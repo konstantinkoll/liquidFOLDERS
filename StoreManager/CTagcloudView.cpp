@@ -150,7 +150,7 @@ CBitmap* CTagcloudView::RenderFooter()
 	g.FillRectangle(&brush3, Rect(cx/2, GraphSpacer, cx/2, m_FontHeight[1]));
 
 	CRect rect(0, GraphSpacer, cx, GraphSpacer+m_FontHeight[1]);
-	Finish(dcDraw, rect, Themed);
+	FinishGraph(dcDraw, rect, Themed);
 
 	rect.top = rect.bottom+GraphSpacer;
 	rect.bottom = rect.top+m_FontHeight[2];

@@ -23,9 +23,7 @@ bool UseGermanDB = false;
 
 void InitAirportDatabase()
 {
-	LCID id = GetThreadLocale();
-	DWORD lang = id & 0x1FF;
-	UseGermanDB = (lang==LANG_GERMAN);
+	UseGermanDB = (GetThreadLocale() & 0x1FF)==LANG_GERMAN;
 }
 
 LFCore_API unsigned int LFIATAGetCountryCount()

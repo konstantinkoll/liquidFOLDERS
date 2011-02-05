@@ -43,6 +43,7 @@ protected:
 
 	virtual void SetViewOptions(BOOL Force);
 	virtual void SetSearchResult(LFSearchResult* Result, FVPersistentData* Data);
+	virtual CBitmap* RenderFooter();
 	virtual void AdjustLayout();
 
 	void SetYear(UINT Year);
@@ -55,6 +56,7 @@ protected:
 	afx_msg void OnPaint();
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 
+	afx_msg void OnShowStatistics();
 	afx_msg void OnShowEmptyDays();
 	afx_msg void OnShowCaptions();
 	afx_msg void OnPrevYear();

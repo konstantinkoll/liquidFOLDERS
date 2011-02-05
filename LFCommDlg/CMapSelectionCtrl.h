@@ -43,8 +43,8 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
-	BOOL blink;
-	UINT remainVisible;
+	BOOL m_Blink;
+	UINT m_RemainVisible;
 
 	void SendUpdateMsg();
 };

@@ -235,6 +235,7 @@ IDM_CALENDAR MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
+        MENUITEM "&Statistiken anzeigen",       IDM_CALENDAR_SHOWSTATISTICS
         MENUITEM "Ü&berschriften anzeigen",     IDM_CALENDAR_SHOWCAPTIONS
         MENUITEM "Leere &Tage anzeigen",        IDM_CALENDAR_SHOWEMPTYDAYS
         MENUITEM SEPARATOR
@@ -514,6 +515,7 @@ IDM_CALENDAR MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
+        MENUITEM "Show &statistics",            IDM_CALENDAR_SHOWSTATISTICS
         MENUITEM "Show &captions",              IDM_CALENDAR_SHOWCAPTIONS
         MENUITEM "Show empty &days",            IDM_CALENDAR_SHOWEMPTYDAYS
         MENUITEM SEPARATOR
@@ -762,8 +764,8 @@ BEGIN
     IDS_LEGEND_OLDER        "Older"
     IDS_LEGEND_NEWER        "Newer"
     IDS_STATISTICS          "Statistics"
-    IDS_STATISTICS_BYCOUNT  "By file count:"
-    IDS_STATISTICS_BYSIZE   "By file size:"
+    IDS_STATISTICS_BYCOUNT  "By file count"
+    IDS_STATISTICS_BYSIZE   "By file size"
 END
 
 STRINGTABLE 
@@ -1013,6 +1015,7 @@ IDM_CALENDAR MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
+        MENUITEM "Mostrar &estadísticas",       IDM_CALENDAR_SHOWSTATISTICS
         MENUITEM "Mostrar &títulos",            IDM_CALENDAR_SHOWCAPTIONS
         MENUITEM "Mostrar días &libres",        IDM_CALENDAR_SHOWEMPTYDAYS
         MENUITEM SEPARATOR
@@ -1269,6 +1272,7 @@ IDM_CALENDAR MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
+        MENUITEM "Indiquer la &statistique",    IDM_CALENDAR_SHOWSTATISTICS
         MENUITEM "Indiquer des &titres",        IDM_CALENDAR_SHOWCAPTIONS
         MENUITEM "Indiquer les &jours vides",   IDM_CALENDAR_SHOWEMPTYDAYS
         MENUITEM SEPARATOR

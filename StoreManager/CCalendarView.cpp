@@ -5,6 +5,7 @@
 #include "stdafx.h"
 #include "CCalendarView.h"
 #include "StoreManager.h"
+#include "FooterGraph.h"
 #include "GoToYearDlg.h"
 
 
@@ -40,15 +41,15 @@ void CCalendarView::SetViewOptions(BOOL Force)
 		m_Year = st.wYear;
 	}
 
-	if (Force || (m_ShowEmptyDays!=theApp.m_ShowEmptyDays))
+	if (Force || (m_ShowEmptyDays!=theApp.m_CalendarShowEmptyDays))
 	{
-		m_ShowEmptyDays = theApp.m_ShowEmptyDays;
+		m_ShowEmptyDays = theApp.m_CalendarShowEmptyDays;
 		Invalidate();
 	}
 
-	if (Force || (m_ShowCaptions!=theApp.m_ShowCaptions))
+	if (Force || (m_ShowCaptions!=theApp.m_CalendarShowCaptions))
 	{
-		m_ShowCaptions = theApp.m_ShowCaptions;
+		m_ShowCaptions = theApp.m_CalendarShowCaptions;
 		AdjustLayout();
 	}
 }
@@ -90,7 +91,81 @@ void CCalendarView::SetYear(UINT Year)
 				break;
 			}
 
-	AdjustLayout();
+	UpdateFooter();
+}
+
+
+CBitmap* CCalendarView::RenderFooter()
+{
+	if (!p_Result || m_Nothing || !theApp.m_CalendarShowStatistics)
+		return NULL;
+
+	INT64 Counts[5] = { 0, 0, 0, 0, 0 };
+	INT64 Sizes[5] = { 0, 0, 0, 0, 0 };
+	COLORREF Colors[5] = { 0xD0D0D0, 0xF08080, 0xD00000, 0xF08080, 0xD0D0D0 };
+
+	for (UINT a=0; a<p_Result->m_ItemCount; a++)
+	{
+		CalendarItemData* d = GetItemData(a);
+		if (d->Hdr.Valid)
+		{
+			LFItemDescriptor* i = p_Result->m_Items[a];
+
+			const UINT Category = (d->Time.wYear<m_Year-1) ? 0 : (d->Time.wYear==m_Year-1) ? 1 : (d->Time.wYear==m_Year) ? 2 : (d->Time.wYear==m_Year+1) ? 3 : 4;
+			Counts[Category] += (i->AggregateCount) ? i->AggregateCount : 1;
+			Sizes[Category] += i->CoreAttributes.FileSize;
+		}
+	}
+
+	ENSURE(m_FooterCaption.LoadString(IDS_STATISTICS));
+	BOOL Themed = IsCtrlThemed();
+
+	CDC* pDC = GetWindowDC();
+	CDC dcDraw;
+
+	INT cy = 2*(m_FontHeight[0]+m_FontHeight[1]+3*GraphSpacer)+2*GraphSpacer+5*(m_FontHeight[2]+GraphSpacer);
+	CBitmap* pBmp = CreateFooterBitmap(pDC, 250, cy, dcDraw, Themed);
+	INT cx = m_FooterSize.cx-6;
+
+	CRect rect(0, 0, cx, cy);
+
+	DrawGraphCaption(dcDraw, rect, IDS_STATISTICS_BYCOUNT);
+	DrawBarChart(dcDraw, rect, Counts, Colors, 5, m_FontHeight[1], Themed);
+
+	DrawGraphCaption(dcDraw, rect, IDS_STATISTICS_BYSIZE);
+	DrawBarChart(dcDraw, rect, Sizes, Colors, 5, m_FontHeight[1], Themed);
+
+	rect.top += 2*GraphSpacer;
+
+	for (INT a=4; a>=0; a--)
+		if (Counts[a] || Sizes[a])
+		{
+			CString tmpStr;
+			switch (a)
+			{
+			case 0:
+				ENSURE(tmpStr.LoadString(IDS_LEGEND_OLDER));
+				break;
+			case 1:
+				tmpStr.Format(_T("%d"), m_Year-1);
+				break;
+			case 2:
+				tmpStr.Format(_T("%d"), m_Year);
+				break;
+			case 3:
+				tmpStr.Format(_T("%d"), m_Year+1);
+				break;
+			case 4:
+				ENSURE(tmpStr.LoadString(IDS_LEGEND_NEWER));
+				break;
+			}
+	
+			DrawChartLegend(dcDraw, rect, Counts[a], Sizes[a], Colors[a], tmpStr, Themed);
+		}
+
+	ReleaseDC(pDC);
+
+	return pBmp;
 }
 
 void CCalendarView::AdjustLayout()
@@ -317,12 +392,13 @@ BEGIN_MESSAGE_MAP(CCalendarView, CFileView)
 	ON_WM_PAINT()
 	ON_WM_KEYDOWN()
 
+	ON_COMMAND(IDM_CALENDAR_SHOWSTATISTICS, OnShowStatistics)
 	ON_COMMAND(IDM_CALENDAR_SHOWCAPTIONS, OnShowCaptions)
 	ON_COMMAND(IDM_CALENDAR_SHOWEMPTYDAYS, OnShowEmptyDays)
 	ON_COMMAND(IDM_CALENDAR_PREVYEAR, OnPrevYear)
 	ON_COMMAND(IDM_CALENDAR_NEXTYEAR, OnNextYear)
 	ON_COMMAND(IDM_CALENDAR_GOTOYEAR, OnGoToYear)
-	ON_UPDATE_COMMAND_UI_RANGE(IDM_CALENDAR_SHOWCAPTIONS, IDM_CALENDAR_GOTOYEAR, OnUpdateCommands)
+	ON_UPDATE_COMMAND_UI_RANGE(IDM_CALENDAR_SHOWSTATISTICS, IDM_CALENDAR_GOTOYEAR, OnUpdateCommands)
 END_MESSAGE_MAP()
 
 INT CCalendarView::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -387,6 +463,8 @@ void CCalendarView::OnPaint()
 			DrawMonth(dc, rect, a, Themed);
 	}
 
+	DrawFooter(dc, Themed);
+
 	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);
 	dc.SelectObject(pOldFont);
 	dc.SelectObject(pOldBitmap);
@@ -406,15 +484,21 @@ void CCalendarView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 }
 
 
+void CCalendarView::OnShowStatistics()
+{
+	theApp.m_CalendarShowStatistics = !theApp.m_CalendarShowStatistics;
+	theApp.UpdateFooter();
+}
+
 void CCalendarView::OnShowCaptions()
 {
-	theApp.m_ShowCaptions = !theApp.m_ShowCaptions;
+	theApp.m_CalendarShowCaptions = !theApp.m_CalendarShowCaptions;
 	theApp.UpdateViewOptions();
 }
 
 void CCalendarView::OnShowEmptyDays()
 {
-	theApp.m_ShowEmptyDays = !theApp.m_ShowEmptyDays;
+	theApp.m_CalendarShowEmptyDays = !theApp.m_CalendarShowEmptyDays;
 	theApp.UpdateViewOptions();
 }
 
@@ -440,11 +524,14 @@ void CCalendarView::OnUpdateCommands(CCmdUI* pCmdUI)
 	BOOL b = TRUE;
 	switch (pCmdUI->m_nID)
 	{
+	case IDM_CALENDAR_SHOWSTATISTICS:
+		pCmdUI->SetCheck(theApp.m_CalendarShowStatistics);
+		break;
 	case IDM_CALENDAR_SHOWCAPTIONS:
-		pCmdUI->SetCheck(theApp.m_ShowCaptions);
+		pCmdUI->SetCheck(theApp.m_CalendarShowCaptions);
 		break;
 	case IDM_CALENDAR_SHOWEMPTYDAYS:
-		pCmdUI->SetCheck(theApp.m_ShowEmptyDays);
+		pCmdUI->SetCheck(theApp.m_CalendarShowEmptyDays);
 		break;
 	case IDM_CALENDAR_PREVYEAR:
 		b = (m_Year>MINYEAR);

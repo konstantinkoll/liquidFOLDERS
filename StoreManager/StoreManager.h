@@ -32,8 +32,9 @@ public:
 	BOOL m_ShowEmptyDrives;
 	BOOL m_ShowEmptyDomains;
 	BOOL m_ShowStatistics;
-	BOOL m_ShowCaptions;
-	BOOL m_ShowEmptyDays;
+	BOOL m_CalendarShowStatistics;
+	BOOL m_CalendarShowCaptions;
+	BOOL m_CalendarShowEmptyDays;
 	BOOL m_GlobeHQModel;
 	BOOL m_GlobeLighting;
 	BOOL m_GlobeAtmosphere;

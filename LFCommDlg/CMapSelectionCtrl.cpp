@@ -45,8 +45,8 @@ CMapSelectionCtrl::CMapSelectionCtrl()
 	m_Coord.Latitude = 0;
 	m_Coord.Longitude = 0;
 
-	blink = TRUE;
-	remainVisible = 0;
+	m_Blink = TRUE;
+	m_RemainVisible = 0;
 }
 
 CMapSelectionCtrl::~CMapSelectionCtrl()
@@ -57,13 +57,13 @@ CMapSelectionCtrl::~CMapSelectionCtrl()
 
 void CMapSelectionCtrl::OnBlink()
 {
-	if (remainVisible)
+	if (m_RemainVisible)
 	{
-		remainVisible--;
+		m_RemainVisible--;
 	}
 	else
 	{
-		blink = !blink;
+		m_Blink = !m_Blink;
 		Invalidate();
 	}
 }
@@ -97,8 +97,8 @@ void CMapSelectionCtrl::UpdateLocation(CPoint point)
 
 void CMapSelectionCtrl::SendUpdateMsg()
 {
-	blink = TRUE;
-	remainVisible = 1;
+	m_Blink = TRUE;
+	m_RemainVisible = 1;
 	Invalidate();
 
 	tagGPSDATA tag;
@@ -148,7 +148,7 @@ void CMapSelectionCtrl::OnPaint()
 	g.SetCompositingMode(CompositingModeSourceOver);
 	g.DrawImage(Map1->m_pBitmap, 0, 0, rect.Width(), rect.Height());
 
-	if (blink)
+	if (m_Blink)
 	{
 		INT cx = (INT)((m_Coord.Longitude+180)*rect.Width()/360)+1;
 		INT cy = (INT)((m_Coord.Latitude+90)*rect.Height()/180)+1;
