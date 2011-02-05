@@ -835,7 +835,7 @@ void CGlobeView::DrawScene(BOOL InternalCall)
 	glBegin(GL_QUADS);
 
 	// Koordinaten bestimmen und Spots zeichnen
-	if (p_Result)
+	if (p_Result && !m_Nothing)
 		if (p_Result->m_ItemCount)
 			CalcAndDrawSpots(ModelView, Projection);
 
@@ -848,7 +848,7 @@ void CGlobeView::DrawScene(BOOL InternalCall)
 	glDisable(GL_TEXTURE_2D);
 
 	// Label zeichnen
-	if (p_Result)
+	if (p_Result && !m_Nothing)
 		if (p_Result->m_ItemCount)
 			CalcAndDrawLabel();
 
