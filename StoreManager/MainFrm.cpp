@@ -320,7 +320,7 @@ void CMainFrame::OnSort(UINT nID)
 	if (ActiveViewParameters->SortBy!=nID)
 	{
 		ActiveViewParameters->SortBy = nID;
-		ActiveViewParameters->Descending = (theApp.m_Attributes[nID]->Type==LFTypeRating) || (theApp.m_Attributes[nID]->Type==LFTypeTime);
+		ActiveViewParameters->Descending = theApp.m_Attributes[nID]->PreferDescendingSort;
 
 		theApp.UpdateSortOptions(ActiveContextID);
 	}

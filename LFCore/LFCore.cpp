@@ -257,8 +257,9 @@ LFCore_API LFAttributeDescriptor* LFGetAttributeInfo(unsigned int ID)
 		SetRange(a->Category, ID, LFAttrPriority, LFAttrPriority, LFAttrCategoryWorkflow);
 	}
 
-	// Sortable
+	// Sorting
 	a->Sortable = (a->Type!=LFTypeFlags);
+	a->PreferDescendingSort = (a->Type==LFTypeRating) || (a->Type==LFTypeTime) || (a->Type==LFTypeMegapixel);
 
 	// ReadOnly
 	switch (ID)

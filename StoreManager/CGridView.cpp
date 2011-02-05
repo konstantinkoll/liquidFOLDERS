@@ -18,7 +18,7 @@ CGridView::CGridView(UINT DataSize, BOOL EnableLabelEdit)
 	for (UINT a=0; a<LFItemCategoryCount; a++)
 		AddItemCategory(theApp.m_ItemCategories[a]->Caption, theApp.m_ItemCategories[a]->Hint);
 
-	m_HasCategories = m_ForceNothing = FALSE;
+	m_HasCategories = FALSE;
 	m_GridArrange = GRIDARRANGE_CUSTOM;
 }
 
@@ -614,42 +614,7 @@ void CGridView::OnPaint()
 
 	CFont* pOldFont = dc.SelectObject(&theApp.m_DefaultFont);
 
-	BOOL Nothing = TRUE;
-
-	if (p_Result)
-		if (p_Result->m_ItemCount)
-		{
-			Nothing = FALSE;
-			RECT rectIntersect;
-
-			for (UINT a=0; a<p_Result->m_ItemCount; a++)
-			{
-				GridItemData* d = GetItemData(a);
-				if (d->Hdr.Valid)
-				{
-					CRect rect(d->Hdr.Rect);
-					rect.OffsetRect(-m_HScrollPos, -m_VScrollPos+(INT)m_HeaderHeight);
-					if (IntersectRect(&rectIntersect, rect, rectUpdate))
-					{
-						DrawItemBackground(dc, rect, a, Themed);
-						DrawItem(dc, rect, a, Themed);
-					}
-				}
-			}
-
-			if (m_HasCategories)
-				for (UINT a=0; a<m_Categories.m_ItemCount; a++)
-				{
-					CRect rect(m_Categories.m_Items[a].Rect);
-					rect.OffsetRect(-m_HScrollPos, -m_VScrollPos+(INT)m_HeaderHeight);
-					if (IntersectRect(&rectIntersect, rect, rectUpdate))
-						DrawCategory(dc, rect, &m_Categories.m_Items[a], Themed);
-				}
-
-			DrawFooter(dc, Themed);
-		}
-
-	if (Nothing || m_ForceNothing)
+	if (m_Nothing)
 	{
 		CRect rectText(rect);
 		rectText.top += m_HeaderHeight+6;
@@ -660,6 +625,38 @@ void CGridView::OnPaint()
 		dc.SetTextColor(Themed ? 0x6D6D6D : GetSysColor(COLOR_3DFACE));
 		dc.DrawText(tmpStr, rectText, DT_CENTER | DT_SINGLELINE | DT_END_ELLIPSIS);
 	}
+	else
+		if (p_Result)
+			if (p_Result->m_ItemCount)
+			{
+				RECT rectIntersect;
+
+				for (UINT a=0; a<p_Result->m_ItemCount; a++)
+				{
+					GridItemData* d = GetItemData(a);
+					if (d->Hdr.Valid)
+					{
+						CRect rect(d->Hdr.Rect);
+						rect.OffsetRect(-m_HScrollPos, -m_VScrollPos+(INT)m_HeaderHeight);
+						if (IntersectRect(&rectIntersect, rect, rectUpdate))
+						{
+							DrawItemBackground(dc, rect, a, Themed);
+							DrawItem(dc, rect, a, Themed);
+						}
+					}
+				}
+
+				if (m_HasCategories)
+					for (UINT a=0; a<m_Categories.m_ItemCount; a++)
+					{
+						CRect rect(m_Categories.m_Items[a].Rect);
+						rect.OffsetRect(-m_HScrollPos, -m_VScrollPos+(INT)m_HeaderHeight);
+						if (IntersectRect(&rectIntersect, rect, rectUpdate))
+							DrawCategory(dc, rect, &m_Categories.m_Items[a], Themed);
+					}
+
+				DrawFooter(dc, Themed);
+			}
 
 	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);
 	dc.SelectObject(pOldFont);

@@ -306,6 +306,7 @@ struct LFAttributeDescriptor
 	wchar_t Name[64];
 	bool AlwaysVisible;
 	bool Sortable;
+	bool PreferDescendingSort;
 	bool ReadOnly;
 	bool FormatRight;
 	unsigned char Type;

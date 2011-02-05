@@ -48,6 +48,8 @@ private:
 	INT m_HeaderItemSort;
 	BOOL m_IgnoreHeaderItemChange;
 
+	CBitmap* RenderLegend();
+	CBitmap* RenderStatistics();
 	void AdjustHeader(BOOL bShow);
 	void DrawIcon(CDC& dc, CRect& rect, LFItemDescriptor* i);
 	void AttributeToString(LFItemDescriptor* i, UINT Attr, WCHAR* tmpStr, size_t cCount);

@@ -54,11 +54,10 @@ void CTagcloudView::SetViewOptions(BOOL Force)
 
 void CTagcloudView::SetSearchResult(LFSearchResult* Result, FVPersistentData* /*Data*/)
 {
-	m_ForceNothing = FALSE;
-
 	if (Result)
 	{
-		LFSortSearchResult(Result, m_ViewParameters.TagcloudCanonical ? m_ViewParameters.SortBy : LFAttrFileCount, m_ViewParameters.TagcloudCanonical==FALSE);
+		LFSortSearchResult(Result, m_ViewParameters.TagcloudCanonical ? m_ViewParameters.SortBy : LFAttrFileCount,
+			(m_ViewParameters.TagcloudCanonical==FALSE) || (theApp.m_Attributes[m_ViewParameters.SortBy]->PreferDescendingSort));
 
 		INT Minimum = -1;
 		INT Maximum = -1;
@@ -79,8 +78,6 @@ void CTagcloudView::SetSearchResult(LFSearchResult* Result, FVPersistentData* /*
 				Maximum = (Maximum==-1) ? d->Cnt : max(Maximum, d->Cnt);
 			}
 		}
-
-		m_ForceNothing = (Minimum==-1);
 
 		// Calculate display properties
 		INT Delta = Maximum-Minimum+1;
@@ -378,12 +375,12 @@ void CTagcloudView::OnUpdateCommands(CCmdUI* pCmdUI)
 	case IDM_TAGCLOUD_SORTVALUE:
 		pCmdUI->SetRadio(m_ViewParameters.TagcloudCanonical);
 		if (!pCmdUI->m_pMenu)
-			b = !m_ViewParameters.TagcloudCanonical;
+			b = !m_ViewParameters.TagcloudCanonical && !m_Nothing;
 		break;
 	case IDM_TAGCLOUD_SORTCOUNT:
 		pCmdUI->SetRadio(!m_ViewParameters.TagcloudCanonical);
 		if (!pCmdUI->m_pMenu)
-			b = m_ViewParameters.TagcloudCanonical;
+			b = m_ViewParameters.TagcloudCanonical && !m_Nothing;
 		break;
 	case IDM_TAGCLOUD_SHOWRARE:
 		pCmdUI->SetCheck(m_ViewParameters.TagcloudShowRare);

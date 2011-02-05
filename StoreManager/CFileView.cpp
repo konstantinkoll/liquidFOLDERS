@@ -47,6 +47,7 @@ CFileView::CFileView(UINT DataSize, BOOL EnableScrolling, BOOL EnableHover, BOOL
 	p_FooterBitmap = NULL;
 	m_FooterPos.x = m_FooterPos.y = m_FooterSize.cx = m_FooterSize.cy = 0;
 	m_DataSize = DataSize;
+	m_Nothing = TRUE;
 	m_Hover = m_ShowFocusRect = FALSE;
 	hThemeList = NULL;
 
@@ -156,6 +157,8 @@ void CFileView::UpdateSearchResult(LFSearchResult* Result, FVPersistentData* Dat
 	void* Victim = m_ItemData;
 	UINT VictimAllocated = m_ItemDataAllocated;
 
+	m_Nothing = TRUE;
+
 	if (Result)
 	{
 		size_t sz = Result->m_ItemCount*m_DataSize;
@@ -204,8 +207,6 @@ void CFileView::UpdateSearchResult(LFSearchResult* Result, FVPersistentData* Dat
 	p_Result = Result;
 	free(Victim);
 
-	SetFooter();
-
 	if (p_Result)
 	{
 		BOOL NeedNewFocusItem = !GetItemData(m_FocusItem)->Valid;
@@ -214,6 +215,7 @@ void CFileView::UpdateSearchResult(LFSearchResult* Result, FVPersistentData* Dat
 		{
 			FVItemData* d = GetItemData(a);
 			d->Selected &= d->Valid;
+			m_Nothing &= !d->Valid;
 
 			if (NeedNewFocusItem && d->Valid)
 			{
@@ -222,11 +224,12 @@ void CFileView::UpdateSearchResult(LFSearchResult* Result, FVPersistentData* Dat
 			}
 		}
 
-		AdjustLayout();
+		UpdateFooter();
 		EnsureVisible(m_FocusItem);
 	}
 	else
 	{
+		SetFooter();
 		Invalidate();
 	}
 
@@ -255,7 +258,7 @@ void CFileView::SetFooter()
 		p_FooterBitmap = NULL;
 	}
 
-	if (p_Result)
+	if (p_Result && !m_Nothing)
 		p_FooterBitmap = RenderFooter();
 
 	if (!p_FooterBitmap)

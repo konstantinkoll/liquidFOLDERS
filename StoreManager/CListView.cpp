@@ -192,14 +192,12 @@ void CListView::AdjustHeader(BOOL bShow)
 	}
 }
 
-CBitmap* CListView::RenderFooter()
+CBitmap* CListView::RenderLegend()
 {
 #ifndef DEBUG
 	if (!m_ShowLegend)
 		return NULL;
 #endif
-//	if (!theApp.m_ShowStatistics)
-//		return NULL;
 
 	CString colBlue;
 	CString colRed;
@@ -226,6 +224,43 @@ CBitmap* CListView::RenderFooter()
 	ReleaseDC(pDC);
 
 	return pBmp;
+}
+
+CBitmap* CListView::RenderStatistics()
+{
+	if (!theApp.m_ShowStatistics)
+		return NULL;
+
+	CString colBlue;
+	CString colRed;
+	ENSURE(colBlue.LoadString(IDS_LEGEND_BLUE));
+	ENSURE(colRed.LoadString(IDS_LEGEND_RED));
+
+	ENSURE(m_FooterCaption.LoadString(IDS_STATISTICS));
+	BOOL Themed = IsCtrlThemed();
+
+	CDC* pDC = GetWindowDC();
+	CDC dcDraw;
+
+	HGDIOBJ oldFont = pDC->SelectStockObject(DEFAULT_GUI_FONT);
+	INT cx = max(pDC->GetTextExtent(colBlue).cx, pDC->GetTextExtent(colRed).cx)+m_FontHeight[2]+2*GraphSpacer-1;
+	INT cy = 2*(m_FontHeight[2]+GraphSpacer)+GraphSpacer;
+
+	CBitmap* pBmp = CreateFooterBitmap(pDC, cx, cy, dcDraw, Themed);
+	CRect rect(0, GraphSpacer, cx, cy);
+
+	DrawLegend(dcDraw, rect, 0xFF0000, colBlue, Themed);
+	DrawLegend(dcDraw, rect, 0x0000FF, colRed, Themed);
+
+	pDC->SelectObject(oldFont);
+	ReleaseDC(pDC);
+
+	return pBmp;
+}
+
+CBitmap* CListView::RenderFooter()
+{
+	return (m_Context==LFContextStoreHome) ? RenderStatistics() : RenderLegend();
 }
 
 void CListView::AdjustLayout()
@@ -958,7 +993,7 @@ void CListView::OnItemClick(NMHDR* pNMHDR, LRESULT* pResult)
 	else
 	{
 		p_ViewParameters->SortBy = attr;
-		p_ViewParameters->Descending = (theApp.m_Attributes[attr]->Type==LFTypeRating) || (theApp.m_Attributes[attr]->Type==LFTypeTime) || (theApp.m_Attributes[attr]->Type==LFTypeMegapixel);
+		p_ViewParameters->Descending = theApp.m_Attributes[attr]->PreferDescendingSort;
 	}
 	theApp.UpdateSortOptions(m_Context);
 

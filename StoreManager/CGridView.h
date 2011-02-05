@@ -39,7 +39,6 @@ public:
 
 protected:
 	BOOL m_HasCategories;
-	BOOL m_ForceNothing;
 	UINT m_GridArrange;
 
 	virtual void DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed);
