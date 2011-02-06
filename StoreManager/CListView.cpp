@@ -248,7 +248,7 @@ CBitmap* CListView::RenderStatistics()
 			{
 				UINT DomainID;
 				if (sscanf_s(i->CoreAttributes.FileID, "%d", &DomainID)==1)
-					if (DomainID>=LFFirstSoloDomain)
+					if ((DomainID>=LFFirstSoloDomain) && (DomainID!=LFDomainPhotos))
 					{
 						INT idx = DomainCount-3;
 						for (UINT a=0; a<DomainCount; a++)
