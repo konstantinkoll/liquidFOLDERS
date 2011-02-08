@@ -391,8 +391,6 @@ struct LFDomainDescriptor
 
 struct LFFilterOptions
 {
-	bool AddBacklink;						// If true, backlink to higher levels of virtual directory tree is added
-
 	// For LFFilterModeStores
 	bool OnlyInternalStores;				// If true, only internal stores are added
 	bool AddDrives;							// If true, drives are added

@@ -52,14 +52,7 @@ LFCore_API void LFUINTToString(const unsigned int v, wchar_t* str, size_t cCount
 
 LFCore_API void LFINT64ToString(const __int64 v, wchar_t* str, size_t cCount)
 {
-	if (v>=0)
-	{
-		StrFormatByteSize(v, str, (unsigned int)cCount);
-	}
-	else
-	{
-		str[0] = L'\0';
-	}
+	StrFormatByteSize(v, str, (unsigned int)cCount);
 }
 
 LFCore_API void LFFractionToString(const LFFraction frac, wchar_t* str, size_t cCount)

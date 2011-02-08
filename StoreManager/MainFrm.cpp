@@ -67,7 +67,6 @@ LFFilter* GetRootFilter(char* RootStore=NULL)
 {
 	LFFilter* f = LFAllocFilter();
 	f->Mode = RootStore ? LFFilterModeStoreHome : LFFilterModeStores;
-	f->Options.AddBacklink = true;
 	f->Options.AddDrives = true;
 	f->ShowEmptyDrives = (theApp.m_ShowEmptyDrives==TRUE);
 
@@ -524,7 +523,6 @@ void CMainFrame::OnNavigateHome()
 {
 	LFFilter* f = LFAllocFilter();
 	f->Mode = LFFilterModeStoreHome;
-	f->Options.AddBacklink = true;
 	f->Options.AddDrives = true;
 	NavigateTo(f);
 }
@@ -798,13 +796,6 @@ void CMainFrame::OnItemOpen()
 
 		if (i->NextFilter)
 		{
-			if (((i->Type & LFTypeMask)==LFTypeVirtual) && (strcmp(i->CoreAttributes.FileID, "BACK")==0) && (m_BreadcrumbBack))
-				if (m_BreadcrumbBack->filter->Mode==i->NextFilter->Mode)
-				{
-					OnNavigateBack();
-					return;
-				}
-
 			NavigateTo(LFAllocFilter(i->NextFilter), NAVMODE_NORMAL, 0, i->FirstAggregate, i->LastAggregate);
 		}
 		else

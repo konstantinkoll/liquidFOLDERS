@@ -158,20 +158,6 @@ void LFSearchResult::AddDrives(LFFilter* filter)
 	}
 }
 
-void LFSearchResult::AddBacklink(char* StoreID, LFFilter* f)
-{
-	wchar_t BacklinkName[256];
-	LoadString(LFCoreModuleHandle, IDS_BacklinkName, BacklinkName, 256);
-	wchar_t BacklinkDescription[256];
-	LoadString(LFCoreModuleHandle, IDS_BacklinkDescription, BacklinkDescription, 256);
-
-	LFItemDescriptor* d = AllocFolderDescriptor(BacklinkName, NULL, BacklinkDescription, StoreID, "BACK", NULL, IDI_FLD_Back, LFItemCategoryStore, 0, f);
-	d->CoreAttributes.FileSize = -1;
-
-	if (!AddItemDescriptor(d))
-		delete d;
-}
-
 void LFSearchResult::RemoveItemDescriptor(unsigned int idx, bool updatecount)
 {
 	assert(idx<m_ItemCount);
@@ -219,12 +205,6 @@ int LFSearchResult::Compare(int eins, int zwei, unsigned int attr, bool descendi
 {
 	LFItemDescriptor* d1 = m_Items[eins];
 	LFItemDescriptor* d2 = m_Items[zwei];
-
-	// Dateien mit Symbol IDI_FLD_Back immer nach vorne
-	if ((d1->IconID==IDI_FLD_Back) && (d2->IconID!=IDI_FLD_Back))
-		return -1;
-	if ((d1->IconID!=IDI_FLD_Back) && (d2->IconID==IDI_FLD_Back))
-		return 1;
 
 	// Kategorien
 	if ((m_HasCategories) && (d1->CategoryID!=d2->CategoryID))

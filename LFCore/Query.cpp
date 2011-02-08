@@ -663,15 +663,6 @@ LFSearchResult* QueryDomains(LFFilter* filter)
 	res->m_HasCategories = true;
 	strcpy_s(res->m_StoreID, LFKeySize, filter->StoreID);
 
-	if (filter->Options.AddBacklink)
-	{
-		LFFilter* nf = LFAllocFilter();
-		nf->Mode = LFFilterModeStores;
-		nf->Options = filter->Options;
-
-		res->AddBacklink(filter->StoreID, nf);
-	}
-
 	wchar_t HintSingular[256];
 	LoadString(LFCoreModuleHandle, IDS_HintSingular, HintSingular, 256);
 	wchar_t HintPlural[256];
@@ -734,43 +725,7 @@ LFSearchResult* QueryDomains(LFFilter* filter)
 	return res;
 }
 
-void AddTreeBacklink(LFFilter* filter, LFSearchResult* res, LFStoreDescriptor* slot)
-{
-	LFFilter* nf = LFAllocFilter(filter);
-	strcpy_s(nf->StoreID, LFKeySize, filter->StoreID);
-
-	if (nf->Options.IsSubfolder)
-	{
-		nf->Options.IsSubfolder = false;
-
-		if (nf->ConditionList)
-		{
-			LFFilterCondition* victim = nf->ConditionList;
-			nf->ConditionList = victim->Next;
-			delete victim;
-		}
-
-		if (nf->Mode==LFFilterModeDirectoryTree)
-		{
-			LoadString(LFCoreModuleHandle, IDS_FirstDomain+nf->DomainID, nf->Name, 256);
-
-			wchar_t* pos = wcschr(nf->Name, L'\n');
-			if (pos)
-				*pos = L'\0';
-		}
-	}
-	else
-	{
-		nf->Mode = LFFilterModeStoreHome;
-
-		if (slot)
-			wcscpy_s(nf->Name, 256, slot->StoreName);
-	}
-
-	res->AddBacklink(filter->StoreID, nf);
-}
-
-bool RetrieveStore(char* StoreID, LFFilter* filter, LFSearchResult* res, bool AddBacklink)
+bool RetrieveStore(char* StoreID, LFFilter* filter, LFSearchResult* res)
 {
 	CIndex* idx1;
 	CIndex* idx2;
@@ -779,9 +734,6 @@ bool RetrieveStore(char* StoreID, LFFilter* filter, LFSearchResult* res, bool Ad
 	res->m_LastError = OpenStore(StoreID, false, idx1, idx2, &slot, &StoreLock);
 	if (res->m_LastError==LFOk)
 	{
-		if (AddBacklink)
-			AddTreeBacklink(filter, res, slot);
-
 		if (idx1)
 		{
 			idx1->Retrieve(filter, res);
@@ -858,7 +810,7 @@ LFSearchResult* QueryTree(LFFilter* filter)
 	LFSearchResult* res = LFAllocSearchResult(LFContextDefault);
 	PrepareSearchResult(res, filter);
 
-	if (RetrieveStore(filter->StoreID, filter, res, filter->Options.AddBacklink))
+	if (RetrieveStore(filter->StoreID, filter, res))
 	{
 		FinishTreeQuery(filter, res);
 	}
@@ -894,7 +846,7 @@ LFSearchResult* QuerySearch(LFFilter* filter)
 			char* ptr = keys;
 			for (unsigned int a=0; a<count; a++)
 			{
-				if (RetrieveStore(ptr, filter, res, filter->Options.AddBacklink && filter->Options.IsSubfolder))
+				if (RetrieveStore(ptr, filter, res))
 					success = true;
 
 				ptr += LFKeySize;
@@ -906,7 +858,7 @@ LFSearchResult* QuerySearch(LFFilter* filter)
 	else
 	{
 		// Ein Store
-		success = RetrieveStore(filter->StoreID, filter, res, false);
+		success = RetrieveStore(filter->StoreID, filter, res);
 	}
 
 Finish:
@@ -994,7 +946,6 @@ LFCore_API LFSearchResult* LFQuery(LFFilter* filter, LFSearchResult* base, int f
 		strcpy_s(res->m_StoreID, LFKeySize, filter->StoreID);
 
 		res->KeepRange(first, last);
-		AddTreeBacklink(filter, res, NULL);
 		FinishTreeQuery(filter, res);
 	}
 	else

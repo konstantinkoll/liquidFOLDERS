@@ -274,7 +274,7 @@ void CTagcloudView::DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed)
 	else
 		if (m_ViewParameters.TagcloudUseOpacity)
 		{
-			COLORREF back = Themed ? 0xFFFFFF : GetSysColor(COLOR_WINDOW);
+			const COLORREF back = Themed ? 0xFFFFFF : GetSysColor(COLOR_WINDOW);
 			color = ((color & 0xFF)*d->Alpha + (back & 0xFF)*(255-d->Alpha))>>8 |
 				((((color>>8) & 0xFF)*d->Alpha + ((back>>8) & 0xFF)*(255-d->Alpha)) & 0xFF00) |
 				((((color>>16) & 0xFF)*d->Alpha + ((back>>16) & 0xFF)*(255-d->Alpha))<<8) & 0xFF0000;
