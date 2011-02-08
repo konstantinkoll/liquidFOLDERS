@@ -18,6 +18,7 @@ ViewOptionsDlg::ViewOptionsDlg(CWnd* pParentWnd, LFViewParameters* View, UINT Co
 void ViewOptionsDlg::DoDataExchange(CDataExchange* pDX)
 {
 	ChooseDetailsDlg::DoDataExchange(pDX);
+	DDX_Control(pDX, IDC_VIEWMODES, m_wndViewList);
 
 	if (pDX->m_bSaveAndValidate)
 	{
@@ -30,48 +31,28 @@ void ViewOptionsDlg::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(ViewOptionsDlg, ChooseDetailsDlg)
 	ON_NOTIFY(LVN_ITEMCHANGED, IDC_VIEWMODES, OnViewModeChange)
 	ON_NOTIFY(NM_DBLCLK, IDC_VIEWMODES, OnDoubleClick)
-	ON_COMMAND(IDC_CHECKALL, OnCheckAll)
-	ON_COMMAND(IDC_UNCHECKALL, OnUncheckAll)
 END_MESSAGE_MAP()
 
 BOOL ViewOptionsDlg::OnInitDialog()
 {
 	ChooseDetailsDlg::OnInitDialog();
 
-	// View-Liste füllen
-	CString tmpStr;
+	// Icons
+	m_ViewIcons.Create(IDB_VIEWS, NULL, 0, 10, 32, 32);
 
-	CListCtrl* l = (CListCtrl*)GetDlgItem(IDC_VIEWMODES);
-
-	LVGROUP lvg;
-	ZeroMemory(&lvg, sizeof(lvg));
-	lvg.cbSize = sizeof(lvg);
-	lvg.mask = LVGF_HEADER | LVGF_GROUPID | LVGF_ALIGN;
-	ENSURE(tmpStr.LoadString(IDS_VIEWGROUP1));
-	lvg.pszHeader = tmpStr.GetBuffer();
-	lvg.cchHeader = (INT)wcslen(lvg.pszHeader);
-	lvg.uAlign = LVGA_HEADER_LEFT;
-	lvg.state = LVGS_COLLAPSIBLE;
-	if (theApp.OSVersion>=OS_Vista)
-	{
-		lvg.mask |= LVGF_STATE;
-		lvg.stateMask = LVGS_COLLAPSIBLE;
-	}
-	l->InsertGroup(lvg.iGroupId, &lvg);
-
+	// View-Liste
 	for (INT a=0; a<2; a++)
 	{
-		lvg.iGroupId = a;
+		CString tmpStr;
 		ENSURE(tmpStr.LoadString(IDS_VIEWGROUP1+a));
-		lvg.pszHeader = tmpStr.GetBuffer();
-		l->InsertGroup(lvg.iGroupId, &lvg);
+		m_wndViewList.AddCategory(a, tmpStr, _T(""), TRUE);
 	}
 
-	m_ViewIcons.Create(IDB_RIBBONVIEW_16, NULL, 0, 10);
-	l->SetImageList(&m_ViewIcons, LVSIL_SMALL);
-	l->SetIconSpacing(68, 30);
-	l->EnableGroupView(TRUE);
+	m_wndViewList.SetImageList(&m_ViewIcons, LVSIL_NORMAL);
+	m_wndViewList.SetIconSpacing(68, 59);
+	m_wndViewList.EnableGroupView(TRUE);
 
+	// Items
 	LV_ITEM lvi;
 	ZeroMemory(&lvi, sizeof(lvi));
 	lvi.mask = LVIF_TEXT | LVIF_IMAGE | LVIF_GROUPID | LVIF_PARAM | LVIF_STATE;
@@ -86,13 +67,14 @@ BOOL ViewOptionsDlg::OnInitDialog()
 			lvi.pszText = tmpStr.GetBuffer();
 			lvi.iImage = a;
 			lvi.state = lvi.stateMask = (a==p_View->Mode) ? LVIS_SELECTED | LVIS_FOCUSED : 0;
-			l->InsertItem(&lvi);
+			m_wndViewList.InsertItem(&lvi);
 		}
 
 		if (a==LFViewPreview)
 			lvi.iGroupId++;
 	}
 
+	// Aktuelles View auswählen
 	NM_LISTVIEW nmlv;
 	LRESULT res;
 	nmlv.lParam = p_View->Mode;

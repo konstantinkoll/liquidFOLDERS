@@ -18,7 +18,32 @@ CExplorerList::CExplorerList()
 	m_ItemMenuID = m_BackgroundMenuID = 0;
 }
 
-void CExplorerList::AddCategory(INT ID, CString name, CString hint)
+void CExplorerList::PreSubclassWindow()
+{
+	CListCtrl::PreSubclassWindow();
+
+	if (IsWindow(GetSafeHwnd()))
+	{
+		SetExtendedStyle(GetExtendedStyle() | LVS_EX_FULLROWSELECT | LVS_EX_DOUBLEBUFFER);
+
+		if ((p_App->m_ThemeLibLoaded) && (p_App->OSVersion>=OS_Vista))
+		{
+			p_App->zSetWindowTheme(GetSafeHwnd(), L"EXPLORER", NULL);
+			hTheme = p_App->zOpenThemeData(GetSafeHwnd(), VSCLASS_LISTVIEW);
+		}
+
+		LVTILEVIEWINFO tvi;
+		ZeroMemory(&tvi, sizeof(tvi));
+		tvi.cbSize = sizeof(LVTILEVIEWINFO);
+		tvi.cLines = 2;
+		tvi.dwFlags = LVTVIF_FIXEDWIDTH;
+		tvi.dwMask = LVTVIM_COLUMNS | LVTVIM_TILESIZE;
+		tvi.sizeTile.cx = 218;
+		SetTileViewInfo(&tvi);
+	}
+}
+
+void CExplorerList::AddCategory(INT ID, CString Name, CString Hint, BOOL Collapsable)
 {
 	LVGROUP lvg;
 	ZeroMemory(&lvg, sizeof(lvg));
@@ -27,11 +52,19 @@ void CExplorerList::AddCategory(INT ID, CString name, CString hint)
 	lvg.mask = LVGF_HEADER | LVGF_GROUPID | LVGF_ALIGN;
 	lvg.uAlign = LVGA_HEADER_LEFT;
 	lvg.iGroupId = ID;
-	lvg.pszHeader = name.GetBuffer();
-	if ((!hint.IsEmpty()) && (p_App->OSVersion>=OS_Vista))
+	lvg.pszHeader = Name.GetBuffer();
+	if (p_App->OSVersion>=OS_Vista)
 	{
-		lvg.pszSubtitle = hint.GetBuffer();
-		lvg.mask |= LVGF_SUBTITLE;
+		if (!Hint.IsEmpty())
+		{
+			lvg.pszSubtitle = Hint.GetBuffer();
+			lvg.mask |= LVGF_SUBTITLE;
+		}
+		if (Collapsable)
+		{
+			lvg.stateMask = LVGS_COLLAPSIBLE;
+			lvg.mask |= LVGF_STATE;
+		}
 	}
 
 	InsertGroup(ID, &lvg);
@@ -43,27 +76,27 @@ void CExplorerList::AddItemCategories()
 		AddCategory(a, p_App->m_ItemCategories[a]->Caption, p_App->m_ItemCategories[a]->Hint);
 }
 
-void CExplorerList::AddColumn(INT ID, CString name)
+void CExplorerList::AddColumn(INT ID, CString Name)
 {
 	LV_COLUMN lvc;
 	ZeroMemory(&lvc, sizeof(lvc));
 
 	lvc.mask = LVCF_TEXT | LVCF_SUBITEM;
-	lvc.pszText = name.GetBuffer();
+	lvc.pszText = Name.GetBuffer();
 	lvc.iSubItem = ID;
 	
 	InsertColumn(ID, &lvc);
 }
 
-void CExplorerList::AddColumn(INT ID, UINT attr)
+void CExplorerList::AddColumn(INT ID, UINT Attr)
 {
 	LV_COLUMN lvc;
 	ZeroMemory(&lvc, sizeof(lvc));
 
 	lvc.mask = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
-	lvc.pszText = p_App->m_Attributes[attr]->Name;
-	lvc.cx = p_App->m_Attributes[attr]->RecommendedWidth;
-	lvc.fmt = p_App->m_Attributes[attr]->FormatRight ? LVCFMT_RIGHT : LVCFMT_LEFT;
+	lvc.pszText = p_App->m_Attributes[Attr]->Name;
+	lvc.cx = p_App->m_Attributes[Attr]->RecommendedWidth;
+	lvc.fmt = p_App->m_Attributes[Attr]->FormatRight ? LVCFMT_RIGHT : LVCFMT_LEFT;
 	lvc.iSubItem = ID;
 
 	InsertColumn(ID, &lvc);
@@ -144,22 +177,7 @@ INT CExplorerList::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CListCtrl::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
-	SetExtendedStyle(GetExtendedStyle() | LVS_EX_FULLROWSELECT | LVS_EX_DOUBLEBUFFER);
-
-	if ((p_App->m_ThemeLibLoaded) && (p_App->OSVersion>=OS_Vista))
-	{
-		p_App->zSetWindowTheme(GetSafeHwnd(), L"EXPLORER", NULL);
-		hTheme = p_App->zOpenThemeData(GetSafeHwnd(), VSCLASS_LISTVIEW);
-	}
-
-	LVTILEVIEWINFO tvi;
-	ZeroMemory(&tvi, sizeof(tvi));
-	tvi.cbSize = sizeof(LVTILEVIEWINFO);
-	tvi.cLines = 2;
-	tvi.dwFlags = LVTVIF_FIXEDWIDTH;
-	tvi.dwMask = LVTVIM_COLUMNS | LVTVIM_TILESIZE;
-	tvi.sizeTile.cx = 218;
-	SetTileViewInfo(&tvi);
+	PreSubclassWindow();
 
 	return 0;
 }

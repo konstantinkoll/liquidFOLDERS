@@ -598,7 +598,7 @@ void CMainFrame::InitializeRibbon()
 		}
 
 	strTemp = "View";
-	CMFCRibbonCategory* pCategoryView = m_wndRibbonBar.AddCategory(strTemp, IDB_RIBBONVIEW_16, IDB_RIBBONVIEW_32);
+	CMFCRibbonCategory* pCategoryView = m_wndRibbonBar.AddCategory(strTemp, 0, IDB_VIEWS);
 
 		strTemp = "Arrange items by";
 		CMFCRibbonPanel* pPanelArrange = pCategoryView->AddPanel(strTemp, m_PanelImages.ExtractIcon(6));

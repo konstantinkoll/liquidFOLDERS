@@ -19,6 +19,7 @@ public:
 
 protected:
 	CImageListTransparent m_ViewIcons;
+	CExplorerList m_wndViewList;
 
 	afx_msg BOOL OnInitDialog();
 	afx_msg void OnViewModeChange(NMHDR* pNMHDR, LRESULT* pResult);

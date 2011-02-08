@@ -746,14 +746,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\Ribbon_View_16.bmp"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Ribbon_View_32.bmp"
-				>
-			</File>
-			<File
 				RelativePath=".\res\SortOptions_Tiny.ico"
 				>
 			</File>
@@ -787,6 +779,10 @@
 			</File>
 			<File
 				RelativePath=".\res\ViewOptions_Tiny.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Views.bmp"
 				>
 			</File>
 		</Filter>

@@ -16,10 +16,12 @@ class AFX_EXT_CLASS CExplorerList : public CListCtrl
 public:
 	CExplorerList();
 
-	void AddCategory(INT ID, CString name, CString hint=_T(""));
+	virtual void PreSubclassWindow();
+
+	void AddCategory(INT ID, CString Name, CString Hint=_T(""), BOOL Collapsable=FALSE);
 	void AddItemCategories();
-	void AddColumn(INT ID, CString name);
-	void AddColumn(INT ID, UINT attr);
+	void AddColumn(INT ID, CString Name);
+	void AddColumn(INT ID, UINT Attr);
 	void AddStoreColumns();
 	void SetSearchResult(LFSearchResult* result);
 	void SetMenus(UINT _ItemMenuID=0, BOOL _HighlightFirst=FALSE, UINT _BackgroundMenuID=0);

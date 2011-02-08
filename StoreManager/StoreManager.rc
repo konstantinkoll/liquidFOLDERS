@@ -77,11 +77,10 @@ IDB_ASCENDING           BITMAP                  "res\\Ascending_16.bmp"
 IDB_GROUPING            BITMAP                  "res\\Grouping_32.bmp"
 IDB_RIBBONHOME_16       BITMAP                  "res\\Ribbon_Home_16.bmp"
 IDB_RIBBONHOME_32       BITMAP                  "res\\Ribbon_Home_32.bmp"
-IDB_RIBBONVIEW_16       BITMAP                  "res\\Ribbon_View_16.bmp"
-IDB_RIBBONVIEW_32       BITMAP                  "res\\Ribbon_View_32.bmp"
 ID_PANE_INSPECTORWND    BITMAP                  "res\\Toolbar_Inspector.bmp"
 ID_PANE_FILTERWND       BITMAP                  "res\\Toolbar_Filter.bmp"
 IDB_TASKS               BITMAP                  "res\\Tasks.bmp"
+IDB_VIEWS               BITMAP                  "res\\Views.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -314,7 +313,7 @@ STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS
 CAPTION "„%s“ anzeigen als"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    CONTROL         "",IDC_VIEWMODES,"SysListView32",LVS_SMALLICON | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | WS_BORDER | WS_GROUP | WS_TABSTOP,14,27,160,201
+    CONTROL         "",IDC_VIEWMODES,"SysListView32",LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | WS_BORDER | WS_GROUP | WS_TABSTOP,14,27,160,201
     GROUPBOX        "Ansichten",IDC_STATIC,7,7,174,228,WS_GROUP
     LTEXT           "Alle Ansichten für diesen Kontext:",IDC_STATIC,14,17,160,8
     GROUPBOX        "Details",IDC_STATIC,189,7,196,228
@@ -565,7 +564,7 @@ STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS
 CAPTION "Display ""%s"" as"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    CONTROL         "",IDC_VIEWMODES,"SysListView32",LVS_SMALLICON | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | WS_BORDER | WS_GROUP | WS_TABSTOP,14,27,160,201
+    CONTROL         "",IDC_VIEWMODES,"SysListView32",LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | WS_BORDER | WS_GROUP | WS_TABSTOP,14,27,160,201
     GROUPBOX        "Views",IDC_STATIC,7,7,174,228,WS_GROUP
     LTEXT           "All views available in this context:",IDC_STATIC,14,17,160,8
     GROUPBOX        "Details",IDC_STATIC,189,7,196,228
@@ -759,14 +758,18 @@ BEGIN
     IDS_LEGEND              "Legend"
     IDS_LEGEND_BLUE         "Requires scheduled maintenance"
     IDS_LEGEND_RED          "Damaged (file body missing)"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_LEGEND_RARE         "Rare"
     IDS_LEGEND_COMMON       "Common"
     IDS_LEGEND_OLDER        "Older"
-    IDS_LEGEND_NEWER        "Newer"
     IDS_STATISTICS          "Statistics"
     IDS_STATISTICS_BYCOUNT  "By file count"
     IDS_STATISTICS_BYSIZE   "By file size"
     IDS_STATISTICS_OTHER    "Other"
+    IDS_LEGEND_NEWER        "Newer"
 END
 
 STRINGTABLE 
@@ -854,6 +857,10 @@ STRINGTABLE
 BEGIN
     IDM_TAGCLOUD_SORTVALUE  "Arranges the tags in their canonic order.\nSort by value"
     IDM_TAGCLOUD_SORTCOUNT  "Arranges the tags by their file count.\nSort by count"
+END
+
+STRINGTABLE 
+BEGIN
     IDM_TAGCLOUD_SORT       "&Sort by"
 END
 
@@ -1082,7 +1089,7 @@ STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS
 CAPTION "Visualizar ""%s"" como"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    CONTROL         "",IDC_VIEWMODES,"SysListView32",LVS_SMALLICON | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | WS_BORDER | WS_GROUP | WS_TABSTOP,14,27,160,201
+    CONTROL         "",IDC_VIEWMODES,"SysListView32",LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | WS_BORDER | WS_GROUP | WS_TABSTOP,14,27,160,201
     GROUPBOX        "Vistas",IDC_STATIC,7,7,174,228,WS_GROUP
     LTEXT           "Todas las vistas disponibles en este contexto:",IDC_STATIC,14,17,160,8
     GROUPBOX        "Detalles",IDC_STATIC,189,7,216,228
@@ -1253,7 +1260,7 @@ BEGIN
         MENUITEM "Paramètres du &globe...",     IDM_GLOBE_SETTINGS
         MENUITEM "&Adapter la donnée",          IDM_GLOBE_AUTOSIZE
         MENUITEM SEPARATOR
-        MENUITEM "Choisissez l'&endroit...\tCtrl+L",    IDM_GLOBE_JUMPTOLOCATION
+        MENUITEM "Choisissez l'&endroit...\tCtrl+L", IDM_GLOBE_JUMPTOLOCATION
     END
 END
 
@@ -1330,7 +1337,7 @@ STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS
 CAPTION """%s"" afficher comme"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    CONTROL         "",IDC_VIEWMODES,"SysListView32",LVS_SMALLICON | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | WS_BORDER | WS_GROUP | WS_TABSTOP,14,27,160,201
+    CONTROL         "",IDC_VIEWMODES,"SysListView32",LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | WS_BORDER | WS_GROUP | WS_TABSTOP,14,27,160,201
     GROUPBOX        "Affichages",IDC_STATIC,7,7,174,228,WS_GROUP
     LTEXT           "Tous les affichages pour ce contexte :",IDC_STATIC,14,17,160,8
     GROUPBOX        "Détails",IDC_STATIC,189,7,196,228
