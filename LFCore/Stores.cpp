@@ -98,8 +98,8 @@ bool RemoveDir(LPWSTR lpPath)
 
 	// Dateien löschen
 	wchar_t DirSpec[MAX_PATH];
-	wcscpy_s(DirSpec, 2*MAX_PATH, lpPath);
-	wcscat_s(DirSpec, L"*");
+	wcscpy_s(DirSpec, MAX_PATH, lpPath);
+	wcscat_s(DirSpec, MAX_PATH, L"*");
 
 	WIN32_FIND_DATA FindFileData;
 	HANDLE hFind = FindFirstFile(DirSpec, &FindFileData);
