@@ -769,7 +769,7 @@ LFCore_API void LFSanitizeUnicodeArray(wchar_t* buf, size_t cCount)
 	{
 		tag[0] = L'\0';
 		if (buf[0]!=L'\0')
-			wcscpy_s(tag, cCount, L" ");
+			wcscpy_s(tag, 259, L" ");
 
 		if (it->first.find_first_of(L" ,:;|")!=std::wstring::npos)
 		{
@@ -779,7 +779,7 @@ LFCore_API void LFSanitizeUnicodeArray(wchar_t* buf, size_t cCount)
 		}
 		else
 		{
-			wcscat_s(tag, 256, it->first.c_str());
+			wcscat_s(tag, 259, it->first.c_str());
 		}
 
 		if (wcslen(buf)+wcslen(tag)<=255)

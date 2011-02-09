@@ -14,7 +14,7 @@
 class AFX_EXT_CLASS LFEditTagsDlg : public CDialog
 {
 public:
-	LFEditTagsDlg(CWnd* pParentWnd, CString _Tags, CHAR* _StoreID);
+	LFEditTagsDlg(CWnd* pParentWnd, CString Tags, CHAR* StoreID);
 
 	virtual void DoDataExchange(CDataExchange* pDX);
 
@@ -30,8 +30,8 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
-	CHAR StoreID[LFKeySize];
-	BOOL StoreIDValid;
+	CHAR m_StoreID[LFKeySize];
+	BOOL m_StoreIDValid;
 	CEdit m_TagEdit;
 	CTagList m_TagList;
 };

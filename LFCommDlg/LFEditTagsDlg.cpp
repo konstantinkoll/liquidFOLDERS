@@ -12,15 +12,24 @@
 
 extern AFX_EXTENSION_MODULE LFCommDlgDLL;
 
-LFEditTagsDlg::LFEditTagsDlg(CWnd* pParentWnd, CString _Tags, CHAR* _StoreID)
+LFEditTagsDlg::LFEditTagsDlg(CWnd* pParentWnd, CString Tags, CHAR* StoreID)
 	: CDialog(IDD_EDITTAGS, pParentWnd)
 {
-	m_Tags = _Tags;
+	m_Tags = Tags;
 	p_App = (LFApplication*)AfxGetApp();
 
-	StoreIDValid = (_StoreID!=NULL);
-	if (_StoreID)
-		strcpy_s(StoreID, LFKeySize, _StoreID);
+	m_StoreIDValid = (StoreID!=NULL);
+	if (m_StoreIDValid)
+		strcpy_s(m_StoreID, LFKeySize, StoreID);
+}
+
+void LFEditTagsDlg::DoDataExchange(CDataExchange* pDX)
+{
+	DDX_Control(pDX, IDC_TAGS, m_TagEdit);
+	DDX_Control(pDX, IDC_TAGLIST, m_TagList);
+
+	if (pDX->m_bSaveAndValidate)
+		GetDlgItem(IDC_TAGS)->GetWindowText(m_Tags);
 }
 
 
@@ -70,11 +79,11 @@ BOOL LFEditTagsDlg::OnInitDialog()
 	m_TagList.SetExtendedStyle(LVS_EX_DOUBLEBUFFER | LVS_EX_ONECLICKACTIVATE);
 	m_TagList.SetHoverTime(1);
 
-	if (StoreIDValid)
+	if (m_StoreIDValid)
 	{
 		// Vorschläge
 		LFFilter* f = LFAllocFilter();
-		strcpy_s(f->StoreID, LFKeySize, StoreID);
+		strcpy_s(f->StoreID, LFKeySize, m_StoreID);
 		f->Mode = LFFilterModeDirectoryTree;
 		f->Options.IgnoreSlaves = true;
 		LFSearchResult* base = LFQuery(f);
@@ -87,7 +96,8 @@ BOOL LFEditTagsDlg::OnInitDialog()
 			LFItemDescriptor* i = res->m_Items[a];
 			if (((i->Type & LFTypeMask)==LFTypeVirtual) && (i->AggregateCount))
 			{
-				UINT puColumns[] = { 1, 2 };
+				UINT puColumns[] = { 1 };
+
 				LVITEM lvi;
 				ZeroMemory(&lvi, sizeof(lvi));
 				lvi.mask = LVIF_TEXT | LVIF_COLUMNS;
@@ -113,15 +123,6 @@ BOOL LFEditTagsDlg::OnInitDialog()
 	return TRUE;
 }
 
-void LFEditTagsDlg::DoDataExchange(CDataExchange* pDX)
-{
-	DDX_Control(pDX, IDC_TAGS, m_TagEdit);
-	DDX_Control(pDX, IDC_TAGLIST, m_TagList);
-
-	if (pDX->m_bSaveAndValidate)
-		GetDlgItem(IDC_TAGS)->GetWindowText(m_Tags);
-}
-
 void LFEditTagsDlg::OnDoubleClick(NMHDR* /*pNMHDR*/, LRESULT* /*pResult*/)
 {
 	OnAddTags();
@@ -144,8 +145,10 @@ void LFEditTagsDlg::OnAddTags()
 	while (idx!=-1)
 	{
 		CString toAdd = m_TagList.GetItemText(idx, 0);
+		if (toAdd.FindOneOf(_T(" ,:;|"))!=-1)
+			toAdd = _T("\"")+toAdd+_T("\"");
 
-		if (Tags!=_T(""))
+		if (!Tags.IsEmpty())
 			Tags += _T(" ");
 		Tags += toAdd;
 
