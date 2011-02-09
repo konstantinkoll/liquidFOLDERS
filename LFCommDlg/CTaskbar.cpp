@@ -49,7 +49,7 @@ UINT CTaskbar::GetPreferredHeight()
 	return h;
 }
 
-CTaskButton* CTaskbar::AddButton(UINT nID, INT IconID, BOOL bForceIcon, BOOL bAddRight)
+CTaskButton* CTaskbar::AddButton(UINT nID, INT IconID, BOOL ForceIcon, BOOL AddRight)
 {
 	CString Caption;
 	CString Hint;
@@ -70,12 +70,20 @@ CTaskButton* CTaskbar::AddButton(UINT nID, INT IconID, BOOL bForceIcon, BOOL bAd
 	}
 
 	CTaskButton* btn = new CTaskButton();
-	btn->Create(bAddRight ? _T("") : Caption, Caption, Hint, &Icons,
-		bForceIcon || bAddRight || (((LFApplication*)AfxGetApp())->OSVersion<OS_Seven) ? IconID : -1,
+	btn->Create(AddRight ? _T("") : Caption, Caption, Hint, &Icons,
+		ForceIcon || AddRight || (((LFApplication*)AfxGetApp())->OSVersion<OS_Seven) ? IconID : -1,
 		this, nID);
 	btn->EnableWindow(FALSE);
 
-	(bAddRight ? &m_ButtonsRight : &m_ButtonsLeft)->AddTail(btn);
+	if (AddRight)
+	{
+		m_ButtonsRight.AddHead(btn);
+	}
+	else
+	{
+		m_ButtonsLeft.AddTail(btn);
+	}
+
 	return btn;
 }
 

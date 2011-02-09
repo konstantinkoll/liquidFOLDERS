@@ -460,6 +460,9 @@ unsigned int LFSearchResult::Aggregate(unsigned int write, unsigned int read1, u
 
 void LFSearchResult::Group(unsigned int attr, unsigned int icon, bool groupone, LFFilter* f)
 {
+	if (!m_ItemCount)
+		return;
+
 	// Choose categorizer
 	CCategorizer* c = NULL;
 
