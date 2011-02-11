@@ -686,10 +686,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\ClipboardButton.bmp"
-				>
-			</File>
-			<File
 				RelativePath=".\res\Descending_16.bmp"
 				>
 			</File>
@@ -723,10 +719,6 @@
 			</File>
 			<File
 				RelativePath=".\res\Inspector_Grey.png"
-				>
-			</File>
-			<File
-				RelativePath=".\res\MainButton.bmp"
 				>
 			</File>
 			<File

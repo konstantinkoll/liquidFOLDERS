@@ -67,11 +67,9 @@ IDB_GLOBEICONS_ALPHA    PNG                     "res\\GlobeIcons_Alpha.png"
 // Bitmap
 //
 
-IDB_MAINBUTTON          BITMAP                  "res\\MainButton.bmp"
 IDB_APPMENU_32          BITMAP                  "res\\AppMenu_32.bmp"
 IDB_APPMENU_16          BITMAP                  "res\\AppMenu_16.bmp"
 IDB_PANEL_16            BITMAP                  "res\\Panel_16.bmp"
-IDB_CLIPBOARDBUTTON     BITMAP                  "res\\ClipboardButton.bmp"
 IDB_DESCENDING          BITMAP                  "res\\Descending_16.bmp"
 IDB_ASCENDING           BITMAP                  "res\\Ascending_16.bmp"
 IDB_GROUPING            BITMAP                  "res\\Grouping_32.bmp"

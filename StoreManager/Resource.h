@@ -5,8 +5,6 @@
 #define IDR_MAINFRAME                   128
 #define IDR_CLIPBOARD                   129
 #define IDB_ABOUTICON                   130
-#define IDB_MAINBUTTON                  131
-#define IDB_CLIPBOARDBUTTON             132
 #define IDB_HISTORYICONS                133
 #define IDB_ASCENDING                   134
 #define IDB_DESCENDING                  135

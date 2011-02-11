@@ -1317,10 +1317,6 @@
 			>
 		</File>
 		<File
-			RelativePath=".\ClipboardButton.bmp"
-			>
-		</File>
-		<File
 			RelativePath=".\Crosshair.png"
 			>
 		</File>
@@ -1490,10 +1486,6 @@
 		</File>
 		<File
 			RelativePath="Logo alpha tiny.png"
-			>
-		</File>
-		<File
-			RelativePath="MainButton.bmp"
 			>
 		</File>
 		<File
