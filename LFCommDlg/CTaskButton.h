@@ -34,7 +34,7 @@ private:
 	CString m_TooltipHeader;
 	CString m_TooltipHint;
 	LFTooltip m_TooltipCtrl;
-	CMFCToolBarImages* m_Icons;
+	CMFCToolBarImages* p_Icons;
 	INT m_IconID;
 	BOOL m_Hover;
 };

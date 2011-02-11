@@ -107,6 +107,7 @@ BOOL CFileView::PreTranslateMessage(MSG* pMsg)
 	case WM_MOUSEHWHEEL:
 		if (p_Edit)
 			return TRUE;
+		break;
 	case WM_LBUTTONDOWN:
 	case WM_RBUTTONDOWN:
 	case WM_MBUTTONDOWN:
@@ -1255,6 +1256,8 @@ BOOL CFileView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 	INT nInc = max(-m_VScrollPos, min(-zDelta*(INT)m_RowHeight/WHEEL_DELTA, m_VScrollMax-m_VScrollPos));
 	if (nInc)
 	{
+		m_TooltipCtrl.Deactivate();
+
 		m_VScrollPos += nInc;
 		ScrollWindowEx(0, -nInc, NULL, NULL, NULL, NULL, SW_INVALIDATE);
 		SetScrollPos(SB_VERT, m_VScrollPos, TRUE);
@@ -1276,6 +1279,8 @@ void CFileView::OnMouseHWheel(UINT nFlags, short zDelta, CPoint pt)
 	INT nInc = max(-m_HScrollPos, min(zDelta*64/WHEEL_DELTA, m_HScrollMax-m_HScrollPos));
 	if (nInc)
 	{
+		m_TooltipCtrl.Deactivate();
+
 		m_HScrollPos += nInc;
 		ScrollWindowEx(-nInc, 0, NULL, NULL, NULL, NULL, SW_INVALIDATE);
 		SetScrollPos(SB_HORZ, m_HScrollPos, TRUE);

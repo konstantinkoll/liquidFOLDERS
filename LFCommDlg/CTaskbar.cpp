@@ -155,6 +155,7 @@ BEGIN_MESSAGE_MAP(CTaskbar, CWnd)
 	ON_WM_PAINT()
 	ON_WM_ERASEBKGND()
 	ON_WM_SYSCOLORCHANGE()
+	ON_WM_THEMECHANGED()
 	ON_WM_CTLCOLOR()
 	ON_WM_SIZE()
 	ON_MESSAGE_VOID(WM_IDLEUPDATECMDUI, OnIdleUpdateCmdUI)
@@ -288,6 +289,13 @@ void CTaskbar::OnPaint()
 void CTaskbar::OnSysColorChange()
 {
 	BackBufferL = BackBufferH = 0;
+}
+
+LRESULT CTaskbar::OnThemeChanged()
+{
+	AdjustLayout();
+
+	return TRUE;
 }
 
 HBRUSH CTaskbar::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)

@@ -24,7 +24,7 @@ BOOL CTaskButton::Create(CString Caption, CString TooltipHeader, CString Tooltip
 	m_Caption = Caption;
 	m_TooltipHeader = TooltipHeader;
 	m_TooltipHint = TooltipHint;
-	m_Icons = Icons;
+	p_Icons = Icons;
 	m_IconID = IconID;
 
 	CRect rect;
@@ -63,7 +63,7 @@ INT CTaskButton::GetPreferredWidth()
 {
 	INT l = 2*(BORDER+2)+1;
 
-	if ((m_Icons) && (m_IconID!=-1))
+	if ((p_Icons) && (m_IconID!=-1))
 		l += 16+(m_Caption.IsEmpty() ? 0 : BORDER);
 
 	if (!m_Caption.IsEmpty())
@@ -71,9 +71,9 @@ INT CTaskButton::GetPreferredWidth()
 		CSize sz;
 
 		CDC* dc = GetDC();
-		CFont* pOldFont = dc->SelectObject(&((LFApplication*)AfxGetApp())->m_DefaultFont);
+		HFONT hOldFont = IsCtrlThemed() ? (HFONT)dc->SelectObject(((LFApplication*)AfxGetApp())->m_DefaultFont.m_hObject) : (HFONT)dc->SelectStockObject(DEFAULT_GUI_FONT);
 		sz = dc->GetTextExtent(m_Caption);
-		dc->SelectObject(pOldFont);
+		dc->SelectObject(hOldFont);
 		ReleaseDC(dc);
 
 		l += sz.cx;
@@ -192,12 +192,12 @@ void CTaskButton::OnPaint()
 				if (Selected)
 					rectText.OffsetRect(1, 1);
 
-				if ((m_Icons) && (m_IconID!=-1))
+				if ((p_Icons) && (m_IconID!=-1))
 				{
 					CAfxDrawState ds;
-					m_Icons->PrepareDrawImage(ds);
-					m_Icons->Draw(&dc, rectText.left, (rect.Height()-rectText.Height())/2+(Selected ? 1 : 0), m_IconID);
-					m_Icons->EndDrawImage(ds);
+					p_Icons->PrepareDrawImage(ds);
+					p_Icons->Draw(&dc, rectText.left, (rect.Height()-rectText.Height())/2+(Selected ? 1 : 0), m_IconID);
+					p_Icons->EndDrawImage(ds);
 
 					rectText.left += 16+BORDER;
 				}
@@ -224,7 +224,7 @@ void CTaskButton::OnPaint()
 
 					GraphicsPath path;
 					CreateRoundRectangle(rectBounds, 2, path);
-	
+
 					Pen pen(Color(0x70, 0x50, 0x57, 0x62));
 					g.DrawPath(&pen, &path);
 
@@ -263,12 +263,12 @@ void CTaskButton::OnPaint()
 				if (Selected)
 					rectText.OffsetRect(1, 1);
 
-				if ((m_Icons) && (m_IconID!=-1))
+				if ((p_Icons) && (m_IconID!=-1))
 				{
 					CAfxDrawState ds;
-					m_Icons->PrepareDrawImage(ds);
-					m_Icons->Draw(&dc, rectText.left, (rect.Height()-rectText.Height())/2+(Selected ? 1 : 0), m_IconID);
-					m_Icons->EndDrawImage(ds);
+					p_Icons->PrepareDrawImage(ds);
+					p_Icons->Draw(&dc, rectText.left, (rect.Height()-rectText.Height())/2+(Selected ? 1 : 0), m_IconID);
+					p_Icons->EndDrawImage(ds);
 
 					rectText.left += 16+BORDER;
 				}
@@ -318,12 +318,12 @@ void CTaskButton::OnPaint()
 		if (Selected)
 			rectText.OffsetRect(1, 1);
 
-		if ((m_Icons) && (m_IconID!=-1))
+		if ((p_Icons) && (m_IconID!=-1))
 		{
 			CAfxDrawState ds;
-			m_Icons->PrepareDrawImage(ds);
-			m_Icons->Draw(&dc, rectText.left, (rect.Height()-rectText.Height())/2+(Selected ? 1 : 0), m_IconID);
-			m_Icons->EndDrawImage(ds);
+			p_Icons->PrepareDrawImage(ds);
+			p_Icons->Draw(&dc, rectText.left, (rect.Height()-rectText.Height())/2+(Selected ? 1 : 0), m_IconID);
+			p_Icons->EndDrawImage(ds);
 
 			rectText.left += 16+BORDER;
 		}
