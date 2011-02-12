@@ -458,6 +458,7 @@ BEGIN_MESSAGE_MAP(CMainView, CWnd)
 	ON_WM_CONTEXTMENU()
 	ON_MESSAGE_VOID(WM_UPDATESELECTION, OnUpdateSelection)
 	ON_MESSAGE(WM_RENAMEITEM, OnRenameItem)
+	ON_MESSAGE(WM_GETMENU, OnGetMenu)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoreAttributesChanged, OnStoreAttributesChanged)
 
 	ON_COMMAND(IDM_STORES_CREATENEW, OnStoresCreateNew)
@@ -559,6 +560,9 @@ INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	// Explorer header
 	if (!m_wndExplorerHeader.Create(this, 2))
 		return -1;
+
+	m_wndExplorerHeader.AddButton(IDM_ORGANIZE);
+	m_wndExplorerHeader.AddButton(IDM_VIEW);
 
 	// Explorer notification
 	if (!m_wndExplorerNotification.Create(this, 4))
@@ -727,6 +731,38 @@ LRESULT CMainView::OnRenameItem(WPARAM wParam, LPARAM lParam)
 	BOOL changes = tl->m_Changes;
 	LFFreeTransactionList(tl);
 	return changes;
+}
+
+LRESULT CMainView::OnGetMenu(WPARAM wParam, LPARAM /*lParam*/)
+{
+	HMENU hMenu = CreatePopupMenu();
+	BOOL Separator = FALSE;
+
+	switch (wParam)
+	{
+	case IDM_ORGANIZE:
+		break;
+	case IDM_VIEW:
+		for (UINT a=0; a<LFViewCount; a++)
+			if (theApp.m_AllowedViews[m_Context]->IsSet(a))
+			{
+				if ((a>LFViewPreview) && (!Separator))
+				{
+					AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
+					Separator = TRUE;
+				}
+
+				UINT nID = IDM_VIEW+a+1;
+
+				CString tmpStr;
+				ENSURE(tmpStr.LoadString(nID));
+
+				AppendMenu(hMenu, MF_STRING, nID, tmpStr);
+			}
+		break;
+	}
+
+	return (LRESULT)hMenu;
 }
 
 LRESULT CMainView::OnStoreAttributesChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)

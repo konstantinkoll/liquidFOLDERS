@@ -15,7 +15,7 @@
 
 extern AFX_EXTENSION_MODULE LFCommDlgDLL;
 
-#define WM_USER_MEDIACHANGED       WM_USER+2
+#define WM_USER_MEDIACHANGED     WM_USER+7
 
 LFStoreNewDlg::LFStoreNewDlg(CWnd* pParentWnd, LFStoreDescriptor* pStore)
 	: CDialog(IDD_STORENEW, pParentWnd)

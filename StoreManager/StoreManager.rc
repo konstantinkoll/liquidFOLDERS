@@ -67,8 +67,6 @@ IDB_GLOBEICONS_ALPHA    PNG                     "res\\GlobeIcons_Alpha.png"
 // Bitmap
 //
 
-IDB_APPMENU_32          BITMAP                  "res\\AppMenu_32.bmp"
-IDB_APPMENU_16          BITMAP                  "res\\AppMenu_16.bmp"
 IDB_PANEL_16            BITMAP                  "res\\Panel_16.bmp"
 IDB_DESCENDING          BITMAP                  "res\\Descending_16.bmp"
 IDB_ASCENDING           BITMAP                  "res\\Ascending_16.bmp"
@@ -790,25 +788,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    ID_APP_VIEW_LARGEICONS  "Displays files as large icons, suitable for overview contexts.\nLarge icons"
-    ID_APP_VIEW_SMALLICONS  "Displays files as small icons.\nSmall icons"
-    ID_APP_VIEW_LIST        "Displays files as a list, suitable for large numbers of files.\nList"
-    ID_APP_VIEW_DETAILS     "Displays files as a report with selectable property columns.\nDetails"
-END
-
-STRINGTABLE 
-BEGIN
-    ID_APP_VIEW_TILES       "Displays files as tiles, including a decent sized icon and detailed information.\nTiles"
-    ID_APP_VIEW_SEARCHRESULT 
-                            "Displays files as wide tiles, including a decent sized icon and detailed information.\nSearch result"
-    ID_APP_VIEW_PREVIEW     "Displays files as preview images.\nPreview"
-    ID_APP_VIEW_CALENDAR    "Places files on a calendar.\nCalendar"
-    ID_APP_VIEW_GLOBE       "Places file on a globe depening on their location property.\nGlobe"
-    ID_APP_VIEW_TAGCLOUD    "Displays files as tag cloud. This is the only view that can show files sorted by their tags.\nTag cloud"
-END
-
-STRINGTABLE 
-BEGIN
     ID_VIEW_AUTODIRS        "Enables or disables grouping of similar files into subfolders for this context. Grouping is not available in all contexts, and cannot be turned off in subfolders or advanced view modes.\nGroup into subfolders"
 END
 
@@ -931,6 +910,22 @@ BEGIN
     IDS_SUBFOLDERS_NOTAVAIL "Subfolders are not available in this context."
     IDS_GROUPBOX_SORT       "Sort items by this property"
     IDS_GROUPBOX_GROUP      "Organize items by this property"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_ORGANIZE            "Selects the property by which to organize all items in this context.\nOrganize by"
+    IDM_VIEW                "Selects the view mode for this context.\nDisplay as"
+    IDM_VIEW_LARGEICONS     "Large icons"
+    IDM_VIEW_SMALLICONS     "Small icons"
+    IDM_VIEW_LIST           "List"
+    IDM_VIEW_DETAILS        "Details"
+    IDM_VIEW_TILES          "Tiles"
+    IDM_VIEW_SEARCHRESULT   "Search result"
+    IDM_VIEW_PREVIEW        "Preview"
+    IDM_VIEW_CALENDAR       "Calendar"
+    IDM_VIEW_GLOBE          "Globe"
+    IDM_VIEW_TAGCLOUD       "Tag cloud"
 END
 
 #endif    // Englisch (neutral) resources

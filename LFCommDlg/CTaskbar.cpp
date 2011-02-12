@@ -33,9 +33,9 @@ BOOL CTaskbar::Create(CWnd* pParentWnd, UINT ResID, UINT nID)
 	return CWnd::CreateEx(WS_EX_CONTROLPARENT, className, _T(""), dwStyle, rect, pParentWnd, nID);
 }
 
-LRESULT CTaskbar::DefWindowProc(UINT message, WPARAM wParam, LPARAM lParam)
+BOOL CTaskbar::OnCommand(WPARAM wParam, LPARAM lParam)
 {
-	return (message==WM_COMMAND) ? GetOwner()->SendMessage(message, wParam, lParam) : CWnd::DefWindowProc(message, wParam, lParam);
+	return GetOwner()->SendMessage(WM_COMMAND, wParam, lParam);
 }
 
 UINT CTaskbar::GetPreferredHeight()
@@ -152,8 +152,8 @@ void CTaskbar::AdjustLayout()
 
 BEGIN_MESSAGE_MAP(CTaskbar, CWnd)
 	ON_WM_DESTROY()
-	ON_WM_PAINT()
 	ON_WM_ERASEBKGND()
+	ON_WM_PAINT()
 	ON_WM_SYSCOLORCHANGE()
 	ON_WM_THEMECHANGED()
 	ON_WM_CTLCOLOR()

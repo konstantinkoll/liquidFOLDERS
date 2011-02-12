@@ -8,6 +8,7 @@
 #include "..\LFCommDlg\CExplorerTree.h"
 #include "..\LFCommDlg\CGdiPlusBitmap.h"
 #include "..\LFCommDlg\CGlasWindow.h"
+#include "..\LFCommDlg\CHeaderButton.h"
 #include "..\LFCommDlg\CIconCtrl.h"
 #include "..\LFCommDlg\CImageListTransparent.h"
 #include "..\LFCommDlg\CInspectorGrid.h"

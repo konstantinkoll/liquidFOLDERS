@@ -415,6 +415,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CHeaderButton.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\CIconCtrl.cpp"
 				>
 			</File>
@@ -654,6 +658,10 @@
 			</File>
 			<File
 				RelativePath=".\CGlasWindow.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CHeaderButton.h"
 				>
 			</File>
 			<File

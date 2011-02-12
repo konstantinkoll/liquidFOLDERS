@@ -13,13 +13,14 @@ extern AFX_EXTENSION_MODULE LFCommDlgDLL;
 
 #define BORDERLEFT      16
 #define BORDER          10
+#define MARGIN          4
 
 CExplorerHeader::CExplorerHeader()
 	: CWnd()
 {
 	m_CaptionCol = 0x993300;
 	m_HintCol = 0x79675A;
-	m_hBackgroundBrush = NULL;
+	hBackgroundBrush = NULL;
 	m_GradientLine = TRUE;
 }
 
@@ -30,13 +31,32 @@ BOOL CExplorerHeader::Create(CWnd* pParentWnd, UINT nID)
 	const DWORD dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE;
 	CRect rect;
 	rect.SetRectEmpty();
-	return CWnd::Create(className, _T(""), dwStyle, rect, pParentWnd, nID);
+	return CWnd::CreateEx(WS_EX_CONTROLPARENT, className, _T(""), dwStyle, rect, pParentWnd, nID);
 }
 
-void CExplorerHeader::SetText(CString _Caption, CString _Hint, BOOL Repaint)
+BOOL CExplorerHeader::OnCommand(WPARAM wParam, LPARAM /*lParam*/)
 {
-	m_Caption = _Caption;
-	m_Hint = _Hint;
+	HMENU hMenu = (HMENU)GetOwner()->SendMessage(WM_GETMENU, wParam);
+	if (hMenu)
+	{
+		CWnd* pWnd = GetDlgItem(wParam);
+		if (pWnd)
+		{
+			CRect rectWindow;
+			pWnd->GetWindowRect(&rectWindow);
+
+			TrackPopupMenu(hMenu, TPM_LEFTALIGN | TPM_RIGHTBUTTON, rectWindow.left, rectWindow.bottom, 0, GetOwner()->GetSafeHwnd(), NULL);
+			return TRUE;
+		}
+	}
+
+	return FALSE;
+}
+
+void CExplorerHeader::SetText(CString Caption, CString Hint, BOOL Repaint)
+{
+	m_Caption = Caption;
+	m_Hint = Hint;
 
 	if (Repaint)
 		Invalidate();
@@ -72,7 +92,59 @@ UINT CExplorerHeader::GetPreferredHeight()
 	((LFApplication*)AfxGetApp())->m_DefaultFont.GetLogFont(&lf);
 	h += abs(lf.lfHeight);
 
-	return max(h, 60);
+	return max(h, max(60, m_Buttons.GetCount()*((UINT)abs(lf.lfHeight)+8+MARGIN)+MARGIN+1));
+}
+
+CHeaderButton* CExplorerHeader::AddButton(UINT nID)
+{
+	CString Caption;
+	CString Hint;
+	ENSURE(Caption.LoadString(nID));
+
+	INT pos = Caption.Find(L'\n');
+	if (pos!=-1)
+	{
+		Hint = Caption.Left(pos);
+		Caption.Delete(0, pos+1);
+
+		if (Hint.GetLength()>40)
+		{
+			pos = Hint.Find(L' ', Hint.GetLength()/2);
+			if (pos!=-1)
+				Hint.SetAt(pos, L'\n');
+		}
+	}
+
+	CHeaderButton* btn = new CHeaderButton();
+	btn->Create(Caption, Hint, this, nID);
+
+	m_Buttons.AddTail(btn);
+
+	return btn;
+}
+
+void CExplorerHeader::AdjustLayout()
+{
+	SetRedraw(FALSE);
+
+	CRect rect;
+	GetClientRect(rect);
+
+	INT Row = MARGIN;
+
+	for (POSITION p=m_Buttons.GetHeadPosition(); p; )
+	{
+		CHeaderButton* btn = m_Buttons.GetNext(p);
+
+		CSize sz;
+		btn->GetPreferredSize(sz);
+		btn->SetWindowPos(NULL, rect.right-sz.cx-BORDER, Row, sz.cx, sz.cy, SWP_NOZORDER | SWP_NOACTIVATE);
+
+		Row += sz.cy+MARGIN;
+	}
+
+	SetRedraw(TRUE);
+	RedrawWindow(NULL, NULL, RDW_INVALIDATE | RDW_ALLCHILDREN);
 }
 
 
@@ -81,8 +153,12 @@ BEGIN_MESSAGE_MAP(CExplorerHeader, CWnd)
 	ON_WM_DESTROY()
 	ON_WM_ERASEBKGND()
 	ON_WM_PAINT()
+	ON_WM_THEMECHANGED()
+	ON_WM_CTLCOLOR()
 	ON_WM_LBUTTONDOWN()
 	ON_WM_RBUTTONUP()
+	ON_WM_SIZE()
+	ON_MESSAGE_VOID(WM_ADJUSTLAYOUT, OnAdjustLayout)
 END_MESSAGE_MAP()
 
 INT CExplorerHeader::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -91,7 +167,7 @@ INT CExplorerHeader::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 
 	m_Background.LoadBitmap(IDB_EXPLORERGRADIENT);
-	m_hBackgroundBrush = CreatePatternBrush(m_Background);
+	hBackgroundBrush = CreatePatternBrush(m_Background);
 
 	return 0;
 }
@@ -100,8 +176,15 @@ void CExplorerHeader::OnDestroy()
 {
 	CWnd::OnDestroy();
 
-	if (m_hBackgroundBrush)
-		DeleteObject(m_hBackgroundBrush);
+	for (POSITION p=m_Buttons.GetHeadPosition(); p; )
+	{
+		CHeaderButton* btn = m_Buttons.GetNext(p);
+		btn->DestroyWindow();
+		delete btn;
+	}
+
+	if (hBackgroundBrush)
+		DeleteObject(hBackgroundBrush);
 }
 
 BOOL CExplorerHeader::OnEraseBkgnd(CDC* /*pDC*/)
@@ -133,7 +216,7 @@ void CExplorerHeader::OnPaint()
 			rectBackground.bottom = 60;
 			dc.FillSolidRect(0, 60, rect.Width(), rect.Height()-60, 0xFFFFFF);
 		}
-		FillRect(dc, rectBackground, m_hBackgroundBrush);
+		FillRect(dc, rectBackground, hBackgroundBrush);
 
 		#define LineCol 0xF5E5D6
 		if (m_GradientLine)
@@ -184,6 +267,34 @@ void CExplorerHeader::OnPaint()
 	dc.SelectObject(pOldBitmap);
 }
 
+LRESULT CExplorerHeader::OnThemeChanged()
+{
+	AdjustLayout();
+
+	return TRUE;
+}
+
+HBRUSH CExplorerHeader::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
+{
+	// Call base class version at first, else it will override changes
+	HBRUSH hbr = CWnd::OnCtlColor(pDC, pWnd, nCtlColor);
+
+	if (IsCtrlThemed())
+		if ((nCtlColor==CTLCOLOR_BTN) || (nCtlColor==CTLCOLOR_STATIC))
+		{
+			CRect rc; 
+			pWnd->GetWindowRect(&rc);
+			ScreenToClient(&rc);
+
+			pDC->SetBkMode(TRANSPARENT);
+			pDC->SetBrushOrg(-rc.left, -rc.top);
+
+			hbr = hBackgroundBrush;
+		}
+
+	return hbr;
+}
+
 void CExplorerHeader::OnLButtonDown(UINT nFlags, CPoint point)
 {
 	ClientToScreen(&point);
@@ -196,4 +307,15 @@ void CExplorerHeader::OnRButtonUp(UINT nFlags, CPoint point)
 	ClientToScreen(&point);
 	GetParent()->ScreenToClient(&point);
 	GetParent()->SendMessage(WM_RBUTTONUP, (WPARAM)nFlags, MAKELPARAM(point.x, point.y));
+}
+
+void CExplorerHeader::OnSize(UINT nType, INT cx, INT cy)
+{
+	CWnd::OnSize(nType, cx, cy);
+	AdjustLayout();
+}
+
+void CExplorerHeader::OnAdjustLayout()
+{
+	AdjustLayout();
 }

@@ -20,21 +20,16 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_WM_CLOSE()
 	ON_WM_DESTROY()
 
-	ON_UPDATE_COMMAND_UI_RANGE(ID_APP_NEWVIEW, ID_APP_VIEW_TAGCLOUD, OnUpdateAppCommands)
+	ON_UPDATE_COMMAND_UI_RANGE(ID_APP_NEWVIEW, ID_VIEW_AUTODIRS, OnUpdateAppCommands)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_AUTODIRS, OnUpdateAppCommands)
-	ON_UPDATE_COMMAND_UI_RANGE(ID_SORT_FILENAME, ID_SORT_FILENAME+99, OnUpdateSortCommands)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_NAV_BACK, ID_NAV_GOTOHISTORY, OnUpdateNavCommands)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_PANE_FILTERWND, ID_PANE_HISTORYWND, OnUpdatePaneCommands)
-	ON_UPDATE_COMMAND_UI_RANGE(ID_DROP_NAME, ID_DROP_DIMENSION, OnUpdateDropCommands)
 
 	ON_COMMAND(ID_APP_CLOSE, OnClose)
 	ON_COMMAND(ID_APP_CLOSEOTHERS, OnCloseOthers)
 	ON_COMMAND(ID_APP_SORTOPTIONS, OnSortOptions)
 	ON_COMMAND(ID_APP_VIEWOPTIONS, OnViewOptions)
 	ON_COMMAND(ID_VIEW_AUTODIRS, OnToggleAutoDirs)
-
-	ON_COMMAND_RANGE(ID_APP_VIEW_LARGEICONS, ID_APP_VIEW_TAGCLOUD, OnChangeChildView)
-	ON_COMMAND_RANGE(ID_SORT_FILENAME, ID_SORT_FILENAME+99, OnSort)
 
 	ON_COMMAND(ID_PANE_FILTERWND, OnToggleFilterWnd)
 	ON_COMMAND(ID_PANE_INSPECTORWND, OnToggleInspectorWnd)
@@ -287,7 +282,6 @@ void CMainFrame::OnToggleAutoDirs()
 
 void CMainFrame::OnUpdateAppCommands(CCmdUI* pCmdUI)
 {
-	UINT view;
 	switch (pCmdUI->m_nID)
 	{
 	case ID_APP_CLOSEOTHERS:
@@ -297,23 +291,10 @@ void CMainFrame::OnUpdateAppCommands(CCmdUI* pCmdUI)
 		pCmdUI->SetCheck((ActiveViewParameters->AutoDirs) || (ActiveContextID>=LFContextSubfolderDefault));
 		pCmdUI->Enable((theApp.m_Contexts[ActiveContextID]->AllowGroups) && (ActiveViewParameters->Mode<=LFViewPreview));
 		break;
-	case ID_APP_VIEW_LARGEICONS:
-	case ID_APP_VIEW_SMALLICONS:
-	case ID_APP_VIEW_LIST:
-	case ID_APP_VIEW_DETAILS:
-	case ID_APP_VIEW_TILES:
-	case ID_APP_VIEW_SEARCHRESULT:
-	case ID_APP_VIEW_PREVIEW:
-	case ID_APP_VIEW_CALENDAR:
-	case ID_APP_VIEW_GLOBE:
-	case ID_APP_VIEW_TAGCLOUD:
-		view = pCmdUI->m_nID-ID_APP_VIEW_LARGEICONS+LFViewLargeIcons;
-		pCmdUI->SetCheck(ActiveViewID==(INT)view);
-		pCmdUI->Enable(theApp.m_AllowedViews[ActiveContextID]->IsSet(view));
 	}
 }
 
-void CMainFrame::OnSort(UINT nID)
+/*void CMainFrame::OnSort(UINT nID)
 {
 	nID -= ID_SORT_FILENAME;
 	if (ActiveViewParameters->SortBy!=nID)
@@ -335,56 +316,7 @@ void CMainFrame::OnUpdateSortCommands(CCmdUI* pCmdUI)
 	UINT attr = pCmdUI->m_nID-ID_SORT_FILENAME;
 	pCmdUI->SetCheck(ActiveViewParameters->SortBy==attr);
 	pCmdUI->Enable(AttributeAllowedForSorting(attr));
-}
-
-void CMainFrame::OnUpdateDropCommands(CCmdUI* pCmdUI)
-{
-	switch (pCmdUI->m_nID)
-	{
-	case ID_DROP_NAME:
-		pCmdUI->SetCheck((ActiveViewParameters->SortBy==LFAttrFileName) ||
-			(ActiveViewParameters->SortBy==LFAttrTitle));
-		pCmdUI->Enable(AttributeAllowedForSorting(LFAttrFileName) ||
-			AttributeAllowedForSorting(LFAttrTitle));
-		break;
-	case ID_DROP_TIME:
-		pCmdUI->SetCheck((ActiveViewParameters->SortBy==LFAttrCreationTime) ||
-			(ActiveViewParameters->SortBy==LFAttrAddTime) ||
-			(ActiveViewParameters->SortBy==LFAttrFileTime) ||
-			(ActiveViewParameters->SortBy==LFAttrDeleteTime) ||
-			(ActiveViewParameters->SortBy==LFAttrRecordingTime) ||
-			(ActiveViewParameters->SortBy==LFAttrDueTime) ||
-			(ActiveViewParameters->SortBy==LFAttrDoneTime));
-		pCmdUI->Enable(AttributeAllowedForSorting(LFAttrCreationTime) ||
-			AttributeAllowedForSorting(LFAttrAddTime) ||
-			AttributeAllowedForSorting(LFAttrFileTime) ||
-			AttributeAllowedForSorting(LFAttrDeleteTime) ||
-			AttributeAllowedForSorting(LFAttrRecordingTime) ||
-			AttributeAllowedForSorting(LFAttrDueTime) ||
-			AttributeAllowedForSorting(LFAttrDoneTime));
-		break;
-	case ID_DROP_LOCATION:
-		pCmdUI->SetCheck((ActiveViewParameters->SortBy==LFAttrLocationName) ||
-			(ActiveViewParameters->SortBy==LFAttrLocationIATA) ||
-			(ActiveViewParameters->SortBy==LFAttrLocationGPS));
-		pCmdUI->Enable(AttributeAllowedForSorting(LFAttrLocationName) ||
-			AttributeAllowedForSorting(LFAttrLocationIATA) ||
-			AttributeAllowedForSorting(LFAttrLocationGPS));
-		break;
-	case ID_DROP_DIMENSION:
-		pCmdUI->SetCheck((ActiveViewParameters->SortBy==LFAttrDimension) ||
-			(ActiveViewParameters->SortBy==LFAttrWidth) ||
-			(ActiveViewParameters->SortBy==LFAttrHeight) ||
-			(ActiveViewParameters->SortBy==LFAttrAspectRatio));
-		pCmdUI->Enable(AttributeAllowedForSorting(LFAttrDimension) ||
-			AttributeAllowedForSorting(LFAttrWidth) ||
-			AttributeAllowedForSorting(LFAttrHeight) ||
-			AttributeAllowedForSorting(LFAttrAspectRatio));
-		break;
-	default:
-		pCmdUI->Enable(TRUE);
-	}
-}
+}*/
 
 void CMainFrame::OnToggleFilterWnd()
 {
@@ -463,8 +395,8 @@ void CMainFrame::UpdateSearchResult(BOOL SetEmpty, FVPersistentData* Data)
 
 void CMainFrame::OnChangeChildView(UINT nID)
 {
-	ActiveViewParameters->Mode = nID-ID_APP_VIEW_LARGEICONS+LFViewLargeIcons;
-	theApp.UpdateViewOptions(ActiveContextID);
+//	ActiveViewParameters->Mode = nID-ID_APP_VIEW_LARGEICONS+LFViewLargeIcons;
+//	theApp.UpdateViewOptions(ActiveContextID);
 }
 
 BOOL CMainFrame::UpdateSelectedItems(LFVariantData* value1, LFVariantData* value2, LFVariantData* value3)
@@ -562,12 +494,11 @@ void CMainFrame::InitializeRibbon()
 	CString strCtx;
 
 	// Hauptschaltfläche initialisieren
-	m_MainButton.SetImage(IsClipboard ? IDB_CLIPBOARDBUTTON : IDB_MAINBUTTON);
 	strTemp = "Application menu";
 	m_MainButton.SetToolTipText(strTemp);
 
 	m_wndRibbonBar.SetApplicationButton(&m_MainButton, CSize (45, 45));
-	CMFCRibbonMainPanel* pMainPanel = m_wndRibbonBar.AddMainCategory(strTemp, IDB_APPMENU_16, IDB_APPMENU_32);
+	CMFCRibbonMainPanel* pMainPanel = m_wndRibbonBar.AddMainCategory(strTemp, 0, 0);
 
 		pMainPanel->Add(theApp.CommandButton(ID_APP_NEWVIEW, 0, 0));
 		pMainPanel->Add(new CMFCRibbonSeparator(TRUE));
@@ -597,7 +528,7 @@ void CMainFrame::InitializeRibbon()
 				pPanelPlaces->Add(theApp.CommandButton(ID_NAV_HOME, 4, 4));
 		}
 
-	strTemp = "View";
+	/*strTemp = "View";
 	CMFCRibbonCategory* pCategoryView = m_wndRibbonBar.AddCategory(strTemp, 0, IDB_VIEWS);
 
 		strTemp = "Arrange items by";
@@ -673,29 +604,7 @@ void CMainFrame::InitializeRibbon()
 		strTemp = "Aggregate";
 		CMFCRibbonPanel* pPanelAggregate = pCategoryView->AddPanel(strTemp, m_PanelImages.ExtractIcon(7));
 
-			pPanelAggregate->Add(theApp.CommandButton(ID_VIEW_AUTODIRS, 12, 12));
-
-		strTemp = "Display search result as";
-		CMFCRibbonPanel* pPanelDisplay = pCategoryView->AddPanel(strTemp, m_PanelImages.ExtractIcon(4));
-		pPanelDisplay->EnableLaunchButton(ID_APP_VIEWOPTIONS, 11);
-
-			pPanelDisplay->Add(theApp.CommandButton(ID_APP_VIEW_LARGEICONS, 0, 0));
-			pPanelDisplay->Add(theApp.CommandButton(ID_APP_VIEW_SMALLICONS, 1, 1));
-			pPanelDisplay->Add(theApp.CommandButton(ID_APP_VIEW_LIST, 2, 2));
-			pPanelDisplay->Add(theApp.CommandButton(ID_APP_VIEW_DETAILS, 3, 3));
-			pPanelDisplay->Add(theApp.CommandButton(ID_APP_VIEW_TILES, 4, 4));
-			pPanelDisplay->Add(theApp.CommandButton(ID_APP_VIEW_SEARCHRESULT, 5, 5));
-			pPanelDisplay->Add(theApp.CommandButton(ID_APP_VIEW_PREVIEW, 6, 6));
-
-			if (!IsClipboard)
-			{
-				pPanelDisplay->AddSeparator();
-				pPanelDisplay->Add(theApp.CommandButton(ID_APP_VIEW_CALENDAR, 7, 7));
-				pPanelDisplay->Add(theApp.CommandButton(ID_APP_VIEW_GLOBE, 8, 8));
-				pPanelDisplay->Add(theApp.CommandButton(ID_APP_VIEW_TAGCLOUD, 9, 9));
-			}
-
-	m_wndRibbonBar.SetActiveCategory(m_wndRibbonBar.GetCategory(1));
+			pPanelAggregate->Add(theApp.CommandButton(ID_VIEW_AUTODIRS, 12, 12));*/
 
 	// Symbolleistenbefehle für Schnellzugriff hinzufügen
 	CList<UINT, UINT> lstQATCmds;

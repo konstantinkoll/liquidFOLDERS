@@ -41,7 +41,7 @@ void CDropdownListCtrl::OnCustomDraw(NMHDR* pNMHDR, LRESULT* pResult)
 
 			CRect rect;
 			GetItemRect((INT)lplvcd->nmcd.dwItemSpec, rect, LVIR_BOUNDS);
-			::FillRect(lplvcd->nmcd.hdc, rect, CreateSolidBrush(lplvcd->clrTextBk));
+			FillRect(lplvcd->nmcd.hdc, rect, CreateSolidBrush(lplvcd->clrTextBk));
 			*pResult = CDRF_NOTIFYPOSTPAINT;
 			break;
 		}
@@ -351,8 +351,8 @@ void CDropdownSelector::OnPaint()
 {
 	CPaintDC pDC(this);
 
-	CRect rclient;
-	GetClientRect(rclient);
+	CRect rectClient;
+	GetClientRect(rectClient);
 
 	CDC dc;
 	dc.CreateCompatibleDC(&pDC);
@@ -360,8 +360,8 @@ void CDropdownSelector::OnPaint()
 
 	BITMAPINFO dib = { 0 };
 	dib.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-	dib.bmiHeader.biWidth = rclient.Width();
-	dib.bmiHeader.biHeight = -rclient.Height();
+	dib.bmiHeader.biWidth = rectClient.Width();
+	dib.bmiHeader.biHeight = -rectClient.Height();
 	dib.bmiHeader.biPlanes = 1;
 	dib.bmiHeader.biBitCount = 32;
 	dib.bmiHeader.biCompression = BI_RGB;
@@ -372,85 +372,85 @@ void CDropdownSelector::OnPaint()
 	Graphics g(dc);
 
 	CGlasWindow* pCtrlSite = (CGlasWindow*)GetParent();
-	pCtrlSite->DrawFrameBackground(&dc, rclient);
+	pCtrlSite->DrawFrameBackground(&dc, rectClient);
 	const BYTE Alpha = m_Dropped ? 0xFF : (m_Hover || (GetFocus()==this)) ? 0xF0 : 0xD0;
 
-	CRect rcontent(rclient);
+	CRect rectContent(rectClient);
 	if (hTheme)
 	{
-		CRect rbounds(rcontent);
-		rbounds.right--;
-		rbounds.bottom--;
+		CRect rectBounds(rectContent);
+		rectBounds.right--;
+		rectBounds.bottom--;
 
-		rcontent.DeflateRect(2, 2);
+		rectContent.DeflateRect(2, 2);
 		SolidBrush brush1(Color(Alpha, 0xFF, 0xFF, 0xFF));
-		g.FillRectangle(&brush1, rcontent.left, rcontent.top, rcontent.Width(), rcontent.Height());
+		g.FillRectangle(&brush1, rectContent.left, rectContent.top, rectContent.Width(), rectContent.Height());
 		g.SetSmoothingMode(SmoothingModeAntiAlias);
 
 		GraphicsPath path;
-		CreateRoundRectangle(rbounds, 2, path);
+		CreateRoundRectangle(rectBounds, 2, path);
 		Pen pen(Color(0x40, 0xFF, 0xFF, 0xFF));
 		g.DrawPath(&pen, &path);
-		rbounds.DeflateRect(1, 1);
+		rectBounds.DeflateRect(1, 1);
 
-		CreateRoundRectangle(rbounds, 1, path);
-		LinearGradientBrush brush2(Point(0, rbounds.top), Point(0, rbounds.bottom), Color(Alpha, 0x50, 0x50, 0x50), Color(Alpha, 0xB0, 0xB0, 0xB0));
+		CreateRoundRectangle(rectBounds, 1, path);
+		LinearGradientBrush brush2(Point(0, rectBounds.top), Point(0, rectBounds.bottom), Color(Alpha, 0x50, 0x50, 0x50), Color(Alpha, 0xB0, 0xB0, 0xB0));
 		pen.SetBrush(&brush2);
 		g.DrawPath(&pen, &path);
 	}
 	else
 	{
-		dc.Draw3dRect(rcontent, GetSysColor(COLOR_3DSHADOW), GetSysColor(COLOR_3DHIGHLIGHT));
-		rcontent.DeflateRect(1, 1);
+		dc.Draw3dRect(rectContent, GetSysColor(COLOR_3DSHADOW), GetSysColor(COLOR_3DHIGHLIGHT));
+		rectContent.DeflateRect(1, 1);
 		if (m_Dropped || (GetFocus()==this))
 		{
-			dc.Draw3dRect(rcontent, 0x000000, GetSysColor(COLOR_3DFACE));
-			rcontent.DeflateRect(1, 1);
-			dc.FillSolidRect(rcontent, GetSysColor(COLOR_WINDOW));
+			dc.Draw3dRect(rectContent, 0x000000, GetSysColor(COLOR_3DFACE));
+			rectContent.DeflateRect(1, 1);
+			dc.FillSolidRect(rectContent, GetSysColor(COLOR_WINDOW));
 		}
 		else
 		{
-			rcontent.DeflateRect(1, 1);
+			rectContent.DeflateRect(1, 1);
 		}
 	}
 
-	CRect rclip(rcontent);
-	rclip.left = rclip.right-GetSystemMetrics(SM_CXHSCROLL);
-	CRect rarrow(rclip);
+	CRect rectClip(rectContent);
+	rectClip.left = rectClip.right-GetSystemMetrics(SM_CXHSCROLL);
+	CRect rectArrow(rectClip);
 
 	if (hTheme)
 	{
 		// Hack to achieve the same style as Windows Explorer
 		if (p_App->OSVersion>OS_XP)
 		{
-			rarrow.InflateRect(1, 1);
+			rectArrow.InflateRect(1, 1);
 			if (m_Hover)
 			{
-				rclip.left--;
+				rectClip.left--;
 			}
 			else
 			{
-				rarrow.InflateRect(1, 1);
+				rectArrow.InflateRect(1, 1);
 			}
 		}
 
-		p_App->zDrawThemeBackground(hTheme, dc, CP_DROPDOWNBUTTON, m_Pressed ? CBXS_PRESSED : (m_Hover && !m_Dropped) ? CBXS_HOT : CBXS_NORMAL, rarrow, rclip);
+		p_App->zDrawThemeBackground(hTheme, dc, CP_DROPDOWNBUTTON, m_Pressed ? CBXS_PRESSED : (m_Hover && !m_Dropped) ? CBXS_HOT : CBXS_NORMAL, rectArrow, rectClip);
 	}
 	else
 	{
 		if (m_Hover || m_Pressed || m_Dropped)
-			dc.DrawFrameControl(rarrow, DFC_BUTTON, DFCS_TRANSPARENT | 16 | DFCS_HOT | (m_Pressed ? DFCS_PUSHED : 0));
+			dc.DrawFrameControl(rectArrow, DFC_BUTTON, DFCS_TRANSPARENT | 16 | DFCS_HOT | (m_Pressed ? DFCS_PUSHED : 0));
 
-		dc.DrawFrameControl(rarrow, DFC_MENU, DFCS_TRANSPARENT | 16 | (m_Pressed ? DFCS_PUSHED : (m_Hover && !m_Dropped) ? DFCS_HOT : DFCS_FLAT));
-		rclip.left--;
+		dc.DrawFrameControl(rectArrow, DFC_MENU, DFCS_TRANSPARENT | 16 | (m_Pressed ? DFCS_PUSHED : (m_Hover && !m_Dropped) ? DFCS_HOT : DFCS_FLAT));
+		rectClip.left--;
 
 		if (m_Hover || m_Pressed || m_Dropped)
-			dc.FillSolidRect(rclip.left, rclip.top, 1, rclip.Height(), GetSysColor(COLOR_3DFACE));
+			dc.FillSolidRect(rectClip.left, rectClip.top, 1, rectClip.Height(), GetSysColor(COLOR_3DFACE));
 	}
 
-	CRect rtext(rcontent);
-	rtext.right = rclip.left;
-	rtext.DeflateRect(BORDER, 0);
+	CRect rectText(rectContent);
+	rectText.right = rectClip.left;
+	rectText.DeflateRect(BORDER, 0);
 
 	CFont* pOldFont;
 
@@ -458,7 +458,7 @@ void CDropdownSelector::OnPaint()
 	{
 		pOldFont = dc.SelectObject(&p_App->m_ItalicFont);
 		dc.SetTextColor(0x808080);
-		dc.DrawText(m_EmptyHint, rtext, DT_SINGLELINE | DT_END_ELLIPSIS | DT_VCENTER);
+		dc.DrawText(m_EmptyHint, rectText, DT_SINGLELINE | DT_END_ELLIPSIS | DT_VCENTER);
 	}
 	else
 	{
@@ -469,8 +469,8 @@ void CDropdownSelector::OnPaint()
 		if (!m_Caption.IsEmpty())
 		{
 			dc.SetTextColor((m_Hover || m_Dropped) ? c1 : c2);
-			dc.DrawText(m_Caption, rtext, DT_SINGLELINE | DT_END_ELLIPSIS | DT_VCENTER);
-			rtext.left += dc.GetTextExtent(m_Caption, m_Caption.GetLength()).cx+BORDER;
+			dc.DrawText(m_Caption, rectText, DT_SINGLELINE | DT_END_ELLIPSIS | DT_VCENTER);
+			rectText.left += dc.GetTextExtent(m_Caption, m_Caption.GetLength()).cx+BORDER;
 		}
 
 		if (m_Icon)
@@ -478,17 +478,17 @@ void CDropdownSelector::OnPaint()
 			INT cx = GetSystemMetrics(SM_CXSMICON);
 			INT cy = GetSystemMetrics(SM_CYSMICON);
 
-			if (rtext.left+cx<rtext.right)
+			if (rectText.left+cx<rectText.right)
 			{
-				DrawIconEx(dc, rtext.left, rtext.top+(rtext.Height()-cy)/2, m_Icon, cx, cy, 0, NULL, DI_NORMAL);
-				rtext.left += cx+BORDER;
+				DrawIconEx(dc, rectText.left, rectText.top+(rectText.Height()-cy)/2, m_Icon, cx, cy, 0, NULL, DI_NORMAL);
+				rectText.left += cx+BORDER;
 			}
 		}
 
 		if (!m_DisplayName.IsEmpty())
 		{
 			dc.SetTextColor(c1);
-			dc.DrawText(m_DisplayName, rtext, DT_SINGLELINE | DT_END_ELLIPSIS | DT_VCENTER);
+			dc.DrawText(m_DisplayName, rectText, DT_SINGLELINE | DT_END_ELLIPSIS | DT_VCENTER);
 		}
 	}
 
@@ -496,26 +496,26 @@ void CDropdownSelector::OnPaint()
 
 	if ((GetFocus()==this) && (!m_Dropped) && (!hTheme))
 	{
-		rtext.InflateRect(3, -1);
+		rectText.InflateRect(3, -1);
 		dc.SetTextColor(0x000000);
-		dc.DrawFocusRect(rtext);
+		dc.DrawFocusRect(rectText);
 	}
 
 	// Set alpha
 	BITMAP bmp;
 	GetObject(hBmp, sizeof(BITMAP), &bmp);
-	BYTE* pBits = ((BYTE*)bmp.bmBits)+4*(rcontent.top*rclient.Width()+rcontent.left);
-	for (INT row=rcontent.top; row<rcontent.bottom; row++)
+	BYTE* pBits = ((BYTE*)bmp.bmBits)+4*(rectContent.top*rectClient.Width()+rectContent.left);
+	for (INT row=rectContent.top; row<rectContent.bottom; row++)
 	{
-		for (INT col=rcontent.left; col<rcontent.right; col++)
+		for (INT col=rectContent.left; col<rectContent.right; col++)
 		{
 			*(pBits+3) = Alpha;
 			pBits += 4;
 		}
-		pBits += 4*(rclient.Width()-rcontent.Width());
+		pBits += 4*(rectClient.Width()-rectContent.Width());
 	}
 
-	pDC.BitBlt(0, 0, rclient.Width(), rclient.Height(), &dc, 0, 0, SRCCOPY);
+	pDC.BitBlt(0, 0, rectClient.Width(), rectClient.Height(), &dc, 0, 0, SRCCOPY);
 
 	dc.SelectObject(hOldBitmap);
 	DeleteObject(hBmp);

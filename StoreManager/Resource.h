@@ -10,8 +10,6 @@
 #define IDB_DESCENDING                  135
 #define IDB_GROUPING                    136
 #define IDB_PANEL_16                    137
-#define IDB_APPMENU_32                  138
-#define IDB_APPMENU_16                  139
 #define IDB_RIBBONHOME_32               140
 #define IDB_RIBBONHOME_16               141
 #define IDB_INSPECTOR                   142
@@ -29,16 +27,6 @@
 #define ID_APP_CLOSEOTHERS              252
 #define ID_APP_VIEWOPTIONS              253
 #define ID_APP_SORTOPTIONS              254
-#define ID_APP_VIEW_LARGEICONS          300
-#define ID_APP_VIEW_SMALLICONS          301
-#define ID_APP_VIEW_LIST                302
-#define ID_APP_VIEW_DETAILS             303
-#define ID_APP_VIEW_TILES               304
-#define ID_APP_VIEW_SEARCHRESULT        305
-#define ID_APP_VIEW_PREVIEW             306
-#define ID_APP_VIEW_CALENDAR            307
-#define ID_APP_VIEW_GLOBE               308
-#define ID_APP_VIEW_TAGCLOUD            309
 #define ID_VIEW_AUTODIRS                354
 #define ID_NAV_BACK                     400
 #define ID_NAV_FORWARD                  401
@@ -85,10 +73,6 @@
 #define ID_SORT_RECORDINGTIME           743
 #define ID_SORT_DUETIME                 749
 #define ID_SORT_DONETIME                750
-#define ID_DROP_NAME                    820
-#define ID_DROP_TIME                    821
-#define ID_DROP_LOCATION                822
-#define ID_DROP_DIMENSION               823
 #define IDS_VIEWGROUP1                  1000
 #define IDS_VIEWGROUP2                  1001
 #define IDS_CONTEXTMENU_SELECTALL       1002
@@ -224,6 +208,18 @@
 #define IDM_TAGCLOUD_USECOLORS          5406
 #define IDM_TAGCLOUD_USEOPACITY         5407
 #define IDM_TAGCLOUD_SORT               5408
+#define IDM_ORGANIZE                    6000
+#define IDM_VIEW                        7000
+#define IDM_VIEW_LARGEICONS             7001
+#define IDM_VIEW_SMALLICONS             7002
+#define IDM_VIEW_LIST                   7003
+#define IDM_VIEW_DETAILS                7004
+#define IDM_VIEW_TILES                  7005
+#define IDM_VIEW_SEARCHRESULT           7006
+#define IDM_VIEW_PREVIEW                7007
+#define IDM_VIEW_CALENDAR               7008
+#define IDM_VIEW_GLOBE                  7009
+#define IDM_VIEW_TAGCLOUD               7010
 
 // Next default values for new objects
 // 

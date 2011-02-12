@@ -68,9 +68,6 @@ protected:
 	afx_msg void OnViewOptions();
 	afx_msg void OnToggleAutoDirs();
 	afx_msg void OnUpdateAppCommands(CCmdUI* pCmdUI);
-	afx_msg void OnSort(UINT nID);
-	afx_msg void OnUpdateSortCommands(CCmdUI* pCmdUI);
-	afx_msg void OnUpdateDropCommands(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateNavCommands(CCmdUI* pCmdUI);
 	afx_msg void OnToggleFilterWnd();
 	afx_msg void OnToggleInspectorWnd();
@@ -97,7 +94,6 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
-	BOOL AttributeAllowedForSorting(INT attr);
 	void Remember(CMainFrame* clip);
 	void InitializeRibbon();
 	void NavigateTo(LFFilter* f, UINT NavMode=NAVMODE_NORMAL, FVPersistentData* Data=NULL, INT FirstAggregate=-1, INT LastAggregate=-1);

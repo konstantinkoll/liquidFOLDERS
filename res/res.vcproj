@@ -508,22 +508,6 @@
 				>
 			</File>
 			<File
-				RelativePath="Ribbon\Close_16.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\Close_32.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\CloseAll_16.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\CloseAll_32.png"
-				>
-			</File>
-			<File
 				RelativePath="Ribbon\Delete_16.png"
 				>
 			</File>
@@ -553,14 +537,6 @@
 			</File>
 			<File
 				RelativePath=".\Ribbon\EditCondition_32.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\Exit_16.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\Exit_32.png"
 				>
 			</File>
 			<File
@@ -913,14 +889,6 @@
 			</File>
 			<File
 				RelativePath="Ribbon\Location_32.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\NewView_16.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\NewView_32.png"
 				>
 			</File>
 			<File

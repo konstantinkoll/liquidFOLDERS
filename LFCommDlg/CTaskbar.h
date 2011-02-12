@@ -15,7 +15,7 @@ class AFX_EXT_CLASS CTaskbar : public CWnd
 public:
 	CTaskbar();
 
-	virtual LRESULT DefWindowProc(UINT message, WPARAM wParam, LPARAM lParam);
+	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
 
 	BOOL Create(CWnd* pParentWnd, UINT ResID, UINT nID);
 	UINT GetPreferredHeight();

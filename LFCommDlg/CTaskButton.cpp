@@ -236,7 +236,7 @@ void CTaskButton::OnPaint()
 
 					if (Selected)
 					{
-						SolidBrush brush(Color(0x24+1, 0x50, 0x57, 0x62));
+						SolidBrush brush(Color(0x24, 0x50, 0x57, 0x62));
 						g.FillRectangle(&brush, rectBounds.left, rectBounds.top, rectBounds.Width()+1, rectBounds.Height()+1);
 					}
 					else
@@ -245,7 +245,7 @@ void CTaskButton::OnPaint()
 							SolidBrush brush1(Color(0x40, 0xFF, 0xFF, 0xFF));
 							g.FillRectangle(&brush1, rectBounds.left, rectBounds.top+1, rectBounds.Width(), rectBounds.Height()/2+1);
 
-							SolidBrush brush2(Color(0x40, 0xA0, 0xAF, 0xC3));
+							SolidBrush brush2(Color(0x28, 0xA0, 0xAF, 0xC3));
 							g.FillRectangle(&brush2, rectBounds.left, rectBounds.top+rectBounds.Height()/2+2, rectBounds.Width(), rectBounds.Height()/2-1);
 						}
 

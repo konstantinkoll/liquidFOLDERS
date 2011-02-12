@@ -45,6 +45,7 @@ BOOL ViewOptionsDlg::OnInitDialog()
 	{
 		CString tmpStr;
 		ENSURE(tmpStr.LoadString(IDS_VIEWGROUP1+a));
+
 		m_wndViewList.AddCategory(a, tmpStr, _T(""), TRUE);
 	}
 
@@ -62,7 +63,9 @@ BOOL ViewOptionsDlg::OnInitDialog()
 	{
 		if (theApp.m_AllowedViews[m_Context]->IsSet(a))
 		{
-			CString tmpStr = theApp.GetCommandName(ID_APP_VIEW_LARGEICONS+a);
+			CString tmpStr;
+			ENSURE(tmpStr.LoadString(IDM_VIEW_LARGEICONS+a));
+
 			lvi.lParam = (LPARAM)a;
 			lvi.pszText = tmpStr.GetBuffer();
 			lvi.iImage = a;
