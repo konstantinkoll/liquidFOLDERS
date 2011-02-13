@@ -817,9 +817,6 @@ LRESULT CMainView::OnGetMenu(WPARAM wParam, LPARAM /*lParam*/)
 		AppendAttribute(hPopupMenu, LFAttrHeight);
 		AppendPopup(IDS_CONTEXTMENU_DIMENSION);
 
-		ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_MORE));
-		AppendMenu(hMenu, MF_STRING, ID_APP_SORTOPTIONS, tmpStr);
-
 		if (theApp.m_Contexts[m_Context]->AllowGroups)
 		{
 			AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
@@ -827,6 +824,11 @@ LRESULT CMainView::OnGetMenu(WPARAM wParam, LPARAM /*lParam*/)
 			ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_AUTODIRS));
 			AppendMenu(hMenu, MF_STRING, ID_VIEW_AUTODIRS, tmpStr);
 		}
+
+		AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
+
+		ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_MORE));
+		AppendMenu(hMenu, MF_STRING, ID_APP_SORTOPTIONS, tmpStr);
 
 		break;
 	case IDM_VIEW:
