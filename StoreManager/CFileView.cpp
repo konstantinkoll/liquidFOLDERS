@@ -210,7 +210,7 @@ void CFileView::UpdateSearchResult(LFSearchResult* Result, FVPersistentData* Dat
 
 	if (p_Result)
 	{
-		BOOL NeedNewFocusItem = !GetItemData(m_FocusItem)->Valid;
+		BOOL NeedNewFocusItem = (m_FocusItem>=0) ? !GetItemData(m_FocusItem)->Valid : TRUE;
 
 		for (UINT a=0; a<p_Result->m_ItemCount; a++)
 		{
