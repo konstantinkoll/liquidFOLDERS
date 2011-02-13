@@ -74,7 +74,7 @@ void DrawSolidColor(CDC& dc, CRect rect, COLORREF clr, BOOL Themed)
 
 void DrawLegend(CDC& dc, CRect& rect, COLORREF clr, CString Text, BOOL Themed)
 {
-	INT Height = dc.GetTextExtent(_T("Wy"), 2).cy;
+	INT Height = dc.GetTextExtent(_T("Wy")).cy;
 
 	CRect rectColor(rect);
 	rectColor.bottom = rectColor.top+Height;
@@ -93,7 +93,7 @@ void DrawGraphCaption(CDC& dc, CRect& rect, UINT nID)
 {
 	CFont* pOldFont = dc.SelectObject(&theApp.m_DefaultFont);
 
-	INT Height = dc.GetTextExtent(_T("Wy"), 2).cy;
+	INT Height = dc.GetTextExtent(_T("Wy")).cy;
 
 	CString tmpStr;
 	ENSURE(tmpStr.LoadString(nID));

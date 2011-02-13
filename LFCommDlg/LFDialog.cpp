@@ -325,19 +325,21 @@ void LFDialog::OnSize(UINT nType, INT cx, INT cy)
 		CWnd* pWnd = m_BottomRightControls.GetNext(p);
 
 		CRect rect;
-		pWnd->GetWindowRect(rect);
+		pWnd->GetWindowRect(&rect);
 		ScreenToClient(&rect);
 
 		pWnd->SetWindowPos(NULL, rect.left+diff.x, rect.top+diff.y, rect.Width(), rect.Height(), SWP_NOSIZE | SWP_NOACTIVATE | SWP_NOZORDER);
+
+		MaxRight = min(MaxRight, rect.left+diff.x);
 	}
 
 	if (p_BottomLeftControl)
 	{
 		CRect rect;
-		p_BottomLeftControl->GetWindowRect(rect);
+		p_BottomLeftControl->GetWindowRect(&rect);
 		ScreenToClient(&rect);
 
-		p_BottomLeftControl->SetWindowPos(NULL, rect.left, rect.top+diff.y, MaxRight-2*rect.left, rect.Height(), SWP_NOACTIVATE | SWP_NOZORDER);
+		p_BottomLeftControl->SetWindowPos(NULL, rect.left, rect.top+diff.y, MaxRight-rect.left, rect.Height(), SWP_NOACTIVATE | SWP_NOZORDER);
 	}
 
 	AdjustLayout();

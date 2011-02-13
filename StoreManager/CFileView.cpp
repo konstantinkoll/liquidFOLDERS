@@ -997,11 +997,11 @@ INT CFileView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	CDC* dc = GetWindowDC();
 	CFont* pOldFont = dc->SelectObject(&theApp.m_DefaultFont);
-	m_FontHeight[0] = m_RowHeight = dc->GetTextExtent(_T("Wy"), 2).cy;
+	m_FontHeight[0] = m_RowHeight = dc->GetTextExtent(_T("Wy")).cy;
 	dc->SelectObject(&theApp.m_LargeFont);
-	m_FontHeight[1] = dc->GetTextExtent(_T("Wy"), 2).cy;
+	m_FontHeight[1] = dc->GetTextExtent(_T("Wy")).cy;
 	dc->SelectStockObject(DEFAULT_GUI_FONT);
-	m_FontHeight[2] = dc->GetTextExtent(_T("Wy"), 2).cy;
+	m_FontHeight[2] = dc->GetTextExtent(_T("Wy")).cy;
 	dc->SelectObject(pOldFont);
 	ReleaseDC(dc);
 

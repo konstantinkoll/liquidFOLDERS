@@ -59,23 +59,31 @@ void CHeaderButton::DrawItem(LPDRAWITEMSTRUCT /*lpDrawItemStruct*/)
 {
 }
 
-void CHeaderButton::SetValue(CString Value)
+void CHeaderButton::SetValue(CString Value, BOOL Repaint)
 {
 	m_Value = Value;
-	GetParent()->SendMessage(WM_ADJUSTLAYOUT);
+
+	if (Repaint)
+		GetParent()->SendMessage(WM_ADJUSTLAYOUT);
 }
 
-void CHeaderButton::GetPreferredSize(CSize& sz)
+void CHeaderButton::GetPreferredSize(CSize& sz, UINT& CaptionWidth)
 {
-//	INT l = 2*(BORDER+2)+1;
 	CDC* dc = GetDC();
 	HFONT hOldFont = IsCtrlThemed() ? (HFONT)dc->SelectObject(((LFApplication*)AfxGetApp())->m_DefaultFont.m_hObject) : (HFONT)dc->SelectStockObject(DEFAULT_GUI_FONT);
 	sz = dc->GetTextExtent(m_Value.IsEmpty() ? _T("Wy") : m_Value);
+	m_CaptionWidth = CaptionWidth = dc->GetTextExtent(m_Caption+_T(":")).cx;
 	dc->SelectObject(hOldFont);
 	ReleaseDC(dc);
 
 	sz.cx += 3*BORDER+2+7;
 	sz.cy += 2*BORDER;
+}
+
+void CHeaderButton::GetCaption(CString& Caption, UINT& CaptionWidth)
+{
+	Caption = m_Caption+_T(":");
+	CaptionWidth = m_CaptionWidth;
 }
 
 

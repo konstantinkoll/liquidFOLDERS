@@ -728,7 +728,7 @@ void CListView::DrawProperty(CDC& dc, CRect& rect, LFItemDescriptor* i, GridItem
 				CString tmpCaption(theApp.m_Attributes[Attr]->Name);
 				tmpCaption += _T(": ");
 				dc.DrawText(tmpCaption, rectText, DT_LEFT | DT_SINGLELINE);
-				rectText.left += dc.GetTextExtent(tmpCaption, tmpCaption.GetLength()).cx;
+				rectText.left += dc.GetTextExtent(tmpCaption).cx;
 			}
 
 			SwitchColor(dc, d);
@@ -753,7 +753,7 @@ INT CListView::GetMaxLabelWidth(INT Max)
 		for (INT a=0; a<(INT)p_Result->m_ItemCount; a++)
 		{
 			CString label = GetLabel(p_Result->m_Items[a]);
-			INT cx = dc->GetTextExtent(label, label.GetLength()).cx;
+			INT cx = dc->GetTextExtent(label).cx;
 
 			if (cx>Width)
 			{

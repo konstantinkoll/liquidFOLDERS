@@ -46,7 +46,6 @@ protected:
 
 	CMFCRibbonBar m_wndRibbonBar;
 	CMFCRibbonApplicationButton m_MainButton;
-	CMFCToolBarImages m_PanelImages;
 	CMFCRibbonStatusBar m_wndStatusBar;
 	CFilterWnd* m_wndFilter;
 	CHistoryWnd* m_wndHistory;
@@ -74,7 +73,6 @@ protected:
 	afx_msg void OnShowHistoryWnd();
 	afx_msg void OnToggleHistoryWnd();
 	afx_msg void OnUpdatePaneCommands(CCmdUI* pCmdUI);
-	afx_msg void OnChangeChildView(UINT nID);
 	afx_msg void OnNavigateBack();
 	afx_msg void OnNavigateForward();
 	afx_msg void OnNavigateReload();

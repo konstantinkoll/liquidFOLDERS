@@ -205,7 +205,7 @@ INT CPIDLDropdownWindow::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	theApp.m_SystemImageListLarge.GetImageInfo(0, &ii);
 	CDC* dc = GetWindowDC();
 	CFont* pOldFont = dc->SelectObject(&theApp.m_DefaultFont);
-	m_wndList.SetIconSpacing(CXDropdownListIconSpacing, ii.rcImage.bottom-ii.rcImage.top+dc->GetTextExtent(_T("Wy"), 2).cy*2+4);
+	m_wndList.SetIconSpacing(CXDropdownListIconSpacing, ii.rcImage.bottom-ii.rcImage.top+dc->GetTextExtent(_T("Wy")).cy*2+4);
 	dc->SelectObject(pOldFont);
 	ReleaseDC(dc);
 

@@ -313,7 +313,7 @@ void CCalendarView::GetMonthSize(LPSIZE Size)
 {
 	CDC* dc = GetWindowDC();
 	CFont* pOldFont = dc->SelectObject(&theApp.m_DefaultFont);
-	m_ColumnWidth = dc->GetTextExtent(_T("00"), 2).cx+2*PADDING;
+	m_ColumnWidth = dc->GetTextExtent(_T("00")).cx+2*PADDING;
 	dc->SelectObject(pOldFont);
 	ReleaseDC(dc);
 

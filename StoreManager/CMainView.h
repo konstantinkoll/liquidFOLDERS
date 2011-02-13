@@ -56,8 +56,13 @@ protected:
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	afx_msg void OnUpdateSelection();
 	afx_msg LRESULT OnRenameItem(WPARAM wParam, LPARAM lParam);
-	afx_msg LRESULT OnGetMenu(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnStoreAttributesChanged(WPARAM wParam, LPARAM lParam);
+
+	afx_msg LRESULT OnGetMenu(WPARAM wParam, LPARAM lParam);
+	afx_msg void OnSort(UINT nID);
+	afx_msg void OnUpdateSortCommands(CCmdUI* pCmdUI);
+	afx_msg void OnView(UINT nID);
+	afx_msg void OnUpdateViewCommands(CCmdUI* pCmdUI);
 
 	afx_msg void OnStoresCreateNew();
 	afx_msg void OnStoresMaintainAll();
@@ -108,7 +113,11 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
+	CHeaderButton* p_OrganizeButton;
+	CHeaderButton* p_ViewButton;
+
 	BOOL CreateFileView(UINT ViewID, FVPersistentData* Data);
+	void SetHeaderButtons();
 	void SetHeader();
 	void AdjustLayout();
 	void ExecuteContextMenu(CHAR Drive, LPCSTR verb);

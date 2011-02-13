@@ -460,14 +460,6 @@
 				>
 			</File>
 			<File
-				RelativePath="Ribbon\Back_16.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\Back_32.png"
-				>
-			</File>
-			<File
 				RelativePath="Ribbon\CalendarBack_16.png"
 				>
 			</File>
@@ -572,14 +564,6 @@
 				>
 			</File>
 			<File
-				RelativePath="Ribbon\Filter_16.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\Filter_32.png"
-				>
-			</File>
-			<File
 				RelativePath="Ribbon\Folder_16.png"
 				>
 			</File>
@@ -604,14 +588,6 @@
 				>
 			</File>
 			<File
-				RelativePath="Ribbon\Forward_16.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\Forward_32.png"
-				>
-			</File>
-			<File
 				RelativePath=".\Ribbon\Globe_FitToWindow_16.png"
 				>
 			</File>
@@ -633,22 +609,6 @@
 			</File>
 			<File
 				RelativePath=".\Ribbon\Grouping_32.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\History_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\History_32.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\Home_16.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\Home_32.png"
 				>
 			</File>
 			<File
@@ -916,14 +876,6 @@
 				>
 			</File>
 			<File
-				RelativePath="Ribbon\Reload_16.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\Reload_32.png"
-				>
-			</File>
-			<File
 				RelativePath=".\Ribbon\RemoveFromClipboard_16.png"
 				>
 			</File>
@@ -1012,11 +964,11 @@
 				>
 			</File>
 			<File
-				RelativePath="Ribbon\Stores_16.png"
+				RelativePath=".\Ribbon\Stores_16.png"
 				>
 			</File>
 			<File
-				RelativePath="Ribbon\Stores_32.png"
+				RelativePath=".\Ribbon\Stores_32.png"
 				>
 			</File>
 			<File

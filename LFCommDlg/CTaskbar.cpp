@@ -377,9 +377,9 @@ void CTaskbar::OnContextMenu(CWnd* /*pWnd*/, CPoint pos)
 		CTaskButton* btn = m_ButtonsLeft.GetNext(p);
 		if (btn->IsWindowEnabled())
 		{
-			WCHAR Text[256];
-			btn->GetWindowText(Text, 256);
-			menu.AppendMenu(0, btn->GetDlgCtrlID(), Text);
+			CString tmpStr;
+			btn->GetWindowText(tmpStr);
+			menu.AppendMenu(0, btn->GetDlgCtrlID(), _T("&")+tmpStr);
 		}
 	}
 
@@ -391,9 +391,9 @@ void CTaskbar::OnContextMenu(CWnd* /*pWnd*/, CPoint pos)
 		CTaskButton* btn = m_ButtonsRight.GetNext(p);
 		if (btn->IsWindowEnabled())
 		{
-			WCHAR Text[256];
-			btn->GetWindowText(Text, 256);
-			menu.AppendMenu(0, btn->GetDlgCtrlID(), Text);
+			CString tmpStr;
+			btn->GetWindowText(tmpStr);
+			menu.AppendMenu(0, btn->GetDlgCtrlID(), _T("&")+tmpStr);
 		}
 	}
 

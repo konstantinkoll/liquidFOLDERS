@@ -11,9 +11,9 @@
 
 extern AFX_EXTENSION_MODULE LFCommDlgDLL;
 
-#define BORDERLEFT      16
-#define BORDER          10
-#define MARGIN          4
+#define BORDERLEFT     16
+#define BORDER         10
+#define MARGIN         4
 
 CExplorerHeader::CExplorerHeader()
 	: CWnd()
@@ -22,6 +22,8 @@ CExplorerHeader::CExplorerHeader()
 	m_HintCol = 0x79675A;
 	hBackgroundBrush = NULL;
 	m_GradientLine = TRUE;
+	p_App = (LFApplication*)AfxGetApp();
+	m_FontHeight = m_RightEdge = 0;
 }
 
 BOOL CExplorerHeader::Create(CWnd* pParentWnd, UINT nID)
@@ -36,7 +38,7 @@ BOOL CExplorerHeader::Create(CWnd* pParentWnd, UINT nID)
 
 BOOL CExplorerHeader::OnCommand(WPARAM wParam, LPARAM /*lParam*/)
 {
-	HMENU hMenu = (HMENU)GetOwner()->SendMessage(WM_GETMENU, wParam);
+	HMENU hMenu = (HMENU)GetParent()->SendMessage(WM_GETMENU, wParam);
 	if (hMenu)
 	{
 		CWnd* pWnd = GetDlgItem(wParam);
@@ -83,16 +85,18 @@ void CExplorerHeader::SetLineStyle(BOOL GradientLine, BOOL Repaint)
 
 UINT CExplorerHeader::GetPreferredHeight()
 {
-	LOGFONT lf;
-	UINT h = 3*BORDER;
+	UINT h = 2*BORDER+MARGIN;
 
-	((LFApplication*)AfxGetApp())->m_CaptionFont.GetLogFont(&lf);
-	h += abs(lf.lfHeight);
+	CDC* dc = GetDC();
+	CFont* pOldFont = dc->SelectObject(&p_App->m_CaptionFont);
+	h += dc->GetTextExtent(_T("Wy")).cy;
+	dc->SelectObject(p_App->m_DefaultFont);
+	m_FontHeight = dc->GetTextExtent(_T("Wy")).cy;
+	h += m_FontHeight;
+	dc->SelectObject(pOldFont);
+	ReleaseDC(dc);
 
-	((LFApplication*)AfxGetApp())->m_DefaultFont.GetLogFont(&lf);
-	h += abs(lf.lfHeight);
-
-	return max(h, max(60, m_Buttons.GetCount()*((UINT)abs(lf.lfHeight)+8+MARGIN)+MARGIN+1));
+	return max(h, max(60, m_Buttons.GetCount()*(m_FontHeight+8+MARGIN/2)+MARGIN+MARGIN/2+1));
 }
 
 CHeaderButton* CExplorerHeader::AddButton(UINT nID)
@@ -130,17 +134,21 @@ void CExplorerHeader::AdjustLayout()
 	CRect rect;
 	GetClientRect(rect);
 
-	INT Row = MARGIN;
+	m_RightEdge = rect.right;
+	INT Row = max(MARGIN, (rect.Height()-m_Buttons.GetCount()*(m_FontHeight+8+MARGIN/2)-MARGIN-MARGIN/2-1)/2);
 
 	for (POSITION p=m_Buttons.GetHeadPosition(); p; )
 	{
 		CHeaderButton* btn = m_Buttons.GetNext(p);
 
 		CSize sz;
-		btn->GetPreferredSize(sz);
-		btn->SetWindowPos(NULL, rect.right-sz.cx-BORDER, Row, sz.cx, sz.cy, SWP_NOZORDER | SWP_NOACTIVATE);
+		UINT CaptionWidth;
+		btn->GetPreferredSize(sz, CaptionWidth);
+		btn->SetWindowPos(NULL, rect.right-sz.cx-BORDERLEFT, Row, sz.cx, sz.cy, SWP_NOZORDER | SWP_NOACTIVATE);
 
-		Row += sz.cy+MARGIN;
+		m_RightEdge = min(m_RightEdge, rect.right-sz.cx-CaptionWidth-BORDER-BORDERLEFT-MARGIN);
+
+		Row += sz.cy+MARGIN/2;
 	}
 
 	SetRedraw(TRUE);
@@ -249,17 +257,33 @@ void CExplorerHeader::OnPaint()
 		dc.FillSolidRect(rect, GetSysColor(COLOR_WINDOW));
 	}
 
-	CFont* pOldFont = dc.SelectObject(&((LFApplication*)AfxGetApp())->m_CaptionFont);
-	CSize sz = dc.GetTextExtent(m_Caption, m_Caption.GetLength());
-	CRect rectText(BORDERLEFT, BORDER, rect.right, BORDER+sz.cy);
+	CFont* pOldFont = dc.SelectObject(&p_App->m_CaptionFont);
+	CSize sz = dc.GetTextExtent(m_Caption);
+	CRect rectText(BORDERLEFT, BORDER, m_RightEdge, BORDER+sz.cy);
 	dc.SetTextColor(Themed ? m_CaptionCol : GetSysColor(COLOR_WINDOWTEXT));
-	dc.DrawText(m_Caption, rectText, DT_SINGLELINE | DT_END_ELLIPSIS);
+	dc.DrawText(m_Caption, rectText, DT_LEFT | DT_VCENTER | DT_SINGLELINE | DT_END_ELLIPSIS);
 
-	dc.SelectObject(&((LFApplication*)AfxGetApp())->m_DefaultFont);
-	sz = dc.GetTextExtent(m_Hint, m_Hint.GetLength());
-	rectText.SetRect(BORDERLEFT, rect.bottom-sz.cy-BORDER-1, rect.right, rect.bottom-BORDER-1);
+	dc.SelectObject(&p_App->m_DefaultFont);
+	sz = dc.GetTextExtent(m_Hint);
+	rectText.SetRect(BORDERLEFT, rect.bottom-sz.cy-BORDER-1, m_RightEdge, rect.bottom-BORDER-1);
 	dc.SetTextColor(Themed ? m_HintCol : GetSysColor(COLOR_WINDOWTEXT));
-	dc.DrawText(m_Hint, rectText, DT_SINGLELINE | DT_END_ELLIPSIS);
+	dc.DrawText(m_Hint, rectText, DT_LEFT | DT_VCENTER | DT_SINGLELINE | DT_END_ELLIPSIS);
+
+	for (POSITION p=m_Buttons.GetHeadPosition(); p; )
+	{
+		CHeaderButton* btn = m_Buttons.GetNext(p);
+
+		CRect rect;
+		btn->GetWindowRect(&rect);
+		ScreenToClient(&rect);
+
+		CString Caption;
+		UINT CaptionWidth;
+		btn->GetCaption(Caption, CaptionWidth);
+
+		CRect rectCaption(rect.left-CaptionWidth-MARGIN, rect.top, rect.left, rect.bottom);
+		dc.DrawText(Caption, rectCaption, DT_LEFT | DT_VCENTER | DT_SINGLELINE | DT_END_ELLIPSIS);
+	}
 
 	dc.SelectObject(pOldFont);
 

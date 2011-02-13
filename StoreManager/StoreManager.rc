@@ -67,12 +67,9 @@ IDB_GLOBEICONS_ALPHA    PNG                     "res\\GlobeIcons_Alpha.png"
 // Bitmap
 //
 
-IDB_PANEL_16            BITMAP                  "res\\Panel_16.bmp"
 IDB_DESCENDING          BITMAP                  "res\\Descending_16.bmp"
 IDB_ASCENDING           BITMAP                  "res\\Ascending_16.bmp"
 IDB_GROUPING            BITMAP                  "res\\Grouping_32.bmp"
-IDB_RIBBONHOME_16       BITMAP                  "res\\Ribbon_Home_16.bmp"
-IDB_RIBBONHOME_32       BITMAP                  "res\\Ribbon_Home_32.bmp"
 ID_PANE_INSPECTORWND    BITMAP                  "res\\Toolbar_Inspector.bmp"
 ID_PANE_FILTERWND       BITMAP                  "res\\Toolbar_Filter.bmp"
 IDB_TASKS               BITMAP                  "res\\Tasks.bmp"
@@ -742,6 +739,10 @@ BEGIN
     IDS_CONTEXTMENU_REMEMBER "Re&member"
     IDS_CONTEXTMENU_REMOVE  "Re&move from clipboard"
     IDS_CONTEXTMENU_AUTOSIZEALL "Size all &columns to fit"
+    IDS_CONTEXTMENU_MORE    "&More..."
+    IDS_CONTEXTMENU_TIME    "&Time"
+    IDS_CONTEXTMENU_LOCATION "&Location"
+    IDS_CONTEXTMENU_DIMENSION "&Dimension"
     IDS_TXTFILEFILTER       "Text files"
     IDS_ATTRIBUTENOTSORTABLE "This property is not suitable for sorting."
     IDS_NOITEMSSELECTED     "No items selected"

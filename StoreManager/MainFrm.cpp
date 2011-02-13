@@ -124,10 +124,6 @@ INT CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		SetTitle(tmpStr);
 	}
 
-	// Bereichsbilder laden
-	m_PanelImages.SetImageSize(CSize(16, 16));
-	m_PanelImages.Load(IDB_PANEL_16);
-
 	// Ribbon erstellen
 	m_wndRibbonBar.Create(this);
 	m_wndRibbonBar.EnablePrintPreview(FALSE);
@@ -141,10 +137,10 @@ INT CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	CMFCRibbonButtonsGroup* pGroupPanels = new CMFCRibbonButtonsGroup();
 	if (!IsClipboard)
 	{
-		pGroupPanels->AddButton(new CMFCRibbonButton(ID_PANE_FILTERWND, _T(""), m_PanelImages.ExtractIcon(1)));
-		pGroupPanels->AddButton(new CMFCRibbonButton(ID_PANE_HISTORYWND, _T(""), m_PanelImages.ExtractIcon(10)));
+		pGroupPanels->AddButton(new CMFCRibbonButton(ID_PANE_FILTERWND, _T("")));
+		pGroupPanels->AddButton(new CMFCRibbonButton(ID_PANE_HISTORYWND, _T("")));
 	}
-	pGroupPanels->AddButton(new CMFCRibbonButton(ID_PANE_INSPECTORWND, _T(""), m_PanelImages.ExtractIcon(2)));
+	pGroupPanels->AddButton(new CMFCRibbonButton(ID_PANE_INSPECTORWND, _T("")));
 
 	tmpStr = "Panes";
 	m_wndStatusBar.AddExtendedElement(pGroupPanels, tmpStr);
@@ -158,7 +154,6 @@ INT CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		m_wndFilter = new CFilterWnd();
 		if (!m_wndFilter->Create(tmpStr, this, CRect(0, 0, 250, 550), TRUE, ID_PANE_FILTERWND, dwStyle | CBRS_LEFT))
 			return -1;
-		m_wndFilter->SetIcon(m_PanelImages.ExtractIcon(1), FALSE);
 		m_wndFilter->EnableDocking(CBRS_ALIGN_ANY | CBRS_FLOAT_MULTI);
 
 		// History-Pane erstellen
@@ -166,7 +161,6 @@ INT CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		m_wndHistory = new CHistoryWnd();
 		if (!m_wndHistory->Create(tmpStr, this, CRect(0, 0, 250, 550), TRUE, ID_PANE_HISTORYWND, dwStyle | CBRS_LEFT))
 			return -1;
-		m_wndHistory->SetIcon(m_PanelImages.ExtractIcon(10), FALSE);
 		m_wndHistory->EnableDocking(CBRS_ALIGN_ANY | CBRS_FLOAT_MULTI);
 
 		// Tabs
@@ -192,7 +186,6 @@ INT CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	tmpStr = "Inspector";
 	if (!m_wndInspector.Create(tmpStr, this, CRect(0, 0, 250, 550), TRUE, ID_PANE_INSPECTORWND, dwStyle | CBRS_RIGHT | WS_VISIBLE))
 		return -1;
-	m_wndInspector.SetIcon(m_PanelImages.ExtractIcon(2), FALSE);
 	m_wndInspector.EnableDocking(CBRS_ALIGN_ANY | CBRS_FLOAT_MULTI);
 	DockPane(&m_wndInspector, AFX_IDW_DOCKBAR_RIGHT);
 
@@ -294,30 +287,6 @@ void CMainFrame::OnUpdateAppCommands(CCmdUI* pCmdUI)
 	}
 }
 
-/*void CMainFrame::OnSort(UINT nID)
-{
-	nID -= ID_SORT_FILENAME;
-	if (ActiveViewParameters->SortBy!=nID)
-	{
-		ActiveViewParameters->SortBy = nID;
-		ActiveViewParameters->Descending = theApp.m_Attributes[nID]->PreferDescendingSort;
-
-		theApp.UpdateSortOptions(ActiveContextID);
-	}
-}
-
-BOOL CMainFrame::AttributeAllowedForSorting(INT attr)
-{
-	return theApp.m_Contexts[ActiveContextID]->AllowedAttributes->IsSet(attr);
-}
-
-void CMainFrame::OnUpdateSortCommands(CCmdUI* pCmdUI)
-{
-	UINT attr = pCmdUI->m_nID-ID_SORT_FILENAME;
-	pCmdUI->SetCheck(ActiveViewParameters->SortBy==attr);
-	pCmdUI->Enable(AttributeAllowedForSorting(attr));
-}*/
-
 void CMainFrame::OnToggleFilterWnd()
 {
 	if (m_wndFilter)
@@ -391,12 +360,6 @@ void CMainFrame::UpdateSearchResult(BOOL SetEmpty, FVPersistentData* Data)
 	m_wndMainView.UpdateSearchResult(SetEmpty ? NULL : RawFiles, SetEmpty ? NULL : CookedFiles, Data);
 
 	ActiveViewID = ActiveViewParameters->Mode;
-}
-
-void CMainFrame::OnChangeChildView(UINT nID)
-{
-//	ActiveViewParameters->Mode = nID-ID_APP_VIEW_LARGEICONS+LFViewLargeIcons;
-//	theApp.UpdateViewOptions(ActiveContextID);
 }
 
 BOOL CMainFrame::UpdateSelectedItems(LFVariantData* value1, LFVariantData* value2, LFVariantData* value3)
@@ -509,12 +472,12 @@ void CMainFrame::InitializeRibbon()
 		pMainPanel->AddToBottom(new CMFCRibbonMainPanelButton(ID_APP_EXIT, strTemp, 3));
 
 	strTemp = "Home";
-	CMFCRibbonCategory* pCategoryHome = m_wndRibbonBar.AddCategory(strTemp, IDB_RIBBONHOME_16, IDB_RIBBONHOME_32);
+	CMFCRibbonCategory* pCategoryHome = m_wndRibbonBar.AddCategory(strTemp, 0, 0);
 
 		if (!IsClipboard)
 		{
 			strTemp = "Navigate";
-			CMFCRibbonPanel* pPanelNavigate = pCategoryHome->AddPanel(strTemp, m_PanelImages.ExtractIcon(5));
+			CMFCRibbonPanel* pPanelNavigate = pCategoryHome->AddPanel(strTemp);
 
 				pPanelNavigate->Add(theApp.CommandButton(ID_NAV_BACK, 0, 0));
 				pPanelNavigate->Add(theApp.CommandButton(ID_NAV_FORWARD, 1, 1));
@@ -522,95 +485,11 @@ void CMainFrame::InitializeRibbon()
 				pPanelNavigate->Add(theApp.CommandButton(ID_NAV_RELOAD, 2, 2));
 
 			strTemp = "Places";
-			CMFCRibbonPanel* pPanelPlaces = pCategoryHome->AddPanel(strTemp, m_PanelImages.ExtractIcon(16));
+			CMFCRibbonPanel* pPanelPlaces = pCategoryHome->AddPanel(strTemp);
 
 				pPanelPlaces->Add(theApp.CommandButton(ID_NAV_STORES, 3, 3));
 				pPanelPlaces->Add(theApp.CommandButton(ID_NAV_HOME, 4, 4));
 		}
-
-	/*strTemp = "View";
-	CMFCRibbonCategory* pCategoryView = m_wndRibbonBar.AddCategory(strTemp, 0, IDB_VIEWS);
-
-		strTemp = "Arrange items by";
-		CMFCRibbonPanel* pPanelArrange = pCategoryView->AddPanel(strTemp, m_PanelImages.ExtractIcon(6));
-		pPanelArrange->EnableLaunchButton(ID_APP_SORTOPTIONS, 13);
-
-			strTemp = "Name";
-			CMFCRibbonButton* pBtnSortName = new CMFCRibbonButton(ID_DROP_NAME, strTemp, 14, 14);
-			pBtnSortName->SetDefaultCommand(FALSE);
-
-				strTemp = "By name";
-				pBtnSortName->AddSubItem(new CMFCRibbonLabel(strTemp));
-				pBtnSortName->AddSubItem(new CMFCRibbonButton(ID_SORT_FILENAME, theApp.m_Attributes[LFAttrFileName]->Name, 15, 15));
-				pBtnSortName->AddSubItem(new CMFCRibbonButton(ID_SORT_TITLE, theApp.m_Attributes[LFAttrTitle]->Name, 16, 16));
-
-			pPanelArrange->Add(pBtnSortName);
-
-			strTemp = "Time";
-			CMFCRibbonButton* pBtnSortDate = new CMFCRibbonButton(ID_DROP_TIME, strTemp, 17, 17);
-			pBtnSortDate->SetDefaultCommand(FALSE);
-
-				strTemp = "By timestamp";
-				pBtnSortDate->AddSubItem(new CMFCRibbonLabel(strTemp));
-				pBtnSortDate->AddSubItem(new CMFCRibbonButton(ID_SORT_CREATIONTIME, theApp.m_Attributes[LFAttrCreationTime]->Name, 18, 18));
-				pBtnSortDate->AddSubItem(new CMFCRibbonButton(ID_SORT_ADDTIME, theApp.m_Attributes[LFAttrAddTime]->Name, 19, 19));
-				pBtnSortDate->AddSubItem(new CMFCRibbonButton(ID_SORT_FILETIME, theApp.m_Attributes[LFAttrFileTime]->Name, 20, 20));
-				pBtnSortDate->AddSubItem(new CMFCRibbonButton(ID_SORT_RECORDINGTIME, theApp.m_Attributes[LFAttrRecordingTime]->Name, 21, 21));
-				pBtnSortDate->AddSubItem(new CMFCRibbonButton(ID_SORT_DELETETIME, theApp.m_Attributes[LFAttrDeleteTime]->Name, 22, 22));
-				strTemp = "By workflow";
-				pBtnSortDate->AddSubItem(new CMFCRibbonLabel(strTemp));
-				pBtnSortDate->AddSubItem(new CMFCRibbonButton(ID_SORT_DUETIME, theApp.m_Attributes[LFAttrDueTime]->Name, 23, 23));
-				pBtnSortDate->AddSubItem(new CMFCRibbonButton(ID_SORT_DONETIME, theApp.m_Attributes[LFAttrDoneTime]->Name, 24, 24));
-
-			pPanelArrange->Add(pBtnSortDate);
-
-			strTemp = "Location";
-			CMFCRibbonButton* pBtnSortLocation = new CMFCRibbonButton(ID_DROP_LOCATION, strTemp, 8, 8);
-			pBtnSortLocation->SetDefaultCommand(FALSE);
-
-				strTemp = "By location";
-				pBtnSortLocation->AddSubItem(new CMFCRibbonLabel(strTemp));
-				pBtnSortLocation->AddSubItem(new CMFCRibbonButton(ID_SORT_LOCATIONNAME, theApp.m_Attributes[LFAttrLocationName]->Name, 25, 25));
-				pBtnSortLocation->AddSubItem(new CMFCRibbonButton(ID_SORT_LOCATIONIATA, theApp.m_Attributes[LFAttrLocationIATA]->Name, 26, 26));
-				pBtnSortLocation->AddSubItem(new CMFCRibbonButton(ID_SORT_LOCATIONGPS, theApp.m_Attributes[LFAttrLocationGPS]->Name, 27, 27));
-
-			pPanelArrange->Add(pBtnSortLocation);
-
-			pPanelArrange->Add(new CMFCRibbonButton(ID_SORT_RATING, theApp.m_Attributes[LFAttrRating]->Name, 28, 28));
-			pPanelArrange->Add(new CMFCRibbonButton(ID_SORT_ROLL, theApp.m_Attributes[LFAttrRoll]->Name, 29, 29));
-
-			pPanelArrange->AddSeparator();
-
-			pPanelArrange->Add(new CMFCRibbonButton(ID_SORT_ARTIST, theApp.m_Attributes[LFAttrArtist]->Name, 30, 30));
-			pPanelArrange->Add(new CMFCRibbonButton(ID_SORT_COMMENT, theApp.m_Attributes[LFAttrComment]->Name, 31, 31));
-			pPanelArrange->Add(new CMFCRibbonButton(ID_SORT_DURATION, theApp.m_Attributes[LFAttrDuration]->Name, 32, 32));
-			pPanelArrange->Add(new CMFCRibbonButton(ID_SORT_LANGUAGE, theApp.m_Attributes[LFAttrLanguage]->Name, 33, 33));
-
-			CMFCRibbonButton* pBtnSortResolution = new CMFCRibbonButton(ID_DROP_DIMENSION, theApp.m_Attributes[LFAttrDimension]->Name, 34, 34);
-			pBtnSortResolution->SetDefaultCommand(FALSE);
-
-				strTemp = "By overall dimension";
-				pBtnSortResolution->AddSubItem(new CMFCRibbonLabel(strTemp));
-				pBtnSortResolution->AddSubItem(new CMFCRibbonButton(ID_SORT_ASPECTRATIO, theApp.m_Attributes[LFAttrAspectRatio]->Name, 37, 37));
-				pBtnSortResolution->AddSubItem(new CMFCRibbonButton(ID_SORT_DIMENSION, theApp.m_Attributes[LFAttrDimension]->Name, 34, 34));
-				strTemp = "By edge";
-				pBtnSortResolution->AddSubItem(new CMFCRibbonLabel(strTemp));
-				pBtnSortResolution->AddSubItem(new CMFCRibbonButton(ID_SORT_WIDTH, theApp.m_Attributes[LFAttrWidth]->Name, 35, 35));
-				pBtnSortResolution->AddSubItem(new CMFCRibbonButton(ID_SORT_HEIGHT, theApp.m_Attributes[LFAttrHeight]->Name, 36, 36));
-
-			pPanelArrange->Add(pBtnSortResolution);
-			pPanelArrange->Add(new CMFCRibbonButton(ID_SORT_TAGS, theApp.m_Attributes[LFAttrTags]->Name, 38, 38));
-
-		strTemp = "Aggregate";
-		CMFCRibbonPanel* pPanelAggregate = pCategoryView->AddPanel(strTemp, m_PanelImages.ExtractIcon(7));
-
-			pPanelAggregate->Add(theApp.CommandButton(ID_VIEW_AUTODIRS, 12, 12));*/
-
-	// Symbolleistenbefehle für Schnellzugriff hinzufügen
-	CList<UINT, UINT> lstQATCmds;
-	lstQATCmds.AddTail(ID_NAV_BACK);
-	lstQATCmds.AddTail(ID_NAV_FORWARD);
-	m_wndRibbonBar.SetQuickAccessCommands(lstQATCmds);
 }
 
 

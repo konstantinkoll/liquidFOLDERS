@@ -134,7 +134,7 @@ BOOL LFChooseStoreDlg::OnInitDialog()
 	pApp->m_CoreImageListLarge.GetImageInfo(0, &ii);
 	CDC* dc = GetWindowDC();
 	CFont* pOldFont = dc->SelectObject(&pApp->m_DefaultFont);
-	m_wndExplorerList.SetIconSpacing(GetSystemMetrics(SM_CXICONSPACING), ii.rcImage.bottom-ii.rcImage.top+dc->GetTextExtent(_T("Wy"), 2).cy*2+4);
+	m_wndExplorerList.SetIconSpacing(GetSystemMetrics(SM_CXICONSPACING), ii.rcImage.bottom-ii.rcImage.top+dc->GetTextExtent(_T("Wy")).cy*2+4);
 	dc->SelectObject(pOldFont);
 	ReleaseDC(dc);
 

@@ -20,6 +20,7 @@ CMainView::CMainView()
 {
 	p_wndFileView = NULL;
 	p_RawFiles = p_CookedFiles = NULL;
+	p_OrganizeButton = p_ViewButton = NULL;
 	m_Context = m_ViewID = -1;
 }
 
@@ -120,6 +121,18 @@ BOOL CMainView::CreateFileView(UINT ViewID, FVPersistentData* Data)
 	return (pNewView!=NULL);
 }
 
+void CMainView::SetHeaderButtons()
+{
+	ASSERT(p_OrganizeButton);
+	ASSERT(p_ViewButton);
+
+	p_OrganizeButton->SetValue(theApp.m_Attributes[theApp.m_Views[m_Context].SortBy]->Name, FALSE);
+
+	CString tmpStr;
+	ENSURE(tmpStr.LoadString(IDM_VIEW_FIRST+m_ViewID));
+	p_ViewButton->SetValue(tmpStr);
+}
+
 void CMainView::SetHeader()
 {
 	if (!p_CookedFiles)
@@ -164,7 +177,8 @@ void CMainView::SetHeader()
 		}
 
 		m_wndExplorerHeader.SetColors(m_Context<=LFContextClipboard ? 0x126E00 : 0x993300, (COLORREF)-1, FALSE);
-		m_wndExplorerHeader.SetText(p_CookedFiles->m_Name, Hint);
+		m_wndExplorerHeader.SetText(p_CookedFiles->m_Name, Hint, FALSE);
+		SetHeaderButtons();
 	}
 }
 
@@ -176,6 +190,8 @@ void CMainView::UpdateViewOptions(INT Context)
 		GetPersistentData(Data);
 		if (!CreateFileView(theApp.m_Views[Context].Mode, &Data))
 			p_wndFileView->UpdateViewOptions(Context);
+
+		SetHeaderButtons();
 	}
 }
 
@@ -458,8 +474,13 @@ BEGIN_MESSAGE_MAP(CMainView, CWnd)
 	ON_WM_CONTEXTMENU()
 	ON_MESSAGE_VOID(WM_UPDATESELECTION, OnUpdateSelection)
 	ON_MESSAGE(WM_RENAMEITEM, OnRenameItem)
-	ON_MESSAGE(WM_GETMENU, OnGetMenu)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoreAttributesChanged, OnStoreAttributesChanged)
+
+	ON_MESSAGE(WM_GETMENU, OnGetMenu)
+	ON_COMMAND_RANGE(IDM_ORGANIZE_FIRST, IDM_ORGANIZE_FIRST+LFAttributeCount-1, OnSort)
+	ON_UPDATE_COMMAND_UI_RANGE(IDM_ORGANIZE_FIRST, IDM_ORGANIZE_FIRST+LFAttributeCount-1, OnUpdateSortCommands)
+	ON_COMMAND_RANGE(IDM_VIEW_FIRST, IDM_VIEW_FIRST+LFViewCount-1, OnView)
+	ON_UPDATE_COMMAND_UI_RANGE(IDM_VIEW_FIRST, IDM_VIEW_FIRST+LFViewCount-1, OnUpdateViewCommands)
 
 	ON_COMMAND(IDM_STORES_CREATENEW, OnStoresCreateNew)
 	ON_COMMAND(IDM_STORES_MAINTAINALL, OnStoresMaintainAll)
@@ -514,7 +535,7 @@ INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CWnd::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
-	// Task bar
+	// Taskbar
 	if (!m_wndTaskbar.Create(this, IDB_TASKS, 1))
 		return -1;
 
@@ -561,8 +582,10 @@ INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (!m_wndExplorerHeader.Create(this, 2))
 		return -1;
 
-	m_wndExplorerHeader.AddButton(IDM_ORGANIZE);
-	m_wndExplorerHeader.AddButton(IDM_VIEW);
+	m_wndExplorerHeader.SetOwner(GetOwner());
+
+	p_OrganizeButton = m_wndExplorerHeader.AddButton(IDM_ORGANIZE);
+	p_ViewButton = m_wndExplorerHeader.AddButton(IDM_VIEW);
 
 	// Explorer notification
 	if (!m_wndExplorerNotification.Create(this, 4))
@@ -733,14 +756,78 @@ LRESULT CMainView::OnRenameItem(WPARAM wParam, LPARAM lParam)
 	return changes;
 }
 
+LRESULT CMainView::OnStoreAttributesChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)
+{
+	if ((p_RawFiles) && (p_CookedFiles) && (m_Context==LFContextStoreHome))
+		SetHeader();
+
+	return NULL;
+}
+
+
+// Header
+
 LRESULT CMainView::OnGetMenu(WPARAM wParam, LPARAM /*lParam*/)
 {
 	HMENU hMenu = CreatePopupMenu();
+	HMENU hPopupMenu = NULL;
 	BOOL Separator = FALSE;
+	CString tmpStr;
 
 	switch (wParam)
 	{
 	case IDM_ORGANIZE:
+#define AppendAttribute(hMenu, attr) if (theApp.m_Contexts[m_Context]->AllowedAttributes->IsSet(attr)) { tmpStr = theApp.m_Attributes[attr]->Name; AppendMenu(hMenu, MF_STRING, IDM_ORGANIZE_FIRST+attr, _T("&")+tmpStr); }
+#define AppendSeparator(hMenu, attr) if (theApp.m_Contexts[m_Context]->AllowedAttributes->IsSet(attr)) { AppendMenu(hMenu, MF_SEPARATOR, 0, NULL); }
+#define AppendPopup(nID) if (GetMenuItemCount(hPopupMenu)) { ENSURE(tmpStr.LoadString(nID)); AppendMenu(hMenu, MF_POPUP | MF_STRING, (UINT_PTR)hPopupMenu, tmpStr); } else { DestroyMenu(hPopupMenu); }
+		AppendAttribute(hMenu, LFAttrFileName);
+		AppendAttribute(hMenu, LFAttrTitle);
+		AppendAttribute(hMenu, LFAttrComment);
+
+		hPopupMenu = CreatePopupMenu();
+		AppendAttribute(hPopupMenu, LFAttrCreationTime);
+		AppendAttribute(hPopupMenu, LFAttrRecordingTime);
+		AppendAttribute(hPopupMenu, LFAttrAddTime);
+		AppendAttribute(hPopupMenu, LFAttrFileTime);
+		AppendAttribute(hPopupMenu, LFAttrDeleteTime);
+		AppendSeparator(hPopupMenu, LFAttrDueTime);
+		AppendAttribute(hPopupMenu, LFAttrDueTime);
+		AppendAttribute(hPopupMenu, LFAttrDoneTime);
+		AppendPopup(IDS_CONTEXTMENU_TIME);
+
+		hPopupMenu = CreatePopupMenu();
+		AppendAttribute(hPopupMenu, LFAttrLocationName);
+		AppendAttribute(hPopupMenu, LFAttrLocationIATA);
+		AppendAttribute(hPopupMenu, LFAttrLocationGPS);
+		AppendPopup(IDS_CONTEXTMENU_LOCATION);
+
+		AppendAttribute(hMenu, LFAttrRating);
+		AppendAttribute(hMenu, LFAttrPriority);
+		AppendAttribute(hMenu, LFAttrTags);
+		AppendAttribute(hMenu, LFAttrRoll);
+		AppendAttribute(hMenu, LFAttrArtist);
+		AppendAttribute(hMenu, LFAttrDuration);
+		AppendAttribute(hMenu, LFAttrLanguage);
+
+		hPopupMenu = CreatePopupMenu();
+		AppendAttribute(hPopupMenu, LFAttrAspectRatio);
+		AppendAttribute(hPopupMenu, LFAttrDimension);
+		AppendSeparator(hPopupMenu, LFAttrWidth);
+		AppendAttribute(hPopupMenu, LFAttrWidth);
+		AppendAttribute(hPopupMenu, LFAttrHeight);
+		AppendPopup(IDS_CONTEXTMENU_DIMENSION);
+
+		ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_MORE));
+		AppendMenu(hMenu, MF_STRING, ID_APP_SORTOPTIONS, tmpStr);
+
+		if (theApp.m_Contexts[m_Context]->AllowGroups)
+		{
+			AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
+
+			ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_AUTODIRS));
+			AppendMenu(hMenu, MF_STRING, ID_VIEW_AUTODIRS, tmpStr);
+		}
+
 		break;
 	case IDM_VIEW:
 		for (UINT a=0; a<LFViewCount; a++)
@@ -752,25 +839,57 @@ LRESULT CMainView::OnGetMenu(WPARAM wParam, LPARAM /*lParam*/)
 					Separator = TRUE;
 				}
 
-				UINT nID = IDM_VIEW+a+1;
+				UINT nID = IDM_VIEW_FIRST+a;
 
 				CString tmpStr;
 				ENSURE(tmpStr.LoadString(nID));
 
-				AppendMenu(hMenu, MF_STRING, nID, tmpStr);
+				AppendMenu(hMenu, MF_STRING, nID, _T("&")+tmpStr);
 			}
+
 		break;
 	}
 
 	return (LRESULT)hMenu;
 }
 
-LRESULT CMainView::OnStoreAttributesChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)
+void CMainView::OnSort(UINT nID)
 {
-	if ((p_RawFiles) && (p_CookedFiles) && (m_Context==LFContextStoreHome))
-		SetHeader();
+	nID -= IDM_ORGANIZE_FIRST;
 
-	return NULL;
+	if (theApp.m_Views[m_Context].SortBy!=nID)
+	{
+		theApp.m_Views[m_Context].SortBy = nID;
+		theApp.m_Views[m_Context].Descending = theApp.m_Attributes[nID]->PreferDescendingSort;
+		theApp.UpdateSortOptions(m_Context);
+	}
+}
+
+void CMainView::OnUpdateSortCommands(CCmdUI* pCmdUI)
+{
+	UINT Attr = pCmdUI->m_nID-IDM_ORGANIZE_FIRST;
+
+	pCmdUI->Enable(theApp.m_Contexts[m_Context]->AllowedAttributes->IsSet(Attr));
+	pCmdUI->SetRadio(theApp.m_Views[m_Context].SortBy==Attr);
+}
+
+void CMainView::OnView(UINT nID)
+{
+	nID -= IDM_VIEW_FIRST;
+
+	if (m_ViewID!=(INT)nID)
+	{
+		theApp.m_Views[m_Context].Mode = nID;
+		theApp.UpdateViewOptions(m_Context);
+	}
+}
+
+void CMainView::OnUpdateViewCommands(CCmdUI* pCmdUI)
+{
+	INT View = pCmdUI->m_nID-IDM_VIEW_FIRST;
+
+	pCmdUI->Enable(theApp.m_AllowedViews[m_Context]->IsSet(View));
+	pCmdUI->SetRadio(m_ViewID==View);
 }
 
 

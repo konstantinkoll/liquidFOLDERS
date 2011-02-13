@@ -44,7 +44,7 @@ INT CStoreDropdownWindow::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	CDC* dc = GetWindowDC();
 	CFont* pOldFont = dc->SelectObject(&pApp->m_DefaultFont);
-	m_wndList.SetIconSpacing(CXDropdownListIconSpacing, cy+dc->GetTextExtent(_T("Wy"), 2).cy*2+4);
+	m_wndList.SetIconSpacing(CXDropdownListIconSpacing, cy+dc->GetTextExtent(_T("Wy")).cy*2+4);
 	dc->SelectObject(pOldFont);
 	ReleaseDC(dc);
 

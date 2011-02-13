@@ -2502,6 +2502,9 @@ void CTreeView::OnUpdateCommands(CCmdUI* pCmdUI)
 
 		switch (pCmdUI->m_nID)
 		{
+		case IDM_VIEW_OPEN:
+			b = TRUE;
+			break;
 		case IDM_VIEW_DELETE:
 			b = (cell->Flags & CF_CANDELETE);
 			break;

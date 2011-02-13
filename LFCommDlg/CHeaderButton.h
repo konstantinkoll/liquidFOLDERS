@@ -21,8 +21,9 @@ public:
 	virtual void DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct);
 
 	BOOL Create(CString Caption, CString Hint, CWnd* pParentWnd, UINT nID);
-	void SetValue(CString Value);
-	void GetPreferredSize(CSize& sz);
+	void SetValue(CString Value, BOOL Repaint=TRUE);
+	void GetPreferredSize(CSize& sz, UINT& CaptionWidth);
+	void GetCaption(CString& Caption, UINT& CaptionWidth);
 
 protected:
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
@@ -38,6 +39,7 @@ private:
 	CString m_Caption;
 	CString m_Hint;
 	CString m_Value;
+	UINT m_CaptionWidth;
 	LFTooltip m_TooltipCtrl;
 	BOOL m_Hover;
 };

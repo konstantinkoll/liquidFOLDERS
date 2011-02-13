@@ -33,6 +33,7 @@ protected:
 	CBitmap m_Background;
 	HBRUSH hBackgroundBrush;
 	BOOL m_GradientLine;
+	UINT m_RightEdge;
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();
@@ -45,4 +46,8 @@ protected:
 	afx_msg void OnSize(UINT nType, INT cx, INT cy);
 	afx_msg void OnAdjustLayout();
 	DECLARE_MESSAGE_MAP()
+
+private:
+	LFApplication* p_App;
+	UINT m_FontHeight;
 };

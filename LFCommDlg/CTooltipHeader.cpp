@@ -145,7 +145,7 @@ void CTooltipHeader::OnPaint()
 							m_SortIndicators.Draw(&dc, (hdi.fmt & HDF_SORTUP) ? 0 : 1, CPoint(rectItem.left+(rectItem.Width()-7)/2, rectItem.top+2), ILD_TRANSPARENT);
 
 						rectItem.bottom -= 3;
-						rectItem.top = rectItem.bottom-dc.GetTextExtent(_T("Wy"), 2).cy;
+						rectItem.top = rectItem.bottom-dc.GetTextExtent(_T("Wy")).cy;
 					}
 					else
 					{

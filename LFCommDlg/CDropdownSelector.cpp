@@ -470,7 +470,7 @@ void CDropdownSelector::OnPaint()
 		{
 			dc.SetTextColor((m_Hover || m_Dropped) ? c1 : c2);
 			dc.DrawText(m_Caption, rectText, DT_SINGLELINE | DT_END_ELLIPSIS | DT_VCENTER);
-			rectText.left += dc.GetTextExtent(m_Caption, m_Caption.GetLength()).cx+BORDER;
+			rectText.left += dc.GetTextExtent(m_Caption).cx+BORDER;
 		}
 
 		if (m_Icon)

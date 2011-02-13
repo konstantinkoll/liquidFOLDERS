@@ -718,18 +718,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\Panel_16.bmp"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Ribbon_Home_16.bmp"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Ribbon_Home_32.bmp"
-				>
-			</File>
-			<File
 				RelativePath=".\res\SortOptions_Tiny.ico"
 				>
 			</File>

@@ -64,7 +64,7 @@ BOOL ViewOptionsDlg::OnInitDialog()
 		if (theApp.m_AllowedViews[m_Context]->IsSet(a))
 		{
 			CString tmpStr;
-			ENSURE(tmpStr.LoadString(IDM_VIEW_LARGEICONS+a));
+			ENSURE(tmpStr.LoadString(IDM_VIEW_FIRST+a));
 
 			lvi.lParam = (LPARAM)a;
 			lvi.pszText = tmpStr.GetBuffer();
