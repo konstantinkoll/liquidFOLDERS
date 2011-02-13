@@ -41,7 +41,7 @@ BOOL CExplorerHeader::OnCommand(WPARAM wParam, LPARAM /*lParam*/)
 	HMENU hMenu = (HMENU)GetParent()->SendMessage(WM_GETMENU, wParam);
 	if (hMenu)
 	{
-		CWnd* pWnd = GetDlgItem(wParam);
+		CWnd* pWnd = GetDlgItem((INT)wParam);
 		if (pWnd)
 		{
 			CRect rectWindow;
@@ -96,7 +96,7 @@ UINT CExplorerHeader::GetPreferredHeight()
 	dc->SelectObject(pOldFont);
 	ReleaseDC(dc);
 
-	return max(h, max(60, m_Buttons.GetCount()*(m_FontHeight+8+MARGIN/2)+MARGIN+MARGIN/2+1));
+	return max(h, max(60, (UINT)m_Buttons.GetCount()*(m_FontHeight+8+MARGIN/2)+MARGIN+MARGIN/2+1));
 }
 
 CHeaderButton* CExplorerHeader::AddButton(UINT nID)
@@ -135,7 +135,7 @@ void CExplorerHeader::AdjustLayout()
 	GetClientRect(rect);
 
 	m_RightEdge = rect.right;
-	INT Row = max(MARGIN, (rect.Height()-m_Buttons.GetCount()*(m_FontHeight+8+MARGIN/2)-MARGIN-MARGIN/2-1)/2);
+	INT Row = max(MARGIN, (rect.Height()-(UINT)m_Buttons.GetCount()*(m_FontHeight+8+MARGIN/2)-MARGIN-MARGIN/2-1)/2);
 
 	for (POSITION p=m_Buttons.GetHeadPosition(); p; )
 	{

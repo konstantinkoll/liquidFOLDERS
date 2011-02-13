@@ -35,7 +35,7 @@ BOOL CTaskbar::Create(CWnd* pParentWnd, UINT ResID, UINT nID)
 
 BOOL CTaskbar::OnCommand(WPARAM wParam, LPARAM lParam)
 {
-	return GetOwner()->SendMessage(WM_COMMAND, wParam, lParam);
+	return (BOOL)GetOwner()->SendMessage(WM_COMMAND, wParam, lParam);
 }
 
 UINT CTaskbar::GetPreferredHeight()
