@@ -395,7 +395,7 @@ void CMainFrame::InitializeRibbon()
 		pMainPanel->Add(theApp.CommandButton(ID_APP_CLOSE));
 
 		strTemp = "Exit";
-		pMainPanel->AddToBottom(new CMFCRibbonMainPanelButton(ID_APP_EXIT, strTemp));
+		pMainPanel->AddToBottom(new CMFCRibbonMainPanelButton(ID_APP_EXIT, strTemp, 0));
 
 	if (!IsClipboard)
 	{
