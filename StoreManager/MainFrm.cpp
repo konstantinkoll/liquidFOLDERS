@@ -22,8 +22,8 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 
 	ON_UPDATE_COMMAND_UI_RANGE(ID_APP_NEWVIEW, ID_VIEW_AUTODIRS, OnUpdateAppCommands)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_AUTODIRS, OnUpdateAppCommands)
-	ON_UPDATE_COMMAND_UI_RANGE(ID_NAV_BACK, ID_NAV_GOTOHISTORY, OnUpdateNavCommands)
-	ON_UPDATE_COMMAND_UI_RANGE(ID_PANE_FILTERWND, ID_PANE_HISTORYWND, OnUpdatePaneCommands)
+	ON_UPDATE_COMMAND_UI_RANGE(ID_NAV_BACK, ID_NAV_HOME, OnUpdateNavCommands)
+	ON_UPDATE_COMMAND_UI_RANGE(ID_PANE_FILTERWND, ID_PANE_INSPECTORWND, OnUpdatePaneCommands)
 
 	ON_COMMAND(ID_APP_CLOSE, OnClose)
 	ON_COMMAND(ID_APP_CLOSEOTHERS, OnCloseOthers)
@@ -33,7 +33,6 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 
 	ON_COMMAND(ID_PANE_FILTERWND, OnToggleFilterWnd)
 	ON_COMMAND(ID_PANE_INSPECTORWND, OnToggleInspectorWnd)
-	ON_COMMAND(ID_PANE_HISTORYWND, OnToggleHistoryWnd)
 
 	ON_COMMAND(ID_NAV_BACK, OnNavigateBack)
 	ON_COMMAND(ID_NAV_FORWARD, OnNavigateForward)
@@ -82,7 +81,6 @@ CMainFrame::CMainFrame(char* RootStore, BOOL _IsClipboard)
 	CookedFiles = NULL;
 	m_BreadcrumbBack = m_BreadcrumbForward = NULL;
 	m_wndFilter = NULL;
-	m_wndHistory = NULL;
 }
 
 CMainFrame::~CMainFrame()
@@ -136,10 +134,7 @@ INT CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	CMFCRibbonButtonsGroup* pGroupPanels = new CMFCRibbonButtonsGroup();
 	if (!IsClipboard)
-	{
 		pGroupPanels->AddButton(new CMFCRibbonButton(ID_PANE_FILTERWND, _T("")));
-		pGroupPanels->AddButton(new CMFCRibbonButton(ID_PANE_HISTORYWND, _T("")));
-	}
 	pGroupPanels->AddButton(new CMFCRibbonButton(ID_PANE_INSPECTORWND, _T("")));
 
 	tmpStr = "Panes";
@@ -156,27 +151,10 @@ INT CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 			return -1;
 		m_wndFilter->EnableDocking(CBRS_ALIGN_ANY | CBRS_FLOAT_MULTI);
 
-		// History-Pane erstellen
-		tmpStr = "History";
-		m_wndHistory = new CHistoryWnd();
-		if (!m_wndHistory->Create(tmpStr, this, CRect(0, 0, 250, 550), TRUE, ID_PANE_HISTORYWND, dwStyle | CBRS_LEFT))
-			return -1;
-		m_wndHistory->EnableDocking(CBRS_ALIGN_ANY | CBRS_FLOAT_MULTI);
-
-		// Tabs
-		CTabbedPane* TabbedPane = new CTabbedPane(TRUE);
-		if (TabbedPane->Create(_T(""), this, CRect(0, 0, 220, 550), TRUE, UINT(-1), dwStyle | CBRS_LEFT))
-		{
-			TabbedPane->AddTab(m_wndFilter, TRUE, TRUE, TRUE);
-			TabbedPane->AddTab(m_wndHistory, TRUE, FALSE, TRUE);
-			TabbedPane->EnableDocking(CBRS_ALIGN_ANY | CBRS_FLOAT_MULTI);
-			DockPane(TabbedPane, AFX_IDW_DOCKBAR_LEFT);
-		}
-
 		// Diese Panes standardmäßig nicht zeigen
 		m_wndFilter->ShowPane(FALSE, FALSE, FALSE);
-		m_wndHistory->ShowPane(FALSE, FALSE, FALSE);
-		TabbedPane->ShowPane(FALSE, FALSE, FALSE);
+
+		DockPane(m_wndFilter, AFX_IDW_DOCKBAR_LEFT);
 	}
 
 	// Inspector-Pane erstellen
@@ -227,11 +205,6 @@ void CMainFrame::OnDestroy()
 	{
 		m_wndFilter->DestroyWindow();
 		delete m_wndFilter;
-	}
-	if (m_wndHistory)
-	{
-		m_wndHistory->DestroyWindow();
-		delete m_wndHistory;
 	}
 
 	CFrameWndEx::OnDestroy();
@@ -304,16 +277,6 @@ void CMainFrame::OnToggleInspectorWnd()
 	RecalcLayout(FALSE);
 }
 
-void CMainFrame::OnToggleHistoryWnd()
-{
-	if (m_wndHistory)
-	{
-		BOOL b = m_wndHistory->IsVisible() ? FALSE : TRUE;
-		m_wndHistory->ShowPane(b, FALSE, b);
-		RecalcLayout(FALSE);
-	}
-}
-
 void CMainFrame::OnUpdatePaneCommands(CCmdUI* pCmdUI)
 {
 	switch (pCmdUI->m_nID)
@@ -325,11 +288,6 @@ void CMainFrame::OnUpdatePaneCommands(CCmdUI* pCmdUI)
 		break;
 	case ID_PANE_INSPECTORWND:
 		pCmdUI->SetCheck(m_wndInspector.IsVisible());
-		break;
-	case ID_PANE_HISTORYWND:
-		if (m_wndHistory)
-			pCmdUI->SetCheck(m_wndHistory->IsVisible());
-		pCmdUI->Enable(m_wndHistory!=NULL);
 		break;
 	}
 }
@@ -471,25 +429,25 @@ void CMainFrame::InitializeRibbon()
 		strTemp = "Exit";
 		pMainPanel->AddToBottom(new CMFCRibbonMainPanelButton(ID_APP_EXIT, strTemp, 3));
 
-	strTemp = "Home";
-	CMFCRibbonCategory* pCategoryHome = m_wndRibbonBar.AddCategory(strTemp, 0, 0);
+	if (!IsClipboard)
+	{
+		strTemp = "Home";
+		CMFCRibbonCategory* pCategoryHome = m_wndRibbonBar.AddCategory(strTemp, 0, 0);
 
-		if (!IsClipboard)
-		{
-			strTemp = "Navigate";
-			CMFCRibbonPanel* pPanelNavigate = pCategoryHome->AddPanel(strTemp);
+		strTemp = "Navigate";
+		CMFCRibbonPanel* pPanelNavigate = pCategoryHome->AddPanel(strTemp);
 
-				pPanelNavigate->Add(theApp.CommandButton(ID_NAV_BACK, 0, 0));
-				pPanelNavigate->Add(theApp.CommandButton(ID_NAV_FORWARD, 1, 1));
-				pPanelNavigate->AddSeparator();
-				pPanelNavigate->Add(theApp.CommandButton(ID_NAV_RELOAD, 2, 2));
+			pPanelNavigate->Add(theApp.CommandButton(ID_NAV_BACK, 0, 0));
+			pPanelNavigate->Add(theApp.CommandButton(ID_NAV_FORWARD, 1, 1));
+			pPanelNavigate->AddSeparator();
+			pPanelNavigate->Add(theApp.CommandButton(ID_NAV_RELOAD, 2, 2));
 
-			strTemp = "Places";
-			CMFCRibbonPanel* pPanelPlaces = pCategoryHome->AddPanel(strTemp);
+		strTemp = "Places";
+		CMFCRibbonPanel* pPanelPlaces = pCategoryHome->AddPanel(strTemp);
 
-				pPanelPlaces->Add(theApp.CommandButton(ID_NAV_STORES, 3, 3));
-				pPanelPlaces->Add(theApp.CommandButton(ID_NAV_HOME, 4, 4));
-		}
+			pPanelPlaces->Add(theApp.CommandButton(ID_NAV_STORES, 3, 3));
+			pPanelPlaces->Add(theApp.CommandButton(ID_NAV_HOME, 4, 4));
+	}
 }
 
 
@@ -564,8 +522,8 @@ void CMainFrame::UpdateHistory()
 	if (CookedFiles)
 		ActiveFilter->Result.ItemCount = CookedFiles->m_ItemCount;
 
-	if (m_wndHistory)
-		m_wndHistory->UpdateList(m_BreadcrumbBack, ActiveFilter, m_BreadcrumbForward);
+//	if (m_wndHistory)
+//		m_wndHistory->UpdateList(m_BreadcrumbBack, ActiveFilter, m_BreadcrumbForward);
 	if (m_wndFilter)
 		m_wndFilter->UpdateList();
 }

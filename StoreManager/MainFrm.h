@@ -48,7 +48,6 @@ protected:
 	CMFCRibbonApplicationButton m_MainButton;
 	CMFCRibbonStatusBar m_wndStatusBar;
 	CFilterWnd* m_wndFilter;
-	CHistoryWnd* m_wndHistory;
 	CInspectorWnd m_wndInspector;
 	CMainView m_wndMainView;
 	BreadcrumbItem* m_BreadcrumbBack;
@@ -70,8 +69,6 @@ protected:
 	afx_msg void OnUpdateNavCommands(CCmdUI* pCmdUI);
 	afx_msg void OnToggleFilterWnd();
 	afx_msg void OnToggleInspectorWnd();
-	afx_msg void OnShowHistoryWnd();
-	afx_msg void OnToggleHistoryWnd();
 	afx_msg void OnUpdatePaneCommands(CCmdUI* pCmdUI);
 	afx_msg void OnNavigateBack();
 	afx_msg void OnNavigateForward();

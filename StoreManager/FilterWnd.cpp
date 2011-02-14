@@ -53,7 +53,6 @@ void CFilterWnd::UpdateList()
 	AddConditionItem(FALSE);
 
 	m_wndList.SetRedraw(TRUE);
-	m_wndList.SetTileSize();
 }
 
 
@@ -71,7 +70,6 @@ INT CFilterWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if (CDockablePane::OnCreate(lpCreateStruct)==-1)
 		return -1;
-	SetRedraw(FALSE);
 
 	if (m_wndToolBar.Create(this, AFX_DEFAULT_TOOLBAR_STYLE)==-1)
 		return -1;
@@ -86,7 +84,7 @@ INT CFilterWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 	if (!m_wndStoreCombo.Create(dwViewStyle | CBS_DROPDOWNLIST | CBS_SORT, CRect(0, 0, 0, 0), this, 3))
 		return -1;
-	if (!m_wndAddCondition.Create(L"&Add...", dwViewStyle | BS_PUSHBUTTON, CRect(0, 0, 0, 0), this, ID_NAV_GOTOHISTORY))
+	if (!m_wndAddCondition.Create(L"&Add...", dwViewStyle | BS_PUSHBUTTON, CRect(0, 0, 0, 0), this, IDCANCEL))
 		return -1;
 	if (!m_wndStartSearch.Create(L"&Search", dwViewStyle | BS_DEFPUSHBUTTON, CRect(0, 0, 0, 0), this, IDOK))
 		return -1;
@@ -145,7 +143,6 @@ INT CFilterWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	m_wndList.SetImageList(m_Icons, LVSIL_NORMAL);
 
-	SetRedraw(TRUE);
 	return 0;
 }
 

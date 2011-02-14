@@ -799,7 +799,6 @@ BEGIN
     ID_NAV_RELOAD           "Reloads the current view.\nReload"
     ID_NAV_STORES           "Displays all stores.\nStores"
     ID_NAV_HOME             "Opens the default store.\nDefault store"
-    ID_NAV_GOTOHISTORY      "Returns to the selected location.\nGoto history"
 END
 
 STRINGTABLE 

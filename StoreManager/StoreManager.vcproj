@@ -410,10 +410,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CPaneList.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\CPaneText.cpp"
 				>
 			</File>
@@ -549,10 +545,6 @@
 			</File>
 			<File
 				RelativePath=".\CMainView.h"
-				>
-			</File>
-			<File
-				RelativePath=".\CPaneList.h"
 				>
 			</File>
 			<File

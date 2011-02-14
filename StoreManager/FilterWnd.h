@@ -2,7 +2,6 @@
 #pragma once
 #include "liquidFOLDERS.h"
 #include "LFCommDlg.h"
-#include "CPaneList.h"
 #include "CPaneText.h"
 
 
@@ -45,7 +44,7 @@ protected:
 	CButton m_wndAddCondition;
 	CPaneText m_wndText3;
 	CImageList* m_Icons;
-	CPaneList m_wndList;
+	CExplorerList m_wndList;
 
 	void AddConditionItem(BOOL focus=FALSE);
 
