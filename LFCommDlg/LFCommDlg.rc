@@ -679,7 +679,7 @@ END
 
 STRINGTABLE 
 BEGIN
-    ID_APP_SUPPORT          "Öffnet das Standard-Mailprogramm für eine  EMail an den Kundenservice.\nEMail an Kundenservice"
+    ID_APP_SUPPORT          "Öffnet das Standard-Mailprogramm für eine EMail an den Kundenservice.\nEMail an Kundenservice"
     ID_APP_NEWFILEDROP      "Öffnet ein neues FileDrop-Fenster.\nFileDrop starten"
     ID_APP_NEWMIGRATE       "Öffnet den Migrations-Assistenten.\nMigrations-Assistent starten"
     ID_APP_NEWSTOREMANAGER  "Öffnet den StoreManager.\nStoreManager starten"
