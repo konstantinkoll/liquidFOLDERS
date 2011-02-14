@@ -797,8 +797,6 @@ BEGIN
     ID_NAV_BACK             "Returns to the previous location.\nBack (Backspace)"
     ID_NAV_FORWARD          "Returns to the next location.\nForward"
     ID_NAV_RELOAD           "Reloads the current view.\nReload"
-    ID_NAV_STORES           "Displays all stores.\nStores"
-    ID_NAV_HOME             "Opens the default store.\nDefault store"
 END
 
 STRINGTABLE 

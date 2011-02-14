@@ -128,7 +128,7 @@ BOOL LFAttributeListDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
-	m_AttributeIcons.Create(IDB_ATTRIBUTEICONS, LFCommDlgDLL.hResource);
+	m_AttributeIcons.Create(IDB_ATTRIBUTEICONS_16, LFCommDlgDLL.hResource);
 
 	return TRUE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird
 }

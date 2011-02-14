@@ -22,7 +22,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 
 	ON_UPDATE_COMMAND_UI_RANGE(ID_APP_NEWVIEW, ID_VIEW_AUTODIRS, OnUpdateAppCommands)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_AUTODIRS, OnUpdateAppCommands)
-	ON_UPDATE_COMMAND_UI_RANGE(ID_NAV_BACK, ID_NAV_HOME, OnUpdateNavCommands)
+	ON_UPDATE_COMMAND_UI_RANGE(ID_NAV_BACK, ID_NAV_RELOAD, OnUpdateNavCommands)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_PANE_FILTERWND, ID_PANE_INSPECTORWND, OnUpdatePaneCommands)
 
 	ON_COMMAND(ID_APP_CLOSE, OnClose)
@@ -37,8 +37,6 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_COMMAND(ID_NAV_BACK, OnNavigateBack)
 	ON_COMMAND(ID_NAV_FORWARD, OnNavigateForward)
 	ON_COMMAND(ID_NAV_RELOAD, OnNavigateReload)
-	ON_COMMAND(ID_NAV_STORES, OnNavigateStores)
-	ON_COMMAND(ID_NAV_HOME, OnNavigateHome)
 
 	ON_COMMAND(IDM_ITEM_OPEN, OnItemOpen)
 
@@ -367,19 +365,6 @@ void CMainFrame::OnNavigateReload()
 	}
 }
 
-void CMainFrame::OnNavigateStores()
-{
-	NavigateTo(GetRootFilter());
-}
-
-void CMainFrame::OnNavigateHome()
-{
-	LFFilter* f = LFAllocFilter();
-	f->Mode = LFFilterModeStoreHome;
-	f->Options.AddDrives = true;
-	NavigateTo(f);
-}
-
 void CMainFrame::OnUpdateNavCommands(CCmdUI* pCmdUI)
 {
 	BOOL b = !IsClipboard;
@@ -392,18 +377,6 @@ void CMainFrame::OnUpdateNavCommands(CCmdUI* pCmdUI)
 	case ID_NAV_FORWARD:
 		b &= (m_BreadcrumbForward!=NULL);
 		break;
-	case ID_NAV_STORES:
-		if (CookedFiles)
-			if (CookedFiles->m_Context==LFContextStores)
-				b = FALSE;
-		break;
-	case ID_NAV_HOME:
-		if (CookedFiles)
-			if (CookedFiles->m_Context==LFContextStoreHome)
-				b = FALSE;
-		if (!LFDefaultStoreAvailable())
-			b = FALSE;
-		break;
 	}
 
 	pCmdUI->Enable(b);
@@ -412,22 +385,17 @@ void CMainFrame::OnUpdateNavCommands(CCmdUI* pCmdUI)
 void CMainFrame::InitializeRibbon()
 {
 	CString strTemp;
-	CString strCtx;
-
-	// Hauptschaltfläche initialisieren
-	strTemp = "Application menu";
-	m_MainButton.SetToolTipText(strTemp);
 
 	m_wndRibbonBar.SetApplicationButton(&m_MainButton, CSize (45, 45));
 	CMFCRibbonMainPanel* pMainPanel = m_wndRibbonBar.AddMainCategory(strTemp, 0, 0);
 
-		pMainPanel->Add(theApp.CommandButton(ID_APP_NEWVIEW, 0, 0));
+		pMainPanel->Add(theApp.CommandButton(ID_APP_NEWVIEW));
 		pMainPanel->Add(new CMFCRibbonSeparator(TRUE));
-		pMainPanel->Add(theApp.CommandButton(ID_APP_CLOSEOTHERS, 1, 1));
-		pMainPanel->Add(theApp.CommandButton(ID_APP_CLOSE, 2, 2));
+		pMainPanel->Add(theApp.CommandButton(ID_APP_CLOSEOTHERS));
+		pMainPanel->Add(theApp.CommandButton(ID_APP_CLOSE));
 
 		strTemp = "Exit";
-		pMainPanel->AddToBottom(new CMFCRibbonMainPanelButton(ID_APP_EXIT, strTemp, 3));
+		pMainPanel->AddToBottom(new CMFCRibbonMainPanelButton(ID_APP_EXIT, strTemp));
 
 	if (!IsClipboard)
 	{
@@ -437,16 +405,9 @@ void CMainFrame::InitializeRibbon()
 		strTemp = "Navigate";
 		CMFCRibbonPanel* pPanelNavigate = pCategoryHome->AddPanel(strTemp);
 
-			pPanelNavigate->Add(theApp.CommandButton(ID_NAV_BACK, 0, 0));
-			pPanelNavigate->Add(theApp.CommandButton(ID_NAV_FORWARD, 1, 1));
-			pPanelNavigate->AddSeparator();
-			pPanelNavigate->Add(theApp.CommandButton(ID_NAV_RELOAD, 2, 2));
-
-		strTemp = "Places";
-		CMFCRibbonPanel* pPanelPlaces = pCategoryHome->AddPanel(strTemp);
-
-			pPanelPlaces->Add(theApp.CommandButton(ID_NAV_STORES, 3, 3));
-			pPanelPlaces->Add(theApp.CommandButton(ID_NAV_HOME, 4, 4));
+			pPanelNavigate->Add(theApp.CommandButton(ID_NAV_BACK));
+			pPanelNavigate->Add(theApp.CommandButton(ID_NAV_FORWARD));
+			pPanelNavigate->Add(theApp.CommandButton(ID_NAV_RELOAD));
 	}
 }
 

@@ -28,8 +28,6 @@
 #define ID_NAV_BACK                     400
 #define ID_NAV_FORWARD                  401
 #define ID_NAV_RELOAD                   402
-#define ID_NAV_STORES                   403
-#define ID_NAV_HOME                     404
 #define ID_PANE_FILTERWND               500
 #define ID_PANE_INSPECTORWND            501
 #define ID_FILTER_CLEAR                 520

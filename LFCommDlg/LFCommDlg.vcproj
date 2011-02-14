@@ -815,7 +815,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\Attributes.bmp"
+				RelativePath=".\res\Attributes_16.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Attributes_32.bmp"
 				>
 			</File>
 			<File

@@ -73,8 +73,6 @@ protected:
 	afx_msg void OnNavigateBack();
 	afx_msg void OnNavigateForward();
 	afx_msg void OnNavigateReload();
-	afx_msg void OnNavigateStores();
-	afx_msg void OnNavigateHome();
 
 	afx_msg void OnItemOpen();
 
