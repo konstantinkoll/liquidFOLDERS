@@ -287,8 +287,8 @@ BEGIN
     LTEXT           "Store-Name:",IDC_STATIC,14,137,189,9
     LTEXT           "Kommentar:",IDC_STATIC,14,167,189,9
     LTEXT           "(Alle Dateien und der Index werden lokal auf diesem Computer gespeichert)",IDC_STATIC,49,27,157,17
-    LTEXT           "(Alle Dateien und der Index werden extern gespeichert, mit zusätzlicher Index-Kopie)",IDC_STATIC,49,65,157,17
-    LTEXT           "(Alle Dateien und der Index werden extern gespeichert)",IDC_STATIC,49,95,157,17
+    LTEXT           "(Alle Dateien und der Index werden extern ge-\nspeichert, mit zusätzlicher lokaler Index-Kopie)",IDC_STATIC,49,65,157,17
+    LTEXT           "(Alle Dateien und der Index werden extern ge-\nspeichert)",IDC_STATIC,49,95,157,17
     CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ | WS_GROUP,14,48,191,1
 END
 
@@ -839,7 +839,7 @@ BEGIN
     LTEXT           "Store name:",IDC_STATIC,14,137,189,9
     LTEXT           "Comment:",IDC_STATIC,14,167,189,9
     LTEXT           "(All files and the index are stored locally on this computer)",IDC_STATIC,49,27,157,17
-    LTEXT           "(All files and the index are stored externally, with a local copy of the index)",IDC_STATIC,49,65,157,17
+    LTEXT           "(All files and the index are stored externally, with an additional local copy of the index)",IDC_STATIC,49,65,157,17
     LTEXT           "(All files and the index are stored externally)",IDC_STATIC,49,95,157,17
     CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ | WS_GROUP,14,48,191,1
 END
@@ -1935,7 +1935,7 @@ BEGIN
     LTEXT           "Nom du store:",IDC_STATIC,14,137,199,9
     LTEXT           "Commentaire:",IDC_STATIC,14,167,199,9
     LTEXT           "(Tous les fichiers et l'index sont conservés localement sur cet ordinateur)",IDC_STATIC,49,27,167,17
-    LTEXT           "(Tous les fichiers sont conservés extérieurement, avec une copie locale de l'index)",IDC_STATIC,49,65,167,17
+    LTEXT           "(Tous les fichiers sont conservés extérieurement, avec une autre copie locale de l'index)",IDC_STATIC,49,65,167,17
     LTEXT           "(Tous les fichiers et l'index sont conservés extérieurement)",IDC_STATIC,49,95,167,17
     CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ | WS_GROUP,14,48,201,1
 END
