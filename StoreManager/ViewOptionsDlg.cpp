@@ -10,8 +10,8 @@
 // ViewOptionsDlg
 //
 
-ViewOptionsDlg::ViewOptionsDlg(CWnd* pParentWnd, LFViewParameters* View, UINT Context)
-	: ChooseDetailsDlg(pParentWnd, View, Context, IDD_VIEWOPTIONS)
+ViewOptionsDlg::ViewOptionsDlg(CWnd* pParentWnd, UINT Context)
+	: ChooseDetailsDlg(pParentWnd, Context, IDD_VIEWOPTIONS)
 {
 }
 

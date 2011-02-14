@@ -13,7 +13,7 @@
 class ViewOptionsDlg : public ChooseDetailsDlg
 {
 public:
-	ViewOptionsDlg(CWnd* pParentWnd, LFViewParameters* View, UINT Context);
+	ViewOptionsDlg(CWnd* pParentWnd, UINT Context);
 
 	virtual void DoDataExchange(CDataExchange* pDX);
 

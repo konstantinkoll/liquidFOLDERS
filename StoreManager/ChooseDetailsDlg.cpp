@@ -10,11 +10,10 @@
 // ChooseDetailsDlg
 //
 
-ChooseDetailsDlg::ChooseDetailsDlg(CWnd* pParentWnd, LFViewParameters* View, INT Context, UINT nIDTemplate)
+ChooseDetailsDlg::ChooseDetailsDlg(CWnd* pParentWnd, INT Context, UINT nIDTemplate)
 	: LFAttributeListDlg(nIDTemplate, pParentWnd)
 {
-	ASSERT(View);
-	p_View = View;
+	p_View = &theApp.m_Views[Context];
 	m_Context = Context;
 	m_Template = nIDTemplate;
 }

@@ -939,7 +939,7 @@ void CListView::OnAutosize()
 
 void CListView::OnChooseDetails()
 {
-	ChooseDetailsDlg dlg(this, p_ViewParameters, m_Context);
+	ChooseDetailsDlg dlg(this, m_Context);
 	if (dlg.DoModal()==IDOK)
 		theApp.UpdateViewOptions(m_Context);
 }

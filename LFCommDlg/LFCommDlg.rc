@@ -1381,7 +1381,7 @@ BEGIN
     CONTROL         "",IDC_EXTERNALSTOREICON,"CIconCtrl",WS_GROUP,14,86,21,20
     LTEXT           "Camino:",IDC_STATIC,236,33,173,8
     LTEXT           "Nombre de store:",IDC_STATIC,14,137,199,9
-    LTEXT           "Observaciones:",IDC_STATIC,14,167,199,9
+    LTEXT           "Commentarios:",IDC_STATIC,14,167,199,9
     LTEXT           "(Todos los archivos y el índice están almacenados de manera local en esta computadora)",IDC_STATIC,49,27,167,19
     LTEXT           "(Todos los archivos y el índice están almacenados de manera externa con una copia local del índice)",IDC_STATIC,49,65,167,17
     LTEXT           "(Todos los archivos y el índice están almacenados de manera externa)",IDC_STATIC,49,95,167,17
@@ -1407,7 +1407,7 @@ BEGIN
     LTEXT           "(Se guarda una copia local del índice)",IDC_STATIC,49,29,170,8
     LTEXT           "(El store sólo puede ser buscado si está conectado)",IDC_STATIC,49,52,170,8
     LTEXT           "Nombre de store:",IDC_STATIC,14,86,203,9
-    LTEXT           "Observaciones:",IDC_STATIC,14,115,203,9
+    LTEXT           "Commentarios:",IDC_STATIC,14,115,203,9
     GROUPBOX        "Ubicación de store",IDC_STATIC,233,7,187,142,WS_GROUP
 END
 

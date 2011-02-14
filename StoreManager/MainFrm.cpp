@@ -255,14 +255,14 @@ void CMainFrame::OnCloseOthers()
 
 void CMainFrame::OnSortOptions()
 {
-	SortOptionsDlg dlg(this, ActiveViewParameters, ActiveContextID);
+	SortOptionsDlg dlg(this, ActiveContextID);
 	if (dlg.DoModal()==IDOK)
 		theApp.UpdateSortOptions(ActiveContextID);
 }
 
 void CMainFrame::OnViewOptions()
 {
-	ViewOptionsDlg dlg(this, ActiveViewParameters, ActiveContextID);
+	ViewOptionsDlg dlg(this, ActiveContextID);
 	if (dlg.DoModal()==IDOK)
 		theApp.UpdateViewOptions(ActiveContextID);
 }

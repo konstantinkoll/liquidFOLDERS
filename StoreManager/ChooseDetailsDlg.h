@@ -13,7 +13,7 @@
 class ChooseDetailsDlg : public LFAttributeListDlg
 {
 public:
-	ChooseDetailsDlg(CWnd* pParentWnd, LFViewParameters* View, INT Context, UINT nIDTemplate=IDD_CHOOSEDETAILS);
+	ChooseDetailsDlg(CWnd* pParentWnd, INT Context, UINT nIDTemplate=IDD_CHOOSEDETAILS);
 
 	virtual void DoDataExchange(CDataExchange* pDX);
 

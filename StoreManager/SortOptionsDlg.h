@@ -13,7 +13,7 @@
 class SortOptionsDlg : public LFAttributeListDlg
 {
 public:
-	SortOptionsDlg(CWnd* pParent, LFViewParameters* View, UINT Context);
+	SortOptionsDlg(CWnd* pParent, UINT Context);
 
 	virtual void DoDataExchange(CDataExchange* pDX);
 
