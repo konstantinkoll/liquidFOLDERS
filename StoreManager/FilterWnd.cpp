@@ -130,7 +130,7 @@ INT CFilterWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	CMFCToolBarImages tmp;
 	tmp.SetImageSize(CSize(32, 32));
-	tmp.Load(IDB_HISTORYICONS);
+	tmp.Load(IDB_TASKS);
 	m_Icons = new CImageList();
 	m_Icons->Create(32, 32, ILC_COLOR32, 2, 1);
 		for (INT a=0; a<tmp.GetCount(); a++)

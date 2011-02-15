@@ -58,7 +58,6 @@ IDB_BLUEMARBLE_8192     JPG                     "res\\BlueMarble_8192.jpg"
 IDB_ABOUTICON           PNG                     "res\\StoreManager_About.png"
 IDB_INSPECTOR           PNG                     "res\\Inspector_Grey.png"
 IDB_MULTIPLE            PNG                     "res\\Multiple.png"
-IDB_HISTORYICONS        PNG                     "res\\HistoryIcons.png"
 IDB_GLOBEICONS_RGB      PNG                     "res\\GlobeIcons_RGB.png"
 IDB_GLOBEICONS_ALPHA    PNG                     "res\\GlobeIcons_Alpha.png"
 
