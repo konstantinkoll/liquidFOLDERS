@@ -45,7 +45,7 @@ BOOL CStoreManagerApp::InitInstance()
 	{
 		m_AllowedViews[a] = new LFBitArray(LFViewCount);
 
-		UINT cnt = ((a>LFContextClipboard) && (a<LFContextSubfolderDefault)) ? LFViewCount-1 : (a>LFContextStoreHome) ? LFViewPreview : LFViewSearchResult;
+		UINT cnt = ((a>LFContextClipboard) && (a<LFContextSubfolderDefault)) ? LFViewCount-1 : (a>LFContextStoreHome) ? LFViewPreview : LFViewContent;
 		for (UINT b=0; b<=cnt; b++)
 			(*m_AllowedViews[a]) += b;
 	}
@@ -391,7 +391,7 @@ void CStoreManagerApp::LoadViewOptions(INT context)
 		DefaultView = LFViewList;
 		break;
 	case LFContextClipboard:
-		DefaultView = LFViewSearchResult;
+		DefaultView = LFViewContent;
 		break;
 	case LFContextHousekeeping:
 	case LFContextTrash:

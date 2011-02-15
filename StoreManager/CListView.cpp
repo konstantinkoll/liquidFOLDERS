@@ -68,7 +68,7 @@ void CListView::SetViewOptions(BOOL Force)
 			cx = cy = 32;
 			break;
 		case LFViewTiles:
-		case LFViewSearchResult:
+		case LFViewContent:
 			m_Icons[0] = &theApp.m_CoreImageListExtraLarge;
 			m_Icons[1] = &theApp.m_SystemImageListExtraLarge;
 			cx = cy = 48;
@@ -358,7 +358,7 @@ void CListView::AdjustLayout()
 		gva.gutterx = gva.guttery = 3;
 		ArrangeHorizontal(gva, FALSE);
 		break;
-	case LFViewSearchResult:
+	case LFViewContent:
 		gva.cy = 2+max(m_IconSize[0].cy, max(m_FontHeight[0]*3+m_FontHeight[1], m_FontHeight[0]*2+max(m_FontHeight[0], 18)*2+1));
 		ArrangeHorizontal(gva, FALSE, TRUE, TRUE);
 		break;
@@ -384,7 +384,7 @@ RECT CListView::GetLabelRect(INT idx)
 		rect.right = rect.left+m_ViewParameters.ColumnWidth[0]-3*PADDING;
 	case LFViewList:
 	case LFViewTiles:
-	case LFViewSearchResult:
+	case LFViewContent:
 		rect.left += m_IconSize[0].cx+2*PADDING;
 		break;
 	}
@@ -499,7 +499,7 @@ void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed)
 
 		DrawTileRows(dc, rectLabel, i, d, Rows, Themed);
 		break;
-	case LFViewSearchResult:
+	case LFViewContent:
 		rectIcon.right = rectIcon.left+m_IconSize[0].cx;
 		DrawIcon(dc, rectIcon, i);
 

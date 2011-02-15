@@ -919,7 +919,7 @@ BEGIN
     IDM_VIEW_LIST           "List"
     IDM_VIEW_DETAILS        "Details"
     IDM_VIEW_TILES          "Tiles"
-    IDM_VIEW_SEARCHRESULT   "Search result"
+    IDM_VIEW_CONTENT        "Content"
     IDM_VIEW_PREVIEW        "Preview"
     IDM_VIEW_CALENDAR       "Calendar"
     IDM_VIEW_GLOBE          "Globe"

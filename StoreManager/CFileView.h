@@ -17,7 +17,7 @@
 #define LFViewList                      2
 #define LFViewDetails                   3
 #define LFViewTiles                     4
-#define LFViewSearchResult              5
+#define LFViewContent                   5
 #define LFViewPreview                   6
 #define LFViewCalendar                  7
 #define LFViewGlobe                     8

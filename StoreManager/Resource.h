@@ -189,7 +189,7 @@
 #define IDM_VIEW_LIST                   7003
 #define IDM_VIEW_DETAILS                7004
 #define IDM_VIEW_TILES                  7005
-#define IDM_VIEW_SEARCHRESULT           7006
+#define IDM_VIEW_CONTENT                7006
 #define IDM_VIEW_PREVIEW                7007
 #define IDM_VIEW_CALENDAR               7008
 #define IDM_VIEW_GLOBE                  7009

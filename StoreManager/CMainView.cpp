@@ -68,7 +68,7 @@ BOOL CMainView::CreateFileView(UINT ViewID, FVPersistentData* Data)
 	case LFViewList:
 	case LFViewDetails:
 	case LFViewTiles:
-	case LFViewSearchResult:
+	case LFViewContent:
 	case LFViewPreview:
 		if ((m_ViewID<LFViewLargeIcons) || (m_ViewID>LFViewPreview))
 		{
