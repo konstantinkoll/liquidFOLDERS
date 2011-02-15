@@ -468,9 +468,10 @@ void CMainFrame::NavigateTo(LFFilter* f, UINT NavMode, FVPersistentData* Data, I
 		m_wndMainView.ShowNotification(ActiveFilter->Result.FilterType==LFFilterTypeError ? ENT_ERROR : ENT_WARNING, CookedFiles->m_LastError, CookedFiles->m_LastError==LFIndexAccessError ? IDM_STORES_REPAIRCORRUPTEDINDEX : 0);
 	}
 	else
-	{
-		m_wndMainView.DismissNotification();
-	}
+		if (theApp.m_NagCounter!=0)
+		{
+			m_wndMainView.DismissNotification();
+		}
 }
 
 void CMainFrame::UpdateHistory()
@@ -609,11 +610,14 @@ LRESULT CMainFrame::OnCookFiles(WPARAM wParam, LPARAM /*lParam*/)
 	if ((Victim) && (Victim!=RawFiles))
 		LFFreeSearchResult(Victim);
 
-	if (!LFIsLicensed())
+	if ((CookedFiles->m_LastError<=LFCancel) && (LFIsLicensed()))
 		if ((++theApp.m_NagCounter)>25)
 		{
+			CString tmpStr;
+			ENSURE(tmpStr.LoadString(IDS_NOLICENSE));
+			m_wndMainView.ShowNotification(ENT_INFO, tmpStr, ID_APP_PURCHASE);
+
 			theApp.m_NagCounter = 0;
-			MessageBox(_T("You are using an unregistered copy of liquidFOLDERS. liquidFOLDERS is shareware -\nif you decide to use it regulary, you are required to purchase a license from our website!"), _T("Unregistered copy"));
 		}
 
 	return CookedFiles->m_LastError;

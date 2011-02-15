@@ -36,7 +36,6 @@ void SortOptionsDlg::TestAttribute(UINT attr, BOOL& add, BOOL& check)
 
 
 BEGIN_MESSAGE_MAP(SortOptionsDlg, LFAttributeListDlg)
-	ON_BN_CLICKED(IDC_AUTODIRS, OnSetAttrGroupBox)
 	ON_NOTIFY(NM_DBLCLK, IDC_SORTATTRIBUTE, OnDoubleClick)
 END_MESSAGE_MAP()
 
@@ -76,17 +75,7 @@ BOOL SortOptionsDlg::OnInitDialog()
 		GetDlgItem(IDC_SUBFOLDERHINT)->SetWindowText(tmpStr);
 	}
 
-	// Gruppenbox
-	OnSetAttrGroupBox();
-
 	return TRUE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird
-}
-
-void SortOptionsDlg::OnSetAttrGroupBox()
-{
-	CString tmpStr;
-	ENSURE(tmpStr.LoadString(IsDlgButtonChecked(IDC_AUTODIRS) ? IDS_GROUPBOX_GROUP : IDS_GROUPBOX_SORT));
-	GetDlgItem(IDC_ATTRBOX)->SetWindowText(tmpStr);
 }
 
 void SortOptionsDlg::OnDoubleClick(NMHDR* /*pNMHDR*/, LRESULT* /*pResult*/)

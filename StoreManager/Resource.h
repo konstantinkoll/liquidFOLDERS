@@ -76,6 +76,9 @@
 #define IDS_STATISTICS_BYCOUNT          1033
 #define IDS_STATISTICS_BYSIZE           1034
 #define IDS_STATISTICS_OTHER            1035
+#define IDS_SUBFOLDERS_MANDATORY        1036
+#define IDS_SUBFOLDERS_NOTAVAIL         1037
+#define IDS_NOLICENSE                   1038
 #define IDS_VATTR_FIRST                 1100
 #define IDS_VATTR_DRIVELETTER           1100
 #define IDS_VATTR_MAINTENANCETIME       1101
@@ -101,11 +104,6 @@
 #define IDC_DESCENDING                  2103
 #define IDC_AUTODIRS                    2104
 #define IDC_SUBFOLDERHINT               2105
-#define IDS_SUBFOLDERS_MANDATORY        2106
-#define IDS_SUBFOLDERS_NOTAVAIL         2107
-#define IDC_ATTRBOX                     2108
-#define IDS_GROUPBOX_SORT               2109
-#define IDS_GROUPBOX_GROUP              2110
 #define IDD_GLOBEOPTIONS                2200
 #define IDC_TEXTURESIZE                 2201
 #define IDC_HQMODEL                     2202

@@ -24,7 +24,6 @@ protected:
 	UINT m_Context;
 
 	afx_msg BOOL OnInitDialog();
-	afx_msg void OnSetAttrGroupBox();
 	afx_msg void OnDoubleClick(NMHDR* pNMHDR, LRESULT* pResult);
 	DECLARE_MESSAGE_MAP()
 };

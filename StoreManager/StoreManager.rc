@@ -287,7 +287,7 @@ BEGIN
     CONTROL         "",IDC_SORTATTRIBUTE,"SysListView32",LVS_LIST | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SORTASCENDING | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_ALIGNLEFT | LVS_NOCOLUMNHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,14,27,261,206
     DEFPUSHBUTTON   "OK",IDOK,174,298,50,14,WS_GROUP
     PUSHBUTTON      "Abbrechen",IDCANCEL,232,298,50,14,WS_GROUP
-    GROUPBOX        "",IDC_ATTRBOX,7,7,275,235,WS_GROUP
+    GROUPBOX        "Objekte nach dieser Eigenschaft organisieren",IDC_STATIC,7,7,275,235
     LTEXT           "Alle Eigenschaften in diesem Kontext:",IDC_STATIC,14,17,261,8
     CONTROL         "Dateien in Unterordner &gruppieren",IDC_AUTODIRS,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,42,262,147,10
     CONTROL         "&Aufsteigend",IDC_ASCENDING,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,225,259,50,10
@@ -578,7 +578,7 @@ BEGIN
     CONTROL         "",IDC_SORTATTRIBUTE,"SysListView32",LVS_LIST | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SORTASCENDING | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_ALIGNLEFT | LVS_NOCOLUMNHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,14,27,261,206
     DEFPUSHBUTTON   "OK",IDOK,174,298,50,14,WS_GROUP
     PUSHBUTTON      "Cancel",IDCANCEL,232,298,50,14,WS_GROUP
-    GROUPBOX        "",IDC_ATTRBOX,7,7,275,235,WS_GROUP
+    GROUPBOX        "Organize items by this property",IDC_STATIC,7,7,275,235
     LTEXT           "All properties available in this context:",IDC_STATIC,14,17,261,8
     CONTROL         "&Group items into subfolders",IDC_AUTODIRS,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,42,262,147,10
     CONTROL         "&Ascending",IDC_ASCENDING,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,225,259,50,10
@@ -750,22 +750,25 @@ BEGIN
     IDS_YOULOOKAT           "You look at %s"
     IDS_NOTHINGTODISPLAY    "There is nothing to display."
     IDS_AUTOMATIC           "Choose automatically"
-    IDS_ILLEGALYEAR         "You can only display the years 1900 through 2100."
-    IDS_LEGEND              "Legend"
-    IDS_LEGEND_BLUE         "Requires scheduled maintenance"
-    IDS_LEGEND_RED          "Damaged (file body missing)"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_ILLEGALYEAR         "You can only display the years 1900 through 2100."
+    IDS_LEGEND              "Legend"
+    IDS_LEGEND_BLUE         "Requires scheduled maintenance"
+    IDS_LEGEND_RED          "Damaged (file body missing)"
     IDS_LEGEND_RARE         "Rare"
     IDS_LEGEND_COMMON       "Common"
     IDS_LEGEND_OLDER        "Older"
+    IDS_LEGEND_NEWER        "Newer"
     IDS_STATISTICS          "Statistics"
     IDS_STATISTICS_BYCOUNT  "By file count"
     IDS_STATISTICS_BYSIZE   "By file size"
     IDS_STATISTICS_OTHER    "Other"
-    IDS_LEGEND_NEWER        "Newer"
+    IDS_SUBFOLDERS_MANDATORY "Subfolders are mandatory for this view."
+    IDS_SUBFOLDERS_NOTAVAIL "Subfolders are not available in this context."
+    IDS_NOLICENSE           "You are using an unregistered copy of liquidFOLDERS. liquidFOLDERS is shareware—if you decide to use it regulary, you are required to purchase a license key!"
 END
 
 STRINGTABLE 
@@ -784,11 +787,6 @@ BEGIN
     IDS_VATTR_INDEXVERSION  "Index version"
     IDS_VATTR_IATA_NAME     "IATA airport name"
     IDS_VATTR_IATA_COUNTRY  "Country/territory"
-END
-
-STRINGTABLE 
-BEGIN
-    ID_VIEW_AUTODIRS        "Enables or disables grouping of similar files into subfolders for this context. Grouping is not available in all contexts, and cannot be turned off in subfolders or advanced view modes.\nGroup into subfolders"
 END
 
 STRINGTABLE 
@@ -903,15 +901,11 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_SUBFOLDERS_MANDATORY "Subfolders are mandatory for this view."
-    IDS_SUBFOLDERS_NOTAVAIL "Subfolders are not available in this context."
-    IDS_GROUPBOX_SORT       "Sort items by this property"
-    IDS_GROUPBOX_GROUP      "Organize items by this property"
+    IDM_ORGANIZE            "Selects the property by which to organize all items in this context.\nOrganize by"
 END
 
 STRINGTABLE 
 BEGIN
-    IDM_ORGANIZE            "Selects the property by which to organize all items in this context.\nOrganize by"
     IDM_VIEW                "Selects the view mode for this context.\nDisplay as"
     IDM_VIEW_LARGEICONS     "Large icons"
     IDM_VIEW_SMALLICONS     "Small icons"
@@ -920,6 +914,10 @@ BEGIN
     IDM_VIEW_TILES          "Tiles"
     IDM_VIEW_CONTENT        "Content"
     IDM_VIEW_PREVIEW        "Preview"
+END
+
+STRINGTABLE 
+BEGIN
     IDM_VIEW_CALENDAR       "Calendar"
     IDM_VIEW_GLOBE          "Globe"
     IDM_VIEW_TAGCLOUD       "Tag cloud"
@@ -1061,7 +1059,7 @@ BEGIN
     CONTROL         "",IDC_SORTATTRIBUTE,"SysListView32",LVS_LIST | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SORTASCENDING | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_ALIGNLEFT | LVS_NOCOLUMNHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,14,27,261,206
     DEFPUSHBUTTON   "OK",IDOK,174,298,50,14,WS_GROUP
     PUSHBUTTON      "Cancelar",IDCANCEL,232,298,50,14,WS_GROUP
-    GROUPBOX        "",IDC_ATTRBOX,7,7,275,235,WS_GROUP
+    GROUPBOX        "",IDC_STATIC,7,7,275,235
     LTEXT           "Todas las propiedades disponibles en este contexto:",IDC_STATIC,14,17,261,8
     CONTROL         "&Agrupar objetos en subarchivos",IDC_AUTODIRS,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,42,262,147,10
     CONTROL         "&Ascendente",IDC_ASCENDING,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,225,259,50,10
@@ -1286,7 +1284,7 @@ END
 
 IDD_CHOOSEDETAILS DIALOGEX 0, 0, 208, 276
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
-CAPTION "choisissez des détails pour ""%s"""
+CAPTION "Choisissez des détails pour ""%s"""
 FONT 8, "MS Shell Dlg", 400, 0, 0x0
 BEGIN
     GROUPBOX        "Détails",IDC_STATIC,7,7,194,241
@@ -1308,7 +1306,7 @@ BEGIN
     CONTROL         "",IDC_SORTATTRIBUTE,"SysListView32",LVS_LIST | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SORTASCENDING | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_ALIGNLEFT | LVS_NOCOLUMNHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,14,27,271,206
     DEFPUSHBUTTON   "OK",IDOK,184,298,50,14,WS_GROUP
     PUSHBUTTON      "Annuler",IDCANCEL,242,298,50,14,WS_GROUP
-    GROUPBOX        "",IDC_ATTRBOX,7,7,285,235,WS_GROUP
+    GROUPBOX        "",IDC_STATIC,7,7,285,235
     LTEXT           "Toutes les qualités dans ce contexte:",IDC_STATIC,14,17,261,8
     CONTROL         "&Grouper des fichiers dans le sous-dossier",IDC_AUTODIRS,
                     "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,42,262,147,10
