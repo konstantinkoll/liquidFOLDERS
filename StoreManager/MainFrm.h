@@ -67,9 +67,6 @@ protected:
 	afx_msg void OnToggleAutoDirs();
 	afx_msg void OnUpdateAppCommands(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateNavCommands(CCmdUI* pCmdUI);
-	afx_msg void OnToggleFilterWnd();
-	afx_msg void OnToggleInspectorWnd();
-	afx_msg void OnUpdatePaneCommands(CCmdUI* pCmdUI);
 	afx_msg void OnNavigateBack();
 	afx_msg void OnNavigateForward();
 	afx_msg void OnNavigateReload();

@@ -23,16 +23,12 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_APP_NEWVIEW, ID_VIEW_AUTODIRS, OnUpdateAppCommands)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_AUTODIRS, OnUpdateAppCommands)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_NAV_BACK, ID_NAV_RELOAD, OnUpdateNavCommands)
-	ON_UPDATE_COMMAND_UI_RANGE(ID_PANE_FILTERWND, ID_PANE_INSPECTORWND, OnUpdatePaneCommands)
 
 	ON_COMMAND(ID_APP_CLOSE, OnClose)
 	ON_COMMAND(ID_APP_CLOSEOTHERS, OnCloseOthers)
 	ON_COMMAND(ID_APP_SORTOPTIONS, OnSortOptions)
 	ON_COMMAND(ID_APP_VIEWOPTIONS, OnViewOptions)
 	ON_COMMAND(ID_VIEW_AUTODIRS, OnToggleAutoDirs)
-
-	ON_COMMAND(ID_PANE_FILTERWND, OnToggleFilterWnd)
-	ON_COMMAND(ID_PANE_INSPECTORWND, OnToggleInspectorWnd)
 
 	ON_COMMAND(ID_NAV_BACK, OnNavigateBack)
 	ON_COMMAND(ID_NAV_FORWARD, OnNavigateForward)
@@ -126,20 +122,7 @@ INT CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	InitializeRibbon();
 
-	// Statusleiste erstellen
-	if (!m_wndStatusBar.Create(this))
-		return -1;
-
-	CMFCRibbonButtonsGroup* pGroupPanels = new CMFCRibbonButtonsGroup();
-	if (!IsClipboard)
-		pGroupPanels->AddButton(new CMFCRibbonButton(ID_PANE_FILTERWND, _T("")));
-	pGroupPanels->AddButton(new CMFCRibbonButton(ID_PANE_INSPECTORWND, _T("")));
-
-	tmpStr = "Panes";
-	m_wndStatusBar.AddExtendedElement(pGroupPanels, tmpStr);
-
 	UINT dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | CBRS_FLOAT_MULTI;
-
 	if (!IsClipboard)
 	{
 		// Filter-Pane erstellen
@@ -258,37 +241,6 @@ void CMainFrame::OnUpdateAppCommands(CCmdUI* pCmdUI)
 	}
 }
 
-void CMainFrame::OnToggleFilterWnd()
-{
-	if (m_wndFilter)
-	{
-		BOOL b = m_wndFilter->IsVisible() ? FALSE : TRUE;
-		m_wndFilter->ShowPane(b, FALSE, b);
-		RecalcLayout(FALSE);
-	}
-}
-
-void CMainFrame::OnToggleInspectorWnd()
-{
-	BOOL b = m_wndInspector.IsVisible() ? FALSE : TRUE;
-	m_wndInspector.ShowPane(b, FALSE, b);
-	RecalcLayout(FALSE);
-}
-
-void CMainFrame::OnUpdatePaneCommands(CCmdUI* pCmdUI)
-{
-	switch (pCmdUI->m_nID)
-	{
-	case ID_PANE_FILTERWND:
-		if (m_wndFilter)
-			pCmdUI->SetCheck(m_wndFilter->IsVisible());
-		pCmdUI->Enable(m_wndFilter!=NULL);
-		break;
-	case ID_PANE_INSPECTORWND:
-		pCmdUI->SetCheck(m_wndInspector.IsVisible());
-		break;
-	}
-}
 
 BOOL CMainFrame::AddClipItem(LFItemDescriptor* i)
 {
