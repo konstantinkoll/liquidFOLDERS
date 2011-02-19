@@ -1,5 +1,4 @@
-
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "..\\include\\LFCore.h"
 #include "LFItemDescriptor.h"
 #include "CIndex.h"

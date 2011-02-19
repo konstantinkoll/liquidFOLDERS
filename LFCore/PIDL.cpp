@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "liquidFOLDERS.h"
 #include <shellapi.h>
 #include <shlobj.h>

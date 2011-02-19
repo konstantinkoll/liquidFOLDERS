@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "..\\include\\LFCore.h"
 #include "LFVariantData.h"
 #include "Mutex.h"

@@ -1,5 +1,4 @@
-
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "..\\include\\LFCore.h"
 #include "LFFileImportList.h"
 #include <assert.h>
