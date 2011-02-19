@@ -1387,11 +1387,13 @@ void CFileView::OnLButtonUp(UINT nFlags, CPoint point)
 	}
 }
 
-void CFileView::OnLButtonDblClk(UINT /*nFlags*/, CPoint /*point*/)
+void CFileView::OnLButtonDblClk(UINT /*nFlags*/, CPoint point)
 {
 	DestroyEdit();
 
-	GetOwner()->SendMessage(WM_COMMAND, IDM_ITEM_OPEN);
+	INT idx = ItemAtPosition(point);
+	if (idx!=-1)
+		GetOwner()->SendMessage(WM_COMMAND, IDM_ITEM_OPEN);
 }
 
 void CFileView::OnRButtonDown(UINT nFlags, CPoint point)
