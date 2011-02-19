@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "..\\include\\LFCore.h"
+#include "LFCore.h"
 #include "LFTransactionList.h"
 #include <assert.h>
 
