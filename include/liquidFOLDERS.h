@@ -1,6 +1,8 @@
 #pragma once
-#include <windows.h>
 
+#if defined(WIN32)
+#include <windows.h>
+#endif
 
 // Resource IDs from LFCORE.DLL
 

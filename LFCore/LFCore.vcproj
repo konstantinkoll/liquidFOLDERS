@@ -560,7 +560,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\LFBitArray.h"
+				RelativePath="..\include\LFBitArray.h"
 				>
 			</File>
 			<File
