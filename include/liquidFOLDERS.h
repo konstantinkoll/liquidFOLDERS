@@ -11,7 +11,7 @@
 
 // BitArray
 
-#include "..\\LFCore\\LFBitArray.h"
+#include "..\\include\\LFBitArray.h"
 
 
 // License

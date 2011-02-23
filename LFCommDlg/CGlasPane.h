@@ -19,6 +19,7 @@ protected:
 	BOOL m_IsLeft;
 
 	afx_msg void OnNcCalcSize(BOOL bCalcValidRects, NCCALCSIZE_PARAMS* lpncsp);
+	afx_msg LRESULT OnNcHitTest(CPoint point);
 	afx_msg void OnNcPaint();
 	DECLARE_MESSAGE_MAP()
 };

@@ -30,6 +30,7 @@ BOOL CGlasPane::Create(CWnd* pParentWnd, UINT nID)
 
 BEGIN_MESSAGE_MAP(CGlasPane, CWnd)
 	ON_WM_NCCALCSIZE()
+	ON_WM_NCHITTEST()
 	ON_WM_NCPAINT()
 END_MESSAGE_MAP()
 
@@ -45,6 +46,11 @@ void CGlasPane::OnNcCalcSize(BOOL bCalcValidRects, NCCALCSIZE_PARAMS* lpncsp)
 	{
 		lpncsp->rgrc[0].left += GRIPPER;
 	}
+}
+
+LRESULT CGlasPane::OnNcHitTest(CPoint /*point*/)
+{
+	return m_IsLeft ? HTRIGHT : HTLEFT;
 }
 
 void CGlasPane::OnNcPaint()
