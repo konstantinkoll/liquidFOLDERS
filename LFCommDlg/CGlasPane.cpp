@@ -9,9 +9,12 @@
 // CGlasPane
 //
 
-CGlasPane::CGlasPane()
+#define GRIPPER    4
+
+CGlasPane::CGlasPane(BOOL IsLeft)
 	: CWnd()
 {
+	m_IsLeft = IsLeft;
 }
 
 BOOL CGlasPane::Create(CWnd* pParentWnd, UINT nID)
@@ -26,4 +29,39 @@ BOOL CGlasPane::Create(CWnd* pParentWnd, UINT nID)
 
 
 BEGIN_MESSAGE_MAP(CGlasPane, CWnd)
+	ON_WM_NCCALCSIZE()
+	ON_WM_NCPAINT()
 END_MESSAGE_MAP()
+
+void CGlasPane::OnNcCalcSize(BOOL bCalcValidRects, NCCALCSIZE_PARAMS* lpncsp)
+{
+	CWnd::OnNcCalcSize(bCalcValidRects, lpncsp);
+
+	if (m_IsLeft)
+	{
+		lpncsp->rgrc[0].right -= GRIPPER;
+	}
+	else
+	{
+		lpncsp->rgrc[0].left += GRIPPER;
+	}
+}
+
+void CGlasPane::OnNcPaint()
+{
+	CWindowDC pDC(this);
+
+	CRect rectClient;
+	GetClientRect(rectClient);
+	ClientToScreen(rectClient);
+
+	CRect rectWindow;
+	GetWindowRect(&rectWindow);
+
+	rectClient.OffsetRect(-rectWindow.TopLeft());
+	rectWindow.OffsetRect(-rectWindow.TopLeft());
+
+	pDC.ExcludeClipRect(rectClient);
+	pDC.FillSolidRect(rectWindow, GetSysColor(COLOR_3DFACE));
+	pDC.SelectClipRgn(NULL);
+}
