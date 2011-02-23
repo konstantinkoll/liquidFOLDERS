@@ -570,7 +570,7 @@ void CListView::DrawIcon(CDC& dc, CRect& rect, LFItemDescriptor* i)
 
 	if ((i->Type & LFTypeMask)==LFTypeFile)
 	{
-		if (m_ViewParameters.Mode==LFViewLargeIcons)
+		if ((m_ViewParameters.Mode==LFViewLargeIcons) || (m_ViewParameters.Mode==LFViewPreview))
 		{
 			theApp.m_FileFormats.DrawJumboIcon(dc, rect, i->CoreAttributes.FileFormat, i->Type & LFTypeGhosted);
 			return;
