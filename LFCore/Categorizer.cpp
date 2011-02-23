@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "Categorizer.h"
 #include "LFCore.h"
 #include "IATA.h"

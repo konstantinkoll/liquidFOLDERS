@@ -1,5 +1,4 @@
-
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "LFMaintenanceList.h"
 #include <assert.h>
 

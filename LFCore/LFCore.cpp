@@ -2,7 +2,7 @@
 //
 
 #include "stdafx.h"
-#include "..\\include\\LFCore.h"
+#include "LFCore.h"
 #include "liquidFOLDERS.h"
 #include "resource.h"
 #include "IATA.h"

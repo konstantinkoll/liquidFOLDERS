@@ -1,6 +1,5 @@
-
-#include "StdAfx.h"
-#include "..\\include\\LFCore.h"
+#include "stdafx.h"
+#include "LFCore.h"
 #include "LFFileIDList.h"
 #include <assert.h>
 

@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "IdxTables.h"
 #include "PIDL.h"
 #include "ShellProperties.h"

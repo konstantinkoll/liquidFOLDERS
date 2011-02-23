@@ -1,5 +1,4 @@
-
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "Categorizer.h"
 #include "IdxTables.h"
 #include "LFCore.h"

@@ -1,5 +1,5 @@
-#include "StdAfx.h"
-#include "..\\include\\LFCore.h"
+#include "stdafx.h"
+#include "LFCore.h"
 #include "LFVariantData.h"
 #include "Mutex.h"
 #include "Stores.h"
