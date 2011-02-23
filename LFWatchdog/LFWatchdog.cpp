@@ -272,7 +272,7 @@ HWND CreateHostWindow()
 // CWatchdogApp-Erstellung
 
 CWatchdogApp::CWatchdogApp()
-	: LFApplication(HasGUI_None)
+	: LFApplication(FALSE)
 {
 }
 

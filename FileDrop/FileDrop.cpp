@@ -26,13 +26,9 @@ static BOOL CALLBACK EnumWindowsProc(HWND hWnd, LPARAM /*lParam*/)
 // CFileDropApp-Erstellung
 
 CFileDropApp::CFileDropApp()
-	: LFApplication(HasGUI_Standard)
+	: LFApplication(TRUE)
 {
 	WakeupMsg = RegisterWindowMessageA("liquidFOLDERS.FileDrop.Wakeup");
-}
-
-CFileDropApp::~CFileDropApp()
-{
 }
 
 

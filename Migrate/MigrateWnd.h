@@ -21,6 +21,7 @@ public:
 	BOOL Create();
 
 protected:
+	HICON m_hIcon;
 	CPIDLSelector m_wndFolder;
 	CStoreSelector m_wndStore;
 	CMainView m_wndMainView;
@@ -36,5 +37,4 @@ protected:
 	afx_msg void OnRootUpdate(NMHDR* pNMHDR, LRESULT* pResult);
 	DECLARE_MESSAGE_MAP()
 
-	HICON m_hIcon;
 };

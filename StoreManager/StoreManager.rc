@@ -32,7 +32,7 @@ LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
-IDR_MAINFRAME           ICON                    "res\\StoreManager.ico"
+IDR_APPLICATION         ICON                    "res\\StoreManager.ico"
 IDR_CLIPBOARD           ICON                    "res\\Clipboard_Small.ico"
 IDD_VIEWOPTIONS         ICON                    "res\\ViewOptions_Tiny.ico"
 IDD_SORTOPTIONS         ICON                    "res\\SortOptions_Tiny.ico"
@@ -110,17 +110,6 @@ BEGIN
     BEGIN
         VALUE "Translation", 0x0, 1252
     END
-END
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Menu
-//
-
-IDR_MAINFRAME MENU 
-BEGIN
-    MENUITEM "",                            65535
 END
 
 
@@ -703,12 +692,8 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDR_MAINFRAME           "StoreManager"
-END
-
-STRINGTABLE 
-BEGIN
-    ID_APP_EXIT             "Exits the StoreManager.\nExit"
+    IDR_APPLICATION         "StoreManager"
+    IDR_CLIPBOARD           "Clipboard"
 END
 
 STRINGTABLE 

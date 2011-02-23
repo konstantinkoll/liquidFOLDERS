@@ -95,8 +95,8 @@ INT CMigrateWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	// Folder selector
 	CString hint;
-	ENSURE(hint.LoadString(IDS_FOLDER_HINT));
 	CString caption;
+	ENSURE(hint.LoadString(IDS_FOLDER_HINT));
 	ENSURE(caption.LoadString(IDS_FOLDER_CAPTION));
 	if (!m_wndFolder.Create(hint, caption, this, 1))
 		return -1;
@@ -140,8 +140,8 @@ void CMigrateWnd::OnIdleUpdateCmdUI()
 void CMigrateWnd::OnSelectRoot()
 {
 	CString caption;
-	ENSURE(caption.LoadString(IDS_BROWSEFORFOLDER_CAPTION));
 	CString hint;
+	ENSURE(caption.LoadString(IDS_BROWSEFORFOLDER_CAPTION));
 	ENSURE(hint.LoadString(IDS_BROWSEFORFOLDER_HINT));
 
 	LFBrowseForFolderDlg dlg(FALSE, FALSE, _T(""), this, caption, hint);

@@ -2,7 +2,7 @@
 // Microsoft Visual C++ generated include file.
 // Used by StoreManager.rc
 //
-#define IDR_MAINFRAME                   128
+#define IDR_APPLICATION                 128
 #define IDR_CLIPBOARD                   129
 #define IDB_ABOUTICON                   130
 #define IDB_TASKS                       131
@@ -18,9 +18,6 @@
 #define IDB_BLUEMARBLE_2048             141
 #define IDB_BLUEMARBLE_4096             142
 #define IDB_BLUEMARBLE_8192             143
-#define ID_APP_NEWVIEW                  250
-#define ID_APP_CLOSE                    251
-#define ID_APP_CLOSEOTHERS              252
 #define ID_APP_VIEWOPTIONS              253
 #define ID_APP_SORTOPTIONS              254
 #define ID_VIEW_AUTODIRS                354

@@ -5,7 +5,7 @@
 #pragma once
 #include "LFCommDlg.h"
 #include "CFormatCache.h"
-#include "MainFrm.h"
+#include "MainWnd.h"
 #include "resource.h"
 #include <hash_map>
 #include <string>
@@ -20,8 +20,8 @@ public:
 	CStoreManagerApp();
 
 	CString m_PathGoogleEarth;
-	CList<CMainFrame*> m_MainFrames;
-	CMainFrame* p_Clipboard;
+	CList<CMainWnd*> m_MainFrames;
+	CMainWnd* p_Clipboard;
 	CFormatCache m_FileFormats;
 	LFViewParameters m_Views[LFContextCount];
 	LFBitArray* m_AllowedViews[LFContextCount];
@@ -46,12 +46,10 @@ public:
 
 	virtual BOOL InitInstance();
 	virtual INT ExitInstance();
-		virtual void OnClosingMainFrame(CFrameImpl* pFrameImpl);	// Axe
 
-	void AddFrame(CMainFrame* pFrame);
-	void KillFrame(CMainFrame* pVictim);
-	void ReplaceMainFrame(CMainFrame* pVictim);
-	CMainFrame* GetClipboard();
+	void AddFrame(CMainWnd* pFrame);
+	void KillFrame(CMainWnd* pVictim);
+	CMainWnd* GetClipboard();
 	void CloseAllFrames(BOOL LeaveOne=FALSE);
 
 	HBITMAP SetContextMenuIcon(CMenu* pMenu, UINT CmdID, UINT ResID);
@@ -70,8 +68,6 @@ protected:
 	void SaveViewOptions(INT context);
 
 	afx_msg void OnAppAbout();
-	afx_msg void OnAppNewView();
-	afx_msg void OnAppExit();
 	DECLARE_MESSAGE_MAP()
 };
 

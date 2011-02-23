@@ -45,9 +45,9 @@ void PlayRegSound(CString Identifier)
 
 // LFApplication-Erstellung
 
-LFApplication::LFApplication(UINT _HasGUI)
+LFApplication::LFApplication(BOOL HasGUI)
 {
-	HasGUI = _HasGUI;
+	m_HasGUI = HasGUI;
 
 	// Version
 	OSVERSIONINFO osInfo;
@@ -271,30 +271,16 @@ BOOL LFApplication::InitInstance()
 
 	CWinAppEx::InitInstance();
 
-	if (HasGUI==HasGUI_Ribbon)
-	{
-		InitTooltipManager();
-		CMFCToolTipInfo ttParams;
-		ttParams.m_bVislManagerTheme = TRUE;
-		GetTooltipManager()->SetTooltipParams(AFX_TOOLTIP_TYPE_ALL, RUNTIME_CLASS(CMFCToolTipCtrl), &ttParams);
-	}
-
 	InitShellManager();
 
 	// OLE Initialisieren
 	ENSURE(AfxOleInit());
 
-	if (HasGUI==HasGUI_None)
+	if (!m_HasGUI)
 		return TRUE;
 
 	SetRegistryKey(_T("liquidFOLDERS"));
 	LoadStdProfileSettings();
-
-	if (HasGUI==HasGUI_Ribbon)
-	{
-		InitContextMenuManager();
-		InitKeyboardManager();
-	}
 
 	// Watchdog starten
 	#ifndef _DEBUG
@@ -344,6 +330,7 @@ void LFApplication::SendMail(CString Subject)
 	CString URL = _T("mailto:support@liquidfolders.net");
 	if (!Subject.IsEmpty())
 		URL += _T("?subject=")+Subject;
+
 	ShellExecute(m_pActiveWnd->GetSafeHwnd(), _T("open"), URL, NULL, NULL, SW_SHOW);
 }
 
@@ -373,6 +360,7 @@ void LFApplication::OnAppPurchase()
 {
 	CString url;
 	ENSURE(url.LoadString(IDS_PURCHASEURL));
+
 	ShellExecute(m_pActiveWnd->GetSafeHwnd(), _T("open"), url, NULL, NULL, SW_SHOW);
 }
 

@@ -11,10 +11,6 @@
 #define RatingBitmapWidth        88
 #define RatingBitmapHeight       15
 
-#define HasGUI_None               0
-#define HasGUI_Standard           1
-#define HasGUI_Ribbon             2
-
 #define OS_XP                     0
 #define OS_Vista                  1
 #define OS_Seven                  2
@@ -50,7 +46,7 @@ typedef BOOL(__stdcall* PFNDWMDEFWINDOWPROC)(HWND hWnd, UINT msg, WPARAM wParam,
 class AFX_EXT_CLASS LFApplication : public CWinAppEx
 {
 public:
-	LFApplication(UINT _HasGUI);
+	LFApplication(BOOL HasGUI);
 	virtual ~LFApplication();
 
 	CString m_Path;
@@ -75,9 +71,9 @@ public:
 	CFont m_SmallFont;
 	CFont m_LargeFont;
 	CFont m_CaptionFont;
+	BOOL m_HasGUI;
 	LFMessageIDs* MessageIDs;
 	BOOL IsLicensed;
-	UINT HasGUI;
 	UINT OSVersion;
 
 	PFNSETWINDOWTHEME zSetWindowTheme;

@@ -13,7 +13,7 @@
 // CRunCmdApp-Erstellung
 
 CRunCmdApp::CRunCmdApp()
-	: LFApplication(HasGUI_None)
+	: LFApplication(FALSE)
 {
 }
 

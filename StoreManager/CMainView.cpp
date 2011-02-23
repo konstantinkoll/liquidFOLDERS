@@ -1274,7 +1274,7 @@ void CMainView::OnFileOpenWith()
 
 void CMainView::OnFileRemember()
 {
-	CMainFrame* pClipboard = theApp.GetClipboard();
+	CMainWnd* pClipboard = theApp.GetClipboard();
 	BOOL changes = FALSE;
 
 	INT idx = GetNextSelectedItem(-1);

@@ -3,9 +3,8 @@
 //
 
 #include "stdafx.h"
-#include "afxwinappex.h"
 #include "StoreManager.h"
-#include "MainFrm.h"
+#include "MainWnd.h"
 #include "..\\LFCore\\resource.h"
 #include "LFCore.h"
 #include "LFCommDlg.h"
@@ -16,15 +15,13 @@
 
 BEGIN_MESSAGE_MAP(CStoreManagerApp, LFApplication)
 	ON_COMMAND(ID_APP_ABOUT, OnAppAbout)
-	ON_COMMAND(ID_APP_NEWVIEW, OnAppNewView)
-	ON_COMMAND(ID_APP_EXIT, OnAppExit)
 END_MESSAGE_MAP()
 
 
 // CStoreManagerApp-Erstellung
 
 CStoreManagerApp::CStoreManagerApp()
-	: LFApplication(HasGUI_Ribbon)
+	: LFApplication(TRUE)
 {
 	m_NagCounter = 20;
 }
@@ -90,10 +87,6 @@ BOOL CStoreManagerApp::InitInstance()
 
 	SetRegistryBase(oldBase);
 
-	CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerOffice2007));
-	CMFCVisualManagerOffice2007::SetStyle(CMFCVisualManagerOffice2007::Office2007_LunaBlue);
-	CDockingManager::SetDockingMode(DT_IMMEDIATE);
-
 	for (INT a=0; a<LFContextCount; a++)
 		LoadViewOptions(a);
 
@@ -107,8 +100,8 @@ BOOL CStoreManagerApp::InitInstance()
 			RootStore = StoreID;
 		}
 
-	CMainFrame* pFrame = new CMainFrame(RootStore);
-	pFrame->LoadFrame(IDR_MAINFRAME, WS_OVERLAPPEDWINDOW);
+	CMainWnd* pFrame = new CMainWnd();
+	pFrame->Create(FALSE, RootStore);
 	pFrame->ShowWindow(SW_SHOW);
 
 	return TRUE;
@@ -146,56 +139,43 @@ INT CStoreManagerApp::ExitInstance()
 }
 
 
-void CStoreManagerApp::AddFrame(CMainFrame* pFrame)
+void CStoreManagerApp::AddFrame(CMainWnd* pFrame)
 {
 	if (!m_pMainWnd)
 		m_pMainWnd = pFrame;
 
 	m_MainFrames.AddTail(pFrame);
 
-	if (pFrame->IsClipboard)
+	if (pFrame->m_IsClipboard)
 		p_Clipboard = pFrame;
 }
 
-void CStoreManagerApp::KillFrame(CMainFrame* pVictim)
+void CStoreManagerApp::KillFrame(CMainWnd* pVictim)
 {
-	if (pVictim->IsClipboard)
+	if (pVictim->m_IsClipboard)
 		p_Clipboard = NULL;
 
 	for (POSITION p=m_MainFrames.GetHeadPosition(); p; )
 	{
 		POSITION pl = p;
-		CMainFrame* pFrame = m_MainFrames.GetNext(p);
+		CMainWnd* pFrame = m_MainFrames.GetNext(p);
 		if (pFrame==pVictim)
 		{
 			m_MainFrames.RemoveAt(pl);
-			break;
 		}
-	}
-}
-
-void CStoreManagerApp::ReplaceMainFrame(CMainFrame* pVictim)
-{
-	if (pVictim!=m_pMainWnd)
-		return;
-
-	for (POSITION p=m_MainFrames.GetHeadPosition(); p; )
-	{
-		CMainFrame* pFrame = m_MainFrames.GetNext(p);
-		if (pFrame!=pVictim)
+		else
 		{
 			m_pMainWnd = pFrame;
-			break;
 		}
 	}
 }
 
-CMainFrame* CStoreManagerApp::GetClipboard()
+CMainWnd* CStoreManagerApp::GetClipboard()
 {
 	if (!p_Clipboard)
 	{
-		p_Clipboard = new CMainFrame(NULL, TRUE);
-		p_Clipboard->LoadFrame(IDR_MAINFRAME, WS_OVERLAPPEDWINDOW);
+		p_Clipboard = new CMainWnd();
+		p_Clipboard->Create(TRUE);
 		p_Clipboard->ShowWindow(SW_SHOW);
 	}
 
@@ -212,7 +192,7 @@ void CStoreManagerApp::CloseAllFrames(BOOL LeaveOne)
 
 	for (POSITION p=m_MainFrames.GetHeadPosition(); p; )
 	{
-		CMainFrame* pFrame = m_MainFrames.GetNext(p);
+		CMainWnd* pFrame = m_MainFrames.GetNext(p);
 		if (pFrame!=m_pMainWnd)
 			pFrame->PostMessage(WM_CLOSE);
 
@@ -225,28 +205,11 @@ void CStoreManagerApp::CloseAllFrames(BOOL LeaveOne)
 		m_pMainWnd->PostMessage(WM_CLOSE);
 }
 
-void CStoreManagerApp::OnClosingMainFrame(CFrameImpl* pFrame)
-{
-	if (!((CMainFrame*)(pFrame->GetFrameList().GetHead()))->IsClipboard)
-		SaveState(NULL, pFrame);
-}
-
 void CStoreManagerApp::OnAppAbout()
 {
-	LFAbout(_T("StoreManager"), _T(__TIMESTAMP__), IDB_ABOUTICON, m_pActiveWnd);
-}
-
-void CStoreManagerApp::OnAppNewView()
-{
-	CMainFrame* pFrame = new CMainFrame();
-	pFrame->LoadFrame(IDR_MAINFRAME, WS_OVERLAPPEDWINDOW);
-	pFrame->ShowWindow(SW_SHOW);
-}
-
-void CStoreManagerApp::OnAppExit()
-{
-	CloseAllFrames();
-	LFApplication::OnAppExit();
+	CString AppName;
+	ENSURE(AppName.LoadString(IDR_APPLICATION));
+	LFAbout(AppName, _T(__TIMESTAMP__), IDB_ABOUTICON, m_pActiveWnd);
 }
 
 
@@ -328,7 +291,7 @@ void CStoreManagerApp::Broadcast(INT Context, INT View, UINT cmdMsg)
 {
 	for (POSITION p=m_MainFrames.GetHeadPosition(); p; )
 	{
-		CMainFrame* pFrame = m_MainFrames.GetNext(p);
+		CMainWnd* pFrame = m_MainFrames.GetNext(p);
 		if ((pFrame->ActiveContextID==Context) || (Context==-1))
 			if ((pFrame->ActiveViewID==View) || (View==-1))
 				pFrame->PostMessage(cmdMsg);

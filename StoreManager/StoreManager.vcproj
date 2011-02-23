@@ -450,7 +450,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\MainFrm.cpp"
+				RelativePath=".\MainWnd.cpp"
 				>
 			</File>
 			<File
@@ -608,7 +608,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\MainFrm.h"
+				RelativePath=".\MainWnd.h"
 				>
 			</File>
 			<File
