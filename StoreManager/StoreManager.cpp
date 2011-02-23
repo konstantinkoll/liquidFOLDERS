@@ -470,34 +470,3 @@ void CStoreManagerApp::SaveViewOptions(INT context)
 
 	SetRegistryBase(oldBase);
 }
-
-
-// Ribbon slack
-
-CString CStoreManagerApp::GetCommandName(UINT nID, BOOL bInsertSpace)
-{
-	CString tmpStr = _T("?");
-	tmpStr.LoadString(nID);
-
-	INT pos = tmpStr.Find(L'\n');
-	if (pos!=-1)
-		tmpStr.Delete(0, pos+1);
-
-	pos = tmpStr.Find(_T(" ("));
-	if (pos!=-1)
-		tmpStr.Delete(pos, tmpStr.GetLength()-pos);
-
-	if (bInsertSpace)
-	{
-		pos = tmpStr.Find(L'-');
-		if ((pos!=-1) && (tmpStr.Find(L' ')==-1))
-			tmpStr.Insert(pos+1, L' ');
-	}
-
-	return tmpStr;
-}
-
-CMFCRibbonButton* CStoreManagerApp::CommandButton(UINT nID, INT nSmallImageIndex, INT nLargeImageIndex, BOOL bAlwaysShowDescription, BOOL bInsertSpace)
-{
-	return new CMFCRibbonButton(nID, GetCommandName(nID, bInsertSpace), nSmallImageIndex, nLargeImageIndex, bAlwaysShowDescription);
-}

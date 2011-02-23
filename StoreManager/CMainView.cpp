@@ -18,29 +18,23 @@
 
 CMainView::CMainView()
 {
+	p_wndFilter = NULL;
 	p_wndFileView = NULL;
 	p_RawFiles = p_CookedFiles = NULL;
 	p_OrganizeButton = p_ViewButton = NULL;
 	m_Context = m_ViewID = -1;
 }
 
-CMainView::~CMainView()
+BOOL CMainView::Create(BOOL IsClipboard, CWnd* pParentWnd, UINT nID)
 {
-	if (p_wndFileView)
-	{
-		p_wndFileView->DestroyWindow();
-		delete p_wndFileView;
-	}
-}
+	m_IsClipboard = IsClipboard;
 
-INT CMainView::Create(CWnd* _pParentWnd, UINT nID)
-{
 	CString className = AfxRegisterWndClass(CS_DBLCLKS, LoadCursor(NULL, IDC_ARROW));
 
 	const DWORD dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_TABSTOP;
 	CRect rect;
 	rect.SetRectEmpty();
-	return CWnd::CreateEx(WS_EX_CONTROLPARENT, className, _T(""), dwStyle, rect, _pParentWnd, nID);
+	return CWnd::CreateEx(WS_EX_CONTROLPARENT, className, _T(""), dwStyle, rect, pParentWnd, nID);
 }
 
 BOOL CMainView::OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo)
@@ -251,14 +245,21 @@ void CMainView::AdjustLayout()
 	const UINT TaskHeight = m_wndTaskbar.GetPreferredHeight();
 	m_wndTaskbar.SetWindowPos(NULL, rect.left, rect.top, rect.Width(), TaskHeight, SWP_NOACTIVATE | SWP_NOZORDER);
 
-	const UINT ExplorerHeight = m_wndExplorerHeader.GetPreferredHeight();
-	m_wndExplorerHeader.SetWindowPos(NULL, rect.left, rect.top+TaskHeight, rect.Width(), ExplorerHeight, SWP_NOACTIVATE | SWP_NOZORDER);
-
 	const UINT NotificationHeight = m_wndExplorerNotification.GetPreferredHeight();
 	m_wndExplorerNotification.SetWindowPos(&wndTop, rect.left+32, rect.bottom-NotificationHeight, rect.Width()-64, NotificationHeight, SWP_NOACTIVATE);
 
+	UINT FilterWidth = 150;
+	UINT InspectorWidth = 150;
+
+	const UINT ExplorerHeight = m_wndExplorerHeader.GetPreferredHeight();
+	m_wndExplorerHeader.SetWindowPos(NULL, rect.left+FilterWidth, rect.top+TaskHeight, rect.Width()-FilterWidth-InspectorWidth, ExplorerHeight, SWP_NOACTIVATE | SWP_NOZORDER);
+	m_wndInspector.SetWindowPos(NULL, rect.right-InspectorWidth, rect.top+TaskHeight, InspectorWidth, rect.Height()-TaskHeight, SWP_NOACTIVATE | SWP_NOZORDER);
+
+	if (p_wndFilter)
+		p_wndFilter->SetWindowPos(NULL, rect.left, rect.top+TaskHeight, FilterWidth, rect.Height()-TaskHeight, SWP_NOACTIVATE | SWP_NOZORDER);
+
 	if (p_wndFileView)
-		p_wndFileView->SetWindowPos(NULL, rect.left, rect.top+TaskHeight+ExplorerHeight, rect.Width(), rect.Height()-ExplorerHeight-TaskHeight, SWP_NOACTIVATE | SWP_NOZORDER);
+		p_wndFileView->SetWindowPos(NULL, rect.left+FilterWidth, rect.top+TaskHeight+ExplorerHeight, rect.Width()-FilterWidth-InspectorWidth, rect.Height()-ExplorerHeight-TaskHeight, SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
 INT CMainView::GetSelectedItem()
@@ -382,8 +383,10 @@ void CMainView::RemoveTransactedItems(LFTransactionList* tl)
 			tl->m_Items[a].Item->DeleteFlag = true;
 
 	LFRemoveFlaggedItemDescriptors(p_RawFiles);
+
 	// TODO
 	//UpdateHistory();
+
 	FVPersistentData Data;
 	GetPersistentData(Data);
 	GetOwner()->SendMessage(WM_COOKFILES, (WPARAM)&Data);
@@ -466,6 +469,7 @@ BOOL CMainView::UpdateItems(LFVariantData* value1, LFVariantData* value2, LFVari
 
 BEGIN_MESSAGE_MAP(CMainView, CWnd)
 	ON_WM_CREATE()
+	ON_WM_DESTROY()
 	ON_WM_ERASEBKGND()
 	ON_WM_SIZE()
 	ON_WM_SETFOCUS()
@@ -587,11 +591,40 @@ INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	p_OrganizeButton = m_wndExplorerHeader.AddButton(IDM_ORGANIZE);
 	p_ViewButton = m_wndExplorerHeader.AddButton(IDM_VIEW);
 
+	// Inspector
+	if (!m_wndInspector.Create(this, 4))
+		return -1;
+
+	// Filter
+	if (!m_IsClipboard)
+	{
+		p_wndFilter = new CFilterWnd();
+		if (!p_wndFilter->Create(this, 5))
+			return -1;
+	}
+
 	// Explorer notification
-	if (!m_wndExplorerNotification.Create(this, 4))
+	if (!m_wndExplorerNotification.Create(this, 6))
 		return -1;
 
 	return 0;
+}
+
+void CMainView::OnDestroy()
+{
+	if (p_wndFilter)
+	{
+		p_wndFilter->DestroyWindow();
+		delete p_wndFilter;
+	}
+
+	if (p_wndFileView)
+	{
+		p_wndFileView->DestroyWindow();
+		delete p_wndFileView;
+	}
+
+	CWnd::OnDestroy();
 }
 
 BOOL CMainView::OnEraseBkgnd(CDC* /*pDC*/)
@@ -713,12 +746,15 @@ void CMainView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 
 void CMainView::OnUpdateSelection()
 {
+	m_wndInspector.UpdateStart(p_CookedFiles ? p_CookedFiles->m_StoreID : NULL);
+
 	INT idx = GetNextSelectedItem(-1);
 	m_FilesSelected = FALSE;
 
 	while (idx>=0)
 	{
 		LFItemDescriptor* item = p_CookedFiles->m_Items[idx];
+		m_wndInspector.UpdateAdd(item, p_RawFiles);
 
 		m_FilesSelected |= ((item->Type & LFTypeMask)==LFTypeFile) ||
 						(((item->Type & LFTypeMask)==LFTypeVirtual) && (item->FirstAggregate!=-1) && (item->LastAggregate!=-1));
@@ -726,10 +762,8 @@ void CMainView::OnUpdateSelection()
 		idx = GetNextSelectedItem(idx);
 	}
 
+	m_wndInspector.UpdateFinish();
 	m_wndTaskbar.PostMessage(WM_IDLEUPDATECMDUI);
-
-	// TODO
-	((CMainFrame*)GetParent())->OnUpdateSelection();
 }
 
 LRESULT CMainView::OnRenameItem(WPARAM wParam, LPARAM lParam)

@@ -146,7 +146,7 @@ void CExplorerHeader::AdjustLayout()
 		btn->GetPreferredSize(sz, CaptionWidth);
 		btn->SetWindowPos(NULL, rect.right-sz.cx-BORDERLEFT, Row, sz.cx, sz.cy, SWP_NOZORDER | SWP_NOACTIVATE);
 
-		m_RightEdge = min(m_RightEdge, rect.right-sz.cx-CaptionWidth-BORDER-BORDERLEFT-MARGIN);
+		m_RightEdge = min(m_RightEdge, rect.right-sz.cx-(INT)CaptionWidth-BORDER-BORDERLEFT-MARGIN);
 
 		Row += sz.cy+MARGIN/2;
 	}

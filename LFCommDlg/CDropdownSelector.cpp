@@ -110,7 +110,7 @@ BOOL CDropdownWindow::Create(CWnd* pOwnerWnd, UINT _DialogResID)
 {
 	m_DialogResID = _DialogResID;
 
-	CString className = AfxRegisterWndClass(CS_DROPSHADOW | CS_DBLCLKS, LoadCursor(NULL, IDC_ARROW));
+	CString className = AfxRegisterWndClass(CS_DROPSHADOW | CS_DBLCLKS, AfxGetApp()->LoadStandardCursor(IDC_ARROW));
 
 	BOOL res = CWnd::CreateEx(WS_EX_CONTROLPARENT | WS_EX_TOOLWINDOW | WS_EX_NOACTIVATE, className, _T(""), WS_BORDER | WS_CHILD, 0, 0, 0, 0, GetDesktopWindow()->GetSafeHwnd(), NULL, NULL);
 	SetOwner(pOwnerWnd);

@@ -411,6 +411,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CGlasPane.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\CGlasWindow.cpp"
 				>
 			</File>
@@ -654,6 +658,10 @@
 			</File>
 			<File
 				RelativePath=".\CGdiPlusBitmap.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CGlasPane.h"
 				>
 			</File>
 			<File

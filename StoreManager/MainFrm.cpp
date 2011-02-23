@@ -74,7 +74,6 @@ CMainFrame::CMainFrame(char* RootStore, BOOL _IsClipboard)
 	RawFiles = NULL;
 	CookedFiles = NULL;
 	m_BreadcrumbBack = m_BreadcrumbForward = NULL;
-	m_wndFilter = NULL;
 }
 
 CMainFrame::~CMainFrame()
@@ -104,7 +103,6 @@ INT CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CFrameWndEx::OnCreate(lpCreateStruct)==-1)
 		return -1;
 	theApp.AddFrame(this);
-	EnableDocking(CBRS_ALIGN_LEFT | CBRS_ALIGN_RIGHT);
 
 	CString tmpStr;
 
@@ -120,47 +118,28 @@ INT CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndRibbonBar.Create(this);
 	m_wndRibbonBar.EnablePrintPreview(FALSE);
 
-	InitializeRibbon();
+	m_wndRibbonBar.SetApplicationButton(&m_MainButton, CSize (45, 45));
+	CMFCRibbonMainPanel* pMainPanel = m_wndRibbonBar.AddMainCategory(tmpStr, 0, 0);
+	pMainPanel->Add(new CMFCRibbonButton(ID_APP_NEWVIEW, _T("New view")));
+	pMainPanel->Add(new CMFCRibbonButton(ID_APP_CLOSEOTHERS, _T("Close others")));
+	pMainPanel->Add(new CMFCRibbonButton(ID_APP_CLOSE, _T("Close")));
+	pMainPanel->AddToBottom(new CMFCRibbonMainPanelButton(ID_APP_EXIT, _T("Exit"), 0));
 
-	UINT dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | CBRS_FLOAT_MULTI;
 	if (!IsClipboard)
 	{
-		// Filter-Pane erstellen
-		tmpStr = "Filter";
-		m_wndFilter = new CFilterWnd();
-		if (!m_wndFilter->Create(tmpStr, this, CRect(0, 0, 250, 550), TRUE, ID_PANE_FILTERWND, dwStyle | CBRS_LEFT))
-			return -1;
-		m_wndFilter->EnableDocking(CBRS_ALIGN_ANY | CBRS_FLOAT_MULTI);
-
-		// Diese Panes standardmäßig nicht zeigen
-		m_wndFilter->ShowPane(FALSE, FALSE, FALSE);
-
-		DockPane(m_wndFilter, AFX_IDW_DOCKBAR_LEFT);
+		CMFCRibbonCategory* pCategoryHome = m_wndRibbonBar.AddCategory(_T("Home"), 0, 0);
+		CMFCRibbonPanel* pPanelNavigate = pCategoryHome->AddPanel(_T("Navigate"));
+		pPanelNavigate->Add(new CMFCRibbonButton(ID_NAV_BACK, _T("Back")));
+		pPanelNavigate->Add(new CMFCRibbonButton(ID_NAV_FORWARD, _T("Forward")));
+		pPanelNavigate->Add(new CMFCRibbonButton(ID_NAV_RELOAD, _T("Reload")));
 	}
 
-	// Inspector-Pane erstellen
-	if (!IsClipboard)
-		dwStyle |= WS_VISIBLE;
-
-	tmpStr = "Inspector";
-	if (!m_wndInspector.Create(tmpStr, this, CRect(0, 0, 250, 550), TRUE, ID_PANE_INSPECTORWND, dwStyle | CBRS_RIGHT | WS_VISIBLE))
-		return -1;
-	m_wndInspector.EnableDocking(CBRS_ALIGN_ANY | CBRS_FLOAT_MULTI);
-	DockPane(&m_wndInspector, AFX_IDW_DOCKBAR_RIGHT);
-
 	// Hauptansicht erstellen
-	if (!m_wndMainView.Create(this, AFX_IDW_PANE_FIRST))
+	if (!m_wndMainView.Create(IsClipboard, this, AFX_IDW_PANE_FIRST))
 		return -1;
 
 	// Entweder leeres Suchergebnis oder Stores-Kontext öffnen
-	if (IsClipboard)
-	{
-		RawFiles = LFAllocSearchResult(LFContextClipboard);
-	}
-	else
-	{
-		RawFiles = LFQuery(ActiveFilter);
-	}
+	RawFiles = IsClipboard ? LFAllocSearchResult(LFContextClipboard) : LFQuery(ActiveFilter);
 	OnCookFiles();
 
 	return 0;
@@ -182,12 +161,6 @@ void CMainFrame::OnClose()
 
 void CMainFrame::OnDestroy()
 {
-	if (m_wndFilter)
-	{
-		m_wndFilter->DestroyWindow();
-		delete m_wndFilter;
-	}
-
 	CFrameWndEx::OnDestroy();
 	theApp.KillFrame(this);
 }
@@ -334,35 +307,6 @@ void CMainFrame::OnUpdateNavCommands(CCmdUI* pCmdUI)
 	pCmdUI->Enable(b);
 }
 
-void CMainFrame::InitializeRibbon()
-{
-	CString strTemp;
-
-	m_wndRibbonBar.SetApplicationButton(&m_MainButton, CSize (45, 45));
-	CMFCRibbonMainPanel* pMainPanel = m_wndRibbonBar.AddMainCategory(strTemp, 0, 0);
-
-		pMainPanel->Add(theApp.CommandButton(ID_APP_NEWVIEW));
-		pMainPanel->Add(new CMFCRibbonSeparator(TRUE));
-		pMainPanel->Add(theApp.CommandButton(ID_APP_CLOSEOTHERS));
-		pMainPanel->Add(theApp.CommandButton(ID_APP_CLOSE));
-
-		strTemp = "Exit";
-		pMainPanel->AddToBottom(new CMFCRibbonMainPanelButton(ID_APP_EXIT, strTemp, 0));
-
-	if (!IsClipboard)
-	{
-		strTemp = "Home";
-		CMFCRibbonCategory* pCategoryHome = m_wndRibbonBar.AddCategory(strTemp, 0, 0);
-
-		strTemp = "Navigate";
-		CMFCRibbonPanel* pPanelNavigate = pCategoryHome->AddPanel(strTemp);
-
-			pPanelNavigate->Add(theApp.CommandButton(ID_NAV_BACK));
-			pPanelNavigate->Add(theApp.CommandButton(ID_NAV_FORWARD));
-			pPanelNavigate->Add(theApp.CommandButton(ID_NAV_RELOAD));
-	}
-}
-
 
 void CMainFrame::NavigateTo(LFFilter* f, UINT NavMode, FVPersistentData* Data, INT FirstAggregate, INT LastAggregate)
 {
@@ -438,8 +382,6 @@ void CMainFrame::UpdateHistory()
 
 //	if (m_wndHistory)
 //		m_wndHistory->UpdateList(m_BreadcrumbBack, ActiveFilter, m_BreadcrumbForward);
-	if (m_wndFilter)
-		m_wndFilter->UpdateList();
 }
 
 
@@ -489,22 +431,6 @@ void CMainFrame::OnItemOpen()
 		}
 	}
 }
-
-// TODO
-void CMainFrame::OnUpdateSelection()
-{
-	m_wndInspector.UpdateStart(ActiveFilter);
-	INT i = m_wndMainView.GetNextSelectedItem(-1);
-
-	while (i>=0)
-	{
-		m_wndInspector.UpdateAdd(CookedFiles->m_Items[i], RawFiles);
-		i = m_wndMainView.GetNextSelectedItem(i);
-	}
-
-	m_wndInspector.UpdateFinish();
-}
-
 
 
 
@@ -562,7 +488,7 @@ LRESULT CMainFrame::OnCookFiles(WPARAM wParam, LPARAM /*lParam*/)
 	if ((Victim) && (Victim!=RawFiles))
 		LFFreeSearchResult(Victim);
 
-	if ((CookedFiles->m_LastError<=LFCancel) && (LFIsLicensed()))
+	if ((CookedFiles->m_LastError<=LFCancel) && (!LFIsLicensed()))
 		if ((++theApp.m_NagCounter)>25)
 		{
 			CString tmpStr;

@@ -382,6 +382,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CFilterWnd.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\CFormatCache.cpp"
 				>
 			</File>
@@ -402,6 +406,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CInspectorWnd.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\CListView.cpp"
 				>
 			</File>
@@ -415,10 +423,6 @@
 			</File>
 			<File
 				RelativePath=".\CTagcloudView.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\FilterWnd.cpp"
 				>
 			</File>
 			<File
@@ -443,10 +447,6 @@
 			</File>
 			<File
 				RelativePath=".\HistoryWnd.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\InspectorWnd.cpp"
 				>
 			</File>
 			<File
@@ -520,6 +520,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CFilterWnd.h"
+				>
+			</File>
+			<File
 				RelativePath=".\CFormatCache.h"
 				>
 			</File>
@@ -540,6 +544,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CInspectorWnd.h"
+				>
+			</File>
+			<File
 				RelativePath=".\CListView.h"
 				>
 			</File>
@@ -553,10 +561,6 @@
 			</File>
 			<File
 				RelativePath=".\CTagcloudView.h"
-				>
-			</File>
-			<File
-				RelativePath=".\FilterWnd.h"
 				>
 			</File>
 			<File
@@ -589,10 +593,6 @@
 			</File>
 			<File
 				RelativePath=".\HistoryWnd.h"
-				>
-			</File>
-			<File
-				RelativePath=".\InspectorWnd.h"
 				>
 			</File>
 			<File

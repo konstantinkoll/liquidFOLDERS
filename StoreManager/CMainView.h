@@ -5,6 +5,8 @@
 #pragma once
 #include "LFCommDlg.h"
 #include "CFileView.h"
+#include "CFilterWnd.h"
+#include "CInspectorWnd.h"
 
 
 // CMainView
@@ -14,11 +16,10 @@ class CMainView : public CWnd
 {
 public:
 	CMainView();
-	~CMainView();
 
 	virtual BOOL OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo);
 
-	INT Create(CWnd* _pParentWnd, UINT nID);
+	BOOL Create(BOOL IsClipboard, CWnd* pParentWnd, UINT nID);
 	void UpdateViewOptions(INT Context);
 	void UpdateSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data=NULL);
 	void UpdateFooter();
@@ -35,11 +36,14 @@ protected:
 	CTaskbar m_wndTaskbar;
 	CExplorerHeader m_wndExplorerHeader;
 	CFileView* p_wndFileView;
+	CFilterWnd* p_wndFilter;
+	CInspectorWnd m_wndInspector;
 	CExplorerNotification m_wndExplorerNotification;
 	LFSearchResult* p_RawFiles;
 	LFSearchResult* p_CookedFiles;
 	INT m_Context;
 	INT m_ViewID;
+	BOOL m_IsClipboard;
 	BOOL m_FilesSelected;
 
 	LFTransactionList* BuildTransactionList(BOOL All=FALSE);
@@ -48,6 +52,7 @@ protected:
 	BOOL DeleteFiles(BOOL All=FALSE);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
+	afx_msg void OnDestroy();
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnSize(UINT nType, INT cx, INT cy);
 	afx_msg void OnSetFocus(CWnd* pOldWnd);

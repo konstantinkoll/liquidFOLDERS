@@ -1,6 +1,6 @@
 
 #include "stdafx.h"
-#include "InspectorWnd.h"
+#include "CInspectorWnd.h"
 #include "Resource.h"
 #include "StoreManager.h"
 #include "LFCore.h"
@@ -49,7 +49,7 @@ void CInspectorWnd::SaveSettings()
 	theApp.SetRegistryBase(oldBase);
 }
 
-void CInspectorWnd::UpdateStart(LFFilter* f)
+void CInspectorWnd::UpdateStart(CHAR* StoreID)
 {
 	Count = 0;
 
@@ -71,7 +71,7 @@ void CInspectorWnd::UpdateStart(LFFilter* f)
 
 		if (a<LFAttributeCount)
 			if (theApp.m_Attributes[a]->Type==LFTypeUnicodeArray)
-				((CAttributePropertyTags*)pAttributes[a])->SetStore(f ? f->Mode==LFFilterModeDirectoryTree ? f->StoreID : NULL : NULL);
+				((CAttributePropertyTags*)pAttributes[a])->SetStore(StoreID ? *StoreID!='\0' ? StoreID : NULL : NULL);
 	}
 }
 
@@ -321,7 +321,7 @@ void CInspectorWnd::UpdateFinish()
 }
 
 
-BEGIN_MESSAGE_MAP(CInspectorWnd, CDockablePane)
+BEGIN_MESSAGE_MAP(CInspectorWnd, CGlasPane)
 	ON_WM_CREATE()
 	ON_WM_SIZE()
 	ON_WM_SETFOCUS()
@@ -337,7 +337,7 @@ END_MESSAGE_MAP()
 
 INT CInspectorWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
-	if (CDockablePane::OnCreate(lpCreateStruct)==-1)
+	if (CGlasPane::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
 	CString oldBase = theApp.GetRegistryBase();
@@ -418,13 +418,12 @@ INT CInspectorWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 void CInspectorWnd::OnSize(UINT nType, INT cx, INT cy)
 {
-	CDockablePane::OnSize(nType, cx, cy);
+	CGlasPane::OnSize(nType, cx, cy);
 	AdjustLayout();
 }
 
-void CInspectorWnd::OnSetFocus(CWnd* pOldWnd)
+void CInspectorWnd::OnSetFocus(CWnd* /*pOldWnd*/)
 {
-	CDockablePane::OnSetFocus(pOldWnd);
 	m_wndPropList.SetFocus();
 }
 
@@ -434,7 +433,7 @@ void CInspectorWnd::OnPaint()
 		afxGlobalData.clrBarFace, afxGlobalData.clrBarText,
 		afxGlobalData.clrBarFace, GetSysColor(COLOR_WINDOWTEXT), afxGlobalData.clrBarFace);
 
-	CDockablePane::OnPaint();
+	CGlasPane::OnPaint();
 }
 
 LRESULT CInspectorWnd::OnPropertyChanged(WPARAM /*wparam*/, LPARAM lparam)

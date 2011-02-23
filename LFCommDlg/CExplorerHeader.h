@@ -33,7 +33,7 @@ protected:
 	CBitmap m_Background;
 	HBRUSH hBackgroundBrush;
 	BOOL m_GradientLine;
-	UINT m_RightEdge;
+	INT m_RightEdge;
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();

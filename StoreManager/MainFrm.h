@@ -3,8 +3,6 @@
 //
 
 #pragma once
-#include "FilterWnd.h"
-#include "InspectorWnd.h"
 #include "HistoryWnd.h"
 #include "liquidFOLDERS.h"
 #include "CMainView.h"
@@ -47,8 +45,6 @@ protected:
 	CMFCRibbonBar m_wndRibbonBar;
 	CMFCRibbonApplicationButton m_MainButton;
 	CMFCRibbonStatusBar m_wndStatusBar;
-	CFilterWnd* m_wndFilter;
-	CInspectorWnd m_wndInspector;
 	CMainView m_wndMainView;
 	BreadcrumbItem* m_BreadcrumbBack;
 	BreadcrumbItem* m_BreadcrumbForward;

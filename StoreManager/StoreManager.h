@@ -64,9 +64,6 @@ public:
 	void Reload(INT Context);
 	void UpdateFooter(INT Context=-1, INT View=-1);
 
-		static CString GetCommandName(UINT nID, BOOL bInsertSpace=FALSE);							// Axe
-		static CMFCRibbonButton* CommandButton(UINT nID, INT nSmallImageIndex=-1, INT nLargeImageIndex=-1, BOOL bAlwaysShowDescription=FALSE, BOOL bInsertSpace=FALSE);	// Axe
-
 protected:
 	void GetBinary(LPCTSTR lpszEntry, void* pData, UINT size);
 	void LoadViewOptions(INT context);

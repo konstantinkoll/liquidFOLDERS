@@ -26,7 +26,7 @@ public:
 // CFilterWnd
 //
 
-class CFilterWnd : public CDockablePane
+class CFilterWnd : public CGlasPane
 {
 public:
 	CFilterWnd();
@@ -52,7 +52,6 @@ protected:
 	afx_msg void OnSize(UINT nType, INT cx, INT cy);
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
-	afx_msg void OnPaint();
 	afx_msg void OnGotoHistory();
 	afx_msg void OnNotifyGotoHistory(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnUpdateCommands(CCmdUI* pCmdUI);

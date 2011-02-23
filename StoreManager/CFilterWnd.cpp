@@ -1,6 +1,6 @@
 
 #include "stdafx.h"
-#include "HistoryWnd.h"
+#include "CFilterWnd.h"
 #include "Resource.h"
 #include "liquidFOLDERS.h"
 #include "LFCore.h"
@@ -56,19 +56,18 @@ void CFilterWnd::UpdateList()
 }
 
 
-BEGIN_MESSAGE_MAP(CFilterWnd, CDockablePane)
+BEGIN_MESSAGE_MAP(CFilterWnd, CGlasPane)
 	ON_WM_CREATE()
 	ON_WM_SIZE()
 	ON_WM_ERASEBKGND()
 	ON_WM_CTLCOLOR()
-	ON_WM_PAINT()
 	ON_UPDATE_COMMAND_UI_RANGE(ID_FILTER_CLEAR, ID_FILTER_SAVEAS, OnUpdateCommands)
 	ON_UPDATE_COMMAND_UI(IDOK, OnUpdateCommands)
 END_MESSAGE_MAP()
 
 INT CFilterWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
-	if (CDockablePane::OnCreate(lpCreateStruct)==-1)
+	if (CGlasPane::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
 	if (m_wndToolBar.Create(this, AFX_DEFAULT_TOOLBAR_STYLE)==-1)
@@ -148,7 +147,7 @@ INT CFilterWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 void CFilterWnd::OnSize(UINT nType, INT cx, INT cy)
 {
-	CDockablePane::OnSize(nType, cx, cy);
+	CGlasPane::OnSize(nType, cx, cy);
 
 	CRect rectClient;
 	GetClientRect(rectClient);
@@ -209,14 +208,6 @@ HBRUSH CFilterWnd::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 	}
 
 	return hbr;
-}
-
-void CFilterWnd::OnPaint()
-{
-	m_wndList.SetBkColor(afxGlobalData.clrBarFace);
-	m_wndList.SetTextBkColor(afxGlobalData.clrBarFace);
-
-	CDockablePane::OnPaint();
 }
 
 void CFilterWnd::OnUpdateCommands(CCmdUI* pCmdUI)

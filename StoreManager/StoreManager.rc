@@ -713,9 +713,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    ID_APP_NEWVIEW          "Opens a new StoreManager window.\nNew view"
-    ID_APP_CLOSE            "Closes this window.\nClose"
-    ID_APP_CLOSEOTHERS      "Closes all StoreManager windows except this one.\nClose all others"
     ID_APP_VIEWOPTIONS      "Opens a dialog window with further display options.\nDisplay as"
     ID_APP_SORTOPTIONS      "Opens a dialog window with further sort options.\nOrganize by"
 END
@@ -787,13 +784,6 @@ BEGIN
     IDS_VATTR_INDEXVERSION  "Index version"
     IDS_VATTR_IATA_NAME     "IATA airport name"
     IDS_VATTR_IATA_COUNTRY  "Country/territory"
-END
-
-STRINGTABLE 
-BEGIN
-    ID_NAV_BACK             "Returns to the previous location.\nBack (Backspace)"
-    ID_NAV_FORWARD          "Returns to the next location.\nForward"
-    ID_NAV_RELOAD           "Reloads the current view.\nReload"
 END
 
 STRINGTABLE 

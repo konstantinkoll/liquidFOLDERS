@@ -7,6 +7,7 @@
 #include "..\LFCommDlg\CExplorerNotification.h"
 #include "..\LFCommDlg\CExplorerTree.h"
 #include "..\LFCommDlg\CGdiPlusBitmap.h"
+#include "..\LFCommDlg\CGlasPane.h"
 #include "..\LFCommDlg\CGlasWindow.h"
 #include "..\LFCommDlg\CHeaderButton.h"
 #include "..\LFCommDlg\CIconCtrl.h"

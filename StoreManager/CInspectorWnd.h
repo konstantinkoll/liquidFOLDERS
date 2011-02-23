@@ -43,7 +43,7 @@ public:
 // CInspectorWnd
 //
 
-class CInspectorWnd : public CDockablePane
+class CInspectorWnd : public CGlasPane
 {
 public:
 	CInspectorWnd();
@@ -51,7 +51,7 @@ public:
 	virtual void AdjustLayout();
 	virtual void SaveSettings();
 
-	void UpdateStart(LFFilter* f);
+	void UpdateStart(CHAR* StoreID);
 	void UpdateAdd(LFItemDescriptor* i, LFSearchResult* raw);
 	void UpdateFinish();
 
