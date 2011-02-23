@@ -48,9 +48,18 @@ void CGlasPane::OnNcCalcSize(BOOL bCalcValidRects, NCCALCSIZE_PARAMS* lpncsp)
 	}
 }
 
-LRESULT CGlasPane::OnNcHitTest(CPoint /*point*/)
+LRESULT CGlasPane::OnNcHitTest(CPoint point)
 {
-	return m_IsLeft ? HTRIGHT : HTLEFT;
+	CRect rectWindow;
+	GetWindowRect(&rectWindow);
+	if (!rectWindow.PtInRect(point))
+		return HTNOWHERE;
+
+	CRect rectClient;
+	GetClientRect(rectClient);
+	ClientToScreen(rectClient);
+
+	return rectClient.PtInRect(point) ? HTCLIENT : m_IsLeft ? HTRIGHT : HTLEFT;
 }
 
 void CGlasPane::OnNcPaint()
