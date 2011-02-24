@@ -379,7 +379,7 @@ void CFileDropWnd::OnContextMenu(CWnd* /*pWnd*/, CPoint pos)
 	ASSERT_VALID(pPopup);
 
 	HBITMAP hBmp = SetMenuItemIcon(*pPopup, 7, ID_APP_NEWSTOREMANAGER);
-	SetMenuItemBitmap(*pPopup, 8, HBMMENU_POPUP_CLOSE);
+	SetMenuItemBitmap(*pPopup, 9, HBMMENU_POPUP_CLOSE);
 
 	pPopup->CheckMenuItem(SC_ALWAYSONTOP, AlwaysOnTop ? MF_CHECKED : MF_UNCHECKED);
 	pPopup->EnableMenuItem(ID_APP_IMPORTFOLDER, StoreValid ? MF_ENABLED : MF_GRAYED);
