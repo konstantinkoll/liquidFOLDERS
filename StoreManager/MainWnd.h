@@ -55,10 +55,6 @@ protected:
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnSetFocus(CWnd *pOldWnd);
 	afx_msg void OnDestroy();
-	afx_msg void OnSortOptions();
-	afx_msg void OnViewOptions();
-	afx_msg void OnToggleAutoDirs();
-	afx_msg void OnUpdateAppCommands(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateNavCommands(CCmdUI* pCmdUI);
 	afx_msg void OnNavigateBack();
 	afx_msg void OnNavigateForward();

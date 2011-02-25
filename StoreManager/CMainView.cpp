@@ -8,6 +8,8 @@
 #include "CGlobeView.h"
 #include "CListView.h"
 #include "CTagcloudView.h"
+#include "SortOptionsDlg.h"
+#include "ViewOptionsDlg.h"
 #include "StoreManager.h"
 
 
@@ -260,7 +262,7 @@ void CMainView::AdjustLayout()
 	const UINT NotificationHeight = m_wndExplorerNotification.GetPreferredHeight();
 	m_wndExplorerNotification.SetWindowPos(&wndTop, rect.left+32, rect.bottom-NotificationHeight, rect.Width()-64, NotificationHeight, SWP_NOACTIVATE);
 
-	const INT MaxWidth = (rect.Width()-128)/(p_wndFilter ? 2 : 1);
+	const INT MaxWidth = (rect.Width()-128)/2;
 	INT FilterWidth = min(MaxWidth, p_wndFilter ? p_wndFilter->GetPreferredWidth() : 0);
 	INT InspectorWidth = min(MaxWidth, m_wndInspector.GetPreferredWidth());
 
@@ -501,6 +503,12 @@ BEGIN_MESSAGE_MAP(CMainView, CWnd)
 	ON_MESSAGE(WM_RENAMEITEM, OnRenameItem)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoreAttributesChanged, OnStoreAttributesChanged)
 
+	ON_COMMAND(IDM_ORGANIZE_OPTIONS, OnSortOptions)
+	ON_COMMAND(IDM_ORGANIZE_TOGGLEAUTODIRS, OnToggleAutoDirs)
+	ON_COMMAND(IDM_VIEW_OPTIONS, OnViewOptions)
+	ON_UPDATE_COMMAND_UI(IDM_ORGANIZE_OPTIONS, OnUpdateHeaderCommands)
+	ON_UPDATE_COMMAND_UI(IDM_ORGANIZE_TOGGLEAUTODIRS, OnUpdateHeaderCommands)
+	ON_UPDATE_COMMAND_UI(IDM_VIEW_OPTIONS, OnUpdateHeaderCommands)
 	ON_MESSAGE(WM_GETMENU, OnGetMenu)
 	ON_COMMAND_RANGE(IDM_ORGANIZE_FIRST, IDM_ORGANIZE_FIRST+LFAttributeCount-1, OnSort)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_ORGANIZE_FIRST, IDM_ORGANIZE_FIRST+LFAttributeCount-1, OnUpdateSortCommands)
@@ -719,7 +727,7 @@ void CMainView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 		CString mask;
 		ENSURE(mask.LoadString(IDS_CONTEXTMENU_VIEWOPTIONS));
 		tmpStr.Format(mask, theApp.m_Contexts[m_Context]->Name);
-		pPopup->InsertMenu(0, MF_STRING | MF_BYPOSITION, ID_APP_VIEWOPTIONS, tmpStr);
+		pPopup->InsertMenu(0, MF_STRING | MF_BYPOSITION, IDM_VIEW_OPTIONS, tmpStr);
 
 		pPopup->InsertMenu(0, MF_SEPARATOR | MF_BYPOSITION);
 
@@ -744,12 +752,12 @@ void CMainView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 		if (theApp.m_Contexts[m_Context]->AllowGroups)
 		{
 			ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_AUTODIRS));
-			pPopup->InsertMenu(0, MF_STRING | MF_BYPOSITION, ID_VIEW_AUTODIRS, tmpStr);
+			pPopup->InsertMenu(0, MF_STRING | MF_BYPOSITION, IDM_ORGANIZE_TOGGLEAUTODIRS, tmpStr);
 		}
 
 		ENSURE(mask.LoadString(IDS_CONTEXTMENU_SORTOPTIONS));
 		tmpStr.Format(mask, theApp.m_Contexts[m_Context]->Name);
-		pPopup->InsertMenu(0, MF_STRING | MF_BYPOSITION, ID_APP_SORTOPTIONS, tmpStr);
+		pPopup->InsertMenu(0, MF_STRING | MF_BYPOSITION, IDM_ORGANIZE_OPTIONS, tmpStr);
 		
 		pPopup->InsertMenu(0, MF_SEPARATOR | MF_BYPOSITION);
 
@@ -828,6 +836,37 @@ LRESULT CMainView::OnStoreAttributesChanged(WPARAM /*wParam*/, LPARAM /*lParam*/
 
 // Header
 
+void CMainView::OnSortOptions()
+{
+	SortOptionsDlg dlg(this, m_Context);
+	if (dlg.DoModal()==IDOK)
+		theApp.UpdateSortOptions(m_Context);
+}
+
+void CMainView::OnToggleAutoDirs()
+{
+	theApp.m_Views[m_Context].AutoDirs = !theApp.m_Views[m_Context].AutoDirs;
+	theApp.UpdateSortOptions(m_Context);
+}
+
+void CMainView::OnViewOptions()
+{
+	ViewOptionsDlg dlg(this, m_Context);
+	if (dlg.DoModal()==IDOK)
+		theApp.UpdateViewOptions(m_Context);
+}
+
+void CMainView::OnUpdateHeaderCommands(CCmdUI* pCmdUI)
+{
+	switch (pCmdUI->m_nID)
+	{
+	case IDM_ORGANIZE_TOGGLEAUTODIRS:
+		pCmdUI->SetCheck((theApp.m_Views[m_Context].AutoDirs) || (m_Context>=LFContextSubfolderDefault));
+		pCmdUI->Enable((theApp.m_Contexts[m_Context]->AllowGroups) && (theApp.m_Views[m_Context].Mode<=LFViewPreview));
+		break;
+	}
+}
+
 LRESULT CMainView::OnGetMenu(WPARAM wParam, LPARAM /*lParam*/)
 {
 	HMENU hMenu = CreatePopupMenu();
@@ -883,13 +922,13 @@ LRESULT CMainView::OnGetMenu(WPARAM wParam, LPARAM /*lParam*/)
 			AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
 
 			ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_AUTODIRS));
-			AppendMenu(hMenu, MF_STRING, ID_VIEW_AUTODIRS, tmpStr);
+			AppendMenu(hMenu, MF_STRING, IDM_ORGANIZE_TOGGLEAUTODIRS, tmpStr);
 		}
 
 		AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
 
 		ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_MORE));
-		AppendMenu(hMenu, MF_STRING, ID_APP_SORTOPTIONS, tmpStr);
+		AppendMenu(hMenu, MF_STRING, IDM_ORGANIZE_OPTIONS, tmpStr);
 
 		break;
 	case IDM_VIEW:

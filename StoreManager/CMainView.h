@@ -64,6 +64,10 @@ protected:
 	afx_msg LRESULT OnRenameItem(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnStoreAttributesChanged(WPARAM wParam, LPARAM lParam);
 
+	afx_msg void OnSortOptions();
+	afx_msg void OnViewOptions();
+	afx_msg void OnToggleAutoDirs();
+	afx_msg void OnUpdateHeaderCommands(CCmdUI* pCmdUI);
 	afx_msg LRESULT OnGetMenu(WPARAM wParam, LPARAM lParam);
 	afx_msg void OnSort(UINT nID);
 	afx_msg void OnUpdateSortCommands(CCmdUI* pCmdUI);

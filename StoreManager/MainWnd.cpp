@@ -4,8 +4,6 @@
 
 #include "stdafx.h"
 #include "StoreManager.h"
-#include "SortOptionsDlg.h"
-#include "ViewOptionsDlg.h"
 #include "LFCommDlg.h"
 
 
@@ -95,17 +93,10 @@ BEGIN_MESSAGE_MAP(CMainWnd, CGlasWindow)
 	ON_WM_CLOSE()
 	ON_WM_DESTROY()
 
-	ON_UPDATE_COMMAND_UI_RANGE(ID_APP_VIEWOPTIONS, ID_VIEW_AUTODIRS, OnUpdateAppCommands)
-	ON_UPDATE_COMMAND_UI(ID_VIEW_AUTODIRS, OnUpdateAppCommands)
-	ON_UPDATE_COMMAND_UI_RANGE(ID_NAV_BACK, ID_NAV_RELOAD, OnUpdateNavCommands)
-
-	ON_COMMAND(ID_APP_SORTOPTIONS, OnSortOptions)
-	ON_COMMAND(ID_APP_VIEWOPTIONS, OnViewOptions)
-	ON_COMMAND(ID_VIEW_AUTODIRS, OnToggleAutoDirs)
-
 	ON_COMMAND(ID_NAV_BACK, OnNavigateBack)
 	ON_COMMAND(ID_NAV_FORWARD, OnNavigateForward)
 	ON_COMMAND(ID_NAV_RELOAD, OnNavigateReload)
+	ON_UPDATE_COMMAND_UI_RANGE(ID_NAV_BACK, ID_NAV_RELOAD, OnUpdateNavCommands)
 
 	ON_COMMAND(IDM_ITEM_OPEN, OnItemOpen)
 
@@ -159,36 +150,7 @@ void CMainWnd::OnDestroy()
 	theApp.KillFrame(this);
 }
 
-void CMainWnd::OnSortOptions()
-{
-	SortOptionsDlg dlg(this, ActiveContextID);
-	if (dlg.DoModal()==IDOK)
-		theApp.UpdateSortOptions(ActiveContextID);
-}
 
-void CMainWnd::OnViewOptions()
-{
-	ViewOptionsDlg dlg(this, ActiveContextID);
-	if (dlg.DoModal()==IDOK)
-		theApp.UpdateViewOptions(ActiveContextID);
-}
-
-void CMainWnd::OnToggleAutoDirs()
-{
-	ActiveViewParameters->AutoDirs = (!ActiveViewParameters->AutoDirs);
-	theApp.UpdateSortOptions(ActiveContextID);
-}
-
-void CMainWnd::OnUpdateAppCommands(CCmdUI* pCmdUI)
-{
-	switch (pCmdUI->m_nID)
-	{
-	case ID_VIEW_AUTODIRS:
-		pCmdUI->SetCheck((ActiveViewParameters->AutoDirs) || (ActiveContextID>=LFContextSubfolderDefault));
-		pCmdUI->Enable((theApp.m_Contexts[ActiveContextID]->AllowGroups) && (ActiveViewParameters->Mode<=LFViewPreview));
-		break;
-	}
-}
 
 
 BOOL CMainWnd::AddClipItem(LFItemDescriptor* i)
@@ -223,6 +185,8 @@ BOOL CMainWnd::UpdateSelectedItems(LFVariantData* value1, LFVariantData* value2,
 {
 	return m_wndMainView.UpdateItems(value1, value2, value3);
 }
+
+
 
 void CMainWnd::OnNavigateBack()
 {
@@ -374,10 +338,9 @@ void CMainWnd::OnItemOpen()
 
 		if (i->NextFilter)
 		{
-			NavigateTo(LFAllocFilter(i->NextFilter), NAVMODE_NORMAL, 0, i->FirstAggregate, i->LastAggregate);
+			NavigateTo(LFAllocFilter(i->NextFilter), NAVMODE_NORMAL, NULL, i->FirstAggregate, i->LastAggregate);
 		}
 		else
-		{
 			if (!(i->Type & LFTypeNotMounted))
 			{
 				WCHAR Path[MAX_PATH];
@@ -404,7 +367,6 @@ void CMainWnd::OnItemOpen()
 					ASSERT(FALSE);
 				}
 			}
-		}
 	}
 }
 
