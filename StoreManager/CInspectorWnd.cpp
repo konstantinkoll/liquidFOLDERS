@@ -444,7 +444,7 @@ LRESULT CInspectorWnd::OnPropertyChanged(WPARAM /*wparam*/, LPARAM lparam)
 	if ((pProp->p_DependentProp2) && (pProp->m_UseDependencies & 2))
 		value3 = (*(pProp->p_DependentProp2))->p_Data;
 
-	((CMainWnd*)GetParentFrame())->UpdateSelectedItems(value1, value2, value3);
+	((CMainWnd*)GetTopLevelParent())->UpdateSelectedItems(value1, value2, value3);
 	pProp->m_UseDependencies = 0;
 
 	return 0;

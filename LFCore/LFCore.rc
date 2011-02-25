@@ -243,9 +243,9 @@ BEGIN
     IDS_LFErrorStoreNotMounted "Der Store ist zur Zeit nicht eingebunden."
     IDS_LFErrorMutexError   "liquidFOLDERS wird zur Zeit von einem anderen Prozess blockiert."
     IDS_LFErrorIllegalAttribute 
-                            "Eine der gewählten Dateien verfügt nicht über die Eigenschaft."
+                            "Eine der gewählten Objekte verfügt nicht über die Eigenschaft."
     IDS_LFErrorIllegalItemType 
-                            "Eine der gewählten Dateien unterstützt diese Operation nicht."
+                            "Eine der gewählten Objekte unterstützt diese Operation nicht."
     IDS_LFErrorIllegalValue "Eine der Eigenschaften hat einen ungültigen Wert."
     IDS_LFErrorIndexTableLoadError 
                             "Eine Index-Tabelle kann nicht geladen werden. Bitte führen Sie die Wartungsarbeiten aus."
@@ -1068,9 +1068,9 @@ BEGIN
     IDS_LFErrorStoreNotMounted "Le store n'est pas relié à présent."
     IDS_LFErrorMutexError   "liquidFOLDERS est bloqué à présent par un autre procès."
     IDS_LFErrorIllegalAttribute 
-                            "L'un des fichiers choisis ne dispose pas de la qualité."
+                            "L'un des éléments choisis ne dispose pas de la qualité."
     IDS_LFErrorIllegalItemType 
-                            "L'un des fichiers choisis ne soutient pas cette opération."
+                            "L'un des éléments choisis ne soutient pas cette opération."
     IDS_LFErrorIllegalValue "L'une des qualités a une valeur non valable."
     IDS_LFErrorIndexTableLoadError 
                             "Un tableau d'index ne peut pas être chargé. S'il vous plaît, exécutez le travail d'entretien."

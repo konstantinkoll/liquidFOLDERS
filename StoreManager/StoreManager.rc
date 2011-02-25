@@ -698,12 +698,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    ID_APP_VIEWOPTIONS      "Opens a dialog window with further display options.\nDisplay as"
-    ID_APP_SORTOPTIONS      "Opens a dialog window with further sort options.\nOrganize by"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_VIEWGROUP1          "Basic views"
     IDS_VIEWGROUP2          "Enhanced views"
     IDS_CONTEXTMENU_SELECTALL "Select &all\tCtrl+A"
