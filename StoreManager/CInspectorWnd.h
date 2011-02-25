@@ -65,7 +65,6 @@ protected:
 	BOOL m_Alphabetic;
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
-	afx_msg void OnSize(UINT nType, INT cx, INT cy);
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
 	afx_msg void OnPaint();
 	afx_msg LRESULT OnPropertyChanged(WPARAM wparam, LPARAM lparam);

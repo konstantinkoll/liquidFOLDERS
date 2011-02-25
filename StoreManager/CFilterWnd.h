@@ -32,6 +32,8 @@ public:
 	CFilterWnd();
 	virtual ~CFilterWnd();
 
+	virtual void AdjustLayout();
+
 	void UpdateList();
 
 protected:
@@ -49,7 +51,6 @@ protected:
 	void AddConditionItem(BOOL focus=FALSE);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
-	afx_msg void OnSize(UINT nType, INT cx, INT cy);
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
 	afx_msg void OnGotoHistory();

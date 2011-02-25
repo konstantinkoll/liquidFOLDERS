@@ -22,6 +22,45 @@ CFilterWnd::~CFilterWnd()
 		delete m_Icons;
 }
 
+void CFilterWnd::AdjustLayout()
+{
+	CRect rectClient;
+	GetClientRect(rectClient);
+
+	const INT borderBtn = 4;
+	LOGFONT lFont;
+	CFont::FromHandle((HFONT)GetStockObject(DEFAULT_GUI_FONT))->GetLogFont(&lFont);
+
+	INT heightTxt = abs(lFont.lfHeight);
+	INT heightTlb = m_wndToolBar.CalcFixedLayout(FALSE, TRUE).cy;
+	INT heightBtn = 2*borderBtn+heightTxt+15;
+
+	CRect rectCombo;
+	m_wndStoreCombo.GetWindowRect(&rectCombo);
+
+	m_wndToolBar.SetWindowPos(NULL, rectClient.left, rectClient.top, rectClient.Width(), heightTlb, SWP_NOACTIVATE | SWP_NOZORDER);
+	INT cy = heightTlb;
+
+	m_wndText1.SetWindowPos(NULL, rectClient.left+borderBtn, cy, rectClient.Width()-borderBtn, heightTxt+borderBtn, SWP_NOACTIVATE | SWP_NOZORDER);
+	cy += heightTxt+borderBtn+1;
+
+	m_wndFreetext.SetWindowPos(NULL, rectClient.left+borderBtn+1, cy, rectClient.Width()-2*borderBtn-1, rectCombo.Height()-3, SWP_NOACTIVATE | SWP_NOZORDER);
+	cy += rectCombo.Height()-3+borderBtn;
+
+	m_wndText2.SetWindowPos(NULL, rectClient.left+borderBtn, cy, rectClient.Width()-borderBtn, heightTxt+borderBtn, SWP_NOACTIVATE | SWP_NOZORDER);
+	cy += heightTxt+borderBtn+1;
+
+	m_wndStoreCombo.SetWindowPos(NULL, rectClient.left+borderBtn+1, cy, rectClient.Width()-2*borderBtn-1, rectCombo.Height(), SWP_NOACTIVATE | SWP_NOZORDER);
+	cy += rectCombo.Height()+borderBtn;
+
+	m_wndAddCondition.SetWindowPos(NULL, rectClient.left+borderBtn, cy+borderBtn, rectClient.Width()/2-3*borderBtn/2, heightBtn-2*borderBtn, SWP_NOACTIVATE | SWP_NOZORDER);
+	m_wndStartSearch.SetWindowPos(NULL, rectClient.Width()-(rectClient.Width()/2-borderBtn/2)+1, cy+borderBtn, rectClient.Width()/2-3*borderBtn/2, heightBtn-2*borderBtn, SWP_NOACTIVATE | SWP_NOZORDER);
+	cy += heightBtn;
+
+	m_wndText3.SetWindowPos(NULL, rectClient.left+borderBtn, cy, rectClient.Width()-borderBtn, 20, SWP_NOACTIVATE | SWP_NOZORDER);
+	m_wndList.SetWindowPos(NULL, rectClient.left+borderBtn, cy+20, rectClient.Width()-borderBtn, rectClient.Height()-cy-20, SWP_NOACTIVATE | SWP_NOZORDER);
+}
+
 void CFilterWnd::AddConditionItem(BOOL focus)
 {
 	UINT puColumns[] = { 1, 2 };
@@ -59,7 +98,6 @@ void CFilterWnd::UpdateList()
 
 BEGIN_MESSAGE_MAP(CFilterWnd, CGlasPane)
 	ON_WM_CREATE()
-	ON_WM_SIZE()
 	ON_WM_ERASEBKGND()
 	ON_WM_CTLCOLOR()
 	ON_UPDATE_COMMAND_UI_RANGE(ID_FILTER_CLEAR, ID_FILTER_SAVEAS, OnUpdateCommands)
@@ -144,47 +182,6 @@ INT CFilterWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndList.SetImageList(m_Icons, LVSIL_NORMAL);
 
 	return 0;
-}
-
-void CFilterWnd::OnSize(UINT nType, INT cx, INT cy)
-{
-	CGlasPane::OnSize(nType, cx, cy);
-
-	CRect rectClient;
-	GetClientRect(rectClient);
-
-	const INT borderBtn = 4;
-	LOGFONT lFont;
-	CFont::FromHandle((HFONT)GetStockObject(DEFAULT_GUI_FONT))->GetLogFont(&lFont);
-
-	INT heightTxt = abs(lFont.lfHeight);
-	INT heightTlb = m_wndToolBar.CalcFixedLayout(FALSE, TRUE).cy;
-	INT heightBtn = 2*borderBtn+heightTxt+15;
-
-	CRect rectCombo;
-	m_wndStoreCombo.GetWindowRect(&rectCombo);
-
-	m_wndToolBar.SetWindowPos(NULL, rectClient.left, rectClient.top, rectClient.Width(), heightTlb, SWP_NOACTIVATE | SWP_NOZORDER);
-	cy = rectClient.top+heightTlb;
-
-	m_wndText1.SetWindowPos(NULL, rectClient.left+borderBtn, cy, rectClient.Width()-borderBtn, heightTxt+borderBtn, SWP_NOACTIVATE | SWP_NOZORDER);
-	cy += heightTxt+borderBtn+1;
-
-	m_wndFreetext.SetWindowPos(NULL, rectClient.left+borderBtn+1, cy, rectClient.Width()-2*borderBtn-1, rectCombo.Height()-3, SWP_NOACTIVATE | SWP_NOZORDER);
-	cy += rectCombo.Height()-3+borderBtn;
-
-	m_wndText2.SetWindowPos(NULL, rectClient.left+borderBtn, cy, rectClient.Width()-borderBtn, heightTxt+borderBtn, SWP_NOACTIVATE | SWP_NOZORDER);
-	cy += heightTxt+borderBtn+1;
-
-	m_wndStoreCombo.SetWindowPos(NULL, rectClient.left+borderBtn+1, cy, rectClient.Width()-2*borderBtn-1, rectCombo.Height(), SWP_NOACTIVATE | SWP_NOZORDER);
-	cy += rectCombo.Height()+borderBtn;
-
-	m_wndAddCondition.SetWindowPos(NULL, rectClient.left+borderBtn, cy+borderBtn, rectClient.Width()/2-3*borderBtn/2, heightBtn-2*borderBtn, SWP_NOACTIVATE | SWP_NOZORDER);
-	m_wndStartSearch.SetWindowPos(NULL, rectClient.Width()-(rectClient.Width()/2-borderBtn/2)+1, cy+borderBtn, rectClient.Width()/2-3*borderBtn/2, heightBtn-2*borderBtn, SWP_NOACTIVATE | SWP_NOZORDER);
-	cy += heightBtn;
-
-	m_wndText3.SetWindowPos(NULL, rectClient.left+borderBtn, cy, rectClient.Width()-borderBtn, 20, SWP_NOACTIVATE | SWP_NOZORDER);
-	m_wndList.SetWindowPos(NULL, rectClient.left+borderBtn, cy+20, rectClient.Width()-borderBtn, rectClient.Height()-cy-20, SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
 BOOL CFilterWnd::OnEraseBkgnd(CDC* pDC)

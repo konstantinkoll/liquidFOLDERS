@@ -598,14 +598,14 @@ INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	p_ViewButton = m_wndExplorerHeader.AddButton(IDM_VIEW);
 
 	// Inspector
-	if (!m_wndInspector.Create(FALSE, 128, this, 4))
+	if (!m_wndInspector.Create(FALSE, 200, this, 4))
 		return -1;
 
 	// Filter
 	if (!m_IsClipboard)
 	{
 		p_wndFilter = new CFilterWnd();
-		if (!p_wndFilter->Create(TRUE, 150, this, 5))
+		if (!p_wndFilter->Create(TRUE, 250, this, 5))
 			return -1;
 	}
 

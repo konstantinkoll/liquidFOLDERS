@@ -324,7 +324,6 @@ void CInspectorWnd::UpdateFinish()
 
 BEGIN_MESSAGE_MAP(CInspectorWnd, CGlasPane)
 	ON_WM_CREATE()
-	ON_WM_SIZE()
 	ON_WM_SETFOCUS()
 	ON_WM_PAINT()
 	ON_REGISTERED_MESSAGE(AFX_WM_PROPERTY_CHANGED, OnPropertyChanged)
@@ -415,12 +414,6 @@ INT CInspectorWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	pGroups[LFAttrCategoryInternal]->Expand(FALSE);
 
 	return 0;
-}
-
-void CInspectorWnd::OnSize(UINT nType, INT cx, INT cy)
-{
-	CGlasPane::OnSize(nType, cx, cy);
-	AdjustLayout();
 }
 
 void CInspectorWnd::OnSetFocus(CWnd* /*pOldWnd*/)
