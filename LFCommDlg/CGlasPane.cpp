@@ -3,7 +3,7 @@
 //
 
 #include "stdafx.h"
-#include "CGlasPane.h"
+#include "LFCommDlg.h"
 
 
 // CGlasPane
@@ -11,14 +11,16 @@
 
 #define GRIPPER    4
 
-CGlasPane::CGlasPane(BOOL IsLeft)
+CGlasPane::CGlasPane()
 	: CWnd()
 {
-	m_IsLeft = IsLeft;
 }
 
-BOOL CGlasPane::Create(CWnd* pParentWnd, UINT nID)
+BOOL CGlasPane::Create(BOOL IsLeft, INT PreferredWidth, CWnd* pParentWnd, UINT nID)
 {
+	m_IsLeft = IsLeft;
+	m_PreferredWidth = PreferredWidth;
+
 	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, LoadCursor(NULL, IDC_ARROW));
 
 	const DWORD dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE;
@@ -27,11 +29,21 @@ BOOL CGlasPane::Create(CWnd* pParentWnd, UINT nID)
 	return CWnd::CreateEx(WS_EX_CONTROLPARENT, className, _T(""), dwStyle, rect, pParentWnd, nID);
 }
 
+void CGlasPane::AdjustLayout()
+{
+}
+
+INT CGlasPane::GetPreferredWidth()
+{
+	return m_PreferredWidth;
+}
+
 
 BEGIN_MESSAGE_MAP(CGlasPane, CWnd)
 	ON_WM_NCCALCSIZE()
 	ON_WM_NCHITTEST()
 	ON_WM_NCPAINT()
+	ON_WM_SIZE()
 END_MESSAGE_MAP()
 
 void CGlasPane::OnNcCalcSize(BOOL bCalcValidRects, NCCALCSIZE_PARAMS* lpncsp)
@@ -79,4 +91,15 @@ void CGlasPane::OnNcPaint()
 	pDC.ExcludeClipRect(rectClient);
 	pDC.FillSolidRect(rectWindow, GetSysColor(COLOR_3DFACE));
 	pDC.SelectClipRgn(NULL);
+}
+
+void CGlasPane::OnSize(UINT nType, INT cx, INT cy)
+{
+	if (GetCapture()==this)
+		m_PreferredWidth = cx+GRIPPER;
+
+	CWnd::OnSize(nType, cx, cy);
+	AdjustLayout();
+
+	GetParent()->SendMessage(WM_ADJUSTLAYOUT);
 }

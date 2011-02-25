@@ -23,6 +23,7 @@ CMainView::CMainView()
 	p_RawFiles = p_CookedFiles = NULL;
 	p_OrganizeButton = p_ViewButton = NULL;
 	m_Context = m_ViewID = -1;
+	m_Resizing = FALSE;
 }
 
 BOOL CMainView::Create(BOOL IsClipboard, CWnd* pParentWnd, UINT nID)
@@ -239,6 +240,8 @@ void CMainView::ShowNotification(UINT Type, UINT ResID, UINT Command)
 
 void CMainView::AdjustLayout()
 {
+	m_Resizing = TRUE;
+
 	CRect rect;
 	GetClientRect(rect);
 
@@ -248,8 +251,8 @@ void CMainView::AdjustLayout()
 	const UINT NotificationHeight = m_wndExplorerNotification.GetPreferredHeight();
 	m_wndExplorerNotification.SetWindowPos(&wndTop, rect.left+32, rect.bottom-NotificationHeight, rect.Width()-64, NotificationHeight, SWP_NOACTIVATE);
 
-	UINT FilterWidth = 150;
-	UINT InspectorWidth = 150;
+	UINT FilterWidth = p_wndFilter ? p_wndFilter->GetPreferredWidth() : 0;
+	UINT InspectorWidth = m_wndInspector.GetPreferredWidth();
 
 	const UINT ExplorerHeight = m_wndExplorerHeader.GetPreferredHeight();
 	m_wndExplorerHeader.SetWindowPos(NULL, rect.left+FilterWidth, rect.top+TaskHeight, rect.Width()-FilterWidth-InspectorWidth, ExplorerHeight, SWP_NOACTIVATE | SWP_NOZORDER);
@@ -260,6 +263,8 @@ void CMainView::AdjustLayout()
 
 	if (p_wndFileView)
 		p_wndFileView->SetWindowPos(NULL, rect.left+FilterWidth, rect.top+TaskHeight+ExplorerHeight, rect.Width()-FilterWidth-InspectorWidth, rect.Height()-ExplorerHeight-TaskHeight, SWP_NOACTIVATE | SWP_NOZORDER);
+
+	m_Resizing = FALSE;
 }
 
 INT CMainView::GetSelectedItem()
@@ -476,6 +481,7 @@ BEGIN_MESSAGE_MAP(CMainView, CWnd)
 	ON_WM_LBUTTONDOWN()
 	ON_WM_RBUTTONUP()
 	ON_WM_CONTEXTMENU()
+	ON_MESSAGE_VOID(WM_ADJUSTLAYOUT, OnAdjustLayout)
 	ON_MESSAGE_VOID(WM_UPDATESELECTION, OnUpdateSelection)
 	ON_MESSAGE(WM_RENAMEITEM, OnRenameItem)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoreAttributesChanged, OnStoreAttributesChanged)
@@ -592,14 +598,14 @@ INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	p_ViewButton = m_wndExplorerHeader.AddButton(IDM_VIEW);
 
 	// Inspector
-	if (!m_wndInspector.Create(this, 4))
+	if (!m_wndInspector.Create(FALSE, 128, this, 4))
 		return -1;
 
 	// Filter
 	if (!m_IsClipboard)
 	{
 		p_wndFilter = new CFilterWnd();
-		if (!p_wndFilter->Create(this, 5))
+		if (!p_wndFilter->Create(TRUE, 150, this, 5))
 			return -1;
 	}
 
@@ -742,6 +748,12 @@ void CMainView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 
 		DeleteObject(hBmp);
 	}
+}
+
+void CMainView::OnAdjustLayout()
+{
+	if (!m_Resizing)
+		AdjustLayout();
 }
 
 void CMainView::OnUpdateSelection()

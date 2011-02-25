@@ -133,7 +133,7 @@ INT CMainWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 
 	// Aero
-	MARGINS Margins = { 0, 0, 50+11, 0 };
+	MARGINS Margins = { 0, 0, 30+11, 0 };
 	UseGlasBackground(Margins);
 
 	// Entweder leeres Suchergebnis oder Stores-Kontext öffnen

@@ -59,6 +59,7 @@ protected:
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnRButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
+	afx_msg void OnAdjustLayout();
 	afx_msg void OnUpdateSelection();
 	afx_msg LRESULT OnRenameItem(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnStoreAttributesChanged(WPARAM wParam, LPARAM lParam);
@@ -120,6 +121,7 @@ protected:
 private:
 	CHeaderButton* p_OrganizeButton;
 	CHeaderButton* p_ViewButton;
+	BOOL m_Resizing;
 
 	BOOL CreateFileView(UINT ViewID, FVPersistentData* Data);
 	void SetHeaderButtons();

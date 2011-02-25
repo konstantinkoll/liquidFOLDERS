@@ -14,7 +14,7 @@
 #define StatusMultiple          2
 
 CInspectorWnd::CInspectorWnd()
-	: CGlasPane(FALSE)
+	: CGlasPane()
 {
 	Count = 0;
 

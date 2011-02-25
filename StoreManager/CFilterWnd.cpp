@@ -11,7 +11,7 @@
 //
 
 CFilterWnd::CFilterWnd()
-	: CGlasPane(TRUE)
+	: CGlasPane()
 {
 	m_Icons = NULL;
 }
