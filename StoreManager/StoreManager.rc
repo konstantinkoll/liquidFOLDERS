@@ -1251,6 +1251,16 @@ BEGIN
     END
 END
 
+IDM_DRIVE MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "Créez un store &nouveau...",  IDM_DRIVE_CREATENEWSTORE
+        MENUITEM SEPARATOR
+        MENUITEM "&Propriétés",                 IDM_DRIVE_PROPERTIES
+    END
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
