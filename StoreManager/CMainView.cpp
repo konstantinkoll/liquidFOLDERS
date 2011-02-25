@@ -240,6 +240,15 @@ void CMainView::ShowNotification(UINT Type, UINT ResID, UINT Command)
 
 void CMainView::AdjustLayout()
 {
+	if (!IsWindow(m_wndTaskbar))
+		return;
+	if (!IsWindow(m_wndExplorerNotification))
+		return;
+	if (!IsWindow(m_wndExplorerHeader))
+		return;
+	if (!IsWindow(m_wndInspector))
+		return;
+
 	m_Resizing = TRUE;
 
 	CRect rect;
@@ -251,15 +260,21 @@ void CMainView::AdjustLayout()
 	const UINT NotificationHeight = m_wndExplorerNotification.GetPreferredHeight();
 	m_wndExplorerNotification.SetWindowPos(&wndTop, rect.left+32, rect.bottom-NotificationHeight, rect.Width()-64, NotificationHeight, SWP_NOACTIVATE);
 
-	UINT FilterWidth = p_wndFilter ? p_wndFilter->GetPreferredWidth() : 0;
-	UINT InspectorWidth = m_wndInspector.GetPreferredWidth();
+	const INT MaxWidth = (rect.Width()-128)/(p_wndFilter ? 2 : 1);
+	INT FilterWidth = min(MaxWidth, p_wndFilter ? p_wndFilter->GetPreferredWidth() : 0);
+	INT InspectorWidth = min(MaxWidth, m_wndInspector.GetPreferredWidth());
 
 	const UINT ExplorerHeight = m_wndExplorerHeader.GetPreferredHeight();
 	m_wndExplorerHeader.SetWindowPos(NULL, rect.left+FilterWidth, rect.top+TaskHeight, rect.Width()-FilterWidth-InspectorWidth, ExplorerHeight, SWP_NOACTIVATE | SWP_NOZORDER);
+
+	m_wndInspector.SetMaxWidth(MaxWidth);
 	m_wndInspector.SetWindowPos(NULL, rect.right-InspectorWidth, rect.top+TaskHeight, InspectorWidth, rect.Height()-TaskHeight, SWP_NOACTIVATE | SWP_NOZORDER);
 
 	if (p_wndFilter)
+	{
+		p_wndFilter->SetMaxWidth(MaxWidth);
 		p_wndFilter->SetWindowPos(NULL, rect.left, rect.top+TaskHeight, FilterWidth, rect.Height()-TaskHeight, SWP_NOACTIVATE | SWP_NOZORDER);
+	}
 
 	if (p_wndFileView)
 		p_wndFileView->SetWindowPos(NULL, rect.left+FilterWidth, rect.top+TaskHeight+ExplorerHeight, rect.Width()-FilterWidth-InspectorWidth, rect.Height()-ExplorerHeight-TaskHeight, SWP_NOACTIVATE | SWP_NOZORDER);

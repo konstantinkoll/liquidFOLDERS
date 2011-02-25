@@ -14,6 +14,7 @@
 CGlasPane::CGlasPane()
 	: CWnd()
 {
+	m_MaxWidth = 128+GRIPPER;
 }
 
 BOOL CGlasPane::Create(BOOL IsLeft, INT PreferredWidth, CWnd* pParentWnd, UINT nID)
@@ -38,12 +39,18 @@ INT CGlasPane::GetPreferredWidth()
 	return m_PreferredWidth;
 }
 
+void CGlasPane::SetMaxWidth(INT MaxWidth)
+{
+	m_MaxWidth = MaxWidth-GRIPPER;
+}
+
 
 BEGIN_MESSAGE_MAP(CGlasPane, CWnd)
 	ON_WM_NCCALCSIZE()
 	ON_WM_NCHITTEST()
 	ON_WM_NCPAINT()
 	ON_WM_SIZE()
+	ON_WM_GETMINMAXINFO()
 END_MESSAGE_MAP()
 
 void CGlasPane::OnNcCalcSize(BOOL bCalcValidRects, NCCALCSIZE_PARAMS* lpncsp)
@@ -102,4 +109,12 @@ void CGlasPane::OnSize(UINT nType, INT cx, INT cy)
 	AdjustLayout();
 
 	GetParent()->SendMessage(WM_ADJUSTLAYOUT);
+}
+
+void CGlasPane::OnGetMinMaxInfo(MINMAXINFO* lpMMI)
+{
+	CWnd::OnGetMinMaxInfo(lpMMI);
+
+	lpMMI->ptMinTrackSize.x = 32+GRIPPER;
+	lpMMI->ptMaxTrackSize.x = m_MaxWidth+GRIPPER;
 }
