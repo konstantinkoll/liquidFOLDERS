@@ -18,6 +18,16 @@
 #define IDB_BLUEMARBLE_2048             141
 #define IDB_BLUEMARBLE_4096             142
 #define IDB_BLUEMARBLE_8192             143
+#define IDB_JOURNAL_FRAME0              144
+#define IDB_JOURNAL_FRAME1              145
+#define IDB_JOURNAL_NORMAL0             146
+#define IDB_JOURNAL_NORMAL1             147
+#define IDB_JOURNAL_HOT0                148
+#define IDB_JOURNAL_HOT1                149
+#define IDB_JOURNAL_PRESSED0            150
+#define IDB_JOURNAL_PRESSED1            151
+#define IDB_JOURNAL_DISABLED0           152
+#define IDB_JOURNAL_DISABLED1           153
 #define ID_PANE_FILTERWND               403
 #define ID_PANE_INSPECTORWND            404
 #define ID_NAV_BACK                     500

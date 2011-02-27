@@ -60,6 +60,16 @@ IDB_INSPECTOR           PNG                     "res\\Inspector_Grey.png"
 IDB_MULTIPLE            PNG                     "res\\Multiple.png"
 IDB_GLOBEICONS_RGB      PNG                     "res\\GlobeIcons_RGB.png"
 IDB_GLOBEICONS_ALPHA    PNG                     "res\\GlobeIcons_Alpha.png"
+IDB_JOURNAL_FRAME0      PNG                     "res\\Journal_Frame0.png"
+IDB_JOURNAL_FRAME1      PNG                     "res\\Journal_Frame1.png"
+IDB_JOURNAL_NORMAL0     PNG                     "res\\Journal_Normal0.png"
+IDB_JOURNAL_NORMAL1     PNG                     "res\\Journal_Normal1.png"
+IDB_JOURNAL_HOT0        PNG                     "res\\Journal_Hot0.png"
+IDB_JOURNAL_HOT1        PNG                     "res\\Journal_Hot1.png"
+IDB_JOURNAL_PRESSED0    PNG                     "res\\Journal_Pressed0.png"
+IDB_JOURNAL_PRESSED1    PNG                     "res\\Journal_Pressed1.png"
+IDB_JOURNAL_DISABLED0   PNG                     "res\\Journal_Disabled0.png"
+IDB_JOURNAL_DISABLED1   PNG                     "res\\Journal_Disabled1.png"
 
 /////////////////////////////////////////////////////////////////////////////
 //
