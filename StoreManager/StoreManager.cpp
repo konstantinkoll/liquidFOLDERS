@@ -62,7 +62,6 @@ BOOL CStoreManagerApp::InitInstance()
 	}
 	
 	// Registry auslesen
-	CString oldBase = GetRegistryBase();
 	SetRegistryBase(_T("Settings"));
 	m_ShowEmptyDrives = GetInt(_T("ShowEmptyDrives"), TRUE);
 	m_ShowEmptyDomains = GetInt(_T("ShowEmptyDomains"), TRUE);
@@ -84,8 +83,6 @@ BOOL CStoreManagerApp::InitInstance()
 		m_nTextureSize = 0;
 	if (m_nTextureSize>m_nMaxTextureSize)
 		m_nTextureSize = m_nMaxTextureSize;
-
-	SetRegistryBase(oldBase);
 
 	for (INT a=0; a<LFContextCount; a++)
 		LoadViewOptions(a);
@@ -115,7 +112,6 @@ INT CStoreManagerApp::ExitInstance()
 		delete m_AllowedViews[a];
 	}
 
-	CString oldBase = GetRegistryBase();
 	SetRegistryBase(_T("Settings"));
 	WriteInt(_T("ShowEmptyDrives"), m_ShowEmptyDrives);
 	WriteInt(_T("ShowEmptyDomains"), m_ShowEmptyDomains);
@@ -133,7 +129,6 @@ INT CStoreManagerApp::ExitInstance()
 	WriteInt(_T("TagcloudShowLegend"), m_TagcloudShowLegend);
 	WriteInt(_T("TextureSize"), m_nTextureSize);
 	WriteInt(_T("MaxTextureSize"), m_nMaxTextureSize);
-	SetRegistryBase(oldBase);
 
 	return LFApplication::ExitInstance();
 }
@@ -339,7 +334,6 @@ void CStoreManagerApp::GetBinary(LPCTSTR lpszEntry, void* pData, UINT size)
 
 void CStoreManagerApp::LoadViewOptions(INT context)
 {
-	CString oldBase = GetRegistryBase();
 	CString base;
 	base.Format(_T("Settings\\Context%d"), context);
 	SetRegistryBase(base);
@@ -400,13 +394,10 @@ void CStoreManagerApp::LoadViewOptions(INT context)
 	GetBinary(_T("ColumnWidth"), &m_Views[context].ColumnWidth, sizeof(m_Views[context].ColumnWidth));
 
 	m_Views[context].AutoDirs &= (m_Contexts[context]->AllowGroups==true) || (context>=LFContextSubfolderDefault);
-
-	SetRegistryBase(oldBase);
 }
 
 void CStoreManagerApp::SaveViewOptions(INT context)
 {
-	CString oldBase = GetRegistryBase();
 	CString base;
 	base.Format(_T("Settings\\Context%d"), context);
 	SetRegistryBase(base);
@@ -430,6 +421,4 @@ void CStoreManagerApp::SaveViewOptions(INT context)
 
 	WriteBinary(_T("ColumnOrder"), (LPBYTE)m_Views[context].ColumnOrder, sizeof(m_Views[context].ColumnOrder));
 	WriteBinary(_T("ColumnWidth"), (LPBYTE)m_Views[context].ColumnWidth, sizeof(m_Views[context].ColumnWidth));
-
-	SetRegistryBase(oldBase);
 }

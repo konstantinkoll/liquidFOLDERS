@@ -94,6 +94,8 @@ BEGIN_MESSAGE_MAP(CHeaderButton, CButton)
 	ON_WM_MOUSEMOVE()
 	ON_WM_MOUSELEAVE()
 	ON_WM_MOUSEHOVER()
+	ON_WM_SETFOCUS()
+	ON_WM_KILLFOCUS()
 	ON_WM_CONTEXTMENU()
 END_MESSAGE_MAP()
 
@@ -304,6 +306,19 @@ void CHeaderButton::OnMouseHover(UINT nFlags, CPoint point)
 		{
 			m_TooltipCtrl.Deactivate();
 		}
+}
+
+void CHeaderButton::OnSetFocus(CWnd* pOldWnd)
+{
+	CButton::OnSetFocus(pOldWnd);
+	Invalidate();
+}
+
+
+void CHeaderButton::OnKillFocus(CWnd* pNewWnd)
+{
+	CButton::OnKillFocus(pNewWnd);
+	Invalidate();
 }
 
 void CHeaderButton::OnContextMenu(CWnd* /*pWnd*/, CPoint /*pos*/)

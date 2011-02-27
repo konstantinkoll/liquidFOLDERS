@@ -90,6 +90,8 @@ BEGIN_MESSAGE_MAP(CTaskButton, CButton)
 	ON_WM_MOUSEMOVE()
 	ON_WM_MOUSELEAVE()
 	ON_WM_MOUSEHOVER()
+	ON_WM_SETFOCUS()
+	ON_WM_KILLFOCUS()
 END_MESSAGE_MAP()
 
 INT CTaskButton::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -375,4 +377,17 @@ void CTaskButton::OnMouseHover(UINT nFlags, CPoint point)
 		{
 			m_TooltipCtrl.Deactivate();
 		}
+}
+
+void CTaskButton::OnSetFocus(CWnd* pOldWnd)
+{
+	CButton::OnSetFocus(pOldWnd);
+	Invalidate();
+}
+
+
+void CTaskButton::OnKillFocus(CWnd* pNewWnd)
+{
+	CButton::OnKillFocus(pNewWnd);
+	Invalidate();
 }

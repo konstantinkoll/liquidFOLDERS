@@ -16,7 +16,7 @@
 // CMainView
 //
 
-#define FileViewID     3
+#define FileViewID     4
 
 CMainView::CMainView()
 {
@@ -611,8 +611,16 @@ INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndTaskbar.AddButton(ID_APP_SUPPORT, 31, TRUE, TRUE);
 	m_wndTaskbar.AddButton(ID_APP_ABOUT, 32, TRUE, TRUE);
 
+	// Filter
+	if (!m_IsClipboard)
+	{
+		p_wndFilter = new CFilterWnd();
+		if (!p_wndFilter->Create(TRUE, 250, this, 2))
+			return -1;
+	}
+
 	// Explorer header
-	if (!m_wndExplorerHeader.Create(this, 2))
+	if (!m_wndExplorerHeader.Create(this, 3))
 		return -1;
 
 	m_wndExplorerHeader.SetOwner(GetOwner());
@@ -623,14 +631,6 @@ INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	// Inspector
 	if (!m_wndInspector.Create(FALSE, 200, this, 4))
 		return -1;
-
-	// Filter
-	if (!m_IsClipboard)
-	{
-		p_wndFilter = new CFilterWnd();
-		if (!p_wndFilter->Create(TRUE, 250, this, 5))
-			return -1;
-	}
 
 	// Explorer notification
 	if (!m_wndExplorerNotification.Create(this, 6))
