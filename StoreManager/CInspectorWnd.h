@@ -5,24 +5,6 @@
 #include "liquidFOLDERS.h"
 
 
-// CInspectorToolBar
-//
-
-class CInspectorToolBar : public CMFCToolBar
-{
-public:
-	virtual void OnUpdateCmdUI(CFrameWnd* /*pTarget*/, BOOL bDisableIfNoHndler)
-	{
-		CMFCToolBar::OnUpdateCmdUI((CFrameWnd*)GetOwner(), bDisableIfNoHndler);
-	}
-
-	virtual BOOL AllowShowOnList()
-	{
-		return FALSE;
-	}
-};
-
-
 // Virtuelle Attribute
 //
 
@@ -56,7 +38,6 @@ public:
 	void UpdateFinish();
 
 protected:
-	CInspectorToolBar m_wndToolBar;
 	CInspectorIconCtrl m_wndIconCtrl;
 	CInspectorGrid m_wndPropList;
 	CMFCPropertyGridProperty* pGroups[LFAttrCategoryCount];

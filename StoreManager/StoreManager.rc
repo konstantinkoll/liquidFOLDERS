@@ -79,7 +79,6 @@ IDB_JOURNAL_DISABLED1   PNG                     "res\\Journal_Disabled1.png"
 IDB_DESCENDING          BITMAP                  "res\\Descending_16.bmp"
 IDB_ASCENDING           BITMAP                  "res\\Ascending_16.bmp"
 IDB_GROUPING            BITMAP                  "res\\Grouping_32.bmp"
-ID_PANE_INSPECTORWND    BITMAP                  "res\\Toolbar_Inspector.bmp"
 ID_PANE_FILTERWND       BITMAP                  "res\\Toolbar_Filter.bmp"
 IDB_TASKS               BITMAP                  "res\\Tasks.bmp"
 IDB_VIEWS               BITMAP                  "res\\Views.bmp"
@@ -127,17 +126,6 @@ END
 //
 // Toolbar
 //
-
-ID_PANE_INSPECTORWND TOOLBAR  16, 16
-BEGIN
-    BUTTON      ID_INSPECTOR_TOGGLEICON
-    SEPARATOR
-    BUTTON      ID_INSPECTOR_TREEVIEW
-    BUTTON      ID_INSPECTOR_ALPHABETIC
-    SEPARATOR
-    BUTTON      ID_INSPECTOR_EXPANDALL
-    BUTTON      ID_INSPECTOR_EXPORT
-END
 
 ID_PANE_FILTERWND TOOLBAR  16, 16
 BEGIN

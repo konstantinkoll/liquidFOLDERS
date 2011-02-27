@@ -532,14 +532,6 @@
 				>
 			</File>
 			<File
-				RelativePath="Ribbon\ExpandAll_16.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\ExpandAll_32.png"
-				>
-			</File>
-			<File
 				RelativePath=".\Ribbon\Explorer_16.png"
 				>
 			</File>
@@ -892,14 +884,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Ribbon\SaveProperties_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\SaveProperties_32.png"
-				>
-			</File>
-			<File
 				RelativePath=".\Ribbon\SendFiles_16.png"
 				>
 			</File>
@@ -1009,14 +993,6 @@
 			</File>
 			<File
 				RelativePath=".\Ribbon\TreeExpand_32.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\TreeView_16.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\TreeView_32.png"
 				>
 			</File>
 			<File
