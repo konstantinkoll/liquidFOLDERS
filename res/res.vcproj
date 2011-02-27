@@ -1196,6 +1196,50 @@
 				>
 			</File>
 		</Filter>
+		<Filter
+			Name="Journal"
+			>
+			<File
+				RelativePath=".\Journal\Journal_Disabled0.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Journal\Journal_Disabled1.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Journal\Journal_Frame0.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Journal\Journal_Frame1.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Journal\Journal_Hot0.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Journal\Journal_Hot1.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Journal\Journal_Normal0.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Journal\Journal_Normal1.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Journal\Journal_Pressed0.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Journal\Journal_Pressed1.png"
+				>
+			</File>
+		</Filter>
 		<File
 			RelativePath=".\About_Small.ico"
 			>

@@ -864,6 +864,8 @@ void CMainView::OnUpdateHeaderCommands(CCmdUI* pCmdUI)
 		pCmdUI->SetCheck((theApp.m_Views[m_Context].AutoDirs) || (m_Context>=LFContextSubfolderDefault));
 		pCmdUI->Enable((theApp.m_Contexts[m_Context]->AllowGroups) && (theApp.m_Views[m_Context].Mode<=LFViewPreview));
 		break;
+	default:
+		pCmdUI->Enable(TRUE);
 	}
 }
 
