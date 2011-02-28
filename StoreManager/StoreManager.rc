@@ -822,7 +822,7 @@ BEGIN
     IDS_CONTEXTMENU_TIME    "&Time"
     IDS_CONTEXTMENU_LOCATION "&Location"
     IDS_CONTEXTMENU_DIMENSION "&Dimension"
-    IDS_TXTFILEFILTER       "Plain text"
+    IDS_TXTFILEFILTER       "Text document"
     IDS_XMLFILEFILTER       "Extensible Markup Language"
     IDS_ATTRIBUTENOTSORTABLE "This property is not suitable for sorting."
     IDS_NOITEMSSELECTED     "No items selected"
@@ -1253,7 +1253,7 @@ END
 STRINGTABLE 
 BEGIN
     IDR_APPLICATION         "StoreManager"
-    IDR_CLIPBOARD           "Clipboard"
+    IDR_CLIPBOARD           "Portapapeles"
 END
 
 STRINGTABLE 
@@ -1261,16 +1261,16 @@ BEGIN
     IDS_VIEWGROUP1          "List views"
     IDS_VIEWGROUP2          "Enhanced views"
     IDS_CONTEXTMENU_SELECTALL "Select &all\tCtrl+A"
-    IDS_CONTEXTMENU_SORTOPTIONS "&Organize ""%s"" by..."
+    IDS_CONTEXTMENU_SORTOPTIONS "&Organizar ""%s"" por..."
     IDS_CONTEXTMENU_AUTODIRS "&Group into subfolders"
-    IDS_CONTEXTMENU_VIEWOPTIONS "&Display ""%s"" as..."
-    IDS_CONTEXTMENU_OPEN    "&Open"
-    IDS_CONTEXTMENU_OPENWITH "Open &with..."
+    IDS_CONTEXTMENU_VIEWOPTIONS "&Visualizar ""%s"" como..."
+    IDS_CONTEXTMENU_OPEN    "&Abrir"
+    IDS_CONTEXTMENU_OPENWITH "Abrir &con..."
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_CONTEXTMENU_OPENGOOGLEEARTH "Open in &Google Earth"
+    IDS_CONTEXTMENU_OPENGOOGLEEARTH "Abrir con &Google Earth"
     IDS_CONTEXTMENU_REMEMBER "Re&member"
     IDS_CONTEXTMENU_REMOVE  "Re&move from clipboard"
     IDS_CONTEXTMENU_AUTOSIZEALL "Size all &columns to fit"
@@ -1278,7 +1278,7 @@ BEGIN
     IDS_CONTEXTMENU_TIME    "&Time"
     IDS_CONTEXTMENU_LOCATION "&Location"
     IDS_CONTEXTMENU_DIMENSION "&Dimension"
-    IDS_TXTFILEFILTER       "Plain text"
+    IDS_TXTFILEFILTER       "Text document"
     IDS_XMLFILEFILTER       "Extensible Markup Language"
     IDS_ATTRIBUTENOTSORTABLE "This property is not suitable for sorting."
     IDS_NOITEMSSELECTED     "No items selected"
@@ -1310,19 +1310,19 @@ END
 STRINGTABLE 
 BEGIN
     IDS_VATTR_DRIVELETTER   "Drive letter"
-    IDS_VATTR_MAINTENANCETIME "Last maintenance"
-    IDS_VATTR_LASTSEEN      "Last seen"
+    IDS_VATTR_MAINTENANCETIME "Mantenimiento"
+    IDS_VATTR_LASTSEEN      "Última entrada"
     IDS_VATTR_GUID          "GUID"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_VATTR_PATH_DAT      "Data path"
-    IDS_VATTR_PATH_IDX_MAIN "Main index path"
-    IDS_VATTR_PATH_IDX_AUX  "Aux. index path"
-    IDS_VATTR_INDEXVERSION  "Index version"
+    IDS_VATTR_PATH_DAT      "Ruta de datos"
+    IDS_VATTR_PATH_IDX_MAIN "Índice principal"
+    IDS_VATTR_PATH_IDX_AUX  "Índice auxiliar"
+    IDS_VATTR_INDEXVERSION  "Versión índice"
     IDS_VATTR_IATA_NAME     "IATA airport name"
-    IDS_VATTR_IATA_COUNTRY  "Country/territory"
+    IDS_VATTR_IATA_COUNTRY  "Territorio"
 END
 
 STRINGTABLE 
@@ -1616,7 +1616,7 @@ END
 STRINGTABLE 
 BEGIN
     IDR_APPLICATION         "StoreManager"
-    IDR_CLIPBOARD           "Zwischenablage"
+    IDR_CLIPBOARD           "Presse-papiers"
 END
 
 STRINGTABLE 
@@ -1624,9 +1624,9 @@ BEGIN
     IDS_VIEWGROUP1          "Listen"
     IDS_VIEWGROUP2          "Erweiterte Ansichten"
     IDS_CONTEXTMENU_SELECTALL "Alles &markieren\tStrg+A"
-    IDS_CONTEXTMENU_SORTOPTIONS """%s"" &organisieren nach..."
+    IDS_CONTEXTMENU_SORTOPTIONS """%s"" &organiser après..."
     IDS_CONTEXTMENU_AUTODIRS "In Unterordner &gruppieren"
-    IDS_CONTEXTMENU_VIEWOPTIONS """%s"" an&zeigen als..."
+    IDS_CONTEXTMENU_VIEWOPTIONS """%s"" a&fficher comme..."
     IDS_CONTEXTMENU_OPEN    "&Ouvrir"
     IDS_CONTEXTMENU_OPENWITH "Ouvrir &avec..."
 END
