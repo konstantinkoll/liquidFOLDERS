@@ -394,6 +394,112 @@ BEGIN
 END
 #endif    // APSTUDIO_INVOKED
 
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE 
+BEGIN
+    IDR_APPLICATION         "StoreManager"
+    IDR_CLIPBOARD           "Zwischenablage"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_VIEWGROUP1          "Listen"
+    IDS_VIEWGROUP2          "Erweiterte Ansichten"
+    IDS_CONTEXTMENU_SELECTALL "Alles &markieren\tStrg+A"
+    IDS_CONTEXTMENU_SORTOPTIONS "„%s“ &organisieren nach..."
+    IDS_CONTEXTMENU_AUTODIRS "In Unterordner &gruppieren"
+    IDS_CONTEXTMENU_VIEWOPTIONS "„%s“ an&zeigen als..."
+    IDS_CONTEXTMENU_OPEN    "Ö&ffnen"
+    IDS_CONTEXTMENU_OPENWITH "Öffnen &mit..."
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_CONTEXTMENU_OPENGOOGLEEARTH "Öffnen in &Google Earth"
+    IDS_CONTEXTMENU_REMEMBER "Mer&ken"
+    IDS_CONTEXTMENU_REMOVE  "Von Zwischenablage &entfernen"
+    IDS_CONTEXTMENU_AUTOSIZEALL "&Alle Spaltenbreiten anpassen"
+    IDS_CONTEXTMENU_MORE    "&Mehr..."
+    IDS_CONTEXTMENU_TIME    "&Zeit"
+    IDS_CONTEXTMENU_LOCATION "&Ort"
+    IDS_CONTEXTMENU_DIMENSION "&Abmessungen"
+    IDS_TXTFILEFILTER       "Textdatei"
+    IDS_XMLFILEFILTER       "Extensible Markup Language"
+    IDS_ATTRIBUTENOTSORTABLE 
+                            "Diese Eigenschaft ist zur Sortierung nicht geeignet."
+    IDS_NOITEMSSELECTED     "Keine Objekte ausgewählt"
+    IDS_MULTIPLETYPESSELECTED "Unterschiedliche Typen, %d Objekte"
+    IDS_YOULOOKAT           "Sie schauen auf %s"
+    IDS_NOTHINGTODISPLAY    "Es gibt nichts anzuzeigen."
+    IDS_AUTOMATIC           "Automatisch wählen"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_ILLEGALYEAR         "Sie können nur die Jahre von 1900 bis 2100 anzeigen."
+    IDS_LEGEND              "Legende"
+    IDS_LEGEND_BLUE         "Wartungsarbeiten erforderlich"
+    IDS_LEGEND_RED          "Beschädigt (Dateikörper fehlt)"
+    IDS_LEGEND_RARE         "Selten"
+    IDS_LEGEND_COMMON       "Häufig"
+    IDS_LEGEND_OLDER        "Älter"
+    IDS_LEGEND_NEWER        "Neuer"
+    IDS_STATISTICS          "Statistik"
+    IDS_STATISTICS_BYCOUNT  "Nach Anzahl"
+    IDS_STATISTICS_BYSIZE   "Nach Größe"
+    IDS_STATISTICS_OTHER    "Andere"
+    IDS_SUBFOLDERS_MANDATORY "Unterordner in dieser Ansicht erforderlich"
+    IDS_SUBFOLDERS_NOTAVAIL "Unterordner im Kontext nicht verfügbar"
+    IDS_NOLICENSE           "Sie nutzen eine unregistrierte Kopie von liquidFOLDERS. liquidFOLDERS ist Shareware – wenn Sie die Software regelmäßig nutzen, müssen Sie eine Lizenz erwerben!"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_VATTR_DRIVELETTER   "Laufwerksbuchstabe"
+    IDS_VATTR_MAINTENANCETIME "Letzte Wartung"
+    IDS_VATTR_LASTSEEN      "Zuletzt eingebunden"
+    IDS_VATTR_GUID          "GUID"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_VATTR_PATH_DAT      "Datenpfad"
+    IDS_VATTR_PATH_IDX_MAIN "Hauptindex"
+    IDS_VATTR_PATH_IDX_AUX  "Hilfsindex"
+    IDS_VATTR_INDEXVERSION  "Index-Version"
+    IDS_VATTR_IATA_NAME     "IATA Flughafenname"
+    IDS_VATTR_IATA_COUNTRY  "Land/Gebiet"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_ORGANIZE            "Wählt die Eigenschaft, nach der die Objekte in diesem Kontext organisiert werden.\nOrganisieren nach"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_VIEW                "Wählt die Ansicht für diesen Kontext.\nAnzeigen als"
+    IDM_VIEW_LARGEICONS     "Große Symbole"
+    IDM_VIEW_SMALLICONS     "Kleine Symbole"
+    IDM_VIEW_LIST           "Liste"
+    IDM_VIEW_DETAILS        "Details"
+    IDM_VIEW_TILES          "Kacheln"
+    IDM_VIEW_CONTENT        "Inhalt"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_VIEW_PREVIEW        "Vorschau"
+    IDM_VIEW_CALENDAR       "Kalender"
+    IDM_VIEW_GLOBE          "Globus"
+    IDM_VIEW_TAGCLOUD       "Wortwolke"
+END
+
 #endif    // Deutsch (neutral) resources
 /////////////////////////////////////////////////////////////////////////////
 
@@ -696,7 +802,7 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_VIEWGROUP1          "Basic views"
+    IDS_VIEWGROUP1          "List views"
     IDS_VIEWGROUP2          "Enhanced views"
     IDS_CONTEXTMENU_SELECTALL "Select &all\tCtrl+A"
     IDS_CONTEXTMENU_SORTOPTIONS "&Organize ""%s"" by..."
@@ -716,11 +822,11 @@ BEGIN
     IDS_CONTEXTMENU_TIME    "&Time"
     IDS_CONTEXTMENU_LOCATION "&Location"
     IDS_CONTEXTMENU_DIMENSION "&Dimension"
-    IDS_TXTFILEFILTER       "Text files"
+    IDS_TXTFILEFILTER       "Plain text"
+    IDS_XMLFILEFILTER       "Extensible Markup Language"
     IDS_ATTRIBUTENOTSORTABLE "This property is not suitable for sorting."
     IDS_NOITEMSSELECTED     "No items selected"
     IDS_MULTIPLETYPESSELECTED "Multiple types, %d items"
-    IDS_MOREATTRIBUTES      "&More properties..."
     IDS_YOULOOKAT           "You look at %s"
     IDS_NOTHINGTODISPLAY    "There is nothing to display."
     IDS_AUTOMATIC           "Choose automatically"
@@ -761,15 +867,6 @@ BEGIN
     IDS_VATTR_INDEXVERSION  "Index version"
     IDS_VATTR_IATA_NAME     "IATA airport name"
     IDS_VATTR_IATA_COUNTRY  "Country/territory"
-END
-
-STRINGTABLE 
-BEGIN
-    ID_INSPECTOR_TOGGLEICON "Shows or hides the icon area.\nIcon area"
-    ID_INSPECTOR_TREEVIEW   "Shows all properties in a tree.\nTree view"
-    ID_INSPECTOR_ALPHABETIC "Shows all properties sorted alphabetically.\nAlphabetic view"
-    ID_INSPECTOR_EXPANDALL  "Expands all property groups.\nExpand all"
-    ID_INSPECTOR_EXPORT     "Saves the properties as a text file.\nExport properties"
 END
 
 STRINGTABLE 
@@ -880,11 +977,11 @@ BEGIN
     IDM_VIEW_DETAILS        "Details"
     IDM_VIEW_TILES          "Tiles"
     IDM_VIEW_CONTENT        "Content"
-    IDM_VIEW_PREVIEW        "Preview"
 END
 
 STRINGTABLE 
 BEGIN
+    IDM_VIEW_PREVIEW        "Preview"
     IDM_VIEW_CALENDAR       "Calendar"
     IDM_VIEW_GLOBE          "Globe"
     IDM_VIEW_TAGCLOUD       "Tag cloud"
@@ -1147,6 +1244,111 @@ BEGIN
 END
 #endif    // APSTUDIO_INVOKED
 
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE 
+BEGIN
+    IDR_APPLICATION         "StoreManager"
+    IDR_CLIPBOARD           "Clipboard"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_VIEWGROUP1          "List views"
+    IDS_VIEWGROUP2          "Enhanced views"
+    IDS_CONTEXTMENU_SELECTALL "Select &all\tCtrl+A"
+    IDS_CONTEXTMENU_SORTOPTIONS "&Organize ""%s"" by..."
+    IDS_CONTEXTMENU_AUTODIRS "&Group into subfolders"
+    IDS_CONTEXTMENU_VIEWOPTIONS "&Display ""%s"" as..."
+    IDS_CONTEXTMENU_OPEN    "&Open"
+    IDS_CONTEXTMENU_OPENWITH "Open &with..."
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_CONTEXTMENU_OPENGOOGLEEARTH "Open in &Google Earth"
+    IDS_CONTEXTMENU_REMEMBER "Re&member"
+    IDS_CONTEXTMENU_REMOVE  "Re&move from clipboard"
+    IDS_CONTEXTMENU_AUTOSIZEALL "Size all &columns to fit"
+    IDS_CONTEXTMENU_MORE    "&More..."
+    IDS_CONTEXTMENU_TIME    "&Time"
+    IDS_CONTEXTMENU_LOCATION "&Location"
+    IDS_CONTEXTMENU_DIMENSION "&Dimension"
+    IDS_TXTFILEFILTER       "Plain text"
+    IDS_XMLFILEFILTER       "Extensible Markup Language"
+    IDS_ATTRIBUTENOTSORTABLE "This property is not suitable for sorting."
+    IDS_NOITEMSSELECTED     "No items selected"
+    IDS_MULTIPLETYPESSELECTED "Multiple types, %d items"
+    IDS_YOULOOKAT           "You look at %s"
+    IDS_NOTHINGTODISPLAY    "There is nothing to display."
+    IDS_AUTOMATIC           "Choose automatically"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_ILLEGALYEAR         "You can only display the years 1900 through 2100."
+    IDS_LEGEND              "Legend"
+    IDS_LEGEND_BLUE         "Requires scheduled maintenance"
+    IDS_LEGEND_RED          "Damaged (file body missing)"
+    IDS_LEGEND_RARE         "Rare"
+    IDS_LEGEND_COMMON       "Common"
+    IDS_LEGEND_OLDER        "Older"
+    IDS_LEGEND_NEWER        "Newer"
+    IDS_STATISTICS          "Statistics"
+    IDS_STATISTICS_BYCOUNT  "By file count"
+    IDS_STATISTICS_BYSIZE   "By file size"
+    IDS_STATISTICS_OTHER    "Other"
+    IDS_SUBFOLDERS_MANDATORY "Subfolders are mandatory for this view."
+    IDS_SUBFOLDERS_NOTAVAIL "Subfolders are not available in this context."
+    IDS_NOLICENSE           "You are using an unregistered copy of liquidFOLDERS. liquidFOLDERS is shareware—if you decide to use it regulary, you are required to purchase a license key!"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_VATTR_DRIVELETTER   "Drive letter"
+    IDS_VATTR_MAINTENANCETIME "Last maintenance"
+    IDS_VATTR_LASTSEEN      "Last seen"
+    IDS_VATTR_GUID          "GUID"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_VATTR_PATH_DAT      "Data path"
+    IDS_VATTR_PATH_IDX_MAIN "Main index path"
+    IDS_VATTR_PATH_IDX_AUX  "Aux. index path"
+    IDS_VATTR_INDEXVERSION  "Index version"
+    IDS_VATTR_IATA_NAME     "IATA airport name"
+    IDS_VATTR_IATA_COUNTRY  "Country/territory"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_ORGANIZE            "Selects the property by which to organize all items in this context.\nOrganize by"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_VIEW                "Selects the view mode for this context.\nDisplay as"
+    IDM_VIEW_LARGEICONS     "Large icons"
+    IDM_VIEW_SMALLICONS     "Small icons"
+    IDM_VIEW_LIST           "List"
+    IDM_VIEW_DETAILS        "Details"
+    IDM_VIEW_TILES          "Tiles"
+    IDM_VIEW_CONTENT        "Content"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_VIEW_PREVIEW        "Preview"
+    IDM_VIEW_CALENDAR       "Calendar"
+    IDM_VIEW_GLOBE          "Globe"
+    IDM_VIEW_TAGCLOUD       "Tag cloud"
+END
+
 #endif    // Spanisch (neutral) resources
 /////////////////////////////////////////////////////////////////////////////
 
@@ -1404,6 +1606,112 @@ BEGIN
     END
 END
 #endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE 
+BEGIN
+    IDR_APPLICATION         "StoreManager"
+    IDR_CLIPBOARD           "Zwischenablage"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_VIEWGROUP1          "Listen"
+    IDS_VIEWGROUP2          "Erweiterte Ansichten"
+    IDS_CONTEXTMENU_SELECTALL "Alles &markieren\tStrg+A"
+    IDS_CONTEXTMENU_SORTOPTIONS "„%s“ &organisieren nach..."
+    IDS_CONTEXTMENU_AUTODIRS "In Unterordner &gruppieren"
+    IDS_CONTEXTMENU_VIEWOPTIONS "„%s“ an&zeigen als..."
+    IDS_CONTEXTMENU_OPEN    "Ö&ffnen"
+    IDS_CONTEXTMENU_OPENWITH "Öffnen &mit..."
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_CONTEXTMENU_OPENGOOGLEEARTH "Öffnen in &Google Earth"
+    IDS_CONTEXTMENU_REMEMBER "Mer&ken"
+    IDS_CONTEXTMENU_REMOVE  "Von Zwischenablage &entfernen"
+    IDS_CONTEXTMENU_AUTOSIZEALL "&Alle Spaltenbreiten anpassen"
+    IDS_CONTEXTMENU_MORE    "&Mehr..."
+    IDS_CONTEXTMENU_TIME    "&Zeit"
+    IDS_CONTEXTMENU_LOCATION "&Ort"
+    IDS_CONTEXTMENU_DIMENSION "&Abmessungen"
+    IDS_TXTFILEFILTER       "Textdatei"
+    IDS_XMLFILEFILTER       "Extensible Markup Language"
+    IDS_ATTRIBUTENOTSORTABLE 
+                            "Diese Eigenschaft ist zur Sortierung nicht geeignet."
+    IDS_NOITEMSSELECTED     "Keine Objekte ausgewählt"
+    IDS_MULTIPLETYPESSELECTED "Unterschiedliche Typen, %d Objekte"
+    IDS_YOULOOKAT           "Sie schauen auf %s"
+    IDS_NOTHINGTODISPLAY    "Es gibt nichts anzuzeigen."
+    IDS_AUTOMATIC           "Automatisch wählen"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_ILLEGALYEAR         "Sie können nur die Jahre von 1900 bis 2100 anzeigen."
+    IDS_LEGEND              "Legende"
+    IDS_LEGEND_BLUE         "Wartungsarbeiten erforderlich"
+    IDS_LEGEND_RED          "Beschädigt (Dateikörper fehlt)"
+    IDS_LEGEND_RARE         "Selten"
+    IDS_LEGEND_COMMON       "Häufig"
+    IDS_LEGEND_OLDER        "Älter"
+    IDS_LEGEND_NEWER        "Neuer"
+    IDS_STATISTICS          "Statistik"
+    IDS_STATISTICS_BYCOUNT  "Nach Anzahl"
+    IDS_STATISTICS_BYSIZE   "Nach Größe"
+    IDS_STATISTICS_OTHER    "Andere"
+    IDS_SUBFOLDERS_MANDATORY "Unterordner in dieser Ansicht erforderlich"
+    IDS_SUBFOLDERS_NOTAVAIL "Unterordner im Kontext nicht verfügbar"
+    IDS_NOLICENSE           "Sie nutzen eine unregistrierte Kopie von liquidFOLDERS. liquidFOLDERS ist Shareware – wenn Sie die Software regelmäßig nutzen, müssen Sie eine Lizenz erwerben!"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_VATTR_DRIVELETTER   "Laufwerksbuchstabe"
+    IDS_VATTR_MAINTENANCETIME "Letzte Wartung"
+    IDS_VATTR_LASTSEEN      "Zuletzt eingebunden"
+    IDS_VATTR_GUID          "GUID"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_VATTR_PATH_DAT      "Datenpfad"
+    IDS_VATTR_PATH_IDX_MAIN "Hauptindex"
+    IDS_VATTR_PATH_IDX_AUX  "Hilfsindex"
+    IDS_VATTR_INDEXVERSION  "Index-Version"
+    IDS_VATTR_IATA_NAME     "IATA Flughafenname"
+    IDS_VATTR_IATA_COUNTRY  "Land/Gebiet"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_ORGANIZE            "Wählt die Eigenschaft, nach der die Objekte in diesem Kontext organisiert werden.\nOrganisieren nach"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_VIEW                "Wählt die Ansicht für diesen Kontext.\nAnzeigen als"
+    IDM_VIEW_LARGEICONS     "Große Symbole"
+    IDM_VIEW_SMALLICONS     "Kleine Symbole"
+    IDM_VIEW_LIST           "Liste"
+    IDM_VIEW_DETAILS        "Details"
+    IDM_VIEW_TILES          "Kacheln"
+    IDM_VIEW_CONTENT        "Inhalt"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_VIEW_PREVIEW        "Vorschau"
+    IDM_VIEW_CALENDAR       "Kalender"
+    IDM_VIEW_GLOBE          "Globus"
+    IDM_VIEW_TAGCLOUD       "Wortwolke"
+END
 
 #endif    // Französisch (neutral) resources
 /////////////////////////////////////////////////////////////////////////////

@@ -61,10 +61,10 @@
 #define IDS_CONTEXTMENU_LOCATION        1014
 #define IDS_CONTEXTMENU_DIMENSION       1015
 #define IDS_TXTFILEFILTER               1016
-#define IDS_ATTRIBUTENOTSORTABLE        1017
-#define IDS_NOITEMSSELECTED             1018
-#define IDS_MULTIPLETYPESSELECTED       1019
-#define IDS_MOREATTRIBUTES              1020
+#define IDS_XMLFILEFILTER               1017
+#define IDS_ATTRIBUTENOTSORTABLE        1018
+#define IDS_NOITEMSSELECTED             1019
+#define IDS_MULTIPLETYPESSELECTED       1020
 #define IDS_YOULOOKAT                   1021
 #define IDS_NOTHINGTODISPLAY            1022
 #define IDS_AUTOMATIC                   1023

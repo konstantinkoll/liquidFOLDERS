@@ -10,6 +10,7 @@
 #include <hash_map>
 #include <string>
 
+
 // CStoreManagerApp:
 // Siehe StoreManager.cpp für die Implementierung dieser Klasse
 //
@@ -54,8 +55,6 @@ public:
 
 	HBITMAP SetContextMenuIcon(CMenu* pMenu, UINT CmdID, UINT ResID);
 
-	BOOL SanitizeSortBy(LFViewParameters* vp, INT Context);
-	BOOL SanitizeViewMode(LFViewParameters* vp, INT Context);
 	void Broadcast(INT Context, INT View, UINT cmdMsg);
 	void UpdateSortOptions(INT Context);
 	void UpdateViewOptions(INT Context=-1, INT View=-1);
@@ -63,6 +62,8 @@ public:
 	void UpdateFooter(INT Context=-1, INT View=-1);
 
 protected:
+	BOOL SanitizeSortBy(LFViewParameters* vp, INT Context);
+	BOOL SanitizeViewMode(LFViewParameters* vp, INT Context);
 	void GetBinary(LPCTSTR lpszEntry, void* pData, UINT size);
 	void LoadViewOptions(INT context);
 	void SaveViewOptions(INT context);
