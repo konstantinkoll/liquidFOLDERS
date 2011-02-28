@@ -399,9 +399,9 @@ BEGIN
     EDITTEXT        IDC_STORENAME,92,16,279,14,ES_AUTOHSCROLL
     LTEXT           "Kommentar:",IDC_STATIC,14,37,75,8
     EDITTEXT        IDC_COMMENT,92,35,279,14,ES_AUTOHSCROLL
-    LTEXT           "Erzeugt:",IDC_STATIC,14,64,75,8
+    LTEXT           "Erzeugt am:",IDC_STATIC,14,64,75,8
     LTEXT           "X",IDC_CREATED,92,64,279,8,SS_ENDELLIPSIS
-    LTEXT           "Geändert:",IDC_STATIC,14,74,75,8
+    LTEXT           "Geändert am:",IDC_STATIC,14,74,75,8
     LTEXT           "X",IDC_UPDATED,92,74,279,8,SS_ENDELLIPSIS
     LTEXT           "Letzte Wartung:",IDC_STATIC,14,84,75,8
     LTEXT           "X",IDC_MAINTENANCE,92,84,279,8,SS_ENDELLIPSIS
@@ -1482,7 +1482,7 @@ BEGIN
     EDITTEXT        IDC_COMMENT,72,35,279,14,ES_AUTOHSCROLL
     LTEXT           "Creado:",IDC_STATIC,14,64,55,8
     LTEXT           "X",IDC_CREATED,72,64,279,8,SS_ENDELLIPSIS
-    LTEXT           "Actualizado:",IDC_STATIC,14,74,55,8
+    LTEXT           "Modificado:",IDC_STATIC,14,74,55,8
     LTEXT           "X",IDC_UPDATED,72,74,279,8,SS_ENDELLIPSIS
     LTEXT           "Mantenimiento:",IDC_STATIC,14,84,55,8
     LTEXT           "X",IDC_MAINTENANCE,72,84,279,8,SS_ENDELLIPSIS
@@ -2032,9 +2032,9 @@ BEGIN
     EDITTEXT        IDC_STORENAME,82,16,279,14,ES_AUTOHSCROLL
     LTEXT           "Commentaire:",IDC_STATIC,14,37,65,8
     EDITTEXT        IDC_COMMENT,82,35,279,14,ES_AUTOHSCROLL
-    LTEXT           "Produit:",IDC_STATIC,14,64,65,8
+    LTEXT           "Temp de création:",IDC_STATIC,14,64,65,8
     LTEXT           "X",IDC_CREATED,82,64,279,8,SS_ENDELLIPSIS
-    LTEXT           "Changé:",IDC_STATIC,14,74,65,8
+    LTEXT           "Changé le:",IDC_STATIC,14,74,65,8
     LTEXT           "X",IDC_UPDATED,82,74,279,8,SS_ENDELLIPSIS
     LTEXT           "Maintenance:",IDC_STATIC,14,84,65,8
     LTEXT           "X",IDC_MAINTENANCE,82,84,279,8,SS_ENDELLIPSIS

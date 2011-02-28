@@ -420,7 +420,7 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_CONTEXTMENU_OPENGOOGLEEARTH "Öffnen in &Google Earth"
+    IDS_CONTEXTMENU_OPENGOOGLEEARTH "Öffnen mit &Google Earth"
     IDS_CONTEXTMENU_REMEMBER "Mer&ken"
     IDS_CONTEXTMENU_REMOVE  "Von Zwischenablage &entfernen"
     IDS_CONTEXTMENU_AUTOSIZEALL "&Alle Spaltenbreiten anpassen"
@@ -1624,19 +1624,19 @@ BEGIN
     IDS_VIEWGROUP1          "Listen"
     IDS_VIEWGROUP2          "Erweiterte Ansichten"
     IDS_CONTEXTMENU_SELECTALL "Alles &markieren\tStrg+A"
-    IDS_CONTEXTMENU_SORTOPTIONS "„%s“ &organisieren nach..."
+    IDS_CONTEXTMENU_SORTOPTIONS """%s"" &organisieren nach..."
     IDS_CONTEXTMENU_AUTODIRS "In Unterordner &gruppieren"
-    IDS_CONTEXTMENU_VIEWOPTIONS "„%s“ an&zeigen als..."
-    IDS_CONTEXTMENU_OPEN    "Ö&ffnen"
-    IDS_CONTEXTMENU_OPENWITH "Öffnen &mit..."
+    IDS_CONTEXTMENU_VIEWOPTIONS """%s"" an&zeigen als..."
+    IDS_CONTEXTMENU_OPEN    "&Ouvrir"
+    IDS_CONTEXTMENU_OPENWITH "Ouvrir &avec..."
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_CONTEXTMENU_OPENGOOGLEEARTH "Öffnen in &Google Earth"
+    IDS_CONTEXTMENU_OPENGOOGLEEARTH "Ouvrir avec &Google Earth"
     IDS_CONTEXTMENU_REMEMBER "Mer&ken"
     IDS_CONTEXTMENU_REMOVE  "Von Zwischenablage &entfernen"
-    IDS_CONTEXTMENU_AUTOSIZEALL "&Alle Spaltenbreiten anpassen"
+    IDS_CONTEXTMENU_AUTOSIZEALL "Adapter &tous les larges de colonnes"
     IDS_CONTEXTMENU_MORE    "&Mehr..."
     IDS_CONTEXTMENU_TIME    "&Zeit"
     IDS_CONTEXTMENU_LOCATION "&Ort"
@@ -1674,19 +1674,19 @@ END
 STRINGTABLE 
 BEGIN
     IDS_VATTR_DRIVELETTER   "Laufwerksbuchstabe"
-    IDS_VATTR_MAINTENANCETIME "Letzte Wartung"
-    IDS_VATTR_LASTSEEN      "Zuletzt eingebunden"
+    IDS_VATTR_MAINTENANCETIME "Maintenance"
+    IDS_VATTR_LASTSEEN      "Finalement vu"
     IDS_VATTR_GUID          "GUID"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_VATTR_PATH_DAT      "Datenpfad"
-    IDS_VATTR_PATH_IDX_MAIN "Hauptindex"
-    IDS_VATTR_PATH_IDX_AUX  "Hilfsindex"
-    IDS_VATTR_INDEXVERSION  "Index-Version"
-    IDS_VATTR_IATA_NAME     "IATA Flughafenname"
-    IDS_VATTR_IATA_COUNTRY  "Land/Gebiet"
+    IDS_VATTR_PATH_DAT      "Données"
+    IDS_VATTR_PATH_IDX_MAIN "Index principal"
+    IDS_VATTR_PATH_IDX_AUX  "Index auxiliaire"
+    IDS_VATTR_INDEXVERSION  "Version de index"
+    IDS_VATTR_IATA_NAME     "IATA nom de aéroport"
+    IDS_VATTR_IATA_COUNTRY  "Territoire"
 END
 
 STRINGTABLE 
@@ -1757,10 +1757,6 @@ BEGIN
     "LANGUAGE 7, 1\r\n"
     "#pragma code_page(1252)\r\n"
     "#include ""l.DEU\\afxres.rc""          // Standardkomponenten\r\n"
-    "#if !defined(_AFXDLL)\r\n"
-    "#include ""l.DEU\\afxprint.rc""                // Ressourcen für Drucken/Seitenansicht\r\n"
-    "#include ""l.DEU\\afxribbon.rc""               // Ressourcen für MFC-Multifunktionsleiste und -Steuerleiste\r\n"
-    "#endif\r\n"
     "#endif\r\n"
     "\0"
 END
@@ -1785,10 +1781,6 @@ END
 LANGUAGE 7, 1
 #pragma code_page(1252)
 #include "l.DEU\afxres.rc"          // Standardkomponenten
-#if !defined(_AFXDLL)
-#include "l.DEU\afxprint.rc"                // Ressourcen für Drucken/Seitenansicht
-#include "l.DEU\afxribbon.rc"               // Ressourcen für MFC-Multifunktionsleiste und -Steuerleiste
-#endif
 #endif
 
 /////////////////////////////////////////////////////////////////////////////
