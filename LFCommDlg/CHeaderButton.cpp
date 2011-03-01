@@ -19,7 +19,7 @@ CHeaderButton::CHeaderButton()
 	m_Hover = FALSE;
 	m_Value.Empty();
 
-	m_Value = _T("xxx");
+	m_Value = _T("?");
 }
 
 BOOL CHeaderButton::Create(CString Caption, CString Hint, CWnd* pParentWnd, UINT nID)
@@ -216,6 +216,8 @@ void CHeaderButton::OnPaint()
 
 		if ((Selected) || (m_Hover))
 		{
+			dc.FillSolidRect(rect, c2);
+
 			if (Selected)
 			{
 				std::swap(c1, c4);
@@ -240,12 +242,14 @@ void CHeaderButton::OnPaint()
 		if (Selected)
 			rectText.OffsetRect(1, 1);
 
-		dc.SelectStockObject(DEFAULT_GUI_FONT);
+		HFONT hOldFont = (HFONT)dc.SelectStockObject(DEFAULT_GUI_FONT);
 
 		clrText = GetSysColor(COLOR_WINDOWTEXT);
 
 		dc.SetTextColor(clrText);
 		dc.DrawText(m_Value, rectText, DT_SINGLELINE | DT_END_ELLIPSIS | DT_VCENTER);
+
+		dc.SelectObject(hOldFont);
 	}
 
 	CPen pen;

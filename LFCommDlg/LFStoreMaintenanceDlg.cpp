@@ -3,9 +3,7 @@
 //
 
 #include "StdAfx.h"
-#include "LFCore.h"
-#include "LFApplication.h"
-#include "LFStoreMaintenanceDlg.h"
+#include "LFCommDlg.h"
 #include "Resource.h"
 
 
@@ -110,7 +108,7 @@ HBRUSH LFStoreMaintenanceDlg::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 	// Call base class version at first, else it will override changes
 	HBRUSH hbr = CDialog::OnCtlColor(pDC, pWnd, nCtlColor);
 
-	if (nCtlColor==CTLCOLOR_STATIC)
+	if ((nCtlColor==CTLCOLOR_STATIC) && IsCtrlThemed())
 	{
 		pDC->SetBkColor(0xFFFFFF);
 

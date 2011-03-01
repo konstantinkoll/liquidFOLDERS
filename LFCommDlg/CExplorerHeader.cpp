@@ -269,6 +269,9 @@ void CExplorerHeader::OnPaint()
 	dc.SetTextColor(Themed ? m_HintCol : GetSysColor(COLOR_WINDOWTEXT));
 	dc.DrawText(m_Hint, rectText, DT_LEFT | DT_VCENTER | DT_SINGLELINE | DT_END_ELLIPSIS);
 
+	if (!Themed)
+		dc.SelectStockObject(DEFAULT_GUI_FONT);
+
 	for (POSITION p=m_Buttons.GetHeadPosition(); p; )
 	{
 		CHeaderButton* btn = m_Buttons.GetNext(p);
@@ -303,8 +306,8 @@ HBRUSH CExplorerHeader::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 	// Call base class version at first, else it will override changes
 	HBRUSH hbr = CWnd::OnCtlColor(pDC, pWnd, nCtlColor);
 
-	if (IsCtrlThemed())
-		if ((nCtlColor==CTLCOLOR_BTN) || (nCtlColor==CTLCOLOR_STATIC))
+	if ((nCtlColor==CTLCOLOR_BTN) || (nCtlColor==CTLCOLOR_STATIC))
+		if (IsCtrlThemed())
 		{
 			CRect rc; 
 			pWnd->GetWindowRect(&rc);
@@ -314,6 +317,10 @@ HBRUSH CExplorerHeader::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 			pDC->SetBrushOrg(-rc.left, -rc.top);
 
 			hbr = hBackgroundBrush;
+		}
+		else
+		{
+			hbr = (HBRUSH)GetStockObject(WHITE_BRUSH);
 		}
 
 	return hbr;

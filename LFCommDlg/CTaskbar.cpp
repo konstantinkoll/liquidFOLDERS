@@ -293,6 +293,7 @@ void CTaskbar::OnSysColorChange()
 
 LRESULT CTaskbar::OnThemeChanged()
 {
+	BackBufferL = BackBufferH = 0;
 	AdjustLayout();
 
 	return TRUE;

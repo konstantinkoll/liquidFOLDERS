@@ -4,6 +4,7 @@
 
 #include "stdafx.h"
 #include "ReportDlg.h"
+#include "LFCommDlg.h"
 #include "resource.h"
 
 
@@ -122,7 +123,7 @@ HBRUSH ReportDlg::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 	// Call base class version at first, else it will override changes
 	HBRUSH hbr = CDialog::OnCtlColor(pDC, pWnd, nCtlColor);
 
-	if ((nCtlColor==CTLCOLOR_STATIC) && (pWnd->GetDlgCtrlID()!=IDC_UNCHECKMIGRATED))
+	if ((nCtlColor==CTLCOLOR_STATIC) && IsCtrlThemed() && (pWnd->GetDlgCtrlID()!=IDC_UNCHECKMIGRATED))
 	{
 		pDC->SetBkColor(0xFFFFFF);
 

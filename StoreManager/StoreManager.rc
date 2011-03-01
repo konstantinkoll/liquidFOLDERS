@@ -926,11 +926,11 @@ END
 STRINGTABLE 
 BEGIN
     IDM_STORE_MAKEDEFAULT   "Makes the selected store the default store.\nMake default store"
-    IDM_STORE_IMPORTFOLDER  "Imports a folder and all its subfolders into the selected store.\nImport folder"
+    IDM_STORE_IMPORTFOLDER  "Imports a folder and all its subfolders into the selected store.\nImport folder..."
     IDM_STORE_RENAME        "Renames the selected store.\nRename"
     IDM_STORE_DELETE        "Deletes the selected store.\nDelete"
     IDM_STORE_PROPERTIES    "Displays the properties of the selected store.\nProperties"
-    IDM_STORES_CREATENEW    "Creates a new store for your files.\nCreate new store"
+    IDM_STORES_CREATENEW    "Creates a new store for your files.\nCreate new store..."
     IDM_STORES_MAINTAINALL  "Executes maintenance work on all stores.\nRun maintenance"
 END
 
@@ -948,7 +948,7 @@ END
 STRINGTABLE 
 BEGIN
     IDM_HOME_SHOWEMPTYDOMAINS "Show &empty domains"
-    IDM_HOME_IMPORTFOLDER   "Imports a folder and all its subfolders into this store.\nImport folder"
+    IDM_HOME_IMPORTFOLDER   "Imports a folder and all its subfolders into this store.\nImport folder..."
 END
 
 STRINGTABLE 
