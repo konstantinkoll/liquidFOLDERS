@@ -47,7 +47,7 @@ BOOL CExplorerHeader::OnCommand(WPARAM wParam, LPARAM /*lParam*/)
 			CRect rectWindow;
 			pWnd->GetWindowRect(&rectWindow);
 
-			TrackPopupMenu(hMenu, TPM_LEFTALIGN | TPM_RIGHTBUTTON, rectWindow.left, rectWindow.bottom, 0, GetOwner()->GetSafeHwnd(), NULL);
+			TrackPopupMenu(hMenu, TPM_RIGHTALIGN | TPM_RIGHTBUTTON, rectWindow.right, rectWindow.bottom, 0, GetOwner()->GetSafeHwnd(), NULL);
 			return TRUE;
 		}
 	}
