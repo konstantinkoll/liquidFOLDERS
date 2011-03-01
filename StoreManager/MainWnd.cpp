@@ -85,13 +85,12 @@ void CMainWnd::AdjustLayout()
 	CRect rect;
 	GetLayoutRect(rect);
 
-	const UINT JournalBorder = 3;
 	const UINT JournalHeight = m_wndJournalButton.GetPreferredHeight();
 	const UINT JournalWidth = m_wndJournalButton.GetPreferredWidth();
+	m_wndJournalButton.SetWindowPos(NULL, rect.left+1, rect.top+(m_Margins.cyTopHeight-JournalHeight-2)/2, JournalWidth, JournalHeight, SWP_NOACTIVATE | SWP_NOZORDER);
 
-	//const UINT HistoryBorder = 4;
-
-	m_wndJournalButton.SetWindowPos(NULL, rect.left+1, rect.top+JournalBorder, JournalWidth, JournalHeight, SWP_NOACTIVATE | SWP_NOZORDER);
+	const UINT HistoryHeight = m_wndHistory.GetPreferredHeight();
+	m_wndHistory.SetWindowPos(NULL, rect.left+JournalWidth+7, rect.top+(m_Margins.cyTopHeight-HistoryHeight-3)/2, rect.Width()-JournalWidth-7, HistoryHeight, SWP_NOACTIVATE | SWP_NOZORDER);
 
 	m_wndMainView.SetWindowPos(NULL, rect.left, rect.top+m_Margins.cyTopHeight, rect.Width(), rect.bottom-m_Margins.cyTopHeight, SWP_NOACTIVATE | SWP_NOZORDER);
 }
@@ -129,8 +128,12 @@ INT CMainWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	theApp.AddFrame(this);
 
+	// History
+	if (!m_wndHistory.Create(this, 2))
+		return -1;
+
 	// Journal-Button
-	if (!m_wndJournalButton.Create(25, this, 3))
+	if (!m_wndJournalButton.Create(m_wndHistory.GetPreferredHeight(), this, 1))
 		return -1;
 
 	// Hauptansicht erstellen
@@ -138,7 +141,7 @@ INT CMainWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 
 	// Aero
-	MARGINS Margins = { 0, 0, m_wndJournalButton.GetPreferredHeight()+8, 0 };
+	MARGINS Margins = { 0, 0, max(m_wndJournalButton.GetPreferredHeight()+8, m_wndHistory.GetPreferredHeight()+11), 0 };
 	UseGlasBackground(Margins);
 
 	// Entweder leeres Suchergebnis oder Stores-Kontext öffnen

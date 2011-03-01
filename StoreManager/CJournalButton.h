@@ -34,9 +34,13 @@ protected:
 	afx_msg void OnMouseLeave();
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
+	afx_msg void OnRButtonUp(UINT nFlags, CPoint point);
 	DECLARE_MESSAGE_MAP()
 
 private:
-	void DrawLeft(Graphics& g, CGdiPlusBitmap* pGdiPlusBitmap);
-	void DrawRight(Graphics& g, CGdiPlusBitmap* pGdiPlusBitmap);
+	UINT m_ButtonHeight;
+	UINT m_ButtonWidth;
+
+	void DrawLeft(Graphics& g, CGdiPlusBitmap* pBmp);
+	void DrawRight(Graphics& g, CGdiPlusBitmap* pBmp);
 };

@@ -398,6 +398,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CHistoryBar.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\ChooseDetailsDlg.cpp"
 				>
 			</File>
@@ -447,10 +451,6 @@
 			</File>
 			<File
 				RelativePath=".\GoToYearDlg.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\HistoryWnd.cpp"
 				>
 			</File>
 			<File
@@ -540,6 +540,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CHistoryBar.h"
+				>
+			</File>
+			<File
 				RelativePath=".\ChooseDetailsDlg.h"
 				>
 			</File>
@@ -597,10 +601,6 @@
 			</File>
 			<File
 				RelativePath=".\GoToYearDlg.h"
-				>
-			</File>
-			<File
-				RelativePath=".\HistoryWnd.h"
 				>
 			</File>
 			<File

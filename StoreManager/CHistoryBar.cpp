@@ -1,96 +1,146 @@
 
-// CJournalButton.cpp: Implementierung der Klasse CJournalButton
-//
-
 #include "stdafx.h"
-#include "CJournalButton.h"
-#include "Resource.h"
+#include "CHistoryBar.h"
+#include "StoreManager.h"
 
 
-// CJournalButton
+// Breadcrumbs
 //
 
-#define XOffset (m_IsLarge ? 0 : 1)
-#define YOffset (m_IsLarge ? 0 : -1)
-
-CJournalButton::CJournalButton()
-	: CWnd()
+void AddBreadcrumbItem(BreadcrumbItem** bi, LFFilter* f, FVPersistentData& data)
 {
+	BreadcrumbItem* add = new BreadcrumbItem;
+	add->next = *bi;
+	add->filter = f;
+	add->data = data;
+	*bi = add;
 }
 
-BOOL CJournalButton::Create(UINT SuggestedHeight, CGlasWindow* pParentWnd, UINT nID)
+void ConsumeBreadcrumbItem(BreadcrumbItem** bi, LFFilter** f, FVPersistentData* data)
 {
-	m_IsLarge = (SuggestedHeight>=32);
+	*f = NULL;
+	ZeroMemory(data, sizeof(FVPersistentData));
 
+	if (*bi)
+	{
+		*f = (*bi)->filter;
+		*data = (*bi)->data;
+		BreadcrumbItem* victim = *bi;
+		*bi = (*bi)->next;
+		delete victim;
+	}
+}
+
+void DeleteBreadcrumbs(BreadcrumbItem** bi)
+{
+	while (*bi)
+	{
+		BreadcrumbItem* victim = *bi;
+		*bi = (*bi)->next;
+		LFFreeFilter(victim->filter);
+		delete victim;
+	}
+}
+
+
+// CHistoryBar
+//
+
+#define BORDER          4
+
+CHistoryBar::CHistoryBar()
+	: CWnd()
+{
+	hTheme = NULL;
+	m_Hover = FALSE;
+}
+
+BOOL CHistoryBar::Create(CGlasWindow* pParentWnd, UINT nID)
+{
 	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW, LoadCursor(NULL, IDC_ARROW));
 
-	const DWORD dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE;
+	const DWORD dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE;// | WS_TABSTOP;
 	CRect rect;
 	rect.SetRectEmpty();
 	return CWnd::Create(className, _T(""), dwStyle, rect, pParentWnd, nID);
 }
 
-UINT CJournalButton::GetPreferredHeight()
+BOOL CHistoryBar::PreTranslateMessage(MSG* pMsg)
 {
-	return m_Frame.m_pBitmap->GetHeight();
+	switch (pMsg->message)
+	{
+	case WM_LBUTTONDOWN:
+	case WM_RBUTTONDOWN:
+	case WM_MBUTTONDOWN:
+	case WM_LBUTTONUP:
+	case WM_RBUTTONUP:
+	case WM_MBUTTONUP:
+	case WM_NCLBUTTONDOWN:
+	case WM_NCRBUTTONDOWN:
+	case WM_NCMBUTTONDOWN:
+	case WM_NCLBUTTONUP:
+	case WM_NCRBUTTONUP:
+	case WM_NCMBUTTONUP:
+		m_TooltipCtrl.Deactivate();
+		break;
+	}
+
+	return CWnd::PreTranslateMessage(pMsg);
 }
 
-UINT CJournalButton::GetPreferredWidth()
+UINT CHistoryBar::GetPreferredHeight()
 {
-	return m_Frame.m_pBitmap->GetWidth();
-}
+	LOGFONT lf;
+	theApp.m_DefaultFont.GetLogFont(&lf);
+	UINT h = max(abs(lf.lfHeight), GetSystemMetrics(SM_CYSMICON));
 
-void CJournalButton::DrawLeft(Graphics& g, CGdiPlusBitmap* pBmp)
-{
-	g.DrawImage(pBmp->m_pBitmap, XOffset, YOffset, 0, 0, m_ButtonWidth/2, m_ButtonHeight, UnitPixel);
-}
-
-void CJournalButton::DrawRight(Graphics& g, CGdiPlusBitmap* pBmp)
-{
-	g.DrawImage(pBmp->m_pBitmap, XOffset+m_ButtonWidth/2+1, YOffset, m_ButtonWidth/2, 0, m_ButtonWidth-m_ButtonWidth/2, m_ButtonHeight, UnitPixel);
+	return h+2*BORDER;
 }
 
 
-BEGIN_MESSAGE_MAP(CJournalButton, CWnd)
+BEGIN_MESSAGE_MAP(CHistoryBar, CWnd)
 	ON_WM_CREATE()
 	ON_WM_DESTROY()
 	ON_WM_ERASEBKGND()
 	ON_WM_PAINT()
+	ON_WM_THEMECHANGED()
 	ON_WM_MOUSEMOVE()
 	ON_WM_MOUSELEAVE()
+	ON_WM_MOUSEHOVER()
 	ON_WM_LBUTTONDOWN()
 	ON_WM_LBUTTONUP()
 	ON_WM_RBUTTONUP()
+	//ON_WM_SETFOCUS()
+	//ON_WM_KILLFOCUS()
 END_MESSAGE_MAP()
 
-INT CJournalButton::OnCreate(LPCREATESTRUCT lpCreateStruct)
+INT CHistoryBar::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if (CWnd::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
-	m_Frame.Load(m_IsLarge ? IDB_JOURNAL_FRAME1 : IDB_JOURNAL_FRAME0, _T("PNG"));
-	m_Normal.Load(m_IsLarge ? IDB_JOURNAL_NORMAL1 : IDB_JOURNAL_NORMAL0, _T("PNG"));
-	m_Hot.Load(m_IsLarge ? IDB_JOURNAL_HOT1 : IDB_JOURNAL_HOT0, _T("PNG"));
-	m_Pressed.Load(m_IsLarge ? IDB_JOURNAL_PRESSED1 : IDB_JOURNAL_PRESSED0, _T("PNG"));
-	m_Disabled.Load(m_IsLarge ? IDB_JOURNAL_DISABLED1 : IDB_JOURNAL_DISABLED0, _T("PNG"));
+	OnThemeChanged();
 
-	m_ButtonWidth = m_Normal.m_pBitmap->GetWidth();
-	m_ButtonHeight = m_Normal.m_pBitmap->GetHeight();
+	// Tooltip
+	m_TooltipCtrl.Create(this);
 
 	return 0;
 }
 
-void CJournalButton::OnDestroy()
+void CHistoryBar::OnDestroy()
 {
+	if (hTheme)
+		theApp.zCloseThemeData(hTheme);
+
 	CWnd::OnDestroy();
 }
 
-BOOL CJournalButton::OnEraseBkgnd(CDC* /*pDC*/)
+BOOL CHistoryBar::OnEraseBkgnd(CDC* /*pDC*/)
 {
 	return TRUE;
 }
 
-void CJournalButton::OnPaint()
+void CHistoryBar::OnPaint()
 {
 	CPaintDC pDC(this);
 
@@ -116,14 +166,7 @@ void CJournalButton::OnPaint()
 
 	CGlasWindow* pCtrlSite = (CGlasWindow*)GetParent();
 	pCtrlSite->DrawFrameBackground(&dc, rectClient);
-
-	g.DrawImage(m_Frame.m_pBitmap, 0, 0);
-
-	DrawLeft(g, &m_Disabled);
-	DrawRight(g, &m_Normal);
-//	g.DrawImage(, m_IsLarge ? 0 : 1, m_IsLarge ? 0 : -1);
-
-	/*const BYTE Alpha = m_Dropped ? 0xFF : (m_Hover || (GetFocus()==this)) ? 0xF0 : 0xD0;
+	const BYTE Alpha = /*m_Dropped ? 0xFF : */(m_Hover || (GetFocus()==this)) ? 0xF0 : 0xD0;
 
 	CRect rectContent(rectClient);
 	if (hTheme)
@@ -152,7 +195,7 @@ void CJournalButton::OnPaint()
 	{
 		dc.Draw3dRect(rectContent, GetSysColor(COLOR_3DSHADOW), GetSysColor(COLOR_3DHIGHLIGHT));
 		rectContent.DeflateRect(1, 1);
-		if (m_Dropped || (GetFocus()==this))
+		if (/*m_Dropped || */(GetFocus()==this))
 		{
 			dc.Draw3dRect(rectContent, 0x000000, GetSysColor(COLOR_3DFACE));
 			rectContent.DeflateRect(1, 1);
@@ -164,7 +207,7 @@ void CJournalButton::OnPaint()
 		}
 	}
 
-	CRect rectClip(rectContent);
+	/*CRect rectClip(rectContent);
 	rectClip.left = rectClip.right-GetSystemMetrics(SM_CXHSCROLL);
 	CRect rectArrow(rectClip);
 
@@ -249,7 +292,7 @@ void CJournalButton::OnPaint()
 		rectText.InflateRect(3, -1);
 		dc.SetTextColor(0x000000);
 		dc.DrawFocusRect(rectText);
-	}
+	}*/
 
 	// Set alpha
 	BITMAP bmp;
@@ -263,7 +306,7 @@ void CJournalButton::OnPaint()
 			pBits += 4;
 		}
 		pBits += 4*(rectClient.Width()-rectContent.Width());
-	}*/
+	}
 
 	pDC.BitBlt(0, 0, rectClient.Width(), rectClient.Height(), &dc, 0, 0, SRCCOPY);
 
@@ -271,9 +314,22 @@ void CJournalButton::OnPaint()
 	DeleteObject(hBmp);
 }
 
-void CJournalButton::OnMouseMove(UINT /*nFlags*/, CPoint /*point*/)
+LRESULT CHistoryBar::OnThemeChanged()
 {
-/*	if (!m_Hover)
+	if (theApp.m_ThemeLibLoaded)
+	{
+		if (hTheme)
+			theApp.zCloseThemeData(hTheme);
+
+		hTheme = theApp.zOpenThemeData(m_hWnd, VSCLASS_COMBOBOX);
+	}
+
+	return TRUE;
+}
+
+void CHistoryBar::OnMouseMove(UINT /*nFlags*/, CPoint /*point*/)
+{
+	if (!m_Hover)
 	{
 		m_Hover = TRUE;
 		Invalidate();
@@ -284,17 +340,39 @@ void CJournalButton::OnMouseMove(UINT /*nFlags*/, CPoint /*point*/)
 		tme.dwHoverTime = LFHOVERTIME;
 		tme.hwndTrack = m_hWnd;
 		TrackMouseEvent(&tme);
-	}*/
+	}
 }
 
-void CJournalButton::OnMouseLeave()
+void CHistoryBar::OnMouseLeave()
 {
-/*	m_TooltipCtrl.Deactivate();
+	m_TooltipCtrl.Deactivate();
 	m_Hover = FALSE;
-	Invalidate();*/
+	Invalidate();
 }
 
-void CJournalButton::OnLButtonDown(UINT /*nFlags*/, CPoint /*point*/)
+void CHistoryBar::OnMouseHover(UINT nFlags, CPoint point)
+{
+	if (((nFlags & (MK_LBUTTON | MK_MBUTTON | MK_RBUTTON | MK_XBUTTON1 | MK_XBUTTON2))==0) /*&& (!m_Dropped)*/)
+	{
+		if (!m_TooltipCtrl.IsWindowVisible())
+		{
+			/*HICON hIcon = NULL;
+			CSize size(0, 0);
+			CString caption;
+			CString hint;
+			GetTooltipData(hIcon, size, caption, hint);
+
+			ClientToScreen(&point);
+			m_TooltipCtrl.Track(point, hIcon, size, caption, hint);*/
+		}
+	}
+	else
+	{
+		m_TooltipCtrl.Deactivate();
+	}
+}
+
+void CHistoryBar::OnLButtonDown(UINT /*nFlags*/, CPoint /*point*/)
 {
 /*	SetFocus();
 
@@ -309,9 +387,9 @@ void CJournalButton::OnLButtonDown(UINT /*nFlags*/, CPoint /*point*/)
 	}*/
 }
 
-void CJournalButton::OnLButtonUp(UINT /*nFlags*/, CPoint /*point*/)
+void CHistoryBar::OnLButtonUp(UINT /*nFlags*/, CPoint /*point*/)
 {
-/*	if (m_Pressed)
+	/*if (m_Pressed)
 	{
 		m_Pressed = FALSE;
 		Invalidate();
@@ -320,7 +398,7 @@ void CJournalButton::OnLButtonUp(UINT /*nFlags*/, CPoint /*point*/)
 	}*/
 }
 
-void CJournalButton::OnRButtonUp(UINT nFlags, CPoint point)
+void CHistoryBar::OnRButtonUp(UINT nFlags, CPoint point)
 {
 	CRect rect;
 	GetWindowRect(rect);
@@ -329,3 +407,14 @@ void CJournalButton::OnRButtonUp(UINT nFlags, CPoint point)
 
 	GetParent()->SendMessage(WM_RBUTTONUP, (WPARAM)nFlags, (LPARAM)((point.y<<16) | point.x));
 }
+
+/*void CHistoryBar::OnSetFocus(CWnd* pOldWnd)
+{
+	Invalidate();
+}
+
+void CHistoryBar::OnKillFocus(CWnd* pOldWnd)
+{
+	if (!OnCloseDropdown())
+		Invalidate();
+}*/

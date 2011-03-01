@@ -3,9 +3,9 @@
 //
 
 #pragma once
-#include "HistoryWnd.h"
 #include "liquidFOLDERS.h"
 #include "CJournalButton.h"
+#include "CHistoryBar.h"
 #include "CMainView.h"
 #include "CFileView.h"
 
@@ -13,9 +13,9 @@
 // CMainWnd
 //
 
-#define NAVMODE_NORMAL        0
-#define NAVMODE_HISTORY       1
-#define NAVMODE_RELOAD        2
+#define NAVMODE_NORMAL           0
+#define NAVMODE_HISTORY          1
+#define NAVMODE_RELOAD           2
 
 #define WM_UPDATEVIEWOPTIONS     WM_USER+200
 #define WM_UPDATESORTOPTIONS     WM_USER+201
@@ -44,6 +44,7 @@ public:
 protected:
 	HICON m_hIcon;
 	CJournalButton m_wndJournalButton;
+	CHistoryBar m_wndHistory;
 	CMainView m_wndMainView;
 	BreadcrumbItem* m_BreadcrumbBack;
 	BreadcrumbItem* m_BreadcrumbForward;
