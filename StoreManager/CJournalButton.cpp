@@ -10,12 +10,14 @@
 // CJournalButton
 //
 
-#define XOffset (m_IsLarge ? 0 : 1)
-#define YOffset (m_IsLarge ? 0 : -1)
+#define XOffset      (m_IsLarge ? 0 : 1)
+#define YOffset      (m_IsLarge ? 0 : -1)
+#define GetHover     ((point.x>(INT)m_ButtonWidth/2+XOffset) ? 1 : 0)
 
 CJournalButton::CJournalButton()
 	: CWnd()
 {
+	m_Hover = m_Pressed = -1;
 }
 
 BOOL CJournalButton::Create(UINT SuggestedHeight, CGlasWindow* pParentWnd, UINT nID)
@@ -71,7 +73,7 @@ INT CJournalButton::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_Frame.Load(m_IsLarge ? IDB_JOURNAL_FRAME1 : IDB_JOURNAL_FRAME0, _T("PNG"));
 	m_Normal.Load(m_IsLarge ? IDB_JOURNAL_NORMAL1 : IDB_JOURNAL_NORMAL0, _T("PNG"));
 	m_Hot.Load(m_IsLarge ? IDB_JOURNAL_HOT1 : IDB_JOURNAL_HOT0, _T("PNG"));
-	m_Pressed.Load(m_IsLarge ? IDB_JOURNAL_PRESSED1 : IDB_JOURNAL_PRESSED0, _T("PNG"));
+	m_Pushed.Load(m_IsLarge ? IDB_JOURNAL_PRESSED1 : IDB_JOURNAL_PRESSED0, _T("PNG"));
 	m_Disabled.Load(m_IsLarge ? IDB_JOURNAL_DISABLED1 : IDB_JOURNAL_DISABLED0, _T("PNG"));
 
 	m_ButtonWidth = m_Normal.m_pBitmap->GetWidth();
@@ -119,8 +121,8 @@ void CJournalButton::OnPaint()
 
 	g.DrawImage(m_Frame.m_pBitmap, 0, 0);
 
-	DrawLeft(g, &m_Disabled);
-	DrawRight(g, &m_Normal);
+	DrawLeft(g, (m_Hover==0) ? &m_Hot : &m_Normal);
+	DrawRight(g, (m_Hover==1) ? &m_Hot : &m_Normal);
 
 	pDC.BitBlt(0, 0, rectClient.Width(), rectClient.Height(), &dc, 0, 0, SRCCOPY);
 
@@ -128,27 +130,31 @@ void CJournalButton::OnPaint()
 	DeleteObject(hBmp);
 }
 
-void CJournalButton::OnMouseMove(UINT /*nFlags*/, CPoint /*point*/)
+void CJournalButton::OnMouseMove(UINT /*nFlags*/, CPoint point)
 {
-/*	if (!m_Hover)
+	if (m_Hover==-1)
 	{
-		m_Hover = TRUE;
 		Invalidate();
 
 		TRACKMOUSEEVENT tme;
 		tme.cbSize = sizeof(TRACKMOUSEEVENT);
-		tme.dwFlags = TME_LEAVE | TME_HOVER;
-		tme.dwHoverTime = LFHOVERTIME;
+		tme.dwFlags = TME_LEAVE;
 		tme.hwndTrack = m_hWnd;
 		TrackMouseEvent(&tme);
-	}*/
+	}
+
+	INT Hover = GetHover;
+	if (Hover!=m_Hover)
+	{
+		m_Hover = Hover;
+		Invalidate();
+	}
 }
 
 void CJournalButton::OnMouseLeave()
 {
-/*	m_TooltipCtrl.Deactivate();
-	m_Hover = FALSE;
-	Invalidate();*/
+	m_Hover = -1;
+	Invalidate();
 }
 
 void CJournalButton::OnLButtonDown(UINT /*nFlags*/, CPoint /*point*/)
@@ -166,15 +172,21 @@ void CJournalButton::OnLButtonDown(UINT /*nFlags*/, CPoint /*point*/)
 	}*/
 }
 
-void CJournalButton::OnLButtonUp(UINT /*nFlags*/, CPoint /*point*/)
+void CJournalButton::OnLButtonUp(UINT /*nFlags*/, CPoint point)
 {
-/*	if (m_Pressed)
+	INT Hover = GetHover;
+	if (TRUE)
 	{
-		m_Pressed = FALSE;
+		GetOwner()->PostMessage(WM_COMMAND, (Hover==0) ? ID_NAV_BACK : ID_NAV_FORWARD);
+	}
+
+	if (m_Pressed!=-1)
+	{
+		m_Pressed = -1;
 		Invalidate();
 
 		ReleaseCapture();
-	}*/
+	}
 }
 
 void CJournalButton::OnRButtonUp(UINT nFlags, CPoint point)

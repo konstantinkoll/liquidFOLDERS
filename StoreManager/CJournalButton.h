@@ -20,10 +20,12 @@ public:
 
 protected:
 	BOOL m_IsLarge;
+	INT m_Hover;
+	INT m_Pressed;
 	CGdiPlusBitmapResource m_Frame;
 	CGdiPlusBitmapResource m_Normal;
 	CGdiPlusBitmapResource m_Hot;
-	CGdiPlusBitmapResource m_Pressed;
+	CGdiPlusBitmapResource m_Pushed;
 	CGdiPlusBitmapResource m_Disabled;
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
