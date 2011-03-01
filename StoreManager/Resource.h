@@ -28,8 +28,8 @@
 #define IDB_JOURNAL_PRESSED1            151
 #define IDB_JOURNAL_DISABLED0           152
 #define IDB_JOURNAL_DISABLED1           153
-#define ID_PANE_FILTERWND               403
-#define ID_PANE_INSPECTORWND            404
+#define ID_PANE_FILTER                  400
+#define ID_PANE_INSPECTOR               401
 #define ID_NAV_BACK                     500
 #define ID_NAV_FORWARD                  501
 #define ID_NAV_RELOAD                   502
@@ -38,7 +38,7 @@
 #define ID_FILTER_REMOVECONDITION       602
 #define ID_FILTER_SAVE                  603
 #define ID_FILTER_SAVEAS                604
-#define ID_FILTERLIST                   600
+#define ID_FILTERLIST                   605
 #define ID_INSPECTOR_TOGGLEICON         700
 #define ID_INSPECTOR_TREEVIEW           701
 #define ID_INSPECTOR_ALPHABETIC         702

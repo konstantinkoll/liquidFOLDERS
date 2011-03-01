@@ -63,6 +63,14 @@ BOOL CStoreManagerApp::InitInstance()
 	
 	// Registry auslesen
 	SetRegistryBase(_T("Settings"));
+	m_ShowFilterPane = GetInt(_T("ShowFilterPane"), FALSE);
+	m_ShowInspectorPane = GetInt(_T("ShowInspectorPane"), FALSE);
+	m_FilterWidth = GetInt(_T("FilterWidth"), 250);
+	if (m_FilterWidth<32)
+		m_FilterWidth = 32;
+	m_InspectorWidth = GetInt(_T("InspectorWidth"), 200);
+	if (m_InspectorWidth<32)
+		m_InspectorWidth = 32;
 	m_ShowEmptyDrives = GetInt(_T("ShowEmptyDrives"), TRUE);
 	m_ShowEmptyDomains = GetInt(_T("ShowEmptyDomains"), TRUE);
 	m_ShowStatistics = GetInt(_T("ShowStatistics"), TRUE);
@@ -113,6 +121,10 @@ INT CStoreManagerApp::ExitInstance()
 	}
 
 	SetRegistryBase(_T("Settings"));
+	WriteInt(_T("ShowFilterPane"), m_ShowFilterPane);
+	WriteInt(_T("ShowInspectorPane"), m_ShowInspectorPane);
+	WriteInt(_T("FilterWidth"), m_FilterWidth);
+	WriteInt(_T("InspectorWidth"), m_InspectorWidth);
 	WriteInt(_T("ShowEmptyDrives"), m_ShowEmptyDrives);
 	WriteInt(_T("ShowEmptyDomains"), m_ShowEmptyDomains);
 	WriteInt(_T("ShowStatistics"), m_ShowStatistics);

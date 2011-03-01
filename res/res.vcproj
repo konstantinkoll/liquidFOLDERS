@@ -612,6 +612,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Ribbon\InspectorHide_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\InspectorShow_16.png"
+				>
+			</File>
+			<File
 				RelativePath=".\Ribbon\Key_16.png"
 				>
 			</File>

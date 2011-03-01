@@ -18,6 +18,7 @@ public:
 	virtual void DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct);
 
 	BOOL Create(CString Caption, CString TooltipHeader, CString TooltipHint, CMFCToolBarImages* Icons, INT IconID, CWnd* pParentWnd, UINT nID);
+	void SetIconID(INT IconID);
 	INT GetPreferredWidth();
 
 protected:

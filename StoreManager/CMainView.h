@@ -45,6 +45,8 @@ protected:
 	INT m_ViewID;
 	BOOL m_IsClipboard;
 	BOOL m_FilesSelected;
+	BOOL m_ShowFilterPane;
+	BOOL m_ShowInspectorPane;
 
 	LFTransactionList* BuildTransactionList(BOOL All=FALSE);
 	void RemoveTransactedItems(LFTransactionList* tl);
@@ -63,6 +65,9 @@ protected:
 	afx_msg void OnUpdateSelection();
 	afx_msg LRESULT OnRenameItem(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnStoreAttributesChanged(WPARAM wParam, LPARAM lParam);
+
+	afx_msg void OnToggleInspector();
+	afx_msg void OnUpdatePaneCommands(CCmdUI* pCmdUI);
 
 	afx_msg void OnSortOptions();
 	afx_msg void OnViewOptions();
@@ -123,6 +128,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
+	CTaskButton* p_InspectorButton;
 	CHeaderButton* p_OrganizeButton;
 	CHeaderButton* p_ViewButton;
 	BOOL m_Resizing;

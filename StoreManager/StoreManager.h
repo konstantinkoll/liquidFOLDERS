@@ -30,6 +30,12 @@ public:
 	UINT m_nTextureSize;
 	UINT m_nMaxTextureSize;
 	UINT m_NagCounter;
+
+	BOOL m_ShowFilterPane;
+	BOOL m_ShowInspectorPane;
+	UINT m_FilterWidth;
+	UINT m_InspectorWidth;
+
 	BOOL m_ShowEmptyDrives;
 	BOOL m_ShowEmptyDomains;
 	BOOL m_ShowStatistics;

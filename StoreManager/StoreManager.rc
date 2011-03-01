@@ -79,7 +79,7 @@ IDB_JOURNAL_DISABLED1   PNG                     "res\\Journal_Disabled1.png"
 IDB_DESCENDING          BITMAP                  "res\\Descending_16.bmp"
 IDB_ASCENDING           BITMAP                  "res\\Ascending_16.bmp"
 IDB_GROUPING            BITMAP                  "res\\Grouping_32.bmp"
-ID_PANE_FILTERWND       BITMAP                  "res\\Toolbar_Filter.bmp"
+ID_PANE_FILTER          BITMAP                  "res\\Toolbar_Filter.bmp"
 IDB_TASKS               BITMAP                  "res\\Tasks.bmp"
 IDB_VIEWS               BITMAP                  "res\\Views.bmp"
 
@@ -127,7 +127,7 @@ END
 // Toolbar
 //
 
-ID_PANE_FILTERWND TOOLBAR  16, 16
+ID_PANE_FILTER TOOLBAR  16, 16
 BEGIN
     BUTTON      ID_FILTER_CLEAR
     SEPARATOR
@@ -798,6 +798,12 @@ STRINGTABLE
 BEGIN
     IDR_APPLICATION         "StoreManager"
     IDR_CLIPBOARD           "Clipboard"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_PANE_FILTER          "Opens and closes the filter pane.\nFilter"
+    ID_PANE_INSPECTOR       "Opens and closes the inspector pane.\nInspector"
 END
 
 STRINGTABLE 

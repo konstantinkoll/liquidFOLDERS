@@ -59,6 +59,12 @@ void CTaskButton::DrawItem(LPDRAWITEMSTRUCT /*lpDrawItemStruct*/)
 {
 }
 
+void CTaskButton::SetIconID(INT IconID)
+{
+	m_IconID = IconID;
+	Invalidate();
+}
+
 INT CTaskButton::GetPreferredWidth()
 {
 	INT l = 2*(BORDER+2)+1;

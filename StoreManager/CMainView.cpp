@@ -23,6 +23,7 @@ CMainView::CMainView()
 	p_wndFilter = NULL;
 	p_wndFileView = NULL;
 	p_RawFiles = p_CookedFiles = NULL;
+	p_InspectorButton = NULL;
 	p_OrganizeButton = p_ViewButton = NULL;
 	m_Context = m_ViewID = -1;
 	m_Resizing = FALSE;
@@ -263,20 +264,40 @@ void CMainView::AdjustLayout()
 	m_wndExplorerNotification.SetWindowPos(&wndTop, rect.left+32, rect.bottom-NotificationHeight, rect.Width()-64, NotificationHeight, SWP_NOACTIVATE);
 
 	const INT MaxWidth = (rect.Width()-128)/2;
-	INT FilterWidth = min(MaxWidth, p_wndFilter ? p_wndFilter->GetPreferredWidth() : 0);
-	INT InspectorWidth = min(MaxWidth, m_wndInspector.GetPreferredWidth());
+	INT FilterWidth = 0;
+	if (p_wndFilter)
+	{
+		theApp.m_FilterWidth = max(32, p_wndFilter->GetPreferredWidth());
+		FilterWidth = min(MaxWidth, (INT)theApp.m_FilterWidth);
+
+		if (m_ShowFilterPane)
+		{
+			p_wndFilter->SetMaxWidth(MaxWidth);
+			p_wndFilter->SetWindowPos(NULL, rect.left, rect.top+TaskHeight, FilterWidth, rect.Height()-TaskHeight, SWP_NOACTIVATE | SWP_NOZORDER | SWP_SHOWWINDOW);
+		}
+		else
+		{
+			p_wndFilter->ShowWindow(SW_HIDE);
+			FilterWidth = 0;
+		}
+	}
+
+	theApp.m_InspectorWidth = max(32, m_wndInspector.GetPreferredWidth());
+	INT InspectorWidth = theApp.m_InspectorWidth = min(MaxWidth, (INT)theApp.m_InspectorWidth);
+
+	if (m_ShowInspectorPane)
+	{
+		m_wndInspector.SetMaxWidth(MaxWidth);
+		m_wndInspector.SetWindowPos(NULL, rect.right-InspectorWidth, rect.top+TaskHeight, InspectorWidth, rect.Height()-TaskHeight, SWP_NOACTIVATE | SWP_NOZORDER | SWP_SHOWWINDOW);
+	}
+	else
+	{
+		m_wndInspector.ShowWindow(SW_HIDE);
+		InspectorWidth = 0;
+	}
 
 	const UINT ExplorerHeight = m_wndExplorerHeader.GetPreferredHeight();
 	m_wndExplorerHeader.SetWindowPos(NULL, rect.left+FilterWidth, rect.top+TaskHeight, rect.Width()-FilterWidth-InspectorWidth, ExplorerHeight, SWP_NOACTIVATE | SWP_NOZORDER);
-
-	m_wndInspector.SetMaxWidth(MaxWidth);
-	m_wndInspector.SetWindowPos(NULL, rect.right-InspectorWidth, rect.top+TaskHeight, InspectorWidth, rect.Height()-TaskHeight, SWP_NOACTIVATE | SWP_NOZORDER);
-
-	if (p_wndFilter)
-	{
-		p_wndFilter->SetMaxWidth(MaxWidth);
-		p_wndFilter->SetWindowPos(NULL, rect.left, rect.top+TaskHeight, FilterWidth, rect.Height()-TaskHeight, SWP_NOACTIVATE | SWP_NOZORDER);
-	}
 
 	if (p_wndFileView)
 		p_wndFileView->SetWindowPos(NULL, rect.left+FilterWidth, rect.top+TaskHeight+ExplorerHeight, rect.Width()-FilterWidth-InspectorWidth, rect.Height()-ExplorerHeight-TaskHeight, SWP_NOACTIVATE | SWP_NOZORDER);
@@ -503,6 +524,9 @@ BEGIN_MESSAGE_MAP(CMainView, CWnd)
 	ON_MESSAGE(WM_RENAMEITEM, OnRenameItem)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoreAttributesChanged, OnStoreAttributesChanged)
 
+	ON_COMMAND(ID_PANE_INSPECTOR, OnToggleInspector)
+	ON_UPDATE_COMMAND_UI_RANGE(ID_PANE_FILTER, ID_PANE_INSPECTOR, OnUpdatePaneCommands)
+
 	ON_COMMAND(IDM_ORGANIZE_OPTIONS, OnSortOptions)
 	ON_COMMAND(IDM_ORGANIZE_TOGGLEAUTODIRS, OnToggleAutoDirs)
 	ON_COMMAND(IDM_VIEW_OPTIONS, OnViewOptions)
@@ -578,7 +602,7 @@ INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndTaskbar.AddButton(IDM_STORES_MAINTAINALL, 1, TRUE);
 	m_wndTaskbar.AddButton(IDM_HOME_IMPORTFOLDER, 2, TRUE);
 	m_wndTaskbar.AddButton(IDM_HOUSEKEEPING_REGISTER, 3, TRUE);
-	m_wndTaskbar.AddButton(IDM_HOUSEKEEPING_SEND, 31, TRUE);
+	m_wndTaskbar.AddButton(IDM_HOUSEKEEPING_SEND, 33, TRUE);
 	m_wndTaskbar.AddButton(IDM_TRASH_EMPTY, 4, TRUE);
 	m_wndTaskbar.AddButton(IDM_TRASH_RESTOREALL, 5, TRUE);
 	m_wndTaskbar.AddButton(IDM_CALENDAR_PREVYEAR, 6, TRUE);
@@ -606,17 +630,27 @@ INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndTaskbar.AddButton(IDM_FILE_RESTORE, 27);
 	m_wndTaskbar.AddButton(ID_APP_NEWFILEDROP, 28, TRUE);
 
-	m_wndTaskbar.AddButton(ID_APP_PURCHASE, 29, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_ENTERLICENSEKEY, 30, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_SUPPORT, 31, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_ABOUT, 32, TRUE, TRUE);
+	#define InspectorIconVisible     30
+	#define InspectorIconHidden     29
+	p_InspectorButton = m_wndTaskbar.AddButton(ID_PANE_INSPECTOR, theApp.m_ShowInspectorPane ? InspectorIconVisible : InspectorIconHidden, TRUE, TRUE);
+
+	m_wndTaskbar.AddButton(ID_APP_PURCHASE, 31, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_ENTERLICENSEKEY, 32, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_SUPPORT, 33, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_ABOUT, 34, TRUE, TRUE);
 
 	// Filter
 	if (!m_IsClipboard)
 	{
 		p_wndFilter = new CFilterWnd();
-		if (!p_wndFilter->Create(TRUE, 250, this, 2))
+		if (!p_wndFilter->Create(TRUE, theApp.m_FilterWidth, this, 2))
 			return -1;
+
+		m_ShowFilterPane = theApp.m_ShowFilterPane;
+	}
+	else
+	{
+		m_ShowFilterPane = FALSE;
 	}
 
 	// Explorer header
@@ -629,8 +663,10 @@ INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	p_ViewButton = m_wndExplorerHeader.AddButton(IDM_VIEW);
 
 	// Inspector
-	if (!m_wndInspector.Create(FALSE, 200, this, 4))
+	if (!m_wndInspector.Create(FALSE, theApp.m_InspectorWidth, this, 4))
 		return -1;
+
+	m_ShowInspectorPane = theApp.m_ShowInspectorPane;
 
 	// Explorer notification
 	if (!m_wndExplorerNotification.Create(this, 6))
@@ -831,6 +867,34 @@ LRESULT CMainView::OnStoreAttributesChanged(WPARAM /*wParam*/, LPARAM /*lParam*/
 		SetHeader();
 
 	return NULL;
+}
+
+
+// Panes
+
+void CMainView::OnToggleInspector()
+{
+	ASSERT(p_InspectorButton);
+
+	theApp.m_ShowInspectorPane = m_ShowInspectorPane = !m_ShowInspectorPane;
+	p_InspectorButton->SetIconID(m_ShowInspectorPane ? InspectorIconVisible : InspectorIconHidden);
+	AdjustLayout();
+}
+
+void CMainView::OnUpdatePaneCommands(CCmdUI* pCmdUI)
+{
+	BOOL b = FALSE;
+
+	switch (pCmdUI->m_nID)
+	{
+	case ID_PANE_FILTER:
+		break;
+	case ID_PANE_INSPECTOR:
+		b = TRUE;
+		break;
+	}
+
+	pCmdUI->Enable(b);
 }
 
 

@@ -112,7 +112,7 @@ INT CFilterWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (m_wndToolBar.Create(this, AFX_DEFAULT_TOOLBAR_STYLE)==-1)
 		return -1;
 
-	m_wndToolBar.LoadToolBar(ID_PANE_FILTERWND, 0, 0, TRUE);
+	m_wndToolBar.LoadToolBar(ID_PANE_FILTER, 0, 0, TRUE);
 	m_wndToolBar.SetPaneStyle(m_wndToolBar.GetPaneStyle() | CBRS_TOOLTIPS | CBRS_FLYBY);
 	m_wndToolBar.SetPaneStyle(m_wndToolBar.GetPaneStyle() & ~(CBRS_GRIPPER | CBRS_SIZE_DYNAMIC | CBRS_BORDER_TOP | CBRS_BORDER_BOTTOM | CBRS_BORDER_LEFT | CBRS_BORDER_RIGHT));
 	m_wndToolBar.SetRouteCommandsViaFrame(FALSE);
