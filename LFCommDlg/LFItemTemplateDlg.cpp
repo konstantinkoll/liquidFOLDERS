@@ -57,15 +57,7 @@ LFItemTemplateDlg::LFItemTemplateDlg(CWnd* pParentWnd, LFItemDescriptor* pItem, 
 				}
 	}
 
-	CFrameWnd* Frame = pParentWnd->GetParentFrame();
-	if (Frame)
-	{
-		Frame->BringWindowToTop();
-	}
-	else
-	{
-		pParentWnd->BringWindowToTop();
-	}
+	pParentWnd->BringWindowToTop();
 }
 
 

@@ -7,6 +7,21 @@
 #include "Resource.h"
 
 
+// CJournalUI
+//
+
+CJournalUI::CJournalUI()
+	: CCmdUI()
+{
+	m_Enabled = FALSE;
+}
+
+void CJournalUI::Enable(BOOL bOn)
+{
+	m_Enabled = bOn;
+}
+
+
 // CJournalButton
 //
 
@@ -17,6 +32,7 @@
 CJournalButton::CJournalButton()
 	: CWnd()
 {
+	m_CmdEnabled[0] = m_CmdEnabled[1] = FALSE;
 	m_Hover = m_Pressed = -1;
 }
 
@@ -63,6 +79,7 @@ BEGIN_MESSAGE_MAP(CJournalButton, CWnd)
 	ON_WM_LBUTTONDOWN()
 	ON_WM_LBUTTONUP()
 	ON_WM_RBUTTONUP()
+	ON_MESSAGE_VOID(WM_IDLEUPDATECMDUI, OnIdleUpdateCmdUI)
 END_MESSAGE_MAP()
 
 INT CJournalButton::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -121,8 +138,8 @@ void CJournalButton::OnPaint()
 
 	g.DrawImage(m_Frame.m_pBitmap, 0, 0);
 
-	DrawLeft(g, ((m_Pressed==0) && (m_Hover==0)) ? &m_Pushed : ((m_Hover==0) && (m_Pressed!=1)) ? &m_Hot : &m_Normal);
-	DrawRight(g, ((m_Pressed==1) && (m_Hover==1)) ? &m_Pushed : ((m_Hover==1) && (m_Pressed!=0)) ? &m_Hot : &m_Normal);
+	DrawLeft(g, m_CmdEnabled[0] ? ((m_Pressed==0) && (m_Hover==0)) ? &m_Pushed : ((m_Hover==0) && (m_Pressed!=1)) ? &m_Hot : &m_Normal : &m_Disabled);
+	DrawRight(g, m_CmdEnabled[1] ? ((m_Pressed==1) && (m_Hover==1)) ? &m_Pushed : ((m_Hover==1) && (m_Pressed!=0)) ? &m_Hot : &m_Normal : &m_Disabled);
 
 	pDC.BitBlt(0, 0, rectClient.Width(), rectClient.Height(), &dc, 0, 0, SRCCOPY);
 
@@ -162,16 +179,20 @@ void CJournalButton::OnMouseLeave()
 
 void CJournalButton::OnLButtonDown(UINT /*nFlags*/, CPoint point)
 {
-	m_Pressed = GetHover;
-	Invalidate();
+	INT ID = GetHover;
+	if (m_CmdEnabled[ID])
+	{
+		m_Pressed = GetHover;
+		Invalidate();
 
-	SetCapture();
+		SetCapture();
+	}
 }
 
 void CJournalButton::OnLButtonUp(UINT /*nFlags*/, CPoint point)
 {
 	INT ID = GetHover;
-	if ((TRUE) && ((m_Pressed==-1) || (m_Pressed==ID)))
+	if ((m_CmdEnabled[ID]) && ((m_Pressed==-1) || (m_Pressed==ID)))
 		GetOwner()->PostMessage(WM_COMMAND, (ID==0) ? ID_NAV_BACK : ID_NAV_FORWARD);
 
 	if (m_Pressed!=-1)
@@ -191,4 +212,23 @@ void CJournalButton::OnRButtonUp(UINT nFlags, CPoint point)
 	GetParent()->ScreenToClient(&point);
 
 	GetParent()->SendMessage(WM_RBUTTONUP, (WPARAM)nFlags, (LPARAM)((point.y<<16) | point.x));
+}
+
+void CJournalButton::OnIdleUpdateCmdUI()
+{
+	BOOL Update = FALSE;
+
+	CJournalUI cmdUI;
+	cmdUI.m_nID = ID_NAV_BACK;
+	cmdUI.DoUpdate(GetOwner(), FALSE);
+	Update |= (cmdUI.m_Enabled!=m_CmdEnabled[0]);
+	m_CmdEnabled[0] = cmdUI.m_Enabled;
+
+	cmdUI.m_nID = ID_NAV_FORWARD;
+	cmdUI.DoUpdate(GetOwner(), FALSE);
+	Update |= (cmdUI.m_Enabled!=m_CmdEnabled[1]);
+	m_CmdEnabled[1] = cmdUI.m_Enabled;
+
+	if (Update)
+		Invalidate();
 }

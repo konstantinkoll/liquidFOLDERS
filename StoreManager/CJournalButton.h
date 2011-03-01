@@ -6,6 +6,20 @@
 #include "LFCommDlg.h"
 
 
+// CJournalUI
+//
+
+class CJournalUI : public CCmdUI
+{
+public:
+	CJournalUI();
+
+	virtual void Enable(BOOL bOn);
+
+	BOOL m_Enabled;
+};
+
+
 // CJournalButton
 //
 
@@ -20,6 +34,7 @@ public:
 
 protected:
 	BOOL m_IsLarge;
+	BOOL m_CmdEnabled[2];
 	INT m_Hover;
 	INT m_Pressed;
 	CGdiPlusBitmapResource m_Frame;
@@ -37,6 +52,7 @@ protected:
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnRButtonUp(UINT nFlags, CPoint point);
+	afx_msg void OnIdleUpdateCmdUI();
 	DECLARE_MESSAGE_MAP()
 
 private:

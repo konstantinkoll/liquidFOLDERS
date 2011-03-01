@@ -15,13 +15,14 @@
 //
 
 BEGIN_MESSAGE_MAP(LFApplication, CWinAppEx)
-	ON_COMMAND(ID_APP_PURCHASE, OnAppPurchase)
-	ON_COMMAND(ID_APP_ENTERLICENSEKEY, OnAppEnterLicenseKey)
 	ON_COMMAND(ID_APP_SUPPORT, OnAppSupport)
 	ON_COMMAND(ID_APP_NEWFILEDROP, OnAppNewFileDrop)
 	ON_COMMAND(ID_APP_NEWMIGRATE, OnAppNewMigrate)
 	ON_COMMAND(ID_APP_NEWSTOREMANAGER, OnAppNewStoreManager)
-	ON_UPDATE_COMMAND_UI_RANGE(ID_APP_PURCHASE, ID_APP_ENTERLICENSEKEY, OnUpdateAppCommands)
+	ON_COMMAND(ID_APP_PURCHASE, OnAppPurchase)
+	ON_COMMAND(ID_APP_ENTERLICENSEKEY, OnAppEnterLicenseKey)
+	ON_UPDATE_COMMAND_UI_RANGE(ID_APP_SUPPORT, ID_APP_ENTERLICENSEKEY, OnUpdateAppCommands)
+	ON_UPDATE_COMMAND_UI(ID_APP_ABOUT, OnUpdateAppCommands)
 END_MESSAGE_MAP()
 
 extern AFX_EXTENSION_MODULE LFCommDlgDLL;
@@ -334,6 +335,40 @@ void LFApplication::SendMail(CString Subject)
 	ShellExecute(m_pActiveWnd->GetSafeHwnd(), _T("open"), URL, NULL, NULL, SW_SHOW);
 }
 
+void LFApplication::OnAppSupport()
+{
+	SendMail();
+}
+
+void LFApplication::OnAppNewFileDrop()
+{
+	ShellExecute(m_pActiveWnd->GetSafeHwnd(), _T("open"), m_Path+_T("FileDrop.exe"), NULL, NULL, SW_SHOW);
+}
+
+void LFApplication::OnAppNewMigrate()
+{
+	ShellExecute(m_pActiveWnd->GetSafeHwnd(), _T("open"), m_Path+_T("Migrate.exe"), NULL, NULL, SW_SHOW);
+}
+
+void LFApplication::OnAppNewStoreManager()
+{
+	ShellExecute(m_pActiveWnd->GetSafeHwnd(), _T("open"), m_Path+_T("StoreManager.exe"), NULL, NULL, SW_SHOW);
+}
+
+void LFApplication::OnAppPurchase()
+{
+	CString url;
+	ENSURE(url.LoadString(IDS_PURCHASEURL));
+
+	ShellExecute(m_pActiveWnd->GetSafeHwnd(), _T("open"), url, NULL, NULL, SW_SHOW);
+}
+
+void LFApplication::OnAppEnterLicenseKey()
+{
+	LFLicenseDlg dlg(NULL);
+	dlg.DoModal();
+}
+
 void LFApplication::OnUpdateAppCommands(CCmdUI* pCmdUI)
 {
 	switch (pCmdUI->m_nID)
@@ -354,40 +389,6 @@ void LFApplication::OnUpdateAppCommands(CCmdUI* pCmdUI)
 	default:
 		pCmdUI->Enable(TRUE);
 	}
-}
-
-void LFApplication::OnAppPurchase()
-{
-	CString url;
-	ENSURE(url.LoadString(IDS_PURCHASEURL));
-
-	ShellExecute(m_pActiveWnd->GetSafeHwnd(), _T("open"), url, NULL, NULL, SW_SHOW);
-}
-
-void LFApplication::OnAppEnterLicenseKey()
-{
-	LFLicenseDlg dlg(NULL);
-	dlg.DoModal();
-}
-
-void LFApplication::OnAppSupport()
-{
-	SendMail();
-}
-
-void LFApplication::OnAppNewFileDrop()
-{
-	ShellExecute(m_pActiveWnd->GetSafeHwnd(), _T("open"), m_Path+_T("FileDrop.exe"), NULL, NULL, SW_SHOW);
-}
-
-void LFApplication::OnAppNewMigrate()
-{
-	ShellExecute(m_pActiveWnd->GetSafeHwnd(), _T("open"), m_Path+_T("Migrate.exe"), NULL, NULL, SW_SHOW);
-}
-
-void LFApplication::OnAppNewStoreManager()
-{
-	ShellExecute(m_pActiveWnd->GetSafeHwnd(), _T("open"), m_Path+_T("StoreManager.exe"), NULL, NULL, SW_SHOW);
 }
 
 CString LFApplication::GetGlobalRegPath()
