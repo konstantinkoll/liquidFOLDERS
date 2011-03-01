@@ -77,11 +77,21 @@ BOOL CMainWnd::OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* p
 
 void CMainWnd::AdjustLayout()
 {
+	if (!IsWindow(m_wndJournalButton))
+		return;
 	if (!IsWindow(m_wndMainView))
 		return;
 
 	CRect rect;
 	GetLayoutRect(rect);
+
+	const UINT JournalBorder = 3;
+	const UINT JournalHeight = m_wndJournalButton.GetPreferredHeight();
+	const UINT JournalWidth = m_wndJournalButton.GetPreferredWidth();
+
+	//const UINT HistoryBorder = 4;
+
+	m_wndJournalButton.SetWindowPos(NULL, rect.left+1, rect.top+JournalBorder, JournalWidth, JournalHeight, SWP_NOACTIVATE | SWP_NOZORDER);
 
 	m_wndMainView.SetWindowPos(NULL, rect.left, rect.top+m_Margins.cyTopHeight, rect.Width(), rect.bottom-m_Margins.cyTopHeight, SWP_NOACTIVATE | SWP_NOZORDER);
 }
@@ -119,12 +129,16 @@ INT CMainWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	theApp.AddFrame(this);
 
+	// Journal-Button
+	if (!m_wndJournalButton.Create(25, this, 3))
+		return -1;
+
 	// Hauptansicht erstellen
 	if (!m_wndMainView.Create(m_IsClipboard, this, 3))
 		return -1;
 
 	// Aero
-	MARGINS Margins = { 0, 0, 30+11, 0 };
+	MARGINS Margins = { 0, 0, m_wndJournalButton.GetPreferredHeight()+8, 0 };
 	UseGlasBackground(Margins);
 
 	// Entweder leeres Suchergebnis oder Stores-Kontext öffnen

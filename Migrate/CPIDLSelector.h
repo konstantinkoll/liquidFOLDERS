@@ -39,7 +39,7 @@ public:
 
 	virtual void CreateDropdownWindow();
 	virtual void SetEmpty(BOOL Repaint=TRUE);
-	virtual void GetTooltipData(HICON& hIcon, CSize& size, CString& caption, CString& hint);
+	virtual void GetTooltipData(HICON& hIcon, CSize& Size, CString& Caption, CString& Hint);
 
 	void SetItem(LPITEMIDLIST _pidl, BOOL Repaint=TRUE, UINT NotifyCode=NM_SELCHANGED);
 	void SetItem(IShellFolder* pDesktop, WCHAR* Path, BOOL Repaint=TRUE, UINT NotifyCode=NM_SELCHANGED);

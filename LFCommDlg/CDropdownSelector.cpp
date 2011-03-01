@@ -280,7 +280,7 @@ void CDropdownSelector::SetItem(HICON hIcon, CString DisplayName, BOOL Repaint, 
 	NotifyOwner(NotifyCode);
 }
 
-void CDropdownSelector::GetTooltipData(HICON& /*hIcon*/, CSize& /*size*/, CString& /*caption*/, CString& /*hint*/)
+void CDropdownSelector::GetTooltipData(HICON& /*hIcon*/, CSize& /*Size*/, CString& /*Caption*/, CString& /*Hint*/)
 {
 }
 

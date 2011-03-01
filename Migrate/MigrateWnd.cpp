@@ -65,8 +65,8 @@ void CMigrateWnd::AdjustLayout()
 
 	const UINT Border = 4;
 	const UINT SelectorHeight = m_wndFolder.GetPreferredHeight();
-	m_wndFolder.SetWindowPos(NULL, rect.left, rect.top+4, (rect.Width()-Border)/2, SelectorHeight, SWP_NOACTIVATE | SWP_NOZORDER);
-	m_wndStore.SetWindowPos(NULL, rect.right-(rect.Width()-Border)/2, rect.top+4, (rect.Width()-Border)/2, SelectorHeight, SWP_NOACTIVATE | SWP_NOZORDER);
+	m_wndFolder.SetWindowPos(NULL, rect.left, rect.top+Border, (rect.Width()-Border)/2, SelectorHeight, SWP_NOACTIVATE | SWP_NOZORDER);
+	m_wndStore.SetWindowPos(NULL, rect.right-(rect.Width()-Border)/2, rect.top+Border, (rect.Width()-Border)/2, SelectorHeight, SWP_NOACTIVATE | SWP_NOZORDER);
 
 	const UINT BottomHeight = MulDiv(45, LOWORD(GetDialogBaseUnits()), 8);
 	m_wndBottomArea.SetWindowPos(NULL, rect.left, rect.bottom-BottomHeight, rect.Width(), BottomHeight, SWP_NOACTIVATE | SWP_NOZORDER);

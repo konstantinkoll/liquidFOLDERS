@@ -410,6 +410,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CJournalButton.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\CListView.cpp"
 				>
 			</File>
@@ -545,6 +549,10 @@
 			</File>
 			<File
 				RelativePath=".\CInspectorWnd.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CJournalButton.h"
 				>
 			</File>
 			<File

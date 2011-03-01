@@ -116,7 +116,7 @@ void CInspectorIconCtrl::OnPaint()
 		{
 			Graphics g(dc);
 			g.SetCompositingMode(CompositingModeSourceOver);
-			g.DrawImage((m_Status==IconEmpty) ? m_Empty.m_pBitmap : m_Multiple.m_pBitmap, cx, cy, 128, 128);
+			g.DrawImage((m_Status==IconEmpty) ? m_Empty.m_pBitmap : m_Multiple.m_pBitmap, cx, cy);
 			break;
 		}
 	case IconCore:

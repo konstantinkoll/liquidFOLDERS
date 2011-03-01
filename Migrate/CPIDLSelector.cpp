@@ -317,9 +317,9 @@ void CPIDLSelector::SetItem(IShellFolder* pDesktop, WCHAR* Path, BOOL Repaint, U
 	}
 }
 
-void CPIDLSelector::GetTooltipData(HICON& hIcon, CSize& size, CString& caption, CString& hint)
+void CPIDLSelector::GetTooltipData(HICON& hIcon, CSize& Size, CString& Caption, CString& Hint)
 {
-	TooltipDataFromPIDL(pidl, &theApp.m_SystemImageListExtraLarge, hIcon, size, caption, hint);
+	TooltipDataFromPIDL(pidl, &theApp.m_SystemImageListExtraLarge, hIcon, Size, Caption, Hint);
 }
 
 

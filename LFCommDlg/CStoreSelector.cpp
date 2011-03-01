@@ -118,12 +118,12 @@ void CStoreDropdownWindow::OnCreateNewStore()
 CStoreSelector::CStoreSelector()
 	: CDropdownSelector()
 {
-	item = NULL;
+	p_Item = NULL;
 }
 
 CStoreSelector::~CStoreSelector()
 {
-	LFFreeItemDescriptor(item);
+	LFFreeItemDescriptor(p_Item);
 }
 
 void CStoreSelector::CreateDropdownWindow()
@@ -134,8 +134,8 @@ void CStoreSelector::CreateDropdownWindow()
 
 void CStoreSelector::SetEmpty(BOOL Repaint)
 {
-	LFFreeItemDescriptor(item);
-	item = NULL;
+	LFFreeItemDescriptor(p_Item);
+	p_Item = NULL;
 
 	CDropdownSelector::SetEmpty(Repaint);
 }
@@ -144,10 +144,10 @@ void CStoreSelector::SetItem(LFItemDescriptor* _item, BOOL Repaint, UINT NotifyC
 {
 	if (_item)
 	{
-		LFFreeItemDescriptor(item);
-		item = LFAllocItemDescriptor(_item);
+		LFFreeItemDescriptor(p_Item);
+		p_Item = LFAllocItemDescriptor(_item);
 
-		CDropdownSelector::SetItem(p_App->m_CoreImageListSmall.ExtractIcon(item->IconID-1), item->CoreAttributes.FileName, Repaint, NotifyCode);
+		CDropdownSelector::SetItem(p_App->m_CoreImageListSmall.ExtractIcon(p_Item->IconID-1), p_Item->CoreAttributes.FileName, Repaint, NotifyCode);
 	}
 	else
 	{
@@ -159,10 +159,10 @@ void CStoreSelector::SetItem(LFStoreDescriptor* s, BOOL Repaint, UINT NotifyCode
 {
 	if (s)
 	{
-		LFFreeItemDescriptor(item);
-		item = LFAllocItemDescriptor(s);
+		LFFreeItemDescriptor(p_Item);
+		p_Item = LFAllocItemDescriptor(s);
 
-		CDropdownSelector::SetItem(p_App->m_CoreImageListSmall.ExtractIcon(item->IconID-1), item->CoreAttributes.FileName, Repaint, NotifyCode);
+		CDropdownSelector::SetItem(p_App->m_CoreImageListSmall.ExtractIcon(p_Item->IconID-1), p_Item->CoreAttributes.FileName, Repaint, NotifyCode);
 	}
 	else
 	{
@@ -195,7 +195,7 @@ BOOL CStoreSelector::GetStoreID(CHAR* StoreID)
 		return FALSE;
 	}
 
-	strcpy_s(StoreID, LFKeySize, item->StoreID);
+	strcpy_s(StoreID, LFKeySize, p_Item->StoreID);
 	return TRUE;
 }
 
@@ -217,42 +217,42 @@ void CStoreSelector::Update()
 	}
 }
 
-void CStoreSelector::GetTooltipData(HICON& hIcon, CSize& size, CString& caption, CString& hint)
+void CStoreSelector::GetTooltipData(HICON& hIcon, CSize& Size, CString& Caption, CString& Hint)
 {
-	hIcon = p_App->m_CoreImageListExtraLarge.ExtractIcon(item->IconID-1);
+	hIcon = p_App->m_CoreImageListExtraLarge.ExtractIcon(p_Item->IconID-1);
 	
 	INT cx = 48;
 	INT cy = 48;
 	ImageList_GetIconSize(p_App->m_CoreImageListExtraLarge, &cx, &cy);
-	size.SetSize(cx, cy);
+	Size.SetSize(cx, cy);
 
-	caption = item->CoreAttributes.FileName;
-	hint = item->CoreAttributes.Comment;
+	Caption = p_Item->CoreAttributes.FileName;
+	Hint = p_Item->CoreAttributes.Comment;
 
-	if (item->Description[0]!=L'\0')
+	if (p_Item->Description[0]!=L'\0')
 	{
-		if (!hint.IsEmpty())
-			hint.Append(_T("\n"));
+		if (!Hint.IsEmpty())
+			Hint.Append(_T("\n"));
 
-		hint.Append(item->Description);
+		Hint.Append(p_Item->Description);
 	}
 
-	if (!hint.IsEmpty())
-		hint.Append(_T("\n"));
+	if (!Hint.IsEmpty())
+		Hint.Append(_T("\n"));
 
 	FILETIME lft;
 	WCHAR tmpBuf1[256];
-	FileTimeToLocalFileTime(&item->CoreAttributes.CreationTime, &lft);
+	FileTimeToLocalFileTime(&p_Item->CoreAttributes.CreationTime, &lft);
 	LFTimeToString(lft, tmpBuf1, 256);
 	WCHAR tmpBuf2[256];
-	FileTimeToLocalFileTime(&item->CoreAttributes.FileTime, &lft);
+	FileTimeToLocalFileTime(&p_Item->CoreAttributes.FileTime, &lft);
 	LFTimeToString(lft, tmpBuf2, 256);
 
 	CString tmpStr;
 	tmpStr.Format(_T("%s: %s\n%s: %s"),
 		p_App->m_Attributes[LFAttrCreationTime]->Name, tmpBuf1,
 		p_App->m_Attributes[LFAttrFileTime]->Name, tmpBuf2);
-	hint.Append(tmpStr);
+	Hint.Append(tmpStr);
 }
 
 

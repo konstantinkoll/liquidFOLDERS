@@ -5,6 +5,7 @@
 #pragma once
 #include "HistoryWnd.h"
 #include "liquidFOLDERS.h"
+#include "CJournalButton.h"
 #include "CMainView.h"
 #include "CFileView.h"
 
@@ -42,6 +43,7 @@ public:
 
 protected:
 	HICON m_hIcon;
+	CJournalButton m_wndJournalButton;
 	CMainView m_wndMainView;
 	BreadcrumbItem* m_BreadcrumbBack;
 	BreadcrumbItem* m_BreadcrumbForward;

@@ -66,7 +66,7 @@ public:
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 	virtual void CreateDropdownWindow();
 	virtual void SetEmpty(BOOL Repaint=TRUE);
-	virtual void GetTooltipData(HICON& hIcon, CSize& size, CString& caption, CString& hint);
+	virtual void GetTooltipData(HICON& hIcon, CSize& Size, CString& Caption, CString& Hint);
 
 	BOOL Create(CString EmptyHint, CString Caption, CGlasWindow* pParentWnd, UINT nID);
 	void SetItem(HICON hIcon, CString DisplayName, BOOL Repaint=TRUE, UINT NotifyCode=NM_SELCHANGED);

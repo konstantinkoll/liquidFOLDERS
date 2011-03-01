@@ -40,7 +40,7 @@ public:
 
 	virtual void CreateDropdownWindow();
 	virtual void SetEmpty(BOOL Repaint=TRUE);
-	virtual void GetTooltipData(HICON& hIcon, CSize& size, CString& caption, CString& hint);
+	virtual void GetTooltipData(HICON& hIcon, CSize& Size, CString& Caption, CString& Hint);
 
 	void SetItem(LFItemDescriptor* _item, BOOL Repaint=TRUE, UINT NotifyCode=NM_SELCHANGED);
 	void SetItem(LFStoreDescriptor* s, BOOL Repaint=TRUE, UINT NotifyCode=NM_SELCHANGED);
@@ -49,7 +49,7 @@ public:
 	void Update();
 
 protected:
-	LFItemDescriptor* item;
+	LFItemDescriptor* p_Item;
 
 	afx_msg LRESULT OnSetItem(WPARAM wParam, LPARAM lParam);
 	DECLARE_MESSAGE_MAP()
