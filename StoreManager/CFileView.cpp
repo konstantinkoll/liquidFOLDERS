@@ -338,10 +338,11 @@ INT CFileView::GetFocusItem()
 INT CFileView::GetSelectedItem()
 {
 	if (p_Result)
-	{
-		FVItemData* d = GetItemData(m_FocusItem);
-		return (d->Selected && d->Valid) ? m_FocusItem : -1;
-	}
+		if (p_Result->m_ItemCount)
+		{
+			FVItemData* d = GetItemData(m_FocusItem);
+			return (d->Selected && d->Valid) ? m_FocusItem : -1;
+		}
 
 	return -1;
 }
