@@ -631,7 +631,7 @@ void CListView::DrawTileRows(CDC& dc, CRect& rect, LFItemDescriptor* i, GridItem
 	}
 
 	rect.top += (rect.Height()-Height)/2;
-	rect.bottom = rect.top+m_FontHeight[0];
+	rect.bottom = rect.top+max(m_FontHeight[0], 18);
 
 	for (UINT a=0; a<4; a++)
 	{
@@ -644,7 +644,7 @@ void CListView::DrawTileRows(CDC& dc, CRect& rect, LFItemDescriptor* i, GridItem
 		else
 			if (tmpStr[a][0]!=L'\0')
 			{
-				dc.DrawText(tmpStr[a], rect, DT_LEFT | DT_SINGLELINE | DT_END_ELLIPSIS);
+				dc.DrawText(tmpStr[a], rect, DT_LEFT | DT_TOP | DT_SINGLELINE | DT_END_ELLIPSIS);
 				rect.OffsetRect(0, m_FontHeight[0]);
 			}
 
