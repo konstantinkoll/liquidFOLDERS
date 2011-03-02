@@ -27,8 +27,7 @@ LFFilter* GetRootFilter(char* RootStore=NULL)
 CMainWnd::CMainWnd()
 {
 	m_hIcon = NULL;
-	ActiveViewID = -1;
-	ActiveContextID = -1;
+	ActiveViewID = ActiveContextID = -1;
 	ActiveViewParameters = &theApp.m_Views[LFContextDefault];
 	ActiveFilter = NULL;
 	RawFiles = CookedFiles = NULL;

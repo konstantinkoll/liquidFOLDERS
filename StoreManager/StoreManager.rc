@@ -436,6 +436,7 @@ BEGIN
     IDS_MULTIPLETYPESSELECTED "Unterschiedliche Typen, %d Objekte"
     IDS_YOULOOKAT           "Sie schauen auf %s"
     IDS_NOTHINGTODISPLAY    "Es gibt nichts anzuzeigen."
+    IDS_NONAVIGATION        "Dieses Fenster unterstützt keine Navigation."
     IDS_AUTOMATIC           "Automatisch wählen"
 END
 
@@ -835,6 +836,7 @@ BEGIN
     IDS_MULTIPLETYPESSELECTED "Multiple types, %d items"
     IDS_YOULOOKAT           "You look at %s"
     IDS_NOTHINGTODISPLAY    "There is nothing to display."
+    IDS_NONAVIGATION        "This window does not support any navigation."
     IDS_AUTOMATIC           "Choose automatically"
 END
 

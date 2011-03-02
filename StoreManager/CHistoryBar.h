@@ -34,6 +34,8 @@ public:
 
 protected:
 	BOOL m_Hover;
+	BOOL m_IsEmpty;
+	CString m_EmptyHint;
 	LFTooltip m_TooltipCtrl;
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);

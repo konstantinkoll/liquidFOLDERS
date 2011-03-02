@@ -53,6 +53,9 @@ CHistoryBar::CHistoryBar()
 {
 	hTheme = NULL;
 	m_Hover = FALSE;
+	m_IsEmpty = TRUE;
+
+	ENSURE(m_EmptyHint.LoadString(IDS_NONAVIGATION));
 }
 
 BOOL CHistoryBar::Create(CGlasWindow* pParentWnd, UINT nID)
@@ -166,7 +169,7 @@ void CHistoryBar::OnPaint()
 
 	CGlasWindow* pCtrlSite = (CGlasWindow*)GetParent();
 	pCtrlSite->DrawFrameBackground(&dc, rectClient);
-	const BYTE Alpha = /*m_Dropped ? 0xFF : */(m_Hover || (GetFocus()==this)) ? 0xF0 : 0xD0;
+	const BYTE Alpha = /*m_Dropped ? 0xFF : */(m_Hover && !m_IsEmpty) ? 0xF0 : 0xD0;
 
 	CRect rectContent(rectClient);
 	if (hTheme)
@@ -239,24 +242,24 @@ void CHistoryBar::OnPaint()
 
 		if (m_Hover || m_Pressed || m_Dropped)
 			dc.FillSolidRect(rectClip.left, rectClip.top, 1, rectClip.Height(), GetSysColor(COLOR_3DFACE));
-	}
+	}*/
 
 	CRect rectText(rectContent);
-	rectText.right = rectClip.left;
+	//rectText.right = rectClip.left;
 	rectText.DeflateRect(BORDER, 0);
 
 	CFont* pOldFont;
 
 	if (m_IsEmpty)
 	{
-		pOldFont = dc.SelectObject(&p_App->m_ItalicFont);
+		pOldFont = dc.SelectObject(&theApp.m_ItalicFont);
 		dc.SetTextColor(0x808080);
 		dc.DrawText(m_EmptyHint, rectText, DT_SINGLELINE | DT_END_ELLIPSIS | DT_VCENTER);
 	}
 	else
 	{
-		pOldFont = dc.SelectObject(&p_App->m_DefaultFont);
-		COLORREF c1 = (pCtrlSite->GetDesign()==GWD_DEFAULT) ? GetSysColor(COLOR_WINDOWTEXT) : 0x000000;
+		pOldFont = dc.SelectObject(&theApp.m_DefaultFont);
+	/*	COLORREF c1 = (pCtrlSite->GetDesign()==GWD_DEFAULT) ? GetSysColor(COLOR_WINDOWTEXT) : 0x000000;
 		COLORREF c2 = (pCtrlSite->GetDesign()==GWD_DEFAULT) ? GetSysColor(COLOR_3DSHADOW) : 0x808080;
 
 		if (!m_Caption.IsEmpty())
@@ -282,12 +285,12 @@ void CHistoryBar::OnPaint()
 		{
 			dc.SetTextColor(c1);
 			dc.DrawText(m_DisplayName, rectText, DT_SINGLELINE | DT_END_ELLIPSIS | DT_VCENTER);
-		}
+		}*/
 	}
 
 	dc.SelectObject(pOldFont);
 
-	if ((GetFocus()==this) && (!m_Dropped) && (!hTheme))
+	/*if ((GetFocus()==this) && (!m_Dropped) && (!hTheme))
 	{
 		rectText.InflateRect(3, -1);
 		dc.SetTextColor(0x000000);
