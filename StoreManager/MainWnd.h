@@ -35,7 +35,6 @@ public:
 	BOOL Create(BOOL IsClipboard, CHAR* RootStore=NULL);
 	BOOL AddClipItem(LFItemDescriptor* i);
 	BOOL UpdateSelectedItems(LFVariantData* value1, LFVariantData* value2=NULL, LFVariantData* value3=NULL);
-	void OnUpdateSelection();
 
 	BOOL m_IsClipboard;
 	INT ActiveContextID;
@@ -56,12 +55,13 @@ protected:
 	void UpdateSearchResult(BOOL SetEmpty, FVPersistentData* Data);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
-	afx_msg void OnSetFocus(CWnd *pOldWnd);
 	afx_msg void OnDestroy();
-	afx_msg void OnUpdateNavCommands(CCmdUI* pCmdUI);
+	afx_msg void OnSetFocus(CWnd* pOldWnd);
+
 	afx_msg void OnNavigateBack();
 	afx_msg void OnNavigateForward();
 	afx_msg void OnNavigateReload();
+	afx_msg void OnUpdateNavCommands(CCmdUI* pCmdUI);
 
 	afx_msg void OnItemOpen();
 

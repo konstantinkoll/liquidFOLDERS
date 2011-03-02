@@ -42,7 +42,6 @@ protected:
 	LFApplication* p_App;
 	BOOL m_IsAeroWindow;
 	BOOL m_Active;
-	BOOL m_Enabled;
 	MARGINS m_Margins;
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
@@ -54,7 +53,7 @@ protected:
 	afx_msg void OnNcCalcSize(BOOL bCalcValidRects, NCCALCSIZE_PARAMS* lpncsp);
 	afx_msg LRESULT OnNcHitTest(CPoint point);
 	afx_msg void OnActivateApp(BOOL bActive, DWORD dwThreadID);
-	afx_msg void OnEnable(BOOL bEnable);
+	afx_msg void OnActivate(UINT nState, CWnd* pWndOther, BOOL bMinimized);
 	afx_msg void OnSize(UINT nType, INT cx, INT cy);
 	afx_msg void OnGetMinMaxInfo(MINMAXINFO* lpMMI);
 	afx_msg void OnRButtonUp(UINT nFlags, CPoint point);

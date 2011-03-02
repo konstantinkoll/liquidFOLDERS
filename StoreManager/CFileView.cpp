@@ -1338,7 +1338,7 @@ void CFileView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 		break;
 	case VK_F5:
 		if ((GetKeyState(VK_CONTROL)>=0) && (GetKeyState(VK_SHIFT)>=0))
-			GetOwner()->PostMessage(WM_RELOAD);
+			GetOwner()->PostMessage(WM_COMMAND, ID_NAV_RELOAD);
 		break;
 	case VK_BACK:
 		if ((GetKeyState(VK_CONTROL)>=0) && (GetKeyState(VK_SHIFT)>=0))

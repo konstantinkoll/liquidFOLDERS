@@ -30,8 +30,8 @@ CMainWnd::CMainWnd()
 	ActiveViewID = -1;
 	ActiveContextID = -1;
 	ActiveViewParameters = &theApp.m_Views[LFContextDefault];
-	RawFiles = NULL;
-	CookedFiles = NULL;
+	ActiveFilter = NULL;
+	RawFiles = CookedFiles = NULL;
 	m_BreadcrumbBack = m_BreadcrumbForward = NULL;
 }
 
@@ -52,7 +52,9 @@ BOOL CMainWnd::Create(BOOL IsClipboard, CHAR* RootStore)
 {
 	m_hIcon = theApp.LoadIcon(IsClipboard ? IDR_CLIPBOARD : IDR_APPLICATION);
 	m_IsClipboard = IsClipboard;
-	ActiveFilter = GetRootFilter(RootStore);
+
+	if (!IsClipboard)
+		ActiveFilter = GetRootFilter(RootStore);
 
 	CString className = AfxRegisterWndClass(CS_DBLCLKS, LoadCursor(NULL, IDC_ARROW), NULL, m_hIcon);
 
@@ -98,9 +100,9 @@ void CMainWnd::AdjustLayout()
 
 BEGIN_MESSAGE_MAP(CMainWnd, CGlasWindow)
 	ON_WM_CREATE()
+	ON_WM_DESTROY()
 	ON_WM_SETFOCUS()
 	ON_WM_CLOSE()
-	ON_WM_DESTROY()
 
 	ON_COMMAND(ID_NAV_BACK, OnNavigateBack)
 	ON_COMMAND(ID_NAV_FORWARD, OnNavigateForward)
@@ -153,18 +155,18 @@ INT CMainWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	return 0;
 }
 
+void CMainWnd::OnDestroy()
+{
+	CGlasWindow::OnDestroy();
+	theApp.KillFrame(this);
+}
+
 void CMainWnd::OnSetFocus(CWnd* /*pOldWnd*/)
 {
 	theApp.m_pMainWnd = this;
 
 	if (IsWindow(m_wndMainView))
 		m_wndMainView.SetFocus();
-}
-
-void CMainWnd::OnDestroy()
-{
-	CGlasWindow::OnDestroy();
-	theApp.KillFrame(this);
 }
 
 
@@ -207,6 +209,8 @@ BOOL CMainWnd::UpdateSelectedItems(LFVariantData* value1, LFVariantData* value2,
 
 void CMainWnd::OnNavigateBack()
 {
+	ASSERT(!m_IsClipboard);
+
 	if (ActiveFilter)
 	{
 		LFFilter* f = ActiveFilter;
@@ -223,6 +227,8 @@ void CMainWnd::OnNavigateBack()
 
 void CMainWnd::OnNavigateForward()
 {
+	ASSERT(!m_IsClipboard);
+
 	if (ActiveFilter)
 	{
 		LFFilter* f = ActiveFilter;
@@ -239,6 +245,8 @@ void CMainWnd::OnNavigateForward()
 
 void CMainWnd::OnNavigateReload()
 {
+	ASSERT(!m_IsClipboard);
+
 	if (ActiveFilter)
 	{
 		FVPersistentData Data;
@@ -267,6 +275,8 @@ void CMainWnd::OnUpdateNavCommands(CCmdUI* pCmdUI)
 
 void CMainWnd::NavigateTo(LFFilter* f, UINT NavMode, FVPersistentData* Data, INT FirstAggregate, INT LastAggregate)
 {
+	ASSERT(!m_IsClipboard);
+
 	if (NavMode<NAVMODE_RELOAD)
 		theApp.PlayNavigateSound();
 
@@ -329,13 +339,16 @@ void CMainWnd::NavigateTo(LFFilter* f, UINT NavMode, FVPersistentData* Data, INT
 
 void CMainWnd::UpdateHistory()
 {
-	if (RawFiles)
+	if (!m_IsClipboard)
 	{
-		ActiveFilter->Result.FileCount = RawFiles->m_FileCount;
-		ActiveFilter->Result.FileSize = RawFiles->m_FileSize;
+		if (RawFiles)
+		{
+			ActiveFilter->Result.FileCount = RawFiles->m_FileCount;
+			ActiveFilter->Result.FileSize = RawFiles->m_FileSize;
+		}
+		if (CookedFiles)
+			ActiveFilter->Result.ItemCount = CookedFiles->m_ItemCount;
 	}
-	if (CookedFiles)
-		ActiveFilter->Result.ItemCount = CookedFiles->m_ItemCount;
 
 //	if (m_wndHistory)
 //		m_wndHistory->UpdateList(m_BreadcrumbBack, ActiveFilter, m_BreadcrumbForward);
@@ -386,10 +399,6 @@ void CMainWnd::OnItemOpen()
 			}
 	}
 }
-
-
-
-
 
 
 void CMainWnd::OnUpdateViewOptions()

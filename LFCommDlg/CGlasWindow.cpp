@@ -15,7 +15,7 @@ CGlasWindow::CGlasWindow()
 	p_App = (LFApplication*)AfxGetApp();
 	p_PopupWindow = NULL;
 	hTheme = NULL;
-	m_Active = m_Enabled = TRUE;
+	m_Active = TRUE;
 	m_IsAeroWindow = FALSE;
 	ZeroMemory(&m_Margins, sizeof(MARGINS));
 }
@@ -140,7 +140,7 @@ void CGlasWindow::DrawFrameBackground(CDC* pDC, CRect rect)
 			rframe.right += GetSystemMetrics(SM_CXSIZEFRAME);
 			rframe.bottom += GetSystemMetrics(SM_CYSIZEFRAME);
 
-			p_App->zDrawThemeBackground(hTheme, *pDC, WP_FRAMELEFT, (m_Active && m_Enabled) ? CS_ACTIVE : CS_INACTIVE, rframe, rect);
+			p_App->zDrawThemeBackground(hTheme, *pDC, WP_FRAMELEFT, m_Active ? CS_ACTIVE : CS_INACTIVE, rframe, rect);
 		}
 		else
 		{
@@ -191,6 +191,7 @@ BEGIN_MESSAGE_MAP(CGlasWindow, CWnd)
 	ON_WM_NCHITTEST()
 	ON_WM_ACTIVATEAPP()
 	ON_WM_ENABLE()
+	ON_WM_ACTIVATE()
 	ON_WM_SIZE()
 	ON_WM_GETMINMAXINFO()
 	ON_WM_RBUTTONUP()
@@ -309,28 +310,21 @@ LRESULT CGlasWindow::OnNcHitTest(CPoint point)
 void CGlasWindow::OnActivateApp(BOOL bActive, DWORD dwThreadID)
 {
 	CWnd::OnActivateApp(bActive, dwThreadID);
-	m_Active = bActive;
 
 	if ((!bActive) && (p_PopupWindow))
 		p_PopupWindow->GetOwner()->SendMessage(WM_CLOSEDROPDOWN);
-
-	if (GetDesign()==GWD_THEMED)
-	{
-		Invalidate();
-		RedrawWindow(NULL, NULL, RDW_ALLCHILDREN | RDW_UPDATENOW | RDW_INVALIDATE);
-	}
 }
 
-void CGlasWindow::OnEnable(BOOL bEnable)
+void CGlasWindow::OnActivate(UINT nState, CWnd* pWndOther, BOOL bMinimized)
 {
-	CWnd::OnEnable(bEnable);
-	m_Enabled = bEnable;
+	CWnd::OnActivate(nState, pWndOther, bMinimized);
+	m_Active = (nState!=WA_INACTIVE);
 
-	if (GetDesign()==GWD_THEMED)
+	if ((GetDesign()==GWD_THEMED) && (!bMinimized))
 	{
 		Invalidate();
-		if (bEnable)
-			RedrawWindow(NULL, NULL, RDW_ALLCHILDREN | RDW_UPDATENOW | RDW_INVALIDATE);
+		RedrawWindow(NULL, NULL, RDW_ALLCHILDREN | RDW_INVALIDATE);
+		UpdateWindow();
 	}
 }
 
