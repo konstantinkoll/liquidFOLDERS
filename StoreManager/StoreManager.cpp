@@ -60,7 +60,7 @@ BOOL CStoreManagerApp::InitInstance()
 
 		RegCloseKey(hKey);
 	}
-	
+
 	// Registry auslesen
 	SetRegistryBase(_T("Settings"));
 	m_ShowFilterPane = GetInt(_T("ShowFilterPane"), FALSE);
@@ -149,7 +149,7 @@ INT CStoreManagerApp::ExitInstance()
 void CStoreManagerApp::AddFrame(CMainWnd* pFrame)
 {
 	m_MainFrames.AddTail(pFrame);
-	m_pMainWnd = pFrame;
+	m_pMainWnd = m_pActiveWnd = pFrame;
 
 	if (pFrame->m_IsClipboard)
 		p_Clipboard = pFrame;

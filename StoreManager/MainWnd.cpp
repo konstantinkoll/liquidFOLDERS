@@ -163,7 +163,7 @@ void CMainWnd::OnDestroy()
 
 void CMainWnd::OnSetFocus(CWnd* /*pOldWnd*/)
 {
-	theApp.m_pMainWnd = this;
+	theApp.m_pMainWnd = theApp.m_pActiveWnd = this;
 
 	if (IsWindow(m_wndMainView))
 		m_wndMainView.SetFocus();
