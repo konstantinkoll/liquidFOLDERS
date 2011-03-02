@@ -794,11 +794,14 @@ void CMainView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 		ENSURE(mask.LoadString(IDS_CONTEXTMENU_SORTOPTIONS));
 		tmpStr.Format(mask, theApp.m_Contexts[m_Context]->Name);
 		pPopup->InsertMenu(0, MF_STRING | MF_BYPOSITION, IDM_ORGANIZE_OPTIONS, tmpStr);
-		
-		pPopup->InsertMenu(0, MF_SEPARATOR | MF_BYPOSITION);
 
-		ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_SELECTALL));
-		pPopup->InsertMenu(0, MF_STRING | MF_BYPOSITION, IDM_SELECTALL, tmpStr);
+		if (p_wndFileView->MultiSelectAllowed())
+		{
+			pPopup->InsertMenu(0, MF_SEPARATOR | MF_BYPOSITION);
+
+			ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_SELECTALL));
+			pPopup->InsertMenu(0, MF_STRING | MF_BYPOSITION, IDM_SELECTALL, tmpStr);
+		}
 
 		HBITMAP hBmp = theApp.SetContextMenuIcon(pPopup, IDM_STORES_CREATENEW, IDI_STORE_Internal);
 

@@ -48,7 +48,7 @@ CFileView::CFileView(UINT DataSize, BOOL EnableScrolling, BOOL EnableHover, BOOL
 	m_FooterPos.x = m_FooterPos.y = m_FooterSize.cx = m_FooterSize.cy = 0;
 	m_DataSize = DataSize;
 	m_Nothing = TRUE;
-	m_Hover = m_ShowFocusRect = FALSE;
+	m_Hover = m_ShowFocusRect = m_AllowMultiSelect = FALSE;
 	hThemeList = NULL;
 
 	m_EnableScrolling = EnableScrolling;
@@ -162,6 +162,12 @@ void CFileView::UpdateSearchResult(LFSearchResult* Result, FVPersistentData* Dat
 
 	if (Result)
 	{
+#ifdef DEBUG
+		m_AllowMultiSelect = TRUE;
+#else
+		m_AllowMultiSelect = (Result->m_Context>LFContextStoreHome);
+#endif
+
 		size_t sz = Result->m_ItemCount*m_DataSize;
 		m_ItemData = (BYTE*)malloc(sz);
 		m_ItemDataAllocated = Result->m_ItemCount;
@@ -175,7 +181,8 @@ void CFileView::UpdateSearchResult(LFSearchResult* Result, FVPersistentData* Dat
 				BYTE* v = (BYTE*)Victim;
 				v += ((BYTE*)d)-((BYTE*)m_ItemData);
 
-				d->Selected = ((FVItemData*)v)->Selected;
+				if (m_AllowMultiSelect)
+					d->Selected = ((FVItemData*)v)->Selected;
 			}
 
 		m_DropTarget.Register(this, Result->m_StoreID);
@@ -437,8 +444,16 @@ void CFileView::EnsureVisible(INT idx)
 	}
 }
 
+BOOL CFileView::MultiSelectAllowed()
+{
+	return m_AllowMultiSelect;
+}
+
 void CFileView::SetFocusItem(INT FocusItem, BOOL ShiftSelect)
 {
+	if (!m_AllowMultiSelect)
+		ShiftSelect = FALSE;
+
 	if (ShiftSelect && m_EnableShiftSelection)
 	{
 		if (m_SelectionAnchor==-1)
@@ -1350,7 +1365,7 @@ void CFileView::OnLButtonDown(UINT nFlags, CPoint point)
 	INT idx = ItemAtPosition(point);
 	if (idx!=-1)
 	{
-		if (nFlags & MK_CONTROL)
+		if ((nFlags & MK_CONTROL) && (m_AllowMultiSelect))
 		{
 			InvalidateItem(m_FocusItem);
 			m_FocusItem = idx;
@@ -1383,7 +1398,7 @@ void CFileView::OnLButtonUp(UINT nFlags, CPoint point)
 	}
 	else
 	{
-		if (!(nFlags & MK_CONTROL))
+		if (!(nFlags & MK_CONTROL) || (!m_AllowMultiSelect))
 			OnSelectNone();
 	}
 }
@@ -1402,7 +1417,7 @@ void CFileView::OnRButtonDown(UINT nFlags, CPoint point)
 	INT idx = ItemAtPosition(point);
 	if (idx!=-1)
 	{
-		if (!(nFlags & (MK_SHIFT | MK_CONTROL)))
+		if (!(nFlags & (MK_SHIFT | MK_CONTROL)) || (!m_AllowMultiSelect))
 			if (!IsSelected(idx))
 			{
 				m_FocusItem = idx;
@@ -1447,10 +1462,11 @@ void CFileView::OnRButtonUp(UINT nFlags, CPoint point)
 	}
 	else
 	{
-		if (!(nFlags & MK_CONTROL))
+		if (!(nFlags & MK_CONTROL) || (!m_AllowMultiSelect))
 			OnSelectNone();
 	}
 
+	UpdateWindow();
 	CWnd::OnRButtonUp(nFlags, point);
 }
 
@@ -1517,7 +1533,7 @@ void CFileView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 
 void CFileView::OnSelectAll()
 {
-	if (p_Result)
+	if (p_Result && m_AllowMultiSelect)
 	{
 		for (INT a=0; a<(INT)p_Result->m_ItemCount; a++)
 			SelectItem(a, TRUE, TRUE);
@@ -1541,7 +1557,7 @@ void CFileView::OnSelectNone()
 
 void CFileView::OnSelectInvert()
 {
-	if (p_Result)
+	if (p_Result && m_AllowMultiSelect)
 	{
 		for (INT a=0; a<(INT)p_Result->m_ItemCount; a++)
 			SelectItem(a, !IsSelected(a), TRUE);
@@ -1561,9 +1577,10 @@ void CFileView::OnUpdateCommands(CCmdUI* pCmdUI)
 		b = (m_Context<=LFContextStoreHome) && (_waccess(theApp.m_Path+_T("FileDrop.exe"), 0)==0);
 		break;
 	case IDM_SELECTALL:
-	case IDM_SELECTNONE:
 	case IDM_SELECTINVERT:
-		b = p_Result ? p_Result->m_ItemCount : FALSE;
+		b &= m_AllowMultiSelect;
+	case IDM_SELECTNONE:
+		b &= p_Result ? p_Result->m_ItemCount : FALSE;
 		break;
 	}
 

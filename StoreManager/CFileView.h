@@ -117,6 +117,7 @@ public:
 	INT GetNextSelectedItem(INT idx);
 	void SelectItem(INT idx, BOOL Select=TRUE, BOOL InternalCall=FALSE);
 	void EnsureVisible(INT idx);
+	BOOL MultiSelectAllowed();
 
 protected:
 	INT m_Context;
@@ -143,6 +144,7 @@ protected:
 	BOOL m_EnableLabelEdit;
 	BOOL m_HideFileExt;
 	BOOL m_ShowFocusRect;
+	BOOL m_AllowMultiSelect;
 	INT m_FocusItem;
 	INT m_HotItem;
 	INT m_SelectionAnchor;
