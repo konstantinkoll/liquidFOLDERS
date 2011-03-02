@@ -49,8 +49,8 @@ protected:
 	BreadcrumbItem* m_BreadcrumbForward;
 	LFViewParameters* ActiveViewParameters;
 	LFFilter* ActiveFilter;
-	LFSearchResult* RawFiles;
-	LFSearchResult* CookedFiles;
+	LFSearchResult* m_pRawFiles;
+	LFSearchResult* m_pCookedFiles;
 
 	void UpdateSearchResult(BOOL SetEmpty, FVPersistentData* Data);
 

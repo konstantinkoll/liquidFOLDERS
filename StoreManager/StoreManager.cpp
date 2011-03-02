@@ -149,7 +149,8 @@ INT CStoreManagerApp::ExitInstance()
 void CStoreManagerApp::AddFrame(CMainWnd* pFrame)
 {
 	m_MainFrames.AddTail(pFrame);
-	m_pMainWnd = m_pActiveWnd = pFrame;
+	m_pMainWnd = pFrame;
+	m_pActiveWnd = NULL;
 
 	if (pFrame->m_IsClipboard)
 		p_Clipboard = pFrame;

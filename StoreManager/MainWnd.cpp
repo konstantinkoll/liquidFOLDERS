@@ -7,12 +7,11 @@
 #include "LFCommDlg.h"
 
 
-LFFilter* GetRootFilter(char* RootStore=NULL)
+LFFilter* GetRootFilter(CHAR* RootStore=NULL)
 {
 	LFFilter* f = LFAllocFilter();
 	f->Mode = RootStore ? LFFilterModeStoreHome : LFFilterModeStores;
 	f->Options.AddDrives = true;
-	f->ShowEmptyDrives = (theApp.m_ShowEmptyDrives==TRUE);
 
 	if (RootStore)
 		strcpy_s(f->StoreID, LFKeySize, RootStore);
@@ -30,7 +29,7 @@ CMainWnd::CMainWnd()
 	ActiveViewID = ActiveContextID = -1;
 	ActiveViewParameters = &theApp.m_Views[LFContextDefault];
 	ActiveFilter = NULL;
-	RawFiles = CookedFiles = NULL;
+	m_pRawFiles = m_pCookedFiles = NULL;
 	m_BreadcrumbBack = m_BreadcrumbForward = NULL;
 }
 
@@ -40,9 +39,9 @@ CMainWnd::~CMainWnd()
 		DestroyIcon(m_hIcon);
 	if (ActiveFilter)
 		LFFreeFilter(ActiveFilter);
-	if (CookedFiles!=RawFiles)
-		LFFreeSearchResult(CookedFiles);
-	LFFreeSearchResult(RawFiles);
+	if (m_pCookedFiles!=m_pRawFiles)
+		LFFreeSearchResult(m_pCookedFiles);
+	LFFreeSearchResult(m_pRawFiles);
 	DeleteBreadcrumbs(&m_BreadcrumbBack);
 	DeleteBreadcrumbs(&m_BreadcrumbForward);
 }
@@ -146,11 +145,12 @@ INT CMainWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	UseGlasBackground(Margins);
 
 	// Entweder leeres Suchergebnis oder Stores-Kontext öffnen
-	RawFiles = m_IsClipboard ? LFAllocSearchResult(LFContextClipboard) : LFQuery(ActiveFilter);
+	m_pRawFiles = m_IsClipboard ? LFAllocSearchResult(LFContextClipboard) : LFQuery(ActiveFilter);
 	OnCookFiles();
 
-	m_wndMainView.SetFocus();
 	AdjustLayout();
+	SetFocus();
+
 	return 0;
 }
 
@@ -162,7 +162,8 @@ void CMainWnd::OnDestroy()
 
 void CMainWnd::OnSetFocus(CWnd* /*pOldWnd*/)
 {
-	theApp.m_pMainWnd = theApp.m_pActiveWnd = this;
+	theApp.m_pMainWnd = this;
+	theApp.m_pActiveWnd = NULL;
 
 	if (IsWindow(m_wndMainView))
 		m_wndMainView.SetFocus();
@@ -175,12 +176,12 @@ BOOL CMainWnd::AddClipItem(LFItemDescriptor* i)
 {
 	ASSERT(m_IsClipboard);
 
-	for (UINT a=0; a<RawFiles->m_ItemCount; a++)
-		if ((strcmp(i->StoreID, RawFiles->m_Items[a]->StoreID)==0) &&
-			(strcmp(i->CoreAttributes.FileID, RawFiles->m_Items[a]->CoreAttributes.FileID)==0))
+	for (UINT a=0; a<m_pRawFiles->m_ItemCount; a++)
+		if ((strcmp(i->StoreID, m_pRawFiles->m_Items[a]->StoreID)==0) &&
+			(strcmp(i->CoreAttributes.FileID, m_pRawFiles->m_Items[a]->CoreAttributes.FileID)==0))
 			return FALSE;
 
-	LFAddItemDescriptor(RawFiles, LFAllocItemDescriptor(i));
+	LFAddItemDescriptor(m_pRawFiles, LFAllocItemDescriptor(i));
 	return TRUE;
 }
 
@@ -188,13 +189,13 @@ BOOL CMainWnd::AddClipItem(LFItemDescriptor* i)
 
 void CMainWnd::UpdateSearchResult(BOOL SetEmpty, FVPersistentData* Data)
 {
-	if ((!SetEmpty) && (CookedFiles))
+	if ((!SetEmpty) && (m_pCookedFiles))
 	{
-		ActiveContextID = CookedFiles->m_Context;
+		ActiveContextID = m_pCookedFiles->m_Context;
 		ActiveViewParameters = &theApp.m_Views[ActiveContextID];
 	}
 
-	m_wndMainView.UpdateSearchResult(SetEmpty ? NULL : RawFiles, SetEmpty ? NULL : CookedFiles, Data);
+	m_wndMainView.UpdateSearchResult(SetEmpty ? NULL : m_pRawFiles, SetEmpty ? NULL : m_pCookedFiles, Data);
 
 	ActiveViewID = ActiveViewParameters->Mode;
 }
@@ -303,31 +304,31 @@ void CMainWnd::NavigateTo(LFFilter* f, UINT NavMode, FVPersistentData* Data, INT
 	INT OldContext = -1;
 	LFSearchResult* victim = NULL;
 
-	if (RawFiles)
+	if (m_pRawFiles)
 	{
-		OldContext = RawFiles->m_Context;
-		if (RawFiles!=CookedFiles)
-			victim = RawFiles;
+		OldContext = m_pRawFiles->m_Context;
+		if (m_pRawFiles!=m_pCookedFiles)
+			victim = m_pRawFiles;
 	}
 
-	if ((RawFiles) && (FirstAggregate!=-1) && (LastAggregate!=-1))
+	if ((m_pRawFiles) && (FirstAggregate!=-1) && (LastAggregate!=-1))
 	{
-		RawFiles = LFQuery(f, RawFiles, FirstAggregate, LastAggregate);
-		if ((victim) && (victim!=RawFiles))
+		m_pRawFiles = LFQuery(f, m_pRawFiles, FirstAggregate, LastAggregate);
+		if ((victim) && (victim!=m_pRawFiles))
 			LFFreeSearchResult(victim);
 	}
 	else
 	{
 		if (victim)
 			LFFreeSearchResult(victim);
-		RawFiles = LFQuery(ActiveFilter);
+		m_pRawFiles = LFQuery(ActiveFilter);
 	}
 
 	OnCookFiles((WPARAM)Data);
 
-	if (CookedFiles->m_LastError>LFCancel)
+	if (m_pCookedFiles->m_LastError>LFCancel)
 	{
-		m_wndMainView.ShowNotification(ActiveFilter->Result.FilterType==LFFilterTypeError ? ENT_ERROR : ENT_WARNING, CookedFiles->m_LastError, CookedFiles->m_LastError==LFIndexAccessError ? IDM_STORES_REPAIRCORRUPTEDINDEX : 0);
+		m_wndMainView.ShowNotification(ActiveFilter->Result.FilterType==LFFilterTypeError ? ENT_ERROR : ENT_WARNING, m_pCookedFiles->m_LastError, m_pCookedFiles->m_LastError==LFIndexAccessError ? IDM_STORES_REPAIRCORRUPTEDINDEX : 0);
 	}
 	else
 		if (theApp.m_NagCounter!=0)
@@ -340,13 +341,13 @@ void CMainWnd::UpdateHistory()
 {
 	if (!m_IsClipboard)
 	{
-		if (RawFiles)
+		if (m_pRawFiles)
 		{
-			ActiveFilter->Result.FileCount = RawFiles->m_FileCount;
-			ActiveFilter->Result.FileSize = RawFiles->m_FileSize;
+			ActiveFilter->Result.FileCount = m_pRawFiles->m_FileCount;
+			ActiveFilter->Result.FileSize = m_pRawFiles->m_FileSize;
 		}
-		if (CookedFiles)
-			ActiveFilter->Result.ItemCount = CookedFiles->m_ItemCount;
+		if (m_pCookedFiles)
+			ActiveFilter->Result.ItemCount = m_pCookedFiles->m_ItemCount;
 	}
 
 //	if (m_wndHistory)
@@ -363,7 +364,7 @@ void CMainWnd::OnItemOpen()
 	INT idx = m_wndMainView.GetSelectedItem();
 	if (idx!=-1)
 	{
-		LFItemDescriptor* i = CookedFiles->m_Items[idx];
+		LFItemDescriptor* i = m_pCookedFiles->m_Items[idx];
 
 		if (i->NextFilter)
 		{
@@ -428,30 +429,30 @@ void CMainWnd::OnUpdateSortOptions()
 
 LRESULT CMainWnd::OnCookFiles(WPARAM wParam, LPARAM /*lParam*/)
 {
-	LFSearchResult* Victim = CookedFiles;
+	LFSearchResult* Victim = m_pCookedFiles;
 
-	LFViewParameters* vp = &theApp.m_Views[RawFiles->m_Context];
+	LFViewParameters* vp = &theApp.m_Views[m_pRawFiles->m_Context];
 	LFAttributeDescriptor* attr = theApp.m_Attributes[vp->SortBy];
 
 	if (((!m_IsClipboard) && (vp->AutoDirs) && (!ActiveFilter->Options.IsSubfolder)) || (vp->Mode>LFViewPreview))
 	{
-		CookedFiles = LFGroupSearchResult(RawFiles, vp->SortBy, (vp->Mode<=LFViewPreview) && (vp->Descending==TRUE), attr->IconID,
+		m_pCookedFiles = LFGroupSearchResult(m_pRawFiles, vp->SortBy, (vp->Mode<=LFViewPreview) && (vp->Descending==TRUE), attr->IconID,
 			(vp->Mode>LFViewPreview) || ((attr->Type!=LFTypeTime) && (vp->SortBy!=LFAttrFileName) && (vp->SortBy!=LFAttrStoreID) && (vp->SortBy!=LFAttrFileID)),
 			ActiveFilter);
 	}
 	else
 	{
-		LFSortSearchResult(RawFiles, vp->SortBy, (vp->Mode<=LFViewPreview) && (vp->Descending==TRUE));
-		CookedFiles = RawFiles;
+		LFSortSearchResult(m_pRawFiles, vp->SortBy, (vp->Mode<=LFViewPreview) && (vp->Descending==TRUE));
+		m_pCookedFiles = m_pRawFiles;
 	}
 
 	UpdateSearchResult(FALSE, (FVPersistentData*)wParam);
 	UpdateHistory();
 
-	if ((Victim) && (Victim!=RawFiles))
+	if ((Victim) && (Victim!=m_pRawFiles))
 		LFFreeSearchResult(Victim);
 
-	if ((CookedFiles->m_LastError<=LFCancel) && (!LFIsLicensed()))
+	if ((m_pCookedFiles->m_LastError<=LFCancel) && (!LFIsLicensed()))
 		if ((++theApp.m_NagCounter)>20)
 		{
 			CString tmpStr;
@@ -461,7 +462,7 @@ LRESULT CMainWnd::OnCookFiles(WPARAM wParam, LPARAM /*lParam*/)
 			theApp.m_NagCounter = 0;
 		}
 
-	return CookedFiles->m_LastError;
+	return m_pCookedFiles->m_LastError;
 }
 
 void CMainWnd::OnUpdateFooter()
@@ -472,8 +473,8 @@ void CMainWnd::OnUpdateFooter()
 
 LRESULT CMainWnd::OnDrivesChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)
 {
-	if (CookedFiles)
-		switch (CookedFiles->m_Context)
+	if (m_pCookedFiles)
+		switch (m_pCookedFiles->m_Context)
 		{
 		case LFContextStores:
 			PostMessage(WM_RELOAD);
@@ -485,8 +486,8 @@ LRESULT CMainWnd::OnDrivesChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)
 
 LRESULT CMainWnd::OnStoresChanged(WPARAM /*wParam*/, LPARAM lParam)
 {
-	if ((CookedFiles) && (GetSafeHwnd()!=(HWND)lParam))
-		switch (CookedFiles->m_Context)
+	if ((m_pCookedFiles) && (GetSafeHwnd()!=(HWND)lParam))
+		switch (m_pCookedFiles->m_Context)
 		{
 		case LFContextStores:
 			PostMessage(WM_RELOAD);
@@ -498,8 +499,8 @@ LRESULT CMainWnd::OnStoresChanged(WPARAM /*wParam*/, LPARAM lParam)
 
 LRESULT CMainWnd::OnStoreAttributesChanged(WPARAM wParam, LPARAM lParam)
 {
-	if ((CookedFiles) && (GetSafeHwnd()!=(HWND)lParam))
-		switch (CookedFiles->m_Context)
+	if ((m_pCookedFiles) && (GetSafeHwnd()!=(HWND)lParam))
+		switch (m_pCookedFiles->m_Context)
 		{
 		case LFContextStores:
 			PostMessage(WM_RELOAD);
