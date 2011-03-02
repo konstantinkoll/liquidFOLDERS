@@ -11,6 +11,8 @@ LFFilter* GetRootFilter(CHAR* RootStore=NULL)
 {
 	LFFilter* f = LFAllocFilter();
 	f->Mode = RootStore ? LFFilterModeStoreHome : LFFilterModeStores;
+	f->ShowEmptyDrives = (theApp.m_ShowEmptyDrives==TRUE);
+	f->ShowEmptyDomains = (theApp.m_ShowEmptyDomains==TRUE);
 	f->Options.AddDrives = true;
 
 	if (RootStore)
