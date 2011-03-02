@@ -180,14 +180,14 @@ void CMainView::SetHeader()
 	}
 }
 
-void CMainView::UpdateViewOptions(INT Context)
+void CMainView::UpdateViewOptions()
 {
-	if (((Context==m_Context) || (Context==-1)) && (p_wndFileView))
+	if (p_wndFileView)
 	{
 		FVPersistentData Data;
 		GetPersistentData(Data);
-		if (!CreateFileView(theApp.m_Views[Context].Mode, &Data))
-			p_wndFileView->UpdateViewOptions(Context);
+		if (!CreateFileView(theApp.m_Views[m_Context].Mode, &Data))
+			p_wndFileView->UpdateViewOptions(m_Context);
 
 		SetHeaderButtons();
 	}
@@ -222,6 +222,16 @@ void CMainView::UpdateFooter()
 {
 	if (p_wndFileView)
 		p_wndFileView->UpdateFooter();
+}
+
+INT CMainView::GetContext()
+{
+	return m_Context;
+}
+
+INT CMainView::GetViewID()
+{
+	return m_ViewID;
 }
 
 void CMainView::DismissNotification()
@@ -1034,6 +1044,8 @@ void CMainView::OnSort(UINT nID)
 		theApp.m_Views[m_Context].Descending = theApp.m_Attributes[nID]->PreferDescendingSort;
 		theApp.UpdateSortOptions(m_Context);
 	}
+
+	SetFocus();
 }
 
 void CMainView::OnUpdateSortCommands(CCmdUI* pCmdUI)
@@ -1053,6 +1065,8 @@ void CMainView::OnView(UINT nID)
 		theApp.m_Views[m_Context].Mode = nID;
 		theApp.UpdateViewOptions(m_Context);
 	}
+
+	SetFocus();
 }
 
 void CMainView::OnUpdateViewCommands(CCmdUI* pCmdUI)

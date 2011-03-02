@@ -20,9 +20,11 @@ public:
 	virtual BOOL OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo);
 
 	BOOL Create(BOOL IsClipboard, CWnd* pParentWnd, UINT nID);
-	void UpdateViewOptions(INT Context);
+	void UpdateViewOptions();
 	void UpdateSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data=NULL);
 	void UpdateFooter();
+	INT GetContext();
+	INT GetViewID();
 	void DismissNotification();
 	void ShowNotification(UINT Type, CString Message, UINT Command=0);
 	void ShowNotification(UINT Type, UINT ResID, UINT Command=0);

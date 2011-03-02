@@ -33,12 +33,12 @@ public:
 	virtual void AdjustLayout();
 
 	BOOL Create(BOOL IsClipboard, CHAR* RootStore=NULL);
+	INT GetContext();
+	INT GetViewID();
 	BOOL AddClipItem(LFItemDescriptor* i);
 	BOOL UpdateSelectedItems(LFVariantData* value1, LFVariantData* value2=NULL, LFVariantData* value3=NULL);
 
 	BOOL m_IsClipboard;
-	INT ActiveContextID;
-	INT ActiveViewID;
 
 protected:
 	HICON m_hIcon;
@@ -47,12 +47,9 @@ protected:
 	CMainView m_wndMainView;
 	BreadcrumbItem* m_BreadcrumbBack;
 	BreadcrumbItem* m_BreadcrumbForward;
-	LFViewParameters* ActiveViewParameters;
 	LFFilter* ActiveFilter;
 	LFSearchResult* m_pRawFiles;
 	LFSearchResult* m_pCookedFiles;
-
-	void UpdateSearchResult(BOOL SetEmpty, FVPersistentData* Data);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();

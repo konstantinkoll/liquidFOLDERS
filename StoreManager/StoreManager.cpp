@@ -298,8 +298,8 @@ void CStoreManagerApp::Broadcast(INT Context, INT View, UINT cmdMsg)
 	for (POSITION p=m_MainFrames.GetHeadPosition(); p; )
 	{
 		CMainWnd* pFrame = m_MainFrames.GetNext(p);
-		if ((pFrame->ActiveContextID==Context) || (Context==-1))
-			if ((pFrame->ActiveViewID==View) || (View==-1))
+		if ((pFrame->GetContext()==Context) || (Context==-1))
+			if ((pFrame->GetViewID()==View) || (View==-1))
 				pFrame->PostMessage(cmdMsg);
 	}
 }

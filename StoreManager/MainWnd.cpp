@@ -26,8 +26,6 @@ LFFilter* GetRootFilter(CHAR* RootStore=NULL)
 CMainWnd::CMainWnd()
 {
 	m_hIcon = NULL;
-	ActiveViewID = ActiveContextID = -1;
-	ActiveViewParameters = &theApp.m_Views[LFContextDefault];
 	ActiveFilter = NULL;
 	m_pRawFiles = m_pCookedFiles = NULL;
 	m_BreadcrumbBack = m_BreadcrumbForward = NULL;
@@ -93,6 +91,29 @@ void CMainWnd::AdjustLayout()
 	m_wndHistory.SetWindowPos(NULL, rect.left+JournalWidth+7, rect.top+(m_Margins.cyTopHeight-HistoryHeight-3)/2, rect.Width()-JournalWidth-7, HistoryHeight, SWP_NOACTIVATE | SWP_NOZORDER);
 
 	m_wndMainView.SetWindowPos(NULL, rect.left, rect.top+m_Margins.cyTopHeight, rect.Width(), rect.bottom-m_Margins.cyTopHeight, SWP_NOACTIVATE | SWP_NOZORDER);
+}
+
+INT CMainWnd::GetContext()
+{
+	return m_wndMainView.GetContext();
+}
+
+INT CMainWnd::GetViewID()
+{
+	return m_wndMainView.GetViewID();
+}
+
+BOOL CMainWnd::AddClipItem(LFItemDescriptor* i)
+{
+	ASSERT(m_IsClipboard);
+
+	for (UINT a=0; a<m_pRawFiles->m_ItemCount; a++)
+		if ((strcmp(i->StoreID, m_pRawFiles->m_Items[a]->StoreID)==0) &&
+			(strcmp(i->CoreAttributes.FileID, m_pRawFiles->m_Items[a]->CoreAttributes.FileID)==0))
+			return FALSE;
+
+	LFAddItemDescriptor(m_pRawFiles, LFAllocItemDescriptor(i));
+	return TRUE;
 }
 
 
@@ -172,33 +193,8 @@ void CMainWnd::OnSetFocus(CWnd* /*pOldWnd*/)
 
 
 
-BOOL CMainWnd::AddClipItem(LFItemDescriptor* i)
-{
-	ASSERT(m_IsClipboard);
-
-	for (UINT a=0; a<m_pRawFiles->m_ItemCount; a++)
-		if ((strcmp(i->StoreID, m_pRawFiles->m_Items[a]->StoreID)==0) &&
-			(strcmp(i->CoreAttributes.FileID, m_pRawFiles->m_Items[a]->CoreAttributes.FileID)==0))
-			return FALSE;
-
-	LFAddItemDescriptor(m_pRawFiles, LFAllocItemDescriptor(i));
-	return TRUE;
-}
 
 
-
-void CMainWnd::UpdateSearchResult(BOOL SetEmpty, FVPersistentData* Data)
-{
-	if ((!SetEmpty) && (m_pCookedFiles))
-	{
-		ActiveContextID = m_pCookedFiles->m_Context;
-		ActiveViewParameters = &theApp.m_Views[ActiveContextID];
-	}
-
-	m_wndMainView.UpdateSearchResult(SetEmpty ? NULL : m_pRawFiles, SetEmpty ? NULL : m_pCookedFiles, Data);
-
-	ActiveViewID = ActiveViewParameters->Mode;
-}
 
 BOOL CMainWnd::UpdateSelectedItems(LFVariantData* value1, LFVariantData* value2, LFVariantData* value3)
 {
@@ -296,7 +292,7 @@ void CMainWnd::NavigateTo(LFFilter* f, UINT NavMode, FVPersistentData* Data, INT
 
 	// Flush the search result so no future paint will access the old search result
 	if (NavMode<NAVMODE_RELOAD)
-		UpdateSearchResult(TRUE, 0);
+		m_wndMainView.UpdateSearchResult(NULL, NULL, NULL);
 
 	ActiveFilter->ShowEmptyDrives = (theApp.m_ShowEmptyDrives==TRUE);
 	ActiveFilter->ShowEmptyDomains = (theApp.m_ShowEmptyDomains==TRUE);
@@ -403,17 +399,15 @@ void CMainWnd::OnItemOpen()
 
 void CMainWnd::OnUpdateViewOptions()
 {
-	if ((ActiveViewID>LFViewPreview)!=(ActiveViewParameters->Mode>LFViewPreview))
+	if ((m_wndMainView.GetViewID()>LFViewPreview)!=(theApp.m_Views[m_wndMainView.GetContext()].Mode>LFViewPreview))
 	{
 		m_wndMainView.SelectNone();
 		OnCookFiles();
 	}
 	else
 	{
-		m_wndMainView.UpdateViewOptions(ActiveContextID);
+		m_wndMainView.UpdateViewOptions();
 	}
-
-	ActiveViewID = ActiveViewParameters->Mode;
 }
 
 void CMainWnd::OnUpdateSortOptions()
@@ -423,8 +417,6 @@ void CMainWnd::OnUpdateSortOptions()
 	FVPersistentData Data;
 	m_wndMainView.GetPersistentData(Data);
 	OnCookFiles((WPARAM)&Data);
-
-	ActiveViewID = ActiveViewParameters->Mode;
 }
 
 LRESULT CMainWnd::OnCookFiles(WPARAM wParam, LPARAM /*lParam*/)
@@ -446,7 +438,7 @@ LRESULT CMainWnd::OnCookFiles(WPARAM wParam, LPARAM /*lParam*/)
 		m_pCookedFiles = m_pRawFiles;
 	}
 
-	UpdateSearchResult(FALSE, (FVPersistentData*)wParam);
+	m_wndMainView.UpdateSearchResult(m_pRawFiles, m_pCookedFiles, (FVPersistentData*)wParam);
 	UpdateHistory();
 
 	if ((Victim) && (Victim!=m_pRawFiles))
