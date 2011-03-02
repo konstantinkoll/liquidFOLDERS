@@ -1625,67 +1625,66 @@ BEGIN
     IDR_CLIPBOARD           "Presse-papiers"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
-    IDS_VIEWGROUP1          "Listen"
-    IDS_VIEWGROUP2          "Erweiterte Ansichten"
-    IDS_CONTEXTMENU_SELECTALL "Alles &markieren\tStrg+A"
+    IDS_VIEWGROUP1          "Des listes"
+    IDS_VIEWGROUP2          "L'affichages élargis"
+    IDS_CONTEXTMENU_SELECTALL "Sélectionner &tout\tCtrl+A"
     IDS_CONTEXTMENU_SORTOPTIONS """%s"" &organiser après..."
-    IDS_CONTEXTMENU_AUTODIRS "In Unterordner &gruppieren"
+    IDS_CONTEXTMENU_AUTODIRS "&Grouper dans sous-dossiers"
     IDS_CONTEXTMENU_VIEWOPTIONS """%s"" a&fficher comme..."
     IDS_CONTEXTMENU_OPEN    "&Ouvrir"
     IDS_CONTEXTMENU_OPENWITH "Ouvrir &avec..."
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_CONTEXTMENU_OPENGOOGLEEARTH "Ouvrir avec &Google Earth"
-    IDS_CONTEXTMENU_REMEMBER "Mer&ken"
-    IDS_CONTEXTMENU_REMOVE  "Von Zwischenablage &entfernen"
+    IDS_CONTEXTMENU_REMEMBER "Remar&quer"
+    IDS_CONTEXTMENU_REMOVE  "Enlèver du &presse-papiers"
     IDS_CONTEXTMENU_AUTOSIZEALL "Adapter &tous les larges de colonnes"
-    IDS_CONTEXTMENU_MORE    "&Mehr..."
-    IDS_CONTEXTMENU_TIME    "&Zeit"
-    IDS_CONTEXTMENU_LOCATION "&Ort"
-    IDS_CONTEXTMENU_DIMENSION "&Abmessungen"
-    IDS_TXTFILEFILTER       "Textdatei"
+    IDS_CONTEXTMENU_MORE    "&Plus..."
+    IDS_CONTEXTMENU_TIME    "&Temps"
+    IDS_CONTEXTMENU_LOCATION "&Lieu"
+    IDS_CONTEXTMENU_DIMENSION "&Mesurages"
+    IDS_TXTFILEFILTER       "Fichier texte"
     IDS_XMLFILEFILTER       "Extensible Markup Language"
-    IDS_ATTRIBUTENOTSORTABLE 
-                            "Diese Eigenschaft ist zur Sortierung nicht geeignet."
-    IDS_NOITEMSSELECTED     "Keine Objekte ausgewählt"
-    IDS_MULTIPLETYPESSELECTED "Unterschiedliche Typen, %d Objekte"
-    IDS_YOULOOKAT           "Sie schauen auf %s"
-    IDS_NOTHINGTODISPLAY    "Es gibt nichts anzuzeigen."
-    IDS_AUTOMATIC           "Automatisch wählen"
+    IDS_ATTRIBUTENOTSORTABLE "Cette qualité ne convient pas au triage."
+    IDS_NOITEMSSELECTED     "Aucun élément choisi"
+    IDS_MULTIPLETYPESSELECTED "Types, éléments %d différents"
+    IDS_YOULOOKAT           "Vous regardez %s"
+    IDS_NOTHINGTODISPLAY    "Il n'y a rien indiquer."
+    IDS_AUTOMATIC           "Choisir automatiquement"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
-    IDS_ILLEGALYEAR         "Sie können nur die Jahre von 1900 bis 2100 anzeigen."
-    IDS_LEGEND              "Legende"
-    IDS_LEGEND_BLUE         "Wartungsarbeiten erforderlich"
-    IDS_LEGEND_RED          "Beschädigt (Dateikörper fehlt)"
-    IDS_LEGEND_RARE         "Selten"
-    IDS_LEGEND_COMMON       "Häufig"
-    IDS_LEGEND_OLDER        "Älter"
-    IDS_LEGEND_NEWER        "Neuer"
-    IDS_STATISTICS          "Statistik"
-    IDS_STATISTICS_BYCOUNT  "Nach Anzahl"
-    IDS_STATISTICS_BYSIZE   "Nach Größe"
-    IDS_STATISTICS_OTHER    "Andere"
-    IDS_SUBFOLDERS_MANDATORY "Unterordner in dieser Ansicht erforderlich"
-    IDS_SUBFOLDERS_NOTAVAIL "Unterordner im Kontext nicht verfügbar"
-    IDS_NOLICENSE           "Sie nutzen eine unregistrierte Kopie von liquidFOLDERS. liquidFOLDERS ist Shareware – wenn Sie die Software regelmäßig nutzen, müssen Sie eine Lizenz erwerben!"
+    IDS_ILLEGALYEAR         "Vous pouvez indiquer seulement les années de 1900 à 2100."
+    IDS_LEGEND              "Légende"
+    IDS_LEGEND_BLUE         "Travail d'entretien nécessaire"
+    IDS_LEGEND_RED          "Mutilé (le corps de fichier manque)"
+    IDS_LEGEND_RARE         "Rare"
+    IDS_LEGEND_COMMON       "Fréquent"
+    IDS_LEGEND_OLDER        "Âgé"
+    IDS_LEGEND_NEWER        "Plus à neuf"
+    IDS_STATISTICS          "Statistique"
+    IDS_STATISTICS_BYCOUNT  "Après le nombre"
+    IDS_STATISTICS_BYSIZE   "Après la grandeur"
+    IDS_STATISTICS_OTHER    "D'autres"
+    IDS_SUBFOLDERS_MANDATORY "Sous-dossier dans cet avis nécessaire"
+    IDS_SUBFOLDERS_NOTAVAIL "Sous-dossier dans le contexte non disponible"
+    IDS_NOLICENSE           "Vous utilisez une copie non enregistrée de liquidFOLDERS. liquidFOLDERS est shareware – si vous utilisez régulièrement le logiciel, vous devez acquérir une licence!"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
-    IDS_VATTR_DRIVELETTER   "Laufwerksbuchstabe"
-    IDS_VATTR_MAINTENANCETIME "Maintenance"
+    IDS_VATTR_DRIVELETTER   "Lettres aux lecteurs"
+    IDS_VATTR_MAINTENANCETIME "Entretien"
     IDS_VATTR_LASTSEEN      "Finalement vu"
     IDS_VATTR_GUID          "GUID"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_VATTR_PATH_DAT      "Données"
     IDS_VATTR_PATH_IDX_MAIN "Index principal"
@@ -1695,28 +1694,28 @@ BEGIN
     IDS_VATTR_IATA_COUNTRY  "Territoire"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
-    IDM_ORGANIZE            "Wählt die Eigenschaft, nach der die Objekte in diesem Kontext organisiert werden.\nOrganisieren nach"
+    IDM_ORGANIZE            "Choisit la qualité après quoi les éléments sont organisés dans ce contexte .\nOrganiser après"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
-    IDM_VIEW                "Wählt die Ansicht für diesen Kontext.\nAnzeigen als"
-    IDM_VIEW_LARGEICONS     "Große Symbole"
-    IDM_VIEW_SMALLICONS     "Kleine Symbole"
+    IDM_VIEW                "Choisit l'avis pour ce contexte.\nAfficher comme"
+    IDM_VIEW_LARGEICONS     "Grands symboles"
+    IDM_VIEW_SMALLICONS     "Petits symboles"
     IDM_VIEW_LIST           "Liste"
-    IDM_VIEW_DETAILS        "Details"
-    IDM_VIEW_TILES          "Kacheln"
-    IDM_VIEW_CONTENT        "Inhalt"
+    IDM_VIEW_DETAILS        "Détails"
+    IDM_VIEW_TILES          "Cadres de page"
+    IDM_VIEW_CONTENT        "Contenu"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
-    IDM_VIEW_PREVIEW        "Vorschau"
-    IDM_VIEW_CALENDAR       "Kalender"
-    IDM_VIEW_GLOBE          "Globus"
-    IDM_VIEW_TAGCLOUD       "Wortwolke"
+    IDM_VIEW_PREVIEW        "Aperçu"
+    IDM_VIEW_CALENDAR       "Calendrier"
+    IDM_VIEW_GLOBE          "Globe"
+    IDM_VIEW_TAGCLOUD       "Nuage de mot"
 END
 
 #endif    // Französisch (neutral) resources
