@@ -73,8 +73,6 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
-	void Remember(CMainWnd* clip);
-	void InitializeRibbon();
 	void NavigateTo(LFFilter* f, UINT NavMode=NAVMODE_NORMAL, FVPersistentData* Data=NULL, INT FirstAggregate=-1, INT LastAggregate=-1);
 	void UpdateHistory();
 };

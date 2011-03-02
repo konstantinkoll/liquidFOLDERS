@@ -118,158 +118,10 @@ BOOL CMainWnd::AddClipItem(LFItemDescriptor* i)
 	return TRUE;
 }
 
-
-BEGIN_MESSAGE_MAP(CMainWnd, CGlasWindow)
-	ON_WM_CREATE()
-	ON_WM_DESTROY()
-	ON_WM_SETFOCUS()
-	ON_WM_CLOSE()
-
-	ON_COMMAND(ID_NAV_BACK, OnNavigateBack)
-	ON_COMMAND(ID_NAV_FORWARD, OnNavigateForward)
-	ON_COMMAND(ID_NAV_RELOAD, OnNavigateReload)
-	ON_UPDATE_COMMAND_UI_RANGE(ID_NAV_BACK, ID_NAV_RELOAD, OnUpdateNavCommands)
-
-	ON_COMMAND(IDM_ITEM_OPEN, OnItemOpen)
-
-	ON_MESSAGE_VOID(WM_UPDATEVIEWOPTIONS, OnUpdateViewOptions)
-	ON_MESSAGE_VOID(WM_UPDATESORTOPTIONS, OnUpdateSortOptions)
-	ON_MESSAGE_VOID(WM_RELOAD, OnNavigateReload)
-	ON_MESSAGE(WM_COOKFILES, OnCookFiles)
-	ON_MESSAGE_VOID(WM_UPDATEFOOTER, OnUpdateFooter)
-
-	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->DrivesChanged, OnDrivesChanged)
-	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoresChanged, OnStoresChanged)
-	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoreAttributesChanged, OnStoreAttributesChanged)
-	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->DefaultStoreChanged, OnStoresChanged)
-END_MESSAGE_MAP()
-
-INT CMainWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
-{
-	if (CGlasWindow::OnCreate(lpCreateStruct)==-1)
-		return -1;
-
-	theApp.AddFrame(this);
-
-	// History
-	if (!m_wndHistory.Create(this, 2))
-		return -1;
-
-	// Journal-Button
-	if (!m_wndJournalButton.Create(m_wndHistory.GetPreferredHeight(), this, 1))
-		return -1;
-
-	// Hauptansicht erstellen
-	if (!m_wndMainView.Create(m_IsClipboard, this, 3))
-		return -1;
-
-	// Aero
-	MARGINS Margins = { 0, 0, max(m_wndJournalButton.GetPreferredHeight()+8, m_wndHistory.GetPreferredHeight()+11), 0 };
-	UseGlasBackground(Margins);
-
-	// Entweder leeres Suchergebnis oder Stores-Kontext öffnen
-	m_pRawFiles = m_IsClipboard ? LFAllocSearchResult(LFContextClipboard) : LFQuery(ActiveFilter);
-	OnCookFiles();
-
-	AdjustLayout();
-	SetFocus();
-
-	return 0;
-}
-
-void CMainWnd::OnDestroy()
-{
-	CGlasWindow::OnDestroy();
-	theApp.KillFrame(this);
-}
-
-void CMainWnd::OnSetFocus(CWnd* /*pOldWnd*/)
-{
-	theApp.m_pMainWnd = this;
-	theApp.m_pActiveWnd = NULL;
-
-	if (IsWindow(m_wndMainView))
-		m_wndMainView.SetFocus();
-}
-
-
-
-
-
-
-
 BOOL CMainWnd::UpdateSelectedItems(LFVariantData* value1, LFVariantData* value2, LFVariantData* value3)
 {
 	return m_wndMainView.UpdateItems(value1, value2, value3);
 }
-
-
-
-void CMainWnd::OnNavigateBack()
-{
-	ASSERT(!m_IsClipboard);
-
-	if (ActiveFilter)
-	{
-		LFFilter* f = ActiveFilter;
-		FVPersistentData Data;
-		m_wndMainView.GetPersistentData(Data);
-		ActiveFilter = NULL;
-
-		AddBreadcrumbItem(&m_BreadcrumbForward, f, Data);
-		ConsumeBreadcrumbItem(&m_BreadcrumbBack, &f, &Data);
-
-		NavigateTo(f, NAVMODE_HISTORY, &Data);
-	}
-}
-
-void CMainWnd::OnNavigateForward()
-{
-	ASSERT(!m_IsClipboard);
-
-	if (ActiveFilter)
-	{
-		LFFilter* f = ActiveFilter;
-		FVPersistentData Data;
-		m_wndMainView.GetPersistentData(Data);
-		ActiveFilter = NULL;
-
-		AddBreadcrumbItem(&m_BreadcrumbBack, f, Data);
-		ConsumeBreadcrumbItem(&m_BreadcrumbForward, &f, &Data);
-
-		NavigateTo(f, NAVMODE_HISTORY, &Data);
-	}
-}
-
-void CMainWnd::OnNavigateReload()
-{
-	ASSERT(!m_IsClipboard);
-
-	if (ActiveFilter)
-	{
-		FVPersistentData Data;
-		m_wndMainView.GetPersistentData(Data);
-		NavigateTo(LFAllocFilter(ActiveFilter), NAVMODE_RELOAD, &Data);
-	}
-}
-
-void CMainWnd::OnUpdateNavCommands(CCmdUI* pCmdUI)
-{
-	BOOL b = !m_IsClipboard;
-
-	switch (pCmdUI->m_nID)
-	{
-	case ID_NAV_BACK:
-		b &= (m_BreadcrumbBack!=NULL);
-		break;
-	case ID_NAV_FORWARD:
-		b &= (m_BreadcrumbForward!=NULL);
-		break;
-	}
-
-	pCmdUI->Enable(b);
-}
-
 
 void CMainWnd::NavigateTo(LFFilter* f, UINT NavMode, FVPersistentData* Data, INT FirstAggregate, INT LastAggregate)
 {
@@ -354,8 +206,149 @@ void CMainWnd::UpdateHistory()
 
 
 
+BEGIN_MESSAGE_MAP(CMainWnd, CGlasWindow)
+	ON_WM_CREATE()
+	ON_WM_DESTROY()
+	ON_WM_SETFOCUS()
+	ON_WM_CLOSE()
+
+	ON_COMMAND(ID_NAV_BACK, OnNavigateBack)
+	ON_COMMAND(ID_NAV_FORWARD, OnNavigateForward)
+	ON_COMMAND(ID_NAV_RELOAD, OnNavigateReload)
+	ON_UPDATE_COMMAND_UI_RANGE(ID_NAV_BACK, ID_NAV_RELOAD, OnUpdateNavCommands)
+
+	ON_COMMAND(IDM_ITEM_OPEN, OnItemOpen)
+
+	ON_MESSAGE_VOID(WM_UPDATEVIEWOPTIONS, OnUpdateViewOptions)
+	ON_MESSAGE_VOID(WM_UPDATESORTOPTIONS, OnUpdateSortOptions)
+	ON_MESSAGE_VOID(WM_RELOAD, OnNavigateReload)
+	ON_MESSAGE(WM_COOKFILES, OnCookFiles)
+	ON_MESSAGE_VOID(WM_UPDATEFOOTER, OnUpdateFooter)
+
+	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->DrivesChanged, OnDrivesChanged)
+	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoresChanged, OnStoresChanged)
+	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoreAttributesChanged, OnStoreAttributesChanged)
+	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->DefaultStoreChanged, OnStoresChanged)
+END_MESSAGE_MAP()
+
+INT CMainWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
+{
+	if (CGlasWindow::OnCreate(lpCreateStruct)==-1)
+		return -1;
+
+	theApp.AddFrame(this);
+
+	// History
+	if (!m_wndHistory.Create(this, 2))
+		return -1;
+
+	// Journal-Button
+	if (!m_wndJournalButton.Create(m_wndHistory.GetPreferredHeight(), this, 1))
+		return -1;
+
+	// Hauptansicht erstellen
+	if (!m_wndMainView.Create(m_IsClipboard, this, 3))
+		return -1;
+
+	// Aero
+	MARGINS Margins = { 0, 0, max(m_wndJournalButton.GetPreferredHeight()+8, m_wndHistory.GetPreferredHeight()+11), 0 };
+	UseGlasBackground(Margins);
+
+	// Entweder leeres Suchergebnis oder Stores-Kontext öffnen
+	m_pRawFiles = m_IsClipboard ? LFAllocSearchResult(LFContextClipboard) : LFQuery(ActiveFilter);
+	OnCookFiles();
+
+	AdjustLayout();
+	SetFocus();
+
+	return 0;
+}
+
+void CMainWnd::OnDestroy()
+{
+	CGlasWindow::OnDestroy();
+	theApp.KillFrame(this);
+}
+
+void CMainWnd::OnSetFocus(CWnd* /*pOldWnd*/)
+{
+	theApp.m_pMainWnd = this;
+	theApp.m_pActiveWnd = NULL;
+
+	if (IsWindow(m_wndMainView))
+		m_wndMainView.SetFocus();
+}
 
 
+// Navigation
+
+void CMainWnd::OnNavigateBack()
+{
+	ASSERT(!m_IsClipboard);
+
+	if (ActiveFilter)
+	{
+		LFFilter* f = ActiveFilter;
+		FVPersistentData Data;
+		m_wndMainView.GetPersistentData(Data);
+		ActiveFilter = NULL;
+
+		AddBreadcrumbItem(&m_BreadcrumbForward, f, Data);
+		ConsumeBreadcrumbItem(&m_BreadcrumbBack, &f, &Data);
+
+		NavigateTo(f, NAVMODE_HISTORY, &Data);
+	}
+}
+
+void CMainWnd::OnNavigateForward()
+{
+	ASSERT(!m_IsClipboard);
+
+	if (ActiveFilter)
+	{
+		LFFilter* f = ActiveFilter;
+		FVPersistentData Data;
+		m_wndMainView.GetPersistentData(Data);
+		ActiveFilter = NULL;
+
+		AddBreadcrumbItem(&m_BreadcrumbBack, f, Data);
+		ConsumeBreadcrumbItem(&m_BreadcrumbForward, &f, &Data);
+
+		NavigateTo(f, NAVMODE_HISTORY, &Data);
+	}
+}
+
+void CMainWnd::OnNavigateReload()
+{
+	ASSERT(!m_IsClipboard);
+
+	if (ActiveFilter)
+	{
+		FVPersistentData Data;
+		m_wndMainView.GetPersistentData(Data);
+		NavigateTo(LFAllocFilter(ActiveFilter), NAVMODE_RELOAD, &Data);
+	}
+}
+
+void CMainWnd::OnUpdateNavCommands(CCmdUI* pCmdUI)
+{
+	BOOL b = !m_IsClipboard;
+
+	switch (pCmdUI->m_nID)
+	{
+	case ID_NAV_BACK:
+		b &= (m_BreadcrumbBack!=NULL);
+		break;
+	case ID_NAV_FORWARD:
+		b &= (m_BreadcrumbForward!=NULL);
+		break;
+	}
+
+	pCmdUI->Enable(b);
+}
+
+
+// Global messages
 
 void CMainWnd::OnItemOpen()
 {
