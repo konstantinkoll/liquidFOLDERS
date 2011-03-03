@@ -1264,97 +1264,97 @@ BEGIN
     IDR_CLIPBOARD           "Portapapeles"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
-    IDS_VIEWGROUP1          "List views"
-    IDS_VIEWGROUP2          "Enhanced views"
-    IDS_CONTEXTMENU_SELECTALL "Select &all\tCtrl+A"
+    IDS_VIEWGROUP1          "Enlistar vistas"
+    IDS_VIEWGROUP2          "Vistas mejoradas"
+    IDS_CONTEXTMENU_SELECTALL "Seleccionar &todo\tCtrl+A"
     IDS_CONTEXTMENU_SORTOPTIONS "&Organizar ""%s"" por..."
-    IDS_CONTEXTMENU_AUTODIRS "&Group into subfolders"
+    IDS_CONTEXTMENU_AUTODIRS "&Agrupar en subcarpetas"
     IDS_CONTEXTMENU_VIEWOPTIONS "&Visualizar ""%s"" como..."
     IDS_CONTEXTMENU_OPEN    "&Abrir"
     IDS_CONTEXTMENU_OPENWITH "Abrir &con..."
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_CONTEXTMENU_OPENGOOGLEEARTH "Abrir con &Google Earth"
-    IDS_CONTEXTMENU_REMEMBER "Re&member"
-    IDS_CONTEXTMENU_REMOVE  "Re&move from clipboard"
-    IDS_CONTEXTMENU_AUTOSIZEALL "Size all &columns to fit"
-    IDS_CONTEXTMENU_MORE    "&More..."
-    IDS_CONTEXTMENU_TIME    "&Time"
-    IDS_CONTEXTMENU_LOCATION "&Location"
-    IDS_CONTEXTMENU_DIMENSION "&Dimension"
-    IDS_TXTFILEFILTER       "Text document"
+    IDS_CONTEXTMENU_REMEMBER "Re&cordar"
+    IDS_CONTEXTMENU_REMOVE  "&Eliminar del portapapeles"
+    IDS_CONTEXTMENU_AUTOSIZEALL "Autoajustar &todas las columnas"
+    IDS_CONTEXTMENU_MORE    "&Más..."
+    IDS_CONTEXTMENU_TIME    "&Tiempo"
+    IDS_CONTEXTMENU_LOCATION "&Ubicación"
+    IDS_CONTEXTMENU_DIMENSION "&Dimensión"
+    IDS_TXTFILEFILTER       "Documento de texto"
     IDS_XMLFILEFILTER       "Extensible Markup Language"
-    IDS_ATTRIBUTENOTSORTABLE "This property is not suitable for sorting."
-    IDS_NOITEMSSELECTED     "No items selected"
-    IDS_MULTIPLETYPESSELECTED "Multiple types, %d items"
-    IDS_YOULOOKAT           "You look at %s"
-    IDS_NOTHINGTODISPLAY    "There is nothing to display."
-    IDS_AUTOMATIC           "Choose automatically"
+    IDS_ATTRIBUTENOTSORTABLE "Esta propiedad no es adecuada para clasificar."
+    IDS_NOITEMSSELECTED     "Objetos no seleccionados"
+    IDS_MULTIPLETYPESSELECTED "Múltiples tipos, %d objetos"
+    IDS_YOULOOKAT           "Usted está viendo %s"
+    IDS_NOTHINGTODISPLAY    "No hay nada que visualizar."
+    IDS_AUTOMATIC           "Escoger automaticamente"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
-    IDS_ILLEGALYEAR         "You can only display the years 1900 through 2100."
-    IDS_LEGEND              "Legend"
-    IDS_LEGEND_BLUE         "Requires scheduled maintenance"
-    IDS_LEGEND_RED          "Damaged (file body missing)"
-    IDS_LEGEND_RARE         "Rare"
-    IDS_LEGEND_COMMON       "Common"
-    IDS_LEGEND_OLDER        "Older"
-    IDS_LEGEND_NEWER        "Newer"
-    IDS_STATISTICS          "Statistics"
-    IDS_STATISTICS_BYCOUNT  "By file count"
-    IDS_STATISTICS_BYSIZE   "By file size"
-    IDS_STATISTICS_OTHER    "Other"
-    IDS_SUBFOLDERS_MANDATORY "Subfolders are mandatory for this view."
-    IDS_SUBFOLDERS_NOTAVAIL "Subfolders are not available in this context."
-    IDS_NOLICENSE           "You are using an unregistered copy of liquidFOLDERS. liquidFOLDERS is shareware—if you decide to use it regulary, you are required to purchase a license key!"
+    IDS_ILLEGALYEAR         "Usted sólo puede visualizar del año 1900 al año 2100."
+    IDS_LEGEND              "Leyenda"
+    IDS_LEGEND_BLUE         "Requiere de mantenimiento programado"
+    IDS_LEGEND_RED          "Dañado"
+    IDS_LEGEND_RARE         "Raro"
+    IDS_LEGEND_COMMON       "Común"
+    IDS_LEGEND_OLDER        "Más viejo"
+    IDS_LEGEND_NEWER        "Más nuevo"
+    IDS_STATISTICS          "Estadísticas"
+    IDS_STATISTICS_BYCOUNT  "Por número de archivo"
+    IDS_STATISTICS_BYSIZE   "Por tamaño de archivo"
+    IDS_STATISTICS_OTHER    "Otros"
+    IDS_SUBFOLDERS_MANDATORY "Las subcarpetas son obligatorias para esta visualización."
+    IDS_SUBFOLDERS_NOTAVAIL "Las subcarpetas no están disponibles para este contexto."
+    IDS_NOLICENSE           "Usted está usando una copia no registrada de liquidFOLDERS. liquidFOLDERS es un software de demostración – si usted decide usarlo regularmente, usted está obligado a adquirir una licencia!"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
-    IDS_VATTR_DRIVELETTER   "Drive letter"
+    IDS_VATTR_DRIVELETTER   "Unidad"
     IDS_VATTR_MAINTENANCETIME "Mantenimiento"
     IDS_VATTR_LASTSEEN      "Última entrada"
     IDS_VATTR_GUID          "GUID"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_VATTR_PATH_DAT      "Ruta de datos"
     IDS_VATTR_PATH_IDX_MAIN "Índice principal"
     IDS_VATTR_PATH_IDX_AUX  "Índice auxiliar"
     IDS_VATTR_INDEXVERSION  "Versión índice"
-    IDS_VATTR_IATA_NAME     "IATA airport name"
+    IDS_VATTR_IATA_NAME     "Nombre de aeropuerto IATA"
     IDS_VATTR_IATA_COUNTRY  "Territorio"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
-    IDM_ORGANIZE            "Selects the property by which to organize all items in this context.\nOrganize by"
+    IDM_ORGANIZE            "Selecciona la propiedad mediante la cuál organizar todos los objetos en este contexto.\nOrganizar por"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
-    IDM_VIEW                "Selects the view mode for this context.\nDisplay as"
-    IDM_VIEW_LARGEICONS     "Large icons"
-    IDM_VIEW_SMALLICONS     "Small icons"
-    IDM_VIEW_LIST           "List"
-    IDM_VIEW_DETAILS        "Details"
-    IDM_VIEW_TILES          "Tiles"
-    IDM_VIEW_CONTENT        "Content"
+    IDM_VIEW                "Selecciona el modo de visualización para este contexto.\nVisualizar como"
+    IDM_VIEW_LARGEICONS     "Íconos grandes"
+    IDM_VIEW_SMALLICONS     "Íconos pequeños"
+    IDM_VIEW_LIST           "Lista"
+    IDM_VIEW_DETAILS        "Detalles"
+    IDM_VIEW_TILES          "Mosaicos"
+    IDM_VIEW_CONTENT        "Contenido"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
-    IDM_VIEW_PREVIEW        "Preview"
-    IDM_VIEW_CALENDAR       "Calendar"
-    IDM_VIEW_GLOBE          "Globe"
-    IDM_VIEW_TAGCLOUD       "Tag cloud"
+    IDM_VIEW_PREVIEW        "Vista preliminar"
+    IDM_VIEW_CALENDAR       "Calendario" 
+    IDM_VIEW_GLOBE          "Globo"
+    IDM_VIEW_TAGCLOUD       "Nube de palabras"
 END
 
 #endif    // Spanisch (neutral) resources
@@ -1717,7 +1717,7 @@ BEGIN
     IDM_VIEW_PREVIEW        "Aperçu"
     IDM_VIEW_CALENDAR       "Calendrier"
     IDM_VIEW_GLOBE          "Globe"
-    IDM_VIEW_TAGCLOUD       "Nuage de mot"
+    IDM_VIEW_TAGCLOUD       "Nuage de mots-clés"
 END
 
 #endif    // Französisch (neutral) resources

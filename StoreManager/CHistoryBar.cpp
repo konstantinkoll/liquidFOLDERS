@@ -410,14 +410,3 @@ void CHistoryBar::OnRButtonUp(UINT nFlags, CPoint point)
 
 	GetParent()->SendMessage(WM_RBUTTONUP, (WPARAM)nFlags, (LPARAM)((point.y<<16) | point.x));
 }
-
-/*void CHistoryBar::OnSetFocus(CWnd* pOldWnd)
-{
-	Invalidate();
-}
-
-void CHistoryBar::OnKillFocus(CWnd* pOldWnd)
-{
-	if (!OnCloseDropdown())
-		Invalidate();
-}*/

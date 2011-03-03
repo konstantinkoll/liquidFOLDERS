@@ -49,8 +49,6 @@ protected:
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnRButtonUp(UINT nFlags, CPoint point);
-	//afx_msg void OnSetFocus(CWnd* pOldWnd);
-	//afx_msg void OnKillFocus(CWnd* pOldWnd);
 	DECLARE_MESSAGE_MAP()
 
 private:
