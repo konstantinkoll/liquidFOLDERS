@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<DOCUMENT Type="Advanced Installer" CreateVersion="7.6" version="7.7" Modules="enterprise" RootPath=".." Language="de">
+<DOCUMENT Type="Advanced Installer" CreateVersion="7.6" version="7.7" Modules="enterprise" RootPath=".." Language="en">
   <COMPONENT cid="caphyon.advinst.msicomp.ProjectOptionsComponent">
     <ROW Name="HiddenItems" Value="SerValComponent;MsiJavaComponent;MsiExtComponent;MsiAssemblyComponent;ActSyncAppComponent;BackgroundImagesComponent;MsiEnvComponent;CPLAppletComponent;WebApplicationsComponent;MsiOdbcDataSrcComponent;SqlConnectionComponent"/>
   </COMPONENT>
@@ -182,7 +182,7 @@
     <ROW Dialog_="MaintenanceTypeDlg" Control="RemoveLabel" Type="Text" X="110" Y="228" Width="100" Height="11" Attributes="65539" Text="&amp;Entfernen" TextStyle="[DlgTitleFont]" Control_Next="Bitmap" TextLocId="Control.Text.MaintenanceTypeDlg#RemoveLabel" MsiKey="MaintenanceTypeDlg#RemoveLabel"/>
     <ROW Dialog_="MaintenanceTypeDlg" Control="RepairButton" Type="PushButton" X="55" Y="169" Width="38" Height="38" Attributes="5767171" Text="[RepairIcon]" Control_Next="RemoveButton" Help="Installation reparieren|" HelpLocId="Control.Help.MaintenanceTypeDlg#RepairButton" MsiKey="MaintenanceTypeDlg#RepairButton"/>
     <ROW Dialog_="MaintenanceTypeDlg" Control="RepairLabel" Type="Text" X="110" Y="169" Width="100" Height="11" Attributes="65539" Text="Re&amp;parieren" TextStyle="[DlgTitleFont]" Control_Next="RepairButton" TextLocId="Control.Text.MaintenanceTypeDlg#RepairLabel" MsiKey="MaintenanceTypeDlg#RepairLabel"/>
-    <ROW Dialog_="MaintenanceTypeDlg" Control="Title" Type="Text" X="55" Y="10" Width="202" Height="58" Attributes="196611" Text="Ändern der Installation von [ProductName]" TextStyle="TitleFont" Control_Next="RepairText" TextLocId="Azure.Control.Text.MaintenanceTypeDlg#Title" MsiKey="MaintenanceTypeDlg#Title"/>
+    <ROW Dialog_="MaintenanceTypeDlg" Control="Title" Type="Text" X="55" Y="10" Width="202" Height="58" Attributes="196611" Text="Ändern der Installation von [ProductName]" TextStyle="TitleFont" Control_Next="RemoveCommand" TextLocId="Azure.Control.Text.MaintenanceTypeDlg#Title" MsiKey="MaintenanceTypeDlg#Title"/>
     <ROW Dialog_="MaintenanceTypeDlg" Control="RemoveCommand" Type="CommandLinkButton" X="55" Y="228" Width="297" Height="48" Attributes="6815747" Text="[RemoveIcon]" Control_Next="RepairCommand" Help="Entfernt [ProductName] von Ihrem Computer.|" HelpLocId="Azure.Control.Help.MaintenanceTypeDlg#RemoveCommand" MsiKey="MaintenanceTypeDlg#RemoveCommand" ExtType="CommandLinkButton" ExtData="Entfernen"/>
     <ROW Dialog_="MaintenanceTypeDlg" Control="RepairCommand" Type="CommandLinkButton" X="55" Y="169" Width="297" Height="48" Attributes="6815747" Text="[RepairIcon]" Control_Next="ModifyCommand" Help="Korrigiert Fehler durch Zurücksetzen in den letzten Installationsstatus.|" HelpLocId="Azure.Control.Help.MaintenanceTypeDlg#RepairCommand" MsiKey="MaintenanceTypeDlg#RepairCommand" ExtType="CommandLinkButton" ExtData="Reparieren"/>
     <ROW Dialog_="MaintenanceTypeDlg" Control="ModifyCommand" Type="CommandLinkButton" X="55" Y="110" Width="297" Height="48" Attributes="6815747" Text="[CustomSetupIcon]" Control_Next="PushButton_Cancel" Help="Ändern SIe die zu installierenden Funktionen.|" HelpLocId="Azure.Control.Help.MaintenanceTypeDlg#ModifyCommand" MsiKey="MaintenanceTypeDlg#ModifyCommand" ExtType="CommandLinkButton" ExtData="Funktion hinzufügen oder entfernen"/>
@@ -325,7 +325,12 @@
     <ROW Dialog_="WelcomeDlg" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1" Text="[Background]" Control_Next="DialogIcon" MsiKey="WelcomeDlg#Bitmap"/>
     <ROW Dialog_="PatchWelcomeDlg" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1" Text="[Background]" Control_Next="Next" MsiKey="PatchWelcomeDlg#Bitmap"/>
     <ROW Dialog_="MsiRMFilesInUse" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1" Text="[Background]" Control_Next="OK" MsiKey="MsiRMFilesInUse#Bitmap"/>
+    <ROW Dialog_="MaintenanceTypeDlg" Control="Cancel" Type="PushButton" X="450" Y="0" Width="0" Height="0" Attributes="2" Text="[ButtonText_Cancel]" Control_Next="Title" TextLocId="-" MsiKey="MaintenanceTypeDlg#Cancel"/>
+    <ATTRIBUTE name="DeletedRows" value="MaintenanceTypeDlg#RemoveText@MaintenanceTypeDlg#ChangeText@MaintenanceTypeDlg#RepairText"/>
     <ATTRIBUTE name="FixedSizeBitmaps" value="0"/>
+  </COMPONENT>
+  <COMPONENT cid="caphyon.advinst.msicomp.MsiControlConditionComponent">
+    <ATTRIBUTE name="DeletedRows" value="MaintenanceTypeDlg#ChangeText#Hide#AIEXTERNALUI@MaintenanceTypeDlg#RepairText#Hide#AIEXTERNALUI@MaintenanceTypeDlg#RemoveText#Hide#AIEXTERNALUI"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiControlEventComponent">
     <ROW Dialog_="FolderDlg" Control_="Back" Event="NewDialog" Argument="WelcomeDlg" Condition="AI_INSTALL" Ordering="1"/>
