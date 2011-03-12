@@ -1281,10 +1281,6 @@
 			>
 		</File>
 		<File
-			RelativePath=".\DisplayOptions_Tiny.ico"
-			>
-		</File>
-		<File
 			RelativePath=".\Earthmap_1024.jpg"
 			>
 		</File>
@@ -1641,6 +1637,10 @@
 			>
 		</File>
 		<File
+			RelativePath=".\Tags_Tiny.ico"
+			>
+		</File>
+		<File
 			RelativePath=".\TaskReport_Tiny.ico"
 			>
 		</File>
@@ -1650,6 +1650,14 @@
 		</File>
 		<File
 			RelativePath=".\Tools.png"
+			>
+		</File>
+		<File
+			RelativePath=".\TreeWidgets.bmp"
+			>
+		</File>
+		<File
+			RelativePath=".\ViewOptions_Tiny.ico"
 			>
 		</File>
 		<File
