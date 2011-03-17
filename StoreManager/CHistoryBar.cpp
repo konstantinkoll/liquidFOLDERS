@@ -68,29 +68,6 @@ BOOL CHistoryBar::Create(CGlasWindow* pParentWnd, UINT nID)
 	return CWnd::Create(className, _T(""), dwStyle, rect, pParentWnd, nID);
 }
 
-BOOL CHistoryBar::PreTranslateMessage(MSG* pMsg)
-{
-	switch (pMsg->message)
-	{
-	case WM_LBUTTONDOWN:
-	case WM_RBUTTONDOWN:
-	case WM_MBUTTONDOWN:
-	case WM_LBUTTONUP:
-	case WM_RBUTTONUP:
-	case WM_MBUTTONUP:
-	case WM_NCLBUTTONDOWN:
-	case WM_NCRBUTTONDOWN:
-	case WM_NCMBUTTONDOWN:
-	case WM_NCLBUTTONUP:
-	case WM_NCRBUTTONUP:
-	case WM_NCMBUTTONUP:
-		m_TooltipCtrl.Deactivate();
-		break;
-	}
-
-	return CWnd::PreTranslateMessage(pMsg);
-}
-
 UINT CHistoryBar::GetPreferredHeight()
 {
 	LOGFONT lf;
@@ -109,7 +86,6 @@ BEGIN_MESSAGE_MAP(CHistoryBar, CWnd)
 	ON_WM_THEMECHANGED()
 	ON_WM_MOUSEMOVE()
 	ON_WM_MOUSELEAVE()
-	ON_WM_MOUSEHOVER()
 	ON_WM_LBUTTONDOWN()
 	ON_WM_LBUTTONUP()
 	ON_WM_RBUTTONUP()
@@ -123,9 +99,6 @@ INT CHistoryBar::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 
 	OnThemeChanged();
-
-	// Tooltip
-	m_TooltipCtrl.Create(this);
 
 	return 0;
 }
@@ -339,7 +312,7 @@ void CHistoryBar::OnMouseMove(UINT /*nFlags*/, CPoint /*point*/)
 
 		TRACKMOUSEEVENT tme;
 		tme.cbSize = sizeof(TRACKMOUSEEVENT);
-		tme.dwFlags = TME_LEAVE | TME_HOVER;
+		tme.dwFlags = TME_LEAVE;
 		tme.dwHoverTime = LFHOVERTIME;
 		tme.hwndTrack = m_hWnd;
 		TrackMouseEvent(&tme);
@@ -348,31 +321,8 @@ void CHistoryBar::OnMouseMove(UINT /*nFlags*/, CPoint /*point*/)
 
 void CHistoryBar::OnMouseLeave()
 {
-	m_TooltipCtrl.Deactivate();
 	m_Hover = FALSE;
 	Invalidate();
-}
-
-void CHistoryBar::OnMouseHover(UINT nFlags, CPoint point)
-{
-	if (((nFlags & (MK_LBUTTON | MK_MBUTTON | MK_RBUTTON | MK_XBUTTON1 | MK_XBUTTON2))==0) /*&& (!m_Dropped)*/)
-	{
-		if (!m_TooltipCtrl.IsWindowVisible())
-		{
-			/*HICON hIcon = NULL;
-			CSize size(0, 0);
-			CString caption;
-			CString hint;
-			GetTooltipData(hIcon, size, caption, hint);
-
-			ClientToScreen(&point);
-			m_TooltipCtrl.Track(point, hIcon, size, caption, hint);*/
-		}
-	}
-	else
-	{
-		m_TooltipCtrl.Deactivate();
-	}
 }
 
 void CHistoryBar::OnLButtonDown(UINT /*nFlags*/, CPoint /*point*/)

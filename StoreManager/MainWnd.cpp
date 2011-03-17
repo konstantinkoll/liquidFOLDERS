@@ -178,7 +178,7 @@ void CMainWnd::NavigateTo(LFFilter* f, UINT NavMode, FVPersistentData* Data, INT
 
 	if (m_pCookedFiles->m_LastError>LFCancel)
 	{
-		m_wndMainView.ShowNotification(ActiveFilter->Result.FilterType==LFFilterTypeError ? ENT_ERROR : ENT_WARNING, m_pCookedFiles->m_LastError, m_pCookedFiles->m_LastError==LFIndexAccessError ? IDM_STORES_REPAIRCORRUPTEDINDEX : 0);
+		m_wndMainView.ShowNotification(m_pCookedFiles->m_LastError==LFDriveWriteProtected ? ENT_WARNING : ENT_ERROR, m_pCookedFiles->m_LastError, m_pCookedFiles->m_LastError==LFIndexAccessError ? IDM_STORES_REPAIRCORRUPTEDINDEX : 0);
 	}
 	else
 		if (theApp.m_NagCounter!=0)
@@ -186,24 +186,6 @@ void CMainWnd::NavigateTo(LFFilter* f, UINT NavMode, FVPersistentData* Data, INT
 			m_wndMainView.DismissNotification();
 		}
 }
-
-void CMainWnd::UpdateHistory()
-{
-	if (!m_IsClipboard)
-	{
-		if (m_pRawFiles)
-		{
-			ActiveFilter->Result.FileCount = m_pRawFiles->m_FileCount;
-			ActiveFilter->Result.FileSize = m_pRawFiles->m_FileSize;
-		}
-		if (m_pCookedFiles)
-			ActiveFilter->Result.ItemCount = m_pCookedFiles->m_ItemCount;
-	}
-
-//	if (m_wndHistory)
-//		m_wndHistory->UpdateList(m_BreadcrumbBack, ActiveFilter, m_BreadcrumbForward);
-}
-
 
 
 BEGIN_MESSAGE_MAP(CMainWnd, CGlasWindow)
@@ -434,7 +416,6 @@ LRESULT CMainWnd::OnCookFiles(WPARAM wParam, LPARAM /*lParam*/)
 	}
 
 	m_wndMainView.UpdateSearchResult(m_pRawFiles, m_pCookedFiles, (FVPersistentData*)wParam);
-	UpdateHistory();
 
 	if ((Victim) && (Victim!=m_pRawFiles))
 		LFFreeSearchResult(Victim);

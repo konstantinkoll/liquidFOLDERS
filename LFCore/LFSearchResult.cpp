@@ -538,7 +538,7 @@ void LFSearchResult::Group(unsigned int attr, unsigned int icon, bool groupone, 
 	}
 
 	WritePtr += Aggregate(WritePtr, ReadPtr1, m_ItemCount, c, attr, icon, groupone, f);
-	m_ItemCount = f->Result.ItemCount = WritePtr;
+	m_ItemCount = WritePtr;
 
 	delete c;
 }

@@ -647,12 +647,8 @@ LFSearchResult* QueryStores(LFFilter* filter)
 	ReleaseMutex(Mutex_Stores);
 
 	if (filter)
-	{
 		if (filter->Options.AddDrives)
 			res->AddDrives(filter);
-
-		filter->Result.FilterType = LFFilterTypeStores;
-	}
 
 	return res;
 }
@@ -714,12 +710,6 @@ LFSearchResult* QueryDomains(LFFilter* filter)
 
 					LFFreeDomainDescriptor(d);
 				}
-
-		filter->Result.FilterType = LFFilterTypeStoreHome;
-	}
-	else
-	{
-		filter->Result.FilterType = LFFilterTypeError;
 	}
 
 	return res;
@@ -747,23 +737,6 @@ bool RetrieveStore(char* StoreID, LFFilter* filter, LFSearchResult* res)
 	}
 
 	return false;
-}
-
-void FinishTreeQuery(LFFilter* filter, LFSearchResult* res)
-{
-	res->SetContext(filter);
-
-	switch (filter->DomainID)
-	{
-	case LFDomainTrash:
-		filter->Result.FilterType = LFFilterTypeTrash;
-		break;
-	case LFDomainUnknown:
-		filter->Result.FilterType = LFFilterTypeUnknownFileFormats;
-		break;
-	default:
-		filter->Result.FilterType = LFFilterTypeSubfolder;
-	}
 }
 
 inline void PrepareSearchResult(LFSearchResult* res, LFFilter* filter)
@@ -811,13 +784,7 @@ LFSearchResult* QueryTree(LFFilter* filter)
 	PrepareSearchResult(res, filter);
 
 	if (RetrieveStore(filter->StoreID, filter, res))
-	{
-		FinishTreeQuery(filter, res);
-	}
-	else
-	{
-		filter->Result.FilterType = LFFilterTypeError;
-	}
+		res->SetContext(filter);
 
 	return res;
 }
@@ -827,14 +794,13 @@ LFSearchResult* QuerySearch(LFFilter* filter)
 	LFSearchResult* res = LFAllocSearchResult(LFContextDefault);
 	PrepareSearchResult(res, filter);
 
-	bool success = false;
 	if (filter->StoreID[0]=='\0')
 	{
 		// Alle Stores
 		if (!GetMutex(Mutex_Stores))
 		{
 			res->m_LastError = LFMutexError;
-			goto Finish;
+			return res;
 		}
 
 		char* keys;
@@ -846,9 +812,7 @@ LFSearchResult* QuerySearch(LFFilter* filter)
 			char* ptr = keys;
 			for (unsigned int a=0; a<count; a++)
 			{
-				if (RetrieveStore(ptr, filter, res))
-					success = true;
-
+				RetrieveStore(ptr, filter, res);
 				ptr += LFKeySize;
 			}
 		}
@@ -858,11 +822,8 @@ LFSearchResult* QuerySearch(LFFilter* filter)
 	else
 	{
 		// Ein Store
-		success = RetrieveStore(filter->StoreID, filter, res);
+		RetrieveStore(filter->StoreID, filter, res);
 	}
-
-Finish:
-	filter->Result.FilterType = success ? LFFilterTypeQueryFilter : LFFilterTypeError;
 
 	return res;
 }
@@ -912,18 +873,11 @@ LFCore_API LFSearchResult* LFQuery(LFFilter* filter)
 			default:
 				res = new LFSearchResult(LFContextDefault);
 				res->m_LastError = LFIllegalQuery;
-				filter->Result.FilterType = LFFilterTypeIllegalRequest;
 			}
 
 		// Statistik
 		if ((filter->Name[0]==L'\0') && (res->m_Context!=LFContextDefault))
 			LoadString(LFCoreModuleHandle, res->m_Context+IDS_FirstContext, filter->Name, 256);
-
-		GetSystemTime(&filter->Result.Time);
-		filter->Result.ItemCount = res->m_ItemCount;
-		filter->Result.StoreCount = res->m_StoreCount;
-		filter->Result.FileCount = res->m_FileCount;
-		filter->Result.FileSize = res->m_FileSize;
 	}
 
 	res->m_QueryTime = GetTickCount()-start;
@@ -946,7 +900,7 @@ LFCore_API LFSearchResult* LFQuery(LFFilter* filter, LFSearchResult* base, int f
 		strcpy_s(res->m_StoreID, LFKeySize, filter->StoreID);
 
 		res->KeepRange(first, last);
-		FinishTreeQuery(filter, res);
+		res->SetContext(filter);
 	}
 	else
 	{
@@ -954,7 +908,6 @@ LFCore_API LFSearchResult* LFQuery(LFFilter* filter, LFSearchResult* base, int f
 		PrepareSearchResult(res, filter);
 
 		res->m_LastError = LFIllegalQuery;
-		filter->Result.FilterType = LFFilterTypeIllegalRequest;
 	}
 
 	wcscpy_s(res->m_Name, 256, filter->Name);

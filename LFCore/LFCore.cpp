@@ -611,7 +611,6 @@ LFCore_API LFFilter* LFAllocFilter(LFFilter* f)
 	{
 		ZeroMemory(filter, sizeof(LFFilter));
 		filter->Mode = LFFilterModeStores;
-		filter->Result.FilterType = LFFilterTypeDefault;
 	}
 	return filter;
 }

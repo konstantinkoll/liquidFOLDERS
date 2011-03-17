@@ -369,16 +369,6 @@ struct LFDomainDescriptor
 #define LFFilterModeDirectoryTree       3
 #define LFFilterModeSearch              4
 
-#define LFFilterTypeStores              0
-#define LFFilterTypeStoreHome           1
-#define LFFilterTypeSubfolder           2
-#define LFFilterTypeQueryFilter         3
-#define LFFilterTypeTrash               4
-#define LFFilterTypeUnknownFileFormats  5
-#define LFFilterTypeIllegalRequest      6
-#define LFFilterTypeError               7
-#define LFFilterTypeDefault             -1
-
 #define LFFilterCompareIgnore           0
 #define LFFilterCompareIsNull           1
 #define LFFilterCompareSubfolder        2
@@ -405,16 +395,6 @@ struct LFFilterOptions
 	unsigned int GroupAttribute;			// Attribute on which parent folder was grouped
 };
 
-struct LFFilterResult
-{
-	SYSTEMTIME Time;
-	unsigned int ItemCount;
-	unsigned int StoreCount;
-	unsigned int FileCount;
-	__int64 FileSize;
-	int FilterType;
-};
-
 struct LFFilterCondition
 {
 	LFFilterCondition* Next;
@@ -435,8 +415,6 @@ struct LFFilter
 	unsigned char DomainID;					// For LFFilterModeDirectoryTree and above
 	wchar_t Searchterm[256];				// For LFFilterModeDirectoryTree and above
 	LFFilterCondition* ConditionList;		// For LFFilterModeDirectoryTree and above
-
-	LFFilterResult Result;					// Set by the query engine
 };
 
 
