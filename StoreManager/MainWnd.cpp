@@ -142,14 +142,14 @@ void CMainWnd::NavigateTo(LFFilter* f, UINT NavMode, FVPersistentData* Data, INT
 		{
 			LFFreeFilter(ActiveFilter);
 		}
-	ActiveFilter = f;
 
-	// Flush the search result so no future paint will access the old search result
+	ActiveFilter = f;
+	ActiveFilter->ShowEmptyDrives = (theApp.m_ShowEmptyDrives==TRUE);
+	ActiveFilter->ShowEmptyDomains = (theApp.m_ShowEmptyDomains==TRUE);
+
 	if (NavMode<NAVMODE_RELOAD)
 		m_wndMainView.UpdateSearchResult(NULL, NULL, NULL);
 
-	ActiveFilter->ShowEmptyDrives = (theApp.m_ShowEmptyDrives==TRUE);
-	ActiveFilter->ShowEmptyDomains = (theApp.m_ShowEmptyDomains==TRUE);
 
 	INT OldContext = -1;
 	LFSearchResult* victim = NULL;
@@ -175,6 +175,7 @@ void CMainWnd::NavigateTo(LFFilter* f, UINT NavMode, FVPersistentData* Data, INT
 	}
 
 	OnCookFiles((WPARAM)Data);
+	UpdateHistory();
 
 	if (m_pCookedFiles->m_LastError>LFCancel)
 	{
@@ -185,6 +186,12 @@ void CMainWnd::NavigateTo(LFFilter* f, UINT NavMode, FVPersistentData* Data, INT
 		{
 			m_wndMainView.DismissNotification();
 		}
+}
+
+void CMainWnd::UpdateHistory()
+{
+	if (!m_IsClipboard)
+		m_wndHistory.SetHistory(ActiveFilter, m_BreadcrumbBack);
 }
 
 
@@ -239,6 +246,7 @@ INT CMainWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	// Entweder leeres Suchergebnis oder Stores-Kontext öffnen
 	m_pRawFiles = m_IsClipboard ? LFAllocSearchResult(LFContextClipboard) : LFQuery(ActiveFilter);
 	OnCookFiles();
+	UpdateHistory();
 
 	AdjustLayout();
 	SetFocus();

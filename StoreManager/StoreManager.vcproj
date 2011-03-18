@@ -576,6 +576,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\include\DynArray.h"
+				>
+			</File>
+			<File
 				RelativePath=".\FooterGraph.h"
 				>
 			</File>

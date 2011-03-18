@@ -74,4 +74,5 @@ protected:
 
 private:
 	void NavigateTo(LFFilter* f, UINT NavMode=NAVMODE_NORMAL, FVPersistentData* Data=NULL, INT FirstAggregate=-1, INT LastAggregate=-1);
+	void UpdateHistory();
 };

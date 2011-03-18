@@ -7,23 +7,23 @@
 // Breadcrumbs
 //
 
-void AddBreadcrumbItem(BreadcrumbItem** bi, LFFilter* f, FVPersistentData& data)
+void AddBreadcrumbItem(BreadcrumbItem** bi, LFFilter* filter, FVPersistentData& data)
 {
 	BreadcrumbItem* add = new BreadcrumbItem;
 	add->next = *bi;
-	add->filter = f;
+	add->filter = filter;
 	add->data = data;
 	*bi = add;
 }
 
-void ConsumeBreadcrumbItem(BreadcrumbItem** bi, LFFilter** f, FVPersistentData* data)
+void ConsumeBreadcrumbItem(BreadcrumbItem** bi, LFFilter** filter, FVPersistentData* data)
 {
-	*f = NULL;
+	*filter = NULL;
 	ZeroMemory(data, sizeof(FVPersistentData));
 
 	if (*bi)
 	{
-		*f = (*bi)->filter;
+		*filter = (*bi)->filter;
 		*data = (*bi)->data;
 		BreadcrumbItem* victim = *bi;
 		*bi = (*bi)->next;
@@ -47,6 +47,7 @@ void DeleteBreadcrumbs(BreadcrumbItem** bi)
 //
 
 #define BORDER          4
+#define MARGIN          3
 
 CHistoryBar::CHistoryBar()
 	: CWnd()
@@ -77,6 +78,60 @@ UINT CHistoryBar::GetPreferredHeight()
 	return h+2*BORDER;
 }
 
+void CHistoryBar::AddFilter(LFFilter* Filter, CDC* pDC)
+{
+	HistoryItem item;
+	ZeroMemory(&item, sizeof(item));
+
+	wcscpy_s(item.Name, 256, Filter->Name);
+	item.Width = pDC->GetTextExtent(item.Name, wcslen(item.Name)).cx+2*MARGIN;
+
+	m_Items.AddItem(item);
+}
+
+void CHistoryBar::SetHistory(LFFilter* ActiveFilter, BreadcrumbItem* BreadcrumbBack)
+{
+	m_IsEmpty = FALSE;
+	m_Items.m_ItemCount = 0;
+
+	CDC* dc = GetDC();
+	CFont* pOldFont = dc->SelectObject(&theApp.m_DefaultFont);
+
+	AddFilter(ActiveFilter, dc);
+	while (BreadcrumbBack)
+	{
+		AddFilter(BreadcrumbBack->filter, dc);
+		BreadcrumbBack = BreadcrumbBack->next;
+	}
+
+	dc->SelectObject(pOldFont);
+	ReleaseDC(dc);
+
+	AdjustLayout();
+}
+
+void CHistoryBar::AdjustLayout()
+{
+	CRect rect;
+	GetClientRect(rect);
+
+	INT Spacer = rect.Height()-2*BORDER;
+	INT Width = 0;
+	for (UINT a=0; a<m_Items.m_ItemCount; a++)
+		Width += m_Items.m_Items[a].Width+((a>0) ? Spacer : 0);
+
+	INT Right = min(rect.right-BORDER, rect.left+Width+BORDER);
+	for (UINT a=0; a<m_Items.m_ItemCount; a++)
+	{
+		m_Items.m_Items[a].Right = Right;
+		Right = m_Items.m_Items[a].Left = Right-m_Items.m_Items[a].Width;
+		if (a<m_Items.m_ItemCount-1)
+			Right -= Spacer;
+	}
+
+	Invalidate();
+}
+
 
 BEGIN_MESSAGE_MAP(CHistoryBar, CWnd)
 	ON_WM_CREATE()
@@ -84,6 +139,7 @@ BEGIN_MESSAGE_MAP(CHistoryBar, CWnd)
 	ON_WM_ERASEBKGND()
 	ON_WM_PAINT()
 	ON_WM_THEMECHANGED()
+	ON_WM_SIZE()
 	ON_WM_MOUSEMOVE()
 	ON_WM_MOUSELEAVE()
 	ON_WM_LBUTTONDOWN()
@@ -183,6 +239,8 @@ void CHistoryBar::OnPaint()
 		}
 	}
 
+	// Reload button
+
 	/*CRect rectClip(rectContent);
 	rectClip.left = rectClip.right-GetSystemMetrics(SM_CXHSCROLL);
 	CRect rectArrow(rectClip);
@@ -217,14 +275,14 @@ void CHistoryBar::OnPaint()
 			dc.FillSolidRect(rectClip.left, rectClip.top, 1, rectClip.Height(), GetSysColor(COLOR_3DFACE));
 	}*/
 
-	CRect rectText(rectContent);
-	//rectText.right = rectClip.left;
-	rectText.DeflateRect(BORDER, 0);
-
+	// Breadcrumbs
 	CFont* pOldFont;
 
 	if (m_IsEmpty)
 	{
+		CRect rectText(rectContent);
+		rectText.DeflateRect(BORDER, 0);
+
 		pOldFont = dc.SelectObject(&theApp.m_ItalicFont);
 		dc.SetTextColor(0x808080);
 		dc.DrawText(m_EmptyHint, rectText, DT_SINGLELINE | DT_END_ELLIPSIS | DT_VCENTER);
@@ -232,43 +290,50 @@ void CHistoryBar::OnPaint()
 	else
 	{
 		pOldFont = dc.SelectObject(&theApp.m_DefaultFont);
-	/*	COLORREF c1 = (pCtrlSite->GetDesign()==GWD_DEFAULT) ? GetSysColor(COLOR_WINDOWTEXT) : 0x000000;
-		COLORREF c2 = (pCtrlSite->GetDesign()==GWD_DEFAULT) ? GetSysColor(COLOR_3DSHADOW) : 0x808080;
+		dc.SetTextColor(hTheme ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT));
 
-		if (!m_Caption.IsEmpty())
+		for (UINT a=0; a<m_Items.m_ItemCount; a++)
 		{
-			dc.SetTextColor((m_Hover || m_Dropped) ? c1 : c2);
-			dc.DrawText(m_Caption, rectText, DT_SINGLELINE | DT_END_ELLIPSIS | DT_VCENTER);
-			rectText.left += dc.GetTextExtent(m_Caption).cx+BORDER;
-		}
+			// Item
+			HistoryItem* hi = &m_Items.m_Items[a];
 
-		if (m_Icon)
-		{
-			INT cx = GetSystemMetrics(SM_CXSMICON);
-			INT cy = GetSystemMetrics(SM_CYSMICON);
+			CRect rectItem(rectContent);
+			rectItem.left = hi->Left;
+			rectItem.right = hi->Right;
+			CRect rectItemText(rectItem);
 
-			if (rectText.left+cx<rectText.right)
+			if (rectItem.left<BORDER/2)
+				rectItem.left = BORDER/2;
+			//TODO
+
+			rectItemText.DeflateRect(MARGIN, 0);
+			if (rectItemText.left<BORDER/2)
+				rectItemText.left = BORDER/2;
+
+			dc.DrawText(hi->Name, wcslen(hi->Name), rectItemText, DT_SINGLELINE | DT_VCENTER | DT_RIGHT);
+
+			// Arrow
+			if (a>0)
 			{
-				DrawIconEx(dc, rectText.left, rectText.top+(rectText.Height()-cy)/2, m_Icon, cx, cy, 0, NULL, DI_NORMAL);
-				rectText.left += cx+BORDER;
+				CRect rectArrow(rectContent);
+				rectArrow.left = hi->Right;
+				rectArrow.right = m_Items.m_Items[a-1].Left;
+
+				INT cy = rectArrow.Height()/4;
+				INT cx = (rectArrow.Width()-cy)/2;
+				INT cc = (rectArrow.top+rectArrow.bottom)/2;
+				for (INT y=0; y<cy; y++)
+				{
+					dc.MoveTo(rectArrow.left+cx, cc+y);
+					dc.LineTo(rectArrow.left+cx+cy-y, cc+y);
+					dc.MoveTo(rectArrow.left+cx, cc-y);
+					dc.LineTo(rectArrow.left+cx+cy-y, cc-y);
+				}
 			}
 		}
-
-		if (!m_DisplayName.IsEmpty())
-		{
-			dc.SetTextColor(c1);
-			dc.DrawText(m_DisplayName, rectText, DT_SINGLELINE | DT_END_ELLIPSIS | DT_VCENTER);
-		}*/
 	}
 
 	dc.SelectObject(pOldFont);
-
-	/*if ((GetFocus()==this) && (!m_Dropped) && (!hTheme))
-	{
-		rectText.InflateRect(3, -1);
-		dc.SetTextColor(0x000000);
-		dc.DrawFocusRect(rectText);
-	}*/
 
 	// Set alpha
 	BITMAP bmp;
@@ -301,6 +366,12 @@ LRESULT CHistoryBar::OnThemeChanged()
 	}
 
 	return TRUE;
+}
+
+void CHistoryBar::OnSize(UINT nType, INT cx, INT cy)
+{
+	CWnd::OnSize(nType, cx, cy);
+	AdjustLayout();
 }
 
 void CHistoryBar::OnMouseMove(UINT /*nFlags*/, CPoint /*point*/)
