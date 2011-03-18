@@ -337,7 +337,7 @@ void CTaskbar::OnIdleUpdateCmdUI()
 		CCmdUI cmdUI;
 		cmdUI.m_nID = btn->GetDlgCtrlID();
 		cmdUI.m_pOther = btn;
-		cmdUI.DoUpdate(GetOwner(), FALSE);
+		cmdUI.DoUpdate(GetOwner(), TRUE);
 
 		if (btn->IsWindowEnabled()!=Enabled)
 			Update = TRUE;
@@ -351,7 +351,7 @@ void CTaskbar::OnIdleUpdateCmdUI()
 		CCmdUI cmdUI;
 		cmdUI.m_nID = btn->GetDlgCtrlID();
 		cmdUI.m_pOther = btn;
-		cmdUI.DoUpdate(GetOwner(), FALSE);
+		cmdUI.DoUpdate(GetOwner(), TRUE);
 
 		if (btn->IsWindowEnabled()!=Enabled)
 			Update = TRUE;
