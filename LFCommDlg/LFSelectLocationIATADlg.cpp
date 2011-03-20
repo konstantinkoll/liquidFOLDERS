@@ -89,7 +89,7 @@ BEGIN_MESSAGE_MAP(LFSelectLocationIATADlg, CDialog)
 	ON_NOTIFY(LVN_ITEMCHANGED, IDC_AIRPORTS, OnItemChanged)
 	ON_NOTIFY(HDN_ITEMCLICK, 0, OnSortItems)
 	ON_CONTROL(CBN_SELCHANGE, IDC_COUNTRY, OnSelectCountry)
-	ON_COMMAND(IDC_REPORTERROR, OnReportError)
+	ON_NOTIFY(NM_CLICK, IDC_REPORTERROR, OnReportError)
 END_MESSAGE_MAP()
 
 BOOL LFSelectLocationIATADlg::OnInitDialog()
@@ -270,7 +270,7 @@ void LFSelectLocationIATADlg::OnSelectCountry()
 	LoadCountry(m_LastCountrySelected, TRUE);
 }
 
-void LFSelectLocationIATADlg::OnReportError()
+void LFSelectLocationIATADlg::OnReportError(NMHDR* /*pNMHDR*/, LRESULT* pResult)
 {
 	CString Subject = _T("IATA database error");
 
@@ -284,4 +284,6 @@ void LFSelectLocationIATADlg::OnReportError()
 	}
 
 	p_App->SendMail(Subject);
+
+	*pResult = 0;
 }

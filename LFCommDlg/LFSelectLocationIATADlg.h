@@ -46,6 +46,6 @@ private:
 	afx_msg void OnItemChanged(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnSortItems(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnSelectCountry();
-	afx_msg void OnReportError();
+	afx_msg void OnReportError(NMHDR* pNMHDR, LRESULT* pResult);
 	DECLARE_MESSAGE_MAP()
 };

@@ -8,6 +8,7 @@
 #define ID_APP_NEWSTOREMANAGER          203
 #define ID_APP_PURCHASE                 204
 #define ID_APP_ENTERLICENSEKEY          205
+#define IDC_SYSLINK1                    2025
 #define IDB_KEY                         20000
 #define IDB_BACKDROP                    20001
 #define IDB_LOGO                        20002
@@ -166,7 +167,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        2008
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         2025
+#define _APS_NEXT_CONTROL_VALUE         2026
 #define _APS_NEXT_SYMED_VALUE           2007
 #endif
 #endif
