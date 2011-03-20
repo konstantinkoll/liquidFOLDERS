@@ -86,13 +86,13 @@ void CHistoryBar::AddFilter(LFFilter* Filter, CDC* pDC)
 	wcscpy_s(item.Name, 256, Filter->Name);
 	item.Width = pDC->GetTextExtent(item.Name, wcslen(item.Name)).cx+2*MARGIN;
 
-	m_Items.AddItem(item);
+	m_Breadcrumbs.AddItem(item);
 }
 
 void CHistoryBar::SetHistory(LFFilter* ActiveFilter, BreadcrumbItem* BreadcrumbBack)
 {
 	m_IsEmpty = FALSE;
-	m_Items.m_ItemCount = 0;
+	m_Breadcrumbs.m_ItemCount = 0;
 
 	CDC* dc = GetDC();
 	CFont* pOldFont = dc->SelectObject(&theApp.m_DefaultFont);
@@ -117,15 +117,15 @@ void CHistoryBar::AdjustLayout()
 
 	INT Spacer = rect.Height()-2*BORDER;
 	INT Width = 0;
-	for (UINT a=0; a<m_Items.m_ItemCount; a++)
-		Width += m_Items.m_Items[a].Width+((a>0) ? Spacer : 0);
+	for (UINT a=0; a<m_Breadcrumbs.m_ItemCount; a++)
+		Width += m_Breadcrumbs.m_Items[a].Width+((a>0) ? Spacer : 0);
 
 	INT Right = min(rect.right-BORDER, rect.left+Width+BORDER);
-	for (UINT a=0; a<m_Items.m_ItemCount; a++)
+	for (UINT a=0; a<m_Breadcrumbs.m_ItemCount; a++)
 	{
-		m_Items.m_Items[a].Right = Right;
-		Right = m_Items.m_Items[a].Left = Right-m_Items.m_Items[a].Width;
-		if (a<m_Items.m_ItemCount-1)
+		m_Breadcrumbs.m_Items[a].Right = Right;
+		Right = m_Breadcrumbs.m_Items[a].Left = Right-m_Breadcrumbs.m_Items[a].Width;
+		if (a<m_Breadcrumbs.m_ItemCount-1)
 			Right -= Spacer;
 	}
 
@@ -294,10 +294,10 @@ void CHistoryBar::OnPaint()
 		pOldFont = dc.SelectObject(&theApp.m_DefaultFont);
 		dc.SetTextColor(c1);
 
-		for (UINT a=0; a<m_Items.m_ItemCount; a++)
+		for (UINT a=0; a<m_Breadcrumbs.m_ItemCount; a++)
 		{
 			// Item
-			HistoryItem* hi = &m_Items.m_Items[a];
+			HistoryItem* hi = &m_Breadcrumbs.m_Items[a];
 
 			CRect rectItem(rectContent);
 			rectItem.left = hi->Left;
@@ -319,7 +319,7 @@ void CHistoryBar::OnPaint()
 			{
 				CRect rectArrow(rectContent);
 				rectArrow.left = hi->Right;
-				rectArrow.right = m_Items.m_Items[a-1].Left;
+				rectArrow.right = m_Breadcrumbs.m_Items[a-1].Left;
 
 				INT cy = rectArrow.Height()/4;
 				INT cx = (rectArrow.Width()-cy)/2;

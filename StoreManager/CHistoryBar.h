@@ -44,7 +44,7 @@ protected:
 	BOOL m_Hover;
 	BOOL m_IsEmpty;
 	CString m_EmptyHint;
-	DynArray<HistoryItem> m_Items;
+	DynArray<HistoryItem> m_Breadcrumbs;
 
 	void AdjustLayout();
 
