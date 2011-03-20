@@ -47,7 +47,7 @@ protected:
 	CMainView m_wndMainView;
 	BreadcrumbItem* m_BreadcrumbBack;
 	BreadcrumbItem* m_BreadcrumbForward;
-	LFFilter* ActiveFilter;
+	LFFilter* m_pActiveFilter;
 	LFSearchResult* m_pRawFiles;
 	LFSearchResult* m_pCookedFiles;
 

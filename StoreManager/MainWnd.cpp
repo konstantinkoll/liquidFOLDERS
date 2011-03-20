@@ -28,7 +28,7 @@ LFFilter* GetRootFilter(CHAR* RootStore=NULL)
 CMainWnd::CMainWnd()
 {
 	m_hIcon = NULL;
-	ActiveFilter = NULL;
+	m_pActiveFilter = NULL;
 	m_pRawFiles = m_pCookedFiles = NULL;
 	m_BreadcrumbBack = m_BreadcrumbForward = NULL;
 }
@@ -37,8 +37,8 @@ CMainWnd::~CMainWnd()
 {
 	if (m_hIcon)
 		DestroyIcon(m_hIcon);
-	if (ActiveFilter)
-		LFFreeFilter(ActiveFilter);
+	if (m_pActiveFilter)
+		LFFreeFilter(m_pActiveFilter);
 	if (m_pCookedFiles!=m_pRawFiles)
 		LFFreeSearchResult(m_pCookedFiles);
 	LFFreeSearchResult(m_pRawFiles);
@@ -52,7 +52,7 @@ BOOL CMainWnd::Create(BOOL IsClipboard, CHAR* RootStore)
 	m_IsClipboard = IsClipboard;
 
 	if (!IsClipboard)
-		ActiveFilter = GetRootFilter(RootStore);
+		m_pActiveFilter = GetRootFilter(RootStore);
 
 	CString className = AfxRegisterWndClass(CS_DBLCLKS, LoadCursor(NULL, IDC_ARROW), NULL, m_hIcon);
 
@@ -130,48 +130,46 @@ void CMainWnd::NavigateTo(LFFilter* f, UINT NavMode, FVPersistentData* Data, INT
 	if (NavMode<NAVMODE_RELOAD)
 		theApp.PlayNavigateSound();
 
-	if (ActiveFilter)
+	if (m_pActiveFilter)
 		if (NavMode==NAVMODE_NORMAL)
 		{
 			FVPersistentData Data;
 			m_wndMainView.GetPersistentData(Data);
-			AddBreadcrumbItem(&m_BreadcrumbBack, ActiveFilter, Data);
+			AddBreadcrumbItem(&m_BreadcrumbBack, m_pActiveFilter, Data);
 			DeleteBreadcrumbs(&m_BreadcrumbForward);
 		}
 		else
 		{
-			LFFreeFilter(ActiveFilter);
+			LFFreeFilter(m_pActiveFilter);
 		}
 
-	ActiveFilter = f;
-	ActiveFilter->ShowEmptyDrives = (theApp.m_ShowEmptyDrives==TRUE);
-	ActiveFilter->ShowEmptyDomains = (theApp.m_ShowEmptyDomains==TRUE);
+	m_pActiveFilter = f;
+	m_pActiveFilter->ShowEmptyDrives = (theApp.m_ShowEmptyDrives==TRUE);
+	m_pActiveFilter->ShowEmptyDomains = (theApp.m_ShowEmptyDomains==TRUE);
 
 	if (NavMode<NAVMODE_RELOAD)
 		m_wndMainView.UpdateSearchResult(NULL, NULL, NULL);
 
-
 	INT OldContext = -1;
-	LFSearchResult* victim = NULL;
-
+	LFSearchResult* pVictim = NULL;
 	if (m_pRawFiles)
 	{
 		OldContext = m_pRawFiles->m_Context;
 		if (m_pRawFiles!=m_pCookedFiles)
-			victim = m_pRawFiles;
+			pVictim = m_pRawFiles;
 	}
 
 	if ((m_pRawFiles) && (FirstAggregate!=-1) && (LastAggregate!=-1))
 	{
 		m_pRawFiles = LFQuery(f, m_pRawFiles, FirstAggregate, LastAggregate);
-		if ((victim) && (victim!=m_pRawFiles))
-			LFFreeSearchResult(victim);
+		if ((pVictim) && (pVictim!=m_pRawFiles))
+			LFFreeSearchResult(pVictim);
 	}
 	else
 	{
-		if (victim)
-			LFFreeSearchResult(victim);
-		m_pRawFiles = LFQuery(ActiveFilter);
+		if (pVictim)
+			LFFreeSearchResult(pVictim);
+		m_pRawFiles = LFQuery(m_pActiveFilter);
 	}
 
 	OnCookFiles((WPARAM)Data);
@@ -191,7 +189,7 @@ void CMainWnd::NavigateTo(LFFilter* f, UINT NavMode, FVPersistentData* Data, INT
 void CMainWnd::UpdateHistory()
 {
 	if (!m_IsClipboard)
-		m_wndHistory.SetHistory(ActiveFilter, m_BreadcrumbBack);
+		m_wndHistory.SetHistory(m_pActiveFilter, m_BreadcrumbBack);
 }
 
 
@@ -244,7 +242,7 @@ INT CMainWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	UseGlasBackground(Margins);
 
 	// Entweder leeres Suchergebnis oder Stores-Kontext öffnen
-	m_pRawFiles = m_IsClipboard ? LFAllocSearchResult(LFContextClipboard) : LFQuery(ActiveFilter);
+	m_pRawFiles = m_IsClipboard ? LFAllocSearchResult(LFContextClipboard) : LFQuery(m_pActiveFilter);
 	OnCookFiles();
 	UpdateHistory();
 
@@ -276,12 +274,12 @@ void CMainWnd::OnNavigateBack()
 {
 	ASSERT(!m_IsClipboard);
 
-	if (ActiveFilter)
+	if (m_pActiveFilter)
 	{
-		LFFilter* f = ActiveFilter;
+		LFFilter* f = m_pActiveFilter;
 		FVPersistentData Data;
 		m_wndMainView.GetPersistentData(Data);
-		ActiveFilter = NULL;
+		m_pActiveFilter = NULL;
 
 		AddBreadcrumbItem(&m_BreadcrumbForward, f, Data);
 		ConsumeBreadcrumbItem(&m_BreadcrumbBack, &f, &Data);
@@ -294,12 +292,12 @@ void CMainWnd::OnNavigateForward()
 {
 	ASSERT(!m_IsClipboard);
 
-	if (ActiveFilter)
+	if (m_pActiveFilter)
 	{
-		LFFilter* f = ActiveFilter;
+		LFFilter* f = m_pActiveFilter;
 		FVPersistentData Data;
 		m_wndMainView.GetPersistentData(Data);
-		ActiveFilter = NULL;
+		m_pActiveFilter = NULL;
 
 		AddBreadcrumbItem(&m_BreadcrumbBack, f, Data);
 		ConsumeBreadcrumbItem(&m_BreadcrumbForward, &f, &Data);
@@ -312,11 +310,11 @@ void CMainWnd::OnNavigateReload()
 {
 	ASSERT(!m_IsClipboard);
 
-	if (ActiveFilter)
+	if (m_pActiveFilter)
 	{
 		FVPersistentData Data;
 		m_wndMainView.GetPersistentData(Data);
-		NavigateTo(LFAllocFilter(ActiveFilter), NAVMODE_RELOAD, &Data);
+		NavigateTo(LFAllocFilter(m_pActiveFilter), NAVMODE_RELOAD, &Data);
 	}
 }
 
@@ -406,16 +404,16 @@ void CMainWnd::OnUpdateSortOptions()
 
 LRESULT CMainWnd::OnCookFiles(WPARAM wParam, LPARAM /*lParam*/)
 {
-	LFSearchResult* Victim = m_pCookedFiles;
+	LFSearchResult* pVictim = m_pCookedFiles;
 
 	LFViewParameters* vp = &theApp.m_Views[m_pRawFiles->m_Context];
 	LFAttributeDescriptor* attr = theApp.m_Attributes[vp->SortBy];
 
-	if (((!m_IsClipboard) && (vp->AutoDirs) && (!ActiveFilter->Options.IsSubfolder)) || (vp->Mode>LFViewPreview))
+	if (((!m_IsClipboard) && (vp->AutoDirs) && (!m_pActiveFilter->Options.IsSubfolder)) || (vp->Mode>LFViewPreview))
 	{
 		m_pCookedFiles = LFGroupSearchResult(m_pRawFiles, vp->SortBy, (vp->Mode<=LFViewPreview) && (vp->Descending==TRUE), attr->IconID,
 			(vp->Mode>LFViewPreview) || ((attr->Type!=LFTypeTime) && (vp->SortBy!=LFAttrFileName) && (vp->SortBy!=LFAttrStoreID) && (vp->SortBy!=LFAttrFileID)),
-			ActiveFilter);
+			m_pActiveFilter);
 	}
 	else
 	{
@@ -425,8 +423,8 @@ LRESULT CMainWnd::OnCookFiles(WPARAM wParam, LPARAM /*lParam*/)
 
 	m_wndMainView.UpdateSearchResult(m_pRawFiles, m_pCookedFiles, (FVPersistentData*)wParam);
 
-	if ((Victim) && (Victim!=m_pRawFiles))
-		LFFreeSearchResult(Victim);
+	if ((pVictim) && (pVictim!=m_pRawFiles))
+		LFFreeSearchResult(pVictim);
 
 	if ((m_pCookedFiles->m_LastError<=LFCancel) && (!LFIsLicensed()))
 		if ((++theApp.m_NagCounter)>20)

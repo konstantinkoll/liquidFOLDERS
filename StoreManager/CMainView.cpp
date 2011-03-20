@@ -1093,6 +1093,8 @@ void CMainView::OnStoresCreateNew()
 
 void CMainView::OnStoresMaintainAll()
 {
+	CWaitCursor wait;
+
 	LFMaintenanceList* ml = LFStoreMaintenance();
 	LFErrorBox(ml->m_LastError);
 

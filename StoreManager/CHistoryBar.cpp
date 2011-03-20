@@ -47,7 +47,7 @@ void DeleteBreadcrumbs(BreadcrumbItem** bi)
 //
 
 #define BORDER          4
-#define MARGIN          3
+#define MARGIN          4
 
 CHistoryBar::CHistoryBar()
 	: CWnd()
@@ -277,6 +277,8 @@ void CHistoryBar::OnPaint()
 
 	// Breadcrumbs
 	CFont* pOldFont;
+	COLORREF c1 = (pCtrlSite->GetDesign()==GWD_DEFAULT) ? GetSysColor(COLOR_WINDOWTEXT) : 0x000000;
+	COLORREF c2 = (pCtrlSite->GetDesign()==GWD_DEFAULT) ? GetSysColor(COLOR_3DSHADOW) : 0x808080;
 
 	if (m_IsEmpty)
 	{
@@ -284,13 +286,13 @@ void CHistoryBar::OnPaint()
 		rectText.DeflateRect(BORDER, 0);
 
 		pOldFont = dc.SelectObject(&theApp.m_ItalicFont);
-		dc.SetTextColor(0x808080);
+		dc.SetTextColor(c2);
 		dc.DrawText(m_EmptyHint, rectText, DT_SINGLELINE | DT_END_ELLIPSIS | DT_VCENTER);
 	}
 	else
 	{
 		pOldFont = dc.SelectObject(&theApp.m_DefaultFont);
-		dc.SetTextColor(hTheme ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT));
+		dc.SetTextColor(c1);
 
 		for (UINT a=0; a<m_Items.m_ItemCount; a++)
 		{

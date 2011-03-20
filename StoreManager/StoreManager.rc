@@ -450,7 +450,7 @@ BEGIN
     IDS_LEGEND_COMMON       "Häufig"
     IDS_LEGEND_OLDER        "Älter"
     IDS_LEGEND_NEWER        "Neuer"
-    IDS_STATISTICS          "Statistik"
+    IDS_STATISTICS          "Statistiken"
     IDS_STATISTICS_BYCOUNT  "Nach Anzahl"
     IDS_STATISTICS_BYSIZE   "Nach Größe"
     IDS_STATISTICS_OTHER    "Andere"
