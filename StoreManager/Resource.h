@@ -126,7 +126,7 @@
 #define IDC_CROSSHAIRS                  2212
 #define IDD_GOTOYEAR                    2300
 #define IDC_YEAR                        2301
-#define IDM_STORES_SHOWEMPTYDRIVES      3000
+#define IDM_STORES_SHOWEMPTYVOLUMES      3000
 #define IDM_STORES_REPAIRCORRUPTEDINDEX 3001
 #define IDM_HOME                        3100
 #define IDM_HOME_SHOWEMPTYDOMAINS       3101
@@ -141,11 +141,11 @@
 #define IDM_TRASH_EMPTY                 3301
 #define IDM_TRASH_RESTOREALL            3302
 #define IDM_ITEM_OPEN                   4000
-#define IDM_DRIVE                       4100
-#define IDM_DRIVE_CREATENEWSTORE        4101
-#define IDM_DRIVE_EJECT                 4102
-#define IDM_DRIVE_FORMAT                4103
-#define IDM_DRIVE_PROPERTIES            4104
+#define IDM_VOLUME                       4100
+#define IDM_VOLUME_CREATENEWSTORE        4101
+#define IDM_VOLUME_EJECT                 4102
+#define IDM_VOLUME_FORMAT                4103
+#define IDM_VOLUME_PROPERTIES            4104
 #define IDM_FILE                        4200
 #define IDM_FILE_OPENWITH               4201
 #define IDM_FILE_REMEMBER               4202

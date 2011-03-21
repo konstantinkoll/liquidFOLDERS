@@ -1,9 +1,9 @@
 
-// LFStoreNewDriveDlg.cpp: Implementierung der Klasse LFStoreNewDriveDlg
+// LFStoreNewVolumeDlg.cpp: Implementierung der Klasse LFStoreNewVolumeDlg
 //
 
 #include "StdAfx.h"
-#include "LFStoreNewDriveDlg.h"
+#include "LFStoreNewVolumeDlg.h"
 #include "Resource.h"
 #include "LFCore.h"
 #include "LFApplication.h"
@@ -11,20 +11,20 @@
 #include "..\\LFCore\\resource.h"
 
 
-// LFStoreNewDriveDlg
+// LFStoreNewVolumeDlg
 //
 
 extern AFX_EXTENSION_MODULE LFCommDlgDLL;
 
-LFStoreNewDriveDlg::LFStoreNewDriveDlg(CWnd* pParentWnd, CHAR Drive, LFStoreDescriptor* pStore)
-	: CDialog(IDD_STORENEWDRIVE, pParentWnd)
+LFStoreNewVolumeDlg::LFStoreNewVolumeDlg(CWnd* pParentWnd, CHAR Drive, LFStoreDescriptor* pStore)
+	: CDialog(IDD_STORENEWVOLUME, pParentWnd)
 {
 	m_pStore = pStore;
 	m_ulSHChangeNotifyRegister = NULL;
 	m_Drive = Drive;
 }
 
-void LFStoreNewDriveDlg::DoDataExchange(CDataExchange* pDX)
+void LFStoreNewVolumeDlg::DoDataExchange(CDataExchange* pDX)
 {
 	DDX_Control(pDX, IDC_HYBRIDSTOREICON, m_IconHybrid);
 	DDX_Control(pDX, IDC_EXTERNALSTOREICON, m_IconExternal);
@@ -51,12 +51,12 @@ void LFStoreNewDriveDlg::DoDataExchange(CDataExchange* pDX)
 }
 
 
-BEGIN_MESSAGE_MAP(LFStoreNewDriveDlg, CDialog)
+BEGIN_MESSAGE_MAP(LFStoreNewVolumeDlg, CDialog)
 	ON_WM_DESTROY()
 	ON_MESSAGE(WM_SHELLCHANGE, OnShellChange)
 END_MESSAGE_MAP()
 
-BOOL LFStoreNewDriveDlg::OnInitDialog()
+BOOL LFStoreNewVolumeDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
@@ -94,7 +94,7 @@ BOOL LFStoreNewDriveDlg::OnInitDialog()
 	return TRUE;
 }
 
-void LFStoreNewDriveDlg::OnDestroy()
+void LFStoreNewVolumeDlg::OnDestroy()
 {
 	if (m_ulSHChangeNotifyRegister)
 		VERIFY(SHChangeNotifyDeregister(m_ulSHChangeNotifyRegister));
@@ -102,7 +102,7 @@ void LFStoreNewDriveDlg::OnDestroy()
 	CDialog::OnDestroy();
 }
 
-LRESULT LFStoreNewDriveDlg::OnShellChange(WPARAM /*wParam*/, LPARAM /*lParam*/)
+LRESULT LFStoreNewVolumeDlg::OnShellChange(WPARAM /*wParam*/, LPARAM /*lParam*/)
 {
 	// Wenn das Laufwerk nicht mehr vorhanden ist, Dialog schlieﬂen
 	WCHAR szDriveRoot[] = L" :\\";

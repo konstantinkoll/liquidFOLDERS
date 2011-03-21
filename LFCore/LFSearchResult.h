@@ -12,7 +12,7 @@ public:
 
 	bool AddItemDescriptor(LFItemDescriptor* i);
 	bool AddStoreDescriptor(LFStoreDescriptor* s, LFFilter* f);
-	void AddDrives(LFFilter* filter);
+	void AddVolumes(LFFilter* filter);
 	void RemoveItemDescriptor(unsigned int idx, bool updatecount=true);
 	void RemoveFlaggedItemDescriptors(bool updatecount=true);
 	void KeepRange(int first, int last);

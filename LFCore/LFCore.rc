@@ -392,14 +392,14 @@ LANGUAGE LANG_ENGLISH, SUBLANG_NEUTRAL
 STRINGTABLE 
 BEGIN
     IDS_LFCategoryInternalStores 
-                            "Internal stores\nThese stores reside on an internal drive, and are always available."
+                            "Internal stores\nThese stores reside on an internal volume, and are always available."
     IDS_LFCategoryHybridStores 
-                            "Hybrid stores\nThese stores can be searched, even when the removable drive is not connected."
+                            "Hybrid stores\nThese stores can be searched, even when the removable volume is not connected."
     IDS_LFCategoryExternalStores 
-                            "External stores\nThese stores reside entirely on removable drives."
+                            "External stores\nThese stores reside entirely on removable volumes."
     IDS_LFCategoryRemoteStores 
                             "Remote stores\nThese stores reside on other computers."
-    IDS_LFCategoryDrives    "Removable drives\nChoose one of these to create a new external or hybrid store."
+    IDS_LFCategoryDrives    "Removable volumes\nChoose one of these to create a new external or hybrid store."
     IDS_LFCategoryStore     "This store"
     IDS_LFCategoryMediaTypes "Media"
     IDS_LFCategoryDocuments "Documents"

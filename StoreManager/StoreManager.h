@@ -36,7 +36,7 @@ public:
 	UINT m_FilterWidth;
 	UINT m_InspectorWidth;
 
-	BOOL m_ShowEmptyDrives;
+	BOOL m_ShowEmptyVolumes;
 	BOOL m_ShowEmptyDomains;
 	BOOL m_ShowStatistics;
 	BOOL m_CalendarShowStatistics;

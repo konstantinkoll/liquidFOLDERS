@@ -43,7 +43,7 @@ struct LFMessageIDs
 	unsigned int StoresChanged;
 	unsigned int StoreAttributesChanged;
 	unsigned int DefaultStoreChanged;
-	unsigned int DrivesChanged;
+	unsigned int VolumesChanged;
 };
 
 #define LFMSGF_IntStores                1
@@ -112,7 +112,7 @@ struct LFAirport
 #define LFItemCategoryHybridStores      1
 #define LFItemCategoryExternalStores    2
 #define LFItemCategoryRemoteStores      3
-#define LFItemCategoryDrives            4
+#define LFItemCategoryVolumes           4
 #define LFItemCategoryStore             5
 #define LFItemCategoryMediaTypes        6
 #define LFItemCategoryOtherTypes        7
@@ -385,7 +385,7 @@ struct LFFilterOptions
 {
 	// For LFFilterModeStores
 	bool OnlyInternalStores;				// If true, only internal stores are added
-	bool AddDrives;							// If true, drives are added
+	bool AddVolumes;						// If true, volumes are added
 
 	// For LFFilterModeDirectoryTree and above
 	bool IgnoreSlaves;						// If true, returns only core attributes
@@ -408,7 +408,7 @@ struct LFFilter
 	unsigned int Mode;
 	LFFilterOptions Options;
 
-	bool ShowEmptyDrives;					// For LFFilterModeStores
+	bool ShowEmptyVolumes;					// For LFFilterModeStores
 	bool ShowEmptyDomains;					// For LFFilterModeStoreHome
 
 	char StoreID[LFKeySize];				// For LFFilterModeStoreHome and above
@@ -455,7 +455,7 @@ struct LFCoreAttributes
 #define LFTypeGhosted                   0x00000004
 #define LFTypeRequiresMaintenance       0x00000008
 
-#define LFTypeDrive                     0x10000000
+#define LFTypeVolume                    0x10000000
 #define LFTypeStore                     0x20000000
 #define LFTypeFile                      0x40000000
 #define LFTypeVirtual                   0x80000000

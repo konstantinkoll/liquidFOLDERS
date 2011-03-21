@@ -67,7 +67,7 @@ protected:
 	afx_msg LRESULT OnCookFiles(WPARAM wParam=0, LPARAM lParam=NULL);
 	afx_msg void OnUpdateFooter();
 
-	afx_msg LRESULT OnDrivesChanged(WPARAM wParam, LPARAM lParam);
+	afx_msg LRESULT OnVolumesChanged(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnStoresChanged(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnStoreAttributesChanged(WPARAM wParam, LPARAM lParam);
 	DECLARE_MESSAGE_MAP()

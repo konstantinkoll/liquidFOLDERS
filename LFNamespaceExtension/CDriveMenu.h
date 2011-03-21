@@ -9,7 +9,7 @@
 // CDriveMenu
 //
 
-#define VERB_CREATENEWSTOREDRIVE     "newstoredrive"
+#define VERB_CREATENEWSTOREVOLUME     "newstorevolume"
 
 class CDriveMenu : public CContextMenuExtension
 {

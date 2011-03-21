@@ -553,8 +553,8 @@ CMenu* CFileView::GetItemContextMenu(INT idx)
 	LFItemDescriptor* item = p_Result->m_Items[idx];
 	switch (item->Type & LFTypeMask)
 	{
-	case LFTypeDrive:
-		pMenu->LoadMenu(IDM_DRIVE);
+	case LFTypeVolume:
+		pMenu->LoadMenu(IDM_VOLUME);
 		break;
 	case LFTypeStore:
 		pMenu->LoadMenu(IDM_STORE);
@@ -577,7 +577,7 @@ CMenu* CFileView::GetItemContextMenu(INT idx)
 	CMenu* pPopup = pMenu->GetSubMenu(0);
 	ASSERT_VALID(pPopup);
 
-	if ((item->Type & LFTypeMask)!=LFTypeDrive)
+	if ((item->Type & LFTypeMask)!=LFTypeVolume)
 	{
 		CString tmpStr;
 
@@ -900,7 +900,7 @@ CString CFileView::GetHint(LFItemDescriptor* i, WCHAR* FormatName)
 
 	switch (i->Type & LFTypeMask)
 	{
-	case LFTypeDrive:
+	case LFTypeVolume:
 		AppendAttribute(i, LFAttrDescription, hint);
 		break;
 	case LFTypeStore:
@@ -1521,7 +1521,7 @@ void CFileView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 			CMenu* pPopup = pMenu->GetSubMenu(0);
 			ASSERT_VALID(pPopup);
 
-			HBITMAP hBmp = theApp.SetContextMenuIcon(pPopup, IDM_DRIVE_CREATENEWSTORE, IDI_STORE_Bag);
+			HBITMAP hBmp = theApp.SetContextMenuIcon(pPopup, IDM_VOLUME_CREATENEWSTORE, IDI_STORE_Bag);
 
 			pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, GetOwner(), NULL);
 			delete pMenu;

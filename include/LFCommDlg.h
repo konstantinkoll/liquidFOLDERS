@@ -33,7 +33,7 @@
 #include "..\LFCommDlg\LFStoreDeleteDlg.h"
 #include "..\LFCommDlg\LFStoreMaintenanceDlg.h"
 #include "..\LFCommDlg\LFStoreNewDlg.h"
-#include "..\LFCommDlg\LFStoreNewDriveDlg.h"
+#include "..\LFCommDlg\LFStoreNewVolumeDlg.h"
 #include "..\LFCommDlg\LFStorePropertiesDlg.h"
 #include "..\LFCommDlg\LFTooltip.h"
 #include "..\LFCommDlg\LFWelcomeDlg.h"

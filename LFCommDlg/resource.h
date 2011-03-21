@@ -109,7 +109,7 @@
 #define IDC_MAKEDEFAULT                 21309
 #define IDC_AUTOPATH                    21310
 #define IDC_PATHTREE                    21311
-#define IDD_STORENEWDRIVE               21350
+#define IDD_STORENEWVOLUME              21350
 #define IDD_STOREDELETE                 21400
 #define IDC_KEEP                        21401
 #define IDC_DELETE                      21402

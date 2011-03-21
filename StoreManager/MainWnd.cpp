@@ -11,9 +11,9 @@ LFFilter* GetRootFilter(CHAR* RootStore=NULL)
 {
 	LFFilter* f = LFAllocFilter();
 	f->Mode = RootStore ? LFFilterModeStoreHome : LFFilterModeStores;
-	f->ShowEmptyDrives = (theApp.m_ShowEmptyDrives==TRUE);
+	f->ShowEmptyVolumes = (theApp.m_ShowEmptyVolumes==TRUE);
 	f->ShowEmptyDomains = (theApp.m_ShowEmptyDomains==TRUE);
-	f->Options.AddDrives = true;
+	f->Options.AddVolumes = true;
 
 	if (RootStore)
 		strcpy_s(f->StoreID, LFKeySize, RootStore);
@@ -144,7 +144,7 @@ void CMainWnd::NavigateTo(LFFilter* f, UINT NavMode, FVPersistentData* Data, INT
 		}
 
 	m_pActiveFilter = f;
-	m_pActiveFilter->ShowEmptyDrives = (theApp.m_ShowEmptyDrives==TRUE);
+	m_pActiveFilter->ShowEmptyVolumes = (theApp.m_ShowEmptyVolumes==TRUE);
 	m_pActiveFilter->ShowEmptyDomains = (theApp.m_ShowEmptyDomains==TRUE);
 
 	if (NavMode<NAVMODE_RELOAD)
@@ -212,7 +212,7 @@ BEGIN_MESSAGE_MAP(CMainWnd, CGlasWindow)
 	ON_MESSAGE(WM_COOKFILES, OnCookFiles)
 	ON_MESSAGE_VOID(WM_UPDATEFOOTER, OnUpdateFooter)
 
-	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->DrivesChanged, OnDrivesChanged)
+	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->VolumesChanged, OnVolumesChanged)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoresChanged, OnStoresChanged)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoreAttributesChanged, OnStoreAttributesChanged)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->DefaultStoreChanged, OnStoresChanged)
@@ -357,8 +357,8 @@ void CMainWnd::OnItemOpen()
 
 				switch (i->Type & LFTypeMask)
 				{
-				case LFTypeDrive:
-					SendMessage(WM_COMMAND, IDM_DRIVE_CREATENEWSTORE);
+				case LFTypeVolume:
+					SendMessage(WM_COMMAND, IDM_VOLUME_CREATENEWSTORE);
 					break;
 				case LFTypeFile:
 					res = LFGetFileLocation(i, Path, MAX_PATH, true);
@@ -445,7 +445,7 @@ void CMainWnd::OnUpdateFooter()
 }
 
 
-LRESULT CMainWnd::OnDrivesChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)
+LRESULT CMainWnd::OnVolumesChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)
 {
 	if (m_pCookedFiles)
 		switch (m_pCookedFiles->m_Context)

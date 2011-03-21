@@ -22,7 +22,7 @@ public:
 protected:
 	void OnAppAbout(UINT ResIDName, UINT ResIDPicture);
 	void OnStoresCreate();
-	void OnStoresCreateDrive(CHAR Drive);
+	void OnStoresCreateVolume(CHAR Drive);
 	void OnStoresMaintainAll();
 	void OnStoreDelete(CString ID);
 	void OnStoreImportFolder(CString ID);

@@ -1,5 +1,5 @@
 
-// LFStoreNewDriveDlg.h: Schnittstelle der Klasse LFStoreNewDrive
+// LFStoreNewVolumeDlg.h: Schnittstelle der Klasse LFStoreNewVolume
 //
 
 #pragma once
@@ -8,13 +8,13 @@
 #include "CIconCtrl.h"
 
 
-// LFStoreNewDriveDlg
+// LFStoreNewVolumeDlg
 //
 
-class AFX_EXT_CLASS LFStoreNewDriveDlg : public CDialog
+class AFX_EXT_CLASS LFStoreNewVolumeDlg : public CDialog
 {
 public:
-	LFStoreNewDriveDlg(CWnd* pParentWnd, CHAR Drive, LFStoreDescriptor* pStore);
+	LFStoreNewVolumeDlg(CWnd* pParentWnd, CHAR Drive, LFStoreDescriptor* pStore);
 
 	virtual void DoDataExchange(CDataExchange* pDX);
 

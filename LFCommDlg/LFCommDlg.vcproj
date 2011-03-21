@@ -571,7 +571,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\LFStoreNewDriveDlg.cpp"
+				RelativePath=".\LFStoreNewVolumeDlg.cpp"
 				>
 			</File>
 			<File
@@ -781,7 +781,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\LFStoreNewDriveDlg.h"
+				RelativePath=".\LFStoreNewVolumeDlg.h"
 				>
 			</File>
 			<File

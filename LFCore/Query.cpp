@@ -647,8 +647,8 @@ LFSearchResult* QueryStores(LFFilter* filter)
 	ReleaseMutex(Mutex_Stores);
 
 	if (filter)
-		if (filter->Options.AddDrives)
-			res->AddDrives(filter);
+		if (filter->Options.AddVolumes)
+			res->AddVolumes(filter);
 
 	return res;
 }

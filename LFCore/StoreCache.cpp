@@ -31,7 +31,7 @@ LFStoreDescriptor StoreCache[MaxStores] = { 0 };
 extern HANDLE Mutex_Stores;
 extern HMODULE LFCoreModuleHandle;
 extern LFMessageIDs LFMessages;
-extern unsigned int DriveTypes[26];
+extern unsigned int VolumeTypes[26];
 
 
 bool IsStoreMounted(LFStoreDescriptor* s)
@@ -663,7 +663,7 @@ LFCore_API unsigned int LFGetStoreCount()
 	return res;
 }
 
-LFCore_API bool LFStoresOnDrive(char d)
+LFCore_API bool LFStoresOnVolume(char d)
 {
 	bool res = false;
 
@@ -799,7 +799,7 @@ Finish2:
 
 	if (!InternalCall)
 	{
-		SendLFNotifyMessage(changeOccured ? LFMessages.StoresChanged : LFMessages.DrivesChanged, changeOccured ? LFMSGF_ExtHybStores : 0, NULL);
+		SendLFNotifyMessage(changeOccured ? LFMessages.StoresChanged : LFMessages.VolumesChanged, changeOccured ? LFMSGF_ExtHybStores : 0, NULL);
 		SendShellNotifyMessage(SHCNE_UPDATEDIR);
 	}
 
@@ -812,7 +812,7 @@ LFCore_API unsigned int LFUnmountDrive(char d, bool InternalCall)
 		return LFMutexError;
 
 	bool changeOccured = false;
-	DriveTypes[d-'A'] = DRIVE_UNKNOWN;
+	VolumeTypes[d-'A'] = DRIVE_UNKNOWN;
 	unsigned int res = LFOk;
 
 	char NotifyIDs[MaxStores][LFKeySize];
@@ -865,7 +865,7 @@ LFCore_API unsigned int LFUnmountDrive(char d, bool InternalCall)
 
 	if (!InternalCall)
 	{
-		SendLFNotifyMessage(changeOccured ? LFMessages.StoresChanged : LFMessages.DrivesChanged, changeOccured ? LFMSGF_ExtHybStores : 0, NULL);
+		SendLFNotifyMessage(changeOccured ? LFMessages.StoresChanged : LFMessages.VolumesChanged, changeOccured ? LFMSGF_ExtHybStores : 0, NULL);
 		for (unsigned int a=0; a<NotifyCount; a++)
 			SendShellNotifyMessage(SHCNE_UPDATEITEM, NotifyIDs[a]);
 		SendShellNotifyMessage(SHCNE_UPDATEDIR);

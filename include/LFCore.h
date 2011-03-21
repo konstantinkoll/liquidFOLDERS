@@ -365,7 +365,7 @@ LFCore_API void LFGetDefaultStoreName(wchar_t* name, size_t cCount);
 LFCore_API unsigned int LFGetStoreCount();
 
 // Prüft, ob Stores auf dem angegebenen Laufwerk vorhanden sind
-LFCore_API bool LFStoresOnDrive(char d);
+LFCore_API bool LFStoresOnVolume(char d);
 
 // Gibt die IDs aller Stores zurück
 LFCore_API unsigned int LFGetStores(char** keys, unsigned int* count);

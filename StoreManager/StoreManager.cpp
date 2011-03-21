@@ -71,7 +71,7 @@ BOOL CStoreManagerApp::InitInstance()
 	m_InspectorWidth = GetInt(_T("InspectorWidth"), 200);
 	if (m_InspectorWidth<32)
 		m_InspectorWidth = 32;
-	m_ShowEmptyDrives = GetInt(_T("ShowEmptyDrives"), TRUE);
+	m_ShowEmptyVolumes = GetInt(_T("ShowEmptyVolumes"), TRUE);
 	m_ShowEmptyDomains = GetInt(_T("ShowEmptyDomains"), TRUE);
 	m_ShowStatistics = GetInt(_T("ShowStatistics"), TRUE);
 	m_CalendarShowStatistics = GetInt(_T("CalendarShowStatistics"), TRUE);
@@ -125,7 +125,7 @@ INT CStoreManagerApp::ExitInstance()
 	WriteInt(_T("ShowInspectorPane"), m_ShowInspectorPane);
 	WriteInt(_T("FilterWidth"), m_FilterWidth);
 	WriteInt(_T("InspectorWidth"), m_InspectorWidth);
-	WriteInt(_T("ShowEmptyDrives"), m_ShowEmptyDrives);
+	WriteInt(_T("ShowEmptyVolumes"), m_ShowEmptyVolumes);
 	WriteInt(_T("ShowEmptyDomains"), m_ShowEmptyDomains);
 	WriteInt(_T("ShowStatistics"), m_ShowStatistics);
 	WriteInt(_T("CalendarShowStatistics"), m_CalendarShowStatistics);

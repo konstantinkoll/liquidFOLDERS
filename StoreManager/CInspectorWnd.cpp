@@ -115,7 +115,7 @@ void CInspectorWnd::UpdateAdd(LFItemDescriptor* i, LFSearchResult* raw)
 	// Attribute
 	switch (i->Type & LFTypeMask)
 	{
-	case LFTypeDrive:
+	case LFTypeVolume:
 		AddValue(i, LFAttrFileName, FALSE);
 		AddValue(i, LFAttrDescription);
 		AddValueVirtual(AttrDriveLetter, i->CoreAttributes.FileID);
@@ -188,7 +188,7 @@ void CInspectorWnd::UpdateFinish()
 	{
 		switch (TypeID)
 		{
-		case LFTypeDrive:
+		case LFTypeVolume:
 			SID = IDS_DRIVES_SINGULAR;
 			break;
 		case LFTypeStore:

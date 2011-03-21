@@ -179,16 +179,16 @@ BEGIN
     END
 END
 
-IDM_DRIVE MENU 
+IDM_VOLUME MENU 
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "&Neuen Store anlegen...",     IDM_DRIVE_CREATENEWSTORE
+        MENUITEM "&Neuen Store anlegen...",     IDM_VOLUME_CREATENEWSTORE
         MENUITEM SEPARATOR
-        MENUITEM "&Formatieren...",             IDM_DRIVE_FORMAT
-        MENUITEM "A&uswerfen",                  IDM_DRIVE_EJECT
+        MENUITEM "&Formatieren...",             IDM_VOLUME_FORMAT
+        MENUITEM "A&uswerfen",                  IDM_VOLUME_EJECT
         MENUITEM SEPARATOR
-        MENUITEM "&Eigenschaften",              IDM_DRIVE_PROPERTIES
+        MENUITEM "&Eigenschaften",              IDM_VOLUME_PROPERTIES
     END
 END
 
@@ -568,16 +568,16 @@ BEGIN
     END
 END
 
-IDM_DRIVE MENU 
+IDM_VOLUME MENU 
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "Create &new store...",        IDM_DRIVE_CREATENEWSTORE
+        MENUITEM "Create &new store...",        IDM_VOLUME_CREATENEWSTORE
         MENUITEM SEPARATOR
-        MENUITEM "&Format...",                  IDM_DRIVE_FORMAT
-        MENUITEM "E&ject",                      IDM_DRIVE_EJECT
+        MENUITEM "&Format...",                  IDM_VOLUME_FORMAT
+        MENUITEM "E&ject",                      IDM_VOLUME_EJECT
         MENUITEM SEPARATOR
-        MENUITEM "&Properties",                 IDM_DRIVE_PROPERTIES
+        MENUITEM "&Properties",                 IDM_VOLUME_PROPERTIES
     END
 END
 
@@ -980,13 +980,13 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDM_STORES_SHOWEMPTYDRIVES "Show &unmounted drives"
+    IDM_STORES_SHOWEMPTYVOLUMES "Show &unmounted volumes"
     IDM_STORES_REPAIRCORRUPTEDINDEX "Run maintenance"
 END
 
 STRINGTABLE 
 BEGIN
-    IDM_DRIVE_PROPERTIES    "Displays the properties of the selected drive.\nProperties"
+    IDM_VOLUME_PROPERTIES    "Displays the properties of the selected volume.\nProperties"
 END
 
 STRINGTABLE 
@@ -1068,16 +1068,16 @@ BEGIN
     END
 END
 
-IDM_DRIVE MENU 
+IDM_VOLUME MENU 
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "Crear &nuevo store...",       IDM_DRIVE_CREATENEWSTORE
+        MENUITEM "Crear &nuevo store...",       IDM_VOLUME_CREATENEWSTORE
         MENUITEM SEPARATOR
-        MENUITEM "&Format...",                  IDM_DRIVE_FORMAT
-        MENUITEM "E&ject",                      IDM_DRIVE_EJECT
+        MENUITEM "&Format...",                  IDM_VOLUME_FORMAT
+        MENUITEM "E&ject",                      IDM_VOLUME_EJECT
         MENUITEM SEPARATOR
-        MENUITEM "&Propiedades",                IDM_DRIVE_PROPERTIES
+        MENUITEM "&Propiedades",                IDM_VOLUME_PROPERTIES
     END
 END
 
@@ -1448,16 +1448,16 @@ BEGIN
     END
 END
 
-IDM_DRIVE MENU 
+IDM_VOLUME MENU 
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "Créez un store &nouveau...",  IDM_DRIVE_CREATENEWSTORE
+        MENUITEM "Créez un store &nouveau...",  IDM_VOLUME_CREATENEWSTORE
         MENUITEM SEPARATOR
-        MENUITEM "&Formatieren...",             IDM_DRIVE_FORMAT
-        MENUITEM "A&uswerfen",                  IDM_DRIVE_EJECT
+        MENUITEM "&Formatieren...",             IDM_VOLUME_FORMAT
+        MENUITEM "A&uswerfen",                  IDM_VOLUME_EJECT
         MENUITEM SEPARATOR
-        MENUITEM "&Propriétés",                 IDM_DRIVE_PROPERTIES
+        MENUITEM "&Propriétés",                 IDM_VOLUME_PROPERTIES
     END
 END
 

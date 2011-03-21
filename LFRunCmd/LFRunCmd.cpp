@@ -54,8 +54,8 @@ BOOL CRunCmdApp::InitInstance()
 				LFCreateSendTo(true);
 			break;
 		case 3:
-			if (command==_T("NEWSTOREDRIVE"))
-				OnStoresCreateDrive(*__wargv[2] & 0xFF);
+			if (command==_T("NEWSTOREVOLUME"))
+				OnStoresCreateVolume(*__wargv[2] & 0xFF);
 			if (command==_T("DELETESTORE"))
 				OnStoreDelete(__wargv[2]);
 			if (command==_T("IMPORTFOLDER"))
@@ -89,11 +89,11 @@ void CRunCmdApp::OnStoresCreate()
 	LFFreeStoreDescriptor(s);
 }
 
-void CRunCmdApp::OnStoresCreateDrive(CHAR Drive)
+void CRunCmdApp::OnStoresCreateVolume(CHAR Drive)
 {
 	LFStoreDescriptor* s = LFAllocStoreDescriptor();
 
-	LFStoreNewDriveDlg dlg(CWnd::GetForegroundWindow(), Drive, s);
+	LFStoreNewVolumeDlg dlg(CWnd::GetForegroundWindow(), Drive, s);
 	if (dlg.DoModal()==IDOK)
 		LFErrorBox(LFCreateStore(s, FALSE));
 

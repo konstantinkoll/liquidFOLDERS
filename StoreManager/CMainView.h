@@ -84,7 +84,7 @@ protected:
 	afx_msg void OnStoresCreateNew();
 	afx_msg void OnStoresMaintainAll();
 	afx_msg void OnStoresBackup();
-	afx_msg void OnStoresShowEmptyDrives();
+	afx_msg void OnStoresShowEmptyVolumes();
 	afx_msg void OnStoresShowStatistics();
 	afx_msg void OnUpdateStoresCommands(CCmdUI* pCmdUI);
 
@@ -105,10 +105,10 @@ protected:
 
 	afx_msg void OnUpdateItemCommands(CCmdUI* pCmdUI);
 
-	afx_msg void OnDriveCreateNewStore();
-	afx_msg void OnDriveFormat();
-	afx_msg void OnDriveEject();
-	afx_msg void OnDriveProperties();
+	afx_msg void OnVolumeCreateNewStore();
+	afx_msg void OnVolumeFormat();
+	afx_msg void OnVolumeEject();
+	afx_msg void OnVolumeProperties();
 	afx_msg void OnUpdateDriveCommands(CCmdUI* pCmdUI);
 
 	afx_msg void OnStoreMakeDefault();

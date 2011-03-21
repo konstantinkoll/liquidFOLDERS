@@ -28,7 +28,7 @@ extern LFShellProperty AttrProperties[];
 
 #pragma data_seg("common_drives")
 
-unsigned int DriveTypes[26] = { DRIVE_UNKNOWN };
+unsigned int VolumeTypes[26] = { DRIVE_UNKNOWN };
 
 #pragma data_seg()
 #pragma comment(linker, "/SECTION:common_drives,RWS")
@@ -75,11 +75,11 @@ LFCore_API unsigned int LFGetLogicalDrives(unsigned int mask)
 	{
 		if (!(DrivesOnSystem & Index))
 		{
-			DriveTypes[cDrive-'A'] = DRIVE_UNKNOWN;
+			VolumeTypes[cDrive-'A'] = DRIVE_UNKNOWN;
 			continue;
 		}
 
-		unsigned int uDriveType = DriveTypes[cDrive-'A'];
+		unsigned int uDriveType = VolumeTypes[cDrive-'A'];
 		if (uDriveType==DRIVE_UNKNOWN)
 		{
 			szDriveRoot[0] = cDrive;
@@ -94,7 +94,7 @@ LFCore_API unsigned int LFGetLogicalDrives(unsigned int mask)
 					break;
 				}
 
-			DriveTypes[cDrive-'A'] = uDriveType;
+			VolumeTypes[cDrive-'A'] = uDriveType;
 		}
 
 		switch (uDriveType)
@@ -125,7 +125,7 @@ LFCore_API unsigned int LFGetDriveIcon(char Drv, bool IsMounted)
 	unsigned int ic = IDI_DRV_Default;
 
 	if ((Drv>='A') && (Drv<='Z'))
-		switch (DriveTypes[Drv-'A'])
+		switch (VolumeTypes[Drv-'A'])
 		{
 		case DRIVE_FIXED:
 		case DRIVE_REMOVABLE:

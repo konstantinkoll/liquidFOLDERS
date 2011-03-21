@@ -14,7 +14,7 @@
 
 extern HMODULE LFCoreModuleHandle;
 extern unsigned char AttrTypes[];
-extern unsigned int DriveTypes[];
+extern unsigned int VolumeTypes[];
 
 
 LFSearchResult::LFSearchResult(int ctx)
@@ -122,7 +122,7 @@ bool LFSearchResult::AddStoreDescriptor(LFStoreDescriptor* s, LFFilter* f)
 	return res;
 }
 
-void LFSearchResult::AddDrives(LFFilter* filter)
+void LFSearchResult::AddVolumes(LFFilter* filter)
 {
 	DWORD DrivesOnSystem = LFGetLogicalDrives(LFGLD_External);
 
@@ -136,15 +136,15 @@ void LFSearchResult::AddDrives(LFFilter* filter)
 		SHFILEINFO sfi;
 		if (SHGetFileInfo(szDriveRoot, 0, &sfi, sizeof(SHFILEINFO), SHGFI_DISPLAYNAME | SHGFI_TYPENAME | SHGFI_ATTRIBUTES))
 		{
-			if ((!sfi.dwAttributes) && (!filter->ShowEmptyDrives))
+			if ((!sfi.dwAttributes) && (!filter->ShowEmptyVolumes))
 				continue;
 
 			LFItemDescriptor* d = LFAllocItemDescriptor();
-			d->Type = LFTypeDrive;
+			d->Type = LFTypeVolume;
 			d->IconID = LFGetDriveIcon(cDrive, sfi.dwAttributes!=0);
 			if (!sfi.dwAttributes)
 				d->Type |= LFTypeGhosted | LFTypeNotMounted;
-			d->CategoryID = LFItemCategoryDrives;
+			d->CategoryID = LFItemCategoryVolumes;
 			SetAttribute(d, LFAttrFileName, sfi.szDisplayName);
 			char key[] = " :";
 			key[0] = cDrive;
@@ -212,7 +212,7 @@ int LFSearchResult::Compare(int eins, int zwei, unsigned int attr, bool descendi
 	// Wenn zwei Laufwerke anhand des Namens verglichen werden sollen, Laufwerksbuchstaben nehmen
 	unsigned int Sort = attr;
 	unsigned int SortSecond = LFAttrFileName;
-	if (((d1->Type & LFTypeMask)==LFTypeDrive) && ((d2->Type & LFTypeMask)==LFTypeDrive))
+	if (((d1->Type & LFTypeMask)==LFTypeVolume) && ((d2->Type & LFTypeMask)==LFTypeVolume))
 		if (Sort==LFAttrFileName)
 		{
 			Sort = LFAttrFileID;

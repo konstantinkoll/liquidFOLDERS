@@ -471,7 +471,7 @@ void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed)
 		switch (i->Type & LFTypeMask)
 		{
 		case LFTypeStore:
-		case LFTypeDrive:
+		case LFTypeVolume:
 			Rows[1] = LFAttrComment;
 			Rows[2] = LFAttrDescription;
 			Rows[3] = LFAttrCreationTime;
@@ -516,7 +516,7 @@ void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed)
 		switch (i->Type & LFTypeMask)
 		{
 		case LFTypeStore:
-		case LFTypeDrive:
+		case LFTypeVolume:
 			DrawProperty(dc, rectLeft, i, d, LFAttrComment, Themed);
 			DrawProperty(dc, rectLeft, i, d, LFAttrDescription, Themed);
 			break;

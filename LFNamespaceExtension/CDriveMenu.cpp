@@ -133,7 +133,7 @@ void CDriveMenu::OnGetMenuItems(CGetMenuitemsEventArgs& e)
 		ENSURE(tmpStr.LoadString(IDS_MENU_CreateNewStore));
 		ENSURE(tmpHint.LoadString(IDS_HINT_CreateNewStore));
 
-		CShellMenuItem* item = e.menu->AddItem(tmpStr, _T(VERB_CREATENEWSTOREDRIVE), tmpHint);
+		CShellMenuItem* item = e.menu->AddItem(tmpStr, _T(VERB_CREATENEWSTOREVOLUME), tmpHint);
 		item->SetEnabled(!theApp.m_PathRunCmd.IsEmpty());
 
 		HMODULE hModCore = LoadLibrary(_T("LFCORE.DLL"));
@@ -154,12 +154,12 @@ void CDriveMenu::OnGetMenuItems(CGetMenuitemsEventArgs& e)
 
 BOOL CDriveMenu::OnExecuteMenuItem(CExecuteItemEventArgs& e)
 {
-	if (e.menuItem->GetVerb()==_T(VERB_CREATENEWSTOREDRIVE))
+	if (e.menuItem->GetVerb()==_T(VERB_CREATENEWSTOREVOLUME))
 	{
 		if ((Drive>=L'A') && (Drive<=L'Z'))
 		{
 			CString id(Drive);
-			ShellExecute(NULL, _T("open"), theApp.m_PathRunCmd, _T("NEWSTOREDRIVE ")+id, NULL, SW_SHOW);
+			ShellExecute(NULL, _T("open"), theApp.m_PathRunCmd, _T("NEWSTOREVOLUME ")+id, NULL, SW_SHOW);
 			return TRUE;
 		}
 

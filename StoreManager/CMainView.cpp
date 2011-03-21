@@ -552,10 +552,10 @@ BEGIN_MESSAGE_MAP(CMainView, CWnd)
 	ON_COMMAND(IDM_STORES_CREATENEW, OnStoresCreateNew)
 	ON_COMMAND(IDM_STORES_MAINTAINALL, OnStoresMaintainAll)
 	ON_COMMAND(IDM_STORES_BACKUP, OnStoresBackup)
-	ON_COMMAND(IDM_STORES_SHOWEMPTYDRIVES, OnStoresShowEmptyDrives)
+	ON_COMMAND(IDM_STORES_SHOWEMPTYVOLUMES, OnStoresShowEmptyVolumes)
 	ON_COMMAND(IDM_STORES_REPAIRCORRUPTEDINDEX, OnStoresMaintainAll)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_STORES_CREATENEW, IDM_STORES_BACKUP, OnUpdateStoresCommands)
-	ON_UPDATE_COMMAND_UI(IDM_STORES_SHOWEMPTYDRIVES, OnUpdateStoresCommands)
+	ON_UPDATE_COMMAND_UI(IDM_STORES_SHOWEMPTYVOLUMES, OnUpdateStoresCommands)
 
 	ON_COMMAND(IDM_HOME_SHOWEMPTYDOMAINS, OnHomeShowEmptyDomains)
 	ON_COMMAND(IDM_HOME_SHOWSTATISTICS, OnHomeShowStatistics)
@@ -574,11 +574,11 @@ BEGIN_MESSAGE_MAP(CMainView, CWnd)
 
 	ON_UPDATE_COMMAND_UI(IDM_ITEM_OPEN, OnUpdateItemCommands)
 
-	ON_COMMAND(IDM_DRIVE_CREATENEWSTORE, OnDriveCreateNewStore)
-	ON_COMMAND(IDM_DRIVE_FORMAT, OnDriveFormat)
-	ON_COMMAND(IDM_DRIVE_EJECT, OnDriveEject)
-	ON_COMMAND(IDM_DRIVE_PROPERTIES, OnDriveProperties)
-	ON_UPDATE_COMMAND_UI_RANGE(IDM_DRIVE_CREATENEWSTORE, IDM_DRIVE_PROPERTIES, OnUpdateDriveCommands)
+	ON_COMMAND(IDM_VOLUME_CREATENEWSTORE, OnVolumeCreateNewStore)
+	ON_COMMAND(IDM_VOLUME_FORMAT, OnVolumeFormat)
+	ON_COMMAND(IDM_VOLUME_EJECT, OnVolumeEject)
+	ON_COMMAND(IDM_VOLUME_PROPERTIES, OnVolumeProperties)
+	ON_UPDATE_COMMAND_UI_RANGE(IDM_VOLUME_CREATENEWSTORE, IDM_VOLUME_PROPERTIES, OnUpdateDriveCommands)
 
 	ON_COMMAND(IDM_STORE_MAKEDEFAULT, OnStoreMakeDefault)
 	ON_COMMAND(IDM_STORE_MAKEHYBRID, OnStoreMakeHybrid)
@@ -628,7 +628,7 @@ INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndTaskbar.AddButton(IDM_TAGCLOUD_SORTCOUNT, 14);
 	m_wndTaskbar.AddButton(IDM_ITEM_OPEN, 15);
 	m_wndTaskbar.AddButton(IDM_GLOBE_GOOGLEEARTH, 16, TRUE);
-	m_wndTaskbar.AddButton(IDM_DRIVE_PROPERTIES, 17);
+	m_wndTaskbar.AddButton(IDM_VOLUME_PROPERTIES, 17);
 	m_wndTaskbar.AddButton(IDM_STORE_DELETE, 18);
 	m_wndTaskbar.AddButton(IDM_STORE_RENAME, 19);
 	m_wndTaskbar.AddButton(IDM_STORE_PROPERTIES, 20);
@@ -782,8 +782,8 @@ void CMainView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 		switch (m_Context)
 		{
 		case LFContextStores:
-			ENSURE(tmpStr.LoadString(IDM_STORES_SHOWEMPTYDRIVES));
-			pPopup->InsertMenu(0, MF_STRING | MF_BYPOSITION, IDM_STORES_SHOWEMPTYDRIVES, tmpStr);
+			ENSURE(tmpStr.LoadString(IDM_STORES_SHOWEMPTYVOLUMES));
+			pPopup->InsertMenu(0, MF_STRING | MF_BYPOSITION, IDM_STORES_SHOWEMPTYVOLUMES, tmpStr);
 			break;
 		case LFContextStoreHome:
 			ENSURE(tmpStr.LoadString(IDM_HOME_SHOWEMPTYDOMAINS));
@@ -1111,9 +1111,9 @@ void CMainView::OnStoresBackup()
 	LFBackupStores(this);
 }
 
-void CMainView::OnStoresShowEmptyDrives()
+void CMainView::OnStoresShowEmptyVolumes()
 {
-	theApp.m_ShowEmptyDrives = !theApp.m_ShowEmptyDrives;
+	theApp.m_ShowEmptyVolumes = !theApp.m_ShowEmptyVolumes;
 	theApp.Reload(LFContextStores);
 }
 
@@ -1123,8 +1123,8 @@ void CMainView::OnUpdateStoresCommands(CCmdUI* pCmdUI)
 
 	switch (pCmdUI->m_nID)
 	{
-	case IDM_STORES_SHOWEMPTYDRIVES:
-		pCmdUI->SetCheck(theApp.m_ShowEmptyDrives);
+	case IDM_STORES_SHOWEMPTYVOLUMES:
+		pCmdUI->SetCheck(theApp.m_ShowEmptyVolumes);
 	case IDM_STORES_CREATENEW:
 		break;
 	default:
@@ -1263,14 +1263,14 @@ void CMainView::OnUpdateItemCommands(CCmdUI* pCmdUI)
 
 // Drive
 
-void CMainView::OnDriveCreateNewStore()
+void CMainView::OnVolumeCreateNewStore()
 {
 	INT idx = GetSelectedItem();
 	if (idx!=-1)
 	{
 		LFStoreDescriptor* s = LFAllocStoreDescriptor();
 
-		LFStoreNewDriveDlg dlg(this, p_CookedFiles->m_Items[idx]->CoreAttributes.FileID[0], s);
+		LFStoreNewVolumeDlg dlg(this, p_CookedFiles->m_Items[idx]->CoreAttributes.FileID[0], s);
 		if (dlg.DoModal()==IDOK)
 			LFErrorBox(LFCreateStore(s, FALSE), GetSafeHwnd());
 
@@ -1278,13 +1278,13 @@ void CMainView::OnDriveCreateNewStore()
 	}
 }
 
-void CMainView::OnDriveFormat()
+void CMainView::OnVolumeFormat()
 {
 	INT idx = GetSelectedItem();
 	if (idx!=-1)
 	{
 		CHAR Drive = p_CookedFiles->m_Items[idx]->CoreAttributes.FileID[0];
-		if (LFStoresOnDrive(Drive))
+		if (LFStoresOnVolume(Drive))
 		{
 			CString caption;
 			CString mask;
@@ -1302,14 +1302,14 @@ void CMainView::OnDriveFormat()
 	}
 }
 
-void CMainView::OnDriveEject()
+void CMainView::OnVolumeEject()
 {
 	INT idx = GetSelectedItem();
 	if (idx!=-1)
 		ExecuteContextMenu(p_CookedFiles->m_Items[idx]->CoreAttributes.FileID[0], "eject");
 }
 
-void CMainView::OnDriveProperties()
+void CMainView::OnVolumeProperties()
 {
 	INT idx = GetSelectedItem();
 	if (idx!=-1)
@@ -1326,13 +1326,13 @@ void CMainView::OnUpdateDriveCommands(CCmdUI* pCmdUI)
 		LFItemDescriptor* item = p_CookedFiles->m_Items[idx];
 		switch (pCmdUI->m_nID)
 		{
-		case IDM_DRIVE_CREATENEWSTORE:
-		case IDM_DRIVE_FORMAT:
-		case IDM_DRIVE_EJECT:
-			b = ((item->Type & (LFTypeMask | LFTypeNotMounted))==LFTypeDrive);
+		case IDM_VOLUME_CREATENEWSTORE:
+		case IDM_VOLUME_FORMAT:
+		case IDM_VOLUME_EJECT:
+			b = ((item->Type & (LFTypeMask | LFTypeNotMounted))==LFTypeVolume);
 			break;
-		case IDM_DRIVE_PROPERTIES:
-			b = ((item->Type & LFTypeMask)==LFTypeDrive);
+		case IDM_VOLUME_PROPERTIES:
+			b = ((item->Type & LFTypeMask)==LFTypeVolume);
 			break;
 		}
 	}
