@@ -235,42 +235,6 @@ void CHistoryBar::OnPaint()
 		}
 	}
 
-	// Reload button
-
-	/*CRect rectClip(rectContent);
-	rectClip.left = rectClip.right-GetSystemMetrics(SM_CXHSCROLL);
-	CRect rectArrow(rectClip);
-
-	if (hTheme)
-	{
-		// Hack to achieve the same style as Windows Explorer
-		if (p_App->OSVersion>OS_XP)
-		{
-			rectArrow.InflateRect(1, 1);
-			if (m_Hover)
-			{
-				rectClip.left--;
-			}
-			else
-			{
-				rectArrow.InflateRect(1, 1);
-			}
-		}
-
-		p_App->zDrawThemeBackground(hTheme, dc, CP_DROPDOWNBUTTON, m_Pressed ? CBXS_PRESSED : (m_Hover && !m_Dropped) ? CBXS_HOT : CBXS_NORMAL, rectArrow, rectClip);
-	}
-	else
-	{
-		if (m_Hover || m_Pressed || m_Dropped)
-			dc.DrawFrameControl(rectArrow, DFC_BUTTON, DFCS_TRANSPARENT | 16 | DFCS_HOT | (m_Pressed ? DFCS_PUSHED : 0));
-
-		dc.DrawFrameControl(rectArrow, DFC_MENU, DFCS_TRANSPARENT | 16 | (m_Pressed ? DFCS_PUSHED : (m_Hover && !m_Dropped) ? DFCS_HOT : DFCS_FLAT));
-		rectClip.left--;
-
-		if (m_Hover || m_Pressed || m_Dropped)
-			dc.FillSolidRect(rectClip.left, rectClip.top, 1, rectClip.Height(), GetSysColor(COLOR_3DFACE));
-	}*/
-
 	// Breadcrumbs
 	CFont* pOldFont;
 	COLORREF c1 = (pCtrlSite->GetDesign()==GWD_DEFAULT) ? GetSysColor(COLOR_WINDOWTEXT) : 0x000000;
@@ -402,8 +366,23 @@ void CHistoryBar::OnLButtonDown(UINT /*nFlags*/, CPoint point)
 	Invalidate();
 }
 
-void CHistoryBar::OnLButtonUp(UINT /*nFlags*/, CPoint /*point*/)
+void CHistoryBar::OnLButtonUp(UINT /*nFlags*/, CPoint point)
 {
+	m_Hover = HitTest(point);
+	switch (m_Hover)
+	{
+	case NOPART:
+	case VIEW:
+		break;
+	case RELOAD:
+	case 0:
+		GetOwner()->PostMessage(WM_RELOAD);
+		break;
+	default:
+		GetOwner()->PostMessage(WM_NAVIGATEBACK, (WPARAM)m_Hover);
+		break;
+	}
+
 	m_Pressed = NOPART;
 	Invalidate();
 }

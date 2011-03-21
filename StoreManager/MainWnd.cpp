@@ -211,6 +211,7 @@ BEGIN_MESSAGE_MAP(CMainWnd, CGlasWindow)
 	ON_MESSAGE_VOID(WM_RELOAD, OnNavigateReload)
 	ON_MESSAGE(WM_COOKFILES, OnCookFiles)
 	ON_MESSAGE_VOID(WM_UPDATEFOOTER, OnUpdateFooter)
+	ON_MESSAGE(WM_NAVIGATEBACK, OnNavigateBack)
 
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->VolumesChanged, OnVolumesChanged)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoresChanged, OnStoresChanged)
@@ -272,6 +273,11 @@ void CMainWnd::OnSetFocus(CWnd* /*pOldWnd*/)
 
 void CMainWnd::OnNavigateBack()
 {
+	OnNavigateBack(1);
+}
+
+LRESULT CMainWnd::OnNavigateBack(WPARAM wParam, LPARAM /*lParam*/)
+{
 	ASSERT(!m_IsClipboard);
 
 	if (m_pActiveFilter)
@@ -281,11 +287,16 @@ void CMainWnd::OnNavigateBack()
 		m_wndMainView.GetPersistentData(Data);
 		m_pActiveFilter = NULL;
 
-		AddBreadcrumbItem(&m_BreadcrumbForward, f, Data);
-		ConsumeBreadcrumbItem(&m_BreadcrumbBack, &f, &Data);
+		for (UINT a=0; a<(UINT)wParam; a++)
+		{
+			AddBreadcrumbItem(&m_BreadcrumbForward, f, Data);
+			ConsumeBreadcrumbItem(&m_BreadcrumbBack, &f, &Data);
+		}
 
 		NavigateTo(f, NAVMODE_HISTORY, &Data);
 	}
+
+	return NULL;
 }
 
 void CMainWnd::OnNavigateForward()

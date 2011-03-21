@@ -22,6 +22,7 @@
 #define WM_RELOAD                WM_USER+202
 #define WM_COOKFILES             WM_USER+203
 #define WM_UPDATEFOOTER          WM_USER+204
+#define WM_NAVIGATEBACK          WM_USER+205
 
 class CMainWnd : public CGlasWindow
 {
@@ -56,6 +57,7 @@ protected:
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
 
 	afx_msg void OnNavigateBack();
+	afx_msg LRESULT OnNavigateBack(WPARAM wParam, LPARAM lParam=NULL);
 	afx_msg void OnNavigateForward();
 	afx_msg void OnNavigateReload();
 	afx_msg void OnUpdateNavCommands(CCmdUI* pCmdUI);
