@@ -575,6 +575,8 @@ BEGIN_MESSAGE_MAP(CMainView, CWnd)
 	ON_UPDATE_COMMAND_UI(IDM_ITEM_OPEN, OnUpdateItemCommands)
 
 	ON_COMMAND(IDM_DRIVE_CREATENEWSTORE, OnDriveCreateNewStore)
+	ON_COMMAND(IDM_DRIVE_FORMAT, OnDriveFormat)
+	ON_COMMAND(IDM_DRIVE_EJECT, OnDriveEject)
 	ON_COMMAND(IDM_DRIVE_PROPERTIES, OnDriveProperties)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_DRIVE_CREATENEWSTORE, IDM_DRIVE_PROPERTIES, OnUpdateDriveCommands)
 
@@ -1276,6 +1278,37 @@ void CMainView::OnDriveCreateNewStore()
 	}
 }
 
+void CMainView::OnDriveFormat()
+{
+	INT idx = GetSelectedItem();
+	if (idx!=-1)
+	{
+		CHAR Drive = p_CookedFiles->m_Items[idx]->CoreAttributes.FileID[0];
+		if (LFStoresOnDrive(Drive))
+		{
+			CString caption;
+			CString mask;
+			CString text;
+			ENSURE(mask.LoadString(IDS_FORMAT_CAPTION));
+			ENSURE(text.LoadString(IDS_FORMAT_TEXT));
+			caption.Format(mask, p_CookedFiles->m_Items[idx]->CoreAttributes.FileName);
+
+			MessageBox(text, caption, MB_ICONWARNING);
+		}
+		else
+		{
+			ExecuteContextMenu(Drive, "format");
+		}
+	}
+}
+
+void CMainView::OnDriveEject()
+{
+	INT idx = GetSelectedItem();
+	if (idx!=-1)
+		ExecuteContextMenu(p_CookedFiles->m_Items[idx]->CoreAttributes.FileID[0], "eject");
+}
+
 void CMainView::OnDriveProperties()
 {
 	INT idx = GetSelectedItem();
@@ -1294,6 +1327,8 @@ void CMainView::OnUpdateDriveCommands(CCmdUI* pCmdUI)
 		switch (pCmdUI->m_nID)
 		{
 		case IDM_DRIVE_CREATENEWSTORE:
+		case IDM_DRIVE_FORMAT:
+		case IDM_DRIVE_EJECT:
 			b = ((item->Type & (LFTypeMask | LFTypeNotMounted))==LFTypeDrive);
 			break;
 		case IDM_DRIVE_PROPERTIES:

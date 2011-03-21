@@ -198,14 +198,14 @@ LFCore_API bool LFAddItemDescriptor(LFSearchResult* res, LFItemDescriptor* i);
 // LFItemDescriptor aus LFSearchResult entfernen
 //
 // !!ACHTUNG!!
-// Die Sortierreihenfolge geht verloren, LFItemDescriptor.Position wird bei
+// Die Sortierreihenfolge geht verloren, LFItemDescriptor::Position wird bei
 // LFSearchResults, die nicht "hohl" sind (m_RawCopy==true), jedoch angepasst.
 LFCore_API void LFRemoveItemDescriptor(LFSearchResult* res, unsigned int idx);
 
 // Alle markierten LFItemDescriptor (DeleteFlag==true) aus LFSearchResult entfernen
 //
 // !!ACHTUNG!!
-// Die Sortierreihenfolge geht verloren, LFItemDescriptor.Position wird bei
+// Die Sortierreihenfolge geht verloren, LFItemDescriptor::Position wird bei
 // LFSearchResults, die nicht "hohl" sind (m_RawCopy==true), jedoch angepasst.
 LFCore_API void LFRemoveFlaggedItemDescriptors(LFSearchResult* res);
 
@@ -363,6 +363,9 @@ LFCore_API void LFGetDefaultStoreName(wchar_t* name, size_t cCount);
 
 // Gibt die Anzahl aller Stores zurück
 LFCore_API unsigned int LFGetStoreCount();
+
+// Prüft, ob Stores auf dem angegebenen Laufwerk vorhanden sind
+LFCore_API bool LFStoresOnDrive(char d);
 
 // Gibt die IDs aller Stores zurück
 LFCore_API unsigned int LFGetStores(char** keys, unsigned int* count);

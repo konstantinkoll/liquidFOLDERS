@@ -156,23 +156,16 @@ LANGUAGE LANG_GERMAN, SUBLANG_NEUTRAL
 // Menu
 //
 
-IDM_TAGCLOUD_SORT MENU 
-BEGIN
-    MENUITEM "Sortieren nach &Wert",        IDM_TAGCLOUD_SORTVALUE
-    MENUITEM "Sortieren nach &Anzahl",      IDM_TAGCLOUD_SORTCOUNT
-    MENUITEM SEPARATOR
-    MENUITEM "&Seltene Tags zeigen",        IDM_TAGCLOUD_SHOWRARE
-END
-
-IDM_TAGCLOUD MENU 
+IDM_HOME MENU 
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "&Legende anzeigen",           IDM_TAGCLOUD_SHOWLEGEND
+        MENUITEM "&Statistiken anzeigen",       IDM_HOME_SHOWSTATISTICS
         MENUITEM SEPARATOR
-        MENUITEM "Schrift&größe",               IDM_TAGCLOUD_USESIZE
-        MENUITEM "&Farbe",                      IDM_TAGCLOUD_USECOLORS
-        MENUITEM "&Deckkraft",                  IDM_TAGCLOUD_USEOPACITY
+        MENUITEM "&Verzeichnis importieren...", IDM_HOME_IMPORTFOLDER
+        MENUITEM "&Wartungsarbeiten durchführen", IDM_HOME_MAINTAIN
+        MENUITEM SEPARATOR
+        MENUITEM "&Eigenschaften",              IDM_HOME_PROPERTIES
     END
 END
 
@@ -186,14 +179,16 @@ BEGIN
     END
 END
 
-IDM_GLOBE MENU 
+IDM_DRIVE MENU 
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "Globus-&Einstellungen...",    IDM_GLOBE_SETTINGS
-        MENUITEM "&Größe anpassen",             IDM_GLOBE_AUTOSIZE
+        MENUITEM "&Neuen Store anlegen...",     IDM_DRIVE_CREATENEWSTORE
         MENUITEM SEPARATOR
-        MENUITEM "&Ort anzeigen...\tStrg+L",    IDM_GLOBE_JUMPTOLOCATION
+        MENUITEM "&Formatieren...",             IDM_DRIVE_FORMAT
+        MENUITEM "A&uswerfen",                  IDM_DRIVE_EJECT
+        MENUITEM SEPARATOR
+        MENUITEM "&Eigenschaften",              IDM_DRIVE_PROPERTIES
     END
 END
 
@@ -209,6 +204,17 @@ BEGIN
     END
 END
 
+IDM_GLOBE MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "Globus-&Einstellungen...",    IDM_GLOBE_SETTINGS
+        MENUITEM "&Größe anpassen",             IDM_GLOBE_AUTOSIZE
+        MENUITEM SEPARATOR
+        MENUITEM "&Ort anzeigen...\tStrg+L",    IDM_GLOBE_JUMPTOLOCATION
+    END
+END
+
 IDM_CALENDAR MENU 
 BEGIN
     POPUP "POPUP"
@@ -221,26 +227,38 @@ BEGIN
     END
 END
 
-IDM_HOME MENU 
+IDM_TAGCLOUD MENU 
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "&Statistiken anzeigen",       IDM_HOME_SHOWSTATISTICS
+        MENUITEM "&Legende anzeigen",           IDM_TAGCLOUD_SHOWLEGEND
         MENUITEM SEPARATOR
-        MENUITEM "&Verzeichnis importieren...", IDM_HOME_IMPORTFOLDER
-        MENUITEM "&Wartungsarbeiten durchführen", IDM_HOME_MAINTAIN
-        MENUITEM SEPARATOR
-        MENUITEM "&Eigenschaften",              IDM_HOME_PROPERTIES
+        MENUITEM "Schrift&größe",               IDM_TAGCLOUD_USESIZE
+        MENUITEM "&Farbe",                      IDM_TAGCLOUD_USECOLORS
+        MENUITEM "&Deckkraft",                  IDM_TAGCLOUD_USEOPACITY
     END
 END
 
-IDM_DRIVE MENU 
+IDM_TAGCLOUD_SORT MENU 
+BEGIN
+    MENUITEM "Sortieren nach &Wert",        IDM_TAGCLOUD_SORTVALUE
+    MENUITEM "Sortieren nach &Anzahl",      IDM_TAGCLOUD_SORTCOUNT
+    MENUITEM SEPARATOR
+    MENUITEM "&Seltene Tags zeigen",        IDM_TAGCLOUD_SHOWRARE
+END
+
+IDM_INSPECTOR MENU 
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "&Neuen Store anlegen...",     IDM_DRIVE_CREATENEWSTORE
+        MENUITEM "&Vorschau anzeigen",          IDM_INSPECTOR_SHOWPREVIEW
+        MENUITEM "&Alphabetisch sortieren",     IDM_INSPECTOR_SORTALPHABETIC
         MENUITEM SEPARATOR
-        MENUITEM "&Eigenschaften",              IDM_DRIVE_PROPERTIES
+        POPUP "Export"
+        BEGIN
+            MENUITEM "&Zusammenfassung...",         IDM_INSPECTOR_EXPORTSUMMARY
+            MENUITEM "Alle &Metadaten...",          IDM_INSPECTOR_EXPORTMETADATA
+        END
     END
 END
 
@@ -437,11 +455,13 @@ BEGIN
     IDS_YOULOOKAT           "Sie schauen auf %s"
     IDS_NOTHINGTODISPLAY    "Es gibt nichts anzuzeigen."
     IDS_NONAVIGATION        "Dieses Fenster unterstützt keine Navigation."
-    IDS_AUTOMATIC           "Automatisch wählen"
+    IDS_FORMAT_CAPTION      "Sie können das Laufwerk „%s“ nicht formatieren"
+    IDS_FORMAT_TEXT         "Das Laufwerk enthält Stores, die zur Zeit benutzt werden.\nDas Formatieren des Laufwerks würde diese Stores unbrauchbar machen."
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_AUTOMATIC           "Automatisch wählen"
     IDS_ILLEGALYEAR         "Sie können nur die Jahre von 1900 bis 2100 anzeigen."
     IDS_LEGEND              "Legende"
     IDS_LEGEND_BLUE         "Wartungsarbeiten erforderlich"
@@ -491,10 +511,6 @@ BEGIN
     IDM_VIEW_DETAILS        "Details"
     IDM_VIEW_TILES          "Kacheln"
     IDM_VIEW_CONTENT        "Inhalt"
-END
-
-STRINGTABLE 
-BEGIN
     IDM_VIEW_PREVIEW        "Vorschau"
     IDM_VIEW_CALENDAR       "Kalender"
     IDM_VIEW_GLOBE          "Globus"
@@ -557,6 +573,9 @@ BEGIN
     POPUP "POPUP"
     BEGIN
         MENUITEM "Create &new store...",        IDM_DRIVE_CREATENEWSTORE
+        MENUITEM SEPARATOR
+        MENUITEM "&Format...",                  IDM_DRIVE_FORMAT
+        MENUITEM "E&ject",                      IDM_DRIVE_EJECT
         MENUITEM SEPARATOR
         MENUITEM "&Properties",                 IDM_DRIVE_PROPERTIES
     END
@@ -637,6 +656,21 @@ BEGIN
     MENUITEM "Sort by &count",              IDM_TAGCLOUD_SORTCOUNT
     MENUITEM SEPARATOR
     MENUITEM "Show &rare tags",             IDM_TAGCLOUD_SHOWRARE
+END
+
+IDM_INSPECTOR MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "Show &preview",               IDM_INSPECTOR_SHOWPREVIEW
+        MENUITEM "Sort &alphabetically",        IDM_INSPECTOR_SORTALPHABETIC
+        MENUITEM SEPARATOR
+        POPUP "Export"
+        BEGIN
+            MENUITEM "&Summary...",                 IDM_INSPECTOR_EXPORTSUMMARY
+            MENUITEM "Complete &metadata...",       IDM_INSPECTOR_EXPORTMETADATA
+        END
+    END
 END
 
 
@@ -837,11 +871,13 @@ BEGIN
     IDS_YOULOOKAT           "You look at %s"
     IDS_NOTHINGTODISPLAY    "There is nothing to display."
     IDS_NONAVIGATION        "This window does not support any navigation."
-    IDS_AUTOMATIC           "Choose automatically"
+    IDS_FORMAT_CAPTION      "You cannot format volume ""%s"""
+    IDS_FORMAT_TEXT         "It contains stores that you are using.\nFormatting this volume will destroy those stores."
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_AUTOMATIC           "Choose automatically"
     IDS_ILLEGALYEAR         "You can only display the years 1900 through 2100."
     IDS_LEGEND              "Legend"
     IDS_LEGEND_BLUE         "Requires scheduled maintenance"
@@ -985,10 +1021,6 @@ BEGIN
     IDM_VIEW_DETAILS        "Details"
     IDM_VIEW_TILES          "Tiles"
     IDM_VIEW_CONTENT        "Content"
-END
-
-STRINGTABLE 
-BEGIN
     IDM_VIEW_PREVIEW        "Preview"
     IDM_VIEW_CALENDAR       "Calendar"
     IDM_VIEW_GLOBE          "Globe"
@@ -1013,36 +1045,6 @@ LANGUAGE LANG_SPANISH, SUBLANG_NEUTRAL
 // Menu
 //
 
-IDM_TAGCLOUD_SORT MENU 
-BEGIN
-    MENUITEM "Ordenar por &valor",          IDM_TAGCLOUD_SORTVALUE
-    MENUITEM "Ordenar por &conteo",         IDM_TAGCLOUD_SORTCOUNT
-    MENUITEM SEPARATOR
-    MENUITEM "Mostrar &etiquetas poco comunes", IDM_TAGCLOUD_SHOWRARE
-END
-
-IDM_TAGCLOUD MENU 
-BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "Mostrar &leyenda",            IDM_TAGCLOUD_SHOWLEGEND
-        MENUITEM SEPARATOR
-        MENUITEM "Usar &tamaño de fuente",      IDM_TAGCLOUD_USESIZE
-        MENUITEM "Usar &color",                 IDM_TAGCLOUD_USECOLORS
-        MENUITEM "Usar &opacidad",              IDM_TAGCLOUD_USEOPACITY
-    END
-END
-
-IDM_HOUSEKEEPING MENU 
-BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM SEPARATOR
-        MENUITEM "&Registrar formatos de archivo desconocidos", IDM_HOUSEKEEPING_REGISTER
-        MENUITEM "&Enviar información",         IDM_HOUSEKEEPING_SEND
-    END
-END
-
 IDM_HOME MENU 
 BEGIN
     POPUP "POPUP"
@@ -1056,14 +1058,26 @@ BEGIN
     END
 END
 
-IDM_GLOBE MENU 
+IDM_HOUSEKEEPING MENU 
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "Configuraciones de &globo...", IDM_GLOBE_SETTINGS
-        MENUITEM "Ajustar globo para &adaptar", IDM_GLOBE_AUTOSIZE
         MENUITEM SEPARATOR
-        MENUITEM "Seleccionar &ubicación...\tCtrl+L", IDM_GLOBE_JUMPTOLOCATION
+        MENUITEM "&Registrar formatos de archivo desconocidos", IDM_HOUSEKEEPING_REGISTER
+        MENUITEM "&Enviar información",         IDM_HOUSEKEEPING_SEND
+    END
+END
+
+IDM_DRIVE MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "Crear &nuevo store...",       IDM_DRIVE_CREATENEWSTORE
+        MENUITEM SEPARATOR
+        MENUITEM "&Format...",                  IDM_DRIVE_FORMAT
+        MENUITEM "E&ject",                      IDM_DRIVE_EJECT
+        MENUITEM SEPARATOR
+        MENUITEM "&Propiedades",                IDM_DRIVE_PROPERTIES
     END
 END
 
@@ -1091,13 +1105,49 @@ BEGIN
     END
 END
 
-IDM_DRIVE MENU 
+IDM_GLOBE MENU 
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "Crear &nuevo store...",       IDM_DRIVE_CREATENEWSTORE
+        MENUITEM "Configuraciones de &globo...", IDM_GLOBE_SETTINGS
+        MENUITEM "Ajustar globo para &adaptar", IDM_GLOBE_AUTOSIZE
         MENUITEM SEPARATOR
-        MENUITEM "&Propiedades",                IDM_DRIVE_PROPERTIES
+        MENUITEM "Seleccionar &ubicación...\tCtrl+L", IDM_GLOBE_JUMPTOLOCATION
+    END
+END
+
+IDM_TAGCLOUD MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "Mostrar &leyenda",            IDM_TAGCLOUD_SHOWLEGEND
+        MENUITEM SEPARATOR
+        MENUITEM "Usar &tamaño de fuente",      IDM_TAGCLOUD_USESIZE
+        MENUITEM "Usar &color",                 IDM_TAGCLOUD_USECOLORS
+        MENUITEM "Usar &opacidad",              IDM_TAGCLOUD_USEOPACITY
+    END
+END
+
+IDM_TAGCLOUD_SORT MENU 
+BEGIN
+    MENUITEM "Ordenar por &valor",          IDM_TAGCLOUD_SORTVALUE
+    MENUITEM "Ordenar por &conteo",         IDM_TAGCLOUD_SORTCOUNT
+    MENUITEM SEPARATOR
+    MENUITEM "Mostrar &etiquetas poco comunes", IDM_TAGCLOUD_SHOWRARE
+END
+
+IDM_INSPECTOR MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "Show &preview",               IDM_INSPECTOR_SHOWPREVIEW
+        MENUITEM "Sort &alphabetically",        IDM_INSPECTOR_SORTALPHABETIC
+        MENUITEM SEPARATOR
+        POPUP "Export"
+        BEGIN
+            MENUITEM "&Summary...",                 IDM_INSPECTOR_EXPORTSUMMARY
+            MENUITEM "Complete &metadata...",       IDM_INSPECTOR_EXPORTMETADATA
+        END
     END
 END
 
@@ -1264,7 +1314,7 @@ BEGIN
     IDR_CLIPBOARD           "Portapapeles"
 END
 
-STRINGTABLE
+STRINGTABLE 
 BEGIN
     IDS_VIEWGROUP1          "Enlistar vistas"
     IDS_VIEWGROUP2          "Vistas mejoradas"
@@ -1276,7 +1326,7 @@ BEGIN
     IDS_CONTEXTMENU_OPENWITH "Abrir &con..."
 END
 
-STRINGTABLE
+STRINGTABLE 
 BEGIN
     IDS_CONTEXTMENU_OPENGOOGLEEARTH "Abrir con &Google Earth"
     IDS_CONTEXTMENU_REMEMBER "Re&cordar"
@@ -1293,11 +1343,11 @@ BEGIN
     IDS_MULTIPLETYPESSELECTED "Múltiples tipos, %d objetos"
     IDS_YOULOOKAT           "Usted está viendo %s"
     IDS_NOTHINGTODISPLAY    "No hay nada que visualizar."
-    IDS_AUTOMATIC           "Escoger automaticamente"
 END
 
-STRINGTABLE
+STRINGTABLE 
 BEGIN
+    IDS_AUTOMATIC           "Escoger automaticamente"
     IDS_ILLEGALYEAR         "Usted sólo puede visualizar del año 1900 al año 2100."
     IDS_LEGEND              "Leyenda"
     IDS_LEGEND_BLUE         "Requiere de mantenimiento programado"
@@ -1310,12 +1360,16 @@ BEGIN
     IDS_STATISTICS_BYCOUNT  "Por número de archivo"
     IDS_STATISTICS_BYSIZE   "Por tamaño de archivo"
     IDS_STATISTICS_OTHER    "Otros"
-    IDS_SUBFOLDERS_MANDATORY "Las subcarpetas son obligatorias para esta visualización."
+    IDS_SUBFOLDERS_MANDATORY 
+                            "Las subcarpetas son obligatorias para esta visualización."
     IDS_SUBFOLDERS_NOTAVAIL "Las subcarpetas no están disponibles para este contexto."
     IDS_NOLICENSE           "Usted está usando una copia no registrada de liquidFOLDERS. liquidFOLDERS es un software de demostración – si usted decide usarlo regularmente, usted está obligado a adquirir una licencia!"
+    IDS_NONAVIGATION        "This window does not support any navigation."
+    IDS_FORMAT_CAPTION      "You cannot format volume ""%s"""
+    IDS_FORMAT_TEXT         "It contains stores that you are using.\nFormatting this volume will destroy those stores."
 END
 
-STRINGTABLE
+STRINGTABLE 
 BEGIN
     IDS_VATTR_DRIVELETTER   "Unidad"
     IDS_VATTR_MAINTENANCETIME "Mantenimiento"
@@ -1323,7 +1377,7 @@ BEGIN
     IDS_VATTR_GUID          "GUID"
 END
 
-STRINGTABLE
+STRINGTABLE 
 BEGIN
     IDS_VATTR_PATH_DAT      "Ruta de datos"
     IDS_VATTR_PATH_IDX_MAIN "Índice principal"
@@ -1333,12 +1387,12 @@ BEGIN
     IDS_VATTR_IATA_COUNTRY  "Territorio"
 END
 
-STRINGTABLE
+STRINGTABLE 
 BEGIN
     IDM_ORGANIZE            "Selecciona la propiedad mediante la cuál organizar todos los objetos en este contexto.\nOrganizar por"
 END
 
-STRINGTABLE
+STRINGTABLE 
 BEGIN
     IDM_VIEW                "Selecciona el modo de visualización para este contexto.\nVisualizar como"
     IDM_VIEW_LARGEICONS     "Íconos grandes"
@@ -1347,12 +1401,8 @@ BEGIN
     IDM_VIEW_DETAILS        "Detalles"
     IDM_VIEW_TILES          "Mosaicos"
     IDM_VIEW_CONTENT        "Contenido"
-END
-
-STRINGTABLE
-BEGIN
     IDM_VIEW_PREVIEW        "Vista preliminar"
-    IDM_VIEW_CALENDAR       "Calendario" 
+    IDM_VIEW_CALENDAR       "Calendario"
     IDM_VIEW_GLOBE          "Globo"
     IDM_VIEW_TAGCLOUD       "Nube de palabras"
 END
@@ -1375,36 +1425,6 @@ LANGUAGE LANG_FRENCH, SUBLANG_NEUTRAL
 // Menu
 //
 
-IDM_TAGCLOUD_SORT MENU 
-BEGIN
-    MENUITEM "Trier par la &valeur",        IDM_TAGCLOUD_SORTVALUE
-    MENUITEM "Trier par le &nombre",        IDM_TAGCLOUD_SORTCOUNT
-    MENUITEM SEPARATOR
-    MENUITEM "Indiquer les tags &rares",    IDM_TAGCLOUD_SHOWRARE
-END
-
-IDM_TAGCLOUD MENU 
-BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "Indiquer la &légende",        IDM_TAGCLOUD_SHOWLEGEND
-        MENUITEM SEPARATOR
-        MENUITEM "Utilise la &taille",          IDM_TAGCLOUD_USESIZE
-        MENUITEM "Utilise la &couleur",         IDM_TAGCLOUD_USECOLORS
-        MENUITEM "Utilise la &propriété couvrante", IDM_TAGCLOUD_USEOPACITY
-    END
-END
-
-IDM_HOUSEKEEPING MENU 
-BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM SEPARATOR
-        MENUITEM "Enregistrer les formats &inconnus", IDM_HOUSEKEEPING_REGISTER
-        MENUITEM "&Envoyer les informations",   IDM_HOUSEKEEPING_SEND
-    END
-END
-
 IDM_HOME MENU 
 BEGIN
     POPUP "POPUP"
@@ -1418,14 +1438,26 @@ BEGIN
     END
 END
 
-IDM_GLOBE MENU 
+IDM_HOUSEKEEPING MENU 
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "Paramètres du &globe...",     IDM_GLOBE_SETTINGS
-        MENUITEM "&Adapter la donnée",          IDM_GLOBE_AUTOSIZE
         MENUITEM SEPARATOR
-        MENUITEM "Choisissez l'&endroit...\tCtrl+L", IDM_GLOBE_JUMPTOLOCATION
+        MENUITEM "Enregistrer les formats &inconnus", IDM_HOUSEKEEPING_REGISTER
+        MENUITEM "&Envoyer les informations",   IDM_HOUSEKEEPING_SEND
+    END
+END
+
+IDM_DRIVE MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "Créez un store &nouveau...",  IDM_DRIVE_CREATENEWSTORE
+        MENUITEM SEPARATOR
+        MENUITEM "&Formatieren...",             IDM_DRIVE_FORMAT
+        MENUITEM "A&uswerfen",                  IDM_DRIVE_EJECT
+        MENUITEM SEPARATOR
+        MENUITEM "&Propriétés",                 IDM_DRIVE_PROPERTIES
     END
 END
 
@@ -1453,13 +1485,49 @@ BEGIN
     END
 END
 
-IDM_DRIVE MENU 
+IDM_GLOBE MENU 
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "Créez un store &nouveau...",  IDM_DRIVE_CREATENEWSTORE
+        MENUITEM "Paramètres du &globe...",     IDM_GLOBE_SETTINGS
+        MENUITEM "&Adapter la donnée",          IDM_GLOBE_AUTOSIZE
         MENUITEM SEPARATOR
-        MENUITEM "&Propriétés",                 IDM_DRIVE_PROPERTIES
+        MENUITEM "Choisissez l'&endroit...\tCtrl+L", IDM_GLOBE_JUMPTOLOCATION
+    END
+END
+
+IDM_TAGCLOUD MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "Indiquer la &légende",        IDM_TAGCLOUD_SHOWLEGEND
+        MENUITEM SEPARATOR
+        MENUITEM "Utilise la &taille",          IDM_TAGCLOUD_USESIZE
+        MENUITEM "Utilise la &couleur",         IDM_TAGCLOUD_USECOLORS
+        MENUITEM "Utilise la &propriété couvrante", IDM_TAGCLOUD_USEOPACITY
+    END
+END
+
+IDM_TAGCLOUD_SORT MENU 
+BEGIN
+    MENUITEM "Trier par la &valeur",        IDM_TAGCLOUD_SORTVALUE
+    MENUITEM "Trier par le &nombre",        IDM_TAGCLOUD_SORTCOUNT
+    MENUITEM SEPARATOR
+    MENUITEM "Indiquer les tags &rares",    IDM_TAGCLOUD_SHOWRARE
+END
+
+IDM_INSPECTOR MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "&Vorschau anzeigen",          IDM_INSPECTOR_SHOWPREVIEW
+        MENUITEM "&Alphabetisch sortieren",     IDM_INSPECTOR_SORTALPHABETIC
+        MENUITEM SEPARATOR
+        POPUP "Export"
+        BEGIN
+            MENUITEM "&Zusammenfassung...",         IDM_INSPECTOR_EXPORTSUMMARY
+            MENUITEM "Alle &Metadaten...",          IDM_INSPECTOR_EXPORTMETADATA
+        END
     END
 END
 
@@ -1627,7 +1695,7 @@ BEGIN
     IDR_CLIPBOARD           "Presse-papiers"
 END
 
-STRINGTABLE
+STRINGTABLE 
 BEGIN
     IDS_VIEWGROUP1          "Des listes"
     IDS_VIEWGROUP2          "L'affichages élargis"
@@ -1639,7 +1707,7 @@ BEGIN
     IDS_CONTEXTMENU_OPENWITH "Ouvrir &avec..."
 END
 
-STRINGTABLE
+STRINGTABLE 
 BEGIN
     IDS_CONTEXTMENU_OPENGOOGLEEARTH "Ouvrir avec &Google Earth"
     IDS_CONTEXTMENU_REMEMBER "Remar&quer"
@@ -1656,11 +1724,14 @@ BEGIN
     IDS_MULTIPLETYPESSELECTED "Types, éléments %d différents"
     IDS_YOULOOKAT           "Vous regardez %s"
     IDS_NOTHINGTODISPLAY    "Il n'y a rien indiquer."
-    IDS_AUTOMATIC           "Choisir automatiquement"
+    IDS_NONAVIGATION        "Dieses Fenster unterstützt keine Navigation."
+    IDS_FORMAT_CAPTION      "Sie können das Laufwerk „%s“ nicht formatieren"
+    IDS_FORMAT_TEXT         "Das Laufwerk enthält Stores, die zur Zeit benutzt werden.\nDas Formatieren des Laufwerks würde diese Stores unbrauchbar machen."
 END
 
-STRINGTABLE
+STRINGTABLE 
 BEGIN
+    IDS_AUTOMATIC           "Choisir automatiquement"
     IDS_ILLEGALYEAR         "Vous pouvez indiquer seulement les années de 1900 à 2100."
     IDS_LEGEND              "Légende"
     IDS_LEGEND_BLUE         "Travail d'entretien nécessaire"
@@ -1678,7 +1749,7 @@ BEGIN
     IDS_NOLICENSE           "Vous utilisez une copie non enregistrée de liquidFOLDERS. liquidFOLDERS est shareware – si vous utilisez régulièrement le logiciel, vous devez acquérir une licence!"
 END
 
-STRINGTABLE
+STRINGTABLE 
 BEGIN
     IDS_VATTR_DRIVELETTER   "Lettres aux lecteurs"
     IDS_VATTR_MAINTENANCETIME "Entretien"
@@ -1686,7 +1757,7 @@ BEGIN
     IDS_VATTR_GUID          "GUID"
 END
 
-STRINGTABLE
+STRINGTABLE 
 BEGIN
     IDS_VATTR_PATH_DAT      "Données"
     IDS_VATTR_PATH_IDX_MAIN "Index principal"
@@ -1696,12 +1767,12 @@ BEGIN
     IDS_VATTR_IATA_COUNTRY  "Territoire"
 END
 
-STRINGTABLE
+STRINGTABLE 
 BEGIN
     IDM_ORGANIZE            "Choisit la qualité après quoi les éléments sont organisés dans ce contexte .\nOrganiser après"
 END
 
-STRINGTABLE
+STRINGTABLE 
 BEGIN
     IDM_VIEW                "Choisit l'avis pour ce contexte.\nAfficher comme"
     IDM_VIEW_LARGEICONS     "Grands symboles"
@@ -1710,10 +1781,6 @@ BEGIN
     IDM_VIEW_DETAILS        "Détails"
     IDM_VIEW_TILES          "Cadres de page"
     IDM_VIEW_CONTENT        "Contenu"
-END
-
-STRINGTABLE
-BEGIN
     IDM_VIEW_PREVIEW        "Aperçu"
     IDM_VIEW_CALENDAR       "Calendrier"
     IDM_VIEW_GLOBE          "Globe"

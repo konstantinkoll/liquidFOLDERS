@@ -89,7 +89,7 @@ void CHistoryBar::AddFilter(LFFilter* Filter, CDC* pDC)
 	m_Breadcrumbs.AddItem(item);
 }
 
-void CHistoryBar::SetHistory(LFFilter* ActiveFilter, BreadcrumbItem* BreadcrumbBack)
+void CHistoryBar::SetHistory(LFFilter* ActiveFilter, BreadcrumbItem* Breadcrumbs)
 {
 	m_IsEmpty = FALSE;
 	m_Breadcrumbs.m_ItemCount = 0;
@@ -98,10 +98,10 @@ void CHistoryBar::SetHistory(LFFilter* ActiveFilter, BreadcrumbItem* BreadcrumbB
 	CFont* pOldFont = dc->SelectObject(&theApp.m_DefaultFont);
 
 	AddFilter(ActiveFilter, dc);
-	while (BreadcrumbBack)
+	while (Breadcrumbs)
 	{
-		AddFilter(BreadcrumbBack->filter, dc);
-		BreadcrumbBack = BreadcrumbBack->next;
+		AddFilter(Breadcrumbs->filter, dc);
+		Breadcrumbs = Breadcrumbs->next;
 	}
 
 	dc->SelectObject(pOldFont);

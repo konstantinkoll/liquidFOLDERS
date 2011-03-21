@@ -107,6 +107,7 @@ protected:
 
 	afx_msg void OnDriveCreateNewStore();
 	afx_msg void OnDriveFormat();
+	afx_msg void OnDriveEject();
 	afx_msg void OnDriveProperties();
 	afx_msg void OnUpdateDriveCommands(CCmdUI* pCmdUI);
 

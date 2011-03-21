@@ -663,6 +663,26 @@ LFCore_API unsigned int LFGetStoreCount()
 	return res;
 }
 
+LFCore_API bool LFStoresOnDrive(char d)
+{
+	bool res = false;
+
+	if (GetMutex(Mutex_Stores))
+	{
+		for (unsigned int a=0; a<StoreCount; a++)
+			if (IsStoreMounted(&StoreCache[a]))
+				if (StoreCache[a].DatPath[0]==d)
+				{
+					res = true;
+					break;
+				}
+
+		ReleaseMutex(Mutex_Stores);
+	}
+
+	return res;
+}
+
 LFCore_API unsigned int LFGetStores(char** keys, unsigned int* count)
 {
 	if (!GetMutex(Mutex_Stores))

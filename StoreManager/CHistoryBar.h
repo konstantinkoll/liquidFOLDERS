@@ -38,7 +38,7 @@ public:
 
 	BOOL Create(CGlasWindow* pParentWnd, UINT nID);
 	UINT GetPreferredHeight();
-	void SetHistory(LFFilter* ActiveFilter, BreadcrumbItem* BreadcrumbBack);
+	void SetHistory(LFFilter* ActiveFilter, BreadcrumbItem* Breadcrumbs);
 
 protected:
 	BOOL m_Hover;
