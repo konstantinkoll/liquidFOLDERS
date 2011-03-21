@@ -181,7 +181,7 @@ void CFileView::UpdateSearchResult(LFSearchResult* Result, FVPersistentData* Dat
 				BYTE* v = (BYTE*)Victim;
 				v += ((BYTE*)d)-((BYTE*)m_ItemData);
 
-				if (m_AllowMultiSelect)
+				if ((m_AllowMultiSelect) || ((INT)a==Data->FocusItem))
 					d->Selected = ((FVItemData*)v)->Selected;
 			}
 
