@@ -41,18 +41,17 @@ public:
 	void SetHistory(LFFilter* ActiveFilter, BreadcrumbItem* Breadcrumbs);
 
 protected:
-	BOOL m_Hover;
 	BOOL m_IsEmpty;
 	CString m_EmptyHint;
+	INT m_Hover;
+	INT m_Pressed;
 	DynArray<HistoryItem> m_Breadcrumbs;
 
+	INT HitTest(CPoint point);
 	void AdjustLayout();
 
-	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
-	afx_msg void OnDestroy();
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnPaint();
-	afx_msg LRESULT OnThemeChanged();
 	afx_msg void OnSize(UINT nType, INT cx, INT cy);
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg void OnMouseLeave();
@@ -62,7 +61,5 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
-	HTHEME hTheme;
-
 	void AddFilter(LFFilter* Filter, CDC* pDC);
 };

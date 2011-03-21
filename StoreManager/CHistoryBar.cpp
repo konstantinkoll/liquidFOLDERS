@@ -7,6 +7,10 @@
 // Breadcrumbs
 //
 
+#define NOPART     -3
+#define VIEW       -2
+#define RELOAD     -1
+
 void AddBreadcrumbItem(BreadcrumbItem** bi, LFFilter* filter, FVPersistentData& data)
 {
 	BreadcrumbItem* add = new BreadcrumbItem;
@@ -52,8 +56,7 @@ void DeleteBreadcrumbs(BreadcrumbItem** bi)
 CHistoryBar::CHistoryBar()
 	: CWnd()
 {
-	hTheme = NULL;
-	m_Hover = FALSE;
+	m_Hover = m_Pressed = NOPART;
 	m_IsEmpty = TRUE;
 
 	ENSURE(m_EmptyHint.LoadString(IDS_NONAVIGATION));
@@ -63,10 +66,26 @@ BOOL CHistoryBar::Create(CGlasWindow* pParentWnd, UINT nID)
 {
 	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW, LoadCursor(NULL, IDC_ARROW));
 
-	const DWORD dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE;// | WS_TABSTOP;
+	const DWORD dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE;
 	CRect rect;
 	rect.SetRectEmpty();
 	return CWnd::Create(className, _T(""), dwStyle, rect, pParentWnd, nID);
+}
+
+INT CHistoryBar::HitTest(CPoint point)
+{
+	CRect rect;
+	GetClientRect(rect);
+
+	if (!rect.PtInRect(point))
+		return NOPART;
+
+	if (((point.y>=2) && (point.y<rect.bottom-2)) || (!IsCtrlThemed() && (point.y>=1) && (point.y<rect.bottom-1)))
+		for (UINT a=0; a<m_Breadcrumbs.m_ItemCount; a++)
+			if ((point.x>=m_Breadcrumbs.m_Items[a].Left) && (point.x<m_Breadcrumbs.m_Items[a].Right))
+				return a;
+
+	return VIEW;
 }
 
 UINT CHistoryBar::GetPreferredHeight()
@@ -134,38 +153,15 @@ void CHistoryBar::AdjustLayout()
 
 
 BEGIN_MESSAGE_MAP(CHistoryBar, CWnd)
-	ON_WM_CREATE()
-	ON_WM_DESTROY()
 	ON_WM_ERASEBKGND()
 	ON_WM_PAINT()
-	ON_WM_THEMECHANGED()
 	ON_WM_SIZE()
 	ON_WM_MOUSEMOVE()
 	ON_WM_MOUSELEAVE()
 	ON_WM_LBUTTONDOWN()
 	ON_WM_LBUTTONUP()
 	ON_WM_RBUTTONUP()
-	//ON_WM_SETFOCUS()
-	//ON_WM_KILLFOCUS()
 END_MESSAGE_MAP()
-
-INT CHistoryBar::OnCreate(LPCREATESTRUCT lpCreateStruct)
-{
-	if (CWnd::OnCreate(lpCreateStruct)==-1)
-		return -1;
-
-	OnThemeChanged();
-
-	return 0;
-}
-
-void CHistoryBar::OnDestroy()
-{
-	if (hTheme)
-		theApp.zCloseThemeData(hTheme);
-
-	CWnd::OnDestroy();
-}
 
 BOOL CHistoryBar::OnEraseBkgnd(CDC* /*pDC*/)
 {
@@ -198,10 +194,10 @@ void CHistoryBar::OnPaint()
 
 	CGlasWindow* pCtrlSite = (CGlasWindow*)GetParent();
 	pCtrlSite->DrawFrameBackground(&dc, rectClient);
-	const BYTE Alpha = /*m_Dropped ? 0xFF : */(m_Hover && !m_IsEmpty) ? 0xF0 : 0xD0;
+	const BYTE Alpha = /*m_Dropped ? 0xFF : */((m_Hover!=NOPART) && !m_IsEmpty) ? 0xF0 : 0xD0;
 
 	CRect rectContent(rectClient);
-	if (hTheme)
+	if (IsCtrlThemed())
 	{
 		CRect rectBounds(rectContent);
 		rectBounds.right--;
@@ -306,7 +302,16 @@ void CHistoryBar::OnPaint()
 
 			if (rectItem.left<BORDER/2)
 				rectItem.left = BORDER/2;
-			//TODO
+
+			if (m_Pressed==(INT)a)
+			{
+				dc.FillSolidRect(rectItem, 0xFF0000);
+			}
+			else
+				if (m_Hover==(INT)a)
+				{
+					dc.FillSolidRect(rectItem, 0xFFFF00);
+				}
 
 			rectItemText.DeflateRect(MARGIN, 0);
 			if (rectItemText.left<BORDER/2)
@@ -357,32 +362,16 @@ void CHistoryBar::OnPaint()
 	DeleteObject(hBmp);
 }
 
-LRESULT CHistoryBar::OnThemeChanged()
-{
-	if (theApp.m_ThemeLibLoaded)
-	{
-		if (hTheme)
-			theApp.zCloseThemeData(hTheme);
-
-		hTheme = theApp.zOpenThemeData(m_hWnd, VSCLASS_COMBOBOX);
-	}
-
-	return TRUE;
-}
-
 void CHistoryBar::OnSize(UINT nType, INT cx, INT cy)
 {
 	CWnd::OnSize(nType, cx, cy);
 	AdjustLayout();
 }
 
-void CHistoryBar::OnMouseMove(UINT /*nFlags*/, CPoint /*point*/)
+void CHistoryBar::OnMouseMove(UINT nFlags, CPoint point)
 {
-	if (!m_Hover)
+	if (m_Hover==NOPART)
 	{
-		m_Hover = TRUE;
-		Invalidate();
-
 		TRACKMOUSEEVENT tme;
 		tme.cbSize = sizeof(TRACKMOUSEEVENT);
 		tme.dwFlags = TME_LEAVE;
@@ -390,38 +379,33 @@ void CHistoryBar::OnMouseMove(UINT /*nFlags*/, CPoint /*point*/)
 		tme.hwndTrack = m_hWnd;
 		TrackMouseEvent(&tme);
 	}
+
+	INT Hover = HitTest(point);
+	m_Pressed = (nFlags & MK_LBUTTON) ? Hover : NOPART;
+
+	if (Hover!=m_Hover)
+	{
+		m_Hover = Hover;
+		Invalidate();
+	}
 }
 
 void CHistoryBar::OnMouseLeave()
 {
-	m_Hover = FALSE;
+	m_Hover = m_Pressed = NOPART;
 	Invalidate();
 }
 
-void CHistoryBar::OnLButtonDown(UINT /*nFlags*/, CPoint /*point*/)
+void CHistoryBar::OnLButtonDown(UINT /*nFlags*/, CPoint point)
 {
-/*	SetFocus();
-
-	if (m_Dropped)
-	{
-		OnCloseDropdown();
-	}
-	else
-	{
-		m_Pressed = TRUE;
-		OnOpenDropdown();
-	}*/
+	m_Hover = m_Pressed = HitTest(point);
+	Invalidate();
 }
 
 void CHistoryBar::OnLButtonUp(UINT /*nFlags*/, CPoint /*point*/)
 {
-	/*if (m_Pressed)
-	{
-		m_Pressed = FALSE;
-		Invalidate();
-
-		ReleaseCapture();
-	}*/
+	m_Pressed = NOPART;
+	Invalidate();
 }
 
 void CHistoryBar::OnRButtonUp(UINT nFlags, CPoint point)

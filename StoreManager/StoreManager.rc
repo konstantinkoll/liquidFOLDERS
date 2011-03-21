@@ -440,7 +440,7 @@ STRINGTABLE
 BEGIN
     IDS_CONTEXTMENU_OPENGOOGLEEARTH "Öffnen mit &Google Earth"
     IDS_CONTEXTMENU_REMEMBER "Mer&ken"
-    IDS_CONTEXTMENU_REMOVE  "Von Zwischenablage &entfernen"
+    IDS_CONTEXTMENU_REMOVE  "Aus Zwischenablage &entfernen"
     IDS_CONTEXTMENU_AUTOSIZEALL "&Alle Spaltenbreiten anpassen"
     IDS_CONTEXTMENU_MORE    "&Mehr..."
     IDS_CONTEXTMENU_TIME    "&Zeit"
