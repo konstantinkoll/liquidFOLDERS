@@ -66,6 +66,8 @@ struct GlobeParameters
 struct FVPersistentData
 {
 	INT FocusItem;
+	INT HScrollPos;
+	INT VScrollPos;
 	UINT Year;
 	GlobeParameters Location;
 	BOOL LocationValid;

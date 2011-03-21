@@ -437,9 +437,6 @@ void CMainView::RemoveTransactedItems(LFTransactionList* tl)
 
 	LFRemoveFlaggedItemDescriptors(p_RawFiles);
 
-	// TODO
-	//UpdateHistory();
-
 	FVPersistentData Data;
 	GetPersistentData(Data);
 	GetOwner()->SendMessage(WM_COOKFILES, (WPARAM)&Data);
@@ -506,7 +503,11 @@ BOOL CMainView::UpdateItems(LFVariantData* value1, LFVariantData* value2, LFVari
 			}
 
 		if (tl->m_Changes)
-			UpdateSearchResult(p_RawFiles, p_CookedFiles);
+		{
+			FVPersistentData Data;
+			GetPersistentData(Data);
+			UpdateSearchResult(p_RawFiles, p_CookedFiles, &Data);
+		}
 		if (deselected)
 			OnUpdateSelection();
 	}
@@ -866,7 +867,11 @@ LRESULT CMainView::OnRenameItem(WPARAM wParam, LPARAM lParam)
 	LFTransactionUpdate(tl, GetSafeHwnd(), &value);
 
 	if (tl->m_Changes)
-		UpdateSearchResult(p_RawFiles, p_CookedFiles);
+	{
+		FVPersistentData Data;
+		GetPersistentData(Data);
+		UpdateSearchResult(p_RawFiles, p_CookedFiles, &Data);
+	}
 
 	if (tl->m_LastError>LFCancel)
 		ShowNotification(ENT_ERROR, tl->m_LastError);

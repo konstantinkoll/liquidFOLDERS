@@ -174,6 +174,9 @@ void CFileView::UpdateSearchResult(LFSearchResult* Result, FVPersistentData* Dat
 		ZeroMemory(m_ItemData, sz);
 
 		if ((VictimAllocated) && (Result->m_Context!=LFContextClipboard))
+		{
+			INT RetainSelection = Data ? Data->FocusItem : -1;
+
 			for (UINT a=0; a<min(VictimAllocated, Result->m_ItemCount); a++)
 			{
 				FVItemData* d = GetItemData(a);
@@ -181,9 +184,10 @@ void CFileView::UpdateSearchResult(LFSearchResult* Result, FVPersistentData* Dat
 				BYTE* v = (BYTE*)Victim;
 				v += ((BYTE*)d)-((BYTE*)m_ItemData);
 
-				if ((m_AllowMultiSelect) || ((INT)a==Data->FocusItem))
+				if ((m_AllowMultiSelect) || ((INT)a==RetainSelection))
 					d->Selected = ((FVItemData*)v)->Selected;
 			}
+		}
 
 		m_DropTarget.Register(this, Result->m_StoreID);
 
@@ -192,6 +196,8 @@ void CFileView::UpdateSearchResult(LFSearchResult* Result, FVPersistentData* Dat
 		m_ViewParameters.SortBy = p_ViewParameters->SortBy;
 
 		m_FocusItem = Data ? min(Data->FocusItem, (INT)Result->m_ItemCount-1) : Result->m_ItemCount ? 0 : -1;
+		m_HScrollPos = Data ? Data->HScrollPos : 0;
+		m_VScrollPos = Data ? Data->VScrollPos : 0;
 		m_HotItem = -1;
 		m_HideFileExt = theApp.HideFileExt();
 	}
@@ -614,6 +620,8 @@ void CFileView::GetPersistentData(FVPersistentData& Data)
 {
 	ZeroMemory(&Data, sizeof(Data));
 	Data.FocusItem = m_FocusItem;
+	Data.HScrollPos = m_HScrollPos;
+	Data.VScrollPos = m_VScrollPos;
 }
 
 void CFileView::EditLabel(INT idx)

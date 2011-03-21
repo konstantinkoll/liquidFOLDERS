@@ -389,6 +389,10 @@ void CHistoryBar::OnLButtonUp(UINT /*nFlags*/, CPoint point)
 
 void CHistoryBar::OnRButtonUp(UINT nFlags, CPoint point)
 {
+	m_Hover = m_Pressed = NOPART;
+	Invalidate();
+	UpdateWindow();
+
 	CRect rect;
 	GetWindowRect(rect);
 	point += rect.TopLeft();
