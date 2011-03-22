@@ -267,6 +267,7 @@ void CHistoryBar::OnPaint()
 			if (rectItem.left<BORDER/2)
 				rectItem.left = BORDER/2;
 
+			// TODO
 			if (m_Pressed==(INT)a)
 			{
 				dc.FillSolidRect(rectItem, 0xFF0000);
