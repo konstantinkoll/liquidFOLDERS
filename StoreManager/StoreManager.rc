@@ -254,7 +254,7 @@ BEGIN
         MENUITEM "&Vorschau anzeigen",          IDM_INSPECTOR_SHOWPREVIEW
         MENUITEM "&Alphabetisch sortieren",     IDM_INSPECTOR_SORTALPHABETIC
         MENUITEM SEPARATOR
-        POPUP "Export"
+        POPUP "Exportieren"
         BEGIN
             MENUITEM "&Zusammenfassung...",         IDM_INSPECTOR_EXPORTSUMMARY
             MENUITEM "Alle &Metadaten...",          IDM_INSPECTOR_EXPORTMETADATA

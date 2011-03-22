@@ -387,9 +387,9 @@ void CTaskbar::OnContextMenu(CWnd* /*pWnd*/, CPoint pos)
 	if (menu.GetMenuItemCount())
 		menu.AppendMenu(MF_SEPARATOR);
 
-	for (POSITION p=m_ButtonsRight.GetHeadPosition(); p; )
+	for (POSITION p=m_ButtonsRight.GetTailPosition(); p; )
 	{
-		CTaskButton* btn = m_ButtonsRight.GetNext(p);
+		CTaskButton* btn = m_ButtonsRight.GetPrev(p);
 		if (btn->IsWindowEnabled())
 		{
 			CString tmpStr;
