@@ -1074,8 +1074,8 @@ BEGIN
     BEGIN
         MENUITEM "Crear &nuevo store...",       IDM_VOLUME_CREATENEWSTORE
         MENUITEM SEPARATOR
-        MENUITEM "&Format...",                  IDM_VOLUME_FORMAT
-        MENUITEM "E&ject",                      IDM_VOLUME_EJECT
+        MENUITEM "&Formatear...",               IDM_VOLUME_FORMAT
+        MENUITEM "E&xpulsar",                   IDM_VOLUME_EJECT
         MENUITEM SEPARATOR
         MENUITEM "&Propiedades",                IDM_VOLUME_PROPERTIES
     END
@@ -1136,17 +1136,17 @@ BEGIN
     MENUITEM "Mostrar &etiquetas poco comunes", IDM_TAGCLOUD_SHOWRARE
 END
 
-IDM_INSPECTOR MENU 
+IDM_INSPECTOR MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "Show &preview",               IDM_INSPECTOR_SHOWPREVIEW
-        MENUITEM "Sort &alphabetically",        IDM_INSPECTOR_SORTALPHABETIC
+        MENUITEM "Mostrar &vista previa",       IDM_INSPECTOR_SHOWPREVIEW
+        MENUITEM "Ordenar &alfabéticamente",    IDM_INSPECTOR_SORTALPHABETIC
         MENUITEM SEPARATOR
-        POPUP "Export"
+        POPUP "Exportar"
         BEGIN
-            MENUITEM "&Summary...",                 IDM_INSPECTOR_EXPORTSUMMARY
-            MENUITEM "Complete &metadata...",       IDM_INSPECTOR_EXPORTMETADATA
+            MENUITEM "&Sumario...",                 IDM_INSPECTOR_EXPORTSUMMARY
+            MENUITEM "Completar &metadata...",      IDM_INSPECTOR_EXPORTMETADATA
         END
     END
 END
@@ -1364,9 +1364,9 @@ BEGIN
                             "Las subcarpetas son obligatorias para esta visualización."
     IDS_SUBFOLDERS_NOTAVAIL "Las subcarpetas no están disponibles para este contexto."
     IDS_NOLICENSE           "Usted está usando una copia no registrada de liquidFOLDERS. liquidFOLDERS es un software de demostración – si usted decide usarlo regularmente, usted está obligado a adquirir una licencia!"
-    IDS_NONAVIGATION        "This window does not support any navigation."
-    IDS_FORMAT_CAPTION      "You cannot format volume ""%s"""
-    IDS_FORMAT_TEXT         "It contains stores that you are using.\nFormatting this volume will destroy those stores."
+    IDS_NONAVIGATION        "Esta ventana no es compatible con la navegación."
+    IDS_FORMAT_CAPTION      "Usted no puede formatear volúmen ""%s"""
+    IDS_FORMAT_TEXT         "Contiene stores que usted está usando.\nAl formatear este volúmen destruirá aquellos stores."
 END
 
 STRINGTABLE 
