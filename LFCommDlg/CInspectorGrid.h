@@ -72,6 +72,7 @@ protected:
 	BOOL m_SortAlphabetic;
 
 	void MakeSortArrayDirty();
+	void DrawCategory(CDC& dc, LPRECT rectCategory, WCHAR* Text);
 
 	afx_msg void OnDestroy();
 	afx_msg LRESULT OnThemeChanged();

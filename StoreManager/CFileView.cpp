@@ -765,11 +765,11 @@ void CFileView::DrawCategory(CDC& dc, LPRECT rectCategory, ItemCategory* ic, BOO
 		dc.SelectObject(pOldPen);
 	}
 
-	if (Themed)
-		dc.SetTextColor(((dc.GetTextColor()>>1) & 0x7F7F7F) | 0x808080);
-
 	if (ic->Hint[0]!=L'\0')
 	{
+		if (Themed)
+			dc.SetTextColor(((dc.GetTextColor()>>1) & 0x7F7F7F) | 0x808080);
+
 		rect.top += m_FontHeight[1];
 		dc.SelectObject(&theApp.m_DefaultFont);
 		dc.DrawText(ic->Hint, rect, DT_LEFT | DT_TOP | DT_SINGLELINE | DT_END_ELLIPSIS);

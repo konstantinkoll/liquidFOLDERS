@@ -28,7 +28,8 @@ void CInspectorProperty::DrawValue(CDC& dc, CRect rect)
 
 extern AFX_EXTENSION_MODULE LFCommDlgDLL;
 
-#define GUTTER     3
+#define GUTTER      3
+#define PADDING     2
 
 CInspectorGrid::CInspectorGrid()
 	: CWnd()
@@ -267,12 +268,24 @@ void CInspectorGrid::AdjustLayout()
 	CreateSortArray();
 	ASSERT(m_pSortArray);
 
+	for (UINT a=0; a<LFAttrCategoryCount; a++)
+		m_Categories[a].Top = m_Categories[a].Bottom = -1;
+
 	m_LabelWidth = 0;
 	INT Top = 1;
+	INT Category = -1;
 
 	for (UINT a=0; a<m_Properties.m_ItemCount; a++)
 	{
 		Property* pProp = &m_Properties.m_Items[m_pSortArray[a]];
+
+		if ((!m_SortAlphabetic) && (pProp->Visible) && ((INT)pProp->Category!=Category))
+		{
+			Category = pProp->Category;
+			m_Categories[Category].Top = Top;
+			m_Categories[Category].Bottom = Top+m_FontHeight[1]+2*PADDING+8;
+			Top += m_FontHeight[1]+2*PADDING+8+1;
+		}
 
 		pProp->Top = pProp->Visible ? Top : -1;
 		pProp->Bottom = pProp->Visible ? Top+m_RowHeight : -1;
@@ -294,6 +307,29 @@ void CInspectorGrid::AdjustLayout()
 		m_LabelWidth = rect.Width()/2;
 
 	Invalidate();
+}
+
+void CInspectorGrid::DrawCategory(CDC& dc, LPRECT rectCategory, WCHAR* Text)
+{
+	CRect rect(rectCategory);
+	rect.DeflateRect(0, PADDING);
+	rect.left += GUTTER;
+
+	dc.DrawText(Text, rect, DT_LEFT | DT_BOTTOM | DT_SINGLELINE | DT_END_ELLIPSIS);
+
+	CRect rectLine(rect);
+	dc.DrawText(Text, rectLine, DT_LEFT | DT_BOTTOM | DT_SINGLELINE | DT_END_ELLIPSIS | DT_CALCRECT);
+	rectLine.right += 2*PADDING;
+
+	if (rectLine.right<=rect.right)
+	{
+		CPen pen(PS_SOLID, 1, 0xE2E2E2);
+
+		CPen* pOldPen = dc.SelectObject(&pen);
+		dc.MoveTo(rectLine.right, rect.bottom-(m_FontHeight[1]+1)/2);
+		dc.LineTo(rect.right, rect.bottom-(m_FontHeight[1]+1)/2);
+		dc.SelectObject(pOldPen);
+	}
 }
 
 
@@ -366,6 +402,18 @@ void CInspectorGrid::OnPaint()
 
 	dc.FillSolidRect(rect, Themed ? 0xFFFFFF : GetSysColor(COLOR_WINDOW));
 
+	// Categories
+	CFont* pOldFont = dc.SelectObject(&p_App->m_DefaultFont);
+	dc.SetTextColor(Themed ? 0x993300 : GetSysColor(COLOR_WINDOWTEXT));
+
+	for (UINT a=0; a<LFAttrCategoryCount; a++)
+		if (m_Categories[a].Top!=-1)
+		{
+			CRect rect(0, m_Categories[a].Top, rect.Width(), m_Categories[a].Bottom);
+			DrawCategory(dc, rect, p_App->m_AttrCategories[a]);
+		}
+
+	// Items
 	dc.SelectStockObject(DEFAULT_GUI_FONT);
 
 	for (UINT a=0; a<m_Properties.m_ItemCount; a++)
@@ -385,6 +433,7 @@ void CInspectorGrid::OnPaint()
 	}
 
 	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);
+	dc.SelectObject(pOldFont);
 	dc.SelectObject(pOldBitmap);
 }
 
