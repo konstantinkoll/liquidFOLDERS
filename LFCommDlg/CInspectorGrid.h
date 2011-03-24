@@ -67,6 +67,7 @@ public:
 	BOOL Create(CWnd* pParentWnd, UINT nID, BOOL bBorder, CInspectorHeader* pHeader=NULL);
 	void AddProperty(CInspectorProperty* pProperty, UINT Category, WCHAR* Name, BOOL Editable=FALSE);
 	void AddAttributes(LFVariantData* pData);
+	void ShowHeader(BOOL ShowHeader);
 	void SetAlphabeticMode(BOOL SortAlphabetic);
 	void UpdatePropertyState(UINT nID, BOOL Multiple, BOOL Editable, BOOL Visible);
 
@@ -81,6 +82,7 @@ protected:
 	INT m_FontHeight[2];
 	INT m_RowHeight;
 	INT m_LabelWidth;
+	BOOL m_ShowHeader;
 	BOOL m_SortAlphabetic;
 
 	void MakeSortArrayDirty();

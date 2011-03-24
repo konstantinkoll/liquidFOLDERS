@@ -80,7 +80,8 @@ protected:
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	afx_msg LRESULT OnPropertyChanged(WPARAM wparam, LPARAM lparam);
-	afx_msg void OnToggleIcon();
+
+	afx_msg void OnTogglePreview();
 	afx_msg void OnAlphabetic();
 	afx_msg void OnExport();
 	afx_msg void OnUpdateCommands(CCmdUI* pCmdUI);

@@ -389,7 +389,7 @@ BEGIN_MESSAGE_MAP(CInspectorWnd, CGlasPane)
 	ON_WM_CONTEXTMENU()
 	ON_REGISTERED_MESSAGE(AFX_WM_PROPERTY_CHANGED, OnPropertyChanged)
 
-	ON_COMMAND(IDM_INSPECTOR_SHOWPREVIEW, OnToggleIcon)
+	ON_COMMAND(IDM_INSPECTOR_SHOWPREVIEW, OnTogglePreview)
 	ON_COMMAND(IDM_INSPECTOR_SORTALPHABETIC, OnAlphabetic)
 	ON_COMMAND(IDM_INSPECTOR_EXPORTSUMMARY, OnExport)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_INSPECTOR_SHOWPREVIEW, IDM_INSPECTOR_EXPORTMETADATA, OnUpdateCommands)
@@ -460,11 +460,12 @@ LRESULT CInspectorWnd::OnPropertyChanged(WPARAM /*wparam*/, LPARAM lparam)
 }
 
 
-void CInspectorWnd::OnToggleIcon()
+void CInspectorWnd::OnTogglePreview()
 {
 	m_ShowPreview = !m_ShowPreview;
-	AdjustLayout();
 	SaveSettings();
+
+	m_wndInspectorGrid.ShowHeader(m_ShowPreview);
 }
 
 void CInspectorWnd::OnAlphabetic()
