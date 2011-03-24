@@ -48,6 +48,7 @@ class AFX_EXT_CLASS CInspectorGrid : public CWnd
 {
 public:
 	CInspectorGrid();
+	~CInspectorGrid();
 
 	virtual void PreSubclassWindow();
 	virtual void AdjustLayout();
@@ -62,12 +63,15 @@ protected:
 	LFApplication* p_App;
 	DynArray<Property> m_Properties;
 	PropertyCategory m_Categories[LFAttrCategoryCount];
-	HTHEME hTheme;
+	HTHEME hThemeButton;
+	HTHEME hThemeList;
 	LFTooltip m_TooltipCtrl;
 	INT m_FontHeight[2];
 	INT m_RowHeight;
 	INT m_LabelWidth;
 	BOOL m_SortAlphabetic;
+
+	void MakeSortArrayDirty();
 
 	afx_msg void OnDestroy();
 	afx_msg LRESULT OnThemeChanged();
@@ -76,4 +80,11 @@ protected:
 	afx_msg void OnPaint();
 	afx_msg void OnSize(UINT nType, INT cx, INT cy);
 	DECLARE_MESSAGE_MAP()
+
+private:
+	INT* m_pSortArray;
+
+	INT Compare(INT eins, INT zwei);
+	void Heap(INT wurzel, INT anz);
+	void CreateSortArray();
 };

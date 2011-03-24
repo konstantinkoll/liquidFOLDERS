@@ -1466,6 +1466,8 @@ void CTreeView::OnDestroy()
 		theApp.zCloseThemeData(hThemeButton);
 	if (hThemeList)
 		theApp.zCloseThemeData(hThemeList);
+	if (hThemeTree)
+		theApp.zCloseThemeData(hThemeTree);
 
 	FreeTree();
 

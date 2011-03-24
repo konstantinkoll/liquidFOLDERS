@@ -19,7 +19,7 @@ void CInspectorProperty::DrawValue(CDC& dc, CRect rect)
 	WCHAR tmpStr[256];
 	LFVariantDataToString(p_Data, tmpStr, 256);
 
-	dc.DrawText(tmpStr, -1, rect, DT_LEFT | DT_VCENTER | DT_END_ELLIPSIS);
+	dc.DrawText(tmpStr, -1, rect, DT_LEFT | DT_VCENTER | DT_END_ELLIPSIS | DT_SINGLELINE);
 }
 
 
@@ -53,7 +53,15 @@ CInspectorGrid::CInspectorGrid()
 	}
 
 	p_App = (LFApplication*)AfxGetApp();
-	hTheme = NULL;
+	m_SortAlphabetic = FALSE;
+	m_pSortArray = NULL;
+	hThemeList = hThemeButton = NULL;
+}
+
+CInspectorGrid::~CInspectorGrid()
+{
+	if (m_pSortArray)
+		delete[] m_pSortArray;
 }
 
 BOOL CInspectorGrid::Create(CWnd* pParentWnd, UINT nID, BOOL bBorder)
@@ -70,12 +78,14 @@ void CInspectorGrid::PreSubclassWindow()
 {
 	CWnd::PreSubclassWindow();
 
-	m_TooltipCtrl.Create(this);
-
 	if (p_App->m_ThemeLibLoaded)
 	{
-		p_App->zSetWindowTheme(GetSafeHwnd(), NULL, NULL);
-		hTheme = p_App->zOpenThemeData(GetSafeHwnd(), VSCLASS_BUTTON);
+		hThemeButton = p_App->zOpenThemeData(GetSafeHwnd(), VSCLASS_BUTTON);
+		if (p_App->OSVersion>=OS_Vista)
+		{
+			p_App->zSetWindowTheme(GetSafeHwnd(), L"explorer", NULL);
+			hThemeList = p_App->zOpenThemeData(GetSafeHwnd(), VSCLASS_LISTVIEW);
+		}
 	}
 
 //	ResetScrollbars();
@@ -109,6 +119,11 @@ void CInspectorGrid::AddProperty(CInspectorProperty* pProperty, UINT Category, W
 	ReleaseDC(dc);
 
 	m_Properties.AddItem(prop);
+
+	MakeSortArrayDirty();
+
+	if (!IsWindow(m_TooltipCtrl))
+		m_TooltipCtrl.Create(this);
 }
 
 void CInspectorGrid::AddAttributes(LFVariantData* pData)
@@ -168,6 +183,7 @@ void CInspectorGrid::AddAttributes(LFVariantData* pData)
 void CInspectorGrid::SetAlphabeticMode(BOOL SortAlphabetic)
 {
 	m_SortAlphabetic = SortAlphabetic;
+	MakeSortArrayDirty();
 	AdjustLayout();
 }
 
@@ -179,14 +195,84 @@ void CInspectorGrid::UpdatePropertyState(UINT nID, BOOL Multiple, BOOL Editable,
 	m_Properties.m_Items[nID].Visible = Visible;
 }
 
+INT CInspectorGrid::Compare(INT eins, INT zwei)
+{
+	Property* pEins = &m_Properties.m_Items[m_pSortArray[eins]];
+	Property* pZwei = &m_Properties.m_Items[m_pSortArray[zwei]];
+
+	if (m_SortAlphabetic)
+		return wcscmp(pEins->Name, pZwei->Name);
+
+	return (pEins->Category==pZwei->Category) ? m_pSortArray[eins]-m_pSortArray[zwei] : (INT)pEins->Category-(INT)pZwei->Category;
+}
+
+void CInspectorGrid::Heap(INT wurzel, INT anz)
+{
+	while (wurzel<=anz/2-1)
+	{
+		INT idx = (wurzel+1)*2-1;
+		if (idx+1<anz)
+			if (Compare(idx, idx+1)<0)
+				idx++;
+
+		if (Compare(wurzel, idx)<0)
+		{
+			std::swap(m_pSortArray[wurzel], m_pSortArray[idx]);
+			wurzel = idx;
+		}
+		else
+		{
+			break;
+		}
+	}
+}
+
+inline void CInspectorGrid::CreateSortArray()
+{
+	if (m_pSortArray)
+		return;
+
+	ASSERT(m_Properties.m_ItemCount);
+	m_pSortArray = new INT[m_Properties.m_ItemCount];
+
+	for (UINT a=0; a<m_Properties.m_ItemCount; a++)
+		m_pSortArray[a] = a;
+
+	if (m_Properties.m_ItemCount>1)
+	{
+		for (INT a=m_Properties.m_ItemCount/2-1; a>=0; a--)
+			Heap(a, m_Properties.m_ItemCount);
+		for (INT a=m_Properties.m_ItemCount-1; a>0; )
+		{
+			std::swap(m_pSortArray[0], m_pSortArray[a]);
+			Heap(0, a--);
+		}
+	}
+}
+
+inline void CInspectorGrid::MakeSortArrayDirty()
+{
+	if (m_pSortArray)
+	{
+		delete[] m_pSortArray;
+		m_pSortArray = NULL;
+	}
+}
+
 void CInspectorGrid::AdjustLayout()
 {
+	if (!m_Properties.m_ItemCount)
+		return;
+
+	CreateSortArray();
+	ASSERT(m_pSortArray);
+
 	m_LabelWidth = 0;
-	INT Top = 0;
+	INT Top = 1;
 
 	for (UINT a=0; a<m_Properties.m_ItemCount; a++)
 	{
-		Property* pProp = &m_Properties.m_Items[a];
+		Property* pProp = &m_Properties.m_Items[m_pSortArray[a]];
 
 		pProp->Top = pProp->Visible ? Top : -1;
 		pProp->Bottom = pProp->Visible ? Top+m_RowHeight : -1;
@@ -224,8 +310,10 @@ void CInspectorGrid::OnDestroy()
 {
 	CWnd::OnDestroy();
 
-	if (hTheme)
-		p_App->zCloseThemeData(hTheme);
+	if (hThemeButton)
+		p_App->zCloseThemeData(hThemeButton);
+	if (hThemeList)
+		p_App->zCloseThemeData(hThemeList);
 
 	for (UINT a=0; a<m_Properties.m_ItemCount; a++)
 		delete m_Properties.m_Items[a].pProperty;
@@ -235,10 +323,14 @@ LRESULT CInspectorGrid::OnThemeChanged()
 {
 	if (p_App->m_ThemeLibLoaded)
 	{
-		if (hTheme)
-			p_App->zCloseThemeData(hTheme);
+		if (hThemeButton)
+			p_App->zCloseThemeData(hThemeButton);
+		if (hThemeList)
+			p_App->zCloseThemeData(hThemeList);
 
-		hTheme = p_App->zOpenThemeData(GetSafeHwnd(), VSCLASS_BUTTON);
+		hThemeButton = p_App->zOpenThemeData(GetSafeHwnd(), VSCLASS_BUTTON);
+		if (p_App->OSVersion>=OS_Vista)
+			hThemeList = p_App->zOpenThemeData(GetSafeHwnd(), VSCLASS_LISTVIEW);
 	}
 
 	return TRUE;
@@ -283,7 +375,7 @@ void CInspectorGrid::OnPaint()
 		{
 			CRect rectProp(GUTTER, pProp->Top, m_LabelWidth, pProp->Bottom);
 			dc.SetTextColor(pProp->Editable ? Themed ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT) : GetSysColor(COLOR_3DSHADOW));
-			dc.DrawText(pProp->Name, -1, rectProp, DT_RIGHT | DT_VCENTER | DT_END_ELLIPSIS);
+			dc.DrawText(pProp->Name, -1, rectProp, DT_RIGHT | DT_VCENTER | DT_END_ELLIPSIS | DT_SINGLELINE);
 
 			rectProp.left = rectProp.right+GUTTER;
 			rectProp.right = rect.Width()-GUTTER;
