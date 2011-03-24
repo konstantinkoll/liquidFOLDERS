@@ -23,6 +23,17 @@ protected:
 };
 
 
+// CInspectorHeader
+//
+
+class AFX_EXT_CLASS CInspectorHeader
+{
+public:
+	virtual INT GetPreferredHeight();
+	virtual void DrawHeader(CDC& dc, CRect rect, BOOL Themed);
+};
+
+
 // CInspectorGrid
 //
 
@@ -53,7 +64,7 @@ public:
 	virtual void PreSubclassWindow();
 	virtual void AdjustLayout();
 
-	BOOL Create(CWnd* pParentWnd, UINT nID, BOOL bBorder);
+	BOOL Create(CWnd* pParentWnd, UINT nID, BOOL bBorder, CInspectorHeader* pHeader=NULL);
 	void AddProperty(CInspectorProperty* pProperty, UINT Category, WCHAR* Name, BOOL Editable=FALSE);
 	void AddAttributes(LFVariantData* pData);
 	void SetAlphabeticMode(BOOL SortAlphabetic);
@@ -66,13 +77,14 @@ protected:
 	HTHEME hThemeButton;
 	HTHEME hThemeList;
 	LFTooltip m_TooltipCtrl;
+	CInspectorHeader* m_pHeader;
 	INT m_FontHeight[2];
 	INT m_RowHeight;
 	INT m_LabelWidth;
 	BOOL m_SortAlphabetic;
 
 	void MakeSortArrayDirty();
-	void DrawCategory(CDC& dc, LPRECT rectCategory, WCHAR* Text);
+	void DrawCategory(CDC& dc, CRect& rectCategory, WCHAR* Text);
 
 	afx_msg void OnDestroy();
 	afx_msg LRESULT OnThemeChanged();

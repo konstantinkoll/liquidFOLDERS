@@ -23,6 +23,19 @@ void CInspectorProperty::DrawValue(CDC& dc, CRect rect)
 }
 
 
+// CInspectorHeader
+//
+
+INT CInspectorHeader::GetPreferredHeight()
+{
+	return 0;
+}
+
+void CInspectorHeader::DrawHeader(CDC& /*dc*/, CRect /*rect*/, BOOL /*Themed*/)
+{
+}
+
+
 // CInspectorGrid
 //
 
@@ -56,6 +69,7 @@ CInspectorGrid::CInspectorGrid()
 	p_App = (LFApplication*)AfxGetApp();
 	m_SortAlphabetic = FALSE;
 	m_pSortArray = NULL;
+	m_pHeader = NULL;
 	hThemeList = hThemeButton = NULL;
 }
 
@@ -65,8 +79,10 @@ CInspectorGrid::~CInspectorGrid()
 		delete[] m_pSortArray;
 }
 
-BOOL CInspectorGrid::Create(CWnd* pParentWnd, UINT nID, BOOL bBorder)
+BOOL CInspectorGrid::Create(CWnd* pParentWnd, UINT nID, BOOL bBorder, CInspectorHeader* pHeader)
 {
+	m_pHeader = pHeader;
+
 	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, LoadCursor(NULL, IDC_ARROW));
 
 	const DWORD dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_TABSTOP | WS_VSCROLL | (bBorder ? WS_BORDER : 0);
@@ -272,7 +288,7 @@ void CInspectorGrid::AdjustLayout()
 		m_Categories[a].Top = m_Categories[a].Bottom = -1;
 
 	m_LabelWidth = 0;
-	INT Top = 1;
+	INT Top = m_pHeader ? m_pHeader->GetPreferredHeight()+1 : 1;
 	INT Category = -1;
 
 	for (UINT a=0; a<m_Properties.m_ItemCount; a++)
@@ -282,9 +298,10 @@ void CInspectorGrid::AdjustLayout()
 		if ((!m_SortAlphabetic) && (pProp->Visible) && ((INT)pProp->Category!=Category))
 		{
 			Category = pProp->Category;
+			INT Spacer = (Top==1) ? -PADDING : 8;
 			m_Categories[Category].Top = Top;
-			m_Categories[Category].Bottom = Top+m_FontHeight[1]+2*PADDING+8;
-			Top += m_FontHeight[1]+2*PADDING+8+1;
+			m_Categories[Category].Bottom = Top+m_FontHeight[1]+2*PADDING+Spacer;
+			Top += m_FontHeight[1]+2*PADDING+Spacer+1;
 		}
 
 		pProp->Top = pProp->Visible ? Top : -1;
@@ -309,9 +326,8 @@ void CInspectorGrid::AdjustLayout()
 	Invalidate();
 }
 
-void CInspectorGrid::DrawCategory(CDC& dc, LPRECT rectCategory, WCHAR* Text)
+void CInspectorGrid::DrawCategory(CDC& dc, CRect& rect, WCHAR* Text)
 {
-	CRect rect(rectCategory);
 	rect.DeflateRect(0, PADDING);
 	rect.left += GUTTER;
 
@@ -430,6 +446,13 @@ void CInspectorGrid::OnPaint()
 			dc.SetTextColor(Themed ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT));
 			pProp->pProperty->DrawValue(dc, rectProp);
 		}
+	}
+
+	//Header
+	if (m_pHeader)
+	{
+		CRect rect(0, 0, rect.Width(), m_pHeader->GetPreferredHeight());
+		m_pHeader->DrawHeader(dc, rect, Themed);
 	}
 
 	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);

@@ -1,6 +1,5 @@
 
 #pragma once
-#include "CInspectorIconCtrl.h"
 #include "LFCommDlg.h"
 #include "liquidFOLDERS.h"
 
@@ -22,6 +21,40 @@
 #define AttrCount                   LFAttributeCount+10
 
 
+// CIconHeader
+//
+
+#define IconEmpty         0
+#define IconMultiple      1
+#define IconCore          2
+#define IconExtension     3
+#define IconPreview       4
+
+class CIconHeader : public CInspectorHeader
+{
+public:
+	CIconHeader();
+
+	virtual INT GetPreferredHeight();
+	virtual void DrawHeader(CDC& dc, CRect rect, BOOL Themed);
+
+	void SetEmpty();
+	void SetMultiple(CString Description=_T(""));
+	void SetCoreIcon(INT IconID, CString Description=_T(""));
+	void SetFormatIcon(CHAR* FileFormat, CString Description=_T(""));
+	//void SetPreview(, CString Description=_T(""));		TODO
+
+protected:
+	CGdiPlusBitmapResource m_Empty;
+	CGdiPlusBitmapResource m_Multiple;
+	CString m_strUnused;
+	CString m_strDescription;
+	UINT m_Status;
+	INT m_IconID;
+	CHAR m_FileFormat[LFExtSize];
+};
+
+
 // CInspectorWnd
 //
 
@@ -38,7 +71,7 @@ public:
 	void UpdateFinish();
 
 protected:
-	CInspectorIconCtrl m_wndIconCtrl;
+	CIconHeader m_IconHeader;
 	CInspectorGrid m_wndInspectorGrid;
 	BOOL m_ShowPreview;
 	BOOL m_SortAlphabetic;

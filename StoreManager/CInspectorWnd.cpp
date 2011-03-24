@@ -6,6 +6,85 @@
 #include "LFCore.h"
 
 
+// CIconHeader
+//
+
+CIconHeader::CIconHeader()
+	: CInspectorHeader()
+{
+	m_Empty.Load(IDB_INSPECTOR, _T("PNG"));
+	m_Multiple.Load(IDB_MULTIPLE, _T("PNG"));
+
+	ENSURE(m_strUnused.LoadString(IDS_NOITEMSSELECTED));
+	m_strDescription = m_strUnused;
+	m_Status = IconEmpty;
+}
+
+INT CIconHeader::GetPreferredHeight()
+{
+	return 128+24;
+}
+
+void CIconHeader::DrawHeader(CDC& dc, CRect rect, BOOL Themed)
+{
+	const INT cx = (rect.Width()-128)/2;
+	const INT cy = 4;
+	CRect rectIcon(cx, cy, cx+128, cy+128);
+
+	switch (m_Status)
+	{
+	case IconEmpty:
+	case IconMultiple:
+		{
+			Graphics g(dc);
+			g.SetCompositingMode(CompositingModeSourceOver);
+			g.DrawImage((m_Status==IconEmpty) ? m_Empty.m_pBitmap : m_Multiple.m_pBitmap, cx, cy);
+			break;
+		}
+	case IconCore:
+		theApp.m_CoreImageListJumbo.DrawEx(&dc, m_IconID, CPoint(cx, cy), CSize(128, 128), CLR_NONE, 0xFFFFFF, ILD_TRANSPARENT);
+		break;
+	case IconExtension:
+		theApp.m_FileFormats.DrawJumboIcon(dc, rectIcon, m_FileFormat);
+		break;
+	}
+
+	dc.SetTextColor(m_Status==IconEmpty ? GetSysColor(COLOR_3DSHADOW) : Themed ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT));
+
+	CRect rectText(rect);
+	rectText.top = 128+6;
+	dc.DrawText(m_strDescription, rectText, DT_SINGLELINE | DT_END_ELLIPSIS | DT_VCENTER | DT_CENTER);
+}
+
+void CIconHeader::SetEmpty()
+{
+	m_Status = IconEmpty;
+	m_strDescription = m_strUnused;
+}
+
+void CIconHeader::SetMultiple(CString Description)
+{
+	m_Status = IconMultiple;
+	m_strDescription = Description;
+}
+
+void CIconHeader::SetCoreIcon(INT IconID, CString Description)
+{
+	m_Status = IconCore;
+	m_IconID = IconID;
+	m_strDescription = Description;
+}
+
+void CIconHeader::SetFormatIcon(CHAR* FileFormat, CString Description)
+{
+	ASSERT(FileFormat);
+
+	m_Status = IconExtension;
+	strcpy_s(m_FileFormat, LFExtSize, FileFormat);
+	m_strDescription = Description;
+}
+
+
 // CInspectorWnd
 //
 
@@ -33,10 +112,7 @@ void CInspectorWnd::AdjustLayout()
 	CRect rectClient;
 	GetClientRect(rectClient);
 
-	INT heightIcn = m_ShowPreview ? m_wndIconCtrl.GetPreferredHeight() : 0;
-
-	m_wndIconCtrl.SetWindowPos(NULL, rectClient.left, rectClient.top, rectClient.Width(), heightIcn, SWP_NOACTIVATE | SWP_NOZORDER);
-	m_wndInspectorGrid.SetWindowPos(NULL, rectClient.left, rectClient.top+heightIcn, rectClient.Width(), rectClient.Height()-heightIcn, SWP_NOACTIVATE | SWP_NOZORDER);
+	m_wndInspectorGrid.SetWindowPos(NULL, rectClient.left, rectClient.top, rectClient.Width(), rectClient.Height(), SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
 void CInspectorWnd::SaveSettings()
@@ -217,31 +293,31 @@ void CInspectorWnd::UpdateFinish()
 	switch (IconStatus)
 	{
 	case StatusUnused:
-		m_wndIconCtrl.SetEmpty();
+		m_IconHeader.SetEmpty();
 		break;
 	case StatusMultiple:
-		m_wndIconCtrl.SetMultiple(TypeName);
+		m_IconHeader.SetMultiple(TypeName);
 		break;
 	default:
 		if (TypeStatus==StatusMultiple)
 		{
-			m_wndIconCtrl.SetMultiple(TypeName);
+			m_IconHeader.SetMultiple(TypeName);
 		}
 		else
 			if (TypeID==LFTypeFile)
 			{
 				if (AttributeStatus[LFAttrFileFormat]==StatusMultiple)
 				{
-					m_wndIconCtrl.SetMultiple(TypeName);
+					m_IconHeader.SetMultiple(TypeName);
 				}
 				else
 				{
-					m_wndIconCtrl.SetFormatIcon(AttributeValues[LFAttrFileFormat].AnsiString, TypeName);
+					m_IconHeader.SetFormatIcon(AttributeValues[LFAttrFileFormat].AnsiString, TypeName);
 				}
 			}
 			else
 			{
-				m_wndIconCtrl.SetCoreIcon(IconID-1, TypeName);
+				m_IconHeader.SetCoreIcon(IconID-1, TypeName);
 			}
 	}
 
@@ -330,10 +406,7 @@ INT CInspectorWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_SortAlphabetic = theApp.GetInt(_T("SortAlphabetic"), FALSE);
 	theApp.SetRegistryBase(oldBase);
 
-	if (!m_wndIconCtrl.Create(this, 1))
-		return -1;
-
-	if (!m_wndInspectorGrid.Create(this, 2, FALSE))
+	if (!m_wndInspectorGrid.Create(this, 1, FALSE, &m_IconHeader))
 		return -1;
 
 	m_wndInspectorGrid.SetAlphabeticMode(m_SortAlphabetic);
