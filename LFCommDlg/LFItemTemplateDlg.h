@@ -5,7 +5,6 @@
 #pragma once
 #include "LFCore.h"
 #include "LFApplication.h"
-#include "CAttributeProperties.h"
 #include "CInspectorGrid.h"
 
 
@@ -15,7 +14,7 @@
 class AFX_EXT_CLASS LFItemTemplateDlg : public CDialog
 {
 public:
-	LFItemTemplateDlg(CWnd* pParentWnd, LFItemDescriptor* pItem, CHAR* _StoreID);
+	LFItemTemplateDlg(CWnd* pParentWnd, LFItemDescriptor* pItem, CHAR* StoreID);
 
 	virtual void DoDataExchange(CDataExchange* pDX);
 
@@ -23,8 +22,6 @@ public:
 
 protected:
 	LFApplication* p_App;
-	CMFCPropertyGridProperty* pGroups[LFAttrCategoryCount];
-	CAttributeProperty* pAttributes[LFAttributeCount];
 
 	afx_msg BOOL OnInitDialog();
 	afx_msg void OnSortAlphabetically();
@@ -33,7 +30,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
-	CHAR StoreID[LFKeySize];
-	LFVariantData AttributeValues[LFAttributeCount];
-	CInspectorGrid m_Inspector;
+	CHAR m_StoreID[LFKeySize];
+	LFVariantData m_AttributeValues[LFAttributeCount];
+	CInspectorGrid m_wndInspectorGrid;
 };

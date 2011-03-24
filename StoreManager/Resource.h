@@ -39,11 +39,6 @@
 #define ID_FILTER_SAVE                  603
 #define ID_FILTER_SAVEAS                604
 #define ID_FILTERLIST                   605
-#define ID_INSPECTOR_TOGGLEICON         700
-#define ID_INSPECTOR_TREEVIEW           701
-#define ID_INSPECTOR_ALPHABETIC         702
-#define ID_INSPECTOR_EXPANDALL          703
-#define ID_INSPECTOR_EXPORT             704
 #define IDS_VIEWGROUP1                  1000
 #define IDS_VIEWGROUP2                  1001
 #define IDS_CONTEXTMENU_SELECTALL       1002
@@ -126,7 +121,7 @@
 #define IDC_CROSSHAIRS                  2212
 #define IDD_GOTOYEAR                    2300
 #define IDC_YEAR                        2301
-#define IDM_STORES_SHOWEMPTYVOLUMES      3000
+#define IDM_STORES_SHOWEMPTYVOLUMES     3000
 #define IDM_STORES_REPAIRCORRUPTEDINDEX 3001
 #define IDM_HOME                        3100
 #define IDM_HOME_SHOWEMPTYDOMAINS       3101
@@ -141,11 +136,11 @@
 #define IDM_TRASH_EMPTY                 3301
 #define IDM_TRASH_RESTOREALL            3302
 #define IDM_ITEM_OPEN                   4000
-#define IDM_VOLUME                       4100
-#define IDM_VOLUME_CREATENEWSTORE        4101
-#define IDM_VOLUME_EJECT                 4102
-#define IDM_VOLUME_FORMAT                4103
-#define IDM_VOLUME_PROPERTIES            4104
+#define IDM_VOLUME                      4100
+#define IDM_VOLUME_CREATENEWSTORE       4101
+#define IDM_VOLUME_EJECT                4102
+#define IDM_VOLUME_FORMAT               4103
+#define IDM_VOLUME_PROPERTIES           4104
 #define IDM_FILE                        4200
 #define IDM_FILE_OPENWITH               4201
 #define IDM_FILE_REMEMBER               4202

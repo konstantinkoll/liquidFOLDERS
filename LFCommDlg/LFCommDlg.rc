@@ -178,7 +178,7 @@ BEGIN
         MENUITEM "&Neuen Store anlegen...",     IDM_STORES_CREATENEW
         MENUITEM SEPARATOR
         MENUITEM "&Wartungsarbeiten durchführen", IDM_STORES_MAINTAINALL
-        MENUITEM "&Registry-Einstellungen sichern", IDM_STORES_BACKUP
+        MENUITEM "&Registry-Einstellungen sichern...", IDM_STORES_BACKUP
     END
 END
 
@@ -730,7 +730,7 @@ BEGIN
         MENUITEM "Create &new store...",        IDM_STORES_CREATENEW
         MENUITEM SEPARATOR
         MENUITEM "Run &maintenance",            IDM_STORES_MAINTAINALL
-        MENUITEM "Backup &registry settings",   IDM_STORES_BACKUP
+        MENUITEM "Backup &registry settings...", IDM_STORES_BACKUP
     END
 END
 
@@ -1274,7 +1274,7 @@ BEGIN
         MENUITEM "Crear &nuevo store...",       IDM_STORES_CREATENEW
         MENUITEM SEPARATOR
         MENUITEM "Ejecutar &mantenimiento",     IDM_STORES_MAINTAINALL
-        MENUITEM "Respaldo configuración del &registro", IDM_STORES_BACKUP
+        MENUITEM "Respaldo configuración del &registro...", IDM_STORES_BACKUP
     END
 END
 
@@ -1826,7 +1826,7 @@ BEGIN
         MENUITEM "Créez un store &nouveau...",  IDM_STORES_CREATENEW
         MENUITEM SEPARATOR
         MENUITEM "Exécuter des &travails d'entretien", IDM_STORES_MAINTAINALL
-        MENUITEM "Protection de secours paramètres d'en&registrement", IDM_STORES_BACKUP
+        MENUITEM "Protection de secours paramètres d'en&registrement...", IDM_STORES_BACKUP
     END
 END
 

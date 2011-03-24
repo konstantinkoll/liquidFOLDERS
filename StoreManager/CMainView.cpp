@@ -48,6 +48,10 @@ BOOL CMainView::OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* 
 		if (p_wndFileView->OnCmdMsg(nID, nCode, pExtra, pHandlerInfo))
 			return TRUE;
 
+	// Check Inspector
+	if (m_wndInspector.OnCmdMsg(nID, nCode, pExtra, pHandlerInfo))
+		return TRUE;
+
 	// Check application commands
 	if (theApp.OnCmdMsg(nID, nCode, pExtra, pHandlerInfo))
 		return TRUE;
@@ -679,6 +683,7 @@ INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (!m_wndInspector.Create(FALSE, theApp.m_InspectorWidth, this, 4))
 		return -1;
 
+	m_wndInspector.SetOwner(GetOwner());
 	m_ShowInspectorPane = theApp.m_ShowInspectorPane;
 
 	// Explorer notification

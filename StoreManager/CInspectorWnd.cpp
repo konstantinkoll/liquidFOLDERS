@@ -33,18 +33,18 @@ void CInspectorWnd::AdjustLayout()
 	CRect rectClient;
 	GetClientRect(rectClient);
 
-	INT heightIcn = m_ShowIcon ? m_wndIconCtrl.GetPreferredHeight() : 0;
+	INT heightIcn = m_ShowPreview ? m_wndIconCtrl.GetPreferredHeight() : 0;
 
 	m_wndIconCtrl.SetWindowPos(NULL, rectClient.left, rectClient.top, rectClient.Width(), heightIcn, SWP_NOACTIVATE | SWP_NOZORDER);
-	m_wndPropList.SetWindowPos(NULL, rectClient.left, rectClient.top+heightIcn, rectClient.Width(), rectClient.Height()-heightIcn, SWP_NOACTIVATE | SWP_NOZORDER);
+	m_wndInspectorGrid.SetWindowPos(NULL, rectClient.left, rectClient.top+heightIcn, rectClient.Width(), rectClient.Height()-heightIcn, SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
 void CInspectorWnd::SaveSettings()
 {
 	CString oldBase = theApp.GetRegistryBase();
 	theApp.SetRegistryBase(_T("Inspector"));
-	theApp.WriteInt(_T("ShowIcon"), m_ShowIcon);
-	theApp.WriteInt(_T("Alphabetic"), m_Alphabetic);
+	theApp.WriteInt(_T("ShowPreview"), m_ShowPreview);
+	theApp.WriteInt(_T("SortAlphabetic"), m_SortAlphabetic);
 	theApp.SetRegistryBase(oldBase);
 }
 
@@ -67,11 +67,12 @@ void CInspectorWnd::UpdateStart(CHAR* StoreID)
 	{
 		AttributeValues[a].Attr = a;
 		LFGetNullVariantData(&AttributeValues[a]);
+	}
 
-		if (a<LFAttributeCount)
+/*		if (a<LFAttributeCount)
 			if (theApp.m_Attributes[a]->Type==LFTypeUnicodeArray)
 				((CAttributePropertyTags*)pAttributes[a])->SetStore(StoreID ? *StoreID!='\0' ? StoreID : NULL : NULL);
-	}
+	}*/
 }
 
 void CInspectorWnd::UpdateAdd(LFItemDescriptor* i, LFSearchResult* raw)
@@ -244,8 +245,6 @@ void CInspectorWnd::UpdateFinish()
 			}
 	}
 
-	m_wndPropList.SetRedraw(FALSE);
-
 	// Flughafen-Name
 	if ((AttributeStatus[LFAttrLocationIATA]==StatusUsed) && (AttributeValues[LFAttrLocationIATA].AnsiString[0]!='\0'))
 	{
@@ -267,20 +266,10 @@ void CInspectorWnd::UpdateFinish()
 		AttributeVisible[AttrIATAAirportName] = AttributeVisible[AttrIATAAirportCountry] = AttributeVisible[LFAttrLocationIATA];
 	}
 
-	// Attribut-Kategorien
-	#ifndef _DEBUG
-	BOOL CategoryVisible[LFAttrCategoryCount];
-	ZeroMemory(CategoryVisible, sizeof(CategoryVisible));
-	for (UINT a=0; a<AttrCount; a++)
-		CategoryVisible[AttributeCategory[a]] |= AttributeVisible[a];
-	for (UINT a=0; a<LFAttrCategoryCount; a++)
-		pGroups[a]->Show(CategoryVisible[a]);
-	#endif
-
 	// Attribute
 	for (UINT a=0; a<AttrCount; a++)
-	{
-		#ifndef _DEBUG
+		m_wndInspectorGrid.UpdatePropertyState(a, AttributeStatus[a]==StatusMultiple, a<LFAttributeCount ? !theApp.m_Attributes[a]->ReadOnly : FALSE, AttributeVisible[a]);
+/*		#ifndef _DEBUG
 		if (AttributeVisible[a])
 		{
 		#endif
@@ -312,25 +301,22 @@ void CInspectorWnd::UpdateFinish()
 		#ifndef _DEBUG
 		}
 		pAttributes[a]->Show(AttributeVisible[a]);
-		#endif
-	}
+		#endif*/
 
-	m_wndPropList.SetRedraw(TRUE);
-	m_wndPropList.Invalidate();
+	m_wndInspectorGrid.AdjustLayout();
 }
 
 
 BEGIN_MESSAGE_MAP(CInspectorWnd, CGlasPane)
 	ON_WM_CREATE()
 	ON_WM_SETFOCUS()
-	ON_WM_PAINT()
+	ON_WM_CONTEXTMENU()
 	ON_REGISTERED_MESSAGE(AFX_WM_PROPERTY_CHANGED, OnPropertyChanged)
-	ON_COMMAND(ID_INSPECTOR_TOGGLEICON, OnToggleIcon)
-	ON_COMMAND(ID_INSPECTOR_TREEVIEW, OnTreeView)
-	ON_COMMAND(ID_INSPECTOR_ALPHABETIC, OnAlphabetic)
-	ON_COMMAND(ID_INSPECTOR_EXPANDALL, OnExpandAll)
-	ON_COMMAND(ID_INSPECTOR_EXPORT, OnExport)
-	ON_UPDATE_COMMAND_UI_RANGE(ID_INSPECTOR_TOGGLEICON, ID_INSPECTOR_EXPORT, OnUpdateCommands)
+
+	ON_COMMAND(IDM_INSPECTOR_SHOWPREVIEW, OnToggleIcon)
+	ON_COMMAND(IDM_INSPECTOR_SORTALPHABETIC, OnAlphabetic)
+	ON_COMMAND(IDM_INSPECTOR_EXPORTSUMMARY, OnExport)
+	ON_UPDATE_COMMAND_UI_RANGE(IDM_INSPECTOR_SHOWPREVIEW, IDM_INSPECTOR_EXPORTMETADATA, OnUpdateCommands)
 END_MESSAGE_MAP()
 
 INT CInspectorWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -340,89 +326,48 @@ INT CInspectorWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	CString oldBase = theApp.GetRegistryBase();
 	theApp.SetRegistryBase(_T("Inspector"));
-	m_ShowIcon = theApp.GetInt(_T("ShowIcon"), TRUE);
-	m_Alphabetic = theApp.GetInt(_T("Alphabetic"), FALSE);
+	m_ShowPreview = theApp.GetInt(_T("ShowPreview"), TRUE);
+	m_SortAlphabetic = theApp.GetInt(_T("SortAlphabetic"), FALSE);
 	theApp.SetRegistryBase(oldBase);
 
 	if (!m_wndIconCtrl.Create(this, 1))
 		return -1;
 
-	CRect rectDummy;
-	rectDummy.SetRectEmpty();
-	if (!m_wndPropList.Create(WS_VISIBLE | WS_CHILD, rectDummy, this, 2))
+	if (!m_wndInspectorGrid.Create(this, 2, FALSE))
 		return -1;
 
-	m_wndPropList.SetGroupNameFullWidth(TRUE, FALSE);
-	m_wndPropList.EnableHeaderCtrl(FALSE);
-	m_wndPropList.MarkModifiedProperties(TRUE);
-	m_wndPropList.SetAlphabeticMode(m_Alphabetic);
-	m_wndPropList.SetFont(CFont::FromHandle((HFONT)GetStockObject(DEFAULT_GUI_FONT)), FALSE);
-
-	for (UINT a=0; a<LFAttrCategoryCount; a++)
-		pGroups[a] = new CMFCPropertyGridProperty(theApp.m_AttrCategories[a]);
-
-	for (UINT a=0; a<AttrCount; a++)
-	{
-		if (a>=LFAttributeCount)
-		{
-			pAttributes[a] = new CMFCPropertyGridProperty(AttributeVirtualNames[a-LFAttributeCount], _T(""));
-			pAttributes[a]->Enable(FALSE);
-			pAttributes[a]->AllowEdit(FALSE);
-			AttributeCategory[a] = LFAttrCategoryInternal;
-		}
-		else
-		{
-			switch (theApp.m_Attributes[a]->Type)
-			{
-			case LFTypeUnicodeArray:
-				pAttributes[a] = new CAttributePropertyTags(&AttributeValues[a]);
-				break;
-			case LFTypeAnsiString:
-				pAttributes[a] = (a==LFAttrLocationIATA) ? new CAttributePropertyIATA(&AttributeValues[a], (CAttributeProperty**)&pAttributes[LFAttrLocationName], (CAttributeProperty**)&pAttributes[LFAttrLocationGPS]) : new CAttributeProperty(&AttributeValues[a]);
-				break;
-			case LFTypeRating:
-				pAttributes[a] = new CAttributePropertyRating(&AttributeValues[a]);
-				break;
-			case LFTypeGeoCoordinates:
-				pAttributes[a] = new CAttributePropertyGPS(&AttributeValues[a]);
-				break;
-			case LFTypeTime:
-				pAttributes[a] = new CAttributePropertyTime(&AttributeValues[a]);
-				break;
-			default:
-				pAttributes[a] = new CAttributeProperty(&AttributeValues[a]);
-			}
-			AttributeCategory[a] = theApp.m_Attributes[a]->Category;
-		}
-
-		pGroups[AttributeCategory[a]]->AddSubItem(pAttributes[a]);
-	}
-
-	for (UINT a=0; a<LFAttrCategoryCount; a++)
-		m_wndPropList.AddProperty(pGroups[a]);
-
-	pGroups[LFAttrCategoryInternal]->Expand(FALSE);
+	m_wndInspectorGrid.AddAttributes(AttributeValues);
+	for (UINT a=LFAttributeCount; a<AttrCount; a++)
+		m_wndInspectorGrid.AddProperty(new CInspectorProperty(&AttributeValues[a]), LFAttrCategoryInternal, AttributeVirtualNames[a-LFAttributeCount].GetBuffer());
 
 	return 0;
 }
 
 void CInspectorWnd::OnSetFocus(CWnd* /*pOldWnd*/)
 {
-	m_wndPropList.SetFocus();
+	m_wndInspectorGrid.SetFocus();
 }
 
-void CInspectorWnd::OnPaint()
+void CInspectorWnd::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 {
-	m_wndPropList.SetCustomColors(GetSysColor(COLOR_WINDOW), GetSysColor(COLOR_WINDOWTEXT),
-		afxGlobalData.clrBarFace, afxGlobalData.clrBarText,
-		afxGlobalData.clrBarFace, GetSysColor(COLOR_WINDOWTEXT), afxGlobalData.clrBarFace);
+	if ((point.x==-1) && (point.y==-1))
+	{
+		point.x = point.y = 0;
+		ClientToScreen(&point);
+	}
 
-	CGlasPane::OnPaint();
+	CMenu menu;
+	ENSURE(menu.LoadMenu(IDM_INSPECTOR));
+
+	CMenu* pPopup = menu.GetSubMenu(0);
+	ASSERT_VALID(pPopup);
+
+	pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, GetOwner(), NULL);
 }
 
 LRESULT CInspectorWnd::OnPropertyChanged(WPARAM /*wparam*/, LPARAM lparam)
 {
-	CAttributeProperty* pProp = (CAttributeProperty*)lparam;
+/*	CAttributeProperty* pProp = (CAttributeProperty*)lparam;
 
 	LFVariantData* value1 = pProp->p_Data;
 	LFVariantData* value2 = NULL;
@@ -436,36 +381,24 @@ LRESULT CInspectorWnd::OnPropertyChanged(WPARAM /*wparam*/, LPARAM lparam)
 
 	((CMainWnd*)GetTopLevelParent())->UpdateSelectedItems(value1, value2, value3);
 	pProp->m_UseDependencies = 0;
-
+*/
 	return 0;
 }
 
+
 void CInspectorWnd::OnToggleIcon()
 {
-	m_ShowIcon = !m_ShowIcon;
+	m_ShowPreview = !m_ShowPreview;
 	AdjustLayout();
 	SaveSettings();
 }
 
-void CInspectorWnd::OnTreeView()
-{
-	m_Alphabetic = FALSE;
-	SaveSettings();
-
-	m_wndPropList.SetAlphabeticMode(m_Alphabetic);
-}
-
 void CInspectorWnd::OnAlphabetic()
 {
-	m_Alphabetic = TRUE;
+	m_SortAlphabetic = !m_SortAlphabetic;
 	SaveSettings();
 
-	m_wndPropList.SetAlphabeticMode(m_Alphabetic);
-}
-
-void CInspectorWnd::OnExpandAll()
-{
-	m_wndPropList.ExpandAll();
+	m_wndInspectorGrid.SetAlphabeticMode(m_SortAlphabetic);
 }
 
 void CInspectorWnd::OnExport()
@@ -477,7 +410,7 @@ void CInspectorWnd::OnExport()
 	CFileDialog dlg(FALSE, _T(".txt"), NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, tmpStr, this);
 	if (dlg.DoModal()==IDOK)
 	{
-		CStdioFile f;
+/*		CStdioFile f;
 		if (!f.Open(dlg.GetFileName(), CFile::modeCreate | CFile::modeWrite))
 		{
 			LFErrorBox(LFDriveNotReady);
@@ -500,33 +433,33 @@ void CInspectorWnd::OnExport()
 				LFErrorBox(LFDriveNotReady);
 			}
 			f.Close();
-		}
+		}*/
 	}
 }
 
 void CInspectorWnd::OnUpdateCommands(CCmdUI* pCmdUI)
 {
+	BOOL b = TRUE;
+
 	switch (pCmdUI->m_nID)
 	{
-	case ID_INSPECTOR_TOGGLEICON:
-		pCmdUI->SetCheck(m_ShowIcon);
-		pCmdUI->Enable(TRUE);
+	case IDM_INSPECTOR_SHOWPREVIEW:
+		pCmdUI->SetCheck(m_ShowPreview);
 		break;
-	case ID_INSPECTOR_TREEVIEW:
-		pCmdUI->SetCheck(!m_Alphabetic);
-		pCmdUI->Enable(TRUE);
+	case IDM_INSPECTOR_SORTALPHABETIC:
+		pCmdUI->SetCheck(m_SortAlphabetic);
 		break;
-	case ID_INSPECTOR_ALPHABETIC:
-		pCmdUI->SetCheck(m_Alphabetic);
-		pCmdUI->Enable(TRUE);
+	case IDM_INSPECTOR_EXPORTSUMMARY:
+	case IDM_INSPECTOR_EXPORTMETADATA:
+		b = Count;
 		break;
-	case ID_INSPECTOR_EXPANDALL:
-		pCmdUI->Enable((!m_Alphabetic) && (Count));
-		break;
-	case ID_INSPECTOR_EXPORT:
-		pCmdUI->Enable(Count);
 	}
+
+	pCmdUI->Enable(b);
 }
+
+
+
 
 void CInspectorWnd::AddValue(LFItemDescriptor* i, UINT Attr, BOOL Editable)
 {

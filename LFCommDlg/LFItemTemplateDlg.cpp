@@ -12,20 +12,17 @@
 
 extern AFX_EXTENSION_MODULE LFCommDlgDLL;
 
-LFItemTemplateDlg::LFItemTemplateDlg(CWnd* pParentWnd, LFItemDescriptor* pItem, CHAR* _StoreID)
+LFItemTemplateDlg::LFItemTemplateDlg(CWnd* pParentWnd, LFItemDescriptor* pItem, CHAR* StoreID)
 	: CDialog(IDD_ITEMTEMPLATE, pParentWnd)
 {
 	m_pItem = pItem;
 	p_App = (LFApplication*)AfxGetApp();
-	strcpy_s(StoreID, LFKeySize, _StoreID);
-
-	ZeroMemory(pGroups, sizeof(pGroups));
-	ZeroMemory(pAttributes, sizeof(pAttributes));
+	strcpy_s(m_StoreID, LFKeySize, StoreID);
 
 	for (UINT a=0; a<LFAttributeCount; a++)
 	{
-		AttributeValues[a].Attr = a;
-		LFGetNullVariantData(&AttributeValues[a]);
+		m_AttributeValues[a].Attr = a;
+		LFGetNullVariantData(&m_AttributeValues[a]);
 	}
 
 	CSettingsStoreSP regSP;
@@ -46,10 +43,10 @@ LFItemTemplateDlg::LFItemTemplateDlg(CWnd* pParentWnd, LFItemDescriptor* pItem, 
 
 					if (reg.Read(value, &pData, &pSz))
 					{
-						if (pSz==sizeof(AttributeValues[a].Value))
+						if (pSz==sizeof(m_AttributeValues[a].Value))
 						{
-							memcpy_s(AttributeValues[a].Value, sizeof(AttributeValues[a].Value), pData, pSz);
-							AttributeValues[a].IsNull = false;
+							memcpy_s(m_AttributeValues[a].Value, sizeof(m_AttributeValues[a].Value), pData, pSz);
+							m_AttributeValues[a].IsNull = false;
 						}
 
 						free(pData);
@@ -78,73 +75,29 @@ BOOL LFItemTemplateDlg::OnInitDialog()
 	SetIcon(hIcon, FALSE);
 	SetIcon(hIcon, TRUE);
 
-	m_Inspector.ModifyStyle(0, WS_BORDER);
-	m_Inspector.SetGroupNameFullWidth(TRUE, FALSE);
-	m_Inspector.EnableHeaderCtrl(FALSE);
-	m_Inspector.MarkModifiedProperties(TRUE);
-	m_Inspector.SetFont(CFont::FromHandle((HFONT)GetStockObject(DEFAULT_GUI_FONT)), FALSE);
-	OnSortAlphabetically();
-
-	for (UINT a=0; a<LFAttrCategoryCount; a++)
-		pGroups[a] = new CMFCPropertyGridProperty(p_App->m_AttrCategories[a]);
+	m_wndInspectorGrid.ModifyStyle(0, WS_BORDER);
+	m_wndInspectorGrid.AddAttributes(m_AttributeValues);
 
 	for (UINT a=0; a<LFAttributeCount; a++)
-		if ((!p_App->m_Attributes[a]->ReadOnly) && (a!=LFAttrFileName))
-		{
-			switch (AttributeValues[a].Type)
-			{
-			case LFTypeUnicodeArray:
-				pAttributes[a] = new CAttributePropertyTags(&AttributeValues[a], StoreID);
-				break;
-			case LFTypeAnsiString:
-				pAttributes[a] = (a==LFAttrLocationIATA) ? new CAttributePropertyIATA(&AttributeValues[a], (CAttributeProperty**)&pAttributes[LFAttrLocationName], (CAttributeProperty**)&pAttributes[LFAttrLocationGPS]) : new CAttributeProperty(&AttributeValues[a]);
-				break;
-			case LFTypeRating:
-				pAttributes[a] = new CAttributePropertyRating(&AttributeValues[a]);
-				break;
-			case LFTypeGeoCoordinates:
-				pAttributes[a] = new CAttributePropertyGPS(&AttributeValues[a]);
-				break;
-			case LFTypeTime:
-				pAttributes[a] = new CAttributePropertyTime(&AttributeValues[a]);
-				break;
-			default:
-				pAttributes[a] = new CAttributeProperty(&AttributeValues[a]);
-			}
+		m_wndInspectorGrid.UpdatePropertyState(a, FALSE, !p_App->m_Attributes[a]->ReadOnly, (!p_App->m_Attributes[a]->ReadOnly) && (a!=LFAttrFileName));
 
-			pGroups[p_App->m_Attributes[a]->Category]->AddSubItem(pAttributes[a]);
-		}
-
-	for (UINT a=0; a<LFAttrCategoryCount; a++)
-		if (pGroups[a]->GetSubItemsCount())
-		{
-			m_Inspector.AddProperty(pGroups[a]);
-		}
-		else
-		{
-			delete pGroups[a];
-			pGroups[a] = NULL;
-		}
+	OnSortAlphabetically();
 
 	return TRUE;
 }
 
 void LFItemTemplateDlg::OnSortAlphabetically()
 {
-	m_Inspector.SetAlphabeticMode(((CButton*)GetDlgItem(IDC_ALPHABETICALLY))->GetCheck());
+	m_wndInspectorGrid.SetAlphabeticMode(((CButton*)GetDlgItem(IDC_ALPHABETICALLY))->GetCheck());
 }
 
 void LFItemTemplateDlg::OnReset()
 {
 	for (UINT a=0; a<LFAttributeCount; a++)
-	{
-		LFGetNullVariantData(&AttributeValues[a]);
+		LFGetNullVariantData(&m_AttributeValues[a]);
 
-		if (pAttributes[a])
-			pAttributes[a]->SetValue(_T(""), FALSE);
-	}
-
-	m_Inspector.SetFocus();
+	m_wndInspectorGrid.Invalidate();
+	m_wndInspectorGrid.SetFocus();
 }
 
 void LFItemTemplateDlg::OnSkip()
@@ -154,15 +107,15 @@ void LFItemTemplateDlg::OnSkip()
 
 void LFItemTemplateDlg::DoDataExchange(CDataExchange* pDX)
 {
-	DDX_Control(pDX, IDC_INSPECTOR, m_Inspector);
+	DDX_Control(pDX, IDC_INSPECTOR, m_wndInspectorGrid);
 
 	if (pDX->m_bSaveAndValidate)
 	{
 		m_pItem->Type = LFTypeFile;
 
 		for (UINT a=0; a<LFAttributeCount; a++)
-			if ((pAttributes[a]) && (!AttributeValues[a].IsNull))
-				LFSetAttributeVariantData(m_pItem, &AttributeValues[a]);
+			if (!m_AttributeValues[a].IsNull)
+				LFSetAttributeVariantData(m_pItem, &m_AttributeValues[a]);
 
 		CSettingsStoreSP regSP;
 		CSettingsStore& reg = regSP.Create(FALSE, FALSE);
@@ -176,13 +129,13 @@ void LFItemTemplateDlg::DoDataExchange(CDataExchange* pDX)
 				CString value;
 				value.Format(_T("Attr%d"), a);
 
-				if ((pAttributes[a]) && (!AttributeValues[a].IsNull))
+				if (m_AttributeValues[a].IsNull)
 				{
-					reg.Write(value, (BYTE*)&AttributeValues[a].Value, sizeof(AttributeValues[a].Value));
+					reg.DeleteValue(value);
 				}
 				else
 				{
-					reg.DeleteValue(value);
+					reg.Write(value, (BYTE*)&m_AttributeValues[a].Value, sizeof(m_AttributeValues[a].Value));
 				}
 			}
 		}

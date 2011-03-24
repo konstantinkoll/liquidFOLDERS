@@ -39,20 +39,16 @@ public:
 
 protected:
 	CInspectorIconCtrl m_wndIconCtrl;
-	CInspectorGrid m_wndPropList;
-	CMFCPropertyGridProperty* pGroups[LFAttrCategoryCount];
-	CMFCPropertyGridProperty* pAttributes[AttrCount];
-	BOOL m_ShowIcon;
-	BOOL m_Alphabetic;
+	CInspectorGrid m_wndInspectorGrid;
+	BOOL m_ShowPreview;
+	BOOL m_SortAlphabetic;
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
-	afx_msg void OnPaint();
+	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	afx_msg LRESULT OnPropertyChanged(WPARAM wparam, LPARAM lparam);
 	afx_msg void OnToggleIcon();
-	afx_msg void OnTreeView();
 	afx_msg void OnAlphabetic();
-	afx_msg void OnExpandAll();
 	afx_msg void OnExport();
 	afx_msg void OnUpdateCommands(CCmdUI* pCmdUI);
 	DECLARE_MESSAGE_MAP()

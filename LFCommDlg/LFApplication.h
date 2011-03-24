@@ -67,6 +67,7 @@ public:
 	HBITMAP m_RatingBitmaps[LFMaxRating+1];
 	HBITMAP m_PriorityBitmaps[LFMaxRating+1];
 	CFont m_DefaultFont;
+	CFont m_BoldFont;
 	CFont m_ItalicFont;
 	CFont m_SmallFont;
 	CFont m_LargeFont;

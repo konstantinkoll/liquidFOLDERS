@@ -1,5 +1,4 @@
 #pragma once
-#include "..\LFCommDlg\CAttributeProperties.h"
 #include "..\LFCommDlg\CBottomArea.h"
 #include "..\LFCommDlg\CDropdownSelector.h"
 #include "..\LFCommDlg\CExplorerHeader.h"
