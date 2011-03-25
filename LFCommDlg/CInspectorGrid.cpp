@@ -12,6 +12,7 @@
 CInspectorProperty::CInspectorProperty(LFVariantData* pData)
 {
 	p_Data = pData;
+	m_Multiple = FALSE;
 }
 
 void CInspectorProperty::DrawValue(CDC& dc, CRect rect)
@@ -20,6 +21,32 @@ void CInspectorProperty::DrawValue(CDC& dc, CRect rect)
 	LFVariantDataToString(p_Data, tmpStr, 256);
 
 	dc.DrawText(tmpStr, -1, rect, DT_LEFT | DT_VCENTER | DT_END_ELLIPSIS | DT_SINGLELINE);
+}
+
+
+// CInspectorPropertyRating
+//
+
+CInspectorPropertyRating::CInspectorPropertyRating(LFVariantData* pData)
+	: CInspectorProperty(pData)
+{
+}
+
+void CInspectorPropertyRating::DrawValue(CDC& dc, CRect rect)
+{
+	LFApplication* pApp = (LFApplication*)AfxGetApp();
+
+	HDC hdcMem = CreateCompatibleDC(dc);
+	UCHAR level = m_Multiple ? 0 : p_Data->Rating;
+	HBITMAP hbmOld = (HBITMAP)SelectObject(hdcMem, p_Data->Attr==LFAttrRating ? pApp->m_RatingBitmaps[level] : pApp->m_PriorityBitmaps[level]);
+
+	INT w = min(rect.Width()-6, RatingBitmapWidth);
+	INT h = min(rect.Height(), RatingBitmapHeight);
+	BLENDFUNCTION LF = { AC_SRC_OVER, 0, 0xFF, AC_SRC_ALPHA };
+	AlphaBlend(dc, rect.left+6, rect.top+(rect.Height()-h)/2, w, h, hdcMem, 0, 0, w, h, LF);
+
+	SelectObject(hdcMem, hbmOld);
+	DeleteDC(hdcMem);
 }
 
 
@@ -198,6 +225,9 @@ void CInspectorGrid::AddAttributes(LFVariantData* pData)
 
 		switch (attr->Type)
 		{
+		case LFTypeRating:
+			pProp = new CInspectorPropertyRating(&pData[a]);
+			break;
 		default:
 			pProp = new CInspectorProperty(&pData[a]);
 		}

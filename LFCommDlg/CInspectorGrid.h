@@ -20,6 +20,19 @@ public:
 
 protected:
 	LFVariantData* p_Data;
+	BOOL m_Multiple;
+};
+
+
+// CInspectorPropertyRating
+//
+
+class AFX_EXT_CLASS CInspectorPropertyRating : public CInspectorProperty
+{
+public:
+	CInspectorPropertyRating(LFVariantData* pData);
+
+	virtual void DrawValue(CDC& dc, CRect rect);
 };
 
 
