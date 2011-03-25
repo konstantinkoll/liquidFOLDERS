@@ -84,16 +84,25 @@ protected:
 	INT m_LabelWidth;
 	BOOL m_ShowHeader;
 	BOOL m_SortAlphabetic;
+	INT m_ScrollHeight;
+	INT m_VScrollPos;
+	INT m_VScrollMax;
 
+	virtual void Init();
+
+	void ResetScrollbars();
+	void AdjustScrollbars();
 	void MakeSortArrayDirty();
 	void DrawCategory(CDC& dc, CRect& rectCategory, WCHAR* Text);
 
+	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();
 	afx_msg LRESULT OnThemeChanged();
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnNcPaint();
 	afx_msg void OnPaint();
 	afx_msg void OnSize(UINT nType, INT cx, INT cy);
+	afx_msg void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
 	DECLARE_MESSAGE_MAP()
 
 private:

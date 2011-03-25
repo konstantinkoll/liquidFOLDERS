@@ -71,6 +71,7 @@ CInspectorGrid::CInspectorGrid()
 	m_pSortArray = NULL;
 	m_pHeader = NULL;
 	hThemeList = hThemeButton = NULL;
+	m_VScrollMax = m_VScrollPos = 0;
 }
 
 CInspectorGrid::~CInspectorGrid()
@@ -96,6 +97,13 @@ void CInspectorGrid::PreSubclassWindow()
 {
 	CWnd::PreSubclassWindow();
 
+	_AFX_THREAD_STATE* pThreadState = AfxGetThreadState();
+	if (!pThreadState->m_pWndInit)
+		Init();
+}
+
+void CInspectorGrid::Init()
+{
 	if (p_App->m_ThemeLibLoaded)
 	{
 		hThemeButton = p_App->zOpenThemeData(GetSafeHwnd(), VSCLASS_BUTTON);
@@ -106,7 +114,7 @@ void CInspectorGrid::PreSubclassWindow()
 		}
 	}
 
-//	ResetScrollbars();
+	ResetScrollbars();
 
 	CDC* dc = GetWindowDC();
 	CFont* pOldFont = dc->SelectObject(&p_App->m_DefaultFont);
@@ -219,6 +227,36 @@ void CInspectorGrid::UpdatePropertyState(UINT nID, BOOL Multiple, BOOL Editable,
 	m_Properties.m_Items[nID].Visible = Visible;
 }
 
+void CInspectorGrid::ResetScrollbars()
+{
+	ScrollWindowEx(0, m_VScrollPos, NULL, NULL, NULL, NULL, SW_INVALIDATE);
+	m_VScrollPos = 0;
+	SetScrollPos(SB_VERT, m_VScrollPos, TRUE);
+}
+
+void CInspectorGrid::AdjustScrollbars()
+{
+	CRect rect;
+	GetClientRect(rect);
+
+	INT oldVScrollPos = m_VScrollPos;
+	m_VScrollMax = max(0, m_ScrollHeight-rect.Height());
+	m_VScrollPos = min(m_VScrollPos, m_VScrollMax);
+
+	SCROLLINFO si;
+	ZeroMemory(&si, sizeof(si));
+	si.cbSize = sizeof(SCROLLINFO);
+	si.fMask = SIF_PAGE | SIF_RANGE | SIF_POS;
+	si.nPage = rect.Height();
+	si.nMin = 0;
+	si.nMax = m_ScrollHeight-1;
+	si.nPos = m_VScrollPos;
+	SetScrollInfo(SB_VERT, &si);
+
+	if (oldVScrollPos!=m_VScrollPos)
+		Invalidate();
+}
+
 INT CInspectorGrid::Compare(INT eins, INT zwei)
 {
 	Property* pEins = &m_Properties.m_Items[m_pSortArray[eins]];
@@ -295,7 +333,7 @@ void CInspectorGrid::AdjustLayout()
 		m_Categories[a].Top = m_Categories[a].Bottom = -1;
 
 	m_LabelWidth = 0;
-	INT Top = (m_pHeader && m_ShowHeader) ? m_pHeader->GetPreferredHeight()+1 : 1;
+	m_ScrollHeight = (m_pHeader && m_ShowHeader) ? m_pHeader->GetPreferredHeight()+1 : 1;
 	INT Category = -1;
 
 	for (UINT a=0; a<m_Properties.m_ItemCount; a++)
@@ -305,21 +343,21 @@ void CInspectorGrid::AdjustLayout()
 		if ((!m_SortAlphabetic) && (pProp->Visible) && ((INT)pProp->Category!=Category))
 		{
 			Category = pProp->Category;
-			INT Spacer = (Top==1) ? -PADDING : 8;
-			m_Categories[Category].Top = Top;
-			m_Categories[Category].Bottom = Top+m_FontHeight[1]+2*PADDING+Spacer;
-			Top += m_FontHeight[1]+2*PADDING+Spacer+1;
+			INT Spacer = (m_ScrollHeight==1) ? -PADDING : 8;
+			m_Categories[Category].Top = m_ScrollHeight;
+			m_Categories[Category].Bottom = m_ScrollHeight+m_FontHeight[1]+2*PADDING+Spacer;
+			m_ScrollHeight += m_FontHeight[1]+2*PADDING+Spacer+1;
 		}
 
-		pProp->Top = pProp->Visible ? Top : -1;
-		pProp->Bottom = pProp->Visible ? Top+m_RowHeight : -1;
+		pProp->Top = pProp->Visible ? m_ScrollHeight : -1;
+		pProp->Bottom = pProp->Visible ? m_ScrollHeight+m_RowHeight : -1;
 
 		if (pProp->Visible)
 		{
 			if (pProp->LabelWidth>m_LabelWidth)
 				m_LabelWidth = pProp->LabelWidth;
 
-			Top += m_RowHeight+1;
+			m_ScrollHeight += m_RowHeight+1;
 		}
 	}
 
@@ -330,6 +368,7 @@ void CInspectorGrid::AdjustLayout()
 	if (m_LabelWidth>rect.Width()/2)
 		m_LabelWidth = rect.Width()/2;
 
+	AdjustScrollbars();
 	Invalidate();
 }
 
@@ -357,13 +396,25 @@ void CInspectorGrid::DrawCategory(CDC& dc, CRect& rect, WCHAR* Text)
 
 
 BEGIN_MESSAGE_MAP(CInspectorGrid, CWnd)
+	ON_WM_CREATE()
 	ON_WM_DESTROY()
 	ON_WM_THEMECHANGED()
 	ON_WM_ERASEBKGND()
 	ON_WM_NCPAINT()
 	ON_WM_PAINT()
 	ON_WM_SIZE()
+	ON_WM_VSCROLL()
 END_MESSAGE_MAP()
+
+INT CInspectorGrid::OnCreate(LPCREATESTRUCT lpCreateStruct)
+{
+	if (CWnd::OnCreate(lpCreateStruct)==-1)
+		return -1;
+
+	Init();
+
+	return 0;
+}
 
 void CInspectorGrid::OnDestroy()
 {
@@ -404,6 +455,8 @@ void CInspectorGrid::OnNcPaint()
 {
 	if (GetStyle() & WS_BORDER)
 		DrawControlBorder(this);
+
+	CWnd::OnNcPaint();
 }
 
 void CInspectorGrid::OnPaint()
@@ -432,7 +485,7 @@ void CInspectorGrid::OnPaint()
 	for (UINT a=0; a<LFAttrCategoryCount; a++)
 		if (m_Categories[a].Top!=-1)
 		{
-			CRect rect(0, m_Categories[a].Top, rect.Width(), m_Categories[a].Bottom);
+			CRect rect(0, m_Categories[a].Top-m_VScrollPos, rect.Width(), m_Categories[a].Bottom-m_VScrollPos);
 			DrawCategory(dc, rect, p_App->m_AttrCategories[a]);
 		}
 
@@ -444,7 +497,7 @@ void CInspectorGrid::OnPaint()
 		Property* pProp = &m_Properties.m_Items[a];
 		if (pProp->Visible)
 		{
-			CRect rectProp(GUTTER, pProp->Top, m_LabelWidth, pProp->Bottom);
+			CRect rectProp(GUTTER, pProp->Top-m_VScrollPos, m_LabelWidth, pProp->Bottom-m_VScrollPos);
 			dc.SetTextColor(pProp->Editable ? Themed ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT) : GetSysColor(COLOR_3DSHADOW));
 			dc.DrawText(pProp->Name, -1, rectProp, DT_RIGHT | DT_VCENTER | DT_END_ELLIPSIS | DT_SINGLELINE);
 
@@ -458,7 +511,7 @@ void CInspectorGrid::OnPaint()
 	//Header
 	if (m_pHeader && m_ShowHeader)
 	{
-		CRect rect(0, 0, rect.Width(), m_pHeader->GetPreferredHeight());
+		CRect rect(0, -m_VScrollPos, rect.Width(), m_pHeader->GetPreferredHeight()-m_VScrollPos);
 		m_pHeader->DrawHeader(dc, rect, Themed);
 	}
 
@@ -471,4 +524,58 @@ void CInspectorGrid::OnSize(UINT nType, INT cx, INT cy)
 {
 	CWnd::OnSize(nType, cx, cy);
 	AdjustLayout();
+}
+
+void CInspectorGrid::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
+{
+	CRect rect;
+	GetClientRect(&rect);
+
+	SCROLLINFO si;
+
+	INT nInc = 0;
+	switch (nSBCode)
+	{
+	case SB_TOP:
+		nInc = -m_VScrollPos;
+		break;
+	case SB_BOTTOM:
+		nInc = m_VScrollMax-m_VScrollPos;
+		break;
+	case SB_LINEUP:
+		nInc = -m_RowHeight;
+		break;
+	case SB_LINEDOWN:
+		nInc = m_RowHeight;
+		break;
+	case SB_PAGEUP:
+		nInc = min(-1, -rect.Height());
+		break;
+	case SB_PAGEDOWN:
+		nInc = max(1, rect.Height());
+		break;
+	case SB_THUMBTRACK:
+		ZeroMemory(&si, sizeof(si));
+		si.cbSize = sizeof(SCROLLINFO);
+		si.fMask = SIF_TRACKPOS;
+		GetScrollInfo(SB_VERT, &si);
+
+		nInc = si.nTrackPos-m_VScrollPos;
+		break;
+	}
+
+	nInc = max(-m_VScrollPos, min(nInc, m_VScrollMax-m_VScrollPos));
+	if (nInc)
+	{
+		m_VScrollPos += nInc;
+		ScrollWindowEx(0, -nInc, NULL, NULL, NULL, NULL, SW_INVALIDATE);
+
+		ZeroMemory(&si, sizeof(si));
+		si.cbSize = sizeof(SCROLLINFO);
+		si.fMask = SIF_POS;
+		si.nPos = m_VScrollPos;
+		SetScrollInfo(SB_VERT, &si);
+	}
+
+	CWnd::OnVScroll(nSBCode, nPos, pScrollBar);
 }
