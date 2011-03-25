@@ -80,14 +80,14 @@ CInspectorGrid::~CInspectorGrid()
 		delete[] m_pSortArray;
 }
 
-BOOL CInspectorGrid::Create(CWnd* pParentWnd, UINT nID, BOOL bBorder, CInspectorHeader* pHeader)
+BOOL CInspectorGrid::Create(CWnd* pParentWnd, UINT nID, CInspectorHeader* pHeader)
 {
 	m_pHeader = pHeader;
 	m_ShowHeader = (pHeader!=NULL);
 
 	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, LoadCursor(NULL, IDC_ARROW));
 
-	const DWORD dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_TABSTOP | WS_VSCROLL | (bBorder ? WS_BORDER : 0);
+	const DWORD dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_TABSTOP | WS_VSCROLL;
 	CRect rect;
 	rect.SetRectEmpty();
 	return CWnd::Create(className, _T(""), dwStyle, rect, pParentWnd, nID);
@@ -389,7 +389,7 @@ void CInspectorGrid::DrawCategory(CDC& dc, CRect& rect, WCHAR* Text)
 
 		CPen* pOldPen = dc.SelectObject(&pen);
 		dc.MoveTo(rectLine.right, rect.bottom-(m_FontHeight[1]+1)/2);
-		dc.LineTo(rect.right, rect.bottom-(m_FontHeight[1]+1)/2);
+		dc.LineTo(rect.right-PADDING, rect.bottom-(m_FontHeight[1]+1)/2);
 		dc.SelectObject(pOldPen);
 	}
 }
@@ -400,10 +400,10 @@ BEGIN_MESSAGE_MAP(CInspectorGrid, CWnd)
 	ON_WM_DESTROY()
 	ON_WM_THEMECHANGED()
 	ON_WM_ERASEBKGND()
-	ON_WM_NCPAINT()
 	ON_WM_PAINT()
 	ON_WM_SIZE()
 	ON_WM_VSCROLL()
+	ON_WM_MOUSEWHEEL()
 END_MESSAGE_MAP()
 
 INT CInspectorGrid::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -449,14 +449,6 @@ LRESULT CInspectorGrid::OnThemeChanged()
 BOOL CInspectorGrid::OnEraseBkgnd(CDC* /*pDC*/)
 {
 	return TRUE;
-}
-
-void CInspectorGrid::OnNcPaint()
-{
-	if (GetStyle() & WS_BORDER)
-		DrawControlBorder(this);
-
-	CWnd::OnNcPaint();
 }
 
 void CInspectorGrid::OnPaint()
@@ -543,10 +535,10 @@ void CInspectorGrid::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 		nInc = m_VScrollMax-m_VScrollPos;
 		break;
 	case SB_LINEUP:
-		nInc = -m_RowHeight;
+		nInc = -m_RowHeight-1;
 		break;
 	case SB_LINEDOWN:
-		nInc = m_RowHeight;
+		nInc = m_RowHeight+1;
 		break;
 	case SB_PAGEUP:
 		nInc = min(-1, -rect.Height());
@@ -578,4 +570,27 @@ void CInspectorGrid::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 	}
 
 	CWnd::OnVScroll(nSBCode, nPos, pScrollBar);
+}
+
+BOOL CInspectorGrid::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
+{
+	CRect rect;
+	GetWindowRect(&rect);
+	if (!rect.PtInRect(pt))
+		return FALSE;
+
+	INT nInc = max(-m_VScrollPos, min(-zDelta*(INT)(m_RowHeight+1)/WHEEL_DELTA, m_VScrollMax-m_VScrollPos));
+	if (nInc)
+	{
+		m_TooltipCtrl.Deactivate();
+
+		m_VScrollPos += nInc;
+		ScrollWindowEx(0, -nInc, NULL, NULL, NULL, NULL, SW_INVALIDATE);
+		SetScrollPos(SB_VERT, m_VScrollPos, TRUE);
+
+		ScreenToClient(&pt);
+		OnMouseMove(nFlags, pt);
+	}
+
+	return TRUE;
 }

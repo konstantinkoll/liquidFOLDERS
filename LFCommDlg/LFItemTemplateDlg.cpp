@@ -57,54 +57,6 @@ LFItemTemplateDlg::LFItemTemplateDlg(CWnd* pParentWnd, LFItemDescriptor* pItem, 
 	pParentWnd->BringWindowToTop();
 }
 
-
-BEGIN_MESSAGE_MAP(LFItemTemplateDlg, CDialog)
-	ON_BN_CLICKED(IDC_ALPHABETICALLY, OnSortAlphabetically)
-	ON_BN_CLICKED(IDC_RESET, OnReset)
-	ON_BN_CLICKED(IDC_SKIP, OnSkip)
-END_MESSAGE_MAP()
-
-
-BOOL LFItemTemplateDlg::OnInitDialog()
-{
-	CDialog::OnInitDialog();
-
-	// Symbol für dieses Dialogfeld festlegen. Wird automatisch erledigt
-	// wenn das Hauptfenster der Anwendung kein Dialogfeld ist
-	HICON hIcon = LoadIcon(LFCommDlgDLL.hResource, MAKEINTRESOURCE(IDD_ITEMTEMPLATE));
-	SetIcon(hIcon, FALSE);
-	SetIcon(hIcon, TRUE);
-
-	m_wndInspectorGrid.ModifyStyle(0, WS_BORDER);
-	m_wndInspectorGrid.AddAttributes(m_AttributeValues);
-
-	for (UINT a=0; a<LFAttributeCount; a++)
-		m_wndInspectorGrid.UpdatePropertyState(a, FALSE, !p_App->m_Attributes[a]->ReadOnly, (!p_App->m_Attributes[a]->ReadOnly) && (a!=LFAttrFileName));
-
-	OnSortAlphabetically();
-
-	return TRUE;
-}
-
-void LFItemTemplateDlg::OnSortAlphabetically()
-{
-	m_wndInspectorGrid.SetAlphabeticMode(((CButton*)GetDlgItem(IDC_ALPHABETICALLY))->GetCheck());
-}
-
-void LFItemTemplateDlg::OnReset()
-{
-	for (UINT a=0; a<LFAttributeCount; a++)
-		LFGetNullVariantData(&m_AttributeValues[a]);
-
-	m_wndInspectorGrid.Invalidate();
-	m_wndInspectorGrid.SetFocus();
-}
-
-void LFItemTemplateDlg::OnSkip()
-{
-	EndDialog(IDC_SKIP);
-}
-
 void LFItemTemplateDlg::DoDataExchange(CDataExchange* pDX)
 {
 	DDX_Control(pDX, IDC_INSPECTOR, m_wndInspectorGrid);
@@ -140,4 +92,59 @@ void LFItemTemplateDlg::DoDataExchange(CDataExchange* pDX)
 			}
 		}
 	}
+}
+
+
+BEGIN_MESSAGE_MAP(LFItemTemplateDlg, CDialog)
+	ON_WM_WINDOWPOSCHANGED()
+	ON_BN_CLICKED(IDC_ALPHABETICALLY, OnSortAlphabetically)
+	ON_BN_CLICKED(IDC_RESET, OnReset)
+	ON_BN_CLICKED(IDC_SKIP, OnSkip)
+END_MESSAGE_MAP()
+
+
+BOOL LFItemTemplateDlg::OnInitDialog()
+{
+	CDialog::OnInitDialog();
+
+	// Symbol für dieses Dialogfeld festlegen. Wird automatisch erledigt
+	// wenn das Hauptfenster der Anwendung kein Dialogfeld ist
+	HICON hIcon = LoadIcon(LFCommDlgDLL.hResource, MAKEINTRESOURCE(IDD_ITEMTEMPLATE));
+	SetIcon(hIcon, FALSE);
+	SetIcon(hIcon, TRUE);
+
+	CRect rect;
+	m_wndInspectorGrid.GetWindowRect(&rect);
+	ScreenToClient(rect);
+	m_FrameCtrl.Create(this, rect);
+
+	rect.DeflateRect(2, 2);
+	m_wndInspectorGrid.SetWindowPos(NULL, rect.left, rect.top, rect.Width(), rect.Height(), SWP_NOZORDER | SWP_NOACTIVATE);
+	m_wndInspectorGrid.AddAttributes(m_AttributeValues);
+
+	for (UINT a=0; a<LFAttributeCount; a++)
+		m_wndInspectorGrid.UpdatePropertyState(a, FALSE, !p_App->m_Attributes[a]->ReadOnly, (!p_App->m_Attributes[a]->ReadOnly) && (a!=LFAttrFileName));
+
+	OnSortAlphabetically();
+
+	return TRUE;
+}
+
+void LFItemTemplateDlg::OnSortAlphabetically()
+{
+	m_wndInspectorGrid.SetAlphabeticMode(((CButton*)GetDlgItem(IDC_ALPHABETICALLY))->GetCheck());
+}
+
+void LFItemTemplateDlg::OnReset()
+{
+	for (UINT a=0; a<LFAttributeCount; a++)
+		LFGetNullVariantData(&m_AttributeValues[a]);
+
+	m_wndInspectorGrid.Invalidate();
+	m_wndInspectorGrid.SetFocus();
+}
+
+void LFItemTemplateDlg::OnSkip()
+{
+	EndDialog(IDC_SKIP);
 }

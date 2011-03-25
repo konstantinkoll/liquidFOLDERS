@@ -406,7 +406,7 @@ INT CInspectorWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_SortAlphabetic = theApp.GetInt(_T("SortAlphabetic"), FALSE);
 	theApp.SetRegistryBase(oldBase);
 
-	if (!m_wndInspectorGrid.Create(this, 1, FALSE, &m_IconHeader))
+	if (!m_wndInspectorGrid.Create(this, 1, &m_IconHeader))
 		return -1;
 
 	m_wndInspectorGrid.SetAlphabeticMode(m_SortAlphabetic);

@@ -403,6 +403,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CFrameCtrl.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\CGdiPlusBitmap.cpp"
 				>
 			</File>
@@ -646,6 +650,10 @@
 			</File>
 			<File
 				RelativePath=".\CExplorerTree.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CFrameCtrl.h"
 				>
 			</File>
 			<File

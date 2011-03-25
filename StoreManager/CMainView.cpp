@@ -680,7 +680,7 @@ INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	p_ViewButton = m_wndExplorerHeader.AddButton(IDM_VIEW);
 
 	// Inspector
-	if (!m_wndInspector.Create(FALSE, theApp.m_InspectorWidth, this, 4))
+	if (!m_wndInspector.Create(FALSE, theApp.m_InspectorWidth, this, 5))
 		return -1;
 
 	m_wndInspector.SetOwner(GetOwner());

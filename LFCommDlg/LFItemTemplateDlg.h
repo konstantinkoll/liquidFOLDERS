@@ -6,6 +6,7 @@
 #include "LFCore.h"
 #include "LFApplication.h"
 #include "CInspectorGrid.h"
+#include "CFrameCtrl.h"
 
 
 // LFItemTemplateDlg
@@ -33,4 +34,5 @@ private:
 	CHAR m_StoreID[LFKeySize];
 	LFVariantData m_AttributeValues[LFAttributeCount];
 	CInspectorGrid m_wndInspectorGrid;
+	CFrameCtrl m_FrameCtrl;
 };

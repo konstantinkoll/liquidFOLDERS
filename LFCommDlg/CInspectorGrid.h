@@ -64,7 +64,7 @@ public:
 	virtual void PreSubclassWindow();
 	virtual void AdjustLayout();
 
-	BOOL Create(CWnd* pParentWnd, UINT nID, BOOL bBorder, CInspectorHeader* pHeader=NULL);
+	BOOL Create(CWnd* pParentWnd, UINT nID, CInspectorHeader* pHeader=NULL);
 	void AddProperty(CInspectorProperty* pProperty, UINT Category, WCHAR* Name, BOOL Editable=FALSE);
 	void AddAttributes(LFVariantData* pData);
 	void ShowHeader(BOOL ShowHeader);
@@ -99,10 +99,10 @@ protected:
 	afx_msg void OnDestroy();
 	afx_msg LRESULT OnThemeChanged();
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
-	afx_msg void OnNcPaint();
 	afx_msg void OnPaint();
 	afx_msg void OnSize(UINT nType, INT cx, INT cy);
 	afx_msg void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
+	afx_msg BOOL OnMouseWheel(UINT nFlags, short zDelta, CPoint pt);
 	DECLARE_MESSAGE_MAP()
 
 private:
