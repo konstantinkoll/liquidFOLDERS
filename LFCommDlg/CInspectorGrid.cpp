@@ -12,15 +12,40 @@
 CInspectorProperty::CInspectorProperty(LFVariantData* pData)
 {
 	p_Data = pData;
-	m_Multiple = FALSE;
+	p_Parent = NULL;
+	m_Modified = m_Multiple = FALSE;
+}
+
+void CInspectorProperty::SetParent(CInspectorGrid* pParent)
+{
+	p_Parent = pParent;
+}
+
+void CInspectorProperty::SetMultiple(BOOL Multiple)
+{
+	m_Multiple = Multiple;
 }
 
 void CInspectorProperty::DrawValue(CDC& dc, CRect rect)
 {
-	WCHAR tmpStr[256];
-	LFVariantDataToString(p_Data, tmpStr, 256);
+	ASSERT(p_Parent);
 
-	dc.DrawText(tmpStr, -1, rect, DT_LEFT | DT_VCENTER | DT_END_ELLIPSIS | DT_SINGLELINE);
+	if (m_Multiple)
+	{
+		CFont* pOldFont = dc.SelectObject(&p_Parent->m_ItalicFont);
+		dc.DrawText(p_Parent->m_MultipleValues, rect, DT_LEFT | DT_VCENTER | DT_END_ELLIPSIS | DT_SINGLELINE);
+		dc.SelectObject(pOldFont);
+	}
+	else
+	{
+		WCHAR tmpStr[256];
+		LFVariantDataToString(p_Data, tmpStr, 256);
+
+		CFont* pOldFont = m_Modified ? dc.SelectObject(&p_Parent->m_BoldFont) : NULL;
+		dc.DrawText(tmpStr, -1, rect, DT_LEFT | DT_VCENTER | DT_END_ELLIPSIS | DT_SINGLELINE);
+		if (pOldFont)
+			dc.SelectObject(pOldFont);
+	}
 }
 
 
@@ -99,6 +124,8 @@ CInspectorGrid::CInspectorGrid()
 	m_pHeader = NULL;
 	hThemeList = hThemeButton = NULL;
 	m_VScrollMax = m_VScrollPos = 0;
+
+	ENSURE(m_MultipleValues.LoadString(IDS_MULTIPLEVALUES));
 }
 
 CInspectorGrid::~CInspectorGrid()
@@ -142,6 +169,7 @@ void CInspectorGrid::Init()
 	}
 
 	ResetScrollbars();
+	CreateFonts();
 
 	CDC* dc = GetWindowDC();
 	CFont* pOldFont = dc->SelectObject(&p_App->m_DefaultFont);
@@ -154,8 +182,30 @@ void CInspectorGrid::Init()
 	m_RowHeight = max(m_FontHeight[0], 16);
 }
 
+void CInspectorGrid::CreateFonts()
+{
+	if (m_BoldFont.GetSafeHandle())
+		m_BoldFont.DeleteObject();
+	if (m_ItalicFont.GetSafeHandle())
+		m_ItalicFont.DeleteObject();
+
+	CFont* pFont = CFont::FromHandle((HFONT)GetStockObject(DEFAULT_GUI_FONT));
+	ASSERT_VALID(pFont);
+
+	LOGFONT lf;
+	pFont->GetLogFont(&lf);
+	lf.lfWeight = FW_BOLD;
+	m_BoldFont.CreateFontIndirect(&lf);
+
+	pFont->GetLogFont(&lf);
+	lf.lfItalic = TRUE;
+	m_ItalicFont.CreateFontIndirect(&lf);
+}
+
 void CInspectorGrid::AddProperty(CInspectorProperty* pProperty, UINT Category, WCHAR* Name, BOOL Editable)
 {
+	pProperty->SetParent(this);
+
 	Property prop;
 	prop.pProperty = pProperty;
 	prop.Category = Category;
@@ -255,6 +305,7 @@ void CInspectorGrid::UpdatePropertyState(UINT nID, BOOL Multiple, BOOL Editable,
 
 	m_Properties.m_Items[nID].Editable = Editable;
 	m_Properties.m_Items[nID].Visible = Visible;
+	m_Properties.m_Items[nID].pProperty->SetMultiple(Multiple);
 }
 
 void CInspectorGrid::ResetScrollbars()

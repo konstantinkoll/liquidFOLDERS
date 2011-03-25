@@ -11,6 +11,8 @@
 // CInspectorProperty
 //
 
+class AFX_EXT_CLASS CInspectorGrid;
+
 class AFX_EXT_CLASS CInspectorProperty
 {
 public:
@@ -18,8 +20,13 @@ public:
 
 	virtual void DrawValue(CDC& dc, CRect rect);
 
+	void SetParent(CInspectorGrid* pParent);
+	void SetMultiple(BOOL Multiple);
+
 protected:
+	CInspectorGrid* p_Parent;
 	LFVariantData* p_Data;
+	BOOL m_Modified;
 	BOOL m_Multiple;
 };
 
@@ -70,6 +77,8 @@ struct PropertyCategory
 
 class AFX_EXT_CLASS CInspectorGrid : public CWnd
 {
+friend class CInspectorProperty;
+
 public:
 	CInspectorGrid();
 	~CInspectorGrid();
@@ -92,6 +101,9 @@ protected:
 	HTHEME hThemeList;
 	LFTooltip m_TooltipCtrl;
 	CInspectorHeader* m_pHeader;
+	CString m_MultipleValues;
+	CFont m_BoldFont;
+	CFont m_ItalicFont;
 	INT m_FontHeight[2];
 	INT m_RowHeight;
 	INT m_LabelWidth;
@@ -121,6 +133,7 @@ protected:
 private:
 	INT* m_pSortArray;
 
+	void CreateFonts();
 	INT Compare(INT eins, INT zwei);
 	void Heap(INT wurzel, INT anz);
 	void CreateSortArray();
