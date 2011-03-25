@@ -28,7 +28,7 @@ INT CIconHeader::GetPreferredHeight()
 void CIconHeader::DrawHeader(CDC& dc, CRect rect, BOOL Themed)
 {
 	const INT cx = (rect.Width()-128)/2;
-	const INT cy = 4;
+	const INT cy = rect.top+4;
 	CRect rectIcon(cx, cy, cx+128, cy+128);
 
 	switch (m_Status)
@@ -52,7 +52,7 @@ void CIconHeader::DrawHeader(CDC& dc, CRect rect, BOOL Themed)
 	dc.SetTextColor(m_Status==IconEmpty ? GetSysColor(COLOR_3DSHADOW) : Themed ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT));
 
 	CRect rectText(rect);
-	rectText.top = 128+6;
+	rectText.top += 128+6;
 	dc.DrawText(m_strDescription, rectText, DT_SINGLELINE | DT_END_ELLIPSIS | DT_VCENTER | DT_CENTER);
 }
 
