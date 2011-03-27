@@ -668,6 +668,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Ribbon\LFAttrChannels_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\LFAttrChannels_32.png"
+				>
+			</File>
+			<File
 				RelativePath=".\Ribbon\LFAttrComment_16.png"
 				>
 			</File>
