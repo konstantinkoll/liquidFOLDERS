@@ -644,6 +644,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Ribbon\LFAttrArchiveTime_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\LFAttrArchiveTime_32.png"
+				>
+			</File>
+			<File
 				RelativePath=".\Ribbon\LFAttrArtist_16.png"
 				>
 			</File>
@@ -705,6 +713,14 @@
 			</File>
 			<File
 				RelativePath=".\Ribbon\LFAttrDuration_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\LFAttrFileID_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\LFAttrFileID_32.png"
 				>
 			</File>
 			<File
