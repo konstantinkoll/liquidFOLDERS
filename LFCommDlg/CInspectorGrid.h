@@ -4,6 +4,7 @@
 
 #pragma once
 #include "liquidFOLDERS.h"
+#include "CImageListTransparent.h"
 #include "DynArray.h"
 #include "LFTooltip.h"
 
@@ -18,6 +19,7 @@ class AFX_EXT_CLASS CInspectorProperty
 public:
 	CInspectorProperty(LFVariantData* pData);
 
+	virtual void ToString(WCHAR* tmpStr, INT nCount);
 	virtual void DrawValue(CDC& dc, CRect rect);
 
 	void SetParent(CInspectorGrid* pParent);
@@ -39,6 +41,7 @@ class AFX_EXT_CLASS CInspectorPropertyRating : public CInspectorProperty
 public:
 	CInspectorPropertyRating(LFVariantData* pData);
 
+	virtual void ToString(WCHAR* tmpStr, INT nCount);
 	virtual void DrawValue(CDC& dc, CRect rect);
 };
 
@@ -78,6 +81,7 @@ struct PropertyCategory
 class AFX_EXT_CLASS CInspectorGrid : public CWnd
 {
 friend class CInspectorProperty;
+friend class CInspectorPropertyRating;
 
 public:
 	CInspectorGrid();
@@ -109,12 +113,19 @@ protected:
 	INT m_LabelWidth;
 	BOOL m_ShowHeader;
 	BOOL m_SortAlphabetic;
+	BOOL m_Hover;
 	INT m_ScrollHeight;
 	INT m_VScrollPos;
 	INT m_VScrollMax;
+	INT m_HotItem;
+	INT m_SelectedItem;
 
 	virtual void Init();
 
+	RECT GetItemRect(INT Item);
+	INT HitTest(CPoint point);
+	void InvalidateItem(INT Item);
+	void SelectItem(INT Item);
 	void ResetScrollbars();
 	void AdjustScrollbars();
 	void MakeSortArrayDirty();
@@ -127,11 +138,21 @@ protected:
 	afx_msg void OnPaint();
 	afx_msg void OnSize(UINT nType, INT cx, INT cy);
 	afx_msg void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
+	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
+	afx_msg void OnMouseLeave();
+	afx_msg void OnMouseHover(UINT nFlags, CPoint point);
 	afx_msg BOOL OnMouseWheel(UINT nFlags, short zDelta, CPoint pt);
+	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
+	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
+	afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);
+	afx_msg void OnRButtonDown(UINT nFlags, CPoint point);
+	afx_msg void OnSetFocus(CWnd* pOldWnd);
+	afx_msg void OnKillFocus(CWnd* pNewWnd);
 	DECLARE_MESSAGE_MAP()
 
 private:
 	INT* m_pSortArray;
+	CImageListTransparent m_AttributeIcons;
 
 	void CreateFonts();
 	INT Compare(INT eins, INT zwei);

@@ -4,6 +4,7 @@
 
 #include "stdafx.h"
 #include "LFCommDlg.h"
+#include "resource.h"
 
 
 // CInspectorProperty
@@ -26,26 +27,29 @@ void CInspectorProperty::SetMultiple(BOOL Multiple)
 	m_Multiple = Multiple;
 }
 
-void CInspectorProperty::DrawValue(CDC& dc, CRect rect)
+void CInspectorProperty::ToString(WCHAR* tmpStr, INT nCount)
 {
 	ASSERT(p_Parent);
 
 	if (m_Multiple)
 	{
-		CFont* pOldFont = dc.SelectObject(&p_Parent->m_ItalicFont);
-		dc.DrawText(p_Parent->m_MultipleValues, rect, DT_LEFT | DT_VCENTER | DT_END_ELLIPSIS | DT_SINGLELINE);
-		dc.SelectObject(pOldFont);
+		wcscpy_s(tmpStr, nCount, p_Parent->m_MultipleValues);
 	}
 	else
 	{
-		WCHAR tmpStr[256];
-		LFVariantDataToString(p_Data, tmpStr, 256);
-
-		CFont* pOldFont = m_Modified ? dc.SelectObject(&p_Parent->m_BoldFont) : NULL;
-		dc.DrawText(tmpStr, -1, rect, DT_LEFT | DT_VCENTER | DT_END_ELLIPSIS | DT_SINGLELINE);
-		if (pOldFont)
-			dc.SelectObject(pOldFont);
+		LFVariantDataToString(p_Data, tmpStr, nCount);
 	}
+}
+
+void CInspectorProperty::DrawValue(CDC& dc, CRect rect)
+{
+	WCHAR tmpStr[256];
+	ToString(tmpStr, 256);
+
+	CFont* pOldFont = m_Multiple ? dc.SelectObject(&p_Parent->m_ItalicFont) : m_Modified ? dc.SelectObject(&p_Parent->m_BoldFont) : NULL;
+	dc.DrawText(tmpStr, -1, rect, DT_LEFT | DT_VCENTER | DT_END_ELLIPSIS | DT_SINGLELINE);
+	if (pOldFont)
+		dc.SelectObject(pOldFont);
 }
 
 
@@ -55,6 +59,13 @@ void CInspectorProperty::DrawValue(CDC& dc, CRect rect)
 CInspectorPropertyRating::CInspectorPropertyRating(LFVariantData* pData)
 	: CInspectorProperty(pData)
 {
+}
+
+void CInspectorPropertyRating::ToString(WCHAR* tmpStr, INT nCount)
+{
+	ASSERT(p_Parent);
+
+	wcscpy_s(tmpStr, nCount, m_Multiple ? p_Parent->m_MultipleValues : L"");
 }
 
 void CInspectorPropertyRating::DrawValue(CDC& dc, CRect rect)
@@ -67,8 +78,8 @@ void CInspectorPropertyRating::DrawValue(CDC& dc, CRect rect)
 
 	INT w = min(rect.Width()-6, RatingBitmapWidth);
 	INT h = min(rect.Height(), RatingBitmapHeight);
-	BLENDFUNCTION LF = { AC_SRC_OVER, 0, 0xFF, AC_SRC_ALPHA };
-	AlphaBlend(dc, rect.left+6, rect.top+(rect.Height()-h)/2, w, h, hdcMem, 0, 0, w, h, LF);
+	BLENDFUNCTION BF = { AC_SRC_OVER, 0, 0xFF, AC_SRC_ALPHA };
+	AlphaBlend(dc, rect.left+6, rect.top+(rect.Height()-h)/2, w, h, hdcMem, 0, 0, w, h, BF);
 
 	SelectObject(hdcMem, hbmOld);
 	DeleteDC(hdcMem);
@@ -92,6 +103,7 @@ void CInspectorHeader::DrawHeader(CDC& /*dc*/, CRect /*rect*/, BOOL /*Themed*/)
 //
 
 extern AFX_EXTENSION_MODULE LFCommDlgDLL;
+extern INT GetAttributeIconIndex(UINT Attr);
 
 #define GUTTER      3
 #define PADDING     2
@@ -119,11 +131,12 @@ CInspectorGrid::CInspectorGrid()
 	}
 
 	p_App = (LFApplication*)AfxGetApp();
-	m_ShowHeader = m_SortAlphabetic = FALSE;
+	m_ShowHeader = m_SortAlphabetic = m_Hover = FALSE;
 	m_pSortArray = NULL;
 	m_pHeader = NULL;
 	hThemeList = hThemeButton = NULL;
 	m_VScrollMax = m_VScrollPos = 0;
+	m_HotItem = m_SelectedItem = 0;
 
 	ENSURE(m_MultipleValues.LoadString(IDS_MULTIPLEVALUES));
 }
@@ -170,6 +183,9 @@ void CInspectorGrid::Init()
 
 	ResetScrollbars();
 	CreateFonts();
+
+	m_AttributeIcons.Create(IDB_ATTRIBUTEICONS_32, LFCommDlgDLL.hResource, 0, -1, 32, 32);
+	m_TooltipCtrl.Create(this);
 
 	CDC* dc = GetWindowDC();
 	CFont* pOldFont = dc->SelectObject(&p_App->m_DefaultFont);
@@ -306,6 +322,58 @@ void CInspectorGrid::UpdatePropertyState(UINT nID, BOOL Multiple, BOOL Editable,
 	m_Properties.m_Items[nID].Editable = Editable;
 	m_Properties.m_Items[nID].Visible = Visible;
 	m_Properties.m_Items[nID].pProperty->SetMultiple(Multiple);
+}
+
+RECT CInspectorGrid::GetItemRect(INT Item)
+{
+	RECT rect = { 0, 0, 0, 0 };
+
+	if ((Item>=0) && (Item<(INT)m_Properties.m_ItemCount))
+		{
+			GetClientRect(&rect);
+			rect.top = m_Properties.m_Items[Item].Top-1;
+			rect.bottom = m_Properties.m_Items[Item].Bottom+1;
+			rect.left++;
+			rect.right--;
+			OffsetRect(&rect, 0, -m_VScrollPos);
+		}
+
+	return rect;
+}
+
+INT CInspectorGrid::HitTest(CPoint point)
+{
+	for (UINT a=0; a<m_Properties.m_ItemCount; a++)
+	{
+		RECT rect = GetItemRect(a);
+		if (PtInRect(&rect, point))
+			return a;
+	}
+
+	return -1;
+}
+
+void CInspectorGrid::InvalidateItem(INT Item)
+{
+	RECT rect = GetItemRect(Item);
+	InvalidateRect(&rect);
+}
+
+void CInspectorGrid::SelectItem(INT Item)
+{
+	if (Item==m_SelectedItem)
+		return;
+
+	if (!m_Properties.m_Items[Item].Visible)
+		return;
+
+	InvalidateItem(m_SelectedItem);
+	m_SelectedItem = Item;
+//	EnsureVisible(Item);
+	InvalidateItem(Item);
+//	m_EditLabel = CPoint(-1, -1);
+
+	ReleaseCapture();
 }
 
 void CInspectorGrid::ResetScrollbars()
@@ -484,7 +552,16 @@ BEGIN_MESSAGE_MAP(CInspectorGrid, CWnd)
 	ON_WM_PAINT()
 	ON_WM_SIZE()
 	ON_WM_VSCROLL()
+	ON_WM_MOUSEMOVE()
+	ON_WM_MOUSELEAVE()
+	ON_WM_MOUSEHOVER()
 	ON_WM_MOUSEWHEEL()
+	ON_WM_LBUTTONDOWN()
+	ON_WM_LBUTTONUP()
+	ON_WM_LBUTTONDBLCLK()
+	ON_WM_RBUTTONDOWN()
+	ON_WM_SETFOCUS()
+	ON_WM_KILLFOCUS()
 END_MESSAGE_MAP()
 
 INT CInspectorGrid::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -570,14 +647,42 @@ void CInspectorGrid::OnPaint()
 		Property* pProp = &m_Properties.m_Items[a];
 		if (pProp->Visible)
 		{
-			CRect rectProp(GUTTER, pProp->Top-m_VScrollPos, m_LabelWidth, pProp->Bottom-m_VScrollPos);
-			dc.SetTextColor(pProp->Editable ? Themed ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT) : GetSysColor(COLOR_3DSHADOW));
-			dc.DrawText(pProp->Name, -1, rectProp, DT_RIGHT | DT_VCENTER | DT_END_ELLIPSIS | DT_SINGLELINE);
+			RECT rectProp = GetItemRect(a);
 
-			rectProp.left = rectProp.right+GUTTER;
-			rectProp.right = rect.Width()-GUTTER;
-			dc.SetTextColor(Themed ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT));
-			pProp->pProperty->DrawValue(dc, rectProp);
+			COLORREF clr1 = pProp->Editable ? Themed ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT) : GetSysColor(COLOR_3DSHADOW);
+			COLORREF clr2 = Themed ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT);
+			if (hThemeList)
+			{
+				const INT StateIDs[4] = { LISS_NORMAL, LISS_HOT, GetFocus()!=this ? LISS_SELECTEDNOTFOCUS : LISS_SELECTED, LISS_HOTSELECTED };
+				UINT State = 0;
+				if ((INT)a==m_HotItem)
+					State |= 1;
+				if ((GetFocus()==this) && ((INT)a==m_SelectedItem))
+					State |= 2;
+				if (State)
+					p_App->zDrawThemeBackground(hThemeList, dc, LVP_LISTITEM, StateIDs[State], &rectProp, &rectProp);
+			}
+			else
+			{
+				if ((GetFocus()==this) && ((INT)a==m_SelectedItem))
+				{
+					dc.FillSolidRect(&rectProp, GetSysColor(COLOR_HIGHLIGHT));
+					dc.SetTextColor(0x000000);
+					dc.SetBkColor(0xFFFFFF);
+					dc.DrawFocusRect(&rectProp);
+
+					clr1 = clr2 = GetSysColor(COLOR_HIGHLIGHTTEXT);
+				}
+			}
+
+			CRect rectLabel(GUTTER, pProp->Top-m_VScrollPos, m_LabelWidth, pProp->Bottom-m_VScrollPos);
+			dc.SetTextColor(clr1);
+			dc.DrawText(pProp->Name, -1, rectLabel, DT_RIGHT | DT_VCENTER | DT_END_ELLIPSIS | DT_SINGLELINE);
+
+			rectLabel.left = rectLabel.right+GUTTER;
+			rectLabel.right = rect.Width()-GUTTER;
+			dc.SetTextColor(clr2);
+			pProp->pProperty->DrawValue(dc, rectLabel);
 		}
 	}
 
@@ -653,6 +758,91 @@ void CInspectorGrid::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 	CWnd::OnVScroll(nSBCode, nPos, pScrollBar);
 }
 
+void CInspectorGrid::OnMouseMove(UINT nFlags, CPoint point)
+{
+	BOOL Dragging = (GetCapture()==this);
+	INT Item = HitTest(point);
+
+	if (!m_Hover)
+	{
+		m_Hover = TRUE;
+
+		TRACKMOUSEEVENT tme;
+		tme.cbSize = sizeof(TRACKMOUSEEVENT);
+		tme.dwFlags = TME_LEAVE | TME_HOVER;
+		tme.dwHoverTime = LFHOVERTIME;
+		tme.hwndTrack = m_hWnd;
+		TrackMouseEvent(&tme);
+	}
+	else
+		if ((m_TooltipCtrl.IsWindowVisible()) && (Item!=m_HotItem))
+			m_TooltipCtrl.Deactivate();
+
+	if (!Dragging)
+	{
+		if (m_HotItem!=Item)
+		{
+			InvalidateItem(m_HotItem);
+			m_HotItem = Item;
+			InvalidateItem(m_HotItem);
+		}
+
+		if ((Item!=-1) && (nFlags & MK_RBUTTON))
+		{
+			SetFocus();
+			m_SelectedItem = m_HotItem;
+		}
+	}
+}
+
+void CInspectorGrid::OnMouseLeave()
+{
+	m_TooltipCtrl.Deactivate();
+	InvalidateItem(m_HotItem);
+
+	m_Hover = FALSE;
+	m_HotItem = -1;
+}
+
+void CInspectorGrid::OnMouseHover(UINT nFlags, CPoint point)
+{
+	if ((nFlags & (MK_LBUTTON | MK_MBUTTON | MK_RBUTTON | MK_XBUTTON1 | MK_XBUTTON2))==0)
+	{
+		if ((m_HotItem!=-1)/* && (!p_Edit)*/)
+			//if (m_HotItem==m_EditLabel)
+			//{
+			//	m_TooltipCtrl.Deactivate();
+			//	EditLabel(m_EditLabel);
+			//}
+			//else
+				if (!m_TooltipCtrl.IsWindowVisible())
+				{
+					Property* pProp = &m_Properties.m_Items[m_HotItem];
+					ASSERT(pProp);
+
+					INT idx = GetAttributeIconIndex(m_HotItem);
+					HICON hIcon = (idx!=-1) ? m_AttributeIcons.ExtractIcon(idx) : NULL;
+
+					WCHAR tmpStr[256];
+					pProp->pProperty->ToString(tmpStr, 256);
+
+					ClientToScreen(&point);
+					m_TooltipCtrl.Track(point, hIcon, hIcon ? CSize(32, 32) : CSize(0, 0), p_App->m_Attributes[m_HotItem]->Name, tmpStr);
+				}
+	}
+	else
+	{
+		m_TooltipCtrl.Deactivate();
+	}
+
+	TRACKMOUSEEVENT tme;
+	tme.cbSize = sizeof(TRACKMOUSEEVENT);
+	tme.dwFlags = TME_LEAVE | TME_HOVER;
+	tme.dwHoverTime = LFHOVERTIME;
+	tme.hwndTrack = m_hWnd;
+	TrackMouseEvent(&tme);
+}
+
 BOOL CInspectorGrid::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 {
 	CRect rect;
@@ -674,4 +864,66 @@ BOOL CInspectorGrid::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 	}
 
 	return TRUE;
+}
+
+void CInspectorGrid::OnLButtonDown(UINT /*nFlags*/, CPoint point)
+{
+	SetFocus();
+
+	INT Item = HitTest(point);
+	if (Item!=-1)
+	{
+		if (Item==m_SelectedItem)
+		{
+			//m_EditLabel = m_SelectedItem;
+		}
+		else
+		{
+			SelectItem(Item);
+		}
+	}
+	else
+	{
+	}
+}
+
+void CInspectorGrid::OnLButtonUp(UINT /*nFlags*/, CPoint point)
+{
+	if (GetCapture()==this)
+	{
+		INT Item = HitTest(point);
+		if (Item==m_SelectedItem)
+		{
+			// TODO
+		}
+
+		ReleaseCapture();
+	}
+}
+
+void CInspectorGrid::OnLButtonDblClk(UINT /*nFlags*/, CPoint point)
+{
+	ReleaseCapture();
+
+	INT Item = HitTest(point);
+	if (Item!=-1)
+	{
+		SelectItem(Item);
+		// TODO
+	}
+}
+
+void CInspectorGrid::OnRButtonDown(UINT /*nFlags*/, CPoint /*point*/)
+{
+	SetFocus();
+}
+
+void CInspectorGrid::OnSetFocus(CWnd* /*pOldWnd*/)
+{
+	Invalidate();
+}
+
+void CInspectorGrid::OnKillFocus(CWnd* /*pNewWnd*/)
+{
+	Invalidate();
 }

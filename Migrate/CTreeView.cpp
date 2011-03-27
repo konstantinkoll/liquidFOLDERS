@@ -941,7 +941,7 @@ BOOL CTreeView::HitTest(CPoint point, CPoint* item, BOOL* cbhot, CPoint* exphot)
 	return res;
 }
 
-void CTreeView::InvalidateItem(CPoint item)
+void CTreeView::InvalidateItem(CPoint Item)
 {
 	if ((item.x!=-1) && (item.y!=-1))
 	{

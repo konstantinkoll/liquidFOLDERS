@@ -676,7 +676,7 @@ void CFileView::DrawItemBackground(CDC& dc, LPRECT rectItem, INT idx, BOOL Theme
 				State |= 1;
 			if (Selected)
 				State |= 2;
-				theApp.zDrawThemeBackground(hThemeList, dc, LVP_LISTITEM, StateIDs[State], rectItem, rectItem);
+			theApp.zDrawThemeBackground(hThemeList, dc, LVP_LISTITEM, StateIDs[State], rectItem, rectItem);
 		}
 
 		if ((GetFocus()==this) && (m_FocusItem==idx))

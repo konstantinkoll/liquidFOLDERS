@@ -18,6 +18,7 @@ static INT CALLBACK MyCompareProc(LPARAM lParam1, LPARAM lParam2, LPARAM /*lPara
 //
 
 extern AFX_EXTENSION_MODULE LFCommDlgDLL;
+extern INT GetAttributeIconIndex(UINT Attr);
 
 LFAttributeListDlg::LFAttributeListDlg(UINT nIDTemplate, CWnd* pParentWnd)
 	: CDialog(nIDTemplate, pParentWnd)
@@ -53,26 +54,13 @@ void LFAttributeListDlg::AddAttribute(CListCtrl* li, UINT attr)
 	if (!add)
 		return;
 
-	static const UINT IconPosition[] = { LFAttrFileName, LFAttrTitle, LFAttrCreationTime, LFAttrAddTime,
-		LFAttrFileTime, LFAttrRecordingTime, LFAttrDeleteTime, LFAttrDueTime, LFAttrDoneTime, LFAttrLocationName,
-		LFAttrLocationIATA, LFAttrLocationGPS, LFAttrRating, LFAttrRoll, LFAttrArtist, LFAttrComment,
-		LFAttrDuration, LFAttrLanguage, LFAttrDimension, LFAttrWidth, LFAttrHeight, LFAttrAspectRatio, LFAttrTags,
-		LFAttrStoreID, LFAttrAlbum, LFAttrPriority, LFAttrURL, LFAttrISBN, LFAttrRecordingEquipment, LFAttrCustomer };
-
 	LVITEM lvi;
 	ZeroMemory(&lvi, sizeof(lvi));
 	lvi.mask = LVIF_TEXT | LVIF_IMAGE | LVIF_PARAM;
 	lvi.lParam = (LPARAM)attr;
 	lvi.pszText = p_App->m_Attributes[attr]->Name;
-	lvi.iImage = -1;
+	lvi.iImage = GetAttributeIconIndex(attr);
 	lvi.iItem = li->GetItemCount();
-
-	for (UINT a=0; a<sizeof(IconPosition)/sizeof(UINT); a++)
-		if (IconPosition[a]==attr)
-		{
-			lvi.iImage = a;
-			break;
-		}
 
 	li->SetCheck(li->InsertItem(&lvi), check);
 }

@@ -107,7 +107,7 @@ protected:
 	void FreeItem(Cell* cell);
 	void FreeTree();
 	BOOL HitTest(CPoint point, CPoint* item, BOOL* cbhot, CPoint* exphot);
-	void InvalidateItem(CPoint item);
+	void InvalidateItem(CPoint Item);
 	void TrackMenu(UINT nID, CPoint point, INT col=-1);
 	void SelectItem(CPoint Item);
 	void DeletePath(LPWSTR Path);

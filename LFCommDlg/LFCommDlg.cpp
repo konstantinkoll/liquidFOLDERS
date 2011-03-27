@@ -7,6 +7,21 @@
 #include "LFCommDlg.h"
 
 
+INT GetAttributeIconIndex(UINT Attr)
+{
+	static const UINT IconPosition[] = { LFAttrFileName, LFAttrTitle, LFAttrCreationTime, LFAttrAddTime,
+		LFAttrFileTime, LFAttrRecordingTime, LFAttrDeleteTime, LFAttrDueTime, LFAttrDoneTime, LFAttrLocationName,
+		LFAttrLocationIATA, LFAttrLocationGPS, LFAttrRating, LFAttrRoll, LFAttrArtist, LFAttrComment,
+		LFAttrDuration, LFAttrLanguage, LFAttrDimension, LFAttrWidth, LFAttrHeight, LFAttrAspectRatio, LFAttrTags,
+		LFAttrStoreID, LFAttrAlbum, LFAttrPriority, LFAttrURL, LFAttrISBN, LFAttrRecordingEquipment, LFAttrCustomer };
+
+	for (UINT a=0; a<sizeof(IconPosition)/sizeof(UINT); a++)
+		if (IconPosition[a]==Attr)
+			return a;
+
+	return -1;
+}
+
 LFCommDlg_API void CreateRoundRectangle(CRect rect, INT rad, GraphicsPath& path)
 {
 	path.Reset();
