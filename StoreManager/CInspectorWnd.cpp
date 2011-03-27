@@ -198,10 +198,6 @@ void CInspectorWnd::UpdateAdd(LFItemDescriptor* i, LFSearchResult* raw)
 		AddValueVirtual(AttrDriveLetter, i->CoreAttributes.FileID);
 		break;
 	case LFTypeVirtual:
-		AddValue(i, LFAttrFileName, FALSE);
-		AddValue(i, LFAttrFileID);
-		AddValue(i, LFAttrStoreID);
-		AddValue(i, LFAttrDescription);
 		if ((i->FirstAggregate!=-1) && (i->LastAggregate!=-1))
 		{
 			AddValue(i, LFAttrFileCount);
@@ -212,6 +208,10 @@ void CInspectorWnd::UpdateAdd(LFItemDescriptor* i, LFSearchResult* raw)
 		}
 		else
 		{
+			AddValue(i, LFAttrFileName, FALSE);
+			AddValue(i, LFAttrFileID);
+			AddValue(i, LFAttrStoreID);
+			AddValue(i, LFAttrDescription);
 			AddValue(i, LFAttrComment, FALSE);
 			for (UINT a=LFAttrDescription+1; a<LFAttributeCount; a++)
 				if (i->AttributeValues[a])
@@ -324,11 +324,11 @@ void CInspectorWnd::UpdateFinish()
 	// Flughafen-Name
 	if ((AttributeStatus[LFAttrLocationIATA]==StatusUsed) && (AttributeValues[LFAttrLocationIATA].AnsiString[0]!='\0'))
 	{
-		LFAirport* airport;
-		if (LFIATAGetAirportByCode(AttributeValues[LFAttrLocationIATA].AnsiString, &airport))
+		LFAirport* pAirport;
+		if (LFIATAGetAirportByCode(AttributeValues[LFAttrLocationIATA].AnsiString, &pAirport))
 		{
-			AddValueVirtual(AttrIATAAirportName, airport->Name);
-			AddValueVirtual(AttrIATAAirportCountry, LFIATAGetCountry(airport->CountryID)->Name);
+			AddValueVirtual(AttrIATAAirportName, pAirport->Name);
+			AddValueVirtual(AttrIATAAirportCountry, LFIATAGetCountry(pAirport->CountryID)->Name);
 		}
 		else
 		{
@@ -344,40 +344,7 @@ void CInspectorWnd::UpdateFinish()
 
 	// Attribute
 	for (UINT a=0; a<AttrCount; a++)
-		m_wndInspectorGrid.UpdatePropertyState(a, AttributeStatus[a]==StatusMultiple, a<LFAttributeCount ? !theApp.m_Attributes[a]->ReadOnly : FALSE, AttributeVisible[a]);
-/*		#ifndef _DEBUG
-		if (AttributeVisible[a])
-		{
-		#endif
-			BOOL editable = FALSE;
-			BOOL enabled = FALSE;
-			if (a<LFAttributeCount)
-			{
-				#ifndef _DEBUG
-				enabled = (!theApp.m_Attributes[a]->ReadOnly) && AttributeEditable[a];
-				#else
-				enabled = TRUE;
-				#endif
-				editable = enabled && ((CAttributeProperty*)pAttributes[a])->IsEditable();
-			}
-			pAttributes[a]->Enable(enabled);
-			pAttributes[a]->AllowEdit(editable);
-
-			pAttributes[a]->ResetOriginalValue();
-			if (a<LFAttributeCount)
-			{
-				WCHAR tmpStr[256];
-				LFVariantDataToString(&AttributeValues[a], tmpStr, 256);
-				((CAttributeProperty*)pAttributes[a])->SetValue(tmpStr, AttributeStatus[a]==StatusMultiple);
-			}
-			else
-			{
-				pAttributes[a]->SetValue(AttributeStatus[a]==StatusMultiple ? _T("...") : AttributeValues[a].UnicodeString);
-			}
-		#ifndef _DEBUG
-		}
-		pAttributes[a]->Show(AttributeVisible[a]);
-		#endif*/
+		m_wndInspectorGrid.UpdatePropertyState(a, AttributeStatus[a]==StatusMultiple, a<LFAttributeCount ? (!theApp.m_Attributes[a]->ReadOnly) && AttributeEditable[a] : FALSE, AttributeVisible[a]);
 
 	m_wndInspectorGrid.AdjustLayout();
 }

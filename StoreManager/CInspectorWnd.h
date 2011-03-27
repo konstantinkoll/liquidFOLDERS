@@ -98,7 +98,6 @@ private:
 
 	UINT AttributeVisible[AttrCount];
 	UINT AttributeStatus[AttrCount];
-	UINT AttributeCategory[AttrCount];
 	BOOL AttributeEditable[AttrCount];
 	LFVariantData AttributeValues[AttrCount];
 	CString AttributeVirtualNames[AttrCount-LFAttributeCount];

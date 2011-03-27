@@ -24,6 +24,7 @@ public:
 
 	void SetParent(CInspectorGrid* pParent);
 	void SetMultiple(BOOL Multiple);
+	void ResetModified();
 
 protected:
 	CInspectorGrid* p_Parent;

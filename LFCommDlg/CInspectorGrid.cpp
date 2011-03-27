@@ -27,13 +27,18 @@ void CInspectorProperty::SetMultiple(BOOL Multiple)
 	m_Multiple = Multiple;
 }
 
+void CInspectorProperty::ResetModified()
+{
+	m_Modified = FALSE;
+}
+
 void CInspectorProperty::ToString(WCHAR* tmpStr, INT nCount)
 {
 	ASSERT(p_Parent);
 
-	if (m_Multiple)
+	if ((m_Multiple) || (p_Data->Attr>=LFAttributeCount))
 	{
-		wcscpy_s(tmpStr, nCount, p_Parent->m_MultipleValues);
+		wcscpy_s(tmpStr, nCount, m_Multiple ? p_Parent->m_MultipleValues : p_Data->UnicodeString);
 	}
 	else
 	{
@@ -326,6 +331,7 @@ void CInspectorGrid::UpdatePropertyState(UINT nID, BOOL Multiple, BOOL Editable,
 	m_Properties.m_Items[nID].Editable = Editable;
 	m_Properties.m_Items[nID].Visible = Visible;
 	m_Properties.m_Items[nID].pProperty->SetMultiple(Multiple);
+	m_Properties.m_Items[nID].pProperty->ResetModified();
 }
 
 RECT CInspectorGrid::GetItemRect(INT Item)
