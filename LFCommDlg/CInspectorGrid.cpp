@@ -135,8 +135,9 @@ CInspectorGrid::CInspectorGrid()
 	m_pSortArray = NULL;
 	m_pHeader = NULL;
 	hThemeList = hThemeButton = NULL;
-	m_VScrollMax = m_VScrollPos = 0;
-	m_HotItem = m_SelectedItem = 0;
+	hIconResetNormal = hIconResetHot = NULL;
+	m_VScrollMax = m_VScrollPos = m_IconSize = 0;
+	m_HotItem = m_SelectedItem = -1;
 
 	ENSURE(m_MultipleValues.LoadString(IDS_MULTIPLEVALUES));
 }
@@ -196,6 +197,9 @@ void CInspectorGrid::Init()
 	ReleaseDC(dc);
 
 	m_RowHeight = max(m_FontHeight[0], 16);
+	m_IconSize = (m_RowHeight>=32) ? 32 : (m_RowHeight>=24) ? 24 : 16;
+	hIconResetNormal = (HICON)LoadImage(LFCommDlgDLL.hResource, MAKEINTRESOURCE(IDI_RESET_NORMAL), IMAGE_ICON, m_IconSize, m_IconSize, LR_DEFAULTCOLOR);
+	hIconResetHot = (HICON)LoadImage(LFCommDlgDLL.hResource, MAKEINTRESOURCE(IDI_RESET_HOT), IMAGE_ICON, m_IconSize, m_IconSize, LR_DEFAULTCOLOR);
 }
 
 void CInspectorGrid::CreateFonts()
@@ -582,6 +586,10 @@ void CInspectorGrid::OnDestroy()
 		p_App->zCloseThemeData(hThemeButton);
 	if (hThemeList)
 		p_App->zCloseThemeData(hThemeList);
+	if (hIconResetNormal)
+		DestroyIcon(hIconResetNormal);
+	if (hIconResetHot)
+		DestroyIcon(hIconResetHot);
 
 	for (UINT a=0; a<m_Properties.m_ItemCount; a++)
 		delete m_Properties.m_Items[a].pProperty;
@@ -680,7 +688,45 @@ void CInspectorGrid::OnPaint()
 			dc.DrawText(pProp->Name, -1, rectLabel, DT_RIGHT | DT_VCENTER | DT_END_ELLIPSIS | DT_SINGLELINE);
 
 			rectLabel.left = rectLabel.right+GUTTER;
-			rectLabel.right = rect.Width()-GUTTER;
+			rectLabel.right = rect.Width();
+
+			if ((INT)a==m_HotItem)
+			{
+				INT Offs = (rectLabel.Height()-m_IconSize)/2;
+				DrawIconEx(dc, rectLabel.right-m_IconSize-Offs-2, rectLabel.top+Offs, hIconResetNormal, m_IconSize, m_IconSize, 0, NULL, DI_NORMAL);
+				rectLabel.right -= m_IconSize+Offs+GUTTER+2;
+			}
+			else
+			{
+				rectLabel.right -= GUTTER;
+			}
+
+			if ((INT)a==m_HotItem)
+			{
+				CRect rectButton(rectLabel);
+				rectButton.left = rectButton.right-rectButton.Height()-m_IconSize/2;
+				rectLabel.right -= rectButton.Width()+GUTTER;
+
+				if (hThemeButton)
+				{
+					UINT State = PBS_NORMAL;
+/*					if(bIsFocused)
+						state = PBS_DEFAULTED;
+					if(bMouseOverButton)
+						state = PBS_HOT;
+					}*/
+					//State = PBS_PRESSED;
+					p_App->zDrawThemeBackground(hThemeButton, dc, BP_PUSHBUTTON, State, &rectButton, NULL);
+				}
+				else
+				{
+				}
+
+				rectButton.bottom -= 4;
+				dc.SetTextColor(GetSysColor(COLOR_WINDOWTEXT));
+				dc.DrawText(_T("..."), rectButton, DT_VCENTER | DT_CENTER | DT_SINGLELINE);
+			}
+
 			dc.SetTextColor(clr2);
 			pProp->pProperty->DrawValue(dc, rectLabel);
 		}
@@ -787,11 +833,8 @@ void CInspectorGrid::OnMouseMove(UINT nFlags, CPoint point)
 			InvalidateItem(m_HotItem);
 		}
 
-		if ((Item!=-1) && (nFlags & MK_RBUTTON))
-		{
+		if (nFlags & MK_RBUTTON)
 			SetFocus();
-			m_SelectedItem = m_HotItem;
-		}
 	}
 }
 

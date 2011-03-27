@@ -8,7 +8,6 @@
 #define ID_APP_NEWSTOREMANAGER          203
 #define ID_APP_PURCHASE                 204
 #define ID_APP_ENTERLICENSEKEY          205
-#define IDC_SYSLINK1                    2025
 #define IDB_KEY                         20000
 #define IDB_BACKDROP                    20001
 #define IDB_LOGO                        20002
@@ -43,6 +42,8 @@
 #define IDB_PRIORITY10                  20130
 #define IDB_SORTINDICATORS              20131
 #define IDI_READY                       20200
+#define IDI_RESET_NORMAL                20201
+#define IDI_RESET_HOT                   20202
 #define IDS_PURCHASEURL                 20300
 #define IDS_ERROR                       20301
 #define IDS_STORES_SINGULAR             20302

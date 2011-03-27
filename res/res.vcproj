@@ -1573,6 +1573,14 @@
 			>
 		</File>
 		<File
+			RelativePath=".\Reset_Hot_Small.ico"
+			>
+		</File>
+		<File
+			RelativePath=".\Reset_Normal_Small.ico"
+			>
+		</File>
+		<File
 			RelativePath=".\RunCmd.ico"
 			>
 		</File>

@@ -103,6 +103,8 @@ protected:
 	PropertyCategory m_Categories[LFAttrCategoryCount];
 	HTHEME hThemeButton;
 	HTHEME hThemeList;
+	HICON hIconResetNormal;
+	HICON hIconResetHot;
 	LFTooltip m_TooltipCtrl;
 	CInspectorHeader* m_pHeader;
 	CString m_MultipleValues;
@@ -111,6 +113,7 @@ protected:
 	INT m_FontHeight[2];
 	INT m_RowHeight;
 	INT m_LabelWidth;
+	INT m_IconSize;
 	BOOL m_ShowHeader;
 	BOOL m_SortAlphabetic;
 	BOOL m_Hover;

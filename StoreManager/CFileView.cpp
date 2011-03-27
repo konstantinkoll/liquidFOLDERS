@@ -1474,7 +1474,7 @@ void CFileView::OnRButtonUp(UINT nFlags, CPoint point)
 			OnSelectNone();
 	}
 
-	UpdateWindow();
+	GetParent()->UpdateWindow();
 	CWnd::OnRButtonUp(nFlags, point);
 }
 

@@ -1003,6 +1003,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\Reset_Hot_Small.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Reset_Normal_Small.ico"
+				>
+			</File>
+			<File
 				RelativePath=".\res\Shield_7.ico"
 				>
 			</File>

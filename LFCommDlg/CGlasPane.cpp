@@ -115,6 +115,6 @@ void CGlasPane::OnGetMinMaxInfo(MINMAXINFO* lpMMI)
 {
 	CWnd::OnGetMinMaxInfo(lpMMI);
 
-	lpMMI->ptMinTrackSize.x = 32+GRIPPER;
+	lpMMI->ptMinTrackSize.x = 128+GRIPPER;
 	lpMMI->ptMaxTrackSize.x = m_MaxWidth+GRIPPER;
 }
