@@ -943,13 +943,13 @@ BOOL CTreeView::HitTest(CPoint point, CPoint* item, BOOL* cbhot, CPoint* exphot)
 
 void CTreeView::InvalidateItem(CPoint Item)
 {
-	if ((item.x!=-1) && (item.y!=-1))
+	if ((Item.x!=-1) && (Item.y!=-1))
 	{
 		INT x = -m_HScrollPos;
-		for (UINT a=0; a<(UINT)item.x; a++)
+		for (UINT a=0; a<(UINT)Item.x; a++)
 			x += m_ColumnWidth[a];
 
-		CRect rect(x, m_HeaderHeight+item.y*m_RowHeight-m_VScrollPos, x+m_ColumnWidth[item.x], m_HeaderHeight-m_VScrollPos+(item.y+1)*m_RowHeight);
+		CRect rect(x, m_HeaderHeight+Item.y*m_RowHeight-m_VScrollPos, x+m_ColumnWidth[Item.x], m_HeaderHeight-m_VScrollPos+(Item.y+1)*m_RowHeight);
 		InvalidateRect(rect);
 	}
 }
