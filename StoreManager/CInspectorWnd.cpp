@@ -406,7 +406,7 @@ BEGIN_MESSAGE_MAP(CInspectorWnd, CGlasPane)
 	ON_WM_CREATE()
 	ON_WM_SETFOCUS()
 	ON_WM_CONTEXTMENU()
-	ON_MESSAGE_VOID(WM_PROPERTYCHANGED, OnPropertyChanged)
+	ON_MESSAGE(WM_PROPERTYCHANGED, OnPropertyChanged)
 
 	ON_COMMAND(IDM_INSPECTOR_SHOWPREVIEW, OnTogglePreview)
 	ON_COMMAND(IDM_INSPECTOR_SORTALPHABETIC, OnAlphabetic)
@@ -458,7 +458,7 @@ void CInspectorWnd::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 	pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, GetOwner(), NULL);
 }
 
-void CInspectorWnd::OnPropertyChanged(WPARAM wparam, LPARAM lparam)
+LRESULT CInspectorWnd::OnPropertyChanged(WPARAM wparam, LPARAM lparam)
 {
 	SHORT Attr1 = wparam & 0xFFFF;
 	SHORT Attr2 = lparam & 0xFFFF;
@@ -469,6 +469,8 @@ void CInspectorWnd::OnPropertyChanged(WPARAM wparam, LPARAM lparam)
 	LFVariantData* Value3 = (Attr3==-1) ? NULL : &m_AttributeValues[Attr3];
 
 	((CMainWnd*)GetTopLevelParent())->UpdateSelectedItems(Value1, Value2, Value3);
+
+	return NULL;
 }
 
 

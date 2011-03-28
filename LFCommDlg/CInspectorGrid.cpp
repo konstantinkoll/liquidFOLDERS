@@ -1,4 +1,4 @@
-
+nvali
 // CInspectorGrid.cpp: Implementierung der Klasse CInspectorGrid
 //
 
@@ -46,7 +46,6 @@ void CInspectorProperty::DrawValue(CDC& dc, CRect rect)
 
 void CInspectorProperty::OnClickButton()
 {
-	MessageBox(NULL,_T("Test"),0,0);
 }
 
 BOOL CInspectorProperty::CanDelete()
@@ -56,8 +55,7 @@ BOOL CInspectorProperty::CanDelete()
 
 BOOL CInspectorProperty::HasButton()
 {
-	//return FALSE;
-	return TRUE;
+	return FALSE;
 }
 
 void CInspectorProperty::SetParent(CInspectorGrid* pParent)
@@ -134,6 +132,12 @@ extern INT GetAttributeIconIndex(UINT Attr);
 #define GUTTER      3
 #define PADDING     2
 
+#define PartNone       0
+#define PartLabel      1
+#define PartValue      2
+#define PartButton     3
+#define PartReset      4
+
 CInspectorGrid::CInspectorGrid()
 	: CWnd()
 {
@@ -157,13 +161,14 @@ CInspectorGrid::CInspectorGrid()
 	}
 
 	p_App = (LFApplication*)AfxGetApp();
-	m_ShowHeader = m_SortAlphabetic = m_Hover = FALSE;
+	m_ShowHeader = m_SortAlphabetic = m_Hover = m_PartPressed = FALSE;
 	m_pSortArray = NULL;
 	m_pHeader = NULL;
 	hThemeList = hThemeButton = NULL;
 	hIconResetNormal = hIconResetHot = NULL;
 	m_VScrollMax = m_VScrollPos = m_IconSize = 0;
 	m_HotItem = m_SelectedItem = -1;
+	m_HotPart = PartNone;
 
 	ENSURE(m_MultipleValues.LoadString(IDS_MULTIPLEVALUES));
 }
@@ -393,15 +398,62 @@ RECT CInspectorGrid::GetItemRect(INT Item)
 	return rect;
 }
 
-INT CInspectorGrid::HitTest(CPoint point)
+INT CInspectorGrid::HitTest(CPoint point, UINT* PartID)
 {
 	for (UINT a=0; a<m_Properties.m_ItemCount; a++)
 	{
 		RECT rect = GetItemRect(a);
 		if (PtInRect(&rect, point))
+		{
+			if (PartID)
+			{
+				if (point.x<m_LabelWidth+GUTTER)
+				{
+					*PartID = PartLabel;
+					return a;
+				}
+
+				Property* pProp = &m_Properties.m_Items[a];
+				CRect rectPart(m_LabelWidth+GUTTER, pProp->Top-m_VScrollPos, rect.right+1, pProp->Bottom-m_VScrollPos);
+
+				if ((pProp->Editable) && (pProp->pProperty->CanDelete()))
+				{
+					INT Offs = (rectPart.Height()-m_IconSize)/2;
+					CRect rectReset(rectPart.right-m_IconSize-Offs-2, rectPart.top+Offs, rectPart.right-Offs-2, rectPart.top+Offs+m_IconSize);
+					if (rectReset.PtInRect(point))
+					{
+						*PartID = PartReset;
+						return a;
+					}
+
+					rectPart.right -= m_IconSize+Offs+GUTTER+2;
+				}
+				else
+				{
+					rectPart.right -= GUTTER;
+				}
+
+				if ((pProp->Editable) && (pProp->pProperty->HasButton()))
+				{
+					CRect rectButton(rectPart);
+					rectButton.left = rectButton.right-rectButton.Height()-m_IconSize/2;
+
+					if (rectButton.PtInRect(point))
+					{
+						*PartID = PartButton;
+						return a;
+					}
+				}
+
+				*PartID = PartValue;
+			}
+
 			return a;
+		}
 	}
 
+	if (PartID)
+		*PartID = PartNone;
 	return -1;
 }
 
@@ -754,10 +806,10 @@ void CInspectorGrid::OnPaint()
 			rectLabel.left = rectLabel.right+GUTTER;
 			rectLabel.right = rect.Width();
 
-			if ((pProp->Editable) && (pProp->pProperty->CanDelete()) && (INT)a==m_HotItem)
+			if ((pProp->Editable) && (pProp->pProperty->CanDelete()) && ((INT)a==m_HotItem))
 			{
 				INT Offs = (rectLabel.Height()-m_IconSize)/2;
-				DrawIconEx(dc, rectLabel.right-m_IconSize-Offs-2, rectLabel.top+Offs, hIconResetNormal, m_IconSize, m_IconSize, 0, NULL, DI_NORMAL);
+				DrawIconEx(dc, rectLabel.right-m_IconSize-Offs-2, rectLabel.top+Offs, ((INT)a==m_HotItem) && (m_HotPart==PartReset) ? hIconResetHot : hIconResetNormal, m_IconSize, m_IconSize, 0, NULL, DI_NORMAL);
 				rectLabel.right -= m_IconSize+Offs+GUTTER+2;
 			}
 			else
@@ -765,7 +817,7 @@ void CInspectorGrid::OnPaint()
 				rectLabel.right -= GUTTER;
 			}
 
-			if ((pProp->Editable) && (pProp->pProperty->HasButton()) && (INT)a==m_HotItem)
+			if ((pProp->Editable) && (pProp->pProperty->HasButton()) && ((INT)a==m_HotItem))
 			{
 				CRect rectButton(rectLabel);
 				rectButton.left = rectButton.right-rectButton.Height()-m_IconSize/2;
@@ -774,12 +826,8 @@ void CInspectorGrid::OnPaint()
 				if (hThemeButton)
 				{
 					UINT State = PBS_NORMAL;
-/*					if(bIsFocused)
-						state = PBS_DEFAULTED;
-					if(bMouseOverButton)
-						state = PBS_HOT;
-					}*/
-					//State = PBS_PRESSED;
+					if (((INT)a==m_HotItem) && (m_HotPart==PartButton))
+						State = m_PartPressed ? PBS_PRESSED : PBS_HOT;
 					p_App->zDrawThemeBackground(hThemeButton, dc, BP_PUSHBUTTON, State, &rectButton, NULL);
 				}
 				else
@@ -871,7 +919,8 @@ void CInspectorGrid::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 void CInspectorGrid::OnMouseMove(UINT nFlags, CPoint point)
 {
 	BOOL Dragging = (GetCapture()==this);
-	INT Item = HitTest(point);
+	UINT Part;
+	INT Item = HitTest(point, &Part);
 
 	if (!m_Hover)
 	{
@@ -890,15 +939,25 @@ void CInspectorGrid::OnMouseMove(UINT nFlags, CPoint point)
 
 	if (!Dragging)
 	{
-		if (m_HotItem!=Item)
+		if ((m_HotItem!=Item) || (m_HotPart!=Part))
 		{
 			InvalidateItem(m_HotItem);
 			m_HotItem = Item;
+			m_HotPart = Part;
 			InvalidateItem(m_HotItem);
 		}
 
 		if (nFlags & MK_RBUTTON)
 			SetFocus();
+	}
+	else
+	{
+		BOOL PartPressed = (Item==m_SelectedItem) && (Part==m_HotPart);
+		if (m_PartPressed!=PartPressed)
+		{
+			m_PartPressed = PartPressed;
+			InvalidateItem(m_SelectedItem);
+		}
 	}
 }
 
@@ -909,6 +968,7 @@ void CInspectorGrid::OnMouseLeave()
 
 	m_Hover = FALSE;
 	m_HotItem = -1;
+	m_HotPart = PartNone;
 }
 
 void CInspectorGrid::OnMouseHover(UINT nFlags, CPoint point)
@@ -977,10 +1037,11 @@ void CInspectorGrid::OnLButtonDown(UINT /*nFlags*/, CPoint point)
 {
 	SetFocus();
 
-	INT Item = HitTest(point);
+	UINT Part;
+	INT Item = HitTest(point, & Part);
 	if (Item!=-1)
 	{
-		if (Item==m_SelectedItem)
+		if ((Item==m_SelectedItem) && (Item!=-1))
 		{
 			//m_EditLabel = m_SelectedItem;
 		}
@@ -988,9 +1049,14 @@ void CInspectorGrid::OnLButtonDown(UINT /*nFlags*/, CPoint point)
 		{
 			SelectItem(Item);
 		}
-	}
-	else
-	{
+
+		if (Part>=PartButton)
+		{
+			m_HotPart = Part;
+			m_PartPressed = TRUE;
+			SetCapture();
+			InvalidateItem(m_SelectedItem);
+		}
 	}
 }
 
@@ -998,25 +1064,36 @@ void CInspectorGrid::OnLButtonUp(UINT /*nFlags*/, CPoint point)
 {
 	if (GetCapture()==this)
 	{
-		INT Item = HitTest(point);
-		if (Item==m_SelectedItem)
-		{
-			// TODO
-		}
+		UINT Part;
+		INT Item = HitTest(point, & Part);
+		if ((Item==m_SelectedItem) && (Item!=-1))
+			switch (Part)
+			{
+			case PartReset:
+				ResetProperty(Item);
+				break;
+			case PartButton:
+				m_Properties.m_Items[Item].pProperty->OnClickButton();
+				break;
+			}
 
+		m_PartPressed = FALSE;
 		ReleaseCapture();
+		InvalidateItem(Item);
 	}
 }
 
 void CInspectorGrid::OnLButtonDblClk(UINT /*nFlags*/, CPoint point)
 {
+	m_PartPressed = FALSE;
 	ReleaseCapture();
 
-	INT Item = HitTest(point);
-	if (Item!=-1)
+	UINT Part;
+	INT Item = HitTest(point, &Part);
+	if ((Item!=-1) && (Part<=PartButton))
 	{
 		SelectItem(Item);
-		// TODO
+		// TODO: Edit
 	}
 }
 

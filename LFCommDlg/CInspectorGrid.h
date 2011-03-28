@@ -131,16 +131,18 @@ protected:
 	BOOL m_ShowHeader;
 	BOOL m_SortAlphabetic;
 	BOOL m_Hover;
+	BOOL m_PartPressed;
 	INT m_ScrollHeight;
 	INT m_VScrollPos;
 	INT m_VScrollMax;
 	INT m_HotItem;
+	UINT m_HotPart;
 	INT m_SelectedItem;
 
 	virtual void Init();
 
 	RECT GetItemRect(INT Item);
-	INT HitTest(CPoint point);
+	INT HitTest(CPoint point, UINT* PartID=NULL);
 	void InvalidateItem(INT Item);
 	void SelectItem(INT Item);
 	void ResetScrollbars();

@@ -79,7 +79,7 @@ protected:
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
-	afx_msg void OnPropertyChanged(WPARAM wparam, LPARAM lparam);
+	afx_msg LRESULT OnPropertyChanged(WPARAM wparam, LPARAM lparam);
 
 	afx_msg void OnTogglePreview();
 	afx_msg void OnAlphabetic();
