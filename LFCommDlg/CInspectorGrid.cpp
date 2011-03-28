@@ -599,6 +599,40 @@ void CInspectorGrid::InvalidateItem(INT Item)
 	InvalidateRect(&rect);
 }
 
+void CInspectorGrid::EnsureVisible(INT Item)
+{
+	if (Item==-1)
+		return;
+
+	CRect rect;
+	GetClientRect(&rect);
+
+	RECT rectItem = GetItemRect(Item);
+
+	SCROLLINFO si;
+	INT nInc;
+
+	// Vertikal
+	nInc = 0;
+	if (rectItem.bottom>rect.Height())
+		nInc = rectItem.bottom-rect.Height();
+	if (rectItem.top<nInc)
+		nInc = rectItem.top;
+
+	nInc = max(-m_VScrollPos, min(nInc, m_VScrollMax-m_VScrollPos));
+	if (nInc)
+	{
+		m_VScrollPos += nInc;
+		ScrollWindowEx(0, -nInc, NULL, NULL, NULL, NULL, SW_INVALIDATE);
+
+		ZeroMemory(&si, sizeof(si));
+		si.cbSize = sizeof(SCROLLINFO);
+		si.fMask = SIF_POS;
+		si.nPos = m_VScrollPos;
+		SetScrollInfo(SB_VERT, &si);
+	}
+}
+
 void CInspectorGrid::SelectItem(INT Item)
 {
 	if ((Item==m_SelectedItem) || (Item==-1))
@@ -609,7 +643,7 @@ void CInspectorGrid::SelectItem(INT Item)
 
 	InvalidateItem(m_SelectedItem);
 	m_SelectedItem = Item;
-//	EnsureVisible(Item);
+	EnsureVisible(Item);
 	InvalidateItem(Item);
 
 	ReleaseCapture();

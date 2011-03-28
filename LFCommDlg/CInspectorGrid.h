@@ -196,6 +196,7 @@ protected:
 	RECT GetItemRect(INT Item);
 	INT HitTest(CPoint point, UINT* PartID=NULL);
 	void InvalidateItem(INT Item);
+	void EnsureVisible(INT Item);
 	void SelectItem(INT Item);
 	void ResetScrollbars();
 	void AdjustScrollbars();
