@@ -443,9 +443,13 @@ void CInspectorWnd::OnSetFocus(CWnd* /*pOldWnd*/)
 
 void CInspectorWnd::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 {
-	if ((point.x==-1) && (point.y==-1))
+	if ((point.x<0) || (point.y<0))
 	{
-		point.x = point.y = 0;
+		CRect rect;
+		GetClientRect(rect);
+
+		point.x = (rect.left+rect.right)/2;
+		point.y = (rect.top+rect.bottom)/2;
 		ClientToScreen(&point);
 	}
 

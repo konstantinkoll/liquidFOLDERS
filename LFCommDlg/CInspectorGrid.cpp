@@ -238,9 +238,21 @@ CInspectorPropertyGPS::CInspectorPropertyGPS(LFVariantData* pData)
 {
 }
 
+HCURSOR CInspectorPropertyGPS::SetCursor(INT /*x*/)
+{
+	ASSERT(p_Parent);
+
+	return p_Parent->p_App->LoadStandardCursor(IDC_ARROW);
+}
+
 BOOL CInspectorPropertyGPS::HasButton()
 {
 	return TRUE;
+}
+
+BOOL CInspectorPropertyGPS::OnClickValue(INT /*x*/)
+{
+	return FALSE;
 }
 
 void CInspectorPropertyGPS::OnClickButton()
@@ -790,6 +802,8 @@ void CInspectorGrid::NotifyOwner(SHORT Attr1, SHORT Attr2, SHORT Attr3)
 		m_Properties.m_Items[Attr3].pProperty->m_Multiple = FALSE;
 		InvalidateItem(Attr3);
 	}
+
+	m_TooltipCtrl.Deactivate();
 
 	GetOwner()->PostMessage(WM_PROPERTYCHANGED, Attr1, Attr2 | (Attr3 << 16));
 }

@@ -731,7 +731,7 @@ void CExplorerTree::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 		return;
 
 	HTREEITEM hItem = NULL;
-	if ((point.x==-1) && (point.y==-1))
+	if ((point.x<0) && (point.y<0))
 	{
 		hItem = GetSelectedItem();
 		if (!hItem)
@@ -741,7 +741,7 @@ void CExplorerTree::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 		if (GetItemRect(hItem, rectItem, FALSE))
 		{
 			point.x = rectItem.left;
-			point.y = rectItem.bottom + 1;
+			point.y = rectItem.bottom+1;
 			ClientToScreen(&point);
 		}
 	}

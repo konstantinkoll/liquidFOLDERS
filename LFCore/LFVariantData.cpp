@@ -167,6 +167,8 @@ void ToString(void* value, unsigned int type, wchar_t* str, size_t cCount)
 		case LFTypeRating:
 			assert(*((unsigned char*)value)<=LFMaxRating);
 			swprintf_s(str, cCount, L"%d", *((unsigned char*)value)/2);
+			if (*((unsigned char*)value)%2)
+				wcscat_s(str, cCount, L"½");
 			return;
 		case LFTypeUINT:
 			LFUINTToString(*((unsigned int*)value), str, cCount);
@@ -399,10 +401,13 @@ LFCore_API void LFVariantDataFromString(LFVariantData* v, wchar_t* str)
 			break;
 		case LFTypeRating:
 			if ((str[0]>=L'0') && (str[0]<=L'5'))
-				if (sz==1)
+				if (sz<=2)
 				{
 					v->IsNull = false;
 					v->Rating = (unsigned char)((str[0]-L'0')*2);
+					if (sz==2)
+						if (str[1]==L'½')
+							v->Rating++;
 					return;
 				}
 			if ((sz>=1) && (sz<=5))

@@ -96,6 +96,8 @@ public:
 	CInspectorPropertyGPS(LFVariantData* pData);
 
 	virtual BOOL HasButton();
+	virtual HCURSOR SetCursor(INT x);
+	virtual BOOL OnClickValue(INT x);
 	virtual void OnClickButton();
 };
 

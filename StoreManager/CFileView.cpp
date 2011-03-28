@@ -1497,7 +1497,7 @@ BOOL CFileView::OnSetCursor(CWnd* /*pWnd*/, UINT /*nHitTest*/, UINT /*message*/)
 void CFileView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 {
 	INT idx = -1;
-	if ((point.x==-1) && (point.y==-1))
+	if ((point.x<0) || (point.y<0))
 	{
 		idx = GetSelectedItem();
 
@@ -1505,7 +1505,7 @@ void CFileView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 		{
 			FVItemData* d = GetItemData(idx);
 			point.x = d->Rect.left-m_HScrollPos;
-			point.y = d->Rect.top-m_VScrollPos+(INT)m_HeaderHeight;
+			point.y = d->Rect.bottom-m_VScrollPos+(INT)m_HeaderHeight+1;
 			ClientToScreen(&point);
 		}
 	}

@@ -2228,7 +2228,7 @@ void CTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 		return;
 
 	CPoint item(-1, -1);
-	if ((point.x==-1) && (point.y==-1))
+	if ((point.x<0) || (point.y<0))
 	{
 		if ((m_SelectedItem.x==-1) || (m_SelectedItem.y==-1))
 		{
