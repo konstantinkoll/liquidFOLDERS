@@ -16,6 +16,8 @@ class AFX_EXT_CLASS CInspectorGrid;
 
 class AFX_EXT_CLASS CInspectorProperty
 {
+friend class CInspectorGrid;
+
 public:
 	CInspectorProperty(LFVariantData* pData);
 

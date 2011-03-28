@@ -606,6 +606,8 @@ void CInspectorGrid::ResetProperty(UINT Attr)
 	ASSERT(m_Properties.m_Items[Attr].Editable);
 
 	LFGetNullVariantData(m_Properties.m_Items[Attr].pProperty->GetData());
+	m_Properties.m_Items[Attr].pProperty->m_Modified = TRUE;
+
 	NotifyOwner((SHORT)Attr);
 }
 
