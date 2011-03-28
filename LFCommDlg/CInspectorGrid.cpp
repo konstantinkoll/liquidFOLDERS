@@ -35,6 +35,8 @@ void CInspectorProperty::ToString(WCHAR* tmpStr, INT nCount)
 
 void CInspectorProperty::DrawValue(CDC& dc, CRect rect)
 {
+	ASSERT(p_Parent);
+
 	WCHAR tmpStr[256];
 	ToString(tmpStr, 256);
 
@@ -42,6 +44,13 @@ void CInspectorProperty::DrawValue(CDC& dc, CRect rect)
 	dc.DrawText(tmpStr, -1, rect, DT_LEFT | DT_VCENTER | DT_END_ELLIPSIS | DT_SINGLELINE);
 	if (pOldFont)
 		dc.SelectObject(pOldFont);
+}
+
+HCURSOR CInspectorProperty::SetCursor(INT /*x*/)
+{
+	ASSERT(p_Parent);
+
+	return p_Parent->p_App->LoadStandardCursor(IDC_IBEAM);
 }
 
 void CInspectorProperty::OnClickButton()
@@ -128,6 +137,13 @@ void CInspectorPropertyRating::DrawValue(CDC& dc, CRect rect)
 
 	SelectObject(hdcMem, hbmOld);
 	DeleteDC(hdcMem);
+}
+
+HCURSOR CInspectorPropertyRating::SetCursor(INT x)
+{
+	ASSERT(p_Parent);
+
+	return p_Parent->p_App->LoadStandardCursor(x<6 ? IDC_HAND : ((x<=RatingBitmapWidth+6) && ((x-6)%18<16)) ? IDC_HAND : IDC_ARROW);
 }
 
 BOOL CInspectorPropertyRating::CanDelete()
@@ -542,7 +558,7 @@ void CInspectorGrid::InvalidateItem(INT Item)
 
 void CInspectorGrid::SelectItem(INT Item)
 {
-	if (Item==m_SelectedItem)
+	if ((Item==m_SelectedItem) || (Item==-1))
 		return;
 
 	if (!m_Properties.m_Items[Item].Visible)
@@ -552,7 +568,6 @@ void CInspectorGrid::SelectItem(INT Item)
 	m_SelectedItem = Item;
 //	EnsureVisible(Item);
 	InvalidateItem(Item);
-//	m_EditLabel = CPoint(-1, -1);
 
 	ReleaseCapture();
 }
@@ -778,6 +793,7 @@ BEGIN_MESSAGE_MAP(CInspectorGrid, CWnd)
 	ON_WM_RBUTTONDOWN()
 	ON_WM_SETFOCUS()
 	ON_WM_KILLFOCUS()
+	ON_WM_SETCURSOR()
 END_MESSAGE_MAP()
 
 INT CInspectorGrid::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -1072,26 +1088,20 @@ void CInspectorGrid::OnMouseHover(UINT nFlags, CPoint point)
 	if ((nFlags & (MK_LBUTTON | MK_MBUTTON | MK_RBUTTON | MK_XBUTTON1 | MK_XBUTTON2))==0)
 	{
 		if ((m_HotItem!=-1)/* && (!p_Edit)*/)
-			//if (m_HotItem==m_EditLabel)
-			//{
-			//	m_TooltipCtrl.Deactivate();
-			//	EditLabel(m_EditLabel);
-			//}
-			//else
-				if (!m_TooltipCtrl.IsWindowVisible())
-				{
-					Property* pProp = &m_Properties.m_Items[m_HotItem];
-					ASSERT(pProp);
+			if (!m_TooltipCtrl.IsWindowVisible())
+			{
+				Property* pProp = &m_Properties.m_Items[m_HotItem];
+				ASSERT(pProp);
 
-					INT idx = GetAttributeIconIndex(m_HotItem);
-					HICON hIcon = (idx!=-1) ? m_AttributeIcons.ExtractIcon(idx) : NULL;
+				INT idx = GetAttributeIconIndex(m_HotItem);
+				HICON hIcon = (idx!=-1) ? m_AttributeIcons.ExtractIcon(idx) : NULL;
 
-					WCHAR tmpStr[256];
-					pProp->pProperty->ToString(tmpStr, 256);
+				WCHAR tmpStr[256];
+				pProp->pProperty->ToString(tmpStr, 256);
 
-					ClientToScreen(&point);
-					m_TooltipCtrl.Track(point, hIcon, hIcon ? CSize(32, 32) : CSize(0, 0), pProp->Name, tmpStr);
-				}
+				ClientToScreen(&point);
+				m_TooltipCtrl.Track(point, hIcon, hIcon ? CSize(32, 32) : CSize(0, 0), pProp->Name, tmpStr);
+			}
 	}
 	else
 	{
@@ -1137,14 +1147,7 @@ void CInspectorGrid::OnLButtonDown(UINT /*nFlags*/, CPoint point)
 	INT Item = HitTest(point, & Part);
 	if (Item!=-1)
 	{
-		if ((Item==m_SelectedItem) && (Item!=-1))
-		{
-			//m_EditLabel = m_SelectedItem;
-		}
-		else
-		{
-			SelectItem(Item);
-		}
+		SelectItem(Item);
 
 		if (Part>=PartButton)
 		{
@@ -1207,4 +1210,28 @@ void CInspectorGrid::OnSetFocus(CWnd* /*pOldWnd*/)
 void CInspectorGrid::OnKillFocus(CWnd* /*pNewWnd*/)
 {
 	Invalidate();
+}
+
+BOOL CInspectorGrid::OnSetCursor(CWnd* /*pWnd*/, UINT /*nHitTest*/, UINT /*message*/)
+{
+	CPoint point;
+	GetCursorPos(&point);
+	ScreenToClient(&point);
+
+	UINT Part;
+	INT Item = HitTest(point, &Part);
+
+	if ((Item!=-1) && (Part==PartValue))
+	{
+		Property* pProp = &m_Properties.m_Items[Item];
+
+		if (pProp->Editable)
+		{
+			SetCursor(pProp->pProperty->SetCursor(point.x-m_LabelWidth-GUTTER));
+			return TRUE;
+		}
+	}
+
+	SetCursor(p_App->LoadStandardCursor(IDC_ARROW));
+	return TRUE;
 }

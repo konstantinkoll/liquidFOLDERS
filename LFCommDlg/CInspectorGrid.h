@@ -23,6 +23,7 @@ public:
 
 	virtual void ToString(WCHAR* tmpStr, INT nCount);
 	virtual void DrawValue(CDC& dc, CRect rect);
+	virtual HCURSOR SetCursor(INT x);
 	virtual BOOL CanDelete();
 	virtual BOOL HasButton();
 	virtual void OnClickButton();
@@ -62,6 +63,7 @@ public:
 	CInspectorPropertyRating(LFVariantData* pData);
 
 	virtual void DrawValue(CDC& dc, CRect rect);
+	virtual HCURSOR SetCursor(INT x);
 	virtual BOOL CanDelete();
 };
 
@@ -215,6 +217,7 @@ protected:
 	afx_msg void OnRButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
 	afx_msg void OnKillFocus(CWnd* pNewWnd);
+	afx_msg BOOL OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message);
 	DECLARE_MESSAGE_MAP()
 
 private:
