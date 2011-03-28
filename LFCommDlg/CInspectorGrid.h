@@ -26,6 +26,7 @@ public:
 	virtual HCURSOR SetCursor(INT x);
 	virtual BOOL CanDelete();
 	virtual BOOL HasButton();
+	virtual BOOL OnClickValue(INT x);
 	virtual void OnClickButton();
 
 	void SetParent(CInspectorGrid* pParent);
@@ -65,6 +66,7 @@ public:
 	virtual void DrawValue(CDC& dc, CRect rect);
 	virtual HCURSOR SetCursor(INT x);
 	virtual BOOL CanDelete();
+	virtual BOOL OnClickValue(INT x);
 };
 
 

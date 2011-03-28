@@ -53,6 +53,11 @@ HCURSOR CInspectorProperty::SetCursor(INT /*x*/)
 	return p_Parent->p_App->LoadStandardCursor(IDC_IBEAM);
 }
 
+BOOL CInspectorProperty::OnClickValue(INT /*x*/)
+{
+	return TRUE;
+}
+
 void CInspectorProperty::OnClickButton()
 {
 }
@@ -103,6 +108,8 @@ BOOL CInspectorPropertyTags::HasButton()
 
 void CInspectorPropertyTags::OnClickButton()
 {
+	ASSERT(p_Parent);
+
 	LFEditTagsDlg dlg(p_Parent, m_Multiple ? _T("") : p_Data->UnicodeArray, p_Parent->m_StoreID);
 
 	if (dlg.DoModal()==IDOK)
@@ -124,11 +131,11 @@ CInspectorPropertyRating::CInspectorPropertyRating(LFVariantData* pData)
 
 void CInspectorPropertyRating::DrawValue(CDC& dc, CRect rect)
 {
-	LFApplication* pApp = (LFApplication*)AfxGetApp();
+	ASSERT(p_Parent);
 
 	HDC hdcMem = CreateCompatibleDC(dc);
 	UCHAR level = m_Multiple ? 0 : p_Data->Rating;
-	HBITMAP hbmOld = (HBITMAP)SelectObject(hdcMem, p_Data->Attr==LFAttrRating ? pApp->m_RatingBitmaps[level] : pApp->m_PriorityBitmaps[level]);
+	HBITMAP hbmOld = (HBITMAP)SelectObject(hdcMem, p_Data->Attr==LFAttrRating ? p_Parent->p_App->m_RatingBitmaps[level] : p_Parent->p_App->m_PriorityBitmaps[level]);
 
 	INT w = min(rect.Width()-6, RatingBitmapWidth);
 	INT h = min(rect.Height(), RatingBitmapHeight);
@@ -143,11 +150,31 @@ HCURSOR CInspectorPropertyRating::SetCursor(INT x)
 {
 	ASSERT(p_Parent);
 
-	return p_Parent->p_App->LoadStandardCursor(x<6 ? IDC_HAND : ((x<=RatingBitmapWidth+6) && ((x-6)%18<16)) ? IDC_HAND : IDC_ARROW);
+	return p_Parent->p_App->LoadStandardCursor(x<6 ? IDC_HAND : ((x<RatingBitmapWidth+6) && ((x-6)%18<16)) ? IDC_HAND : IDC_ARROW);
 }
 
 BOOL CInspectorPropertyRating::CanDelete()
 {
+	return FALSE;
+}
+
+BOOL CInspectorPropertyRating::OnClickValue(INT x)
+{
+	ASSERT(p_Parent);
+
+	if (x<RatingBitmapWidth+6)
+		if ((x<6) || ((x-6)%18<16))
+		{
+			INT Rating = (x<6) ? 0 : 2*((x-6)/18)+((x-6)%18>8)+1;
+
+			if (p_Data->Rating!=(UCHAR)Rating)
+			{
+				p_Data->IsNull = false;
+				p_Data->Rating = (UCHAR)Rating;
+				p_Parent->NotifyOwner((SHORT)p_Data->Attr);
+			}
+		}
+
 	return FALSE;
 }
 
@@ -169,6 +196,8 @@ BOOL CInspectorPropertyIATA::HasButton()
 
 void CInspectorPropertyIATA::OnClickButton()
 {
+	ASSERT(p_Parent);
+
 	LFSelectLocationIATADlg dlg(IDD_SELECTIATA, p_Parent, &p_Data->AnsiString[0]);
 
 	if (dlg.DoModal()==IDOK)
@@ -216,6 +245,8 @@ BOOL CInspectorPropertyGPS::HasButton()
 
 void CInspectorPropertyGPS::OnClickButton()
 {
+	ASSERT(p_Parent);
+
 	LFSelectLocationGPSDlg dlg(p_Parent, p_Data->GeoCoordinates);
 
 	if (dlg.DoModal()==IDOK)
@@ -1161,11 +1192,11 @@ void CInspectorGrid::OnLButtonDown(UINT /*nFlags*/, CPoint point)
 
 void CInspectorGrid::OnLButtonUp(UINT /*nFlags*/, CPoint point)
 {
+	UINT Part;
+	INT Item = HitTest(point, &Part);
+
 	if (GetCapture()==this)
 	{
-		UINT Part;
-		INT Item = HitTest(point, &Part);
-
 		m_PartPressed = FALSE;
 		ReleaseCapture();
 		InvalidateItem(Item);
@@ -1173,14 +1204,22 @@ void CInspectorGrid::OnLButtonUp(UINT /*nFlags*/, CPoint point)
 		if ((Item==m_SelectedItem) && (Item!=-1))
 			switch (Part)
 			{
-			case PartReset:
-				ResetProperty(Item);
-				break;
 			case PartButton:
 				m_Properties.m_Items[Item].pProperty->OnClickButton();
 				break;
+			case PartReset:
+				ResetProperty(Item);
+				break;
 			}
 	}
+	else
+		if ((Item==m_SelectedItem) && (Item!=-1) && (Part==PartValue))
+		{
+			Property* pProp = &m_Properties.m_Items[Item];
+
+			if (pProp->Editable)
+				pProp->pProperty->OnClickValue(point.x-m_LabelWidth-GUTTER);
+		}
 }
 
 void CInspectorGrid::OnLButtonDblClk(UINT /*nFlags*/, CPoint point)
