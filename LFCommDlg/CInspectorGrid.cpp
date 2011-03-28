@@ -53,6 +53,39 @@ HCURSOR CInspectorProperty::SetCursor(INT /*x*/)
 	return p_Parent->p_App->LoadStandardCursor(IDC_IBEAM);
 }
 
+CString CInspectorProperty::GetValidChars()
+{
+	return _T("");
+}
+
+void CInspectorProperty::OnSetString(CString Value)
+{
+	Value.Trim();
+	if (p_Data->Attr==LFAttrLanguage)
+		Value.MakeUpper();
+
+	WCHAR tmpStr[256];
+	ToString(tmpStr, 256);
+
+	if (((p_Data->Attr!=LFAttrFileName) || (!Value.IsEmpty())) && (wcscmp(tmpStr, Value.GetBuffer())!=0))
+	{
+		p_Data->IsNull = false;
+
+		switch (p_Data->Type)
+		{
+		case LFTypeUnicodeString:
+		case LFTypeUnicodeArray:
+			wcscpy_s(p_Data->UnicodeString, 256, Value);
+			break;
+		case LFTypeAnsiString:
+			WideCharToMultiByte(CP_ACP, 0, Value, -1, p_Data->AnsiString, 256, NULL, NULL);
+			break;
+		}
+
+		p_Parent->NotifyOwner((SHORT)p_Data->Attr);
+	}
+}
+
 BOOL CInspectorProperty::OnClickValue(INT /*x*/)
 {
 	return TRUE;
@@ -189,9 +222,21 @@ CInspectorPropertyIATA::CInspectorPropertyIATA(LFVariantData* pData, LFVariantDa
 	p_LocationGPS = pLocationGPS;
 }
 
+CString CInspectorPropertyIATA::GetValidChars()
+{
+	return _T("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz");
+}
+
 BOOL CInspectorPropertyIATA::HasButton()
 {
 	return TRUE;
+}
+
+void CInspectorPropertyIATA::OnSetString(CString Value)
+{
+	Value.MakeUpper();
+
+	CInspectorProperty::OnSetString(Value);
 }
 
 void CInspectorPropertyIATA::OnClickButton()
@@ -327,14 +372,17 @@ CInspectorGrid::CInspectorGrid()
 	hThemeList = hThemeButton = NULL;
 	hIconResetNormal = hIconResetHot = NULL;
 	m_VScrollMax = m_VScrollPos = m_IconSize = 0;
-	m_HotItem = m_SelectedItem = -1;
+	m_HotItem = m_SelectedItem = m_EditItem = -1;
 	m_HotPart = PartNone;
+	p_Edit = NULL;
 
 	ENSURE(m_MultipleValues.LoadString(IDS_MULTIPLEVALUES));
 }
 
 CInspectorGrid::~CInspectorGrid()
 {
+	DestroyEdit();
+
 	if (m_pSortArray)
 		delete[] m_pSortArray;
 }
@@ -413,6 +461,47 @@ void CInspectorGrid::CreateFonts()
 	m_ItalicFont.CreateFontIndirect(&lf);
 }
 
+BOOL CInspectorGrid::PreTranslateMessage(MSG* pMsg)
+{
+	switch (pMsg->message)
+	{
+	case WM_KEYDOWN:
+		if (p_Edit)
+			switch (pMsg->wParam)
+			{
+			case VK_EXECUTE:
+			case VK_RETURN:
+				DestroyEdit(TRUE);
+				return TRUE;
+			case VK_ESCAPE:
+				DestroyEdit(FALSE);
+				return TRUE;
+			}
+		break;
+	case WM_MOUSEWHEEL:
+	case WM_MOUSEHWHEEL:
+		if (p_Edit)
+			return TRUE;
+		break;
+	case WM_LBUTTONDOWN:
+	case WM_RBUTTONDOWN:
+	case WM_MBUTTONDOWN:
+	case WM_LBUTTONUP:
+	case WM_RBUTTONUP:
+	case WM_MBUTTONUP:
+	case WM_NCLBUTTONDOWN:
+	case WM_NCRBUTTONDOWN:
+	case WM_NCMBUTTONDOWN:
+	case WM_NCLBUTTONUP:
+	case WM_NCRBUTTONUP:
+	case WM_NCMBUTTONUP:
+		m_TooltipCtrl.Deactivate();
+		break;
+	}
+
+	return CWnd::PreTranslateMessage(pMsg);
+}
+
 void CInspectorGrid::AddProperty(CInspectorProperty* pProperty, UINT Category, WCHAR* Name, BOOL Editable)
 {
 	pProperty->SetParent(this);
@@ -437,6 +526,8 @@ void CInspectorGrid::AddProperty(CInspectorProperty* pProperty, UINT Category, W
 
 	if (!IsWindow(m_TooltipCtrl))
 		m_TooltipCtrl.Create(this);
+
+	DestroyEdit();
 }
 
 void CInspectorGrid::AddAttributes(LFVariantData* pData)
@@ -474,12 +565,16 @@ void CInspectorGrid::AddAttributes(LFVariantData* pData)
 
 void CInspectorGrid::ShowHeader(BOOL ShowHeader)
 {
+	DestroyEdit();
+
 	m_ShowHeader = ShowHeader;
 	AdjustLayout();
 }
 
 void CInspectorGrid::SetAlphabeticMode(BOOL SortAlphabetic)
 {
+	DestroyEdit();
+
 	m_SortAlphabetic = SortAlphabetic;
 	MakeSortArrayDirty();
 	AdjustLayout();
@@ -552,7 +647,7 @@ INT CInspectorGrid::HitTest(CPoint point, UINT* PartID)
 				Property* pProp = &m_Properties.m_Items[a];
 				CRect rectPart(m_LabelWidth+GUTTER, pProp->Top-m_VScrollPos, rect.right+1, pProp->Bottom-m_VScrollPos);
 
-				if ((pProp->Editable) && (pProp->pProperty->CanDelete()))
+				if ((pProp->Editable) && (pProp->pProperty->CanDelete()) && ((INT)a!=m_EditItem))
 				{
 					INT Offs = (rectPart.Height()-m_IconSize)/2;
 					CRect rectReset(rectPart.right-m_IconSize-Offs-2, rectPart.top+Offs, rectPart.right-Offs-2, rectPart.top+Offs+m_IconSize);
@@ -569,7 +664,7 @@ INT CInspectorGrid::HitTest(CPoint point, UINT* PartID)
 					rectPart.right -= GUTTER;
 				}
 
-				if ((pProp->Editable) && (pProp->pProperty->HasButton()))
+				if ((pProp->Editable) && (pProp->pProperty->HasButton()) && ((INT)a!=m_EditItem))
 				{
 					CRect rectButton(rectPart);
 					rectButton.left = rectButton.right-rectButton.Height()-m_IconSize/2;
@@ -853,6 +948,59 @@ void CInspectorGrid::ResetProperty(UINT Attr)
 	NotifyOwner((SHORT)Attr);
 }
 
+void CInspectorGrid::EditProperty(UINT Attr)
+{
+	ASSERT(Attr<m_Properties.m_ItemCount);
+	m_EditItem = -1;
+
+	Property* pProp = &m_Properties.m_Items[Attr];
+	if (pProp->Editable)
+	{
+		m_EditItem = Attr;
+		InvalidateItem(Attr);
+		EnsureVisible(Attr);
+
+		RECT rect = GetItemRect(Attr);
+		rect.top += 2;
+		rect.bottom -=2;
+		rect.left += m_LabelWidth+GUTTER-1;
+
+		WCHAR tmpStr[256];
+		pProp->pProperty->ToString(tmpStr, 256);
+
+		p_Edit = new CMFCMaskedEdit();
+		p_Edit->Create(WS_CHILD | WS_VISIBLE | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | ES_AUTOHSCROLL, rect, this, 1);
+		p_Edit->SetWindowText(tmpStr);
+		p_Edit->SetSel(0, (INT)wcslen(tmpStr));
+		p_Edit->SetValidChars(pProp->pProperty->GetValidChars());
+		if (Attr<LFAttributeCount)
+			p_Edit->SetLimitText(p_App->m_Attributes[Attr]->cCharacters);
+		p_Edit->SendMessage(WM_SETFONT, (WPARAM)GetStockObject(DEFAULT_GUI_FONT));
+		p_Edit->SetFocus();
+	}
+}
+
+void CInspectorGrid::DestroyEdit(BOOL Accept)
+{
+	if (p_Edit)
+	{
+		INT Item = m_EditItem;
+
+		CEdit* victim = p_Edit;
+		p_Edit = NULL;
+
+		CString Value;
+		victim->GetWindowText(Value);
+		victim->DestroyWindow();
+		delete victim;
+
+		if ((Accept) && (!Value.IsEmpty()) && (Item!=-1))
+			m_Properties.m_Items[Item].pProperty->OnSetString(Value);
+	}
+
+	m_EditItem = -1;
+}
+
 
 BEGIN_MESSAGE_MAP(CInspectorGrid, CWnd)
 	ON_WM_CREATE()
@@ -873,6 +1021,7 @@ BEGIN_MESSAGE_MAP(CInspectorGrid, CWnd)
 	ON_WM_SETFOCUS()
 	ON_WM_KILLFOCUS()
 	ON_WM_SETCURSOR()
+	ON_EN_KILLFOCUS(1, OnDestroyEdit)
 END_MESSAGE_MAP()
 
 INT CInspectorGrid::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -979,7 +1128,7 @@ void CInspectorGrid::OnPaint()
 			}
 			else
 			{
-				if ((GetFocus()==this) && ((INT)a==m_SelectedItem))
+				if ((GetFocus()==this) && ((INT)a==m_SelectedItem) && ((INT)a!=m_EditItem))
 				{
 					dc.FillSolidRect(&rectProp, GetSysColor(COLOR_HIGHLIGHT));
 					dc.SetTextColor(0x000000);
@@ -997,7 +1146,7 @@ void CInspectorGrid::OnPaint()
 			rectLabel.left = rectLabel.right+GUTTER;
 			rectLabel.right = rect.Width();
 
-			if ((pProp->Editable) && (pProp->pProperty->CanDelete()) && ((INT)a==m_HotItem))
+			if ((pProp->Editable) && (pProp->pProperty->CanDelete()) && ((INT)a==m_HotItem) && ((INT)a!=m_EditItem))
 			{
 				INT Offs = (rectLabel.Height()-m_IconSize)/2;
 				DrawIconEx(dc, rectLabel.right-m_IconSize-Offs-2, rectLabel.top+Offs, ((INT)a==m_HotItem) && (m_HotPart==PartReset) ? hIconResetHot : hIconResetNormal, m_IconSize, m_IconSize, 0, NULL, DI_NORMAL);
@@ -1166,7 +1315,7 @@ void CInspectorGrid::OnMouseHover(UINT nFlags, CPoint point)
 {
 	if ((nFlags & (MK_LBUTTON | MK_MBUTTON | MK_RBUTTON | MK_XBUTTON1 | MK_XBUTTON2))==0)
 	{
-		if ((m_HotItem!=-1)/* && (!p_Edit)*/)
+		if ((m_HotItem!=-1) && (!p_Edit))
 			if (!m_TooltipCtrl.IsWindowVisible())
 			{
 				Property* pProp = &m_Properties.m_Items[m_HotItem];
@@ -1266,7 +1415,8 @@ void CInspectorGrid::OnLButtonUp(UINT /*nFlags*/, CPoint point)
 			Property* pProp = &m_Properties.m_Items[Item];
 
 			if (pProp->Editable)
-				pProp->pProperty->OnClickValue(point.x-m_LabelWidth-GUTTER);
+				if (pProp->pProperty->OnClickValue(point.x-m_LabelWidth-GUTTER))
+					EditProperty(Item);
 		}
 }
 
@@ -1280,7 +1430,7 @@ void CInspectorGrid::OnLButtonDblClk(UINT /*nFlags*/, CPoint point)
 	if ((Item!=-1) && (Part<=PartButton))
 	{
 		SelectItem(Item);
-		// TODO: Edit
+		EditProperty(Item);
 	}
 }
 
@@ -1321,4 +1471,9 @@ BOOL CInspectorGrid::OnSetCursor(CWnd* /*pWnd*/, UINT /*nHitTest*/, UINT /*messa
 
 	SetCursor(p_App->LoadStandardCursor(IDC_ARROW));
 	return TRUE;
+}
+
+void CInspectorGrid::OnDestroyEdit()
+{
+	DestroyEdit(TRUE);
 }

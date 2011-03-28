@@ -24,8 +24,10 @@ public:
 	virtual void ToString(WCHAR* tmpStr, INT nCount);
 	virtual void DrawValue(CDC& dc, CRect rect);
 	virtual HCURSOR SetCursor(INT x);
+	virtual CString GetValidChars();
 	virtual BOOL CanDelete();
 	virtual BOOL HasButton();
+	virtual void OnSetString(CString Value);
 	virtual BOOL OnClickValue(INT x);
 	virtual void OnClickButton();
 
@@ -78,7 +80,9 @@ class AFX_EXT_CLASS CInspectorPropertyIATA : public CInspectorProperty
 public:
 	CInspectorPropertyIATA(LFVariantData* pData, LFVariantData* pLocationName, LFVariantData* pLocationGPS);
 
+	virtual CString GetValidChars();
 	virtual BOOL HasButton();
+	virtual void OnSetString(CString Value);
 	virtual void OnClickButton();
 
 protected:
@@ -150,6 +154,7 @@ public:
 	~CInspectorGrid();
 
 	virtual void PreSubclassWindow();
+	virtual BOOL PreTranslateMessage(MSG* pMsg);
 	virtual void AdjustLayout();
 
 	BOOL Create(CWnd* pParentWnd, UINT nID, CInspectorHeader* pHeader=NULL);
@@ -173,6 +178,7 @@ protected:
 	HICON hIconResetHot;
 	LFTooltip m_TooltipCtrl;
 	CInspectorHeader* m_pHeader;
+	CMFCMaskedEdit* p_Edit;
 	CString m_MultipleValues;
 	CFont m_BoldFont;
 	CFont m_ItalicFont;
@@ -190,6 +196,7 @@ protected:
 	INT m_HotItem;
 	UINT m_HotPart;
 	INT m_SelectedItem;
+	INT m_EditItem;
 
 	virtual void Init();
 
@@ -204,6 +211,8 @@ protected:
 	void DrawCategory(CDC& dc, CRect& rectCategory, WCHAR* Text);
 	void NotifyOwner(SHORT Attr1, SHORT Attr2=-1, SHORT Attr3=-1);
 	void ResetProperty(UINT Attr);
+	void EditProperty(UINT Attr);
+	void DestroyEdit(BOOL Accept=FALSE);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();
@@ -223,6 +232,7 @@ protected:
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
 	afx_msg void OnKillFocus(CWnd* pNewWnd);
 	afx_msg BOOL OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message);
+	afx_msg void OnDestroyEdit();
 	DECLARE_MESSAGE_MAP()
 
 private:
