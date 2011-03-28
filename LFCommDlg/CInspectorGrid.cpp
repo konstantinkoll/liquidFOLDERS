@@ -965,17 +965,26 @@ void CInspectorGrid::EditProperty(UINT Attr)
 		rect.bottom -=2;
 		rect.left += m_LabelWidth+GUTTER-1;
 
-		WCHAR tmpStr[256];
-		pProp->pProperty->ToString(tmpStr, 256);
-
 		p_Edit = new CMFCMaskedEdit();
 		p_Edit->Create(WS_CHILD | WS_VISIBLE | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | ES_AUTOHSCROLL, rect, this, 1);
-		p_Edit->SetWindowText(tmpStr);
-		p_Edit->SetSel(0, (INT)wcslen(tmpStr));
+		if (!pProp->pProperty->m_Multiple)
+		{
+			WCHAR tmpStr[256];
+			pProp->pProperty->ToString(tmpStr, 256);
+			p_Edit->SetWindowText(tmpStr);
+			p_Edit->SetSel(0, (INT)wcslen(tmpStr));
+		}
 		p_Edit->SetValidChars(pProp->pProperty->GetValidChars());
 		if (Attr<LFAttributeCount)
 			p_Edit->SetLimitText(p_App->m_Attributes[Attr]->cCharacters);
-		p_Edit->SendMessage(WM_SETFONT, (WPARAM)GetStockObject(DEFAULT_GUI_FONT));
+		if (pProp->pProperty->m_Modified)
+		{
+			p_Edit->SetFont(&m_BoldFont);
+		}
+		else
+		{
+			p_Edit->SendMessage(WM_SETFONT, (WPARAM)GetStockObject(DEFAULT_GUI_FONT));
+		}
 		p_Edit->SetFocus();
 	}
 }
@@ -994,7 +1003,7 @@ void CInspectorGrid::DestroyEdit(BOOL Accept)
 		victim->DestroyWindow();
 		delete victim;
 
-		if ((Accept) && (!Value.IsEmpty()) && (Item!=-1))
+		if ((Accept) && (Item!=-1))
 			m_Properties.m_Items[Item].pProperty->OnSetString(Value);
 	}
 
@@ -1128,7 +1137,7 @@ void CInspectorGrid::OnPaint()
 			}
 			else
 			{
-				if ((GetFocus()==this) && ((INT)a==m_SelectedItem) && ((INT)a!=m_EditItem))
+				if ((GetFocus()==this) && ((INT)a==m_SelectedItem))
 				{
 					dc.FillSolidRect(&rectProp, GetSysColor(COLOR_HIGHLIGHT));
 					dc.SetTextColor(0x000000);
@@ -1157,24 +1166,47 @@ void CInspectorGrid::OnPaint()
 				rectLabel.right -= GUTTER;
 			}
 
-			if ((pProp->Editable) && (pProp->pProperty->HasButton()) && ((INT)a==m_HotItem))
+			if ((pProp->Editable) && (pProp->pProperty->HasButton()) && ((INT)a==m_HotItem) && ((INT)a!=m_EditItem))
 			{
 				CRect rectButton(rectLabel);
 				rectButton.left = rectButton.right-rectButton.Height()-m_IconSize/2;
 				rectLabel.right -= rectButton.Width()+GUTTER;
 
+				BOOL Hot = ((INT)a==m_HotItem) && (m_HotPart==PartButton);
+				BOOL Pressed = Hot && m_PartPressed;
+
 				if (hThemeButton)
 				{
-					UINT State = PBS_NORMAL;
-					if (((INT)a==m_HotItem) && (m_HotPart==PartButton))
-						State = m_PartPressed ? PBS_PRESSED : PBS_HOT;
+					rectButton.InflateRect(1, 1);
+
+					UINT State = Pressed ? PBS_PRESSED : Hot ? PBS_HOT : PBS_NORMAL;
 					p_App->zDrawThemeBackground(hThemeButton, dc, BP_PUSHBUTTON, State, &rectButton, NULL);
 				}
 				else
 				{
+					COLORREF c1 = GetSysColor(COLOR_3DHIGHLIGHT);
+					COLORREF c2 = GetSysColor(COLOR_3DFACE);
+					COLORREF c3 = GetSysColor(COLOR_3DSHADOW);
+					COLORREF c4 = 0x000000;
+
+					dc.FillSolidRect(rectButton, c2);
+
+					if (Pressed)
+					{
+						std::swap(c1, c4);
+						std::swap(c2, c3);
+					}
+
+					CRect rectBorder(rectButton);
+					dc.Draw3dRect(rectBorder, c1, c4);
+					rectBorder.DeflateRect(1, 1);
+					dc.Draw3dRect(rectBorder, c2, c3);
 				}
 
 				rectButton.bottom -= 4;
+				if (Pressed)
+					rectButton.OffsetRect(1, 1);
+
 				dc.SetTextColor(GetSysColor(COLOR_WINDOWTEXT));
 				dc.DrawText(_T("..."), rectButton, DT_VCENTER | DT_CENTER | DT_SINGLELINE);
 			}
