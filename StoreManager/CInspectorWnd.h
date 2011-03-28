@@ -67,7 +67,7 @@ public:
 	virtual void SaveSettings();
 
 	void UpdateStart(CHAR* StoreID);
-	void UpdateAdd(LFItemDescriptor* i, LFSearchResult* raw);
+	void UpdateAdd(LFItemDescriptor* i, LFSearchResult* pRawFiles);
 	void UpdateFinish();
 
 protected:
@@ -79,30 +79,26 @@ protected:
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
-	afx_msg LRESULT OnPropertyChanged(WPARAM wparam, LPARAM lparam);
+	afx_msg void OnPropertyChanged(WPARAM wparam, LPARAM lparam);
 
 	afx_msg void OnTogglePreview();
 	afx_msg void OnAlphabetic();
-	afx_msg void OnExport();
+	afx_msg void OnExportSummary();
 	afx_msg void OnUpdateCommands(CCmdUI* pCmdUI);
 	DECLARE_MESSAGE_MAP()
 
 private:
-	UINT Count;
-
-	UINT IconID;
-	UINT IconStatus;
-	
-	UINT TypeID;
-	UINT TypeStatus;
-
-	UINT AttributeVisible[AttrCount];
-	UINT AttributeStatus[AttrCount];
-	BOOL AttributeEditable[AttrCount];
-	LFVariantData AttributeValues[AttrCount];
-	CString AttributeVirtualNames[AttrCount-LFAttributeCount];
-
-	CString TypeName;
+	UINT m_Count;
+	UINT m_IconID;
+	UINT m_IconStatus;
+	UINT m_TypeID;
+	UINT m_TypeStatus;
+	UINT m_AttributeVisible[AttrCount];
+	UINT m_AttributeStatus[AttrCount];
+	BOOL m_AttributeEditable[AttrCount];
+	LFVariantData m_AttributeValues[AttrCount];
+	CString m_AttributeVirtualNames[AttrCount-LFAttributeCount];
+	CString m_TypeName;
 
 	void AddValue(LFItemDescriptor* i, UINT Attr, BOOL Editable=TRUE);
 	void AddValueVirtual(UINT Attr, CHAR* Value);

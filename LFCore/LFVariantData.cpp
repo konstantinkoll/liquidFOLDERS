@@ -11,8 +11,6 @@
 
 extern unsigned char AttrTypes[];
 
-wchar_t RatingStrings[6] = L"\x2605\x2605\x2605\x2605\x2605";
-
 
 // Conversion ToString
 //
@@ -168,7 +166,7 @@ void ToString(void* value, unsigned int type, wchar_t* str, size_t cCount)
 			return;
 		case LFTypeRating:
 			assert(*((unsigned char*)value)<=LFMaxRating);
-			wcscpy_s(str, cCount, &RatingStrings[5-*((unsigned char*)value)/2]);
+			swprintf_s(str, cCount, L"%d", *((unsigned char*)value)/2);
 			return;
 		case LFTypeUINT:
 			LFUINTToString(*((unsigned int*)value), str, cCount);
@@ -401,7 +399,7 @@ LFCore_API void LFVariantDataFromString(LFVariantData* v, wchar_t* str)
 			break;
 		case LFTypeRating:
 			if ((str[0]>=L'0') && (str[0]<=L'5'))
-				if ((sz==1) || (sz==L' '))
+				if (sz==1)
 				{
 					v->IsNull = false;
 					v->Rating = (unsigned char)((str[0]-L'0')*2);

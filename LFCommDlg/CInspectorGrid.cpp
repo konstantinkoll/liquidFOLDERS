@@ -12,24 +12,11 @@
 
 CInspectorProperty::CInspectorProperty(LFVariantData* pData)
 {
+	ASSERT(pData);
+
 	p_Data = pData;
 	p_Parent = NULL;
 	m_Modified = m_Multiple = FALSE;
-}
-
-void CInspectorProperty::SetParent(CInspectorGrid* pParent)
-{
-	p_Parent = pParent;
-}
-
-void CInspectorProperty::SetMultiple(BOOL Multiple)
-{
-	m_Multiple = Multiple;
-}
-
-void CInspectorProperty::ResetModified()
-{
-	m_Modified = FALSE;
 }
 
 void CInspectorProperty::ToString(WCHAR* tmpStr, INT nCount)
@@ -57,6 +44,42 @@ void CInspectorProperty::DrawValue(CDC& dc, CRect rect)
 		dc.SelectObject(pOldFont);
 }
 
+void CInspectorProperty::OnClickButton()
+{
+	MessageBox(NULL,_T("Test"),0,0);
+}
+
+BOOL CInspectorProperty::CanDelete()
+{
+	return (p_Data->Attr!=LFAttrFileName);
+}
+
+BOOL CInspectorProperty::HasButton()
+{
+	//return FALSE;
+	return TRUE;
+}
+
+void CInspectorProperty::SetParent(CInspectorGrid* pParent)
+{
+	p_Parent = pParent;
+}
+
+void CInspectorProperty::SetMultiple(BOOL Multiple)
+{
+	m_Multiple = Multiple;
+}
+
+void CInspectorProperty::ResetModified()
+{
+	m_Modified = FALSE;
+}
+
+LFVariantData* CInspectorProperty::GetData()
+{
+	return p_Data;
+}
+
 
 // CInspectorPropertyRating
 //
@@ -64,13 +87,6 @@ void CInspectorProperty::DrawValue(CDC& dc, CRect rect)
 CInspectorPropertyRating::CInspectorPropertyRating(LFVariantData* pData)
 	: CInspectorProperty(pData)
 {
-}
-
-void CInspectorPropertyRating::ToString(WCHAR* tmpStr, INT nCount)
-{
-	ASSERT(p_Parent);
-
-	wcscpy_s(tmpStr, nCount, m_Multiple ? p_Parent->m_MultipleValues : L"");
 }
 
 void CInspectorPropertyRating::DrawValue(CDC& dc, CRect rect)
@@ -88,6 +104,11 @@ void CInspectorPropertyRating::DrawValue(CDC& dc, CRect rect)
 
 	SelectObject(hdcMem, hbmOld);
 	DeleteDC(hdcMem);
+}
+
+BOOL CInspectorPropertyRating::CanDelete()
+{
+	return FALSE;
 }
 
 
@@ -235,7 +256,6 @@ void CInspectorGrid::AddProperty(CInspectorProperty* pProperty, UINT Category, W
 	prop.pProperty = pProperty;
 	prop.Category = Category;
 	wcscpy_s(prop.Name, 256, Name);
-	wcscat_s(prop.Name, 256, L":");
 	prop.Visible = FALSE;
 	prop.Editable = Editable;
 	prop.Top = prop.Bottom = prop.LabelWidth = -1;
@@ -332,6 +352,28 @@ void CInspectorGrid::UpdatePropertyState(UINT nID, BOOL Multiple, BOOL Editable,
 	m_Properties.m_Items[nID].Visible = Visible;
 	m_Properties.m_Items[nID].pProperty->SetMultiple(Multiple);
 	m_Properties.m_Items[nID].pProperty->ResetModified();
+}
+
+void CInspectorGrid::SetStore(CHAR* StoreID)
+{
+	strcpy_s(m_StoreID, LFKeySize, StoreID ? StoreID : "");
+}
+
+CString CInspectorGrid::GetName(UINT nID)
+{
+	ASSERT(nID<m_Properties.m_ItemCount);
+
+	return m_Properties.m_Items[nID].Name;
+}
+
+CString CInspectorGrid::GetValue(UINT nID)
+{
+	ASSERT(nID<m_Properties.m_ItemCount);
+
+	WCHAR tmpStr[256];
+	m_Properties.m_Items[nID].pProperty->ToString(tmpStr, 256);
+
+	return tmpStr;
 }
 
 RECT CInspectorGrid::GetItemRect(INT Item)
@@ -553,6 +595,20 @@ void CInspectorGrid::DrawCategory(CDC& dc, CRect& rect, WCHAR* Text)
 	}
 }
 
+void CInspectorGrid::NotifyOwner(SHORT Attr1, SHORT Attr2, SHORT Attr3)
+{
+	GetOwner()->PostMessage(WM_PROPERTYCHANGED, Attr1, Attr2 | (Attr3 << 16));
+}
+
+void CInspectorGrid::ResetProperty(UINT Attr)
+{
+	ASSERT(Attr<m_Properties.m_ItemCount);
+	ASSERT(m_Properties.m_Items[Attr].Editable);
+
+	LFGetNullVariantData(m_Properties.m_Items[Attr].pProperty->GetData());
+	NotifyOwner((SHORT)Attr);
+}
+
 
 BEGIN_MESSAGE_MAP(CInspectorGrid, CWnd)
 	ON_WM_CREATE()
@@ -691,12 +747,12 @@ void CInspectorGrid::OnPaint()
 
 			CRect rectLabel(GUTTER, pProp->Top-m_VScrollPos, m_LabelWidth, pProp->Bottom-m_VScrollPos);
 			dc.SetTextColor(clr1);
-			dc.DrawText(pProp->Name, -1, rectLabel, DT_RIGHT | DT_VCENTER | DT_END_ELLIPSIS | DT_SINGLELINE);
+			dc.DrawText(CString(pProp->Name)+_T(":"), rectLabel, DT_RIGHT | DT_VCENTER | DT_END_ELLIPSIS | DT_SINGLELINE);
 
 			rectLabel.left = rectLabel.right+GUTTER;
 			rectLabel.right = rect.Width();
 
-			if ((INT)a==m_HotItem)
+			if ((pProp->Editable) && (pProp->pProperty->CanDelete()) && (INT)a==m_HotItem)
 			{
 				INT Offs = (rectLabel.Height()-m_IconSize)/2;
 				DrawIconEx(dc, rectLabel.right-m_IconSize-Offs-2, rectLabel.top+Offs, hIconResetNormal, m_IconSize, m_IconSize, 0, NULL, DI_NORMAL);
@@ -707,7 +763,7 @@ void CInspectorGrid::OnPaint()
 				rectLabel.right -= GUTTER;
 			}
 
-			if ((INT)a==m_HotItem)
+			if ((pProp->Editable) && (pProp->pProperty->HasButton()) && (INT)a==m_HotItem)
 			{
 				CRect rectButton(rectLabel);
 				rectButton.left = rectButton.right-rectButton.Height()-m_IconSize/2;
@@ -876,7 +932,7 @@ void CInspectorGrid::OnMouseHover(UINT nFlags, CPoint point)
 					pProp->pProperty->ToString(tmpStr, 256);
 
 					ClientToScreen(&point);
-					m_TooltipCtrl.Track(point, hIcon, hIcon ? CSize(32, 32) : CSize(0, 0), p_App->m_Attributes[m_HotItem]->Name, tmpStr);
+					m_TooltipCtrl.Track(point, hIcon, hIcon ? CSize(32, 32) : CSize(0, 0), pProp->Name, tmpStr);
 				}
 	}
 	else

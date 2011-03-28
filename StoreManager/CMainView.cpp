@@ -279,35 +279,39 @@ void CMainView::AdjustLayout()
 
 	const INT MaxWidth = (rect.Width()-128)/2;
 	INT FilterWidth = 0;
-	if (p_wndFilter)
+	INT InspectorWidth = 0;
+	if (MaxWidth>0)
 	{
-		theApp.m_FilterWidth = max(32, p_wndFilter->GetPreferredWidth());
-		FilterWidth = min(MaxWidth, (INT)theApp.m_FilterWidth);
-
-		if (m_ShowFilterPane)
+		if (p_wndFilter)
 		{
-			p_wndFilter->SetMaxWidth(MaxWidth);
-			p_wndFilter->SetWindowPos(NULL, rect.left, rect.top+TaskHeight, FilterWidth, rect.Height()-TaskHeight, SWP_NOACTIVATE | SWP_NOZORDER | SWP_SHOWWINDOW);
+			theApp.m_FilterWidth = max(32, p_wndFilter->GetPreferredWidth());
+			FilterWidth = min(MaxWidth, (INT)theApp.m_FilterWidth);
+
+			if (m_ShowFilterPane)
+			{
+				p_wndFilter->SetMaxWidth(MaxWidth);
+				p_wndFilter->SetWindowPos(NULL, rect.left, rect.top+TaskHeight, FilterWidth, rect.Height()-TaskHeight, SWP_NOACTIVATE | SWP_NOZORDER | SWP_SHOWWINDOW);
+			}
+			else
+			{
+				p_wndFilter->ShowWindow(SW_HIDE);
+				FilterWidth = 0;
+			}
+		}
+
+		theApp.m_InspectorWidth = max(32, m_wndInspector.GetPreferredWidth());
+		InspectorWidth = theApp.m_InspectorWidth = min(MaxWidth, (INT)theApp.m_InspectorWidth);
+
+		if (m_ShowInspectorPane)
+		{
+			m_wndInspector.SetMaxWidth(MaxWidth);
+			m_wndInspector.SetWindowPos(NULL, rect.right-InspectorWidth, rect.top+TaskHeight, InspectorWidth, rect.Height()-TaskHeight, SWP_NOACTIVATE | SWP_NOZORDER | SWP_SHOWWINDOW);
 		}
 		else
 		{
-			p_wndFilter->ShowWindow(SW_HIDE);
-			FilterWidth = 0;
+			m_wndInspector.ShowWindow(SW_HIDE);
+			InspectorWidth = 0;
 		}
-	}
-
-	theApp.m_InspectorWidth = max(32, m_wndInspector.GetPreferredWidth());
-	INT InspectorWidth = theApp.m_InspectorWidth = min(MaxWidth, (INT)theApp.m_InspectorWidth);
-
-	if (m_ShowInspectorPane)
-	{
-		m_wndInspector.SetMaxWidth(MaxWidth);
-		m_wndInspector.SetWindowPos(NULL, rect.right-InspectorWidth, rect.top+TaskHeight, InspectorWidth, rect.Height()-TaskHeight, SWP_NOACTIVATE | SWP_NOZORDER | SWP_SHOWWINDOW);
-	}
-	else
-	{
-		m_wndInspector.ShowWindow(SW_HIDE);
-		InspectorWidth = 0;
 	}
 
 	const UINT ExplorerHeight = m_wndExplorerHeader.GetPreferredHeight();

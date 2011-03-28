@@ -88,22 +88,22 @@ void CIconHeader::SetFormatIcon(CHAR* FileFormat, CString Description)
 // CInspectorWnd
 //
 
-#define StatusUnused            0
-#define StatusUsed              1
-#define StatusMultiple          2
+#define StatusUnused       0
+#define StatusUsed         1
+#define StatusMultiple     2
 
 CInspectorWnd::CInspectorWnd()
 	: CGlasPane()
 {
-	Count = 0;
+	m_Count = 0;
 
 	for (UINT a=0; a<AttrCount-LFAttributeCount; a++)
-		AttributeVirtualNames[a].LoadString(a+IDS_VATTR_FIRST);
+		ENSURE(m_AttributeVirtualNames[a].LoadString(a+IDS_VATTR_FIRST));
 
 	for (UINT a=0; a<AttrCount; a++)
 	{
-		AttributeValues[a].Attr = a;
-		LFGetNullVariantData(&AttributeValues[a]);
+		m_AttributeValues[a].Attr = a;
+		LFGetNullVariantData(&m_AttributeValues[a]);
 	}
 }
 
@@ -124,68 +124,116 @@ void CInspectorWnd::SaveSettings()
 	theApp.SetRegistryBase(oldBase);
 }
 
-void CInspectorWnd::UpdateStart(CHAR* StoreID)
+void CInspectorWnd::AddValue(LFItemDescriptor* i, UINT Attr, BOOL Editable)
 {
-	Count = 0;
+	m_AttributeEditable[Attr] |= Editable;
 
-	// Icon
-	IconStatus = StatusUnused;
-
-	// Typ
-	TypeStatus = StatusUnused;
-
-	// Properties
-	ZeroMemory(AttributeVisible, sizeof(AttributeVisible));
-	ZeroMemory(AttributeStatus, sizeof(AttributeStatus));
-	ZeroMemory(AttributeEditable, sizeof(AttributeEditable));
-
-	for (UINT a=0; a<AttrCount; a++)
+	if (i->AttributeValues[Attr])
 	{
-		AttributeValues[a].Attr = a;
-		LFGetNullVariantData(&AttributeValues[a]);
-	}
-
-/*		if (a<LFAttributeCount)
-			if (theApp.m_Attributes[a]->Type==LFTypeUnicodeArray)
-				((CAttributePropertyTags*)pAttributes[a])->SetStore(StoreID ? *StoreID!='\0' ? StoreID : NULL : NULL);
-	}*/
-}
-
-void CInspectorWnd::UpdateAdd(LFItemDescriptor* i, LFSearchResult* raw)
-{
-	Count++;
-
-	// Icon
-	if (IconStatus<StatusMultiple)
-	{
-		UINT _IconID = i->IconID;
-		if (IconID==IDI_STORE_Default)
-			IconID=IDI_STORE_Internal;
-
-		switch (IconStatus)
+		switch (m_AttributeStatus[Attr])
 		{
 		case StatusUnused:
-			IconStatus = StatusUsed;
-			IconID = _IconID;
+			LFGetAttributeVariantData(i, &m_AttributeValues[Attr]);
+			if ((Editable) || (!LFIsNullVariantData(&m_AttributeValues[Attr])))
+			{
+				m_AttributeStatus[Attr] = StatusUsed;
+				m_AttributeVisible[Attr] = TRUE;
+			}
 			break;
 		case StatusUsed:
-			if (IconID!=_IconID)
-				IconStatus = StatusMultiple;
+			if (!LFIsEqualToVariantData(i, &m_AttributeValues[Attr]))
+				m_AttributeStatus[Attr] = StatusMultiple;
+		}
+	}
+	else
+		if (Editable)
+			switch (m_AttributeStatus[Attr])
+			{
+			case StatusUnused:
+				m_AttributeStatus[Attr] = StatusUsed;
+				m_AttributeVisible[Attr] = TRUE;
+				break;
+			case StatusUsed:
+				if (!m_AttributeValues[Attr].IsNull)
+					m_AttributeStatus[Attr] = StatusMultiple;
+			}
+}
+
+void CInspectorWnd::AddValueVirtual(UINT Attr, CHAR* Value)
+{
+	WCHAR tmpStr[256];
+	MultiByteToWideChar(CP_ACP, 0, Value, -1, tmpStr, 256);
+
+	AddValueVirtual(Attr, &tmpStr[0]);
+}
+
+void CInspectorWnd::AddValueVirtual(UINT Attr, WCHAR* Value)
+{
+	switch (m_AttributeStatus[Attr])
+	{
+	case StatusUnused:
+		m_AttributeStatus[Attr] = StatusUsed;
+		m_AttributeVisible[Attr] = TRUE;
+		wcscpy_s(m_AttributeValues[Attr].UnicodeString, 256, Value);
+		break;
+	case StatusUsed:
+		if (wcscmp(m_AttributeValues[Attr].UnicodeString, Value)!=0)
+			m_AttributeStatus[Attr] = StatusMultiple;
+		break;
+	}
+}
+
+void CInspectorWnd::UpdateStart(CHAR* StoreID)
+{
+	m_Count = 0;
+
+	// Icon und Typ
+	m_IconStatus = m_TypeStatus = StatusUnused;
+
+	// Properties
+	ZeroMemory(m_AttributeVisible, sizeof(m_AttributeVisible));
+	ZeroMemory(m_AttributeStatus, sizeof(m_AttributeStatus));
+	ZeroMemory(m_AttributeEditable, sizeof(m_AttributeEditable));
+	for (UINT a=0; a<AttrCount; a++)
+		LFGetNullVariantData(&m_AttributeValues[a]);
+
+	// Store
+	m_wndInspectorGrid.SetStore(StoreID);
+}
+
+void CInspectorWnd::UpdateAdd(LFItemDescriptor* i, LFSearchResult* pRawFiles)
+{
+	m_Count++;
+
+	// Icon
+	if (m_IconStatus<StatusMultiple)
+	{
+		UINT IconID = (i->IconID==IDI_STORE_Default) ? IDI_STORE_Internal : i->IconID;
+
+		switch (m_IconStatus)
+		{
+		case StatusUnused:
+			m_IconStatus = StatusUsed;
+			m_IconID = IconID;
+			break;
+		case StatusUsed:
+			if (m_IconID!=IconID)
+				m_IconStatus = StatusMultiple;
 			break;
 		}
 	}
 
 	// Typ
-	if (TypeStatus<StatusMultiple)
-		switch (TypeStatus)
+	if (m_TypeStatus<StatusMultiple)
+		switch (m_TypeStatus)
 		{
 		case StatusUnused:
-			TypeStatus = StatusUsed;
-			TypeID = (i->Type & LFTypeMask);
+			m_TypeStatus = StatusUsed;
+			m_TypeID = (i->Type & LFTypeMask);
 			break;
 		case StatusUsed:
-			if (TypeID!=(i->Type & LFTypeMask))
-				TypeStatus = StatusMultiple;
+			if (m_TypeID!=(i->Type & LFTypeMask))
+				m_TypeStatus = StatusMultiple;
 			break;
 		}
 
@@ -198,20 +246,24 @@ void CInspectorWnd::UpdateAdd(LFItemDescriptor* i, LFSearchResult* raw)
 		AddValueVirtual(AttrDriveLetter, i->CoreAttributes.FileID);
 		break;
 	case LFTypeVirtual:
+		AddValue(i, LFAttrFileName, FALSE);
+		AddValue(i, LFAttrDescription);
 		if ((i->FirstAggregate!=-1) && (i->LastAggregate!=-1))
 		{
 			AddValue(i, LFAttrFileCount);
 			for (INT a=i->FirstAggregate; a<=i->LastAggregate; a++)
+			{
 				for (UINT b=0; b<LFAttributeCount; b++)
-					if ((raw->m_Items[a]->AttributeValues[b]) && (b!=LFAttrFileName) && (b!=LFAttrDescription) && (b!=LFAttrDeleteTime) && (b!=LFAttrFileCount))
-						AddValue(raw->m_Items[a], b);
+					if ((pRawFiles->m_Items[a]->AttributeValues[b]) && (b!=LFAttrFileName) && (b!=LFAttrDescription) && (b!=LFAttrDeleteTime) && (b!=LFAttrFileCount))
+						AddValue(pRawFiles->m_Items[a], b);
+				if (pRawFiles->m_Items[a]->CoreAttributes.Flags & LFFlagTrash)
+					AddValue(pRawFiles->m_Items[a], LFAttrDeleteTime);
+			}
 		}
 		else
 		{
-			AddValue(i, LFAttrFileName, FALSE);
 			AddValue(i, LFAttrFileID);
 			AddValue(i, LFAttrStoreID);
-			AddValue(i, LFAttrDescription);
 			AddValue(i, LFAttrComment, FALSE);
 			for (UINT a=LFAttrDescription+1; a<LFAttributeCount; a++)
 				if (i->AttributeValues[a])
@@ -257,13 +309,13 @@ void CInspectorWnd::UpdateFinish()
 {
 	// Icon & Typ
 	UINT SID = 0;
-	if (TypeStatus==StatusMultiple)
+	if (m_TypeStatus==StatusMultiple)
 	{
 		SID = IDS_MULTIPLETYPESSELECTED;
 	}
 	else
 	{
-		switch (TypeID)
+		switch (m_TypeID)
 		{
 		case LFTypeVolume:
 			SID = IDS_DRIVES_SINGULAR;
@@ -279,7 +331,7 @@ void CInspectorWnd::UpdateFinish()
 			break;
 		}
 
-		if ((SID) && (Count!=1))
+		if ((SID) && (m_Count!=1))
 			SID++;
 	}
 
@@ -287,45 +339,45 @@ void CInspectorWnd::UpdateFinish()
 	{
 		CString tmpStr;
 		ENSURE(tmpStr.LoadString(SID));
-		TypeName.Format(tmpStr, Count);
+		m_TypeName.Format(tmpStr, m_Count);
 	}
 
-	switch (IconStatus)
+	switch (m_IconStatus)
 	{
 	case StatusUnused:
 		m_IconHeader.SetEmpty();
 		break;
 	case StatusMultiple:
-		m_IconHeader.SetMultiple(TypeName);
+		m_IconHeader.SetMultiple(m_TypeName);
 		break;
 	default:
-		if (TypeStatus==StatusMultiple)
+		if (m_TypeStatus==StatusMultiple)
 		{
-			m_IconHeader.SetMultiple(TypeName);
+			m_IconHeader.SetMultiple(m_TypeName);
 		}
 		else
-			if (TypeID==LFTypeFile)
+			if (m_TypeID==LFTypeFile)
 			{
-				if (AttributeStatus[LFAttrFileFormat]==StatusMultiple)
+				if (m_AttributeStatus[LFAttrFileFormat]==StatusMultiple)
 				{
-					m_IconHeader.SetMultiple(TypeName);
+					m_IconHeader.SetMultiple(m_TypeName);
 				}
 				else
 				{
-					m_IconHeader.SetFormatIcon(AttributeValues[LFAttrFileFormat].AnsiString, TypeName);
+					m_IconHeader.SetFormatIcon(m_AttributeValues[LFAttrFileFormat].AnsiString, m_TypeName);
 				}
 			}
 			else
 			{
-				m_IconHeader.SetCoreIcon(IconID-1, TypeName);
+				m_IconHeader.SetCoreIcon(m_IconID-1, m_TypeName);
 			}
 	}
 
-	// Flughafen-Name
-	if ((AttributeStatus[LFAttrLocationIATA]==StatusUsed) && (AttributeValues[LFAttrLocationIATA].AnsiString[0]!='\0'))
+	// Flughafen-Name und -Land
+	if ((m_AttributeStatus[LFAttrLocationIATA]==StatusUsed) && (m_AttributeValues[LFAttrLocationIATA].AnsiString[0]!='\0'))
 	{
 		LFAirport* pAirport;
-		if (LFIATAGetAirportByCode(AttributeValues[LFAttrLocationIATA].AnsiString, &pAirport))
+		if (LFIATAGetAirportByCode(m_AttributeValues[LFAttrLocationIATA].AnsiString, &pAirport))
 		{
 			AddValueVirtual(AttrIATAAirportName, pAirport->Name);
 			AddValueVirtual(AttrIATAAirportCountry, LFIATAGetCountry(pAirport->CountryID)->Name);
@@ -338,13 +390,13 @@ void CInspectorWnd::UpdateFinish()
 	}
 	else
 	{
-		AttributeStatus[AttrIATAAirportName] = AttributeStatus[AttrIATAAirportCountry] = AttributeStatus[LFAttrLocationIATA];
-		AttributeVisible[AttrIATAAirportName] = AttributeVisible[AttrIATAAirportCountry] = AttributeVisible[LFAttrLocationIATA];
+		m_AttributeStatus[AttrIATAAirportName] = m_AttributeStatus[AttrIATAAirportCountry] = m_AttributeStatus[LFAttrLocationIATA];
+		m_AttributeVisible[AttrIATAAirportName] = m_AttributeVisible[AttrIATAAirportCountry] = m_AttributeVisible[LFAttrLocationIATA];
 	}
 
-	// Attribute
+	// Werte aktualisieren
 	for (UINT a=0; a<AttrCount; a++)
-		m_wndInspectorGrid.UpdatePropertyState(a, AttributeStatus[a]==StatusMultiple, a<LFAttributeCount ? (!theApp.m_Attributes[a]->ReadOnly) && AttributeEditable[a] : FALSE, AttributeVisible[a]);
+		m_wndInspectorGrid.UpdatePropertyState(a, m_AttributeStatus[a]==StatusMultiple, a<LFAttributeCount ? (!theApp.m_Attributes[a]->ReadOnly) && m_AttributeEditable[a] : FALSE, m_AttributeVisible[a]);
 
 	m_wndInspectorGrid.AdjustLayout();
 }
@@ -354,11 +406,11 @@ BEGIN_MESSAGE_MAP(CInspectorWnd, CGlasPane)
 	ON_WM_CREATE()
 	ON_WM_SETFOCUS()
 	ON_WM_CONTEXTMENU()
-	ON_REGISTERED_MESSAGE(AFX_WM_PROPERTY_CHANGED, OnPropertyChanged)
+	ON_MESSAGE_VOID(WM_PROPERTYCHANGED, OnPropertyChanged)
 
 	ON_COMMAND(IDM_INSPECTOR_SHOWPREVIEW, OnTogglePreview)
 	ON_COMMAND(IDM_INSPECTOR_SORTALPHABETIC, OnAlphabetic)
-	ON_COMMAND(IDM_INSPECTOR_EXPORTSUMMARY, OnExport)
+	ON_COMMAND(IDM_INSPECTOR_EXPORTSUMMARY, OnExportSummary)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_INSPECTOR_SHOWPREVIEW, IDM_INSPECTOR_EXPORTMETADATA, OnUpdateCommands)
 END_MESSAGE_MAP()
 
@@ -377,9 +429,9 @@ INT CInspectorWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 
 	m_wndInspectorGrid.SetAlphabeticMode(m_SortAlphabetic);
-	m_wndInspectorGrid.AddAttributes(AttributeValues);
+	m_wndInspectorGrid.AddAttributes(m_AttributeValues);
 	for (UINT a=LFAttributeCount; a<AttrCount; a++)
-		m_wndInspectorGrid.AddProperty(new CInspectorProperty(&AttributeValues[a]), LFAttrCategoryInternal, AttributeVirtualNames[a-LFAttributeCount].GetBuffer());
+		m_wndInspectorGrid.AddProperty(new CInspectorProperty(&m_AttributeValues[a]), LFAttrCategoryInternal, m_AttributeVirtualNames[a-LFAttributeCount].GetBuffer());
 
 	return 0;
 }
@@ -406,24 +458,17 @@ void CInspectorWnd::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 	pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, GetOwner(), NULL);
 }
 
-LRESULT CInspectorWnd::OnPropertyChanged(WPARAM /*wparam*/, LPARAM lparam)
+void CInspectorWnd::OnPropertyChanged(WPARAM wparam, LPARAM lparam)
 {
-/*	CAttributeProperty* pProp = (CAttributeProperty*)lparam;
+	SHORT Attr1 = wparam & 0xFFFF;
+	SHORT Attr2 = lparam & 0xFFFF;
+	SHORT Attr3 = (lparam >> 16) & 0xFFFF;
 
-	LFVariantData* value1 = pProp->p_Data;
-	LFVariantData* value2 = NULL;
-	LFVariantData* value3 = NULL;
+	LFVariantData* Value1 = (Attr1==-1) ? NULL : &m_AttributeValues[Attr1];
+	LFVariantData* Value2 = (Attr2==-1) ? NULL : &m_AttributeValues[Attr2];
+	LFVariantData* Value3 = (Attr3==-1) ? NULL : &m_AttributeValues[Attr3];
 
-	if ((pProp->p_DependentProp1) && (pProp->m_UseDependencies & 1))
-		value2 = (*(pProp->p_DependentProp1))->p_Data;
-
-	if ((pProp->p_DependentProp2) && (pProp->m_UseDependencies & 2))
-		value3 = (*(pProp->p_DependentProp2))->p_Data;
-
-	((CMainWnd*)GetTopLevelParent())->UpdateSelectedItems(value1, value2, value3);
-	pProp->m_UseDependencies = 0;
-*/
-	return 0;
+	((CMainWnd*)GetTopLevelParent())->UpdateSelectedItems(Value1, Value2, Value3);
 }
 
 
@@ -443,7 +488,7 @@ void CInspectorWnd::OnAlphabetic()
 	m_wndInspectorGrid.SetAlphabeticMode(m_SortAlphabetic);
 }
 
-void CInspectorWnd::OnExport()
+void CInspectorWnd::OnExportSummary()
 {
 	CString tmpStr;
 	tmpStr.LoadString(IDS_TXTFILEFILTER);
@@ -452,7 +497,7 @@ void CInspectorWnd::OnExport()
 	CFileDialog dlg(FALSE, _T(".txt"), NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, tmpStr, this);
 	if (dlg.DoModal()==IDOK)
 	{
-/*		CStdioFile f;
+		CStdioFile f;
 		if (!f.Open(dlg.GetFileName(), CFile::modeCreate | CFile::modeWrite))
 		{
 			LFErrorBox(LFDriveNotReady);
@@ -461,13 +506,15 @@ void CInspectorWnd::OnExport()
 		{
 			try
 			{
-				f.WriteString(TypeName+_T("\n\n"));
+				f.WriteString(m_TypeName+_T("\n\n"));
 				for (UINT a=0; a<AttrCount; a++)
-					if (pAttributes[a]->IsVisible())
+					if (m_AttributeVisible[a])
 					{
-						CString tmpStr1 = pAttributes[a]->GetName();
-						CString tmpStr2 = pAttributes[a]->GetValue();
-						f.WriteString(tmpStr1+_T(": ")+tmpStr2+_T("\n"));
+						CString tmpStr = m_wndInspectorGrid.GetName(a)+_T(": ")+m_wndInspectorGrid.GetValue(a)+_T("\n");
+
+						CHAR Buffer[1024];
+						WideCharToMultiByte(CP_ACP, 0, tmpStr, -1, Buffer, 1024, NULL, NULL);
+						f.Write(Buffer, strlen(Buffer));
 					}
 			}
 			catch(CFileException ex)
@@ -475,7 +522,7 @@ void CInspectorWnd::OnExport()
 				LFErrorBox(LFDriveNotReady);
 			}
 			f.Close();
-		}*/
+		}
 	}
 }
 
@@ -493,71 +540,9 @@ void CInspectorWnd::OnUpdateCommands(CCmdUI* pCmdUI)
 		break;
 	case IDM_INSPECTOR_EXPORTSUMMARY:
 	case IDM_INSPECTOR_EXPORTMETADATA:
-		b = Count;
+		b = m_Count;
 		break;
 	}
 
 	pCmdUI->Enable(b);
-}
-
-
-
-
-void CInspectorWnd::AddValue(LFItemDescriptor* i, UINT Attr, BOOL Editable)
-{
-	AttributeEditable[Attr] |= Editable;
-
-	if (i->AttributeValues[Attr])
-	{
-		switch (AttributeStatus[Attr])
-		{
-		case StatusUnused:
-			LFGetAttributeVariantData(i, &AttributeValues[Attr]);
-			if ((Editable) || (!LFIsNullVariantData(&AttributeValues[Attr])))
-			{
-				AttributeStatus[Attr] = StatusUsed;
-				AttributeVisible[Attr] = TRUE;
-			}
-			break;
-		case StatusUsed:
-			if (!LFIsEqualToVariantData(i, &AttributeValues[Attr]))
-				AttributeStatus[Attr] = StatusMultiple;
-		}
-	}
-	else
-		if (Editable)
-			switch (AttributeStatus[Attr])
-			{
-			case StatusUnused:
-				AttributeStatus[Attr] = StatusUsed;
-				AttributeVisible[Attr] = TRUE;
-				break;
-			case StatusUsed:
-				if (!AttributeValues[Attr].IsNull)
-					AttributeStatus[Attr] = StatusMultiple;
-			}
-}
-
-void CInspectorWnd::AddValueVirtual(UINT Attr, CHAR* Value)
-{
-	WCHAR tmpStr[256];
-	MultiByteToWideChar(CP_ACP, 0, Value, -1, tmpStr, 256);
-
-	AddValueVirtual(Attr, &tmpStr[0]);
-}
-
-void CInspectorWnd::AddValueVirtual(UINT Attr, WCHAR* Value)
-{
-	switch (AttributeStatus[Attr])
-	{
-	case StatusUnused:
-		AttributeStatus[Attr] = StatusUsed;
-		AttributeVisible[Attr] = TRUE;
-		wcscpy_s(AttributeValues[Attr].UnicodeString, 256, Value);
-		break;
-	case StatusUsed:
-		if (wcscmp(AttributeValues[Attr].UnicodeString, Value)!=0)
-			AttributeStatus[Attr] = StatusMultiple;
-		break;
-	}
 }

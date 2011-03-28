@@ -21,10 +21,14 @@ public:
 
 	virtual void ToString(WCHAR* tmpStr, INT nCount);
 	virtual void DrawValue(CDC& dc, CRect rect);
+	virtual BOOL CanDelete();
+	virtual BOOL HasButton();
+	virtual void OnClickButton();
 
 	void SetParent(CInspectorGrid* pParent);
 	void SetMultiple(BOOL Multiple);
 	void ResetModified();
+	LFVariantData* GetData();
 
 protected:
 	CInspectorGrid* p_Parent;
@@ -42,8 +46,8 @@ class AFX_EXT_CLASS CInspectorPropertyRating : public CInspectorProperty
 public:
 	CInspectorPropertyRating(LFVariantData* pData);
 
-	virtual void ToString(WCHAR* tmpStr, INT nCount);
 	virtual void DrawValue(CDC& dc, CRect rect);
+	virtual BOOL CanDelete();
 };
 
 
@@ -61,9 +65,12 @@ public:
 // CInspectorGrid
 //
 
+#define WM_PROPERTYCHANGED     WM_USER+10
+
 struct Property
 {
 	CInspectorProperty* pProperty;
+	LFVariantData* pData;
 	UINT Category;
 	WCHAR Name[256];
 	BOOL Visible;
@@ -97,11 +104,15 @@ public:
 	void ShowHeader(BOOL ShowHeader);
 	void SetAlphabeticMode(BOOL SortAlphabetic);
 	void UpdatePropertyState(UINT nID, BOOL Multiple, BOOL Editable, BOOL Visible);
+	void SetStore(CHAR* StoreID);
+	CString GetName(UINT nID);
+	CString GetValue(UINT nID);
 
 protected:
 	LFApplication* p_App;
 	DynArray<Property> m_Properties;
 	PropertyCategory m_Categories[LFAttrCategoryCount];
+	CHAR m_StoreID[LFKeySize];
 	HTHEME hThemeButton;
 	HTHEME hThemeList;
 	HICON hIconResetNormal;
@@ -134,6 +145,8 @@ protected:
 	void AdjustScrollbars();
 	void MakeSortArrayDirty();
 	void DrawCategory(CDC& dc, CRect& rectCategory, WCHAR* Text);
+	void NotifyOwner(SHORT Attr1, SHORT Attr2=-1, SHORT Attr3=-1);
+	void ResetProperty(UINT Attr);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();
