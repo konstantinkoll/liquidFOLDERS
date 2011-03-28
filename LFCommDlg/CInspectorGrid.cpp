@@ -100,9 +100,6 @@ void CInspectorPropertyTags::OnClickButton()
 	{
 		p_Data->IsNull = false;
 		wcscpy_s(p_Data->UnicodeArray, 256, dlg.m_Tags);
-
-		m_Modified = TRUE;
-		m_Multiple = FALSE;
 		p_Parent->NotifyOwner((SHORT)p_Data->Attr);
 	}
 }
@@ -183,9 +180,6 @@ void CInspectorPropertyIATA::OnClickButton()
 
 			p_Data->IsNull = false;
 			strcpy_s(p_Data->AnsiString, 256, dlg.m_Airport->Code);
-
-			m_Modified = TRUE;
-			m_Multiple = FALSE;
 			p_Parent->NotifyOwner((SHORT)p_Data->Attr, Attr2, Attr3);
 		}
 }
@@ -212,9 +206,6 @@ void CInspectorPropertyGPS::OnClickButton()
 	{
 		p_Data->GeoCoordinates = dlg.m_Location;
 		p_Data->IsNull = false;
-
-		m_Modified = TRUE;
-		m_Multiple = FALSE;
 		p_Parent->NotifyOwner((SHORT)p_Data->Attr);
 	}
 }
@@ -735,9 +726,24 @@ void CInspectorGrid::DrawCategory(CDC& dc, CRect& rect, WCHAR* Text)
 
 void CInspectorGrid::NotifyOwner(SHORT Attr1, SHORT Attr2, SHORT Attr3)
 {
-	InvalidateItem(Attr1);
-	InvalidateItem(Attr2);
-	InvalidateItem(Attr3);
+	if (Attr1!=-1)
+	{
+		m_Properties.m_Items[Attr1].pProperty->m_Modified = TRUE;
+		m_Properties.m_Items[Attr1].pProperty->m_Multiple = FALSE;
+		InvalidateItem(Attr1);
+	}
+	if (Attr2!=-1)
+	{
+		m_Properties.m_Items[Attr2].pProperty->m_Modified = TRUE;
+		m_Properties.m_Items[Attr2].pProperty->m_Multiple = FALSE;
+		InvalidateItem(Attr2);
+	}
+	if (Attr3!=-1)
+	{
+		m_Properties.m_Items[Attr3].pProperty->m_Modified = TRUE;
+		m_Properties.m_Items[Attr3].pProperty->m_Multiple = FALSE;
+		InvalidateItem(Attr3);
+	}
 
 	GetOwner()->PostMessage(WM_PROPERTYCHANGED, Attr1, Attr2 | (Attr3 << 16));
 }
