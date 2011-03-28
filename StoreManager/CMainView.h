@@ -14,6 +14,8 @@
 
 class CMainView : public CWnd
 {
+friend class CInspectorWnd;
+
 public:
 	CMainView();
 
@@ -21,7 +23,7 @@ public:
 
 	BOOL Create(BOOL IsClipboard, CWnd* pParentWnd, UINT nID);
 	void UpdateViewOptions();
-	void UpdateSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data=NULL);
+	void UpdateSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data=NULL, BOOL UpdateSelection=TRUE);
 	void UpdateFooter();
 	INT GetContext();
 	INT GetViewID();
@@ -32,7 +34,6 @@ public:
 	INT GetNextSelectedItem(INT n);
 	void GetPersistentData(FVPersistentData& Data);
 	void SelectNone();
-	BOOL UpdateItems(LFVariantData* value1, LFVariantData* value2, LFVariantData* value3); // TODO (protected)
 
 protected:
 	CTaskbar m_wndTaskbar;
@@ -54,6 +55,7 @@ protected:
 	void RemoveTransactedItems(LFTransactionList* tl);
 	BOOL UpdateTrashFlag(BOOL Trash, BOOL All=FALSE);
 	BOOL DeleteFiles(BOOL All=FALSE);
+	BOOL UpdateItems(LFVariantData* Value1, LFVariantData* Value2, LFVariantData* Value3);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();

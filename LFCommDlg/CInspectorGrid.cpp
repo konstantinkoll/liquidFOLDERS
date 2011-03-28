@@ -735,6 +735,10 @@ void CInspectorGrid::DrawCategory(CDC& dc, CRect& rect, WCHAR* Text)
 
 void CInspectorGrid::NotifyOwner(SHORT Attr1, SHORT Attr2, SHORT Attr3)
 {
+	InvalidateItem(Attr1);
+	InvalidateItem(Attr2);
+	InvalidateItem(Attr3);
+
 	GetOwner()->PostMessage(WM_PROPERTYCHANGED, Attr1, Attr2 | (Attr3 << 16));
 }
 

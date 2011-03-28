@@ -197,7 +197,7 @@ void CMainView::UpdateViewOptions()
 	}
 }
 
-void CMainView::UpdateSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data)
+void CMainView::UpdateSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data, BOOL UpdateSelection)
 {
 	p_RawFiles = pRawFiles;
 	p_CookedFiles = pCookedFiles;
@@ -219,7 +219,8 @@ void CMainView::UpdateSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pC
 	}
 
 	SetHeader();
-	OnUpdateSelection();
+	if (UpdateSelection)
+		OnUpdateSelection();
 }
 
 void CMainView::UpdateFooter()
@@ -475,9 +476,9 @@ BOOL CMainView::UpdateTrashFlag(BOOL Trash, BOOL All)
 	if (tl->m_LastError>LFCancel)
 		ShowNotification(ENT_ERROR, tl->m_LastError);
 
-	BOOL changes = tl->m_Changes;
+	BOOL Changes = tl->m_Changes;
 	LFFreeTransactionList(tl);
-	return changes;
+	return Changes;
 }
 
 BOOL CMainView::DeleteFiles(BOOL All)
@@ -489,43 +490,43 @@ BOOL CMainView::DeleteFiles(BOOL All)
 	if (tl->m_LastError>LFCancel)
 		ShowNotification(ENT_ERROR, tl->m_LastError);
 
-	BOOL changes = tl->m_Changes;
+	BOOL Changes = tl->m_Changes;
 	LFFreeTransactionList(tl);
-	return changes;
+	return Changes;
 }
 
-BOOL CMainView::UpdateItems(LFVariantData* value1, LFVariantData* value2, LFVariantData* value3)
+BOOL CMainView::UpdateItems(LFVariantData* Value1, LFVariantData* Value2, LFVariantData* Value3)
 {
 	LFTransactionList* tl = BuildTransactionList();
-	LFTransactionUpdate(tl, GetOwner()->GetSafeHwnd(), value1, value2, value3);
+	LFTransactionUpdate(tl, GetOwner()->GetSafeHwnd(), Value1, Value2, Value3);
 
 	if (p_wndFileView)
 	{
-		BOOL deselected = FALSE;
+		BOOL Deselected = FALSE;
 
 		for (UINT a=0; a<tl->m_ItemCount; a++)
 			if (tl->m_Items[a].LastError!=LFOk)
 			{
 				p_wndFileView->SelectItem(tl->m_Items[a].UserData, FALSE, TRUE);
-				deselected = TRUE;
+				Deselected = TRUE;
 			}
 
 		if (tl->m_Changes)
 		{
 			FVPersistentData Data;
 			GetPersistentData(Data);
-			UpdateSearchResult(p_RawFiles, p_CookedFiles, &Data);
+			UpdateSearchResult(p_RawFiles, p_CookedFiles, &Data, FALSE);
 		}
-		if (deselected)
+		if (Deselected)
 			OnUpdateSelection();
 	}
 
 	if (tl->m_LastError>LFCancel)
 		ShowNotification(ENT_ERROR, tl->m_LastError);
 
-	BOOL changes = tl->m_Changes;
+	BOOL Changes = tl->m_Changes;
 	LFFreeTransactionList(tl);
-	return changes;
+	return Changes;
 }
 
 
