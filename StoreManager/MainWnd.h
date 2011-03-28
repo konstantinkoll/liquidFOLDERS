@@ -37,7 +37,6 @@ public:
 	INT GetContext();
 	INT GetViewID();
 	BOOL AddClipItem(LFItemDescriptor* i);
-	BOOL UpdateSelectedItems(LFVariantData* value1, LFVariantData* value2=NULL, LFVariantData* value3=NULL);
 
 	BOOL m_IsClipboard;
 

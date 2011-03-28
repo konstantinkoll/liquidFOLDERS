@@ -468,7 +468,7 @@ LRESULT CInspectorWnd::OnPropertyChanged(WPARAM wparam, LPARAM lparam)
 	LFVariantData* Value2 = (Attr2==-1) ? NULL : &m_AttributeValues[Attr2];
 	LFVariantData* Value3 = (Attr3==-1) ? NULL : &m_AttributeValues[Attr3];
 
-	((CMainWnd*)GetTopLevelParent())->UpdateSelectedItems(Value1, Value2, Value3);
+	((CMainView*)GetParent())->UpdateItems(Value1, Value2, Value3);
 
 	return NULL;
 }

@@ -118,11 +118,6 @@ BOOL CMainWnd::AddClipItem(LFItemDescriptor* i)
 	return TRUE;
 }
 
-BOOL CMainWnd::UpdateSelectedItems(LFVariantData* value1, LFVariantData* value2, LFVariantData* value3)
-{
-	return m_wndMainView.UpdateItems(value1, value2, value3);
-}
-
 void CMainWnd::NavigateTo(LFFilter* f, UINT NavMode, FVPersistentData* Data, INT FirstAggregate, INT LastAggregate)
 {
 	ASSERT(!m_IsClipboard);

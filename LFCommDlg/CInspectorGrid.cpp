@@ -1,4 +1,4 @@
-nvali
+
 // CInspectorGrid.cpp: Implementierung der Klasse CInspectorGrid
 //
 
@@ -50,7 +50,7 @@ void CInspectorProperty::OnClickButton()
 
 BOOL CInspectorProperty::CanDelete()
 {
-	return (p_Data->Attr!=LFAttrFileName);
+	return (p_Data->Attr!=LFAttrFileName) && (!LFIsNullVariantData(p_Data));
 }
 
 BOOL CInspectorProperty::HasButton()
@@ -76,6 +76,35 @@ void CInspectorProperty::ResetModified()
 LFVariantData* CInspectorProperty::GetData()
 {
 	return p_Data;
+}
+
+
+// CInspectorPropertyTags
+//
+
+CInspectorPropertyTags::CInspectorPropertyTags(LFVariantData* pData)
+	: CInspectorProperty(pData)
+{
+}
+
+BOOL CInspectorPropertyTags::HasButton()
+{
+	return TRUE;
+}
+
+void CInspectorPropertyTags::OnClickButton()
+{
+	LFEditTagsDlg dlg(p_Parent, m_Multiple ? _T("") : p_Data->UnicodeArray, p_Parent->m_StoreID);
+
+	if (dlg.DoModal()==IDOK)
+	{
+		p_Data->IsNull = false;
+		wcscpy_s(p_Data->UnicodeArray, 256, dlg.m_Tags);
+
+		m_Modified = TRUE;
+		m_Multiple = FALSE;
+		p_Parent->NotifyOwner((SHORT)p_Data->Attr);
+	}
 }
 
 
@@ -107,6 +136,87 @@ void CInspectorPropertyRating::DrawValue(CDC& dc, CRect rect)
 BOOL CInspectorPropertyRating::CanDelete()
 {
 	return FALSE;
+}
+
+
+// CInspectorPropertyIATA
+//
+
+CInspectorPropertyIATA::CInspectorPropertyIATA(LFVariantData* pData, LFVariantData* pLocationName, LFVariantData* pLocationGPS)
+	: CInspectorProperty(pData)
+{
+	p_LocationName = pLocationName;
+	p_LocationGPS = pLocationGPS;
+}
+
+BOOL CInspectorPropertyIATA::HasButton()
+{
+	return TRUE;
+}
+
+void CInspectorPropertyIATA::OnClickButton()
+{
+	LFSelectLocationIATADlg dlg(IDD_SELECTIATA, p_Parent, &p_Data->AnsiString[0]);
+
+	if (dlg.DoModal()==IDOK)
+		if (dlg.m_Airport)
+		{
+			SHORT Attr2 = -1;
+			if ((p_LocationName) && (dlg.m_IATA_OverwriteName))
+			{
+				ASSERT(p_LocationName->Attr==LFAttrLocationName);
+				Attr2 = LFAttrLocationName;
+
+				p_LocationName->IsNull = false;
+				MultiByteToWideChar(CP_ACP, 0, dlg.m_Airport->Name, -1, p_LocationName->UnicodeString, 256);
+			}
+
+			SHORT Attr3 = -1;
+			if ((p_LocationGPS) && (dlg.m_IATA_OverwriteGPS))
+			{
+				ASSERT(p_LocationGPS->Attr==LFAttrLocationGPS);
+				Attr3 = LFAttrLocationGPS;
+
+				p_LocationGPS->IsNull = false;
+				p_LocationGPS->GeoCoordinates = dlg.m_Airport->Location;
+			}
+
+			p_Data->IsNull = false;
+			strcpy_s(p_Data->AnsiString, 256, dlg.m_Airport->Code);
+
+			m_Modified = TRUE;
+			m_Multiple = FALSE;
+			p_Parent->NotifyOwner((SHORT)p_Data->Attr, Attr2, Attr3);
+		}
+}
+
+
+// CInspectorPropertyGPS
+//
+
+CInspectorPropertyGPS::CInspectorPropertyGPS(LFVariantData* pData)
+	: CInspectorProperty(pData)
+{
+}
+
+BOOL CInspectorPropertyGPS::HasButton()
+{
+	return TRUE;
+}
+
+void CInspectorPropertyGPS::OnClickButton()
+{
+	LFSelectLocationGPSDlg dlg(p_Parent, p_Data->GeoCoordinates);
+
+	if (dlg.DoModal()==IDOK)
+	{
+		p_Data->GeoCoordinates = dlg.m_Location;
+		p_Data->IsNull = false;
+
+		m_Modified = TRUE;
+		m_Multiple = FALSE;
+		p_Parent->NotifyOwner((SHORT)p_Data->Attr);
+	}
 }
 
 
@@ -281,42 +391,9 @@ void CInspectorGrid::AddProperty(CInspectorProperty* pProperty, UINT Category, W
 
 void CInspectorGrid::AddAttributes(LFVariantData* pData)
 {
-	
-/*	for (UINT a=0; a<AttrCount; a++)
-	{
-		if (a>=LFAttributeCount)
-		{
-			pAttributes[a] = new CMFCPropertyGridProperty(AttributeVirtualNames[a-LFAttributeCount], _T(""));
-			pAttributes[a]->Enable(FALSE);
-			pAttributes[a]->AllowEdit(FALSE);
-			AttributeCategory[a] = LFAttrCategoryInternal;
-		}
-		else
-		{
-			switch (theApp.m_Attributes[a]->Type)
-			{
-			case LFTypeUnicodeArray:
-				pAttributes[a] = new CAttributePropertyTags(&AttributeValues[a]);
-				break;
-			case LFTypeAnsiString:
-				pAttributes[a] = (a==LFAttrLocationIATA) ? new CAttributePropertyIATA(&AttributeValues[a], (CAttributeProperty**)&pAttributes[LFAttrLocationName], (CAttributeProperty**)&pAttributes[LFAttrLocationGPS]) : new CAttributeProperty(&AttributeValues[a]);
-				break;
-			case LFTypeRating:
-				pAttributes[a] = new CAttributePropertyRating(&AttributeValues[a]);
-				break;
-			case LFTypeGeoCoordinates:
-				pAttributes[a] = new CAttributePropertyGPS(&AttributeValues[a]);
-				break;
-			case LFTypeTime:
-				pAttributes[a] = new CAttributePropertyTime(&AttributeValues[a]);
-				break;
-			default:
-				pAttributes[a] = new CAttributeProperty(&AttributeValues[a]);
-			}
-			AttributeCategory[a] = theApp.m_Attributes[a]->Category;
-		}
-	}*/
-
+/*	case LFTypeTime:
+		pAttributes[a] = new CAttributePropertyTime(&AttributeValues[a]);
+		break;*/
 
 	for (UINT a=0; a<LFAttributeCount; a++)
 	{
@@ -325,8 +402,17 @@ void CInspectorGrid::AddAttributes(LFVariantData* pData)
 
 		switch (attr->Type)
 		{
+		case LFTypeUnicodeArray:
+			pProp = (a==LFAttrTags) ? new CInspectorPropertyTags(&pData[a]) : new CInspectorProperty(&pData[a]);
+			break;
+		case LFTypeAnsiString:
+			pProp = (a==LFAttrLocationIATA) ? new CInspectorPropertyIATA(&pData[a], &pData[LFAttrLocationName], &pData[LFAttrLocationGPS]) : new CInspectorProperty(&pData[a]);
+			break;
 		case LFTypeRating:
 			pProp = new CInspectorPropertyRating(&pData[a]);
+			break;
+		case LFTypeGeoCoordinates:
+			pProp = new CInspectorPropertyGPS(&pData[a]);
 			break;
 		default:
 			pProp = new CInspectorProperty(&pData[a]);
@@ -1065,7 +1151,12 @@ void CInspectorGrid::OnLButtonUp(UINT /*nFlags*/, CPoint point)
 	if (GetCapture()==this)
 	{
 		UINT Part;
-		INT Item = HitTest(point, & Part);
+		INT Item = HitTest(point, &Part);
+
+		m_PartPressed = FALSE;
+		ReleaseCapture();
+		InvalidateItem(Item);
+
 		if ((Item==m_SelectedItem) && (Item!=-1))
 			switch (Part)
 			{
@@ -1076,10 +1167,6 @@ void CInspectorGrid::OnLButtonUp(UINT /*nFlags*/, CPoint point)
 				m_Properties.m_Items[Item].pProperty->OnClickButton();
 				break;
 			}
-
-		m_PartPressed = FALSE;
-		ReleaseCapture();
-		InvalidateItem(Item);
 	}
 }
 

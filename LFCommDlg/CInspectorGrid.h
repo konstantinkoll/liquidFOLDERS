@@ -40,6 +40,19 @@ protected:
 };
 
 
+// CInspectorPropertyTags
+//
+
+class AFX_EXT_CLASS CInspectorPropertyTags : public CInspectorProperty
+{
+public:
+	CInspectorPropertyTags(LFVariantData* pData);
+
+	virtual BOOL HasButton();
+	virtual void OnClickButton();
+};
+
+
 // CInspectorPropertyRating
 //
 
@@ -50,6 +63,36 @@ public:
 
 	virtual void DrawValue(CDC& dc, CRect rect);
 	virtual BOOL CanDelete();
+};
+
+
+// CInspectorPropertyIATA
+//
+
+class AFX_EXT_CLASS CInspectorPropertyIATA : public CInspectorProperty
+{
+public:
+	CInspectorPropertyIATA(LFVariantData* pData, LFVariantData* pLocationName, LFVariantData* pLocationGPS);
+
+	virtual BOOL HasButton();
+	virtual void OnClickButton();
+
+protected:
+	LFVariantData* p_LocationName;
+	LFVariantData* p_LocationGPS;
+};
+
+
+// CInspectorPropertyGPS
+//
+
+class AFX_EXT_CLASS CInspectorPropertyGPS : public CInspectorProperty
+{
+public:
+	CInspectorPropertyGPS(LFVariantData* pData);
+
+	virtual BOOL HasButton();
+	virtual void OnClickButton();
 };
 
 
@@ -91,7 +134,10 @@ struct PropertyCategory
 class AFX_EXT_CLASS CInspectorGrid : public CWnd
 {
 friend class CInspectorProperty;
+friend class CInspectorPropertyTags;
 friend class CInspectorPropertyRating;
+friend class CInspectorPropertyIATA;
+friend class CInspectorPropertyGPS;
 
 public:
 	CInspectorGrid();
