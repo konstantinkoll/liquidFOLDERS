@@ -1754,6 +1754,16 @@ void CTreeView::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 		si.fMask = SIF_POS;
 		si.nPos = m_VScrollPos;
 		SetScrollInfo(SB_VERT, &si);
+
+		if (p_Edit)
+		{
+			CRect rect;
+			p_Edit->GetWindowRect(&rect);
+			ScreenToClient(&rect);
+
+			rect.OffsetRect(0, -nInc);
+			p_Edit->SetWindowPos(NULL, rect.left, rect.top, rect.Width(), rect.Height(), SWP_NOZORDER | SWP_NOACTIVATE);
+		}
 	}
 
 	CWnd::OnVScroll(nSBCode, nPos, pScrollBar);
