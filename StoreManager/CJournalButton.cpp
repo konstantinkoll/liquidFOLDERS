@@ -206,6 +206,8 @@ void CJournalButton::OnLButtonUp(UINT /*nFlags*/, CPoint point)
 
 void CJournalButton::OnRButtonUp(UINT nFlags, CPoint point)
 {
+	ReleaseCapture();
+
 	CRect rect;
 	GetWindowRect(rect);
 	point += rect.TopLeft();

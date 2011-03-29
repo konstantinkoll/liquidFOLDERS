@@ -194,7 +194,7 @@ void CHistoryBar::OnPaint()
 
 	CGlasWindow* pCtrlSite = (CGlasWindow*)GetParent();
 	pCtrlSite->DrawFrameBackground(&dc, rectClient);
-	const BYTE Alpha = /*m_Dropped ? 0xFF : */((m_Hover!=NOPART) && !m_IsEmpty) ? 0xF0 : 0xD0;
+	const BYTE Alpha = (((m_Hover!=NOPART) || (m_Pressed!=NOPART)) && !m_IsEmpty) ? 0xF0 : 0xD0;
 
 	CRect rectContent(rectClient);
 	if (IsCtrlThemed())
@@ -223,7 +223,7 @@ void CHistoryBar::OnPaint()
 	{
 		dc.Draw3dRect(rectContent, GetSysColor(COLOR_3DSHADOW), GetSysColor(COLOR_3DHIGHLIGHT));
 		rectContent.DeflateRect(1, 1);
-		if (/*m_Dropped || */(GetFocus()==this))
+		if (GetFocus()==this)
 		{
 			dc.Draw3dRect(rectContent, 0x000000, GetSysColor(COLOR_3DFACE));
 			rectContent.DeflateRect(1, 1);
@@ -268,12 +268,12 @@ void CHistoryBar::OnPaint()
 				rectItem.left = BORDER/2;
 
 			// TODO
-			if (m_Pressed==(INT)a)
+			if ((m_Hover==(INT)a) && (m_Pressed==(INT)a))
 			{
 				dc.FillSolidRect(rectItem, 0xFF0000);
 			}
 			else
-				if (m_Hover==(INT)a)
+				if ((m_Hover==(INT)a) && (m_Pressed==NOPART))
 				{
 					dc.FillSolidRect(rectItem, 0xFFFF00);
 				}
@@ -333,7 +333,7 @@ void CHistoryBar::OnSize(UINT nType, INT cx, INT cy)
 	AdjustLayout();
 }
 
-void CHistoryBar::OnMouseMove(UINT nFlags, CPoint point)
+void CHistoryBar::OnMouseMove(UINT /*nFlags*/, CPoint point)
 {
 	if (m_Hover==NOPART)
 	{
@@ -346,8 +346,6 @@ void CHistoryBar::OnMouseMove(UINT nFlags, CPoint point)
 	}
 
 	INT Hover = HitTest(point);
-	m_Pressed = (nFlags & MK_LBUTTON) ? Hover : NOPART;
-
 	if (Hover!=m_Hover)
 	{
 		m_Hover = Hover;
@@ -365,32 +363,41 @@ void CHistoryBar::OnLButtonDown(UINT /*nFlags*/, CPoint point)
 {
 	m_Hover = m_Pressed = HitTest(point);
 	Invalidate();
+
+	if (m_Hover>=0)
+		SetCapture();
 }
 
 void CHistoryBar::OnLButtonUp(UINT /*nFlags*/, CPoint point)
 {
-	m_Hover = HitTest(point);
-	switch (m_Hover)
-	{
-	case NOPART:
-	case VIEW:
-		break;
-	case RELOAD:
-	case 0:
-		GetOwner()->PostMessage(WM_RELOAD);
-		break;
-	default:
-		GetOwner()->PostMessage(WM_NAVIGATEBACK, (WPARAM)m_Hover);
-		break;
-	}
+	INT ID = HitTest(point);
+	if (ID==m_Pressed)
+		switch (ID)
+		{
+		case NOPART:
+		case VIEW:
+			break;
+		case RELOAD:
+		case 0:
+			GetOwner()->PostMessage(WM_RELOAD);
+			break;
+		default:
+			GetOwner()->PostMessage(WM_NAVIGATEBACK, (WPARAM)ID);
+			break;
+		}
 
+	m_Hover = ID;
 	m_Pressed = NOPART;
 	Invalidate();
+
+	ReleaseCapture();
 }
 
 void CHistoryBar::OnRButtonUp(UINT nFlags, CPoint point)
 {
 	m_Hover = m_Pressed = NOPART;
+	ReleaseCapture();
+
 	Invalidate();
 	UpdateWindow();
 

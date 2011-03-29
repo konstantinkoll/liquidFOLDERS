@@ -1184,6 +1184,8 @@ void CFileView::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 		si.fMask = SIF_POS;
 		si.nPos = m_HScrollPos;
 		SetScrollInfo(SB_HORZ, &si);
+
+		UpdateWindow();
 	}
 
 	CWnd::OnHScroll(nSBCode, nPos, pScrollBar);
