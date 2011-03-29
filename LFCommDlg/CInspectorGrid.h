@@ -106,6 +106,21 @@ public:
 };
 
 
+// CInspectorPropertyTime
+//
+
+class AFX_EXT_CLASS CInspectorPropertyTime : public CInspectorProperty
+{
+public:
+	CInspectorPropertyTime(LFVariantData* pData);
+
+	virtual BOOL HasButton();
+	virtual HCURSOR SetCursor(INT x);
+	virtual BOOL OnClickValue(INT x);
+	virtual void OnClickButton();
+};
+
+
 // CInspectorHeader
 //
 
@@ -148,6 +163,7 @@ friend class CInspectorPropertyTags;
 friend class CInspectorPropertyRating;
 friend class CInspectorPropertyIATA;
 friend class CInspectorPropertyGPS;
+friend class CInspectorPropertyTime;
 
 public:
 	CInspectorGrid();

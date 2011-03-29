@@ -315,6 +315,41 @@ void CInspectorPropertyGPS::OnClickButton()
 }
 
 
+
+
+// CInspectorPropertyTime
+//
+
+CInspectorPropertyTime::CInspectorPropertyTime(LFVariantData* pData)
+	: CInspectorProperty(pData)
+{
+}
+
+HCURSOR CInspectorPropertyTime::SetCursor(INT /*x*/)
+{
+	ASSERT(p_Parent);
+
+	return p_Parent->p_App->LoadStandardCursor(IDC_ARROW);
+}
+
+BOOL CInspectorPropertyTime::HasButton()
+{
+	return TRUE;
+}
+
+BOOL CInspectorPropertyTime::OnClickValue(INT /*x*/)
+{
+	return FALSE;
+}
+
+void CInspectorPropertyTime::OnClickButton()
+{
+	ASSERT(p_Parent);
+
+	p_Parent->MessageBox(_T("Coming soon!"));
+}
+
+
 // CInspectorHeader
 //
 
@@ -532,10 +567,6 @@ void CInspectorGrid::AddProperty(CInspectorProperty* pProperty, UINT Category, W
 
 void CInspectorGrid::AddAttributes(LFVariantData* pData)
 {
-/*	case LFTypeTime:
-		pAttributes[a] = new CAttributePropertyTime(&AttributeValues[a]);
-		break;*/
-
 	for (UINT a=0; a<LFAttributeCount; a++)
 	{
 		LFAttributeDescriptor* attr = p_App->m_Attributes[a];
@@ -554,6 +585,9 @@ void CInspectorGrid::AddAttributes(LFVariantData* pData)
 			break;
 		case LFTypeGeoCoordinates:
 			pProp = new CInspectorPropertyGPS(&pData[a]);
+			break;
+		case LFTypeTime:
+			pProp = new CInspectorPropertyTime(&pData[a]);
 			break;
 		default:
 			pProp = new CInspectorProperty(&pData[a]);
