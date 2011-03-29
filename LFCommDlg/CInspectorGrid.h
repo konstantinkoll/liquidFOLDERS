@@ -30,6 +30,7 @@ public:
 	virtual void OnSetString(CString Value);
 	virtual BOOL OnClickValue(INT x);
 	virtual void OnClickButton();
+	virtual BOOL OnPushChar(UINT nChar);
 
 	void SetParent(CInspectorGrid* pParent);
 	void SetMultiple(BOOL Multiple);
@@ -69,6 +70,7 @@ public:
 	virtual HCURSOR SetCursor(INT x);
 	virtual BOOL CanDelete();
 	virtual BOOL OnClickValue(INT x);
+	virtual BOOL OnPushChar(UINT nChar);
 };
 
 

@@ -125,6 +125,11 @@ LFVariantData* CInspectorProperty::GetData()
 	return p_Data;
 }
 
+BOOL CInspectorProperty::OnPushChar(UINT /*ch*/)
+{
+	return FALSE;
+}
+
 
 // CInspectorPropertyTags
 //
@@ -209,6 +214,47 @@ BOOL CInspectorPropertyRating::OnClickValue(INT x)
 		}
 
 	return FALSE;
+}
+
+BOOL CInspectorPropertyRating::OnPushChar(UINT nChar)
+{
+	INT Rating = m_Multiple ? 0 : p_Data->Rating;
+
+	switch (nChar)
+	{
+	case 0x6B:
+	case 0xBB:
+		Rating++;
+		break;
+	case 0x6D:
+	case 0xBD:
+		Rating--;
+		break;
+	case '0':
+	case '1':
+	case '2':
+	case '3':
+	case '4':
+	case '5':
+		Rating = (nChar-'0')*2;
+		break;
+	default:
+		return FALSE;
+	}
+
+	if (Rating<0)
+		Rating = 0;
+	if (Rating>LFMaxRating)
+		Rating = LFMaxRating;
+
+	if (p_Data->Rating!=(UCHAR)Rating)
+	{
+		p_Data->IsNull = false;
+		p_Data->Rating = (UCHAR)Rating;
+		p_Parent->NotifyOwner((SHORT)p_Data->Attr);
+	}
+
+	return TRUE;
 }
 
 
@@ -1565,6 +1611,11 @@ void CInspectorGrid::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 			ResetProperty(m_SelectedItem);
 		break;
 	default:
+		if (m_SelectedItem!=-1)
+			if (m_Properties.m_Items[m_SelectedItem].Editable)
+				if (m_Properties.m_Items[m_SelectedItem].pProperty->OnPushChar(nChar))
+					break;
+
 		CWnd::OnKeyDown(nChar, nRepCnt, nFlags);
 	}
 }
