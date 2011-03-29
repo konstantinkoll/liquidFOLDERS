@@ -520,7 +520,7 @@ void CInspectorWnd::OnExportSummary()
 
 						CHAR Buffer[1024];
 						WideCharToMultiByte(CP_ACP, 0, tmpStr, -1, Buffer, 1024, NULL, NULL);
-						f.Write(Buffer, strlen(Buffer));
+						f.Write(Buffer, (UINT)strlen(Buffer));
 					}
 			}
 			catch(CFileException ex)

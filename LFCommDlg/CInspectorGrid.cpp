@@ -603,6 +603,7 @@ void CInspectorGrid::ShowHeader(BOOL ShowHeader)
 
 	m_ShowHeader = ShowHeader;
 	AdjustLayout();
+	EnsureVisible(m_SelectedItem);
 }
 
 void CInspectorGrid::SetAlphabeticMode(BOOL SortAlphabetic)
@@ -612,6 +613,7 @@ void CInspectorGrid::SetAlphabeticMode(BOOL SortAlphabetic)
 	m_SortAlphabetic = SortAlphabetic;
 	MakeSortArrayDirty();
 	AdjustLayout();
+	EnsureVisible(m_SelectedItem);
 }
 
 void CInspectorGrid::UpdatePropertyState(UINT nID, BOOL Multiple, BOOL Editable, BOOL Visible)
@@ -931,7 +933,7 @@ void CInspectorGrid::AdjustLayout()
 		for (UINT a=0; a<m_Properties.m_ItemCount; a++)
 			if (m_Properties.m_Items[m_pSortArray[a]].Visible)
 			{
-				m_SelectedItem = a;
+				m_SelectedItem = m_pSortArray[a];
 				break;
 			}
 	}
@@ -1085,6 +1087,7 @@ BEGIN_MESSAGE_MAP(CInspectorGrid, CWnd)
 	ON_WM_RBUTTONDOWN()
 	ON_WM_SETFOCUS()
 	ON_WM_KILLFOCUS()
+	ON_WM_GETDLGCODE()
 	ON_WM_SETCURSOR()
 	ON_EN_KILLFOCUS(1, OnDestroyEdit)
 END_MESSAGE_MAP()
@@ -1499,8 +1502,50 @@ void CInspectorGrid::OnLButtonDown(UINT /*nFlags*/, CPoint point)
 
 void CInspectorGrid::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
+	INT Last = m_SelectedItem;
+
 	switch(nChar)
 	{
+	case VK_HOME:
+		for (UINT a=0; a<m_Properties.m_ItemCount; a++)
+			if (m_Properties.m_Items[m_pSortArray[a]].Visible)
+			{
+				SelectItem(m_pSortArray[a]);
+				break;
+			}
+		break;
+	case VK_UP:
+		for (UINT a=0; a<m_Properties.m_ItemCount; a++)
+		{
+			if (m_pSortArray[a]==m_SelectedItem)
+			{
+				SelectItem(Last);
+				break;
+			}
+			if (m_Properties.m_Items[m_pSortArray[a]].Visible)
+				Last = m_pSortArray[a];
+		}
+		break;
+	case VK_DOWN:
+		for (INT a=m_Properties.m_ItemCount-1; a>=0; a--)
+		{
+			if (m_pSortArray[a]==m_SelectedItem)
+			{
+				SelectItem(Last);
+				break;
+			}
+			if (m_Properties.m_Items[m_pSortArray[a]].Visible)
+				Last = m_pSortArray[a];
+		}
+		break;
+	case VK_END:
+		for (INT a=m_Properties.m_ItemCount-1; a>=0; a--)
+			if (m_Properties.m_Items[m_pSortArray[a]].Visible)
+			{
+				SelectItem(m_pSortArray[a]);
+				break;
+			}
+		break;
 	case VK_EXECUTE:
 	case VK_RETURN:
 		if ((GetKeyState(VK_CONTROL)<0) && (m_SelectedItem!=-1))
@@ -1584,6 +1629,11 @@ void CInspectorGrid::OnSetFocus(CWnd* /*pOldWnd*/)
 void CInspectorGrid::OnKillFocus(CWnd* /*pNewWnd*/)
 {
 	Invalidate();
+}
+
+UINT CInspectorGrid::OnGetDlgCode()
+{
+	return DLGC_WANTARROWS | DLGC_WANTCHARS | DLGC_WANTALLKEYS;
 }
 
 BOOL CInspectorGrid::OnSetCursor(CWnd* /*pWnd*/, UINT /*nHitTest*/, UINT /*message*/)

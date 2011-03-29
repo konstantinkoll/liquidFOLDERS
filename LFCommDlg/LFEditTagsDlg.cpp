@@ -20,7 +20,7 @@ LFEditTagsDlg::LFEditTagsDlg(CWnd* pParentWnd, CString Tags, CHAR* StoreID)
 
 	m_StoreIDValid = (StoreID!=NULL);
 	if (m_StoreIDValid)
-		m_StoreIDValid = strlen(StoreID);
+		m_StoreIDValid = (strlen(StoreID)>0);
 	if (m_StoreIDValid)
 		strcpy_s(m_StoreID, LFKeySize, StoreID);
 }

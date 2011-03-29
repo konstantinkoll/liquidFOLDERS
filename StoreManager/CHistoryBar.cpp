@@ -103,7 +103,7 @@ void CHistoryBar::AddFilter(LFFilter* Filter, CDC* pDC)
 	ZeroMemory(&item, sizeof(item));
 
 	wcscpy_s(item.Name, 256, Filter->Name);
-	item.Width = pDC->GetTextExtent(item.Name, wcslen(item.Name)).cx+2*MARGIN;
+	item.Width = pDC->GetTextExtent(item.Name, (INT)wcslen(item.Name)).cx+2*MARGIN;
 
 	m_Breadcrumbs.AddItem(item);
 }
@@ -282,7 +282,7 @@ void CHistoryBar::OnPaint()
 			if (rectItemText.left<BORDER/2)
 				rectItemText.left = BORDER/2;
 
-			dc.DrawText(hi->Name, wcslen(hi->Name), rectItemText, DT_SINGLELINE | DT_VCENTER | DT_RIGHT);
+			dc.DrawText(hi->Name, (INT)wcslen(hi->Name), rectItemText, DT_SINGLELINE | DT_VCENTER | DT_RIGHT);
 
 			// Arrow
 			if (a>0)
