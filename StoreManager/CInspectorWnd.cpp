@@ -496,11 +496,11 @@ void CInspectorWnd::OnAlphabetic()
 
 void CInspectorWnd::OnExportSummary()
 {
-	CString tmpStr;
-	tmpStr.LoadString(IDS_TXTFILEFILTER);
-	tmpStr += _T(" (*.txt)|*.txt||");
+	CString Extensions;
+	ENSURE(Extensions.LoadString(IDS_TXTFILEFILTER));
+	Extensions += _T(" (*.txt)|*.txt||");
 
-	CFileDialog dlg(FALSE, _T(".txt"), NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, tmpStr, this);
+	CFileDialog dlg(FALSE, _T(".txt"), NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, Extensions, this);
 	if (dlg.DoModal()==IDOK)
 	{
 		CStdioFile f;

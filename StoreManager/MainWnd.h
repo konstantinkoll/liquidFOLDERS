@@ -62,6 +62,7 @@ protected:
 	afx_msg void OnUpdateNavCommands(CCmdUI* pCmdUI);
 
 	afx_msg void OnItemOpen();
+	afx_msg void OnExportMetadata();
 
 	afx_msg void OnUpdateViewOptions();
 	afx_msg void OnUpdateSortOptions();

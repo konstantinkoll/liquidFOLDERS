@@ -200,6 +200,7 @@ BEGIN_MESSAGE_MAP(CMainWnd, CGlasWindow)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_NAV_BACK, ID_NAV_RELOAD, OnUpdateNavCommands)
 
 	ON_COMMAND(IDM_ITEM_OPEN, OnItemOpen)
+	ON_COMMAND(IDM_INSPECTOR_EXPORTMETADATA, OnExportMetadata)
 
 	ON_MESSAGE_VOID(WM_UPDATEVIEWOPTIONS, OnUpdateViewOptions)
 	ON_MESSAGE_VOID(WM_UPDATESORTOPTIONS, OnUpdateSortOptions)
@@ -382,6 +383,23 @@ void CMainWnd::OnItemOpen()
 					ASSERT(FALSE);
 				}
 			}
+	}
+}
+
+void CMainWnd::OnExportMetadata()
+{
+	CString Extensions;
+	ENSURE(Extensions.LoadString(IDS_TXTFILEFILTER));
+	Extensions += _T(" (*.txt)|*.txt|");
+
+	CString tmpStr;
+	ENSURE(tmpStr.LoadStringW(IDS_XMLFILEFILTER));
+	Extensions += tmpStr+_T(" (*.xml)|*.xml||");
+
+	CFileDialog dlg(FALSE, _T(".txt"), NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, Extensions, this);
+	if (dlg.DoModal()==IDOK)
+	{
+		MessageBox(_T("Coming soon!"));
 	}
 }
 
