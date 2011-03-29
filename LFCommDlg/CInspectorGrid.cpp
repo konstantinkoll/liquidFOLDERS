@@ -1126,29 +1126,30 @@ void CInspectorGrid::OnPaint()
 
 			COLORREF clr1 = pProp->Editable ? Themed ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT) : GetSysColor(COLOR_3DSHADOW);
 			COLORREF clr2 = Themed ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT);
-			if (hThemeList)
-			{
-				const INT StateIDs[4] = { LISS_NORMAL, LISS_HOT, GetFocus()!=this ? LISS_SELECTEDNOTFOCUS : LISS_SELECTED, LISS_HOTSELECTED };
-				UINT State = 0;
-				if ((INT)a==m_HotItem)
-					State |= 1;
-				if ((GetFocus()==this) && ((INT)a==m_SelectedItem))
-					State |= 2;
-				if (State)
-					p_App->zDrawThemeBackground(hThemeList, dc, LVP_LISTITEM, StateIDs[State], &rectProp, &rectProp);
-			}
-			else
-			{
-				if ((GetFocus()==this) && ((INT)a==m_SelectedItem))
+			if ((INT)a!=m_EditItem)
+				if (hThemeList)
 				{
-					dc.FillSolidRect(&rectProp, GetSysColor(COLOR_HIGHLIGHT));
-					dc.SetTextColor(0x000000);
-					dc.SetBkColor(0xFFFFFF);
-					dc.DrawFocusRect(&rectProp);
-
-					clr1 = clr2 = GetSysColor(COLOR_HIGHLIGHTTEXT);
+					const INT StateIDs[4] = { LISS_NORMAL, LISS_HOT, GetFocus()!=this ? LISS_SELECTEDNOTFOCUS : LISS_SELECTED, LISS_HOTSELECTED };
+					UINT State = 0;
+					if ((INT)a==m_HotItem)
+						State |= 1;
+					if ((GetFocus()==this) && ((INT)a==m_SelectedItem))
+						State |= 2;
+					if (State)
+						p_App->zDrawThemeBackground(hThemeList, dc, LVP_LISTITEM, StateIDs[State], &rectProp, &rectProp);
 				}
-			}
+				else
+				{
+					if ((GetFocus()==this) && ((INT)a==m_SelectedItem))
+					{
+						dc.FillSolidRect(&rectProp, GetSysColor(COLOR_HIGHLIGHT));
+						dc.SetTextColor(0x000000);
+						dc.SetBkColor(0xFFFFFF);
+						dc.DrawFocusRect(&rectProp);
+
+						clr1 = clr2 = GetSysColor(COLOR_HIGHLIGHTTEXT);
+					}
+				}
 
 			CRect rectLabel(GUTTER, pProp->Top-m_VScrollPos, m_LabelWidth, pProp->Bottom-m_VScrollPos);
 			dc.SetTextColor(clr1);
