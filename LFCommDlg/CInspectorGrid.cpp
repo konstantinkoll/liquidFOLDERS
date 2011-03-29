@@ -921,6 +921,21 @@ void CInspectorGrid::AdjustLayout()
 	if (m_LabelWidth>rect.Width()/2)
 		m_LabelWidth = rect.Width()/2;
 
+	if (m_SelectedItem==-1)
+		m_SelectedItem = 0;
+
+	if (!m_Properties.m_Items[m_SelectedItem].Visible)
+	{
+		m_SelectedItem = -1;
+
+		for (UINT a=0; a<m_Properties.m_ItemCount; a++)
+			if (m_Properties.m_Items[m_pSortArray[a]].Visible)
+			{
+				m_SelectedItem = a;
+				break;
+			}
+	}
+
 	AdjustScrollbars();
 	Invalidate();
 }
@@ -977,12 +992,14 @@ void CInspectorGrid::NotifyOwner(SHORT Attr1, SHORT Attr2, SHORT Attr3)
 void CInspectorGrid::ResetProperty(UINT Attr)
 {
 	ASSERT(Attr<m_Properties.m_ItemCount);
-	ASSERT(m_Properties.m_Items[Attr].Editable);
 
-	LFGetNullVariantData(m_Properties.m_Items[Attr].pProperty->GetData());
-	m_Properties.m_Items[Attr].pProperty->m_Modified = TRUE;
+	if ((m_Properties.m_Items[Attr].Editable) && (Attr!=LFAttrFileName))
+	{
+		LFGetNullVariantData(m_Properties.m_Items[Attr].pProperty->GetData());
+		m_Properties.m_Items[Attr].pProperty->m_Modified = TRUE;
 
-	NotifyOwner((SHORT)Attr);
+		NotifyOwner((SHORT)Attr);
+	}
 }
 
 void CInspectorGrid::EditProperty(UINT Attr)
@@ -1061,6 +1078,7 @@ BEGIN_MESSAGE_MAP(CInspectorGrid, CWnd)
 	ON_WM_MOUSELEAVE()
 	ON_WM_MOUSEHOVER()
 	ON_WM_MOUSEWHEEL()
+	ON_WM_KEYDOWN()
 	ON_WM_LBUTTONDOWN()
 	ON_WM_LBUTTONUP()
 	ON_WM_LBUTTONDBLCLK()
@@ -1476,6 +1494,33 @@ void CInspectorGrid::OnLButtonDown(UINT /*nFlags*/, CPoint point)
 			SetCapture();
 			InvalidateItem(m_SelectedItem);
 		}
+	}
+}
+
+void CInspectorGrid::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
+{
+	switch(nChar)
+	{
+	case VK_EXECUTE:
+	case VK_RETURN:
+		if ((GetKeyState(VK_CONTROL)<0) && (m_SelectedItem!=-1))
+			if (m_Properties.m_Items[m_SelectedItem].pProperty->HasButton())
+			{
+				m_Properties.m_Items[m_SelectedItem].pProperty->OnClickButton();
+				break;
+			}
+	case VK_F2:
+		if (m_SelectedItem!=-1)
+			EditProperty(m_SelectedItem);
+		break;
+	case VK_BACK:
+	case VK_DELETE:
+	case VK_SPACE:
+		if (m_SelectedItem!=-1)
+			ResetProperty(m_SelectedItem);
+		break;
+	default:
+		CWnd::OnKeyDown(nChar, nRepCnt, nFlags);
 	}
 }
 
