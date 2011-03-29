@@ -584,6 +584,8 @@ void CInspectorGrid::UpdatePropertyState(UINT nID, BOOL Multiple, BOOL Editable,
 {
 	ASSERT(nID<m_Properties.m_ItemCount);
 
+	DestroyEdit();
+
 	m_Properties.m_Items[nID].Editable = Editable;
 	m_Properties.m_Items[nID].Visible = Visible;
 	m_Properties.m_Items[nID].pProperty->SetMultiple(Multiple);
@@ -1235,6 +1237,17 @@ void CInspectorGrid::OnSize(UINT nType, INT cx, INT cy)
 {
 	CWnd::OnSize(nType, cx, cy);
 	AdjustLayout();
+
+	if (p_Edit)
+	{
+		CRect rect;
+		p_Edit->GetWindowRect(&rect);
+		ScreenToClient(&rect);
+
+		rect.left = m_LabelWidth+GUTTER;
+		rect.right = cx-1;
+		p_Edit->SetWindowPos(NULL, rect.left, rect.top, rect.Width(), rect.Height(), SWP_NOZORDER | SWP_NOACTIVATE);
+	}
 }
 
 void CInspectorGrid::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
