@@ -253,8 +253,6 @@ void CGlobeView::SetSearchResult(LFSearchResult* Result, FVPersistentData* Data)
 	if (Data)
 		if (Data->LocationValid)
 			m_GlobeCurrent = Data->Location;
-
-	UpdateScene(TRUE);
 }
 
 INT CGlobeView::ItemAtPosition(CPoint point)
