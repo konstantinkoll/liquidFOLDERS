@@ -334,14 +334,14 @@ void CInspectorHeader::DrawHeader(CDC& /*dc*/, CRect /*rect*/, BOOL /*Themed*/)
 extern AFX_EXTENSION_MODULE LFCommDlgDLL;
 extern INT GetAttributeIconIndex(UINT Attr);
 
-#define GUTTER      3
-#define PADDING     2
+#define GUTTER         3
+#define PADDING        2
 
-#define PartNone       0
-#define PartLabel      1
-#define PartValue      2
-#define PartButton     3
-#define PartReset      4
+#define NOPART         0
+#define PARTLABEL      1
+#define PARTVALUE      2
+#define PARTBUTTON     3
+#define PARTRESET      4
 
 CInspectorGrid::CInspectorGrid()
 	: CWnd()
@@ -373,7 +373,7 @@ CInspectorGrid::CInspectorGrid()
 	hIconResetNormal = hIconResetHot = NULL;
 	m_VScrollMax = m_VScrollPos = m_IconSize = 0;
 	m_HotItem = m_SelectedItem = m_EditItem = -1;
-	m_HotPart = PartNone;
+	m_HotPart = NOPART;
 	p_Edit = NULL;
 
 	ENSURE(m_MultipleValues.LoadString(IDS_MULTIPLEVALUES));
@@ -640,7 +640,7 @@ INT CInspectorGrid::HitTest(CPoint point, UINT* PartID)
 			{
 				if (point.x<m_LabelWidth+GUTTER)
 				{
-					*PartID = PartLabel;
+					*PartID = PARTLABEL;
 					return a;
 				}
 
@@ -653,7 +653,7 @@ INT CInspectorGrid::HitTest(CPoint point, UINT* PartID)
 					CRect rectReset(rectPart.right-m_IconSize-Offs-2, rectPart.top+Offs, rectPart.right-Offs-2, rectPart.top+Offs+m_IconSize);
 					if (rectReset.PtInRect(point))
 					{
-						*PartID = PartReset;
+						*PartID = PARTRESET;
 						return a;
 					}
 
@@ -671,12 +671,12 @@ INT CInspectorGrid::HitTest(CPoint point, UINT* PartID)
 
 					if (rectButton.PtInRect(point))
 					{
-						*PartID = PartButton;
+						*PartID = PARTBUTTON;
 						return a;
 					}
 				}
 
-				*PartID = PartValue;
+				*PartID = PARTVALUE;
 			}
 
 			return a;
@@ -684,7 +684,7 @@ INT CInspectorGrid::HitTest(CPoint point, UINT* PartID)
 	}
 
 	if (PartID)
-		*PartID = PartNone;
+		*PartID = NOPART;
 	return -1;
 }
 
@@ -1161,7 +1161,7 @@ void CInspectorGrid::OnPaint()
 			if ((pProp->Editable) && (pProp->pProperty->CanDelete()) && ((INT)a==m_HotItem) && ((INT)a!=m_EditItem))
 			{
 				INT Offs = (rectLabel.Height()-m_IconSize)/2;
-				DrawIconEx(dc, rectLabel.right-m_IconSize-Offs-2, rectLabel.top+Offs, ((INT)a==m_HotItem) && (m_HotPart==PartReset) ? hIconResetHot : hIconResetNormal, m_IconSize, m_IconSize, 0, NULL, DI_NORMAL);
+				DrawIconEx(dc, rectLabel.right-m_IconSize-Offs-2, rectLabel.top+Offs, ((INT)a==m_HotItem) && (m_HotPart==PARTRESET) ? hIconResetHot : hIconResetNormal, m_IconSize, m_IconSize, 0, NULL, DI_NORMAL);
 				rectLabel.right -= m_IconSize+Offs+GUTTER+2;
 			}
 			else
@@ -1175,7 +1175,7 @@ void CInspectorGrid::OnPaint()
 				rectButton.left = rectButton.right-rectButton.Height()-m_IconSize/2;
 				rectLabel.right -= rectButton.Width()+GUTTER;
 
-				BOOL Hot = ((INT)a==m_HotItem) && (m_HotPart==PartButton);
+				BOOL Hot = ((INT)a==m_HotItem) && (m_HotPart==PARTBUTTON);
 				BOOL Pressed = Hot && m_PartPressed;
 
 				if (hThemeButton)
@@ -1343,7 +1343,7 @@ void CInspectorGrid::OnMouseLeave()
 
 	m_Hover = FALSE;
 	m_HotItem = -1;
-	m_HotPart = PartNone;
+	m_HotPart = NOPART;
 }
 
 void CInspectorGrid::OnMouseHover(UINT nFlags, CPoint point)
@@ -1412,7 +1412,7 @@ void CInspectorGrid::OnLButtonDown(UINT /*nFlags*/, CPoint point)
 	{
 		SelectItem(Item);
 
-		if (Part>=PartButton)
+		if (Part>=PARTBUTTON)
 		{
 			m_HotPart = Part;
 			m_PartPressed = TRUE;
@@ -1436,16 +1436,16 @@ void CInspectorGrid::OnLButtonUp(UINT /*nFlags*/, CPoint point)
 		if ((Item==m_SelectedItem) && (Item!=-1))
 			switch (Part)
 			{
-			case PartButton:
+			case PARTBUTTON:
 				m_Properties.m_Items[Item].pProperty->OnClickButton();
 				break;
-			case PartReset:
+			case PARTRESET:
 				ResetProperty(Item);
 				break;
 			}
 	}
 	else
-		if ((Item==m_SelectedItem) && (Item!=-1) && (Part==PartValue))
+		if ((Item==m_SelectedItem) && (Item!=-1) && (Part==PARTVALUE))
 		{
 			Property* pProp = &m_Properties.m_Items[Item];
 
@@ -1462,7 +1462,7 @@ void CInspectorGrid::OnLButtonDblClk(UINT /*nFlags*/, CPoint point)
 
 	UINT Part;
 	INT Item = HitTest(point, &Part);
-	if ((Item!=-1) && (Part<=PartButton))
+	if ((Item!=-1) && (Part<=PARTBUTTON))
 	{
 		SelectItem(Item);
 		EditProperty(Item);
@@ -1493,7 +1493,7 @@ BOOL CInspectorGrid::OnSetCursor(CWnd* /*pWnd*/, UINT /*nHitTest*/, UINT /*messa
 	UINT Part;
 	INT Item = HitTest(point, &Part);
 
-	if ((Item!=-1) && (Part==PartValue))
+	if ((Item!=-1) && (Part==PARTVALUE))
 	{
 		Property* pProp = &m_Properties.m_Items[Item];
 
