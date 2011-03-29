@@ -195,7 +195,7 @@ BOOL CInspectorPropertyRating::OnClickValue(INT x)
 {
 	ASSERT(p_Parent);
 
-	if (x<RatingBitmapWidth+6)
+	if ((x>=0) && (x<RatingBitmapWidth+6))
 		if ((x<6) || ((x-6)%18<16))
 		{
 			INT Rating = (x<6) ? 0 : 2*((x-6)/18)+((x-6)%18>8)+1;
@@ -661,7 +661,7 @@ INT CInspectorGrid::HitTest(CPoint point, UINT* PartID)
 				}
 				else
 				{
-					rectPart.right -= GUTTER;
+					rectPart.right -= GUTTER-1;
 				}
 
 				if ((pProp->Editable) && (pProp->pProperty->HasButton()) && ((INT)a!=m_EditItem))
@@ -934,6 +934,7 @@ void CInspectorGrid::NotifyOwner(SHORT Attr1, SHORT Attr2, SHORT Attr3)
 
 	m_TooltipCtrl.Deactivate();
 
+	UpdateWindow();
 	GetOwner()->PostMessage(WM_PROPERTYCHANGED, Attr1, Attr2 | (Attr3 << 16));
 }
 
@@ -955,38 +956,39 @@ void CInspectorGrid::EditProperty(UINT Attr)
 
 	Property* pProp = &m_Properties.m_Items[Attr];
 	if (pProp->Editable)
-	{
-		m_EditItem = Attr;
-		InvalidateItem(Attr);
-		EnsureVisible(Attr);
+		if (pProp->pProperty->OnClickValue(-1))
+		{
+			m_EditItem = Attr;
+			InvalidateItem(Attr);
+			EnsureVisible(Attr);
 
-		RECT rect = GetItemRect(Attr);
-		rect.top += 2;
-		rect.bottom -=2;
-		rect.left += m_LabelWidth+GUTTER-1;
+			RECT rect = GetItemRect(Attr);
+			rect.top += 2;
+			rect.bottom -=2;
+			rect.left += m_LabelWidth+GUTTER-1;
 
-		p_Edit = new CMFCMaskedEdit();
-		p_Edit->Create(WS_CHILD | WS_VISIBLE | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | ES_AUTOHSCROLL, rect, this, 1);
-		if (!pProp->pProperty->m_Multiple)
-		{
-			WCHAR tmpStr[256];
-			pProp->pProperty->ToString(tmpStr, 256);
-			p_Edit->SetWindowText(tmpStr);
-			p_Edit->SetSel(0, (INT)wcslen(tmpStr));
+			p_Edit = new CMFCMaskedEdit();
+			p_Edit->Create(WS_CHILD | WS_VISIBLE | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | ES_AUTOHSCROLL, rect, this, 1);
+			if (!pProp->pProperty->m_Multiple)
+			{
+				WCHAR tmpStr[256];
+				pProp->pProperty->ToString(tmpStr, 256);
+				p_Edit->SetWindowText(tmpStr);
+				p_Edit->SetSel(0, (INT)wcslen(tmpStr));
+			}
+			p_Edit->SetValidChars(pProp->pProperty->GetValidChars());
+			if (Attr<LFAttributeCount)
+				p_Edit->SetLimitText(p_App->m_Attributes[Attr]->cCharacters);
+			if (pProp->pProperty->m_Modified)
+			{
+				p_Edit->SetFont(&m_BoldFont);
+			}
+			else
+			{
+				p_Edit->SendMessage(WM_SETFONT, (WPARAM)GetStockObject(DEFAULT_GUI_FONT));
+			}
+			p_Edit->SetFocus();
 		}
-		p_Edit->SetValidChars(pProp->pProperty->GetValidChars());
-		if (Attr<LFAttributeCount)
-			p_Edit->SetLimitText(p_App->m_Attributes[Attr]->cCharacters);
-		if (pProp->pProperty->m_Modified)
-		{
-			p_Edit->SetFont(&m_BoldFont);
-		}
-		else
-		{
-			p_Edit->SendMessage(WM_SETFONT, (WPARAM)GetStockObject(DEFAULT_GUI_FONT));
-		}
-		p_Edit->SetFocus();
-	}
 }
 
 void CInspectorGrid::DestroyEdit(BOOL Accept)
@@ -1163,7 +1165,7 @@ void CInspectorGrid::OnPaint()
 			}
 			else
 			{
-				rectLabel.right -= GUTTER;
+				rectLabel.right -= GUTTER-1;
 			}
 
 			if ((pProp->Editable) && (pProp->pProperty->HasButton()) && ((INT)a==m_HotItem) && ((INT)a!=m_EditItem))
