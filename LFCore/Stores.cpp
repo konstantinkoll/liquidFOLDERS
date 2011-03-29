@@ -284,7 +284,7 @@ void GetFileLocation(wchar_t* DatPath, LFCoreAttributes* ca, wchar_t* dst, size_
 
 	GetFilePath(DatPath, ca, dst, cCount);
 	wcscat_s(dst, cCount, L"\\");
-	wcscat_s(dst, cCount, buf1);
+	wcsncat_s(dst, cCount, buf1, 127);
 
 	if (ca->FileFormat[0]!='\0')
 	{

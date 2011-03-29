@@ -876,7 +876,7 @@ LRESULT CMainView::OnRenameItem(WPARAM wParam, LPARAM lParam)
 	value.Attr = LFAttrFileName;
 	value.Type = LFTypeUnicodeString;
 	value.IsNull = false;
-	wcscpy_s(value.UnicodeString, 256, (WCHAR*)lParam);
+	wcsncpy_s(value.UnicodeString, 256, (WCHAR*)lParam, 255);
 
 	LFTransactionUpdate(tl, GetSafeHwnd(), &value);
 
