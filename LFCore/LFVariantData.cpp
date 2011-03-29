@@ -352,13 +352,13 @@ LFCore_API void LFVariantDataFromString(LFVariantData* v, wchar_t* str)
 		wchar_t tmpBuf[256];
 		wchar_t* dst = &tmpBuf[0];
 
-		unsigned int LatDeg;
-		unsigned int LatMin;
-		unsigned int LatSec;
+		int LatDeg;
+		int LatMin;
+		int LatSec;
 		wchar_t LatCh;
-		unsigned int LonDeg;
-		unsigned int LonMin;
-		unsigned int LonSec;
+		int LonDeg;
+		int LonMin;
+		int LonSec;
 		wchar_t LonCh;
 
 		unsigned int Date1;
@@ -464,15 +464,19 @@ LFCore_API void LFVariantDataFromString(LFVariantData* v, wchar_t* str)
 				v->IsNull = false;
 			break;
 		case LFTypeGeoCoordinates:
-			if (swscanf_s(str, L"%u°%u\'%u\"%c, %u°%u\'%u\"%c", &LatDeg, &LatMin, &LatSec, &LatCh, 1, &LonDeg, &LonMin, &LonSec, &LonCh, 1)==8)
+			if (swscanf_s(str, L"%d°%d\'%d\"%c, %d°%d\'%d\"%c", &LatDeg, &LatMin, &LatSec, &LatCh, 1, &LonDeg, &LonMin, &LonSec, &LonCh, 1)==8)
 				if (((LatCh==L'N') || (LatCh==L'S')) && ((LonCh==L'W') || (LonCh==L'E')))
 				{
-					v->GeoCoordinates.Latitude = LatDeg+(LatMin/60.0)+(LatSec/3600.0);
+					v->GeoCoordinates.Latitude = abs(LatDeg)+(abs(LatMin)/60.0)+(abs(LatSec)/3600.0);
 					if (LatCh==L'N')
 						v->GeoCoordinates.Latitude -= v->GeoCoordinates.Latitude;
-					v->GeoCoordinates.Longitude = LonDeg+(LonMin/60.0)+(LonSec/3600.0);
+					if ((v->GeoCoordinates.Latitude<180.0) || (v->GeoCoordinates.Latitude>180.0))
+						v->GeoCoordinates.Latitude = 0.0;
+					v->GeoCoordinates.Longitude = abs(LonDeg)+(abs(LonMin)/60.0)+(abs(LonSec)/3600.0);
 					if (LatCh==L'W')
 						v->GeoCoordinates.Longitude -= v->GeoCoordinates.Longitude;
+					if ((v->GeoCoordinates.Longitude<180.0) || (v->GeoCoordinates.Longitude>180.0))
+						v->GeoCoordinates.Longitude = 0.0;
 					v->IsNull = false;
 				}
 			break;

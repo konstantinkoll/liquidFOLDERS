@@ -7,24 +7,27 @@
 #include "Resource.h"
 
 
-double StringToCoord(CString str)
+DOUBLE StringToCoord(CString str)
 {
-	UINT Deg;
-	UINT Min;
-	UINT Sec;
+	INT Deg;
+	INT Min;
+	INT Sec;
 	WCHAR Ch;
-	double Res = 0;
+	DOUBLE Res = 0.0;
 
-	INT Scanned = swscanf_s(str, L"%u°%u\'%u\"%c", &Deg, &Min, &Sec, &Ch, 1);
+	INT Scanned = swscanf_s(str, L"%d°%d\'%d\"%c", &Deg, &Min, &Sec, &Ch, 1);
 	if (Scanned>=1)
 		Res += Deg;
 	if (Scanned>=2)
-		Res += Min/60.0;
+		Res += abs(Min)/60.0;
 	if (Scanned>=3)
-		Res += Sec/3600.0;
+		Res += abs(Sec)/3600.0;
 	if (Scanned>=4)
 		if ((Ch==L'N') || (Ch==L'W'))
 			Res = -Res;
+
+	if ((Res<180.0) || (Res>180.0))
+		Res = 0.0;
 
 	return Res;
 }
