@@ -131,7 +131,8 @@ void ShowAboutDlg()
 	if (!AboutWindow)
 	{
 		AboutWindow = TRUE;
-		LFAbout(_T("Watchdog"), _T(__TIMESTAMP__), IDB_ABOUTICON);
+		TIMESTAMP;
+		LFAbout(_T("Watchdog"), Timestamp, IDB_ABOUTICON);
 		AboutWindow = FALSE;
 	}
 }

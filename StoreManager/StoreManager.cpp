@@ -215,7 +215,8 @@ void CStoreManagerApp::OnAppAbout()
 {
 	CString AppName;
 	ENSURE(AppName.LoadString(IDR_APPLICATION));
-	LFAbout(AppName, _T(__TIMESTAMP__), IDB_ABOUTICON, m_pActiveWnd);
+	TIMESTAMP;
+	LFAbout(AppName, Timestamp, IDB_ABOUTICON, m_pActiveWnd);
 }
 
 

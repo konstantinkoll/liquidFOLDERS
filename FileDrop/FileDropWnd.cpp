@@ -449,7 +449,8 @@ void CFileDropWnd::OnStoreProperties()
 
 void CFileDropWnd::OnAbout()
 {
-	LFAbout(_T("FileDrop"), _T(__TIMESTAMP__), IDB_ABOUTICON, this);
+	TIMESTAMP;
+	LFAbout(_T("FileDrop"), Timestamp, IDB_ABOUTICON, this);
 }
 
 void CFileDropWnd::OnNewStoreManager()

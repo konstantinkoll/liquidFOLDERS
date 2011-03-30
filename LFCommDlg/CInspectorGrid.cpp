@@ -74,8 +74,11 @@ void CInspectorProperty::OnSetString(CString Value)
 		switch (p_Data->Type)
 		{
 		case LFTypeUnicodeString:
+			wcsncpy_s(p_Data->UnicodeString, 256, Value, 255);
+			break;
 		case LFTypeUnicodeArray:
-			wcscpy_s(p_Data->UnicodeString, 256, Value);
+			wcsncpy_s(p_Data->UnicodeArray, 256, Value, 255);
+			LFSanitizeUnicodeArray(p_Data->UnicodeArray, 256);
 			break;
 		case LFTypeAnsiString:
 			WideCharToMultiByte(CP_ACP, 0, Value, -1, p_Data->AnsiString, 256, NULL, NULL);

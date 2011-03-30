@@ -74,8 +74,8 @@ void CRunCmdApp::OnAppAbout(UINT ResIDName, UINT ResIDPicture)
 {
 	CString AppName;
 	ENSURE(AppName.LoadString(ResIDName));
-
-	LFAbout(AppName, _T(__TIMESTAMP__), ResIDPicture, CWnd::GetForegroundWindow());
+	TIMESTAMP;
+	LFAbout(AppName, Timestamp, ResIDPicture, CWnd::GetForegroundWindow());
 }
 
 void CRunCmdApp::OnStoresCreate()

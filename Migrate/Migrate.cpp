@@ -58,6 +58,6 @@ void CMigrateApp::OnAppAbout()
 {
 	CString AppName;
 	ENSURE(AppName.LoadString(IDR_APPLICATION));
-
-	LFAbout(AppName, _T(__TIMESTAMP__), IDB_ABOUTICON, m_pMainWnd);
+	TIMESTAMP;
+	LFAbout(AppName, Timestamp, IDB_ABOUTICON, m_pMainWnd);
 }
