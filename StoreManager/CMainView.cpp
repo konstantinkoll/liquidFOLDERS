@@ -1271,7 +1271,8 @@ void CMainView::OnUpdateItemCommands(CCmdUI* pCmdUI)
 		{
 		case IDM_ITEM_OPEN:
 			b = (item->NextFilter!=NULL) ||
-				((item->Type & (LFTypeMask | LFTypeNotMounted))==LFTypeFile);
+				((item->Type & (LFTypeMask | LFTypeNotMounted))==LFTypeFile) ||
+				((item->Type & (LFTypeMask | LFTypeNotMounted))==LFTypeVolume);
 			break;
 		}
 	}
