@@ -19,7 +19,7 @@ BOOL RunPath(HWND hWnd, CString path, CString parameter=_T(""));
 #define LevelAttribute          3
 #define LevelAttrValue          4
 
-#define NSEIA_CFOLDERITEM       NSEIA_FileSysAncestor | NSEIA_Browsable | NSEIA_Folder | NSEIA_CanLink
+#define NSEIA_CFOLDERITEM       NSEIA_FileSysAncestor | NSEIA_Browsable | NSEIA_Folder | NSEIA_CanLink | NSEIA_DropTarget
 
 #define VERB_CREATELINK         "link"
 #define VERB_CREATENEWSTORE     "newstore"

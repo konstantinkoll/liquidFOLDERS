@@ -83,11 +83,26 @@ BOOL CFolderItem::CFolderItemFactory::UpdateRegistry(BOOL bRegister)
 		// Register the namespace extension
 		CNSEFolder::RegisterExtension(RUNTIME_CLASS(CFolderItem));
 
+		// Hide desktop icon
+		if (reg.Open(_T("Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\HideDesktopIcons\\ClassicStartMenu")))
+		{
+			reg.Write(_T("{3F2D914F-FE57-414F-9F88-A377C7841DA4}"), (DWORD)1);
+			reg.Close();
+		}
+		if (reg.Open(_T("Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\HideDesktopIcons\\NewStartPanel")))
+		{
+			reg.Write(_T("{3F2D914F-FE57-414F-9F88-A377C7841DA4}"), (DWORD)1);
+			reg.Close();
+		}
+
 		// Move to delegate folders
 		reg.DeleteKey(_T("Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\MyComputer\\NameSpace\\{3F2D914F-FE57-414F-9F88-A377C7841DA4}"), TRUE);
 
 		if (reg.Open(_T("Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\MyComputer\\NameSpace\\DelegateFolders")))
+		{
 			reg.CreateKey(_T("{3F2D914F-FE57-414F-9F88-A377C7841DA4}"));
+			reg.Close();
+		}
 
 		return ret;
 	}
@@ -1053,8 +1068,6 @@ NSEItemAttributes CFolderItem::GetAttributes(NSEItemAttributes requested)
 	}
 	if (Attrs.Level<LevelAttrValue)
 		mask |= NSEIA_HasSubFolder;
-	if (Attrs.Level>LevelRoot)
-		mask |= NSEIA_DropTarget;
 
 	return (NSEItemAttributes)(requested & mask);
 }
