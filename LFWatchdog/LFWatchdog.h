@@ -20,7 +20,7 @@ public:
 	virtual INT ExitInstance();
 
 protected:
-	HANDLE sessionMutex;
+	HANDLE hSessionMutex;
 };
 
 extern CWatchdogApp theApp;

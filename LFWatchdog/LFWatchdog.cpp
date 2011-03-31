@@ -287,10 +287,10 @@ CWatchdogApp theApp;
 
 BOOL CWatchdogApp::InitInstance()
 {
-	sessionMutex = CreateMutex(NULL, TRUE, _T(LFCM_Watchdog));
-	if (sessionMutex && GetLastError()==ERROR_ALREADY_EXISTS)
+	hSessionMutex = CreateMutex(NULL, TRUE, _T(LFCM_Watchdog));
+	if (hSessionMutex && (GetLastError()==ERROR_ALREADY_EXISTS))
 	{
-		ReleaseMutex(sessionMutex);
+		ReleaseMutex(hSessionMutex);
 		return FALSE;
 	}
 
@@ -310,7 +310,7 @@ BOOL CWatchdogApp::InitInstance()
 INT CWatchdogApp::ExitInstance()
 {
 	LFApplication::ExitInstance();
-	CloseHandle(sessionMutex);
-	sessionMutex = NULL;
+	CloseHandle(hSessionMutex);
+	hSessionMutex = NULL;
 	return 0;
 }
