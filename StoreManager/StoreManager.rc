@@ -975,7 +975,6 @@ BEGIN
     IDM_STORE_DELETE        "Deletes the selected store.\nDelete"
     IDM_STORE_PROPERTIES    "Displays the properties of the selected store.\nProperties"
     IDM_STORES_CREATENEW    "Creates a new store for your files.\nCreate new store..."
-    IDM_STORES_MAINTAINALL  "Executes maintenance work on all stores.\nRun maintenance"
 END
 
 STRINGTABLE 

@@ -73,7 +73,7 @@ BOOL CStoreManagerApp::InitInstance()
 		m_InspectorWidth = 32;
 	m_ShowEmptyVolumes = GetInt(_T("ShowEmptyVolumes"), TRUE);
 	m_ShowEmptyDomains = GetInt(_T("ShowEmptyDomains"), TRUE);
-	m_ShowStatistics = GetInt(_T("ShowStatistics"), TRUE);
+	m_ShowStatistics = GetInt(_T("ShowStatistics"), FALSE);
 	m_CalendarShowStatistics = GetInt(_T("CalendarShowStatistics"), TRUE);
 	m_CalendarShowCaptions = GetInt(_T("CalendarShowCaptions"), TRUE);
 	m_CalendarShowEmptyDays = GetInt(_T("CalendarShowEmptyDays"), TRUE);

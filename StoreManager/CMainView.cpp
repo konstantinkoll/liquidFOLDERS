@@ -621,45 +621,44 @@ INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndTaskbar.SetOwner(GetOwner());
 
 	m_wndTaskbar.AddButton(IDM_STORES_CREATENEW, 0);
-	m_wndTaskbar.AddButton(IDM_STORES_MAINTAINALL, 1, TRUE);
-	m_wndTaskbar.AddButton(IDM_HOME_IMPORTFOLDER, 2, TRUE);
-	m_wndTaskbar.AddButton(IDM_HOUSEKEEPING_REGISTER, 3, TRUE);
-	m_wndTaskbar.AddButton(IDM_HOUSEKEEPING_SEND, 33, TRUE);
-	m_wndTaskbar.AddButton(IDM_TRASH_EMPTY, 4, TRUE);
-	m_wndTaskbar.AddButton(IDM_TRASH_RESTOREALL, 5, TRUE);
-	m_wndTaskbar.AddButton(IDM_CALENDAR_PREVYEAR, 6, TRUE);
-	m_wndTaskbar.AddButton(IDM_CALENDAR_NEXTYEAR, 7, TRUE);
-	m_wndTaskbar.AddButton(IDM_CALENDAR_GOTOYEAR, 8);
-	m_wndTaskbar.AddButton(IDM_GLOBE_JUMPTOLOCATION, 9, TRUE);
-	m_wndTaskbar.AddButton(IDM_GLOBE_ZOOMIN, 10);
-	m_wndTaskbar.AddButton(IDM_GLOBE_ZOOMOUT, 11);
-	m_wndTaskbar.AddButton(IDM_GLOBE_AUTOSIZE, 12);
-	m_wndTaskbar.AddButton(IDM_TAGCLOUD_SORTVALUE, 13);
-	m_wndTaskbar.AddButton(IDM_TAGCLOUD_SORTCOUNT, 14);
-	m_wndTaskbar.AddButton(IDM_ITEM_OPEN, 15);
-	m_wndTaskbar.AddButton(IDM_GLOBE_GOOGLEEARTH, 16, TRUE);
-	m_wndTaskbar.AddButton(IDM_VOLUME_PROPERTIES, 17);
-	m_wndTaskbar.AddButton(IDM_STORE_DELETE, 18);
-	m_wndTaskbar.AddButton(IDM_STORE_RENAME, 19);
-	m_wndTaskbar.AddButton(IDM_STORE_PROPERTIES, 20);
-	m_wndTaskbar.AddButton(IDM_STORE_MAKEDEFAULT, 21);
-	m_wndTaskbar.AddButton(IDM_STORE_IMPORTFOLDER, 2);
-	m_wndTaskbar.AddButton(IDM_FILE_REMEMBER, 22);
-	m_wndTaskbar.AddButton(IDM_FILE_REMOVE, 23);
-	m_wndTaskbar.AddButton(IDM_FILE_DELETE, 24);
-	m_wndTaskbar.AddButton(IDM_FILE_RENAME, 25);
-	m_wndTaskbar.AddButton(IDM_FILE_SEND, 26);
-	m_wndTaskbar.AddButton(IDM_FILE_RESTORE, 27);
-	m_wndTaskbar.AddButton(ID_APP_NEWFILEDROP, 28, TRUE);
+	m_wndTaskbar.AddButton(IDM_HOME_IMPORTFOLDER, 1, TRUE);
+	m_wndTaskbar.AddButton(IDM_HOUSEKEEPING_REGISTER, 2, TRUE);
+	m_wndTaskbar.AddButton(IDM_HOUSEKEEPING_SEND, 32, TRUE);
+	m_wndTaskbar.AddButton(IDM_TRASH_EMPTY, 3, TRUE);
+	m_wndTaskbar.AddButton(IDM_TRASH_RESTOREALL, 4, TRUE);
+	m_wndTaskbar.AddButton(IDM_CALENDAR_PREVYEAR, 5, TRUE);
+	m_wndTaskbar.AddButton(IDM_CALENDAR_NEXTYEAR, 6, TRUE);
+	m_wndTaskbar.AddButton(IDM_CALENDAR_GOTOYEAR, 7);
+	m_wndTaskbar.AddButton(IDM_GLOBE_JUMPTOLOCATION, 8, TRUE);
+	m_wndTaskbar.AddButton(IDM_GLOBE_ZOOMIN, 9);
+	m_wndTaskbar.AddButton(IDM_GLOBE_ZOOMOUT, 10);
+	m_wndTaskbar.AddButton(IDM_GLOBE_AUTOSIZE, 11);
+	m_wndTaskbar.AddButton(IDM_TAGCLOUD_SORTVALUE, 12);
+	m_wndTaskbar.AddButton(IDM_TAGCLOUD_SORTCOUNT, 13);
+	m_wndTaskbar.AddButton(IDM_ITEM_OPEN, 14);
+	m_wndTaskbar.AddButton(IDM_GLOBE_GOOGLEEARTH, 15, TRUE);
+	m_wndTaskbar.AddButton(IDM_VOLUME_PROPERTIES, 16);
+	m_wndTaskbar.AddButton(IDM_STORE_DELETE, 17);
+	m_wndTaskbar.AddButton(IDM_STORE_RENAME, 18);
+	m_wndTaskbar.AddButton(IDM_STORE_PROPERTIES, 19);
+	m_wndTaskbar.AddButton(IDM_STORE_MAKEDEFAULT, 20);
+	m_wndTaskbar.AddButton(IDM_STORE_IMPORTFOLDER, 1);
+	m_wndTaskbar.AddButton(IDM_FILE_REMEMBER, 21);
+	m_wndTaskbar.AddButton(IDM_FILE_REMOVE, 22);
+	m_wndTaskbar.AddButton(IDM_FILE_DELETE, 23);
+	m_wndTaskbar.AddButton(IDM_FILE_RENAME, 24);
+	m_wndTaskbar.AddButton(IDM_FILE_SEND, 25);
+	m_wndTaskbar.AddButton(IDM_FILE_RESTORE, 26);
+	m_wndTaskbar.AddButton(ID_APP_NEWFILEDROP, 27, TRUE);
 
-	#define InspectorIconVisible     30
-	#define InspectorIconHidden     29
+	#define InspectorIconVisible     29
+	#define InspectorIconHidden     28
 	p_InspectorButton = m_wndTaskbar.AddButton(ID_PANE_INSPECTOR, theApp.m_ShowInspectorPane ? InspectorIconVisible : InspectorIconHidden, TRUE, TRUE);
 
-	m_wndTaskbar.AddButton(ID_APP_PURCHASE, 31, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_ENTERLICENSEKEY, 32, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_SUPPORT, 33, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_ABOUT, 34, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_PURCHASE, 30, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_ENTERLICENSEKEY, 31, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_SUPPORT, 32, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_ABOUT, 33, TRUE, TRUE);
 
 	// Filter
 	if (!m_IsClipboard)
