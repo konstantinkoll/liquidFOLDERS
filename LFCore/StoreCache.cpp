@@ -166,7 +166,7 @@ bool LoadStoreSettingsFromFile(wchar_t* filename, LFStoreDescriptor* s)
 	if (filename[0]==L'\0')
 		return false;
 
-	HANDLE hFile = CreateFile(filename, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_SEQUENTIAL_SCAN, NULL);
+	HANDLE hFile = CreateFile(filename, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_SEQUENTIAL_SCAN, NULL);
 	if (hFile==INVALID_HANDLE_VALUE)
 		return false;
 
@@ -712,7 +712,7 @@ LFCore_API unsigned int LFMountDrive(char d, bool InternalCall)
 			f[0] = d;
 			wcscat_s(f, MAX_PATH, ffd.cFileName);
 
-			LFStoreDescriptor s = { 0 };
+			LFStoreDescriptor s;
 			if (LoadStoreSettingsFromFile(f, &s)==true)
 			{
 				if (!GetMutex(Mutex_Stores))

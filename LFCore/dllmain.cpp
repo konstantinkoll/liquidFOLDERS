@@ -8,7 +8,6 @@
 
 extern HMODULE LFCoreModuleHandle;
 extern LFMessageIDs LFMessages;
-extern char BootDrive;
 
 bool APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID /*lpReserved*/)
 {
