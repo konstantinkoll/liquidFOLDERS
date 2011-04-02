@@ -283,9 +283,62 @@ BOOL CInspectorPropertyIATA::HasButton()
 
 void CInspectorPropertyIATA::OnSetString(CString Value)
 {
+	LFAirport* pAirportOld = NULL;
+	LFIATAGetAirportByCode(p_Data->AnsiString, &pAirportOld);
+
+	Value.Trim();
 	Value.MakeUpper();
 
-	CInspectorProperty::OnSetString(Value);
+	WCHAR tmpStr[256];
+	ToString(tmpStr, 256);
+	if ((wcslen(tmpStr)!=0) && (wcslen(tmpStr)!=3))
+		return;
+
+	p_Data->IsNull = false;
+	WideCharToMultiByte(CP_ACP, 0, Value, -1, p_Data->AnsiString, 256, NULL, NULL);
+	LFAirport* pAirportNew = NULL;
+	LFIATAGetAirportByCode(p_Data->AnsiString, &pAirportNew);
+
+	SHORT Attr2 = -1;
+	if (p_LocationName)
+	{
+		ASSERT(p_LocationName->Attr==LFAttrLocationName);
+
+		BOOL Set = LFIsNullVariantData(p_LocationName);
+		if (pAirportOld)
+		{
+			MultiByteToWideChar(CP_ACP, 0, pAirportOld->Name, -1, tmpStr, 256);
+			Set |= (wcscmp(p_LocationName->UnicodeString, tmpStr)==0);
+		}
+
+		if (Set)
+		{
+			Attr2 = LFAttrLocationName;
+
+			p_LocationName->IsNull = false;
+			MultiByteToWideChar(CP_ACP, 0, pAirportNew->Name, -1, p_LocationName->UnicodeString, 256);
+		}
+	}
+
+	SHORT Attr3 = -1;
+	if (p_LocationGPS)
+	{
+		ASSERT(p_LocationGPS->Attr==LFAttrLocationGPS);
+
+		BOOL Set = LFIsNullVariantData(p_LocationGPS);
+		if (pAirportOld)
+			Set |= (p_LocationGPS->GeoCoordinates.Latitude==pAirportOld->Location.Latitude) && (p_LocationGPS->GeoCoordinates.Longitude==pAirportOld->Location.Longitude);
+
+		if (Set)
+		{
+			Attr3 = LFAttrLocationGPS;
+
+			p_LocationGPS->IsNull = false;
+			p_LocationGPS->GeoCoordinates = pAirportNew->Location;
+		}
+	}
+
+	p_Parent->NotifyOwner((SHORT)p_Data->Attr, Attr2, Attr3);
 }
 
 void CInspectorPropertyIATA::OnClickButton()
