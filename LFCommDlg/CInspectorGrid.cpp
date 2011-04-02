@@ -284,7 +284,8 @@ BOOL CInspectorPropertyIATA::HasButton()
 void CInspectorPropertyIATA::OnSetString(CString Value)
 {
 	LFAirport* pAirportOld = NULL;
-	LFIATAGetAirportByCode(p_Data->AnsiString, &pAirportOld);
+	if (!m_Multiple)
+		LFIATAGetAirportByCode(p_Data->AnsiString, &pAirportOld);
 
 	Value.Trim();
 	Value.MakeUpper();
@@ -300,7 +301,7 @@ void CInspectorPropertyIATA::OnSetString(CString Value)
 	LFIATAGetAirportByCode(p_Data->AnsiString, &pAirportNew);
 
 	SHORT Attr2 = -1;
-	if (p_LocationName)
+	if (p_LocationName && pAirportNew && !m_Multiple)
 	{
 		ASSERT(p_LocationName->Attr==LFAttrLocationName);
 
@@ -321,7 +322,7 @@ void CInspectorPropertyIATA::OnSetString(CString Value)
 	}
 
 	SHORT Attr3 = -1;
-	if (p_LocationGPS)
+	if (p_LocationGPS && pAirportNew && !m_Multiple)
 	{
 		ASSERT(p_LocationGPS->Attr==LFAttrLocationGPS);
 
@@ -1136,14 +1137,7 @@ void CInspectorGrid::EditProperty(UINT Attr)
 			p_Edit->SetValidChars(pProp->pProperty->GetValidChars());
 			if (Attr<LFAttributeCount)
 				p_Edit->SetLimitText(p_App->m_Attributes[Attr]->cCharacters);
-			if (pProp->pProperty->m_Modified)
-			{
-				p_Edit->SetFont(&m_BoldFont);
-			}
-			else
-			{
-				p_Edit->SendMessage(WM_SETFONT, (WPARAM)GetStockObject(DEFAULT_GUI_FONT));
-			}
+			p_Edit->SetFont(&m_BoldFont);
 			p_Edit->SetFocus();
 		}
 }
