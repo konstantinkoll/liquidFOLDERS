@@ -74,6 +74,7 @@ protected:
 	CIconHeader m_IconHeader;
 	CInspectorGrid m_wndInspectorGrid;
 	BOOL m_ShowPreview;
+	BOOL m_ShowInternal;
 	BOOL m_SortAlphabetic;
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
@@ -82,6 +83,7 @@ protected:
 	afx_msg LRESULT OnPropertyChanged(WPARAM wparam, LPARAM lparam);
 
 	afx_msg void OnTogglePreview();
+	afx_msg void OnToggleInternal();
 	afx_msg void OnAlphabetic();
 	afx_msg void OnExportSummary();
 	afx_msg void OnUpdateCommands(CCmdUI* pCmdUI);

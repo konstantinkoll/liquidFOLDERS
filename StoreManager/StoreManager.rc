@@ -252,6 +252,7 @@ BEGIN
     POPUP "POPUP"
     BEGIN
         MENUITEM "&Vorschau anzeigen",          IDM_INSPECTOR_SHOWPREVIEW
+        MENUITEM "&Alle Eigenschaften anzeigen", IDM_INSPECTOR_SHOWINTERNAL
         MENUITEM "&Alphabetisch sortieren",     IDM_INSPECTOR_SORTALPHABETIC
         MENUITEM SEPARATOR
         POPUP "Exportieren"
@@ -663,6 +664,7 @@ BEGIN
     POPUP "POPUP"
     BEGIN
         MENUITEM "Show &preview",               IDM_INSPECTOR_SHOWPREVIEW
+        MENUITEM "Show a&ll properties",        IDM_INSPECTOR_SHOWINTERNAL
         MENUITEM "Sort &alphabetically",        IDM_INSPECTOR_SORTALPHABETIC
         MENUITEM SEPARATOR
         POPUP "Export"
@@ -1140,6 +1142,7 @@ BEGIN
     POPUP "POPUP"
     BEGIN
         MENUITEM "Mostrar &vista previa",       IDM_INSPECTOR_SHOWPREVIEW
+        MENUITEM "Mostrar &todas las propriedades", IDM_INSPECTOR_SHOWPREVIEW
         MENUITEM "Ordenar &alfabéticamente",    IDM_INSPECTOR_SORTALPHABETIC
         MENUITEM SEPARATOR
         POPUP "Exportar"
@@ -1520,6 +1523,7 @@ BEGIN
     POPUP "POPUP"
     BEGIN
         MENUITEM "&Vorschau anzeigen",          IDM_INSPECTOR_SHOWPREVIEW
+        MENUITEM "Indiquer &tous les propriétés", IDM_INSPECTOR_SHOWINTERNAL
         MENUITEM "&Alphabetisch sortieren",     IDM_INSPECTOR_SORTALPHABETIC
         MENUITEM SEPARATOR
         POPUP "Export"
