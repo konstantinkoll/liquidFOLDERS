@@ -652,9 +652,13 @@ void CInspectorGrid::AddProperty(CInspectorProperty* pProperty, UINT Category, W
 	prop.Editable = Editable;
 	prop.Top = prop.Bottom = prop.LabelWidth = -1;
 
+	WCHAR tmpName[256];
+	wcscpy_s(tmpName, 256, Name);
+	wcscat_s(tmpName, 256, L":");
+
 	CDC* dc = GetWindowDC();
 	CGdiObject* pOldFont = dc->SelectStockObject(DEFAULT_GUI_FONT);
-	prop.LabelWidth = dc->GetTextExtent(prop.Name).cx;
+	prop.LabelWidth = dc->GetTextExtent(tmpName).cx;
 	dc->SelectObject(pOldFont);
 	ReleaseDC(dc);
 
