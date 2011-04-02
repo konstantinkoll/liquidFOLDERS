@@ -385,8 +385,8 @@ void CInspectorWnd::UpdateFinish()
 		}
 		else
 		{
-			AddValueVirtual(AttrIATAAirportName, "?");
-			AddValueVirtual(AttrIATAAirportCountry, "?");
+			AddValueVirtual(AttrIATAAirportName, L"?");
+			AddValueVirtual(AttrIATAAirportCountry, L"?");
 		}
 	}
 	else
@@ -472,10 +472,37 @@ LRESULT CInspectorWnd::OnPropertyChanged(WPARAM wparam, LPARAM lparam)
 	SHORT Attr1 = wparam & 0xFFFF;
 	SHORT Attr2 = lparam & 0xFFFF;
 	SHORT Attr3 = (lparam >> 16) & 0xFFFF;
+	SHORT AttrIATA = (Attr1==LFAttrLocationIATA) ? Attr1 : (Attr2==LFAttrLocationIATA) ? Attr2 : (Attr3==LFAttrLocationIATA) ? Attr3 : -1;
 
 	LFVariantData* Value1 = (Attr1==-1) ? NULL : &m_AttributeValues[Attr1];
 	LFVariantData* Value2 = (Attr2==-1) ? NULL : &m_AttributeValues[Attr2];
 	LFVariantData* Value3 = (Attr3==-1) ? NULL : &m_AttributeValues[Attr3];
+
+	// Special handling of IATA airport for internal properties
+	if (AttrIATA!=-1)
+	{
+		LFAirport* pAirport;
+		if (LFIsNullVariantData(&m_AttributeValues[AttrIATA]))
+		{
+			wcscpy_s(m_AttributeValues[AttrIATAAirportName].UnicodeString, 256, L"");
+			wcscpy_s(m_AttributeValues[AttrIATAAirportCountry].UnicodeString, 256, L"");
+		}
+		else
+			if (LFIATAGetAirportByCode(m_AttributeValues[AttrIATA].AnsiString, &pAirport))
+			{
+				MultiByteToWideChar(CP_ACP, 0, pAirport->Name, -1, m_AttributeValues[AttrIATAAirportName].UnicodeString, 256);
+				MultiByteToWideChar(CP_ACP, 0, LFIATAGetCountry(pAirport->CountryID)->Name, -1, m_AttributeValues[AttrIATAAirportCountry].UnicodeString, 256);
+			}
+			else
+			{
+				wcscpy_s(m_AttributeValues[AttrIATAAirportName].UnicodeString, 256, L"?");
+				wcscpy_s(m_AttributeValues[AttrIATAAirportCountry].UnicodeString, 256, L"?");
+			}
+
+		m_wndInspectorGrid.UpdatePropertyState(AttrIATAAirportName, FALSE, FALSE, m_ShowInternal);
+		m_wndInspectorGrid.UpdatePropertyState(AttrIATAAirportCountry, FALSE, FALSE, m_ShowInternal);
+		m_wndInspectorGrid.AdjustLayout();
+	}
 
 	((CMainView*)GetParent())->UpdateItems(Value1, Value2, Value3);
 
