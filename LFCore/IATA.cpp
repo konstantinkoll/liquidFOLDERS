@@ -23,7 +23,7 @@ bool UseGermanDB = false;
 
 void InitAirportDatabase()
 {
-	UseGermanDB = (GetThreadLocale() & 0x1FF)==LANG_GERMAN;
+	UseGermanDB = (GetSystemDefaultUILanguage() & 0x1FF)==LANG_GERMAN;
 }
 
 LFCore_API unsigned int LFIATAGetCountryCount()
