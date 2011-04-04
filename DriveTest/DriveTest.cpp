@@ -19,16 +19,15 @@ unsigned int GetDriveBus(char d)
 
 	char szBuf[MAX_PATH] = "\\\\?\\ :";
 	szBuf[4] = d;
-	HANDLE hDevice = CreateFileA(szBuf, GENERIC_READ,
-		FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, NULL, NULL);
+	HANDLE hDevice = CreateFileA(szBuf, 0, 0, NULL, OPEN_EXISTING, NULL, NULL);
 
 	if (hDevice!=INVALID_HANDLE_VALUE)
 	{
-		STORAGE_DEVICE_DESCRIPTOR* pDevDesc = (STORAGE_DEVICE_DESCRIPTOR*)new BYTE[sizeof(STORAGE_DEVICE_DESCRIPTOR) + 512 - 1];
-		pDevDesc->Size = sizeof(STORAGE_DEVICE_DESCRIPTOR)+512-1;
+		STORAGE_ADAPTER_DESCRIPTOR* pDevDesc = (STORAGE_ADAPTER_DESCRIPTOR*)new BYTE[sizeof(STORAGE_ADAPTER_DESCRIPTOR)+512-1];
+		pDevDesc->Size = sizeof(STORAGE_ADAPTER_DESCRIPTOR)+512-1;
 
 		STORAGE_PROPERTY_QUERY Query;
-		Query.PropertyId = StorageDeviceProperty;
+		Query.PropertyId = StorageAdapterProperty;
 		Query.QueryType = PropertyStandardQuery;
 
 		DWORD dwOutBytes;
