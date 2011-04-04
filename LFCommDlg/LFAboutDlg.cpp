@@ -56,6 +56,32 @@ LFAboutDlg::LFAboutDlg(CString AppName, CString Build, UINT IconResID, CWnd* pPa
 	}
 }
 
+void LFAboutDlg::CheckLicenseKey(LFLicense* License)
+{
+	LFLicense l;
+	if (!License)
+		License = &l;
+
+	LFDialog::CheckLicenseKey(License);
+
+	GetDlgItem(IDC_NAME)->SetWindowText(License->RegName);
+	GetDlgItem(IDC_PURCHASEDATE)->SetWindowText(License->PurchaseDate);
+	GetDlgItem(IDC_ID)->SetWindowText(License->PurchaseID);
+	GetDlgItem(IDC_PRODUCT)->SetWindowText(License->ProductID);
+
+	if (wcslen(License->ProductID)>13)
+	{
+		GetDlgItem(IDC_QUANTITYTITLE)->ShowWindow(SW_HIDE);
+		GetDlgItem(IDC_QUANTITY)->ShowWindow(SW_HIDE);
+	}
+	else
+	{
+		GetDlgItem(IDC_QUANTITYTITLE)->ShowWindow(SW_SHOW);
+		GetDlgItem(IDC_QUANTITY)->ShowWindow(SW_SHOW);
+		GetDlgItem(IDC_QUANTITY)->SetWindowText(License->Quantity);
+	}
+}
+
 
 BEGIN_MESSAGE_MAP(LFAboutDlg, LFDialog)
 END_MESSAGE_MAP()
@@ -95,7 +121,7 @@ void LFAboutDlg::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 
 	dc.SetTextColor(0x000000);
 	dc.SetBkMode(TRANSPARENT);
-	dc.DrawText(m_AppName+_T(" (Beta4)"), r, 0);
+	dc.DrawText(m_AppName+_T(" (Beta5)"), r, 0);
 	r.top += 45;
 
 	CFont font2;
@@ -104,36 +130,10 @@ void LFAboutDlg::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 		DEFAULT_PITCH | FF_DONTCARE, ((LFApplication*)AfxGetApp())->GetDefaultFontFace());
 	dc.SelectObject(&font2);
 
-	dc.DrawText(m_Copyright, r, 0);
+	dc.DrawText(_T("Version ")+m_Version+_T(" (")+m_Build+_T(")"), r, 0);
 	r.top += 25;
 
-	dc.DrawText(_T("Version ")+m_Version+_T(" (")+m_Build+_T(")"), r, 0);
+	dc.DrawText(m_Copyright, r, 0);
 
 	dc.SelectObject(pOldFont);
-}
-
-void LFAboutDlg::CheckLicenseKey(LFLicense* License)
-{
-	LFLicense l;
-	if (!License)
-		License = &l;
-
-	LFDialog::CheckLicenseKey(License);
-
-	GetDlgItem(IDC_NAME)->SetWindowText(License->RegName);
-	GetDlgItem(IDC_PURCHASEDATE)->SetWindowText(License->PurchaseDate);
-	GetDlgItem(IDC_ID)->SetWindowText(License->PurchaseID);
-	GetDlgItem(IDC_PRODUCT)->SetWindowText(License->ProductID);
-
-	if (wcslen(License->ProductID)>13)
-	{
-		GetDlgItem(IDC_QUANTITYTITLE)->ShowWindow(SW_HIDE);
-		GetDlgItem(IDC_QUANTITY)->ShowWindow(SW_HIDE);
-	}
-	else
-	{
-		GetDlgItem(IDC_QUANTITYTITLE)->ShowWindow(SW_SHOW);
-		GetDlgItem(IDC_QUANTITY)->ShowWindow(SW_SHOW);
-		GetDlgItem(IDC_QUANTITY)->SetWindowText(License->Quantity);
-	}
 }
