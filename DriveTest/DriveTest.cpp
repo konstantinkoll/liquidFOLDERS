@@ -1,4 +1,4 @@
-// ConvertIATA.cpp : Definiert den Einstiegspunkt für die Konsolenanwendung.
+// DriveTest.cpp : Definiert den Einstiegspunkt für die Konsolenanwendung.
 //
 
 #include "stdafx.h"
