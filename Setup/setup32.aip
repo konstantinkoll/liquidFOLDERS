@@ -485,11 +485,11 @@
     <ROW Registry="DisplayVersion" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="DisplayVersion" Value="0.8.4" Component_="AI_CustomARPName"/>
     <ROW Registry="EstimatedSize" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="EstimatedSize" Value="#30720" Component_="AI_CustomARPName"/>
     <ROW Registry="F2D914D_FE57_414F_9F88_A377C7841DA4" Root="0" Key="CLSID\{3F2D914D-FE57-414F-9F88-A377C7841DA4}" Name="-" Component_="F2D914D_FE57_414F_9F88_A377C7841DA4"/>
-    <ROW Registry="F2D914D_FE57_414F_9F88_A377C7841DA4_1" Root="2" Key="Software\Microsoft\Windows\CurrentVersion\Shell Extensions\Approved" Name="[\{]3F2D914D-FE57-414F-9F88-A377C7841DA4[\}]" Value="LFSendTo" Component_="LFNamespaceExtension.dll"/>
+    <ROW Registry="F2D914D_FE57_414F_9F88_A377C7841DA4_1" Root="2" Key="Software\Microsoft\Windows\CurrentVersion\Shell Extensions\Approved" Name="[\{]3F2D914D-FE57-414F-9F88-A377C7841DA4[\}]" Value="liquidFOLDERS.SendTo" Component_="LFNamespaceExtension.dll"/>
     <ROW Registry="F2D914E_FE57_414F_9F88_A377C7841DA4" Root="0" Key="CLSID\{3F2D914E-FE57-414F-9F88-A377C7841DA4}" Name="-" Component_="F2D914E_FE57_414F_9F88_A377C7841DA4"/>
     <ROW Registry="F2D914E_FE57_414F_9F88_A377C7841DA4_1" Root="2" Key="Software\Microsoft\Windows\CurrentVersion\Shell Extensions\Approved" Name="[\{]3F2D914E-FE57-414F-9F88-A377C7841DA4[\}]" Value="liquidFOLDERS.DriveMenu" Component_="LFNamespaceExtension.dll"/>
     <ROW Registry="F2D914F_FE57_414F_9F88_A377C7841DA4" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}" Name="-" Component_="F2D914F_FE57_414F_9F88_A377C7841DA4"/>
-    <ROW Registry="F2D914F_FE57_414F_9F88_A377C7841DA4_1" Root="2" Key="Software\Microsoft\Windows\CurrentVersion\Shell Extensions\Approved" Name="[\{]3F2D914F-FE57-414F-9F88-A377C7841DA4[\}]" Value="liquidFOLDERS" Component_="LFNamespaceExtension.dll"/>
+    <ROW Registry="F2D914F_FE57_414F_9F88_A377C7841DA4_1" Root="2" Key="Software\Microsoft\Windows\CurrentVersion\Shell Extensions\Approved" Name="[\{]3F2D914F-FE57-414F-9F88-A377C7841DA4[\}]" Value="liquidFOLDERS.RootFolder" Component_="LFNamespaceExtension.dll"/>
     <ROW Registry="F2D914F_FE57_414F_9F88_A377C7841DA4_2" Root="2" Key="Software\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\Namespace\DelegateFolders\{3F2D914F-FE57-414F-9F88-A377C7841DA4}" Name="*" Component_="LFNamespaceExtension.dll"/>
     <ROW Registry="F2D914F_FE57_414F_9F88_A377C7841DA4_3" Root="2" Key="Software\Microsoft\Windows\CurrentVersion\Explorer\Desktop\Namespace\{3F2D914F-FE57-414F-9F88-A377C7841DA4}" Name="*" Component_="LFNamespaceExtension.dll"/>
     <ROW Registry="F2D914F_FE57_414F_9F88_A377C7841DA4_4" Root="2" Key="Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu" Name="{3F2D914F-FE57-414F-9F88-A377C7841DA4}" Value="#1" Component_="LFNamespaceExtension.dll"/>
@@ -497,7 +497,7 @@
     <ROW Registry="FileDrop" Root="2" Key="Software\liquidFOLDERS" Name="FileDrop" Value="[#FileDrop.exe]" Component_="FileDrop.exe"/>
     <ROW Registry="HelpLink" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="HelpLink" Value="http://liquidfolders.net/tour/" Component_="AI_CustomARPName"/>
     <ROW Registry="HelpTelephone" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="HelpTelephone" Component_="AI_CustomARPName"/>
-    <ROW Registry="InfoTip" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}" Name="InfoTip" Value="Stores und Dateien" Component_="LFNamespaceExtension.dll"/>
+    <ROW Registry="InfoTip" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}" Name="InfoTip" Value="#%@[#LFNamespaceExtension.dll],1000" Component_="LFNamespaceExtension.dll"/>
     <ROW Registry="LFNamespaceExtension.DriveMenu" Root="0" Key="LFNamespaceExtension.DriveMenu" Name="-" Component_="LFNamespaceExtension.DriveMenu"/>
     <ROW Registry="LFNamespaceExtension.RootFolder" Root="0" Key="LFNamespaceExtension.RootFolder" Name="-" Component_="LFNamespaceExtension.RootFolder"/>
     <ROW Registry="LFNamespaceExtension.SendTo" Root="0" Key="LFNamespaceExtension.SendTo" Name="-" Component_="LFNamespaceExtension.SendTo"/>
@@ -517,7 +517,7 @@
     <ROW Registry="StoreManager" Root="2" Key="Software\liquidFOLDERS" Name="StoreManager" Value="[#StoreManager.exe]" Component_="StoreManager.exe"/>
     <ROW Registry="System.DescriptionID" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}" Name="System.DescriptionID" Value="#20" Component_="LFNamespaceExtension.dll"/>
     <ROW Registry="System.ItemType" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}" Name="System.ItemType" Value="Folder" Component_="LFNamespaceExtension.dll"/>
-    <ROW Registry="System.ItemTypeText" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}" Name="System.ItemTypeText" Value="Stores und Dateien" Component_="LFNamespaceExtension.dll"/>
+    <ROW Registry="System.ItemTypeText" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}" Name="System.ItemTypeText" Value="#%@[#LFNamespaceExtension.dll],1000" Component_="LFNamespaceExtension.dll"/>
     <ROW Registry="System.PerceivedType" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}" Name="System.PerceivedType" Value="#8" Component_="LFNamespaceExtension.dll"/>
     <ROW Registry="System.PropList.DetailsPaneNullSelect" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}" Name="System.PropList.DetailsPaneNullSelect" Value="prop:" Component_="LFNamespaceExtension.dll"/>
     <ROW Registry="System.PropList.DetailsPaneNullSelectTitle" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}" Name="System.PropList.DetailsPaneNullSelectTitle" Value="prop:~System.ItemNameDisplay;~System.ItemTypeText" Component_="LFNamespaceExtension.dll"/>
