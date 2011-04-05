@@ -77,7 +77,7 @@ void CGroupBox::OnPaint()
 
 	// Border
 	CFont* pOldFont = (CFont*)dc.SelectStockObject(DEFAULT_GUI_FONT);
-	COLORREF clr = 0x000000;
+	COLORREF clr;
 
 	CString caption;
 	GetWindowText(caption);
@@ -94,6 +94,8 @@ void CGroupBox::OnPaint()
 
 		rectBounds.OffsetRect(-1, -1);
 		dc.Draw3dRect(rectBounds, GetSysColor(COLOR_3DSHADOW), GetSysColor(COLOR_3DSHADOW));
+
+		clr = GetSysColor(COLOR_WINDOWTEXT);
 	}
 	else
 	{
