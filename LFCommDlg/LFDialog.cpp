@@ -23,9 +23,16 @@ LFDialog::LFDialog(UINT nIDTemplate, UINT _Design, CWnd* pParent)
 	p_App = (LFApplication*)AfxGetApp();
 	hIconS = hIconL = hIconShield = NULL;
 	hBackgroundBrush = NULL;
-	m_Backdrop = m_Logo = NULL;
+	m_pBackdrop = m_pLogo = NULL;
 	m_BackBufferL = m_BackBufferH = m_UACHeight = 0;
 	p_BottomLeftControl = NULL;
+}
+
+void LFDialog::DoDataExchange(CDataExchange* pDX)
+{
+	CWnd* pWnd = GetDlgItem(IDC_GROUPBOX);
+	if (pWnd)
+		DDX_Control(pDX, IDC_GROUPBOX, m_GroupBox);
 }
 
 void LFDialog::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
@@ -55,15 +62,15 @@ void LFDialog::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 		{
 			if (Themed)
 			{
-				INT l = m_Backdrop->m_pBitmap->GetWidth();
-				INT h = m_Backdrop->m_pBitmap->GetHeight();
+				INT l = m_pBackdrop->m_pBitmap->GetWidth();
+				INT h = m_pBackdrop->m_pBitmap->GetHeight();
 				if ((l<rect.Width()) || (h<rect.Height()))
 				{
 					double f = max((double)rect.Width()/l, (double)rect.Height()/h);
 					l = (INT)(l*f);
 					h = (INT)(h*f);
 				}
-				g.DrawImage(m_Backdrop->m_pBitmap, rect.Width()-l, rect.Height()-h, l, h);
+				g.DrawImage(m_pBackdrop->m_pBitmap, rect.Width()-l, rect.Height()-h, l, h);
 
 				SolidBrush brush1(Color(180, 255, 255, 255));
 				g.FillRectangle(&brush1, 0, 0, m_BackBufferL, Line);
@@ -81,9 +88,9 @@ void LFDialog::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 				dc.FillSolidRect(rect, GetSysColor(COLOR_3DFACE));
 			}
 
-			INT l = m_Logo->m_pBitmap->GetWidth();
-			INT h = m_Logo->m_pBitmap->GetHeight();
-			g.DrawImage(m_Logo->m_pBitmap, rect.Width()-l-8, 8, l, h);
+			INT l = m_pLogo->m_pBitmap->GetWidth();
+			INT h = m_pLogo->m_pBitmap->GetHeight();
+			g.DrawImage(m_pLogo->m_pBitmap, rect.Width()-l-8, 8, l, h);
 
 			break;
 		}
@@ -196,6 +203,11 @@ void LFDialog::GetLayoutRect(LPRECT lpRect) const
 		lpRect->top = m_UACHeight;
 }
 
+UINT LFDialog::GetDesign() const
+{
+	return m_Design;
+}
+
 
 BEGIN_MESSAGE_MAP(LFDialog, CDialog)
 	ON_WM_DESTROY()
@@ -226,12 +238,12 @@ BOOL LFDialog::OnInitDialog()
 	{
 	case LFDS_Blue:
 		// Hintergrundbild laden
-		m_Backdrop = new CGdiPlusBitmapResource();
-		m_Backdrop->Load(IDB_BACKDROP, _T("PNG"), LFCommDlgDLL.hResource);
+		m_pBackdrop = new CGdiPlusBitmapResource();
+		m_pBackdrop->Load(IDB_BACKDROP, _T("PNG"), LFCommDlgDLL.hResource);
 
-		// m_Logo laden
-		m_Logo = new CGdiPlusBitmapResource();
-		m_Logo->Load(IDB_LOGO, _T("PNG"), LFCommDlgDLL.hResource);
+		// m_pLogo laden
+		m_pLogo = new CGdiPlusBitmapResource();
+		m_pLogo->Load(IDB_LOGO, _T("PNG"), LFCommDlgDLL.hResource);
 
 		break;
 	case LFDS_UAC:
@@ -256,10 +268,10 @@ BOOL LFDialog::OnInitDialog()
 
 void LFDialog::OnDestroy()
 {
-	if (m_Backdrop)
-		delete m_Backdrop;
-	if (m_Logo)
-		delete m_Logo;
+	if (m_pBackdrop)
+		delete m_pBackdrop;
+	if (m_pLogo)
+		delete m_pLogo;
 	if (hIconL)
 		DestroyIcon(hIconL);
 	if (hIconS)

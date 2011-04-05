@@ -18,48 +18,13 @@ extern AFX_EXTENSION_MODULE LFCommDlgDLL;
 LFLicenseDlg::LFLicenseDlg(CWnd* pParent)
 	: LFDialog(IDD_ENTERLICENSEKEY, LFDS_Default, pParent)
 {
-	icon = NULL;
 }
 
-
-BEGIN_MESSAGE_MAP(LFLicenseDlg, LFDialog)
-	ON_WM_DESTROY()
-	ON_BN_CLICKED(IDC_LOADLICENSE, OnLoadLicense)
-END_MESSAGE_MAP()
-
-BOOL LFLicenseDlg::OnInitDialog()
-{
-	LFDialog::OnInitDialog();
-
-	// Icon laden
-	icon = new CGdiPlusBitmapResource();
-	icon->Load(IDB_KEY, _T("PNG"), LFCommDlgDLL.hResource);
-
-	return TRUE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird
-}
-
-void LFLicenseDlg::OnDestroy()
-{
-	if (icon)
-		delete icon;
-
-	LFDialog::OnDestroy();
-}
-
-void LFLicenseDlg::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
-{
-	LFDialog::OnEraseBkgnd(dc, g, rect);
-
-	if (icon)
-	{
-		INT l = icon->m_pBitmap->GetWidth();
-		INT h = icon->m_pBitmap->GetHeight();
-		g.DrawImage(icon->m_pBitmap, 16, 16, l, h);
-	}
-}
 
 void LFLicenseDlg::DoDataExchange(CDataExchange* pDX)
 {
+	LFDialog::DoDataExchange(pDX);
+
 	if (pDX->m_bSaveAndValidate)
 	{
 		CString key;
@@ -123,4 +88,27 @@ void LFLicenseDlg::OnLoadLicense()
 			GetDlgItem(IDOK)->SetFocus();
 		}
 	}
+}
+
+
+BEGIN_MESSAGE_MAP(LFLicenseDlg, LFDialog)
+	ON_BN_CLICKED(IDC_LOADLICENSE, OnLoadLicense)
+END_MESSAGE_MAP()
+
+BOOL LFLicenseDlg::OnInitDialog()
+{
+	LFDialog::OnInitDialog();
+
+	m_Icon.Load(IDB_KEY, _T("PNG"), LFCommDlgDLL.hResource);
+
+	return TRUE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird
+}
+
+void LFLicenseDlg::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
+{
+	LFDialog::OnEraseBkgnd(dc, g, rect);
+
+	INT l = m_Icon.m_pBitmap->GetWidth();
+	INT h = m_Icon.m_pBitmap->GetHeight();
+	g.DrawImage(m_Icon.m_pBitmap, 16, 16, l, h);
 }

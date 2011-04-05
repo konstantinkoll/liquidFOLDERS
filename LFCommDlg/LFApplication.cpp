@@ -300,7 +300,7 @@ BOOL LFApplication::InitInstance()
 	#endif
 
 	// Beim ersten Mal Welcome-Dialog anzeigen
-	if ((LFGetStoreCount()==0) && (GetGlobalInt(_T("FirstRun"), 1)!=0))
+	//if ((LFGetStoreCount()==0) && (GetGlobalInt(_T("FirstRun"), 1)!=0))
 	{
 		WriteGlobalInt(_T("FirstRun"), 0);
 

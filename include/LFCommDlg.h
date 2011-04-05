@@ -9,6 +9,7 @@
 #include "..\LFCommDlg\CGdiPlusBitmap.h"
 #include "..\LFCommDlg\CGlasPane.h"
 #include "..\LFCommDlg\CGlasWindow.h"
+#include "..\LFCommDlg\CGroupBox.h"
 #include "..\LFCommDlg\CHeaderButton.h"
 #include "..\LFCommDlg\CIconCtrl.h"
 #include "..\LFCommDlg\CImageListTransparent.h"

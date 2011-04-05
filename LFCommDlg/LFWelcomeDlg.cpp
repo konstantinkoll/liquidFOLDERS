@@ -31,6 +31,8 @@ BOOL LFWelcomeDlg::OnInitDialog()
 
 void LFWelcomeDlg::DoDataExchange(CDataExchange* pDX)
 {
+	LFDialog::DoDataExchange(pDX);
+
 	if (pDX->m_bSaveAndValidate)
 	{
 		CreateStore(IDC_STORENAME1);

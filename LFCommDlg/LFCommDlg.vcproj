@@ -419,6 +419,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CGroupBox.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\CHeaderButton.cpp"
 				>
 			</File>
@@ -666,6 +670,10 @@
 			</File>
 			<File
 				RelativePath=".\CGlasWindow.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CGroupBox.h"
 				>
 			</File>
 			<File

@@ -196,7 +196,7 @@ CAPTION "Über %s"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,301,266,50,14,WS_GROUP
-    GROUPBOX        "Lizenz",IDC_STATIC,7,169,155,81,WS_GROUP
+    CONTROL         "Lizenz",IDC_GROUPBOX,"CGroupBox",WS_GROUP,7,169,155,81
     LTEXT           "Name:",IDC_STATIC,15,179,141,8
     LTEXT           "X",IDC_NAME,15,189,141,8
     LTEXT           "Kaufdatum:",IDC_STATIC,15,202,84,8
@@ -236,6 +236,7 @@ EXSTYLE WS_EX_APPWINDOW | 0x4000000L
 CAPTION "Willkommen bei liquidFOLDERS"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
+    CONTROL         "Store-Namen",IDC_GROUPBOX,"CGroupBox",WS_GROUP,7,140,248,44
     EDITTEXT        IDC_STORENAME1,14,162,72,14,ES_AUTOHSCROLL | WS_GROUP
     EDITTEXT        IDC_STORENAME2,94,162,72,14,ES_AUTOHSCROLL | WS_GROUP
     EDITTEXT        IDC_STORENAME3,175,162,72,14,ES_AUTOHSCROLL | WS_GROUP
@@ -243,7 +244,6 @@ BEGIN
     PUSHBUTTON      "Jetzt nicht.",IDCANCEL,205,199,50,14,WS_GROUP
     PUSHBUTTON      "&Lizenzschlüssel eingeben...",IDC_ENTERLICENSEKEY,7,199,105,14,WS_GROUP
     LTEXT           "Dies ist der erste Start von liquidFOLDERS. liquidFOLDERS speichert alle Dateien in sog. „Stores“. Um gleich loszulegen, können Sie hier bis zu drei Stores anlegen, indem Sie deren Namen eintragen (z.B. „Meine Dateien“).",IDC_STATIC,7,101,248,36
-    GROUPBOX        "Store-Namen",IDC_STATIC,7,140,248,44,WS_GROUP
     LTEXT           "Store 1:",IDC_STATIC,14,152,72,8
     LTEXT           "Store 2:",IDC_STATIC,94,152,72,8
     LTEXT           "Store 3:",IDC_STATIC,175,152,72,8
@@ -254,6 +254,7 @@ STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS
 CAPTION "Eingebundenen Store „%s“ löschen"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
+    CONTROL         "Zustimmung",IDC_GROUPBOX,"CGroupBox",WS_GROUP,7,102,74,41
     DEFPUSHBUTTON   "Abbrechen",IDCANCEL,221,162,50,14,WS_GROUP
     CONTROL         "Store &behalten",IDC_KEEP,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,15,115,62,10
     CONTROL         "&Löschen",IDC_DELETE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,15,127,61,10
@@ -261,7 +262,6 @@ BEGIN
     LTEXT           "Soll der Store wirklich gelöscht werden?",IDC_CAPTION,7,31,263,8
     LTEXT           "Da der gewählte Store zur Zeit angeschlossen ist, werden alle Dateien im Store ohne Wiederherstellungsmöglichkeit gelöscht!",IDC_STATIC,7,51,213,17
     LTEXT           "Zum Löschen geben Sie Ihre Zustimmung, indem Sie „Löschen“ auswählen und anschließend auf „Jetzt löschen“ klicken:",IDC_STATIC,7,81,213,17
-    GROUPBOX        "Zustimmung",IDC_STATIC,7,102,74,41,BS_FLAT | WS_GROUP
     LTEXT           "Dieses Fenster verhindert das unabsichtliche Löschen von sehr vielen Dateien.",IDC_STATIC,7,190,263,8
 END
 
@@ -380,7 +380,7 @@ STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS
 CAPTION "Lizenzschlüssel eingeben"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    GROUPBOX        "Lizenz",IDC_STATIC,7,92,336,135
+    CONTROL         "Lizenz",IDC_GROUPBOX,"CGroupBox",WS_GROUP,7,92,336,135
     LTEXT           "Bei Erwerb eines Lizenzschlüssel sendet Ihnen unser Partner share*it eine EMail, an die die Datei „liquidFOLDERS.lic“ angehängt ist. Speichern Sie diese Datei lokal auf Ihrem Computer ab.",IDC_STATIC,14,103,322,18
     LTEXT           "Öffnen Sie die Datei anschließend mit der untenstehenden Schaltfläche. Alternativ können Sie ihren Inhalt in das Textfeld darunter kopieren.",IDC_STATIC,14,119,322,18
     PUSHBUTTON      "Lizenz&datei laden...",IDC_LOADLICENSE,14,139,81,15,WS_GROUP
@@ -748,7 +748,7 @@ CAPTION "About %s"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,301,266,50,14,WS_GROUP
-    GROUPBOX        "License",IDC_STATIC,7,169,155,81,WS_GROUP
+    CONTROL         "License",IDC_GROUPBOX,"CGroupBox",WS_GROUP,7,169,155,81
     LTEXT           "Name:",IDC_STATIC,15,179,141,8
     LTEXT           "X",IDC_NAME,15,189,141,8
     LTEXT           "Purchase date:",IDC_STATIC,15,202,84,8
@@ -768,6 +768,7 @@ EXSTYLE WS_EX_APPWINDOW | 0x4000000L
 CAPTION "Welcome to liquidFOLDERS"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
+    CONTROL         "Store names",IDC_GROUPBOX,"CGroupBox",WS_GROUP,7,140,248,44
     EDITTEXT        IDC_STORENAME1,14,162,72,14,ES_AUTOHSCROLL | WS_GROUP
     EDITTEXT        IDC_STORENAME2,94,162,72,14,ES_AUTOHSCROLL | WS_GROUP
     EDITTEXT        IDC_STORENAME3,175,162,72,14,ES_AUTOHSCROLL | WS_GROUP
@@ -775,7 +776,6 @@ BEGIN
     PUSHBUTTON      "Not now.",IDCANCEL,205,199,50,14,WS_GROUP
     PUSHBUTTON      "Enter &license key...",IDC_ENTERLICENSEKEY,7,199,105,14,WS_GROUP
     LTEXT           "This is the first time you run liquidFOLDERS. liquidFOLDERS keeps all your files in so-called stores. To get going, you can create up to three stores right now, by simply filling in their names below (e.g. ""Home"" and ""Work"").",IDC_STATIC,7,101,248,36
-    GROUPBOX        "Store names",IDC_STATIC,7,140,248,44,WS_GROUP
     LTEXT           "Store 1:",IDC_STATIC,14,152,27,8
     LTEXT           "Store 2:",IDC_STATIC,94,152,27,8
     LTEXT           "Store 3:",IDC_STATIC,175,152,27,8
@@ -806,6 +806,7 @@ STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS
 CAPTION "Delete mounted store ""%s"""
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
+    CONTROL         "Permission",IDC_GROUPBOX,"CGroupBox",WS_GROUP,7,102,74,41
     DEFPUSHBUTTON   "Cancel",IDCANCEL,221,162,50,14,WS_GROUP
     CONTROL         "&Keep the store",IDC_KEEP,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,15,115,62,10
     CONTROL         "&Delete",IDC_DELETE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,15,127,61,10
@@ -813,7 +814,6 @@ BEGIN
     LTEXT           "Please confirm that you really want to delete the selected store.",IDC_CAPTION,7,31,263,8
     LTEXT           "Since the store is currently mounted, you will lose all files inside that store without recovery option!",IDC_STATIC,7,51,166,17
     LTEXT           "You give permission to delete the store by choosing ""Delete"" below, and then click on the button ""Delete now"".",IDC_STATIC,7,81,205,17
-    GROUPBOX        "Permission",IDC_STATIC,7,102,74,41,BS_FLAT | WS_GROUP
     LTEXT           "This window prevents you from accidentially nuking lots of files.",IDC_STATIC,7,190,263,8
 END
 
@@ -992,7 +992,7 @@ STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS
 CAPTION "Enter license key"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    GROUPBOX        "License",IDC_STATIC,7,92,336,135
+    CONTROL         "License",IDC_GROUPBOX,"CGroupBox",WS_GROUP,7,92,336,135
     LTEXT           "After purchasing a license key through our partner share*it, you'll receive an email that has the file „liquidFOLDERS.lic“ attached to it. Save this file locally on your computer.",IDC_STATIC,14,103,322,18
     LTEXT           "Subsequently open the file using the button below, or copy and paste its contents into the textbox beneath the button.",IDC_STATIC,14,119,322,18
     PUSHBUTTON      "Load license &file...",IDC_LOADLICENSE,14,139,81,15,WS_GROUP
@@ -1292,7 +1292,7 @@ CAPTION "Acerca %s"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,301,266,50,14,WS_GROUP
-    GROUPBOX        "Licensia",IDC_STATIC,7,169,155,81,WS_GROUP
+    CONTROL         "Licensia",IDC_GROUPBOX,"CGroupBox",WS_GROUP,7,169,155,81
     LTEXT           "Nombre:",IDC_STATIC,15,179,141,8
     LTEXT           "X",IDC_NAME,15,189,141,8
     LTEXT           "Adquisición:",IDC_STATIC,15,202,84,8
@@ -1332,6 +1332,7 @@ EXSTYLE WS_EX_APPWINDOW | 0x4000000L
 CAPTION "Bienvenidos a liquidFOLDERS"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
+    CONTROL         "Nombres des Store",IDC_GROUPBOX,"CGroupBox",WS_GROUP,7,140,248,44
     EDITTEXT        IDC_STORENAME1,14,162,72,14,ES_AUTOHSCROLL | WS_GROUP
     EDITTEXT        IDC_STORENAME2,94,162,72,14,ES_AUTOHSCROLL | WS_GROUP
     EDITTEXT        IDC_STORENAME3,175,162,72,14,ES_AUTOHSCROLL | WS_GROUP
@@ -1339,7 +1340,6 @@ BEGIN
     PUSHBUTTON      "No gracias.",IDCANCEL,205,199,50,14,WS_GROUP
     PUSHBUTTON      "Dictar &licencia...",IDC_ENTERLICENSEKEY,7,199,105,14,WS_GROUP
     LTEXT           "Parece ser que es la primera vez que ejecuta liquidFOLDERS. liquidFOLDERS mantiene todos sus archivos en los llamados stores. Para comenzar puede crear hasta 3 stores en este momento, simplemente introduciendo sus nombres a continuación.",IDC_STATIC,7,101,248,36
-    GROUPBOX        "Nombres des Store",IDC_STATIC,7,140,248,44,WS_GROUP
     LTEXT           "Store 1:",IDC_STATIC,14,152,27,8
     LTEXT           "Store 2:",IDC_STATIC,94,152,27,8
     LTEXT           "Store 3:",IDC_STATIC,175,152,27,8
@@ -1350,6 +1350,7 @@ STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS
 CAPTION "Eliminar store conectado ""%s"""
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
+    CONTROL         "Permiso",IDC_GROUPBOX,"CGroupBox",WS_GROUP,7,102,78,41
     DEFPUSHBUTTON   "Cancelar",IDCANCEL,221,162,50,14,WS_GROUP
     CONTROL         "&Conservar store",IDC_KEEP,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,15,115,62,10
     CONTROL         "&Eliminar",IDC_DELETE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,15,127,61,10
@@ -1357,7 +1358,6 @@ BEGIN
     LTEXT           "Confirme si realmente desea eliminar el store seleccionado.",IDC_CAPTION,7,31,263,8
     LTEXT           "Dado que el store está actualmente conectado, perderá todos los archivos dentro de ese store sin opción a recuperarlos!",IDC_STATIC,7,51,206,17
     LTEXT           "Usted da permiso de eliminar el store al elegir ""Eliminar"" en la parte de abajo y luego dar click en ""Eliminar ahora"".",IDC_STATIC,7,81,205,17
-    GROUPBOX        "Permiso",IDC_STATIC,7,102,78,41,BS_FLAT | WS_GROUP
     LTEXT           "Esta ventana previene que usted elimine accidentalmente muchos archivos.",IDC_STATIC,7,190,263,8
 END
 
@@ -1536,7 +1536,7 @@ STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS
 CAPTION "Dictar licencia"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    GROUPBOX        "Licencia",IDC_STATIC,7,92,336,135
+    CONTROL         "Licencia",IDC_GROUPBOX,"CGroupBox",WS_GROUP,7,92,336,135
     LTEXT           "Después de adquirir la licencia a través de nuestro proveedor, usted recibirá un correo con el archivo ""liquidFOLDERS.lic"" adjunto. Guarde este archivo de manera local en su computadora.",IDC_STATIC,14,103,322,18
     LTEXT           "Posteriormente abra el archivo usando el botón de abajo, o copie y pegue su contenido dentro del recuadro debajo del botón.",IDC_STATIC,14,119,322,18
     PUSHBUTTON      "Cargar &archivo de licencia...",IDC_LOADLICENSE,14,139,111,15,WS_GROUP
@@ -1844,7 +1844,7 @@ CAPTION "Concernant %s"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,301,266,50,14,WS_GROUP
-    GROUPBOX        "Licence",IDC_STATIC,7,169,155,81,WS_GROUP
+    CONTROL         "Licence",IDC_GROUPBOX,"CGroupBox",WS_GROUP,7,169,155,81
     LTEXT           "Nom:",IDC_STATIC,15,179,141,8
     LTEXT           "X",IDC_NAME,15,189,141,8
     LTEXT           "Date d'achat:",IDC_STATIC,15,202,84,8
@@ -1884,6 +1884,7 @@ EXSTYLE WS_EX_APPWINDOW | 0x4000000L
 CAPTION "Bienvenu à liquidFOLDERS"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
+    CONTROL         "Les noms des stores",IDC_GROUPBOX,"CGroupBox",WS_GROUP,7,140,248,44
     EDITTEXT        IDC_STORENAME1,14,162,72,14,ES_AUTOHSCROLL | WS_GROUP
     EDITTEXT        IDC_STORENAME2,94,162,72,14,ES_AUTOHSCROLL | WS_GROUP
     EDITTEXT        IDC_STORENAME3,175,162,72,14,ES_AUTOHSCROLL | WS_GROUP
@@ -1891,7 +1892,6 @@ BEGIN
     PUSHBUTTON      "Pas maintenant.",IDCANCEL,189,199,66,14,WS_GROUP
     PUSHBUTTON      "Donner clé de &licence...",IDC_ENTERLICENSEKEY,7,199,105,14,WS_GROUP
     LTEXT           "C'est la première fois que vous dirigez liquidFOLDERS. liquidFOLDERS gére tous vous fichiers dans les ainsi-appelé stores. Pour recevoir le départ, vous pouvez créer jusqu'à trois stores immédiatement en remplissant leurs noms ci-dessous.",IDC_STATIC,7,101,248,36
-    GROUPBOX        "Les noms des stores",IDC_STATIC,7,140,248,44,WS_GROUP
     LTEXT           "Store 1:",IDC_STATIC,14,152,27,8
     LTEXT           "Store 2:",IDC_STATIC,94,152,27,8
     LTEXT           "Store 3:",IDC_STATIC,175,152,27,8
@@ -1902,6 +1902,7 @@ STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS
 CAPTION "Effacez le store monté sur ""%s"""
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
+    CONTROL         "Confirmation",IDC_GROUPBOX,"CGroupBox",WS_GROUP,7,102,74,41
     DEFPUSHBUTTON   "Annuler",IDCANCEL,238,162,50,14,WS_GROUP
     CONTROL         "&Gardez le store",IDC_KEEP,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,15,115,62,10
     CONTROL         "&Effacer",IDC_DELETE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,15,127,61,10
@@ -1909,7 +1910,6 @@ BEGIN
     LTEXT           "Confirmez s'il vous plaît que vous voulez vraiment effacer le store choisi.",IDC_CAPTION,7,31,281,8
     LTEXT           "Comme le store est actuellement monté, vous perdrez tous les fichiers à l'intérieur de ce store sans option de récupération!",IDC_STATIC,7,51,213,17
     LTEXT           "Pour l'effacement vous donnez votre approbation en choisir ""l'effacement"" et, ensuite, en cliquer sur ""Effacer maintenant"":",IDC_STATIC,7,81,213,17
-    GROUPBOX        "Confirmation",IDC_STATIC,7,102,74,41,BS_FLAT | WS_GROUP
     LTEXT           "Cette fenêtre empêche l'effacement non intentionnel de beaucoup de fichiers.",IDC_STATIC,7,189,281,8
 END
 
@@ -2088,7 +2088,7 @@ STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS
 CAPTION "Donner clé de licence"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    GROUPBOX        "Licence",IDC_STATIC,7,92,336,135
+    CONTROL         "Licence",IDC_GROUPBOX,"CGroupBox",WS_GROUP,7,92,336,135
     LTEXT           "A l'acquisition d'une clé de licence, notre partenaire share*it vous envoie un e-mail auquel le fichier „liquidFOLDERS.lic“ est ajouté. Mémorisez ce fichier localement sur votre ordinateur.",IDC_STATIC,14,103,322,18
     LTEXT           "Ensuite ouvrez le fichier avec le tableau de commande mentionné ci-dessous. Alternatif vous pouvez copier son contenu dans le champ de texte y compris.",IDC_STATIC,14,119,322,18
     PUSHBUTTON      "Charger le fichier de licence...",IDC_LOADLICENSE,14,139,115,15,WS_GROUP
