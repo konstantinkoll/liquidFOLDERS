@@ -98,8 +98,6 @@ void CFilterWnd::UpdateList()
 
 BEGIN_MESSAGE_MAP(CFilterWnd, CGlasPane)
 	ON_WM_CREATE()
-	ON_WM_ERASEBKGND()
-	ON_WM_CTLCOLOR()
 	ON_UPDATE_COMMAND_UI_RANGE(ID_FILTER_CLEAR, ID_FILTER_SAVEAS, OnUpdateCommands)
 	ON_UPDATE_COMMAND_UI(IDOK, OnUpdateCommands)
 END_MESSAGE_MAP()
@@ -182,30 +180,6 @@ INT CFilterWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndList.SetImageList(m_Icons, LVSIL_NORMAL);
 
 	return 0;
-}
-
-BOOL CFilterWnd::OnEraseBkgnd(CDC* pDC)
-{
-	CRect rect;
-	GetClientRect(rect);
-
-	pDC->FillSolidRect(rect, afxGlobalData.clrBarFace);
-
-	return TRUE;
-}
-
-HBRUSH CFilterWnd::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
-{
-	// Call base class version at first, else it will override changes
-	HBRUSH hbr = CWnd::OnCtlColor(pDC, pWnd, nCtlColor);
-
-	if ((nCtlColor==CTLCOLOR_BTN) || (nCtlColor==CTLCOLOR_STATIC))
-	{
-		pDC->SetBkMode(TRANSPARENT);
-		hbr = CreateSolidBrush(afxGlobalData.clrBarFace);
-	}
-
-	return hbr;
 }
 
 void CFilterWnd::OnUpdateCommands(CCmdUI* pCmdUI)

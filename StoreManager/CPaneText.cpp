@@ -4,6 +4,7 @@
 
 #include "stdafx.h"
 #include "CPaneText.h"
+#include "LFCommDlg.h"
 
 
 // CPaneText
@@ -36,7 +37,6 @@ BEGIN_MESSAGE_MAP(CPaneText, CWnd)
 	ON_WM_ERASEBKGND()
 	ON_WM_PAINT()
 	ON_WM_SETFOCUS()
-	ON_WM_LBUTTONDOWN()
 END_MESSAGE_MAP()
 
 BOOL CPaneText::OnEraseBkgnd(CDC* /*pDC*/)
@@ -58,11 +58,11 @@ void CPaneText::OnPaint()
 	buffer.CreateCompatibleBitmap(&pDC, rect.Width(), rect.Height());
 	CBitmap* pOldBitmap = dc.SelectObject(&buffer);
 
-	dc.FillSolidRect(rect, afxGlobalData.clrBarFace);
+	dc.SetTextColor(afxGlobalData.clrBarText);
+	dc.SetBkColor(IsCtrlThemed() ? 0xFFFFFF : GetSysColor(COLOR_WINDOW));
+	dc.FillSolidRect(rect, dc.GetBkColor());
 
 	CFont* pOldFont = (CFont*)dc.SelectStockObject(DEFAULT_GUI_FONT);
-	dc.SetTextColor(afxGlobalData.clrBarText);
-	dc.SetBkColor(afxGlobalData.clrBarFace);
 
 	dc.DrawText(m_Text, rect, DT_SINGLELINE | DT_END_ELLIPSIS | DT_BOTTOM);
 	dc.SelectObject(pOldFont);
@@ -77,9 +77,4 @@ void CPaneText::OnSetFocus(CWnd* /*pOldWnd*/)
 
 	if (pParent)
 		pParent->SetFocus();
-}
-
-void CPaneText::OnLButtonDown(UINT /*nFlags*/, CPoint /*point*/)
-{
-	OnSetFocus(NULL);
 }

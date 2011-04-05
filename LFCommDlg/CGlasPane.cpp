@@ -49,8 +49,10 @@ BEGIN_MESSAGE_MAP(CGlasPane, CWnd)
 	ON_WM_NCCALCSIZE()
 	ON_WM_NCHITTEST()
 	ON_WM_NCPAINT()
+	ON_WM_ERASEBKGND()
 	ON_WM_SIZE()
 	ON_WM_GETMINMAXINFO()
+	ON_WM_CTLCOLOR()
 END_MESSAGE_MAP()
 
 void CGlasPane::OnNcCalcSize(BOOL bCalcValidRects, NCCALCSIZE_PARAMS* lpncsp)
@@ -100,6 +102,16 @@ void CGlasPane::OnNcPaint()
 	pDC.SelectClipRgn(NULL);
 }
 
+BOOL CGlasPane::OnEraseBkgnd(CDC* pDC)
+{
+	CRect rect;
+	GetClientRect(rect);
+
+	pDC->FillSolidRect(rect, IsCtrlThemed() ? 0xFFFFFF : GetSysColor(COLOR_WINDOW));
+
+	return TRUE;
+}
+
 void CGlasPane::OnSize(UINT nType, INT cx, INT cy)
 {
 	if (GetCapture()==this)
@@ -117,4 +129,19 @@ void CGlasPane::OnGetMinMaxInfo(MINMAXINFO* lpMMI)
 
 	lpMMI->ptMinTrackSize.x = 128+GRIPPER;
 	lpMMI->ptMaxTrackSize.x = m_MaxWidth+GRIPPER;
+}
+
+HBRUSH CGlasPane::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
+{
+	// Call base class version at first, else it will override changes
+	HBRUSH hbr = CWnd::OnCtlColor(pDC, pWnd, nCtlColor);
+
+	if ((nCtlColor==CTLCOLOR_BTN) || (nCtlColor==CTLCOLOR_STATIC))
+	{
+		pDC->SetBkMode(TRANSPARENT);
+		pDC->SetDCBrushColor(IsCtrlThemed() ? 0xFFFFFF : GetSysColor(COLOR_WINDOW));
+		hbr = (HBRUSH)GetStockObject(DC_BRUSH);
+	}
+
+	return hbr;
 }

@@ -51,10 +51,6 @@ protected:
 	void AddConditionItem(BOOL focus=FALSE);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
-	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
-	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
-	afx_msg void OnGotoHistory();
-	afx_msg void OnNotifyGotoHistory(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnUpdateCommands(CCmdUI* pCmdUI);
 	DECLARE_MESSAGE_MAP()
 };
