@@ -7,6 +7,7 @@
 #include "LFVariantData.h"
 #include "StoreCache.h"
 #include <assert.h>
+#include <algorithm>
 #include <hash_map>
 #include <malloc.h>
 #include <shellapi.h>
@@ -590,10 +591,9 @@ void LFSearchResult::GroupArray(unsigned int attr, unsigned int icon, LFFilter* 
 {
 	assert(AttrTypes[attr]==LFTypeUnicodeArray);
 
-	typedef stdext::hash_map<std::wstring, unsigned int> hashcount;
-	typedef stdext::hash_map<std::wstring, __int64> hashsize;
-	hashcount tagcount;
-	hashsize tagsize;
+	typedef struct { std::wstring name; bool multiple; unsigned int count; __int64 size; } tagitem;
+	typedef stdext::hash_map<std::wstring, tagitem> hashtags;
+	hashtags tags;
 
 	for (unsigned int a=0; a<m_ItemCount; a++)
 	{
@@ -602,34 +602,33 @@ void LFSearchResult::GroupArray(unsigned int attr, unsigned int icon, LFFilter* 
 
 		if (tagarray)
 		{
-			hashcount filetags;
 			wchar_t tag[256];
 			while (GetNextTag(&tagarray, tag, 256))
 			{
-				bool first = true;
-				for (wchar_t* ptr = tag; *ptr; ptr++)
-					switch (*ptr)
-					{
-					case L' ':
-					case L',':
-					case L':':
-					case L';':
-					case L'|':
-						first = true;
-						break;
-					default:
-						*ptr = first ? (wchar_t)toupper(*ptr) : (wchar_t)tolower(*ptr);
-						first = false;
-					}
+				std::wstring key(tag);
+				transform(key.begin(), key.end(), key.begin(), towupper);
 
-				filetags[tag] = 1;
+				hashtags::iterator location = tags.find(key);
+				if (location==tags.end())
+				{
+					tagitem item;
+					item.name.assign(tag);
+					item.multiple = false;
+					item.count = 1;
+					item.size = m_Items[a]->CoreAttributes.FileSize;
+					tags[key] = item;
+				}
+				else
+				{
+					if (!location->second.multiple)
+						if (location->second.name.compare(tag)!=0)
+							location->second.multiple = true;
+
+					location->second.count++;
+					location->second.size += m_Items[a]->CoreAttributes.FileSize;
+				}
+
 				found = true;
-			}
-
-			for (hashcount::iterator it=filetags.begin(); it!=filetags.end(); it++)
-			{
-				tagcount[it->first]++;
-				tagsize[it->first] += m_Items[a]->CoreAttributes.FileSize;
 			}
 		}
 
@@ -638,39 +637,58 @@ void LFSearchResult::GroupArray(unsigned int attr, unsigned int icon, LFFilter* 
 
 	RemoveFlaggedItemDescriptors(false);
 
-	for (hashcount::iterator it=tagcount.begin(); it!=tagcount.end(); it++)
+	for (hashtags::iterator it=tags.begin(); it!=tags.end(); it++)
 	{
+		wchar_t tag[256];
+		wcscpy_s(tag, 256, it->second.name.c_str());
+
+		if (it->second.multiple)
+		{
+			bool first = true;
+			for (wchar_t* ptr=tag; *ptr; ptr++)
+				switch (*ptr)
+				{
+				case L' ':
+				case L',':
+				case L':':
+				case L';':
+				case L'|':
+				case L'-':
+				case L'"':
+					first = true;
+					break;
+				default:
+					*ptr = first ? (wchar_t)toupper(*ptr) : (wchar_t)tolower(*ptr);
+					first = false;
+				}
+		}
+
 		LFItemDescriptor* folder = LFAllocItemDescriptor();
 		folder->Type = LFTypeVirtual;
 		folder->IconID = icon;
-		folder->AggregateCount = it->second;
-		strcpy_s(folder->StoreID, LFKeySize, f->StoreID);
+		folder->AggregateCount = it->second.count;
+
+		SetAttribute(folder, LFAttrFileName, tag);
+		SetAttribute(folder, LFAttrFileSize, &it->second.size);
+		SetAttribute(folder, attr, tag);
 
 		wchar_t Mask[256];
 		LoadString(LFCoreModuleHandle, (folder->AggregateCount==1) ? IDS_HintSingular : IDS_HintPlural, Mask, 256);
 		wchar_t Hint[256];
 		swprintf_s(Hint, 256, Mask, folder->AggregateCount);
 		SetAttribute(folder, LFAttrDescription, &Hint);
-		SetAttribute(folder, LFAttrFileSize, &tagsize[it->first]);
 
 		LFFilterCondition* c = LFAllocFilterCondition();
 		c->Compare = LFFilterCompareSubfolder;
 		c->AttrData.Attr = attr;
 		c->AttrData.Type = AttrTypes[attr];
-		wcscpy_s(c->AttrData.UnicodeArray, 256, it->first.c_str());
+		wcscpy_s(c->AttrData.UnicodeArray, 256, tag);
 
 		folder->NextFilter = LFAllocFilter(f);
 		folder->NextFilter->Options.IsSubfolder = true;
 		c->Next = folder->NextFilter->ConditionList;
 		folder->NextFilter->ConditionList = c;
-
-		wchar_t Tag[256];
-		wcscpy_s(Tag, 256, it->first.c_str());
-		Tag[0] = (wchar_t)toupper(Tag[0]);
-
-		SetAttribute(folder, attr, Tag);
-		SetAttribute(folder, LFAttrFileName, Tag);
-		wcscpy_s(folder->NextFilter->Name, 256, Tag);
+		wcscpy_s(folder->NextFilter->Name, 256, tag);
 
 		AddItemDescriptor(folder);
 	}

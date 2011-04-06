@@ -2,6 +2,7 @@
 #include "LFItemDescriptor.h"
 #include "LFVariantData.h"
 #include "LFCore.h"
+#include <algorithm>
 #include <assert.h>
 #include <cmath>
 #include <hash_map>
@@ -744,51 +745,70 @@ LFCore_API void LFSetAttributeVariantData(LFItemDescriptor* i, LFVariantData* v)
 
 LFCore_API void LFSanitizeUnicodeArray(wchar_t* buf, size_t cCount)
 {
-	typedef stdext::hash_map<std::wstring, unsigned int> hashcount;
-	hashcount tags;
+	typedef std::pair<std::wstring, bool> tagitem;
+	typedef stdext::hash_map<std::wstring, tagitem> hashtags;
+	hashtags tags;
 
 	wchar_t tag[259];
 	wchar_t* tagarray = buf;
 	while (GetNextTag(&tagarray, tag, 256))
 	{
-		bool first = true;
-		for (wchar_t* ptr = tag; *ptr; ptr++)
-			switch (*ptr)
-			{
-			case L' ':
-			case L',':
-			case L':':
-			case L';':
-			case L'|':
-				first = true;
-				break;
-			default:
-				*ptr = first ? (wchar_t)toupper(*ptr) : (wchar_t)tolower(*ptr);
-				first = false;
-			}
+		std::wstring key(tag);
+		transform(key.begin(), key.end(), key.begin(), towupper);
 
-		tags[tag] = 1;
+		hashtags::iterator location = tags.find(key);
+		if (location==tags.end())
+		{
+			tags[key] = tagitem(tag, false);
+		}
+		else
+			if (!location->second.second)
+				if (location->second.first.compare(tag)!=0)
+					location->second.second = true;
 	}
 
 	buf[0] = L'\0';
-	for (hashcount::iterator it=tags.begin(); it!=tags.end(); it++)
+	for (hashtags::iterator it=tags.begin(); it!=tags.end(); it++)
 	{
 		tag[0] = L'\0';
 		if (buf[0]!=L'\0')
 			wcscpy_s(tag, 259, L" ");
 
-		if (it->first.find_first_of(L" ,:;|")!=std::wstring::npos)
+		if (it->second.first.find_first_of(L" ,:;|")!=std::wstring::npos)
 		{
 			wcscat_s(tag, 259, L"\"");
-			wcscat_s(tag, 259, it->first.c_str());
+			wcscat_s(tag, 259, it->second.first.c_str());
 			wcscat_s(tag, 259, L"\"");
 		}
 		else
 		{
-			wcscat_s(tag, 259, it->first.c_str());
+			wcscat_s(tag, 259, it->second.first.c_str());
 		}
 
 		if (wcslen(buf)+wcslen(tag)<=255)
+		{
+			if (it->second.second)
+			{
+				bool first = true;
+				for (wchar_t* ptr=tag; *ptr; ptr++)
+					switch (*ptr)
+					{
+					case L' ':
+					case L',':
+					case L':':
+					case L';':
+					case L'|':
+					case L'-':
+					case L'"':
+						first = true;
+						break;
+					default:
+						*ptr = first ? (wchar_t)toupper(*ptr) : (wchar_t)tolower(*ptr);
+						first = false;
+					}
+			}
+
 			wcscat_s(buf, cCount, tag);
+		}
 	}
 }

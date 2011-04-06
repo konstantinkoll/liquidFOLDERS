@@ -32,7 +32,6 @@ LFItemDescriptor* CCategorizer::GetFolder(LFItemDescriptor* i, LFFilter* f)
 {
 	LFItemDescriptor* folder = LFAllocItemDescriptor();
 	folder->Type = LFTypeVirtual;
-	strcpy_s(folder->StoreID, LFKeySize, f->StoreID);
 
 	if (i->AttributeValues[attr])
 	{
