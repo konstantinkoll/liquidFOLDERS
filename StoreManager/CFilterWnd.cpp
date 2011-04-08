@@ -41,13 +41,13 @@ void CFilterWnd::AdjustLayout()
 	m_wndToolBar.SetWindowPos(NULL, rectClient.left, rectClient.top, rectClient.Width(), heightTlb, SWP_NOACTIVATE | SWP_NOZORDER);
 	INT cy = heightTlb;
 
-	m_wndText1.SetWindowPos(NULL, rectClient.left+borderBtn, cy, rectClient.Width()-borderBtn, heightTxt+borderBtn, SWP_NOACTIVATE | SWP_NOZORDER);
+	m_wndLabel1.SetWindowPos(NULL, rectClient.left+borderBtn, cy, rectClient.Width()-borderBtn, heightTxt+borderBtn, SWP_NOACTIVATE | SWP_NOZORDER);
 	cy += heightTxt+borderBtn+1;
 
 	m_wndFreetext.SetWindowPos(NULL, rectClient.left+borderBtn+1, cy, rectClient.Width()-2*borderBtn-1, rectCombo.Height()-3, SWP_NOACTIVATE | SWP_NOZORDER);
 	cy += rectCombo.Height()-3+borderBtn;
 
-	m_wndText2.SetWindowPos(NULL, rectClient.left+borderBtn, cy, rectClient.Width()-borderBtn, heightTxt+borderBtn, SWP_NOACTIVATE | SWP_NOZORDER);
+	m_wndLabel2.SetWindowPos(NULL, rectClient.left+borderBtn, cy, rectClient.Width()-borderBtn, heightTxt+borderBtn, SWP_NOACTIVATE | SWP_NOZORDER);
 	cy += heightTxt+borderBtn+1;
 
 	m_wndStoreCombo.SetWindowPos(NULL, rectClient.left+borderBtn+1, cy, rectClient.Width()-2*borderBtn-1, rectCombo.Height(), SWP_NOACTIVATE | SWP_NOZORDER);
@@ -57,7 +57,7 @@ void CFilterWnd::AdjustLayout()
 	m_wndStartSearch.SetWindowPos(NULL, rectClient.Width()-(rectClient.Width()/2-borderBtn/2)+1, cy+borderBtn, rectClient.Width()/2-3*borderBtn/2, heightBtn-2*borderBtn, SWP_NOACTIVATE | SWP_NOZORDER);
 	cy += heightBtn;
 
-	m_wndText3.SetWindowPos(NULL, rectClient.left+borderBtn, cy, rectClient.Width()-borderBtn, 20, SWP_NOACTIVATE | SWP_NOZORDER);
+	m_wndLabel3.SetWindowPos(NULL, rectClient.left+borderBtn, cy, rectClient.Width()-borderBtn, 20, SWP_NOACTIVATE | SWP_NOZORDER);
 	m_wndList.SetWindowPos(NULL, rectClient.left+borderBtn, cy+20, rectClient.Width()-borderBtn, rectClient.Height()-cy-20, SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
@@ -116,7 +116,7 @@ INT CFilterWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndToolBar.SetRouteCommandsViaFrame(FALSE);
 
 	const DWORD dwViewStyle = WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_TABSTOP;
-	if (!m_wndFreetext.Create(dwViewStyle, CRect(0, 0, 0, 0), this, 4))
+	if (!m_wndFreetext.Create(dwViewStyle | WS_BORDER, CRect(0, 0, 0, 0), this, 4))
 		return -1;
 	if (!m_wndStoreCombo.Create(dwViewStyle | CBS_DROPDOWNLIST | CBS_SORT, CRect(0, 0, 0, 0), this, 3))
 		return -1;
@@ -125,7 +125,7 @@ INT CFilterWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (!m_wndStartSearch.Create(L"&Search", dwViewStyle | BS_DEFPUSHBUTTON, CRect(0, 0, 0, 0), this, IDOK))
 		return -1;
 
-	m_wndFreetext.ModifyStyleEx(0, WS_EX_STATICEDGE, 0);
+//	m_wndFreetext.ModifyStyleEx(0, WS_EX_STATICEDGE, 0);
 
 	CFont* fnt = CFont::FromHandle((HFONT)GetStockObject(DEFAULT_GUI_FONT));
 	m_wndFreetext.SetFont(fnt);
@@ -137,11 +137,11 @@ INT CFilterWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndStoreCombo.AddString(L"Search current store");
 	m_wndStoreCombo.SetCurSel(0);
 
-	if (!m_wndText1.Create(this, 5, L"Search for:"))
+	if (!m_wndLabel1.Create(this, 5, L"Search for:"))
 		return -1;
-	if (!m_wndText2.Create(this, 6, L"Scope:"))
+	if (!m_wndLabel2.Create(this, 6, L"Scope:"))
 		return -1;
-	if (!m_wndText3.Create(this, 7, L"Files must also meet these conditions:"))
+	if (!m_wndLabel3.Create(this, 7, L"Files must also meet these conditions:"))
 		return -1;
 
 	if (!m_wndList.Create(dwViewStyle | LVS_NOCOLUMNHEADER, CRect(0, 0, 0, 0), this, ID_FILTERLIST))

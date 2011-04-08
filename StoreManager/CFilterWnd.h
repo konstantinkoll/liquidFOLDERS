@@ -2,7 +2,6 @@
 #pragma once
 #include "liquidFOLDERS.h"
 #include "LFCommDlg.h"
-#include "CPaneText.h"
 
 
 // CFilterToolBar
@@ -38,13 +37,13 @@ public:
 
 protected:
 	CFilterToolBar m_wndToolBar;
-	CPaneText m_wndText1;
+	CLabel m_wndLabel1;
 	CEdit m_wndFreetext;
-	CPaneText m_wndText2;
+	CLabel m_wndLabel2;
 	CComboBox m_wndStoreCombo;
 	CButton m_wndStartSearch;
 	CButton m_wndAddCondition;
-	CPaneText m_wndText3;
+	CLabel m_wndLabel3;
 	CImageList* m_Icons;
 	CExplorerList m_wndList;
 

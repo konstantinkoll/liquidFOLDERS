@@ -439,6 +439,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CLabel.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\CMapPreviewCtrl.cpp"
 				>
 			</File>
@@ -690,6 +694,10 @@
 			</File>
 			<File
 				RelativePath=".\CInspectorGrid.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CLabel.h"
 				>
 			</File>
 			<File

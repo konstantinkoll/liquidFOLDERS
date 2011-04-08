@@ -422,10 +422,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CPaneText.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\CTagcloudView.cpp"
 				>
 			</File>
@@ -557,10 +553,6 @@
 			</File>
 			<File
 				RelativePath=".\CMainView.h"
-				>
-			</File>
-			<File
-				RelativePath=".\CPaneText.h"
 				>
 			</File>
 			<File

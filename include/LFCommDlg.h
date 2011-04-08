@@ -14,6 +14,7 @@
 #include "..\LFCommDlg\CIconCtrl.h"
 #include "..\LFCommDlg\CImageListTransparent.h"
 #include "..\LFCommDlg\CInspectorGrid.h"
+#include "..\LFCommDlg\CLabel.h"
 #include "..\LFCommDlg\CMapPreviewCtrl.h"
 #include "..\LFCommDlg\CStoreSelector.h"
 #include "..\LFCommDlg\CTagList.h"
