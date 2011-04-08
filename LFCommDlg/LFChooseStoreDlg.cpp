@@ -238,6 +238,7 @@ void LFChooseStoreDlg::OnEndLabelEdit(NMHDR* pNMHDR, LRESULT* pResult)
 		}
 }
 
+
 void LFChooseStoreDlg::OnStoresCreateNew()
 {
 	LFStoreDescriptor* s = LFAllocStoreDescriptor();
@@ -267,8 +268,9 @@ void LFChooseStoreDlg::OnStoresBackup()
 
 void LFChooseStoreDlg::OnUpdateStoresCommands(CCmdUI* pCmdUI)
 {
-	pCmdUI->Enable(pCmdUI->m_nID==IDM_STORES_CREATENEW || LFGetStoreCount());
+	pCmdUI->Enable((pCmdUI->m_nID==IDM_STORES_CREATENEW) || LFGetStoreCount());
 }
+
 
 void LFChooseStoreDlg::OnStoreMakeDefault()
 {

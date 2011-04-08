@@ -158,7 +158,7 @@ void CGroupBox::OnPaint()
 	rectCaption.bottom = rectCaption.top+sz.cy;
 
 	if (brush)
-		FillRect(dc, rect, brush);
+		FillRect(dc, rectCaption, brush);
 
 	dc.SetTextColor(clr);
 	dc.DrawText(caption, rectCaption, DT_VCENTER | DT_CENTER | DT_END_ELLIPSIS | DT_SINGLELINE);
