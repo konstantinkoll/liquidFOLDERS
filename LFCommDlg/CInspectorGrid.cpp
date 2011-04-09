@@ -1664,6 +1664,16 @@ void CInspectorGrid::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 		if (m_SelectedItem!=-1)
 			ResetProperty(m_SelectedItem);
 		break;
+	case VK_TAB:
+		{
+			CWnd* pWnd = GetParent()->GetNextDlgTabItem(GetFocus(), GetKeyState(VK_SHIFT)<0);
+			if (pWnd)
+				pWnd->SetFocus();
+			break;
+		}
+	case VK_ESCAPE:
+		GetParent()->SendMessage(WM_COMMAND, IDCANCEL);
+		break;
 	default:
 		if (m_SelectedItem!=-1)
 			if (m_Properties.m_Items[m_SelectedItem].Editable)
