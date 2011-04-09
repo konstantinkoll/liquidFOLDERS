@@ -60,7 +60,7 @@ void CStorePanel::PreSubclassWindow()
 
 	INT szExtraLargeX = 48;
 	INT szExtraLargeY = 48;
-	ImageList_GetIconSize(p_App->m_CoreImageListLarge, &szExtraLargeX, &szExtraLargeY);
+	ImageList_GetIconSize(p_App->m_CoreImageListExtraLarge, &szExtraLargeX, &szExtraLargeY);
 
 	CRect rect;
 	GetClientRect(rect);

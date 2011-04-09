@@ -149,7 +149,7 @@ BOOL LFItemTemplateDlg::OnInitDialog()
 	CRect rectInspector;
 	m_wndInspectorGrid.GetWindowRect(&rectInspector);
 
-	INT Grow = min(550-rectInspector.Height(), rectScreen.Height()*2/3-rectInspector.Height());
+	INT Grow = min(550-rectInspector.Height(), rectScreen.Height()/2-rectInspector.Height());
 	if (Grow>0)
 	{
 #define Grow(pWnd) { pWnd->GetWindowRect(&rect); ScreenToClient(rect); pWnd->SetWindowPos(NULL, 0, 0, rect.Width(), rect.Height()+Grow, SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOMOVE); }
