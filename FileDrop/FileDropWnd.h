@@ -19,6 +19,19 @@ public:
 	BOOL Create();
 
 protected:
+	LFDropTarget m_DropTarget;
+	LFTooltip m_TooltipCtrl;
+	HICON m_hIcon;
+	HICON m_hWarning;
+	CImageList m_Dropzone;
+	LFStoreDescriptor m_Store;
+	CString m_Label;
+	INT m_PosX;
+	INT m_PosY;
+	BOOL m_AlwaysOnTop;
+	BOOL m_StoreValid;
+	BOOL m_Hover;
+
 	void UpdateStore();
 	void SetWindowRect(INT x, INT y, BOOL TopMost);
 
@@ -44,18 +57,4 @@ protected:
 	afx_msg LRESULT OnStoresChanged(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnWakeup(WPARAM wParam, LPARAM lParam);
 	DECLARE_MESSAGE_MAP()
-
-	LFDropTarget m_DropTarget;
-	LFTooltip m_TooltipCtrl;
-	HICON m_hIcon;
-	HICON m_hWarning;
-	CImageList m_Dropzone;
-	LFStoreDescriptor m_Store;
-	CString Label;
-	INT PosX;
-	INT PosY;
-	BOOL AlwaysOnTop;
-	BOOL MouseInWnd;
-	BOOL Grabbed;
-	BOOL StoreValid;
 };

@@ -15,16 +15,16 @@
 extern AFX_EXTENSION_MODULE LFCommDlgDLL;
 extern LFMessageIDs* MessageIDs;
 
-LFStorePropertiesDlg::LFStorePropertiesDlg(CHAR* _StoreID, CWnd* pParentWnd)
+LFStorePropertiesDlg::LFStorePropertiesDlg(CHAR* StoreID, CWnd* pParentWnd)
 	: CDialog(IDD_STOREPROPERTIES, pParentWnd)
 {
-	if (LFGetStoreSettings(_StoreID, &store)==LFOk)
+	if (LFGetStoreSettings(StoreID, &m_Store)==LFOk)
 	{
-		key = store.guid;
+		m_Key = m_Store.guid;
 	}
 	else
 	{
-		ZeroMemory(&key, sizeof(key));
+		ZeroMemory(&m_Key, sizeof(m_Key));
 	}
 }
 
@@ -38,7 +38,7 @@ void LFStorePropertiesDlg::DoDataExchange(CDataExchange* pDX)
 		CString comment;
 		GetDlgItem(IDC_COMMENT)->GetWindowText(comment);
 
-		UINT res = LFSetStoreAttributes(store.StoreID, name.GetBuffer(), comment.GetBuffer());
+		UINT res = LFSetStoreAttributes(m_Store.StoreID, name.GetBuffer(), comment.GetBuffer());
 		if (res!=LFOk)
 		{
 			LFErrorBox(res);
@@ -70,7 +70,7 @@ BOOL LFStorePropertiesDlg::OnInitDialog()
 	CString text;
 	GetWindowText(text);
 	CString caption;
-	caption.Format(text, store.StoreName);
+	caption.Format(text, m_Store.StoreName);
 	SetWindowText(caption);
 
 	return TRUE;
@@ -81,36 +81,36 @@ LRESULT LFStorePropertiesDlg::OnUpdateStore(WPARAM /*wParam*/, LPARAM /*lParam*/
 	CEdit* edit1 = (CEdit*)GetDlgItem(IDC_STORENAME);
 	CEdit* edit2 = (CEdit*)GetDlgItem(IDC_COMMENT);
 
-	if (LFGetStoreSettings(key, &store)==LFOk)
+	if (LFGetStoreSettings(m_Key, &m_Store)==LFOk)
 	{
 		if (edit1->LineLength()==0)
-			edit1->SetWindowText(store.StoreName);
+			edit1->SetWindowText(m_Store.StoreName);
 		if (edit2->LineLength()==0)
-			edit2->SetWindowText(store.Comment);
+			edit2->SetWindowText(m_Store.Comment);
 
 		edit1->EnableWindow(TRUE);
 		edit2->EnableWindow(TRUE);
 		GetDlgItem(IDOK)->EnableWindow(TRUE);
 
 		WCHAR tmpStr[256];
-		LFTimeToString(store.CreationTime, tmpStr, 256);
+		LFTimeToString(m_Store.CreationTime, tmpStr, 256);
 		GetDlgItem(IDC_CREATED)->SetWindowText(tmpStr);
-		LFTimeToString(store.FileTime, tmpStr, 256);
+		LFTimeToString(m_Store.FileTime, tmpStr, 256);
 		GetDlgItem(IDC_UPDATED)->SetWindowText(tmpStr);
-		LFTimeToString(store.MaintenanceTime, tmpStr, 256);
+		LFTimeToString(m_Store.MaintenanceTime, tmpStr, 256);
 		GetDlgItem(IDC_MAINTENANCE)->SetWindowText(tmpStr);
 
 		OLECHAR szGUID[MAX_PATH];
-		StringFromGUID2(store.guid, szGUID, MAX_PATH);
+		StringFromGUID2(m_Store.guid, szGUID, MAX_PATH);
 		GetDlgItem(IDC_GUID)->SetWindowText(szGUID);
 
-		GetDlgItem(IDC_LASTSEENCAPTION)->EnableWindow(store.StoreMode!=LFStoreModeInternal);
-		GetDlgItem(IDC_LASTSEEN)->SetWindowText(store.LastSeen);
-		GetDlgItem(IDC_DATPATH)->SetWindowText(store.DatPath);
-		GetDlgItem(IDC_IDXPATHMAIN)->SetWindowText(store.IdxPathMain);
-		GetDlgItem(IDC_IDXPATHAUX)->SetWindowText(store.IdxPathAux);
+		GetDlgItem(IDC_LASTSEENCAPTION)->EnableWindow(m_Store.StoreMode!=LFStoreModeInternal);
+		GetDlgItem(IDC_LASTSEEN)->SetWindowText(m_Store.LastSeen);
+		GetDlgItem(IDC_DATPATH)->SetWindowText(m_Store.DatPath);
+		GetDlgItem(IDC_IDXPATHMAIN)->SetWindowText(m_Store.IdxPathMain);
+		GetDlgItem(IDC_IDXPATHAUX)->SetWindowText(m_Store.IdxPathAux);
 
-		LFUINTToString(store.IndexVersion, tmpStr, 256);
+		LFUINTToString(m_Store.IndexVersion, tmpStr, 256);
 		GetDlgItem(IDC_IDXVERSION)->SetWindowText(tmpStr);
 	}
 	else

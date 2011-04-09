@@ -189,7 +189,7 @@ void CFileView::UpdateSearchResult(LFSearchResult* Result, FVPersistentData* Dat
 			}
 		}
 
-		m_DropTarget.Register(this, Result->m_StoreID);
+		m_DropTarget.Register(this, Result->m_StoreID, TRUE);
 
 		m_Context = Result->m_Context;
 		p_ViewParameters = &theApp.m_Views[m_Context];

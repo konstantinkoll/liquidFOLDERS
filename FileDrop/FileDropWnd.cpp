@@ -18,7 +18,7 @@ CFileDropWnd::CFileDropWnd()
 	: CGlasWindow()
 {
 	m_hIcon = NULL;
-	MouseInWnd = Grabbed = StoreValid = FALSE;
+	m_AlwaysOnTop = m_StoreValid = m_Hover = FALSE;
 }
 
 CFileDropWnd::~CFileDropWnd()
@@ -62,24 +62,14 @@ BOOL CFileDropWnd::PreTranslateMessage(MSG* pMsg)
 
 void CFileDropWnd::UpdateStore()
 {
-	CHAR* key = LFGetDefaultStore();
-	if (*key!='\0')
+	m_StoreValid = (LFGetStoreSettings("", &m_Store)==LFOk);
+	if (m_StoreValid)
 	{
-		StoreValid = (LFGetStoreSettings(key, &m_Store)==LFOk);
+		m_Label = m_Store.StoreName;
 	}
 	else
 	{
-		StoreValid = FALSE;
-	}
-	free(key);
-
-	if (StoreValid)
-	{
-		Label = m_Store.StoreName;
-	}
-	else
-	{
-		Label.LoadString(IDS_NODEFAULTSTORE);
+		ENSURE(m_Label.LoadString(IDS_NODEFAULTSTORE));
 	}
 }
 
@@ -100,15 +90,15 @@ void CFileDropWnd::SetWindowRect(INT x, INT y, BOOL TopMost)
 		if (y+r.Height()>d.Height())
 			y = d.Height()-r.Height();
 
-		PosX = x;
-		PosY = y;
+		m_PosX = x;
+		m_PosY = y;
 	}
 	else
 	{
 		Flags |= SWP_NOMOVE;
 	}
 
-	AlwaysOnTop = TopMost;
+	m_AlwaysOnTop = TopMost;
 	SetWindowPos(TopMost ? &wndTopMost : &wndNoTopMost, x, y, 0, 0, Flags);
 
 	CMenu* pSysMenu = GetSystemMenu(FALSE);
@@ -176,9 +166,9 @@ INT CFileDropWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_TooltipCtrl.Create(this);
 
 	// Einstellungen laden
-	PosX = theApp.GetInt(_T("X"), 10000);
-	PosY = theApp.GetInt(_T("Y"), 10000);
-	SetWindowRect(PosX, PosY, theApp.GetInt(_T("AlwaysOnTop"), TRUE));
+	m_PosX = theApp.GetInt(_T("X"), 10000);
+	m_PosY = theApp.GetInt(_T("Y"), 10000);
+	SetWindowRect(m_PosX, m_PosY, theApp.GetInt(_T("AlwaysOnTop"), TRUE));
 
 	// SC_xxx muss sich im Bereich der Systembefehle befinden.
 	ASSERT((SC_ALWAYSONTOP & 0xFFF0)==SC_ALWAYSONTOP);
@@ -190,7 +180,7 @@ INT CFileDropWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		// Always on top
 		CString tmpStr;
 		ENSURE(tmpStr.LoadString(IDS_ALWAYSONTOP));
-		pSysMenu->InsertMenu(SC_CLOSE, MF_STRING | MF_BYCOMMAND | (AlwaysOnTop ? MF_CHECKED:0), SC_ALWAYSONTOP, tmpStr);
+		pSysMenu->InsertMenu(SC_CLOSE, MF_STRING | MF_BYCOMMAND | (m_AlwaysOnTop ? MF_CHECKED : 0), SC_ALWAYSONTOP, tmpStr);
 		pSysMenu->InsertMenu(SC_CLOSE, MF_SEPARATOR | MF_BYCOMMAND);
 
 		// Überflüssige Einträge löschen
@@ -202,16 +192,16 @@ INT CFileDropWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	UpdateStore();
 
 	// Initialize Drop
-	m_DropTarget.Register(this, "");
+	m_DropTarget.Register(this, "", FALSE);
 
 	return 0;
 }
 
 void CFileDropWnd::OnClose()
 {
-	theApp.WriteInt(_T("AlwaysOnTop"), AlwaysOnTop);
-	theApp.WriteInt(_T("X"), PosX);
-	theApp.WriteInt(_T("Y"), PosY);
+	theApp.WriteInt(_T("AlwaysOnTop"), m_AlwaysOnTop);
+	theApp.WriteInt(_T("X"), m_PosX);
+	theApp.WriteInt(_T("Y"), m_PosY);
 
 	CGlasWindow::OnClose();
 }
@@ -245,7 +235,7 @@ BOOL CFileDropWnd::OnEraseBkgnd(CDC* pDC)
 	// Dropzone
 	POINT pt = { rlayout.left+(rlayout.Width()-128)/2, rlayout.top };
 	SIZE sz = { 128, 128 };
-	m_Dropzone.DrawEx(&dc, StoreValid, pt, sz, CLR_NONE, CLR_NONE, StoreValid ? ILD_TRANSPARENT : m_IsAeroWindow ? ILD_BLEND25 : ILD_BLEND50);
+	m_Dropzone.DrawEx(&dc, m_StoreValid, pt, sz, CLR_NONE, CLR_NONE, m_StoreValid ? ILD_TRANSPARENT : m_IsAeroWindow ? ILD_BLEND25 : ILD_BLEND50);
 
 	// Text
 	CRect rtext(rlayout);
@@ -271,15 +261,15 @@ BOOL CFileDropWnd::OnEraseBkgnd(CDC* pDC)
 			opts.iGlowSize = 15;
 
 			if (theApp.zDrawThemeTextEx)
-				theApp.zDrawThemeTextEx(hTheme, dc, 0, GetActiveWindow()==this ? CS_ACTIVE : CS_INACTIVE, Label, -1, textflags, rtext, &opts);
+				theApp.zDrawThemeTextEx(hTheme, dc, 0, GetActiveWindow()==this ? CS_ACTIVE : CS_INACTIVE, m_Label, -1, textflags, rtext, &opts);
 		}
 		else
 		{
 			theApp.zDrawThemeText(hTheme, dc, WP_CAPTION, GetActiveWindow()==this ? CS_ACTIVE : CS_INACTIVE,
-				Label, -1, textflags, 0, rtext);
+				m_Label, -1, textflags, 0, rtext);
 
 			dc.SetTextColor(GetSysColor(COLOR_CAPTIONTEXT));
-			dc.DrawText(Label, rtext, textflags);
+			dc.DrawText(m_Label, rtext, textflags);
 		}
 
 		dc.SelectObject(oldFont);
@@ -289,13 +279,13 @@ BOOL CFileDropWnd::OnEraseBkgnd(CDC* pDC)
 		HGDIOBJ oldFont = dc.SelectStockObject(DEFAULT_GUI_FONT);
 
 		dc.SetTextColor(GetSysColor(COLOR_WINDOWTEXT));
-		dc.DrawText(Label, rtext, textflags);
+		dc.DrawText(m_Label, rtext, textflags);
 
 		dc.SelectObject(oldFont);
 	}
 
 	// Badge
-	if (!StoreValid)
+	if (!m_StoreValid)
 		DrawIconEx(dc, rlayout.right-28, rlayout.top, m_hWarning, 24, 24, 0, NULL, DI_NORMAL);
 
 	pDC->BitBlt(0, 0, rclient.Width(), rclient.Height(), &dc, 0, 0, SRCCOPY);
@@ -308,7 +298,7 @@ BOOL CFileDropWnd::OnEraseBkgnd(CDC* pDC)
 
 void CFileDropWnd::OnMouseMove(UINT nFlags, CPoint point)
 {
-	if (!MouseInWnd)
+	if (!m_Hover)
 	{
 		TRACKMOUSEEVENT tme;
 		ZeroMemory(&tme, sizeof(tme));
@@ -318,7 +308,7 @@ void CFileDropWnd::OnMouseMove(UINT nFlags, CPoint point)
 		tme.hwndTrack = m_hWnd;
 		TrackMouseEvent(&tme);
 
-		MouseInWnd = TRUE;
+		m_Hover = TRUE;
 	}
 
 	CGlasWindow::OnMouseMove(nFlags, point);
@@ -327,7 +317,7 @@ void CFileDropWnd::OnMouseMove(UINT nFlags, CPoint point)
 void CFileDropWnd::OnMouseLeave()
 {
 	m_TooltipCtrl.Deactivate();
-	MouseInWnd = FALSE;
+	m_Hover = FALSE;
 
 	CGlasWindow::OnMouseLeave();
 }
@@ -385,7 +375,7 @@ void CFileDropWnd::OnContextMenu(CWnd* /*pWnd*/, CPoint pos)
 	HBITMAP hBmp = SetMenuItemIcon(*pPopup, 7, ID_APP_NEWSTOREMANAGER);
 	SetMenuItemBitmap(*pPopup, 9, HBMMENU_POPUP_CLOSE);
 
-	pPopup->CheckMenuItem(SC_ALWAYSONTOP, AlwaysOnTop ? MF_CHECKED : MF_UNCHECKED);
+	pPopup->CheckMenuItem(SC_ALWAYSONTOP, m_AlwaysOnTop ? MF_CHECKED : MF_UNCHECKED);
 
 	pPopup->SetDefaultItem(ID_APP_CHOOSEDEFAULTSTORE);
 	pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, pos.x, pos.y, this);
@@ -414,33 +404,33 @@ void CFileDropWnd::OnMove(INT x, INT y)
 
 	if ((rect.left>=-100) && (rect.top>=-100))
 	{
-		PosX = rect.left;
-		PosY = rect.top;
+		m_PosX = rect.left;
+		m_PosY = rect.top;
 	}
 }
 
 void CFileDropWnd::OnAlwaysOnTop()
 {
-	SetWindowRect(-1, -1, !AlwaysOnTop);
+	SetWindowRect(-1, -1, !m_AlwaysOnTop);
 }
 
 void CFileDropWnd::OnChooseDefaultStore()
 {
 	LFChooseStoreDlg dlg(this, LFCSD_ChooseDefault);
 	if (dlg.DoModal()==IDOK)
-		if (dlg.StoreID[0]!='\0')
-			LFErrorBox(LFMakeDefaultStore(dlg.StoreID, NULL), m_hWnd);
+		if (dlg.m_StoreID[0]!='\0')
+			LFErrorBox(LFMakeDefaultStore(dlg.m_StoreID, NULL), m_hWnd);
 }
 
 void CFileDropWnd::OnImportFolder()
 {
-	if (StoreValid)
+	if (m_StoreValid)
 		LFImportFolder(m_Store.StoreID, this);
 }
 
 void CFileDropWnd::OnStoreProperties()
 {
-	if (StoreValid)
+	if (m_StoreValid)
 	{
 		LFStorePropertiesDlg dlg(m_Store.StoreID, this);
 		dlg.DoModal();
@@ -465,7 +455,7 @@ void CFileDropWnd::OnQuit()
 
 void CFileDropWnd::OnUpdateCommands(CCmdUI* pCmdUI)
 {
-	pCmdUI->Enable((pCmdUI->m_nID==ID_APP_CHOOSEDEFAULTSTORE) ? TRUE : StoreValid);
+	pCmdUI->Enable((pCmdUI->m_nID==ID_APP_CHOOSEDEFAULTSTORE) ? TRUE : m_StoreValid);
 }
 
 LRESULT CFileDropWnd::OnStoresChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)

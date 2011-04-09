@@ -451,6 +451,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CStorePanel.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\CStoreSelector.cpp"
 				>
 			</File>
@@ -706,6 +710,10 @@
 			</File>
 			<File
 				RelativePath=".\CMapSelectionCtrl.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CStorePanel.h"
 				>
 			</File>
 			<File

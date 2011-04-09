@@ -246,7 +246,7 @@ IDM_POPUP MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "Sél&ectioneer le store standard...", ID_APP_CHOOSEDEFAULTSTORE
+        MENUITEM "Choisiss&ez le store standard...", ID_APP_CHOOSEDEFAULTSTORE
         MENUITEM "&Importer dossier...",        ID_APP_IMPORTFOLDER
         MENUITEM "&Qualités",                   ID_APP_STOREPROPERTIES
         MENUITEM SEPARATOR

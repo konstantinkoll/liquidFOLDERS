@@ -140,12 +140,12 @@ void CStoreSelector::SetEmpty(BOOL Repaint)
 	CDropdownSelector::SetEmpty(Repaint);
 }
 
-void CStoreSelector::SetItem(LFItemDescriptor* _item, BOOL Repaint, UINT NotifyCode)
+void CStoreSelector::SetItem(LFItemDescriptor* pItem, BOOL Repaint, UINT NotifyCode)
 {
-	if (_item)
+	if (pItem)
 	{
 		LFFreeItemDescriptor(p_Item);
-		p_Item = LFAllocItemDescriptor(_item);
+		p_Item = LFAllocItemDescriptor(pItem);
 
 		CDropdownSelector::SetItem(p_App->m_CoreImageListSmall.ExtractIcon(p_Item->IconID-1), p_Item->CoreAttributes.FileName, Repaint, NotifyCode);
 	}

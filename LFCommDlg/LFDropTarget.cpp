@@ -15,9 +15,10 @@ LFDropTarget::LFDropTarget()
 	m_SkipTemplate = FALSE;
 }
 
-BOOL LFDropTarget::Register(CWnd* pWnd, CHAR* StoreID)
+BOOL LFDropTarget::Register(CWnd* pWnd, CHAR* StoreID, BOOL AllowChooseStore)
 {
 	strcpy_s(m_StoreID, LFKeySize, StoreID);
+	m_AllowChooseStore = AllowChooseStore;
 
 	return (m_hWnd!=pWnd->m_hWnd) ? COleDropTarget::Register(pWnd) : TRUE;
 }
@@ -38,7 +39,7 @@ DROPEFFECT LFDropTarget::OnDragOver(CWnd* /*pWnd*/, COleDataObject* /*pDataObjec
 
 BOOL LFDropTarget::OnDrop(CWnd* /*pWnd*/, COleDataObject* pDataObject, DROPEFFECT dropEffect, CPoint /*point*/)
 {
-	// Store verfügbar ?
+	// Wenn Default-Store gewünscht: verfügbar ?
 	if (m_StoreID[0]=='\0')
 		if (!LFDefaultStoreAvailable())
 		{
@@ -59,16 +60,22 @@ BOOL LFDropTarget::OnDrop(CWnd* /*pWnd*/, COleDataObject* pDataObject, DROPEFFEC
 	}
 
 	// Template füllen
+	CHAR StoreID[LFKeySize];
+	strcpy_s(StoreID, LFKeySize, m_StoreID);
+
 	LFItemDescriptor* it = NULL;
 	if (!m_SkipTemplate)
 	{
 		it = LFAllocItemDescriptor();
 
-		LFItemTemplateDlg dlg(CWnd::FromHandle(m_hWnd), it, m_StoreID);
-		if (dlg.DoModal()==IDCANCEL)
+		LFItemTemplateDlg dlg(CWnd::FromHandle(m_hWnd), it, StoreID, m_AllowChooseStore);
+		switch (dlg.DoModal())
 		{
+		case IDCANCEL:
 			GlobalUnlock(hG);
 			return FALSE;
+		case IDOK:
+			strcpy_s(StoreID, LFKeySize, dlg.m_StoreID);
 		}
 	}
 
@@ -88,7 +95,7 @@ BOOL LFDropTarget::OnDrop(CWnd* /*pWnd*/, COleDataObject* pDataObject, DROPEFFEC
 	// Import
 	if (success)
 	{
-		UINT res = LFImportFiles(m_StoreID, il, it, dropEffect==DROPEFFECT_MOVE);
+		UINT res = LFImportFiles(StoreID, il, it, dropEffect==DROPEFFECT_MOVE);
 		if (res!=LFOk)
 		{
 			LFErrorBox(res);

@@ -151,7 +151,7 @@ void CMigrateWnd::OnSelectRoot()
 
 void CMigrateWnd::OnMigrate()
 {
-	// Folders checked?
+	// Folders checked ?
 	if (!m_wndMainView.FoldersChecked())
 	{
 		CString caption;
@@ -163,32 +163,21 @@ void CMigrateWnd::OnMigrate()
 		return;
 	}
 
-	// Choose store if none is selected
-	if (m_wndStore.IsEmpty())
-	{
-		LFChooseStoreDlg dlg(this, LFCSD_Mounted);
-		if (dlg.DoModal()!=IDOK)
-			return;
-
-		m_wndStore.SetItem(dlg.StoreID);
-	}
-
-	// Paranoid: does the store really exist?
-	CHAR StoreID[LFKeySize];
-	if (!m_wndStore.GetStoreID(StoreID))
-	{
-		LFErrorBox(LFStoreNotFound, m_hWnd);
-		return;
-	}
-
 	// Item template
+	CHAR StoreID[LFKeySize];
+	m_wndStore.GetStoreID(StoreID);
+
 	LFItemDescriptor* it = LFAllocItemDescriptor();
-	LFItemTemplateDlg dlg(this, it, StoreID);
+	LFItemTemplateDlg dlg(this, it, StoreID, TRUE);
 	if (dlg.DoModal()==IDCANCEL)
 	{
 		LFFreeItemDescriptor(it);
 		return;
 	}
+
+	strcpy_s(StoreID, LFKeySize, dlg.m_StoreID);
+	m_wndStore.SetItem(dlg.m_StoreID);
+	m_wndStore.UpdateWindow();
 
 	// Create snapshot
 	CMigrationList ml;
@@ -211,7 +200,7 @@ void CMigrateWnd::OnMigrate()
 		btn->SetCheck(DeleteSource);
 	}
 
-	// Migration starten
+	// Start migration
 	CReportList Results[2];
 	for (UINT a=0; a<ml.m_ItemCount; a++)
 	{
@@ -222,7 +211,7 @@ void CMigrateWnd::OnMigrate()
 		Results[res==LFOk ? 0 : 1].AddItem(&ml.m_Items[a]);
 	}
 
-	// Ergebnis zeigen
+	// Show report
 	ReportDlg repdlg(this, &Results[0], &Results[1]);
 	if (repdlg.DoModal()==IDOK)
 		if (repdlg.m_UncheckMigrated)

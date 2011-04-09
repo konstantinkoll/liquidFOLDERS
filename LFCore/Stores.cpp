@@ -461,13 +461,11 @@ LFCore_API unsigned int LFGetStoreSettings(char* key, LFStoreDescriptor* s)
 {
 	if (!key)
 		return LFIllegalKey;
-	if (key[0]=='\0')
-		return LFIllegalKey;
 
 	if (!GetMutex(Mutex_Stores))
 		return LFMutexError;
 
-	LFStoreDescriptor* slot = FindStore(key);
+	LFStoreDescriptor* slot = FindStore(key[0]=='\0' ? DefaultStore : key);
 	if (slot)
 		*s = *slot;
 

@@ -79,19 +79,19 @@ void CMapSelectionCtrl::UpdateLocation(CPoint point)
 	CRect rect;
 	GetClientRect(rect);
 
-	double latitude = (((point.y-1)*180.0)/rect.Height())-90.0;
-	if (latitude<-90.0)
-		latitude = -90.0;
-	if (latitude>90.0)
-		latitude = 90.0;
-	double longitude = (((point.x-1)*360.0)/rect.Width())-180.0;
-	if (longitude<-180.0)
-		longitude = -180.0;
-	if (longitude>180.0)
-		longitude = 180.0;
+	DOUBLE Latitude = (((point.y-1)*180.0)/rect.Height())-90.0;
+	if (Latitude<-90.0)
+		Latitude = -90.0;
+	if (Latitude>90.0)
+		Latitude = 90.0;
+	DOUBLE Longitude = (((point.x-1)*360.0)/rect.Width())-180.0;
+	if (Longitude<-180.0)
+		Longitude = -180.0;
+	if (Longitude>180.0)
+		Longitude = 180.0;
 
-	m_Coord.Latitude = latitude;
-	m_Coord.Longitude = longitude;
+	m_Coord.Latitude = Latitude;
+	m_Coord.Longitude = Longitude;
 	SendUpdateMsg();
 }
 

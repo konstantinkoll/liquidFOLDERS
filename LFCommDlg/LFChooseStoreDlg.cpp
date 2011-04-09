@@ -18,7 +18,7 @@ extern LFMessageIDs* MessageIDs;
 LFChooseStoreDlg::LFChooseStoreDlg(CWnd* pParentWnd, UINT Mode)
 	: LFDialog(Mode==LFCSD_ChooseDefault ? IDD_CHOOSEDEFAULTSTORE : IDD_CHOOSESTORE, LFDS_White, pParentWnd)
 {
-	StoreID[0] = '\0';
+	m_StoreID[0] = '\0';
 	p_Result = NULL;
 	m_Mode = Mode;
 }
@@ -34,7 +34,7 @@ void LFChooseStoreDlg::DoDataExchange(CDataExchange* pDX)
 	if (pDX->m_bSaveAndValidate)
 	{
 		INT idx = GetSelectedStore();
-		strcpy_s(StoreID, LFKeySize, idx!=-1 ? p_Result->m_Items[idx]->StoreID : "");
+		strcpy_s(m_StoreID, LFKeySize, idx!=-1 ? p_Result->m_Items[idx]->StoreID : "");
 	}
 }
 
@@ -200,7 +200,7 @@ LRESULT LFChooseStoreDlg::OnUpdateStores(WPARAM wParam, LPARAM lParam)
 
 void LFChooseStoreDlg::OnDoubleClick(NMHDR* /*pNMHDR*/, LRESULT* /*pResult*/)
 {
-	if (GetSelectedStore()!=-1)
+	if ((GetSelectedStore()!=-1) && (GetDlgItem(IDOK)->IsWindowEnabled()))
 		PostMessage(WM_COMMAND, (WPARAM)IDOK);
 }
 

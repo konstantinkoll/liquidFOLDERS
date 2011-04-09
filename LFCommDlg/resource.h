@@ -144,10 +144,12 @@
 #define IDC_IDXPATHAUX                  21709
 #define IDC_IDXVERSION                  21710
 #define IDD_ITEMTEMPLATE                21800
-#define IDC_INSPECTOR                   21801
-#define IDC_SKIP                        21802
-#define IDC_ALPHABETICALLY              21803
-#define IDC_RESET                       21804
+#define IDC_DESTINATION                 21801
+#define IDC_CHOOSESTORE                 21802
+#define IDC_INSPECTOR                   21803
+#define IDC_ALPHABETICALLY              21804
+#define IDC_RESET                       21805
+#define IDC_SKIP                        21806
 #define IDD_STOREMAINTENANCE            21900
 #define IDC_TABS                        21901
 #define IDC_STATUS                      21902
@@ -169,7 +171,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        2008
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         2026
+#define _APS_NEXT_CONTROL_VALUE         2027
 #define _APS_NEXT_SYMED_VALUE           2007
 #endif
 #endif

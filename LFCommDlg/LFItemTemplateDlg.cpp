@@ -4,6 +4,7 @@
 
 #include "StdAfx.h"
 #include "LFItemTemplateDlg.h"
+#include "LFChooseStoreDlg.h"
 #include "Resource.h"
 
 
@@ -12,12 +13,14 @@
 
 extern AFX_EXTENSION_MODULE LFCommDlgDLL;
 
-LFItemTemplateDlg::LFItemTemplateDlg(CWnd* pParentWnd, LFItemDescriptor* pItem, CHAR* StoreID)
+LFItemTemplateDlg::LFItemTemplateDlg(CWnd* pParentWnd, LFItemDescriptor* pItem, CHAR* StoreID, BOOL AllowChooseStore, LFFilter* pFilter)
 	: CDialog(IDD_ITEMTEMPLATE, pParentWnd)
 {
 	m_pItem = pItem;
 	p_App = (LFApplication*)AfxGetApp();
 	strcpy_s(m_StoreID, LFKeySize, StoreID);
+	m_AllowChooseStore = AllowChooseStore;
+	m_SortAlphabetic = FALSE;
 
 	for (UINT a=0; a<LFAttributeCount; a++)
 	{
@@ -30,6 +33,8 @@ LFItemTemplateDlg::LFItemTemplateDlg(CWnd* pParentWnd, LFItemDescriptor* pItem, 
 
 	if (reg.Open(_T("Software\\liquidFOLDERS\\Template")))
 	{
+		reg.Read(_T("SortAlphabetic"), m_SortAlphabetic);
+
 		INT count = 0;
 		if (reg.Read(_T("AttrCount"), count))
 			if (count==LFAttributeCount)
@@ -54,12 +59,19 @@ LFItemTemplateDlg::LFItemTemplateDlg(CWnd* pParentWnd, LFItemDescriptor* pItem, 
 				}
 	}
 
+	if (pFilter)
+	{
+		// TODO
+	}
+
 	pParentWnd->BringWindowToTop();
 }
 
 void LFItemTemplateDlg::DoDataExchange(CDataExchange* pDX)
 {
+	DDX_Control(pDX, IDC_DESTINATION, m_wndStorePanel);
 	DDX_Control(pDX, IDC_INSPECTOR, m_wndInspectorGrid);
+	DDX_Check(pDX, IDC_ALPHABETICALLY, m_SortAlphabetic);
 
 	if (pDX->m_bSaveAndValidate)
 	{
@@ -74,6 +86,7 @@ void LFItemTemplateDlg::DoDataExchange(CDataExchange* pDX)
 
 		if (reg.CreateKey(_T("Software\\liquidFOLDERS\\Template")))
 		{
+			reg.Write(_T("SortAlphabetic"), m_SortAlphabetic);
 			reg.Write(_T("AttrCount"), LFAttributeCount);
 
 			for (UINT a=0; a<LFAttributeCount; a++)
@@ -96,10 +109,13 @@ void LFItemTemplateDlg::DoDataExchange(CDataExchange* pDX)
 
 
 BEGIN_MESSAGE_MAP(LFItemTemplateDlg, CDialog)
-	ON_WM_WINDOWPOSCHANGED()
-	ON_BN_CLICKED(IDC_ALPHABETICALLY, OnSortAlphabetically)
+	ON_BN_CLICKED(IDC_CHOOSESTORE, OnChooseStore)
+	ON_BN_CLICKED(IDC_ALPHABETICALLY, OnSortAlphabetic)
 	ON_BN_CLICKED(IDC_RESET, OnReset)
 	ON_BN_CLICKED(IDC_SKIP, OnSkip)
+	ON_REGISTERED_MESSAGE(((LFApplication*)AfxGetApp())->p_MessageIDs->StoresChanged, OnStoresChanged)
+	ON_REGISTERED_MESSAGE(((LFApplication*)AfxGetApp())->p_MessageIDs->StoreAttributesChanged, OnStoresChanged)
+	ON_REGISTERED_MESSAGE(((LFApplication*)AfxGetApp())->p_MessageIDs->DefaultStoreChanged, OnStoresChanged)
 END_MESSAGE_MAP()
 
 
@@ -113,26 +129,77 @@ BOOL LFItemTemplateDlg::OnInitDialog()
 	SetIcon(hIcon, FALSE);
 	SetIcon(hIcon, TRUE);
 
+	// Größe
 	CRect rect;
-	m_wndInspectorGrid.GetWindowRect(&rect);
-	ScreenToClient(rect);
-	m_FrameCtrl.Create(this, rect);
+	GetWindowRect(&rect);
 
-	rect.DeflateRect(2, 2);
-	m_wndInspectorGrid.SetWindowPos(NULL, rect.left, rect.top, rect.Width(), rect.Height(), SWP_NOZORDER | SWP_NOACTIVATE);
+	MONITORINFO mi;
+	mi.cbSize = sizeof(MONITORINFO);
+
+	CRect rectScreen;
+	if (GetMonitorInfo(MonitorFromPoint(rect.TopLeft(), MONITOR_DEFAULTTONEAREST), &mi))
+	{
+		rectScreen = mi.rcWork;
+	}
+	else
+	{
+		SystemParametersInfo(SPI_GETWORKAREA, 0, &rectScreen, 0);
+	}
+
+	CRect rectInspector;
+	m_wndInspectorGrid.GetWindowRect(&rectInspector);
+
+	INT Grow = min(550-rectInspector.Height(), rectScreen.Height()*2/3-rectInspector.Height());
+	if (Grow>0)
+	{
+#define Grow(pWnd) { pWnd->GetWindowRect(&rect); ScreenToClient(rect); pWnd->SetWindowPos(NULL, 0, 0, rect.Width(), rect.Height()+Grow, SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOMOVE); }
+#define Move(pWnd) { pWnd->GetWindowRect(&rect); ScreenToClient(rect); pWnd->SetWindowPos(NULL, rect.left, rect.top+Grow, 0, 0, SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOSIZE); }
+
+		Grow(this);
+		Grow(GetDlgItem(IDC_GROUPBOX));
+		Grow(GetDlgItem(IDC_INSPECTOR));
+		Move(GetDlgItem(IDC_ALPHABETICALLY));
+		Move(GetDlgItem(IDC_RESET));
+		Move(GetDlgItem(IDOK));
+		Move(GetDlgItem(IDC_SKIP));
+		Move(GetDlgItem(IDCANCEL));
+	}
+
+	// Inspector
+	m_wndInspectorGrid.GetWindowRect(&rectInspector);
+	ScreenToClient(rectInspector);
+	m_FrameCtrl.Create(this, rectInspector);
+
+	rectInspector.DeflateRect(2, 2);
+	m_wndInspectorGrid.SetWindowPos(NULL, rectInspector.left, rectInspector.top, rectInspector.Width(), rectInspector.Height(), SWP_NOZORDER | SWP_NOACTIVATE);
 	m_wndInspectorGrid.AddAttributes(m_AttributeValues);
 
 	for (UINT a=0; a<LFAttributeCount; a++)
 		m_wndInspectorGrid.UpdatePropertyState(a, FALSE, !p_App->m_Attributes[a]->ReadOnly, (!p_App->m_Attributes[a]->ReadOnly) && (a!=LFAttrFileName));
 
-	OnSortAlphabetically();
+	OnSortAlphabetic();
+
+	// Store
+	m_wndStorePanel.SetStore(m_StoreID);
+	GetDlgItem(IDC_CHOOSESTORE)->EnableWindow(m_AllowChooseStore);
 
 	return TRUE;
 }
 
-void LFItemTemplateDlg::OnSortAlphabetically()
+void LFItemTemplateDlg::OnChooseStore()
 {
-	m_wndInspectorGrid.SetAlphabeticMode(((CButton*)GetDlgItem(IDC_ALPHABETICALLY))->GetCheck());
+	LFChooseStoreDlg dlg(this, LFCSD_Mounted);
+	if (dlg.DoModal()==IDOK)
+	{
+		strcpy_s(m_StoreID, LFKeySize, dlg.m_StoreID);
+		m_wndStorePanel.SetStore(m_StoreID);
+	}
+}
+
+void LFItemTemplateDlg::OnSortAlphabetic()
+{
+	m_SortAlphabetic = ((CButton*)GetDlgItem(IDC_ALPHABETICALLY))->GetCheck();
+	m_wndInspectorGrid.SetAlphabeticMode(m_SortAlphabetic);
 }
 
 void LFItemTemplateDlg::OnReset()
@@ -147,4 +214,11 @@ void LFItemTemplateDlg::OnReset()
 void LFItemTemplateDlg::OnSkip()
 {
 	EndDialog(IDC_SKIP);
+}
+
+LRESULT LFItemTemplateDlg::OnStoresChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)
+{
+	m_wndStorePanel.SetStore(m_StoreID);
+
+	return NULL;
 }
