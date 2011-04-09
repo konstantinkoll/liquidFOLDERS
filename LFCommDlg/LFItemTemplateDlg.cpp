@@ -165,6 +165,10 @@ BOOL LFItemTemplateDlg::OnInitDialog()
 		Move(GetDlgItem(IDCANCEL));
 	}
 
+	// Store
+	m_wndStorePanel.SetStore(m_StoreID);
+	GetDlgItem(IDC_CHOOSESTORE)->EnableWindow(m_AllowChooseStore);
+
 	// Inspector
 	m_wndInspectorGrid.GetWindowRect(&rectInspector);
 	ScreenToClient(rectInspector);
@@ -172,16 +176,13 @@ BOOL LFItemTemplateDlg::OnInitDialog()
 
 	rectInspector.DeflateRect(2, 2);
 	m_wndInspectorGrid.SetWindowPos(NULL, rectInspector.left, rectInspector.top, rectInspector.Width(), rectInspector.Height(), SWP_NOZORDER | SWP_NOACTIVATE);
+	m_wndInspectorGrid.SetStore(m_StoreID);
 	m_wndInspectorGrid.AddAttributes(m_AttributeValues);
 
 	for (UINT a=0; a<LFAttributeCount; a++)
 		m_wndInspectorGrid.UpdatePropertyState(a, FALSE, !p_App->m_Attributes[a]->ReadOnly, (!p_App->m_Attributes[a]->ReadOnly) && (a!=LFAttrFileName));
 
 	OnSortAlphabetic();
-
-	// Store
-	m_wndStorePanel.SetStore(m_StoreID);
-	GetDlgItem(IDC_CHOOSESTORE)->EnableWindow(m_AllowChooseStore);
 
 	return TRUE;
 }
@@ -193,6 +194,7 @@ void LFItemTemplateDlg::OnChooseStore()
 	{
 		strcpy_s(m_StoreID, LFKeySize, dlg.m_StoreID);
 		m_wndStorePanel.SetStore(m_StoreID);
+		m_wndInspectorGrid.SetStore(m_StoreID);
 	}
 }
 
