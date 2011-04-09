@@ -428,17 +428,17 @@ STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS
 CAPTION "Inspektor"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    CONTROL         "",IDC_DESTINATION,"CStorePanel",WS_GROUP,14,16,177,31
-    PUSHBUTTON      "&Store wählen...",IDC_CHOOSESTORE,197,24,66,14
-    CONTROL         "",IDC_INSPECTOR,"CInspectorGrid",WS_GROUP | WS_TABSTOP,14,91,249,192
+    CONTROL         "",IDC_DESTINATION,"CStorePanel",WS_GROUP,14,16,177,34
+    PUSHBUTTON      "&Store wählen...",IDC_CHOOSESTORE,197,25,66,14
+    CONTROL         "",IDC_INSPECTOR,"CInspectorGrid",WS_GROUP | WS_TABSTOP,14,93,249,190
     CONTROL         "&Alphabetisch sortieren",IDC_ALPHABETICALLY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,291,181,10
     PUSHBUTTON      "&Zurücksetzen",IDC_RESET,204,289,59,14,WS_GROUP
     DEFPUSHBUTTON   "OK",IDOK,96,317,50,14,WS_GROUP
     PUSHBUTTON      "Überspringen",IDC_SKIP,153,317,60,14,WS_GROUP
     PUSHBUTTON      "Abbrechen",IDCANCEL,220,317,50,14,WS_GROUP
-    GROUPBOX        "Ziel",IDC_STATIC,7,7,263,47
-    GROUPBOX        "Datei-Eigenschaften",IDC_GROUPBOX,7,60,263,251
-    LTEXT           "Nicht vorhandene Eigenschaften werden mit den Angaben unten ergänzt.\nFalls dies nicht gewünscht wird, klicken Sie bitte auf „Überspringen“.",IDC_STATIC,14,71,249,18
+    GROUPBOX        "Ziel",IDC_STATIC,7,7,263,49
+    GROUPBOX        "Datei-Eigenschaften",IDC_GROUPBOX,7,62,263,249
+    LTEXT           "Nicht vorhandene Eigenschaften werden mit den Angaben unten ergänzt.\nFalls dies nicht gewünscht wird, klicken Sie bitte auf „Überspringen“.",IDC_STATIC,14,73,249,18
 END
 
 IDD_STOREMAINTENANCE DIALOGEX 0, 0, 324, 299
@@ -968,17 +968,17 @@ STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS
 CAPTION "Inspector"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    CONTROL         "",IDC_DESTINATION,"CStorePanel",WS_GROUP,14,16,177,31
-    PUSHBUTTON      "Choose &store...",IDC_CHOOSESTORE,197,24,66,14
-    CONTROL         "",IDC_INSPECTOR,"CInspectorGrid",WS_GROUP | WS_TABSTOP,14,91,249,192
+    CONTROL         "",IDC_DESTINATION,"CStorePanel",WS_GROUP,14,16,177,34
+    PUSHBUTTON      "Choose &store...",IDC_CHOOSESTORE,197,25,66,14
+    CONTROL         "",IDC_INSPECTOR,"CInspectorGrid",WS_GROUP | WS_TABSTOP,14,93,249,190
     CONTROL         "Sort &alphabetically",IDC_ALPHABETICALLY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,291,181,10
     PUSHBUTTON      "&Reset",IDC_RESET,204,289,59,14,WS_GROUP
     DEFPUSHBUTTON   "OK",IDOK,96,317,50,14,WS_GROUP
     PUSHBUTTON      "Skip",IDC_SKIP,153,317,60,14,WS_GROUP
     PUSHBUTTON      "Cancel",IDCANCEL,220,317,50,14,WS_GROUP
-    GROUPBOX        "Destination",IDC_STATIC,7,7,263,47
-    GROUPBOX        "File properties",IDC_GROUPBOX,7,60,263,251
-    LTEXT           "Missing file properties will be set using the values below.\nIf you don't want your files to be amended, press ""Skip"".",IDC_STATIC,14,71,249,18
+    GROUPBOX        "Destination",IDC_STATIC,7,7,263,49
+    GROUPBOX        "File properties",IDC_GROUPBOX,7,62,263,249
+    LTEXT           "Missing file properties will be set using the values below.\nIf you don't want your files to be amended, press ""Skip"".",IDC_STATIC,14,73,249,18
 END
 
 IDD_STOREMAINTENANCE DIALOGEX 0, 0, 324, 299
@@ -1515,17 +1515,17 @@ STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS
 CAPTION "Inspector"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    CONTROL         "",IDC_DESTINATION,"CStorePanel",WS_GROUP,14,16,167,31
-    PUSHBUTTON      "Selecionar &store...",IDC_CHOOSESTORE,187,24,76,14
-    CONTROL         "",IDC_INSPECTOR,"CInspectorGrid",WS_GROUP | WS_TABSTOP,14,98,249,185
+    CONTROL         "",IDC_DESTINATION,"CStorePanel",WS_GROUP,14,16,167,34
+    PUSHBUTTON      "Selecionar &store...",IDC_CHOOSESTORE,187,25,76,14
+    CONTROL         "",IDC_INSPECTOR,"CInspectorGrid",WS_GROUP | WS_TABSTOP,14,101,249,182
     CONTROL         "Ordenar &alfabéticamente",IDC_ALPHABETICALLY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,291,181,10
     PUSHBUTTON      "&Restaurar",IDC_RESET,204,289,59,14,WS_GROUP
     DEFPUSHBUTTON   "OK",IDOK,96,317,50,14,WS_GROUP
     PUSHBUTTON      "Omitir",IDC_SKIP,153,317,60,14,WS_GROUP
     PUSHBUTTON      "Cancelar",IDCANCEL,220,317,50,14,WS_GROUP
-    GROUPBOX        "Destino",IDC_STATIC,7,7,263,47
-    GROUPBOX        "Propiedades de archivo",IDC_GROUPBOX,7,60,263,251
-    LTEXT           "Las propiedades faltantes del archivo serán establecidos usando los valores que a continuación se enlistan. Si usted no quiere que sus archivos sean corregidos, presione ""Omitir"".",IDC_STATIC,14,71,249,26
+    GROUPBOX        "Destino",IDC_STATIC,7,7,263,49
+    GROUPBOX        "Propiedades de archivo",IDC_GROUPBOX,7,62,263,249
+    LTEXT           "Las propiedades faltantes del archivo serán establecidos usando los valores que a continuación se enlistan. Si usted no quiere que sus archivos sean corregidos, presione ""Omitir"".",IDC_STATIC,14,73,249,26
 END
 
 IDD_STOREMAINTENANCE DIALOGEX 0, 0, 324, 299
@@ -2070,17 +2070,17 @@ STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS
 CAPTION "Inspecteur"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    CONTROL         "",IDC_DESTINATION,"CStorePanel",WS_GROUP,14,16,176,31
-    PUSHBUTTON      "Choisissez le &store...",IDC_CHOOSESTORE,196,24,81,14
-    CONTROL         "",IDC_INSPECTOR,"CInspectorGrid",WS_GROUP | WS_TABSTOP,14,91,263,192
+    CONTROL         "",IDC_DESTINATION,"CStorePanel",WS_GROUP,14,16,176,34
+    PUSHBUTTON      "Choisissez le &store...",IDC_CHOOSESTORE,196,25,81,14
+    CONTROL         "",IDC_INSPECTOR,"CInspectorGrid",WS_GROUP | WS_TABSTOP,14,93,263,190
     CONTROL         "Classer &alphabétiquement",IDC_ALPHABETICALLY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,291,195,10
     PUSHBUTTON      "&Zurücksetzen",IDC_RESET,218,289,59,14,WS_GROUP
     DEFPUSHBUTTON   "OK",IDOK,110,317,50,14,WS_GROUP
     PUSHBUTTON      "Omettre",IDC_SKIP,167,317,60,14,WS_GROUP
     PUSHBUTTON      "Annuler",IDCANCEL,234,317,50,14,WS_GROUP
-    GROUPBOX        "Destination",IDC_STATIC,7,7,277,47
-    GROUPBOX        "Qualités des fichiers",IDC_GROUPBOX,7,60,277,251
-    LTEXT           "Les qualités de fichier manquants seront mis en utilisant les valeurs si-dessous.\nSi vous ne voulez pas que vos fichiers soient amendés, appuyez ""Omettre"".",IDC_STATIC,14,71,263,18
+    GROUPBOX        "Destination",IDC_STATIC,7,7,277,49
+    GROUPBOX        "Qualités des fichiers",IDC_GROUPBOX,7,62,277,249
+    LTEXT           "Les qualités de fichier manquants seront mis en utilisant les valeurs si-dessous.\nSi vous ne voulez pas que vos fichiers soient amendés, appuyez ""Omettre"".",IDC_STATIC,14,73,263,18
 END
 
 IDD_STOREMAINTENANCE DIALOGEX 0, 0, 324, 299

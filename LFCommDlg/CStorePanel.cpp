@@ -171,10 +171,12 @@ void CStorePanel::OnPaint()
 			dc.DrawText(p_Item->CoreAttributes.Comment, -1, rectText, DT_SINGLELINE | DT_END_ELLIPSIS | DT_LEFT);
 			rectText.OffsetRect(0, cy);
 		}
-		dc.DrawText(tmpStr, rectText, DT_SINGLELINE | DT_END_ELLIPSIS | DT_LEFT);
-		rectText.OffsetRect(0, cy);
 		if (p_Item->Description[0]!=L'\0')
+		{
 			dc.DrawText(p_Item->Description, -1, rectText, DT_SINGLELINE | DT_END_ELLIPSIS | DT_LEFT);
+			rectText.OffsetRect(0, cy);
+		}
+		dc.DrawText(tmpStr, rectText, DT_SINGLELINE | DT_END_ELLIPSIS | DT_LEFT);
 
 		dc.SelectObject(pOldFont);
 	}
