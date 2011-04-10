@@ -134,7 +134,6 @@ protected:
 	BYTE* m_ItemData;
 	UINT m_ItemDataAllocated;
 	BOOL m_Nothing;
-	LFDropTarget m_DropTarget;
 	HTHEME hThemeList;
 	LFTooltip m_TooltipCtrl;
 	UINT m_HeaderHeight;

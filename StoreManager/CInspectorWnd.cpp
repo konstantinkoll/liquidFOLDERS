@@ -184,7 +184,7 @@ void CInspectorWnd::AddValueVirtual(UINT Attr, WCHAR* Value)
 	}
 }
 
-void CInspectorWnd::UpdateStart(CHAR* StoreID)
+void CInspectorWnd::UpdateStart()
 {
 	m_Count = 0;
 
@@ -197,9 +197,6 @@ void CInspectorWnd::UpdateStart(CHAR* StoreID)
 	ZeroMemory(m_AttributeEditable, sizeof(m_AttributeEditable));
 	for (UINT a=0; a<AttrCount; a++)
 		LFGetNullVariantData(&m_AttributeValues[a]);
-
-	// Store
-	m_wndInspectorGrid.SetStore(StoreID);
 }
 
 void CInspectorWnd::UpdateAdd(LFItemDescriptor* i, LFSearchResult* pRawFiles)
@@ -400,6 +397,9 @@ void CInspectorWnd::UpdateFinish()
 		m_wndInspectorGrid.UpdatePropertyState(a, m_AttributeStatus[a]==StatusMultiple,
 		a<LFAttributeCount ? (!theApp.m_Attributes[a]->ReadOnly) && m_AttributeEditable[a] : FALSE,
 		m_AttributeVisible[a] & (m_ShowInternal ? TRUE : a<LFAttributeCount ? (theApp.m_Attributes[a]->Category!=LFAttrCategoryInternal) : FALSE));
+
+	// Store
+	m_wndInspectorGrid.SetStore(m_AttributeStatus[LFAttrStoreID]==StatusUsed ? m_AttributeValues[LFAttrStoreID].AnsiString : NULL);
 
 	m_wndInspectorGrid.AdjustLayout();
 }

@@ -445,7 +445,7 @@ LRESULT CMainWnd::OnCookFiles(WPARAM wParam, LPARAM /*lParam*/)
 		m_pCookedFiles = m_pRawFiles;
 	}
 
-	m_wndMainView.UpdateSearchResult(m_pRawFiles, m_pCookedFiles, (FVPersistentData*)wParam);
+	m_wndMainView.UpdateSearchResult(m_pActiveFilter, m_pRawFiles, m_pCookedFiles, (FVPersistentData*)wParam);
 
 	if ((pVictim) && (pVictim!=m_pRawFiles))
 		LFFreeSearchResult(pVictim);

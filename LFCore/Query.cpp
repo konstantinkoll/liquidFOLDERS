@@ -657,7 +657,6 @@ LFSearchResult* QueryDomains(LFFilter* filter)
 {
 	LFSearchResult* res = new LFSearchResult(LFContextStoreHome);
 	res->m_HasCategories = true;
-	strcpy_s(res->m_StoreID, LFKeySize, filter->StoreID);
 
 	wchar_t HintSingular[256];
 	LoadString(LFCoreModuleHandle, IDS_HintSingular, HintSingular, 256);
@@ -775,7 +774,6 @@ inline void PrepareSearchResult(LFSearchResult* res, LFFilter* filter)
 	res->m_LastError = LFOk;
 	res->m_Context = ctx;
 	wcscpy_s(res->m_Name, 256, name);
-	strcpy_s(res->m_StoreID, LFKeySize, filter->StoreID);
 }
 
 LFSearchResult* QueryTree(LFFilter* filter)
@@ -897,8 +895,6 @@ LFCore_API LFSearchResult* LFQuery(LFFilter* filter, LFSearchResult* base, int f
 		PrepareSearchResult(res, filter);
 
 		res->m_LastError = LFOk;
-		strcpy_s(res->m_StoreID, LFKeySize, filter->StoreID);
-
 		res->KeepRange(first, last);
 		res->SetContext(filter);
 	}

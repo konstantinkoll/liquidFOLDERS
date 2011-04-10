@@ -151,7 +151,7 @@ void CInspectorPropertyTags::OnClickButton()
 {
 	ASSERT(p_Parent);
 
-	LFEditTagsDlg dlg(p_Parent, m_Multiple ? _T("") : p_Data->UnicodeArray, p_Parent->m_StoreID);
+	LFEditTagsDlg dlg(p_Parent, m_Multiple ? _T("") : p_Data->UnicodeArray, p_Parent->m_StoreIDValid ? p_Parent->m_StoreID : NULL);
 
 	if (dlg.DoModal()==IDOK)
 	{
@@ -504,7 +504,7 @@ CInspectorGrid::CInspectorGrid()
 	}
 
 	p_App = (LFApplication*)AfxGetApp();
-	m_ShowHeader = m_SortAlphabetic = m_Hover = m_PartPressed = FALSE;
+	m_StoreIDValid = m_ShowHeader = m_SortAlphabetic = m_Hover = m_PartPressed = FALSE;
 	m_pSortArray = NULL;
 	m_pHeader = NULL;
 	hThemeList = hThemeButton = NULL;
@@ -737,7 +737,8 @@ void CInspectorGrid::UpdatePropertyState(UINT nID, BOOL Multiple, BOOL Editable,
 
 void CInspectorGrid::SetStore(CHAR* StoreID)
 {
-	strcpy_s(m_StoreID, LFKeySize, StoreID ? StoreID : "");
+	m_StoreIDValid = (StoreID!=NULL);
+	strcpy_s(m_StoreID, LFKeySize, m_StoreIDValid ? StoreID : "");
 }
 
 CString CInspectorGrid::GetName(UINT nID)

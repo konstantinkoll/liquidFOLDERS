@@ -204,6 +204,7 @@ protected:
 	INT m_RowHeight;
 	INT m_LabelWidth;
 	INT m_IconSize;
+	BOOL m_StoreIDValid;
 	BOOL m_ShowHeader;
 	BOOL m_SortAlphabetic;
 	BOOL m_Hover;

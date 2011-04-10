@@ -252,6 +252,8 @@ void LFChooseStoreDlg::OnStoresCreateNew()
 
 void LFChooseStoreDlg::OnStoresMaintainAll()
 {
+	CWaitCursor wait;
+
 	LFMaintenanceList* ml = LFStoreMaintenance();
 	LFErrorBox(ml->m_LastError);
 

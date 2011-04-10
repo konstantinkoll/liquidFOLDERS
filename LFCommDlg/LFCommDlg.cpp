@@ -131,7 +131,7 @@ LFCommDlg_API void DrawControlBorder(CWnd* pWnd)
 	dc.Draw3dRect(rect, 0x000000, GetSysColor(COLOR_3DFACE));
 }
 
-LFCommDlg_API void LFImportFolder(CHAR* StoreID, CWnd* pParentWnd)
+LFCommDlg_API void LFImportFolder(CHAR* StoreID, CWnd* pParentWnd, BOOL AllowChooseStore)
 {
 	CString caption;
 	ENSURE(caption.LoadString(IDS_IMPORTFOLDER_CAPTION));
@@ -146,9 +146,9 @@ LFCommDlg_API void LFImportFolder(CHAR* StoreID, CWnd* pParentWnd)
 
 		// Template füllen
 		LFItemDescriptor* it = LFAllocItemDescriptor();
-		LFItemTemplateDlg tdlg(pParentWnd, it, StoreID);
+		LFItemTemplateDlg tdlg(pParentWnd, it, StoreID, AllowChooseStore);
 		if (tdlg.DoModal()!=IDCANCEL)
-			LFErrorBox(LFImportFiles(StoreID, il, it, true, dlg.m_DeleteSource==TRUE), pParentWnd->GetSafeHwnd());
+			LFErrorBox(LFImportFiles(StoreID, il, it, true, dlg.m_DeleteSource==TRUE), pParentWnd ? pParentWnd->GetSafeHwnd() : NULL);
 
 		LFFreeItemDescriptor(it);
 		LFFreeFileImportList(il);
@@ -272,8 +272,8 @@ LFCommDlg_API void LFBackupStores(CWnd* pParentWnd)
 	free(Keys);
 }
 
-void LFAbout(CString AppName, CString Build, UINT IconResID, CWnd* pParent)
+void LFAbout(CString AppName, CString Build, UINT IconResID, CWnd* pParentWnd)
 {
-	LFAboutDlg dlg(AppName, Build, IconResID, pParent);
+	LFAboutDlg dlg(AppName, Build, IconResID, pParentWnd);
 	dlg.DoModal();
 }

@@ -66,7 +66,7 @@ public:
 	virtual void AdjustLayout();
 	virtual void SaveSettings();
 
-	void UpdateStart(CHAR* StoreID);
+	void UpdateStart();
 	void UpdateAdd(LFItemDescriptor* i, LFSearchResult* pRawFiles);
 	void UpdateFinish();
 

@@ -23,7 +23,7 @@ public:
 
 	BOOL Create(BOOL IsClipboard, CWnd* pParentWnd, UINT nID);
 	void UpdateViewOptions();
-	void UpdateSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data=NULL, BOOL UpdateSelection=TRUE);
+	void UpdateSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data=NULL, BOOL UpdateSelection=TRUE);
 	void UpdateFooter();
 	INT GetContext();
 	INT GetViewID();
@@ -42,10 +42,15 @@ protected:
 	CFilterWnd* p_wndFilter;
 	CInspectorWnd m_wndInspector;
 	CExplorerNotification m_wndExplorerNotification;
+	LFDropTarget m_DropTarget1;
+	LFDropTarget m_DropTarget2;
+	LFFilter* p_Filter;
 	LFSearchResult* p_RawFiles;
 	LFSearchResult* p_CookedFiles;
+	CHAR m_StoreID[LFKeySize];
 	INT m_Context;
 	INT m_ViewID;
+	BOOL m_StoreIDValid;
 	BOOL m_IsClipboard;
 	BOOL m_FilesSelected;
 	BOOL m_ShowFilterPane;

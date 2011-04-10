@@ -32,7 +32,6 @@ LFSearchResult::LFSearchResult(int ctx)
 	m_FileCount = 0;
 	m_FileSize = 0;
 	m_StoreCount = 0;
-	m_StoreID[0] = '\0';
 }
 
 LFSearchResult::LFSearchResult(LFSearchResult* res)
@@ -50,7 +49,6 @@ LFSearchResult::LFSearchResult(LFSearchResult* res)
 	m_FileCount = res->m_FileCount;
 	m_FileSize = res->m_FileSize;
 	m_StoreCount = res->m_StoreCount;
-	strcpy_s(m_StoreID, LFKeySize, res->m_StoreID);
 	m_Allocated = res->m_ItemCount;
 
 	if (m_Items)

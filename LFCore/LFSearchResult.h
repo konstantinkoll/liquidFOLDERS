@@ -30,7 +30,6 @@ public:
 	unsigned int m_FileCount;
 	__int64 m_FileSize;
 	unsigned int m_StoreCount;
-	char m_StoreID[LFKeySize];
 
 private:
 	int Compare(int eins, int zwei, unsigned int attr, bool descending);

@@ -61,10 +61,25 @@ LFItemTemplateDlg::LFItemTemplateDlg(CWnd* pParentWnd, LFItemDescriptor* pItem, 
 
 	if (pFilter)
 	{
-		// TODO
+		LFFilterCondition* pCondition = pFilter->ConditionList;
+		while (pCondition)
+		{
+			if (pCondition->Compare==LFFilterCompareSubfolder)
+			{
+				UINT Attr = pCondition->AttrData.Attr;
+				if ((!p_App->m_Attributes[Attr]->ReadOnly) && (Attr!=LFAttrFileName))
+				{
+					ASSERT(m_AttributeValues[Attr].Type==pCondition->AttrData.Type);
+					m_AttributeValues[Attr] = pCondition->AttrData;
+				}
+			}
+
+			pCondition = pCondition->Next;
+		}
 	}
 
-	pParentWnd->BringWindowToTop();
+	if (pParentWnd)
+		pParentWnd->BringWindowToTop();
 }
 
 void LFItemTemplateDlg::DoDataExchange(CDataExchange* pDX)
@@ -117,7 +132,6 @@ BEGIN_MESSAGE_MAP(LFItemTemplateDlg, CDialog)
 	ON_REGISTERED_MESSAGE(((LFApplication*)AfxGetApp())->p_MessageIDs->StoreAttributesChanged, OnStoresChanged)
 	ON_REGISTERED_MESSAGE(((LFApplication*)AfxGetApp())->p_MessageIDs->DefaultStoreChanged, OnStoresChanged)
 END_MESSAGE_MAP()
-
 
 BOOL LFItemTemplateDlg::OnInitDialog()
 {

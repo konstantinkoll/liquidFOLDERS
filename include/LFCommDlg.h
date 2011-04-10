@@ -51,6 +51,6 @@ LFCommDlg_API void TooltipDataFromPIDL(LPITEMIDLIST pidl, CImageList* icons, HIC
 LFCommDlg_API BOOL IsCtrlThemed();
 LFCommDlg_API void DrawControlBorder(CWnd* pWnd);
 
-LFCommDlg_API void LFImportFolder(CHAR* StoreID, CWnd* pParentWnd=NULL);
+LFCommDlg_API void LFImportFolder(CHAR* StoreID, CWnd* pParentWnd=NULL, BOOL AllowChooseStore=FALSE);
 LFCommDlg_API void LFBackupStores(CWnd* pParentWnd=NULL);
-LFCommDlg_API void LFAbout(CString AppName, CString Build, UINT IconResID, CWnd* pParent=NULL);
+LFCommDlg_API void LFAbout(CString AppName, CString Build, UINT IconResID, CWnd* pParentWnd=NULL);

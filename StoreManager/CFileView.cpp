@@ -189,8 +189,6 @@ void CFileView::UpdateSearchResult(LFSearchResult* Result, FVPersistentData* Dat
 			}
 		}
 
-		m_DropTarget.Register(this, Result->m_StoreID, TRUE);
-
 		m_Context = Result->m_Context;
 		p_ViewParameters = &theApp.m_Views[m_Context];
 		m_ViewParameters.SortBy = p_ViewParameters->SortBy;
@@ -205,9 +203,6 @@ void CFileView::UpdateSearchResult(LFSearchResult* Result, FVPersistentData* Dat
 	{
 		m_ItemData = NULL;
 		m_ItemDataAllocated = 0;
-
-		m_DropTarget.Revoke();
-		m_pDropTarget = NULL;
 
 		m_FocusItem = m_HotItem = -1;
 		m_HScrollPos = m_VScrollPos = 0;

@@ -22,11 +22,12 @@ CMainView::CMainView()
 {
 	p_wndFilter = NULL;
 	p_wndFileView = NULL;
+	p_Filter = NULL;
 	p_RawFiles = p_CookedFiles = NULL;
 	p_InspectorButton = NULL;
 	p_OrganizeButton = p_ViewButton = NULL;
 	m_Context = m_ViewID = -1;
-	m_Resizing = FALSE;
+	m_Resizing = m_StoreIDValid = FALSE;
 }
 
 BOOL CMainView::Create(BOOL IsClipboard, CWnd* pParentWnd, UINT nID)
@@ -107,11 +108,14 @@ BOOL CMainView::CreateFileView(UINT ViewID, FVPersistentData* Data)
 	if (pNewView)
 	{
 		CFileView* pVictim = p_wndFileView;
+		m_DropTarget2.Revoke();
 
 		p_wndFileView = pNewView;
 		p_wndFileView->SetOwner(GetOwner());
 		p_wndFileView->SetFocus();
 		AdjustLayout();
+
+		m_DropTarget2.Register(p_wndFileView, p_Filter, TRUE);
 
 		if (pVictim)
 		{
@@ -162,10 +166,10 @@ void CMainView::SetHeader()
 			Hint.Append(_T(")"));
 		}
 
-		if (m_Context==LFContextStoreHome)
+		if ((m_Context==LFContextStoreHome) && (m_StoreIDValid))
 		{
 			LFStoreDescriptor s;
-			if (LFGetStoreSettings(p_RawFiles->m_StoreID, &s)==LFOk)
+			if (LFGetStoreSettings(m_StoreID, &s)==LFOk)
 			{
 				wcscpy_s(p_RawFiles->m_Name, 256, s.StoreName);
 				wcscpy_s(p_CookedFiles->m_Name, 256, s.StoreName);
@@ -197,15 +201,29 @@ void CMainView::UpdateViewOptions()
 	}
 }
 
-void CMainView::UpdateSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data, BOOL UpdateSelection)
+void CMainView::UpdateSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data, BOOL UpdateSelection)
 {
+	p_Filter = pFilter;
 	p_RawFiles = pRawFiles;
 	p_CookedFiles = pCookedFiles;
+
+	if (!pFilter)
+	{
+		m_StoreIDValid = FALSE;
+	}
+	else
+	{
+		strcpy_s(m_StoreID, LFKeySize, pFilter->StoreID);
+		m_StoreIDValid = (m_StoreID[0]!='\0');
+	}
 
 	if (!pCookedFiles)
 	{
 		if (p_wndFileView)
 			p_wndFileView->UpdateSearchResult(NULL, NULL);
+
+		m_DropTarget1.Revoke();
+		m_DropTarget2.Revoke();
 	}
 	else
 	{
@@ -216,6 +234,9 @@ void CMainView::UpdateSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pC
 			p_wndFileView->UpdateViewOptions(m_Context);
 			p_wndFileView->UpdateSearchResult(pCookedFiles, Data);
 		}
+
+		m_DropTarget1.Register(&m_wndExplorerHeader, pFilter, TRUE);
+		m_DropTarget2.Register(p_wndFileView, pFilter, TRUE);
 	}
 
 	SetHeader();
@@ -515,7 +536,7 @@ BOOL CMainView::UpdateItems(LFVariantData* Value1, LFVariantData* Value2, LFVari
 		{
 			FVPersistentData Data;
 			GetPersistentData(Data);
-			UpdateSearchResult(p_RawFiles, p_CookedFiles, &Data, FALSE);
+			UpdateSearchResult(p_Filter, p_RawFiles, p_CookedFiles, &Data, FALSE);
 		}
 		if (Deselected)
 			OnUpdateSelection();
@@ -846,7 +867,7 @@ void CMainView::OnAdjustLayout()
 
 void CMainView::OnUpdateSelection()
 {
-	m_wndInspector.UpdateStart(p_CookedFiles ? p_CookedFiles->m_StoreID : NULL);
+	m_wndInspector.UpdateStart();
 
 	INT idx = GetNextSelectedItem(-1);
 	m_FilesSelected = FALSE;
@@ -883,7 +904,7 @@ LRESULT CMainView::OnRenameItem(WPARAM wParam, LPARAM lParam)
 	{
 		FVPersistentData Data;
 		GetPersistentData(Data);
-		UpdateSearchResult(p_RawFiles, p_CookedFiles, &Data);
+		UpdateSearchResult(p_Filter, p_RawFiles, p_CookedFiles, &Data);
 	}
 
 	if (tl->m_LastError>LFCancel)
@@ -1169,15 +1190,15 @@ void CMainView::OnHomeShowStatistics()
 
 void CMainView::OnHomeImportFolder()
 {
-	if (p_CookedFiles)
-		LFImportFolder(p_CookedFiles->m_StoreID, this);
+	if (m_StoreIDValid)
+		LFImportFolder(m_StoreID, this, TRUE);
 }
 
 void CMainView::OnHomeMaintain()
 {
-	if (p_CookedFiles)
+	if (m_StoreIDValid)
 	{
-		LFMaintenanceList* ml = LFStoreMaintenance(p_CookedFiles->m_StoreID);
+		LFMaintenanceList* ml = LFStoreMaintenance(m_StoreID);
 		LFErrorBox(ml->m_LastError);
 
 		LFStoreMaintenanceDlg dlg(ml, this);
@@ -1189,9 +1210,9 @@ void CMainView::OnHomeMaintain()
 
 void CMainView::OnHomeProperties()
 {
-	if (p_CookedFiles)
+	if (m_StoreIDValid)
 	{
-		LFStorePropertiesDlg dlg(p_CookedFiles->m_StoreID, this);
+		LFStorePropertiesDlg dlg(m_StoreID, this);
 		dlg.DoModal();
 	}
 }
