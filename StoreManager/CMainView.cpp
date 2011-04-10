@@ -1198,6 +1198,8 @@ void CMainView::OnHomeMaintain()
 {
 	if (m_StoreIDValid)
 	{
+		CWaitCursor wait;
+
 		LFMaintenanceList* ml = LFStoreMaintenance(m_StoreID);
 		LFErrorBox(ml->m_LastError);
 

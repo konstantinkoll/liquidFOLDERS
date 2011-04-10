@@ -293,6 +293,8 @@ void LFChooseStoreDlg::OnStoreMaintain()
 	INT idx = GetSelectedStore();
 	if (idx!=-1)
 	{
+		CWaitCursor wait;
+
 		LFMaintenanceList* ml = LFStoreMaintenance(p_Result->m_Items[idx]->StoreID);
 		LFErrorBox(ml->m_LastError);
 
