@@ -35,18 +35,18 @@ LFItemTemplateDlg::LFItemTemplateDlg(CWnd* pParentWnd, LFItemDescriptor* pItem, 
 	{
 		reg.Read(_T("SortAlphabetic"), m_SortAlphabetic);
 
-		INT count = 0;
-		if (reg.Read(_T("AttrCount"), count))
-			if (count==LFAttributeCount)
+		INT Count = 0;
+		if (reg.Read(_T("AttrCount"), Count))
+			if (Count==LFAttributeCount)
 				for (UINT a=0; a<LFAttributeCount; a++)
 				{
-					CString value;
-					value.Format(_T("Attr%d"), a);
+					CString Value;
+					Value.Format(_T("Attr%d"), a);
 
 					BYTE* pData = NULL;
 					UINT pSz = 0;
 
-					if (reg.Read(value, &pData, &pSz))
+					if (reg.Read(Value, &pData, &pSz))
 					{
 						if (pSz==sizeof(m_AttributeValues[a].Value))
 						{
@@ -106,16 +106,16 @@ void LFItemTemplateDlg::DoDataExchange(CDataExchange* pDX)
 
 			for (UINT a=0; a<LFAttributeCount; a++)
 			{
-				CString value;
-				value.Format(_T("Attr%d"), a);
+				CString Value;
+				Value.Format(_T("Attr%d"), a);
 
 				if (m_AttributeValues[a].IsNull)
 				{
-					reg.DeleteValue(value);
+					reg.DeleteValue(Value);
 				}
 				else
 				{
-					reg.Write(value, (BYTE*)&m_AttributeValues[a].Value, sizeof(m_AttributeValues[a].Value));
+					reg.Write(Value, (BYTE*)&m_AttributeValues[a].Value, sizeof(m_AttributeValues[a].Value));
 				}
 			}
 		}
