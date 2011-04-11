@@ -44,8 +44,8 @@ void CFilterWnd::AdjustLayout()
 	m_wndLabel1.SetWindowPos(NULL, rectClient.left+borderBtn, cy, rectClient.Width()-borderBtn, heightTxt+borderBtn, SWP_NOACTIVATE | SWP_NOZORDER);
 	cy += heightTxt+borderBtn+1;
 
-	m_wndFreetext.SetWindowPos(NULL, rectClient.left+borderBtn+1, cy, rectClient.Width()-2*borderBtn-1, rectCombo.Height()-3, SWP_NOACTIVATE | SWP_NOZORDER);
-	cy += rectCombo.Height()-3+borderBtn;
+	m_wndFreetext.SetWindowPos(NULL, rectClient.left+borderBtn+1, cy, rectClient.Width()-2*borderBtn-1, rectCombo.Height()-1, SWP_NOACTIVATE | SWP_NOZORDER);
+	cy += rectCombo.Height()-1+borderBtn;
 
 	m_wndLabel2.SetWindowPos(NULL, rectClient.left+borderBtn, cy, rectClient.Width()-borderBtn, heightTxt+borderBtn, SWP_NOACTIVATE | SWP_NOZORDER);
 	cy += heightTxt+borderBtn+1;
@@ -116,7 +116,7 @@ INT CFilterWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndToolBar.SetRouteCommandsViaFrame(FALSE);
 
 	const DWORD dwViewStyle = WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_TABSTOP;
-	if (!m_wndFreetext.Create(dwViewStyle | WS_BORDER, CRect(0, 0, 0, 0), this, 4))
+	if (!m_wndFreetext.CreateEx(WS_EX_CLIENTEDGE, _T("EDIT"), _T(""), dwViewStyle | ES_AUTOHSCROLL, CRect(0, 0, 0, 0), this, 4))
 		return -1;
 	if (!m_wndStoreCombo.Create(dwViewStyle | CBS_DROPDOWNLIST | CBS_SORT, CRect(0, 0, 0, 0), this, 3))
 		return -1;
@@ -125,13 +125,14 @@ INT CFilterWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (!m_wndStartSearch.Create(L"&Search", dwViewStyle | BS_DEFPUSHBUTTON, CRect(0, 0, 0, 0), this, IDOK))
 		return -1;
 
-//	m_wndFreetext.ModifyStyleEx(0, WS_EX_STATICEDGE, 0);
-
 	CFont* fnt = CFont::FromHandle((HFONT)GetStockObject(DEFAULT_GUI_FONT));
 	m_wndFreetext.SetFont(fnt);
 	m_wndStoreCombo.SetFont(fnt);
 	m_wndStartSearch.SetFont(fnt);
 	m_wndAddCondition.SetFont(fnt);
+
+	//if (theApp.m_ThemeLibLoaded)
+		//theApp.zSetWindowTheme(m_wndFreetext, L"", L"");
 
 	m_wndStoreCombo.AddString(L"Search all stores");
 	m_wndStoreCombo.AddString(L"Search current store");
@@ -139,7 +140,7 @@ INT CFilterWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	if (!m_wndLabel1.Create(this, 5, L"Search for:"))
 		return -1;
-	if (!m_wndLabel2.Create(this, 6, L"Scope:"))
+	if (!m_wndLabel2.Create(this, 6, L"Search in:"))
 		return -1;
 	if (!m_wndLabel3.Create(this, 7, L"Files must also meet these conditions:"))
 		return -1;
