@@ -190,21 +190,24 @@ void CHistoryBar::OnPaint()
 	HBITMAP hBmp = CreateDIBSection(dc, &dib, DIB_RGB_COLORS, NULL, NULL, 0);
 	HBITMAP hOldBitmap = (HBITMAP)dc.SelectObject(hBmp);
 
-	Graphics g(dc);
+	BOOL Themed = IsCtrlThemed();
 
 	CGlasWindow* pCtrlSite = (CGlasWindow*)GetParent();
 	pCtrlSite->DrawFrameBackground(&dc, rectClient);
 	const BYTE Alpha = (((m_Hover!=NOPART) || (m_Pressed!=NOPART)) && !m_IsEmpty) ? 0xF0 : 0xD0;
 
 	CRect rectContent(rectClient);
-	if (IsCtrlThemed())
+	if (Themed)
 	{
+		Graphics g(dc);
+
 		CRect rectBounds(rectContent);
 		rectBounds.right--;
 		rectBounds.bottom--;
 
 		rectContent.DeflateRect(2, 2);
 		SolidBrush brush1(Color(Alpha, 0xFF, 0xFF, 0xFF));
+
 		g.FillRectangle(&brush1, rectContent.left, rectContent.top, rectContent.Width(), rectContent.Height());
 		g.SetSmoothingMode(SmoothingModeAntiAlias);
 
@@ -268,19 +271,71 @@ void CHistoryBar::OnPaint()
 				rectItem.left = BORDER/2;
 
 			// TODO
-			if ((m_Hover==(INT)a) && (m_Pressed==(INT)a))
-			{
-				dc.FillSolidRect(rectItem, 0xFF0000);
-			}
-			else
-				if ((m_Hover==(INT)a) && (m_Pressed==NOPART))
+			BOOL Hover = (m_Hover==(INT)a) && (m_Pressed==NOPART);
+			BOOL Pressed = (m_Hover==(INT)a) && (m_Pressed==(INT)a);
+			if (Hover || Pressed)
+				if (Themed)
 				{
-					dc.FillSolidRect(rectItem, 0xFFFF00);
+					COLORREF clr = Hover ? 0xB17F3C : 0x8B622C;
+					dc.FillSolidRect(rectItem.left, rectItem.top, 1, rectItem.Height(), clr);
+					dc.FillSolidRect(rectItem.right-1, rectItem.top, 1, rectItem.Height(), clr);
+
+					Graphics g(dc);
+					rectItem.DeflateRect(1, 0);
+
+					if (Hover)
+					{
+						LinearGradientBrush brush1(Point(rectItem.left, rectItem.top), Point(rectItem.left, rectItem.bottom), Color(0xFA, 0xFD, 0xFE), Color(0xE8, 0xF5, 0xFC));
+						g.FillRectangle(&brush1, rectItem.left, rectItem.top, rectItem.Width(), rectItem.Height());
+
+						rectItem.DeflateRect(1, 1);
+						INT y = (rectItem.top+rectItem.bottom)/2;
+
+						LinearGradientBrush brush2(Point(rectItem.left, rectItem.top-1), Point(rectItem.left, y-1), Color(0xEA, 0xF6, 0xFD), Color(0xD7, 0xEF, 0xFC));
+						g.FillRectangle(&brush2, rectItem.left, rectItem.top, rectItem.Width(), y-rectItem.top);
+
+						LinearGradientBrush brush3(Point(rectItem.left, y-1), Point(rectItem.left, rectItem.bottom), Color(0xBD, 0xE6, 0xFD), Color(0xA6, 0xD9, 0xF4));
+						g.FillRectangle(&brush3, rectItem.left, y, rectItem.Width(), rectItem.bottom-y);
+					}
+					else
+					{
+						dc.FillSolidRect(rectItem, 0xF6E4C2);
+
+						INT y = (rectItem.top+rectItem.bottom)/2;
+
+						LinearGradientBrush brush2(Point(rectItem.left, y-1), Point(rectItem.left, rectItem.bottom), Color(0xA9, 0xD9, 0xF2), Color(0x90, 0xCB, 0xEB));
+						g.FillRectangle(&brush2, rectItem.left, y, rectItem.Width(), rectItem.bottom-y);
+
+						LinearGradientBrush brush3(Point(rectItem.left, rectItem.top), Point(rectItem.left, rectItem.top+2), Color(0x80, 0x16, 0x31, 0x45), Color(0x00, 0x16, 0x31, 0x45));
+						g.FillRectangle(&brush3, rectItem.left, rectItem.top, rectItem.Width(), 2);
+
+						LinearGradientBrush brush4(Point(rectItem.left, rectItem.top), Point(rectItem.left+2, rectItem.top), Color(0x80, 0x16, 0x31, 0x45), Color(0x00, 0x16, 0x31, 0x45));
+						g.FillRectangle(&brush4, rectItem.left, rectItem.top, 2, rectItem.Height());
+					}
+				}
+				else
+				{
+					COLORREF c1 = GetSysColor(COLOR_3DHIGHLIGHT);
+					COLORREF c2 = GetSysColor(COLOR_3DFACE);
+					COLORREF c3 = GetSysColor(COLOR_3DSHADOW);
+					COLORREF c4 = 0x000000;
+
+					if (Pressed)
+					{
+						std::swap(c1, c4);
+						std::swap(c2, c3);
+					}
+
+					dc.Draw3dRect(rectItem, c1, c4);
+					rectItem.DeflateRect(1, 1);
+					dc.Draw3dRect(rectItem, c2, c3);
 				}
 
 			rectItemText.DeflateRect(MARGIN, 0);
 			if (rectItemText.left<BORDER/2)
 				rectItemText.left = BORDER/2;
+			if (Pressed)
+				rectItemText.OffsetRect(1, 1);
 
 			dc.DrawText(hi->Name, (INT)wcslen(hi->Name), rectItemText, DT_SINGLELINE | DT_VCENTER | DT_RIGHT);
 

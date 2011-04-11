@@ -50,6 +50,9 @@ protected:
 	INT HitTest(CPoint point);
 	void AdjustLayout();
 
+	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
+	afx_msg void OnDestroy();
+	afx_msg LRESULT OnThemeChanged();
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnPaint();
 	afx_msg void OnSize(UINT nType, INT cx, INT cy);
