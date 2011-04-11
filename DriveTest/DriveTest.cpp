@@ -23,8 +23,8 @@ unsigned int GetDriveBus(char d)
 
 	if (hDevice!=INVALID_HANDLE_VALUE)
 	{
-		STORAGE_ADAPTER_DESCRIPTOR* pDevDesc = (STORAGE_ADAPTER_DESCRIPTOR*)new BYTE[sizeof(STORAGE_ADAPTER_DESCRIPTOR)+512-1];
-		pDevDesc->Size = sizeof(STORAGE_ADAPTER_DESCRIPTOR)+512-1;
+		STORAGE_ADAPTER_DESCRIPTOR* pDevDesc = (STORAGE_ADAPTER_DESCRIPTOR*)new BYTE[sizeof(STORAGE_ADAPTER_DESCRIPTOR)];
+		pDevDesc->Size = sizeof(STORAGE_ADAPTER_DESCRIPTOR);
 
 		STORAGE_PROPERTY_QUERY Query;
 		Query.PropertyId = StorageAdapterProperty;
@@ -35,6 +35,36 @@ unsigned int GetDriveBus(char d)
 			&Query, sizeof(STORAGE_PROPERTY_QUERY), pDevDesc, pDevDesc->Size,
 			&dwOutBytes, NULL))
 			res = pDevDesc->BusType;
+
+		delete[] pDevDesc;
+		CloseHandle(hDevice);
+	}
+
+	return res;
+}
+
+bool IsHotplug(char d)
+{
+	bool res = false;
+
+	char szBuf[MAX_PATH] = "\\\\?\\ :";
+	szBuf[4] = d;
+	HANDLE hDevice = CreateFileA(szBuf, 0, 0, NULL, OPEN_EXISTING, NULL, NULL);
+
+	if (hDevice!=INVALID_HANDLE_VALUE)
+	{
+		STORAGE_HOTPLUG_INFO* pDevDesc = (STORAGE_HOTPLUG_INFO*)new BYTE[sizeof(STORAGE_HOTPLUG_INFO)];
+		pDevDesc->Size = sizeof(STORAGE_ADAPTER_DESCRIPTOR);
+
+		STORAGE_PROPERTY_QUERY Query;
+		Query.PropertyId = StorageAdapterProperty;
+		Query.QueryType = PropertyStandardQuery;
+
+		DWORD dwOutBytes;
+		if (DeviceIoControl(hDevice, IOCTL_STORAGE_GET_HOTPLUG_INFO,
+			&Query, sizeof(STORAGE_PROPERTY_QUERY), pDevDesc, pDevDesc->Size,
+			&dwOutBytes, NULL))
+			res = pDevDesc->MediaRemovable==TRUE;
 
 		delete[] pDevDesc;
 		CloseHandle(hDevice);
@@ -55,7 +85,7 @@ void AnalyseLogicalDrives()
 			continue;
 
 		szDriveRoot[0] = cDrive;
-		std::cout << cDrive << _T(": ") << GetDriveTypeA(szDriveRoot) << _T(", ") << GetDriveBus(cDrive) << _T("\n");
+		std::cout << cDrive << _T(": ") << GetDriveTypeA(szDriveRoot) << _T(", ") << GetDriveBus(cDrive) << (IsHotplug(cDrive) ? _T(", HOTPLUG") : _T("")) << _T("\n");
 	}
 }
 
