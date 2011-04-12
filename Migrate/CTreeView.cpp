@@ -130,6 +130,7 @@ void CTreeView::AdjustLayout()
 	m_HeaderHeight = wp.cy + (wp.cy ? 4 : 0);
 
 	AdjustScrollbars();
+	Invalidate();
 
 	m_wndHeader.SetWindowPos(NULL, wp.x-m_HScrollPos, wp.y, wp.cx+m_HScrollMax+GetSystemMetrics(SM_CXVSCROLL), m_HeaderHeight, wp.flags | SWP_NOZORDER | SWP_NOACTIVATE);
 }
@@ -144,7 +145,6 @@ void CTreeView::ClearRoot()
 	m_wndHeader.ModifyStyle(0, HDS_HIDDEN);
 	ResetScrollbars();
 	AdjustLayout();
-	Invalidate();
 }
 
 void CTreeView::SetRoot(LPITEMIDLIST pidl, BOOL Update, BOOL ExpandAll)
@@ -186,7 +186,6 @@ void CTreeView::SetRoot(LPITEMIDLIST pidl, BOOL Update, BOOL ExpandAll)
 
 	m_wndHeader.ModifyStyle(HDS_HIDDEN, 0);
 	AdjustLayout();
-	Invalidate();
 }
 
 void CTreeView::SetBranchCheck(BOOL Check, CPoint item)
@@ -2430,7 +2429,6 @@ void CTreeView::OnItemChanging(NMHDR* pNMHDR, LRESULT* pResult)
 
 		m_ColumnWidth[pHdr->iItem] = pHdr->pitem->cxy;
 		AdjustLayout();
-		Invalidate();
 
 		*pResult = FALSE;
 	}
