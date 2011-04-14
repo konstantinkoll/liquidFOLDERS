@@ -255,7 +255,7 @@ BEGIN
         MENUITEM "&Alle Eigenschaften anzeigen", IDM_INSPECTOR_SHOWINTERNAL
         MENUITEM "&Alphabetisch sortieren",     IDM_INSPECTOR_SORTALPHABETIC
         MENUITEM SEPARATOR
-        POPUP "Exportieren"
+        POPUP "&Exportieren"
         BEGIN
             MENUITEM "&Zusammenfassung...",         IDM_INSPECTOR_EXPORTSUMMARY
             MENUITEM "Alle &Metadaten...",          IDM_INSPECTOR_EXPORTMETADATA
@@ -589,8 +589,6 @@ BEGIN
         MENUITEM SEPARATOR
         MENUITEM "&Delete",                     IDM_FILE_DELETE
         MENUITEM "&Rename",                     IDM_FILE_RENAME
-        MENUITEM SEPARATOR
-        MENUITEM "&Send",                       IDM_FILE_SEND
     END
 END
 
@@ -667,7 +665,7 @@ BEGIN
         MENUITEM "Show a&ll properties",        IDM_INSPECTOR_SHOWINTERNAL
         MENUITEM "Sort &alphabetically",        IDM_INSPECTOR_SORTALPHABETIC
         MENUITEM SEPARATOR
-        POPUP "Export"
+        POPUP "&Export"
         BEGIN
             MENUITEM "&Summary...",                 IDM_INSPECTOR_EXPORTSUMMARY
             MENUITEM "Complete &metadata...",       IDM_INSPECTOR_EXPORTMETADATA
@@ -952,7 +950,6 @@ BEGIN
     IDM_FILE_REMOVE         "Removes the selected files from the clipboard window.\nRemove"
     IDM_FILE_DELETE         "Deletes the selected files.\nDelete"
     IDM_FILE_RENAME         "Renames the selected file.\nRename"
-    IDM_FILE_SEND           "Sends the selected files by mail.\nSend"
     IDM_FILE_RESTORE        "Restores the selected files.\nRestore"
 END
 
@@ -976,11 +973,11 @@ BEGIN
     IDM_STORE_RENAME        "Renames the selected store.\nRename"
     IDM_STORE_DELETE        "Deletes the selected store.\nDelete"
     IDM_STORE_PROPERTIES    "Displays the properties of the selected store.\nProperties"
-    IDM_STORES_CREATENEW    "Creates a new store for your files.\nCreate new store..."
 END
 
 STRINGTABLE 
 BEGIN
+    IDM_STORES_CREATENEW    "Creates a new store for your files.\nCreate new store..."
     IDM_STORES_SHOWEMPTYVOLUMES "Show &unmounted volumes"
     IDM_STORES_REPAIRCORRUPTEDINDEX "Run maintenance"
 END
@@ -999,6 +996,11 @@ END
 STRINGTABLE 
 BEGIN
     IDM_ITEM_OPEN           "Opens the selected item.\nOpen"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_SEND                "S&end to"
 END
 
 STRINGTABLE 
@@ -1145,7 +1147,7 @@ BEGIN
         MENUITEM "Mostrar &todas las propriedades", IDM_INSPECTOR_SHOWPREVIEW
         MENUITEM "Ordenar &alfabéticamente",    IDM_INSPECTOR_SORTALPHABETIC
         MENUITEM SEPARATOR
-        POPUP "Exportar"
+        POPUP "&Exportar"
         BEGIN
             MENUITEM "&Sumario...",                 IDM_INSPECTOR_EXPORTSUMMARY
             MENUITEM "Completar &metadata...",      IDM_INSPECTOR_EXPORTMETADATA
@@ -1526,7 +1528,7 @@ BEGIN
         MENUITEM "Indiquer &tous les propriétés", IDM_INSPECTOR_SHOWINTERNAL
         MENUITEM "&Alphabetisch sortieren",     IDM_INSPECTOR_SORTALPHABETIC
         MENUITEM SEPARATOR
-        POPUP "Export"
+        POPUP "&Export"
         BEGIN
             MENUITEM "&Zusammenfassung...",         IDM_INSPECTOR_EXPORTSUMMARY
             MENUITEM "Alle &Metadaten...",          IDM_INSPECTOR_EXPORTMETADATA

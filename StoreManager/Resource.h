@@ -147,9 +147,9 @@
 #define IDM_FILE_REMOVE                 4203
 #define IDM_FILE_DELETE                 4204
 #define IDM_FILE_RENAME                 4205
-#define IDM_FILE_SEND                   4206
-#define IDM_FILE_RESTORE                4207
+#define IDM_FILE_RESTORE                4206
 #define IDM_FILE_TRASH                  4300
+#define IDM_SEND                        4400
 #define IDM_SELECTALL                   5000
 #define IDM_SELECTNONE                  5001
 #define IDM_SELECTINVERT                5002

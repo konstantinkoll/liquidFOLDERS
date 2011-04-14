@@ -625,7 +625,6 @@ BEGIN_MESSAGE_MAP(CMainView, CWnd)
 	ON_COMMAND(IDM_FILE_REMOVE, OnFileRemove)
 	ON_COMMAND(IDM_FILE_DELETE, OnFileDelete)
 	ON_COMMAND(IDM_FILE_RENAME, OnFileRename)
-	ON_COMMAND(IDM_FILE_SEND, OnFileSend)
 	ON_COMMAND(IDM_FILE_RESTORE, OnFileRestore)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_FILE_OPENWITH, IDM_FILE_RESTORE, OnUpdateFileCommands)
 END_MESSAGE_MAP()
@@ -644,7 +643,7 @@ INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndTaskbar.AddButton(IDM_STORES_CREATENEW, 0);
 	m_wndTaskbar.AddButton(IDM_HOME_IMPORTFOLDER, 1, TRUE);
 	m_wndTaskbar.AddButton(IDM_HOUSEKEEPING_REGISTER, 2, TRUE);
-	m_wndTaskbar.AddButton(IDM_HOUSEKEEPING_SEND, 32, TRUE);
+	m_wndTaskbar.AddButton(IDM_HOUSEKEEPING_SEND, 31, TRUE);
 	m_wndTaskbar.AddButton(IDM_TRASH_EMPTY, 3, TRUE);
 	m_wndTaskbar.AddButton(IDM_TRASH_RESTOREALL, 4, TRUE);
 	m_wndTaskbar.AddButton(IDM_CALENDAR_PREVYEAR, 5, TRUE);
@@ -668,18 +667,17 @@ INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndTaskbar.AddButton(IDM_FILE_REMOVE, 22);
 	m_wndTaskbar.AddButton(IDM_FILE_DELETE, 23);
 	m_wndTaskbar.AddButton(IDM_FILE_RENAME, 24);
-	m_wndTaskbar.AddButton(IDM_FILE_SEND, 25);
-	m_wndTaskbar.AddButton(IDM_FILE_RESTORE, 26);
-	m_wndTaskbar.AddButton(ID_APP_NEWFILEDROP, 27, TRUE);
+	m_wndTaskbar.AddButton(IDM_FILE_RESTORE, 25);
+	m_wndTaskbar.AddButton(ID_APP_NEWFILEDROP, 26, TRUE);
 
-	#define InspectorIconVisible     29
-	#define InspectorIconHidden     28
+	#define InspectorIconVisible     28
+	#define InspectorIconHidden      27
 	p_InspectorButton = m_wndTaskbar.AddButton(ID_PANE_INSPECTOR, theApp.m_ShowInspectorPane ? InspectorIconVisible : InspectorIconHidden, TRUE, TRUE);
 
-	m_wndTaskbar.AddButton(ID_APP_PURCHASE, 30, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_ENTERLICENSEKEY, 31, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_SUPPORT, 32, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_ABOUT, 33, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_PURCHASE, 29, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_ENTERLICENSEKEY, 30, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_SUPPORT, 31, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_ABOUT, 32, TRUE, TRUE);
 
 	// Filter
 	if (!m_IsClipboard)
@@ -1557,11 +1555,6 @@ void CMainView::OnFileRename()
 		p_wndFileView->EditLabel(idx);
 }
 
-void CMainView::OnFileSend()
-{
-	MessageBox(_T("Coming soon!"));
-}
-
 void CMainView::OnFileRestore()
 {
 	UpdateTrashFlag(FALSE);
@@ -1594,9 +1587,6 @@ void CMainView::OnUpdateFileCommands(CCmdUI* pCmdUI)
 			b = ((item->Type & LFTypeMask)==LFTypeFile);
 		if (p_wndFileView)
 			b &= !p_wndFileView->IsEditing();
-		break;
-	case IDM_FILE_SEND:
-		b = m_FilesSelected && (m_Context!=LFContextTrash);
 		break;
 	case IDM_FILE_RESTORE:
 		b = m_FilesSelected && (m_Context==LFContextTrash);
