@@ -567,16 +567,28 @@ void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed)
 void CListView::DrawIcon(CDC& dc, CRect& rect, LFItemDescriptor* i)
 {
 	INT SysIconIndex = -1;
+	CHAR Path[4];
 
-	if ((i->Type & LFTypeMask)==LFTypeFile)
+	switch (i->Type & LFTypeMask)
 	{
+	case LFTypeFile:
 		if ((m_ViewParameters.Mode==LFViewLargeIcons) || (m_ViewParameters.Mode==LFViewPreview))
 		{
 			theApp.m_FileFormats.DrawJumboIcon(dc, rect, i->CoreAttributes.FileFormat, i->Type & LFTypeGhosted);
 			return;
 		}
-
 		SysIconIndex = theApp.m_FileFormats.GetSysIconIndex(i->CoreAttributes.FileFormat);
+		break;
+	case LFTypeVolume:
+		strcpy_s(Path, 4, " :\\");
+		Path[0] = i->CoreAttributes.FileID[0];
+		if ((m_ViewParameters.Mode==LFViewLargeIcons) || (m_ViewParameters.Mode==LFViewPreview))
+		{
+			theApp.m_FileFormats.DrawJumboIcon(dc, rect, Path, i->Type & LFTypeGhosted);
+			return;
+		}
+		SysIconIndex = theApp.m_FileFormats.GetSysIconIndex(Path);
+		break;
 	}
 
 	const UINT List = (SysIconIndex>=0) ? 1 : 0;

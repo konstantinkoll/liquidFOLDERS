@@ -106,8 +106,9 @@ void CFormatCache::Lookup(CHAR* FileFormat, FormatData& fd)
 			if (m_Cache.Lookup(Key, fd))
 				return;
 
-			CString Ext = _T("*.");
-			Ext += Key;
+			CString Ext(Key);
+			if ((Key[1]!=':') || (Key[2]!='\\'))
+				Ext.Insert(0, _T("*."));
 
 			SHFILEINFO sfi;
 			if (SUCCEEDED(SHGetFileInfo(Ext, 0, &sfi, sizeof(sfi), SHGFI_SYSICONINDEX | SHGFI_SMALLICON | SHGFI_TYPENAME | SHGFI_USEFILEATTRIBUTES)))

@@ -354,8 +354,9 @@ void CInspectorWnd::UpdateFinish()
 			m_IconHeader.SetMultiple(m_TypeName);
 		}
 		else
-			if (m_TypeID==LFTypeFile)
+			switch (m_TypeID)
 			{
+			case LFTypeFile:
 				if (m_AttributeStatus[LFAttrFileFormat]==StatusMultiple)
 				{
 					m_IconHeader.SetMultiple(m_TypeName);
@@ -364,9 +365,21 @@ void CInspectorWnd::UpdateFinish()
 				{
 					m_IconHeader.SetFormatIcon(m_AttributeValues[LFAttrFileFormat].AnsiString, m_TypeName);
 				}
-			}
-			else
-			{
+				break;
+			case LFTypeVolume:
+				if (m_AttributeStatus[AttrDriveLetter]==StatusMultiple)
+				{
+					m_IconHeader.SetMultiple(m_TypeName);
+				}
+				else
+				{
+					CHAR Path[4];
+					strcpy_s(Path, 4, " :\\");
+					Path[0] = m_AttributeValues[AttrDriveLetter].AnsiString[0];
+					m_IconHeader.SetFormatIcon(Path, m_TypeName);
+				}
+				break;
+			default:
 				m_IconHeader.SetCoreIcon(m_IconID-1, m_TypeName);
 			}
 	}

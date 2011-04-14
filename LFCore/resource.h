@@ -26,12 +26,7 @@
 #define IDI_STORE_Default               22
 #define IDI_STORE_Bag                   23
 #define IDI_STORE_Server                24
-#define IDI_DRV_Default                 25
-#define IDI_DRV_Empty                   26
-#define IDI_DRV_ExtHD                   27
-#define IDI_DRV_Disconnected            28
-#define IDI_DRV_Connected               29
-#define IDI_LastIcon                    29
+#define IDI_LastIcon                    24
 #define IDS_FirstItemCategory           1000
 #define IDS_LFCategoryInternalStores    1000
 #define IDS_LFCategoryHybridStores      1001

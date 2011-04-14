@@ -140,7 +140,6 @@ void LFSearchResult::AddVolumes(LFFilter* filter)
 
 			LFItemDescriptor* d = LFAllocItemDescriptor();
 			d->Type = LFTypeVolume;
-			d->IconID = LFGetDriveIcon(cDrive, sfi.dwAttributes!=0);
 			if (!sfi.dwAttributes)
 				d->Type |= LFTypeGhosted | LFTypeNotMounted;
 			d->CategoryID = LFItemCategoryVolumes;

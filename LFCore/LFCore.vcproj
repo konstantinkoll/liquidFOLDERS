@@ -650,26 +650,6 @@
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
 			<File
-				RelativePath=".\res\DRV_Connected.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\res\DRV_Default.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\res\DRV_Disconnected.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\res\DRV_Empty.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\res\DRV_ExtHD.ico"
-				>
-			</File>
-			<File
 				RelativePath=".\res\FLD_All.ico"
 				>
 			</File>

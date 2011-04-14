@@ -31,9 +31,6 @@
 // Wie Win32-Funktion GetLogicalDrives(), allerdings selektiv (s.o.)
 LFCore_API unsigned int LFGetLogicalDrives(unsigned int mask=LFGLD_Both);
 
-// Gibt den Index für das Laufwerks-Icon zurück
-LFCore_API unsigned int LFGetDriveIcon(char Drv, bool IsMounted=true);
-
 // Gibt einen Zeiger auf die IDs aller registrierten Nachrichten zurück
 LFCore_API LFMessageIDs* LFGetMessageIDs();
 

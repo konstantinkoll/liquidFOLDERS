@@ -1241,14 +1241,20 @@ void CFileView::OnMouseHover(UINT nFlags, CPoint point)
 				if (!m_TooltipCtrl.IsWindowVisible() && m_EnableTooltip)
 				{
 					FormatData fd;
+					CHAR Path[4];
 
 					LFItemDescriptor* i = p_Result->m_Items[m_HotItem];
-					if ((i->Type & LFTypeMask)==LFTypeFile)
+					switch (i->Type & LFTypeMask)
 					{
+					case LFTypeFile:
 						theApp.m_FileFormats.Lookup(i->CoreAttributes.FileFormat, fd);
-					}
-					else
-					{
+						break;
+					case LFTypeVolume:
+						strcpy_s(Path, 4, " :\\");
+						Path[0] = i->CoreAttributes.FileID[0];
+						theApp.m_FileFormats.Lookup(Path, fd);
+						break;
+					default:
 						fd.FormatName[0] = L'\0';
 						fd.SysIconIndex = -1;
 					}

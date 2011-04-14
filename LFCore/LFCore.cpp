@@ -119,27 +119,6 @@ LFCore_API unsigned int LFGetLogicalDrives(unsigned int mask)
 	return DrivesOnSystem;
 }
 
-LFCore_API unsigned int LFGetDriveIcon(char Drv, bool IsMounted)
-{
-	unsigned int ic = IDI_DRV_Default;
-
-	if ((Drv>='A') && (Drv<='Z'))
-		switch (VolumeTypes[Drv-'A'])
-		{
-		case DRIVE_FIXED:
-		case DRIVE_REMOVABLE:
-			ic = IsMounted ? IDI_DRV_Default : IDI_DRV_Empty;
-			break;
-		case DRIVE_EXTHD:
-			ic = IDI_DRV_ExtHD;
-			break;
-		case DRIVE_REMOTE:
-			ic = IsMounted ? IDI_DRV_Connected : IDI_DRV_Disconnected;
-		}
-
-	return ic;
-}
-
 LFCore_API LFMessageIDs* LFGetMessageIDs()
 {
 	return &LFMessages;
