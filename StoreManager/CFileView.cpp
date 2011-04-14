@@ -592,29 +592,21 @@ CMenu* CFileView::GetItemContextMenu(INT idx)
 	{
 		CString tmpStr;
 
-		if (((item->Type & LFTypeMask)==LFTypeFile) || (((item->Type & LFTypeMask)==LFTypeVirtual) && (item->FirstAggregate!=-1) && (item->LastAggregate!=-1)))
-		{
-			if (m_Context==LFContextClipboard)
+		if (m_Context!=LFContextTrash)
+			if (((item->Type & LFTypeMask)==LFTypeFile) || (((item->Type & LFTypeMask)==LFTypeVirtual) && (item->FirstAggregate!=-1) && (item->LastAggregate!=-1)))
 			{
-				ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_REMOVE));
-				pPopup->InsertMenu(0, MF_STRING | MF_BYPOSITION, IDM_FILE_REMOVE, tmpStr);
+				ENSURE(tmpStr.LoadString(m_Context==LFContextClipboard ? IDS_CONTEXTMENU_REMOVE : IDS_CONTEXTMENU_REMEMBER));
+				pPopup->InsertMenu(0, MF_STRING | MF_BYPOSITION, m_Context==LFContextClipboard ? IDM_FILE_REMOVE : IDM_FILE_REMEMBER, tmpStr);
+
+				CMenu* pSendPopup = GetSendToMenu();
+
+				ENSURE(tmpStr.LoadString(IDM_SEND));
+				pPopup->InsertMenu(0, MF_POPUP | MF_BYPOSITION, (UINT_PTR)pSendPopup->m_hMenu, tmpStr);
+				pPopup->InsertMenu(0, MF_SEPARATOR | MF_BYPOSITION);
+
+				pSendPopup->Detach();
+				delete pSendPopup;
 			}
-			else
-				if (m_Context!=LFContextTrash)
-				{
-					ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_REMEMBER));
-					pPopup->InsertMenu(0, MF_STRING | MF_BYPOSITION, IDM_FILE_REMEMBER, tmpStr);
-				}
-
-			CMenu* pSendPopup = GetSendToMenu();
-
-			ENSURE(tmpStr.LoadString(IDM_SEND));
-			pPopup->InsertMenu(0, MF_POPUP | MF_BYPOSITION, (UINT_PTR)pSendPopup->m_hMenu, tmpStr);
-			pPopup->InsertMenu(0, MF_SEPARATOR | MF_BYPOSITION);
-
-			pSendPopup->Detach();
-			delete pSendPopup;
-		}
 
 		if ((item->Type & LFTypeMask)==LFTypeFile)
 		{
