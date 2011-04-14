@@ -167,6 +167,7 @@ protected:
 	virtual RECT GetLabelRect(INT idx);
 	virtual INT ItemAtPosition(CPoint point);
 	virtual void InvalidateItem(INT idx);
+	virtual CMenu* GetSendToMenu();
 	virtual CMenu* GetItemContextMenu(INT idx);
 
 	CBitmap* CreateFooterBitmap(CDC* pDC, INT mincx, INT cy, CDC& dcDraw, BOOL Themed);

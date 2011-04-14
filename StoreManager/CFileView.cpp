@@ -547,6 +547,16 @@ CMenu* CFileView::GetBackgroundContextMenu()
 	return pMenu;
 }
 
+CMenu* CFileView::GetSendToMenu()
+{
+	CMenu* pMenu = new CMenu();
+	pMenu->CreatePopupMenu();
+
+	pMenu->InsertMenu(0, MF_STRING | MF_BYPOSITION | MF_DISABLED | MF_GRAYED, 0, _T("Coming soon!"));
+
+	return pMenu;
+}
+
 CMenu* CFileView::GetItemContextMenu(INT idx)
 {
 	CMenu* pMenu = new CMenu();
@@ -583,19 +593,28 @@ CMenu* CFileView::GetItemContextMenu(INT idx)
 		CString tmpStr;
 
 		if (((item->Type & LFTypeMask)==LFTypeFile) || (((item->Type & LFTypeMask)==LFTypeVirtual) && (item->FirstAggregate!=-1) && (item->LastAggregate!=-1)))
+		{
 			if (m_Context==LFContextClipboard)
 			{
 				ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_REMOVE));
 				pPopup->InsertMenu(0, MF_STRING | MF_BYPOSITION, IDM_FILE_REMOVE, tmpStr);
-					pPopup->InsertMenu(0, MF_SEPARATOR | MF_BYPOSITION);
 			}
 			else
 				if (m_Context!=LFContextTrash)
 				{
 					ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_REMEMBER));
 					pPopup->InsertMenu(0, MF_STRING | MF_BYPOSITION, IDM_FILE_REMEMBER, tmpStr);
-					pPopup->InsertMenu(0, MF_SEPARATOR | MF_BYPOSITION);
 				}
+
+			CMenu* pSendPopup = GetSendToMenu();
+
+			ENSURE(tmpStr.LoadString(IDM_SEND));
+			pPopup->InsertMenu(0, MF_POPUP | MF_BYPOSITION, (UINT_PTR)pSendPopup->m_hMenu, tmpStr);
+			pPopup->InsertMenu(0, MF_SEPARATOR | MF_BYPOSITION);
+
+			pSendPopup->Detach();
+			delete pSendPopup;
+		}
 
 		if ((item->Type & LFTypeMask)==LFTypeFile)
 		{
