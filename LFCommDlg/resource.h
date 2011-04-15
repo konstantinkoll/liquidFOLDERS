@@ -92,8 +92,8 @@
 #define IDM_STORE_MAKEHYBRID            21205
 #define IDM_STORE_IMPORTFOLDER          21206
 #define IDM_STORE_MAINTAIN              21207
-#define IDM_STORE_RENAME                21208
-#define IDM_STORE_DELETE                21209
+#define IDM_STORE_DELETE                21208
+#define IDM_STORE_RENAME                21209
 #define IDM_STORE_PROPERTIES            21210
 #define IDM_STORES                      21211
 #define IDM_STORES_CREATENEW            21212

@@ -263,6 +263,36 @@ BEGIN
     END
 END
 
+IDM_FILE MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM SEPARATOR
+        MENUITEM "&Löschen",                    IDM_FILE_DELETE
+        MENUITEM "&Umbenennen",                 IDM_FILE_RENAME
+    END
+END
+
+IDM_FILE_TRASH MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM SEPARATOR
+        MENUITEM "&Löschen",                    IDM_FILE_DELETE
+        MENUITEM "&Wiederherstellen",           IDM_FILE_RESTORE
+    END
+END
+
+IDM_TRASH MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM SEPARATOR
+        MENUITEM "Alle &wiederherstellen",      IDM_TRASH_RESTOREALL
+        MENUITEM "&Papierkorb leeren",          IDM_TRASH_EMPTY
+    END
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -427,6 +457,12 @@ END
 
 STRINGTABLE 
 BEGIN
+    ID_PANE_FILTER          "Blendet den Filter ein oder aus.\nFilter"
+    ID_PANE_INSPECTOR       "Blendet den Inspektor ein oder aus.\nInspektor"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_VIEWGROUP1          "Listen"
     IDS_VIEWGROUP2          "Erweiterte Ansichten"
     IDS_CONTEXTMENU_SELECTALL "Alles &markieren\tStrg+A"
@@ -456,12 +492,12 @@ BEGIN
     IDS_YOULOOKAT           "Sie schauen auf %s"
     IDS_NOTHINGTODISPLAY    "Es gibt nichts anzuzeigen."
     IDS_NONAVIGATION        "Dieses Fenster unterstützt keine Navigation."
-    IDS_FORMAT_CAPTION      "Sie können das Laufwerk „%s“ nicht formatieren"
-    IDS_FORMAT_TEXT         "Das Laufwerk enthält Stores, die zur Zeit benutzt werden.\nDas Formatieren des Laufwerks würde diese Stores unbrauchbar machen."
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_FORMAT_CAPTION      "Sie können das Laufwerk „%s“ nicht formatieren"
+    IDS_FORMAT_TEXT         "Das Laufwerk enthält Stores, die zur Zeit benutzt werden.\nDas Formatieren des Laufwerks würde diese Stores unbrauchbar machen."
     IDS_AUTOMATIC           "Automatisch wählen"
     IDS_ILLEGALYEAR         "Sie können nur die Jahre von 1900 bis 2100 anzeigen."
     IDS_LEGEND              "Legende"
@@ -476,6 +512,10 @@ BEGIN
     IDS_STATISTICS_BYSIZE   "Nach Größe"
     IDS_STATISTICS_OTHER    "Andere"
     IDS_SUBFOLDERS_MANDATORY "Unterordner in dieser Ansicht erforderlich"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_SUBFOLDERS_NOTAVAIL "Unterordner im Kontext nicht verfügbar"
     IDS_NOLICENSE           "Sie nutzen eine unregistrierte Kopie von liquidFOLDERS. liquidFOLDERS ist Shareware – wenn Sie die Software regelmäßig nutzen, müssen Sie eine Lizenz erwerben!"
 END
@@ -496,6 +536,93 @@ BEGIN
     IDS_VATTR_INDEXVERSION  "Index-Version"
     IDS_VATTR_IATA_NAME     "IATA Flughafenname"
     IDS_VATTR_IATA_COUNTRY  "Land/Gebiet"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_STORES_CREATENEW    "Erstellt einen neuen Store für Ihre Dateien.\nNeuen Store anlegen..."
+    IDM_STORES_SHOWEMPTYVOLUMES "&Leere Laufwerke anzeigen"
+    IDM_STORES_REPAIRCORRUPTEDINDEX "Wartungsarbeiten durchführen"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_HOME_SHOWEMPTYDOMAINS "&Leere Ordner anzeigen"
+    IDM_HOME_IMPORTFOLDER   "Importiert einen Ordner und alle Unterordner in den aktuellen Store.\nVerzeichnis importieren.."
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_HOUSEKEEPING_REGISTER 
+                            "Registriert unbekannte Dateiformate, die dadurch in den richtigen Ordnern erscheinen.\nFormate registrieren..."
+    IDM_HOUSEKEEPING_SEND   "Sendet eine Liste mit allen registrierten Dateiformaten an den Kundenservice.\nListe senden"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_TRASH_EMPTY         "Löscht endgültig alle Dateien aus dem Papierkorb.\nPapierkorb leeren"
+    IDM_TRASH_RESTOREALL    "Stellt alle Dateien wieder her.\nAlle wiederherstellen"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_ITEM_OPEN           "Öffnet das ausgewählte Objekt.\nÖffnen"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_STORE_MAKEDEFAULT   "Setzt den ausgewählten Store als Standard-Store.\nAls Standard-Store setzen"
+    IDM_STORE_IMPORTFOLDER  "Importiert einen Ordner und alle Unterordner in den ausgewählten Store.\nVerzeichnis importieren..."
+    IDM_STORE_DELETE        "Löscht den ausgewählten Store und alle enthaltenen Dateien.\nLöschen"
+    IDM_STORE_RENAME        "Benennt den ausgewählten Store um.\nUmbenennen"
+    IDM_STORE_PROPERTIES    "Zeigt die Eigenschaften des ausgewählten Stores an.\nEigenschaften"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_VOLUME_PROPERTIES   "Zeigt die Eigenschaften des ausgewählten Laufwerks an.\nEigenschaften"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_FILE_REMEMBER       "Fügt die ausgewählten Dateien zur Zwischenablage hinzu.\nMerken"
+    IDM_FILE_REMOVE         "Entfernt die ausgewählten Dateien aus der Zwischenablage.\nEntfernen"
+    IDM_FILE_DELETE         "Löscht die ausgewählten Dateien.\nLöschen"
+    IDM_FILE_RENAME         "Benennt die ausgewählte Datei um.\nUmbenennen"
+    IDM_FILE_RESTORE        "Stellt die ausgewählten Dateien wieder her.\nWiederstellen"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_SEND                "S&enden an"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_CALENDAR_PREVYEAR   "Zeigt das vorige Jahr an.\nVoriges Jahr"
+    IDM_CALENDAR_NEXTYEAR   "Zeigt das nächste Jahr an.\nNächstes Jahr"
+    IDM_CALENDAR_GOTOYEAR   "Öffnet ein Dialogfenster, in dem Sie ein Jahr zum Anzeigen auswählen können.\nJahr auswählen..."
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_GLOBE_JUMPTOLOCATION 
+                            "Richtet von Globus auf einen bestimmten Ort aus.\nOrt auswählen..."
+    IDM_GLOBE_ZOOMIN        "Vergrößert den Globus.\nVergößern"
+    IDM_GLOBE_ZOOMOUT       "Verkleinert den Globus.\nVerkleinern"
+    IDM_GLOBE_AUTOSIZE      "Passt den Globus an die Fenstergröße an.\nGröße anpassen"
+    IDM_GLOBE_GOOGLEEARTH   "Öffnet den auswählten Ort in Google Earth.\nÖffnen in Google Earth"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_TAGCLOUD_SORTVALUE  "Sortiert alle Worte alphabetisch.\nAlphabetisch sortieren"
+    IDM_TAGCLOUD_SORTCOUNT  "Sortiert alle Worte nach Dateianzahl.\nNach Anzahl sortieren"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_TAGCLOUD_SORT       "&Sortieren nach"
 END
 
 STRINGTABLE 
@@ -871,12 +998,12 @@ BEGIN
     IDS_YOULOOKAT           "You look at %s"
     IDS_NOTHINGTODISPLAY    "There is nothing to display."
     IDS_NONAVIGATION        "This window does not support any navigation."
-    IDS_FORMAT_CAPTION      "You cannot format volume ""%s"""
-    IDS_FORMAT_TEXT         "It contains stores that you are using.\nFormatting this volume will destroy those stores."
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_FORMAT_CAPTION      "You cannot format volume ""%s"""
+    IDS_FORMAT_TEXT         "It contains stores that you are using.\nFormatting this volume will destroy those stores."
     IDS_AUTOMATIC           "Choose automatically"
     IDS_ILLEGALYEAR         "You can only display the years 1900 through 2100."
     IDS_LEGEND              "Legend"
@@ -891,6 +1018,10 @@ BEGIN
     IDS_STATISTICS_BYSIZE   "By file size"
     IDS_STATISTICS_OTHER    "Other"
     IDS_SUBFOLDERS_MANDATORY "Subfolders are mandatory for this view."
+END
+
+STRINGTABLE 
+BEGIN
     IDS_SUBFOLDERS_NOTAVAIL "Subfolders are not available in this context."
     IDS_NOLICENSE           "You are using an unregistered copy of liquidFOLDERS. liquidFOLDERS is shareware—if you decide to use it regulary, you are required to purchase a license key!"
 END
@@ -925,8 +1056,74 @@ END
 
 STRINGTABLE 
 BEGIN
+    IDM_STORES_CREATENEW    "Creates a new store for your files.\nCreate new store..."
+    IDM_STORES_SHOWEMPTYVOLUMES "Show &unmounted volumes"
+    IDM_STORES_REPAIRCORRUPTEDINDEX "Run maintenance"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_HOME_SHOWEMPTYDOMAINS "Show &empty domains"
+    IDM_HOME_IMPORTFOLDER   "Imports a folder and all its subfolders into this store.\nImport folder..."
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_HOUSEKEEPING_REGISTER 
+                            "Registers unknown file formats to make them appear in a regular domain.\nRegister formats..."
+    IDM_HOUSEKEEPING_SEND   "Sends a list of user-registered file formats to customer support.\nSend list"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_TRASH_EMPTY         "Permanently deletes all files from the trash.\nEmpty trash"
+    IDM_TRASH_RESTOREALL    "Restores all files from the trash.\nRestore all"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_ITEM_OPEN           "Opens the selected item.\nOpen"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_STORE_MAKEDEFAULT   "Makes the selected store the default store.\nMake default store"
+    IDM_STORE_IMPORTFOLDER  "Imports a folder and all its subfolders into the selected store.\nImport folder..."
+    IDM_STORE_RENAME        "Renames the selected store.\nRename"
+    IDM_STORE_DELETE        "Deletes the selected store.\nDelete"
+    IDM_STORE_PROPERTIES    "Displays the properties of the selected store.\nProperties"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_VOLUME_PROPERTIES   "Displays the properties of the selected volume.\nProperties"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_FILE_REMEMBER       "Adds the selected files to the clipboard window.\nRemember"
+    IDM_FILE_REMOVE         "Removes the selected files from the clipboard window.\nRemove"
+    IDM_FILE_DELETE         "Deletes the selected files.\nDelete"
+    IDM_FILE_RENAME         "Renames the selected file.\nRename"
+    IDM_FILE_RESTORE        "Restores the selected files.\nRestore"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_SEND                "S&end to"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_CALENDAR_PREVYEAR   "Displays the previous year.\nPrevious year"
+    IDM_CALENDAR_NEXTYEAR   "Displays the next year.\nNext year"
+    IDM_CALENDAR_GOTOYEAR   "Shows a window that lets you choose a year to display.\nGo to year..."
+END
+
+STRINGTABLE 
+BEGIN
     IDM_GLOBE_JUMPTOLOCATION 
-                            "Centers the globe on a specific location.\nJump to location"
+                            "Centers the globe on a specific location.\nJump to location..."
     IDM_GLOBE_ZOOMIN        "Zooms into the globe.\nZoom in"
     IDM_GLOBE_ZOOMOUT       "Zooms out of the globe.\nZoom out"
     IDM_GLOBE_AUTOSIZE      "Resizes the globe to touch the edges of the window.\nSize to fit"
@@ -942,72 +1139,6 @@ END
 STRINGTABLE 
 BEGIN
     IDM_TAGCLOUD_SORT       "&Sort by"
-END
-
-STRINGTABLE 
-BEGIN
-    IDM_FILE_REMEMBER       "Adds the selected files to the clipboard window.\nRemember"
-    IDM_FILE_REMOVE         "Removes the selected files from the clipboard window.\nRemove"
-    IDM_FILE_DELETE         "Deletes the selected files.\nDelete"
-    IDM_FILE_RENAME         "Renames the selected file.\nRename"
-    IDM_FILE_RESTORE        "Restores the selected files.\nRestore"
-END
-
-STRINGTABLE 
-BEGIN
-    IDM_TRASH_EMPTY         "Permanently deletes all files from the trash.\nEmpty trash"
-    IDM_TRASH_RESTOREALL    "Restores all files from the trash.\nRestore all"
-END
-
-STRINGTABLE 
-BEGIN
-    IDM_HOUSEKEEPING_REGISTER 
-                            "Registers unknown file formats to make them appear in a regular domain.\nRegister formats"
-    IDM_HOUSEKEEPING_SEND   "Sends a list of user-registered file formats to customer support. This allows us to include them in future releases of our software.\nSend list"
-END
-
-STRINGTABLE 
-BEGIN
-    IDM_STORE_MAKEDEFAULT   "Makes the selected store the default store.\nMake default store"
-    IDM_STORE_IMPORTFOLDER  "Imports a folder and all its subfolders into the selected store.\nImport folder..."
-    IDM_STORE_RENAME        "Renames the selected store.\nRename"
-    IDM_STORE_DELETE        "Deletes the selected store.\nDelete"
-    IDM_STORE_PROPERTIES    "Displays the properties of the selected store.\nProperties"
-END
-
-STRINGTABLE 
-BEGIN
-    IDM_STORES_CREATENEW    "Creates a new store for your files.\nCreate new store..."
-    IDM_STORES_SHOWEMPTYVOLUMES "Show &unmounted volumes"
-    IDM_STORES_REPAIRCORRUPTEDINDEX "Run maintenance"
-END
-
-STRINGTABLE 
-BEGIN
-    IDM_VOLUME_PROPERTIES    "Displays the properties of the selected volume.\nProperties"
-END
-
-STRINGTABLE 
-BEGIN
-    IDM_HOME_SHOWEMPTYDOMAINS "Show &empty domains"
-    IDM_HOME_IMPORTFOLDER   "Imports a folder and all its subfolders into this store.\nImport folder..."
-END
-
-STRINGTABLE 
-BEGIN
-    IDM_ITEM_OPEN           "Opens the selected item.\nOpen"
-END
-
-STRINGTABLE 
-BEGIN
-    IDM_SEND                "S&end to"
-END
-
-STRINGTABLE 
-BEGIN
-    IDM_CALENDAR_PREVYEAR   "Displays the previous year.\nPrevious year"
-    IDM_CALENDAR_NEXTYEAR   "Displays the next year.\nNext year"
-    IDM_CALENDAR_GOTOYEAR   "Shows a window that lets you choose a year to display.\nGo to year"
 END
 
 STRINGTABLE 
@@ -1139,7 +1270,7 @@ BEGIN
     MENUITEM "Mostrar &etiquetas poco comunes", IDM_TAGCLOUD_SHOWRARE
 END
 
-IDM_INSPECTOR MENU
+IDM_INSPECTOR MENU 
 BEGIN
     POPUP "POPUP"
     BEGIN
@@ -1347,10 +1478,13 @@ BEGIN
     IDS_MULTIPLETYPESSELECTED "Múltiples tipos, %d objetos"
     IDS_YOULOOKAT           "Usted está viendo %s"
     IDS_NOTHINGTODISPLAY    "No hay nada que visualizar."
+    IDS_NONAVIGATION        "Esta ventana no es compatible con la navegación."
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_FORMAT_CAPTION      "Usted no puede formatear volúmen ""%s"""
+    IDS_FORMAT_TEXT         "Contiene stores que usted está usando.\nAl formatear este volúmen destruirá aquellos stores."
     IDS_AUTOMATIC           "Escoger automaticamente"
     IDS_ILLEGALYEAR         "Usted sólo puede visualizar del año 1900 al año 2100."
     IDS_LEGEND              "Leyenda"
@@ -1366,11 +1500,12 @@ BEGIN
     IDS_STATISTICS_OTHER    "Otros"
     IDS_SUBFOLDERS_MANDATORY 
                             "Las subcarpetas son obligatorias para esta visualización."
+END
+
+STRINGTABLE 
+BEGIN
     IDS_SUBFOLDERS_NOTAVAIL "Las subcarpetas no están disponibles para este contexto."
     IDS_NOLICENSE           "Usted está usando una copia no registrada de liquidFOLDERS. liquidFOLDERS es un software de demostración – si usted decide usarlo regularmente, usted está obligado a adquirir una licencia!"
-    IDS_NONAVIGATION        "Esta ventana no es compatible con la navegación."
-    IDS_FORMAT_CAPTION      "Usted no puede formatear volúmen ""%s"""
-    IDS_FORMAT_TEXT         "Contiene stores que usted está usando.\nAl formatear este volúmen destruirá aquellos stores."
 END
 
 STRINGTABLE 
@@ -1730,12 +1865,12 @@ BEGIN
     IDS_YOULOOKAT           "Vous regardez %s"
     IDS_NOTHINGTODISPLAY    "Il n'y a rien indiquer."
     IDS_NONAVIGATION        "Dieses Fenster unterstützt keine Navigation."
-    IDS_FORMAT_CAPTION      "Sie können das Laufwerk „%s“ nicht formatieren"
-    IDS_FORMAT_TEXT         "Das Laufwerk enthält Stores, die zur Zeit benutzt werden.\nDas Formatieren des Laufwerks würde diese Stores unbrauchbar machen."
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_FORMAT_CAPTION      "Sie können das Laufwerk „%s“ nicht formatieren"
+    IDS_FORMAT_TEXT         "Das Laufwerk enthält Stores, die zur Zeit benutzt werden.\nDas Formatieren des Laufwerks würde diese Stores unbrauchbar machen."
     IDS_AUTOMATIC           "Choisir automatiquement"
     IDS_ILLEGALYEAR         "Vous pouvez indiquer seulement les années de 1900 à 2100."
     IDS_LEGEND              "Légende"
@@ -1750,6 +1885,10 @@ BEGIN
     IDS_STATISTICS_BYSIZE   "Après la grandeur"
     IDS_STATISTICS_OTHER    "D'autres"
     IDS_SUBFOLDERS_MANDATORY "Sous-dossier dans cet avis nécessaire"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_SUBFOLDERS_NOTAVAIL "Sous-dossier dans le contexte non disponible"
     IDS_NOLICENSE           "Vous utilisez une copie non enregistrée de liquidFOLDERS. liquidFOLDERS est shareware – si vous utilisez régulièrement le logiciel, vous devez acquérir une licence!"
 END
