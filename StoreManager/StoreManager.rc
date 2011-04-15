@@ -557,7 +557,7 @@ END
 STRINGTABLE 
 BEGIN
     IDM_HOME_SHOWEMPTYDOMAINS "&Leere Ordner anzeigen"
-    IDM_HOME_IMPORTFOLDER   "Importiert einen Ordner und alle Unterordner in den aktuellen Store.\nVerzeichnis importieren.."
+    IDM_HOME_IMPORTFOLDER   "Importiert einen Ordner und alle Unterordner in den aktuellen Store.\nVerzeichnis importieren..."
 END
 
 STRINGTABLE 
@@ -616,8 +616,8 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDM_TAGCLOUD_SORTVALUE  "Sortiert alle Worte alphabetisch.\nAlphabetisch sortieren"
-    IDM_TAGCLOUD_SORTCOUNT  "Sortiert alle Worte nach Dateianzahl.\nNach Anzahl sortieren"
+    IDM_TAGCLOUD_SORTVALUE  "Sortiert alle Tags alphabetisch.\nAlphabetisch sortieren"
+    IDM_TAGCLOUD_SORTCOUNT  "Sortiert alle Tags nach Dateianzahl.\nNach Anzahl sortieren"
 END
 
 STRINGTABLE 
@@ -1202,6 +1202,16 @@ BEGIN
     END
 END
 
+IDM_TRASH MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM SEPARATOR
+        MENUITEM "&Restore all",                IDM_TRASH_RESTOREALL
+        MENUITEM "&Empty trash",                IDM_TRASH_EMPTY
+    END
+END
+
 IDM_VOLUME MENU 
 BEGIN
     POPUP "POPUP"
@@ -1212,6 +1222,26 @@ BEGIN
         MENUITEM "E&xpulsar",                   IDM_VOLUME_EJECT
         MENUITEM SEPARATOR
         MENUITEM "&Propiedades",                IDM_VOLUME_PROPERTIES
+    END
+END
+
+IDM_FILE MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM SEPARATOR
+        MENUITEM "&Eliminar",                   IDM_FILE_DELETE
+        MENUITEM "&Renombrar",                  IDM_FILE_RENAME
+    END
+END
+
+IDM_FILE_TRASH MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM SEPARATOR
+        MENUITEM "&Eliminar",                   IDM_FILE_DELETE
+        MENUITEM "Re&store",                    IDM_FILE_RESTORE
     END
 END
 
@@ -1283,36 +1313,6 @@ BEGIN
             MENUITEM "&Sumario...",                 IDM_INSPECTOR_EXPORTSUMMARY
             MENUITEM "Completar &metadata...",      IDM_INSPECTOR_EXPORTMETADATA
         END
-    END
-END
-
-IDM_FILE MENU 
-BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM SEPARATOR
-        MENUITEM "&Eliminar",                   IDM_FILE_DELETE
-        MENUITEM "&Renombrar",                  IDM_FILE_RENAME
-    END
-END
-
-IDM_FILE_TRASH MENU 
-BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM SEPARATOR
-        MENUITEM "&Eliminar",                   IDM_FILE_DELETE
-        MENUITEM "Re&store",                    IDM_FILE_RESTORE
-    END
-END
-
-IDM_TRASH MENU 
-BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM SEPARATOR
-        MENUITEM "&Restore all",                IDM_TRASH_RESTOREALL
-        MENUITEM "&Empty trash",                IDM_TRASH_EMPTY
     END
 END
 
@@ -1481,6 +1481,12 @@ END
 
 STRINGTABLE 
 BEGIN
+    ID_PANE_FILTER          "Opens and closes the filter pane.\nFilter"
+    ID_PANE_INSPECTOR       "Opens and closes the inspector pane.\nInspector"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_VIEWGROUP1          "Enlistar vistas"
     IDS_VIEWGROUP2          "Vistas mejoradas"
     IDS_CONTEXTMENU_SELECTALL "Seleccionar &todo\tCtrl+A"
@@ -1558,6 +1564,93 @@ END
 
 STRINGTABLE 
 BEGIN
+    IDM_STORE_MAKEDEFAULT   "Establece el store seleccionado como el store predeterminado.\nEstablecer a store predeterminado"
+    IDM_STORE_IMPORTFOLDER  "Importa una carpeta y todas sus subcarpetas al store seleccionado.\nImportar carpeta..."
+    IDM_STORE_DELETE        "Deletes the selected store.\nEliminar"
+    IDM_STORE_RENAME        "Renames the selected store.\nRenombrar"
+    IDM_STORE_PROPERTIES    "Displays the properties of the selected store.\nPropiedades"
+    IDM_STORES_CREATENEW    "Creaun nuevo store para sus archivos.\nCrear nuevo store..."
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_STORES_SHOWEMPTYVOLUMES "Show &unmounted volumes"
+    IDM_STORES_REPAIRCORRUPTEDINDEX "Ejecutar mantenimiento"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_HOME_SHOWEMPTYDOMAINS "Show &empty domains"
+    IDM_HOME_IMPORTFOLDER   "Imports a folder and all its subfolders into this store.\nImportar carpeta..."
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_HOUSEKEEPING_REGISTER 
+                            "Registers unknown file formats to make them appear in a regular domain.\nRegister formats..."
+    IDM_HOUSEKEEPING_SEND   "Sends a list of user-registered file formats to customer support.\nSend list"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_TRASH_EMPTY         "Permanently deletes all files from the trash.\nEmpty trash"
+    IDM_TRASH_RESTOREALL    "Restores all files from the trash.\nRestore all"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_ITEM_OPEN           "Abre el objeto seleccionado.\nAbrir"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_VOLUME_PROPERTIES   "Displays the properties of the selected volume.\nPropiedades"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_FILE_REMEMBER       "Adds the selected files to the clipboard window.\nRemember"
+    IDM_FILE_REMOVE         "Removes the selected files from the clipboard window.\nRemove"
+    IDM_FILE_DELETE         "Deletes the selected files.\nEliminar"
+    IDM_FILE_RENAME         "Renames the selected file.\nRenombrar"
+    IDM_FILE_RESTORE        "Restores the selected files.\nRestore"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_SEND                "S&end to"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_CALENDAR_PREVYEAR   "Displays the previous year.\nPrevious year"
+    IDM_CALENDAR_NEXTYEAR   "Displays the next year.\nNext year"
+    IDM_CALENDAR_GOTOYEAR   "Shows a window that lets you choose a year to display.\nIr al año..."
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_GLOBE_JUMPTOLOCATION 
+                            "Centers the globe on a specific location.\nSeleccionar ubicación..."
+    IDM_GLOBE_ZOOMIN        "Zooms into the globe.\nZoom in"
+    IDM_GLOBE_ZOOMOUT       "Zooms out of the globe.\nZoom out"
+    IDM_GLOBE_AUTOSIZE      "Resizes the globe to touch the edges of the window.\nSize to fit"
+    IDM_GLOBE_GOOGLEEARTH   "Opens the selected locations in Google Earth.\nOpen in Google Earth"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_TAGCLOUD_SORTVALUE  "Arranges the tags in their canonic order.\nSort by value"
+    IDM_TAGCLOUD_SORTCOUNT  "Arranges the tags by their file count.\nSort by count"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_TAGCLOUD_SORT       "&Sort by"
+END
+
+STRINGTABLE 
+BEGIN
     IDM_ORGANIZE            "Selecciona la propiedad mediante la cuál organizar todos los objetos en este contexto.\nOrganizar por"
 END
 
@@ -1617,6 +1710,16 @@ BEGIN
     END
 END
 
+IDM_TRASH MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM SEPARATOR
+        MENUITEM "Alle &wiederherstellen",      IDM_TRASH_RESTOREALL
+        MENUITEM "&Papierkorb leeren",          IDM_TRASH_EMPTY
+    END
+END
+
 IDM_VOLUME MENU 
 BEGIN
     POPUP "POPUP"
@@ -1627,6 +1730,26 @@ BEGIN
         MENUITEM "A&uswerfen",                  IDM_VOLUME_EJECT
         MENUITEM SEPARATOR
         MENUITEM "&Propriétés",                 IDM_VOLUME_PROPERTIES
+    END
+END
+
+IDM_FILE MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM SEPARATOR
+        MENUITEM "&Effacer",                    IDM_FILE_DELETE
+        MENUITEM "&Renommer",                   IDM_FILE_RENAME
+    END
+END
+
+IDM_FILE_TRASH MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM SEPARATOR
+        MENUITEM "&Effacer",                    IDM_FILE_DELETE
+        MENUITEM "&Wiederherstellen",           IDM_FILE_RESTORE
     END
 END
 
@@ -1698,36 +1821,6 @@ BEGIN
             MENUITEM "&Zusammenfassung...",         IDM_INSPECTOR_EXPORTSUMMARY
             MENUITEM "Alle &Metadaten...",          IDM_INSPECTOR_EXPORTMETADATA
         END
-    END
-END
-
-IDM_FILE MENU 
-BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM SEPARATOR
-        MENUITEM "&Effacer",                    IDM_FILE_DELETE
-        MENUITEM "&Renommer",                   IDM_FILE_RENAME
-    END
-END
-
-IDM_TRASH MENU 
-BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM SEPARATOR
-        MENUITEM "Alle &wiederherstellen",      IDM_TRASH_RESTOREALL
-        MENUITEM "&Papierkorb leeren",          IDM_TRASH_EMPTY
-    END
-END
-
-IDM_FILE_TRASH MENU 
-BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM SEPARATOR
-        MENUITEM "&Effacer",                    IDM_FILE_DELETE
-        MENUITEM "&Wiederherstellen",           IDM_FILE_RESTORE
     END
 END
 
@@ -1897,6 +1990,12 @@ END
 
 STRINGTABLE 
 BEGIN
+    ID_PANE_FILTER          "Blendet den Filter ein oder aus.\nFilter"
+    ID_PANE_INSPECTOR       "Blendet den Inspektor ein oder aus.\nInspektor"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_VIEWGROUP1          "Des listes"
     IDS_VIEWGROUP2          "L'affichages élargis"
     IDS_CONTEXTMENU_SELECTALL "Sélectionner &tout\tCtrl+A"
@@ -1973,7 +2072,94 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDM_ORGANIZE            "Choisit la qualité après quoi les éléments sont organisés dans ce contexte .\nOrganiser après"
+    IDM_STORE_MAKEDEFAULT   "Met le store choisi comme le store standard.\nFaites store standard"
+    IDM_STORE_IMPORTFOLDER  "Importe un dossier et tous les sous-dossiers dans le store choisi.\nImporter dossier..."
+    IDM_STORE_DELETE        "Löscht den ausgewählten Store und alle enthaltenen Dateien.\nEffacer"
+    IDM_STORE_RENAME        "Benennt den ausgewählten Store um.\nRenommer"
+    IDM_STORE_PROPERTIES    "Zeigt die Eigenschaften des ausgewählten Stores an.\nPropriétés"
+    IDM_STORES_CREATENEW    "Crée un nouveau store pour vos fichiers.\nCréez un store nouveau..."
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_STORES_SHOWEMPTYVOLUMES "&Leere Laufwerke anzeigen"
+    IDM_STORES_REPAIRCORRUPTEDINDEX "Wartungsarbeiten durchführen"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_HOME_SHOWEMPTYDOMAINS "&Leere Ordner anzeigen"
+    IDM_HOME_IMPORTFOLDER   "Importiert einen Ordner und alle Unterordner in den aktuellen Store.\nImporter dossier..."
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_HOUSEKEEPING_REGISTER 
+                            "Registriert unbekannte Dateiformate, die dadurch in den richtigen Ordnern erscheinen.\nFormate registrieren..."
+    IDM_HOUSEKEEPING_SEND   "Sendet eine Liste mit allen registrierten Dateiformaten an den Kundenservice.\nListe senden"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_TRASH_EMPTY         "Löscht endgültig alle Dateien aus dem Papierkorb.\nPapierkorb leeren"
+    IDM_TRASH_RESTOREALL    "Stellt alle Dateien wieder her.\nAlle wiederherstellen"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_ITEM_OPEN           "Öffnet das ausgewählte Objekt.\nÖffnen"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_VOLUME_PROPERTIES   "Zeigt die Eigenschaften des ausgewählten Laufwerks an.\nPropriétés"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_FILE_REMEMBER       "Fügt die ausgewählten Dateien zur Zwischenablage hinzu.\nMerken"
+    IDM_FILE_REMOVE         "Entfernt die ausgewählten Dateien aus der Zwischenablage.\nEntfernen"
+    IDM_FILE_DELETE         "Löscht die ausgewählten Dateien.\nEffacer"
+    IDM_FILE_RENAME         "Benennt die ausgewählte Datei um.\nRenommer"
+    IDM_FILE_RESTORE        "Stellt die ausgewählten Dateien wieder her.\nWiederstellen"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_SEND                "S&enden an"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_CALENDAR_PREVYEAR   "Zeigt das vorige Jahr an.\nVoriges Jahr"
+    IDM_CALENDAR_NEXTYEAR   "Zeigt das nächste Jahr an.\nNächstes Jahr"
+    IDM_CALENDAR_GOTOYEAR   "Öffnet ein Dialogfenster, in dem Sie ein Jahr zum Anzeigen auswählen können.\nChoisissez l'année..."
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_GLOBE_JUMPTOLOCATION 
+                            "Richtet von Globus auf einen bestimmten Ort aus.\nChoisissez l'endroit..."
+    IDM_GLOBE_ZOOMIN        "Vergrößert den Globus.\nVergößern"
+    IDM_GLOBE_ZOOMOUT       "Verkleinert den Globus.\nVerkleinern"
+    IDM_GLOBE_AUTOSIZE      "Passt den Globus an die Fenstergröße an.\nGröße anpassen"
+    IDM_GLOBE_GOOGLEEARTH   "Öffnet den auswählten Ort in Google Earth.\nÖffnen in Google Earth"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_TAGCLOUD_SORTVALUE  "Sortiert alle Tags alphabetisch.\nAlphabetisch sortieren"
+    IDM_TAGCLOUD_SORTCOUNT  "Sortiert alle Tags nach Dateianzahl.\nNach Anzahl sortieren"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_TAGCLOUD_SORT       "&Sortieren nach"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_ORGANIZE            "Choisit la qualité après quoi les éléments sont organisés dans ce contexte.\nOrganiser après"
 END
 
 STRINGTABLE 
