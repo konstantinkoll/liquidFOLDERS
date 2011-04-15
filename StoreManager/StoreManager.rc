@@ -540,7 +540,16 @@ END
 
 STRINGTABLE 
 BEGIN
+    IDM_STORE_MAKEDEFAULT   "Setzt den ausgewählten Store als Standard-Store.\nAls Standard-Store setzen"
+    IDM_STORE_IMPORTFOLDER  "Importiert einen Ordner und alle Unterordner in den ausgewählten Store.\nVerzeichnis importieren..."
+    IDM_STORE_DELETE        "Löscht den ausgewählten Store und alle enthaltenen Dateien.\nLöschen"
+    IDM_STORE_RENAME        "Benennt den ausgewählten Store um.\nUmbenennen"
+    IDM_STORE_PROPERTIES    "Zeigt die Eigenschaften des ausgewählten Stores an.\nEigenschaften"
     IDM_STORES_CREATENEW    "Erstellt einen neuen Store für Ihre Dateien.\nNeuen Store anlegen..."
+END
+
+STRINGTABLE 
+BEGIN
     IDM_STORES_SHOWEMPTYVOLUMES "&Leere Laufwerke anzeigen"
     IDM_STORES_REPAIRCORRUPTEDINDEX "Wartungsarbeiten durchführen"
 END
@@ -567,15 +576,6 @@ END
 STRINGTABLE 
 BEGIN
     IDM_ITEM_OPEN           "Öffnet das ausgewählte Objekt.\nÖffnen"
-END
-
-STRINGTABLE 
-BEGIN
-    IDM_STORE_MAKEDEFAULT   "Setzt den ausgewählten Store als Standard-Store.\nAls Standard-Store setzen"
-    IDM_STORE_IMPORTFOLDER  "Importiert einen Ordner und alle Unterordner in den ausgewählten Store.\nVerzeichnis importieren..."
-    IDM_STORE_DELETE        "Löscht den ausgewählten Store und alle enthaltenen Dateien.\nLöschen"
-    IDM_STORE_RENAME        "Benennt den ausgewählten Store um.\nUmbenennen"
-    IDM_STORE_PROPERTIES    "Zeigt die Eigenschaften des ausgewählten Stores an.\nEigenschaften"
 END
 
 STRINGTABLE 
@@ -1056,7 +1056,16 @@ END
 
 STRINGTABLE 
 BEGIN
+    IDM_STORE_MAKEDEFAULT   "Makes the selected store the default store.\nMake default store"
+    IDM_STORE_IMPORTFOLDER  "Imports a folder and all its subfolders into the selected store.\nImport folder..."
+    IDM_STORE_DELETE        "Deletes the selected store.\nDelete"
+    IDM_STORE_RENAME        "Renames the selected store.\nRename"
+    IDM_STORE_PROPERTIES    "Displays the properties of the selected store.\nProperties"
     IDM_STORES_CREATENEW    "Creates a new store for your files.\nCreate new store..."
+END
+
+STRINGTABLE 
+BEGIN
     IDM_STORES_SHOWEMPTYVOLUMES "Show &unmounted volumes"
     IDM_STORES_REPAIRCORRUPTEDINDEX "Run maintenance"
 END
@@ -1083,15 +1092,6 @@ END
 STRINGTABLE 
 BEGIN
     IDM_ITEM_OPEN           "Opens the selected item.\nOpen"
-END
-
-STRINGTABLE 
-BEGIN
-    IDM_STORE_MAKEDEFAULT   "Makes the selected store the default store.\nMake default store"
-    IDM_STORE_IMPORTFOLDER  "Imports a folder and all its subfolders into the selected store.\nImport folder..."
-    IDM_STORE_RENAME        "Renames the selected store.\nRename"
-    IDM_STORE_DELETE        "Deletes the selected store.\nDelete"
-    IDM_STORE_PROPERTIES    "Displays the properties of the selected store.\nProperties"
 END
 
 STRINGTABLE 
@@ -1283,6 +1283,36 @@ BEGIN
             MENUITEM "&Sumario...",                 IDM_INSPECTOR_EXPORTSUMMARY
             MENUITEM "Completar &metadata...",      IDM_INSPECTOR_EXPORTMETADATA
         END
+    END
+END
+
+IDM_FILE MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM SEPARATOR
+        MENUITEM "&Eliminar",                   IDM_FILE_DELETE
+        MENUITEM "&Renombrar",                  IDM_FILE_RENAME
+    END
+END
+
+IDM_FILE_TRASH MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM SEPARATOR
+        MENUITEM "&Eliminar",                   IDM_FILE_DELETE
+        MENUITEM "Re&store",                    IDM_FILE_RESTORE
+    END
+END
+
+IDM_TRASH MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM SEPARATOR
+        MENUITEM "&Restore all",                IDM_TRASH_RESTOREALL
+        MENUITEM "&Empty trash",                IDM_TRASH_EMPTY
     END
 END
 
@@ -1668,6 +1698,36 @@ BEGIN
             MENUITEM "&Zusammenfassung...",         IDM_INSPECTOR_EXPORTSUMMARY
             MENUITEM "Alle &Metadaten...",          IDM_INSPECTOR_EXPORTMETADATA
         END
+    END
+END
+
+IDM_FILE MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM SEPARATOR
+        MENUITEM "&Effacer",                    IDM_FILE_DELETE
+        MENUITEM "&Renommer",                   IDM_FILE_RENAME
+    END
+END
+
+IDM_TRASH MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM SEPARATOR
+        MENUITEM "Alle &wiederherstellen",      IDM_TRASH_RESTOREALL
+        MENUITEM "&Papierkorb leeren",          IDM_TRASH_EMPTY
+    END
+END
+
+IDM_FILE_TRASH MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM SEPARATOR
+        MENUITEM "&Effacer",                    IDM_FILE_DELETE
+        MENUITEM "&Wiederherstellen",           IDM_FILE_RESTORE
     END
 END
 
