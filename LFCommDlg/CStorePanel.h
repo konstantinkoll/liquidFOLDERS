@@ -18,6 +18,7 @@ public:
 	virtual void PreSubclassWindow();
 
 	void SetStore(CHAR* Key);
+	BOOL IsValidStore();
 
 protected:
 	LFApplication* p_App;

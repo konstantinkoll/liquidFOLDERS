@@ -180,8 +180,8 @@ BOOL LFItemTemplateDlg::OnInitDialog()
 	}
 
 	// Store
-	m_wndStorePanel.SetStore(m_StoreID);
 	GetDlgItem(IDC_CHOOSESTORE)->EnableWindow(m_AllowChooseStore);
+	OnStoresChanged(NULL, NULL);
 
 	// Inspector
 	m_wndInspectorGrid.GetWindowRect(&rectInspector);
@@ -207,8 +207,8 @@ void LFItemTemplateDlg::OnChooseStore()
 	if (dlg.DoModal()==IDOK)
 	{
 		strcpy_s(m_StoreID, LFKeySize, dlg.m_StoreID);
-		m_wndStorePanel.SetStore(m_StoreID);
 		m_wndInspectorGrid.SetStore(m_StoreID);
+		OnStoresChanged(NULL, NULL);
 	}
 }
 
@@ -235,6 +235,8 @@ void LFItemTemplateDlg::OnSkip()
 LRESULT LFItemTemplateDlg::OnStoresChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)
 {
 	m_wndStorePanel.SetStore(m_StoreID);
+	GetDlgItem(IDOK)->EnableWindow(m_wndStorePanel.IsValidStore());
+	GetDlgItem(IDC_SKIP)->EnableWindow(m_wndStorePanel.IsValidStore());
 
 	return NULL;
 }

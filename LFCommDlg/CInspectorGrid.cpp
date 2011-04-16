@@ -1151,7 +1151,11 @@ void CInspectorGrid::EditProperty(UINT Attr)
 				p_Edit->SetLimitText(p_App->m_Attributes[Attr]->cCharacters);
 			p_Edit->SetFont(&m_BoldFont);
 			p_Edit->SetFocus();
+			return;
 		}
+
+	if (pProp->pProperty->HasButton())
+		pProp->pProperty->OnClickButton();
 }
 
 void CInspectorGrid::DestroyEdit(BOOL Accept)

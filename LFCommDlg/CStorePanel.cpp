@@ -109,6 +109,11 @@ void CStorePanel::SetStore(CHAR* Key)
 	Invalidate();
 }
 
+BOOL CStorePanel::IsValidStore()
+{
+	return p_Item!=NULL;
+}
+
 
 BEGIN_MESSAGE_MAP(CStorePanel, CWnd)
 	ON_WM_ERASEBKGND()
