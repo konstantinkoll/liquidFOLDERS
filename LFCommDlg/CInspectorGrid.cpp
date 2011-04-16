@@ -449,7 +449,14 @@ void CInspectorPropertyTime::OnClickButton()
 {
 	ASSERT(p_Parent);
 
-	p_Parent->MessageBox(_T("Coming soon!"));
+	LFEditTimeDlg dlg(p_Parent, p_Data->Attr);
+
+	if (dlg.DoModal()==IDOK)
+	{
+	//	p_Data->GeoCoordinates = dlg.m_Location;
+		//p_Data->IsNull = false;
+		//p_Parent->NotifyOwner((SHORT)p_Data->Attr);
+	}
 }
 
 

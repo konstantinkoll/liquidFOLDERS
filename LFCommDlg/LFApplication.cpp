@@ -270,7 +270,7 @@ BOOL LFApplication::InitInstance()
 	InitCtrls.dwSize = sizeof(InitCtrls);
 	// Legen Sie dies fest, um alle allgemeinen Steuerelementklassen einzubeziehen,
 	// die Sie in Ihrer Anwendung verwenden möchten.
-	InitCtrls.dwICC = ICC_WIN95_CLASSES;
+	InitCtrls.dwICC = ICC_WIN95_CLASSES | ICC_DATE_CLASSES;
 	InitCommonControlsEx(&InitCtrls);
 
 	CWinAppEx::InitInstance();

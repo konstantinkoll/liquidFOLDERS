@@ -163,15 +163,21 @@
 #define IDC_DELETESOURCE                22103
 #define IDD_CREATENEWSTORE              22200
 #define IDD_REGISTRY                    22300
+#define IDD_EDITTIME                    22400
+#define IDC_GROUPBOX1                   22401
+#define IDC_GROUPBOX2                   22402
+#define IDC_CALENDAR                    22403
+#define IDC_USETIME                     22404
+#define IDC_TIME                        22405
 #define IDI_SHIELD_VISTA                32519
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        2008
+#define _APS_NEXT_RESOURCE_VALUE        2009
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         2027
+#define _APS_NEXT_CONTROL_VALUE         2031
 #define _APS_NEXT_SYMED_VALUE           2007
 #endif
 #endif
