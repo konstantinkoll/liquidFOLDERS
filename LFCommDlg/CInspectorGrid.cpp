@@ -579,7 +579,7 @@ BOOL CInspectorGrid::Create(CWnd* pParentWnd, UINT nID, CInspectorHeader* pHeade
 
 void CInspectorGrid::PreSubclassWindow()
 {
-	CWnd::PreSubclassWindow();
+	CPropertyHolder::PreSubclassWindow();
 
 	_AFX_THREAD_STATE* pThreadState = AfxGetThreadState();
 	if (!pThreadState->m_pWndInit)
@@ -656,7 +656,7 @@ BOOL CInspectorGrid::PreTranslateMessage(MSG* pMsg)
 		break;
 	}
 
-	return CWnd::PreTranslateMessage(pMsg);
+	return CPropertyHolder::PreTranslateMessage(pMsg);
 }
 
 void CInspectorGrid::AddProperty(CProperty* pProperty, UINT Category, WCHAR* Name, BOOL Editable)
@@ -1186,7 +1186,7 @@ void CInspectorGrid::DestroyEdit(BOOL Accept)
 }
 
 
-BEGIN_MESSAGE_MAP(CInspectorGrid, CWnd)
+BEGIN_MESSAGE_MAP(CInspectorGrid, CPropertyHolder)
 	ON_WM_CREATE()
 	ON_WM_DESTROY()
 	ON_WM_THEMECHANGED()
@@ -1212,7 +1212,7 @@ END_MESSAGE_MAP()
 
 INT CInspectorGrid::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
-	if (CWnd::OnCreate(lpCreateStruct)==-1)
+	if (CPropertyHolder::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
 	Init();
@@ -1222,7 +1222,7 @@ INT CInspectorGrid::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 void CInspectorGrid::OnDestroy()
 {
-	CWnd::OnDestroy();
+	CPropertyHolder::OnDestroy();
 
 	if (hThemeButton)
 		p_App->zCloseThemeData(hThemeButton);
@@ -1408,7 +1408,7 @@ void CInspectorGrid::OnPaint()
 
 void CInspectorGrid::OnSize(UINT nType, INT cx, INT cy)
 {
-	CWnd::OnSize(nType, cx, cy);
+	CPropertyHolder::OnSize(nType, cx, cy);
 	AdjustLayout();
 
 	if (p_Edit)
@@ -1484,7 +1484,7 @@ void CInspectorGrid::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 		}
 	}
 
-	CWnd::OnVScroll(nSBCode, nPos, pScrollBar);
+	CPropertyHolder::OnVScroll(nSBCode, nPos, pScrollBar);
 }
 
 void CInspectorGrid::OnMouseMove(UINT nFlags, CPoint point)
@@ -1698,7 +1698,7 @@ void CInspectorGrid::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 				if (m_Properties.m_Items[m_SelectedItem].pProperty->OnPushChar(nChar))
 					break;
 
-		CWnd::OnKeyDown(nChar, nRepCnt, nFlags);
+		CPropertyHolder::OnKeyDown(nChar, nRepCnt, nFlags);
 	}
 }
 
