@@ -55,11 +55,12 @@ BOOL LFEditTimeDlg::OnInitDialog()
 	CRect rect;
 	m_wndCalendar.GetMinReqRect(&rect);
 
+
 	CRect rectCalendar;
 	m_wndCalendar.GetWindowRect(&rectCalendar);
 
-	INT GrowX = rect.Width()-rectCalendar.Width();
-	INT GrowY = rect.Height()-rectCalendar.Height();
+	INT GrowX = rect.Width()-rectCalendar.Width()+4;
+	INT GrowY = rect.Height()-rectCalendar.Height()+4;
 
 #define Grow(pWnd) { pWnd->GetWindowRect(&rect); ScreenToClient(rect); pWnd->SetWindowPos(NULL, 0, 0, rect.Width()+GrowX, rect.Height()+GrowY, SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOMOVE); }
 #define GXMY(pWnd) { pWnd->GetWindowRect(&rect); ScreenToClient(rect); pWnd->SetWindowPos(NULL, rect.left, rect.top+GrowY, rect.Width()+GrowX, rect.Height(), SWP_NOZORDER | SWP_NOACTIVATE); }
