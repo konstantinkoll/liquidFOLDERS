@@ -120,7 +120,7 @@ LFCore_API void LFTimeToString(const FILETIME t, wchar_t* str, size_t cCount, un
 			GetDateFormat(LOCALE_USER_DEFAULT, DATE_SHORTDATE, &stLocal, NULL, str, (int)cCount);
 
 		if (mask & 2)
-			if ((stLocal.wHour) && (stLocal.wMinute) && (stLocal.wSecond) && (stLocal.wMilliseconds))
+			if ((stLocal.wHour) || (stLocal.wMinute) || (stLocal.wSecond))
 			{
 				if (mask & 1)
 					wcscat_s(str, cCount, L", ");
