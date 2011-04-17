@@ -16,13 +16,13 @@
 class AFX_EXT_CLASS LFEditTimeDlg : public CDialog
 {
 public:
-	LFEditTimeDlg(CWnd* pParentWnd, UINT Attr);
+	LFEditTimeDlg(CWnd* pParentWnd, LFVariantData* pData);
 
 	virtual void DoDataExchange(CDataExchange* pDX);
 
 protected:
 	LFApplication* p_App;
-	UINT m_Attr;
+	LFVariantData* p_Data;
 
 	afx_msg BOOL OnInitDialog();
 	DECLARE_MESSAGE_MAP()

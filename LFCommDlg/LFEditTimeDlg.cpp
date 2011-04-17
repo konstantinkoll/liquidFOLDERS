@@ -12,11 +12,13 @@
 
 extern AFX_EXTENSION_MODULE LFCommDlgDLL;
 
-LFEditTimeDlg::LFEditTimeDlg(CWnd* pParentWnd, UINT Attr)
+LFEditTimeDlg::LFEditTimeDlg(CWnd* pParentWnd, LFVariantData* pData)
 	: CDialog(IDD_EDITTIME, pParentWnd)
 {
+	ASSERT(pData);
+
 	p_App = (LFApplication*)AfxGetApp();
-	m_Attr = Attr;
+	p_Data = pData;
 }
 
 void LFEditTimeDlg::DoDataExchange(CDataExchange* pDX)
@@ -36,11 +38,11 @@ BOOL LFEditTimeDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
-	SetWindowText(p_App->m_Attributes[m_Attr]->Name);
+	SetWindowText(p_App->m_Attributes[p_Data->Attr]->Name);
 
 	// Symbol für dieses Dialogfeld festlegen. Wird automatisch erledigt
 	// wenn das Hauptfenster der Anwendung kein Dialogfeld ist
-	INT idx = GetAttributeIconIndex(m_Attr);
+	INT idx = GetAttributeIconIndex(p_Data->Attr);
 	if (idx!=-1)
 	{
 		CImageListTransparent AttributeIcons;
@@ -54,7 +56,6 @@ BOOL LFEditTimeDlg::OnInitDialog()
 	// Größe
 	CRect rect;
 	m_wndCalendar.GetMinReqRect(&rect);
-
 
 	CRect rectCalendar;
 	m_wndCalendar.GetWindowRect(&rectCalendar);

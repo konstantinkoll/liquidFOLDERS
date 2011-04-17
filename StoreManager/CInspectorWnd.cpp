@@ -449,7 +449,7 @@ INT CInspectorWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndInspectorGrid.SetAlphabeticMode(m_SortAlphabetic);
 	m_wndInspectorGrid.AddAttributes(m_AttributeValues);
 	for (UINT a=LFAttributeCount; a<AttrCount; a++)
-		m_wndInspectorGrid.AddProperty(new CInspectorProperty(&m_AttributeValues[a]), LFAttrCategoryInternal, m_AttributeVirtualNames[a-LFAttributeCount].GetBuffer());
+		m_wndInspectorGrid.AddProperty(new CProperty(&m_AttributeValues[a]), LFAttrCategoryInternal, m_AttributeVirtualNames[a-LFAttributeCount].GetBuffer());
 
 	return 0;
 }

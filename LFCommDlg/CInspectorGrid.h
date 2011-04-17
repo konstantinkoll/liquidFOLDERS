@@ -9,17 +9,48 @@
 #include "LFTooltip.h"
 
 
-// CInspectorProperty
+// CPropertyHolder
 //
 
-class AFX_EXT_CLASS CInspectorGrid;
+#define WM_PROPERTYCHANGED     WM_USER+10
 
-class AFX_EXT_CLASS CInspectorProperty
+class AFX_EXT_CLASS CPropertyHolder : public CWnd
+{
+friend class CProperty;
+friend class CPropertyTags;
+friend class CPropertyRating;
+friend class CPropertyIATA;
+friend class CPropertyGPS;
+friend class CPropertyTime;
+
+public:
+	CPropertyHolder();
+
+	void SetStore(CHAR* StoreID);
+
+protected:
+	virtual void NotifyOwner(SHORT Attr1, SHORT Attr2=-1, SHORT Attr3=-1)=NULL;
+
+	void CreateFonts();
+
+	LFApplication* p_App;
+	CString m_MultipleValues;
+	CFont m_BoldFont;
+	CFont m_ItalicFont;
+	BOOL m_StoreIDValid;
+	CHAR m_StoreID[LFKeySize];
+};
+
+
+// CProperty
+//
+
+class AFX_EXT_CLASS CProperty
 {
 friend class CInspectorGrid;
 
 public:
-	CInspectorProperty(LFVariantData* pData);
+	CProperty(LFVariantData* pData);
 
 	virtual void ToString(WCHAR* tmpStr, INT nCount);
 	virtual void DrawValue(CDC& dc, CRect rect);
@@ -32,39 +63,39 @@ public:
 	virtual void OnClickButton();
 	virtual BOOL OnPushChar(UINT nChar);
 
-	void SetParent(CInspectorGrid* pParent);
+	void SetParent(CPropertyHolder* pParent);
 	void SetMultiple(BOOL Multiple);
 	void ResetModified();
 	LFVariantData* GetData();
 
 protected:
-	CInspectorGrid* p_Parent;
+	CPropertyHolder* p_Parent;
 	LFVariantData* p_Data;
 	BOOL m_Modified;
 	BOOL m_Multiple;
 };
 
 
-// CInspectorPropertyTags
+// CPropertyTags
 //
 
-class AFX_EXT_CLASS CInspectorPropertyTags : public CInspectorProperty
+class AFX_EXT_CLASS CPropertyTags : public CProperty
 {
 public:
-	CInspectorPropertyTags(LFVariantData* pData);
+	CPropertyTags(LFVariantData* pData);
 
 	virtual BOOL HasButton();
 	virtual void OnClickButton();
 };
 
 
-// CInspectorPropertyRating
+// CPropertyRating
 //
 
-class AFX_EXT_CLASS CInspectorPropertyRating : public CInspectorProperty
+class AFX_EXT_CLASS CPropertyRating : public CProperty
 {
 public:
-	CInspectorPropertyRating(LFVariantData* pData);
+	CPropertyRating(LFVariantData* pData);
 
 	virtual void DrawValue(CDC& dc, CRect rect);
 	virtual HCURSOR SetCursor(INT x);
@@ -74,13 +105,13 @@ public:
 };
 
 
-// CInspectorPropertyIATA
+// CPropertyIATA
 //
 
-class AFX_EXT_CLASS CInspectorPropertyIATA : public CInspectorProperty
+class AFX_EXT_CLASS CPropertyIATA : public CProperty
 {
 public:
-	CInspectorPropertyIATA(LFVariantData* pData, LFVariantData* pLocationName, LFVariantData* pLocationGPS);
+	CPropertyIATA(LFVariantData* pData, LFVariantData* pLocationName, LFVariantData* pLocationGPS);
 
 	virtual CString GetValidChars();
 	virtual BOOL HasButton();
@@ -93,13 +124,13 @@ protected:
 };
 
 
-// CInspectorPropertyGPS
+// CPropertyGPS
 //
 
-class AFX_EXT_CLASS CInspectorPropertyGPS : public CInspectorProperty
+class AFX_EXT_CLASS CPropertyGPS : public CProperty
 {
 public:
-	CInspectorPropertyGPS(LFVariantData* pData);
+	CPropertyGPS(LFVariantData* pData);
 
 	virtual BOOL HasButton();
 	virtual HCURSOR SetCursor(INT x);
@@ -108,13 +139,13 @@ public:
 };
 
 
-// CInspectorPropertyTime
+// CPropertyTime
 //
 
-class AFX_EXT_CLASS CInspectorPropertyTime : public CInspectorProperty
+class AFX_EXT_CLASS CPropertyTime : public CProperty
 {
 public:
-	CInspectorPropertyTime(LFVariantData* pData);
+	CPropertyTime(LFVariantData* pData);
 
 	virtual BOOL HasButton();
 	virtual HCURSOR SetCursor(INT x);
@@ -137,11 +168,9 @@ public:
 // CInspectorGrid
 //
 
-#define WM_PROPERTYCHANGED     WM_USER+10
-
 struct Property
 {
-	CInspectorProperty* pProperty;
+	CProperty* pProperty;
 	LFVariantData* pData;
 	UINT Category;
 	WCHAR Name[256];
@@ -158,15 +187,8 @@ struct PropertyCategory
 	INT Bottom;
 };
 
-class AFX_EXT_CLASS CInspectorGrid : public CWnd
+class AFX_EXT_CLASS CInspectorGrid : public CPropertyHolder
 {
-friend class CInspectorProperty;
-friend class CInspectorPropertyTags;
-friend class CInspectorPropertyRating;
-friend class CInspectorPropertyIATA;
-friend class CInspectorPropertyGPS;
-friend class CInspectorPropertyTime;
-
 public:
 	CInspectorGrid();
 	~CInspectorGrid();
@@ -176,20 +198,17 @@ public:
 	virtual void AdjustLayout();
 
 	BOOL Create(CWnd* pParentWnd, UINT nID, CInspectorHeader* pHeader=NULL);
-	void AddProperty(CInspectorProperty* pProperty, UINT Category, WCHAR* Name, BOOL Editable=FALSE);
+	void AddProperty(CProperty* pProperty, UINT Category, WCHAR* Name, BOOL Editable=FALSE);
 	void AddAttributes(LFVariantData* pData);
 	void ShowHeader(BOOL ShowHeader);
 	void SetAlphabeticMode(BOOL SortAlphabetic);
 	void UpdatePropertyState(UINT nID, BOOL Multiple, BOOL Editable, BOOL Visible);
-	void SetStore(CHAR* StoreID);
 	CString GetName(UINT nID);
 	CString GetValue(UINT nID);
 
 protected:
-	LFApplication* p_App;
 	DynArray<Property> m_Properties;
 	PropertyCategory m_Categories[LFAttrCategoryCount];
-	CHAR m_StoreID[LFKeySize];
 	HTHEME hThemeButton;
 	HTHEME hThemeList;
 	HICON hIconResetNormal;
@@ -197,14 +216,10 @@ protected:
 	LFTooltip m_TooltipCtrl;
 	CInspectorHeader* m_pHeader;
 	CMFCMaskedEdit* p_Edit;
-	CString m_MultipleValues;
-	CFont m_BoldFont;
-	CFont m_ItalicFont;
 	INT m_FontHeight[2];
 	INT m_RowHeight;
 	INT m_LabelWidth;
 	INT m_IconSize;
-	BOOL m_StoreIDValid;
 	BOOL m_ShowHeader;
 	BOOL m_SortAlphabetic;
 	BOOL m_Hover;
@@ -218,6 +233,7 @@ protected:
 	INT m_EditItem;
 
 	virtual void Init();
+	virtual void NotifyOwner(SHORT Attr1, SHORT Attr2=-1, SHORT Attr3=-1);
 
 	RECT GetItemRect(INT Item);
 	INT HitTest(CPoint point, UINT* PartID=NULL);
@@ -228,7 +244,6 @@ protected:
 	void AdjustScrollbars();
 	void MakeSortArrayDirty();
 	void DrawCategory(CDC& dc, CRect& rectCategory, WCHAR* Text);
-	void NotifyOwner(SHORT Attr1, SHORT Attr2=-1, SHORT Attr3=-1);
 	void ResetProperty(UINT Attr);
 	void EditProperty(UINT Attr);
 	void DestroyEdit(BOOL Accept=FALSE);
@@ -260,7 +275,6 @@ private:
 	INT* m_pSortArray;
 	CImageListTransparent m_AttributeIcons;
 
-	void CreateFonts();
 	INT Compare(INT eins, INT zwei);
 	void Heap(INT wurzel, INT anz);
 	void CreateSortArray();

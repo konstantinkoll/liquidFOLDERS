@@ -7,10 +7,49 @@
 #include "resource.h"
 
 
-// CInspectorProperty
+// CPropertyHolder
 //
 
-CInspectorProperty::CInspectorProperty(LFVariantData* pData)
+CPropertyHolder::CPropertyHolder()
+	: CWnd()
+{
+	p_App = (LFApplication*)AfxGetApp();
+	m_StoreIDValid = FALSE;
+
+	ENSURE(m_MultipleValues.LoadString(IDS_MULTIPLEVALUES));
+}
+
+void CPropertyHolder::SetStore(CHAR* StoreID)
+{
+	m_StoreIDValid = (StoreID!=NULL);
+	strcpy_s(m_StoreID, LFKeySize, m_StoreIDValid ? StoreID : "");
+}
+
+void CPropertyHolder::CreateFonts()
+{
+	if (m_BoldFont.GetSafeHandle())
+		m_BoldFont.DeleteObject();
+	if (m_ItalicFont.GetSafeHandle())
+		m_ItalicFont.DeleteObject();
+
+	CFont* pFont = CFont::FromHandle((HFONT)GetStockObject(DEFAULT_GUI_FONT));
+	ASSERT_VALID(pFont);
+
+	LOGFONT lf;
+	pFont->GetLogFont(&lf);
+	lf.lfWeight = FW_BOLD;
+	m_BoldFont.CreateFontIndirect(&lf);
+
+	pFont->GetLogFont(&lf);
+	lf.lfItalic = TRUE;
+	m_ItalicFont.CreateFontIndirect(&lf);
+}
+
+
+// CProperty
+//
+
+CProperty::CProperty(LFVariantData* pData)
 {
 	ASSERT(pData);
 
@@ -19,7 +58,7 @@ CInspectorProperty::CInspectorProperty(LFVariantData* pData)
 	m_Modified = m_Multiple = FALSE;
 }
 
-void CInspectorProperty::ToString(WCHAR* tmpStr, INT nCount)
+void CProperty::ToString(WCHAR* tmpStr, INT nCount)
 {
 	ASSERT(p_Parent);
 
@@ -33,7 +72,7 @@ void CInspectorProperty::ToString(WCHAR* tmpStr, INT nCount)
 	}
 }
 
-void CInspectorProperty::DrawValue(CDC& dc, CRect rect)
+void CProperty::DrawValue(CDC& dc, CRect rect)
 {
 	ASSERT(p_Parent);
 
@@ -46,19 +85,19 @@ void CInspectorProperty::DrawValue(CDC& dc, CRect rect)
 		dc.SelectObject(pOldFont);
 }
 
-HCURSOR CInspectorProperty::SetCursor(INT /*x*/)
+HCURSOR CProperty::SetCursor(INT /*x*/)
 {
 	ASSERT(p_Parent);
 
 	return p_Parent->p_App->LoadStandardCursor(IDC_IBEAM);
 }
 
-CString CInspectorProperty::GetValidChars()
+CString CProperty::GetValidChars()
 {
 	return _T("");
 }
 
-void CInspectorProperty::OnSetString(CString Value)
+void CProperty::OnSetString(CString Value)
 {
 	Value.Trim();
 	if (p_Data->Attr==LFAttrLanguage)
@@ -89,65 +128,65 @@ void CInspectorProperty::OnSetString(CString Value)
 	}
 }
 
-BOOL CInspectorProperty::OnClickValue(INT /*x*/)
+BOOL CProperty::OnClickValue(INT /*x*/)
 {
 	return TRUE;
 }
 
-void CInspectorProperty::OnClickButton()
+void CProperty::OnClickButton()
 {
 }
 
-BOOL CInspectorProperty::CanDelete()
+BOOL CProperty::CanDelete()
 {
 	return (p_Data->Attr!=LFAttrFileName) && (!LFIsNullVariantData(p_Data));
 }
 
-BOOL CInspectorProperty::HasButton()
+BOOL CProperty::HasButton()
 {
 	return FALSE;
 }
 
-void CInspectorProperty::SetParent(CInspectorGrid* pParent)
+void CProperty::SetParent(CPropertyHolder* pParent)
 {
 	p_Parent = pParent;
 }
 
-void CInspectorProperty::SetMultiple(BOOL Multiple)
+void CProperty::SetMultiple(BOOL Multiple)
 {
 	m_Multiple = Multiple;
 }
 
-void CInspectorProperty::ResetModified()
+void CProperty::ResetModified()
 {
 	m_Modified = FALSE;
 }
 
-LFVariantData* CInspectorProperty::GetData()
+LFVariantData* CProperty::GetData()
 {
 	return p_Data;
 }
 
-BOOL CInspectorProperty::OnPushChar(UINT /*ch*/)
+BOOL CProperty::OnPushChar(UINT /*ch*/)
 {
 	return FALSE;
 }
 
 
-// CInspectorPropertyTags
+// CPropertyTags
 //
 
-CInspectorPropertyTags::CInspectorPropertyTags(LFVariantData* pData)
-	: CInspectorProperty(pData)
+CPropertyTags::CPropertyTags(LFVariantData* pData)
+	: CProperty(pData)
 {
 }
 
-BOOL CInspectorPropertyTags::HasButton()
+BOOL CPropertyTags::HasButton()
 {
 	return TRUE;
 }
 
-void CInspectorPropertyTags::OnClickButton()
+void CPropertyTags::OnClickButton()
 {
 	ASSERT(p_Parent);
 
@@ -162,15 +201,15 @@ void CInspectorPropertyTags::OnClickButton()
 }
 
 
-// CInspectorPropertyRating
+// CPropertyRating
 //
 
-CInspectorPropertyRating::CInspectorPropertyRating(LFVariantData* pData)
-	: CInspectorProperty(pData)
+CPropertyRating::CPropertyRating(LFVariantData* pData)
+	: CProperty(pData)
 {
 }
 
-void CInspectorPropertyRating::DrawValue(CDC& dc, CRect rect)
+void CPropertyRating::DrawValue(CDC& dc, CRect rect)
 {
 	ASSERT(p_Parent);
 
@@ -187,19 +226,19 @@ void CInspectorPropertyRating::DrawValue(CDC& dc, CRect rect)
 	DeleteDC(hdcMem);
 }
 
-HCURSOR CInspectorPropertyRating::SetCursor(INT x)
+HCURSOR CPropertyRating::SetCursor(INT x)
 {
 	ASSERT(p_Parent);
 
 	return p_Parent->p_App->LoadStandardCursor(x<6 ? IDC_HAND : ((x<RatingBitmapWidth+6) && ((x-6)%18<16)) ? IDC_HAND : IDC_ARROW);
 }
 
-BOOL CInspectorPropertyRating::CanDelete()
+BOOL CPropertyRating::CanDelete()
 {
 	return FALSE;
 }
 
-BOOL CInspectorPropertyRating::OnClickValue(INT x)
+BOOL CPropertyRating::OnClickValue(INT x)
 {
 	ASSERT(p_Parent);
 
@@ -219,7 +258,7 @@ BOOL CInspectorPropertyRating::OnClickValue(INT x)
 	return FALSE;
 }
 
-BOOL CInspectorPropertyRating::OnPushChar(UINT nChar)
+BOOL CPropertyRating::OnPushChar(UINT nChar)
 {
 	INT Rating = m_Multiple ? 0 : p_Data->Rating;
 
@@ -261,27 +300,27 @@ BOOL CInspectorPropertyRating::OnPushChar(UINT nChar)
 }
 
 
-// CInspectorPropertyIATA
+// CPropertyIATA
 //
 
-CInspectorPropertyIATA::CInspectorPropertyIATA(LFVariantData* pData, LFVariantData* pLocationName, LFVariantData* pLocationGPS)
-	: CInspectorProperty(pData)
+CPropertyIATA::CPropertyIATA(LFVariantData* pData, LFVariantData* pLocationName, LFVariantData* pLocationGPS)
+	: CProperty(pData)
 {
 	p_LocationName = pLocationName;
 	p_LocationGPS = pLocationGPS;
 }
 
-CString CInspectorPropertyIATA::GetValidChars()
+CString CPropertyIATA::GetValidChars()
 {
 	return _T("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz");
 }
 
-BOOL CInspectorPropertyIATA::HasButton()
+BOOL CPropertyIATA::HasButton()
 {
 	return TRUE;
 }
 
-void CInspectorPropertyIATA::OnSetString(CString Value)
+void CPropertyIATA::OnSetString(CString Value)
 {
 	LFAirport* pAirportOld = NULL;
 	if (!m_Multiple)
@@ -342,7 +381,7 @@ void CInspectorPropertyIATA::OnSetString(CString Value)
 	p_Parent->NotifyOwner((SHORT)p_Data->Attr, Attr2, Attr3);
 }
 
-void CInspectorPropertyIATA::OnClickButton()
+void CPropertyIATA::OnClickButton()
 {
 	ASSERT(p_Parent);
 
@@ -378,32 +417,32 @@ void CInspectorPropertyIATA::OnClickButton()
 }
 
 
-// CInspectorPropertyGPS
+// CPropertyGPS
 //
 
-CInspectorPropertyGPS::CInspectorPropertyGPS(LFVariantData* pData)
-	: CInspectorProperty(pData)
+CPropertyGPS::CPropertyGPS(LFVariantData* pData)
+	: CProperty(pData)
 {
 }
 
-HCURSOR CInspectorPropertyGPS::SetCursor(INT /*x*/)
+HCURSOR CPropertyGPS::SetCursor(INT /*x*/)
 {
 	ASSERT(p_Parent);
 
 	return p_Parent->p_App->LoadStandardCursor(IDC_ARROW);
 }
 
-BOOL CInspectorPropertyGPS::HasButton()
+BOOL CPropertyGPS::HasButton()
 {
 	return TRUE;
 }
 
-BOOL CInspectorPropertyGPS::OnClickValue(INT /*x*/)
+BOOL CPropertyGPS::OnClickValue(INT /*x*/)
 {
 	return FALSE;
 }
 
-void CInspectorPropertyGPS::OnClickButton()
+void CPropertyGPS::OnClickButton()
 {
 	ASSERT(p_Parent);
 
@@ -420,43 +459,39 @@ void CInspectorPropertyGPS::OnClickButton()
 
 
 
-// CInspectorPropertyTime
+// CPropertyTime
 //
 
-CInspectorPropertyTime::CInspectorPropertyTime(LFVariantData* pData)
-	: CInspectorProperty(pData)
+CPropertyTime::CPropertyTime(LFVariantData* pData)
+	: CProperty(pData)
 {
 }
 
-HCURSOR CInspectorPropertyTime::SetCursor(INT /*x*/)
+HCURSOR CPropertyTime::SetCursor(INT /*x*/)
 {
 	ASSERT(p_Parent);
 
 	return p_Parent->p_App->LoadStandardCursor(IDC_ARROW);
 }
 
-BOOL CInspectorPropertyTime::HasButton()
+BOOL CPropertyTime::HasButton()
 {
 	return TRUE;
 }
 
-BOOL CInspectorPropertyTime::OnClickValue(INT /*x*/)
+BOOL CPropertyTime::OnClickValue(INT /*x*/)
 {
 	return FALSE;
 }
 
-void CInspectorPropertyTime::OnClickButton()
+void CPropertyTime::OnClickButton()
 {
 	ASSERT(p_Parent);
 
-	LFEditTimeDlg dlg(p_Parent, p_Data->Attr);
+	LFEditTimeDlg dlg(p_Parent, p_Data);
 
 	if (dlg.DoModal()==IDOK)
-	{
-	//	p_Data->GeoCoordinates = dlg.m_Location;
-		//p_Data->IsNull = false;
-		//p_Parent->NotifyOwner((SHORT)p_Data->Attr);
-	}
+		p_Parent->NotifyOwner((SHORT)p_Data->Attr);
 }
 
 
@@ -489,7 +524,7 @@ extern INT GetAttributeIconIndex(UINT Attr);
 #define PARTRESET      4
 
 CInspectorGrid::CInspectorGrid()
-	: CWnd()
+	: CPropertyHolder()
 {
 	WNDCLASS wndcls;
 	HINSTANCE hInst = LFCommDlgDLL.hModule;
@@ -510,8 +545,7 @@ CInspectorGrid::CInspectorGrid()
 			AfxThrowResourceException();
 	}
 
-	p_App = (LFApplication*)AfxGetApp();
-	m_StoreIDValid = m_ShowHeader = m_SortAlphabetic = m_Hover = m_PartPressed = FALSE;
+	m_ShowHeader = m_SortAlphabetic = m_Hover = m_PartPressed = FALSE;
 	m_pSortArray = NULL;
 	m_pHeader = NULL;
 	hThemeList = hThemeButton = NULL;
@@ -520,8 +554,6 @@ CInspectorGrid::CInspectorGrid()
 	m_HotItem = m_SelectedItem = m_EditItem = -1;
 	m_HotPart = NOPART;
 	p_Edit = NULL;
-
-	ENSURE(m_MultipleValues.LoadString(IDS_MULTIPLEVALUES));
 }
 
 CInspectorGrid::~CInspectorGrid()
@@ -586,26 +618,6 @@ void CInspectorGrid::Init()
 	hIconResetHot = (HICON)LoadImage(LFCommDlgDLL.hResource, MAKEINTRESOURCE(IDI_RESET_HOT), IMAGE_ICON, m_IconSize, m_IconSize, LR_DEFAULTCOLOR);
 }
 
-void CInspectorGrid::CreateFonts()
-{
-	if (m_BoldFont.GetSafeHandle())
-		m_BoldFont.DeleteObject();
-	if (m_ItalicFont.GetSafeHandle())
-		m_ItalicFont.DeleteObject();
-
-	CFont* pFont = CFont::FromHandle((HFONT)GetStockObject(DEFAULT_GUI_FONT));
-	ASSERT_VALID(pFont);
-
-	LOGFONT lf;
-	pFont->GetLogFont(&lf);
-	lf.lfWeight = FW_BOLD;
-	m_BoldFont.CreateFontIndirect(&lf);
-
-	pFont->GetLogFont(&lf);
-	lf.lfItalic = TRUE;
-	m_ItalicFont.CreateFontIndirect(&lf);
-}
-
 BOOL CInspectorGrid::PreTranslateMessage(MSG* pMsg)
 {
 	switch (pMsg->message)
@@ -647,7 +659,7 @@ BOOL CInspectorGrid::PreTranslateMessage(MSG* pMsg)
 	return CWnd::PreTranslateMessage(pMsg);
 }
 
-void CInspectorGrid::AddProperty(CInspectorProperty* pProperty, UINT Category, WCHAR* Name, BOOL Editable)
+void CInspectorGrid::AddProperty(CProperty* pProperty, UINT Category, WCHAR* Name, BOOL Editable)
 {
 	pProperty->SetParent(this);
 
@@ -684,27 +696,27 @@ void CInspectorGrid::AddAttributes(LFVariantData* pData)
 	for (UINT a=0; a<LFAttributeCount; a++)
 	{
 		LFAttributeDescriptor* attr = p_App->m_Attributes[a];
-		CInspectorProperty* pProp;
+		CProperty* pProp;
 
 		switch (attr->Type)
 		{
 		case LFTypeUnicodeArray:
-			pProp = (a==LFAttrTags) ? new CInspectorPropertyTags(&pData[a]) : new CInspectorProperty(&pData[a]);
+			pProp = (a==LFAttrTags) ? new CPropertyTags(&pData[a]) : new CProperty(&pData[a]);
 			break;
 		case LFTypeAnsiString:
-			pProp = (a==LFAttrLocationIATA) ? new CInspectorPropertyIATA(&pData[a], &pData[LFAttrLocationName], &pData[LFAttrLocationGPS]) : new CInspectorProperty(&pData[a]);
+			pProp = (a==LFAttrLocationIATA) ? new CPropertyIATA(&pData[a], &pData[LFAttrLocationName], &pData[LFAttrLocationGPS]) : new CProperty(&pData[a]);
 			break;
 		case LFTypeRating:
-			pProp = new CInspectorPropertyRating(&pData[a]);
+			pProp = new CPropertyRating(&pData[a]);
 			break;
 		case LFTypeGeoCoordinates:
-			pProp = new CInspectorPropertyGPS(&pData[a]);
+			pProp = new CPropertyGPS(&pData[a]);
 			break;
 		case LFTypeTime:
-			pProp = new CInspectorPropertyTime(&pData[a]);
+			pProp = new CPropertyTime(&pData[a]);
 			break;
 		default:
-			pProp = new CInspectorProperty(&pData[a]);
+			pProp = new CProperty(&pData[a]);
 		}
 
 		AddProperty(pProp, attr->Category, attr->Name, !attr->ReadOnly);
@@ -740,12 +752,6 @@ void CInspectorGrid::UpdatePropertyState(UINT nID, BOOL Multiple, BOOL Editable,
 	m_Properties.m_Items[nID].Visible = Visible;
 	m_Properties.m_Items[nID].pProperty->SetMultiple(Multiple);
 	m_Properties.m_Items[nID].pProperty->ResetModified();
-}
-
-void CInspectorGrid::SetStore(CHAR* StoreID)
-{
-	m_StoreIDValid = (StoreID!=NULL);
-	strcpy_s(m_StoreID, LFKeySize, m_StoreIDValid ? StoreID : "");
 }
 
 CString CInspectorGrid::GetName(UINT nID)
@@ -1597,7 +1603,7 @@ void CInspectorGrid::OnLButtonDown(UINT /*nFlags*/, CPoint point)
 	SetFocus();
 
 	UINT Part;
-	INT Item = HitTest(point, & Part);
+	INT Item = HitTest(point, &Part);
 	if (Item!=-1)
 	{
 		SelectItem(Item);
