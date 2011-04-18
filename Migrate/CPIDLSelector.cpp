@@ -142,10 +142,10 @@ void CPIDLDropdownWindow::PopulateList()
 	AddCSIDL(CSIDL_MYPICTURES, 0);										// My pictures
 	AddCSIDL(CSIDL_MYVIDEO, 0);											// My videos
 
-	AddCSIDL(CSIDL_COMMON_DOCUMENTS, 2);							// Common documents
-	AddCSIDL(CSIDL_COMMON_MUSIC, 2);								// Common music
-	AddCSIDL(CSIDL_COMMON_PICTURES, 2);								// Common pictures
-	AddCSIDL(CSIDL_COMMON_VIDEO, 2);								// Common videos
+	AddCSIDL(CSIDL_COMMON_DOCUMENTS, 2);								// Common documents
+	AddCSIDL(CSIDL_COMMON_MUSIC, 2);									// Common music
+	AddCSIDL(CSIDL_COMMON_PICTURES, 2);									// Common pictures
+	AddCSIDL(CSIDL_COMMON_VIDEO, 2);									// Common videos
 
 	switch (((LFApplication*)AfxGetApp())->OSVersion)
 	{
@@ -210,6 +210,8 @@ INT CPIDLDropdownWindow::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	ReleaseDC(dc);
 
 	PopulateList();
+	m_wndList.SetItemState(0, LVIS_FOCUSED | LVIS_SELECTED, LVIS_FOCUSED | LVIS_SELECTED);
+
 	return 0;
 }
 
@@ -260,10 +262,10 @@ CPIDLSelector::~CPIDLSelector()
 		theApp.GetShellManager()->FreeItem(pidl);
 }
 
-void CPIDLSelector::CreateDropdownWindow()
+void CPIDLSelector::CreateDropdownWindow(CRect rectDrop)
 {
 	p_DropWindow = new CPIDLDropdownWindow();
-	p_DropWindow->Create(this, IDD_CHOOSEFOLDER);
+	p_DropWindow->Create(this, rectDrop, IDD_CHOOSEFOLDER);
 }
 
 void CPIDLSelector::SetEmpty(BOOL Repaint)

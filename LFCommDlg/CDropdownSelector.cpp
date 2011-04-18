@@ -16,10 +16,10 @@ CDropdownListCtrl::CDropdownListCtrl()
 
 
 BEGIN_MESSAGE_MAP(CDropdownListCtrl, CExplorerList)
-	ON_NOTIFY_REFLECT(NM_CUSTOMDRAW, OnCustomDraw)
+	/*ON_NOTIFY_REFLECT(NM_CUSTOMDRAW, OnCustomDraw)
 	ON_WM_RBUTTONDOWN()
 	ON_WM_LBUTTONDOWN()
-	ON_WM_LBUTTONUP()
+	ON_WM_LBUTTONUP()*/
 END_MESSAGE_MAP()
 
 void CDropdownListCtrl::OnCustomDraw(NMHDR* pNMHDR, LRESULT* pResult)
@@ -106,26 +106,51 @@ CDropdownWindow::CDropdownWindow()
 {
 }
 
-BOOL CDropdownWindow::Create(CWnd* pOwnerWnd, UINT _DialogResID)
+BOOL CDropdownWindow::Create(CWnd* pParentWnd, CRect rectDrop, UINT DialogResID)
 {
-	m_DialogResID = _DialogResID;
+	m_DialogResID = DialogResID;
 
-	CString className = AfxRegisterWndClass(CS_DROPSHADOW | CS_DBLCLKS, AfxGetApp()->LoadStandardCursor(IDC_ARROW));
+	ASSERT(pParentWnd);
+	CWnd* pTopParent = pParentWnd->GetParentOwner();
 
-	BOOL res = CWnd::CreateEx(WS_EX_CONTROLPARENT | WS_EX_TOOLWINDOW | WS_EX_NOACTIVATE, className, _T(""), WS_BORDER | WS_CHILD, 0, 0, 0, 0, GetDesktopWindow()->GetSafeHwnd(), NULL, NULL);
-	SetOwner(pOwnerWnd);
+	if (pTopParent)
+		pTopParent->SetRedraw(FALSE);
+
+	CString className = AfxRegisterWndClass(CS_DBLCLKS | CS_DROPSHADOW, LoadCursor(NULL, IDC_ARROW));
+	BOOL res = CWnd::CreateEx(WS_EX_CONTROLPARENT, className, _T(""), WS_BORDER | WS_VISIBLE | WS_POPUP, rectDrop.left, rectDrop.top, rectDrop.Width(), rectDrop.Height(), pParentWnd->GetSafeHwnd(), NULL);
+	SetOwner(pParentWnd);
+
+	if (pTopParent)
+	{
+		pTopParent->SendMessage(WM_NCACTIVATE, TRUE);
+		pTopParent->SetRedraw(TRUE);
+	}
+
 	return res;
+}
+
+BOOL CDropdownWindow::PreTranslateMessage(MSG* pMsg)
+{
+	if ((pMsg->message==WM_KEYDOWN) && (pMsg->wParam==VK_TAB))
+	{
+		CWnd* pWnd = GetNextDlgTabItem(GetFocus(), GetKeyState(VK_SHIFT)<0);
+		if (pWnd)
+			pWnd->SetFocus();
+		return TRUE;
+	}
+
+	return CWnd::PreTranslateMessage(pMsg);
 }
 
 void CDropdownWindow::AdjustLayout()
 {
-	if (!IsWindow(m_wndList.GetSafeHwnd()))
+	if (!IsWindow(m_wndList))
 		return;
 
 	CRect rect;
 	GetClientRect(rect);
 
-	if (IsWindow(m_wndBottomArea.GetSafeHwnd()))
+	if (IsWindow(m_wndBottomArea))
 	{
 		const UINT BottomHeight = MulDiv(45, LOWORD(GetDialogBaseUnits()), 8);
 		m_wndBottomArea.SetWindowPos(NULL, rect.left, rect.bottom-BottomHeight, rect.Width(), BottomHeight, SWP_NOACTIVATE | SWP_NOZORDER);
@@ -140,6 +165,7 @@ void CDropdownWindow::AdjustLayout()
 BEGIN_MESSAGE_MAP(CDropdownWindow, CWnd)
 	ON_WM_CREATE()
 	ON_WM_SIZE()
+	ON_WM_SETFOCUS()
 END_MESSAGE_MAP()
 
 INT CDropdownWindow::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -147,15 +173,14 @@ INT CDropdownWindow::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CWnd::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
-	const DWORD dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | LVS_SHOWSELALWAYS | LVS_AUTOARRANGE | LVS_SHAREIMAGELISTS | LVS_ALIGNTOP;
+	const DWORD dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE;
 
 	CRect rect;
 	rect.SetRectEmpty();
-	if (m_wndList.Create(dwStyle, rect, this, 1)==-1)
+	if (m_wndList.Create(dwStyle | LVS_AUTOARRANGE | LVS_SHAREIMAGELISTS | LVS_ALIGNTOP, rect, this, 1)==-1)
 		return -1;
 
-	m_wndList.SetExtendedStyle(LVS_EX_DOUBLEBUFFER | LVS_EX_ONECLICKACTIVATE | LVS_EX_JUSTIFYCOLUMNS);
-	m_wndList.SetHotCursor(LoadCursor(NULL, IDC_ARROW));
+	m_wndList.SetExtendedStyle(LVS_EX_DOUBLEBUFFER | LVS_EX_JUSTIFYCOLUMNS);
 	m_wndList.SetFont(&((LFApplication*)AfxGetApp())->m_DefaultFont, FALSE);
 
 	BOOL Themed = IsCtrlThemed();
@@ -164,7 +189,7 @@ INT CDropdownWindow::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndList.SetTextBkColor(Themed ? 0xFFFFFF : GetSysColor(COLOR_WINDOW));
 
 	if (m_DialogResID)
-		if (m_wndBottomArea.Create(this, m_DialogResID, dwStyle, 2)==-1)
+		if (m_wndBottomArea.Create(this, m_DialogResID, CBRS_BOTTOM, 2)==-1)
 			return -1;
 
 	return 0;
@@ -174,6 +199,11 @@ void CDropdownWindow::OnSize(UINT nType, INT cx, INT cy)
 {
 	CWnd::OnSize(nType, cx, cy);
 	AdjustLayout();
+}
+
+void CDropdownWindow::OnSetFocus(CWnd* /*pOldWnd*/)
+{
+	m_wndList.SetFocus();
 }
 
 
@@ -229,10 +259,10 @@ BOOL CDropdownSelector::PreTranslateMessage(MSG* pMsg)
 	return CWnd::PreTranslateMessage(pMsg);
 }
 
-void CDropdownSelector::CreateDropdownWindow()
+void CDropdownSelector::CreateDropdownWindow(CRect rectDrop)
 {
 	p_DropWindow = new CDropdownWindow();
-	p_DropWindow->Create(this, 0);
+	p_DropWindow->Create(this, rectDrop);
 }
 
 void CDropdownSelector::NotifyOwner(UINT NotifyCode)
@@ -645,8 +675,6 @@ LRESULT CDropdownSelector::OnOpenDropdown(WPARAM /*wParam*/, LPARAM /*lParam*/)
 	m_Dropped = TRUE;
 	SetCapture();
 
-	CreateDropdownWindow();
-
 	CRect rectClient;
 	GetClientRect(rectClient);
 	ClientToScreen(rectClient);
@@ -673,8 +701,7 @@ LRESULT CDropdownSelector::OnOpenDropdown(WPARAM /*wParam*/, LPARAM /*lParam*/)
 	if (rectDrop.bottom>rectScreen.bottom)
 		rectDrop.MoveToY(rectClient.top-rectDrop.Height()+1);
 
-	p_DropWindow->SetWindowPos(&wndTopMost, rectDrop.left, rectDrop.top, rectDrop.Width(), rectDrop.Height(), SWP_SHOWWINDOW | SWP_NOACTIVATE);
-	((CGlasWindow*)GetParent())->RegisterPopupWindow(p_DropWindow);
+	CreateDropdownWindow(rectDrop);
 
 	Invalidate();
 	return TRUE;
@@ -686,7 +713,6 @@ LRESULT CDropdownSelector::OnCloseDropdown(WPARAM /*wParam*/, LPARAM /*lParam*/)
 
 	if (p_DropWindow)
 	{
-		((CGlasWindow*)GetParent())->RegisterPopupWindow(NULL);
 		m_Dropped = FALSE;
 
 		p_DropWindow->DestroyWindow();
@@ -707,6 +733,5 @@ void CDropdownSelector::OnSetFocus(CWnd* /*pOldWnd*/)
 
 void CDropdownSelector::OnKillFocus(CWnd* /*pOldWnd*/)
 {
-	if (!OnCloseDropdown())
-		Invalidate();
+	Invalidate();
 }

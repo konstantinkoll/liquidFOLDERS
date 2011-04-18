@@ -23,22 +23,20 @@ public:
 	CGlasWindow();
 
 	virtual LRESULT DefWindowProc(UINT message, WPARAM wParam, LPARAM lParam);
+	virtual BOOL PreTranslateMessage(MSG* pMsg);
 	virtual BOOL OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo);
 	virtual void AdjustLayout();
 	virtual void PostNcDestroy();
 
 	BOOL Create(DWORD dwStyle, LPCTSTR lpszClassName, LPCTSTR lpszWindowName, const RECT& rect, CWnd* pParentWnd=NULL, UINT nID=0);
-	BOOL PreTranslateMessage(MSG* pMsg);
 	void UseGlasBackground(MARGINS Margins);
 	void GetLayoutRect(LPRECT lpRect) const;
 	void DrawFrameBackground(CDC* pDC, CRect rect);
 	UINT GetDesign();
-	CWnd* RegisterPopupWindow(CWnd* pPopupWnd);
 
 	HTHEME hTheme;
 
 protected:
-	CWnd* p_PopupWindow;
 	LFApplication* p_App;
 	BOOL m_IsAeroWindow;
 	BOOL m_Active;
@@ -52,7 +50,6 @@ protected:
 	afx_msg void OnCompositionChanged();
 	afx_msg void OnNcCalcSize(BOOL bCalcValidRects, NCCALCSIZE_PARAMS* lpncsp);
 	afx_msg LRESULT OnNcHitTest(CPoint point);
-	afx_msg void OnActivateApp(BOOL bActive, DWORD dwThreadID);
 	afx_msg void OnActivate(UINT nState, CWnd* pWndOther, BOOL bMinimized);
 	afx_msg void OnSize(UINT nType, INT cx, INT cy);
 	afx_msg void OnGetMinMaxInfo(MINMAXINFO* lpMMI);

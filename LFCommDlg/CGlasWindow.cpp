@@ -13,7 +13,6 @@ CGlasWindow::CGlasWindow()
 	: CWnd()
 {
 	p_App = (LFApplication*)AfxGetApp();
-	p_PopupWindow = NULL;
 	hTheme = NULL;
 	m_Active = TRUE;
 	m_IsAeroWindow = FALSE;
@@ -40,44 +39,6 @@ LRESULT CGlasWindow::DefWindowProc(UINT message, WPARAM wParam, LPARAM lParam)
 
 BOOL CGlasWindow::PreTranslateMessage(MSG* pMsg)
 {
-	if (p_PopupWindow)
-		if ((GetCapture()!=p_PopupWindow->GetOwner()) && (p_PopupWindow->IsWindowVisible()))
-		{
-			
-			CRect rect;
-			p_PopupWindow->GetOwner()->GetClientRect(rect);
-			p_PopupWindow->GetOwner()->ClientToScreen(rect);
-
-			CPoint pt;
-			GetCursorPos(&pt);
-
-			switch (pMsg->message)
-			{
-			case WM_SYSKEYDOWN:
-			case WM_SYSKEYUP:
-			case WM_KEYDOWN:
-			case WM_KEYUP:
-				p_PopupWindow->SendMessage(pMsg->message, pMsg->wParam, pMsg->lParam);
-				break;
-			case WM_LBUTTONDOWN:
-			case WM_RBUTTONDOWN:
-			case WM_MBUTTONDOWN:
-			case WM_LBUTTONUP:
-			case WM_RBUTTONUP:
-			case WM_MBUTTONUP:
-				p_PopupWindow->GetOwner()->SendMessage(WM_CLOSEDROPDOWN);
-				return rect.PtInRect(pt);
-			case WM_NCLBUTTONDOWN:
-			case WM_NCRBUTTONDOWN:
-			case WM_NCMBUTTONDOWN:
-			case WM_NCLBUTTONUP:
-			case WM_NCRBUTTONUP:
-			case WM_NCMBUTTONUP:
-				p_PopupWindow->GetOwner()->SendMessage(WM_CLOSEDROPDOWN);
-				return TRUE;
-			}
-		}
-
 	if ((pMsg->message==WM_KEYDOWN) && (pMsg->wParam==VK_TAB))
 	{
 		CWnd* pWnd = GetNextDlgTabItem(GetFocus(), GetKeyState(VK_SHIFT)<0);
@@ -172,13 +133,6 @@ void CGlasWindow::SetTheme()
 	}
 }
 
-CWnd* CGlasWindow::RegisterPopupWindow(CWnd* pPopupWnd)
-{
-	CWnd* old = p_PopupWindow;
-	p_PopupWindow = pPopupWnd;
-	return old;
-}
-
 
 BEGIN_MESSAGE_MAP(CGlasWindow, CWnd)
 	ON_WM_CREATE()
@@ -189,8 +143,6 @@ BEGIN_MESSAGE_MAP(CGlasWindow, CWnd)
 	ON_WM_DWMCOMPOSITIONCHANGED()
 	ON_WM_NCCALCSIZE()
 	ON_WM_NCHITTEST()
-	ON_WM_ACTIVATEAPP()
-	ON_WM_ENABLE()
 	ON_WM_ACTIVATE()
 	ON_WM_SIZE()
 	ON_WM_GETMINMAXINFO()
@@ -305,14 +257,6 @@ LRESULT CGlasWindow::OnNcHitTest(CPoint point)
 	SHORT LButtonDown = GetAsyncKeyState(VK_LBUTTON);
 	LRESULT uHitTest = CWnd::OnNcHitTest(point);
 	return ((!(GetStyle() & WS_MAXIMIZEBOX)) && (uHitTest>=HTLEFT) && (uHitTest<=HTBOTTOMRIGHT)) ? HTCAPTION : ((uHitTest==HTCLIENT) && (LButtonDown & 0x8000)) ? HTCAPTION : uHitTest;
-}
-
-void CGlasWindow::OnActivateApp(BOOL bActive, DWORD dwThreadID)
-{
-	CWnd::OnActivateApp(bActive, dwThreadID);
-
-	if ((!bActive) && (p_PopupWindow))
-		p_PopupWindow->GetOwner()->SendMessage(WM_CLOSEDROPDOWN);
 }
 
 void CGlasWindow::OnActivate(UINT nState, CWnd* pWndOther, BOOL bMinimized)

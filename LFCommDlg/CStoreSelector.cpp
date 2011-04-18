@@ -54,6 +54,7 @@ INT CStoreDropdownWindow::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndList.SetView(LV_VIEW_TILE);
 
 	SendMessage(MessageIDs->StoresChanged, LFMSGF_IntStores | LFMSGF_ExtHybStores);
+	m_wndList.SetItemState(0, LVIS_FOCUSED | LVIS_SELECTED, LVIS_FOCUSED | LVIS_SELECTED);
 
 	return 0;
 }
@@ -126,10 +127,10 @@ CStoreSelector::~CStoreSelector()
 	LFFreeItemDescriptor(p_Item);
 }
 
-void CStoreSelector::CreateDropdownWindow()
+void CStoreSelector::CreateDropdownWindow(CRect rectDrop)
 {
 	p_DropWindow = new CStoreDropdownWindow();
-	p_DropWindow->Create(this, IDD_CREATENEWSTORE);
+	p_DropWindow->Create(this, rectDrop, IDD_CREATENEWSTORE);
 }
 
 void CStoreSelector::SetEmpty(BOOL Repaint)

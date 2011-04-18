@@ -36,9 +36,10 @@ class AFX_EXT_CLASS CDropdownWindow : public CWnd
 public:
 	CDropdownWindow();
 
+	virtual BOOL PreTranslateMessage(MSG* pMsg);
 	virtual void AdjustLayout();
 
-	BOOL Create(CWnd* pOwnerWnd, UINT _DialogResID=0);
+	BOOL Create(CWnd* pParentWnd, CRect rectDrop, UINT DialogResID=0);
 
 protected:
 	CDropdownListCtrl m_wndList;
@@ -47,6 +48,7 @@ protected:
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnSize(UINT nType, INT cx, INT cy);
+	afx_msg void OnSetFocus(CWnd* pOldWnd);
 	DECLARE_MESSAGE_MAP()
 };
 
@@ -64,7 +66,7 @@ public:
 	CDropdownSelector();
 
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
-	virtual void CreateDropdownWindow();
+	virtual void CreateDropdownWindow(CRect rectDrop);
 	virtual void SetEmpty(BOOL Repaint=TRUE);
 	virtual void GetTooltipData(HICON& hIcon, CSize& Size, CString& Caption, CString& Hint);
 

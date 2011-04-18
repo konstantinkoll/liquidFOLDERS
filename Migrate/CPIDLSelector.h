@@ -37,7 +37,7 @@ public:
 	CPIDLSelector();
 	~CPIDLSelector();
 
-	virtual void CreateDropdownWindow();
+	virtual void CreateDropdownWindow(CRect rectDrop);
 	virtual void SetEmpty(BOOL Repaint=TRUE);
 	virtual void GetTooltipData(HICON& hIcon, CSize& Size, CString& Caption, CString& Hint);
 
