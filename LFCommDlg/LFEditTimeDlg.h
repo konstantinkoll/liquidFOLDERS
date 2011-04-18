@@ -25,9 +25,12 @@ protected:
 	LFVariantData* p_Data;
 
 	afx_msg BOOL OnInitDialog();
+	afx_msg void OnUseTime();
 	DECLARE_MESSAGE_MAP()
 
 private:
 	CMonthCalCtrl m_wndCalendar;
 	CFrameCtrl m_FrameCtrl;
+	CDateTimeCtrl m_wndTime;
+	BOOL m_UseTime;
 };

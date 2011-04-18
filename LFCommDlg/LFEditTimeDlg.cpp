@@ -19,19 +19,46 @@ LFEditTimeDlg::LFEditTimeDlg(CWnd* pParentWnd, LFVariantData* pData)
 
 	p_App = (LFApplication*)AfxGetApp();
 	p_Data = pData;
+	m_UseTime = TRUE;
 }
 
 void LFEditTimeDlg::DoDataExchange(CDataExchange* pDX)
 {
 	DDX_Control(pDX, IDC_CALENDAR, m_wndCalendar);
+	DDX_Control(pDX, IDC_TIME, m_wndTime);
 
 	if (pDX->m_bSaveAndValidate)
 	{
+		ASSERT(p_App->m_Attributes[p_Data->Attr]->Type==LFTypeTime);
+		p_Data->IsNull = false;
+
+		SYSTEMTIME Date;
+		m_wndCalendar.GetCurSel(&Date);
+
+		if (m_UseTime)
+		{
+			SYSTEMTIME Time;
+			m_wndTime.GetTime(&Time);
+
+			Date.wHour = Time.wHour;
+			Date.wMinute = Time.wMinute;
+			Date.wSecond = Time.wSecond;
+			Date.wMilliseconds = 0;
+		}
+		else
+		{
+			Date.wHour = Date.wMinute = Date.wSecond = Date.wMilliseconds = 0;
+		}
+
+		SYSTEMTIME stUTC;
+		TzSpecificLocalTimeToSystemTime(NULL, &Date, &stUTC);
+		SystemTimeToFileTime(&stUTC, &p_Data->Time);
 	}
 }
 
 
 BEGIN_MESSAGE_MAP(LFEditTimeDlg, CDialog)
+	ON_BN_CLICKED(IDC_USETIME, OnUseTime)
 END_MESSAGE_MAP()
 
 BOOL LFEditTimeDlg::OnInitDialog()
@@ -76,6 +103,22 @@ BOOL LFEditTimeDlg::OnInitDialog()
 	Move(GetDlgItem(IDOK));
 	Move(GetDlgItem(IDCANCEL));
 
+	// Werte
+	if (!p_Data->IsNull)
+		if ((p_Data->Time.dwHighDateTime) || (p_Data->Time.dwLowDateTime))
+		{
+			SYSTEMTIME stUTC;
+			SYSTEMTIME stLocal;
+			FileTimeToSystemTime(&p_Data->Time, &stUTC);
+			SystemTimeToTzSpecificLocalTime(NULL, &stUTC, &stLocal);
+
+			ENSURE(m_wndCalendar.SetCurSel(&stLocal));
+
+			m_UseTime = (stLocal.wHour!=0) || (stLocal.wMinute!=0) || (stLocal.wSecond!=0);
+			if (m_UseTime)
+				ENSURE(m_wndTime.SetTime(&stLocal));
+		}
+
 	// Calendar
 	m_wndCalendar.GetWindowRect(&rectCalendar);
 	ScreenToClient(rectCalendar);
@@ -105,5 +148,15 @@ BOOL LFEditTimeDlg::OnInitDialog()
 
 	ENSURE(m_wndCalendar.SetRange(&stMin, &stMax));
 
+	// Time
+	((CButton*)GetDlgItem(IDC_USETIME))->SetCheck(m_UseTime);
+	m_wndTime.EnableWindow(m_UseTime);
+
 	return TRUE;
+}
+
+void LFEditTimeDlg::OnUseTime()
+{
+	m_UseTime = ((CButton*)GetDlgItem(IDC_USETIME))->GetCheck();
+	m_wndTime.EnableWindow(m_UseTime);
 }
