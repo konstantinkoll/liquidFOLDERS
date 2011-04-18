@@ -421,6 +421,7 @@
     <ROW Dialog="MaintenanceTypeDlg" HCentering="50" VCentering="50" Width="450" Height="360" Attributes="3" Title="[ProductName] [Setup]" Control_First="RemoveLabel" Control_Default="ChangeButton" Control_Cancel="Cancel" TitleLocId="Dialog.MaintenanceTypeDlg" MsiKey="MaintenanceTypeDlg"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiIconsComponent">
+    <ROW Name="SystemFolder_msiexec.exe" SourcePath="&lt;AI_RES&gt;uninstall.ico" Index="0"/>
     <ROW Name="liquidFOLDERS.exe" SourcePath="Setup\liquidFOLDERS.ico" Index="0"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiInstExSeqComponent">
@@ -569,6 +570,7 @@
     <ROW Shortcut="StoreManager" Directory_="SHORTCUTDIR" Name="StoreM~1|StoreManager" Component_="StoreManager.exe" Target="[#StoreManager.exe]" Description="StoreManager" Hotkey="0" IconIndex="0" ShowCmd="1" WkDir="APPDIR"/>
     <ROW Shortcut="StoreManager_1" Directory_="Quick_Launch_DIR" Name="StoreM~1|StoreManager" Component_="StoreManager.exe" Target="[#StoreManager.exe]" Description="liquidFOLDERS StoreManager" Hotkey="0" IconIndex="0" ShowCmd="1" WkDir="APPDIR"/>
     <ROW Shortcut="StoreManager_2" Directory_="DesktopFolder" Name="liquid~1|liquidFOLDERS StoreManager" Component_="StoreManager.exe" Target="[#StoreManager.exe]" Description="StoreManager" Hotkey="0" IconIndex="0" ShowCmd="1" WkDir="APPDIR"/>
+    <ROW Shortcut="Uninstall" Directory_="SHORTCUTDIR" Name="Uninst~1|Uninstall liquidFOLDERS" Component_="LFNamespaceExtension.RootFolder" Target="[SystemFolder]msiexec.exe" Arguments="/x [ProductCode]" Hotkey="0" Icon_="SystemFolder_msiexec.exe" IconIndex="0" ShowCmd="1"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiTextStyleComponent">
     <ROW TextStyle="BlueText" FaceName="Arial" Size="12" Color="16711680" StyleBits="0" MsiKey="BlueText"/>
