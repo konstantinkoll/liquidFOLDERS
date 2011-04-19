@@ -482,9 +482,9 @@ void CInspectorWnd::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 
 LRESULT CInspectorWnd::OnPropertyChanged(WPARAM wparam, LPARAM lparam)
 {
-	SHORT Attr1 = wparam & 0xFFFF;
-	SHORT Attr2 = lparam & 0xFFFF;
-	SHORT Attr3 = (lparam >> 16) & 0xFFFF;
+	SHORT Attr1 = LOWORD(wparam);
+	SHORT Attr2 = LOWORD(lparam);
+	SHORT Attr3 = HIWORD(lparam);
 	SHORT AttrIATA = (Attr1==LFAttrLocationIATA) ? Attr1 : (Attr2==LFAttrLocationIATA) ? Attr2 : (Attr3==LFAttrLocationIATA) ? Attr3 : -1;
 
 	LFVariantData* Value1 = (Attr1==-1) ? NULL : &m_AttributeValues[Attr1];

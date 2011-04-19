@@ -16,84 +16,50 @@ CDropdownListCtrl::CDropdownListCtrl()
 
 
 BEGIN_MESSAGE_MAP(CDropdownListCtrl, CExplorerList)
-	/*ON_NOTIFY_REFLECT(NM_CUSTOMDRAW, OnCustomDraw)
-	ON_WM_RBUTTONDOWN()
+	ON_WM_MOUSEMOVE()
 	ON_WM_LBUTTONDOWN()
-	ON_WM_LBUTTONUP()*/
+	ON_WM_LBUTTONUP()
+	ON_WM_KEYDOWN()
 END_MESSAGE_MAP()
 
-void CDropdownListCtrl::OnCustomDraw(NMHDR* pNMHDR, LRESULT* pResult)
+void CDropdownListCtrl::OnMouseMove(UINT nFlags, CPoint point)
 {
-	LPNMLVCUSTOMDRAW lplvcd = (LPNMLVCUSTOMDRAW)pNMHDR;
+	CExplorerList::OnMouseMove(nFlags, point);
 
-	switch(lplvcd->nmcd.dwDrawStage)
+	INT idx = HitTest(point);
+	if (idx!=-1)
 	{
-	case CDDS_PREPAINT:
-		*pResult = CDRF_NOTIFYITEMDRAW;
-		break;
-	case CDDS_ITEMPREPAINT:
-		if ((!hTheme) && (GetHotItem()==(INT)lplvcd->nmcd.dwItemSpec))
-		{
-			lplvcd->nmcd.uItemState |= CDIS_SELECTED;
-			lplvcd->clrTextBk = lplvcd->clrFace = GetSysColor(COLOR_HIGHLIGHT);
-			lplvcd->clrText = GetSysColor(COLOR_HIGHLIGHTTEXT);
-			SetBkColor(lplvcd->clrTextBk);
+		SetItemState(idx, LVIS_FOCUSED | LVIS_SELECTED, LVIS_FOCUSED | LVIS_SELECTED);
 
-			CRect rect;
-			GetItemRect((INT)lplvcd->nmcd.dwItemSpec, rect, LVIR_BOUNDS);
-			FillRect(lplvcd->nmcd.hdc, rect, CreateSolidBrush(lplvcd->clrTextBk));
-			*pResult = CDRF_NOTIFYPOSTPAINT;
-			break;
-		}
-
-		*pResult = CDRF_DODEFAULT;
-		break;
-	case CDDS_ITEMPOSTPAINT:
-		if ((!hTheme) && (GetHotItem()==(INT)lplvcd->nmcd.dwItemSpec))
-		{
-			SetBkColor(GetSysColor(COLOR_WINDOW));
-
-			CRect rect;
-			GetItemRect((INT)lplvcd->nmcd.dwItemSpec, rect, LVIR_BOUNDS);
-			DrawFocusRect(lplvcd->nmcd.hdc, rect);
-
-			*pResult = CDRF_SKIPDEFAULT;
-			break;
-		}
-	default:
-		*pResult = CDRF_DODEFAULT;
+		if (GetFocus()!=this)
+			SetFocus();
 	}
-}
-
-void CDropdownListCtrl::OnRButtonDown(UINT /*nFlags*/, CPoint /*point*/)
-{
 }
 
 void CDropdownListCtrl::OnLButtonDown(UINT /*nFlags*/, CPoint /*point*/)
 {
 }
 
-void CDropdownListCtrl::OnLButtonUp(UINT /*nFlags*/, CPoint point)
+void CDropdownListCtrl::OnLButtonUp(UINT nFlags, CPoint point)
 {
-	INT idx = GetHotItem();
+	CExplorerList::OnLButtonUp(nFlags, point);
+
+	INT idx = HitTest(point);
 	if (idx!=-1)
+		GetOwner()->SendMessage(WM_SETITEM, (WPARAM)idx);
+}
+
+void CDropdownListCtrl::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
+{
+	if ((nChar==VK_EXECUTE) || (nChar==VK_RETURN))
 	{
-		CRect rect;
-		GetItemRect(idx, rect, LVIR_BOUNDS);
-
-		if (rect.PtInRect(point))
-		{
-			NMLISTVIEW tag;
-			ZeroMemory(&tag, sizeof(NMLISTVIEW));
-			tag.hdr.code = LVN_ITEMCHANGED;
-			tag.hdr.hwndFrom = m_hWnd;
-			tag.hdr.idFrom = GetDlgCtrlID();
-			tag.iItem = idx;
-			tag.uChanged = LVIF_STATE;
-			tag.uNewState = LVIS_SELECTED;
-
-			GetOwner()->SendNotifyMessage(WM_NOTIFY, tag.hdr.idFrom, LPARAM(&tag));
-		}
+		INT idx = GetNextItem(-1, LVIS_SELECTED);
+		if (idx!=-1)
+			GetOwner()->SendMessage(WM_SETITEM, (WPARAM)idx);
+	}
+	else
+	{
+		CExplorerList::OnKeyDown(nChar, nRepCnt, nFlags);
 	}
 }
 
@@ -124,6 +90,7 @@ BOOL CDropdownWindow::Create(CWnd* pParentWnd, CRect rectDrop, UINT DialogResID)
 	{
 		pTopParent->SendMessage(WM_NCACTIVATE, TRUE);
 		pTopParent->SetRedraw(TRUE);
+		pTopParent->UpdateWindow();
 	}
 
 	return res;
@@ -131,15 +98,32 @@ BOOL CDropdownWindow::Create(CWnd* pParentWnd, CRect rectDrop, UINT DialogResID)
 
 BOOL CDropdownWindow::PreTranslateMessage(MSG* pMsg)
 {
-	if ((pMsg->message==WM_KEYDOWN) && (pMsg->wParam==VK_TAB))
-	{
-		CWnd* pWnd = GetNextDlgTabItem(GetFocus(), GetKeyState(VK_SHIFT)<0);
-		if (pWnd)
-			pWnd->SetFocus();
-		return TRUE;
-	}
+	CWnd* pWnd;
+
+	if (pMsg->message==WM_KEYDOWN)
+		switch (pMsg->wParam)
+		{
+		case VK_TAB:
+			pWnd = GetNextDlgTabItem(GetFocus(), GetKeyState(VK_SHIFT)<0);
+			if (pWnd)
+				pWnd->SetFocus();
+			return TRUE;
+		case VK_ESCAPE:
+			GetOwner()->PostMessage(WM_CLOSEDROPDOWN);
+			return TRUE;
+		}
 
 	return CWnd::PreTranslateMessage(pMsg);
+}
+
+BOOL CDropdownWindow::OnCommand(WPARAM wParam, LPARAM lParam) 
+{
+	if ((UINT)HIWORD(wParam)==WM_KILLFOCUS)
+	{
+		GetOwner()->PostMessage(WM_CLOSEDROPDOWN);
+	}
+
+	return CWnd::OnCommand(wParam, lParam);
 }
 
 void CDropdownWindow::AdjustLayout()
@@ -166,6 +150,7 @@ BEGIN_MESSAGE_MAP(CDropdownWindow, CWnd)
 	ON_WM_CREATE()
 	ON_WM_SIZE()
 	ON_WM_SETFOCUS()
+	ON_WM_ACTIVATEAPP()
 END_MESSAGE_MAP()
 
 INT CDropdownWindow::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -177,7 +162,7 @@ INT CDropdownWindow::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	CRect rect;
 	rect.SetRectEmpty();
-	if (m_wndList.Create(dwStyle | LVS_AUTOARRANGE | LVS_SHAREIMAGELISTS | LVS_ALIGNTOP, rect, this, 1)==-1)
+	if (m_wndList.Create(dwStyle | WS_TABSTOP | LVS_AUTOARRANGE | LVS_SHAREIMAGELISTS | LVS_ALIGNTOP | LVS_SINGLESEL, rect, this, 1)==-1)
 		return -1;
 
 	m_wndList.SetExtendedStyle(LVS_EX_DOUBLEBUFFER | LVS_EX_JUSTIFYCOLUMNS);
@@ -204,6 +189,14 @@ void CDropdownWindow::OnSize(UINT nType, INT cx, INT cy)
 void CDropdownWindow::OnSetFocus(CWnd* /*pOldWnd*/)
 {
 	m_wndList.SetFocus();
+}
+
+void CDropdownWindow::OnActivateApp(BOOL bActive, DWORD dwTask)
+{
+	CWnd::OnActivateApp(bActive, dwTask);
+
+	if (!bActive)
+		GetOwner()->PostMessage(WM_CLOSEDROPDOWN);
 }
 
 
@@ -263,6 +256,7 @@ void CDropdownSelector::CreateDropdownWindow(CRect rectDrop)
 {
 	p_DropWindow = new CDropdownWindow();
 	p_DropWindow->Create(this, rectDrop);
+	((CGlasWindow*)GetParent())->RegisterPopupWindow(p_DropWindow);
 }
 
 void CDropdownSelector::NotifyOwner(UINT NotifyCode)
@@ -675,6 +669,9 @@ LRESULT CDropdownSelector::OnOpenDropdown(WPARAM /*wParam*/, LPARAM /*lParam*/)
 	m_Dropped = TRUE;
 	SetCapture();
 
+	Invalidate();
+	UpdateWindow();
+
 	CRect rectClient;
 	GetClientRect(rectClient);
 	ClientToScreen(rectClient);
@@ -703,7 +700,6 @@ LRESULT CDropdownSelector::OnOpenDropdown(WPARAM /*wParam*/, LPARAM /*lParam*/)
 
 	CreateDropdownWindow(rectDrop);
 
-	Invalidate();
 	return TRUE;
 }
 
@@ -713,13 +709,17 @@ LRESULT CDropdownSelector::OnCloseDropdown(WPARAM /*wParam*/, LPARAM /*lParam*/)
 
 	if (p_DropWindow)
 	{
-		m_Dropped = FALSE;
+		((CGlasWindow*)GetParent())->RegisterPopupWindow(NULL);
 
 		p_DropWindow->DestroyWindow();
 		delete p_DropWindow;
 		p_DropWindow = NULL;
 
+		m_Dropped = FALSE;
+		SetFocus();
 		Invalidate();
+		UpdateWindow();			// Essential, as parent window's redraw flag may be false
+
 		return TRUE;
 	}
 
@@ -734,4 +734,5 @@ void CDropdownSelector::OnSetFocus(CWnd* /*pOldWnd*/)
 void CDropdownSelector::OnKillFocus(CWnd* /*pOldWnd*/)
 {
 	Invalidate();
+	UpdateWindow();				// Essential, as parent window's redraw flag may be false
 }

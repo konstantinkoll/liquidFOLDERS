@@ -180,7 +180,7 @@ void CPIDLDropdownWindow::PopulateList()
 BEGIN_MESSAGE_MAP(CPIDLDropdownWindow, CDropdownWindow)
 	ON_WM_CREATE()
 	ON_WM_DESTROY()
-	ON_NOTIFY(LVN_ITEMCHANGED, 1, OnItemChanged)
+	ON_MESSAGE(WM_SETITEM, OnSetItem)
 	ON_BN_CLICKED(IDOK, OnChooseFolder)
 END_MESSAGE_MAP()
 
@@ -227,15 +227,11 @@ void CPIDLDropdownWindow::OnDestroy()
 	CDropdownWindow::OnDestroy();
 }
 
-void CPIDLDropdownWindow::OnItemChanged(NMHDR* pNMHDR, LRESULT* /*pResult*/)
+LRESULT CPIDLDropdownWindow::OnSetItem(WPARAM wParam, LPARAM /*lParam*/)
 {
-	NM_LISTVIEW* pNMListView = (NM_LISTVIEW*)pNMHDR;
+	theApp.m_ExpandAll = ((CButton*)m_wndBottomArea.GetDlgItem(IDC_EXPANDALL))->GetCheck();
 
-	if ((pNMListView->uChanged & LVIF_STATE) && (pNMListView->uNewState & LVIS_SELECTED))
-	{
-		theApp.m_ExpandAll = ((CButton*)m_wndBottomArea.GetDlgItem(IDC_EXPANDALL))->GetCheck();
-		GetOwner()->SendMessage(WM_SETITEM, NULL, (LPARAM)m_wndList.GetItemData(pNMListView->iItem));
-	}
+	return GetOwner()->SendMessage(WM_SETITEM, NULL, (LPARAM)m_wndList.GetItemData((INT)wParam));
 }
 
 void CPIDLDropdownWindow::OnChooseFolder()
@@ -266,6 +262,7 @@ void CPIDLSelector::CreateDropdownWindow(CRect rectDrop)
 {
 	p_DropWindow = new CPIDLDropdownWindow();
 	p_DropWindow->Create(this, rectDrop, IDD_CHOOSEFOLDER);
+	((CGlasWindow*)GetParent())->RegisterPopupWindow(p_DropWindow);
 }
 
 void CPIDLSelector::SetEmpty(BOOL Repaint)

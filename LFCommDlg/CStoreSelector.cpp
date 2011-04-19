@@ -25,7 +25,7 @@ BEGIN_MESSAGE_MAP(CStoreDropdownWindow, CDropdownWindow)
 	ON_REGISTERED_MESSAGE(MessageIDs->StoresChanged, OnUpdateStores)
 	ON_REGISTERED_MESSAGE(MessageIDs->StoreAttributesChanged, OnUpdateStores)
 	ON_REGISTERED_MESSAGE(MessageIDs->DefaultStoreChanged, OnUpdateStores)
-	ON_NOTIFY(LVN_ITEMCHANGED, 1, OnItemChanged)
+	ON_MESSAGE(WM_SETITEM, OnSetItem)
 	ON_BN_CLICKED(IDOK, OnCreateNewStore)
 END_MESSAGE_MAP()
 
@@ -80,12 +80,13 @@ LRESULT CStoreDropdownWindow::OnUpdateStores(WPARAM /*wParam*/, LPARAM /*lParam*
 	return NULL;
 }
 
-void CStoreDropdownWindow::OnItemChanged(NMHDR* pNMHDR, LRESULT* /*pResult*/)
+LRESULT CStoreDropdownWindow::OnSetItem(WPARAM wParam, LPARAM /*lParam*/)
 {
-	NM_LISTVIEW* pNMListView = (NM_LISTVIEW*)pNMHDR;
+	ASSERT(p_Result);
+	ASSERT(((INT)wParam)>=0);
+	ASSERT(((INT)wParam)<p_Result->m_ItemCount);
 
-	if ((pNMListView->uChanged & LVIF_STATE) && (pNMListView->uNewState & LVIS_SELECTED))
-		GetOwner()->SendMessage(WM_SETITEM, NULL, (LPARAM)p_Result->m_Items[pNMListView->iItem]);
+	return GetOwner()->SendMessage(WM_SETITEM, NULL, (LPARAM)p_Result->m_Items[(INT)wParam]);
 }
 
 void CStoreDropdownWindow::OnCreateNewStore()
@@ -131,6 +132,7 @@ void CStoreSelector::CreateDropdownWindow(CRect rectDrop)
 {
 	p_DropWindow = new CStoreDropdownWindow();
 	p_DropWindow->Create(this, rectDrop, IDD_CREATENEWSTORE);
+	((CGlasWindow*)GetParent())->RegisterPopupWindow(p_DropWindow);
 }
 
 void CStoreSelector::SetEmpty(BOOL Repaint)

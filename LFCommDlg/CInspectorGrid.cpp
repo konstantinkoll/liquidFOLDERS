@@ -190,7 +190,7 @@ void CPropertyTags::OnClickButton()
 {
 	ASSERT(p_Parent);
 
-	LFEditTagsDlg dlg(p_Parent, m_Multiple ? _T("") : p_Data->UnicodeArray, p_Parent->m_StoreIDValid ? p_Parent->m_StoreID : NULL);
+	LFEditTagsDlg dlg(AfxGetApp()->GetMainWnd(), m_Multiple ? _T("") : p_Data->UnicodeArray, p_Parent->m_StoreIDValid ? p_Parent->m_StoreID : NULL);
 
 	if (dlg.DoModal()==IDOK)
 	{
@@ -385,7 +385,7 @@ void CPropertyIATA::OnClickButton()
 {
 	ASSERT(p_Parent);
 
-	LFSelectLocationIATADlg dlg(IDD_SELECTIATA, p_Parent, &p_Data->AnsiString[0]);
+	LFSelectLocationIATADlg dlg(IDD_SELECTIATA, AfxGetApp()->GetMainWnd(), &p_Data->AnsiString[0]);
 
 	if (dlg.DoModal()==IDOK)
 		if (dlg.m_Airport)
@@ -446,7 +446,7 @@ void CPropertyGPS::OnClickButton()
 {
 	ASSERT(p_Parent);
 
-	LFSelectLocationGPSDlg dlg(p_Parent, p_Data->GeoCoordinates);
+	LFSelectLocationGPSDlg dlg(AfxGetApp()->GetMainWnd(), p_Data->GeoCoordinates);
 
 	if (dlg.DoModal()==IDOK)
 	{
@@ -488,7 +488,7 @@ void CPropertyTime::OnClickButton()
 {
 	ASSERT(p_Parent);
 
-	LFEditTimeDlg dlg(p_Parent, p_Data);
+	LFEditTimeDlg dlg(AfxGetApp()->GetMainWnd(), p_Data);
 
 	if (dlg.DoModal()==IDOK)
 		p_Parent->NotifyOwner((SHORT)p_Data->Attr);

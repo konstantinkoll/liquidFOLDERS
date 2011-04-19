@@ -18,10 +18,10 @@ public:
 	CDropdownListCtrl();
 
 protected:
-	afx_msg void OnCustomDraw(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnRButtonDown(UINT nFlags, CPoint point);
+	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
+	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 	DECLARE_MESSAGE_MAP()
 };
 
@@ -37,6 +37,7 @@ public:
 	CDropdownWindow();
 
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
+	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
 	virtual void AdjustLayout();
 
 	BOOL Create(CWnd* pParentWnd, CRect rectDrop, UINT DialogResID=0);
@@ -49,6 +50,7 @@ protected:
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnSize(UINT nType, INT cx, INT cy);
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
+	afx_msg void OnActivateApp(BOOL bActive, DWORD dwTask);
 	DECLARE_MESSAGE_MAP()
 };
 
