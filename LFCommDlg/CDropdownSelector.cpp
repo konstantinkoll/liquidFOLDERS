@@ -79,21 +79,10 @@ BOOL CDropdownWindow::Create(CWnd* pParentWnd, CRect rectDrop, UINT DialogResID)
 	ASSERT(pParentWnd);
 	CWnd* pTopParent = pParentWnd->GetParentOwner();
 
-	if (pTopParent)
-		pTopParent->SetRedraw(FALSE);
-
 	CString className = AfxRegisterWndClass(CS_DBLCLKS | CS_DROPSHADOW, LoadCursor(NULL, IDC_ARROW));
 	BOOL res = CWnd::CreateEx(WS_EX_CONTROLPARENT, className, _T(""), WS_BORDER | WS_VISIBLE | WS_POPUP, rectDrop.left, rectDrop.top, rectDrop.Width(), rectDrop.Height(), pParentWnd->GetSafeHwnd(), NULL);
+
 	SetOwner(pParentWnd);
-
-	if (pTopParent)
-	{
-		pTopParent->SendMessage(WM_NCACTIVATE, TRUE);
-		pTopParent->SetRedraw(TRUE);
-
-		// Workaround for f#*!ing Adobe Flash
-		pTopParent->RedrawWindow(NULL, NULL, RDW_ALLCHILDREN | RDW_INVALIDATE | RDW_UPDATENOW | RDW_FRAME);
-	}
 
 	return res;
 }
@@ -257,8 +246,8 @@ BOOL CDropdownSelector::PreTranslateMessage(MSG* pMsg)
 void CDropdownSelector::CreateDropdownWindow(CRect rectDrop)
 {
 	p_DropWindow = new CDropdownWindow();
-	p_DropWindow->Create(this, rectDrop);
 	((CGlasWindow*)GetParent())->RegisterPopupWindow(p_DropWindow);
+	p_DropWindow->Create(this, rectDrop);
 }
 
 void CDropdownSelector::NotifyOwner(UINT NotifyCode)

@@ -41,36 +41,37 @@ LRESULT CGlasWindow::DefWindowProc(UINT message, WPARAM wParam, LPARAM lParam)
 BOOL CGlasWindow::PreTranslateMessage(MSG* pMsg)
 {
 	if (p_PopupWindow)
-		if (GetCapture()!=p_PopupWindow->GetOwner())
-		{
-			CRect rect;
-			p_PopupWindow->GetClientRect(rect);
-			p_PopupWindow->ClientToScreen(rect);
-
-			CPoint pt;
-			GetCursorPos(&pt);
-
-			switch (pMsg->message)
+		if (IsWindow(p_PopupWindow->GetSafeHwnd()))
+			if (GetCapture()!=p_PopupWindow->GetOwner())
 			{
-			case WM_LBUTTONDOWN:
-			case WM_RBUTTONDOWN:
-			case WM_MBUTTONDOWN:
-			case WM_LBUTTONUP:
-			case WM_RBUTTONUP:
-			case WM_MBUTTONUP:
-			case WM_NCLBUTTONDOWN:
-			case WM_NCRBUTTONDOWN:
-			case WM_NCMBUTTONDOWN:
-			case WM_NCLBUTTONUP:
-			case WM_NCRBUTTONUP:
-			case WM_NCMBUTTONUP:
-				if (!rect.PtInRect(pt))
+				CRect rect;
+				p_PopupWindow->GetClientRect(rect);
+				p_PopupWindow->ClientToScreen(rect);
+
+				CPoint pt;
+				GetCursorPos(&pt);
+
+				switch (pMsg->message)
 				{
-					p_PopupWindow->GetOwner()->SendMessage(WM_CLOSEDROPDOWN);
-					return TRUE;
+				case WM_LBUTTONDOWN:
+				case WM_RBUTTONDOWN:
+				case WM_MBUTTONDOWN:
+				case WM_LBUTTONUP:
+				case WM_RBUTTONUP:
+				case WM_MBUTTONUP:
+				case WM_NCLBUTTONDOWN:
+				case WM_NCRBUTTONDOWN:
+				case WM_NCMBUTTONDOWN:
+				case WM_NCLBUTTONUP:
+				case WM_NCRBUTTONUP:
+				case WM_NCMBUTTONUP:
+					if (!rect.PtInRect(pt))
+					{
+						p_PopupWindow->GetOwner()->SendMessage(WM_CLOSEDROPDOWN);
+						return TRUE;
+					}
 				}
 			}
-		}
 
 	if ((pMsg->message==WM_KEYDOWN) && (pMsg->wParam==VK_TAB))
 	{
@@ -184,6 +185,7 @@ BEGIN_MESSAGE_MAP(CGlasWindow, CWnd)
 	ON_WM_NCCALCSIZE()
 	ON_WM_NCHITTEST()
 	ON_WM_NCACTIVATE()
+	ON_WM_ACTIVATE()
 	ON_WM_SIZE()
 	ON_WM_GETMINMAXINFO()
 	ON_WM_RBUTTONUP()
@@ -301,19 +303,27 @@ LRESULT CGlasWindow::OnNcHitTest(CPoint point)
 
 BOOL CGlasWindow::OnNcActivate(BOOL bActive)
 {
-	if (bActive!=m_Active)
+	if ((bActive!=m_Active) && ((!p_PopupWindow) || (bActive)))
 	{
 		m_Active = bActive;
 
 		if (GetDesign()==GWD_THEMED)
 		{
 			Invalidate();
+			RedrawWindow(NULL, NULL, RDW_ALLCHILDREN | RDW_INVALIDATE);
 			UpdateWindow();
 		}
 	}
 
-	return CWnd::OnNcActivate(bActive);
+	return (bActive || !p_PopupWindow) ? CWnd::OnNcActivate(bActive) : TRUE;
 }
+
+void CGlasWindow::OnActivate(UINT nState, CWnd* pWndOther, BOOL bMinimized)
+{
+	if (!p_PopupWindow)
+		CWnd::OnActivate(nState, pWndOther, bMinimized);
+}
+
 
 void CGlasWindow::OnSize(UINT nType, INT cx, INT cy)
 {

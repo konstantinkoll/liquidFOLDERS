@@ -131,8 +131,8 @@ CStoreSelector::~CStoreSelector()
 void CStoreSelector::CreateDropdownWindow(CRect rectDrop)
 {
 	p_DropWindow = new CStoreDropdownWindow();
-	p_DropWindow->Create(this, rectDrop, IDD_CREATENEWSTORE);
 	((CGlasWindow*)GetParent())->RegisterPopupWindow(p_DropWindow);
+	p_DropWindow->Create(this, rectDrop, IDD_CREATENEWSTORE);
 }
 
 void CStoreSelector::SetEmpty(BOOL Repaint)
