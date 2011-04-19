@@ -76,9 +76,6 @@ BOOL CDropdownWindow::Create(CWnd* pParentWnd, CRect rectDrop, UINT DialogResID)
 {
 	m_DialogResID = DialogResID;
 
-	ASSERT(pParentWnd);
-	CWnd* pTopParent = pParentWnd->GetParentOwner();
-
 	CString className = AfxRegisterWndClass(CS_DBLCLKS | CS_DROPSHADOW, LoadCursor(NULL, IDC_ARROW));
 	BOOL res = CWnd::CreateEx(WS_EX_CONTROLPARENT, className, _T(""), WS_BORDER | WS_VISIBLE | WS_POPUP, rectDrop.left, rectDrop.top, rectDrop.Width(), rectDrop.Height(), pParentWnd->GetSafeHwnd(), NULL);
 

@@ -144,10 +144,9 @@ void CGroupBox::OnPaint()
 
 				Pen pen(Color(204, 204, 204));
 				g.DrawPath(&pen, &path);
-
-				clr = 0x808080;
-				break;
 			}
+		default:
+			clr = 0x808080;
 		}
 	}
 
