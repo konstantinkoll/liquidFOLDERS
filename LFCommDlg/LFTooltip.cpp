@@ -17,7 +17,13 @@ LFTooltip::LFTooltip()
 
 BOOL LFTooltip::Create(CWnd* pWndParent)
 {
-	CString className = AfxRegisterWndClass(CS_DROPSHADOW | CS_SAVEBITS, LoadCursor(NULL, IDC_ARROW));
+	UINT nClassStyle = CS_HREDRAW | CS_VREDRAW | CS_SAVEBITS;
+	BOOL bDropShadow;
+	SystemParametersInfo(SPI_GETDROPSHADOW, 0, &bDropShadow, FALSE);
+	if (bDropShadow)
+		nClassStyle |= CS_DROPSHADOW;
+
+	CString className = AfxRegisterWndClass(nClassStyle, LoadCursor(NULL, IDC_ARROW));
 	return CWnd::CreateEx(0, className, _T(""), WS_POPUP, 0, 0, 0, 0, pWndParent->GetSafeHwnd(), NULL);
 }
 

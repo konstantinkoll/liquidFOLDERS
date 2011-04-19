@@ -76,7 +76,16 @@ BOOL CDropdownWindow::Create(CWnd* pParentWnd, CRect rectDrop, UINT DialogResID)
 {
 	m_DialogResID = DialogResID;
 
-	CString className = AfxRegisterWndClass(CS_DBLCLKS | CS_DROPSHADOW, LoadCursor(NULL, IDC_ARROW));
+	UINT nClassStyle = CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS;
+	if (((LFApplication*)AfxGetApp())->OSVersion>OS_XP)
+	{
+		BOOL bDropShadow;
+		SystemParametersInfo(SPI_GETDROPSHADOW, 0, &bDropShadow, FALSE);
+		if (bDropShadow)
+			nClassStyle |= CS_DROPSHADOW;
+	}
+
+	CString className = AfxRegisterWndClass(nClassStyle, LoadCursor(NULL, IDC_ARROW));
 	BOOL res = CWnd::CreateEx(WS_EX_CONTROLPARENT, className, _T(""), WS_BORDER | WS_VISIBLE | WS_POPUP, rectDrop.left, rectDrop.top, rectDrop.Width(), rectDrop.Height(), pParentWnd->GetSafeHwnd(), NULL);
 
 	SetOwner(pParentWnd);
