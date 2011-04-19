@@ -90,7 +90,9 @@ BOOL CDropdownWindow::Create(CWnd* pParentWnd, CRect rectDrop, UINT DialogResID)
 	{
 		pTopParent->SendMessage(WM_NCACTIVATE, TRUE);
 		pTopParent->SetRedraw(TRUE);
-		pTopParent->UpdateWindow();
+
+		// Workaround for f#*!ing Adobe Flash
+		pTopParent->RedrawWindow(NULL, NULL, RDW_ALLCHILDREN | RDW_INVALIDATE | RDW_UPDATENOW | RDW_FRAME);
 	}
 
 	return res;
