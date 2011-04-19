@@ -714,8 +714,8 @@ LRESULT CDropdownSelector::OnCloseDropdown(WPARAM /*wParam*/, LPARAM /*lParam*/)
 
 		m_Dropped = FALSE;
 		SetFocus();
-		Invalidate();
-		UpdateWindow();			// Essential, as parent window's redraw flag may be false
+		GetParent()->Invalidate();
+		GetParent()->UpdateWindow();		// Essential, as parent window's redraw flag may be false
 
 		return TRUE;
 	}
@@ -731,5 +731,5 @@ void CDropdownSelector::OnSetFocus(CWnd* /*pOldWnd*/)
 void CDropdownSelector::OnKillFocus(CWnd* /*pOldWnd*/)
 {
 	Invalidate();
-	UpdateWindow();				// Essential, as parent window's redraw flag may be false
+	UpdateWindow();							// Essential, as parent window's redraw flag may be false
 }
