@@ -1207,8 +1207,8 @@ BEGIN
     POPUP "POPUP"
     BEGIN
         MENUITEM SEPARATOR
-        MENUITEM "&Restore all",                IDM_TRASH_RESTOREALL
-        MENUITEM "&Empty trash",                IDM_TRASH_EMPTY
+        MENUITEM "&Restaurar todo",             IDM_TRASH_RESTOREALL
+        MENUITEM "&Vaciar bandeja de reciclaje", IDM_TRASH_EMPTY
     END
 END
 
@@ -1241,7 +1241,7 @@ BEGIN
     BEGIN
         MENUITEM SEPARATOR
         MENUITEM "&Eliminar",                   IDM_FILE_DELETE
-        MENUITEM "Re&store",                    IDM_FILE_RESTORE
+        MENUITEM "Re&staurar",                  IDM_FILE_RESTORE
     END
 END
 
