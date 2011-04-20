@@ -79,7 +79,6 @@ IDB_JOURNAL_DISABLED1   PNG                     "res\\Journal_Disabled1.png"
 IDB_DESCENDING          BITMAP                  "res\\Descending_16.bmp"
 IDB_ASCENDING           BITMAP                  "res\\Ascending_16.bmp"
 IDB_GROUPING            BITMAP                  "res\\Grouping_32.bmp"
-ID_PANE_FILTER          BITMAP                  "res\\Toolbar_Filter.bmp"
 IDB_TASKS               BITMAP                  "res\\Tasks.bmp"
 IDB_VIEWS               BITMAP                  "res\\Views.bmp"
 
@@ -119,23 +118,6 @@ BEGIN
     BEGIN
         VALUE "Translation", 0x0, 1252
     END
-END
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Toolbar
-//
-
-ID_PANE_FILTER TOOLBAR  16, 16
-BEGIN
-    BUTTON      ID_FILTER_CLEAR
-    SEPARATOR
-    BUTTON      ID_FILTER_EDITCONDITION
-    BUTTON      ID_FILTER_REMOVECONDITION
-    SEPARATOR
-    BUTTON      ID_FILTER_SAVE
-    BUTTON      ID_FILTER_SAVEAS
 END
 
 #endif    // Neutral resources

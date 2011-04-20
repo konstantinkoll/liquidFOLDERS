@@ -32,14 +32,12 @@ void CFilterWnd::AdjustLayout()
 	CFont::FromHandle((HFONT)GetStockObject(DEFAULT_GUI_FONT))->GetLogFont(&lFont);
 
 	INT heightTxt = abs(lFont.lfHeight);
-	INT heightTlb = m_wndToolBar.CalcFixedLayout(FALSE, TRUE).cy;
 	INT heightBtn = 2*borderBtn+heightTxt+15;
 
 	CRect rectCombo;
 	m_wndStoreCombo.GetWindowRect(&rectCombo);
 
-	m_wndToolBar.SetWindowPos(NULL, rectClient.left, rectClient.top, rectClient.Width(), heightTlb, SWP_NOACTIVATE | SWP_NOZORDER);
-	INT cy = heightTlb;
+	INT cy = 0;
 
 	m_wndLabel1.SetWindowPos(NULL, rectClient.left+borderBtn, cy, rectClient.Width()-borderBtn, heightTxt+borderBtn, SWP_NOACTIVATE | SWP_NOZORDER);
 	cy += heightTxt+borderBtn+1;
@@ -107,14 +105,6 @@ INT CFilterWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CGlasPane::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
-	if (m_wndToolBar.Create(this, AFX_DEFAULT_TOOLBAR_STYLE)==-1)
-		return -1;
-
-	m_wndToolBar.LoadToolBar(ID_PANE_FILTER, 0, 0, TRUE);
-	m_wndToolBar.SetPaneStyle(m_wndToolBar.GetPaneStyle() | CBRS_TOOLTIPS | CBRS_FLYBY);
-	m_wndToolBar.SetPaneStyle(m_wndToolBar.GetPaneStyle() & ~(CBRS_GRIPPER | CBRS_SIZE_DYNAMIC | CBRS_BORDER_TOP | CBRS_BORDER_BOTTOM | CBRS_BORDER_LEFT | CBRS_BORDER_RIGHT));
-	m_wndToolBar.SetRouteCommandsViaFrame(FALSE);
-
 	const DWORD dwViewStyle = WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_TABSTOP;
 	if (!m_wndFreetext.CreateEx(WS_EX_CLIENTEDGE, _T("EDIT"), _T(""), dwViewStyle | ES_AUTOHSCROLL, CRect(0, 0, 0, 0), this, 4))
 		return -1;
@@ -130,9 +120,6 @@ INT CFilterWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndStoreCombo.SetFont(fnt);
 	m_wndStartSearch.SetFont(fnt);
 	m_wndAddCondition.SetFont(fnt);
-
-	//if (theApp.m_ThemeLibLoaded)
-		//theApp.zSetWindowTheme(m_wndFreetext, L"", L"");
 
 	m_wndStoreCombo.AddString(L"Search all stores");
 	m_wndStoreCombo.AddString(L"Search current store");

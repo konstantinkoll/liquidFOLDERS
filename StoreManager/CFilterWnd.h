@@ -4,24 +4,6 @@
 #include "LFCommDlg.h"
 
 
-// CFilterToolBar
-//
-
-class CFilterToolBar : public CMFCToolBar
-{
-public:
-	virtual void OnUpdateCmdUI(CFrameWnd* /*pTarget*/, BOOL bDisableIfNoHndler)
-	{
-		CMFCToolBar::OnUpdateCmdUI((CFrameWnd*)GetOwner(), bDisableIfNoHndler);
-	}
-
-	virtual BOOL AllowShowOnList()
-	{
-		return FALSE;
-	}
-};
-
-
 // CFilterWnd
 //
 
@@ -36,7 +18,6 @@ public:
 	void UpdateList();
 
 protected:
-	CFilterToolBar m_wndToolBar;
 	CLabel m_wndLabel1;
 	CEdit m_wndFreetext;
 	CLabel m_wndLabel2;
