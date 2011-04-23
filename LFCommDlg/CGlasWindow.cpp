@@ -200,6 +200,8 @@ INT CGlasWindow::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	OnCompositionChanged();
 	SetWindowPos(NULL, 0, 0, 0, 0, SWP_FRAMECHANGED | SWP_NOMOVE | SWP_NOSIZE);
 
+	m_Active = (CWnd::GetActiveWindow()==this);
+
 	return 0;
 }
 
