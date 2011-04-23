@@ -91,8 +91,7 @@ LRESULT CStoreDropdownWindow::OnSetItem(WPARAM wParam, LPARAM /*lParam*/)
 
 void CStoreDropdownWindow::OnCreateNewStore()
 {
-	CWnd* pOwnerWnd = GetOwner();
-	pOwnerWnd->PostMessage(WM_CLOSEDROPDOWN);
+	GetOwner()->SendMessage(WM_CLOSEDROPDOWN);
 
 	LFStoreDescriptor* s = LFAllocStoreDescriptor();
 
@@ -105,7 +104,7 @@ void CStoreDropdownWindow::OnCreateNewStore()
 		if (res==LFOk)
 		{
 			LFItemDescriptor* i = LFAllocItemDescriptor(s);
-			pOwnerWnd->SendMessage(WM_SETITEM, NULL, (LPARAM)i);
+			GetOwner()->SendMessage(WM_SETITEM, NULL, (LPARAM)i);
 			LFFreeItemDescriptor(i);
 		}
 	}
