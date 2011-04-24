@@ -1461,10 +1461,10 @@ BEGIN
     IDR_CLIPBOARD           "Portapapeles"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
-    ID_PANE_FILTER          "Opens and closes the filter pane.\nFilter"
-    ID_PANE_INSPECTOR       "Opens and closes the inspector pane.\nInspector"
+    ID_PANE_FILTER          "Abre y cierra el panel de filtros.\nFiltro"
+    ID_PANE_INSPECTOR       "Abre y cierra el inspector del panel.\nInspector"
 END
 
 STRINGTABLE 
@@ -1544,91 +1544,91 @@ BEGIN
     IDS_VATTR_IATA_COUNTRY  "Territorio"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
-    IDM_STORE_MAKEDEFAULT   "Establece el store seleccionado como el store predeterminado.\nEstablecer a store predeterminado"
+    IDM_STORE_MAKEDEFAULT   "Establece el store seleccionado como el store predeterminado.\nEstablecer como store predeterminado"
     IDM_STORE_IMPORTFOLDER  "Importa una carpeta y todas sus subcarpetas al store seleccionado.\nImportar carpeta..."
-    IDM_STORE_DELETE        "Deletes the selected store.\nEliminar"
-    IDM_STORE_RENAME        "Renames the selected store.\nRenombrar"
-    IDM_STORE_PROPERTIES    "Displays the properties of the selected store.\nPropiedades"
-    IDM_STORES_CREATENEW    "Creaun nuevo store para sus archivos.\nCrear nuevo store..."
+    IDM_STORE_DELETE        "Elimina el store seleccionado.\nEliminar"
+    IDM_STORE_RENAME        "Renombra el store seleccionado.\nRenombrar"
+    IDM_STORE_PROPERTIES    "Despliega las propiedades del store seleccionado.\nPropiedades"
+    IDM_STORES_CREATENEW    "Crea un nuevo store para sus archivos.\nCrear nuevo store..."
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
-    IDM_STORES_SHOWEMPTYVOLUMES "Show &unmounted volumes"
+    IDM_STORES_SHOWEMPTYVOLUMES "Mostrar &volúmenes desconectados"
     IDM_STORES_REPAIRCORRUPTEDINDEX "Ejecutar mantenimiento"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
-    IDM_HOME_SHOWEMPTYDOMAINS "Show &empty domains"
-    IDM_HOME_IMPORTFOLDER   "Imports a folder and all its subfolders into this store.\nImportar carpeta..."
+    IDM_HOME_SHOWEMPTYDOMAINS "Mostrar &dominios vacíos"
+    IDM_HOME_IMPORTFOLDER   "Importa una carpeta y todas sus subcarpetas a este store.\nImportar carpeta..."
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
-    IDM_HOUSEKEEPING_REGISTER 
-                            "Registers unknown file formats to make them appear in a regular domain.\nRegister formats..."
-    IDM_HOUSEKEEPING_SEND   "Sends a list of user-registered file formats to customer support.\nSend list"
+    IDM_HOUSEKEEPING_REGISTER
+                            "Registra formatos de archivo desconocidos para hacerlos aparecer en un dominio regular.\nRegistrar formatos..."
+    IDM_HOUSEKEEPING_SEND   "Envìa una lista de formatos de archivo registrados por el usuario a atenciòn al cliente.\nEnviar lista"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
-    IDM_TRASH_EMPTY         "Permanently deletes all files from the trash.\nEmpty trash"
-    IDM_TRASH_RESTOREALL    "Restores all files from the trash.\nRestore all"
+    IDM_TRASH_EMPTY         "Elimina de manera permanente todos los archivos de la bandeja de reciclaje.\nVaciar bandeja de reciclaje"
+    IDM_TRASH_RESTOREALL    "Restablece todos los archivos de la bandeja de reciclaje.\nRestablecer todos"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDM_ITEM_OPEN           "Abre el objeto seleccionado.\nAbrir"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
-    IDM_VOLUME_PROPERTIES   "Displays the properties of the selected volume.\nPropiedades"
+    IDM_VOLUME_PROPERTIES   "Visualiza las propiedades del volumen seleccionado.\nPropiedades"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
-    IDM_FILE_REMEMBER       "Adds the selected files to the clipboard window.\nRemember"
-    IDM_FILE_REMOVE         "Removes the selected files from the clipboard window.\nRemove"
-    IDM_FILE_DELETE         "Deletes the selected files.\nEliminar"
-    IDM_FILE_RENAME         "Renames the selected file.\nRenombrar"
-    IDM_FILE_RESTORE        "Restores the selected files.\nRestore"
+    IDM_FILE_REMEMBER       "Agrega los archivos seleccionados a la ventana del portapapeles.\nRecordar"
+    IDM_FILE_REMOVE         "Remueve los archivos seleccionados de la ventana del portapapeles.\nRemover"
+    IDM_FILE_DELETE         "Elimina los archivos seleccionados.\nEliminar"
+    IDM_FILE_RENAME         "Renombra los archivos seleccionados.\nRenombrar"
+    IDM_FILE_RESTORE        "Restablece los archivos seleccionados.\nRestablecer"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
-    IDM_SEND                "S&end to"
+    IDM_SEND                "&Enviar a"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
-    IDM_CALENDAR_PREVYEAR   "Displays the previous year.\nPrevious year"
-    IDM_CALENDAR_NEXTYEAR   "Displays the next year.\nNext year"
-    IDM_CALENDAR_GOTOYEAR   "Shows a window that lets you choose a year to display.\nIr al año..."
+    IDM_CALENDAR_PREVYEAR   "Visualiza el años anterior.\nAño anterior"
+    IDM_CALENDAR_NEXTYEAR   "Visualiza el año siguiente.\nAño siguiente"
+    IDM_CALENDAR_GOTOYEAR   "Muestra una ventana que le permite elegir un año para visualizar.\nIr al año..."
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
-    IDM_GLOBE_JUMPTOLOCATION 
-                            "Centers the globe on a specific location.\nSeleccionar ubicación..."
-    IDM_GLOBE_ZOOMIN        "Zooms into the globe.\nZoom in"
-    IDM_GLOBE_ZOOMOUT       "Zooms out of the globe.\nZoom out"
-    IDM_GLOBE_AUTOSIZE      "Resizes the globe to touch the edges of the window.\nSize to fit"
-    IDM_GLOBE_GOOGLEEARTH   "Opens the selected locations in Google Earth.\nOpen in Google Earth"
+    IDM_GLOBE_JUMPTOLOCATION
+                            "Centra el globo sobre una ubicación específica.\nSeleccionar ubicación..."
+    IDM_GLOBE_ZOOMIN        "Amplía el globo.\nAmpliar"
+    IDM_GLOBE_ZOOMOUT       "Reduce el globo.\nReducir"
+    IDM_GLOBE_AUTOSIZE      "Reajusta el globo dentro de la ventana.\nAjustar"
+    IDM_GLOBE_GOOGLEEARTH   "Abre las ubicaciones seleccionadas en Google Earth.\nAbrir en Google Earth"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
-    IDM_TAGCLOUD_SORTVALUE  "Arranges the tags in their canonic order.\nSort by value"
-    IDM_TAGCLOUD_SORTCOUNT  "Arranges the tags by their file count.\nSort by count"
+    IDM_TAGCLOUD_SORTVALUE  "Ordena las etiquetas en su orden canónico.\nOrdenar por valor"
+    IDM_TAGCLOUD_SORTCOUNT  "Ordena las etiquetas por su número de archivo.\nOrdenar por número"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
-    IDM_TAGCLOUD_SORT       "&Sort by"
+    IDM_TAGCLOUD_SORT       "&Ordenar por"
 END
 
 STRINGTABLE 
