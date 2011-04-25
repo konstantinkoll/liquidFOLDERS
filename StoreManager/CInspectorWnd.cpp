@@ -446,6 +446,7 @@ INT CInspectorWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (!m_wndInspectorGrid.Create(this, 1, &m_IconHeader))
 		return -1;
 
+	m_wndInspectorGrid.ShowHeader(m_ShowPreview);
 	m_wndInspectorGrid.SetAlphabeticMode(m_SortAlphabetic);
 	m_wndInspectorGrid.AddAttributes(m_AttributeValues);
 	for (UINT a=LFAttributeCount; a<AttrCount; a++)
