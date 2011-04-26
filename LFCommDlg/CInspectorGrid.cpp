@@ -593,7 +593,7 @@ void CInspectorGrid::Init()
 		hThemeButton = p_App->zOpenThemeData(GetSafeHwnd(), VSCLASS_BUTTON);
 		if (p_App->OSVersion>=OS_Vista)
 		{
-			p_App->zSetWindowTheme(GetSafeHwnd(), L"explorer", NULL);
+			p_App->zSetWindowTheme(GetSafeHwnd(), L"EXPLORER", NULL);
 			hThemeList = p_App->zOpenThemeData(GetSafeHwnd(), VSCLASS_LISTVIEW);
 		}
 	}

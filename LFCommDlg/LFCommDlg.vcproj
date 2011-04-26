@@ -383,6 +383,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CConditionList.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\CDropdownSelector.cpp"
 				>
 			</File>
@@ -646,6 +650,10 @@
 			>
 			<File
 				RelativePath=".\CBottomArea.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CConditionList.h"
 				>
 			</File>
 			<File

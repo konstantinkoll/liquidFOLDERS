@@ -1,34 +1,27 @@
 
-// CExplorerList: Schnittstelle der Klasse CExplorerList
+// CConditionList: Schnittstelle der Klasse CConditionList
 //
 
 #pragma once
 #include "liquidFOLDERS.h"
 #include "LFApplication.h"
-#include "LFCore.h"
+#include "CImageListTransparent.h"
 
 
-// CExplorerList
+// CConditionList
 //
 
-class AFX_EXT_CLASS CExplorerList : public CListCtrl
+class AFX_EXT_CLASS CConditionList : public CListCtrl
 {
 public:
-	CExplorerList();
+	CConditionList();
 
 	virtual void PreSubclassWindow();
 
-	void AddCategory(INT ID, CString Name, CString Hint=_T(""), BOOL Collapsable=FALSE);
-	void AddItemCategories();
-	void AddColumn(INT ID, CString Name);
-	void AddColumn(INT ID, UINT Attr);
-	void AddStoreColumns();
-	void SetSearchResult(LFSearchResult* result);
 	void SetMenus(UINT _ItemMenuID=0, BOOL _HighlightFirst=FALSE, UINT _BackgroundMenuID=0);
 
 protected:
 	LFApplication* p_App;
-	LFSearchResult* p_Result;
 	HTHEME hTheme;
 	UINT m_ItemMenuID;
 	BOOL m_HighlightFirst;
@@ -42,4 +35,8 @@ protected:
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint pos);
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 	DECLARE_MESSAGE_MAP()
+
+private:
+	CImageListTransparent m_AttributeIcons16;
+	CImageListTransparent m_AttributeIcons32;
 };

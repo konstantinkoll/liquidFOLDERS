@@ -25,8 +25,7 @@ protected:
 	CButton m_wndStartSearch;
 	CButton m_wndAddCondition;
 	CLabel m_wndLabel3;
-	CImageList* m_Icons;
-	CExplorerList m_wndList;
+	CConditionList m_wndList;
 
 	void AddConditionItem(BOOL focus=FALSE);
 

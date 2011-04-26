@@ -1422,7 +1422,7 @@ INT CTreeView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		hThemeButton = theApp.zOpenThemeData(GetSafeHwnd(), VSCLASS_BUTTON);
 		if (theApp.OSVersion>=OS_Vista)
 		{
-			theApp.zSetWindowTheme(GetSafeHwnd(), L"explorer", NULL);
+			theApp.zSetWindowTheme(GetSafeHwnd(), L"EXPLORER", NULL);
 			hThemeList = theApp.zOpenThemeData(GetSafeHwnd(), VSCLASS_LISTVIEW);
 		}
 		hThemeTree = theApp.zOpenThemeData(GetSafeHwnd(), VSCLASS_TREEVIEW);

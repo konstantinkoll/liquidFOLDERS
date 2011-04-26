@@ -11,13 +11,10 @@
 CFilterWnd::CFilterWnd()
 	: CGlasPane()
 {
-	m_Icons = NULL;
 }
 
 CFilterWnd::~CFilterWnd()
 {
-	if (m_Icons)
-		delete m_Icons;
 }
 
 void CFilterWnd::AdjustLayout()
@@ -146,21 +143,6 @@ INT CFilterWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	}
 
 	m_wndList.SetView(LV_VIEW_TILE);
-
-	CMFCToolBarImages tmp;
-	tmp.SetImageSize(CSize(32, 32));
-	tmp.Load(IDB_TASKS);
-	m_Icons = new CImageList();
-	m_Icons->Create(32, 32, ILC_COLOR32, 2, 1);
-		for (INT a=0; a<tmp.GetCount(); a++)
-		{
-			HICON h = tmp.ExtractIcon(a);
-			m_Icons->Add(h);
-			DestroyIcon(h);
-		}
-	tmp.Clear();
-
-	m_wndList.SetImageList(m_Icons, LVSIL_NORMAL);
 
 	return 0;
 }

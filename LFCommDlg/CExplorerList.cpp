@@ -22,25 +22,29 @@ void CExplorerList::PreSubclassWindow()
 {
 	CListCtrl::PreSubclassWindow();
 
-	if (IsWindow(GetSafeHwnd()))
+	_AFX_THREAD_STATE* pThreadState = AfxGetThreadState();
+	if (!pThreadState->m_pWndInit)
+		Init();
+}
+
+void CExplorerList::Init()
+{
+	SetExtendedStyle(GetExtendedStyle() | LVS_EX_FULLROWSELECT | LVS_EX_DOUBLEBUFFER);
+
+	if ((p_App->m_ThemeLibLoaded) && (p_App->OSVersion>=OS_Vista))
 	{
-		SetExtendedStyle(GetExtendedStyle() | LVS_EX_FULLROWSELECT | LVS_EX_DOUBLEBUFFER);
-
-		if ((p_App->m_ThemeLibLoaded) && (p_App->OSVersion>=OS_Vista))
-		{
-			p_App->zSetWindowTheme(GetSafeHwnd(), L"EXPLORER", NULL);
-			hTheme = p_App->zOpenThemeData(GetSafeHwnd(), VSCLASS_LISTVIEW);
-		}
-
-		LVTILEVIEWINFO tvi;
-		ZeroMemory(&tvi, sizeof(tvi));
-		tvi.cbSize = sizeof(LVTILEVIEWINFO);
-		tvi.cLines = 2;
-		tvi.dwFlags = LVTVIF_FIXEDWIDTH;
-		tvi.dwMask = LVTVIM_COLUMNS | LVTVIM_TILESIZE;
-		tvi.sizeTile.cx = 218;
-		SetTileViewInfo(&tvi);
+		p_App->zSetWindowTheme(GetSafeHwnd(), L"EXPLORER", NULL);
+		hTheme = p_App->zOpenThemeData(GetSafeHwnd(), VSCLASS_LISTVIEW);
 	}
+
+	LVTILEVIEWINFO tvi;
+	ZeroMemory(&tvi, sizeof(tvi));
+	tvi.cbSize = sizeof(LVTILEVIEWINFO);
+	tvi.cLines = 2;
+	tvi.dwFlags = LVTVIF_FIXEDWIDTH;
+	tvi.dwMask = LVTVIM_COLUMNS | LVTVIM_TILESIZE;
+	tvi.sizeTile.cx = 218;
+	SetTileViewInfo(&tvi);
 }
 
 void CExplorerList::AddCategory(INT ID, CString Name, CString Hint, BOOL Collapsable)
@@ -177,7 +181,7 @@ INT CExplorerList::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CListCtrl::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
-	PreSubclassWindow();
+	Init();
 
 	return 0;
 }

@@ -1020,7 +1020,7 @@ INT CFileView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (theApp.m_ThemeLibLoaded)
 		if (theApp.OSVersion>=OS_Vista)
 		{
-			theApp.zSetWindowTheme(GetSafeHwnd(), L"explorer", NULL);
+			theApp.zSetWindowTheme(GetSafeHwnd(), L"EXPLORER", NULL);
 			hThemeList = theApp.zOpenThemeData(GetSafeHwnd(), VSCLASS_LISTVIEW);
 		}
 
