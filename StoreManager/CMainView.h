@@ -75,6 +75,7 @@ protected:
 	afx_msg LRESULT OnRenameItem(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnStoreAttributesChanged(WPARAM wParam, LPARAM lParam);
 
+	afx_msg void OnToggleFilter();
 	afx_msg void OnToggleInspector();
 	afx_msg void OnUpdatePaneCommands(CCmdUI* pCmdUI);
 
@@ -137,6 +138,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
+	CTaskButton* p_FilterButton;
 	CTaskButton* p_InspectorButton;
 	CHeaderButton* p_OrganizeButton;
 	CHeaderButton* p_ViewButton;

@@ -1063,7 +1063,7 @@ void CInspectorGrid::AdjustLayout()
 	Invalidate();
 }
 
-void CInspectorGrid::DrawCategory(CDC& dc, CRect& rect, WCHAR* Text)
+void CInspectorGrid::DrawCategory(CDC& dc, CRect& rect, WCHAR* Text, BOOL Themed)
 {
 	rect.DeflateRect(0, PADDING);
 	rect.left += GUTTER;
@@ -1076,7 +1076,7 @@ void CInspectorGrid::DrawCategory(CDC& dc, CRect& rect, WCHAR* Text)
 
 	if (rectLine.right<=rect.right)
 	{
-		CPen pen(PS_SOLID, 1, 0xE2E2E2);
+		CPen pen(PS_SOLID, 1, Themed ? 0xE2E2E2 : GetSysColor(COLOR_WINDOWTEXT));
 
 		CPen* pOldPen = dc.SelectObject(&pen);
 		dc.MoveTo(rectLine.right, rect.bottom-(m_FontHeight[1]+1)/2);
@@ -1286,7 +1286,7 @@ void CInspectorGrid::OnPaint()
 		if (m_Categories[a].Top!=-1)
 		{
 			CRect rect(0, m_Categories[a].Top-m_VScrollPos, rect.Width(), m_Categories[a].Bottom-m_VScrollPos);
-			DrawCategory(dc, rect, p_App->m_AttrCategories[a]);
+			DrawCategory(dc, rect, p_App->m_AttrCategories[a], Themed);
 		}
 
 	// Items

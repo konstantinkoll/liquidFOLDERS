@@ -243,7 +243,7 @@ protected:
 	void ResetScrollbars();
 	void AdjustScrollbars();
 	void MakeSortArrayDirty();
-	void DrawCategory(CDC& dc, CRect& rectCategory, WCHAR* Text);
+	void DrawCategory(CDC& dc, CRect& rectCategory, WCHAR* Text, BOOL Themed);
 	void ResetProperty(UINT Attr);
 	void EditProperty(UINT Attr);
 	void DestroyEdit(BOOL Accept=FALSE);

@@ -39,6 +39,7 @@ IDD_SORTOPTIONS         ICON                    "res\\SortOptions_Tiny.ico"
 IDD_CHOOSEDETAILS       ICON                    "res\\Table_Tiny.ico"
 IDD_GLOBEOPTIONS        ICON                    "res\\GlobeOptions_Tiny.ico"
 IDD_GOTOYEAR            ICON                    "res\\GotoDate_Tiny.ico"
+IDD_EDITCONDITION       ICON                    "res\\FilterEdit_Tiny.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -161,6 +162,16 @@ BEGIN
     END
 END
 
+IDM_TRASH MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM SEPARATOR
+        MENUITEM "Alle &wiederherstellen",      IDM_TRASH_RESTOREALL
+        MENUITEM "&Papierkorb leeren",          IDM_TRASH_EMPTY
+    END
+END
+
 IDM_VOLUME MENU 
 BEGIN
     POPUP "POPUP"
@@ -171,6 +182,26 @@ BEGIN
         MENUITEM "A&uswerfen",                  IDM_VOLUME_EJECT
         MENUITEM SEPARATOR
         MENUITEM "&Eigenschaften",              IDM_VOLUME_PROPERTIES
+    END
+END
+
+IDM_FILE MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM SEPARATOR
+        MENUITEM "&Löschen",                    IDM_FILE_DELETE
+        MENUITEM "&Umbenennen",                 IDM_FILE_RENAME
+    END
+END
+
+IDM_FILE_TRASH MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM SEPARATOR
+        MENUITEM "&Löschen",                    IDM_FILE_DELETE
+        MENUITEM "&Wiederherstellen",           IDM_FILE_RESTORE
     END
 END
 
@@ -186,17 +217,6 @@ BEGIN
     END
 END
 
-IDM_GLOBE MENU 
-BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "Globus-&Einstellungen...",    IDM_GLOBE_SETTINGS
-        MENUITEM "&Größe anpassen",             IDM_GLOBE_AUTOSIZE
-        MENUITEM SEPARATOR
-        MENUITEM "&Ort anzeigen...\tStrg+L",    IDM_GLOBE_JUMPTOLOCATION
-    END
-END
-
 IDM_CALENDAR MENU 
 BEGIN
     POPUP "POPUP"
@@ -206,6 +226,17 @@ BEGIN
         MENUITEM "Leere &Tage anzeigen",        IDM_CALENDAR_SHOWEMPTYDAYS
         MENUITEM SEPARATOR
         MENUITEM "&Jahr auswählen...\tStrg+Y",  IDM_CALENDAR_GOTOYEAR
+    END
+END
+
+IDM_GLOBE MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "Globus-&Einstellungen...",    IDM_GLOBE_SETTINGS
+        MENUITEM "&Größe anpassen",             IDM_GLOBE_AUTOSIZE
+        MENUITEM SEPARATOR
+        MENUITEM "&Ort anzeigen...\tStrg+L",    IDM_GLOBE_JUMPTOLOCATION
     END
 END
 
@@ -245,33 +276,30 @@ BEGIN
     END
 END
 
-IDM_FILE MENU 
+IDM_FILTER MENU 
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM SEPARATOR
-        MENUITEM "&Löschen",                    IDM_FILE_DELETE
-        MENUITEM "&Umbenennen",                 IDM_FILE_RENAME
+        MENUITEM "S&uchen",                 IDM_FILTER_SEARCH
+        MENUITEM "&Speichern",              IDM_FILTER_SAVE
     END
 END
 
-IDM_FILE_TRASH MENU 
+IDM_CONDITIONLIST MENU 
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM SEPARATOR
-        MENUITEM "&Löschen",                    IDM_FILE_DELETE
-        MENUITEM "&Wiederherstellen",           IDM_FILE_RESTORE
+        MENUITEM "Bedingung &hinzufügen...", IDM_CONDITIONLIST_ADD
     END
 END
 
-IDM_TRASH MENU 
+IDM_CONDITION MENU 
 BEGIN
     POPUP "POPUP"
     BEGIN
+        MENUITEM "&Bearbeiten...",          IDM_CONDITION_EDIT
         MENUITEM SEPARATOR
-        MENUITEM "Alle &wiederherstellen",      IDM_TRASH_RESTOREALL
-        MENUITEM "&Papierkorb leeren",          IDM_TRASH_EMPTY
+        MENUITEM "&Löschen",                IDM_CONDITION_DELETE
     END
 END
 
@@ -374,6 +402,19 @@ BEGIN
     PUSHBUTTON      "Abbrechen",IDCANCEL,65,57,50,14,WS_GROUP
 END
 
+IDD_EDITCONDITION DIALOGEX 0, 0, 289, 308
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
+CAPTION "Bedingung bearbeiten"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "",IDC_COMPAREATTRIBUTE,"SysListView32",LVS_LIST | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SORTASCENDING | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_ALIGNLEFT | LVS_NOCOLUMNHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,14,19,261,214
+    COMBOBOX        IDC_COMPARE,14,259,76,30,WS_GROUP | CBS_DROPDOWN | CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    DEFPUSHBUTTON   "OK",IDOK,174,287,50,14,WS_GROUP
+    PUSHBUTTON      "Abbrechen",IDCANCEL,232,287,50,14,WS_GROUP
+    GROUPBOX        "Eigenschaften",IDC_STATIC,7,7,275,235
+    GROUPBOX        "Vergleich",IDC_STATIC,7,248,275,32
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -421,6 +462,14 @@ BEGIN
         RIGHTMARGIN, 115
         TOPMARGIN, 7
         BOTTOMMARGIN, 71
+    END
+
+    IDD_EDITCONDITION, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 282
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 301
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -1028,16 +1077,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    ID_FILTER_CLEAR         "Removes all conditions from the filter.\nClear filter"
-    ID_FILTER_EDITCONDITION "Edit the selected condition.\nEdit condition"
-    ID_FILTER_REMOVECONDITION 
-                            "Removes the selected conditions from the filter.\nRemove conditions"
-    ID_FILTER_SAVE          "Saves the filter.\nSave filter"
-    ID_FILTER_SAVEAS        "Saves the filter and prompts for a file name.\nSave filter as"
-END
-
-STRINGTABLE 
-BEGIN
     IDM_STORE_MAKEDEFAULT   "Makes the selected store the default store.\nMake default store"
     IDM_STORE_IMPORTFOLDER  "Imports a folder and all its subfolders into the selected store.\nImport folder..."
     IDM_STORE_DELETE        "Deletes the selected store.\nDelete"
@@ -1461,7 +1500,7 @@ BEGIN
     IDR_CLIPBOARD           "Portapapeles"
 END
 
-STRINGTABLE
+STRINGTABLE 
 BEGIN
     ID_PANE_FILTER          "Abre y cierra el panel de filtros.\nFiltro"
     ID_PANE_INSPECTOR       "Abre y cierra el inspector del panel.\nInspector"
@@ -1544,7 +1583,7 @@ BEGIN
     IDS_VATTR_IATA_COUNTRY  "Territorio"
 END
 
-STRINGTABLE
+STRINGTABLE 
 BEGIN
     IDM_STORE_MAKEDEFAULT   "Establece el store seleccionado como el store predeterminado.\nEstablecer como store predeterminado"
     IDM_STORE_IMPORTFOLDER  "Importa una carpeta y todas sus subcarpetas al store seleccionado.\nImportar carpeta..."
@@ -1554,42 +1593,42 @@ BEGIN
     IDM_STORES_CREATENEW    "Crea un nuevo store para sus archivos.\nCrear nuevo store..."
 END
 
-STRINGTABLE
+STRINGTABLE 
 BEGIN
     IDM_STORES_SHOWEMPTYVOLUMES "Mostrar &volúmenes desconectados"
     IDM_STORES_REPAIRCORRUPTEDINDEX "Ejecutar mantenimiento"
 END
 
-STRINGTABLE
+STRINGTABLE 
 BEGIN
     IDM_HOME_SHOWEMPTYDOMAINS "Mostrar &dominios vacíos"
     IDM_HOME_IMPORTFOLDER   "Importa una carpeta y todas sus subcarpetas a este store.\nImportar carpeta..."
 END
 
-STRINGTABLE
+STRINGTABLE 
 BEGIN
-    IDM_HOUSEKEEPING_REGISTER
+    IDM_HOUSEKEEPING_REGISTER 
                             "Registra formatos de archivo desconocidos para hacerlos aparecer en un dominio regular.\nRegistrar formatos..."
     IDM_HOUSEKEEPING_SEND   "Envìa una lista de formatos de archivo registrados por el usuario a atenciòn al cliente.\nEnviar lista"
 END
 
-STRINGTABLE
+STRINGTABLE 
 BEGIN
     IDM_TRASH_EMPTY         "Elimina de manera permanente todos los archivos de la bandeja de reciclaje.\nVaciar bandeja de reciclaje"
     IDM_TRASH_RESTOREALL    "Restablece todos los archivos de la bandeja de reciclaje.\nRestablecer todos"
 END
 
-STRINGTABLE
+STRINGTABLE 
 BEGIN
     IDM_ITEM_OPEN           "Abre el objeto seleccionado.\nAbrir"
 END
 
-STRINGTABLE
+STRINGTABLE 
 BEGIN
     IDM_VOLUME_PROPERTIES   "Visualiza las propiedades del volumen seleccionado.\nPropiedades"
 END
 
-STRINGTABLE
+STRINGTABLE 
 BEGIN
     IDM_FILE_REMEMBER       "Agrega los archivos seleccionados a la ventana del portapapeles.\nRecordar"
     IDM_FILE_REMOVE         "Remueve los archivos seleccionados de la ventana del portapapeles.\nRemover"
@@ -1598,21 +1637,21 @@ BEGIN
     IDM_FILE_RESTORE        "Restablece los archivos seleccionados.\nRestablecer"
 END
 
-STRINGTABLE
+STRINGTABLE 
 BEGIN
     IDM_SEND                "&Enviar a"
 END
 
-STRINGTABLE
+STRINGTABLE 
 BEGIN
     IDM_CALENDAR_PREVYEAR   "Visualiza el años anterior.\nAño anterior"
     IDM_CALENDAR_NEXTYEAR   "Visualiza el año siguiente.\nAño siguiente"
     IDM_CALENDAR_GOTOYEAR   "Muestra una ventana que le permite elegir un año para visualizar.\nIr al año..."
 END
 
-STRINGTABLE
+STRINGTABLE 
 BEGIN
-    IDM_GLOBE_JUMPTOLOCATION
+    IDM_GLOBE_JUMPTOLOCATION 
                             "Centra el globo sobre una ubicación específica.\nSeleccionar ubicación..."
     IDM_GLOBE_ZOOMIN        "Amplía el globo.\nAmpliar"
     IDM_GLOBE_ZOOMOUT       "Reduce el globo.\nReducir"
@@ -1620,13 +1659,13 @@ BEGIN
     IDM_GLOBE_GOOGLEEARTH   "Abre las ubicaciones seleccionadas en Google Earth.\nAbrir en Google Earth"
 END
 
-STRINGTABLE
+STRINGTABLE 
 BEGIN
     IDM_TAGCLOUD_SORTVALUE  "Ordena las etiquetas en su orden canónico.\nOrdenar por valor"
     IDM_TAGCLOUD_SORTCOUNT  "Ordena las etiquetas por su número de archivo.\nOrdenar por número"
 END
 
-STRINGTABLE
+STRINGTABLE 
 BEGIN
     IDM_TAGCLOUD_SORT       "&Ordenar por"
 END

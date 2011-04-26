@@ -540,6 +540,22 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Ribbon\FilterEdit_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\FilterEdit_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\FilterHide_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\FilterShow_16.png"
+				>
+			</File>
+			<File
 				RelativePath="Ribbon\Folder_16.png"
 				>
 			</File>
@@ -585,14 +601,6 @@
 			</File>
 			<File
 				RelativePath=".\Ribbon\Grouping_32.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\Inspector_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\Inspector_32.png"
 				>
 			</File>
 			<File
@@ -1330,6 +1338,10 @@
 		</File>
 		<File
 			RelativePath=".\FileDrop_Small.ico"
+			>
+		</File>
+		<File
+			RelativePath=".\FilterEdit_Tiny.ico"
 			>
 		</File>
 		<File

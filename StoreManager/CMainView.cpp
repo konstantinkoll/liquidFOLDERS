@@ -24,7 +24,7 @@ CMainView::CMainView()
 	p_wndFileView = NULL;
 	p_Filter = NULL;
 	p_RawFiles = p_CookedFiles = NULL;
-	p_InspectorButton = NULL;
+	p_FilterButton = p_InspectorButton = NULL;
 	p_OrganizeButton = p_ViewButton = NULL;
 	m_Context = m_ViewID = -1;
 	m_Resizing = m_StoreIDValid = FALSE;
@@ -47,6 +47,11 @@ BOOL CMainView::OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* 
 	// The file view gets the command first
 	if (p_wndFileView)
 		if (p_wndFileView->OnCmdMsg(nID, nCode, pExtra, pHandlerInfo))
+			return TRUE;
+
+	// Check Filter
+	if (p_wndFilter)
+		if (p_wndFilter->OnCmdMsg(nID, nCode, pExtra, pHandlerInfo))
 			return TRUE;
 
 	// Check Inspector
@@ -565,6 +570,7 @@ BEGIN_MESSAGE_MAP(CMainView, CWnd)
 	ON_MESSAGE(WM_RENAMEITEM, OnRenameItem)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoreAttributesChanged, OnStoreAttributesChanged)
 
+	ON_COMMAND(ID_PANE_FILTER, OnToggleFilter)
 	ON_COMMAND(ID_PANE_INSPECTOR, OnToggleInspector)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_PANE_FILTER, ID_PANE_INSPECTOR, OnUpdatePaneCommands)
 
@@ -643,7 +649,7 @@ INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndTaskbar.AddButton(IDM_STORES_CREATENEW, 0);
 	m_wndTaskbar.AddButton(IDM_HOME_IMPORTFOLDER, 1, TRUE);
 	m_wndTaskbar.AddButton(IDM_HOUSEKEEPING_REGISTER, 2, TRUE);
-	m_wndTaskbar.AddButton(IDM_HOUSEKEEPING_SEND, 31, TRUE);
+	m_wndTaskbar.AddButton(IDM_HOUSEKEEPING_SEND, 33, TRUE);
 	m_wndTaskbar.AddButton(IDM_TRASH_EMPTY, 3, TRUE);
 	m_wndTaskbar.AddButton(IDM_TRASH_RESTOREALL, 4, TRUE);
 	m_wndTaskbar.AddButton(IDM_CALENDAR_PREVYEAR, 5, TRUE);
@@ -670,14 +676,18 @@ INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndTaskbar.AddButton(IDM_FILE_RESTORE, 25);
 	m_wndTaskbar.AddButton(ID_APP_NEWFILEDROP, 26, TRUE);
 
-	#define InspectorIconVisible     28
-	#define InspectorIconHidden      27
+	#define FilterIconVisible     28
+	#define FilterIconHidden      27
+	p_FilterButton = m_wndTaskbar.AddButton(ID_PANE_FILTER, theApp.m_ShowFilterPane ? FilterIconVisible : FilterIconHidden, TRUE, TRUE);
+
+	#define InspectorIconVisible     30
+	#define InspectorIconHidden      29
 	p_InspectorButton = m_wndTaskbar.AddButton(ID_PANE_INSPECTOR, theApp.m_ShowInspectorPane ? InspectorIconVisible : InspectorIconHidden, TRUE, TRUE);
 
-	m_wndTaskbar.AddButton(ID_APP_PURCHASE, 29, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_ENTERLICENSEKEY, 30, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_SUPPORT, 31, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_ABOUT, 32, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_PURCHASE, 31, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_ENTERLICENSEKEY, 32, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_SUPPORT, 33, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_ABOUT, 34, TRUE, TRUE);
 
 	// Filter
 	if (!m_IsClipboard)
@@ -924,6 +934,15 @@ LRESULT CMainView::OnStoreAttributesChanged(WPARAM /*wParam*/, LPARAM /*lParam*/
 
 // Panes
 
+void CMainView::OnToggleFilter()
+{
+	ASSERT(p_FilterButton);
+
+	theApp.m_ShowFilterPane = m_ShowFilterPane = !m_ShowFilterPane;
+	p_FilterButton->SetIconID(m_ShowFilterPane ? FilterIconVisible : FilterIconHidden);
+	AdjustLayout();
+}
+
 void CMainView::OnToggleInspector()
 {
 	ASSERT(p_InspectorButton);
@@ -940,6 +959,7 @@ void CMainView::OnUpdatePaneCommands(CCmdUI* pCmdUI)
 	switch (pCmdUI->m_nID)
 	{
 	case ID_PANE_FILTER:
+		b = !m_IsClipboard;
 		break;
 	case ID_PANE_INSPECTOR:
 		b = TRUE;

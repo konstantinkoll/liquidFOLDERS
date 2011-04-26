@@ -33,12 +33,6 @@
 #define ID_NAV_BACK                     500
 #define ID_NAV_FORWARD                  501
 #define ID_NAV_RELOAD                   502
-#define ID_FILTER_CLEAR                 600
-#define ID_FILTER_EDITCONDITION         601
-#define ID_FILTER_REMOVECONDITION       602
-#define ID_FILTER_SAVE                  603
-#define ID_FILTER_SAVEAS                604
-#define ID_FILTERLIST                   605
 #define IDS_VIEWGROUP1                  1000
 #define IDS_VIEWGROUP2                  1001
 #define IDS_CONTEXTMENU_SELECTALL       1002
@@ -121,6 +115,9 @@
 #define IDC_CROSSHAIRS                  2212
 #define IDD_GOTOYEAR                    2300
 #define IDC_YEAR                        2301
+#define IDD_EDITCONDITION               2400
+#define IDC_COMPAREATTRIBUTE            2401
+#define IDC_COMPARE                     2402
 #define IDM_STORES_SHOWEMPTYVOLUMES     3000
 #define IDM_STORES_REPAIRCORRUPTEDINDEX 3001
 #define IDM_HOME                        3100
@@ -187,6 +184,14 @@
 #define IDM_INSPECTOR_SORTALPHABETIC    6003
 #define IDM_INSPECTOR_EXPORTSUMMARY     6004
 #define IDM_INSPECTOR_EXPORTMETADATA    6005
+#define IDM_FILTER                      6100
+#define IDM_FILTER_SAVE                 6101
+#define IDM_FILTER_SEARCH               6102
+#define IDM_CONDITIONLIST               6200
+#define IDM_CONDITIONLIST_ADD           6201
+#define IDM_CONDITION                   6300
+#define IDM_CONDITION_EDIT              6301
+#define IDM_CONDITION_DELETE            6302
 #define IDM_ORGANIZE                    7000
 #define IDM_ORGANIZE_OPTIONS            7001
 #define IDM_ORGANIZE_TOGGLEAUTODIRS     7002
@@ -211,7 +216,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        8011
 #define _APS_NEXT_COMMAND_VALUE         32777
-#define _APS_NEXT_CONTROL_VALUE         8017
+#define _APS_NEXT_CONTROL_VALUE         8018
 #define _APS_NEXT_SYMED_VALUE           8007
 #endif
 #endif

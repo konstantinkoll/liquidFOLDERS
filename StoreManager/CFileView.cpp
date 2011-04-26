@@ -763,7 +763,7 @@ void CFileView::DrawCategory(CDC& dc, LPRECT rectCategory, ItemCategory* ic, BOO
 
 	if (rectLine.right<=rect.right)
 	{
-		CPen pen(PS_SOLID, 1, 0xE2E2E2);
+		CPen pen(PS_SOLID, 1, Themed ? 0xE2E2E2: GetSysColor(COLOR_WINDOWTEXT));
 
 		CPen* pOldPen = dc.SelectObject(&pen);
 		dc.MoveTo(rectLine.right, rect.top+(m_FontHeight[1]+1)/2);
