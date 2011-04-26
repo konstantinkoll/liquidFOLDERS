@@ -130,6 +130,7 @@ BOOL CFileView::PreTranslateMessage(MSG* pMsg)
 void CFileView::UpdateViewOptions(INT Context, BOOL Force)
 {
 	DestroyEdit();
+	m_TooltipCtrl.Deactivate();
 
 	if (Context>=0)
 		m_Context = Context;
@@ -154,6 +155,7 @@ void CFileView::UpdateViewOptions(INT Context, BOOL Force)
 void CFileView::UpdateSearchResult(LFSearchResult* Result, FVPersistentData* Data)
 {
 	DestroyEdit();
+	m_TooltipCtrl.Deactivate();
 
 	void* Victim = m_ItemData;
 	UINT VictimAllocated = m_ItemDataAllocated;
