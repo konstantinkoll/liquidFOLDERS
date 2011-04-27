@@ -52,44 +52,11 @@ void CFilterWnd::AdjustLayout()
 	m_wndList.SetWindowPos(NULL, rectClient.left+borderBtn, cy+20, rectClient.Width()-borderBtn, rectClient.Height()-cy-20, SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
-void CFilterWnd::AddConditionItem(BOOL focus)
-{
-	UINT puColumns[] = { 1, 2 };
-	LVITEM lvi;
-	ZeroMemory(&lvi, sizeof(lvi));
-	lvi.mask = LVIF_TEXT | LVIF_IMAGE | LVIF_COLUMNS;
-	lvi.cColumns = 2;
-	lvi.puColumns = puColumns;
-	lvi.iItem = m_wndList.GetItemCount();
-	lvi.pszText = L"Property";
-	lvi.iImage = -1;
-	INT idx = m_wndList.InsertItem(&lvi);
-
-	m_wndList.SetItemText(idx, 1, L"Condition");
-	m_wndList.SetItemText(idx, 2, L"Value");
-
-	if (focus)
-		m_wndList.SetItemState(idx, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
-}
-
-void CFilterWnd::UpdateList()
-{
-	m_wndList.SetRedraw(FALSE);
-	m_wndList.DeleteAllItems();
-
-	AddConditionItem(FALSE);
-	AddConditionItem(FALSE);
-	AddConditionItem(FALSE);
-	AddConditionItem(FALSE);
-	AddConditionItem(FALSE);
-
-	m_wndList.SetRedraw(TRUE);
-}
-
 
 BEGIN_MESSAGE_MAP(CFilterWnd, CGlasPane)
 	ON_WM_CREATE()
 	ON_WM_CONTEXTMENU()
+	ON_NOTIFY(NM_DBLCLK, 4, OnDoubleClick)
 //	ON_UPDATE_COMMAND_UI_RANGE(ID_FILTER_CLEAR, ID_FILTER_SAVEAS, OnUpdateCommands)
 	ON_UPDATE_COMMAND_UI(IDOK, OnUpdateCommands)
 END_MESSAGE_MAP()
@@ -125,22 +92,29 @@ INT CFilterWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (!m_wndLabel3.Create(this, 7, L"Other conditions"))
 		return -1;
 
-	if (!m_wndList.Create(dwViewStyle | LVS_NOCOLUMNHEADER, CRect(0, 0, 0, 0), this, IDCANCEL))
+	if (!m_wndList.Create(dwViewStyle | LVS_NOCOLUMNHEADER | LVS_SHAREIMAGELISTS, CRect(0, 0, 0, 0), this, 4))
 		return -1;
 
 	m_wndList.SetMenus(IDM_CONDITION, TRUE, IDM_CONDITIONLIST);
 
-	LV_COLUMN lvc;
-	ZeroMemory(&lvc, sizeof(lvc));
+	LFFilterCondition c;
+	c.AttrData.Attr = LFAttrArtist;
+	LFGetNullVariantData(&c.AttrData);
+	c.AttrData.IsNull = false;
+	wcscpy_s(c.AttrData.UnicodeString, 256, L"Madonna");
+	m_wndList.InsertItem(&c);
 
-	lvc.mask = LVCF_FMT | LVCF_TEXT | LVCF_SUBITEM;
-	for (UINT a=0; a<3; a++)
-	{
-		lvc.pszText = L"";
-		lvc.fmt = LVCFMT_LEFT;
-		lvc.iSubItem = a;
-		m_wndList.InsertColumn(a, &lvc);
-	}
+	c.AttrData.Attr = LFAttrRating;
+	LFGetNullVariantData(&c.AttrData);
+	c.AttrData.IsNull = false;
+	c.AttrData.Rating = 7;
+	m_wndList.InsertItem(&c);
+
+	c.AttrData.Attr = LFAttrAlbum;
+	LFGetNullVariantData(&c.AttrData);
+	c.AttrData.IsNull = false;
+	wcscpy_s(c.AttrData.UnicodeString, 256, L"True Blue");
+	m_wndList.InsertItem(&c);
 
 	m_wndList.SetView(LV_VIEW_TILE);
 
@@ -170,6 +144,19 @@ void CFilterWnd::OnContextMenu(CWnd* pWnd, CPoint point)
 
 	pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, GetOwner(), NULL);
 }
+
+void CFilterWnd::OnDoubleClick(NMHDR* pNMHDR, LRESULT* /*pResult*/)
+{
+//	NM_LISTVIEW* pNMListView = (NM_LISTVIEW*)pNMHDR;
+
+	EditConditionDlg dlg(GetParent());
+	if (dlg.DoModal()==IDOK)
+	{
+	}
+
+	m_wndList.SetFocus();
+}
+
 
 void CFilterWnd::OnUpdateCommands(CCmdUI* pCmdUI)
 {

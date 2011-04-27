@@ -11,11 +11,9 @@ class CFilterWnd : public CGlasPane
 {
 public:
 	CFilterWnd();
-	virtual ~CFilterWnd();
+	~CFilterWnd();
 
 	virtual void AdjustLayout();
-
-	void UpdateList();
 
 protected:
 	CLabel m_wndLabel1;
@@ -27,10 +25,9 @@ protected:
 	CLabel m_wndLabel3;
 	CConditionList m_wndList;
 
-	void AddConditionItem(BOOL focus=FALSE);
-
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
+	afx_msg void OnDoubleClick(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnUpdateCommands(CCmdUI* pCmdUI);
 	DECLARE_MESSAGE_MAP()
 };

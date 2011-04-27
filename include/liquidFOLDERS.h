@@ -375,10 +375,10 @@ struct LFDomainDescriptor
 #define LFFilterCompareIsEqual          3
 #define LFFilterCompareIsNotEqual       4
 #define LFFilterCompareIsAboveOrEqual   5
-#define LFFilterCompareBeginsWith       5	// Strings
-#define LFFilterCompareIsBelowOrEqual   6
-#define LFFilterCompareEndsWith         6	// Strings
-#define LFFilterCompareContains         7	// Strings
+#define LFFilterCompareBeginsWith       6	// Strings
+#define LFFilterCompareIsBelowOrEqual   7
+#define LFFilterCompareEndsWith         8	// Strings
+#define LFFilterCompareContains         9	// Strings
 
 
 struct LFFilterOptions

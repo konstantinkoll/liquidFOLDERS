@@ -18,6 +18,8 @@ public:
 
 	virtual void PreSubclassWindow();
 
+	void InsertItem(LFFilterCondition* c);
+	void SetItem(INT nItem, LFFilterCondition* c);
 	void SetMenus(UINT _ItemMenuID=0, BOOL _HighlightFirst=FALSE, UINT _BackgroundMenuID=0);
 
 protected:
@@ -39,4 +41,6 @@ protected:
 private:
 	CImageListTransparent m_AttributeIcons16;
 	CImageListTransparent m_AttributeIcons32;
+
+	void ConditionToItem(LFFilterCondition* c, LVITEM& lvi);
 };

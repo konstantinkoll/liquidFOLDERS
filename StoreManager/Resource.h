@@ -209,6 +209,7 @@
 #define IDM_VIEW_CALENDAR               8009
 #define IDM_VIEW_GLOBE                  8010
 #define IDM_VIEW_TAGCLOUD               8011
+#define IDC_EDIT1                       8018
 
 // Next default values for new objects
 // 
@@ -216,7 +217,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        8011
 #define _APS_NEXT_COMMAND_VALUE         32777
-#define _APS_NEXT_CONTROL_VALUE         8018
+#define _APS_NEXT_CONTROL_VALUE         8019
 #define _APS_NEXT_SYMED_VALUE           8007
 #endif
 #endif

@@ -29,6 +29,7 @@ void CExplorerList::PreSubclassWindow()
 
 void CExplorerList::Init()
 {
+	ModifyStyle(0, LVS_SHAREIMAGELISTS);
 	SetExtendedStyle(GetExtendedStyle() | LVS_EX_FULLROWSELECT | LVS_EX_DOUBLEBUFFER);
 
 	if ((p_App->m_ThemeLibLoaded) && (p_App->OSVersion>=OS_Vista))

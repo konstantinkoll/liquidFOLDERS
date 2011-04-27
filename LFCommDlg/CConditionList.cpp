@@ -4,6 +4,7 @@
 
 #include "stdafx.h"
 #include "CConditionList.h"
+#include "LFCore.h"
 
 
 // CConditionList
@@ -11,6 +12,7 @@
 
 extern AFX_EXTENSION_MODULE LFCommDlgDLL;
 extern INT GetAttributeIconIndex(UINT Attr);
+static UINT puColumns[] = { 1, 2 };
 
 CConditionList::CConditionList()
 	: CListCtrl()
@@ -31,6 +33,7 @@ void CConditionList::PreSubclassWindow()
 
 void CConditionList::Init()
 {
+	ModifyStyle(0, LVS_SHAREIMAGELISTS);
 	SetExtendedStyle(GetExtendedStyle() | LVS_EX_FULLROWSELECT | LVS_EX_DOUBLEBUFFER);
 
 	if ((p_App->m_ThemeLibLoaded) && (p_App->OSVersion>=OS_Vista))
@@ -40,19 +43,63 @@ void CConditionList::Init()
 	}
 
 	m_AttributeIcons16.Create(IDB_ATTRIBUTEICONS_16, LFCommDlgDLL.hResource, 0, -1, 16, 16);
-	m_AttributeIcons32.Create(IDB_ATTRIBUTEICONS_16, LFCommDlgDLL.hResource, 0, -1, 32, 32);
+	m_AttributeIcons32.Create(IDB_ATTRIBUTEICONS_32, LFCommDlgDLL.hResource, 0, -1, 32, 32);
 
 	SetImageList(&m_AttributeIcons16, LVSIL_SMALL);
 	SetImageList(&m_AttributeIcons32, LVSIL_NORMAL);
 
-	/*LVTILEVIEWINFO tvi;
+	LV_COLUMN lvc;
+	ZeroMemory(&lvc, sizeof(lvc));
+	lvc.mask = LVCF_FMT | LVCF_TEXT | LVCF_SUBITEM;
+	lvc.pszText = L"";
+	lvc.fmt = LVCFMT_LEFT;
+	for (UINT a=0; a<3; a++)
+	{
+		lvc.iSubItem = a;
+		InsertColumn(a, &lvc);
+	}
+
+	LVTILEVIEWINFO tvi;
 	ZeroMemory(&tvi, sizeof(tvi));
 	tvi.cbSize = sizeof(LVTILEVIEWINFO);
 	tvi.cLines = 2;
 	tvi.dwFlags = LVTVIF_FIXEDWIDTH;
 	tvi.dwMask = LVTVIM_COLUMNS | LVTVIM_TILESIZE;
 	tvi.sizeTile.cx = 218;
-	SetTileViewInfo(&tvi);*/
+	SetTileViewInfo(&tvi);
+}
+
+void CConditionList::ConditionToItem(LFFilterCondition* c, LVITEM& lvi)
+{
+	ZeroMemory(&lvi, sizeof(lvi));
+
+	lvi.mask = LVIF_TEXT | LVIF_IMAGE | LVIF_COLUMNS;
+	lvi.cColumns = 2;
+	lvi.puColumns = puColumns;
+	lvi.pszText = p_App->m_Attributes[c->AttrData.Attr]->Name;
+	lvi.iImage = GetAttributeIconIndex(c->AttrData.Attr);
+}
+
+void CConditionList::InsertItem(LFFilterCondition* c)
+{
+	LVITEM lvi;
+	ConditionToItem(c, lvi);
+	lvi.iItem = GetItemCount();
+
+	INT nItem = CListCtrl::InsertItem(&lvi);
+
+	WCHAR tmpStr[256];
+	LFVariantDataToString(&c->AttrData, tmpStr, 256);
+	SetItemText(nItem, 2, tmpStr);
+}
+
+void CConditionList::SetItem(INT nItem, LFFilterCondition* c)
+{
+	LVITEM lvi;
+	ConditionToItem(c, lvi);
+	lvi.iItem = nItem;
+
+	CListCtrl::SetItem(&lvi);
 }
 
 void CConditionList::SetMenus(UINT _ItemMenuID, BOOL _HighlightFirst, UINT _BackgroundMenuID)
