@@ -71,6 +71,17 @@
 #define IDS_MAINTENANCETAB0             20324
 #define IDS_MAINTENANCETAB1             20325
 #define IDS_REGFILEFILTER               20326
+#define IDS_COMPARE_FIRST               20400
+#define IDS_COMPARE_IGNORE              20400
+#define IDS_COMPARE_ISNULL              20401
+#define IDS_COMPARE_SUBFOLDER           20402
+#define IDS_COMPARE_ISEQUAL             20403
+#define IDS_COMPARE_ISNOTEQUAL          20404
+#define IDS_COMPARE_ISABOVEEQUAL        20405
+#define IDS_COMPARE_BEGINSWITH          20406
+#define IDS_COMPARE_ISBELOWEQUAL        20407
+#define IDS_COMPARE_ENDSWITH            20408
+#define IDS_COMPARE_CONTAINS            20409
 #define IDD_ABOUT                       21000
 #define IDC_GROUPBOX                    21001
 #define IDC_NAME                        21002

@@ -41,6 +41,7 @@ protected:
 private:
 	CImageListTransparent m_AttributeIcons16;
 	CImageListTransparent m_AttributeIcons32;
+	CString m_Compare[LFFilterCompareCount];
 
 	void ConditionToItem(LFFilterCondition* c, LVITEM& lvi);
 };

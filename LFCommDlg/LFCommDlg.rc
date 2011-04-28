@@ -701,11 +701,21 @@ END
 
 STRINGTABLE 
 BEGIN
-    ID_APP_ABOUT            "Zeigt Informationen und globale Einstellungen an.\nÜber liquidFOLDERS"
+    IDS_COMPARE_IGNORE      "wird ignoriert"
+    IDS_COMPARE_ISNULL      "ist nicht gesetzt"
+    IDS_COMPARE_SUBFOLDER   "ist der Unterordner"
+    IDS_COMPARE_ISEQUAL     "ist gleich"
+    IDS_COMPARE_ISNOTEQUAL  "ist ungleich"
+    IDS_COMPARE_ISABOVEEQUAL "ist mindestens"
+    IDS_COMPARE_BEGINSWITH  "fängt an mit"
+    IDS_COMPARE_ISBELOWEQUAL "ist höchstens"
+    IDS_COMPARE_ENDSWITH    "endet auf"
+    IDS_COMPARE_CONTAINS    "enthält"
 END
 
 STRINGTABLE 
 BEGIN
+    ID_APP_ABOUT            "Zeigt Informationen und globale Einstellungen an.\nÜber liquidFOLDERS"
     ID_APP_SUPPORT          "Öffnet das Standard-Mailprogramm für eine EMail an den Kundenservice.\nEMail an Kundenservice"
     ID_APP_NEWFILEDROP      "Öffnet ein neues FileDrop-Fenster.\nFileDrop starten"
     ID_APP_NEWMIGRATE       "Öffnet den Migrations-Assistenten.\nMigrations-Assistent starten"
@@ -1269,11 +1279,21 @@ END
 
 STRINGTABLE 
 BEGIN
-    ID_APP_ABOUT            "Shows liquidFOLDERS information and settings.\nAbout liquidFOLDERS"
+    IDS_COMPARE_IGNORE      "is ignored"
+    IDS_COMPARE_ISNULL      "is not set"
+    IDS_COMPARE_SUBFOLDER   "is the subfolder"
+    IDS_COMPARE_ISEQUAL     "equals"
+    IDS_COMPARE_ISNOTEQUAL  "does not equal"
+    IDS_COMPARE_ISABOVEEQUAL "is at least"
+    IDS_COMPARE_BEGINSWITH  "begins with"
+    IDS_COMPARE_ISBELOWEQUAL "is at most"
+    IDS_COMPARE_ENDSWITH    "ends with"
+    IDS_COMPARE_CONTAINS    "contains"
 END
 
 STRINGTABLE 
 BEGIN
+    ID_APP_ABOUT            "Shows liquidFOLDERS information and settings.\nAbout liquidFOLDERS"
     ID_APP_SUPPORT          "Opens your standard mail software to contact customer support.\nContact support"
     ID_APP_NEWFILEDROP      "Opens a new FileDrop window.\nOpen FileDrop"
     ID_APP_NEWMIGRATE       "Opens the migration wizard.\nOpen Migration Wizard"
@@ -1846,10 +1866,6 @@ END
 STRINGTABLE 
 BEGIN
     ID_APP_ABOUT            "Visualiza información y configuración de liquidFOLDERS.\nAcerca de liquidFOLDERS"
-END
-
-STRINGTABLE 
-BEGIN
     ID_APP_SUPPORT          "Abre su software estándar de correo para contactar a servicio al cliente.\nContacto de servicio"
     ID_APP_NEWFILEDROP      "Abre una ventana nueva de FileDrop.\nEmpezar FileDrop"
     ID_APP_NEWMIGRATE       "Abre el asistente de migración.\nEmpezar Asistente de Migración"
@@ -2424,10 +2440,6 @@ END
 STRINGTABLE 
 BEGIN
     ID_APP_ABOUT            "Montre des informations et embauches globales.\nConcernant liquidFOLDERS"
-END
-
-STRINGTABLE 
-BEGIN
     ID_APP_SUPPORT          "Produis un nouvel e-mail au service aprés-vente.\nE-mail au service aprés-vente"
     ID_APP_NEWFILEDROP      "Ouvre une nouvelle fenêtre de FileDrop.\nCommoncer FileDrop"
     ID_APP_NEWMIGRATE       "Ouvre l'assistant de migration.\nCommmencer l'assistant de migration"

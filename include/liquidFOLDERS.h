@@ -380,6 +380,8 @@ struct LFDomainDescriptor
 #define LFFilterCompareEndsWith         8	// Strings
 #define LFFilterCompareContains         9	// Strings
 
+#define LFFilterCompareCount            10
+
 
 struct LFFilterOptions
 {

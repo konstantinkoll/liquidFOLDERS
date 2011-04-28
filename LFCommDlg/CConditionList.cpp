@@ -5,6 +5,7 @@
 #include "stdafx.h"
 #include "CConditionList.h"
 #include "LFCore.h"
+#include "resource.h"
 
 
 // CConditionList
@@ -20,6 +21,9 @@ CConditionList::CConditionList()
 	p_App = (LFApplication*)AfxGetApp();
 	hTheme = NULL;
 	m_ItemMenuID = m_BackgroundMenuID = 0;
+
+	for (UINT a=0; a<LFFilterCompareCount; a++)
+		ENSURE(m_Compare[a].LoadString(IDS_COMPARE_FIRST+a));
 }
 
 void CConditionList::PreSubclassWindow()
@@ -62,7 +66,7 @@ void CConditionList::Init()
 	LVTILEVIEWINFO tvi;
 	ZeroMemory(&tvi, sizeof(tvi));
 	tvi.cbSize = sizeof(LVTILEVIEWINFO);
-	tvi.cLines = 2;
+	tvi.cLines = 1;
 	tvi.dwFlags = LVTVIF_FIXEDWIDTH;
 	tvi.dwMask = LVTVIM_COLUMNS | LVTVIM_TILESIZE;
 	tvi.sizeTile.cx = 218;
@@ -88,9 +92,15 @@ void CConditionList::InsertItem(LFFilterCondition* c)
 
 	INT nItem = CListCtrl::InsertItem(&lvi);
 
-	WCHAR tmpStr[256];
-	LFVariantDataToString(&c->AttrData, tmpStr, 256);
-	SetItemText(nItem, 2, tmpStr);
+	WCHAR tmpStr[512];
+	ASSERT(c->Compare<LFFilterCompareCount);
+	wcscpy_s(tmpStr, 512, m_Compare[c->Compare]);
+	if (c->Compare)
+	{
+		wcscat_s(tmpStr, 512, L" ");
+		LFVariantDataToString(&c->AttrData, &tmpStr[wcslen(tmpStr)], 512-wcslen(tmpStr));
+	}
+	SetItemText(nItem, 1, tmpStr);
 }
 
 void CConditionList::SetItem(INT nItem, LFFilterCondition* c)

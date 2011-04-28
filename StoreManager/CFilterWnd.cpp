@@ -101,18 +101,21 @@ INT CFilterWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	c.AttrData.Attr = LFAttrArtist;
 	LFGetNullVariantData(&c.AttrData);
 	c.AttrData.IsNull = false;
+	c.Compare = LFFilterCompareIsEqual;
 	wcscpy_s(c.AttrData.UnicodeString, 256, L"Madonna");
 	m_wndList.InsertItem(&c);
 
 	c.AttrData.Attr = LFAttrRating;
 	LFGetNullVariantData(&c.AttrData);
 	c.AttrData.IsNull = false;
+	c.Compare = LFFilterCompareIsAboveOrEqual;
 	c.AttrData.Rating = 7;
 	m_wndList.InsertItem(&c);
 
 	c.AttrData.Attr = LFAttrAlbum;
 	LFGetNullVariantData(&c.AttrData);
 	c.AttrData.IsNull = false;
+	c.Compare = LFFilterCompareIsEqual;
 	wcscpy_s(c.AttrData.UnicodeString, 256, L"True Blue");
 	m_wndList.InsertItem(&c);
 
