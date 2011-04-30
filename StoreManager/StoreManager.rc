@@ -1737,8 +1737,8 @@ BEGIN
     POPUP "POPUP"
     BEGIN
         MENUITEM SEPARATOR
-        MENUITEM "Alle &wiederherstellen",      IDM_TRASH_RESTOREALL
-        MENUITEM "&Papierkorb leeren",          IDM_TRASH_EMPTY
+        MENUITEM "Reconstituer &tous",          IDM_TRASH_RESTOREALL
+        MENUITEM "&Vider dêchets",              IDM_TRASH_EMPTY
     END
 END
 
@@ -1748,8 +1748,8 @@ BEGIN
     BEGIN
         MENUITEM "Créez un store &nouveau...",  IDM_VOLUME_CREATENEWSTORE
         MENUITEM SEPARATOR
-        MENUITEM "&Formatieren...",             IDM_VOLUME_FORMAT
-        MENUITEM "A&uswerfen",                  IDM_VOLUME_EJECT
+        MENUITEM "&Formater...",                IDM_VOLUME_FORMAT
+        MENUITEM "&Éjecter",                    IDM_VOLUME_EJECT
         MENUITEM SEPARATOR
         MENUITEM "&Propriétés",                 IDM_VOLUME_PROPERTIES
     END
@@ -1771,7 +1771,7 @@ BEGIN
     BEGIN
         MENUITEM SEPARATOR
         MENUITEM "&Effacer",                    IDM_FILE_DELETE
-        MENUITEM "&Wiederherstellen",           IDM_FILE_RESTORE
+        MENUITEM "&Reconstituer",               IDM_FILE_RESTORE
     END
 END
 
@@ -1834,14 +1834,14 @@ IDM_INSPECTOR MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "&Vorschau anzeigen",          IDM_INSPECTOR_SHOWPREVIEW
+        MENUITEM "&Indiquer l'aperçu",      IDM_INSPECTOR_SHOWPREVIEW
         MENUITEM "Indiquer &tous les propriétés", IDM_INSPECTOR_SHOWINTERNAL
-        MENUITEM "&Alphabetisch sortieren",     IDM_INSPECTOR_SORTALPHABETIC
+        MENUITEM "&Classer par ordre alphabétique", IDM_INSPECTOR_SORTALPHABETIC
         MENUITEM SEPARATOR
         POPUP "&Export"
         BEGIN
-            MENUITEM "&Zusammenfassung...",         IDM_INSPECTOR_EXPORTSUMMARY
-            MENUITEM "Alle &Metadaten...",          IDM_INSPECTOR_EXPORTMETADATA
+            MENUITEM "&Compte-rendu...",            IDM_INSPECTOR_EXPORTSUMMARY
+            MENUITEM "Toutes les &meta-données...", IDM_INSPECTOR_EXPORTMETADATA
         END
     END
 END
@@ -2045,13 +2045,13 @@ BEGIN
     IDS_MULTIPLETYPESSELECTED "Types, éléments %d différents"
     IDS_YOULOOKAT           "Vous regardez %s"
     IDS_NOTHINGTODISPLAY    "Il n'y a rien indiquer."
-    IDS_NONAVIGATION        "Dieses Fenster unterstützt keine Navigation."
+    IDS_NONAVIGATION        "Cette fenêtre ne soutient aucune navigation."
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_FORMAT_CAPTION      "Sie können das Laufwerk „%s“ nicht formatieren"
-    IDS_FORMAT_TEXT         "Das Laufwerk enthält Stores, die zur Zeit benutzt werden.\nDas Formatieren des Laufwerks würde diese Stores unbrauchbar machen."
+    IDS_FORMAT_CAPTION      "Vous ne pouvez pas formater le lecteur ""%s"""
+    IDS_FORMAT_TEXT         "Le lecteur contient à présent stores, être utilisés.\nLe fait de formater le lecteur rendrait ces stores inutilisables."
     IDS_AUTOMATIC           "Choisir automatiquement"
     IDS_ILLEGALYEAR         "Vous pouvez indiquer seulement les années de 1900 à 2100."
     IDS_LEGEND              "Légende"
