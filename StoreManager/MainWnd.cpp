@@ -238,6 +238,9 @@ INT CMainWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	MARGINS Margins = { 0, 0, max(m_wndJournalButton.GetPreferredHeight()+8, m_wndHistory.GetPreferredHeight()+11), 0 };
 	UseGlasBackground(Margins);
 
+	m_GlasChildren.AddTail(&m_wndJournalButton);
+	m_GlasChildren.AddTail(&m_wndHistory);
+
 	// Entweder leeres Suchergebnis oder Stores-Kontext öffnen
 	m_pRawFiles = m_IsClipboard ? LFAllocSearchResult(LFContextClipboard) : LFQuery(m_pActiveFilter);
 	OnCookFiles();

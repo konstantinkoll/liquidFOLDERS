@@ -312,7 +312,10 @@ BOOL CGlasWindow::OnNcActivate(BOOL bActive)
 		if (GetDesign()==GWD_THEMED)
 		{
 			Invalidate();
-			RedrawWindow(NULL, NULL, RDW_ALLCHILDREN | RDW_INVALIDATE);
+
+			for (POSITION p=m_GlasChildren.GetHeadPosition(); p; )
+				m_GlasChildren.GetNext(p)->RedrawWindow(NULL, NULL, RDW_ALLCHILDREN | RDW_INVALIDATE);
+
 			UpdateWindow();
 		}
 	}

@@ -40,6 +40,7 @@ public:
 protected:
 	LFApplication* p_App;
 	CWnd* p_PopupWindow;
+	CList<CWnd*> m_GlasChildren;
 	BOOL m_IsAeroWindow;
 	BOOL m_Active;
 	MARGINS m_Margins;

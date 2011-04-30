@@ -17,13 +17,15 @@ public:
 
 protected:
 	CLabel m_wndLabel1;
-	CEdit m_wndFreetext;
+	CButton m_wndAllStores;
+	CButton m_wndThisStore;
 	CLabel m_wndLabel2;
-	CComboBox m_wndStoreCombo;
+	CEdit m_wndFreetext;
+	CButton m_wndSaveFilter;
 	CButton m_wndStartSearch;
-	CButton m_wndAddCondition;
 	CLabel m_wndLabel3;
 	CConditionList m_wndList;
+	CButton m_wndAddCondition;
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
