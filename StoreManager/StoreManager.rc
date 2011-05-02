@@ -2010,10 +2010,10 @@ BEGIN
     IDR_CLIPBOARD           "Presse-papiers"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
-    ID_PANE_FILTER          "Blendet den Filter ein oder aus.\nFilter"
-    ID_PANE_INSPECTOR       "Blendet den Inspektor ein oder aus.\nInspektor"
+    ID_PANE_FILTER          "Insère le filtre ou masque le filtre.\nFiltre"
+    ID_PANE_INSPECTOR       "Insère le filtre ou masque l'inspecteur.\nInspecteur"
 END
 
 STRINGTABLE 
@@ -2092,91 +2092,91 @@ BEGIN
     IDS_VATTR_IATA_COUNTRY  "Territoire"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDM_STORE_MAKEDEFAULT   "Met le store choisi comme le store standard.\nFaites store standard"
     IDM_STORE_IMPORTFOLDER  "Importe un dossier et tous les sous-dossiers dans le store choisi.\nImporter dossier..."
-    IDM_STORE_DELETE        "Löscht den ausgewählten Store und alle enthaltenen Dateien.\nEffacer"
-    IDM_STORE_RENAME        "Benennt den ausgewählten Store um.\nRenommer"
-    IDM_STORE_PROPERTIES    "Zeigt die Eigenschaften des ausgewählten Stores an.\nPropriétés"
+    IDM_STORE_DELETE        "Efface le store choisi et tous les fichiers contenus.\nEffacer"
+    IDM_STORE_RENAME        "Renomme le store choisi .\nRenommer"
+    IDM_STORE_PROPERTIES    "Indique les propriétés du store choisi.\nPropriétés"
     IDM_STORES_CREATENEW    "Crée un nouveau store pour vos fichiers.\nCréez un store nouveau..."
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
-    IDM_STORES_SHOWEMPTYVOLUMES "&Leere Laufwerke anzeigen"
-    IDM_STORES_REPAIRCORRUPTEDINDEX "Wartungsarbeiten durchführen"
+    IDM_STORES_SHOWEMPTYVOLUMES "&Indiquer des lecteurs vides "
+    IDM_STORES_REPAIRCORRUPTEDINDEX "Effectuer travails d'entretien "
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
-    IDM_HOME_SHOWEMPTYDOMAINS "&Leere Ordner anzeigen"
-    IDM_HOME_IMPORTFOLDER   "Importiert einen Ordner und alle Unterordner in den aktuellen Store.\nImporter dossier..."
+    IDM_HOME_SHOWEMPTYDOMAINS "&Indiquer des dossiers vides"
+    IDM_HOME_IMPORTFOLDER   "Importe un dossier et tous les sous-dossiers dans le store actuel.\nImporter dossier..."
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
-    IDM_HOUSEKEEPING_REGISTER 
-                            "Registriert unbekannte Dateiformate, die dadurch in den richtigen Ordnern erscheinen.\nFormate registrieren..."
-    IDM_HOUSEKEEPING_SEND   "Sendet eine Liste mit allen registrierten Dateiformaten an den Kundenservice.\nListe senden"
+    IDM_HOUSEKEEPING_REGISTER
+                            "Enregistre les formats de fichier inconnus qui apparaissent ainsi dans les dossiers justes.\nEnregistrer des formats..."
+    IDM_HOUSEKEEPING_SEND   "Envoie une liste avec tous les formats de fichier enregistrés au service après-vente.\nEnvoyer une liste"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
-    IDM_TRASH_EMPTY         "Löscht endgültig alle Dateien aus dem Papierkorb.\nPapierkorb leeren"
-    IDM_TRASH_RESTOREALL    "Stellt alle Dateien wieder her.\nAlle wiederherstellen"
+    IDM_TRASH_EMPTY         "Efface définitivement tous les fichiers de la corbeille .\nVider la corbeille"
+    IDM_TRASH_RESTOREALL    "Reconstitue tous les fichiers.\nReconstituer tous"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
-    IDM_ITEM_OPEN           "Öffnet das ausgewählte Objekt.\nÖffnen"
+    IDM_ITEM_OPEN           "Ouvre l'objet choisi.\nOuvrir"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
-    IDM_VOLUME_PROPERTIES   "Zeigt die Eigenschaften des ausgewählten Laufwerks an.\nPropriétés"
+    IDM_VOLUME_PROPERTIES   "Indique les propriétés du lecteur choisi.\nPropriétés"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
-    IDM_FILE_REMEMBER       "Fügt die ausgewählten Dateien zur Zwischenablage hinzu.\nMerken"
-    IDM_FILE_REMOVE         "Entfernt die ausgewählten Dateien aus der Zwischenablage.\nEntfernen"
-    IDM_FILE_DELETE         "Löscht die ausgewählten Dateien.\nEffacer"
-    IDM_FILE_RENAME         "Benennt die ausgewählte Datei um.\nRenommer"
-    IDM_FILE_RESTORE        "Stellt die ausgewählten Dateien wieder her.\nWiederstellen"
+    IDM_FILE_REMEMBER       "Ajoute les fichiers choisis au presse-papiers.\nRemarquer"
+    IDM_FILE_REMOVE         "Enlève les fichiers choisis du presse-papiers.\nEnlever"
+    IDM_FILE_DELETE         "Efface les fichiers choisis.\nEffacer"
+    IDM_FILE_RENAME         "Renomme le fichier choisi.\nRenommer"
+    IDM_FILE_RESTORE        "Reconstitue tous les fichiers.\nReconstituer"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
-    IDM_SEND                "S&enden an"
+    IDM_SEND                "E&nvoyer à"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
-    IDM_CALENDAR_PREVYEAR   "Zeigt das vorige Jahr an.\nVoriges Jahr"
-    IDM_CALENDAR_NEXTYEAR   "Zeigt das nächste Jahr an.\nNächstes Jahr"
-    IDM_CALENDAR_GOTOYEAR   "Öffnet ein Dialogfenster, in dem Sie ein Jahr zum Anzeigen auswählen können.\nChoisissez l'année..."
+    IDM_CALENDAR_PREVYEAR   "Indique l'année précédente .\nannée précédente"
+    IDM_CALENDAR_NEXTYEAR   "Indique l' année prochaine .\nl' année prochaine"
+    IDM_CALENDAR_GOTOYEAR   "Ouvre une fenêtre de dialogue dans quoi vous pouvez choisir un an à l'annonce.\nChoisissez l'année..."
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
-    IDM_GLOBE_JUMPTOLOCATION 
-                            "Richtet von Globus auf einen bestimmten Ort aus.\nChoisissez l'endroit..."
-    IDM_GLOBE_ZOOMIN        "Vergrößert den Globus.\nVergößern"
-    IDM_GLOBE_ZOOMOUT       "Verkleinert den Globus.\nVerkleinern"
-    IDM_GLOBE_AUTOSIZE      "Passt den Globus an die Fenstergröße an.\nGröße anpassen"
-    IDM_GLOBE_GOOGLEEARTH   "Öffnet den auswählten Ort in Google Earth.\nÖffnen in Google Earth"
+    IDM_GLOBE_JUMPTOLOCATION
+                            "Transmet du globe vers un lieu certain.\nChoisissez l'endroit..."
+    IDM_GLOBE_ZOOMIN        "Agrandit le globe.\nAgrandir"
+    IDM_GLOBE_ZOOMOUT       "Rapetisse le globe.\nRapetisser"
+    IDM_GLOBE_AUTOSIZE      "Adapte le globe à la grandeur de fenêtre.\nAdapter la grandeur"
+    IDM_GLOBE_GOOGLEEARTH   "Ouvre le lieu choisi dans Google Earth.\nOuvrir dans Google Earth"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
-    IDM_TAGCLOUD_SORTVALUE  "Sortiert alle Tags alphabetisch.\nAlphabetisch sortieren"
-    IDM_TAGCLOUD_SORTCOUNT  "Sortiert alle Tags nach Dateianzahl.\nNach Anzahl sortieren"
+    IDM_TAGCLOUD_SORTVALUE  "Classe tous les tags par ordre alphabétique.\nClasser par ordre alphabétique"
+    IDM_TAGCLOUD_SORTCOUNT  "Classe tous les tags par nombre de fichier.\nClasser par nombre"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
-    IDM_TAGCLOUD_SORT       "&Sortieren nach"
+    IDM_TAGCLOUD_SORT       "&Classer par"
 END
 
 STRINGTABLE 
