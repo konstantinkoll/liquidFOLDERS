@@ -8,15 +8,24 @@
 // CFilterWnd
 //
 
-#define     GUTTER 4
+#define GUTTER     4
+#define IDLIST     7
 
 CFilterWnd::CFilterWnd()
 	: CGlasPane()
 {
+	m_FontHeight = 0;
 }
 
 CFilterWnd::~CFilterWnd()
 {
+}
+
+void CFilterWnd::SetOwner(CWnd* pOwnerWnd)
+{
+	CWnd::SetOwner(pOwnerWnd);
+
+	m_wndList.SetOwner(pOwnerWnd);
 }
 
 void CFilterWnd::AdjustLayout()
@@ -25,9 +34,12 @@ void CFilterWnd::AdjustLayout()
 	GetClientRect(rectClient);
 
 	INT heightLabel = m_wndLabel1.GetPreferredHeight();
-	INT heightButton = heightLabel+8;
-	INT heightRadio = 16;
-	INT heightText = 20;
+	INT heightButton = m_FontHeight*2-3;
+	INT heightRadio = max(m_FontHeight+2, 16);
+	INT heightText = m_FontHeight+7;
+
+	INT widthButton1 = m_FontHeight*7;
+	INT widthButton2 = m_FontHeight*15;
 
 	INT cy = -1;
 
@@ -40,8 +52,8 @@ void CFilterWnd::AdjustLayout()
 	m_wndThisStore.SetWindowPos(NULL, rectClient.left+GUTTER+1, cy, rectClient.Width()-2*GUTTER-1, heightRadio, SWP_NOACTIVATE | SWP_NOZORDER);
 	cy += heightRadio+GUTTER;
 
-	m_wndSaveFilter.SetWindowPos(NULL, rectClient.left+GUTTER, cy+GUTTER, rectClient.Width()/2-3*GUTTER/2, heightButton, SWP_NOACTIVATE | SWP_NOZORDER);
-	m_wndStartSearch.SetWindowPos(NULL, rectClient.Width()-(rectClient.Width()/2-GUTTER/2)+1, cy+GUTTER, rectClient.Width()/2-3*GUTTER/2, heightButton, SWP_NOACTIVATE | SWP_NOZORDER);
+	m_wndSaveFilter.SetWindowPos(NULL, rectClient.left+GUTTER, cy+GUTTER, min(rectClient.Width()/2-3*GUTTER/2, widthButton1), heightButton, SWP_NOACTIVATE | SWP_NOZORDER);
+	m_wndStartSearch.SetWindowPos(NULL, min(widthButton1+2*GUTTER, rectClient.Width()-(rectClient.Width()/2-GUTTER/2))+1, cy+GUTTER, min(rectClient.Width()/2-3*GUTTER/2, widthButton1), heightButton, SWP_NOACTIVATE | SWP_NOZORDER);
 	cy += heightButton+2*GUTTER;
 
 	m_wndLabel2.SetWindowPos(NULL, rectClient.left, cy, rectClient.Width(), heightLabel+GUTTER, SWP_NOACTIVATE | SWP_NOZORDER);
@@ -53,6 +65,9 @@ void CFilterWnd::AdjustLayout()
 	m_wndLabel3.SetWindowPos(NULL, rectClient.left, cy, rectClient.Width(), heightLabel, SWP_NOACTIVATE | SWP_NOZORDER);
 	cy += heightLabel+GUTTER;
 
+	m_wndAddCondition.SetWindowPos(NULL, rectClient.left+GUTTER, cy, min(rectClient.Width(), widthButton2)-2*GUTTER, heightButton, SWP_NOACTIVATE | SWP_NOZORDER);
+	cy += heightButton+GUTTER;
+
 	m_wndList.SetWindowPos(NULL, rectClient.left+GUTTER, cy, rectClient.Width()-GUTTER, rectClient.Height()-cy, SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
@@ -60,9 +75,15 @@ void CFilterWnd::AdjustLayout()
 BEGIN_MESSAGE_MAP(CFilterWnd, CGlasPane)
 	ON_WM_CREATE()
 	ON_WM_CONTEXTMENU()
-	ON_NOTIFY(NM_DBLCLK, 4, OnDoubleClick)
-//	ON_UPDATE_COMMAND_UI_RANGE(ID_FILTER_CLEAR, ID_FILTER_SAVEAS, OnUpdateCommands)
+	ON_NOTIFY(NM_DBLCLK, IDLIST, OnDoubleClick)
+	ON_COMMAND(IDOK, OnSearch)
+	ON_COMMAND(IDM_FILTER_SAVE, OnSave)
+	ON_COMMAND(IDM_FILTER_SEARCH, OnSearch)
+	ON_COMMAND(IDM_CONDITIONLIST_ADD, OnAddCondition)
+	ON_COMMAND(IDM_CONDITION_EDIT, OnEditCondition)
+	ON_COMMAND(IDM_CONDITION_DELETE, OnDeleteCondition)
 	ON_UPDATE_COMMAND_UI(IDOK, OnUpdateCommands)
+	ON_UPDATE_COMMAND_UI_RANGE(IDM_FILTER_SAVE, IDM_CONDITION_DELETE, OnUpdateCommands)
 END_MESSAGE_MAP()
 
 INT CFilterWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -70,18 +91,41 @@ INT CFilterWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CGlasPane::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
+	CDC* dc = GetWindowDC();
+	HGDIOBJ hOldFont = dc->SelectStockObject(DEFAULT_GUI_FONT);
+	m_FontHeight = dc->GetTextExtent(_T("Wy")).cy;
+	dc->SelectObject(hOldFont);
+	ReleaseDC(dc);
+
 	const DWORD dwViewStyle = WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_TABSTOP;
-	if (!m_wndAllStores.Create(L"&All stores", dwViewStyle | BS_AUTORADIOBUTTON | WS_GROUP, CRect(0, 0, 0, 0), this, 80))
+	CString tmpStr;
+	ENSURE(tmpStr.LoadString(IDS_FILTER_SEARCHIN));
+	if (!m_wndLabel1.Create(this, 1, tmpStr))
 		return -1;
-	if (!m_wndThisStore.Create(L"&This store", dwViewStyle | BS_AUTORADIOBUTTON, CRect(0, 0, 0, 0), this, 81))
+	ENSURE(tmpStr.LoadString(IDS_FILTER_ALLSTORES));
+	if (!m_wndAllStores.Create(tmpStr, dwViewStyle | BS_AUTORADIOBUTTON | WS_GROUP, CRect(0, 0, 0, 0), this, 2))
 		return -1;
-	if (!m_wndSaveFilter.Create(L"Sa&ve", dwViewStyle | BS_PUSHBUTTON, CRect(0, 0, 0, 0), this, IDCANCEL))
+	ENSURE(tmpStr.LoadString(IDS_FILTER_THISSTORE));
+	if (!m_wndThisStore.Create(tmpStr, dwViewStyle | BS_AUTORADIOBUTTON, CRect(0, 0, 0, 0), this, 3))
 		return -1;
-	if (!m_wndStartSearch.Create(L"&Search", dwViewStyle | BS_DEFPUSHBUTTON, CRect(0, 0, 0, 0), this, IDOK))
+	ENSURE(tmpStr.LoadString(IDS_FILTER_SAVE));
+	if (!m_wndSaveFilter.Create(tmpStr, dwViewStyle | BS_PUSHBUTTON, CRect(0, 0, 0, 0), this, IDM_FILTER_SAVE))
 		return -1;
-	if (!m_wndFreetext.CreateEx(WS_EX_CLIENTEDGE, _T("EDIT"), _T(""), dwViewStyle | ES_AUTOHSCROLL, CRect(0, 0, 0, 0), this, 2))
+	ENSURE(tmpStr.LoadString(IDS_FILTER_SEARCH));
+	if (!m_wndStartSearch.Create(tmpStr, dwViewStyle | BS_DEFPUSHBUTTON, CRect(0, 0, 0, 0), this, IDOK))
 		return -1;
-	if (!m_wndAddCondition.Create(L"A&dd condition...", dwViewStyle | BS_PUSHBUTTON, CRect(0, 0, 0, 0), this, IDCANCEL))
+	ENSURE(tmpStr.LoadString(IDS_FILTER_SEARCHTERM));
+	if (!m_wndLabel2.Create(this, 4, tmpStr))
+		return -1;
+	if (!m_wndFreetext.CreateEx(WS_EX_CLIENTEDGE, _T("EDIT"), _T(""), dwViewStyle | ES_AUTOHSCROLL, CRect(0, 0, 0, 0), this, 5))
+		return -1;
+	ENSURE(tmpStr.LoadString(IDS_FILTER_OTHERCONDITIONS));
+	if (!m_wndLabel3.Create(this, 6, tmpStr))
+		return -1;
+	ENSURE(tmpStr.LoadString(IDS_FILTER_ADDCONDITION));
+	if (!m_wndAddCondition.Create(tmpStr, dwViewStyle | BS_PUSHBUTTON, CRect(0, 0, 0, 0), this, IDM_CONDITIONLIST_ADD))
+		return -1;
+	if (!m_wndList.Create(dwViewStyle | LVS_NOCOLUMNHEADER | LVS_SHAREIMAGELISTS | LVS_SINGLESEL, CRect(0, 0, 0, 0), this, IDLIST))
 		return -1;
 
 	m_wndAllStores.SendMessage(WM_SETFONT, (WPARAM)GetStockObject(DEFAULT_GUI_FONT));
@@ -93,18 +137,9 @@ INT CFilterWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	m_wndAllStores.SetCheck(BST_CHECKED);
 
-	if (!m_wndLabel1.Create(this, 5, L"Search in"))
-		return -1;
-	if (!m_wndLabel2.Create(this, 6, L"Global search term"))
-		return -1;
-	if (!m_wndLabel3.Create(this, 7, L"Other conditions"))
-		return -1;
-
-	if (!m_wndList.Create(dwViewStyle | LVS_NOCOLUMNHEADER | LVS_SHAREIMAGELISTS, CRect(0, 0, 0, 0), this, 4))
-		return -1;
-
 	m_wndList.SetView(LV_VIEW_TILE);
 	m_wndList.SetMenus(IDM_CONDITION, TRUE, IDM_CONDITIONLIST);
+
 
 	LFFilterCondition c;
 	c.AttrData.Attr = LFAttrArtist;
@@ -155,10 +190,24 @@ void CFilterWnd::OnContextMenu(CWnd* pWnd, CPoint point)
 	pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, GetOwner(), NULL);
 }
 
-void CFilterWnd::OnDoubleClick(NMHDR* pNMHDR, LRESULT* /*pResult*/)
+void CFilterWnd::OnDoubleClick(NMHDR* /*pNMHDR*/, LRESULT* /*pResult*/)
 {
-//	NM_LISTVIEW* pNMListView = (NM_LISTVIEW*)pNMHDR;
+	OnEditCondition();
+}
 
+
+void CFilterWnd::OnSave()
+{
+	MessageBox(_T("Coming soon"));
+}
+
+void CFilterWnd::OnSearch()
+{
+	MessageBox(_T("Coming soon"));
+}
+
+void CFilterWnd::OnAddCondition()
+{
 	EditConditionDlg dlg(GetParent());
 	if (dlg.DoModal()==IDOK)
 	{
@@ -167,8 +216,36 @@ void CFilterWnd::OnDoubleClick(NMHDR* pNMHDR, LRESULT* /*pResult*/)
 	m_wndList.SetFocus();
 }
 
+void CFilterWnd::OnEditCondition()
+{
+	INT idx = m_wndList.GetNextItem(-1, LVNI_SELECTED | LVNI_FOCUSED);
+	if (idx!=-1)
+	{
+		EditConditionDlg dlg(GetParent());
+		if (dlg.DoModal()==IDOK)
+		{
+		}
+
+		m_wndList.SetFocus();
+	}
+}
+
+void CFilterWnd::OnDeleteCondition()
+{
+	MessageBox(_T("Coming soon"));
+}
 
 void CFilterWnd::OnUpdateCommands(CCmdUI* pCmdUI)
 {
-	pCmdUI->Enable(TRUE);
+	BOOL b = TRUE;
+
+	switch (pCmdUI->m_nID)
+	{
+	case IDM_CONDITION_EDIT:
+	case IDM_CONDITION_DELETE:
+		b = (m_wndList.GetNextItem(-1, LVNI_SELECTED | LVNI_FOCUSED)!=-1);
+		break;
+	}
+
+	pCmdUI->Enable(b);
 }

@@ -696,6 +696,7 @@ INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		if (!p_wndFilter->Create(TRUE, theApp.m_FilterWidth, this, 2))
 			return -1;
 
+		p_wndFilter->SetOwner(GetOwner());
 		m_ShowFilterPane = theApp.m_ShowFilterPane;
 	}
 	else

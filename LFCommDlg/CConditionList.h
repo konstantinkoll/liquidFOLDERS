@@ -17,6 +17,7 @@ public:
 	CConditionList();
 
 	virtual void PreSubclassWindow();
+	virtual BOOL SetWindowPos(const CWnd* pWndInsertAfter, INT x, INT y, INT cx, INT cy, UINT nFlags);
 
 	void InsertItem(LFFilterCondition* c);
 	void SetItem(INT nItem, LFFilterCondition* c);
@@ -28,8 +29,11 @@ protected:
 	UINT m_ItemMenuID;
 	BOOL m_HighlightFirst;
 	UINT m_BackgroundMenuID;
+	INT m_LastWidth;
 
 	virtual void Init();
+
+	void SetTileSize(INT cx);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();

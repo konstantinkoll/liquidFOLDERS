@@ -558,16 +558,24 @@ BEGIN
     IDS_VATTR_MAINTENANCETIME "Letzte Wartung"
     IDS_VATTR_LASTSEEN      "Zuletzt eingebunden"
     IDS_VATTR_GUID          "GUID"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_VATTR_PATH_DAT      "Datenpfad"
     IDS_VATTR_PATH_IDX_MAIN "Hauptindex"
     IDS_VATTR_PATH_IDX_AUX  "Hilfsindex"
     IDS_VATTR_INDEXVERSION  "Index-Version"
     IDS_VATTR_IATA_NAME     "IATA Flughafenname"
     IDS_VATTR_IATA_COUNTRY  "Land/Gebiet"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_FILTER_SEARCHIN     "Suchen in"
+    IDS_FILTER_ALLSTORES    "Allen Stores"
+    IDS_FILTER_THISSTORE    "Diesem Store"
+    IDS_FILTER_SAVE         "Speichern"
+    IDS_FILTER_SEARCH       "Suchen"
+    IDS_FILTER_SEARCHTERM   "Suchbegriff"
+    IDS_FILTER_OTHERCONDITIONS "Weitere Bedingungen"
+    IDS_FILTER_ADDCONDITION "Bedingung hinzufügen..."
 END
 
 STRINGTABLE 
@@ -1064,16 +1072,24 @@ BEGIN
     IDS_VATTR_MAINTENANCETIME "Last maintenance"
     IDS_VATTR_LASTSEEN      "Last seen"
     IDS_VATTR_GUID          "GUID"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_VATTR_PATH_DAT      "Data path"
     IDS_VATTR_PATH_IDX_MAIN "Main index path"
     IDS_VATTR_PATH_IDX_AUX  "Aux. index path"
     IDS_VATTR_INDEXVERSION  "Index version"
     IDS_VATTR_IATA_NAME     "IATA airport name"
     IDS_VATTR_IATA_COUNTRY  "Country/territory"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_FILTER_SEARCHIN     "Search in"
+    IDS_FILTER_ALLSTORES    "All stores"
+    IDS_FILTER_THISSTORE    "This store"
+    IDS_FILTER_SAVE         "Save"
+    IDS_FILTER_SEARCH       "Search"
+    IDS_FILTER_SEARCHTERM   "Search term"
+    IDS_FILTER_OTHERCONDITIONS "Other conditions"
+    IDS_FILTER_ADDCONDITION "Add condition..."
 END
 
 STRINGTABLE 
@@ -1572,16 +1588,24 @@ BEGIN
     IDS_VATTR_MAINTENANCETIME "Mantenimiento"
     IDS_VATTR_LASTSEEN      "Última entrada"
     IDS_VATTR_GUID          "GUID"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_VATTR_PATH_DAT      "Ruta de datos"
     IDS_VATTR_PATH_IDX_MAIN "Índice principal"
     IDS_VATTR_PATH_IDX_AUX  "Índice auxiliar"
     IDS_VATTR_INDEXVERSION  "Versión índice"
     IDS_VATTR_IATA_NAME     "Nombre de aeropuerto IATA"
     IDS_VATTR_IATA_COUNTRY  "Territorio"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_FILTER_SEARCHIN     "Search in"
+    IDS_FILTER_ALLSTORES    "All stores"
+    IDS_FILTER_THISSTORE    "This store"
+    IDS_FILTER_SAVE         "Save"
+    IDS_FILTER_SEARCH       "Search"
+    IDS_FILTER_SEARCHTERM   "Search term"
+    IDS_FILTER_OTHERCONDITIONS "Other conditions"
+    IDS_FILTER_ADDCONDITION "Add condition..."
 END
 
 STRINGTABLE 
@@ -2080,16 +2104,24 @@ BEGIN
     IDS_VATTR_MAINTENANCETIME "Entretien"
     IDS_VATTR_LASTSEEN      "Finalement vu"
     IDS_VATTR_GUID          "GUID"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_VATTR_PATH_DAT      "Données"
     IDS_VATTR_PATH_IDX_MAIN "Index principal"
     IDS_VATTR_PATH_IDX_AUX  "Index auxiliaire"
     IDS_VATTR_INDEXVERSION  "Version de index"
     IDS_VATTR_IATA_NAME     "IATA nom de aéroport"
     IDS_VATTR_IATA_COUNTRY  "Territoire"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_FILTER_SEARCHIN     "Suchen in"
+    IDS_FILTER_ALLSTORES    "Allen Stores"
+    IDS_FILTER_THISSTORE    "Diesem Store"
+    IDS_FILTER_SAVE         "Speichern"
+    IDS_FILTER_SEARCH       "Suchen"
+    IDS_FILTER_SEARCHTERM   "Suchbegriff"
+    IDS_FILTER_OTHERCONDITIONS "Weitere Bedingungen"
+    IDS_FILTER_ADDCONDITION "Bedingung hinzufügen..."
 END
 
 STRINGTABLE

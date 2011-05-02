@@ -21,6 +21,7 @@ CConditionList::CConditionList()
 	p_App = (LFApplication*)AfxGetApp();
 	hTheme = NULL;
 	m_ItemMenuID = m_BackgroundMenuID = 0;
+	m_LastWidth = -1;
 
 	for (UINT a=0; a<LFFilterCompareCount; a++)
 		ENSURE(m_Compare[a].LoadString(IDS_COMPARE_FIRST+a));
@@ -68,8 +69,45 @@ void CConditionList::Init()
 	tvi.cbSize = sizeof(LVTILEVIEWINFO);
 	tvi.cLines = 1;
 	tvi.dwFlags = LVTVIF_FIXEDWIDTH;
-	tvi.dwMask = LVTVIM_COLUMNS | LVTVIM_TILESIZE;
-	tvi.sizeTile.cx = 218;
+	tvi.dwMask = LVTVIM_COLUMNS;
+	SetTileViewInfo(&tvi);
+}
+
+BOOL CConditionList::SetWindowPos(const CWnd* pWndInsertAfter, INT x, INT y, INT cx, INT cy, UINT nFlags)
+{
+	if (cx<m_LastWidth)
+	{
+		SetTileSize(cx);
+		return CListCtrl::SetWindowPos(pWndInsertAfter, x, y, cx, cy, nFlags);
+	}
+	else
+	{
+		BOOL res = CListCtrl::SetWindowPos(pWndInsertAfter, x, y, cx, cy, nFlags);
+		SetTileSize(cx);
+		return res;
+	}
+}
+
+void CConditionList::SetTileSize(INT cx)
+{
+	if (cx==-1)
+	{
+		cx = m_LastWidth;
+	}
+	else
+	{
+		m_LastWidth = cx;
+	}
+
+	if (GetStyle() & WS_VSCROLL)
+		cx -= GetSystemMetrics(SM_CXVSCROLL);
+
+	LVTILEVIEWINFO tvi;
+	ZeroMemory(&tvi, sizeof(tvi));
+	tvi.cbSize = sizeof(LVTILEVIEWINFO);
+	tvi.dwFlags = LVTVIF_FIXEDWIDTH;
+	tvi.dwMask = LVTVIM_TILESIZE;
+	tvi.sizeTile.cx = (IsGroupViewEnabled() && (p_App->OSVersion==OS_XP)) ? cx-16 : cx;
 	SetTileViewInfo(&tvi);
 }
 
