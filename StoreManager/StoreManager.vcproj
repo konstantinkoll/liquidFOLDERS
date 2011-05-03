@@ -458,6 +458,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\SaveFilterDlg.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\SortOptionsDlg.cpp"
 				>
 			</File>
@@ -621,6 +625,10 @@
 			</File>
 			<File
 				RelativePath=".\Resource.h"
+				>
+			</File>
+			<File
+				RelativePath=".\SaveFilterDlg.h"
 				>
 			</File>
 			<File

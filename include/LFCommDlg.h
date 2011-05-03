@@ -17,6 +17,7 @@
 #include "..\LFCommDlg\CInspectorGrid.h"
 #include "..\LFCommDlg\CLabel.h"
 #include "..\LFCommDlg\CMapPreviewCtrl.h"
+#include "..\LFCommDlg\CStorePanel.h"
 #include "..\LFCommDlg\CStoreSelector.h"
 #include "..\LFCommDlg\CTagList.h"
 #include "..\LFCommDlg\CTaskbar.h"

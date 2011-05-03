@@ -17,19 +17,26 @@ CStorePanel::CStorePanel()
 	: CWnd()
 {
 	WNDCLASS wndcls;
-	HINSTANCE hInst = LFCommDlgDLL.hModule;
+	ZeroMemory(&wndcls, sizeof(wndcls));
+	wndcls.style = CS_DBLCLKS | CS_HREDRAW | CS_VREDRAW;
+	wndcls.lpfnWndProc = ::DefWindowProc;
+	wndcls.cbClsExtra = wndcls.cbWndExtra = 0;
+	wndcls.hIcon = NULL;
+	wndcls.hCursor = LoadCursor(NULL, IDC_ARROW);
+	wndcls.hbrBackground = NULL;
+	wndcls.lpszMenuName = NULL;
+	wndcls.lpszClassName = L"CStorePanel";
 
-	if (!(::GetClassInfo(hInst, L"CStorePanel", &wndcls)))
+	if (!(::GetClassInfo(AfxGetInstanceHandle(), L"CStorePanel", &wndcls)))
 	{
-		wndcls.style = CS_DBLCLKS | CS_HREDRAW | CS_VREDRAW;
-		wndcls.lpfnWndProc = ::DefWindowProc;
-		wndcls.cbClsExtra = wndcls.cbWndExtra = 0;
-		wndcls.hInstance = hInst;
-		wndcls.hIcon = NULL;
-		wndcls.hCursor = LoadCursor(NULL, IDC_ARROW);
-		wndcls.hbrBackground = NULL;
-		wndcls.lpszMenuName = NULL;
-		wndcls.lpszClassName = L"CStorePanel";
+		wndcls.hInstance = AfxGetInstanceHandle();
+
+		if (!AfxRegisterClass(&wndcls))
+			AfxThrowResourceException();
+	}
+	if (!(::GetClassInfo(LFCommDlgDLL.hModule, L"CStorePanel", &wndcls)))
+	{
+		wndcls.hInstance = LFCommDlgDLL.hModule;
 
 		if (!AfxRegisterClass(&wndcls))
 			AfxThrowResourceException();

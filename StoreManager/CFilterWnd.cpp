@@ -2,6 +2,7 @@
 #include "stdafx.h"
 #include "CFilterWnd.h"
 #include "EditConditionDlg.h"
+#include "SaveFilterDlg.h"
 #include "StoreManager.h"
 
 
@@ -198,7 +199,11 @@ void CFilterWnd::OnDoubleClick(NMHDR* /*pNMHDR*/, LRESULT* /*pResult*/)
 
 void CFilterWnd::OnSave()
 {
-	MessageBox(_T("Coming soon"));
+	SaveFilterDlg dlg(GetParent(), NULL, L"Test", TRUE);
+	if (dlg.DoModal()==IDOK)
+	{
+		MessageBox(_T("Coming soon"));
+	}
 }
 
 void CFilterWnd::OnSearch()

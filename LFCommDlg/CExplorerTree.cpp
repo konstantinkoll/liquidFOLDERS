@@ -25,19 +25,26 @@ CExplorerTree::CExplorerTree()
 	: CTreeCtrl()
 {
 	WNDCLASS wndcls;
-	HINSTANCE hInst = LFCommDlgDLL.hModule;
+	ZeroMemory(&wndcls, sizeof(wndcls));
+	wndcls.style = CS_DBLCLKS | CS_HREDRAW | CS_VREDRAW;
+	wndcls.lpfnWndProc = ::DefWindowProc;
+	wndcls.cbClsExtra = wndcls.cbWndExtra = 0;
+	wndcls.hIcon = NULL;
+	wndcls.hCursor = LoadCursor(NULL, IDC_ARROW);
+	wndcls.hbrBackground = NULL;
+	wndcls.lpszMenuName = NULL;
+	wndcls.lpszClassName = L"CExplorerTree";
 
-	if (!(::GetClassInfo(hInst, L"CExplorerTree", &wndcls)))
+	if (!(::GetClassInfo(AfxGetInstanceHandle(), L"CExplorerTree", &wndcls)))
 	{
-		wndcls.style = CS_DBLCLKS;
-		wndcls.lpfnWndProc = ::DefWindowProc;
-		wndcls.cbClsExtra = wndcls.cbWndExtra = 0;
-		wndcls.hInstance = hInst;
-		wndcls.hIcon = NULL;
-		wndcls.hCursor = LoadCursor(NULL, IDC_ARROW);
-		wndcls.hbrBackground = NULL;
-		wndcls.lpszMenuName = NULL;
-		wndcls.lpszClassName = L"CExplorerTree";
+		wndcls.hInstance = AfxGetInstanceHandle();
+
+		if (!AfxRegisterClass(&wndcls))
+			AfxThrowResourceException();
+	}
+	if (!(::GetClassInfo(LFCommDlgDLL.hModule, L"CExplorerTree", &wndcls)))
+	{
+		wndcls.hInstance = LFCommDlgDLL.hModule;
 
 		if (!AfxRegisterClass(&wndcls))
 			AfxThrowResourceException();

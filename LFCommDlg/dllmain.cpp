@@ -13,15 +13,11 @@
 
 AFX_EXTENSION_MODULE LFCommDlgDLL = { NULL, NULL };
 LFMessageIDs* MessageIDs = LFGetMessageIDs();
-CString strMultiple;
 
 extern "C" INT APIENTRY
-DllMain(HINSTANCE hInstance, DWORD dwReason, LPVOID lpReserved)
+DllMain(HINSTANCE hInstance, DWORD dwReason, LPVOID /*lpReserved*/)
 {
-	// Entfernen Sie dies, wenn Sie lpReserved verwenden.
-	UNREFERENCED_PARAMETER(lpReserved);
-
-	if (dwReason == DLL_PROCESS_ATTACH)
+	if (dwReason==DLL_PROCESS_ATTACH)
 	{
 		// Einmalige Initialisierung der Erweiterungs-DLL
 		if (!AfxInitExtensionModule(LFCommDlgDLL, hInstance))
@@ -40,13 +36,13 @@ DllMain(HINSTANCE hInstance, DWORD dwReason, LPVOID lpReserved)
 		//  führen kann.
 
 		new CDynLinkLibrary(LFCommDlgDLL);
+	}
+	else
+		if (dwReason==DLL_PROCESS_DETACH)
+		{
+			// Bibliothek vor dem Aufruf der Destruktoren schließen.
+			AfxTermExtensionModule(LFCommDlgDLL);
+		}
 
-		strMultiple.LoadString(hInstance, IDS_MULTIPLEVALUES);
-	}
-	else if (dwReason == DLL_PROCESS_DETACH)
-	{
-		// Bibliothek vor dem Aufruf der Destruktoren schließen.
-		AfxTermExtensionModule(LFCommDlgDLL);
-	}
 	return 1;   // OK
 }
