@@ -40,6 +40,7 @@ IDD_CHOOSEDETAILS       ICON                    "res\\Table_Tiny.ico"
 IDD_GLOBEOPTIONS        ICON                    "res\\GlobeOptions_Tiny.ico"
 IDD_GOTOYEAR            ICON                    "res\\GotoDate_Tiny.ico"
 IDD_EDITCONDITION       ICON                    "res\\FilterEdit_Tiny.ico"
+IDD_SAVEFILTER          ICON                    "res\\FilterSave_Tiny.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -413,7 +414,20 @@ BEGIN
     PUSHBUTTON      "Abbrechen",IDCANCEL,232,287,50,14,WS_GROUP
     GROUPBOX        "Eigenschaften",IDC_STATIC,7,7,275,235
     GROUPBOX        "Vergleich",IDC_STATIC,7,248,275,32
-    EDITTEXT        IDC_EDIT1,96,259,179,13,ES_AUTOHSCROLL
+END
+
+IDD_SAVEFILTER DIALOGEX 0, 0, 277, 127
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
+CAPTION "Filter speichern"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    EDITTEXT        IDC_FILENAME,14,75,249,14,ES_AUTOHSCROLL
+    PUSHBUTTON      "&Store wählen...",IDC_CHOOSESTORE,197,25,66,14
+    DEFPUSHBUTTON   "OK",IDOK,164,106,50,14,WS_GROUP
+    PUSHBUTTON      "Abbrechen",IDCANCEL,220,106,50,14,WS_GROUP
+    CONTROL         "",IDC_DESTINATION,"CStorePanel",WS_GROUP,14,16,177,34
+    GROUPBOX        "Ziel",IDC_STATIC,7,7,263,49
+    GROUPBOX        "Name",IDC_GROUPBOX,7,62,263,37
 END
 
 
@@ -471,6 +485,14 @@ BEGIN
         RIGHTMARGIN, 282
         TOPMARGIN, 7
         BOTTOMMARGIN, 301
+    END
+
+    IDD_SAVEFILTER, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 270
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 120
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -558,6 +580,10 @@ BEGIN
     IDS_VATTR_MAINTENANCETIME "Letzte Wartung"
     IDS_VATTR_LASTSEEN      "Zuletzt eingebunden"
     IDS_VATTR_GUID          "GUID"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_VATTR_PATH_DAT      "Datenpfad"
     IDS_VATTR_PATH_IDX_MAIN "Hauptindex"
     IDS_VATTR_PATH_IDX_AUX  "Hilfsindex"
@@ -840,6 +866,33 @@ BEGIN
     END
 END
 
+IDM_FILTER MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "S&earch",                     IDM_FILTER_SEARCH
+        MENUITEM "&Save",                       IDM_FILTER_SAVE
+    END
+END
+
+IDM_CONDITIONLIST MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "&Add condition...",           IDM_CONDITIONLIST_ADD
+    END
+END
+
+IDM_CONDITION MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "&Edit...",                    IDM_CONDITION_EDIT
+        MENUITEM SEPARATOR
+        MENUITEM "&Delete",                     IDM_CONDITION_DELETE
+    END
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -939,6 +992,33 @@ BEGIN
     PUSHBUTTON      "Cancel",IDCANCEL,65,57,50,14,WS_GROUP
 END
 
+IDD_EDITCONDITION DIALOGEX 0, 0, 289, 308
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
+CAPTION "Edit condition"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "",IDC_COMPAREATTRIBUTE,"SysListView32",LVS_LIST | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SORTASCENDING | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_ALIGNLEFT | LVS_NOCOLUMNHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,14,19,261,214
+    COMBOBOX        IDC_COMPARE,14,259,76,30,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_GROUP | WS_TABSTOP
+    DEFPUSHBUTTON   "OK",IDOK,174,287,50,14,WS_GROUP
+    PUSHBUTTON      "Cancel",IDCANCEL,232,287,50,14,WS_GROUP
+    GROUPBOX        "Properties",IDC_STATIC,7,7,275,235
+    GROUPBOX        "Comparison",IDC_STATIC,7,248,275,32
+END
+
+IDD_SAVEFILTER DIALOGEX 0, 0, 277, 127
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
+CAPTION "Save filter"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    EDITTEXT        IDC_FILENAME,14,75,249,14,ES_AUTOHSCROLL
+    PUSHBUTTON      "Choose &store...",IDC_CHOOSESTORE,197,25,66,14
+    DEFPUSHBUTTON   "OK",IDOK,164,106,50,14,WS_GROUP
+    PUSHBUTTON      "Cancel",IDCANCEL,220,106,50,14,WS_GROUP
+    CONTROL         "",IDC_DESTINATION,"CStorePanel",WS_GROUP,14,16,177,34
+    GROUPBOX        "Ziel",IDC_STATIC,7,7,263,49
+    GROUPBOX        "Name",IDC_GROUPBOX,7,62,263,37
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -986,6 +1066,22 @@ BEGIN
         RIGHTMARGIN, 115
         TOPMARGIN, 7
         BOTTOMMARGIN, 71
+    END
+
+    IDD_EDITCONDITION, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 282
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 301
+    END
+
+    IDD_SAVEFILTER, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 270
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 120
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -1072,6 +1168,10 @@ BEGIN
     IDS_VATTR_MAINTENANCETIME "Last maintenance"
     IDS_VATTR_LASTSEEN      "Last seen"
     IDS_VATTR_GUID          "GUID"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_VATTR_PATH_DAT      "Data path"
     IDS_VATTR_PATH_IDX_MAIN "Main index path"
     IDS_VATTR_PATH_IDX_AUX  "Aux. index path"
@@ -1354,6 +1454,33 @@ BEGIN
     END
 END
 
+IDM_FILTER MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "S&earch",                     IDM_FILTER_SEARCH
+        MENUITEM "&Save",                       IDM_FILTER_SAVE
+    END
+END
+
+IDM_CONDITIONLIST MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "&Add condition...",           IDM_CONDITIONLIST_ADD
+    END
+END
+
+IDM_CONDITION MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "E&dit...",                    IDM_CONDITION_EDIT
+        MENUITEM SEPARATOR
+        MENUITEM "&Eliminar",                   IDM_CONDITION_DELETE
+    END
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -1454,6 +1581,33 @@ BEGIN
     PUSHBUTTON      "Cancelar",IDCANCEL,65,57,50,14,WS_GROUP
 END
 
+IDD_EDITCONDITION DIALOGEX 0, 0, 289, 308
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
+CAPTION "Edit condition"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "",IDC_COMPAREATTRIBUTE,"SysListView32",LVS_LIST | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SORTASCENDING | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_ALIGNLEFT | LVS_NOCOLUMNHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,14,19,261,214
+    COMBOBOX        IDC_COMPARE,14,259,76,30,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_GROUP | WS_TABSTOP
+    DEFPUSHBUTTON   "OK",IDOK,174,287,50,14,WS_GROUP
+    PUSHBUTTON      "Cancelar",IDCANCEL,232,287,50,14,WS_GROUP
+    GROUPBOX        "Propiedades",IDC_STATIC,7,7,275,235
+    GROUPBOX        "Comparison",IDC_STATIC,7,248,275,32
+END
+
+IDD_SAVEFILTER DIALOGEX 0, 0, 292, 127
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
+CAPTION "Save filter"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    EDITTEXT        IDC_FILENAME,14,75,263,14,ES_AUTOHSCROLL
+    PUSHBUTTON      "Selecionar &store...",IDC_CHOOSESTORE,197,25,81,14
+    DEFPUSHBUTTON   "OK",IDOK,179,106,50,14,WS_GROUP
+    PUSHBUTTON      "Cancelar",IDCANCEL,236,106,50,14,WS_GROUP
+    CONTROL         "",IDC_DESTINATION,"CStorePanel",WS_GROUP,14,16,177,34
+    GROUPBOX        "Destino",IDC_STATIC,7,7,278,49
+    GROUPBOX        "Nombre",IDC_GROUPBOX,7,62,278,37
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -1501,6 +1655,22 @@ BEGIN
         RIGHTMARGIN, 115
         TOPMARGIN, 7
         BOTTOMMARGIN, 71
+    END
+
+    IDD_EDITCONDITION, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 282
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 301
+    END
+
+    IDD_SAVEFILTER, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 285
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 120
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -1588,6 +1758,10 @@ BEGIN
     IDS_VATTR_MAINTENANCETIME "Mantenimiento"
     IDS_VATTR_LASTSEEN      "Última entrada"
     IDS_VATTR_GUID          "GUID"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_VATTR_PATH_DAT      "Ruta de datos"
     IDS_VATTR_PATH_IDX_MAIN "Índice principal"
     IDS_VATTR_PATH_IDX_AUX  "Índice auxiliar"
@@ -1858,7 +2032,7 @@ IDM_INSPECTOR MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "&Indiquer l'aperçu",      IDM_INSPECTOR_SHOWPREVIEW
+        MENUITEM "&Indiquer l'aperçu",          IDM_INSPECTOR_SHOWPREVIEW
         MENUITEM "Indiquer &tous les propriétés", IDM_INSPECTOR_SHOWINTERNAL
         MENUITEM "&Classer par ordre alphabétique", IDM_INSPECTOR_SORTALPHABETIC
         MENUITEM SEPARATOR
@@ -1867,6 +2041,33 @@ BEGIN
             MENUITEM "&Compte-rendu...",            IDM_INSPECTOR_EXPORTSUMMARY
             MENUITEM "Toutes les &meta-données...", IDM_INSPECTOR_EXPORTMETADATA
         END
+    END
+END
+
+IDM_FILTER MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "S&uchen",                     IDM_FILTER_SEARCH
+        MENUITEM "&Speichern",                  IDM_FILTER_SAVE
+    END
+END
+
+IDM_CONDITIONLIST MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "Bedingung &hinzufügen...",    IDM_CONDITIONLIST_ADD
+    END
+END
+
+IDM_CONDITION MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "&Bearbeiten...",              IDM_CONDITION_EDIT
+        MENUITEM SEPARATOR
+        MENUITEM "&Effacer",                    IDM_CONDITION_DELETE
     END
 END
 
@@ -1971,6 +2172,33 @@ BEGIN
     PUSHBUTTON      "Annuler",IDCANCEL,65,57,50,14,WS_GROUP
 END
 
+IDD_SAVEFILTER DIALOGEX 0, 0, 292, 127
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
+CAPTION "Filter speichern"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    EDITTEXT        IDC_FILENAME,14,75,263,14,ES_AUTOHSCROLL
+    PUSHBUTTON      "Choisissez le &store...",IDC_CHOOSESTORE,197,25,81,14
+    DEFPUSHBUTTON   "OK",IDOK,179,106,50,14,WS_GROUP
+    PUSHBUTTON      "Annuler",IDCANCEL,236,106,50,14,WS_GROUP
+    CONTROL         "",IDC_DESTINATION,"CStorePanel",WS_GROUP,14,16,177,34
+    GROUPBOX        "Destination",IDC_STATIC,7,7,278,49
+    GROUPBOX        "Nom",IDC_GROUPBOX,7,62,278,37
+END
+
+IDD_EDITCONDITION DIALOGEX 0, 0, 289, 308
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
+CAPTION "Bedingung bearbeiten"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "",IDC_COMPAREATTRIBUTE,"SysListView32",LVS_LIST | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SORTASCENDING | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_ALIGNLEFT | LVS_NOCOLUMNHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,14,19,261,214
+    COMBOBOX        IDC_COMPARE,14,259,76,30,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_GROUP | WS_TABSTOP
+    DEFPUSHBUTTON   "OK",IDOK,174,287,50,14,WS_GROUP
+    PUSHBUTTON      "Annuler",IDCANCEL,232,287,50,14,WS_GROUP
+    GROUPBOX        "Qualités",IDC_STATIC,7,7,275,235
+    GROUPBOX        "Vergleich",IDC_STATIC,7,248,275,32
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -2019,6 +2247,22 @@ BEGIN
         TOPMARGIN, 7
         BOTTOMMARGIN, 71
     END
+
+    IDD_SAVEFILTER, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 285
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 120
+    END
+
+    IDD_EDITCONDITION, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 282
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 301
+    END
 END
 #endif    // APSTUDIO_INVOKED
 
@@ -2034,7 +2278,7 @@ BEGIN
     IDR_CLIPBOARD           "Presse-papiers"
 END
 
-STRINGTABLE
+STRINGTABLE 
 BEGIN
     ID_PANE_FILTER          "Insère le filtre ou masque le filtre.\nFiltre"
     ID_PANE_INSPECTOR       "Insère le filtre ou masque l'inspecteur.\nInspecteur"
@@ -2104,6 +2348,10 @@ BEGIN
     IDS_VATTR_MAINTENANCETIME "Entretien"
     IDS_VATTR_LASTSEEN      "Finalement vu"
     IDS_VATTR_GUID          "GUID"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_VATTR_PATH_DAT      "Données"
     IDS_VATTR_PATH_IDX_MAIN "Index principal"
     IDS_VATTR_PATH_IDX_AUX  "Index auxiliaire"
@@ -2124,7 +2372,7 @@ BEGIN
     IDS_FILTER_ADDCONDITION "Bedingung hinzufügen..."
 END
 
-STRINGTABLE
+STRINGTABLE 
 BEGIN
     IDM_STORE_MAKEDEFAULT   "Met le store choisi comme le store standard.\nFaites store standard"
     IDM_STORE_IMPORTFOLDER  "Importe un dossier et tous les sous-dossiers dans le store choisi.\nImporter dossier..."
@@ -2134,42 +2382,42 @@ BEGIN
     IDM_STORES_CREATENEW    "Crée un nouveau store pour vos fichiers.\nCréez un store nouveau..."
 END
 
-STRINGTABLE
+STRINGTABLE 
 BEGIN
     IDM_STORES_SHOWEMPTYVOLUMES "&Indiquer des lecteurs vides "
     IDM_STORES_REPAIRCORRUPTEDINDEX "Effectuer travails d'entretien "
 END
 
-STRINGTABLE
+STRINGTABLE 
 BEGIN
     IDM_HOME_SHOWEMPTYDOMAINS "&Indiquer des dossiers vides"
     IDM_HOME_IMPORTFOLDER   "Importe un dossier et tous les sous-dossiers dans le store actuel.\nImporter dossier..."
 END
 
-STRINGTABLE
+STRINGTABLE 
 BEGIN
-    IDM_HOUSEKEEPING_REGISTER
+    IDM_HOUSEKEEPING_REGISTER 
                             "Enregistre les formats de fichier inconnus qui apparaissent ainsi dans les dossiers justes.\nEnregistrer des formats..."
     IDM_HOUSEKEEPING_SEND   "Envoie une liste avec tous les formats de fichier enregistrés au service après-vente.\nEnvoyer une liste"
 END
 
-STRINGTABLE
+STRINGTABLE 
 BEGIN
     IDM_TRASH_EMPTY         "Efface définitivement tous les fichiers de la corbeille .\nVider la corbeille"
     IDM_TRASH_RESTOREALL    "Reconstitue tous les fichiers.\nReconstituer tous"
 END
 
-STRINGTABLE
+STRINGTABLE 
 BEGIN
     IDM_ITEM_OPEN           "Ouvre l'objet choisi.\nOuvrir"
 END
 
-STRINGTABLE
+STRINGTABLE 
 BEGIN
     IDM_VOLUME_PROPERTIES   "Indique les propriétés du lecteur choisi.\nPropriétés"
 END
 
-STRINGTABLE
+STRINGTABLE 
 BEGIN
     IDM_FILE_REMEMBER       "Ajoute les fichiers choisis au presse-papiers.\nRemarquer"
     IDM_FILE_REMOVE         "Enlève les fichiers choisis du presse-papiers.\nEnlever"
@@ -2178,21 +2426,21 @@ BEGIN
     IDM_FILE_RESTORE        "Reconstitue tous les fichiers.\nReconstituer"
 END
 
-STRINGTABLE
+STRINGTABLE 
 BEGIN
     IDM_SEND                "E&nvoyer à"
 END
 
-STRINGTABLE
+STRINGTABLE 
 BEGIN
     IDM_CALENDAR_PREVYEAR   "Indique l'année précédente .\nannée précédente"
     IDM_CALENDAR_NEXTYEAR   "Indique l' année prochaine .\nl' année prochaine"
     IDM_CALENDAR_GOTOYEAR   "Ouvre une fenêtre de dialogue dans quoi vous pouvez choisir un an à l'annonce.\nChoisissez l'année..."
 END
 
-STRINGTABLE
+STRINGTABLE 
 BEGIN
-    IDM_GLOBE_JUMPTOLOCATION
+    IDM_GLOBE_JUMPTOLOCATION 
                             "Transmet du globe vers un lieu certain.\nChoisissez l'endroit..."
     IDM_GLOBE_ZOOMIN        "Agrandit le globe.\nAgrandir"
     IDM_GLOBE_ZOOMOUT       "Rapetisse le globe.\nRapetisser"
@@ -2200,13 +2448,13 @@ BEGIN
     IDM_GLOBE_GOOGLEEARTH   "Ouvre le lieu choisi dans Google Earth.\nOuvrir dans Google Earth"
 END
 
-STRINGTABLE
+STRINGTABLE 
 BEGIN
     IDM_TAGCLOUD_SORTVALUE  "Classe tous les tags par ordre alphabétique.\nClasser par ordre alphabétique"
     IDM_TAGCLOUD_SORTCOUNT  "Classe tous les tags par nombre de fichier.\nClasser par nombre"
 END
 
-STRINGTABLE
+STRINGTABLE 
 BEGIN
     IDM_TAGCLOUD_SORT       "&Classer par"
 END

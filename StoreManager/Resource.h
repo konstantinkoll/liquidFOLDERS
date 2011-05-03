@@ -126,6 +126,8 @@
 #define IDD_EDITCONDITION               2400
 #define IDC_COMPAREATTRIBUTE            2401
 #define IDC_COMPARE                     2402
+#define IDD_SAVEFILTER                  2500
+#define IDC_FILENAME                    2501
 #define IDM_STORES_SHOWEMPTYVOLUMES     3000
 #define IDM_STORES_REPAIRCORRUPTEDINDEX 3001
 #define IDM_HOME                        3100
@@ -217,7 +219,6 @@
 #define IDM_VIEW_CALENDAR               8009
 #define IDM_VIEW_GLOBE                  8010
 #define IDM_VIEW_TAGCLOUD               8011
-#define IDC_EDIT1                       8018
 
 // Next default values for new objects
 // 

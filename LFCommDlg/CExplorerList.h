@@ -24,7 +24,7 @@ public:
 	void AddColumn(INT ID, UINT Attr);
 	void AddStoreColumns();
 	void SetSearchResult(LFSearchResult* result);
-	void SetMenus(UINT _ItemMenuID=0, BOOL _HighlightFirst=FALSE, UINT _BackgroundMenuID=0);
+	void SetMenus(UINT ItemMenuID=0, BOOL HighlightFirst=FALSE, UINT BackgroundMenuID=0);
 
 protected:
 	LFApplication* p_App;

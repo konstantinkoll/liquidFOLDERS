@@ -686,6 +686,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\FilterSave_Tiny.ico"
+				>
+			</File>
+			<File
 				RelativePath=".\res\GlobeIcons_Alpha.png"
 				>
 			</File>

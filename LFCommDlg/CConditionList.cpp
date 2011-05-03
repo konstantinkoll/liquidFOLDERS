@@ -150,11 +150,11 @@ void CConditionList::SetItem(INT nItem, LFFilterCondition* c)
 	CListCtrl::SetItem(&lvi);
 }
 
-void CConditionList::SetMenus(UINT _ItemMenuID, BOOL _HighlightFirst, UINT _BackgroundMenuID)
+void CConditionList::SetMenus(UINT ItemMenuID, BOOL HighlightFirst, UINT BackgroundMenuID)
 {
-	m_ItemMenuID = _ItemMenuID;
-	m_HighlightFirst = _HighlightFirst;
-	m_BackgroundMenuID = _BackgroundMenuID;
+	m_ItemMenuID = ItemMenuID;
+	m_HighlightFirst = HighlightFirst;
+	m_BackgroundMenuID = BackgroundMenuID;
 }
 
 

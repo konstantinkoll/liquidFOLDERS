@@ -423,7 +423,7 @@ BEGIN
     PUSHBUTTON      "Abbrechen",IDCANCEL,328,165,50,14,WS_GROUP
 END
 
-IDD_ITEMTEMPLATE DIALOGEX 0, 0, 277, 338
+IDD_ITEMTEMPLATE DIALOGEX 0, 0, 277, 340
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
 CAPTION "Inspektor"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
@@ -433,9 +433,9 @@ BEGIN
     CONTROL         "",IDC_INSPECTOR,"CInspectorGrid",WS_GROUP | WS_TABSTOP,14,93,249,190
     CONTROL         "&Alphabetisch sortieren",IDC_ALPHABETICALLY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,291,181,10
     PUSHBUTTON      "&Zurücksetzen",IDC_RESET,204,289,59,14,WS_GROUP
-    DEFPUSHBUTTON   "OK",IDOK,96,317,50,14,WS_GROUP
-    PUSHBUTTON      "Überspringen",IDC_SKIP,153,317,60,14,WS_GROUP
-    PUSHBUTTON      "Abbrechen",IDCANCEL,220,317,50,14,WS_GROUP
+    DEFPUSHBUTTON   "OK",IDOK,96,319,50,14,WS_GROUP
+    PUSHBUTTON      "Überspringen",IDC_SKIP,153,319,60,14,WS_GROUP
+    PUSHBUTTON      "Abbrechen",IDCANCEL,220,319,50,14,WS_GROUP
     GROUPBOX        "Ziel",IDC_STATIC,7,7,263,49
     GROUPBOX        "Datei-Eigenschaften",IDC_GROUPBOX,7,62,263,249
     LTEXT           "Nicht vorhandene Eigenschaften werden mit den Angaben unten ergänzt.\nFalls dies nicht gewünscht wird, klicken Sie bitte auf „Überspringen“.",IDC_STATIC,14,73,249,18
@@ -611,7 +611,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 270
         TOPMARGIN, 7
-        BOTTOMMARGIN, 331
+        BOTTOMMARGIN, 333
     END
 
     IDD_STOREMAINTENANCE, DIALOG
@@ -716,6 +716,10 @@ END
 STRINGTABLE 
 BEGIN
     ID_APP_ABOUT            "Zeigt Informationen und globale Einstellungen an.\nÜber liquidFOLDERS"
+END
+
+STRINGTABLE 
+BEGIN
     ID_APP_SUPPORT          "Öffnet das Standard-Mailprogramm für eine EMail an den Kundenservice.\nEMail an Kundenservice"
     ID_APP_NEWFILEDROP      "Öffnet ein neues FileDrop-Fenster.\nFileDrop starten"
     ID_APP_NEWMIGRATE       "Öffnet den Migrations-Assistenten.\nMigrations-Assistent starten"
@@ -994,7 +998,7 @@ BEGIN
     PUSHBUTTON      "Cancel",IDCANCEL,318,165,50,14,WS_GROUP
 END
 
-IDD_ITEMTEMPLATE DIALOGEX 0, 0, 277, 338
+IDD_ITEMTEMPLATE DIALOGEX 0, 0, 277, 340
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
 CAPTION "Inspector"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
@@ -1004,9 +1008,9 @@ BEGIN
     CONTROL         "",IDC_INSPECTOR,"CInspectorGrid",WS_GROUP | WS_TABSTOP,14,93,249,190
     CONTROL         "Sort &alphabetically",IDC_ALPHABETICALLY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,291,181,10
     PUSHBUTTON      "&Reset",IDC_RESET,204,289,59,14,WS_GROUP
-    DEFPUSHBUTTON   "OK",IDOK,96,317,50,14,WS_GROUP
-    PUSHBUTTON      "Skip",IDC_SKIP,153,317,60,14,WS_GROUP
-    PUSHBUTTON      "Cancel",IDCANCEL,220,317,50,14,WS_GROUP
+    DEFPUSHBUTTON   "OK",IDOK,106,319,50,14,WS_GROUP
+    PUSHBUTTON      "Skip",IDC_SKIP,163,319,50,14,WS_GROUP
+    PUSHBUTTON      "Cancel",IDCANCEL,220,319,50,14,WS_GROUP
     GROUPBOX        "Destination",IDC_STATIC,7,7,263,49
     GROUPBOX        "File properties",IDC_GROUPBOX,7,62,263,249
     LTEXT           "Missing file properties will be set using the values below.\nIf you don't want your files to be amended, press ""Skip"".",IDC_STATIC,14,73,249,18
@@ -1189,7 +1193,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 270
         TOPMARGIN, 7
-        BOTTOMMARGIN, 331
+        BOTTOMMARGIN, 333
     END
 
     IDD_STOREMAINTENANCE, DIALOG
@@ -1294,6 +1298,10 @@ END
 STRINGTABLE 
 BEGIN
     ID_APP_ABOUT            "Shows liquidFOLDERS information and settings.\nAbout liquidFOLDERS"
+END
+
+STRINGTABLE 
+BEGIN
     ID_APP_SUPPORT          "Opens your standard mail software to contact customer support.\nContact support"
     ID_APP_NEWFILEDROP      "Opens a new FileDrop window.\nOpen FileDrop"
     ID_APP_NEWMIGRATE       "Opens the migration wizard.\nOpen Migration Wizard"
@@ -1572,22 +1580,22 @@ BEGIN
     PUSHBUTTON      "Cancelar",IDCANCEL,308,165,50,14,WS_GROUP
 END
 
-IDD_ITEMTEMPLATE DIALOGEX 0, 0, 277, 338
+IDD_ITEMTEMPLATE DIALOGEX 0, 0, 292, 340
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
 CAPTION "Inspector"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    CONTROL         "",IDC_DESTINATION,"CStorePanel",WS_GROUP,14,16,167,34
-    PUSHBUTTON      "Selecionar &store...",IDC_CHOOSESTORE,187,25,76,14
-    CONTROL         "",IDC_INSPECTOR,"CInspectorGrid",WS_GROUP | WS_TABSTOP,14,101,249,182
-    CONTROL         "Ordenar &alfabéticamente",IDC_ALPHABETICALLY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,291,181,10
-    PUSHBUTTON      "&Restaurar",IDC_RESET,204,289,59,14,WS_GROUP
-    DEFPUSHBUTTON   "OK",IDOK,96,317,50,14,WS_GROUP
-    PUSHBUTTON      "Omitir",IDC_SKIP,153,317,60,14,WS_GROUP
-    PUSHBUTTON      "Cancelar",IDCANCEL,220,317,50,14,WS_GROUP
-    GROUPBOX        "Destino",IDC_STATIC,7,7,263,49
-    GROUPBOX        "Propiedades de archivo",IDC_GROUPBOX,7,62,263,249
-    LTEXT           "Las propiedades faltantes del archivo serán establecidos usando los valores que a continuación se enlistan. Si usted no quiere que sus archivos sean corregidos, presione ""Omitir"".",IDC_STATIC,14,73,249,26
+    CONTROL         "",IDC_DESTINATION,"CStorePanel",WS_GROUP,14,16,177,34
+    PUSHBUTTON      "Selecionar &store...",IDC_CHOOSESTORE,197,25,81,14
+    CONTROL         "",IDC_INSPECTOR,"CInspectorGrid",WS_GROUP | WS_TABSTOP,14,100,264,183
+    CONTROL         "Ordenar &alfabéticamente",IDC_ALPHABETICALLY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,291,195,10
+    PUSHBUTTON      "&Restaurar",IDC_RESET,219,289,59,14,WS_GROUP
+    DEFPUSHBUTTON   "OK",IDOK,121,319,50,14,WS_GROUP
+    PUSHBUTTON      "Omitir",IDC_SKIP,178,319,50,14,WS_GROUP
+    PUSHBUTTON      "Cancelar",IDCANCEL,235,319,50,14,WS_GROUP
+    GROUPBOX        "Destino",IDC_STATIC,7,7,278,49
+    GROUPBOX        "Propiedades de archivo",IDC_GROUPBOX,7,62,278,249
+    LTEXT           "Las propiedades faltantes del archivo serán establecidos usando los valores que a continuación se enlistan. Si usted no quiere que sus archivos sean corregidos, presione ""Omitir"".",IDC_STATIC,14,73,264,26
 END
 
 IDD_STOREMAINTENANCE DIALOGEX 0, 0, 324, 299
@@ -1765,9 +1773,9 @@ BEGIN
     IDD_ITEMTEMPLATE, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 270
+        RIGHTMARGIN, 285
         TOPMARGIN, 7
-        BOTTOMMARGIN, 331
+        BOTTOMMARGIN, 333
     END
 
     IDD_STOREMAINTENANCE, DIALOG
@@ -1865,7 +1873,25 @@ END
 
 STRINGTABLE 
 BEGIN
+    IDS_COMPARE_IGNORE      "is ignored"
+    IDS_COMPARE_ISNULL      "is not set"
+    IDS_COMPARE_SUBFOLDER   "is the subfolder"
+    IDS_COMPARE_ISEQUAL     "equals"
+    IDS_COMPARE_ISNOTEQUAL  "does not equal"
+    IDS_COMPARE_ISABOVEEQUAL "is at least"
+    IDS_COMPARE_BEGINSWITH  "begins with"
+    IDS_COMPARE_ISBELOWEQUAL "is at most"
+    IDS_COMPARE_ENDSWITH    "ends with"
+    IDS_COMPARE_CONTAINS    "contains"
+END
+
+STRINGTABLE 
+BEGIN
     ID_APP_ABOUT            "Visualiza información y configuración de liquidFOLDERS.\nAcerca de liquidFOLDERS"
+END
+
+STRINGTABLE 
+BEGIN
     ID_APP_SUPPORT          "Abre su software estándar de correo para contactar a servicio al cliente.\nContacto de servicio"
     ID_APP_NEWFILEDROP      "Abre una ventana nueva de FileDrop.\nEmpezar FileDrop"
     ID_APP_NEWMIGRATE       "Abre el asistente de migración.\nEmpezar Asistente de Migración"
@@ -2144,22 +2170,22 @@ BEGIN
     PUSHBUTTON      "Annuler",IDCANCEL,318,165,50,14,WS_GROUP
 END
 
-IDD_ITEMTEMPLATE DIALOGEX 0, 0, 291, 338
+IDD_ITEMTEMPLATE DIALOGEX 0, 0, 292, 340
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
 CAPTION "Inspecteur"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    CONTROL         "",IDC_DESTINATION,"CStorePanel",WS_GROUP,14,16,176,34
-    PUSHBUTTON      "Choisissez le &store...",IDC_CHOOSESTORE,196,25,81,14
-    CONTROL         "",IDC_INSPECTOR,"CInspectorGrid",WS_GROUP | WS_TABSTOP,14,93,263,190
+    CONTROL         "",IDC_DESTINATION,"CStorePanel",WS_GROUP,14,16,177,34
+    PUSHBUTTON      "Choisissez le &store...",IDC_CHOOSESTORE,197,25,81,14
+    CONTROL         "",IDC_INSPECTOR,"CInspectorGrid",WS_GROUP | WS_TABSTOP,14,93,264,190
     CONTROL         "Classer &alphabétiquement",IDC_ALPHABETICALLY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,291,195,10
-    PUSHBUTTON      "&Zurücksetzen",IDC_RESET,218,289,59,14,WS_GROUP
-    DEFPUSHBUTTON   "OK",IDOK,110,317,50,14,WS_GROUP
-    PUSHBUTTON      "Omettre",IDC_SKIP,167,317,60,14,WS_GROUP
-    PUSHBUTTON      "Annuler",IDCANCEL,234,317,50,14,WS_GROUP
-    GROUPBOX        "Destination",IDC_STATIC,7,7,277,49
-    GROUPBOX        "Qualités des fichiers",IDC_GROUPBOX,7,62,277,249
-    LTEXT           "Les qualités de fichier manquants seront mis en utilisant les valeurs si-dessous.\nSi vous ne voulez pas que vos fichiers soient amendés, appuyez ""Omettre"".",IDC_STATIC,14,73,263,18
+    PUSHBUTTON      "&Zurücksetzen",IDC_RESET,219,289,59,14,WS_GROUP
+    DEFPUSHBUTTON   "OK",IDOK,121,319,50,14,WS_GROUP
+    PUSHBUTTON      "Omettre",IDC_SKIP,178,319,50,14,WS_GROUP
+    PUSHBUTTON      "Annuler",IDCANCEL,235,319,50,14,WS_GROUP
+    GROUPBOX        "Destination",IDC_STATIC,7,7,278,49
+    GROUPBOX        "Qualités des fichiers",IDC_GROUPBOX,7,62,278,249
+    LTEXT           "Les qualités de fichier manquants seront mis en utilisant les valeurs si-dessous.\nSi vous ne voulez pas que vos fichiers soient amendés, appuyez ""Omettre"".",IDC_STATIC,14,73,264,18
 END
 
 IDD_STOREMAINTENANCE DIALOGEX 0, 0, 324, 299
@@ -2339,9 +2365,9 @@ BEGIN
     IDD_ITEMTEMPLATE, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 284
+        RIGHTMARGIN, 285
         TOPMARGIN, 7
-        BOTTOMMARGIN, 331
+        BOTTOMMARGIN, 333
     END
 
     IDD_STOREMAINTENANCE, DIALOG
@@ -2439,7 +2465,25 @@ END
 
 STRINGTABLE 
 BEGIN
+    IDS_COMPARE_IGNORE      "wird ignoriert"
+    IDS_COMPARE_ISNULL      "ist nicht gesetzt"
+    IDS_COMPARE_SUBFOLDER   "ist der Unterordner"
+    IDS_COMPARE_ISEQUAL     "ist gleich"
+    IDS_COMPARE_ISNOTEQUAL  "ist ungleich"
+    IDS_COMPARE_ISABOVEEQUAL "ist mindestens"
+    IDS_COMPARE_BEGINSWITH  "fängt an mit"
+    IDS_COMPARE_ISBELOWEQUAL "ist höchstens"
+    IDS_COMPARE_ENDSWITH    "endet auf"
+    IDS_COMPARE_CONTAINS    "enthält"
+END
+
+STRINGTABLE 
+BEGIN
     ID_APP_ABOUT            "Montre des informations et embauches globales.\nConcernant liquidFOLDERS"
+END
+
+STRINGTABLE 
+BEGIN
     ID_APP_SUPPORT          "Produis un nouvel e-mail au service aprés-vente.\nE-mail au service aprés-vente"
     ID_APP_NEWFILEDROP      "Ouvre une nouvelle fenêtre de FileDrop.\nCommoncer FileDrop"
     ID_APP_NEWMIGRATE       "Ouvre l'assistant de migration.\nCommmencer l'assistant de migration"

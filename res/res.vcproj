@@ -552,6 +552,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Ribbon\FilterSave_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\FilterSave_32.png"
+				>
+			</File>
+			<File
 				RelativePath=".\Ribbon\FilterShow_16.png"
 				>
 			</File>
@@ -1342,6 +1350,10 @@
 		</File>
 		<File
 			RelativePath=".\FilterEdit_Tiny.ico"
+			>
+		</File>
+		<File
+			RelativePath=".\FilterSave_Tiny.ico"
 			>
 		</File>
 		<File
