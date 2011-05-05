@@ -16,9 +16,11 @@ EditConditionDlg::EditConditionDlg(CWnd* pParent)
 
 void EditConditionDlg::DoDataExchange(CDataExchange* pDX)
 {
+	DDX_Control(pDX, IDC_COMPAREATTRIBUTE, m_wndAttribute);
+	DDX_Control(pDX, IDC_PROPERTY, m_wndEdit);
+
 	if (pDX->m_bSaveAndValidate)
 	{
-		CListCtrl* pList = (CListCtrl*)GetDlgItem(IDC_COMPAREATTRIBUTE);
 //		p_View->SortBy = (UINT)pList->GetItemData(pList->GetNextItem(-1, LVNI_SELECTED));
 	}
 }
@@ -31,7 +33,7 @@ void EditConditionDlg::TestAttribute(UINT attr, BOOL& add, BOOL& check)
 
 
 BEGIN_MESSAGE_MAP(EditConditionDlg, LFAttributeListDlg)
-	ON_NOTIFY(NM_DBLCLK, IDC_COMPAREATTRIBUTE, OnDoubleClick)
+	ON_NOTIFY(LVN_ITEMCHANGED, IDC_COMPAREATTRIBUTE, OnItemChanged)
 END_MESSAGE_MAP()
 
 BOOL EditConditionDlg::OnInitDialog()
@@ -47,10 +49,16 @@ BOOL EditConditionDlg::OnInitDialog()
 	// Attribut-Liste füllen
 	PopulateListCtrl(IDC_COMPAREATTRIBUTE, FALSE, 0);	// TODO
 
+	// Property
+	
+
 	return TRUE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird
 }
 
-void EditConditionDlg::OnDoubleClick(NMHDR* /*pNMHDR*/, LRESULT* /*pResult*/)
+void EditConditionDlg::OnItemChanged(NMHDR* pNMHDR, LRESULT* /*pResult*/)
 {
-	PostMessage(WM_COMMAND, (WPARAM)IDOK);
+	NM_LISTVIEW* pNMListView = (NM_LISTVIEW*)pNMHDR;
+
+	if ((pNMListView->uChanged & LVIF_STATE) && ((pNMListView->uOldState & LVIS_SELECTED) || (pNMListView->uNewState & LVIS_SELECTED)))
+		m_wndEdit.SetAttribute((UINT)m_wndAttribute.GetItemData(m_wndAttribute.GetNextItem(-1, LVNI_SELECTED)));
 }

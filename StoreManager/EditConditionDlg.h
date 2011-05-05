@@ -21,6 +21,10 @@ protected:
 	virtual void TestAttribute(UINT attr, BOOL& add, BOOL& check);
 
 	afx_msg BOOL OnInitDialog();
-	afx_msg void OnDoubleClick(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnItemChanged(NMHDR* pNMHDR, LRESULT* pResult);
 	DECLARE_MESSAGE_MAP()
+
+private:
+	CListCtrl m_wndAttribute;
+	CPropertyEdit m_wndEdit;
 };

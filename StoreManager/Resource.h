@@ -126,6 +126,7 @@
 #define IDD_EDITCONDITION               2400
 #define IDC_COMPAREATTRIBUTE            2401
 #define IDC_COMPARE                     2402
+#define IDC_PROPERTY                    2403
 #define IDD_SAVEFILTER                  2500
 #define IDC_FILENAME                    2501
 #define IDM_STORES_SHOWEMPTYVOLUMES     3000
@@ -226,7 +227,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        8011
 #define _APS_NEXT_COMMAND_VALUE         32777
-#define _APS_NEXT_CONTROL_VALUE         8019
+#define _APS_NEXT_CONTROL_VALUE         8020
 #define _APS_NEXT_SYMED_VALUE           8007
 #endif
 #endif
