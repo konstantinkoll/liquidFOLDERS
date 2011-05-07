@@ -37,6 +37,7 @@ BEGIN_MESSAGE_MAP(CPropertyDisplay, CWnd)
 	ON_WM_ERASEBKGND()
 	ON_WM_PAINT()
 	ON_WM_KEYDOWN()
+	ON_WM_LBUTTONDOWN()
 	ON_WM_LBUTTONUP()
 	ON_WM_GETDLGCODE()
 	ON_WM_SETCURSOR()
@@ -95,6 +96,11 @@ void CPropertyDisplay::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 				return;
 
 	CWnd::OnKeyDown(nChar, nRepCnt, nFlags);
+}
+
+void CPropertyDisplay::OnLButtonDown(UINT /*nFlags*/, CPoint /*point*/)
+{
+	SetFocus();
 }
 
 void CPropertyDisplay::OnLButtonUp(UINT /*nFlags*/, CPoint point)
