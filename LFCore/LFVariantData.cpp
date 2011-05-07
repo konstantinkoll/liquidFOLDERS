@@ -476,7 +476,7 @@ LFCore_API void LFVariantDataFromString(LFVariantData* v, wchar_t* str)
 					v->GeoCoordinates.Longitude = abs(LonDeg)+(abs(LonMin)/60.0)+(abs(LonSec)/3600.0);
 					if (LatCh==L'W')
 						v->GeoCoordinates.Longitude -= v->GeoCoordinates.Longitude;
-					if ((v->GeoCoordinates.Longitude<180.0) || (v->GeoCoordinates.Longitude>180.0))
+					if ((v->GeoCoordinates.Longitude<-180.0) || (v->GeoCoordinates.Longitude>180.0))
 						v->GeoCoordinates.Longitude = 0.0;
 					v->IsNull = false;
 				}

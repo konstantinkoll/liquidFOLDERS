@@ -16,6 +16,8 @@ public:
 	LFAttributeListDlg(UINT nIDTemplate, CWnd* pParentWnd=NULL);
 
 protected:
+	LFApplication* p_App;
+
 	virtual void TestAttribute(UINT attr, BOOL& add, BOOL& check);
 
 	void PrepareListCtrl(CListCtrl* li, BOOL check);
@@ -26,8 +28,6 @@ protected:
 	void AddAttribute(UINT nID, UINT attr);
 	void PopulateListCtrl(CListCtrl* li, BOOL check, INT focus=-1, BOOL sort=TRUE);
 	void PopulateListCtrl(INT nID, BOOL check, INT focus=-1, BOOL sort=TRUE);
-
-	LFApplication* p_App;
 
 	afx_msg BOOL OnInitDialog();
 	DECLARE_MESSAGE_MAP()

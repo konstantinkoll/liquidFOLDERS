@@ -65,6 +65,7 @@ public:
 	virtual CString GetValidChars();
 	virtual BOOL CanDelete();
 	virtual BOOL HasButton();
+	virtual BOOL WantsChars();
 	virtual void OnSetString(CString Value);
 	virtual BOOL OnClickValue(INT x);
 	virtual void OnClickButton();
@@ -107,6 +108,7 @@ public:
 	virtual void DrawValue(CDC& dc, CRect rect);
 	virtual HCURSOR SetCursor(INT x);
 	virtual BOOL CanDelete();
+	virtual BOOL WantsChars();
 	virtual BOOL OnClickValue(INT x);
 	virtual BOOL OnPushChar(UINT nChar);
 };
@@ -282,57 +284,4 @@ private:
 	INT Compare(INT eins, INT zwei);
 	void Heap(INT wurzel, INT anz);
 	void CreateSortArray();
-};
-
-
-// CPropertyEdit
-//
-
-class AFX_EXT_CLASS CPropertyEdit : public CPropertyHolder
-{
-public:
-	CPropertyEdit();
-	~CPropertyEdit();
-
-	virtual void PreSubclassWindow();
-	virtual BOOL PreTranslateMessage(MSG* pMsg);
-
-	BOOL Create(CWnd* pParentWnd, UINT nID);
-	void SetAttribute(UINT Attr);
-	void SetData(LFVariantData* pData);
-	CString GetValue();
-
-protected:
-	LFVariantData m_Data;
-	CProperty* m_pProperty;
-	HTHEME hThemeButton;
-	CMFCMaskedEdit* p_Edit;
-	BOOL m_Hover;
-	BOOL m_PartPressed;
-	UINT m_HotPart;
-
-	virtual void Init();
-	virtual void NotifyOwner(SHORT Attr1, SHORT Attr2=-1, SHORT Attr3=-1);
-
-	UINT HitTest(CPoint point);
-	void EditProperty();
-	void DestroyEdit(BOOL Accept=FALSE);
-
-	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
-	afx_msg void OnDestroy();
-	afx_msg LRESULT OnThemeChanged();
-	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
-	afx_msg void OnNcPaint();
-	afx_msg void OnPaint();
-	afx_msg void OnSize(UINT nType, INT cx, INT cy);
-	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
-	afx_msg void OnMouseLeave();
-	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
-	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
-	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
-	afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);
-	afx_msg BOOL OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message);
-	afx_msg void OnSetFocus(CWnd* pOldWnd);
-	afx_msg void OnDestroyEdit();
-	DECLARE_MESSAGE_MAP()
 };

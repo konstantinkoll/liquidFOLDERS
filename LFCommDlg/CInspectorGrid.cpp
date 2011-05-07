@@ -199,6 +199,11 @@ BOOL CProperty::HasButton()
 	return FALSE;
 }
 
+BOOL CProperty::WantsChars()
+{
+	return FALSE;
+}
+
 void CProperty::SetParent(CPropertyHolder* pParent)
 {
 	p_Parent = pParent;
@@ -242,7 +247,7 @@ void CPropertyTags::OnClickButton()
 {
 	ASSERT(p_Parent);
 
-	LFEditTagsDlg dlg(AfxGetApp()->GetMainWnd(), m_Multiple ? _T("") : p_Data->UnicodeArray, p_Parent->m_StoreIDValid ? p_Parent->m_StoreID : NULL);
+	LFEditTagsDlg dlg(NULL, m_Multiple ? _T("") : p_Data->UnicodeArray, p_Parent->m_StoreIDValid ? p_Parent->m_StoreID : NULL);
 
 	if (dlg.DoModal()==IDOK)
 	{
@@ -288,6 +293,11 @@ HCURSOR CPropertyRating::SetCursor(INT x)
 BOOL CPropertyRating::CanDelete()
 {
 	return FALSE;
+}
+
+BOOL CPropertyRating::WantsChars()
+{
+	return TRUE;
 }
 
 BOOL CPropertyRating::OnClickValue(INT x)
@@ -437,7 +447,7 @@ void CPropertyIATA::OnClickButton()
 {
 	ASSERT(p_Parent);
 
-	LFSelectLocationIATADlg dlg(IDD_SELECTIATA, AfxGetApp()->GetMainWnd(), &p_Data->AnsiString[0]);
+	LFSelectLocationIATADlg dlg(IDD_SELECTIATA, NULL, &p_Data->AnsiString[0]);
 
 	if (dlg.DoModal()==IDOK)
 		if (dlg.m_Airport)
@@ -498,7 +508,7 @@ void CPropertyGPS::OnClickButton()
 {
 	ASSERT(p_Parent);
 
-	LFSelectLocationGPSDlg dlg(AfxGetApp()->GetMainWnd(), p_Data->GeoCoordinates);
+	LFSelectLocationGPSDlg dlg(NULL, p_Data->GeoCoordinates);
 
 	if (dlg.DoModal()==IDOK)
 	{
@@ -540,7 +550,7 @@ void CPropertyTime::OnClickButton()
 {
 	ASSERT(p_Parent);
 
-	LFEditTimeDlg dlg(AfxGetApp()->GetMainWnd(), p_Data);
+	LFEditTimeDlg dlg(NULL, p_Data);
 
 	if (dlg.DoModal()==IDOK)
 		p_Parent->NotifyOwner((SHORT)p_Data->Attr);
@@ -1727,9 +1737,12 @@ void CInspectorGrid::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 		break;
 	default:
 		if (m_SelectedItem!=-1)
-			if (m_Properties.m_Items[m_SelectedItem].Editable)
+		{
+			Property* pProp = &m_Properties.m_Items[m_SelectedItem];
+			if ((pProp->Editable) && (pProp->pProperty->WantsChars()))
 				if (m_Properties.m_Items[m_SelectedItem].pProperty->OnPushChar(nChar))
 					break;
+		}
 
 		CPropertyHolder::OnKeyDown(nChar, nRepCnt, nFlags);
 	}
@@ -1812,520 +1825,6 @@ BOOL CInspectorGrid::OnSetCursor(CWnd* /*pWnd*/, UINT /*nHitTest*/, UINT /*messa
 }
 
 void CInspectorGrid::OnDestroyEdit()
-{
-	DestroyEdit(TRUE);
-}
-
-
-// CPropertyEdit
-//
-
-CPropertyEdit::CPropertyEdit()
-	: CPropertyHolder()
-{
-	WNDCLASS wndcls;
-	ZeroMemory(&wndcls, sizeof(wndcls));
-	wndcls.style = CS_DBLCLKS | CS_HREDRAW | CS_VREDRAW;
-	wndcls.lpfnWndProc = ::DefWindowProc;
-	wndcls.cbClsExtra = wndcls.cbWndExtra = 0;
-	wndcls.hIcon = NULL;
-	wndcls.hCursor = LoadCursor(NULL, IDC_ARROW);
-	wndcls.hbrBackground = NULL;
-	wndcls.lpszMenuName = NULL;
-	wndcls.lpszClassName = L"CPropertyEdit";
-
-	if (!(::GetClassInfo(AfxGetInstanceHandle(), L"CPropertyEdit", &wndcls)))
-	{
-		wndcls.hInstance = AfxGetInstanceHandle();
-
-		if (!AfxRegisterClass(&wndcls))
-			AfxThrowResourceException();
-	}
-	if (!(::GetClassInfo(LFCommDlgDLL.hModule, L"CPropertyEdit", &wndcls)))
-	{
-		wndcls.hInstance = LFCommDlgDLL.hModule;
-
-		if (!AfxRegisterClass(&wndcls))
-			AfxThrowResourceException();
-	}
-
-	ZeroMemory(&m_Data, sizeof(LFVariantData));
-	LFGetNullVariantData(&m_Data);
-	m_pProperty = CreateProperty(&m_Data);
-	m_Hover = m_PartPressed = FALSE;
-	hThemeButton = NULL;
-	m_HotPart = NOPART;
-	p_Edit = NULL;
-}
-
-CPropertyEdit::~CPropertyEdit()
-{
-	DestroyEdit();
-}
-
-BOOL CPropertyEdit::Create(CWnd* pParentWnd, UINT nID)
-{
-	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, LoadCursor(NULL, IDC_ARROW));
-
-	const DWORD dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_TABSTOP | WS_VSCROLL;
-	CRect rect;
-	rect.SetRectEmpty();
-	return CWnd::Create(className, _T(""), dwStyle, rect, pParentWnd, nID);
-}
-
-void CPropertyEdit::PreSubclassWindow()
-{
-	CPropertyHolder::PreSubclassWindow();
-
-	_AFX_THREAD_STATE* pThreadState = AfxGetThreadState();
-	if (!pThreadState->m_pWndInit)
-		Init();
-}
-
-void CPropertyEdit::Init()
-{
-	if (p_App->m_ThemeLibLoaded)
-		hThemeButton = p_App->zOpenThemeData(GetSafeHwnd(), VSCLASS_BUTTON);
-
-	CreateFonts();
-}
-
-BOOL CPropertyEdit::PreTranslateMessage(MSG* pMsg)
-{
-	switch (pMsg->message)
-	{
-	case WM_KEYDOWN:
-		if (p_Edit)
-			switch (pMsg->wParam)
-			{
-			case VK_EXECUTE:
-			case VK_RETURN:
-				DestroyEdit(TRUE);
-				return TRUE;
-			case VK_ESCAPE:
-				DestroyEdit(FALSE);
-				return TRUE;
-			}
-		break;
-	case WM_MOUSEWHEEL:
-	case WM_MOUSEHWHEEL:
-		if (p_Edit)
-			return TRUE;
-		break;
-	}
-
-	return CPropertyHolder::PreTranslateMessage(pMsg);
-}
-
-void CPropertyEdit::SetAttribute(UINT Attr)
-{
-	if (Attr!=m_Data.Attr)
-	{
-		DestroyEdit();
-
-		LFAttributeDescriptor* pAttr = p_App->m_Attributes[Attr];
-		if (pAttr->Type!=p_App->m_Attributes[m_Data.Attr]->Type)
-		{
-			ZeroMemory(&m_Data, sizeof(m_Data));
-			m_Data.Attr = Attr;
-			LFGetNullVariantData(&m_Data);
-		}
-		else
-			switch (pAttr->Type)
-			{
-			case LFTypeUnicodeString:
-				m_Data.UnicodeString[pAttr->cCharacters] = L'\0';
-				break;
-			case LFTypeAnsiString:
-				m_Data.AnsiString[pAttr->cCharacters] = '\0';
-				break;
-			}
-
-		if (m_pProperty)
-			delete m_pProperty;
-
-		m_pProperty = CreateProperty(&m_Data);
-	}
-}
-
-void CPropertyEdit::SetData(LFVariantData* pData)
-{
-	DestroyEdit();
-	if (m_pProperty)
-		delete m_pProperty;
-
-	m_Data = *pData;
-	m_pProperty = CreateProperty(pData);
-}
-
-CString CPropertyEdit::GetValue()
-{
-	WCHAR tmpStr[256];
-	m_pProperty->ToString(tmpStr, 256);
-
-	return tmpStr;
-}
-
-UINT CPropertyEdit::HitTest(CPoint point)
-{
-	CRect rect;
-	GetClientRect(rect);
-
-	if (PtInRect(&rect, point))
-	{
-		if ((m_pProperty->HasButton()) && !p_Edit)
-		{
-			CRect rectButton(rect);
-			rectButton.left = rectButton.right-rectButton.Height()*3/2;
-
-			if (rectButton.PtInRect(point))
-				return PARTBUTTON;
-		}
-
-		return PARTVALUE;
-	}
-
-	return NOPART;
-}
-
-void CPropertyEdit::NotifyOwner(SHORT Attr1, SHORT Attr2, SHORT Attr3)
-{
-	if (Attr1!=-1)
-	{
-		m_pProperty->m_Multiple = FALSE;
-		Invalidate();
-	}
-
-	UpdateWindow();
-	GetOwner()->PostMessage(WM_PROPERTYCHANGED, Attr1, Attr2 | (Attr3 << 16));
-}
-
-void CPropertyEdit::EditProperty()
-{
-	if (m_pProperty->OnClickValue(-1))
-	{
-		Invalidate();
-
-		CRect rect;
-		GetClientRect(rect);
-		rect.top += 2;
-		rect.bottom -=2;
-
-		p_Edit = new CMFCMaskedEdit();
-		p_Edit->Create(WS_CHILD | WS_VISIBLE | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | ES_AUTOHSCROLL, rect, this, 1);
-		if (!m_pProperty->m_Multiple)
-		{
-			WCHAR tmpStr[256];
-			m_pProperty->ToString(tmpStr, 256);
-			p_Edit->SetWindowText(tmpStr);
-			p_Edit->SetSel(0, (INT)wcslen(tmpStr));
-		}
-		p_Edit->SetValidChars(m_pProperty->GetValidChars());
-		//p_Edit->SetLimitText(p_App->m_Attributes[Attr]->cCharacters);
-		//p_Edit->SetFont(&m_BoldFont);
-		p_Edit->SetFocus();
-		return;
-	}
-}
-
-void CPropertyEdit::DestroyEdit(BOOL Accept)
-{
-	if (p_Edit)
-	{
-		CEdit* victim = p_Edit;
-		p_Edit = NULL;
-
-		CString Value;
-		victim->GetWindowText(Value);
-		victim->DestroyWindow();
-		delete victim;
-
-		if (Accept)
-			m_pProperty->OnSetString(Value);
-	}
-
-	Invalidate();
-}
-
-
-BEGIN_MESSAGE_MAP(CPropertyEdit, CPropertyHolder)
-	ON_WM_CREATE()
-	ON_WM_DESTROY()
-	ON_WM_THEMECHANGED()
-	ON_WM_ERASEBKGND()
-	ON_WM_NCPAINT()
-	ON_WM_PAINT()
-	ON_WM_SIZE()
-	ON_WM_MOUSEMOVE()
-	ON_WM_MOUSELEAVE()
-	ON_WM_KEYDOWN()
-	ON_WM_LBUTTONDOWN()
-	ON_WM_LBUTTONUP()
-	ON_WM_LBUTTONDBLCLK()
-	ON_WM_GETDLGCODE()
-	ON_WM_SETCURSOR()
-	ON_WM_SETFOCUS()
-	ON_EN_KILLFOCUS(1, OnDestroyEdit)
-END_MESSAGE_MAP()
-
-INT CPropertyEdit::OnCreate(LPCREATESTRUCT lpCreateStruct)
-{
-	if (CPropertyHolder::OnCreate(lpCreateStruct)==-1)
-		return -1;
-
-	Init();
-
-	return 0;
-}
-
-void CPropertyEdit::OnDestroy()
-{
-	CPropertyHolder::OnDestroy();
-
-	if (hThemeButton)
-		p_App->zCloseThemeData(hThemeButton);
-}
-
-LRESULT CPropertyEdit::OnThemeChanged()
-{
-	if (p_App->m_ThemeLibLoaded)
-	{
-		if (hThemeButton)
-			p_App->zCloseThemeData(hThemeButton);
-
-		hThemeButton = p_App->zOpenThemeData(GetSafeHwnd(), VSCLASS_BUTTON);
-	}
-
-	return TRUE;
-}
-
-BOOL CPropertyEdit::OnEraseBkgnd(CDC* /*pDC*/)
-{
-	return TRUE;
-}
-
-void CPropertyEdit::OnNcPaint()
-{
-	DrawControlBorder(this);
-}
-
-void CPropertyEdit::OnPaint()
-{
-	CPaintDC pDC(this);
-
-	CRect rect;
-	GetClientRect(rect);
-
-	CDC dc;
-	dc.CreateCompatibleDC(&pDC);
-	dc.SetBkMode(TRANSPARENT);
-
-	CBitmap buffer;
-	buffer.CreateCompatibleBitmap(&pDC, rect.Width(), rect.Height());
-	CBitmap* pOldBitmap = dc.SelectObject(&buffer);
-
-	BOOL Themed = IsCtrlThemed();
-
-	dc.FillSolidRect(rect, GetSysColor(COLOR_WINDOW));
-	dc.SelectStockObject(DEFAULT_GUI_FONT);
-	dc.SetTextColor(COLOR_WINDOWTEXT);
-
-	CRect rectValue(rect);
-
-	if (m_pProperty->HasButton() && !p_Edit)
-	{
-		CRect rectButton(rect);
-		rectButton.left = rectButton.right-rectButton.Height()*3/2;
-		rectValue.right -= rectButton.Width()+GUTTER;
-
-		BOOL Hot = (m_HotPart==PARTBUTTON);
-		BOOL Pressed = Hot && m_PartPressed;
-
-		if (hThemeButton)
-		{
-			rectButton.InflateRect(1, 1);
-
-			UINT State = Pressed ? PBS_PRESSED : Hot ? PBS_HOT : PBS_NORMAL;
-			p_App->zDrawThemeBackground(hThemeButton, dc, BP_PUSHBUTTON, State, &rectButton, NULL);
-		}
-		else
-		{
-			COLORREF c1 = GetSysColor(COLOR_3DHIGHLIGHT);
-			COLORREF c2 = GetSysColor(COLOR_3DFACE);
-			COLORREF c3 = GetSysColor(COLOR_3DSHADOW);
-			COLORREF c4 = 0x000000;
-
-			dc.FillSolidRect(rectButton, c2);
-
-			if (Pressed)
-			{
-				std::swap(c1, c4);
-				std::swap(c2, c3);
-			}
-
-			CRect rectBorder(rectButton);
-			dc.Draw3dRect(rectBorder, c1, c4);
-			rectBorder.DeflateRect(1, 1);
-			dc.Draw3dRect(rectBorder, c2, c3);
-		}
-
-		rectButton.bottom -= 4;
-		if (Pressed)
-			rectButton.OffsetRect(1, 1);
-
-		dc.DrawText(_T("..."), rectButton, DT_VCENTER | DT_CENTER | DT_SINGLELINE);
-	}
-
-	m_pProperty->DrawValue(dc, rectValue);
-
-	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);
-}
-
-void CPropertyEdit::OnSize(UINT nType, INT cx, INT cy)
-{
-	CPropertyHolder::OnSize(nType, cx, cy);
-
-	if (p_Edit)
-	{
-		CRect rect;
-		GetClientRect(rect);
-
-		p_Edit->SetWindowPos(NULL, rect.left, rect.top, rect.Width(), rect.Height(), SWP_NOZORDER | SWP_NOACTIVATE);
-	}
-}
-
-void CPropertyEdit::OnMouseMove(UINT nFlags, CPoint point)
-{
-	BOOL Dragging = (GetCapture()==this);
-	UINT Part = HitTest(point);
-
-	if (!m_Hover)
-	{
-		m_Hover = TRUE;
-
-		TRACKMOUSEEVENT tme;
-		tme.cbSize = sizeof(TRACKMOUSEEVENT);
-		tme.dwFlags = TME_LEAVE;
-		tme.hwndTrack = m_hWnd;
-		TrackMouseEvent(&tme);
-	}
-
-	if (!Dragging)
-	{
-		if (m_HotPart!=Part)
-		{
-			m_HotPart = Part;
-			Invalidate();
-		}
-
-		if (nFlags & MK_RBUTTON)
-			SetFocus();
-	}
-	else
-	{
-		BOOL PartPressed = (Part==m_HotPart);
-		if (m_PartPressed!=PartPressed)
-		{
-			m_PartPressed = PartPressed;
-			Invalidate();
-		}
-	}
-}
-
-void CPropertyEdit::OnMouseLeave()
-{
-	Invalidate();
-
-	m_Hover = FALSE;
-	m_HotPart = NOPART;
-}
-
-void CPropertyEdit::OnLButtonDown(UINT /*nFlags*/, CPoint point)
-{
-	SetFocus();
-
-	UINT Part = HitTest(point);
-
-	if (Part>=PARTBUTTON)
-	{
-		m_HotPart = Part;
-		m_PartPressed = TRUE;
-		SetCapture();
-		Invalidate();
-	}
-}
-
-void CPropertyEdit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
-{
-	switch(nChar)
-	{
-	case VK_EXECUTE:
-	case VK_RETURN:
-		if (GetKeyState(VK_CONTROL)<0)
-			if (m_pProperty->HasButton())
-			{
-				m_pProperty->OnClickButton();
-				break;
-			}
-	case VK_TAB:
-		{
-			CWnd* pWnd = GetParent()->GetNextDlgTabItem(GetFocus(), GetKeyState(VK_SHIFT)<0);
-			if (pWnd)
-				pWnd->SetFocus();
-			break;
-		}
-	case VK_ESCAPE:
-		GetParent()->SendMessage(WM_COMMAND, IDCANCEL);
-		break;
-	default:
-		if (m_pProperty->OnPushChar(nChar))
-			break;
-
-		CPropertyHolder::OnKeyDown(nChar, nRepCnt, nFlags);
-	}
-}
-
-void CPropertyEdit::OnLButtonUp(UINT /*nFlags*/, CPoint point)
-{
-	UINT Part =HitTest(point);
-
-	if (GetCapture()==this)
-	{
-		m_PartPressed = FALSE;
-		ReleaseCapture();
-		Invalidate();
-
-		if (Part==PARTBUTTON)
-			m_pProperty->OnClickButton();
-	}
-	else
-		if (Part==PARTVALUE)
-			EditProperty();
-}
-
-void CPropertyEdit::OnLButtonDblClk(UINT /*nFlags*/, CPoint /*point*/)
-{
-	m_PartPressed = FALSE;
-	ReleaseCapture();
-	Invalidate();
-}
-
-BOOL CPropertyEdit::OnSetCursor(CWnd* /*pWnd*/, UINT /*nHitTest*/, UINT /*message*/)
-{
-	CPoint point;
-	GetCursorPos(&point);
-	ScreenToClient(&point);
-
-	SetCursor(HitTest(point)==PARTVALUE ? m_pProperty->SetCursor(point.x) : p_App->LoadStandardCursor(IDC_ARROW));
-	return TRUE;
-}
-
-void CPropertyEdit::OnSetFocus(CWnd* /*pOldWnd*/)
-{
-	//EditProperty();
-}
-
-void CPropertyEdit::OnDestroyEdit()
 {
 	DestroyEdit(TRUE);
 }

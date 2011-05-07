@@ -50,7 +50,7 @@ BOOL EditConditionDlg::OnInitDialog()
 	PopulateListCtrl(IDC_COMPAREATTRIBUTE, FALSE, 0);	// TODO
 
 	// Property
-	
+	m_wndEdit.SetAttribute(0);
 
 	return TRUE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird
 }
@@ -60,5 +60,9 @@ void EditConditionDlg::OnItemChanged(NMHDR* pNMHDR, LRESULT* /*pResult*/)
 	NM_LISTVIEW* pNMListView = (NM_LISTVIEW*)pNMHDR;
 
 	if ((pNMListView->uChanged & LVIF_STATE) && ((pNMListView->uOldState & LVIS_SELECTED) || (pNMListView->uNewState & LVIS_SELECTED)))
-		m_wndEdit.SetAttribute((UINT)m_wndAttribute.GetItemData(m_wndAttribute.GetNextItem(-1, LVNI_SELECTED)));
+	{
+		INT idx = m_wndAttribute.GetNextItem(-1, LVNI_SELECTED);
+		if (idx!=-1)
+			m_wndEdit.SetAttribute((UINT)m_wndAttribute.GetItemData(idx));
+	}
 }

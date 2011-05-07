@@ -15,7 +15,8 @@ DOUBLE StringToCoord(CString str)
 	WCHAR Ch;
 	DOUBLE Res = 0.0;
 
-	INT Scanned = swscanf_s(str, L"%d°%d\'%d\"%c", &Deg, &Min, &Sec, &Ch, 1);
+	INT Scanned = swscanf_s(str.GetBuffer(), L"%d°%d\'%d\"%c", &Deg, &Min, &Sec, &Ch, 1);
+
 	if (Scanned>=1)
 		Res += Deg;
 	if (Scanned>=2)
@@ -26,7 +27,7 @@ DOUBLE StringToCoord(CString str)
 		if ((Ch==L'N') || (Ch==L'W'))
 			Res = -Res;
 
-	if ((Res<180.0) || (Res>180.0))
+	if ((Res<-180.0) || (Res>180.0))
 		Res = 0.0;
 
 	return Res;
@@ -57,6 +58,9 @@ void LFSelectLocationGPSDlg::DoDataExchange(CDataExchange* pDX)
 		CString strLon;
 		GetDlgItem(IDC_LONGITUDE)->GetWindowText(strLon);
 		m_Location.Longitude = StringToCoord(strLon);
+
+		if (m_Location.Latitude==0)
+			MessageBox(_T("XX"));
 	}
 }
 
