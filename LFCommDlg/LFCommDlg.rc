@@ -1871,18 +1871,18 @@ BEGIN
     IDS_REGFILEFILTER       "Archivo de Registro"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
-    IDS_COMPARE_IGNORE      "is ignored"
-    IDS_COMPARE_ISNULL      "is not set"
-    IDS_COMPARE_SUBFOLDER   "is the subfolder"
-    IDS_COMPARE_ISEQUAL     "equals"
-    IDS_COMPARE_ISNOTEQUAL  "does not equal"
-    IDS_COMPARE_ISABOVEEQUAL "is at least"
-    IDS_COMPARE_BEGINSWITH  "begins with"
-    IDS_COMPARE_ISBELOWEQUAL "is at most"
-    IDS_COMPARE_ENDSWITH    "ends with"
-    IDS_COMPARE_CONTAINS    "contains"
+    IDS_COMPARE_IGNORE      "es ignorado"
+    IDS_COMPARE_ISNULL      "no está establecido"
+    IDS_COMPARE_SUBFOLDER   "es subcarpeta"
+    IDS_COMPARE_ISEQUAL     "igual"
+    IDS_COMPARE_ISNOTEQUAL  "no es igual"
+    IDS_COMPARE_ISABOVEEQUAL "es por lo menos"
+    IDS_COMPARE_BEGINSWITH  "comienza con"
+    IDS_COMPARE_ISBELOWEQUAL "es lo más"
+    IDS_COMPARE_ENDSWITH    "termina con"
+    IDS_COMPARE_CONTAINS    "contiene"
 END
 
 STRINGTABLE 
