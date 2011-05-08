@@ -197,6 +197,7 @@ void CPropertyEdit::PreSubclassWindow()
 
 void CPropertyEdit::Init()
 {
+	ModifyStyle(0, WS_CLIPCHILDREN);
 	ModifyStyleEx(0, WS_EX_CONTROLPARENT);
 
 	CreateFonts();
@@ -337,10 +338,9 @@ void CPropertyEdit::NotifyOwner(SHORT Attr1, SHORT Attr2, SHORT Attr3)
 	if (Attr1!=-1)
 	{
 		p_Property->m_Multiple = FALSE;
-		Invalidate();
+		RedrawWindow(NULL, NULL, RDW_ALLCHILDREN | RDW_INVALIDATE | RDW_UPDATENOW);
 	}
 
-	UpdateWindow();
 	GetOwner()->PostMessage(WM_PROPERTYCHANGED, Attr1, Attr2 | (Attr3 << 16));
 }
 
