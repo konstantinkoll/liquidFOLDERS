@@ -174,6 +174,7 @@ CPropertyEdit::CPropertyEdit()
 	p_Property = NULL;
 	p_wndDisplay = NULL;
 	p_wndEdit = NULL;
+	m_IsValid = FALSE;
 }
 
 BOOL CPropertyEdit::Create(CWnd* pParentWnd, UINT nID)
@@ -295,6 +296,8 @@ void CPropertyEdit::CreateProperty()
 	}
 
 	AdjustLayout();
+
+	m_IsValid = TRUE;
 }
 
 void CPropertyEdit::SetAttribute(UINT Attr)
@@ -339,6 +342,8 @@ void CPropertyEdit::NotifyOwner(SHORT Attr1, SHORT Attr2, SHORT Attr3)
 	{
 		p_Property->m_Multiple = FALSE;
 		RedrawWindow(NULL, NULL, RDW_ALLCHILDREN | RDW_INVALIDATE | RDW_UPDATENOW);
+
+		m_IsValid = TRUE;
 	}
 
 	GetOwner()->PostMessage(WM_PROPERTYCHANGED, Attr1, Attr2 | (Attr3 << 16));
@@ -352,6 +357,8 @@ BEGIN_MESSAGE_MAP(CPropertyEdit, CPropertyHolder)
 	ON_WM_NCPAINT()
 	ON_WM_PAINT()
 	ON_WM_SIZE()
+	ON_EN_CHANGE(1, OnChange)
+	ON_MESSAGE(WM_PROPERTYCHANGED, OnPropertyChanged)
 	ON_BN_CLICKED(3, OnClick)
 END_MESSAGE_MAP()
 
@@ -410,9 +417,37 @@ void CPropertyEdit::OnSize(UINT nType, INT cx, INT cy)
 	AdjustLayout();
 }
 
+void CPropertyEdit::OnChange()
+{
+	PostMessage(WM_PROPERTYCHANGED);
+}
+
+LRESULT CPropertyEdit::OnPropertyChanged(WPARAM /*wparam*/, LPARAM /*lparam*/)
+{
+	ASSERT(p_wndEdit);
+
+	WCHAR tmpStr[256];
+	p_wndEdit->GetWindowText(tmpStr, 256);
+
+	LFVariantDataFromString(&m_Data, tmpStr);
+	m_IsValid = !m_Data.IsNull;
+
+	return GetOwner()->PostMessage(WM_PROPERTYCHANGED, m_Data.Attr);
+}
+
 void CPropertyEdit::OnClick()
 {
 	if (p_Property)
 		if (p_Property->HasButton())
+		{
 			p_Property->OnClickButton();
+
+			if (p_wndEdit)
+			{
+				WCHAR tmpStr[256];
+				LFVariantDataToString(&m_Data, tmpStr, 256);
+
+				p_wndEdit->SetWindowText(tmpStr);
+			}
+		}
 }

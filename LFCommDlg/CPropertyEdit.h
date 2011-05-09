@@ -50,6 +50,8 @@ public:
 	void SetAttribute(UINT Attr);
 	void SetData(LFVariantData* pData);
 
+	BOOL m_IsValid;
+
 protected:
 	LFVariantData m_Data;
 	CProperty* p_Property;
@@ -68,6 +70,8 @@ protected:
 	afx_msg void OnNcPaint();
 	afx_msg void OnPaint();
 	afx_msg void OnSize(UINT nType, INT cx, INT cy);
+	afx_msg void OnChange();
+	afx_msg LRESULT OnPropertyChanged(WPARAM wparam, LPARAM lparam);
 	afx_msg void OnClick();
 	DECLARE_MESSAGE_MAP()
 };

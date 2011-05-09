@@ -119,6 +119,8 @@ public:
 
 class AFX_EXT_CLASS CPropertyIATA : public CProperty
 {
+friend class CInspectorGrid;
+
 public:
 	CPropertyIATA(LFVariantData* pData, LFVariantData* pLocationName, LFVariantData* pLocationGPS);
 

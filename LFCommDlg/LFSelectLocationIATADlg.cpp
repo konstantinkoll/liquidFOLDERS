@@ -14,19 +14,21 @@
 
 extern AFX_EXTENSION_MODULE LFCommDlgDLL;
 
-LFSelectLocationIATADlg::LFSelectLocationIATADlg(UINT nIDTemplate, CWnd* pParentWnd, CHAR* _Airport)
+LFSelectLocationIATADlg::LFSelectLocationIATADlg(UINT nIDTemplate, CWnd* pParentWnd, CHAR* Airport, BOOL AllowOverwriteName, BOOL AllowOverwriteGPS)
 	: CDialog(nIDTemplate, pParentWnd)
 {
 	m_nIDTemplate = nIDTemplate;
 
 	p_App = (LFApplication*)AfxGetApp();
 	m_LastCountrySelected = p_App->GetGlobalInt(_T("LastCountrySelected"), 0);
-	m_IATA_OverwriteName = p_App->GetGlobalInt(_T("IATAOverwriteName"), TRUE);
-	m_IATA_OverwriteGPS = p_App->GetGlobalInt(_T("IATAOverwriteGPS"), TRUE);
+	m_OverwriteName = AllowOverwriteName ? p_App->GetGlobalInt(_T("IATAOverwriteName"), TRUE) : FALSE;
+	m_OverwriteGPS = AllowOverwriteGPS ? p_App->GetGlobalInt(_T("IATAOverwriteGPS"), TRUE) : FALSE;
+	m_AllowOverwriteName = AllowOverwriteName;
+	m_AllowOverwriteGPS = AllowOverwriteGPS;
 
-	if (_Airport)
+	if (Airport)
 	{
-		if (!LFIATAGetAirportByCode(_Airport, &m_Airport))
+		if (!LFIATAGetAirportByCode(Airport, &m_Airport))
 			m_Airport = NULL;
 	}
 	else
@@ -139,24 +141,31 @@ BOOL LFSelectLocationIATADlg::OnInitDialog()
 	c->SelectString(-1, tmpStr);
 	LoadCountry(country, FALSE);
 
+	if (m_nIDTemplate==IDD_SELECTIATA)
+	{
+		GetDlgItem(IDC_REPLACE_NAME)->EnableWindow(m_AllowOverwriteName);
+		GetDlgItem(IDC_REPLACE_GPS)->EnableWindow(m_AllowOverwriteGPS);
+	}
+
 	return TRUE;
 }
 
 void LFSelectLocationIATADlg::DoDataExchange(CDataExchange* pDX)
 {
 	DDX_Control(pDX, IDC_MAP_PREVIEW, m_Map);
-
 	if (m_nIDTemplate==IDD_SELECTIATA)
 	{
-		DDX_Check(pDX, IDC_REPLACE_NAME, m_IATA_OverwriteName);
-		DDX_Check(pDX, IDC_REPLACE_GPS, m_IATA_OverwriteGPS);
+		DDX_Check(pDX, IDC_REPLACE_NAME, m_OverwriteName);
+		DDX_Check(pDX, IDC_REPLACE_GPS, m_OverwriteGPS);
 	}
 
 	if (pDX->m_bSaveAndValidate)
 	{
-		p_App->WriteGlobalInt(_T("LastCountrySelected"),m_LastCountrySelected);
-		p_App->WriteGlobalInt(_T("IATAOverwriteName"),m_IATA_OverwriteName);
-		p_App->WriteGlobalInt(_T("IATAOverwriteGPS"), m_IATA_OverwriteGPS);
+		p_App->WriteGlobalInt(_T("LastCountrySelected"), m_LastCountrySelected);
+		if (m_AllowOverwriteName)
+			p_App->WriteGlobalInt(_T("IATAOverwriteName"), m_OverwriteName);
+		if (m_AllowOverwriteGPS)
+			p_App->WriteGlobalInt(_T("IATAOverwriteGPS"), m_OverwriteGPS);
 	}
 }
 

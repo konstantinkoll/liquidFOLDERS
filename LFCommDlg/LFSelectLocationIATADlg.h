@@ -15,14 +15,14 @@
 class AFX_EXT_CLASS LFSelectLocationIATADlg : public CDialog
 {
 public:
-	LFSelectLocationIATADlg(UINT nIDTemplate, CWnd* pParentWnd, CHAR* _Airport=NULL);
+	LFSelectLocationIATADlg(UINT nIDTemplate, CWnd* pParentWnd, CHAR* Airport=NULL, BOOL AllowOverwriteName=FALSE, BOOL AllowOverwriteGPS=FALSE);
 
 	virtual void DoDataExchange(CDataExchange* pDX);
 
 	LFAirport* m_Airport;
 	UINT m_LastCountrySelected;
-	BOOL m_IATA_OverwriteName;
-	BOOL m_IATA_OverwriteGPS;
+	BOOL m_OverwriteName;
+	BOOL m_OverwriteGPS;
 
 protected:
 	void LoadCountry(UINT country, BOOL SelectFirst=TRUE);
@@ -35,6 +35,8 @@ private:
 	UINT m_nIDTemplate;
 	WCHAR m_Buffer[256];
 	LFApplication* p_App;
+	BOOL m_AllowOverwriteName;
+	BOOL m_AllowOverwriteGPS;
 
 	INT Compare(INT col, INT n1, INT n2);
 	void Heap(INT col, INT wurzel, INT anz);

@@ -34,6 +34,7 @@ void EditConditionDlg::TestAttribute(UINT attr, BOOL& add, BOOL& check)
 
 BEGIN_MESSAGE_MAP(EditConditionDlg, LFAttributeListDlg)
 	ON_NOTIFY(LVN_ITEMCHANGED, IDC_COMPAREATTRIBUTE, OnItemChanged)
+	ON_MESSAGE(WM_PROPERTYCHANGED, OnPropertyChanged)
 END_MESSAGE_MAP()
 
 BOOL EditConditionDlg::OnInitDialog()
@@ -63,6 +64,16 @@ void EditConditionDlg::OnItemChanged(NMHDR* pNMHDR, LRESULT* /*pResult*/)
 	{
 		INT idx = m_wndAttribute.GetNextItem(-1, LVNI_SELECTED);
 		if (idx!=-1)
+		{
 			m_wndEdit.SetAttribute((UINT)m_wndAttribute.GetItemData(idx));
+			GetDlgItem(IDOK)->EnableWindow();
+		}
 	}
+}
+
+LRESULT EditConditionDlg::OnPropertyChanged(WPARAM /*wparam*/, LPARAM /*lparam*/)
+{
+	GetDlgItem(IDOK)->EnableWindow(m_wndEdit.m_IsValid);
+
+	return NULL;
 }

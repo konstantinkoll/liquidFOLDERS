@@ -22,6 +22,7 @@ protected:
 
 	afx_msg BOOL OnInitDialog();
 	afx_msg void OnItemChanged(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg LRESULT OnPropertyChanged(WPARAM wparam, LPARAM lparam);
 	DECLARE_MESSAGE_MAP()
 
 private:

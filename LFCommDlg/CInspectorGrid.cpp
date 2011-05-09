@@ -447,13 +447,13 @@ void CPropertyIATA::OnClickButton()
 {
 	ASSERT(p_Parent);
 
-	LFSelectLocationIATADlg dlg(IDD_SELECTIATA, NULL, &p_Data->AnsiString[0]);
+	LFSelectLocationIATADlg dlg(IDD_SELECTIATA, NULL, &p_Data->AnsiString[0], p_LocationName!=NULL, p_LocationGPS!=NULL);
 
 	if (dlg.DoModal()==IDOK)
 		if (dlg.m_Airport)
 		{
 			SHORT Attr2 = -1;
-			if ((p_LocationName) && (dlg.m_IATA_OverwriteName))
+			if ((p_LocationName) && (dlg.m_OverwriteName))
 			{
 				ASSERT(p_LocationName->Attr==LFAttrLocationName);
 				Attr2 = LFAttrLocationName;
@@ -463,7 +463,7 @@ void CPropertyIATA::OnClickButton()
 			}
 
 			SHORT Attr3 = -1;
-			if ((p_LocationGPS) && (dlg.m_IATA_OverwriteGPS))
+			if ((p_LocationGPS) && (dlg.m_OverwriteGPS))
 			{
 				ASSERT(p_LocationGPS->Attr==LFAttrLocationGPS);
 				Attr3 = LFAttrLocationGPS;
@@ -764,8 +764,15 @@ void CInspectorGrid::AddAttributes(LFVariantData* pData)
 {
 	for (UINT a=0; a<LFAttributeCount; a++)
 	{
+		CProperty* pProp = CreateProperty(&pData[a]);
+		if (a==LFAttrLocationIATA)
+		{
+			((CPropertyIATA*)pProp)->p_LocationName = &pData[LFAttrLocationName];
+			((CPropertyIATA*)pProp)->p_LocationGPS = &pData[LFAttrLocationGPS];
+		}
+
 		LFAttributeDescriptor* pAttr = p_App->m_Attributes[a];
-		AddProperty(CreateProperty(&pData[a]), pAttr->Category, pAttr->Name, !pAttr->ReadOnly);
+		AddProperty(pProp, pAttr->Category, pAttr->Name, !pAttr->ReadOnly);
 	}
 }
 
