@@ -270,17 +270,17 @@ bool CheckCondition(void* value, LFFilterCondition* c)
 		case LFFilterCompareIsNotEqual:
 			return _wcsicmp((wchar_t*)value, c->AttrData.UnicodeString)!=0;
 		case LFFilterCompareBeginsWith:
-			len1 = wcslen((wchar_t*)value);
-			len2 = wcslen(c->AttrData.UnicodeString);
+			len1 = wcslen(c->AttrData.UnicodeString);
+			len2 = wcslen((wchar_t*)value);
 			if (len1>len2)
 				return false;
 			return _wcsnicmp((wchar_t*)value, c->AttrData.UnicodeString, len1)==0;
 		case LFFilterCompareEndsWith:
-			len1 = wcslen((wchar_t*)value);
-			len2 = wcslen(c->AttrData.UnicodeString);
+			len1 = wcslen(c->AttrData.UnicodeString);
+			len2 = wcslen((wchar_t*)value);
 			if (len1>len2)
 				return false;
-			return _wcsicmp((wchar_t*)value, &c->AttrData.UnicodeString[len2-len1])==0;
+			return _wcsicmp(&((wchar_t*)value)[len2-len1], c->AttrData.UnicodeString)==0;
 		case LFFilterCompareContains:
 			return wcsistr(c->AttrData.UnicodeString, (wchar_t*)value)!=NULL;
 		default:
@@ -316,17 +316,17 @@ bool CheckCondition(void* value, LFFilterCondition* c)
 		case LFFilterCompareIsNotEqual:
 			return _stricmp((char*)value, c->AttrData.AnsiString)!=0;
 		case LFFilterCompareBeginsWith:
-			len1 = strlen((char*)value);
-			len2 = strlen(c->AttrData.AnsiString);
+			len1 = strlen(c->AttrData.AnsiString);
+			len2 = strlen((char*)value);
 			if (len1>len2)
 				return false;
 			return _strnicmp((char*)value, c->AttrData.AnsiString, len1)==0;
 		case LFFilterCompareEndsWith:
-			len1 = strlen((char*)value);
-			len2 = strlen(c->AttrData.AnsiString);
+			len1 = strlen(c->AttrData.AnsiString);
+			len2 = strlen((char*)value);
 			if (len1>len2)
 				return false;
-			return _stricmp((char*)value, &c->AttrData.AnsiString[len2-len1])==0;
+			return _stricmp(&((char*)value)[len2-len1], c->AttrData.AnsiString)==0;
 		case LFFilterCompareContains:
 			return stristr(c->AttrData.AnsiString, (char*)value)!=NULL;
 		default:
