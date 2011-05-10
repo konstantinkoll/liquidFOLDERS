@@ -611,7 +611,7 @@ bool PassesFilterSlaves(LFItemDescriptor* i, LFFilter* filter)
 	}
 
 	if (filter->Searchterm[0]=='\0')
-		return false;
+		return true;
 
 	// Globaler Suchbegriff
 	bool checkTime = true;
