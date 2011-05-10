@@ -682,6 +682,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\ComingSoon.ico"
+				>
+			</File>
+			<File
 				RelativePath=".\res\Descending_16.bmp"
 				>
 			</File>

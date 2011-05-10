@@ -356,6 +356,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Other\ComingSoon.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\Other\ComingSoon.png"
+				>
+			</File>
+			<File
 				RelativePath=".\Other\Computer.ico"
 				>
 			</File>
