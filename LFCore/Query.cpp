@@ -625,8 +625,11 @@ bool PassesFilterSlaves(LFItemDescriptor* i, LFFilter* filter)
 		}
 	}
 
+	char Searchterm[256];
+	WideCharToMultiByte(CP_ACP, 0, filter->Searchterm, -1, Searchterm, 256, NULL, NULL);
+
 	for (unsigned int a=0; a<LFAttributeCount; a++)
-		if (i->AttributeValues[a])
+		if ((a!=LFAttrStoreID) && (a!=LFAttrFileID) && (i->AttributeValues[a]))
 		{
 			wchar_t tmpStr[256];
 
@@ -634,6 +637,10 @@ bool PassesFilterSlaves(LFItemDescriptor* i, LFFilter* filter)
 			{
 			case LFTypeUnicodeString:
 				if (wcsistr((wchar_t*)i->AttributeValues[a], filter->Searchterm)!=NULL)
+					return true;
+				break;
+			case LFTypeAnsiString:
+				if (stristr((char*)i->AttributeValues[a], Searchterm)!=NULL)
 					return true;
 				break;
 			case LFTypeGeoCoordinates:
