@@ -282,7 +282,7 @@ bool CheckCondition(void* value, LFFilterCondition* c)
 				return false;
 			return _wcsicmp(&((wchar_t*)value)[len2-len1], c->AttrData.UnicodeString)==0;
 		case LFFilterCompareContains:
-			return wcsistr(c->AttrData.UnicodeString, (wchar_t*)value)!=NULL;
+			return wcsistr((wchar_t*)value, c->AttrData.UnicodeString)!=NULL;
 		default:
 			
 			assert(false);
@@ -328,7 +328,7 @@ bool CheckCondition(void* value, LFFilterCondition* c)
 				return false;
 			return _stricmp(&((char*)value)[len2-len1], c->AttrData.AnsiString)==0;
 		case LFFilterCompareContains:
-			return stristr(c->AttrData.AnsiString, (char*)value)!=NULL;
+			return stristr((char*)value, c->AttrData.AnsiString)!=NULL;
 		default:
 			
 			assert(false);
