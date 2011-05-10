@@ -200,9 +200,6 @@
 #define IDM_FILTER_SEARCH               6102
 #define IDM_CONDITIONLIST               6200
 #define IDM_CONDITIONLIST_ADD           6201
-#define IDM_CONDITION                   6300
-#define IDM_CONDITION_EDIT              6301
-#define IDM_CONDITION_DELETE            6302
 #define IDM_ORGANIZE                    7000
 #define IDM_ORGANIZE_OPTIONS            7001
 #define IDM_ORGANIZE_TOGGLEAUTODIRS     7002

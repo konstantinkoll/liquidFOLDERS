@@ -16,14 +16,17 @@ public:
 	virtual void SetOwner(CWnd* pOwnerWnd);
 	virtual void AdjustLayout();
 
+	void SetStoreID(CHAR* StoreID);
+
 protected:
 	UINT m_FontHeight;
+	CHAR m_StoreID[LFKeySize];
 	DynArray<LFFilterCondition> m_Conditions;
 	CLabel m_wndLabel1;
 	CButton m_wndAllStores;
 	CButton m_wndThisStore;
 	CLabel m_wndLabel2;
-	CEdit m_wndFreetext;
+	CEdit m_wndSearchterm;
 	CButton m_wndSaveFilter;
 	CButton m_wndStartSearch;
 	CLabel m_wndLabel3;

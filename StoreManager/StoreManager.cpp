@@ -360,6 +360,7 @@ void CStoreManagerApp::LoadViewOptions(INT context)
 		DefaultView = LFViewList;
 		break;
 	case LFContextClipboard:
+	case LFContextSearch:
 		DefaultView = LFViewContent;
 		break;
 	case LFContextHousekeeping:

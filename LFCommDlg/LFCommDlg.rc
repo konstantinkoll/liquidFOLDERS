@@ -184,6 +184,16 @@ BEGIN
     END
 END
 
+IDM_CONDITION MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "&Bearbeiten...",              IDM_CONDITION_EDIT
+        MENUITEM SEPARATOR
+        MENUITEM "&Löschen",                    IDM_CONDITION_DELETE
+    END
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -774,6 +784,16 @@ BEGIN
     END
 END
 
+IDM_CONDITION MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "&Edit...",                    IDM_CONDITION_EDIT
+        MENUITEM SEPARATOR
+        MENUITEM "&Delete",                     IDM_CONDITION_DELETE
+    END
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -1356,6 +1376,16 @@ BEGIN
     END
 END
 
+IDM_CONDITION MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "E&ditar...",                  IDM_CONDITION_EDIT
+        MENUITEM SEPARATOR
+        MENUITEM "&Eliminar",                   IDM_CONDITION_DELETE
+    END
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -1871,7 +1901,7 @@ BEGIN
     IDS_REGFILEFILTER       "Archivo de Registro"
 END
 
-STRINGTABLE
+STRINGTABLE 
 BEGIN
     IDS_COMPARE_IGNORE      "es ignorado"
     IDS_COMPARE_ISNULL      "no está establecido"
@@ -1943,6 +1973,16 @@ BEGIN
         MENUITEM SEPARATOR
         MENUITEM "Exécuter des &travails d'entretien", IDM_STORES_MAINTAINALL
         MENUITEM "Protection de secours paramètres d'en&registrement...", IDM_STORES_BACKUP
+    END
+END
+
+IDM_CONDITION MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "&Bearbeiten...",              IDM_CONDITION_EDIT
+        MENUITEM SEPARATOR
+        MENUITEM "&Effacer",                    IDM_CONDITION_DELETE
     END
 END
 

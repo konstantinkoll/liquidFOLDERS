@@ -137,13 +137,14 @@ struct LFItemCategoryDescriptor
 #define LFContextStoreHome              1
 #define LFContextClipboard              2
 #define LFContextDefault                3
-#define LFContextHousekeeping           4
-#define LFContextTrash                  5
-#define LFContextSubfolderDefault       6
-#define LFContextSubfolderDay           7
-#define LFContextSubfolderLocation      8
+#define LFContextSearch                 4
+#define LFContextHousekeeping           5
+#define LFContextTrash                  6
+#define LFContextSubfolderDefault       7
+#define LFContextSubfolderDay           8
+#define LFContextSubfolderLocation      9
 
-#define LFContextCount                  9
+#define LFContextCount                  10
 
 
 // Context descriptor
@@ -392,6 +393,7 @@ struct LFFilterOptions
 	// For LFFilterModeDirectoryTree and above
 	bool IgnoreSlaves;						// If true, returns only core attributes
 	bool IsSubfolder;						// If true, you are already inside a grouped subdirectory
+	bool IsSearch;							// If true, the filter belongs to a custom search filter
 
 	// For subfolders
 	unsigned int GroupAttribute;			// Attribute on which parent folder was grouped

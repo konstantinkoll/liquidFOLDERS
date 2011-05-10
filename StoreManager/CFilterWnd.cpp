@@ -16,6 +16,7 @@ CFilterWnd::CFilterWnd()
 	: CGlasPane()
 {
 	m_FontHeight = 0;
+	m_StoreID[0]= '\0';
 }
 
 CFilterWnd::~CFilterWnd()
@@ -60,7 +61,7 @@ void CFilterWnd::AdjustLayout()
 	m_wndLabel2.SetWindowPos(NULL, rectClient.left, cy, rectClient.Width(), heightLabel+GUTTER, SWP_NOACTIVATE | SWP_NOZORDER);
 	cy += heightLabel+GUTTER;
 
-	m_wndFreetext.SetWindowPos(NULL, rectClient.left+GUTTER+1, cy, rectClient.Width()-2*GUTTER-1, heightText, SWP_NOACTIVATE | SWP_NOZORDER);
+	m_wndSearchterm.SetWindowPos(NULL, rectClient.left+GUTTER+1, cy, rectClient.Width()-2*GUTTER-1, heightText, SWP_NOACTIVATE | SWP_NOZORDER);
 	cy += heightText+2*GUTTER;
 
 	m_wndLabel3.SetWindowPos(NULL, rectClient.left, cy, rectClient.Width(), heightLabel, SWP_NOACTIVATE | SWP_NOZORDER);
@@ -70,6 +71,37 @@ void CFilterWnd::AdjustLayout()
 	cy += heightButton+GUTTER;
 
 	m_wndList.SetWindowPos(NULL, rectClient.left+GUTTER, cy, rectClient.Width()-GUTTER, rectClient.Height()-cy, SWP_NOACTIVATE | SWP_NOZORDER);
+}
+
+void CFilterWnd::SetStoreID(CHAR* StoreID)
+{
+	strcpy_s(m_StoreID, LFKeySize, StoreID ? StoreID : "");
+
+	CString tmpStr;
+	ENSURE(tmpStr.LoadString(IDS_FILTER_THISSTORE));
+
+	BOOL InStore = FALSE;
+	if (m_StoreID[0]!='\0')
+	{
+		LFStoreDescriptor s;
+		if (LFGetStoreSettings(m_StoreID, &s)==LFOk)
+		{
+			InStore = TRUE;
+
+			tmpStr.Append(_T(" ("));
+			tmpStr.Append(s.StoreName);
+			tmpStr.Append(_T(")"));
+		}
+	}
+
+	m_wndThisStore.EnableWindow(InStore);
+	m_wndThisStore.SetWindowText(tmpStr);
+
+	if (!InStore)
+	{
+		m_wndAllStores.SetCheck(TRUE);
+		m_wndThisStore.SetCheck(FALSE);
+	}
 }
 
 
@@ -84,7 +116,8 @@ BEGIN_MESSAGE_MAP(CFilterWnd, CGlasPane)
 	ON_COMMAND(IDM_CONDITION_EDIT, OnEditCondition)
 	ON_COMMAND(IDM_CONDITION_DELETE, OnDeleteCondition)
 	ON_UPDATE_COMMAND_UI(IDOK, OnUpdateCommands)
-	ON_UPDATE_COMMAND_UI_RANGE(IDM_FILTER_SAVE, IDM_CONDITION_DELETE, OnUpdateCommands)
+	ON_UPDATE_COMMAND_UI_RANGE(IDM_FILTER_SAVE, IDM_FILTER_SEARCH, OnUpdateCommands)
+	ON_UPDATE_COMMAND_UI_RANGE(IDM_CONDITION_EDIT, IDM_CONDITION_DELETE, OnUpdateCommands)
 END_MESSAGE_MAP()
 
 INT CFilterWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -118,7 +151,7 @@ INT CFilterWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	ENSURE(tmpStr.LoadString(IDS_FILTER_SEARCHTERM));
 	if (!m_wndLabel2.Create(this, 4, tmpStr))
 		return -1;
-	if (!m_wndFreetext.CreateEx(WS_EX_CLIENTEDGE, _T("EDIT"), _T(""), dwViewStyle | ES_AUTOHSCROLL, CRect(0, 0, 0, 0), this, 5))
+	if (!m_wndSearchterm.CreateEx(WS_EX_CLIENTEDGE, _T("EDIT"), _T(""), dwViewStyle | ES_AUTOHSCROLL, CRect(0, 0, 0, 0), this, 5))
 		return -1;
 	ENSURE(tmpStr.LoadString(IDS_FILTER_OTHERCONDITIONS));
 	if (!m_wndLabel3.Create(this, 6, tmpStr))
@@ -133,13 +166,13 @@ INT CFilterWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndThisStore.SendMessage(WM_SETFONT, (WPARAM)GetStockObject(DEFAULT_GUI_FONT));
 	m_wndSaveFilter.SendMessage(WM_SETFONT, (WPARAM)GetStockObject(DEFAULT_GUI_FONT));
 	m_wndStartSearch.SendMessage(WM_SETFONT, (WPARAM)GetStockObject(DEFAULT_GUI_FONT));
-	m_wndFreetext.SendMessage(WM_SETFONT, (WPARAM)GetStockObject(DEFAULT_GUI_FONT));
+	m_wndSearchterm.SendMessage(WM_SETFONT, (WPARAM)GetStockObject(DEFAULT_GUI_FONT));
 	m_wndAddCondition.SendMessage(WM_SETFONT, (WPARAM)GetStockObject(DEFAULT_GUI_FONT));
 
 	m_wndAllStores.SetCheck(BST_CHECKED);
 
 	m_wndList.SetView(LV_VIEW_TILE);
-	m_wndList.SetMenus(IDM_CONDITION, TRUE, IDM_CONDITIONLIST);
+	m_wndList.SetMenus(IDM_CONDITIONLIST);
 
 #ifdef DEBUG
 	LFFilterCondition c;
@@ -203,7 +236,7 @@ void CFilterWnd::OnDoubleClick(NMHDR* /*pNMHDR*/, LRESULT* /*pResult*/)
 
 void CFilterWnd::OnSave()
 {
-	SaveFilterDlg dlg(GetParent(), NULL, L"Test", TRUE);
+	SaveFilterDlg dlg(this, NULL, L"Test", TRUE);
 	if (dlg.DoModal()==IDOK)
 	{
 		MessageBox(_T("Coming soon"));
@@ -212,7 +245,21 @@ void CFilterWnd::OnSave()
 
 void CFilterWnd::OnSearch()
 {
-	MessageBox(_T("Coming soon"));
+	LFFilter* f = LFAllocFilter();
+	f->Mode = LFFilterModeSearch;
+	f->Options.IsSearch = true;
+	strcpy_s(f->StoreID, LFKeySize, m_wndAllStores.GetCheck() ? "" : m_StoreID);
+	m_wndSearchterm.GetWindowText(f->Searchterm, 256);
+
+	for (INT a=m_Conditions.m_ItemCount-1; a>=0; a--)
+	{
+		LFFilterCondition* c = LFAllocFilterCondition();
+		*c = m_Conditions.m_Items[a];
+		c->Next = f->ConditionList;
+		f->ConditionList = c;
+	}
+
+	GetOwner()->SendMessage(WM_NAVIGATETO, (WPARAM)f);
 }
 
 void CFilterWnd::OnAddCondition()

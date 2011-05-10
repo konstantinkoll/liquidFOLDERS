@@ -20,7 +20,7 @@ CConditionList::CConditionList()
 {
 	p_App = (LFApplication*)AfxGetApp();
 	hTheme = NULL;
-	m_ItemMenuID = m_BackgroundMenuID = 0;
+	m_BackgroundMenuID = 0;
 	m_LastWidth = -1;
 
 	for (UINT a=0; a<LFFilterCompareCount; a++)
@@ -154,10 +154,8 @@ void CConditionList::SetItem(INT nItem, LFFilterCondition* c)
 		FinishItem(nItem, c);
 }
 
-void CConditionList::SetMenus(UINT ItemMenuID, BOOL HighlightFirst, UINT BackgroundMenuID)
+void CConditionList::SetMenus(UINT BackgroundMenuID)
 {
-	m_ItemMenuID = ItemMenuID;
-	m_HighlightFirst = HighlightFirst;
 	m_BackgroundMenuID = BackgroundMenuID;
 }
 
@@ -225,7 +223,7 @@ void CConditionList::OnContextMenu(CWnd* /*pWnd*/, CPoint pos)
 	UINT MenuID = m_BackgroundMenuID;
 	if (pInfo.iItem!=-1)
 		if (GetNextItem(pInfo.iItem-1, LVNI_FOCUSED | LVNI_SELECTED)==pInfo.iItem)
-			MenuID = m_ItemMenuID;
+			MenuID = IDM_CONDITION;
 
 	if (MenuID)
 	{
@@ -238,7 +236,7 @@ void CConditionList::OnContextMenu(CWnd* /*pWnd*/, CPoint pos)
 		CMenu* pPopup = Menu.GetSubMenu(0);
 		ASSERT_VALID(pPopup);
 
-		if ((pInfo.iItem!=-1) && (m_HighlightFirst))
+		if (pInfo.iItem!=-1)
 			pPopup->SetDefaultItem(0, TRUE);
 
 		pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, pos.x, pos.y, GetOwner());
@@ -247,9 +245,18 @@ void CConditionList::OnContextMenu(CWnd* /*pWnd*/, CPoint pos)
 
 void CConditionList::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
-/*	switch(nChar)
+	switch(nChar)
 	{
-	}*/
-
-	CListCtrl::OnKeyDown(nChar, nRepCnt, nFlags);
+	case VK_EXECUTE:
+	case VK_RETURN:
+		if ((GetKeyState(VK_CONTROL)>=0) && (GetKeyState(VK_SHIFT)>=0))
+			GetOwner()->PostMessage(WM_COMMAND, IDM_CONDITION_EDIT);
+		break;
+	case VK_DELETE:
+		if ((GetKeyState(VK_CONTROL)>=0) && (GetKeyState(VK_SHIFT)>=0))
+			GetOwner()->PostMessage(WM_COMMAND, IDM_CONDITION_DELETE);
+		break;
+	default:
+		CListCtrl::OnKeyDown(nChar, nRepCnt, nFlags);
+	}
 }

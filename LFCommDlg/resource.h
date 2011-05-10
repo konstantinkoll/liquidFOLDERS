@@ -180,6 +180,9 @@
 #define IDC_CALENDAR                    22403
 #define IDC_USETIME                     22404
 #define IDC_TIME                        22405
+#define IDM_CONDITION                   22500
+#define IDM_CONDITION_EDIT              22501
+#define IDM_CONDITION_DELETE            22502
 #define IDI_SHIELD_VISTA                32519
 
 // Next default values for new objects

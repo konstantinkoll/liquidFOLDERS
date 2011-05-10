@@ -21,13 +21,11 @@ public:
 
 	void InsertItem(LFFilterCondition* c);
 	void SetItem(INT nItem, LFFilterCondition* c);
-	void SetMenus(UINT ItemMenuID=0, BOOL HighlightFirst=FALSE, UINT BackgroundMenuID=0);
+	void SetMenus(UINT BackgroundMenuID=0);
 
 protected:
 	LFApplication* p_App;
 	HTHEME hTheme;
-	UINT m_ItemMenuID;
-	BOOL m_HighlightFirst;
 	UINT m_BackgroundMenuID;
 	INT m_LastWidth;
 

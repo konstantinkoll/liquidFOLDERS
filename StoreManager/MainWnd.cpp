@@ -208,6 +208,7 @@ BEGIN_MESSAGE_MAP(CMainWnd, CGlasWindow)
 	ON_MESSAGE(WM_COOKFILES, OnCookFiles)
 	ON_MESSAGE_VOID(WM_UPDATEFOOTER, OnUpdateFooter)
 	ON_MESSAGE(WM_NAVIGATEBACK, OnNavigateBack)
+	ON_MESSAGE(WM_NAVIGATETO, OnNavigateTo)
 
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->VolumesChanged, OnVolumesChanged)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoresChanged, OnStoresChanged)
@@ -387,6 +388,13 @@ void CMainWnd::OnItemOpen()
 				}
 			}
 	}
+}
+
+LRESULT CMainWnd::OnNavigateTo(WPARAM wParam, LPARAM /*lParam*/)
+{
+	NavigateTo((LFFilter*)wParam);
+
+	return NULL;
 }
 
 void CMainWnd::OnExportMetadata()

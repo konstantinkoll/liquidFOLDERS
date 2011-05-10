@@ -146,6 +146,9 @@ void CMainView::SetHeaderButtons()
 
 void CMainView::SetHeader()
 {
+	if (p_wndFilter && p_CookedFiles)
+		p_wndFilter->SetStoreID(m_StoreIDValid ? m_StoreID : "");
+
 	if (!p_CookedFiles)
 	{
 		m_wndExplorerHeader.SetText(_T(""), _T(""));
@@ -544,7 +547,10 @@ BOOL CMainView::UpdateItems(LFVariantData* Value1, LFVariantData* Value2, LFVari
 			UpdateSearchResult(p_Filter, p_RawFiles, p_CookedFiles, &Data, FALSE);
 		}
 		if (Deselected)
+		{
+			p_wndFileView->Invalidate();
 			OnUpdateSelection();
+		}
 	}
 
 	if (tl->m_LastError>LFCancel)

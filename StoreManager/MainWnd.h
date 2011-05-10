@@ -23,6 +23,7 @@
 #define WM_COOKFILES             WM_USER+203
 #define WM_UPDATEFOOTER          WM_USER+204
 #define WM_NAVIGATEBACK          WM_USER+205
+#define WM_NAVIGATETO            WM_USER+206
 
 class CMainWnd : public CGlasWindow
 {
@@ -62,6 +63,7 @@ protected:
 	afx_msg void OnUpdateNavCommands(CCmdUI* pCmdUI);
 
 	afx_msg void OnItemOpen();
+	afx_msg LRESULT OnNavigateTo(WPARAM wParam, LPARAM lParam);
 	afx_msg void OnExportMetadata();
 
 	afx_msg void OnUpdateViewOptions();

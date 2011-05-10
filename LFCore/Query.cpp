@@ -126,19 +126,19 @@ bool GetNamePrefix(wchar_t* FullName, wchar_t* Buffer)
 {
 #define Choose if ((P2) && ((!P1) || (P2<P1))) P1 = P2;
 
-	wchar_t* P1 = wcsistr(FullName, L" —");
+	wchar_t* P1 = wcsstr(FullName, L" —");
 	wchar_t* P2;
 
-	P2 = wcsistr(FullName, L" –"); Choose;
-	P2 = wcsistr(FullName, L" -"); Choose;
-	P2 = wcsistr(FullName, L" \""); Choose;
-	P2 = wcsistr(FullName, L" ("); Choose;
-	P2 = wcsistr(FullName, L" /"); Choose;
-	P2 = wcsistr(FullName, L" »"); Choose;
-	P2 = wcsistr(FullName, L" «"); Choose;
-	P2 = wcsistr(FullName, L" „"); Choose;
-	P2 = wcsistr(FullName, L" “"); Choose;
-	P2 = wcsistr(FullName, L"—"); Choose;
+	P2 = wcsstr(FullName, L" –"); Choose;
+	P2 = wcsstr(FullName, L" -"); Choose;
+	P2 = wcsstr(FullName, L" \""); Choose;
+	P2 = wcsstr(FullName, L" ("); Choose;
+	P2 = wcsstr(FullName, L" /"); Choose;
+	P2 = wcsstr(FullName, L" »"); Choose;
+	P2 = wcsstr(FullName, L" «"); Choose;
+	P2 = wcsstr(FullName, L" „"); Choose;
+	P2 = wcsstr(FullName, L" “"); Choose;
+	P2 = wcsstr(FullName, L"—"); Choose;
 
 	// Wenn kein Trenner gefunden wurde, von rechts nach Ziffern suchen
 	if (!P1)
@@ -572,7 +572,7 @@ int PassesFilterCore(LFCoreAttributes* ca, LFFilter* filter)
 		}
 
 	// Attribute
-	int advanced = (filter->Searchterm[0]==L'\0') ? 0 : 1;
+	int advanced = (filter->Searchterm[0]==L'\0') ? 1 : 0;
 
 	LFFilterCondition* c = filter->ConditionList;
 	while (c)
@@ -610,13 +610,29 @@ bool PassesFilterSlaves(LFItemDescriptor* i, LFFilter* filter)
 		c = c->Next;
 	}
 
-	// Globaler Suchbegriff
-	if (filter->Searchterm[0]!='\0')
-	{
-		// TODO
-	}
+	if (filter->Searchterm[0]=='\0')
+		return false;
 
-	return true;
+	// Globaler Suchbegriff
+	for (unsigned int a=0; a<LFAttributeCount; a++)
+		if (i->AttributeValues[a])
+		{
+			wchar_t tmpStr[256];
+
+			switch (AttrTypes[a])
+			{
+			case LFTypeUnicodeString:
+				if (wcsistr((wchar_t*)i->AttributeValues[a], filter->Searchterm)!=NULL)
+					return true;
+				break;
+			default:
+				LFAttributeToString(i, a, tmpStr, 256);
+				if (wcsistr(tmpStr, filter->Searchterm)!=NULL)
+					return true;
+			}
+		}
+
+	return false;
 }
 
 LFCore_API bool LFPassesFilter(LFItemDescriptor* i, LFFilter* filter)
@@ -742,7 +758,7 @@ bool RetrieveStore(char* StoreID, LFFilter* filter, LFSearchResult* res)
 inline void PrepareSearchResult(LFSearchResult* res, LFFilter* filter)
 {
 	wchar_t name[256];
-	int ctx = LFContextDefault;
+	int ctx = (filter->Mode==LFFilterModeSearch) ? LFContextSearch : LFContextDefault;
 
 	if ((filter->Options.IsSubfolder) && (filter->ConditionList))
 	{
@@ -756,7 +772,7 @@ inline void PrepareSearchResult(LFSearchResult* res, LFFilter* filter)
 	else
 	{
 		assert(filter->DomainID<LFDomainCount);
-		LoadString(LFCoreModuleHandle, IDS_FirstDomain+filter->DomainID, name, 256);
+		LoadString(LFCoreModuleHandle, filter->Mode==LFFilterModeSearch ? IDS_LFContextSearch : IDS_FirstDomain+filter->DomainID, name, 256);
 		wchar_t* brk = wcschr(name, L'\n');
 		if (brk)
 			*brk = L'\0';
