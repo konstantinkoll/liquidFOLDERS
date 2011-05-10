@@ -122,14 +122,8 @@ void CConditionList::ConditionToItem(LFFilterCondition* c, LVITEM& lvi)
 	lvi.iImage = GetAttributeIconIndex(c->AttrData.Attr);
 }
 
-void CConditionList::InsertItem(LFFilterCondition* c)
+void CConditionList::FinishItem(INT nItem, LFFilterCondition* c)
 {
-	LVITEM lvi;
-	ConditionToItem(c, lvi);
-	lvi.iItem = GetItemCount();
-
-	INT nItem = CListCtrl::InsertItem(&lvi);
-
 	WCHAR tmpStr[512];
 	ASSERT(c->Compare<LFFilterCompareCount);
 	wcscpy_s(tmpStr, 512, m_Compare[c->Compare]);
@@ -141,13 +135,23 @@ void CConditionList::InsertItem(LFFilterCondition* c)
 	SetItemText(nItem, 1, tmpStr);
 }
 
+void CConditionList::InsertItem(LFFilterCondition* c)
+{
+	LVITEM lvi;
+	ConditionToItem(c, lvi);
+	lvi.iItem = GetItemCount();
+
+	FinishItem(CListCtrl::InsertItem(&lvi), c);
+}
+
 void CConditionList::SetItem(INT nItem, LFFilterCondition* c)
 {
 	LVITEM lvi;
 	ConditionToItem(c, lvi);
 	lvi.iItem = nItem;
 
-	CListCtrl::SetItem(&lvi);
+	if (CListCtrl::SetItem(&lvi))
+		FinishItem(nItem, c);
 }
 
 void CConditionList::SetMenus(UINT ItemMenuID, BOOL HighlightFirst, UINT BackgroundMenuID)

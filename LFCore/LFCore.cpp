@@ -285,7 +285,6 @@ LFCore_API LFAttributeDescriptor* LFGetAttributeInfo(unsigned int ID)
 	}
 
 	// Icon
-
 	switch (ID)
 	{
 	case LFAttrCreationTime:

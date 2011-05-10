@@ -18,6 +18,7 @@ public:
 
 protected:
 	UINT m_FontHeight;
+	DynArray<LFFilterCondition> m_Conditions;
 	CLabel m_wndLabel1;
 	CButton m_wndAllStores;
 	CButton m_wndThisStore;

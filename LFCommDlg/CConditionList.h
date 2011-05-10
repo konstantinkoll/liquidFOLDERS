@@ -48,4 +48,5 @@ private:
 	CString m_Compare[LFFilterCompareCount];
 
 	void ConditionToItem(LFFilterCondition* c, LVITEM& lvi);
+	void FinishItem(INT idx, LFFilterCondition* c);
 };

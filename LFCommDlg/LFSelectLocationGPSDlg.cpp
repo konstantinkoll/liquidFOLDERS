@@ -58,9 +58,6 @@ void LFSelectLocationGPSDlg::DoDataExchange(CDataExchange* pDX)
 		CString strLon;
 		GetDlgItem(IDC_LONGITUDE)->GetWindowText(strLon);
 		m_Location.Longitude = StringToCoord(strLon);
-
-		if (m_Location.Latitude==0)
-			MessageBox(_T("XX"));
 	}
 }
 

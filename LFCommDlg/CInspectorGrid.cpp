@@ -61,6 +61,13 @@ CProperty* CPropertyHolder::CreateProperty(LFVariantData* pData)
 	case LFTypeRating:
 		pProperty = new CPropertyRating(pData);
 		break;
+	case LFTypeUINT:
+	case LFTypeINT64:
+		pProperty = new CPropertyNumber(pData);
+		break;
+	case LFTypeDuration:
+		pProperty = new CPropertyDuration(pData);
+		break;
 	case LFTypeGeoCoordinates:
 		pProperty = new CPropertyGPS(pData);
 		break;
@@ -147,6 +154,10 @@ HCURSOR CProperty::SetCursor(INT /*x*/)
 CString CProperty::GetValidChars()
 {
 	return _T("");
+}
+
+void CProperty::SetEditMask(CMFCMaskedEdit* /*pEdit*/)
+{
 }
 
 void CProperty::OnSetString(CString Value)
@@ -519,8 +530,6 @@ void CPropertyGPS::OnClickButton()
 }
 
 
-
-
 // CPropertyTime
 //
 
@@ -554,6 +563,36 @@ void CPropertyTime::OnClickButton()
 
 	if (dlg.DoModal()==IDOK)
 		p_Parent->NotifyOwner((SHORT)p_Data->Attr);
+}
+
+
+// CPropertyNumber
+//
+
+CPropertyNumber::CPropertyNumber(LFVariantData* pData)
+	: CProperty(pData)
+{
+}
+
+CString CPropertyNumber::GetValidChars()
+{
+	return _T("0123456789");
+}
+
+
+// CPropertyDuration
+//
+
+CPropertyDuration::CPropertyDuration(LFVariantData* pData)
+	: CPropertyNumber(pData)
+{
+}
+
+void CPropertyDuration::SetEditMask(CMFCMaskedEdit *pEdit)
+{
+	pEdit->EnableMask(_T("DD DD DD"), _T("__:__:__"), _T('0'), _T("0123456789"));
+	pEdit->EnableGetMaskedCharsOnly(FALSE);
+	pEdit->SetWindowText(_T("00:00:00"));
 }
 
 
@@ -1206,6 +1245,7 @@ void CInspectorGrid::EditProperty(UINT Attr)
 				p_Edit->SetSel(0, (INT)wcslen(tmpStr));
 			}
 			p_Edit->SetValidChars(pProp->pProperty->GetValidChars());
+			pProp->pProperty->SetEditMask(p_Edit);
 			if (Attr<LFAttributeCount)
 				p_Edit->SetLimitText(p_App->m_Attributes[Attr]->cCharacters);
 			p_Edit->SetFont(&m_BoldFont);

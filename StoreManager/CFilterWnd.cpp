@@ -141,13 +141,14 @@ INT CFilterWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndList.SetView(LV_VIEW_TILE);
 	m_wndList.SetMenus(IDM_CONDITION, TRUE, IDM_CONDITIONLIST);
 
-
+#ifdef DEBUG
 	LFFilterCondition c;
 	c.AttrData.Attr = LFAttrArtist;
 	LFGetNullVariantData(&c.AttrData);
 	c.AttrData.IsNull = false;
 	c.Compare = LFFilterCompareIsEqual;
 	wcscpy_s(c.AttrData.UnicodeString, 256, L"Madonna");
+	m_Conditions.AddItem(c);
 	m_wndList.InsertItem(&c);
 
 	c.AttrData.Attr = LFAttrRating;
@@ -155,6 +156,7 @@ INT CFilterWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	c.AttrData.IsNull = false;
 	c.Compare = LFFilterCompareIsAboveOrEqual;
 	c.AttrData.Rating = 7;
+	m_Conditions.AddItem(c);
 	m_wndList.InsertItem(&c);
 
 	c.AttrData.Attr = LFAttrAlbum;
@@ -162,7 +164,9 @@ INT CFilterWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	c.AttrData.IsNull = false;
 	c.Compare = LFFilterCompareIsEqual;
 	wcscpy_s(c.AttrData.UnicodeString, 256, L"True Blue");
+	m_Conditions.AddItem(c);
 	m_wndList.InsertItem(&c);
+#endif
 
 	return 0;
 }
@@ -213,9 +217,11 @@ void CFilterWnd::OnSearch()
 
 void CFilterWnd::OnAddCondition()
 {
-	EditConditionDlg dlg(GetParent());
+	EditConditionDlg dlg(this);
 	if (dlg.DoModal()==IDOK)
 	{
+		m_Conditions.AddItem(dlg.m_Condition);
+		m_wndList.InsertItem(&dlg.m_Condition);
 	}
 
 	m_wndList.SetFocus();
@@ -226,9 +232,11 @@ void CFilterWnd::OnEditCondition()
 	INT idx = m_wndList.GetNextItem(-1, LVNI_SELECTED | LVNI_FOCUSED);
 	if (idx!=-1)
 	{
-		EditConditionDlg dlg(GetParent());
+		EditConditionDlg dlg(this, &m_Conditions.m_Items[idx]);
 		if (dlg.DoModal()==IDOK)
 		{
+			m_Conditions.m_Items[idx] = dlg.m_Condition;
+			m_wndList.SetItem(idx, &dlg.m_Condition);
 		}
 
 		m_wndList.SetFocus();
@@ -237,7 +245,16 @@ void CFilterWnd::OnEditCondition()
 
 void CFilterWnd::OnDeleteCondition()
 {
-	MessageBox(_T("Coming soon"));
+	INT idx = m_wndList.GetNextItem(-1, LVNI_SELECTED | LVNI_FOCUSED);
+	if (idx!=-1)
+	{
+		m_Conditions.m_ItemCount--;
+		for (INT a=idx; a<(INT)m_Conditions.m_ItemCount; a++)
+			m_Conditions.m_Items[a] = m_Conditions.m_Items[a+1];
+
+		m_wndList.DeleteItem(idx);
+		m_wndList.Arrange(LVA_ALIGNTOP);
+	}
 }
 
 void CFilterWnd::OnUpdateCommands(CCmdUI* pCmdUI)

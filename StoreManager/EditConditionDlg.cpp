@@ -9,25 +9,37 @@
 // EditConditionDlg
 //
 
-EditConditionDlg::EditConditionDlg(CWnd* pParent)
+EditConditionDlg::EditConditionDlg(CWnd* pParent, LFFilterCondition* pCondition)
 	: LFAttributeListDlg(IDD_EDITCONDITION, pParent)
 {
+	if (pCondition)
+	{
+		m_Condition = *pCondition;
+	}
+	else
+	{
+		m_Condition.Compare = LFFilterCompareContains;
+		m_Condition.AttrData.Attr = LFAttrFileName;
+		LFGetNullVariantData(&m_Condition.AttrData);
+	}
 }
 
 void EditConditionDlg::DoDataExchange(CDataExchange* pDX)
 {
 	DDX_Control(pDX, IDC_COMPAREATTRIBUTE, m_wndAttribute);
+	DDX_Control(pDX, IDC_COMPARE, m_wndCompare);
 	DDX_Control(pDX, IDC_PROPERTY, m_wndEdit);
 
 	if (pDX->m_bSaveAndValidate)
 	{
-//		p_View->SortBy = (UINT)pList->GetItemData(pList->GetNextItem(-1, LVNI_SELECTED));
+		m_Condition.Compare = (UCHAR)m_wndCompare.GetItemData(m_wndCompare.GetCurSel());
+		m_Condition.AttrData = m_wndEdit.m_Data;
 	}
 }
 
 void EditConditionDlg::TestAttribute(UINT attr, BOOL& add, BOOL& check)
 {
-	add = (attr!=LFAttrFileID) && (attr!=LFAttrStoreID);
+	add = (attr!=LFAttrFileID) && (attr!=LFAttrStoreID) && (attr!=LFAttrFlags);
 	check = FALSE;
 }
 
@@ -48,10 +60,10 @@ BOOL EditConditionDlg::OnInitDialog()
 	SetIcon(hIcon, FALSE);		// Kleines Symbol verwenden
 
 	// Attribut-Liste füllen
-	PopulateListCtrl(IDC_COMPAREATTRIBUTE, FALSE, 0);	// TODO
+	PopulateListCtrl(IDC_COMPAREATTRIBUTE, FALSE, m_Condition.AttrData.Attr);
 
-	// Property
-	m_wndEdit.SetAttribute(0);
+	// Bedingung
+	m_wndEdit.SetData(&m_Condition.AttrData);
 
 	return TRUE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird
 }
@@ -65,15 +77,16 @@ void EditConditionDlg::OnItemChanged(NMHDR* pNMHDR, LRESULT* /*pResult*/)
 		INT idx = m_wndAttribute.GetNextItem(-1, LVNI_SELECTED);
 		if (idx!=-1)
 		{
-			m_wndEdit.SetAttribute((UINT)m_wndAttribute.GetItemData(idx));
-			GetDlgItem(IDOK)->EnableWindow();
+			UINT attr = (UINT)m_wndAttribute.GetItemData(idx);
+			SetCompareComboBox(&m_wndCompare, attr, m_Condition.Compare);
+			m_wndEdit.SetAttribute(attr);
 		}
 	}
 }
 
 LRESULT EditConditionDlg::OnPropertyChanged(WPARAM /*wparam*/, LPARAM /*lparam*/)
 {
-	GetDlgItem(IDOK)->EnableWindow(m_wndEdit.m_IsValid);
+	GetDlgItem(IDOK)->EnableWindow(m_wndEdit.m_IsValid && !m_wndEdit.m_IsEmpty);
 
 	return NULL;
 }

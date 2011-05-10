@@ -63,6 +63,7 @@ public:
 	virtual void DrawValue(CDC& dc, CRect rect);
 	virtual HCURSOR SetCursor(INT x);
 	virtual CString GetValidChars();
+	virtual void SetEditMask(CMFCMaskedEdit* pEdit);
 	virtual BOOL CanDelete();
 	virtual BOOL HasButton();
 	virtual BOOL WantsChars();
@@ -162,6 +163,30 @@ public:
 	virtual HCURSOR SetCursor(INT x);
 	virtual BOOL OnClickValue(INT x);
 	virtual void OnClickButton();
+};
+
+
+// CPropertyNumber
+//
+
+class AFX_EXT_CLASS CPropertyNumber : public CProperty
+{
+public:
+	CPropertyNumber(LFVariantData* pData);
+
+	virtual CString GetValidChars();
+};
+
+
+// CPropertyDuration
+//
+
+class AFX_EXT_CLASS CPropertyDuration : public CPropertyNumber
+{
+public:
+	CPropertyDuration(LFVariantData* pData);
+
+	virtual void SetEditMask(CMFCMaskedEdit* pEdit);
 };
 
 

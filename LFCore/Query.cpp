@@ -292,6 +292,7 @@ bool CheckCondition(void* value, LFFilterCondition* c)
 		switch (c->Compare)
 		{
 		case LFFilterCompareSubfolder:
+		case LFFilterCompareContains:
 			tagarray = (wchar_t*)value;
 			while (GetNextTag(&tagarray, tag, 256))
 				if (_wcsicmp(tag, c->AttrData.UnicodeArray)==0)

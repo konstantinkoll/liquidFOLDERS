@@ -51,9 +51,10 @@ public:
 	void SetData(LFVariantData* pData);
 
 	BOOL m_IsValid;
+	BOOL m_IsEmpty;
+	LFVariantData m_Data;
 
 protected:
-	LFVariantData m_Data;
 	CProperty* p_Property;
 	CPropertyDisplay* p_wndDisplay;
 	CMFCMaskedEdit* p_wndEdit;

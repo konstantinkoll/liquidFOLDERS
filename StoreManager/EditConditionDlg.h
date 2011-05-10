@@ -13,9 +13,11 @@
 class EditConditionDlg : public LFAttributeListDlg
 {
 public:
-	EditConditionDlg(CWnd* pParent);
+	EditConditionDlg(CWnd* pParent, LFFilterCondition* pCondition=NULL);
 
 	virtual void DoDataExchange(CDataExchange* pDX);
+
+	LFFilterCondition m_Condition;
 
 protected:
 	virtual void TestAttribute(UINT attr, BOOL& add, BOOL& check);
@@ -27,5 +29,6 @@ protected:
 
 private:
 	CListCtrl m_wndAttribute;
+	CComboBox m_wndCompare;
 	CPropertyEdit m_wndEdit;
 };

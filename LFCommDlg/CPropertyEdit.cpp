@@ -175,6 +175,7 @@ CPropertyEdit::CPropertyEdit()
 	p_wndDisplay = NULL;
 	p_wndEdit = NULL;
 	m_IsValid = FALSE;
+	m_IsEmpty = TRUE;
 }
 
 BOOL CPropertyEdit::Create(CWnd* pParentWnd, UINT nID)
@@ -284,6 +285,7 @@ void CPropertyEdit::CreateProperty()
 			p_wndEdit->SetSel(0, (INT)wcslen(tmpStr));
 		}
 		p_wndEdit->SetValidChars(p_Property->GetValidChars());
+		p_Property->SetEditMask(p_wndEdit);
 		p_wndEdit->SetLimitText(p_App->m_Attributes[m_Data.Attr]->cCharacters);
 		p_wndEdit->SendMessage(WM_SETFONT, (WPARAM)GetStockObject(DEFAULT_GUI_FONT));
 	}
@@ -298,6 +300,7 @@ void CPropertyEdit::CreateProperty()
 	AdjustLayout();
 
 	m_IsValid = TRUE;
+	m_IsEmpty = LFIsNullVariantData(&m_Data);
 }
 
 void CPropertyEdit::SetAttribute(UINT Attr)
@@ -332,6 +335,8 @@ void CPropertyEdit::SetAttribute(UINT Attr)
 
 void CPropertyEdit::SetData(LFVariantData* pData)
 {
+	ASSERT(pData);
+
 	m_Data = *pData;
 	CreateProperty();
 }
@@ -344,6 +349,7 @@ void CPropertyEdit::NotifyOwner(SHORT Attr1, SHORT Attr2, SHORT Attr3)
 		RedrawWindow(NULL, NULL, RDW_ALLCHILDREN | RDW_INVALIDATE | RDW_UPDATENOW);
 
 		m_IsValid = TRUE;
+		m_IsEmpty = LFIsNullVariantData(&m_Data);
 	}
 
 	GetOwner()->PostMessage(WM_PROPERTYCHANGED, Attr1, Attr2 | (Attr3 << 16));
@@ -431,6 +437,7 @@ LRESULT CPropertyEdit::OnPropertyChanged(WPARAM /*wparam*/, LPARAM /*lparam*/)
 
 	LFVariantDataFromString(&m_Data, tmpStr);
 	m_IsValid = !m_Data.IsNull;
+	m_IsEmpty = LFIsNullVariantData(&m_Data);
 
 	return GetOwner()->PostMessage(WM_PROPERTYCHANGED, m_Data.Attr);
 }

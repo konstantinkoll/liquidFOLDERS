@@ -131,6 +131,76 @@ LFCommDlg_API void DrawControlBorder(CWnd* pWnd)
 	dc.Draw3dRect(rect, 0x000000, GetSysColor(COLOR_3DFACE));
 }
 
+void AddCompare(CComboBox* pComboBox, UINT ResID, UINT CompareID)
+{
+	CString tmpStr;
+	ENSURE(tmpStr.LoadString(ResID));
+
+	pComboBox->SetItemData(pComboBox->AddString(tmpStr), CompareID);
+}
+
+LFCommDlg_API void SetCompareComboBox(CComboBox* pComboBox, UINT attr, INT request)
+{
+	pComboBox->SetRedraw(FALSE);
+	pComboBox->ResetContent();
+
+	switch (((LFApplication*)AfxGetApp())->m_Attributes[attr]->Type)
+	{
+	case LFTypeUnicodeString:
+	case LFTypeAnsiString:
+		AddCompare(pComboBox, IDS_COMPARE_CONTAINS, LFFilterCompareContains);
+		AddCompare(pComboBox, IDS_COMPARE_ISEQUAL, LFFilterCompareIsEqual);
+		AddCompare(pComboBox, IDS_COMPARE_ISNOTEQUAL, LFFilterCompareIsNotEqual);
+		AddCompare(pComboBox, IDS_COMPARE_BEGINSWITH, LFFilterCompareBeginsWith);
+		AddCompare(pComboBox, IDS_COMPARE_ENDSWITH, LFFilterCompareEndsWith);
+		break;
+	case LFTypeUnicodeArray:
+		AddCompare(pComboBox, IDS_COMPARE_CONTAINS, LFFilterCompareContains);
+		break;
+	case LFTypeFourCC:
+	case LFTypeFraction:
+	case LFTypeFlags:
+	case LFTypeGeoCoordinates:
+		AddCompare(pComboBox, IDS_COMPARE_ISEQUAL, LFFilterCompareIsEqual);
+		AddCompare(pComboBox, IDS_COMPARE_ISNOTEQUAL, LFFilterCompareIsNotEqual);
+		break;
+	case LFTypeRating:
+	case LFTypeUINT:
+	case LFTypeINT64:
+	case LFTypeTime:
+	case LFTypeDouble:
+	case LFTypeDuration:
+	case LFTypeBitrate:
+	case LFTypeMegapixel:
+		AddCompare(pComboBox, IDS_COMPARE_ISEQUAL, LFFilterCompareIsEqual);
+		AddCompare(pComboBox, IDS_COMPARE_ISNOTEQUAL, LFFilterCompareIsNotEqual);
+		AddCompare(pComboBox, IDS_COMPARE_ISABOVEEQUAL, LFFilterCompareIsAboveOrEqual);
+		AddCompare(pComboBox, IDS_COMPARE_ISBELOWEQUAL, LFFilterCompareIsBelowOrEqual);
+		break;
+	default:
+		ASSERT(FALSE);
+	}
+
+	if (request!=-1)
+	{
+		BOOL first = TRUE;
+
+		for (INT a=0; a<pComboBox->GetCount(); a++)
+		{
+			INT data = pComboBox->GetItemData(a);
+			if ((data==request) || ((first==TRUE) && ((data==LFFilterCompareIsEqual) || (data==LFFilterCompareContains))))
+			{
+				pComboBox->SetCurSel(a);
+				first = FALSE;
+			}
+		}
+	}
+
+	pComboBox->SetRedraw(TRUE);
+	pComboBox->Invalidate();
+}
+
+
 LFCommDlg_API void LFImportFolder(CHAR* StoreID, CWnd* pParentWnd, BOOL AllowChooseStore)
 {
 	CString caption;

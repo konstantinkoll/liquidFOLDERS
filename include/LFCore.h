@@ -195,15 +195,13 @@ LFCore_API bool LFAddItemDescriptor(LFSearchResult* res, LFItemDescriptor* i);
 // LFItemDescriptor aus LFSearchResult entfernen
 //
 // !!ACHTUNG!!
-// Die Sortierreihenfolge geht verloren, LFItemDescriptor::Position wird bei
-// LFSearchResults, die nicht "hohl" sind (m_RawCopy==true), jedoch angepasst.
+// Die Sortierreihenfolge geht verloren!
 LFCore_API void LFRemoveItemDescriptor(LFSearchResult* res, unsigned int idx);
 
 // Alle markierten LFItemDescriptor (DeleteFlag==true) aus LFSearchResult entfernen
 //
 // !!ACHTUNG!!
-// Die Sortierreihenfolge geht verloren, LFItemDescriptor::Position wird bei
-// LFSearchResults, die nicht "hohl" sind (m_RawCopy==true), jedoch angepasst.
+// Die Sortierreihenfolge geht verloren!
 LFCore_API void LFRemoveFlaggedItemDescriptors(LFSearchResult* res);
 
 // Sortiert LFSearchResult
