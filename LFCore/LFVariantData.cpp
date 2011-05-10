@@ -107,7 +107,7 @@ LFCore_API void LFGeoCoordinatesToString(const LFGeoCoordinates c, wchar_t* str,
 
 LFCore_API void LFTimeToString(const FILETIME t, wchar_t* str, size_t cCount, unsigned int mask)
 {
-	*str = '\0';
+	*str = L'\0';
 
 	if ((t.dwHighDateTime) || (t.dwLowDateTime))
 	{

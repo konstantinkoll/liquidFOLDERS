@@ -614,6 +614,17 @@ bool PassesFilterSlaves(LFItemDescriptor* i, LFFilter* filter)
 		return false;
 
 	// Globaler Suchbegriff
+	bool checkTime = true;
+	for (unsigned int a=0; a<wcslen(filter->Searchterm); a++)
+	{
+		wchar_t ch = filter->Searchterm[a];
+		if (((ch<L'0') || (ch>L'9')) && (ch!=L':') && (ch!=L'.') && (ch!=L'/') && (ch!=L'.'))
+		{
+			checkTime = false;
+			break;
+		}
+	}
+
 	for (unsigned int a=0; a<LFAttributeCount; a++)
 		if (i->AttributeValues[a])
 		{
@@ -625,6 +636,11 @@ bool PassesFilterSlaves(LFItemDescriptor* i, LFFilter* filter)
 				if (wcsistr((wchar_t*)i->AttributeValues[a], filter->Searchterm)!=NULL)
 					return true;
 				break;
+			case LFTypeGeoCoordinates:
+				break;
+			case LFTypeTime:
+				if (!checkTime)
+					break;
 			default:
 				LFAttributeToString(i, a, tmpStr, 256);
 				if (wcsistr(tmpStr, filter->Searchterm)!=NULL)
