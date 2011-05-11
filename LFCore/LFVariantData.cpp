@@ -429,9 +429,8 @@ LFCore_API void LFVariantDataFromString(LFVariantData* v, wchar_t* str)
 				v->IsNull = false;
 			break;
 		case LFTypeINT64:
-			for (wchar_t* src = &str[0]; src<&tmpBuf[255]; src++)
-			{
-				switch (*src)
+			for (unsigned int a=0; a<=wcslen(str); a++)
+				switch (str[a])
 				{
 				case L'0':
 				case L'1':
@@ -443,7 +442,7 @@ LFCore_API void LFVariantDataFromString(LFVariantData* v, wchar_t* str)
 				case L'7':
 				case L'8':
 				case L'9':
-					*(dst++) = *src;
+					*(dst++) = str[a];
 				case L'.':
 				case L',':
 					break;
@@ -451,7 +450,6 @@ LFCore_API void LFVariantDataFromString(LFVariantData* v, wchar_t* str)
 					*dst = L'\0';
 					break;
 				}
-			}
 			if (swscanf_s(tmpBuf, L"%d", &v->INT64)==1)
 				v->IsNull = false;
 			break;

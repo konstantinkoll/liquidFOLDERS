@@ -39,7 +39,7 @@ void EditConditionDlg::DoDataExchange(CDataExchange* pDX)
 
 void EditConditionDlg::TestAttribute(UINT attr, BOOL& add, BOOL& check)
 {
-	add = (attr!=LFAttrFileID) && (attr!=LFAttrStoreID) && (theApp.m_Attributes[attr]->Type!=LFTypeFlags) && (theApp.m_Attributes[attr]->Type!=LFTypeINT64);
+	add = (attr!=LFAttrFileID) && (attr!=LFAttrStoreID) && (theApp.m_Attributes[attr]->Type!=LFTypeFlags);
 	check = FALSE;
 }
 
