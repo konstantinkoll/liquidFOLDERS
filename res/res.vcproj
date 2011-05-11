@@ -1621,6 +1621,10 @@
 			>
 		</File>
 		<File
+			RelativePath=".\Search.ico"
+			>
+		</File>
+		<File
 			RelativePath=".\Shield_7.ico"
 			>
 		</File>

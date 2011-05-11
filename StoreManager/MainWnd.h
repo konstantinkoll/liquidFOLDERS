@@ -31,6 +31,7 @@ public:
 	CMainWnd();
 	virtual ~CMainWnd();
 
+	virtual BOOL PreTranslateMessage(MSG* pMsg);
 	virtual BOOL OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo);
 	virtual void AdjustLayout();
 
@@ -45,6 +46,7 @@ protected:
 	HICON m_hIcon;
 	CJournalButton m_wndJournalButton;
 	CHistoryBar m_wndHistory;
+	CGlasEdit m_wndSearch;
 	CMainView m_wndMainView;
 	BreadcrumbItem* m_BreadcrumbBack;
 	BreadcrumbItem* m_BreadcrumbForward;

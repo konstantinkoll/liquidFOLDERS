@@ -8,6 +8,7 @@
 #include "..\LFCommDlg\CExplorerTree.h"
 #include "..\LFCommDlg\CFrameCtrl.h"
 #include "..\LFCommDlg\CGdiPlusBitmap.h"
+#include "..\LFCommDlg\CGlasEdit.h"
 #include "..\LFCommDlg\CGlasPane.h"
 #include "..\LFCommDlg\CGlasWindow.h"
 #include "..\LFCommDlg\CGroupBox.h"

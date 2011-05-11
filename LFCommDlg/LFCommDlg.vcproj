@@ -415,6 +415,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CGlasEdit.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\CGlasPane.cpp"
 				>
 			</File>
@@ -686,6 +690,10 @@
 			</File>
 			<File
 				RelativePath=".\CGdiPlusBitmap.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CGlasEdit.h"
 				>
 			</File>
 			<File
@@ -1056,6 +1064,10 @@
 			</File>
 			<File
 				RelativePath=".\res\Reset_Normal_Small.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Search.ico"
 				>
 			</File>
 			<File

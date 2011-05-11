@@ -172,8 +172,8 @@ CPropertyEdit::CPropertyEdit()
 	ZeroMemory(&m_Data, sizeof(LFVariantData));
 	LFGetNullVariantData(&m_Data);
 	p_Property = NULL;
-	p_wndDisplay = NULL;
-	p_wndEdit = NULL;
+	m_pWndDisplay = NULL;
+	m_pWndEdit = NULL;
 	m_IsValid = FALSE;
 	m_IsEmpty = TRUE;
 }
@@ -238,32 +238,32 @@ void CPropertyEdit::AdjustLayout()
 			m_wndButton.ShowWindow(SW_HIDE);
 		}
 
-		if (p_wndDisplay)
+		if (m_pWndDisplay)
 		{
-			p_wndDisplay->SetWindowPos(NULL, rect.left, rect.top, rect.Width(), rect.Height(), SWP_NOZORDER | SWP_NOACTIVATE);
-			m_wndButton.SetWindowPos(p_wndDisplay, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+			m_pWndDisplay->SetWindowPos(NULL, rect.left, rect.top, rect.Width(), rect.Height(), SWP_NOZORDER | SWP_NOACTIVATE);
+			m_wndButton.SetWindowPos(m_pWndDisplay, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
 		}
-		if (p_wndEdit)
+		if (m_pWndEdit)
 		{
-			p_wndEdit->SetWindowPos(NULL, rect.left, rect.top+1, rect.Width(), rect.Height()-2, SWP_NOZORDER | SWP_NOACTIVATE);
-			m_wndButton.SetWindowPos(p_wndEdit, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+			m_pWndEdit->SetWindowPos(NULL, rect.left, rect.top+1, rect.Width(), rect.Height()-2, SWP_NOZORDER | SWP_NOACTIVATE);
+			m_wndButton.SetWindowPos(m_pWndEdit, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
 		}
 	}
 }
 
 void CPropertyEdit::CreateProperty()
 {
-	if (p_wndDisplay)
+	if (m_pWndDisplay)
 	{
-		p_wndDisplay->DestroyWindow();
-		delete p_wndDisplay;
-		p_wndDisplay = NULL;
+		m_pWndDisplay->DestroyWindow();
+		delete m_pWndDisplay;
+		m_pWndDisplay = NULL;
 	}
-	if (p_wndEdit)
+	if (m_pWndEdit)
 	{
-		p_wndEdit->DestroyWindow();
-		delete p_wndEdit;
-		p_wndEdit = NULL;
+		m_pWndEdit->DestroyWindow();
+		delete m_pWndEdit;
+		m_pWndEdit = NULL;
 	}
 	if (p_Property)
 		delete p_Property;
@@ -275,26 +275,26 @@ void CPropertyEdit::CreateProperty()
 
 	if (p_Property->OnClickValue(-1))
 	{
-		p_wndEdit = new CMFCMaskedEdit();
-		p_wndEdit->Create(WS_CHILD | WS_VISIBLE | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_TABSTOP | ES_AUTOHSCROLL, rect, this, 1);
+		m_pWndEdit = new CMFCMaskedEdit();
+		m_pWndEdit->Create(WS_CHILD | WS_VISIBLE | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_TABSTOP | ES_AUTOHSCROLL, rect, this, 1);
 		if (!p_Property->m_Multiple)
 		{
 			WCHAR tmpStr[256];
 			p_Property->ToString(tmpStr, 256);
-			p_wndEdit->SetWindowText(tmpStr);
-			p_wndEdit->SetSel(0, (INT)wcslen(tmpStr));
+			m_pWndEdit->SetWindowText(tmpStr);
+			m_pWndEdit->SetSel(0, (INT)wcslen(tmpStr));
 		}
-		p_wndEdit->SetValidChars(p_Property->GetValidChars());
-		p_Property->SetEditMask(p_wndEdit);
-		p_wndEdit->SetLimitText(p_App->m_Attributes[m_Data.Attr]->cCharacters);
-		p_wndEdit->SendMessage(WM_SETFONT, (WPARAM)GetStockObject(DEFAULT_GUI_FONT));
+		m_pWndEdit->SetValidChars(p_Property->GetValidChars());
+		p_Property->SetEditMask(m_pWndEdit);
+		m_pWndEdit->SetLimitText(p_App->m_Attributes[m_Data.Attr]->cCharacters);
+		m_pWndEdit->SendMessage(WM_SETFONT, (WPARAM)GetStockObject(DEFAULT_GUI_FONT));
 	}
 	else
 	{
-		p_wndDisplay = new CPropertyDisplay();
-		p_wndDisplay->Create(this, 2);
-		p_wndDisplay->SetProperty(p_Property);
-		p_wndDisplay->EnableWindow(p_Property->WantsChars());
+		m_pWndDisplay = new CPropertyDisplay();
+		m_pWndDisplay->Create(this, 2);
+		m_pWndDisplay->SetProperty(p_Property);
+		m_pWndDisplay->EnableWindow(p_Property->WantsChars());
 	}
 
 	AdjustLayout();
@@ -380,15 +380,15 @@ INT CPropertyEdit::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 void CPropertyEdit::OnDestroy()
 {
-	if (p_wndDisplay)
+	if (m_pWndDisplay)
 	{
-		p_wndDisplay->DestroyWindow();
-		delete p_wndDisplay;
+		m_pWndDisplay->DestroyWindow();
+		delete m_pWndDisplay;
 	}
-	if (p_wndEdit)
+	if (m_pWndEdit)
 	{
-		p_wndEdit->DestroyWindow();
-		delete p_wndEdit;
+		m_pWndEdit->DestroyWindow();
+		delete m_pWndEdit;
 	}
 	if (p_Property)
 		delete p_Property;
@@ -430,10 +430,10 @@ void CPropertyEdit::OnChange()
 
 LRESULT CPropertyEdit::OnPropertyChanged(WPARAM /*wparam*/, LPARAM /*lparam*/)
 {
-	ASSERT(p_wndEdit);
+	ASSERT(m_pWndEdit);
 
 	WCHAR tmpStr[256];
-	p_wndEdit->GetWindowText(tmpStr, 256);
+	m_pWndEdit->GetWindowText(tmpStr, 256);
 
 	LFVariantDataFromString(&m_Data, tmpStr);
 	m_IsValid = !m_Data.IsNull;
@@ -449,12 +449,12 @@ void CPropertyEdit::OnClick()
 		{
 			p_Property->OnClickButton();
 
-			if (p_wndEdit)
+			if (m_pWndEdit)
 			{
 				WCHAR tmpStr[256];
 				LFVariantDataToString(&m_Data, tmpStr, 256);
 
-				p_wndEdit->SetWindowText(tmpStr);
+				m_pWndEdit->SetWindowText(tmpStr);
 			}
 		}
 }

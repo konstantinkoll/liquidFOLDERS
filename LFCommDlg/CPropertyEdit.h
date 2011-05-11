@@ -56,8 +56,8 @@ public:
 
 protected:
 	CProperty* p_Property;
-	CPropertyDisplay* p_wndDisplay;
-	CMFCMaskedEdit* p_wndEdit;
+	CPropertyDisplay* m_pWndDisplay;
+	CMFCMaskedEdit* m_pWndEdit;
 	CButton m_wndButton;
 
 	virtual void Init();

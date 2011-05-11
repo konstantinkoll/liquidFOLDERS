@@ -66,6 +66,25 @@ BOOL CMainWnd::Create(BOOL IsClipboard, CHAR* RootStore)
 	return CGlasWindow::Create(WS_MINIMIZEBOX | WS_MAXIMIZEBOX, className, caption, rect);
 }
 
+BOOL CMainWnd::PreTranslateMessage(MSG* pMsg)
+{
+	if ((pMsg->message==WM_KEYDOWN) && (pMsg->wParam==VK_RETURN) && (pMsg->hwnd==m_wndSearch))
+	{
+		LFFilter* f = LFAllocFilter();
+		f->Mode = LFFilterModeSearch;
+		f->Options.IsSearch = true;
+		m_wndSearch.GetWindowText(f->Searchterm, 256);
+		m_wndSearch.SetWindowText(_T(""));
+
+		SendMessage(WM_NAVIGATETO, (WPARAM)f);
+		m_wndMainView.SetFocus();
+
+		return TRUE;
+	}
+
+	return CGlasWindow::PreTranslateMessage(pMsg);
+}
+
 BOOL CMainWnd::OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo)
 {
 	// The main view gets the command first
@@ -90,7 +109,9 @@ void CMainWnd::AdjustLayout()
 	m_wndJournalButton.SetWindowPos(NULL, rect.left+1, rect.top+(m_Margins.cyTopHeight-JournalHeight-2)/2, JournalWidth, JournalHeight, SWP_NOACTIVATE | SWP_NOZORDER);
 
 	const UINT HistoryHeight = m_wndHistory.GetPreferredHeight();
-	m_wndHistory.SetWindowPos(NULL, rect.left+JournalWidth+7, rect.top+(m_Margins.cyTopHeight-HistoryHeight-3)/2, rect.Width()-JournalWidth-7, HistoryHeight, SWP_NOACTIVATE | SWP_NOZORDER);
+	const UINT SearchWidth = max(150, (rect.Width()-JournalWidth)/4);
+	m_wndHistory.SetWindowPos(NULL, rect.left+JournalWidth+7, rect.top+(m_Margins.cyTopHeight-HistoryHeight-3)/2, rect.Width()-JournalWidth-SearchWidth-14, HistoryHeight, SWP_NOACTIVATE | SWP_NOZORDER);
+	m_wndSearch.SetWindowPos(NULL, rect.right-SearchWidth, rect.top+(m_Margins.cyTopHeight-HistoryHeight-3)/2, SearchWidth, HistoryHeight, SWP_NOACTIVATE | SWP_NOZORDER);
 
 	m_wndMainView.SetWindowPos(NULL, rect.left, rect.top+m_Margins.cyTopHeight, rect.Width(), rect.bottom-m_Margins.cyTopHeight, SWP_NOACTIVATE | SWP_NOZORDER);
 }
@@ -231,8 +252,14 @@ INT CMainWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (!m_wndJournalButton.Create(m_wndHistory.GetPreferredHeight(), this, 1))
 		return -1;
 
+	// Suchbegriff
+	CString tmpStr;
+	ENSURE(tmpStr.LoadString(IDS_FILTER_SEARCHTERM));
+	if (!m_wndSearch.Create(tmpStr, this, 3, TRUE))
+		return -1;
+
 	// Hauptansicht erstellen
-	if (!m_wndMainView.Create(m_IsClipboard, this, 3))
+	if (!m_wndMainView.Create(m_IsClipboard, this, 4))
 		return -1;
 
 	// Aero
