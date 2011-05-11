@@ -350,24 +350,29 @@ LFCore_API LFContextDescriptor* LFGetContextInfo(unsigned int ID)
 	(*c->AllowedAttributes) += LFAttrFileName;
 	(*c->AllowedAttributes) += LFAttrStoreID;
 	(*c->AllowedAttributes) += LFAttrFileID;
-	(*c->AllowedAttributes) += LFAttrDescription;
 	(*c->AllowedAttributes) += LFAttrComment;
 
 	switch (ID)
 	{
 	case LFContextStores:
+		(*c->AllowedAttributes) += LFAttrDescription;
 		(*c->AllowedAttributes) += LFAttrCreationTime;
 		(*c->AllowedAttributes) += LFAttrFileTime;
 		break;
 	case LFContextStoreHome:
+		(*c->AllowedAttributes) += LFAttrDescription;
 		(*c->AllowedAttributes) += LFAttrFileCount;
 		(*c->AllowedAttributes) += LFAttrFileSize;
+		break;
+	case LFContextFilters:
+		(*c->AllowedAttributes) += LFAttrCreationTime;
+		(*c->AllowedAttributes) += LFAttrFileTime;
 		break;
 	case LFContextTrash:
 		(*c->AllowedAttributes) += LFAttrDeleteTime;
 	default:
 		for (unsigned int a=0; a<LFAttributeCount; a++)
-			if ((a!=LFAttrDeleteTime) && ((ID<LFContextSubfolderDefault) || (a!=LFAttrFileCount)))
+			if ((a!=LFAttrDeleteTime) && ((ID<LFContextHousekeeping) || (a!=LFAttrDescription)) && ((ID<LFContextSubfolderDefault) || (a!=LFAttrFileCount)))
 				(*c->AllowedAttributes) += a;
 	}
 

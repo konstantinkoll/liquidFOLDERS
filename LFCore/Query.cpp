@@ -781,16 +781,11 @@ bool RetrieveStore(char* StoreID, LFFilter* filter, LFSearchResult* res)
 inline void PrepareSearchResult(LFSearchResult* res, LFFilter* filter)
 {
 	wchar_t name[256];
-	int ctx = (filter->Mode==LFFilterModeSearch) ? LFContextSearch : LFContextDefault;
 
 	if ((filter->Options.IsSubfolder) && (filter->ConditionList))
 	{
 		res->m_GroupAttribute = filter->Options.GroupAttribute;
-
 		wcscpy_s(name, 256, filter->Name);
-		unsigned int attr = filter->ConditionList->AttrData.Attr;
-		ctx = (attr==LFAttrLocationName) || (attr==LFAttrLocationIATA) || (attr==LFAttrLocationGPS) ? LFContextSubfolderLocation :
-			((filter->ConditionList->Compare==LFFilterCompareSubfolder) && (AttrTypes[attr]==LFTypeTime)) ? LFContextSubfolderDay : LFContextSubfolderDefault;
 	}
 	else
 	{
@@ -799,20 +794,10 @@ inline void PrepareSearchResult(LFSearchResult* res, LFFilter* filter)
 		wchar_t* brk = wcschr(name, L'\n');
 		if (brk)
 			*brk = L'\0';
-
-		switch (filter->DomainID)
-		{
-		case LFDomainTrash:
-			ctx = LFContextTrash;
-			break;
-		case LFDomainUnknown:
-			ctx = LFContextHousekeeping;
-			break;
-		}
 	}
 
 	res->m_LastError = LFOk;
-	res->m_Context = ctx;
+	res->SetContext(filter);
 	wcscpy_s(res->m_Name, 256, name);
 }
 

@@ -94,11 +94,12 @@
 #define IDS_LFContextClipboard          2002
 #define IDS_LFContextDefault            2003
 #define IDS_LFContextSearch             2004
-#define IDS_LFContextHousekeeping       2005
-#define IDS_LFContextTrash              2006
-#define IDS_LFContextSubfolderDefault   2007
-#define IDS_LFContextSubfolderDay       2008
-#define IDS_LFContextSubfolderLocation  2009
+#define IDS_LFContextFilters            2005
+#define IDS_LFContextHousekeeping       2006
+#define IDS_LFContextTrash              2007
+#define IDS_LFContextSubfolderDefault   2008
+#define IDS_LFContextSubfolderDay       2009
+#define IDS_LFContextSubfolderLocation  2010
 #define IDS_FirstError                  3000
 #define IDS_LFOk                        3000
 #define IDS_LFCancel                    3001

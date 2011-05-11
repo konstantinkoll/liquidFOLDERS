@@ -543,45 +543,50 @@ void LFSearchResult::Group(unsigned int attr, unsigned int icon, bool groupone, 
 
 void LFSearchResult::SetContext(LFFilter* f)
 {
-	switch (f->Mode)
+	if (f->Options.IsSubfolder)
 	{
-	case LFFilterModeStores:
-		m_Context = LFContextStores;
-		break;
-	case LFFilterModeStoreHome:
-		m_Context = LFContextStoreHome;
-		break;
-	default:
-		if (f->Options.IsSubfolder)
-		{
-			m_Context = LFContextSubfolderDefault;
-			if (f->ConditionList)
-				switch (f->ConditionList->AttrData.Attr)
-				{
-				case LFAttrLocationName:
-				case LFAttrLocationIATA:
-				case LFAttrLocationGPS:
-					m_Context = LFContextSubfolderLocation;
-					break;
-				default:
-					if (AttrTypes[f->ConditionList->AttrData.Attr]==LFTypeTime)
-						m_Context = LFContextSubfolderDay;
-				}
-		}
-		else
-			switch (f->DomainID)
+		m_Context = LFContextSubfolderDefault;
+		if (f->ConditionList)
+			switch (f->ConditionList->AttrData.Attr)
 			{
-			case LFDomainTrash:
-				m_Context = LFContextTrash;
+			case LFAttrLocationName:
+			case LFAttrLocationIATA:
+			case LFAttrLocationGPS:
+				m_Context = LFContextSubfolderLocation;
 				break;
-			case LFDomainUnknown:
-				m_Context = LFContextHousekeeping;
+			default:
+				if (AttrTypes[f->ConditionList->AttrData.Attr]==LFTypeTime)
+					m_Context = LFContextSubfolderDay;
+			}
+	}
+	else
+		switch (f->DomainID)
+		{
+		case LFDomainFilters:
+			m_Context = LFContextFilters;
+			break;
+		case LFDomainTrash:
+			m_Context = LFContextTrash;
+			break;
+		case LFDomainUnknown:
+			m_Context = LFContextHousekeeping;
+			break;
+		default:
+			switch (f->Mode)
+			{
+			case LFFilterModeStores:
+				m_Context = LFContextStores;
+				break;
+			case LFFilterModeStoreHome:
+				m_Context = LFContextStoreHome;
+				break;
+			case LFFilterModeSearch:
+				m_Context = LFContextSearch;
 				break;
 			default:
 				m_Context = LFContextDefault;
-				break;
 			}
-	}
+		}
 }
 
 void LFSearchResult::GroupArray(unsigned int attr, unsigned int icon, LFFilter* f)

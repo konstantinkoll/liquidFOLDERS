@@ -406,6 +406,10 @@ void CStoreManagerApp::LoadViewOptions(INT context)
 	GetBinary(_T("ColumnOrder"), &m_Views[context].ColumnOrder, sizeof(m_Views[context].ColumnOrder));
 	GetBinary(_T("ColumnWidth"), &m_Views[context].ColumnWidth, sizeof(m_Views[context].ColumnWidth));
 
+	for (UINT a=0; a<LFAttributeCount; a++)
+		if (!m_Contexts[context]->AllowedAttributes->IsSet(a))
+			m_Views[context].ColumnWidth[a] = 0;
+
 	m_Views[context].AutoDirs &= (m_Contexts[context]->AllowGroups==true) || (context>=LFContextSubfolderDefault);
 }
 
