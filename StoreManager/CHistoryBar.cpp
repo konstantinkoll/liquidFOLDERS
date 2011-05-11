@@ -270,7 +270,6 @@ void CHistoryBar::OnPaint()
 			if (rectItem.left<BORDER/2)
 				rectItem.left = BORDER/2;
 
-			// TODO
 			BOOL Hover = (m_Hover==(INT)a) && (m_Pressed==NOPART);
 			BOOL Pressed = (m_Hover==(INT)a) && (m_Pressed==(INT)a);
 			if (Hover || Pressed)
