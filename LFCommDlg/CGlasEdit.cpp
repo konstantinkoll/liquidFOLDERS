@@ -302,7 +302,7 @@ HBRUSH CGlasEdit::CtlColor(CDC* pDC, UINT /*nCtlColor*/)
 {
 	HBRUSH hbr = NULL;
 
-	if (!IsCtrlThemed())
+	if (!IsCtrlThemed() && (GetFocus()!=this))
 	{
 		pDC->SetDCBrushColor(GetSysColor(COLOR_3DFACE));
 		hbr = (HBRUSH)GetStockObject(DC_BRUSH);
