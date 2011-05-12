@@ -15,12 +15,12 @@
     <ROW Property="AI_UNINSTALLER" Value="msiexec.exe"/>
     <ROW Property="ALLUSERS" Value="2" MultiBuildValue="DefaultBuild:1"/>
     <ROW Property="ARPCONTACT" Value="support@liquidfolders.net"/>
-    <ROW Property="ARPHELPLINK" Value="http://liquidfolders.net/tour/"/>
+    <ROW Property="ARPHELPLINK" Value="http://liquidfolders.net/support/"/>
     <ROW Property="ARPNOMODIFY" MultiBuildValue="DefaultBuild:1"/>
     <ROW Property="ARPNOREPAIR" Value="1"/>
     <ROW Property="ARPPRODUCTICON" Value="liquidFOLDERS.exe" Type="8"/>
     <ROW Property="ARPSYSTEMCOMPONENT" Value="1"/>
-    <ROW Property="ARPURLINFOABOUT" Value="http://liquidfolders.net/support/"/>
+    <ROW Property="ARPURLINFOABOUT" Value="http://liquidfolders.net/"/>
     <ROW Property="ARPURLUPDATEINFO" Value="http://liquidfolders.net/download/"/>
     <ROW Property="AppLogoIcon" Value="AppLogo.ico" Type="1" MsiKey="AppLogoIcon"/>
     <ROW Property="Background" Value="Backdrop5.bmp" Type="1" MsiKey="Background"/>
@@ -34,10 +34,10 @@
     <ROW Property="InstallerIcon" Value="Install.ico" Type="1" MsiKey="InstallerIcon"/>
     <ROW Property="Manufacturer" Value="liquidFOLDERS" ValueLocId="*"/>
     <ROW Property="OptionsLogoIcon" Value="Tools.ico" Type="1" MsiKey="OptionsLogoIcon"/>
-    <ROW Property="ProductCode" Value="1032:{E3E631FA-23A5-4153-A9C7-1FC9E3597823} 1041:{6C0ED284-6232-4E7B-81A1-1E7AC1E17CC2} 1027:{BE2B609C-0D10-411B-8F0F-1416173F3844} 1049:{DB395FF7-6420-4DBC-BB59-154BE3EC0E14} 1058:{267A3C44-F8A5-40DA-9911-E5A1AE026318} 1035:{163CB9CD-7F54-4037-92A0-467C8CDB7F88} 1044:{66454911-23BF-4AE1-BA23-CA1820DEF954} 2068:{67E63933-D593-458A-ADCB-A4AADD5578D1} 1030:{DE5A1D5F-1C7C-4862-A28D-28C418882253} 1052:{59F43884-9340-42D2-A491-A39332B0324E} 1038:{620D04EA-239C-478D-A2FC-FE48C158572D} 1033:{F95D630A-E848-4531-91C7-CF9C081FB4F6} 2057:{8F786E11-34D6-4B7D-8CF0-9A06C657FB68} 1042:{E9792A5B-E0AA-4C9F-AC52-8C222B7670CA} 1028:{9C4D0059-6195-428D-AB7A-B555B3289121} 2052:{0AD1BB32-65FF-463B-A636-849DCC132AB5} 1055:{3E656EDF-CDD5-4F8B-A4EE-36EB919F3D42} 1050:{172DB32C-D519-4148-92C5-2D5F25D1EA13} 2074:{7429F4A2-BECF-46AB-BF78-B7373FE81A05} 3098:{9BC0B8BF-833B-427D-AAD7-22420962C67F} 1036:{C398013C-4A35-4454-89A0-5A762245A89D} 1045:{2F62F244-48BA-4712-833E-806ED74A5013} 1031:{F493E52D-7597-4C20-9656-1FC8D4D16548} 1040:{350BD1D4-C8DF-45A7-B79E-40F0D735F1CE} 1026:{BE9FFDD9-AA22-4BB3-A8C5-20DB8EFCCE3F} 1053:{0230A3FA-A1B0-461C-BFA0-0A7BE3999071} 1057:{3A949F94-547E-4A0C-93B1-E2CBBB8E6D81} 3082:{3FC9E994-C353-4C61-B4C2-25DA43C5162F} 1043:{ED54BA8D-13D2-440D-9B3A-75D97203A43A} 1029:{D2D7E52E-D274-4A25-BA23-ACEEA2CB5481} 1051:{763631A8-D2E2-47AE-AE2B-A885EAF9431E} 1060:{E874482D-1DE3-4FF3-AC1C-3194451CE5AA} 1046:{DE2FA37A-B987-4630-AB23-55C501C7BE8A} 2070:{E2119296-4832-4BDC-841B-ABFB596F5A5E} " Type="16"/>
+    <ROW Property="ProductCode" Value="1032:{765E07D2-5242-4018-BFF4-6D9098FA3716} 1041:{F0A3D32D-30C9-4E17-B01C-32BEF63BD288} 1027:{1D7BFD0B-58CE-4867-87A3-C70F46F3337B} 1049:{17FC0439-CA40-432A-BDC3-BE2B6A0BB5EC} 1058:{1ACA1FFC-9D07-492E-B238-E54C028DBDAE} 1035:{11242C60-9906-42C5-81CA-7108967A224C} 1044:{7FAA1AE1-3624-4B54-8899-0EA7CD5D5487} 2068:{9FBEC8C0-0DDF-43B0-875E-F3A7D4D35256} 1030:{DE61A15E-52D0-4C46-9EB6-EF55BD6BD2F5} 1052:{1180E774-0759-4E05-93CA-0DB28DD3AAE5} 1038:{EF5BCF4A-3841-44EB-9AB1-BEAC470D1904} 1033:{28072109-AFBE-4847-879A-F305E1F492BA} 2057:{DA0CE132-4044-493E-B23C-C455436A24EF} 1042:{AD19C0E6-0627-448B-A308-453F1C6AFCBE} 1028:{F7DD18B6-AF09-4E85-A646-812ED2103C0D} 2052:{5D8561DC-F50A-4D75-A52E-E8B17FBA8D4C} 1055:{B2E6C62B-FC6B-473D-8D64-47215F4093C1} 1050:{F334436F-B27B-4E0C-A35C-965033875CE9} 2074:{182DC1EA-2BE1-4AFE-9966-3CA49D4F2BDE} 3098:{76C377CC-2C27-48BC-8574-7F0F41F37D9A} 1036:{F850680B-6560-4D82-9DCF-C568886735AE} 1045:{82D46252-361F-4F24-A8E0-83726AC6B64D} 1031:{53D6A221-5F1B-4CFB-BBCC-E5F20C946CEE} 1040:{3F97E7D5-4ACD-4EB7-914C-4FDCB8268A30} 1026:{17DCD202-6C67-46B8-8B7B-775A556455CB} 1053:{7E12CD0B-6263-4F06-B4FE-0BF485F7DFFF} 1057:{AD8727B7-61B5-4F2C-9EFC-A619BD191AC4} 3082:{C81EE7AB-91C7-4F83-9C83-B69B6983C7E8} 1043:{73FCC5AE-8327-4C7D-9209-D6767B5417FC} 1029:{27D95874-4C26-483C-BD49-001548EA9286} 1051:{98B4F8AB-0682-40BD-B336-C80E2258D566} 1060:{F7503976-6DEE-465B-A381-09D5CF31D894} 1046:{A976C2D6-C223-453C-9FCB-130BEEB164BC} 2070:{E2BD41F0-605A-47B5-A16D-274ED48196A9} " Type="16"/>
     <ROW Property="ProductLanguage" Value="1031"/>
     <ROW Property="ProductName" Value="liquidFOLDERS" ValueLocId="*"/>
-    <ROW Property="ProductVersion" Value="0.8.4"/>
+    <ROW Property="ProductVersion" Value="0.9.0"/>
     <ROW Property="RepairIcon" Value="Tools.ico" Type="1" MsiKey="RepairIcon"/>
     <ROW Property="SecureCustomProperties" Value="OLDPRODUCTS;AI_NEWERPRODUCTFOUND;AI_SETUPEXEPATH;SETUPEXEDIR"/>
     <ROW Property="ShortcutLogoIcon" Value="Shortcuts.ico" Type="1" MsiKey="ShortcutLogoIcon"/>
@@ -483,7 +483,7 @@
     <ROW Registry="Contact" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="Contact" Value="support@liquidfolders.net" Component_="AI_CustomARPName"/>
     <ROW Registry="DisplayIcon" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="DisplayIcon" Value="[ARP_ICON_PATH]" Component_="AI_CustomARPName"/>
     <ROW Registry="DisplayName" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="DisplayName" Value="liquidFOLDERS" Component_="AI_CustomARPName"/>
-    <ROW Registry="DisplayVersion" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="DisplayVersion" Value="0.8.4" Component_="AI_CustomARPName"/>
+    <ROW Registry="DisplayVersion" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="DisplayVersion" Value="0.9.0" Component_="AI_CustomARPName"/>
     <ROW Registry="EstimatedSize" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="EstimatedSize" Value="#30720" Component_="AI_CustomARPName"/>
     <ROW Registry="F2D914D_FE57_414F_9F88_A377C7841DA4" Root="0" Key="CLSID\{3F2D914D-FE57-414F-9F88-A377C7841DA4}" Name="-" Component_="F2D914D_FE57_414F_9F88_A377C7841DA4"/>
     <ROW Registry="F2D914D_FE57_414F_9F88_A377C7841DA4_1" Root="2" Key="Software\Microsoft\Windows\CurrentVersion\Shell Extensions\Approved" Name="[\{]3F2D914D-FE57-414F-9F88-A377C7841DA4[\}]" Value="liquidFOLDERS.SendTo" Component_="LFNamespaceExtension.dll"/>
@@ -496,7 +496,7 @@
     <ROW Registry="F2D914F_FE57_414F_9F88_A377C7841DA4_4" Root="2" Key="Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu" Name="{3F2D914F-FE57-414F-9F88-A377C7841DA4}" Value="#1" Component_="LFNamespaceExtension.dll"/>
     <ROW Registry="F2D914F_FE57_414F_9F88_A377C7841DA4_5" Root="2" Key="Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" Name="{3F2D914F-FE57-414F-9F88-A377C7841DA4}" Value="#1" Component_="LFNamespaceExtension.dll"/>
     <ROW Registry="FileDrop" Root="2" Key="Software\liquidFOLDERS" Name="FileDrop" Value="[#FileDrop.exe]" Component_="FileDrop.exe"/>
-    <ROW Registry="HelpLink" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="HelpLink" Value="http://liquidfolders.net/tour/" Component_="AI_CustomARPName"/>
+    <ROW Registry="HelpLink" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="HelpLink" Value="http://liquidfolders.net/support/" Component_="AI_CustomARPName"/>
     <ROW Registry="HelpTelephone" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="HelpTelephone" Component_="AI_CustomARPName"/>
     <ROW Registry="InfoTip" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}" Name="InfoTip" Value="#%@[#LFNamespaceExtension.dll],1000" Component_="LFNamespaceExtension.dll"/>
     <ROW Registry="LFNamespaceExtension.DriveMenu" Root="0" Key="LFNamespaceExtension.DriveMenu" Name="-" Component_="LFNamespaceExtension.DriveMenu"/>
@@ -526,7 +526,7 @@
     <ROW Registry="ThreadingModel" Root="0" Key="CLSID\{3F2D914D-FE57-414F-9F88-A377C7841DA4}\InProcServer32" Name="ThreadingModel" Value="Both" Component_="LFNamespaceExtension.dll"/>
     <ROW Registry="ThreadingModel_1" Root="0" Key="CLSID\{3F2D914E-FE57-414F-9F88-A377C7841DA4}\InProcServer32" Name="ThreadingModel" Value="Both" Component_="LFNamespaceExtension.dll"/>
     <ROW Registry="ThreadingModel_2" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}\InProcServer32" Name="ThreadingModel" Value="Both" Component_="LFNamespaceExtension.dll"/>
-    <ROW Registry="URLInfoAbout" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="URLInfoAbout" Value="http://liquidfolders.net/support/" Component_="AI_CustomARPName"/>
+    <ROW Registry="URLInfoAbout" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="URLInfoAbout" Value="http://liquidfolders.net/" Component_="AI_CustomARPName"/>
     <ROW Registry="URLUpdateInfo" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="URLUpdateInfo" Value="http://liquidfolders.net/download/" Component_="AI_CustomARPName"/>
     <ROW Registry="UninstallString" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="UninstallString" Value="[AI_UNINSTALLER] /x [ProductCode]" Component_="AI_CustomARPName"/>
     <ROW Registry="WantsFORPARSING" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}\ShellFolder" Name="WantsFORPARSING" Component_="LFNamespaceExtension.dll"/>
