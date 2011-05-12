@@ -17,7 +17,7 @@ CGlasEdit::CGlasEdit()
 	: CEdit()
 {
 	hSearchIcon = NULL;
-	m_IconSize = 0;
+	m_IconSize = m_ClientAreaTopOffset = m_FontHeight = 0;
 	m_Hover = FALSE;
 }
 
@@ -29,7 +29,12 @@ BOOL CGlasEdit::Create(CString EmptyHint, CGlasWindow* pParentWnd, UINT nID, BOO
 	const DWORD dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_TABSTOP | ES_AUTOHSCROLL;
 	CRect rect;
 	rect.SetRectEmpty();
-	return CWnd::CreateEx(WS_EX_CLIENTEDGE, _T("EDIT"), _T(""), dwStyle, rect, pParentWnd, nID);
+	return CWnd::CreateEx(0, _T("EDIT"), _T(""), dwStyle, rect, pParentWnd, nID);
+}
+
+UINT CGlasEdit::GetPreferredHeight()
+{
+	return max(m_FontHeight, GetSystemMetrics(SM_CYSMICON))+2*BORDER;
 }
 
 
@@ -41,6 +46,7 @@ BEGIN_MESSAGE_MAP(CGlasEdit, CEdit)
 	ON_WM_PAINT()
 	ON_WM_MOUSEMOVE()
 	ON_WM_MOUSELEAVE()
+	ON_WM_NCCALCSIZE()
 END_MESSAGE_MAP()
 
 INT CGlasEdit::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -64,6 +70,14 @@ INT CGlasEdit::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		}
 	}
 
+	CDC* dc = GetWindowDC();
+	CFont* pOldFont = dc->SelectObject(&pApp->m_DefaultFont);
+	m_FontHeight = dc->GetTextExtent(_T("Wy")).cy;
+	ReleaseDC(dc);
+
+	m_ClientAreaTopOffset = max(0, (GetPreferredHeight()-BORDER-m_FontHeight)/2-2);
+	SetWindowPos(NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE | SWP_NOZORDER | SWP_FRAMECHANGED);
+
 	return 0;
 }
 
@@ -83,7 +97,7 @@ BOOL CGlasEdit::OnEraseBkgnd(CDC* /*pDC*/)
 void CGlasEdit::OnNcPaint()
 {
 	CRect rect;
-	GetWindowRect(rect);
+	GetWindowRect(&rect);
 
 	rect.bottom -= rect.top;
 	rect.right -= rect.left;
@@ -91,9 +105,9 @@ void CGlasEdit::OnNcPaint()
 
 	CWindowDC pDC(this);
 
-	CRect rectClient(rect);
-	rectClient.DeflateRect(2, 2);
-	pDC.ExcludeClipRect(rectClient);
+	CRect rectClient;
+	GetClientRect(rectClient);
+	rectClient.OffsetRect(BORDER+3, BORDER+m_ClientAreaTopOffset);
 
 	CDC dc;
 	dc.CreateCompatibleDC(&pDC);
@@ -110,11 +124,12 @@ void CGlasEdit::OnNcPaint()
 	HBITMAP hBmp = CreateDIBSection(dc, &dib, DIB_RGB_COLORS, NULL, NULL, 0);
 	HBITMAP hOldBitmap = (HBITMAP)dc.SelectObject(hBmp);
 
-	Graphics g(dc);
-
 	CGlasWindow* pCtrlSite = (CGlasWindow*)GetParent();
 	pCtrlSite->DrawFrameBackground(&dc, rect);
-	const BYTE Alpha = (m_Hover || (GetFocus()==this)) ? 0xF0 : 0xD0;
+	const BYTE Alpha = (m_Hover || (GetFocus()==this)) ? (pCtrlSite->GetDesign()==GWD_THEMED) ? 0xFF : 0xF0 : 0xD0;
+
+	Graphics g(dc);
+	g.ExcludeClip(Rect(rectClient.left, rectClient.top, rectClient.Width(), rectClient.Height()));
 
 	CRect rectContent(rect);
 	if (IsCtrlThemed())
@@ -151,52 +166,8 @@ void CGlasEdit::OnNcPaint()
 		}
 	}
 
-	// Set alpha
-	BITMAP bmp;
-	GetObject(hBmp, sizeof(BITMAP), &bmp);
-	BYTE* pBits = (BYTE*)bmp.bmBits;
-	for (UINT a=0; a<(UINT)(rect.Width()*rect.Height()); a++)
-	{
-		*(pBits+3) = Alpha;
-		pBits += 4;
-	}
-
-	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);
-
-	dc.SelectObject(hOldBitmap);
-	DeleteObject(hBmp);
-}
-
-void CGlasEdit::OnPaint()
-{
-	CPaintDC pDC(this);
-
-	CRect rectClient;
-	GetClientRect(rectClient);
-
-	CDC dc;
-	dc.CreateCompatibleDC(&pDC);
-	dc.SetBkMode(TRANSPARENT);
-
-	BITMAPINFO dib = { 0 };
-	dib.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-	dib.bmiHeader.biWidth = rectClient.Width();
-	dib.bmiHeader.biHeight = -rectClient.Height();
-	dib.bmiHeader.biPlanes = 1;
-	dib.bmiHeader.biBitCount = 32;
-	dib.bmiHeader.biCompression = BI_RGB;
-
-	HBITMAP hBmp = CreateDIBSection(dc, &dib, DIB_RGB_COLORS, NULL, NULL, 0);
-	HBITMAP hOldBitmap = (HBITMAP)dc.SelectObject(hBmp);
-
-	Graphics g(dc);
-
-	CGlasWindow* pCtrlSite = (CGlasWindow*)GetParent();
-	pCtrlSite->DrawFrameBackground(&dc, rectClient);
-	const BYTE Alpha = (m_Hover || (GetFocus()==this)) ? 0xF0 : 0xD0;
-
 	CDC dcPaint;
-	dcPaint.CreateCompatibleDC(&dc);
+	dcPaint.CreateCompatibleDC(&pDC);
 	dcPaint.SetBkMode(TRANSPARENT);
 
 	CBitmap buffer;
@@ -205,18 +176,25 @@ void CGlasEdit::OnPaint()
 
 	CEdit::DefWindowProc(WM_PAINT, (WPARAM)dcPaint.m_hDC, NULL);
 
-	BLENDFUNCTION BF = { AC_SRC_OVER, 0, Alpha, AC_SRC_ALPHA };
-	AlphaBlend(dc, rectClient.left, rectClient.top, rectClient.Width(), rectClient.Height(), dcPaint, 0, 0, rectClient.Width(), rectClient.Height(), BF);
+	if (pCtrlSite->GetDesign()>=GWD_THEMED)
+	{
+		BLENDFUNCTION BF = { AC_SRC_OVER, 0, Alpha, 0 };
+		AlphaBlend(dc, rectClient.left, rectClient.top, rectClient.Width(), rectClient.Height(), dcPaint, 0, 0, rectClient.Width(), rectClient.Height(), BF);
+	}
+	else
+	{
+		dc.BitBlt(rectClient.left, rectClient.top, rectClient.Width(), rectClient.Height(), &dcPaint, 0, 0, SRCCOPY);
+	}
 
 	dcPaint.SelectObject(pOldBitmap);
 
 	if ((GetWindowTextLength()==0) && (GetFocus()!=this))
 	{
-		CRect rectText(rectClient);
+		CRect rectText(rectContent);
 		rectText.DeflateRect(BORDER, 0);
 		if (m_IconSize)
 		{
-			DrawIconEx(dc, rectText.right-m_IconSize, (rectText.Height()-m_IconSize)/2, hSearchIcon, m_IconSize, m_IconSize, 0, NULL, DI_NORMAL);
+			DrawIconEx(dc, rectText.right-m_IconSize, rectText.top+(rectText.Height()-m_IconSize)/2, hSearchIcon, m_IconSize, m_IconSize, 0, NULL, DI_NORMAL);
 			rectText.right -= m_IconSize+BORDER;
 		}
 
@@ -229,17 +207,27 @@ void CGlasEdit::OnPaint()
 	// Set alpha
 	BITMAP bmp;
 	GetObject(hBmp, sizeof(BITMAP), &bmp);
-	BYTE* pBits = (BYTE*)bmp.bmBits;
-	for (UINT a=0; a<(UINT)(rectClient.Width()*rectClient.Height()); a++)
+	BYTE* pBits = ((BYTE*)bmp.bmBits)+4*(rectContent.top*rect.Width()+rectContent.left);
+	for (INT row=rectContent.top; row<rectContent.bottom; row++)
 	{
-		*(pBits+3) = Alpha;
-		pBits += 4;
+		for (INT col=rectContent.left; col<rectContent.right; col++)
+		{
+			*(pBits+3) = Alpha;
+			pBits += 4;
+		}
+		pBits += 4*(rect.Width()-rectContent.Width());
 	}
 
-	pDC.BitBlt(0, 0, rectClient.Width(), rectClient.Height(), &dc, 0, 0, SRCCOPY);
+	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);
 
 	dc.SelectObject(hOldBitmap);
 	DeleteObject(hBmp);
+}
+
+void CGlasEdit::OnPaint()
+{
+	CPaintDC pDC(this);
+	OnNcPaint();
 }
 
 void CGlasEdit::OnMouseMove(UINT nFlags, CPoint point)
@@ -264,4 +252,14 @@ void CGlasEdit::OnMouseLeave()
 {
 	m_Hover = FALSE;
 	Invalidate();
+}
+
+void CGlasEdit::OnNcCalcSize(BOOL bCalcValidRects, NCCALCSIZE_PARAMS* lpncsp)
+{
+	CEdit::OnNcCalcSize(bCalcValidRects, lpncsp);
+
+	lpncsp->rgrc[0].top += BORDER+m_ClientAreaTopOffset;
+	lpncsp->rgrc[0].bottom -= BORDER;
+	lpncsp->rgrc[0].left += 3+BORDER;
+	lpncsp->rgrc[0].right -= BORDER;
 }

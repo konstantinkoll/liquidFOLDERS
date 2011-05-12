@@ -200,7 +200,7 @@ void CDropdownWindow::OnActivateApp(BOOL bActive, DWORD dwTask)
 // CDropdownSelector
 //
 
-#define BORDER          4
+#define BORDER     4
 
 CDropdownSelector::CDropdownSelector()
 	: CWnd()
@@ -307,9 +307,10 @@ void CDropdownSelector::GetTooltipData(HICON& /*hIcon*/, CSize& /*Size*/, CStrin
 
 UINT CDropdownSelector::GetPreferredHeight()
 {
-	LOGFONT lf;
-	p_App->m_DefaultFont.GetLogFont(&lf);
-	UINT h = max(abs(lf.lfHeight), GetSystemMetrics(SM_CYSMICON));
+	CDC* dc = GetWindowDC();
+	CFont* pOldFont = dc->SelectObject(&p_App->m_DefaultFont);
+	UINT h = max(dc->GetTextExtent(_T("Wy")).cy, GetSystemMetrics(SM_CYSMICON));
+	ReleaseDC(dc);
 
 	return h+2*BORDER;
 }

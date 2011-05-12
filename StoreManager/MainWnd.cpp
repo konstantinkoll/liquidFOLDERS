@@ -268,6 +268,7 @@ INT CMainWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	m_GlasChildren.AddTail(&m_wndJournalButton);
 	m_GlasChildren.AddTail(&m_wndHistory);
+	m_GlasChildren.AddTail(&m_wndSearch);
 
 	// Entweder leeres Suchergebnis oder Stores-Kontext öffnen
 	m_pRawFiles = m_IsClipboard ? LFAllocSearchResult(LFContextClipboard) : LFQuery(m_pActiveFilter);
