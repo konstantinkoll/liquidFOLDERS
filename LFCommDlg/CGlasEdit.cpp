@@ -46,9 +46,7 @@ BEGIN_MESSAGE_MAP(CGlasEdit, CEdit)
 	ON_WM_NCHITTEST()
 	ON_WM_NCPAINT()
 	ON_WM_PAINT()
-	ON_WM_NCMOUSEMOVE()
 	ON_WM_MOUSEMOVE()
-	ON_WM_NCMOUSELEAVE()
 	ON_WM_MOUSELEAVE()
 	ON_WM_KEYDOWN()
 	ON_WM_CHAR()
@@ -79,6 +77,7 @@ INT CGlasEdit::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	CDC* dc = GetWindowDC();
 	CFont* pOldFont = dc->SelectObject(&pApp->m_DefaultFont);
 	m_FontHeight = dc->GetTextExtent(_T("Wy")).cy;
+	dc->SelectObject(pOldFont);
 	ReleaseDC(dc);
 
 	m_ClientAreaTopOffset = max(0, (GetPreferredHeight()-BORDER-m_FontHeight)/2-2);
@@ -110,13 +109,9 @@ void CGlasEdit::OnNcCalcSize(BOOL bCalcValidRects, NCCALCSIZE_PARAMS* lpncsp)
 	lpncsp->rgrc[0].right -= BORDER;
 }
 
-LRESULT CGlasEdit::OnNcHitTest(CPoint point)
+LRESULT CGlasEdit::OnNcHitTest(CPoint /*point*/)
 {
-	LRESULT uHitTest = CEdit::OnNcHitTest(point);
-	if (uHitTest==HTNOWHERE)
-		uHitTest = HTBORDER;
-
-	return uHitTest;
+	return HTCLIENT;
 }
 
 void CGlasEdit::OnNcPaint()
@@ -255,21 +250,6 @@ void CGlasEdit::OnPaint()
 	OnNcPaint();
 }
 
-void CGlasEdit::OnNcMouseMove(UINT /*nFlags*/, CPoint /*point*/)
-{
-	if (!m_Hover)
-	{
-		m_Hover = TRUE;
-		Invalidate();
-
-		TRACKMOUSEEVENT tme;
-		tme.cbSize = sizeof(TRACKMOUSEEVENT);
-		tme.dwFlags = TME_LEAVE | TME_NONCLIENT;
-		tme.hwndTrack = m_hWnd;
-		TrackMouseEvent(&tme);
-	}
-}
-
 void CGlasEdit::OnMouseMove(UINT nFlags, CPoint point)
 {
 	if (nFlags & (MK_LBUTTON | MK_MBUTTON | MK_RBUTTON))
@@ -292,12 +272,6 @@ void CGlasEdit::OnMouseMove(UINT nFlags, CPoint point)
 
 	if (nFlags & (MK_LBUTTON | MK_MBUTTON | MK_RBUTTON))
 		RedrawWindow(NULL, NULL, RDW_INVALIDATE | RDW_UPDATENOW);
-}
-
-void CGlasEdit::OnNcMouseLeave()
-{
-	m_Hover = FALSE;
-	Invalidate();
 }
 
 void CGlasEdit::OnMouseLeave()

@@ -408,6 +408,15 @@ BEGIN
     GROUPBOX        "Vergleich",IDC_STATIC,7,248,275,32
 END
 
+IDD_FILTER DIALOGEX 0, 0, 186, 28
+STYLE DS_SETFONT | DS_FIXEDSYS | DS_CONTROL | WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN
+EXSTYLE WS_EX_CONTROLPARENT
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    PUSHBUTTON      "Suchen",IDM_FILTER_SEARCH,7,7,82,14
+    PUSHBUTTON      "Speichern",IDM_FILTER_SAVE,97,7,82,14
+END
+
 IDD_SAVEFILTER DIALOGEX 0, 0, 277, 127
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
 CAPTION "Filter speichern"
@@ -477,6 +486,14 @@ BEGIN
         RIGHTMARGIN, 282
         TOPMARGIN, 7
         BOTTOMMARGIN, 301
+    END
+
+    IDD_FILTER, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 179
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 21
     END
 
     IDD_SAVEFILTER, DIALOG
@@ -589,8 +606,6 @@ BEGIN
     IDS_FILTER_SEARCHIN     "Suchen in"
     IDS_FILTER_ALLSTORES    "Allen Stores"
     IDS_FILTER_THISSTORE    "Diesem Store"
-    IDS_FILTER_SAVE         "Speichern"
-    IDS_FILTER_SEARCH       "Suchen"
     IDS_FILTER_SEARCHTERM   "Suchbegriff"
     IDS_FILTER_OTHERCONDITIONS "Weitere Bedingungen"
     IDS_FILTER_ADDCONDITION "Bedingung hinzufügen..."
@@ -1002,6 +1017,15 @@ BEGIN
     GROUPBOX        "Name",IDC_GROUPBOX,7,62,263,37
 END
 
+IDD_FILTER DIALOGEX 0, 0, 186, 28
+STYLE DS_SETFONT | DS_FIXEDSYS | DS_CONTROL | WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN
+EXSTYLE WS_EX_CONTROLPARENT
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    PUSHBUTTON      "Search",IDM_FILTER_SEARCH,7,7,82,14
+    PUSHBUTTON      "Save",IDM_FILTER_SAVE,97,7,82,14
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -1065,6 +1089,14 @@ BEGIN
         RIGHTMARGIN, 270
         TOPMARGIN, 7
         BOTTOMMARGIN, 120
+    END
+
+    IDD_FILTER, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 179
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 21
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -1168,8 +1200,6 @@ BEGIN
     IDS_FILTER_SEARCHIN     "Search in"
     IDS_FILTER_ALLSTORES    "All stores"
     IDS_FILTER_THISSTORE    "This store"
-    IDS_FILTER_SAVE         "Save"
-    IDS_FILTER_SEARCH       "Search"
     IDS_FILTER_SEARCHTERM   "Search term"
     IDS_FILTER_OTHERCONDITIONS "Other conditions"
     IDS_FILTER_ADDCONDITION "Add condition..."
@@ -1582,6 +1612,15 @@ BEGIN
     GROUPBOX        "Nombre",IDC_GROUPBOX,7,62,278,37
 END
 
+IDD_FILTER DIALOGEX 0, 0, 186, 28
+STYLE DS_SETFONT | DS_FIXEDSYS | DS_CONTROL | WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN
+EXSTYLE WS_EX_CONTROLPARENT
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    PUSHBUTTON      "Buscar",IDM_FILTER_SEARCH,7,7,82,14
+    PUSHBUTTON      "Guardar",IDM_FILTER_SAVE,97,7,82,14
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -1645,6 +1684,14 @@ BEGIN
         RIGHTMARGIN, 285
         TOPMARGIN, 7
         BOTTOMMARGIN, 120
+    END
+
+    IDD_FILTER, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 179
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 21
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -1749,8 +1796,6 @@ BEGIN
     IDS_FILTER_SEARCHIN     "Buscar en"
     IDS_FILTER_ALLSTORES    "Todos los stores"
     IDS_FILTER_THISSTORE    "Este store"
-    IDS_FILTER_SAVE         "Guardar"
-    IDS_FILTER_SEARCH       "Buscar"
     IDS_FILTER_SEARCHTERM   "Buscar término"
     IDS_FILTER_OTHERCONDITIONS "Otras condiciones"
     IDS_FILTER_ADDCONDITION "Añadir condición..."
@@ -2164,6 +2209,15 @@ BEGIN
     GROUPBOX        "Vergleich",IDC_STATIC,7,248,275,32
 END
 
+IDD_FILTER DIALOGEX 0, 0, 186, 28
+STYLE DS_SETFONT | DS_FIXEDSYS | DS_CONTROL | WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN
+EXSTYLE WS_EX_CONTROLPARENT
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    PUSHBUTTON      "Suchen",IDM_FILTER_SEARCH,7,7,82,14
+    PUSHBUTTON      "Speichern",IDM_FILTER_SAVE,97,7,82,14
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -2227,6 +2281,14 @@ BEGIN
         RIGHTMARGIN, 282
         TOPMARGIN, 7
         BOTTOMMARGIN, 301
+    END
+
+    IDD_FILTER, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 179
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 21
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -2330,8 +2392,6 @@ BEGIN
     IDS_FILTER_SEARCHIN     "Suchen in"
     IDS_FILTER_ALLSTORES    "Allen Stores"
     IDS_FILTER_THISSTORE    "Diesem Store"
-    IDS_FILTER_SAVE         "Speichern"
-    IDS_FILTER_SEARCH       "Suchen"
     IDS_FILTER_SEARCHTERM   "Suchbegriff"
     IDS_FILTER_OTHERCONDITIONS "Weitere Bedingungen"
     IDS_FILTER_ADDCONDITION "Bedingung hinzufügen..."

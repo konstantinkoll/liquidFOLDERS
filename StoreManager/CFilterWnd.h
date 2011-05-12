@@ -27,11 +27,10 @@ protected:
 	CButton m_wndThisStore;
 	CLabel m_wndLabel2;
 	CEdit m_wndSearchterm;
-	CButton m_wndSaveFilter;
-	CButton m_wndStartSearch;
 	CLabel m_wndLabel3;
-	CConditionList m_wndList;
 	CButton m_wndAddCondition;
+	CConditionList m_wndList;
+	CBottomArea m_wndBottomArea;
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);

@@ -90,11 +90,9 @@
 #define IDS_FILTER_SEARCHIN             1200
 #define IDS_FILTER_ALLSTORES            1201
 #define IDS_FILTER_THISSTORE            1202
-#define IDS_FILTER_SAVE                 1203
-#define IDS_FILTER_SEARCH               1204
-#define IDS_FILTER_SEARCHTERM           1205
-#define IDS_FILTER_OTHERCONDITIONS      1206
-#define IDS_FILTER_ADDCONDITION         1207
+#define IDS_FILTER_SEARCHTERM           1203
+#define IDS_FILTER_OTHERCONDITIONS      1204
+#define IDS_FILTER_ADDCONDITION         1205
 #define IDD_CHOOSEDETAILS               2000
 #define IDC_VIEWATTRIBUTES              2001
 #define IDC_CHECKALL                    2002
@@ -128,8 +126,9 @@
 #define IDC_COMPAREATTRIBUTE            2401
 #define IDC_COMPARE                     2402
 #define IDC_PROPERTY                    2403
-#define IDD_SAVEFILTER                  2500
-#define IDC_FILENAME                    2501
+#define IDD_FILTER                      2500
+#define IDD_SAVEFILTER                  2600
+#define IDC_FILENAME                    2601
 #define IDM_STORES_SHOWEMPTYVOLUMES     3000
 #define IDM_STORES_REPAIRCORRUPTEDINDEX 3001
 #define IDM_HOME                        3100
@@ -197,8 +196,8 @@
 #define IDM_INSPECTOR_EXPORTSUMMARY     6004
 #define IDM_INSPECTOR_EXPORTMETADATA    6005
 #define IDM_FILTER                      6100
-#define IDM_FILTER_SAVE                 6101
-#define IDM_FILTER_SEARCH               6102
+#define IDM_FILTER_SEARCH               6101
+#define IDM_FILTER_SAVE                 6102
 #define IDM_CONDITIONLIST               6200
 #define IDM_CONDITIONLIST_ADD           6201
 #define IDM_ORGANIZE                    7000

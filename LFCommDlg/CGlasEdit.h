@@ -33,9 +33,7 @@ protected:
 	afx_msg LRESULT OnNcHitTest(CPoint point);
 	afx_msg void OnNcPaint();
 	afx_msg void OnPaint();
-	afx_msg void OnNcMouseMove(UINT nFlags, CPoint point);
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
-	afx_msg void OnNcMouseLeave();
 	afx_msg void OnMouseLeave();
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg void OnChar(UINT nChar, UINT nRepCnt, UINT nFlags);

@@ -32,16 +32,24 @@ void CFilterWnd::SetOwner(CWnd* pOwnerWnd)
 
 void CFilterWnd::AdjustLayout()
 {
+	if (!IsWindow(m_wndBottomArea))
+		return;
+
 	CRect rectClient;
 	GetClientRect(rectClient);
 
-	INT heightLabel = m_wndLabel1.GetPreferredHeight();
-	INT heightButton = m_FontHeight*2-3;
-	INT heightRadio = max(m_FontHeight+2, 16);
-	INT heightText = m_FontHeight+7;
+	CRect rectButton;
+	m_wndBottomArea.GetDlgItem(IDM_FILTER_SEARCH)->GetWindowRect(&rectButton);
+	m_wndBottomArea.ScreenToClient(&rectButton);
 
-	INT widthButton1 = m_FontHeight*7;
-	INT widthButton2 = m_FontHeight*15;
+	const INT heightLabel = m_wndLabel1.GetPreferredHeight();
+	const INT heightButton = rectButton.Height();
+	const INT heightRadio = max(m_FontHeight+2, 16);
+	const INT heightText = m_FontHeight+7;
+
+	const UINT BottomHeight = MulDiv(45, LOWORD(GetDialogBaseUnits()), 8);
+	const INT widthButton1 = m_FontHeight*7;
+	const INT widthButton2 = m_FontHeight*15;
 
 	INT cy = -1;
 
@@ -53,10 +61,6 @@ void CFilterWnd::AdjustLayout()
 
 	m_wndThisStore.SetWindowPos(NULL, rectClient.left+GUTTER+1, cy, rectClient.Width()-2*GUTTER-1, heightRadio, SWP_NOACTIVATE | SWP_NOZORDER);
 	cy += heightRadio+GUTTER;
-
-	m_wndSaveFilter.SetWindowPos(NULL, rectClient.left+GUTTER, cy+GUTTER, min(rectClient.Width()/2-3*GUTTER/2, widthButton1), heightButton, SWP_NOACTIVATE | SWP_NOZORDER);
-	m_wndStartSearch.SetWindowPos(NULL, min(widthButton1+2*GUTTER, rectClient.Width()-(rectClient.Width()/2-GUTTER/2))+1, cy+GUTTER, min(rectClient.Width()/2-3*GUTTER/2, widthButton1), heightButton, SWP_NOACTIVATE | SWP_NOZORDER);
-	cy += heightButton+2*GUTTER;
 
 	m_wndLabel2.SetWindowPos(NULL, rectClient.left, cy, rectClient.Width(), heightLabel+GUTTER, SWP_NOACTIVATE | SWP_NOZORDER);
 	cy += heightLabel+GUTTER;
@@ -70,7 +74,11 @@ void CFilterWnd::AdjustLayout()
 	m_wndAddCondition.SetWindowPos(NULL, rectClient.left+GUTTER, cy, min(rectClient.Width(), widthButton2)-2*GUTTER, heightButton, SWP_NOACTIVATE | SWP_NOZORDER);
 	cy += heightButton+GUTTER;
 
-	m_wndList.SetWindowPos(NULL, rectClient.left+GUTTER, cy, rectClient.Width()-GUTTER, rectClient.Height()-cy, SWP_NOACTIVATE | SWP_NOZORDER);
+	m_wndList.SetWindowPos(NULL, rectClient.left+GUTTER, cy, rectClient.Width()-GUTTER, rectClient.Height()-cy-BottomHeight, SWP_NOACTIVATE | SWP_NOZORDER);
+
+	m_wndBottomArea.SetWindowPos(NULL, rectClient.left, rectClient.bottom-BottomHeight, rectClient.Width(), BottomHeight, SWP_NOACTIVATE | SWP_NOZORDER);
+	m_wndBottomArea.GetDlgItem(IDM_FILTER_SEARCH)->SetWindowPos(NULL, rectButton.left, rectButton.top, min(rectClient.Width()/2-3*rectButton.left/2, widthButton1), rectButton.Height(), SWP_NOACTIVATE | SWP_NOZORDER);
+	m_wndBottomArea.GetDlgItem(IDM_FILTER_SAVE)->SetWindowPos(NULL, min(widthButton1+2*rectButton.left, rectClient.Width()-(rectClient.Width()/2-rectButton.left/2))+1, rectButton.top, min(rectClient.Width()/2-3*rectButton.left/2, widthButton1), rectButton.Height(), SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
 void CFilterWnd::SetStoreID(CHAR* StoreID)
@@ -142,12 +150,6 @@ INT CFilterWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	ENSURE(tmpStr.LoadString(IDS_FILTER_THISSTORE));
 	if (!m_wndThisStore.Create(tmpStr, dwViewStyle | BS_AUTORADIOBUTTON, CRect(0, 0, 0, 0), this, 3))
 		return -1;
-	ENSURE(tmpStr.LoadString(IDS_FILTER_SAVE));
-	if (!m_wndSaveFilter.Create(tmpStr, dwViewStyle | BS_PUSHBUTTON, CRect(0, 0, 0, 0), this, IDM_FILTER_SAVE))
-		return -1;
-	ENSURE(tmpStr.LoadString(IDS_FILTER_SEARCH));
-	if (!m_wndStartSearch.Create(tmpStr, dwViewStyle | BS_DEFPUSHBUTTON, CRect(0, 0, 0, 0), this, IDOK))
-		return -1;
 	ENSURE(tmpStr.LoadString(IDS_FILTER_SEARCHTERM));
 	if (!m_wndLabel2.Create(this, 4, tmpStr))
 		return -1;
@@ -161,11 +163,11 @@ INT CFilterWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 	if (!m_wndList.Create(dwViewStyle | LVS_NOCOLUMNHEADER | LVS_SHAREIMAGELISTS | LVS_SINGLESEL, CRect(0, 0, 0, 0), this, IDLIST))
 		return -1;
+	if (!m_wndBottomArea.Create(this, MAKEINTRESOURCE(IDD_FILTER), CBRS_BOTTOM, 8))
+		return -1;
 
 	m_wndAllStores.SendMessage(WM_SETFONT, (WPARAM)GetStockObject(DEFAULT_GUI_FONT));
 	m_wndThisStore.SendMessage(WM_SETFONT, (WPARAM)GetStockObject(DEFAULT_GUI_FONT));
-	m_wndSaveFilter.SendMessage(WM_SETFONT, (WPARAM)GetStockObject(DEFAULT_GUI_FONT));
-	m_wndStartSearch.SendMessage(WM_SETFONT, (WPARAM)GetStockObject(DEFAULT_GUI_FONT));
 	m_wndSearchterm.SendMessage(WM_SETFONT, (WPARAM)GetStockObject(DEFAULT_GUI_FONT));
 	m_wndAddCondition.SendMessage(WM_SETFONT, (WPARAM)GetStockObject(DEFAULT_GUI_FONT));
 
