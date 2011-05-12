@@ -42,11 +42,17 @@ BEGIN_MESSAGE_MAP(CGlasEdit, CEdit)
 	ON_WM_CREATE()
 	ON_WM_DESTROY()
 	ON_WM_ERASEBKGND()
+	ON_WM_NCCALCSIZE()
+	ON_WM_NCHITTEST()
 	ON_WM_NCPAINT()
 	ON_WM_PAINT()
+	ON_WM_NCMOUSEMOVE()
 	ON_WM_MOUSEMOVE()
+	ON_WM_NCMOUSELEAVE()
 	ON_WM_MOUSELEAVE()
-	ON_WM_NCCALCSIZE()
+	ON_WM_KEYDOWN()
+	ON_WM_CHAR()
+	ON_WM_CTLCOLOR_REFLECT()
 END_MESSAGE_MAP()
 
 INT CGlasEdit::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -92,6 +98,25 @@ void CGlasEdit::OnDestroy()
 BOOL CGlasEdit::OnEraseBkgnd(CDC* /*pDC*/)
 {
 	return TRUE;
+}
+
+void CGlasEdit::OnNcCalcSize(BOOL bCalcValidRects, NCCALCSIZE_PARAMS* lpncsp)
+{
+	CEdit::OnNcCalcSize(bCalcValidRects, lpncsp);
+
+	lpncsp->rgrc[0].top += BORDER+m_ClientAreaTopOffset;
+	lpncsp->rgrc[0].bottom -= BORDER;
+	lpncsp->rgrc[0].left += 3+BORDER;
+	lpncsp->rgrc[0].right -= BORDER;
+}
+
+LRESULT CGlasEdit::OnNcHitTest(CPoint point)
+{
+	LRESULT uHitTest = CEdit::OnNcHitTest(point);
+	if (uHitTest==HTNOWHERE)
+		uHitTest = HTBORDER;
+
+	return uHitTest;
 }
 
 void CGlasEdit::OnNcPaint()
@@ -230,7 +255,7 @@ void CGlasEdit::OnPaint()
 	OnNcPaint();
 }
 
-void CGlasEdit::OnMouseMove(UINT nFlags, CPoint point)
+void CGlasEdit::OnNcMouseMove(UINT /*nFlags*/, CPoint /*point*/)
 {
 	if (!m_Hover)
 	{
@@ -239,13 +264,40 @@ void CGlasEdit::OnMouseMove(UINT nFlags, CPoint point)
 
 		TRACKMOUSEEVENT tme;
 		tme.cbSize = sizeof(TRACKMOUSEEVENT);
-		tme.dwFlags = TME_LEAVE | TME_HOVER;
-		tme.dwHoverTime = LFHOVERTIME;
+		tme.dwFlags = TME_LEAVE | TME_NONCLIENT;
+		tme.hwndTrack = m_hWnd;
+		TrackMouseEvent(&tme);
+	}
+}
+
+void CGlasEdit::OnMouseMove(UINT nFlags, CPoint point)
+{
+	if (nFlags & (MK_LBUTTON | MK_MBUTTON | MK_RBUTTON))
+		SetRedraw(FALSE);
+	CEdit::OnMouseMove(nFlags, point);
+	if (nFlags & (MK_LBUTTON | MK_MBUTTON | MK_RBUTTON))
+		SetRedraw(TRUE);
+
+	if (!m_Hover)
+	{
+		m_Hover = TRUE;
+		Invalidate();
+
+		TRACKMOUSEEVENT tme;
+		tme.cbSize = sizeof(TRACKMOUSEEVENT);
+		tme.dwFlags = TME_LEAVE;
 		tme.hwndTrack = m_hWnd;
 		TrackMouseEvent(&tme);
 	}
 
-	CEdit::OnMouseMove(nFlags, point);
+	if (nFlags & (MK_LBUTTON | MK_MBUTTON | MK_RBUTTON))
+		RedrawWindow(NULL, NULL, RDW_INVALIDATE | RDW_UPDATENOW);
+}
+
+void CGlasEdit::OnNcMouseLeave()
+{
+	m_Hover = FALSE;
+	Invalidate();
 }
 
 void CGlasEdit::OnMouseLeave()
@@ -254,12 +306,33 @@ void CGlasEdit::OnMouseLeave()
 	Invalidate();
 }
 
-void CGlasEdit::OnNcCalcSize(BOOL bCalcValidRects, NCCALCSIZE_PARAMS* lpncsp)
+void CGlasEdit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
-	CEdit::OnNcCalcSize(bCalcValidRects, lpncsp);
+	SetRedraw(FALSE);
+	CEdit::OnKeyDown(nChar, nRepCnt, nFlags);
+	SetRedraw(TRUE);
 
-	lpncsp->rgrc[0].top += BORDER+m_ClientAreaTopOffset;
-	lpncsp->rgrc[0].bottom -= BORDER;
-	lpncsp->rgrc[0].left += 3+BORDER;
-	lpncsp->rgrc[0].right -= BORDER;
+	RedrawWindow(NULL, NULL, RDW_INVALIDATE | RDW_UPDATENOW);
+}
+
+void CGlasEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
+{
+	SetRedraw(FALSE);
+	CEdit::OnChar(nChar, nRepCnt, nFlags);
+	SetRedraw(TRUE);
+
+	RedrawWindow(NULL, NULL, RDW_INVALIDATE | RDW_UPDATENOW);
+}
+
+HBRUSH CGlasEdit::CtlColor(CDC* pDC, UINT /*nCtlColor*/)
+{
+	HBRUSH hbr = NULL;
+
+	if (!IsCtrlThemed())
+	{
+		pDC->SetDCBrushColor(GetSysColor(COLOR_3DFACE));
+		hbr = (HBRUSH)GetStockObject(DC_BRUSH);
+	}
+
+	return hbr;
 }
