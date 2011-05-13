@@ -149,10 +149,19 @@ void CMainWnd::NavigateTo(LFFilter* f, UINT NavMode, FVPersistentData* Data, INT
 	if (m_pActiveFilter)
 		if (NavMode==NAVMODE_NORMAL)
 		{
+			DeleteBreadcrumbs(&m_BreadcrumbForward);
+
 			FVPersistentData Data;
 			m_wndMainView.GetPersistentData(Data);
+
+			if ((f->Options.IsSearch) && (!f->Options.IsSubfolder))
+				while (m_pActiveFilter ? m_pActiveFilter->Options.IsSearch : false)
+				{
+					LFFreeFilter(m_pActiveFilter);
+					ConsumeBreadcrumbItem(&m_BreadcrumbBack, &m_pActiveFilter, &Data);
+				}
+
 			AddBreadcrumbItem(&m_BreadcrumbBack, m_pActiveFilter, Data);
-			DeleteBreadcrumbs(&m_BreadcrumbForward);
 		}
 		else
 		{
