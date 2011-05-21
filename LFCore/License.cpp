@@ -142,8 +142,7 @@ bool GetLicense(LFLicense* License)
 
 bool IsLicensed(LFLicense* License, bool Reload)
 {
-
-	if ((LicenseRead==false) || (Reload==true))
+	if (!LicenseRead || Reload)
 	{
 		LicenseRead = true;
 
