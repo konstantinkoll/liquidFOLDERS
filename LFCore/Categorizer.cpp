@@ -1,3 +1,4 @@
+
 #include "stdafx.h"
 #include "Categorizer.h"
 #include "LFCore.h"

@@ -1,3 +1,4 @@
+
 #include "stdafx.h"
 #include "LFCore.h"
 #include "LFVariantData.h"

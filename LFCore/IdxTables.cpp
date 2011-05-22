@@ -1,5 +1,4 @@
 
-#pragma once
 #include "stdafx.h"
 #include "IdxTables.h"
 #include "LFCore.h"
