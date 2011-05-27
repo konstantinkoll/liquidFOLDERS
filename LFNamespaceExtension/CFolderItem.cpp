@@ -221,25 +221,31 @@ void CFolderItem::GetExtensionTargetInfo(CExtensionTargetInfo& info)
 
 void CFolderItem::Serialize(CArchive& ar)
 {
+	ar << (BYTE)0x31;
 	ar << (BYTE)LFNamespaceExtensionVersion;
-	ar << (BYTE)1;
 	ar.Write(&Attrs, sizeof(Attrs));
 }
 
 CNSEItem* CFolderItem::DeserializeChild(CArchive& ar)
 {
-	BYTE version;
-	ar >> version;
-
-	if (version!=LFNamespaceExtensionVersion)
-		return NULL;
-
 	BYTE ItemType;
 	ar >> ItemType;
 
+	BYTE Version;
+	ar >> Version;
+	if (Version!=LFNamespaceExtensionVersion)
+		return NULL;
+
 	switch (ItemType)
 	{
-	case 0:
+	case 0x31:
+		{
+			FolderSerialization Attrs;
+			ar.Read(&Attrs, sizeof(Attrs));
+
+			return new CFolderItem(Attrs);
+		}
+	case 0x32:
 		{
 			CHAR StoreID[LFKeySize];
 			ar.Read(&StoreID, sizeof(StoreID));
@@ -262,13 +268,6 @@ CNSEItem* CFolderItem::DeserializeChild(CArchive& ar)
 			}
 
 			return f;
-		}
-	case 1:
-		{
-			FolderSerialization Attrs;
-			ar.Read(&Attrs, sizeof(Attrs));
-
-			return new CFolderItem(Attrs);
 		}
 	}
 

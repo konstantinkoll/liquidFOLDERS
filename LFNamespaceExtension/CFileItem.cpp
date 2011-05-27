@@ -46,8 +46,8 @@ CFileItem::~CFileItem()
 
 void CFileItem::Serialize(CArchive& ar)
 {
+	ar << (BYTE)0x32;
 	ar << (BYTE)LFNamespaceExtensionVersion;
-	ar << (BYTE)0;
 	ar.Write(&Item->StoreID, sizeof(Item->StoreID));
 	ar << (UINT)sizeof(LFCoreAttributes);
 	ar.Write(&Item->CoreAttributes, sizeof(LFCoreAttributes));
