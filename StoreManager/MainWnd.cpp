@@ -16,7 +16,17 @@ LFFilter* GetRootFilter(CHAR* RootStore=NULL)
 	f->Options.AddVolumes = true;
 
 	if (RootStore)
+	{
 		strcpy_s(f->StoreID, LFKeySize, RootStore);
+
+		LFStoreDescriptor s;
+		if (LFGetStoreSettings(RootStore, &s)==LFOk)
+			wcscpy_s(f->Name, 256, s.StoreName);
+	}
+	else
+	{
+		wcscpy_s(f->Name, 256, theApp.m_Contexts[LFContextStores]->Name);
+	}
 
 	return f;
 }
@@ -52,7 +62,16 @@ BOOL CMainWnd::Create(BOOL IsClipboard, CHAR* RootStore)
 	m_IsClipboard = IsClipboard;
 
 	if (!IsClipboard)
+	{
+		if (RootStore)
+		{
+			m_BreadcrumbBack = new BreadcrumbItem();
+			ZeroMemory(m_BreadcrumbBack, sizeof(BreadcrumbItem));
+			m_BreadcrumbBack->filter = GetRootFilter();
+		}
+
 		m_pActiveFilter = GetRootFilter(RootStore);
+	}
 
 	CString className = AfxRegisterWndClass(CS_DBLCLKS, LoadCursor(NULL, IDC_ARROW), NULL, m_hIcon);
 
