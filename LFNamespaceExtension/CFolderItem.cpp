@@ -221,7 +221,7 @@ void CFolderItem::GetExtensionTargetInfo(CExtensionTargetInfo& info)
 
 void CFolderItem::Serialize(CArchive& ar)
 {
-	ar << (BYTE)0x31;
+	ar << (Attrs.Level==LevelRoot ? (BYTE)0x1F : (BYTE)0x31);
 	ar << (BYTE)LFNamespaceExtensionVersion;
 	ar.Write(&Attrs, sizeof(Attrs));
 }
@@ -238,6 +238,7 @@ CNSEItem* CFolderItem::DeserializeChild(CArchive& ar)
 
 	switch (ItemType)
 	{
+	case 0x1F:
 	case 0x31:
 		{
 			FolderSerialization Attrs;
@@ -514,26 +515,22 @@ void CFolderItem::GetMenuItems(CGetMenuitemsEventArgs& e)
 			InsertItem(e.menu, IDS_MENU_Open, _T(VERB_OPEN))->SetDefaultItem((e.flags & NSEQCF_NoDefault)==0);
 		}
 		else
+		{
+			if (Attrs.Level==LevelRoot)
+				InsertItem(e.menu, IDS_MENU_OpenStoreManager, _T(VERB_OPENSTOREMANAGER))->SetEnabled(!theApp.m_PathStoreManager.IsEmpty());
+
 			if (osInfo.dwMajorVersion<6)
 			{
-				if (Attrs.Level==LevelRoot)
-					InsertItem(e.menu, IDS_MENU_OpenStoreManager, _T(VERB_OPENSTOREMANAGER))->SetEnabled(!theApp.m_PathStoreManager.IsEmpty());
-
-				if (e.flags & NSEQCF_NoDefault)
-				{
-					InsertItem(e.menu, IDS_MENU_Open, _T(VERB_OPEN));
-				}
-				else
-				{
-					InsertItem(e.menu, IDS_MENU_Explore, e.flags & NSEQCF_Explore ? _T(VERB_OPEN) : _T(VERB_EXPLORE), Attrs.Level==LevelRoot ? 1 : 0)->SetDefaultItem((e.flags & (NSEQCF_Explore | NSEQCF_NoDefault))==NSEQCF_Explore);
-					InsertItem(e.menu, IDS_MENU_Open, e.flags & NSEQCF_Explore ? _T(VERB_OPENNEWWINDOW) : _T(VERB_OPEN))->SetDefaultItem((e.flags & (NSEQCF_Explore | NSEQCF_NoDefault))==0);
-				}
+				InsertItem(e.menu, IDS_MENU_Explore, e.flags & NSEQCF_Explore ? _T(VERB_OPEN) : _T(VERB_EXPLORE), Attrs.Level==LevelRoot ? 1 : 0)->SetDefaultItem((e.flags & (NSEQCF_Explore | NSEQCF_NoDefault))==NSEQCF_Explore);
+				InsertItem(e.menu, IDS_MENU_Open, e.flags & NSEQCF_Explore ? _T(VERB_OPENNEWWINDOW) : _T(VERB_OPEN))->SetDefaultItem((e.flags & (NSEQCF_Explore | NSEQCF_NoDefault))==0);
 			}
 			else
 			{
-				InsertItem(e.menu, (e.menu->GetItemCount() && (!(e.flags & NSEQCF_NoDefault))) ? IDS_MENU_OpenStoreManager : IDS_MENU_OpenNewWindow, _T(VERB_OPENSTOREMANAGER))->SetEnabled(!theApp.m_PathStoreManager.IsEmpty());
-				InsertItem(e.menu, IDS_MENU_Open, _T(VERB_OPEN))->SetDefaultItem((e.flags & NSEQCF_NoDefault)==0);
+				InsertItem(e.menu, IDS_MENU_OpenNewWindow, _T(VERB_OPENNEWWINDOW));
+				if ((e.flags & NSEQCF_NoDefault)==0)
+					InsertItem(e.menu, IDS_MENU_Open, _T(VERB_OPEN))->SetDefaultItem(TRUE);
 			}
+		}
 
 	switch (Attrs.Level)
 	{
