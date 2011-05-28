@@ -605,9 +605,9 @@ void CExplorerTree::EnumObjects(HTREEITEM hParentItem, LPITEMIDLIST pidlParent)
 			LPITEMIDLIST pidlFQ = p_App->GetShellManager()->ConcatenateItem(pidlParent, pidlTemp);
 
 			WCHAR Path[MAX_PATH];
-			if (SUCCEEDED(SHGetPathFromIDListW(pidlFQ, Path)))
+			if (SUCCEEDED(SHGetPathFromIDList(pidlFQ, Path)))
 			{
-				DWORD attr = GetFileAttributesW(Path);
+				DWORD attr = GetFileAttributes(Path);
 				if ((attr!=INVALID_FILE_ATTRIBUTES) && (!(attr & FILE_ATTRIBUTE_DIRECTORY)))
 				{
 					p_App->GetShellManager()->FreeItem(pidlFQ);

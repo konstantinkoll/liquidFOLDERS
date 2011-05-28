@@ -118,9 +118,9 @@ void LFBrowseForFolderDlg::OnSelectionChanged(NMHDR* pNMHDR, LRESULT* /*pResult*
 	{
 		NM_TREEVIEW* pNMTreeView = (NM_TREEVIEW*)pNMHDR;
 
-		LPAFX_SHELLITEMINFO pInfo = (LPAFX_SHELLITEMINFO)pNMTreeView->itemNew.lParam;
+		ExplorerTreeItemData* pItem = (ExplorerTreeItemData*)pNMTreeView->itemNew.lParam;
 
 		WCHAR path[MAX_PATH];
-		GetDlgItem(IDOK)->EnableWindow(pInfo ? SHGetPathFromIDList(pInfo->pidlFQ, path) : FALSE);
+		GetDlgItem(IDOK)->EnableWindow(pItem ? SHGetPathFromIDList(pItem->pidlFQ, path) : FALSE);
 	}
 }
