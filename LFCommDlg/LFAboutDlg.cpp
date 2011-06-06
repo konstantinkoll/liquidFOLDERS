@@ -121,7 +121,7 @@ void LFAboutDlg::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 
 	dc.SetTextColor(0x000000);
 	dc.SetBkMode(TRANSPARENT);
-	dc.DrawText(m_AppName+_T(" (Beta5)"), r, 0);
+	dc.DrawText(m_AppName+_T(" 2011"), r, 0);
 	r.top += 45;
 
 	CFont font2;
