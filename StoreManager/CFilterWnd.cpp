@@ -238,7 +238,7 @@ void CFilterWnd::OnDoubleClick(NMHDR* /*pNMHDR*/, LRESULT* /*pResult*/)
 
 void CFilterWnd::OnSave()
 {
-	SaveFilterDlg dlg(this, NULL, L"Test", TRUE);
+	SaveFilterDlg dlg(this, m_StoreID, NULL, TRUE);
 	if (dlg.DoModal()==IDOK)
 	{
 		MessageBox(_T("Coming soon"));
