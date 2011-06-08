@@ -154,5 +154,5 @@ bool IsLicensed(LFLicense* License, bool Reload)
 	if (License)
 		*License = LicenseBuffer;
 
-	return (wcsncmp(LicenseBuffer.ProductID, L"liquidFOLDERS", 13)==0);
+	return (wcsncmp(LicenseBuffer.ProductID, L"liquidFOLDERS", 13)==0) && (LicenseBuffer.Version.Major>=0);
 }
