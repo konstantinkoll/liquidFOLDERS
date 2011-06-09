@@ -249,7 +249,7 @@ void CIndex::Update(LFItemDescriptor* i, bool IncludeSlaves)
 			Tables[i->CoreAttributes.SlaveID]->Update(i);
 }
 
-bool CIndex::UpdateFileLocation(LFItemDescriptor* i, bool Exists)
+bool CIndex::UpdateMissing(LFItemDescriptor* i, bool Exists)
 {
 	assert(i);
 
@@ -276,19 +276,11 @@ bool CIndex::UpdateFileLocation(LFItemDescriptor* i, bool Exists)
 		}
 		else
 		{
-			wchar_t tmpPath[2*MAX_PATH];
-			GetFileLocation(DatPath, PtrM, tmpPath, 2*MAX_PATH);
-			if (FileExists(tmpPath))
-			{
-				i->CoreAttributes = *PtrM;
-				i->CoreAttributes.Flags &= ~(LFFlagNew | LFFlagMissing);
-			}
-			else
+			if ((PtrM->Flags & LFFlagMissing)==0)
 			{
 				i->CoreAttributes.Flags |= LFFlagMissing;
+				Tables[IDMaster]->Update(i, PtrM);
 			}
-
-			Tables[IDMaster]->Update(i, PtrM);
 		}
 	}
 
@@ -401,7 +393,7 @@ unsigned int CIndex::DeletePhysicalFile(LFCoreAttributes* PtrM, wchar_t* DatPath
 	wchar_t* LastBackslash = wcsrchr(Path, L'\\');
 	if (LastBackslash)
 		*(LastBackslash+1) = L'\0';
-	
+
 	return RemoveDir(Path) ? LFOk : LFCannotDeleteFile;
 }
 
@@ -648,7 +640,7 @@ unsigned int CIndex::RetrieveStats(unsigned int* cnt, __int64* size)
 
 	while (Tables[IDMaster]->FindNext(ID, (void*&)PtrM))
 	{
-		#define Count(Domain) { if (cnt) cnt[Domain]++; if (size) size[Domain]+=PtrM->FileSize; }
+		#define Count(Domain) { if (cnt) cnt[Domain]++; if (size) size[Domain] += PtrM->FileSize; }
 
 		if (PtrM->Flags & LFFlagTrash)
 		{

@@ -132,7 +132,7 @@
 #define IDS_AttrFileName                4000
 #define IDS_AttrStoreID                 4001
 #define IDS_AttrFileID                  4002
-#define IDS_AttrComment                 4003
+#define IDS_AttrComments                4003
 #define IDS_AttrDescription             4004
 #define IDS_AttrCreationTime            4005
 #define IDS_AttrFileTime                4006
