@@ -16,7 +16,8 @@ public:
 	virtual void SetOwner(CWnd* pOwnerWnd);
 	virtual void AdjustLayout();
 
-	void SetStoreID(CHAR* StoreID);
+	void SetStoreID(CHAR* StoreID, BOOL SetCheck=FALSE);
+	void SetFilter(LFFilter* f);
 
 protected:
 	UINT m_FontHeight;

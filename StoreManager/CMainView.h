@@ -34,6 +34,7 @@ public:
 	INT GetNextSelectedItem(INT n);
 	void GetPersistentData(FVPersistentData& Data);
 	void SelectNone();
+	void SetFilter(LFFilter* f);
 
 protected:
 	CTaskbar m_wndTaskbar;

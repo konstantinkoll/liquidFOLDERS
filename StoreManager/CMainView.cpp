@@ -381,6 +381,12 @@ void CMainView::SelectNone()
 		p_wndFileView->SendMessage(WM_SELECTNONE);
 }
 
+void CMainView::SetFilter(LFFilter* f)
+{
+	if (p_wndFilter)
+		p_wndFilter->SetFilter(f);
+}
+
 void CMainView::ExecuteContextMenu(CHAR Drive, LPCSTR verb)
 {
 	WCHAR Path[4] = L" :\\";

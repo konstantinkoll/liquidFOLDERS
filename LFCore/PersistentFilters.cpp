@@ -47,7 +47,7 @@ bool StoreFilter(wchar_t* fn, LFFilter* filter)
 				Condition = filter->ConditionList;
 				while (Condition)
 				{
-					if (!WriteFile(hFile, Condition, sizeof(PersistentFilterCondition), &Written, NULL))
+					if (!WriteFile(hFile, Condition, sizeof(LFFilterCondition), &Written, NULL))
 					{
 						res = false;
 						break;
@@ -61,6 +61,69 @@ bool StoreFilter(wchar_t* fn, LFFilter* filter)
 
 	return res;
 }
+
+LFFilter* LoadFilter(wchar_t* fn)
+{
+	assert(fn);
+
+#define Abort1 { return NULL; }
+
+	HANDLE hFile = CreateFile(fn, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+	if (hFile==INVALID_HANDLE_VALUE)
+		Abort1;
+
+#define Abort2 { CloseHandle(hFile); Abort1; }
+
+	PersistentFilterHeader Header;
+	ZeroMemory(&Header, sizeof(Header));
+
+	DWORD Read;
+	if (!ReadFile(hFile, &Header, 14, &Read, NULL))
+		Abort2;
+	if (Header.ID[8]!='\0')
+		Abort2;
+	if (strcmp(Header.ID, "LFFilter")!=0)
+		Abort2;
+	if (!ReadFile(hFile, &Header.szBody, min(Header.szHeader, sizeof(Header))-14, &Read, NULL))
+		Abort2;
+
+	if (SetFilePointer(hFile, Header.szHeader, NULL, FILE_BEGIN)==INVALID_SET_FILE_POINTER)
+		Abort2;
+
+	PersistentFilterBody Body;
+	ZeroMemory(&Body, sizeof(Body));
+
+	if (!ReadFile(hFile, &Body, min(Header.szBody, sizeof(Body)), &Read, NULL))
+		Abort2;
+
+	LFFilter* f = LFAllocFilter();
+	f->Mode = LFFilterModeSearch;
+#define Abort3 { LFFreeFilter(f); Abort2; }
+
+	strcpy_s(f->StoreID, LFKeySize, Body.StoreID);
+	wcscpy_s(f->Searchterm, 256, Body.Searchterm);
+
+	for (unsigned int a=Body.cConditions; a>0; a--)
+	{
+		if (SetFilePointer(hFile, Header.szHeader+Header.szBody+(a-1)*Header.szCondition, NULL, FILE_BEGIN)==INVALID_SET_FILE_POINTER)
+			Abort3;
+
+		PersistentFilterCondition Condition;
+		ZeroMemory(&Condition, sizeof(Condition));
+
+		if (!ReadFile(hFile, &Condition, min(Header.szCondition, sizeof(Condition)), &Read, NULL))
+			Abort3;
+
+		LFFilterCondition* c = new LFFilterCondition();
+		memcpy_s(c, sizeof(LFFilterCondition), &Condition, sizeof(Condition));
+		c->Next = f->ConditionList;
+		f->ConditionList = c;
+	}
+
+	CloseHandle(hFile);
+	return f;
+}
+
 
 LFCore_API unsigned int LFCreateFilter(char* key, LFFilter* filter, wchar_t* name, wchar_t* comments, LFItemDescriptor** created)
 {
@@ -91,7 +154,7 @@ LFCore_API unsigned int LFCreateFilter(char* key, LFFilter* filter, wchar_t* nam
 	CIndex* idx2;
 	LFStoreDescriptor* slot;
 	HANDLE StoreLock = NULL;
-	unsigned int res = OpenStore(&store[0], true, idx1, idx2, &slot, &StoreLock);
+	unsigned int res = OpenStore(store, true, idx1, idx2, &slot, &StoreLock);
 	if (res==LFOk)
 	{
 		LFItemDescriptor* i = LFAllocItemDescriptor();
@@ -140,4 +203,31 @@ LFCore_API unsigned int LFCreateFilter(char* key, LFFilter* filter, wchar_t* nam
 	}
 
 	return res;
+}
+
+LFCore_API LFFilter* LFLoadFilter(LFItemDescriptor* i)
+{
+	LFFilter* f = NULL;
+
+	CIndex* idx1;
+	CIndex* idx2;
+	LFStoreDescriptor* slot;
+	HANDLE StoreLock = NULL;
+	unsigned int res = OpenStore(i->StoreID, false, idx1, idx2, &slot, &StoreLock);
+	if (res==LFOk)
+	{
+		wchar_t Path[2*MAX_PATH];
+		GetFileLocation(slot->DatPath, &i->CoreAttributes, Path, 2*MAX_PATH);
+		f = LoadFilter(Path);
+		if (f)
+			wcscpy_s(f->Name, 256, i->CoreAttributes.FileName);
+
+		if (idx1)
+			delete idx1;
+		if (idx2)
+			delete idx2;
+		ReleaseMutexForStore(StoreLock);
+	}
+
+	return f;
 }

@@ -1,6 +1,9 @@
 #pragma once
 #include "liquidFOLDERS.h"
 
+#pragma pack(push)
+#pragma pack(1)
+
 struct PersistentFilterHeader
 {
 	char ID[9];					// LFFilter
@@ -9,6 +12,8 @@ struct PersistentFilterHeader
 	unsigned int szBody;
 	unsigned int szCondition;
 };
+
+#pragma pack(pop)
 
 struct PersistentFilterBody
 {

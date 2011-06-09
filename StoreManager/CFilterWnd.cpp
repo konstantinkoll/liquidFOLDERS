@@ -81,7 +81,7 @@ void CFilterWnd::AdjustLayout()
 	m_wndBottomArea.GetDlgItem(IDM_FILTER_SAVE)->SetWindowPos(NULL, min(widthButton1+2*rectButton.left, rectClient.Width()-(rectClient.Width()/2-rectButton.left/2))+1, rectButton.top, min(rectClient.Width()/2-3*rectButton.left/2, widthButton1), rectButton.Height(), SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
-void CFilterWnd::SetStoreID(CHAR* StoreID)
+void CFilterWnd::SetStoreID(CHAR* StoreID, BOOL SetCheck)
 {
 	strcpy_s(m_StoreID, LFKeySize, StoreID ? StoreID : "");
 
@@ -110,6 +110,18 @@ void CFilterWnd::SetStoreID(CHAR* StoreID)
 		m_wndAllStores.SetCheck(TRUE);
 		m_wndThisStore.SetCheck(FALSE);
 	}
+	else
+		if (SetCheck)
+		{
+			m_wndAllStores.SetCheck(FALSE);
+			m_wndThisStore.SetCheck(TRUE);
+		}
+}
+
+void CFilterWnd::SetFilter(LFFilter* f)
+{
+	SetStoreID(f->StoreID, TRUE);
+	m_wndSearchterm.SetWindowText(f->Searchterm);
 }
 
 LFFilter* CFilterWnd::CreateFilter()

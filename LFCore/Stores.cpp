@@ -1038,7 +1038,7 @@ LFCore_API unsigned int LFImportFiles(char* key, LFFileImportList* il, LFItemDes
 	CIndex* idx2;
 	LFStoreDescriptor* slot;
 	HANDLE StoreLock = NULL;
-	unsigned int res = OpenStore(&store[0], true, idx1, idx2, &slot, &StoreLock);
+	unsigned int res = OpenStore(store, true, idx1, idx2, &slot, &StoreLock);
 	if (res==LFOk)
 	{
 		for (unsigned int a=0; a<il->m_ItemCount; a++)

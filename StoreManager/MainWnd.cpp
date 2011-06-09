@@ -428,15 +428,27 @@ void CMainWnd::OnItemOpen()
 					SendMessage(WM_COMMAND, IDM_VOLUME_CREATENEWSTORE);
 					break;
 				case LFTypeFile:
-					res = LFGetFileLocation(i, Path, MAX_PATH, true);
-					if (res==LFOk)
+					if (strcmp(i->CoreAttributes.FileFormat, "filter")==0)
 					{
-						if (ShellExecute(NULL, _T("open"), Path, NULL, NULL, SW_SHOW)==(HINSTANCE)SE_ERR_NOASSOC)
-							SendMessage(WM_COMMAND, IDM_FILE_OPENWITH);
+						LFFilter* f = LFLoadFilter(i);
+						if (f)
+						{
+							m_wndMainView.SetFilter(f);
+							NavigateTo(f);
+						}
 					}
 					else
 					{
-						LFErrorBox(res, GetSafeHwnd());
+						res = LFGetFileLocation(i, Path, MAX_PATH, true);
+						if (res==LFOk)
+						{
+							if (ShellExecute(NULL, _T("open"), Path, NULL, NULL, SW_SHOW)==(HINSTANCE)SE_ERR_NOASSOC)
+								SendMessage(WM_COMMAND, IDM_FILE_OPENWITH);
+						}
+						else
+						{
+							LFErrorBox(res, GetSafeHwnd());
+						}
 					}
 					break;
 				default:
