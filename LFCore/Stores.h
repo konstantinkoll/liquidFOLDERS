@@ -11,6 +11,7 @@ unsigned int CopyDir(LPWSTR lpPathSrc, LPWSTR lpPathDst);
 unsigned int ValidateStoreDirectories(LFStoreDescriptor* s);
 void GetFileLocation(wchar_t* DatPath, LFCoreAttributes* ca, wchar_t* dst, size_t cCount);
 bool FileExists(LPWSTR lpPath);
+unsigned int PrepareImport(LFStoreDescriptor* slot, LFItemDescriptor* i, wchar_t* Dst, size_t cCount);
 bool GetPIDLForStore(char* StoreID, LPITEMIDLIST* ppidl, LPITEMIDLIST* ppidlDelegate);
 void SendLFNotifyMessage(unsigned int Msg, unsigned int Flags, HWND hWndSource);
 void SendShellNotifyMessage(unsigned int Msg, char* StoreID=NULL, LPITEMIDLIST oldpidl=NULL, LPITEMIDLIST oldpidlDelegate=NULL);

@@ -1027,7 +1027,7 @@ LRESULT CMainView::OnGetMenu(WPARAM wParam, LPARAM /*lParam*/)
 #define AppendPopup(nID) if (GetMenuItemCount(hPopupMenu)) { ENSURE(tmpStr.LoadString(nID)); AppendMenu(hMenu, MF_POPUP | MF_STRING, (UINT_PTR)hPopupMenu, tmpStr); } else { DestroyMenu(hPopupMenu); }
 		AppendAttribute(hMenu, LFAttrFileName);
 		AppendAttribute(hMenu, LFAttrTitle);
-		AppendAttribute(hMenu, LFAttrComment);
+		AppendAttribute(hMenu, LFAttrComments);
 
 		hPopupMenu = CreatePopupMenu();
 		AppendAttribute(hPopupMenu, LFAttrCreationTime);
@@ -1152,7 +1152,7 @@ void CMainView::OnStoresCreateNew()
 
 	LFStoreNewDlg dlg(this, s);
 	if (dlg.DoModal()==IDOK)
-		LFErrorBox(LFCreateStore(s, dlg.MakeDefault));
+		LFErrorBox(LFCreateStore(s, dlg.MakeDefault), GetSafeHwnd());
 
 	LFFreeStoreDescriptor(s);
 }
@@ -1162,7 +1162,7 @@ void CMainView::OnStoresMaintainAll()
 	CWaitCursor wait;
 
 	LFMaintenanceList* ml = LFStoreMaintenance();
-	LFErrorBox(ml->m_LastError);
+	LFErrorBox(ml->m_LastError, GetSafeHwnd());
 
 	LFStoreMaintenanceDlg dlg(ml, this);
 	dlg.DoModal();
@@ -1226,7 +1226,7 @@ void CMainView::OnHomeMaintain()
 		CWaitCursor wait;
 
 		LFMaintenanceList* ml = LFStoreMaintenance(m_StoreID);
-		LFErrorBox(ml->m_LastError);
+		LFErrorBox(ml->m_LastError, GetSafeHwnd());
 
 		LFStoreMaintenanceDlg dlg(ml, this);
 		dlg.DoModal();
@@ -1437,7 +1437,7 @@ void CMainView::OnStoreMaintain()
 	if (idx!=-1)
 	{
 		LFMaintenanceList* ml = LFStoreMaintenance(p_CookedFiles->m_Items[idx]->StoreID);
-		LFErrorBox(ml->m_LastError);
+		LFErrorBox(ml->m_LastError, GetSafeHwnd());
 
 		LFStoreMaintenanceDlg dlg(ml, this);
 		dlg.DoModal();
@@ -1457,7 +1457,7 @@ void CMainView::OnStoreDelete()
 {
 	INT idx = GetSelectedItem();
 	if (idx!=-1)
-		LFErrorBox(((LFApplication*)AfxGetApp())->DeleteStore(p_CookedFiles->m_Items[idx], this));
+		LFErrorBox(((LFApplication*)AfxGetApp())->DeleteStore(p_CookedFiles->m_Items[idx], this), GetSafeHwnd());
 }
 
 void CMainView::OnStoreProperties()

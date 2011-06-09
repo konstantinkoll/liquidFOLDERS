@@ -32,6 +32,8 @@ protected:
 	CConditionList m_wndList;
 	CBottomArea m_wndBottomArea;
 
+	LFFilter* CreateFilter();
+
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 	afx_msg void OnDoubleClick(NMHDR* pNMHDR, LRESULT* pResult);

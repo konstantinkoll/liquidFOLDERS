@@ -12,12 +12,13 @@
 class SaveFilterDlg : public CDialog
 {
 public:
-	SaveFilterDlg(CWnd* pParentWnd, CHAR* StoreID=NULL, WCHAR* FileName=NULL, BOOL AllowChooseStore=FALSE);
+	SaveFilterDlg(CWnd* pParentWnd, CHAR* StoreID=NULL, BOOL AllowChooseStore=FALSE, WCHAR* FileName=NULL, WCHAR* Comments=NULL);
 
 	virtual void DoDataExchange(CDataExchange* pDX);
 
 	CHAR m_StoreID[LFKeySize];
 	WCHAR m_FileName[256];
+	WCHAR m_Comments[256];
 
 protected:
 	BOOL m_AllowChooseStore;

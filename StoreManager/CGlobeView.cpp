@@ -1292,7 +1292,7 @@ void CGlobeView::OnGoogleEarth()
 					WriteGoogleAttribute(&f, p_Result->m_Items[i], LFAttrArtist);
 					WriteGoogleAttribute(&f, p_Result->m_Items[i], LFAttrRoll);
 					WriteGoogleAttribute(&f, p_Result->m_Items[i], LFAttrRecordingTime);
-					WriteGoogleAttribute(&f, p_Result->m_Items[i], LFAttrComment);
+					WriteGoogleAttribute(&f, p_Result->m_Items[i], LFAttrComments);
 					f.WriteString(_T("&lt;div&gt;</description>\n"));
 
 					f.WriteString(_T("<styleUrl>#C</styleUrl>\n"));

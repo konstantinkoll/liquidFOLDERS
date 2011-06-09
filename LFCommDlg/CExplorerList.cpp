@@ -110,7 +110,7 @@ void CExplorerList::AddColumn(INT ID, UINT Attr)
 void CExplorerList::AddStoreColumns()
 {
 	AddColumn(LFAttrFileName, 0);
-	AddColumn(LFAttrComment, 1);
+	AddColumn(LFAttrComments, 1);
 	AddColumn(LFAttrCreationTime, 2);
 	AddColumn(LFAttrStoreID, 3);
 	AddColumn(LFAttrDescription, 4);

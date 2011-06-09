@@ -414,14 +414,8 @@ LFCore_API unsigned int LFGetFileLocation(LFItemDescriptor* i, wchar_t* dst, siz
 					{
 						if (idx1)
 						{
-							if (idx1->UpdateFileLocation(i, Exists))
-							{
-								GetFileLocation(slot->DatPath, &i->CoreAttributes, tmpPath, 2*MAX_PATH);
-							}
-							else
-							{
+							if (!idx1->UpdateMissing(i, Exists))
 								res = LFNoFileBody;
-							}
 							delete idx1;
 						}
 						if (idx2)
@@ -1027,6 +1021,8 @@ LFCore_API unsigned int LFImportFiles(char* key, LFFileImportList* il, LFItemDes
 			strcpy_s(store, LFKeySize, DefaultStore);
 			ReleaseMutex(Mutex_Stores);
 		}
+		else
+			return LFMutexError;
 
 	if (store[0]=='\0')
 	{
@@ -1053,17 +1049,23 @@ LFCore_API unsigned int LFImportFiles(char* key, LFFileImportList* il, LFItemDes
 				SetNameExtAddFromFile(i, il->m_Items[a]);
 				SetAttributesFromFile(i, il->m_Items[a]);
 
-				wchar_t CopyTo[2*MAX_PATH];
-				res = PrepareImport(slot, i, CopyTo, 2*MAX_PATH);
+				wchar_t Path[2*MAX_PATH];
+				res = PrepareImport(slot, i, Path, 2*MAX_PATH);
 				if (res!=LFOk)
 				{
 					LFFreeItemDescriptor(i);
 					break;
 				}
 
-				BOOL shres = move ? MoveFile(il->m_Items[a], CopyTo) : CopyFile(il->m_Items[a], CopyTo, FALSE);
+				BOOL shres = move ? MoveFile(il->m_Items[a], Path) : CopyFile(il->m_Items[a], Path, FALSE);
 				if (!shres)
 				{
+					wchar_t* LastBackslash = wcsrchr(Path, L'\\');
+					if (LastBackslash)
+						*(LastBackslash+1) = L'\0';
+
+					RemoveDir(Path);
+
 					LFFreeItemDescriptor(i);
 					res = LFIllegalPhysicalPath;
 					break;

@@ -902,10 +902,10 @@ BOOL CFolderItem::GetColumn(CShellColumn& column, INT index)
 	ASSERT(LFLastCoreAttribute<=31);
 	const UINT AttrMask[5] =
 	{
-		(1<<LFAttrFileName) | (1<<LFAttrStoreID) | (1<<LFAttrComment) | (1<<LFAttrDescription) | (1<<LFAttrCreationTime) | (1<<LFAttrFileTime) | (1<<LFAttrFileFormat),
-		(1<<LFAttrFileName) | (1<<LFAttrStoreID) | (1<<LFAttrComment) | (1<<LFAttrDescription) | (1<<LFAttrFileFormat) | (1<<LFAttrFileSize) | (1<<LFAttrFileCount),
-		(1<<LFAttrFileName) | (1<<LFAttrStoreID) | (1<<LFAttrComment) | (1<<LFAttrFileFormat),
-		(1<<LFAttrFileName) | (1<<LFAttrStoreID) | (1<<LFAttrComment) | (1<<LFAttrDescription) | (1<<LFAttrFileFormat) | (1<<LFAttrFileSize) | (1<<LFAttrFileCount),
+		(1<<LFAttrFileName) | (1<<LFAttrStoreID) | (1<<LFAttrComments) | (1<<LFAttrDescription) | (1<<LFAttrCreationTime) | (1<<LFAttrFileTime) | (1<<LFAttrFileFormat),
+		(1<<LFAttrFileName) | (1<<LFAttrStoreID) | (1<<LFAttrComments) | (1<<LFAttrDescription) | (1<<LFAttrFileFormat) | (1<<LFAttrFileSize) | (1<<LFAttrFileCount),
+		(1<<LFAttrFileName) | (1<<LFAttrStoreID) | (1<<LFAttrComments) | (1<<LFAttrFileFormat),
+		(1<<LFAttrFileName) | (1<<LFAttrStoreID) | (1<<LFAttrComments) | (1<<LFAttrDescription) | (1<<LFAttrFileFormat) | (1<<LFAttrFileSize) | (1<<LFAttrFileCount),
 		(UINT)~((1<<LFAttrDescription) | (1<<LFAttrDeleteTime) | (1<<LFAttrFileCount) | (1<<LFAttrFlags))
 	};
 	if (!(AttrMask[Attrs.Level] & (1<<index)))
@@ -977,7 +977,7 @@ BOOL CFolderItem::GetColumnValueEx(VARIANT* value, CShellColumn& column)
 	case LFAttrDescription:
 		CUtils::SetVariantLPCTSTR(value, Attrs.Description);
 		break;
-	case LFAttrComment:
+	case LFAttrComments:
 		CUtils::SetVariantLPCTSTR(value, Attrs.Comment);
 		break;
 	case LFAttrCreationTime:
@@ -1093,7 +1093,7 @@ INT CFolderItem::CompareTo(CNSEItem* otherItem, CShellColumn& column)
 		str1 = Attrs.FileID;
 		str2 = dir2->Attrs.FileID;
 		break;
-	case LFAttrComment:
+	case LFAttrComments:
 		str1 = Attrs.Comment;
 		str2 = dir2->Attrs.Comment;
 		break;
@@ -1383,7 +1383,7 @@ void CFolderItem::DragDrop(CNSEDragEventArgs& e)
 INT CFolderItem::GetXPTaskPaneColumnIndices(UINT* indices)
 {
 	indices[0] = LFAttrFileName;
-	indices[1] = LFAttrComment;
+	indices[1] = LFAttrComments;
 	indices[2] = LFAttrDescription;
 
 	switch (Attrs.Level)
@@ -1406,7 +1406,7 @@ INT CFolderItem::GetXPTaskPaneColumnIndices(UINT* indices)
 
 INT CFolderItem::GetTileViewColumnIndices(UINT* indices)
 {
-	indices[0] = LFAttrComment;
+	indices[0] = LFAttrComments;
 	indices[1] = LFAttrDescription;
 
 	switch (Attrs.Level)
@@ -1425,7 +1425,7 @@ INT CFolderItem::GetTileViewColumnIndices(UINT* indices)
 
 INT CFolderItem::GetPreviewDetailsColumnIndices(UINT* indices)
 {
-	indices[0] = LFAttrComment;
+	indices[0] = LFAttrComments;
 	indices[1] = LFAttrDescription;
 
 	switch (Attrs.Level)

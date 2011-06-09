@@ -10,11 +10,12 @@
 // SaveFilterDlg
 //
 
-SaveFilterDlg::SaveFilterDlg(CWnd* pParentWnd, CHAR* StoreID, WCHAR* FileName, BOOL AllowChooseStore)
+SaveFilterDlg::SaveFilterDlg(CWnd* pParentWnd, CHAR* StoreID, BOOL AllowChooseStore, WCHAR* FileName, WCHAR* Comments)
 	: CDialog(IDD_SAVEFILTER, pParentWnd)
 {
 	strcpy_s(m_StoreID, LFKeySize, StoreID ? StoreID : "");
 	wcscpy_s(m_FileName, 256, FileName ? FileName : L"");
+	wcscpy_s(m_Comments, 256, Comments ? Comments : L"");
 	m_AllowChooseStore = AllowChooseStore;
 }
 
@@ -24,7 +25,10 @@ void SaveFilterDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_FILENAME, m_wndEdit);
 
 	if (pDX->m_bSaveAndValidate)
+	{
 		m_wndEdit.GetWindowText(m_FileName, 256);
+		GetDlgItem(IDC_COMMENTS)->GetWindowText(m_Comments, 256);
+	}
 }
 
 void SaveFilterDlg::CheckOK()

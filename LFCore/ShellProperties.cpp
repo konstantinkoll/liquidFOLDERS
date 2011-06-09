@@ -84,7 +84,7 @@ LFShellProperty AttrProperties[LFAttributeCount] = {
 	{ PropertyStorage, 10 },		// LFAttrFileName
 	{ 0, 0 },						// LFAttrStoreID
 	{ PropertyStorage, 8 },			// LFAttrFileID
-	{ PropertySummary, 6 },			// LFAttrComment
+	{ PropertySummary, 6 },			// LFAttrComments
 	{ PropertyVersion, 3 },			// LFAttrDescription
 	{ PropertyStorage, 15 },		// LFAttrCreationTime
 	{ PropertyStorage, 14 },		// LFAttrFileTime
@@ -282,7 +282,7 @@ bool GetShellProperty(IShellFolder2* pParentFolder, LPCITEMIDLIST pidlRel, GUID 
 	return (value.vt!=0);
 }
 
-void SetAttributesFromFile(LFItemDescriptor* i, wchar_t* fn)
+void SetAttributesFromFile(LFItemDescriptor* i, wchar_t* fn, bool metadata)
 {
 	// Attribute des Dateisystems
 	WIN32_FIND_DATA ffd;
@@ -300,6 +300,9 @@ void SetAttributesFromFile(LFItemDescriptor* i, wchar_t* fn)
 
 	// Domain und Slave
 	SetFileDomainAndSlave(i);
+
+	if (!metadata)
+		return;
 
 	// Shell properties
 	IShellFolder* pDesktop;

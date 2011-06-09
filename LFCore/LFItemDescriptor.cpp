@@ -59,7 +59,7 @@ unsigned char AttrTypes[LFAttributeCount] = {
 	LFTypeUnicodeString,		// LFAttrFileName
 	LFTypeAnsiString,			// LFAttrStoreID
 	LFTypeAnsiString,			// LFAttrFileID
-	LFTypeUnicodeString,		// LFAttrComment
+	LFTypeUnicodeString,		// LFAttrComments
 	LFTypeUnicodeString,		// LFAttrDescription
 	LFTypeTime,					// LFAttrCreationTime
 	LFTypeTime,					// LFAttrAddTime
@@ -322,7 +322,7 @@ LFCore_API LFItemDescriptor* LFAllocItemDescriptor(LFStoreDescriptor* s)
 	d->CategoryID = s->StoreMode;
 	d->Type |= LFTypeStore;
 	SetAttribute(d, LFAttrFileName, s->StoreName);
-	SetAttribute(d, LFAttrComment, s->Comment);
+	SetAttribute(d, LFAttrComments, s->Comment);
 	SetAttribute(d, LFAttrStoreID, s->StoreID);
 	SetAttribute(d, LFAttrFileID, s->StoreID);
 	SetAttribute(d, LFAttrCreationTime, &s->CreationTime);
@@ -348,7 +348,7 @@ LFItemDescriptor* AllocFolderDescriptor(const wchar_t* Name, const wchar_t* Comm
 	if (FileID)
 		SetAttribute(d, LFAttrFileID, FileID);
 	if (Comment)
-		SetAttribute(d, LFAttrComment, Comment);
+		SetAttribute(d, LFAttrComments, Comment);
 	if (Description)
 		SetAttribute(d, LFAttrDescription, Description);
 	if (Size)

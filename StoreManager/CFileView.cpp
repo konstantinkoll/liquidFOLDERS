@@ -877,7 +877,7 @@ CString CFileView::GetLabel(LFItemDescriptor* i)
 {
 	CString label = i->CoreAttributes.FileName;
 	if ((i->Type & LFTypeMask)==LFTypeFile)
-		if ((!m_HideFileExt) && (i->CoreAttributes.FileFormat[0]!='\0'))
+		if ((!m_HideFileExt) && (i->CoreAttributes.FileFormat[0]!='\0') && (strcmp(i->CoreAttributes.FileFormat, "filter")!=0))
 		{
 			label += _T(".");
 			label += i->CoreAttributes.FileFormat;
@@ -893,7 +893,7 @@ void CFileView::AppendString(UINT attr, CString& str, WCHAR* tmpStr)
 		{
 			if (!str.IsEmpty())
 				str += _T("\n");
-			if ((attr!=LFAttrComment) && (attr!=LFAttrFileFormat) && (attr!=LFAttrDescription))
+			if ((attr!=LFAttrComments) && (attr!=LFAttrFileFormat) && (attr!=LFAttrDescription))
 			{
 				str += theApp.m_Attributes[attr]->Name;
 				str += _T(": ");
@@ -920,19 +920,19 @@ CString CFileView::GetHint(LFItemDescriptor* i, WCHAR* FormatName)
 		AppendAttribute(i, LFAttrDescription, hint);
 		break;
 	case LFTypeStore:
-		AppendAttribute(i, LFAttrComment, hint);
+		AppendAttribute(i, LFAttrComments, hint);
 		AppendAttribute(i, LFAttrDescription, hint);
 		AppendAttribute(i, LFAttrCreationTime, hint);
 		AppendAttribute(i, LFAttrFileTime, hint);
 		break;
 	case LFTypeVirtual:
-		AppendAttribute(i, LFAttrComment, hint);
+		AppendAttribute(i, LFAttrComments, hint);
 		AppendAttribute(i, LFAttrDescription, hint);
 		if (i->CoreAttributes.FileSize>0)
 			AppendAttribute(i, LFAttrFileSize, hint);
 		break;
 	case LFTypeFile:
-		AppendAttribute(i, LFAttrComment, hint);
+		AppendAttribute(i, LFAttrComments, hint);
 		AppendString(LFAttrFileFormat, hint, FormatName);
 		AppendAttribute(i, LFAttrArtist, hint);
 		AppendAttribute(i, LFAttrTitle, hint);

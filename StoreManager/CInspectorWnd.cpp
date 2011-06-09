@@ -262,7 +262,7 @@ void CInspectorWnd::UpdateAdd(LFItemDescriptor* i, LFSearchResult* pRawFiles)
 		{
 			AddValue(i, LFAttrFileID);
 			AddValue(i, LFAttrStoreID);
-			AddValue(i, LFAttrComment, FALSE);
+			AddValue(i, LFAttrComments, FALSE);
 			for (UINT a=LFAttrDescription+1; a<LFAttributeCount; a++)
 				if (i->AttributeValues[a])
 					AddValue(i, a, FALSE);

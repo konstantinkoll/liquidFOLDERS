@@ -22,7 +22,7 @@ void fmtcpy(CHAR* Dst, CHAR* Src)
 
 CFormatCache::CFormatCache()
 {
-	m_Cache.InitHashTable(2111);		// Primzahl
+	m_Cache.InitHashTable(2111);		// Primzahl mit pz = 4n+3
 
 	m_SystemIcons128.Create(128, 128, ILC_COLOR32, 64, 8);
 

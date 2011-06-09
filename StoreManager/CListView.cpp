@@ -476,7 +476,7 @@ void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed)
 		{
 		case LFTypeStore:
 		case LFTypeVolume:
-			Rows[1] = LFAttrComment;
+			Rows[1] = LFAttrComments;
 			Rows[2] = LFAttrDescription;
 			Rows[3] = LFAttrCreationTime;
 			break;
@@ -488,7 +488,7 @@ void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed)
 		case LFTypeVirtual:
 			if (m_Context==LFContextStoreHome)
 			{
-				Rows[1] = LFAttrComment;
+				Rows[1] = LFAttrComments;
 				Rows[2] = LFAttrDescription;
 				Rows[3] = LFAttrFileSize;
 			}
@@ -521,18 +521,18 @@ void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed)
 		{
 		case LFTypeStore:
 		case LFTypeVolume:
-			DrawProperty(dc, rectLeft, i, d, LFAttrComment, Themed);
+			DrawProperty(dc, rectLeft, i, d, LFAttrComments, Themed);
 			DrawProperty(dc, rectLeft, i, d, LFAttrDescription, Themed);
 			break;
 		case LFTypeFile:
-			DrawProperty(dc, rectLeft, i, d, LFAttrComment, Themed);
+			DrawProperty(dc, rectLeft, i, d, LFAttrComments, Themed);
 			DrawProperty(dc, rectLeft, i, d, LFAttrTags, Themed);
 			DrawProperty(dc, rectLeft, i, d, LFAttrFileFormat, Themed);
 			break;
 		case LFTypeVirtual:
 			if (m_Context==LFContextStoreHome)
 			{
-				DrawProperty(dc, rectLeft, i, d, LFAttrComment, Themed);
+				DrawProperty(dc, rectLeft, i, d, LFAttrComments, Themed);
 				DrawProperty(dc, rectLeft, i, d, LFAttrDescription, Themed);
 				DrawProperty(dc, rectLeft, i, d, LFAttrFileSize, Themed);
 			}
@@ -742,7 +742,7 @@ void CListView::DrawProperty(CDC& dc, CRect& rect, LFItemDescriptor* i, GridItem
 			COLORREF oldColor = dc.GetTextColor();
 
 			CRect rectText(rect);
-			if ((Attr!=LFAttrComment) && (Attr!=LFAttrDescription))
+			if ((Attr!=LFAttrComments) && (Attr!=LFAttrDescription))
 			{
 				CString tmpCaption(theApp.m_Attributes[Attr]->Name);
 				tmpCaption += _T(": ");

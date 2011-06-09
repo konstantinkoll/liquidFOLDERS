@@ -297,7 +297,7 @@ INT CFileItem::CompareTo(CNSEItem* otherItem, CShellColumn& column)
 		str1 = Item->CoreAttributes.FileID;
 		str2 = file2->Item->CoreAttributes.FileID;
 		break;
-	case LFAttrComment:
+	case LFAttrComments:
 		str1 = Item->CoreAttributes.Comment;
 		str2 = file2->Item->CoreAttributes.Comment;
 		break;
@@ -411,7 +411,7 @@ LPSTREAM CFileItem::GetStream()
 INT CFileItem::GetXPTaskPaneColumnIndices(UINT* indices)
 {
 	indices[0] = LFAttrFileName;
-	indices[1] = LFAttrComment;
+	indices[1] = LFAttrComments;
 	indices[2] = LFAttrCreationTime;
 	indices[3] = LFAttrFileTime;
 	indices[4] = LFAttrFileSize;
@@ -421,7 +421,7 @@ INT CFileItem::GetXPTaskPaneColumnIndices(UINT* indices)
 
 INT CFileItem::GetTileViewColumnIndices(UINT* indices)
 {
-	indices[0] = LFAttrComment;
+	indices[0] = LFAttrComments;
 	indices[1] = LFAttrFileTime;
 	indices[2] = LFAttrFileSize;
 
@@ -430,7 +430,7 @@ INT CFileItem::GetTileViewColumnIndices(UINT* indices)
 
 INT CFileItem::GetPreviewDetailsColumnIndices(UINT* indices)
 {
-	indices[0] = LFAttrComment;
+	indices[0] = LFAttrComments;
 	indices[1] = LFAttrArtist;
 	indices[2] = LFAttrTitle;
 	indices[3] = LFAttrRecordingTime;

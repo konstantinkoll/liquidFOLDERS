@@ -112,6 +112,25 @@ void CFilterWnd::SetStoreID(CHAR* StoreID)
 	}
 }
 
+LFFilter* CFilterWnd::CreateFilter()
+{
+	LFFilter* f = LFAllocFilter();
+	f->Mode = LFFilterModeSearch;
+	f->Options.IsSearch = true;
+	strcpy_s(f->StoreID, LFKeySize, m_wndAllStores.GetCheck() ? "" : m_StoreID);
+	m_wndSearchterm.GetWindowText(f->Searchterm, 256);
+
+	for (INT a=m_Conditions.m_ItemCount-1; a>=0; a--)
+	{
+		LFFilterCondition* c = LFAllocFilterCondition();
+		*c = m_Conditions.m_Items[a];
+		c->Next = f->ConditionList;
+		f->ConditionList = c;
+	}
+
+	return f;
+}
+
 
 BEGIN_MESSAGE_MAP(CFilterWnd, CGlasPane)
 	ON_WM_CREATE()
@@ -238,30 +257,35 @@ void CFilterWnd::OnDoubleClick(NMHDR* /*pNMHDR*/, LRESULT* /*pResult*/)
 
 void CFilterWnd::OnSave()
 {
-	SaveFilterDlg dlg(this, m_StoreID, NULL, TRUE);
+	SaveFilterDlg dlg(this, m_StoreID, TRUE);
 	if (dlg.DoModal()==IDOK)
 	{
-		MessageBox(_T("Coming soon"));
+		CWaitCursor csr;
+		if (TRUE)
+		{
+			LFItemDescriptor* item;
+			UINT res = LFCreateFilter(dlg.m_StoreID, CreateFilter(), dlg.m_FileName, dlg.m_Comments, &item);
+			if (res==LFOk)
+			{
+				LFFreeItemDescriptor(item);
+			}
+			else
+			{
+				LFErrorBox(res, GetSafeHwnd());
+			}
+		}
+		else
+		{
+			LFErrorBox(LFOk, GetSafeHwnd());
+		}
+
+		GetOwner()->PostMessage(WM_COMMAND, ID_NAV_RELOAD);
 	}
 }
 
 void CFilterWnd::OnSearch()
 {
-	LFFilter* f = LFAllocFilter();
-	f->Mode = LFFilterModeSearch;
-	f->Options.IsSearch = true;
-	strcpy_s(f->StoreID, LFKeySize, m_wndAllStores.GetCheck() ? "" : m_StoreID);
-	m_wndSearchterm.GetWindowText(f->Searchterm, 256);
-
-	for (INT a=m_Conditions.m_ItemCount-1; a>=0; a--)
-	{
-		LFFilterCondition* c = LFAllocFilterCondition();
-		*c = m_Conditions.m_Items[a];
-		c->Next = f->ConditionList;
-		f->ConditionList = c;
-	}
-
-	GetOwner()->SendMessage(WM_NAVIGATETO, (WPARAM)f);
+	GetOwner()->SendMessage(WM_NAVIGATETO, (WPARAM)CreateFilter());
 }
 
 void CFilterWnd::OnAddCondition()

@@ -208,7 +208,7 @@ LFCore_API LFAttributeDescriptor* LFGetAttributeInfo(unsigned int ID)
 	const unsigned int rWidths[LFTypeCount] = { 200, 200, 200, 100, 100, 100, 120, 100, 100, 100, 150, 140, 100 };
 	switch (ID)
 	{
-	case LFAttrComment:
+	case LFAttrComments:
 		a->RecommendedWidth = 350;
 		break;
 	case LFAttrDescription:
@@ -350,7 +350,7 @@ LFCore_API LFContextDescriptor* LFGetContextInfo(unsigned int ID)
 	(*c->AllowedAttributes) += LFAttrFileName;
 	(*c->AllowedAttributes) += LFAttrStoreID;
 	(*c->AllowedAttributes) += LFAttrFileID;
-	(*c->AllowedAttributes) += LFAttrComment;
+	(*c->AllowedAttributes) += LFAttrComments;
 
 	switch (ID)
 	{
@@ -365,9 +365,10 @@ LFCore_API LFContextDescriptor* LFGetContextInfo(unsigned int ID)
 		(*c->AllowedAttributes) += LFAttrFileSize;
 		break;
 	case LFContextFilters:
-		for (unsigned int a=0; a<=LFLastCoreAttribute; a++)
-			if ((a!=LFAttrDeleteTime) && (a!=LFAttrDescription) && (a!=LFAttrFileCount))
-				(*c->AllowedAttributes) += a;
+		(*c->AllowedAttributes) += LFAttrCreationTime;
+		(*c->AllowedAttributes) += LFAttrFileTime;
+		(*c->AllowedAttributes) += LFAttrAddTime;
+		(*c->AllowedAttributes) += LFAttrFileSize;
 		break;
 	case LFContextTrash:
 		(*c->AllowedAttributes) += LFAttrDeleteTime;
@@ -452,7 +453,7 @@ LFCore_API LFDomainDescriptor* LFGetDomainInfo(unsigned int ID)
 	*(d->ImportantAttributes) += LFAttrCreationTime;
 	*(d->ImportantAttributes) += LFAttrFileTime;
 	*(d->ImportantAttributes) += LFAttrRoll;
-	*(d->ImportantAttributes) += LFAttrComment;
+	*(d->ImportantAttributes) += LFAttrComments;
 	*(d->ImportantAttributes) += LFAttrTags;
 	*(d->ImportantAttributes) += LFAttrRating;
 	*(d->ImportantAttributes) += LFAttrPriority;

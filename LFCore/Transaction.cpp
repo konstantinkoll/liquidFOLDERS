@@ -20,7 +20,7 @@ void UpdateStore(LFTransactionList* tl, unsigned int idx, LFVariantData* value, 
 	case LFAttrFileName:
 		result = LFSetStoreAttributes(tl->m_Items[idx].Item->StoreID, value->UnicodeString, NULL, NULL, true);
 		break;
-	case LFAttrComment:
+	case LFAttrComments:
 		result = LFSetStoreAttributes(tl->m_Items[idx].Item->StoreID, NULL, value->UnicodeString, NULL, true);
 		break;
 	default:

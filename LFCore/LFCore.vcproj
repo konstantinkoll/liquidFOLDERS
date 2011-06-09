@@ -458,6 +458,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\PersistentFilters.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\PIDL.cpp"
 				>
 			</File>
@@ -605,6 +609,10 @@
 			</File>
 			<File
 				RelativePath=".\Mutex.h"
+				>
+			</File>
+			<File
+				RelativePath=".\PersistentFilters.h"
 				>
 			</File>
 			<File
