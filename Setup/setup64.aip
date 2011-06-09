@@ -35,7 +35,7 @@
     <ROW Property="Manufacturer" Value="liquidFOLDERS" ValueLocId="*"/>
     <ROW Property="OptionsLogoIcon" Value="Tools.ico" Type="1" MsiKey="OptionsLogoIcon"/>
     <ROW Property="ProductCode" Value="1032:{765E07D2-5242-4018-BFF4-6D9098FA3716} 1041:{F0A3D32D-30C9-4E17-B01C-32BEF63BD288} 1027:{1D7BFD0B-58CE-4867-87A3-C70F46F3337B} 1049:{17FC0439-CA40-432A-BDC3-BE2B6A0BB5EC} 1058:{1ACA1FFC-9D07-492E-B238-E54C028DBDAE} 1035:{11242C60-9906-42C5-81CA-7108967A224C} 1044:{7FAA1AE1-3624-4B54-8899-0EA7CD5D5487} 2068:{9FBEC8C0-0DDF-43B0-875E-F3A7D4D35256} 1030:{DE61A15E-52D0-4C46-9EB6-EF55BD6BD2F5} 1052:{1180E774-0759-4E05-93CA-0DB28DD3AAE5} 1038:{EF5BCF4A-3841-44EB-9AB1-BEAC470D1904} 1033:{28072109-AFBE-4847-879A-F305E1F492BA} 2057:{DA0CE132-4044-493E-B23C-C455436A24EF} 1042:{AD19C0E6-0627-448B-A308-453F1C6AFCBE} 1028:{F7DD18B6-AF09-4E85-A646-812ED2103C0D} 2052:{5D8561DC-F50A-4D75-A52E-E8B17FBA8D4C} 1055:{B2E6C62B-FC6B-473D-8D64-47215F4093C1} 1050:{F334436F-B27B-4E0C-A35C-965033875CE9} 2074:{182DC1EA-2BE1-4AFE-9966-3CA49D4F2BDE} 3098:{76C377CC-2C27-48BC-8574-7F0F41F37D9A} 1036:{F850680B-6560-4D82-9DCF-C568886735AE} 1045:{82D46252-361F-4F24-A8E0-83726AC6B64D} 1031:{53D6A221-5F1B-4CFB-BBCC-E5F20C946CEE} 1040:{3F97E7D5-4ACD-4EB7-914C-4FDCB8268A30} 1026:{17DCD202-6C67-46B8-8B7B-775A556455CB} 1053:{7E12CD0B-6263-4F06-B4FE-0BF485F7DFFF} 1057:{AD8727B7-61B5-4F2C-9EFC-A619BD191AC4} 3082:{C81EE7AB-91C7-4F83-9C83-B69B6983C7E8} 1043:{73FCC5AE-8327-4C7D-9209-D6767B5417FC} 1029:{27D95874-4C26-483C-BD49-001548EA9286} 1051:{98B4F8AB-0682-40BD-B336-C80E2258D566} 1060:{F7503976-6DEE-465B-A381-09D5CF31D894} 1046:{A976C2D6-C223-453C-9FCB-130BEEB164BC} 2070:{E2BD41F0-605A-47B5-A16D-274ED48196A9} " Type="16"/>
-    <ROW Property="ProductLanguage" Value="1031"/>
+    <ROW Property="ProductLanguage" Value="1033"/>
     <ROW Property="ProductName" Value="liquidFOLDERS" ValueLocId="*"/>
     <ROW Property="ProductVersion" Value="0.9.0"/>
     <ROW Property="RepairIcon" Value="Tools.ico" Type="1" MsiKey="RepairIcon"/>
@@ -111,7 +111,7 @@
     <ROW BootstrOptKey="GlobalOptions" GeneralOptions="b"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.BuildComponent">
-    <ROW BuildKey="DefaultBuild" BuildName="DefaultBuild" BuildOrder="1" BuildType="1" PackageFolder="." PackageFileName="liquidFOLDERS64" Languages="de;en;fr;es" LangOpt="1" InstallationType="4" CabsLocation="1" PackageType="1" FilesInsideExe="true" ExeIconPath="Setup\liquidFOLDERS.ico" ExtractionFolder="[AppDataFolder][|Manufacturer]\[|ProductName]\install" ExtUI="true" LangsDialog="true" MsiPackageType="x64" UACExecutionLevel="2"/>
+    <ROW BuildKey="DefaultBuild" BuildName="DefaultBuild" BuildOrder="1" BuildType="1" PackageFolder="." PackageFileName="liquidFOLDERS64" Languages="de;en;fr;es" LangOpt="1" InstallationType="4" CabsLocation="1" PackageType="1" FilesInsideExe="true" ExeIconPath="Setup\liquidFOLDERS.ico" ExtractionFolder="[AppDataFolder]\[|ProductName]\install" ExtUI="true" LangsDialog="true" MsiPackageType="x64" UACExecutionLevel="2"/>
     <ATTRIBUTE name="CurrentBuild" value="DefaultBuild"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.CacheComponent">
