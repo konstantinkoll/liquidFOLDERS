@@ -125,7 +125,7 @@ LFFilter* LoadFilter(wchar_t* fn)
 }
 
 
-LFCore_API unsigned int LFCreateFilter(char* key, LFFilter* filter, wchar_t* name, wchar_t* comments, LFItemDescriptor** created)
+LFCore_API unsigned int LFSaveFilter(char* key, LFFilter* filter, wchar_t* name, wchar_t* comments, LFItemDescriptor** created)
 {
 	assert(filter);
 
@@ -207,27 +207,13 @@ LFCore_API unsigned int LFCreateFilter(char* key, LFFilter* filter, wchar_t* nam
 
 LFCore_API LFFilter* LFLoadFilter(LFItemDescriptor* i)
 {
-	LFFilter* f = NULL;
+	wchar_t Path[2*MAX_PATH];
+	if (LFGetFileLocation(i, Path, 2*MAX_PATH, true, true)!=LFOk)
+		return NULL;
 
-	CIndex* idx1;
-	CIndex* idx2;
-	LFStoreDescriptor* slot;
-	HANDLE StoreLock = NULL;
-	unsigned int res = OpenStore(i->StoreID, false, idx1, idx2, &slot, &StoreLock);
-	if (res==LFOk)
-	{
-		wchar_t Path[2*MAX_PATH];
-		GetFileLocation(slot->DatPath, &i->CoreAttributes, Path, 2*MAX_PATH);
-		f = LoadFilter(Path);
-		if (f)
-			wcscpy_s(f->Name, 256, i->CoreAttributes.FileName);
-
-		if (idx1)
-			delete idx1;
-		if (idx2)
-			delete idx2;
-		ReleaseMutexForStore(StoreLock);
-	}
+	LFFilter* f =LoadFilter(Path);
+	if (f)
+		wcscpy_s(f->Name, 256, i->CoreAttributes.FileName);
 
 	return f;
 }

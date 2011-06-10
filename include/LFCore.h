@@ -381,7 +381,7 @@ LFCore_API unsigned int LFImportFiles(char* key, LFFileImportList* il, LFItemDes
 //
 
 // Erzeugt eine neue Filterdatei in einem Store
-LFCore_API unsigned int LFCreateFilter(char* key, LFFilter* filter, wchar_t* name, wchar_t* comments=NULL, LFItemDescriptor** created=NULL);
+LFCore_API unsigned int LFSaveFilter(char* key, LFFilter* filter, wchar_t* name, wchar_t* comments=NULL, LFItemDescriptor** created=NULL);
 
 // Lädt einen abgespeicherten Filter
 LFCore_API LFFilter* LFLoadFilter(LFItemDescriptor* i);

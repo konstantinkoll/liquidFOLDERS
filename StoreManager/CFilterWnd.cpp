@@ -25,7 +25,7 @@ CFilterWnd::~CFilterWnd()
 
 void CFilterWnd::SetOwner(CWnd* pOwnerWnd)
 {
-	CWnd::SetOwner(pOwnerWnd);
+	CGlasPane::SetOwner(pOwnerWnd);
 
 	m_wndList.SetOwner(pOwnerWnd);
 }
@@ -122,6 +122,17 @@ void CFilterWnd::SetFilter(LFFilter* f)
 {
 	SetStoreID(f->StoreID, TRUE);
 	m_wndSearchterm.SetWindowText(f->Searchterm);
+
+	m_Conditions.m_ItemCount = 0;
+	m_wndList.DeleteAllItems();
+
+	LFFilterCondition* c = f->ConditionList;
+	while (c)
+	{
+		m_Conditions.AddItem(*c);
+		m_wndList.InsertItem(c);
+		c = c->Next;
+	}
 }
 
 LFFilter* CFilterWnd::CreateFilter()
@@ -273,24 +284,8 @@ void CFilterWnd::OnSave()
 	if (dlg.DoModal()==IDOK)
 	{
 		CWaitCursor csr;
-		if (TRUE)
-		{
-			LFItemDescriptor* item;
-			UINT res = LFCreateFilter(dlg.m_StoreID, CreateFilter(), dlg.m_FileName, dlg.m_Comments, &item);
-			if (res==LFOk)
-			{
-				LFFreeItemDescriptor(item);
-			}
-			else
-			{
-				LFErrorBox(res, GetSafeHwnd());
-			}
-		}
-		else
-		{
-			LFErrorBox(LFOk, GetSafeHwnd());
-		}
 
+		LFErrorBox(LFSaveFilter(dlg.m_StoreID, CreateFilter(), dlg.m_FileName, dlg.m_Comments, NULL), GetSafeHwnd());
 		GetOwner()->PostMessage(WM_COMMAND, ID_NAV_RELOAD);
 	}
 }
