@@ -17,7 +17,7 @@ struct PersistentFilterHeader
 
 struct PersistentFilterBody
 {
-	char StoreID[LFKeySize];
+	bool AllStores;
 	wchar_t Searchterm[256];
 	unsigned int cConditions;
 };

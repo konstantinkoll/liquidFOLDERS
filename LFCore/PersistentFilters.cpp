@@ -16,6 +16,9 @@ bool StoreFilter(wchar_t* fn, LFFilter* filter)
 	assert(fn);
 	assert(filter);
 
+	if (filter->Mode!=LFFilterModeSearch)
+		return false;
+
 	PersistentFilterHeader Header;
 	ZeroMemory(&Header, sizeof(Header));
 	strcpy_s(Header.ID, 9, "LFFilter");
@@ -26,7 +29,7 @@ bool StoreFilter(wchar_t* fn, LFFilter* filter)
 
 	PersistentFilterBody Body;
 	ZeroMemory(&Body, sizeof(Body));
-	strcpy_s(Body.StoreID, LFKeySize, filter->StoreID);
+	Body.AllStores = (filter->StoreID[0]=='\0');
 	wcscpy_s(Body.Searchterm, 256, filter->Searchterm);
 	LFFilterCondition* Condition = filter->ConditionList;
 	while (Condition)
@@ -62,7 +65,7 @@ bool StoreFilter(wchar_t* fn, LFFilter* filter)
 	return res;
 }
 
-LFFilter* LoadFilter(wchar_t* fn)
+LFFilter* LoadFilter(wchar_t* fn, char* key)
 {
 	assert(fn);
 
@@ -100,7 +103,7 @@ LFFilter* LoadFilter(wchar_t* fn)
 	f->Mode = LFFilterModeSearch;
 #define Abort3 { LFFreeFilter(f); Abort2; }
 
-	strcpy_s(f->StoreID, LFKeySize, Body.StoreID);
+	strcpy_s(f->StoreID, LFKeySize, Body.AllStores ? "" : key);
 	wcscpy_s(f->Searchterm, 256, Body.Searchterm);
 
 	for (unsigned int a=Body.cConditions; a>0; a--)
@@ -211,7 +214,7 @@ LFCore_API LFFilter* LFLoadFilter(LFItemDescriptor* i)
 	if (LFGetFileLocation(i, Path, 2*MAX_PATH, true, true)!=LFOk)
 		return NULL;
 
-	LFFilter* f =LoadFilter(Path);
+	LFFilter* f =LoadFilter(Path, i->StoreID);
 	if (f)
 		wcscpy_s(f->Name, 256, i->CoreAttributes.FileName);
 
