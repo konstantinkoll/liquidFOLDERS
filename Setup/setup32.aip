@@ -35,7 +35,7 @@
     <ROW Property="Manufacturer" Value="liquidFOLDERS" ValueLocId="*"/>
     <ROW Property="OptionsLogoIcon" Value="Tools.ico" Type="1" MsiKey="OptionsLogoIcon"/>
     <ROW Property="ProductCode" Value="1032:{43D44A57-0ED8-4F44-843D-5476E03263F4} 1041:{980C868D-654C-4235-93C1-94830726E9A3} 1027:{6F2033A1-06EF-4F76-B524-34F0D73B93FF} 1049:{71F9E2AA-C819-4ECD-9612-8F25CC818A32} 1058:{F0163632-9F52-4DAD-BB92-E5432BEEF8DF} 1035:{6D4AE856-0255-44F6-898A-872B153708D7} 1044:{F3840624-C51F-4916-8C37-A8E0F1D5F7F2} 2068:{6EEA78F4-8630-41C4-A082-5A54AC33FE3E} 1030:{F966F989-07F5-47F8-A888-A1EF91B5FFE1} 1052:{27DE302D-581E-4F24-ADE6-FB54CAA49ED9} 1038:{3789F9C5-396A-430D-8A66-68F7CC45A0E9} 1033:{B4A80B6F-5410-49DC-ACB7-71BE0E9DE755} 2057:{98CB943A-F0E9-4F8C-A023-ECEC7BC191B3} 1042:{95A20EA8-F1C8-4305-8005-DCA1E16CF575} 1028:{BC05AB09-42FB-4898-8621-630D35A253DD} 2052:{6765EC2C-5A3D-42B4-8888-EE41C87CA644} 1055:{1FA4C1FA-5D8C-4443-A1F3-11CDA6C1B956} 1050:{25EC1FFA-C7DD-4656-83DF-0A8E9CA80B67} 2074:{18398DA3-7AF8-4349-9FEF-79E94D2B7167} 3098:{E099DCDC-B136-4877-89E1-EC80D39AECD9} 1036:{151F51F8-F367-49D7-B35B-DDE1D33150DD} 1045:{4314850F-7E75-4B40-8D81-A4AC65A07975} 1031:{C801DC84-FED7-4E0A-A1CD-9A2E928A67F1} 1040:{ACD9D4ED-D568-40DE-A5BC-09CCA8CCD02E} 1026:{E74D2A7A-1840-4C88-8DFD-4D23AC589AAD} 1053:{50536A08-515F-436D-8AED-2784182B5E04} 1057:{54C8B5CA-63BF-4A4F-B2D6-7A0B3D4EB662} 3082:{280D3F51-09CE-412E-A050-DD609D8F7697} 1043:{9FC55C1E-87C4-4FAE-83B3-4CC1A9DD218E} 1029:{690BC0A9-FAFF-4257-B0FF-4344A2760D49} 1051:{A6B4D30D-1DF9-4F53-9549-39ABF8F67FC6} 1060:{A103258E-5CBF-4175-A939-9C088F429215} 1046:{3CF41922-A472-4EED-B3F9-CE85FB8ED0B0} 2070:{0FE6818C-0DCF-4295-8B88-3D6FA6C083C6} " Type="16"/>
-    <ROW Property="ProductLanguage" Value="1031"/>
+    <ROW Property="ProductLanguage" Value="1033"/>
     <ROW Property="ProductName" Value="liquidFOLDERS" ValueLocId="*"/>
     <ROW Property="ProductVersion" Value="0.9.0"/>
     <ROW Property="RepairIcon" Value="Tools.ico" Type="1" MsiKey="RepairIcon"/>
@@ -500,6 +500,7 @@
     <ROW Registry="ModifyPath" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="ModifyPath" Value="[AI_UNINSTALLER] /I [ProductCode]" Component_="AI_CustomARPName"/>
     <ROW Registry="NeverShowExt" Root="0" Key="LFSendTofile" Name="NeverShowExt" Value="#0" Component_="LFNamespaceExtension.dll"/>
     <ROW Registry="NoModify" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="NoModify" Value="#1" Component_="AI_DisableModify"/>
+    <ROW Registry="PerceivedType" Root="0" Key=".LFSendTo" Name="PerceivedType" Value="system" Component_="LFNamespaceExtension.dll"/>
     <ROW Registry="PinToNameSpaceTree" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}\ShellFolder" Name="PinToNameSpaceTree" Component_="LFNamespaceExtension.dll"/>
     <ROW Registry="Publisher" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="Publisher" Value="liquidFOLDERS" Component_="AI_CustomARPName"/>
     <ROW Registry="QueryForOverlay" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}\ShellFolder" Name="QueryForOverlay" Component_="LFNamespaceExtension.dll"/>
