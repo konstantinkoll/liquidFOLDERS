@@ -40,7 +40,6 @@
     <ROW Property="SecureCustomProperties" Value="OLDPRODUCTS;AI_NEWERPRODUCTFOUND;AI_SETUPEXEPATH;SETUPEXEDIR"/>
     <ROW Property="ShortcutLogoIcon" Value="Shortcuts.ico" Type="1"/>
     <ROW Property="UpgradeCode" Value="{67BB0890-A341-4E87-90D6-AEB28804E142}"/>
-    <ROW Property="WIMinVersion" MultiBuildValue="DefaultBuild:4.0" ValueLocId="-"/>
     <ROW Property="WaitLogoItem" Value="Wait.ico" Type="1" MsiKey="WaitLogoItem"/>
     <ROW Property="WindowsFamily9X" MultiBuildValue="DefaultBuild:Windows 9x/ME" ValueLocId="-"/>
     <ROW Property="WindowsFamilyNT64" MultiBuildValue="DefaultBuild:Windows XP/Vista/Windows7 x64" ValueLocId="-"/>
@@ -159,8 +158,6 @@
     <ROW Name="Warning.ico" SourcePath="Setup\Warning.ico"/>
     <ROW Name="aicustact.dll" SourcePath="&lt;AI_CUSTACTS&gt;aicustact.dll"/>
     <ROW Name="lzmaextractor.dll" SourcePath="&lt;AI_CUSTACTS&gt;lzmaextractor.dll"/>
-    <ROW Name="reboot.vbs" SourcePath="Setup\reboot.vbs"/>
-    <ROW Name="suspend.vbs" SourcePath="Setup\suspend.vbs"/>
     <ATTRIBUTE name="DeletedRows" value="info@completi@repairic@background@optionslogoicon@applogoicon@exitbackground@folderlogoicon@insticon@custicon@exclamic@installlogoicon@waitlogoicon"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiCheckBoxComponent">
@@ -395,8 +392,6 @@
     <ROW Action="SET_SHORTCUTDIR" Type="307" Source="SHORTCUTDIR" Target="[ProgramMenuFolder][ProductName]"/>
     <ROW Action="SET_TARGETDIR_TO_APPDIR" Type="51" Source="TARGETDIR" Target="[APPDIR]"/>
     <ROW Action="StopProcess" Type="65" Source="aicustact.dll" Target="StopProcess"/>
-    <ROW Action="reboot.vbs" Type="6" Source="reboot.vbs"/>
-    <ROW Action="suspend.vbs" Type="6" Source="suspend.vbs" Target="Suspend"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiIconsComponent">
     <ROW Name="SystemFolder_msiexec.exe" SourcePath="&lt;AI_RES&gt;uninstall.ico" Index="0"/>
@@ -405,7 +400,7 @@
   <COMPONENT cid="caphyon.advinst.msicomp.MsiInstExSeqComponent">
     <ROW Action="AI_DOWNGRADE" Condition="AI_NEWERPRODUCTFOUND AND (UILevel &lt;&gt; 5)" Sequence="210"/>
     <ROW Action="AI_RESTORE_LOCATION" Condition="APPDIR=&quot;&quot;" Sequence="749"/>
-    <ROW Action="AI_STORE_LOCATION" Condition="Not Installed" Sequence="1504"/>
+    <ROW Action="AI_STORE_LOCATION" Condition="Not Installed" Sequence="1502"/>
     <ROW Action="AI_PREPARE_UPGRADE" Condition="AI_UPGRADE=&quot;No&quot; AND (Not Installed)" Sequence="1399"/>
     <ROW Action="AI_ResolveKnownFolders" Sequence="54"/>
     <ROW Action="AI_DeleteCadLzma" Condition="SETUPEXEDIR=&quot;&quot; AND Installed AND (REMOVE&lt;&gt;&quot;ALL&quot;) AND (NOT PATCH)" Sequence="199" Builds="DefaultBuild"/>
@@ -416,15 +411,13 @@
     <ROW Action="AI_DeleteRLzma" Condition="SETUPEXEDIR=&quot;&quot; AND Installed AND (REMOVE&lt;&gt;&quot;ALL&quot;) AND (NOT PATCH)" Sequence="1548" Builds="DefaultBuild"/>
     <ROW Action="AI_DeleteLzma" Condition="SETUPEXEDIR=&quot;&quot; AND Installed AND (REMOVE&lt;&gt;&quot;ALL&quot;) AND (NOT PATCH)" Sequence="6599" Builds="DefaultBuild"/>
     <ROW Action="AI_GetArpIconPath" Sequence="53"/>
-    <ROW Action="AI_RemoveExternalUIStub" Condition="(REMOVE=&quot;ALL&quot;) AND ((VersionNT &gt; 500) OR((VersionNT = 500) AND (ServicePackLevel &gt;= 4)))" Sequence="1503"/>
+    <ROW Action="AI_RemoveExternalUIStub" Condition="(REMOVE=&quot;ALL&quot;) AND ((VersionNT &gt; 500) OR((VersionNT = 500) AND (ServicePackLevel &gt;= 4)))" Sequence="1501"/>
     <ROW Action="AI_AiRemoveFilesImmediate" Sequence="3499"/>
     <ROW Action="AI_DELETE_SHORTCUTS" Condition="NOT (REMOVE=&quot;ALL&quot;)" Sequence="1401"/>
     <ROW Action="AI_DEL_EMPTY_SHORTCUTDIR" Condition="NOT (REMOVE=&quot;ALL&quot;)" Sequence="6404" AdditionalSeq="AI_DATA_SETTER"/>
     <ROW Action="AI_DATA_SETTER" Condition="NOT (REMOVE=&quot;ALL&quot;)" Sequence="6403"/>
     <ROW Action="LFWatchdog.exe" Condition="NOT (($LFWatchdog.exe = 2) AND (?LFWatchdog.exe = 3))" Sequence="6402"/>
     <ROW Action="LFRunCmd.exe" Condition="NOT (($LFRunCmd.exe = 2) AND (?LFRunCmd.exe = 3))" Sequence="6401"/>
-    <ROW Action="reboot.vbs" Condition="OLDPRODUCT AND NOT AFTERREBOOT" Sequence="1501"/>
-    <ROW Action="suspend.vbs" Condition="OLDPRODUCT AND NOT AFTERREBOOT" Sequence="1502"/>
     <ROW Action="StopProcess" Condition="Installed" Sequence="52" AdditionalSeq="AI_DATA_SETTER_2"/>
     <ROW Action="AI_DATA_SETTER_2" Condition="Installed" Sequence="51"/>
   </COMPONENT>
@@ -436,7 +429,6 @@
     <ROW Condition="Privileged" Description="[ProductName] requires administrative privileges to install." DescriptionLocId="AI.LaunchCondition.Privileged" IsPredefined="true" Builds="DefaultBuild"/>
     <ROW Condition="Version9X OR (VersionNT AND (NOT VersionNT64))" Description="[ProductName] cannot be installed on [WindowsFamilyNT64]" DescriptionLocId="AI.LaunchCondition.NoNT64" IsPredefined="true" Builds="DefaultBuild"/>
     <ROW Condition="Version9X OR VersionNT64 OR ((VersionNT &gt; 501) OR ((VersionNT = 501) AND (ServicePackLevel &gt;= 2)))" Description="[ProductName] cannot be installed on systems earlier than [WindowsTypeNT]" DescriptionLocId="AI.LaunchCondition.NoSpecificNT" IsPredefined="true" Builds="DefaultBuild"/>
-    <ROW Condition="VersionMsi &gt;= WIMinVersion" Description="[ProductName] cannot be installed on systems with Windows Installer version lower than [WIMinVersion]" DescriptionLocId="AI.LaunchCondition.WI" IsPredefined="true" Builds="DefaultBuild"/>
     <ROW Condition="VersionNT" Description="[ProductName] cannot be installed on [WindowsFamily9X]" DescriptionLocId="AI.LaunchCondition.No9X" IsPredefined="true" Builds="DefaultBuild"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiMergeModsComponent">
