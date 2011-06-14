@@ -89,16 +89,13 @@ BOOL CMainWnd::CreateStore(CHAR* RootStore)
 {
 	ASSERT(RootStore);
 
-	if (!Create(FALSE))
-		return FALSE;
-
 	m_BreadcrumbBack = new BreadcrumbItem();
 	ZeroMemory(m_BreadcrumbBack, sizeof(BreadcrumbItem));
 	m_BreadcrumbBack->filter = GetRootFilter();
 
 	m_pActiveFilter = GetRootFilter(RootStore);
 
-	return TRUE;
+	return Create(FALSE);
 }
 
 BOOL CMainWnd::CreateFilter(LFFilter* f)

@@ -105,6 +105,14 @@ BOOL CStoreManagerApp::InitInstance()
 			{
 				CHAR StoreID[LFKeySize];
 				WideCharToMultiByte(CP_ACP, 0, __wargv[1], -1, StoreID, LFKeySize, NULL, NULL);
+
+				CHAR* pChar = StoreID;
+				while (*pChar)
+				{
+					*pChar = (CHAR)toupper(*pChar);
+					pChar++;
+				}
+
 				pFrame->CreateStore(StoreID);
 				goto Finish;
 			}
