@@ -568,13 +568,7 @@ void CInspectorWnd::OnExportSummary()
 				f.WriteString(m_TypeName+_T("\n\n"));
 				for (UINT a=0; a<AttrCount; a++)
 					if (m_AttributeVisible[a])
-					{
-						CString tmpStr = m_wndInspectorGrid.GetName(a)+_T(": ")+m_wndInspectorGrid.GetValue(a)+_T("\n");
-
-						CHAR Buffer[1024];
-						WideCharToMultiByte(CP_ACP, 0, tmpStr, -1, Buffer, 1024, NULL, NULL);
-						f.Write(Buffer, (UINT)strlen(Buffer));
-					}
+						f.WriteString(m_wndInspectorGrid.GetName(a)+_T(": ")+m_wndInspectorGrid.GetValue(a)+_T("\n"));
 			}
 			catch(CFileException ex)
 			{

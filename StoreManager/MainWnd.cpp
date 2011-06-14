@@ -31,6 +31,71 @@ LFFilter* GetRootFilter(CHAR* RootStore=NULL)
 	return f;
 }
 
+void WriteTXTItem(CStdioFile& f, LFItemDescriptor* i)
+{
+	for (UINT attr=0; attr<LFAttributeCount; attr++)
+	{
+		LFVariantData v;
+		v.Attr = attr;
+		LFGetAttributeVariantData(i, &v);
+
+		if (!LFIsNullVariantData(&v))
+		{
+			WCHAR tmpBuf[256];
+			LFVariantDataToString(&v, tmpBuf, 256);
+
+			CString tmpStr = theApp.m_Attributes[attr]->Name;
+			tmpStr.Append(_T(": "));
+			tmpStr.Append(tmpBuf);
+			tmpStr.Append(_T("\n"));
+
+			f.WriteString(tmpStr);
+		}
+	}
+}
+
+void WriteXMLItem(CStdioFile& f, LFItemDescriptor* i)
+{
+	CString Type(_T("unknown"));
+	switch (i->Type & LFTypeMask)
+	{
+	case LFTypeStore:
+		Type = _T("store");
+		break;
+	case LFTypeVolume:
+		Type = _T("volume");
+		break;
+	case LFTypeVirtual:
+		Type = _T("virtual");
+		break;
+	case LFTypeFile:
+		Type = _T("file");
+		break;
+	}
+
+	f.WriteString(_T("\t<item type=\"")+Type+_T("\">\n"));
+
+	for (UINT attr=0; attr<LFAttributeCount; attr++)
+	{
+		LFVariantData v;
+		v.Attr = attr;
+		LFGetAttributeVariantData(i, &v);
+
+		if (!LFIsNullVariantData(&v))
+		{
+			WCHAR tmpBuf[256];
+			LFVariantDataToString(&v, tmpBuf, 256);
+
+			CString tmpStr;
+			tmpStr.Format(_T("\t\t<property name=\"%s\" id=\"%d\">%s</property>\n"), theApp.m_Attributes[attr]->XMLID, attr, tmpBuf);
+
+			f.WriteString(tmpStr);
+		}
+	}
+
+	f.WriteString(_T("\t</item>\n"));
+}
+
 
 // CMainWnd
 //
@@ -510,41 +575,26 @@ LRESULT CMainWnd::OnNavigateTo(WPARAM wParam, LPARAM /*lParam*/)
 
 void CMainWnd::WriteMetadataTXT(CStdioFile& f)
 {
+#define Spacer { if (First) { First = FALSE; } else { f.WriteString(_T("\n")); } }
+
 	BOOL First = TRUE;
 	INT idx = m_wndMainView.GetNextSelectedItem(-1);
 	while (idx!=-1)
 	{
 		LFItemDescriptor* i = m_pCookedFiles->m_Items[idx];
 
-		if (First)
+		if (((i->Type & LFTypeMask)==LFTypeVirtual) && (i->FirstAggregate!=-1) && (i->LastAggregate!=-1))
 		{
-			First = FALSE;
+			for (INT a=i->FirstAggregate; a<=i->LastAggregate; a++)
+			{
+				Spacer;
+				WriteTXTItem(f, m_pRawFiles->m_Items[a]);
+			}
 		}
 		else
 		{
-			f.WriteString(_T("\n"));
-		}
-
-		for (UINT attr=0; attr<LFAttributeCount; attr++)
-		{
-			LFVariantData v;
-			v.Attr = attr;
-			LFGetAttributeVariantData(i, &v);
-
-			if (!LFIsNullVariantData(&v))
-			{
-				WCHAR tmpBuf[256];
-				LFVariantDataToString(&v, tmpBuf, 256);
-
-				CString tmpStr = theApp.m_Attributes[attr]->Name;
-				tmpStr.Append(_T(": "));
-				tmpStr.Append(tmpBuf);
-				tmpStr.Append(_T("\n"));
-
-				CHAR Buffer[1024];
-				WideCharToMultiByte(CP_ACP, 0, tmpStr, -1, Buffer, 1024, NULL, NULL);
-				f.Write(Buffer, (UINT)strlen(Buffer));
-			}
+			Spacer;
+			WriteTXTItem(f, i);
 		}
 
 		idx = m_wndMainView.GetNextSelectedItem(idx);
@@ -553,6 +603,26 @@ void CMainWnd::WriteMetadataTXT(CStdioFile& f)
 
 void CMainWnd::WriteMetadataXML(CStdioFile& f)
 {
+	f.WriteString(_T("<?xml version=\"1.0\">\n<items>\n"));
+
+	INT idx = m_wndMainView.GetNextSelectedItem(-1);
+	while (idx!=-1)
+	{
+		LFItemDescriptor* i = m_pCookedFiles->m_Items[idx];
+		if (((i->Type & LFTypeMask)==LFTypeVirtual) && (i->FirstAggregate!=-1) && (i->LastAggregate!=-1))
+		{
+			for (INT a=i->FirstAggregate; a<=i->LastAggregate; a++)
+				WriteXMLItem(f, m_pRawFiles->m_Items[a]);
+		}
+		else
+		{
+			WriteXMLItem(f, i);
+		}
+
+		idx = m_wndMainView.GetNextSelectedItem(idx);
+	}
+
+	f.WriteString(_T("</items>\n"));
 }
 
 void CMainWnd::OnExportMetadata()

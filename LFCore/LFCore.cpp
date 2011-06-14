@@ -34,6 +34,46 @@ unsigned int VolumeTypes[26] = { DRIVE_UNKNOWN };
 #pragma comment(linker, "/SECTION:common_drives,RWS")
 
 
+void LoadStringEnglish(HINSTANCE hInstance, unsigned int uID, wchar_t* lpBuffer, int cchBufferMax)
+{
+	DWORD nID = (uID>>4)+1;
+	DWORD nItemID = uID & 0x000F;
+
+	HRSRC hRes = FindResourceEx(hInstance, RT_STRING, MAKEINTRESOURCE(nID), MAKELANGID(LANG_ENGLISH, SUBLANG_NEUTRAL));
+	if (hRes)
+	{
+		HGLOBAL hGlobal = LoadResource(hInstance, hRes);
+		LPCWSTR lpStr = (LPCWSTR)LockResource(hGlobal);
+
+		unsigned int nStr = 0;
+		DWORD dwSize = SizeofResource(hInstance, hRes);
+		DWORD ptr = 0;
+		while (ptr<dwSize)
+		{
+			if (nStr==nItemID)
+			{
+				if (lpStr[ptr])
+				{
+					wcsncpy_s(lpBuffer, cchBufferMax, &lpStr[ptr+1], lpStr[ptr]);
+					lpBuffer[lpStr[ptr]] = L'\0';
+				}
+				else
+				{
+					lpBuffer[0] = L'\0';
+				}
+
+				break;
+			}
+
+			ptr += lpStr[ptr]+1;
+			nStr++;
+		}
+
+		UnlockResource(lpStr);
+		FreeResource(hGlobal);
+	}
+}
+
 unsigned int GetDriveBus(char d)
 {
 	unsigned int res = BusTypeMaxReserved;
@@ -196,9 +236,23 @@ LFCore_API LFAttributeDescriptor* LFGetAttributeInfo(unsigned int ID)
 		return NULL;
 
 	LFAttributeDescriptor* a = LFAllocAttributeDescriptor();
-	LoadString(LFCoreModuleHandle, ID+IDS_FirstAttribute, a->Name, 64);
+	LoadString(LFCoreModuleHandle, ID+IDS_FirstAttribute, a->Name, 256);
 	a->AlwaysVisible = (ID==LFAttrFileName);
 	a->Type = AttrTypes[ID];
+
+	wchar_t tmpBuf[256];
+	wchar_t* ptrSrc = tmpBuf;
+	wchar_t* ptrDst = a->XMLID;
+	LoadStringEnglish(LFCoreModuleHandle, ID+IDS_FirstAttribute, tmpBuf, 256);
+
+	do
+	{
+		wchar_t ch = (wchar_t)tolower(*ptrSrc);
+		if ((ch>=L'a') && (ch<=L'z'))
+			*(ptrDst++) = ch;
+	}
+	while (*(ptrSrc++)!=L'\0');
+	*ptrDst = L'\0';
 
 	// Type and character count (where appropriate)
 	if ((a->Type==LFTypeUnicodeString) || (a->Type==LFTypeUnicodeArray) || (a->Type==LFTypeAnsiString))

@@ -307,7 +307,8 @@ struct LFShellProperty
 
 struct LFAttributeDescriptor
 {
-	wchar_t Name[64];
+	wchar_t Name[256];
+	wchar_t XMLID[256];
 	bool AlwaysVisible;
 	bool Sortable;
 	bool PreferDescendingSort;
