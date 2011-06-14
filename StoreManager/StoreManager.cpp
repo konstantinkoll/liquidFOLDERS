@@ -95,18 +95,27 @@ BOOL CStoreManagerApp::InitInstance()
 	for (INT a=0; a<LFContextCount; a++)
 		LoadViewOptions(a);
 
-	CHAR StoreID[LFKeySize];
-	CHAR* RootStore = NULL;
-
-	if (__argc==2)
-		if (wcslen(__wargv[1])==LFKeySize-1)
-		{
-			WideCharToMultiByte(CP_ACP, 0, __wargv[1], -1, StoreID, LFKeySize, NULL, NULL);
-			RootStore = StoreID;
-		}
-
 	CMainWnd* pFrame = new CMainWnd();
-	pFrame->Create(FALSE, RootStore);
+
+	// Parse parameter and create window
+	if (__argc==2)
+	{
+		if (wcslen(__wargv[1])==LFKeySize-1)
+			if ((wcschr(__wargv[1], L'.')==NULL) && (wcschr(__wargv[1], L':')==NULL) && (wcschr(__wargv[1], L'\\')==NULL))
+			{
+				CHAR StoreID[LFKeySize];
+				WideCharToMultiByte(CP_ACP, 0, __wargv[1], -1, StoreID, LFKeySize, NULL, NULL);
+				pFrame->CreateStore(StoreID);
+				goto Finish;
+			}
+
+		pFrame->CreateFilter(__wargv[1]);
+		goto Finish;
+	}
+
+	pFrame->CreateRoot();
+
+Finish:
 	pFrame->ShowWindow(SW_SHOW);
 
 	return TRUE;
@@ -181,7 +190,7 @@ CMainWnd* CStoreManagerApp::GetClipboard()
 	if (!p_Clipboard)
 	{
 		p_Clipboard = new CMainWnd();
-		p_Clipboard->Create(TRUE);
+		p_Clipboard->CreateClipboard();
 		p_Clipboard->ShowWindow(SW_SHOW);
 	}
 

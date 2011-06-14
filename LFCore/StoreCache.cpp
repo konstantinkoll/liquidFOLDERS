@@ -527,6 +527,19 @@ LFStoreDescriptor* FindStore(GUID guid, HANDLE* lock)
 	return NULL;
 }
 
+LFStoreDescriptor* FindStore(wchar_t* datpath, HANDLE* lock)
+{
+	for (unsigned int a=0; a<StoreCount; a++)
+		if (wcscmp(StoreCache[a].DatPath, datpath)==0)
+		{
+			if (lock)
+				GetMutexForStore(&StoreCache[a], lock);
+			return &StoreCache[a];
+		}
+
+	return NULL;
+}
+
 unsigned int FindStores(char** keys)
 {
 	if (StoreCount)

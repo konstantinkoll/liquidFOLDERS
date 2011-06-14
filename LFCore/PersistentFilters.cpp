@@ -208,6 +208,38 @@ LFCore_API unsigned int LFSaveFilter(char* key, LFFilter* filter, wchar_t* name,
 	return res;
 }
 
+LFCore_API LFFilter* LFLoadFilter(wchar_t* fn)
+{
+	if (!GetMutex(Mutex_Stores))
+		return NULL;
+
+	wchar_t Path[2*MAX_PATH];
+	wcscpy_s(Path, 2*MAX_PATH, fn);
+	wchar_t* LastBackslash = wcsrchr(Path, L'\\');
+	if (LastBackslash)
+		*(LastBackslash+1) = L'\0';
+
+	LFStoreDescriptor* slot = FindStore(Path);
+
+	LFFilter* f = LoadFilter(fn, slot ? slot->StoreID : "");
+	if (f)
+	{
+		wchar_t Name[256];
+		LastBackslash = wcsrchr(fn, L'\\');
+		wcscpy_s(Name, 256, (!LastBackslash) ? fn : (*LastBackslash==L'\0') ? fn : LastBackslash+1);
+
+		wchar_t* pExt = wcschr(Name, L'.');
+		if (pExt)
+			*pExt = L'\0';
+
+		wcscpy_s(f->Name, 256, Name);
+	}
+
+	ReleaseMutex(Mutex_Stores);
+
+	return f;
+}
+
 LFCore_API LFFilter* LFLoadFilter(LFItemDescriptor* i)
 {
 	wchar_t Path[2*MAX_PATH];

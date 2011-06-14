@@ -56,22 +56,10 @@ CMainWnd::~CMainWnd()
 	DeleteBreadcrumbs(&m_BreadcrumbForward);
 }
 
-BOOL CMainWnd::Create(BOOL IsClipboard, CHAR* RootStore)
+BOOL CMainWnd::Create(BOOL IsClipboard)
 {
 	m_hIcon = theApp.LoadIcon(IsClipboard ? IDR_CLIPBOARD : IDR_APPLICATION);
 	m_IsClipboard = IsClipboard;
-
-	if (!IsClipboard)
-	{
-		if (RootStore)
-		{
-			m_BreadcrumbBack = new BreadcrumbItem();
-			ZeroMemory(m_BreadcrumbBack, sizeof(BreadcrumbItem));
-			m_BreadcrumbBack->filter = GetRootFilter();
-		}
-
-		m_pActiveFilter = GetRootFilter(RootStore);
-	}
 
 	CString className = AfxRegisterWndClass(CS_DBLCLKS, LoadCursor(NULL, IDC_ARROW), NULL, m_hIcon);
 
@@ -83,6 +71,52 @@ BOOL CMainWnd::Create(BOOL IsClipboard, CHAR* RootStore)
 	ENSURE(caption.LoadString(IsClipboard ? IDR_CLIPBOARD : IDR_APPLICATION));
 
 	return CGlasWindow::Create(WS_MINIMIZEBOX | WS_MAXIMIZEBOX, className, caption, rect);
+}
+
+BOOL CMainWnd::CreateClipboard()
+{
+	return Create(TRUE);
+}
+
+BOOL CMainWnd::CreateRoot()
+{
+	m_pActiveFilter = GetRootFilter();
+
+	return Create(FALSE);
+}
+
+BOOL CMainWnd::CreateStore(CHAR* RootStore)
+{
+	ASSERT(RootStore);
+
+	if (!Create(FALSE))
+		return FALSE;
+
+	m_BreadcrumbBack = new BreadcrumbItem();
+	ZeroMemory(m_BreadcrumbBack, sizeof(BreadcrumbItem));
+	m_BreadcrumbBack->filter = GetRootFilter();
+
+	m_pActiveFilter = GetRootFilter(RootStore);
+
+	return TRUE;
+}
+
+BOOL CMainWnd::CreateFilter(LFFilter* f)
+{
+	m_pActiveFilter = f;
+	if (!m_pActiveFilter)
+		return FALSE;
+
+	return Create(FALSE);
+}
+
+BOOL CMainWnd::CreateFilter(WCHAR* FileName)
+{
+	m_pActiveFilter = LFLoadFilter(FileName);
+	if (!m_pActiveFilter)
+		return FALSE;
+
+	return Create(FALSE);
 }
 
 BOOL CMainWnd::PreTranslateMessage(MSG* pMsg)
@@ -160,8 +194,19 @@ BOOL CMainWnd::AddClipItem(LFItemDescriptor* i)
 
 void CMainWnd::NavigateTo(LFFilter* f, UINT NavMode, FVPersistentData* Data, INT FirstAggregate, INT LastAggregate)
 {
-	ASSERT(!m_IsClipboard);
+	ASSERT(f);
 
+	// Open new window if current window is not navigable
+	if (m_IsClipboard)
+	{
+		CMainWnd* pFrame = new CMainWnd();
+		pFrame->CreateFilter(f);
+		pFrame->ShowWindow(SW_SHOW);
+
+		return;
+	}
+
+	// Navigate
 	if (NavMode<NAVMODE_RELOAD)
 		theApp.PlayNavigateSound();
 

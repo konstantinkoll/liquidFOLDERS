@@ -35,7 +35,11 @@ public:
 	virtual BOOL OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo);
 	virtual void AdjustLayout();
 
-	BOOL Create(BOOL IsClipboard, CHAR* RootStore=NULL);
+	BOOL CreateClipboard();
+	BOOL CreateRoot();
+	BOOL CreateStore(CHAR* RootStore);
+	BOOL CreateFilter(LFFilter* f);
+	BOOL CreateFilter(WCHAR* FileName);
 	INT GetContext();
 	INT GetViewID();
 	BOOL AddClipItem(LFItemDescriptor* i);
@@ -53,6 +57,8 @@ protected:
 	LFFilter* m_pActiveFilter;
 	LFSearchResult* m_pRawFiles;
 	LFSearchResult* m_pCookedFiles;
+
+	BOOL Create(BOOL IsClipboard);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();
