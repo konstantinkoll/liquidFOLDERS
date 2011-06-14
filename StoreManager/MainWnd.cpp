@@ -507,6 +507,54 @@ LRESULT CMainWnd::OnNavigateTo(WPARAM wParam, LPARAM /*lParam*/)
 	return NULL;
 }
 
+
+void CMainWnd::WriteMetadataTXT(CStdioFile& f)
+{
+	BOOL First = TRUE;
+	INT idx = m_wndMainView.GetNextSelectedItem(-1);
+	while (idx!=-1)
+	{
+		LFItemDescriptor* i = m_pCookedFiles->m_Items[idx];
+
+		if (First)
+		{
+			First = FALSE;
+		}
+		else
+		{
+			f.WriteString(_T("\n"));
+		}
+
+		for (UINT attr=0; attr<LFAttributeCount; attr++)
+		{
+			LFVariantData v;
+			v.Attr = attr;
+			LFGetAttributeVariantData(i, &v);
+
+			if (!LFIsNullVariantData(&v))
+			{
+				WCHAR tmpBuf[256];
+				LFVariantDataToString(&v, tmpBuf, 256);
+
+				CString tmpStr = theApp.m_Attributes[attr]->Name;
+				tmpStr.Append(_T(": "));
+				tmpStr.Append(tmpBuf);
+				tmpStr.Append(_T("\n"));
+
+				CHAR Buffer[1024];
+				WideCharToMultiByte(CP_ACP, 0, tmpStr, -1, Buffer, 1024, NULL, NULL);
+				f.Write(Buffer, (UINT)strlen(Buffer));
+			}
+		}
+
+		idx = m_wndMainView.GetNextSelectedItem(idx);
+	}
+}
+
+void CMainWnd::WriteMetadataXML(CStdioFile& f)
+{
+}
+
 void CMainWnd::OnExportMetadata()
 {
 	CString Extensions;
@@ -520,7 +568,31 @@ void CMainWnd::OnExportMetadata()
 	CFileDialog dlg(FALSE, _T(".txt"), NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, Extensions, this);
 	if (dlg.DoModal()==IDOK)
 	{
-		MessageBox(_T("Coming soon!"));
+		CStdioFile f;
+		if (!f.Open(dlg.GetFileName(), CFile::modeCreate | CFile::modeWrite))
+		{
+			LFErrorBox(LFDriveNotReady, GetSafeHwnd());
+		}
+		else
+		{
+			try
+			{
+				if (dlg.GetFileExt()==_T("txt"))
+				{
+					WriteMetadataTXT(f);
+				}
+				else
+					if (dlg.GetFileExt()==_T("xml"))
+					{
+						WriteMetadataXML(f);
+					}
+			}
+			catch(CFileException ex)
+			{
+				LFErrorBox(LFDriveNotReady, GetSafeHwnd());
+			}
+			f.Close();
+		}
 	}
 }
 

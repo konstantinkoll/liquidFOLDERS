@@ -559,7 +559,7 @@ void CInspectorWnd::OnExportSummary()
 		CStdioFile f;
 		if (!f.Open(dlg.GetFileName(), CFile::modeCreate | CFile::modeWrite))
 		{
-			LFErrorBox(LFDriveNotReady);
+			LFErrorBox(LFDriveNotReady, GetSafeHwnd());
 		}
 		else
 		{
@@ -578,7 +578,7 @@ void CInspectorWnd::OnExportSummary()
 			}
 			catch(CFileException ex)
 			{
-				LFErrorBox(LFDriveNotReady);
+				LFErrorBox(LFDriveNotReady, GetSafeHwnd());
 			}
 			f.Close();
 		}

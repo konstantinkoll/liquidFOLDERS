@@ -59,6 +59,8 @@ protected:
 	LFSearchResult* m_pCookedFiles;
 
 	BOOL Create(BOOL IsClipboard);
+	void WriteMetadataTXT(CStdioFile& f);
+	void WriteMetadataXML(CStdioFile& f);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();
@@ -72,6 +74,7 @@ protected:
 
 	afx_msg void OnItemOpen();
 	afx_msg LRESULT OnNavigateTo(WPARAM wParam, LPARAM lParam);
+
 	afx_msg void OnExportMetadata();
 
 	afx_msg void OnUpdateViewOptions();
