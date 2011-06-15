@@ -603,7 +603,7 @@ void CMainWnd::WriteMetadataTXT(CStdioFile& f)
 
 void CMainWnd::WriteMetadataXML(CStdioFile& f)
 {
-	f.WriteString(_T("<?xml version=\"1.0\">\n<items>\n"));
+	f.WriteString(_T("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\">\n<items>\n"));
 
 	INT idx = m_wndMainView.GetNextSelectedItem(-1);
 	while (idx!=-1)

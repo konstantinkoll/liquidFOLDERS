@@ -65,7 +65,7 @@ BOOL SaveFilterDlg::OnInitDialog()
 
 	// Name
 	m_wndEdit.SetWindowText(m_FileName);
-	m_wndEdit.SetSel(0, wcslen(m_FileName)-1);
+	m_wndEdit.SetSel(0, (int)wcslen(m_FileName)-1);
 
 	// OK-Button
 	CheckOK();

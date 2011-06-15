@@ -187,7 +187,7 @@ LFCommDlg_API void SetCompareComboBox(CComboBox* pComboBox, UINT attr, INT reque
 
 		for (INT a=0; a<pComboBox->GetCount(); a++)
 		{
-			INT data = pComboBox->GetItemData(a);
+			INT data = (INT)pComboBox->GetItemData(a);
 			if ((data==request) || ((first==TRUE) && ((data==LFFilterCompareIsEqual) || (data==LFFilterCompareContains))))
 			{
 				pComboBox->SetCurSel(a);
