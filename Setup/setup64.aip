@@ -94,11 +94,11 @@
     <ROW RemoveFile="__1" Condition="(AI_CLEAN_RESOURCES_UNINSTALL = &quot;1&quot;) AND (NOT UPGRADINGPRODUCTCODE)" Options="3"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.BuildComponent">
-    <ROW BuildKey="DefaultBuild" BuildName="DefaultBuild" BuildOrder="1" BuildType="1" PackageFolder="." PackageFileName="liquidFOLDERS32" Languages="en;fr;de;es" LangOpt="1" InstallationType="2" CabsLocation="1" UseLzma="true" LzmaCompressionLevel="4" PackageType="1" FilesInsideExe="true" ExeIconPath="Setup\liquidFOLDERS.ico" ExtractionFolder="[AppDataFolder]\[|ProductName]\install" ExtUI="true" LangsDialog="true" MsiPackageType="x64" UACExecutionLevel="2"/>
+    <ROW BuildKey="DefaultBuild" BuildName="DefaultBuild" BuildOrder="1" BuildType="1" PackageFolder="." PackageFileName="liquidFOLDERS64" Languages="en;fr;de;es" LangOpt="1" InstallationType="2" CabsLocation="1" UseLzma="true" LzmaCompressionLevel="4" PackageType="1" FilesInsideExe="true" ExeIconPath="Setup\liquidFOLDERS.ico" ExtractionFolder="[AppDataFolder]\[|ProductName]\install" ExtUI="true" LangsDialog="true" MsiPackageType="x64" UACExecutionLevel="2"/>
     <ATTRIBUTE name="CurrentBuild" value="DefaultBuild"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.CacheComponent">
-    <ATTRIBUTE name="CacheIndex" value="setup32.txt"/>
+    <ATTRIBUTE name="CacheIndex" value="setup64.txt"/>
     <ATTRIBUTE name="Folder" value="Temp"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.DictionaryComponent">
