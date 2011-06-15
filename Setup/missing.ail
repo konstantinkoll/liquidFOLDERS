@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<DICTIONARY type="multilanguage" ignore="en">
+  <ENTRY id="ActionText.Description.AI_AiRemoveFilesCommit">
+    <STRING lang="en" value="Executing file removal operations."/>
+    <STRING lang="es" value=""/>
+  </ENTRY>
+  <ENTRY id="ActionText.Description.AI_AiRemoveFilesDeferred">
+    <STRING lang="en" value="Executing file removal operations."/>
+    <STRING lang="es" value=""/>
+  </ENTRY>
+  <ENTRY id="ActionText.Description.AI_AiRemoveFilesImmediate">
+    <STRING lang="en" value="Generating actions to remove files."/>
+    <STRING lang="es" value=""/>
+  </ENTRY>
+  <ENTRY id="ActionText.Template.AI_AiRemoveFilesCommit">
+    <STRING lang="en" value="Removing file: [1]"/>
+    <STRING lang="es" value=""/>
+  </ENTRY>
+  <ENTRY id="ActionText.Template.AI_AiRemoveFilesDeferred">
+    <STRING lang="en" value="Removing file: [1]"/>
+    <STRING lang="es" value=""/>
+  </ENTRY>
+  <ENTRY id="Azure.Control.Help.MaintenanceTypeDlg#ModifyCommand">
+    <STRING lang="en" value="Change which features are installed.|"/>
+    <STRING lang="es" value=""/>
+  </ENTRY>
+  <ENTRY id="Azure.Control.Text.AdminInstallPointDlg#Title">
+    <STRING lang="en" value="Select a network location for the server image of [ProductName] product"/>
+    <STRING lang="es" value=""/>
+  </ENTRY>
+  <ENTRY id="Azure.Control.Text.CustomizeDlg#AvailableSpaceLabel">
+    <STRING lang="en" value="Space available on drive: "/>
+    <STRING lang="es" value=""/>
+  </ENTRY>
+  <ENTRY id="Azure.Control.Text.CustomizeDlg#AvailableSpaceText">
+    <STRING lang="en" value="[PrimaryVolumeSpaceAvailable]"/>
+    <STRING lang="es" value=""/>
+  </ENTRY>
+  <ENTRY id="Azure.Control.Text.CustomizeDlg#ItemDescription">
+    <STRING lang="en" value="Multiline description of the currently selected item."/>
+    <STRING lang="es" value=""/>
+  </ENTRY>
+  <ENTRY id="Azure.Control.Text.CustomizeDlg#Text">
+    <STRING lang="en" value="Select which components of [ProductName] will be installed"/>
+    <STRING lang="es" value=""/>
+  </ENTRY>
+  <ENTRY id="Azure.Control.Text.CustomizeDlg#TotalSpaceLabel">
+    <STRING lang="en" value="Total space required on drive: "/>
+    <STRING lang="es" value=""/>
+  </ENTRY>
+  <ENTRY id="Azure.Control.Text.CustomizeDlg#TotalSpaceText">
+    <STRING lang="en" value="[PrimaryVolumeSpaceRequired]"/>
+    <STRING lang="es" value=""/>
+  </ENTRY>
+  <ENTRY id="Azure.Control.Text.DiskCostDlg#Title">
+    <STRING lang="en" value="Disk space required for the selected features"/>
+    <STRING lang="es" value=""/>
+  </ENTRY>
+  <ENTRY id="Azure.Control.Text.FilesInUse#Title">
+    <STRING lang="en" value="Some files that need to be updated are currently in use"/>
+    <STRING lang="es" value=""/>
+  </ENTRY>
+  <ENTRY id="Azure.Control.Text.FolderDlg#AvailableSpaceLabel">
+    <STRING lang="en" value="Space available on drive: "/>
+    <STRING lang="es" value=""/>
+  </ENTRY>
+  <ENTRY id="Azure.Control.Text.FolderDlg#AvailableSpaceText">
+    <STRING lang="en" value="[PrimaryVolumeSpaceAvailable]"/>
+    <STRING lang="es" value=""/>
+  </ENTRY>
+  <ENTRY id="Azure.Control.Text.FolderDlg#RemainingSpaceLabel">
+    <STRING lang="en" value="Remaining free space on drive: "/>
+    <STRING lang="es" value=""/>
+  </ENTRY>
+  <ENTRY id="Azure.Control.Text.FolderDlg#RemainingSpaceText">
+    <STRING lang="en" value="[PrimaryVolumeSpaceRemaining]"/>
+    <STRING lang="es" value=""/>
+  </ENTRY>
+  <ENTRY id="Azure.Control.Text.FolderDlg#Title">
+    <STRING lang="en" value="Choose a file location"/>
+    <STRING lang="es" value=""/>
+  </ENTRY>
+  <ENTRY id="Azure.Control.Text.FolderDlg#TotalSpaceLabel">
+    <STRING lang="en" value="Total space required on drive:"/>
+    <STRING lang="es" value=""/>
+  </ENTRY>
+  <ENTRY id="Azure.Control.Text.FolderDlg#TotalSpaceText">
+    <STRING lang="en" value="[PrimaryVolumeSpaceRequired]"/>
+    <STRING lang="es" value=""/>
+  </ENTRY>
+  <ENTRY id="Azure.Control.Text.MaintenanceTypeDlg#Title">
+    <STRING lang="en" value="Change your installation of [ProductName]"/>
+    <STRING lang="es" value=""/>
+  </ENTRY>
+  <ENTRY id="Azure.Control.Text.MsiRMFilesInUse#Title">
+    <STRING lang="en" value="Some files that need to be updated are currently in use"/>
+    <STRING lang="es" value=""/>
+  </ENTRY>
+  <ENTRY id="Azure.Control.Text.OutOfDiskDlg#Title">
+    <STRING lang="en" value="Disk space required for the installation exceeds available disk space"/>
+    <STRING lang="es" value=""/>
+  </ENTRY>
+  <ENTRY id="Azure.Control.Text.OutOfRbDiskDlg#Title">
+    <STRING lang="en" value="Disk space required for the installation exceeds available disk space"/>
+    <STRING lang="es" value=""/>
+  </ENTRY>
+  <ENTRY id="Azure.Control.Text.PrepareDlg#Description">
+    <STRING lang="en" value="Please wait while the [Wizard] prepares to guide you through the installation."/>
+    <STRING lang="es" value=""/>
+  </ENTRY>
+  <ENTRY id="Azure.Control.Text.PrepareDlg#Title">
+    <STRING lang="en" value="Preparing [ProductName] [Wizard]"/>
+    <STRING lang="es" value=""/>
+  </ENTRY>
+  <ENTRY id="Azure.Control.Text.ProgressDlg#Description">
+    <STRING lang="en" value="Installing [ProductName]..."/>
+    <STRING lang="es" value=""/>
+  </ENTRY>
+  <ENTRY id="Azure.Control.Text.ProgressDlg#Title">
+    <STRING lang="en" value="Installation Progress"/>
+    <STRING lang="es" value=""/>
+  </ENTRY>
+  <ENTRY id="Azure.Control.Text.ShortcutsDlg#Title">
+    <STRING lang="en" value="Create application shortcuts"/>
+    <STRING lang="es" value=""/>
+  </ENTRY>
+  <ENTRY id="Azure.Control.Text.VerifyReadyDlg#Title">
+    <STRING lang="en" value="Begin installation of [ProductName]"/>
+    <STRING lang="es" value=""/>
+  </ENTRY>
+  <ENTRY id="Azure.Control.Text.VerifyRemoveDlg#Title">
+    <STRING lang="en" value="Begin remove of [ProductName]"/>
+    <STRING lang="es" value=""/>
+  </ENTRY>
+  <ENTRY id="Azure.Control.Text.VerifyRepairDlg#Title">
+    <STRING lang="en" value="Begin repair of [ProductName]"/>
+    <STRING lang="es" value=""/>
+  </ENTRY>
+  <ENTRY id="Control.Text.AdminWelcomeDlg#DescriptionNoClose">
+    <STRING lang="en" value="The [Wizard] will create a server image of [ProductName], at a specified network location.  Click Next to continue or close the window to exit the [Wizard]."/>
+    <STRING lang="fr" value=""/>
+    <STRING lang="de" value=""/>
+    <STRING lang="es" value=""/>
+  </ENTRY>
+  <ENTRY id="Control.Text.MaintenanceWelcomeDlg#DescriptionNoClose">
+    <STRING lang="en" value="The [Wizard] will allow you to change the way [ProductName] features are installed on your computer or even to remove [ProductName] from your computer.  Click Next to continue or close the window to exit the [Wizard]."/>
+    <STRING lang="fr" value=""/>
+    <STRING lang="de" value=""/>
+    <STRING lang="es" value=""/>
+  </ENTRY>
+  <ENTRY id="Control.Text.PatchWelcomeDlg#DescriptionNoClose">
+    <STRING lang="en" value="The [Wizard] will install the Patch for [ProductName] on your computer.  Click Next to continue or close the window to exit the Patch [Wizard]."/>
+    <STRING lang="fr" value=""/>
+    <STRING lang="de" value=""/>
+    <STRING lang="es" value=""/>
+  </ENTRY>
+  <ENTRY id="Control.Text.ResumeDlg#DescriptionNoClose">
+    <STRING lang="en" value="The [Wizard] will complete the installation of [ProductName] on your computer.  Click Install to continue or close the window to exit the [Wizard]."/>
+    <STRING lang="fr" value=""/>
+    <STRING lang="de" value=""/>
+    <STRING lang="es" value=""/>
+  </ENTRY>
+  <ENTRY id="Control.Text.VerifyReadyDlg#TextNoClose">
+    <STRING lang="en" value="Click Install to begin the installation.  If you want to review or change any of your installation settings, click Back.  Close the window to exit the wizard."/>
+    <STRING lang="fr" value=""/>
+    <STRING lang="de" value=""/>
+    <STRING lang="es" value=""/>
+  </ENTRY>
+  <ENTRY id="Control.Text.WelcomeDlg#DescriptionNoClose">
+    <STRING lang="en" value="The [Wizard] will install [ProductName] on your computer. Click Next to continue or close the window to exit the [Wizard]."/>
+    <STRING lang="fr" value=""/>
+    <STRING lang="de" value=""/>
+    <STRING lang="es" value=""/>
+  </ENTRY>
+  <ENTRY id="Property.Manufacturer">
+    <STRING lang="en" value="liquidFOLDERS"/>
+    <STRING lang="fr" value="liquidFOLDERS"/>
+    <STRING lang="de" value="liquidFOLDERS"/>
+    <STRING lang="es" value="liquidFOLDERS"/>
+  </ENTRY>
+  <ENTRY id="Property.ProductName">
+    <STRING lang="en" value="liquidFOLDERS"/>
+    <STRING lang="fr" value="liquidFOLDERS"/>
+    <STRING lang="de" value="liquidFOLDERS"/>
+    <STRING lang="es" value="liquidFOLDERS"/>
+  </ENTRY>
+</DICTIONARY>
