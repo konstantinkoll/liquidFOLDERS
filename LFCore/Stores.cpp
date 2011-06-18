@@ -211,15 +211,15 @@ unsigned int ValidateStoreDirectories(LFStoreDescriptor* s)
 	if (s->DatPath[0]!=L'\0')
 	{
 		DWORD res = CreateDir(s->DatPath);
-			if ((res!=ERROR_SUCCESS) && (res!=ERROR_ALREADY_EXISTS))
-				return LFIllegalPhysicalPath;
+		if ((res!=ERROR_SUCCESS) && (res!=ERROR_ALREADY_EXISTS))
+			return LFIllegalPhysicalPath;
 	}
 
 	if (s->DatPath[0]!=L'\0')
 	{
 		DWORD res = CreateDir(s->IdxPathMain);
-			if ((res!=ERROR_SUCCESS) && (res!=ERROR_ALREADY_EXISTS))
-				return LFIllegalPhysicalPath;
+		if ((res!=ERROR_SUCCESS) && (res!=ERROR_ALREADY_EXISTS))
+			return LFIllegalPhysicalPath;
 
 		// Store auf externen Medien verstecken
 		if ((s->StoreMode!=LFStoreModeInternal) && (res==ERROR_SUCCESS))
@@ -495,7 +495,7 @@ LFCore_API unsigned int LFCreateStore(LFStoreDescriptor* s, bool MakeDefault, HW
 
 	// Ggf. Name setzen
 	if (!s->StoreName[0])
-		LoadStringW(LFCoreModuleHandle, IDS_StoreDefaultName, s->StoreName, 256);
+		LoadString(LFCoreModuleHandle, IDS_StoreDefaultName, s->StoreName, 256);
 
 	if (!GetMutex(Mutex_Stores))
 		return LFMutexError;
