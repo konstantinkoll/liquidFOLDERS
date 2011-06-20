@@ -55,6 +55,7 @@
     <ROW Directory="SHORTCUTDIR" Directory_Parent="TARGETDIR" DefaultDir="SHORTC~1|SHORTCUTDIR" IsPseudoRoot="1"/>
     <ROW Directory="SystemFolder" Directory_Parent="TARGETDIR" DefaultDir="System~1|SystemFolder" IsPseudoRoot="1"/>
     <ROW Directory="TARGETDIR" DefaultDir="SourceDir"/>
+    <ROW Directory="WindowsFolder" Directory_Parent="TARGETDIR" DefaultDir="Window~1|WindowsFolder" IsPseudoRoot="1"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiCompsComponent">
     <ROW Component="AI_CustomARPName" ComponentId="{35B1121B-A24F-48CB-91D6-D06869268BAD}" Directory_="APPDIR" Attributes="4" KeyPath="DisplayName" Options="1"/>
@@ -62,7 +63,6 @@
     <ROW Component="FileDrop.exe" ComponentId="{54E79247-5D7F-42D3-8857-BE97DFB82F0B}" Directory_="APPDIR" Attributes="0" KeyPath="FileDrop.exe"/>
     <ROW Component="LFCommDlg.dll" ComponentId="{E57BA0CB-7A32-432F-800E-DF5203723D46}" Directory_="APPDIR" Attributes="0" KeyPath="LFCommDlg.dll"/>
     <ROW Component="LFCore.dll" ComponentId="{08385D33-9AE4-448E-9CE8-0C2ECB1F6837}" Directory_="SystemFolder" Attributes="0" KeyPath="LFCore.dll"/>
-    <ROW Component="LFFilterfile" ComponentId="{A5817351-49F1-4842-9DAC-5FE8858B21FF}" Directory_="APPDIR" Attributes="4" KeyPath="LFFilterfile"/>
     <ROW Component="LFNamespaceExtension.dll" ComponentId="{D95B92C6-EFFF-4DDF-8B93-4080729E0DDE}" Directory_="SystemFolder" Attributes="0" KeyPath="LFNamespaceExtension.dll"/>
     <ROW Component="LFRunCmd.exe" ComponentId="{EC192EE4-9393-47A0-8FBF-4715E3B4974F}" Directory_="APPDIR" Attributes="0" KeyPath="LFRunCmd.exe"/>
     <ROW Component="LFWatchdog.exe" ComponentId="{C9158E4A-BAE9-4D93-80EF-BFAD3058595F}" Directory_="APPDIR" Attributes="0" KeyPath="LFWatchdog.exe"/>
@@ -75,7 +75,7 @@
   <COMPONENT cid="caphyon.advinst.msicomp.MsiFeatsComponent">
     <ROW Feature="FileDrop" Title="FileDrop" Description="FileDrop" Display="5" Level="1" Directory_="APPDIR" Attributes="8" Components="FileDrop.exe AI_CustomARPName AI_DisableModify"/>
     <ROW Feature="MigrationWizard" Title="MigrationWizard" Description="Migration Wizard" Display="7" Level="1" Directory_="APPDIR" Attributes="8" Components="Migrate.exe AI_CustomARPName AI_DisableModify"/>
-    <ROW Feature="liquidFOLDERS" Title="liquidFOLDERS" Description="liquidFOLDERS" Display="0" Level="1" Directory_="APPDIR" Attributes="24" Components="LFCommDlg.dll LFCore.dll LFNamespaceExtension.dll LFRunCmd.exe LFWatchdog.exe StoreManager.exe SHORTCUTDIR AI_CustomARPName AI_DisableModify Quick_Launch liquidFOLDERS LFFilterfile"/>
+    <ROW Feature="liquidFOLDERS" Title="liquidFOLDERS" Description="liquidFOLDERS" Display="0" Level="1" Directory_="APPDIR" Attributes="24" Components="LFCommDlg.dll LFCore.dll LFNamespaceExtension.dll LFRunCmd.exe LFWatchdog.exe StoreManager.exe SHORTCUTDIR AI_CustomARPName AI_DisableModify Quick_Launch liquidFOLDERS"/>
     <ATTRIBUTE name="CurrentFeature" value="liquidFOLDERS"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiFilesComponent">
@@ -356,6 +356,7 @@
     <ROW Action="AI_AiRemoveFilesDeferred" Type="11265" Source="ResourceCleaner.dll" Target="OnAiRemoveFiles" WithoutSeq="true"/>
     <ROW Action="AI_AiRemoveFilesImmediate" Type="1" Source="ResourceCleaner.dll" Target="OnAiRemoveFilesImmediate"/>
     <ROW Action="AI_DATA_SETTER" Type="51" Source="AI_DEL_EMPTY_SHORTCUTDIR" Target="[SHORTCUTDIR]"/>
+    <ROW Action="AI_DATA_SETTER_1" Type="51" Source="CustomActionData" Target="explorer.exe"/>
     <ROW Action="AI_DATA_SETTER_2" Type="51" Source="CustomActionData" Target="LFWatchdog.exe"/>
     <ROW Action="AI_DELETE_SHORTCUTS" Type="1" Source="aicustact.dll" Target="DeleteShortcuts"/>
     <ROW Action="AI_DEL_EMPTY_SHORTCUTDIR" Type="3073" Source="aicustact.dll" Target="DeleteEmptyDirectory"/>
@@ -375,6 +376,8 @@
     <ROW Action="AI_ResolveKnownFolders" Type="1" Source="aicustact.dll" Target="AI_ResolveKnownFolders"/>
     <ROW Action="AI_RunFinishActions" Type="1" Source="aicustact.dll" Target="RunFinishActions" WithoutSeq="true"/>
     <ROW Action="AI_STORE_LOCATION" Type="51" Source="ARPINSTALLLOCATION" Target="[APPDIR]"/>
+    <ROW Action="DetectProcess" Type="1" Source="aicustact.dll" Target="DetectProcess"/>
+    <ROW Action="Explorer" Type="226" Source="WindowsFolder" Target="Explorer.exe"/>
     <ROW Action="LFRunCmd.exe" Type="1618" Source="LFRunCmd.exe" Target="INSTALL"/>
     <ROW Action="LFWatchdog.exe" Type="1746" Source="LFWatchdog.exe"/>
     <ROW Action="SET_APPDIR" Type="307" Source="APPDIR" Target="[ProgramFilesFolder][Manufacturer]\[ProductName]" MultiBuildTarget="DefaultBuild:[ProgramFilesFolder]\[ProductName]"/>
@@ -409,6 +412,9 @@
     <ROW Action="LFRunCmd.exe" Condition="NOT (($LFRunCmd.exe = 2) AND (?LFRunCmd.exe = 3))" Sequence="6401"/>
     <ROW Action="StopProcess" Condition="Installed" Sequence="52" AdditionalSeq="AI_DATA_SETTER_2"/>
     <ROW Action="AI_DATA_SETTER_2" Condition="Installed" Sequence="51"/>
+    <ROW Action="DetectProcess" Sequence="6602" AdditionalSeq="AI_DATA_SETTER_1"/>
+    <ROW Action="Explorer" Condition="AI_PROCESS_STATE=&quot;Stopped&quot;" Sequence="6603"/>
+    <ROW Action="AI_DATA_SETTER_1" Sequence="6601"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiInstallUISequenceComponent">
     <ROW Action="AI_RESTORE_LOCATION" Condition="APPDIR=&quot;&quot;" Sequence="749"/>
@@ -464,7 +470,7 @@
     <ROW Registry="HelpTelephone" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="HelpTelephone" Component_="AI_CustomARPName"/>
     <ROW Registry="InfoTip" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}" Name="InfoTip" Value="#%@[#LFNamespaceExtension.dll],1000" Component_="LFNamespaceExtension.dll"/>
     <ROW Registry="InstallLocation" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="InstallLocation" Value="[APPDIR]" Component_="AI_CustomARPName"/>
-    <ROW Registry="LFFilterfile" Root="0" Key="LFFilterfile" Name="-" Component_="LFFilterfile"/>
+    <ROW Registry="LFFilterfile" Root="0" Key="LFFilterfile" Name="-" Component_="LFNamespaceExtension.dll"/>
     <ROW Registry="LFNamespaceExtension.DriveMenu" Root="0" Key="LFNamespaceExtension.DriveMenu" Name="-" Component_="LFNamespaceExtension.dll"/>
     <ROW Registry="LFNamespaceExtension.RootFolder" Root="0" Key="LFNamespaceExtension.RootFolder" Name="-" Component_="LFNamespaceExtension.dll"/>
     <ROW Registry="LFNamespaceExtension.SendTo" Root="0" Key="LFNamespaceExtension.SendTo" Name="-" Component_="LFNamespaceExtension.dll"/>
