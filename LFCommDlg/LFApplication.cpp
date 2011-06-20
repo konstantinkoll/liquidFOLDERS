@@ -324,6 +324,21 @@ INT LFApplication::ExitInstance()
 	return 0;
 }
 
+BOOL LFApplication::ShowNagScreen()
+{
+	if (!LFIsLicensed())
+	{
+		CString tmpStr;
+		ENSURE(tmpStr.LoadString(IDS_NOLICENSE));
+
+		MessageBox(GetForegroundWindow(), tmpStr, _T("liquidFOLDERS"), MB_OK | MB_ICONINFORMATION);
+
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
 CString LFApplication::GetDefaultFontFace()
 {
 	return (OSVersion==OS_XP ? _T("Arial") : _T("Segoe UI"));

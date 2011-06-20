@@ -72,6 +72,7 @@
 #define IDS_MAINTENANCETAB0             20324
 #define IDS_MAINTENANCETAB1             20325
 #define IDS_REGFILEFILTER               20326
+#define IDS_NOLICENSE                   20327
 #define IDS_COMPARE_FIRST               20400
 #define IDS_COMPARE_IGNORE              20400
 #define IDS_COMPARE_ISNULL              20401

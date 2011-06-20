@@ -86,6 +86,8 @@ END_MESSAGE_MAP()
 
 BOOL LFStoreNewDlg::OnInitDialog()
 {
+	((LFApplication*)AfxGetApp())->ShowNagScreen();
+
 	CDialog::OnInitDialog();
 
 	// Symbol für dieses Dialogfeld festlegen. Wird automatisch erledigt

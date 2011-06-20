@@ -708,6 +708,7 @@ BEGIN
     IDS_MAINTENANCETAB0     "Erfolgreich gewartet"
     IDS_MAINTENANCETAB1     "Fehler"
     IDS_REGFILEFILTER       "Registrierungsdatei"
+    IDS_NOLICENSE           "Sie nutzen eine unregistrierte Kopie von liquidFOLDERS. liquidFOLDERS ist Shareware – wenn Sie die Software regelmäßig nutzen, müssen Sie eine Lizenz erwerben!"
 END
 
 STRINGTABLE 
@@ -1301,6 +1302,7 @@ BEGIN
     IDS_MAINTENANCETAB0     "Successfully serviced"
     IDS_MAINTENANCETAB1     "Errors"
     IDS_REGFILEFILTER       "Registry file"
+    IDS_NOLICENSE           "You are using an unregistered copy of liquidFOLDERS. liquidFOLDERS is shareware—if you decide to use it regulary, you are required to purchase a license key!"
 END
 
 STRINGTABLE 
@@ -1901,6 +1903,7 @@ BEGIN
     IDS_MAINTENANCETAB0     "Revisión satisfactoria"
     IDS_MAINTENANCETAB1     "Errores"
     IDS_REGFILEFILTER       "Archivo de Registro"
+    IDS_NOLICENSE           "Usted está usando una copia no registrada de liquidFOLDERS. liquidFOLDERS es un software de demostración – si usted decide usarlo regularmente, usted está obligado a adquirir una licencia!"
 END
 
 STRINGTABLE 
@@ -2503,6 +2506,7 @@ BEGIN
     IDS_MAINTENANCETAB0     "Entretenu avec succès"
     IDS_MAINTENANCETAB1     "Erreurs"
     IDS_REGFILEFILTER       "Fichier de Registre"
+    IDS_NOLICENSE           "Vous utilisez une copie non enregistrée de liquidFOLDERS. liquidFOLDERS est shareware – si vous utilisez régulièrement le logiciel, vous devez acquérir une licence!"
 END
 
 STRINGTABLE 

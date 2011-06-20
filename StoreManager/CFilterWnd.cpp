@@ -292,6 +292,8 @@ void CFilterWnd::OnSave()
 
 void CFilterWnd::OnSearch()
 {
+	theApp.ShowNagScreen();
+
 	GetOwner()->SendMessage(WM_NAVIGATETO, (WPARAM)CreateFilter());
 }
 

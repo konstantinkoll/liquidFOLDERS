@@ -99,6 +99,7 @@ public:
 
 	virtual BOOL InitInstance();
 	virtual INT ExitInstance();
+	virtual BOOL ShowNagScreen();
 
 	CString GetDefaultFontFace();
 	void SendMail(CString Subject=_T(""));

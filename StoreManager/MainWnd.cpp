@@ -185,6 +185,8 @@ BOOL CMainWnd::PreTranslateMessage(MSG* pMsg)
 {
 	if ((pMsg->message==WM_KEYDOWN) && (pMsg->wParam==VK_RETURN) && (pMsg->hwnd==m_wndSearch))
 	{
+		theApp.ShowNagScreen();
+
 		LFFilter* f = LFAllocFilter();
 		f->Mode = LFFilterModeSearch;
 		f->Options.IsSearch = true;
@@ -540,6 +542,8 @@ void CMainWnd::OnItemOpen()
 						LFFilter* f = LFLoadFilter(i);
 						if (f)
 						{
+							theApp.ShowNagScreen();
+
 							m_wndMainView.SetFilter(f);
 							NavigateTo(f);
 						}
@@ -720,7 +724,7 @@ LRESULT CMainWnd::OnCookFiles(WPARAM wParam, LPARAM /*lParam*/)
 			ENSURE(tmpStr.LoadString(IDS_NOLICENSE));
 			m_wndMainView.ShowNotification(ENT_INFO, tmpStr, ID_APP_PURCHASE);
 
-			theApp.m_NagCounter = 0;
+			ResetNagCounter;
 		}
 
 	return m_pCookedFiles->m_LastError;

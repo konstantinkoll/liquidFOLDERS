@@ -578,12 +578,7 @@ BEGIN
     IDS_STATISTICS_BYSIZE   "Nach Größe"
     IDS_STATISTICS_OTHER    "Andere"
     IDS_SUBFOLDERS_MANDATORY "Unterordner in dieser Ansicht erforderlich"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_SUBFOLDERS_NOTAVAIL "Unterordner im Kontext nicht verfügbar"
-    IDS_NOLICENSE           "Sie nutzen eine unregistrierte Kopie von liquidFOLDERS. liquidFOLDERS ist Shareware – wenn Sie die Software regelmäßig nutzen, müssen Sie eine Lizenz erwerben!"
 END
 
 STRINGTABLE 
@@ -1175,12 +1170,7 @@ BEGIN
     IDS_STATISTICS_BYSIZE   "By file size"
     IDS_STATISTICS_OTHER    "Other"
     IDS_SUBFOLDERS_MANDATORY "Subfolders are mandatory for this view."
-END
-
-STRINGTABLE 
-BEGIN
     IDS_SUBFOLDERS_NOTAVAIL "Subfolders are not available in this context."
-    IDS_NOLICENSE           "You are using an unregistered copy of liquidFOLDERS. liquidFOLDERS is shareware—if you decide to use it regulary, you are required to purchase a license key!"
 END
 
 STRINGTABLE 
@@ -1772,14 +1762,8 @@ BEGIN
     IDS_STATISTICS_BYCOUNT  "Por número de archivo"
     IDS_STATISTICS_BYSIZE   "Por tamaño de archivo"
     IDS_STATISTICS_OTHER    "Otros"
-    IDS_SUBFOLDERS_MANDATORY 
-                            "Las subcarpetas son obligatorias para esta visualización."
-END
-
-STRINGTABLE 
-BEGIN
+    IDS_SUBFOLDERS_MANDATORY "Las subcarpetas son obligatorias para esta visualización."
     IDS_SUBFOLDERS_NOTAVAIL "Las subcarpetas no están disponibles para este contexto."
-    IDS_NOLICENSE           "Usted está usando una copia no registrada de liquidFOLDERS. liquidFOLDERS es un software de demostración – si usted decide usarlo regularmente, usted está obligado a adquirir una licencia!"
 END
 
 STRINGTABLE 
@@ -2373,12 +2357,7 @@ BEGIN
     IDS_STATISTICS_BYSIZE   "Après la grandeur"
     IDS_STATISTICS_OTHER    "D'autres"
     IDS_SUBFOLDERS_MANDATORY "Sous-dossier dans cet avis nécessaire"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_SUBFOLDERS_NOTAVAIL "Sous-dossier dans le contexte non disponible"
-    IDS_NOLICENSE           "Vous utilisez une copie non enregistrée de liquidFOLDERS. liquidFOLDERS est shareware – si vous utilisez régulièrement le logiciel, vous devez acquérir une licence!"
 END
 
 STRINGTABLE 
