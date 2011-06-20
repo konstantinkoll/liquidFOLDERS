@@ -154,6 +154,8 @@ void CMigrateWnd::OnSelectRoot()
 
 void CMigrateWnd::OnMigrate()
 {
+	theApp.ShowNagScreen();
+
 	// Folders checked ?
 	if (!m_wndMainView.FoldersChecked())
 	{
