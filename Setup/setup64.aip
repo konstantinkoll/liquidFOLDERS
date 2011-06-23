@@ -560,20 +560,20 @@
     <ROW FileKey="__1" Component_="LFCore.dll" DirProperty="SHORTCUTDIR" InstallMode="2"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiRemoveRegComponent">
-    <ROW RemoveRegistry="_" Root="2" Key="Software\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\Namespace\DelegateFolders\{3F2D914F-FE57-414F-9F88-A377C7841DA4}" Name="-" Component_="LFNamespaceExtension.dll"/>
-    <ROW RemoveRegistry="__1" Root="2" Key="Software\Microsoft\Windows\CurrentVersion\Explorer\Desktop\Namespace\{3F2D914F-FE57-414F-9F88-A377C7841DA4}" Name="-" Component_="LFNamespaceExtension.dll"/>
-    <ROW RemoveRegistry="__10" Root="0" Key=".LFSendTo" Name="-" Component_="LFNamespaceExtension.dll"/>
-    <ROW RemoveRegistry="__11" Root="0" Key="CLSID\{3F2D914D-FE57-414F-9F88-A377C7841DA4}" Name="-" Component_="LFNamespaceExtension.dll"/>
-    <ROW RemoveRegistry="__12" Root="0" Key="CLSID\{3F2D914E-FE57-414F-9F88-A377C7841DA4}" Name="-" Component_="LFNamespaceExtension.dll"/>
-    <ROW RemoveRegistry="__13" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}" Name="-" Component_="LFNamespaceExtension.dll"/>
+    <ROW RemoveRegistry="_" Root="2" Key="Software\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\Namespace\DelegateFolders\{3F2D914F-FE57-414F-9F88-A377C7841DA4}" Name="-" Component_="liquidFOLDERS"/>
+    <ROW RemoveRegistry="__1" Root="2" Key="Software\Microsoft\Windows\CurrentVersion\Explorer\Desktop\Namespace\{3F2D914F-FE57-414F-9F88-A377C7841DA4}" Name="-" Component_="liquidFOLDERS"/>
+    <ROW RemoveRegistry="__10" Root="0" Key=".LFSendTo" Name="-" Component_="liquidFOLDERS"/>
+    <ROW RemoveRegistry="__11" Root="0" Key="CLSID\{3F2D914D-FE57-414F-9F88-A377C7841DA4}" Name="-" Component_="liquidFOLDERS"/>
+    <ROW RemoveRegistry="__12" Root="0" Key="CLSID\{3F2D914E-FE57-414F-9F88-A377C7841DA4}" Name="-" Component_="liquidFOLDERS"/>
+    <ROW RemoveRegistry="__13" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}" Name="-" Component_="liquidFOLDERS"/>
     <ROW RemoveRegistry="__2" Root="2" Key="Software\liquidFOLDERS" Name="-" Component_="liquidFOLDERS"/>
-    <ROW RemoveRegistry="__3" Root="0" Key="LFSendTofile" Name="-" Component_="LFNamespaceExtension.dll"/>
-    <ROW RemoveRegistry="__4" Root="0" Key="LFNamespaceExtension.RootFolder" Name="-" Component_="LFNamespaceExtension.dll"/>
-    <ROW RemoveRegistry="__5" Root="0" Key="LFNamespaceExtension.DriveMenu" Name="-" Component_="LFNamespaceExtension.dll"/>
-    <ROW RemoveRegistry="__6" Root="0" Key="LFFilterfile" Name="-" Component_="LFNamespaceExtension.dll"/>
-    <ROW RemoveRegistry="__7" Root="0" Key="Folder\Shellex\ContextMenuHandlers\liquidFOLDERS.DriveMenu" Name="-" Component_="LFNamespaceExtension.dll"/>
-    <ROW RemoveRegistry="__8" Root="0" Key="Drive\Shellex\ContextMenuHandlers\liquidFOLDERS.DriveMenu" Name="-" Component_="LFNamespaceExtension.dll"/>
-    <ROW RemoveRegistry="__9" Root="0" Key=".filter" Name="-" Component_="LFNamespaceExtension.dll"/>
+    <ROW RemoveRegistry="__3" Root="0" Key="LFSendTofile" Name="-" Component_="liquidFOLDERS"/>
+    <ROW RemoveRegistry="__4" Root="0" Key="LFNamespaceExtension.RootFolder" Name="-" Component_="liquidFOLDERS"/>
+    <ROW RemoveRegistry="__5" Root="0" Key="LFNamespaceExtension.DriveMenu" Name="-" Component_="liquidFOLDERS"/>
+    <ROW RemoveRegistry="__6" Root="0" Key="LFFilterfile" Name="-" Component_="liquidFOLDERS"/>
+    <ROW RemoveRegistry="__7" Root="0" Key="Folder\Shellex\ContextMenuHandlers\liquidFOLDERS.DriveMenu" Name="-" Component_="liquidFOLDERS"/>
+    <ROW RemoveRegistry="__8" Root="0" Key="Drive\Shellex\ContextMenuHandlers\liquidFOLDERS.DriveMenu" Name="-" Component_="liquidFOLDERS"/>
+    <ROW RemoveRegistry="__9" Root="0" Key=".filter" Name="-" Component_="liquidFOLDERS"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiShortsComponent">
     <ROW Shortcut="FileDrop.exe" Directory_="SHORTCUTDIR" Name="FileDrop" Component_="FileDrop.exe" Target="[#FileDrop.exe]" Description="FileDrop.exe" Hotkey="0" IconIndex="0" ShowCmd="1" WkDir="APPDIR"/>
