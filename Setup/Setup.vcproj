@@ -211,10 +211,6 @@
 			>
 		</File>
 		<File
-			RelativePath=".\reboot.vbs"
-			>
-		</File>
-		<File
 			RelativePath=".\setup32.aip"
 			>
 		</File>
