@@ -142,6 +142,18 @@
     <STRING lang="de" value="Der [Wizard] erstellt ein Server-Image von [ProductName], in dem angegebenen Netzwerkpfad. &quot;Weiter&quot; um fortzufahren oder &quot;Abbrechen&quot; um den [Wizard] zu beenden."/>
     <STRING lang="es" value="El [Wizard] va a crear una imágen de servidor de [ProductName] en una ubicación de red especificada. Seleccione Siguiente para continuar o Cancelar para salir del [Wizard]."/>
   </ENTRY>
+  <ENTRY id="Azure.Control.Text.LicenseAgreementDlg#Description">
+    <STRING lang="en" value="To continue you must read and accept the terms of this agreement. If you do not want to accept the [Manufacturer] Licence Terms, close this window to cancel the installation."/>
+    <STRING lang="es" value="Lea atentamente el siguiente contrato de licencia."/>
+  </ENTRY>
+  <ENTRY id="Azure.Control.Text.LicenseAgreementDlg#EulaAgreeCheckBox">
+    <STRING lang="en" value="I &amp;accept the terms of this agreement."/>
+    <STRING lang="es" value="&amp;Aceptar contrato de licencia para usuarios finales."/>
+  </ENTRY>
+  <ENTRY id="Azure.Control.Text.LicenseAgreementDlg#Title">
+    <STRING lang="en" value="Accept the [ProductName] Licence Terms"/>
+    <STRING lang="es" value="Contrato de licencia para usuarios finales"/>
+  </ENTRY>
   <ENTRY id="Control.Text.MaintenanceWelcomeDlg#DescriptionNoClose">
     <STRING lang="en" value="The [Wizard] will allow you to change the way [ProductName] features are installed on your computer or even to remove [ProductName] from your computer. Click Next to continue or close the window to exit the [Wizard]."/>
     <STRING lang="fr" value="L&apos;[Wizard] va vous permettre de changer la façon dont les fonctionnalités de [ProductName] vont être installées sur votre ordinateur ou d&apos;enlever [ProductName] de votre ordinateur. Choisissez &quot;Suivant&quot; pour continuer ou &quot;Annuler&quot; pour quitter l&apos;[Wizard]."/>
@@ -171,6 +183,12 @@
     <STRING lang="fr" value="L&apos;[Wizard] va installer [ProductName] sur votre ordinateur. Cliquez sur &quot;Suivant&quot; pour continuer ou &quot;Annuler&quot; pour quitter l&apos;[Wizard]."/>
     <STRING lang="de" value="Der [Wizard] wird [ProductName] auf Ihrem Computer installieren. Klicken Sie auf &quot;Weiter&quot; um fortzufahren, oder auf &quot;Abbrechen&quot; um den [Wizard] zu beenden."/>
     <STRING lang="es" value="El [Wizard] va a instalar [ProductName] en su ordenador. Haga click en Siguente para continuar o en Cancelar para salir del [Wizard]."/>
+  </ENTRY>
+  <ENTRY id="Control.Text.LicenseAgreementDlg#AgreementText">
+    <STRING lang="en" value="I:\Dokumente und Einstellungen\ROOT\Eigene Dateien\liquidFOLDERS\Setup\EULA_en.rtf"/>
+    <STRING lang="fr" value="I:\Dokumente und Einstellungen\ROOT\Eigene Dateien\liquidFOLDERS\Setup\EULA_en.rtf"/>
+    <STRING lang="de" value="I:\Dokumente und Einstellungen\ROOT\Eigene Dateien\liquidFOLDERS\Setup\EULA_de.rtf"/>
+    <STRING lang="es" value="I:\Dokumente und Einstellungen\ROOT\Eigene Dateien\liquidFOLDERS\Setup\EULA_en.rtf"/>
   </ENTRY>
   <ENTRY id="Property.Manufacturer">
     <STRING lang="en" value="liquidFOLDERS"/>
