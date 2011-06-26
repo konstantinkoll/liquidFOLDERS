@@ -20,7 +20,7 @@ public:
 	LFPhysicalLocationList();
 	~LFPhysicalLocationList();
 
-	bool AddItem(LFItemDescriptor* i);
+	bool AddItemDescriptor(LFItemDescriptor* i);
 	void SetError(char* key, unsigned int error);
 	void Resolve(bool IncludePIDL=false);
 	LPITEMIDLIST DetachPIDL(unsigned int idx);

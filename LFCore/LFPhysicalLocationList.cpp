@@ -21,7 +21,7 @@ LFPhysicalLocationList::~LFPhysicalLocationList()
 				FreePIDL(m_Items[a].pidlFQ);
 }
 
-bool LFPhysicalLocationList::AddItem(LFItemDescriptor* i)
+bool LFPhysicalLocationList::AddItemDescriptor(LFItemDescriptor* i)
 {
 	assert(i);
 

@@ -355,7 +355,7 @@ void SetNameExtAddFromFile(LFItemDescriptor* i, wchar_t* fn)
 	// Erweiterung
 	wchar_t* LastExt = wcsrchr(Name, L'.');
 	if (LastExt)
-		if (*LastExt!='\0')
+		if (*LastExt!=L'\0')
 		{
 			char Ext[LFExtSize] = { 0 };
 

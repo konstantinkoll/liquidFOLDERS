@@ -57,6 +57,7 @@ protected:
 	BOOL m_ShowFilterPane;
 	BOOL m_ShowInspectorPane;
 
+	LFPhysicalLocationList* BuildPhysicalLocationList(BOOL All=FALSE);
 	LFTransactionList* BuildTransactionList(BOOL All=FALSE);
 	void RemoveTransactedItems(LFTransactionList* tl);
 	BOOL UpdateTrashFlag(BOOL Trash, BOOL All=FALSE);
@@ -74,6 +75,7 @@ protected:
 	afx_msg void OnAdjustLayout();
 	afx_msg void OnUpdateSelection();
 	afx_msg LRESULT OnRenameItem(WPARAM wParam, LPARAM lParam);
+	afx_msg LRESULT OnSendTo(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnStoreAttributesChanged(WPARAM wParam, LPARAM lParam);
 
 	afx_msg void OnToggleFilter();
@@ -150,5 +152,6 @@ private:
 	void SetHeader();
 	void AdjustLayout();
 	void ExecuteContextMenu(CHAR Drive, LPCSTR verb);
+	void AddPhysicalLocationItem(LFPhysicalLocationList* ll, LFItemDescriptor* item);
 	void AddTransactionItem(LFTransactionList* tl, LFItemDescriptor* item, UINT UserData);
 };

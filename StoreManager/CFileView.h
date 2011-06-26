@@ -74,6 +74,17 @@ struct FVPersistentData
 };
 
 
+// SendTo item
+
+struct SendToItemData
+{
+	HBITMAP hBmp;
+	BOOL IsStore;
+	CHAR StoreID[LFKeySize];
+	WCHAR Path[MAX_PATH];
+};
+
+
 // Item data
 
 struct FVItemData
@@ -214,6 +225,7 @@ protected:
 
 private:
 	CEdit* p_Edit;
+	SendToItemData m_SendToItems[256];
 
 	void SetFooter();
 	void AppendString(UINT attr, CString& str, WCHAR* tmpStr);

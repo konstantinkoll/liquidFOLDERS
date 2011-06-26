@@ -24,6 +24,7 @@
 #define WM_UPDATEFOOTER          WM_USER+204
 #define WM_NAVIGATEBACK          WM_USER+205
 #define WM_NAVIGATETO            WM_USER+206
+#define WM_SENDTO                WM_USER+207
 
 class CMainWnd : public CGlasWindow
 {

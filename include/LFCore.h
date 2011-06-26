@@ -24,7 +24,8 @@
 #define LFGLD_External                   2
 #define LFGLD_Both                       3
 #define LFGLD_Network                    4
-#define LFGLD_All                        7
+#define LFGLD_IncludeFloppies            8
+#define LFGLD_All                        15
 
 #define DRIVE_EXTHD                      100
 
@@ -246,7 +247,7 @@ LFCore_API void LFFreeMaintenanceList(LFMaintenanceList* ml);
 LFCore_API LFPhysicalLocationList* LFAllocPhysicalLocationList();
 
 // Existierende Physical Location List freigeben
-LFCore_API void LFFreeTransactionList(LFTransactionList* ll);
+LFCore_API void LFFreePhysicalLocationList(LFPhysicalLocationList* ll);
 
 // LFItemDescriptor zur Physical Location List hinzufügen
 LFCore_API bool LFAddItemDescriptor(LFPhysicalLocationList* ll, LFItemDescriptor* i);

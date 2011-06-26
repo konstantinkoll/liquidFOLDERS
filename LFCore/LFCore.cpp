@@ -106,7 +106,10 @@ unsigned int GetDriveBus(char d)
 
 LFCore_API unsigned int LFGetLogicalDrives(unsigned int mask)
 {
-	DWORD DrivesOnSystem = GetLogicalDrives() & ~3;
+	DWORD DrivesOnSystem = GetLogicalDrives();
+	if ((mask & LFGLD_IncludeFloppies)==0)
+		DrivesOnSystem &= ~3;
+
 	DWORD Index = 1;
 	char szDriveRoot[] = " :\\";
 
@@ -808,10 +811,15 @@ LFCore_API LFPhysicalLocationList* LFAllocPhysicalLocationList()
 	return new LFPhysicalLocationList();
 }
 
-LFCore_API void LFFreePhyiscalLocationList(LFPhysicalLocationList* ll)
+LFCore_API void LFFreePhysicalLocationList(LFPhysicalLocationList* ll)
 {
 	if (ll)
 		delete ll;
+}
+
+LFCore_API bool LFAddItemDescriptor(LFPhysicalLocationList* ll, LFItemDescriptor* i)
+{
+	return ll->AddItemDescriptor(i);
 }
 
 LFCore_API unsigned int LFResolve(LFPhysicalLocationList* ll, bool IncludePIDL)

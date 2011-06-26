@@ -427,6 +427,48 @@ void CMainView::ExecuteContextMenu(CHAR Drive, LPCSTR verb)
 	}
 }
 
+void CMainView::AddPhysicalLocationItem(LFPhysicalLocationList* ll, LFItemDescriptor* item)
+{
+	switch (item->Type & LFTypeMask)
+	{
+	case LFTypeFile:
+		LFAddItemDescriptor(ll, item);
+		break;
+	case LFTypeVirtual:
+		if ((item->FirstAggregate!=-1) && (item->LastAggregate!=-1))
+			for (INT a=item->FirstAggregate; a<=item->LastAggregate; a++)
+				LFAddItemDescriptor(ll, p_RawFiles->m_Items[a]);
+		break;
+	}
+}
+
+LFPhysicalLocationList* CMainView::BuildPhysicalLocationList(BOOL All)
+{
+	LFPhysicalLocationList* ll = NULL;
+
+	if ((p_RawFiles) && (p_CookedFiles))
+	{
+		ll = LFAllocPhysicalLocationList();
+
+		if (All)
+		{
+			for (UINT a=0; a<p_CookedFiles->m_ItemCount; a++)
+				AddPhysicalLocationItem(ll, p_CookedFiles->m_Items[a]);
+		}
+		else
+		{
+			INT idx = GetNextSelectedItem(-1);
+			while (idx!=-1)
+			{
+				AddPhysicalLocationItem(ll, p_CookedFiles->m_Items[idx]);
+				idx = GetNextSelectedItem(idx);
+			}
+		}
+	}
+
+	return ll;
+}
+
 void CMainView::AddTransactionItem(LFTransactionList* tl, LFItemDescriptor* item, UINT UserData)
 {
 	switch (item->Type & LFTypeMask)
@@ -580,6 +622,7 @@ BEGIN_MESSAGE_MAP(CMainView, CWnd)
 	ON_MESSAGE_VOID(WM_ADJUSTLAYOUT, OnAdjustLayout)
 	ON_MESSAGE_VOID(WM_UPDATESELECTION, OnUpdateSelection)
 	ON_MESSAGE(WM_RENAMEITEM, OnRenameItem)
+	ON_MESSAGE(WM_SENDTO, OnSendTo)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoreAttributesChanged, OnStoreAttributesChanged)
 
 	ON_COMMAND(ID_PANE_FILTER, OnToggleFilter)
@@ -934,6 +977,20 @@ LRESULT CMainView::OnRenameItem(WPARAM wParam, LPARAM lParam)
 	BOOL changes = tl->m_Changes;
 	LFFreeTransactionList(tl);
 	return changes;
+}
+
+LRESULT CMainView::OnSendTo(WPARAM wParam, LPARAM /*lParam*/)
+{
+	SendToItemData* pItemData = (SendToItemData*)wParam;
+	MessageBox(pItemData->Path);
+
+	LFPhysicalLocationList* ll = BuildPhysicalLocationList();
+	LFResolve(ll);
+
+
+	LFFreePhysicalLocationList(ll);
+
+	return NULL;
 }
 
 LRESULT CMainView::OnStoreAttributesChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)

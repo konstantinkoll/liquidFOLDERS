@@ -4,6 +4,7 @@
 
 #include "stdafx.h"
 #include "CFileView.h"
+#include "MenuIcons.h"
 #include "StoreManager.h"
 
 
@@ -20,6 +21,25 @@ BOOL AttributeSortableInView(UINT Attr, UINT ViewMode)
 		break;
 	}
 	return b;
+}
+
+void AppendSendToItem(CMenu* pMenu, UINT nID, LPCWSTR lpszNewItem, HICON hIcon, INT cx, INT cy, SendToItemData* id)
+{
+	UINT idx = nID % 0xFF;
+
+	pMenu->AppendMenu(MF_STRING, nID, lpszNewItem);
+
+	if (hIcon)
+	{
+		id[idx].hBmp = IconToBitmap(hIcon, cx, cy);
+		DestroyIcon(hIcon);
+
+		MENUITEMINFO mii;
+		mii.cbSize = sizeof(mii);
+		mii.fMask = MIIM_BITMAP;
+		mii.hbmpItem = id[idx].hBmp;
+		SetMenuItemInfo(*pMenu, pMenu->GetMenuItemCount()-1, TRUE, &mii);
+	}
 }
 
 
@@ -554,7 +574,104 @@ CMenu* CFileView::GetSendToMenu()
 	CMenu* pMenu = new CMenu();
 	pMenu->CreatePopupMenu();
 
-	pMenu->InsertMenu(0, MF_STRING | MF_BYPOSITION | MF_DISABLED | MF_GRAYED, 0, _T("Coming soon!"));
+	MENUINFO mi;
+	mi.cbSize = sizeof(mi);
+	mi.fMask = MIM_STYLE;
+	mi.dwStyle = MNS_CHECKORBMP;
+	SetMenuInfo(*pMenu, &mi);
+
+	INT cx = GetSystemMetrics(SM_CXSMICON);
+	INT cy = GetSystemMetrics(SM_CYSMICON);
+
+	BOOL Added = FALSE;
+
+	// Stores
+	// TODO
+	UINT nID = 0xFF00;
+
+	// SendTo shortcuts
+	nID = 0xFF40;
+	if (Added)
+	{
+		pMenu->AppendMenu(MF_SEPARATOR);
+		Added = FALSE;
+	}
+
+	WCHAR Path[MAX_PATH];
+	if (SHGetSpecialFolderPath(NULL, Path, CSIDL_SENDTO, FALSE))
+	{
+		WCHAR Mask[MAX_PATH];
+		wcscpy_s(Mask, MAX_PATH, Path);
+		wcscat_s(Mask, MAX_PATH, L"\\*.*");
+
+		WIN32_FIND_DATA ffd;
+		HANDLE hFind = FindFirstFile(Mask, &ffd);
+
+		if (hFind!=INVALID_HANDLE_VALUE)
+			do
+			{
+				if ((ffd.dwFileAttributes & (FILE_ATTRIBUTE_HIDDEN | FILE_ATTRIBUTE_DIRECTORY))==0)
+				{
+					WCHAR Name[MAX_PATH];
+					wcscpy_s(Name, MAX_PATH, ffd.cFileName);
+
+					WCHAR* LastExt = wcsrchr(Name, L'.');
+					if (LastExt)
+						if (*LastExt!=L'\0')
+						{
+							CString Ext(LastExt);
+							Ext.MakeUpper();
+							if ((Ext==_T(".DESKLINK")) || (Ext==_T(".LFSENDTO")))
+								continue;
+
+							*LastExt = L'\0';
+						}
+
+					WCHAR Dst[MAX_PATH];
+					wcscpy_s(Dst, MAX_PATH, Path);
+					wcscat_s(Dst, MAX_PATH, L"\\");
+					wcscat_s(Dst, MAX_PATH, ffd.cFileName);
+
+					SHFILEINFO sfi;
+					if (SHGetFileInfo(Dst, 0, &sfi, sizeof(SHFILEINFO), SHGFI_ATTRIBUTES | SHGFI_ICON | SHGFI_SMALLICON))
+					{
+						AppendSendToItem(pMenu, nID, Name, sfi.hIcon, cx, cy, m_SendToItems);
+						Added = TRUE;
+
+						INT idx = (nID++) & 0xFF;
+						m_SendToItems[idx].IsStore = FALSE;
+						wcscpy_s(m_SendToItems[idx].Path, MAX_PATH, Dst);
+					}
+				}
+			}
+			while (FindNextFile(hFind, &ffd));
+
+		FindClose(hFind);
+	}
+
+	// Volumes
+	if (Added)
+		pMenu->AppendMenu(MF_SEPARATOR);
+
+	DWORD DrivesOnSystem = LFGetLogicalDrives(LFGLD_External | LFGLD_Network | LFGLD_IncludeFloppies);
+
+	for (CHAR cDrive='A'; cDrive<='Z'; cDrive++, DrivesOnSystem>>=1)
+	{
+		if (!(DrivesOnSystem & 1))
+			continue;
+
+		WCHAR szDriveRoot[] = L" :\\";
+		szDriveRoot[0] = cDrive;
+		SHFILEINFO sfi;
+		if (SHGetFileInfo(szDriveRoot, 0, &sfi, sizeof(SHFILEINFO), SHGFI_DISPLAYNAME | SHGFI_ICON | SHGFI_SMALLICON))
+		{
+			AppendSendToItem(pMenu, nID, sfi.szDisplayName, sfi.hIcon, cx, cy, m_SendToItems);
+
+			INT idx = (nID++) & 0xFF;
+			m_SendToItems[idx].IsStore = FALSE;
+			wcscpy_s(m_SendToItems[idx].Path, MAX_PATH, szDriveRoot);
+		}
+	}
 
 	return pMenu;
 }
@@ -1549,6 +1666,8 @@ void CFileView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 	}
 	else
 	{
+		ZeroMemory(&m_SendToItems, sizeof(m_SendToItems));
+
 		CMenu* pMenu = GetItemContextMenu(idx);
 		if (pMenu)
 		{
@@ -1557,11 +1676,24 @@ void CFileView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 
 			HBITMAP hBmp = theApp.SetContextMenuIcon(pPopup, IDM_VOLUME_CREATENEWSTORE, IDI_STORE_Bag);
 
-			pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, GetOwner(), NULL);
+			UINT idCmd = pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON | TPM_RETURNCMD, point.x, point.y, GetOwner(), NULL);
 			delete pMenu;
+
+			if (idCmd<0xFF00)
+			{
+				GetOwner()->SendMessage(WM_COMMAND, (WPARAM)idCmd);
+			}
+			else
+			{
+				GetParent()->SendMessage(WM_SENDTO, (WPARAM)&m_SendToItems[idCmd % 0xFF]);
+			}
 
 			DeleteObject(hBmp);
 		}
+
+		for (UINT a=0; a<256; a++)
+			if (m_SendToItems[a].hBmp)
+				DeleteObject(m_SendToItems[a].hBmp);
 	}
 }
 
