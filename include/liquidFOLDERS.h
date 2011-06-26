@@ -559,4 +559,5 @@ struct LFStoreDescriptor
 #include "..\\LFCore\\LFFileImportList.h"
 #include "..\\LFCore\\LFMaintenanceList.h"
 #include "..\\LFCore\\LFSearchResult.h"
+#include "..\\LFCore\\LFPhysicalLocationList.h"
 #include "..\\LFCore\\LFTransactionList.h"

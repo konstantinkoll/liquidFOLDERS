@@ -176,7 +176,7 @@ void CIndex::AddItem(LFItemDescriptor* i)
 	}
 }
 
-unsigned int CIndex::RenamePhysicalFile(LFCoreAttributes* PtrM, wchar_t* NewName, wchar_t* DatPath)
+unsigned int CIndex::RenamePhysicalFile(LFCoreAttributes* PtrM, wchar_t* NewName)
 {
 	if (!DatPath)
 		return LFStoreNotMounted;
@@ -229,7 +229,7 @@ void CIndex::Update(LFItemDescriptor* i, bool IncludeSlaves)
 		// Phys. Datei umbenennen ?
 		if (!(PtrM->Flags & LFFlagLink))
 			if (wcscmp(i->CoreAttributes.FileName, PtrM->FileName)!=0)
-				switch (RenamePhysicalFile(PtrM, i->CoreAttributes.FileName, DatPath))
+				switch (RenamePhysicalFile(PtrM, i->CoreAttributes.FileName))
 				{
 				case LFOk:
 					i->CoreAttributes.Flags &= ~LFFlagMissing;
@@ -331,7 +331,7 @@ void CIndex::Update(LFTransactionList* tl, LFVariantData* value1, LFVariantData*
 					if (!(PtrM->Flags & LFFlagLink))
 						if (wcscmp(i->CoreAttributes.FileName, PtrM->FileName)!=0)
 						{
-							unsigned int res = RenamePhysicalFile(PtrM, i->CoreAttributes.FileName, DatPath);
+							unsigned int res = RenamePhysicalFile(PtrM, i->CoreAttributes.FileName);
 							switch (res)
 							{
 							case LFOk:
@@ -380,7 +380,7 @@ void CIndex::Update(LFTransactionList* tl, LFVariantData* value1, LFVariantData*
 	}
 }
 
-unsigned int CIndex::DeletePhysicalFile(LFCoreAttributes* PtrM, wchar_t* DatPath)
+unsigned int CIndex::DeletePhysicalFile(LFCoreAttributes* PtrM)
 {
 	if (!DatPath)
 		return LFStoreNotMounted;
@@ -397,7 +397,7 @@ unsigned int CIndex::DeletePhysicalFile(LFCoreAttributes* PtrM, wchar_t* DatPath
 	return RemoveDir(Path) ? LFOk : LFCannotDeleteFile;
 }
 
-void CIndex::Delete(LFTransactionList* tl, wchar_t* DatPath)
+void CIndex::Delete(LFTransactionList* tl)
 {
 	assert(tl);
 
@@ -423,7 +423,7 @@ void CIndex::Delete(LFTransactionList* tl, wchar_t* DatPath)
 					// Files with "link" flag do not posses a file body
 					if (!(PtrM->Flags & LFFlagLink))
 					{
-						unsigned int res = DeletePhysicalFile(PtrM, DatPath);
+						unsigned int res = DeletePhysicalFile(PtrM);
 						if (res!=LFOk)
 							tl->m_Items[a].LastError = tl->m_LastError = res;
 					}
@@ -465,7 +465,7 @@ void CIndex::Delete(LFTransactionList* tl, wchar_t* DatPath)
 	}
 }
 
-void CIndex::Delete(LFFileIDList* il, bool PutInTrash, wchar_t* DatPath)
+void CIndex::Delete(LFFileIDList* il, bool PutInTrash)
 {
 	assert(il);
 
@@ -496,7 +496,7 @@ void CIndex::Delete(LFFileIDList* il, bool PutInTrash, wchar_t* DatPath)
 					// Files with "link" flag do not posses a file body
 					if (!(PtrM->Flags & LFFlagLink))
 					{
-						unsigned int res = DeletePhysicalFile(PtrM, DatPath);
+						unsigned int res = DeletePhysicalFile(PtrM);
 						if (res!=LFOk)
 							il->m_Items[a].LastError = il->m_LastError = res;
 					}
@@ -531,7 +531,7 @@ void CIndex::Delete(LFFileIDList* il, bool PutInTrash, wchar_t* DatPath)
 		}
 }
 
-unsigned int CIndex::Rename(char* FileID, wchar_t* NewName, wchar_t* DatPath)
+unsigned int CIndex::Rename(char* FileID, wchar_t* NewName)
 {
 	assert(FileID);
 	assert(NewName);
@@ -550,7 +550,7 @@ unsigned int CIndex::Rename(char* FileID, wchar_t* NewName, wchar_t* DatPath)
 		unsigned int res = LFOk;
 		if (!(PtrM->Flags & LFFlagLink))
 		{
-			res = RenamePhysicalFile(PtrM, NewName, DatPath);
+			res = RenamePhysicalFile(PtrM, NewName);
 			switch (res)
 			{
 			case LFOk:
@@ -571,6 +571,37 @@ unsigned int CIndex::Rename(char* FileID, wchar_t* NewName, wchar_t* DatPath)
 	}
 
 	return LFIllegalKey;
+}
+
+void CIndex::ResolvePhysicalLocation(LFPhysicalLocationList* ll)
+{
+	bool Mounted = (DatPath!=NULL);
+	if (DatPath)
+		Mounted &= (DatPath[0]!='\0');
+
+	if (!Mounted)
+	{
+		ll->SetError(StoreID, LFStoreNotMounted);
+		return;
+	}
+
+	if (!LoadTable(IDMaster))
+	{
+		ll->SetError(StoreID, LFIndexTableLoadError);
+		return;
+	}
+
+	int ID = 0;
+	LFCoreAttributes* PtrM;
+
+	while (Tables[IDMaster]->FindNext(ID, (void*&)PtrM))
+		for (unsigned int a=0; a<ll->m_ItemCount; a++)
+			if (!ll->m_Items[a].Processed)
+				if ((strcmp(ll->m_Items[a].StoreID, StoreID)==0) && (strcmp(ll->m_Items[a].FileID, PtrM->FileID)==0))
+				{
+					GetFileLocation(DatPath, PtrM, ll->m_Items[a].Path, 2*MAX_PATH);
+					ll->m_Items[a].Processed = true;
+				}
 }
 
 void CIndex::Retrieve(LFFilter* f, LFSearchResult* res)

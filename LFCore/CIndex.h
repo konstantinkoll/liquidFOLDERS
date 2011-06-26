@@ -29,16 +29,17 @@ public:
 	void Update(LFItemDescriptor* i, bool IncludeSlaves=true);
 	bool UpdateMissing(LFItemDescriptor* i, bool Exists);
 	void Update(LFTransactionList* tl, LFVariantData* value1, LFVariantData* value2=NULL, LFVariantData* value3=NULL);
-	void Delete(LFTransactionList* tl, wchar_t* DatPath=NULL);
-	void Delete(LFFileIDList* il, bool PutInTrash=true, wchar_t* DatPath=NULL);
-	unsigned int Rename(char* FileID, wchar_t* NewName, wchar_t* DatPath=NULL);
+	void Delete(LFTransactionList* tl);
+	void Delete(LFFileIDList* il, bool PutInTrash=true);
+	unsigned int Rename(char* FileID, wchar_t* NewName);
+	void ResolvePhysicalLocation(LFPhysicalLocationList* ll);
 	void Retrieve(LFFilter* f, LFSearchResult* res);
 	unsigned int RetrieveStats(unsigned int* cnt, __int64* size);
 
 protected:
 	bool LoadTable(unsigned int ID, unsigned int* res=NULL);
-	unsigned int RenamePhysicalFile(LFCoreAttributes* PtrM, wchar_t* NewName, wchar_t* DatPath);
-	unsigned int DeletePhysicalFile(LFCoreAttributes* PtrM, wchar_t* DatPath);
+	unsigned int RenamePhysicalFile(LFCoreAttributes* PtrM, wchar_t* NewName);
+	unsigned int DeletePhysicalFile(LFCoreAttributes* PtrM);
 
 private:
 	CHeapfile* Tables[IdxTableCount];

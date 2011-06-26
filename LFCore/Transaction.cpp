@@ -133,15 +133,14 @@ LFCore_API void LFTransactionDelete(LFTransactionList* tl)
 			{
 				CIndex* idx1;
 				CIndex* idx2;
-				LFStoreDescriptor* slot;
 				HANDLE StoreLock = NULL;
-				unsigned int res = OpenStore(tl->m_Items[a].Item->StoreID, true, idx1, idx2, &slot, &StoreLock);
+				unsigned int res = OpenStore(tl->m_Items[a].Item->StoreID, true, idx1, idx2, NULL, &StoreLock);
 
 				if (res==LFOk)
 				{
 					if (idx1)
 					{
-						idx1->Delete(tl, &slot->DatPath[0]);
+						idx1->Delete(tl);
 						delete idx1;
 					}
 					if (idx2)
@@ -191,20 +190,19 @@ LFCore_API void LFTransactionDelete(LFFileIDList* il, bool PutInTrash)
 		{
 			CIndex* idx1;
 			CIndex* idx2;
-			LFStoreDescriptor* slot;
 			HANDLE StoreLock = NULL;
-			unsigned int res = OpenStore(il->m_Items[a].StoreID, true, idx1, idx2, &slot, &StoreLock);
+			unsigned int res = OpenStore(il->m_Items[a].StoreID, true, idx1, idx2, NULL, &StoreLock);
 
 			if (res==LFOk)
 			{
 				if (idx1)
 				{
-					idx1->Delete(il, PutInTrash, &slot->DatPath[0]);
+					idx1->Delete(il, PutInTrash);
 					delete idx1;
 				}
 				if (idx2)
 				{
-					idx2->Delete(il, PutInTrash, &slot->DatPath[0]);
+					idx2->Delete(il, PutInTrash);
 					delete idx2;
 				}
 
@@ -231,15 +229,14 @@ LFCore_API unsigned int LFTransactionRename(char* StoreID, char* FileID, wchar_t
 
 	CIndex* idx1;
 	CIndex* idx2;
-	LFStoreDescriptor* slot;
 	HANDLE StoreLock = NULL;
-	unsigned int res = OpenStore(StoreID, true, idx1, idx2, &slot, &StoreLock);
+	unsigned int res = OpenStore(StoreID, true, idx1, idx2, NULL, &StoreLock);
 
 	if (res==LFOk)
 	{
 		if (idx1)
 		{
-			res = idx1->Rename(FileID, NewName, &slot->DatPath[0]);
+			res = idx1->Rename(FileID, NewName);
 			delete idx1;
 		}
 		if (idx2)

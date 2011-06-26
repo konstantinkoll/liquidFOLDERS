@@ -234,6 +234,31 @@ LFCore_API bool LFAddImportPath(LFFileImportList* il, wchar_t* path);
 
 
 
+// Neue LFMaintenanceList erzeugen
+LFCore_API LFMaintenanceList* LFAllocMaintenanceList();
+
+// Existierende LFMaintenanceList freigeben
+LFCore_API void LFFreeMaintenanceList(LFMaintenanceList* ml);
+
+
+
+// Neue Physical Location List erzeugen
+LFCore_API LFPhysicalLocationList* LFAllocPhysicalLocationList();
+
+// Existierende Physical Location List freigeben
+LFCore_API void LFFreeTransactionList(LFTransactionList* ll);
+
+// LFItemDescriptor zur Physical Location List hinzufügen
+LFCore_API bool LFAddItemDescriptor(LFPhysicalLocationList* ll, LFItemDescriptor* i);
+
+// Physische Orte auflösen
+LFCore_API unsigned int LFResolve(LFPhysicalLocationList* ll, bool IncludePIDL=false);
+
+// PIDL von Physical Location List lösen
+LFCore_API LPITEMIDLIST LFDetachPIDL(LFPhysicalLocationList* ll, unsigned int idx);
+
+
+
 // Neue Transaktionsliste erzeugen
 LFCore_API LFTransactionList* LFAllocTransactionList();
 
@@ -242,14 +267,6 @@ LFCore_API void LFFreeTransactionList(LFTransactionList* tl);
 
 // LFItemDescriptor zur LFTransactionList hinzufügen
 LFCore_API bool LFAddItemDescriptor(LFTransactionList* tl, LFItemDescriptor* i, unsigned int UserData=0);
-
-
-
-// Neue LFMaintenanceList erzeugen
-LFCore_API LFMaintenanceList* LFAllocMaintenanceList();
-
-// Existierende LFMaintenanceList freigeben
-LFCore_API void LFFreeMaintenanceList(LFMaintenanceList* ml);
 
 
 

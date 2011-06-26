@@ -13,5 +13,4 @@ public:
 
 	unsigned int m_FileCount;
 	__int64 m_FileSize;
-
 };
