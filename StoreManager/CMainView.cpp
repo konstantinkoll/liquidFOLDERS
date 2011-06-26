@@ -982,13 +982,44 @@ LRESULT CMainView::OnRenameItem(WPARAM wParam, LPARAM lParam)
 LRESULT CMainView::OnSendTo(WPARAM wParam, LPARAM /*lParam*/)
 {
 	SendToItemData* pItemData = (SendToItemData*)wParam;
-	MessageBox(pItemData->Path);
+	if (pItemData->IsStore)
+	{
+		// TODO - this message box should never appear
+		MessageBox(_T("Coming soon!"));
+	}
+	else
+	{
+		IShellFolder* pDesktop = NULL;
+		if (SUCCEEDED(SHGetDesktopFolder(&pDesktop)))
+		{
+			LPITEMIDLIST pidlFQ;
+			if (SUCCEEDED(pDesktop->ParseDisplayName(NULL, NULL, pItemData->Path, NULL, &pidlFQ, NULL)))
+			{
+				IShellFolder* pParent = NULL;
+				LPCITEMIDLIST pidlRel;
+				if (SUCCEEDED(SHBindToParent(pidlFQ, IID_IShellFolder, (void**)&pParent, &pidlRel)))
+				{
+					IDropTarget* pDropTarget;
+					if (SUCCEEDED(pParent->GetUIObjectOf(GetSafeHwnd(), 1, &pidlRel, IID_IDropTarget, NULL, (void**)&pDropTarget)))
+					{
+						LFPhysicalLocationList* ll = BuildPhysicalLocationList();
+						LFResolve(ll);
 
-	LFPhysicalLocationList* ll = BuildPhysicalLocationList();
-	LFResolve(ll);
+						MessageBox(_T("Test"));
 
+						LFFreePhysicalLocationList(ll);
+						pDropTarget->Release();
+					}
 
-	LFFreePhysicalLocationList(ll);
+					pParent->Release();
+				}
+
+				theApp.GetShellManager()->FreeItem(pidlFQ);
+			}
+
+			pDesktop->Release();
+		}
+	}
 
 	return NULL;
 }
