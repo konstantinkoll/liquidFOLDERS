@@ -258,6 +258,9 @@ LFCore_API unsigned int LFResolve(LFPhysicalLocationList* ll, bool IncludePIDL=f
 // PIDL von Physical Location List lösen
 LFCore_API LPITEMIDLIST LFDetachPIDL(LFPhysicalLocationList* ll, unsigned int idx);
 
+// Handle zu DROPFILES-Struktur von Physical Location List auf globalem Heap erzeugen
+LFCore_API HGLOBAL LFCreateDropFiles(LFPhysicalLocationList* ll);
+
 
 
 // Neue Transaktionsliste erzeugen

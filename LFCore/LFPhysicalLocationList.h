@@ -24,4 +24,5 @@ public:
 	void SetError(char* key, unsigned int error);
 	void Resolve(bool IncludePIDL=false);
 	LPITEMIDLIST DetachPIDL(unsigned int idx);
+	HGLOBAL CreateDropFiles();
 };

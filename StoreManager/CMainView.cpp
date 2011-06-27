@@ -3,6 +3,7 @@
 //
 
 #include "stdafx.h"
+#include "CDataObject.h"
 #include "CMainView.h"
 #include "CCalendarView.h"
 #include "CGlobeView.h"
@@ -999,13 +1000,30 @@ LRESULT CMainView::OnSendTo(WPARAM wParam, LPARAM /*lParam*/)
 				LPCITEMIDLIST pidlRel;
 				if (SUCCEEDED(SHBindToParent(pidlFQ, IID_IShellFolder, (void**)&pParent, &pidlRel)))
 				{
-					IDropTarget* pDropTarget;
+					IDropTarget* pDropTarget = NULL;
 					if (SUCCEEDED(pParent->GetUIObjectOf(GetSafeHwnd(), 1, &pidlRel, IID_IDropTarget, NULL, (void**)&pDropTarget)))
 					{
 						LFPhysicalLocationList* ll = BuildPhysicalLocationList();
-						LFResolve(ll);
+						if (ll->m_ItemCount)
+						{
+							LFErrorBox(LFResolve(ll), GetSafeHwnd());
 
-						MessageBox(_T("Test"));
+							CWaitCursor csr;
+							IDataObject* pDataObject = new CDataObject(ll);
+
+							POINTL pt = { 0, 0 };
+							DWORD dwEffect = DROPEFFECT_COPY;
+							if (SUCCEEDED(pDropTarget->DragEnter(pDataObject, MK_LBUTTON, pt, &dwEffect)))
+							{
+								pDropTarget->Drop(pDataObject, MK_LBUTTON, pt, &dwEffect);
+							}
+							else
+							{
+								pDropTarget->DragLeave();
+							}
+
+							pDataObject->Release();
+						}
 
 						LFFreePhysicalLocationList(ll);
 						pDropTarget->Release();

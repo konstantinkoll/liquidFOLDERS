@@ -91,7 +91,16 @@ void LFPhysicalLocationList::Resolve(bool IncludePIDL)
 	// PIDLs
 	if (IncludePIDL)
 	{
+		IShellFolder* pDesktop = NULL;
+		if (SUCCEEDED(SHGetDesktopFolder(&pDesktop)))
+		{
+			for (unsigned int a=0; a<m_ItemCount; a++)
+				if ((m_Items[a].Processed) && (m_Items[a].LastError==LFOk))
+					if (FAILED(pDesktop->ParseDisplayName(NULL, NULL, &m_Items[a].Path[4], NULL, &m_Items[a].pidlFQ, NULL)))
+						m_Items[a].LastError = m_LastError = LFIllegalPhysicalPath;
 
+			pDesktop->Release();
+		}
 	}
 }
 
@@ -103,4 +112,45 @@ LPITEMIDLIST LFPhysicalLocationList::DetachPIDL(unsigned int idx)
 	m_Items[idx].pidlFQ = NULL;
 
 	return pidl;
+}
+
+HGLOBAL LFPhysicalLocationList::CreateDropFiles()
+{
+	unsigned int cChars = 0;
+	for (unsigned int a=0; a<m_ItemCount; a++)
+		if ((m_Items[a].Processed) && (m_Items[a].LastError==LFOk))
+			cChars += wcslen(&m_Items[a].Path[4])+1;
+
+	unsigned int szBuffer = sizeof(DROPFILES)+sizeof(wchar_t)*(cChars+1);
+	HGLOBAL hG = GlobalAlloc(GMEM_MOVEABLE, szBuffer);
+	if (!hG)
+		return NULL;
+
+	DROPFILES* pDrop = (DROPFILES*)GlobalLock(hG);
+	if (!pDrop)
+	{
+		GlobalFree(hG);
+		return NULL;
+	}
+
+	pDrop->pFiles = sizeof(DROPFILES);
+	pDrop->fNC = TRUE;
+	pDrop->pt.x = pDrop->pt.y = 0;
+	pDrop->fWide = TRUE;
+
+	wchar_t* ptr = (wchar_t*)(((unsigned char*)pDrop)+sizeof(DROPFILES));
+	for (unsigned int a=0; a<m_ItemCount; a++)
+		if ((m_Items[a].Processed) && (m_Items[a].LastError==LFOk))
+		{
+#pragma warning(push)
+#pragma warning(disable: 4996)
+			wcscpy(ptr, &m_Items[a].Path[4]);
+#pragma warning(pop)
+			ptr += wcslen(&m_Items[a].Path[4])+1;
+		}
+
+	*ptr = L'\0';
+
+	GlobalUnlock(hG);
+	return hG;
 }

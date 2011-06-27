@@ -834,6 +834,11 @@ LFCore_API LPITEMIDLIST LFDetachPIDL(LFPhysicalLocationList* ll, unsigned int id
 	return ll->DetachPIDL(idx);
 }
 
+LFCore_API HGLOBAL LFCreateDropFiles(LFPhysicalLocationList* ll)
+{
+	return ll->CreateDropFiles();
+}
+
 
 LFCore_API LFTransactionList* LFAllocTransactionList()
 {
