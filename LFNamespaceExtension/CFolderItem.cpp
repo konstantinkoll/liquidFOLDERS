@@ -601,9 +601,6 @@ void CFolderItem::GetMenuItems(CGetMenuitemsEventArgs& e)
 			AddItem(e.menu, IDS_MENU_Delete, _T(VERB_DELETE));
 			if ((e.children->GetCount()==1) && (e.flags & NSEQCF_CanRename))
 					AddItem(e.menu, IDS_MENU_Rename, _T(VERB_RENAME));
-
-			AddSeparator(e.menu);
-			AddItem(e.menu, IDS_MENU_Properties, _T(VERB_PROPERTIES))->SetEnabled(FALSE /*!theApp.m_PathRunCmd.IsEmpty()*/);
 		}
 		break;
 	}
@@ -1494,8 +1491,8 @@ BOOL CFolderItem::SetShellLink(IShellLink* psl)
 void CFolderItem::CreateShortcut(CNSEItem* Item)
 {
 	// Get a pointer to the IShellLink interface
-	IShellLink* psl;
-	if (SUCCEEDED(CoCreateInstance(CLSID_ShellLink, NULL, CLSCTX_INPROC_SERVER, IID_IShellLink, (PVOID *)&psl)))
+	IShellLink* psl = NULL;
+	if (SUCCEEDED(CoCreateInstance(CLSID_ShellLink, NULL, CLSCTX_INPROC_SERVER, IID_IShellLink, (void**)&psl)))
 	{
 		BOOL res = FALSE;
 		if (IS(Item, CFolderItem))
@@ -1510,28 +1507,30 @@ void CFolderItem::CreateShortcut(CNSEItem* Item)
 
 			// Get the fully qualified file name for the link file
 			TCHAR strPath[MAX_PATH];
-			SHGetSpecialFolderPath(NULL, strPath, CSIDL_DESKTOPDIRECTORY, FALSE);
-			CString PathLink;
-			CString NumberStr;
-			INT Number = 1;
-
-			// Check if link file exists; if not, append number
-			do
+			if (SHGetSpecialFolderPath(NULL, strPath, CSIDL_DESKTOPDIRECTORY, FALSE))
 			{
-				PathLink = strPath;
-				PathLink += _T("\\")+LinkFilename+NumberStr+_T(".lnk");
-				NumberStr.Format(_T(" (%d)"), ++Number);
-			}
-			while (_waccess(PathLink, 0)==0);
+				CString PathLink;
+				CString NumberStr;
+				INT Number = 1;
 
-			// Query IShellLink for the IPersistFile interface for saving the 
-			// shortcut in persistent storage
-			IPersistFile* ppf;
-			if (SUCCEEDED(psl->QueryInterface(IID_IPersistFile, (PVOID*)&ppf)))
-			{
-				// Save the link by calling IPersistFile::Save
-				ppf->Save(PathLink, TRUE);
-				ppf->Release();
+				// Check if link file exists; if not, append number
+				do
+				{
+					PathLink = strPath;
+					PathLink += _T("\\")+LinkFilename+NumberStr+_T(".lnk");
+					NumberStr.Format(_T(" (%d)"), ++Number);
+				}
+				while (_waccess(PathLink, 0)==0);
+
+				// Query IShellLink for the IPersistFile interface for saving the 
+				// shortcut in persistent storage
+				IPersistFile* ppf;
+				if (SUCCEEDED(psl->QueryInterface(IID_IPersistFile, (void**)&ppf)))
+				{
+					// Save the link by calling IPersistFile::Save
+					ppf->Save(PathLink, TRUE);
+					ppf->Release();
+				}
 			}
 		}
 
