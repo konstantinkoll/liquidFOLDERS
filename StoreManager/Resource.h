@@ -155,10 +155,11 @@
 #define IDM_FILE_OPENWITH               4201
 #define IDM_FILE_REMEMBER               4202
 #define IDM_FILE_REMOVE                 4203
-#define IDM_FILE_SHORTCUT               4204
-#define IDM_FILE_DELETE                 4205
-#define IDM_FILE_RENAME                 4206
-#define IDM_FILE_RESTORE                4207
+#define IDM_FILE_COPY                   4204
+#define IDM_FILE_SHORTCUT               4205
+#define IDM_FILE_DELETE                 4206
+#define IDM_FILE_RENAME                 4207
+#define IDM_FILE_RESTORE                4208
 #define IDM_FILE_TRASH                  4300
 #define IDM_SEND                        4400
 #define IDM_SELECTALL                   5000

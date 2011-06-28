@@ -739,6 +739,7 @@ BEGIN_MESSAGE_MAP(CMainView, CWnd)
 	ON_COMMAND(IDM_FILE_OPENWITH, OnFileOpenWith)
 	ON_COMMAND(IDM_FILE_REMEMBER, OnFileRemember)
 	ON_COMMAND(IDM_FILE_REMOVE, OnFileRemove)
+	ON_COMMAND(IDM_FILE_COPY, OnFileCopy)
 	ON_COMMAND(IDM_FILE_SHORTCUT, OnFileShortcut)
 	ON_COMMAND(IDM_FILE_DELETE, OnFileDelete)
 	ON_COMMAND(IDM_FILE_RENAME, OnFileRename)
@@ -1729,6 +1730,34 @@ void CMainView::OnFileRemove()
 	LFFreeTransactionList(tl);
 }
 
+void CMainView::OnFileCopy()
+{
+	LFPhysicalLocationList* ll = BuildPhysicalLocationList();
+	if (ll->m_ItemCount)
+	{
+		LFErrorBox(LFResolve(ll), GetSafeHwnd());
+
+		STGMEDIUM Medium;
+		ZeroMemory(&Medium, sizeof(Medium));
+		Medium.tymed = TYMED_HGLOBAL;
+		Medium.hGlobal = LFCreateDropFiles(ll);
+		Medium.pUnkForRelease = NULL;
+
+		FORMATETC FormatEtc;
+		ZeroMemory(&FormatEtc, sizeof(FormatEtc));
+		FormatEtc.cfFormat = CF_HDROP;
+		FormatEtc.dwAspect = DVASPECT_CONTENT;
+		FormatEtc.lindex = -1;
+		FormatEtc.tymed = TYMED_HGLOBAL;
+
+		COleDataSource* pData = new COleDataSource();
+		pData->CacheData(CF_HDROP, &Medium, &FormatEtc);
+		pData->SetClipboard();
+	}
+
+	LFFreePhysicalLocationList(ll);
+}
+
 void CMainView::OnFileShortcut()
 {
 	if (theApp.OSVersion==OS_XP)
@@ -1800,6 +1829,7 @@ void CMainView::OnUpdateFileCommands(CCmdUI* pCmdUI)
 	case IDM_FILE_REMOVE:
 		b = m_FilesSelected && (m_Context==LFContextClipboard);
 		break;
+	case IDM_FILE_COPY:
 	case IDM_FILE_SHORTCUT:
 	case IDM_FILE_DELETE:
 		b = m_FilesSelected;

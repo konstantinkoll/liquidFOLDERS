@@ -192,6 +192,8 @@ BEGIN
     POPUP "POPUP"
     BEGIN
         MENUITEM SEPARATOR
+        MENUITEM "&Kopieren",                   IDM_FILE_COPY
+        MENUITEM SEPARATOR
         MENUITEM "&Verknüpfung erstellen",      IDM_FILE_SHORTCUT
         MENUITEM "&Löschen",                    IDM_FILE_DELETE
         MENUITEM "&Umbenennen",                 IDM_FILE_RENAME
