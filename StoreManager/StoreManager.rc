@@ -790,6 +790,8 @@ BEGIN
     POPUP "POPUP"
     BEGIN
         MENUITEM SEPARATOR
+        MENUITEM "&Copy",                       IDM_FILE_COPY
+        MENUITEM SEPARATOR
         MENUITEM "Create &shortcut",            IDM_FILE_SHORTCUT
         MENUITEM "&Delete",                     IDM_FILE_DELETE
         MENUITEM "&Rename",                     IDM_FILE_RENAME
@@ -1384,6 +1386,8 @@ IDM_FILE MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
+        MENUITEM SEPARATOR
+        MENUITEM "&Copiar",                     IDM_FILE_COPY
         MENUITEM SEPARATOR
         MENUITEM "Crear &acceso directo",       IDM_FILE_SHORTCUT
         MENUITEM "&Eliminar",                   IDM_FILE_DELETE
@@ -1980,6 +1984,8 @@ IDM_FILE MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
+        MENUITEM SEPARATOR
+        MENUITEM "&Copier",                     IDM_FILE_COPY
         MENUITEM SEPARATOR
         MENUITEM "Créer &raccourci",            IDM_FILE_SHORTCUT
         MENUITEM "&Effacer",                    IDM_FILE_DELETE
