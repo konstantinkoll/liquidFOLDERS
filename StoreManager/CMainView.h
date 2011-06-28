@@ -134,6 +134,7 @@ protected:
 	afx_msg void OnFileOpenWith();
 	afx_msg void OnFileRemember();
 	afx_msg void OnFileRemove();
+	afx_msg void OnFileShortcut();
 	afx_msg void OnFileDelete();
 	afx_msg void OnFileRename();
 	afx_msg void OnFileRestore();

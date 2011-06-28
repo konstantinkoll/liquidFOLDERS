@@ -563,7 +563,7 @@ void CFolderItem::GetMenuItems(CGetMenuitemsEventArgs& e)
 		if ((!(e.flags & NSEQCF_NoDefault)) && (e.children->GetCount()>=1))
 		{
 			AddSeparator(e.menu);
-			AddItem(e.menu, IDS_MENU_CreateLink, _T(VERB_CREATELINK));
+			AddItem(e.menu, IDS_MENU_CreateShortcut, _T(VERB_CREATESHORTCUT));
 
 			if (e.children->GetCount()==1)
 			{
@@ -590,14 +590,14 @@ void CFolderItem::GetMenuItems(CGetMenuitemsEventArgs& e)
 		if ((!(e.flags & NSEQCF_NoDefault)) && (e.children->GetCount()>=1))
 		{
 			AddSeparator(e.menu);
-			AddItem(e.menu, IDS_MENU_CreateLink, _T(VERB_CREATELINK));
+			AddItem(e.menu, IDS_MENU_CreateShortcut, _T(VERB_CREATESHORTCUT));
 		}
 		break;
 	case LevelAttrValue:
 		if ((!(e.flags & NSEQCF_NoDefault)) && (e.children->GetCount()>=1))
 		{
 			AddSeparator(e.menu);
-			AddItem(e.menu, IDS_MENU_CreateLink, _T(VERB_CREATELINK));
+			AddItem(e.menu, IDS_MENU_CreateShortcut, _T(VERB_CREATESHORTCUT));
 			AddItem(e.menu, IDS_MENU_Delete, _T(VERB_DELETE));
 			if ((e.children->GetCount()==1) && (e.flags & NSEQCF_CanRename))
 					AddItem(e.menu, IDS_MENU_Rename, _T(VERB_RENAME));
@@ -656,7 +656,7 @@ BOOL CFolderItem::OnExecuteMenuItem(CExecuteMenuitemsEventArgs& e)
 		return FALSE;
 	}
 
-	if (e.menuItem->GetVerb()==_T(VERB_CREATELINK))
+	if (e.menuItem->GetVerb()==_T(VERB_CREATESHORTCUT))
 	{
 		OSVERSIONINFO osInfo;
 		ZeroMemory(&osInfo, sizeof(OSVERSIONINFO));
@@ -668,8 +668,8 @@ BOOL CFolderItem::OnExecuteMenuItem(CExecuteMenuitemsEventArgs& e)
 			// Ask if link should be created on desktop
 			CString tmpStr;
 			CString tmpCaption;
-			ENSURE(tmpStr.LoadString(IDS_TEXT_CreateLink));
-			ENSURE(tmpCaption.LoadString(IDS_CAPT_CreateLink));
+			ENSURE(tmpStr.LoadString(IDS_TEXT_CreateShortcut));
+			ENSURE(tmpCaption.LoadString(IDS_CAPT_CreateShortcut));
 
 			if (MessageBox(GetViewWindow(), tmpStr, tmpCaption, MB_YESNO | MB_ICONQUESTION)==IDNO)
 				return FALSE;
@@ -1478,12 +1478,14 @@ FolderThemes CFolderItem::GetFolderTheme()
 
 // Other
 
-BOOL CFolderItem::SetShellLink(IShellLink* psl)
+BOOL CFolderItem::SetShellLink(IShellLink* pShellLink)
 {
-	psl->SetIDList(GetPIDLAbsolute());
-	psl->SetIconLocation(theApp.m_CoreFile, (Attrs.Icon==IDI_STORE_Default ? IDI_STORE_Internal : Attrs.Icon)-1);
-	psl->SetShowCmd(SW_SHOWNORMAL);
-	psl->SetDescription(Attrs.Comment);
+	ASSERT(pShellLink);
+
+	pShellLink->SetIDList(GetPIDLAbsolute());
+	pShellLink->SetIconLocation(theApp.m_CoreFile, (Attrs.Icon==IDI_STORE_Default ? IDI_STORE_Internal : Attrs.Icon)-1);
+	pShellLink->SetShowCmd(SW_SHOWNORMAL);
+	pShellLink->SetDescription(Attrs.Comment);
 
 	return TRUE;
 }
@@ -1491,14 +1493,14 @@ BOOL CFolderItem::SetShellLink(IShellLink* psl)
 void CFolderItem::CreateShortcut(CNSEItem* Item)
 {
 	// Get a pointer to the IShellLink interface
-	IShellLink* psl = NULL;
-	if (SUCCEEDED(CoCreateInstance(CLSID_ShellLink, NULL, CLSCTX_INPROC_SERVER, IID_IShellLink, (void**)&psl)))
+	IShellLink* pShellLink = NULL;
+	if (SUCCEEDED(CoCreateInstance(CLSID_ShellLink, NULL, CLSCTX_INPROC_SERVER, IID_IShellLink, (void**)&pShellLink)))
 	{
 		BOOL res = FALSE;
 		if (IS(Item, CFolderItem))
-			res = AS(Item, CFolderItem)->SetShellLink(psl);
+			res = AS(Item, CFolderItem)->SetShellLink(pShellLink);
 		if (IS(Item, CFileItem))
-			res = AS(Item, CFileItem)->SetShellLink(psl);
+			res = AS(Item, CFileItem)->SetShellLink(pShellLink);
 
 		if (res)
 		{
@@ -1524,17 +1526,17 @@ void CFolderItem::CreateShortcut(CNSEItem* Item)
 
 				// Query IShellLink for the IPersistFile interface for saving the 
 				// shortcut in persistent storage
-				IPersistFile* ppf;
-				if (SUCCEEDED(psl->QueryInterface(IID_IPersistFile, (void**)&ppf)))
+				IPersistFile* pPersistFile = NULL;
+				if (SUCCEEDED(pShellLink->QueryInterface(IID_IPersistFile, (void**)&pPersistFile)))
 				{
 					// Save the link by calling IPersistFile::Save
-					ppf->Save(PathLink, TRUE);
-					ppf->Release();
+					pPersistFile->Save(PathLink, TRUE);
+					pPersistFile->Release();
 				}
 			}
 		}
 
-		psl->Release();
+		pShellLink->Release();
 	}
 }
 

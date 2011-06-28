@@ -192,6 +192,7 @@ BEGIN
     POPUP "POPUP"
     BEGIN
         MENUITEM SEPARATOR
+        MENUITEM "&Verknüpfung erstellen",      IDM_FILE_SHORTCUT
         MENUITEM "&Löschen",                    IDM_FILE_DELETE
         MENUITEM "&Umbenennen",                 IDM_FILE_RENAME
     END
@@ -579,6 +580,8 @@ BEGIN
     IDS_STATISTICS_OTHER    "Andere"
     IDS_SUBFOLDERS_MANDATORY "Unterordner in dieser Ansicht erforderlich"
     IDS_SUBFOLDERS_NOTAVAIL "Unterordner im Kontext nicht verfügbar"
+    IDS_SHORTCUT_CAPTION    "Verknüpfung"
+    IDS_SHORTCUT_TEXT       "An dieser Stelle kann keine Verknüpfung erstellt werden.\nMöchten Sie die Verknüpfung stattdessen auf dem Desktop erstellen?"
 END
 
 STRINGTABLE 
@@ -785,6 +788,7 @@ BEGIN
     POPUP "POPUP"
     BEGIN
         MENUITEM SEPARATOR
+        MENUITEM "Create &shortcut",            IDM_FILE_SHORTCUT
         MENUITEM "&Delete",                     IDM_FILE_DELETE
         MENUITEM "&Rename",                     IDM_FILE_RENAME
     END
@@ -1171,6 +1175,8 @@ BEGIN
     IDS_STATISTICS_OTHER    "Other"
     IDS_SUBFOLDERS_MANDATORY "Subfolders are mandatory for this view."
     IDS_SUBFOLDERS_NOTAVAIL "Subfolders are not available in this context."
+    IDS_SHORTCUT_CAPTION    "Shortcut"
+    IDS_SHORTCUT_TEXT       "Windows cannot create a shortcut here.\nDo you want the shortcut to be placed on the desktop instead?"
 END
 
 STRINGTABLE 
@@ -1377,6 +1383,7 @@ BEGIN
     POPUP "POPUP"
     BEGIN
         MENUITEM SEPARATOR
+        MENUITEM "Crear &acceso directo",       IDM_FILE_SHORTCUT
         MENUITEM "&Eliminar",                   IDM_FILE_DELETE
         MENUITEM "&Renombrar",                  IDM_FILE_RENAME
     END
@@ -1764,6 +1771,8 @@ BEGIN
     IDS_STATISTICS_OTHER    "Otros"
     IDS_SUBFOLDERS_MANDATORY "Las subcarpetas son obligatorias para esta visualización."
     IDS_SUBFOLDERS_NOTAVAIL "Las subcarpetas no están disponibles para este contexto."
+    IDS_SHORTCUT_CAPTION    "Acceso directo"
+    IDS_SHORTCUT_TEXT       "Windows no puede crear un acceso directo aquí.\n¿Desea que en su lugar el acceso directo se coloque en el escritorio?"
 END
 
 STRINGTABLE 
@@ -1970,6 +1979,7 @@ BEGIN
     POPUP "POPUP"
     BEGIN
         MENUITEM SEPARATOR
+        MENUITEM "Créer &raccourci",            IDM_FILE_SHORTCUT
         MENUITEM "&Effacer",                    IDM_FILE_DELETE
         MENUITEM "&Renommer",                   IDM_FILE_RENAME
     END
@@ -2358,6 +2368,8 @@ BEGIN
     IDS_STATISTICS_OTHER    "D'autres"
     IDS_SUBFOLDERS_MANDATORY "Sous-dossier dans cet avis nécessaire"
     IDS_SUBFOLDERS_NOTAVAIL "Sous-dossier dans le contexte non disponible"
+    IDS_SHORTCUT_CAPTION    "Raccourci"
+    IDS_SHORTCUT_TEXT       "Windows ne peut pas créer un raccourci ici.\nVoulez-vous que le raccourci à être mis sur le Bureau à la place ?"
 END
 
 STRINGTABLE 

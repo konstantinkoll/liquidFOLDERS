@@ -55,7 +55,7 @@ public:
 	virtual INT GetContentViewColumnIndices(UINT* indices);
 
 	// Other
-	BOOL SetShellLink(IShellLink* psl);
+	BOOL SetShellLink(IShellLink* pShellLink);
 
 	LFItemDescriptor* Item;
 };

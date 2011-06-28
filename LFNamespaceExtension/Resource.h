@@ -24,8 +24,8 @@
 #define IDS_NULLFOLDER_CommentMask      1009
 #define IDS_FILES_Singular              1010
 #define IDS_FILES_Plural                1011
-#define IDS_CAPT_CreateLink             1012
-#define IDS_TEXT_CreateLink             1013
+#define IDS_CAPT_CreateShortcut         1012
+#define IDS_TEXT_CreateShortcut         1013
 #define IDS_MENU_CreateNewStore         1100
 #define IDS_HINT_CreateNewStore         1101
 #define IDS_MENU_MakeDefaultStore       1102
@@ -42,8 +42,8 @@
 #define IDS_HINT_OpenNewWindow          1113
 #define IDS_MENU_OpenWith               1114
 #define IDS_HINT_OpenWith               1115
-#define IDS_MENU_CreateLink             1116
-#define IDS_HINT_CreateLink             1117
+#define IDS_MENU_CreateShortcut             1116
+#define IDS_HINT_CreateShortcut             1117
 #define IDS_MENU_Delete                 1118
 #define IDS_HINT_Delete                 1119
 #define IDS_MENU_Rename                 1120

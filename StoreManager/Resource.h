@@ -75,6 +75,8 @@
 #define IDS_STATISTICS_OTHER            1038
 #define IDS_SUBFOLDERS_MANDATORY        1039
 #define IDS_SUBFOLDERS_NOTAVAIL         1040
+#define IDS_SHORTCUT_CAPTION            1041
+#define IDS_SHORTCUT_TEXT               1042
 #define IDS_VATTR_FIRST                 1100
 #define IDS_VATTR_DRIVELETTER           1100
 #define IDS_VATTR_MAINTENANCETIME       1101
@@ -153,9 +155,10 @@
 #define IDM_FILE_OPENWITH               4201
 #define IDM_FILE_REMEMBER               4202
 #define IDM_FILE_REMOVE                 4203
-#define IDM_FILE_DELETE                 4204
-#define IDM_FILE_RENAME                 4205
-#define IDM_FILE_RESTORE                4206
+#define IDM_FILE_SHORTCUT               4204
+#define IDM_FILE_DELETE                 4205
+#define IDM_FILE_RENAME                 4206
+#define IDM_FILE_RESTORE                4207
 #define IDM_FILE_TRASH                  4300
 #define IDM_SEND                        4400
 #define IDM_SELECTALL                   5000

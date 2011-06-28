@@ -458,14 +458,25 @@ INT CFileItem::GetContentViewColumnIndices(UINT* indices)
 
 // Other
 
-BOOL CFileItem::SetShellLink(IShellLink* psl)
+BOOL CFileItem::SetShellLink(IShellLink* pShellLink)
 {
+	ASSERT(pShellLink);
+
 	WCHAR Path[MAX_PATH];
 	if (LFGetFileLocation(Item, Path, MAX_PATH, true)==LFOk)
 	{
-		psl->SetPath(Path);
-		psl->SetIconLocation(Path, 0);
-		psl->SetShowCmd(SW_SHOWNORMAL);
+		WCHAR Ext[LFExtSize+1] = L".*";
+		WCHAR* LastBackslash = wcsrchr(Path, L'\\');
+		if (!LastBackslash)
+			LastBackslash = Path;
+
+		WCHAR* LastExt = wcsrchr(LastBackslash, L'.');
+		if (LastExt)
+			wcscpy_s(Ext, LFExtSize+1, LastExt);
+
+		pShellLink->SetPath(Path);
+		pShellLink->SetIconLocation(Ext, 0);
+		pShellLink->SetShowCmd(SW_SHOWNORMAL);
 
 		return TRUE;
 	}

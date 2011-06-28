@@ -14,6 +14,60 @@
 #include "StoreManager.h"
 
 
+void CreateShortcut(LFPLL_Item* i)
+{
+	// Get a pointer to the IShellLink interface
+	IShellLink* pShellLink = NULL;
+	if (SUCCEEDED(CoCreateInstance(CLSID_ShellLink, NULL, CLSCTX_INPROC_SERVER, IID_IShellLink, (void**)&pShellLink)))
+	{
+		WCHAR Ext[LFExtSize+1] = L".*";
+		WCHAR* LastBackslash = wcsrchr(i->Path, L'\\');
+		if (!LastBackslash)
+			LastBackslash = i->Path;
+
+		WCHAR* LastExt = wcsrchr(LastBackslash, L'.');
+		if (LastExt)
+			wcscpy_s(Ext, LFExtSize+1, LastExt);
+
+		pShellLink->SetIDList(i->pidlFQ);
+		pShellLink->SetIconLocation(Ext, 0);
+		pShellLink->SetShowCmd(SW_SHOWNORMAL);
+
+		CString LinkFilename(i->FileName);
+
+		// Get the fully qualified file name for the link file
+		TCHAR strPath[MAX_PATH];
+		if (SHGetSpecialFolderPath(NULL, strPath, CSIDL_DESKTOPDIRECTORY, FALSE))
+		{
+			CString PathLink;
+			CString NumberStr;
+			INT Number = 1;
+
+			// Check if link file exists; if not, append number
+			do
+			{
+				PathLink = strPath;
+				PathLink += _T("\\")+LinkFilename+NumberStr+_T(".lnk");
+				NumberStr.Format(_T(" (%d)"), ++Number);
+			}
+			while (_waccess(PathLink, 0)==0);
+
+			// Query IShellLink for the IPersistFile interface for saving the 
+			// shortcut in persistent storage
+			IPersistFile* pPersistFile = NULL;
+			if (SUCCEEDED(pShellLink->QueryInterface(IID_IPersistFile, (void**)&pPersistFile)))
+			{
+				// Save the link by calling IPersistFile::Save
+				pPersistFile->Save(PathLink, TRUE);
+				pPersistFile->Release();
+			}
+		}
+
+		pShellLink->Release();
+	}
+}
+
+
 // CMainView
 //
 
@@ -685,6 +739,7 @@ BEGIN_MESSAGE_MAP(CMainView, CWnd)
 	ON_COMMAND(IDM_FILE_OPENWITH, OnFileOpenWith)
 	ON_COMMAND(IDM_FILE_REMEMBER, OnFileRemember)
 	ON_COMMAND(IDM_FILE_REMOVE, OnFileRemove)
+	ON_COMMAND(IDM_FILE_SHORTCUT, OnFileShortcut)
 	ON_COMMAND(IDM_FILE_DELETE, OnFileDelete)
 	ON_COMMAND(IDM_FILE_RENAME, OnFileRename)
 	ON_COMMAND(IDM_FILE_RESTORE, OnFileRestore)
@@ -1674,6 +1729,33 @@ void CMainView::OnFileRemove()
 	LFFreeTransactionList(tl);
 }
 
+void CMainView::OnFileShortcut()
+{
+	if (theApp.OSVersion==OS_XP)
+	{
+		// Ask if link should be created on desktop
+		CString tmpStr;
+		CString tmpCaption;
+		ENSURE(tmpStr.LoadString(IDS_SHORTCUT_TEXT));
+		ENSURE(tmpCaption.LoadString(IDS_SHORTCUT_CAPTION));
+
+		if (MessageBox(tmpStr, tmpCaption, MB_YESNO | MB_ICONQUESTION)==IDNO)
+			return;
+	}
+
+	LFPhysicalLocationList* ll = BuildPhysicalLocationList();
+	if (ll->m_ItemCount)
+	{
+		LFErrorBox(LFResolve(ll, true), GetSafeHwnd());
+
+		CWaitCursor csr;
+		for (UINT a=0; a<ll->m_ItemCount; a++)
+			CreateShortcut(&ll->m_Items[a]);
+	}
+
+	LFFreePhysicalLocationList(ll);
+}
+
 void CMainView::OnFileDelete()
 {
 	if (p_CookedFiles)
@@ -1718,6 +1800,7 @@ void CMainView::OnUpdateFileCommands(CCmdUI* pCmdUI)
 	case IDM_FILE_REMOVE:
 		b = m_FilesSelected && (m_Context==LFContextClipboard);
 		break;
+	case IDM_FILE_SHORTCUT:
 	case IDM_FILE_DELETE:
 		b = m_FilesSelected;
 		break;

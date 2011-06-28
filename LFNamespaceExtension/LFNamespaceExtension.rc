@@ -118,8 +118,8 @@ STRINGTABLE
 BEGIN
     IDS_FILES_Singular      "%d Datei"
     IDS_FILES_Plural        "%d Dateien"
-    IDS_CAPT_CreateLink     "Verknüpfung"
-    IDS_TEXT_CreateLink     "An dieser Stelle kann keine Verknüpfung erstellt werden.\nMöchten Sie die Verknüpfung stattdessen auf dem Desktop erstellen?"
+    IDS_CAPT_CreateShortcut "Verknüpfung"
+    IDS_TEXT_CreateShortcut "An dieser Stelle kann keine Verknüpfung erstellt werden.\nMöchten Sie die Verknüpfung stattdessen auf dem Desktop erstellen?"
 END
 
 STRINGTABLE 
@@ -127,15 +127,13 @@ BEGIN
     IDS_MENU_CreateNewStore "&Neuen Store anlegen..."
     IDS_HINT_CreateNewStore "Erstellt einen neuen Store für Ihre Dateien."
     IDS_MENU_MakeDefaultStore "Als &Standard-Store setzen"
-    IDS_HINT_MakeDefaultStore 
-                            "Setzt den ausgewählten Store als Standard-Store."
+    IDS_HINT_MakeDefaultStore "Setzt den ausgewählten Store als Standard-Store."
 END
 
 STRINGTABLE 
 BEGIN
     IDS_MENU_MakeHybridStore "Zu &Hybrid-Store machen"
-    IDS_HINT_MakeHybridStore 
-                            "Konvertiert den ausgewählten Store in einen Hybrid-Store."
+    IDS_HINT_MakeHybridStore "Konvertiert den ausgewählten Store in einen Hybrid-Store."
     IDS_MENU_Open           "Ö&ffnen"
     IDS_HINT_Open           "Öffnet das ausgewählte Objekt."
     IDS_MENU_Explore        "&Explorer"
@@ -146,8 +144,8 @@ BEGIN
     IDS_HINT_OpenNewWindow  "Öffnet das ausgewählte Objekt in einem neuen Fenster."
     IDS_MENU_OpenWith       "Öffnen &mit..."
     IDS_HINT_OpenWith       "Wählen Sie das Programm, mit dem Sie diese Datei öffnen möchten."
-    IDS_MENU_CreateLink     "&Verknüpfung erstellen"
-    IDS_HINT_CreateLink     "Erstellt eine Verknüpfung für die ausgewählten Objekte."
+    IDS_MENU_CreateShortcut "&Verknüpfung erstellen"
+    IDS_HINT_CreateShortcut "Erstellt eine Verknüpfung für die ausgewählten Objekte."
     IDS_MENU_Delete         "&Löschen"
     IDS_HINT_Delete         "Löscht die ausgewählten Objekte."
 END
@@ -212,8 +210,8 @@ STRINGTABLE
 BEGIN
     IDS_FILES_Singular      "%d file"
     IDS_FILES_Plural        "%d files"
-    IDS_CAPT_CreateLink     "Shortcut"
-    IDS_TEXT_CreateLink     "Windows cannot create a shortcut here.\nDo you want the shortcut to be placed on the desktop instead?"
+    IDS_CAPT_CreateShortcut "Shortcut"
+    IDS_TEXT_CreateShortcut "Windows cannot create a shortcut here.\nDo you want the shortcut to be placed on the desktop instead?"
 END
 
 STRINGTABLE 
@@ -227,8 +225,7 @@ END
 STRINGTABLE 
 BEGIN
     IDS_MENU_MakeHybridStore "Make &hybrid store"
-    IDS_HINT_MakeHybridStore 
-                            "Converts the selected store into a hybrid store."
+    IDS_HINT_MakeHybridStore "Converts the selected store into a hybrid store."
     IDS_MENU_Open           "&Open"
     IDS_HINT_Open           "Opens the selected item."
     IDS_MENU_Explore        "&Explore"
@@ -239,8 +236,8 @@ BEGIN
     IDS_HINT_OpenNewWindow  "Opens the selected item in a new window."
     IDS_MENU_OpenWith       "Open &with..."
     IDS_HINT_OpenWith       "Choose a program to open this file with."
-    IDS_MENU_CreateLink     "Create &shortcut"
-    IDS_HINT_CreateLink     "Creates a shortcut for the selected items."
+    IDS_MENU_CreateShortcut "Create &shortcut"
+    IDS_HINT_CreateShortcut "Creates a shortcut for the selected items."
     IDS_MENU_Delete         "&Delete"
     IDS_HINT_Delete         "Deletes the selected items."
 END
@@ -305,8 +302,8 @@ STRINGTABLE
 BEGIN
     IDS_FILES_Singular      "%d archivo"
     IDS_FILES_Plural        "%d archivos"
-    IDS_CAPT_CreateLink     "Acceso directo"
-    IDS_TEXT_CreateLink     "Windows no puede crear un acceso directo aquí.\n¿Desea que en su lugar el acceso directo se coloque en el escritorio?"
+    IDS_CAPT_CreateShortcut "Acceso directo"
+    IDS_TEXT_CreateShortcut "Windows no puede crear un acceso directo aquí.\n¿Desea que en su lugar el acceso directo se coloque en el escritorio?"
 END
 
 STRINGTABLE 
@@ -314,15 +311,13 @@ BEGIN
     IDS_MENU_CreateNewStore "Crear &nuevo store..."
     IDS_HINT_CreateNewStore "Creaun nuevo store para sus archivos."
     IDS_MENU_MakeDefaultStore "Establecer a &store predeterminado"
-    IDS_HINT_MakeDefaultStore 
-                            "Establece el store seleccionado como el store predeterminado."
+    IDS_HINT_MakeDefaultStore "Establece el store seleccionado como el store predeterminado."
 END
 
 STRINGTABLE 
 BEGIN
     IDS_MENU_MakeHybridStore "Convertir astore &híbrido"
-    IDS_HINT_MakeHybridStore 
-                            "Convierte el store seleccionado en un store híbrido."
+    IDS_HINT_MakeHybridStore "Convierte el store seleccionado en un store híbrido."
     IDS_MENU_Open           "&Abrir"
     IDS_HINT_Open           "Abre el objeto seleccionado."
     IDS_MENU_Explore        "&Explorer"
@@ -334,8 +329,8 @@ BEGIN
     IDS_HINT_OpenNewWindow  "Abre el objeto seleccionado en una nueva ventana."
     IDS_MENU_OpenWith       "Abrir &con..."
     IDS_HINT_OpenWith       "Escoja un programa con el cual abrir este archivo."
-    IDS_MENU_CreateLink     "Crear &acceso directo"
-    IDS_HINT_CreateLink     "Crea un acceso directo para los objetos seleccionados."
+    IDS_MENU_CreateShortcut "Crear &acceso directo"
+    IDS_HINT_CreateShortcut "Crea un acceso directo para los objetos seleccionados."
     IDS_MENU_Delete         "&Eliminar"
     IDS_HINT_Delete         "Elimina los objetos seleccionados."
 END
@@ -400,8 +395,8 @@ STRINGTABLE
 BEGIN
     IDS_FILES_Singular      "%d fichier"
     IDS_FILES_Plural        "%d fichiers"
-    IDS_CAPT_CreateLink     "Raccourci"
-    IDS_TEXT_CreateLink     "Windows ne peut pas créer un raccourci ici.\nVoulez-vous que le raccourci à être mis sur le Bureau à la place ?"
+    IDS_CAPT_CreateShortcut "Raccourci"
+    IDS_TEXT_CreateShortcut "Windows ne peut pas créer un raccourci ici.\nVoulez-vous que le raccourci à être mis sur le Bureau à la place ?"
 END
 
 STRINGTABLE
@@ -409,18 +404,15 @@ BEGIN
     IDS_MENU_CreateNewStore "Créez un store &nouveau..."
     IDS_HINT_CreateNewStore "Crée un nouveau store pour vos fichiers."
     IDS_MENU_MakeDefaultStore "Faites store &standard"
-    IDS_HINT_MakeDefaultStore
-                            "Met le store choisi comme le store standard."
+    IDS_HINT_MakeDefaultStore "Met le store choisi comme le store standard."
     IDS_MENU_MakeHybridStore "Faites store &hybride"
-    IDS_HINT_MakeHybridStore
-                            "Convertit le store choisi dans un store hybride."
+    IDS_HINT_MakeHybridStore "Convertit le store choisi dans un store hybride."
     IDS_MENU_Open           "&Ouvrir"
     IDS_HINT_Open           "Ouvre l'élément choisi."
     IDS_MENU_Explore        "&Explorateur"
     IDS_HINT_Explore        "Ouvre l'élément choisi dans Explorateur."
     IDS_MENU_OpenStoreManager "Ouvrir dans le &store manager"
-    IDS_HINT_OpenStoreManager
-                            "Ouvre l'élément choisi dans le store manager."
+    IDS_HINT_OpenStoreManager "Ouvre l'élément choisi dans le store manager."
     IDS_MENU_OpenNewWindow  "Ouvrir dans une nouvelle &fenêtre"
     IDS_HINT_OpenNewWindow  "Ouvre l'élément choisi dans une nouvelle fenêtre."
     IDS_MENU_OpenWith       "Ouvrir &avec..."
@@ -429,8 +421,8 @@ END
 
 STRINGTABLE
 BEGIN
-    IDS_MENU_CreateLink     "&Créer un raccourci"
-    IDS_HINT_CreateLink     "Crée un raccourci pour les éléments choisis."
+    IDS_MENU_CreateShortcut "Créer &raccourci"
+    IDS_HINT_CreateShortcut "Crée un raccourci pour les éléments choisis."
     IDS_MENU_Delete         "&Effacer"
     IDS_HINT_Delete         "Efface les éléments choisis."
     IDS_MENU_Rename         "&Renommer"

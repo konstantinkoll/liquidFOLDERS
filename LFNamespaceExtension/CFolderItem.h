@@ -21,7 +21,7 @@ BOOL RunPath(HWND hWnd, CString path, CString parameter=_T(""));
 
 #define NSEIA_CFOLDERITEM       NSEIA_FileSysAncestor | NSEIA_Browsable | NSEIA_Folder | NSEIA_CanLink | NSEIA_DropTarget
 
-#define VERB_CREATELINK         "link"
+#define VERB_CREATESHORTCUT     "link"
 #define VERB_CREATENEWSTORE     "newstore"
 #define VERB_MAKEDEFAULTSTORE   "defaultstore"
 #define VERB_MAKEHYBRIDSTORE    "hybridstore"
@@ -144,7 +144,7 @@ public:
 	virtual FolderThemes GetFolderTheme();
 
 	// Other
-	BOOL SetShellLink(IShellLink* psl);
+	BOOL SetShellLink(IShellLink* pShellLink);
 
 	FolderSerialization Attrs;
 
