@@ -337,10 +337,12 @@ BOOL CPropertyRating::OnPushChar(UINT nChar)
 
 	switch (nChar)
 	{
+	case 0x27:
 	case 0x6B:
 	case 0xBB:
 		Rating++;
 		break;
+	case 0x25:
 	case 0x6D:
 	case 0xBD:
 		Rating--;

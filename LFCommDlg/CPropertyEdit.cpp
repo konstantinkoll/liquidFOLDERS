@@ -111,7 +111,7 @@ void CPropertyDisplay::OnLButtonUp(UINT /*nFlags*/, CPoint point)
 
 UINT CPropertyDisplay::OnGetDlgCode()
 {
-	return DLGC_WANTCHARS;
+	return DLGC_WANTARROWS | DLGC_WANTCHARS;
 }
 
 BOOL CPropertyDisplay::OnSetCursor(CWnd* /*pWnd*/, UINT /*nHitTest*/, UINT /*message*/)
