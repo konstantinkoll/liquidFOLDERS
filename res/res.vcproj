@@ -804,6 +804,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Ribbon\LFAttrPriority_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\LFAttrPriority_32.png"
+				>
+			</File>
+			<File
 				RelativePath=".\Ribbon\LFAttrRating_16.png"
 				>
 			</File>
