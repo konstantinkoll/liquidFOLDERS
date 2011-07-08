@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XML_DIZ_INFO>
+	<MASTER_PAD_VERSION_INFO>
+		<MASTER_PAD_VERSION>3.11</MASTER_PAD_VERSION>
+		<MASTER_PAD_EDITOR>PADGen 3.1.1.47 http://www.padgen.org</MASTER_PAD_EDITOR>
+		<MASTER_PAD_INFO>Portable Application Description, or PAD for short, is a data set that is used by shareware authors to disseminate information to anyone interested in their software products. To find out more go to http://pad.asp-software.org</MASTER_PAD_INFO>
+	</MASTER_PAD_VERSION_INFO>
+	<Company_Info>
+		<Company_Name>liquidFOLDERS UG</Company_Name>
+		<Address_1>Hansmannstr. 17</Address_1>
+		<Address_2 />
+		<City_Town>Dortmund</City_Town>
+		<State_Province />
+		<Zip_Postal_Code>44227</Zip_Postal_Code>
+		<Country>Germany</Country>
+		<Company_WebSite_URL>http://liquidfolders.net/about/</Company_WebSite_URL>
+		<Contact_Info>
+			<Author_First_Name />
+			<Author_Last_Name />
+			<Author_Email>info@liquidfolders.net</Author_Email>
+			<Contact_First_Name />
+			<Contact_Last_Name />
+			<Contact_Email>info@liquidfolders.net</Contact_Email>
+		</Contact_Info>
+		<Support_Info>
+			<Sales_Email>sales@liquidfolders.net</Sales_Email>
+			<Support_Email>support@liquidfolders.net</Support_Email>
+			<General_Email>info@liquidfolders.net</General_Email>
+			<Sales_Phone />
+			<Support_Phone />
+			<General_Phone />
+			<Fax_Phone />
+		</Support_Info>
+	</Company_Info>
+	<Program_Info>
+		<Program_Name>liquidFOLDERS</Program_Name>
+		<Program_Version>1.0.1</Program_Version>
+		<Program_Release_Month>07</Program_Release_Month>
+		<Program_Release_Day>06</Program_Release_Day>
+		<Program_Release_Year>2011</Program_Release_Year>
+		<Program_Cost_Dollars>37.00</Program_Cost_Dollars>
+		<Program_Cost_Other_Code>EUR</Program_Cost_Other_Code>
+		<Program_Cost_Other>27.90</Program_Cost_Other>
+		<Program_Type>Shareware</Program_Type>
+		<Program_Release_Status>Minor Update</Program_Release_Status>
+		<Program_Install_Support>Install and Uninstall</Program_Install_Support>
+		<Program_OS_Support>Win7 x32,Win7 x64,WinVista,WinVista x64,WinXP</Program_OS_Support>
+		<Program_Language>English,French,German,Spanish</Program_Language>
+		<Program_Change_Info />
+		<Program_Specific_Category>Utilities</Program_Specific_Category>
+		<Program_Category_Class>System Utilities::File &amp; Disk Management</Program_Category_Class>
+		<Program_System_Requirements />
+		<File_Info>
+			<File_Size_Bytes>25000000</File_Size_Bytes>
+			<File_Size_K>24414</File_Size_K>
+			<File_Size_MB>23.84</File_Size_MB>
+		</File_Info>
+		<Expire_Info>
+			<Has_Expire_Info>N</Has_Expire_Info>
+			<Expire_Count />
+			<Expire_Based_On />
+			<Expire_Other_Info />
+			<Expire_Month />
+			<Expire_Day />
+			<Expire_Year />
+		</Expire_Info>
+	</Program_Info>
+	<Program_Descriptions>
+		<English>
+			<Keywords />
+			<Char_Desc_45>Relational File System for Microsoft Windows</Char_Desc_45>
+			<Char_Desc_80 />
+			<Char_Desc_250>liquidFOLDERS works like a professional database and stores your files without fixed directory tree. You can easily search, group, sort and display thousands of files.</Char_Desc_250>
+			<Char_Desc_450>liquidFOLDERS stores all files in a separate area of your computer we call "store". A store does not have a fixed directory tree (let alone one that you'll have to manage yourself), but is one big thing. Just like with an industry grade database, you can slice and dice that entity in real time with regard to the properties of the actual files stored in it.</Char_Desc_450>
+			<Char_Desc_2000 />
+		</English>
+		<German>
+			<Keywords />
+			<Char_Desc_45>Relationales Dateisystem für MS Windows</Char_Desc_45>
+			<Char_Desc_80 />
+			<Char_Desc_250>liquidFOLDERS arbeitet wie eine professionelle Datenbank und speichert Ihre Dateien ohne starren Verzeichnisbaum ab. Sie können sehr schnell tausende von Dateien durchsuchen, gruppieren, sortieren und sich anzeigen lassen.</Char_Desc_250>
+			<Char_Desc_450>liquidFOLDERS speichert Ihre Dateien in einem Bereich der Festplatte ab, den wir „Store“ nennen. Ein Store besitzt keinen starren Verzeichnisbaum, und schon gar keinen, den Sie selbst erstellen müssen. Statt dessen arbeitet liquidFOLDERS wie eine professionelle Datenbank, mit der Sie die Dateien in einem Store anhand ihrer Eigenschaften in Sekundenschnelle immer wieder neu anordnen können.</Char_Desc_450>
+			<Char_Desc_2000 />
+		</German>
+	</Program_Descriptions>
+	<Web_Info>
+		<Application_URLs>
+			<Application_Info_URL>http://liquidfolders.net/features/</Application_Info_URL>
+			<Application_Order_URL>http://liquidfolders.net/purchase/</Application_Order_URL>
+			<Application_Screenshot_URL>http://liquidfolders.net/screenshots/SM_Globe.png</Application_Screenshot_URL>
+			<Application_Icon_URL>http://liquidfolders.net/img/IconLF.png</Application_Icon_URL>
+			<Application_XML_File_URL>http://liquidfolders.net/liquidFOLDERS.xml</Application_XML_File_URL>
+		</Application_URLs>
+		<Download_URLs>
+			<Primary_Download_URL>http://liquidfolders.net/download/</Primary_Download_URL>
+			<Secondary_Download_URL />
+			<Additional_Download_URL_1 />
+			<Additional_Download_URL_2 />
+		</Download_URLs>
+	</Web_Info>
+	<Permissions>
+		<Distribution_Permissions />
+		<EULA>License Terms
+liquidFOLDERS 2011
+
+
+Definitions
+
+"Software" means the computer program liquidFOLDERS, including all descriptions, manuals and other material.
+
+This agreements distinguishes between the "shareware version" and a "full version".
+
+The full version is distinguished between private/home and commercial use. "Private users" are users who deploy the software solely for personal, private/home use. "Commercial users" are all other users.
+
+"Licensor" is the liquidFOLDERS UG (limited liability).
+
+"Licensee" are private or commercial users who purchase an authorized license key for the software.
+
+
+Scope
+
+This agreement governs the right to use the software. The purpose of the software is to manage files using the notion of "stores", which are containers for files and work like a smart library. Stores can be accessed through queries, and create a dynamic directory tree in regard to their contents.
+
+
+Grant of license
+
+The licensor grants a limited right to use the software. All rights that are not explicitly granted are reserved. In addition, copyright, patent and trademark laws apply.
+
+Shareware version
+
+The shareware version may be installed on an unlimited number of computers for 30 days. After 30 days expire, the user is obliged to either purchase a license, or remove the software from the computer in its entirety.
+
+Full version
+
+Using an authorized license key, the shareware version may be converted into a full version as covered by the particular license assigned to the key. The licensee is obliged to keep the license key secret and store it safe from the access of third parties.
+
+The licensor grants private users the right to install the full version of the software on all computers in his household. Computers bearing the full version of the software must reside mainly in the household of the licensee. As soon as a particular computer does not mainly reside in the household of the licensee, the licensee is obliged to either replace the license key with a valid license key, or remove the software from said computer in its entirety.
+
+The licensor grants commercial users the right to install the full version of the software on one computer. Commercial users are obliged to purchase a separate license key for each computer. Site licenses are exempt from this, as they give the licensee the right to install the full version on an arbitrary numbers of computers at a single branch office.
+
+
+Distribution
+
+The software remains the sole property of the licensor, and is protected by copyright laws, international treaties and other laws. No copyright notices, trademarks and license numbers may be removed from the software or changed therein.
+
+The licensee may create arbitrary numbers of copies of the software and freely distribute those copies free of charge. Each copy has to be identical to the installation archives provided by the licensor. No modifications are permitted. All copies remain the sole property of the licensor. The licensee is obliged to declare all copies shareware. All license keys are exempt from distribution.
+
+
+Modification and decompilation
+
+Modifying, reverse engineering, decompiling or disassembling the software is only allowed as granted by §89 section E of UrhG. You are obliged to inform us of any incompatible hard- or software.
+
+
+Limited liability
+
+In no event shall the liquidFOLDERS UG (limited liability), its parent, subsidiaries, licensors or affiliates be liable for any damages whatsoever, such as, but not limited to, loss of revenue, business interruption, loss of data, damages to hardware or any other damages that are consequential to the use or unfitness of the software, even if you have informed us about such damages. Excluded are damages resulting from intentional acts or culpable negligence committed by us, unless the licensee is a commercial entity. Under no circumstances shall the licensor be liable for any damages consequential to unauthorized license keys or patches, regardless of their kind or origin.
+
+Under no circumstances shall the licensor's aggregate liability exceed the total amount paid by you for the particular license.
+
+You are obliged to create frequent backups of all files managed by the software, and keep the software current by installing all available patches and updates.
+
+
+Warranty
+
+The software is provided on an "as is" basis, without warranty of any kind, included, but not limited to, the warranties of quality, merchantability, compatibility or fitness for a particular purpose. The entire risk as to the quality, merchantability, compatibility or fitness for a particular purpose is borne with you. You are obliged to carefully evaluate the shareware version of the software prior to purchasing a license.
+
+
+Governing law
+
+This agreement is governed by the laws of the Federal Republic of Germany and the European Union, and shall be applied pretending all transactions were executed in the Federal Republic of Germany.
+
+
+Ancillary agreements
+
+Any agreements, in particular verbal ancillary agreements, pledges, guarantees or other assurances, shall have no binding effect until confirmed by both parties in writing.
+
+
+Severability clause
+
+If any provision of this agreement is found to be unlawful, void or unenforceable for any reason, that provision shall not affect the validity and enforceability of any remaining provisions. The unlawful, void or unenforcable provision shall be replaced by a lawful, valid and enforcable provision whose economic effect is closest to that of the unlawful, void or unenforcable provision. The same shall apply to circumstances not effectively covered by this agreement.</EULA>
+	</Permissions>
+	<Affiliates>
+		<Affiliates_FORM>Y</Affiliates_FORM>
+		<Affiliates_VERSION>1.4</Affiliates_VERSION>
+		<Affiliates_URL>http://pad.asp-software.org/extensions/Affiliates.htm</Affiliates_URL>
+		<Affiliates_Information_Page />
+		<Affiliates_Avangate_Order_Page />
+		<Affiliates_Avangate_Vendor_ID />
+		<Affiliates_Avangate_Product_ID />
+		<Affiliates_Avangate_Maximum_Commission_Rate />
+		<Affiliates_BMTMicro_Order_Page />
+		<Affiliates_BMTMicro_Vendor_ID />
+		<Affiliates_BMTMicro_Product_ID />
+		<Affiliates_BMTMicro_Maximum_Commission_Rate />
+		<Affiliates_Cleverbridge_Order_Page />
+		<Affiliates_Cleverbridge_Vendor_ID />
+		<Affiliates_Cleverbridge_Product_ID />
+		<Affiliates_Cleverbridge_Maximum_Commission_Rate />
+		<Affiliates_clixGalore_Order_Page />
+		<Affiliates_clixGalore_Vendor_ID />
+		<Affiliates_clixGalore_Product_ID />
+		<Affiliates_clixGalore_Maximum_Commission_Rate />
+		<Affiliates_CommissionJunction_Order_Page />
+		<Affiliates_CommissionJunction_Vendor_ID />
+		<Affiliates_CommissionJunction_Product_ID />
+		<Affiliates_CommissionJunction_Maximum_Commission_Rate />
+		<Affiliates_DigiBuy_Order_Page />
+		<Affiliates_DigiBuy_Vendor_ID />
+		<Affiliates_DigiBuy_Product_ID />
+		<Affiliates_DigiBuy_Maximum_Commission_Rate />
+		<Affiliates_DigitalCandle_Order_Page />
+		<Affiliates_DigitalCandle_Vendor_ID />
+		<Affiliates_DigitalCandle_Product_ID />
+		<Affiliates_DigitalCandle_Maximum_Commission_Rate />
+		<Affiliates_Emetrix_Order_Page />
+		<Affiliates_Emetrix_Vendor_ID />
+		<Affiliates_Emetrix_Product_ID />
+		<Affiliates_Emetrix_Maximum_Commission_Rate />
+		<Affiliates_eSellerate_Order_Page />
+		<Affiliates_eSellerate_Vendor_ID />
+		<Affiliates_eSellerate_Product_ID />
+		<Affiliates_eSellerate_Maximum_Commission_Rate />
+		<Affiliates_Kagi_Order_Page />
+		<Affiliates_Kagi_Vendor_ID />
+		<Affiliates_Kagi_Product_ID />
+		<Affiliates_Kagi_Maximum_Commission_Rate />
+		<Affiliates_LinkShare_Order_Page />
+		<Affiliates_LinkShare_Vendor_ID />
+		<Affiliates_LinkShare_Product_ID />
+		<Affiliates_LinkShare_Maximum_Commission_Rate />
+		<Affiliates_NorthStarSol_Order_Page />
+		<Affiliates_NorthStarSol_Vendor_ID />
+		<Affiliates_NorthStarSol_Product_ID />
+		<Affiliates_NorthStarSol_Maximum_Commission_Rate />
+		<Affiliates_OneNetworkDirect_Order_Page />
+		<Affiliates_OneNetworkDirect_Vendor_ID />
+		<Affiliates_OneNetworkDirect_Product_ID />
+		<Affiliates_OneNetworkDirect_Maximum_Commission_Rate />
+		<Affiliates_Order1_Order_Page />
+		<Affiliates_Order1_Vendor_ID />
+		<Affiliates_Order1_Product_ID />
+		<Affiliates_Order1_Maximum_Commission_Rate />
+		<Affiliates_Osolis_Order_Page />
+		<Affiliates_Osolis_Vendor_ID />
+		<Affiliates_Osolis_Product_ID />
+		<Affiliates_Osolis_Maximum_Commission_Rate />
+		<Affiliates_Plimus_Order_Page />
+		<Affiliates_Plimus_Vendor_ID />
+		<Affiliates_Plimus_Product_ID />
+		<Affiliates_Plimus_Maximum_Commission_Rate />
+		<Affiliates_Regnet_Order_Page />
+		<Affiliates_Regnet_Vendor_ID />
+		<Affiliates_Regnet_Product_ID />
+		<Affiliates_Regnet_Maximum_Commission_Rate />
+		<Affiliates_Regnow_Order_Page />
+		<Affiliates_Regnow_Vendor_ID />
+		<Affiliates_Regnow_Product_ID />
+		<Affiliates_Regnow_Maximum_Commission_Rate />
+		<Affiliates_Regsoft_Order_Page />
+		<Affiliates_Regsoft_Vendor_ID />
+		<Affiliates_Regsoft_Product_ID />
+		<Affiliates_Regsoft_Maximum_Commission_Rate />
+		<Affiliates_ShareIt_Order_Page>https://secure.shareit.com/shareit/cart.html?PRODUCT[300380873]=1&amp;DELIVERY[300380873]=EML&amp;stylefrom=300380873&amp;backlink=http%3A%2F%2Fliquidfolders.net%2Fpurchase%2Fde%2F&amp;currencies=all&amp;js=-1</Affiliates_ShareIt_Order_Page>
+		<Affiliates_ShareIt_Vendor_ID>200114006</Affiliates_ShareIt_Vendor_ID>
+		<Affiliates_ShareIt_Product_ID>300380873</Affiliates_ShareIt_Product_ID>
+		<Affiliates_ShareIt_Maximum_Commission_Rate>20</Affiliates_ShareIt_Maximum_Commission_Rate>
+		<Affiliates_Shareasale_Order_Page />
+		<Affiliates_Shareasale_Vendor_ID />
+		<Affiliates_Shareasale_Product_ID />
+		<Affiliates_Shareasale_Maximum_Commission_Rate />
+		<Affiliates_SWReg_Order_Page />
+		<Affiliates_SWReg_Vendor_ID />
+		<Affiliates_SWReg_Product_ID />
+		<Affiliates_SWReg_Maximum_Commission_Rate />
+		<Affiliates_V-Share_Order_Page />
+		<Affiliates_V-Share_Vendor_ID />
+		<Affiliates_V-Share_Product_ID />
+		<Affiliates_V-Share_Maximum_Commission_Rate />
+		<Affiliates_VFree_Order_Page />
+		<Affiliates_VFree_Vendor_ID />
+		<Affiliates_VFree_Product_ID />
+		<Affiliates_VFree_Maximum_Commission_Rate />
+		<Affiliates_Yaskifo_Order_Page />
+		<Affiliates_Yaskifo_Vendor_ID />
+		<Affiliates_Yaskifo_Product_ID />
+		<Affiliates_Yaskifo_Maximum_Commission_Rate />
+	</Affiliates>
+</XML_DIZ_INFO>
