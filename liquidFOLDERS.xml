@@ -67,20 +67,20 @@
 	</Program_Info>
 	<Program_Descriptions>
 		<English>
-			<Keywords />
+			<Keywords>Relational File System, Explorer Extension, Smart Folders, Geotagging, Metadata, File Archive, Photo Archive, Music Archive, Document Management, Desktop Search</Keywords>
 			<Char_Desc_45>Relational File System for Microsoft Windows</Char_Desc_45>
-			<Char_Desc_80 />
+			<Char_Desc_80>liquidFOLDERS stores your files without files without fixed directory tree.</Char_Desc_80>
 			<Char_Desc_250>liquidFOLDERS works like a professional database and stores your files without fixed directory tree. You can easily search, group, sort and display thousands of files.</Char_Desc_250>
 			<Char_Desc_450>liquidFOLDERS stores all files in a separate area of your computer we call "store". A store does not have a fixed directory tree (let alone one that you'll have to manage yourself), but is one big thing. Just like with an industry grade database, you can slice and dice that entity in real time with regard to the properties of the actual files stored in it.</Char_Desc_450>
-			<Char_Desc_2000 />
+			<Char_Desc_2000>liquidFOLDERS stores all files in a separate area of your computer we call "store". A store does not have a fixed directory tree (let alone one that you'll have to manage yourself), but is one big thing. Just like with an industry grade database, you can slice and dice that entity in real time with regard to the properties of the actual files stored in it.</Char_Desc_2000>
 		</English>
 		<German>
-			<Keywords />
+			<Keywords>Relationales Dateisystem, Explorer-Erweiterung, Intelligente Ordner, Geotagging, Metadaten, Dateiarchiv, Bildarchiv, Musikarchive, Document Management, Desktopsuche</Keywords>
 			<Char_Desc_45>Relationales Dateisystem für MS Windows</Char_Desc_45>
-			<Char_Desc_80 />
+			<Char_Desc_80>liquidFOLDERS speichert Ihre Dateien ohen starren Verzeichnisbaum ab.</Char_Desc_80>
 			<Char_Desc_250>liquidFOLDERS arbeitet wie eine professionelle Datenbank und speichert Ihre Dateien ohne starren Verzeichnisbaum ab. Sie können sehr schnell tausende von Dateien durchsuchen, gruppieren, sortieren und sich anzeigen lassen.</Char_Desc_250>
 			<Char_Desc_450>liquidFOLDERS speichert Ihre Dateien in einem Bereich der Festplatte ab, den wir „Store“ nennen. Ein Store besitzt keinen starren Verzeichnisbaum, und schon gar keinen, den Sie selbst erstellen müssen. Statt dessen arbeitet liquidFOLDERS wie eine professionelle Datenbank, mit der Sie die Dateien in einem Store anhand ihrer Eigenschaften in Sekundenschnelle immer wieder neu anordnen können.</Char_Desc_450>
-			<Char_Desc_2000 />
+			<Char_Desc_2000>liquidFOLDERS speichert Ihre Dateien in einem Bereich der Festplatte ab, den wir „Store“ nennen. Ein Store besitzt keinen starren Verzeichnisbaum, und schon gar keinen, den Sie selbst erstellen müssen. Statt dessen arbeitet liquidFOLDERS wie eine professionelle Datenbank, mit der Sie die Dateien in einem Store anhand ihrer Eigenschaften in Sekundenschnelle immer wieder neu anordnen können.</Char_Desc_2000>
 		</German>
 	</Program_Descriptions>
 	<Web_Info>
