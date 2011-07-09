@@ -71,6 +71,9 @@ LFNamespaceExtensionApp::LFNamespaceExtensionApp()
 
 	// Link-Datei schreiben
 	LFCreateSendTo();
+
+	// Registrierungshinweis
+	NagCounter = 100;
 }
 
 LFNamespaceExtensionApp::~LFNamespaceExtensionApp()
@@ -204,6 +207,20 @@ CString LFNamespaceExtensionApp::FrmtAttrStr(CString Mask, CString Name)
 	CString tmpStr;
 	tmpStr.Format(Mask.Mid(1, Mask.GetLength()-1), Name);
 	return tmpStr;
+}
+
+void LFNamespaceExtensionApp::ShowNagscreen()
+{
+	if (!LFIsLicensed())
+		if (++NagCounter>=3)
+		{
+			CString tmpStr;
+			ENSURE(tmpStr.LoadString(IDS_NoLicense));
+
+			MessageBox(GetForegroundWindow(), tmpStr, _T("liquidFOLDERS"), MB_OK | MB_ICONINFORMATION);
+
+			NagCounter = 0;
+		}
 }
 
 

@@ -26,6 +26,7 @@ public:
 	static void GetIconSize(INT& cx, INT& cy);
 	static void SetCoreMenuIcon(void* item, UINT ResID);
 	static CString FrmtAttrStr(CString Mask, CString Name);
+	void ShowNagscreen();
 
 	CString m_PathRunCmd;
 	CString m_PathStoreManager;
@@ -40,6 +41,7 @@ public:
 	LFDomainDescriptor* m_Domains[LFDomainCount];
 	LFItemCategoryDescriptor* m_ItemCategories[LFItemCategoryCount];
 	WCHAR* m_AttrCategoryNames[LFAttrCategoryCount+1];
+	UINT NagCounter;
 
 protected:
 	static BOOL GetApplicationPath(CString App, CString& Path);

@@ -110,12 +110,9 @@ BEGIN
     IDS_Folder              "Virtueller Ordner"
     IDS_Folders             "Virtuelle Ordner"
     IDS_Files               "Dateien"
+    IDS_NoLicense           "Sie nutzen eine unregistrierte Kopie von liquidFOLDERS. liquidFOLDERS ist Shareware – wenn Sie die Software regelmäßig nutzen, müssen Sie eine Lizenz erwerben!"
     IDS_NULLFOLDER_NameMask "UOhne %s"
     IDS_NULLFOLDER_CommentMask "UAlle Dateien ohne %s"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_FILES_Singular      "%d Datei"
     IDS_FILES_Plural        "%d Dateien"
     IDS_CAPT_CreateShortcut "Verknüpfung"
@@ -128,10 +125,6 @@ BEGIN
     IDS_HINT_CreateNewStore "Erstellt einen neuen Store für Ihre Dateien."
     IDS_MENU_MakeDefaultStore "Als &Standard-Store setzen"
     IDS_HINT_MakeDefaultStore "Setzt den ausgewählten Store als Standard-Store."
-END
-
-STRINGTABLE 
-BEGIN
     IDS_MENU_MakeHybridStore "Zu &Hybrid-Store machen"
     IDS_HINT_MakeHybridStore "Konvertiert den ausgewählten Store in einen Hybrid-Store."
     IDS_MENU_Open           "Ö&ffnen"
@@ -148,10 +141,6 @@ BEGIN
     IDS_HINT_CreateShortcut "Erstellt eine Verknüpfung für die ausgewählten Objekte."
     IDS_MENU_Delete         "&Löschen"
     IDS_HINT_Delete         "Löscht die ausgewählten Objekte."
-END
-
-STRINGTABLE 
-BEGIN
     IDS_MENU_Rename         "&Umbenennen"
     IDS_HINT_Rename         "Benennt die ausgewählten Objekte um."
     IDS_MENU_Properties     "E&igenschaften"
@@ -202,12 +191,9 @@ BEGIN
     IDS_Folder              "Virtual folder"
     IDS_Folders             "Virtual folders"
     IDS_Files               "Files"
+    IDS_NoLicense           "You are using an unregistered copy of liquidFOLDERS. liquidFOLDERS is shareware—if you decide to use it regulary, you are required to purchase a license key!"
     IDS_NULLFOLDER_NameMask "LWithout %s"
     IDS_NULLFOLDER_CommentMask "LAll files without %s"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_FILES_Singular      "%d file"
     IDS_FILES_Plural        "%d files"
     IDS_CAPT_CreateShortcut "Shortcut"
@@ -220,10 +206,6 @@ BEGIN
     IDS_HINT_CreateNewStore "Creates a new store for your files."
     IDS_MENU_MakeDefaultStore "Make default &store"
     IDS_HINT_MakeDefaultStore "Makes the selected store the default store."
-END
-
-STRINGTABLE 
-BEGIN
     IDS_MENU_MakeHybridStore "Make &hybrid store"
     IDS_HINT_MakeHybridStore "Converts the selected store into a hybrid store."
     IDS_MENU_Open           "&Open"
@@ -240,10 +222,6 @@ BEGIN
     IDS_HINT_CreateShortcut "Creates a shortcut for the selected items."
     IDS_MENU_Delete         "&Delete"
     IDS_HINT_Delete         "Deletes the selected items."
-END
-
-STRINGTABLE 
-BEGIN
     IDS_MENU_Rename         "&Rename"
     IDS_HINT_Rename         "Renames the selected items."
     IDS_MENU_Properties     "&Properties"
@@ -294,12 +272,8 @@ BEGIN
     IDS_Folder              "Carpeta virtual"
     IDS_Folders             "Carpetas virtual"
     IDS_Files               "Archivos"
+    IDS_NoLicense           "Usted está usando una copia no registrada de liquidFOLDERS. liquidFOLDERS es un software de demostración – si usted decide usarlo regularmente, usted está obligado a adquirir una licencia!"
     IDS_NULLFOLDER_NameMask "LSin %s"
-    IDS_NULLFOLDER_CommentMask "LTodos los archivos sin %s"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_FILES_Singular      "%d archivo"
     IDS_FILES_Plural        "%d archivos"
     IDS_CAPT_CreateShortcut "Acceso directo"
@@ -312,10 +286,6 @@ BEGIN
     IDS_HINT_CreateNewStore "Creaun nuevo store para sus archivos."
     IDS_MENU_MakeDefaultStore "Establecer a &store predeterminado"
     IDS_HINT_MakeDefaultStore "Establece el store seleccionado como el store predeterminado."
-END
-
-STRINGTABLE 
-BEGIN
     IDS_MENU_MakeHybridStore "Convertir astore &híbrido"
     IDS_HINT_MakeHybridStore "Convierte el store seleccionado en un store híbrido."
     IDS_MENU_Open           "&Abrir"
@@ -323,8 +293,7 @@ BEGIN
     IDS_MENU_Explore        "&Explorer"
     IDS_HINT_Explore        "Explora el objeto seleccionado."
     IDS_MENU_OpenStoreManager "Abrir en Store&Manager"
-    IDS_HINT_OpenStoreManager 
-                            "Abre el objeto seleccionado en el StoreManager."
+    IDS_HINT_OpenStoreManager "Abre el objeto seleccionado en el StoreManager."
     IDS_MENU_OpenNewWindow  "Abrir en &nueva ventana"
     IDS_HINT_OpenNewWindow  "Abre el objeto seleccionado en una nueva ventana."
     IDS_MENU_OpenWith       "Abrir &con..."
@@ -333,10 +302,6 @@ BEGIN
     IDS_HINT_CreateShortcut "Crea un acceso directo para los objetos seleccionados."
     IDS_MENU_Delete         "&Eliminar"
     IDS_HINT_Delete         "Elimina los objetos seleccionados."
-END
-
-STRINGTABLE 
-BEGIN
     IDS_MENU_Rename         "&Renombrar"
     IDS_HINT_Rename         "Renombra los objetos seleccionados."
     IDS_MENU_Properties     "&Propiedades"
@@ -387,12 +352,9 @@ BEGIN
     IDS_Folder              "Dossier virtuel"
     IDS_Folders             "Dossiers virtuelles"
     IDS_Files               "Fichiers"
+    IDS_NoLicense           "Vous utilisez une copie non enregistrée de liquidFOLDERS. liquidFOLDERS est shareware – si vous utilisez régulièrement le logiciel, vous devez acquérir une licence!"
     IDS_NULLFOLDER_NameMask "LSans %s"
     IDS_NULLFOLDER_CommentMask "LTous les fichiers sans %s"
-END
-
-STRINGTABLE
-BEGIN
     IDS_FILES_Singular      "%d fichier"
     IDS_FILES_Plural        "%d fichiers"
     IDS_CAPT_CreateShortcut "Raccourci"
@@ -417,10 +379,6 @@ BEGIN
     IDS_HINT_OpenNewWindow  "Ouvre l'élément choisi dans une nouvelle fenêtre."
     IDS_MENU_OpenWith       "Ouvrir &avec..."
     IDS_HINT_OpenWith       "Choisissez le programme avec quoi vous voudriez ouvrir ce fichier."
-END
-
-STRINGTABLE
-BEGIN
     IDS_MENU_CreateShortcut "Créer &raccourci"
     IDS_HINT_CreateShortcut "Crée un raccourci pour les éléments choisis."
     IDS_MENU_Delete         "&Effacer"

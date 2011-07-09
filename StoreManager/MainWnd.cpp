@@ -718,7 +718,7 @@ LRESULT CMainWnd::OnCookFiles(WPARAM wParam, LPARAM /*lParam*/)
 		LFFreeSearchResult(pVictim);
 
 	if ((m_pCookedFiles->m_LastError<=LFCancel) && (!LFIsLicensed()))
-		if ((++theApp.m_NagCounter)>20)
+		if ((++theApp.m_NagCounter)>5)
 		{
 			CString tmpStr;
 			ENSURE(tmpStr.LoadString(IDS_NOLICENSE));

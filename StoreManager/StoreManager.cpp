@@ -23,7 +23,7 @@ END_MESSAGE_MAP()
 CStoreManagerApp::CStoreManagerApp()
 	: LFApplication(TRUE)
 {
-	m_NagCounter = 17;
+	m_NagCounter = 3;
 }
 
 

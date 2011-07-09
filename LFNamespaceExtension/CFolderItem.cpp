@@ -361,6 +361,8 @@ BOOL CFolderItem::GetChildren(CGetChildrenEventArgs& e)
 		ConvertSearchResult(e, LFQuery(NULL));
 		break;
 	case LevelStores:
+		theApp.ShowNagscreen();
+
 		f = LFAllocFilter();
 		f->Mode = LFFilterModeStoreHome;
 		strcpy_s(f->StoreID, LFKeySize, Attrs.StoreID);
@@ -1143,7 +1145,7 @@ BOOL CFolderItem::OnOpen(CExecuteMenuitemsEventArgs& e)
 	if (e.children->GetCount()==1)
 	{
 		POSITION pos = e.children->GetHeadPosition();
-		CNSEItem* item = (CFileItem*)e.children->GetNext(pos);
+		CNSEItem* item = (CNSEItem*)e.children->GetNext(pos);
 
 		if (IS(item, CFolderItem))
 			if (!CUtils::BrowseTo(item->GetPIDLAbsolute(), e.hWnd))
