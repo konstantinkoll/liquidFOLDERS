@@ -119,7 +119,7 @@ HGLOBAL LFPhysicalLocationList::CreateDropFiles()
 	unsigned int cChars = 0;
 	for (unsigned int a=0; a<m_ItemCount; a++)
 		if ((m_Items[a].Processed) && (m_Items[a].LastError==LFOk))
-			cChars += wcslen(&m_Items[a].Path[4])+1;
+			cChars += (unsigned int)wcslen(&m_Items[a].Path[4])+1;
 
 	unsigned int szBuffer = sizeof(DROPFILES)+sizeof(wchar_t)*(cChars+1);
 	HGLOBAL hG = GlobalAlloc(GMEM_MOVEABLE, szBuffer);

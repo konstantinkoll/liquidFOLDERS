@@ -782,6 +782,23 @@ LFCore_API LFFileImportList* LFAllocFileImportList()
 	return new LFFileImportList();
 }
 
+LFCore_API LFFileImportList* LFAllocFileImportList(HDROP hDrop)
+{
+	LFFileImportList* il = new LFFileImportList();
+
+	if (hDrop)
+	{
+		unsigned int NumFiles = DragQueryFile(hDrop, (UINT)-1, NULL, 0);
+		wchar_t FileName[2*MAX_PATH];
+
+		for (unsigned int a=0; a<NumFiles; a++)
+			if (DragQueryFile(hDrop, a, FileName, 2*MAX_PATH))
+				il->AddPath(FileName);
+	}
+
+	return il;
+}
+
 LFCore_API void LFFreeFileImportList(LFFileImportList* il)
 {
 	if (il)

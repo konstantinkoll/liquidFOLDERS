@@ -1,6 +1,7 @@
 #pragma once
 
 #if defined(WIN32)
+#include <shellapi.h>
 #include <windows.h>
 #endif
 

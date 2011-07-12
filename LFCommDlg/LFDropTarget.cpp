@@ -67,12 +67,11 @@ BOOL LFDropTarget::OnDrop(CWnd* /*pWnd*/, COleDataObject* pDataObject, DROPEFFEC
 	if (!hG)
 		return FALSE;
 
+	BOOL Success = TRUE;
+
 	HDROP hDrop = (HDROP)GlobalLock(hG);
-	if (!hDrop)
-	{
-		GlobalUnlock(hG);
-		return FALSE;
-	}
+	LFFileImportList* il = LFAllocFileImportList(hDrop);
+	GlobalUnlock(hG);
 
 	// Template füllen
 	LFItemDescriptor* it = NULL;
@@ -84,41 +83,25 @@ BOOL LFDropTarget::OnDrop(CWnd* /*pWnd*/, COleDataObject* pDataObject, DROPEFFEC
 		switch (dlg.DoModal())
 		{
 		case IDCANCEL:
-			LFFreeItemDescriptor(it);
-			GlobalUnlock(hG);
-			return FALSE;
+			Success = FALSE;
+			goto Finish;
 		case IDOK:
 			strcpy_s(StoreID, LFKeySize, dlg.m_StoreID);
 		}
 	}
 
-	// Dateien durchlaufen
-	BOOL success = TRUE;
-	UINT uNumFiles = DragQueryFile(hDrop, (UINT)-1, NULL, 0);
-	WCHAR szNextFile[MAX_PATH];
-
-	LFFileImportList* il = LFAllocFileImportList();
-	for (UINT uFile=0; uFile<uNumFiles; uFile++)
-		if (DragQueryFile(hDrop, uFile, szNextFile, MAX_PATH))
-			if (!LFAddImportPath(il, &szNextFile[0]))
-				success = FALSE;
-
-	GlobalUnlock(hG);
-
 	// Import
-	if (success)
+	UINT res = LFImportFiles(StoreID, il, it, dropEffect==DROPEFFECT_MOVE);
+	if (res!=LFOk)
 	{
-		UINT res = LFImportFiles(StoreID, il, it, dropEffect==DROPEFFECT_MOVE);
-		if (res!=LFOk)
-		{
-			LFErrorBox(res);
-			success = FALSE;
-		}
-
-		SendMessage(m_hWnd, LFGetMessageIDs()->ItemsDropped, NULL, NULL);
+		LFErrorBox(res);
+		Success = FALSE;
 	}
 
+	SendMessage(m_hWnd, LFGetMessageIDs()->ItemsDropped, NULL, NULL);
+
+Finish:
 	LFFreeItemDescriptor(it);
 	LFFreeFileImportList(il);
-	return success;
+	return Success;
 }

@@ -226,6 +226,7 @@ LFCore_API bool LFAddFileID(LFFileIDList* il, char* StoreID, char* FileID, void*
 
 // Neue Datei-Importliste erzeugen
 LFCore_API LFFileImportList* LFAllocFileImportList();
+LFCore_API LFFileImportList* LFAllocFileImportList(HDROP hDrop);
 
 // Existierende LFFileImportList freigeben
 LFCore_API void LFFreeFileImportList(LFFileImportList* il);
