@@ -215,12 +215,16 @@ LFCore_API LFSearchResult* LFGroupSearchResult(LFSearchResult* res, unsigned int
 
 // Neue Dateiliste erzeugen
 LFCore_API LFFileIDList* LFAllocFileIDList();
+LFCore_API LFFileIDList* LFAllocFileImportList(HLIQUID hLiquid);
 
 // Existierende LFFileIDList freigeben
 LFCore_API void LFFreeFileIDList(LFFileIDList* il);
 
 // String zur LFFileIDList hinzufügen
 LFCore_API bool LFAddFileID(LFFileIDList* il, char* StoreID, char* FileID, void* UserData=NULL);
+
+// Handle zu LIQUIDFILES-Struktur von Dateiliste auf globalem Heap erzeugen
+LFCore_API HGLOBAL LFCreateLiquidFiles(LFFileIDList* il);
 
 
 
@@ -261,6 +265,9 @@ LFCore_API LPITEMIDLIST LFDetachPIDL(LFPhysicalLocationList* ll, unsigned int id
 
 // Handle zu DROPFILES-Struktur von Physical Location List auf globalem Heap erzeugen
 LFCore_API HGLOBAL LFCreateDropFiles(LFPhysicalLocationList* ll);
+
+// Handle zu LIQUIDFILES-Struktur von Physical Location List auf globalem Heap erzeugen
+LFCore_API HGLOBAL LFCreateLiquidFiles(LFPhysicalLocationList* ll);
 
 
 

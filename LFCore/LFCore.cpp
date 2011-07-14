@@ -765,6 +765,17 @@ LFCore_API LFFileIDList* LFAllocFileIDList()
 	return new LFFileIDList();
 }
 
+LFCore_API LFFileIDList* LFAllocFileImportList(HLIQUID hLiquid)
+{
+	LFFileIDList* il = new LFFileIDList();
+
+	if (hLiquid)
+	{
+	}
+
+	return il;
+}
+
 LFCore_API void LFFreeFileIDList(LFFileIDList* il)
 {
 	if (il)
@@ -774,6 +785,11 @@ LFCore_API void LFFreeFileIDList(LFFileIDList* il)
 LFCore_API bool LFAddFileID(LFFileIDList* il, char* StoreID, char* FileID, void* UserData)
 {
 	return il->AddFileID(StoreID, FileID, UserData);
+}
+
+LFCore_API HGLOBAL LFCreateLiquidFiles(LFFileIDList* il)
+{
+	return il->CreateLiquidFiles();
 }
 
 
@@ -854,6 +870,11 @@ LFCore_API LPITEMIDLIST LFDetachPIDL(LFPhysicalLocationList* ll, unsigned int id
 LFCore_API HGLOBAL LFCreateDropFiles(LFPhysicalLocationList* ll)
 {
 	return ll->CreateDropFiles();
+}
+
+LFCore_API HGLOBAL LFCreateLiquidFiles(LFPhysicalLocationList* ll)
+{
+	return ll->CreateLiquidFiles();
 }
 
 

@@ -1737,22 +1737,12 @@ void CMainView::OnFileCopy()
 	{
 		LFErrorBox(LFResolve(ll), GetSafeHwnd());
 
-		STGMEDIUM Medium;
-		ZeroMemory(&Medium, sizeof(Medium));
-		Medium.tymed = TYMED_HGLOBAL;
-		Medium.hGlobal = LFCreateDropFiles(ll);
-		Medium.pUnkForRelease = NULL;
+		CWaitCursor csr;
+		IDataObject* pDataObject = new CDataObject(ll);
 
-		FORMATETC FormatEtc;
-		ZeroMemory(&FormatEtc, sizeof(FormatEtc));
-		FormatEtc.cfFormat = CF_HDROP;
-		FormatEtc.dwAspect = DVASPECT_CONTENT;
-		FormatEtc.lindex = -1;
-		FormatEtc.tymed = TYMED_HGLOBAL;
+		OleSetClipboard(pDataObject);
 
-		COleDataSource* pData = new COleDataSource();
-		pData->CacheData(CF_HDROP, &Medium, &FormatEtc);
-		pData->SetClipboard();
+		pDataObject->Release();
 	}
 
 	LFFreePhysicalLocationList(ll);

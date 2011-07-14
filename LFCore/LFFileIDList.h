@@ -18,6 +18,7 @@ public:
 	LFFileIDList();
 
 	bool AddFileID(char* StoreID, char* FileID, void* UserData);
+	HGLOBAL CreateLiquidFiles();
 
 	bool m_Changes;
 };

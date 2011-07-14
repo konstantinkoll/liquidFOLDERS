@@ -15,6 +15,19 @@
 #include "..\\include\\LFBitArray.h"
 
 
+// Clipbaord
+
+#define CF_LIQUIDFILES     "liquidFOLDERS.liquidFILES"
+
+typedef HANDLE HLIQUID;
+
+struct LIQUIDFILES
+{
+	DWORD pFiles;
+	UINT cFiles;
+};
+
+
 // License
 
 struct LFLicenseVersion

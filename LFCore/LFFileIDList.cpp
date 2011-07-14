@@ -23,3 +23,39 @@ bool LFFileIDList::AddFileID(char* StoreID, char* FileID, void* UserData)
 
 	return DynArray::AddItem(item);
 }
+
+HGLOBAL LFFileIDList::CreateLiquidFiles()
+{
+	unsigned int cFiles = 0;
+	for (unsigned int a=0; a<m_ItemCount; a++)
+		if (m_Items[a].LastError==LFOk)
+			cFiles++;
+
+	unsigned int szBuffer = sizeof(LIQUIDFILES)+sizeof(char)*cFiles*LFKeySize*2;
+	HGLOBAL hG = GlobalAlloc(GMEM_MOVEABLE, szBuffer);
+	if (!hG)
+		return NULL;
+
+	LIQUIDFILES* pFiles = (LIQUIDFILES*)GlobalLock(hG);
+	if (!pFiles)
+	{
+		GlobalFree(hG);
+		return NULL;
+	}
+
+	pFiles->pFiles = sizeof(LIQUIDFILES);
+	pFiles->cFiles = cFiles;
+
+	char* ptr = (char*)(((unsigned char*)pFiles)+sizeof(LIQUIDFILES));
+	for (unsigned int a=0; a<m_ItemCount; a++)
+		if (m_Items[a].LastError==LFOk)
+		{
+			strcpy_s(ptr, LFKeySize, m_Items[a].StoreID);
+			ptr += LFKeySize;
+			strcpy_s(ptr, LFKeySize, m_Items[a].FileID);
+			ptr += LFKeySize;
+		}
+
+	GlobalUnlock(hG);
+	return hG;
+}

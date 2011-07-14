@@ -25,4 +25,5 @@ public:
 	void Resolve(bool IncludePIDL=false);
 	LPITEMIDLIST DetachPIDL(unsigned int idx);
 	HGLOBAL CreateDropFiles();
+	HGLOBAL CreateLiquidFiles();
 };

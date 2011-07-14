@@ -57,6 +57,9 @@ LFApplication::LFApplication(BOOL HasGUI)
 	GetVersionEx(&osInfo);
 	OSVersion = (osInfo.dwMajorVersion<6) ? OS_XP : ((osInfo.dwMajorVersion==6) && (osInfo.dwMinorVersion==0)) ? OS_Vista : OS_Seven;
 
+	// Clipboard
+	CF_HLIQUID = RegisterClipboardFormat(_T(CF_LIQUIDFILES));
+
 	// DLL-Hijacking verhindern
 	SetDllDirectory(_T(""));
 
