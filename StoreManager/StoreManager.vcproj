@@ -378,10 +378,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CDataObject.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\CFileView.cpp"
 				>
 			</File>
@@ -521,10 +517,6 @@
 			>
 			<File
 				RelativePath=".\CCalendarView.h"
-				>
-			</File>
-			<File
-				RelativePath=".\CDataObject.h"
 				>
 			</File>
 			<File

@@ -9,7 +9,7 @@
 // CDataObject
 //
 
-class CDataObject : public IDataObject
+class AFX_EXT_CLASS CDataObject : public IDataObject
 {
 public:
 	CDataObject(LFPhysicalLocationList* ll);

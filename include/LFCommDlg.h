@@ -1,6 +1,7 @@
 #pragma once
 #include "..\LFCommDlg\CBottomArea.h"
 #include "..\LFCommDlg\CConditionList.h"
+#include "..\LFCommDlg\CDataObject.h"
 #include "..\LFCommDlg\CDropdownSelector.h"
 #include "..\LFCommDlg\CExplorerHeader.h"
 #include "..\LFCommDlg\CExplorerList.h"

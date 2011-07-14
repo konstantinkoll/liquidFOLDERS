@@ -3,7 +3,6 @@
 //
 
 #include "stdafx.h"
-#include "CDataObject.h"
 #include "CMainView.h"
 #include "CCalendarView.h"
 #include "CGlobeView.h"

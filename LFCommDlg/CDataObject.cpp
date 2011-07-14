@@ -4,7 +4,7 @@
 
 #include "stdafx.h"
 #include "CDataObject.h"
-#include "LFCommDlg.h"
+#include "LFApplication.h"
 
 
 BOOL DuplicateGlobalMemory(const HGLOBAL hSrc, HGLOBAL& hDst)
