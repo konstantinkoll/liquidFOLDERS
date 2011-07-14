@@ -17,7 +17,7 @@ class LFFileIDList : public DynArray<LFFIL_Item>
 public:
 	LFFileIDList();
 
-	bool AddFileID(char* StoreID, char* FileID, void* UserData);
+	bool AddFileID(char* StoreID, char* FileID, void* UserData=NULL);
 	HGLOBAL CreateLiquidFiles();
 
 	bool m_Changes;

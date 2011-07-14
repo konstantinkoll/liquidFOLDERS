@@ -771,6 +771,27 @@ LFCore_API LFFileIDList* LFAllocFileImportList(HLIQUID hLiquid)
 
 	if (hLiquid)
 	{
+		LIQUIDFILES* pFiles = (LIQUIDFILES*)GlobalLock(hLiquid);
+		if (pFiles)
+		{
+			unsigned int cFiles = pFiles->cFiles;
+			char* ptr = (char*)(((unsigned char*)pFiles)+sizeof(LIQUIDFILES));
+
+			for (unsigned int a=0; a<cFiles; a++)
+			{
+				char StoreID[LFKeySize];
+				strcpy_s(StoreID, LFKeySize, ptr);
+				ptr += LFKeySize;
+
+				char FileID[LFKeySize];
+				strcpy_s(FileID, LFKeySize, ptr);
+				ptr += LFKeySize;
+
+				il->AddFileID(StoreID, FileID);
+			}
+		}
+
+		GlobalUnlock(hLiquid);
 	}
 
 	return il;
