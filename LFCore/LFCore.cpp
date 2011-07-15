@@ -765,7 +765,7 @@ LFCore_API LFFileIDList* LFAllocFileIDList()
 	return new LFFileIDList();
 }
 
-LFCore_API LFFileIDList* LFAllocFileImportList(HLIQUID hLiquid)
+LFCore_API LFFileIDList* LFAllocFileIDList(HLIQUID hLiquid)
 {
 	LFFileIDList* il = new LFFileIDList();
 

@@ -215,7 +215,7 @@ LFCore_API LFSearchResult* LFGroupSearchResult(LFSearchResult* res, unsigned int
 
 // Neue Dateiliste erzeugen
 LFCore_API LFFileIDList* LFAllocFileIDList();
-LFCore_API LFFileIDList* LFAllocFileImportList(HLIQUID hLiquid);
+LFCore_API LFFileIDList* LFAllocFileIDList(HLIQUID hLiquid);
 
 // Existierende LFFileIDList freigeben
 LFCore_API void LFFreeFileIDList(LFFileIDList* il);
