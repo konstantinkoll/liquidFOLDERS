@@ -38,27 +38,6 @@ void CreateShortcut(LFPLL_Item* i)
 	}
 }
 
-void CreateShortcut(LFItemDescriptor* i)
-{
-	ASSERT(i->Type & LFTypeStore);
-
-	// Get a pointer to the IShellLink interface
-	IShellLink* pShellLink = NULL;
-	if (SUCCEEDED(CoCreateInstance(CLSID_ShellLink, NULL, CLSCTX_INPROC_SERVER, IID_IShellLink, (void**)&pShellLink)))
-	{
-		CString StoreID(i->StoreID);
-
-		pShellLink->SetPath(theApp.m_Path+_T("StoreManager.exe"));
-		pShellLink->SetArguments(StoreID);
-		pShellLink->SetIconLocation(_T("LFCORE.DLL"), (i->IconID==IDI_STORE_Default ? IDI_STORE_Internal : i->IconID)-1);
-		pShellLink->SetShowCmd(SW_SHOWNORMAL);
-
-		LFCreateDesktopShortcut(pShellLink, i->CoreAttributes.FileName);
-
-		pShellLink->Release();
-	}
-}
-
 
 // CMainView
 //
@@ -1611,12 +1590,8 @@ void CMainView::OnStoreShortcut()
 {
 	INT idx = GetSelectedItem();
 	if (idx!=-1)
-	{
-		if (!LFAskCreateShortcut(GetSafeHwnd()))
-			return;
-
-		CreateShortcut(p_CookedFiles->m_Items[idx]);
-	}
+		if (LFAskCreateShortcut(GetSafeHwnd()))
+			LFCreateShortcutForStore(p_CookedFiles->m_Items[idx]);
 }
 
 void CMainView::OnStoreDelete()

@@ -93,6 +93,7 @@ BEGIN_MESSAGE_MAP(LFChooseStoreDlg, LFDialog)
 	ON_COMMAND(IDM_STORE_MAKEDEFAULT, OnStoreMakeDefault)
 	ON_COMMAND(IDM_STORE_MAKEHYBRID, OnStoreMakeHybrid)
 	ON_COMMAND(IDM_STORE_MAINTAIN, OnStoreMaintain)
+	ON_COMMAND(IDM_STORE_SHORTCUT, OnStoreShortcut)
 	ON_COMMAND(IDM_STORE_DELETE, OnStoreDelete)
 	ON_COMMAND(IDM_STORE_RENAME, OnStoreRename)
 	ON_COMMAND(IDM_STORE_PROPERTIES, OnStoreProperties)
@@ -303,6 +304,14 @@ void LFChooseStoreDlg::OnStoreMaintain()
 
 		LFFreeMaintenanceList(ml);
 	}
+}
+
+void LFChooseStoreDlg::OnStoreShortcut()
+{
+	INT idx = GetSelectedStore();
+	if (idx!=-1)
+		if (LFAskCreateShortcut(GetSafeHwnd()))
+			LFCreateShortcutForStore(p_Result->m_Items[idx]);
 }
 
 void LFChooseStoreDlg::OnStoreDelete()

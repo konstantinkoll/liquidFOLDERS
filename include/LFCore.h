@@ -472,3 +472,8 @@ LFCore_API bool LFAskCreateShortcut(HWND hwnd);
 
 // Speichert pShellLink auf dem Desktop ab
 LFCore_API void LFCreateDesktopShortcut(IShellLink* pShellLink, wchar_t* LinkFilename);
+
+// Erzeugt auf dem Desktop eine Verknüpfung mit dem angegebenen Store
+LFCore_API void LFCreateShortcutForStore(LFItemDescriptor* i);
+LFCore_API void LFCreateShortcutForStore(LFStoreDescriptor* s);
+LFCore_API void LFCreateShortcutForStore(char* key);
