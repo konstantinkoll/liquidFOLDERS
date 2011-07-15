@@ -75,8 +75,6 @@
 #define IDS_STATISTICS_OTHER            1038
 #define IDS_SUBFOLDERS_MANDATORY        1039
 #define IDS_SUBFOLDERS_NOTAVAIL         1040
-#define IDS_SHORTCUT_CAPTION            1041
-#define IDS_SHORTCUT_TEXT               1042
 #define IDS_VATTR_FIRST                 1100
 #define IDS_VATTR_DRIVELETTER           1100
 #define IDS_VATTR_MAINTENANCETIME       1101

@@ -25,8 +25,6 @@
 #define IDS_NULLFOLDER_CommentMask      1010
 #define IDS_FILES_Singular              1011
 #define IDS_FILES_Plural                1012
-#define IDS_CAPT_CreateShortcut         1013
-#define IDS_TEXT_CreateShortcut         1014
 #define IDS_MENU_CreateNewStore         1100
 #define IDS_HINT_CreateNewStore         1101
 #define IDS_MENU_MakeDefaultStore       1102

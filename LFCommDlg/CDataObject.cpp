@@ -129,14 +129,20 @@ STDMETHODIMP CDataObject::EnumFormatEtc(DWORD dwDirection, IEnumFORMATETC** ppen
 {
 	if (dwDirection==DATADIR_GET)
 	{
-		FORMATETC fmt;
+		FORMATETC fmt[2];
 		ZeroMemory(&fmt, sizeof(fmt));
-		fmt.cfFormat = CF_HDROP;
-		fmt.dwAspect = DVASPECT_CONTENT;
-		fmt.lindex = -1;
-		fmt.tymed = TYMED_HGLOBAL;
 
-		return SHCreateStdEnumFmtEtc(1, &fmt, ppenumFormatEtc);
+		fmt[0].cfFormat = CF_HDROP;
+		fmt[0].dwAspect = DVASPECT_CONTENT;
+		fmt[0].lindex = -1;
+		fmt[0].tymed = TYMED_HGLOBAL;
+
+		fmt[1].cfFormat = ((LFApplication*)AfxGetApp())->CF_HLIQUID;
+		fmt[1].dwAspect = DVASPECT_CONTENT;
+		fmt[1].lindex = -1;
+		fmt[1].tymed = TYMED_HGLOBAL;
+
+		return SHCreateStdEnumFmtEtc(2, fmt, ppenumFormatEtc);
 	}
 
 	return E_NOTIMPL;

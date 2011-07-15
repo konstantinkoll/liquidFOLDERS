@@ -78,7 +78,7 @@ public:
 	LFMessageIDs* MessageIDs;
 	BOOL IsLicensed;
 	UINT OSVersion;
-	UINT CF_HLIQUID;
+	CLIPFORMAT CF_HLIQUID;
 
 	PFNSETWINDOWTHEME zSetWindowTheme;
 	PFNOPENTHEMEDATA zOpenThemeData;

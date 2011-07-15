@@ -32,35 +32,28 @@ void CreateShortcut(LFPLL_Item* i)
 		pShellLink->SetIconLocation(Ext, 0);
 		pShellLink->SetShowCmd(SW_SHOWNORMAL);
 
-		CString LinkFilename(i->FileName);
+		LFCreateDesktopShortcut(pShellLink, i->FileName);
 
-		// Get the fully qualified file name for the link file
-		TCHAR strPath[MAX_PATH];
-		if (SHGetSpecialFolderPath(NULL, strPath, CSIDL_DESKTOPDIRECTORY, FALSE))
-		{
-			CString PathLink;
-			CString NumberStr;
-			INT Number = 1;
+		pShellLink->Release();
+	}
+}
 
-			// Check if link file exists; if not, append number
-			do
-			{
-				PathLink = strPath;
-				PathLink += _T("\\")+LinkFilename+NumberStr+_T(".lnk");
-				NumberStr.Format(_T(" (%d)"), ++Number);
-			}
-			while (_waccess(PathLink, 0)==0);
+void CreateShortcut(LFItemDescriptor* i)
+{
+	ASSERT(i->Type & LFTypeStore);
 
-			// Query IShellLink for the IPersistFile interface for saving the 
-			// shortcut in persistent storage
-			IPersistFile* pPersistFile = NULL;
-			if (SUCCEEDED(pShellLink->QueryInterface(IID_IPersistFile, (void**)&pPersistFile)))
-			{
-				// Save the link by calling IPersistFile::Save
-				pPersistFile->Save(PathLink, TRUE);
-				pPersistFile->Release();
-			}
-		}
+	// Get a pointer to the IShellLink interface
+	IShellLink* pShellLink = NULL;
+	if (SUCCEEDED(CoCreateInstance(CLSID_ShellLink, NULL, CLSCTX_INPROC_SERVER, IID_IShellLink, (void**)&pShellLink)))
+	{
+		CString StoreID(i->StoreID);
+
+		pShellLink->SetPath(theApp.m_Path+_T("StoreManager.exe"));
+		pShellLink->SetArguments(StoreID);
+		pShellLink->SetIconLocation(_T("LFCORE.DLL"), (i->IconID==IDI_STORE_Default ? IDI_STORE_Internal : i->IconID)-1);
+		pShellLink->SetShowCmd(SW_SHOWNORMAL);
+
+		LFCreateDesktopShortcut(pShellLink, i->CoreAttributes.FileName);
 
 		pShellLink->Release();
 	}
@@ -730,6 +723,7 @@ BEGIN_MESSAGE_MAP(CMainView, CWnd)
 	ON_COMMAND(IDM_STORE_MAKEHYBRID, OnStoreMakeHybrid)
 	ON_COMMAND(IDM_STORE_IMPORTFOLDER, OnStoreImportFolder)
 	ON_COMMAND(IDM_STORE_MAINTAIN, OnStoreMaintain)
+	ON_COMMAND(IDM_STORE_SHORTCUT, OnStoreShortcut)
 	ON_COMMAND(IDM_STORE_DELETE, OnStoreDelete)
 	ON_COMMAND(IDM_STORE_RENAME, OnStoreRename)
 	ON_COMMAND(IDM_STORE_PROPERTIES, OnStoreProperties)
@@ -1613,11 +1607,16 @@ void CMainView::OnStoreMaintain()
 	}
 }
 
-void CMainView::OnStoreRename()
+void CMainView::OnStoreShortcut()
 {
 	INT idx = GetSelectedItem();
-	if ((idx!=-1) && (p_wndFileView))
-		p_wndFileView->EditLabel(idx);
+	if (idx!=-1)
+	{
+		if (!LFAskCreateShortcut(GetSafeHwnd()))
+			return;
+
+		CreateShortcut(p_CookedFiles->m_Items[idx]);
+	}
 }
 
 void CMainView::OnStoreDelete()
@@ -1625,6 +1624,13 @@ void CMainView::OnStoreDelete()
 	INT idx = GetSelectedItem();
 	if (idx!=-1)
 		LFErrorBox(((LFApplication*)AfxGetApp())->DeleteStore(p_CookedFiles->m_Items[idx], this), GetSafeHwnd());
+}
+
+void CMainView::OnStoreRename()
+{
+	INT idx = GetSelectedItem();
+	if ((idx!=-1) && (p_wndFileView))
+		p_wndFileView->EditLabel(idx);
 }
 
 void CMainView::OnStoreProperties()
@@ -1749,17 +1755,8 @@ void CMainView::OnFileCopy()
 
 void CMainView::OnFileShortcut()
 {
-	if (theApp.OSVersion==OS_XP)
-	{
-		// Ask if link should be created on desktop
-		CString tmpStr;
-		CString tmpCaption;
-		ENSURE(tmpStr.LoadString(IDS_SHORTCUT_TEXT));
-		ENSURE(tmpCaption.LoadString(IDS_SHORTCUT_CAPTION));
-
-		if (MessageBox(tmpStr, tmpCaption, MB_YESNO | MB_ICONQUESTION)==IDNO)
-			return;
-	}
+	if (!LFAskCreateShortcut(GetSafeHwnd()))
+		return;
 
 	LFPhysicalLocationList* ll = BuildPhysicalLocationList();
 	if (ll->m_ItemCount)

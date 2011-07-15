@@ -126,8 +126,9 @@ protected:
 	afx_msg void OnStoreMakeHybrid();
 	afx_msg void OnStoreImportFolder();
 	afx_msg void OnStoreMaintain();
-	afx_msg void OnStoreRename();
+	afx_msg void OnStoreShortcut();
 	afx_msg void OnStoreDelete();
+	afx_msg void OnStoreRename();
 	afx_msg void OnStoreProperties();
 	afx_msg void OnUpdateStoreCommands(CCmdUI* pCmdUI);
 

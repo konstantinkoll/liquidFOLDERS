@@ -164,9 +164,10 @@ BEGIN
         MENUITEM "Als &Standard-Store setzen",  IDM_STORE_MAKEDEFAULT
         MENUITEM "Zu &Hybrid-Store machen",     IDM_STORE_MAKEHYBRID
         MENUITEM SEPARATOR
-        MENUITEM "&Verzeichnis importieren...", IDM_STORE_IMPORTFOLDER
+        MENUITEM "Verzeichnis &importieren...", IDM_STORE_IMPORTFOLDER
         MENUITEM "&Wartungsarbeiten durchführen", IDM_STORE_MAINTAIN
         MENUITEM SEPARATOR
+        MENUITEM "&Verknüpfung erstellen",      IDM_STORE_SHORTCUT
         MENUITEM "&Löschen",                    IDM_STORE_DELETE
         MENUITEM "&Umbenennen",                 IDM_STORE_RENAME
         MENUITEM SEPARATOR
@@ -762,12 +763,13 @@ IDM_STORE MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "Make default &store",         IDM_STORE_MAKEDEFAULT
+        MENUITEM "Make de&fault store",         IDM_STORE_MAKEDEFAULT
         MENUITEM "Make &hybrid store",          IDM_STORE_MAKEHYBRID
         MENUITEM SEPARATOR
         MENUITEM "&Import folder...",           IDM_STORE_IMPORTFOLDER
         MENUITEM "Run &maintenance",            IDM_STORE_MAINTAIN
         MENUITEM SEPARATOR
+        MENUITEM "Create &shortcut",            IDM_STORE_SHORTCUT
         MENUITEM "&Delete",                     IDM_STORE_DELETE
         MENUITEM "&Rename",                     IDM_STORE_RENAME
         MENUITEM SEPARATOR
@@ -1362,6 +1364,7 @@ BEGIN
         MENUITEM "&Importar carpeta...",        IDM_STORE_IMPORTFOLDER
         MENUITEM "Ejecutar &mantenimiento",     IDM_STORE_MAINTAIN
         MENUITEM SEPARATOR
+        MENUITEM "Crear &acceso directo",       IDM_STORE_SHORTCUT
         MENUITEM "&Eliminar",                   IDM_STORE_DELETE
         MENUITEM "&Renombrar",                  IDM_STORE_RENAME
         MENUITEM SEPARATOR
@@ -1963,6 +1966,7 @@ BEGIN
         MENUITEM "&Importer dossier...",        IDM_STORE_IMPORTFOLDER
         MENUITEM "Exécuter des &travails d'entretien", IDM_STORE_MAINTAIN
         MENUITEM SEPARATOR
+        MENUITEM "Créer r&accourci",            IDM_STORE_SHORTCUT
         MENUITEM "&Effacer",                    IDM_STORE_DELETE
         MENUITEM "&Renommer",                   IDM_STORE_RENAME
         MENUITEM SEPARATOR

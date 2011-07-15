@@ -115,8 +115,6 @@ BEGIN
     IDS_NULLFOLDER_CommentMask "UAlle Dateien ohne %s"
     IDS_FILES_Singular      "%d Datei"
     IDS_FILES_Plural        "%d Dateien"
-    IDS_CAPT_CreateShortcut "Verknüpfung"
-    IDS_TEXT_CreateShortcut "An dieser Stelle kann keine Verknüpfung erstellt werden.\nMöchten Sie die Verknüpfung stattdessen auf dem Desktop erstellen?"
 END
 
 STRINGTABLE 
@@ -145,7 +143,7 @@ BEGIN
     IDS_HINT_Rename         "Benennt die ausgewählten Objekte um."
     IDS_MENU_Properties     "E&igenschaften"
     IDS_HINT_Properties     "Zeigt die Eigenschaften der ausgewählten Objekte."
-    IDS_MENU_ImportFolder   "&Verzeichnis importieren..."
+    IDS_MENU_ImportFolder   "Verzeichnis &importieren..."
     IDS_HINT_ImportFolder   "Importiert einen Ordner und alle Unterordner in den ausgewählten Store."
     IDS_MENU_Maintain       "&Wartungsarbeiten durchführen"
     IDS_HINT_Maintain       "Führt Wartungsarbeiten am ausgewählten Store durch."
@@ -196,15 +194,13 @@ BEGIN
     IDS_NULLFOLDER_CommentMask "LAll files without %s"
     IDS_FILES_Singular      "%d file"
     IDS_FILES_Plural        "%d files"
-    IDS_CAPT_CreateShortcut "Shortcut"
-    IDS_TEXT_CreateShortcut "Windows cannot create a shortcut here.\nDo you want the shortcut to be placed on the desktop instead?"
 END
 
 STRINGTABLE 
 BEGIN
     IDS_MENU_CreateNewStore "Create &new store..."
     IDS_HINT_CreateNewStore "Creates a new store for your files."
-    IDS_MENU_MakeDefaultStore "Make default &store"
+    IDS_MENU_MakeDefaultStore "Make de&fault store"
     IDS_HINT_MakeDefaultStore "Makes the selected store the default store."
     IDS_MENU_MakeHybridStore "Make &hybrid store"
     IDS_HINT_MakeHybridStore "Converts the selected store into a hybrid store."
@@ -276,8 +272,6 @@ BEGIN
     IDS_NULLFOLDER_NameMask "LSin %s"
     IDS_FILES_Singular      "%d archivo"
     IDS_FILES_Plural        "%d archivos"
-    IDS_CAPT_CreateShortcut "Acceso directo"
-    IDS_TEXT_CreateShortcut "Windows no puede crear un acceso directo aquí.\n¿Desea que en su lugar el acceso directo se coloque en el escritorio?"
 END
 
 STRINGTABLE 
@@ -357,8 +351,6 @@ BEGIN
     IDS_NULLFOLDER_CommentMask "LTous les fichiers sans %s"
     IDS_FILES_Singular      "%d fichier"
     IDS_FILES_Plural        "%d fichiers"
-    IDS_CAPT_CreateShortcut "Raccourci"
-    IDS_TEXT_CreateShortcut "Windows ne peut pas créer un raccourci ici.\nVoulez-vous que le raccourci à être mis sur le Bureau à la place ?"
 END
 
 STRINGTABLE
@@ -379,7 +371,7 @@ BEGIN
     IDS_HINT_OpenNewWindow  "Ouvre l'élément choisi dans une nouvelle fenêtre."
     IDS_MENU_OpenWith       "Ouvrir &avec..."
     IDS_HINT_OpenWith       "Choisissez le programme avec quoi vous voudriez ouvrir ce fichier."
-    IDS_MENU_CreateShortcut "Créer &raccourci"
+    IDS_MENU_CreateShortcut "Créer r&accourci"
     IDS_HINT_CreateShortcut "Crée un raccourci pour les éléments choisis."
     IDS_MENU_Delete         "&Effacer"
     IDS_HINT_Delete         "Efface les éléments choisis."

@@ -460,3 +460,15 @@ LFCore_API int LFIATAGetNextAirportByCountry(unsigned int CountryID, int last, L
 // Setzt den Zeiger *pBuffer auf den Flughafen mit dem übergebenen Code.
 // *pBuffer kann in jedem Fall überschrieben werden.
 LFCore_API bool LFIATAGetAirportByCode(char* Code, LFAirport** pBuffer);
+
+
+//
+// Shortcuts
+//
+
+// Fragt unter Windows XP, ob eine Verknüpfung auf dem Desktop erstellt werden soll
+// Bei höheren Windows-Versionen wird immer true zurückgeliefert.
+LFCore_API bool LFAskCreateShortcut(HWND hwnd);
+
+// Speichert pShellLink auf dem Desktop ab
+LFCore_API void LFCreateDesktopShortcut(IShellLink* pShellLink, wchar_t* LinkFilename);

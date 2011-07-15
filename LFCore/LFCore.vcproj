@@ -478,6 +478,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Shortcuts.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\stdafx.cpp"
 				>
 				<FileConfiguration
@@ -637,6 +641,10 @@
 			</File>
 			<File
 				RelativePath=".\ShellProperties.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Shortcuts.h"
 				>
 			</File>
 			<File

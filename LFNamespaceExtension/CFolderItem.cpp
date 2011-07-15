@@ -660,22 +660,8 @@ BOOL CFolderItem::OnExecuteMenuItem(CExecuteMenuitemsEventArgs& e)
 
 	if (e.menuItem->GetVerb()==_T(VERB_CREATESHORTCUT))
 	{
-		OSVERSIONINFO osInfo;
-		ZeroMemory(&osInfo, sizeof(OSVERSIONINFO));
-		osInfo.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
-		GetVersionEx(&osInfo);
-
-		if (osInfo.dwMajorVersion<6)
-		{
-			// Ask if link should be created on desktop
-			CString tmpStr;
-			CString tmpCaption;
-			ENSURE(tmpStr.LoadString(IDS_TEXT_CreateShortcut));
-			ENSURE(tmpCaption.LoadString(IDS_CAPT_CreateShortcut));
-
-			if (MessageBox(GetViewWindow(), tmpStr, tmpCaption, MB_YESNO | MB_ICONQUESTION)==IDNO)
-				return FALSE;
-		}
+		if (!LFAskCreateShortcut(GetViewWindow()))
+			return FALSE;
 
 		// Create shortcut on desktop
 		POSITION pos = e.children->GetHeadPosition();
@@ -1509,33 +1495,7 @@ void CFolderItem::CreateShortcut(CNSEItem* Item)
 			CString LinkFilename;
 			Item->GetDisplayName(LinkFilename);
 
-			// Get the fully qualified file name for the link file
-			TCHAR strPath[MAX_PATH];
-			if (SHGetSpecialFolderPath(NULL, strPath, CSIDL_DESKTOPDIRECTORY, FALSE))
-			{
-				CString PathLink;
-				CString NumberStr;
-				INT Number = 1;
-
-				// Check if link file exists; if not, append number
-				do
-				{
-					PathLink = strPath;
-					PathLink += _T("\\")+LinkFilename+NumberStr+_T(".lnk");
-					NumberStr.Format(_T(" (%d)"), ++Number);
-				}
-				while (_waccess(PathLink, 0)==0);
-
-				// Query IShellLink for the IPersistFile interface for saving the 
-				// shortcut in persistent storage
-				IPersistFile* pPersistFile = NULL;
-				if (SUCCEEDED(pShellLink->QueryInterface(IID_IPersistFile, (void**)&pPersistFile)))
-				{
-					// Save the link by calling IPersistFile::Save
-					pPersistFile->Save(PathLink, TRUE);
-					pPersistFile->Release();
-				}
-			}
+			LFCreateDesktopShortcut(pShellLink, LinkFilename.GetBuffer());
 		}
 
 		pShellLink->Release();

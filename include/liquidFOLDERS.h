@@ -17,7 +17,7 @@
 
 // Clipbaord
 
-#define CF_LIQUIDFILES     "liquidFOLDERS.liquidFILES"
+#define CFSTR_LIQUIDFILES     "liquidFOLDERS.liquidFILES"
 
 typedef HANDLE HLIQUID;
 
