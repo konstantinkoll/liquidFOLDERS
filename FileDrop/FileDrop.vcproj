@@ -445,10 +445,6 @@
 				RelativePath=".\res\FileDrop_About.png"
 				>
 			</File>
-			<File
-				RelativePath=".\res\StoreManager_Small.ico"
-				>
-			</File>
 		</Filter>
 		<Filter
 			Name="Headerdateien"

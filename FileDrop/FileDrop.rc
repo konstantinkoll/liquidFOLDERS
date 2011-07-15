@@ -33,7 +33,6 @@ LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
 IDR_APPLICATION         ICON                    "res\\FileDrop.ico"
-ID_APP_NEWSTOREMANAGER  ICON                    "res\\StoreManager_Small.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -103,13 +102,20 @@ BEGIN
     POPUP "POPUP"
     BEGIN
         MENUITEM "Standard-Store &wählen...",   ID_APP_CHOOSEDEFAULTSTORE
-        MENUITEM "&Verzeichnis importieren...", ID_APP_IMPORTFOLDER
-        MENUITEM "&Eigenschaften",              ID_APP_STOREPROPERTIES
+        POPUP "&Store"
+        BEGIN
+            MENUITEM "Ö&ffnen",                     ID_APP_OPENSTORE
+            MENUITEM SEPARATOR
+            MENUITEM "Verzeichnis &importieren...", IDM_STORE_IMPORTFOLDER
+            MENUITEM "&Wartungsarbeiten durchführen", IDM_STORE_MAINTAIN
+            MENUITEM SEPARATOR
+            MENUITEM "&Verknüpfung erstellen",      IDM_STORE_SHORTCUT
+            MENUITEM SEPARATOR
+            MENUITEM "&Eigenschaften",              IDM_STORE_PROPERTIES
+        END
         MENUITEM SEPARATOR
         MENUITEM "&Über FileDrop",              ID_APP_ABOUT
         MENUITEM "&Immer im Vordergrund",       SC_ALWAYSONTOP
-        MENUITEM SEPARATOR
-        MENUITEM "&StoreManager starten",       ID_APP_NEWSTOREMANAGER
         MENUITEM SEPARATOR
         MENUITEM "&Beenden",                    ID_APP_EXIT
     END
@@ -133,54 +139,6 @@ END
 
 
 /////////////////////////////////////////////////////////////////////////////
-// Englisch (neutral) resources
-
-#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
-#ifdef _WIN32
-LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
-#pragma code_page(1252)
-#endif //_WIN32
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Menu
-//
-
-IDM_POPUP MENU 
-BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "Choose &default store...",    ID_APP_CHOOSEDEFAULTSTORE
-        MENUITEM "&Import folder...",           ID_APP_IMPORTFOLDER
-        MENUITEM "&Properties",                 ID_APP_STOREPROPERTIES
-        MENUITEM SEPARATOR
-        MENUITEM "&About FileDrop",             ID_APP_ABOUT
-        MENUITEM "Always on &top",              SC_ALWAYSONTOP
-        MENUITEM SEPARATOR
-        MENUITEM "Open &StoreManager",          ID_APP_NEWSTOREMANAGER
-        MENUITEM SEPARATOR
-        MENUITEM "&Quit",                       ID_APP_EXIT
-    END
-END
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// String Table
-//
-
-STRINGTABLE 
-BEGIN
-    IDS_ALWAYSONTOP         "Always on &top"
-    IDS_TOOLTIP             "Drop files here to import\nthem into liquidFOLDERS."
-    IDS_NODEFAULTSTORE      "No default store"
-END
-
-#endif    // Englisch (neutral) resources
-/////////////////////////////////////////////////////////////////////////////
-
-
-/////////////////////////////////////////////////////////////////////////////
 // Spanisch (neutral) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ESP)
@@ -199,13 +157,20 @@ BEGIN
     POPUP "POPUP"
     BEGIN
         MENUITEM "Selecionar store &estándar...", ID_APP_CHOOSEDEFAULTSTORE
-        MENUITEM "&Importar carpeta...",        ID_APP_IMPORTFOLDER
-        MENUITEM "&Propiedades",                ID_APP_STOREPROPERTIES
+        POPUP "&Store"
+        BEGIN
+            MENUITEM "&Abrir",                      ID_APP_OPENSTORE
+            MENUITEM SEPARATOR
+            MENUITEM "&Importar carpeta...",        IDM_STORE_IMPORTFOLDER
+            MENUITEM "Ejecutar &mantenimiento",     IDM_STORE_MAINTAIN
+            MENUITEM SEPARATOR
+            MENUITEM "Crear &acceso directo",       IDM_STORE_SHORTCUT
+            MENUITEM SEPARATOR
+            MENUITEM "&Propiedades",                IDM_STORE_PROPERTIES
+        END
         MENUITEM SEPARATOR
         MENUITEM "&Acerca FileDrop",            ID_APP_ABOUT
-        MENUITEM "Siempre &arriba",             SC_ALWAYSONTOP
-        MENUITEM SEPARATOR
-        MENUITEM "Empezar &StoreManager",       ID_APP_NEWSTOREMANAGER
+        MENUITEM "Siempre a&rriba",             SC_ALWAYSONTOP
         MENUITEM SEPARATOR
         MENUITEM "&Terminar",                   ID_APP_EXIT
     END
@@ -247,13 +212,20 @@ BEGIN
     POPUP "POPUP"
     BEGIN
         MENUITEM "Choisiss&ez le store standard...", ID_APP_CHOOSEDEFAULTSTORE
-        MENUITEM "&Importer dossier...",        ID_APP_IMPORTFOLDER
-        MENUITEM "&Qualités",                   ID_APP_STOREPROPERTIES
+        POPUP "&Store"
+        BEGIN
+            MENUITEM "&Ouvrir",                     ID_APP_OPENSTORE
+            MENUITEM SEPARATOR
+            MENUITEM "&Importer dossier...",        IDM_STORE_IMPORTFOLDER
+            MENUITEM "Exécuter des &travails d'entretien", IDM_STORE_MAINTAIN
+            MENUITEM SEPARATOR
+            MENUITEM "Créer r&accourci",            IDM_STORE_SHORTCUT
+            MENUITEM SEPARATOR
+            MENUITEM "&Propriétés",                 IDM_STORE_PROPERTIES
+        END
         MENUITEM SEPARATOR
         MENUITEM "&Concernant FileDrop",        ID_APP_ABOUT
         MENUITEM "Toujours au &top",            SC_ALWAYSONTOP
-        MENUITEM SEPARATOR
-        MENUITEM "Commencer &StoreManager",     ID_APP_NEWSTOREMANAGER
         MENUITEM SEPARATOR
         MENUITEM "&Quitter",                    ID_APP_EXIT
     END
@@ -324,6 +296,61 @@ END
 #endif    // APSTUDIO_INVOKED
 
 #endif    // Deutsch (Deutschland) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// Englisch (USA) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDM_POPUP MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "Choose &default store...",    ID_APP_CHOOSEDEFAULTSTORE
+        POPUP "&Store"
+        BEGIN
+            MENUITEM "&Open",                       ID_APP_OPENSTORE
+            MENUITEM SEPARATOR
+            MENUITEM "&Import folder...",           IDM_STORE_IMPORTFOLDER
+            MENUITEM "Run &maintenance",            IDM_STORE_MAINTAIN
+            MENUITEM SEPARATOR
+            MENUITEM "Create &shortcut",            IDM_STORE_SHORTCUT
+            MENUITEM SEPARATOR
+            MENUITEM "&Properties",                 IDM_STORE_PROPERTIES
+        END
+        MENUITEM SEPARATOR
+        MENUITEM "&About FileDrop",             ID_APP_ABOUT
+        MENUITEM "Always on &top",              SC_ALWAYSONTOP
+        MENUITEM SEPARATOR
+        MENUITEM "&Quit",                       ID_APP_EXIT
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE 
+BEGIN
+    IDS_ALWAYSONTOP         "Always on &top"
+    IDS_TOOLTIP             "Drop files here to import\nthem into liquidFOLDERS."
+    IDS_NODEFAULTSTORE      "No default store"
+END
+
+#endif    // Englisch (USA) resources
 /////////////////////////////////////////////////////////////////////////////
 
 

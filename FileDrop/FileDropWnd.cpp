@@ -5,9 +5,9 @@
 #include "stdafx.h"
 #include "FileDrop.h"
 #include "FileDropWnd.h"
+#include "MenuIcons.h"
 #include "Resource.h"
 #include "LFCore.h"
-#include "MenuIcons.h"
 #include <io.h>
 
 
@@ -121,12 +121,15 @@ BEGIN_MESSAGE_MAP(CFileDropWnd, CGlasWindow)
 	ON_WM_MOVE()
 	ON_COMMAND(SC_ALWAYSONTOP, OnAlwaysOnTop)
 	ON_COMMAND(ID_APP_CHOOSEDEFAULTSTORE, OnChooseDefaultStore)
-	ON_COMMAND(ID_APP_IMPORTFOLDER, OnImportFolder)
-	ON_COMMAND(ID_APP_STOREPROPERTIES, OnStoreProperties)
+	ON_COMMAND(ID_APP_OPENSTORE, OnStoreOpen)
+	ON_COMMAND(IDM_STORE_IMPORTFOLDER, OnStoreImportFolder)
+	ON_COMMAND(IDM_STORE_MAINTAIN, OnStoreMaintain)
+	ON_COMMAND(IDM_STORE_SHORTCUT, OnStoreShortcut)
+	ON_COMMAND(IDM_STORE_PROPERTIES, OnStoreProperties)
 	ON_COMMAND(ID_APP_ABOUT, OnAbout)
-	ON_COMMAND(ID_APP_NEWSTOREMANAGER, OnNewStoreManager)
 	ON_COMMAND(ID_APP_EXIT, OnQuit)
-	ON_UPDATE_COMMAND_UI_RANGE(ID_APP_CHOOSEDEFAULTSTORE, ID_APP_STOREPROPERTIES, OnUpdateCommands)
+	ON_UPDATE_COMMAND_UI(ID_APP_OPENSTORE, OnUpdateCommands)
+	ON_UPDATE_COMMAND_UI_RANGE(IDM_STORE_MAKEDEFAULT, IDM_STORE_PROPERTIES, OnUpdateCommands)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoresChanged, OnStoresChanged)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoreAttributesChanged, OnStoresChanged)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->DefaultStoreChanged, OnStoresChanged)
@@ -372,15 +375,12 @@ void CFileDropWnd::OnContextMenu(CWnd* /*pWnd*/, CPoint pos)
 	CMenu* pPopup = menu.GetSubMenu(0);
 	ASSERT_VALID(pPopup);
 
-	HBITMAP hBmp = SetMenuItemIcon(*pPopup, 7, ID_APP_NEWSTOREMANAGER);
-	SetMenuItemBitmap(*pPopup, 9, HBMMENU_POPUP_CLOSE);
+	SetMenuItemBitmap(*pPopup, 6, HBMMENU_POPUP_CLOSE);
 
 	pPopup->CheckMenuItem(SC_ALWAYSONTOP, m_AlwaysOnTop ? MF_CHECKED : MF_UNCHECKED);
 
 	pPopup->SetDefaultItem(ID_APP_CHOOSEDEFAULTSTORE);
 	pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, pos.x, pos.y, this);
-
-	DeleteObject(hBmp);
 }
 
 void CFileDropWnd::OnSysCommand(UINT nID, LPARAM lParam)
@@ -409,54 +409,6 @@ void CFileDropWnd::OnMove(INT x, INT y)
 	}
 }
 
-void CFileDropWnd::OnAlwaysOnTop()
-{
-	SetWindowRect(-1, -1, !m_AlwaysOnTop);
-}
-
-void CFileDropWnd::OnChooseDefaultStore()
-{
-	LFChooseStoreDlg dlg(this, LFCSD_ChooseDefault);
-	if (dlg.DoModal()==IDOK)
-		if (dlg.m_StoreID[0]!='\0')
-			LFErrorBox(LFMakeDefaultStore(dlg.m_StoreID, NULL), m_hWnd);
-}
-
-void CFileDropWnd::OnImportFolder()
-{
-	if (m_StoreValid)
-		LFImportFolder(m_Store.StoreID, this);
-}
-
-void CFileDropWnd::OnStoreProperties()
-{
-	if (m_StoreValid)
-	{
-		LFStorePropertiesDlg dlg(m_Store.StoreID, this);
-		dlg.DoModal();
-	}
-}
-
-void CFileDropWnd::OnAbout()
-{
-	TIMESTAMP;
-	LFAbout(_T("FileDrop"), Timestamp, IDB_ABOUTICON, this);
-}
-
-void CFileDropWnd::OnNewStoreManager()
-{
-	theApp.OnAppNewStoreManager();
-}
-
-void CFileDropWnd::OnQuit()
-{
-	PostQuitMessage(0);
-}
-
-void CFileDropWnd::OnUpdateCommands(CCmdUI* pCmdUI)
-{
-	pCmdUI->Enable((pCmdUI->m_nID==ID_APP_CHOOSEDEFAULTSTORE) ? TRUE : m_StoreValid);
-}
 
 LRESULT CFileDropWnd::OnStoresChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)
 {
@@ -473,4 +425,71 @@ LRESULT CFileDropWnd::OnWakeup(WPARAM /*wParam*/, LPARAM /*lParam*/)
 
 	SetForegroundWindow();
 	return 24878;
+}
+
+
+// Commands
+
+void CFileDropWnd::OnChooseDefaultStore()
+{
+	LFChooseStoreDlg dlg(this, LFCSD_ChooseDefault);
+	if (dlg.DoModal()==IDOK)
+		if (dlg.m_StoreID[0]!='\0')
+			LFErrorBox(LFMakeDefaultStore(dlg.m_StoreID, NULL), m_hWnd);
+}
+
+void CFileDropWnd::OnStoreOpen()
+{
+	ShellExecute(GetSafeHwnd(), _T("open"), theApp.m_Path+_T("StoreManager.exe"), CString(m_Store.StoreID), NULL, SW_SHOW);
+}
+
+void CFileDropWnd::OnStoreImportFolder()
+{
+	LFImportFolder(m_Store.StoreID, this);
+}
+
+void CFileDropWnd::OnStoreMaintain()
+{
+	CWaitCursor wait;
+
+	LFMaintenanceList* ml = LFStoreMaintenance(m_Store.StoreID);
+	LFErrorBox(ml->m_LastError);
+
+	LFStoreMaintenanceDlg dlg(ml, this);
+	dlg.DoModal();
+
+	LFFreeMaintenanceList(ml);
+}
+
+void CFileDropWnd::OnStoreShortcut()
+{
+	if (LFAskCreateShortcut(GetSafeHwnd()))
+		LFCreateShortcutForStore(&m_Store);
+}
+
+void CFileDropWnd::OnStoreProperties()
+{
+	LFStorePropertiesDlg dlg(m_Store.StoreID, this);
+	dlg.DoModal();
+}
+
+void CFileDropWnd::OnAlwaysOnTop()
+{
+	SetWindowRect(-1, -1, !m_AlwaysOnTop);
+}
+
+void CFileDropWnd::OnAbout()
+{
+	TIMESTAMP;
+	LFAbout(_T("FileDrop"), Timestamp, IDB_ABOUTICON, this);
+}
+
+void CFileDropWnd::OnQuit()
+{
+	PostQuitMessage(0);
+}
+
+void CFileDropWnd::OnUpdateCommands(CCmdUI* pCmdUI)
+{
+	pCmdUI->Enable(pCmdUI->m_nID==ID_APP_OPENSTORE ? _waccess(theApp.m_Path+_T("StoreManager.exe"), 0)==0 : m_StoreValid);
 }

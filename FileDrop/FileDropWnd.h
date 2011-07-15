@@ -46,15 +46,18 @@ protected:
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint pos);
 	afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
 	afx_msg void OnMove(INT x, INT y);
-	afx_msg void OnAlwaysOnTop();
-	afx_msg void OnChooseDefaultStore();
-	afx_msg void OnImportFolder();
-	afx_msg void OnStoreProperties();
-	afx_msg void OnAbout();
-	afx_msg void OnNewStoreManager();
-	afx_msg void OnQuit();
-	afx_msg void OnUpdateCommands(CCmdUI* pCmdUI);
 	afx_msg LRESULT OnStoresChanged(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnWakeup(WPARAM wParam, LPARAM lParam);
+
+	afx_msg void OnChooseDefaultStore();
+	afx_msg void OnStoreOpen();
+	afx_msg void OnStoreImportFolder();
+	afx_msg void OnStoreMaintain();
+	afx_msg void OnStoreShortcut();
+	afx_msg void OnStoreProperties();
+	afx_msg void OnAlwaysOnTop();
+	afx_msg void OnAbout();
+	afx_msg void OnQuit();
+	afx_msg void OnUpdateCommands(CCmdUI* pCmdUI);
 	DECLARE_MESSAGE_MAP()
 };
