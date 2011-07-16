@@ -91,7 +91,7 @@ BOOL LFDropTarget::OnDrop(CWnd* /*pWnd*/, COleDataObject* pDataObject, DROPEFFEC
 	}
 
 	// Import
-	UINT res = LFImportFiles(StoreID, il, it, dropEffect==DROPEFFECT_MOVE);
+	UINT res = LFImportFiles(StoreID, il, it, true, dropEffect==DROPEFFECT_MOVE);
 	if (res!=LFOk)
 	{
 		LFErrorBox(res);
