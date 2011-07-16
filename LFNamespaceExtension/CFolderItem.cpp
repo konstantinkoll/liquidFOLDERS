@@ -1246,7 +1246,24 @@ BOOL CFolderItem::OnChangeName(CChangeNameEventArgs& e)
 void CFolderItem::InitDataObject(CInitDataObjectEventArgs& e)
 {
 	if (e.children->GetCount())
+	{
+		LFFileIDList* il = LFAllocFileIDList();
+
+		POSITION pos = e.children->GetHeadPosition();
+		while (pos)
+		{
+			CNSEItem* item = (CNSEItem*)e.children->GetNext(pos);
+
+			if (IS(item, CFileItem))
+				LFAddFileID(il, AS(item, CFileItem)->Item->StoreID, AS(item, CFileItem)->Item->CoreAttributes.FileID);
+		}
+
 		e.dataObject->SetHasFileData();
+		if (il->m_ItemCount)
+			e.dataObject->SetHGlobalData(_T(CFSTR_LIQUIDFILES), LFCreateLiquidFiles(il));
+
+		LFFreeFileIDList(il);
+	}
 }
 
 BOOL CFolderItem::GetFileDescriptor(FILEDESCRIPTOR* fd)
