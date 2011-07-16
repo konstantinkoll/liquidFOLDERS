@@ -79,8 +79,10 @@ STDMETHODIMP CDataObject::GetData(FORMATETC* pFormatEtc, STGMEDIUM* pMedium)
 {
 	if ((!pFormatEtc) || (!pMedium))
 		return DV_E_FORMATETC;
+	if (pFormatEtc->tymed!=TYMED_HGLOBAL)
+		return DV_E_FORMATETC;
 
-	if ((pFormatEtc->cfFormat==CF_HDROP) && (pFormatEtc->tymed==TYMED_HGLOBAL))
+	if (pFormatEtc->cfFormat==CF_HDROP)
 	{
 		if (!DuplicateGlobalMemory(m_hDropFiles, pMedium->hGlobal))
 			return STG_E_MEDIUMFULL;
@@ -90,7 +92,7 @@ STDMETHODIMP CDataObject::GetData(FORMATETC* pFormatEtc, STGMEDIUM* pMedium)
 		return S_OK;
 	}
 
-	if ((pFormatEtc->cfFormat==((LFApplication*)AfxGetApp())->CF_HLIQUID) && (pFormatEtc->tymed==TYMED_HGLOBAL))
+	if (pFormatEtc->cfFormat==((LFApplication*)AfxGetApp())->CF_HLIQUID)
 	{
 		if (!DuplicateGlobalMemory(m_hLiquidFiles, pMedium->hGlobal))
 			return STG_E_MEDIUMFULL;
@@ -110,7 +112,8 @@ STDMETHODIMP CDataObject::GetDataHere(FORMATETC* /*pFormatEtc*/, STGMEDIUM* /*pM
 
 STDMETHODIMP CDataObject::QueryGetData(FORMATETC* pFormatEtc)
 {
-	return (pFormatEtc->cfFormat==CF_HDROP) && (pFormatEtc->tymed==TYMED_HGLOBAL) ? S_OK : DV_E_FORMATETC;
+	return ((pFormatEtc->cfFormat==CF_HDROP) || (pFormatEtc->cfFormat==((LFApplication*)AfxGetApp())->CF_HLIQUID)) &&
+		(pFormatEtc->tymed==TYMED_HGLOBAL) ? S_OK : DV_E_FORMATETC;
 }
 
 STDMETHODIMP CDataObject::GetCanonicalFormatEtc(FORMATETC* /*pFormatEtcIn*/, FORMATETC* pFormatEtcOut)
