@@ -37,10 +37,10 @@
     <ROW Property="MSIFASTINSTALL" MultiBuildValue="DefaultBuild:6"/>
     <ROW Property="Manufacturer" Value="liquidFOLDERS" ValueLocId="*"/>
     <ROW Property="OptionsLogoIcon" Value="Tools.ico" Type="1" MsiKey="OptionsLogoIcon"/>
-    <ROW Property="ProductCode" Value="1033:{270F8014-E5FD-4567-9142-1CAF02E59E8C} 3082:{2CFF6F3C-936C-4009-9F1F-8EA832EEFFFB} 1036:{AD3FEC52-D499-4929-B0AC-0AE082A5C675} 1031:{7FA5D1A9-D48F-41A9-8689-100A9A901F7A} " Type="16"/>
+    <ROW Property="ProductCode" Value="1033:{F24579D1-D49E-4DF6-AC2B-8C0FA080D044} 3082:{CEB4C694-ACD6-41C1-9274-F31C3C584302} 1036:{DC2F6C44-0207-4C2F-8211-D1042A506C14} 1031:{898D4E21-2422-4990-A170-7FA02236450A} " Type="16"/>
     <ROW Property="ProductLanguage" Value="1033"/>
     <ROW Property="ProductName" Value="liquidFOLDERS" ValueLocId="*"/>
-    <ROW Property="ProductVersion" Value="1.0.1"/>
+    <ROW Property="ProductVersion" Value="1.0.2"/>
     <ROW Property="REBOOT" MultiBuildValue="DefaultBuild:Force"/>
     <ROW Property="RepairIcon" Value="Tools.ico" Type="1" MsiKey="RepairIcon"/>
     <ROW Property="SecureCustomProperties" Value="OLDPRODUCTS;AI_NEWERPRODUCTFOUND;AI_SETUPEXEPATH;SETUPEXEDIR"/>
@@ -63,19 +63,19 @@
     <ROW Directory="TARGETDIR" DefaultDir="SourceDir"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiCompsComponent">
-    <ROW Component="AI_CustomARPName" ComponentId="{33AD8FD7-C499-4214-AF7E-382F922B4532}" Directory_="APPDIR" Attributes="4" KeyPath="DisplayName" Options="1"/>
-    <ROW Component="AI_DisableModify" ComponentId="{DAFAF2AF-75A5-4A23-9A5B-20D5E4787C0F}" Directory_="APPDIR" Attributes="4" KeyPath="NoModify" Options="1"/>
-    <ROW Component="FileDrop.exe" ComponentId="{342E4E44-819D-4667-8E63-57F9133E540B}" Directory_="APPDIR" Attributes="768" KeyPath="FileDrop.exe"/>
-    <ROW Component="LFCommDlg.dll" ComponentId="{8A7798BC-F11D-4907-B5B2-045C1EE8B84D}" Directory_="APPDIR" Attributes="768" KeyPath="LFCommDlg.dll"/>
-    <ROW Component="LFCore.dll" ComponentId="{1578F434-1B1C-4F26-B264-5960C16488F9}" Directory_="System64Folder" Attributes="768" KeyPath="LFCore.dll"/>
-    <ROW Component="LFNamespaceExtension.dll" ComponentId="{EB6C5DB6-B8BB-4CF1-8EDA-E7BFB5F4D312}" Directory_="System64Folder" Attributes="768" KeyPath="LFNamespaceExtension.dll"/>
-    <ROW Component="LFRunCmd.exe" ComponentId="{7160C453-D0FF-404D-9D26-5FBA82DD43DE}" Directory_="APPDIR" Attributes="768" KeyPath="LFRunCmd.exe"/>
-    <ROW Component="LFWatchdog.exe" ComponentId="{04650FB7-1A4E-4365-A383-D0C9B8DC39E9}" Directory_="APPDIR" Attributes="768" KeyPath="LFWatchdog.exe"/>
-    <ROW Component="Migrate.exe" ComponentId="{73601CF0-2341-45A6-91E1-D0757E9CBC3E}" Directory_="APPDIR" Attributes="768" KeyPath="Migrate.exe"/>
-    <ROW Component="Quick_Launch" ComponentId="{E39A1F25-B5C0-46E3-935D-E30DB608DF37}" Directory_="Quick_Launch_DIR" Attributes="768"/>
-    <ROW Component="SHORTCUTDIR" ComponentId="{17D481B4-C1D9-4D57-99D4-02BC301887FA}" Directory_="SHORTCUTDIR" Attributes="768"/>
-    <ROW Component="StoreManager.exe" ComponentId="{B51A9545-2084-4E98-9A88-FC206D7AFEAA}" Directory_="APPDIR" Attributes="768" KeyPath="StoreManager.exe"/>
-    <ROW Component="liquidFOLDERS" ComponentId="{1C98DE9D-E69F-4099-807F-2D876A0A50EC}" Directory_="APPDIR" Attributes="772" KeyPath="AIShRegAnswer"/>
+    <ROW Component="AI_CustomARPName" ComponentId="{FC968FFD-9BB2-471D-AFA0-138C0FD2B772}" Directory_="APPDIR" Attributes="4" KeyPath="DisplayName" Options="1"/>
+    <ROW Component="AI_DisableModify" ComponentId="{55702517-54BC-4D32-B004-6E0B6C5FECF9}" Directory_="APPDIR" Attributes="4" KeyPath="NoModify" Options="1"/>
+    <ROW Component="FileDrop.exe" ComponentId="{118DCCA9-802F-4676-BBDC-4DF6B9DA03E8}" Directory_="APPDIR" Attributes="768" KeyPath="FileDrop.exe"/>
+    <ROW Component="LFCommDlg.dll" ComponentId="{646758E5-F481-43D4-8657-723F61BF3C06}" Directory_="APPDIR" Attributes="768" KeyPath="LFCommDlg.dll"/>
+    <ROW Component="LFCore.dll" ComponentId="{708111CC-8E9D-48B0-90E1-035CE45D68EE}" Directory_="System64Folder" Attributes="768" KeyPath="LFCore.dll"/>
+    <ROW Component="LFNamespaceExtension.dll" ComponentId="{F256B12E-DAD9-42B0-932A-0E835700AA89}" Directory_="System64Folder" Attributes="768" KeyPath="LFNamespaceExtension.dll"/>
+    <ROW Component="LFRunCmd.exe" ComponentId="{45C880AF-283C-4EDF-A473-7B3B6B350EA5}" Directory_="APPDIR" Attributes="768" KeyPath="LFRunCmd.exe"/>
+    <ROW Component="LFWatchdog.exe" ComponentId="{B3BD9401-BF68-434A-92A5-9B8575E74AFB}" Directory_="APPDIR" Attributes="768" KeyPath="LFWatchdog.exe"/>
+    <ROW Component="Migrate.exe" ComponentId="{699D6C51-1F2A-4AC3-BA0E-ABB88ABE58A9}" Directory_="APPDIR" Attributes="768" KeyPath="Migrate.exe"/>
+    <ROW Component="Quick_Launch" ComponentId="{824A193C-BD1B-490B-9E7F-AA7F6C98372D}" Directory_="Quick_Launch_DIR" Attributes="768"/>
+    <ROW Component="SHORTCUTDIR" ComponentId="{B2E9C933-6ED7-45F4-9358-07EA8D258913}" Directory_="SHORTCUTDIR" Attributes="768"/>
+    <ROW Component="StoreManager.exe" ComponentId="{45727770-2F88-41B5-8203-81C0B2F3108C}" Directory_="APPDIR" Attributes="768" KeyPath="StoreManager.exe"/>
+    <ROW Component="liquidFOLDERS" ComponentId="{0A04AAF7-EFBC-440C-8A01-64AFB0A0081D}" Directory_="APPDIR" Attributes="772" KeyPath="AIShRegAnswer"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiFeatsComponent">
     <ROW Feature="FileDrop" Title="FileDrop" Description="FileDrop" Display="5" Level="1" Directory_="APPDIR" Attributes="8" Components="FileDrop.exe AI_CustomARPName AI_DisableModify"/>
@@ -486,7 +486,7 @@
     <ROW Registry="Contact" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="Contact" Value="support@liquidfolders.net" Component_="AI_CustomARPName"/>
     <ROW Registry="DisplayIcon" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="DisplayIcon" Value="[ARP_ICON_PATH]" Component_="AI_CustomARPName"/>
     <ROW Registry="DisplayName" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="DisplayName" Value="[ProductName]" Component_="AI_CustomARPName"/>
-    <ROW Registry="DisplayVersion" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="DisplayVersion" Value="1.0.1" Component_="AI_CustomARPName"/>
+    <ROW Registry="DisplayVersion" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="DisplayVersion" Value="1.0.2" Component_="AI_CustomARPName"/>
     <ROW Registry="EstimatedSize" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="EstimatedSize" Value="#30720" Component_="AI_CustomARPName"/>
     <ROW Registry="F2D914D_FE57_414F_9F88_A377C7841DA4_1" Root="2" Key="Software\Microsoft\Windows\CurrentVersion\Shell Extensions\Approved" Name="[\{]3F2D914D-FE57-414F-9F88-A377C7841DA4[\}]" Value="liquidFOLDERS.SendTo" Component_="LFNamespaceExtension.dll"/>
     <ROW Registry="F2D914E_FE57_414F_9F88_A377C7841DA4_1" Root="2" Key="Software\Microsoft\Windows\CurrentVersion\Shell Extensions\Approved" Name="[\{]3F2D914E-FE57-414F-9F88-A377C7841DA4[\}]" Value="liquidFOLDERS.DriveMenu" Component_="LFNamespaceExtension.dll"/>
