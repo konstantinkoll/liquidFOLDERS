@@ -7,7 +7,7 @@
 #include <stddef.h>
 
 
-inline void ZeroCopy(void* _Dst, rsize_t _DstSize, void* _Src, rsize_t _SrcSize)
+__forceinline void ZeroCopy(void* _Dst, rsize_t _DstSize, void* _Src, rsize_t _SrcSize)
 {
 	memcpy_s(_Dst, _DstSize, _Src, min(_DstSize, _SrcSize));
 
@@ -18,7 +18,7 @@ inline void ZeroCopy(void* _Dst, rsize_t _DstSize, void* _Src, rsize_t _SrcSize)
 	}
 }
 
-inline void CalcVisualAttributes(LFItemDescriptor* i)
+__forceinline void CalcVisualAttributes(LFItemDescriptor* i)
 {
 	if ((i->AttributeValues[LFAttrWidth]) && (i->AttributeValues[LFAttrHeight]))
 	{

@@ -18,7 +18,7 @@
 #define SPOT           2
 #define CROSSHAIRS     3
 
-inline void ColorRef2GLColor(GLfloat* dst, COLORREF src, GLfloat Alpha=1.0f)
+__forceinline void ColorRef2GLColor(GLfloat* dst, COLORREF src, GLfloat Alpha=1.0f)
 {
 	dst[0] = (src & 0xFF)/255.0f;
 	dst[1] = ((src>>8) & 0xFF)/255.0f;
@@ -26,12 +26,12 @@ inline void ColorRef2GLColor(GLfloat* dst, COLORREF src, GLfloat Alpha=1.0f)
 	dst[3] = Alpha;
 }
 
-inline double decToRad(double dec)
+__forceinline double decToRad(double dec)
 {
 	return dec*(PI/180.0);
 }
 
-inline void MatrixMul(GLdouble Result[4][4], GLdouble Left[4][4], GLdouble Right[4][4])
+__forceinline void MatrixMul(GLdouble Result[4][4], GLdouble Left[4][4], GLdouble Right[4][4])
 {
 	Result[0][0] = Left[0][0]*Right[0][0] + Left[0][1]*Right[1][0] + Left[0][2]*Right[2][0] + Left[0][3]*Right[3][0];
 	Result[0][1] = Left[0][0]*Right[0][1] + Left[0][1]*Right[1][1] + Left[0][2]*Right[2][1] + Left[0][3]*Right[3][1];
@@ -51,7 +51,7 @@ inline void MatrixMul(GLdouble Result[4][4], GLdouble Left[4][4], GLdouble Right
 	Result[3][3] = Left[3][0]*Right[0][3] + Left[3][1]*Right[1][3] + Left[3][2]*Right[2][3] + Left[3][3]*Right[3][3];
 }
 
-inline void CalculateWorldCoords(double lat, double lon, double result[])
+__forceinline void CalculateWorldCoords(double lat, double lon, double result[])
 {
 	double lon_r = decToRad(lon);
 	double lat_r = -decToRad(lat);
@@ -63,7 +63,7 @@ inline void CalculateWorldCoords(double lat, double lon, double result[])
 	result[2] = sin(lat_r);
 }
 
-inline CString CookAttributeString(WCHAR* attr)
+__forceinline CString CookAttributeString(WCHAR* attr)
 {
 	CString tmpStr(attr);
 	tmpStr.Replace(_T("<"), _T("_"));
@@ -88,7 +88,7 @@ void WriteGoogleAttribute(CStdioFile* f, LFItemDescriptor* i, UINT attr)
 	}
 }
 
-inline BOOL SetupPixelFormat(HDC hDC)
+__forceinline BOOL SetupPixelFormat(HDC hDC)
 {
 	PIXELFORMATDESCRIPTOR pfd =
 	{

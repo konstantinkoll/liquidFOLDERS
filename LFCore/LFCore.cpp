@@ -227,7 +227,7 @@ LFCore_API LFAttributeDescriptor* LFAllocAttributeDescriptor()
 	return a;
 }
 
-inline void SetRange(unsigned char &var, unsigned int ID, unsigned int lo, unsigned int hi, unsigned char val)
+__forceinline void SetRange(unsigned char &var, unsigned int ID, unsigned int lo, unsigned int hi, unsigned char val)
 {
 	if ((ID>=lo) && (ID<=hi))
 		var = val;

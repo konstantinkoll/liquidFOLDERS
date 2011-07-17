@@ -22,7 +22,7 @@ CIndex::~CIndex()
 			delete Tables[a];
 }
 
-inline bool CIndex::LoadTable(unsigned int ID, unsigned int* res)
+__forceinline bool CIndex::LoadTable(unsigned int ID, unsigned int* res)
 {
 	assert(ID<IdxTableCount);
 

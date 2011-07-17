@@ -126,7 +126,7 @@ void CHeapfile::GetAttribute(void* PtrDst, unsigned int offset, unsigned int att
 	}
 }
 
-inline void CHeapfile::AllocBuffer()
+__forceinline void CHeapfile::AllocBuffer()
 {
 	assert(Hdr.ElementSize);
 
@@ -141,7 +141,7 @@ inline void CHeapfile::AllocBuffer()
 	FirstInBuffer = LastInBuffer = -1;
 }
 
-inline bool CHeapfile::OpenFile()
+__forceinline bool CHeapfile::OpenFile()
 {
 	if (hFile==INVALID_HANDLE_VALUE)
 		hFile = CreateFile(IdxFilename, GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_SEQUENTIAL_SCAN, NULL);
@@ -203,7 +203,7 @@ bool CHeapfile::Writeback()
 	return true;
 }
 
-inline void CHeapfile::ElementToBuffer(int ID)
+__forceinline void CHeapfile::ElementToBuffer(int ID)
 {
 	if (((ID>=FirstInBuffer) && (ID<=LastInBuffer)) || (ID>=ItemCount))
 		return;

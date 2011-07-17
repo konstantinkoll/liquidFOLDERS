@@ -779,7 +779,7 @@ bool RetrieveStore(char* StoreID, LFFilter* filter, LFSearchResult* res)
 	return false;
 }
 
-inline void PrepareSearchResult(LFSearchResult* res, LFFilter* filter)
+__forceinline void PrepareSearchResult(LFSearchResult* res, LFFilter* filter)
 {
 	wchar_t name[256];
 

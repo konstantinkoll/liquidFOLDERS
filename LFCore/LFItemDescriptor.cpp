@@ -125,7 +125,7 @@ extern HMODULE LFCoreModuleHandle;
 // Attribute handling
 //
 
-inline bool IsSlaveAttribute(LFItemDescriptor* i, unsigned int attr)
+__forceinline bool IsSlaveAttribute(LFItemDescriptor* i, unsigned int attr)
 {
 	assert(i);
 
@@ -135,7 +135,7 @@ inline bool IsSlaveAttribute(LFItemDescriptor* i, unsigned int attr)
 	return (i->AttributeValues[attr]>=(char*)i->Slave) && (i->AttributeValues[attr]<(char*)i->Slave+_msize(i->Slave));
 }
 
-inline void FreeAttribute(LFItemDescriptor* i, unsigned int attr)
+__forceinline void FreeAttribute(LFItemDescriptor* i, unsigned int attr)
 {
 	assert(i);
 	assert(attr<LFAttributeCount);
@@ -174,7 +174,7 @@ size_t GetAttributeMaxCharacterCount(unsigned int attr)
 	return 255;
 }
 
-inline size_t GetAttributeSize(unsigned int attr, const void* v)
+__forceinline size_t GetAttributeSize(unsigned int attr, const void* v)
 {
 	assert(attr<LFAttributeCount);
 	assert(AttrTypes[attr]<LFTypeCount);

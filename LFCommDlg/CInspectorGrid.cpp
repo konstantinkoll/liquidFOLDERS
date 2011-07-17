@@ -1059,7 +1059,7 @@ void CInspectorGrid::Heap(INT wurzel, INT anz)
 	}
 }
 
-inline void CInspectorGrid::CreateSortArray()
+__forceinline void CInspectorGrid::CreateSortArray()
 {
 	if (m_pSortArray)
 		return;
@@ -1082,7 +1082,7 @@ inline void CInspectorGrid::CreateSortArray()
 	}
 }
 
-inline void CInspectorGrid::MakeSortArrayDirty()
+__forceinline void CInspectorGrid::MakeSortArrayDirty()
 {
 	if (m_pSortArray)
 	{

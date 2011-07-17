@@ -27,7 +27,7 @@ static char KeyChars[38] = { LFKeyChars };
 // Verzeichnis-Funktionen
 //
 
-inline DWORD CreateDir(LPWSTR lpPath)
+__forceinline DWORD CreateDir(LPWSTR lpPath)
 {
 	return CreateDirectory(lpPath, NULL);
 }

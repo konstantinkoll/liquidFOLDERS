@@ -19,13 +19,13 @@ extern unsigned char AttrTypes[];
 
 #define ROUNDOFF 0.00000001
 
-inline double GetMinutes(double c)
+__forceinline double GetMinutes(double c)
 {
 	c = fabs(c)+ROUNDOFF;
 	return (c-(double)(int)c)*60.0;
 }
 
-inline double GetSeconds(double c)
+__forceinline double GetSeconds(double c)
 {
 	c = fabs(c)*60.0+ROUNDOFF;
 	return (c-(double)(int)c)*60.0;
