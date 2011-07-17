@@ -446,8 +446,8 @@
     <ROW Action="AI_DATA_SETTER" Condition="NOT (REMOVE=&quot;ALL&quot;)" Sequence="6403"/>
     <ROW Action="LFWatchdog.exe" Condition="NOT (($LFWatchdog.exe = 2) AND (?LFWatchdog.exe = 3))" Sequence="6402"/>
     <ROW Action="LFRunCmd.exe" Condition="NOT (($LFRunCmd.exe = 2) AND (?LFRunCmd.exe = 3))" Sequence="6401"/>
-    <ROW Action="StopProcess" Condition="REMOVE=&quot;ALL&quot; OR UPGRADEINGPRODUCTCODE" Sequence="52" AdditionalSeq="AI_DATA_SETTER_2"/>
-    <ROW Action="AI_DATA_SETTER_2" Condition="REMOVE=&quot;ALL&quot; OR UPGRADEINGPRODUCTCODE" Sequence="51"/>
+    <ROW Action="StopProcess" Sequence="52" AdditionalSeq="AI_DATA_SETTER_2"/>
+    <ROW Action="AI_DATA_SETTER_2" Sequence="51"/>
     <ROW Action="AI_AiRemoveRegsImmediate" Sequence="2599"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiInstallUISequenceComponent">
