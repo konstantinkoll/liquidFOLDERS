@@ -29,68 +29,7 @@ static char KeyChars[38] = { LFKeyChars };
 
 DWORD CreateDir(LPWSTR lpPath)
 {
-	SECURITY_ATTRIBUTES sa;
-	SECURITY_DESCRIPTOR sd;
-	PACL pAcl = NULL;
-	DWORD cbAcl = 0;
-	DWORD dwNeeded = 0;
-	DWORD dwError = 0;
-	HANDLE hToken;
-	PTOKEN_USER ptu = NULL;
-
-	if (!OpenProcessToken(GetCurrentProcess(), TOKEN_QUERY, &hToken))
-		return GetLastError();
-
-	GetTokenInformation(hToken, TokenUser, NULL, 0, &dwNeeded);
-	if (GetLastError()!=ERROR_INSUFFICIENT_BUFFER)
-	{
-		dwError = GetLastError();
-		goto Cleanup;
-	}
-
-	ptu = (TOKEN_USER*)malloc(dwNeeded);
-	if (!GetTokenInformation(hToken, TokenUser, ptu, dwNeeded, &dwNeeded))
-	{
-		dwError = GetLastError();
-		goto Cleanup;
-	}
-
-	cbAcl = sizeof(ACL)+((sizeof(ACCESS_ALLOWED_ACE)-sizeof(DWORD))+GetLengthSid(ptu->User.Sid));
-	pAcl = (ACL*)malloc(cbAcl);
-
-	if (!InitializeAcl(pAcl, cbAcl, ACL_REVISION))
-	{
-		dwError = GetLastError();
-		goto Cleanup;
-	}
-
-	if (!AddAccessAllowedAce(pAcl, ACL_REVISION,GENERIC_ALL | STANDARD_RIGHTS_ALL | SPECIFIC_RIGHTS_ALL, ptu->User.Sid))
-	{
-		dwError = GetLastError();
-		goto Cleanup;
-	}
-
-	InitializeSecurityDescriptor(&sd, SECURITY_DESCRIPTOR_REVISION);
-	SetSecurityDescriptorDacl(&sd, TRUE, pAcl, FALSE);
-	SetSecurityDescriptorOwner(&sd, ptu->User.Sid, FALSE);
-	SetSecurityDescriptorGroup(&sd, NULL, FALSE); 
-	SetSecurityDescriptorSacl(&sd, FALSE, NULL, FALSE);
-
-	sa.nLength = sizeof(SECURITY_ATTRIBUTES);
-	sa.lpSecurityDescriptor = &sd;
-	sa.bInheritHandle = TRUE;
-
-	CreateDirectory(lpPath, &sa);
-	dwError = GetLastError();
-
-Cleanup:
-	if (ptu)
-		free(ptu);
-	if (pAcl)
-		free(pAcl);
-
-	CloseHandle(hToken);
-	return dwError;
+	return CreateDirectory(lpPath, NULL);
 }
 
 bool RemoveDir(LPWSTR lpPath)
