@@ -510,7 +510,6 @@
     <ROW Registry="PerceivedType" Root="0" Key=".LFSendTo" Name="PerceivedType" Value="system" Component_="LFNamespaceExtension.dll"/>
     <ROW Registry="PinToNameSpaceTree" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}\ShellFolder" Name="PinToNameSpaceTree" Component_="LFNamespaceExtension.dll"/>
     <ROW Registry="Publisher" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="Publisher" Value="liquidFOLDERS" Component_="AI_CustomARPName"/>
-    <ROW Registry="QueryForOverlay" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}\ShellFolder" Name="QueryForOverlay" Component_="LFNamespaceExtension.dll"/>
     <ROW Registry="SortOrderIndex" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}" Name="SortOrderIndex" Value="#64" Component_="LFNamespaceExtension.dll"/>
     <ROW Registry="StoreManager" Root="2" Key="Software\liquidFOLDERS" Name="StoreManager" Value="[#StoreManager.exe]" Component_="StoreManager.exe"/>
     <ROW Registry="System.DescriptionID" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}" Name="System.DescriptionID" Value="#20" Component_="LFNamespaceExtension.dll"/>
