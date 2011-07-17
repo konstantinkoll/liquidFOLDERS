@@ -29,7 +29,7 @@ static char KeyChars[38] = { LFKeyChars };
 
 __forceinline DWORD CreateDir(LPWSTR lpPath)
 {
-	return CreateDirectory(lpPath, NULL);
+	return CreateDirectory(lpPath, NULL) ? ERROR_SUCCESS : GetLastError();
 }
 
 bool RemoveDir(LPWSTR lpPath)
