@@ -505,7 +505,7 @@
     <ROW Registry="Migrate" Root="2" Key="Software\liquidFOLDERS" Name="Migrate" Value="[#Migrate.exe]" Component_="Migrate.exe"/>
     <ROW Registry="ModifyPath" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="ModifyPath" Value="[AI_UNINSTALLER] /I [ProductCode]" Component_="AI_CustomARPName"/>
     <ROW Registry="NeverShowExt" Root="0" Key="LFSendTofile" Name="NeverShowExt" Value="#0" Component_="LFNamespaceExtension.dll"/>
-    <ROW Registry="New_Value" Root="0" Key="LFFilterfile\DefaultIcon" Value="[SystemFolder]LFCore.dll,16" Component_="LFNamespaceExtension.dll"/>
+    <ROW Registry="New_Value" Root="0" Key="LFFilterfile\DefaultIcon" Value="&quot;[#LFCore.dll]&quot;,16" Component_="LFNamespaceExtension.dll"/>
     <ROW Registry="NoModify" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="NoModify" Value="#1" Component_="AI_DisableModify"/>
     <ROW Registry="PerceivedType" Root="0" Key=".LFSendTo" Name="PerceivedType" Value="system" Component_="LFNamespaceExtension.dll"/>
     <ROW Registry="PinToNameSpaceTree" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}\ShellFolder" Name="PinToNameSpaceTree" Component_="LFNamespaceExtension.dll"/>
@@ -538,7 +538,7 @@
     <ROW Registry="__16" Root="0" Key="LFNamespaceExtension.RootFolder\CLSID" Value="[\{]3F2D914F-FE57-414F-9F88-A377C7841DA4[\}]" Component_="LFNamespaceExtension.dll"/>
     <ROW Registry="__17" Root="0" Key="LFNamespaceExtension.SendTo" Value="LFNamespaceExtension.SendTo" Component_="LFNamespaceExtension.dll"/>
     <ROW Registry="__18" Root="0" Key="LFNamespaceExtension.SendTo\CLSID" Value="[\{]3F2D914D-FE57-414F-9F88-A377C7841DA4[\}]" Component_="LFNamespaceExtension.dll"/>
-    <ROW Registry="__19" Root="0" Key="LFSendTofile\DefaultIcon" Value="[SystemFolder]LFCore.dll,21" Component_="LFNamespaceExtension.dll"/>
+    <ROW Registry="__19" Root="0" Key="LFSendTofile\DefaultIcon" Value="&quot;[#LFCore.dll]&quot;,21" Component_="LFNamespaceExtension.dll"/>
     <ROW Registry="__2" Root="0" Key="CLSID\{3F2D914D-FE57-414F-9F88-A377C7841DA4}\InProcServer32" Value="[!LFNamespaceExtension.dll]" Component_="LFNamespaceExtension.dll"/>
     <ROW Registry="__20" Root="0" Key="LFSendTofile\Shellex\DropHandler" Value="[\{]3F2D914D-FE57-414F-9F88-A377C7841DA4[\}]" Component_="LFNamespaceExtension.dll"/>
     <ROW Registry="__21" Root="2" Key="Software\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\Namespace\DelegateFolders\{3F2D914F-FE57-414F-9F88-A377C7841DA4}" Value="liquidFOLDERS" Component_="LFNamespaceExtension.dll"/>
@@ -550,7 +550,7 @@
     <ROW Registry="__5" Root="0" Key="CLSID\{3F2D914E-FE57-414F-9F88-A377C7841DA4}\InProcServer32" Value="[!LFNamespaceExtension.dll]" Component_="LFNamespaceExtension.dll"/>
     <ROW Registry="__6" Root="0" Key="CLSID\{3F2D914E-FE57-414F-9F88-A377C7841DA4}\ProgID" Value="LFNamespaceExtension.DriveMenu" Component_="LFNamespaceExtension.dll"/>
     <ROW Registry="__7" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}" Value="liquidFOLDERS" Component_="LFNamespaceExtension.dll"/>
-    <ROW Registry="__8" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}\DefaultIcon" Value="[System64Folder]LFCore.dll,0" Component_="LFNamespaceExtension.dll"/>
+    <ROW Registry="__8" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}\DefaultIcon" Value="&quot;[#LFCore.dll]&quot;,0" Component_="LFNamespaceExtension.dll"/>
     <ROW Registry="__9" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}\InProcServer32" Value="[!LFNamespaceExtension.dll]" Component_="LFNamespaceExtension.dll"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiRemoveFileComponent">
