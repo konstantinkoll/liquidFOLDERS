@@ -459,6 +459,7 @@ LFCore_API void LFVariantDataFromString(LFVariantData* v, wchar_t* str)
 					*(dst++) = str[a];
 				case L'.':
 				case L',':
+				case L'\'':
 					break;
 				default:
 					*dst = L'\0';
