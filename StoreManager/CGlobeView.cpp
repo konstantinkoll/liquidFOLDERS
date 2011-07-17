@@ -63,7 +63,7 @@ __forceinline void CalculateWorldCoords(double lat, double lon, double result[])
 	result[2] = sin(lat_r);
 }
 
-__forceinline CString CookAttributeString(WCHAR* attr)
+CString CookAttributeString(WCHAR* attr)
 {
 	CString tmpStr(attr);
 	tmpStr.Replace(_T("<"), _T("_"));

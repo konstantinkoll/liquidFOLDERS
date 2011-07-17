@@ -74,7 +74,7 @@ bool GetStoreManagerPath(wchar_t* Path, size_t cCount)
 	HKEY k;
 	if (RegOpenKeyA(HKEY_LOCAL_MACHINE, "Software\\liquidFOLDERS\\", &k)==ERROR_SUCCESS)
 	{
-		DWORD sz = cCount*sizeof(wchar_t);
+		DWORD sz = (DWORD)(cCount*sizeof(wchar_t));
 		LSTATUS res = RegQueryValueEx(k, L"StoreManager", 0, NULL, (BYTE*)Path, &sz);
 
 		RegCloseKey(k);
