@@ -169,6 +169,8 @@ protected:
 	INT m_VScrollMax;
 	INT m_RowHeight;
 	BOOL m_Hover;
+	BOOL m_BeginDragDrop;
+	CPoint m_DragPos;
 
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 	virtual void SetViewOptions(BOOL Force);
@@ -191,6 +193,7 @@ protected:
 	void ResetScrollbars();
 	void AdjustScrollbars();
 	CString GetLabel(LFItemDescriptor* i);
+	BOOL BeginDragDrop();
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();

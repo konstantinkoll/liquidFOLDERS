@@ -68,7 +68,7 @@ CFileView::CFileView(UINT DataSize, BOOL EnableScrolling, BOOL EnableHover, BOOL
 	m_FooterPos.x = m_FooterPos.y = m_FooterSize.cx = m_FooterSize.cy = 0;
 	m_DataSize = DataSize;
 	m_Nothing = TRUE;
-	m_Hover = m_ShowFocusRect = m_AllowMultiSelect = FALSE;
+	m_Hover = m_BeginDragDrop = m_ShowFocusRect = m_AllowMultiSelect = FALSE;
 	hThemeList = NULL;
 
 	m_EnableScrolling = EnableScrolling;
@@ -156,6 +156,7 @@ void CFileView::UpdateViewOptions(INT Context, BOOL Force)
 		m_Context = Context;
 	p_ViewParameters = &theApp.m_Views[m_Context];
 
+	m_BeginDragDrop = FALSE;
 	m_EditLabel = -1;
 	SetViewOptions(Force);
 
@@ -232,6 +233,7 @@ void CFileView::UpdateSearchResult(LFSearchResult* Result, FVPersistentData* Dat
 		m_ShowFocusRect = FALSE;
 	}
 
+	m_BeginDragDrop = FALSE;
 	m_EditLabel = -1;
 	SetSearchResult(Result, Data);
 
@@ -1003,6 +1005,15 @@ CString CFileView::GetLabel(LFItemDescriptor* i)
 	return label;
 }
 
+BOOL CFileView::BeginDragDrop()
+{
+//	m_BeginDragDrop = FALSE;
+
+	theApp.PlayWarningSound();
+
+	return TRUE;
+}
+
 void CFileView::AppendString(UINT attr, CString& str, WCHAR* tmpStr)
 {
 	if (tmpStr)
@@ -1316,8 +1327,13 @@ void CFileView::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 	CWnd::OnHScroll(nSBCode, nPos, pScrollBar);
 }
 
-void CFileView::OnMouseMove(UINT /*nFlags*/, CPoint point)
+void CFileView::OnMouseMove(UINT nFlags, CPoint point)
 {
+	if (m_BeginDragDrop && (nFlags & MK_LBUTTON))
+		if ((abs(point.x-m_DragPos.x)>=GetSystemMetrics(SM_CXDRAG)) && (abs(point.y-m_DragPos.y)>=GetSystemMetrics(SM_CYDRAG)))
+			if (BeginDragDrop())
+				return;
+
 	if (m_EnableHover || m_EnableTooltip)
 	{
 		INT Item = ItemAtPosition(point);
@@ -1516,6 +1532,12 @@ void CFileView::OnLButtonDown(UINT nFlags, CPoint point)
 	INT idx = ItemAtPosition(point);
 	if (idx!=-1)
 	{
+		if (!m_BeginDragDrop)
+		{
+			m_BeginDragDrop = TRUE;
+			m_DragPos = point;
+		}
+
 		if ((nFlags & MK_CONTROL) && (m_AllowMultiSelect))
 		{
 			InvalidateItem(m_FocusItem);
@@ -1552,6 +1574,8 @@ void CFileView::OnLButtonUp(UINT nFlags, CPoint point)
 		if (!(nFlags & MK_CONTROL) || (!m_AllowMultiSelect))
 			OnSelectNone();
 	}
+
+	m_BeginDragDrop = FALSE;
 }
 
 void CFileView::OnLButtonDblClk(UINT /*nFlags*/, CPoint point)
@@ -1591,6 +1615,8 @@ void CFileView::OnRButtonDown(UINT nFlags, CPoint point)
 		if (GetFocus()!=this)
 			SetFocus();
 	}
+
+	m_BeginDragDrop = FALSE;
 }
 
 void CFileView::OnRButtonUp(UINT nFlags, CPoint point)
