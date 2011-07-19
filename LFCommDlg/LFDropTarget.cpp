@@ -67,11 +67,17 @@ BOOL LFDropTarget::OnDrop(CWnd* /*pWnd*/, COleDataObject* pDataObject, DROPEFFEC
 	if (!hG)
 		return FALSE;
 
-	BOOL Success = TRUE;
-
 	HDROP hDrop = (HDROP)GlobalLock(hG);
 	LFFileImportList* il = LFAllocFileImportList(hDrop);
 	GlobalUnlock(hG);
+
+	if (!il->m_ItemCount)
+	{
+		LFFreeFileImportList(il);
+		return FALSE;
+	}
+
+	BOOL Success = TRUE;
 
 	// Template füllen
 	LFItemDescriptor* it = NULL;

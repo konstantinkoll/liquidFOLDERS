@@ -233,35 +233,41 @@ LFCore_API void LFTransactionResolvePhysicalLocations(LFTransactionList* tl, boo
 	// Retrieve physical paths
 	for (unsigned int a=0; a<tl->m_ItemCount; a++)
 		if ((tl->m_Items[a].LastError==LFOk) && (!tl->m_Items[a].Processed))
-		{
-			CIndex* idx1;
-			CIndex* idx2;
-			HANDLE StoreLock = NULL;
-			unsigned int res = OpenStore(tl->m_Items[a].Item->StoreID, true, idx1, idx2, NULL, &StoreLock);
-
-			if (res==LFOk)
+			if ((tl->m_Items[a].Item->Type & LFTypeMask)==LFTypeFile)
 			{
-				if (idx1)
-				{
-					idx1->ResolvePhysicalLocations(tl);
-					delete idx1;
-				}
-				if (idx2)
-					delete idx2;
+				CIndex* idx1;
+				CIndex* idx2;
+				HANDLE StoreLock = NULL;
+				unsigned int res = OpenStore(tl->m_Items[a].Item->StoreID, true, idx1, idx2, NULL, &StoreLock);
 
-				ReleaseMutexForStore(StoreLock);
+				if (res==LFOk)
+				{
+					if (idx1)
+					{
+						idx1->ResolvePhysicalLocations(tl);
+						delete idx1;
+					}
+					if (idx2)
+						delete idx2;
+
+					ReleaseMutexForStore(StoreLock);
+				}
+				else
+				{
+					// Cannot open index, so mark all subsequent files in the same store as processed
+					for (unsigned int b=a; b<tl->m_ItemCount; b++)
+						if ((strcmp(tl->m_Items[b].Item->StoreID, tl->m_Items[a].Item->StoreID)==0) && (!tl->m_Items[b].Processed))
+						{
+							tl->m_Items[b].LastError = tl->m_LastError = res;
+							tl->m_Items[b].Processed = true;
+						}
+				}
 			}
 			else
 			{
-				// Cannot open index, so mark all subsequent files in the same store as processed
-				for (unsigned int b=a; b<tl->m_ItemCount; b++)
-					if ((strcmp(tl->m_Items[b].Item->StoreID, tl->m_Items[a].Item->StoreID)==0) && (!tl->m_Items[b].Processed))
-					{
-						tl->m_Items[b].LastError = tl->m_LastError = res;
-						tl->m_Items[b].Processed = true;
-					}
+				tl->m_LastError = tl->m_Items[a].LastError = LFIllegalItemType;
+				tl->m_Items[a].Processed = true;
 			}
-		}
 
 	// PIDLs
 	if (IncludePIDL)
