@@ -242,9 +242,9 @@ BEGIN
     IDS_LFErrorStoreNotMounted "Der Store ist zur Zeit nicht eingebunden."
     IDS_LFErrorMutexError   "liquidFOLDERS wird zur Zeit von einem anderen Prozess blockiert."
     IDS_LFErrorIllegalAttribute 
-                            "Eine der gewählten Objekte verfügt nicht über die Eigenschaft."
+                            "Eines der gewählten Objekte verfügt nicht über die Eigenschaft."
     IDS_LFErrorIllegalItemType 
-                            "Eine der gewählten Objekte unterstützt diese Operation nicht."
+                            "Eines der gewählten Objekte unterstützt diese Operation nicht."
     IDS_LFErrorIllegalValue "Eine der Eigenschaften hat einen ungültigen Wert."
     IDS_LFErrorIndexTableLoadError 
                             "Eine Index-Tabelle kann nicht geladen werden. Bitte führen Sie die Wartungsarbeiten aus."
