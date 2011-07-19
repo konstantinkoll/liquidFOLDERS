@@ -1,18 +1,18 @@
 
-// CGlobeView.h: Schnittstelle der Klasse CGlobeView
+// LFDataObject.h: Schnittstelle der Klasse LFDataObject
 //
 
 #pragma once
 #include "LFCore.h"
 
 
-// CDataObject
+// LFDataObject
 //
 
-class AFX_EXT_CLASS CDataObject : public IDataObject
+class AFX_EXT_CLASS LFDataObject : public IDataObject
 {
 public:
-	CDataObject(LFPhysicalLocationList* ll);
+	LFDataObject(LFTransactionList* tl);
 
 	BEGIN_INTERFACE
 

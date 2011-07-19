@@ -8,7 +8,7 @@
 LFTransactionList::LFTransactionList()
 	: DynArray()
 {
-	m_Changes = false;
+	m_Changes = m_Resolved = false;
 }
 
 LFTransactionList::~LFTransactionList()
@@ -29,4 +29,108 @@ bool LFTransactionList::AddItemDescriptor(LFItemDescriptor* i, unsigned int User
 
 	i->RefCount++;
 	return true;
+}
+
+void LFTransactionList::SetError(char* key, unsigned int res)
+{
+	for (unsigned int a=0; a<m_ItemCount; a++)
+		if (!m_Items[a].Processed)
+			if (strcmp(m_Items[a].Item->StoreID, key)==0)
+			{
+				m_Items[a].LastError = m_LastError = res;
+				m_Items[a].Processed = true;
+			}
+}
+
+LPITEMIDLIST LFTransactionList::DetachPIDL(unsigned int idx)
+{
+	assert(idx<m_ItemCount);
+
+	LPITEMIDLIST pidl = m_Items[idx].pidlFQ;
+	m_Items[idx].pidlFQ = NULL;
+
+	return pidl;
+}
+
+HGLOBAL LFTransactionList::CreateDropFiles()
+{
+	if (!m_Resolved)
+		return NULL;
+
+	unsigned int cChars = 0;
+	for (unsigned int a=0; a<m_ItemCount; a++)
+		if ((m_Items[a].Processed) && (m_Items[a].LastError==LFOk))
+			cChars += (unsigned int)wcslen(&m_Items[a].Path[4])+1;
+
+	unsigned int szBuffer = sizeof(DROPFILES)+sizeof(wchar_t)*(cChars+1);
+	HGLOBAL hG = GlobalAlloc(GMEM_MOVEABLE, szBuffer);
+	if (!hG)
+		return NULL;
+
+	DROPFILES* pDrop = (DROPFILES*)GlobalLock(hG);
+	if (!pDrop)
+	{
+		GlobalFree(hG);
+		return NULL;
+	}
+
+	pDrop->pFiles = sizeof(DROPFILES);
+	pDrop->fNC = TRUE;
+	pDrop->pt.x = pDrop->pt.y = 0;
+	pDrop->fWide = TRUE;
+
+	wchar_t* ptr = (wchar_t*)(((unsigned char*)pDrop)+sizeof(DROPFILES));
+	for (unsigned int a=0; a<m_ItemCount; a++)
+		if ((m_Items[a].Processed) && (m_Items[a].LastError==LFOk))
+		{
+#pragma warning(push)
+#pragma warning(disable: 4996)
+			wcscpy(ptr, &m_Items[a].Path[4]);
+#pragma warning(pop)
+			ptr += wcslen(&m_Items[a].Path[4])+1;
+		}
+
+	*ptr = L'\0';
+
+	GlobalUnlock(hG);
+	return hG;
+}
+
+HGLOBAL LFTransactionList::CreateLiquidFiles()
+{
+	if (!m_Resolved)
+		return NULL;
+
+	unsigned int cFiles = 0;
+	for (unsigned int a=0; a<m_ItemCount; a++)
+		if ((m_Items[a].Processed) && (m_Items[a].LastError==LFOk))
+			cFiles++;
+
+	unsigned int szBuffer = sizeof(LIQUIDFILES)+sizeof(char)*cFiles*LFKeySize*2;
+	HGLOBAL hG = GlobalAlloc(GMEM_MOVEABLE, szBuffer);
+	if (!hG)
+		return NULL;
+
+	LIQUIDFILES* pFiles = (LIQUIDFILES*)GlobalLock(hG);
+	if (!pFiles)
+	{
+		GlobalFree(hG);
+		return NULL;
+	}
+
+	pFiles->pFiles = sizeof(LIQUIDFILES);
+	pFiles->cFiles = cFiles;
+
+	char* ptr = (char*)(((unsigned char*)pFiles)+sizeof(LIQUIDFILES));
+	for (unsigned int a=0; a<m_ItemCount; a++)
+		if ((m_Items[a].Processed) && (m_Items[a].LastError==LFOk))
+		{
+			strcpy_s(ptr, LFKeySize, m_Items[a].Item->StoreID);
+			ptr += LFKeySize;
+			strcpy_s(ptr, LFKeySize, m_Items[a].Item->CoreAttributes.FileID);
+			ptr += LFKeySize;
+		}
+
+	GlobalUnlock(hG);
+	return hG;
 }

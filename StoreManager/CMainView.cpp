@@ -13,7 +13,7 @@
 #include "StoreManager.h"
 
 
-void CreateShortcut(LFPLL_Item* i)
+void CreateShortcut(LFTL_Item* i)
 {
 	// Get a pointer to the IShellLink interface
 	IShellLink* pShellLink = NULL;
@@ -32,7 +32,7 @@ void CreateShortcut(LFPLL_Item* i)
 		pShellLink->SetIconLocation(Ext, 0);
 		pShellLink->SetShowCmd(SW_SHOWNORMAL);
 
-		LFCreateDesktopShortcut(pShellLink, i->FileName);
+		LFCreateDesktopShortcut(pShellLink, i->Item->CoreAttributes.FileName);
 
 		pShellLink->Release();
 	}
@@ -453,48 +453,6 @@ void CMainView::ExecuteContextMenu(CHAR Drive, LPCSTR verb)
 	}
 }
 
-void CMainView::AddPhysicalLocationItem(LFPhysicalLocationList* ll, LFItemDescriptor* item)
-{
-	switch (item->Type & LFTypeMask)
-	{
-	case LFTypeFile:
-		LFAddItemDescriptor(ll, item);
-		break;
-	case LFTypeVirtual:
-		if ((item->FirstAggregate!=-1) && (item->LastAggregate!=-1))
-			for (INT a=item->FirstAggregate; a<=item->LastAggregate; a++)
-				LFAddItemDescriptor(ll, p_RawFiles->m_Items[a]);
-		break;
-	}
-}
-
-LFPhysicalLocationList* CMainView::BuildPhysicalLocationList(BOOL All)
-{
-	LFPhysicalLocationList* ll = NULL;
-
-	if ((p_RawFiles) && (p_CookedFiles))
-	{
-		ll = LFAllocPhysicalLocationList();
-
-		if (All)
-		{
-			for (UINT a=0; a<p_CookedFiles->m_ItemCount; a++)
-				AddPhysicalLocationItem(ll, p_CookedFiles->m_Items[a]);
-		}
-		else
-		{
-			INT idx = GetNextSelectedItem(-1);
-			while (idx!=-1)
-			{
-				AddPhysicalLocationItem(ll, p_CookedFiles->m_Items[idx]);
-				idx = GetNextSelectedItem(idx);
-			}
-		}
-	}
-
-	return ll;
-}
-
 void CMainView::AddTransactionItem(LFTransactionList* tl, LFItemDescriptor* item, UINT UserData)
 {
 	switch (item->Type & LFTypeMask)
@@ -511,14 +469,12 @@ void CMainView::AddTransactionItem(LFTransactionList* tl, LFItemDescriptor* item
 	}
 }
 
-LFTransactionList* CMainView::BuildTransactionList(BOOL All)
+LFTransactionList* CMainView::BuildTransactionList(BOOL All, BOOL ResolvePhysicalLocations, BOOL IncludePIDL)
 {
-	LFTransactionList* tl = NULL;
+	LFTransactionList* tl = LFAllocTransactionList();
 
 	if ((p_RawFiles) && (p_CookedFiles))
 	{
-		tl = LFAllocTransactionList();
-
 		if (All)
 		{
 			for (UINT a=0; a<p_CookedFiles->m_ItemCount; a++)
@@ -532,6 +488,12 @@ LFTransactionList* CMainView::BuildTransactionList(BOOL All)
 				AddTransactionItem(tl, p_CookedFiles->m_Items[idx], idx);
 				idx = GetNextSelectedItem(idx);
 			}
+		}
+
+		if (ResolvePhysicalLocations)
+		{
+			LFTransactionResolvePhysicalLocations(tl, IncludePIDL==TRUE);
+			LFErrorBox(tl->m_LastError, GetSafeHwnd());
 		}
 	}
 
@@ -647,6 +609,7 @@ BEGIN_MESSAGE_MAP(CMainView, CWnd)
 	ON_WM_CONTEXTMENU()
 	ON_MESSAGE_VOID(WM_ADJUSTLAYOUT, OnAdjustLayout)
 	ON_MESSAGE_VOID(WM_UPDATESELECTION, OnUpdateSelection)
+	ON_MESSAGE_VOID(WM_BEGINDRAGDROP, OnBeginDragDrop)
 	ON_MESSAGE(WM_RENAMEITEM, OnRenameItem)
 	ON_MESSAGE(WM_SENDTO, OnSendTo)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoreAttributesChanged, OnStoreAttributesChanged)
@@ -971,13 +934,36 @@ void CMainView::OnUpdateSelection()
 		m_wndInspector.UpdateAdd(item, p_RawFiles);
 
 		m_FilesSelected |= ((item->Type & LFTypeMask)==LFTypeFile) ||
-						(((item->Type & LFTypeMask)==LFTypeVirtual) && (item->FirstAggregate!=-1) && (item->LastAggregate!=-1));
+			(((item->Type & LFTypeMask)==LFTypeVirtual) && (item->FirstAggregate!=-1) && (item->LastAggregate!=-1));
 
 		idx = GetNextSelectedItem(idx);
 	}
 
 	m_wndInspector.UpdateFinish();
 	m_wndTaskbar.PostMessage(WM_IDLEUPDATECMDUI);
+}
+
+void CMainView::OnBeginDragDrop()
+{
+	LFTransactionList* tl = BuildTransactionList(FALSE, TRUE);
+	if (tl->m_ItemCount)
+	{
+		LFDataObject* pDataObject = new LFDataObject(tl);
+		LFDropSource* pDropSource = new LFDropSource();
+
+		DWORD dwEffect;
+		if (DoDragDrop(pDataObject, pDropSource, DROPEFFECT_COPY | DROPEFFECT_MOVE, &dwEffect)==DRAGDROP_S_DROP)
+			if ((dwEffect & DROPEFFECT_MOVE) || (pDropSource->GetLastEffect() & DROPEFFECT_MOVE))
+			{
+				LFTransactionDelete(tl, false);
+				RemoveTransactedItems(tl);
+			}
+
+		pDropSource->Release();
+		pDataObject->Release();
+	}
+
+	LFFreeTransactionList(tl);
 }
 
 LRESULT CMainView::OnRenameItem(WPARAM wParam, LPARAM lParam)
@@ -1031,13 +1017,11 @@ LRESULT CMainView::OnSendTo(WPARAM wParam, LPARAM /*lParam*/)
 					IDropTarget* pDropTarget = NULL;
 					if (SUCCEEDED(pParent->GetUIObjectOf(GetSafeHwnd(), 1, &pidlRel, IID_IDropTarget, NULL, (void**)&pDropTarget)))
 					{
-						LFPhysicalLocationList* ll = BuildPhysicalLocationList();
-						if (ll->m_ItemCount)
+						LFTransactionList* tl = BuildTransactionList(FALSE, TRUE);
+						if (tl->m_ItemCount)
 						{
-							LFErrorBox(LFResolve(ll), GetSafeHwnd());
-
 							CWaitCursor csr;
-							IDataObject* pDataObject = new CDataObject(ll);
+							LFDataObject* pDataObject = new LFDataObject(tl);
 
 							POINTL pt = { 0, 0 };
 							DWORD dwEffect = DROPEFFECT_COPY;
@@ -1053,7 +1037,7 @@ LRESULT CMainView::OnSendTo(WPARAM wParam, LPARAM /*lParam*/)
 							pDataObject->Release();
 						}
 
-						LFFreePhysicalLocationList(ll);
+						LFFreeTransactionList(tl);
 						pDropTarget->Release();
 					}
 
@@ -1712,20 +1696,19 @@ void CMainView::OnFileRemove()
 
 void CMainView::OnFileCopy()
 {
-	LFPhysicalLocationList* ll = BuildPhysicalLocationList();
-	if (ll->m_ItemCount)
+	LFTransactionList* tl = BuildTransactionList(FALSE, TRUE);
+	if (tl->m_ItemCount)
 	{
-		LFErrorBox(LFResolve(ll), GetSafeHwnd());
-
 		CWaitCursor csr;
-		IDataObject* pDataObject = new CDataObject(ll);
+		LFDataObject* pDataObject = new LFDataObject(tl);
 
 		OleSetClipboard(pDataObject);
+		OleFlushClipboard();
 
 		pDataObject->Release();
 	}
 
-	LFFreePhysicalLocationList(ll);
+	LFFreeTransactionList(tl);
 }
 
 void CMainView::OnFileShortcut()
@@ -1733,17 +1716,16 @@ void CMainView::OnFileShortcut()
 	if (!LFAskCreateShortcut(GetSafeHwnd()))
 		return;
 
-	LFPhysicalLocationList* ll = BuildPhysicalLocationList();
-	if (ll->m_ItemCount)
+	LFTransactionList* tl = BuildTransactionList(FALSE, TRUE, TRUE);
+	if (tl->m_ItemCount)
 	{
-		LFErrorBox(LFResolve(ll, true), GetSafeHwnd());
-
 		CWaitCursor csr;
-		for (UINT a=0; a<ll->m_ItemCount; a++)
-			CreateShortcut(&ll->m_Items[a]);
+		for (UINT a=0; a<tl->m_ItemCount; a++)
+			if ((tl->m_Items[a].LastError==LFOk) && (tl->m_Items[a].Processed))
+				CreateShortcut(&tl->m_Items[a]);
 	}
 
-	LFFreePhysicalLocationList(ll);
+	LFFreeTransactionList(tl);
 }
 
 void CMainView::OnFileDelete()

@@ -860,45 +860,6 @@ LFCore_API void LFFreeMaintenanceList(LFMaintenanceList* ml)
 }
 
 
-LFCore_API LFPhysicalLocationList* LFAllocPhysicalLocationList()
-{
-	return new LFPhysicalLocationList();
-}
-
-LFCore_API void LFFreePhysicalLocationList(LFPhysicalLocationList* ll)
-{
-	if (ll)
-		delete ll;
-}
-
-LFCore_API bool LFAddItemDescriptor(LFPhysicalLocationList* ll, LFItemDescriptor* i)
-{
-	return ll->AddItemDescriptor(i);
-}
-
-LFCore_API unsigned int LFResolve(LFPhysicalLocationList* ll, bool IncludePIDL)
-{
-	ll->Resolve(IncludePIDL);
-
-	return ll->m_LastError;
-}
-
-LFCore_API LPITEMIDLIST LFDetachPIDL(LFPhysicalLocationList* ll, unsigned int idx)
-{
-	return ll->DetachPIDL(idx);
-}
-
-LFCore_API HGLOBAL LFCreateDropFiles(LFPhysicalLocationList* ll)
-{
-	return ll->CreateDropFiles();
-}
-
-LFCore_API HGLOBAL LFCreateLiquidFiles(LFPhysicalLocationList* ll)
-{
-	return ll->CreateLiquidFiles();
-}
-
-
 LFCore_API LFTransactionList* LFAllocTransactionList()
 {
 	return new LFTransactionList();
@@ -913,6 +874,21 @@ LFCore_API void LFFreeTransactionList(LFTransactionList* tl)
 LFCore_API bool LFAddItemDescriptor(LFTransactionList* tl, LFItemDescriptor* i, unsigned int UserData)
 {
 	return tl->AddItemDescriptor(i, UserData);
+}
+
+LFCore_API LPITEMIDLIST LFDetachPIDL(LFTransactionList* tl, unsigned int idx)
+{
+	return tl->DetachPIDL(idx);
+}
+
+LFCore_API HGLOBAL LFCreateDropFiles(LFTransactionList* tl)
+{
+	return tl->CreateDropFiles();
+}
+
+LFCore_API HGLOBAL LFCreateLiquidFiles(LFTransactionList* tl)
+{
+	return tl->CreateLiquidFiles();
 }
 
 

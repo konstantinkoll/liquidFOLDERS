@@ -29,10 +29,10 @@ public:
 	void Update(LFItemDescriptor* i, bool IncludeSlaves=true);
 	bool UpdateMissing(LFItemDescriptor* i, bool Exists);
 	void Update(LFTransactionList* tl, LFVariantData* value1, LFVariantData* value2=NULL, LFVariantData* value3=NULL);
-	void Delete(LFTransactionList* tl);
 	void Delete(LFFileIDList* il, bool PutInTrash=true);
+	void Delete(LFTransactionList* tl, bool PutInTrash=true);
+	void ResolvePhysicalLocations(LFTransactionList* tl);
 	unsigned int Rename(char* FileID, wchar_t* NewName);
-	void ResolvePhysicalLocation(LFPhysicalLocationList* ll);
 	void Retrieve(LFFilter* f, LFSearchResult* res);
 	unsigned int RetrieveStats(unsigned int* cnt, __int64* size);
 

@@ -387,10 +387,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CDataObject.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\CDropdownSelector.cpp"
 				>
 			</File>
@@ -559,7 +555,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\LFDataObject.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\LFDialog.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\LFDropSource.cpp"
 				>
 			</File>
 			<File
@@ -666,10 +670,6 @@
 			</File>
 			<File
 				RelativePath=".\CConditionList.h"
-				>
-			</File>
-			<File
-				RelativePath=".\CDataObject.h"
 				>
 			</File>
 			<File
@@ -801,7 +801,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\LFDataObject.h"
+				>
+			</File>
+			<File
 				RelativePath=".\LFDialog.h"
+				>
+			</File>
+			<File
+				RelativePath=".\LFDropSource.h"
 				>
 			</File>
 			<File

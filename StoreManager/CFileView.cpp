@@ -1007,9 +1007,9 @@ CString CFileView::GetLabel(LFItemDescriptor* i)
 
 BOOL CFileView::BeginDragDrop()
 {
-//	m_BeginDragDrop = FALSE;
+	m_BeginDragDrop = FALSE;
 
-	theApp.PlayWarningSound();
+	GetParent()->SendMessage(WM_BEGINDRAGDROP);
 
 	return TRUE;
 }

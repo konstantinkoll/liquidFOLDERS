@@ -1,7 +1,6 @@
 #pragma once
 #include "..\LFCommDlg\CBottomArea.h"
 #include "..\LFCommDlg\CConditionList.h"
-#include "..\LFCommDlg\CDataObject.h"
 #include "..\LFCommDlg\CDropdownSelector.h"
 #include "..\LFCommDlg\CExplorerHeader.h"
 #include "..\LFCommDlg\CExplorerList.h"
@@ -31,6 +30,8 @@
 #include "..\LFCommDlg\LFAttributeListDlg.h"
 #include "..\LFCommDlg\LFBrowseForFolderDlg.h"
 #include "..\LFCommDlg\LFChooseStoreDlg.h"
+#include "..\LFCommDlg\LFDataObject.h"
+#include "..\LFCommDlg\LFDropSource.h"
 #include "..\LFCommDlg\LFDropTarget.h"
 #include "..\LFCommDlg\LFEditTagsDlg.h"
 #include "..\LFCommDlg\LFEditTimeDlg.h"

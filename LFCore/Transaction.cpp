@@ -115,64 +115,6 @@ LFCore_API void LFTransactionUpdate(LFTransactionList* tl, HWND hWndSource, LFVa
 	}
 }
 
-LFCore_API void LFTransactionDelete(LFTransactionList* tl)
-{
-	assert(tl);
-
-	// Reset
-	for (unsigned int a=0; a<tl->m_ItemCount; a++)
-	{
-		tl->m_Items[a].LastError = LFOk;
-		tl->m_Items[a].Processed = false;
-	}
-
-	// Process
-	for (unsigned int a=0; a<tl->m_ItemCount; a++)
-		if ((tl->m_Items[a].LastError==LFOk) && (!tl->m_Items[a].Processed))
-			if ((tl->m_Items[a].Item->Type & LFTypeMask)==LFTypeFile)
-			{
-				CIndex* idx1;
-				CIndex* idx2;
-				HANDLE StoreLock = NULL;
-				unsigned int res = OpenStore(tl->m_Items[a].Item->StoreID, true, idx1, idx2, NULL, &StoreLock);
-
-				if (res==LFOk)
-				{
-					if (idx1)
-					{
-						idx1->Delete(tl);
-						delete idx1;
-					}
-					if (idx2)
-					{
-						idx2->Delete(tl);
-						delete idx2;
-					}
-
-					ReleaseMutexForStore(StoreLock);
-				}
-				else
-				{
-					// Cannot open index, so mark all subsequent files in the same store as processed
-					for (unsigned int b=a; b<tl->m_ItemCount; b++)
-					{
-						LFItemDescriptor* i = tl->m_Items[b].Item;
-						if ((i->Type & LFTypeMask)==LFTypeFile)
-							if ((strcmp(i->StoreID, tl->m_Items[a].Item->StoreID)==0) && (!tl->m_Items[b].Processed))
-							{
-								tl->m_Items[b].LastError = tl->m_LastError = res;
-								tl->m_Items[b].Processed = true;
-							}
-					}
-				}
-			}
-			else
-			{
-				tl->m_LastError = tl->m_Items[a].LastError = LFIllegalItemType;
-				tl->m_Items[a].Processed = true;
-			}
-}
-
 LFCore_API void LFTransactionDelete(LFFileIDList* il, bool PutInTrash)
 {
 	assert(il);
@@ -219,6 +161,124 @@ LFCore_API void LFTransactionDelete(LFFileIDList* il, bool PutInTrash)
 					}
 			}
 		}
+}
+
+LFCore_API void LFTransactionDelete(LFTransactionList* tl, bool PutInTrash)
+{
+	assert(tl);
+
+	// Reset
+	for (unsigned int a=0; a<tl->m_ItemCount; a++)
+	{
+		tl->m_Items[a].LastError = LFOk;
+		tl->m_Items[a].Processed = false;
+	}
+
+	// Process
+	for (unsigned int a=0; a<tl->m_ItemCount; a++)
+		if ((tl->m_Items[a].LastError==LFOk) && (!tl->m_Items[a].Processed))
+			if ((tl->m_Items[a].Item->Type & LFTypeMask)==LFTypeFile)
+			{
+				CIndex* idx1;
+				CIndex* idx2;
+				HANDLE StoreLock = NULL;
+				unsigned int res = OpenStore(tl->m_Items[a].Item->StoreID, true, idx1, idx2, NULL, &StoreLock);
+
+				if (res==LFOk)
+				{
+					if (idx1)
+					{
+						idx1->Delete(tl, PutInTrash);
+						delete idx1;
+					}
+					if (idx2)
+					{
+						idx2->Delete(tl, PutInTrash);
+						delete idx2;
+					}
+
+					ReleaseMutexForStore(StoreLock);
+				}
+				else
+				{
+					// Cannot open index, so mark all subsequent files in the same store as processed
+					for (unsigned int b=a; b<tl->m_ItemCount; b++)
+					{
+						LFItemDescriptor* i = tl->m_Items[b].Item;
+						if ((i->Type & LFTypeMask)==LFTypeFile)
+							if ((strcmp(i->StoreID, tl->m_Items[a].Item->StoreID)==0) && (!tl->m_Items[b].Processed))
+							{
+								tl->m_Items[b].LastError = tl->m_LastError = res;
+								tl->m_Items[b].Processed = true;
+							}
+					}
+				}
+			}
+			else
+			{
+				tl->m_LastError = tl->m_Items[a].LastError = LFIllegalItemType;
+				tl->m_Items[a].Processed = true;
+			}
+}
+
+LFCore_API void LFTransactionResolvePhysicalLocations(LFTransactionList* tl, bool IncludePIDL)
+{
+	// Reset
+	for (unsigned int a=0; a<tl->m_ItemCount; a++)
+	{
+		tl->m_Items[a].LastError = LFOk;
+		tl->m_Items[a].Processed = false;
+	}
+
+	// Retrieve physical paths
+	for (unsigned int a=0; a<tl->m_ItemCount; a++)
+		if ((tl->m_Items[a].LastError==LFOk) && (!tl->m_Items[a].Processed))
+		{
+			CIndex* idx1;
+			CIndex* idx2;
+			HANDLE StoreLock = NULL;
+			unsigned int res = OpenStore(tl->m_Items[a].Item->StoreID, true, idx1, idx2, NULL, &StoreLock);
+
+			if (res==LFOk)
+			{
+				if (idx1)
+				{
+					idx1->ResolvePhysicalLocations(tl);
+					delete idx1;
+				}
+				if (idx2)
+					delete idx2;
+
+				ReleaseMutexForStore(StoreLock);
+			}
+			else
+			{
+				// Cannot open index, so mark all subsequent files in the same store as processed
+				for (unsigned int b=a; b<tl->m_ItemCount; b++)
+					if ((strcmp(tl->m_Items[b].Item->StoreID, tl->m_Items[a].Item->StoreID)==0) && (!tl->m_Items[b].Processed))
+					{
+						tl->m_Items[b].LastError = tl->m_LastError = res;
+						tl->m_Items[b].Processed = true;
+					}
+			}
+		}
+
+	// PIDLs
+	if (IncludePIDL)
+	{
+		IShellFolder* pDesktop = NULL;
+		if (SUCCEEDED(SHGetDesktopFolder(&pDesktop)))
+		{
+			for (unsigned int a=0; a<tl->m_ItemCount; a++)
+				if ((tl->m_Items[a].Processed) && (tl->m_Items[a].LastError==LFOk))
+					if (FAILED(pDesktop->ParseDisplayName(NULL, NULL, &tl->m_Items[a].Path[4], NULL, &tl->m_Items[a].pidlFQ, NULL)))
+						tl->m_Items[a].LastError = tl->m_LastError = LFIllegalPhysicalPath;
+
+			pDesktop->Release();
+		}
+	}
+
+	tl->m_Resolved = true;
 }
 
 LFCore_API unsigned int LFTransactionRename(char* StoreID, char* FileID, wchar_t* NewName)

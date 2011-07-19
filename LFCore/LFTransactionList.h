@@ -1,13 +1,18 @@
 #pragma once
 #include "liquidFOLDERS.h"
 #include "DynArray.h"
+#include <shlobj.h>
 
 struct LFTL_Item
 {
 	LFItemDescriptor* Item;
-	unsigned int LastError;
 	unsigned int UserData;
+
+	unsigned int LastError;
 	bool Processed;
+
+	wchar_t Path[2*MAX_PATH];
+	LPITEMIDLIST pidlFQ;
 };
 
 
@@ -18,6 +23,11 @@ public:
 	~LFTransactionList();
 
 	bool AddItemDescriptor(LFItemDescriptor* i, unsigned int UserData);
+	void SetError(char* key, unsigned int error);
+	LPITEMIDLIST DetachPIDL(unsigned int idx);
+	HGLOBAL CreateDropFiles();
+	HGLOBAL CreateLiquidFiles();
 
 	bool m_Changes;
+	bool m_Resolved;
 };

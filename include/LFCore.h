@@ -248,29 +248,6 @@ LFCore_API void LFFreeMaintenanceList(LFMaintenanceList* ml);
 
 
 
-// Neue Physical Location List erzeugen
-LFCore_API LFPhysicalLocationList* LFAllocPhysicalLocationList();
-
-// Existierende Physical Location List freigeben
-LFCore_API void LFFreePhysicalLocationList(LFPhysicalLocationList* ll);
-
-// LFItemDescriptor zur Physical Location List hinzufügen
-LFCore_API bool LFAddItemDescriptor(LFPhysicalLocationList* ll, LFItemDescriptor* i);
-
-// Physische Orte auflösen
-LFCore_API unsigned int LFResolve(LFPhysicalLocationList* ll, bool IncludePIDL=false);
-
-// PIDL von Physical Location List lösen
-LFCore_API LPITEMIDLIST LFDetachPIDL(LFPhysicalLocationList* ll, unsigned int idx);
-
-// Handle zu DROPFILES-Struktur von Physical Location List auf globalem Heap erzeugen
-LFCore_API HGLOBAL LFCreateDropFiles(LFPhysicalLocationList* ll);
-
-// Handle zu LIQUIDFILES-Struktur von Physical Location List auf globalem Heap erzeugen
-LFCore_API HGLOBAL LFCreateLiquidFiles(LFPhysicalLocationList* ll);
-
-
-
 // Neue Transaktionsliste erzeugen
 LFCore_API LFTransactionList* LFAllocTransactionList();
 
@@ -279,6 +256,15 @@ LFCore_API void LFFreeTransactionList(LFTransactionList* tl);
 
 // LFItemDescriptor zur LFTransactionList hinzufügen
 LFCore_API bool LFAddItemDescriptor(LFTransactionList* tl, LFItemDescriptor* i, unsigned int UserData=0);
+
+// PIDL von Transaktionsliste lösen
+LFCore_API LPITEMIDLIST LFDetachPIDL(LFTransactionList* tl, unsigned int idx);
+
+// Handle zu DROPFILES-Struktur aus Transaktionsliste auf globalem Heap erzeugen
+LFCore_API HGLOBAL LFCreateDropFiles(LFTransactionList* tl);
+
+// Handle zu LIQUIDFILES-Struktur aus Transaktionsliste auf globalem Heap erzeugen
+LFCore_API HGLOBAL LFCreateLiquidFiles(LFTransactionList* tl);
 
 
 
@@ -427,11 +413,14 @@ LFCore_API LFFilter* LFLoadFilter(LFItemDescriptor* i);
 // als LPARAM mitgeschickt wird (ggf. NULL)
 LFCore_API void LFTransactionUpdate(LFTransactionList* tl, HWND hWndSource, LFVariantData* value1, LFVariantData* value2=NULL, LFVariantData* value3=NULL);
 
-// Löscht alle Dateien in tl
-LFCore_API void LFTransactionDelete(LFTransactionList* tl);
-
 // Löscht alle Dateien in il
 LFCore_API void LFTransactionDelete(LFFileIDList* il, bool PutInTrash=true);
+
+// Löscht alle Dateien in tl
+LFCore_API void LFTransactionDelete(LFTransactionList* tl, bool PutInTrash=true);
+
+// Physische Orte auflösen
+LFCore_API void LFTransactionResolvePhysicalLocations(LFTransactionList* tl, bool IncludePIDL=false);
 
 // Benennt die Datei um
 LFCore_API unsigned int LFTransactionRename(char* StoreID, char* FileID, wchar_t* NewName);

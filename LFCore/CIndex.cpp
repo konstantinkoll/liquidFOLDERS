@@ -293,7 +293,7 @@ void CIndex::Update(LFTransactionList* tl, LFVariantData* value1, LFVariantData*
 
 	if (!LoadTable(IDMaster))
 	{
-		tl->m_LastError = LFIndexRepairError;
+		tl->SetError(StoreID, LFIndexTableLoadError);
 		return;
 	}
 
@@ -368,16 +368,7 @@ void CIndex::Update(LFTransactionList* tl, LFVariantData* value1, LFVariantData*
 	}
 
 	// Ungültige Items finden
-	for (unsigned int a=0; a<tl->m_ItemCount; a++)
-	{
-		LFItemDescriptor* i = tl->m_Items[a].Item;
-		if ((i->Type & LFTypeMask)==LFTypeFile)
-			if ((strcmp(i->StoreID, StoreID)==0) && (!tl->m_Items[a].Processed))
-			{
-				tl->m_Items[a].LastError = tl->m_LastError = LFIllegalKey;
-				tl->m_Items[a].Processed = true;
-			}
-	}
+	tl->SetError(StoreID, LFIllegalKey);
 }
 
 unsigned int CIndex::DeletePhysicalFile(LFCoreAttributes* PtrM)
@@ -397,81 +388,13 @@ unsigned int CIndex::DeletePhysicalFile(LFCoreAttributes* PtrM)
 	return RemoveDir(Path) ? LFOk : LFCannotDeleteFile;
 }
 
-void CIndex::Delete(LFTransactionList* tl)
-{
-	assert(tl);
-
-	if (!LoadTable(IDMaster))
-	{
-		tl->m_LastError = LFIndexRepairError;
-		return;
-	}
-
-	// Items löschen
-	int IDs[IdxTableCount];
-	ZeroMemory(IDs, sizeof(IDs));
-	LFCoreAttributes* PtrM;
-
-	while (Tables[IDMaster]->FindNext(IDs[IDMaster], (void*&)PtrM))
-	{
-		for (unsigned int a=0; a<tl->m_ItemCount; a++)
-		{
-			LFItemDescriptor* i = tl->m_Items[a].Item;
-			if ((i->Type & LFTypeMask)==LFTypeFile)
-				if ((strcmp(i->StoreID, StoreID)==0) && (strcmp(i->CoreAttributes.FileID, PtrM->FileID)==0))
-				{
-					// Files with "link" flag do not posses a file body
-					if (!(PtrM->Flags & LFFlagLink))
-					{
-						unsigned int res = DeletePhysicalFile(PtrM);
-						if (res!=LFOk)
-							tl->m_Items[a].LastError = tl->m_LastError = res;
-					}
-
-					// Slave
-					if (tl->m_Items[a].LastError==LFOk)
-						if ((PtrM->SlaveID) && (PtrM->SlaveID<IdxTableCount))
-							if (LoadTable(PtrM->SlaveID))
-							{
-								Tables[PtrM->SlaveID]->Invalidate(PtrM->FileID, IDs[PtrM->SlaveID]);
-							}
-							else
-							{
-								tl->m_Items[a].LastError = tl->m_LastError = LFIndexTableLoadError;
-							}
-
-					// Master
-					if (tl->m_Items[a].LastError==LFOk)
-					{
-						Tables[IDMaster]->Invalidate(PtrM);
-						tl->m_Changes = true;
-					}
-
-					tl->m_Items[a].Processed = true;
-				}
-		}
-	}
-
-	// Ungültige Items finden
-	for (unsigned int a=0; a<tl->m_ItemCount; a++)
-	{
-		LFItemDescriptor* i = tl->m_Items[a].Item;
-		if ((i->Type & LFTypeMask)==LFTypeFile)
-			if ((strcmp(i->StoreID, StoreID)==0) && (!tl->m_Items[a].Processed))
-			{
-				tl->m_Items[a].LastError = tl->m_LastError = LFIllegalKey;
-				tl->m_Items[a].Processed = true;
-			}
-	}
-}
-
 void CIndex::Delete(LFFileIDList* il, bool PutInTrash)
 {
 	assert(il);
 
 	if (!LoadTable(IDMaster))
 	{
-		il->m_LastError = LFIndexRepairError;
+		il->SetError(StoreID, LFIndexTableLoadError);
 		return;
 	}
 
@@ -523,11 +446,108 @@ void CIndex::Delete(LFFileIDList* il, bool PutInTrash)
 	}
 
 	// Ungültige Items finden
-	for (unsigned int a=0; a<il->m_ItemCount; a++)
-		if ((strcmp(il->m_Items[a].StoreID, StoreID)==0) && (!il->m_Items[a].Processed))
+	il->SetError(StoreID, LFIllegalKey);
+}
+
+void CIndex::Delete(LFTransactionList* tl, bool PutInTrash)
+{
+	assert(tl);
+
+	if (!LoadTable(IDMaster))
+	{
+		tl->SetError(StoreID, LFIndexTableLoadError);
+		return;
+	}
+
+	// Items löschen
+	int IDs[IdxTableCount];
+	ZeroMemory(IDs, sizeof(IDs));
+	LFCoreAttributes* PtrM;
+
+	while (Tables[IDMaster]->FindNext(IDs[IDMaster], (void*&)PtrM))
+	{
+		for (unsigned int a=0; a<tl->m_ItemCount; a++)
 		{
-			il->m_Items[a].LastError = il->m_LastError = LFIllegalKey;
-			il->m_Items[a].Processed = true;
+			LFItemDescriptor* i = tl->m_Items[a].Item;
+			if ((i->Type & LFTypeMask)==LFTypeFile)
+				if ((strcmp(i->StoreID, StoreID)==0) && (strcmp(i->CoreAttributes.FileID, PtrM->FileID)==0))
+				{
+					if (PutInTrash)
+					{
+						PtrM->Flags |= LFFlagTrash;
+						GetSystemTimeAsFileTime(&PtrM->DeleteTime);
+						Tables[IDMaster]->MakeDirty();
+					}
+					else
+					{
+						// Files with "link" flag do not posses a file body
+						if (!(PtrM->Flags & LFFlagLink))
+						{
+							unsigned int res = DeletePhysicalFile(PtrM);
+							if (res!=LFOk)
+								tl->m_Items[a].LastError = tl->m_LastError = res;
+						}
+
+						// Slave
+						if (tl->m_Items[a].LastError==LFOk)
+							if ((PtrM->SlaveID) && (PtrM->SlaveID<IdxTableCount))
+								if (LoadTable(PtrM->SlaveID))
+								{
+									Tables[PtrM->SlaveID]->Invalidate(PtrM->FileID, IDs[PtrM->SlaveID]);
+								}
+								else
+								{
+									tl->m_Items[a].LastError = tl->m_LastError = LFIndexTableLoadError;
+								}
+
+						// Master
+						if (tl->m_Items[a].LastError==LFOk)
+						{
+							Tables[IDMaster]->Invalidate(PtrM);
+							tl->m_Changes = true;
+						}
+
+						tl->m_Items[a].Processed = true;
+					}
+				}
+		}
+	}
+
+	// Ungültige Items finden
+	tl->SetError(StoreID, LFIllegalKey);
+}
+
+void CIndex::ResolvePhysicalLocations(LFTransactionList* tl)
+{
+	bool Mounted = (DatPath!=NULL);
+	if (DatPath)
+		Mounted &= (DatPath[0]!='\0');
+
+	if (!Mounted)
+	{
+		tl->SetError(StoreID, LFStoreNotMounted);
+		return;
+	}
+
+	if (!LoadTable(IDMaster))
+	{
+		tl->SetError(StoreID, LFIndexTableLoadError);
+		return;
+	}
+
+	int ID = 0;
+	LFCoreAttributes* PtrM;
+
+	while (Tables[IDMaster]->FindNext(ID, (void*&)PtrM))
+		for (unsigned int a=0; a<tl->m_ItemCount; a++)
+		{
+			LFItemDescriptor* i = tl->m_Items[a].Item;
+			if ((i->Type & LFTypeMask)==LFTypeFile)
+				if ((strcmp(i->StoreID, StoreID)==0) && (strcmp(i->CoreAttributes.FileID, PtrM->FileID)==0))
+				{
+					GetFileLocation(DatPath, PtrM, tl->m_Items[a].Path, 2*MAX_PATH);
+					tl->m_Items[a].Processed = true;
+				}
 		}
 }
 
@@ -571,37 +591,6 @@ unsigned int CIndex::Rename(char* FileID, wchar_t* NewName)
 	}
 
 	return LFIllegalKey;
-}
-
-void CIndex::ResolvePhysicalLocation(LFPhysicalLocationList* ll)
-{
-	bool Mounted = (DatPath!=NULL);
-	if (DatPath)
-		Mounted &= (DatPath[0]!='\0');
-
-	if (!Mounted)
-	{
-		ll->SetError(StoreID, LFStoreNotMounted);
-		return;
-	}
-
-	if (!LoadTable(IDMaster))
-	{
-		ll->SetError(StoreID, LFIndexTableLoadError);
-		return;
-	}
-
-	int ID = 0;
-	LFCoreAttributes* PtrM;
-
-	while (Tables[IDMaster]->FindNext(ID, (void*&)PtrM))
-		for (unsigned int a=0; a<ll->m_ItemCount; a++)
-			if (!ll->m_Items[a].Processed)
-				if ((strcmp(ll->m_Items[a].StoreID, StoreID)==0) && (strcmp(ll->m_Items[a].FileID, PtrM->FileID)==0))
-				{
-					GetFileLocation(DatPath, PtrM, ll->m_Items[a].Path, 2*MAX_PATH);
-					ll->m_Items[a].Processed = true;
-				}
 }
 
 void CIndex::Retrieve(LFFilter* f, LFSearchResult* res)

@@ -1,9 +1,9 @@
 
-// CDataObject.cpp: Implementierung der Klasse CDataObject
+// LFDataObject.cpp: Implementierung der Klasse LFDataObject
 //
 
 #include "stdafx.h"
-#include "CDataObject.h"
+#include "LFDataObject.h"
 #include "LFApplication.h"
 
 
@@ -30,18 +30,18 @@ BOOL DuplicateGlobalMemory(const HGLOBAL hSrc, HGLOBAL& hDst)
 }
 
 
-// CDataObject
+// LFDataObject
 //
 
-CDataObject::CDataObject(LFPhysicalLocationList* ll)
+LFDataObject::LFDataObject(LFTransactionList* tl)
 {
 	m_lRefCount = 1;
 	m_IsReset = TRUE;
-	m_hDropFiles = LFCreateDropFiles(ll);
-	m_hLiquidFiles = LFCreateLiquidFiles(ll);
+	m_hDropFiles = LFCreateDropFiles(tl);
+	m_hLiquidFiles = LFCreateLiquidFiles(tl);
 }
 
-STDMETHODIMP CDataObject::QueryInterface(REFIID iid, void** ppvObject)
+STDMETHODIMP LFDataObject::QueryInterface(REFIID iid, void** ppvObject)
 {
 	if ((iid==IID_IDataObject) || (iid==IID_IUnknown))
 	{
@@ -54,12 +54,12 @@ STDMETHODIMP CDataObject::QueryInterface(REFIID iid, void** ppvObject)
 	return E_NOINTERFACE;
 }
 
-STDMETHODIMP_(ULONG) STDMETHODCALLTYPE CDataObject::AddRef()
+STDMETHODIMP_(ULONG) STDMETHODCALLTYPE LFDataObject::AddRef()
 {
 	return InterlockedIncrement(&m_lRefCount);
 }
 
-STDMETHODIMP_(ULONG) STDMETHODCALLTYPE CDataObject::Release()
+STDMETHODIMP_(ULONG) STDMETHODCALLTYPE LFDataObject::Release()
 {
 	LONG Count = InterlockedDecrement(&m_lRefCount);
 	if (!Count)
@@ -75,11 +75,11 @@ STDMETHODIMP_(ULONG) STDMETHODCALLTYPE CDataObject::Release()
 	return Count;
 }
 
-STDMETHODIMP CDataObject::GetData(FORMATETC* pFormatEtc, STGMEDIUM* pMedium)
+STDMETHODIMP LFDataObject::GetData(FORMATETC* pFormatEtc, STGMEDIUM* pMedium)
 {
 	if ((!pFormatEtc) || (!pMedium))
 		return DV_E_FORMATETC;
-	if (pFormatEtc->tymed!=TYMED_HGLOBAL)
+	if ((pFormatEtc->tymed & TYMED_HGLOBAL)==0)
 		return DV_E_FORMATETC;
 
 	if (pFormatEtc->cfFormat==CF_HDROP)
@@ -105,30 +105,30 @@ STDMETHODIMP CDataObject::GetData(FORMATETC* pFormatEtc, STGMEDIUM* pMedium)
 	return DV_E_FORMATETC;
 }
 
-STDMETHODIMP CDataObject::GetDataHere(FORMATETC* /*pFormatEtc*/, STGMEDIUM* /*pMedium*/)
+STDMETHODIMP LFDataObject::GetDataHere(FORMATETC* /*pFormatEtc*/, STGMEDIUM* /*pMedium*/)
 {
 	return DATA_E_FORMATETC;
 }
 
-STDMETHODIMP CDataObject::QueryGetData(FORMATETC* pFormatEtc)
+STDMETHODIMP LFDataObject::QueryGetData(FORMATETC* pFormatEtc)
 {
 	return ((pFormatEtc->cfFormat==CF_HDROP) || (pFormatEtc->cfFormat==((LFApplication*)AfxGetApp())->CF_HLIQUID)) &&
-		(pFormatEtc->tymed==TYMED_HGLOBAL) ? S_OK : DV_E_FORMATETC;
+		(pFormatEtc->tymed & TYMED_HGLOBAL) ? S_OK : DV_E_FORMATETC;
 }
 
-STDMETHODIMP CDataObject::GetCanonicalFormatEtc(FORMATETC* /*pFormatEtcIn*/, FORMATETC* pFormatEtcOut)
+STDMETHODIMP LFDataObject::GetCanonicalFormatEtc(FORMATETC* /*pFormatEtcIn*/, FORMATETC* pFormatEtcOut)
 {
 	pFormatEtcOut->ptd = NULL;
 
 	return E_NOTIMPL;
 }
 
-STDMETHODIMP CDataObject::SetData(FORMATETC* /*pFormatEtc*/, STGMEDIUM* /*pmedium*/, BOOL /*fRelease*/)
+STDMETHODIMP LFDataObject::SetData(FORMATETC* /*pFormatEtc*/, STGMEDIUM* /*pmedium*/, BOOL /*fRelease*/)
 {
 	return E_NOTIMPL;
 }
 
-STDMETHODIMP CDataObject::EnumFormatEtc(DWORD dwDirection, IEnumFORMATETC** ppenumFormatEtc)
+STDMETHODIMP LFDataObject::EnumFormatEtc(DWORD dwDirection, IEnumFORMATETC** ppenumFormatEtc)
 {
 	if (dwDirection==DATADIR_GET)
 	{
@@ -151,17 +151,17 @@ STDMETHODIMP CDataObject::EnumFormatEtc(DWORD dwDirection, IEnumFORMATETC** ppen
 	return E_NOTIMPL;
 }
 
-STDMETHODIMP CDataObject::DAdvise(FORMATETC* /*pFormatEtc*/, DWORD /*advf*/, IAdviseSink* /*pAdvSink*/, DWORD* /*pdwConnection*/)
+STDMETHODIMP LFDataObject::DAdvise(FORMATETC* /*pFormatEtc*/, DWORD /*advf*/, IAdviseSink* /*pAdvSink*/, DWORD* /*pdwConnection*/)
 {
 	return OLE_E_ADVISENOTSUPPORTED;;
 }
 
-STDMETHODIMP CDataObject::DUnadvise(DWORD /*dwConnection*/)
+STDMETHODIMP LFDataObject::DUnadvise(DWORD /*dwConnection*/)
 {
 	return OLE_E_ADVISENOTSUPPORTED;
 }
 
-STDMETHODIMP CDataObject::EnumDAdvise(IEnumSTATDATA** /*ppenumAdvise*/)
+STDMETHODIMP LFDataObject::EnumDAdvise(IEnumSTATDATA** /*ppenumAdvise*/)
 {
 	return OLE_E_ADVISENOTSUPPORTED;
 }
