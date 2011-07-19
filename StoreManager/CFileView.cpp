@@ -1330,7 +1330,7 @@ void CFileView::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 void CFileView::OnMouseMove(UINT nFlags, CPoint point)
 {
 	if (m_BeginDragDrop && (nFlags & MK_LBUTTON))
-		if ((abs(point.x-m_DragPos.x)>=GetSystemMetrics(SM_CXDRAG)) && (abs(point.y-m_DragPos.y)>=GetSystemMetrics(SM_CYDRAG)))
+		if ((abs(point.x-m_DragPos.x)>=GetSystemMetrics(SM_CXDRAG)) || (abs(point.y-m_DragPos.y)>=GetSystemMetrics(SM_CYDRAG)))
 			if (BeginDragDrop())
 				return;
 
