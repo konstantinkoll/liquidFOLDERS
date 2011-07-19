@@ -1020,7 +1020,7 @@ LRESULT CMainView::OnSendTo(WPARAM wParam, LPARAM /*lParam*/)
 						LFTransactionList* tl = BuildTransactionList(FALSE, TRUE);
 						if (tl->m_ItemCount)
 						{
-							CWaitCursor csr;
+							CWaitCursor wait;
 							LFDataObject* pDataObject = new LFDataObject(tl);
 
 							POINTL pt = { 0, 0 };
@@ -1560,6 +1560,8 @@ void CMainView::OnStoreMaintain()
 	INT idx = GetSelectedItem();
 	if (idx!=-1)
 	{
+		CWaitCursor wait;
+
 		LFMaintenanceList* ml = LFStoreMaintenance(p_CookedFiles->m_Items[idx]->StoreID);
 		LFErrorBox(ml->m_LastError, GetSafeHwnd());
 
@@ -1699,7 +1701,7 @@ void CMainView::OnFileCopy()
 	LFTransactionList* tl = BuildTransactionList(FALSE, TRUE);
 	if (tl->m_ItemCount)
 	{
-		CWaitCursor csr;
+		CWaitCursor wait;
 		LFDataObject* pDataObject = new LFDataObject(tl);
 
 		OleSetClipboard(pDataObject);
@@ -1719,7 +1721,7 @@ void CMainView::OnFileShortcut()
 	LFTransactionList* tl = BuildTransactionList(FALSE, TRUE, TRUE);
 	if (tl->m_ItemCount)
 	{
-		CWaitCursor csr;
+		CWaitCursor wait;
 		for (UINT a=0; a<tl->m_ItemCount; a++)
 			if ((tl->m_Items[a].LastError==LFOk) && (tl->m_Items[a].Processed))
 				CreateShortcut(&tl->m_Items[a]);
