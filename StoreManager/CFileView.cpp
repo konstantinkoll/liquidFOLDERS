@@ -1549,9 +1549,10 @@ void CFileView::OnLButtonDown(UINT nFlags, CPoint point)
 				m_EditLabel = idx;
 			}
 			else
-			{
-				SetFocusItem(idx, nFlags & MK_SHIFT);
-			}
+				if (!IsSelected(idx))
+				{
+					SetFocusItem(idx, nFlags & MK_SHIFT);
+				}
 	}
 	else
 	{
