@@ -223,7 +223,6 @@ protected:
 	afx_msg void OnSelectInvert();
 	afx_msg void OnUpdateCommands(CCmdUI* pCmdUI);
 	afx_msg void OnDestroyEdit();
-	afx_msg LRESULT OnItemsDropped(WPARAM wParam, LPARAM lParam);
 	DECLARE_MESSAGE_MAP()
 
 private:

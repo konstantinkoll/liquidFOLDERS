@@ -310,6 +310,7 @@ UINT CDropdownSelector::GetPreferredHeight()
 	CDC* dc = GetWindowDC();
 	CFont* pOldFont = dc->SelectObject(&p_App->m_DefaultFont);
 	UINT h = max(dc->GetTextExtent(_T("Wy")).cy, GetSystemMetrics(SM_CYSMICON));
+	dc->SelectObject(pOldFont);
 	ReleaseDC(dc);
 
 	return h+2*BORDER;

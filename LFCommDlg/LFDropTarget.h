@@ -10,21 +10,34 @@
 // LFDropTarget
 //
 
-class AFX_EXT_CLASS LFDropTarget : public COleDropTarget
+class AFX_EXT_CLASS LFDropTarget : public IDropTarget
 {
 public:
 	LFDropTarget();
 
-	BOOL Register(CWnd* pWnd, CHAR* StoreID, BOOL AllowChooseStore);
-	BOOL Register(CWnd* pWnd, LFFilter* pFilter, BOOL AllowChooseStore);
-	DROPEFFECT CheckDrop(COleDataObject* pDataObject, DWORD dwKeyState);
+	void SetOwner(CWnd* pOwner);
+	void SetFilter(LFFilter* pFilter, BOOL AllowChooseStore=TRUE);
+	void SetStore(CHAR* StoreID, BOOL AllowChooseStore=TRUE);
 
-	virtual DROPEFFECT OnDragEnter(CWnd* pWnd, COleDataObject* pDataObject, DWORD dwKeyState, CPoint point);
-	virtual DROPEFFECT OnDragOver(CWnd* pWnd, COleDataObject* pDataObject, DWORD dwKeyState, CPoint point);
-	virtual BOOL OnDrop(CWnd* pWnd, COleDataObject* pDataObject, DROPEFFECT dropEffect, CPoint point);
+	BEGIN_INTERFACE
+
+	// IUnknown members
+	STDMETHOD(QueryInterface)(REFIID iid, void** ppvObject);
+	STDMETHOD_(ULONG, AddRef)();
+	STDMETHOD_(ULONG, Release());
+
+	// IDropTarget members
+	STDMETHOD(DragEnter)(IDataObject* pDataObject, DWORD grfKeyState, POINTL pt, DWORD* pdwEffect);
+	STDMETHOD(DragOver)(DWORD grfKeyState, POINTL pt, DWORD* pdwEffect);
+	STDMETHOD(DragLeave)();
+	STDMETHOD(Drop)(IDataObject* pDataObject, DWORD grfKeyState, POINTL pt, DWORD* pdwEffect);
+
+	END_INTERFACE
 
 protected:
+	LONG m_lRefCount;
 	LFFilter* p_Filter;
+	CWnd* p_Owner;
 	CHAR m_StoreID[LFKeySize];
 	BOOL m_StoreIDValid;
 	BOOL m_AllowChooseStore;

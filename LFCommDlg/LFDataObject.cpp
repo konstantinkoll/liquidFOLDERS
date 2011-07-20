@@ -36,7 +36,6 @@ BOOL DuplicateGlobalMemory(const HGLOBAL hSrc, HGLOBAL& hDst)
 LFDataObject::LFDataObject(LFTransactionList* tl)
 {
 	m_lRefCount = 1;
-	m_IsReset = TRUE;
 	m_hDropFiles = LFCreateDropFiles(tl);
 	m_hLiquidFiles = LFCreateLiquidFiles(tl);
 }

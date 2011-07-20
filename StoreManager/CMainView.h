@@ -43,8 +43,7 @@ protected:
 	CFilterWnd* p_wndFilter;
 	CInspectorWnd m_wndInspector;
 	CExplorerNotification m_wndExplorerNotification;
-	LFDropTarget m_DropTarget1;
-	LFDropTarget m_DropTarget2;
+	LFDropTarget m_DropTarget;
 	LFFilter* p_Filter;
 	LFSearchResult* p_RawFiles;
 	LFSearchResult* p_CookedFiles;

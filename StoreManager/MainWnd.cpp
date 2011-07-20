@@ -372,6 +372,7 @@ BEGIN_MESSAGE_MAP(CMainWnd, CGlasWindow)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoresChanged, OnStoresChanged)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoreAttributesChanged, OnStoreAttributesChanged)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->DefaultStoreChanged, OnStoresChanged)
+	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->ItemsDropped, OnItemsDropped)
 END_MESSAGE_MAP()
 
 INT CMainWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -772,6 +773,22 @@ LRESULT CMainWnd::OnStoreAttributesChanged(WPARAM wParam, LPARAM lParam)
 			break;
 		case LFContextStoreHome:
 			m_wndMainView.PostMessage(theApp.p_MessageIDs->StoreAttributesChanged, wParam, lParam);
+			break;
+		}
+
+	return NULL;
+}
+
+LRESULT CMainWnd::OnItemsDropped(WPARAM /*wParam*/, LPARAM /*lParam*/)
+{
+	if (m_pCookedFiles)
+		switch (m_pCookedFiles->m_Context)
+		{
+		case LFContextStores:
+		case LFContextClipboard:
+			break;
+		default:
+			PostMessage(WM_RELOAD);
 			break;
 		}
 

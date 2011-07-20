@@ -1135,7 +1135,6 @@ BEGIN_MESSAGE_MAP(CFileView, CWnd)
 	ON_UPDATE_COMMAND_UI(ID_APP_NEWFILEDROP, OnUpdateCommands)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_SELECTALL, IDM_SELECTINVERT, OnUpdateCommands)
 	ON_EN_KILLFOCUS(2, OnDestroyEdit)
-	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->ItemsDropped, OnItemsDropped)
 END_MESSAGE_MAP()
 
 INT CFileView::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -1782,13 +1781,4 @@ void CFileView::OnUpdateCommands(CCmdUI* pCmdUI)
 void CFileView::OnDestroyEdit()
 {
 	DestroyEdit(TRUE);
-}
-
-LRESULT CFileView::OnItemsDropped(WPARAM /*wParam*/, LPARAM /*lParam*/)
-{
-	if (p_Result)
-		if (p_Result->m_Context!=LFContextStores)
-			GetOwner()->SendMessage(WM_COMMAND, ID_NAV_RELOAD);
-
-	return NULL;
 }

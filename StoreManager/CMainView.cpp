@@ -139,14 +139,13 @@ BOOL CMainView::CreateFileView(UINT ViewID, FVPersistentData* Data)
 	if (pNewView)
 	{
 		CFileView* pVictim = p_wndFileView;
-		m_DropTarget2.Revoke();
 
 		p_wndFileView = pNewView;
 		p_wndFileView->SetOwner(GetOwner());
 		p_wndFileView->SetFocus();
 		AdjustLayout();
 
-		m_DropTarget2.Register(p_wndFileView, p_Filter, TRUE);
+		RegisterDragDrop(p_wndFileView->GetSafeHwnd(), &m_DropTarget);
 
 		if (pVictim)
 		{
@@ -256,8 +255,8 @@ void CMainView::UpdateSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles,
 		if (p_wndFileView)
 			p_wndFileView->UpdateSearchResult(NULL, NULL);
 
-		m_DropTarget1.Revoke();
-		m_DropTarget2.Revoke();
+		RevokeDragDrop(m_wndExplorerHeader.GetSafeHwnd());
+		RevokeDragDrop(p_wndFileView->GetSafeHwnd());
 	}
 	else
 	{
@@ -269,8 +268,9 @@ void CMainView::UpdateSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles,
 			p_wndFileView->UpdateSearchResult(pCookedFiles, Data);
 		}
 
-		m_DropTarget1.Register(&m_wndExplorerHeader, pFilter, TRUE);
-		m_DropTarget2.Register(p_wndFileView, pFilter, TRUE);
+		m_DropTarget.SetFilter(pFilter);
+		RegisterDragDrop(m_wndExplorerHeader.GetSafeHwnd(), &m_DropTarget);
+		RegisterDragDrop(p_wndFileView->GetSafeHwnd(), &m_DropTarget);
 	}
 
 	SetHeader();
@@ -750,6 +750,9 @@ INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	{
 		m_ShowFilterPane = FALSE;
 	}
+
+	// Drop target
+	m_DropTarget.SetOwner(GetOwner());
 
 	// Explorer header
 	if (!m_wndExplorerHeader.Create(this, 3))

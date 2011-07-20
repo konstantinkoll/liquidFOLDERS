@@ -195,7 +195,9 @@ INT CFileDropWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	UpdateStore();
 
 	// Initialize Drop
-	m_DropTarget.Register(this, "", FALSE);
+	m_DropTarget.SetOwner(this);
+	m_DropTarget.SetStore("", FALSE);
+	RegisterDragDrop(GetSafeHwnd(), &m_DropTarget);
 
 	return 0;
 }

@@ -36,7 +36,6 @@ public:
 
 protected:
 	LONG m_lRefCount;
-	BOOL m_IsReset;
 	HGLOBAL m_hDropFiles;
 	HGLOBAL m_hLiquidFiles;
 };

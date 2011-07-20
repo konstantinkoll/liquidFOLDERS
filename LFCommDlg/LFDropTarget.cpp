@@ -4,7 +4,6 @@
 
 #include "StdAfx.h"
 #include "LFCommDlg.h"
-#include <iostream>
 
 
 // LFDropTarget
@@ -12,51 +11,93 @@
 
 LFDropTarget::LFDropTarget()
 {
+	p_Owner = NULL;
 	m_StoreIDValid = m_AllowChooseStore = m_SkipTemplate = FALSE;
 	p_Filter = NULL;
 }
 
-BOOL LFDropTarget::Register(CWnd* pWnd, CHAR* StoreID, BOOL AllowChooseStore)
+void LFDropTarget::SetOwner(CWnd* pOwner)
+{
+	p_Owner = pOwner;
+}
+
+void LFDropTarget::SetStore(CHAR* StoreID, BOOL AllowChooseStore)
 {
 	p_Filter = NULL;
 	strcpy_s(m_StoreID, LFKeySize, StoreID);
 	m_StoreIDValid = TRUE;
 	m_AllowChooseStore = AllowChooseStore;
-
-	return (m_hWnd!=pWnd->m_hWnd) ? COleDropTarget::Register(pWnd) : TRUE;
 }
 
-BOOL LFDropTarget::Register(CWnd* pWnd, LFFilter* pFilter, BOOL AllowChooseStore)
+void LFDropTarget::SetFilter(LFFilter* pFilter, BOOL AllowChooseStore)
 {
 	p_Filter = pFilter;
 	m_StoreIDValid = FALSE;
 	m_AllowChooseStore = AllowChooseStore;
-
-	return (m_hWnd!=pWnd->m_hWnd) ? COleDropTarget::Register(pWnd) : TRUE;
 }
 
-DROPEFFECT LFDropTarget::CheckDrop(COleDataObject* pDataObject, DWORD dwKeyState)
+
+STDMETHODIMP LFDropTarget::QueryInterface(REFIID iid, void** ppvObject)
 {
-	m_SkipTemplate = (dwKeyState & MK_SHIFT);
+	if ((iid==IID_IDropTarget) || (iid==IID_IUnknown))
+	{
+		AddRef();
+		*ppvObject = this;
+		return S_OK;
+	}
 
-	if ((pDataObject->GetGlobalData(CF_HDROP)==NULL) && pDataObject->GetGlobalData(((LFApplication*)AfxGetApp())->CF_HLIQUID)==NULL)
-		return DROPEFFECT_NONE;
-
-	return (dwKeyState & MK_CONTROL) ? DROPEFFECT_MOVE : DROPEFFECT_COPY;
+	*ppvObject = NULL;
+	return E_NOINTERFACE;
 }
 
-DROPEFFECT LFDropTarget::OnDragEnter(CWnd* /*pWnd*/, COleDataObject* pDataObject, DWORD dwKeyState, CPoint /*point*/)
+STDMETHODIMP_(ULONG) STDMETHODCALLTYPE LFDropTarget::AddRef()
 {
-	return CheckDrop(pDataObject, dwKeyState);
+	return InterlockedIncrement(&m_lRefCount);
 }
 
-DROPEFFECT LFDropTarget::OnDragOver(CWnd* /*pWnd*/, COleDataObject* pDataObject, DWORD dwKeyState, CPoint /*point*/)
+STDMETHODIMP_(ULONG) STDMETHODCALLTYPE LFDropTarget::Release()
 {
-	return CheckDrop(pDataObject, dwKeyState);
+	LONG Count = InterlockedDecrement(&m_lRefCount);
+	if (!Count)
+	{
+		delete this;
+		return 0;
+	}
+
+	return Count;
 }
 
-BOOL LFDropTarget::OnDrop(CWnd* /*pWnd*/, COleDataObject* pDataObject, DROPEFFECT dropEffect, CPoint /*point*/)
+STDMETHODIMP LFDropTarget::DragEnter(IDataObject* pDataObject, DWORD grfKeyState, POINTL pt, DWORD* pdwEffect)
 {
+	m_SkipTemplate = (grfKeyState & MK_SHIFT);
+
+	COleDataObject dobj;
+	dobj.Attach(pDataObject, FALSE);
+
+	if ((dobj.GetGlobalData(CF_HDROP)==NULL) && (dobj.GetGlobalData(((LFApplication*)AfxGetApp())->CF_HLIQUID)==NULL))
+	{
+		*pdwEffect = DROPEFFECT_NONE;
+		return E_INVALIDARG;
+	}
+
+	return DragOver(grfKeyState, pt, pdwEffect);
+}
+
+STDMETHODIMP LFDropTarget::DragOver(DWORD grfKeyState, POINTL /*pt*/, DWORD* pdwEffect)
+{
+	*pdwEffect &= (grfKeyState & MK_CONTROL) ? DROPEFFECT_MOVE : DROPEFFECT_COPY;
+	return S_OK;
+}
+
+STDMETHODIMP LFDropTarget::DragLeave()
+{
+	return S_OK;
+}
+
+STDMETHODIMP LFDropTarget::Drop(IDataObject* pDataObject, DWORD grfKeyState, POINTL pt, DWORD* pdwEffect)
+{
+	DragOver(grfKeyState, pt, pdwEffect);
+
 	CHAR StoreID[LFKeySize];
 	strcpy_s(StoreID, LFKeySize, p_Filter ? p_Filter->StoreID : m_StoreIDValid ? m_StoreID : "");
 
@@ -65,13 +106,16 @@ BOOL LFDropTarget::OnDrop(CWnd* /*pWnd*/, COleDataObject* pDataObject, DROPEFFEC
 		if (!LFDefaultStoreAvailable())
 		{
 			LFErrorBox(LFNoDefaultStore);
-			return FALSE;
+			return E_INVALIDARG;
 		}
 
 	// HDROP holen
-	HGLOBAL hG = pDataObject->GetGlobalData(CF_HDROP);
+	COleDataObject dobj;
+	dobj.Attach(pDataObject, FALSE);
+
+	HGLOBAL hG = dobj.GetGlobalData(CF_HDROP);
 	if (!hG)
-		return FALSE;
+		return E_INVALIDARG;
 
 	HDROP hDrop = (HDROP)GlobalLock(hG);
 	LFFileImportList* il = LFAllocFileImportList(hDrop);
@@ -80,7 +124,7 @@ BOOL LFDropTarget::OnDrop(CWnd* /*pWnd*/, COleDataObject* pDataObject, DROPEFFEC
 	if (!il->m_ItemCount)
 	{
 		LFFreeFileImportList(il);
-		return FALSE;
+		return E_INVALIDARG;
 	}
 
 	BOOL Success = TRUE;
@@ -91,7 +135,7 @@ BOOL LFDropTarget::OnDrop(CWnd* /*pWnd*/, COleDataObject* pDataObject, DROPEFFEC
 	{
 		it = LFAllocItemDescriptor();
 
-		LFItemTemplateDlg dlg(CWnd::FromHandle(m_hWnd), it, StoreID, m_AllowChooseStore, p_Filter);
+		LFItemTemplateDlg dlg(p_Owner ? p_Owner : CWnd::GetForegroundWindow(), it, StoreID, m_AllowChooseStore, p_Filter);
 		switch (dlg.DoModal())
 		{
 		case IDCANCEL:
@@ -103,17 +147,18 @@ BOOL LFDropTarget::OnDrop(CWnd* /*pWnd*/, COleDataObject* pDataObject, DROPEFFEC
 	}
 
 	// Import
-	UINT res = LFImportFiles(StoreID, il, it, true, dropEffect==DROPEFFECT_MOVE);
+	UINT res = LFImportFiles(StoreID, il, it, true, (*pdwEffect & DROPEFFECT_MOVE)!=0);
 	if (res!=LFOk)
 	{
 		LFErrorBox(res);
 		Success = FALSE;
 	}
 
-	SendMessage(m_hWnd, LFGetMessageIDs()->ItemsDropped, NULL, NULL);
+	if (p_Owner)
+		p_Owner->SendMessage(LFGetMessageIDs()->ItemsDropped, NULL, NULL);
 
 Finish:
 	LFFreeItemDescriptor(it);
 	LFFreeFileImportList(il);
-	return Success;
+	return S_OK;
 }
