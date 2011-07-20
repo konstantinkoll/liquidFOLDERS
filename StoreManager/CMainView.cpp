@@ -1630,6 +1630,9 @@ void CMainView::OnUpdateStoreCommands(CCmdUI* pCmdUI)
 			case IDM_STORE_IMPORTFOLDER:
 				b = !(item->Type & LFTypeNotMounted);
 				break;
+			case IDM_STORE_SHORTCUT:
+				b = (item->CategoryID!=LFItemCategoryExternalStores);
+				break;
 			case IDM_STORE_RENAME:
 				b = !p_wndFileView->IsEditing();
 				break;

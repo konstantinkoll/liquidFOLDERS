@@ -345,19 +345,25 @@ void LFChooseStoreDlg::OnUpdateStoreCommands(CCmdUI* pCmdUI)
 	INT idx = GetSelectedStore();
 	if (idx!=-1)
 	{
-		LFItemDescriptor* i = p_Result->m_Items[idx];
-		b = ((i->Type & LFTypeMask)==LFTypeStore);
+		LFItemDescriptor* item = p_Result->m_Items[idx];
+		b = ((item->Type & LFTypeMask)==LFTypeStore);
 
 		switch (pCmdUI->m_nID)
 		{
 		case IDM_STORE_MAKEDEFAULT:
-			b = (i->CategoryID==LFItemCategoryInternalStores) && (!(i->Type & LFTypeDefaultStore));
+			b = (item->CategoryID==LFItemCategoryInternalStores) && (!(item->Type & LFTypeDefaultStore));
 			break;
 		case IDM_STORE_MAKEHYBRID:
-			b = (i->CategoryID==LFItemCategoryExternalStores) && (!(i->Type & LFTypeNotMounted));
+			b = (item->CategoryID==LFItemCategoryExternalStores) && (!(item->Type & LFTypeNotMounted));
 			break;
 		case IDM_STORE_IMPORTFOLDER:
 			b = FALSE;
+			break;
+		case IDM_STORE_SHORTCUT:
+			b = (item->CategoryID!=LFItemCategoryExternalStores);
+			break;
+		case IDM_STORE_RENAME:
+			b = (m_wndExplorerList.GetEditControl()==NULL);
 			break;
 		}
 	}
