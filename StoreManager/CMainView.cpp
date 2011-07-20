@@ -273,6 +273,9 @@ void CMainView::UpdateSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles,
 		RegisterDragDrop(p_wndFileView->GetSafeHwnd(), &m_DropTarget);
 	}
 
+	if (m_IsClipboard)
+		m_DropTarget.SetSearchResult(pRawFiles);
+
 	SetHeader();
 	if (UpdateSelection)
 		OnUpdateSelection();
@@ -955,7 +958,7 @@ void CMainView::OnBeginDragDrop()
 		LFDropSource* pDropSource = new LFDropSource();
 
 		DWORD dwEffect;
-		if (DoDragDrop(pDataObject, pDropSource, DROPEFFECT_COPY | DROPEFFECT_MOVE, &dwEffect)==DRAGDROP_S_DROP)
+		if (DoDragDrop(pDataObject, pDropSource, m_IsClipboard ? DROPEFFECT_COPY : DROPEFFECT_COPY | DROPEFFECT_MOVE, &dwEffect)==DRAGDROP_S_DROP)
 			if ((dwEffect & DROPEFFECT_MOVE) || (pDropSource->GetLastEffect() & DROPEFFECT_MOVE))
 			{
 				LFTransactionDelete(tl, false);

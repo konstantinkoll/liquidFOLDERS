@@ -785,8 +785,11 @@ LRESULT CMainWnd::OnItemsDropped(WPARAM /*wParam*/, LPARAM /*lParam*/)
 		switch (m_pCookedFiles->m_Context)
 		{
 		case LFContextStores:
-		case LFContextClipboard:
 			break;
+		case LFContextClipboard:
+			PostMessage(WM_COOKFILES);
+			break;
+
 		default:
 			PostMessage(WM_RELOAD);
 			break;

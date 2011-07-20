@@ -18,6 +18,7 @@ public:
 	void SetOwner(CWnd* pOwner);
 	void SetFilter(LFFilter* pFilter, BOOL AllowChooseStore=TRUE);
 	void SetStore(CHAR* StoreID, BOOL AllowChooseStore=TRUE);
+	void SetSearchResult(LFSearchResult* pSearchResult);
 
 	BEGIN_INTERFACE
 
@@ -37,6 +38,7 @@ public:
 protected:
 	LONG m_lRefCount;
 	LFFilter* p_Filter;
+	LFSearchResult* p_SearchResult;
 	CWnd* p_Owner;
 	CHAR m_StoreID[LFKeySize];
 	BOOL m_StoreIDValid;

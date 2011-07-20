@@ -14,6 +14,7 @@ LFDropTarget::LFDropTarget()
 	p_Owner = NULL;
 	m_StoreIDValid = m_AllowChooseStore = m_SkipTemplate = FALSE;
 	p_Filter = NULL;
+	p_SearchResult = NULL;
 }
 
 void LFDropTarget::SetOwner(CWnd* pOwner)
@@ -36,6 +37,10 @@ void LFDropTarget::SetFilter(LFFilter* pFilter, BOOL AllowChooseStore)
 	m_AllowChooseStore = AllowChooseStore;
 }
 
+void LFDropTarget::SetSearchResult(LFSearchResult* pSearchResult)
+{
+	p_SearchResult = pSearchResult;
+}
 
 STDMETHODIMP LFDropTarget::QueryInterface(REFIID iid, void** ppvObject)
 {
@@ -74,18 +79,21 @@ STDMETHODIMP LFDropTarget::DragEnter(IDataObject* pDataObject, DWORD grfKeyState
 	COleDataObject dobj;
 	dobj.Attach(pDataObject, FALSE);
 
-	if ((dobj.GetGlobalData(CF_HDROP)==NULL) && (dobj.GetGlobalData(((LFApplication*)AfxGetApp())->CF_HLIQUID)==NULL))
-	{
-		*pdwEffect = DROPEFFECT_NONE;
-		return E_INVALIDARG;
-	}
+	if (dobj.GetGlobalData(((LFApplication*)AfxGetApp())->CF_HLIQUID))
+		goto Allowed;
+	if ((!p_SearchResult) && (dobj.GetGlobalData(CF_HDROP)))
+		goto Allowed;
 
+	*pdwEffect = DROPEFFECT_NONE;
+	return E_INVALIDARG;
+
+Allowed:
 	return DragOver(grfKeyState, pt, pdwEffect);
 }
 
 STDMETHODIMP LFDropTarget::DragOver(DWORD grfKeyState, POINTL /*pt*/, DWORD* pdwEffect)
 {
-	*pdwEffect &= (grfKeyState & MK_CONTROL) ? DROPEFFECT_MOVE : DROPEFFECT_COPY;
+	*pdwEffect &= p_SearchResult ? DROPEFFECT_COPY : (grfKeyState & MK_CONTROL) ? DROPEFFECT_MOVE : DROPEFFECT_COPY;
 	return S_OK;
 }
 
@@ -98,6 +106,33 @@ STDMETHODIMP LFDropTarget::Drop(IDataObject* pDataObject, DWORD grfKeyState, POI
 {
 	DragOver(grfKeyState, pt, pdwEffect);
 
+	COleDataObject dobj;
+	dobj.Attach(pDataObject, FALSE);
+
+	HGLOBAL hgDrop = dobj.GetGlobalData(CF_HDROP);
+	HGLOBAL hgLiquid = dobj.GetGlobalData(((LFApplication*)AfxGetApp())->CF_HLIQUID);
+
+	// Clipboard
+	if (p_SearchResult)
+	{
+		if (!hgLiquid)
+			return E_INVALIDARG;
+
+		HLIQUID hLiquid = (HLIQUID)GlobalLock(hgLiquid);
+		LFFileIDList* il = LFAllocFileIDList(hLiquid);
+		GlobalUnlock(hgLiquid);
+
+		LFTransactionAddToSearchResult(il, p_SearchResult);
+		LFErrorBox(il->m_LastError, p_Owner->GetSafeHwnd());
+		LFFreeFileIDList(il);
+
+		if (p_Owner)
+			p_Owner->SendMessage(LFGetMessageIDs()->ItemsDropped, NULL, NULL);
+
+		return S_OK;
+	}
+
+	// Import
 	CHAR StoreID[LFKeySize];
 	strcpy_s(StoreID, LFKeySize, p_Filter ? p_Filter->StoreID : m_StoreIDValid ? m_StoreID : "");
 
@@ -110,16 +145,9 @@ STDMETHODIMP LFDropTarget::Drop(IDataObject* pDataObject, DWORD grfKeyState, POI
 		}
 
 	// HDROP holen
-	COleDataObject dobj;
-	dobj.Attach(pDataObject, FALSE);
-
-	HGLOBAL hG = dobj.GetGlobalData(CF_HDROP);
-	if (!hG)
-		return E_INVALIDARG;
-
-	HDROP hDrop = (HDROP)GlobalLock(hG);
+	HDROP hDrop = (HDROP)GlobalLock(hgDrop);
 	LFFileImportList* il = LFAllocFileImportList(hDrop);
-	GlobalUnlock(hG);
+	GlobalUnlock(hgDrop);
 
 	if (!il->m_ItemCount)
 	{
