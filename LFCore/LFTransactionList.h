@@ -23,6 +23,7 @@ public:
 	~LFTransactionList();
 
 	bool AddItemDescriptor(LFItemDescriptor* i, unsigned int UserData);
+	void Reset();
 	void SetError(char* key, unsigned int error);
 	LPITEMIDLIST DetachPIDL(unsigned int idx);
 	HGLOBAL CreateDropFiles();

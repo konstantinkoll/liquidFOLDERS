@@ -35,18 +35,24 @@ BOOL LFDropTarget::Register(CWnd* pWnd, LFFilter* pFilter, BOOL AllowChooseStore
 	return (m_hWnd!=pWnd->m_hWnd) ? COleDropTarget::Register(pWnd) : TRUE;
 }
 
-DROPEFFECT LFDropTarget::OnDragEnter(CWnd* /*pWnd*/, COleDataObject* /*pDataObject*/, DWORD dwKeyState, CPoint /*point*/)
+DROPEFFECT LFDropTarget::CheckDrop(COleDataObject* pDataObject, DWORD dwKeyState)
 {
 	m_SkipTemplate = (dwKeyState & MK_SHIFT);
+
+	if ((pDataObject->GetGlobalData(CF_HDROP)==NULL) && pDataObject->GetGlobalData(((LFApplication*)AfxGetApp())->CF_HLIQUID)==NULL)
+		return DROPEFFECT_NONE;
 
 	return (dwKeyState & MK_CONTROL) ? DROPEFFECT_MOVE : DROPEFFECT_COPY;
 }
 
-DROPEFFECT LFDropTarget::OnDragOver(CWnd* /*pWnd*/, COleDataObject* /*pDataObject*/, DWORD dwKeyState, CPoint /*point*/)
+DROPEFFECT LFDropTarget::OnDragEnter(CWnd* /*pWnd*/, COleDataObject* pDataObject, DWORD dwKeyState, CPoint /*point*/)
 {
-	m_SkipTemplate = (dwKeyState & MK_SHIFT);
+	return CheckDrop(pDataObject, dwKeyState);
+}
 
-	return (dwKeyState & MK_CONTROL) ? DROPEFFECT_MOVE : DROPEFFECT_COPY;
+DROPEFFECT LFDropTarget::OnDragOver(CWnd* /*pWnd*/, COleDataObject* pDataObject, DWORD dwKeyState, CPoint /*point*/)
+{
+	return CheckDrop(pDataObject, dwKeyState);
 }
 
 BOOL LFDropTarget::OnDrop(CWnd* /*pWnd*/, COleDataObject* pDataObject, DROPEFFECT dropEffect, CPoint /*point*/)

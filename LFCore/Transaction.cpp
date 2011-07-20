@@ -42,14 +42,12 @@ void UpdateStore(LFTransactionList* tl, unsigned int idx, LFVariantData* value, 
 
 LFCore_API void LFTransactionUpdate(LFTransactionList* tl, HWND hWndSource, LFVariantData* value1, LFVariantData* value2, LFVariantData* value3)
 {
+	assert(tl);
+
 	bool StoresUpdated = false;
 
 	// Reset
-	for (unsigned int a=0; a<tl->m_ItemCount; a++)
-	{
-		tl->m_Items[a].LastError = LFOk;
-		tl->m_Items[a].Processed = false;
-	}
+	tl->Reset();
 
 	// Process
 	for (unsigned int a=0; a<tl->m_ItemCount; a++)
@@ -87,17 +85,7 @@ LFCore_API void LFTransactionUpdate(LFTransactionList* tl, HWND hWndSource, LFVa
 					}
 					else
 					{
-						// Cannot open index, so mark all subsequent files in the same store as processed
-						for (unsigned int b=a; b<tl->m_ItemCount; b++)
-						{
-							LFItemDescriptor* i = tl->m_Items[b].Item;
-							if ((i->Type & LFTypeMask)==LFTypeFile)
-								if ((strcmp(i->StoreID, tl->m_Items[a].Item->StoreID)==0) && (!tl->m_Items[b].Processed))
-								{
-									tl->m_Items[b].LastError = tl->m_LastError = res;
-									tl->m_Items[b].Processed = true;
-								}
-						}
+						tl->SetError(tl->m_Items[a].Item->StoreID, res);
 					}
 				}
 
@@ -115,64 +103,12 @@ LFCore_API void LFTransactionUpdate(LFTransactionList* tl, HWND hWndSource, LFVa
 	}
 }
 
-LFCore_API void LFTransactionDelete(LFFileIDList* il, bool PutInTrash)
-{
-	assert(il);
-
-	// Reset
-	for (unsigned int a=0; a<il->m_ItemCount; a++)
-	{
-		il->m_Items[a].LastError = LFOk;
-		il->m_Items[a].Processed = false;
-	}
-
-	// Process
-	for (unsigned int a=0; a<il->m_ItemCount; a++)
-		if ((il->m_Items[a].LastError==LFOk) && (!il->m_Items[a].Processed))
-		{
-			CIndex* idx1;
-			CIndex* idx2;
-			HANDLE StoreLock = NULL;
-			unsigned int res = OpenStore(il->m_Items[a].StoreID, true, idx1, idx2, NULL, &StoreLock);
-
-			if (res==LFOk)
-			{
-				if (idx1)
-				{
-					idx1->Delete(il, PutInTrash);
-					delete idx1;
-				}
-				if (idx2)
-				{
-					idx2->Delete(il, PutInTrash);
-					delete idx2;
-				}
-
-				ReleaseMutexForStore(StoreLock);
-			}
-			else
-			{
-				// Cannot open index, so mark all subsequent files in the same store as processed
-				for (unsigned int b=a; b<il->m_ItemCount; b++)
-					if ((strcmp(il->m_Items[b].StoreID, il->m_Items[a].StoreID)==0) && (!il->m_Items[b].Processed))
-					{
-						il->m_Items[b].LastError = il->m_LastError = res;
-						il->m_Items[b].Processed = true;
-					}
-			}
-		}
-}
-
 LFCore_API void LFTransactionDelete(LFTransactionList* tl, bool PutInTrash)
 {
 	assert(tl);
 
 	// Reset
-	for (unsigned int a=0; a<tl->m_ItemCount; a++)
-	{
-		tl->m_Items[a].LastError = LFOk;
-		tl->m_Items[a].Processed = false;
-	}
+	tl->Reset();
 
 	// Process
 	for (unsigned int a=0; a<tl->m_ItemCount; a++)
@@ -201,17 +137,7 @@ LFCore_API void LFTransactionDelete(LFTransactionList* tl, bool PutInTrash)
 				}
 				else
 				{
-					// Cannot open index, so mark all subsequent files in the same store as processed
-					for (unsigned int b=a; b<tl->m_ItemCount; b++)
-					{
-						LFItemDescriptor* i = tl->m_Items[b].Item;
-						if ((i->Type & LFTypeMask)==LFTypeFile)
-							if ((strcmp(i->StoreID, tl->m_Items[a].Item->StoreID)==0) && (!tl->m_Items[b].Processed))
-							{
-								tl->m_Items[b].LastError = tl->m_LastError = res;
-								tl->m_Items[b].Processed = true;
-							}
-					}
+					tl->SetError(tl->m_Items[a].Item->StoreID, res);
 				}
 			}
 			else
@@ -224,11 +150,7 @@ LFCore_API void LFTransactionDelete(LFTransactionList* tl, bool PutInTrash)
 LFCore_API void LFTransactionResolvePhysicalLocations(LFTransactionList* tl, bool IncludePIDL)
 {
 	// Reset
-	for (unsigned int a=0; a<tl->m_ItemCount; a++)
-	{
-		tl->m_Items[a].LastError = LFOk;
-		tl->m_Items[a].Processed = false;
-	}
+	tl->Reset();
 
 	// Retrieve physical paths
 	for (unsigned int a=0; a<tl->m_ItemCount; a++)
@@ -238,7 +160,7 @@ LFCore_API void LFTransactionResolvePhysicalLocations(LFTransactionList* tl, boo
 				CIndex* idx1;
 				CIndex* idx2;
 				HANDLE StoreLock = NULL;
-				unsigned int res = OpenStore(tl->m_Items[a].Item->StoreID, true, idx1, idx2, NULL, &StoreLock);
+				unsigned int res = OpenStore(tl->m_Items[a].Item->StoreID, false, idx1, idx2, NULL, &StoreLock);
 
 				if (res==LFOk)
 				{
@@ -254,13 +176,7 @@ LFCore_API void LFTransactionResolvePhysicalLocations(LFTransactionList* tl, boo
 				}
 				else
 				{
-					// Cannot open index, so mark all subsequent files in the same store as processed
-					for (unsigned int b=a; b<tl->m_ItemCount; b++)
-						if ((strcmp(tl->m_Items[b].Item->StoreID, tl->m_Items[a].Item->StoreID)==0) && (!tl->m_Items[b].Processed))
-						{
-							tl->m_Items[b].LastError = tl->m_LastError = res;
-							tl->m_Items[b].Processed = true;
-						}
+					tl->SetError(tl->m_Items[a].Item->StoreID, res);
 				}
 			}
 			else
@@ -316,4 +232,80 @@ LFCore_API unsigned int LFTransactionRename(char* StoreID, char* FileID, wchar_t
 	}
 
 	return res;
+}
+
+
+LFCore_API void LFTransactionDelete(LFFileIDList* il, bool PutInTrash)
+{
+	assert(il);
+
+	// Reset
+	il->Reset();
+
+	// Process
+	for (unsigned int a=0; a<il->m_ItemCount; a++)
+		if ((il->m_Items[a].LastError==LFOk) && (!il->m_Items[a].Processed))
+		{
+			CIndex* idx1;
+			CIndex* idx2;
+			HANDLE StoreLock = NULL;
+			unsigned int res = OpenStore(il->m_Items[a].StoreID, true, idx1, idx2, NULL, &StoreLock);
+
+			if (res==LFOk)
+			{
+				if (idx1)
+				{
+					idx1->Delete(il, PutInTrash);
+					delete idx1;
+				}
+				if (idx2)
+				{
+					idx2->Delete(il, PutInTrash);
+					delete idx2;
+				}
+
+				ReleaseMutexForStore(StoreLock);
+			}
+			else
+			{
+				il->SetError(il->m_Items[a].StoreID, res);
+			}
+		}
+}
+
+LFCore_API void LFTransactionAddToSearchResult(LFFileIDList* il, LFSearchResult* res)
+{
+	assert(il);
+
+	LFSearchResult* sr = res;
+
+	// Reset
+	il->Reset();
+
+	// Process
+	for (unsigned int a=0; a<il->m_ItemCount; a++)
+		if ((il->m_Items[a].LastError==LFOk) && (!il->m_Items[a].Processed))
+		{
+			CIndex* idx1;
+			CIndex* idx2;
+			HANDLE StoreLock = NULL;
+			unsigned int res = OpenStore(il->m_Items[a].StoreID, false, idx1, idx2, NULL, &StoreLock);
+
+			if (res==LFOk)
+			{
+				if (idx1)
+				{
+					idx1->AddToSearchResult(il, sr);
+					delete idx1;
+				}
+				if (idx2)
+					delete idx2;
+
+				ReleaseMutexForStore(StoreLock);
+			}
+			else
+			{
+				il->SetError(il->m_Items[a].StoreID, res);
+			}
+		}
 }

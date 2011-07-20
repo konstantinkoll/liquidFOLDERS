@@ -31,15 +31,28 @@ bool LFTransactionList::AddItemDescriptor(LFItemDescriptor* i, unsigned int User
 	return true;
 }
 
+void LFTransactionList::Reset()
+{
+	for (unsigned int a=0; a<m_ItemCount; a++)
+	{
+		m_Items[a].LastError = LFOk;
+		m_Items[a].Processed = false;
+	}
+
+	m_LastError = LFOk;
+}
+
 void LFTransactionList::SetError(char* key, unsigned int res)
 {
 	for (unsigned int a=0; a<m_ItemCount; a++)
 		if (!m_Items[a].Processed)
-			if (strcmp(m_Items[a].Item->StoreID, key)==0)
+			if ((strcmp(m_Items[a].Item->StoreID, key)==0) && ((m_Items[a].Item->Type & LFTypeMask)==LFTypeFile))
 			{
-				m_Items[a].LastError = m_LastError = res;
+				m_Items[a].LastError = res;
 				m_Items[a].Processed = true;
 			}
+
+	m_LastError = res;
 }
 
 LPITEMIDLIST LFTransactionList::DetachPIDL(unsigned int idx)

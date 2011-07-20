@@ -24,15 +24,28 @@ bool LFFileIDList::AddFileID(char* StoreID, char* FileID, void* UserData)
 	return DynArray::AddItem(item);
 }
 
+void LFFileIDList::Reset()
+{
+	for (unsigned int a=0; a<m_ItemCount; a++)
+	{
+		m_Items[a].LastError = LFOk;
+		m_Items[a].Processed = false;
+	}
+
+	m_LastError = LFOk;
+}
+
 void LFFileIDList::SetError(char* key, unsigned int res)
 {
 	for (unsigned int a=0; a<m_ItemCount; a++)
 		if (!m_Items[a].Processed)
 			if (strcmp(m_Items[a].StoreID, key)==0)
 			{
-				m_Items[a].LastError = m_LastError = res;
+				m_Items[a].LastError = res;
 				m_Items[a].Processed = true;
 			}
+
+	m_LastError = res;
 }
 
 HGLOBAL LFFileIDList::CreateLiquidFiles()

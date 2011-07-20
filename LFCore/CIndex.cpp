@@ -682,3 +682,60 @@ unsigned int CIndex::RetrieveStats(unsigned int* cnt, __int64* size)
 
 	return LFOk;
 }
+
+void CIndex::AddToSearchResult(LFFileIDList* il, LFSearchResult* res)
+{
+	assert(il);
+	assert(res);
+
+	if (!LoadTable(IDMaster))
+	{
+		il->SetError(StoreID, LFIndexTableLoadError);
+		res->m_LastError = LFIndexTableLoadError;
+		return;
+	}
+
+	int IDs[IdxTableCount];
+	ZeroMemory(IDs, sizeof(IDs));
+	LFCoreAttributes* PtrM;
+
+	while (Tables[IDMaster]->FindNext(IDs[IDMaster], (void*&)PtrM))
+	{
+		unsigned int ItemID = 0;
+
+		while (ItemID<il->m_ItemCount)
+		{
+			if ((strcmp(il->m_Items[ItemID].StoreID, StoreID)==0) && (strcmp(il->m_Items[ItemID].FileID, PtrM->FileID)==0))
+				goto Add;
+
+			ItemID++;
+		}
+
+		continue;
+
+Add:
+		// Master
+		LFItemDescriptor* i = LFAllocItemDescriptor();
+		i->Type = LFTypeFile;
+		strcpy_s(i->StoreID, LFKeySize, StoreID);
+		Tables[IDMaster]->WriteToItemDescriptor(i, PtrM);
+
+		// Slave
+		if ((PtrM->SlaveID) && (PtrM->SlaveID<IdxTableCount))
+			if (LoadTable(PtrM->SlaveID))
+			{
+				void* PtrS;
+
+				if (Tables[PtrM->SlaveID]->FindKey(PtrM->FileID, IDs[PtrM->SlaveID], PtrS))
+					Tables[PtrM->SlaveID]->WriteToItemDescriptor(i, PtrS);
+			}
+			else
+			{
+				res->m_LastError = il->m_Items[ItemID].LastError = LFIndexTableLoadError;
+			}
+
+		res->AddItemDescriptor(i);
+
+		il->m_Items[ItemID].Processed = true;
+	}
+}

@@ -35,6 +35,7 @@ public:
 	unsigned int Rename(char* FileID, wchar_t* NewName);
 	void Retrieve(LFFilter* f, LFSearchResult* res);
 	unsigned int RetrieveStats(unsigned int* cnt, __int64* size);
+	void AddToSearchResult(LFFileIDList* il, LFSearchResult* res);
 
 protected:
 	bool LoadTable(unsigned int ID, unsigned int* res=NULL);

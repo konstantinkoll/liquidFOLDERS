@@ -413,9 +413,6 @@ LFCore_API LFFilter* LFLoadFilter(LFItemDescriptor* i);
 // als LPARAM mitgeschickt wird (ggf. NULL)
 LFCore_API void LFTransactionUpdate(LFTransactionList* tl, HWND hWndSource, LFVariantData* value1, LFVariantData* value2=NULL, LFVariantData* value3=NULL);
 
-// Löscht alle Dateien in il
-LFCore_API void LFTransactionDelete(LFFileIDList* il, bool PutInTrash=true);
-
 // Löscht alle Dateien in tl
 LFCore_API void LFTransactionDelete(LFTransactionList* tl, bool PutInTrash=true);
 
@@ -424,6 +421,12 @@ LFCore_API void LFTransactionResolvePhysicalLocations(LFTransactionList* tl, boo
 
 // Benennt die Datei um
 LFCore_API unsigned int LFTransactionRename(char* StoreID, char* FileID, wchar_t* NewName);
+
+// Löscht alle Dateien in il
+LFCore_API void LFTransactionDelete(LFFileIDList* il, bool PutInTrash=true);
+
+// Fügt die angegebenen Dateien zum Suchergebnis hinzu
+LFCore_API void LFTransactionAddToSearchResult(LFFileIDList* il, LFSearchResult* res);
 
 
 //

@@ -17,6 +17,7 @@ public:
 
 	BOOL Register(CWnd* pWnd, CHAR* StoreID, BOOL AllowChooseStore);
 	BOOL Register(CWnd* pWnd, LFFilter* pFilter, BOOL AllowChooseStore);
+	DROPEFFECT CheckDrop(COleDataObject* pDataObject, DWORD dwKeyState);
 
 	virtual DROPEFFECT OnDragEnter(CWnd* pWnd, COleDataObject* pDataObject, DWORD dwKeyState, CPoint point);
 	virtual DROPEFFECT OnDragOver(CWnd* pWnd, COleDataObject* pDataObject, DWORD dwKeyState, CPoint point);
