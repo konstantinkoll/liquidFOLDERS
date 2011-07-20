@@ -48,11 +48,9 @@ void LFTransactionList::SetError(char* key, unsigned int res)
 		if (!m_Items[a].Processed)
 			if ((strcmp(m_Items[a].Item->StoreID, key)==0) && ((m_Items[a].Item->Type & LFTypeMask)==LFTypeFile))
 			{
-				m_Items[a].LastError = res;
+				m_Items[a].LastError = m_LastError = res;
 				m_Items[a].Processed = true;
 			}
-
-	m_LastError = res;
 }
 
 LPITEMIDLIST LFTransactionList::DetachPIDL(unsigned int idx)

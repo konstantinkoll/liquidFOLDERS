@@ -41,11 +41,9 @@ void LFFileIDList::SetError(char* key, unsigned int res)
 		if (!m_Items[a].Processed)
 			if (strcmp(m_Items[a].StoreID, key)==0)
 			{
-				m_Items[a].LastError = res;
+				m_Items[a].LastError = m_LastError = res;
 				m_Items[a].Processed = true;
 			}
-
-	m_LastError = res;
 }
 
 HGLOBAL LFFileIDList::CreateLiquidFiles()
