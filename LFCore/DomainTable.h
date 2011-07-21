@@ -38,6 +38,7 @@ RegisteredFile Registry[] = {
 	{ "dsf",    LFDomainPictures },
 	{ "dv",     LFDomainVideos },
 	{ "dvi",    LFDomainVideos },
+	{ "eml",    LFDomainMessages },
 	{ "eot",    LFDomainFonts },
 	{ "epa",    LFDomainPictures },
 	{ "filter", LFDomainFilters },
