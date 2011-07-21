@@ -358,6 +358,7 @@ BEGIN_MESSAGE_MAP(CMainWnd, CGlasWindow)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_NAV_BACK, ID_NAV_RELOAD, OnUpdateNavCommands)
 
 	ON_COMMAND(IDM_ITEM_OPEN, OnItemOpen)
+	ON_COMMAND(IDM_ITEM_OPENNEWWINDOW, OnItemOpenNewWindow)
 	ON_COMMAND(IDM_INSPECTOR_EXPORTMETADATA, OnExportMetadata)
 
 	ON_MESSAGE_VOID(WM_UPDATEVIEWOPTIONS, OnUpdateViewOptions)
@@ -567,6 +568,21 @@ void CMainWnd::OnItemOpen()
 					ASSERT(FALSE);
 				}
 			}
+	}
+}
+
+void CMainWnd::OnItemOpenNewWindow()
+{
+	INT idx = m_wndMainView.GetSelectedItem();
+	if (idx!=-1)
+	{
+		LFItemDescriptor* i = m_pCookedFiles->m_Items[idx];
+
+		ASSERT((i->Type & LFTypeMask)==LFTypeStore);
+
+		CMainWnd* pFrame = new CMainWnd();
+		pFrame->CreateStore(i->StoreID);
+		pFrame->ShowWindow(SW_SHOW);
 	}
 }
 

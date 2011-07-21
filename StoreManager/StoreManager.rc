@@ -539,6 +539,7 @@ BEGIN
     IDS_CONTEXTMENU_AUTODIRS "In Unterordner &gruppieren"
     IDS_CONTEXTMENU_VIEWOPTIONS "„%s“ an&zeigen als..."
     IDS_CONTEXTMENU_OPEN    "Ö&ffnen"
+    IDS_CONTEXTMENU_OPENNEWWINDOW "In neuem &Fenster öffnen"
     IDS_CONTEXTMENU_OPENWITH "Öffnen &mit..."
 END
 
@@ -1136,6 +1137,7 @@ BEGIN
     IDS_CONTEXTMENU_AUTODIRS "&Group into subfolders"
     IDS_CONTEXTMENU_VIEWOPTIONS "&Display ""%s"" as..."
     IDS_CONTEXTMENU_OPEN    "&Open"
+    IDS_CONTEXTMENU_OPENNEWWINDOW "Open in &new window"
     IDS_CONTEXTMENU_OPENWITH "Open &with..."
 END
 
@@ -1733,6 +1735,7 @@ BEGIN
     IDS_CONTEXTMENU_AUTODIRS "&Agrupar en subcarpetas"
     IDS_CONTEXTMENU_VIEWOPTIONS "&Visualizar ""%s"" como..."
     IDS_CONTEXTMENU_OPEN    "&Abrir"
+    IDS_CONTEXTMENU_OPENNEWWINDOW "Abrir en &nueva ventana"
     IDS_CONTEXTMENU_OPENWITH "Abrir &con..."
 END
 
@@ -2331,6 +2334,7 @@ BEGIN
     IDS_CONTEXTMENU_AUTODIRS "&Grouper dans sous-dossiers"
     IDS_CONTEXTMENU_VIEWOPTIONS """%s"" a&fficher comme..."
     IDS_CONTEXTMENU_OPEN    "&Ouvrir"
+    IDS_CONTEXTMENU_OPENNEWWINDOW "Ouvrir dans une nouvelle &fenêtre"
     IDS_CONTEXTMENU_OPENWITH "Ouvrir &avec..."
 END
 

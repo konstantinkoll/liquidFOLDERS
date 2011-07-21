@@ -752,10 +752,16 @@ CMenu* CFileView::GetItemContextMenu(INT idx)
 				delete pSendPopup;
 			}
 
-		if ((item->Type & LFTypeMask)==LFTypeFile)
+		switch (item->Type & LFTypeMask)
 		{
+		case LFTypeStore:
+			ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_OPENNEWWINDOW));
+			pPopup->InsertMenu(0, MF_STRING | MF_BYPOSITION, IDM_ITEM_OPENNEWWINDOW, tmpStr);
+			break;
+		case LFTypeFile:
 			ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_OPENWITH));
 			pPopup->InsertMenu(0, MF_STRING | MF_BYPOSITION, IDM_FILE_OPENWITH, tmpStr);
+			break;
 		}
 
 		ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_OPEN));

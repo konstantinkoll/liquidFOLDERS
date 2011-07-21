@@ -75,6 +75,7 @@ protected:
 	afx_msg void OnUpdateNavCommands(CCmdUI* pCmdUI);
 
 	afx_msg void OnItemOpen();
+	afx_msg void OnItemOpenNewWindow();
 	afx_msg LRESULT OnNavigateTo(WPARAM wParam, LPARAM lParam);
 
 	afx_msg void OnExportMetadata();
