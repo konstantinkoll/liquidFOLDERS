@@ -67,10 +67,12 @@ __forceinline HRESULT LFDropTarget::ImportFromFS(HGLOBAL hgDrop, DWORD dwEffect,
 	}
 
 	// Import
+	UINT res = LFOk;
 	if (DoImport)
 	{
 		LFTransactionImport(StoreID, il, it, true, (dwEffect & DROPEFFECT_MOVE)!=0);
-		LFErrorBox(il->m_LastError, pWnd->GetSafeHwnd());
+		res = il->m_ItemCount;
+		LFErrorBox(res, pWnd->GetSafeHwnd());
 	}
 
 	LFFreeItemDescriptor(it);
@@ -79,7 +81,7 @@ __forceinline HRESULT LFDropTarget::ImportFromFS(HGLOBAL hgDrop, DWORD dwEffect,
 	if ((p_Owner) && (DoImport))
 		p_Owner->SendMessage(LFGetMessageIDs()->ItemsDropped, NULL, NULL);
 
-	return S_OK;
+	return (res==LFOk) ? S_OK : E_INVALIDARG;
 }
 
 __forceinline HRESULT LFDropTarget::ImportFromStore(HGLOBAL hgLiquid, DWORD dwEffect, CHAR* StoreID, CWnd* pWnd)
@@ -89,13 +91,14 @@ __forceinline HRESULT LFDropTarget::ImportFromStore(HGLOBAL hgLiquid, DWORD dwEf
 	GlobalUnlock(hgLiquid);
 
 	LFTransactionImport(StoreID, il, (dwEffect & DROPEFFECT_MOVE)!=0);
-	LFErrorBox(il->m_LastError, pWnd->GetSafeHwnd());
+	UINT res = il->m_LastError;
+	LFErrorBox(res, pWnd->GetSafeHwnd());
 	LFFreeFileIDList(il);
 
 	if (p_Owner)
 		p_Owner->SendMessage(LFGetMessageIDs()->ItemsDropped, NULL, NULL);
 
-	return S_OK;
+	return (res==LFOk) ? S_OK : E_INVALIDARG;
 }
 
 __forceinline HRESULT LFDropTarget::AddToClipboard(HGLOBAL hgLiquid, CWnd* pWnd)
@@ -108,13 +111,14 @@ __forceinline HRESULT LFDropTarget::AddToClipboard(HGLOBAL hgLiquid, CWnd* pWnd)
 	GlobalUnlock(hgLiquid);
 
 	LFTransactionAddToSearchResult(il, p_SearchResult);
-	LFErrorBox(il->m_LastError, pWnd->GetSafeHwnd());
+	UINT res = il->m_LastError;
+	LFErrorBox(res, pWnd->GetSafeHwnd());
 	LFFreeFileIDList(il);
 
 	if (p_Owner)
 		p_Owner->SendMessage(LFGetMessageIDs()->ItemsDropped, NULL, NULL);
 
-	return S_OK;
+	return (res==LFOk) ? S_OK : E_INVALIDARG;
 }
 
 

@@ -385,7 +385,7 @@ unsigned int CIndex::DeletePhysicalFile(LFCoreAttributes* PtrM)
 	if (LastBackslash)
 		*(LastBackslash+1) = L'\0';
 
-	return RemoveDir(Path) ? LFOk : LFCannotDeleteFile;
+	return RemoveDir(Path) ? LFOk : GetLastError()==ERROR_PATH_NOT_FOUND ? LFOk : LFCannotDeleteFile;
 }
 
 void CIndex::Delete(LFFileIDList* il, bool PutInTrash)
@@ -445,8 +445,8 @@ void CIndex::Delete(LFFileIDList* il, bool PutInTrash)
 			}
 	}
 
-	// Ungültige Items finden
-	il->SetError(StoreID, LFIllegalKey);
+	// Ungültige Items gelten als gelöscht
+	il->SetError(StoreID, LFOk);
 }
 
 void CIndex::Delete(LFTransactionList* tl, bool PutInTrash)
@@ -513,12 +513,14 @@ void CIndex::Delete(LFTransactionList* tl, bool PutInTrash)
 		}
 	}
 
-	// Ungültige Items finden
-	tl->SetError(StoreID, LFIllegalKey);
+	// Ungültige Items gelten als gelöscht
+	tl->SetError(StoreID, LFOk);
 }
 
 void CIndex::ResolvePhysicalLocations(LFTransactionList* tl)
 {
+	assert(tl);
+
 	bool Mounted = (DatPath!=NULL);
 	if (DatPath)
 		Mounted &= (DatPath[0]!='\0');
@@ -738,4 +740,111 @@ Add:
 
 		il->m_Items[ItemID].Processed = true;
 	}
+}
+
+void CIndex::TransferTo(CIndex* idxDst1, CIndex* idxDst2, LFStoreDescriptor* slotDst, LFFileIDList* il, LFStoreDescriptor* slotSrc, bool move)
+{
+	assert(il);
+
+	bool Mounted = (DatPath!=NULL);
+	if (DatPath)
+		Mounted &= (DatPath[0]!='\0');
+
+	if (!Mounted)
+	{
+		il->SetError(StoreID, LFStoreNotMounted);
+		return;
+	}
+
+	if (!LoadTable(IDMaster))
+	{
+		il->SetError(StoreID, LFIndexTableLoadError);
+		return;
+	}
+
+#define ABORT(r) { LFFreeItemDescriptor(i); \
+	il->m_Items[a].LastError = il->m_LastError = r; \
+	il->m_Items[a].Processed = true; \
+	continue; }
+
+	// Items übertragen
+	int IDs[IdxTableCount];
+	ZeroMemory(IDs, sizeof(IDs));
+	LFCoreAttributes* PtrM;
+
+	while (Tables[IDMaster]->FindNext(IDs[IDMaster], (void*&)PtrM))
+	{
+		for (unsigned int a=0; a<il->m_ItemCount; a++)
+			if ((strcmp(il->m_Items[a].StoreID, StoreID)==0) && (strcmp(il->m_Items[a].FileID, PtrM->FileID)==0))
+			{
+				// Master
+				LFItemDescriptor* i = LFAllocItemDescriptor();
+				i->Type = LFTypeFile;
+				strcpy_s(i->StoreID, LFKeySize, StoreID);
+				Tables[IDMaster]->WriteToItemDescriptor(i, PtrM);
+
+				// Slave
+				if ((PtrM->SlaveID) && (PtrM->SlaveID<IdxTableCount))
+					if (LoadTable(PtrM->SlaveID))
+					{
+						void* PtrS;
+	
+						if (Tables[PtrM->SlaveID]->FindKey(PtrM->FileID, IDs[PtrM->SlaveID], PtrS))
+							Tables[PtrM->SlaveID]->WriteToItemDescriptor(i, PtrS);
+					}
+					else
+					{
+						ABORT(LFIndexTableLoadError);
+					}
+
+				wchar_t PathSrc[2*MAX_PATH];
+				GetFileLocation(slotSrc->DatPath, PtrM, PathSrc, 2*MAX_PATH);
+
+				wchar_t PathDst[2*MAX_PATH];
+				unsigned int res = PrepareImport(slotDst, i, PathDst, 2*MAX_PATH);
+				if (res!=LFOk)
+					ABORT(res);
+
+				// Files with "link" flag do not posses a file body
+				if (!(PtrM->Flags & LFFlagLink))
+				{
+					BOOL shres = CopyFile(PathSrc, PathDst, FALSE);
+					if (!shres)
+					{
+						wchar_t* LastBackslash = wcsrchr(Path, L'\\');
+						if (LastBackslash)
+							*(LastBackslash+1) = L'\0';
+
+						RemoveDir(Path);
+						ABORT(LFIllegalPhysicalPath);
+					}
+				}
+
+				if (idxDst1)
+					idxDst1->AddItem(i);
+				if (idxDst2)
+					idxDst2->AddItem(i);
+
+				if (move)
+				{
+					// Files with "link" flag do not posses a file body
+					if (!(PtrM->Flags & LFFlagLink))
+					{
+						unsigned int res = DeletePhysicalFile(PtrM);
+						if (res!=LFOk)
+							ABORT(res);
+					}
+
+					if ((PtrM->SlaveID) && (PtrM->SlaveID<IdxTableCount))
+						Tables[PtrM->SlaveID]->Invalidate(PtrM->FileID, IDs[PtrM->SlaveID]);
+					Tables[IDMaster]->Invalidate(PtrM);
+				}
+
+				il->m_Items[a].Processed = true;
+
+			}
+	}
+
+	// Ungültige Items finden
+	il->SetError(StoreID, LFIllegalKey);
 }

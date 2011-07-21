@@ -82,6 +82,7 @@ LFCore_API void LFTransactionImport(char* key, LFFileImportList* il, LFItemDescr
 	unsigned int res = OpenStore(store, true, idx1, idx2, &slot, &StoreLock);
 	if (res==LFOk)
 	{
+		// Process
 		for (unsigned int a=0; a<il->m_ItemCount; a++)
 			if (il->m_Items[a])
 			{
@@ -331,6 +332,85 @@ LFCore_API unsigned int LFTransactionRename(char* StoreID, char* FileID, wchar_t
 
 LFCore_API void LFTransactionImport(char* key, LFFileIDList* il, bool move)
 {
+	assert(il);
+
+	// Reset
+	il->Reset();
+
+	// Store finden
+	char store[LFKeySize] = "";
+	if (key)
+		strcpy_s(store, LFKeySize, key);
+
+	if (store[0]=='\0')
+		if (GetMutex(Mutex_Stores))
+		{
+			strcpy_s(store, LFKeySize, DefaultStore);
+			ReleaseMutex(Mutex_Stores);
+		}
+		else
+		{
+			il->m_LastError = LFMutexError;
+			return;
+		}
+
+	if (store[0]=='\0')
+	{
+		il->m_LastError = LFNoDefaultStore;
+		return;
+	}
+
+	// Import
+	CIndex* idxDst1;
+	CIndex* idxDst2;
+	LFStoreDescriptor* slotDst;
+	HANDLE StoreLock = NULL;
+	unsigned int res = OpenStore(store, true, idxDst1, idxDst2, &slotDst, &StoreLock);
+	if (res==LFOk)
+	{
+		// Process
+		for (unsigned int a=0; a<il->m_ItemCount; a++)
+			if ((il->m_Items[a].LastError==LFOk) && (!il->m_Items[a].Processed))
+				if (strcmp(key, il->m_Items[a].StoreID)==0)
+				{
+					il->m_Items[a].Processed = true;
+				}
+				else
+				{
+					CIndex* idxSrc1;
+					CIndex* idxSrc2;
+					LFStoreDescriptor* slotSrc;
+					HANDLE StoreLock = NULL;
+					unsigned int res = OpenStore(il->m_Items[a].StoreID, false, idxSrc1, idxSrc2, &slotSrc, &StoreLock);
+
+					if (res==LFOk)
+					{
+						if (idxSrc1)
+						{
+							idxSrc1->TransferTo(idxDst1, idxDst2, slotDst, il, slotSrc, move);
+							delete idxSrc1;
+						}
+						if (idxSrc2)
+							delete idxSrc2;
+
+						ReleaseMutexForStore(StoreLock);
+					}
+					else
+					{
+						il->SetError(il->m_Items[a].StoreID, res);
+					}
+				}
+
+		if (idxDst1)
+			delete idxDst1;
+		if (idxDst2)
+			delete idxDst2;
+		ReleaseMutexForStore(StoreLock);
+	}
+	else
+	{
+		il->m_LastError = res;
+	}
 }
 
 LFCore_API void LFTransactionDelete(LFFileIDList* il, bool PutInTrash)
