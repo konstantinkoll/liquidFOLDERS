@@ -590,7 +590,7 @@ BOOL CMainView::UpdateTrashFlag(BOOL Trash, BOOL All)
 BOOL CMainView::DeleteFiles(BOOL All)
 {
 	LFTransactionList* tl = BuildTransactionList(All);
-	LFTransactionDelete(tl);
+	LFTransactionDelete(tl, false);
 	RemoveTransactedItems(tl);
 
 	if (tl->m_LastError>LFCancel)
