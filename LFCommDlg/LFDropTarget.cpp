@@ -11,6 +11,9 @@
 
 LFDropTarget::LFDropTarget()
 {
+	/* This call might fail, in which case OLE sets m_pdth = NULL */
+	CoCreateInstance(CLSID_DragDropHelper, NULL, CLSCTX_INPROC_SERVER, IID_IDropTargetHelper, (void**)&m_pDropTargetHelper);
+
 	p_Owner = NULL;
 	m_StoreIDValid = m_AllowChooseStore = m_SkipTemplate = m_IsDragging = FALSE;
 	p_Filter = NULL;
@@ -151,6 +154,8 @@ STDMETHODIMP_(ULONG) STDMETHODCALLTYPE LFDropTarget::Release()
 	LONG Count = InterlockedDecrement(&m_lRefCount);
 	if (!Count)
 	{
+		if (m_pDropTargetHelper)
+			m_pDropTargetHelper->Release();
 		delete this;
 		return 0;
 	}
@@ -158,9 +163,15 @@ STDMETHODIMP_(ULONG) STDMETHODCALLTYPE LFDropTarget::Release()
 	return Count;
 }
 
-STDMETHODIMP LFDropTarget::DragEnter(IDataObject* pDataObject, DWORD grfKeyState, POINTL pt, DWORD* pdwEffect)
+STDMETHODIMP LFDropTarget::DragEnter(IDataObject* pDataObject, DWORD grfKeyState, POINTL ptl, DWORD* pdwEffect)
 {
 	m_SkipTemplate = (grfKeyState & MK_SHIFT);
+
+	if (m_pDropTargetHelper)
+	{
+		POINT pt = { ptl.x, ptl.y };
+		m_pDropTargetHelper->DragEnter(p_Owner ? p_Owner->GetSafeHwnd() : NULL, pDataObject, &pt, *pdwEffect);
+	}
 
 	COleDataObject dobj;
 	dobj.Attach(pDataObject, FALSE);
@@ -174,23 +185,32 @@ STDMETHODIMP LFDropTarget::DragEnter(IDataObject* pDataObject, DWORD grfKeyState
 	return E_INVALIDARG;
 
 Allowed:
-	return DragOver(grfKeyState, pt, pdwEffect);
+	return DragOver(grfKeyState, ptl, pdwEffect);
 }
 
-STDMETHODIMP LFDropTarget::DragOver(DWORD grfKeyState, POINTL /*pt*/, DWORD* pdwEffect)
+STDMETHODIMP LFDropTarget::DragOver(DWORD grfKeyState, POINTL ptl, DWORD* pdwEffect)
 {
+	if (m_pDropTargetHelper)
+	{
+		POINT pt = { ptl.x, ptl.y };
+		m_pDropTargetHelper->DragOver(&pt, *pdwEffect);
+	}
+
 	*pdwEffect &= m_IsDragging ? DROPEFFECT_NONE : p_SearchResult ? DROPEFFECT_COPY : (grfKeyState & MK_CONTROL) ? DROPEFFECT_MOVE : DROPEFFECT_COPY;
 	return S_OK;
 }
 
 STDMETHODIMP LFDropTarget::DragLeave()
 {
+	if (m_pDropTargetHelper)
+		m_pDropTargetHelper->DragLeave();
+
 	return S_OK;
 }
 
-STDMETHODIMP LFDropTarget::Drop(IDataObject* pDataObject, DWORD grfKeyState, POINTL pt, DWORD* pdwEffect)
+STDMETHODIMP LFDropTarget::Drop(IDataObject* pDataObject, DWORD grfKeyState, POINTL ptl, DWORD* pdwEffect)
 {
-	if ((DragOver(grfKeyState, pt, pdwEffect)!=S_OK) || (m_IsDragging))
+	if ((DragOver(grfKeyState, ptl, pdwEffect)!=S_OK) || (m_IsDragging))
 		return E_INVALIDARG;
 
 	// Data object

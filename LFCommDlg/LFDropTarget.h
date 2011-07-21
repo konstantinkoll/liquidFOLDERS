@@ -29,10 +29,10 @@ public:
 	STDMETHOD_(ULONG, Release());
 
 	// IDropTarget members
-	STDMETHOD(DragEnter)(IDataObject* pDataObject, DWORD grfKeyState, POINTL pt, DWORD* pdwEffect);
-	STDMETHOD(DragOver)(DWORD grfKeyState, POINTL pt, DWORD* pdwEffect);
+	STDMETHOD(DragEnter)(IDataObject* pDataObject, DWORD grfKeyState, POINTL ptl, DWORD* pdwEffect);
+	STDMETHOD(DragOver)(DWORD grfKeyState, POINTL ptl, DWORD* pdwEffect);
 	STDMETHOD(DragLeave)();
-	STDMETHOD(Drop)(IDataObject* pDataObject, DWORD grfKeyState, POINTL pt, DWORD* pdwEffect);
+	STDMETHOD(Drop)(IDataObject* pDataObject, DWORD grfKeyState, POINTL ptl, DWORD* pdwEffect);
 
 	END_INTERFACE
 
@@ -42,6 +42,7 @@ protected:
 	HRESULT AddToClipboard(HGLOBAL hgLiquid, CWnd* pWnd);
 
 	LONG m_lRefCount;
+	IDropTargetHelper* m_pDropTargetHelper;
 	LFFilter* p_Filter;
 	LFSearchResult* p_SearchResult;
 	CWnd* p_Owner;
