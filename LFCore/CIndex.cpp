@@ -160,20 +160,26 @@ unsigned int CIndex::Check(bool scheduled)
 	return Repaired ? IndexFullyRepaired : IndexOk;
 }
 
-void CIndex::AddItem(LFItemDescriptor* i)
+unsigned int CIndex::AddItem(LFItemDescriptor* i)
 {
 	assert(i);
 
 	// Master
-	LoadTable(IDMaster);
-	Tables[IDMaster]->Add(i);
+	if (!LoadTable(IDMaster))
+		return LFIndexTableLoadError;
 
 	// Slave
 	if ((i->CoreAttributes.SlaveID) && (i->CoreAttributes.SlaveID<IdxTableCount))
 	{
-		LoadTable(i->CoreAttributes.SlaveID);
+		if (!LoadTable(i->CoreAttributes.SlaveID))
+			return LFIndexTableLoadError;
+
 		Tables[i->CoreAttributes.SlaveID]->Add(i);
 	}
+
+	Tables[IDMaster]->Add(i);
+
+	return LFOk;
 }
 
 unsigned int CIndex::RenamePhysicalFile(LFCoreAttributes* PtrM, wchar_t* NewName)
@@ -821,9 +827,12 @@ void CIndex::TransferTo(CIndex* idxDst1, CIndex* idxDst2, LFStoreDescriptor* slo
 				}
 
 				if (idxDst1)
-					idxDst1->AddItem(i);
+					res |= idxDst1->AddItem(i);
 				if (idxDst2)
-					idxDst2->AddItem(i);
+					res |= idxDst2->AddItem(i);
+
+				if (res!=LFOk)
+					ABORT(res);
 
 				if (move)
 				{

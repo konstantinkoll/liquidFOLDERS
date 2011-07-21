@@ -1061,6 +1061,7 @@ LRESULT CMainView::OnSendTo(WPARAM wParam, LPARAM /*lParam*/)
 
 		LFFileIDList* il = BuildFileIDList();
 		LFTransactionImport(StoreID, il, false);
+		LFErrorBox(il->m_LastError, GetSafeHwnd());
 		LFFreeFileIDList(il);
 	}
 	else

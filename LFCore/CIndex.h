@@ -25,7 +25,7 @@ public:
 	bool Create();
 	unsigned int Check(bool scheduled=false);
 	void Reindex();
-	void AddItem(LFItemDescriptor* i);
+	unsigned int AddItem(LFItemDescriptor* i);
 	void Update(LFItemDescriptor* i, bool IncludeSlaves=true);
 	bool UpdateMissing(LFItemDescriptor* i, bool Exists);
 	void Update(LFTransactionList* tl, LFVariantData* value1, LFVariantData* value2=NULL, LFVariantData* value3=NULL);
