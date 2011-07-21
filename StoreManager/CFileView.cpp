@@ -588,8 +588,31 @@ CMenu* CFileView::GetSendToMenu()
 	BOOL Added = FALSE;
 
 	// Stores
-	// TODO
 	UINT nID = 0xFF00;
+	if (LFDefaultStoreAvailable())
+	{
+		WCHAR tmpStr[256];
+		LFGetDefaultStoreName(tmpStr, 256);
+		AppendSendToItem(pMenu, nID, tmpStr, theApp.m_CoreImageListSmall.ExtractIcon(IDI_STORE_Default-1), cx, cy, m_SendToItems);
+		Added = TRUE;
+
+		INT idx = (nID++) & 0xFF;
+		m_SendToItems[idx].IsStore = TRUE;
+		strcpy_s(m_SendToItems[idx].StoreID, LFKeySize, "");
+	}
+
+	if (LFGetStoreCount())
+	{
+		CString tmpStr;
+		ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_CHOOSESTORE));
+		AppendSendToItem(pMenu, nID, tmpStr, NULL, cx, cy, m_SendToItems);
+		Added = TRUE;
+
+		INT idx = (nID++) & 0xFF;
+		m_SendToItems[idx].IsStore = TRUE;
+		strcpy_s(m_SendToItems[idx].StoreID, LFKeySize, "CHOOSE");
+	}
+
 
 	// SendTo shortcuts
 	nID = 0xFF40;

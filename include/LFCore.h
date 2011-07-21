@@ -408,6 +408,7 @@ LFCore_API LFFilter* LFLoadFilter(LFItemDescriptor* i);
 // Importiert Dateien in den Store
 LFCore_API void LFTransactionImport(char* key, LFFileImportList* il, LFItemDescriptor* it, bool recursive, bool move);
 
+
 // Ändert bei allen Einträgen in tl bis zu 3 Attributwerte
 // hWndSource enthält das Window-Handle des auslösenden Fensters, welches bei allen globalen Nachrichten
 // als LPARAM mitgeschickt wird (ggf. NULL)

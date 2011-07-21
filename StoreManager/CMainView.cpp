@@ -456,6 +456,44 @@ void CMainView::ExecuteContextMenu(CHAR Drive, LPCSTR verb)
 	}
 }
 
+void CMainView::AddFileIDItem(LFFileIDList* il, LFItemDescriptor* item)
+{
+	switch (item->Type & LFTypeMask)
+	{
+	case LFTypeFile:
+		LFAddFileID(il, item->StoreID, item->CoreAttributes.FileID, NULL);
+		break;
+	case LFTypeVirtual:
+		if ((item->FirstAggregate!=-1) && (item->LastAggregate!=-1))
+			for (INT a=item->FirstAggregate; a<=item->LastAggregate; a++)
+				LFAddFileID(il, p_RawFiles->m_Items[a]->StoreID, p_RawFiles->m_Items[a]->CoreAttributes.FileID, NULL);
+		break;
+	}
+}
+
+LFFileIDList* CMainView::BuildFileIDList(BOOL All)
+{
+	LFFileIDList* il = LFAllocFileIDList();
+
+	if ((p_RawFiles) && (p_CookedFiles))
+		if (All)
+		{
+			for (UINT a=0; a<p_CookedFiles->m_ItemCount; a++)
+				AddFileIDItem(il, p_CookedFiles->m_Items[a]);
+		}
+		else
+		{
+			INT idx = GetNextSelectedItem(-1);
+			while (idx!=-1)
+			{
+				AddFileIDItem(il, p_CookedFiles->m_Items[idx]);
+				idx = GetNextSelectedItem(idx);
+			}
+		}
+
+	return il;
+}
+
 void CMainView::AddTransactionItem(LFTransactionList* tl, LFItemDescriptor* item, UINT UserData)
 {
 	switch (item->Type & LFTypeMask)
@@ -1009,8 +1047,21 @@ LRESULT CMainView::OnSendTo(WPARAM wParam, LPARAM /*lParam*/)
 	SendToItemData* pItemData = (SendToItemData*)wParam;
 	if (pItemData->IsStore)
 	{
-		// TODO - this message box should never appear
-		MessageBox(_T("Coming soon!"));
+		CHAR StoreID[LFKeySize];
+		strcpy_s(StoreID, LFKeySize, pItemData->StoreID);
+
+		if (strcmp(StoreID, "CHOOSE")==0)
+		{
+			LFChooseStoreDlg dlg(this, LFCSD_Normal);
+			if (dlg.DoModal()!=IDOK)
+				return NULL;
+
+			strcpy_s(StoreID, LFKeySize, dlg.m_StoreID);
+		}
+
+		LFFileIDList* il = BuildFileIDList();
+		LFTransactionImport(StoreID, il, false);
+		LFFreeFileIDList(il);
 	}
 	else
 	{

@@ -56,6 +56,7 @@ protected:
 	BOOL m_ShowFilterPane;
 	BOOL m_ShowInspectorPane;
 
+	LFFileIDList* BuildFileIDList(BOOL All=FALSE);
 	LFTransactionList* BuildTransactionList(BOOL All=FALSE, BOOL ResolvePhysicalLocations=FALSE, BOOL IncludePIDL=FALSE);
 	void RemoveTransactedItems(LFTransactionList* tl);
 	BOOL UpdateTrashFlag(BOOL Trash, BOOL All=FALSE);
@@ -154,5 +155,6 @@ private:
 	void SetHeader();
 	void AdjustLayout();
 	void ExecuteContextMenu(CHAR Drive, LPCSTR verb);
+	void AddFileIDItem(LFFileIDList* il, LFItemDescriptor* item);
 	void AddTransactionItem(LFTransactionList* tl, LFItemDescriptor* item, UINT UserData);
 };
