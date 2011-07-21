@@ -954,6 +954,8 @@ void CMainView::OnBeginDragDrop()
 	LFTransactionList* tl = BuildTransactionList(FALSE, TRUE);
 	if (tl->m_ItemCount)
 	{
+		m_DropTarget.SetDragging(TRUE);
+
 		LFDataObject* pDataObject = new LFDataObject(tl);
 		LFDropSource* pDropSource = new LFDropSource();
 
@@ -967,6 +969,8 @@ void CMainView::OnBeginDragDrop()
 
 		pDropSource->Release();
 		pDataObject->Release();
+
+		m_DropTarget.SetDragging(FALSE);
 	}
 
 	LFFreeTransactionList(tl);

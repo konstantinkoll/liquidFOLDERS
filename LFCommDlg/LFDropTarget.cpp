@@ -12,10 +12,16 @@
 LFDropTarget::LFDropTarget()
 {
 	p_Owner = NULL;
-	m_StoreIDValid = m_AllowChooseStore = m_SkipTemplate = FALSE;
+	m_StoreIDValid = m_AllowChooseStore = m_SkipTemplate = m_IsDragging = FALSE;
 	p_Filter = NULL;
 	p_SearchResult = NULL;
 }
+
+void LFDropTarget::SetDragging(BOOL IsDragging)
+{
+	m_IsDragging = IsDragging;
+}
+
 
 void LFDropTarget::SetOwner(CWnd* pOwner)
 {
@@ -173,7 +179,7 @@ Allowed:
 
 STDMETHODIMP LFDropTarget::DragOver(DWORD grfKeyState, POINTL /*pt*/, DWORD* pdwEffect)
 {
-	*pdwEffect &= p_SearchResult ? DROPEFFECT_COPY : (grfKeyState & MK_CONTROL) ? DROPEFFECT_MOVE : DROPEFFECT_COPY;
+	*pdwEffect &= m_IsDragging ? DROPEFFECT_NONE : p_SearchResult ? DROPEFFECT_COPY : (grfKeyState & MK_CONTROL) ? DROPEFFECT_MOVE : DROPEFFECT_COPY;
 	return S_OK;
 }
 
@@ -184,7 +190,7 @@ STDMETHODIMP LFDropTarget::DragLeave()
 
 STDMETHODIMP LFDropTarget::Drop(IDataObject* pDataObject, DWORD grfKeyState, POINTL pt, DWORD* pdwEffect)
 {
-	if (DragOver(grfKeyState, pt, pdwEffect)!=S_OK)
+	if ((DragOver(grfKeyState, pt, pdwEffect)!=S_OK) || (m_IsDragging))
 		return E_INVALIDARG;
 
 	// Data object

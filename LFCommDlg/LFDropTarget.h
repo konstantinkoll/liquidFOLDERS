@@ -15,6 +15,7 @@ class AFX_EXT_CLASS LFDropTarget : public IDropTarget
 public:
 	LFDropTarget();
 
+	void SetDragging(BOOL IsDragging);
 	void SetOwner(CWnd* pOwner);
 	void SetFilter(LFFilter* pFilter, BOOL AllowChooseStore=TRUE);
 	void SetStore(CHAR* StoreID, BOOL AllowChooseStore=TRUE);
@@ -48,4 +49,5 @@ protected:
 	BOOL m_StoreIDValid;
 	BOOL m_AllowChooseStore;
 	BOOL m_SkipTemplate;
+	BOOL m_IsDragging;
 };
