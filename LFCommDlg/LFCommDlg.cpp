@@ -218,7 +218,10 @@ LFCommDlg_API void LFImportFolder(CHAR* StoreID, CWnd* pParentWnd, BOOL AllowCho
 		LFItemDescriptor* it = LFAllocItemDescriptor();
 		LFItemTemplateDlg tdlg(pParentWnd, it, StoreID, AllowChooseStore);
 		if (tdlg.DoModal()!=IDCANCEL)
-			LFErrorBox(LFImportFiles(StoreID, il, it, true, dlg.m_DeleteSource==TRUE), pParentWnd ? pParentWnd->GetSafeHwnd() : NULL);
+		{
+			LFTransactionImport(StoreID, il, it, true, dlg.m_DeleteSource==TRUE);
+			LFErrorBox(il->m_LastError, pParentWnd ? pParentWnd->GetSafeHwnd() : NULL);
+		}
 
 		LFFreeItemDescriptor(it);
 		LFFreeFileImportList(il);

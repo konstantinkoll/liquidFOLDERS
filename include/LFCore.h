@@ -386,9 +386,6 @@ LFCore_API unsigned int LFMountDrive(char d, bool InternalCall=false);
 // Unmountet alle Hybrid-Stores und externen Stores auf Laufwerk d
 LFCore_API unsigned int LFUnmountDrive(char d, bool InternalCall=false);
 
-// Importiert Dateien in einen Store
-LFCore_API unsigned int LFImportFiles(char* key, LFFileImportList* il, LFItemDescriptor* it=NULL, bool recursive=true, bool move=false);
-
 
 
 //
@@ -408,6 +405,9 @@ LFCore_API LFFilter* LFLoadFilter(LFItemDescriptor* i);
 // Transaktionen
 //
 
+// Importiert Dateien in den Store
+LFCore_API void LFTransactionImport(char* key, LFFileImportList* il, LFItemDescriptor* it, bool recursive, bool move);
+
 // Ändert bei allen Einträgen in tl bis zu 3 Attributwerte
 // hWndSource enthält das Window-Handle des auslösenden Fensters, welches bei allen globalen Nachrichten
 // als LPARAM mitgeschickt wird (ggf. NULL)
@@ -421,6 +421,10 @@ LFCore_API void LFTransactionResolvePhysicalLocations(LFTransactionList* tl, boo
 
 // Benennt die Datei um
 LFCore_API unsigned int LFTransactionRename(char* StoreID, char* FileID, wchar_t* NewName);
+
+
+// Importiert Dateien in den Store
+LFCore_API void LFTransactionImport(char* key, LFFileIDList* il, bool move);
 
 // Löscht alle Dateien in il
 LFCore_API void LFTransactionDelete(LFFileIDList* il, bool PutInTrash=true);

@@ -3,13 +3,16 @@
 #include "LFCore.h"
 #include "LFVariantData.h"
 #include "Mutex.h"
+#include "ShellProperties.h"
 #include "Stores.h"
+#include "StoreCache.h"
 #include "Transaction.h"
 #include <assert.h>
-#include <shlobj.h>
 
 
+extern HANDLE Mutex_Stores;
 extern LFMessageIDs LFMessages;
+
 
 void UpdateStore(LFTransactionList* tl, unsigned int idx, LFVariantData* value, bool& Updated)
 {
@@ -38,6 +41,97 @@ void UpdateStore(LFTransactionList* tl, unsigned int idx, LFVariantData* value, 
 		tl->m_LastError = tl->m_Items[idx].LastError = result;
 	}
 	tl->m_Items[idx].Processed = true;
+}
+
+
+LFCore_API void LFTransactionImport(char* key, LFFileImportList* il, LFItemDescriptor* it, bool recursive, bool move)
+{
+	assert(il);
+
+	// Store finden
+	char store[LFKeySize] = "";
+	if (key)
+		strcpy_s(store, LFKeySize, key);
+
+	if (store[0]=='\0')
+		if (GetMutex(Mutex_Stores))
+		{
+			strcpy_s(store, LFKeySize, DefaultStore);
+			ReleaseMutex(Mutex_Stores);
+		}
+		else
+		{
+			il->m_LastError = LFMutexError;
+			return;
+		}
+
+	if (store[0]=='\0')
+	{
+		il->m_LastError = LFNoDefaultStore;
+		return;
+	}
+
+	// Importliste vorbereiten
+	il->Resolve(recursive);
+
+	// Import
+	CIndex* idx1;
+	CIndex* idx2;
+	LFStoreDescriptor* slot;
+	HANDLE StoreLock = NULL;
+	unsigned int res = OpenStore(store, true, idx1, idx2, &slot, &StoreLock);
+	if (res==LFOk)
+	{
+		for (unsigned int a=0; a<il->m_ItemCount; a++)
+			if (il->m_Items[a])
+			{
+				LFItemDescriptor* i = LFAllocItemDescriptor(it);
+				i->CoreAttributes.Flags = LFFlagNew;
+				SetNameExtAddFromFile(i, il->m_Items[a]);
+				SetAttributesFromFile(i, il->m_Items[a]);
+
+				wchar_t Path[2*MAX_PATH];
+				res = PrepareImport(slot, i, Path, 2*MAX_PATH);
+				if (res!=LFOk)
+				{
+					LFFreeItemDescriptor(i);
+					break;
+				}
+
+				BOOL shres = move ? MoveFile(il->m_Items[a], Path) : CopyFile(il->m_Items[a], Path, FALSE);
+				if (!shres)
+				{
+					wchar_t* LastBackslash = wcsrchr(Path, L'\\');
+					if (LastBackslash)
+						*(LastBackslash+1) = L'\0';
+
+					RemoveDir(Path);
+
+					LFFreeItemDescriptor(i);
+					res = LFIllegalPhysicalPath;
+					break;
+				}
+
+				il->m_FileCount++;
+				il->m_FileSize += i->CoreAttributes.FileSize;
+
+				if (idx1)
+					idx1->AddItem(i);
+				if (idx2)
+					idx2->AddItem(i);
+				LFFreeItemDescriptor(i);
+			}
+
+		if (idx1)
+			delete idx1;
+		if (idx2)
+			delete idx2;
+		ReleaseMutexForStore(StoreLock);
+	}
+	else
+	{
+		il->m_LastError = res;
+	}
 }
 
 LFCore_API void LFTransactionUpdate(LFTransactionList* tl, HWND hWndSource, LFVariantData* value1, LFVariantData* value2, LFVariantData* value3)
@@ -234,6 +328,10 @@ LFCore_API unsigned int LFTransactionRename(char* StoreID, char* FileID, wchar_t
 	return res;
 }
 
+
+LFCore_API void LFTransactionImport(char* key, LFFileIDList* il, bool move)
+{
+}
 
 LFCore_API void LFTransactionDelete(LFFileIDList* il, bool PutInTrash)
 {

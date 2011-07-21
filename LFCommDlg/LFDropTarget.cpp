@@ -42,6 +42,82 @@ void LFDropTarget::SetSearchResult(LFSearchResult* pSearchResult)
 	p_SearchResult = pSearchResult;
 }
 
+__forceinline HRESULT LFDropTarget::ImportFromFS(HGLOBAL hgDrop, DWORD dwEffect, CHAR* StoreID, CWnd* pWnd)
+{
+	HDROP hDrop = (HDROP)GlobalLock(hgDrop);
+	LFFileImportList* il = LFAllocFileImportList(hDrop);
+	GlobalUnlock(hgDrop);
+
+	// Template füllen
+	BOOL DoImport = TRUE;
+	LFItemDescriptor* it = NULL;
+	if (!m_SkipTemplate)
+	{
+		it = LFAllocItemDescriptor();
+
+		LFItemTemplateDlg dlg(pWnd, it, StoreID, m_AllowChooseStore, p_Filter);
+		switch (dlg.DoModal())
+		{
+		case IDCANCEL:
+			DoImport = FALSE;
+			break;
+		case IDOK:
+			strcpy_s(StoreID, LFKeySize, dlg.m_StoreID);
+		}
+	}
+
+	// Import
+	if (DoImport)
+	{
+		LFTransactionImport(StoreID, il, it, true, (dwEffect & DROPEFFECT_MOVE)!=0);
+		LFErrorBox(il->m_LastError, pWnd->GetSafeHwnd());
+	}
+
+	LFFreeItemDescriptor(it);
+	LFFreeFileImportList(il);
+
+	if ((p_Owner) && (DoImport))
+		p_Owner->SendMessage(LFGetMessageIDs()->ItemsDropped, NULL, NULL);
+
+	return S_OK;
+}
+
+__forceinline HRESULT LFDropTarget::ImportFromStore(HGLOBAL hgLiquid, DWORD dwEffect, CHAR* StoreID, CWnd* pWnd)
+{
+	HLIQUID hLiquid = (HLIQUID)GlobalLock(hgLiquid);
+	LFFileIDList* il = LFAllocFileIDList(hLiquid);
+	GlobalUnlock(hgLiquid);
+
+	LFTransactionImport(StoreID, il, (dwEffect & DROPEFFECT_MOVE)!=0);
+	LFErrorBox(il->m_LastError, pWnd->GetSafeHwnd());
+	LFFreeFileIDList(il);
+
+	if (p_Owner)
+		p_Owner->SendMessage(LFGetMessageIDs()->ItemsDropped, NULL, NULL);
+
+	return S_OK;
+}
+
+__forceinline HRESULT LFDropTarget::AddToClipboard(HGLOBAL hgLiquid, CWnd* pWnd)
+{
+	if (!hgLiquid)
+		return E_INVALIDARG;
+
+	HLIQUID hLiquid = (HLIQUID)GlobalLock(hgLiquid);
+	LFFileIDList* il = LFAllocFileIDList(hLiquid);
+	GlobalUnlock(hgLiquid);
+
+	LFTransactionAddToSearchResult(il, p_SearchResult);
+	LFErrorBox(il->m_LastError, pWnd->GetSafeHwnd());
+	LFFreeFileIDList(il);
+
+	if (p_Owner)
+		p_Owner->SendMessage(LFGetMessageIDs()->ItemsDropped, NULL, NULL);
+
+	return S_OK;
+}
+
+
 STDMETHODIMP LFDropTarget::QueryInterface(REFIID iid, void** ppvObject)
 {
 	if ((iid==IID_IDropTarget) || (iid==IID_IUnknown))
@@ -104,35 +180,27 @@ STDMETHODIMP LFDropTarget::DragLeave()
 
 STDMETHODIMP LFDropTarget::Drop(IDataObject* pDataObject, DWORD grfKeyState, POINTL pt, DWORD* pdwEffect)
 {
-	DragOver(grfKeyState, pt, pdwEffect);
+	if (DragOver(grfKeyState, pt, pdwEffect)!=S_OK)
+		return E_INVALIDARG;
 
+	// Data object
 	COleDataObject dobj;
 	dobj.Attach(pDataObject, FALSE);
 
 	HGLOBAL hgDrop = dobj.GetGlobalData(CF_HDROP);
 	HGLOBAL hgLiquid = dobj.GetGlobalData(((LFApplication*)AfxGetApp())->CF_HLIQUID);
 
+	if ((hgDrop==NULL) && (hgLiquid==NULL))
+		return E_INVALIDARG;
+
+	// Fenster
+	CWnd* pWnd = p_Owner ? p_Owner : CWnd::GetForegroundWindow();
+
 	// Clipboard
 	if (p_SearchResult)
-	{
-		if (!hgLiquid)
-			return E_INVALIDARG;
+		return AddToClipboard(hgLiquid, pWnd);
 
-		HLIQUID hLiquid = (HLIQUID)GlobalLock(hgLiquid);
-		LFFileIDList* il = LFAllocFileIDList(hLiquid);
-		GlobalUnlock(hgLiquid);
-
-		LFTransactionAddToSearchResult(il, p_SearchResult);
-		LFErrorBox(il->m_LastError, p_Owner->GetSafeHwnd());
-		LFFreeFileIDList(il);
-
-		if (p_Owner)
-			p_Owner->SendMessage(LFGetMessageIDs()->ItemsDropped, NULL, NULL);
-
-		return S_OK;
-	}
-
-	// Import
+	// Ziel-Store
 	CHAR StoreID[LFKeySize];
 	strcpy_s(StoreID, LFKeySize, p_Filter ? p_Filter->StoreID : m_StoreIDValid ? m_StoreID : "");
 
@@ -140,53 +208,9 @@ STDMETHODIMP LFDropTarget::Drop(IDataObject* pDataObject, DWORD grfKeyState, POI
 	if (StoreID[0]=='\0')
 		if (!LFDefaultStoreAvailable())
 		{
-			LFErrorBox(LFNoDefaultStore);
+			LFErrorBox(LFNoDefaultStore, pWnd->GetSafeHwnd());
 			return E_INVALIDARG;
 		}
 
-	// HDROP holen
-	HDROP hDrop = (HDROP)GlobalLock(hgDrop);
-	LFFileImportList* il = LFAllocFileImportList(hDrop);
-	GlobalUnlock(hgDrop);
-
-	if (!il->m_ItemCount)
-	{
-		LFFreeFileImportList(il);
-		return E_INVALIDARG;
-	}
-
-	BOOL Success = TRUE;
-
-	// Template füllen
-	LFItemDescriptor* it = NULL;
-	if (!m_SkipTemplate)
-	{
-		it = LFAllocItemDescriptor();
-
-		LFItemTemplateDlg dlg(p_Owner ? p_Owner : CWnd::GetForegroundWindow(), it, StoreID, m_AllowChooseStore, p_Filter);
-		switch (dlg.DoModal())
-		{
-		case IDCANCEL:
-			Success = FALSE;
-			goto Finish;
-		case IDOK:
-			strcpy_s(StoreID, LFKeySize, dlg.m_StoreID);
-		}
-	}
-
-	// Import
-	UINT res = LFImportFiles(StoreID, il, it, true, (*pdwEffect & DROPEFFECT_MOVE)!=0);
-	if (res!=LFOk)
-	{
-		LFErrorBox(res);
-		Success = FALSE;
-	}
-
-	if (p_Owner)
-		p_Owner->SendMessage(LFGetMessageIDs()->ItemsDropped, NULL, NULL);
-
-Finish:
-	LFFreeItemDescriptor(it);
-	LFFreeFileImportList(il);
-	return S_OK;
+	return hgLiquid ? ImportFromStore(hgLiquid, *pdwEffect, StoreID, pWnd) : ImportFromFS(hgDrop, *pdwEffect, StoreID, pWnd);
 }

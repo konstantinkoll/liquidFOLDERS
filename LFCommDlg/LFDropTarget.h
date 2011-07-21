@@ -36,6 +36,10 @@ public:
 	END_INTERFACE
 
 protected:
+	HRESULT ImportFromFS(HGLOBAL hgDrop, DWORD dwEffect, CHAR* StoreID, CWnd* pWnd);
+	HRESULT ImportFromStore(HGLOBAL hgLiquid, DWORD dwEffect, CHAR* StoreID, CWnd* pWnd);
+	HRESULT AddToClipboard(HGLOBAL hgLiquid, CWnd* pWnd);
+
 	LONG m_lRefCount;
 	LFFilter* p_Filter;
 	LFSearchResult* p_SearchResult;
