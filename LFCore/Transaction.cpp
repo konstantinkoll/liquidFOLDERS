@@ -135,6 +135,7 @@ LFCore_API void LFTransactionImport(char* key, LFFileImportList* il, LFItemDescr
 	}
 }
 
+
 LFCore_API void LFTransactionUpdate(LFTransactionList* tl, HWND hWndSource, LFVariantData* value1, LFVariantData* value2, LFVariantData* value3)
 {
 	assert(tl);
@@ -371,7 +372,7 @@ LFCore_API void LFTransactionImport(char* key, LFFileIDList* il, bool move)
 		// Process
 		for (unsigned int a=0; a<il->m_ItemCount; a++)
 			if ((il->m_Items[a].LastError==LFOk) && (!il->m_Items[a].Processed))
-				if (strcmp(key, il->m_Items[a].StoreID)==0)
+				if (strcmp(store, il->m_Items[a].StoreID)==0)
 				{
 					il->m_Items[a].Processed = true;
 				}
