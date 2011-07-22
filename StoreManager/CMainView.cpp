@@ -989,6 +989,10 @@ void CMainView::OnUpdateSelection()
 
 void CMainView::OnBeginDragDrop()
 {
+	// Stores haben keinen physischen Speicherort, der von einer LFTransactionList aufgelöst werden kann
+	if (m_Context==LFContextStores)
+		return;
+
 	LFTransactionList* tl = BuildTransactionList(FALSE, TRUE);
 	if (tl->m_ItemCount)
 	{
