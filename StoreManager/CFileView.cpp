@@ -658,9 +658,9 @@ CMenu* CFileView::GetSendToMenu()
 					wcscat_s(Dst, MAX_PATH, ffd.cFileName);
 
 					SHFILEINFO sfi;
-					if (SHGetFileInfo(Dst, 0, &sfi, sizeof(SHFILEINFO), SHGFI_ATTRIBUTES | SHGFI_ICON | SHGFI_SMALLICON))
+					if (SHGetFileInfo(Dst, 0, &sfi, sizeof(SHFILEINFO), SHGFI_ATTRIBUTES | SHGFI_SYSICONINDEX | SHGFI_SMALLICON))
 					{
-						AppendSendToItem(pMenu, nID, Name, sfi.hIcon, cx, cy, m_SendToItems);
+						AppendSendToItem(pMenu, nID, Name, theApp.m_SystemImageListSmall.ExtractIcon(sfi.iIcon), cx, cy, m_SendToItems);
 						Added = TRUE;
 
 						INT idx = (nID++) & 0xFF;
@@ -675,10 +675,10 @@ CMenu* CFileView::GetSendToMenu()
 	}
 
 	// Volumes
-	if (Added)
-		pMenu->AppendMenu(MF_SEPARATOR);
-
 	DWORD DrivesOnSystem = LFGetLogicalDrives(LFGLD_External | LFGLD_Network | LFGLD_IncludeFloppies);
+
+	if ((Added) && (DrivesOnSystem))
+		pMenu->AppendMenu(MF_SEPARATOR);
 
 	for (CHAR cDrive='A'; cDrive<='Z'; cDrive++, DrivesOnSystem>>=1)
 	{
