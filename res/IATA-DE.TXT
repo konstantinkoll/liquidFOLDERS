@@ -619,7 +619,7 @@ BEN     Benghazi, Lybien;4;32*5'48"N, 20*16'10"E
 BEO     Newcastle (Belmont Airport), Australien;4;33*3'58"S, 151*38'47"E
 BEP     Bellary, Indien;4;15*9'46"N, 76*52'58"E
 BEQ     Bury St. Edmunds, Gro·britannien;4;52*20'33"N, 0*46'23"E
-BER BER Berlin, Deutschland
+BER     Berlin Brandenburg, Deutschland;5;52*22'0"N, 13*30'12"E
 BES     Brest, Frankreich;4;48*26'50"N, 4*25'18"W
 BET     Bethel, USA;4;60*46'47"N, 161*50'17"W
 BEU     Bedourie, Australien;4;24*20'46"S, 139*27'37"E
@@ -2113,7 +2113,7 @@ ERB     Ernabella, Australien;4;26*15'55"S, 132*10'35"E
 ERC     Erzincan, TÅrkei;4;39*42'37"N, 39*31'37"E
 ERD     Berdyansk, Ukraine;4;46*48'54"N, 36*45'29"E
 ERE     Erave, Neu-Guinea;4;6*37'59"S, 144*0'0"E
-ERF     Erfurt, Deutschland;4;50*58'47"N, 10*57'29"E
+ERF     Erfurt Weimar, Deutschland;4;50*58'47"N, 10*57'29"E
 ERG     Eromanga, Australien;4;26*42'36"S, 143*15'45"E
 ERH     Errachidia, Marokko;4;31*56'51"N, 4*23'54"W
 ERI     Erie, USA;4;42*4'55"N, 80*10'34"W
@@ -7404,7 +7404,7 @@ SXB     Strasbourg, Frankreich;4;48*32'37"N, 7*38'14"E
 SXC     Avalon (Peebly Beach Seaplane Base), USA
 SXD     Sophia Antipolis, Frankreich;4;43*37'1"N, 7*3'0"E
 SXE     Sale, Australien;4;38*5'30"S, 146*57'55"E
-SXF BER Berlin (Schînefeld), Deutschland;4;52*22'48"N, 13*31'21"E
+SXF     Berlin (Schînefeld), Deutschland;4;52*22'48"N, 13*31'21"E
 SXG     Senanga, Sambia;4;16*6'0"S, 23*16'1"E
 SXH     Sehulea, Neu-Guinea;4;9*58'1"S, 151*8'60"E
 SXI     Sirri Island, Iran;4;25*54'32"N, 54*32'22"E
@@ -7593,7 +7593,7 @@ THA     Tullahoma (Regional Airport), USA;4;35*22'48"N, 86*14'47"W
 THB     Thaba Tseka, Lesotho;4;29*31'22"S, 28*36'57"E
 THC     Tchien, Liberia;4;6*4'4"N, 8*8'0"W
 THE     Teresina, Brasilien;4;5*3'36"S, 42*49'25"W
-THF BER Berlin (Tempelhof), Deutschland;4;52*28'23"N, 13*24'14"E
+THF     Berlin (Tempelhof), Deutschland;4;52*28'23"N, 13*24'14"E
 THG     Thangool/Biloela, Australien;4;24*29'38"S, 150*34'34"E
 THH     Taharoa, Neuseeland;4;38*10'52"S, 174*42'29"E
 THI     Tichitt, Mauretanien;4;18*27'0"N, 9*31'1"W
@@ -7898,7 +7898,7 @@ TWU     Tawau, Malaysia;4;4*18'48"N, 118*7'19"E
 TWY     Tawa, Neu-Guinea;5;7*26'60"S, 146*6'0"E
 TXG     Taichung, Taiwan;4;24*11'11"N, 120*39'14"E
 TXK     Texarkana, USA;4;33*27'13"N, 93*59'28"W
-TXL BER Berlin (Tegel), Deutschland;4;52*33'35"N, 13*17'16"E
+TXL     Berlin (Tegel), Deutschland;4;52*33'35"N, 13*17'16"E
 TXM     Teminabuan, Indonesien;4;1*26'41"S, 132*1'14"E
 TXN     Tunxi, China;4;29*43'60"N, 118*15'21"E
 TXR     Tanbar, Australien;4;25*55'1"S, 141*55'1"E
