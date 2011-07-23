@@ -209,11 +209,11 @@ void CMigrateWnd::OnMigrate()
 	CReportList Results[2];
 	for (UINT a=0; a<ml.m_ItemCount; a++)
 	{
-		UINT res = LFImportFiles(StoreID, ml.m_Items[a].List, ml.m_Items[a].Template, ml.m_Items[a].Recursive==TRUE, DeleteSource==TRUE);
-		if (res==LFCancel)
+		LFTransactionImport(StoreID, ml.m_Items[a].List, ml.m_Items[a].Template, ml.m_Items[a].Recursive==TRUE, DeleteSource==TRUE);
+		if (ml.m_Items[a].List==LFCancel)
 			break;
 
-		Results[res==LFOk ? 0 : 1].AddItem(&ml.m_Items[a]);
+		Results[ml.m_Items[a].List==LFOk ? 0 : 1].AddItem(&ml.m_Items[a]);
 	}
 
 	// Show report
