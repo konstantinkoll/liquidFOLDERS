@@ -210,10 +210,10 @@ void CMigrateWnd::OnMigrate()
 	for (UINT a=0; a<ml.m_ItemCount; a++)
 	{
 		LFTransactionImport(StoreID, ml.m_Items[a].List, ml.m_Items[a].Template, ml.m_Items[a].Recursive==TRUE, DeleteSource==TRUE);
-		if (ml.m_Items[a].List==LFCancel)
+		if (ml.m_Items[a].List->m_LastError==LFCancel)
 			break;
 
-		Results[ml.m_Items[a].List==LFOk ? 0 : 1].AddItem(&ml.m_Items[a]);
+		Results[ml.m_Items[a].List->m_LastError==LFOk ? 0 : 1].AddItem(&ml.m_Items[a]);
 	}
 
 	// Show report
