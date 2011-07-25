@@ -269,7 +269,7 @@ BOOL CFileItem::OnChangeName(CChangeNameEventArgs& e)
 
 NSEItemAttributes CFileItem::GetAttributes(NSEItemAttributes requested)
 {
-	return (NSEItemAttributes)(requested & (NSEIA_FileSystem | NSEIA_CanRename | NSEIA_CanDelete | NSEIA_CanLink));
+	return (NSEItemAttributes)(requested & (NSEIA_FileSystem | NSEIA_CanRename | NSEIA_CanDelete | NSEIA_CanLink | NSEIA_CanCopy));
 }
 
 INT CFileItem::CompareTo(CNSEItem* otherItem, CShellColumn& column)
