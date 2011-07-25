@@ -60,7 +60,7 @@ void LFFileImportList::Resolve(bool recursive)
 					wcscat_s(DirSpec, MAX_PATH, L"\\*");
 
 					WIN32_FIND_DATAW FindFileData;
-					HANDLE hFind = FindFirstFileW(DirSpec, &FindFileData);
+					HANDLE hFind = FindFirstFile(DirSpec, &FindFileData);
 
 					if (hFind!=INVALID_HANDLE_VALUE)
 					{
@@ -78,7 +78,7 @@ FileFound:
 						}
 					}
 
-					if (FindNextFileW(hFind, &FindFileData)!=0)
+					if (FindNextFile(hFind, &FindFileData)!=0)
 						goto FileFound;
 
 					FindClose(hFind);

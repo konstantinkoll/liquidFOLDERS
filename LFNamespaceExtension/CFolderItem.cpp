@@ -285,7 +285,7 @@ void CFolderItem::ConvertSearchResult(CGetChildrenEventArgs& e, LFSearchResult* 
 
 	if (res->m_LastError!=LFOk)
 	{
-		LFErrorBox(res->m_LastError);
+		LFErrorBox(res->m_LastError, GetForegroundWindow());
 		LFFreeSearchResult(res);
 		return;
 	}
@@ -599,6 +599,8 @@ void CFolderItem::GetMenuItems(CGetMenuitemsEventArgs& e)
 		if ((!(e.flags & NSEQCF_NoDefault)) && (e.children->GetCount()>=1))
 		{
 			AddSeparator(e.menu);
+			AddItem(e.menu, IDS_MENU_Copy, _T(VERB_COPY));
+			AddSeparator(e.menu);
 			AddItem(e.menu, IDS_MENU_CreateShortcut, _T(VERB_CREATESHORTCUT));
 			AddItem(e.menu, IDS_MENU_Delete, _T(VERB_DELETE));
 			if ((e.children->GetCount()==1) && (e.flags & NSEQCF_CanRename))
@@ -651,7 +653,7 @@ BOOL CFolderItem::OnExecuteMenuItem(CExecuteMenuitemsEventArgs& e)
 			CFolderItem* folder = AS(temp, CFolderItem);
 
 			UINT res = (e.menuItem->GetVerb()==_T(VERB_MAKEDEFAULTSTORE)) ? LFMakeDefaultStore(folder->Attrs.StoreID) : LFMakeHybridStore(folder->Attrs.StoreID);
-			LFErrorBox(res);
+			LFErrorBox(res, GetForegroundWindow());
 			return (res==LFOk);
 		}
 
@@ -1154,7 +1156,7 @@ BOOL CFolderItem::OnOpen(CExecuteMenuitemsEventArgs& e)
 			UINT res = LFGetFileLocation(AS(item, CFileItem)->Item, Path, MAX_PATH, true);
 			if (res!=LFOk)
 			{
-				LFErrorBox(res);
+				LFErrorBox(res, GetForegroundWindow());
 			}
 			else
 				if (ShellExecute(e.hWnd, _T("open"), Path, _T(""), _T(""), SW_SHOW)==(HINSTANCE)SE_ERR_NOASSOC)
@@ -1214,7 +1216,7 @@ BOOL CFolderItem::OnDelete(CExecuteMenuitemsEventArgs& e)
 		res = TRUE;
 	}
 
-	LFErrorBox(il->m_LastError);
+	LFErrorBox(il->m_LastError, GetForegroundWindow());
 	LFFreeFileIDList(il);
 	return res;
 }
@@ -1231,7 +1233,7 @@ BOOL CFolderItem::OnChangeName(CChangeNameEventArgs& e)
 		}
 		else
 		{
-			LFErrorBox(res);
+			LFErrorBox(res, GetForegroundWindow());
 		}
 
 		return (res==LFOk);
@@ -1263,6 +1265,8 @@ void CFolderItem::InitDataObject(CInitDataObjectEventArgs& e)
 			e.dataObject->SetHGlobalData(_T(CFSTR_LIQUIDFILES), LFCreateLiquidFiles(il));
 
 		LFFreeFileIDList(il);
+
+		e.dataObject->SetPreferredDropEffect(DROPEFFECT_MOVE);
 	}
 }
 
@@ -1318,8 +1322,10 @@ void CFolderItem::OnExternalDrop(CNSEDragEventArgs& e)
 					((CFileItem*)il->m_Items[a].UserData)->Delete();
 		}
 
-		LFErrorBox(il->m_LastError);
+		LFErrorBox(il->m_LastError, GetForegroundWindow());
 		LFFreeFileIDList(il);
+
+		RefreshView();
 	}
 }
 
@@ -1328,55 +1334,22 @@ void CFolderItem::OnExternalDrop(CNSEDragEventArgs& e)
 
 void CFolderItem::DragEnter(CNSEDragEventArgs& e)
 {
-	e.effect = (Attrs.Level==LevelRoot) ? DROPEFFECT_NONE : (e.keyState & MK_CONTROL) ? DROPEFFECT_MOVE : DROPEFFECT_COPY;
+	e.allowedEffect = DROPEFFECT_MOVE | DROPEFFECT_COPY;
+	e.effect = (e.keyState & MK_CONTROL) ? DROPEFFECT_MOVE : DROPEFFECT_COPY;
 }
 
 void CFolderItem::DragOver(CNSEDragEventArgs& e)
 {
-	e.effect = (Attrs.Level==LevelRoot) ? DROPEFFECT_NONE : (e.keyState & MK_CONTROL) ? DROPEFFECT_MOVE : DROPEFFECT_COPY;
+	e.allowedEffect = DROPEFFECT_MOVE | DROPEFFECT_COPY;
+	e.effect = (e.keyState & MK_CONTROL) ? DROPEFFECT_MOVE : DROPEFFECT_COPY;
 }
 
 void CFolderItem::DragDrop(CNSEDragEventArgs& e)
 {
-	MessageBox(e.hWnd, _T("IDropTarget not implemented yet!\nPlease drop your items on a FileDrop or StoreManager window."), _T("Drop"), 0);
-	// If file drop data is present, do the copy/move
-/*	CStringArray files;
-	if (e.data->GetHDROPData(&files))
-	{
-		for(INT i=0;i<files.GetSize();i++)
-		{
-			CString file = files[i];
-			CString fileName = PathFindFileName(file);
-			CString destPath = PathCombineNSE(fullPath, fileName);
-			if((GetFileAttributes(file) & FILE_ATTRIBUTE_DIRECTORY)!=0)
-			{
-				try
-				{
-					CopyDirectory(file, destPath);
-				}
-				catch(...)
-				{
-				}
-			}
-			else
-			{
-				try
-				{
-					CopyFile(file,destPath,TRUE);
-				}
-				catch(...)
-				{
-				}
-			}
-			e.data->SetPerformedDropEffect(e.effect);
+	e.data->SetPerformedDropEffect(theApp.ImportFiles(Attrs.StoreID, e.data, e.keyState & MK_CONTROL));
+	e.data->SetPasteSucceded(e.data->GetPerformedDropEffect());
 
-			if(e.data->GetPreferredDropEffect()==DROPEFFECT_MOVE)
-				e.data->SetPasteSucceded(DROPEFFECT_MOVE);
-
-			this->RefreshView();
-		}
-	}
-*/
+	RefreshView();
 }
 
 
@@ -1588,7 +1561,7 @@ BOOL CFolderItem::OnOpenWith(CExecuteMenuitemsEventArgs& e)
 			UINT res = LFGetFileLocation(AS(item, CFileItem)->Item, Path, MAX_PATH, true);
 			if (res!=LFOk)
 			{
-				LFErrorBox(res);
+				LFErrorBox(res, GetForegroundWindow());
 			}
 			else
 			{

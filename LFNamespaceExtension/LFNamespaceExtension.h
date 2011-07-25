@@ -26,6 +26,7 @@ public:
 	static void GetIconSize(INT& cx, INT& cy);
 	static void SetCoreMenuIcon(void* item, UINT ResID);
 	static CString FrmtAttrStr(CString Mask, CString Name);
+	static UINT ImportFiles(CHAR* StoreID, IDataObject* pDataObject, BOOL Move);
 	void ShowNagscreen();
 
 	CString m_PathRunCmd;

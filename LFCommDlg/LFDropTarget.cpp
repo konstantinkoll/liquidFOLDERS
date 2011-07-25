@@ -80,7 +80,7 @@ __forceinline HRESULT LFDropTarget::ImportFromFS(HGLOBAL hgDrop, DWORD dwEffect,
 	if (DoImport)
 	{
 		LFTransactionImport(StoreID, il, it, true, (dwEffect & DROPEFFECT_MOVE)!=0);
-		res = il->m_ItemCount;
+		res = il->m_LastError;
 		LFErrorBox(res, pWnd->GetSafeHwnd());
 	}
 

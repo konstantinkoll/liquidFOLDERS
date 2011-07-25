@@ -54,16 +54,5 @@ void LFSendTo::GetExtensionTargetInfo(CSendToExtensionTargetInfo& info)
 
 UINT LFSendTo::OnDragDrop(CDragDropEventArgs& /*e*/)
 {
-	if (!LFDefaultStoreAvailable())
-	{
-		LFErrorBox(LFNoDefaultStore);
-		return DROPEFFECT_NONE;
-	}
-
-	CStringArray* files = GetFiles();
-
-	// TODO
-	MessageBox(NULL, _T("IDropTarget not implemented yet!\nPlease drop your items on a FileDrop or StoreManager window."), _T("Send to"), 0);
-
-	return DROPEFFECT_COPY;
+	return theApp.ImportFiles("", GetDataObject(), FALSE);
 }

@@ -209,6 +209,78 @@ CString LFNamespaceExtensionApp::FrmtAttrStr(CString Mask, CString Name)
 	return tmpStr;
 }
 
+UINT LFNamespaceExtensionApp::ImportFiles(CHAR* StoreID, IDataObject* pDataObject, BOOL Move)
+{
+	// Data object
+	COleDataObject dobj;
+	dobj.Attach(pDataObject, FALSE);
+
+	CLIPFORMAT CF_HLIQUID = (CLIPFORMAT)RegisterClipboardFormat(_T(CFSTR_LIQUIDFILES));
+
+	HGLOBAL hgDrop = dobj.GetGlobalData(CF_HDROP);
+	HGLOBAL hgLiquid = dobj.GetGlobalData(CF_HLIQUID);
+
+	if ((hgDrop==NULL) && (hgLiquid==NULL))
+		return DROPEFFECT_NONE;
+
+	// Wenn Default-Store gewünscht: verfügbar ?
+	if (StoreID[0]=='\0')
+		if (!LFDefaultStoreAvailable())
+		{
+			LFErrorBox(LFNoDefaultStore, GetForegroundWindow());
+			return DROPEFFECT_NONE;
+		}
+
+	// Importieren
+	if (hgLiquid)
+	{
+		HLIQUID hLiquid = (HLIQUID)GlobalLock(hgLiquid);
+		LFFileIDList* il = LFAllocFileIDList(hLiquid);
+		GlobalUnlock(hgLiquid);
+
+		LFTransactionImport(StoreID, il, Move==TRUE);
+		UINT res = il->m_LastError;
+		LFErrorBox(res, GetForegroundWindow());
+
+		// CF_LIQUIDFILES neu setzen, um nicht veränderte Dateien (Fehler oder Drop auf denselben Store) zu entfernen
+		FORMATETC fmt;
+		ZeroMemory(&fmt, sizeof(fmt));
+		fmt.cfFormat = CF_HLIQUID;
+		fmt.dwAspect = DVASPECT_CONTENT;
+		fmt.lindex = -1;
+		fmt.tymed = TYMED_HGLOBAL;
+
+		STGMEDIUM stg;
+		stg.tymed = TYMED_HGLOBAL;
+		stg.hGlobal = LFCreateLiquidFiles(il);
+
+		pDataObject->SetData(&fmt, &stg, FALSE);
+
+		LFFreeFileIDList(il);
+
+		return (res==LFOk) ? Move ? DROPEFFECT_MOVE : DROPEFFECT_COPY : DROPEFFECT_NONE;
+	}
+	else
+	{
+		HDROP hDrop = (HDROP)GlobalLock(hgDrop);
+		LFFileImportList* il = LFAllocFileImportList(hDrop);
+		GlobalUnlock(hgDrop);
+
+		// Import
+		UINT res = LFOk;
+		if (TRUE)
+		{
+			LFTransactionImport(StoreID, il, NULL, true, Move==TRUE);
+			res = il->m_LastError;
+			LFErrorBox(res, GetForegroundWindow());
+		}
+
+		LFFreeFileImportList(il);
+
+		return (res==LFOk) ? Move ? DROPEFFECT_MOVE : DROPEFFECT_COPY : DROPEFFECT_NONE;
+	}
+}
+
 void LFNamespaceExtensionApp::ShowNagscreen()
 {
 	if (!LFIsLicensed())
