@@ -1034,6 +1034,7 @@ void CMainView::OnBeginDragDrop()
 				LFFileIDList* il = pDataObject->GetFileIDList();
 				LFTransactionDelete(il, false);
 				RemoveTransactedItems(il);
+				LFFreeFileIDList(il);
 			}
 
 		pDropSource->Release();
