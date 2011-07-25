@@ -58,6 +58,7 @@ protected:
 
 	LFFileIDList* BuildFileIDList(BOOL All=FALSE);
 	LFTransactionList* BuildTransactionList(BOOL All=FALSE, BOOL ResolvePhysicalLocations=FALSE, BOOL IncludePIDL=FALSE);
+	void RemoveTransactedItems(LFFileIDList* il);
 	void RemoveTransactedItems(LFTransactionList* tl);
 	BOOL UpdateTrashFlag(BOOL Trash, BOOL All=FALSE);
 	BOOL DeleteFiles(BOOL All=FALSE);

@@ -40,6 +40,11 @@ LFDataObject::LFDataObject(LFTransactionList* tl)
 	m_hLiquidFiles = LFCreateLiquidFiles(tl);
 }
 
+LFFileIDList* LFDataObject::GetFileIDList()
+{
+	return LFAllocFileIDList(m_hLiquidFiles);
+}
+
 STDMETHODIMP LFDataObject::QueryInterface(REFIID iid, void** ppvObject)
 {
 	if ((iid==IID_IDataObject) || (iid==IID_IUnknown))
@@ -122,9 +127,32 @@ STDMETHODIMP LFDataObject::GetCanonicalFormatEtc(FORMATETC* /*pFormatEtcIn*/, FO
 	return E_NOTIMPL;
 }
 
-STDMETHODIMP LFDataObject::SetData(FORMATETC* /*pFormatEtc*/, STGMEDIUM* /*pmedium*/, BOOL /*fRelease*/)
+STDMETHODIMP LFDataObject::SetData(FORMATETC* pFormatEtc, STGMEDIUM* pMedium, BOOL /*fRelease*/)
 {
-	return E_NOTIMPL;
+	if ((!pFormatEtc) || (!pMedium))
+		return E_INVALIDARG;
+	if ((pFormatEtc->tymed!=TYMED_HGLOBAL) || (pMedium->tymed!=TYMED_HGLOBAL))
+		return DV_E_TYMED;
+	if (!pMedium->hGlobal)
+		return E_INVALIDARG;
+
+	if (pFormatEtc->cfFormat==CF_HDROP)
+	{
+		if (m_hDropFiles)
+			GlobalFree(m_hDropFiles);
+		m_hDropFiles = pMedium->hGlobal;
+		return S_OK;
+	}
+
+	if (pFormatEtc->cfFormat==((LFApplication*)AfxGetApp())->CF_HLIQUID)
+	{
+		if (m_hLiquidFiles)
+			GlobalFree(m_hLiquidFiles);
+		m_hLiquidFiles = pMedium->hGlobal;
+		return S_OK;
+	}
+
+	return DV_E_FORMATETC;
 }
 
 STDMETHODIMP LFDataObject::EnumFormatEtc(DWORD dwDirection, IEnumFORMATETC** ppenumFormatEtc)

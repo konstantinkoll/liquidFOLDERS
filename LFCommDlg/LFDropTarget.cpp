@@ -93,7 +93,7 @@ __forceinline HRESULT LFDropTarget::ImportFromFS(HGLOBAL hgDrop, DWORD dwEffect,
 	return (res==LFOk) ? S_OK : E_INVALIDARG;
 }
 
-__forceinline HRESULT LFDropTarget::ImportFromStore(HGLOBAL hgLiquid, DWORD dwEffect, CHAR* StoreID, CWnd* pWnd)
+__forceinline HRESULT LFDropTarget::ImportFromStore(IDataObject* pDataObject, HGLOBAL hgLiquid, DWORD dwEffect, CHAR* StoreID, CWnd* pWnd)
 {
 	HLIQUID hLiquid = (HLIQUID)GlobalLock(hgLiquid);
 	LFFileIDList* il = LFAllocFileIDList(hLiquid);
@@ -102,6 +102,22 @@ __forceinline HRESULT LFDropTarget::ImportFromStore(HGLOBAL hgLiquid, DWORD dwEf
 	LFTransactionImport(StoreID, il, (dwEffect & DROPEFFECT_MOVE)!=0);
 	UINT res = il->m_LastError;
 	LFErrorBox(res, pWnd->GetSafeHwnd());
+
+	// CF_LIQUIDFILES neu setzen, um nicht veränderte Dateien (Fehler oder Drop auf denselben Store) zu entfernen
+	FORMATETC fmt;
+	ZeroMemory(&fmt, sizeof(fmt));
+	fmt.cfFormat = ((LFApplication*)AfxGetApp())->CF_HLIQUID;
+	fmt.dwAspect = DVASPECT_CONTENT;
+	fmt.lindex = -1;
+	fmt.tymed = TYMED_HGLOBAL;
+
+	STGMEDIUM stg;
+	ZeroMemory(&stg, sizeof(stg));
+	stg.tymed = TYMED_HGLOBAL;
+	stg.hGlobal = LFCreateLiquidFiles(il);
+
+	pDataObject->SetData(&fmt, &stg, FALSE);
+
 	LFFreeFileIDList(il);
 
 	if (p_Owner)
@@ -252,5 +268,5 @@ STDMETHODIMP LFDropTarget::Drop(IDataObject* pDataObject, DWORD grfKeyState, POI
 	// Template
 	m_SkipTemplate = (grfKeyState & MK_SHIFT);
 
-	return hgLiquid ? ImportFromStore(hgLiquid, *pdwEffect, StoreID, pWnd) : ImportFromFS(hgDrop, *pdwEffect, StoreID, pWnd);
+	return hgLiquid ? ImportFromStore(pDataObject, hgLiquid, *pdwEffect, StoreID, pWnd) : ImportFromFS(hgDrop, *pdwEffect, StoreID, pWnd);
 }

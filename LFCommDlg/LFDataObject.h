@@ -13,6 +13,7 @@ class AFX_EXT_CLASS LFDataObject : public IDataObject
 {
 public:
 	LFDataObject(LFTransactionList* tl);
+	LFFileIDList* GetFileIDList();
 
 	BEGIN_INTERFACE
 
@@ -26,7 +27,7 @@ public:
 	STDMETHOD(GetDataHere)(FORMATETC* pFormatEtc, STGMEDIUM* pMedium);
 	STDMETHOD(QueryGetData)(FORMATETC* pFormatEtc);
 	STDMETHOD(GetCanonicalFormatEtc)(FORMATETC* pFormatEtcIn, FORMATETC* pFormatEtcOut);
-	STDMETHOD(SetData)(FORMATETC* pFormatEtc, STGMEDIUM* pmedium, BOOL fRelease);
+	STDMETHOD(SetData)(FORMATETC* pFormatEtc, STGMEDIUM* pMedium, BOOL fRelease);
 	STDMETHOD(EnumFormatEtc)(DWORD dwDirection, IEnumFORMATETC** ppenumFormatEtc);
 	STDMETHOD(DAdvise)(FORMATETC* pFormatEtc, DWORD advf, IAdviseSink* pAdvSink, DWORD* pdwConnection);
 	STDMETHOD(DUnadvise)(DWORD dwConnection);

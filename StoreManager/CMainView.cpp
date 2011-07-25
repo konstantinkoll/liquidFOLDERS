@@ -541,6 +541,32 @@ LFTransactionList* CMainView::BuildTransactionList(BOOL All, BOOL ResolvePhysica
 	return tl;
 }
 
+void CMainView::RemoveTransactedItems(LFFileIDList* il)
+{
+	if (!p_RawFiles)
+		return;
+
+	for (UINT a=0; a<il->m_ItemCount; a++)
+		if (il->m_Items[a].LastError==LFOk)
+			for (UINT b=0; b<p_RawFiles->m_ItemCount; b++)
+			{
+				LFItemDescriptor* i = p_RawFiles->m_Items[b];
+
+				if ((i->Type & LFTypeMask)==LFTypeFile)
+					if ((strcmp(il->m_Items[a].StoreID, i->StoreID)==0) && (strcmp(il->m_Items[a].FileID, i->CoreAttributes.FileID)==0))
+					{
+						p_RawFiles->m_Items[b]->DeleteFlag = true;
+						break;
+					}
+			}
+
+	LFRemoveFlaggedItemDescriptors(p_RawFiles);
+
+	FVPersistentData Data;
+	GetPersistentData(Data);
+	GetOwner()->SendMessage(WM_COOKFILES, (WPARAM)&Data);
+}
+
 void CMainView::RemoveTransactedItems(LFTransactionList* tl)
 {
 	if (!p_RawFiles)
@@ -1005,8 +1031,9 @@ void CMainView::OnBeginDragDrop()
 		if (DoDragDrop(pDataObject, pDropSource, m_IsClipboard ? DROPEFFECT_COPY : DROPEFFECT_COPY | DROPEFFECT_MOVE, &dwEffect)==DRAGDROP_S_DROP)
 			if ((dwEffect & DROPEFFECT_MOVE) || (pDropSource->GetLastEffect() & DROPEFFECT_MOVE))
 			{
-				LFTransactionDelete(tl, false);
-				RemoveTransactedItems(tl);
+				LFFileIDList* il = pDataObject->GetFileIDList();
+				LFTransactionDelete(il, false);
+				RemoveTransactedItems(il);
 			}
 
 		pDropSource->Release();

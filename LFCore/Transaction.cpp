@@ -374,6 +374,7 @@ LFCore_API void LFTransactionImport(char* key, LFFileIDList* il, bool move)
 			if ((il->m_Items[a].LastError==LFOk) && (!il->m_Items[a].Processed))
 				if (strcmp(store, il->m_Items[a].StoreID)==0)
 				{
+					il->m_Items[a].LastError = LFCancel;
 					il->m_Items[a].Processed = true;
 				}
 				else

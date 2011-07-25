@@ -38,7 +38,7 @@ public:
 
 protected:
 	HRESULT ImportFromFS(HGLOBAL hgDrop, DWORD dwEffect, CHAR* StoreID, CWnd* pWnd);
-	HRESULT ImportFromStore(HGLOBAL hgLiquid, DWORD dwEffect, CHAR* StoreID, CWnd* pWnd);
+	HRESULT ImportFromStore(IDataObject* pDataObject, HGLOBAL hgLiquid, DWORD dwEffect, CHAR* StoreID, CWnd* pWnd);
 	HRESULT AddToClipboard(HGLOBAL hgLiquid, CWnd* pWnd);
 
 	LONG m_lRefCount;
