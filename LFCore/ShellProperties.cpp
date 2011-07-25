@@ -369,10 +369,6 @@ void SetNameExtAddFromFile(LFItemDescriptor* i, wchar_t* fn)
 
 			SetAttribute(i, LFAttrFileFormat, Ext);
 			*LastExt = L'\0';
-
-			// Bei versteckten Unix-Dateien Erweiterung als Name einsetzen
-			if (Name[0]==L'\0')
-				wcscpy_s(Name, 256, LastExt+1);
 		}
 
 	SetAttribute(i, LFAttrFileName, Name);

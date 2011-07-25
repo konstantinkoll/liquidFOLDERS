@@ -1025,7 +1025,7 @@ CString CFileView::GetLabel(LFItemDescriptor* i)
 {
 	CString label = i->CoreAttributes.FileName;
 	if ((i->Type & LFTypeMask)==LFTypeFile)
-		if ((!m_HideFileExt) && (i->CoreAttributes.FileFormat[0]!='\0') && (strcmp(i->CoreAttributes.FileFormat, "filter")!=0))
+		if (((!m_HideFileExt) || (i->CoreAttributes.FileName[0]==L'\0')) && (i->CoreAttributes.FileFormat[0]!='\0') && (strcmp(i->CoreAttributes.FileFormat, "filter")!=0))
 		{
 			label += _T(".");
 			label += i->CoreAttributes.FileFormat;
