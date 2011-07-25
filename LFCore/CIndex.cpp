@@ -391,7 +391,11 @@ unsigned int CIndex::DeletePhysicalFile(LFCoreAttributes* PtrM)
 	if (LastBackslash)
 		*(LastBackslash+1) = L'\0';
 
-	return RemoveDir(Path) ? LFOk : GetLastError()==ERROR_PATH_NOT_FOUND ? LFOk : LFCannotDeleteFile;
+	if (RemoveDir(Path))
+		return LFOk;
+
+	DWORD err = GetLastError();
+	return (err==ERROR_NO_MORE_FILES) || (err==ERROR_FILE_NOT_FOUND) || (err==ERROR_PATH_NOT_FOUND) ? LFOk : LFCannotDeleteFile;
 }
 
 void CIndex::Delete(LFFileIDList* il, bool PutInTrash)
