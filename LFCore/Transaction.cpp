@@ -96,6 +96,7 @@ LFCore_API void LFTransactionImport(char* key, LFFileImportList* il, LFItemDescr
 				if (res!=LFOk)
 				{
 					LFFreeItemDescriptor(i);
+					il->m_LastError = res;
 					break;
 				}
 
@@ -109,7 +110,7 @@ LFCore_API void LFTransactionImport(char* key, LFFileImportList* il, LFItemDescr
 					RemoveDir(Path);
 
 					LFFreeItemDescriptor(i);
-					res = LFIllegalPhysicalPath;
+					il->m_LastError= LFIllegalPhysicalPath;
 					break;
 				}
 
