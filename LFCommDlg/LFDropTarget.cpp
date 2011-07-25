@@ -165,8 +165,6 @@ STDMETHODIMP_(ULONG) STDMETHODCALLTYPE LFDropTarget::Release()
 
 STDMETHODIMP LFDropTarget::DragEnter(IDataObject* pDataObject, DWORD grfKeyState, POINTL ptl, DWORD* pdwEffect)
 {
-	m_SkipTemplate = (grfKeyState & MK_SHIFT);
-
 	if (m_pDropTargetHelper)
 	{
 		POINT pt = { ptl.x, ptl.y };
@@ -210,6 +208,15 @@ STDMETHODIMP LFDropTarget::DragLeave()
 
 STDMETHODIMP LFDropTarget::Drop(IDataObject* pDataObject, DWORD grfKeyState, POINTL ptl, DWORD* pdwEffect)
 {
+	if (p_Owner)
+		p_Owner->ActivateTopParent();
+
+	if (m_pDropTargetHelper)
+	{
+		POINT pt = { ptl.x, ptl.y };
+		m_pDropTargetHelper->Drop(pDataObject, &pt, *pdwEffect);
+	}
+
 	if ((DragOver(grfKeyState, ptl, pdwEffect)!=S_OK) || (m_IsDragging))
 		return E_INVALIDARG;
 
@@ -241,6 +248,9 @@ STDMETHODIMP LFDropTarget::Drop(IDataObject* pDataObject, DWORD grfKeyState, POI
 			LFErrorBox(LFNoDefaultStore, pWnd->GetSafeHwnd());
 			return E_INVALIDARG;
 		}
+
+	// Template
+	m_SkipTemplate = (grfKeyState & MK_SHIFT);
 
 	return hgLiquid ? ImportFromStore(hgLiquid, *pdwEffect, StoreID, pWnd) : ImportFromFS(hgDrop, *pdwEffect, StoreID, pWnd);
 }
