@@ -15,7 +15,7 @@ BOOL DuplicateGlobalMemory(const HGLOBAL hSrc, HGLOBAL& hDst)
 		return FALSE;
 	}
 
-	DWORD sz = GlobalSize(hSrc);
+	SIZE_T sz = GlobalSize(hSrc);
 	hDst = GlobalAlloc(GMEM_MOVEABLE, sz);
 	if (!hDst)
 		return FALSE;
