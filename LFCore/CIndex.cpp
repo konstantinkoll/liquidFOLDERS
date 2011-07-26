@@ -818,15 +818,14 @@ void CIndex::TransferTo(CIndex* idxDst1, CIndex* idxDst2, LFStoreDescriptor* slo
 				// Files with "link" flag do not posses a file body
 				if (!(PtrM->Flags & LFFlagLink))
 				{
-					BOOL shres = CopyFile(PathSrc, PathDst, FALSE);
-					if (!shres)
+					if (!(CopyFile(PathSrc, PathDst, FALSE)))
 					{
 						wchar_t* LastBackslash = wcsrchr(Path, L'\\');
 						if (LastBackslash)
 							*(LastBackslash+1) = L'\0';
 
 						RemoveDir(Path);
-						ABORT(LFIllegalPhysicalPath);
+						ABORT(LFCannotImportFile);
 					}
 				}
 
