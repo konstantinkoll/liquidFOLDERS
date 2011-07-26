@@ -817,7 +817,6 @@ void CIndex::TransferTo(CIndex* idxDst1, CIndex* idxDst2, LFStoreDescriptor* slo
 
 				// Files with "link" flag do not posses a file body
 				if (!(PtrM->Flags & LFFlagLink))
-				{
 					if (!(CopyFile(PathSrc, PathDst, FALSE)))
 					{
 						wchar_t* LastBackslash = wcsrchr(Path, L'\\');
@@ -827,7 +826,6 @@ void CIndex::TransferTo(CIndex* idxDst1, CIndex* idxDst2, LFStoreDescriptor* slo
 						RemoveDir(Path);
 						ABORT(LFCannotImportFile);
 					}
-				}
 
 				if (idxDst1)
 					res |= idxDst1->AddItem(i);
@@ -853,7 +851,6 @@ void CIndex::TransferTo(CIndex* idxDst1, CIndex* idxDst2, LFStoreDescriptor* slo
 				}
 
 				il->m_Items[a].Processed = true;
-
 			}
 	}
 
