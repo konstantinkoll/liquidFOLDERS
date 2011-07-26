@@ -561,10 +561,11 @@ struct LFStoreDescriptor
 #define LFIndexAccessError              20
 #define LFIndexCreateError              21
 #define LFNotEnoughFreeDiscSpace        22
-#define LFCannotDeleteFile              23
-#define LFCannotRenameFile              24
-#define LFCannotCopyIndex               25
-#define LFNoFileBody                    26
+#define LFCannotImportFile              23
+#define LFCannotDeleteFile              24
+#define LFCannotRenameFile              25
+#define LFCannotCopyIndex               26
+#define LFNoFileBody                    27
 
 
 // Structures and classes from LFCore.dll

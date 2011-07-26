@@ -12,29 +12,15 @@ LFFileImportList::LFFileImportList()
 	m_FileSize = 0;
 }
 
-LFFileImportList::~LFFileImportList()
-{
-	if (m_Items)
-		for (unsigned int a=0; a<m_ItemCount; a++)
-			if (m_Items[a])
-				free(m_Items[a]);
-}
-
 bool LFFileImportList::AddPath(wchar_t* path)
 {
 	assert(path);
 
-	size_t sz = wcslen(path)+1;
-	wchar_t* i = (wchar_t*)malloc(sz*sizeof(wchar_t));
-	wcscpy_s(i, sz, path);
+	LFFIL2_Item item;
+	ZeroMemory(&item, sizeof(item));
+	wcscpy_s(item.Path, MAX_PATH, path);
 
-	if (!DynArray::AddItem(i))
-	{
-		free(i);
-		return false;
-	}
-
-	return true;
+	return DynArray::AddItem(item);
 }
 
 void LFFileImportList::Resolve(bool recursive)
@@ -43,20 +29,20 @@ void LFFileImportList::Resolve(bool recursive)
 
 	while (a<m_ItemCount)
 	{
-		if (m_Items[a])
+		if (!m_Items[a].Processed)
 		{
-			DWORD attr = GetFileAttributes(m_Items[a]);
+			DWORD attr = GetFileAttributes(m_Items[a].Path);
 			if (attr==INVALID_FILE_ATTRIBUTES)
 			{
-				free(m_Items[a]);
-				m_Items[a] = NULL;
+				//m_Items[a].LastError = m_LastError = LFErrorInvalidItemType;
+				m_Items[a].Processed = true;
 			}
 			else
 				if (attr & FILE_ATTRIBUTE_DIRECTORY)
 				{
 					// Dateien suchen und hinzufügen
 					wchar_t DirSpec[MAX_PATH];
-					wcscpy_s(DirSpec, MAX_PATH, m_Items[a]);
+					wcscpy_s(DirSpec, MAX_PATH, m_Items[a].Path);
 					wcscat_s(DirSpec, MAX_PATH, L"\\*");
 
 					WIN32_FIND_DATAW FindFileData;
@@ -70,7 +56,7 @@ FileFound:
 							((!(FindFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) || (recursive)))
 						{
 							wchar_t fn[MAX_PATH];
-							wcscpy_s(fn, MAX_PATH, m_Items[a]);
+							wcscpy_s(fn, MAX_PATH, m_Items[a].Path);
 							wcscat_s(fn, MAX_PATH, L"\\");
 							wcscat_s(fn, MAX_PATH, FindFileData.cFileName);
 
@@ -83,8 +69,7 @@ FileFound:
 
 					FindClose(hFind);
 
-					free(m_Items[a]);
-					m_Items[a] = NULL;
+					m_Items[a].Processed = true;
 				}
 		}
 

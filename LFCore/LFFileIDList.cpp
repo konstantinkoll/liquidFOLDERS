@@ -15,7 +15,7 @@ bool LFFileIDList::AddFileID(char* StoreID, char* FileID, void* UserData)
 	assert(StoreID);
 	assert(FileID);
 
-	LFFIL_Item item;
+	LFFIL1_Item item;
 	ZeroMemory(&item, sizeof(item));
 	strcpy_s(item.StoreID, LFKeySize, StoreID);
 	strcpy_s(item.FileID, LFKeySize, FileID);

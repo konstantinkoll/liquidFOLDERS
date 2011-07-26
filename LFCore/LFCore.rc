@@ -228,10 +228,6 @@ BEGIN
                             "Der gewählte Store ist nicht eingebunden oder nicht vorhanden."
     IDS_LFErrorDriveNotReady "Der Datenträger ist nicht bereit!"
     IDS_LFErrorDriveWriteProtected "Der Datenträger ist schreibgeschützt."
-END
-
-STRINGTABLE 
-BEGIN
     IDS_LFErrorIllegalPhysFolder 
                             "Auf das physische Verzeichnis kann nicht zugegriffen werden."
     IDS_LFErrorRegistryError "Auf die Registry kann nicht zugegriffen werden."
@@ -256,12 +252,10 @@ BEGIN
                             "Der Index kann nicht erstellt werden (Datenträger schreibgeschützt ?)."
     IDS_LFErrorNotEnoughFreeDisc 
                             "Auf dem Datenträger ist nicht mehr ausreichend Speicherplatz frei."
+    IDS_LFErrorCannotImportFile 
+                            "Einige Dateien können nicht importiert werden, da sie noch in Gebrauch sind."
     IDS_LFErrorCannotDeleteFile 
                             "Einige Dateien können nicht gelöscht werden, da sie noch in Gebrauch sind."
-END
-
-STRINGTABLE 
-BEGIN
     IDS_LFErrorCannotRenameFile 
                             "Einige Dateien können nicht umbenannt werden, da sie noch in Gebrauch sind."
     IDS_LFErrorCannotCopyIndex 
@@ -507,10 +501,6 @@ BEGIN
                             "The selected store is not mounted or not present."
     IDS_LFErrorDriveNotReady "The drive is not ready!"
     IDS_LFErrorDriveWriteProtected "The drive is write protected."
-END
-
-STRINGTABLE 
-BEGIN
     IDS_LFErrorIllegalPhysFolder "The physical folder is not accessible."
     IDS_LFErrorRegistryError "The registry cannot be accessed."
     IDS_LFErrorIllegalKey   "The store or file ID is illegal."
@@ -533,12 +523,10 @@ BEGIN
     IDS_LFErrorIndexCreateError 
                             "The store index cannot be created (write protected disc ?)."
     IDS_LFErrorNotEnoughFreeDisc "There is not enough free disc space."
+    IDS_LFErrorCannotImportFile 
+                            "Some files cannot be imported because they are still in use."
     IDS_LFErrorCannotDeleteFile 
                             "Some files cannot be deleted because they are still in use."
-END
-
-STRINGTABLE 
-BEGIN
     IDS_LFErrorCannotRenameFile 
                             "Some files cannot be renamed because they are still in use."
     IDS_LFErrorCannotCopyIndex 
@@ -786,10 +774,6 @@ BEGIN
     IDS_LFErrorDriveNotReady "La unidad no está lista!"
     IDS_LFErrorDriveWriteProtected 
                             "La unidad está protegida contra escritura."
-END
-
-STRINGTABLE 
-BEGIN
     IDS_LFErrorIllegalPhysFolder "La carpeta física no es accessible."
     IDS_LFErrorRegistryError "No se puede acceder al registro."
     IDS_LFErrorIllegalKey   "El ID del store ó del archivo es ilegal."
@@ -813,12 +797,10 @@ BEGIN
                             "El índice del store no puede ser creado (¿disco protegido contra escritura?)."
     IDS_LFErrorNotEnoughFreeDisc 
                             "No hay suficiente espacio libre en el disco."
+    IDS_LFErrorCannotImportFile 
+                            "Algunos archivos no pueden ser importados porque aún se encuentran en uso."
     IDS_LFErrorCannotDeleteFile 
                             "Algunos archivos no pueden ser eliminados porque aún se encuentran en uso."
-END
-
-STRINGTABLE 
-BEGIN
     IDS_LFErrorCannotRenameFile 
                             "Algunos archivos no pueden ser renombrados porque aún se encuentran en uso."
     IDS_LFErrorCannotCopyIndex 
@@ -1066,10 +1048,6 @@ BEGIN
     IDS_LFErrorDriveNotReady "Le support de données n'est pas prêt!"
     IDS_LFErrorDriveWriteProtected 
                             "Le support de données est protégé en écriture."
-END
-
-STRINGTABLE 
-BEGIN
     IDS_LFErrorIllegalPhysFolder "Il n'y a pas accès au dossier physique."
     IDS_LFErrorRegistryError "Il n'ya pas accès au registry."
     IDS_LFErrorIllegalKey   "Le store- ou le fichier-ID est non valable."
@@ -1093,12 +1071,10 @@ BEGIN
                             "L'index ne peut pas être créé (Est-ce que le support de données est protégé en écriture ?)."
     IDS_LFErrorNotEnoughFreeDisc 
                             "Sur le support de données, la cellule de mémoire n'est plus libre suffisamment."
+    IDS_LFErrorCannotImportFile 
+                            "Certains fichiers ne peuvent pas être importés, puisqu'ils sont encore dans l'usage."
     IDS_LFErrorCannotDeleteFile 
                             "Certains fichiers ne peuvent pas être effacés, puisqu'ils sont encore dans l'usage."
-END
-
-STRINGTABLE 
-BEGIN
     IDS_LFErrorCannotRenameFile 
                             "Certains fichiers ne peuvent pas être renommées, puisqu'ils sont encore dans l'usage."
     IDS_LFErrorCannotCopyIndex 

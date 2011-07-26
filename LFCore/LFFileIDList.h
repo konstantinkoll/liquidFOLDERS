@@ -2,7 +2,7 @@
 #include "liquidFOLDERS.h"
 #include "DynArray.h"
 
-struct LFFIL_Item
+struct LFFIL1_Item
 {
 	char StoreID[LFKeySize];
 	char FileID[LFKeySize];
@@ -12,7 +12,7 @@ struct LFFIL_Item
 };
 
 
-class LFFileIDList : public DynArray<LFFIL_Item>
+class LFFileIDList : public DynArray<LFFIL1_Item>
 {
 public:
 	LFFileIDList();

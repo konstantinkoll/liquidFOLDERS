@@ -84,23 +84,24 @@ LFCore_API void LFTransactionImport(char* key, LFFileImportList* il, LFItemDescr
 	{
 		// Process
 		for (unsigned int a=0; a<il->m_ItemCount; a++)
-			if (il->m_Items[a])
+			if (!il->m_Items[a].Processed)
 			{
 				LFItemDescriptor* i = LFAllocItemDescriptor(it);
 				i->CoreAttributes.Flags = LFFlagNew;
-				SetNameExtAddFromFile(i, il->m_Items[a]);
-				SetAttributesFromFile(i, il->m_Items[a]);
+				SetNameExtAddFromFile(i, il->m_Items[a].Path);
+				SetAttributesFromFile(i, il->m_Items[a].Path);
 
 				wchar_t Path[2*MAX_PATH];
 				res = PrepareImport(slot, i, Path, 2*MAX_PATH);
 				if (res!=LFOk)
 				{
 					LFFreeItemDescriptor(i);
-					il->m_LastError = res;
+					il->m_Items[a].LastError = il->m_LastError = res;
+					il->m_Items[a].Processed = true;
 					break;
 				}
 
-				BOOL shres = move ? MoveFile(il->m_Items[a], Path) : CopyFile(il->m_Items[a], Path, FALSE);
+				BOOL shres = move ? MoveFile(il->m_Items[a].Path, Path) : CopyFile(il->m_Items[a].Path, Path, FALSE);
 				if (!shres)
 				{
 					wchar_t* LastBackslash = wcsrchr(Path, L'\\');
@@ -110,7 +111,8 @@ LFCore_API void LFTransactionImport(char* key, LFFileImportList* il, LFItemDescr
 					RemoveDir(Path);
 
 					LFFreeItemDescriptor(i);
-					il->m_LastError= LFIllegalPhysicalPath;
+					il->m_Items[a].LastError = il->m_LastError = LFCannotImportFile;
+					il->m_Items[a].Processed = true;
 					break;
 				}
 
@@ -122,6 +124,8 @@ LFCore_API void LFTransactionImport(char* key, LFFileImportList* il, LFItemDescr
 				if (idx2)
 					idx2->AddItem(i);
 				LFFreeItemDescriptor(i);
+
+				il->m_Items[a].Processed = true;
 			}
 
 		if (idx1)
