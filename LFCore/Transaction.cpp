@@ -97,33 +97,30 @@ LFCore_API void LFTransactionImport(char* key, LFFileImportList* il, LFItemDescr
 				{
 					LFFreeItemDescriptor(i);
 					il->m_Items[a].LastError = il->m_LastError = res;
-					il->m_Items[a].Processed = true;
-					break;
 				}
+				else
+					if (!(move ? MoveFile(il->m_Items[a].Path, Path) : CopyFile(il->m_Items[a].Path, Path, FALSE)))
+					{
+						wchar_t* LastBackslash = wcsrchr(Path, L'\\');
+						if (LastBackslash)
+							*(LastBackslash+1) = L'\0';
 
-				BOOL shres = move ? MoveFile(il->m_Items[a].Path, Path) : CopyFile(il->m_Items[a].Path, Path, FALSE);
-				if (!shres)
-				{
-					wchar_t* LastBackslash = wcsrchr(Path, L'\\');
-					if (LastBackslash)
-						*(LastBackslash+1) = L'\0';
+						RemoveDir(Path);
 
-					RemoveDir(Path);
+						LFFreeItemDescriptor(i);
+						il->m_Items[a].LastError = il->m_LastError = LFCannotImportFile;
+					}
+					else
+					{
+						il->m_FileCount++;
+						il->m_FileSize += i->CoreAttributes.FileSize;
 
-					LFFreeItemDescriptor(i);
-					il->m_Items[a].LastError = il->m_LastError = LFCannotImportFile;
-					il->m_Items[a].Processed = true;
-					break;
-				}
-
-				il->m_FileCount++;
-				il->m_FileSize += i->CoreAttributes.FileSize;
-
-				if (idx1)
-					idx1->AddItem(i);
-				if (idx2)
-					idx2->AddItem(i);
-				LFFreeItemDescriptor(i);
+						if (idx1)
+							idx1->AddItem(i);
+						if (idx2)
+							idx2->AddItem(i);
+						LFFreeItemDescriptor(i);
+					}
 
 				il->m_Items[a].Processed = true;
 			}
