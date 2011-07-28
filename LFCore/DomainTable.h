@@ -133,6 +133,7 @@ RegisteredFile Registry[] = {
 	{ "qt",     LFDomainVideos },
 	{ "qtm",    LFDomainVideos },
 	{ "ra",     LFDomainAudio },
+	{ "raf",    LFDomainPhotos },
 	{ "ram",    LFDomainAudio },
 	{ "rar",    LFDomainArchives },
 	{ "ras",    LFDomainPictures },
