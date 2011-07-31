@@ -130,7 +130,6 @@ public:
 	// IDropSource
 	virtual void InitDataObject(CInitDataObjectEventArgs& e);
 	virtual BOOL GetFileDescriptor(FILEDESCRIPTOR* fd);
-	virtual void OnExternalDrop(CNSEDragEventArgs& e);
 
 	// IDropTarget
 	virtual void DragEnter(CNSEDragEventArgs& e);

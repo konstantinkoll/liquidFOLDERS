@@ -1028,14 +1028,7 @@ void CMainView::OnBeginDragDrop()
 		LFDropSource* pDropSource = new LFDropSource();
 
 		DWORD dwEffect;
-		if (DoDragDrop(pDataObject, pDropSource, m_IsClipboard ? DROPEFFECT_COPY : DROPEFFECT_COPY | DROPEFFECT_MOVE, &dwEffect)==DRAGDROP_S_DROP)
-			if ((dwEffect & DROPEFFECT_MOVE) || (pDropSource->GetLastEffect() & DROPEFFECT_MOVE))
-			{
-				LFFileIDList* il = pDataObject->GetFileIDList();
-				LFTransactionDelete(il, false);
-				RemoveTransactedItems(il);
-				LFFreeFileIDList(il);
-			}
+		SHDoDragDrop(GetSafeHwnd(), pDataObject, pDropSource, DROPEFFECT_COPY , &dwEffect);
 
 		pDropSource->Release();
 		pDataObject->Release();

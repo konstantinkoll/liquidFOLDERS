@@ -1266,7 +1266,7 @@ void CFolderItem::InitDataObject(CInitDataObjectEventArgs& e)
 
 		LFFreeFileIDList(il);
 
-		e.dataObject->SetPreferredDropEffect(DROPEFFECT_MOVE);
+		e.dataObject->SetPreferredDropEffect(DROPEFFECT_COPY);
 	}
 }
 
@@ -1296,37 +1296,6 @@ BOOL CFolderItem::GetFileDescriptor(FILEDESCRIPTOR* fd)
 	}
 
 	return TRUE;
-}
-
-void CFolderItem::OnExternalDrop(CNSEDragEventArgs& e)
-{
-	if (e.data->ShouldDeleteSource() && e.data->DidValidDrop())
-	{
-		LFFileIDList* il = LFAllocFileIDList();
-
-		POSITION pos = e.data->GetChildren()->GetHeadPosition();
-		while (pos)
-		{
-			CNSEItem* item = (CNSEItem*)e.data->GetChildren()->GetNext(pos);
-
-			if (IS(item, CFileItem))
-				LFAddFileID(il, AS(item, CFileItem)->Item->StoreID, AS(item, CFileItem)->Item->CoreAttributes.FileID, item);
-		}
-
-		if (il->m_ItemCount)
-		{
-			LFTransactionDelete(il, false);
-
-			for (UINT a=0; a<il->m_ItemCount; a++)
-				if ((il->m_Items[a].Processed) && (il->m_Items[a].LastError==LFOk))
-					((CFileItem*)il->m_Items[a].UserData)->Delete();
-		}
-
-		LFErrorBox(il->m_LastError, GetForegroundWindow());
-		LFFreeFileIDList(il);
-
-		RefreshView();
-	}
 }
 
 
