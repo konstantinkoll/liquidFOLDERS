@@ -6,6 +6,9 @@
 #include <io.h>
 #include <malloc.h>
 #include <stdio.h>
+#include <winioctl.h>
+
+#define COMPRESSION
 
 
 CHeapfile::CHeapfile(wchar_t* Path, wchar_t* Filename, unsigned int _ElementSize, unsigned int _KeyOffset)
@@ -90,6 +93,27 @@ Create:
 					OpenStatus = HeapMaintenanceRequired;
 				}
 		}
+
+		// NTFS compression
+#ifdef COMPRESSION
+		BY_HANDLE_FILE_INFORMATION fi;
+		if (GetFileInformationByHandle(hFile, &fi))
+			if ((fi.dwFileAttributes & FILE_ATTRIBUTE_COMPRESSED)==0)
+			{
+				wchar_t Root[4];
+				wcsncpy_s(Root, 4, IdxFilename, 3);
+
+				wchar_t VolumeName[MAX_PATH+1];
+				DWORD Flags;
+				if (GetVolumeInformation(Root, VolumeName, MAX_PATH+1, NULL, NULL, &Flags, NULL, 0))
+					if (Flags & FS_FILE_COMPRESSION)
+					{
+						unsigned short mode = COMPRESSION_FORMAT_LZNT1;
+						DWORD returned = 0;
+						DeviceIoControl(hFile, FSCTL_SET_COMPRESSION, &mode, sizeof(mode), NULL, 0, &returned, NULL);
+					}
+			}
+#endif
 
 		AllocBuffer();
 	}
