@@ -47,6 +47,9 @@ LFCore_API void LFCreateSendTo(bool force=false);
 // Gibt ein Icon dieser DLL zurück
 LFCore_API HICON LFGetIcon(unsigned int ResID, int cx, int cy);
 
+// Initalisiert eine LFProgress-Datenstruktur
+LFCore_API void LFInitProgress(LFProgress* pProgress, HWND hWnd, unsigned int MajorCount=0);
+
 
 // Neuen LFAttributeDescriptor erzeugen
 LFCore_API LFAttributeDescriptor* LFAllocAttributeDescriptor();
@@ -406,7 +409,7 @@ LFCore_API LFFilter* LFLoadFilter(LFItemDescriptor* i);
 //
 
 // Importiert Dateien in den Store
-LFCore_API void LFTransactionImport(char* key, LFFileImportList* il, LFItemDescriptor* it, bool recursive, bool move);
+LFCore_API void LFTransactionImport(char* key, LFFileImportList* il, LFItemDescriptor* it, bool recursive, bool move, LFProgress* pProgrss=NULL);
 
 
 // Ändert bei allen Einträgen in tl bis zu 3 Attributwerte

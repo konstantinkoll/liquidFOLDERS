@@ -44,7 +44,7 @@ void UpdateStore(LFTransactionList* tl, unsigned int idx, LFVariantData* value, 
 }
 
 
-LFCore_API void LFTransactionImport(char* key, LFFileImportList* il, LFItemDescriptor* it, bool recursive, bool move)
+LFCore_API void LFTransactionImport(char* key, LFFileImportList* il, LFItemDescriptor* it, bool recursive, bool move, LFProgress* pProgress)
 {
 	assert(il);
 
@@ -72,7 +72,22 @@ LFCore_API void LFTransactionImport(char* key, LFFileImportList* il, LFItemDescr
 	}
 
 	// Importliste vorbereiten
+	if (pProgress)
+	{
+		wcscpy_s(pProgress->Object, 256, il->m_Items[0].Path);
+		pProgress->MinorCount = 1;
+		pProgress->MinorCurrent = 0;
+		if (SendMessage(pProgress->hWnd, WM_UPDATEPROGRESS, (WPARAM)pProgress, NULL))
+		{
+			il->m_LastError = LFCancel;
+			return;
+		}
+	}
+
 	il->Resolve(recursive);
+
+	if (pProgress)
+		pProgress->MinorCount = il->m_ItemCount;
 
 	// Import
 	CIndex* idx1;
@@ -86,6 +101,16 @@ LFCore_API void LFTransactionImport(char* key, LFFileImportList* il, LFItemDescr
 		for (unsigned int a=0; a<il->m_ItemCount; a++)
 			if (!il->m_Items[a].Processed)
 			{
+				if (pProgress)
+				{
+					wcscpy_s(pProgress->Object, 256, il->m_Items[a].Path);
+					if (SendMessage(pProgress->hWnd, WM_UPDATEPROGRESS, (WPARAM)pProgress, NULL))
+					{
+						res = LFCancel;
+						break;
+					}
+				}
+
 				LFItemDescriptor* i = LFAllocItemDescriptor(it);
 				i->CoreAttributes.Flags = LFFlagNew;
 				SetNameExtAddFromFile(i, il->m_Items[a].Path);
@@ -123,6 +148,16 @@ LFCore_API void LFTransactionImport(char* key, LFFileImportList* il, LFItemDescr
 					}
 
 				il->m_Items[a].Processed = true;
+
+				if (pProgress)
+				{
+					pProgress->MinorCurrent++;
+					if (SendMessage(pProgress->hWnd, WM_UPDATEPROGRESS, (WPARAM)pProgress, NULL))
+					{
+						res = LFCancel;
+						break;
+					}
+				}
 			}
 
 		if (idx1)

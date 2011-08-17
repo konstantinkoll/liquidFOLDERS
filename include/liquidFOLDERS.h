@@ -38,6 +38,7 @@ struct LIQUIDFILES
 
 struct LFProgress
 {
+	HWND hWnd;
 	wchar_t Object[256];
 	unsigned char ProgressState;
 	unsigned int MajorCurrent;			// Starting from 0, must not exceed max(0, MajorCount-1)

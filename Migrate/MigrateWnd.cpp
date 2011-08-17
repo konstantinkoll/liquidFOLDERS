@@ -12,6 +12,56 @@
 #include "ReportDlg.h"
 
 
+// Thread workers
+//
+
+struct WorkerParameters
+{
+	LFWorkerParameters Hdr;
+	CHAR StoreID[LFKeySize];
+	BOOL DeleteSource;
+	CMigrationList MigrationList;
+	CReportList Results[2];
+};
+
+DWORD WINAPI WorkerMigrate(void* lParam)
+{
+	WorkerParameters* wp = (WorkerParameters*)lParam;
+
+	LFProgress p;
+	LFInitProgress(&p, wp->Hdr.hWnd, wp->MigrationList.m_ItemCount);
+
+	for (UINT a=0; a<wp->MigrationList.m_ItemCount; a++)
+	{
+		LFTransactionImport(wp->StoreID, wp->MigrationList.m_Items[a].List, wp->MigrationList.m_Items[a].Template, wp->MigrationList.m_Items[a].Recursive==TRUE, wp->DeleteSource==TRUE, &p);
+		if (wp->MigrationList.m_Items[a].List->m_LastError==LFCancel)
+			break;
+
+		wp->Results[wp->MigrationList.m_Items[a].List->m_LastError==LFOk ? 0 : 1].AddItem(&wp->MigrationList.m_Items[a]);
+		p.MajorCurrent++;
+	}
+
+/*	for (UINT a=0; a<p.MinorCount; a++)
+	{
+		swprintf(p.Object, 256, _T("Item %d"), a+1);
+		if (SendMessage(wp->hWnd, WM_UPDATEPROGRESS, (WPARAM)&p, NULL))
+			break;
+
+		Sleep(1000);
+
+		p.MinorCurrent++;
+		if (SendMessage(wp->hWnd, WM_UPDATEPROGRESS, (WPARAM)&p, NULL))
+			break;
+	}*/
+
+	PostMessage(wp->Hdr.hWnd, WM_COMMAND, (WPARAM)IDOK, NULL);
+	return 0;
+}
+
+
+// CMigrateWnd
+//
+
 CMigrateWnd::CMigrateWnd()
 	: CGlasWindow()
 {
@@ -169,30 +219,29 @@ void CMigrateWnd::OnMigrate()
 	}
 
 	// Item template
-	CHAR StoreID[LFKeySize];
-	m_wndStore.GetStoreID(StoreID);
+	WorkerParameters wp;
+	m_wndStore.GetStoreID(wp.StoreID);
 
 	LFItemDescriptor* it = LFAllocItemDescriptor();
-	LFItemTemplateDlg dlg(this, it, StoreID, TRUE);
+	LFItemTemplateDlg dlg(this, it, wp.StoreID, TRUE);
 	if (dlg.DoModal()==IDCANCEL)
 	{
 		LFFreeItemDescriptor(it);
 		return;
 	}
 
-	strcpy_s(StoreID, LFKeySize, dlg.m_StoreID);
+	strcpy_s(wp.StoreID, LFKeySize, dlg.m_StoreID);
 	m_wndStore.SetItem(dlg.m_StoreID);
 	m_wndStore.UpdateWindow();
 
 	// Create snapshot
-	CMigrationList ml;
-	m_wndMainView.PopulateMigrationList(&ml, it);
+	m_wndMainView.PopulateMigrationList(&wp.MigrationList, it);
 	LFFreeItemDescriptor(it);
 
 	// UAC warning if source files should be deleted
 	CButton* btn = (CButton*)m_wndBottomArea.GetDlgItem(IDC_DELETESOURCE);
-	BOOL DeleteSource = btn->GetCheck();
-	if (DeleteSource)
+	wp.DeleteSource = btn->GetCheck();
+	if (wp.DeleteSource)
 	{
 		DeleteFilesDlg dlg(this);
 		if (dlg.DoModal()==IDCANCEL)
@@ -201,26 +250,18 @@ void CMigrateWnd::OnMigrate()
 			return;
 		}
 
-		DeleteSource = dlg.m_Delete;
-		btn->SetCheck(DeleteSource);
+		wp.DeleteSource = dlg.m_Delete;
+		btn->SetCheck(wp.DeleteSource);
 	}
 
-	// Start migration
-	CReportList Results[2];
-	for (UINT a=0; a<ml.m_ItemCount; a++)
-	{
-		LFTransactionImport(StoreID, ml.m_Items[a].List, ml.m_Items[a].Template, ml.m_Items[a].Recursive==TRUE, DeleteSource==TRUE);
-		if (ml.m_Items[a].List->m_LastError==LFCancel)
-			break;
-
-		Results[ml.m_Items[a].List->m_LastError==LFOk ? 0 : 1].AddItem(&ml.m_Items[a]);
-	}
+	// Migrate
+	LFDoWithProgress(WorkerMigrate, &wp.Hdr, this);
 
 	// Show report
-	ReportDlg repdlg(this, &Results[0], &Results[1]);
+	ReportDlg repdlg(this, &wp.Results[0], &wp.Results[1]);
 	if (repdlg.DoModal()==IDOK)
 		if (repdlg.m_UncheckMigrated)
-			m_wndMainView.UncheckMigrated(&Results[0]);
+			m_wndMainView.UncheckMigrated(&wp.Results[0]);
 }
 
 LRESULT CMigrateWnd::OnStoresChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)

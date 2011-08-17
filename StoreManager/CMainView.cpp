@@ -65,7 +65,7 @@ DWORD WINAPI WorkerTest(void* lParam)
 			break;
 	}
 
-	SendMessage(wp->hWnd, WM_COMMAND, (WPARAM)IDOK, NULL);
+	PostMessage(wp->hWnd, WM_COMMAND, (WPARAM)IDOK, NULL);
 	return 0;
 }
 #endif

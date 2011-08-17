@@ -219,6 +219,16 @@ LFCore_API HICON LFGetIcon(unsigned int ResID, int cx, int cy)
 	return (HICON)LoadImage(LFCoreModuleHandle, MAKEINTRESOURCE(ResID), IMAGE_ICON, cx, cy, LR_DEFAULTCOLOR);
 }
 
+LFCore_API void LFInitProgress(LFProgress* pProgress, HWND hWnd, unsigned int MajorCount)
+{
+	assert(pProgress);
+
+	ZeroMemory(pProgress, sizeof(LFProgress));
+	pProgress->hWnd = hWnd;
+	pProgress->ProgressState = LFProgressWorking;
+	pProgress->MajorCount = MajorCount;
+}
+
 
 LFCore_API LFAttributeDescriptor* LFAllocAttributeDescriptor()
 {
