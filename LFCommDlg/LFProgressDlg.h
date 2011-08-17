@@ -24,6 +24,9 @@ public:
 	virtual void DoDataExchange(CDataExchange* pDX);
 
 protected:
+	CString m_XofY_Singular;
+	CString m_XofY_Plural;
+
 	afx_msg BOOL OnInitDialog();
 	afx_msg void OnCancel();
 	afx_msg LRESULT OnUpdateProgress(WPARAM wParam, LPARAM lParam);
@@ -34,4 +37,5 @@ private:
 	LPTHREAD_START_ROUTINE p_ThreadProc;
 	LFWorkerParameters* p_Parameters;
 	CProgressCtrl m_wndProgress;
+	CString m_LastCounter;
 };
