@@ -201,6 +201,28 @@ LFCommDlg_API void SetCompareComboBox(CComboBox* pComboBox, UINT attr, INT reque
 }
 
 
+struct WorkerParameters
+{
+	LFWorkerParameters Hdr;
+	CHAR StoreID[LFKeySize];
+	BOOL DeleteSource;
+	LFFileImportList* FileImportList;
+	LFItemDescriptor* Template;
+};
+
+DWORD WINAPI WorkerImport(void* lParam)
+{
+	WorkerParameters* wp = (WorkerParameters*)lParam;
+
+	LFProgress p;
+	LFInitProgress(&p, wp->Hdr.hWnd);
+
+	LFTransactionImport(wp->StoreID, wp->FileImportList, wp->Template, true, wp->DeleteSource==TRUE, &p);
+
+	PostMessage(wp->Hdr.hWnd, WM_COMMAND, (WPARAM)IDOK, NULL);
+	return 0;
+}
+
 LFCommDlg_API void LFImportFolder(CHAR* StoreID, CWnd* pParentWnd, BOOL AllowChooseStore)
 {
 	CString caption;
@@ -211,22 +233,28 @@ LFCommDlg_API void LFImportFolder(CHAR* StoreID, CWnd* pParentWnd, BOOL AllowCho
 	LFBrowseForFolderDlg dlg(TRUE, TRUE, _T(""), pParentWnd, caption, hint);
 	if (dlg.DoModal()==IDOK)
 	{
-		LFFileImportList* il = LFAllocFileImportList();
-		LFAddImportPath(il, dlg.m_FolderPath);
+		WorkerParameters wp;
+		wp.FileImportList = LFAllocFileImportList();
+		LFAddImportPath(wp.FileImportList, dlg.m_FolderPath);
 
 		// Template füllen
-		LFItemDescriptor* it = LFAllocItemDescriptor();
-		LFItemTemplateDlg tdlg(pParentWnd, it, StoreID, AllowChooseStore);
+		wp.Template = LFAllocItemDescriptor();
+		LFItemTemplateDlg tdlg(pParentWnd, wp.Template, StoreID, AllowChooseStore);
 		if (tdlg.DoModal()!=IDCANCEL)
 		{
-			LFTransactionImport(StoreID, il, it, true, dlg.m_DeleteSource==TRUE);
-			LFErrorBox(il->m_LastError, pParentWnd ? pParentWnd->GetSafeHwnd() : NULL);
+			strcpy_s(wp.StoreID, LFKeySize, StoreID);
+			wp.DeleteSource = dlg.m_DeleteSource;
+
+			LFDoWithProgress(WorkerImport, (LFWorkerParameters*)&wp, pParentWnd);
+
+			LFErrorBox(wp.FileImportList->m_LastError, pParentWnd ? pParentWnd->GetSafeHwnd() : NULL);
 		}
 
-		LFFreeItemDescriptor(it);
-		LFFreeFileImportList(il);
+		LFFreeItemDescriptor(wp.Template);
+		LFFreeFileImportList(wp.FileImportList);
 	}
 }
+
 
 CString MakeHex(BYTE* x, UINT bCount)
 {
