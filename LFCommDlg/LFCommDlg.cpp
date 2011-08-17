@@ -350,3 +350,9 @@ void LFAbout(CString AppName, CString Build, UINT IconResID, CWnd* pParentWnd)
 	LFAboutDlg dlg(AppName, Build, IconResID, pParentWnd);
 	dlg.DoModal();
 }
+
+void LFDoWithProgress(LPTHREAD_START_ROUTINE pThreadProc, LFWorkerParameters* pParameters, CWnd* pParent)
+{
+	LFProgressDlg dlg(pThreadProc, pParameters, pParent);
+	dlg.DoModal();
+}

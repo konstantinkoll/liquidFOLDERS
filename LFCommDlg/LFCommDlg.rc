@@ -519,7 +519,7 @@ FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     PUSHBUTTON      "Abbrechen",IDCANCEL,192,61,50,14
     LTEXT           "X",IDC_CAPTION,7,7,235,8
-    CONTROL         "",IDC_PROGRESSBAR,"msctls_progress32",0,7,19,235,14
+    CONTROL         "",IDC_PROGRESSBAR,"msctls_progress32",PBS_SMOOTH,7,19,235,14
     LTEXT           "X",IDC_PROGRESSCOUNT,7,37,235,8
 END
 

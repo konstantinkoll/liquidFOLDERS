@@ -42,6 +42,7 @@ void CreateShortcut(LFTL_Item* i)
 // Thread workers
 //
 
+#ifdef _DEBUG
 DWORD WINAPI WorkerTest(void* lParam)
 {
 	LFWorkerParameters* wp = (LFWorkerParameters*)lParam;
@@ -67,6 +68,7 @@ DWORD WINAPI WorkerTest(void* lParam)
 	SendMessage(wp->hWnd, WM_COMMAND, (WPARAM)IDOK, NULL);
 	return 0;
 }
+#endif
 
 
 // CMainView
@@ -1781,7 +1783,7 @@ void CMainView::OnFileOpenWith()
 
 void CMainView::OnFileRemember()
 {
-	/*CMainWnd* pClipboard = theApp.GetClipboard();
+	CMainWnd* pClipboard = theApp.GetClipboard();
 	BOOL changes = FALSE;
 
 	INT idx = GetNextSelectedItem(-1);
@@ -1806,13 +1808,7 @@ void CMainView::OnFileRemember()
 	}
 
 	if (changes)
-		pClipboard->SendMessage(WM_COOKFILES);*/
-
-	LFWorkerParameters wp;
-	ZeroMemory(&wp, sizeof(wp));
-
-	LFProgressDlg dlg(WorkerTest, &wp, this);
-	dlg.DoModal();
+		pClipboard->SendMessage(WM_COOKFILES);
 }
 
 void CMainView::OnFileRemove()
