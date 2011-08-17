@@ -35,10 +35,19 @@ void LFDialog::DoDataExchange(CDataExchange* pDX)
 		DDX_Control(pDX, IDC_GROUPBOX, m_GroupBox);
 }
 
+CWnd* LFDialog::GetBottomWnd() const
+{
+	CWnd* pBottomWnd = GetDlgItem(IDOK);
+	if (!pBottomWnd)
+		pBottomWnd = GetDlgItem(IDCANCEL);
+
+	return pBottomWnd;
+}
+
 void LFDialog::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 {
-	CWnd* pOkWnd = GetDlgItem(IDOK);
-	if (!pOkWnd)
+	CWnd* pBottomWnd = GetBottomWnd();
+	if (!pBottomWnd)
 	{
 		rect.SetRectEmpty();
 		return;
@@ -48,7 +57,7 @@ void LFDialog::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 	MapDialogRect(&borders);
 
 	CRect btn;
-	pOkWnd->GetWindowRect(&btn);
+	pBottomWnd->GetWindowRect(&btn);
 	ScreenToClient(&btn);
 
 	CRect layout;
@@ -194,8 +203,12 @@ void LFDialog::GetLayoutRect(LPRECT lpRect) const
 	CRect borders(0, 0, 7, 7);
 	MapDialogRect(&borders);
 
+	CWnd* pBottomWnd = GetBottomWnd();
+	if (!pBottomWnd)
+		return;
+
 	CRect btn;
-	GetDlgItem(IDOK)->GetWindowRect(&btn);
+	pBottomWnd->GetWindowRect(&btn);
 	ScreenToClient(&btn);
 	lpRect->bottom = btn.top-borders.Height()-(m_Design==LFDS_Blue ? 3 : 1);
 

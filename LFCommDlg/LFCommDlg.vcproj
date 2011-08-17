@@ -587,6 +587,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\LFProgressDlg.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\LFSelectLocationGPSDlg.cpp"
 				>
 			</File>
@@ -830,6 +834,10 @@
 			</File>
 			<File
 				RelativePath=".\LFLicenseDlg.h"
+				>
+			</File>
+			<File
+				RelativePath=".\LFProgressDlg.h"
 				>
 			</File>
 			<File

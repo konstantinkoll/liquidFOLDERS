@@ -39,6 +39,36 @@ void CreateShortcut(LFTL_Item* i)
 }
 
 
+// Thread workers
+//
+
+DWORD WINAPI WorkerTest(void* lParam)
+{
+	LFWorkerParameters* wp = (LFWorkerParameters*)lParam;
+
+	LFProgress p;
+	ZeroMemory(&p, sizeof(p));
+	p.ProgressState = LFProgressWorking;
+	p.MinorCount = 5;
+
+	for (UINT a=0; a<p.MinorCount; a++)
+	{
+		swprintf(p.Object, 256, _T("Item %d"), a+1);
+		if (SendMessage(wp->hWnd, WM_UPDATEPROGRESS, (WPARAM)&p, NULL))
+			break;
+
+		Sleep(1000);
+
+		p.MinorCurrent++;
+		if (SendMessage(wp->hWnd, WM_UPDATEPROGRESS, (WPARAM)&p, NULL))
+			break;
+	}
+
+	SendMessage(wp->hWnd, WM_COMMAND, (WPARAM)IDOK, NULL);
+	return 0;
+}
+
+
 // CMainView
 //
 
@@ -1751,7 +1781,7 @@ void CMainView::OnFileOpenWith()
 
 void CMainView::OnFileRemember()
 {
-	CMainWnd* pClipboard = theApp.GetClipboard();
+	/*CMainWnd* pClipboard = theApp.GetClipboard();
 	BOOL changes = FALSE;
 
 	INT idx = GetNextSelectedItem(-1);
@@ -1776,7 +1806,13 @@ void CMainView::OnFileRemember()
 	}
 
 	if (changes)
-		pClipboard->SendMessage(WM_COOKFILES);
+		pClipboard->SendMessage(WM_COOKFILES);*/
+
+	LFWorkerParameters wp;
+	ZeroMemory(&wp, sizeof(wp));
+
+	LFProgressDlg dlg(WorkerTest, &wp, this);
+	dlg.DoModal();
 }
 
 void CMainView::OnFileRemove()

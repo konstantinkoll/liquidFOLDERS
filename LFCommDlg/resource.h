@@ -186,15 +186,18 @@
 #define IDM_CONDITION                   22500
 #define IDM_CONDITION_EDIT              22501
 #define IDM_CONDITION_DELETE            22502
+#define IDD_PROGRESS                    22600
+#define IDC_PROGRESSBAR                 22601
+#define IDC_PROGRESSCOUNT               22602
 #define IDI_SHIELD_VISTA                32519
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        2009
+#define _APS_NEXT_RESOURCE_VALUE        2010
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         2031
+#define _APS_NEXT_CONTROL_VALUE         2032
 #define _APS_NEXT_SYMED_VALUE           2007
 #endif
 #endif

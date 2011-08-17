@@ -38,6 +38,7 @@ protected:
 	virtual void OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect);
 	virtual void CheckLicenseKey(LFLicense* License=NULL);
 
+	CWnd* GetBottomWnd() const;
 	void SetBottomLeftControl(CWnd* pChildWnd);
 	void SetBottomLeftControl(UINT nID);
 	void AddBottomRightControl(CWnd* pChildWnd);

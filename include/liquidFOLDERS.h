@@ -15,7 +15,7 @@
 #include "..\\include\\LFBitArray.h"
 
 
-// Clipbaord
+// Clipboard
 
 #define CFSTR_LIQUIDFILES     "liquidFOLDERS.liquidFILES"
 
@@ -25,6 +25,25 @@ struct LIQUIDFILES
 {
 	DWORD pFiles;
 	UINT cFiles;
+};
+
+
+// Progress message
+
+#define WM_UPDATEPROGRESS     WM_USER
+
+#define LFProgressWorking     1
+#define LFProgressError       2
+#define LFProgressPaused      3
+
+struct LFProgress
+{
+	wchar_t Object[256];
+	unsigned char ProgressState;
+	unsigned int MajorCurrent;			// Starting from 0, must not exceed max(0, MajorCount-1)
+	unsigned int MajorCount;			// May be 0
+	unsigned int MinorCurrent;			// Starting from 0, must nox exceed max(0, MinorCount-1)
+	unsigned int MinorCount;			// Must be 1 or higher
 };
 
 
