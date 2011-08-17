@@ -41,19 +41,6 @@ DWORD WINAPI WorkerMigrate(void* lParam)
 		p.MajorCurrent++;
 	}
 
-/*	for (UINT a=0; a<p.MinorCount; a++)
-	{
-		swprintf(p.Object, 256, _T("Item %d"), a+1);
-		if (SendMessage(wp->hWnd, WM_UPDATEPROGRESS, (WPARAM)&p, NULL))
-			break;
-
-		Sleep(1000);
-
-		p.MinorCurrent++;
-		if (SendMessage(wp->hWnd, WM_UPDATEPROGRESS, (WPARAM)&p, NULL))
-			break;
-	}*/
-
 	PostMessage(wp->Hdr.hWnd, WM_COMMAND, (WPARAM)IDOK, NULL);
 	return 0;
 }
