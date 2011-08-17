@@ -1827,6 +1827,7 @@ void CTreeView::OnMouseMove(UINT nFlags, CPoint point)
 {
 	BOOL Dragging = (GetCapture()==this);
 	BOOL Pressed = FALSE;
+	BOOL CheckboxHot = m_CheckboxHot;
 	CPoint Item(-1, -1);
 	CPoint Expando(-1, -1);
 	BOOL OnItem = HitTest(point, &Item, Dragging ? &Pressed : &m_CheckboxHot, &Expando);
@@ -1848,7 +1849,7 @@ void CTreeView::OnMouseMove(UINT nFlags, CPoint point)
 
 	if (!Dragging)
 	{
-		if (m_HotItem!=Item)
+		if ((m_HotItem!=Item) || (CheckboxHot!=m_CheckboxHot))
 		{
 			InvalidateItem(m_HotItem);
 			m_HotItem = Item;
