@@ -26,6 +26,7 @@ struct WorkerParameters
 
 DWORD WINAPI WorkerMigrate(void* lParam)
 {
+	CoInitialize(NULL);
 	WorkerParameters* wp = (WorkerParameters*)lParam;
 
 	LFProgress p;
@@ -41,6 +42,7 @@ DWORD WINAPI WorkerMigrate(void* lParam)
 		p.MajorCurrent++;
 	}
 
+	CoUninitialize();
 	PostMessage(wp->Hdr.hWnd, WM_COMMAND, (WPARAM)IDOK, NULL);
 	return 0;
 }

@@ -45,6 +45,7 @@ void CreateShortcut(LFTL_Item* i)
 #ifdef _DEBUG
 DWORD WINAPI WorkerTest(void* lParam)
 {
+	CoInitialize(NULL);
 	LFWorkerParameters* wp = (LFWorkerParameters*)lParam;
 
 	LFProgress p;
@@ -65,6 +66,7 @@ DWORD WINAPI WorkerTest(void* lParam)
 			break;
 	}
 
+	CoUninitialize();
 	PostMessage(wp->hWnd, WM_COMMAND, (WPARAM)IDOK, NULL);
 	return 0;
 }
