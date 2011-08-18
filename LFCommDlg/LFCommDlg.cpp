@@ -212,6 +212,7 @@ struct WorkerParameters
 
 DWORD WINAPI WorkerImport(void* lParam)
 {
+	CoInitialize(NULL);
 	WorkerParameters* wp = (WorkerParameters*)lParam;
 
 	LFProgress p;
@@ -219,6 +220,7 @@ DWORD WINAPI WorkerImport(void* lParam)
 
 	LFTransactionImport(wp->StoreID, wp->FileImportList, wp->Template, true, wp->DeleteSource==TRUE, &p);
 
+	CoUninitialize();
 	PostMessage(wp->Hdr.hWnd, WM_COMMAND, (WPARAM)IDOK, NULL);
 	return 0;
 }
