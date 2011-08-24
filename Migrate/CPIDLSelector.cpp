@@ -230,6 +230,7 @@ void CPIDLDropdownWindow::OnDestroy()
 LRESULT CPIDLDropdownWindow::OnSetItem(WPARAM wParam, LPARAM /*lParam*/)
 {
 	theApp.m_ExpandAll = ((CButton*)m_wndBottomArea.GetDlgItem(IDC_EXPANDALL))->GetCheck();
+	theApp.WriteInt(_T("ExpandAll"), theApp.m_ExpandAll);
 
 	return GetOwner()->SendMessage(WM_SETITEM, NULL, (LPARAM)m_wndList.GetItemData((INT)wParam));
 }
@@ -237,6 +238,8 @@ LRESULT CPIDLDropdownWindow::OnSetItem(WPARAM wParam, LPARAM /*lParam*/)
 void CPIDLDropdownWindow::OnChooseFolder()
 {
 	theApp.m_ExpandAll = ((CButton*)m_wndBottomArea.GetDlgItem(IDC_EXPANDALL))->GetCheck();
+	theApp.WriteInt(_T("ExpandAll"), theApp.m_ExpandAll);
+
 	GetOwner()->SendMessage(WM_CLOSEDROPDOWN);
 
 	theApp.m_pMainWnd->SendMessage(WM_COMMAND, IDM_VIEW_SELECTROOT);

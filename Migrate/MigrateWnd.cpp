@@ -121,11 +121,12 @@ BEGIN_MESSAGE_MAP(CMigrateWnd, CGlasWindow)
 	ON_MESSAGE_VOID(WM_IDLEUPDATECMDUI, OnIdleUpdateCmdUI)
 	ON_COMMAND(IDM_VIEW_SELECTROOT, OnSelectRoot)
 	ON_COMMAND(IDC_MIGRATE, OnMigrate)
+	ON_NOTIFY(NM_SELCHANGED, 1, OnRootChanged)
+	ON_NOTIFY(NM_SELUPDATE, 1, OnRootUpdate)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoresChanged, OnStoresChanged)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoreAttributesChanged, OnStoresChanged)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->DefaultStoreChanged, OnStoresChanged)
-	ON_NOTIFY(NM_SELCHANGED, 1, OnRootChanged)
-	ON_NOTIFY(NM_SELUPDATE, 1, OnRootUpdate)
+	ON_REGISTERED_MESSAGE(theApp.m_WakeupMsg, OnWakeup)
 END_MESSAGE_MAP()
 
 INT CMigrateWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -265,15 +266,6 @@ void CMigrateWnd::OnMigrate()
 			m_wndMainView.UncheckMigrated(&wp.Results[0]);
 }
 
-LRESULT CMigrateWnd::OnStoresChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)
-{
-	m_wndStore.Update();
-
-	PostMessage(WM_IDLEUPDATECMDUI);
-
-	return NULL;
-}
-
 void CMigrateWnd::OnRootChanged(NMHDR* /*pNMHDR*/, LRESULT* /*pResult*/)
 {
 	if (m_wndFolder.IsEmpty())
@@ -294,4 +286,23 @@ void CMigrateWnd::OnRootUpdate(NMHDR* /*pNMHDR*/, LRESULT* /*pResult*/)
 	m_wndMainView.SetRoot(m_wndFolder.pidl, TRUE, FALSE);
 
 	PostMessage(WM_IDLEUPDATECMDUI);
+}
+
+LRESULT CMigrateWnd::OnStoresChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)
+{
+	m_wndStore.Update();
+
+	PostMessage(WM_IDLEUPDATECMDUI);
+
+	return NULL;
+}
+
+
+LRESULT CMigrateWnd::OnWakeup(WPARAM /*wParam*/, LPARAM /*lParam*/)
+{
+	CMigrateWnd* pFrame = new CMigrateWnd();
+	pFrame->Create();
+	pFrame->ShowWindow(SW_SHOW);
+
+	return 24878;
 }

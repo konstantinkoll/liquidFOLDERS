@@ -8,7 +8,7 @@
 #include "resource.h"
 
 
-static BOOL CALLBACK EnumWindowsProc(HWND hWnd, LPARAM lParam)
+BOOL CALLBACK EnumWindowsProc(HWND hWnd, LPARAM lParam)
 {
 	return (SendMessage(hWnd, theApp.m_WakeupMsg, NULL, lParam)!=24878);
 }

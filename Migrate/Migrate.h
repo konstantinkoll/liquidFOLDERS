@@ -17,7 +17,6 @@ public:
 	CMigrateApp();
 
 	virtual BOOL InitInstance();
-	virtual INT ExitInstance();
 
 	void AddFrame(CMigrateWnd* pFrame);
 	void KillFrame(CMigrateWnd* pVictim);
@@ -25,7 +24,6 @@ public:
 	CList<CMigrateWnd*> m_MainFrames;
 	UINT m_WakeupMsg;
 	BOOL m_ExpandAll;
-	BOOL m_DeleteImported;
 
 protected:
 	afx_msg void OnAppAbout();

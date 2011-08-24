@@ -8,7 +8,7 @@
 #include "resource.h"
 
 
-static BOOL CALLBACK EnumWindowsProc(HWND hWnd, LPARAM lParam)
+BOOL CALLBACK EnumWindowsProc(HWND hWnd, LPARAM lParam)
 {
 	return (SendMessage(hWnd, theApp.m_WakeupMsg, NULL, lParam)!=24878);
 }
@@ -47,21 +47,12 @@ BOOL CMigrateApp::InitInstance()
 	// Registry auslesen
 	SetRegistryBase(_T("Settings"));
 	m_ExpandAll = GetInt(_T("ExpandAll"), FALSE);
-	m_DeleteImported = GetInt(_T("DeleteImported"), FALSE);
 
-	m_pMainWnd = new CMigrateWnd();
-	((CMigrateWnd*)m_pMainWnd)->Create();
-	m_pMainWnd->ShowWindow(SW_SHOW);
+	CMigrateWnd* pFrame = new CMigrateWnd();
+	pFrame->Create();
+	pFrame->ShowWindow(SW_SHOW);
 
 	return TRUE;
-}
-
-INT CMigrateApp::ExitInstance()
-{
-	WriteInt(_T("ExpandAll"), m_ExpandAll);
-	WriteInt(_T("DeleteImported"), m_DeleteImported);
-
-	return LFApplication::ExitInstance();
 }
 
 
