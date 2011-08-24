@@ -126,14 +126,13 @@ BEGIN_MESSAGE_MAP(CFileDropWnd, CGlasWindow)
 	ON_COMMAND(IDM_STORE_MAINTAIN, OnStoreMaintain)
 	ON_COMMAND(IDM_STORE_SHORTCUT, OnStoreShortcut)
 	ON_COMMAND(IDM_STORE_PROPERTIES, OnStoreProperties)
-	ON_COMMAND(ID_APP_ABOUT, OnAbout)
 	ON_COMMAND(ID_APP_EXIT, OnQuit)
 	ON_UPDATE_COMMAND_UI(ID_APP_OPENSTORE, OnUpdateCommands)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_STORE_MAKEDEFAULT, IDM_STORE_PROPERTIES, OnUpdateCommands)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoresChanged, OnStoresChanged)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoreAttributesChanged, OnStoresChanged)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->DefaultStoreChanged, OnStoresChanged)
-	ON_REGISTERED_MESSAGE(theApp.WakeupMsg, OnWakeup)
+	ON_REGISTERED_MESSAGE(theApp.m_WakeupMsg, OnWakeup)
 END_MESSAGE_MAP()
 
 INT CFileDropWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -477,12 +476,6 @@ void CFileDropWnd::OnStoreProperties()
 void CFileDropWnd::OnAlwaysOnTop()
 {
 	SetWindowRect(-1, -1, !m_AlwaysOnTop);
-}
-
-void CFileDropWnd::OnAbout()
-{
-	TIMESTAMP;
-	LFAbout(_T("FileDrop"), Timestamp, IDB_ABOUTICON, this);
 }
 
 void CFileDropWnd::OnQuit()

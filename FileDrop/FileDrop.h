@@ -16,7 +16,11 @@ public:
 
 	virtual BOOL InitInstance();
 
-	UINT WakeupMsg;
+	UINT m_WakeupMsg;
+
+protected:
+	afx_msg void OnAppAbout();
+	DECLARE_MESSAGE_MAP()
 };
 
 extern CFileDropApp theApp;

@@ -8,19 +8,17 @@
 #include "resource.h"
 
 
-static BOOL CALLBACK EnumWindowsProc(HWND hWnd, LPARAM /*lParam*/)
+static BOOL CALLBACK EnumWindowsProc(HWND hWnd, LPARAM lParam)
 {
-	BOOL res = TRUE;
-
-	CWnd* wnd = CWnd::FromHandle(hWnd);
-
-	CString caption;
-	wnd->GetWindowText(caption);
-	if (caption==_T("FileDrop"))
-		res = (wnd->SendMessage(theApp.WakeupMsg, NULL, NULL)!=24878);
-
-	return res;
+	return (SendMessage(hWnd, theApp.m_WakeupMsg, NULL, lParam)!=24878);
 }
+
+
+// CFileDropApp
+
+BEGIN_MESSAGE_MAP(CFileDropApp, LFApplication)
+	ON_COMMAND(ID_APP_ABOUT, OnAppAbout)
+END_MESSAGE_MAP()
 
 
 // CFileDropApp-Erstellung
@@ -28,7 +26,7 @@ static BOOL CALLBACK EnumWindowsProc(HWND hWnd, LPARAM /*lParam*/)
 CFileDropApp::CFileDropApp()
 	: LFApplication(TRUE)
 {
-	WakeupMsg = RegisterWindowMessageA("liquidFOLDERS.FileDrop.Wakeup");
+	m_WakeupMsg = RegisterWindowMessage(_T("liquidFOLDERS.FileDrop.Wakeup"));
 }
 
 
@@ -46,6 +44,7 @@ BOOL CFileDropApp::InitInstance()
 
 	LFApplication::InitInstance();
 
+	// Registry auslesen
 	SetRegistryBase(_T("Settings"));
 
 	m_pMainWnd = new CFileDropWnd();
@@ -53,4 +52,10 @@ BOOL CFileDropApp::InitInstance()
 	m_pMainWnd->ShowWindow(SW_SHOW);
 
 	return TRUE;
+}
+
+void CFileDropApp::OnAppAbout()
+{
+	TIMESTAMP;
+	LFAbout(_T("FileDrop"), Timestamp, IDB_ABOUTICON, m_pMainWnd);
 }

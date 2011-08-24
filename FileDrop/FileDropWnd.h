@@ -56,7 +56,6 @@ protected:
 	afx_msg void OnStoreShortcut();
 	afx_msg void OnStoreProperties();
 	afx_msg void OnAlwaysOnTop();
-	afx_msg void OnAbout();
 	afx_msg void OnQuit();
 	afx_msg void OnUpdateCommands(CCmdUI* pCmdUI);
 	DECLARE_MESSAGE_MAP()
