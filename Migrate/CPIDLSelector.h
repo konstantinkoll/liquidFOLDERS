@@ -2,6 +2,7 @@
 // CPIDLSelector.h: Schnittstelle der Klasse CPIDLSelector
 //
 
+#pragma once
 #include "LFCommDlg.h"
 
 

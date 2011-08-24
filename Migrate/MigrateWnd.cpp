@@ -116,6 +116,7 @@ void CMigrateWnd::AdjustLayout()
 
 BEGIN_MESSAGE_MAP(CMigrateWnd, CGlasWindow)
 	ON_WM_CREATE()
+	ON_WM_DESTROY()
 	ON_WM_SETFOCUS()
 	ON_MESSAGE_VOID(WM_IDLEUPDATECMDUI, OnIdleUpdateCmdUI)
 	ON_COMMAND(IDM_VIEW_SELECTROOT, OnSelectRoot)
@@ -131,6 +132,8 @@ INT CMigrateWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if (CGlasWindow::OnCreate(lpCreateStruct)==-1)
 		return -1;
+
+	theApp.AddFrame(this);
 
 	// Folder selector
 	CString hint;
@@ -166,8 +169,17 @@ INT CMigrateWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	return 0;
 }
 
+void CMigrateWnd::OnDestroy()
+{
+	CGlasWindow::OnDestroy();
+	theApp.KillFrame(this);
+}
+
 void CMigrateWnd::OnSetFocus(CWnd* /*pOldWnd*/)
 {
+	theApp.m_pMainWnd = this;
+	theApp.m_pActiveWnd = NULL;
+
 	if (IsWindow(m_wndMainView))
 		m_wndMainView.SetFocus();
 }

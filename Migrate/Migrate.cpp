@@ -8,6 +8,12 @@
 #include "resource.h"
 
 
+static BOOL CALLBACK EnumWindowsProc(HWND hWnd, LPARAM lParam)
+{
+	return (SendMessage(hWnd, theApp.m_WakeupMsg, NULL, lParam)!=24878);
+}
+
+
 // CMigrateApp
 
 BEGIN_MESSAGE_MAP(CMigrateApp, LFApplication)
@@ -20,6 +26,7 @@ END_MESSAGE_MAP()
 CMigrateApp::CMigrateApp()
 	: LFApplication(TRUE)
 {
+	m_WakeupMsg = RegisterWindowMessage(_T("liquidFOLDERS.Migrate.NewWindow"));
 }
 
 
@@ -32,6 +39,9 @@ CMigrateApp theApp;
 
 BOOL CMigrateApp::InitInstance()
 {
+	if (!EnumWindows((WNDENUMPROC)EnumWindowsProc, NULL))
+		return FALSE;
+
 	LFApplication::InitInstance();
 
 	// Registry auslesen
@@ -52,6 +62,31 @@ INT CMigrateApp::ExitInstance()
 	WriteInt(_T("DeleteImported"), m_DeleteImported);
 
 	return LFApplication::ExitInstance();
+}
+
+
+void CMigrateApp::AddFrame(CMigrateWnd* pFrame)
+{
+	m_MainFrames.AddTail(pFrame);
+	m_pMainWnd = pFrame;
+	m_pActiveWnd = NULL;
+}
+
+void CMigrateApp::KillFrame(CMigrateWnd* pVictim)
+{
+	for (POSITION p=m_MainFrames.GetHeadPosition(); p; )
+	{
+		POSITION pl = p;
+		CMigrateWnd* pFrame = m_MainFrames.GetNext(p);
+		if (pFrame==pVictim)
+		{
+			m_MainFrames.RemoveAt(pl);
+		}
+		else
+		{
+			m_pMainWnd = pFrame;
+		}
+	}
 }
 
 void CMigrateApp::OnAppAbout()
