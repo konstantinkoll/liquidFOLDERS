@@ -40,6 +40,7 @@ public:
 
 	CList<CMainWnd*> m_MainFrames;
 	CMainWnd* p_Clipboard;
+	UINT m_WakeupMsg;
 	CString m_PathGoogleEarth;
 	CFormatCache m_FileFormats;
 	LFViewParameters m_Views[LFContextCount];
@@ -70,6 +71,8 @@ public:
 	BOOL m_TagcloudShowLegend;
 
 protected:
+	BOOL m_AppInitialized;
+
 	BOOL SanitizeSortBy(LFViewParameters* vp, INT Context);
 	BOOL SanitizeViewMode(LFViewParameters* vp, INT Context);
 	void GetBinary(LPCTSTR lpszEntry, void* pData, UINT size);

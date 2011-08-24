@@ -374,6 +374,8 @@ BEGIN_MESSAGE_MAP(CMainWnd, CGlasWindow)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoreAttributesChanged, OnStoreAttributesChanged)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->DefaultStoreChanged, OnStoresChanged)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->ItemsDropped, OnItemsDropped)
+
+	ON_REGISTERED_MESSAGE(theApp.m_WakeupMsg, OnWakeup)
 END_MESSAGE_MAP()
 
 INT CMainWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -812,4 +814,14 @@ LRESULT CMainWnd::OnItemsDropped(WPARAM /*wParam*/, LPARAM /*lParam*/)
 		}
 
 	return NULL;
+}
+
+
+LRESULT CMainWnd::OnWakeup(WPARAM /*wParam*/, LPARAM /*lParam*/)
+{
+	CMainWnd* pFrame = new CMainWnd();
+	pFrame->CreateRoot();
+	pFrame->ShowWindow(SW_SHOW);
+
+	return 24878;
 }

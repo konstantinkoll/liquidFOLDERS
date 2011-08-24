@@ -11,6 +11,12 @@
 #include "MenuIcons.h"
 
 
+BOOL CALLBACK EnumWindowsProc(HWND hWnd, LPARAM lParam)
+{
+	return (SendMessage(hWnd, theApp.m_WakeupMsg, NULL, lParam)!=24878);
+}
+
+
 // CStoreManagerApp
 
 BEGIN_MESSAGE_MAP(CStoreManagerApp, LFApplication)
@@ -23,7 +29,9 @@ END_MESSAGE_MAP()
 CStoreManagerApp::CStoreManagerApp()
 	: LFApplication(TRUE)
 {
+	m_WakeupMsg = RegisterWindowMessage(_T("liquidFOLDERS.StoreManager.NewWindow"));
 	m_NagCounter = 3;
+	m_AppInitialized = FALSE;
 }
 
 
@@ -36,6 +44,9 @@ CStoreManagerApp theApp;
 
 BOOL CStoreManagerApp::InitInstance()
 {
+	if (!EnumWindows((WNDENUMPROC)EnumWindowsProc, NULL))
+		return FALSE;
+
 	LFApplication::InitInstance();
 
 	for (UINT a=0; a<LFContextCount; a++)
@@ -126,38 +137,43 @@ BOOL CStoreManagerApp::InitInstance()
 Finish:
 	pFrame->ShowWindow(SW_SHOW);
 
+	m_AppInitialized = TRUE;
+
 	return TRUE;
 }
 
 INT CStoreManagerApp::ExitInstance()
 {
-	for (INT a=0; a<LFContextCount; a++)
+	if (m_AppInitialized)
 	{
-		SaveViewOptions(a);
-		delete m_AllowedViews[a];
-	}
+		for (INT a=0; a<LFContextCount; a++)
+		{
+			SaveViewOptions(a);
+			delete m_AllowedViews[a];
+		}
 
-	SetRegistryBase(_T("Settings"));
-	WriteInt(_T("ShowFilterPane"), m_ShowFilterPane);
-	WriteInt(_T("ShowInspectorPane"), m_ShowInspectorPane);
-	WriteInt(_T("FilterWidth"), m_FilterWidth);
-	WriteInt(_T("InspectorWidth"), m_InspectorWidth);
-	WriteInt(_T("ShowEmptyVolumes"), m_ShowEmptyVolumes);
-	WriteInt(_T("ShowEmptyDomains"), m_ShowEmptyDomains);
-	WriteInt(_T("ShowStatistics"), m_ShowStatistics);
-	WriteInt(_T("CalendarShowStatistics"), m_CalendarShowStatistics);
-	WriteInt(_T("CalendarShowCaptions"), m_CalendarShowCaptions);
-	WriteInt(_T("CalendarShowEmptyDays"), m_CalendarShowEmptyDays);
-	WriteInt(_T("GlobeHQModel"), m_GlobeHQModel);
-	WriteInt(_T("GlobeLighting"), m_GlobeLighting);
-	WriteInt(_T("GlobeAtmosphere"), m_GlobeAtmosphere);
-	WriteInt(_T("GlobeShadows"), m_GlobeShadows);
-	WriteInt(_T("GlobeBlackBackground"), m_GlobeBlackBackground);
-	WriteInt(_T("GlobeShowViewport"), m_GlobeShowViewport);
-	WriteInt(_T("GlobeShowCrosshairs"), m_GlobeShowCrosshairs);
-	WriteInt(_T("TagcloudShowLegend"), m_TagcloudShowLegend);
-	WriteInt(_T("TextureSize"), m_nTextureSize);
-	WriteInt(_T("MaxTextureSize"), m_nMaxTextureSize);
+		SetRegistryBase(_T("Settings"));
+		WriteInt(_T("ShowFilterPane"), m_ShowFilterPane);
+		WriteInt(_T("ShowInspectorPane"), m_ShowInspectorPane);
+		WriteInt(_T("FilterWidth"), m_FilterWidth);
+		WriteInt(_T("InspectorWidth"), m_InspectorWidth);
+		WriteInt(_T("ShowEmptyVolumes"), m_ShowEmptyVolumes);
+		WriteInt(_T("ShowEmptyDomains"), m_ShowEmptyDomains);
+		WriteInt(_T("ShowStatistics"), m_ShowStatistics);
+		WriteInt(_T("CalendarShowStatistics"), m_CalendarShowStatistics);
+		WriteInt(_T("CalendarShowCaptions"), m_CalendarShowCaptions);
+		WriteInt(_T("CalendarShowEmptyDays"), m_CalendarShowEmptyDays);
+		WriteInt(_T("GlobeHQModel"), m_GlobeHQModel);
+		WriteInt(_T("GlobeLighting"), m_GlobeLighting);
+		WriteInt(_T("GlobeAtmosphere"), m_GlobeAtmosphere);
+		WriteInt(_T("GlobeShadows"), m_GlobeShadows);
+		WriteInt(_T("GlobeBlackBackground"), m_GlobeBlackBackground);
+		WriteInt(_T("GlobeShowViewport"), m_GlobeShowViewport);
+		WriteInt(_T("GlobeShowCrosshairs"), m_GlobeShowCrosshairs);
+		WriteInt(_T("TagcloudShowLegend"), m_TagcloudShowLegend);
+		WriteInt(_T("TextureSize"), m_nTextureSize);
+		WriteInt(_T("MaxTextureSize"), m_nMaxTextureSize);
+	}
 
 	return LFApplication::ExitInstance();
 }

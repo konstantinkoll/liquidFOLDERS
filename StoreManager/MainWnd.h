@@ -89,6 +89,8 @@ protected:
 	afx_msg LRESULT OnStoresChanged(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnStoreAttributesChanged(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnItemsDropped(WPARAM wParam, LPARAM lParam);
+
+	afx_msg LRESULT OnWakeup(WPARAM wParam, LPARAM lParam);
 	DECLARE_MESSAGE_MAP()
 
 private:
