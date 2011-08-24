@@ -22,9 +22,25 @@ class CStoreManagerApp : public LFApplication
 public:
 	CStoreManagerApp();
 
-	CString m_PathGoogleEarth;
+	virtual BOOL InitInstance();
+	virtual INT ExitInstance();
+	virtual BOOL ShowNagScreen();
+
+	void AddFrame(CMainWnd* pFrame);
+	void KillFrame(CMainWnd* pVictim);
+	CMainWnd* GetClipboard();
+
+	HBITMAP SetContextMenuIcon(CMenu* pMenu, UINT CmdID, UINT ResID);
+
+	void Broadcast(INT Context, INT View, UINT cmdMsg);
+	void UpdateSortOptions(INT Context);
+	void UpdateViewOptions(INT Context=-1, INT View=-1);
+	void Reload(INT Context);
+	void UpdateFooter(INT Context=-1, INT View=-1);
+
 	CList<CMainWnd*> m_MainFrames;
 	CMainWnd* p_Clipboard;
+	CString m_PathGoogleEarth;
 	CFormatCache m_FileFormats;
 	LFViewParameters m_Views[LFContextCount];
 	LFBitArray* m_AllowedViews[LFContextCount];
@@ -52,23 +68,6 @@ public:
 	BOOL m_GlobeShowViewport;
 	BOOL m_GlobeShowCrosshairs;
 	BOOL m_TagcloudShowLegend;
-
-	virtual BOOL InitInstance();
-	virtual INT ExitInstance();
-	virtual BOOL ShowNagScreen();
-
-	void AddFrame(CMainWnd* pFrame);
-	void KillFrame(CMainWnd* pVictim);
-	CMainWnd* GetClipboard();
-	void CloseAllFrames(BOOL LeaveOne=FALSE);
-
-	HBITMAP SetContextMenuIcon(CMenu* pMenu, UINT CmdID, UINT ResID);
-
-	void Broadcast(INT Context, INT View, UINT cmdMsg);
-	void UpdateSortOptions(INT Context);
-	void UpdateViewOptions(INT Context=-1, INT View=-1);
-	void Reload(INT Context);
-	void UpdateFooter(INT Context=-1, INT View=-1);
 
 protected:
 	BOOL SanitizeSortBy(LFViewParameters* vp, INT Context);

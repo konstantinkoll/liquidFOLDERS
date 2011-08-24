@@ -214,29 +214,6 @@ CMainWnd* CStoreManagerApp::GetClipboard()
 	return p_Clipboard;
 }
 
-void CStoreManagerApp::CloseAllFrames(BOOL LeaveOne)
-{
-	MSG msg;
-
-	// Nachrichten löschen
-	while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
-		DispatchMessage(&msg);
-
-	for (POSITION p=m_MainFrames.GetHeadPosition(); p; )
-	{
-		CMainWnd* pFrame = m_MainFrames.GetNext(p);
-		if (pFrame!=m_pMainWnd)
-			pFrame->PostMessage(WM_CLOSE);
-
-		// Nachrichten löschen
-		while(PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
-			DispatchMessage(&msg);
-	}
-
-	if ((m_pMainWnd) && (!LeaveOne))
-		m_pMainWnd->PostMessage(WM_CLOSE);
-}
-
 void CStoreManagerApp::OnAppAbout()
 {
 	CString AppName;
