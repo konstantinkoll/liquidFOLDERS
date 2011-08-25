@@ -44,8 +44,10 @@ CStoreManagerApp theApp;
 
 BOOL CStoreManagerApp::InitInstance()
 {
-	if (!EnumWindows((WNDENUMPROC)EnumWindowsProc, NULL))
-		return FALSE;
+	// Parameter
+	if (__argc!=2)
+		if (!EnumWindows((WNDENUMPROC)EnumWindowsProc, NULL))
+			return FALSE;
 
 	LFApplication::InitInstance();
 
