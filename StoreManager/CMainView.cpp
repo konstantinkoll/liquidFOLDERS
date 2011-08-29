@@ -1058,7 +1058,7 @@ void CMainView::OnBeginDragDrop()
 	{
 		m_DropTarget.SetDragging(TRUE);
 
-		LFDataObject* pDataObject = new LFDataObject(tl);
+		LFTransactionDataObject* pDataObject = new LFTransactionDataObject(tl);
 		LFDropSource* pDropSource = new LFDropSource();
 
 		DWORD dwEffect;
@@ -1142,7 +1142,7 @@ LRESULT CMainView::OnSendTo(WPARAM wParam, LPARAM /*lParam*/)
 						if (tl->m_ItemCount)
 						{
 							CWaitCursor wait;
-							LFDataObject* pDataObject = new LFDataObject(tl);
+							LFTransactionDataObject* pDataObject = new LFTransactionDataObject(tl);
 
 							POINTL pt = { 0, 0 };
 							DWORD dwEffect = DROPEFFECT_COPY;
@@ -1698,7 +1698,7 @@ void CMainView::OnStoreShortcut()
 	INT idx = GetSelectedItem();
 	if (idx!=-1)
 		if (LFAskCreateShortcut(GetSafeHwnd()))
-			LFCreateShortcutForStore(p_CookedFiles->m_Items[idx]);
+			LFCreateDesktopShortcutForStore(p_CookedFiles->m_Items[idx]);
 }
 
 void CMainView::OnStoreDelete()
@@ -1826,7 +1826,7 @@ void CMainView::OnFileCopy()
 	if (tl->m_ItemCount)
 	{
 		CWaitCursor wait;
-		LFDataObject* pDataObject = new LFDataObject(tl);
+		LFTransactionDataObject* pDataObject = new LFTransactionDataObject(tl);
 
 		OleSetClipboard(pDataObject);
 		OleFlushClipboard();

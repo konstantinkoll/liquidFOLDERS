@@ -1,9 +1,9 @@
 
-// LFDataObject.cpp: Implementierung der Klasse LFDataObject
+// LFTransactionDataObject.cpp: Implementierung der Klasse LFTransactionDataObject
 //
 
 #include "stdafx.h"
-#include "LFDataObject.h"
+#include "LFTransactionDataObject.h"
 #include "LFApplication.h"
 
 
@@ -30,22 +30,22 @@ BOOL DuplicateGlobalMemory(const HGLOBAL hSrc, HGLOBAL& hDst)
 }
 
 
-// LFDataObject
+// LFTransactionDataObject
 //
 
-LFDataObject::LFDataObject(LFTransactionList* tl)
+LFTransactionDataObject::LFTransactionDataObject(LFTransactionList* tl)
 {
 	m_lRefCount = 1;
 	m_hDropFiles = LFCreateDropFiles(tl);
 	m_hLiquidFiles = LFCreateLiquidFiles(tl);
 }
 
-LFFileIDList* LFDataObject::GetFileIDList()
+LFFileIDList* LFTransactionDataObject::GetFileIDList()
 {
 	return LFAllocFileIDList(m_hLiquidFiles);
 }
 
-STDMETHODIMP LFDataObject::QueryInterface(REFIID iid, void** ppvObject)
+STDMETHODIMP LFTransactionDataObject::QueryInterface(REFIID iid, void** ppvObject)
 {
 	if ((iid==IID_IDataObject) || (iid==IID_IUnknown))
 	{
@@ -58,12 +58,12 @@ STDMETHODIMP LFDataObject::QueryInterface(REFIID iid, void** ppvObject)
 	return E_NOINTERFACE;
 }
 
-STDMETHODIMP_(ULONG) STDMETHODCALLTYPE LFDataObject::AddRef()
+STDMETHODIMP_(ULONG) STDMETHODCALLTYPE LFTransactionDataObject::AddRef()
 {
 	return InterlockedIncrement(&m_lRefCount);
 }
 
-STDMETHODIMP_(ULONG) STDMETHODCALLTYPE LFDataObject::Release()
+STDMETHODIMP_(ULONG) STDMETHODCALLTYPE LFTransactionDataObject::Release()
 {
 	LONG Count = InterlockedDecrement(&m_lRefCount);
 	if (!Count)
@@ -79,7 +79,7 @@ STDMETHODIMP_(ULONG) STDMETHODCALLTYPE LFDataObject::Release()
 	return Count;
 }
 
-STDMETHODIMP LFDataObject::GetData(FORMATETC* pFormatEtc, STGMEDIUM* pMedium)
+STDMETHODIMP LFTransactionDataObject::GetData(FORMATETC* pFormatEtc, STGMEDIUM* pMedium)
 {
 	if ((!pFormatEtc) || (!pMedium))
 		return DV_E_FORMATETC;
@@ -109,25 +109,25 @@ STDMETHODIMP LFDataObject::GetData(FORMATETC* pFormatEtc, STGMEDIUM* pMedium)
 	return DV_E_FORMATETC;
 }
 
-STDMETHODIMP LFDataObject::GetDataHere(FORMATETC* /*pFormatEtc*/, STGMEDIUM* /*pMedium*/)
+STDMETHODIMP LFTransactionDataObject::GetDataHere(FORMATETC* /*pFormatEtc*/, STGMEDIUM* /*pMedium*/)
 {
 	return DATA_E_FORMATETC;
 }
 
-STDMETHODIMP LFDataObject::QueryGetData(FORMATETC* pFormatEtc)
+STDMETHODIMP LFTransactionDataObject::QueryGetData(FORMATETC* pFormatEtc)
 {
 	return ((pFormatEtc->cfFormat==CF_HDROP) || (pFormatEtc->cfFormat==((LFApplication*)AfxGetApp())->CF_HLIQUID)) &&
 		(pFormatEtc->tymed & TYMED_HGLOBAL) ? S_OK : DV_E_FORMATETC;
 }
 
-STDMETHODIMP LFDataObject::GetCanonicalFormatEtc(FORMATETC* /*pFormatEtcIn*/, FORMATETC* pFormatEtcOut)
+STDMETHODIMP LFTransactionDataObject::GetCanonicalFormatEtc(FORMATETC* /*pFormatEtcIn*/, FORMATETC* pFormatEtcOut)
 {
 	pFormatEtcOut->ptd = NULL;
 
 	return E_NOTIMPL;
 }
 
-STDMETHODIMP LFDataObject::SetData(FORMATETC* pFormatEtc, STGMEDIUM* pMedium, BOOL /*fRelease*/)
+STDMETHODIMP LFTransactionDataObject::SetData(FORMATETC* pFormatEtc, STGMEDIUM* pMedium, BOOL /*fRelease*/)
 {
 	if ((!pFormatEtc) || (!pMedium))
 		return E_INVALIDARG;
@@ -155,7 +155,7 @@ STDMETHODIMP LFDataObject::SetData(FORMATETC* pFormatEtc, STGMEDIUM* pMedium, BO
 	return DV_E_FORMATETC;
 }
 
-STDMETHODIMP LFDataObject::EnumFormatEtc(DWORD dwDirection, IEnumFORMATETC** ppenumFormatEtc)
+STDMETHODIMP LFTransactionDataObject::EnumFormatEtc(DWORD dwDirection, IEnumFORMATETC** ppenumFormatEtc)
 {
 	if (dwDirection==DATADIR_GET)
 	{
@@ -178,17 +178,17 @@ STDMETHODIMP LFDataObject::EnumFormatEtc(DWORD dwDirection, IEnumFORMATETC** ppe
 	return E_NOTIMPL;
 }
 
-STDMETHODIMP LFDataObject::DAdvise(FORMATETC* /*pFormatEtc*/, DWORD /*advf*/, IAdviseSink* /*pAdvSink*/, DWORD* /*pdwConnection*/)
+STDMETHODIMP LFTransactionDataObject::DAdvise(FORMATETC* /*pFormatEtc*/, DWORD /*advf*/, IAdviseSink* /*pAdvSink*/, DWORD* /*pdwConnection*/)
 {
 	return OLE_E_ADVISENOTSUPPORTED;;
 }
 
-STDMETHODIMP LFDataObject::DUnadvise(DWORD /*dwConnection*/)
+STDMETHODIMP LFTransactionDataObject::DUnadvise(DWORD /*dwConnection*/)
 {
 	return OLE_E_ADVISENOTSUPPORTED;
 }
 
-STDMETHODIMP LFDataObject::EnumDAdvise(IEnumSTATDATA** /*ppenumAdvise*/)
+STDMETHODIMP LFTransactionDataObject::EnumDAdvise(IEnumSTATDATA** /*ppenumAdvise*/)
 {
 	return OLE_E_ADVISENOTSUPPORTED;
 }

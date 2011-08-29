@@ -555,10 +555,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\LFDataObject.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\LFDialog.cpp"
 				>
 			</File>
@@ -620,6 +616,10 @@
 			</File>
 			<File
 				RelativePath=".\LFTooltip.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\LFTransactionDataObject.cpp"
 				>
 			</File>
 			<File
@@ -805,10 +805,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\LFDataObject.h"
-				>
-			</File>
-			<File
 				RelativePath=".\LFDialog.h"
 				>
 			</File>
@@ -870,6 +866,10 @@
 			</File>
 			<File
 				RelativePath=".\LFTooltip.h"
+				>
+			</File>
+			<File
+				RelativePath=".\LFTransactionDataObject.h"
 				>
 			</File>
 			<File

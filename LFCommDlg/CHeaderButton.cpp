@@ -17,8 +17,6 @@ CHeaderButton::CHeaderButton()
 	: CButton()
 {
 	m_Hover = FALSE;
-	m_Value.Empty();
-
 	m_Value = _T("?");
 }
 

@@ -464,7 +464,7 @@ void CFileDropWnd::OnStoreMaintain()
 void CFileDropWnd::OnStoreShortcut()
 {
 	if (LFAskCreateShortcut(GetSafeHwnd()))
-		LFCreateShortcutForStore(&m_Store);
+		LFCreateDesktopShortcutForStore(&m_Store);
 }
 
 void CFileDropWnd::OnStoreProperties()

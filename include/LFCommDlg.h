@@ -30,7 +30,6 @@
 #include "..\LFCommDlg\LFAttributeListDlg.h"
 #include "..\LFCommDlg\LFBrowseForFolderDlg.h"
 #include "..\LFCommDlg\LFChooseStoreDlg.h"
-#include "..\LFCommDlg\LFDataObject.h"
 #include "..\LFCommDlg\LFDropSource.h"
 #include "..\LFCommDlg\LFDropTarget.h"
 #include "..\LFCommDlg\LFEditTagsDlg.h"
@@ -46,6 +45,7 @@
 #include "..\LFCommDlg\LFStoreNewVolumeDlg.h"
 #include "..\LFCommDlg\LFStorePropertiesDlg.h"
 #include "..\LFCommDlg\LFTooltip.h"
+#include "..\LFCommDlg\LFTransactionDataObject.h"
 #include "..\LFCommDlg\LFWelcomeDlg.h"
 
 #ifdef LFCommDlg_EXPORTS

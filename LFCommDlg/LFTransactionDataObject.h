@@ -1,18 +1,19 @@
 
-// LFDataObject.h: Schnittstelle der Klasse LFDataObject
+// LFTransactionDataObject.h: Schnittstelle der Klasse LFTransactionDataObject
 //
 
 #pragma once
 #include "LFCore.h"
 
 
-// LFDataObject
+// LFTransactionDataObject
 //
 
-class AFX_EXT_CLASS LFDataObject : public IDataObject
+class AFX_EXT_CLASS LFTransactionDataObject : public IDataObject
 {
 public:
-	LFDataObject(LFTransactionList* tl);
+	LFTransactionDataObject(LFTransactionList* tl);
+
 	LFFileIDList* GetFileIDList();
 
 	BEGIN_INTERFACE
