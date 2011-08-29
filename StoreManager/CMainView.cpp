@@ -1051,8 +1051,32 @@ void CMainView::OnBeginDragDrop()
 {
 	// Stores haben keinen physischen Speicherort, der von einer LFTransactionList aufgelöst werden kann
 	if (m_Context==LFContextStores)
-		return;
+	{
+		INT idx = GetSelectedItem();
+		if (idx!=-1)
+		{
+			LFItemDescriptor* i = p_CookedFiles->m_Items[idx];
+			if (i->Type & LFTypeStore)
+			{
+				m_DropTarget.SetDragging(TRUE);
 
+				LFStoreDataObject* pDataObject = new LFStoreDataObject(i);
+				LFDropSource* pDropSource = new LFDropSource();
+
+				DWORD dwEffect;
+				SHDoDragDrop(GetSafeHwnd(), pDataObject, pDropSource, DROPEFFECT_COPY , &dwEffect);
+
+				pDropSource->Release();
+				pDataObject->Release();
+
+				m_DropTarget.SetDragging(FALSE);
+			}
+		}
+
+		return;
+	}
+
+	// Alle anderen Kontexte
 	LFTransactionList* tl = BuildTransactionList(FALSE, TRUE);
 	if (tl->m_ItemCount)
 	{

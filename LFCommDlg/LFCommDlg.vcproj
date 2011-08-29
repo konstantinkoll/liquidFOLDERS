@@ -595,6 +595,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\LFStoreDataObject.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\LFStoreDeleteDlg.cpp"
 				>
 			</File>
@@ -842,6 +846,10 @@
 			</File>
 			<File
 				RelativePath=".\LFSelectLocationIATADlg.h"
+				>
+			</File>
+			<File
+				RelativePath=".\LFStoreDataObject.h"
 				>
 			</File>
 			<File

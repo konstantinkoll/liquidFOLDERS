@@ -39,6 +39,7 @@
 #include "..\LFCommDlg\LFProgressDlg.h"
 #include "..\LFCommDlg\LFSelectLocationGPSDlg.h"
 #include "..\LFCommDlg\LFSelectLocationIATADlg.h"
+#include "..\LFCommDlg\LFStoreDataObject.h"
 #include "..\LFCommDlg\LFStoreDeleteDlg.h"
 #include "..\LFCommDlg\LFStoreMaintenanceDlg.h"
 #include "..\LFCommDlg\LFStoreNewDlg.h"
@@ -54,6 +55,7 @@
 #define LFCommDlg_API __declspec(dllimport)
 #endif
 
+LFCommDlg_API BOOL DuplicateGlobalMemory(const HGLOBAL hSrc, HGLOBAL& hDst);
 LFCommDlg_API INT GetAttributeIconIndex(UINT Attr);
 LFCommDlg_API void CreateRoundRectangle(CRect rect, INT rad, GraphicsPath& path);
 LFCommDlg_API void TooltipDataFromPIDL(LPITEMIDLIST pidl, CImageList* icons, HICON& hIcon, CSize& size, CString& caption, CString& hint);

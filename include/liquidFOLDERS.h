@@ -17,7 +17,7 @@
 
 // Clipboard
 
-#define CFSTR_LIQUIDFILES     "liquidFOLDERS.liquidFILES"
+#define CFSTR_LIQUIDFILES     L"liquidFOLDERS.liquidFILES"
 
 typedef HANDLE HLIQUID;
 

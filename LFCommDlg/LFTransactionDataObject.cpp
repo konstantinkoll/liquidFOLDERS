@@ -3,31 +3,7 @@
 //
 
 #include "stdafx.h"
-#include "LFTransactionDataObject.h"
-#include "LFApplication.h"
-
-
-BOOL DuplicateGlobalMemory(const HGLOBAL hSrc, HGLOBAL& hDst)
-{
-	if (!hSrc)
-	{
-		hDst = NULL;
-		return FALSE;
-	}
-
-	SIZE_T sz = GlobalSize(hSrc);
-	hDst = GlobalAlloc(GMEM_MOVEABLE, sz);
-	if (!hDst)
-		return FALSE;
-
-	void* pSrc = GlobalLock(hSrc);
-	void* pDst = GlobalLock(hDst);
-	memcpy(pDst, pSrc, sz);
-	GlobalUnlock(hSrc);
-	GlobalUnlock(hDst);
-
-	return TRUE;
-}
+#include "LFCommDlg.h"
 
 
 // LFTransactionDataObject

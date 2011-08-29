@@ -7,6 +7,28 @@
 #include "LFCommDlg.h"
 
 
+LFCommDlg_API BOOL DuplicateGlobalMemory(const HGLOBAL hSrc, HGLOBAL& hDst)
+{
+	if (!hSrc)
+	{
+		hDst = NULL;
+		return FALSE;
+	}
+
+	SIZE_T sz = GlobalSize(hSrc);
+	hDst = GlobalAlloc(GMEM_MOVEABLE, sz);
+	if (!hDst)
+		return FALSE;
+
+	void* pSrc = GlobalLock(hSrc);
+	void* pDst = GlobalLock(hDst);
+	memcpy(pDst, pSrc, sz);
+	GlobalUnlock(hSrc);
+	GlobalUnlock(hDst);
+
+	return TRUE;
+}
+
 LFCommDlg_API INT GetAttributeIconIndex(UINT Attr)
 {
 	static const UINT IconPosition[] = { LFAttrFileName, LFAttrStoreID, LFAttrFileID, LFAttrTitle, LFAttrCreationTime,
