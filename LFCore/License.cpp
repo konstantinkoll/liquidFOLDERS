@@ -97,7 +97,7 @@ bool ReadCodedLicense(string& Message)
 	{
 		char tmpStr[4096];
 		DWORD sz = sizeof(tmpStr);
-		if (RegQueryValueExA(k, "License", 0, NULL, (BYTE*)&tmpStr, &sz)==ERROR_SUCCESS)
+		if (RegQueryValueEx(k, L"License", 0, NULL, (BYTE*)&tmpStr, &sz)==ERROR_SUCCESS)
 		{
 			Message = tmpStr;
 			res = true;

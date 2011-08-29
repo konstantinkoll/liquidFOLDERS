@@ -1055,12 +1055,12 @@ void CMainView::OnBeginDragDrop()
 		INT idx = GetSelectedItem();
 		if (idx!=-1)
 		{
-			LFItemDescriptor* i = p_CookedFiles->m_Items[idx];
-			if (i->Type & LFTypeStore)
+			LFItemDescriptor* item = p_CookedFiles->m_Items[idx];
+			if ((item->Type & LFTypeStore) && (item->CategoryID!=LFItemCategoryExternalStores))
 			{
 				m_DropTarget.SetDragging(TRUE);
 
-				LFStoreDataObject* pDataObject = new LFStoreDataObject(i);
+				LFStoreDataObject* pDataObject = new LFStoreDataObject(item);
 				LFDropSource* pDropSource = new LFDropSource();
 
 				DWORD dwEffect;

@@ -359,7 +359,7 @@ void ChooseNewDefaultStore()
 	HKEY hive;
 	if (RegOpenKeyA(HKEY_CURRENT_USER, LFStoresHive, &hive)==ERROR_SUCCESS)
 	{
-		RegDeleteValueA(hive, "DefaultStore");
+		RegDeleteValue(hive, L"DefaultStore");
 		RegCloseKey(hive);
 	}
 }
@@ -440,7 +440,7 @@ void InitStoreCache()
 			{
 				DWORD type;
 				DWORD sz = LFKeySize;
-				RegQueryValueExA(k, "DefaultStore", NULL, &type, (BYTE*)DefaultStore, &sz);
+				RegQueryValueEx(k, L"DefaultStore", NULL, &type, (BYTE*)DefaultStore, &sz);
 				RegCloseKey(k);
 			}
 
