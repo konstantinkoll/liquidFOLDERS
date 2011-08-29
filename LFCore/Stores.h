@@ -8,6 +8,7 @@ void HideDir(LPWSTR lpPath);
 bool RemoveDir(LPWSTR lpPath);
 bool DirFreeSpace(LPWSTR lpPathSrc, unsigned int Required);
 unsigned int CopyDir(LPWSTR lpPathSrc, LPWSTR lpPathDst);
+void SanitizeFileName(wchar_t* dst, size_t cCount, wchar_t* src);
 unsigned int ValidateStoreDirectories(LFStoreDescriptor* s);
 void GetFileLocation(wchar_t* DatPath, LFCoreAttributes* ca, wchar_t* dst, size_t cCount);
 bool FileExists(LPWSTR lpPath);

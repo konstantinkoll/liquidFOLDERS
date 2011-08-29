@@ -97,10 +97,20 @@ void LFStoreDataObject::CreateGlobals(IShellLink* pShellLink, WCHAR* Name)
 						fgd.fgd[0].nFileSizeHigh = size.HighPart;
 						fgd.fgd[0].ftLastWriteTime.dwLowDateTime = 0x256d4000;
 						fgd.fgd[0].ftLastWriteTime.dwHighDateTime = 0x01bf53eb;
-						wcscpy_s(fgd.fgd[0].cFileName, MAX_PATH, Name);
-						wcscat_s(fgd.fgd[0].cFileName, MAX_PATH, L".lnk");
-						CreateGlobalMemory(&fgd, sizeof(fgd), m_hDescriptor);
 
+						wcscpy_s(fgd.fgd[0].cFileName, MAX_PATH, Name);
+
+						WCHAR* pChar = fgd.fgd[0].cFileName;
+						while (*pChar!=L'\0')
+						{
+							if ((*pChar<L' ') || (wcschr(L"<>:\"/\\|?*", *pChar)))
+								*pChar = L'_';
+							pChar++;
+						}
+
+						wcscat_s(fgd.fgd[0].cFileName, MAX_PATH, L".lnk");
+
+						CreateGlobalMemory(&fgd, sizeof(fgd), m_hDescriptor);
 						CloseHandle(hFile);
 					}
 

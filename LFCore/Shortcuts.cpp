@@ -4,6 +4,7 @@
 #include "LFCore.h"
 #include "Mutex.h"
 #include "StoreCache.h"
+#include "Stores.h"
 #include <assert.h>
 
 
@@ -39,6 +40,9 @@ LFCore_API void LFCreateDesktopShortcut(IShellLink* pShellLink, wchar_t* LinkFil
 	wchar_t PathDesktop[MAX_PATH];
 	if (SHGetSpecialFolderPath(NULL, PathDesktop, CSIDL_DESKTOPDIRECTORY, FALSE))
 	{
+		wchar_t SanitizedLinkFilename[MAX_PATH];
+		SanitizeFileName(SanitizedLinkFilename, MAX_PATH, LinkFilename);
+
 		wchar_t PathLink[2*MAX_PATH];
 		wchar_t NumberStr[16] = L"";
 		int Number = 1;
@@ -48,7 +52,7 @@ LFCore_API void LFCreateDesktopShortcut(IShellLink* pShellLink, wchar_t* LinkFil
 		{
 			wcscpy_s(PathLink, 2*MAX_PATH, PathDesktop);
 			wcscat_s(PathLink, 2*MAX_PATH, L"\\");
-			wcscat_s(PathLink, 2*MAX_PATH, LinkFilename);
+			wcscat_s(PathLink, 2*MAX_PATH, SanitizedLinkFilename);
 			wcscat_s(PathLink, 2*MAX_PATH, NumberStr);
 			wcscat_s(PathLink, 2*MAX_PATH, L".lnk");
 

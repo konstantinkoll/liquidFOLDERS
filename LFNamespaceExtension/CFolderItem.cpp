@@ -1262,7 +1262,7 @@ void CFolderItem::InitDataObject(CInitDataObjectEventArgs& e)
 
 		e.dataObject->SetHasFileData();
 		if (il->m_ItemCount)
-			e.dataObject->SetHGlobalData(_T(CFSTR_LIQUIDFILES), LFCreateLiquidFiles(il));
+			e.dataObject->SetHGlobalData(CFSTR_LIQUIDFILES, LFCreateLiquidFiles(il));
 
 		LFFreeFileIDList(il);
 

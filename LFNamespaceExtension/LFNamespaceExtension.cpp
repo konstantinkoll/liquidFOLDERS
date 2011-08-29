@@ -215,7 +215,7 @@ UINT LFNamespaceExtensionApp::ImportFiles(CHAR* StoreID, IDataObject* pDataObjec
 	COleDataObject dobj;
 	dobj.Attach(pDataObject, FALSE);
 
-	CLIPFORMAT CF_HLIQUID = (CLIPFORMAT)RegisterClipboardFormat(_T(CFSTR_LIQUIDFILES));
+	CLIPFORMAT CF_HLIQUID = (CLIPFORMAT)RegisterClipboardFormat(CFSTR_LIQUIDFILES);
 
 	HGLOBAL hgDrop = dobj.GetGlobalData(CF_HDROP);
 	HGLOBAL hgLiquid = dobj.GetGlobalData(CF_HLIQUID);

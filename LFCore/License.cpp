@@ -93,11 +93,11 @@ bool ReadCodedLicense(string& Message)
 	bool res = false;
 
 	HKEY k;
-	if (RegOpenKeyA(HKEY_CURRENT_USER, "Software\\liquidFOLDERS", &k)==ERROR_SUCCESS)
+	if (RegOpenKey(HKEY_CURRENT_USER, L"Software\\liquidFOLDERS", &k)==ERROR_SUCCESS)
 	{
 		char tmpStr[4096];
 		DWORD sz = sizeof(tmpStr);
-		if (RegQueryValueEx(k, L"License", 0, NULL, (BYTE*)&tmpStr, &sz)==ERROR_SUCCESS)
+		if (RegQueryValueExA(k, "License", 0, NULL, (BYTE*)&tmpStr, &sz)==ERROR_SUCCESS)
 		{
 			Message = tmpStr;
 			res = true;
