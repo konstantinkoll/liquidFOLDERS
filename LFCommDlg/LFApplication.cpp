@@ -82,9 +82,9 @@ LFApplication::LFApplication(BOOL HasGUI)
 		zGetThemeSysColor = (PFNGETTHEMESYSCOLOR)GetProcAddress(hModThemes, "GetThemeSysColor");
 		zGetThemePartSize = (PFNGETTHEMEPARTSIZE)GetProcAddress(hModThemes, "GetThemePartSize");
 		zSetWindowThemeAttribute = (PFNSETWINDOWTHEMEATTRIBUTE)GetProcAddress(hModThemes, "SetWindowThemeAttribute");
-		zIsThemeActive = (PFNISTHEMEACTIVE)GetProcAddress(hModThemes, "IsThemeActive");
+		zIsAppThemed = (PFNISAPPTHEMED)GetProcAddress(hModThemes, "IsAppThemed");
 
-		m_ThemeLibLoaded = (zOpenThemeData && zCloseThemeData && zDrawThemeBackground && zDrawThemeText && zGetThemeSysFont && zGetThemeSysColor && zGetThemePartSize && zIsThemeActive);
+		m_ThemeLibLoaded = (zOpenThemeData && zCloseThemeData && zDrawThemeBackground && zDrawThemeText && zGetThemeSysFont && zGetThemeSysColor && zGetThemePartSize && zIsAppThemed);
 		if (m_ThemeLibLoaded)
 		{
 			FreeLibrary(hModThemes);
@@ -103,7 +103,7 @@ LFApplication::LFApplication(BOOL HasGUI)
 		zGetThemeSysColor = NULL;
 		zGetThemePartSize = NULL;
 		zSetWindowThemeAttribute = NULL;
-		zIsThemeActive = NULL;
+		zIsAppThemed = NULL;
 
 		m_ThemeLibLoaded = FALSE;
 	}
