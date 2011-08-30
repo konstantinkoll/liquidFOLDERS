@@ -43,7 +43,6 @@ protected:
 
 private:
 	CImageList* m_Icons[2];
-	HICON m_hComingSoon;
 	SIZE m_IconSize[2];
 	INT m_HeaderItemClicked;
 	INT m_HeaderItemSort;

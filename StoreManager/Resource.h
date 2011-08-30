@@ -28,7 +28,6 @@
 #define IDB_JOURNAL_PRESSED1            151
 #define IDB_JOURNAL_DISABLED0           152
 #define IDB_JOURNAL_DISABLED1           153
-#define IDI_COMINGSOON                  154
 #define ID_PANE_FILTER                  400
 #define ID_PANE_INSPECTOR               401
 #define ID_NAV_BACK                     500

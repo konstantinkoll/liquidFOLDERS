@@ -32,7 +32,6 @@ CListView::CListView(UINT DataSize)
 	: CGridView(DataSize)
 {
 	m_Icons[0] = m_Icons[1] = NULL;
-	m_hComingSoon = NULL;
 	m_HeaderItemClicked = m_HeaderItemSort = -1;
 	m_IgnoreHeaderItemChange = m_ShowLegend = FALSE;
 
@@ -88,9 +87,6 @@ void CListView::SetViewOptions(BOOL Force)
 		m_IconSize[1].cx = min(cx, 128);
 		m_IconSize[1].cy = min(cy, 128);
 	}
-
-	if ((p_ViewParameters->Mode==LFViewPreview) && (!m_hComingSoon))
-		m_hComingSoon = (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IDI_COMINGSOON), IMAGE_ICON, 128, 128, LR_DEFAULTCOLOR);
 
 	if ((p_ViewParameters->Mode==LFViewDetails) && (p_Result))
 		for (UINT a=0; a<LFAttributeCount; a++)
@@ -578,10 +574,7 @@ void CListView::DrawIcon(CDC& dc, CRect& rect, LFItemDescriptor* i)
 	case LFTypeFile:
 		if ((m_ViewParameters.Mode==LFViewLargeIcons) || (m_ViewParameters.Mode==LFViewPreview))
 		{
-			CRect rectComingSoon(rect);
 			theApp.m_FileFormats.DrawJumboIcon(dc, rect, i->CoreAttributes.FileFormat, i->Type & LFTypeGhosted);
-			if (m_ViewParameters.Mode==LFViewPreview)
-				DrawIconEx(dc, rectComingSoon.left, rectComingSoon.top, m_hComingSoon, 128, 128, 0, NULL, DI_NORMAL);
 			return;
 		}
 		SysIconIndex = theApp.m_FileFormats.GetSysIconIndex(i->CoreAttributes.FileFormat);
