@@ -297,7 +297,7 @@ BEGIN
     IDS_MENU_OpenWith       "Abrir &con..."
     IDS_HINT_OpenWith       "Escoja un programa con el cual abrir este archivo."
     IDS_MENU_Copy           "&Copiar"
-    IDS_HINT_Copy           "Copies the selected items to the clipboard."
+    IDS_HINT_Copy           "Copia los objetos seleccionados al portapapeles."
     IDS_MENU_CreateShortcut "Crear &acceso directo"
     IDS_HINT_CreateShortcut "Crea un acceso directo para los objetos seleccionados."
     IDS_MENU_Delete         "&Eliminar"
