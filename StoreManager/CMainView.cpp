@@ -46,8 +46,11 @@ struct WorkerParameters
 {
 	LFWorkerParameters Hdr;
 	CHAR StoreID[LFKeySize];
-	BOOL DeleteSource;
-	LFFileIDList* FileIDList;
+	union
+	{
+		LFFileIDList* FileIDList;
+		LFTransactionList* TransactionList;
+	};
 };
 
 DWORD WINAPI WorkerImport(void* lParam)
@@ -58,7 +61,22 @@ DWORD WINAPI WorkerImport(void* lParam)
 	LFProgress p;
 	LFInitProgress(&p, wp->Hdr.hWnd);
 
-	LFTransactionImport(wp->StoreID, wp->FileIDList, wp->DeleteSource==TRUE, &p);
+	LFTransactionImport(wp->StoreID, wp->FileIDList, false, &p);
+
+	CoUninitialize();
+	PostMessage(wp->Hdr.hWnd, WM_COMMAND, (WPARAM)IDOK, NULL);
+	return 0;
+}
+
+DWORD WINAPI WorkerDelete(void* lParam)
+{
+	CoInitialize(NULL);
+	WorkerParameters* wp = (WorkerParameters*)lParam;
+
+	LFProgress p;
+	LFInitProgress(&p, wp->Hdr.hWnd);
+
+	LFTransactionDelete(wp->TransactionList, false,&p);
 
 	CoUninitialize();
 	PostMessage(wp->Hdr.hWnd, WM_COMMAND, (WPARAM)IDOK, NULL);
@@ -643,7 +661,22 @@ void CMainView::RemoveTransactedItems(LFTransactionList* tl)
 BOOL CMainView::DeleteFiles(BOOL Trash, BOOL All)
 {
 	LFTransactionList* tl = BuildTransactionList(All);
-	LFTransactionDelete(tl, Trash==TRUE);
+
+	if (Trash)
+	{
+		CWaitCursor wait;
+
+		LFTransactionDelete(tl, true);
+	}
+	else
+	{
+		WorkerParameters wp;
+		ZeroMemory(&wp, sizeof(wp));
+		wp.TransactionList = tl;
+
+		LFDoWithProgress(WorkerDelete, &wp.Hdr, this);
+	}
+
 	RemoveTransactedItems(tl);
 
 	if (tl->m_LastError>LFCancel)
