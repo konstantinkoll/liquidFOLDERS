@@ -1801,7 +1801,7 @@ void CFileView::OnUpdateCommands(CCmdUI* pCmdUI)
 	case IDM_SELECTINVERT:
 		b &= m_AllowMultiSelect;
 	case IDM_SELECTNONE:
-		b &= p_Result ? p_Result->m_ItemCount : FALSE;
+		b &= p_Result ? (p_Result->m_ItemCount!=NULL) : FALSE;
 		break;
 	}
 

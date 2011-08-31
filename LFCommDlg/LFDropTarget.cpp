@@ -251,7 +251,11 @@ STDMETHODIMP LFDropTarget::Drop(IDataObject* pDataObject, DWORD grfKeyState, POI
 
 	// Clipboard
 	if (p_SearchResult)
+	{
+		CWaitCursor wait;
+
 		return AddToClipboard(hgLiquid, pWnd);
+	}
 
 	// Ziel-Store
 	CHAR StoreID[LFKeySize];
