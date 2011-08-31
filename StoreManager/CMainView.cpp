@@ -42,6 +42,29 @@ void CreateShortcut(LFTL_Item* i)
 // Thread workers
 //
 
+struct WorkerParameters
+{
+	LFWorkerParameters Hdr;
+	CHAR StoreID[LFKeySize];
+	BOOL DeleteSource;
+	LFFileIDList* FileIDList;
+};
+
+DWORD WINAPI WorkerImport(void* lParam)
+{
+	CoInitialize(NULL);
+	WorkerParameters* wp = (WorkerParameters*)lParam;
+
+	LFProgress p;
+	LFInitProgress(&p, wp->Hdr.hWnd);
+
+	LFTransactionImport(wp->StoreID, wp->FileIDList, wp->DeleteSource==TRUE, &p);
+
+	CoUninitialize();
+	PostMessage(wp->Hdr.hWnd, WM_COMMAND, (WPARAM)IDOK, NULL);
+	return 0;
+}
+
 #ifdef _DEBUG
 DWORD WINAPI WorkerTest(void* lParam)
 {
@@ -1130,22 +1153,24 @@ LRESULT CMainView::OnSendTo(WPARAM wParam, LPARAM /*lParam*/)
 	SendToItemData* pItemData = (SendToItemData*)wParam;
 	if (pItemData->IsStore)
 	{
-		CHAR StoreID[LFKeySize];
-		strcpy_s(StoreID, LFKeySize, pItemData->StoreID);
+		WorkerParameters wp;
+		ZeroMemory(&wp, sizeof(wp));
+		wp.FileIDList = BuildFileIDList();
+		strcpy_s(wp.StoreID, LFKeySize, pItemData->StoreID);
 
-		if (strcmp(StoreID, "CHOOSE")==0)
+		if (strcmp(wp.StoreID, "CHOOSE")==0)
 		{
 			LFChooseStoreDlg dlg(this, LFCSD_Normal);
 			if (dlg.DoModal()!=IDOK)
 				return NULL;
 
-			strcpy_s(StoreID, LFKeySize, dlg.m_StoreID);
+			strcpy_s(wp.StoreID, LFKeySize, dlg.m_StoreID);
 		}
 
-		LFFileIDList* il = BuildFileIDList();
-		LFTransactionImport(StoreID, il, false);
-		LFErrorBox(il->m_LastError, GetSafeHwnd());
-		LFFreeFileIDList(il);
+		LFDoWithProgress(WorkerImport, &wp.Hdr, this);
+
+		LFErrorBox(wp.FileIDList->m_LastError, GetSafeHwnd());
+		LFFreeFileIDList(wp.FileIDList);
 	}
 	else
 	{

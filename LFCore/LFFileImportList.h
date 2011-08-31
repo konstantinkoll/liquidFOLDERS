@@ -16,6 +16,7 @@ public:
 
 	bool AddPath(wchar_t* path);
 	void Resolve(bool recursive);
+	void SetError(unsigned int idx, unsigned int res, LFProgress* pProgress=NULL);
 
 	unsigned int m_FileCount;
 	__int64 m_FileSize;

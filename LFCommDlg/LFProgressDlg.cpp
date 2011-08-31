@@ -108,7 +108,7 @@ LRESULT LFProgressDlg::OnUpdateProgress(WPARAM wParam, LPARAM /*lParam*/)
 
 	// Counter
 	CString tmpStr(_T(""));
-	if (nCurrent<=nOf)
+	if ((nCurrent<=nOf) && (!m_Abort))
 		tmpStr.Format(nOf==1 ? m_XofY_Singular : m_XofY_Plural, nCurrent, nOf);
 
 	if (m_LastCounter!=tmpStr)
@@ -116,6 +116,9 @@ LRESULT LFProgressDlg::OnUpdateProgress(WPARAM wParam, LPARAM /*lParam*/)
 		GetDlgItem(IDC_PROGRESSCOUNT)->SetWindowText(tmpStr);
 		m_LastCounter = tmpStr;
 	}
+
+	if (m_Abort)
+		pProgress->UserAbort = true;
 
 	return m_Abort;
 }

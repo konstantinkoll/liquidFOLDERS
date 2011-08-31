@@ -428,7 +428,7 @@ LFCore_API unsigned int LFTransactionRename(char* StoreID, char* FileID, wchar_t
 
 
 // Importiert Dateien in den Store
-LFCore_API void LFTransactionImport(char* key, LFFileIDList* il, bool move);
+LFCore_API void LFTransactionImport(char* key, LFFileIDList* il, bool move, LFProgress* pProgress=NULL);
 
 // Löscht alle Dateien in il
 LFCore_API void LFTransactionDelete(LFFileIDList* il, bool PutInTrash=true);

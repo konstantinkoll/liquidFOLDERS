@@ -35,7 +35,7 @@ void LFFileIDList::Reset()
 	m_LastError = LFOk;
 }
 
-void LFFileIDList::SetError(char* key, unsigned int res)
+void LFFileIDList::SetError(char* key, unsigned int res, LFProgress* pProgress)
 {
 	for (unsigned int a=0; a<m_ItemCount; a++)
 		if (!m_Items[a].Processed)
@@ -43,7 +43,16 @@ void LFFileIDList::SetError(char* key, unsigned int res)
 			{
 				m_Items[a].LastError = m_LastError = res;
 				m_Items[a].Processed = true;
+				if (pProgress)
+					pProgress->MinorCurrent++;
 			}
+}
+
+void LFFileIDList::SetError(unsigned int idx, unsigned int res, LFProgress* pProgress)
+{
+	m_Items[idx].LastError = m_LastError = res;
+	if (pProgress)
+		pProgress->ProgressState = LFProgressError;
 }
 
 HGLOBAL LFFileIDList::CreateLiquidFiles()

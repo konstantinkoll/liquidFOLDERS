@@ -552,15 +552,17 @@ void CIndex::ResolvePhysicalLocations(LFTransactionList* tl)
 
 	while (Tables[IDMaster]->FindNext(ID, (void*&)PtrM))
 		for (unsigned int a=0; a<tl->m_ItemCount; a++)
-		{
-			LFItemDescriptor* i = tl->m_Items[a].Item;
-			if ((i->Type & LFTypeMask)==LFTypeFile)
-				if ((strcmp(i->StoreID, StoreID)==0) && (strcmp(i->CoreAttributes.FileID, PtrM->FileID)==0))
-				{
-					GetFileLocation(DatPath, PtrM, tl->m_Items[a].Path, 2*MAX_PATH);
-					tl->m_Items[a].Processed = true;
-				}
-		}
+			if (!tl->m_Items[a].Processed)
+			{
+				LFItemDescriptor* i = tl->m_Items[a].Item;
+				if ((i->Type & LFTypeMask)==LFTypeFile)
+					if ((strcmp(i->StoreID, StoreID)==0) && (strcmp(i->CoreAttributes.FileID, PtrM->FileID)==0))
+					{
+						GetFileLocation(DatPath, PtrM, tl->m_Items[a].Path, 2*MAX_PATH);
+						tl->m_Items[a].Processed = true;
+						break;
+					}
+			}
 }
 
 unsigned int CIndex::Rename(char* FileID, wchar_t* NewName)
@@ -752,7 +754,7 @@ Add:
 	}
 }
 
-void CIndex::TransferTo(CIndex* idxDst1, CIndex* idxDst2, LFStoreDescriptor* slotDst, LFFileIDList* il, LFStoreDescriptor* slotSrc, bool move)
+void CIndex::TransferTo(CIndex* idxDst1, CIndex* idxDst2, LFStoreDescriptor* slotDst, LFFileIDList* il, LFStoreDescriptor* slotSrc, bool move, LFProgress* pProgress)
 {
 	assert(il);
 
@@ -773,8 +775,7 @@ void CIndex::TransferTo(CIndex* idxDst1, CIndex* idxDst2, LFStoreDescriptor* slo
 	}
 
 #define ABORT(r) { LFFreeItemDescriptor(i); \
-	il->m_Items[a].LastError = il->m_LastError = r; \
-	il->m_Items[a].Processed = true; \
+	il->SetError(a, r, pProgress); \
 	continue; }
 
 	// Items übertragen
@@ -792,6 +793,17 @@ void CIndex::TransferTo(CIndex* idxDst1, CIndex* idxDst2, LFStoreDescriptor* slo
 				i->Type = LFTypeFile;
 				strcpy_s(i->StoreID, LFKeySize, StoreID);
 				Tables[IDMaster]->WriteToItemDescriptor(i, PtrM);
+
+				// Progress
+				if (pProgress)
+				{
+					wcscpy_s(pProgress->Object, 256, PtrM->FileName);
+					if (SendMessage(pProgress->hWnd, WM_UPDATEPROGRESS, (WPARAM)pProgress, NULL))
+					{
+						il->m_LastError = LFCancel;
+						return;
+					}
+				}
 
 				// Slave
 				if ((PtrM->SlaveID) && (PtrM->SlaveID<IdxTableCount))
@@ -851,9 +863,20 @@ void CIndex::TransferTo(CIndex* idxDst1, CIndex* idxDst2, LFStoreDescriptor* slo
 				}
 
 				il->m_Items[a].Processed = true;
+
+				// Progress
+				if (pProgress)
+				{
+					pProgress->MinorCurrent++;
+					if (SendMessage(pProgress->hWnd, WM_UPDATEPROGRESS, (WPARAM)pProgress, NULL))
+					{
+						il->m_LastError = LFCancel;
+						return;
+					}
+				}
 			}
 	}
 
 	// Ungültige Items finden
-	il->SetError(StoreID, LFIllegalKey);
+	il->SetError(StoreID, LFIllegalKey, pProgress);
 }

@@ -257,6 +257,7 @@ LFCommDlg_API void LFImportFolder(CHAR* StoreID, CWnd* pParentWnd, BOOL AllowCho
 	if (dlg.DoModal()==IDOK)
 	{
 		WorkerParameters wp;
+		ZeroMemory(&wp, sizeof(wp));
 		wp.FileImportList = LFAllocFileImportList();
 		LFAddImportPath(wp.FileImportList, dlg.m_FolderPath);
 

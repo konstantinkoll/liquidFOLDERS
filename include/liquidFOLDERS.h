@@ -45,6 +45,7 @@ struct LFProgress
 	unsigned int MajorCount;			// May be 0
 	unsigned int MinorCurrent;			// Starting from 0, must nox exceed max(0, MinorCount-1)
 	unsigned int MinorCount;			// Must be 1 or higher
+	bool UserAbort;						// Set true if aborted by user
 };
 
 

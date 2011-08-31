@@ -76,3 +76,10 @@ FileFound:
 		a++;
 	}
 }
+
+void LFFileImportList::SetError(unsigned int idx, unsigned int res, LFProgress* pProgress)
+{
+	m_Items[idx].LastError = m_LastError = res;
+	if (pProgress)
+		pProgress->ProgressState = LFProgressError;
+}

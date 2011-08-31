@@ -19,7 +19,8 @@ public:
 
 	bool AddFileID(char* StoreID, char* FileID, void* UserData=NULL);
 	void Reset();
-	void SetError(char* key, unsigned int error);
+	void SetError(char* key, unsigned int error, LFProgress* pProgress=NULL);
+	void SetError(unsigned int idx, unsigned int res, LFProgress* pProgress=NULL);
 	HGLOBAL CreateLiquidFiles();
 
 	bool m_Changes;

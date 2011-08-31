@@ -71,24 +71,6 @@ LFCore_API void LFTransactionImport(char* key, LFFileImportList* il, LFItemDescr
 		return;
 	}
 
-	// Importliste vorbereiten
-	if (pProgress)
-	{
-		wcscpy_s(pProgress->Object, 256, il->m_Items[0].Path);
-		pProgress->MinorCount = 1;
-		pProgress->MinorCurrent = 0;
-		if (SendMessage(pProgress->hWnd, WM_UPDATEPROGRESS, (WPARAM)pProgress, NULL))
-		{
-			il->m_LastError = LFCancel;
-			return;
-		}
-	}
-
-	il->Resolve(recursive);
-
-	if (pProgress)
-		pProgress->MinorCount = il->m_ItemCount;
-
 	// Import
 	CIndex* idx1;
 	CIndex* idx2;
@@ -97,8 +79,23 @@ LFCore_API void LFTransactionImport(char* key, LFFileImportList* il, LFItemDescr
 	unsigned int res = OpenStore(store, true, idx1, idx2, &slot, &StoreLock);
 	if (res==LFOk)
 	{
+		// Progress, prepare import list
+		if (pProgress)
+		{
+			wcscpy_s(pProgress->Object, 256, il->m_Items[0].Path);
+			pProgress->MinorCount = 1;
+			pProgress->MinorCurrent = 0;
+			SendMessage(pProgress->hWnd, WM_UPDATEPROGRESS, (WPARAM)pProgress, NULL);
+		}
+
+		il->Resolve(recursive);
+
+		if (pProgress)
+			pProgress->MinorCount = il->m_ItemCount;
+
 		// Process
 		for (unsigned int a=0; a<il->m_ItemCount; a++)
+		{
 			if (!il->m_Items[a].Processed)
 			{
 				if (pProgress)
@@ -121,7 +118,7 @@ LFCore_API void LFTransactionImport(char* key, LFFileImportList* il, LFItemDescr
 				if (res!=LFOk)
 				{
 					LFFreeItemDescriptor(i);
-					il->m_Items[a].LastError = il->m_LastError = res;
+					il->SetError(a, res, pProgress);
 				}
 				else
 					if (!(move ? MoveFile(il->m_Items[a].Path, Path) : CopyFile(il->m_Items[a].Path, Path, FALSE)))
@@ -133,7 +130,7 @@ LFCore_API void LFTransactionImport(char* key, LFFileImportList* il, LFItemDescr
 						RemoveDir(Path);
 
 						LFFreeItemDescriptor(i);
-						il->m_Items[a].LastError = il->m_LastError = LFCannotImportFile;
+						il->SetError(a, LFCannotImportFile, pProgress);
 					}
 					else
 					{
@@ -148,17 +145,23 @@ LFCore_API void LFTransactionImport(char* key, LFFileImportList* il, LFItemDescr
 					}
 
 				il->m_Items[a].Processed = true;
+			}
 
-				if (pProgress)
+			if (pProgress)
+			{
+				pProgress->MinorCurrent++;
+				if (SendMessage(pProgress->hWnd, WM_UPDATEPROGRESS, (WPARAM)pProgress, NULL))
 				{
-					pProgress->MinorCurrent++;
-					if (SendMessage(pProgress->hWnd, WM_UPDATEPROGRESS, (WPARAM)pProgress, NULL))
-					{
-						il->m_LastError = LFCancel;
-						break;
-					}
+					il->m_LastError = LFCancel;
+					break;
 				}
 			}
+		}
+
+		// Done
+		pProgress->Object[0] = L'\0';
+		if (SendMessage(pProgress->hWnd, WM_UPDATEPROGRESS, (WPARAM)pProgress, NULL))
+			il->m_LastError = LFCancel;
 
 		if (idx1)
 			delete idx1;
@@ -368,7 +371,7 @@ LFCore_API unsigned int LFTransactionRename(char* StoreID, char* FileID, wchar_t
 }
 
 
-LFCore_API void LFTransactionImport(char* key, LFFileIDList* il, bool move)
+LFCore_API void LFTransactionImport(char* key, LFFileIDList* il, bool move, LFProgress* pProgress)
 {
 	assert(il);
 
@@ -406,6 +409,13 @@ LFCore_API void LFTransactionImport(char* key, LFFileIDList* il, bool move)
 	unsigned int res = OpenStore(store, true, idxDst1, idxDst2, &slotDst, &StoreLock);
 	if (res==LFOk)
 	{
+		// Progress
+		if (pProgress)
+		{
+			pProgress->MinorCount = il->m_ItemCount;
+			pProgress->MinorCurrent = 0;
+		}
+
 		// Process
 		for (unsigned int a=0; a<il->m_ItemCount; a++)
 			if ((il->m_Items[a].LastError==LFOk) && (!il->m_Items[a].Processed))
@@ -413,6 +423,17 @@ LFCore_API void LFTransactionImport(char* key, LFFileIDList* il, bool move)
 				{
 					il->m_Items[a].LastError = LFCancel;
 					il->m_Items[a].Processed = true;
+
+					if (pProgress)
+					{
+						pProgress->Object[0] = L'\0';
+						pProgress->MinorCurrent++;
+						if (SendMessage(pProgress->hWnd, WM_UPDATEPROGRESS, (WPARAM)pProgress, NULL))
+						{
+							il->m_LastError = LFCancel;
+							break;
+						}
+					}
 				}
 				else
 				{
@@ -426,19 +447,39 @@ LFCore_API void LFTransactionImport(char* key, LFFileIDList* il, bool move)
 					{
 						if (idxSrc1)
 						{
-							idxSrc1->TransferTo(idxDst1, idxDst2, slotDst, il, slotSrc, move);
+							idxSrc1->TransferTo(idxDst1, idxDst2, slotDst, il, slotSrc, move, pProgress);
 							delete idxSrc1;
 						}
 						if (idxSrc2)
 							delete idxSrc2;
 
 						ReleaseMutexForStore(StoreLock);
+
+						if (pProgress)
+							if (pProgress->UserAbort)
+							{
+								il->m_LastError = LFCancel;
+								break;
+							}
 					}
 					else
 					{
-						il->SetError(il->m_Items[a].StoreID, res);
+						il->SetError(il->m_Items[a].StoreID, res, pProgress);
+
+						pProgress->Object[0] = L'\0';
+						if (pProgress)
+							if (SendMessage(pProgress->hWnd, WM_UPDATEPROGRESS, (WPARAM)pProgress, NULL))
+							{
+								il->m_LastError = LFCancel;
+								break;
+							}
 					}
 				}
+
+		// Done
+		pProgress->Object[0] = L'\0';
+		if (SendMessage(pProgress->hWnd, WM_UPDATEPROGRESS, (WPARAM)pProgress, NULL))
+			il->m_LastError = LFCancel;
 
 		if (idxDst1)
 			delete idxDst1;
