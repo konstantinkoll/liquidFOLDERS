@@ -640,26 +640,10 @@ void CMainView::RemoveTransactedItems(LFTransactionList* tl)
 	GetOwner()->SendMessage(WM_COOKFILES, (WPARAM)&Data);
 }
 
-BOOL CMainView::UpdateTrashFlag(BOOL Trash, BOOL All)
+BOOL CMainView::DeleteFiles(BOOL Trash, BOOL All)
 {
-	LFVariantData value1;
-	value1.Attr = LFAttrFlags;
-	LFGetNullVariantData(&value1);
-
-	value1.IsNull = false;
-	value1.Flags.Flags = Trash ? LFFlagTrash : 0;
-	value1.Flags.Mask = LFFlagTrash;
-
-	LFVariantData value2;
-	value2.Attr = LFAttrDeleteTime;
-	LFGetNullVariantData(&value2);
-	value2.IsNull = false;
-
-	if (Trash)
-		GetSystemTimeAsFileTime(&value2.Time);
-
 	LFTransactionList* tl = BuildTransactionList(All);
-	LFTransactionUpdate(tl, GetOwner()->GetSafeHwnd(), &value1, &value2);
+	LFTransactionDelete(tl, Trash==TRUE);
 	RemoveTransactedItems(tl);
 
 	if (tl->m_LastError>LFCancel)
@@ -670,10 +654,12 @@ BOOL CMainView::UpdateTrashFlag(BOOL Trash, BOOL All)
 	return Changes;
 }
 
-BOOL CMainView::DeleteFiles(BOOL All)
+BOOL CMainView::RestoreFiles(BOOL All)
 {
+	CWaitCursor wait;
+
 	LFTransactionList* tl = BuildTransactionList(All);
-	LFTransactionDelete(tl, false);
+	LFTransactionRestore(tl);
 	RemoveTransactedItems(tl);
 
 	if (tl->m_LastError>LFCancel)
@@ -686,6 +672,8 @@ BOOL CMainView::DeleteFiles(BOOL All)
 
 BOOL CMainView::UpdateItems(LFVariantData* Value1, LFVariantData* Value2, LFVariantData* Value3)
 {
+	CWaitCursor wait;
+
 	LFTransactionList* tl = BuildTransactionList();
 	LFTransactionUpdate(tl, GetOwner()->GetSafeHwnd(), Value1, Value2, Value3);
 
@@ -1583,13 +1571,13 @@ void CMainView::OnUpdateHousekeepingCommands(CCmdUI* pCmdUI)
 
 void CMainView::OnTrashEmpty()
 {
-	if (DeleteFiles(TRUE))
+	if (DeleteFiles(FALSE, TRUE))
 		theApp.PlayTrashSound();
 }
 
 void CMainView::OnTrashRestoreAll()
 {
-	UpdateTrashFlag(FALSE, TRUE);
+	RestoreFiles(TRUE);
 }
 
 void CMainView::OnUpdateTrashCommands(CCmdUI* pCmdUI)
@@ -1906,14 +1894,7 @@ void CMainView::OnFileShortcut()
 void CMainView::OnFileDelete()
 {
 	if (p_CookedFiles)
-		if (p_CookedFiles->m_Context==LFContextTrash)
-		{
-			DeleteFiles();
-		}
-		else
-		{
-			UpdateTrashFlag(TRUE);
-		}
+		DeleteFiles(p_CookedFiles->m_Context!=LFContextTrash);
 }
 
 void CMainView::OnFileRename()
@@ -1925,7 +1906,7 @@ void CMainView::OnFileRename()
 
 void CMainView::OnFileRestore()
 {
-	UpdateTrashFlag(FALSE);
+	RestoreFiles();
 }
 
 void CMainView::OnUpdateFileCommands(CCmdUI* pCmdUI)

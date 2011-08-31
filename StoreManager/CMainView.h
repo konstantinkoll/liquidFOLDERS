@@ -60,8 +60,8 @@ protected:
 	LFTransactionList* BuildTransactionList(BOOL All=FALSE, BOOL ResolvePhysicalLocations=FALSE, BOOL IncludePIDL=FALSE);
 	void RemoveTransactedItems(LFFileIDList* il);
 	void RemoveTransactedItems(LFTransactionList* tl);
-	BOOL UpdateTrashFlag(BOOL Trash, BOOL All=FALSE);
-	BOOL DeleteFiles(BOOL All=FALSE);
+	BOOL DeleteFiles(BOOL Trash, BOOL All=FALSE);
+	BOOL RestoreFiles(BOOL All=FALSE);
 	BOOL UpdateItems(LFVariantData* Value1, LFVariantData* Value2, LFVariantData* Value3);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);

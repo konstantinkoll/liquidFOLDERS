@@ -14,35 +14,40 @@ extern HANDLE Mutex_Stores;
 extern LFMessageIDs LFMessages;
 
 
-void UpdateStore(LFTransactionList* tl, unsigned int idx, LFVariantData* value, bool& Updated)
+LFCore_API unsigned int LFTransactionRename(char* StoreID, char* FileID, wchar_t* NewName)
 {
-	unsigned int result = LFIllegalAttribute;
+	assert(StoreID);
+	assert(FileID);
+	assert(NewName);
 
-	switch (value->Attr)
+	CIndex* idx1;
+	CIndex* idx2;
+	HANDLE StoreLock = NULL;
+	unsigned int res = OpenStore(StoreID, true, idx1, idx2, NULL, &StoreLock);
+
+	if (res==LFOk)
 	{
-	case LFAttrFileName:
-		result = LFSetStoreAttributes(tl->m_Items[idx].Item->StoreID, value->UnicodeString, NULL, NULL, true);
-		break;
-	case LFAttrComments:
-		result = LFSetStoreAttributes(tl->m_Items[idx].Item->StoreID, NULL, value->UnicodeString, NULL, true);
-		break;
-	default:
-		result = LFIllegalAttribute;
+		if (idx1)
+		{
+			res = idx1->Rename(FileID, NewName);
+			delete idx1;
+		}
+		if (idx2)
+		{
+			if (res==LFOk)
+				res = idx2->Rename(FileID, NewName);
+			delete idx2;
+		}
+
+		ReleaseMutexForStore(StoreLock);
 	}
 
-	if (result==LFOk)
-	{
-		LFSetAttributeVariantData(tl->m_Items[idx].Item, value);
-		tl->m_Changes = true;
-		Updated |= true;
-	}
-	else
-	{
-		tl->m_LastError = tl->m_Items[idx].LastError = result;
-	}
-	tl->m_Items[idx].Processed = true;
+	return res;
 }
 
+
+// LFFileImportList
+//
 
 LFCore_API void LFTransactionImport(char* key, LFFileImportList* il, LFItemDescriptor* it, bool recursive, bool move, LFProgress* pProgress)
 {
@@ -176,6 +181,38 @@ LFCore_API void LFTransactionImport(char* key, LFFileImportList* il, LFItemDescr
 }
 
 
+// LFTransactionList
+//
+
+void UpdateStore(LFTransactionList* tl, unsigned int idx, LFVariantData* value, bool& Updated)
+{
+	unsigned int result = LFIllegalAttribute;
+
+	switch (value->Attr)
+	{
+	case LFAttrFileName:
+		result = LFSetStoreAttributes(tl->m_Items[idx].Item->StoreID, value->UnicodeString, NULL, NULL, true);
+		break;
+	case LFAttrComments:
+		result = LFSetStoreAttributes(tl->m_Items[idx].Item->StoreID, NULL, value->UnicodeString, NULL, true);
+		break;
+	default:
+		result = LFIllegalAttribute;
+	}
+
+	if (result==LFOk)
+	{
+		LFSetAttributeVariantData(tl->m_Items[idx].Item, value);
+		tl->m_Changes = true;
+		Updated |= true;
+	}
+	else
+	{
+		tl->m_LastError = tl->m_Items[idx].LastError = result;
+	}
+	tl->m_Items[idx].Processed = true;
+}
+
 LFCore_API void LFTransactionUpdate(LFTransactionList* tl, HWND hWndSource, LFVariantData* value1, LFVariantData* value2, LFVariantData* value3)
 {
 	assert(tl);
@@ -239,7 +276,7 @@ LFCore_API void LFTransactionUpdate(LFTransactionList* tl, HWND hWndSource, LFVa
 	}
 }
 
-LFCore_API void LFTransactionDelete(LFTransactionList* tl, bool PutInTrash)
+LFCore_API void LFTransactionDelete(LFTransactionList* tl, bool PutInTrash, LFProgress* pProgress)
 {
 	assert(tl);
 
@@ -281,6 +318,26 @@ LFCore_API void LFTransactionDelete(LFTransactionList* tl, bool PutInTrash)
 				tl->m_LastError = tl->m_Items[a].LastError = LFIllegalItemType;
 				tl->m_Items[a].Processed = true;
 			}
+}
+
+LFCore_API void LFTransactionRestore(LFTransactionList* tl)
+{
+	assert(tl);
+
+	LFVariantData value1;
+	value1.Attr = LFAttrFlags;
+	LFGetNullVariantData(&value1);
+
+	value1.IsNull = false;
+	value1.Flags.Flags = 0;
+	value1.Flags.Mask = LFFlagTrash;
+
+	LFVariantData value2;
+	value2.Attr = LFAttrDeleteTime;
+	LFGetNullVariantData(&value2);
+	value2.IsNull = false;
+
+	LFTransactionUpdate(tl, NULL, &value1, &value2);
 }
 
 LFCore_API void LFTransactionResolvePhysicalLocations(LFTransactionList* tl, bool IncludePIDL)
@@ -339,37 +396,9 @@ LFCore_API void LFTransactionResolvePhysicalLocations(LFTransactionList* tl, boo
 	tl->m_Resolved = true;
 }
 
-LFCore_API unsigned int LFTransactionRename(char* StoreID, char* FileID, wchar_t* NewName)
-{
-	assert(StoreID);
-	assert(FileID);
-	assert(NewName);
 
-	CIndex* idx1;
-	CIndex* idx2;
-	HANDLE StoreLock = NULL;
-	unsigned int res = OpenStore(StoreID, true, idx1, idx2, NULL, &StoreLock);
-
-	if (res==LFOk)
-	{
-		if (idx1)
-		{
-			res = idx1->Rename(FileID, NewName);
-			delete idx1;
-		}
-		if (idx2)
-		{
-			if (res==LFOk)
-				res = idx2->Rename(FileID, NewName);
-			delete idx2;
-		}
-
-		ReleaseMutexForStore(StoreLock);
-	}
-
-	return res;
-}
-
+// LFFileIDList
+//
 
 LFCore_API void LFTransactionImport(char* key, LFFileIDList* il, bool move, LFProgress* pProgress)
 {
@@ -493,7 +522,7 @@ LFCore_API void LFTransactionImport(char* key, LFFileIDList* il, bool move, LFPr
 	}
 }
 
-LFCore_API void LFTransactionDelete(LFFileIDList* il, bool PutInTrash)
+LFCore_API void LFTransactionDelete(LFFileIDList* il, bool PutInTrash, LFProgress* pProgress)
 {
 	assert(il);
 

@@ -408,9 +408,19 @@ LFCore_API LFFilter* LFLoadFilter(LFItemDescriptor* i);
 // Transaktionen
 //
 
-// Importiert Dateien in den Store
-LFCore_API void LFTransactionImport(char* key, LFFileImportList* il, LFItemDescriptor* it, bool recursive, bool move, LFProgress* pProgrss=NULL);
+// Benennt die Datei um
+LFCore_API unsigned int LFTransactionRename(char* StoreID, char* FileID, wchar_t* NewName);
 
+
+// LFFileImportList
+//
+
+// Importiert Dateien in den Store
+LFCore_API void LFTransactionImport(char* key, LFFileImportList* il, LFItemDescriptor* it, bool recursive, bool move, LFProgress* pProgress=NULL);
+
+
+// LFTransactionList
+//
 
 // Ändert bei allen Einträgen in tl bis zu 3 Attributwerte
 // hWndSource enthält das Window-Handle des auslösenden Fensters, welches bei allen globalen Nachrichten
@@ -418,20 +428,23 @@ LFCore_API void LFTransactionImport(char* key, LFFileImportList* il, LFItemDescr
 LFCore_API void LFTransactionUpdate(LFTransactionList* tl, HWND hWndSource, LFVariantData* value1, LFVariantData* value2=NULL, LFVariantData* value3=NULL);
 
 // Löscht alle Dateien in tl
-LFCore_API void LFTransactionDelete(LFTransactionList* tl, bool PutInTrash=true);
+LFCore_API void LFTransactionDelete(LFTransactionList* tl, bool PutInTrash=true, LFProgress* pProgress=NULL);
+
+// Stellt alle Dateien in tl wieder her, sofern nicht entgültig gelöscht
+LFCore_API void LFTransactionRestore(LFTransactionList* tl);
 
 // Physische Orte auflösen
 LFCore_API void LFTransactionResolvePhysicalLocations(LFTransactionList* tl, bool IncludePIDL=false);
 
-// Benennt die Datei um
-LFCore_API unsigned int LFTransactionRename(char* StoreID, char* FileID, wchar_t* NewName);
 
+// LFFileIDList
+//
 
 // Importiert Dateien in den Store
 LFCore_API void LFTransactionImport(char* key, LFFileIDList* il, bool move, LFProgress* pProgress=NULL);
 
 // Löscht alle Dateien in il
-LFCore_API void LFTransactionDelete(LFFileIDList* il, bool PutInTrash=true);
+//LFCore_API void LFTransactionDelete(LFFileIDList* il, bool PutInTrash=true, LFProgress* pProgress=NULL);
 
 // Fügt die angegebenen Dateien zum Suchergebnis hinzu
 LFCore_API void LFTransactionAddToSearchResult(LFFileIDList* il, LFSearchResult* res);
