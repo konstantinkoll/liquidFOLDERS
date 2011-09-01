@@ -42,15 +42,49 @@ void LFTransactionList::Reset()
 	m_LastError = LFOk;
 }
 
-void LFTransactionList::SetError(char* key, unsigned int res)
+void LFTransactionList::SetError(char* key, unsigned int res, LFProgress* pProgress)
 {
+	bool found = false;
+
 	for (unsigned int a=0; a<m_ItemCount; a++)
 		if (!m_Items[a].Processed)
-			if ((strcmp(m_Items[a].Item->StoreID, key)==0) && ((m_Items[a].Item->Type & LFTypeMask)==LFTypeFile))
+			if (strcmp(m_Items[a].Item->StoreID, key)==0)
 			{
+				found = true;
+
 				m_Items[a].LastError = m_LastError = res;
 				m_Items[a].Processed = true;
+				if (pProgress)
+					pProgress->MinorCurrent++;
 			}
+
+	if (pProgress)
+	{
+		if (res>LFCancel)
+			pProgress->ProgressState = LFProgressError;
+		if (found)
+			pProgress->Object[0] = L'\0';
+
+		if (SendMessage(pProgress->hWnd, WM_UPDATEPROGRESS, (WPARAM)pProgress, NULL))
+			m_LastError = LFCancel;
+	}
+}
+
+void LFTransactionList::SetError(unsigned int idx, unsigned int res, LFProgress* pProgress)
+{
+	m_Items[idx].LastError = m_LastError = res;
+	m_Items[idx].Processed = true;
+
+	if (pProgress)
+	{
+		if (res>LFCancel)
+			pProgress->ProgressState = LFProgressError;
+
+		wcscpy_s(pProgress->Object, 256, m_Items[idx].Item->CoreAttributes.FileName);
+		pProgress->MinorCurrent++;
+		if (SendMessage(pProgress->hWnd, WM_UPDATEPROGRESS, (WPARAM)pProgress, NULL))
+			m_LastError = LFCancel;
+	}
 }
 
 LPITEMIDLIST LFTransactionList::DetachPIDL(unsigned int idx)

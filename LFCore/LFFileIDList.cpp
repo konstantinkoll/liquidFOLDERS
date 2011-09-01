@@ -37,22 +37,47 @@ void LFFileIDList::Reset()
 
 void LFFileIDList::SetError(char* key, unsigned int res, LFProgress* pProgress)
 {
+	bool found = false;
+
 	for (unsigned int a=0; a<m_ItemCount; a++)
 		if (!m_Items[a].Processed)
 			if (strcmp(m_Items[a].StoreID, key)==0)
 			{
+				found = true;
+
 				m_Items[a].LastError = m_LastError = res;
 				m_Items[a].Processed = true;
 				if (pProgress)
 					pProgress->MinorCurrent++;
 			}
+
+	if (pProgress)
+	{
+		if (res>LFCancel)
+			pProgress->ProgressState = LFProgressError;
+		if (found)
+			pProgress->Object[0] = L'\0';
+
+		if (SendMessage(pProgress->hWnd, WM_UPDATEPROGRESS, (WPARAM)pProgress, NULL))
+			m_LastError = LFCancel;
+	}
 }
 
 void LFFileIDList::SetError(unsigned int idx, unsigned int res, LFProgress* pProgress)
 {
 	m_Items[idx].LastError = m_LastError = res;
+	m_Items[idx].Processed = true;
+
 	if (pProgress)
-		pProgress->ProgressState = LFProgressError;
+	{
+		if (res>LFCancel)
+			pProgress->ProgressState = LFProgressError;
+
+		pProgress->Object[0] = L'\0';
+		pProgress->MinorCurrent++;
+		if (SendMessage(pProgress->hWnd, WM_UPDATEPROGRESS, (WPARAM)pProgress, NULL))
+			m_LastError = LFCancel;
+	}
 }
 
 HGLOBAL LFFileIDList::CreateLiquidFiles()

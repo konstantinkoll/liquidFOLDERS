@@ -103,6 +103,7 @@ LFCore_API void LFTransactionImport(char* key, LFFileImportList* il, LFItemDescr
 		{
 			if (!il->m_Items[a].Processed)
 			{
+				// Progress
 				if (pProgress)
 				{
 					wcscpy_s(pProgress->Object, 256, il->m_Items[a].Path);
@@ -120,22 +121,15 @@ LFCore_API void LFTransactionImport(char* key, LFFileImportList* il, LFItemDescr
 
 				wchar_t Path[2*MAX_PATH];
 				res = PrepareImport(slot, i, Path, 2*MAX_PATH);
-				if (res!=LFOk)
-				{
-					LFFreeItemDescriptor(i);
-					il->SetError(a, res, pProgress);
-				}
-				else
+				if (res==LFOk)
 					if (!(move ? MoveFile(il->m_Items[a].Path, Path) : CopyFile(il->m_Items[a].Path, Path, FALSE)))
 					{
 						wchar_t* LastBackslash = wcsrchr(Path, L'\\');
 						if (LastBackslash)
 							*(LastBackslash+1) = L'\0';
-
 						RemoveDir(Path);
 
-						LFFreeItemDescriptor(i);
-						il->SetError(a, LFCannotImportFile, pProgress);
+						res = LFCannotImportFile;
 					}
 					else
 					{
@@ -146,21 +140,22 @@ LFCore_API void LFTransactionImport(char* key, LFFileImportList* il, LFItemDescr
 							idx1->AddItem(i);
 						if (idx2)
 							idx2->AddItem(i);
-						LFFreeItemDescriptor(i);
 					}
 
-				il->m_Items[a].Processed = true;
+				il->SetError(a, res, pProgress);
+				LFFreeItemDescriptor(i);
+			}
+			else
+			{
+				// Resolved paths
+				if (pProgress)
+					pProgress->MinorCurrent++;
 			}
 
+			// Progress
 			if (pProgress)
-			{
-				pProgress->MinorCurrent++;
-				if (SendMessage(pProgress->hWnd, WM_UPDATEPROGRESS, (WPARAM)pProgress, NULL))
-				{
-					il->m_LastError = LFCancel;
+				if (pProgress->UserAbort)
 					break;
-				}
-			}
 		}
 
 		// Done
@@ -283,9 +278,17 @@ LFCore_API void LFTransactionDelete(LFTransactionList* tl, bool PutInTrash, LFPr
 	// Reset
 	tl->Reset();
 
+	// Progress
+	if (pProgress)
+	{
+		pProgress->MinorCount = tl->m_ItemCount;
+		pProgress->MinorCurrent = 0;
+	}
+
 	// Process
 	for (unsigned int a=0; a<tl->m_ItemCount; a++)
 		if ((tl->m_Items[a].LastError==LFOk) && (!tl->m_Items[a].Processed))
+		{
 			if ((tl->m_Items[a].Item->Type & LFTypeMask)==LFTypeFile)
 			{
 				CIndex* idx1;
@@ -297,12 +300,12 @@ LFCore_API void LFTransactionDelete(LFTransactionList* tl, bool PutInTrash, LFPr
 				{
 					if (idx1)
 					{
-						idx1->Delete(tl, PutInTrash);
+						idx1->Delete(tl, PutInTrash, pProgress);
 						delete idx1;
 					}
 					if (idx2)
 					{
-						idx2->Delete(tl, PutInTrash);
+						idx2->Delete(tl, PutInTrash, pProgress);
 						delete idx2;
 					}
 
@@ -315,9 +318,13 @@ LFCore_API void LFTransactionDelete(LFTransactionList* tl, bool PutInTrash, LFPr
 			}
 			else
 			{
-				tl->m_LastError = tl->m_Items[a].LastError = LFIllegalItemType;
-				tl->m_Items[a].Processed = true;
+				tl->SetError(a, LFIllegalItemType, pProgress);
 			}
+
+			if (pProgress)
+				if (pProgress->UserAbort)
+					break;
+		}
 }
 
 LFCore_API void LFTransactionRestore(LFTransactionList* tl)
@@ -447,22 +454,12 @@ LFCore_API void LFTransactionImport(char* key, LFFileIDList* il, bool move, LFPr
 
 		// Process
 		for (unsigned int a=0; a<il->m_ItemCount; a++)
+		{
 			if ((il->m_Items[a].LastError==LFOk) && (!il->m_Items[a].Processed))
+			{
 				if (strcmp(store, il->m_Items[a].StoreID)==0)
 				{
-					il->m_Items[a].LastError = LFCancel;
-					il->m_Items[a].Processed = true;
-
-					if (pProgress)
-					{
-						pProgress->Object[0] = L'\0';
-						pProgress->MinorCurrent++;
-						if (SendMessage(pProgress->hWnd, WM_UPDATEPROGRESS, (WPARAM)pProgress, NULL))
-						{
-							il->m_LastError = LFCancel;
-							break;
-						}
-					}
+					il->SetError(a, LFCancel, pProgress);
 				}
 				else
 				{
@@ -483,27 +480,19 @@ LFCore_API void LFTransactionImport(char* key, LFFileIDList* il, bool move, LFPr
 							delete idxSrc2;
 
 						ReleaseMutexForStore(StoreLock);
-
-						if (pProgress)
-							if (pProgress->UserAbort)
-							{
-								il->m_LastError = LFCancel;
-								break;
-							}
 					}
 					else
 					{
 						il->SetError(il->m_Items[a].StoreID, res, pProgress);
-
-						pProgress->Object[0] = L'\0';
-						if (pProgress)
-							if (SendMessage(pProgress->hWnd, WM_UPDATEPROGRESS, (WPARAM)pProgress, NULL))
-							{
-								il->m_LastError = LFCancel;
-								break;
-							}
 					}
 				}
+			}
+
+			// Progress
+			if (pProgress)
+				if (pProgress->UserAbort)
+					break;
+		}
 
 		// Done
 		pProgress->Object[0] = L'\0';
@@ -529,6 +518,13 @@ LFCore_API void LFTransactionDelete(LFFileIDList* il, bool PutInTrash, LFProgres
 	// Reset
 	il->Reset();
 
+	// Progress
+	if (pProgress)
+	{
+		pProgress->MinorCount = il->m_ItemCount;
+		pProgress->MinorCurrent = 0;
+	}
+
 	// Process
 	for (unsigned int a=0; a<il->m_ItemCount; a++)
 		if ((il->m_Items[a].LastError==LFOk) && (!il->m_Items[a].Processed))
@@ -542,12 +538,12 @@ LFCore_API void LFTransactionDelete(LFFileIDList* il, bool PutInTrash, LFProgres
 			{
 				if (idx1)
 				{
-					idx1->Delete(il, PutInTrash);
+					idx1->Delete(il, PutInTrash, pProgress);
 					delete idx1;
 				}
 				if (idx2)
 				{
-					idx2->Delete(il, PutInTrash);
+					idx2->Delete(il, PutInTrash, pProgress);
 					delete idx2;
 				}
 
@@ -557,6 +553,10 @@ LFCore_API void LFTransactionDelete(LFFileIDList* il, bool PutInTrash, LFProgres
 			{
 				il->SetError(il->m_Items[a].StoreID, res);
 			}
+
+			if (pProgress)
+				if (pProgress->UserAbort)
+					break;
 		}
 }
 

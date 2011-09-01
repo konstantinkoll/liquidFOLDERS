@@ -34,7 +34,6 @@ void LFFileImportList::Resolve(bool recursive)
 			DWORD attr = GetFileAttributes(m_Items[a].Path);
 			if (attr==INVALID_FILE_ATTRIBUTES)
 			{
-				//m_Items[a].LastError = m_LastError = LFErrorInvalidItemType;
 				m_Items[a].Processed = true;
 			}
 			else
@@ -79,7 +78,19 @@ FileFound:
 
 void LFFileImportList::SetError(unsigned int idx, unsigned int res, LFProgress* pProgress)
 {
-	m_Items[idx].LastError = m_LastError = res;
+	if (res>LFOk)
+		m_LastError = res;
+	m_Items[idx].LastError = res;
+	m_Items[idx].Processed = true;
+
 	if (pProgress)
-		pProgress->ProgressState = LFProgressError;
+	{
+		if (res>LFCancel)
+			pProgress->ProgressState = LFProgressError;
+
+		wcscpy_s(pProgress->Object, 256, m_Items[idx].Path);
+		pProgress->MinorCurrent++;
+		if (SendMessage(pProgress->hWnd, WM_UPDATEPROGRESS, (WPARAM)pProgress, NULL))
+			m_LastError = LFCancel;
+	}
 }

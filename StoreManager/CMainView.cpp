@@ -622,7 +622,7 @@ void CMainView::RemoveTransactedItems(LFFileIDList* il)
 		return;
 
 	for (UINT a=0; a<il->m_ItemCount; a++)
-		if (il->m_Items[a].LastError==LFOk)
+		if ((il->m_Items[a].LastError==LFOk) && (il->m_Items[a].Processed))
 			for (UINT b=0; b<p_RawFiles->m_ItemCount; b++)
 			{
 				LFItemDescriptor* i = p_RawFiles->m_Items[b];
@@ -648,7 +648,7 @@ void CMainView::RemoveTransactedItems(LFTransactionList* tl)
 		return;
 
 	for (UINT a=0; a<tl->m_ItemCount; a++)
-		if (tl->m_Items[a].LastError==LFOk)
+		if ((tl->m_Items[a].LastError==LFOk) && (tl->m_Items[a].Processed))
 			tl->m_Items[a].Item->DeleteFlag = true;
 
 	LFRemoveFlaggedItemDescriptors(p_RawFiles);
