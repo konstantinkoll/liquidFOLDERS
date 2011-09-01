@@ -159,9 +159,12 @@ LFCore_API void LFTransactionImport(char* key, LFFileImportList* il, LFItemDescr
 		}
 
 		// Done
-		pProgress->Object[0] = L'\0';
-		if (SendMessage(pProgress->hWnd, WM_UPDATEPROGRESS, (WPARAM)pProgress, NULL))
-			il->m_LastError = LFCancel;
+		if (pProgress)
+		{
+			pProgress->Object[0] = L'\0';
+			if (SendMessage(pProgress->hWnd, WM_UPDATEPROGRESS, (WPARAM)pProgress, NULL))
+				il->m_LastError = LFCancel;
+		}
 
 		if (idx1)
 			delete idx1;
@@ -495,9 +498,12 @@ LFCore_API void LFTransactionImport(char* key, LFFileIDList* il, bool move, LFPr
 		}
 
 		// Done
-		pProgress->Object[0] = L'\0';
-		if (SendMessage(pProgress->hWnd, WM_UPDATEPROGRESS, (WPARAM)pProgress, NULL))
-			il->m_LastError = LFCancel;
+		if (pProgress)
+		{
+			pProgress->Object[0] = L'\0';
+			if (SendMessage(pProgress->hWnd, WM_UPDATEPROGRESS, (WPARAM)pProgress, NULL))
+				il->m_LastError = LFCancel;
+		}
 
 		if (idxDst1)
 			delete idxDst1;
