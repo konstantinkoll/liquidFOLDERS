@@ -444,7 +444,7 @@ LFCore_API void LFTransactionResolvePhysicalLocations(LFTransactionList* tl, boo
 LFCore_API void LFTransactionImport(char* key, LFFileIDList* il, bool move, LFProgress* pProgress=NULL);
 
 // Löscht alle Dateien in il
-//LFCore_API void LFTransactionDelete(LFFileIDList* il, bool PutInTrash=true, LFProgress* pProgress=NULL);
+LFCore_API void LFTransactionDelete(LFFileIDList* il, bool PutInTrash=true, LFProgress* pProgress=NULL);
 
 // Fügt die angegebenen Dateien zum Suchergebnis hinzu
 LFCore_API void LFTransactionAddToSearchResult(LFFileIDList* il, LFSearchResult* res);
