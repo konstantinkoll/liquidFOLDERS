@@ -72,7 +72,7 @@ bool CIndex::Create()
 	return res;
 }
 
-unsigned int CIndex::Check(bool scheduled)
+unsigned int CIndex::Check(bool scheduled, LFProgress* pProgress)
 {
 	bool SlaveReindex = false;
 	bool Repaired = false;

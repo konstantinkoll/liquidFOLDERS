@@ -45,10 +45,13 @@ void CreateShortcut(LFTL_Item* i)
 struct WorkerParameters
 {
 	LFWorkerParameters Hdr;
+	BOOL AllStores;
 	CHAR StoreID[LFKeySize];
+	HWND hWndSource;
 	union
 	{
 		LFFileIDList* FileIDList;
+		LFMaintenanceList* MaintenanceList;
 		LFTransactionList* TransactionList;
 	};
 };
@@ -83,35 +86,20 @@ DWORD WINAPI WorkerDelete(void* lParam)
 	return 0;
 }
 
-#ifdef _DEBUG
-DWORD WINAPI WorkerTest(void* lParam)
+DWORD WINAPI WorkerMaintenance(void* lParam)
 {
 	CoInitialize(NULL);
-	LFWorkerParameters* wp = (LFWorkerParameters*)lParam;
+	WorkerParameters* wp = (WorkerParameters*)lParam;
 
 	LFProgress p;
-	ZeroMemory(&p, sizeof(p));
-	p.ProgressState = LFProgressWorking;
-	p.MinorCount = 5;
+	LFInitProgress(&p, wp->Hdr.hWnd);
 
-	for (UINT a=0; a<p.MinorCount; a++)
-	{
-		swprintf(p.Object, 256, _T("Item %d"), a+1);
-		if (SendMessage(wp->hWnd, WM_UPDATEPROGRESS, (WPARAM)&p, NULL))
-			break;
-
-		Sleep(1000);
-
-		p.MinorCurrent++;
-		if (SendMessage(wp->hWnd, WM_UPDATEPROGRESS, (WPARAM)&p, NULL))
-			break;
-	}
+	wp->MaintenanceList = wp->AllStores ? LFStoreMaintenance(wp->hWndSource, &p) : LFStoreMaintenance(wp->StoreID, wp->hWndSource, &p);
 
 	CoUninitialize();
-	PostMessage(wp->hWnd, WM_COMMAND, (WPARAM)IDOK, NULL);
+	PostMessage(wp->Hdr.hWnd, WM_COMMAND, (WPARAM)IDOK, NULL);
 	return 0;
 }
-#endif
 
 
 // CMainView
@@ -1474,15 +1462,17 @@ void CMainView::OnStoresCreateNew()
 
 void CMainView::OnStoresMaintainAll()
 {
-	CWaitCursor wait;
+	WorkerParameters wp;
+	ZeroMemory(&wp, sizeof(wp));
+	wp.AllStores = TRUE;
 
-	LFMaintenanceList* ml = LFStoreMaintenance();
-	LFErrorBox(ml->m_LastError, GetSafeHwnd());
+	LFDoWithProgress(WorkerMaintenance, &wp.Hdr, this);
+	LFErrorBox(wp.MaintenanceList->m_LastError, GetSafeHwnd());
 
-	LFStoreMaintenanceDlg dlg(ml, this);
+	LFStoreMaintenanceDlg dlg(wp.MaintenanceList, this);
 	dlg.DoModal();
 
-	LFFreeMaintenanceList(ml);
+	LFFreeMaintenanceList(wp.MaintenanceList);
 }
 
 void CMainView::OnStoresBackup()
@@ -1538,15 +1528,17 @@ void CMainView::OnHomeMaintain()
 {
 	if (m_StoreIDValid)
 	{
-		CWaitCursor wait;
+		WorkerParameters wp;
+		ZeroMemory(&wp, sizeof(wp));
+		strcpy_s(wp.StoreID, LFKeySize, m_StoreID);
 
-		LFMaintenanceList* ml = LFStoreMaintenance(m_StoreID);
-		LFErrorBox(ml->m_LastError, GetSafeHwnd());
+		LFDoWithProgress(WorkerMaintenance, &wp.Hdr, this);
+		LFErrorBox(wp.MaintenanceList->m_LastError, GetSafeHwnd());
 
-		LFStoreMaintenanceDlg dlg(ml, this);
+		LFStoreMaintenanceDlg dlg(wp.MaintenanceList, this);
 		dlg.DoModal();
 
-		LFFreeMaintenanceList(ml);
+		LFFreeMaintenanceList(wp.MaintenanceList);
 	}
 }
 
@@ -1751,15 +1743,17 @@ void CMainView::OnStoreMaintain()
 	INT idx = GetSelectedItem();
 	if (idx!=-1)
 	{
-		CWaitCursor wait;
+		WorkerParameters wp;
+		ZeroMemory(&wp, sizeof(wp));
+		strcpy_s(wp.StoreID, LFKeySize, p_CookedFiles->m_Items[idx]->StoreID);
 
-		LFMaintenanceList* ml = LFStoreMaintenance(p_CookedFiles->m_Items[idx]->StoreID);
-		LFErrorBox(ml->m_LastError, GetSafeHwnd());
+		LFDoWithProgress(WorkerMaintenance, &wp.Hdr, this);
+		LFErrorBox(wp.MaintenanceList->m_LastError, GetSafeHwnd());
 
-		LFStoreMaintenanceDlg dlg(ml, this);
+		LFStoreMaintenanceDlg dlg(wp.MaintenanceList, this);
 		dlg.DoModal();
 
-		LFFreeMaintenanceList(ml);
+		LFFreeMaintenanceList(wp.MaintenanceList);
 	}
 }
 

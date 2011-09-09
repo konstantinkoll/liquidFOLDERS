@@ -23,7 +23,7 @@ public:
 	~CIndex();
 
 	bool Create();
-	unsigned int Check(bool scheduled=false);
+	unsigned int Check(bool scheduled=false, LFProgress* pProgress=NULL);
 	void Reindex();
 	unsigned int AddItem(LFItemDescriptor* i);
 	void Update(LFItemDescriptor* i, bool IncludeSlaves=true);

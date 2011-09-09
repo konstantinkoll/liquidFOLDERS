@@ -7,6 +7,34 @@
 #include "Resource.h"
 
 
+// Thread workers
+//
+
+struct WorkerParameters
+{
+	LFWorkerParameters Hdr;
+	BOOL AllStores;
+	CHAR StoreID[LFKeySize];
+	HWND hWndSource;
+	LFMaintenanceList* MaintenanceList;
+};
+
+DWORD WINAPI WorkerMaintenance(void* lParam)
+{
+	CoInitialize(NULL);
+	WorkerParameters* wp = (WorkerParameters*)lParam;
+
+	LFProgress p;
+	LFInitProgress(&p, wp->Hdr.hWnd);
+
+	wp->MaintenanceList = wp->AllStores ? LFStoreMaintenance(wp->hWndSource, &p) : LFStoreMaintenance(wp->StoreID, wp->hWndSource, &p);
+
+	CoUninitialize();
+	PostMessage(wp->Hdr.hWnd, WM_COMMAND, (WPARAM)IDOK, NULL);
+	return 0;
+}
+
+
 // LFChooseStoreDlg
 //
 
@@ -253,15 +281,17 @@ void LFChooseStoreDlg::OnStoresCreateNew()
 
 void LFChooseStoreDlg::OnStoresMaintainAll()
 {
-	CWaitCursor wait;
+	WorkerParameters wp;
+	ZeroMemory(&wp, sizeof(wp));
+	wp.AllStores = TRUE;
 
-	LFMaintenanceList* ml = LFStoreMaintenance();
-	LFErrorBox(ml->m_LastError);
+	LFDoWithProgress(WorkerMaintenance, &wp.Hdr, this);
+	LFErrorBox(wp.MaintenanceList->m_LastError);
 
-	LFStoreMaintenanceDlg dlg(ml, this);
+	LFStoreMaintenanceDlg dlg(wp.MaintenanceList, this);
 	dlg.DoModal();
 
-	LFFreeMaintenanceList(ml);
+	LFFreeMaintenanceList(wp.MaintenanceList);
 }
 
 void LFChooseStoreDlg::OnStoresBackup()
@@ -294,15 +324,17 @@ void LFChooseStoreDlg::OnStoreMaintain()
 	INT idx = GetSelectedStore();
 	if (idx!=-1)
 	{
-		CWaitCursor wait;
+		WorkerParameters wp;
+		ZeroMemory(&wp, sizeof(wp));
+		strcpy_s(wp.StoreID, LFKeySize, p_Result->m_Items[idx]->StoreID);
 
-		LFMaintenanceList* ml = LFStoreMaintenance(p_Result->m_Items[idx]->StoreID);
-		LFErrorBox(ml->m_LastError);
+		LFDoWithProgress(WorkerMaintenance, &wp.Hdr, this);
+		LFErrorBox(wp.MaintenanceList->m_LastError);
 
-		LFStoreMaintenanceDlg dlg(ml, this);
+		LFStoreMaintenanceDlg dlg(wp.MaintenanceList, this);
 		dlg.DoModal();
 
-		LFFreeMaintenanceList(ml);
+		LFFreeMaintenanceList(wp.MaintenanceList);
 	}
 }
 

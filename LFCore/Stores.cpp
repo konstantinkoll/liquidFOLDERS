@@ -736,7 +736,7 @@ LFCore_API bool LFAskDeleteStore(LFStoreDescriptor* s, HWND hWnd)
 	return MessageBox(hWnd, msg, caption, MB_YESNO | MB_DEFBUTTON2 | MB_ICONWARNING)==IDYES;
 }
 
-unsigned int RunMaintenance(LFStoreDescriptor* s, bool scheduled)
+unsigned int RunMaintenance(LFStoreDescriptor* s, bool scheduled, LFProgress* pProgress=NULL)
 {
 	// Verzeichnisse prüfen
 	unsigned int res = ValidateStoreDirectories(s);
@@ -753,7 +753,7 @@ unsigned int RunMaintenance(LFStoreDescriptor* s, bool scheduled)
 
 	// Index prüfen
 	CIndex* idx = new CIndex((s->StoreMode!=LFStoreModeHybrid) ? s->IdxPathMain : s->IdxPathAux, s->StoreID, s->DatPath);
-	switch (idx->Check(scheduled))
+	switch (idx->Check(scheduled, pProgress))
 	{
 	case IndexNoAccess:
 		delete idx;
@@ -796,9 +796,15 @@ unsigned int RunMaintenance(LFStoreDescriptor* s, bool scheduled)
 	return LFOk;
 }
 
-LFCore_API LFMaintenanceList* LFStoreMaintenance(char* key, HWND hWndSource)
+LFCore_API LFMaintenanceList* LFStoreMaintenance(char* key, HWND hWndSource, LFProgress* pProgress)
 {
 	LFMaintenanceList* ml = LFAllocMaintenanceList();
+
+	if (!key)
+	{
+		ml->m_LastError = LFIllegalKey;
+		return ml;
+	}
 
 	if (!GetMutex(Mutex_Stores))
 	{
@@ -807,7 +813,7 @@ LFCore_API LFMaintenanceList* LFStoreMaintenance(char* key, HWND hWndSource)
 	}
 
 	HANDLE StoreLock = NULL;
-	LFStoreDescriptor* slot = FindStore(key, &StoreLock);
+	LFStoreDescriptor* slot = FindStore(key[0]=='\0' ? DefaultStore : key, &StoreLock);
 	ReleaseMutex(Mutex_Stores);
 
 	if (!slot)
@@ -821,7 +827,7 @@ LFCore_API LFMaintenanceList* LFStoreMaintenance(char* key, HWND hWndSource)
 		return ml;
 	}
 
-	ml->AddStore(RunMaintenance(slot, true), slot->StoreName, key, slot->StoreMode==LFStoreModeInternal ? IDI_STORE_Internal : slot->StoreMode==LFStoreModeRemote ? IDI_STORE_Server : IDI_STORE_Bag);
+	ml->AddStore(RunMaintenance(slot, true, pProgress), slot->StoreName, key, slot->StoreMode==LFStoreModeInternal ? IDI_STORE_Internal : slot->StoreMode==LFStoreModeRemote ? IDI_STORE_Server : IDI_STORE_Bag);
 	ReleaseMutexForStore(StoreLock);
 
 	SendLFNotifyMessage(LFMessages.StoreAttributesChanged, slot->StoreMode==LFStoreModeInternal ? LFMSGF_IntStores : LFMSGF_ExtHybStores, hWndSource);
@@ -829,7 +835,7 @@ LFCore_API LFMaintenanceList* LFStoreMaintenance(char* key, HWND hWndSource)
 	return ml;
 }
 
-LFCore_API LFMaintenanceList* LFStoreMaintenance(HWND hWndSource)
+LFCore_API LFMaintenanceList* LFStoreMaintenance(HWND hWndSource, LFProgress* pProgress)
 {
 	LFMaintenanceList* ml = LFAllocMaintenanceList();
 
@@ -862,7 +868,7 @@ LFCore_API LFMaintenanceList* LFStoreMaintenance(HWND hWndSource)
 			if ((!slot) || (!StoreLock))
 				continue;
 
-			ml->AddStore(RunMaintenance(slot, true), slot->StoreName, ptr, slot->StoreMode==LFStoreModeInternal ? IDI_STORE_Internal : slot->StoreMode==LFStoreModeRemote ? IDI_STORE_Server : IDI_STORE_Bag);
+			ml->AddStore(RunMaintenance(slot, true, pProgress), slot->StoreName, ptr, slot->StoreMode==LFStoreModeInternal ? IDI_STORE_Internal : slot->StoreMode==LFStoreModeRemote ? IDI_STORE_Server : IDI_STORE_Bag);
 			ReleaseMutexForStore(StoreLock);
 
 			ptr += LFKeySize;
