@@ -16,6 +16,8 @@
 #define IndexCompleteReindexRequired   6
 #define IndexNotEnoughFreeDiscSpace    7
 
+#define IndexMaintenanceSteps          (IdxTableCount*2+1)
+
 class CIndex
 {
 public:

@@ -738,49 +738,63 @@ LFCore_API bool LFAskDeleteStore(LFStoreDescriptor* s, HWND hWnd)
 
 unsigned int RunMaintenance(LFStoreDescriptor* s, bool scheduled, LFProgress* pProgress=NULL)
 {
+	// Progress
+	if (pProgress)
+	{
+		pProgress->MinorCount = IndexMaintenanceSteps+2;
+		pProgress->MinorCurrent = 0;
+		wcscpy_s(pProgress->Object, 256, s->StoreName);
+		if (SendMessage(pProgress->hWnd, WM_UPDATEPROGRESS, (WPARAM)pProgress, NULL))
+			return LFCancel;
+	}
+
+#define ABORT(res) { if (pProgress) pProgress->ProgressState = LFProgressError; return res; }
+
 	// Verzeichnisse prüfen
 	unsigned int res = ValidateStoreDirectories(s);
 	if (res!=LFOk)
-		return res;
+		ABORT(res);
 
 	// Sind die Verzeichnisse beschreibbar?
 	if (s->IdxPathMain[0]!='\0')
 		if (!DirWriteable(s->IdxPathMain))
-			return LFDriveWriteProtected;
+			ABORT(LFDriveWriteProtected);
 	if (s->IdxPathAux[0]!='\0')
 		if (!DirWriteable(s->IdxPathAux))
-			return LFDriveWriteProtected;
+			ABORT(LFDriveWriteProtected);
+
+	// Progress
+	if (pProgress)
+	{
+		pProgress->MinorCurrent++;
+		if (SendMessage(pProgress->hWnd, WM_UPDATEPROGRESS, (WPARAM)pProgress, NULL))
+			return LFCancel;
+	}
 
 	// Index prüfen
 	CIndex* idx = new CIndex((s->StoreMode!=LFStoreModeHybrid) ? s->IdxPathMain : s->IdxPathAux, s->StoreID, s->DatPath);
-	switch (idx->Check(scheduled, pProgress))
+	res = idx->Check(scheduled, pProgress);
+	delete idx;
+
+	switch (res)
 	{
 	case IndexNoAccess:
-		delete idx;
-		return LFIndexAccessError;
+		ABORT(LFIndexAccessError);
 	case IndexCannotCreate:
-		delete idx;
-		return LFIndexCreateError;
+		ABORT(LFIndexCreateError);
 	case IndexNotEnoughFreeDiscSpace:
-		delete idx;
-		return LFNotEnoughFreeDiscSpace;
+		ABORT(LFNotEnoughFreeDiscSpace);
 	case IndexCompleteReindexRequired:
 		// TODO
 	case IndexError:
-		delete idx;
-		return LFIndexRepairError;
+		ABORT(LFIndexRepairError);
 	case IndexFullyRepaired:
 		s->IndexVersion = CurIdxVersion;
 
 		res = UpdateStore(s);
 		if (res!=LFOk)
-		{
-			delete idx;
-			return res;
-		}
+			ABORT(res);
 	}
-
-	delete idx;
 
 	// Index duplizieren
 	if ((s->StoreMode==LFStoreModeHybrid) && IsStoreMounted(s))
@@ -792,6 +806,14 @@ unsigned int RunMaintenance(LFStoreDescriptor* s, bool scheduled, LFProgress* pP
 
 	GetSystemTimeAsFileTime(&s->MaintenanceTime);
 	s->NeedsCheck = false;
+
+	// Progress
+	if (pProgress)
+	{
+		pProgress->MinorCurrent++;
+		if (SendMessage(pProgress->hWnd, WM_UPDATEPROGRESS, (WPARAM)pProgress, NULL))
+			return LFCancel;
+	}
 
 	return LFOk;
 }
@@ -851,6 +873,9 @@ LFCore_API LFMaintenanceList* LFStoreMaintenance(HWND hWndSource, LFProgress* pP
 
 	if (count)
 	{
+		if (pProgress)
+			pProgress->MajorCount = count;
+
 		char* ptr = keys;
 		for (unsigned int a=0; a<count; a++)
 		{
@@ -872,6 +897,14 @@ LFCore_API LFMaintenanceList* LFStoreMaintenance(HWND hWndSource, LFProgress* pP
 			ReleaseMutexForStore(StoreLock);
 
 			ptr += LFKeySize;
+
+			if (pProgress)
+			{
+				if (pProgress->UserAbort)
+					break;
+
+				pProgress->MajorCurrent++;
+			}
 		}
 
 		free(keys);

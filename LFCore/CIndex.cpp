@@ -106,6 +106,13 @@ unsigned int CIndex::Check(bool scheduled, LFProgress* pProgress)
 		}
 
 		RecordSize += Tables[a]->GetRequiredElementSize();
+
+		// Progress
+		if (pProgress)
+		{
+			pProgress->MinorCurrent++;
+			SendMessage(pProgress->hWnd, WM_UPDATEPROGRESS, (WPARAM)pProgress, NULL);
+		}
 	}
 
 	// Index-Durchlauf
@@ -138,6 +145,13 @@ unsigned int CIndex::Check(bool scheduled, LFProgress* pProgress)
 		}
 	}
 
+	// Progress
+	if (pProgress)
+	{
+		pProgress->MinorCurrent++;
+		SendMessage(pProgress->hWnd, WM_UPDATEPROGRESS, (WPARAM)pProgress, NULL);
+	}
+
 	// Kompaktieren
 	if (scheduled)
 		for (unsigned int a=0; a<IdxTableCount; a++)
@@ -149,6 +163,13 @@ unsigned int CIndex::Check(bool scheduled, LFProgress* pProgress)
 
 			Repaired |= (tres[a]!=Tables[a]->OpenStatus);
 			tres[a] = Tables[a]->OpenStatus;
+
+			// Progress
+			if (pProgress)
+			{
+				pProgress->MinorCurrent++;
+				SendMessage(pProgress->hWnd, WM_UPDATEPROGRESS, (WPARAM)pProgress, NULL);
+			}
 		}
 
 	// Ergebnis
