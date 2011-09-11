@@ -11,6 +11,33 @@
 #include <mmsystem.h>
 
 
+// Thread workers
+//
+
+struct WorkerParameters
+{
+	LFWorkerParameters Hdr;
+	CHAR StoreID[LFKeySize];
+	HWND hWndSource;
+	UINT Result;
+};
+
+DWORD WINAPI WorkerDeleteStore(void* lParam)
+{
+	CoInitialize(NULL);
+	WorkerParameters* wp = (WorkerParameters*)lParam;
+
+	LFProgress p;
+	LFInitProgress(&p, wp->Hdr.hWnd);
+
+	wp->Result = LFDeleteStore(wp->StoreID, wp->hWndSource, &p);
+
+	CoUninitialize();
+	PostMessage(wp->Hdr.hWnd, WM_COMMAND, (WPARAM)IDOK, NULL);
+	return 0;
+}
+
+
 // LFApplication
 //
 
@@ -511,7 +538,14 @@ UINT LFApplication::DeleteStore(LFItemDescriptor* store, CWnd* pParentWnd, CWnd*
 			return LFCancel;
 	}
 
-	return LFDeleteStore(store->StoreID, pOwnerWnd ? pOwnerWnd->GetSafeHwnd() : NULL);
+	WorkerParameters wp;
+	ZeroMemory(&wp, sizeof(wp));
+	strcpy_s(wp.StoreID, LFKeySize, store->StoreID);
+	wp.hWndSource = pOwnerWnd ? pOwnerWnd->GetSafeHwnd() : NULL;
+
+	LFDoWithProgress(WorkerDeleteStore, &wp.Hdr, pParentWnd);
+
+	return wp.Result;
 }
 
 UINT LFApplication::DeleteStore(LFStoreDescriptor* store, CWnd* pParentWnd, CWnd* pOwnerWnd)

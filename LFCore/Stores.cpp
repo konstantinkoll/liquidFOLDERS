@@ -648,7 +648,7 @@ LFCore_API unsigned int LFSetStoreAttributes(char* key, wchar_t* name, wchar_t* 
 	return res;
 }
 
-LFCore_API unsigned int LFDeleteStore(char* key, HWND hWndSource)
+LFCore_API unsigned int LFDeleteStore(char* key, HWND hWndSource, LFProgress* pProgress)
 {
 	if (!key)
 		return LFIllegalKey;
@@ -663,6 +663,22 @@ LFCore_API unsigned int LFDeleteStore(char* key, HWND hWndSource)
 	LFStoreDescriptor* slot = FindStore(key, &StoreLock);
 	if ((slot) && (StoreLock))
 	{
+		// Progress
+		if (pProgress)
+		{
+			pProgress->MinorCount = 2;
+			pProgress->MinorCurrent = 0;
+			pProgress->NoMinorCounter = true;
+			wcscpy_s(pProgress->Object, 256, slot->StoreName);
+			if (SendMessage(pProgress->hWnd, WM_UPDATEPROGRESS, (WPARAM)pProgress, NULL))
+			{
+				ReleaseMutex(Mutex_Stores);
+				ReleaseMutexForStore(StoreLock);
+				return LFCancel;
+			}
+		}
+
+		// Delete
 		if (slot->DatPath[0]!=L'\0')
 		{
 			wchar_t Path[MAX_PATH];
@@ -688,6 +704,13 @@ LFCore_API unsigned int LFDeleteStore(char* key, HWND hWndSource)
 			SendLFNotifyMessage(LFMessages.StoresChanged, victim.StoreMode==LFStoreModeInternal ? LFMSGF_IntStores : LFMSGF_ExtHybStores, hWndSource);
 			SendShellNotifyMessage(SHCNE_UPDATEDIR);
 
+			// Progress
+			if (pProgress)
+			{
+				pProgress->MinorCurrent++;
+				SendMessage(pProgress->hWnd, WM_UPDATEPROGRESS, (WPARAM)pProgress, NULL);
+			}
+
 			if (victim.IdxPathAux[0]!=L'\0')
 			{
 				wchar_t path[MAX_PATH];
@@ -697,6 +720,17 @@ LFCore_API unsigned int LFDeleteStore(char* key, HWND hWndSource)
 
 			if (victim.DatPath[0]!=L'\0')
 				RemoveDir(victim.DatPath);
+		}
+		else
+		{
+			pProgress->MinorCount++;
+		}
+
+		// Progress
+		if (pProgress)
+		{
+			pProgress->MinorCurrent++;
+			SendMessage(pProgress->hWnd, WM_UPDATEPROGRESS, (WPARAM)pProgress, NULL);
 		}
 	}
 	else
@@ -767,6 +801,7 @@ unsigned int RunMaintenance(LFStoreDescriptor* s, bool scheduled, LFProgress* pP
 	if (pProgress)
 	{
 		pProgress->MinorCurrent++;
+		pProgress->NoMinorCounter = true;
 		if (SendMessage(pProgress->hWnd, WM_UPDATEPROGRESS, (WPARAM)pProgress, NULL))
 			return LFCancel;
 	}
@@ -778,6 +813,8 @@ unsigned int RunMaintenance(LFStoreDescriptor* s, bool scheduled, LFProgress* pP
 
 	switch (res)
 	{
+	case IndexCancel:
+		return LFCancel;
 	case IndexNoAccess:
 		ABORT(LFIndexAccessError);
 	case IndexCannotCreate:

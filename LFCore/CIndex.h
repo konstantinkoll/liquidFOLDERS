@@ -8,13 +8,14 @@
 //
 
 #define IndexOk                        0
-#define IndexPartiallyRepaired         1
-#define IndexFullyRepaired             2
-#define IndexNoAccess                  3
-#define IndexError                     4
-#define IndexCannotCreate              5
-#define IndexCompleteReindexRequired   6
-#define IndexNotEnoughFreeDiscSpace    7
+#define IndexCancel                    1
+#define IndexPartiallyRepaired         2
+#define IndexFullyRepaired             3
+#define IndexNoAccess                  4
+#define IndexError                     5
+#define IndexCannotCreate              6
+#define IndexCompleteReindexRequired   7
+#define IndexNotEnoughFreeDiscSpace    8
 
 #define IndexMaintenanceSteps          (IdxTableCount*2+1)
 

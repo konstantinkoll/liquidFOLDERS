@@ -351,7 +351,7 @@ LFCore_API unsigned int LFMakeHybridStore(char* key, HWND hWndSource=NULL);
 LFCore_API unsigned int LFSetStoreAttributes(char* key, wchar_t* name, wchar_t* comment, HWND hWndSource=NULL, bool InternalCall=false);
 
 // Löscht einen bestehenden Store
-LFCore_API unsigned int LFDeleteStore(char* key, HWND hWndSource=NULL);
+LFCore_API unsigned int LFDeleteStore(char* key, HWND hWndSource=NULL, LFProgress* pProgress=NULL);
 
 // Anzeigen einer MessageBox zum Löschen des Stores in aktueller Sprache
 LFCore_API bool LFAskDeleteStore(LFItemDescriptor* s, HWND hWnd=NULL);

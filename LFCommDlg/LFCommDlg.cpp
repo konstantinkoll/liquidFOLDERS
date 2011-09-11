@@ -320,6 +320,7 @@ LFCommDlg_API void LFBackupStores(CWnd* pParentWnd)
 
 	if (dlg.DoModal()==IDOK)
 	{
+		CWaitCursor wait;
 
 		CStdioFile f;
 		if (!f.Open(dlg.GetFileName(), CFile::modeCreate | CFile::modeWrite))

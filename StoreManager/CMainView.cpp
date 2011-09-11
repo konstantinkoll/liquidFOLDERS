@@ -48,6 +48,7 @@ struct WorkerParameters
 	BOOL AllStores;
 	CHAR StoreID[LFKeySize];
 	HWND hWndSource;
+	UINT Result;
 	union
 	{
 		LFFileIDList* FileIDList;
@@ -1455,7 +1456,11 @@ void CMainView::OnStoresCreateNew()
 
 	LFStoreNewDlg dlg(this, s);
 	if (dlg.DoModal()==IDOK)
+	{
+		CWaitCursor wait;
+
 		LFErrorBox(LFCreateStore(s, dlg.MakeDefault), GetSafeHwnd());
+	}
 
 	LFFreeStoreDescriptor(s);
 }
@@ -1646,7 +1651,11 @@ void CMainView::OnVolumeCreateNewStore()
 
 		LFStoreNewVolumeDlg dlg(this, p_CookedFiles->m_Items[idx]->CoreAttributes.FileID[0], s);
 		if (dlg.DoModal()==IDOK)
+		{
+			CWaitCursor wait;
+
 			LFErrorBox(LFCreateStore(s, FALSE), GetSafeHwnd());
+		}
 
 		LFFreeStoreDescriptor(s);
 	}
@@ -1728,7 +1737,11 @@ void CMainView::OnStoreMakeHybrid()
 {
 	INT idx = GetSelectedItem();
 	if (idx!=-1)
+	{
+		CWaitCursor wait;
+
 		LFErrorBox(LFMakeHybridStore(p_CookedFiles->m_Items[idx]->StoreID, NULL), GetSafeHwnd());
+	}
 }
 
 void CMainView::OnStoreImportFolder()
@@ -1769,7 +1782,7 @@ void CMainView::OnStoreDelete()
 {
 	INT idx = GetSelectedItem();
 	if (idx!=-1)
-		LFErrorBox(((LFApplication*)AfxGetApp())->DeleteStore(p_CookedFiles->m_Items[idx], this), GetSafeHwnd());
+		LFErrorBox(theApp.DeleteStore(p_CookedFiles->m_Items[idx], this), GetSafeHwnd());
 }
 
 void CMainView::OnStoreRename()

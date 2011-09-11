@@ -67,12 +67,19 @@ LRESULT LFProgressDlg::OnUpdateProgress(WPARAM wParam, LPARAM /*lParam*/)
 {
 	LFProgress* pProgress = (LFProgress*)wParam;
 
+	if (m_Abort)
+	{
+		pProgress->UserAbort = true;
+		if (pProgress->ProgressState==LFProgressWorking)
+			pProgress->ProgressState = LFProgressCancelled;
+	}
+
 	// Caption
 	GetDlgItem(IDC_CAPTION)->SetWindowText(pProgress->Object);
 
 	// Progress bar
 	ASSERT(pProgress->ProgressState>=LFProgressWorking);
-	ASSERT(pProgress->ProgressState<=LFProgressPaused);
+	ASSERT(pProgress->ProgressState<=LFProgressCancelled);
 	m_wndProgress.SendMessage(0x410, pProgress->ProgressState);
 
 	UINT nUpper;
@@ -100,7 +107,7 @@ LRESULT LFProgressDlg::OnUpdateProgress(WPARAM wParam, LPARAM /*lParam*/)
 		nUpper = pProgress->MinorCount;
 		nPos = pProgress->MinorCurrent;
 		nCurrent = pProgress->MinorCurrent+1;
-		nOf = pProgress->MinorCount;
+		nOf = pProgress->NoMinorCounter ? 0 : pProgress->MinorCount;
 	}
 
 	m_wndProgress.SetRange32(0, nUpper);
@@ -116,9 +123,6 @@ LRESULT LFProgressDlg::OnUpdateProgress(WPARAM wParam, LPARAM /*lParam*/)
 		GetDlgItem(IDC_PROGRESSCOUNT)->SetWindowText(tmpStr);
 		m_LastCounter = tmpStr;
 	}
-
-	if (m_Abort)
-		pProgress->UserAbort = true;
 
 	return m_Abort;
 }

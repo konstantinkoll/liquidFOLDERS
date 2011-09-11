@@ -111,7 +111,8 @@ unsigned int CIndex::Check(bool scheduled, LFProgress* pProgress)
 		if (pProgress)
 		{
 			pProgress->MinorCurrent++;
-			SendMessage(pProgress->hWnd, WM_UPDATEPROGRESS, (WPARAM)pProgress, NULL);
+			if (SendMessage(pProgress->hWnd, WM_UPDATEPROGRESS, (WPARAM)pProgress, NULL))
+				return IndexCancel;
 		}
 	}
 
@@ -149,7 +150,8 @@ unsigned int CIndex::Check(bool scheduled, LFProgress* pProgress)
 	if (pProgress)
 	{
 		pProgress->MinorCurrent++;
-		SendMessage(pProgress->hWnd, WM_UPDATEPROGRESS, (WPARAM)pProgress, NULL);
+		if (SendMessage(pProgress->hWnd, WM_UPDATEPROGRESS, (WPARAM)pProgress, NULL))
+			return IndexCancel;
 	}
 
 	// Kompaktieren
@@ -168,7 +170,8 @@ unsigned int CIndex::Check(bool scheduled, LFProgress* pProgress)
 			if (pProgress)
 			{
 				pProgress->MinorCurrent++;
-				SendMessage(pProgress->hWnd, WM_UPDATEPROGRESS, (WPARAM)pProgress, NULL);
+				if (SendMessage(pProgress->hWnd, WM_UPDATEPROGRESS, (WPARAM)pProgress, NULL))
+					return IndexCancel;
 			}
 		}
 

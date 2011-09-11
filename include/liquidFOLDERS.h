@@ -34,7 +34,7 @@ struct LIQUIDFILES
 
 #define LFProgressWorking     1
 #define LFProgressError       2
-#define LFProgressPaused      3
+#define LFProgressCancelled   3
 
 struct LFProgress
 {
@@ -46,6 +46,7 @@ struct LFProgress
 	unsigned int MinorCurrent;			// Starting from 0, must nox exceed max(0, MinorCount-1)
 	unsigned int MinorCount;			// Must be 1 or higher
 	bool UserAbort;						// Set true if aborted by user
+	bool NoMinorCounter;				// Set true if thread does not wish minor progress counter to be displayed
 };
 
 

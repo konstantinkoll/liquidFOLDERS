@@ -316,7 +316,11 @@ void LFChooseStoreDlg::OnStoreMakeHybrid()
 {
 	INT idx = GetSelectedStore();
 	if (idx!=-1)
+	{
+		CWaitCursor wait;
+
 		LFErrorBox(LFMakeHybridStore(p_Result->m_Items[idx]->StoreID, NULL), m_hWnd);
+	}
 }
 
 void LFChooseStoreDlg::OnStoreMaintain()

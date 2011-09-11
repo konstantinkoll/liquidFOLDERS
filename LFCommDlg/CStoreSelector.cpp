@@ -98,6 +98,8 @@ void CStoreDropdownWindow::OnCreateNewStore()
 	LFStoreNewDlg dlg(AfxGetApp()->GetMainWnd(), s);
 	if (dlg.DoModal()==IDOK)
 	{
+		CWaitCursor wait;
+
 		UINT res = LFCreateStore(s, dlg.MakeDefault);
 		LFErrorBox(res);
 
