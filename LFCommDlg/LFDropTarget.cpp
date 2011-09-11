@@ -6,12 +6,45 @@
 #include "LFCommDlg.h"
 
 
+// Thread workers
+//
+
+struct WorkerParameters
+{
+	LFWorkerParameters Hdr;
+	CHAR StoreID[LFKeySize];
+	BOOL Move;
+	union
+	{
+		LFFileIDList* FileIDList;
+		LFFileImportList* FileImportList;
+	};
+};
+
+DWORD WINAPI WorkerImportFromFS(void* lParam)
+{
+	LF_WORKERTHREAD_START(lParam);
+
+	LFTransactionImport(wp->StoreID, wp->FileImportList, NULL, true, wp->Move==TRUE, &p);
+
+	LF_WORKERTHREAD_FINISH();
+}
+
+DWORD WINAPI WorkerImportFromStore(void* lParam)
+{
+	LF_WORKERTHREAD_START(lParam);
+
+	LFTransactionImport(wp->StoreID, wp->FileIDList, wp->Move==TRUE, &p);
+
+	LF_WORKERTHREAD_FINISH();
+}
+
+
 // LFDropTarget
 //
 
 LFDropTarget::LFDropTarget()
 {
-	/* This call might fail, in which case OLE sets m_pdth = NULL */
 	CoCreateInstance(CLSID_DragDropHelper, NULL, CLSCTX_INPROC_SERVER, IID_IDropTargetHelper, (void**)&m_pDropTargetHelper);
 
 	p_Owner = NULL;
@@ -53,16 +86,20 @@ void LFDropTarget::SetSearchResult(LFSearchResult* pSearchResult)
 
 __forceinline HRESULT LFDropTarget::ImportFromFS(HGLOBAL hgDrop, DWORD dwEffect, CHAR* StoreID, CWnd* pWnd)
 {
+	WorkerParameters wp;
+	ZeroMemory(&wp, sizeof(wp));
+	strcpy_s(wp.StoreID, LFKeySize, StoreID);
+	wp.Move = (dwEffect & DROPEFFECT_MOVE)!=0;
+
 	HDROP hDrop = (HDROP)GlobalLock(hgDrop);
-	LFFileImportList* il = LFAllocFileImportList(hDrop);
+	wp.FileImportList = LFAllocFileImportList(hDrop);
 	GlobalUnlock(hgDrop);
 
-	// Import
-	LFTransactionImport(StoreID, il, NULL, true, (dwEffect & DROPEFFECT_MOVE)!=0);
-	UINT res = il->m_LastError;
+	LFDoWithProgress(WorkerImportFromFS, &wp.Hdr, pWnd);
+	UINT res = wp.FileImportList->m_LastError;
 	LFErrorBox(res, pWnd->GetSafeHwnd());
 
-	LFFreeFileImportList(il);
+	LFFreeFileImportList(wp.FileImportList);
 
 	if (p_Owner)
 		p_Owner->SendMessage(LFGetMessageIDs()->ItemsDropped, NULL, NULL);
@@ -72,12 +109,17 @@ __forceinline HRESULT LFDropTarget::ImportFromFS(HGLOBAL hgDrop, DWORD dwEffect,
 
 __forceinline HRESULT LFDropTarget::ImportFromStore(IDataObject* pDataObject, HGLOBAL hgLiquid, DWORD dwEffect, CHAR* StoreID, CWnd* pWnd)
 {
+	WorkerParameters wp;
+	ZeroMemory(&wp, sizeof(wp));
+	strcpy_s(wp.StoreID, LFKeySize, StoreID);
+	wp.Move = (dwEffect & DROPEFFECT_MOVE)!=0;
+
 	HLIQUID hLiquid = (HLIQUID)GlobalLock(hgLiquid);
-	LFFileIDList* il = LFAllocFileIDList(hLiquid);
+	wp.FileIDList = LFAllocFileIDList(hLiquid);
 	GlobalUnlock(hgLiquid);
 
-	LFTransactionImport(StoreID, il, (dwEffect & DROPEFFECT_MOVE)!=0);
-	UINT res = il->m_LastError;
+	LFDoWithProgress(WorkerImportFromStore, &wp.Hdr, pWnd);
+	UINT res = wp.FileIDList->m_LastError;
 	LFErrorBox(res, pWnd->GetSafeHwnd());
 
 	// CF_LIQUIDFILES neu setzen, um nicht veränderte Dateien (Fehler oder Drop auf denselben Store) zu entfernen
@@ -91,11 +133,11 @@ __forceinline HRESULT LFDropTarget::ImportFromStore(IDataObject* pDataObject, HG
 	STGMEDIUM stg;
 	ZeroMemory(&stg, sizeof(stg));
 	stg.tymed = TYMED_HGLOBAL;
-	stg.hGlobal = LFCreateLiquidFiles(il);
+	stg.hGlobal = LFCreateLiquidFiles(wp.FileIDList);
 
 	pDataObject->SetData(&fmt, &stg, FALSE);
 
-	LFFreeFileIDList(il);
+	LFFreeFileIDList(wp.FileIDList);
 
 	if (p_Owner)
 		p_Owner->SendMessage(LFGetMessageIDs()->ItemsDropped, NULL, NULL);
@@ -107,6 +149,8 @@ __forceinline HRESULT LFDropTarget::AddToClipboard(HGLOBAL hgLiquid, CWnd* pWnd)
 {
 	if (!hgLiquid)
 		return E_INVALIDARG;
+
+	CWaitCursor wait;
 
 	HLIQUID hLiquid = (HLIQUID)GlobalLock(hgLiquid);
 	LFFileIDList* il = LFAllocFileIDList(hLiquid);
