@@ -233,17 +233,11 @@ struct WorkerParameters
 
 DWORD WINAPI WorkerImport(void* lParam)
 {
-	CoInitialize(NULL);
-	WorkerParameters* wp = (WorkerParameters*)lParam;
-
-	LFProgress p;
-	LFInitProgress(&p, wp->Hdr.hWnd);
+	LF_WORKERTHREAD_START(lParam);
 
 	LFTransactionImport(wp->StoreID, wp->FileImportList, wp->Template, true, wp->DeleteSource==TRUE, &p);
 
-	CoUninitialize();
-	PostMessage(wp->Hdr.hWnd, WM_COMMAND, (WPARAM)IDOK, NULL);
-	return 0;
+	LF_WORKERTHREAD_FINISH();
 }
 
 LFCommDlg_API void LFImportFolder(CHAR* StoreID, CWnd* pParentWnd, BOOL AllowChooseStore)

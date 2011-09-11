@@ -24,17 +24,11 @@ struct WorkerParameters
 
 DWORD WINAPI WorkerDeleteStore(void* lParam)
 {
-	CoInitialize(NULL);
-	WorkerParameters* wp = (WorkerParameters*)lParam;
-
-	LFProgress p;
-	LFInitProgress(&p, wp->Hdr.hWnd);
+	LF_WORKERTHREAD_START(lParam);
 
 	wp->Result = LFDeleteStore(wp->StoreID, wp->hWndSource, &p);
 
-	CoUninitialize();
-	PostMessage(wp->Hdr.hWnd, WM_COMMAND, (WPARAM)IDOK, NULL);
-	return 0;
+	LF_WORKERTHREAD_FINISH();
 }
 
 
@@ -292,9 +286,6 @@ BOOL LFApplication::InitInstance()
 	// Nachrichten registrieren
 	p_MessageIDs = LFGetMessageIDs();
 
-	// SendTo-Link erzeugen
-	LFCreateSendTo();
-
 	// InitCommonControlsEx() ist für Windows XP erforderlich, wenn ein Anwendungsmanifest
 	// die Verwendung von ComCtl32.dll Version 6 oder höher zum Aktivieren
 	// von visuellen Stilen angibt. Ansonsten treten beim Erstellen von Fenstern Fehler auf.
@@ -311,6 +302,9 @@ BOOL LFApplication::InitInstance()
 
 	// OLE Initialisieren
 	ENSURE(AfxOleInit());
+
+	// SendTo-Link erzeugen
+	LFCreateSendTo();
 
 	if (!m_HasGUI)
 		return TRUE;

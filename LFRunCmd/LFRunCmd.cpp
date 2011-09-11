@@ -24,17 +24,11 @@ struct WorkerParameters
 
 DWORD WINAPI WorkerMaintenance(void* lParam)
 {
-	CoInitialize(NULL);
-	WorkerParameters* wp = (WorkerParameters*)lParam;
-
-	LFProgress p;
-	LFInitProgress(&p, wp->Hdr.hWnd);
+	LF_WORKERTHREAD_START(lParam);
 
 	wp->MaintenanceList = wp->AllStores ? LFStoreMaintenance(wp->hWndSource, &p) : LFStoreMaintenance(wp->StoreID, wp->hWndSource, &p);
 
-	CoUninitialize();
-	PostMessage(wp->Hdr.hWnd, WM_COMMAND, (WPARAM)IDOK, NULL);
-	return 0;
+	LF_WORKERTHREAD_FINISH();
 }
 
 
