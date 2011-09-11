@@ -49,6 +49,5 @@ protected:
 	CHAR m_StoreID[LFKeySize];
 	BOOL m_StoreIDValid;
 	BOOL m_AllowChooseStore;
-	BOOL m_SkipTemplate;
 	BOOL m_IsDragging;
 };

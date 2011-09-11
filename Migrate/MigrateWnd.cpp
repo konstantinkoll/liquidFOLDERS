@@ -214,25 +214,23 @@ void CMigrateWnd::OnMigrate()
 		return;
 	}
 
-	// Item template
+	// Store
 	WorkerParameters wp;
 	m_wndStore.GetStoreID(wp.StoreID);
 
-	LFItemDescriptor* it = LFAllocItemDescriptor();
-	LFItemTemplateDlg dlg(this, it, wp.StoreID, TRUE);
-	if (dlg.DoModal()==IDCANCEL)
+	if (wp.StoreID[0]=='\0')
 	{
-		LFFreeItemDescriptor(it);
-		return;
+		LFChooseStoreDlg dlg(this, LFCSD_Mounted);
+		if (dlg.DoModal()!=IDOK)
+			return;
+
+		strcpy_s(wp.StoreID, LFKeySize, dlg.m_StoreID);
+		m_wndStore.SetItem(dlg.m_StoreID);
+		m_wndStore.UpdateWindow();
 	}
 
-	strcpy_s(wp.StoreID, LFKeySize, dlg.m_StoreID);
-	m_wndStore.SetItem(dlg.m_StoreID);
-	m_wndStore.UpdateWindow();
-
 	// Create snapshot
-	m_wndMainView.PopulateMigrationList(&wp.MigrationList, it);
-	LFFreeItemDescriptor(it);
+	m_wndMainView.PopulateMigrationList(&wp.MigrationList, NULL);
 
 	// UAC warning if source files should be deleted
 	CButton* btn = (CButton*)m_wndBottomArea.GetDlgItem(IDC_DELETESOURCE);
@@ -241,10 +239,7 @@ void CMigrateWnd::OnMigrate()
 	{
 		DeleteFilesDlg dlg(this);
 		if (dlg.DoModal()==IDCANCEL)
-		{
-			LFFreeItemDescriptor(it);
 			return;
-		}
 
 		wp.DeleteSource = dlg.m_Delete;
 		btn->SetCheck(wp.DeleteSource);

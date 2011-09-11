@@ -15,7 +15,7 @@ LFDropTarget::LFDropTarget()
 	CoCreateInstance(CLSID_DragDropHelper, NULL, CLSCTX_INPROC_SERVER, IID_IDropTargetHelper, (void**)&m_pDropTargetHelper);
 
 	p_Owner = NULL;
-	m_StoreIDValid = m_AllowChooseStore = m_SkipTemplate = m_IsDragging = FALSE;
+	m_StoreIDValid = m_AllowChooseStore = m_IsDragging = FALSE;
 	p_Filter = NULL;
 	p_SearchResult = NULL;
 }
@@ -57,37 +57,14 @@ __forceinline HRESULT LFDropTarget::ImportFromFS(HGLOBAL hgDrop, DWORD dwEffect,
 	LFFileImportList* il = LFAllocFileImportList(hDrop);
 	GlobalUnlock(hgDrop);
 
-	// Template füllen
-	BOOL DoImport = TRUE;
-	LFItemDescriptor* it = NULL;
-	if (!m_SkipTemplate)
-	{
-		it = LFAllocItemDescriptor();
-
-		LFItemTemplateDlg dlg(pWnd, it, StoreID, m_AllowChooseStore, p_Filter);
-		switch (dlg.DoModal())
-		{
-		case IDCANCEL:
-			DoImport = FALSE;
-			break;
-		case IDOK:
-			strcpy_s(StoreID, LFKeySize, dlg.m_StoreID);
-		}
-	}
-
 	// Import
-	UINT res = LFOk;
-	if (DoImport)
-	{
-		LFTransactionImport(StoreID, il, it, true, (dwEffect & DROPEFFECT_MOVE)!=0);
-		res = il->m_LastError;
-		LFErrorBox(res, pWnd->GetSafeHwnd());
-	}
+	LFTransactionImport(StoreID, il, NULL, true, (dwEffect & DROPEFFECT_MOVE)!=0);
+	UINT res = il->m_LastError;
+	LFErrorBox(res, pWnd->GetSafeHwnd());
 
-	LFFreeItemDescriptor(it);
 	LFFreeFileImportList(il);
 
-	if ((p_Owner) && (DoImport))
+	if (p_Owner)
 		p_Owner->SendMessage(LFGetMessageIDs()->ItemsDropped, NULL, NULL);
 
 	return (res==LFOk) ? S_OK : E_INVALIDARG;
@@ -268,9 +245,6 @@ STDMETHODIMP LFDropTarget::Drop(IDataObject* pDataObject, DWORD grfKeyState, POI
 			LFErrorBox(LFNoDefaultStore, pWnd->GetSafeHwnd());
 			return E_INVALIDARG;
 		}
-
-	// Template
-	m_SkipTemplate = (grfKeyState & MK_SHIFT);
 
 	return hgLiquid ? ImportFromStore(pDataObject, hgLiquid, *pdwEffect, StoreID, pWnd) : ImportFromFS(hgDrop, *pdwEffect, StoreID, pWnd);
 }

@@ -128,8 +128,10 @@
 #define IDC_PROPERTY                    2403
 #define IDD_FILTER                      2500
 #define IDD_SAVEFILTER                  2600
-#define IDC_FILENAME                    2601
-#define IDC_COMMENTS                    2602
+#define IDC_DESTINATION                 2601
+#define IDC_CHOOSESTORE                 2602
+#define IDC_FILENAME                    2603
+#define IDC_COMMENTS                    2604
 #define IDM_STORES_SHOWEMPTYVOLUMES     3000
 #define IDM_STORES_REPAIRCORRUPTEDINDEX 3001
 #define IDM_HOME                        3100

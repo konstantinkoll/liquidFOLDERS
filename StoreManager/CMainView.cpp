@@ -1508,7 +1508,7 @@ void CMainView::OnHomeShowStatistics()
 void CMainView::OnHomeImportFolder()
 {
 	if (m_StoreIDValid)
-		LFImportFolder(m_StoreID, this, TRUE);
+		LFImportFolder(m_StoreID, this);
 }
 
 void CMainView::OnHomeMaintain()

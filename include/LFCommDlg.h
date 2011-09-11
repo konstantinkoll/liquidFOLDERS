@@ -34,7 +34,6 @@
 #include "..\LFCommDlg\LFDropTarget.h"
 #include "..\LFCommDlg\LFEditTagsDlg.h"
 #include "..\LFCommDlg\LFEditTimeDlg.h"
-#include "..\LFCommDlg\LFItemTemplateDlg.h"
 #include "..\LFCommDlg\LFLicenseDlg.h"
 #include "..\LFCommDlg\LFProgressDlg.h"
 #include "..\LFCommDlg\LFSelectLocationGPSDlg.h"
@@ -68,7 +67,7 @@ LFCommDlg_API BOOL IsCtrlThemed();
 LFCommDlg_API void DrawControlBorder(CWnd* pWnd);
 LFCommDlg_API void SetCompareComboBox(CComboBox* pComboBox, UINT attr, INT request=-1);
 
-LFCommDlg_API void LFImportFolder(CHAR* StoreID, CWnd* pParentWnd=NULL, BOOL AllowChooseStore=FALSE);
+LFCommDlg_API void LFImportFolder(CHAR* StoreID, CWnd* pParentWnd=NULL);
 LFCommDlg_API void LFBackupStores(CWnd* pParentWnd=NULL);
 LFCommDlg_API void LFAbout(CString AppName, CString Build, UINT IconResID, CWnd* pParentWnd=NULL);
 LFCommDlg_API void LFDoWithProgress(LPTHREAD_START_ROUTINE pThreadProc, LFWorkerParameters* pParameters, CWnd* pParent=NULL);

@@ -134,7 +134,6 @@ IDD_JUMPTOIATA          ICON                    "res\\Location_Tiny.ico"
 IDD_SELECTGPS           ICON                    "res\\LocationGPS_Tiny.ico"
 IDD_ENTERLICENSEKEY     ICON                    "res\\Key_Small.ico"
 IDD_STOREPROPERTIES     ICON                    "res\\StoreProperties_Tiny.ico"
-IDD_ITEMTEMPLATE        ICON                    "res\\Inspector_Tiny.ico"
 IDD_STOREMAINTENANCE    ICON                    "res\\StoreMaintenance_Tiny.ico"
 IDD_EDITTAGS            ICON                    "res\\Tags_Tiny.ico"
 IDD_BROWSEFORFOLDER     ICON                    "res\\Folder_Tiny.ico"
@@ -435,24 +434,6 @@ BEGIN
     PUSHBUTTON      "Abbrechen",IDCANCEL,328,167,50,14,WS_GROUP
 END
 
-IDD_ITEMTEMPLATE DIALOGEX 0, 0, 277, 340
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
-CAPTION "Inspektor"
-FONT 8, "MS Shell Dlg", 400, 0, 0x1
-BEGIN
-    CONTROL         "",IDC_DESTINATION,"CStorePanel",WS_GROUP,14,16,177,34
-    PUSHBUTTON      "&Store wählen...",IDC_CHOOSESTORE,197,25,66,14
-    CONTROL         "",IDC_INSPECTOR,"CInspectorGrid",WS_GROUP | WS_TABSTOP,14,93,249,190
-    CONTROL         "&Alphabetisch sortieren",IDC_ALPHABETICALLY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,291,181,10
-    PUSHBUTTON      "&Zurücksetzen",IDC_RESET,204,289,59,14,WS_GROUP
-    DEFPUSHBUTTON   "OK",IDOK,96,319,50,14,WS_GROUP
-    PUSHBUTTON      "Überspringen",IDC_SKIP,153,319,60,14,WS_GROUP
-    PUSHBUTTON      "Abbrechen",IDCANCEL,220,319,50,14,WS_GROUP
-    GROUPBOX        "Ziel",IDC_STATIC,7,7,263,49
-    GROUPBOX        "Datei-Eigenschaften",IDC_GROUPBOX,7,62,263,249
-    LTEXT           "Nicht vorhandene Eigenschaften werden mit den Angaben unten ergänzt.\nFalls dies nicht gewünscht wird, klicken Sie bitte auf „Überspringen“.",IDC_STATIC,14,73,249,18
-END
-
 IDD_STOREMAINTENANCE DIALOGEX 0, 0, 324, 299
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
 CAPTION "Wartungsarbeiten"
@@ -626,14 +607,6 @@ BEGIN
         RIGHTMARGIN, 378
         TOPMARGIN, 7
         BOTTOMMARGIN, 181
-    END
-
-    IDD_ITEMTEMPLATE, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 270
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 333
     END
 
     IDD_STOREMAINTENANCE, DIALOG
@@ -1034,24 +1007,6 @@ BEGIN
     PUSHBUTTON      "Cancelar",IDCANCEL,308,167,50,14,WS_GROUP
 END
 
-IDD_ITEMTEMPLATE DIALOGEX 0, 0, 292, 340
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
-CAPTION "Inspector"
-FONT 8, "MS Shell Dlg", 400, 0, 0x1
-BEGIN
-    CONTROL         "",IDC_DESTINATION,"CStorePanel",WS_GROUP,14,16,177,34
-    PUSHBUTTON      "Selecionar &store...",IDC_CHOOSESTORE,197,25,81,14
-    CONTROL         "",IDC_INSPECTOR,"CInspectorGrid",WS_GROUP | WS_TABSTOP,14,100,264,183
-    CONTROL         "Ordenar &alfabéticamente",IDC_ALPHABETICALLY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,291,195,10
-    PUSHBUTTON      "&Restaurar",IDC_RESET,219,289,59,14,WS_GROUP
-    DEFPUSHBUTTON   "OK",IDOK,121,319,50,14,WS_GROUP
-    PUSHBUTTON      "Omitir",IDC_SKIP,178,319,50,14,WS_GROUP
-    PUSHBUTTON      "Cancelar",IDCANCEL,235,319,50,14,WS_GROUP
-    GROUPBOX        "Destino",IDC_STATIC,7,7,278,49
-    GROUPBOX        "Propiedades de archivo",IDC_GROUPBOX,7,62,278,249
-    LTEXT           "Las propiedades faltantes del archivo serán establecidos usando los valores que a continuación se enlistan. Si usted no quiere que sus archivos sean corregidos, presione ""Omitir"".",IDC_STATIC,14,73,264,26
-END
-
 IDD_STOREMAINTENANCE DIALOGEX 0, 0, 324, 299
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
 CAPTION "Mantenimiento programado"
@@ -1232,14 +1187,6 @@ BEGIN
         RIGHTMARGIN, 358
         TOPMARGIN, 7
         BOTTOMMARGIN, 181
-    END
-
-    IDD_ITEMTEMPLATE, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 285
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 333
     END
 
     IDD_STOREMAINTENANCE, DIALOG
@@ -1648,24 +1595,6 @@ BEGIN
     PUSHBUTTON      "Annuler",IDCANCEL,318,167,50,14,WS_GROUP
 END
 
-IDD_ITEMTEMPLATE DIALOGEX 0, 0, 292, 340
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
-CAPTION "Inspecteur"
-FONT 8, "MS Shell Dlg", 400, 0, 0x1
-BEGIN
-    CONTROL         "",IDC_DESTINATION,"CStorePanel",WS_GROUP,14,16,177,34
-    PUSHBUTTON      "Choisissez le &store...",IDC_CHOOSESTORE,197,25,81,14
-    CONTROL         "",IDC_INSPECTOR,"CInspectorGrid",WS_GROUP | WS_TABSTOP,14,93,264,190
-    CONTROL         "Classer &alphabétiquement",IDC_ALPHABETICALLY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,291,195,10
-    PUSHBUTTON      "&Zurücksetzen",IDC_RESET,219,289,59,14,WS_GROUP
-    DEFPUSHBUTTON   "OK",IDOK,121,319,50,14,WS_GROUP
-    PUSHBUTTON      "Omettre",IDC_SKIP,178,319,50,14,WS_GROUP
-    PUSHBUTTON      "Annuler",IDCANCEL,235,319,50,14,WS_GROUP
-    GROUPBOX        "Destination",IDC_STATIC,7,7,278,49
-    GROUPBOX        "Qualités des fichiers",IDC_GROUPBOX,7,62,278,249
-    LTEXT           "Les qualités de fichier manquants seront mis en utilisant les valeurs si-dessous.\nSi vous ne voulez pas que vos fichiers soient amendés, appuyez ""Omettre"".",IDC_STATIC,14,73,264,18
-END
-
 IDD_STOREMAINTENANCE DIALOGEX 0, 0, 324, 299
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
 CAPTION "Travail d'entretien"
@@ -1848,14 +1777,6 @@ BEGIN
         RIGHTMARGIN, 368
         TOPMARGIN, 7
         BOTTOMMARGIN, 181
-    END
-
-    IDD_ITEMTEMPLATE, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 285
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 333
     END
 
     IDD_STOREMAINTENANCE, DIALOG
@@ -2315,24 +2236,6 @@ BEGIN
     PUSHBUTTON      "Cancel",IDCANCEL,318,167,50,14,WS_GROUP
 END
 
-IDD_ITEMTEMPLATE DIALOGEX 0, 0, 277, 340
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
-CAPTION "Inspector"
-FONT 8, "MS Shell Dlg", 400, 0, 0x1
-BEGIN
-    CONTROL         "",IDC_DESTINATION,"CStorePanel",WS_GROUP,14,16,177,34
-    PUSHBUTTON      "Choose &store...",IDC_CHOOSESTORE,197,25,66,14
-    CONTROL         "",IDC_INSPECTOR,"CInspectorGrid",WS_GROUP | WS_TABSTOP,14,93,249,190
-    CONTROL         "Sort &alphabetically",IDC_ALPHABETICALLY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,291,181,10
-    PUSHBUTTON      "&Reset",IDC_RESET,204,289,59,14,WS_GROUP
-    DEFPUSHBUTTON   "OK",IDOK,106,319,50,14,WS_GROUP
-    PUSHBUTTON      "Skip",IDC_SKIP,163,319,50,14,WS_GROUP
-    PUSHBUTTON      "Cancel",IDCANCEL,220,319,50,14,WS_GROUP
-    GROUPBOX        "Destination",IDC_STATIC,7,7,263,49
-    GROUPBOX        "File properties",IDC_GROUPBOX,7,62,263,249
-    LTEXT           "Missing file properties will be set using the values below.\nIf you don't want your files to be amended, press ""Skip"".",IDC_STATIC,14,73,249,18
-END
-
 IDD_STOREMAINTENANCE DIALOGEX 0, 0, 324, 299
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
 CAPTION "Scheduled maintenance"
@@ -2514,14 +2417,6 @@ BEGIN
         VERTGUIDE, 368
         TOPMARGIN, 7
         BOTTOMMARGIN, 181
-    END
-
-    IDD_ITEMTEMPLATE, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 270
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 333
     END
 
     IDD_STOREMAINTENANCE, DIALOG

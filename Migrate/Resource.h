@@ -52,7 +52,6 @@
 #define IDD_CHOOSEPROPERTY              2200
 #define IDC_ATTRIBUTES                  2201
 #define IDD_DELETEFILES                 2300
-#define IDD_CHOOSEPROPERTY1             2301
 #define IDD_REPORT                      2400
 #define IDC_FOLDERLIST                  2401
 #define IDC_STATUS1                     2402
