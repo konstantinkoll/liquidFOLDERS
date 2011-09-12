@@ -568,10 +568,19 @@ void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed)
 
 		break;
 	case LFViewContent:
-		rectIcon.left += (m_IconSize[0].cx-88)/2;
-		rectIcon.bottom--;
-		rectIcon.top = rectIcon.bottom-18;
-		DrawProperty(dc, rectIcon, i, d, LFAttrRating, Themed);
+		if (i->AttributeValues[LFAttrRating])
+		{
+			UCHAR Rating = *((UCHAR*)i->AttributeValues[LFAttrRating]);
+			if (((i->Type & LFTypeMask)==LFTypeFile) || (Rating))
+			{
+				rectIcon.left += (m_IconSize[0].cx-88)/2;
+				rectIcon.bottom--;
+				rectIcon.top = rectIcon.bottom-18;
+
+				PrepareBlend();
+				Blend(dc, rectIcon, Rating, theApp.m_RatingBitmaps);
+			}
+		}
 
 		rectIcon.left = rectLeft.left;
 		rectIcon.right = rectIcon.left+m_IconSize[0].cx;
