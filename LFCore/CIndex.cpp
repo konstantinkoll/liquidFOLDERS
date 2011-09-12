@@ -746,7 +746,7 @@ unsigned int CIndex::RetrieveStats(unsigned int* cnt, __int64* size)
 			if (PtrM->Flags & LFFlagNew)
 				Count(LFDomainNew);
 
-			Count(((PtrM->DomainID>=LFFirstPhysicalDomain) && (PtrM->DomainID<LFDomainCount)) ? PtrM->DomainID : LFDomainUnknown);
+			Count(((PtrM->DomainID>=LFFirstPhysicalDomain) && (PtrM->DomainID<LFDomainCount) && (PtrM->DomainID!=LFDomainNew)) ? PtrM->DomainID : LFDomainUnknown);
 		}
 	}
 

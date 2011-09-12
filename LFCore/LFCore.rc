@@ -336,7 +336,6 @@ BEGIN
     IDS_DomainAllFiles      "Alle Dateien\nAlle Dateien in diesem Store"
     IDS_DomainAllMediaFiles "Alle Multimedia-Dateien\nAlle Audio-Dateien, Bilder, Fotos und Videos"
     IDS_DomainFavorites     "Favoriten\nAlle Dateien mit Bewertung"
-    IDS_DomainNew           "Neue Dateien\nKürzlich importierte Dateien"
     IDS_DomainTrash         "Papierkorb\nGelöschte Dateien"
     IDS_DomainUnknown       "Unbekannte Dateiformate\nDateien, die noch keiner Kategorie zugeordnet wurden"
     IDS_DomainFilters       "Filter\nBenutzerdefinierte Filter"
@@ -358,6 +357,7 @@ BEGIN
     IDS_DomainPresentations "Präsentationen"
     IDS_DomainSpreadsheets  "Tabellen"
     IDS_DomainWeb           "Webseiten"
+    IDS_DomainNew           "Neue Dateien\nKürzlich importierte Dateien"
 END
 
 STRINGTABLE 
@@ -608,7 +608,6 @@ BEGIN
     IDS_DomainAllFiles      "All files\nAll files in this store"
     IDS_DomainAllMediaFiles "All media files\nAll audio files, pictures, photos and videos"
     IDS_DomainFavorites     "Favorites\nAll files which are rated"
-    IDS_DomainNew           "New files\Recently imported files"
     IDS_DomainTrash         "Trash\nDeleted files"
     IDS_DomainUnknown       "Unknown file formats\nFiles which have not been assigned to any category yet"
     IDS_DomainFilters       "Filters\nUser-defined filters"
@@ -630,6 +629,7 @@ BEGIN
     IDS_DomainPresentations "Presentations"
     IDS_DomainSpreadsheets  "Spreadsheets"
     IDS_DomainWeb           "Web pages"
+    IDS_DomainNew           "New files\Recently imported files"
 END
 
 STRINGTABLE 
@@ -883,7 +883,6 @@ BEGIN
     IDS_DomainAllFiles      "Todos los archivos\nTodos los archivos en este store"
     IDS_DomainAllMediaFiles "Todos los archivos media\nTodos los archivos de audio, películas, fotos y videos"
     IDS_DomainFavorites     "Favoritos\nTodos los archivos que están calificados"
-    IDS_DomainNew           "New files\Recently imported files"
     IDS_DomainTrash         "Basura\nArchivos eliminados"
     IDS_DomainUnknown       "Formatos de archivo desconocidos\nArchivos que todavía no han sido asignados a alguna categoría"
     IDS_DomainFilters       "Filtros\nFiltros definidos por el usuario"
@@ -905,6 +904,7 @@ BEGIN
     IDS_DomainPresentations "Presentaciones"
     IDS_DomainSpreadsheets  "Hojas de cálculo"
     IDS_DomainWeb           "Páginas Web"
+    IDS_DomainNew           "New files\Recently imported files"
 END
 
 STRINGTABLE 
@@ -1158,7 +1158,6 @@ BEGIN
     IDS_DomainAllFiles      "Tous les fichiers\nTous les fichiers dans ce store"
     IDS_DomainAllMediaFiles "Tous les fichiers multimédias\nTous les fichiers audio, les images, les photos et les vidéos"
     IDS_DomainFavorites     "Favoris\nTous les fichiers qui sont estimés"
-    IDS_DomainNew           "New files\Recently imported files"
     IDS_DomainTrash         "Déchets\nLes fichiers marqués pour la radiation finale"
     IDS_DomainUnknown       "Formats de fichier inconnus\nLes fichiers qui n'étaient encore classés dans aucune catégorie"
     IDS_DomainFilters       "Filtres\nFiltres définis par l'utilisateur"
@@ -1180,6 +1179,7 @@ BEGIN
     IDS_DomainPresentations "Présentations"
     IDS_DomainSpreadsheets  "Tableur"
     IDS_DomainWeb           "Pages Web"
+    IDS_DomainNew           "New files\Recently imported files"
 END
 
 STRINGTABLE 

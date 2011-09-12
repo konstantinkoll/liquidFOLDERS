@@ -544,10 +544,10 @@ LFCore_API LFDomainDescriptor* LFGetDomainInfo(unsigned int ID)
 				d->CategoryID = LFItemCategoryOtherTypes;
 			}
 
-	const unsigned int Icons[LFDomainCount] = { IDI_FLD_All, IDI_FLD_All, IDI_FLD_Favorites, IDI_FLD_System, IDI_FLD_Trash, IDI_FLD_Default,
+	const unsigned int Icons[LFDomainCount] = { IDI_FLD_All, IDI_FLD_All, IDI_FLD_Favorites, IDI_FLD_Trash, IDI_FLD_Default,
 		IDI_FLD_System, IDI_FLD_Audio, IDI_FLD_Photos, IDI_FLD_Pictures, IDI_FLD_Video, IDI_FLD_Archive, IDI_FLD_Contacts,
 		IDI_FLD_Documents, IDI_FLD_Calendar, IDI_FLD_Fonts, IDI_FLD_Location, IDI_FLD_Mail, IDI_FLD_Presentations,
-		IDI_FLD_Spreadsheets, IDI_FLD_Web };
+		IDI_FLD_Spreadsheets, IDI_FLD_Web, IDI_FLD_System };
 	d->IconID = Icons[ID];
 
 	switch (ID)

@@ -365,28 +365,29 @@ struct LFAttributeDescriptor
 #define LFDomainAllMediaFiles           1
 #define LFDomainFavorites               2
 
-#define LFDomainNew                     3
-#define LFDomainTrash                   4
-#define LFDomainUnknown                 5
+#define LFDomainTrash                   3
+#define LFDomainUnknown                 4
 
-#define LFDomainFilters                 6
-#define LFDomainAudio                   7
-#define LFDomainPhotos                  8
-#define LFDomainPictures                9
-#define LFDomainVideos                 10
-#define LFDomainArchives               11
-#define LFDomainContacts               12
-#define LFDomainDocuments              13
-#define LFDomainEvents                 14
-#define LFDomainFonts                  15
-#define LFDomainGeodata                16
-#define LFDomainMessages               17
-#define LFDomainPresentations          18
-#define LFDomainSpreadsheets           19
-#define LFDomainWeb                    20
+#define LFDomainFilters                 5
+#define LFDomainAudio                   6
+#define LFDomainPhotos                  7
+#define LFDomainPictures                8
+#define LFDomainVideos                  9
+#define LFDomainArchives               10
+#define LFDomainContacts               11
+#define LFDomainDocuments              12
+#define LFDomainEvents                 13
+#define LFDomainFonts                  14
+#define LFDomainGeodata                15
+#define LFDomainMessages               16
+#define LFDomainPresentations          17
+#define LFDomainSpreadsheets           18
+#define LFDomainWeb                    19
 
-#define LFFirstSoloDomain               4
-#define LFFirstPhysicalDomain           6
+#define LFDomainNew                    20
+
+#define LFFirstSoloDomain               3
+#define LFFirstPhysicalDomain           5
 #define LFDomainCount                  21
 
 
