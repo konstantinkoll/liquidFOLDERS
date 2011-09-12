@@ -1093,7 +1093,9 @@ CString CFileView::GetHint(LFItemDescriptor* i, WCHAR* FormatName)
 		AppendString(LFAttrFileFormat, hint, FormatName);
 		AppendAttribute(i, LFAttrArtist, hint);
 		AppendAttribute(i, LFAttrTitle, hint);
+		AppendAttribute(i, LFAttrAlbum, hint);
 		AppendAttribute(i, LFAttrRecordingTime, hint);
+		AppendAttribute(i, LFAttrRoll, hint);
 		AppendAttribute(i, LFAttrDuration, hint);
 		AppendAttribute(i, LFAttrTags, hint);
 		AppendAttribute(i, LFAttrPages, hint);

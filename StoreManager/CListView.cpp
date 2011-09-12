@@ -588,68 +588,22 @@ void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed)
 		DrawProperty(dc, rectLeft, i, d, LFAttrFileName, Themed);
 		DrawProperty(dc, rectLeft, i, d, LFAttrComments, Themed, FALSE);
 		DrawProperty(dc, rectLeft, i, d, LFAttrDescription, Themed, FALSE);
-		DrawProperty(dc, rectLeft, i, d, LFAttrTitle, Themed, FALSE);
 		DrawProperty(dc, rectLeft, i, d, LFAttrArtist, Themed, FALSE);
+		DrawProperty(dc, rectLeft, i, d, LFAttrTitle, Themed, FALSE);
 		DrawProperty(dc, rectLeft, i, d, LFAttrAlbum, Themed, FALSE);
+		DrawProperty(dc, rectLeft, i, d, LFAttrRecordingTime, Themed, FALSE);
 		DrawProperty(dc, rectLeft, i, d, LFAttrRoll, Themed, FALSE);
 		DrawProperty(dc, rectLeft, i, d, LFAttrDuration, Themed, FALSE);
+		DrawProperty(dc, rectLeft, i, d, LFAttrTags, Themed, FALSE);
+		DrawProperty(dc, rectLeft, i, d, LFAttrPages, Themed, FALSE);
 		DrawProperty(dc, rectLeft, i, d, LFAttrWidth, Themed, FALSE);
 		DrawProperty(dc, rectLeft, i, d, LFAttrHeight, Themed, FALSE);
-		DrawProperty(dc, rectLeft, i, d, LFAttrCustomer, Themed, FALSE);
-		DrawProperty(dc, rectLeft, i, d, LFAttrTo, Themed, FALSE);
-		DrawProperty(dc, rectLeft, i, d, LFAttrFrom, Themed, FALSE);
-		DrawProperty(dc, rectLeft, i, d, LFAttrResponsible, Themed, FALSE);
+		DrawProperty(dc, rectLeft, i, d, LFAttrRecordingEquipment, Themed, FALSE);
+		DrawProperty(dc, rectLeft, i, d, LFAttrBitrate, Themed, FALSE);
+		DrawProperty(dc, rectLeft, i, d, LFAttrCreationTime, Themed, FALSE);
+		DrawProperty(dc, rectLeft, i, d, LFAttrFileTime, Themed, FALSE);
+		DrawProperty(dc, rectLeft, i, d, LFAttrFileSize, Themed, FALSE);
 
-		/*		Right = (rect.Width()>600) && (((i->Type & LFTypeMask)==LFTypeStore) || ((i->Type & LFTypeMask)==LFTypeFile));
-		if (Right)
-			rectLeft.right -= RIGHTCOLUMN+2*PADDING;
-
-		switch (i->Type & LFTypeMask)
-		{
-		case LFTypeStore:
-		case LFTypeVolume:
-			DrawProperty(dc, rectLeft, i, d, LFAttrDescription, Themed);
-			break;
-		case LFTypeFile:
-			DrawProperty(dc, rectLeft, i, d, LFAttrComments, Themed);
-			DrawProperty(dc, rectLeft, i, d, LFAttrTags, Themed);
-			DrawProperty(dc, rectLeft, i, d, LFAttrFileFormat, Themed);
-			break;
-		case LFTypeVirtual:
-			if (m_Context==LFContextStoreHome)
-			{
-				DrawProperty(dc, rectLeft, i, d, LFAttrComments, Themed);
-				DrawProperty(dc, rectLeft, i, d, LFAttrDescription, Themed);
-				DrawProperty(dc, rectLeft, i, d, LFAttrFileSize, Themed);
-			}
-			else
-			{
-				DrawProperty(dc, rectLeft, i, d, LFAttrDescription, Themed);
-				DrawProperty(dc, rectLeft, i, d, LFAttrFileSize, Themed);
-			}
-			break;
-		}
-
-		if (Right)
-		{
-			rectRight.left = rectLeft.right+2*PADDING;
-			rectRight.top += 1+m_FontHeight[1]-m_FontHeight[0];
-
-			switch (i->Type & LFTypeMask)
-			{
-			case LFTypeStore:
-				DrawProperty(dc, rectRight, i, d, LFAttrCreationTime, Themed);
-				DrawProperty(dc, rectRight, i, d, LFAttrFileTime, Themed);
-				break;
-			case LFTypeFile:
-				DrawProperty(dc, rectRight, i, d, LFAttrFileTime, Themed);
-				DrawProperty(dc, rectRight, i, d, LFAttrFileSize, Themed);
-				DrawProperty(dc, rectRight, i, d, LFAttrRating, Themed);
-				DrawProperty(dc, rectRight, i, d, LFAttrPriority, Themed);
-				break;
-			}
-		}
-*/
 		break;
 	}
 }
@@ -801,7 +755,7 @@ void CListView::DrawProperty(CDC& dc, CRect& rect, LFItemDescriptor* i, GridItem
 		DrawLabel(dc, rect, i, DT_LEFT | DT_SINGLELINE);
 		dc.SelectObject(pOldFont);
 
-		rect.OffsetRect(0, m_FontHeight[1]);
+		rect.top += m_FontHeight[1];
 		break;
 	case LFAttrRating:
 	case LFAttrPriority:
@@ -817,13 +771,16 @@ void CListView::DrawProperty(CDC& dc, CRect& rect, LFItemDescriptor* i, GridItem
 			}
 		}
 
-		rect.OffsetRect(0, 18);
+		rect.top += 18;
 		break;
 	default:
 		WCHAR tmpStr[256];
 		AttributeToString(i, Attr, tmpStr, 256);
 		if (tmpStr[0]!=L'\0')
 		{
+			if (rect.top>rect.bottom-m_FontHeight[0])
+				return;
+
 			COLORREF oldColor = dc.GetTextColor();
 
 			CRect rectText(rect);
@@ -845,7 +802,7 @@ void CListView::DrawProperty(CDC& dc, CRect& rect, LFItemDescriptor* i, GridItem
 				return;
 		}
 
-		rect.OffsetRect(0, m_FontHeight[0]);
+		rect.top += m_FontHeight[0];
 		break;
 	}
 }
