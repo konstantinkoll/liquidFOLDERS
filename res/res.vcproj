@@ -1052,6 +1052,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Ribbon\ViewContent_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\ViewContent_32.png"
+				>
+			</File>
+			<File
 				RelativePath="Ribbon\ViewDetails_16.png"
 				>
 			</File>
@@ -1092,19 +1100,19 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Ribbon\ViewSearchResult_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\ViewSearchResult_32.png"
-				>
-			</File>
-			<File
 				RelativePath="Ribbon\ViewSmallIcons_16.png"
 				>
 			</File>
 			<File
 				RelativePath="Ribbon\ViewSmallIcons_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\ViewStrips_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\ViewStrips_32.png"
 				>
 			</File>
 			<File

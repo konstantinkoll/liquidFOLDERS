@@ -50,7 +50,7 @@ BOOL ViewOptionsDlg::OnInitDialog()
 	}
 
 	m_wndViewList.SetImageList(&m_ViewIcons, LVSIL_NORMAL);
-	m_wndViewList.SetIconSpacing(68, 64);
+	m_wndViewList.SetIconSpacing(90, 64);
 	m_wndViewList.EnableGroupView(TRUE);
 
 	// Items

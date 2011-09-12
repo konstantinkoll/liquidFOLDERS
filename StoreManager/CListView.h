@@ -55,7 +55,7 @@ private:
 	void AttributeToString(LFItemDescriptor* i, UINT Attr, WCHAR* tmpStr, size_t cCount);
 	void DrawTileRows(CDC& dc, CRect& rect, LFItemDescriptor* i, GridItemData* d, INT* Rows, BOOL Themed);
 	void DrawColumn(CDC& dc, CRect& rect, LFItemDescriptor* i, UINT Attr);
-	void DrawProperty(CDC& dc, CRect& rect, LFItemDescriptor* i, GridItemData* d, UINT Attr, BOOL Themed);
+	void DrawProperty(CDC& dc, CRect& rect, LFItemDescriptor* i, GridItemData* d, UINT Attr, BOOL Themed, BOOL AlwaysNewRow=TRUE);
 	INT GetMaxLabelWidth(INT Max);
 	INT GetMaxColumnWidth(UINT Col, INT Max);
 	void AutosizeColumn(UINT Col);

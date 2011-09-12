@@ -57,6 +57,7 @@ void CListView::SetViewOptions(BOOL Force)
 		switch (p_ViewParameters->Mode)
 		{
 		case LFViewLargeIcons:
+		case LFViewContent:
 		case LFViewPreview:
 			m_Icons[0] = &theApp.m_CoreImageListJumbo;
 			m_Icons[1] = (theApp.OSVersion<OS_Vista) ? &theApp.m_SystemImageListExtraLarge : &theApp.m_SystemImageListJumbo;
@@ -68,7 +69,7 @@ void CListView::SetViewOptions(BOOL Force)
 			cx = cy = 32;
 			break;
 		case LFViewTiles:
-		case LFViewContent:
+		case LFViewStrips:
 			m_Icons[0] = &theApp.m_CoreImageListExtraLarge;
 			m_Icons[1] = &theApp.m_SystemImageListExtraLarge;
 			cx = cy = 48;
@@ -358,8 +359,12 @@ void CListView::AdjustLayout()
 		gva.gutterx = gva.guttery = 3;
 		ArrangeHorizontal(gva, FALSE);
 		break;
-	case LFViewContent:
+	case LFViewStrips:
 		gva.cy = 2+max(m_IconSize[0].cy, max(m_FontHeight[0]*3+m_FontHeight[1], m_FontHeight[0]*2+max(m_FontHeight[0], 18)*2+1));
+		ArrangeHorizontal(gva, FALSE, TRUE, TRUE);
+		break;
+	case LFViewContent:
+		gva.cy = m_IconSize[0].cy+18+3;
 		ArrangeHorizontal(gva, FALSE, TRUE, TRUE);
 		break;
 	}
@@ -384,6 +389,7 @@ RECT CListView::GetLabelRect(INT idx)
 		rect.right = rect.left+m_ViewParameters.ColumnWidth[0]-3*PADDING;
 	case LFViewList:
 	case LFViewTiles:
+	case LFViewStrips:
 	case LFViewContent:
 		rect.left += m_IconSize[0].cx+2*PADDING;
 		break;
@@ -499,7 +505,7 @@ void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed)
 
 		DrawTileRows(dc, rectLabel, i, d, Rows, Themed);
 		break;
-	case LFViewContent:
+	case LFViewStrips:
 		rectIcon.right = rectIcon.left+m_IconSize[0].cx;
 		DrawIcon(dc, rectIcon, i);
 
@@ -561,6 +567,90 @@ void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed)
 		}
 
 		break;
+	case LFViewContent:
+		rectIcon.left += (m_IconSize[0].cx-88)/2;
+		rectIcon.bottom--;
+		rectIcon.top = rectIcon.bottom-18;
+		DrawProperty(dc, rectIcon, i, d, LFAttrRating, Themed);
+
+		rectIcon.left = rectLeft.left;
+		rectIcon.right = rectIcon.left+m_IconSize[0].cx;
+		rectIcon.top = rectLeft.top+1;
+		rectIcon.bottom = rectIcon.top+m_IconSize[0].cy;
+		DrawIcon(dc, rectIcon, i);
+
+		if (IsEditing() && (idx==m_EditLabel))
+			break;
+
+		rectLeft.left += m_IconSize[0].cx+m_FontHeight[0]/2;
+		rectLeft.top++;
+
+		DrawProperty(dc, rectLeft, i, d, LFAttrFileName, Themed);
+		DrawProperty(dc, rectLeft, i, d, LFAttrComments, Themed, FALSE);
+		DrawProperty(dc, rectLeft, i, d, LFAttrDescription, Themed, FALSE);
+		DrawProperty(dc, rectLeft, i, d, LFAttrTitle, Themed, FALSE);
+		DrawProperty(dc, rectLeft, i, d, LFAttrArtist, Themed, FALSE);
+		DrawProperty(dc, rectLeft, i, d, LFAttrAlbum, Themed, FALSE);
+		DrawProperty(dc, rectLeft, i, d, LFAttrRoll, Themed, FALSE);
+		DrawProperty(dc, rectLeft, i, d, LFAttrDuration, Themed, FALSE);
+		DrawProperty(dc, rectLeft, i, d, LFAttrWidth, Themed, FALSE);
+		DrawProperty(dc, rectLeft, i, d, LFAttrHeight, Themed, FALSE);
+		DrawProperty(dc, rectLeft, i, d, LFAttrCustomer, Themed, FALSE);
+		DrawProperty(dc, rectLeft, i, d, LFAttrTo, Themed, FALSE);
+		DrawProperty(dc, rectLeft, i, d, LFAttrFrom, Themed, FALSE);
+		DrawProperty(dc, rectLeft, i, d, LFAttrResponsible, Themed, FALSE);
+
+		/*		Right = (rect.Width()>600) && (((i->Type & LFTypeMask)==LFTypeStore) || ((i->Type & LFTypeMask)==LFTypeFile));
+		if (Right)
+			rectLeft.right -= RIGHTCOLUMN+2*PADDING;
+
+		switch (i->Type & LFTypeMask)
+		{
+		case LFTypeStore:
+		case LFTypeVolume:
+			DrawProperty(dc, rectLeft, i, d, LFAttrDescription, Themed);
+			break;
+		case LFTypeFile:
+			DrawProperty(dc, rectLeft, i, d, LFAttrComments, Themed);
+			DrawProperty(dc, rectLeft, i, d, LFAttrTags, Themed);
+			DrawProperty(dc, rectLeft, i, d, LFAttrFileFormat, Themed);
+			break;
+		case LFTypeVirtual:
+			if (m_Context==LFContextStoreHome)
+			{
+				DrawProperty(dc, rectLeft, i, d, LFAttrComments, Themed);
+				DrawProperty(dc, rectLeft, i, d, LFAttrDescription, Themed);
+				DrawProperty(dc, rectLeft, i, d, LFAttrFileSize, Themed);
+			}
+			else
+			{
+				DrawProperty(dc, rectLeft, i, d, LFAttrDescription, Themed);
+				DrawProperty(dc, rectLeft, i, d, LFAttrFileSize, Themed);
+			}
+			break;
+		}
+
+		if (Right)
+		{
+			rectRight.left = rectLeft.right+2*PADDING;
+			rectRight.top += 1+m_FontHeight[1]-m_FontHeight[0];
+
+			switch (i->Type & LFTypeMask)
+			{
+			case LFTypeStore:
+				DrawProperty(dc, rectRight, i, d, LFAttrCreationTime, Themed);
+				DrawProperty(dc, rectRight, i, d, LFAttrFileTime, Themed);
+				break;
+			case LFTypeFile:
+				DrawProperty(dc, rectRight, i, d, LFAttrFileTime, Themed);
+				DrawProperty(dc, rectRight, i, d, LFAttrFileSize, Themed);
+				DrawProperty(dc, rectRight, i, d, LFAttrRating, Themed);
+				DrawProperty(dc, rectRight, i, d, LFAttrPriority, Themed);
+				break;
+			}
+		}
+*/
+		break;
 	}
 }
 
@@ -569,10 +659,12 @@ void CListView::DrawIcon(CDC& dc, CRect& rect, LFItemDescriptor* i)
 	INT SysIconIndex = -1;
 	CHAR Path[4];
 
+#define JUMBOICON (m_ViewParameters.Mode==LFViewLargeIcons) || (m_ViewParameters.Mode==LFViewContent) || (m_ViewParameters.Mode==LFViewPreview)
+
 	switch (i->Type & LFTypeMask)
 	{
 	case LFTypeFile:
-		if ((m_ViewParameters.Mode==LFViewLargeIcons) || (m_ViewParameters.Mode==LFViewPreview))
+		if (JUMBOICON)
 		{
 			theApp.m_FileFormats.DrawJumboIcon(dc, rect, i->CoreAttributes.FileFormat, i->Type & LFTypeGhosted);
 			return;
@@ -582,7 +674,7 @@ void CListView::DrawIcon(CDC& dc, CRect& rect, LFItemDescriptor* i)
 	case LFTypeVolume:
 		strcpy_s(Path, 4, " :\\");
 		Path[0] = i->CoreAttributes.FileID[0];
-		if ((m_ViewParameters.Mode==LFViewLargeIcons) || (m_ViewParameters.Mode==LFViewPreview))
+		if (JUMBOICON)
 		{
 			theApp.m_FileFormats.DrawJumboIcon(dc, rect, Path, i->Type & LFTypeGhosted);
 			return;
@@ -698,7 +790,7 @@ void CListView::DrawColumn(CDC& dc, CRect& rect, LFItemDescriptor* i, UINT Attr)
 	}
 }
 
-void CListView::DrawProperty(CDC& dc, CRect& rect, LFItemDescriptor* i, GridItemData* d, UINT Attr, BOOL Themed)
+void CListView::DrawProperty(CDC& dc, CRect& rect, LFItemDescriptor* i, GridItemData* d, UINT Attr, BOOL Themed, BOOL AlwaysNewRow)
 {
 	CFont* pOldFont;
 
@@ -746,6 +838,11 @@ void CListView::DrawProperty(CDC& dc, CRect& rect, LFItemDescriptor* i, GridItem
 			SwitchColor(dc, d);
 			dc.DrawText(tmpStr, rectText, DT_LEFT | DT_SINGLELINE | DT_END_ELLIPSIS);
 			dc.SetTextColor(oldColor);
+		}
+		else
+		{
+			if (!AlwaysNewRow)
+				return;
 		}
 
 		rect.OffsetRect(0, m_FontHeight[0]);

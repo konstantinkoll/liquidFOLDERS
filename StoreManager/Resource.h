@@ -218,11 +218,12 @@
 #define IDM_VIEW_LIST                   8004
 #define IDM_VIEW_DETAILS                8005
 #define IDM_VIEW_TILES                  8006
-#define IDM_VIEW_CONTENT                8007
-#define IDM_VIEW_PREVIEW                8008
-#define IDM_VIEW_CALENDAR               8009
-#define IDM_VIEW_GLOBE                  8010
-#define IDM_VIEW_TAGCLOUD               8011
+#define IDM_VIEW_STRIPS                 8007
+#define IDM_VIEW_CONTENT                8008
+#define IDM_VIEW_PREVIEW                8009
+#define IDM_VIEW_CALENDAR               8010
+#define IDM_VIEW_GLOBE                  8011
+#define IDM_VIEW_TAGCLOUD               8012
 
 // Next default values for new objects
 // 

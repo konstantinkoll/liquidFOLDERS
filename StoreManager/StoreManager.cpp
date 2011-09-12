@@ -55,7 +55,7 @@ BOOL CStoreManagerApp::InitInstance()
 	{
 		m_AllowedViews[a] = new LFBitArray(LFViewCount);
 
-		UINT cnt = ((a>LFContextClipboard) && (a<LFContextSubfolderDefault)) ? LFViewCount-1 : (a>LFContextStoreHome) ? LFViewPreview : LFViewContent;
+		UINT cnt = ((a>LFContextClipboard) && (a<LFContextSubfolderDefault)) ? LFViewCount-1 : (a>LFContextStoreHome) ? LFViewPreview : LFViewStrips;
 		for (UINT b=0; b<=cnt; b++)
 			(*m_AllowedViews[a]) += b;
 	}
