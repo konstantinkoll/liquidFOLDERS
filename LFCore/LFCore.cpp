@@ -411,7 +411,7 @@ LFCore_API LFContextDescriptor* LFGetContextInfo(unsigned int ID)
 
 	LFContextDescriptor* c = LFAllocContextDescriptor();
 	LoadString(LFCoreModuleHandle, ID+IDS_FirstContext, c->Name, 256);
-	c->AllowGroups = (ID>LFContextClipboard) && (ID<LFContextHousekeeping);
+	c->AllowGroups = (ID>LFContextClipboard) && (ID<=LFContextHousekeeping);
 
 	c->AllowedAttributes = new LFBitArray(LFAttributeCount);
 	(*c->AllowedAttributes) += LFAttrFileName;
@@ -525,7 +525,7 @@ LFCore_API LFDomainDescriptor* LFGetDomainInfo(unsigned int ID)
 	*(d->ImportantAttributes) += LFAttrRating;
 	*(d->ImportantAttributes) += LFAttrPriority;
 
-	if ((ID==LFDomainTrash) || (ID==LFDomainUnknown))
+	if ((ID==LFDomainNew) || (ID==LFDomainTrash) || (ID==LFDomainUnknown))
 	{
 		d->CategoryID = LFItemCategoryHousekeeping;
 	}
@@ -535,7 +535,7 @@ LFCore_API LFDomainDescriptor* LFGetDomainInfo(unsigned int ID)
 			d->CategoryID = LFItemCategoryMediaTypes;
 		}
 		else
-			if ((ID==LFDomainAllFiles) || (ID==LFDomainFilters) || (ID==LFDomainFavorites))
+			if ((ID==LFDomainAllFiles) || (ID==LFDomainFavorites) || (ID==LFDomainFilters) )
 			{
 				d->CategoryID = LFItemCategoryStore;
 			}
@@ -544,7 +544,7 @@ LFCore_API LFDomainDescriptor* LFGetDomainInfo(unsigned int ID)
 				d->CategoryID = LFItemCategoryOtherTypes;
 			}
 
-	const unsigned int Icons[LFDomainCount] = { IDI_FLD_All, IDI_FLD_All, IDI_FLD_Favorites, IDI_FLD_Trash, IDI_FLD_Default,
+	const unsigned int Icons[LFDomainCount] = { IDI_FLD_All, IDI_FLD_All, IDI_FLD_Favorites, IDI_FLD_System, IDI_FLD_Trash, IDI_FLD_Default,
 		IDI_FLD_System, IDI_FLD_Audio, IDI_FLD_Photos, IDI_FLD_Pictures, IDI_FLD_Video, IDI_FLD_Archive, IDI_FLD_Contacts,
 		IDI_FLD_Documents, IDI_FLD_Calendar, IDI_FLD_Fonts, IDI_FLD_Location, IDI_FLD_Mail, IDI_FLD_Presentations,
 		IDI_FLD_Spreadsheets, IDI_FLD_Web };

@@ -19,11 +19,12 @@ public:
 	void Sort(unsigned int attr, bool descending);
 	void Group(unsigned int attr,unsigned int icon, bool groupone, LFFilter* f);
 	void GroupArray(unsigned int attr, unsigned int icon, LFFilter* f);
-	void SetContext(LFFilter* f);
+	void SetContextAndDomain(LFFilter* f);
 
 	wchar_t m_Name[256];
 	bool m_RawCopy;
-	int m_Context;
+	unsigned int m_Context;
+	unsigned int m_Domain;
 	unsigned int m_GroupAttribute;
 	bool m_HasCategories;
 	DWORD m_QueryTime;

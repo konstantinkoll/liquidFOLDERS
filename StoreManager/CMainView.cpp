@@ -98,7 +98,7 @@ CMainView::CMainView()
 	p_RawFiles = p_CookedFiles = NULL;
 	p_FilterButton = p_InspectorButton = NULL;
 	p_OrganizeButton = p_ViewButton = NULL;
-	m_Context = m_ViewID = -1;
+	m_Context = m_Domain = m_ViewID = -1;
 	m_Resizing = m_StoreIDValid = FALSE;
 }
 
@@ -148,6 +148,7 @@ BOOL CMainView::CreateFileView(UINT ViewID, FVPersistentData* Data)
 	case LFViewList:
 	case LFViewDetails:
 	case LFViewTiles:
+	case LFViewStrips:
 	case LFViewContent:
 	case LFViewPreview:
 		if ((m_ViewID<LFViewLargeIcons) || (m_ViewID>LFViewPreview))
@@ -307,6 +308,7 @@ void CMainView::UpdateSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles,
 	else
 	{
 		m_Context = pCookedFiles->m_Context;
+		m_Domain = pCookedFiles->m_Domain;
 
 		if (!CreateFileView(theApp.m_Views[pCookedFiles->m_Context].Mode, Data))
 		{
@@ -336,6 +338,11 @@ void CMainView::UpdateFooter()
 INT CMainView::GetContext()
 {
 	return m_Context;
+}
+
+INT CMainView::GetDomain()
+{
+	return m_Domain;
 }
 
 INT CMainView::GetViewID()
@@ -1570,10 +1577,17 @@ void CMainView::OnHousekeepingSend()
 
 void CMainView::OnUpdateHousekeepingCommands(CCmdUI* pCmdUI)
 {
-	BOOL b = (p_CookedFiles) && (m_Context==LFContextHousekeeping);
+	BOOL b = (p_CookedFiles!=NULL);
 
-	if ((p_CookedFiles) && (pCmdUI->m_nID==IDM_HOUSEKEEPING_REGISTER))
-		b &= (p_CookedFiles->m_ItemCount>0);
+	switch (pCmdUI->m_nID)
+	{
+	case IDM_HOUSEKEEPING_REGISTER:
+		if (p_CookedFiles)
+			b &= (p_CookedFiles->m_ItemCount>0);
+	case IDM_HOUSEKEEPING_SEND:
+		b &= (m_Domain==LFDomainUnknown);
+		break;
+	}
 
 	pCmdUI->Enable(b);
 }

@@ -27,6 +27,7 @@ LFSearchResult::LFSearchResult(int ctx)
 	LoadString(LFCoreModuleHandle, IDS_FirstContext+ctx, m_Name, 256);
 	m_RawCopy = true;
 	m_Context = ctx;
+	m_Domain = LFDomainAllFiles;
 	m_GroupAttribute = 0;
 	m_HasCategories = false;
 	m_QueryTime = 0;
@@ -44,6 +45,7 @@ LFSearchResult::LFSearchResult(LFSearchResult* res)
 	wcscpy_s(m_Name, 256, res->m_Name);
 	m_RawCopy = false;
 	m_Context = res->m_Context;
+	m_Domain = res->m_Domain;
 	m_GroupAttribute = res->m_GroupAttribute;
 	m_HasCategories = res->m_HasCategories;
 	m_QueryTime = res->m_QueryTime;
@@ -542,8 +544,10 @@ void LFSearchResult::Group(unsigned int attr, unsigned int icon, bool groupone, 
 	delete c;
 }
 
-void LFSearchResult::SetContext(LFFilter* f)
+void LFSearchResult::SetContextAndDomain(LFFilter* f)
 {
+	m_Domain = f->DomainID;
+
 	if (f->Options.IsSubfolder)
 	{
 		m_Context = LFContextSubfolderDefault;
@@ -569,6 +573,7 @@ void LFSearchResult::SetContext(LFFilter* f)
 		case LFDomainTrash:
 			m_Context = LFContextTrash;
 			break;
+		case LFDomainNew:
 		case LFDomainUnknown:
 			m_Context = LFContextHousekeeping;
 			break;

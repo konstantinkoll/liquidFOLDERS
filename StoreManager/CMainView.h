@@ -26,6 +26,7 @@ public:
 	void UpdateSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data=NULL, BOOL UpdateSelection=TRUE);
 	void UpdateFooter();
 	INT GetContext();
+	INT GetDomain();
 	INT GetViewID();
 	void DismissNotification();
 	void ShowNotification(UINT Type, CString Message, UINT Command=0);
@@ -49,6 +50,7 @@ protected:
 	LFSearchResult* p_CookedFiles;
 	CHAR m_StoreID[LFKeySize];
 	INT m_Context;
+	INT m_Domain;
 	INT m_ViewID;
 	BOOL m_StoreIDValid;
 	BOOL m_IsClipboard;

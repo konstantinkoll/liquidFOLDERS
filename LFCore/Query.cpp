@@ -556,6 +556,10 @@ int PassesFilterCore(LFCoreAttributes* ca, LFFilter* filter)
 			if (!ca->Rating)
 				return -1;
 			break;
+		case LFDomainNew:
+			if (!(ca->Flags & LFFlagNew))
+				return -1;
+			break;
 		case LFDomainTrash:
 			if (!(ca->Flags & LFFlagTrash))
 				return -1;
@@ -798,7 +802,7 @@ __forceinline void PrepareSearchResult(LFSearchResult* res, LFFilter* filter)
 	}
 
 	res->m_LastError = LFOk;
-	res->SetContext(filter);
+	res->SetContextAndDomain(filter);
 	wcscpy_s(res->m_Name, 256, name);
 }
 
@@ -808,7 +812,7 @@ LFSearchResult* QueryTree(LFFilter* filter)
 	PrepareSearchResult(res, filter);
 
 	if (RetrieveStore(filter->StoreID, filter, res))
-		res->SetContext(filter);
+		res->SetContextAndDomain(filter);
 
 	return res;
 }
@@ -922,7 +926,7 @@ LFCore_API LFSearchResult* LFQuery(LFFilter* filter, LFSearchResult* base, int f
 
 		res->m_LastError = LFOk;
 		res->KeepRange(first, last);
-		res->SetContext(filter);
+		res->SetContextAndDomain(filter);
 	}
 	else
 	{

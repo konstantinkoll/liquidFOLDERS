@@ -336,6 +336,7 @@ BEGIN
     IDS_DomainAllFiles      "Alle Dateien\nAlle Dateien in diesem Store"
     IDS_DomainAllMediaFiles "Alle Multimedia-Dateien\nAlle Audio-Dateien, Bilder, Fotos und Videos"
     IDS_DomainFavorites     "Favoriten\nAlle Dateien mit Bewertung"
+    IDS_DomainNew           "Neue Dateien\nKürzlich importierte Dateien"
     IDS_DomainTrash         "Papierkorb\nGelöschte Dateien"
     IDS_DomainUnknown       "Unbekannte Dateiformate\nDateien, die noch keiner Kategorie zugeordnet wurden"
     IDS_DomainFilters       "Filter\nBenutzerdefinierte Filter"

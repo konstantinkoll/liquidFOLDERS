@@ -743,6 +743,8 @@ unsigned int CIndex::RetrieveStats(unsigned int* cnt, __int64* size)
 				Count(LFDomainPictures);
 			if (PtrM->Rating)
 				Count(LFDomainFavorites);
+			if (PtrM->Flags & LFFlagNew)
+				Count(LFDomainNew);
 
 			Count(((PtrM->DomainID>=LFFirstPhysicalDomain) && (PtrM->DomainID<LFDomainCount)) ? PtrM->DomainID : LFDomainUnknown);
 		}
