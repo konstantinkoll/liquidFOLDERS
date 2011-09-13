@@ -159,7 +159,7 @@ BEGIN
     BEGIN
         MENUITEM SEPARATOR
         MENUITEM "Unbekannte Formate re&gistrieren", IDM_HOUSEKEEPING_REGISTER
-        MENUITEM "Informationen &senden",       IDM_HOUSEKEEPING_SEND
+        MENUITEM "Liste &senden",               IDM_HOUSEKEEPING_SEND
     END
 END
 
@@ -758,7 +758,7 @@ BEGIN
     BEGIN
         MENUITEM SEPARATOR
         MENUITEM "Re&gister unknown file formats", IDM_HOUSEKEEPING_REGISTER
-        MENUITEM "&Send information",           IDM_HOUSEKEEPING_SEND
+        MENUITEM "&Send list",                  IDM_HOUSEKEEPING_SEND
     END
 END
 
@@ -1356,7 +1356,7 @@ BEGIN
     BEGIN
         MENUITEM SEPARATOR
         MENUITEM "&Registrar formatos de archivo desconocidos", IDM_HOUSEKEEPING_REGISTER
-        MENUITEM "&Enviar información",         IDM_HOUSEKEEPING_SEND
+        MENUITEM "&Enviar lista",               IDM_HOUSEKEEPING_SEND
     END
 END
 
@@ -1955,7 +1955,7 @@ BEGIN
     BEGIN
         MENUITEM SEPARATOR
         MENUITEM "Enregistrer les formats &inconnus", IDM_HOUSEKEEPING_REGISTER
-        MENUITEM "&Envoyer les informations",   IDM_HOUSEKEEPING_SEND
+        MENUITEM "&Envoyer la liste",           IDM_HOUSEKEEPING_SEND
     END
 END
 
@@ -2436,7 +2436,7 @@ STRINGTABLE
 BEGIN
     IDM_HOUSEKEEPING_REGISTER 
                             "Enregistre les formats de fichier inconnus qui apparaissent ainsi dans les dossiers justes.\nEnregistrer des formats..."
-    IDM_HOUSEKEEPING_SEND   "Envoie une liste avec tous les formats de fichier enregistrés au service après-vente.\nEnvoyer une liste"
+    IDM_HOUSEKEEPING_SEND   "Envoie une liste avec tous les formats de fichier enregistrés au service après-vente.\nEnvoyer la liste"
 END
 
 STRINGTABLE 
