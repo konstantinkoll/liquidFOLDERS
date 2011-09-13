@@ -233,7 +233,7 @@ void CMainView::SetHeader()
 
 		if (m_Context==LFContextStores)
 		{
-			ENSURE(Mask.LoadString(p_CookedFiles->m_ItemCount==1 ? IDS_STORES_SINGULAR : IDS_STORES_PLURAL));
+			ENSURE(Mask.LoadString(p_CookedFiles->m_StoreCount==1 ? IDS_STORES_SINGULAR : IDS_STORES_PLURAL));
 			Hint.Format(Mask, p_CookedFiles->m_StoreCount);
 		}
 		else

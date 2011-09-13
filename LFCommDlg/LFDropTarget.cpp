@@ -14,6 +14,7 @@ struct WorkerParameters
 	LFWorkerParameters Hdr;
 	CHAR StoreID[LFKeySize];
 	BOOL Move;
+	LFItemDescriptor* Template;
 	union
 	{
 		LFFileIDList* FileIDList;
@@ -25,7 +26,7 @@ DWORD WINAPI WorkerImportFromFS(void* lParam)
 {
 	LF_WORKERTHREAD_START(lParam);
 
-	LFTransactionImport(wp->StoreID, wp->FileImportList, NULL, true, wp->Move==TRUE, &p);
+	LFTransactionImport(wp->StoreID, wp->FileImportList, wp->Template, true, wp->Move==TRUE, &p);
 
 	LF_WORKERTHREAD_FINISH();
 }
@@ -91,6 +92,24 @@ __forceinline HRESULT LFDropTarget::ImportFromFS(HGLOBAL hgDrop, DWORD dwEffect,
 	strcpy_s(wp.StoreID, LFKeySize, StoreID);
 	wp.Move = (dwEffect & DROPEFFECT_MOVE)!=0;
 
+	if (p_Filter)
+	{
+		wp.Template = LFAllocItemDescriptor();
+
+		LFFilterCondition* pCondition = p_Filter->ConditionList;
+		while (pCondition)
+		{
+			if (pCondition->Compare==LFFilterCompareSubfolder)
+			{
+				UINT Attr = pCondition->AttrData.Attr;
+				if ((!((LFApplication*)AfxGetApp())->m_Attributes[Attr]->ReadOnly) && (Attr!=LFAttrFileName))
+					LFSetAttributeVariantData(wp.Template, &pCondition->AttrData);
+			}
+
+			pCondition = pCondition->Next;
+		}
+	}
+
 	HDROP hDrop = (HDROP)GlobalLock(hgDrop);
 	wp.FileImportList = LFAllocFileImportList(hDrop);
 	GlobalUnlock(hgDrop);
@@ -100,6 +119,7 @@ __forceinline HRESULT LFDropTarget::ImportFromFS(HGLOBAL hgDrop, DWORD dwEffect,
 	LFErrorBox(res, pWnd->GetSafeHwnd());
 
 	LFFreeFileImportList(wp.FileImportList);
+	LFFreeItemDescriptor(wp.Template);
 
 	if (p_Owner)
 		p_Owner->SendMessage(LFGetMessageIDs()->ItemsDropped, NULL, NULL);
