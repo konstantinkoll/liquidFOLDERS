@@ -1448,7 +1448,7 @@ BEGIN
     PUSHBUTTON      "Effacer maintenant (il n'y aura aucun avertissement de plus)",IDOK,20,162,210,14,WS_DISABLED | WS_GROUP
     LTEXT           "Confirmez s'il vous plaît que vous voulez vraiment effacer le store choisi.",IDC_CAPTION,7,31,281,8
     LTEXT           "Comme le store est actuellement monté, vous perdrez tous les fichiers à l'intérieur de ce store sans option de récupération!",IDC_STATIC,7,51,213,17
-    LTEXT           "Pour l'effacement vous donnez votre approbation en choisir ""l'effacement"" et, ensuite, en cliquer sur ""Effacer maintenant"":",IDC_STATIC,7,81,213,17
+    LTEXT           "Pour l'effacement vous donnez votre approbation en choisir ""Effacer"" et, ensuite, en cliquer sur ""Effacer maintenant"":",IDC_STATIC,7,81,213,17
     LTEXT           "Cette fenêtre empêche l'effacement non intentionnel de beaucoup de fichiers.",IDC_STATIC,7,189,281,8
 END
 

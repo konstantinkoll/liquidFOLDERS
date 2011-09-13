@@ -109,6 +109,7 @@ protected:
 	afx_msg void OnHomeProperties();
 	afx_msg void OnUpdateHomeCommands(CCmdUI* pCmdUI);
 
+	afx_msg void OnHousekeepingRemoveNew();
 	afx_msg void OnHousekeepingRegister();
 	afx_msg void OnHousekeepingSend();
 	afx_msg void OnUpdateHousekeepingCommands(CCmdUI* pCmdUI);

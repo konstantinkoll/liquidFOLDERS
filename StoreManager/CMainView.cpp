@@ -768,9 +768,10 @@ BEGIN_MESSAGE_MAP(CMainView, CWnd)
 	ON_COMMAND(IDM_HOME_PROPERTIES, OnHomeProperties)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_HOME_SHOWEMPTYDOMAINS, IDM_HOME_PROPERTIES, OnUpdateHomeCommands)
 
+	ON_COMMAND(IDM_HOUSEKEEPING_REMOVENEW, OnHousekeepingRemoveNew)
 	ON_COMMAND(IDM_HOUSEKEEPING_REGISTER, OnHousekeepingRegister)
 	ON_COMMAND(IDM_HOUSEKEEPING_SEND, OnHousekeepingSend)
-	ON_UPDATE_COMMAND_UI_RANGE(IDM_HOUSEKEEPING_REGISTER, IDM_HOUSEKEEPING_SEND, OnUpdateHousekeepingCommands)
+	ON_UPDATE_COMMAND_UI_RANGE(IDM_HOUSEKEEPING_REMOVENEW, IDM_HOUSEKEEPING_SEND, OnUpdateHousekeepingCommands)
 
 	ON_COMMAND(IDM_TRASH_EMPTY, OnTrashEmpty)
 	ON_COMMAND(IDM_TRASH_RESTOREALL, OnTrashRestoreAll)
@@ -818,46 +819,47 @@ INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	m_wndTaskbar.AddButton(IDM_STORES_CREATENEW, 0);
 	m_wndTaskbar.AddButton(IDM_HOME_IMPORTFOLDER, 1, TRUE);
-	m_wndTaskbar.AddButton(IDM_HOUSEKEEPING_REGISTER, 2, TRUE);
-	m_wndTaskbar.AddButton(IDM_HOUSEKEEPING_SEND, 33, TRUE);
-	m_wndTaskbar.AddButton(IDM_TRASH_EMPTY, 3, TRUE);
-	m_wndTaskbar.AddButton(IDM_TRASH_RESTOREALL, 4, TRUE);
-	m_wndTaskbar.AddButton(IDM_CALENDAR_PREVYEAR, 5, TRUE);
-	m_wndTaskbar.AddButton(IDM_CALENDAR_NEXTYEAR, 6, TRUE);
-	m_wndTaskbar.AddButton(IDM_CALENDAR_GOTOYEAR, 7);
-	m_wndTaskbar.AddButton(IDM_GLOBE_JUMPTOLOCATION, 8, TRUE);
-	m_wndTaskbar.AddButton(IDM_GLOBE_ZOOMIN, 9);
-	m_wndTaskbar.AddButton(IDM_GLOBE_ZOOMOUT, 10);
-	m_wndTaskbar.AddButton(IDM_GLOBE_AUTOSIZE, 11);
-	m_wndTaskbar.AddButton(IDM_TAGCLOUD_SORTVALUE, 12);
-	m_wndTaskbar.AddButton(IDM_TAGCLOUD_SORTCOUNT, 13);
-	m_wndTaskbar.AddButton(IDM_ITEM_OPEN, 14);
-	m_wndTaskbar.AddButton(IDM_GLOBE_GOOGLEEARTH, 15, TRUE);
-	m_wndTaskbar.AddButton(IDM_VOLUME_PROPERTIES, 16);
-	m_wndTaskbar.AddButton(IDM_STORE_DELETE, 17);
-	m_wndTaskbar.AddButton(IDM_STORE_RENAME, 18);
-	m_wndTaskbar.AddButton(IDM_STORE_PROPERTIES, 19);
-	m_wndTaskbar.AddButton(IDM_STORE_MAKEDEFAULT, 20);
+	m_wndTaskbar.AddButton(IDM_HOUSEKEEPING_REMOVENEW, 2, TRUE);
+	m_wndTaskbar.AddButton(IDM_HOUSEKEEPING_REGISTER, 3, TRUE);
+	m_wndTaskbar.AddButton(IDM_HOUSEKEEPING_SEND, 34, TRUE);
+	m_wndTaskbar.AddButton(IDM_TRASH_EMPTY, 4, TRUE);
+	m_wndTaskbar.AddButton(IDM_TRASH_RESTOREALL, 5, TRUE);
+	m_wndTaskbar.AddButton(IDM_CALENDAR_PREVYEAR, 6, TRUE);
+	m_wndTaskbar.AddButton(IDM_CALENDAR_NEXTYEAR, 7, TRUE);
+	m_wndTaskbar.AddButton(IDM_CALENDAR_GOTOYEAR, 8);
+	m_wndTaskbar.AddButton(IDM_GLOBE_JUMPTOLOCATION, 9, TRUE);
+	m_wndTaskbar.AddButton(IDM_GLOBE_ZOOMIN, 10);
+	m_wndTaskbar.AddButton(IDM_GLOBE_ZOOMOUT, 11);
+	m_wndTaskbar.AddButton(IDM_GLOBE_AUTOSIZE, 12);
+	m_wndTaskbar.AddButton(IDM_TAGCLOUD_SORTVALUE, 13);
+	m_wndTaskbar.AddButton(IDM_TAGCLOUD_SORTCOUNT, 14);
+	m_wndTaskbar.AddButton(IDM_ITEM_OPEN, 15);
+	m_wndTaskbar.AddButton(IDM_GLOBE_GOOGLEEARTH, 16, TRUE);
+	m_wndTaskbar.AddButton(IDM_VOLUME_PROPERTIES, 17);
+	m_wndTaskbar.AddButton(IDM_STORE_DELETE, 18);
+	m_wndTaskbar.AddButton(IDM_STORE_RENAME, 19);
+	m_wndTaskbar.AddButton(IDM_STORE_PROPERTIES, 20);
+	m_wndTaskbar.AddButton(IDM_STORE_MAKEDEFAULT, 21);
 	m_wndTaskbar.AddButton(IDM_STORE_IMPORTFOLDER, 1);
-	m_wndTaskbar.AddButton(IDM_FILE_REMEMBER, 21);
-	m_wndTaskbar.AddButton(IDM_FILE_REMOVE, 22);
-	m_wndTaskbar.AddButton(IDM_FILE_DELETE, 23);
-	m_wndTaskbar.AddButton(IDM_FILE_RENAME, 24);
-	m_wndTaskbar.AddButton(IDM_FILE_RESTORE, 25);
-	m_wndTaskbar.AddButton(ID_APP_NEWFILEDROP, 26, TRUE);
+	m_wndTaskbar.AddButton(IDM_FILE_REMEMBER, 22);
+	m_wndTaskbar.AddButton(IDM_FILE_REMOVE, 23);
+	m_wndTaskbar.AddButton(IDM_FILE_DELETE, 24);
+	m_wndTaskbar.AddButton(IDM_FILE_RENAME, 25);
+	m_wndTaskbar.AddButton(IDM_FILE_RESTORE, 26);
+	m_wndTaskbar.AddButton(ID_APP_NEWFILEDROP, 27, TRUE);
 
-	#define FilterIconVisible     28
-	#define FilterIconHidden      27
+	#define FilterIconVisible     29
+	#define FilterIconHidden      28
 	p_FilterButton = m_wndTaskbar.AddButton(ID_PANE_FILTER, theApp.m_ShowFilterPane ? FilterIconVisible : FilterIconHidden, TRUE, TRUE);
 
-	#define InspectorIconVisible     30
-	#define InspectorIconHidden      29
+	#define InspectorIconVisible     31
+	#define InspectorIconHidden      30
 	p_InspectorButton = m_wndTaskbar.AddButton(ID_PANE_INSPECTOR, theApp.m_ShowInspectorPane ? InspectorIconVisible : InspectorIconHidden, TRUE, TRUE);
 
-	m_wndTaskbar.AddButton(ID_APP_PURCHASE, 31, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_ENTERLICENSEKEY, 32, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_SUPPORT, 33, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_ABOUT, 34, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_PURCHASE, 32, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_ENTERLICENSEKEY, 33, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_SUPPORT, 34, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_ABOUT, 35, TRUE, TRUE);
 
 	// Filter
 	if (!m_IsClipboard)
@@ -1565,6 +1567,28 @@ void CMainView::OnUpdateHomeCommands(CCmdUI* pCmdUI)
 
 // Housekeeping
 
+void CMainView::OnHousekeepingRemoveNew()
+{
+	LFVariantData Value;
+	Value.Attr = LFAttrFlags;
+	LFGetNullVariantData(&Value);
+
+	Value.IsNull = false;
+	Value.Flags.Flags = 0;
+	Value.Flags.Mask = LFFlagNew;
+
+	CWaitCursor wait;
+
+	LFTransactionList* tl = BuildTransactionList(TRUE);
+	LFTransactionUpdate(tl, GetOwner()->GetSafeHwnd(), &Value);
+	RemoveTransactedItems(tl);
+
+	if (tl->m_LastError>LFCancel)
+		ShowNotification(ENT_ERROR, tl->m_LastError);
+
+	LFFreeTransactionList(tl);
+}
+
 void CMainView::OnHousekeepingRegister()
 {
 	MessageBox(_T("Coming soon!"));
@@ -1581,6 +1605,11 @@ void CMainView::OnUpdateHousekeepingCommands(CCmdUI* pCmdUI)
 
 	switch (pCmdUI->m_nID)
 	{
+	case IDM_HOUSEKEEPING_REMOVENEW:
+		if (p_CookedFiles)
+			b &= (p_CookedFiles->m_ItemCount>0);
+		b &= (m_Domain==LFDomainNew);
+		break;
 	case IDM_HOUSEKEEPING_REGISTER:
 		if (p_CookedFiles)
 			b &= (p_CookedFiles->m_ItemCount>0);
