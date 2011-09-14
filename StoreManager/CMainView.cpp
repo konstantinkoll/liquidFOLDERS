@@ -1601,7 +1601,7 @@ void CMainView::OnHousekeepingSend()
 
 void CMainView::OnUpdateHousekeepingCommands(CCmdUI* pCmdUI)
 {
-	BOOL b = (p_CookedFiles!=NULL);
+	BOOL b = (p_CookedFiles!=NULL) && (m_Context==LFContextHousekeeping);
 
 	switch (pCmdUI->m_nID)
 	{
