@@ -79,7 +79,7 @@ BOOL CDriveMenu::OnInitialize(LPDATAOBJECT dataObject)
 	}
 
 	// Shell items
-	IShellFolder* pDesktopPtr;
+	IShellFolder* pDesktop = NULL;
 	if (SUCCEEDED(SHGetDesktopFolder(&pDesktopPtr)))
 	{
 		UINT CF_IDLIST = RegisterClipboardFormat(CFSTR_SHELLIDLIST);
@@ -101,7 +101,7 @@ BOOL CDriveMenu::OnInitialize(LPDATAOBJECT dataObject)
 				{
 					LPITEMIDLIST pidl = HIDA_GetPIDLItem(pIDList, uItem);
 					STRRET strret;
-					if (SUCCEEDED(pDesktopPtr->GetDisplayNameOf(pidl, SHGDN_FORPARSING, &strret)))
+					if (SUCCEEDED(pDesktop->GetDisplayNameOf(pidl, SHGDN_FORPARSING, &strret)))
 						if (wcscmp(strret.pOleStr, L"::{20D04FE0-3AEA-1069-A2D8-08002B30309D}")==0)
 							Drive = L'\1';
 				}
@@ -110,7 +110,7 @@ BOOL CDriveMenu::OnInitialize(LPDATAOBJECT dataObject)
 			GlobalUnlock(pIDList);
 		}
 
-		pDesktopPtr->Release();
+		pDesktop->Release();
 	}
 
 	d.Detach();

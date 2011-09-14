@@ -495,3 +495,10 @@ LFCore_API IShellLink* LFGetShortcutForStore(char* key);
 LFCore_API void LFCreateDesktopShortcutForStore(LFItemDescriptor* i);
 LFCore_API void LFCreateDesktopShortcutForStore(LFStoreDescriptor* s);
 LFCore_API void LFCreateDesktopShortcutForStore(char* key);
+
+
+//
+// Thumbnails
+//
+
+LFCore_API HBITMAP LFGetThumbnail(LFItemDescriptor* i);

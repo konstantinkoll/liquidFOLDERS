@@ -522,6 +522,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Thumbnails.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\Transaction.cpp"
 				>
 			</File>
@@ -653,6 +657,10 @@
 			</File>
 			<File
 				RelativePath=".\targetver.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Thumbnails.h"
 				>
 			</File>
 			<File

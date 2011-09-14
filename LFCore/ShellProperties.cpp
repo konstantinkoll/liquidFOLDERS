@@ -305,10 +305,10 @@ void SetAttributesFromFile(LFItemDescriptor* i, wchar_t* fn, bool metadata)
 		return;
 
 	// Shell properties
-	IShellFolder* pDesktop;
+	IShellFolder* pDesktop = NULL;
 	if (SUCCEEDED(SHGetDesktopFolder(&pDesktop)))
 	{
-		LPITEMIDLIST pidlFQ;
+		LPITEMIDLIST pidlFQ = NULL;
 		if (SUCCEEDED(pDesktop->ParseDisplayName(NULL, NULL, fn, NULL, &pidlFQ, NULL)))
 		{
 			IShellFolder2* pParentFolder = NULL;

@@ -105,7 +105,7 @@ bool GetPIDLForStore(char* StoreID, LPITEMIDLIST* ppidl, LPITEMIDLIST* ppidlDele
 	// Delegate PIDL
 	if (res)
 	{
-		LPITEMIDLIST pidlMyComputer;
+		LPITEMIDLIST pidlMyComputer = NULL;
 		if (SUCCEEDED(SHGetSpecialFolderLocation(NULL, CSIDL_DRIVES, &pidlMyComputer)))
 		{
 			if (!StoreID)
@@ -119,10 +119,10 @@ bool GetPIDLForStore(char* StoreID, LPITEMIDLIST* ppidl, LPITEMIDLIST* ppidlDele
 			IShellFolder* pParentFolder = NULL;
 			if (SUCCEEDED(pDesktop->BindToObject(pidlMyComputer, NULL, IID_IShellFolder, (void**)&pParentFolder)))
 			{
-				IEnumIDList* pEnum;
+				IEnumIDList* pEnum = NULL;
 				if (SUCCEEDED(pParentFolder->EnumObjects(NULL, SHCONTF_FOLDERS, &pEnum)))
 				{
-					LPITEMIDLIST pidlTemp;
+					LPITEMIDLIST pidlTemp = NULL;
 					while (pEnum->Next(1, &pidlTemp, NULL)==S_OK)
 					{
 						SHDESCRIPTIONID did;

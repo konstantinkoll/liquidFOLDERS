@@ -627,6 +627,27 @@ void CListView::DrawIcon(CDC& dc, CRect& rect, LFItemDescriptor* i)
 	switch (i->Type & LFTypeMask)
 	{
 	case LFTypeFile:
+		if ((m_ViewParameters.Mode==LFViewContent) || (m_ViewParameters.Mode==LFViewPreview))
+		{
+			HBITMAP hBmp = LFGetThumbnail(i);
+			if (hBmp)
+			{
+				BITMAP bm;
+				GetObject(hBmp, sizeof(bm), &bm);
+				rect.OffsetRect((rect.Width()-bm.bmWidth)/2, (rect.Height()-bm.bmHeight)/2);
+
+				HDC hdcMem = CreateCompatibleDC(dc);
+				HBITMAP hbmOld = (HBITMAP)SelectObject(hdcMem, hBmp);
+
+				BitBlt(dc, rect.left, rect.top+1, 128, 128, hdcMem, 0, 0, SRCCOPY);
+
+				SelectObject(hdcMem, hbmOld);
+				DeleteDC(hdcMem);
+				DeleteObject(hBmp);
+
+				return;
+			}
+		}
 		if (JUMBOICON)
 		{
 			theApp.m_FileFormats.DrawJumboIcon(dc, rect, i->CoreAttributes.FileFormat, i->Type & LFTypeGhosted);

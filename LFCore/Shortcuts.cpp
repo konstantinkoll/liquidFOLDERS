@@ -1,8 +1,8 @@
 
 #include "stdafx.h"
-#include "Shortcuts.h"
 #include "LFCore.h"
 #include "Mutex.h"
+#include "Shortcuts.h"
 #include "StoreCache.h"
 #include "Stores.h"
 #include <assert.h>

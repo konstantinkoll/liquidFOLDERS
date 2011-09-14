@@ -52,16 +52,16 @@ void CPIDLDropdownWindow::AddKnownFolder(REFKNOWNFOLDERID rfid, UINT Category)
 
 void CPIDLDropdownWindow::AddPath(WCHAR* Path, UINT Category)
 {
-	IShellFolder* Desktop;
-	if (SUCCEEDED(SHGetDesktopFolder(&Desktop)))
+	IShellFolder* pDesktop = NULL;
+	if (SUCCEEDED(SHGetDesktopFolder(&pDesktop)))
 	{
 		ULONG chEaten;
 		ULONG dwAttributes;
 		LPITEMIDLIST pidl = NULL;
-		Desktop->ParseDisplayName(NULL, NULL, Path, &chEaten, &pidl, &dwAttributes);
+		pDesktop->ParseDisplayName(NULL, NULL, Path, &chEaten, &pidl, &dwAttributes);
 		AddPIDL(pidl, Category);
 
-		Desktop->Release();
+		pDesktop->Release();
 	}
 }
 
@@ -74,22 +74,22 @@ void CPIDLDropdownWindow::AddCSIDL(INT CSIDL, UINT Category)
 
 void CPIDLDropdownWindow::AddChildren(WCHAR* Path, UINT Category)
 {
-	IShellFolder* Desktop;
-	if (SUCCEEDED(SHGetDesktopFolder(&Desktop)))
+	IShellFolder* pDesktop = NULL;
+	if (SUCCEEDED(SHGetDesktopFolder(&pDesktop)))
 	{
 		ULONG chEaten;
 		ULONG dwAttributes;
 		LPITEMIDLIST pidl = NULL;
-		Desktop->ParseDisplayName(NULL, NULL, Path, &chEaten, &pidl, &dwAttributes);
+		pDesktop->ParseDisplayName(NULL, NULL, Path, &chEaten, &pidl, &dwAttributes);
 		BOOL ParentAdded = AddPIDL(pidl, Category, FALSE);
 
-		IShellFolder* pParentFolder;
-		if (SUCCEEDED(Desktop->BindToObject(pidl, NULL, IID_IShellFolder, (void**)&pParentFolder)))
+		IShellFolder* pParentFolder = NULL;
+		if (SUCCEEDED(pDesktop->BindToObject(pidl, NULL, IID_IShellFolder, (void**)&pParentFolder)))
 		{
-			IEnumIDList* pEnum;
+			IEnumIDList* pEnum = NULL;
 			if (SUCCEEDED(pParentFolder->EnumObjects(NULL, SHCONTF_FOLDERS, &pEnum)))
 			{
-				LPITEMIDLIST pidlTemp;
+				LPITEMIDLIST pidlTemp = NULL;
 				while (pEnum->Next(1, &pidlTemp, NULL)==S_OK)
 				{
 					// Don't include liquidFOLDERS
@@ -124,7 +124,7 @@ void CPIDLDropdownWindow::AddChildren(WCHAR* Path, UINT Category)
 			pParentFolder->Release();
 		}
 
-		Desktop->Release();
+		pDesktop->Release();
 
 		if (!ParentAdded)
 			theApp.GetShellManager()->FreeItem(pidl);
