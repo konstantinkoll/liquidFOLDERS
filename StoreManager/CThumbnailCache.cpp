@@ -13,86 +13,31 @@
 
 CThumbnailCache::CThumbnailCache()
 {
-	ZeroMemory(&m_Thumbnails, sizeof(m_Thumbnails));
-	ZeroMemory(&m_NoThumbnails, sizeof(m_NoThumbnails));
-	m_NextPtr[0] = m_NextPtr[1] = 0;
-}
-
-CThumbnailCache::~CThumbnailCache()
-{
-	for (UINT a=0; a<ThumbnailCount; a++)
-		FreeItem(a);
-}
-
-__forceinline void CThumbnailCache::FreeItem(UINT idx)
-{
-	if (m_Thumbnails[idx].hBmp)
-		DeleteObject(m_Thumbnails[idx].hBmp);
 }
 
 HBITMAP CThumbnailCache::Lookup(LFItemDescriptor* i)
 {
-	// Assumption: we know the item has no thumbnail
-	INT Ptr = m_NextPtr[1];
+	ThumbnailData td;
 
-	for (UINT a=0; a<NoThumbnailCount; a++)
+	if (m_NoThumbnails.Lookup(i, td))
+		return td.hBmp;
+	if (m_Thumbnails.Lookup(i, td))
+		return td.hBmp;
+
+	strcpy_s(td.StoreID, LFKeySize, i->StoreID);
+	strcpy_s(td.FileID, LFKeySize, i->CoreAttributes.FileID);
+	td.hBmp = LFGetThumbnail(i);
+
+	if (td.hBmp)
 	{
-		if (--Ptr<0)
-			Ptr = NoThumbnailCount-1;
-
-		if ((strcmp(m_NoThumbnails[Ptr].StoreID, i->StoreID)==0) && (strcmp(m_NoThumbnails[Ptr].FileID, i->CoreAttributes.FileID)==0))
-		{
-			if (Ptr!=m_NextPtr[1])
-				std::swap(m_NoThumbnails[m_NextPtr[1]], m_NoThumbnails[Ptr]);
-
-			return NULL;
-		}
-	}
-
-	// See if we have a thumbnail...
-	Ptr = m_NextPtr[0];
-
-	for (UINT a=0; a<ThumbnailCount; a++)
-	{
-		if (--Ptr<0)
-			Ptr = ThumbnailCount-1;
-
-		if ((strcmp(m_Thumbnails[Ptr].StoreID, i->StoreID)==0) && (strcmp(m_Thumbnails[Ptr].FileID, i->CoreAttributes.FileID)==0))
-		{
-			HBITMAP hBmp = m_Thumbnails[Ptr].hBmp;
-
-			if (Ptr!=m_NextPtr[0])
-				std::swap(m_Thumbnails[m_NextPtr[0]], m_Thumbnails[Ptr]);
-
-			if (++m_NextPtr[0]>=ThumbnailCount)
-				m_NextPtr[0] = 0;
-
-			return hBmp;
-		}
-	}
-
-	// We don't know the file yet. Lets request a thumbnail!
-	HBITMAP hBmp = LFGetThumbnail(i);
-
-	if (hBmp)
-	{
-		FreeItem(m_NextPtr[0]);
-
-		strcpy_s(m_Thumbnails[m_NextPtr[0]].StoreID, LFKeySize, i->StoreID);
-		strcpy_s(m_Thumbnails[m_NextPtr[0]].FileID, LFKeySize, i->CoreAttributes.FileID);
-		m_Thumbnails[m_NextPtr[0]].hBmp = hBmp;
-		if (++m_NextPtr[0]>=ThumbnailCount)
-			m_NextPtr[0] = 0;
+		m_Thumbnails.AddItem(td);
 	}
 	else
 	{
-		strcpy_s(m_NoThumbnails[m_NextPtr[1]].StoreID, LFKeySize, i->StoreID);
-		strcpy_s(m_NoThumbnails[m_NextPtr[1]].FileID, LFKeySize, i->CoreAttributes.FileID);
-		if (++m_NextPtr[1]>=NoThumbnailCount)
-			m_NextPtr[1] = 0;
+		m_NoThumbnails.AddItem(td);
 	}
 
-	return hBmp;
+	return td.hBmp;
 }
 
 BOOL CThumbnailCache::DrawJumboThumbnail(CDC& dc, CRect& rect, LFItemDescriptor* i)

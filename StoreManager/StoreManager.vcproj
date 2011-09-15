@@ -656,6 +656,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ThumbnailList.h"
+				>
+			</File>
+			<File
 				RelativePath=".\ViewOptionsDlg.h"
 				>
 			</File>
