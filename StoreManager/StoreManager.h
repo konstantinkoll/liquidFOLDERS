@@ -5,6 +5,7 @@
 #pragma once
 #include "LFCommDlg.h"
 #include "CFormatCache.h"
+#include "CThumbnailCache.h"
 #include "MainWnd.h"
 #include "resource.h"
 #include <hash_map>
@@ -43,6 +44,7 @@ public:
 	UINT m_WakeupMsg;
 	CString m_PathGoogleEarth;
 	CFormatCache m_FileFormats;
+	CThumbnailCache m_ThumbnailCache;
 	LFViewParameters m_Views[LFContextCount];
 	LFBitArray* m_AllowedViews[LFContextCount];
 

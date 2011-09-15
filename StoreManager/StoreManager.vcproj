@@ -426,6 +426,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CThumbnailCache.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\EditConditionDlg.cpp"
 				>
 			</File>
@@ -565,6 +569,10 @@
 			</File>
 			<File
 				RelativePath=".\CTagcloudView.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CThumbnailCache.h"
 				>
 			</File>
 			<File
