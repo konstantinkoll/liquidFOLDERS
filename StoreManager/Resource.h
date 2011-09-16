@@ -28,6 +28,8 @@
 #define IDB_JOURNAL_PRESSED1            151
 #define IDB_JOURNAL_DISABLED0           152
 #define IDB_JOURNAL_DISABLED1           153
+#define IDB_THUMBNAIL_SHADOW            154
+#define IDB_THUMBNAIL_FRAME             155
 #define ID_PANE_FILTER                  400
 #define ID_PANE_INSPECTOR               401
 #define ID_NAV_BACK                     500

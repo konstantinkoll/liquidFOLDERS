@@ -1701,6 +1701,14 @@
 			>
 		</File>
 		<File
+			RelativePath=".\Thumbnail_Frame.png"
+			>
+		</File>
+		<File
+			RelativePath=".\Thumbnail_Shadow.png"
+			>
+		</File>
+		<File
 			RelativePath=".\Tools.ico"
 			>
 		</File>

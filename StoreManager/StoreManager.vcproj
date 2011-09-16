@@ -802,6 +802,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\Thumbnail_Frame.png"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Thumbnail_Shadow.png"
+				>
+			</File>
+			<File
 				RelativePath=".\res\ViewOptions_Tiny.ico"
 				>
 			</File>

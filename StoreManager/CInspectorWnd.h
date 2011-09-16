@@ -42,9 +42,11 @@ public:
 	void SetMultiple(CString Description=_T(""));
 	void SetCoreIcon(INT IconID, CString Description=_T(""));
 	void SetFormatIcon(CHAR* FileFormat, CString Description=_T(""));
-	//void SetPreview(, CString Description=_T(""));		TODO
+	void SetPreview(LFItemDescriptor* i, CString Description=_T(""));
 
 protected:
+	void FreeItem();
+
 	CGdiPlusBitmapResource m_Empty;
 	CGdiPlusBitmapResource m_Multiple;
 	CString m_strUnused;
@@ -52,6 +54,7 @@ protected:
 	UINT m_Status;
 	INT m_IconID;
 	CHAR m_FileFormat[LFExtSize];
+	LFItemDescriptor* m_pItem;
 };
 
 
@@ -76,6 +79,7 @@ protected:
 	BOOL m_ShowPreview;
 	BOOL m_ShowInternal;
 	BOOL m_SortAlphabetic;
+	LFItemDescriptor* p_LastItem;
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnSetFocus(CWnd* pOldWnd);

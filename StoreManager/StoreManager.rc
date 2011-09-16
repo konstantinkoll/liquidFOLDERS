@@ -72,6 +72,8 @@ IDB_JOURNAL_PRESSED0    PNG                     "res\\Journal_Pressed0.png"
 IDB_JOURNAL_PRESSED1    PNG                     "res\\Journal_Pressed1.png"
 IDB_JOURNAL_DISABLED0   PNG                     "res\\Journal_Disabled0.png"
 IDB_JOURNAL_DISABLED1   PNG                     "res\\Journal_Disabled1.png"
+IDB_THUMBNAIL_FRAME     PNG                     "res\\Thumbnail_Frame.png"
+IDB_THUMBNAIL_SHADOW    PNG                     "res\\Thumbnail_Shadow.png"
 
 /////////////////////////////////////////////////////////////////////////////
 //

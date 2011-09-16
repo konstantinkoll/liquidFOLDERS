@@ -108,6 +108,8 @@ BOOL CStoreManagerApp::InitInstance()
 	for (INT a=0; a<LFContextCount; a++)
 		LoadViewOptions(a);
 
+	m_ThumbnailCache.LoadFrames();
+
 	CMainWnd* pFrame = new CMainWnd();
 
 	// Parse parameter and create window

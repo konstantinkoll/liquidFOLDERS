@@ -364,7 +364,7 @@ void CListView::AdjustLayout()
 		ArrangeHorizontal(gva, FALSE, TRUE, TRUE);
 		break;
 	case LFViewContent:
-		gva.cy = m_IconSize[0].cy+18+3;
+		gva.cy = m_IconSize[0].cy+18+3+8;
 		ArrangeHorizontal(gva, FALSE, TRUE, TRUE);
 		break;
 	}
@@ -574,7 +574,7 @@ void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed)
 			if (((i->Type & LFTypeMask)==LFTypeFile) || (Rating))
 			{
 				rectIcon.left += (m_IconSize[0].cx-88)/2;
-				rectIcon.bottom--;
+				rectIcon.bottom -= 9;
 				rectIcon.top = rectIcon.bottom-18;
 
 				PrepareBlend();

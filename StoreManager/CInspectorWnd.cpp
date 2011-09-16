@@ -18,6 +18,7 @@ CIconHeader::CIconHeader()
 	ENSURE(m_strUnused.LoadString(IDS_NOITEMSSELECTED));
 	m_strDescription = m_strUnused;
 	m_Status = IconEmpty;
+	m_pItem = NULL;
 }
 
 INT CIconHeader::GetPreferredHeight()
@@ -44,6 +45,9 @@ void CIconHeader::DrawHeader(CDC& dc, CRect rect, BOOL Themed)
 	case IconCore:
 		theApp.m_CoreImageListJumbo.DrawEx(&dc, m_IconID, CPoint(cx, cy), CSize(128, 128), CLR_NONE, 0xFFFFFF, ILD_TRANSPARENT);
 		break;
+	case IconPreview:
+		if (theApp.m_ThumbnailCache.DrawJumboThumbnail(dc, rectIcon, m_pItem))
+			break;
 	case IconExtension:
 		theApp.m_FileFormats.DrawJumboIcon(dc, rectIcon, m_FileFormat);
 		break;
@@ -56,16 +60,29 @@ void CIconHeader::DrawHeader(CDC& dc, CRect rect, BOOL Themed)
 	dc.DrawText(m_strDescription, rectText, DT_SINGLELINE | DT_END_ELLIPSIS | DT_VCENTER | DT_CENTER);
 }
 
+void CIconHeader::FreeItem()
+{
+	if (m_pItem)
+	{
+		LFFreeItemDescriptor(m_pItem);
+		m_pItem = NULL;
+	}
+}
+
 void CIconHeader::SetEmpty()
 {
 	m_Status = IconEmpty;
 	m_strDescription = m_strUnused;
+
+	FreeItem();
 }
 
 void CIconHeader::SetMultiple(CString Description)
 {
 	m_Status = IconMultiple;
 	m_strDescription = Description;
+
+	FreeItem();
 }
 
 void CIconHeader::SetCoreIcon(INT IconID, CString Description)
@@ -73,6 +90,8 @@ void CIconHeader::SetCoreIcon(INT IconID, CString Description)
 	m_Status = IconCore;
 	m_IconID = IconID;
 	m_strDescription = Description;
+
+	FreeItem();
 }
 
 void CIconHeader::SetFormatIcon(CHAR* FileFormat, CString Description)
@@ -82,6 +101,20 @@ void CIconHeader::SetFormatIcon(CHAR* FileFormat, CString Description)
 	m_Status = IconExtension;
 	strcpy_s(m_FileFormat, LFExtSize, FileFormat);
 	m_strDescription = Description;
+
+	FreeItem();
+}
+
+void CIconHeader::SetPreview(LFItemDescriptor* i, CString Description)
+{
+	ASSERT(i);
+
+	m_Status = IconPreview;
+	m_strDescription = Description;
+	strcpy_s(m_FileFormat, LFExtSize, i->CoreAttributes.FileFormat);
+
+	FreeItem();
+	m_pItem = LFAllocItemDescriptor(i);
 }
 
 
@@ -96,6 +129,7 @@ CInspectorWnd::CInspectorWnd()
 	: CGlasPane()
 {
 	m_Count = 0;
+	p_LastItem = NULL;
 
 	for (UINT a=0; a<AttrCount-LFAttributeCount; a++)
 		ENSURE(m_AttributeVirtualNames[a].LoadString(a+IDS_VATTR_FIRST));
@@ -187,6 +221,7 @@ void CInspectorWnd::AddValueVirtual(UINT Attr, WCHAR* Value)
 void CInspectorWnd::UpdateStart()
 {
 	m_Count = 0;
+	p_LastItem = NULL;
 
 	// Icon und Typ
 	m_IconStatus = m_TypeStatus = StatusUnused;
@@ -202,6 +237,7 @@ void CInspectorWnd::UpdateStart()
 void CInspectorWnd::UpdateAdd(LFItemDescriptor* i, LFSearchResult* pRawFiles)
 {
 	m_Count++;
+	p_LastItem = i;
 
 	// Icon
 	if (m_IconStatus<StatusMultiple)
@@ -362,9 +398,14 @@ void CInspectorWnd::UpdateFinish()
 					m_IconHeader.SetMultiple(m_TypeName);
 				}
 				else
-				{
-					m_IconHeader.SetFormatIcon(m_AttributeValues[LFAttrFileFormat].AnsiString, m_TypeName);
-				}
+					if ((m_AttributeStatus[LFAttrStoreID]==StatusMultiple) || (m_AttributeStatus[LFAttrFileID]==StatusMultiple))
+					{
+						m_IconHeader.SetFormatIcon(m_AttributeValues[LFAttrFileFormat].AnsiString, m_TypeName);
+					}
+					else
+					{
+						m_IconHeader.SetPreview(p_LastItem, m_TypeName);
+					}
 				break;
 			case LFTypeVolume:
 				if (m_AttributeStatus[AttrDriveLetter]==StatusMultiple)
