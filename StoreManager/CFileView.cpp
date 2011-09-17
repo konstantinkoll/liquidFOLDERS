@@ -1418,12 +1418,27 @@ void CFileView::OnMouseHover(UINT nFlags, CPoint point)
 				{
 					FormatData fd;
 					CHAR Path[4];
+					HICON hIcon = NULL;
+					CSize sz;
 
 					LFItemDescriptor* i = p_Result->m_Items[m_HotItem];
 					switch (i->Type & LFTypeMask)
 					{
 					case LFTypeFile:
-						theApp.m_FileFormats.Lookup(i->CoreAttributes.FileFormat, fd);
+						if ((theApp.m_Views[m_Context].Mode!=LFViewContent) && (theApp.m_Views[m_Context].Mode!=LFViewPreview))
+						{
+							CDC* pDC = GetWindowDC();
+							hIcon = theApp.m_ThumbnailCache.GetThumbnailIcon(i, pDC);
+							ReleaseDC(pDC);
+						}
+						if (hIcon)
+						{
+							sz.cx = sz.cy = 128;
+						}
+						else
+						{
+							theApp.m_FileFormats.Lookup(i->CoreAttributes.FileFormat, fd);
+						}
 						break;
 					case LFTypeVolume:
 						strcpy_s(Path, 4, " :\\");
@@ -1435,12 +1450,16 @@ void CFileView::OnMouseHover(UINT nFlags, CPoint point)
 						fd.SysIconIndex = -1;
 					}
 
-					HICON hIcon = (fd.SysIconIndex>=0) ? theApp.m_SystemImageListExtraLarge.ExtractIcon(fd.SysIconIndex) : theApp.m_CoreImageListExtraLarge.ExtractIcon(i->IconID-1);
+					if (!hIcon)
+					{
+						hIcon = (fd.SysIconIndex>=0) ? theApp.m_SystemImageListExtraLarge.ExtractIcon(fd.SysIconIndex) : theApp.m_CoreImageListExtraLarge.ExtractIcon(i->IconID-1);
 
-					INT cx = 48;
-					INT cy = 48;
-					ImageList_GetIconSize(theApp.m_SystemImageListExtraLarge, &cx, &cy);
-					CSize sz(cx, cy);
+						INT cx = 48;
+						INT cy = 48;
+						ImageList_GetIconSize(theApp.m_SystemImageListExtraLarge, &cx, &cy);
+						sz.cx = cx;
+						sz.cy = cy;
+					}
 
 					ClientToScreen(&point);
 					m_TooltipCtrl.Track(point, hIcon, sz, GetLabel(i), GetHint(i, fd.FormatName));

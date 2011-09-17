@@ -8,12 +8,44 @@
 #include "StoreManager.h"
 
 
+void SanitizeBitmap(HBITMAP hBmp, CRect rect, BOOL HasSolidBackground)
+{
+	DIBSECTION ds;
+	GetObject(hBmp, sizeof(ds), &ds);
+
+	if (ds.dsBm.bmBitsPixel==32)
+	{
+		BOOL IsNullAlpha = TRUE;
+
+		if (!HasSolidBackground)
+			for (LONG a=rect.top; IsNullAlpha && (a<rect.bottom); a++)
+			{
+				UCHAR* pAlpha = (UCHAR*)ds.dsBm.bmBits;
+				pAlpha += ds.dsBm.bmWidthBytes*a+rect.left*4+3;
+				for (LONG b=rect.left; IsNullAlpha && (b<rect.right); b++)
+				{
+					IsNullAlpha &= (*pAlpha==0x00);
+					pAlpha += 4;
+				}
+			}
+
+		if (IsNullAlpha)
+			for (LONG a=rect.top; a<rect.bottom; a++)
+			{
+				UCHAR* pAlpha = (UCHAR*)ds.dsBm.bmBits;
+				pAlpha += ds.dsBm.bmWidthBytes*a+rect.left*4+3;
+				for (LONG b=rect.left; b<rect.right; b++)
+				{
+					*pAlpha = 0xFF;
+					pAlpha += 4;
+				}
+			}
+	}
+}
+
+
 // CThumbnailCache
 //
-
-CThumbnailCache::CThumbnailCache()
-{
-}
 
 void CThumbnailCache::LoadFrames()
 {
@@ -48,7 +80,7 @@ HBITMAP CThumbnailCache::Lookup(LFItemDescriptor* i)
 	return td.hBmp;
 }
 
-BOOL CThumbnailCache::DrawJumboThumbnail(CDC& dc, CRect& rect, LFItemDescriptor* i)
+BOOL CThumbnailCache::DrawJumboThumbnail(CDC& dc, CRect& rect, LFItemDescriptor* i, BOOL* HasSolidBackground)
 {
 	ASSERT((i->Type & LFTypeMask)==LFTypeFile);
 
@@ -62,7 +94,7 @@ BOOL CThumbnailCache::DrawJumboThumbnail(CDC& dc, CRect& rect, LFItemDescriptor*
 	static const BLENDFUNCTION BF = { AC_SRC_OVER, 0, 0xFF, AC_SRC_ALPHA };
 
 	BOOL DrawFrame = ((i->CoreAttributes.DomainID>=LFDomainPhotos) && (i->CoreAttributes.DomainID<=LFDomainVideos)) || ((bm.bmWidth==118) && (bm.bmHeight==118));
-	BOOL DrawShadow = !DrawFrame;
+	BOOL DrawShadow = !DrawFrame && (bm.bmWidth>=4) && (bm.bmHeight>=4);
 	if (theApp.m_ThemeLibLoaded)
 		if (!theApp.zIsAppThemed())
 			DrawFrame = DrawShadow = FALSE;
@@ -82,9 +114,12 @@ BOOL CThumbnailCache::DrawJumboThumbnail(CDC& dc, CRect& rect, LFItemDescriptor*
 		DeleteDC(hdcMem);
 	}
 
-	rect.OffsetRect((128-bm.bmWidth)/2-1, (128-bm.bmHeight)/2-1);
+	rect.left += (128-bm.bmWidth)/2-1;
+	rect.right = rect.left+bm.bmWidth;
+	rect.top += (128-bm.bmHeight)/2-1;
+	rect.bottom = rect.top+bm.bmHeight;
 
-	HDC hdcMem = CreateCompatibleDC(dc);
+	HDC hdcMem = CreateCompatibleDC(GetDC(NULL));
 	HBITMAP hbmOld = (HBITMAP)SelectObject(hdcMem, hBmp);
 
 	BitBlt(dc, rect.left, rect.top, bm.bmWidth, bm.bmHeight, hdcMem, 0, 0, SRCCOPY);
@@ -92,7 +127,7 @@ BOOL CThumbnailCache::DrawJumboThumbnail(CDC& dc, CRect& rect, LFItemDescriptor*
 	SelectObject(hdcMem, hbmOld);
 	DeleteDC(hdcMem);
 
-	if ((DrawShadow) && (bm.bmWidth>=4) && (bm.bmHeight>=4))
+	if (DrawShadow)
 	{
 		HDC hdcMem = CreateCompatibleDC(dc);
 		HBITMAP hBmp;
@@ -109,5 +144,50 @@ BOOL CThumbnailCache::DrawJumboThumbnail(CDC& dc, CRect& rect, LFItemDescriptor*
 		DeleteDC(hdcMem);
 	}
 
+	if (HasSolidBackground)
+		*HasSolidBackground = DrawShadow || DrawFrame;
 	return TRUE;
+}
+
+HICON CThumbnailCache::GetThumbnailIcon(LFItemDescriptor* i, CDC* pDC)
+{
+	HICON hIcon = NULL;
+
+	CDC dc;
+	dc.CreateCompatibleDC(pDC);
+	dc.SetBkMode(TRANSPARENT);
+
+	BITMAPINFO dib = { 0 };
+	dib.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+	dib.bmiHeader.biWidth = 128;
+	dib.bmiHeader.biHeight = -128;
+	dib.bmiHeader.biPlanes = 1;
+	dib.bmiHeader.biBitCount = 32;
+	dib.bmiHeader.biCompression = BI_RGB;
+
+	HBITMAP hBmp = CreateDIBSection(dc, &dib, DIB_RGB_COLORS, NULL, NULL, 0);
+	HBITMAP hOldBitmap = (HBITMAP)dc.SelectObject(hBmp);
+
+	CRect rect(0, 0, 128, 128);
+	BOOL HasSolidBackground;
+	if (DrawJumboThumbnail(dc, rect, i, &HasSolidBackground))
+	{
+		SanitizeBitmap(hBmp, rect, HasSolidBackground);
+
+		HBITMAP hBmpMask = CreateCompatibleBitmap(*pDC, 128, 128);
+
+		ICONINFO ii;
+		ZeroMemory(&ii, sizeof(ii));
+		ii.fIcon = TRUE;
+		ii.hbmColor = hBmp;
+		ii.hbmMask = hBmpMask;
+
+		hIcon = CreateIconIndirect(&ii);
+		DeleteObject(hBmpMask);
+	}
+
+	dc.SelectObject(hOldBitmap);
+	DeleteObject(hBmp);
+
+	return hIcon;
 }
