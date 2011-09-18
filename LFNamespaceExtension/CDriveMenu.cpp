@@ -80,7 +80,7 @@ BOOL CDriveMenu::OnInitialize(LPDATAOBJECT dataObject)
 
 	// Shell items
 	IShellFolder* pDesktop = NULL;
-	if (SUCCEEDED(SHGetDesktopFolder(&pDesktopPtr)))
+	if (SUCCEEDED(SHGetDesktopFolder(&pDesktop)))
 	{
 		UINT CF_IDLIST = RegisterClipboardFormat(CFSTR_SHELLIDLIST);
 
