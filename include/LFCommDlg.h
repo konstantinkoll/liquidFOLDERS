@@ -68,6 +68,9 @@ LFCommDlg_API void DrawControlBorder(CWnd* pWnd);
 LFCommDlg_API void SetCompareComboBox(CComboBox* pComboBox, UINT attr, INT request=-1);
 
 LFCommDlg_API void LFImportFolder(CHAR* StoreID, CWnd* pParentWnd=NULL);
+
 LFCommDlg_API void LFBackupStores(CWnd* pParentWnd=NULL);
 LFCommDlg_API void LFAbout(CString AppName, CString Build, UINT IconResID, CWnd* pParentWnd=NULL);
 LFCommDlg_API void LFDoWithProgress(LPTHREAD_START_ROUTINE pThreadProc, LFWorkerParameters* pParameters, CWnd* pParent=NULL);
+
+LFCommDlg_API CString LFGetLatestVersion();

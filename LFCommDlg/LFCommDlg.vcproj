@@ -74,7 +74,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="version.lib winmm.lib"
+				AdditionalDependencies="version.lib winhttp.lib winmm.lib"
 				LinkIncremental="2"
 				ModuleDefinitionFile=".\LFCommDlg.def"
 				GenerateDebugInformation="true"
@@ -159,7 +159,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="version.lib winmm.lib"
+				AdditionalDependencies="version.lib winhttp.lib winmm.lib"
 				LinkIncremental="2"
 				ModuleDefinitionFile=".\LFCommDlg.def"
 				GenerateDebugInformation="true"
@@ -246,7 +246,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="version.lib winmm.lib"
+				AdditionalDependencies="version.lib winhttp.lib winmm.lib"
 				LinkIncremental="1"
 				GenerateManifest="true"
 				ModuleDefinitionFile=".\LFCommDlg.def"
@@ -336,7 +336,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="version.lib winmm.lib"
+				AdditionalDependencies="version.lib winhttp.lib winmm.lib"
 				LinkIncremental="1"
 				GenerateManifest="true"
 				ModuleDefinitionFile=".\LFCommDlg.def"

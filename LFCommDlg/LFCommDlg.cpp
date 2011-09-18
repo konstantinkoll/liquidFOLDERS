@@ -5,6 +5,7 @@
 #include "stdafx.h"
 #include "LFCore.h"
 #include "LFCommDlg.h"
+#include <winhttp.h>
 
 
 LFCommDlg_API BOOL DuplicateGlobalMemory(const HGLOBAL hSrc, HGLOBAL& hDst)
@@ -383,14 +384,67 @@ LFCommDlg_API void LFBackupStores(CWnd* pParentWnd)
 	free(Keys);
 }
 
-void LFAbout(CString AppName, CString Build, UINT IconResID, CWnd* pParentWnd)
+LFCommDlg_API void LFAbout(CString AppName, CString Build, UINT IconResID, CWnd* pParentWnd)
 {
 	LFAboutDlg dlg(AppName, Build, IconResID, pParentWnd);
 	dlg.DoModal();
 }
 
-void LFDoWithProgress(LPTHREAD_START_ROUTINE pThreadProc, LFWorkerParameters* pParameters, CWnd* pParent)
+LFCommDlg_API void LFDoWithProgress(LPTHREAD_START_ROUTINE pThreadProc, LFWorkerParameters* pParameters, CWnd* pParent)
 {
 	LFProgressDlg dlg(pThreadProc, pParameters, pParent);
 	dlg.DoModal();
+}
+
+
+LFCommDlg_API CString LFGetLatestVersion()
+{
+	CString LatestVersion;
+
+	// Obtain current version from DLL version resource
+	CString CurrentVersion(_T("1.1"));
+
+	// Get version
+	HINTERNET hSession = WinHttpOpen(_T("liquidFOLDERS/")+CurrentVersion, WINHTTP_ACCESS_TYPE_DEFAULT_PROXY, WINHTTP_NO_PROXY_NAME, WINHTTP_NO_PROXY_BYPASS, 0);
+	if (hSession)
+	{
+		HINTERNET hConnect = WinHttpConnect(hSession, L"update.liquidfolders.net", INTERNET_DEFAULT_HTTP_PORT, 0);
+		if (hConnect)
+		{
+			HINTERNET hRequest = WinHttpOpenRequest(hConnect, L"GET", L"/version.ini", NULL, WINHTTP_NO_REFERER, WINHTTP_DEFAULT_ACCEPT_TYPES, 0);
+			if (hRequest)
+			{
+				if (WinHttpSendRequest(hRequest, WINHTTP_NO_ADDITIONAL_HEADERS, 0, NULL, 0, 0, 0))
+					if (WinHttpReceiveResponse(hRequest, NULL))
+					{
+						DWORD dwSize;
+
+						do
+						{
+							dwSize = 0;
+							if (WinHttpQueryDataAvailable(hRequest, &dwSize))
+							{
+								CHAR* pBuffer = new CHAR[dwSize+1];
+								DWORD dwDownloaded;
+								if (WinHttpReadData(hRequest, pBuffer, dwSize, &dwDownloaded))
+								{
+									pBuffer[dwDownloaded] = '\0';
+									CString tmpStr(pBuffer);
+									LatestVersion += tmpStr;
+									delete[] pBuffer;
+								}
+							}
+						} while (dwSize>0);
+					}
+
+				WinHttpCloseHandle(hRequest);
+			}
+
+			WinHttpCloseHandle(hConnect);
+		}
+
+		WinHttpCloseHandle(hSession);
+	}
+
+	return LatestVersion;
 }
