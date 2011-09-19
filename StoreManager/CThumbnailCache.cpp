@@ -111,6 +111,7 @@ BOOL CThumbnailCache::DrawJumboThumbnail(CDC& dc, CRect& rect, LFItemDescriptor*
 		AlphaBlend(dc, rect.left, rect.top, 128, 128, hdcMem, 0, 0, 128, 128, BF);
 
 		SelectObject(hdcMem, hbmOld);
+		DeleteObject(hBmp);
 		DeleteDC(hdcMem);
 	}
 
@@ -141,6 +142,7 @@ BOOL CThumbnailCache::DrawJumboThumbnail(CDC& dc, CRect& rect, LFItemDescriptor*
 		AlphaBlend(dc, rect.left+bm.bmWidth, rect.top+bm.bmHeight, 4, 4, hdcMem, 124, 124, 4, 4, BF);
 
 		SelectObject(hdcMem, hbmOld);
+		DeleteObject(hBmp);
 		DeleteDC(hdcMem);
 	}
 
