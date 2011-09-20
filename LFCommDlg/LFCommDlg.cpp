@@ -8,6 +8,9 @@
 #include <winhttp.h>
 
 
+extern AFX_EXTENSION_MODULE LFCommDlgDLL;
+
+
 LFCommDlg_API BOOL DuplicateGlobalMemory(const HGLOBAL hSrc, HGLOBAL& hDst)
 {
 	if (!hSrc)
@@ -397,14 +400,56 @@ LFCommDlg_API void LFDoWithProgress(LPTHREAD_START_ROUTINE pThreadProc, LFWorker
 }
 
 
+LFCommDlg_API void LFGetFileVersion(HMODULE hModule, CString* Version, CString* Copyright)
+{
+	if (Version)
+		Version->Empty();
+	if (Copyright)
+		Copyright->Empty();
+
+	CString modFilename;
+	if (GetModuleFileName(hModule, modFilename.GetBuffer(MAX_PATH), MAX_PATH)>0)
+	{
+		modFilename.ReleaseBuffer(MAX_PATH);
+		DWORD dwHandle = 0;
+		DWORD dwSize = GetFileVersionInfoSize(modFilename, &dwHandle);
+		if (dwSize>0)
+		{
+			LPBYTE lpInfo = new BYTE[dwSize];
+			ZeroMemory(lpInfo, dwSize);
+
+			if (GetFileVersionInfo(modFilename, 0, dwSize, lpInfo))
+			{
+				UINT valLen = 0;
+				LPVOID valPtr = NULL;
+				LPCWSTR valData = NULL;
+
+				if (Version)
+					if (VerQueryValue(lpInfo, _T("\\"), &valPtr, &valLen))
+					{
+						VS_FIXEDFILEINFO* pFinfo = (VS_FIXEDFILEINFO*)valPtr;
+						Version->Format(_T("%d.%d.%d"), 
+							(pFinfo->dwProductVersionMS >> 16) & 0xFF,
+							(pFinfo->dwProductVersionMS) & 0xFF,
+							(pFinfo->dwProductVersionLS >> 16) & 0xFF);
+					}
+				if (Copyright)
+					*Copyright = VerQueryValue(lpInfo, _T("StringFileInfo\\000004E4\\LegalCopyright"), (void**)&valData, &valLen) ? valData : _T("© liquidFOLDERS");
+			}
+			delete[] lpInfo;
+		}
+	}
+}
+
 LFCommDlg_API CString LFGetLatestVersion()
 {
 	CString LatestVersion;
 
 	// Obtain current version from DLL version resource
-	CString CurrentVersion(_T("1.1"));
+	CString CurrentVersion;
+	LFGetFileVersion(LFCommDlgDLL.hModule, &CurrentVersion);
 
-	// Get version
+	// Get available version
 	HINTERNET hSession = WinHttpOpen(_T("liquidFOLDERS/")+CurrentVersion, WINHTTP_ACCESS_TYPE_DEFAULT_PROXY, WINHTTP_NO_PROXY_NAME, WINHTTP_NO_PROXY_BYPASS, 0);
 	if (hSession)
 	{
@@ -434,7 +479,8 @@ LFCommDlg_API CString LFGetLatestVersion()
 									delete[] pBuffer;
 								}
 							}
-						} while (dwSize>0);
+						}
+						while (dwSize>0);
 					}
 
 				WinHttpCloseHandle(hRequest);

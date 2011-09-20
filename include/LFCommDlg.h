@@ -73,4 +73,5 @@ LFCommDlg_API void LFBackupStores(CWnd* pParentWnd=NULL);
 LFCommDlg_API void LFAbout(CString AppName, CString Build, UINT IconResID, CWnd* pParentWnd=NULL);
 LFCommDlg_API void LFDoWithProgress(LPTHREAD_START_ROUTINE pThreadProc, LFWorkerParameters* pParameters, CWnd* pParent=NULL);
 
+LFCommDlg_API void LFGetFileVersion(HMODULE hModule, CString* Version, CString* Copyright=NULL);
 LFCommDlg_API CString LFGetLatestVersion();

@@ -1079,11 +1079,15 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\Reset_Hot_Small.ico"
+				RelativePath=".\res\Reset_Hot_Tiny.ico"
 				>
 			</File>
 			<File
-				RelativePath=".\res\Reset_Normal_Small.ico"
+				RelativePath=".\res\Reset_Normal_Tiny.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Reset_Pressed_Tiny.ico"
 				>
 			</File>
 			<File

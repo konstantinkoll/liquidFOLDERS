@@ -659,7 +659,7 @@ CInspectorGrid::CInspectorGrid()
 	m_pSortArray = NULL;
 	m_pHeader = NULL;
 	hThemeList = hThemeButton = NULL;
-	hIconResetNormal = hIconResetHot = NULL;
+	hIconResetNormal = hIconResetHot = hIconResetPressed = NULL;
 	m_VScrollMax = m_VScrollPos = m_IconSize = 0;
 	m_HotItem = m_SelectedItem = m_EditItem = -1;
 	m_HotPart = NOPART;
@@ -723,9 +723,10 @@ void CInspectorGrid::Init()
 	ReleaseDC(dc);
 
 	m_RowHeight = max(m_FontHeight[0], 16);
-	m_IconSize = (m_RowHeight>=32) ? 32 : (m_RowHeight>=24) ? 24 : 16;
+	m_IconSize = 16;
 	hIconResetNormal = (HICON)LoadImage(LFCommDlgDLL.hResource, MAKEINTRESOURCE(IDI_RESET_NORMAL), IMAGE_ICON, m_IconSize, m_IconSize, LR_DEFAULTCOLOR);
 	hIconResetHot = (HICON)LoadImage(LFCommDlgDLL.hResource, MAKEINTRESOURCE(IDI_RESET_HOT), IMAGE_ICON, m_IconSize, m_IconSize, LR_DEFAULTCOLOR);
+	hIconResetPressed = (HICON)LoadImage(LFCommDlgDLL.hResource, MAKEINTRESOURCE(IDI_RESET_PRESSED), IMAGE_ICON, m_IconSize, m_IconSize, LR_DEFAULTCOLOR);
 }
 
 BOOL CInspectorGrid::PreTranslateMessage(MSG* pMsg)
@@ -1324,6 +1325,8 @@ void CInspectorGrid::OnDestroy()
 		DestroyIcon(hIconResetNormal);
 	if (hIconResetHot)
 		DestroyIcon(hIconResetHot);
+	if (hIconResetPressed)
+		DestroyIcon(hIconResetPressed);
 
 	for (UINT a=0; a<m_Properties.m_ItemCount; a++)
 		delete m_Properties.m_Items[a].pProperty;
@@ -1425,10 +1428,10 @@ void CInspectorGrid::OnPaint()
 			rectLabel.left = rectLabel.right+GUTTER;
 			rectLabel.right = rect.Width();
 
-			if ((pProp->Editable) && (pProp->pProperty->CanDelete()) && ((INT)a==m_HotItem) && ((INT)a!=m_EditItem))
+			if ((pProp->Editable) && (pProp->pProperty->CanDelete()))
 			{
 				INT Offs = (rectLabel.Height()-m_IconSize)/2;
-				DrawIconEx(dc, rectLabel.right-m_IconSize-Offs-2, rectLabel.top+Offs, ((INT)a==m_HotItem) && (m_HotPart==PARTRESET) ? hIconResetHot : hIconResetNormal, m_IconSize, m_IconSize, 0, NULL, DI_NORMAL);
+				DrawIconEx(dc, rectLabel.right-m_IconSize-Offs-2, rectLabel.top+Offs, ((INT)a==m_HotItem) && (m_HotPart==PARTRESET) ? m_PartPressed ? hIconResetPressed : hIconResetHot : hIconResetNormal, m_IconSize, m_IconSize, 0, NULL, DI_NORMAL);
 				rectLabel.right -= m_IconSize+Offs+GUTTER+2;
 			}
 			else

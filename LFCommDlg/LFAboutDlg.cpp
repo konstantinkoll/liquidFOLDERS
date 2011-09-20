@@ -3,12 +3,9 @@
 //
 
 #include "stdafx.h"
-#include "LFAboutDlg.h"
 #include "LFCore.h"
+#include "LFCommDlg.h"
 #include "Resource.h"
-#include "..\\LFCore\\resource.h"
-
-using namespace Gdiplus;
 
 
 // LFAboutDlg
@@ -23,37 +20,7 @@ LFAboutDlg::LFAboutDlg(CString AppName, CString Build, UINT IconResID, CWnd* pPa
 	m_Build = Build;
 	ENSURE(m_Icon.Load(IconResID, _T("PNG"), AfxGetResourceHandle()));
 
-	CString modFilename;
-	if (GetModuleFileName(AfxGetInstanceHandle(), modFilename.GetBuffer(MAX_PATH), MAX_PATH)>0)
-	{
-		modFilename.ReleaseBuffer(MAX_PATH);
-		DWORD dwHandle = 0;
-		DWORD dwSize = GetFileVersionInfoSize(modFilename, &dwHandle);
-		if (dwSize>0)
-		{
-			LPBYTE lpInfo = new BYTE[dwSize];
-			ZeroMemory(lpInfo, dwSize);
-
-			if (GetFileVersionInfo(modFilename, 0, dwSize, lpInfo))
-			{
-				UINT valLen = MAX_PATH;
-				LPVOID valPtr = NULL;
-				LPCWSTR valData = NULL;
-
-				if (VerQueryValue(lpInfo, _T("\\"), &valPtr, &valLen))
-				{
-					VS_FIXEDFILEINFO* pFinfo = (VS_FIXEDFILEINFO*)valPtr;
-					m_Version.Format(_T("%d.%d.%d"), 
-						(pFinfo->dwProductVersionMS >> 16) & 0xFF,
-						(pFinfo->dwProductVersionMS) & 0xFF,
-						(pFinfo->dwProductVersionLS >> 16) & 0xFF);
-				}
-
-				m_Copyright = VerQueryValue(lpInfo, _T("StringFileInfo\\000004E4\\LegalCopyright"), (void**)&valData, &valLen) ? valData : _T("© liquidFOLDERS");
-			}
-			delete[] lpInfo;
-		}
-	}
+	LFGetFileVersion(AfxGetInstanceHandle(), &m_Version, &m_Copyright);
 }
 
 void LFAboutDlg::CheckLicenseKey(LFLicense* License)
@@ -130,7 +97,13 @@ void LFAboutDlg::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 		DEFAULT_PITCH | FF_DONTCARE, ((LFApplication*)AfxGetApp())->GetDefaultFontFace());
 	dc.SelectObject(&font2);
 
-	dc.DrawText(_T("Version ")+m_Version+_T(" (")+m_Build+_T(")"), r, 0);
+#ifdef _M_X64
+#define ISET _T(" (x64, ")
+#else
+#define ISET _T(" (x32, ")
+#endif
+
+	dc.DrawText(_T("Version ")+m_Version+ISET+m_Build+_T(")"), r, 0);
 	r.top += 25;
 
 	dc.DrawText(m_Copyright, r, 0);

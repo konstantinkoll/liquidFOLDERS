@@ -116,8 +116,9 @@ IDB_SORTINDICATORS      BITMAP                  "res\\SortIndicators.bmp"
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
 IDI_READY               ICON                    "res\\Ready.ico"
-IDI_RESET_NORMAL        ICON                    "res\\Reset_Normal_Small.ico"
-IDI_RESET_HOT           ICON                    "res\\Reset_Hot_Small.ico"
+IDI_RESET_NORMAL        ICON                    "res\\Reset_Normal_Tiny.ico"
+IDI_RESET_HOT           ICON                    "res\\Reset_Hot_Tiny.ico"
+IDI_RESET_PRESSED       ICON                    "res\\Reset_Pressed_Tiny.ico"
 IDI_SEARCH              ICON                    "res\\Search.ico"
 32513                   ICON                    "res\\Error.ico"
 32516                   ICON                    "res\\Info.ico"

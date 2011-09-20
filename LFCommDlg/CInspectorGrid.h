@@ -249,6 +249,7 @@ protected:
 	HTHEME hThemeList;
 	HICON hIconResetNormal;
 	HICON hIconResetHot;
+	HICON hIconResetPressed;
 	LFTooltip m_TooltipCtrl;
 	CInspectorHeader* m_pHeader;
 	CMFCMaskedEdit* p_Edit;

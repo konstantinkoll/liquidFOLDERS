@@ -44,7 +44,8 @@
 #define IDI_READY                       20200
 #define IDI_RESET_NORMAL                20201
 #define IDI_RESET_HOT                   20202
-#define IDI_SEARCH                      20203
+#define IDI_RESET_PRESSED               20203
+#define IDI_SEARCH                      20204
 #define IDS_PURCHASEURL                 20300
 #define IDS_ERROR                       20301
 #define IDS_STORES_SINGULAR             20302
