@@ -120,7 +120,7 @@ BOOL CThumbnailCache::DrawJumboThumbnail(CDC& dc, CRect& rect, LFItemDescriptor*
 	rect.top += (128-bm.bmHeight)/2-1;
 	rect.bottom = rect.top+bm.bmHeight;
 
-	HDC hdcMem = CreateCompatibleDC(GetDC(NULL));
+	HDC hdcMem = CreateCompatibleDC(dc);
 	HBITMAP hbmOld = (HBITMAP)SelectObject(hdcMem, hBmp);
 
 	BitBlt(dc, rect.left, rect.top, bm.bmWidth, bm.bmHeight, hdcMem, 0, 0, SRCCOPY);
