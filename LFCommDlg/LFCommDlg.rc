@@ -703,6 +703,7 @@ BEGIN
     IDS_NOLICENSE           "Sie nutzen eine unregistrierte Kopie von liquidFOLDERS. liquidFOLDERS ist Shareware – wenn Sie die Software regelmäßig nutzen, müssen Sie eine Lizenz erwerben!"
     IDS_XOFY_SINGULAR       "%d von %d"
     IDS_XOFY_PLURAL         "%d von %d"
+    IDS_UPDATE              "Update"
     IDS_UPDATE_AVAILABLE    "Eine neue Version, liquidFOLDERS %s, steht zum Herunterladen bereit. Möchten Sie jetzt den Installer herunterladen?"
     IDS_UPDATE_NOTAVAILABLE "Es steht keine neue Version von liquidFOLDERS zum Herunterladen bereit."
 END
@@ -1300,6 +1301,7 @@ BEGIN
     IDS_NOLICENSE           "Usted está usando una copia no registrada de liquidFOLDERS. liquidFOLDERS es un software de demostración – si usted decide usarlo regularmente, usted está obligado a adquirir una licencia!"
     IDS_XOFY_SINGULAR       "%d de %d"
     IDS_XOFY_PLURAL         "%d de %d"
+    IDS_UPDATE              "Update"
     IDS_UPDATE_AVAILABLE    "An update, liquidFOLDERS %s, is available. Would you like to download it now?"
     IDS_UPDATE_NOTAVAILABLE "There is no update of liquidFOLDERS available right now."
 END
@@ -1899,6 +1901,7 @@ BEGIN
     IDS_NOLICENSE           "Vous utilisez une copie non enregistrée de liquidFOLDERS. liquidFOLDERS est shareware – si vous utilisez régulièrement le logiciel, vous devez acquérir une licence!"
     IDS_XOFY_SINGULAR       "%d sur %d"
     IDS_XOFY_PLURAL         "%d sur %d"
+    IDS_UPDATE              "Update"
     IDS_UPDATE_AVAILABLE    "Eine neue Version, liquidFOLDERS %s, steht zum Herunterladen bereit. Möchten Sie jetzt den Installer herunterladen?"
     IDS_UPDATE_NOTAVAILABLE "Es steht keine neue Version von liquidFOLDERS zum Herunterladen bereit."
 END
@@ -2540,6 +2543,7 @@ BEGIN
     IDS_NOLICENSE           "You are using an unregistered copy of liquidFOLDERS. liquidFOLDERS is shareware—if you decide to use it regulary, you are required to purchase a license key!"
     IDS_XOFY_SINGULAR       "%d of %d"
     IDS_XOFY_PLURAL         "%d of %d"
+    IDS_UPDATE              "Update"
     IDS_UPDATE_AVAILABLE    "An update, liquidFOLDERS %s, is available. Would you like to download it now?"
     IDS_UPDATE_NOTAVAILABLE "There is no update of liquidFOLDERS available right now."
 END
