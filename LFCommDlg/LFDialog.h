@@ -58,7 +58,8 @@ protected:
 private:
 	CGdiPlusBitmapResource* m_pBackdrop;
 	CGdiPlusBitmapResource* m_pLogo;
-	CGroupBox m_GroupBox;
+	CGroupBox m_GroupBox1;
+	CGroupBox m_GroupBox2;
 	HICON hIconL;
 	HICON hIconS;
 	HICON hIconShield;

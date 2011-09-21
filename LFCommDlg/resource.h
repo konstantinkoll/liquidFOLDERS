@@ -76,6 +76,8 @@
 #define IDS_NOLICENSE                   20327
 #define IDS_XOFY_SINGULAR               20328
 #define IDS_XOFY_PLURAL                 20329
+#define IDS_UPDATE_AVAILABLE            20330
+#define IDS_UPDATE_NOTAVAILABLE         20331
 #define IDS_COMPARE_FIRST               20400
 #define IDS_COMPARE_IGNORE              20400
 #define IDS_COMPARE_ISNULL              20401
@@ -88,13 +90,19 @@
 #define IDS_COMPARE_ENDSWITH            20408
 #define IDS_COMPARE_CONTAINS            20409
 #define IDD_ABOUT                       21000
-#define IDC_GROUPBOX                    21001
+#define IDC_GROUPBOX1                   21001
 #define IDC_NAME                        21002
 #define IDC_PURCHASEDATE                21003
 #define IDC_ID                          21004
 #define IDC_PRODUCT                     21005
 #define IDC_QUANTITYTITLE               21006
 #define IDC_QUANTITY                    21007
+#define IDC_GROUPBOX2                   21008
+#define IDC_ENABLEAUTOUPDATE            21009
+#define IDC_CHECKDAILY                  21010
+#define IDC_CHECKWEEKLY                 21011
+#define IDC_CHECKMONTHLY                21012
+#define IDC_UPDATENOW                   21013
 #define IDD_WELCOME                     21100
 #define IDC_STORENAME1                  21101
 #define IDC_STORENAME2                  21102
@@ -175,11 +183,9 @@
 #define IDD_CREATENEWSTORE              22100
 #define IDD_REGISTRY                    22200
 #define IDD_EDITTIME                    22300
-#define IDC_GROUPBOX1                   22301
-#define IDC_GROUPBOX2                   22302
-#define IDC_CALENDAR                    22303
-#define IDC_USETIME                     22304
-#define IDC_TIME                        22305
+#define IDC_CALENDAR                    22301
+#define IDC_USETIME                     22302
+#define IDC_TIME                        22303
 #define IDM_CONDITION                   22400
 #define IDM_CONDITION_EDIT              22401
 #define IDM_CONDITION_DELETE            22402
@@ -194,7 +200,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        2010
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         2032
+#define _APS_NEXT_CONTROL_VALUE         2036
 #define _APS_NEXT_SYMED_VALUE           2007
 #endif
 #endif

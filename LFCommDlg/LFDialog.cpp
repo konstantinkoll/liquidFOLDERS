@@ -30,9 +30,13 @@ LFDialog::LFDialog(UINT nIDTemplate, UINT _Design, CWnd* pParent)
 
 void LFDialog::DoDataExchange(CDataExchange* pDX)
 {
-	CWnd* pWnd = GetDlgItem(IDC_GROUPBOX);
+	CWnd* pWnd = GetDlgItem(IDC_GROUPBOX1);
 	if (pWnd)
-		DDX_Control(pDX, IDC_GROUPBOX, m_GroupBox);
+		DDX_Control(pDX, IDC_GROUPBOX1, m_GroupBox1);
+	
+	pWnd = GetDlgItem(IDC_GROUPBOX2);
+	if (pWnd)
+		DDX_Control(pDX, IDC_GROUPBOX2, m_GroupBox2);
 }
 
 CWnd* LFDialog::GetBottomWnd() const
