@@ -400,7 +400,7 @@ LFCommDlg_API void LFDoWithProgress(LPTHREAD_START_ROUTINE pThreadProc, LFWorker
 }
 
 
-LFCommDlg_API void LFGetFileVersion(HMODULE hModule, CString* Version, CString* Copyright)
+LFCommDlg_API void GetFileVersion(HMODULE hModule, CString* Version, CString* Copyright)
 {
 	if (Version)
 		Version->Empty();
@@ -441,13 +441,12 @@ LFCommDlg_API void LFGetFileVersion(HMODULE hModule, CString* Version, CString* 
 	}
 }
 
-LFCommDlg_API CString LFGetLatestVersion()
+LFCommDlg_API CString GetLatestVersion(CString& CurrentVersion)
 {
-	CString LatestVersion;
+	CString VersionIni;
 
 	// Obtain current version from DLL version resource
-	CString CurrentVersion;
-	LFGetFileVersion(LFCommDlgDLL.hModule, &CurrentVersion);
+	GetFileVersion(LFCommDlgDLL.hModule, &CurrentVersion);
 
 	// Get available version
 	HINTERNET hSession = WinHttpOpen(_T("liquidFOLDERS/")+CurrentVersion, WINHTTP_ACCESS_TYPE_DEFAULT_PROXY, WINHTTP_NO_PROXY_NAME, WINHTTP_NO_PROXY_BYPASS, 0);
@@ -475,7 +474,7 @@ LFCommDlg_API CString LFGetLatestVersion()
 								{
 									pBuffer[dwDownloaded] = '\0';
 									CString tmpStr(pBuffer);
-									LatestVersion += tmpStr;
+									VersionIni += tmpStr;
 									delete[] pBuffer;
 								}
 							}
@@ -492,5 +491,100 @@ LFCommDlg_API CString LFGetLatestVersion()
 		WinHttpCloseHandle(hSession);
 	}
 
-	return LatestVersion;
+	return VersionIni;
+}
+
+CString GetIniValue(CString Ini, CString Name)
+{
+	while (!Ini.IsEmpty())
+	{
+		INT pos = Ini.Find(L"\n");
+		if (pos==-1)
+			pos = Ini.GetLength()+1;
+
+		CString Line = Ini.Mid(0, pos-1);
+		Ini.Delete(0, pos+1);
+
+		pos = Line.Find(L"=");
+		if (pos!=-1)
+			if (Line.Mid(0, pos)==Name)
+				return Line.Mid(pos+1, Line.GetLength()-pos);
+	}
+
+	return _T("");
+}
+
+struct Version
+{
+	UINT Major, Minor, Build;
+};
+
+__forceinline INT ParseVersion(CString ver, Version* v)
+{
+	ZeroMemory(v, sizeof(Version));
+	return swscanf_s(ver, L"%d.%d.%d", &v->Major, &v->Minor, &v->Build);
+}
+
+LFCommDlg_API void LFCheckForUpdate(BOOL Force, CWnd* pParentWnd)
+{
+	BOOL UpdateFound = FALSE;
+	BOOL Check = Force;
+
+	// Check due?
+	if (!Check)
+		Check = ((LFApplication*)AfxGetApp())->IsUpdateCheckDue();
+
+	// Perform check
+	CString VersionIni;
+	CString LatestVersion;
+	if (Check)
+	{
+		CWaitCursor wait;
+
+		CString CurrentVersion;
+		VersionIni = GetLatestVersion(CurrentVersion);
+
+		if (!VersionIni.IsEmpty())
+		{
+			LatestVersion = GetIniValue(VersionIni, _T("Version"));
+			if (!LatestVersion.IsEmpty())
+			{
+				Version CV;
+				Version LV;
+				ParseVersion(CurrentVersion, &CV);
+				ParseVersion(LatestVersion, &LV);
+
+				UpdateFound = (LV.Major>CV.Major) ||
+								((LV.Major==CV.Major) && (LV.Minor>CV.Minor)) ||
+								((LV.Major==CV.Major) && (LV.Minor==CV.Minor) && (LV.Build>CV.Build));
+			}
+		}
+	}
+
+	// Result
+	CString Caption;
+	ENSURE(Caption.LoadString(IDS_UPDATE));
+
+	if (UpdateFound)
+	{
+		CString Mask;
+		ENSURE(Mask.LoadString(IDS_UPDATE_AVAILABLE));
+
+		CString Text;
+		Text.Format(Mask, LatestVersion);
+		if (MessageBox(pParentWnd->GetSafeHwnd(), Text, Caption, MB_ICONQUESTION | MB_YESNO)==IDYES)
+		{
+			CString url;
+			ENSURE(url.LoadString(IDS_UPDATEURL));
+
+			ShellExecute(pParentWnd->GetSafeHwnd(), _T("open"), url, NULL, NULL, SW_SHOW);
+		}
+	}
+	else
+		if (Force)
+		{
+			CString Text;
+			ENSURE(Text.LoadString(IDS_UPDATE_NOTAVAILABLE));
+			MessageBox(pParentWnd->GetSafeHwnd(), Text, Caption, MB_ICONINFORMATION | MB_OK);
+		}
 }

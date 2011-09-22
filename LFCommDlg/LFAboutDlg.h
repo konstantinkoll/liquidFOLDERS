@@ -16,11 +16,15 @@ class AFX_EXT_CLASS LFAboutDlg : public LFDialog
 public:
 	LFAboutDlg(CString AppName, CString Build, UINT IconResID, CWnd* pParent=NULL);
 
+	virtual void DoDataExchange(CDataExchange* pDX);
+
 protected:
 	virtual void OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect);
 	virtual void CheckLicenseKey(LFLicense* License=NULL);
 
 	afx_msg BOOL OnInitDialog();
+	afx_msg void OnEnableAutoUpdate();
+	afx_msg void OnUpdateNow();
 	DECLARE_MESSAGE_MAP()
 
 private:

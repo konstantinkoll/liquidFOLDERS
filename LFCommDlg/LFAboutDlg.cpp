@@ -20,7 +20,32 @@ LFAboutDlg::LFAboutDlg(CString AppName, CString Build, UINT IconResID, CWnd* pPa
 	m_Build = Build;
 	ENSURE(m_Icon.Load(IconResID, _T("PNG"), AfxGetResourceHandle()));
 
-	LFGetFileVersion(AfxGetInstanceHandle(), &m_Version, &m_Copyright);
+	GetFileVersion(AfxGetInstanceHandle(), &m_Version, &m_Copyright);
+}
+
+void LFAboutDlg::DoDataExchange(CDataExchange* pDX)
+{
+	LFDialog::DoDataExchange(pDX);
+
+	BOOL EnableAutoUpdate;
+	INT Interval;
+
+	if (pDX->m_bSaveAndValidate)
+	{
+		DDX_Check(pDX, IDC_ENABLEAUTOUPDATE, EnableAutoUpdate);
+		DDX_Radio(pDX, IDC_CHECKDAILY, Interval);
+
+		((LFApplication*)AfxGetApp())->SetUpdateSettings(EnableAutoUpdate, Interval);
+	}
+	else
+	{
+		((LFApplication*)AfxGetApp())->GetUpdateSettings(&EnableAutoUpdate, &Interval);
+
+		DDX_Check(pDX, IDC_ENABLEAUTOUPDATE, EnableAutoUpdate);
+		DDX_Radio(pDX, IDC_CHECKDAILY, Interval);
+
+		OnEnableAutoUpdate();
+	}
 }
 
 void LFAboutDlg::CheckLicenseKey(LFLicense* License)
@@ -51,6 +76,8 @@ void LFAboutDlg::CheckLicenseKey(LFLicense* License)
 
 
 BEGIN_MESSAGE_MAP(LFAboutDlg, LFDialog)
+	ON_BN_CLICKED(IDC_ENABLEAUTOUPDATE, OnEnableAutoUpdate)
+	ON_BN_CLICKED(IDC_UPDATENOW, OnUpdateNow)
 END_MESSAGE_MAP()
 
 BOOL LFAboutDlg::OnInitDialog()
@@ -109,4 +136,18 @@ void LFAboutDlg::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 	dc.DrawText(m_Copyright, r, 0);
 
 	dc.SelectObject(pOldFont);
+}
+
+void LFAboutDlg::OnEnableAutoUpdate()
+{
+	BOOL Enabled = ((CButton*)GetDlgItem(IDC_ENABLEAUTOUPDATE))->GetCheck();
+
+	GetDlgItem(IDC_CHECKDAILY)->EnableWindow(Enabled);
+	GetDlgItem(IDC_CHECKWEEKLY)->EnableWindow(Enabled);
+	GetDlgItem(IDC_CHECKMONTHLY)->EnableWindow(Enabled);
+}
+
+void LFAboutDlg::OnUpdateNow()
+{
+	LFCheckForUpdate(TRUE, this);
 }

@@ -306,10 +306,11 @@ BOOL LFApplication::InitInstance()
 	// SendTo-Link erzeugen
 	LFCreateSendTo();
 
+	SetRegistryKey(_T("liquidFOLDERS"));
+
 	if (!m_HasGUI)
 		return TRUE;
 
-	SetRegistryKey(_T("liquidFOLDERS"));
 	LoadStdProfileSettings();
 
 	// Watchdog starten
@@ -583,6 +584,70 @@ BOOL LFApplication::HideFileExt()
 		DWORD hide;
 		if (reg.Read(_T("HideFileExt"), hide))
 			return hide;
+	}
+
+	return FALSE;
+}
+
+void LFApplication::GetUpdateSettings(BOOL* EnableAutoUpdate, INT* Interval)
+{
+	if (EnableAutoUpdate)
+		*EnableAutoUpdate = GetGlobalInt(_T("EnableAutoUpdate"), 1)!=0;
+	if (Interval)
+		*Interval = GetGlobalInt(_T("UpdateInterval"), 1);
+}
+
+void LFApplication::SetUpdateSettings(BOOL EnableAutoUpdate, INT Interval)
+{
+	WriteGlobalInt(_T("EnableAutoUpdate"), EnableAutoUpdate);
+	WriteGlobalInt(_T("UpdateInterval"), Interval);
+}
+
+BOOL LFApplication::IsUpdateCheckDue()
+{
+	BOOL EnableAutoUpdate;
+	INT Interval;
+	GetUpdateSettings(&EnableAutoUpdate, &Interval);
+
+	if ((EnableAutoUpdate) && (Interval>=0) && (Interval<=2))
+	{
+		FILETIME ft;
+		GetSystemTimeAsFileTime(&ft);
+
+		ULARGE_INTEGER LastUpdate;
+		LastUpdate.HighPart = GetGlobalInt(_T("LastUpdateHigh"), 0);
+		LastUpdate.LowPart = GetGlobalInt(_T("LastUpdateLow"), 0);
+
+		ULARGE_INTEGER Now;
+		Now.HighPart = ft.dwHighDateTime;
+		Now.LowPart = ft.dwLowDateTime;
+
+#define SECOND ((ULONGLONG)10000000)
+#define MINUTE (60*SECOND)
+#define HOUR   (60*MINUTE)
+#define DAY    (24*HOUR)
+
+		switch (Interval)
+		{
+		case 0:
+			LastUpdate.QuadPart += DAY;
+			break;
+		case 1:
+			LastUpdate.QuadPart += 7*DAY;
+			break;
+		case 2:
+			LastUpdate.QuadPart += 30*DAY;
+			break;
+		}
+		LastUpdate.QuadPart += 10*SECOND;
+
+		if (Now.QuadPart>=LastUpdate.QuadPart)
+		{
+			WriteGlobalInt(_T("LastUpdateHigh"), Now.HighPart);
+			WriteGlobalInt(_T("LastUpdateLow"), Now.LowPart);
+
+			return TRUE;
+		}
 	}
 
 	return FALSE;

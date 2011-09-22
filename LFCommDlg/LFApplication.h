@@ -118,6 +118,9 @@ public:
 	static void PlayWarningSound();
 	static void PlayTrashSound();
 	static BOOL HideFileExt();
+	void GetUpdateSettings(BOOL* EnableAutoUpdate, INT* Interval);
+	void SetUpdateSettings(BOOL EnableAutoUpdate, INT Interval);
+	BOOL IsUpdateCheckDue();
 
 	afx_msg void OnAppNewFileDrop();
 	afx_msg void OnAppNewMigrate();

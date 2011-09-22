@@ -17,6 +17,7 @@
 WCHAR const szWindowClass[] = L"LFWatchdog";
 ULONG ulSHChangeNotifyRegister;
 BOOL AboutWindow = FALSE;
+BOOL UpdateInProgress = FALSE;
 BOOL ReceivedDoubleclk = FALSE;
 
 
@@ -191,6 +192,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			AddNotificationIcon(hWnd);
 			break;
 		case WM_DESTROY:
+			KillTimer(hWnd, 1);
 			DeleteNotificationIcon(hWnd);
 			PostQuitMessage(0);
 			break;
@@ -214,6 +216,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			break;
 		case WM_USER_MEDIACHANGED:
 			OnMediaChanged(hWnd, wParam, lParam);
+			break;
+		case WM_TIMER:
+			if (!UpdateInProgress)
+			{
+				UpdateInProgress = TRUE;
+				LFCheckForUpdate();
+				UpdateInProgress = FALSE;
+			}
 			break;
 		case WM_COMMAND:
 			switch (wParam)
@@ -250,6 +260,9 @@ HWND CreateHostWindow()
 	HWND hWnd = CreateWindow(szWindowClass, _T("LFWatchdog"), WS_DISABLED, CW_USEDEFAULT, 0, 250, 200, NULL, NULL, AfxGetInstanceHandle(), NULL);
 	if (hWnd)
 	{
+		// Update-Timer
+		SetTimer(hWnd, 1, 1000/3600, NULL);
+
 		// Benachrichtigung, wenn sich Laufwerke ändern
 		LPITEMIDLIST ppidl;
 		if (SHGetSpecialFolderLocation(hWnd, CSIDL_DESKTOP, &ppidl)==NOERROR)
@@ -296,6 +309,8 @@ BOOL CWatchdogApp::InitInstance()
 
 	LFApplication::InitInstance();
 	CreateHostWindow();
+
+	LFCheckForUpdate();
 
 	MSG msg;
 	while (GetMessage(&msg, NULL, 0, 0))

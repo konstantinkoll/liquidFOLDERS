@@ -24,10 +24,10 @@ public:
 	LFChooseStoreDlg(CWnd* pParentWnd, UINT Mode);
 	~LFChooseStoreDlg();
 
-	CHAR m_StoreID[LFKeySize];
-
-	virtual void AdjustLayout();
 	virtual void DoDataExchange(CDataExchange* pDX);
+	virtual void AdjustLayout();
+
+	CHAR m_StoreID[LFKeySize];
 
 protected:
 	CExplorerHeader m_wndExplorerHeader;
