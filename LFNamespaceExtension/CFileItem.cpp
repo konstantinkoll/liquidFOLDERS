@@ -116,6 +116,25 @@ void CFileItem::GetIconFileAndIndex(CGetIconFileAndIndexEventArgs& e)
 }
 
 
+// IExtractImage
+
+HBITMAP CFileItem::GetThumbnail(CGetThumbnailEventArgs& e)
+{
+	return LFGetThumbnail(Item, e.sizeThumbnail);
+}
+
+CachingPolicy CFileItem::GetThumbnailCachingPolicy()
+{
+	return NSECP_Explicit;
+}
+
+CTime CFileItem::GetThumbnailDateTimeStamp()
+{
+	CTime ti(Item->CoreAttributes.FileTime);
+	return ti;
+}
+
+
 // IQueryInfo
 
 void CFileItem::GetInfoTip(CString& infotip)

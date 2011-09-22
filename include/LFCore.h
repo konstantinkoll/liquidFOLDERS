@@ -502,3 +502,4 @@ LFCore_API void LFCreateDesktopShortcutForStore(char* key);
 //
 
 LFCore_API HBITMAP LFGetThumbnail(LFItemDescriptor* i);
+LFCore_API HBITMAP LFGetThumbnail(LFItemDescriptor* i, SIZE sz);

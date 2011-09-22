@@ -10,6 +10,12 @@ extern HANDLE Mutex_Stores;
 
 LFCore_API HBITMAP LFGetThumbnail(LFItemDescriptor* i)
 {
+	SIZE sz = { 118, 118 };
+	return LFGetThumbnail(i, sz);
+}
+
+LFCore_API HBITMAP LFGetThumbnail(LFItemDescriptor* i, SIZE sz)
+{
 	if ((i->Type & LFTypeMask)!=LFTypeFile)
 		return NULL;
 
@@ -33,7 +39,6 @@ LFCore_API HBITMAP LFGetThumbnail(LFItemDescriptor* i)
 				IExtractImage* pExtractImage = NULL;
 				if (SUCCEEDED(pParentFolder->GetUIObjectOf(NULL,1, &pidlRel, IID_IExtractImage, NULL, (void**)&pExtractImage)))
 				{
-					SIZE sz = { 118, 118 };
 					DWORD dwPriority = 0;
 					DWORD dwFlags = IEIFLAG_SCREEN | IEIFLAG_NOBORDER | IEIFLAG_NOSTAMP | IEIFLAG_OFFLINE;
 					HRESULT hResult = pExtractImage->GetLocation(Path, MAX_PATH, &dwPriority, &sz, 32, &dwFlags);

@@ -31,6 +31,11 @@ public:
 	// IExtractIcon
 	virtual void GetIconFileAndIndex(CGetIconFileAndIndexEventArgs& e);
 
+	// IExtractImage
+	virtual HBITMAP GetThumbnail(CGetThumbnailEventArgs& e);
+	virtual CachingPolicy GetThumbnailCachingPolicy();
+	virtual CTime GetThumbnailDateTimeStamp();
+
 	// IQueryInfo
 	virtual void GetInfoTip(CString& infotip);
 

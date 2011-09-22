@@ -66,8 +66,8 @@
     <ROW Component="AI_DisableModify" ComponentId="{55702517-54BC-4D32-B004-6E0B6C5FECF9}" Directory_="APPDIR" Attributes="4" KeyPath="NoModify" Options="1"/>
     <ROW Component="FileDrop.exe" ComponentId="{118DCCA9-802F-4676-BBDC-4DF6B9DA03E8}" Directory_="APPDIR" Attributes="768" KeyPath="FileDrop.exe"/>
     <ROW Component="LFCommDlg.dll" ComponentId="{646758E5-F481-43D4-8657-723F61BF3C06}" Directory_="APPDIR" Attributes="768" KeyPath="LFCommDlg.dll"/>
-    <ROW Component="LFCore.dll" ComponentId="{708111CC-8E9D-48B0-90E1-035CE45D68EE}" Directory_="System64Folder" Attributes="768" KeyPath="LFCore.dll"/>
-    <ROW Component="LFNamespaceExtension.dll" ComponentId="{F256B12E-DAD9-42B0-932A-0E835700AA89}" Directory_="System64Folder" Attributes="768" KeyPath="LFNamespaceExtension.dll"/>
+    <ROW Component="LFCore.dll" ComponentId="{708111CC-8E9D-48B0-90E1-035CE45D68EE}" Directory_="APPDIR" Attributes="768" KeyPath="LFCore.dll"/>
+    <ROW Component="LFNamespaceExtension.dll" ComponentId="{F256B12E-DAD9-42B0-932A-0E835700AA89}" Directory_="APPDIR" Attributes="768" KeyPath="LFNamespaceExtension.dll"/>
     <ROW Component="LFRunCmd.exe" ComponentId="{45C880AF-283C-4EDF-A473-7B3B6B350EA5}" Directory_="APPDIR" Attributes="768" KeyPath="LFRunCmd.exe"/>
     <ROW Component="LFWatchdog.exe" ComponentId="{B3BD9401-BF68-434A-92A5-9B8575E74AFB}" Directory_="APPDIR" Attributes="768" KeyPath="LFWatchdog.exe"/>
     <ROW Component="Migrate.exe" ComponentId="{699D6C51-1F2A-4AC3-BA0E-ABB88ABE58A9}" Directory_="APPDIR" Attributes="768" KeyPath="Migrate.exe"/>
@@ -555,8 +555,8 @@
     <ROW Registry="__9" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}\InProcServer32" Value="[!LFNamespaceExtension.dll]" Component_="LFNamespaceExtension.dll"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiRemoveFileComponent">
-    <ROW FileKey="LFCore.dll" Component_="LFCore.dll" FileName="LFCore.dll" DirProperty="System64Folder" InstallMode="2"/>
-    <ROW FileKey="LFNamespaceExtension.dll" Component_="LFNamespaceExtension.dll" FileName="LFName~1.dll|LFNamespaceExtension.dll" DirProperty="System64Folder" InstallMode="2"/>
+    <ROW FileKey="LFCore.dll" Component_="LFCore.dll" FileName="LFCore.dll" DirProperty="System64Folder" InstallMode="3"/>
+    <ROW FileKey="LFNamespaceExtension.dll" Component_="LFNamespaceExtension.dll" FileName="LFName~1.dll|LFNamespaceExtension.dll" DirProperty="System64Folder" InstallMode="3"/>
     <ROW FileKey="_" Component_="LFCore.dll" DirProperty="APPDIR" InstallMode="2"/>
     <ROW FileKey="__1" Component_="LFCore.dll" DirProperty="SHORTCUTDIR" InstallMode="2"/>
   </COMPONENT>
