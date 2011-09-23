@@ -240,8 +240,7 @@ unsigned int SaveStoreSettingsToFile(LFStoreDescriptor* s)
 	if (res!=LFOk)
 		return res;
 
-	HANDLE hFile = CreateFile(filename, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS,
-		FILE_ATTRIBUTE_HIDDEN | FILE_FLAG_WRITE_THROUGH, NULL);
+	HANDLE hFile = CreateFile(filename, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_HIDDEN | FILE_FLAG_WRITE_THROUGH, NULL);
 	if (hFile==INVALID_HANDLE_VALUE)
 		return LFDriveNotReady;
 
@@ -415,9 +414,9 @@ void MountExternal()
 	DWORD DrivesOnSystem = LFGetLogicalDrives(LFGLD_External);
 	wchar_t szDriveRoot[4] = L" :\\";
 
-	for (char cDrive=L'A'; cDrive<='Z'; cDrive++, DrivesOnSystem>>=1)
+	for (char cDrive='A'; cDrive<='Z'; cDrive++, DrivesOnSystem>>=1)
 	{
-		if (!(DrivesOnSystem & 1))
+		if ((DrivesOnSystem & 1)==0)
 			continue;
 
 		szDriveRoot[0] = cDrive;
@@ -434,21 +433,21 @@ void InitStoreCache()
 	{
 		if (!Initialized)
 		{
+			Initialized = true;
+
 			// Default-Store laden
 			HKEY k;
 			if (RegOpenKeyA(HKEY_CURRENT_USER, LFStoresHive, &k)==ERROR_SUCCESS)
 			{
 				DWORD type;
 				DWORD sz = LFKeySize;
-				RegQueryValueEx(k, L"DefaultStore", NULL, &type, (BYTE*)DefaultStore, &sz);
+				RegQueryValueExA(k, "DefaultStore", NULL, &type, (BYTE*)DefaultStore, &sz);
 				RegCloseKey(k);
 			}
 
 			// Stores aus der Registry
 			StoreCount = 0;
 			LoadRegistry();
-
-			Initialized = true;
 		}
 
 		ReleaseMutex(Mutex_Stores);
@@ -782,14 +781,14 @@ LFCore_API unsigned int LFMountDrive(char d, bool InternalCall)
 					changeOccured = true;
 
 					if (slot->StoreMode!=LFStoreModeHybrid)
-						goto Finish1;
+						goto Finish;
 
 					// Hybrid-Stores in der Registry abspeichern, damit LastSeen aktualisiert wird
 					SaveStoreSettingsToRegistry(slot);
 
 					HANDLE StoreLock;
 					if (!GetMutexForStore(slot, &StoreLock))
-						goto Finish1;
+						goto Finish;
 
 					ReleaseMutex(Mutex_Stores);
 					res = CopyDir(slot->IdxPathMain, slot->IdxPathAux);
@@ -798,13 +797,11 @@ LFCore_API unsigned int LFMountDrive(char d, bool InternalCall)
 						SendShellNotifyMessage(SHCNE_UPDATEITEM, slot->StoreID);
 
 					ReleaseMutexForStore(StoreLock);
-					goto Finish2;
+					continue;
 				}
 
-Finish1:
+Finish:
 				ReleaseMutex(Mutex_Stores);
-Finish2:
-				;
 			}
 		}
 		while (FindNextFile(hFind, &ffd));

@@ -246,7 +246,7 @@ void CExplorerTree::PopulateTree()
 
 			for (CHAR cDrive='A'; cDrive<='Z'; cDrive++, DrivesOnSystem>>=1)
 			{
-				if (!(DrivesOnSystem & 1))
+				if ((DrivesOnSystem & 1)==0)
 					continue;
 
 				szDriveRoot[0] = cDrive;

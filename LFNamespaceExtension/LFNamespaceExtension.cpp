@@ -50,6 +50,9 @@ LFNamespaceExtensionApp::LFNamespaceExtensionApp()
 			m_Categories[0][a] = m_Categories[1][a] = m_Categories[2][a] = _T("?");
 	}
 
+	// liquidFOLDERS initalisieren
+	LFInitialize();
+
 	// Get attribute information
 	for (UINT a=0; a<LFAttributeCount; a++)
 		m_Attributes[a] = LFGetAttributeInfo(a);

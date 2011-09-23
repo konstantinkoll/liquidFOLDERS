@@ -9,7 +9,9 @@
 #include "LFItemDescriptor.h"
 #include "LFVariantData.h"
 #include "License.h"
+#include "Mutex.h"
 #include "ShellProperties.h"
+#include "StoreCache.h"
 #include <assert.h>
 #include <iostream>
 #include <shlobj.h>
@@ -32,6 +34,20 @@ unsigned int VolumeTypes[26] = { DRIVE_UNKNOWN };
 
 #pragma data_seg()
 #pragma comment(linker, "/SECTION:common_drives,RWS")
+
+
+LFCore_API void LFInitialize()
+{
+	LFMessages.ItemsDropped = RegisterWindowMessageA("liquidFOLDERS.ItemsDropped");
+	LFMessages.StoresChanged = RegisterWindowMessageA("liquidFOLDERS.StoresChanged");
+	LFMessages.StoreAttributesChanged = RegisterWindowMessageA("liquidFOLDERS.StoreAttributesChanged");
+	LFMessages.DefaultStoreChanged = RegisterWindowMessageA("liquidFOLDERS.DefaultStoreChanged");
+	LFMessages.VolumesChanged = RegisterWindowMessageA("liquidFOLDERS.VolumesChanged");
+
+	InitMutex();
+	InitAirportDatabase();
+	InitStoreCache();
+}
 
 
 void LoadStringEnglish(HINSTANCE hInstance, unsigned int uID, wchar_t* lpBuffer, int cchBufferMax)
@@ -115,7 +131,7 @@ LFCore_API unsigned int LFGetLogicalDrives(unsigned int mask)
 
 	for (char cDrive='A'; cDrive<='Z'; cDrive++, Index<<=1)
 	{
-		if (!(DrivesOnSystem & Index))
+		if ((DrivesOnSystem & Index)==0)
 		{
 			VolumeTypes[cDrive-'A'] = DRIVE_UNKNOWN;
 			continue;

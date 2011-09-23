@@ -104,7 +104,7 @@ void LFAboutDlg::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 	g.DrawImage(m_Icon.m_pBitmap, 16, 16, m_Icon.m_pBitmap->GetWidth(), m_Icon.m_pBitmap->GetHeight());
 
 	CRect r(rect);
-	r.top = 172;
+	r.top = 170;
 	r.left = 16;
 
 	CFont font1;
@@ -119,7 +119,7 @@ void LFAboutDlg::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 	r.top += 45;
 
 	CFont font2;
-	font2.CreateFont(25, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, ANSI_CHARSET,
+	font2.CreateFont(24, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, ANSI_CHARSET,
 		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY,
 		DEFAULT_PITCH | FF_DONTCARE, ((LFApplication*)AfxGetApp())->GetDefaultFontFace());
 	dc.SelectObject(&font2);
@@ -131,7 +131,7 @@ void LFAboutDlg::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 #endif
 
 	dc.DrawText(_T("Version ")+m_Version+ISET+m_Build+_T(")"), r, 0);
-	r.top += 25;
+	r.top += 26;
 
 	dc.DrawText(m_Copyright, r, 0);
 

@@ -229,6 +229,9 @@ LFApplication::LFApplication(BOOL HasGUI)
 		FreeLibrary(hModIcons);
 	}
 
+	// liquidFOLDERS initalisieren
+	LFInitialize();
+
 	// Get attribute information
 	for (UINT a=0; a<LFAttributeCount; a++)
 		m_Attributes[a] = LFGetAttributeInfo(a);

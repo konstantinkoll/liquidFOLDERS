@@ -1,13 +1,10 @@
 // dllmain.cpp : Definiert den Einstiegspunkt für die DLL-Anwendung.
 
 #include "stdafx.h"
-#include "Mutex.h"
-#include "IATA.h"
-#include "StoreCache.h"
 
 
 extern HMODULE LFCoreModuleHandle;
-extern LFMessageIDs LFMessages;
+
 
 bool APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID /*lpReserved*/)
 {
@@ -15,16 +12,6 @@ bool APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID /*lpRese
 	{
 	case DLL_PROCESS_ATTACH:
 		LFCoreModuleHandle = hModule;
-
-		LFMessages.ItemsDropped = RegisterWindowMessageA("liquidFOLDERS.ItemsDropped");
-		LFMessages.StoresChanged = RegisterWindowMessageA("liquidFOLDERS.StoresChanged");
-		LFMessages.StoreAttributesChanged = RegisterWindowMessageA("liquidFOLDERS.StoreAttributesChanged");
-		LFMessages.DefaultStoreChanged = RegisterWindowMessageA("liquidFOLDERS.DefaultStoreChanged");
-		LFMessages.VolumesChanged = RegisterWindowMessageA("liquidFOLDERS.VolumesChanged");
-
-		InitMutex();
-		InitAirportDatabase();
-		InitStoreCache();
 		break;
 	case DLL_THREAD_ATTACH:
 	case DLL_THREAD_DETACH:

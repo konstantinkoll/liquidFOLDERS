@@ -97,9 +97,9 @@ struct LFMessageIDs
 
 // Mutex objects
 
-#define LFCM_Watchdog                   "Local\\LFWatchdogMutex"
-#define LFCM_Store                      "Local\\LFCoreMutex_Store_"
-#define LFCM_Stores                     "Local\\LFCoreMutex_Stores"
+#define LFCM_Watchdog                   "Global\\LFWatchdogMutex"
+#define LFCM_Store                      "Global\\LFCoreMutex_Store_"
+#define LFCM_Stores                     "Global\\LFCoreMutex_Stores"
 
 
 // Globe textures

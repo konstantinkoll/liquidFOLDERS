@@ -682,7 +682,7 @@ CMenu* CFileView::GetSendToMenu()
 
 	for (CHAR cDrive='A'; cDrive<='Z'; cDrive++, DrivesOnSystem>>=1)
 	{
-		if (!(DrivesOnSystem & 1))
+		if ((DrivesOnSystem & 1)==0)
 			continue;
 
 		WCHAR szDriveRoot[] = L" :\\";

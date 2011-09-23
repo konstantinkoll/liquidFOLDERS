@@ -29,6 +29,13 @@
 
 #define DRIVE_EXTHD                      100
 
+
+
+// liquidFOLDERS initalisieren
+LFCore_API void LFInitialize();
+
+
+
 // Wie Win32-Funktion GetLogicalDrives(), allerdings selektiv (s.o.)
 LFCore_API unsigned int LFGetLogicalDrives(unsigned int mask=LFGLD_Both);
 

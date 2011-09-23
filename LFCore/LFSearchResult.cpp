@@ -130,7 +130,7 @@ void LFSearchResult::AddVolumes(LFFilter* filter)
 
 	for (char cDrive='A'; cDrive<='Z'; cDrive++, DrivesOnSystem>>=1)
 	{
-		if (!(DrivesOnSystem & 1))
+		if ((DrivesOnSystem & 1)==0)
 			continue;
 
 		wchar_t szDriveRoot[] = L" :\\";
