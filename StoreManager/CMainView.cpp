@@ -1517,7 +1517,10 @@ void CMainView::OnHomeShowStatistics()
 void CMainView::OnHomeImportFolder()
 {
 	if (m_StoreIDValid)
+	{
 		LFImportFolder(m_StoreID, this);
+		GetOwner()->PostMessage(WM_RELOAD);
+	}
 }
 
 void CMainView::OnHomeMaintain()
