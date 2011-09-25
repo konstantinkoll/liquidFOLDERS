@@ -179,6 +179,8 @@ INT CStoreManagerApp::ExitInstance()
 		WriteInt(_T("MaxTextureSize"), m_nMaxTextureSize);
 	}
 
+	m_ThumbnailCache.DeleteFrames();
+
 	return LFApplication::ExitInstance();
 }
 

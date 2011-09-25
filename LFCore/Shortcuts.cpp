@@ -107,9 +107,12 @@ IShellLink* GetShortcutForStore(char* StoreID, unsigned int IconID)
 			wchar_t ID[LFKeySize];
 			MultiByteToWideChar(CP_ACP, 0, StoreID, -1, ID, LFKeySize);
 	
+			wchar_t IconLocation[2*MAX_PATH];
+			GetModuleFileName(LFCoreModuleHandle, IconLocation, MAX_PATH);
+
 			pShellLink->SetPath(Path);
 			pShellLink->SetArguments(ID);
-			pShellLink->SetIconLocation(L"LFCORE.DLL", (IconID==IDI_STORE_Default ? IDI_STORE_Internal : IconID)-1);
+			pShellLink->SetIconLocation(IconLocation, (IconID==IDI_STORE_Default ? IDI_STORE_Internal : IconID)-1);
 			pShellLink->SetShowCmd(SW_SHOWNORMAL);
 
 			return pShellLink;

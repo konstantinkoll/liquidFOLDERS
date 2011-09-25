@@ -55,6 +55,14 @@ void CThumbnailCache::LoadFrames()
 		m_pShadow = new CGdiPlusBitmapResource(IDB_THUMBNAIL_SHADOW, _T("PNG"));
 }
 
+void CThumbnailCache::DeleteFrames()
+{
+	if (m_pFrame)
+		delete m_pFrame;
+	if (m_pShadow)
+		delete m_pShadow;
+}
+
 HBITMAP CThumbnailCache::Lookup(LFItemDescriptor* i)
 {
 	ThumbnailData td;

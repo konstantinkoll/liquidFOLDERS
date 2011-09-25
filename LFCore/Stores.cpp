@@ -775,7 +775,7 @@ unsigned int RunMaintenance(LFStoreDescriptor* s, bool scheduled, LFProgress* pP
 	// Progress
 	if (pProgress)
 	{
-		pProgress->MinorCount = IndexMaintenanceSteps+2;
+		pProgress->MinorCount = IndexMaintenanceSteps+3;
 		pProgress->MinorCurrent = 0;
 		wcscpy_s(pProgress->Object, 256, s->StoreName);
 		if (SendMessage(pProgress->hWnd, WM_UPDATEPROGRESS, (WPARAM)pProgress, NULL))

@@ -15,6 +15,7 @@ class CThumbnailCache
 {
 public:
 	void LoadFrames();
+	void DeleteFrames();
 	BOOL DrawJumboThumbnail(CDC& dc, CRect& rect, LFItemDescriptor* i, BOOL* HasSolidBackground=NULL);
 	HICON GetThumbnailIcon(LFItemDescriptor* i, CDC* pDC);
 
