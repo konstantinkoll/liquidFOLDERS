@@ -261,7 +261,7 @@ HWND CreateHostWindow()
 	if (hWnd)
 	{
 		// Update-Timer
-		SetTimer(hWnd, 1, 1000/3600, NULL);
+		SetTimer(hWnd, 1, 1000*3600, NULL);
 
 		// Benachrichtigung, wenn sich Laufwerke ändern
 		LPITEMIDLIST ppidl;
