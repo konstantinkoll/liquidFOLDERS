@@ -597,7 +597,7 @@ void LFApplication::GetUpdateSettings(BOOL* EnableAutoUpdate, INT* Interval)
 	if (EnableAutoUpdate)
 		*EnableAutoUpdate = GetGlobalInt(_T("EnableAutoUpdate"), 1)!=0;
 	if (Interval)
-		*Interval = GetGlobalInt(_T("UpdateInterval"), 1);
+		*Interval = GetGlobalInt(_T("UpdateInterval"), 0);
 }
 
 void LFApplication::SetUpdateSettings(BOOL EnableAutoUpdate, INT Interval)

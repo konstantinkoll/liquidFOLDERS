@@ -448,6 +448,21 @@ LFCommDlg_API CString GetLatestVersion(CString& CurrentVersion)
 	// Obtain current version from DLL version resource
 	GetFileVersion(LFCommDlgDLL.hModule, &CurrentVersion);
 
+	// Variant
+#ifdef _M_X64
+#define ISET _T(" (x64")
+#else
+#define ISET _T(" (x32")
+#endif
+
+	CurrentVersion += ISET;
+
+	// Licensed?
+	if (LFIsLicensed())
+		CurrentVersion += _T(";licensed");
+
+	CurrentVersion += _T(")");
+
 	// Get available version
 	HINTERNET hSession = WinHttpOpen(_T("liquidFOLDERS/")+CurrentVersion, WINHTTP_ACCESS_TYPE_DEFAULT_PROXY, WINHTTP_NO_PROXY_NAME, WINHTTP_NO_PROXY_BYPASS, 0);
 	if (hSession)
