@@ -312,7 +312,7 @@ LFCommDlg_API void LFBackupStores(CWnd* pParentWnd)
 		CWaitCursor wait;
 
 		CStdioFile f;
-		if (!f.Open(dlg.GetFileName(), CFile::modeCreate | CFile::modeWrite))
+		if (!f.Open(dlg.GetPathName(), CFile::modeCreate | CFile::modeWrite))
 		{
 			LFErrorBox(LFDriveNotReady, pParentWnd->GetSafeHwnd());
 		}

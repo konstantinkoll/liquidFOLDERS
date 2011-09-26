@@ -662,7 +662,7 @@ void CMainWnd::OnExportMetadata()
 	if (dlg.DoModal()==IDOK)
 	{
 		CStdioFile f;
-		if (!f.Open(dlg.GetFileName(), CFile::modeCreate | CFile::modeWrite))
+		if (!f.Open(dlg.GetPathName(), CFile::modeCreate | CFile::modeWrite))
 		{
 			LFErrorBox(LFDriveNotReady, GetSafeHwnd());
 		}
