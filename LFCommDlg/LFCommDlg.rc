@@ -1907,9 +1907,9 @@ BEGIN
     IDS_NOLICENSE           "Vous utilisez une copie non enregistrée de liquidFOLDERS. liquidFOLDERS est shareware – si vous utilisez régulièrement le logiciel, vous devez acquérir une licence!"
     IDS_XOFY_SINGULAR       "%d sur %d"
     IDS_XOFY_PLURAL         "%d sur %d"
-    IDS_UPDATE              "Update"
-    IDS_UPDATE_AVAILABLE    "Eine neue Version, liquidFOLDERS %s, steht zum Herunterladen bereit.\nMöchten Sie jetzt den Installer herunterladen?"
-    IDS_UPDATE_NOTAVAILABLE "Es steht keine neue Version von liquidFOLDERS zum Herunterladen bereit."
+    IDS_UPDATE              "Mise á jour"
+    IDS_UPDATE_AVAILABLE    "Une nouvelle version, liquidFOLDERS %s, est prête pour télécharger. Voulez-vous maintenant télécharger l'installer?"
+    IDS_UPDATE_NOTAVAILABLE "Aucune nouvelle version de liquidFOLDERS pour télécharger n'est prête."
 END
 
 STRINGTABLE 
@@ -2074,13 +2074,13 @@ BEGIN
     LTEXT           "Quantity:",IDC_QUANTITYTITLE,105,227,50,8
     LTEXT           "X",IDC_QUANTITY,105,237,50,8
     PUSHBUTTON      "Enter &license key...",IDC_ENTERLICENSEKEY,13,179,143,66,WS_GROUP
-    CONTROL         "Updates",IDC_GROUPBOX2,"CGroupBox",WS_GROUP,170,169,181,81
-    CONTROL         "Automatically search for &updates",IDC_ENABLEAUTOUPDATE,
+    CONTROL         "Mises à jour",IDC_GROUPBOX2,"CGroupBox",WS_GROUP,170,169,181,81
+    CONTROL         "Chercher automatiquement des &mises á jour",IDC_ENABLEAUTOUPDATE,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,176,179,168,10
-    CONTROL         "&Daily",IDC_CHECKDAILY,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,186,191,158,10
-    CONTROL         "&Weekly",IDC_CHECKWEEKLY,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,186,202,158,10
-    CONTROL         "&Monthly",IDC_CHECKMONTHLY,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,186,213,158,10
-    PUSHBUTTON      "&Search for update now",IDC_UPDATENOW,176,231,170,14
+    CONTROL         "Chaque &jour",IDC_CHECKDAILY,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,186,191,158,10
+    CONTROL         "Chaque &semaine",IDC_CHECKWEEKLY,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,186,202,158,10
+    CONTROL         "&Mensuellement",IDC_CHECKMONTHLY,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,186,213,158,10
+    PUSHBUTTON      "&Chercher maintenant des mises á jour...",IDC_UPDATENOW,176,231,170,14
 END
 
 IDD_WELCOME DIALOGEX 0, 0, 262, 220

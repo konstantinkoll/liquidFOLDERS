@@ -378,7 +378,7 @@ BEGIN
     IDS_MENU_OpenWith       "Ouvrir &avec..."
     IDS_HINT_OpenWith       "Choisissez le programme avec quoi vous voudriez ouvrir ce fichier."
     IDS_MENU_Copy           "&Copier"
-    IDS_HINT_Copy           "Kopiert die ausgewählten Objekte in die Zwischenablage."
+    IDS_HINT_Copy           "Copie les objets choisis dans le presse-papiers."
     IDS_MENU_CreateShortcut "Créer r&accourci"
     IDS_HINT_CreateShortcut "Crée un raccourci pour les éléments choisis."
     IDS_MENU_Delete         "&Effacer"

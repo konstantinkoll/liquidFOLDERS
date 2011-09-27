@@ -1179,7 +1179,7 @@ BEGIN
     IDS_DomainPresentations "Présentations"
     IDS_DomainSpreadsheets  "Tableur"
     IDS_DomainWeb           "Pages Web"
-    IDS_DomainNew           "New files\Recently imported files"
+    IDS_DomainNew           "Nouveaux fichiers\Fichiers récemment importés"
 END
 
 STRINGTABLE 
