@@ -69,8 +69,6 @@ unsigned int GetKeyFileFromStoreDescriptor(LFStoreDescriptor* s, wchar_t* f)
 {
 	if (!s)
 		return LFIllegalStoreDescriptor;
-	if ((s->StoreMode!=LFStoreModeHybrid) && (s->StoreMode!=LFStoreModeExternal))
-		return LFIllegalStoreDescriptor;
 
 	if (!IsStoreMounted(s))
 		return LFStoreNotMounted;
@@ -80,7 +78,14 @@ unsigned int GetKeyFileFromStoreDescriptor(LFStoreDescriptor* s, wchar_t* f)
 	if (!ccount)
 		return LFIllegalStoreDescriptor;
 
-	wcsncpy_s(f, MAX_PATH, s->DatPath, 3);		// .store-Datei immer im Hauptverzeichnis
+	if (s->StoreMode==LFStoreModeInternal)
+	{
+		wcscpy_s(f, MAX_PATH, s->DatPath);			// .store-Datei im Store selbst
+	}
+	else
+	{
+		wcsncpy_s(f, MAX_PATH, s->DatPath, 3);		// .store-Datei immer im Hauptverzeichnis
+	}
 	wcscat_s(f, MAX_PATH, szGUID);
 	wcscat_s(f, MAX_PATH, L".store");
 
@@ -231,8 +236,6 @@ unsigned int SaveStoreSettingsToRegistry(LFStoreDescriptor* s)
 unsigned int SaveStoreSettingsToFile(LFStoreDescriptor* s)
 {
 	if (!s)
-		return LFIllegalStoreDescriptor;
-	if ((s->StoreMode!=LFStoreModeHybrid) && (s->StoreMode!=LFStoreModeExternal))
 		return LFIllegalStoreDescriptor;
 
 	wchar_t filename[MAX_PATH];
@@ -397,6 +400,7 @@ void LoadRegistry()
 			if (ValidateStoreSettings(&StoreCache[StoreCount])==LFOk)
 			{
 				StoreCache[StoreCount].NeedsCheck = true;
+				SaveStoreSettingsToFile(&StoreCache[StoreCount]);
 				DefaultStoreOk |= (strcmp(DefaultStore, StoreCache[StoreCount].StoreID)==0);
 				StoreCount++;
 			}
@@ -580,9 +584,8 @@ unsigned int UpdateStore(LFStoreDescriptor* s, bool MakeDefault)
 	unsigned int res = LFOk;
 	if ((s->StoreMode==LFStoreModeInternal) || (s->StoreMode==LFStoreModeHybrid))
 		res = SaveStoreSettingsToRegistry(s);
-	if ((s->StoreMode==LFStoreModeHybrid) || (s->StoreMode==LFStoreModeExternal))
-		if ((res==LFOk) && (IsStoreMounted(s)))
-			res = SaveStoreSettingsToFile(s);
+	if ((res==LFOk) && (IsStoreMounted(s)))
+		res = SaveStoreSettingsToFile(s);
 
 	// Ggf. Store zum Default Store machen
 	if (res==LFOk)
