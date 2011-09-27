@@ -1841,7 +1841,7 @@ END
 STRINGTABLE 
 BEGIN
     IDM_HOUSEKEEPING_REMOVENEW 
-                            "Removes the designation as recently imported file from all files.\nRemove ""New"" attribute"
+                            "Elimina la designación de archivo recién importado de todos los archivos .\nEliminar ""Nuevo"" attributo"
     IDM_HOUSEKEEPING_REGISTER 
                             "Registra formatos de archivo desconocidos para hacerlos aparecer en un dominio regular.\nRegistrar formatos..."
     IDM_HOUSEKEEPING_SEND   "Envìa una lista de formatos de archivo registrados por el usuario a atenciòn al cliente.\nEnviar lista"

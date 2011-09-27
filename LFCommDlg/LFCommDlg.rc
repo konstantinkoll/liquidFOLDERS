@@ -821,13 +821,13 @@ BEGIN
     LTEXT           "Número:",IDC_QUANTITYTITLE,105,227,50,8
     LTEXT           "X",IDC_QUANTITY,105,237,50,8
     PUSHBUTTON      "Dictar &licencia...",IDC_ENTERLICENSEKEY,13,179,143,66,WS_GROUP
-    CONTROL         "Updates",IDC_GROUPBOX2,"CGroupBox",WS_GROUP,170,169,181,81
-    CONTROL         "Automatically search for &updates",IDC_ENABLEAUTOUPDATE,
+    CONTROL         "Actualizaciones",IDC_GROUPBOX2,"CGroupBox",WS_GROUP,170,169,181,81
+    CONTROL         "Buscar &actualizaciones de manera automática",IDC_ENABLEAUTOUPDATE,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,176,179,168,10
-    CONTROL         "&Daily",IDC_CHECKDAILY,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,186,191,158,10
-    CONTROL         "&Weekly",IDC_CHECKWEEKLY,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,186,202,158,10
-    CONTROL         "&Monthly",IDC_CHECKMONTHLY,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,186,213,158,10
-    PUSHBUTTON      "&Search for update now",IDC_UPDATENOW,176,231,170,14
+    CONTROL         "&Diariamente",IDC_CHECKDAILY,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,186,191,158,10
+    CONTROL         "&Semanalmente",IDC_CHECKWEEKLY,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,186,202,158,10
+    CONTROL         "&Mensualmente",IDC_CHECKMONTHLY,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,186,213,158,10
+    PUSHBUTTON      "&Buscar actualización ahora...",IDC_UPDATENOW,176,231,170,14
 END
 
 IDD_CHOOSESTORE DIALOGEX 0, 0, 451, 282
@@ -1305,9 +1305,9 @@ BEGIN
     IDS_NOLICENSE           "Usted está usando una copia no registrada de liquidFOLDERS. liquidFOLDERS es un software de demostración – si usted decide usarlo regularmente, usted está obligado a adquirir una licencia!"
     IDS_XOFY_SINGULAR       "%d de %d"
     IDS_XOFY_PLURAL         "%d de %d"
-    IDS_UPDATE              "Update"
-    IDS_UPDATE_AVAILABLE    "An update, liquidFOLDERS %s, is available.\nWould you like to download it now?"
-    IDS_UPDATE_NOTAVAILABLE "There is no update of liquidFOLDERS available right now."
+    IDS_UPDATE              "Actualización"
+    IDS_UPDATE_AVAILABLE    "Una actualización de, liquidFOLDERS %s, está disponible. Quisiera descargarla ahora?"
+    IDS_UPDATE_NOTAVAILABLE "No hay actualización disponible de liquidFOLDERS en este momento."
 END
 
 STRINGTABLE 

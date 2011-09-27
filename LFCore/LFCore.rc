@@ -904,7 +904,7 @@ BEGIN
     IDS_DomainPresentations "Presentaciones"
     IDS_DomainSpreadsheets  "Hojas de cálculo"
     IDS_DomainWeb           "Páginas Web"
-    IDS_DomainNew           "New files\Recently imported files"
+    IDS_DomainNew           "Archivos nuevos\Archivos importados recientemente"
 END
 
 STRINGTABLE 
