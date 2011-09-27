@@ -287,7 +287,7 @@ UINT LFNamespaceExtensionApp::ImportFiles(CHAR* StoreID, IDataObject* pDataObjec
 void LFNamespaceExtensionApp::ShowNagscreen()
 {
 	if (!LFIsLicensed())
-		if (++NagCounter>=3)
+		if (++NagCounter>=5)
 		{
 			CString tmpStr;
 			ENSURE(tmpStr.LoadString(IDS_NoLicense));

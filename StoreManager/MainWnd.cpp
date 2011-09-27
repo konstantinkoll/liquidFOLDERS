@@ -741,7 +741,8 @@ LRESULT CMainWnd::OnCookFiles(WPARAM wParam, LPARAM /*lParam*/)
 		{
 			CString tmpStr;
 			ENSURE(tmpStr.LoadString(IDS_NOLICENSE));
-			m_wndMainView.ShowNotification(ENT_INFO, tmpStr, ID_APP_PURCHASE);
+
+			MessageBox(tmpStr, _T("liquidFOLDERS"), MB_OK | MB_ICONINFORMATION);
 
 			ResetNagCounter;
 		}
