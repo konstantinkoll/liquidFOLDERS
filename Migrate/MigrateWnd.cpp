@@ -200,7 +200,7 @@ void CMigrateWnd::OnSelectRoot()
 
 void CMigrateWnd::OnMigrate()
 {
-	theApp.ShowNagScreen();
+	theApp.ShowNagScreen(NAG_EXPIRED | NAG_FORCE, this);
 
 	// Folders checked ?
 	if (!m_wndMainView.FoldersChecked())

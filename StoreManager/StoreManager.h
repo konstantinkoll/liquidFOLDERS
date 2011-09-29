@@ -16,8 +16,6 @@
 // Siehe StoreManager.cpp für die Implementierung dieser Klasse
 //
 
-#define ResetNagCounter     theApp.m_NagCounter = 0;
-
 class CStoreManagerApp : public LFApplication
 {
 public:
@@ -25,7 +23,6 @@ public:
 
 	virtual BOOL InitInstance();
 	virtual INT ExitInstance();
-	virtual BOOL ShowNagScreen();
 
 	void AddFrame(CMainWnd* pFrame);
 	void KillFrame(CMainWnd* pVictim);
@@ -50,7 +47,6 @@ public:
 
 	UINT m_nTextureSize;
 	UINT m_nMaxTextureSize;
-	UINT m_NagCounter;
 
 	BOOL m_ShowFilterPane;
 	BOOL m_ShowInspectorPane;

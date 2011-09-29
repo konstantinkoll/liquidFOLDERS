@@ -20,7 +20,9 @@ USING_NAMESPACE(std)
 #pragma data_seg("common_license")
 
 bool LicenseRead = false;
+bool ExpireRead = false;
 LFLicense LicenseBuffer = { 0 };
+FILETIME ExpireBuffer = { 0, 0 };
 
 #pragma data_seg()
 #pragma comment(linker, "/SECTION:common_license,RWS")
@@ -141,8 +143,9 @@ bool GetLicense(LFLicense* License)
 	return true;
 }
 
-bool IsLicensed(LFLicense* License, bool Reload)
+LFCore_API bool LFIsLicensed(LFLicense* License, bool Reload)
 {
+	// Setup
 	if (!LicenseRead || Reload)
 	{
 		LicenseRead = true;
@@ -155,4 +158,60 @@ bool IsLicensed(LFLicense* License, bool Reload)
 		*License = LicenseBuffer;
 
 	return (wcsncmp(LicenseBuffer.ProductID, L"liquidFOLDERS", 13)==0) && (LicenseBuffer.Version.Major>=0);
+}
+
+LFCore_API bool LFIsSharewareExpired()
+{
+	if (LFIsLicensed())
+		return false;
+
+	// Setup
+	if (!ExpireRead)
+	{
+		ExpireRead = true;
+
+		bool res = false;
+
+		HKEY k;
+		if (RegOpenKey(HKEY_CURRENT_USER, L"Software\\liquidFOLDERS", &k)==ERROR_SUCCESS)
+		{
+			DWORD sz = sizeof(DWORD);
+			if (RegQueryValueExA(k, "Seed", 0, NULL, (BYTE*)&ExpireBuffer.dwHighDateTime, &sz)==ERROR_SUCCESS)
+			{
+				sz = sizeof(DWORD);
+				if (RegQueryValueExA(k, "Envelope", 0, NULL, (BYTE*)&ExpireBuffer.dwLowDateTime, &sz)==ERROR_SUCCESS)
+					res = true;
+			}
+
+			if (!res)
+			{
+				GetSystemTimeAsFileTime(&ExpireBuffer);
+				RegSetValueExA(k, "Seed", 0, REG_DWORD, (BYTE*)&ExpireBuffer.dwHighDateTime, sizeof(DWORD));
+				RegSetValueExA(k, "Envelope", 0, REG_DWORD, (BYTE*)&ExpireBuffer.dwLowDateTime, sizeof(DWORD));
+			}
+
+			RegCloseKey(k);
+		}
+	}
+
+	// Check
+	FILETIME ft;
+	GetSystemTimeAsFileTime(&ft);
+
+	ULARGE_INTEGER FirstInstall;
+	FirstInstall.HighPart = ExpireBuffer.dwHighDateTime;
+	FirstInstall.LowPart = ExpireBuffer.dwHighDateTime;
+
+	ULARGE_INTEGER Now;
+	Now.HighPart = ft.dwHighDateTime;
+	Now.LowPart = ft.dwLowDateTime;
+
+#define SECOND ((ULONGLONG)10000000)
+#define MINUTE (60*SECOND)
+#define HOUR   (60*MINUTE)
+#define DAY    (24*HOUR)
+
+	FirstInstall.QuadPart += 30*DAY;
+
+	return Now.QuadPart>=FirstInstall.QuadPart;
 }

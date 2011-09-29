@@ -16,6 +16,8 @@
 // LFNamespaceExtensionApp
 //
 
+#define ResetNagCounter     m_NagCounter = 0;
+
 LFNamespaceExtensionApp::LFNamespaceExtensionApp()
 {
 	//Version
@@ -74,9 +76,6 @@ LFNamespaceExtensionApp::LFNamespaceExtensionApp()
 
 	// Link-Datei schreiben
 	LFCreateSendTo();
-
-	// Registrierungshinweis
-	NagCounter = 100;
 }
 
 LFNamespaceExtensionApp::~LFNamespaceExtensionApp()
@@ -132,6 +131,8 @@ BOOL LFNamespaceExtensionApp::InitInstance()
 
 	m_Categories[0][0] = FrmtAttrStr(sortStr, CString(m_Attributes[LFAttrRating]->Name));
 	m_Categories[1][0] = FrmtAttrStr(sortStr, CString(m_Attributes[LFAttrPriority]->Name));
+
+	ResetNagCounter;
 
 	return CWinApp::InitInstance();
 }
@@ -214,6 +215,10 @@ CString LFNamespaceExtensionApp::FrmtAttrStr(CString Mask, CString Name)
 
 UINT LFNamespaceExtensionApp::ImportFiles(CHAR* StoreID, IDataObject* pDataObject, BOOL Move)
 {
+	// Allowed?
+	if (ShowNagScreen(NAG_EXPIRED | NAG_FORCE, TRUE))
+		return DROPEFFECT_NONE;
+
 	// Data object
 	COleDataObject dobj;
 	dobj.Attach(pDataObject, FALSE);
@@ -284,18 +289,21 @@ UINT LFNamespaceExtensionApp::ImportFiles(CHAR* StoreID, IDataObject* pDataObjec
 	}
 }
 
-void LFNamespaceExtensionApp::ShowNagscreen()
+BOOL LFNamespaceExtensionApp::ShowNagScreen(UINT Level, BOOL Abort)
 {
-	if (!LFIsLicensed())
-		if (++NagCounter>=5)
+	if ((Level & NAG_EXPIRED) ? LFIsSharewareExpired() : !LFIsLicensed())
+		if ((Level & NAG_FORCE) || (++m_NagCounter)>5)
 		{
 			CString tmpStr;
 			ENSURE(tmpStr.LoadString(IDS_NoLicense));
 
-			MessageBox(GetForegroundWindow(), tmpStr, _T("liquidFOLDERS"), MB_OK | MB_ICONINFORMATION);
+			MessageBox(GetForegroundWindow(), tmpStr, _T("liquidFOLDERS"), Abort ? (MB_OK | MB_ICONSTOP) : (MB_OK | MB_ICONINFORMATION));
+			ResetNagCounter;
 
-			NagCounter = 0;
+			return TRUE;
 		}
+
+	return FALSE;
 }
 
 

@@ -35,6 +35,8 @@ DWORD WINAPI WorkerDeleteStore(void* lParam)
 // LFApplication
 //
 
+#define ResetNagCounter     m_NagCounter = 0;
+
 BEGIN_MESSAGE_MAP(LFApplication, CWinAppEx)
 	ON_COMMAND(ID_APP_SUPPORT, OnAppSupport)
 	ON_COMMAND(ID_APP_NEWFILEDROP, OnAppNewFileDrop)
@@ -329,6 +331,11 @@ BOOL LFApplication::InitInstance()
 	}
 	#endif
 
+	// Falls abgelaufen, Fenster anzeigen
+	ResetNagCounter;
+	if (!LFIsLicensed())
+		ShowNagScreen(NAG_NOTLICENSED | NAG_FORCE);
+
 	// Beim ersten Mal Welcome-Dialog anzeigen
 	if ((LFGetStoreCount()==0) && (GetGlobalInt(_T("FirstRun"), 1)!=0))
 	{
@@ -354,17 +361,19 @@ INT LFApplication::ExitInstance()
 	return 0;
 }
 
-BOOL LFApplication::ShowNagScreen()
+BOOL LFApplication::ShowNagScreen(UINT Level, CWnd* pWndParent, BOOL Abort)
 {
-	if (!LFIsLicensed())
-	{
-		CString tmpStr;
-		ENSURE(tmpStr.LoadString(IDS_NOLICENSE));
+	if ((Level & NAG_EXPIRED) ? LFIsSharewareExpired() : !LFIsLicensed())
+		if ((Level & NAG_FORCE) || (++m_NagCounter)>5)
+		{
+			CString tmpStr;
+			ENSURE(tmpStr.LoadString(IDS_NOLICENSE));
 
-		MessageBox(GetForegroundWindow(), tmpStr, _T("liquidFOLDERS"), MB_OK | MB_ICONINFORMATION);
+			MessageBox(pWndParent ? pWndParent->GetSafeHwnd() : GetForegroundWindow(), tmpStr, _T("liquidFOLDERS"), Abort ? (MB_OK | MB_ICONSTOP) : (MB_OK | MB_ICONINFORMATION));
+			ResetNagCounter;
 
-		return TRUE;
-	}
+			return TRUE;
+		}
 
 	return FALSE;
 }
@@ -382,6 +391,7 @@ void LFApplication::SendMail(CString Subject)
 
 	ShellExecute(m_pActiveWnd->GetSafeHwnd(), _T("open"), URL, NULL, NULL, SW_SHOW);
 }
+
 
 void LFApplication::OnAppSupport()
 {
@@ -438,6 +448,7 @@ void LFApplication::OnUpdateAppCommands(CCmdUI* pCmdUI)
 		pCmdUI->Enable(TRUE);
 	}
 }
+
 
 CString LFApplication::GetGlobalRegPath()
 {

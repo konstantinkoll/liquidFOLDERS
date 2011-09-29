@@ -183,11 +183,6 @@ LFCore_API LFMessageIDs* LFGetMessageIDs()
 	return &LFMessages;
 }
 
-LFCore_API bool LFIsLicensed(LFLicense* License, bool Reload)
-{
-	return IsLicensed(License, Reload);
-}
-
 LFCore_API void LFCreateSendTo(bool force)
 {
 	HKEY k;

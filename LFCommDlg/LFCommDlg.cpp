@@ -245,6 +245,10 @@ DWORD WINAPI WorkerImport(void* lParam)
 
 LFCommDlg_API void LFImportFolder(CHAR* StoreID, CWnd* pParentWnd)
 {
+	// Allowed?
+	if (((LFApplication*)AfxGetApp())->ShowNagScreen(NAG_EXPIRED | NAG_FORCE, pParentWnd, TRUE))
+		return;
+
 	CString caption;
 	ENSURE(caption.LoadString(IDS_IMPORTFOLDER_CAPTION));
 	CString hint;
@@ -459,7 +463,14 @@ LFCommDlg_API CString GetLatestVersion(CString& CurrentVersion)
 
 	// Licensed?
 	if (LFIsLicensed())
+	{
 		CurrentVersion += _T(";licensed");
+	}
+	else
+		if (LFIsSharewareExpired())
+		{
+			CurrentVersion += _T(";expired");
+		}
 
 	CurrentVersion += _T(")");
 

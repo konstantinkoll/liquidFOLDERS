@@ -361,7 +361,7 @@ BOOL CFolderItem::GetChildren(CGetChildrenEventArgs& e)
 		ConvertSearchResult(e, LFQuery(NULL));
 		break;
 	case LevelStores:
-		theApp.ShowNagscreen();
+		theApp.ShowNagScreen(NAG_EXPIRED);
 
 		f = LFAllocFilter();
 		f->Mode = LFFilterModeStoreHome;

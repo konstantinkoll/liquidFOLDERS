@@ -185,7 +185,7 @@ BOOL CMainWnd::PreTranslateMessage(MSG* pMsg)
 {
 	if ((pMsg->message==WM_KEYDOWN) && (pMsg->wParam==VK_RETURN) && (pMsg->hwnd==m_wndSearch))
 	{
-		theApp.ShowNagScreen();
+		theApp.ShowNagScreen(NAG_EXPIRED | NAG_FORCE, this);
 
 		LFFilter* f = LFAllocFilter();
 		f->Mode = LFFilterModeSearch;
@@ -333,10 +333,9 @@ void CMainWnd::NavigateTo(LFFilter* f, UINT NavMode, FVPersistentData* Data, INT
 		m_wndMainView.ShowNotification(m_pCookedFiles->m_LastError==LFDriveWriteProtected ? ENT_WARNING : ENT_ERROR, m_pCookedFiles->m_LastError, m_pCookedFiles->m_LastError==LFIndexAccessError ? IDM_STORES_REPAIRCORRUPTEDINDEX : 0);
 	}
 	else
-		if (theApp.m_NagCounter!=0)
-		{
-			m_wndMainView.DismissNotification();
-		}
+	{
+		m_wndMainView.DismissNotification();
+	}
 }
 
 void CMainWnd::UpdateHistory()
@@ -546,7 +545,7 @@ void CMainWnd::OnItemOpen()
 						LFFilter* f = LFLoadFilter(i);
 						if (f)
 						{
-							theApp.ShowNagScreen();
+							theApp.ShowNagScreen(NAG_EXPIRED | NAG_FORCE, this);
 
 							m_wndMainView.SetFilter(f);
 							NavigateTo(f);
@@ -736,16 +735,8 @@ LRESULT CMainWnd::OnCookFiles(WPARAM wParam, LPARAM /*lParam*/)
 	if ((pVictim) && (pVictim!=m_pRawFiles))
 		LFFreeSearchResult(pVictim);
 
-	if ((m_pCookedFiles->m_LastError<=LFCancel) && (!LFIsLicensed()))
-		if ((++theApp.m_NagCounter)>5)
-		{
-			CString tmpStr;
-			ENSURE(tmpStr.LoadString(IDS_NOLICENSE));
-
-			MessageBox(tmpStr, _T("liquidFOLDERS"), MB_OK | MB_ICONINFORMATION);
-
-			ResetNagCounter;
-		}
+	if (m_pCookedFiles->m_LastError<=LFCancel)
+		theApp.ShowNagScreen(NAG_EXPIRED, this);
 
 	return m_pCookedFiles->m_LastError;
 }

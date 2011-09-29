@@ -277,6 +277,10 @@ STDMETHODIMP LFDropTarget::Drop(IDataObject* pDataObject, DWORD grfKeyState, POI
 	if ((DragOver(grfKeyState, ptl, pdwEffect)!=S_OK) || (m_IsDragging))
 		return E_INVALIDARG;
 
+	// Allowed?
+	if (((LFApplication*)AfxGetApp())->ShowNagScreen(NAG_EXPIRED | NAG_FORCE, p_Owner, TRUE))
+		return E_INVALIDARG;
+
 	// Data object
 	COleDataObject dobj;
 	dobj.Attach(pDataObject, FALSE);

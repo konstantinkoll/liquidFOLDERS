@@ -86,7 +86,7 @@ END_MESSAGE_MAP()
 
 BOOL LFStoreNewDlg::OnInitDialog()
 {
-	((LFApplication*)AfxGetApp())->ShowNagScreen();
+	((LFApplication*)AfxGetApp())->ShowNagScreen(NAG_EXPIRED | NAG_FORCE);
 
 	CDialog::OnInitDialog();
 

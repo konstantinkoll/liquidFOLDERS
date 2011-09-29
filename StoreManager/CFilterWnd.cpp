@@ -292,7 +292,7 @@ void CFilterWnd::OnSave()
 
 void CFilterWnd::OnSearch()
 {
-	theApp.ShowNagScreen();
+	theApp.ShowNagScreen(NAG_EXPIRED | NAG_FORCE, this);
 
 	GetOwner()->SendMessage(WM_NAVIGATETO, (WPARAM)CreateFilter());
 }

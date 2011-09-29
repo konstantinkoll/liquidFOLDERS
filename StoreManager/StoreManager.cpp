@@ -184,15 +184,6 @@ INT CStoreManagerApp::ExitInstance()
 	return LFApplication::ExitInstance();
 }
 
-BOOL CStoreManagerApp::ShowNagScreen()
-{
-	BOOL Res = LFApplication::ShowNagScreen();
-	if (Res)
-		ResetNagCounter;
-
-	return Res;
-}
-
 
 void CStoreManagerApp::AddFrame(CMainWnd* pFrame)
 {

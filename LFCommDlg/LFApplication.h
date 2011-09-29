@@ -15,6 +15,11 @@
 #define OS_Vista                  1
 #define OS_Seven                  2
 
+#define NAG_NOTLICENSED           0
+#define NAG_EXPIRED               1
+#define NAG_COUNTER               0
+#define NAG_FORCE                 2
+
 typedef HRESULT(__stdcall* PFNSETWINDOWTHEME)(HWND hwnd, LPCWSTR pszSubAppName, LPCWSTR pszSubIdList);
 typedef HRESULT(__stdcall* PFNCLOSETHEMEDATA)(HTHEME hTheme);
 typedef HTHEME(__stdcall* PFNOPENTHEMEDATA)(HWND hwnd, LPCWSTR pszClassList);
@@ -103,8 +108,8 @@ public:
 
 	virtual BOOL InitInstance();
 	virtual INT ExitInstance();
-	virtual BOOL ShowNagScreen();
 
+	BOOL ShowNagScreen(UINT Level, CWnd* pWndParent=NULL, BOOL Abort=FALSE);
 	CString GetDefaultFontFace();
 	void SendMail(CString Subject=_T(""));
 	INT GetGlobalInt(LPCTSTR lpszEntry, INT nDefault=0);
@@ -127,6 +132,8 @@ public:
 	afx_msg void OnAppNewStoreManager();
 
 protected:
+	UINT m_NagCounter;
+
 	CString GetGlobalRegPath();
 
 	afx_msg void OnAppPurchase();

@@ -36,15 +36,21 @@ LFCore_API void LFInitialize();
 
 
 
+// Gibt true zurück, wenn diese Installation freigeschaltet ist
+// Die gespeicherten Lizenzinformationen finden sich in License
+LFCore_API bool LFIsLicensed(LFLicense* License=NULL, bool Reload=false);
+
+// Gibt true zurück, wenn die Shareware-Version ausgelaufen ist,
+// und keine ordnungsgemäße Lizenz vorliegt
+LFCore_API bool LFIsSharewareExpired();
+
+
+
 // Wie Win32-Funktion GetLogicalDrives(), allerdings selektiv (s.o.)
 LFCore_API unsigned int LFGetLogicalDrives(unsigned int mask=LFGLD_Both);
 
 // Gibt einen Zeiger auf die IDs aller registrierten Nachrichten zurück
 LFCore_API LFMessageIDs* LFGetMessageIDs();
-
-// Gibt true zurück, wenn diese Installation freigeschaltet ist
-// Die gespeicherten Lizenzinformationen finden sich in License
-LFCore_API bool LFIsLicensed(LFLicense* License=NULL, bool Reload=false);
 
 // Erzeugt einen Link mit DropHandler zur Explorer-Erweiterung
 // im SendTo-Ordner des Benutzers
