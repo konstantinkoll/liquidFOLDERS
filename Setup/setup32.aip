@@ -66,7 +66,7 @@
     <ROW Component="AI_DisableModify" ComponentId="{DD31B056-8D31-4892-845F-B6BA2BFF92EA}" Directory_="APPDIR" Attributes="4" KeyPath="NoModify" Options="1"/>
     <ROW Component="FileDrop.exe" ComponentId="{8F616507-15F7-4888-BD0A-6A76897609A7}" Directory_="APPDIR" Attributes="0" KeyPath="FileDrop.exe"/>
     <ROW Component="LFCommDlg.dll" ComponentId="{EFEB7EE1-B3F4-433C-BF7B-3437F06605E1}" Directory_="APPDIR" Attributes="0" KeyPath="LFCommDlg.dll"/>
-    <ROW Component="LFCore.dll" ComponentId="{9B505893-2785-4480-9EE6-750BCF0B75F5}" Directory_="APPDIR" Attributes="0" KeyPath="LFCore.dll"/>
+    <ROW Component="LFCore.dll" ComponentId="{9B505893-2785-4480-9EE6-750BCF0B75F5}" Directory_="SystemFolder" Attributes="0" KeyPath="LFCore.dll"/>
     <ROW Component="LFNamespaceExtension.dll" ComponentId="{C424FA2A-6FEB-4C17-9BAB-45716DF703A4}" Directory_="APPDIR" Attributes="0" KeyPath="LFNamespaceExtension.dll"/>
     <ROW Component="LFRunCmd.exe" ComponentId="{30F465C5-0672-4DC2-B47A-F7A722C9CF9E}" Directory_="APPDIR" Attributes="0" KeyPath="LFRunCmd.exe"/>
     <ROW Component="LFWatchdog.exe" ComponentId="{577356CC-B7AD-4EFC-BA0A-534AA870BBFA}" Directory_="APPDIR" Attributes="0" KeyPath="LFWatchdog.exe"/>
@@ -555,7 +555,7 @@
     <ROW Registry="__9" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}\InProcServer32" Value="[!LFNamespaceExtension.dll]" Component_="LFNamespaceExtension.dll"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiRemoveFileComponent">
-    <ROW FileKey="LFCore.dll" Component_="LFCore.dll" FileName="LFCore.dll" DirProperty="SystemFolder" InstallMode="3"/>
+    <ROW FileKey="LFCore.dll" Component_="LFCore.dll" FileName="LFCore.dll" DirProperty="SystemFolder" InstallMode="2"/>
     <ROW FileKey="LFNamespaceExtension.dll" Component_="LFNamespaceExtension.dll" FileName="LFName~1.dll|LFNamespaceExtension.dll" DirProperty="SystemFolder" InstallMode="3"/>
     <ROW FileKey="_" Component_="LFCore.dll" DirProperty="APPDIR" InstallMode="2"/>
     <ROW FileKey="__1" Component_="LFCore.dll" DirProperty="SHORTCUTDIR" InstallMode="2"/>
