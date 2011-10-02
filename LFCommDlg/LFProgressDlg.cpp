@@ -89,7 +89,7 @@ LRESULT LFProgressDlg::OnUpdateProgress(WPARAM wParam, LPARAM /*lParam*/)
 
 	ASSERT(pProgress->MinorCount>0);
 	ASSERT(pProgress->MinorCurrent>=0);
-	ASSERT(pProgress->MinorCurrent<max(1, pProgress->MinorCount));
+	ASSERT(pProgress->MinorCurrent<=max(1, pProgress->MinorCount));
 
 	if (pProgress->MajorCount>0)
 	{
