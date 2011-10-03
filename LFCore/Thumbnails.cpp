@@ -51,6 +51,8 @@ LFCore_API HBITMAP LFGetThumbnail(LFItemDescriptor* i, SIZE sz)
 				pParentFolder->Release();
 			}
 		}
+
+		pDesktop->Release();
 	}
 
 	return hBmp;

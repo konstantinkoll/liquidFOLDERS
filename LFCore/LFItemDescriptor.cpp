@@ -211,7 +211,18 @@ void SetAttribute(LFItemDescriptor* i, unsigned int attr, const void* v)
 	}
 
 	// Kopieren
-	memcpy(i->AttributeValues[attr], v, sz);
+	switch (AttrTypes[attr])
+	{
+	case LFTypeUnicodeString:
+	case LFTypeUnicodeArray:
+		wcsncpy_s((wchar_t*)i->AttributeValues[attr], sz/sizeof(wchar_t), (wchar_t*)v, (sz/sizeof(wchar_t))-1);
+		break;
+	case LFTypeAnsiString:
+		strncpy_s((char*)i->AttributeValues[attr], sz, (char*)v, sz-1);
+		break;
+	default:
+		memcpy(i->AttributeValues[attr], v, sz);
+	}
 }
 
 
