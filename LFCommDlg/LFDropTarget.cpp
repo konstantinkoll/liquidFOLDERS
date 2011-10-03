@@ -208,16 +208,7 @@ STDMETHODIMP_(ULONG) STDMETHODCALLTYPE LFDropTarget::AddRef()
 
 STDMETHODIMP_(ULONG) STDMETHODCALLTYPE LFDropTarget::Release()
 {
-	LONG Count = InterlockedDecrement(&m_lRefCount);
-	if (!Count)
-	{
-		if (m_pDropTargetHelper)
-			m_pDropTargetHelper->Release();
-		delete this;
-		return 0;
-	}
-
-	return Count;
+	return InterlockedDecrement(&m_lRefCount);
 }
 
 STDMETHODIMP LFDropTarget::DragEnter(IDataObject* pDataObject, DWORD grfKeyState, POINTL ptl, DWORD* pdwEffect)
