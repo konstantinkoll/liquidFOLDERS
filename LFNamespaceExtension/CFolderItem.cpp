@@ -144,7 +144,7 @@ CFolderItem::CFolderItem(UCHAR Level, LFItemDescriptor* i)
 	wcscpy_s(Attrs.DisplayName, 256, i->CoreAttributes.FileName);
 	wcscpy_s(Attrs.Description, 256, i->Description);
 	wcscpy_s(Attrs.Comment, 256, i->CoreAttributes.Comment);
-	strcpy_s(Attrs.StoreID, LFKeySize, i->StoreID);
+	strcpy_s(Attrs.StoreID, LFKeySize, i->NextFilter ? i->NextFilter->StoreID : i->StoreID);
 	strcpy_s(Attrs.FileID, LFKeySize, i->CoreAttributes.FileID);
 	Attrs.DomainID = Attrs.DomainID;
 	Attrs.Count = i->AggregateCount;
