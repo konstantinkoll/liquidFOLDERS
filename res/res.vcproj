@@ -1265,7 +1265,7 @@
 			</File>
 		</Filter>
 		<File
-			RelativePath=".\About_Small.ico"
+			RelativePath=".\About_Tiny.ico"
 			>
 		</File>
 		<File
@@ -1445,7 +1445,7 @@
 			>
 		</File>
 		<File
-			RelativePath=".\Key_Small.ico"
+			RelativePath=".\Key_Tiny.ico"
 			>
 		</File>
 		<File

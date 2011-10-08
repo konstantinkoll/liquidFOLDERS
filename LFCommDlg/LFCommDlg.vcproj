@@ -899,10 +899,6 @@
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
 			<File
-				RelativePath=".\res\About_Small.ico"
-				>
-			</File>
-			<File
 				RelativePath=".\res\Attributes_16.bmp"
 				>
 			</File>
@@ -947,7 +943,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\Key_Small.ico"
+				RelativePath=".\res\Key_Tiny.ico"
 				>
 			</File>
 			<File
