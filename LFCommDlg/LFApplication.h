@@ -81,7 +81,6 @@ public:
 	CFont m_LargeFont;
 	CFont m_CaptionFont;
 	BOOL m_HasGUI;
-	LFMessageIDs* MessageIDs;
 	BOOL IsLicensed;
 	UINT OSVersion;
 	CLIPFORMAT CF_FILEDESCRIPTOR;

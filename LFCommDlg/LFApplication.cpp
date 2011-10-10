@@ -89,7 +89,7 @@ LFApplication::LFApplication(BOOL HasGUI)
 	SetDllDirectory(_T(""));
 
 	// Nachrichten
-	MessageIDs = LFGetMessageIDs();
+	p_MessageIDs = LFGetMessageIDs();
 
 	// Themes
 	hModThemes = LoadLibrary(_T("UXTHEME.DLL"));
@@ -287,9 +287,6 @@ BOOL LFApplication::InitInstance()
 	// GDI+ initalisieren
 	GdiplusStartupInput gdiplusStartupInput;
 	GdiplusStartup(&m_gdiplusToken, &gdiplusStartupInput, NULL);
-
-	// Nachrichten registrieren
-	p_MessageIDs = LFGetMessageIDs();
 
 	// InitCommonControlsEx() ist für Windows XP erforderlich, wenn ein Anwendungsmanifest
 	// die Verwendung von ComCtl32.dll Version 6 oder höher zum Aktivieren
