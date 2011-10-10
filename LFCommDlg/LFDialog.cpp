@@ -79,7 +79,7 @@ void LFDialog::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 				INT h = m_pBackdrop->m_pBitmap->GetHeight();
 				if ((l<rect.Width()) || (h<rect.Height()))
 				{
-					double f = max((double)rect.Width()/l, (double)rect.Height()/h);
+					DOUBLE f = max((DOUBLE)rect.Width()/l, (DOUBLE)rect.Height()/h);
 					l = (INT)(l*f);
 					h = (INT)(h*f);
 				}
