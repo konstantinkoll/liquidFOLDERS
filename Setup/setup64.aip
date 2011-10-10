@@ -423,6 +423,9 @@
     <ROW Action="SET_TARGETDIR_TO_APPDIR" Type="51" Source="TARGETDIR" Target="[APPDIR]"/>
     <ROW Action="StopProcess" Type="1" Source="aicustact.dll" Target="StopProcess"/>
   </COMPONENT>
+  <COMPONENT cid="caphyon.advinst.msicomp.MsiDialogComponent">
+    <ROW Dialog="FolderDlg" HCentering="50" VCentering="50" Width="450" Height="360" Attributes="35" Title="[ProductName] [Setup]" Control_First="Bitmap" Control_Default="Next" Control_Cancel="Cancel" TitleLocId="Dialog.FolderDlg" MsiKey="FolderDlg"/>
+  </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiIconsComponent">
     <ROW Name="SystemFolder_msiexec.exe" SourcePath="&lt;AI_RES&gt;uninstall.ico" Index="0"/>
     <ROW Name="liquidFOLDERS.exe" SourcePath="Setup\liquidFOLDERS.ico" Index="0"/>
