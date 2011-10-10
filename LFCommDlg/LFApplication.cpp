@@ -313,8 +313,6 @@ BOOL LFApplication::InitInstance()
 	if (!m_HasGUI)
 		return TRUE;
 
-	LoadStdProfileSettings();
-
 	// Watchdog starten
 	#ifndef _DEBUG
 	HANDLE hMutex = CreateMutex(NULL, FALSE, _T(LFCM_Watchdog));
