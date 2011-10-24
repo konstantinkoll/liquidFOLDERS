@@ -598,6 +598,21 @@ BOOL LFApplication::HideFileExt()
 	return FALSE;
 }
 
+BOOL LFApplication::HideEmptyDrives()
+{
+	CSettingsStoreSP regSP;
+	CSettingsStore& reg = regSP.Create(FALSE, TRUE);
+
+	if (reg.Open(_T("Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced")))
+	{
+		DWORD hide;
+		if (reg.Read(_T("HideDrivesWithNoMedia"), hide))
+			return hide;
+	}
+
+	return FALSE;
+}
+
 void LFApplication::GetUpdateSettings(BOOL* EnableAutoUpdate, INT* Interval)
 {
 	if (EnableAutoUpdate)

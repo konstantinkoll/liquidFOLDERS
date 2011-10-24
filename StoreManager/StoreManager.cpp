@@ -84,7 +84,7 @@ BOOL CStoreManagerApp::InitInstance()
 	m_InspectorWidth = GetInt(_T("InspectorWidth"), 200);
 	if (m_InspectorWidth<32)
 		m_InspectorWidth = 32;
-	m_ShowEmptyVolumes = GetInt(_T("ShowEmptyVolumes"), TRUE);
+	m_ShowEmptyVolumes = GetInt(_T("ShowEmptyVolumes"), !theApp.HideEmptyDrives());
 	m_ShowEmptyDomains = GetInt(_T("ShowEmptyDomains"), TRUE);
 	m_ShowStatistics = GetInt(_T("ShowStatistics"), FALSE);
 	m_CalendarShowStatistics = GetInt(_T("CalendarShowStatistics"), TRUE);

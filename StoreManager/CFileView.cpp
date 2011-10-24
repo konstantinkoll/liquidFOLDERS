@@ -676,20 +676,30 @@ CMenu* CFileView::GetSendToMenu()
 
 	// Volumes
 	DWORD DrivesOnSystem = LFGetLogicalDrives(LFGLD_External | LFGLD_Network | LFGLD_IncludeFloppies);
+	DWORD DrivesWOFloppies = LFGetLogicalDrives(LFGLD_External | LFGLD_Network);
+	BOOL HideEmptyDrives = theApp.HideEmptyDrives();
 
-	if ((Added) && (DrivesOnSystem))
-		pMenu->AppendMenu(MF_SEPARATOR);
-
-	for (CHAR cDrive='A'; cDrive<='Z'; cDrive++, DrivesOnSystem>>=1)
+	for (CHAR cDrive='A'; cDrive<='Z'; cDrive++, DrivesOnSystem>>=1, DrivesWOFloppies>>=1)
 	{
 		if ((DrivesOnSystem & 1)==0)
 			continue;
 
+		BOOL CheckEmpty = HideEmptyDrives && ((DrivesWOFloppies & 1)!=0);
+
 		WCHAR szDriveRoot[] = L" :\\";
 		szDriveRoot[0] = cDrive;
 		SHFILEINFO sfi;
-		if (SHGetFileInfo(szDriveRoot, 0, &sfi, sizeof(SHFILEINFO), SHGFI_DISPLAYNAME | SHGFI_ICON | SHGFI_SMALLICON))
+		if (SHGetFileInfo(szDriveRoot, 0, &sfi, sizeof(SHFILEINFO), SHGFI_DISPLAYNAME | SHGFI_ICON | SHGFI_SMALLICON | (CheckEmpty ? SHGFI_ATTRIBUTES : 0)))
 		{
+			if ((!sfi.dwAttributes) && CheckEmpty)
+				continue;
+
+			if (Added)
+			{
+				pMenu->AppendMenu(MF_SEPARATOR);
+				Added = FALSE;
+			}
+
 			AppendSendToItem(pMenu, nID, sfi.szDisplayName, sfi.hIcon, cx, cy, m_SendToItems);
 
 			INT idx = (nID++) & 0xFF;

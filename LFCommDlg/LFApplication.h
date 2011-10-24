@@ -122,6 +122,7 @@ public:
 	static void PlayWarningSound();
 	static void PlayTrashSound();
 	static BOOL HideFileExt();
+	static BOOL HideEmptyDrives();
 	void GetUpdateSettings(BOOL* EnableAutoUpdate, INT* Interval);
 	void SetUpdateSettings(BOOL EnableAutoUpdate, INT Interval);
 	BOOL IsUpdateCheckDue();
