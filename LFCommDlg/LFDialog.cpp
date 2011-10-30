@@ -33,7 +33,7 @@ void LFDialog::DoDataExchange(CDataExchange* pDX)
 	CWnd* pWnd = GetDlgItem(IDC_GROUPBOX1);
 	if (pWnd)
 		DDX_Control(pDX, IDC_GROUPBOX1, m_GroupBox1);
-	
+
 	pWnd = GetDlgItem(IDC_GROUPBOX2);
 	if (pWnd)
 		DDX_Control(pDX, IDC_GROUPBOX2, m_GroupBox2);
