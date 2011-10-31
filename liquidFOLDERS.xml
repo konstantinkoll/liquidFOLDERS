@@ -15,8 +15,8 @@
 		<Country>Germany</Country>
 		<Company_WebSite_URL>http://liquidfolders.net/about/</Company_WebSite_URL>
 		<Contact_Info>
-			<Author_First_Name />
-			<Author_Last_Name />
+			<Author_First_Name>__</Author_First_Name>
+			<Author_Last_Name>__</Author_Last_Name>
 			<Author_Email>info@liquidfolders.net</Author_Email>
 			<Contact_First_Name>Konstantin</Contact_First_Name>
 			<Contact_Last_Name>Koll</Contact_Last_Name>
@@ -69,23 +69,23 @@
 		<English>
 			<Keywords>Relational File System, Explorer Extension, Smart Folders, Geotagging, Metadata, File Archive, Photo Archive, Music Archive, Document Management, Desktop Search</Keywords>
 			<Char_Desc_45>Relational File System for Microsoft Windows</Char_Desc_45>
-			<Char_Desc_80>liquidFOLDERS stores your files without files without fixed directory tree.</Char_Desc_80>
-			<Char_Desc_250>liquidFOLDERS works like a professional database and stores your files without fixed directory tree. You can easily search, group, sort and display thousands of files.</Char_Desc_250>
-			<Char_Desc_450>liquidFOLDERS stores all files in a separate area of your computer we call "store". A store does not have a fixed directory tree (let alone one that you'll have to manage yourself), but is one big thing. Just like with an industry grade database, you can slice and dice that entity in real time with regard to the properties of the actual files stored in it.</Char_Desc_450>
-			<Char_Desc_2000>liquidFOLDERS stores all files in a separate area of your computer we call "store". A store does not have a fixed directory tree (let alone one that you'll have to manage yourself), but is one big thing. Just like with an industry grade database, you can slice and dice that entity in real time with regard to the properties of the actual files stored in it.</Char_Desc_2000>
+			<Char_Desc_80>liquidFOLDERS is a revolutionary way to manage all the files on your computer.</Char_Desc_80>
+			<Char_Desc_250>liquidFOLDERS is a revolutionary way to manage all the files on your computer. Tired of creating directories and looking for stuff all the time? Then liquidFOLDERS is for you!</Char_Desc_250>
+			<Char_Desc_450>liquidFOLDERS is a revolutionary way to manage all the files on your computer. Tired of creating directories and looking for stuff all the time? Then liquidFOLDERS is for you! It has been primarily designed for media files, but works great with all other file types, too.</Char_Desc_450>
+			<Char_Desc_2000>liquidFOLDERS is a revolutionary way to manage all the files on your computer. Tired of creating directories and looking for stuff all the time? Then liquidFOLDERS is for you! It has been primarily designed for media files, but works great with all other file types, too. Under the hood, our software puts industry-strength database technology to work for you. But don't worry, all the details are hidden under our beautifully designed and highly intuitive UI. You can enjoy liquidFOLDERS right from the start!</Char_Desc_2000>
 		</English>
 		<German>
 			<Keywords>Relationales Dateisystem, Explorer-Erweiterung, Intelligente Ordner, Geotagging, Metadaten, Dateiarchiv, Bildarchiv, Musikarchive, Document Management, Desktopsuche</Keywords>
 			<Char_Desc_45>Relationales Dateisystem für MS Windows</Char_Desc_45>
-			<Char_Desc_80>liquidFOLDERS speichert Ihre Dateien ohen starren Verzeichnisbaum ab.</Char_Desc_80>
-			<Char_Desc_250>liquidFOLDERS arbeitet wie eine professionelle Datenbank und speichert Ihre Dateien ohne starren Verzeichnisbaum ab. Sie können sehr schnell tausende von Dateien durchsuchen, gruppieren, sortieren und sich anzeigen lassen.</Char_Desc_250>
-			<Char_Desc_450>liquidFOLDERS speichert Ihre Dateien in einem Bereich der Festplatte ab, den wir „Store“ nennen. Ein Store besitzt keinen starren Verzeichnisbaum, und schon gar keinen, den Sie selbst erstellen müssen. Statt dessen arbeitet liquidFOLDERS wie eine professionelle Datenbank, mit der Sie die Dateien in einem Store anhand ihrer Eigenschaften in Sekundenschnelle immer wieder neu anordnen können.</Char_Desc_450>
-			<Char_Desc_2000>liquidFOLDERS speichert Ihre Dateien in einem Bereich der Festplatte ab, den wir „Store“ nennen. Ein Store besitzt keinen starren Verzeichnisbaum, und schon gar keinen, den Sie selbst erstellen müssen. Statt dessen arbeitet liquidFOLDERS wie eine professionelle Datenbank, mit der Sie die Dateien in einem Store anhand ihrer Eigenschaften in Sekundenschnelle immer wieder neu anordnen können.</Char_Desc_2000>
+			<Char_Desc_80>liquidFOLDERS speichert Ihre Dateien ohne starren Verzeichnisbaum ab.</Char_Desc_80>
+			<Char_Desc_250>liquidFOLDERS ist ein innovativer Dateimanager für Ihren Computer. Wollen Sie keine Mühe mehr mit Unterverzeichnissen und dem Einsortieren von Dateien haben, und trotzdem alles schnell finden? Dann ist liquidFOLDERS wie für Sie gemacht!</Char_Desc_250>
+			<Char_Desc_450>liquidFOLDERS ist ein innovativer Dateimanager für Ihren Computer. Wollen Sie keine Mühe mehr mit Unterverzeichnissen und dem Einsortieren von Dateien haben, und trotzdem alles schnell finden? Dann ist liquidFOLDERS wie für Sie gemacht! liquidFOLDERS wurde primär für Multimedia-Dateien entwickelt, ist aber auch hervorragend für alle anderen Dateiformate geeignet.</Char_Desc_450>
+			<Char_Desc_2000>liquidFOLDERS ist ein innovativer Dateimanager für Ihren Computer. Wollen Sie keine Mühe mehr mit Unterverzeichnissen und dem Einsortieren von Dateien haben, und trotzdem alles schnell finden? Dann ist liquidFOLDERS wie für Sie gemacht! liquidFOLDERS wurde primär für Multimedia-Dateien entwickelt, ist aber auch hervorragend für alle anderen Dateiformate geeignet. liquidFOLDERS nutzt hierbei professionelle Datenbank-Technologie. Aber keine Sorge, alle technischen Details sind tief unter der sorgfältig entworfenen und intuitiven Oberfläche verborgen. So können Sie liquidFOLDERS gleich von Anfang an produktiv einsetzen!</Char_Desc_2000>
 		</German>
 	</Program_Descriptions>
 	<Web_Info>
 		<Application_URLs>
-			<Application_Info_URL>http://liquidfolders.net/features/</Application_Info_URL>
+			<Application_Info_URL>http://liquidfolders.net/</Application_Info_URL>
 			<Application_Order_URL>http://liquidfolders.net/purchase/</Application_Order_URL>
 			<Application_Screenshot_URL>http://liquidfolders.net/screenshots/SM_Globe.png</Application_Screenshot_URL>
 			<Application_Icon_URL>http://liquidfolders.net/img/IconLF.png</Application_Icon_URL>
