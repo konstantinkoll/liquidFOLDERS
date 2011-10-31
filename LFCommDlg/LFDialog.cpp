@@ -15,11 +15,11 @@ using namespace Gdiplus;
 
 extern AFX_EXTENSION_MODULE LFCommDlgDLL;
 
-LFDialog::LFDialog(UINT nIDTemplate, UINT _Design, CWnd* pParent)
+LFDialog::LFDialog(UINT nIDTemplate, UINT Design, CWnd* pParent)
 	: CDialog(nIDTemplate, pParent)
 {
 	m_nIDTemplate = nIDTemplate;
-	m_Design = _Design;
+	m_Design = Design;
 	p_App = (LFApplication*)AfxGetApp();
 	hIconS = hIconL = hIconShield = NULL;
 	hBackgroundBrush = NULL;
@@ -256,11 +256,11 @@ BOOL LFDialog::OnInitDialog()
 	case LFDS_Blue:
 		// Hintergrundbild laden
 		m_pBackdrop = new CGdiPlusBitmapResource();
-		m_pBackdrop->Load(IDB_BACKDROP, _T("PNG"), LFCommDlgDLL.hResource);
+		ENSURE(m_pBackdrop->Load(IDB_BACKDROP, _T("PNG"), LFCommDlgDLL.hResource));
 
 		// m_pLogo laden
 		m_pLogo = new CGdiPlusBitmapResource();
-		m_pLogo->Load(IDB_LOGO, _T("PNG"), LFCommDlgDLL.hResource);
+		ENSURE(m_pLogo->Load(IDB_LOGO, _T("PNG"), LFCommDlgDLL.hResource));
 
 		break;
 	case LFDS_UAC:

@@ -45,10 +45,10 @@ CMapSelectionCtrl::CMapSelectionCtrl()
 	if (!Map1)
 	{
 		Map1 = new CGdiPlusBitmapResource();
-		Map1->Load(IDB_EARTHMAP_1024, _T("PNG"), LFCommDlgDLL.hResource);
+		ENSURE(Map1->Load(IDB_EARTHMAP_1024, _T("PNG"), LFCommDlgDLL.hResource));
 	}
 	m_Indicator = new CGdiPlusBitmapResource();
-	m_Indicator->Load(IDB_LOCATIONINDICATOR_8, _T("PNG"), LFCommDlgDLL.hResource);
+	ENSURE(m_Indicator->Load(IDB_LOCATIONINDICATOR_8, _T("PNG"), LFCommDlgDLL.hResource));
 	m_Coord.Latitude = 0;
 	m_Coord.Longitude = 0;
 

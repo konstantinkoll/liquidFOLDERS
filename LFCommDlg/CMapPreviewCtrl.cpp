@@ -45,10 +45,10 @@ CMapPreviewCtrl::CMapPreviewCtrl()
 	if (!Map2)
 	{
 		Map2 = new CGdiPlusBitmapResource();
-		Map2->Load(IDB_EARTHMAP_2048, _T("PNG"), LFCommDlgDLL.hResource);
+		ENSURE(Map2->Load(IDB_EARTHMAP_2048, _T("PNG"), LFCommDlgDLL.hResource));
 	}
 	m_Indicator = new CGdiPlusBitmapResource();
-	m_Indicator->Load(IDB_LOCATIONINDICATOR_16, _T("PNG"), LFCommDlgDLL.hResource);
+	ENSURE(m_Indicator->Load(IDB_LOCATIONINDICATOR_16, _T("PNG"), LFCommDlgDLL.hResource));
 	m_Airport = NULL;
 	m_Location.Latitude = 0;
 	m_Location.Longitude = 0;
