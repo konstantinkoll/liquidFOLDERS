@@ -375,7 +375,10 @@ BOOL LFApplication::ShowNagScreen(UINT Level, CWnd* pWndParent, BOOL Abort)
 
 CString LFApplication::GetDefaultFontFace()
 {
-	return (OSVersion==OS_XP ? _T("Arial") : _T("Segoe UI"));
+	LOGFONT lf;
+	SystemParametersInfo(SPI_GETICONTITLELOGFONT, sizeof(LOGFONT), &lf, 0);
+
+	return lf.lfFaceName;
 }
 
 void LFApplication::SendMail(CString Subject)
