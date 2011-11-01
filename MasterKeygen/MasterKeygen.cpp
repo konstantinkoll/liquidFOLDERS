@@ -45,11 +45,9 @@ int main(int argc, char* argv[])
 
 	std::ofstream out(argv[1]);
 	out << "RSA Parameters:" << endl;
-	out << "char* n = \"" << params.GetModulus() << "\"" << endl;
-	//out << "char* p =\"" << params.GetPrime1 << "\"" << endl;
-	//out << "char* q \"" << params.GetPrime2 << "\"" << endl;
-	out << "char* d = \"" << params.GetPrivateExponent() << "\"" << endl;
-	out << "char* e = \"" << params.GetPublicExponent() << "\"" << endl;
+	out << "char* n = \"" << params.GetModulus() << "\";" << endl;
+	out << "char* d = \"" << params.GetPrivateExponent() << "\";" << endl;
+	out << "char* e = \"" << params.GetPublicExponent() << "\";" << endl;
 	out << endl;
 
 	return 0;
