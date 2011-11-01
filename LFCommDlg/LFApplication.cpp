@@ -418,7 +418,7 @@ void LFApplication::OnAppPurchase()
 
 void LFApplication::OnAppEnterLicenseKey()
 {
-	LFLicenseDlg dlg(NULL);
+	LFLicenseDlg dlg(m_pActiveWnd);
 	dlg.DoModal();
 }
 
