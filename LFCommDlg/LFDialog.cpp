@@ -474,13 +474,8 @@ void LFDialog::OnInitMenuPopup(CMenu* pPopupMenu, UINT /*nIndex*/, BOOL /*bSysMe
 
 void LFDialog::OnEnterLicenseKey()
 {
-	if (!(GetExStyle() & WS_EX_APPWINDOW))
-		ShowWindow(SW_HIDE);
-
 	LFLicenseDlg dlg(this);
 	dlg.DoModal();
 
 	CheckLicenseKey();
-	if (!(GetExStyle() & WS_EX_APPWINDOW))
-		ShowWindow(SW_SHOW);
 }

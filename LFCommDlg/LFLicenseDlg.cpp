@@ -27,7 +27,7 @@ void LFLicenseDlg::DoDataExchange(CDataExchange* pDX)
 		CString key;
 		GetDlgItem(IDC_LICENSEKEY)->GetWindowText(key);
 
-		((LFApplication*)AfxGetApp())->WriteGlobalString(_T("License"), key);
+		p_App->WriteGlobalString(_T("License"), key);
 
 		CString caption;
 		CString message;
