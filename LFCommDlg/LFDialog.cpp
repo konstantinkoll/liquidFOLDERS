@@ -7,8 +7,6 @@
 #include "LFCore.h"
 #include "Resource.h"
 
-using namespace Gdiplus;
-
 
 // LFDialog
 //
