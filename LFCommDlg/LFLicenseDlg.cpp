@@ -7,8 +7,6 @@
 #include "LFCore.h"
 #include "Resource.h"
 
-using namespace Gdiplus;
-
 
 // LFLicenseDlg
 //
@@ -19,7 +17,6 @@ LFLicenseDlg::LFLicenseDlg(CWnd* pParent)
 	: LFDialog(IDD_ENTERLICENSEKEY, LFDS_Default, pParent)
 {
 }
-
 
 void LFLicenseDlg::DoDataExchange(CDataExchange* pDX)
 {

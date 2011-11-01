@@ -137,7 +137,6 @@ void CGroupBox::OnPaint()
 				pen.SetColor(Color(64, 60, 96, 112));
 				g.DrawPath(&pen, &path);
 
-				clr = 0xCC6600;
 				break;
 			}
 		case LFDS_White:
@@ -152,9 +151,9 @@ void CGroupBox::OnPaint()
 				Pen pen(Color(204, 204, 204));
 				g.DrawPath(&pen, &path);
 			}
-		default:
-			clr = 0x808080;
 		}
+
+		clr = 0xCC6600;
 	}
 
 	// Caption
