@@ -36,11 +36,11 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
-	CMFCToolBarImages Icons;
+	CMFCToolBarImages m_Icons;
 	CList<CTaskButton*> m_ButtonsLeft;
 	CList<CTaskButton*> m_ButtonsRight;
-	CBitmap BackBuffer;
-	INT BackBufferL;
-	INT BackBufferH;
+	CBitmap m_BackBuffer;
+	INT m_BackBufferL;
+	INT m_BackBufferH;
 	HBRUSH hBackgroundBrush;
 };

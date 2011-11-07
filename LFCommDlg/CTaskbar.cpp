@@ -16,14 +16,14 @@ CTaskbar::CTaskbar()
 	: CWnd()
 {
 	hBackgroundBrush = NULL;
-	BackBufferL = BackBufferH = 0;
+	m_BackBufferL = m_BackBufferH = 0;
 }
 
 BOOL CTaskbar::Create(CWnd* pParentWnd, UINT ResID, UINT nID)
 {
-	Icons.SetImageSize(CSize(16, 16));
+	m_Icons.SetImageSize(CSize(16, 16));
 	if (ResID)
-		Icons.Load(ResID);
+		m_Icons.Load(ResID);
 
 	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, LoadCursor(NULL, IDC_ARROW));
 
@@ -70,7 +70,7 @@ CTaskButton* CTaskbar::AddButton(UINT nID, INT IconID, BOOL ForceIcon, BOOL AddR
 	}
 
 	CTaskButton* btn = new CTaskButton();
-	btn->Create(AddRight ? _T("") : Caption, Caption, Hint, &Icons,
+	btn->Create(AddRight ? _T("") : Caption, Caption, Hint, &m_Icons,
 		ForceIcon || AddRight || (((LFApplication*)AfxGetApp())->OSVersion<OS_Seven) ? IconID : -1,
 		this, nID);
 	btn->EnableWindow(FALSE);
@@ -195,14 +195,14 @@ BOOL CTaskbar::OnEraseBkgnd(CDC* pDC)
 	dc.SetBkMode(TRANSPARENT);
 
 	CBitmap* pOldBitmap;
-	if ((BackBufferL!=rect.Width()) || (BackBufferH!=rect.Height()))
+	if ((m_BackBufferL!=rect.Width()) || (m_BackBufferH!=rect.Height()))
 	{
-		BackBufferL = rect.Width();
-		BackBufferH = rect.Height();
+		m_BackBufferL = rect.Width();
+		m_BackBufferH = rect.Height();
 
-		BackBuffer.DeleteObject();
-		BackBuffer.CreateCompatibleBitmap(pDC, rect.Width(), rect.Height());
-		pOldBitmap = dc.SelectObject(&BackBuffer);
+		m_BackBuffer.DeleteObject();
+		m_BackBuffer.CreateCompatibleBitmap(pDC, rect.Width(), rect.Height());
+		pOldBitmap = dc.SelectObject(&m_BackBuffer);
 
 		Graphics g(dc);
 
@@ -265,11 +265,11 @@ BOOL CTaskbar::OnEraseBkgnd(CDC* pDC)
 
 		if (hBackgroundBrush)
 			DeleteObject(hBackgroundBrush);
-		hBackgroundBrush = CreatePatternBrush(BackBuffer);
+		hBackgroundBrush = CreatePatternBrush(m_BackBuffer);
 	}
 	else
 	{
-		pOldBitmap = dc.SelectObject(&BackBuffer);
+		pOldBitmap = dc.SelectObject(&m_BackBuffer);
 	}
 
 	dc.SelectObject(pOldBitmap);
@@ -288,12 +288,12 @@ void CTaskbar::OnPaint()
 
 void CTaskbar::OnSysColorChange()
 {
-	BackBufferL = BackBufferH = 0;
+	m_BackBufferL = m_BackBufferH = 0;
 }
 
 LRESULT CTaskbar::OnThemeChanged()
 {
-	BackBufferL = BackBufferH = 0;
+	m_BackBufferL = m_BackBufferH = 0;
 	AdjustLayout();
 
 	return TRUE;
