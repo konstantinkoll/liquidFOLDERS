@@ -428,7 +428,7 @@ void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed)
 			break;
 
 		rectLabel.top += m_IconSize[0].cy+PADDING;
-		DrawLabel(dc, rectLabel, i, DT_CENTER | DT_WORDBREAK);
+		DrawLabel(dc, rectLabel, i, DT_CENTER | DT_WORDBREAK | DT_NOPREFIX);
 		break;
 	case LFViewDetails:
 		rectIcon.right = rectIcon.left+m_IconSize[0].cx;
@@ -463,7 +463,7 @@ void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed)
 			break;
 
 		rectLabel.left += m_IconSize[0].cx+PADDING;
-		DrawLabel(dc, rectLabel, i, DT_LEFT | DT_SINGLELINE);
+		DrawLabel(dc, rectLabel, i, DT_LEFT | DT_SINGLELINE | DT_NOPREFIX);
 		break;
 	case LFViewTiles:
 		rectIcon.right = rectIcon.left+m_IconSize[0].cx;
@@ -715,7 +715,7 @@ void CListView::DrawTileRows(CDC& dc, CRect& rect, LFItemDescriptor* i, GridItem
 		else
 			if (tmpStr[a][0]!=L'\0')
 			{
-				dc.DrawText(tmpStr[a], rect, DT_LEFT | DT_TOP | DT_SINGLELINE | DT_END_ELLIPSIS);
+				dc.DrawText(tmpStr[a], rect, DT_LEFT | DT_TOP | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
 				rect.OffsetRect(0, m_FontHeight[0]);
 			}
 
@@ -753,7 +753,7 @@ void CListView::DrawColumn(CDC& dc, CRect& rect, LFItemDescriptor* i, UINT Attr)
 	if (tmpStr[0]!=L'\0')
 	{
 		CRect rectText(rect);
-		dc.DrawText(tmpStr, rectText, (theApp.m_Attributes[Attr]->FormatRight ? DT_RIGHT : DT_LEFT) | DT_SINGLELINE | DT_END_ELLIPSIS);
+		dc.DrawText(tmpStr, rectText, (theApp.m_Attributes[Attr]->FormatRight ? DT_RIGHT : DT_LEFT) | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
 	}
 }
 
@@ -765,7 +765,7 @@ void CListView::DrawProperty(CDC& dc, CRect& rect, LFItemDescriptor* i, GridItem
 	{
 	case LFAttrFileName:
 		pOldFont = dc.SelectObject(&theApp.m_LargeFont);
-		DrawLabel(dc, rect, i, DT_LEFT | DT_SINGLELINE);
+		DrawLabel(dc, rect, i, DT_LEFT | DT_SINGLELINE | DT_NOPREFIX);
 		dc.SelectObject(pOldFont);
 
 		rect.top += m_FontHeight[1];

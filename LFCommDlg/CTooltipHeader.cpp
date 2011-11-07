@@ -168,7 +168,7 @@ void CTooltipHeader::OnPaint()
 
 					rectItem.DeflateRect(4, 0);
 
-					UINT nFormat = DT_SINGLELINE | DT_END_ELLIPSIS | DT_VCENTER;
+					UINT nFormat = DT_SINGLELINE | DT_END_ELLIPSIS | DT_VCENTER | DT_NOPREFIX;
 					switch (hdi.fmt & HDF_JUSTIFYMASK)
 					{
 					case HDF_LEFT:

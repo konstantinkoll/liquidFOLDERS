@@ -266,7 +266,7 @@ BOOL CFileDropWnd::OnEraseBkgnd(CDC* pDC)
 	CRect rtext(rlayout);
 	rtext.top += 120;
 
-	const UINT textflags = DT_VCENTER | DT_CENTER | DT_SINGLELINE;
+	const UINT textflags = DT_VCENTER | DT_CENTER | DT_SINGLELINE | DT_NOPREFIX;
 
 	if ((m_IsAeroWindow) || (hTheme))
 	{

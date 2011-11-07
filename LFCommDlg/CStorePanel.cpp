@@ -176,19 +176,19 @@ void CStorePanel::OnPaint()
 		INT y = max(0, (rect.Height()-rows*cy)/2);
 		CRect rectText(m_IconSizeX+GUTTER, y, rect.right, y+cy);
 
-		dc.DrawText(p_Item->CoreAttributes.FileName, -1, rectText, DT_SINGLELINE | DT_END_ELLIPSIS | DT_LEFT);
+		dc.DrawText(p_Item->CoreAttributes.FileName, -1, rectText, DT_SINGLELINE | DT_END_ELLIPSIS | DT_LEFT | DT_NOPREFIX);
 		rectText.OffsetRect(0, cy);
 		if (p_Item->CoreAttributes.Comment[0]!=L'\0')
 		{
-			dc.DrawText(p_Item->CoreAttributes.Comment, -1, rectText, DT_SINGLELINE | DT_END_ELLIPSIS | DT_LEFT);
+			dc.DrawText(p_Item->CoreAttributes.Comment, -1, rectText, DT_SINGLELINE | DT_END_ELLIPSIS | DT_LEFT | DT_NOPREFIX);
 			rectText.OffsetRect(0, cy);
 		}
 		if (p_Item->Description[0]!=L'\0')
 		{
-			dc.DrawText(p_Item->Description, -1, rectText, DT_SINGLELINE | DT_END_ELLIPSIS | DT_LEFT);
+			dc.DrawText(p_Item->Description, -1, rectText, DT_SINGLELINE | DT_END_ELLIPSIS | DT_LEFT | DT_NOPREFIX);
 			rectText.OffsetRect(0, cy);
 		}
-		dc.DrawText(tmpStr, rectText, DT_SINGLELINE | DT_END_ELLIPSIS | DT_LEFT);
+		dc.DrawText(tmpStr, rectText, DT_SINGLELINE | DT_END_ELLIPSIS | DT_LEFT | DT_NOPREFIX);
 
 		dc.SelectObject(pOldFont);
 	}

@@ -91,10 +91,10 @@ void CLabel::OnPaint()
 	dc.SetTextColor(Themed ? 0x993300 : GetSysColor(COLOR_WINDOWTEXT));
 
 	CRect rectText(rect.left+GUTTER, rect.top+PADDING, rect.right, rect.bottom-PADDING);
-	dc.DrawText(m_Text, rectText, DT_LEFT | DT_BOTTOM | DT_SINGLELINE | DT_END_ELLIPSIS);
+	dc.DrawText(m_Text, rectText, DT_LEFT | DT_BOTTOM | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
 
 	CRect rectLine(rectText);
-	dc.DrawText(m_Text, rectLine, DT_LEFT | DT_BOTTOM | DT_SINGLELINE | DT_END_ELLIPSIS | DT_CALCRECT);
+	dc.DrawText(m_Text, rectLine, DT_LEFT | DT_BOTTOM | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX | DT_CALCRECT);
 	rectLine.right += 2*PADDING;
 
 	dc.SelectObject(pOldFont);

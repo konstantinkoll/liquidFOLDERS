@@ -915,10 +915,10 @@ void CFileView::DrawCategory(CDC& dc, LPRECT rectCategory, ItemCategory* ic, BOO
 
 	CFont* pOldFont = dc.SelectObject(&theApp.m_LargeFont);
 	dc.SetTextColor(Themed ? 0x993300 : GetSysColor(COLOR_WINDOWTEXT));
-	dc.DrawText(ic->Caption, rect, DT_LEFT | DT_TOP | DT_SINGLELINE | DT_END_ELLIPSIS);
+	dc.DrawText(ic->Caption, rect, DT_LEFT | DT_TOP | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
 
 	CRect rectLine(rect);
-	dc.DrawText(ic->Caption, rectLine, DT_LEFT | DT_TOP | DT_SINGLELINE | DT_END_ELLIPSIS | DT_CALCRECT);
+	dc.DrawText(ic->Caption, rectLine, DT_LEFT | DT_TOP | DT_SINGLELINE | DT_END_ELLIPSIS | DT_CALCRECT | DT_NOPREFIX);
 	rectLine.right += 2*CategoryPadding;
 
 	if (rectLine.right<=rect.right)
@@ -938,7 +938,7 @@ void CFileView::DrawCategory(CDC& dc, LPRECT rectCategory, ItemCategory* ic, BOO
 
 		rect.top += m_FontHeight[1];
 		dc.SelectObject(&theApp.m_DefaultFont);
-		dc.DrawText(ic->Hint, rect, DT_LEFT | DT_TOP | DT_SINGLELINE | DT_END_ELLIPSIS);
+		dc.DrawText(ic->Hint, rect, DT_LEFT | DT_TOP | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
 	}
 
 	dc.SelectObject(pOldFont);

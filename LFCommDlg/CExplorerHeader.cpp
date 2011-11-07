@@ -261,13 +261,13 @@ void CExplorerHeader::OnPaint()
 	CSize sz = dc.GetTextExtent(m_Caption);
 	CRect rectText(BORDERLEFT, BORDER, m_RightEdge, BORDER+sz.cy);
 	dc.SetTextColor(Themed ? m_CaptionCol : GetSysColor(COLOR_WINDOWTEXT));
-	dc.DrawText(m_Caption, rectText, DT_LEFT | DT_VCENTER | DT_SINGLELINE | DT_END_ELLIPSIS);
+	dc.DrawText(m_Caption, rectText, DT_LEFT | DT_VCENTER | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
 
 	dc.SelectObject(&p_App->m_DefaultFont);
 	sz = dc.GetTextExtent(m_Hint);
 	rectText.SetRect(BORDERLEFT, rect.bottom-sz.cy-BORDER-1, m_RightEdge, rect.bottom-BORDER-1);
 	dc.SetTextColor(Themed ? m_HintCol : GetSysColor(COLOR_WINDOWTEXT));
-	dc.DrawText(m_Hint, rectText, DT_LEFT | DT_VCENTER | DT_SINGLELINE | DT_END_ELLIPSIS);
+	dc.DrawText(m_Hint, rectText, DT_LEFT | DT_VCENTER | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
 
 	if (!Themed)
 		dc.SelectStockObject(DEFAULT_GUI_FONT);

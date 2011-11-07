@@ -166,7 +166,7 @@ void CGroupBox::OnPaint()
 		FillRect(dc, rectCaption, brush);
 
 	dc.SetTextColor(clr);
-	dc.DrawText(caption, rectCaption, DT_VCENTER | DT_CENTER | DT_END_ELLIPSIS | DT_SINGLELINE);
+	dc.DrawText(caption, rectCaption, DT_VCENTER | DT_CENTER | DT_END_ELLIPSIS | DT_SINGLELINE | DT_NOPREFIX);
 
 	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);
 	dc.SelectObject(pOldFont);

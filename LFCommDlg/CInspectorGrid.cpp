@@ -139,7 +139,7 @@ void CProperty::DrawValue(CDC& dc, CRect rect)
 	ToString(tmpStr, 256);
 
 	CFont* pOldFont = m_Multiple ? dc.SelectObject(&p_Parent->m_ItalicFont) : m_Modified ? dc.SelectObject(&p_Parent->m_BoldFont) : NULL;
-	dc.DrawText(tmpStr, -1, rect, DT_LEFT | DT_VCENTER | DT_END_ELLIPSIS | DT_SINGLELINE);
+	dc.DrawText(tmpStr, -1, rect, DT_LEFT | DT_VCENTER | DT_END_ELLIPSIS | DT_SINGLELINE | DT_NOPREFIX);
 	if (pOldFont)
 		dc.SelectObject(pOldFont);
 }
@@ -1163,10 +1163,10 @@ void CInspectorGrid::DrawCategory(CDC& dc, CRect& rect, WCHAR* Text, BOOL Themed
 	rect.DeflateRect(0, PADDING);
 	rect.left += GUTTER;
 
-	dc.DrawText(Text, rect, DT_LEFT | DT_BOTTOM | DT_SINGLELINE | DT_END_ELLIPSIS);
+	dc.DrawText(Text, rect, DT_LEFT | DT_BOTTOM | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
 
 	CRect rectLine(rect);
-	dc.DrawText(Text, rectLine, DT_LEFT | DT_BOTTOM | DT_SINGLELINE | DT_END_ELLIPSIS | DT_CALCRECT);
+	dc.DrawText(Text, rectLine, DT_LEFT | DT_BOTTOM | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX | DT_CALCRECT);
 	rectLine.right += 2*PADDING;
 
 	if (rectLine.right<=rect.right)
@@ -1423,7 +1423,7 @@ void CInspectorGrid::OnPaint()
 
 			CRect rectLabel(GUTTER, pProp->Top-m_VScrollPos, m_LabelWidth, pProp->Bottom-m_VScrollPos);
 			dc.SetTextColor(clr1);
-			dc.DrawText(CString(pProp->Name)+_T(":"), rectLabel, DT_RIGHT | DT_VCENTER | DT_END_ELLIPSIS | DT_SINGLELINE);
+			dc.DrawText(CString(pProp->Name)+_T(":"), rectLabel, DT_RIGHT | DT_VCENTER | DT_END_ELLIPSIS | DT_NOPREFIX | DT_SINGLELINE);
 
 			rectLabel.left = rectLabel.right+GUTTER;
 			rectLabel.right = rect.Width();
@@ -1481,7 +1481,7 @@ void CInspectorGrid::OnPaint()
 					rectButton.OffsetRect(1, 1);
 
 				dc.SetTextColor(GetSysColor(COLOR_WINDOWTEXT));
-				dc.DrawText(_T("..."), rectButton, DT_VCENTER | DT_CENTER | DT_SINGLELINE);
+				dc.DrawText(_T("..."), rectButton, DT_VCENTER | DT_CENTER | DT_SINGLELINE | DT_NOPREFIX);
 			}
 
 			dc.SetTextColor(clr2);

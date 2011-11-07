@@ -310,7 +310,7 @@ void LFTooltip::OnPaint()
 	if (!m_strCaption.IsEmpty())
 	{
 		CFont* pOldFont = dc.SelectObject(&afxGlobalData.fontBold);
-		dc.DrawText(m_strCaption, rect, DT_LEFT | DT_SINGLELINE | DT_END_ELLIPSIS);
+		dc.DrawText(m_strCaption, rect, DT_LEFT | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
 		rect.top += dc.GetTextExtent(m_strCaption).cy+AFX_TEXT_MARGIN;
 		dc.SelectObject(pOldFont);
 	}
@@ -335,7 +335,7 @@ void LFTooltip::OnPaint()
 				strText.Delete(0, pos+1);
 			}
 
-			dc.DrawText(Line, rect, DT_LEFT | DT_SINGLELINE | DT_END_ELLIPSIS);
+			dc.DrawText(Line, rect, DT_LEFT | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
 			rect.top += m_TextHeight;
 		}
 

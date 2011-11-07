@@ -239,10 +239,10 @@ void CExplorerNotification::OnPaint()
 
 	CFont* pOldFont = dc.SelectObject(&p_App->m_DefaultFont);
 	dc.SetTextColor(Themed ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT));
-	dc.DrawText(m_Text, rectText, DT_WORDBREAK | DT_VCENTER | DT_END_ELLIPSIS | DT_CALCRECT);
+	dc.DrawText(m_Text, rectText, DT_WORDBREAK | DT_VCENTER | DT_END_ELLIPSIS | DT_NOPREFIX | DT_CALCRECT);
 	if (rect.Height()>rectText.Height())
 		rect.top += (rect.Height()-rectText.Height())/2;
-	dc.DrawText(m_Text, rect, DT_WORDBREAK | DT_VCENTER | DT_END_ELLIPSIS);
+	dc.DrawText(m_Text, rect, DT_WORDBREAK | DT_VCENTER | DT_END_ELLIPSIS | DT_NOPREFIX);
 	dc.SelectObject(pOldFont);
 
 	pDC.BitBlt(0, 0, rectClient.Width(), rectClient.Height(), &dc, 0, 0, SRCCOPY);

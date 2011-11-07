@@ -1614,7 +1614,7 @@ void CTreeView::OnPaint()
 						dc.DrawFrameControl(rectButton, DFC_BUTTON, uiStyle);
 					}
 
-					dc.DrawText(curCell->pItem->Name, -1, rectItem, DT_VCENTER | DT_SINGLELINE | DT_END_ELLIPSIS);
+					dc.DrawText(curCell->pItem->Name, -1, rectItem, DT_VCENTER | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
 
 					dc.MoveTo(x+((curCell->Flags & CF_ISSIBLING) ? GUTTER/2 : 0), y+m_RowHeight/2);
 					dc.LineTo(x+GUTTER+BORDER-1, y+m_RowHeight/2);
@@ -1689,7 +1689,7 @@ void CTreeView::OnPaint()
 		ENSURE(tmpStr.LoadString(IDS_NOTHINGTODISPLAY));
 
 		dc.SetTextColor(Themed ? 0x6D6D6D : GetSysColor(COLOR_3DFACE));
-		dc.DrawText(tmpStr, -1, rectText, DT_CENTER | DT_SINGLELINE | DT_END_ELLIPSIS);
+		dc.DrawText(tmpStr, -1, rectText, DT_CENTER | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
 	}
 
 	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);
