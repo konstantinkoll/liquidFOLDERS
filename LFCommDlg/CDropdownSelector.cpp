@@ -113,14 +113,6 @@ BOOL CDropdownWindow::PreTranslateMessage(MSG* pMsg)
 	return CWnd::PreTranslateMessage(pMsg);
 }
 
-BOOL CDropdownWindow::OnCommand(WPARAM wParam, LPARAM lParam) 
-{
-	if ((UINT)HIWORD(wParam)==WM_KILLFOCUS)
-		GetOwner()->PostMessage(WM_CLOSEDROPDOWN);
-
-	return CWnd::OnCommand(wParam, lParam);
-}
-
 void CDropdownWindow::AdjustLayout()
 {
 	if (!IsWindow(m_wndList))

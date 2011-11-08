@@ -37,7 +37,6 @@ public:
 	CDropdownWindow();
 
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
-	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
 	virtual void AdjustLayout();
 
 	BOOL Create(CWnd* pParentWnd, CRect rectDrop, UINT DialogResID=0);
