@@ -215,31 +215,31 @@ void CGlassWindow::OnDestroy()
 
 BOOL CGlassWindow::OnEraseBkgnd(CDC* pDC)
 {
-	CRect rclient;
-	GetClientRect(rclient);
+	CRect rectClient;
+	GetClientRect(rectClient);
 
 	if ((m_Margins.cxLeftWidth!=-1) && (m_Margins.cxRightWidth!=-1) && (m_Margins.cyTopHeight!=-1) && (m_Margins.cyBottomHeight!=-1))
 	{
 		CRect rectLayout;
 		GetLayoutRect(rectLayout);
 
-		CRect rc(rclient);
+		CRect rc(rectClient);
 		rc.right = rectLayout.left = rectLayout.left+m_Margins.cxLeftWidth;
 		DrawFrameBackground(pDC, rc);
 
-		rc.CopyRect(rclient);
+		rc.CopyRect(rectClient);
 		rc.left = rectLayout.right = rectLayout.right-m_Margins.cxRightWidth;
 		DrawFrameBackground(pDC, rc);
 
 		if (m_Margins.cyTopHeight)
 		{
-			CRect rc(rclient);
+			CRect rc(rectClient);
 			rc.bottom = rectLayout.top = rectLayout.top+m_Margins.cyTopHeight;
 			DrawFrameBackground(pDC, rc);
 		}
 		if (m_Margins.cyBottomHeight)
 		{
-			CRect rc(rclient);
+			CRect rc(rectClient);
 			rc.top = rectLayout.bottom = rectLayout.bottom-m_Margins.cyBottomHeight;
 			DrawFrameBackground(pDC, rc);
 		}
@@ -249,7 +249,7 @@ BOOL CGlassWindow::OnEraseBkgnd(CDC* pDC)
 	}
 	else
 	{
-		DrawFrameBackground(pDC, rclient);
+		DrawFrameBackground(pDC, rectClient);
 	}
 
 	return TRUE;
