@@ -28,7 +28,7 @@ class CJournalButton : public CWnd
 public:
 	CJournalButton();
 
-	BOOL Create(UINT SuggestedHeight, CGlasWindow* pParentWnd, UINT nID);
+	BOOL Create(UINT SuggestedHeight, CGlassWindow* pParentWnd, UINT nID);
 	UINT GetPreferredHeight();
 	UINT GetPreferredWidth();
 

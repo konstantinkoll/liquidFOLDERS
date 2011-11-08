@@ -132,7 +132,7 @@ CStoreSelector::~CStoreSelector()
 void CStoreSelector::CreateDropdownWindow(CRect rectDrop)
 {
 	p_DropWindow = new CStoreDropdownWindow();
-	((CGlasWindow*)GetParent())->RegisterPopupWindow(p_DropWindow);
+	((CGlassWindow*)GetParent())->RegisterPopupWindow(p_DropWindow);
 	p_DropWindow->Create(this, rectDrop, IDD_CREATENEWSTORE);
 }
 

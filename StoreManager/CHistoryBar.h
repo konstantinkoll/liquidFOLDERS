@@ -36,7 +36,7 @@ class CHistoryBar : public CWnd
 public:
 	CHistoryBar();
 
-	BOOL Create(CGlasWindow* pParentWnd, UINT nID);
+	BOOL Create(CGlassWindow* pParentWnd, UINT nID);
 	UINT GetPreferredHeight();
 	void SetHistory(LFFilter* ActiveFilter, BreadcrumbItem* Breadcrumbs);
 

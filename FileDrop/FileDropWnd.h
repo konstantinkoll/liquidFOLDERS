@@ -8,7 +8,7 @@
 
 // CFileDropWnd
 
-class CFileDropWnd : public CGlasWindow
+class CFileDropWnd : public CGlassWindow
 {
 public:
 	CFileDropWnd();

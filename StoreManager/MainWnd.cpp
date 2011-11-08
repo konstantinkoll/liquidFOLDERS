@@ -135,7 +135,7 @@ BOOL CMainWnd::Create(BOOL IsClipboard)
 	CString caption;
 	ENSURE(caption.LoadString(IsClipboard ? IDR_CLIPBOARD : IDR_APPLICATION));
 
-	return CGlasWindow::Create(WS_MINIMIZEBOX | WS_MAXIMIZEBOX, className, caption, rect);
+	return CGlassWindow::Create(WS_MINIMIZEBOX | WS_MAXIMIZEBOX, className, caption, rect);
 }
 
 BOOL CMainWnd::CreateClipboard()
@@ -199,7 +199,7 @@ BOOL CMainWnd::PreTranslateMessage(MSG* pMsg)
 		return TRUE;
 	}
 
-	return CGlasWindow::PreTranslateMessage(pMsg);
+	return CGlassWindow::PreTranslateMessage(pMsg);
 }
 
 BOOL CMainWnd::OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo)
@@ -208,7 +208,7 @@ BOOL CMainWnd::OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* p
 	if (m_wndMainView.OnCmdMsg(nID, nCode, pExtra, pHandlerInfo))
 		return TRUE;
 
-	return CGlasWindow::OnCmdMsg(nID, nCode, pExtra, pHandlerInfo);
+	return CGlassWindow::OnCmdMsg(nID, nCode, pExtra, pHandlerInfo);
 }
 
 void CMainWnd::AdjustLayout()
@@ -345,7 +345,7 @@ void CMainWnd::UpdateHistory()
 }
 
 
-BEGIN_MESSAGE_MAP(CMainWnd, CGlasWindow)
+BEGIN_MESSAGE_MAP(CMainWnd, CGlassWindow)
 	ON_WM_CREATE()
 	ON_WM_DESTROY()
 	ON_WM_SETFOCUS()
@@ -379,7 +379,7 @@ END_MESSAGE_MAP()
 
 INT CMainWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
-	if (CGlasWindow::OnCreate(lpCreateStruct)==-1)
+	if (CGlassWindow::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
 	theApp.AddFrame(this);
@@ -423,7 +423,7 @@ INT CMainWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 void CMainWnd::OnDestroy()
 {
-	CGlasWindow::OnDestroy();
+	CGlassWindow::OnDestroy();
 	theApp.KillFrame(this);
 }
 

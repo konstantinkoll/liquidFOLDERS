@@ -36,7 +36,7 @@ DWORD WINAPI WorkerMaintenance(void* lParam)
 //
 
 CFileDropWnd::CFileDropWnd()
-	: CGlasWindow()
+	: CGlassWindow()
 {
 	m_hIcon = NULL;
 	m_AlwaysOnTop = m_StoreValid = m_Hover = FALSE;
@@ -55,7 +55,7 @@ BOOL CFileDropWnd::Create()
 	CString className = AfxRegisterWndClass(CS_DBLCLKS, LoadCursor(NULL, IDC_ARROW), NULL, m_hIcon);
 
 	CRect rect(0, 0, 144, 190);
-	return CGlasWindow::Create(WS_MINIMIZEBOX, className, _T("FileDrop"), rect);
+	return CGlassWindow::Create(WS_MINIMIZEBOX, className, _T("FileDrop"), rect);
 }
 
 BOOL CFileDropWnd::PreTranslateMessage(MSG* pMsg)
@@ -78,7 +78,7 @@ BOOL CFileDropWnd::PreTranslateMessage(MSG* pMsg)
 		break;
 	}
 
-	return CGlasWindow::PreTranslateMessage(pMsg);
+	return CGlassWindow::PreTranslateMessage(pMsg);
 }
 
 void CFileDropWnd::UpdateStore()
@@ -128,7 +128,7 @@ void CFileDropWnd::SetWindowRect(INT x, INT y, BOOL TopMost)
 }
 
 
-BEGIN_MESSAGE_MAP(CFileDropWnd, CGlasWindow)
+BEGIN_MESSAGE_MAP(CFileDropWnd, CGlassWindow)
 	ON_WM_CREATE()
 	ON_WM_CLOSE()
 	ON_WM_ERASEBKGND()
@@ -158,7 +158,7 @@ END_MESSAGE_MAP()
 
 INT CFileDropWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
-	if (CGlasWindow::OnCreate(lpCreateStruct)==-1)
+	if (CGlassWindow::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
 	// Aero
@@ -228,7 +228,7 @@ void CFileDropWnd::OnClose()
 	theApp.WriteInt(_T("X"), m_PosX);
 	theApp.WriteInt(_T("Y"), m_PosY);
 
-	CGlasWindow::OnClose();
+	CGlassWindow::OnClose();
 }
 
 BOOL CFileDropWnd::OnEraseBkgnd(CDC* pDC)
@@ -255,7 +255,7 @@ BOOL CFileDropWnd::OnEraseBkgnd(CDC* pDC)
 	HBITMAP hOldBitmap = (HBITMAP)dc.SelectObject(hBmp);
 
 	// Hintergrund
-	CGlasWindow::OnEraseBkgnd(&dc);
+	CGlassWindow::OnEraseBkgnd(&dc);
 
 	// Dropzone
 	POINT pt = { rlayout.left+(rlayout.Width()-128)/2, rlayout.top };
@@ -336,7 +336,7 @@ void CFileDropWnd::OnMouseMove(UINT nFlags, CPoint point)
 		m_Hover = TRUE;
 	}
 
-	CGlasWindow::OnMouseMove(nFlags, point);
+	CGlassWindow::OnMouseMove(nFlags, point);
 }
 
 void CFileDropWnd::OnMouseLeave()
@@ -344,7 +344,7 @@ void CFileDropWnd::OnMouseLeave()
 	m_TooltipCtrl.Deactivate();
 	m_Hover = FALSE;
 
-	CGlasWindow::OnMouseLeave();
+	CGlassWindow::OnMouseLeave();
 }
 
 void CFileDropWnd::OnMouseHover(UINT nFlags, CPoint point)
@@ -412,13 +412,13 @@ void CFileDropWnd::OnSysCommand(UINT nID, LPARAM lParam)
 		OnAlwaysOnTop();
 		break;
 	default:
-		CGlasWindow::OnSysCommand(nID, lParam);
+		CGlassWindow::OnSysCommand(nID, lParam);
 	}
 }
 
 void CFileDropWnd::OnMove(INT x, INT y)
 {
-	CGlasWindow::OnMove(x, y);
+	CGlassWindow::OnMove(x, y);
 
 	CRect rect;
 	GetWindowRect(rect);

@@ -3,7 +3,7 @@
 //
 
 #pragma once
-#include "CGlasWindow.h"
+#include "CGlassWindow.h"
 #include "CExplorerList.h"
 #include "CBottomArea.h"
 #include "LFTooltip.h"
@@ -72,7 +72,7 @@ public:
 	virtual void SetEmpty(BOOL Repaint=TRUE);
 	virtual void GetTooltipData(HICON& hIcon, CSize& Size, CString& Caption, CString& Hint);
 
-	BOOL Create(CString EmptyHint, CString Caption, CGlasWindow* pParentWnd, UINT nID);
+	BOOL Create(CString EmptyHint, CString Caption, CGlassWindow* pParentWnd, UINT nID);
 	void SetItem(HICON hIcon, CString DisplayName, BOOL Repaint=TRUE, UINT NotifyCode=NM_SELCHANGED);
 	UINT GetPreferredHeight();
 	BOOL IsEmpty();

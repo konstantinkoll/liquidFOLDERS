@@ -13,7 +13,7 @@
 #define IDLIST     7
 
 CFilterWnd::CFilterWnd()
-	: CGlasPane()
+	: CGlassPane()
 {
 	m_FontHeight = 0;
 	m_StoreID[0]= '\0';
@@ -25,7 +25,7 @@ CFilterWnd::~CFilterWnd()
 
 void CFilterWnd::SetOwner(CWnd* pOwnerWnd)
 {
-	CGlasPane::SetOwner(pOwnerWnd);
+	CGlassPane::SetOwner(pOwnerWnd);
 
 	m_wndList.SetOwner(pOwnerWnd);
 }
@@ -155,7 +155,7 @@ LFFilter* CFilterWnd::CreateFilter()
 }
 
 
-BEGIN_MESSAGE_MAP(CFilterWnd, CGlasPane)
+BEGIN_MESSAGE_MAP(CFilterWnd, CGlassPane)
 	ON_WM_CREATE()
 	ON_WM_CONTEXTMENU()
 	ON_NOTIFY(NM_DBLCLK, IDLIST, OnDoubleClick)
@@ -172,7 +172,7 @@ END_MESSAGE_MAP()
 
 INT CFilterWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
-	if (CGlasPane::OnCreate(lpCreateStruct)==-1)
+	if (CGlassPane::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
 	CDC* dc = GetWindowDC();

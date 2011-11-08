@@ -415,15 +415,15 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CGlasEdit.cpp"
+				RelativePath=".\CGlassEdit.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\CGlasPane.cpp"
+				RelativePath=".\CGlassPane.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\CGlasWindow.cpp"
+				RelativePath=".\CGlassWindow.cpp"
 				>
 			</File>
 			<File
@@ -705,15 +705,15 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CGlasEdit.h"
+				RelativePath=".\CGlassEdit.h"
 				>
 			</File>
 			<File
-				RelativePath=".\CGlasPane.h"
+				RelativePath=".\CGlassPane.h"
 				>
 			</File>
 			<File
-				RelativePath=".\CGlasWindow.h"
+				RelativePath=".\CGlassWindow.h"
 				>
 			</File>
 			<File

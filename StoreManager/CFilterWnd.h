@@ -7,7 +7,7 @@
 // CFilterWnd
 //
 
-class CFilterWnd : public CGlasPane
+class CFilterWnd : public CGlassPane
 {
 public:
 	CFilterWnd();

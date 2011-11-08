@@ -61,7 +61,7 @@ protected:
 // CInspectorWnd
 //
 
-class CInspectorWnd : public CGlasPane
+class CInspectorWnd : public CGlassPane
 {
 public:
 	CInspectorWnd();

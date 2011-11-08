@@ -126,7 +126,7 @@ void CIconHeader::SetPreview(LFItemDescriptor* i, CString Description)
 #define StatusMultiple     2
 
 CInspectorWnd::CInspectorWnd()
-	: CGlasPane()
+	: CGlassPane()
 {
 	m_Count = 0;
 	p_LastItem = NULL;
@@ -459,7 +459,7 @@ void CInspectorWnd::UpdateFinish()
 }
 
 
-BEGIN_MESSAGE_MAP(CInspectorWnd, CGlasPane)
+BEGIN_MESSAGE_MAP(CInspectorWnd, CGlassPane)
 	ON_WM_CREATE()
 	ON_WM_SETFOCUS()
 	ON_WM_CONTEXTMENU()
@@ -474,7 +474,7 @@ END_MESSAGE_MAP()
 
 INT CInspectorWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
-	if (CGlasPane::OnCreate(lpCreateStruct)==-1)
+	if (CGlassPane::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
 	CString oldBase = theApp.GetRegistryBase();

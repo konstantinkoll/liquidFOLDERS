@@ -1,23 +1,23 @@
 
-// CGlasPane.cpp: Implementierung der Klasse CGlasPane
+// CGlassPane.cpp: Implementierung der Klasse CGlassPane
 //
 
 #include "stdafx.h"
 #include "LFCommDlg.h"
 
 
-// CGlasPane
+// CGlassPane
 //
 
 #define GRIPPER    4
 
-CGlasPane::CGlasPane()
+CGlassPane::CGlassPane()
 	: CWnd()
 {
 	m_MaxWidth = 128+GRIPPER;
 }
 
-BOOL CGlasPane::Create(BOOL IsLeft, INT PreferredWidth, CWnd* pParentWnd, UINT nID)
+BOOL CGlassPane::Create(BOOL IsLeft, INT PreferredWidth, CWnd* pParentWnd, UINT nID)
 {
 	m_IsLeft = IsLeft;
 	m_PreferredWidth = PreferredWidth;
@@ -30,22 +30,22 @@ BOOL CGlasPane::Create(BOOL IsLeft, INT PreferredWidth, CWnd* pParentWnd, UINT n
 	return CWnd::CreateEx(WS_EX_CONTROLPARENT, className, _T(""), dwStyle, rect, pParentWnd, nID);
 }
 
-void CGlasPane::AdjustLayout()
+void CGlassPane::AdjustLayout()
 {
 }
 
-INT CGlasPane::GetPreferredWidth()
+INT CGlassPane::GetPreferredWidth()
 {
 	return m_PreferredWidth;
 }
 
-void CGlasPane::SetMaxWidth(INT MaxWidth)
+void CGlassPane::SetMaxWidth(INT MaxWidth)
 {
 	m_MaxWidth = MaxWidth-GRIPPER;
 }
 
 
-BEGIN_MESSAGE_MAP(CGlasPane, CWnd)
+BEGIN_MESSAGE_MAP(CGlassPane, CWnd)
 	ON_WM_NCCALCSIZE()
 	ON_WM_NCHITTEST()
 	ON_WM_NCPAINT()
@@ -55,7 +55,7 @@ BEGIN_MESSAGE_MAP(CGlasPane, CWnd)
 	ON_WM_CTLCOLOR()
 END_MESSAGE_MAP()
 
-void CGlasPane::OnNcCalcSize(BOOL bCalcValidRects, NCCALCSIZE_PARAMS* lpncsp)
+void CGlassPane::OnNcCalcSize(BOOL bCalcValidRects, NCCALCSIZE_PARAMS* lpncsp)
 {
 	CWnd::OnNcCalcSize(bCalcValidRects, lpncsp);
 
@@ -69,7 +69,7 @@ void CGlasPane::OnNcCalcSize(BOOL bCalcValidRects, NCCALCSIZE_PARAMS* lpncsp)
 	}
 }
 
-LRESULT CGlasPane::OnNcHitTest(CPoint point)
+LRESULT CGlassPane::OnNcHitTest(CPoint point)
 {
 	CRect rectWindow;
 	GetWindowRect(&rectWindow);
@@ -83,7 +83,7 @@ LRESULT CGlasPane::OnNcHitTest(CPoint point)
 	return rectClient.PtInRect(point) ? HTCLIENT : m_IsLeft ? HTRIGHT : HTLEFT;
 }
 
-void CGlasPane::OnNcPaint()
+void CGlassPane::OnNcPaint()
 {
 	CWindowDC pDC(this);
 
@@ -102,7 +102,7 @@ void CGlasPane::OnNcPaint()
 	pDC.SelectClipRgn(NULL);
 }
 
-BOOL CGlasPane::OnEraseBkgnd(CDC* pDC)
+BOOL CGlassPane::OnEraseBkgnd(CDC* pDC)
 {
 	CRect rect;
 	GetClientRect(rect);
@@ -112,7 +112,7 @@ BOOL CGlasPane::OnEraseBkgnd(CDC* pDC)
 	return TRUE;
 }
 
-void CGlasPane::OnSize(UINT nType, INT cx, INT cy)
+void CGlassPane::OnSize(UINT nType, INT cx, INT cy)
 {
 	if (GetCapture()==this)
 		m_PreferredWidth = cx+GRIPPER;
@@ -123,7 +123,7 @@ void CGlasPane::OnSize(UINT nType, INT cx, INT cy)
 	GetParent()->SendMessage(WM_ADJUSTLAYOUT);
 }
 
-void CGlasPane::OnGetMinMaxInfo(MINMAXINFO* lpMMI)
+void CGlassPane::OnGetMinMaxInfo(MINMAXINFO* lpMMI)
 {
 	CWnd::OnGetMinMaxInfo(lpMMI);
 
@@ -131,7 +131,7 @@ void CGlasPane::OnGetMinMaxInfo(MINMAXINFO* lpMMI)
 	lpMMI->ptMaxTrackSize.x = m_MaxWidth+GRIPPER;
 }
 
-HBRUSH CGlasPane::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
+HBRUSH CGlassPane::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 {
 	// Call base class version at first, else it will override changes
 	HBRUSH hbr = CWnd::OnCtlColor(pDC, pWnd, nCtlColor);

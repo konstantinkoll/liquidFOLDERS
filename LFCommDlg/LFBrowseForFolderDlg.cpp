@@ -3,7 +3,7 @@
 //
 
 #include "stdafx.h"
-#include "CGlasWindow.h"
+#include "CGlassWindow.h"
 #include "LFBrowseForFolderDlg.h"
 #include "resource.h"
 

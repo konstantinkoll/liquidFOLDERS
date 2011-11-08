@@ -27,7 +27,7 @@
 #define WM_SENDTO                WM_USER+207
 #define WM_BEGINDRAGDROP         WM_USER+208
 
-class CMainWnd : public CGlasWindow
+class CMainWnd : public CGlassWindow
 {
 public:
 	CMainWnd();
@@ -52,7 +52,7 @@ protected:
 	HICON m_hIcon;
 	CJournalButton m_wndJournalButton;
 	CHistoryBar m_wndHistory;
-	CGlasEdit m_wndSearch;
+	CGlassEdit m_wndSearch;
 	CMainView m_wndMainView;
 	BreadcrumbItem* m_BreadcrumbBack;
 	BreadcrumbItem* m_BreadcrumbForward;

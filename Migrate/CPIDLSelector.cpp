@@ -264,7 +264,7 @@ CPIDLSelector::~CPIDLSelector()
 void CPIDLSelector::CreateDropdownWindow(CRect rectDrop)
 {
 	p_DropWindow = new CPIDLDropdownWindow();
-	((CGlasWindow*)GetParent())->RegisterPopupWindow(p_DropWindow);
+	((CGlassWindow*)GetParent())->RegisterPopupWindow(p_DropWindow);
 	p_DropWindow->Create(this, rectDrop, IDD_CHOOSEFOLDER);
 }
 

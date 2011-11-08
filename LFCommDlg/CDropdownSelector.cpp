@@ -116,9 +116,7 @@ BOOL CDropdownWindow::PreTranslateMessage(MSG* pMsg)
 BOOL CDropdownWindow::OnCommand(WPARAM wParam, LPARAM lParam) 
 {
 	if ((UINT)HIWORD(wParam)==WM_KILLFOCUS)
-	{
 		GetOwner()->PostMessage(WM_CLOSEDROPDOWN);
-	}
 
 	return CWnd::OnCommand(wParam, lParam);
 }
@@ -213,7 +211,7 @@ CDropdownSelector::CDropdownSelector()
 	m_Hover = m_Pressed = m_Dropped = FALSE;
 }
 
-BOOL CDropdownSelector::Create(CString EmptyHint, CString Caption, CGlasWindow* pParentWnd, UINT nID)
+BOOL CDropdownSelector::Create(CString EmptyHint, CString Caption, CGlassWindow* pParentWnd, UINT nID)
 {
 	m_EmptyHint = EmptyHint;
 	m_Caption = Caption;
@@ -252,7 +250,7 @@ BOOL CDropdownSelector::PreTranslateMessage(MSG* pMsg)
 void CDropdownSelector::CreateDropdownWindow(CRect rectDrop)
 {
 	p_DropWindow = new CDropdownWindow();
-	((CGlasWindow*)GetParent())->RegisterPopupWindow(p_DropWindow);
+	((CGlassWindow*)GetParent())->RegisterPopupWindow(p_DropWindow);
 	p_DropWindow->Create(this, rectDrop);
 }
 
@@ -394,7 +392,7 @@ void CDropdownSelector::OnPaint()
 
 	Graphics g(dc);
 
-	CGlasWindow* pCtrlSite = (CGlasWindow*)GetParent();
+	CGlassWindow* pCtrlSite = (CGlassWindow*)GetParent();
 	pCtrlSite->DrawFrameBackground(&dc, rectClient);
 	const BYTE Alpha = m_Dropped ? 0xFF : (m_Hover || (GetFocus()==this)) ? 0xF0 : 0xD0;
 
@@ -708,7 +706,7 @@ LRESULT CDropdownSelector::OnCloseDropdown(WPARAM /*wParam*/, LPARAM /*lParam*/)
 
 	if (p_DropWindow)
 	{
-		((CGlasWindow*)GetParent())->RegisterPopupWindow(NULL);
+		((CGlassWindow*)GetParent())->RegisterPopupWindow(NULL);
 
 		p_DropWindow->DestroyWindow();
 		delete p_DropWindow;

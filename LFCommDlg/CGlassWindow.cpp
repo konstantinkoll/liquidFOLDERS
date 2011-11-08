@@ -1,15 +1,15 @@
 
-// CGlasWindow.cpp: Implementierung der Klasse CGlasWindow
+// CGlassWindow.cpp: Implementierung der Klasse CGlassWindow
 //
 
 #include "stdafx.h"
-#include "CGlasWindow.h"
+#include "CGlassWindow.h"
 
 
-// CGlasWindow
+// CGlassWindow
 //
 
-CGlasWindow::CGlasWindow()
+CGlassWindow::CGlassWindow()
 	: CWnd()
 {
 	p_App = (LFApplication*)AfxGetApp();
@@ -20,13 +20,13 @@ CGlasWindow::CGlasWindow()
 	ZeroMemory(&m_Margins, sizeof(MARGINS));
 }
 
-BOOL CGlasWindow::Create(DWORD dwStyle, LPCTSTR lpszClassName, LPCTSTR lpszWindowName, const RECT& rect, CWnd* pParentWnd, UINT nID)
+BOOL CGlassWindow::Create(DWORD dwStyle, LPCTSTR lpszClassName, LPCTSTR lpszWindowName, const RECT& rect, CWnd* pParentWnd, UINT nID)
 {
 	return CWnd::CreateEx(WS_EX_APPWINDOW | WS_EX_CONTROLPARENT, lpszClassName, lpszWindowName,
 		dwStyle | WS_BORDER | WS_THICKFRAME | WS_SYSMENU | WS_CLIPCHILDREN | WS_CLIPSIBLINGS, rect, pParentWnd, nID);
 }
 
-LRESULT CGlasWindow::DefWindowProc(UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT CGlassWindow::DefWindowProc(UINT message, WPARAM wParam, LPARAM lParam)
 {
 	if (m_IsAeroWindow)
 	{
@@ -38,7 +38,7 @@ LRESULT CGlasWindow::DefWindowProc(UINT message, WPARAM wParam, LPARAM lParam)
 	return CWnd::DefWindowProc(message, wParam, lParam);
 }
 
-BOOL CGlasWindow::PreTranslateMessage(MSG* pMsg)
+BOOL CGlassWindow::PreTranslateMessage(MSG* pMsg)
 {
 	if (p_PopupWindow)
 		if (IsWindow(p_PopupWindow->GetSafeHwnd()))
@@ -84,7 +84,7 @@ BOOL CGlasWindow::PreTranslateMessage(MSG* pMsg)
 	return CWnd::PreTranslateMessage(pMsg);
 }
 
-BOOL CGlasWindow::OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo)
+BOOL CGlassWindow::OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo)
 {
 	if (CWnd::OnCmdMsg(nID, nCode, pExtra, pHandlerInfo))
 		return TRUE;
@@ -92,7 +92,7 @@ BOOL CGlasWindow::OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO
 	return p_App->OnCmdMsg(nID, nCode, pExtra, pHandlerInfo);
 }
 
-void CGlasWindow::UseGlasBackground(MARGINS Margins)
+void CGlassWindow::UseGlasBackground(MARGINS Margins)
 {
 	m_Margins = Margins;
 
@@ -100,16 +100,16 @@ void CGlasWindow::UseGlasBackground(MARGINS Margins)
 		p_App->zDwmExtendFrameIntoClientArea(m_hWnd, &Margins);
 }
 
-void CGlasWindow::AdjustLayout()
+void CGlassWindow::AdjustLayout()
 {
 }
 
-void CGlasWindow::PostNcDestroy()
+void CGlassWindow::PostNcDestroy()
 {
 	delete this;
 }
 
-void CGlasWindow::GetLayoutRect(LPRECT lpRect) const
+void CGlassWindow::GetLayoutRect(LPRECT lpRect) const
 {
 	GetClientRect(lpRect);
 
@@ -120,7 +120,7 @@ void CGlasWindow::GetLayoutRect(LPRECT lpRect) const
 	}
 }
 
-void CGlasWindow::DrawFrameBackground(CDC* pDC, CRect rect)
+void CGlassWindow::DrawFrameBackground(CDC* pDC, CRect rect)
 {
 	if (m_IsAeroWindow)
 	{
@@ -143,12 +143,12 @@ void CGlasWindow::DrawFrameBackground(CDC* pDC, CRect rect)
 		}
 }
 
-UINT CGlasWindow::GetDesign()
+UINT CGlassWindow::GetDesign()
 {
 	return m_IsAeroWindow ? GWD_AERO : hTheme ? GWD_THEMED : GWD_DEFAULT;
 }
 
-void CGlasWindow::SetTheme()
+void CGlassWindow::SetTheme()
 {
 	if (p_App->m_ThemeLibLoaded)
 	{
@@ -167,7 +167,7 @@ void CGlasWindow::SetTheme()
 	}
 }
 
-CWnd* CGlasWindow::RegisterPopupWindow(CWnd* pPopupWnd)
+CWnd* CGlassWindow::RegisterPopupWindow(CWnd* pPopupWnd)
 {
 	CWnd* old = p_PopupWindow;
 	p_PopupWindow = pPopupWnd;
@@ -175,7 +175,7 @@ CWnd* CGlasWindow::RegisterPopupWindow(CWnd* pPopupWnd)
 }
 
 
-BEGIN_MESSAGE_MAP(CGlasWindow, CWnd)
+BEGIN_MESSAGE_MAP(CGlassWindow, CWnd)
 	ON_WM_CREATE()
 	ON_WM_DESTROY()
 	ON_WM_ERASEBKGND()
@@ -192,7 +192,7 @@ BEGIN_MESSAGE_MAP(CGlasWindow, CWnd)
 	ON_WM_INITMENUPOPUP()
 END_MESSAGE_MAP()
 
-INT CGlasWindow::OnCreate(LPCREATESTRUCT lpCreateStruct)
+INT CGlassWindow::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if (CWnd::OnCreate(lpCreateStruct)==-1)
 		return -1;
@@ -205,7 +205,7 @@ INT CGlasWindow::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	return 0;
 }
 
-void CGlasWindow::OnDestroy()
+void CGlassWindow::OnDestroy()
 {
 	if (hTheme)
 		p_App->zCloseThemeData(hTheme);
@@ -213,7 +213,7 @@ void CGlasWindow::OnDestroy()
 	CWnd::OnDestroy();
 }
 
-BOOL CGlasWindow::OnEraseBkgnd(CDC* pDC)
+BOOL CGlassWindow::OnEraseBkgnd(CDC* pDC)
 {
 	CRect rclient;
 	GetClientRect(rclient);
@@ -255,12 +255,12 @@ BOOL CGlasWindow::OnEraseBkgnd(CDC* pDC)
 	return TRUE;
 }
 
-void CGlasWindow::OnSysColorChange()
+void CGlassWindow::OnSysColorChange()
 {
 	AdjustLayout();
 }
 
-LRESULT CGlasWindow::OnThemeChanged()
+LRESULT CGlassWindow::OnThemeChanged()
 {
 	SetTheme();
 	AdjustLayout();
@@ -268,7 +268,7 @@ LRESULT CGlasWindow::OnThemeChanged()
 	return TRUE;
 }
 
-void CGlasWindow::OnCompositionChanged()
+void CGlassWindow::OnCompositionChanged()
 {
 	SetTheme();
 
@@ -285,7 +285,7 @@ void CGlasWindow::OnCompositionChanged()
 	AdjustLayout();
 }
 
-void CGlasWindow::OnNcCalcSize(BOOL bCalcValidRects, NCCALCSIZE_PARAMS* lpncsp)
+void CGlassWindow::OnNcCalcSize(BOOL bCalcValidRects, NCCALCSIZE_PARAMS* lpncsp)
 {
 	CWnd::OnNcCalcSize(bCalcValidRects, lpncsp);
 
@@ -296,14 +296,14 @@ void CGlasWindow::OnNcCalcSize(BOOL bCalcValidRects, NCCALCSIZE_PARAMS* lpncsp)
 	}
 }
 
-LRESULT CGlasWindow::OnNcHitTest(CPoint point)
+LRESULT CGlassWindow::OnNcHitTest(CPoint point)
 {
 	SHORT LButtonDown = GetAsyncKeyState(VK_LBUTTON);
 	LRESULT uHitTest = CWnd::OnNcHitTest(point);
 	return ((!(GetStyle() & WS_MAXIMIZEBOX)) && (uHitTest>=HTLEFT) && (uHitTest<=HTBOTTOMRIGHT)) ? HTCAPTION : ((uHitTest==HTCLIENT) && (LButtonDown & 0x8000)) ? HTCAPTION : uHitTest;
 }
 
-BOOL CGlasWindow::OnNcActivate(BOOL bActive)
+BOOL CGlassWindow::OnNcActivate(BOOL bActive)
 {
 	if ((bActive!=m_Active) && ((!p_PopupWindow) || (bActive)))
 	{
@@ -323,20 +323,20 @@ BOOL CGlasWindow::OnNcActivate(BOOL bActive)
 	return (bActive || !p_PopupWindow) ? CWnd::OnNcActivate(bActive) : TRUE;
 }
 
-void CGlasWindow::OnActivate(UINT nState, CWnd* pWndOther, BOOL bMinimized)
+void CGlassWindow::OnActivate(UINT nState, CWnd* pWndOther, BOOL bMinimized)
 {
 	if (!p_PopupWindow)
 		CWnd::OnActivate(nState, pWndOther, bMinimized);
 }
 
 
-void CGlasWindow::OnSize(UINT nType, INT cx, INT cy)
+void CGlassWindow::OnSize(UINT nType, INT cx, INT cy)
 {
 	CWnd::OnSize(nType, cx, cy);
 	AdjustLayout();
 }
 
-void CGlasWindow::OnGetMinMaxInfo(MINMAXINFO* lpMMI)
+void CGlassWindow::OnGetMinMaxInfo(MINMAXINFO* lpMMI)
 {
 	CWnd::OnGetMinMaxInfo(lpMMI);
 
@@ -353,14 +353,14 @@ void CGlasWindow::OnGetMinMaxInfo(MINMAXINFO* lpMMI)
 	}
 }
 
-void CGlasWindow::OnRButtonUp(UINT /*nFlags*/, CPoint point)
+void CGlassWindow::OnRButtonUp(UINT /*nFlags*/, CPoint point)
 {
 	ClientToScreen(&point);
 	DWORD Item = GetSystemMenu(FALSE)->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON | TPM_RETURNCMD, point.x, point.y, this);
 	SendMessage(WM_SYSCOMMAND, (WPARAM)Item);
 }
 
-void CGlasWindow::OnInitMenuPopup(CMenu* pPopupMenu, UINT /*nIndex*/, BOOL /*bSysMenu*/)
+void CGlassWindow::OnInitMenuPopup(CMenu* pPopupMenu, UINT /*nIndex*/, BOOL /*bSysMenu*/)
 {
 	ASSERT(pPopupMenu);
 

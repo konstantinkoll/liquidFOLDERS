@@ -1,20 +1,20 @@
 
-// CGlasEdit.h: Schnittstelle der Klasse CGlasEdit
+// CGlassEdit.h: Schnittstelle der Klasse CGlassEdit
 //
 
 #pragma once
-#include "CGlasWindow.h"
+#include "CGlassWindow.h"
 
 
-// CGlasEdit
+// CGlassEdit
 //
 
-class AFX_EXT_CLASS CGlasEdit : public CEdit
+class AFX_EXT_CLASS CGlassEdit : public CEdit
 {
 public:
-	CGlasEdit();
+	CGlassEdit();
 
-	BOOL Create(CString EmptyHint, CGlasWindow* pParentWnd, UINT nID, BOOL ShowSearchIcon=FALSE);
+	BOOL Create(CString EmptyHint, CGlassWindow* pParentWnd, UINT nID, BOOL ShowSearchIcon=FALSE);
 	UINT GetPreferredHeight();
 
 protected:

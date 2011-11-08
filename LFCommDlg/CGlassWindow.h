@@ -1,5 +1,5 @@
 
-// CGlasWindow: Schnittstelle der Klasse CGlasWindow
+// CGlassWindow: Schnittstelle der Klasse CGlassWindow
 //
 
 #pragma once
@@ -7,7 +7,7 @@
 #include "LFApplication.h"
 
 
-// CGlasWindow
+// CGlassWindow
 //
 
 #define GWD_DEFAULT            1
@@ -17,10 +17,10 @@
 #define WM_OPENDROPDOWN        WM_USER+1
 #define WM_CLOSEDROPDOWN       WM_USER+2
 
-class AFX_EXT_CLASS CGlasWindow : public CWnd
+class AFX_EXT_CLASS CGlassWindow : public CWnd
 {
 public:
-	CGlasWindow();
+	CGlassWindow();
 
 	virtual LRESULT DefWindowProc(UINT message, WPARAM wParam, LPARAM lParam);
 	virtual BOOL PreTranslateMessage(MSG* pMsg);

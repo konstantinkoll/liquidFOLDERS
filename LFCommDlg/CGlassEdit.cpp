@@ -1,19 +1,19 @@
 
-// CGlasEdit.cpp: Implementierung der Klasse CGlasEdit
+// CGlassEdit.cpp: Implementierung der Klasse CGlassEdit
 //
 
 #include "stdafx.h"
 #include "LFCommDlg.h"
 
 
-// CGlasEdit
+// CGlassEdit
 //
 
 #define BORDER     4
 
 extern AFX_EXTENSION_MODULE LFCommDlgDLL;
 
-CGlasEdit::CGlasEdit()
+CGlassEdit::CGlassEdit()
 	: CEdit()
 {
 	hSearchIcon = NULL;
@@ -21,7 +21,7 @@ CGlasEdit::CGlasEdit()
 	m_Hover = FALSE;
 }
 
-BOOL CGlasEdit::Create(CString EmptyHint, CGlasWindow* pParentWnd, UINT nID, BOOL ShowSearchIcon)
+BOOL CGlassEdit::Create(CString EmptyHint, CGlassWindow* pParentWnd, UINT nID, BOOL ShowSearchIcon)
 {
 	m_EmptyHint = EmptyHint;
 	m_ShowSearchIcon = ShowSearchIcon;
@@ -32,13 +32,13 @@ BOOL CGlasEdit::Create(CString EmptyHint, CGlasWindow* pParentWnd, UINT nID, BOO
 	return CWnd::CreateEx(0, _T("EDIT"), _T(""), dwStyle, rect, pParentWnd, nID);
 }
 
-UINT CGlasEdit::GetPreferredHeight()
+UINT CGlassEdit::GetPreferredHeight()
 {
 	return max(m_FontHeight, GetSystemMetrics(SM_CYSMICON))+2*BORDER;
 }
 
 
-BEGIN_MESSAGE_MAP(CGlasEdit, CEdit)
+BEGIN_MESSAGE_MAP(CGlassEdit, CEdit)
 	ON_WM_CREATE()
 	ON_WM_DESTROY()
 	ON_WM_ERASEBKGND()
@@ -53,7 +53,7 @@ BEGIN_MESSAGE_MAP(CGlasEdit, CEdit)
 	ON_WM_CTLCOLOR_REFLECT()
 END_MESSAGE_MAP()
 
-INT CGlasEdit::OnCreate(LPCREATESTRUCT lpCreateStruct)
+INT CGlassEdit::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if (CEdit::OnCreate(lpCreateStruct)==-1)
 		return -1;
@@ -86,7 +86,7 @@ INT CGlasEdit::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	return 0;
 }
 
-void CGlasEdit::OnDestroy()
+void CGlassEdit::OnDestroy()
 {
 	CWnd::OnDestroy();
 
@@ -94,12 +94,12 @@ void CGlasEdit::OnDestroy()
 		DestroyIcon(hSearchIcon);
 }
 
-BOOL CGlasEdit::OnEraseBkgnd(CDC* /*pDC*/)
+BOOL CGlassEdit::OnEraseBkgnd(CDC* /*pDC*/)
 {
 	return TRUE;
 }
 
-void CGlasEdit::OnNcCalcSize(BOOL bCalcValidRects, NCCALCSIZE_PARAMS* lpncsp)
+void CGlassEdit::OnNcCalcSize(BOOL bCalcValidRects, NCCALCSIZE_PARAMS* lpncsp)
 {
 	CEdit::OnNcCalcSize(bCalcValidRects, lpncsp);
 
@@ -109,12 +109,12 @@ void CGlasEdit::OnNcCalcSize(BOOL bCalcValidRects, NCCALCSIZE_PARAMS* lpncsp)
 	lpncsp->rgrc[0].right -= BORDER;
 }
 
-LRESULT CGlasEdit::OnNcHitTest(CPoint /*point*/)
+LRESULT CGlassEdit::OnNcHitTest(CPoint /*point*/)
 {
 	return HTCLIENT;
 }
 
-void CGlasEdit::OnNcPaint()
+void CGlassEdit::OnNcPaint()
 {
 	CRect rect;
 	GetWindowRect(&rect);
@@ -144,7 +144,7 @@ void CGlasEdit::OnNcPaint()
 	HBITMAP hBmp = CreateDIBSection(dc, &dib, DIB_RGB_COLORS, NULL, NULL, 0);
 	HBITMAP hOldBitmap = (HBITMAP)dc.SelectObject(hBmp);
 
-	CGlasWindow* pCtrlSite = (CGlasWindow*)GetParent();
+	CGlassWindow* pCtrlSite = (CGlassWindow*)GetParent();
 	pCtrlSite->DrawFrameBackground(&dc, rect);
 	const BYTE Alpha = (m_Hover || (GetFocus()==this)) ? (pCtrlSite->GetDesign()==GWD_THEMED) ? 0xFF : 0xF0 : 0xD0;
 
@@ -244,13 +244,13 @@ void CGlasEdit::OnNcPaint()
 	DeleteObject(hBmp);
 }
 
-void CGlasEdit::OnPaint()
+void CGlassEdit::OnPaint()
 {
 	CPaintDC pDC(this);
 	OnNcPaint();
 }
 
-void CGlasEdit::OnMouseMove(UINT nFlags, CPoint point)
+void CGlassEdit::OnMouseMove(UINT nFlags, CPoint point)
 {
 	if (nFlags & (MK_LBUTTON | MK_MBUTTON | MK_RBUTTON))
 		SetRedraw(FALSE);
@@ -274,13 +274,13 @@ void CGlasEdit::OnMouseMove(UINT nFlags, CPoint point)
 		RedrawWindow(NULL, NULL, RDW_INVALIDATE | RDW_UPDATENOW);
 }
 
-void CGlasEdit::OnMouseLeave()
+void CGlassEdit::OnMouseLeave()
 {
 	m_Hover = FALSE;
 	Invalidate();
 }
 
-void CGlasEdit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
+void CGlassEdit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 	SetRedraw(FALSE);
 	CEdit::OnKeyDown(nChar, nRepCnt, nFlags);
@@ -289,7 +289,7 @@ void CGlasEdit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 	RedrawWindow(NULL, NULL, RDW_INVALIDATE | RDW_UPDATENOW);
 }
 
-void CGlasEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
+void CGlassEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 	SetRedraw(FALSE);
 	CEdit::OnChar(nChar, nRepCnt, nFlags);
@@ -298,7 +298,7 @@ void CGlasEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
 	RedrawWindow(NULL, NULL, RDW_INVALIDATE | RDW_UPDATENOW);
 }
 
-HBRUSH CGlasEdit::CtlColor(CDC* pDC, UINT /*nCtlColor*/)
+HBRUSH CGlassEdit::CtlColor(CDC* pDC, UINT /*nCtlColor*/)
 {
 	HBRUSH hbr = NULL;
 

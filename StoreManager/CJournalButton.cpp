@@ -36,7 +36,7 @@ CJournalButton::CJournalButton()
 	m_Hover = m_Pressed = -1;
 }
 
-BOOL CJournalButton::Create(UINT SuggestedHeight, CGlasWindow* pParentWnd, UINT nID)
+BOOL CJournalButton::Create(UINT SuggestedHeight, CGlassWindow* pParentWnd, UINT nID)
 {
 	m_IsLarge = (SuggestedHeight>=32);
 
@@ -133,7 +133,7 @@ void CJournalButton::OnPaint()
 
 	Graphics g(dc);
 
-	CGlasWindow* pCtrlSite = (CGlasWindow*)GetParent();
+	CGlassWindow* pCtrlSite = (CGlassWindow*)GetParent();
 	pCtrlSite->DrawFrameBackground(&dc, rectClient);
 
 	g.DrawImage(m_Frame.m_pBitmap, 0, 0);

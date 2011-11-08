@@ -9,7 +9,7 @@
 
 // CMigrateWnd
 
-class CMigrateWnd : public CGlasWindow
+class CMigrateWnd : public CGlassWindow
 {
 public:
 	CMigrateWnd();

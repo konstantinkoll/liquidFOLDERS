@@ -62,7 +62,7 @@ CHistoryBar::CHistoryBar()
 	ENSURE(m_EmptyHint.LoadString(IDS_NONAVIGATION));
 }
 
-BOOL CHistoryBar::Create(CGlasWindow* pParentWnd, UINT nID)
+BOOL CHistoryBar::Create(CGlassWindow* pParentWnd, UINT nID)
 {
 	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW, LoadCursor(NULL, IDC_ARROW));
 
@@ -192,7 +192,7 @@ void CHistoryBar::OnPaint()
 
 	BOOL Themed = IsCtrlThemed();
 
-	CGlasWindow* pCtrlSite = (CGlasWindow*)GetParent();
+	CGlassWindow* pCtrlSite = (CGlassWindow*)GetParent();
 	pCtrlSite->DrawFrameBackground(&dc, rectClient);
 	const BYTE Alpha = (((m_Hover!=NOPART) || (m_Pressed!=NOPART)) && !m_IsEmpty) ? 0xF0 : 0xD0;
 

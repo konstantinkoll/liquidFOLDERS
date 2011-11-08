@@ -3,7 +3,7 @@
 //
 
 #include "stdafx.h"
-#include "CGlasWindow.h"
+#include "CGlassWindow.h"
 #include "CHeaderButton.h"
 #include "LFCommDlg.h"
 

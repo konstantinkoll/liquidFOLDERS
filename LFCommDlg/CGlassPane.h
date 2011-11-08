@@ -1,17 +1,17 @@
 
-// CGlasPane: Schnittstelle der Klasse CGlasPane
+// CGlassPane: Schnittstelle der Klasse CGlassPane
 //
 
 #pragma once
 
 
-// CGlasPane
+// CGlassPane
 //
 
-class AFX_EXT_CLASS CGlasPane : public CWnd
+class AFX_EXT_CLASS CGlassPane : public CWnd
 {
 public:
-	CGlasPane();
+	CGlassPane();
 
 	virtual void AdjustLayout();
 

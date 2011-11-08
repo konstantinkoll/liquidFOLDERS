@@ -46,7 +46,7 @@ DWORD WINAPI WorkerMigrate(void* lParam)
 //
 
 CMigrateWnd::CMigrateWnd()
-	: CGlasWindow()
+	: CGlassWindow()
 {
 	m_hIcon = NULL;
 }
@@ -70,7 +70,7 @@ BOOL CMigrateWnd::Create()
 	CString caption;
 	ENSURE(caption.LoadString(IDR_APPLICATION));
 
-	return CGlasWindow::Create(WS_MINIMIZEBOX | WS_MAXIMIZEBOX, className, caption, rect);
+	return CGlassWindow::Create(WS_MINIMIZEBOX | WS_MAXIMIZEBOX, className, caption, rect);
 }
 
 BOOL CMigrateWnd::OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo)
@@ -79,7 +79,7 @@ BOOL CMigrateWnd::OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO
 	if (m_wndMainView.OnCmdMsg(nID, nCode, pExtra, pHandlerInfo))
 		return TRUE;
 
-	return CGlasWindow::OnCmdMsg(nID, nCode, pExtra, pHandlerInfo);
+	return CGlassWindow::OnCmdMsg(nID, nCode, pExtra, pHandlerInfo);
 }
 
 void CMigrateWnd::AdjustLayout()
@@ -108,7 +108,7 @@ void CMigrateWnd::AdjustLayout()
 }
 
 
-BEGIN_MESSAGE_MAP(CMigrateWnd, CGlasWindow)
+BEGIN_MESSAGE_MAP(CMigrateWnd, CGlassWindow)
 	ON_WM_CREATE()
 	ON_WM_DESTROY()
 	ON_WM_SETFOCUS()
@@ -125,7 +125,7 @@ END_MESSAGE_MAP()
 
 INT CMigrateWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
-	if (CGlasWindow::OnCreate(lpCreateStruct)==-1)
+	if (CGlassWindow::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
 	theApp.AddFrame(this);
@@ -166,7 +166,7 @@ INT CMigrateWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 void CMigrateWnd::OnDestroy()
 {
-	CGlasWindow::OnDestroy();
+	CGlassWindow::OnDestroy();
 	theApp.KillFrame(this);
 }
 
