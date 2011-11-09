@@ -394,7 +394,7 @@ HBRUSH LFDialog::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 
 	if ((nCtlColor==CTLCOLOR_BTN) || (nCtlColor==CTLCOLOR_STATIC))
 	{
-		CRect rc; 
+		CRect rc;
 		pWnd->GetWindowRect(&rc);
 		ScreenToClient(&rc);
 
