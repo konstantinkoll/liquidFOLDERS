@@ -113,9 +113,10 @@ void LFAboutDlg::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 		DEFAULT_PITCH | FF_DONTCARE, ((LFApplication*)AfxGetApp())->GetDefaultFontFace());
 	CFont* pOldFont = dc.SelectObject(&font1);
 
+	const UINT fmt = DT_SINGLELINE | DT_LEFT | DT_NOPREFIX | DT_END_ELLIPSIS;
 	dc.SetTextColor(0x000000);
 	dc.SetBkMode(TRANSPARENT);
-	dc.DrawText(m_AppName, r, 0);
+	dc.DrawText(m_AppName, r, fmt);
 	r.top += 45;
 
 	CFont font2;
@@ -130,10 +131,10 @@ void LFAboutDlg::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 #define ISET _T(" (x32, ")
 #endif
 
-	dc.DrawText(_T("Version ")+m_Version+ISET+m_Build+_T(")"), r, 0);
+	dc.DrawText(_T("Version ")+m_Version+ISET+m_Build+_T(")"), r, fmt);
 	r.top += 26;
 
-	dc.DrawText(m_Copyright, r, 0);
+	dc.DrawText(m_Copyright, r, fmt);
 
 	dc.SelectObject(pOldFont);
 }
