@@ -8,8 +8,6 @@
 #include "Resource.h"
 #include "..\\LFCore\\resource.h"
 
-using namespace Gdiplus;
-
 
 // LFProgressDlg
 //
@@ -24,7 +22,6 @@ LFProgressDlg::LFProgressDlg(LPTHREAD_START_ROUTINE pThreadProc, LFWorkerParamet
 
 	ENSURE(m_XofY_Singular.LoadString(IDS_XOFY_SINGULAR));
 	ENSURE(m_XofY_Plural.LoadString(IDS_XOFY_PLURAL));
-
 }
 
 void LFProgressDlg::DoDataExchange(CDataExchange* pDX)
