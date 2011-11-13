@@ -55,9 +55,15 @@ BOOL LFProgressDlg::OnInitDialog()
 
 void LFProgressDlg::OnCancel()
 {
-	m_Abort = TRUE;
-
-	GetDlgItem(IDCANCEL)->EnableWindow(FALSE);
+	if (p_ThreadProc)
+	{
+		m_Abort = TRUE;
+		GetDlgItem(IDCANCEL)->EnableWindow(FALSE);
+	}
+	else
+	{
+		EndDialog(IDCANCEL);
+	}
 }
 
 LRESULT LFProgressDlg::OnUpdateProgress(WPARAM wParam, LPARAM /*lParam*/)
