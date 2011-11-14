@@ -42,7 +42,8 @@ BOOL CFileDropApp::InitInstance()
 	if (!EnumWindows((WNDENUMPROC)EnumWindowsProc, NULL))
 		return FALSE;
 
-	LFApplication::InitInstance();
+	if (!LFApplication::InitInstance())
+		return FALSE;
 
 	// Registry auslesen
 	SetRegistryBase(_T("Settings"));

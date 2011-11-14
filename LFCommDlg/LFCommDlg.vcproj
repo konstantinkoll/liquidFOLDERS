@@ -47,7 +47,6 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalOptions="/MP"
 				Optimization="0"
 				AdditionalIncludeDirectories="$(SolutionDir)\include"
 				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG;_AFXEXT;LFCommDlg_EXPORTS"
@@ -75,7 +74,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="version.lib winhttp.lib winmm.lib"
-				LinkIncremental="2"
+				LinkIncremental="1"
 				ModuleDefinitionFile=".\LFCommDlg.def"
 				GenerateDebugInformation="true"
 				SubSystem="2"
@@ -160,7 +159,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="version.lib winhttp.lib winmm.lib"
-				LinkIncremental="2"
+				LinkIncremental="1"
 				ModuleDefinitionFile=".\LFCommDlg.def"
 				GenerateDebugInformation="true"
 				SubSystem="2"
@@ -218,7 +217,6 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalOptions="/MP"
 				Optimization="3"
 				EnableIntrinsicFunctions="true"
 				OmitFramePointers="true"

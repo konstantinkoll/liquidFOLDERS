@@ -73,7 +73,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				LinkIncremental="2"
+				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;I:\Programme\LogicNP Software\EZShellExtensionsMFC 2009\Lib&quot;;&quot;I:\Programme\LogicNP Software\EZNamespaceExtensionsMFC 2009\Lib&quot;;&quot;C:\Program Files (x86)\LogicNP Software\EZShellExtensionsMFC 2009\Lib&quot;;&quot;C:\Program Files (x86)\LogicNP Software\EZNamespaceExtensionsMFC 2009\Lib&quot;"
 				ModuleDefinitionFile=".\LFNamespaceExtension.def"
 				GenerateDebugInformation="true"
@@ -158,7 +158,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				LinkIncremental="2"
+				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;I:\Programme\LogicNP Software\EZShellExtensionsMFC 2009\Lib&quot;;&quot;I:\Programme\LogicNP Software\EZNamespaceExtensionsMFC 2009\Lib&quot;;&quot;C:\Program Files (x86)\LogicNP Software\EZShellExtensionsMFC 2009\Lib&quot;;&quot;C:\Program Files (x86)\LogicNP Software\EZNamespaceExtensionsMFC 2009\Lib&quot;"
 				ModuleDefinitionFile=".\LFNamespaceExtension.def"
 				GenerateDebugInformation="true"
