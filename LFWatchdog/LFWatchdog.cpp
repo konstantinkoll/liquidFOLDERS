@@ -307,7 +307,9 @@ BOOL CWatchdogApp::InitInstance()
 		return FALSE;
 	}
 
-	LFApplication::InitInstance();
+	if (!LFApplication::InitInstance())
+		return FALSE;
+
 	CreateHostWindow();
 
 	LFCheckForUpdate();

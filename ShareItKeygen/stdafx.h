@@ -30,5 +30,5 @@
 #include "base64.h"
 #pragma warning(pop)
 
-USING_NAMESPACE(CryptoPP)
-USING_NAMESPACE(std)
+using namespace CryptoPP;
+using namespace std;

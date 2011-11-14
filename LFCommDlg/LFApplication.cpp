@@ -209,7 +209,7 @@ LFApplication::LFApplication(BOOL HasGUI)
 			m_SystemImageListJumbo.Attach((HIMAGELIST)il);
 
 	// Core image lists
-	HINSTANCE hModIcons = LoadLibrary(_T("LFCORE.DLL"));
+	HMODULE hModIcons = GetModuleHandle(_T("LFCORE"));
 	if (hModIcons)
 	{
 		INT cx = GetSystemMetrics(SM_CXSMICON);
@@ -227,8 +227,6 @@ LFApplication::LFApplication(BOOL HasGUI)
 		ExtractCoreIcons(hModIcons, cy, &m_CoreImageListExtraLarge);
 
 		ExtractCoreIcons(hModIcons, 128, &m_CoreImageListJumbo);
-
-		FreeLibrary(hModIcons);
 	}
 
 	// liquidFOLDERS initalisieren
@@ -257,10 +255,9 @@ LFApplication::LFApplication(BOOL HasGUI)
 LFApplication::~LFApplication()
 {
 	if (hModThemes)
-	{
 		FreeLibrary(hModThemes);
-		hModThemes = NULL;
-	}
+	if (hModAero)
+		FreeLibrary(hModAero);
 
 	for (UINT a=0; a<=LFMaxRating; a++)
 	{
@@ -299,8 +296,6 @@ BOOL LFApplication::InitInstance()
 	InitCommonControlsEx(&InitCtrls);
 
 	CWinAppEx::InitInstance();
-
-	InitShellManager();
 
 	// OLE Initialisieren
 	ENSURE(AfxOleInit());
@@ -345,7 +340,6 @@ BOOL LFApplication::InitInstance()
 
 INT LFApplication::ExitInstance()
 {
-	CWinAppEx::ExitInstance();
 	GdiplusShutdown(m_gdiplusToken);
 
 	if (hModThemes)
@@ -353,7 +347,7 @@ INT LFApplication::ExitInstance()
 	if (hModAero)
 		FreeLibrary(hModAero);
 
-	return 0;
+	return CWinAppEx::ExitInstance();
 }
 
 BOOL LFApplication::ShowNagScreen(UINT Level, CWnd* pWndParent, BOOL Abort)

@@ -49,7 +49,8 @@ CRunCmdApp theApp;
 
 BOOL CRunCmdApp::InitInstance()
 {
-	LFApplication::InitInstance();
+	if (!LFApplication::InitInstance())
+		return FALSE;
 
 	if (__argc)
 	{

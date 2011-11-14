@@ -49,7 +49,8 @@ BOOL CStoreManagerApp::InitInstance()
 		if (!EnumWindows((WNDENUMPROC)EnumWindowsProc, NULL))
 			return FALSE;
 
-	LFApplication::InitInstance();
+	if (!LFApplication::InitInstance())
+		return FALSE;
 
 	for (UINT a=0; a<LFContextCount; a++)
 	{
