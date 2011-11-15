@@ -88,29 +88,50 @@ void ConvertFile(CString Suffix)
 	output.WriteString(tmpStr);
 	for (UINT a=0; a<PolyCount; a++)
 	{
-		FLOAT LastU = 0.0f;
-		BOOL FirstTriple = TRUE;
+		FLOAT U[3];
+		U[0] = Vertices[Polygons[a].A].U;
+		U[1] = Vertices[Polygons[a].B].U;
+		U[2] = Vertices[Polygons[a].C].U;
 
-#define Print(id) { \
-		FLOAT U = Vertices[id].U-0.25f; \
-		if (U<0.0f) \
-			U += 1.0f; \
-		if (!FirstTriple) \
-		{ \
-			if ((LastU>0.75f) && (U<0.25f)) \
-				U += 1.0f; \
-			if ((LastU<0.25f) && (U>0.75f)) \
-				U -= 1.0f; \
-		} \
-		tmpStr.Format("\t%ff, %ff, %ff, %ff, %ff,\n", U, Vertices[id].V, Vertices[id].X, Vertices[id].Y, Vertices[id]. Z); \
+		FLOAT V[3];
+		V[0] = Vertices[Polygons[a].A].V;
+		V[1] = Vertices[Polygons[a].B].V;
+		V[2] = Vertices[Polygons[a].C].V;
+
+		for (UINT b=0; b<3; b++)
+		{
+			U[b] -= 0.2501f;
+			if (U[b]<0.0f)
+				U[b] += 1.0f;
+		}
+
+		for (UINT b=1; b<3; b++)
+		{
+			if ((U[b-1]>0.75f) && (U[b]<0.25f))
+				U[b] += 1.0f;
+			if ((U[b-1]<0.25f) && (U[b]>0.75f))
+				U[b] -= 1.0f;
+		}
+
+		for (UINT b=0; b<3; b++)
+		{
+			if ((V[b]<0.02f) || (V[b]>0.98f))
+			{
+				UINT eins = (b==0) ? 1 : (b==1) ? 2 : 0;
+				UINT zwei = (b==0) ? 2 : (b==1) ? 0 : 1;
+				U[b] = (U[eins]+U[zwei])/2.0f;
+				break;
+			}
+		}
+
+#define Print(id, no) { \
+		tmpStr.Format("\t%ff, %ff, %ff, %ff, %ff,\n", U[no], V[no], Vertices[id].X, Vertices[id].Y, Vertices[id]. Z); \
 		output.WriteString(tmpStr); \
-		LastU = U; \
-		FirstTriple = FALSE; \
 	}
 
-		Print(Polygons[a].A);
-		Print(Polygons[a].B);
-		Print(Polygons[a].C);
+		Print(Polygons[a].A, 0);
+		Print(Polygons[a].B, 1);
+		Print(Polygons[a].C, 2);
 	}
 	output.WriteString("};\n");
 
