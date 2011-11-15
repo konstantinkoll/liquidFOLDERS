@@ -629,7 +629,7 @@ BEGIN
     IDS_DomainPresentations "Presentations"
     IDS_DomainSpreadsheets  "Spreadsheets"
     IDS_DomainWeb           "Web pages"
-    IDS_DomainNew           "New files\Recently imported files"
+    IDS_DomainNew           "New files\nRecently imported files"
 END
 
 STRINGTABLE 
@@ -904,7 +904,7 @@ BEGIN
     IDS_DomainPresentations "Presentaciones"
     IDS_DomainSpreadsheets  "Hojas de cálculo"
     IDS_DomainWeb           "Páginas Web"
-    IDS_DomainNew           "Archivos nuevos\Archivos importados recientemente"
+    IDS_DomainNew           "Archivos nuevos\nArchivos importados recientemente"
 END
 
 STRINGTABLE 
@@ -1179,7 +1179,7 @@ BEGIN
     IDS_DomainPresentations "Présentations"
     IDS_DomainSpreadsheets  "Tableur"
     IDS_DomainWeb           "Pages Web"
-    IDS_DomainNew           "Nouveaux fichiers\Fichiers récemment importés"
+    IDS_DomainNew           "Nouveaux fichiers\nFichiers récemment importés"
 END
 
 STRINGTABLE 
