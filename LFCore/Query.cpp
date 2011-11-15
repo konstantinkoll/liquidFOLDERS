@@ -248,6 +248,8 @@ bool CheckCondition(void* value, LFFilterCondition* c)
 	SYSTEMTIME stUTC;
 	SYSTEMTIME stLocal;
 	FILETIME ft;
+	wchar_t* conditionarray;
+	wchar_t condition[256];
 	wchar_t* tagarray;
 	wchar_t tag[256];
 	char Server[256];
@@ -294,10 +296,14 @@ bool CheckCondition(void* value, LFFilterCondition* c)
 		{
 		case LFFilterCompareSubfolder:
 		case LFFilterCompareContains:
-			tagarray = (wchar_t*)value;
-			while (GetNextTag(&tagarray, tag, 256))
-				if (_wcsicmp(tag, c->AttrData.UnicodeArray)==0)
-					return true;
+			conditionarray = c->AttrData.UnicodeArray;
+			while (GetNextTag(&conditionarray, condition, 256))
+			{
+				tagarray = (wchar_t*)value;
+				while (GetNextTag(&tagarray, tag, 256))
+					if (_wcsicmp(tag, condition)==0)
+						return true;
+			}
 			return false;
 		default:
 			assert(false);
