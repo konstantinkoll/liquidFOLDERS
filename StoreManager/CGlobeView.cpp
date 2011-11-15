@@ -350,7 +350,7 @@ void CGlobeView::PrepareModel()
 	#include "Globe_Low.h"
 	#include "Globe_High.h"
 	UINT Count = (theApp.m_GlobeHQModel ? GlobeHighCount : GlobeLowCount);
-	GLdouble* Nodes = (theApp.m_GlobeHQModel ? &GlobeHighNodes[0] : &GlobeLowNodes[0]);
+	GLfloat* Nodes = (theApp.m_GlobeHQModel ? &GlobeHighNodes[0] : &GlobeLowNodes[0]);
 
 	// Display-Liste für das 3D-Modell erstellen
 	m_LockUpdate = TRUE;

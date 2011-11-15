@@ -1389,6 +1389,22 @@
 			>
 		</File>
 		<File
+			RelativePath=".\Globe_High.3ds"
+			>
+		</File>
+		<File
+			RelativePath=".\Globe_High.asc"
+			>
+		</File>
+		<File
+			RelativePath=".\Globe_Low.3ds"
+			>
+		</File>
+		<File
+			RelativePath=".\Globe_Low.asc"
+			>
+		</File>
+		<File
 			RelativePath=".\GlobeOptions_Tiny.ico"
 			>
 		</File>
