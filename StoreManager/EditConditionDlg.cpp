@@ -9,9 +9,11 @@
 // EditConditionDlg
 //
 
-EditConditionDlg::EditConditionDlg(CWnd* pParent, LFFilterCondition* pCondition)
+EditConditionDlg::EditConditionDlg(CWnd* pParent, CHAR* StoreID, LFFilterCondition* pCondition)
 	: LFAttributeListDlg(IDD_EDITCONDITION, pParent)
 {
+	strcpy_s(m_StoreID, LFKeySize, StoreID ? StoreID : "");
+
 	if (pCondition)
 	{
 		m_Condition = *pCondition;
@@ -64,6 +66,8 @@ BOOL EditConditionDlg::OnInitDialog()
 
 	// Bedingung
 	m_wndEdit.SetData(&m_Condition.AttrData);
+	if (m_StoreID[0]!='\0')
+		m_wndEdit.SetStore(m_StoreID);
 
 	return TRUE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird
 }

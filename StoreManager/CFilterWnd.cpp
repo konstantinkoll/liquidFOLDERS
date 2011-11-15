@@ -299,7 +299,7 @@ void CFilterWnd::OnSearch()
 
 void CFilterWnd::OnAddCondition()
 {
-	EditConditionDlg dlg(this);
+	EditConditionDlg dlg(this, m_wndAllStores.GetCheck() ? NULL : m_StoreID);
 	if (dlg.DoModal()==IDOK)
 	{
 		m_Conditions.AddItem(dlg.m_Condition);
@@ -314,7 +314,7 @@ void CFilterWnd::OnEditCondition()
 	INT idx = m_wndList.GetNextItem(-1, LVNI_SELECTED | LVNI_FOCUSED);
 	if (idx!=-1)
 	{
-		EditConditionDlg dlg(this, &m_Conditions.m_Items[idx]);
+		EditConditionDlg dlg(this, m_wndAllStores.GetCheck() ? NULL : m_StoreID, &m_Conditions.m_Items[idx]);
 		if (dlg.DoModal()==IDOK)
 		{
 			m_Conditions.m_Items[idx] = dlg.m_Condition;

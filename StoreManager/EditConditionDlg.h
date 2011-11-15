@@ -13,7 +13,7 @@
 class EditConditionDlg : public LFAttributeListDlg
 {
 public:
-	EditConditionDlg(CWnd* pParent, LFFilterCondition* pCondition=NULL);
+	EditConditionDlg(CWnd* pParent, CHAR* StoreID=NULL, LFFilterCondition* pCondition=NULL);
 
 	virtual void DoDataExchange(CDataExchange* pDX);
 
@@ -28,6 +28,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
+	CHAR m_StoreID[LFKeySize];
 	CListCtrl m_wndAttribute;
 	CComboBox m_wndCompare;
 	CPropertyEdit m_wndEdit;

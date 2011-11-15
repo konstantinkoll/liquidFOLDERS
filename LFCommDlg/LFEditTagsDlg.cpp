@@ -79,47 +79,51 @@ BOOL LFEditTagsDlg::OnInitDialog()
 	m_TagList.SetExtendedStyle(LVS_EX_DOUBLEBUFFER | LVS_EX_ONECLICKACTIVATE);
 	m_TagList.SetHoverTime(1);
 
+
+	// Vorschläge
+	CWaitCursor csr;
+	LFFilter* f = LFAllocFilter();
+
 	if (m_StoreIDValid)
 	{
-		// Vorschläge
-		LFFilter* f = LFAllocFilter();
 		strcpy_s(f->StoreID, LFKeySize, m_StoreID);
 		f->Mode = LFFilterModeDirectoryTree;
-		f->Options.IgnoreSlaves = true;
-		LFSearchResult* base = LFQuery(f);
-		LFSearchResult* res = LFGroupSearchResult(base, LFAttrTags, false, 0, true, f);
-		LFFreeSearchResult(base);
-		LFFreeFilter(f);
-
-		for (UINT a=0; a<res->m_ItemCount; a++)
-		{
-			LFItemDescriptor* i = res->m_Items[a];
-			if (((i->Type & LFTypeMask)==LFTypeVirtual) && (i->AggregateCount))
-			{
-				UINT puColumns[] = { 1 };
-
-				LVITEM lvi;
-				ZeroMemory(&lvi, sizeof(lvi));
-				lvi.mask = LVIF_TEXT | LVIF_COLUMNS;
-				lvi.cColumns = 1;
-				lvi.puColumns = puColumns;
-				lvi.iItem = a;
-				lvi.pszText = i->CoreAttributes.FileName;
-				INT idx = m_TagList.InsertItem(&lvi);
-
-				CString cnt;
-				cnt.Format(_T("%d"), i->AggregateCount);
-				m_TagList.SetItemText(idx, 1, cnt);
-			}
-		}
-
-		LFFreeSearchResult(res);
 	}
 	else
 	{
-		m_TagList.EnableWindow(FALSE);
+		f->Mode = LFFilterModeSearch;
 	}
 
+	f->Options.IgnoreSlaves = true;
+	LFSearchResult* base = LFQuery(f);
+	LFSearchResult* res = LFGroupSearchResult(base, LFAttrTags, false, 0, true, f);
+	LFFreeSearchResult(base);
+	LFFreeFilter(f);
+
+	for (UINT a=0; a<res->m_ItemCount; a++)
+	{
+		LFItemDescriptor* i = res->m_Items[a];
+		if (((i->Type & LFTypeMask)==LFTypeVirtual) && (i->AggregateCount))
+		{
+			UINT puColumns[] = { 1 };
+
+			LVITEM lvi;
+			ZeroMemory(&lvi, sizeof(lvi));
+			lvi.mask = LVIF_TEXT | LVIF_COLUMNS;
+			lvi.cColumns = 1;
+			lvi.puColumns = puColumns;
+			lvi.iItem = a;
+			lvi.pszText = i->CoreAttributes.FileName;
+			INT idx = m_TagList.InsertItem(&lvi);
+
+			CString cnt;
+			cnt.Format(_T("%d"), i->AggregateCount);
+			m_TagList.SetItemText(idx, 1, cnt);
+		}
+	}
+
+		LFFreeSearchResult(res);
+	
 	return TRUE;
 }
 
