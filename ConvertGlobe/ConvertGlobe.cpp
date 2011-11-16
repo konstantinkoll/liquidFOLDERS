@@ -125,7 +125,7 @@ void ConvertFile(CString Suffix)
 		}
 
 #define Print(id, no) { \
-		tmpStr.Format("\t%ff, %ff, %ff, %ff, %ff,\n", U[no], V[no], Vertices[id].X, Vertices[id].Y, Vertices[id]. Z); \
+		tmpStr.Format("\t%ff, %ff, %ff, %ff, %ff,\n", U[no], V[no], Vertices[id].X*1.01f, Vertices[id].Y*1.01f, Vertices[id]. Z*1.01f); \
 		output.WriteString(tmpStr); \
 	}
 
