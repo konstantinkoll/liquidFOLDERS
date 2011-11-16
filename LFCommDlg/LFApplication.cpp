@@ -295,7 +295,8 @@ BOOL LFApplication::InitInstance()
 	InitCtrls.dwICC = ICC_WIN95_CLASSES | ICC_DATE_CLASSES;
 	InitCommonControlsEx(&InitCtrls);
 
-	CWinAppEx::InitInstance();
+	if (!CWinAppEx::InitInstance())
+		return FALSE;
 
 	// OLE Initialisieren
 	ENSURE(AfxOleInit());
