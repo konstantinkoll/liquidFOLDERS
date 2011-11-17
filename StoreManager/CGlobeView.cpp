@@ -364,15 +364,15 @@ void CGlobeView::PrepareModel()
 	UINT Pos = 0;
 	for (UINT a=0; a<Count; a++)
 	{
-		GLdouble s = Nodes[Pos++];
-		GLdouble t = Nodes[Pos++];
-		glTexCoord2d(s, t);
+		GLfloat s = Nodes[Pos++];
+		GLfloat t = Nodes[Pos++];
+		glTexCoord2f(s, t);
 
-		GLdouble x = Nodes[Pos++];
-		GLdouble y = Nodes[Pos++];
-		GLdouble z = Nodes[Pos++];
-		glNormal3d(x, y, z);
-		glVertex3d(x, y, z);
+		GLfloat x = Nodes[Pos++];
+		GLfloat y = Nodes[Pos++];
+		GLfloat z = Nodes[Pos++];
+		glNormal3f(x, y, z);
+		glVertex3f(x, y, z);
 	}
 
 	glEnd();
