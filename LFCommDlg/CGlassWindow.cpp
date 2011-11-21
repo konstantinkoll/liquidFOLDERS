@@ -155,7 +155,7 @@ void CGlassWindow::SetTheme()
 		if (hTheme)
 			p_App->zCloseThemeData(hTheme);
 
-		hTheme = p_App->zOpenThemeData(m_hWnd, m_IsAeroWindow ? _T("CompositedWindow::Window") : VSCLASS_WINDOW);
+		hTheme = p_App->zOpenThemeData(GetSafeHwnd(), m_IsAeroWindow ? _T("CompositedWindow::Window") : VSCLASS_WINDOW);
 
 		if (p_App->zSetWindowThemeAttribute)
 		{

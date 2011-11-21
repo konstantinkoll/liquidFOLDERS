@@ -541,7 +541,7 @@ LRESULT CDropdownSelector::OnThemeChanged()
 		if (hTheme)
 			p_App->zCloseThemeData(hTheme);
 
-		hTheme = p_App->zOpenThemeData(m_hWnd, VSCLASS_COMBOBOX);
+		hTheme = p_App->zOpenThemeData(GetSafeHwnd(), VSCLASS_COMBOBOX);
 	}
 
 	return TRUE;
