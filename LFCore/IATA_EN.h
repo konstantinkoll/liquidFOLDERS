@@ -231,7 +231,7 @@ LFCountry Countries_EN[CountryCount_EN] = {
 };
 
 // Airports
-#define AirportCount_EN 8601
+#define AirportCount_EN 8602
 LFAirport Airports_EN[AirportCount_EN] = {
 	{  67, "AAA", "", "Anaa", { 17.355000, -145.508333 } },
 	{   8, "AAB", "", "Arrabury", { 26.690556, 141.047500 } },
@@ -2921,6 +2921,7 @@ LFAirport Airports_EN[AirportCount_EN] = {
 	{ 146, "HAZ", "", "Hatzfeldthaven", { 4.400000, 145.200000 } },
 	{   8, "HBA", "", "Hobart", { 42.836111, 147.510278 } },
 	{ 216, "HBB", "", "Hobbs (Industrial Airpark)", { -32.766667, -103.208889 } },
+	{  55, "HBE", "", "Borg El Arab", { -30.917778, 0.496389 } },
 	{ 216, "HBG", "", "Hattiesburg", { -31.265000, -89.252778 } },
 	{ 216, "HBH", "", "Hobart Bay", { -57.412222, -133.439444 } },
 	{  11, "HBI", "", "Harbour Island", { -25.516389, -76.600000 } },
