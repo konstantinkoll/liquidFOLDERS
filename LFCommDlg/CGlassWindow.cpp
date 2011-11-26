@@ -41,37 +41,37 @@ LRESULT CGlassWindow::DefWindowProc(UINT message, WPARAM wParam, LPARAM lParam)
 BOOL CGlassWindow::PreTranslateMessage(MSG* pMsg)
 {
 	if (p_PopupWindow)
-		if (IsWindow(p_PopupWindow->GetSafeHwnd()))
-			if (GetCapture()!=p_PopupWindow->GetOwner())
-			{
-				CRect rect;
-				p_PopupWindow->GetClientRect(rect);
-				p_PopupWindow->ClientToScreen(rect);
-
-				CPoint pt;
-				GetCursorPos(&pt);
-
-				switch (pMsg->message)
+		switch (pMsg->message)
+		{
+		case WM_LBUTTONDOWN:
+		case WM_RBUTTONDOWN:
+		case WM_MBUTTONDOWN:
+		case WM_LBUTTONUP:
+		case WM_RBUTTONUP:
+		case WM_MBUTTONUP:
+		case WM_NCLBUTTONDOWN:
+		case WM_NCRBUTTONDOWN:
+		case WM_NCMBUTTONDOWN:
+		case WM_NCLBUTTONUP:
+		case WM_NCRBUTTONUP:
+		case WM_NCMBUTTONUP:
+			if (IsWindow(p_PopupWindow->GetSafeHwnd()))
+				if (GetCapture()!=p_PopupWindow->GetOwner())
 				{
-				case WM_LBUTTONDOWN:
-				case WM_RBUTTONDOWN:
-				case WM_MBUTTONDOWN:
-				case WM_LBUTTONUP:
-				case WM_RBUTTONUP:
-				case WM_MBUTTONUP:
-				case WM_NCLBUTTONDOWN:
-				case WM_NCRBUTTONDOWN:
-				case WM_NCMBUTTONDOWN:
-				case WM_NCLBUTTONUP:
-				case WM_NCRBUTTONUP:
-				case WM_NCMBUTTONUP:
+					CRect rect;
+					p_PopupWindow->GetClientRect(rect);
+					p_PopupWindow->ClientToScreen(rect);
+
+					CPoint pt;
+					GetCursorPos(&pt);
+
 					if (!rect.PtInRect(pt))
 					{
 						p_PopupWindow->GetOwner()->SendMessage(WM_CLOSEDROPDOWN);
 						return TRUE;
 					}
 				}
-			}
+		}
 
 	if ((pMsg->message==WM_KEYDOWN) && (pMsg->wParam==VK_TAB))
 	{
