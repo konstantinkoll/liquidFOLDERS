@@ -178,9 +178,9 @@ void CDropdownWindow::OnSetFocus(CWnd* /*pOldWnd*/)
 	m_wndList.SetFocus();
 }
 
-void CDropdownWindow::OnActivateApp(BOOL bActive, DWORD dwTask)
+void CDropdownWindow::OnActivateApp(BOOL bActive, DWORD dwThreadID)
 {
-	CWnd::OnActivateApp(bActive, dwTask);
+	CWnd::OnActivateApp(bActive, dwThreadID);
 
 	if (!bActive)
 		GetOwner()->PostMessage(WM_CLOSEDROPDOWN);
