@@ -566,6 +566,11 @@ UINT LFApplication::DeleteStore(LFStoreDescriptor* store, CWnd* pParentWnd, CWnd
 	return LFDeleteStore(store->StoreID, pOwnerWnd ? pOwnerWnd->GetSafeHwnd() : NULL);
 }
 
+void LFApplication::PlayStandardSound()
+{
+	PlayRegSound(L"Apps\\.Default\\.Default");
+}
+
 void LFApplication::PlayNavigateSound()
 {
 	PlayRegSound(L"Apps\\Explorer\\Navigating");

@@ -118,6 +118,7 @@ public:
 	static void ExtractCoreIcons(HINSTANCE hModIcons, INT size, CImageList* li);
 	static UINT DeleteStore(LFItemDescriptor* store, CWnd* pParentWnd=NULL, CWnd* pOwnerWnd=NULL);
 	static UINT DeleteStore(LFStoreDescriptor* store, CWnd* pParentWnd=NULL, CWnd* pOwnerWnd=NULL);
+	static void PlayStandardSound();
 	static void PlayNavigateSound();
 	static void PlayWarningSound();
 	static void PlayTrashSound();
