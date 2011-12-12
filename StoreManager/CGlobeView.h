@@ -15,7 +15,7 @@
 struct GlobeItemData
 {
 	FVItemData Hdr;
-	GLdouble World[3];
+	GLfloat World[3];
 	INT ScreenPoint[2];
 	GLfloat Alpha;
 	WCHAR CoordString[32];
@@ -55,7 +55,7 @@ protected:
 	void PrepareModel();
 	void PrepareTexture();
 	void Normalize();
-	void CalcAndDrawSpots(GLdouble ModelView[4][4], GLdouble Projection[4][4]);
+	void CalcAndDrawSpots(GLfloat ModelView[4][4], GLfloat Projection[4][4]);
 	void CalcAndDrawLabel();
 	void DrawLabel(GlobeItemData* d, UINT cCaption, WCHAR* Caption, WCHAR* Subcaption, WCHAR* Coordinates, WCHAR* Description, BOOL Focused);
 	void DrawStatusBar(INT Height, GLfloat BackColor[], BOOL Themed);

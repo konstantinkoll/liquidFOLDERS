@@ -31,7 +31,7 @@ __forceinline double decToRad(double dec)
 	return dec*(PI/180.0);
 }
 
-__forceinline void MatrixMul(GLdouble Result[4][4], GLdouble Left[4][4], GLdouble Right[4][4])
+__forceinline void MatrixMul(GLfloat Result[4][4], GLfloat Left[4][4], GLfloat Right[4][4])
 {
 	Result[0][0] = Left[0][0]*Right[0][0] + Left[0][1]*Right[1][0] + Left[0][2]*Right[2][0] + Left[0][3]*Right[3][0];
 	Result[0][1] = Left[0][0]*Right[0][1] + Left[0][1]*Right[1][1] + Left[0][2]*Right[2][1] + Left[0][3]*Right[3][1];
@@ -51,16 +51,16 @@ __forceinline void MatrixMul(GLdouble Result[4][4], GLdouble Left[4][4], GLdoubl
 	Result[3][3] = Left[3][0]*Right[0][3] + Left[3][1]*Right[1][3] + Left[3][2]*Right[2][3] + Left[3][3]*Right[3][3];
 }
 
-__forceinline void CalculateWorldCoords(double lat, double lon, double result[])
+__forceinline void CalculateWorldCoords(double lat, double lon, GLfloat result[])
 {
 	double lon_r = decToRad(lon);
 	double lat_r = -decToRad(lat);
 
 	double c = cos(lat_r);
 
-	result[0] = cos(lon_r)*c;
-	result[1] = sin(lon_r)*c;
-	result[2] = sin(lat_r);
+	result[0] = (GLfloat)(cos(lon_r)*c);
+	result[1] = (GLfloat)(sin(lon_r)*c);
+	result[2] = (GLfloat)(sin(lat_r));
 }
 
 CString CookAttributeString(WCHAR* attr)
@@ -144,16 +144,16 @@ void glDisable2D()
 	glPopMatrix();
 }
 
-void glDrawIcon(GLdouble x, GLdouble y, GLdouble Size, GLdouble Alpha, UINT ID)
+void glDrawIcon(GLfloat x, GLfloat y, GLfloat Size, GLfloat Alpha, UINT ID)
 {
 	x -= 0.375;
 	y -= 0.375;
 	Size /= 2.0;
 
-	GLdouble s = (ID%2) ? 0.5 : 0.0;
-	GLdouble t = (ID/2) ? 0.5 : 0.0;
+	GLfloat s = (ID%2) ? 0.5f : 0.0f;
+	GLfloat t = (ID/2) ? 0.5f : 0.0f;
 
-	glColor4d(1.0, 1.0, 1.0, Alpha);
+	glColor4f(1.0f, 1.0f, 1.0f, Alpha);
 
 	glTexCoord2d(s, t);
 	glVertex2d(x-Size, y-Size);
@@ -310,8 +310,8 @@ void CGlobeView::GetPersistentData(FVPersistentData& Data)
 
 BOOL CGlobeView::CursorOnGlobe(CPoint point)
 {
-	GLdouble distX = point.x-(GLdouble)m_Width/2;
-	GLdouble distY = point.y-(GLdouble)m_Height/2;
+	GLfloat distX = point.x-(GLfloat)m_Width/2;
+	GLfloat distY = point.y-(GLfloat)m_Height/2;
 
 	return distX*distX+distY*distY<m_Radius*m_Radius;
 }
@@ -343,6 +343,7 @@ void CGlobeView::UpdateCursor()
 
 
 // OpenGL
+//
 
 void CGlobeView::PrepareModel()
 {
@@ -448,12 +449,12 @@ void CGlobeView::Normalize()
 		m_GlobeTarget.Longitude -= 360.0f;
 }
 
-void CGlobeView::CalcAndDrawSpots(GLdouble ModelView[4][4], GLdouble Projection[4][4])
+void CGlobeView::CalcAndDrawSpots(GLfloat ModelView[4][4], GLfloat Projection[4][4])
 {
-	GLdouble SizeX = m_Width/2.0;
-	GLdouble SizeY = m_Height/2.0;
+	GLfloat SizeX = m_Width/2.0f;
+	GLfloat SizeY = m_Height/2.0f;
 
-	GLdouble MVP[4][4];
+	GLfloat MVP[4][4];
 	MatrixMul(MVP, ModelView, Projection);
 
 	for (UINT a=0; a<p_Result->m_ItemCount; a++)
@@ -463,12 +464,12 @@ void CGlobeView::CalcAndDrawSpots(GLdouble ModelView[4][4], GLdouble Projection[
 		{
 			d->Alpha = 0.0f;
 
-			GLdouble z = ModelView[0][2]*d->World[0] + ModelView[1][2]*d->World[1] + ModelView[2][2]*d->World[2];
+			GLfloat z = ModelView[0][2]*d->World[0] + ModelView[1][2]*d->World[1] + ModelView[2][2]*d->World[2];
 			if ((z>m_FogEnd) && (m_Width) && (m_Height))
 			{
-				GLdouble w = MVP[0][3]*d->World[0] + MVP[1][3]*d->World[1] + MVP[2][3]*d->World[2] + MVP[3][3];
-				GLdouble x = (MVP[0][0]*d->World[0] + MVP[1][0]*d->World[1] + MVP[2][0]*d->World[2] + MVP[3][0])*SizeX/w + SizeX + 0.5;
-				GLdouble y = -(MVP[0][1]*d->World[0] + MVP[1][1]*d->World[1] + MVP[2][1]*d->World[2] + MVP[3][1])*SizeY/w + SizeY + 0.5;
+				GLfloat w = MVP[0][3]*d->World[0] + MVP[1][3]*d->World[1] + MVP[2][3]*d->World[2] + MVP[3][3];
+				GLfloat x = (MVP[0][0]*d->World[0] + MVP[1][0]*d->World[1] + MVP[2][0]*d->World[2] + MVP[3][0])*SizeX/w + SizeX + 0.5f;
+				GLfloat y = -(MVP[0][1]*d->World[0] + MVP[1][1]*d->World[1] + MVP[2][1]*d->World[2] + MVP[3][1])*SizeY/w + SizeY + 0.5f;
 
 				d->ScreenPoint[0] = (INT)x;
 				d->ScreenPoint[1] = (INT)y;
@@ -477,7 +478,7 @@ void CGlobeView::CalcAndDrawSpots(GLdouble ModelView[4][4], GLdouble Projection[
 					d->Alpha -= (GLfloat)((m_FogStart-z)/(m_FogStart-m_FogEnd));
 
 				if (m_ViewParameters.GlobeShowSpots)
-					glDrawIcon(x, y, 6.0+8.0*d->Alpha, d->Alpha, SPOT);
+					glDrawIcon(x, y, 6.0f+8.0f*d->Alpha, d->Alpha, SPOT);
 			}
 		}
 	}
@@ -814,10 +815,10 @@ void CGlobeView::DrawScene(BOOL InternalCall)
 	}
 
 	// Matritzen speichern
-	GLdouble ModelView[4][4];
-	GLdouble Projection[4][4];
-	glGetDoublev(GL_MODELVIEW_MATRIX, &ModelView[0][0]);
-	glGetDoublev(GL_PROJECTION_MATRIX, &Projection[0][0]);
+	GLfloat ModelView[4][4];
+	GLfloat Projection[4][4];
+	glGetFloatv(GL_MODELVIEW_MATRIX, &ModelView[0][0]);
+	glGetFloatv(GL_PROJECTION_MATRIX, &Projection[0][0]);
 
 	// Für Icons vorbereiten
 	if (m_TextureIcons)
@@ -840,7 +841,7 @@ void CGlobeView::DrawScene(BOOL InternalCall)
 
 	// Fadenkreuz zeichnen
 	if (theApp.m_GlobeShowViewport && theApp.m_GlobeShowCrosshairs)
-		glDrawIcon(m_Width/2.0, m_Height/2.0, 64.0, 1.0, CROSSHAIRS);
+		glDrawIcon(m_Width/2.0f, m_Height/2.0f, 64.0f, 1.0f, CROSSHAIRS);
 
 	// Icons beenden
 	glEnd();
@@ -1057,7 +1058,7 @@ void CGlobeView::OnSize(UINT nType, INT cx, INT cy)
 
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
-		gluPerspective(3.0f, (GLdouble)cx/cy, 0.1f, 500.0f);
+		gluPerspective(3.0f, (GLfloat)cx/cy, 0.1f, 500.0f);
 	}
 
 	CFileView::OnSize(nType, cx, cy);
