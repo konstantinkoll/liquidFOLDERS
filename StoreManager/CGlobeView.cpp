@@ -191,7 +191,7 @@ CGlobeView::CGlobeView()
 	m_Grabbed = FALSE;
 	m_AnimCounter = m_MoveCounter = 0;
 
-	ENSURE(YouLookAt.LoadString(IDS_YOULOOKAT));
+	ENSURE(m_YouLookAt.LoadString(IDS_YOULOOKAT));
 	m_LockUpdate = FALSE;
 }
 
@@ -688,7 +688,7 @@ void CGlobeView::DrawStatusBar(INT Height, GLfloat BackColor[], BOOL Themed)
 		c.Longitude = (m_GlobeCurrent.Longitude>180.0) ? 360-m_GlobeCurrent.Longitude : -m_GlobeCurrent.Longitude;
 		LFGeoCoordinatesToString(c, Coord, 256, true);
 
-		swprintf(Viewpoint, 256, YouLookAt, Coord);
+		swprintf(Viewpoint, 256, m_YouLookAt, Coord);
 
 		ViewpointWidth = (INT)m_Fonts[0].GetTextWidth(Viewpoint);
 		if (m_Width<CopyrightWidth+ViewpointWidth+48)
@@ -1307,14 +1307,15 @@ void CGlobeView::OnGoogleEarth()
 			}
 
 			f.WriteString(_T("</Document>\n</kml>\n"));
+			f.Close();
 
 			ShellExecute(m_hWnd, _T("open"), szTempName, NULL, NULL, SW_SHOW);
 		}
 		catch(CFileException ex)
 		{
 			LFErrorBox(LFDriveNotReady);
+			f.Close();
 		}
-		f.Close();
 	}
 }
 

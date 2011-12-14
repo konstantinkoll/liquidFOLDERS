@@ -107,7 +107,7 @@ private:
 	CPoint m_GrabPoint;
 	BOOL m_Grabbed;
 	BOOL m_LockUpdate;
-	CString YouLookAt;
+	CString m_YouLookAt;
 
 	BOOL CursorOnGlobe(CPoint point);
 	void UpdateCursor();
