@@ -1261,7 +1261,7 @@ void CGlobeView::OnGoogleEarth()
 
 	CString szTempName;
 	srand(rand());
-	szTempName.Format(_T("%sliquidFOLDERS%.4X%.4X.KML"), Pathname, 32768+rand(), 32768+rand());
+	szTempName.Format(_T("%sliquidFOLDERS%.4X%.4X.kml"), Pathname, 32768+rand(), 32768+rand());
 
 	// Datei erzeugen
 	CStdioFile f;
