@@ -8,7 +8,7 @@
 #include <math.h>
 
 
-// CTimelineView
+// GLFont
 //
 
 GLFont::GLFont()
@@ -96,13 +96,53 @@ BOOL GLFont::Create(CFont* font)
 	return ok;
 }
 
+UINT GLFont::Render(CHAR* pStr, INT xs, INT ys, INT cCount)
+{
+	if (!pStr)
+		return 0;
+
+	if (cCount<0)
+		cCount = MAXINT;
+
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, m_TexID);
+	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+
+	glBegin (GL_QUADS);
+	INT x = xs;
+	INT y = ys;
+	UINT h = 0;
+
+	while ((cCount>0) && (*pStr))
+	{
+		CHAR ch = *pStr;
+
+		if (ch==' ')
+		{
+			x += m_Spacing;
+		}
+		else
+			if (ch>32)
+			{
+				x += RenderChar((UCHAR)(ch-32), x, y, &h);
+			}
+
+		pStr++;
+		cCount--;
+	}
+	glEnd();
+
+	glDisable(GL_TEXTURE_2D);
+	return h;
+}
+
 UINT GLFont::Render(WCHAR* pStr, INT xs, INT ys, INT cCount)
 {
 	if (!pStr)
 		return 0;
 
 	if (cCount<0)
-		cCount = (INT)wcslen(pStr);
+		cCount = MAXINT;
 
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, m_TexID);
@@ -121,12 +161,12 @@ UINT GLFont::Render(WCHAR* pStr, INT xs, INT ys, INT cCount)
 		if ((ch==2014) || (ch==8212))
 			ch = 151;
 
-		if (ch==' ')
+		if (ch==L' ')
 		{
 			x += m_Spacing;
 		}
 		else
-			if (((ch-32)>0) && ((ch-32)<256-32))
+			if ((ch>32) && (ch<256))
 			{
 				x += RenderChar((UCHAR)(ch-32), x, y, &h);
 			}
@@ -165,13 +205,35 @@ UINT GLFont::RenderChar(UCHAR ch, INT x, INT y, UINT* pHeight)
 	return w;
 }
 
+UINT GLFont::GetTextWidth(CHAR* pStr, INT cCount)
+{
+	if (!pStr)
+		return 0;
+
+	if (cCount<0)
+		cCount = MAXINT;
+
+	GLfloat w = 0;
+
+	while ((cCount>0) && (*pStr))
+	{
+		CHAR ch = *pStr;
+
+		w += (ch==' ') ? m_Spacing : (ch>32) ? (TexCoords[ch-32][2]-TexCoords[ch-32][0])*m_TexSize : 0;
+		pStr++;
+		cCount--;
+	}
+
+	return (UINT)w;
+}
+
 UINT GLFont::GetTextWidth(WCHAR* pStr, INT cCount)
 {
 	if (!pStr)
 		return 0;
 
 	if (cCount<0)
-		cCount = (INT)wcslen(pStr);
+		cCount = MAXINT;
 
 	GLfloat w = 0;
 
@@ -183,16 +245,7 @@ UINT GLFont::GetTextWidth(WCHAR* pStr, INT cCount)
 		if ((ch==2014) || (ch==8212))
 			ch = 151;
 
-		if (ch==' ')
-		{
-			w += m_Spacing;
-		}
-		else
-			if (((ch-32)>0) && ((ch-32)<256-32))
-			{
-				w += (TexCoords[ch-32][2]-TexCoords[ch-32][0])*m_TexSize;
-			}
-
+		w += (ch==L' ') ? m_Spacing : (ch>32) && (ch<256) ? (TexCoords[ch-32][2]-TexCoords[ch-32][0])*m_TexSize : 0;
 		pStr++;
 		cCount--;
 	}
@@ -200,7 +253,7 @@ UINT GLFont::GetTextWidth(WCHAR* pStr, INT cCount)
 	return (UINT)w;
 }
 
-UINT GLFont::GetTextHeight(WCHAR* pStr)
+UINT GLFont::GetTextHeight(void* pStr)
 {
 	return (pStr ? m_LineHeight : 0);
 }

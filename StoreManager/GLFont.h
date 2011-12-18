@@ -16,9 +16,11 @@ public:
 
 	BOOL Create(CString face, UINT size, BOOL bold, BOOL italic);
 	BOOL Create(CFont* font);
+	UINT Render(CHAR* pStr, INT x, INT y, INT cCount=-1);
 	UINT Render(WCHAR* pStr, INT x, INT y, INT cCount=-1);
+	UINT GetTextWidth(CHAR* pStr, INT cCount=-1);
 	UINT GetTextWidth(WCHAR* pStr, INT cCount=-1);
-	UINT GetTextHeight(WCHAR* pStr);
+	UINT GetTextHeight(void* pStr);
 
 protected:
 	BOOL Initialize(HFONT hFont);
