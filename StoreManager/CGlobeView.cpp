@@ -268,7 +268,7 @@ INT CGlobeView::ItemAtPosition(CPoint point)
 		GlobeItemData* d = GetItemData(a);
 
 		if (d->Hdr.Valid)
-			if ((d->Alpha>0.1f) && ((d->Alpha>Alpha-0.05f) || (d->Alpha>0.75f)))
+			if ((d->Alpha>0.75f) || ((d->Alpha>0.1f) && (d->Alpha>Alpha-0.05f)))
 				if (PtInRect(&d->Hdr.Rect, point))
 				{
 					res = a;
