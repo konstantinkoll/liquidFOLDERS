@@ -345,7 +345,7 @@ void CGlobeView::UpdateCursor()
 // OpenGL
 //
 
-void CGlobeView::PrepareModel()
+__forceinline void CGlobeView::PrepareModel()
 {
 	// 3D-Modelle einbinden
 	#include "Globe_Low.h"
@@ -383,7 +383,7 @@ void CGlobeView::PrepareModel()
 	m_LockUpdate = FALSE;
 }
 
-void CGlobeView::PrepareTexture()
+__forceinline void CGlobeView::PrepareTexture()
 {
 	// Automatisch höchstens 4096x4096 laden, da quadratisch und von den meisten Grafikkarten unterstützt
 	UINT Tex = theApp.m_nTextureSize;
@@ -428,7 +428,7 @@ Smaller:
 	}
 }
 
-void CGlobeView::Normalize()
+__forceinline void CGlobeView::Normalize()
 {
 	// Zoom
 	if (m_GlobeTarget.Zoom<0)
@@ -449,7 +449,7 @@ void CGlobeView::Normalize()
 		m_GlobeTarget.Longitude -= 360.0f;
 }
 
-void CGlobeView::CalcAndDrawSpots(GLfloat ModelView[4][4], GLfloat Projection[4][4])
+__forceinline void CGlobeView::CalcAndDrawSpots(GLfloat ModelView[4][4], GLfloat Projection[4][4])
 {
 	GLfloat SizeX = m_Width/2.0f;
 	GLfloat SizeY = m_Height/2.0f;
@@ -484,7 +484,7 @@ void CGlobeView::CalcAndDrawSpots(GLfloat ModelView[4][4], GLfloat Projection[4]
 	}
 }
 
-void CGlobeView::CalcAndDrawLabel()
+__forceinline void CGlobeView::CalcAndDrawLabel()
 {
 	for (UINT a=0; a<p_Result->m_ItemCount; a++)
 	{
@@ -525,7 +525,7 @@ void CGlobeView::CalcAndDrawLabel()
 	}
 }
 
-void CGlobeView::DrawLabel(GlobeItemData* d, UINT cCaption, WCHAR* Caption, WCHAR* Subcaption, WCHAR* Coordinates, WCHAR* Description, BOOL Focused)
+__forceinline void CGlobeView::DrawLabel(GlobeItemData* d, UINT cCaption, WCHAR* Caption, WCHAR* Subcaption, WCHAR* Coordinates, WCHAR* Description, BOOL Focused)
 {
 	ASSERT(ARROWSIZE>3);
 
@@ -671,7 +671,7 @@ void CGlobeView::DrawLabel(GlobeItemData* d, UINT cCaption, WCHAR* Caption, WCHA
 		y += m_Fonts[0].Render(Description, x, y);
 }
 
-void CGlobeView::DrawStatusBar(INT Height, GLfloat BackColor[], BOOL Themed)
+__forceinline void CGlobeView::DrawStatusBar(INT Height, GLfloat BackColor[], BOOL Themed)
 {
 	WCHAR Copyright[] = L"© NASA's Earth Observatory";
 	INT CopyrightWidth = (INT)m_Fonts[0].GetTextWidth(Copyright);
