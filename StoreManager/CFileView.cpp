@@ -1376,7 +1376,7 @@ void CFileView::OnMouseMove(UINT nFlags, CPoint point)
 
 	if (m_EnableHover || m_EnableTooltip)
 	{
-		INT Item = ItemAtPosition(point);
+		INT idx = ItemAtPosition(point);
 
 		if (!m_Hover)
 		{
@@ -1390,14 +1390,14 @@ void CFileView::OnMouseMove(UINT nFlags, CPoint point)
 			TrackMouseEvent(&tme);
 		}
 		else
-			if ((m_TooltipCtrl.IsWindowVisible()) && (Item!=m_HotItem))
+			if ((m_TooltipCtrl.IsWindowVisible()) && (idx!=m_HotItem))
 				m_TooltipCtrl.Deactivate();
 
-		if (m_HotItem!=Item)
+		if (m_HotItem!=idx)
 		{
 			if (m_EnableHover)
 				InvalidateItem(m_HotItem);
-			m_HotItem = Item;
+			m_HotItem = idx;
 			if (m_EnableHover)
 				InvalidateItem(m_HotItem);
 		}

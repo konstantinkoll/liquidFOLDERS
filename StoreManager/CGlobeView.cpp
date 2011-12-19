@@ -1128,8 +1128,8 @@ void CGlobeView::OnMouseHover(UINT nFlags, CPoint point)
 
 void CGlobeView::OnLButtonDown(UINT nFlags, CPoint point)
 {
-	INT n = ItemAtPosition(point);
-	if (n==-1)
+	INT idx = ItemAtPosition(point);
+	if (idx==-1)
 	{
 		if (CursorOnGlobe(point))
 		{
