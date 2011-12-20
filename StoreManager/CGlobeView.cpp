@@ -69,6 +69,8 @@ CString CookAttributeString(WCHAR* attr)
 	tmpStr.Replace(_T("<"), _T("_"));
 	tmpStr.Replace(_T(">"), _T("_"));
 	tmpStr.Replace(_T("&"), _T("&amp;"));
+	tmpStr.Replace(_T("–"), _T("&#8211;"));
+	tmpStr.Replace(_T("—"), _T("&#8212;"));
 
 	return tmpStr;
 }
