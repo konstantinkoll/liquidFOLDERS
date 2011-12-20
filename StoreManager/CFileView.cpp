@@ -1556,7 +1556,7 @@ void CFileView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 		break;
 	case VK_SPACE:
 		if (m_FocusItem!=-1)
-			SelectItem(m_FocusItem, (GetKeyState(VK_CONTROL)>=0) ? TRUE : !GetItemData(m_FocusItem)->Selected);
+			SelectItem(m_FocusItem, (GetKeyState(VK_CONTROL)>=0) ? TRUE : !IsSelected(m_FocusItem));
 		break;
 	case VK_F2:
 		if ((GetKeyState(VK_CONTROL)>=0) && (GetKeyState(VK_SHIFT)>=0))
@@ -1687,7 +1687,7 @@ void CFileView::OnRButtonUp(UINT nFlags, CPoint point)
 		if (GetFocus()!=this)
 			SetFocus();
 
-		if (!GetItemData(idx)->Selected)
+		if (!IsSelected(idx))
 		{
 			m_FocusItem = idx;
 
