@@ -3,8 +3,6 @@
 //
 
 #include "stdafx.h"
-#include "CGlassWindow.h"
-#include "CTaskButton.h"
 #include "LFCommDlg.h"
 
 
