@@ -115,7 +115,7 @@ UINT GLFont::Render(CHAR* pStr, INT xs, INT ys, INT cCount)
 
 	while ((cCount>0) && (*pStr))
 	{
-		CHAR ch = *pStr;
+		UCHAR ch = *pStr;
 
 		if (ch==' ')
 		{
@@ -124,7 +124,7 @@ UINT GLFont::Render(CHAR* pStr, INT xs, INT ys, INT cCount)
 		else
 			if (ch>32)
 			{
-				x += RenderChar((UCHAR)(ch-32), x, y, &h);
+				x += RenderChar(ch-32, x, y, &h);
 			}
 
 		pStr++;
@@ -168,7 +168,7 @@ UINT GLFont::Render(WCHAR* pStr, INT xs, INT ys, INT cCount)
 		else
 			if ((ch>32) && (ch<256))
 			{
-				x += RenderChar((UCHAR)(ch-32), x, y, &h);
+				x += RenderChar((UCHAR)ch-32, x, y, &h);
 			}
 
 		pStr++;
@@ -217,7 +217,7 @@ UINT GLFont::GetTextWidth(CHAR* pStr, INT cCount)
 
 	while ((cCount>0) && (*pStr))
 	{
-		CHAR ch = *pStr;
+		UCHAR ch = *pStr;
 
 		w += (ch==' ') ? m_Spacing : (ch>32) ? (TexCoords[ch-32][2]-TexCoords[ch-32][0])*m_TexSize : 0;
 		pStr++;
@@ -271,7 +271,7 @@ GLFont::PaintResult GLFont::PaintAlphabet(HDC hDC, BOOL bMeasureOnly)
 	INT x = m_Spacing;
 	INT y = 0;
 
-	for (UCHAR c = 32; c < 255; c++)
+	for (UCHAR c=32; c<255; c++)
 	{
 		str[0] = c;
 		if (!GetTextExtentPoint32A(hDC, str, 1, &size))
