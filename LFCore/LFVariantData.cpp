@@ -66,27 +66,11 @@ LFCore_API void LFDoubleToString(const double d, wchar_t* str, size_t cCount)
 
 LFCore_API void LFGeoCoordinateToString(const double c, wchar_t* str, size_t cCount, bool IsLatitude, bool FillZero)
 {
-	wchar_t Hemisphere[2];
-	if (IsLatitude)
-	{
-		Hemisphere[0] = 'N';
-		Hemisphere[1] = 'S';
-	}
-	else
-	{
-		Hemisphere[0] = 'W';
-		Hemisphere[1] = 'E';
-	}
-
-	swprintf(str, cCount, FillZero ? L"%3u°%2u\'%2u\"%c" : L"%u°%u\'%u\"%c",
+	swprintf(str, cCount, FillZero ? L"%03u°%02u\'%02u\"%c" : L"%u°%u\'%u\"%c",
 		(unsigned int)(fabs(c)+ROUNDOFF),
 		(unsigned int)GetMinutes(c),
 		(unsigned int)(GetSeconds(c)+0.5),
-		Hemisphere[c>0]);
-
-	if (FillZero)
-		while (wchar_t* p=wcschr(str, L' '))
-			*p = L'0';
+		c>0 ? IsLatitude ? L'S' : L'N' : IsLatitude ? L'W' : L'E');
 }
 
 LFCore_API void LFGeoCoordinatesToString(const LFGeoCoordinates c, wchar_t* str, size_t cCount, bool FillZero)
