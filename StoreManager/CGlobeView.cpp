@@ -190,11 +190,10 @@ CGlobeView::CGlobeView()
 	m_CurrentGlobeTexture = -1;
 	m_Scale = 1.0f;
 	m_Radius = m_Momentum = 0.0f;
-	m_Grabbed = FALSE;
+	m_Grabbed = m_LockUpdate = FALSE;
 	m_AnimCounter = m_MoveCounter = 0;
 
 	ENSURE(m_YouLookAt.LoadString(IDS_YOULOOKAT));
-	m_LockUpdate = FALSE;
 }
 
 BOOL CGlobeView::Create(CWnd* pParentWnd, UINT nID, LFSearchResult* Result, FVPersistentData* Data)
