@@ -1098,6 +1098,8 @@ void CGlobeView::OnMouseMove(UINT nFlags, CPoint point)
 
 BOOL CGlobeView::OnMouseWheel(UINT /*nFlags*/, short zDelta, CPoint /*pt*/)
 {
+	m_TooltipCtrl.Deactivate();
+
 	if (zDelta<0)
 	{
 		OnZoomOut();
