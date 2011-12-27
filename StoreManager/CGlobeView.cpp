@@ -952,6 +952,7 @@ BEGIN_MESSAGE_MAP(CGlobeView, CFileView)
 	ON_WM_LBUTTONUP()
 	ON_WM_KEYDOWN()
 	ON_WM_TIMER()
+	ON_WM_CONTEXTMENU()
 
 	ON_COMMAND(IDM_GLOBE_JUMPTOLOCATION, OnJumpToLocation)
 	ON_COMMAND(IDM_GLOBE_ZOOMIN, OnZoomIn)
@@ -1212,6 +1213,13 @@ void CGlobeView::OnTimer(UINT_PTR nIDEvent)
 	// Eat bogus WM_TIMER messages
 	MSG msg;
 	while (PeekMessage(&msg, m_hWnd, WM_TIMER, WM_TIMER, PM_REMOVE));
+}
+
+void CGlobeView::OnContextMenu(CWnd* pWnd, CPoint pos)
+{
+	m_Momentum = 0.0f;
+
+	CFileView::OnContextMenu(pWnd, pos);
 }
 
 
