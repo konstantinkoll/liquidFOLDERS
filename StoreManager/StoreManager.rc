@@ -686,7 +686,7 @@ END
 STRINGTABLE 
 BEGIN
     IDM_GLOBE_JUMPTOLOCATION 
-                            "Richtet von Globus auf einen bestimmten Ort aus.\nOrt auswählen..."
+                            "Richtet den Globus auf einen bestimmten Ort aus.\nOrt auswählen..."
     IDM_GLOBE_ZOOMIN        "Vergrößert den Globus.\nVergößern"
     IDM_GLOBE_ZOOMOUT       "Verkleinert den Globus.\nVerkleinern"
     IDM_GLOBE_AUTOSIZE      "Passt den Globus an die Fenstergröße an.\nGröße anpassen"
