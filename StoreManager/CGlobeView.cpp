@@ -1182,6 +1182,16 @@ void CGlobeView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 
 	switch(nChar)
 	{
+	case VK_ADD:
+	case VK_OEM_PLUS:
+		if ((GetKeyState(VK_CONTROL)>=0) && (GetKeyState(VK_SHIFT)>=0))
+			OnZoomIn();
+		break;
+	case VK_SUBTRACT:
+	case VK_OEM_MINUS:
+		if ((GetKeyState(VK_CONTROL)>=0) && (GetKeyState(VK_SHIFT)>=0))
+			OnZoomOut();
+		break;
 	case 'L':
 		if ((GetKeyState(VK_CONTROL)<0) && (GetKeyState(VK_SHIFT)>=0))
 			OnJumpToLocation();
