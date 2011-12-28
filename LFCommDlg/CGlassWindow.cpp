@@ -71,6 +71,7 @@ BOOL CGlassWindow::PreTranslateMessage(MSG* pMsg)
 						return TRUE;
 					}
 				}
+			break;
 		}
 
 	if ((pMsg->message==WM_KEYDOWN) && (pMsg->wParam==VK_TAB))
