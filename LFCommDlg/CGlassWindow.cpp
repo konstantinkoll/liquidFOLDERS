@@ -58,12 +58,11 @@ BOOL CGlassWindow::PreTranslateMessage(MSG* pMsg)
 			if (IsWindow(p_PopupWindow->GetSafeHwnd()))
 				if (GetCapture()!=p_PopupWindow->GetOwner())
 				{
+					CPoint pt(AFX_GET_X_LPARAM(pMsg->lParam), AFX_GET_Y_LPARAM(pMsg->lParam));
+
 					CRect rect;
 					p_PopupWindow->GetClientRect(rect);
 					p_PopupWindow->ClientToScreen(rect);
-
-					CPoint pt;
-					GetCursorPos(&pt);
 
 					if (!rect.PtInRect(pt))
 					{
