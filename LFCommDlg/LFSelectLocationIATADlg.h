@@ -19,7 +19,7 @@ public:
 
 	virtual void DoDataExchange(CDataExchange* pDX);
 
-	LFAirport* m_Airport;
+	LFAirport* p_Airport;
 	UINT m_LastCountrySelected;
 	BOOL m_OverwriteName;
 	BOOL m_OverwriteGPS;

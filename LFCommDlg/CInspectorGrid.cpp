@@ -463,7 +463,7 @@ void CPropertyIATA::OnClickButton()
 	LFSelectLocationIATADlg dlg(IDD_SELECTIATA, NULL, &p_Data->AnsiString[0], p_LocationName!=NULL, p_LocationGPS!=NULL);
 
 	if (dlg.DoModal()==IDOK)
-		if (dlg.m_Airport)
+		if (dlg.p_Airport)
 		{
 			SHORT Attr2 = -1;
 			if ((p_LocationName) && (dlg.m_OverwriteName))
@@ -472,7 +472,7 @@ void CPropertyIATA::OnClickButton()
 				Attr2 = LFAttrLocationName;
 
 				p_LocationName->IsNull = false;
-				MultiByteToWideChar(CP_ACP, 0, dlg.m_Airport->Name, -1, p_LocationName->UnicodeString, 256);
+				MultiByteToWideChar(CP_ACP, 0, dlg.p_Airport->Name, -1, p_LocationName->UnicodeString, 256);
 			}
 
 			SHORT Attr3 = -1;
@@ -482,11 +482,11 @@ void CPropertyIATA::OnClickButton()
 				Attr3 = LFAttrLocationGPS;
 
 				p_LocationGPS->IsNull = false;
-				p_LocationGPS->GeoCoordinates = dlg.m_Airport->Location;
+				p_LocationGPS->GeoCoordinates = dlg.p_Airport->Location;
 			}
 
 			p_Data->IsNull = false;
-			strcpy_s(p_Data->AnsiString, 256, dlg.m_Airport->Code);
+			strcpy_s(p_Data->AnsiString, 256, dlg.p_Airport->Code);
 			p_Parent->NotifyOwner((SHORT)p_Data->Attr, Attr2, Attr3);
 		}
 }

@@ -1234,8 +1234,8 @@ void CGlobeView::OnJumpToLocation()
 		m_AnimCounter = ANIMLENGTH;
 		m_AnimStartLatitude = m_GlobeCurrent.Latitude;
 		m_AnimStartLongitude = m_GlobeCurrent.Longitude;
-		m_GlobeTarget.Latitude = (GLfloat)-dlg.m_Airport->Location.Latitude;
-		m_GlobeTarget.Longitude = (GLfloat)-dlg.m_Airport->Location.Longitude;
+		m_GlobeTarget.Latitude = (GLfloat)-dlg.p_Airport->Location.Latitude;
+		m_GlobeTarget.Longitude = (GLfloat)-dlg.p_Airport->Location.Longitude;
 		m_Momentum = 0.0f;
 
 		UpdateScene();

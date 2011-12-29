@@ -28,12 +28,12 @@ LFSelectLocationIATADlg::LFSelectLocationIATADlg(UINT nIDTemplate, CWnd* pParent
 
 	if (Airport)
 	{
-		if (!LFIATAGetAirportByCode(Airport, &m_Airport))
-			m_Airport = NULL;
+		if (!LFIATAGetAirportByCode(Airport, &p_Airport))
+			p_Airport = NULL;
 	}
 	else
 	{
-		m_Airport = NULL;
+		p_Airport = NULL;
 	}
 }
 
@@ -54,10 +54,10 @@ void LFSelectLocationIATADlg::LoadCountry(UINT country, BOOL SelectFirst)
 	li->SetColumnWidth(1, LVSCW_AUTOSIZE_USEHEADER);
 
 	INT sel = 0;
-	if ((!SelectFirst) && (m_Airport))
+	if ((!SelectFirst) && (p_Airport))
 	{
 		for (INT a=0; a<m_nAirports; a++)
-			if (m_Airports[a]==m_Airport)
+			if (m_Airports[a]==p_Airport)
 			{
 				sel = a;
 				break;
@@ -76,10 +76,10 @@ void LFSelectLocationIATADlg::UpdatePreview()
 	CListCtrl* li = (CListCtrl*)GetDlgItem(IDC_AIRPORTS);
 	INT idx = li->GetNextItem(-1, LVIS_SELECTED);
 
-	m_Airport = m_Airports[idx];
-	m_Map.Update(m_Airport);
+	p_Airport = m_Airports[idx];
+	m_Map.Update(p_Airport);
 
-	LFGeoCoordinatesToString(m_Airport->Location, m_Buffer, 256, false);
+	LFGeoCoordinatesToString(p_Airport->Location, m_Buffer, 256, false);
 	GetDlgItem(IDC_GPSLOCATION)->SetWindowText(m_Buffer);
 }
 
@@ -133,7 +133,7 @@ BOOL LFSelectLocationIATADlg::OnInitDialog()
 	l->InsertColumn(1, &lvc);
 
 	// Init
-	UINT country = m_Airport ? m_Airport->CountryID : m_LastCountrySelected;
+	UINT country = p_Airport ? p_Airport->CountryID : m_LastCountrySelected;
 	CString tmpStr(&LFIATAGetCountry(country)->Name[0]);
 	c->SelectString(-1, tmpStr);
 	LoadCountry(country, FALSE);
