@@ -1229,7 +1229,7 @@ void CGlobeView::OnJumpToLocation()
 
 	if (dlg.DoModal()==IDOK)
 	{
-		ASSERT(dlg.m_Airport);
+		ASSERT(dlg.p_Airport);
 
 		m_AnimCounter = ANIMLENGTH;
 		m_AnimStartLatitude = m_GlobeCurrent.Latitude;
