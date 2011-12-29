@@ -27,7 +27,7 @@ public:
 	~CMapSelectionCtrl();
 
 	void OnBlink();
-	void SetGeoCoordinates(const LFGeoCoordinates _Coord);
+	void SetGeoCoordinates(const LFGeoCoordinates Coord);
 
 protected:
 	CGdiPlusBitmapResource* m_Indicator;

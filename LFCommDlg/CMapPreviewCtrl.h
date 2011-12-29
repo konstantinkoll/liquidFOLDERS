@@ -18,11 +18,11 @@ public:
 	CMapPreviewCtrl();
 	~CMapPreviewCtrl();
 
-	void Update(LFAirport* _Airport);
+	void Update(LFAirport* pAirport);
 
 protected:
 	CGdiPlusBitmapResource* m_Indicator;
-	LFAirport* m_Airport;
+	LFAirport* p_Airport;
 	LFGeoCoordinates m_Location;
 	GraphicsPath m_TextPath;
 	BOOL m_FirstPathDraw;

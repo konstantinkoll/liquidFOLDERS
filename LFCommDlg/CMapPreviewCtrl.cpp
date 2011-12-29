@@ -49,7 +49,7 @@ CMapPreviewCtrl::CMapPreviewCtrl()
 	}
 	m_Indicator = new CGdiPlusBitmapResource();
 	ENSURE(m_Indicator->Load(IDB_LOCATIONINDICATOR_16, _T("PNG"), LFCommDlgDLL.hResource));
-	m_Airport = NULL;
+	p_Airport = NULL;
 	m_Location.Latitude = 0;
 	m_Location.Longitude = 0;
 }
@@ -60,16 +60,16 @@ CMapPreviewCtrl::~CMapPreviewCtrl()
 		delete m_Indicator;
 }
 
-void CMapPreviewCtrl::Update(LFAirport* _Airport)
+void CMapPreviewCtrl::Update(LFAirport* pAirport)
 {
-	if (_Airport!=m_Airport)
+	if (pAirport!=p_Airport)
 	{
-		m_Airport = _Airport;
-		if (_Airport)
+		p_Airport = pAirport;
+		if (pAirport)
 		{
 			FontFamily fontFamily(((LFApplication*)AfxGetApp())->GetDefaultFontFace());
 			WCHAR pszBuf[4];
-			MultiByteToWideChar(CP_ACP, 0, m_Airport->Code, -1, pszBuf, 4);
+			MultiByteToWideChar(CP_ACP, 0, pAirport->Code, -1, pszBuf, 4);
 
 			StringFormat strformat;
 			m_TextPath.Reset();
@@ -120,8 +120,8 @@ void CMapPreviewCtrl::OnPaint()
 	g.SetInterpolationMode(InterpolationModeHighQualityBicubic);
 
 	// Karte
-	if (m_Airport)
-		m_Location = m_Airport->Location;
+	if (p_Airport)
+		m_Location = p_Airport->Location;
 
 	INT L = Map2->m_pBitmap->GetWidth();
 	INT H = Map2->m_pBitmap->GetHeight();
@@ -144,7 +144,7 @@ void CMapPreviewCtrl::OnPaint()
 	if (PosX<rect.Width()-L)
 		g.DrawImage(Map2->m_pBitmap, PosX+L, PosY, L, H);
 
-	if (m_Airport)
+	if (p_Airport)
 	{
 		// Punkt
 		LocX += PosX-m_Indicator->m_pBitmap->GetWidth()/2+1;

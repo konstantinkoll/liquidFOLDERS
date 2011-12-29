@@ -75,9 +75,9 @@ void CMapSelectionCtrl::OnBlink()
 	}
 }
 
-void CMapSelectionCtrl::SetGeoCoordinates(const LFGeoCoordinates _Coord)
+void CMapSelectionCtrl::SetGeoCoordinates(const LFGeoCoordinates Coord)
 {
-	m_Coord = _Coord;
+	m_Coord = Coord;
 	SendUpdateMsg();
 }
 
