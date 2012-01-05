@@ -2,6 +2,7 @@
 #include "stdafx.h"
 #include "LFCore.h"
 #include "Thumbnails.h"
+#include "Thumbcache.h"
 
 
 extern HMODULE LFCoreModuleHandle;
@@ -36,8 +37,20 @@ LFCore_API HBITMAP LFGetThumbnail(LFItemDescriptor* i, SIZE sz)
 			LPCITEMIDLIST pidlRel = NULL;
 			if (SUCCEEDED(SHBindToParent(pidlFQ, IID_IShellFolder, (void**)&pParentFolder, &pidlRel)))
 			{
+				// IThumbnailProvider
+				IThumbnailProvider* pThumbnailProvider = NULL;
+				if (SUCCEEDED(pParentFolder->GetUIObjectOf(NULL, 1, &pidlRel, IID_IThumbnailProvider, NULL, (void**)&pThumbnailProvider)))
+				{
+					DWORD dwAlpha = WTSAT_UNKNOWN;
+					pThumbnailProvider->GetThumbnail(min(sz.cx, sz.cy), &hBmp, &dwAlpha);
+
+					pThumbnailProvider->Release();
+					goto Finish;
+				}
+
+				// IExtractImage
 				IExtractImage* pExtractImage = NULL;
-				if (SUCCEEDED(pParentFolder->GetUIObjectOf(NULL,1, &pidlRel, IID_IExtractImage, NULL, (void**)&pExtractImage)))
+				if (SUCCEEDED(pParentFolder->GetUIObjectOf(NULL, 1, &pidlRel, IID_IExtractImage, NULL, (void**)&pExtractImage)))
 				{
 					DWORD dwPriority = 0;
 					DWORD dwFlags = IEIFLAG_SCREEN | IEIFLAG_NOBORDER | IEIFLAG_NOSTAMP | IEIFLAG_OFFLINE;
@@ -46,8 +59,10 @@ LFCore_API HBITMAP LFGetThumbnail(LFItemDescriptor* i, SIZE sz)
 						pExtractImage->Extract(&hBmp);
 
 					pExtractImage->Release();
+					goto Finish;
 				}
 
+Finish:
 				pParentFolder->Release();
 			}
 		}
