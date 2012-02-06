@@ -186,7 +186,7 @@ CGlobeView::CGlobeView()
 
 	m_Width = m_Height = 0;
 	m_GlobeModel = -1;
-	m_TextureGlobe = m_TextureIcons = NULL;
+	m_pTextureGlobe = m_pTextureIcons = NULL;
 	m_CurrentGlobeTexture = -1;
 	m_Scale = 1.0f;
 	m_Radius = m_Momentum = 0.0f;
@@ -417,9 +417,9 @@ Smaller:
 
 		wglMakeCurrent(*m_pDC, hRC);
 
-		if (m_TextureGlobe)
-			delete m_TextureGlobe;
-		m_TextureGlobe = new GLTextureBlueMarble(Tex);
+		if (m_pTextureGlobe)
+			delete m_pTextureGlobe;
+		m_pTextureGlobe = new GLTextureBlueMarble(Tex);
 		m_CurrentGlobeTexture = Tex;
 
 		m_LockUpdate = FALSE;
@@ -789,10 +789,10 @@ void CGlobeView::DrawScene(BOOL InternalCall)
 	}
 
 	// Globus-Textur
-	if (m_TextureGlobe)
+	if (m_pTextureGlobe)
 	{
 		glEnable(GL_TEXTURE_2D);
-		glBindTexture(GL_TEXTURE_2D, m_TextureGlobe->GetID());
+		glBindTexture(GL_TEXTURE_2D, m_pTextureGlobe->GetID());
 		glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, theApp.m_GlobeLighting ? GL_MODULATE : GL_REPLACE);
 	}
 	else
@@ -822,10 +822,10 @@ void CGlobeView::DrawScene(BOOL InternalCall)
 	glGetFloatv(GL_PROJECTION_MATRIX, &Projection[0][0]);
 
 	// Für Icons vorbereiten
-	if (m_TextureIcons)
+	if (m_pTextureIcons)
 	{
 		glEnable(GL_TEXTURE_2D);
-		glBindTexture(GL_TEXTURE_2D, m_TextureIcons->GetID());
+		glBindTexture(GL_TEXTURE_2D, m_pTextureIcons->GetID());
 		glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 	}
 	else
@@ -1001,7 +1001,7 @@ INT CGlobeView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	// Icons
 	CGdiPlusBitmapResource Tex0(IDB_GLOBEICONS_RGB, _T("PNG"));
 	CGdiPlusBitmapResource Tex1(IDB_GLOBEICONS_ALPHA, _T("PNG"));
-	m_TextureIcons = new GLTextureCombine(&Tex0, &Tex1);
+	m_pTextureIcons = new GLTextureCombine(&Tex0, &Tex1);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
 
@@ -1019,10 +1019,10 @@ void CGlobeView::OnDestroy()
 	{
 		wglMakeCurrent(*m_pDC, hRC);
 
-		if (m_TextureGlobe)
-			delete m_TextureGlobe;
-		if (m_TextureIcons)
-			delete m_TextureIcons;
+		if (m_pTextureGlobe)
+			delete m_pTextureGlobe;
+		if (m_pTextureIcons)
+			delete m_pTextureIcons;
 		if (m_GlobeModel!=-1)
 			glDeleteLists(m_GlobeModel, 1);
 

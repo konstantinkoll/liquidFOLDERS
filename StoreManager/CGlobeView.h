@@ -43,8 +43,8 @@ protected:
 	HGLRC hRC;
 	INT m_Width;
 	INT m_Height;
-	GLTexture* m_TextureGlobe;
-	GLTexture* m_TextureIcons;
+	GLTexture* m_pTextureGlobe;
+	GLTexture* m_pTextureIcons;
 	GLFont m_Fonts[2];
 
 	virtual void SetViewOptions(BOOL Force);
