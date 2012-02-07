@@ -358,7 +358,9 @@ __forceinline void CGlobeView::PrepareModel()
 	m_LockUpdate = TRUE;
 	wglMakeCurrent(*m_pDC, hRC);
 
-	m_GlobeModel = glGenLists(1);
+	if (m_GlobeModel==-1)
+		m_GlobeModel = glGenLists(1);
+
 	glNewList(m_GlobeModel, GL_COMPILE);
 	glEnable(GL_CULL_FACE);
 	glBegin(GL_TRIANGLES);
