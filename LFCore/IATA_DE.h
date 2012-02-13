@@ -227,7 +227,7 @@ LFCountry Countries_DE[CountryCount_DE] = {
 };
 
 // Airports
-#define AirportCount_DE 8602
+#define AirportCount_DE 8607
 LFAirport Airports_DE[AirportCount_DE] = {
 	{  54, "AAA", "", "Anaa", { 17.355000, -145.508333 } },
 	{  11, "AAB", "", "Arrabury", { 26.690556, 141.047500 } },
@@ -2514,6 +2514,7 @@ LFAirport Airports_DE[AirportCount_DE] = {
 	{  63, "FSS", "", "Forres", { -57.649444, -3.560556 } },
 	{ 210, "FST", "", "Fort Stockton", { -30.915556, -102.916111 } },
 	{ 210, "FSU", "", "Fort Sumner", { -34.483333, -104.217222 } },
+	{  82, "FSZ", "", "Mt. Fuji (Shizuoka)", { -34.796111, 138.189444 } },
 	{ 217, "FTA", "", "Futuna Island", { 19.516389, 170.231944 } },
 	{ 210, "FTG", "QDV", "Denver (Front Range Airport)", { -39.785278, -104.543056 } },
 	{ 164, "FTI", "", "Fitiuta", { 14.216111, -169.423611 } },
@@ -3119,6 +3120,7 @@ LFAirport Airports_DE[AirportCount_DE] = {
 	{ 210, "HSB", "", "Harrisburg", { -37.811389, -88.550278 } },
 	{  36, "HSC", "", "Shaoguan", { -24.833056, 113.616944 } },
 	{ 210, "HSD", "", "Oklahoma City (Sundance Airpark)", { -35.601944, -97.706111 } },
+	{  82, "HSG", "", "Saga", { -33.149722, 130.302222 } },
 	{ 210, "HSH", "", "Las Vegas (Sky Harbor Airport)", { -35.972778, -115.134444 } },
 	{ 210, "HSI", "", "Hastings", { -40.605278, -98.427778 } },
 	{ 210, "HSL", "", "Huslia", { -65.697778, -156.351389 } },
@@ -3212,6 +3214,7 @@ LFAirport Airports_DE[AirportCount_DE] = {
 	{ 210, "IBM", "", "Kimball", { -41.188056, -103.677500 } },
 	{ 132, "IBO", "", "Ibo", { 12.333056, 40.600000 } },
 	{ 152, "IBP", "", "Iberia", { 11.411667, -69.488611 } },
+	{  82, "IBR", "", "Ibaraki", { -36.178333, 140.418056 } },
 	{ 176, "IBZ", "", "Ibiza", { -38.872778, 1.373056 } },
 	{ 214, "ICA", "", "Icabaru", { -4.333056, -61.733056 } },
 	{  50, "ICI", "", "Cicia", { 17.743333, -179.342222 } },
@@ -5365,6 +5368,7 @@ LFAirport Airports_DE[AirportCount_DE] = {
 	{  26, "NTM", "", "Miracema do Norte", { 9.550000, -48.450000 } },
 	{  11, "NTN", "", "Normanton", { 17.683611, 141.070278 } },
 	{  91, "NTO", "", "Santo Antao", { -17.050000, -25.166944 } },
+	{  82, "NTQ", "", "Noto", { -37.294722, 136.956667 } },
 	{ 125, "NTR", "", "Monterrey (Aeropuerto del Norte)", { -25.865556, -100.237222 } },
 	{ 219, "NTT", "", "Niuatoputapu", { 15.976667, -173.755000 } },
 	{ 210, "NTU", "", "Virginia Beach", { -36.820833, -76.022500 } },
@@ -5560,6 +5564,7 @@ LFAirport Airports_DE[AirportCount_DE] = {
 	{  11, "ONG", "", "Mornington Island", { 16.662500, 139.178056 } },
 	{ 210, "ONH", "", "Oneonta", { -42.524722, -75.064444 } },
 	{  74, "ONI", "", "Moanamani", { 3.966944, 136.083056 } },
+	{  82, "ONJ", "", "Odate Noshiro", { -40.300000, 140.050000 } },
 	{ 210, "ONL", "", "O'Neill", { -42.470000, -98.688056 } },
 	{ 210, "ONM", "", "Socorro", { -34.022500, -106.903056 } },
 	{ 210, "ONO", "", "Ontario", { -44.020556, -117.013611 } },

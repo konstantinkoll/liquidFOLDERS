@@ -99,7 +99,7 @@ BOOL CStoreManagerApp::InitInstance()
 	m_GlobeShowViewport = GetInt(_T("GlobeShowViewport"), FALSE);
 	m_GlobeShowCrosshairs = GetInt(_T("GlobeShowCrosshairs"), FALSE);
 	m_TagcloudShowLegend = GetInt(_T("TagcloudShowLegend"), TRUE);
-	m_nTextureSize = GetInt(_T("TextureSize"), 0);
+	m_nTextureSize = GetInt(_T("TextureSize"), LFTextureAuto);
 	m_nMaxTextureSize = GetInt(_T("MaxTextureSize"), LFTexture4096);
 	if (m_nTextureSize<0)
 		m_nTextureSize = 0;
