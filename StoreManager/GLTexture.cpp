@@ -13,7 +13,8 @@
 GLTexture::GLTexture()
 {
 	m_ID = 0;
-	m_SGISMIP = strstr((CHAR*)glGetString(GL_EXTENSIONS), "SGIS_generate_mipmap")!=NULL;
+	m_SGISMIP = (strstr((CHAR*)glGetString(GL_EXTENSIONS), "SGIS_generate_mipmap")!=NULL) &&
+			(strcmp((CHAR*)glGetString(GL_VENDOR), "Intel")!=0);
 }
 
 GLTexture::~GLTexture()
