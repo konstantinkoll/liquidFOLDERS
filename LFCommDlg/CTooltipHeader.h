@@ -1,12 +1,12 @@
 
-// LFTooltipHeader: Schnittstelle der Klasse LFTooltipHeader
+// CTooltipHeader: Schnittstelle der Klasse CTooltipHeader
 //
 
 #pragma once
 #include "LFTooltip.h"
 
 
-// LFTooltipHeader
+// CTooltipHeader
 //
 
 class AFX_EXT_CLASS CTooltipHeader : public CHeaderCtrl
