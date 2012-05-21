@@ -301,9 +301,9 @@ void CTreeView::EditLabel(CPoint item)
 	p_Edit = new CEdit();
 	p_Edit->Create(WS_CHILD | WS_VISIBLE | WS_BORDER | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | ES_AUTOHSCROLL, rect, this, 2);
 	p_Edit->SetWindowText(Name);
-	p_Edit->SetSel(0, (INT)wcslen(Name));
 	p_Edit->SetFont(&theApp.m_DefaultFont);
 	p_Edit->SetFocus();
+	p_Edit->SetSel(0, -1);
 }
 
 void CTreeView::EnsureVisible(CPoint item)
