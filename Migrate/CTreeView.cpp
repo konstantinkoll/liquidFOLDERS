@@ -354,7 +354,7 @@ void CTreeView::EnsureVisible(CPoint item)
 	if (nInc)
 	{
 		m_HScrollPos += nInc;
-		ScrollWindowEx(-nInc, 0, NULL, NULL, NULL, NULL, SW_INVALIDATE);
+		ScrollWindowEx(-nInc, 0, NULL, NULL, NULL, NULL, SW_INVALIDATE | SW_SCROLLCHILDREN);
 
 		ZeroMemory(&si, sizeof(si));
 		si.cbSize = sizeof(SCROLLINFO);
@@ -1954,7 +1954,7 @@ void CTreeView::OnMouseHWheel(UINT nFlags, short zDelta, CPoint pt)
 		m_TooltipCtrl.Deactivate();
 
 		m_HScrollPos += nInc;
-		ScrollWindowEx(-nInc, 0, NULL, NULL, NULL, NULL, SW_INVALIDATE);
+		ScrollWindowEx(-nInc, 0, NULL, NULL, NULL, NULL, SW_INVALIDATE | SW_SCROLLCHILDREN);
 		SetScrollPos(SB_HORZ, m_HScrollPos, TRUE);
 
 		ScreenToClient(&pt);
