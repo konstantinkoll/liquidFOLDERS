@@ -147,8 +147,7 @@ void CTaskButton::OnPaint()
 		g.SetCompositingMode(CompositingModeSourceOver);
 		g.SetSmoothingMode(SmoothingModeAntiAlias);
 
-		UINT OSVersion = ((LFApplication*)AfxGetApp())->OSVersion;
-		switch (OSVersion)
+		switch (((LFApplication*)AfxGetApp())->OSVersion)
 		{
 		case OS_Vista:
 			{
@@ -220,6 +219,7 @@ void CTaskButton::OnPaint()
 			}
 		case OS_XP:
 		case OS_Seven:
+		case OS_Eight:
 			{
 				if ((Focused) || (Selected) || (m_Hover))
 				{

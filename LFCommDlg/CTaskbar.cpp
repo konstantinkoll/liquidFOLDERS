@@ -243,6 +243,7 @@ BOOL CTaskbar::OnEraseBkgnd(CDC* pDC)
 				}
 			case OS_XP:
 			case OS_Seven:
+			case OS_Eight:
 				{
 					UINT line = (rect.Height()-2)/2;
 

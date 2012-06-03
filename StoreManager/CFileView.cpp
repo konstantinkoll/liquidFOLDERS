@@ -848,7 +848,18 @@ void CFileView::DrawItemBackground(CDC& dc, LPRECT rectItem, INT idx, BOOL Theme
 		if ((GetFocus()==this) && (m_FocusItem==idx))
 			switch (theApp.OSVersion)
 			{
+			case OS_Vista:
+				if (m_ShowFocusRect)
+				{
+					CRect rect(rectItem);
+					rect.DeflateRect(1, 1);
+
+					dc.SetBkColor(0xFFFFFF);
+					dc.DrawFocusRect(rect);
+				}
+				break;
 			case OS_Seven:
+			case OS_Eight:
 				if (!Selected)
 				{
 					CRect rect(rectItem);
@@ -863,16 +874,6 @@ void CFileView::DrawItemBackground(CDC& dc, LPRECT rectItem, INT idx, BOOL Theme
 
 					Pen pen(Color(0xFF, 0x7D, 0xA2, 0xCE));
 					g.DrawPath(&pen, &path);
-				}
-				break;
-			case OS_Vista:
-				if (m_ShowFocusRect)
-				{
-					CRect rect(rectItem);
-					rect.DeflateRect(1, 1);
-
-					dc.SetBkColor(0xFFFFFF);
-					dc.DrawFocusRect(rect);
 				}
 				break;
 			}

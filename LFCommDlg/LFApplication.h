@@ -14,6 +14,7 @@
 #define OS_XP                     0
 #define OS_Vista                  1
 #define OS_Seven                  2
+#define OS_Eight                  3
 
 #define NAG_NOTLICENSED           0
 #define NAG_EXPIRED               1
