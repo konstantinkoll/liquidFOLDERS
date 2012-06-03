@@ -8186,7 +8186,7 @@ VHZ     Vahitahi, French Polynesia;4;18*46'48"S, 138*51'12"W
 VIB     Villa Constitucion, Mexico;4;25*3'13"N, 111*36'53"W
 VIC     Vicenza, Italy;4;45*34'24"N, 11*31'46"E
 VID     Vidin, Bulgaria;4;43*58'59"N, 22*49'1"E
-VIE     Wien, Austria;4;48*6'37"N, 16*34'11"E
+VIE     Vienna, Austria;4;48*6'37"N, 16*34'11"E
 VIG     El Vigia, Venezuela;4;8*37'27"N, 71*40'22"W
 VIH     Rolla/Vichy, USA;4;38*7'39"N, 91*46'10"W
 VIJ     Virgin Gorda, British Virgin Islands;4;18*26'47"N, 64*25'39"W
