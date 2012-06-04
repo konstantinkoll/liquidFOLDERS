@@ -844,7 +844,7 @@ void CGlobeView::DrawScene(BOOL InternalCall)
 
 	// Fadenkreuz zeichnen
 	if (theApp.m_GlobeShowViewport && theApp.m_GlobeShowCrosshairs)
-		glDrawIcon(m_Width/2.0f, m_Height/2.0f, 64.0f, 1.0f, CROSSHAIRS);
+		glDrawIcon((GLfloat)(m_Width/2), (GLfloat)(m_Height/2), 64.0f, 1.0f, CROSSHAIRS);
 
 	// Icons beenden
 	glEnd();
