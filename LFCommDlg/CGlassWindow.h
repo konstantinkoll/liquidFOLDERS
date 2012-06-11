@@ -43,6 +43,7 @@ protected:
 	CList<CWnd*> m_GlasChildren;
 	BOOL m_IsAeroWindow;
 	BOOL m_Active;
+	HACCEL hAccelerator;
 	MARGINS m_Margins;
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);

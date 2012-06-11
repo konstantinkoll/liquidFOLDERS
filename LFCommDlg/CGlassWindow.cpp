@@ -14,6 +14,7 @@ CGlassWindow::CGlassWindow()
 {
 	p_App = (LFApplication*)AfxGetApp();
 	p_PopupWindow = NULL;
+	hAccelerator = NULL;
 	hTheme = NULL;
 	m_Active = TRUE;
 	m_IsAeroWindow = FALSE;
@@ -81,6 +82,11 @@ BOOL CGlassWindow::PreTranslateMessage(MSG* pMsg)
 			pWnd->SetFocus();
 		return TRUE;
 	}
+
+	if (hAccelerator)
+		if ((pMsg->message>=WM_KEYFIRST) && (pMsg->message<=WM_KEYLAST))
+			if (TranslateAccelerator(m_hWnd, hAccelerator, pMsg))
+				return TRUE;
 
 	return CWnd::PreTranslateMessage(pMsg);
 }
