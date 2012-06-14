@@ -165,8 +165,6 @@ END_MESSAGE_MAP()
 
 void CTaskbar::OnDestroy()
 {
-	CWnd::OnDestroy();
-
 	for (POSITION p=m_ButtonsRight.GetHeadPosition(); p; )
 	{
 		CTaskButton* btn = m_ButtonsRight.GetNext(p);
@@ -183,6 +181,8 @@ void CTaskbar::OnDestroy()
 
 	if (hBackgroundBrush)
 		DeleteObject(hBackgroundBrush);
+
+	CWnd::OnDestroy();
 }
 
 BOOL CTaskbar::OnEraseBkgnd(CDC* pDC)
