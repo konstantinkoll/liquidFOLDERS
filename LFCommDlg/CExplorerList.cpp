@@ -45,6 +45,14 @@ void CExplorerList::Init()
 	tvi.dwFlags = LVTVIF_FIXEDWIDTH;
 	tvi.dwMask = LVTVIM_COLUMNS | LVTVIM_TILESIZE;
 	tvi.sizeTile.cx = 218;
+
+	if ((p_App->OSVersion==OS_XP) && (GetStyle() & LVS_OWNERDATA))
+	{
+		tvi.dwMask |= LVTVIM_LABELMARGIN;
+		tvi.rcLabelMargin.top = 0;
+		tvi.rcLabelMargin.bottom = 16;
+	}
+
 	SetTileViewInfo(&tvi);
 }
 
