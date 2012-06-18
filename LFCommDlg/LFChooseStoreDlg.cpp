@@ -355,7 +355,12 @@ void LFChooseStoreDlg::OnStoreRename()
 {
 	INT idx = GetSelectedStore();
 	if (idx!=-1)
+	{
+		if (GetFocus()!=&m_wndExplorerList)
+			m_wndExplorerList.SetFocus();
+
 		m_wndExplorerList.EditLabel(idx);
+	}
 }
 
 void LFChooseStoreDlg::OnStoreProperties()
