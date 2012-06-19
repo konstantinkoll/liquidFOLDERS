@@ -3,6 +3,7 @@
 //
 
 #pragma once
+#include "CImageListTransparent.h"
 #include "LFTooltip.h"
 
 
@@ -29,8 +30,6 @@ public:
 protected:
 	CImageListTransparent m_SortIndicators;
 	LFTooltip m_TooltipCtrl;
-
-private:
 	BOOL m_Hover;
 	INT m_HoverItem;
 	INT m_PressedItem;
