@@ -189,12 +189,12 @@ BEGIN
     IDS_Priority1           "Sehr niedrig"
     IDS_Priority2           "Niedrig"
     IDS_Priority3           "Normal"
-    IDS_Priority4           "Hoch"
-    IDS_Priority5           "Dringend"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_Priority4           "Hoch"
+    IDS_Priority5           "Dringend"
     IDS_Size1               "Winzig (< 32 KB)"
     IDS_Size2               "Klein (< 128 KB)"
     IDS_Size3               "Mittel (< 1 MB)"
@@ -209,6 +209,10 @@ BEGIN
     IDS_Duration6           "2-3 Minuten"
     IDS_Duration7           "3-5 Minuten"
     IDS_Duration8           "5-15 Minuten"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_Duration9           "15-30 Minuten"
     IDS_Duration10          "30-45 Minuten"
     IDS_Duration11          "45-60 Minuten"
@@ -228,6 +232,10 @@ BEGIN
                             "Der gewählte Store ist nicht eingebunden oder nicht vorhanden."
     IDS_LFErrorDriveNotReady "Der Datenträger ist nicht bereit!"
     IDS_LFErrorDriveWriteProtected "Der Datenträger ist schreibgeschützt."
+END
+
+STRINGTABLE 
+BEGIN
     IDS_LFErrorIllegalPhysFolder 
                             "Auf das physische Verzeichnis kann nicht zugegriffen werden."
     IDS_LFErrorRegistryError "Auf die Registry kann nicht zugegriffen werden."
@@ -254,6 +262,10 @@ BEGIN
                             "Auf dem Datenträger ist nicht mehr ausreichend Speicherplatz frei."
     IDS_LFErrorCannotImportFile 
                             "Einige Dateien können nicht importiert werden, da sie noch in Gebrauch sind."
+END
+
+STRINGTABLE 
+BEGIN
     IDS_LFErrorCannotDeleteFile 
                             "Einige Dateien können nicht gelöscht werden, da sie noch in Gebrauch sind."
     IDS_LFErrorCannotRenameFile 
@@ -271,7 +283,7 @@ BEGIN
     IDS_AttrComments        "Kommentar"
     IDS_AttrDescription     "Beschreibung"
     IDS_AttrCreationTime    "Erzeugt am"
-    IDS_AttrFileTime        "Verändert am"
+    IDS_AttrFileTime        "Geändert am"
     IDS_AttrAddTime         "Hinzugefügt am"
     IDS_AttrDeleteTime      "Gelöscht am"
     IDS_AttrArchiveTime     "Archiviert am"
@@ -463,12 +475,12 @@ BEGIN
     IDS_Priority1           "Lowest"
     IDS_Priority2           "Low"
     IDS_Priority3           "Average"
-    IDS_Priority4           "High"
-    IDS_Priority5           "Urgent"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_Priority4           "High"
+    IDS_Priority5           "Urgent"
     IDS_Size1               "Tiny (< 32 KB)"
     IDS_Size2               "Small (< 128 KB)"
     IDS_Size3               "Medium (< 1 MB)"
@@ -483,6 +495,10 @@ BEGIN
     IDS_Duration6           "2-3 minutes"
     IDS_Duration7           "3-5 minutes"
     IDS_Duration8           "5-15 minutes"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_Duration9           "15-30 minutes"
     IDS_Duration10          "30-45 minutes"
     IDS_Duration11          "45-60 minutes"
@@ -502,6 +518,10 @@ BEGIN
                             "The selected store is not mounted or not present."
     IDS_LFErrorDriveNotReady "The drive is not ready!"
     IDS_LFErrorDriveWriteProtected "The drive is write protected."
+END
+
+STRINGTABLE 
+BEGIN
     IDS_LFErrorIllegalPhysFolder "The physical folder is not accessible."
     IDS_LFErrorRegistryError "The registry cannot be accessed."
     IDS_LFErrorIllegalKey   "The store or file ID is illegal."
@@ -526,6 +546,10 @@ BEGIN
     IDS_LFErrorNotEnoughFreeDisc "There is not enough free disc space."
     IDS_LFErrorCannotImportFile 
                             "Some files cannot be imported because they are still in use."
+END
+
+STRINGTABLE 
+BEGIN
     IDS_LFErrorCannotDeleteFile 
                             "Some files cannot be deleted because they are still in use."
     IDS_LFErrorCannotRenameFile 
@@ -735,12 +759,12 @@ BEGIN
     IDS_Priority1           "Muy bajo"
     IDS_Priority2           "Bajo"
     IDS_Priority3           "Medio"
-    IDS_Priority4           "Alto"
-    IDS_Priority5           "Urgente"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_Priority4           "Alto"
+    IDS_Priority5           "Urgente"
     IDS_Size1               "Minúsculo (< 32 KB)"
     IDS_Size2               "Chico (< 128 KB)"
     IDS_Size3               "Mediano (< 1 MB)"
@@ -755,6 +779,10 @@ BEGIN
     IDS_Duration6           "2-3 minutos"
     IDS_Duration7           "3-5 minutos"
     IDS_Duration8           "5-15 minuteo"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_Duration9           "15-30 minutos"
     IDS_Duration10          "30-45 minutos"
     IDS_Duration11          "45-60 minutos"
@@ -776,6 +804,10 @@ BEGIN
     IDS_LFErrorDriveNotReady "La unidad no está lista!"
     IDS_LFErrorDriveWriteProtected 
                             "La unidad está protegida contra escritura."
+END
+
+STRINGTABLE 
+BEGIN
     IDS_LFErrorIllegalPhysFolder "La carpeta física no es accessible."
     IDS_LFErrorRegistryError "No se puede acceder al registro."
     IDS_LFErrorIllegalKey   "El ID del store ó del archivo es ilegal."
@@ -801,6 +833,10 @@ BEGIN
                             "No hay suficiente espacio libre en el disco."
     IDS_LFErrorCannotImportFile 
                             "Algunos archivos no pueden ser importados porque aún se encuentran en uso."
+END
+
+STRINGTABLE 
+BEGIN
     IDS_LFErrorCannotDeleteFile 
                             "Algunos archivos no pueden ser eliminados porque aún se encuentran en uso."
     IDS_LFErrorCannotRenameFile 
@@ -1010,12 +1046,12 @@ BEGIN
     IDS_Priority1           "Très bas"
     IDS_Priority2           "Bas"
     IDS_Priority3           "Normal"
-    IDS_Priority4           "Haut"
-    IDS_Priority5           "Urgent"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_Priority4           "Haut"
+    IDS_Priority5           "Urgent"
     IDS_Size1               "Minuscule (< 32 KB)"
     IDS_Size2               "Petit (< 128 KB)"
     IDS_Size3               "Moyen (< 1 MB)"
@@ -1030,6 +1066,10 @@ BEGIN
     IDS_Duration6           "2-3 minutes"
     IDS_Duration7           "3-5 minutes"
     IDS_Duration8           "5-15 minutes"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_Duration9           "15-30 minutes"
     IDS_Duration10          "30-45 minutes"
     IDS_Duration11          "45-60 minutes"
@@ -1051,6 +1091,10 @@ BEGIN
     IDS_LFErrorDriveNotReady "Le support de données n'est pas prêt!"
     IDS_LFErrorDriveWriteProtected 
                             "Le support de données est protégé en écriture."
+END
+
+STRINGTABLE 
+BEGIN
     IDS_LFErrorIllegalPhysFolder "Il n'y a pas accès au dossier physique."
     IDS_LFErrorRegistryError "Il n'ya pas accès au registry."
     IDS_LFErrorIllegalKey   "Le store- ou le fichier-ID est non valable."
@@ -1076,6 +1120,10 @@ BEGIN
                             "Sur le support de données, la cellule de mémoire n'est plus libre suffisamment."
     IDS_LFErrorCannotImportFile 
                             "Certains fichiers ne peuvent pas être importés, puisqu'ils sont encore dans l'usage."
+END
+
+STRINGTABLE 
+BEGIN
     IDS_LFErrorCannotDeleteFile 
                             "Certains fichiers ne peuvent pas être effacés, puisqu'ils sont encore dans l'usage."
     IDS_LFErrorCannotRenameFile 
