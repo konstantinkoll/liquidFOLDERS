@@ -282,7 +282,7 @@ BEGIN
     IDS_AttrFileID          "Datei-ID"
     IDS_AttrComments        "Kommentar"
     IDS_AttrDescription     "Beschreibung"
-    IDS_AttrCreationTime    "Erzeugt am"
+    IDS_AttrCreationTime    "Erstellt am"
     IDS_AttrFileTime        "Geändert am"
     IDS_AttrAddTime         "Hinzugefügt am"
     IDS_AttrDeleteTime      "Gelöscht am"
