@@ -16,6 +16,15 @@ CTooltipHeader::CTooltipHeader()
 	m_HoverItem = m_PressedItem = m_TrackItem = m_TooltipItem = -1;
 }
 
+void CTooltipHeader::PreSubclassWindow()
+{
+	CHeaderCtrl::PreSubclassWindow();
+
+	_AFX_THREAD_STATE* pThreadState = AfxGetThreadState();
+	if (!pThreadState->m_pWndInit)
+		Init();
+}
+
 BOOL CTooltipHeader::PreTranslateMessage(MSG* pMsg)
 {
 	switch (pMsg->message)
@@ -43,6 +52,16 @@ BOOL CTooltipHeader::PreTranslateMessage(MSG* pMsg)
 	return CHeaderCtrl::PreTranslateMessage(pMsg);
 }
 
+void CTooltipHeader::Init()
+{
+	SetFont(&((LFApplication*)AfxGetApp())->m_DefaultFont);
+
+	m_SortIndicators.Create(IDB_SORTINDICATORS, NULL, 0, 3, 7, 4);
+
+	// Tooltip
+	m_TooltipCtrl.Create(this);
+}
+
 
 BEGIN_MESSAGE_MAP(CTooltipHeader, CHeaderCtrl)
 	ON_WM_CREATE()
@@ -60,12 +79,7 @@ INT CTooltipHeader::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CHeaderCtrl::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
-	SetFont(&((LFApplication*)AfxGetApp())->m_DefaultFont);
-
-	m_SortIndicators.Create(IDB_SORTINDICATORS, NULL, 0, 3, 7, 4);
-
-	// Tooltip
-	m_TooltipCtrl.Create(this);
+	Init();
 
 	return 0;
 }

@@ -15,6 +15,7 @@ class AFX_EXT_CLASS CTooltipHeader : public CHeaderCtrl
 public:
 	CTooltipHeader();
 
+	virtual void PreSubclassWindow();
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
@@ -35,4 +36,6 @@ protected:
 	INT m_PressedItem;
 	INT m_TrackItem;
 	INT m_TooltipItem;
+
+	virtual void Init();
 };
