@@ -216,8 +216,11 @@ LRESULT CExplorerList::OnThemeChanged()
 	return TRUE;
 }
 
-void CExplorerList::OnContextMenu(CWnd* /*pWnd*/, CPoint pos)
+void CExplorerList::OnContextMenu(CWnd* pWnd, CPoint pos)
 {
+	if (pWnd!=this)
+		return;
+
 	LVHITTESTINFO pInfo;
 	if ((pos.x<0) || (pos.y<0))
 	{
