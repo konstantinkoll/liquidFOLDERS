@@ -76,6 +76,7 @@ void CExplorerList::AddCategory(INT ID, CString Name, CString Hint, BOOL Collaps
 		if (Collapsible)
 		{
 			lvg.stateMask = LVGS_COLLAPSIBLE;
+			lvg.state = LVGS_COLLAPSIBLE;
 			lvg.mask |= LVGF_STATE;
 		}
 	}
