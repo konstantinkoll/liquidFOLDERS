@@ -18,7 +18,7 @@ public:
 
 	virtual void PreSubclassWindow();
 
-	void AddCategory(INT ID, CString Name, CString Hint=_T(""), BOOL Collapsable=FALSE);
+	void AddCategory(INT ID, CString Name, CString Hint=_T(""), BOOL Collapsible=FALSE);
 	void AddItemCategories();
 	void AddColumn(INT ID, CString Name);
 	void AddColumn(INT ID, UINT Attr);

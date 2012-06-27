@@ -24,10 +24,10 @@ void CImageListTransparent::Create(UINT ID, HINSTANCE hinstRes, UINT first, INT 
 
 	CImageList::Create(cx, cy, ILC_COLOR32, last-first+1, 4);
 
-		for (UINT a=first; (INT)a<=last; a++)
-		{
-			HICON h = tmp.ExtractIcon(a);
-			Add(h);
-			DestroyIcon(h);
-		}
+	for (UINT a=first; (INT)a<=last; a++)
+	{
+		HICON h = tmp.ExtractIcon(a);
+		Add(h);
+		DestroyIcon(h);
+	}
 }

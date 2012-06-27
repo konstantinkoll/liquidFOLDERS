@@ -56,7 +56,7 @@ void CExplorerList::Init()
 	SetTileViewInfo(&tvi);
 }
 
-void CExplorerList::AddCategory(INT ID, CString Name, CString Hint, BOOL Collapsable)
+void CExplorerList::AddCategory(INT ID, CString Name, CString Hint, BOOL Collapsible)
 {
 	LVGROUP lvg;
 	ZeroMemory(&lvg, sizeof(lvg));
@@ -73,7 +73,7 @@ void CExplorerList::AddCategory(INT ID, CString Name, CString Hint, BOOL Collaps
 			lvg.pszSubtitle = Hint.GetBuffer();
 			lvg.mask |= LVGF_SUBTITLE;
 		}
-		if (Collapsable)
+		if (Collapsible)
 		{
 			lvg.stateMask = LVGS_COLLAPSIBLE;
 			lvg.mask |= LVGF_STATE;
