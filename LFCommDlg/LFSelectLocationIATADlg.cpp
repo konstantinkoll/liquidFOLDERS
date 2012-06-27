@@ -117,24 +117,27 @@ BOOL LFSelectLocationIATADlg::OnInitDialog()
 	CListCtrl* l = (CListCtrl*)GetDlgItem(IDC_AIRPORTS);
 	l->SetExtendedStyle(l->GetExtendedStyle() | LVS_EX_FULLROWSELECT | LVS_EX_DOUBLEBUFFER | LVS_EX_GRIDLINES);
 
+	CString tmpStr;
+
 	LV_COLUMN lvc;
 	ZeroMemory(&lvc, sizeof(lvc));
-
 	lvc.mask = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
-	lvc.pszText = _T("IATA code");
-	lvc.cx = 65;
 	lvc.fmt = LVCFMT_LEFT;
-	lvc.iSubItem = 0;
+
+	ENSURE(tmpStr.LoadString(IDS_AIRPORT_CODE));
+	lvc.pszText = tmpStr.GetBuffer();
+	lvc.cx = 70;
 	l->InsertColumn(0, &lvc);
 
-	lvc.pszText = _T("Airport");
-	lvc.cx = 302;
+	ENSURE(tmpStr.LoadString(IDS_AIRPORT_LOCATION));
+	lvc.pszText = tmpStr.GetBuffer();
+	lvc.cx = 297;
 	lvc.iSubItem = 1;
 	l->InsertColumn(1, &lvc);
 
 	// Init
 	UINT country = p_Airport ? p_Airport->CountryID : m_LastCountrySelected;
-	CString tmpStr(&LFIATAGetCountry(country)->Name[0]);
+	tmpStr = LFIATAGetCountry(country)->Name;
 	c->SelectString(-1, tmpStr);
 	LoadCountry(country, FALSE);
 

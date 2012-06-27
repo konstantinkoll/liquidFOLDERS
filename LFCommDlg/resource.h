@@ -80,6 +80,8 @@
 #define IDS_UPDATE                      20331
 #define IDS_UPDATE_AVAILABLE            20332
 #define IDS_UPDATE_NOTAVAILABLE         20333
+#define IDS_AIRPORT_CODE                20334
+#define IDS_AIRPORT_LOCATION            20335
 #define IDS_COMPARE_FIRST               20400
 #define IDS_COMPARE_IGNORE              20400
 #define IDS_COMPARE_ISNULL              20401

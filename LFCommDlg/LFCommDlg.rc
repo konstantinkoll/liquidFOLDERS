@@ -708,6 +708,8 @@ BEGIN
     IDS_UPDATE              "Update"
     IDS_UPDATE_AVAILABLE    "Eine neue Version, liquidFOLDERS %s, steht zum Herunterladen bereit.\nMöchten Sie jetzt den Installer herunterladen?"
     IDS_UPDATE_NOTAVAILABLE "Es steht keine neue Version von liquidFOLDERS zum Herunterladen bereit."
+    IDS_AIRPORT_CODE        "IATA-Code"
+    IDS_AIRPORT_LOCATION    "Ort"
 END
 
 STRINGTABLE 
@@ -1308,6 +1310,8 @@ BEGIN
     IDS_UPDATE              "Actualización"
     IDS_UPDATE_AVAILABLE    "Una actualización de, liquidFOLDERS %s, está disponible. Quisiera descargarla ahora?"
     IDS_UPDATE_NOTAVAILABLE "No hay actualización disponible de liquidFOLDERS en este momento."
+    IDS_AIRPORT_CODE        "Código"
+    IDS_AIRPORT_LOCATION    "Ubicación"
 END
 
 STRINGTABLE 
@@ -1910,6 +1914,8 @@ BEGIN
     IDS_UPDATE              "Mise á jour"
     IDS_UPDATE_AVAILABLE    "Une nouvelle version, liquidFOLDERS %s, est prête pour télécharger. Voulez-vous maintenant télécharger l'installer?"
     IDS_UPDATE_NOTAVAILABLE "Aucune nouvelle version de liquidFOLDERS pour télécharger n'est prête."
+    IDS_AIRPORT_CODE        "Code"
+    IDS_AIRPORT_LOCATION    "Endroit"
 END
 
 STRINGTABLE 
@@ -2553,6 +2559,8 @@ BEGIN
     IDS_UPDATE              "Update"
     IDS_UPDATE_AVAILABLE    "An update, liquidFOLDERS %s, is available.\nWould you like to download it now?"
     IDS_UPDATE_NOTAVAILABLE "There is no update of liquidFOLDERS available right now."
+    IDS_AIRPORT_CODE        "IATA code"
+    IDS_AIRPORT_LOCATION    "Location"
 END
 
 STRINGTABLE 
