@@ -2400,6 +2400,7 @@ FST     Fort Stockton, USA;4;30*54'56"N, 102*54'58"W
 FSU     Fort Sumner, USA;4;34*29'0"N, 104*13'2"W
 FSZ     Mt. Fuji (Shizuoka), Japan;5;34*47'46"N, 138*11'22"E
 FTA     Futuna Island, Wallis and Futuna Islands;4;19*30'59"S, 170*13'55"E
+FTE     El Calafate, Argentina;5;50*17'0"S, 72*03'18"W
 FTG QDV Denver (Front Range Airport), USA;4;39*47'7"N, 104*32'35"W
 FTI     Fitiuta, Samoa;4;14*12'58"S, 169*25'25"W
 FTK     Fort Knox, USA;4;37*54'25"N, 85*58'20"W

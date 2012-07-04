@@ -227,7 +227,7 @@ LFCountry Countries_DE[CountryCount_DE] = {
 };
 
 // Airports
-#define AirportCount_DE 8607
+#define AirportCount_DE 8608
 LFAirport Airports_DE[AirportCount_DE] = {
 	{  54, "AAA", "", "Anaa", { 17.355000, -145.508333 } },
 	{  11, "AAB", "", "Arrabury", { 26.690556, 141.047500 } },
@@ -2516,6 +2516,7 @@ LFAirport Airports_DE[AirportCount_DE] = {
 	{ 210, "FSU", "", "Fort Sumner", { -34.483333, -104.217222 } },
 	{  82, "FSZ", "", "Mt. Fuji (Shizuoka)", { -34.796111, 138.189444 } },
 	{ 217, "FTA", "", "Futuna Island", { 19.516389, 170.231944 } },
+	{   8, "FTE", "", "El Calafate", { 50.283333, -72.055000 } },
 	{ 210, "FTG", "QDV", "Denver (Front Range Airport)", { -39.785278, -104.543056 } },
 	{ 164, "FTI", "", "Fitiuta", { 14.216111, -169.423611 } },
 	{ 210, "FTK", "", "Fort Knox", { -37.906944, -85.972222 } },
