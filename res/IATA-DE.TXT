@@ -9177,6 +9177,7 @@ ZBA     Burlington, Kanada
 ZBE     Zabreh, Tschechien;4;49*55'42"N, 18*4'16"E
 ZBF     Bathurst, Kanada;4;47*37'47"N, 65*44'20"W
 ZBK     Zabljak, Jugoslavien;4;43*5'60"N, 19*8'60"E
+ZBL     Biloela, Australien;5;24*24'0"S, 150*30'0"E
 ZBM     Bromont, Kanada;4;45*17'27"N, 72*44'29"W
 ZBN     Bozen, Italien;4;46*31'1"N, 11*22'1"E
 ZBO     Bowen, Australien;4;20*1'5"S, 148*12'53"E

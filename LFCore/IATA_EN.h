@@ -231,7 +231,7 @@ LFCountry Countries_EN[CountryCount_EN] = {
 };
 
 // Airports
-#define AirportCount_EN 8608
+#define AirportCount_EN 8609
 LFAirport Airports_EN[AirportCount_EN] = {
 	{  67, "AAA", "", "Anaa", { 17.355000, -145.508333 } },
 	{   8, "AAB", "", "Arrabury", { 26.690556, 141.047500 } },
@@ -8738,6 +8738,7 @@ LFAirport Airports_EN[AirportCount_EN] = {
 	{  49, "ZBE", "", "Zabreh", { -49.928333, 18.071111 } },
 	{  34, "ZBF", "", "Bathurst", { -47.629722, -65.738889 } },
 	{ 102, "ZBK", "", "Zabljak", { -43.100000, 19.150000 } },
+	{   8, "ZBL", "", "Biloela", { 24.400000, 150.500000 } },
 	{  34, "ZBM", "", "Bromont", { -45.290833, -72.741389 } },
 	{  96, "ZBN", "", "Bolzano", { -46.516944, 11.366944 } },
 	{   8, "ZBO", "", "Bowen", { 20.018056, 148.214722 } },
