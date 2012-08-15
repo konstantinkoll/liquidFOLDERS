@@ -97,7 +97,7 @@ AEL     Albert Lea, USA;4;43*40'54"N, 93*22'2"W
 AEO     Aioun el Atrouss, Mauretania;4;16*42'41"N, 9*38'16"W
 AEP BUE Buenos Aires (Jorge Newbery), Argentina;4;34*33'33"S, 58*24'56"W
 AER     Adler/Sochi, Russia;4;43*26'60"N, 39*57'24"E
-AES     èlesund, Norway;4;62*33'37"N, 6*6'37"E
+AES     ≈lesund, Norway;4;62*33'37"N, 6*6'37"E
 AET     Allakaket, USA;4;66*33'7"N, 152*37'20"W
 AEX     Alexandria, USA;4;31*19'39"N, 92*32'55"W
 AEY     Akureyri, Iceland;4;65*39'31"N, 18*4'20"W
@@ -117,7 +117,7 @@ AGD     Anggi, Indonesia;4;1*22'59"S, 133*52'1"E
 AGE     Wangerooge, Germany;4;53*46'59"N, 7*55'1"E
 AGF     Agen, France;4;44*10'29"N, 0*35'26"E
 AGG     Angoram, New Guinea;4;4*3'0"S, 144*4'1"E
-AGH     éngelholm, Sweden;4;56*17'46"N, 12*50'50"E
+AGH     ƒngelholm, Sweden;4;56*17'46"N, 12*50'50"E
 AGI     Wageningen, Surinam;4;5*49'59"N, 56*39'0"W
 AGJ     Aguni, Japan;4;26*35'33"N, 127*14'27"E
 AGK     Kagua, New Guinea;4;6*22'59"S, 143*51'0"E
@@ -729,7 +729,7 @@ BIZ     Bimin, New Guinea;4;5*16'59"S, 142*1'1"E
 BJA     Bejaia, Algeria;4;36*42'43"N, 5*4'12"E
 BJC QDV Denver (Broomfield), USA;4;39*54'32"N, 105*7'2"W
 BJD     Bakkafjordur, Iceland;4;66*1'19"N, 14*49'28"W
-BJF     BÜtsfjord, Norway;4;70*36'1"N, 29*41'33"E
+BJF     BÂtsfjord, Norway;4;70*36'1"N, 29*41'33"E
 BJG     Bolaang, Indonesia;4;0*55'59"S, 124*10'1"E
 BJH     Bajhang, Nepal;4;29*32'20"N, 81*11'7"E
 BJI     Bemidji, USA;4;47*30'34"N, 94*56'1"W
@@ -1092,7 +1092,7 @@ BZL     Barisal, Bangladesh;4;22*48'4"N, 90*18'4"E
 BZN     Bozeman, USA;4;45*46'39"N, 111*9'11"W
 BZO     Bolzano, Italy;4;46*27'37"N, 11*19'35"E
 BZP     Bizant, Australia;4;15*13'1"S, 141*13'59"E
-BZR     BÇziers, France;4;43*19'24"N, 3*21'12"E
+BZR     BÈziers, France;4;43*19'24"N, 3*21'12"E
 BZS WAS Washington (Buzzards Point Seaplane Base), USA
 BZT     Brazoria, USA
 BZU     Buta, Congo;4;2*49'6"N, 24*47'37"E
@@ -4205,7 +4205,7 @@ LGB     Long Beach (Daugherty Field), USA;4;33*49'4"N, 118*9'6"W
 LGC     La Grange, USA;4;33*0'32"N, 85*4'21"W
 LGD     La Grande, USA;4;45*17'24"N, 118*0'25"W
 LGF     Yuma Proving Ground, USA;4;32*51'36"N, 114*23'48"W
-LGG     Liege, Belgium;4;50*38'11"N, 5*26'34"E
+LGG     LiËge, Belgium;4;50*38'11"N, 5*26'34"E
 LGH     Leigh Creek, Australia;4;30*35'54"S, 138*25'33"E
 LGI     Deadman's Cay, Bahamas;4;23*10'44"N, 75*5'37"W
 LGK     Langkawi, Malaysia;4;6*19'47"N, 99*43'43"E
@@ -4284,7 +4284,7 @@ LKV     Lakeview, USA;4;42*9'40"N, 120*23'57"W
 LKW     Larkana, Pakistan
 LKY     Lake Manyara, Tanzania;4;3*22'35"S, 35*49'6"E
 LKZ     Brandon, United Kingdom;4;52*24'34"N, 0*33'40"E
-LLA     LuleÜ, Sweden;4;65*32'38"N, 22*7'19"E
+LLA     LuleÂ, Sweden;4;65*32'38"N, 22*7'19"E
 LLD     Loveland, USA
 LLG     Chillagoe, Australia;4;17*8'34"S, 144*31'44"E
 LLH     Las Limas, Honduras;4;15*25'59"N, 87*52'59"W
@@ -5692,7 +5692,7 @@ OPU     Balimo, New Guinea;4;8*3'0"S, 142*55'59"E
 OPW     Opuwa, Namibia;4;18*4'1"S, 13*49'59"E
 OQW     Maquoketa, USA;4;42*3'0"N, 90*44'20"W
 ORA     Oran, Argentina;4;23*9'10"S, 64*19'45"W
-ORB     ôrebro, Sweden;4;59*13'25"N, 15*2'17"E
+ORB     ÷rebro, Sweden;4;59*13'25"N, 15*2'17"E
 ORC     Orocue, Columbia;4;4*47'32"N, 71*21'23"W
 ORD CHI Chicago (O'Hare International), USA;4;41*58'43"N, 87*54'17"W
 ORE     Orleans, France;5;47*59'16"N, 1*54'0"E
@@ -5720,11 +5720,11 @@ ORZ     Orange Walk, Belize;4;18*4'1"N, 88*34'1"W
 OSA OSA Osaka, Japan
 OSB     Osage Beach, USA;4;38*6'38"N, 92*40'50"W
 OSC     Oscoda, USA;4;44*27'6"N, 83*23'39"W
-OSD     ôstersund, Sweden;4;63*11'39"N, 14*30'7"E
+OSD     ÷stersund, Sweden;4;63*11'39"N, 14*30'7"E
 OSE     Omora, New Guinea;4;7*49'59"S, 147*4'59"E
 OSH     Oshkosh, USA;4;43*59'4"N, 88*33'25"W
 OSI     Osijek, Croatia;4;45*27'46"N, 18*48'37"E
-OSK     ôskarshamn, Sweden;4;57*21'2"N, 16*29'53"E
+OSK     ÷skarshamn, Sweden;4;57*21'2"N, 16*29'53"E
 OSL     Oslo, Norway;5;60*11'38"N, 11*6'1"E
 OSM     Mosul, Iraq;4;36*18'21"N, 43*8'51"E
 OSN     Osan, South Korea;4;37*5'26"N, 127*1'47"E
@@ -6851,7 +6851,7 @@ SAS     Salton City, USA;4;33*14'28"N, 115*57'9"W
 SAT     San Antonio, USA;4;29*32'1"N, 98*28'11"W
 SAU     Sawu, Indonesia;4;10*28'59"S, 121*50'60"E
 SAV     Savannah, USA;4;32*7'39"N, 81*12'8"W
-SAW     Istanbul (Sabiha Gokcen), TÅrkei;5;40*54'17"N, 29*18'33"E
+SAW     Istanbul (Sabiha Gokcen), T¸rkei;5;40*54'17"N, 29*18'33"E
 SAX     Sambu, Panama;4;8*1'1"N, 78*11'60"W
 SAY     Siena, Italy;4;43*15'23"N, 11*15'18"E
 SAZ     Sasstown, Liberia;4;4*40'1"N, 8*25'1"W
@@ -6975,7 +6975,7 @@ SFP     Surfers Paradise, Australia;4;28*0'0"S, 153*25'59"E
 SFQ     San Liurfa, Turkey;5;37*5'39"N, 38*50'50"E
 SFR     San Fernando, USA
 SFS     Subic Bay, Philippines;5;14*47'40"N, 120*16'17"E
-SFT     SkellefteÜ, Sweden;4;64*37'29"N, 21*4'37"E
+SFT     SkellefteÂ, Sweden;4;64*37'29"N, 21*4'37"E
 SFU     Safia, New Guinea;4;9*34'59"S, 148*37'59"E
 SFV     Santa Fe do Sul, Brazil;4;20*10'59"S, 50*55'1"W
 SFW     Santa Fe, Panama;4;8*31'1"N, 81*4'1"W
@@ -8021,7 +8021,7 @@ UMA     Punta de Maisi, Cuba;4;20*14'31"N, 74*8'49"W
 UMB     Umnak, USA
 UMC     Umba, New Guinea;4;7*1'1"S, 145*56'60"E
 UMD     Uummannaq, Greenland;4;70*40'47"N, 52*7'2"W
-UME     UmeÜ, Sweden;4;63*47'31"N, 20*16'58"E
+UME     UmeÂ, Sweden;4;63*47'31"N, 20*16'58"E
 UMI     Quince Mil, Peru;4;13*13'60"S, 70*45'12"W
 UMM     Summit, USA;4;63*19'53"N, 149*7'38"W
 UMP     Indianapolis (Metropolitan Airport), USA;4;39*56'7"N, 86*2'42"W
@@ -8791,7 +8791,7 @@ YGG     Ganges Harbor, Canada;4;48*50'60"N, 123*30'0"W
 YGH     Fort Good Hope, Canada;4;66*14'27"N, 128*39'3"W
 YGJ     Yonago, Japan;4;35*29'32"N, 133*14'11"E
 YGK     Kingston, Canada;4;44*13'31"N, 76*35'49"W
-YGL     La Grande (Riviäre Airport), Canada;4;53*37'31"N, 77*42'15"W
+YGL     La Grande (RiviËre Airport), Canada;4;53*37'31"N, 77*42'15"W
 YGM     Gimli, Canada;4;50*37'41"N, 97*2'36"W
 YGN     Greenway Sound, Canada;4;50*50'60"N, 126*50'60"W
 YGO     Gods Narrows, Canada;4;54*33'37"N, 94*29'37"W

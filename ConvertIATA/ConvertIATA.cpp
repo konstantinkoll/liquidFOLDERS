@@ -85,8 +85,6 @@ void ConvertFile(CString LanguageSuffix)
 
 	while (input.ReadString(tmpStr))
 	{
-		tmpStr.OemToAnsi();
-
 		INT curPos= 0;
 		CString NamesAndCodes = tmpStr.Tokenize(";", curPos);
 		CString Dummy = tmpStr.Tokenize(";", curPos);
