@@ -8,6 +8,7 @@
 #include "CGlobeView.h"
 #include "CListView.h"
 #include "CTagcloudView.h"
+#include "CTimelineView.h"
 #include "SortOptionsDlg.h"
 #include "ViewOptionsDlg.h"
 #include "StoreManager.h"
@@ -162,6 +163,13 @@ BOOL CMainView::CreateFileView(UINT ViewID, FVPersistentData* Data)
 		{
 			pNewView = new CCalendarView();
 			((CCalendarView*)pNewView)->Create(this, FileViewID, p_CookedFiles, Data);
+		}
+		break;
+	case LFViewTimeline:
+		if (m_ViewID!=LFViewTimeline)
+		{
+			pNewView = new CTimelineView();
+			((CTimelineView*)pNewView)->Create(this, FileViewID, p_CookedFiles, Data);
 		}
 		break;
 	case LFViewGlobe:

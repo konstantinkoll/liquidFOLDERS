@@ -428,6 +428,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CTimelineView.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\EditConditionDlg.cpp"
 				>
 			</File>
@@ -571,6 +575,10 @@
 			</File>
 			<File
 				RelativePath=".\CThumbnailCache.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CTimelineView.h"
 				>
 			</File>
 			<File

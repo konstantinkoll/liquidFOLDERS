@@ -38,7 +38,7 @@ BOOL ViewOptionsDlg::OnInitDialog()
 	ChooseDetailsDlg::OnInitDialog();
 
 	// Icons
-	m_ViewIcons.Create(IDB_VIEWS, NULL, 0, 10, 32, 32);
+	m_ViewIcons.Create(IDB_VIEWS, NULL, 0, 11, 32, 32);
 
 	// View-Liste
 	for (INT a=0; a<2; a++)

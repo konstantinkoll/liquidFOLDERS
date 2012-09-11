@@ -14,6 +14,7 @@ BOOL AttributeSortableInView(UINT Attr, UINT ViewMode)
 	switch (ViewMode)
 	{
 	case LFViewCalendar:
+	case LFViewTimeline:
 		b &= (theApp.m_Attributes[Attr]->Type==LFTypeTime);
 		break;
 	case LFViewGlobe:
