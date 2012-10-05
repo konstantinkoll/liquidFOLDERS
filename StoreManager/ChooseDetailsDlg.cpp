@@ -136,7 +136,7 @@ void ChooseDetailsDlg::OnSelectionChange(NMHDR* pNMHDR, LRESULT* pResult)
 	NM_LISTVIEW* pNMListView = (NM_LISTVIEW*)pNMHDR;
 	INT idx = (INT)pNMListView->iItem;
 
-	if (pNMListView->uNewState & LVIS_SELECTED)
+	if ((pNMListView->uChanged & LVIF_STATE) && (pNMListView->uNewState & LVIS_SELECTED))
 	{
 		GetDlgItem(IDC_MOVEUP)->EnableWindow(m_ShowAttributes.IsWindowEnabled() && (idx>0));
 		GetDlgItem(IDC_MOVEDOWN)->EnableWindow(m_ShowAttributes.IsWindowEnabled() && (idx<m_ShowAttributes.GetItemCount()-1));
