@@ -41,70 +41,33 @@ BOOL CGdiPlusBitmap::Load(LPCWSTR pFile)
 }
 
 
-// CGdiPlusBitmapResource
+// CGdiPlusBitmapMemory
 //
 
-CGdiPlusBitmapResource::CGdiPlusBitmapResource()
+CGdiPlusBitmapMemory::CGdiPlusBitmapMemory()
 {
-	m_hBuffer = NULL;
 }
 
-CGdiPlusBitmapResource::CGdiPlusBitmapResource(LPCTSTR pName, LPCTSTR pType, HMODULE hInst)
+CGdiPlusBitmapMemory::CGdiPlusBitmapMemory(LPVOID pMemory, DWORD Size)
 {
-	m_hBuffer = NULL;
-	Load(pName, pType, hInst);
+	Load(pMemory, Size);
 }
 
-CGdiPlusBitmapResource::CGdiPlusBitmapResource(UINT id, LPCTSTR pType, HMODULE hInst)
-{
-	m_hBuffer = NULL;
-	Load(id, pType, hInst);
-}
-
-CGdiPlusBitmapResource::CGdiPlusBitmapResource(UINT id, UINT type, HMODULE hInst)
-{
-	m_hBuffer = NULL;
-	Load(id, type, hInst);
-}
-
-void CGdiPlusBitmapResource::Empty()
-{
-	CGdiPlusBitmap::Empty();
-
-	if (m_hBuffer)
-	{
-		GlobalUnlock(m_hBuffer);
-		GlobalFree(m_hBuffer);
-		m_hBuffer = NULL;
-	}
-}
-
-BOOL CGdiPlusBitmapResource::Load(LPCTSTR pName, LPCTSTR pType, HMODULE hInst)
+BOOL CGdiPlusBitmapMemory::Load(LPVOID pMemory, DWORD Size)
 {
 	Empty();
 
-	HRSRC hResource = FindResource(hInst, pName, pType);
-	if (!hResource)
-		return FALSE;
-
-	DWORD imageSize = SizeofResource(hInst, hResource);
-	if (!imageSize)
-		return FALSE;
-
-	const void* pResourceData = LockResource(LoadResource(hInst, hResource));
-	if (!pResourceData)
-		return FALSE;
-
-	m_hBuffer = GlobalAlloc(GMEM_MOVEABLE, imageSize);
-	if (m_hBuffer)
+	HGLOBAL hBuffer = GlobalAlloc(GMEM_MOVEABLE | GMEM_NODISCARD, Size);
+	if (hBuffer)
 	{
-		void* pBuffer = GlobalLock(m_hBuffer);
+		LPVOID pBuffer = GlobalLock(hBuffer);
 		if (pBuffer)
 		{
-			CopyMemory(pBuffer, pResourceData, imageSize);
+			memcpy_s(pBuffer, Size, pMemory, Size);
+			GlobalUnlock(hBuffer);
 
 			IStream* pStream = NULL;
-			if (SUCCEEDED(CreateStreamOnHGlobal(m_hBuffer, FALSE, &pStream)))
+			if (SUCCEEDED(CreateStreamOnHGlobal(hBuffer, TRUE, &pStream)))
 			{
 				m_pBitmap = Gdiplus::Bitmap::FromStream(pStream);
 				pStream->Release();
@@ -117,14 +80,56 @@ BOOL CGdiPlusBitmapResource::Load(LPCTSTR pName, LPCTSTR pType, HMODULE hInst)
 					m_pBitmap = NULL;
 				}
 			}
-			GlobalUnlock(m_hBuffer);
+			else
+			{
+				GlobalFree(hBuffer);
+			}
 		}
-
-		GlobalFree(m_hBuffer);
-		m_hBuffer = NULL;
 	}
 
 	return FALSE;
+}
+
+
+// CGdiPlusBitmapResource
+//
+
+CGdiPlusBitmapResource::CGdiPlusBitmapResource()
+{
+}
+
+CGdiPlusBitmapResource::CGdiPlusBitmapResource(LPCTSTR pName, LPCTSTR pType, HMODULE hInst)
+{
+	Load(pName, pType, hInst);
+}
+
+CGdiPlusBitmapResource::CGdiPlusBitmapResource(UINT id, LPCTSTR pType, HMODULE hInst)
+{
+	Load(id, pType, hInst);
+}
+
+CGdiPlusBitmapResource::CGdiPlusBitmapResource(UINT id, UINT type, HMODULE hInst)
+{
+	Load(id, type, hInst);
+}
+
+BOOL CGdiPlusBitmapResource::Load(LPCTSTR pName, LPCTSTR pType, HMODULE hInst)
+{
+	Empty();
+
+	HRSRC hResource = FindResource(hInst, pName, pType);
+	if (!hResource)
+		return FALSE;
+
+	DWORD Size = SizeofResource(hInst, hResource);
+	if (!Size)
+		return FALSE;
+
+	LPVOID pResourceData = LockResource(LoadResource(hInst, hResource));
+	if (!pResourceData)
+		return FALSE;
+
+	return CGdiPlusBitmapMemory::Load(pResourceData, Size);
 }
 
 BOOL CGdiPlusBitmapResource::Load(UINT id, LPCTSTR pType, HMODULE hInst)

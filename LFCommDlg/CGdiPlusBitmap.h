@@ -20,10 +20,23 @@ public:
 };
 
 
+// CGdiPlusBitmapMemory
+//
+
+class AFX_EXT_CLASS CGdiPlusBitmapMemory : public CGdiPlusBitmap
+{
+public:
+	CGdiPlusBitmapMemory();
+	CGdiPlusBitmapMemory(LPVOID pMemory, DWORD Size);
+
+	BOOL Load(LPVOID pMemory, DWORD Size);
+};
+
+
 // CGdiPlusBitmapResource
 //
 
-class AFX_EXT_CLASS CGdiPlusBitmapResource : public CGdiPlusBitmap
+class AFX_EXT_CLASS CGdiPlusBitmapResource : public CGdiPlusBitmapMemory
 {
 public:
 	CGdiPlusBitmapResource();
@@ -31,12 +44,7 @@ public:
 	CGdiPlusBitmapResource(UINT id, LPCTSTR pType=RT_RCDATA, HMODULE hInst=NULL);
 	CGdiPlusBitmapResource(UINT id, UINT type, HMODULE hInst=NULL);
 
-	virtual void Empty();
-
 	BOOL Load(LPCTSTR pName, LPCTSTR pType=RT_RCDATA, HMODULE hInst=NULL);
 	BOOL Load(UINT id, LPCTSTR pType=RT_RCDATA, HMODULE hInst=NULL);
 	BOOL Load(UINT id, UINT type, HMODULE hInst=NULL);
-
-protected:
-	HGLOBAL m_hBuffer;
 };
