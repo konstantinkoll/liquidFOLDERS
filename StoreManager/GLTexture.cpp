@@ -181,34 +181,20 @@ GLTextureBlueMarble::GLTextureBlueMarble(UINT nID)
 		if (!hResource)
 			return;
 
-		DWORD imageSize = SizeofResource(NULL, hResource);
-		if (!imageSize)
+		DWORD Size = SizeofResource(NULL, hResource);
+		if (!Size)
 			return;
 
-		const void* pResourceData = LockResource(LoadResource(NULL, hResource));
+		LPVOID pResourceData = LockResource(LoadResource(NULL, hResource));
 		if (!pResourceData)
 			return;
 
-		HGLOBAL hBuffer = GlobalAlloc(GMEM_MOVEABLE, imageSize);
-		if (hBuffer)
-		{
-			void* pBuffer = GlobalLock(hBuffer);
-			if (pBuffer)
-			{
-				CopyMemory(pBuffer, pResourceData, imageSize);
+		IStream* pStream = SHCreateMemStream((BYTE*)pResourceData, Size);
+		OleLoadPicture(pStream, 0, FALSE, IID_IPicture, (void**)&p_BlueMarble);
+		pStream->Release();
 
-				IStream* pStream = NULL;
-				if (SUCCEEDED(CreateStreamOnHGlobal(hBuffer, FALSE, &pStream)))
-				{
-					OleLoadPicture(pStream, 0, FALSE, IID_IPicture, (void**)&p_BlueMarble);
-					if (p_BlueMarble)
-						m_nIDLoaded = nID;
-				}
-			}
-			GlobalUnlock(hBuffer);
-		}
-
-		GlobalFree(hBuffer);
+		if (p_BlueMarble)
+			m_nIDLoaded = nID;
 	}
 
 	if (p_BlueMarble)

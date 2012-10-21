@@ -60,36 +60,16 @@ BOOL CGdiPlusBitmapMemory::Load(LPVOID pMemory, DWORD Size)
 	if (!pMemory)
 		return FALSE;
 
-	HGLOBAL hBuffer = GlobalAlloc(GMEM_MOVEABLE | GMEM_NODISCARD, Size);
-	if (hBuffer)
-	{
-		LPVOID pBuffer = GlobalLock(hBuffer);
-		if (pBuffer)
-		{
-			memcpy_s(pBuffer, Size, pMemory, Size);
-			GlobalUnlock(hBuffer);
+	IStream* pStream = SHCreateMemStream((BYTE*)pMemory, Size);
+	m_pBitmap = Gdiplus::Bitmap::FromStream(pStream);
+	pStream->Release();
 
-			IStream* pStream = NULL;
-			if (SUCCEEDED(CreateStreamOnHGlobal(hBuffer, TRUE, &pStream)))
-			{
-				m_pBitmap = Gdiplus::Bitmap::FromStream(pStream);
-				pStream->Release();
-				if (m_pBitmap)
-				{
-					if (m_pBitmap->GetLastStatus()==Gdiplus::Ok)
-						return TRUE;
+	if (m_pBitmap)
+		if (m_pBitmap->GetLastStatus()==Gdiplus::Ok)
+			return TRUE;
 
-					delete m_pBitmap;
-					m_pBitmap = NULL;
-				}
-			}
-			else
-			{
-				GlobalFree(hBuffer);
-			}
-		}
-	}
-
+	delete m_pBitmap;
+	m_pBitmap = NULL;
 	return FALSE;
 }
 
