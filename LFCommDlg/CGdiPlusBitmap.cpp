@@ -57,6 +57,9 @@ BOOL CGdiPlusBitmapMemory::Load(LPVOID pMemory, DWORD Size)
 {
 	Empty();
 
+	if (!pMemory)
+		return FALSE;
+
 	HGLOBAL hBuffer = GlobalAlloc(GMEM_MOVEABLE | GMEM_NODISCARD, Size);
 	if (hBuffer)
 	{

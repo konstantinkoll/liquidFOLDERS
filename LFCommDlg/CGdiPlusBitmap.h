@@ -16,7 +16,7 @@ public:
 
 	BOOL Load(LPCWSTR pFile);
 
-	Gdiplus::Bitmap* m_pBitmap;
+	Bitmap* m_pBitmap;
 };
 
 
