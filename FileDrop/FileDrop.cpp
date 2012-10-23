@@ -50,6 +50,10 @@ BOOL CFileDropApp::InitInstance()
 
 	m_pMainWnd = new CFileDropWnd();
 	((CFileDropWnd*)m_pMainWnd)->Create();
+
+	if (!LFIsLicensed())
+		ShowNagScreen(NAG_NOTLICENSED | NAG_FORCE, m_pMainWnd);
+
 	m_pMainWnd->ShowWindow(SW_SHOW);
 
 	return TRUE;

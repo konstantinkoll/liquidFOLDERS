@@ -140,8 +140,10 @@ BOOL CStoreManagerApp::InitInstance()
 	pFrame->CreateRoot();
 
 Finish:
-	pFrame->ShowWindow(SW_SHOW);
+	if (!LFIsLicensed())
+		ShowNagScreen(NAG_NOTLICENSED | NAG_FORCE, pFrame);
 
+	pFrame->ShowWindow(SW_SHOW);
 	m_AppInitialized = TRUE;
 
 	return TRUE;

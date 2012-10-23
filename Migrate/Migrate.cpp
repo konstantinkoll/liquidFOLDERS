@@ -51,6 +51,10 @@ BOOL CMigrateApp::InitInstance()
 
 	CMigrateWnd* pFrame = new CMigrateWnd();
 	pFrame->Create();
+
+	if (!LFIsLicensed())
+		ShowNagScreen(NAG_NOTLICENSED | NAG_FORCE, pFrame);
+
 	pFrame->ShowWindow(SW_SHOW);
 
 	return TRUE;

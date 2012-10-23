@@ -322,10 +322,7 @@ BOOL LFApplication::InitInstance()
 	}
 	#endif
 
-	// Falls abgelaufen, Fenster anzeigen
 	ResetNagCounter;
-	if (!LFIsLicensed())
-		ShowNagScreen(NAG_NOTLICENSED | NAG_FORCE);
 
 	// Beim ersten Mal Welcome-Dialog anzeigen
 	if ((LFGetStoreCount()==0) && (GetGlobalInt(_T("FirstRun"), 1)!=0))
