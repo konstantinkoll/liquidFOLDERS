@@ -44,9 +44,9 @@ void SaveFilterDlg::CheckOK()
 BEGIN_MESSAGE_MAP(SaveFilterDlg, CDialog)
 	ON_BN_CLICKED(IDC_CHOOSESTORE, OnChooseStore)
 	ON_EN_CHANGE(IDC_FILENAME, OnChange)
-	ON_REGISTERED_MESSAGE(((LFApplication*)AfxGetApp())->p_MessageIDs->StoresChanged, OnStoresChanged)
-	ON_REGISTERED_MESSAGE(((LFApplication*)AfxGetApp())->p_MessageIDs->StoreAttributesChanged, OnStoresChanged)
-	ON_REGISTERED_MESSAGE(((LFApplication*)AfxGetApp())->p_MessageIDs->DefaultStoreChanged, OnStoresChanged)
+	ON_REGISTERED_MESSAGE(LFGetApp()->p_MessageIDs->StoresChanged, OnStoresChanged)
+	ON_REGISTERED_MESSAGE(LFGetApp()->p_MessageIDs->StoreAttributesChanged, OnStoresChanged)
+	ON_REGISTERED_MESSAGE(LFGetApp()->p_MessageIDs->DefaultStoreChanged, OnStoresChanged)
 END_MESSAGE_MAP()
 
 BOOL SaveFilterDlg::OnInitDialog()
@@ -55,7 +55,7 @@ BOOL SaveFilterDlg::OnInitDialog()
 
 	// Symbol für dieses Dialogfeld festlegen. Wird automatisch erledigt
 	// wenn das Hauptfenster der Anwendung kein Dialogfeld ist
-	HICON hIcon = ((LFApplication*)AfxGetApp())->LoadIcon(MAKEINTRESOURCE(IDD_SAVEFILTER));
+	HICON hIcon = LFGetApp()->LoadIcon(MAKEINTRESOURCE(IDD_SAVEFILTER));
 	SetIcon(hIcon, FALSE);
 	SetIcon(hIcon, TRUE);
 

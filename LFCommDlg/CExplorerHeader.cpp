@@ -216,7 +216,7 @@ void CExplorerHeader::OnPaint()
 	CBitmap* pOldBitmap = dc.SelectObject(&buffer);
 
 	BOOL Themed = IsCtrlThemed();
-	if (Themed)
+	if (Themed && (LFGetApp()->OSVersion!=OS_Eight))
 	{
 		CRect rectBackground(rect);
 		if (rectBackground.bottom>60)
@@ -307,7 +307,7 @@ HBRUSH CExplorerHeader::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 	HBRUSH hbr = CWnd::OnCtlColor(pDC, pWnd, nCtlColor);
 
 	if ((nCtlColor==CTLCOLOR_BTN) || (nCtlColor==CTLCOLOR_STATIC))
-		if (IsCtrlThemed())
+		if (IsCtrlThemed() && (LFGetApp()->OSVersion!=OS_Eight))
 		{
 			CRect rc; 
 			pWnd->GetWindowRect(&rc);
@@ -320,7 +320,8 @@ HBRUSH CExplorerHeader::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 		}
 		else
 		{
-			hbr = (HBRUSH)GetStockObject(WHITE_BRUSH);
+			pDC->SetDCBrushColor(GetSysColor(COLOR_WINDOW));
+			hbr = (HBRUSH)GetStockObject(DC_BRUSH);
 		}
 
 	return hbr;

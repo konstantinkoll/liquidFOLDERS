@@ -187,7 +187,8 @@ void LFTooltip::Track(CPoint point, HICON hIcon, CSize szIcon, const CString& st
 
 	CRgn rgn;
 	m_Themed = IsCtrlThemed();
-	if (m_Themed)
+	m_Flat = m_Themed && (LFGetApp()->OSVersion==OS_Eight);
+	if (m_Themed && !m_Flat)
 	{
 		rgn.CreateRoundRectRgn(0, 0, sz.cx+1, sz.cy+1, 4, 4);
 	}
@@ -253,16 +254,21 @@ void LFTooltip::OnPaint()
 	rect.DeflateRect(1, 1);
 
 	// Background
-	if (m_Themed)
+	if (m_Flat)
 	{
-		Graphics g(dc);
-		LinearGradientBrush brush(Point(0, rect.top), Point(0, rect.bottom+1), Color(0xFF, 0xFF, 0xFF), Color(0xE4, 0xE5, 0xF0));
-		g.FillRectangle(&brush, rect.left, rect.top, rect.Width(), rect.Height());
+		dc.FillSolidRect(rect, 0xFFFFFF);
 	}
 	else
-	{
-		dc.FillSolidRect(rect, GetSysColor(COLOR_INFOBK));
-	}
+		if (m_Themed)
+		{
+			Graphics g(dc);
+			LinearGradientBrush brush(Point(0, rect.top), Point(0, rect.bottom+1), Color(0xFF, 0xFF, 0xFF), Color(0xE4, 0xE5, 0xF0));
+			g.FillRectangle(&brush, rect.left, rect.top, rect.Width(), rect.Height());
+		}
+		else
+		{
+			dc.FillSolidRect(rect, GetSysColor(COLOR_INFOBK));
+		}
 
 	// Border
 	COLORREF clrLine = m_Themed ? 0x767676 : GetSysColor(COLOR_INFOTEXT);
@@ -272,7 +278,7 @@ void LFTooltip::OnPaint()
 	CPen* pOldPen = dc.SelectObject(&penLine);
 	rect.InflateRect(1, 1);
 
-	if (m_Themed)
+	if (m_Themed && !m_Flat)
 	{
 		const INT nOffset = 2;
 

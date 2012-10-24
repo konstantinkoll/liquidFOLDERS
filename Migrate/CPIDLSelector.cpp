@@ -147,7 +147,7 @@ void CPIDLDropdownWindow::PopulateList()
 	AddCSIDL(CSIDL_COMMON_PICTURES, 2);									// Common pictures
 	AddCSIDL(CSIDL_COMMON_VIDEO, 2);									// Common videos
 
-	switch (((LFApplication*)AfxGetApp())->OSVersion)
+	switch (LFGetApp()->OSVersion)
 	{
 	case OS_XP:
 	case OS_Vista:

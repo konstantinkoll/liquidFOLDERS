@@ -146,7 +146,7 @@ void CGlassEdit::OnNcPaint()
 
 	CGlassWindow* pCtrlSite = (CGlassWindow*)GetParent();
 	pCtrlSite->DrawFrameBackground(&dc, rect);
-	const BYTE Alpha = (m_Hover || (GetFocus()==this)) ? (pCtrlSite->GetDesign()==GWD_THEMED) ? 0xFF : 0xF0 : 0xD0;
+	const BYTE Alpha = (LFGetApp()->OSVersion==OS_Eight) ? 0xFF : (m_Hover || (GetFocus()==this)) ? (pCtrlSite->GetDesign()==GWD_THEMED) ? 0xFF : 0xF0 : 0xD0;
 
 	Graphics g(dc);
 	g.ExcludeClip(Rect(rectClient.left, rectClient.top, rectClient.Width(), rectClient.Height()));
@@ -169,10 +169,20 @@ void CGlassEdit::OnNcPaint()
 		g.DrawPath(&pen, &path);
 		rectBounds.DeflateRect(1, 1);
 
-		CreateRoundRectangle(rectBounds, 1, path);
-		LinearGradientBrush brush2(Point(0, rectBounds.top), Point(0, rectBounds.bottom), Color(Alpha, 0x50, 0x50, 0x50), Color(Alpha, 0xB0, 0xB0, 0xB0));
-		pen.SetBrush(&brush2);
-		g.DrawPath(&pen, &path);
+
+		if (LFGetApp()->OSVersion==OS_Eight)
+		{
+			CreateRoundRectangle(rectBounds, 0, path);
+			Pen pen(Color(0x40, 0x38, 0x38, 0x38));
+			g.DrawPath(&pen, &path);
+		}
+		else
+		{
+			CreateRoundRectangle(rectBounds, 1, path);
+			LinearGradientBrush brush2(Point(0, rectBounds.top), Point(0, rectBounds.bottom), Color(Alpha, 0x50, 0x50, 0x50), Color(Alpha, 0xB0, 0xB0, 0xB0));
+			pen.SetBrush(&brush2);
+			g.DrawPath(&pen, &path);
+		}
 	}
 	else
 	{
@@ -218,7 +228,7 @@ void CGlassEdit::OnNcPaint()
 			rectText.right -= m_IconSize+BORDER;
 		}
 
-		CFont* pOldFont = dc.SelectObject(&((LFApplication*)AfxGetApp())->m_ItalicFont);
+		CFont* pOldFont = dc.SelectObject(&LFGetApp()->m_ItalicFont);
 		dc.SetTextColor(0x808080);
 		dc.DrawText(m_EmptyHint, rectText, DT_SINGLELINE | DT_END_ELLIPSIS | DT_VCENTER);
 		dc.SelectObject(pOldFont);

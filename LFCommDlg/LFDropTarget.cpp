@@ -102,7 +102,7 @@ __forceinline HRESULT LFDropTarget::ImportFromFS(HGLOBAL hgDrop, DWORD dwEffect,
 			if (pCondition->Compare==LFFilterCompareSubfolder)
 			{
 				UINT Attr = pCondition->AttrData.Attr;
-				if ((!((LFApplication*)AfxGetApp())->m_Attributes[Attr]->ReadOnly) && (Attr!=LFAttrFileName))
+				if ((!LFGetApp()->m_Attributes[Attr]->ReadOnly) && (Attr!=LFAttrFileName))
 					LFSetAttributeVariantData(wp.Template, &pCondition->AttrData);
 			}
 
@@ -145,7 +145,7 @@ __forceinline HRESULT LFDropTarget::ImportFromStore(IDataObject* pDataObject, HG
 	// CF_LIQUIDFILES neu setzen, um nicht veränderte Dateien (Fehler oder Drop auf denselben Store) zu entfernen
 	FORMATETC fmt;
 	ZeroMemory(&fmt, sizeof(fmt));
-	fmt.cfFormat = ((LFApplication*)AfxGetApp())->CF_HLIQUID;
+	fmt.cfFormat = LFGetApp()->CF_HLIQUID;
 	fmt.dwAspect = DVASPECT_CONTENT;
 	fmt.lindex = -1;
 	fmt.tymed = TYMED_HGLOBAL;
@@ -222,7 +222,7 @@ STDMETHODIMP LFDropTarget::DragEnter(IDataObject* pDataObject, DWORD grfKeyState
 	COleDataObject dobj;
 	dobj.Attach(pDataObject, FALSE);
 
-	if (dobj.GetGlobalData(((LFApplication*)AfxGetApp())->CF_HLIQUID))
+	if (dobj.GetGlobalData(LFGetApp()->CF_HLIQUID))
 		goto Allowed;
 	if ((!p_SearchResult) && (dobj.GetGlobalData(CF_HDROP)))
 		goto Allowed;
@@ -269,7 +269,7 @@ STDMETHODIMP LFDropTarget::Drop(IDataObject* pDataObject, DWORD grfKeyState, POI
 		return E_INVALIDARG;
 
 	// Allowed?
-	if (((LFApplication*)AfxGetApp())->ShowNagScreen(NAG_EXPIRED | NAG_FORCE, p_Owner, TRUE))
+	if (LFGetApp()->ShowNagScreen(NAG_EXPIRED | NAG_FORCE, p_Owner, TRUE))
 		return E_INVALIDARG;
 
 	// Data object
@@ -277,7 +277,7 @@ STDMETHODIMP LFDropTarget::Drop(IDataObject* pDataObject, DWORD grfKeyState, POI
 	dobj.Attach(pDataObject, FALSE);
 
 	HGLOBAL hgDrop = dobj.GetGlobalData(CF_HDROP);
-	HGLOBAL hgLiquid = dobj.GetGlobalData(((LFApplication*)AfxGetApp())->CF_HLIQUID);
+	HGLOBAL hgLiquid = dobj.GetGlobalData(LFGetApp()->CF_HLIQUID);
 
 	if ((hgDrop==NULL) && (hgLiquid==NULL))
 		return E_INVALIDARG;

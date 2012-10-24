@@ -169,7 +169,7 @@ LFCommDlg_API void SetCompareComboBox(CComboBox* pComboBox, UINT attr, INT reque
 	pComboBox->SetRedraw(FALSE);
 	pComboBox->ResetContent();
 
-	switch (((LFApplication*)AfxGetApp())->m_Attributes[attr]->Type)
+	switch (LFGetApp()->m_Attributes[attr]->Type)
 	{
 	case LFTypeUnicodeString:
 	case LFTypeAnsiString:
@@ -246,7 +246,7 @@ DWORD WINAPI WorkerImport(void* lParam)
 LFCommDlg_API void LFImportFolder(CHAR* StoreID, CWnd* pParentWnd)
 {
 	// Allowed?
-	if (((LFApplication*)AfxGetApp())->ShowNagScreen(NAG_EXPIRED | NAG_FORCE, pParentWnd, TRUE))
+	if (LFGetApp()->ShowNagScreen(NAG_EXPIRED | NAG_FORCE, pParentWnd, TRUE))
 		return;
 
 	CString caption;
@@ -558,7 +558,7 @@ LFCommDlg_API void LFCheckForUpdate(BOOL Force, CWnd* pParentWnd)
 
 	// Check due?
 	if (!Check)
-		Check = ((LFApplication*)AfxGetApp())->IsUpdateCheckDue();
+		Check = LFGetApp()->IsUpdateCheckDue();
 
 	// Perform check
 	CString VersionIni;

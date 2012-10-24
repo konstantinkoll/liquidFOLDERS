@@ -75,7 +75,7 @@ INT CTaskButton::GetPreferredWidth()
 		CSize sz;
 
 		CDC* dc = GetDC();
-		HFONT hOldFont = IsCtrlThemed() ? (HFONT)dc->SelectObject(((LFApplication*)AfxGetApp())->m_DefaultFont.m_hObject) : (HFONT)dc->SelectStockObject(DEFAULT_GUI_FONT);
+		HFONT hOldFont = IsCtrlThemed() ? (HFONT)dc->SelectObject(LFGetApp()->m_DefaultFont.m_hObject) : (HFONT)dc->SelectStockObject(DEFAULT_GUI_FONT);
 		sz = dc->GetTextExtent(m_Caption);
 		dc->SelectObject(hOldFont);
 		ReleaseDC(dc);
@@ -141,13 +141,13 @@ void CTaskButton::OnPaint()
 	// Button
 	if (IsCtrlThemed())
 	{
-		CFont* pOldFont = dc.SelectObject(&((LFApplication*)AfxGetApp())->m_DefaultFont);
+		CFont* pOldFont = dc.SelectObject(&LFGetApp()->m_DefaultFont);
 
 		Graphics g(dc);
 		g.SetCompositingMode(CompositingModeSourceOver);
 		g.SetSmoothingMode(SmoothingModeAntiAlias);
 
-		switch (((LFApplication*)AfxGetApp())->OSVersion)
+		switch (LFGetApp()->OSVersion)
 		{
 		case OS_Vista:
 			{
@@ -219,7 +219,6 @@ void CTaskButton::OnPaint()
 			}
 		case OS_XP:
 		case OS_Seven:
-		case OS_Eight:
 			{
 				if ((Focused) || (Selected) || (m_Hover))
 				{
@@ -262,6 +261,39 @@ void CTaskButton::OnPaint()
 						pen.SetColor(Color(0x80, 0xFF, 0xFF, 0xFF));
 						g.DrawPath(&pen, &path);
 					}
+				}
+
+				CRect rectText(rect);
+				rectText.DeflateRect(BORDER+2, BORDER);
+				if (Selected)
+					rectText.OffsetRect(1, 1);
+
+				if ((p_Icons) && (m_IconID!=-1))
+				{
+					CAfxDrawState ds;
+					p_Icons->PrepareDrawImage(ds);
+					p_Icons->Draw(&dc, rectText.left, (rect.Height()-rectText.Height())/2+(Selected ? 1 : 0), m_IconID);
+					p_Icons->EndDrawImage(ds);
+
+					rectText.left += 16+BORDER;
+				}
+
+				dc.SetTextColor(0x5B391E);
+				dc.DrawText(m_Caption, rectText, DT_SINGLELINE | DT_END_ELLIPSIS | DT_VCENTER);
+
+				break;
+			}
+		case OS_Eight:
+			{
+				if ((Focused) || (Selected) || (m_Hover))
+				{
+					COLORREF colBorder = Selected ? 0xDAA026 : m_Hover ? 0xE4DB6D : 0xDAA026;
+					COLORREF colInner = Selected ? 0xF0E1C3 : m_Hover ? 0xF4EBDC : 0xF5F5F5;
+
+					CRect rectBounds(rect);
+					dc.Draw3dRect(rectBounds, colBorder, colBorder);
+					rectBounds.DeflateRect(1, 1);
+					dc.FillSolidRect(rectBounds, colInner);
 				}
 
 				CRect rectText(rect);

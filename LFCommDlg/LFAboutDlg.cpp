@@ -35,11 +35,11 @@ void LFAboutDlg::DoDataExchange(CDataExchange* pDX)
 		DDX_Check(pDX, IDC_ENABLEAUTOUPDATE, EnableAutoUpdate);
 		DDX_Radio(pDX, IDC_CHECKDAILY, Interval);
 
-		((LFApplication*)AfxGetApp())->SetUpdateSettings(EnableAutoUpdate, Interval);
+		LFGetApp()->SetUpdateSettings(EnableAutoUpdate, Interval);
 	}
 	else
 	{
-		((LFApplication*)AfxGetApp())->GetUpdateSettings(&EnableAutoUpdate, &Interval);
+		LFGetApp()->GetUpdateSettings(&EnableAutoUpdate, &Interval);
 
 		DDX_Check(pDX, IDC_ENABLEAUTOUPDATE, EnableAutoUpdate);
 		DDX_Radio(pDX, IDC_CHECKDAILY, Interval);
@@ -110,7 +110,7 @@ void LFAboutDlg::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 	CFont font1;
 	font1.CreateFont(40, 0, 0, 0, FW_BOLD, FALSE, FALSE, FALSE, ANSI_CHARSET,
 		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, ANTIALIASED_QUALITY,
-		DEFAULT_PITCH | FF_DONTCARE, ((LFApplication*)AfxGetApp())->GetDefaultFontFace());
+		DEFAULT_PITCH | FF_DONTCARE, LFGetApp()->GetDefaultFontFace());
 	CFont* pOldFont = dc.SelectObject(&font1);
 
 	const UINT fmt = DT_SINGLELINE | DT_LEFT | DT_NOPREFIX | DT_END_ELLIPSIS;
@@ -122,7 +122,7 @@ void LFAboutDlg::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 	CFont font2;
 	font2.CreateFont(24, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, ANSI_CHARSET,
 		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY,
-		DEFAULT_PITCH | FF_DONTCARE, ((LFApplication*)AfxGetApp())->GetDefaultFontFace());
+		DEFAULT_PITCH | FF_DONTCARE, LFGetApp()->GetDefaultFontFace());
 	dc.SelectObject(&font2);
 
 #ifdef _M_X64

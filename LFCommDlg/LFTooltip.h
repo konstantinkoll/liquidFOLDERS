@@ -25,6 +25,7 @@ protected:
 	void Hide();
 
 	BOOL m_Themed;
+	BOOL m_Flat;
 	HICON m_Icon;
 	CSize m_szIcon;
 	CString m_strCaption;

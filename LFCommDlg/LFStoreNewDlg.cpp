@@ -3,10 +3,9 @@
 //
 
 #include "StdAfx.h"
-#include "LFStoreNewDlg.h"
 #include "Resource.h"
 #include "LFCore.h"
-#include "LFApplication.h"
+#include "LFCommDlg.h"
 #include "..\\LFCore\\resource.h"
 
 
@@ -86,7 +85,7 @@ END_MESSAGE_MAP()
 
 BOOL LFStoreNewDlg::OnInitDialog()
 {
-	((LFApplication*)AfxGetApp())->ShowNagScreen(NAG_EXPIRED | NAG_FORCE);
+	LFGetApp()->ShowNagScreen(NAG_EXPIRED | NAG_FORCE);
 
 	CDialog::OnInitDialog();
 

@@ -67,7 +67,7 @@ void CMapPreviewCtrl::Update(LFAirport* pAirport)
 		p_Airport = pAirport;
 		if (pAirport)
 		{
-			FontFamily fontFamily(((LFApplication*)AfxGetApp())->GetDefaultFontFace());
+			FontFamily fontFamily(LFGetApp()->GetDefaultFontFace());
 			WCHAR pszBuf[4];
 			MultiByteToWideChar(CP_ACP, 0, pAirport->Code, -1, pszBuf, 4);
 

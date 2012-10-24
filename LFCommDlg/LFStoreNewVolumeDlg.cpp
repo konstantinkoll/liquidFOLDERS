@@ -3,11 +3,9 @@
 //
 
 #include "StdAfx.h"
-#include "LFStoreNewVolumeDlg.h"
 #include "Resource.h"
 #include "LFCore.h"
-#include "LFApplication.h"
-#include "CExplorerTree.h"
+#include "LFCommDlg.h"
 #include "..\\LFCore\\resource.h"
 
 
@@ -58,7 +56,7 @@ END_MESSAGE_MAP()
 
 BOOL LFStoreNewVolumeDlg::OnInitDialog()
 {
-	((LFApplication*)AfxGetApp())->ShowNagScreen(NAG_EXPIRED | NAG_FORCE);
+	LFGetApp()->ShowNagScreen(NAG_EXPIRED | NAG_FORCE);
 
 	CDialog::OnInitDialog();
 

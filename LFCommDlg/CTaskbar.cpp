@@ -43,7 +43,7 @@ UINT CTaskbar::GetPreferredHeight()
 	LOGFONT lf;
 	UINT h = 4*BORDER+(IsCtrlThemed() ? 4 : 3);
 
-	((LFApplication*)AfxGetApp())->m_DefaultFont.GetLogFont(&lf);
+	LFGetApp()->m_DefaultFont.GetLogFont(&lf);
 	h += abs(lf.lfHeight);
 
 	return h;
@@ -71,7 +71,7 @@ CTaskButton* CTaskbar::AddButton(UINT nID, INT IconID, BOOL ForceIcon, BOOL AddR
 
 	CTaskButton* btn = new CTaskButton();
 	btn->Create(AddRight ? _T("") : Caption, Caption, Hint, &m_Icons,
-		ForceIcon || AddRight || (((LFApplication*)AfxGetApp())->OSVersion<OS_Seven) ? IconID : -1,
+		ForceIcon || AddRight || (LFGetApp()->OSVersion<OS_Seven) ? IconID : -1,
 		this, nID);
 	btn->EnableWindow(FALSE);
 
@@ -211,7 +211,7 @@ BOOL CTaskbar::OnEraseBkgnd(CDC* pDC)
 			dc.FillSolidRect(rect, GetSysColor(COLOR_3DFACE));
 		}
 		else
-			switch (((LFApplication*)AfxGetApp())->OSVersion)
+			switch (LFGetApp()->OSVersion)
 			{
 			case OS_Vista:
 				{
@@ -243,7 +243,6 @@ BOOL CTaskbar::OnEraseBkgnd(CDC* pDC)
 				}
 			case OS_XP:
 			case OS_Seven:
-			case OS_Eight:
 				{
 					UINT line = (rect.Height()-2)/2;
 
@@ -260,6 +259,14 @@ BOOL CTaskbar::OnEraseBkgnd(CDC* pDC)
 					dc.FillSolidRect(0, rect.bottom-3, rect.right, 1, 0xFBEFE4);
 					dc.FillSolidRect(0, rect.bottom-2, rect.right, 1, 0xEADACD);
 					dc.FillSolidRect(0, rect.bottom-1, rect.right, 1, 0xC3AFA0);
+
+					break;
+				}
+			case OS_Eight:
+				{
+					dc.FillSolidRect(0, 0, rect.right, rect.bottom-1, 0xF7F6F5);
+					dc.FillSolidRect(0, rect.bottom-1, rect.right, 1, 0xEAE9E8);
+
 					break;
 				}
 			}

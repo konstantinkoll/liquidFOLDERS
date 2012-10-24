@@ -93,68 +93,62 @@ void CGroupBox::OnPaint()
 	CRect rectBounds(rect);
 	rectBounds.top += sz.cy/2;
 
-	if (!Themed)
+	Graphics g(dc);
+	g.SetCompositingMode(CompositingModeSourceOver);
+	g.SetSmoothingMode(SmoothingModeAntiAlias);
+
+	if (Themed && (((LFDialog*)GetParent())->GetDesign()==LFDS_Blue))
 	{
-		rectBounds.left++;
-		rectBounds.top++;
-		dc.Draw3dRect(rectBounds, GetSysColor(COLOR_3DHIGHLIGHT), GetSysColor(COLOR_3DHIGHLIGHT));
+		rectBounds.right -= 3;
+		rectBounds.bottom -= 3;
 
-		rectBounds.OffsetRect(-1, -1);
-		dc.Draw3dRect(rectBounds, GetSysColor(COLOR_3DSHADOW), GetSysColor(COLOR_3DSHADOW));
+		Matrix m1;
+		m1.Translate(2.0, 2.0);
 
-		clr = GetSysColor(COLOR_WINDOWTEXT);
-	}
-	else
-	{
-		Graphics g(dc);
-		g.SetCompositingMode(CompositingModeSourceOver);
-		g.SetSmoothingMode(SmoothingModeAntiAlias);
+		Matrix m2;
+		m2.Translate(-1.0, -1.0);
 
-		switch (((LFDialog*)GetParent())->GetDesign())
-		{
-		case LFDS_Blue:
-			{
-				rectBounds.right -= 3;
-				rectBounds.bottom -= 3;
+		GraphicsPath path;
+		CreateRoundRectangle(rectBounds, 2, path);
 
-				Matrix m1;
-				m1.Translate(2.0, 2.0);
+		Pen pen(Color(224, 196, 240, 248));
+		g.DrawPath(&pen, &path);
 
-				Matrix m2;
-				m2.Translate(-1.0, -1.0);
+		path.Transform(&m1);
+		pen.SetColor(Color(128, 255, 255, 255));
+		g.DrawPath(&pen, &path);
 
-				GraphicsPath path;
-				CreateRoundRectangle(rectBounds, 2, path);
-
-				Pen pen(Color(224, 196, 240, 248));
-				g.DrawPath(&pen, &path);
-
-				path.Transform(&m1);
-				pen.SetColor(Color(128, 255, 255, 255));
-				g.DrawPath(&pen, &path);
-
-				path.Transform(&m2);
-				pen.SetColor(Color(64, 60, 96, 112));
-				g.DrawPath(&pen, &path);
-
-				break;
-			}
-		case LFDS_White:
-		case LFDS_UAC:
-			{
-				rectBounds.right -= 1;
-				rectBounds.bottom -= 1;
-
-				GraphicsPath path;
-				CreateRoundRectangle(rectBounds, 2, path);
-
-				Pen pen(Color(204, 204, 204));
-				g.DrawPath(&pen, &path);
-			}
-		}
+		path.Transform(&m2);
+		pen.SetColor(Color(64, 60, 96, 112));
+		g.DrawPath(&pen, &path);
 
 		clr = 0xCC6600;
 	}
+	else
+		if (!Themed || (LFGetApp()->OSVersion==OS_Eight))
+		{
+			rectBounds.left++;
+			rectBounds.top++;
+			dc.Draw3dRect(rectBounds, GetSysColor(COLOR_3DHIGHLIGHT), GetSysColor(COLOR_3DHIGHLIGHT));
+
+			rectBounds.OffsetRect(-1, -1);
+			dc.Draw3dRect(rectBounds, GetSysColor(COLOR_3DSHADOW), GetSysColor(COLOR_3DSHADOW));
+
+			clr = GetSysColor(COLOR_WINDOWTEXT);
+		}
+		else
+		{
+			rectBounds.right -= 1;
+			rectBounds.bottom -= 1;
+
+			GraphicsPath path;
+			CreateRoundRectangle(rectBounds, 2, path);
+
+			Pen pen(Color(204, 204, 204));
+			g.DrawPath(&pen, &path);
+
+			clr = 0xCC6600;
+		}
 
 	// Caption
 	CRect rectCaption(rect);

@@ -163,7 +163,7 @@ STDMETHODIMP LFStoreDataObject::GetData(FORMATETC* pFormatEtc, STGMEDIUM* pMediu
 	if ((pFormatEtc->tymed & TYMED_HGLOBAL)==0)
 		return DV_E_FORMATETC;
 
-	if (pFormatEtc->cfFormat==((LFApplication*)AfxGetApp())->CF_FILEDESCRIPTOR)
+	if (pFormatEtc->cfFormat==LFGetApp()->CF_FILEDESCRIPTOR)
 	{
 		if (!DuplicateGlobalMemory(m_hDescriptor, pMedium->hGlobal))
 			return STG_E_MEDIUMFULL;
@@ -173,7 +173,7 @@ STDMETHODIMP LFStoreDataObject::GetData(FORMATETC* pFormatEtc, STGMEDIUM* pMediu
 		return S_OK;
 	}
 
-	if (pFormatEtc->cfFormat==((LFApplication*)AfxGetApp())->CF_FILECONTENTS)
+	if (pFormatEtc->cfFormat==LFGetApp()->CF_FILECONTENTS)
 	{
 		if (!DuplicateGlobalMemory(m_hShellLink, pMedium->hGlobal))
 			return STG_E_MEDIUMFULL;
@@ -193,7 +193,7 @@ STDMETHODIMP LFStoreDataObject::GetDataHere(FORMATETC* /*pFormatEtc*/, STGMEDIUM
 
 STDMETHODIMP LFStoreDataObject::QueryGetData(FORMATETC* pFormatEtc)
 {
-	return ((pFormatEtc->cfFormat==((LFApplication*)AfxGetApp())->CF_FILEDESCRIPTOR) || (pFormatEtc->cfFormat==((LFApplication*)AfxGetApp())->CF_FILECONTENTS)) &&
+	return ((pFormatEtc->cfFormat==LFGetApp()->CF_FILEDESCRIPTOR) || (pFormatEtc->cfFormat==LFGetApp()->CF_FILECONTENTS)) &&
 		(pFormatEtc->tymed & TYMED_HGLOBAL) ? S_OK : DV_E_FORMATETC;
 }
 
@@ -216,12 +216,12 @@ STDMETHODIMP LFStoreDataObject::EnumFormatEtc(DWORD dwDirection, IEnumFORMATETC*
 		FORMATETC fmt[2];
 		ZeroMemory(&fmt, sizeof(fmt));
 
-		fmt[0].cfFormat = ((LFApplication*)AfxGetApp())->CF_FILEDESCRIPTOR;
+		fmt[0].cfFormat = LFGetApp()->CF_FILEDESCRIPTOR;
 		fmt[0].dwAspect = DVASPECT_CONTENT;
 		fmt[0].lindex = -1;
 		fmt[0].tymed = TYMED_HGLOBAL;
 
-		fmt[1].cfFormat = ((LFApplication*)AfxGetApp())->CF_FILECONTENTS;
+		fmt[1].cfFormat = LFGetApp()->CF_FILECONTENTS;
 		fmt[1].dwAspect = DVASPECT_CONTENT;
 		fmt[1].lindex = -1;
 		fmt[1].tymed = TYMED_HGLOBAL;

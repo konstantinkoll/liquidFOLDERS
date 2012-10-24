@@ -72,7 +72,7 @@ STDMETHODIMP LFTransactionDataObject::GetData(FORMATETC* pFormatEtc, STGMEDIUM* 
 		return S_OK;
 	}
 
-	if (pFormatEtc->cfFormat==((LFApplication*)AfxGetApp())->CF_HLIQUID)
+	if (pFormatEtc->cfFormat==LFGetApp()->CF_HLIQUID)
 	{
 		if (!DuplicateGlobalMemory(m_hLiquidFiles, pMedium->hGlobal))
 			return STG_E_MEDIUMFULL;
@@ -92,7 +92,7 @@ STDMETHODIMP LFTransactionDataObject::GetDataHere(FORMATETC* /*pFormatEtc*/, STG
 
 STDMETHODIMP LFTransactionDataObject::QueryGetData(FORMATETC* pFormatEtc)
 {
-	return ((pFormatEtc->cfFormat==CF_HDROP) || (pFormatEtc->cfFormat==((LFApplication*)AfxGetApp())->CF_HLIQUID)) &&
+	return ((pFormatEtc->cfFormat==CF_HDROP) || (pFormatEtc->cfFormat==LFGetApp()->CF_HLIQUID)) &&
 		(pFormatEtc->tymed & TYMED_HGLOBAL) ? S_OK : DV_E_FORMATETC;
 }
 
@@ -120,7 +120,7 @@ STDMETHODIMP LFTransactionDataObject::SetData(FORMATETC* pFormatEtc, STGMEDIUM* 
 		return S_OK;
 	}
 
-	if (pFormatEtc->cfFormat==((LFApplication*)AfxGetApp())->CF_HLIQUID)
+	if (pFormatEtc->cfFormat==LFGetApp()->CF_HLIQUID)
 	{
 		if (m_hLiquidFiles)
 			GlobalFree(m_hLiquidFiles);
@@ -143,7 +143,7 @@ STDMETHODIMP LFTransactionDataObject::EnumFormatEtc(DWORD dwDirection, IEnumFORM
 		fmt[0].lindex = -1;
 		fmt[0].tymed = TYMED_HGLOBAL;
 
-		fmt[1].cfFormat = ((LFApplication*)AfxGetApp())->CF_HLIQUID;
+		fmt[1].cfFormat = LFGetApp()->CF_HLIQUID;
 		fmt[1].dwAspect = DVASPECT_CONTENT;
 		fmt[1].lindex = -1;
 		fmt[1].tymed = TYMED_HGLOBAL;

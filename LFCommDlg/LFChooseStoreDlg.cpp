@@ -348,7 +348,7 @@ void LFChooseStoreDlg::OnStoreDelete()
 {
 	INT idx = GetSelectedStore();
 	if (idx!=-1)
-		LFErrorBox(((LFApplication*)AfxGetApp())->DeleteStore(p_Result->m_Items[idx], this));
+		LFErrorBox(LFGetApp()->DeleteStore(p_Result->m_Items[idx], this));
 }
 
 void LFChooseStoreDlg::OnStoreRename()

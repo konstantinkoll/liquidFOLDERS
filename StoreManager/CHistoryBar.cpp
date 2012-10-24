@@ -194,7 +194,7 @@ void CHistoryBar::OnPaint()
 
 	CGlassWindow* pCtrlSite = (CGlassWindow*)GetParent();
 	pCtrlSite->DrawFrameBackground(&dc, rectClient);
-	const BYTE Alpha = (((m_Hover!=NOPART) || (m_Pressed!=NOPART)) && !m_IsEmpty) ? 0xF0 : 0xD0;
+	const BYTE Alpha = (LFGetApp()->OSVersion==OS_Eight) ? 0xFF : (((m_Hover!=NOPART) || (m_Pressed!=NOPART)) && !m_IsEmpty) ? 0xF0 : 0xD0;
 
 	CRect rectContent(rectClient);
 	if (Themed)
@@ -217,10 +217,19 @@ void CHistoryBar::OnPaint()
 		g.DrawPath(&pen, &path);
 		rectBounds.DeflateRect(1, 1);
 
-		CreateRoundRectangle(rectBounds, 1, path);
-		LinearGradientBrush brush2(Point(0, rectBounds.top), Point(0, rectBounds.bottom), Color(Alpha, 0x50, 0x50, 0x50), Color(Alpha, 0xB0, 0xB0, 0xB0));
-		pen.SetBrush(&brush2);
-		g.DrawPath(&pen, &path);
+		if (LFGetApp()->OSVersion==OS_Eight)
+		{
+			CreateRoundRectangle(rectBounds, 0, path);
+			Pen pen(Color(0x40, 0x38, 0x38, 0x38));
+			g.DrawPath(&pen, &path);
+		}
+		else
+		{
+			CreateRoundRectangle(rectBounds, 1, path);
+			LinearGradientBrush brush2(Point(0, rectBounds.top), Point(0, rectBounds.bottom), Color(Alpha, 0x50, 0x50, 0x50), Color(Alpha, 0xB0, 0xB0, 0xB0));
+			pen.SetBrush(&brush2);
+			g.DrawPath(&pen, &path);
+		}
 	}
 	else
 	{
@@ -275,41 +284,57 @@ void CHistoryBar::OnPaint()
 			if (Hover || Pressed)
 				if (Themed)
 				{
-					COLORREF clr = Hover ? 0xB17F3C : 0x8B622C;
-					dc.FillSolidRect(rectItem.left, rectItem.top, 1, rectItem.Height(), clr);
-					dc.FillSolidRect(rectItem.right-1, rectItem.top, 1, rectItem.Height(), clr);
-
-					Graphics g(dc);
-					rectItem.DeflateRect(1, 0);
-
-					if (Hover)
+					if (LFGetApp()->OSVersion==OS_Eight)
 					{
-						LinearGradientBrush brush1(Point(rectItem.left, rectItem.top), Point(rectItem.left, rectItem.bottom), Color(0xFA, 0xFD, 0xFE), Color(0xE8, 0xF5, 0xFC));
-						g.FillRectangle(&brush1, rectItem.left, rectItem.top, rectItem.Width(), rectItem.Height());
+						if (Hover || Pressed)
+						{
+							COLORREF colBorder = Hover ? 0xEDC093 : 0xDAA026;
+							COLORREF colInner = Hover ? 0xF8F0E1 : 0xF0E1C3;
 
-						rectItem.DeflateRect(1, 1);
-						INT y = (rectItem.top+rectItem.bottom)/2;
-
-						LinearGradientBrush brush2(Point(rectItem.left, rectItem.top-1), Point(rectItem.left, y-1), Color(0xEA, 0xF6, 0xFD), Color(0xD7, 0xEF, 0xFC));
-						g.FillRectangle(&brush2, rectItem.left, rectItem.top, rectItem.Width(), y-rectItem.top);
-
-						LinearGradientBrush brush3(Point(rectItem.left, y-1), Point(rectItem.left, rectItem.bottom), Color(0xBD, 0xE6, 0xFD), Color(0xA6, 0xD9, 0xF4));
-						g.FillRectangle(&brush3, rectItem.left, y, rectItem.Width(), rectItem.bottom-y);
+							CRect rectBounds(rectItem);
+							dc.Draw3dRect(rectBounds, colBorder, colBorder);
+							rectBounds.DeflateRect(1, 0);
+							dc.FillSolidRect(rectBounds, colInner);
+						}
 					}
 					else
 					{
-						dc.FillSolidRect(rectItem, 0xF6E4C2);
+						COLORREF clr = Hover ? 0xB17F3C : 0x8B622C;
+						dc.FillSolidRect(rectItem.left, rectItem.top, 1, rectItem.Height(), clr);
+						dc.FillSolidRect(rectItem.right-1, rectItem.top, 1, rectItem.Height(), clr);
 
-						INT y = (rectItem.top+rectItem.bottom)/2;
+						Graphics g(dc);
+						rectItem.DeflateRect(1, 0);
 
-						LinearGradientBrush brush2(Point(rectItem.left, y-1), Point(rectItem.left, rectItem.bottom), Color(0xA9, 0xD9, 0xF2), Color(0x90, 0xCB, 0xEB));
-						g.FillRectangle(&brush2, rectItem.left, y, rectItem.Width(), rectItem.bottom-y);
+						if (Hover)
+						{
+							LinearGradientBrush brush1(Point(rectItem.left, rectItem.top), Point(rectItem.left, rectItem.bottom), Color(0xFA, 0xFD, 0xFE), Color(0xE8, 0xF5, 0xFC));
+							g.FillRectangle(&brush1, rectItem.left, rectItem.top, rectItem.Width(), rectItem.Height());
 
-						LinearGradientBrush brush3(Point(rectItem.left, rectItem.top), Point(rectItem.left, rectItem.top+2), Color(0x80, 0x16, 0x31, 0x45), Color(0x00, 0x16, 0x31, 0x45));
-						g.FillRectangle(&brush3, rectItem.left, rectItem.top, rectItem.Width(), 2);
+							rectItem.DeflateRect(1, 1);
+							INT y = (rectItem.top+rectItem.bottom)/2;
 
-						LinearGradientBrush brush4(Point(rectItem.left, rectItem.top), Point(rectItem.left+2, rectItem.top), Color(0x80, 0x16, 0x31, 0x45), Color(0x00, 0x16, 0x31, 0x45));
-						g.FillRectangle(&brush4, rectItem.left, rectItem.top, 2, rectItem.Height());
+							LinearGradientBrush brush2(Point(rectItem.left, rectItem.top-1), Point(rectItem.left, y-1), Color(0xEA, 0xF6, 0xFD), Color(0xD7, 0xEF, 0xFC));
+							g.FillRectangle(&brush2, rectItem.left, rectItem.top, rectItem.Width(), y-rectItem.top);
+
+							LinearGradientBrush brush3(Point(rectItem.left, y-1), Point(rectItem.left, rectItem.bottom), Color(0xBD, 0xE6, 0xFD), Color(0xA6, 0xD9, 0xF4));
+							g.FillRectangle(&brush3, rectItem.left, y, rectItem.Width(), rectItem.bottom-y);
+						}
+						else
+						{
+							dc.FillSolidRect(rectItem, 0xF6E4C2);
+
+							INT y = (rectItem.top+rectItem.bottom)/2;
+
+							LinearGradientBrush brush2(Point(rectItem.left, y-1), Point(rectItem.left, rectItem.bottom), Color(0xA9, 0xD9, 0xF2), Color(0x90, 0xCB, 0xEB));
+							g.FillRectangle(&brush2, rectItem.left, y, rectItem.Width(), rectItem.bottom-y);
+
+							LinearGradientBrush brush3(Point(rectItem.left, rectItem.top), Point(rectItem.left, rectItem.top+2), Color(0x80, 0x16, 0x31, 0x45), Color(0x00, 0x16, 0x31, 0x45));
+							g.FillRectangle(&brush3, rectItem.left, rectItem.top, rectItem.Width(), 2);
+
+							LinearGradientBrush brush4(Point(rectItem.left, rectItem.top), Point(rectItem.left+2, rectItem.top), Color(0x80, 0x16, 0x31, 0x45), Color(0x00, 0x16, 0x31, 0x45));
+							g.FillRectangle(&brush4, rectItem.left, rectItem.top, 2, rectItem.Height());
+						}
 					}
 				}
 				else

@@ -52,6 +52,7 @@
 #define LF_WORKERTHREAD_START_EX(pParam, MajorCount) CoInitialize(NULL); WorkerParameters* wp = (WorkerParameters*)pParam; LFProgress p; LFInitProgress(&p, wp->Hdr.hWnd);
 #define LF_WORKERTHREAD_FINISH() LF_WORKERTHREAD_FINISH_EX(LFOk);
 #define LF_WORKERTHREAD_FINISH_EX(Result) CoUninitialize(); PostMessage(wp->Hdr.hWnd, WM_COMMAND, (WPARAM)IDOK, NULL); return Result;
+#define LFGetApp() ((LFApplication*)AfxGetApp())
 
 #ifdef LFCommDlg_EXPORTS
 #define LFCommDlg_API __declspec(dllexport)

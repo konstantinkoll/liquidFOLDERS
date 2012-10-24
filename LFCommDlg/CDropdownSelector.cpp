@@ -77,7 +77,7 @@ BOOL CDropdownWindow::Create(CWnd* pParentWnd, CRect rectDrop, UINT DialogResID)
 	m_DialogResID = DialogResID;
 
 	UINT nClassStyle = CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS;
-	if (((LFApplication*)AfxGetApp())->OSVersion>OS_XP)
+	if (LFGetApp()->OSVersion>OS_XP)
 	{
 		BOOL bDropShadow;
 		SystemParametersInfo(SPI_GETDROPSHADOW, 0, &bDropShadow, FALSE);
@@ -153,7 +153,7 @@ INT CDropdownWindow::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 
 	m_wndList.SetExtendedStyle(LVS_EX_DOUBLEBUFFER | LVS_EX_JUSTIFYCOLUMNS);
-	m_wndList.SetFont(&((LFApplication*)AfxGetApp())->m_DefaultFont, FALSE);
+	m_wndList.SetFont(&LFGetApp()->m_DefaultFont, FALSE);
 
 	BOOL Themed = IsCtrlThemed();
 	m_wndList.SetBkColor(Themed ? 0xFFFFFF : GetSysColor(COLOR_WINDOW));
@@ -386,7 +386,7 @@ void CDropdownSelector::OnPaint()
 
 	CGlassWindow* pCtrlSite = (CGlassWindow*)GetParent();
 	pCtrlSite->DrawFrameBackground(&dc, rectClient);
-	const BYTE Alpha = m_Dropped ? 0xFF : (m_Hover || (GetFocus()==this)) ? 0xF0 : 0xD0;
+	const BYTE Alpha = m_Dropped || (p_App->OSVersion==OS_Eight) ? 0xFF : (m_Hover || (GetFocus()==this)) ? 0xF0 : 0xD0;
 
 	CRect rectContent(rectClient);
 	if (hTheme)
@@ -406,10 +406,19 @@ void CDropdownSelector::OnPaint()
 		g.DrawPath(&pen, &path);
 		rectBounds.DeflateRect(1, 1);
 
-		CreateRoundRectangle(rectBounds, 1, path);
-		LinearGradientBrush brush2(Point(0, rectBounds.top), Point(0, rectBounds.bottom), Color(Alpha, 0x50, 0x50, 0x50), Color(Alpha, 0xB0, 0xB0, 0xB0));
-		pen.SetBrush(&brush2);
-		g.DrawPath(&pen, &path);
+		if (LFGetApp()->OSVersion==OS_Eight)
+		{
+			CreateRoundRectangle(rectBounds, 0, path);
+			Pen pen(Color(0x40, 0x38, 0x38, 0x38));
+			g.DrawPath(&pen, &path);
+		}
+		else
+		{
+			CreateRoundRectangle(rectBounds, 1, path);
+			LinearGradientBrush brush2(Point(0, rectBounds.top), Point(0, rectBounds.bottom), Color(Alpha, 0x50, 0x50, 0x50), Color(Alpha, 0xB0, 0xB0, 0xB0));
+			pen.SetBrush(&brush2);
+			g.DrawPath(&pen, &path);
+		}
 	}
 	else
 	{
@@ -437,7 +446,7 @@ void CDropdownSelector::OnPaint()
 		if (p_App->OSVersion>OS_XP)
 		{
 			rectArrow.InflateRect(1, 1);
-			if (m_Hover)
+			if ((m_Hover) && (p_App->OSVersion!=OS_Eight))
 			{
 				rectClip.left--;
 			}
