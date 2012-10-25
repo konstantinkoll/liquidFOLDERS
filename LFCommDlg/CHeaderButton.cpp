@@ -139,94 +139,8 @@ void CHeaderButton::OnPaint()
 
 	// Button
 	CRect rectText(rect);
-	COLORREF clrText = 0x000000;
-	if (IsCtrlThemed())
-	{
-		CFont* pOldFont = dc.SelectObject(&LFGetApp()->m_DefaultFont);
-
-		Graphics g(dc);
-		g.SetCompositingMode(CompositingModeSourceOver);
-		g.SetSmoothingMode(SmoothingModeAntiAlias);
-
-		if ((Focused) || (Selected) || (m_Hover))
-		{
-			// Outer border
-			CRect rectBounds(rect);
-
-			if (LFGetApp()->OSVersion==OS_Eight)
-			{
-				if ((Focused) || (Selected) || (m_Hover))
-				{
-					COLORREF colBorder = Selected ? 0xDAA026 : m_Hover ? 0xEDC093 : 0xDAA026;
-					COLORREF colInner = Selected ? 0xF0E1C3 : m_Hover ? 0xF8F0E1 : 0xFFFFFF;
-
-					CRect rectBounds(rect);
-					dc.Draw3dRect(rectBounds, colBorder, colBorder);
-
-					if (Selected || m_Hover)
-					{
-						rectBounds.DeflateRect(1, 1);
-						dc.FillSolidRect(rectBounds, colInner);
-					}
-				}
-			}
-			else
-			{
-				rectBounds.right--;
-				rectBounds.bottom--;
-
-				GraphicsPath path;
-				CreateRoundRectangle(rectBounds, 2, path);
-
-				Pen pen(Color(0x80, 0xB8, 0xC8, 0xD8));
-				g.DrawPath(&pen, &path);
-
-				// Inner border
-				rectBounds.DeflateRect(1, 1);
-				CreateRoundRectangle(rectBounds, 1, path);
-
-				g.SetSmoothingMode(SmoothingModeDefault);
-
-				if (Selected)
-				{
-					LinearGradientBrush brush1(Point(rectBounds.left, rectBounds.top), Point(rectBounds.left, rectBounds.top+3), Color(0x24, 0x50, 0x57, 0x62), Color(0x0C, 0x50, 0x58, 0x62));
-					g.FillRectangle(&brush1, rectBounds.left, rectBounds.top, rectBounds.Width()+1, 3);
-
-					SolidBrush brush2(Color(0x08, 0x50, 0x58, 0x62));
-					g.FillRectangle(&brush2, rectBounds.left, rectBounds.top+3, rectBounds.Width()+1, rectBounds.Height()-2);
-				}
-				else
-					if (m_Hover)
-					{
-						SolidBrush brush1(Color(0x40, 0xFF, 0xFF, 0xFF));
-						g.FillRectangle(&brush1, rectBounds.left, rectBounds.top+1, rectBounds.Width(), rectBounds.Height()/2+1);
-
-						SolidBrush brush2(Color(0x28, 0xA0, 0xAF, 0xC3));
-						g.FillRectangle(&brush2, rectBounds.left, rectBounds.top+rectBounds.Height()/2+2, rectBounds.Width(), rectBounds.Height()/2-1);
-					}
-
-				g.SetSmoothingMode(SmoothingModeAntiAlias);
-
-				if (!Selected)
-				{
-					pen.SetColor(Color(0x80, 0xFF, 0xFF, 0xFF));
-					g.DrawPath(&pen, &path);
-				}
-
-				clrText = m_Hover ? 0xFF9933 : 0xCC6600;
-			}
-		}
-
-		rectText.DeflateRect(BORDER, BORDER);
-		if (Selected)
-			rectText.OffsetRect(1, 1);
-
-		dc.SetTextColor(clrText);
-		dc.DrawText(m_Value, rectText, DT_SINGLELINE | DT_END_ELLIPSIS | DT_VCENTER);
-
-		dc.SelectObject(pOldFont);
-	}
-	else
+	COLORREF clrText;
+	if (!IsCtrlThemed())
 	{
 		COLORREF c1 = GetSysColor(COLOR_3DHIGHLIGHT);
 		COLORREF c2 = GetSysColor(COLOR_3DFACE);
@@ -269,6 +183,93 @@ void CHeaderButton::OnPaint()
 		dc.DrawText(m_Value, rectText, DT_SINGLELINE | DT_END_ELLIPSIS | DT_VCENTER);
 
 		dc.SelectObject(hOldFont);
+	}
+	else
+	{
+		CFont* pOldFont = dc.SelectObject(&LFGetApp()->m_DefaultFont);
+
+		Graphics g(dc);
+		g.SetCompositingMode(CompositingModeSourceOver);
+		g.SetSmoothingMode(SmoothingModeAntiAlias);
+
+		if (LFGetApp()->OSVersion==OS_Eight)
+		{
+			if ((Focused) || (Selected) || (m_Hover))
+			{
+				COLORREF colBorder = Selected ? 0xDAA026 : m_Hover ? 0xEDC093 : 0xDAA026;
+				COLORREF colInner = Selected ? 0xF0E1C3 : m_Hover ? 0xF8F0E1 : 0xFFFFFF;
+
+				CRect rectBounds(rect);
+				dc.Draw3dRect(rectBounds, colBorder, colBorder);
+
+				if (Selected || m_Hover)
+				{
+					rectBounds.DeflateRect(1, 1);
+					dc.FillSolidRect(rectBounds, colInner);
+				}
+			}
+
+			clrText = 0x000000;
+		}
+		else
+		{
+			if ((Focused) || (Selected) || (m_Hover))
+			{
+				// Outer border
+				CRect rectBounds(rect);
+				rectBounds.right--;
+				rectBounds.bottom--;
+
+				GraphicsPath path;
+				CreateRoundRectangle(rectBounds, 2, path);
+
+				Pen pen(Color(0x80, 0xB8, 0xC8, 0xD8));
+				g.DrawPath(&pen, &path);
+
+				// Inner border
+				rectBounds.DeflateRect(1, 1);
+				CreateRoundRectangle(rectBounds, 1, path);
+
+				g.SetSmoothingMode(SmoothingModeDefault);
+
+				if (Selected)
+				{
+					LinearGradientBrush brush1(Point(rectBounds.left, rectBounds.top), Point(rectBounds.left, rectBounds.top+3), Color(0x24, 0x50, 0x57, 0x62), Color(0x0C, 0x50, 0x58, 0x62));
+					g.FillRectangle(&brush1, rectBounds.left, rectBounds.top, rectBounds.Width()+1, 3);
+
+					SolidBrush brush2(Color(0x08, 0x50, 0x58, 0x62));
+					g.FillRectangle(&brush2, rectBounds.left, rectBounds.top+3, rectBounds.Width()+1, rectBounds.Height()-2);
+				}
+				else
+					if (m_Hover)
+					{
+						SolidBrush brush1(Color(0x40, 0xFF, 0xFF, 0xFF));
+						g.FillRectangle(&brush1, rectBounds.left, rectBounds.top+1, rectBounds.Width(), rectBounds.Height()/2+1);
+
+						SolidBrush brush2(Color(0x28, 0xA0, 0xAF, 0xC3));
+						g.FillRectangle(&brush2, rectBounds.left, rectBounds.top+rectBounds.Height()/2+2, rectBounds.Width(), rectBounds.Height()/2-1);
+					}
+
+				g.SetSmoothingMode(SmoothingModeAntiAlias);
+
+				if (!Selected)
+				{
+					pen.SetColor(Color(0x80, 0xFF, 0xFF, 0xFF));
+					g.DrawPath(&pen, &path);
+				}
+			}
+
+			clrText = m_Hover ? 0xFF9933 : 0xCC6600;
+		}
+
+		rectText.DeflateRect(BORDER, BORDER);
+		if (Selected)
+			rectText.OffsetRect(1, 1);
+
+		dc.SetTextColor(clrText);
+		dc.DrawText(m_Value, rectText, DT_SINGLELINE | DT_END_ELLIPSIS | DT_VCENTER);
+
+		dc.SelectObject(pOldFont);
 	}
 
 	CPen pen;
