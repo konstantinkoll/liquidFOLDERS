@@ -25,6 +25,7 @@
 #include "..\LFCommDlg\CTaskbar.h"
 #include "..\LFCommDlg\CTaskButton.h"
 #include "..\LFCommDlg\CTooltipHeader.h"
+#include "..\LFCommDlg\CTooltipList.h"
 #include "..\LFCommDlg\LFAboutDlg.h"
 #include "..\LFCommDlg\LFApplication.h"
 #include "..\LFCommDlg\LFAttributeListDlg.h"
