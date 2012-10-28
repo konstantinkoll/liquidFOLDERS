@@ -12,9 +12,10 @@
 
 #define REQUEST_TOOLTIP_DATA     1
 
-struct tagTOOLTIPDATA
+struct NM_TOOLTIPDATA
 {
 	NMHDR hdr;
+	INT Item;
 	BOOL Show;
 	HICON hIcon;
 	INT cx;

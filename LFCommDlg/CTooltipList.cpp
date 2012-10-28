@@ -103,11 +103,12 @@ void CTooltipList::OnMouseHover(UINT nFlags, CPoint point)
 		if (m_TooltipItem!=-1)
 			if (!m_TooltipCtrl.IsWindowVisible())
 			{
-				tagTOOLTIPDATA tag;
+				NM_TOOLTIPDATA tag;
 				ZeroMemory(&tag, sizeof(tag));
 				tag.hdr.code = REQUEST_TOOLTIP_DATA;
 				tag.hdr.hwndFrom = m_hWnd;
 				tag.hdr.idFrom = GetDlgCtrlID();
+				tag.Item = m_TooltipItem;
 
 				GetOwner()->SendMessage(WM_NOTIFY, tag.hdr.idFrom, LPARAM(&tag));
 				if (tag.Show)
