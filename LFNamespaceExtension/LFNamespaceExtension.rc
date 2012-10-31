@@ -27,8 +27,8 @@ LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,1,8,0
- PRODUCTVERSION 1,1,8,0
+ FILEVERSION 1,1,9,0
+ PRODUCTVERSION 1,1,9,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -44,13 +44,13 @@ BEGIN
         BLOCK "000004e4"
         BEGIN
             VALUE "CompanyName", "liquidFOLDERS"
-            VALUE "FileVersion", "1.1.8"
+            VALUE "FileVersion", "1.1.9"
             VALUE "InternalName", "LFNamespaceExtension"
             VALUE "LegalCopyright", "© 2009-2012 liquidFOLDERS"
             VALUE "LegalTrademarks", "liquidFOLDERS®"
             VALUE "OriginalFilename", "LFNamespaceExtension.dll"
             VALUE "ProductName", "liquidFOLDERS"
-            VALUE "ProductVersion", "1.1.8"
+            VALUE "ProductVersion", "1.1.9"
         END
     END
     BLOCK "VarFileInfo"
