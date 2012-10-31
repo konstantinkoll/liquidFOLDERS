@@ -197,7 +197,7 @@ struct LFContextDescriptor
 #define LFAttrFileName                  0
 #define LFAttrStoreID                   1
 #define LFAttrFileID                    2
-#define LFAttrComments                   3
+#define LFAttrComments                  3
 #define LFAttrDescription               4
 #define LFAttrCreationTime              5
 #define LFAttrFileTime                  6

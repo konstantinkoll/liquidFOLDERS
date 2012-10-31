@@ -1442,15 +1442,11 @@ void CFileView::OnMouseHover(UINT nFlags, CPoint point)
 							CDC* pDC = GetWindowDC();
 							hIcon = theApp.m_ThumbnailCache.GetThumbnailIcon(i, pDC);
 							ReleaseDC(pDC);
+
+							if (hIcon)
+								sz.cx = sz.cy = 128;
 						}
-						if (hIcon)
-						{
-							sz.cx = sz.cy = 128;
-						}
-						else
-						{
-							theApp.m_FileFormats.Lookup(i->CoreAttributes.FileFormat, fd);
-						}
+						theApp.m_FileFormats.Lookup(i->CoreAttributes.FileFormat, fd);
 						break;
 					case LFTypeVolume:
 						strcpy_s(Path, 4, " :\\");
@@ -1611,10 +1607,9 @@ void CFileView::OnLButtonDown(UINT nFlags, CPoint point)
 				m_EditLabel = idx;
 			}
 			else
-				if (!IsSelected(idx))
-				{
-					SetFocusItem(idx, nFlags & MK_SHIFT);
-				}
+			{
+				SetFocusItem(idx, nFlags & MK_SHIFT);
+			}
 	}
 	else
 	{
