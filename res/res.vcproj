@@ -109,58 +109,6 @@
 	</References>
 	<Files>
 		<Filter
-			Name="Drives"
-			>
-			<File
-				RelativePath=".\Drives\DRV_Connected.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\Drives\DRV_Connected.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Drives\DRV_Default.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\Drives\DRV_Default.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Drives\DRV_Disconnected.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\Drives\DRV_Disconnected.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Drives\DRV_Empty.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\Drives\DRV_Empty.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Drives\DRV_ExtHD.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\Drives\DRV_ExtHD.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Drives\DRV_Windows.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\Drives\DRV_Windows.png"
-				>
-			</File>
-		</Filter>
-		<Filter
 			Name="Folders"
 			>
 			<File
