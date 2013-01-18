@@ -231,7 +231,7 @@ LFCountry Countries_EN[CountryCount_EN] = {
 };
 
 // Airports
-#define AirportCount_EN 8609
+#define AirportCount_EN 8613
 LFAirport Airports_EN[AirportCount_EN] = {
 	{  67, "AAA", "", "Anaa", { 17.355000, -145.508333 } },
 	{   8, "AAB", "", "Arrabury", { 26.690556, 141.047500 } },
@@ -1903,6 +1903,7 @@ LFAirport Airports_EN[AirportCount_EN] = {
 	{  89, "DIB", "", "Dibrugarh", { -27.483889, 95.016944 } },
 	{  90, "DIC", "", "Dili (Heliport)", { 8.558889, 125.536944 } },
 	{ 119, "DIE", "", "Antsiranana", { 12.349444, 49.291667 } },
+	{  40, "DIG", "", "Shangri-La", { -27.793611, 99.677222 } },
 	{  65, "DIJ", "", "Dijon", { -47.265833, 5.095000 } },
 	{ 216, "DIK", "", "Dickinson", { -46.797500, -102.801944 } },
 	{  90, "DIL", "", "Dili", { 8.546389, 125.524722 } },
@@ -2858,7 +2859,7 @@ LFAirport Airports_EN[AirportCount_EN] = {
 	{ 104, "GUW", "", "Atyrau", { -47.121944, 51.821389 } },
 	{  89, "GUX", "", "Guna", { -24.654722, 77.347222 } },
 	{ 216, "GUY", "", "Guymon", { -36.685000, -101.507778 } },
-	{ 193, "GVA", "", "Genf", { -46.238056, 6.108889 } },
+	{ 193, "GVA", "", "Geneva", { -46.238056, 6.108889 } },
 	{ 216, "GVE", "", "Gordonsville", { -38.156111, -78.165833 } },
 	{ 146, "GVI", "", "Green River", { 3.900000, 141.166944 } },
 	{ 216, "GVL", "", "Gainesville", { -34.272500, -83.830278 } },
@@ -2912,6 +2913,7 @@ LFAirport Airports_EN[AirportCount_EN] = {
 	{ 220, "HAN", "", "Hanoi", { -21.221111, 105.807222 } },
 	{ 216, "HAO", "", "Hamilton", { -39.363889, -84.521944 } },
 	{   8, "HAP", "", "Whitsunday Kontiki Resort", { 20.333889, 148.848889 } },
+	{ 122, "HAQ", "", "Hanimaadhoo", { -6.750000, 73.150000 } },
 	{ 216, "HAR", "", "Harrisburg", { -40.217222, -76.851389 } },
 	{ 170, "HAS", "", "Hail", { -27.438056, 41.686389 } },
 	{   8, "HAT", "", "Heathlands", { 11.736944, 142.577500 } },
@@ -3624,6 +3626,7 @@ LFAirport Airports_EN[AirportCount_EN] = {
 	{ 216, "JYO", "", "Leesburg", { -39.078056, -77.557500 } },
 	{ 216, "JYR", "", "York", { -40.896667, -97.622778 } },
 	{  64, "JYV", "", "Jyvaskyla", { -62.399444, 25.678333 } },
+	{  40, "JZH", "", "Jiu Zhai Huang Long Airport", { -32.836944, 103.681944 } },
 	{ 216, "JZI", "", "Charleston (Executive Airport)", { -32.700833, -80.003056 } },
 	{ 216, "JZP", "", "Jasper", { -34.453333, -84.457222 } },
 	{ 225, "KAA", "", "Kasama", { 10.216944, 31.133056 } },
@@ -4248,6 +4251,7 @@ LFAirport Airports_EN[AirportCount_EN] = {
 	{ 120, "LIX", "", "Likoma Island", { 12.083056, 34.733056 } },
 	{ 216, "LIY", "", "Hinesville", { -31.889167, -81.562222 } },
 	{  43, "LJA", "", "Lodja", { 3.416944, 23.450000 } },
+	{  40, "LJG", "", "Lijiang", { -23.584722, 102.009722 } },
 	{ 216, "LJN", "", "Angleton/Lake Jackson", { -29.108611, -95.461944 } },
 	{ 176, "LJU", "", "Ljubljana", { -46.223611, 14.457500 } },
 	{  90, "LKA", "", "Larantuka", { 8.350000, 122.983056 } },

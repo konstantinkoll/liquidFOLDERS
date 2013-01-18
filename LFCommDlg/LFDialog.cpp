@@ -21,7 +21,7 @@ LFDialog::LFDialog(UINT nIDTemplate, UINT Design, CWnd* pParent)
 	p_App = (LFApplication*)AfxGetApp();
 	hIconS = hIconL = hIconShield = NULL;
 	hBackgroundBrush = NULL;
-	m_pBackdrop = m_pLogo = NULL;
+	m_pBackdrop = NULL;
 	m_BackBufferL = m_BackBufferH = m_UACHeight = 0;
 	p_BottomLeftControl = NULL;
 }
@@ -83,7 +83,7 @@ void LFDialog::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 				}
 				g.DrawImage(m_pBackdrop->m_pBitmap, rect.Width()-l, rect.Height()-h, l, h);
 
-				SolidBrush brush1(Color(180, 255, 255, 255));
+				SolidBrush brush1(Color(168, 255, 255, 255));
 				g.FillRectangle(&brush1, 0, 0, m_BackBufferL, Line);
 				brush1.SetColor(Color(224, 205, 250, 255));
 				g.FillRectangle(&brush1, 0, Line++, m_BackBufferL, 1);
@@ -98,10 +98,6 @@ void LFDialog::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 			{
 				dc.FillSolidRect(rect, GetSysColor(COLOR_3DFACE));
 			}
-
-			INT l = m_pLogo->m_pBitmap->GetWidth();
-			INT h = m_pLogo->m_pBitmap->GetHeight();
-			g.DrawImage(m_pLogo->m_pBitmap, rect.Width()-l-8, 8, l, h);
 
 			break;
 		}
@@ -255,11 +251,6 @@ BOOL LFDialog::OnInitDialog()
 		// Hintergrundbild laden
 		m_pBackdrop = new CGdiPlusBitmapResource();
 		ENSURE(m_pBackdrop->Load(IDB_BACKDROP, _T("PNG"), LFCommDlgDLL.hResource));
-
-		// m_pLogo laden
-		m_pLogo = new CGdiPlusBitmapResource();
-		ENSURE(m_pLogo->Load(IDB_LOGO, _T("PNG"), LFCommDlgDLL.hResource));
-
 		break;
 	case LFDS_UAC:
 		// Schild
@@ -285,8 +276,6 @@ void LFDialog::OnDestroy()
 {
 	if (m_pBackdrop)
 		delete m_pBackdrop;
-	if (m_pLogo)
-		delete m_pLogo;
 	if (hIconL)
 		DestroyIcon(hIconL);
 	if (hIconS)

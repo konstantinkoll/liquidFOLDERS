@@ -68,9 +68,7 @@ END
 // PNG
 //
 
-IDB_KEY                 PNG                     "res\\Key.png"
-IDB_BACKDROP            PNG                     "res\\Backdrop.png"
-IDB_LOGO                PNG                     "res\\Logo alpha tiny.png"
+IDB_BACKDROP            PNG                     "res\\Backdrop_Blue.png"
 IDB_LOCATIONINDICATOR_8 PNG                     "res\\LocationIndicator_8.png"
 IDB_LOCATIONINDICATOR_16 PNG                     "res\\LocationIndicator_16.png"
 IDB_EARTHMAP_1024       PNG                     "res\\Earthmap_1024.jpg"
@@ -202,32 +200,32 @@ END
 // Dialog
 //
 
-IDD_ABOUT DIALOGEX 0, 0, 358, 287
+IDD_ABOUT DIALOGEX 0, 0, 358, 211
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
 CAPTION "Über %s"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,244,266,50,14,WS_GROUP
-    PUSHBUTTON      "Abbrechen",IDCANCEL,301,266,50,14,WS_GROUP
-    CONTROL         "Lizenz",IDC_GROUPBOX1,"CGroupBox",WS_GROUP,7,169,155,81
-    LTEXT           "Name:",IDC_STATIC,15,179,141,8
-    LTEXT           "X",IDC_NAME,15,189,141,8
-    LTEXT           "Kaufdatum:",IDC_STATIC,15,202,84,8
-    LTEXT           "X",IDC_PURCHASEDATE,15,212,84,8
-    LTEXT           "ID:",IDC_STATIC,105,202,50,8
-    LTEXT           "X",IDC_ID,105,212,50,8
-    LTEXT           "Produkt:",IDC_STATIC,15,227,83,8
-    LTEXT           "X",IDC_PRODUCT,15,237,141,8
-    LTEXT           "Menge:",IDC_QUANTITYTITLE,105,227,50,8
-    LTEXT           "X",IDC_QUANTITY,105,237,50,8
-    PUSHBUTTON      "&Lizenzschlüssel eingeben...",IDC_ENTERLICENSEKEY,13,179,143,66,WS_GROUP
-    CONTROL         "Updates",IDC_GROUPBOX2,"CGroupBox",WS_GROUP,170,169,181,81
+    DEFPUSHBUTTON   "OK",IDOK,244,190,50,14,WS_GROUP
+    PUSHBUTTON      "Abbrechen",IDCANCEL,301,190,50,14,WS_GROUP
+    CONTROL         "Lizenz",IDC_GROUPBOX1,"CGroupBox",WS_GROUP,7,93,155,81
+    LTEXT           "Name:",IDC_STATIC,15,103,141,8
+    LTEXT           "X",IDC_NAME,15,113,141,8
+    LTEXT           "Kaufdatum:",IDC_STATIC,15,126,84,8
+    LTEXT           "X",IDC_PURCHASEDATE,15,136,84,8
+    LTEXT           "ID:",IDC_STATIC,105,126,50,8
+    LTEXT           "X",IDC_ID,105,136,50,8
+    LTEXT           "Produkt:",IDC_STATIC,15,151,83,8
+    LTEXT           "X",IDC_PRODUCT,15,161,141,8
+    LTEXT           "Menge:",IDC_QUANTITYTITLE,105,151,50,8
+    LTEXT           "X",IDC_QUANTITY,105,161,50,8
+    PUSHBUTTON      "&Lizenzschlüssel eingeben...",IDC_ENTERLICENSEKEY,13,103,143,66,WS_GROUP
+    CONTROL         "Updates",IDC_GROUPBOX2,"CGroupBox",WS_GROUP,170,93,181,81
     CONTROL         "Automatisch nach &Updates suchen",IDC_ENABLEAUTOUPDATE,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,176,179,168,10
-    CONTROL         "&Täglich",IDC_CHECKDAILY,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,186,191,158,10
-    CONTROL         "&Wöchentlich",IDC_CHECKWEEKLY,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,186,202,158,10
-    CONTROL         "&Monatlich",IDC_CHECKMONTHLY,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,186,213,158,10
-    PUSHBUTTON      "Jetzt nach Update &suchen",IDC_UPDATENOW,176,231,170,14
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,176,103,168,10
+    CONTROL         "&Täglich",IDC_CHECKDAILY,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,186,115,158,10
+    CONTROL         "&Wöchentlich",IDC_CHECKWEEKLY,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,186,126,158,10
+    CONTROL         "&Monatlich",IDC_CHECKMONTHLY,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,186,137,158,10
+    PUSHBUTTON      "Jetzt nach Update &suchen",IDC_UPDATENOW,176,155,170,14
 END
 
 IDD_CHOOSESTORE DIALOGEX 0, 0, 451, 282
@@ -250,23 +248,23 @@ BEGIN
     PUSHBUTTON      "&Neuen Store anlegen...",IDM_STORES_CREATENEW,7,261,95,14
 END
 
-IDD_WELCOME DIALOGEX 0, 0, 262, 220
+IDD_WELCOME DIALOGEX 0, 0, 262, 127
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_APPWINDOW | 0x4000000L
 CAPTION "Willkommen bei liquidFOLDERS"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    CONTROL         "Store-Namen",IDC_GROUPBOX1,"CGroupBox",WS_GROUP,7,140,248,44
-    EDITTEXT        IDC_STORENAME1,14,162,72,14,ES_AUTOHSCROLL | WS_GROUP
-    EDITTEXT        IDC_STORENAME2,94,162,72,14,ES_AUTOHSCROLL | WS_GROUP
-    EDITTEXT        IDC_STORENAME3,175,162,72,14,ES_AUTOHSCROLL | WS_GROUP
-    DEFPUSHBUTTON   "Und los!",IDOK,148,199,50,14,WS_GROUP
-    PUSHBUTTON      "Jetzt nicht.",IDCANCEL,205,199,50,14,WS_GROUP
-    PUSHBUTTON      "&Lizenzschlüssel eingeben...",IDC_ENTERLICENSEKEY,7,199,105,14,WS_GROUP
-    LTEXT           "Dies ist der erste Start von liquidFOLDERS. liquidFOLDERS speichert alle Dateien in sog. „Stores“. Um gleich loszulegen, können Sie hier bis zu drei Stores anlegen, indem Sie deren Namen eintragen (z.B. „Meine Dateien“).",IDC_STATIC,7,101,248,36
-    LTEXT           "Store 1:",IDC_STATIC,14,152,72,8
-    LTEXT           "Store 2:",IDC_STATIC,94,152,72,8
-    LTEXT           "Store 3:",IDC_STATIC,175,152,72,8
+    CONTROL         "Store-Namen",IDC_GROUPBOX1,"CGroupBox",WS_GROUP,7,46,248,44
+    EDITTEXT        IDC_STORENAME1,14,68,72,14,ES_AUTOHSCROLL | WS_GROUP
+    EDITTEXT        IDC_STORENAME2,94,68,72,14,ES_AUTOHSCROLL | WS_GROUP
+    EDITTEXT        IDC_STORENAME3,175,68,72,14,ES_AUTOHSCROLL | WS_GROUP
+    DEFPUSHBUTTON   "Und los!",IDOK,148,105,50,14,WS_GROUP
+    PUSHBUTTON      "Jetzt nicht.",IDCANCEL,205,105,50,14,WS_GROUP
+    PUSHBUTTON      "&Lizenzschlüssel eingeben...",IDC_ENTERLICENSEKEY,7,105,105,14,WS_GROUP
+    LTEXT           "Dies ist der erste Start von liquidFOLDERS. liquidFOLDERS speichert alle Dateien in sog. „Stores“. Um gleich loszulegen, können Sie hier bis zu drei Stores anlegen, indem Sie deren Namen eintragen (z.B. „Meine Dateien“).",IDC_STATIC,7,7,248,36
+    LTEXT           "Store 1:",IDC_STATIC,14,58,72,8
+    LTEXT           "Store 2:",IDC_STATIC,94,58,72,8
+    LTEXT           "Store 3:",IDC_STATIC,175,58,72,8
 END
 
 IDD_STOREDELETE DIALOGEX 0, 0, 277, 205
@@ -395,19 +393,19 @@ BEGIN
     CTEXT           "X",IDC_GPSLOCATION,284,221,217,15,SS_CENTERIMAGE | SS_WORDELLIPSIS
 END
 
-IDD_ENTERLICENSEKEY DIALOGEX 0, 0, 350, 263
+IDD_ENTERLICENSEKEY DIALOGEX 0, 0, 350, 178
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
 CAPTION "Lizenzschlüssel eingeben"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    CONTROL         "Lizenz",IDC_GROUPBOX1,"CGroupBox",WS_GROUP,7,92,336,135
-    LTEXT           "Bei Erwerb eines Lizenzschlüssel sendet Ihnen unser Partner share*it eine EMail, an die die Datei „liquidFOLDERS.lic“ angehängt ist. Speichern Sie diese Datei lokal auf Ihrem Computer ab.",IDC_STATIC,14,103,322,18
-    LTEXT           "Öffnen Sie die Datei anschließend mit der untenstehenden Schaltfläche. Alternativ können Sie ihren Inhalt in das Textfeld darunter kopieren.",IDC_STATIC,14,119,322,18
-    PUSHBUTTON      "Lizenz&datei laden...",IDC_LOADLICENSE,14,139,81,15,WS_GROUP
-    LTEXT           "Lizenzschlüssel:",IDC_STATIC,14,164,291,8
-    EDITTEXT        IDC_LICENSEKEY,14,174,322,45,ES_MULTILINE | ES_AUTOHSCROLL | WS_VSCROLL | WS_GROUP
-    DEFPUSHBUTTON   "OK",IDOK,236,242,50,14,WS_GROUP
-    PUSHBUTTON      "Abbrechen",IDCANCEL,293,242,50,14,WS_GROUP
+    CONTROL         "Lizenz",IDC_GROUPBOX1,"CGroupBox",WS_GROUP,7,7,336,135
+    LTEXT           "Bei Erwerb eines Lizenzschlüssel sendet Ihnen unser Partner share*it eine EMail, an die die Datei „liquidFOLDERS.lic“ angehängt ist. Speichern Sie diese Datei lokal auf Ihrem Computer ab.",IDC_STATIC,14,18,322,18
+    LTEXT           "Öffnen Sie die Datei anschließend mit der untenstehenden Schaltfläche. Alternativ können Sie ihren Inhalt in das Textfeld darunter kopieren.",IDC_STATIC,14,34,322,18
+    PUSHBUTTON      "Lizenz&datei laden...",IDC_LOADLICENSE,14,54,81,15,WS_GROUP
+    LTEXT           "Lizenzschlüssel:",IDC_STATIC,14,79,291,8
+    EDITTEXT        IDC_LICENSEKEY,14,89,322,45,ES_MULTILINE | ES_AUTOHSCROLL | WS_VSCROLL | WS_GROUP
+    DEFPUSHBUTTON   "OK",IDOK,236,157,50,14,WS_GROUP
+    PUSHBUTTON      "Abbrechen",IDCANCEL,293,157,50,14,WS_GROUP
 END
 
 IDD_STOREPROPERTIES DIALOGEX 0, 0, 385, 188
@@ -527,7 +525,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 351
         TOPMARGIN, 7
-        BOTTOMMARGIN, 280
+        BOTTOMMARGIN, 204
     END
 
     IDD_CHOOSESTORE, DIALOG
@@ -551,7 +549,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 255
         TOPMARGIN, 7
-        BOTTOMMARGIN, 213
+        BOTTOMMARGIN, 120
     END
 
     IDD_STOREDELETE, DIALOG
@@ -607,7 +605,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 343
         TOPMARGIN, 7
-        BOTTOMMARGIN, 256
+        BOTTOMMARGIN, 171
     END
 
     IDD_STOREPROPERTIES, DIALOG
@@ -748,7 +746,7 @@ END
 /////////////////////////////////////////////////////////////////////////////
 // Spanisch (neutral) resources
 
-#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ESP)
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ESN)
 #ifdef _WIN32
 LANGUAGE LANG_SPANISH, SUBLANG_NEUTRAL
 #pragma code_page(1252)
@@ -804,32 +802,32 @@ END
 // Dialog
 //
 
-IDD_ABOUT DIALOGEX 0, 0, 358, 287
+IDD_ABOUT DIALOGEX 0, 0, 358, 211
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
 CAPTION "Acerca %s"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,244,266,50,14,WS_GROUP
-    PUSHBUTTON      "Cancelar",IDCANCEL,301,266,50,14,WS_GROUP
-    CONTROL         "Licensia",IDC_GROUPBOX1,"CGroupBox",WS_GROUP,7,169,155,81
-    LTEXT           "Nombre:",IDC_STATIC,15,179,141,8
-    LTEXT           "X",IDC_NAME,15,189,141,8
-    LTEXT           "Adquisición:",IDC_STATIC,15,202,84,8
-    LTEXT           "X",IDC_PURCHASEDATE,15,212,84,8
-    LTEXT           "ID:",IDC_STATIC,105,202,50,8
-    LTEXT           "X",IDC_ID,105,212,50,8
-    LTEXT           "Producto:",IDC_STATIC,15,227,83,8
-    LTEXT           "X",IDC_PRODUCT,15,237,141,8
-    LTEXT           "Número:",IDC_QUANTITYTITLE,105,227,50,8
-    LTEXT           "X",IDC_QUANTITY,105,237,50,8
-    PUSHBUTTON      "Dictar &licencia...",IDC_ENTERLICENSEKEY,13,179,143,66,WS_GROUP
-    CONTROL         "Actualizaciones",IDC_GROUPBOX2,"CGroupBox",WS_GROUP,170,169,181,81
+    DEFPUSHBUTTON   "OK",IDOK,244,190,50,14,WS_GROUP
+    PUSHBUTTON      "Cancelar",IDCANCEL,301,190,50,14,WS_GROUP
+    CONTROL         "Licensia",IDC_GROUPBOX1,"CGroupBox",WS_GROUP,7,93,155,81
+    LTEXT           "Nombre:",IDC_STATIC,15,103,141,8
+    LTEXT           "X",IDC_NAME,15,113,141,8
+    LTEXT           "Adquisición:",IDC_STATIC,15,126,84,8
+    LTEXT           "X",IDC_PURCHASEDATE,15,136,84,8
+    LTEXT           "ID:",IDC_STATIC,105,126,50,8
+    LTEXT           "X",IDC_ID,105,136,50,8
+    LTEXT           "Producto:",IDC_STATIC,15,151,83,8
+    LTEXT           "X",IDC_PRODUCT,15,161,141,8
+    LTEXT           "Número:",IDC_QUANTITYTITLE,105,151,50,8
+    LTEXT           "X",IDC_QUANTITY,105,161,50,8
+    PUSHBUTTON      "Dictar &licencia...",IDC_ENTERLICENSEKEY,13,103,143,66,WS_GROUP
+    CONTROL         "Actualizaciones",IDC_GROUPBOX2,"CGroupBox",WS_GROUP,170,93,181,81
     CONTROL         "Buscar &actualizaciones de manera automática",IDC_ENABLEAUTOUPDATE,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,176,179,168,10
-    CONTROL         "&Diariamente",IDC_CHECKDAILY,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,186,191,158,10
-    CONTROL         "&Semanalmente",IDC_CHECKWEEKLY,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,186,202,158,10
-    CONTROL         "&Mensualmente",IDC_CHECKMONTHLY,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,186,213,158,10
-    PUSHBUTTON      "&Buscar actualización ahora...",IDC_UPDATENOW,176,231,170,14
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,176,103,168,10
+    CONTROL         "&Diariamente",IDC_CHECKDAILY,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,186,115,158,10
+    CONTROL         "&Semanalmente",IDC_CHECKWEEKLY,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,186,126,158,10
+    CONTROL         "&Mensualmente",IDC_CHECKMONTHLY,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,186,137,158,10
+    PUSHBUTTON      "&Buscar actualización ahora...",IDC_UPDATENOW,176,155,170,14
 END
 
 IDD_CHOOSESTORE DIALOGEX 0, 0, 451, 282
@@ -852,23 +850,23 @@ BEGIN
     PUSHBUTTON      "Crear &nuevo store...",IDM_STORES_CREATENEW,7,261,95,14
 END
 
-IDD_WELCOME DIALOGEX 0, 0, 262, 220
+IDD_WELCOME DIALOGEX 0, 0, 262, 127
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_APPWINDOW | 0x4000000L
 CAPTION "Bienvenidos a liquidFOLDERS"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    CONTROL         "Nombres des Store",IDC_GROUPBOX1,"CGroupBox",WS_GROUP,7,140,248,44
-    EDITTEXT        IDC_STORENAME1,14,162,72,14,ES_AUTOHSCROLL | WS_GROUP
-    EDITTEXT        IDC_STORENAME2,94,162,72,14,ES_AUTOHSCROLL | WS_GROUP
-    EDITTEXT        IDC_STORENAME3,175,162,72,14,ES_AUTOHSCROLL | WS_GROUP
-    DEFPUSHBUTTON   "Continuar!",IDOK,148,199,50,14,WS_GROUP
-    PUSHBUTTON      "No gracias.",IDCANCEL,205,199,50,14,WS_GROUP
-    PUSHBUTTON      "Dictar &licencia...",IDC_ENTERLICENSEKEY,7,199,105,14,WS_GROUP
-    LTEXT           "Parece ser que es la primera vez que ejecuta liquidFOLDERS. liquidFOLDERS mantiene todos sus archivos en los llamados stores. Para comenzar puede crear hasta 3 stores en este momento, simplemente introduciendo sus nombres a continuación.",IDC_STATIC,7,101,248,36
-    LTEXT           "Store 1:",IDC_STATIC,14,152,27,8
-    LTEXT           "Store 2:",IDC_STATIC,94,152,27,8
-    LTEXT           "Store 3:",IDC_STATIC,175,152,27,8
+    CONTROL         "Nombres des Store",IDC_GROUPBOX1,"CGroupBox",WS_GROUP,7,46,248,44
+    EDITTEXT        IDC_STORENAME1,14,68,72,14,ES_AUTOHSCROLL | WS_GROUP
+    EDITTEXT        IDC_STORENAME2,94,68,72,14,ES_AUTOHSCROLL | WS_GROUP
+    EDITTEXT        IDC_STORENAME3,175,68,72,14,ES_AUTOHSCROLL | WS_GROUP
+    DEFPUSHBUTTON   "Continuar!",IDOK,148,105,50,14,WS_GROUP
+    PUSHBUTTON      "No gracias.",IDCANCEL,205,105,50,14,WS_GROUP
+    PUSHBUTTON      "Dictar &licencia...",IDC_ENTERLICENSEKEY,7,105,105,14,WS_GROUP
+    LTEXT           "Parece ser que es la primera vez que ejecuta liquidFOLDERS. liquidFOLDERS mantiene todos sus archivos en los llamados stores. Para comenzar puede crear hasta 3 stores en este momento, simplemente introduciendo sus nombres a continuación.",IDC_STATIC,7,7,248,36
+    LTEXT           "Store 1:",IDC_STATIC,14,58,72,8
+    LTEXT           "Store 2:",IDC_STATIC,94,58,72,8
+    LTEXT           "Store 3:",IDC_STATIC,175,58,72,8
 END
 
 IDD_STOREDELETE DIALOGEX 0, 0, 277, 205
@@ -1042,19 +1040,19 @@ BEGIN
     CONTROL         "",IDC_STATUS,"Static",SS_LEFTNOWORDWRAP | SS_ENDELLIPSIS | WS_GROUP,14,255,296,8
 END
 
-IDD_ENTERLICENSEKEY DIALOGEX 0, 0, 350, 263
+IDD_ENTERLICENSEKEY DIALOGEX 0, 0, 350, 178
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
 CAPTION "Dictar licencia"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    CONTROL         "Licencia",IDC_GROUPBOX1,"CGroupBox",WS_GROUP,7,92,336,135
-    LTEXT           "Después de adquirir la licencia a través de nuestro proveedor, usted recibirá un correo con el archivo ""liquidFOLDERS.lic"" adjunto. Guarde este archivo de manera local en su computadora.",IDC_STATIC,14,103,322,18
-    LTEXT           "Posteriormente abra el archivo usando el botón de abajo, o copie y pegue su contenido dentro del recuadro debajo del botón.",IDC_STATIC,14,119,322,18
-    PUSHBUTTON      "Cargar &archivo de licencia...",IDC_LOADLICENSE,14,139,111,15,WS_GROUP
-    LTEXT           "Licencia:",IDC_STATIC,14,164,291,8
-    EDITTEXT        IDC_LICENSEKEY,14,174,322,45,ES_MULTILINE | ES_AUTOHSCROLL | WS_VSCROLL | WS_GROUP
-    DEFPUSHBUTTON   "OK",IDOK,236,242,50,14,WS_GROUP
-    PUSHBUTTON      "Cancelar",IDCANCEL,293,242,50,14,WS_GROUP
+    CONTROL         "Licencia",IDC_GROUPBOX1,"CGroupBox",WS_GROUP,7,7,336,135
+    LTEXT           "Después de adquirir la licencia a través de nuestro proveedor, usted recibirá un correo con el archivo ""liquidFOLDERS.lic"" adjunto. Guarde este archivo de manera local en su computadora.",IDC_STATIC,14,18,322,18
+    LTEXT           "Posteriormente abra el archivo usando el botón de abajo, o copie y pegue su contenido dentro del recuadro debajo del botón.",IDC_STATIC,14,34,322,18
+    PUSHBUTTON      "Cargar &archivo de licencia...",IDC_LOADLICENSE,14,54,111,15,WS_GROUP
+    LTEXT           "Licencia:",IDC_STATIC,14,79,291,8
+    EDITTEXT        IDC_LICENSEKEY,14,89,322,45,ES_MULTILINE | ES_AUTOHSCROLL | WS_VSCROLL | WS_GROUP
+    DEFPUSHBUTTON   "OK",IDOK,236,157,50,14,WS_GROUP
+    PUSHBUTTON      "Cancelar",IDCANCEL,293,157,50,14,WS_GROUP
 END
 
 IDD_BROWSEFORFOLDER DIALOGEX 0, 0, 260, 316
@@ -1129,7 +1127,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 351
         TOPMARGIN, 7
-        BOTTOMMARGIN, 280
+        BOTTOMMARGIN, 204
     END
 
     IDD_CHOOSESTORE, DIALOG
@@ -1153,7 +1151,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 255
         TOPMARGIN, 7
-        BOTTOMMARGIN, 213
+        BOTTOMMARGIN, 120
     END
 
     IDD_STOREDELETE, DIALOG
@@ -1225,7 +1223,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 343
         TOPMARGIN, 7
-        BOTTOMMARGIN, 256
+        BOTTOMMARGIN, 171
     END
 
     IDD_BROWSEFORFOLDER, DIALOG
@@ -1406,32 +1404,32 @@ END
 // Dialog
 //
 
-IDD_ABOUT DIALOGEX 0, 0, 358, 287
+IDD_ABOUT DIALOGEX 0, 0, 358, 211
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
 CAPTION "Concernant %s"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,244,266,50,14,WS_GROUP
-    PUSHBUTTON      "Annuler",IDCANCEL,301,266,50,14,WS_GROUP
-    CONTROL         "Licence",IDC_GROUPBOX1,"CGroupBox",WS_GROUP,7,169,155,81
-    LTEXT           "Nom:",IDC_STATIC,15,179,141,8
-    LTEXT           "X",IDC_NAME,15,189,141,8
-    LTEXT           "Date d'achat:",IDC_STATIC,15,202,84,8
-    LTEXT           "X",IDC_PURCHASEDATE,15,212,84,8
-    LTEXT           "ID:",IDC_STATIC,105,202,50,8
-    LTEXT           "X",IDC_ID,105,212,50,8
-    LTEXT           "Produit:",IDC_STATIC,15,227,83,8
-    LTEXT           "X",IDC_PRODUCT,15,237,141,8
-    LTEXT           "Nombre:",IDC_QUANTITYTITLE,105,227,50,8
-    LTEXT           "X",IDC_QUANTITY,105,237,50,8
-    PUSHBUTTON      "Donner clé de &licence...",IDC_ENTERLICENSEKEY,13,179,143,66,WS_GROUP
-    CONTROL         "Mises à jour",IDC_GROUPBOX2,"CGroupBox",WS_GROUP,170,169,181,81
+    DEFPUSHBUTTON   "OK",IDOK,244,190,50,14,WS_GROUP
+    PUSHBUTTON      "Annuler",IDCANCEL,301,190,50,14,WS_GROUP
+    CONTROL         "Licence",IDC_GROUPBOX1,"CGroupBox",WS_GROUP,7,93,155,81
+    LTEXT           "Nom:",IDC_STATIC,15,103,141,8
+    LTEXT           "X",IDC_NAME,15,113,141,8
+    LTEXT           "Date d'achat:",IDC_STATIC,15,126,84,8
+    LTEXT           "X",IDC_PURCHASEDATE,15,136,84,8
+    LTEXT           "ID:",IDC_STATIC,105,126,50,8
+    LTEXT           "X",IDC_ID,105,136,50,8
+    LTEXT           "Produit:",IDC_STATIC,15,151,83,8
+    LTEXT           "X",IDC_PRODUCT,15,161,141,8
+    LTEXT           "Nombre:",IDC_QUANTITYTITLE,105,151,50,8
+    LTEXT           "X",IDC_QUANTITY,105,161,50,8
+    PUSHBUTTON      "Donner clé de &licence...",IDC_ENTERLICENSEKEY,13,103,143,66,WS_GROUP
+    CONTROL         "Mises à jour",IDC_GROUPBOX2,"CGroupBox",WS_GROUP,170,93,181,81
     CONTROL         "Chercher automatiquement des &mises á jour",IDC_ENABLEAUTOUPDATE,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,176,179,168,10
-    CONTROL         "Chaque &jour",IDC_CHECKDAILY,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,186,191,158,10
-    CONTROL         "Chaque &semaine",IDC_CHECKWEEKLY,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,186,202,158,10
-    CONTROL         "&Mensuellement",IDC_CHECKMONTHLY,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,186,213,158,10
-    PUSHBUTTON      "&Chercher maintenant des mises á jour...",IDC_UPDATENOW,176,231,170,14
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,176,103,168,10
+    CONTROL         "Chaque &jour",IDC_CHECKDAILY,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,186,115,158,10
+    CONTROL         "Chaque &semaine",IDC_CHECKWEEKLY,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,186,126,158,10
+    CONTROL         "&Mensuellement",IDC_CHECKMONTHLY,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,186,137,158,10
+    PUSHBUTTON      "&Chercher maintenant des mises á jour...",IDC_UPDATENOW,176,155,170,14
 END
 
 IDD_CHOOSESTORE DIALOGEX 0, 0, 451, 282
@@ -1454,23 +1452,23 @@ BEGIN
     PUSHBUTTON      "Créez un store &nouveau...",IDM_STORES_CREATENEW,7,261,105,14
 END
 
-IDD_WELCOME DIALOGEX 0, 0, 262, 220
+IDD_WELCOME DIALOGEX 0, 0, 262, 127
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_APPWINDOW | 0x4000000L
 CAPTION "Bienvenu à liquidFOLDERS"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    CONTROL         "Les noms des stores",IDC_GROUPBOX1,"CGroupBox",WS_GROUP,7,140,248,44
-    EDITTEXT        IDC_STORENAME1,14,162,72,14,ES_AUTOHSCROLL | WS_GROUP
-    EDITTEXT        IDC_STORENAME2,94,162,72,14,ES_AUTOHSCROLL | WS_GROUP
-    EDITTEXT        IDC_STORENAME3,175,162,72,14,ES_AUTOHSCROLL | WS_GROUP
-    DEFPUSHBUTTON   "Feu vert",IDOK,135,199,47,14,WS_GROUP
-    PUSHBUTTON      "Pas maintenant.",IDCANCEL,189,199,66,14,WS_GROUP
-    PUSHBUTTON      "Donner clé de &licence...",IDC_ENTERLICENSEKEY,7,199,105,14,WS_GROUP
-    LTEXT           "C'est la première fois que vous dirigez liquidFOLDERS. liquidFOLDERS gére tous vous fichiers dans les ainsi-appelé stores. Pour recevoir le départ, vous pouvez créer jusqu'à trois stores immédiatement en remplissant leurs noms ci-dessous.",IDC_STATIC,7,101,248,36
-    LTEXT           "Store 1:",IDC_STATIC,14,152,27,8
-    LTEXT           "Store 2:",IDC_STATIC,94,152,27,8
-    LTEXT           "Store 3:",IDC_STATIC,175,152,27,8
+    CONTROL         "Les noms des stores",IDC_GROUPBOX1,"CGroupBox",WS_GROUP,7,46,248,44
+    EDITTEXT        IDC_STORENAME1,14,68,72,14,ES_AUTOHSCROLL | WS_GROUP
+    EDITTEXT        IDC_STORENAME2,94,68,72,14,ES_AUTOHSCROLL | WS_GROUP
+    EDITTEXT        IDC_STORENAME3,175,68,72,14,ES_AUTOHSCROLL | WS_GROUP
+    DEFPUSHBUTTON   "Feu vert",IDOK,135,105,47,14,WS_GROUP
+    PUSHBUTTON      "Pas maintenant.",IDCANCEL,189,105,66,14,WS_GROUP
+    PUSHBUTTON      "Donner clé de &licence...",IDC_ENTERLICENSEKEY,7,105,105,14,WS_GROUP
+    LTEXT           "C'est la première fois que vous dirigez liquidFOLDERS. liquidFOLDERS gére tous vous fichiers dans les ainsi-appelé stores. Pour recevoir le départ, vous pouvez créer jusqu'à trois stores immédiatement en remplissant leurs noms ci-dessous.",IDC_STATIC,7,7,248,36
+    LTEXT           "Store 1:",IDC_STATIC,14,58,72,8
+    LTEXT           "Store 2:",IDC_STATIC,94,58,72,8
+    LTEXT           "Store 3:",IDC_STATIC,175,58,72,8
 END
 
 IDD_STOREDELETE DIALOGEX 0, 0, 295, 204
@@ -1644,19 +1642,19 @@ BEGIN
     CONTROL         "",IDC_STATUS,"Static",SS_LEFTNOWORDWRAP | SS_ENDELLIPSIS | WS_GROUP,14,255,296,8
 END
 
-IDD_ENTERLICENSEKEY DIALOGEX 0, 0, 350, 263
+IDD_ENTERLICENSEKEY DIALOGEX 0, 0, 350, 178
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
 CAPTION "Donner clé de licence"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    CONTROL         "Licence",IDC_GROUPBOX1,"CGroupBox",WS_GROUP,7,92,336,135
-    LTEXT           "A l'acquisition d'une clé de licence, notre partenaire share*it vous envoie un e-mail auquel le fichier „liquidFOLDERS.lic“ est ajouté. Mémorisez ce fichier localement sur votre ordinateur.",IDC_STATIC,14,103,322,18
-    LTEXT           "Ensuite ouvrez le fichier avec le tableau de commande mentionné ci-dessous. Alternatif vous pouvez copier son contenu dans le champ de texte y compris.",IDC_STATIC,14,119,322,18
-    PUSHBUTTON      "Charger le fichier de licence...",IDC_LOADLICENSE,14,139,115,15,WS_GROUP
-    LTEXT           "Clé de licence:",IDC_STATIC,14,164,291,8
-    EDITTEXT        IDC_LICENSEKEY,14,174,322,45,ES_MULTILINE | ES_AUTOHSCROLL | WS_VSCROLL | WS_GROUP
-    DEFPUSHBUTTON   "OK",IDOK,236,242,50,14,WS_GROUP
-    PUSHBUTTON      "Annuler",IDCANCEL,293,242,50,14,WS_GROUP
+    CONTROL         "Licence",IDC_GROUPBOX1,"CGroupBox",WS_GROUP,7,7,336,135
+    LTEXT           "A l'acquisition d'une clé de licence, notre partenaire share*it vous envoie un e-mail auquel le fichier „liquidFOLDERS.lic“ est ajouté. Mémorisez ce fichier localement sur votre ordinateur.",IDC_STATIC,14,18,322,18
+    LTEXT           "Ensuite ouvrez le fichier avec le tableau de commande mentionné ci-dessous. Alternatif vous pouvez copier son contenu dans le champ de texte y compris.",IDC_STATIC,14,34,322,18
+    PUSHBUTTON      "Charger le fichier de licence...",IDC_LOADLICENSE,14,54,115,15,WS_GROUP
+    LTEXT           "Clé de licence:",IDC_STATIC,14,79,291,8
+    EDITTEXT        IDC_LICENSEKEY,14,89,322,45,ES_MULTILINE | ES_AUTOHSCROLL | WS_VSCROLL | WS_GROUP
+    DEFPUSHBUTTON   "OK",IDOK,236,157,50,14,WS_GROUP
+    PUSHBUTTON      "Annuler",IDCANCEL,293,157,50,14,WS_GROUP
 END
 
 IDD_BROWSEFORFOLDER DIALOGEX 0, 0, 260, 316
@@ -1732,7 +1730,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 351
         TOPMARGIN, 7
-        BOTTOMMARGIN, 280
+        BOTTOMMARGIN, 204
     END
 
     IDD_CHOOSESTORE, DIALOG
@@ -1756,7 +1754,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 255
         TOPMARGIN, 7
-        BOTTOMMARGIN, 213
+        BOTTOMMARGIN, 120
     END
 
     IDD_STOREDELETE, DIALOG
@@ -1829,7 +1827,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 343
         TOPMARGIN, 7
-        BOTTOMMARGIN, 256
+        BOTTOMMARGIN, 171
     END
 
     IDD_BROWSEFORFOLDER, DIALOG
@@ -2060,51 +2058,51 @@ END
 // Dialog
 //
 
-IDD_ABOUT DIALOGEX 0, 0, 358, 287
+IDD_ABOUT DIALOGEX 0, 0, 358, 211
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
 CAPTION "About %s"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,244,266,50,14,WS_GROUP
-    PUSHBUTTON      "Cancel",IDCANCEL,301,266,50,14,WS_GROUP
-    CONTROL         "License",IDC_GROUPBOX1,"CGroupBox",WS_GROUP,7,169,155,81
-    LTEXT           "Name:",IDC_STATIC,15,179,141,8
-    LTEXT           "X",IDC_NAME,15,189,141,8
-    LTEXT           "Purchase date:",IDC_STATIC,15,202,84,8
-    LTEXT           "X",IDC_PURCHASEDATE,15,212,84,8
-    LTEXT           "ID:",IDC_STATIC,105,202,50,8
-    LTEXT           "X",IDC_ID,105,212,50,8
-    LTEXT           "Product:",IDC_STATIC,15,227,83,8
-    LTEXT           "X",IDC_PRODUCT,15,237,141,8
-    LTEXT           "Quantity:",IDC_QUANTITYTITLE,105,227,50,8
-    LTEXT           "X",IDC_QUANTITY,105,237,50,8
-    PUSHBUTTON      "Enter &license key...",IDC_ENTERLICENSEKEY,13,179,143,66,WS_GROUP
-    CONTROL         "Updates",IDC_GROUPBOX2,"CGroupBox",WS_GROUP,170,169,181,81
+    DEFPUSHBUTTON   "OK",IDOK,244,190,50,14,WS_GROUP
+    PUSHBUTTON      "Cancel",IDCANCEL,301,190,50,14,WS_GROUP
+    CONTROL         "License",IDC_GROUPBOX1,"CGroupBox",WS_GROUP,7,93,155,81
+    LTEXT           "Name:",IDC_STATIC,15,103,141,8
+    LTEXT           "X",IDC_NAME,15,113,141,8
+    LTEXT           "Purchase date:",IDC_STATIC,15,126,84,8
+    LTEXT           "X",IDC_PURCHASEDATE,15,136,84,8
+    LTEXT           "ID:",IDC_STATIC,105,126,50,8
+    LTEXT           "X",IDC_ID,105,136,50,8
+    LTEXT           "Product:",IDC_STATIC,15,151,83,8
+    LTEXT           "X",IDC_PRODUCT,15,161,141,8
+    LTEXT           "Quantity:",IDC_QUANTITYTITLE,105,151,50,8
+    LTEXT           "X",IDC_QUANTITY,105,161,50,8
+    PUSHBUTTON      "Enter &license key...",IDC_ENTERLICENSEKEY,13,103,143,66,WS_GROUP
+    CONTROL         "Updates",IDC_GROUPBOX2,"CGroupBox",WS_GROUP,170,93,181,81
     CONTROL         "Automatically search for &updates",IDC_ENABLEAUTOUPDATE,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,176,179,168,10
-    CONTROL         "&Daily",IDC_CHECKDAILY,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,186,191,158,10
-    CONTROL         "&Weekly",IDC_CHECKWEEKLY,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,186,202,158,10
-    CONTROL         "&Monthly",IDC_CHECKMONTHLY,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,186,213,158,10
-    PUSHBUTTON      "&Search for update now...",IDC_UPDATENOW,176,231,170,14
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,176,103,168,10
+    CONTROL         "&Daily",IDC_CHECKDAILY,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,186,115,158,10
+    CONTROL         "&Weekly",IDC_CHECKWEEKLY,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,186,126,158,10
+    CONTROL         "&Monthly",IDC_CHECKMONTHLY,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,186,137,158,10
+    PUSHBUTTON      "&Search for update now...",IDC_UPDATENOW,176,155,170,14
 END
 
-IDD_WELCOME DIALOGEX 0, 0, 262, 220
+IDD_WELCOME DIALOGEX 0, 0, 262, 127
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_APPWINDOW | 0x4000000L
 CAPTION "Welcome to liquidFOLDERS"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    CONTROL         "Store names",IDC_GROUPBOX1,"CGroupBox",WS_GROUP,7,140,248,44
-    EDITTEXT        IDC_STORENAME1,14,162,72,14,ES_AUTOHSCROLL | WS_GROUP
-    EDITTEXT        IDC_STORENAME2,94,162,72,14,ES_AUTOHSCROLL | WS_GROUP
-    EDITTEXT        IDC_STORENAME3,175,162,72,14,ES_AUTOHSCROLL | WS_GROUP
-    DEFPUSHBUTTON   "Go ahead!",IDOK,148,199,50,14,WS_GROUP
-    PUSHBUTTON      "Not now.",IDCANCEL,205,199,50,14,WS_GROUP
-    PUSHBUTTON      "Enter &license key...",IDC_ENTERLICENSEKEY,7,199,105,14,WS_GROUP
-    LTEXT           "This is the first time you run liquidFOLDERS. liquidFOLDERS keeps all your files in so-called stores. To get going, you can create up to three stores right now, by simply filling in their names below (e.g. ""Home"" and ""Work"").",IDC_STATIC,7,101,248,36
-    LTEXT           "Store 1:",IDC_STATIC,14,152,27,8
-    LTEXT           "Store 2:",IDC_STATIC,94,152,27,8
-    LTEXT           "Store 3:",IDC_STATIC,175,152,27,8
+    CONTROL         "Store names",IDC_GROUPBOX1,"CGroupBox",WS_GROUP,7,46,248,44
+    EDITTEXT        IDC_STORENAME1,14,68,72,14,ES_AUTOHSCROLL | WS_GROUP
+    EDITTEXT        IDC_STORENAME2,94,68,72,14,ES_AUTOHSCROLL | WS_GROUP
+    EDITTEXT        IDC_STORENAME3,175,68,72,14,ES_AUTOHSCROLL | WS_GROUP
+    DEFPUSHBUTTON   "Go ahead!",IDOK,148,105,50,14,WS_GROUP
+    PUSHBUTTON      "Not now.",IDCANCEL,205,105,50,14,WS_GROUP
+    PUSHBUTTON      "Enter &license key...",IDC_ENTERLICENSEKEY,7,105,105,14,WS_GROUP
+    LTEXT           "This is the first time you run liquidFOLDERS. liquidFOLDERS keeps all your files in so-called stores. To get going, you can create up to three stores right now, by simply filling in their names below (e.g. ""Home"" and ""Work"").",IDC_STATIC,7,7,248,36
+    LTEXT           "Store 1:",IDC_STATIC,14,58,72,8
+    LTEXT           "Store 2:",IDC_STATIC,94,58,72,8
+    LTEXT           "Store 3:",IDC_STATIC,175,58,72,8
 END
 
 IDD_CHOOSESTORE DIALOGEX 0, 0, 451, 282
@@ -2298,19 +2296,19 @@ BEGIN
     CONTROL         "",IDC_STATUS,"Static",SS_LEFTNOWORDWRAP | SS_ENDELLIPSIS | WS_GROUP,14,255,296,8
 END
 
-IDD_ENTERLICENSEKEY DIALOGEX 0, 0, 350, 263
+IDD_ENTERLICENSEKEY DIALOGEX 0, 0, 350, 178
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
 CAPTION "Enter license key"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    CONTROL         "License",IDC_GROUPBOX1,"CGroupBox",WS_GROUP,7,92,336,135
-    LTEXT           "After purchasing a license key through our partner share*it, you'll receive an email that has the file „liquidFOLDERS.lic“ attached to it. Save this file locally on your computer.",IDC_STATIC,14,103,322,18
-    LTEXT           "Subsequently open the file using the button below, or copy and paste its contents into the textbox beneath the button.",IDC_STATIC,14,119,322,18
-    PUSHBUTTON      "Load license &file...",IDC_LOADLICENSE,14,139,81,15,WS_GROUP
-    LTEXT           "License key:",IDC_STATIC,14,164,291,8
-    EDITTEXT        IDC_LICENSEKEY,14,174,322,45,ES_MULTILINE | ES_AUTOHSCROLL | WS_VSCROLL | WS_GROUP
-    DEFPUSHBUTTON   "OK",IDOK,236,242,50,14,WS_GROUP
-    PUSHBUTTON      "Cancel",IDCANCEL,293,242,50,14,WS_GROUP
+    CONTROL         "License",IDC_GROUPBOX1,"CGroupBox",WS_GROUP,7,7,336,135
+    LTEXT           "After purchasing a license key through our partner share*it, you'll receive an email that has the file „liquidFOLDERS.lic“ attached to it. Save this file locally on your computer.",IDC_STATIC,14,18,322,18
+    LTEXT           "Subsequently open the file using the button below, or copy and paste its contents into the textbox beneath the button.",IDC_STATIC,14,34,322,18
+    PUSHBUTTON      "Load license &file...",IDC_LOADLICENSE,14,54,81,15,WS_GROUP
+    LTEXT           "License key:",IDC_STATIC,14,79,291,8
+    EDITTEXT        IDC_LICENSEKEY,14,89,322,45,ES_MULTILINE | ES_AUTOHSCROLL | WS_VSCROLL | WS_GROUP
+    DEFPUSHBUTTON   "OK",IDOK,236,157,50,14,WS_GROUP
+    PUSHBUTTON      "Cancel",IDCANCEL,293,157,50,14,WS_GROUP
 END
 
 IDD_EDITTAGS DIALOGEX 0, 0, 348, 245
@@ -2385,7 +2383,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 351
         TOPMARGIN, 6
-        BOTTOMMARGIN, 280
+        BOTTOMMARGIN, 204
     END
 
     IDD_WELCOME, DIALOG
@@ -2393,7 +2391,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 255
         TOPMARGIN, 7
-        BOTTOMMARGIN, 213
+        BOTTOMMARGIN, 120
     END
 
     IDD_CHOOSESTORE, DIALOG
@@ -2482,7 +2480,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 343
         TOPMARGIN, 7
-        BOTTOMMARGIN, 256
+        BOTTOMMARGIN, 171
     END
 
     IDD_EDITTAGS, DIALOG

@@ -101,11 +101,11 @@ void LFAboutDlg::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 {
 	LFDialog::OnEraseBkgnd(dc, g, rect);
 
-	g.DrawImage(m_Icon.m_pBitmap, 16, 16, m_Icon.m_pBitmap->GetWidth(), m_Icon.m_pBitmap->GetHeight());
+	g.DrawImage(m_Icon.m_pBitmap, 9, 14, m_Icon.m_pBitmap->GetWidth(), m_Icon.m_pBitmap->GetHeight());
 
 	CRect r(rect);
-	r.top = 170;
-	r.left = 16;
+	r.top = 15;
+	r.left = 148;
 
 	CFont font1;
 	font1.CreateFont(40, 0, 0, 0, FW_BOLD, FALSE, FALSE, FALSE, ANSI_CHARSET,
@@ -126,13 +126,16 @@ void LFAboutDlg::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 	dc.SelectObject(&font2);
 
 #ifdef _M_X64
-#define ISET _T(" (x64, ")
+#define ISET _T(" (x64)")
 #else
-#define ISET _T(" (x32, ")
+#define ISET _T(" (x32)")
 #endif
 
-	dc.DrawText(_T("Version ")+m_Version+ISET+m_Build+_T(")"), r, fmt);
-	r.top += 26;
+	dc.DrawText(_T("Version ")+m_Version+ISET, r, fmt);
+	r.top += 25;
+
+	dc.DrawText(_T("Built ")+m_Build, r, fmt);
+	r.top += 25;
 
 	dc.DrawText(m_Copyright, r, fmt);
 

@@ -227,7 +227,7 @@ LFCountry Countries_DE[CountryCount_DE] = {
 };
 
 // Airports
-#define AirportCount_DE 8609
+#define AirportCount_DE 8613
 LFAirport Airports_DE[AirportCount_DE] = {
 	{  54, "AAA", "", "Anaa", { 17.355000, -145.508333 } },
 	{  11, "AAB", "", "Arrabury", { 26.690556, 141.047500 } },
@@ -1899,6 +1899,7 @@ LFAirport Airports_DE[AirportCount_DE] = {
 	{  73, "DIB", "", "Dibrugarh", { -27.483889, 95.016944 } },
 	{  74, "DIC", "", "Dili (Heliport)", { 8.558889, 125.536944 } },
 	{ 111, "DIE", "", "Antsiranana", { 12.349444, 49.291667 } },
+	{  36, "DIG", "", "Shangri-La", { -27.793611, 99.677222 } },
 	{  52, "DIJ", "", "Dijon", { -47.265833, 5.095000 } },
 	{ 210, "DIK", "", "Dickinson", { -46.797500, -102.801944 } },
 	{  74, "DIL", "", "Dili", { 8.546389, 125.524722 } },
@@ -2908,6 +2909,7 @@ LFAirport Airports_DE[AirportCount_DE] = {
 	{ 215, "HAN", "", "Hanoi", { -21.221111, 105.807222 } },
 	{ 210, "HAO", "", "Hamilton", { -39.363889, -84.521944 } },
 	{  11, "HAP", "", "Whitsunday Kontiki Resort", { 20.333889, 148.848889 } },
+	{ 114, "HAQ", "", "Hanimaadhoo", { -6.750000, 73.150000 } },
 	{ 210, "HAR", "", "Harrisburg", { -40.217222, -76.851389 } },
 	{ 166, "HAS", "", "Hail", { -27.438056, 41.686389 } },
 	{  11, "HAT", "", "Heathlands", { 11.736944, 142.577500 } },
@@ -3620,6 +3622,7 @@ LFAirport Airports_DE[AirportCount_DE] = {
 	{ 210, "JYO", "", "Leesburg", { -39.078056, -77.557500 } },
 	{ 210, "JYR", "", "York", { -40.896667, -97.622778 } },
 	{  51, "JYV", "", "Jyväskylä", { -62.399444, 25.678333 } },
+	{  36, "JZH", "", "Jiu Zhai Huang Long Airport", { -32.836944, 103.681944 } },
 	{ 210, "JZI", "", "Charleston (Executive Airport)", { -32.700833, -80.003056 } },
 	{ 210, "JZP", "", "Jasper", { -34.453333, -84.457222 } },
 	{ 163, "KAA", "", "Kasama", { 10.216944, 31.133056 } },
@@ -4244,6 +4247,7 @@ LFAirport Airports_DE[AirportCount_DE] = {
 	{ 112, "LIX", "", "Likoma Island", { 12.083056, 34.733056 } },
 	{ 210, "LIY", "", "Hinesville", { -31.889167, -81.562222 } },
 	{  97, "LJA", "", "Lodja", { 3.416944, 23.450000 } },
+	{  36, "LJG", "", "Lijiang", { -23.584722, 102.009722 } },
 	{ 210, "LJN", "", "Angleton/Lake Jackson", { -29.108611, -95.461944 } },
 	{ 174, "LJU", "", "Ljubljana", { -46.223611, 14.457500 } },
 	{  74, "LKA", "", "Larantuka", { 8.350000, 122.983056 } },

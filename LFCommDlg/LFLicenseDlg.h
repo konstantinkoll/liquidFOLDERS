@@ -17,12 +17,8 @@ public:
 	LFLicenseDlg(CWnd* pParent=NULL);
 
 protected:
-	CGdiPlusBitmapResource m_Icon;
-
-	virtual void OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect);
 	virtual void DoDataExchange(CDataExchange* pDX);
 
-	afx_msg BOOL OnInitDialog();
 	afx_msg void OnLoadLicense();
 	DECLARE_MESSAGE_MAP()
 };

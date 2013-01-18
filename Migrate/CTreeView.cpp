@@ -738,67 +738,68 @@ UINT CTreeView::EnumObjects(UINT row, UINT col, BOOL ExpandAll, BOOL FirstInstan
 
 	IEnumIDList* pEnum;
 	if (SUCCEEDED(pParentFolder->EnumObjects(NULL, SHCONTF_FOLDERS, &pEnum)))
-	{
-		CWaitCursor wait;
-
-		BOOL NewRow = FALSE;
-		UINT Flags = ExpandAll ? (cell->Flags & CF_CHECKED) : 0;
-
-		LPITEMIDLIST pidlTemp;
-		while (pEnum->Next(1, &pidlTemp, NULL)==S_OK)
+		if (pEnum)
 		{
-			DWORD dwAttributes = SFGAO_FILESYSANCESTOR | SFGAO_FILESYSTEM;
-			pParentFolder->GetAttributesOf(1, (LPCITEMIDLIST*)&pidlTemp, &dwAttributes);
+			CWaitCursor wait;
 
-			// Don't include virtual branches
-			if (!(dwAttributes & (SFGAO_FILESYSANCESTOR | SFGAO_FILESYSTEM)))
-				continue;
+			BOOL NewRow = FALSE;
+			UINT Flags = ExpandAll ? (cell->Flags & CF_CHECKED) : 0;
 
-			// Don't include liquidFOLDERS
-			SHDESCRIPTIONID did;
-			if (SUCCEEDED(SHGetDataFromIDList(pParentFolder, pidlTemp, SHGDFIL_DESCRIPTIONID, &did, sizeof(SHDESCRIPTIONID))))
+			LPITEMIDLIST pidlTemp;
+			while (pEnum->Next(1, &pidlTemp, NULL)==S_OK)
 			{
-				const CLSID LFNE = { 0x3F2D914F, 0xFE57, 0x414F, { 0x9F, 0x88, 0xA3, 0x77, 0xC7, 0x84, 0x1D, 0xA4 } };
-				if (did.clsid==LFNE)
+				DWORD dwAttributes = SFGAO_FILESYSANCESTOR | SFGAO_FILESYSTEM;
+				pParentFolder->GetAttributesOf(1, (LPCITEMIDLIST*)&pidlTemp, &dwAttributes);
+
+				// Don't include virtual branches
+				if (!(dwAttributes & (SFGAO_FILESYSANCESTOR | SFGAO_FILESYSTEM)))
 					continue;
-			}
 
-			// Don't include file junctions
-			LPITEMIDLIST pidlFQ = theApp.GetShellManager()->ConcatenateItem(m_Tree[MAKEPOS(row, col)].pItem->pidlFQ, pidlTemp);
-
-			WCHAR Path[MAX_PATH];
-			if (SUCCEEDED(SHGetPathFromIDListW(pidlFQ, Path)))
-			{
-				DWORD attr = GetFileAttributesW(Path);
-				if ((attr!=INVALID_FILE_ATTRIBUTES) && (!(attr & FILE_ATTRIBUTE_DIRECTORY)))
+				// Don't include liquidFOLDERS
+				SHDESCRIPTIONID did;
+				if (SUCCEEDED(SHGetDataFromIDList(pParentFolder, pidlTemp, SHGDFIL_DESCRIPTIONID, &did, sizeof(SHDESCRIPTIONID))))
 				{
-					theApp.GetShellManager()->FreeItem(pidlFQ);
-					continue;
+					const CLSID LFNE = { 0x3F2D914F, 0xFE57, 0x414F, { 0x9F, 0x88, 0xA3, 0x77, 0xC7, 0x84, 0x1D, 0xA4 } };
+					if (did.clsid==LFNE)
+						continue;
 				}
+
+				// Don't include file junctions
+				LPITEMIDLIST pidlFQ = theApp.GetShellManager()->ConcatenateItem(m_Tree[MAKEPOS(row, col)].pItem->pidlFQ, pidlTemp);
+
+				WCHAR Path[MAX_PATH];
+				if (SUCCEEDED(SHGetPathFromIDListW(pidlFQ, Path)))
+				{
+					DWORD attr = GetFileAttributesW(Path);
+					if ((attr!=INVALID_FILE_ATTRIBUTES) && (!(attr & FILE_ATTRIBUTE_DIRECTORY)))
+					{
+						theApp.GetShellManager()->FreeItem(pidlFQ);
+						continue;
+					}
+				}
+
+				if (NewRow)
+				{
+					m_Tree[MAKEPOS(row+Inserted, col+1)].Flags |= CF_HASSIBLINGS;
+
+					Inserted++;
+					InsertRow(row+Inserted);
+					Flags |= CF_ISSIBLING;
+				}
+				else
+				{
+					m_Tree[MAKEPOS(row, col)].Flags |= (CF_HASCHILDREN | CF_CANCOLLAPSE);
+				}
+
+				SetItem(row+Inserted, col+1, pidlTemp, pidlFQ, Flags);
+				if (ExpandAll)
+					Inserted += EnumObjects(row+Inserted, col+1, TRUE, FALSE);
+
+				NewRow = TRUE;
 			}
 
-			if (NewRow)
-			{
-				m_Tree[MAKEPOS(row+Inserted, col+1)].Flags |= CF_HASSIBLINGS;
-
-				Inserted++;
-				InsertRow(row+Inserted);
-				Flags |= CF_ISSIBLING;
-			}
-			else
-			{
-				m_Tree[MAKEPOS(row, col)].Flags |= (CF_HASCHILDREN | CF_CANCOLLAPSE);
-			}
-
-			SetItem(row+Inserted, col+1, pidlTemp, pidlFQ, Flags);
-			if (ExpandAll)
-				Inserted += EnumObjects(row+Inserted, col+1, TRUE, FALSE);
-
-			NewRow = TRUE;
+			pEnum->Release();
 		}
-
-		pEnum->Release();
-	}
 
 	pParentFolder->Release();
 	pDesktop->Release();

@@ -92,8 +92,8 @@ IDB_VIEWS               BITMAP                  "res\\Views.bmp"
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,1,9,0
- PRODUCTVERSION 1,1,9,0
+ FILEVERSION 1,1,10,0
+ PRODUCTVERSION 1,1,10,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -109,13 +109,13 @@ BEGIN
         BLOCK "000004e4"
         BEGIN
             VALUE "CompanyName", "liquidFOLDERS"
-            VALUE "FileVersion", "1.1.9"
+            VALUE "FileVersion", "1.1.10"
             VALUE "InternalName", "StoreManager"
-            VALUE "LegalCopyright", "© 2009-2012 liquidFOLDERS"
+            VALUE "LegalCopyright", "© 2009-2013 liquidFOLDERS"
             VALUE "LegalTrademarks", "liquidFOLDERS®"
             VALUE "OriginalFilename", "StoreManager.exe"
             VALUE "ProductName", "liquidFOLDERS"
-            VALUE "ProductVersion", "1.1.9"
+            VALUE "ProductVersion", "1.1.10"
         END
     END
     BLOCK "VarFileInfo"
@@ -160,7 +160,6 @@ BEGIN
     POPUP "POPUP"
     BEGIN
         MENUITEM SEPARATOR
-        MENUITEM "Unbekannte Formate re&gistrieren", IDM_HOUSEKEEPING_REGISTER
         MENUITEM "Liste &senden",               IDM_HOUSEKEEPING_SEND
     END
 END
@@ -641,8 +640,6 @@ STRINGTABLE
 BEGIN
     IDM_HOUSEKEEPING_REMOVENEW 
                             "Entfernt bei allen Dateien die Markierung als kürzlich importierte Datei.\nMarkierung „Neu“ entfernen"
-    IDM_HOUSEKEEPING_REGISTER 
-                            "Registriert unbekannte Dateiformate, die dadurch in den richtigen Ordnern erscheinen.\nFormate registrieren..."
     IDM_HOUSEKEEPING_SEND   "Sendet eine Liste mit allen registrierten Dateiformaten an den Kundenservice.\nListe senden"
 END
 
@@ -762,7 +759,6 @@ BEGIN
     POPUP "POPUP"
     BEGIN
         MENUITEM SEPARATOR
-        MENUITEM "Re&gister unknown file formats", IDM_HOUSEKEEPING_REGISTER
         MENUITEM "&Send list",                  IDM_HOUSEKEEPING_SEND
     END
 END
@@ -1242,8 +1238,6 @@ STRINGTABLE
 BEGIN
     IDM_HOUSEKEEPING_REMOVENEW 
                             "Removes the designation as recently imported file from all files.\nRemove ""New"" attribute"
-    IDM_HOUSEKEEPING_REGISTER 
-                            "Registers unknown file formats to make them appear in a regular domain.\nRegister formats..."
     IDM_HOUSEKEEPING_SEND   "Sends a list of user-registered file formats to customer support.\nSend list"
 END
 
@@ -1363,7 +1357,6 @@ BEGIN
     POPUP "POPUP"
     BEGIN
         MENUITEM SEPARATOR
-        MENUITEM "&Registrar formatos de archivo desconocidos", IDM_HOUSEKEEPING_REGISTER
         MENUITEM "&Enviar lista",               IDM_HOUSEKEEPING_SEND
     END
 END
@@ -1844,8 +1837,6 @@ STRINGTABLE
 BEGIN
     IDM_HOUSEKEEPING_REMOVENEW 
                             "Elimina la designación de archivo recién importado de todos los archivos .\nEliminar ""Nuevo"" attributo"
-    IDM_HOUSEKEEPING_REGISTER 
-                            "Registra formatos de archivo desconocidos para hacerlos aparecer en un dominio regular.\nRegistrar formatos..."
     IDM_HOUSEKEEPING_SEND   "Envìa una lista de formatos de archivo registrados por el usuario a atenciòn al cliente.\nEnviar lista"
 END
 
@@ -1965,7 +1956,6 @@ BEGIN
     POPUP "POPUP"
     BEGIN
         MENUITEM SEPARATOR
-        MENUITEM "Enregistrer les formats &inconnus", IDM_HOUSEKEEPING_REGISTER
         MENUITEM "&Envoyer la liste",           IDM_HOUSEKEEPING_SEND
     END
 END
@@ -2447,8 +2437,6 @@ STRINGTABLE
 BEGIN
     IDM_HOUSEKEEPING_REMOVENEW 
                             "Éloigne à tous les fichiers le marquage comme le fichier récemment importé.\nEnlever le marquage ""nouveau"""
-    IDM_HOUSEKEEPING_REGISTER 
-                            "Enregistre les formats de fichier inconnus qui apparaissent ainsi dans les dossiers justes.\nEnregistrer des formats..."
     IDM_HOUSEKEEPING_SEND   "Envoie une liste avec tous les formats de fichier enregistrés au service après-vente.\nEnvoyer la liste"
 END
 

@@ -144,8 +144,7 @@
 #define IDM_HOME_PROPERTIES             3105
 #define IDM_HOUSEKEEPING                3200
 #define IDM_HOUSEKEEPING_REMOVENEW      3201
-#define IDM_HOUSEKEEPING_REGISTER       3202
-#define IDM_HOUSEKEEPING_SEND           3203
+#define IDM_HOUSEKEEPING_SEND           3202
 #define IDM_TRASH                       3300
 #define IDM_TRASH_EMPTY                 3301
 #define IDM_TRASH_RESTOREALL            3302

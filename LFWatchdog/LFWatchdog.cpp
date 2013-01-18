@@ -1,5 +1,5 @@
 
-// BFWatchdog.cpp: Definiert das Klassenverhalten für die Anwendung.
+// LFWatchdog.cpp: Definiert das Klassenverhalten für die Anwendung.
 //
 
 #include "stdafx.h"
@@ -161,10 +161,10 @@ void ShowMenu(HWND hTargetWnd)
 		EnableMenuItem(hSubMenu, ID_APP_ABOUT, MF_BYCOMMAND | MF_GRAYED);
 	if (_waccess(theApp.m_Path+_T("StoreManager.exe"), 0)!=0)
 		EnableMenuItem(hSubMenu, ID_APP_NEWSTOREMANAGER, MF_BYCOMMAND | MF_GRAYED);
-	if (_waccess(theApp.m_Path+_T("Migrate.exe"), 0)!=0)
-		EnableMenuItem(hSubMenu, ID_APP_NEWMIGRATE, MF_BYCOMMAND | MF_GRAYED);
 	if (_waccess(theApp.m_Path+_T("FileDrop.exe"), 0)!=0)
 		EnableMenuItem(hSubMenu, ID_APP_NEWFILEDROP, MF_BYCOMMAND | MF_GRAYED);
+	if (_waccess(theApp.m_Path+_T("Migrate.exe"), 0)!=0)
+		EnableMenuItem(hSubMenu, ID_APP_NEWMIGRATE, MF_BYCOMMAND | MF_GRAYED);
 
 	POINT pos;
 	GetCursorPos(&pos);

@@ -32,7 +32,7 @@ LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
-IDI_ICON                ICON                    "res\\Watchdog.ico"
+IDI_ICON                ICON                    "res\\LFWatchdog.ico"
 ID_APP_NEWSTOREMANAGER  ICON                    "res\\StoreManager_Small.ico"
 ID_APP_NEWFILEDROP      ICON                    "res\\FileDrop_Small.ico"
 ID_APP_NEWMIGRATE       ICON                    "res\\Migrate_Small.ico"
@@ -43,8 +43,8 @@ ID_APP_NEWMIGRATE       ICON                    "res\\Migrate_Small.ico"
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,1,9,0
- PRODUCTVERSION 1,1,9,0
+ FILEVERSION 1,1,10,0
+ PRODUCTVERSION 1,1,10,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -60,13 +60,13 @@ BEGIN
         BLOCK "000004e4"
         BEGIN
             VALUE "CompanyName", "liquidFOLDERS"
-            VALUE "FileVersion", "1.1.9"
+            VALUE "FileVersion", "1.1.10"
             VALUE "InternalName", "LFWatchdog"
-            VALUE "LegalCopyright", "© 2009-2012 liquidFOLDERS"
+            VALUE "LegalCopyright", "© 2009-2013 liquidFOLDERS"
             VALUE "LegalTrademarks", "liquidFOLDERS®"
             VALUE "OriginalFilename", "LFWatchdog.exe"
             VALUE "ProductName", "liquidFOLDERS"
-            VALUE "ProductVersion", "1.1.9"
+            VALUE "ProductVersion", "1.1.10"
         END
     END
     BLOCK "VarFileInfo"
@@ -81,7 +81,7 @@ END
 // PNG
 //
 
-IDB_ABOUTICON           PNG                     "res\\Watchdog_About.png"
+IDB_ABOUTICON           PNG                     "res\\LFWatchdog_About.png"
 
 #endif    // Neutral resources
 /////////////////////////////////////////////////////////////////////////////
@@ -108,8 +108,8 @@ BEGIN
         MENUITEM "&Über Watchdog",              ID_APP_ABOUT
         MENUITEM SEPARATOR
         MENUITEM "&StoreManager starten",       ID_APP_NEWSTOREMANAGER
-        MENUITEM "&Migrations-Assistenten starten", ID_APP_NEWMIGRATE
         MENUITEM "&FileDrop starten",           ID_APP_NEWFILEDROP
+        MENUITEM "&Migrations-Assistenten starten", ID_APP_NEWMIGRATE
         MENUITEM SEPARATOR
         MENUITEM "&Beenden",                    ID_APP_EXIT
     END
@@ -152,8 +152,8 @@ BEGIN
         MENUITEM "&About Watchdog",             ID_APP_ABOUT
         MENUITEM SEPARATOR
         MENUITEM "Open &StoreManager",          ID_APP_NEWSTOREMANAGER
-        MENUITEM "Open &Migration Wizard",      ID_APP_NEWMIGRATE
         MENUITEM "Open &FileDrop",              ID_APP_NEWFILEDROP
+        MENUITEM "Open &Migration Wizard",      ID_APP_NEWMIGRATE
         MENUITEM SEPARATOR
         MENUITEM "&Quit",                       ID_APP_EXIT
     END
@@ -196,8 +196,8 @@ BEGIN
         MENUITEM "&Acerca Watchdog",            ID_APP_ABOUT
         MENUITEM SEPARATOR
         MENUITEM "Empezar &StoreManager",       ID_APP_NEWSTOREMANAGER
-        MENUITEM "Empezar Asistente de &Migración", ID_APP_NEWMIGRATE
         MENUITEM "Empezar &FileDrop",           ID_APP_NEWFILEDROP
+        MENUITEM "Empezar Asistente de &Migración", ID_APP_NEWMIGRATE
         MENUITEM SEPARATOR
         MENUITEM "&Terminar",                   ID_APP_EXIT
     END
@@ -240,8 +240,8 @@ BEGIN
         MENUITEM "&Concernant Watchdog",        ID_APP_ABOUT
         MENUITEM SEPARATOR
         MENUITEM "Commencer &StoreManager",     ID_APP_NEWSTOREMANAGER
-        MENUITEM "Commencer l'assistant de migration", ID_APP_NEWMIGRATE
         MENUITEM "Commencer &FileDrop",         ID_APP_NEWFILEDROP
+        MENUITEM "Commencer l'assistant de migration", ID_APP_NEWMIGRATE
         MENUITEM SEPARATOR
         MENUITEM "&Quitter",                    ID_APP_EXIT
     END

@@ -581,45 +581,46 @@ void CExplorerTree::EnumObjects(HTREEITEM hParentItem, LPITEMIDLIST pidlParent)
 
 	IEnumIDList* pEnum;
 	if (SUCCEEDED(pParentFolder->EnumObjects(NULL, SHCONTF_FOLDERS, &pEnum)))
-	{
-		LPITEMIDLIST pidlTemp;
-		while (pEnum->Next(1, &pidlTemp, NULL)==S_OK)
+		if(pEnum)
 		{
-			DWORD dwAttributes = SFGAO_HASSUBFOLDER | SFGAO_FILESYSTEM | SFGAO_FILESYSANCESTOR | SFGAO_HASPROPSHEET | SFGAO_CANRENAME | SFGAO_CANDELETE;
-			pParentFolder->GetAttributesOf(1, (LPCITEMIDLIST*)&pidlTemp, &dwAttributes);
-
-			// Don't include virtual branches
-			if (!(dwAttributes & (SFGAO_FILESYSANCESTOR | SFGAO_FILESYSTEM)))
-				continue;
-
-			// Don't include liquidFOLDERS
-			SHDESCRIPTIONID did;
-			if (SUCCEEDED(SHGetDataFromIDList(pParentFolder, pidlTemp, SHGDFIL_DESCRIPTIONID, &did, sizeof(SHDESCRIPTIONID))))
+			LPITEMIDLIST pidlTemp;
+			while (pEnum->Next(1, &pidlTemp, NULL)==S_OK)
 			{
-				const CLSID LFNE = { 0x3F2D914F, 0xFE57, 0x414F, { 0x9F, 0x88, 0xA3, 0x77, 0xC7, 0x84, 0x1D, 0xA4 } };
-				if (did.clsid==LFNE)
+				DWORD dwAttributes = SFGAO_HASSUBFOLDER | SFGAO_FILESYSTEM | SFGAO_FILESYSANCESTOR | SFGAO_HASPROPSHEET | SFGAO_CANRENAME | SFGAO_CANDELETE;
+				pParentFolder->GetAttributesOf(1, (LPCITEMIDLIST*)&pidlTemp, &dwAttributes);
+
+				// Don't include virtual branches
+				if (!(dwAttributes & (SFGAO_FILESYSANCESTOR | SFGAO_FILESYSTEM)))
 					continue;
-			}
 
-			// Don't include file junctions
-			LPITEMIDLIST pidlFQ = p_App->GetShellManager()->ConcatenateItem(pidlParent, pidlTemp);
-
-			WCHAR Path[MAX_PATH];
-			if (SUCCEEDED(SHGetPathFromIDList(pidlFQ, Path)))
-			{
-				DWORD attr = GetFileAttributes(Path);
-				if ((attr!=INVALID_FILE_ATTRIBUTES) && (!(attr & FILE_ATTRIBUTE_DIRECTORY)))
+				// Don't include liquidFOLDERS
+				SHDESCRIPTIONID did;
+				if (SUCCEEDED(SHGetDataFromIDList(pParentFolder, pidlTemp, SHGDFIL_DESCRIPTIONID, &did, sizeof(SHDESCRIPTIONID))))
 				{
-					p_App->GetShellManager()->FreeItem(pidlFQ);
-					continue;
+					const CLSID LFNE = { 0x3F2D914F, 0xFE57, 0x414F, { 0x9F, 0x88, 0xA3, 0x77, 0xC7, 0x84, 0x1D, 0xA4 } };
+					if (did.clsid==LFNE)
+						continue;
 				}
+
+				// Don't include file junctions
+				LPITEMIDLIST pidlFQ = p_App->GetShellManager()->ConcatenateItem(pidlParent, pidlTemp);
+
+				WCHAR Path[MAX_PATH];
+				if (SUCCEEDED(SHGetPathFromIDList(pidlFQ, Path)))
+				{
+					DWORD attr = GetFileAttributes(Path);
+					if ((attr!=INVALID_FILE_ATTRIBUTES) && (!(attr & FILE_ATTRIBUTE_DIRECTORY)))
+					{
+						p_App->GetShellManager()->FreeItem(pidlFQ);
+						continue;
+					}
+				}
+
+				InsertItem(pidlFQ, pidlTemp, dwAttributes, hParentItem);
 			}
 
-			InsertItem(pidlFQ, pidlTemp, dwAttributes, hParentItem);
+			pEnum->Release();
 		}
-
-		pEnum->Release();
-	}
 
 	TV_SORTCB tvSort;
 	tvSort.hParent = hParentItem;

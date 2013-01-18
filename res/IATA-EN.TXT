@@ -1741,6 +1741,7 @@ DHT     Dalhart, USA;4;36*1'21"N, 102*32'50"W
 DIB     Dibrugarh, India;4;27*29'2"N, 95*1'1"E
 DIC     Dili (Heliport), Indonesia;4;8*33'32"S, 125*32'13"E
 DIE     Antsiranana, Madagascar;4;12*20'58"S, 49*17'30"E
+DIG     Shangri-La, China;5;27*47'37"N, 99*40'38"E
 DIJ     Dijon, France;4;47*15'57"N, 5*5'42"E
 DIK     Dickinson, USA;4;46*47'51"N, 102*48'7"W
 DIL     Dili, Indonesia;4;8*32'47"S, 125*31'29"E
@@ -2763,7 +2764,7 @@ GUV     Mougulu, New Guinea;4;6*16'1"S, 142*25'1"E
 GUW     Atyrau, Kasachstan;4;47*7'19"N, 51*49'17"E
 GUX     Guna, India;4;24*39'17"N, 77*20'50"E
 GUY     Guymon, USA;4;36*41'6"N, 101*30'28"W
-GVA     Genf, Switzerland;4;46*14'17"N, 6*6'32"E
+GVA     Geneva, Switzerland;4;46*14'17"N, 6*6'32"E
 GVD     Andravida, Greece
 GVE     Gordonsville, USA;4;38*9'22"N, 78*9'57"W
 GVI     Green River, New Guinea;4;3*54'0"S, 141*10'1"E
@@ -2819,6 +2820,7 @@ HAM     Hamburg, Germany;4;53*37'49"N, 9*59'18"E
 HAN     Hanoi, Vietnam;4;21*13'16"N, 105*48'26"E
 HAO     Hamilton, USA;4;39*21'50"N, 84*31'19"W
 HAP     Whitsunday Kontiki Resort, Australia;4;20*20'2"S, 148*50'56"E
+HAQ     Hanimaadhoo, Maldives;5;6*45'0"N, 73*9'0"E
 HAR     Harrisburg, USA;4;40*13'2"N, 76*51'5"W
 HAS     Hail, Saudi Arabia;4;27*26'17"N, 41*41'11"E
 HAT     Heathlands, Australia;4;11*44'13"S, 142*34'39"E
@@ -3606,6 +3608,7 @@ JYL     Sylvania, USA;4;32*38'43"N, 81*35'50"W
 JYO     Leesburg, USA;4;39*4'41"N, 77*33'27"W
 JYR     York, USA;4;40*53'48"N, 97*37'22"W
 JYV     Jyvaskyla, Finland;4;62*23'58"N, 25*40'42"E
+JZH     Jiu Zhai Huang Long Airport, China;5;32*50'13"N, 103*40'55"E
 JZI     Charleston (Executive Airport), USA;4;32*42'3"N, 80*0'11"W
 JZP     Jasper, USA;4;34*27'12"N, 84*27'26"W
 KAA     Kasama, Zambia;4;10*13'1"S, 31*7'59"E
@@ -4263,6 +4266,7 @@ LIX     Likoma Island, Malawi;4;12*4'59"S, 34*43'59"E
 LIY     Hinesville, USA;4;31*53'21"N, 81*33'44"W
 LJA     Lodja, Congo;4;3*25'1"S, 23*27'0"E
 LJC     Louisville (International Airport), USA
+LJG     Lijiang, China;5;23*35'5"N, 102*0'35"E
 LJN     Angleton/Lake Jackson, USA;4;29*6'31"N, 95*27'43"W
 LJU     Ljubljana, Slovenija;4;46*13'25"N, 14*27'27"E
 LKA     Larantuka, Indonesia;4;8*21'0"S, 122*58'59"E

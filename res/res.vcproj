@@ -112,38 +112,6 @@
 			Name="Folders"
 			>
 			<File
-				RelativePath=".\Folders\All.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Folders\Archive.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Folders\Audio.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Folders\Calendar.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Folders\Contacts.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Folders\Default.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Folders\Documents.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Folders\Favorites.png"
-				>
-			</File>
-			<File
 				RelativePath=".\Folders\FLD_All.ico"
 				>
 			</File>
@@ -223,54 +191,6 @@
 				RelativePath=".\Folders\FLD_Web.ico"
 				>
 			</File>
-			<File
-				RelativePath=".\Folders\Fonts.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Folders\Location.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Folders\Mail.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Folders\Photos.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Folders\Pictures.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Folders\Presentations.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Folders\Roll.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Folders\Spreadsheets.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Folders\System.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Folders\Trash.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Folders\Videos.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Folders\Web.png"
-				>
-			</File>
 		</Filter>
 		<Filter
 			Name="optipng"
@@ -281,110 +201,6 @@
 			</File>
 			<File
 				RelativePath=".\optipng\optipng.exe"
-				>
-			</File>
-		</Filter>
-		<Filter
-			Name="Other"
-			>
-			<File
-				RelativePath=".\Other\ActiveX.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\Other\ActiveX.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Other\Back.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\Other\Back.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Other\Computer.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\Other\Computer.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Other\Favorite.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\Other\Favorite.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Other\Library.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\Other\Library1.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Other\Library2.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Other\Link.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\Other\Link.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Other\Overlay1.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\Other\Overlay1.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Other\Overlay2.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\Other\Overlay2.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Other\Places.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\Other\Places.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Other\Unlink.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\Other\Unlink.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Other\Web.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\Other\Web.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Other\Zipped.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\Other\Zipped.png"
 				>
 			</File>
 		</Filter>
@@ -848,14 +664,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Ribbon\RegisterFileFormat_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\RegisterFileFormat_32.png"
-				>
-			</File>
-			<File
 				RelativePath=".\Ribbon\Registry_16.png"
 				>
 			</File>
@@ -1136,15 +944,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Stores\Store_Bag.png"
-				>
-			</File>
-			<File
 				RelativePath=".\Stores\Store_Default.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\Stores\Store_Default.png"
 				>
 			</File>
 			<File
@@ -1156,23 +956,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Stores\Store_Empty.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Stores\Store_Full.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\Stores\Store_Full.png"
-				>
-			</File>
-			<File
 				RelativePath=".\Stores\Store_Server.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\Stores\Store_Server.png"
 				>
 			</File>
 		</Filter>
@@ -1237,23 +1021,11 @@
 			>
 		</File>
 		<File
-			RelativePath="Backdrop1.jpg"
+			RelativePath=".\Backdrop.jpg"
 			>
 		</File>
 		<File
-			RelativePath="Backdrop2.png"
-			>
-		</File>
-		<File
-			RelativePath="Backdrop3.png"
-			>
-		</File>
-		<File
-			RelativePath=".\Backdrop4.png"
-			>
-		</File>
-		<File
-			RelativePath=".\Backdrop5.png"
+			RelativePath=".\Backdrop_Blue.png"
 			>
 		</File>
 		<File
@@ -1262,10 +1034,6 @@
 		</File>
 		<File
 			RelativePath=".\Crosshair.png"
-			>
-		</File>
-		<File
-			RelativePath="Default.png"
 			>
 		</File>
 		<File
@@ -1301,19 +1069,11 @@
 			>
 		</File>
 		<File
-			RelativePath=".\ExplorerGradient.png"
-			>
-		</File>
-		<File
 			RelativePath=".\Field_Tiny.ico"
 			>
 		</File>
 		<File
 			RelativePath=".\FileDrop.ico"
-			>
-		</File>
-		<File
-			RelativePath=".\FileDrop.png"
 			>
 		</File>
 		<File
@@ -1381,10 +1141,6 @@
 			>
 		</File>
 		<File
-			RelativePath="Help_16.bmp"
-			>
-		</File>
-		<File
 			RelativePath=".\IATA-DE.TXT"
 			>
 		</File>
@@ -1394,10 +1150,6 @@
 		</File>
 		<File
 			RelativePath="Info.ico"
-			>
-		</File>
-		<File
-			RelativePath="Inspector.png"
 			>
 		</File>
 		<File
@@ -1413,11 +1165,23 @@
 			>
 		</File>
 		<File
-			RelativePath=".\Key.png"
+			RelativePath=".\Key_Tiny.ico"
 			>
 		</File>
 		<File
-			RelativePath=".\Key_Tiny.ico"
+			RelativePath=".\LFRunCmd.ico"
+			>
+		</File>
+		<File
+			RelativePath=".\LFRunCmd_About.png"
+			>
+		</File>
+		<File
+			RelativePath=".\LFWatchdog.ico"
+			>
+		</File>
+		<File
+			RelativePath=".\LFWatchdog_About.png"
 			>
 		</File>
 		<File
@@ -1445,27 +1209,11 @@
 			>
 		</File>
 		<File
-			RelativePath="Logo alpha tiny.png"
-			>
-		</File>
-		<File
 			RelativePath=".\Migrate.ico"
 			>
 		</File>
 		<File
-			RelativePath=".\Migrate.png"
-			>
-		</File>
-		<File
-			RelativePath=".\Ribbon\Migrate_16.png"
-			>
-		</File>
-		<File
 			RelativePath=".\Migrate_24.bmp"
-			>
-		</File>
-		<File
-			RelativePath=".\Ribbon\Migrate_32.png"
 			>
 		</File>
 		<File
@@ -1533,10 +1281,6 @@
 			>
 		</File>
 		<File
-			RelativePath="Rating.png"
-			>
-		</File>
-		<File
 			RelativePath=".\Rating0.png"
 			>
 		</File>
@@ -1585,10 +1329,6 @@
 			>
 		</File>
 		<File
-			RelativePath=".\Registry_Tiny.ico"
-			>
-		</File>
-		<File
 			RelativePath=".\Reset_Hot_Tiny.ico"
 			>
 		</File>
@@ -1598,14 +1338,6 @@
 		</File>
 		<File
 			RelativePath=".\Reset_Pressed_Tiny.ico"
-			>
-		</File>
-		<File
-			RelativePath=".\RunCmd.ico"
-			>
-		</File>
-		<File
-			RelativePath=".\RunCmd_About.png"
 			>
 		</File>
 		<File
@@ -1706,18 +1438,6 @@
 		</File>
 		<File
 			RelativePath="Warning.ico"
-			>
-		</File>
-		<File
-			RelativePath=".\Watchdog.ico"
-			>
-		</File>
-		<File
-			RelativePath=".\Watchdog.png"
-			>
-		</File>
-		<File
-			RelativePath=".\Watchdog_About.png"
 			>
 		</File>
 		<File

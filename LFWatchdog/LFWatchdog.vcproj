@@ -441,6 +441,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\LFWatchdog.ico"
+				>
+			</File>
+			<File
 				RelativePath=".\LFWatchdog.rc"
 				>
 				<FileConfiguration
@@ -481,19 +485,15 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\res\LFWatchdog_About.png"
+				>
+			</File>
+			<File
 				RelativePath=".\res\Migrate_Small.ico"
 				>
 			</File>
 			<File
 				RelativePath=".\res\StoreManager_Small.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Watchdog.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Watchdog_About.png"
 				>
 			</File>
 		</Filter>

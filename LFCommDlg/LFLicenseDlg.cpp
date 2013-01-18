@@ -91,21 +91,3 @@ void LFLicenseDlg::OnLoadLicense()
 BEGIN_MESSAGE_MAP(LFLicenseDlg, LFDialog)
 	ON_BN_CLICKED(IDC_LOADLICENSE, OnLoadLicense)
 END_MESSAGE_MAP()
-
-BOOL LFLicenseDlg::OnInitDialog()
-{
-	LFDialog::OnInitDialog();
-
-	m_Icon.Load(IDB_KEY, _T("PNG"), LFCommDlgDLL.hResource);
-
-	return TRUE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird
-}
-
-void LFLicenseDlg::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
-{
-	LFDialog::OnEraseBkgnd(dc, g, rect);
-
-	INT l = m_Icon.m_pBitmap->GetWidth();
-	INT h = m_Icon.m_pBitmap->GetHeight();
-	g.DrawImage(m_Icon.m_pBitmap, 16, 16, l, h);
-}

@@ -546,7 +546,7 @@ LFCore_API LFDomainDescriptor* LFGetDomainInfo(unsigned int ID)
 			d->CategoryID = LFItemCategoryMediaTypes;
 		}
 		else
-			if ((ID==LFDomainAllFiles) || (ID==LFDomainFavorites) || (ID==LFDomainFilters) )
+			if ((ID==LFDomainAllFiles) || (ID==LFDomainFavorites) || (ID==LFDomainFilters))
 			{
 				d->CategoryID = LFItemCategoryStore;
 			}

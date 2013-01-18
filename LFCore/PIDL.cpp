@@ -121,29 +121,31 @@ bool GetPIDLForStore(char* StoreID, LPITEMIDLIST* ppidl, LPITEMIDLIST* ppidlDele
 			{
 				IEnumIDList* pEnum = NULL;
 				if (SUCCEEDED(pParentFolder->EnumObjects(NULL, SHCONTF_FOLDERS, &pEnum)))
-				{
-					LPITEMIDLIST pidlTemp = NULL;
-					while (pEnum->Next(1, &pidlTemp, NULL)==S_OK)
+					if (pEnum)
 					{
-						SHDESCRIPTIONID did;
-						if (SUCCEEDED(SHGetDataFromIDList(pParentFolder, pidlTemp, SHGDFIL_DESCRIPTIONID, &did, sizeof(SHDESCRIPTIONID))))
+						LPITEMIDLIST pidlTemp = NULL;
+						while (pEnum->Next(1, &pidlTemp, NULL)==S_OK)
 						{
-							const CLSID LFNE = { 0x3F2D914F, 0xFE57, 0x414F, { 0x9F, 0x88, 0xA3, 0x77, 0xC7, 0x84, 0x1D, 0xA4 } };
-							if (did.clsid==LFNE)
+							SHDESCRIPTIONID did;
+							if (SUCCEEDED(SHGetDataFromIDList(pParentFolder, pidlTemp, SHGDFIL_DESCRIPTIONID, &did, sizeof(SHDESCRIPTIONID))))
 							{
-								STRRET Name;
-								if (SUCCEEDED(pParentFolder->GetDisplayNameOf(pidlTemp, SHGDN_FORPARSING, &Name)))
-									if (wcscmp(Name.pOleStr, Path)==0)
-									{
-										*ppidlDelegate = ConcatenatePIDLs(pidlMyComputer, pidlTemp);
-										break;
-									}
+								const CLSID LFNE = { 0x3F2D914F, 0xFE57, 0x414F, { 0x9F, 0x88, 0xA3, 0x77, 0xC7, 0x84, 0x1D, 0xA4 } };
+								if (did.clsid==LFNE)
+								{
+									STRRET Name;
+									if (SUCCEEDED(pParentFolder->GetDisplayNameOf(pidlTemp, SHGDN_FORPARSING, &Name)))
+										if (wcscmp(Name.pOleStr, Path)==0)
+										{
+											*ppidlDelegate = ConcatenatePIDLs(pidlMyComputer, pidlTemp);
+											break;
+										}
+								}
 							}
 						}
+
+						pEnum->Release();
 					}
 
-					pEnum->Release();
-				}
 				pParentFolder->Release();
 			}
 		}
