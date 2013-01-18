@@ -423,7 +423,7 @@ void MountExternal()
 		SHFILEINFO sfi;
 		if (SHGetFileInfo(szDriveRoot, 0, &sfi, sizeof(SHFILEINFO), SHGFI_ATTRIBUTES))
 			if (sfi.dwAttributes)
-				LFMountDrive(cDrive, true);
+				MountDrive(cDrive, true);
 	}
 }
 
@@ -707,7 +707,7 @@ LFCore_API unsigned int LFGetStores(char** keys, unsigned int* count)
 	return LFOk;
 }
 
-LFCore_API unsigned int LFMountDrive(char d, bool InternalCall)
+unsigned int MountDrive(char d, bool InternalCall)
 {
 	wchar_t mask[] = L" :\\*.store";
 	mask[0] = d;
@@ -817,7 +817,7 @@ Finish:
 	return res;
 }
 
-LFCore_API unsigned int LFUnmountDrive(char d, bool InternalCall)
+unsigned int UnmountDrive(char d, bool InternalCall)
 {
 	if (!GetMutex(Mutex_Stores))
 		return LFMutexError;

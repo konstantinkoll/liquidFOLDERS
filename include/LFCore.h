@@ -396,12 +396,6 @@ LFCore_API bool LFStoresOnVolume(char d);
 // Gibt die IDs aller Stores zurück
 LFCore_API unsigned int LFGetStores(char** keys, unsigned int* count);
 
-// Mountet alle Hybrid-Stores und externen Stores auf Laufwerk d
-LFCore_API unsigned int LFMountDrive(char d, bool InternalCall=false);
-
-// Unmountet alle Hybrid-Stores und externen Stores auf Laufwerk d
-LFCore_API unsigned int LFUnmountDrive(char d, bool InternalCall=false);
-
 
 
 //

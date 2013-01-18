@@ -527,6 +527,10 @@
 				RelativePath=".\Transaction.cpp"
 				>
 			</File>
+			<File
+				RelativePath=".\Watchdog.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Headerdateien"
@@ -663,6 +667,10 @@
 			</File>
 			<File
 				RelativePath=".\Transaction.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Watchdog.h"
 				>
 			</File>
 		</Filter>

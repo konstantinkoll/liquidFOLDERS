@@ -309,19 +309,6 @@ BOOL LFApplication::InitInstance()
 	if (!m_HasGUI)
 		return TRUE;
 
-	// Watchdog starten
-	#ifndef _DEBUG
-	HANDLE hMutex = CreateMutex(NULL, FALSE, _T(LFCM_Watchdog));
-	if (hMutex && GetLastError()==ERROR_SUCCESS)
-	{
-		ReleaseMutex(hMutex);
-		CloseHandle(hMutex);
-
-		if (_waccess(m_Path+_T("LFWatchdog.exe"), 0)==0)
-			ShellExecute(NULL, _T("open"), m_Path+_T("LFWatchdog.exe"), NULL, NULL, SW_SHOW);
-	}
-	#endif
-
 	ResetNagCounter;
 
 	// Beim ersten Mal Welcome-Dialog anzeigen

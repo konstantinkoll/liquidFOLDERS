@@ -12,6 +12,7 @@
 #include "Mutex.h"
 #include "ShellProperties.h"
 #include "StoreCache.h"
+#include "Watchdog.h"
 #include <assert.h>
 #include <iostream>
 #include <shlobj.h>
@@ -47,6 +48,7 @@ LFCore_API void LFInitialize()
 	InitMutex();
 	InitAirportDatabase();
 	InitStoreCache();
+	InitWatchdog();
 }
 
 
