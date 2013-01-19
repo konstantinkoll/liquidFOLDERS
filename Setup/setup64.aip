@@ -24,11 +24,11 @@
     <ROW Property="ARPURLINFOABOUT" Value="http://liquidfolders.net/"/>
     <ROW Property="ARPURLUPDATEINFO" Value="http://liquidfolders.net/download/"/>
     <ROW Property="AppLogoIcon" Value="AppLogo.ico" Type="1" MsiKey="AppLogoIcon"/>
-    <ROW Property="Background" Value="Backdrop5.bmp" Type="1" MsiKey="Background"/>
+    <ROW Property="Background" Value="Backdrop3.bmp" Type="1" MsiKey="Background"/>
     <ROW Property="CompleteSetupIcon" Value="Install.ico" Type="1" MsiKey="CompleteSetupIcon"/>
     <ROW Property="CustomSetupIcon" Value="Install.ico" Type="1" MsiKey="CustomSetupIcon"/>
     <ROW Property="ExclamationIcon" Value="Warning.ico" Type="1" MsiKey="ExclamationIcon"/>
-    <ROW Property="ExitBackground" Value="Backdrop4.bmp" Type="1" MsiKey="ExitBackground"/>
+    <ROW Property="ExitBackground" Value="Backdrop1.bmp" Type="1" MsiKey="ExitBackground"/>
     <ROW Property="FolderLogoIcon" Value="DestinationFolder.ico" Type="1" MsiKey="FolderLogoIcon"/>
     <ROW Property="InfoIcon" Value="Info.ico" Type="1" MsiKey="InfoIcon"/>
     <ROW Property="InstallLogoIcon" Value="Install.ico" Type="1" MsiKey="InstallLogoIcon"/>
@@ -157,8 +157,9 @@
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiBinaryComponent">
     <ROW Name="AppLogo.ico" SourcePath="Setup\AppLogo.ico"/>
-    <ROW Name="Backdrop4.bmp" SourcePath="Setup\Backdrop4.bmp"/>
-    <ROW Name="Backdrop5.bmp" SourcePath="Setup\Backdrop5.bmp"/>
+    <ROW Name="Backdrop1.bmp" SourcePath="Setup\Backdrop1.bmp"/>
+    <ROW Name="Backdrop2.bmp" SourcePath="Setup\Backdrop2.bmp"/>
+    <ROW Name="Backdrop3.bmp" SourcePath="Setup\Backdrop3.bmp"/>
     <ROW Name="DestinationFolder.ico" SourcePath="Setup\DestinationFolder.ico"/>
     <ROW Name="ExternalUICleaner.dll" SourcePath="&lt;AI_CUSTACTS&gt;ExternalUICleaner.dll"/>
     <ROW Name="Info.ico" SourcePath="Setup\Info.ico"/>
@@ -257,7 +258,7 @@
     <ROW Dialog_="WelcomeDlg" Control="Description" Type="Text" X="55" Y="250" Width="340" Height="60" Attributes="196611" Text="The [Wizard] will install [ProductName] on your computer. Click Next to continue or close the window to exit the [Wizard]." Control_Next="PushButton_Cancel" TextLocId="Control.Text.WelcomeDlg#DescriptionNoClose" MsiKey="WelcomeDlg#Description"/>
     <ROW Dialog_="WelcomeDlg" Control="Next" Type="PushButton" X="307" Y="330" Width="56" Height="17" Attributes="3" Text="[ButtonText_Next]" Control_Next="Cancel" TextLocId="-" MsiKey="WelcomeDlg#Next"/>
     <ROW Dialog_="WelcomeDlg" Control="Title" Type="Text" X="55" Y="10" Width="202" Height="58" Attributes="196611" Text="Welcome to the [ProductName] [Wizard]" TextStyle="TitleFont" Control_Next="Description" TextLocId="Control.Text.WelcomeDlg#Title" MsiKey="WelcomeDlg#Title"/>
-    <ROW Dialog_="WelcomeDlg" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1" Text="[Background]" Control_Next="DialogIcon" MsiKey="WelcomeDlg#Bitmap"/>
+    <ROW Dialog_="WelcomeDlg" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1" Text="Backdrop2.bmp" Control_Next="DialogIcon" MsiKey="WelcomeDlg#Bitmap"/>
     <ROW Dialog_="PatchWelcomeDlg" Control="Back" Type="PushButton" X="245" Y="330" Width="56" Height="17" Attributes="2" Text="[ButtonText_Back]" Control_Next="Title" TextLocId="-" MsiKey="PatchWelcomeDlg#Back"/>
     <ROW Dialog_="PatchWelcomeDlg" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1" Text="[Background]" Control_Next="Next" MsiKey="PatchWelcomeDlg#Bitmap"/>
     <ROW Dialog_="PatchWelcomeDlg" Control="Description" Type="Text" X="55" Y="110" Width="340" Height="60" Attributes="196611" Text="The [Wizard] will install the Patch for [ProductName] on your computer.  Click Next to continue or close the window to exit the Patch [Wizard]." Control_Next="PushButton_Cancel" TextLocId="Control.Text.PatchWelcomeDlg#DescriptionNoClose" MsiKey="PatchWelcomeDlg#Description"/>
@@ -278,7 +279,7 @@
     <ROW Dialog_="AdminInstallPointDlg" Control="PathEdit" Type="PathEdit" X="55" Y="150" Width="340" Height="18" Attributes="3" Property="TARGETDIR" Control_Next="Browse" MsiKey="AdminInstallPointDlg#PathEdit"/>
     <ROW Dialog_="AdminInstallPointDlg" Control="Text" Type="Text" X="55" Y="135" Width="340" Height="11" Attributes="65539" Text="&amp;Enter a new network location or click &quot;Browse&quot; to browse to one." Control_Next="PathEdit" TextLocId="Control.Text.AdminInstallPointDlg#Text" MsiKey="AdminInstallPointDlg#Text"/>
     <ROW Dialog_="MaintenanceTypeDlg" Control="Cancel" Type="PushButton" X="450" Y="0" Width="0" Height="0" Attributes="2" Text="[ButtonText_Cancel]" Control_Next="Title" TextLocId="-" MsiKey="MaintenanceTypeDlg#Cancel"/>
-    <ROW Dialog_="PrepareDlg" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1" Text="[Background]" Control_Next="Cancel" MsiKey="PrepareDlg#Bitmap"/>
+    <ROW Dialog_="PrepareDlg" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1" Text="Backdrop2.bmp" Control_Next="Cancel" MsiKey="PrepareDlg#Bitmap"/>
     <ROW Dialog_="PrepareDlg" Control="Description" Type="Text" X="55" Y="110" Width="340" Height="40" Attributes="196611" Text="Please wait while the [Wizard] prepares to guide you through the installation." Control_Next="TitleIcon" TextLocId="Azure.Control.Text.PrepareDlg#Description" MsiKey="PrepareDlg#Description"/>
     <ROW Dialog_="ProgressDlg" Control="ProgressBar" Type="ProgressBar" X="55" Y="160" Width="340" Height="14" Attributes="65537" Text="Progress done" Control_Next="Description" TextLocId="Control.Text.ProgressDlg#ProgressBar" MsiKey="ProgressDlg#ProgressBar"/>
     <ROW Dialog_="ProgressDlg" Control="Description" Type="Text" X="55" Y="190" Width="340" Height="11" Attributes="65539" Text="Installing [ProductName]..." Control_Next="TitleIcon" TextLocId="Azure.Control.Text.ProgressDlg#Description" MsiKey="ProgressDlg#Description"/>
