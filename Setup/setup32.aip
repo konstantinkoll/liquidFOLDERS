@@ -567,7 +567,7 @@
     <ROW RemoveRegistry="__11" Root="0" Key="CLSID\{3F2D914D-FE57-414F-9F88-A377C7841DA4}" Name="-" Component_="liquidFOLDERS"/>
     <ROW RemoveRegistry="__12" Root="0" Key="CLSID\{3F2D914E-FE57-414F-9F88-A377C7841DA4}" Name="-" Component_="liquidFOLDERS"/>
     <ROW RemoveRegistry="__13" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}" Name="-" Component_="liquidFOLDERS"/>
-    <ROW RemoveRegistry="__14" Root="2" Key="Software\[ProductName]\Template" Name="-" Component_="LFCore.dll"/>
+    <ROW RemoveRegistry="__14" Root="1" Key="Software\[ProductName]\Template" Name="-" Component_="LFCore.dll"/>
     <ROW RemoveRegistry="__2" Root="2" Key="Software\liquidFOLDERS" Name="-" Component_="liquidFOLDERS"/>
     <ROW RemoveRegistry="__3" Root="0" Key="LFSendTofile" Name="-" Component_="liquidFOLDERS"/>
     <ROW RemoveRegistry="__4" Root="0" Key="LFNamespaceExtension.RootFolder" Name="-" Component_="liquidFOLDERS"/>
