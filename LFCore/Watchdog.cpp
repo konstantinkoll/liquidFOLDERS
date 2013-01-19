@@ -7,7 +7,7 @@
 extern HMODULE LFCoreModuleHandle;
 
 const wchar_t szWindowClass[] = L"LFWatchdog";
-HWND hWndWatchdog;
+HWND hWndWatchdog = NULL;
 ULONG ulSHChangeNotifyRegister;
 
 
@@ -57,6 +57,9 @@ void RegisterWindowClass(PCWSTR pszClassName, WNDPROC lpfnWndProc)
 
 void InitWatchdog()
 {
+	if (hWndWatchdog)
+		return;
+
 	RegisterWindowClass(szWindowClass, WndProc);
 
 	hWndWatchdog = CreateWindowEx(0, szWindowClass, L"", 0, 0, 0, 0, 0, HWND_MESSAGE, NULL, NULL, NULL);
