@@ -34,17 +34,17 @@
 	</Company_Info>
 	<Program_Info>
 		<Program_Name>liquidFOLDERS</Program_Name>
-		<Program_Version>1.1.9</Program_Version>
-		<Program_Release_Month>10</Program_Release_Month>
-		<Program_Release_Day>31</Program_Release_Day>
-		<Program_Release_Year>2012</Program_Release_Year>
+		<Program_Version>1.1.10</Program_Version>
+		<Program_Release_Month>1</Program_Release_Month>
+		<Program_Release_Day>19</Program_Release_Day>
+		<Program_Release_Year>2013</Program_Release_Year>
 		<Program_Cost_Dollars>25.00</Program_Cost_Dollars>
 		<Program_Cost_Other_Code>EUR</Program_Cost_Other_Code>
 		<Program_Cost_Other>19.90</Program_Cost_Other>
 		<Program_Type>Shareware</Program_Type>
 		<Program_Release_Status>Minor Update</Program_Release_Status>
 		<Program_Install_Support>Install and Uninstall</Program_Install_Support>
-		<Program_OS_Support>Win7 x32,Win7 x64,WinVista,WinVista x64,WinXP</Program_OS_Support>
+		<Program_OS_Support>Win8 x32,Win8 x64,Win7 x32,Win7 x64,WinVista,WinVista x64,WinXP</Program_OS_Support>
 		<Program_Language>English,French,German,Spanish</Program_Language>
 		<Program_Change_Info />
 		<Program_Specific_Category>Utilities</Program_Specific_Category>
