@@ -75,6 +75,8 @@ BOOL CRunCmdApp::InitInstance()
 				OnStoresMaintainAll();
 			if (command==_T("INSTALL"))
 				LFCreateSendTo(true);
+			if (command==_T("CHECKUPDATE"))
+				LFCheckForUpdate();
 			break;
 		case 3:
 			if (command==_T("NEWSTOREVOLUME"))
