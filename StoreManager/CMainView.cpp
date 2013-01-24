@@ -155,35 +155,35 @@ BOOL CMainView::CreateFileView(UINT ViewID, FVPersistentData* Data)
 		if ((m_ViewID<LFViewLargeIcons) || (m_ViewID>LFViewPreview))
 		{
 			pNewView = new CListView();
-			((CListView*)pNewView)->Create(this, FileViewID, p_CookedFiles, Data);
+			((CListView*)pNewView)->Create(this, FileViewID, p_RawFiles, p_CookedFiles, Data);
 		}
 		break;
 	case LFViewCalendar:
 		if (m_ViewID!=LFViewCalendar)
 		{
 			pNewView = new CCalendarView();
-			((CCalendarView*)pNewView)->Create(this, FileViewID, p_CookedFiles, Data);
+			((CCalendarView*)pNewView)->Create(this, FileViewID, p_RawFiles, p_CookedFiles, Data);
 		}
 		break;
 	case LFViewTimeline:
 		if (m_ViewID!=LFViewTimeline)
 		{
 			pNewView = new CTimelineView();
-			((CTimelineView*)pNewView)->Create(this, FileViewID, p_CookedFiles, Data);
+			((CTimelineView*)pNewView)->Create(this, FileViewID, p_RawFiles, p_CookedFiles, Data);
 		}
 		break;
 	case LFViewGlobe:
 		if (m_ViewID!=LFViewGlobe)
 		{
 			pNewView = new CGlobeView();
-			((CGlobeView*)pNewView)->Create(this, FileViewID, p_CookedFiles, Data);
+			((CGlobeView*)pNewView)->Create(this, FileViewID, p_RawFiles, p_CookedFiles, Data);
 		}
 		break;
 	case LFViewTagcloud:
 		if (m_ViewID!=LFViewTagcloud)
 		{
 			pNewView = new CTagcloudView();
-			((CTagcloudView*)pNewView)->Create(this, FileViewID, p_CookedFiles, Data);
+			((CTagcloudView*)pNewView)->Create(this, FileViewID, p_RawFiles, p_CookedFiles, Data);
 		}
 		break;
 	}
@@ -308,7 +308,7 @@ void CMainView::UpdateSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles,
 	if (!pCookedFiles)
 	{
 		if (p_wndFileView)
-			p_wndFileView->UpdateSearchResult(NULL, NULL);
+			p_wndFileView->UpdateSearchResult(NULL, NULL, NULL);
 
 		RevokeDragDrop(m_wndExplorerHeader.GetSafeHwnd());
 		RevokeDragDrop(p_wndFileView->GetSafeHwnd());
@@ -321,7 +321,7 @@ void CMainView::UpdateSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles,
 		if (!CreateFileView(theApp.m_Views[pCookedFiles->m_Context].Mode, Data))
 		{
 			p_wndFileView->UpdateViewOptions(m_Context);
-			p_wndFileView->UpdateSearchResult(pCookedFiles, Data);
+			p_wndFileView->UpdateSearchResult(pRawFiles, pCookedFiles, Data);
 		}
 
 		m_DropTarget.SetFilter(pFilter);

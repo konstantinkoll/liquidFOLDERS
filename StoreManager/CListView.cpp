@@ -90,7 +90,7 @@ void CListView::SetViewOptions(BOOL Force)
 		m_IconSize[1].cy = min(cy, 128);
 	}
 
-	if ((p_ViewParameters->Mode==LFViewDetails) && (p_Result))
+	if ((p_ViewParameters->Mode==LFViewDetails) && (p_CookedFiles))
 		for (UINT a=0; a<LFAttributeCount; a++)
 			if (p_ViewParameters->ColumnWidth[a]!=m_ViewParameters.ColumnWidth[a])
 			{
@@ -99,32 +99,34 @@ void CListView::SetViewOptions(BOOL Force)
 				break;
 			}
 
-	AdjustHeader((p_ViewParameters->Mode==LFViewDetails) && (p_Result));
+	AdjustHeader((p_ViewParameters->Mode==LFViewDetails) && (p_CookedFiles));
 }
 
-void CListView::SetSearchResult(LFSearchResult* Result, FVPersistentData* /*Data*/)
+void CListView::SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data)
 {
+	CGridView::SetSearchResult(pRawFiles, pCookedFiles, Data);
+
 	m_ShowLegend = FALSE;
 
-	if (Result)
+	if (p_CookedFiles)
 	{
-		m_HasCategories = Result->m_HasCategories;
+		m_HasCategories = p_CookedFiles->m_HasCategories;
 
-		for (UINT a=0; a<Result->m_ItemCount; a++)
+		for (UINT a=0; a<p_CookedFiles->m_ItemCount; a++)
 		{
 			GridItemData* d = GetItemData(a);
 			d->Hdr.Valid = TRUE;
 
-			LFItemDescriptor* i = Result->m_Items[a];
+			LFItemDescriptor* i = p_CookedFiles->m_Items[a];
 			m_ShowLegend |= (i->Type & LFTypeRequiresMaintenance) | (i->CoreAttributes.Flags & LFFlagMissing);
 
 			if ((i->Type & LFTypeMask)==LFTypeFile)
-				if (!Result->m_HasCategories)
-					if (Result->m_Context==LFContextSubfolderDay)
+				if (!p_CookedFiles->m_HasCategories)
+					if (p_CookedFiles->m_Context==LFContextSubfolderDay)
 					{
 						SYSTEMTIME stUTC;
 						SYSTEMTIME stLocal;
-						FileTimeToSystemTime((FILETIME*)i->AttributeValues[Result->m_GroupAttribute], &stUTC);
+						FileTimeToSystemTime((FILETIME*)i->AttributeValues[p_CookedFiles->m_GroupAttribute], &stUTC);
 						SystemTimeToTzSpecificLocalTime(NULL, &stUTC, &stLocal);
 
 						i->CategoryID = stLocal.wHour<6 ? LFItemCategoryNight : LFItemCategoryCount+stLocal.wHour-6;
@@ -132,8 +134,8 @@ void CListView::SetSearchResult(LFSearchResult* Result, FVPersistentData* /*Data
 					}
 		}
 
-		if (m_HasCategories!=(Result->m_HasCategories==true))
-			SortCategories(Result);
+		if (m_HasCategories!=(p_CookedFiles->m_HasCategories==true))
+			SortCategories(p_CookedFiles);
 	}
 
 	AdjustHeader(m_ViewParameters.Mode==LFViewDetails);
@@ -230,7 +232,7 @@ CBitmap* CListView::RenderLegend()
 
 CBitmap* CListView::RenderStatistics()
 {
-	if (!p_Result || m_Nothing || !theApp.m_ShowStatistics)
+	if (!p_CookedFiles || m_Nothing || !theApp.m_ShowStatistics)
 		return NULL;
 
 #define DomainCount 10
@@ -240,12 +242,12 @@ CBitmap* CListView::RenderStatistics()
 	INT64 Sizes[DomainCount] = { 0 };
 	COLORREF Colors[DomainCount] = { 0xB03000, 0xFFB000, 0x202020, 0x00C0FF, 0x00FFB0, 0xFF4080, 0xC028FF, 0xD0D0D0, 0x0000FF, 0xD00000 };
 
-	for (UINT a=0; a<p_Result->m_ItemCount; a++)
+	for (UINT a=0; a<p_CookedFiles->m_ItemCount; a++)
 	{
 		GridItemData* d = GetItemData(a);
 		if (d->Hdr.Valid)
 		{
-			LFItemDescriptor* i = p_Result->m_Items[a];
+			LFItemDescriptor* i = p_CookedFiles->m_Items[a];
 			if ((i->Type & LFTypeMask)==LFTypeVirtual)
 			{
 				UINT DomainID;
@@ -401,7 +403,7 @@ RECT CListView::GetLabelRect(INT idx)
 
 void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed)
 {
-	LFItemDescriptor* i = p_Result->m_Items[idx];
+	LFItemDescriptor* i = p_CookedFiles->m_Items[idx];
 	GridItemData* d = GetItemData(idx);
 	INT Rows[4];
 	BOOL Right = FALSE;
@@ -824,14 +826,14 @@ INT CListView::GetMaxLabelWidth(INT Max)
 {
 	INT Width = 0;
 
-	if (p_Result)
+	if (p_CookedFiles)
 	{
 		CDC* dc = GetWindowDC();
 		CFont* pOldFont = dc->SelectObject(&theApp.m_DefaultFont);
 
-		for (INT a=0; a<(INT)p_Result->m_ItemCount; a++)
+		for (INT a=0; a<(INT)p_CookedFiles->m_ItemCount; a++)
 		{
-			CString label = GetLabel(p_Result->m_Items[a]);
+			CString label = GetLabel(p_CookedFiles->m_Items[a]);
 			INT cx = dc->GetTextExtent(label).cx;
 
 			if (cx>Width)
@@ -857,15 +859,15 @@ INT CListView::GetMaxColumnWidth(UINT Col, INT Max)
 {
 	INT Width = 0;
 
-	if (p_Result)
+	if (p_CookedFiles)
 	{
 		CDC* dc = GetWindowDC();
 		CFont* pOldFont = dc->SelectObject(&theApp.m_DefaultFont);
 
-		for (INT a=0; a<(INT)p_Result->m_ItemCount; a++)
+		for (INT a=0; a<(INT)p_CookedFiles->m_ItemCount; a++)
 		{
 			WCHAR tmpStr[256];
-			LFAttributeToString(p_Result->m_Items[a], Col, tmpStr, 256);
+			LFAttributeToString(p_CookedFiles->m_Items[a], Col, tmpStr, 256);
 			INT cx = dc->GetTextExtent(tmpStr, (INT)wcslen(tmpStr)).cx;
 
 			if (cx>Width)

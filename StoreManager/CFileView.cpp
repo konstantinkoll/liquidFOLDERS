@@ -58,7 +58,7 @@ CFileView::CFileView(UINT DataSize, BOOL EnableScrolling, BOOL EnableHover, BOOL
 {
 	ASSERT(DataSize>=sizeof(FVItemData));
 
-	p_Result = NULL;
+	p_RawFiles = p_CookedFiles = NULL;
 	p_Edit = NULL;
 	m_ItemData = NULL;
 	m_ItemDataAllocated = 0;
@@ -89,7 +89,7 @@ CFileView::~CFileView()
 		delete p_FooterBitmap;
 }
 
-BOOL CFileView::Create(CWnd* pParentWnd, UINT nID, LFSearchResult* Result, FVPersistentData* Data, UINT nClassStyle)
+BOOL CFileView::Create(CWnd* pParentWnd, UINT nID, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data, UINT nClassStyle)
 {
 	CString className = AfxRegisterWndClass(nClassStyle, LoadCursor(NULL, IDC_ARROW));
 
@@ -102,8 +102,8 @@ BOOL CFileView::Create(CWnd* pParentWnd, UINT nID, LFSearchResult* Result, FVPer
 	if (!CWnd::Create(className, _T(""), dwStyle, rect, pParentWnd, nID))
 		return FALSE;
 
-	UpdateViewOptions(Result ? Result->m_Context : LFContextDefault, TRUE);
-	UpdateSearchResult(Result, Data);
+	UpdateViewOptions(pCookedFiles ? pCookedFiles->m_Context : LFContextDefault, TRUE);
+	UpdateSearchResult(pRawFiles, pCookedFiles, Data);
 	return TRUE;
 }
 
@@ -174,7 +174,7 @@ void CFileView::UpdateViewOptions(INT Context, BOOL Force)
 	}
 }
 
-void CFileView::UpdateSearchResult(LFSearchResult* Result, FVPersistentData* Data)
+void CFileView::UpdateSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data)
 {
 	DestroyEdit();
 	m_TooltipCtrl.Deactivate();
@@ -184,24 +184,24 @@ void CFileView::UpdateSearchResult(LFSearchResult* Result, FVPersistentData* Dat
 
 	m_Nothing = TRUE;
 
-	if (Result)
+	if (pCookedFiles)
 	{
 #ifdef DEBUG
 		m_AllowMultiSelect = TRUE;
 #else
-		m_AllowMultiSelect = (Result->m_Context>LFContextStoreHome);
+		m_AllowMultiSelect = (pCookedFiles->m_Context>LFContextStoreHome);
 #endif
 
-		size_t sz = Result->m_ItemCount*m_DataSize;
+		size_t sz = pCookedFiles->m_ItemCount*m_DataSize;
 		m_ItemData = (BYTE*)malloc(sz);
-		m_ItemDataAllocated = Result->m_ItemCount;
+		m_ItemDataAllocated = pCookedFiles->m_ItemCount;
 		ZeroMemory(m_ItemData, sz);
 
-		if ((VictimAllocated) && (Result->m_Context!=LFContextClipboard))
+		if ((VictimAllocated) && (pCookedFiles->m_Context!=LFContextClipboard))
 		{
 			INT RetainSelection = Data ? Data->FocusItem : -1;
 
-			for (UINT a=0; a<min(VictimAllocated, Result->m_ItemCount); a++)
+			for (UINT a=0; a<min(VictimAllocated, pCookedFiles->m_ItemCount); a++)
 			{
 				FVItemData* d = GetItemData(a);
 
@@ -213,11 +213,11 @@ void CFileView::UpdateSearchResult(LFSearchResult* Result, FVPersistentData* Dat
 			}
 		}
 
-		m_Context = Result->m_Context;
+		m_Context = pCookedFiles->m_Context;
 		p_ViewParameters = &theApp.m_Views[m_Context];
 		m_ViewParameters.SortBy = p_ViewParameters->SortBy;
 
-		m_FocusItem = Data ? min(Data->FocusItem, (INT)Result->m_ItemCount-1) : Result->m_ItemCount ? 0 : -1;
+		m_FocusItem = Data ? min(Data->FocusItem, (INT)pCookedFiles->m_ItemCount-1) : pCookedFiles->m_ItemCount ? 0 : -1;
 		m_HScrollPos = Data ? Data->HScrollPos : 0;
 		m_VScrollPos = Data ? Data->VScrollPos : 0;
 		m_HotItem = -1;
@@ -236,16 +236,15 @@ void CFileView::UpdateSearchResult(LFSearchResult* Result, FVPersistentData* Dat
 
 	m_BeginDragDrop = FALSE;
 	m_EditLabel = -1;
-	SetSearchResult(Result, Data);
+	SetSearchResult(pRawFiles, pCookedFiles, Data);
 
-	p_Result = Result;
 	free(Victim);
 
-	if (p_Result)
+	if (p_CookedFiles)
 	{
 		BOOL NeedNewFocusItem = (m_FocusItem>=0) ? !GetItemData(m_FocusItem)->Valid : TRUE;
 
-		for (UINT a=0; a<p_Result->m_ItemCount; a++)
+		for (UINT a=0; a<p_CookedFiles->m_ItemCount; a++)
 		{
 			FVItemData* d = GetItemData(a);
 			d->Selected &= d->Valid;
@@ -267,7 +266,7 @@ void CFileView::UpdateSearchResult(LFSearchResult* Result, FVPersistentData* Dat
 		Invalidate();
 	}
 
-	SetCursor(theApp.LoadStandardCursor(Result ? IDC_ARROW : IDC_WAIT));
+	SetCursor(theApp.LoadStandardCursor(pCookedFiles ? IDC_ARROW : IDC_WAIT));
 }
 
 void CFileView::UpdateFooter()
@@ -280,8 +279,10 @@ void CFileView::SetViewOptions(BOOL /*Force*/)
 {
 }
 
-void CFileView::SetSearchResult(LFSearchResult* /*Result*/, FVPersistentData* /*Data*/)
+void CFileView::SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* /*Data*/)
 {
+	p_RawFiles = pRawFiles;
+	p_CookedFiles = pCookedFiles;
 }
 
 void CFileView::SetFooter()
@@ -292,7 +293,7 @@ void CFileView::SetFooter()
 		p_FooterBitmap = NULL;
 	}
 
-	if (p_Result && !m_Nothing)
+	if (p_CookedFiles && !m_Nothing)
 		p_FooterBitmap = RenderFooter();
 
 	if (!p_FooterBitmap)
@@ -359,7 +360,7 @@ void CFileView::AdjustLayout()
 
 INT CFileView::GetFocusItem()
 {
-	if (p_Result)
+	if (p_CookedFiles)
 	{
 		FVItemData* d = GetItemData(m_FocusItem);
 		return (d->Valid) ? m_FocusItem : -1;
@@ -370,8 +371,8 @@ INT CFileView::GetFocusItem()
 
 INT CFileView::GetSelectedItem()
 {
-	if (p_Result)
-		if (p_Result->m_ItemCount)
+	if (p_CookedFiles)
+		if (p_CookedFiles->m_ItemCount)
 		{
 			FVItemData* d = GetItemData(m_FocusItem);
 			return (d->Selected && d->Valid) ? m_FocusItem : -1;
@@ -382,11 +383,11 @@ INT CFileView::GetSelectedItem()
 
 INT CFileView::GetNextSelectedItem(INT idx)
 {
-	if (p_Result)
+	if (p_CookedFiles)
 	{
 		ASSERT(idx>=-1);
 
-		while (++idx<(INT)p_Result->m_ItemCount)
+		while (++idx<(INT)p_CookedFiles->m_ItemCount)
 		{
 			FVItemData* d = GetItemData(idx);
 			if (d->Selected && d->Valid)
@@ -399,9 +400,9 @@ INT CFileView::GetNextSelectedItem(INT idx)
 
 void CFileView::SelectItem(INT idx, BOOL Select, BOOL InternalCall)
 {
-	if (p_Result)
+	if (p_CookedFiles)
 	{
-		ASSERT(idx<(INT)p_Result->m_ItemCount);
+		ASSERT(idx<(INT)p_CookedFiles->m_ItemCount);
 
 		FVItemData* d = GetItemData(idx);
 		if (d->Valid)
@@ -485,14 +486,14 @@ void CFileView::SetFocusItem(INT FocusItem, BOOL ShiftSelect)
 		if (m_SelectionAnchor==-1)
 			m_SelectionAnchor = m_FocusItem;
 
-		for (INT a=0; a<(INT)p_Result->m_ItemCount; a++)
+		for (INT a=0; a<(INT)p_CookedFiles->m_ItemCount; a++)
 			SelectItem(a, ((a>=FocusItem) && (a<=m_SelectionAnchor)) || ((a>=m_SelectionAnchor) && (a<=FocusItem)), TRUE);
 	}
 	else
 	{
 		m_SelectionAnchor = -1;
 
-		for (INT a=0; a<(INT)p_Result->m_ItemCount; a++)
+		for (INT a=0; a<(INT)p_CookedFiles->m_ItemCount; a++)
 			SelectItem(a, a==FocusItem, TRUE);
 	}
 
@@ -507,8 +508,8 @@ RECT CFileView::GetItemRect(INT idx)
 {
 	RECT rect = { 0, 0, 0, 0 };
 
-	if (p_Result)
-		if ((idx>=0) && (idx<(INT)p_Result->m_ItemCount))
+	if (p_CookedFiles)
+		if ((idx>=0) && (idx<(INT)p_CookedFiles->m_ItemCount))
 		{
 			rect = GetItemData(idx)->Rect;
 			OffsetRect(&rect, -m_HScrollPos, -m_VScrollPos+(INT)m_HeaderHeight);
@@ -524,11 +525,11 @@ RECT CFileView::GetLabelRect(INT idx)
 
 INT CFileView::ItemAtPosition(CPoint point)
 {
-	if (p_Result)
+	if (p_CookedFiles)
 	{
 		point.Offset(m_HScrollPos, m_VScrollPos-m_HeaderHeight);
 
-		for (INT a=0; a<(INT)p_Result->m_ItemCount; a++)
+		for (INT a=0; a<(INT)p_CookedFiles->m_ItemCount; a++)
 			if (PtInRect(&GetItemData(a)->Rect, point))
 				return a;
 	}
@@ -538,8 +539,8 @@ INT CFileView::ItemAtPosition(CPoint point)
 
 void CFileView::InvalidateItem(INT idx)
 {
-	if (p_Result)
-		if ((idx>=0) && (idx<(INT)p_Result->m_ItemCount))
+	if (p_CookedFiles)
+		if ((idx>=0) && (idx<(INT)p_CookedFiles->m_ItemCount))
 		{
 			RECT rect = GetItemRect(idx);
 			InvalidateRect(&rect);
@@ -716,7 +717,7 @@ CMenu* CFileView::GetItemContextMenu(INT idx)
 {
 	CMenu* pMenu = new CMenu();
 
-	LFItemDescriptor* item = p_Result->m_Items[idx];
+	LFItemDescriptor* item = p_CookedFiles->m_Items[idx];
 	switch (item->Type & LFTypeMask)
 	{
 	case LFTypeVolume:
@@ -795,9 +796,9 @@ void CFileView::EditLabel(INT idx)
 {
 	m_EditLabel = -1;
 
-	if ((m_EnableLabelEdit) && (p_Result))
+	if ((m_EnableLabelEdit) && (p_CookedFiles))
 	{
-		LFItemDescriptor* item = p_Result->m_Items[idx];
+		LFItemDescriptor* item = p_CookedFiles->m_Items[idx];
 		if (((item->Type & LFTypeMask)==LFTypeStore) || ((item->Type & LFTypeMask)==LFTypeFile))
 		{
 			m_EditLabel = idx;
@@ -833,7 +834,7 @@ void CFileView::DrawItemBackground(CDC& dc, LPRECT rectItem, INT idx, BOOL Theme
 
 	if (hThemeList)
 	{
-		dc.SetTextColor((p_Result->m_Items[idx]->CoreAttributes.Flags & LFFlagMissing) ? 0x0000FF : (p_Result->m_Items[idx]->Type & LFTypeRequiresMaintenance) ? 0xFF0000 : 0x000000);
+		dc.SetTextColor((p_CookedFiles->m_Items[idx]->CoreAttributes.Flags & LFFlagMissing) ? 0x0000FF : (p_CookedFiles->m_Items[idx]->Type & LFTypeRequiresMaintenance) ? 0xFF0000 : 0x000000);
 
 		if (Hot | Selected)
 		{
@@ -897,12 +898,12 @@ void CFileView::DrawItemBackground(CDC& dc, LPRECT rectItem, INT idx, BOOL Theme
 			dc.DrawFocusRect(rectItem);
 
 		if (!Selected)
-			if (p_Result->m_Items[idx]->CoreAttributes.Flags & LFFlagMissing)
+			if (p_CookedFiles->m_Items[idx]->CoreAttributes.Flags & LFFlagMissing)
 			{
 				dc.SetTextColor(0x0000FF);
 			}
 			else
-				if (p_Result->m_Items[idx]->Type & LFTypeRequiresMaintenance)
+				if (p_CookedFiles->m_Items[idx]->Type & LFTypeRequiresMaintenance)
 				{
 					dc.SetTextColor(0xFF0000);
 				}
@@ -1433,7 +1434,7 @@ void CFileView::OnMouseHover(UINT nFlags, CPoint point)
 					HICON hIcon = NULL;
 					CSize sz;
 
-					LFItemDescriptor* i = p_Result->m_Items[m_HotItem];
+					LFItemDescriptor* i = p_CookedFiles->m_Items[m_HotItem];
 					switch (i->Type & LFTypeMask)
 					{
 					case LFTypeFile:
@@ -1654,7 +1655,7 @@ void CFileView::OnRButtonDown(UINT nFlags, CPoint point)
 			{
 				m_FocusItem = idx;
 
-				for (INT a=0; a<(INT)p_Result->m_ItemCount; a++)
+				for (INT a=0; a<(INT)p_CookedFiles->m_ItemCount; a++)
 					SelectItem(a, a==idx, TRUE);
 
 				ChangedItems();
@@ -1688,7 +1689,7 @@ void CFileView::OnRButtonUp(UINT nFlags, CPoint point)
 		{
 			m_FocusItem = idx;
 
-			for (INT a=0; a<(INT)p_Result->m_ItemCount; a++)
+			for (INT a=0; a<(INT)p_CookedFiles->m_ItemCount; a++)
 				SelectItem(a, a==idx, TRUE);
 
 			ChangedItems();
@@ -1716,7 +1717,7 @@ void CFileView::OnKillFocus(CWnd* /*pNewWnd*/)
 
 BOOL CFileView::OnSetCursor(CWnd* /*pWnd*/, UINT /*nHitTest*/, UINT /*message*/)
 {
-	SetCursor(theApp.LoadStandardCursor(p_Result ? IDC_ARROW : IDC_WAIT));
+	SetCursor(theApp.LoadStandardCursor(p_CookedFiles ? IDC_ARROW : IDC_WAIT));
 	return TRUE;
 }
 
@@ -1782,9 +1783,9 @@ void CFileView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 
 void CFileView::OnSelectAll()
 {
-	if (p_Result && m_AllowMultiSelect)
+	if (p_CookedFiles && m_AllowMultiSelect)
 	{
-		for (INT a=0; a<(INT)p_Result->m_ItemCount; a++)
+		for (INT a=0; a<(INT)p_CookedFiles->m_ItemCount; a++)
 			SelectItem(a, TRUE, TRUE);
 
 		ChangedItems();
@@ -1794,9 +1795,9 @@ void CFileView::OnSelectAll()
 
 void CFileView::OnSelectNone()
 {
-	if (p_Result)
+	if (p_CookedFiles)
 	{
-		for (INT a=0; a<(INT)p_Result->m_ItemCount; a++)
+		for (INT a=0; a<(INT)p_CookedFiles->m_ItemCount; a++)
 			SelectItem(a, FALSE, TRUE);
 
 		ChangedItems();
@@ -1806,9 +1807,9 @@ void CFileView::OnSelectNone()
 
 void CFileView::OnSelectInvert()
 {
-	if (p_Result && m_AllowMultiSelect)
+	if (p_CookedFiles && m_AllowMultiSelect)
 	{
-		for (INT a=0; a<(INT)p_Result->m_ItemCount; a++)
+		for (INT a=0; a<(INT)p_CookedFiles->m_ItemCount; a++)
 			SelectItem(a, !IsSelected(a), TRUE);
 
 		ChangedItems();
@@ -1829,7 +1830,7 @@ void CFileView::OnUpdateCommands(CCmdUI* pCmdUI)
 	case IDM_SELECTINVERT:
 		b &= m_AllowMultiSelect;
 	case IDM_SELECTNONE:
-		b &= p_Result ? (p_Result->m_ItemCount!=NULL) : FALSE;
+		b &= p_CookedFiles ? (p_CookedFiles->m_ItemCount!=NULL) : FALSE;
 		break;
 	}
 

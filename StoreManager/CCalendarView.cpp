@@ -54,12 +54,14 @@ void CCalendarView::SetViewOptions(BOOL Force)
 	}
 }
 
-void CCalendarView::SetSearchResult(LFSearchResult* Result, FVPersistentData* Data)
+void CCalendarView::SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data)
 {
-	if (Result)
-		for (UINT a=0; a<Result->m_ItemCount; a++)
+	CFileView::SetSearchResult(pRawFiles, pCookedFiles, Data);
+
+	if (p_CookedFiles)
+		for (UINT a=0; a<p_CookedFiles->m_ItemCount; a++)
 		{
-			LFItemDescriptor* i = Result->m_Items[a];
+			LFItemDescriptor* i = p_CookedFiles->m_Items[a];
 			if (i->AttributeValues[m_ViewParameters.SortBy])
 				if (*((INT64*)i->AttributeValues[m_ViewParameters.SortBy]))
 				{
@@ -83,8 +85,8 @@ void CCalendarView::SetYear(UINT Year)
 	ASSERT(Year<=MAXYEAR);
 	m_Year = Year;
 
-	if (p_Result)
-		for (UINT a=0; a<p_Result->m_ItemCount; a++)
+	if (p_CookedFiles)
+		for (UINT a=0; a<p_CookedFiles->m_ItemCount; a++)
 			if (GetItemData(a)->Time.wYear==Year)
 			{
 				m_FocusItem = a;
@@ -97,19 +99,19 @@ void CCalendarView::SetYear(UINT Year)
 
 CBitmap* CCalendarView::RenderFooter()
 {
-	if (!p_Result || m_Nothing || !theApp.m_CalendarShowStatistics)
+	if (!p_CookedFiles || m_Nothing || !theApp.m_CalendarShowStatistics)
 		return NULL;
 
 	INT64 Counts[5] = { 0, 0, 0, 0, 0 };
 	INT64 Sizes[5] = { 0, 0, 0, 0, 0 };
 	COLORREF Colors[5] = { 0xD0D0D0, 0xF08080, 0xD00000, 0xF08080, 0xD0D0D0 };
 
-	for (UINT a=0; a<p_Result->m_ItemCount; a++)
+	for (UINT a=0; a<p_CookedFiles->m_ItemCount; a++)
 	{
 		CalendarItemData* d = GetItemData(a);
 		if (d->Hdr.Valid)
 		{
-			LFItemDescriptor* i = p_Result->m_Items[a];
+			LFItemDescriptor* i = p_CookedFiles->m_Items[a];
 
 			const UINT Category = (d->Time.wYear<m_Year-1) ? 0 : (d->Time.wYear==m_Year-1) ? 1 : (d->Time.wYear==m_Year) ? 2 : (d->Time.wYear==m_Year+1) ? 3 : 4;
 			Counts[Category] += (i->AggregateCount) ? i->AggregateCount : 1;
@@ -225,8 +227,8 @@ Restart:
 		}
 	}
 
-	if (p_Result)
-		for (UINT a=0; a<p_Result->m_ItemCount; a++)
+	if (p_CookedFiles)
+		for (UINT a=0; a<p_CookedFiles->m_ItemCount; a++)
 		{
 			CalendarItemData* d = GetItemData(a);
 			if (d->Time.wYear==m_Year)

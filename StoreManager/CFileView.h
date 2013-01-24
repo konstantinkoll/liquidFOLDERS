@@ -123,9 +123,9 @@ public:
 	virtual void EditLabel(INT idx);
 	virtual BOOL IsEditing();
 
-	BOOL Create(CWnd* pParentWnd, UINT nID, LFSearchResult* Result, FVPersistentData* Data=NULL, UINT nClassStyle=CS_DBLCLKS);
+	BOOL Create(CWnd* pParentWnd, UINT nID, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data=NULL, UINT nClassStyle=CS_DBLCLKS);
 	void UpdateViewOptions(INT Context=-1, BOOL Force=FALSE);
-	void UpdateSearchResult(LFSearchResult* Result, FVPersistentData* Data);
+	void UpdateSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data);
 	void UpdateFooter();
 	INT GetFocusItem();
 	INT GetSelectedItem();
@@ -138,7 +138,8 @@ protected:
 	INT m_Context;
 	LFViewParameters m_ViewParameters;
 	LFViewParameters* p_ViewParameters;
-	LFSearchResult* p_Result;
+	LFSearchResult* p_RawFiles;
+	LFSearchResult* p_CookedFiles;
 	CString m_FooterCaption;
 	CBitmap* p_FooterBitmap;
 	CPoint m_FooterPos;
@@ -176,7 +177,7 @@ protected:
 
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 	virtual void SetViewOptions(BOOL Force);
-	virtual void SetSearchResult(LFSearchResult* Result, FVPersistentData* Data);
+	virtual void SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data);
 	virtual CBitmap* RenderFooter();
 	virtual void AdjustLayout();
 	virtual RECT GetLabelRect(INT idx);

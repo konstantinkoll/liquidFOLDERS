@@ -33,7 +33,7 @@ public:
 	virtual CMenu* GetBackgroundContextMenu();
 	virtual void GetPersistentData(FVPersistentData& Data);
 
-	BOOL Create(CWnd* pParentWnd, UINT nID, LFSearchResult* Result, FVPersistentData* Data=NULL);
+	BOOL Create(CWnd* pParentWnd, UINT nID, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data);
 
 protected:
 	GlobeParameters m_GlobeTarget;
@@ -48,7 +48,7 @@ protected:
 	GLFont m_Fonts[2];
 
 	virtual void SetViewOptions(BOOL Force);
-	virtual void SetSearchResult(LFSearchResult* Result, FVPersistentData* Data);
+	virtual void SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data);
 	virtual INT ItemAtPosition(CPoint point);
 	virtual CMenu* GetItemContextMenu(INT idx);
 

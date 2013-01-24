@@ -196,9 +196,9 @@ CGlobeView::CGlobeView()
 	ENSURE(m_YouLookAt.LoadString(IDS_YOULOOKAT));
 }
 
-BOOL CGlobeView::Create(CWnd* pParentWnd, UINT nID, LFSearchResult* Result, FVPersistentData* Data)
+BOOL CGlobeView::Create(CWnd* pParentWnd, UINT nID, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data)
 {
-	return CFileView::Create(pParentWnd, nID, Result, Data, CS_DBLCLKS | CS_OWNDC);
+	return CFileView::Create(pParentWnd, nID, pRawFiles, pCookedFiles, Data, CS_DBLCLKS | CS_OWNDC);
 }
 
 void CGlobeView::SetViewOptions(BOOL Force)
@@ -219,26 +219,26 @@ void CGlobeView::SetViewOptions(BOOL Force)
 	}
 }
 
-void CGlobeView::SetSearchResult(LFSearchResult* Result, FVPersistentData* Data)
+void CGlobeView::SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data)
 {
-	p_Result = Result;
+	CFileView::SetSearchResult(pRawFiles, pCookedFiles, Data);
 
-	if (Result)
-		if (Result->m_ItemCount)
-			for (UINT a=0; a<Result->m_ItemCount; a++)
+	if (p_CookedFiles)
+		if (p_CookedFiles->m_ItemCount)
+			for (UINT a=0; a<p_CookedFiles->m_ItemCount; a++)
 			{
 				LFGeoCoordinates coord = { 0.0, 0.0 };
 				if (m_ViewParameters.SortBy==LFAttrLocationIATA)
 				{
 					LFAirport* airport;
-					if (LFIATAGetAirportByCode((CHAR*)Result->m_Items[a]->AttributeValues[LFAttrLocationIATA], &airport))
+					if (LFIATAGetAirportByCode((CHAR*)p_CookedFiles->m_Items[a]->AttributeValues[LFAttrLocationIATA], &airport))
 						coord = airport->Location;
 				}
 				else
-					if (Result->m_Items[a]->AttributeValues[m_ViewParameters.SortBy])
+					if (p_CookedFiles->m_Items[a]->AttributeValues[m_ViewParameters.SortBy])
 					{
 						ASSERT(theApp.m_Attributes[m_ViewParameters.SortBy]->Type==LFTypeGeoCoordinates);
-						coord = *((LFGeoCoordinates*)Result->m_Items[a]->AttributeValues[m_ViewParameters.SortBy]);
+						coord = *((LFGeoCoordinates*)p_CookedFiles->m_Items[a]->AttributeValues[m_ViewParameters.SortBy]);
 					}
 
 				if ((coord.Latitude!=0.0) || (coord.Longitude!=0))
@@ -258,13 +258,13 @@ void CGlobeView::SetSearchResult(LFSearchResult* Result, FVPersistentData* Data)
 
 INT CGlobeView::ItemAtPosition(CPoint point)
 {
-	if (!p_Result)
+	if (!p_CookedFiles)
 		return -1;
 
 	INT res = -1;
 	GLfloat Alpha = 0.0f;
 
-	for (UINT a=0; a<p_Result->m_ItemCount; a++)
+	for (UINT a=0; a<p_CookedFiles->m_ItemCount; a++)
 	{
 		GlobeItemData* d = GetItemData(a);
 
@@ -460,7 +460,7 @@ __forceinline void CGlobeView::CalcAndDrawSpots(GLfloat ModelView[4][4], GLfloat
 	GLfloat MVP[4][4];
 	MatrixMul(MVP, ModelView, Projection);
 
-	for (UINT a=0; a<p_Result->m_ItemCount; a++)
+	for (UINT a=0; a<p_CookedFiles->m_ItemCount; a++)
 	{
 		GlobeItemData* d = GetItemData(a);
 		if (d->Hdr.Valid)
@@ -489,7 +489,7 @@ __forceinline void CGlobeView::CalcAndDrawSpots(GLfloat ModelView[4][4], GLfloat
 
 __forceinline void CGlobeView::CalcAndDrawLabel()
 {
-	for (UINT a=0; a<p_Result->m_ItemCount; a++)
+	for (UINT a=0; a<p_CookedFiles->m_ItemCount; a++)
 	{
 		GlobeItemData* d = GetItemData(a);
 
@@ -497,11 +497,11 @@ __forceinline void CGlobeView::CalcAndDrawLabel()
 			if (d->Alpha>0.0f)
 			{
 				// Beschriftung
-				WCHAR* Caption = p_Result->m_Items[a]->CoreAttributes.FileName;
+				WCHAR* Caption = p_CookedFiles->m_Items[a]->CoreAttributes.FileName;
 				UINT cCaption = (UINT)wcslen(Caption);
 				WCHAR* Subcaption = NULL;
 				WCHAR* Coordinates = (m_ViewParameters.GlobeShowGPS ? d->CoordString : NULL);
-				WCHAR* Description = (m_ViewParameters.GlobeShowDescription ? p_Result->m_Items[a]->Description : NULL);
+				WCHAR* Description = (m_ViewParameters.GlobeShowDescription ? p_CookedFiles->m_Items[a]->Description : NULL);
 				if (Description)
 					if (*Description==L'\0')
 						Description = NULL;
@@ -838,8 +838,8 @@ void CGlobeView::DrawScene(BOOL InternalCall)
 	glBegin(GL_QUADS);
 
 	// Koordinaten bestimmen und Spots zeichnen
-	if (p_Result && !m_Nothing)
-		if (p_Result->m_ItemCount)
+	if (p_CookedFiles && !m_Nothing)
+		if (p_CookedFiles->m_ItemCount)
 			CalcAndDrawSpots(ModelView, Projection);
 
 	// Fadenkreuz zeichnen
@@ -851,8 +851,8 @@ void CGlobeView::DrawScene(BOOL InternalCall)
 	glDisable(GL_TEXTURE_2D);
 
 	// Label zeichnen
-	if (p_Result && !m_Nothing)
-		if (p_Result->m_ItemCount)
+	if (p_CookedFiles && !m_Nothing)
+		if (p_CookedFiles->m_ItemCount)
 			CalcAndDrawLabel();
 
 	// Statuszeile
@@ -1304,19 +1304,19 @@ void CGlobeView::OnGoogleEarth()
 			INT i = GetNextSelectedItem(-1);
 			while (i>-1)
 			{
-				LFGeoCoordinates c = p_Result->m_Items[i]->CoreAttributes.LocationGPS;
+				LFGeoCoordinates c = p_CookedFiles->m_Items[i]->CoreAttributes.LocationGPS;
 				if ((c.Latitude!=0) || (c.Longitude!=0))
 				{
 					f.WriteString(_T("<Placemark>\n<name>"));
-					f.WriteString(CookAttributeString(p_Result->m_Items[i]->CoreAttributes.FileName));
+					f.WriteString(CookAttributeString(p_CookedFiles->m_Items[i]->CoreAttributes.FileName));
 					f.WriteString(_T("</name>\n<description>"));
-					WriteGoogleAttribute(&f, p_Result->m_Items[i], LFAttrLocationName);
-					WriteGoogleAttribute(&f, p_Result->m_Items[i], LFAttrLocationIATA);
-					WriteGoogleAttribute(&f, p_Result->m_Items[i], LFAttrLocationGPS);
-					WriteGoogleAttribute(&f, p_Result->m_Items[i], LFAttrArtist);
-					WriteGoogleAttribute(&f, p_Result->m_Items[i], LFAttrRoll);
-					WriteGoogleAttribute(&f, p_Result->m_Items[i], LFAttrRecordingTime);
-					WriteGoogleAttribute(&f, p_Result->m_Items[i], LFAttrComments);
+					WriteGoogleAttribute(&f, p_CookedFiles->m_Items[i], LFAttrLocationName);
+					WriteGoogleAttribute(&f, p_CookedFiles->m_Items[i], LFAttrLocationIATA);
+					WriteGoogleAttribute(&f, p_CookedFiles->m_Items[i], LFAttrLocationGPS);
+					WriteGoogleAttribute(&f, p_CookedFiles->m_Items[i], LFAttrArtist);
+					WriteGoogleAttribute(&f, p_CookedFiles->m_Items[i], LFAttrRoll);
+					WriteGoogleAttribute(&f, p_CookedFiles->m_Items[i], LFAttrRecordingTime);
+					WriteGoogleAttribute(&f, p_CookedFiles->m_Items[i], LFAttrComments);
 					f.WriteString(_T("&lt;div&gt;</description>\n"));
 
 					f.WriteString(_T("<styleUrl>#C</styleUrl>\n"));

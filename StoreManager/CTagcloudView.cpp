@@ -33,14 +33,14 @@ void CTagcloudView::SetViewOptions(BOOL Force)
 	if ((Force) || (m_ViewParameters.TagcloudUseSize!=p_ViewParameters->TagcloudUseSize) || (m_ViewParameters.TagcloudUseColors!=p_ViewParameters->TagcloudUseColors))
 		Changes = 1;
 
-	if (p_Result)
+	if (p_CookedFiles)
 	{
 		m_ViewParameters = *p_ViewParameters;
 
 		switch (Changes)
 		{
 		case 2:
-			SetSearchResult(p_Result, NULL);
+			SetSearchResult(p_RawFiles, p_CookedFiles, NULL);
 			GetOwner()->PostMessage(WM_COMMAND, WM_UPDATESELECTION);
 		case 1:
 			UpdateFooter();
@@ -52,20 +52,22 @@ void CTagcloudView::SetViewOptions(BOOL Force)
 	}
 }
 
-void CTagcloudView::SetSearchResult(LFSearchResult* Result, FVPersistentData* /*Data*/)
+void CTagcloudView::SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data)
 {
-	if (Result)
+	CGridView::SetSearchResult(pRawFiles, pCookedFiles, Data);
+
+	if (p_CookedFiles)
 	{
-		LFSortSearchResult(Result, m_ViewParameters.TagcloudCanonical ? m_ViewParameters.SortBy : LFAttrFileCount,
+		LFSortSearchResult(p_CookedFiles, m_ViewParameters.TagcloudCanonical ? m_ViewParameters.SortBy : LFAttrFileCount,
 			(m_ViewParameters.TagcloudCanonical==FALSE) || (theApp.m_Attributes[m_ViewParameters.SortBy]->PreferDescendingSort));
 
 		INT Minimum = -1;
 		INT Maximum = -1;
 
 		// Find items
-		for (UINT a=0; a<Result->m_ItemCount; a++)
+		for (UINT a=0; a<p_CookedFiles->m_ItemCount; a++)
 		{
-			LFItemDescriptor* i = Result->m_Items[a];
+			LFItemDescriptor* i = p_CookedFiles->m_Items[a];
 			TagcloudItemData* d = GetItemData(a);
 
 			if ((i->Type & LFTypeMask)==LFTypeVirtual)
@@ -81,7 +83,7 @@ void CTagcloudView::SetSearchResult(LFSearchResult* Result, FVPersistentData* /*
 
 		// Calculate display properties
 		INT Delta = Maximum-Minimum+1;
-		for (UINT a=0; a<Result->m_ItemCount; a++)
+		for (UINT a=0; a<p_CookedFiles->m_ItemCount; a++)
 		{
 			TagcloudItemData* d = GetItemData(a);
 			if (d->Hdr.Hdr.Valid)
@@ -167,7 +169,7 @@ void CTagcloudView::AdjustLayout()
 {
 	ResetItemCategories();
 
-	if (p_Result)
+	if (p_CookedFiles)
 	{
 		CClientDC dc(this);
 
@@ -214,12 +216,12 @@ Restart:
 		INT rowheight = 0;
 		INT rowstart = 0;
 
-		for (UINT a=0; a<p_Result->m_ItemCount; a++)
+		for (UINT a=0; a<p_CookedFiles->m_ItemCount; a++)
 		{
 			TagcloudItemData* d = GetItemData(a);
 			if (d->Hdr.Hdr.Valid)
 			{
-				LFItemDescriptor* i = p_Result->m_Items[a];
+				LFItemDescriptor* i = p_CookedFiles->m_Items[a];
 
 				CRect rect(0, 0, rectWindow.Width()-2*GUTTER-10, 128);
 				dc.SelectObject(GetFont(a));
@@ -248,8 +250,8 @@ Restart:
 			}
 		}
 
-		if (p_Result->m_ItemCount)
-			CenterRow(p_Result->m_ItemCount-1);
+		if (p_CookedFiles->m_ItemCount)
+			CenterRow(p_CookedFiles->m_ItemCount-1);
 	}
 	else
 	{
@@ -262,7 +264,7 @@ Restart:
 
 void CTagcloudView::DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed)
 {
-	LFItemDescriptor* i = p_Result->m_Items[idx];
+	LFItemDescriptor* i = p_CookedFiles->m_Items[idx];
 	TagcloudItemData* d = GetItemData(idx);
 
 	COLORREF color = m_ViewParameters.TagcloudUseColors ? d->Color : Themed ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT);

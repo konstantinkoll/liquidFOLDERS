@@ -42,7 +42,7 @@ protected:
 	BOOL m_ShowEmptyDays;
 
 	virtual void SetViewOptions(BOOL Force);
-	virtual void SetSearchResult(LFSearchResult* Result, FVPersistentData* Data);
+	virtual void SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data);
 	virtual CBitmap* RenderFooter();
 	virtual void AdjustLayout();
 

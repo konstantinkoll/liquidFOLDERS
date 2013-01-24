@@ -32,7 +32,7 @@ protected:
 	CFont m_Fonts[20];
 
 	virtual void SetViewOptions(BOOL Force);
-	virtual void SetSearchResult(LFSearchResult* Result, FVPersistentData* Data);
+	virtual void SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data);
 	virtual CBitmap* RenderFooter();
 	virtual void AdjustLayout();
 	virtual void DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed);
