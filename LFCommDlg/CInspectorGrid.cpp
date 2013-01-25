@@ -1227,6 +1227,7 @@ void CInspectorGrid::EditProperty(UINT Attr)
 
 	Property* pProp = &m_Properties.m_Items[Attr];
 	if (pProp->Editable)
+	{
 		if (pProp->pProperty->OnClickValue(-1))
 		{
 			m_EditItem = Attr;
@@ -1256,8 +1257,9 @@ void CInspectorGrid::EditProperty(UINT Attr)
 			return;
 		}
 
-	if (pProp->pProperty->HasButton())
-		pProp->pProperty->OnClickButton();
+		if (pProp->pProperty->HasButton())
+			pProp->pProperty->OnClickButton();
+	}
 }
 
 void CInspectorGrid::DestroyEdit(BOOL Accept)
