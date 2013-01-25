@@ -27,7 +27,7 @@ BOOL CGlassPane::Create(BOOL IsLeft, INT PreferredWidth, CWnd* pParentWnd, UINT 
 	const DWORD dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE;
 	CRect rect;
 	rect.SetRectEmpty();
-	return CWnd::CreateEx(WS_EX_CONTROLPARENT, className, _T(""), dwStyle, rect, pParentWnd, nID);
+	return CWnd::CreateEx(WS_EX_CONTROLPARENT | WS_EX_NOACTIVATE, className, _T(""), dwStyle, rect, pParentWnd, nID);
 }
 
 void CGlassPane::AdjustLayout()
@@ -50,6 +50,7 @@ BEGIN_MESSAGE_MAP(CGlassPane, CWnd)
 	ON_WM_NCHITTEST()
 	ON_WM_NCPAINT()
 	ON_WM_ERASEBKGND()
+	ON_WM_CHILDACTIVATE()
 	ON_WM_SIZE()
 	ON_WM_GETMINMAXINFO()
 	ON_WM_CTLCOLOR()
@@ -110,6 +111,11 @@ BOOL CGlassPane::OnEraseBkgnd(CDC* pDC)
 	pDC->FillSolidRect(rect, IsCtrlThemed() ? 0xFFFFFF : GetSysColor(COLOR_WINDOW));
 
 	return TRUE;
+}
+
+void CGlassPane::OnChildActivate()
+{
+	GetParent()->SendMessage(WM_ADJUSTLAYOUT);
 }
 
 void CGlassPane::OnSize(UINT nType, INT cx, INT cy)
