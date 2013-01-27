@@ -136,7 +136,6 @@ IDD_STOREPROPERTIES     ICON                    "res\\StoreProperties_Tiny.ico"
 IDD_STOREMAINTENANCE    ICON                    "res\\StoreMaintenance_Tiny.ico"
 IDD_EDITTAGS            ICON                    "res\\Tags_Tiny.ico"
 IDD_BROWSEFORFOLDER     ICON                    "res\\Folder_Tiny.ico"
-IDD_REGISTRY            ICON                    "res\\Registry_Tiny.ico"
 #endif    // Neutral resources
 /////////////////////////////////////////////////////////////////////////////
 

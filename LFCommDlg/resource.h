@@ -183,17 +183,16 @@
 #define IDC_SHELLTREE                   22002
 #define IDC_DELETESOURCE                22003
 #define IDD_CREATENEWSTORE              22100
-#define IDD_REGISTRY                    22200
-#define IDD_EDITTIME                    22300
-#define IDC_CALENDAR                    22301
-#define IDC_USETIME                     22302
-#define IDC_TIME                        22303
-#define IDM_CONDITION                   22400
-#define IDM_CONDITION_EDIT              22401
-#define IDM_CONDITION_DELETE            22402
-#define IDD_PROGRESS                    22500
-#define IDC_PROGRESSBAR                 22501
-#define IDC_PROGRESSCOUNT               22502
+#define IDD_EDITTIME                    22200
+#define IDC_CALENDAR                    22201
+#define IDC_USETIME                     22202
+#define IDC_TIME                        22203
+#define IDM_CONDITION                   22300
+#define IDM_CONDITION_EDIT              22301
+#define IDM_CONDITION_DELETE            22302
+#define IDD_PROGRESS                    22400
+#define IDC_PROGRESSBAR                 22401
+#define IDC_PROGRESSCOUNT               22402
 #define IDI_SHIELD_VISTA                32519
 
 // Next default values for new objects
