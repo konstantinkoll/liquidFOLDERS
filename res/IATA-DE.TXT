@@ -2792,6 +2792,7 @@ GXQ     Coyhaique, Chile;4;45*35'39"S, 72*6'22"W
 GXX     Yagoua, Kamerun;4;10*21'22"N, 15*14'14"E
 GXY     Greeley, USA;4;40*26'15"N, 104*37'60"W
 GYA     Guayaramerin, Bolivien;4;10*49'18"S, 65*20'45"W
+GYD     Baku, Azerbeidschan;3;40*28'3"N, 50*2'48"E
 GYE     Guayaquil, Equador;4;2*9'27"S, 79*53'1"W
 GYI     Gisenyi, Ruanda;4;1*40'38"S, 29*15'32"E
 GYM     Guaymas, Mexiko;4;27*58'8"N, 110*55'31"W

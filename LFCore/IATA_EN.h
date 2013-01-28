@@ -231,7 +231,7 @@ LFCountry Countries_EN[CountryCount_EN] = {
 };
 
 // Airports
-#define AirportCount_EN 8613
+#define AirportCount_EN 8614
 LFAirport Airports_EN[AirportCount_EN] = {
 	{  67, "AAA", "", "Anaa", { 17.355000, -145.508333 } },
 	{   8, "AAB", "", "Arrabury", { 26.690556, 141.047500 } },
@@ -2885,6 +2885,7 @@ LFAirport Airports_EN[AirportCount_EN] = {
 	{ 103, "GXX", "", "Yagoua", { -10.356111, 15.237222 } },
 	{ 216, "GXY", "", "Greeley", { -40.437500, -104.633333 } },
 	{  22, "GYA", "", "Guayaramerin", { 10.821667, -65.345833 } },
+	{  10, "GYD", "", "Baki", { -40.467500, 50.046667 } },
 	{  54, "GYE", "", "Guayaquil", { 2.157500, -79.883611 } },
 	{ 167, "GYI", "", "Gisenyi", { 1.677222, 29.258889 } },
 	{ 131, "GYM", "", "Guaymas", { -27.968889, -110.925278 } },
@@ -3245,7 +3246,7 @@ LFAirport Airports_EN[AirportCount_EN] = {
 	{  65, "IDY", "", "Ile d'Yeu", { -46.718611, -2.391111 } },
 	{ 160, "IEG", "", "Zielona Gora", { -52.138611, 15.798611 } },
 	{  99, "IEJ", "", "Iejima", { -26.721944, 127.784722 } },
-	{ 213, "IEV", "", "Kiew (Zhulyany)", { -50.401667, 30.449722 } },
+	{ 213, "IEV", "", "Kiev (Zhulyany)", { -50.401667, 30.449722 } },
 	{ 216, "IFA", "", "Iowa Falls", { -42.470833, -93.270000 } },
 	{   8, "IFF", "", "Iffley", { 18.900000, 141.216944 } },
 	{  88, "IFJ", "", "Isafjordur", { -66.058056, -23.135278 } },

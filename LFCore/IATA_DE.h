@@ -227,7 +227,7 @@ LFCountry Countries_DE[CountryCount_DE] = {
 };
 
 // Airports
-#define AirportCount_DE 8613
+#define AirportCount_DE 8614
 LFAirport Airports_DE[AirportCount_DE] = {
 	{  54, "AAA", "", "Anaa", { 17.355000, -145.508333 } },
 	{  11, "AAB", "", "Arrabury", { 26.690556, 141.047500 } },
@@ -2881,6 +2881,7 @@ LFAirport Airports_DE[AirportCount_DE] = {
 	{  88, "GXX", "", "Yagoua", { -10.356111, 15.237222 } },
 	{ 210, "GXY", "", "Greeley", { -40.437500, -104.633333 } },
 	{  23, "GYA", "", "Guayaramerin", { 10.821667, -65.345833 } },
+	{  12, "GYD", "", "Baku", { -40.467500, 50.046667 } },
 	{  46, "GYE", "", "Guayaquil", { 2.157500, -79.883611 } },
 	{ 159, "GYI", "", "Gisenyi", { 1.677222, 29.258889 } },
 	{ 125, "GYM", "", "Guaymas", { -27.968889, -110.925278 } },

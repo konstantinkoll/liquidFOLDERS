@@ -2792,6 +2792,7 @@ GXQ     Coyhaique, Chile;4;45*35'39"S, 72*6'22"W
 GXX     Yagoua, Kamerun;4;10*21'22"N, 15*14'14"E
 GXY     Greeley, USA;4;40*26'15"N, 104*37'60"W
 GYA     Guayaramerin, Bolivia;4;10*49'18"S, 65*20'45"W
+GYD     Baki, Azerbaijan;3;40*28'3"N, 50*2'48"E
 GYE     Guayaquil, Ecuador;4;2*9'27"S, 79*53'1"W
 GYI     Gisenyi, Rwanda;4;1*40'38"S, 29*15'32"E
 GYM     Guaymas, Mexico;4;27*58'8"N, 110*55'31"W
@@ -3174,7 +3175,7 @@ IDR     Indore, India;4;22*43'18"N, 75*48'4"E
 IDY     Ile d'Yeu, France;4;46*43'7"N, 2*23'28"W
 IEG     Zielona Gora, Poland;4;52*8'19"N, 15*47'55"E
 IEJ     Iejima, Japan;4;26*43'19"N, 127*47'5"E
-IEV     Kiew (Zhulyany), Ukraine;4;50*24'6"N, 30*26'59"E
+IEV     Kiev (Zhulyany), Ukraine;4;50*24'6"N, 30*26'59"E
 IFA     Iowa Falls, USA;4;42*28'15"N, 93*16'12"W
 IFF     Iffley, Australia;4;18*53'60"S, 141*13'1"E
 IFJ     Isafjordur, Iceland;4;66*3'29"N, 23*8'7"W
