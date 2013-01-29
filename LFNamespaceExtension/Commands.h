@@ -69,14 +69,14 @@ public:
 };
 
 
-// CmdMigrate
+// CmdFileDrop
 //
 
 
-class CmdMigrate : public CExplorerCommand
+class CmdFileDrop : public CExplorerCommand
 {
 public:
-	CmdMigrate();
+	CmdFileDrop();
 
 	virtual CString GetCaption(CPtrList* nseItems);
 	virtual CString GetToolTip(CPtrList* nseItems);
@@ -86,14 +86,14 @@ public:
 };
 
 
-// CmdFileDrop
+// CmdMigrate
 //
 
 
-class CmdFileDrop : public CExplorerCommand
+class CmdMigrate : public CExplorerCommand
 {
 public:
-	CmdFileDrop();
+	CmdMigrate();
 
 	virtual CString GetCaption(CPtrList* nseItems);
 	virtual CString GetToolTip(CPtrList* nseItems);

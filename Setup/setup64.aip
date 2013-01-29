@@ -552,7 +552,7 @@
     <ROW Registry="__5" Root="0" Key="CLSID\{3F2D914E-FE57-414F-9F88-A377C7841DA4}\InProcServer32" Value="[!LFNamespaceExtension.dll]" Component_="LFNamespaceExtension.dll"/>
     <ROW Registry="__6" Root="0" Key="CLSID\{3F2D914E-FE57-414F-9F88-A377C7841DA4}\ProgID" Value="LFNamespaceExtension.DriveMenu" Component_="LFNamespaceExtension.dll"/>
     <ROW Registry="__7" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}" Value="liquidFOLDERS" Component_="LFNamespaceExtension.dll"/>
-    <ROW Registry="__8" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}\DefaultIcon" Value="&quot;[#LFCore.dll]&quot;,0" Component_="LFNamespaceExtension.dll"/>
+    <ROW Registry="__8" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}\DefaultIcon" Value="&quot;[#LFNamespaceExtension.dll]&quot;,0" Component_="LFNamespaceExtension.dll"/>
     <ROW Registry="__9" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}\InProcServer32" Value="[!LFNamespaceExtension.dll]" Component_="LFNamespaceExtension.dll"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiRemoveFileComponent">

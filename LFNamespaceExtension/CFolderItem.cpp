@@ -186,8 +186,8 @@ void CFolderItem::GetExtensionTargetInfo(CExtensionTargetInfo& info)
 	nti->name = _T("liquidFOLDERS");
 	nti->infoTip.LoadString(IDS_InfoTip);
 	nti->attributes = (NSEItemAttributes)(NSEIA_CFOLDERITEM | NSEIA_HasSubFolder);
-	nti->iconFile = theApp.m_CoreFile;
-	nti->iconIndex = IDI_FLD_Default-1;
+	nti->iconFile = theApp.m_ThisFile;
+	nti->iconIndex = 0;
 	nti->AddRootNodeProperty(_T("SortOrderIndex"), (UINT)64);
 	nti->AddRootNodeProperty(_T("System.DescriptionID"), (UINT)20);
 	nti->AddRootNodeProperty(_T("System.ItemType"), _T("Folder"));
@@ -203,8 +203,8 @@ void CFolderItem::GetExtensionTargetInfo(CExtensionTargetInfo& info)
 	nti->name = _T("liquidFOLDERS");
 	nti->infoTip.LoadString(IDS_InfoTip);
 	nti->attributes = (NSEItemAttributes)(NSEIA_CFOLDERITEM | NSEIA_HasSubFolder);
-	nti->iconFile = theApp.m_CoreFile;
-	nti->iconIndex = IDI_FLD_Default-1;
+	nti->iconFile = theApp.m_ThisFile;
+	nti->iconIndex = 0;
 	nti->AddRootNodeProperty(_T("SortOrderIndex"), (UINT)64);
 	nti->AddRootNodeProperty(_T("System.DescriptionID"), (UINT)20);
 	nti->AddRootNodeProperty(_T("System.ItemType"), _T("Folder"));
@@ -695,18 +695,18 @@ void CFolderItem::GetToolbarButtons(CPtrList& commands)
 			commands.AddTail(new CShellToolbarButton(tmpStr, NSESTBT_Normal, (INT_PTR)IDB_StoreManager));
 		}
 
-		if (!theApp.m_PathMigrate.IsEmpty())
-		{
-			ENSURE(tmpStr.LoadString(IDS_MENU_Migrate));
-			tmpStr.Remove('&');
-			commands.AddTail(new CShellToolbarButton(tmpStr, NSESTBT_Normal, (INT_PTR)IDB_Migrate));
-		}
-
 		if (!theApp.m_PathFileDrop.IsEmpty())
 		{
 			ENSURE(tmpStr.LoadString(IDS_MENU_FileDrop));
 			tmpStr.Remove('&');
 			commands.AddTail(new CShellToolbarButton(tmpStr, NSESTBT_Normal, (INT_PTR)IDB_FileDrop));
+		}
+
+		if (!theApp.m_PathMigrate.IsEmpty())
+		{
+			ENSURE(tmpStr.LoadString(IDS_MENU_Migrate));
+			tmpStr.Remove('&');
+			commands.AddTail(new CShellToolbarButton(tmpStr, NSESTBT_Normal, (INT_PTR)IDB_Migrate));
 		}
 	}
 }
@@ -721,8 +721,8 @@ void CFolderItem::OnMergeFrameMenu(CMergeFrameMenuEventArgs& e)
 	AddItem(subMenu, IDS_MENU_MaintainAll, _T(VERB_MAINTAINALL))->SetEnabled(!theApp.m_PathRunCmd.IsEmpty());
 	AddSeparator(subMenu);
 	AddPathItem(subMenu, IDS_MENU_StoreManager, _T(VERB_STOREMANAGER), theApp.m_PathStoreManager, IDI_StoreManager);
-	AddPathItem(subMenu, IDS_MENU_Migrate, _T(VERB_MIGRATE), theApp.m_PathMigrate, IDI_Migrate);
 	AddPathItem(subMenu, IDS_MENU_FileDrop, _T(VERB_FILEDROP), theApp.m_PathFileDrop, IDI_FileDrop);
+	AddPathItem(subMenu, IDS_MENU_Migrate, _T(VERB_MIGRATE), theApp.m_PathMigrate, IDI_Migrate);
 	AddSeparator(subMenu);
 	AddItem(subMenu, IDS_MENU_About, _T(VERB_ABOUT))->SetEnabled(!theApp.m_PathRunCmd.IsEmpty());
 }
@@ -737,11 +737,11 @@ void CFolderItem::OnExecuteFrameCommand(CExecuteFrameCommandEventArgs& e)
 		if (e.menuItem->GetVerb()==_T(VERB_STOREMANAGER))
 			RunPath(NULL, theApp.m_PathStoreManager);
 
-		if (e.menuItem->GetVerb()==_T(VERB_MIGRATE))
-			RunPath(NULL, theApp.m_PathMigrate);
-
 		if (e.menuItem->GetVerb()==_T(VERB_FILEDROP))
 			RunPath(NULL, theApp.m_PathFileDrop);
+
+		if (e.menuItem->GetVerb()==_T(VERB_MIGRATE))
+			RunPath(NULL, theApp.m_PathMigrate);
 
 		if (e.menuItem->GetVerb()==_T(VERB_ABOUT))
 			RunPath(NULL, theApp.m_PathRunCmd, _T("ABOUTEXTENSION"));
@@ -753,10 +753,10 @@ void CFolderItem::OnExecuteFrameCommand(CExecuteFrameCommandEventArgs& e)
 			RunPath(NULL, theApp.m_PathStoreManager);
 			break;
 		case 2:
-			RunPath(NULL, theApp.m_PathMigrate);
+			RunPath(NULL, theApp.m_PathFileDrop);
 			break;
 		case 3:
-			RunPath(NULL, theApp.m_PathFileDrop);
+			RunPath(NULL, theApp.m_PathMigrate);
 			break;
 		}
 }
@@ -774,8 +774,8 @@ void CFolderItem::GetToolbarCommands(CPtrList& commands)
 	}
 
 	commands.AddTail(new CmdStoreManager());
-	commands.AddTail(new CmdMigrate());
 	commands.AddTail(new CmdFileDrop());
+	commands.AddTail(new CmdMigrate());
 }
 
 

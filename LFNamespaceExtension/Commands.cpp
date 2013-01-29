@@ -216,49 +216,6 @@ CString CmdStoreManager::GetIcon(CPtrList* /*nseItems*/)
 }
 
 
-// CmdMigrate
-//
-
-CmdMigrate::CmdMigrate()
-{
-	static const GUID GMigrate = { 0xA43A5A7A, 0xC10C, 0x4EF1, { 0x9A, 0x70, 0xD9, 0x0C, 0x75, 0x35, 0xAE, 0x68 } };
-	guid = GMigrate;
-}
-
-CString CmdMigrate::GetCaption(CPtrList* /*nseItems*/)
-{
-	CString caption;
-	ENSURE(caption.LoadString(IDS_MENU_Migrate));
-	caption.Remove('&');
-	return caption;
-}
-
-CString CmdMigrate::GetToolTip(CPtrList* /*nseItems*/)
-{
-	CString hint;
-	ENSURE(hint.LoadString(IDS_HINT_Migrate));
-	return hint;
-}
-
-ExplorerCommandState CmdMigrate::GetState(CPtrList* /*nseItems*/)
-{
-	return (!theApp.m_PathMigrate.IsEmpty()) ? ECS_Enabled : ECS_Disabled;
-}
-
-BOOL CmdMigrate::Invoke(CPtrList* /*nseItems*/)
-{
-	return RunPath(NULL, theApp.m_PathMigrate);
-}
-
-CString CmdMigrate::GetIcon(CPtrList* /*nseItems*/)
-{
-	CString tmpStr(theApp.m_ThisFile);
-	tmpStr.Append(_T(",4"));
-
-	return tmpStr;
-}
-
-
 // CmdFileDrop
 //
 
@@ -299,6 +256,49 @@ CString CmdFileDrop::GetIcon(CPtrList* /*nseItems*/)
 {
 	CString tmpStr(theApp.m_ThisFile);
 	tmpStr.Append(_T(",5"));
+
+	return tmpStr;
+}
+
+
+// CmdMigrate
+//
+
+CmdMigrate::CmdMigrate()
+{
+	static const GUID GMigrate = { 0xA43A5A7A, 0xC10C, 0x4EF1, { 0x9A, 0x70, 0xD9, 0x0C, 0x75, 0x35, 0xAE, 0x68 } };
+	guid = GMigrate;
+}
+
+CString CmdMigrate::GetCaption(CPtrList* /*nseItems*/)
+{
+	CString caption;
+	ENSURE(caption.LoadString(IDS_MENU_Migrate));
+	caption.Remove('&');
+	return caption;
+}
+
+CString CmdMigrate::GetToolTip(CPtrList* /*nseItems*/)
+{
+	CString hint;
+	ENSURE(hint.LoadString(IDS_HINT_Migrate));
+	return hint;
+}
+
+ExplorerCommandState CmdMigrate::GetState(CPtrList* /*nseItems*/)
+{
+	return (!theApp.m_PathMigrate.IsEmpty()) ? ECS_Enabled : ECS_Disabled;
+}
+
+BOOL CmdMigrate::Invoke(CPtrList* /*nseItems*/)
+{
+	return RunPath(NULL, theApp.m_PathMigrate);
+}
+
+CString CmdMigrate::GetIcon(CPtrList* /*nseItems*/)
+{
+	CString tmpStr(theApp.m_ThisFile);
+	tmpStr.Append(_T(",4"));
 
 	return tmpStr;
 }

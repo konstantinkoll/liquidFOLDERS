@@ -2,16 +2,17 @@
 // Microsoft Visual C++ generated include file.
 // Used by LFNamespaceExtension.rc
 //
-#define IDI_FolderAdd                   100
-#define IDI_StoreProperties             101
-#define IDI_NewStore                    102
-#define IDI_StoreManager                103
-#define IDI_Migrate                     104
-#define IDI_FileDrop                    105
-#define IDI_DefaultStore                106
-#define IDB_StoreManager                107
-#define IDB_Migrate                     108
+#define IDI_Application                 100
+#define IDI_FolderAdd                   101
+#define IDI_StoreProperties             102
+#define IDI_NewStore                    103
+#define IDI_StoreManager                104
+#define IDI_Migrate                     105
+#define IDI_FileDrop                    106
+#define IDI_DefaultStore                107
+#define IDB_StoreManager                108
 #define IDB_FileDrop                    109
+#define IDB_Migrate                     110
 #define IDS_InfoTip                     1000
 #define IDS_AttributeComment            1001
 #define IDS_AllFiles                    1002
