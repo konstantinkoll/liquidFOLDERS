@@ -1921,7 +1921,11 @@ void CMainView::OnFileRemember()
 void CMainView::OnFileRemove()
 {
 	LFTransactionList* tl = BuildTransactionList();
+
+	for (UINT a=0; a<tl->m_ItemCount; a++)
+		tl->m_Items[a].Processed = true;
 	RemoveTransactedItems(tl);
+
 	LFFreeTransactionList(tl);
 }
 
