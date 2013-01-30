@@ -13,11 +13,11 @@ ULONG ulSHChangeNotifyRegister;
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	typedef struct
+	struct SHNOTIFYSTRUCT
 	{
 		LPCITEMIDLIST dwItem1;
 		DWORD dwItem2;
-	} SHNOTIFYSTRUCT;
+	};
 
 	if (message==WM_USER)
 	{
