@@ -112,7 +112,7 @@
     <ROW RemoveReg="__14" InstallMode="3"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.BuildComponent">
-    <ROW BuildKey="DefaultBuild" BuildName="DefaultBuild" BuildOrder="1" BuildType="1" PackageFolder="." PackageFileName="liquidFOLDERS64" Languages="en;fr;de;es" LangOpt="1" InstallationType="2" CabsLocation="1" UseLzma="true" LzmaCompressionLevel="4" PackageType="1" FilesInsideExe="true" ExeIconPath="Setup\liquidFOLDERS.ico" ExtractionFolder="[AppDataFolder]\[|ProductName]\install" ExtUI="true" LangsDialog="true" MsiPackageType="x64" UACExecutionLevel="2"/>
+    <ROW BuildKey="DefaultBuild" BuildName="DefaultBuild" BuildOrder="1" BuildType="1" PackageFolder="." PackageFileName="liquidFOLDERS64" Languages="en;fr;de;es" LangOpt="1" InstallationType="2" CabsLocation="1" UseLzma="true" LzmaCompressionLevel="4" PackageType="1" FilesInsideExe="true" ExeIconPath="Setup\liquidFOLDERS.ico" ExtractionFolder="[AppDataFolder]\[|ProductName]\install" ExtUI="true" MsiPackageType="x64" UACExecutionLevel="2"/>
     <ATTRIBUTE name="CurrentBuild" value="DefaultBuild"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.CacheComponent">
