@@ -442,7 +442,7 @@ LFCore_API unsigned int LFCreateStore(LFStoreDescriptor* s, bool MakeDefault, HW
 	s->IndexVersion = CurIdxVersion;
 
 	// Store speichern
-	res = UpdateStore(s, MakeDefault);
+	res = UpdateStore(s, true, MakeDefault);
 
 	if (res==LFOk)
 	{
@@ -843,6 +843,10 @@ unsigned int RunMaintenance(LFStoreDescriptor* s, bool scheduled, LFProgress* pP
 
 	GetSystemTimeAsFileTime(&s->MaintenanceTime);
 	s->NeedsCheck = false;
+
+	res = UpdateStore(s, false);
+	if (res!=LFOk)
+		return res;
 
 	// Progress
 	if (pProgress)
