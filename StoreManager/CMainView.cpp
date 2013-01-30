@@ -1842,7 +1842,7 @@ void CMainView::OnUpdateStoreCommands(CCmdUI* pCmdUI)
 			switch (pCmdUI->m_nID)
 			{
 			case IDM_STORE_MAKEDEFAULT:
-				b = (item->CategoryID==LFItemCategoryInternalStores) && (!(item->Type & LFTypeDefaultStore));
+				b = (item->CategoryID==LFItemCategoryInternalStores) && (!(item->Type & LFTypeDefault));
 				break;
 			case IDM_STORE_MAKEHYBRID:
 				b = (item->CategoryID==LFItemCategoryExternalStores) && (!(item->Type & LFTypeNotMounted));

@@ -95,6 +95,7 @@ public:
 
 	// IExtractIcon
 	virtual void GetIconFileAndIndex(CGetIconFileAndIndexEventArgs& e);
+	virtual void GetOverlayIcon(CGetOverlayIconEventArgs& e);
 
 	// IQueryInfo
 	virtual void GetInfoTip(CString& infotip);

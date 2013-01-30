@@ -49,7 +49,7 @@ void LFSendTo::GetExtensionTargetInfo(CSendToExtensionTargetInfo& info)
 
 	info.description = Name;
 	info.iconFile = theApp.m_CoreFile;
-	info.iconIndex = IDI_STORE_Default-1;
+	info.iconIndex = IDI_STORE_Internal-1;
 }
 
 UINT LFSendTo::OnDragDrop(CDragDropEventArgs& /*e*/)

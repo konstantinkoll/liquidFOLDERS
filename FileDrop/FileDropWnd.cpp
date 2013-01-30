@@ -173,7 +173,7 @@ INT CFileDropWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_Dropzone.Add(ic);
 	DestroyIcon(ic);
 
-	ic = LFGetIcon(IDI_STORE_Default, 128, 128);
+	ic = LFGetIcon(IDI_STORE_Internal, 128, 128);
 	m_Dropzone.Add(ic);
 	DestroyIcon(ic);
 

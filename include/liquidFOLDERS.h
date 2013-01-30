@@ -491,7 +491,7 @@ struct LFCoreAttributes
 
 // Item structure
 
-#define LFTypeDefaultStore              0x00000001
+#define LFTypeDefault                   0x00000001
 #define LFTypeNotMounted                0x00000002
 #define LFTypeGhosted                   0x00000004
 #define LFTypeRequiresMaintenance       0x00000008

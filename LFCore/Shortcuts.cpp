@@ -112,7 +112,7 @@ IShellLink* GetShortcutForStore(char* StoreID, unsigned int IconID)
 
 			pShellLink->SetPath(Path);
 			pShellLink->SetArguments(ID);
-			pShellLink->SetIconLocation(IconLocation, (IconID==IDI_STORE_Default ? IDI_STORE_Internal : IconID)-1);
+			pShellLink->SetIconLocation(IconLocation, IconID-1);
 			pShellLink->SetShowCmd(SW_SHOWNORMAL);
 
 			return pShellLink;

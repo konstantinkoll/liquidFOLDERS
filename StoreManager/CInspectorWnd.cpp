@@ -241,21 +241,17 @@ void CInspectorWnd::UpdateAdd(LFItemDescriptor* i, LFSearchResult* pRawFiles)
 
 	// Icon
 	if (m_IconStatus<StatusMultiple)
-	{
-		UINT IconID = (i->IconID==IDI_STORE_Default) ? IDI_STORE_Internal : i->IconID;
-
 		switch (m_IconStatus)
 		{
 		case StatusUnused:
 			m_IconStatus = StatusUsed;
-			m_IconID = IconID;
+			m_IconID = i->IconID;
 			break;
 		case StatusUsed:
-			if (m_IconID!=IconID)
+			if (m_IconID!=i->IconID)
 				m_IconStatus = StatusMultiple;
 			break;
 		}
-	}
 
 	// Typ
 	if (m_TypeStatus<StatusMultiple)

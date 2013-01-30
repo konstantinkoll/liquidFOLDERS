@@ -764,19 +764,19 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\Store_Bag.ico"
+				RelativePath=".\res\OVR_Default.ico"
 				>
 			</File>
 			<File
-				RelativePath=".\res\Store_Default.ico"
+				RelativePath=".\res\STR_Bag.ico"
 				>
 			</File>
 			<File
-				RelativePath=".\res\Store_Empty.ico"
+				RelativePath=".\res\STR_Empty.ico"
 				>
 			</File>
 			<File
-				RelativePath=".\res\Store_Server.ico"
+				RelativePath=".\res\STR_Server.ico"
 				>
 			</File>
 		</Filter>

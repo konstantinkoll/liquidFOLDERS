@@ -22,8 +22,8 @@
 #define IDI_FLD_Trash                   18
 #define IDI_FLD_Video                   19
 #define IDI_FLD_Web                     20
-#define IDI_STORE_Internal              21
-#define IDI_STORE_Default               22
+#define IDI_OVERLAY_Default             21
+#define IDI_STORE_Internal              22
 #define IDI_STORE_Bag                   23
 #define IDI_STORE_Server                24
 #define IDI_LastIcon                    24
@@ -207,7 +207,6 @@
 #define IDS_DomainWeb                   5019
 #define IDS_DomainNew                   5020
 #define IDS_DefaultStore                6000
-#define ID_VIEW_APPLOOK_OFF_2007_NONE   -1
 
 // Next default values for new objects
 // 

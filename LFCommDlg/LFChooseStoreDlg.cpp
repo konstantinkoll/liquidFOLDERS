@@ -212,7 +212,7 @@ LRESULT LFChooseStoreDlg::OnUpdateStores(WPARAM wParam, LPARAM lParam)
 
 		INT idx = -1;
 		for (UINT a=0; a<p_Result->m_ItemCount; a++)
-			if (((idx==-1) && (p_Result->m_Items[a]->Type & LFTypeDefaultStore)) || (!strcmp(StoreID, p_Result->m_Items[a]->StoreID)))
+			if (((idx==-1) && (p_Result->m_Items[a]->Type & LFTypeDefault)) || (!strcmp(StoreID, p_Result->m_Items[a]->StoreID)))
 				idx = a;
 
 		m_wndExplorerList.SetItemState(idx, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
@@ -386,7 +386,7 @@ void LFChooseStoreDlg::OnUpdateStoreCommands(CCmdUI* pCmdUI)
 		switch (pCmdUI->m_nID)
 		{
 		case IDM_STORE_MAKEDEFAULT:
-			b = (item->CategoryID==LFItemCategoryInternalStores) && (!(item->Type & LFTypeDefaultStore));
+			b = (item->CategoryID==LFItemCategoryInternalStores) && (!(item->Type & LFTypeDefault));
 			break;
 		case IDM_STORE_MAKEHYBRID:
 			b = (item->CategoryID==LFItemCategoryExternalStores) && (!(item->Type & LFTypeNotMounted));

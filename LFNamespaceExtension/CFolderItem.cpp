@@ -496,6 +496,20 @@ void CFolderItem::GetIconFileAndIndex(CGetIconFileAndIndexEventArgs& e)
 	e.iconIndex = Attrs.Icon-1;
 }
 
+void CFolderItem::GetOverlayIcon(CGetOverlayIconEventArgs& e)
+{
+	if (Attrs.Type & LFTypeDefault)
+	{
+		e.overlayIconType = NSEOIT_Custom;
+		e.iconFile = theApp.m_CoreFile;
+		e.iconIndex = IDI_OVERLAY_Default-1;
+	}
+	else
+	{
+		e.overlayIconType = NSEOIT_None;
+	}
+}
+
 
 // IQueryInfo
 
@@ -1430,7 +1444,7 @@ BOOL CFolderItem::SetShellLink(IShellLink* pShellLink)
 	ASSERT(pShellLink);
 
 	pShellLink->SetIDList(GetPIDLAbsolute());
-	pShellLink->SetIconLocation(theApp.m_CoreFile, (Attrs.Icon==IDI_STORE_Default ? IDI_STORE_Internal : Attrs.Icon)-1);
+	pShellLink->SetIconLocation(theApp.m_CoreFile, Attrs.Icon-1);
 	pShellLink->SetShowCmd(SW_SHOWNORMAL);
 	pShellLink->SetDescription(Attrs.Comment);
 

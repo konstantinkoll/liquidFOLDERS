@@ -30,7 +30,6 @@ protected:
 	CExplorerTree m_PathTree;
 
 	afx_msg BOOL OnInitDialog();
-	afx_msg void OnSetInternalIcon();
 	afx_msg void OnSetOptions();
 	afx_msg void OnSelChanged(NMHDR* pNMHDR, LRESULT* pResult);
 	DECLARE_MESSAGE_MAP()

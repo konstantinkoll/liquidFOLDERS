@@ -595,7 +595,7 @@ CMenu* CFileView::GetSendToMenu()
 	{
 		WCHAR tmpStr[256];
 		LFGetDefaultStoreName(tmpStr, 256);
-		AppendSendToItem(pMenu, nID, tmpStr, theApp.m_CoreImageListSmall.ExtractIcon(IDI_STORE_Default-1), cx, cy, m_SendToItems);
+		AppendSendToItem(pMenu, nID, tmpStr, theApp.m_CoreImageListSmall.ExtractIcon(IDI_OVERLAY_Default-1), cx, cy, m_SendToItems);
 		Added = TRUE;
 
 		INT idx = (nID++) & 0xFF;

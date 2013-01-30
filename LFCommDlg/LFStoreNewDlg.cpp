@@ -75,7 +75,6 @@ void LFStoreNewDlg::DoDataExchange(CDataExchange* pDX)
 
 
 BEGIN_MESSAGE_MAP(LFStoreNewDlg, CDialog)
-	ON_BN_CLICKED(IDC_MAKEDEFAULT, OnSetInternalIcon)
 	ON_BN_CLICKED(IDC_INTERNALSTORE, OnSetOptions)
 	ON_BN_CLICKED(IDC_HYBRIDSTORE, OnSetOptions)
 	ON_BN_CLICKED(IDC_EXTERNALSTORE, OnSetOptions)
@@ -104,16 +103,11 @@ BOOL LFStoreNewDlg::OnInitDialog()
 	PopulateTreeCtrl();
 
 	// Icons
-	OnSetInternalIcon();
+	m_IconInternal.SetCoreIcon(IDI_STORE_Internal);
 	m_IconHybrid.SetCoreIcon(IDI_STORE_Bag);
 	m_IconExternal.SetCoreIcon(IDI_STORE_Bag);
 
 	return TRUE;
-}
-
-void LFStoreNewDlg::OnSetInternalIcon()
-{
-	m_IconInternal.SetCoreIcon(((CButton*)GetDlgItem(IDC_MAKEDEFAULT))->GetCheck() ? IDI_STORE_Default : IDI_STORE_Internal);
 }
 
 void LFStoreNewDlg::OnSetOptions()

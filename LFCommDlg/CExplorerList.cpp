@@ -120,9 +120,9 @@ void CExplorerList::AddStoreColumns()
 {
 	AddColumn(LFAttrFileName, 0);
 	AddColumn(LFAttrComments, 1);
-	AddColumn(LFAttrCreationTime, 2);
-	AddColumn(LFAttrStoreID, 3);
-	AddColumn(LFAttrDescription, 4);
+	AddColumn(LFAttrDescription, 2);
+	AddColumn(LFAttrCreationTime, 3);
+	AddColumn(LFAttrStoreID, 4);
 }
 
 void CExplorerList::SetSearchResult(LFSearchResult* result)
@@ -137,11 +137,12 @@ void CExplorerList::SetSearchResult(LFSearchResult* result)
 
 		UINT puColumns[2];
 		puColumns[0] = 1;
-		puColumns[1] = 4;
+		puColumns[1] = 2;
 
 		LVITEM lvi;
 		ZeroMemory(&lvi, sizeof(lvi));
 		lvi.mask = LVIF_TEXT | LVIF_IMAGE | LVIF_GROUPID | LVIF_COLUMNS | LVIF_STATE;
+		lvi.stateMask = LVIS_CUT | LVIS_OVERLAYMASK;
 		lvi.puColumns = puColumns;
 
 		for (UINT a=0; a<result->m_ItemCount; a++)
@@ -151,17 +152,16 @@ void CExplorerList::SetSearchResult(LFSearchResult* result)
 			lvi.pszText = (LPWSTR)result->m_Items[a]->CoreAttributes.FileName;
 			lvi.iImage = result->m_Items[a]->IconID-1;
 			lvi.iGroupId = result->m_Items[a]->CategoryID;
-			lvi.state = (result->m_Items[a]->Type & LFTypeGhosted) ? LVIS_CUT : 0;
-			lvi.stateMask = LVIS_CUT;
+			lvi.state = ((result->m_Items[a]->Type & LFTypeGhosted) ? LVIS_CUT : 0) | (result->m_Items[a]->Type & LFTypeDefault ? INDEXTOOVERLAYMASK(1) : 0);
 			INT idx = InsertItem(&lvi);
 
 			WCHAR tmpStr[256];
 			SetItemText(idx, 1, result->m_Items[a]->CoreAttributes.Comment);
+			SetItemText(idx, 2, result->m_Items[a]->Description);
 			LFAttributeToString(result->m_Items[a], LFAttrCreationTime, tmpStr, 256);
-			SetItemText(idx, 2, tmpStr);
-			LFAttributeToString(result->m_Items[a], LFAttrStoreID, tmpStr, 256);
 			SetItemText(idx, 3, tmpStr);
-			SetItemText(idx, 4, result->m_Items[a]->Description);
+			LFAttributeToString(result->m_Items[a], LFAttrStoreID, tmpStr, 256);
+			SetItemText(idx, 4, tmpStr);
 		}
 	}
 

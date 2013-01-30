@@ -304,26 +304,18 @@ LFCore_API LFItemDescriptor* LFAllocItemDescriptor(LFStoreDescriptor* s)
 	bool IsMounted = IsStoreMounted(s);
 
 	if (strcmp(s->StoreID, DefaultStore)==0)
-	{
-		d->IconID = IDI_STORE_Default;
-		d->Type |= LFTypeDefaultStore;
-		wchar_t ds[256];
-		LoadString(LFCoreModuleHandle, IDS_DefaultStore, ds, 256);
-		SetAttribute(d, LFAttrDescription, ds);
-	}
-	else
-	{
-		d->IconID = (s->StoreMode==LFStoreModeInternal ? IDI_STORE_Internal : s->StoreMode==LFStoreModeRemote ? IDI_STORE_Server : IDI_STORE_Bag);
-		if ((s->StoreMode==LFStoreModeHybrid) || (s->StoreMode==LFStoreModeExternal))
-			if (wcscmp(s->LastSeen, L"")!=0)
-			{
-				wchar_t ls[256];
-				LoadString(LFCoreModuleHandle, IsMounted ? IDS_SeenOn :IDS_LastSeen, ls, 256);
-				wchar_t descr[256];
-				wsprintf(descr, ls, s->LastSeen);
-				SetAttribute(d, LFAttrDescription, descr);
-			}
-	}
+		d->Type |= LFTypeDefault;
+
+	d->IconID = (s->StoreMode==LFStoreModeInternal) ? IDI_STORE_Internal : (s->StoreMode==LFStoreModeRemote) ? IDI_STORE_Server : IDI_STORE_Bag;
+	if ((s->StoreMode==LFStoreModeHybrid) || (s->StoreMode==LFStoreModeExternal))
+		if (wcscmp(s->LastSeen, L"")!=0)
+		{
+			wchar_t ls[256];
+			LoadString(LFCoreModuleHandle, IsMounted ? IDS_SeenOn :IDS_LastSeen, ls, 256);
+			wchar_t descr[256];
+			wsprintf(descr, ls, s->LastSeen);
+			SetAttribute(d, LFAttrDescription, descr);
+		}
 
 	if (!IsMounted)
 		d->Type |= LFTypeGhosted | LFTypeNotMounted;

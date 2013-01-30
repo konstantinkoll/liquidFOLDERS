@@ -501,7 +501,7 @@ BOOL LFApplication::WriteGlobalString(LPCTSTR lpszEntry, LPCTSTR lpszValue)
 
 void LFApplication::ExtractCoreIcons(HINSTANCE hModIcons, INT size, CImageList* li)
 {
-	li->Create(size, size, ILC_COLOR32, IDI_LastIcon, 1);
+	li->Create(size, size, ILC_COLOR32 | ILC_MASK, IDI_LastIcon, 1);
 
 	for (UINT a=1; a<=IDI_LastIcon; a++)
 	{
@@ -509,6 +509,8 @@ void LFApplication::ExtractCoreIcons(HINSTANCE hModIcons, INT size, CImageList* 
 		li->Add(ic);
 		DestroyIcon(ic);
 	}
+
+	li->SetOverlayImage(IDI_OVERLAY_Default-1, 1);
 }
 
 UINT LFApplication::DeleteStore(LFItemDescriptor* store, CWnd* pParentWnd, CWnd* pOwnerWnd)
