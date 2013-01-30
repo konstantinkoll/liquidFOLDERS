@@ -185,10 +185,10 @@
     <STRING lang="es" value="El [Wizard] va a instalar [ProductName] en su ordenador. Haga click en Siguente para continuar o en Cancelar para salir del [Wizard]."/>
   </ENTRY>
   <ENTRY id="Control.Text.LicenseAgreementDlg#AgreementText">
-    <STRING lang="en" value="I:\Dokumente und Einstellungen\ROOT\Eigene Dateien\liquidFOLDERS\Setup\EULA_en.rtf"/>
-    <STRING lang="fr" value="I:\Dokumente und Einstellungen\ROOT\Eigene Dateien\liquidFOLDERS\Setup\EULA_en.rtf"/>
-    <STRING lang="de" value="I:\Dokumente und Einstellungen\ROOT\Eigene Dateien\liquidFOLDERS\Setup\EULA_de.rtf"/>
-    <STRING lang="es" value="I:\Dokumente und Einstellungen\ROOT\Eigene Dateien\liquidFOLDERS\Setup\EULA_en.rtf"/>
+    <STRING lang="en" value="EULA_en.rtf"/>
+    <STRING lang="fr" value="EULA_en.rtf"/>
+    <STRING lang="de" value="EULA_de.rtf"/>
+    <STRING lang="es" value="EULA_en.rtf"/>
   </ENTRY>
   <ENTRY id="Property.Manufacturer">
     <STRING lang="en" value="liquidFOLDERS"/>
