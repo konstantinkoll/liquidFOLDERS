@@ -722,8 +722,8 @@ void CInspectorGrid::Init()
 	dc->SelectObject(pOldFont);
 	ReleaseDC(dc);
 
-	m_RowHeight = max(m_FontHeight[0], 16);
-	m_IconSize = 16;
+	m_RowHeight = max(m_FontHeight[0]+2, 16);
+	m_IconSize = (m_RowHeight>=27) ? 27 : (m_RowHeight>=22) ? 22 : 16;
 	hIconResetNormal = (HICON)LoadImage(LFCommDlgDLL.hResource, MAKEINTRESOURCE(IDI_RESET_NORMAL), IMAGE_ICON, m_IconSize, m_IconSize, LR_DEFAULTCOLOR);
 	hIconResetHot = (HICON)LoadImage(LFCommDlgDLL.hResource, MAKEINTRESOURCE(IDI_RESET_HOT), IMAGE_ICON, m_IconSize, m_IconSize, LR_DEFAULTCOLOR);
 	hIconResetPressed = (HICON)LoadImage(LFCommDlgDLL.hResource, MAKEINTRESOURCE(IDI_RESET_PRESSED), IMAGE_ICON, m_IconSize, m_IconSize, LR_DEFAULTCOLOR);
