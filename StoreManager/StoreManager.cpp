@@ -239,30 +239,6 @@ void CStoreManagerApp::OnAppAbout()
 }
 
 
-HBITMAP CStoreManagerApp::SetContextMenuIcon(CMenu* pMenu, UINT CmdID, UINT ResID)
-{
-	HBITMAP res = NULL;
-	INT cx = GetSystemMetrics(SM_CXSMICON);
-	INT cy = GetSystemMetrics(SM_CYSMICON);
-
-	for (UINT a=0; a<pMenu->GetMenuItemCount(); a++)
-		if (pMenu->GetMenuItemID(a)==CmdID)
-		{
-			HMODULE hModCore = LoadLibrary(_T("LFCORE.DLL"));
-			if (hModCore)
-			{
-				HICON hIcon = (HICON)LoadImage(hModCore, MAKEINTRESOURCE(ResID), IMAGE_ICON, cx, cy, LR_DEFAULTCOLOR);
-				FreeLibrary(hModCore);
-
-				res = SetMenuItemIcon(*pMenu, a, hIcon, cx, cy);
-				DestroyIcon(hIcon);
-			}
-		}
-
-	return res;
-}
-
-
 BOOL CStoreManagerApp::SanitizeSortBy(LFViewParameters* vp, INT context)
 {
 	BOOL Modified = FALSE;

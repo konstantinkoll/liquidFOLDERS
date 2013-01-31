@@ -1040,12 +1040,8 @@ void CMainView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 			pPopup->InsertMenu(0, MF_STRING | MF_BYPOSITION, IDM_SELECTALL, tmpStr);
 		}
 
-		HBITMAP hBmp = theApp.SetContextMenuIcon(pPopup, IDM_STORES_CREATENEW, IDI_STORE_Internal);
-
 		pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, GetOwner(), NULL);
 		delete pMenu;
-
-		DeleteObject(hBmp);
 	}
 }
 

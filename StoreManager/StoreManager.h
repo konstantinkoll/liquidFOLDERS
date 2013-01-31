@@ -28,8 +28,6 @@ public:
 	void KillFrame(CMainWnd* pVictim);
 	CMainWnd* GetClipboard();
 
-	HBITMAP SetContextMenuIcon(CMenu* pMenu, UINT CmdID, UINT ResID);
-
 	void Broadcast(INT Context, INT View, UINT cmdMsg);
 	void UpdateSortOptions(INT Context);
 	void UpdateViewOptions(INT Context=-1, INT View=-1);

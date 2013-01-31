@@ -1758,8 +1758,6 @@ void CFileView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 			CMenu* pPopup = pMenu->GetSubMenu(0);
 			ASSERT_VALID(pPopup);
 
-			HBITMAP hBmp = theApp.SetContextMenuIcon(pPopup, IDM_VOLUME_CREATENEWSTORE, IDI_STORE_Bag);
-
 			UINT idCmd = pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON | TPM_RETURNCMD, point.x, point.y, GetOwner(), NULL);
 			delete pMenu;
 
@@ -1771,8 +1769,6 @@ void CFileView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 			{
 				GetParent()->SendMessage(WM_SENDTO, (WPARAM)&m_SendToItems[idCmd % 0xFF]);
 			}
-
-			DeleteObject(hBmp);
 		}
 
 		for (UINT a=0; a<256; a++)
