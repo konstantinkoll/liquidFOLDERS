@@ -101,20 +101,15 @@ IDM_POPUP MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
+        MENUITEM "Ö&ffnen",                     ID_APP_OPENSTORE
+        MENUITEM SEPARATOR
         MENUITEM "Standard-Store &wählen...",   ID_APP_CHOOSEDEFAULTSTORE
-        POPUP "&Store"
-        BEGIN
-            MENUITEM "Ö&ffnen",                     ID_APP_OPENSTORE
-            MENUITEM SEPARATOR
-            MENUITEM "Verzeichnis &importieren...", IDM_STORE_IMPORTFOLDER
-            MENUITEM SEPARATOR
-            MENUITEM "&Eigenschaften",              IDM_STORE_PROPERTIES
-        END
+        MENUITEM "Verzeichnis &importieren...", IDM_STORE_IMPORTFOLDER
+        MENUITEM SEPARATOR
+        MENUITEM "&Eigenschaften",              IDM_STORE_PROPERTIES
         MENUITEM SEPARATOR
         MENUITEM "&Über FileDrop",              ID_APP_ABOUT
-        MENUITEM "&Immer im Vordergrund",       SC_ALWAYSONTOP
-        MENUITEM SEPARATOR
-        MENUITEM "&Beenden",                    ID_APP_EXIT
+        MENUITEM "&Beenden\tAlt+F4",            ID_APP_EXIT
     END
 END
 
@@ -153,21 +148,14 @@ IDM_POPUP MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
+        MENUITEM "&Abrir",                      ID_APP_OPENSTORE
+        MENUITEM SEPARATOR
         MENUITEM "Selecionar store &estándar...", ID_APP_CHOOSEDEFAULTSTORE
-        POPUP "&Store"
-        BEGIN
-            MENUITEM "&Abrir",                      ID_APP_OPENSTORE
-            MENUITEM SEPARATOR
-            MENUITEM "&Importar carpeta...",        IDM_STORE_IMPORTFOLDER
-            MENUITEM SEPARATOR
-            MENUITEM "Crear &acceso directo",       IDM_STORE_SHORTCUT
-            MENUITEM SEPARATOR
-            MENUITEM "&Propiedades",                IDM_STORE_PROPERTIES
-        END
+        MENUITEM "&Importar carpeta...",        IDM_STORE_IMPORTFOLDER
+        MENUITEM SEPARATOR
+        MENUITEM "&Propiedades",                IDM_STORE_PROPERTIES
         MENUITEM SEPARATOR
         MENUITEM "&Acerca FileDrop",            ID_APP_ABOUT
-        MENUITEM "Siempre a&rriba",             SC_ALWAYSONTOP
-        MENUITEM SEPARATOR
         MENUITEM "&Terminar",                   ID_APP_EXIT
     END
 END
@@ -207,21 +195,14 @@ IDM_POPUP MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
+        MENUITEM "&Ouvrir",                     ID_APP_OPENSTORE
+        MENUITEM SEPARATOR
         MENUITEM "Choisiss&ez le store standard...", ID_APP_CHOOSEDEFAULTSTORE
-        POPUP "&Store"
-        BEGIN
-            MENUITEM "&Ouvrir",                     ID_APP_OPENSTORE
-            MENUITEM SEPARATOR
-            MENUITEM "&Importer dossier...",        IDM_STORE_IMPORTFOLDER
-            MENUITEM SEPARATOR
-            MENUITEM "Créer r&accourci",            IDM_STORE_SHORTCUT
-            MENUITEM SEPARATOR
-            MENUITEM "&Propriétés",                 IDM_STORE_PROPERTIES
-        END
+        MENUITEM "&Importer dossier...",        IDM_STORE_IMPORTFOLDER
+        MENUITEM SEPARATOR
+        MENUITEM "&Propriétés",                 IDM_STORE_PROPERTIES
         MENUITEM SEPARATOR
         MENUITEM "&Concernant FileDrop",        ID_APP_ABOUT
-        MENUITEM "Toujours au &top",            SC_ALWAYSONTOP
-        MENUITEM SEPARATOR
         MENUITEM "&Quitter",                    ID_APP_EXIT
     END
 END
@@ -312,21 +293,14 @@ IDM_POPUP MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
+        MENUITEM "&Open",                       ID_APP_OPENSTORE
+        MENUITEM SEPARATOR
         MENUITEM "Choose &default store...",    ID_APP_CHOOSEDEFAULTSTORE
-        POPUP "&Store"
-        BEGIN
-            MENUITEM "&Open",                       ID_APP_OPENSTORE
-            MENUITEM SEPARATOR
-            MENUITEM "&Import folder...",           IDM_STORE_IMPORTFOLDER
-            MENUITEM SEPARATOR
-            MENUITEM "Create &shortcut",            IDM_STORE_SHORTCUT
-            MENUITEM SEPARATOR
-            MENUITEM "&Properties",                 IDM_STORE_PROPERTIES
-        END
+        MENUITEM "&Import folder...",           IDM_STORE_IMPORTFOLDER
+        MENUITEM SEPARATOR
+        MENUITEM "&Properties",                 IDM_STORE_PROPERTIES
         MENUITEM SEPARATOR
         MENUITEM "&About FileDrop",             ID_APP_ABOUT
-        MENUITEM "Always on &top",              SC_ALWAYSONTOP
-        MENUITEM SEPARATOR
         MENUITEM "&Quit",                       ID_APP_EXIT
     END
 END

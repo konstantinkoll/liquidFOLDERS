@@ -395,9 +395,8 @@ void CFileDropWnd::OnContextMenu(CWnd* /*pWnd*/, CPoint pos)
 	CMenu* pPopup = menu.GetSubMenu(0);
 	ASSERT_VALID(pPopup);
 
-	SetMenuItemBitmap(*pPopup, 6, HBMMENU_POPUP_CLOSE);
+	SetMenuItemBitmap(*pPopup, 8, HBMMENU_POPUP_CLOSE);
 
-	pPopup->CheckMenuItem(SC_ALWAYSONTOP, m_AlwaysOnTop ? MF_CHECKED : MF_UNCHECKED);
 	pPopup->SetDefaultItem(ID_APP_CHOOSEDEFAULTSTORE);
 	pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, pos.x, pos.y, this);
 }
