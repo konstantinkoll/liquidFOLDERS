@@ -159,10 +159,7 @@ BEGIN
     POPUP "POPUP"
     BEGIN
         MENUITEM "Als &Standard-Store setzen",  IDM_STORE_MAKEDEFAULT
-        MENUITEM "Zu &Hybrid-Store machen",     IDM_STORE_MAKEHYBRID
-        MENUITEM SEPARATOR
         MENUITEM "Verzeichnis &importieren...", IDM_STORE_IMPORTFOLDER
-        MENUITEM "&Wartungsarbeiten durchführen", IDM_STORE_MAINTAIN
         MENUITEM SEPARATOR
         MENUITEM "&Verknüpfung erstellen",      IDM_STORE_SHORTCUT
         MENUITEM "&Löschen",                    IDM_STORE_DELETE
@@ -177,9 +174,6 @@ BEGIN
     POPUP "POPUP"
     BEGIN
         MENUITEM "&Neuen Store anlegen...",     IDM_STORES_CREATENEW
-        MENUITEM SEPARATOR
-        MENUITEM "&Wartungsarbeiten durchführen", IDM_STORES_MAINTAINALL
-        MENUITEM "&Registry-Einstellungen sichern...", IDM_STORES_BACKUP
     END
 END
 
@@ -761,10 +755,7 @@ BEGIN
     POPUP "POPUP"
     BEGIN
         MENUITEM "Establecer al &store predeterminado", IDM_STORE_MAKEDEFAULT
-        MENUITEM "Convertir al store &híbrido", IDM_STORE_MAKEHYBRID
-        MENUITEM SEPARATOR
         MENUITEM "&Importar carpeta...",        IDM_STORE_IMPORTFOLDER
-        MENUITEM "Ejecutar &mantenimiento",     IDM_STORE_MAINTAIN
         MENUITEM SEPARATOR
         MENUITEM "Crear &acceso directo",       IDM_STORE_SHORTCUT
         MENUITEM "&Eliminar",                   IDM_STORE_DELETE
@@ -779,9 +770,6 @@ BEGIN
     POPUP "POPUP"
     BEGIN
         MENUITEM "Crear &nuevo store...",       IDM_STORES_CREATENEW
-        MENUITEM SEPARATOR
-        MENUITEM "Ejecutar &mantenimiento",     IDM_STORES_MAINTAINALL
-        MENUITEM "Respaldo configuración del &registro...", IDM_STORES_BACKUP
     END
 END
 
@@ -1363,10 +1351,7 @@ BEGIN
     POPUP "POPUP"
     BEGIN
         MENUITEM "Faites store &standard",      IDM_STORE_MAKEDEFAULT
-        MENUITEM "Faites store &hybride",       IDM_STORE_MAKEHYBRID
-        MENUITEM SEPARATOR
         MENUITEM "&Importer dossier...",        IDM_STORE_IMPORTFOLDER
-        MENUITEM "Exécuter des &travails d'entretien", IDM_STORE_MAINTAIN
         MENUITEM SEPARATOR
         MENUITEM "Créer r&accourci",            IDM_STORE_SHORTCUT
         MENUITEM "&Effacer",                    IDM_STORE_DELETE
@@ -1381,9 +1366,6 @@ BEGIN
     POPUP "POPUP"
     BEGIN
         MENUITEM "Créez un store &nouveau...",  IDM_STORES_CREATENEW
-        MENUITEM SEPARATOR
-        MENUITEM "Exécuter des &travails d'entretien", IDM_STORES_MAINTAINALL
-        MENUITEM "Protection de secours paramètres d'en&registrement...", IDM_STORES_BACKUP
     END
 END
 
@@ -2017,10 +1999,7 @@ BEGIN
     POPUP "POPUP"
     BEGIN
         MENUITEM "Make de&fault store",         IDM_STORE_MAKEDEFAULT
-        MENUITEM "Make &hybrid store",          IDM_STORE_MAKEHYBRID
-        MENUITEM SEPARATOR
         MENUITEM "&Import folder...",           IDM_STORE_IMPORTFOLDER
-        MENUITEM "Run &maintenance",            IDM_STORE_MAINTAIN
         MENUITEM SEPARATOR
         MENUITEM "Create &shortcut",            IDM_STORE_SHORTCUT
         MENUITEM "&Delete",                     IDM_STORE_DELETE
@@ -2035,9 +2014,6 @@ BEGIN
     POPUP "POPUP"
     BEGIN
         MENUITEM "Create &new store...",        IDM_STORES_CREATENEW
-        MENUITEM SEPARATOR
-        MENUITEM "Run &maintenance",            IDM_STORES_MAINTAINALL
-        MENUITEM "Backup &registry settings...", IDM_STORES_BACKUP
     END
 END
 

@@ -144,8 +144,6 @@ BEGIN_MESSAGE_MAP(CFileDropWnd, CGlassWindow)
 	ON_COMMAND(ID_APP_CHOOSEDEFAULTSTORE, OnChooseDefaultStore)
 	ON_COMMAND(ID_APP_OPENSTORE, OnStoreOpen)
 	ON_COMMAND(IDM_STORE_IMPORTFOLDER, OnStoreImportFolder)
-	ON_COMMAND(IDM_STORE_MAINTAIN, OnStoreMaintain)
-	ON_COMMAND(IDM_STORE_SHORTCUT, OnStoreShortcut)
 	ON_COMMAND(IDM_STORE_PROPERTIES, OnStoreProperties)
 	ON_COMMAND(ID_APP_EXIT, OnQuit)
 	ON_UPDATE_COMMAND_UI(ID_APP_OPENSTORE, OnUpdateCommands)
@@ -467,25 +465,6 @@ void CFileDropWnd::OnStoreOpen()
 void CFileDropWnd::OnStoreImportFolder()
 {
 	LFImportFolder(m_Store.StoreID, this);
-}
-
-void CFileDropWnd::OnStoreMaintain()
-{
-	WorkerParameters wp;
-	ZeroMemory(&wp, sizeof(wp));
-	strcpy_s(wp.StoreID, LFKeySize, m_Store.StoreID);
-
-	LFDoWithProgress(WorkerMaintenance, &wp.Hdr, this);
-	LFErrorBox(wp.MaintenanceList->m_LastError, GetSafeHwnd());
-
-	LFStoreMaintenanceDlg dlg(wp.MaintenanceList, this);
-	dlg.DoModal();
-}
-
-void CFileDropWnd::OnStoreShortcut()
-{
-	if (LFAskCreateShortcut(GetSafeHwnd()))
-		LFCreateDesktopShortcutForStore(&m_Store);
 }
 
 void CFileDropWnd::OnStoreProperties()

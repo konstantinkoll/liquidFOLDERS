@@ -149,7 +149,6 @@ BEGIN
         MENUITEM "&Statistiken anzeigen",       IDM_HOME_SHOWSTATISTICS
         MENUITEM SEPARATOR
         MENUITEM "Verzeichnis &importieren...", IDM_HOME_IMPORTFOLDER
-        MENUITEM "&Wartungsarbeiten durchführen", IDM_HOME_MAINTAIN
         MENUITEM SEPARATOR
         MENUITEM "&Eigenschaften",              IDM_HOME_PROPERTIES
     END
@@ -748,7 +747,6 @@ BEGIN
         MENUITEM "Show &statistics",            IDM_HOME_SHOWSTATISTICS
         MENUITEM SEPARATOR
         MENUITEM "&Import folder...",           IDM_HOME_IMPORTFOLDER
-        MENUITEM "Run &maintenance",            IDM_HOME_MAINTAIN
         MENUITEM SEPARATOR
         MENUITEM "P&roperties",                 IDM_HOME_PROPERTIES
     END
@@ -1346,7 +1344,6 @@ BEGIN
         MENUITEM "Mostrar &estadísticas",       IDM_HOME_SHOWSTATISTICS
         MENUITEM SEPARATOR
         MENUITEM "&Importar carpeta...",        IDM_HOME_IMPORTFOLDER
-        MENUITEM "Ejecutar &mantenimiento",     IDM_HOME_MAINTAIN
         MENUITEM SEPARATOR
         MENUITEM "&Propiedades",                IDM_HOME_PROPERTIES
     END
@@ -1945,7 +1942,6 @@ BEGIN
         MENUITEM "Indiquer la &statistique",    IDM_HOME_SHOWSTATISTICS
         MENUITEM SEPARATOR
         MENUITEM "&Importer dossier...",        IDM_HOME_IMPORTFOLDER
-        MENUITEM "Exécuter des &travails d'entretien", IDM_HOME_MAINTAIN
         MENUITEM SEPARATOR
         MENUITEM "&Propriétés",                 IDM_HOME_PROPERTIES
     END

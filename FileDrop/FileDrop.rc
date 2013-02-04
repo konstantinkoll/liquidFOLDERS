@@ -107,9 +107,6 @@ BEGIN
             MENUITEM "Ö&ffnen",                     ID_APP_OPENSTORE
             MENUITEM SEPARATOR
             MENUITEM "Verzeichnis &importieren...", IDM_STORE_IMPORTFOLDER
-            MENUITEM "&Wartungsarbeiten durchführen", IDM_STORE_MAINTAIN
-            MENUITEM SEPARATOR
-            MENUITEM "&Verknüpfung erstellen",      IDM_STORE_SHORTCUT
             MENUITEM SEPARATOR
             MENUITEM "&Eigenschaften",              IDM_STORE_PROPERTIES
         END
@@ -162,7 +159,6 @@ BEGIN
             MENUITEM "&Abrir",                      ID_APP_OPENSTORE
             MENUITEM SEPARATOR
             MENUITEM "&Importar carpeta...",        IDM_STORE_IMPORTFOLDER
-            MENUITEM "Ejecutar &mantenimiento",     IDM_STORE_MAINTAIN
             MENUITEM SEPARATOR
             MENUITEM "Crear &acceso directo",       IDM_STORE_SHORTCUT
             MENUITEM SEPARATOR
@@ -217,7 +213,6 @@ BEGIN
             MENUITEM "&Ouvrir",                     ID_APP_OPENSTORE
             MENUITEM SEPARATOR
             MENUITEM "&Importer dossier...",        IDM_STORE_IMPORTFOLDER
-            MENUITEM "Exécuter des &travails d'entretien", IDM_STORE_MAINTAIN
             MENUITEM SEPARATOR
             MENUITEM "Créer r&accourci",            IDM_STORE_SHORTCUT
             MENUITEM SEPARATOR
@@ -323,7 +318,6 @@ BEGIN
             MENUITEM "&Open",                       ID_APP_OPENSTORE
             MENUITEM SEPARATOR
             MENUITEM "&Import folder...",           IDM_STORE_IMPORTFOLDER
-            MENUITEM "Run &maintenance",            IDM_STORE_MAINTAIN
             MENUITEM SEPARATOR
             MENUITEM "Create &shortcut",            IDM_STORE_SHORTCUT
             MENUITEM SEPARATOR

@@ -554,14 +554,7 @@ void CFolderItem::GetMenuItems(CGetMenuitemsEventArgs& e)
 		if (e.children->GetCount()==0)
 		{
 			AddSeparator(e.menu);
-
-			CShellMenuItem* item = AddItem(e.menu, IDS_MENU_CreateNewStore, _T(VERB_CREATENEWSTORE));
-			item->SetEnabled(!theApp.m_PathRunCmd.IsEmpty());
-			theApp.SetCoreMenuIcon(item, IDI_STORE_Internal);
-
-			AddSeparator(e.menu);
-			AddItem(e.menu, IDS_MENU_MaintainAll, _T(VERB_MAINTAINALL))->SetEnabled(!theApp.m_PathRunCmd.IsEmpty());
-			AddItem(e.menu, IDS_MENU_Backup, _T(VERB_BACKUP))->SetEnabled(!theApp.m_PathRunCmd.IsEmpty());
+			AddItem(e.menu, IDS_MENU_CreateNewStore, _T(VERB_CREATENEWSTORE));
 		}
 
 		if (e.children->GetCount()==1)
@@ -570,10 +563,7 @@ void CFolderItem::GetMenuItems(CGetMenuitemsEventArgs& e)
 
 			AddSeparator(e.menu);
 			AddItem(e.menu, IDS_MENU_MakeDefaultStore, _T(VERB_MAKEDEFAULTSTORE))->SetEnabled(f->Attrs.CategoryID==LFStoreModeInternal);
-			AddItem(e.menu, IDS_MENU_MakeHybridStore, _T(VERB_MAKEHYBRIDSTORE))->SetEnabled(f->Attrs.CategoryID==LFStoreModeExternal);
-			AddSeparator(e.menu);
 			AddItem(e.menu, IDS_MENU_ImportFolder, _T(VERB_IMPORTFOLDER))->SetEnabled((!(f->Attrs.Type & LFTypeNotMounted)) && (!theApp.m_PathRunCmd.IsEmpty()));
-			AddItem(e.menu, IDS_MENU_Maintain, _T(VERB_MAINTAIN))->SetEnabled(!theApp.m_PathRunCmd.IsEmpty());
 		}
 
 		if ((!(e.flags & NSEQCF_NoDefault)) && (e.children->GetCount()>=1))
@@ -597,7 +587,6 @@ void CFolderItem::GetMenuItems(CGetMenuitemsEventArgs& e)
 		if (e.children->GetCount()==0)
 		{
 			AddItem(e.menu, IDS_MENU_ImportFolder, _T(VERB_IMPORTFOLDER))->SetEnabled(!theApp.m_PathRunCmd.IsEmpty());
-			AddItem(e.menu, IDS_MENU_Maintain, _T(VERB_MAINTAIN))->SetEnabled(!theApp.m_PathRunCmd.IsEmpty());
 			AddSeparator(e.menu);
 			AddItem(e.menu, IDS_MENU_Properties, _T(VERB_PROPERTIES))->SetEnabled(!theApp.m_PathRunCmd.IsEmpty());
 		}
@@ -629,17 +618,8 @@ BOOL CFolderItem::OnExecuteMenuItem(CExecuteMenuitemsEventArgs& e)
 	if (e.menuItem->GetVerb()==_T(VERB_IMPORTFOLDER))
 		return RunStoreCommand(e, theApp.m_PathRunCmd, _T("IMPORTFOLDER "));
 
-	if (e.menuItem->GetVerb()==_T(VERB_MAINTAIN))
-		return RunStoreCommand(e, theApp.m_PathRunCmd, _T("MAINTAIN "));
-
 	if (e.menuItem->GetVerb()==_T(VERB_CREATENEWSTORE))
 		return RunPath(e.hWnd, theApp.m_PathRunCmd, _T("NEWSTORE"));
-
-	if (e.menuItem->GetVerb()==_T(VERB_MAINTAINALL))
-		RunPath(NULL, theApp.m_PathRunCmd, _T("MAINTAINALL"));
-
-	if (e.menuItem->GetVerb()==_T(VERB_BACKUP))
-		RunPath(NULL, theApp.m_PathRunCmd, _T("BACKUP"));
 
 	if (e.menuItem->GetVerb()==_T(VERB_EXPLORE))
 		return OnExplorer(e);
@@ -658,7 +638,7 @@ BOOL CFolderItem::OnExecuteMenuItem(CExecuteMenuitemsEventArgs& e)
 	if (e.menuItem->GetVerb()==_T(VERB_OPENWITH))
 		return OnOpenWith(e);
 
-	if ((e.menuItem->GetVerb()==_T(VERB_MAKEDEFAULTSTORE)) || (e.menuItem->GetVerb()==_T(VERB_MAKEHYBRIDSTORE)))
+	if (e.menuItem->GetVerb()==_T(VERB_MAKEDEFAULTSTORE))
 	{
 		POSITION pos = e.children->GetHeadPosition();
 		CNSEItem* temp = (CNSEItem*)e.children->GetNext(pos);
@@ -666,7 +646,7 @@ BOOL CFolderItem::OnExecuteMenuItem(CExecuteMenuitemsEventArgs& e)
 		{
 			CFolderItem* folder = AS(temp, CFolderItem);
 
-			UINT res = (e.menuItem->GetVerb()==_T(VERB_MAKEDEFAULTSTORE)) ? LFMakeDefaultStore(folder->Attrs.StoreID) : LFMakeHybridStore(folder->Attrs.StoreID);
+			UINT res = LFMakeDefaultStore(folder->Attrs.StoreID);
 			LFErrorBox(res, GetForegroundWindow());
 			return (res==LFOk);
 		}
@@ -732,8 +712,6 @@ void CFolderItem::OnMergeFrameMenu(CMergeFrameMenuEventArgs& e)
 
 	CShellMenu* subMenu = item->GetSubMenu();
 
-	AddItem(subMenu, IDS_MENU_MaintainAll, _T(VERB_MAINTAINALL))->SetEnabled(!theApp.m_PathRunCmd.IsEmpty());
-	AddSeparator(subMenu);
 	AddPathItem(subMenu, IDS_MENU_StoreManager, _T(VERB_STOREMANAGER), theApp.m_PathStoreManager, IDI_StoreManager);
 	AddPathItem(subMenu, IDS_MENU_FileDrop, _T(VERB_FILEDROP), theApp.m_PathFileDrop, IDI_FileDrop);
 	AddPathItem(subMenu, IDS_MENU_Migrate, _T(VERB_MIGRATE), theApp.m_PathMigrate, IDI_Migrate);
@@ -745,9 +723,6 @@ void CFolderItem::OnExecuteFrameCommand(CExecuteFrameCommandEventArgs& e)
 {
 	if(e.menuItem)
 	{
-		if (e.menuItem->GetVerb()==_T(VERB_MAINTAINALL))
-			RunPath(NULL, theApp.m_PathRunCmd, _T("MAINTAINALL"));
-
 		if (e.menuItem->GetVerb()==_T(VERB_STOREMANAGER))
 			RunPath(NULL, theApp.m_PathStoreManager);
 

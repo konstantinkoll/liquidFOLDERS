@@ -25,7 +25,6 @@ BOOL RunPath(HWND hWnd, CString path, CString parameter=_T(""));
 #define VERB_CREATESHORTCUT     "link"
 #define VERB_CREATENEWSTORE     "newstore"
 #define VERB_MAKEDEFAULTSTORE   "defaultstore"
-#define VERB_MAKEHYBRIDSTORE    "hybridstore"
 #define VERB_OPEN               "open"
 #define VERB_EXPLORE            "explore"
 #define VERB_OPENSTOREMANAGER   "openstoremanager"
@@ -35,12 +34,9 @@ BOOL RunPath(HWND hWnd, CString path, CString parameter=_T(""));
 #define VERB_DELETE             "delete"
 #define VERB_PROPERTIES         "properties"
 #define VERB_IMPORTFOLDER       "importfolder"
-#define VERB_MAINTAIN           "maintain"
 #define VERB_STOREMANAGER       "storemanager"
 #define VERB_FILEDROP           "filedrop"
 #define VERB_MIGRATE            "migrate"
-#define VERB_MAINTAINALL        "maintainall"
-#define VERB_BACKUP             "regbackup"
 #define VERB_ABOUT              "about"
 
 struct FolderSerialization

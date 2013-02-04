@@ -192,17 +192,6 @@ void LFNamespaceExtensionApp::GetIconSize(INT& cx, INT& cy)
 	cy = GetSystemMetrics((osInfo.dwMajorVersion<6) ? SM_CYMENUCHECK : SM_CYSMICON);
 }
 
-void LFNamespaceExtensionApp::SetCoreMenuIcon(void* item, UINT ResID)
-{
-	INT cx;
-	INT cy;
-	GetIconSize(cx, cy);
-
-	HICON hIcon = LFGetIcon(ResID, cx, cy);
-	((EZNamespaceExtensionsMFC::CShellMenuItem*)item)->SetBitmap(IconToBitmap(hIcon, cx, cy));
-	DestroyIcon(hIcon);
-}
-
 CString LFNamespaceExtensionApp::FrmtAttrStr(CString Mask, CString Name)
 {
 	if ((Mask[0]=='L') && (Name[0]>='A') && (Name[0]<='Z') && (Name[1]>'Z'))

@@ -140,8 +140,7 @@
 #define IDM_HOME_SHOWEMPTYDOMAINS       3101
 #define IDM_HOME_SHOWSTATISTICS         3102
 #define IDM_HOME_IMPORTFOLDER           3103
-#define IDM_HOME_MAINTAIN               3104
-#define IDM_HOME_PROPERTIES             3105
+#define IDM_HOME_PROPERTIES             3104
 #define IDM_HOUSEKEEPING                3200
 #define IDM_HOUSEKEEPING_REMOVENEW      3201
 #define IDM_HOUSEKEEPING_SEND           3202

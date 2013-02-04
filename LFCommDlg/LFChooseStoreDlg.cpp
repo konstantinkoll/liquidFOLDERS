@@ -7,28 +7,6 @@
 #include "Resource.h"
 
 
-// Thread workers
-//
-
-struct WorkerParameters
-{
-	LFWorkerParameters Hdr;
-	BOOL AllStores;
-	CHAR StoreID[LFKeySize];
-	HWND hWndSource;
-	LFMaintenanceList* MaintenanceList;
-};
-
-DWORD WINAPI WorkerMaintenance(void* lParam)
-{
-	LF_WORKERTHREAD_START(lParam);
-
-	wp->MaintenanceList = wp->AllStores ? LFStoreMaintenance(wp->hWndSource, &p) : LFStoreMaintenance(wp->StoreID, wp->hWndSource, &p);
-
-	LF_WORKERTHREAD_FINISH();
-}
-
-
 // LFChooseStoreDlg
 //
 
@@ -109,12 +87,8 @@ BEGIN_MESSAGE_MAP(LFChooseStoreDlg, LFDialog)
 	ON_REGISTERED_MESSAGE(MessageIDs->StoreAttributesChanged, OnUpdateStores)
 	ON_REGISTERED_MESSAGE(MessageIDs->DefaultStoreChanged, OnUpdateStores)
 	ON_COMMAND(IDM_STORES_CREATENEW, OnStoresCreateNew)
-	ON_COMMAND(IDM_STORES_MAINTAINALL, OnStoresMaintainAll)
-	ON_COMMAND(IDM_STORES_BACKUP, OnStoresBackup)
-	ON_UPDATE_COMMAND_UI_RANGE(IDM_STORES_CREATENEW, IDM_STORES_BACKUP, OnUpdateStoresCommands)
+	ON_UPDATE_COMMAND_UI(IDM_STORES_CREATENEW, OnUpdateStoresCommands)
 	ON_COMMAND(IDM_STORE_MAKEDEFAULT, OnStoreMakeDefault)
-	ON_COMMAND(IDM_STORE_MAKEHYBRID, OnStoreMakeHybrid)
-	ON_COMMAND(IDM_STORE_MAINTAIN, OnStoreMaintain)
 	ON_COMMAND(IDM_STORE_SHORTCUT, OnStoreShortcut)
 	ON_COMMAND(IDM_STORE_DELETE, OnStoreDelete)
 	ON_COMMAND(IDM_STORE_RENAME, OnStoreRename)
@@ -273,26 +247,6 @@ void LFChooseStoreDlg::OnStoresCreateNew()
 	LFFreeStoreDescriptor(s);
 }
 
-void LFChooseStoreDlg::OnStoresMaintainAll()
-{
-	WorkerParameters wp;
-	ZeroMemory(&wp, sizeof(wp));
-	wp.AllStores = TRUE;
-
-	LFDoWithProgress(WorkerMaintenance, &wp.Hdr, this);
-	LFErrorBox(wp.MaintenanceList->m_LastError);
-
-	LFStoreMaintenanceDlg dlg(wp.MaintenanceList, this);
-	dlg.DoModal();
-
-	LFFreeMaintenanceList(wp.MaintenanceList);
-}
-
-void LFChooseStoreDlg::OnStoresBackup()
-{
-	LFBackupStores(this);
-}
-
 void LFChooseStoreDlg::OnUpdateStoresCommands(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable((pCmdUI->m_nID==IDM_STORES_CREATENEW) || LFGetStoreCount());
@@ -304,36 +258,6 @@ void LFChooseStoreDlg::OnStoreMakeDefault()
 	INT idx = GetSelectedStore();
 	if (idx!=-1)
 		LFErrorBox(LFMakeDefaultStore(p_Result->m_Items[idx]->StoreID, NULL), m_hWnd);
-}
-
-void LFChooseStoreDlg::OnStoreMakeHybrid()
-{
-	INT idx = GetSelectedStore();
-	if (idx!=-1)
-	{
-		CWaitCursor wait;
-
-		LFErrorBox(LFMakeHybridStore(p_Result->m_Items[idx]->StoreID, NULL), m_hWnd);
-	}
-}
-
-void LFChooseStoreDlg::OnStoreMaintain()
-{
-	INT idx = GetSelectedStore();
-	if (idx!=-1)
-	{
-		WorkerParameters wp;
-		ZeroMemory(&wp, sizeof(wp));
-		strcpy_s(wp.StoreID, LFKeySize, p_Result->m_Items[idx]->StoreID);
-
-		LFDoWithProgress(WorkerMaintenance, &wp.Hdr, this);
-		LFErrorBox(wp.MaintenanceList->m_LastError);
-
-		LFStoreMaintenanceDlg dlg(wp.MaintenanceList, this);
-		dlg.DoModal();
-
-		LFFreeMaintenanceList(wp.MaintenanceList);
-	}
 }
 
 void LFChooseStoreDlg::OnStoreShortcut()
@@ -387,9 +311,6 @@ void LFChooseStoreDlg::OnUpdateStoreCommands(CCmdUI* pCmdUI)
 		{
 		case IDM_STORE_MAKEDEFAULT:
 			b = (item->CategoryID==LFItemCategoryInternalStores) && (!(item->Type & LFTypeDefault));
-			break;
-		case IDM_STORE_MAKEHYBRID:
-			b = (item->CategoryID==LFItemCategoryExternalStores) && (!(item->Type & LFTypeNotMounted));
 			break;
 		case IDM_STORE_IMPORTFOLDER:
 			b = FALSE;

@@ -762,17 +762,14 @@ BEGIN_MESSAGE_MAP(CMainView, CWnd)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_VIEW_FIRST, IDM_VIEW_FIRST+LFViewCount-1, OnUpdateViewCommands)
 
 	ON_COMMAND(IDM_STORES_CREATENEW, OnStoresCreateNew)
-	ON_COMMAND(IDM_STORES_MAINTAINALL, OnStoresMaintainAll)
-	ON_COMMAND(IDM_STORES_BACKUP, OnStoresBackup)
 	ON_COMMAND(IDM_STORES_SHOWEMPTYVOLUMES, OnStoresShowEmptyVolumes)
 	ON_COMMAND(IDM_STORES_REPAIRCORRUPTEDINDEX, OnStoresMaintainAll)
-	ON_UPDATE_COMMAND_UI_RANGE(IDM_STORES_CREATENEW, IDM_STORES_BACKUP, OnUpdateStoresCommands)
+	ON_UPDATE_COMMAND_UI(IDM_STORES_CREATENEW, OnUpdateStoresCommands)
 	ON_UPDATE_COMMAND_UI(IDM_STORES_SHOWEMPTYVOLUMES, OnUpdateStoresCommands)
 
 	ON_COMMAND(IDM_HOME_SHOWEMPTYDOMAINS, OnHomeShowEmptyDomains)
 	ON_COMMAND(IDM_HOME_SHOWSTATISTICS, OnHomeShowStatistics)
 	ON_COMMAND(IDM_HOME_IMPORTFOLDER, OnHomeImportFolder)
-	ON_COMMAND(IDM_HOME_MAINTAIN, OnHomeMaintain)
 	ON_COMMAND(IDM_HOME_PROPERTIES, OnHomeProperties)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_HOME_SHOWEMPTYDOMAINS, IDM_HOME_PROPERTIES, OnUpdateHomeCommands)
 
@@ -793,9 +790,7 @@ BEGIN_MESSAGE_MAP(CMainView, CWnd)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_VOLUME_CREATENEWSTORE, IDM_VOLUME_PROPERTIES, OnUpdateDriveCommands)
 
 	ON_COMMAND(IDM_STORE_MAKEDEFAULT, OnStoreMakeDefault)
-	ON_COMMAND(IDM_STORE_MAKEHYBRID, OnStoreMakeHybrid)
 	ON_COMMAND(IDM_STORE_IMPORTFOLDER, OnStoreImportFolder)
-	ON_COMMAND(IDM_STORE_MAINTAIN, OnStoreMaintain)
 	ON_COMMAND(IDM_STORE_SHORTCUT, OnStoreShortcut)
 	ON_COMMAND(IDM_STORE_DELETE, OnStoreDelete)
 	ON_COMMAND(IDM_STORE_RENAME, OnStoreRename)
@@ -846,7 +841,6 @@ INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndTaskbar.AddButton(IDM_STORE_RENAME, 18);
 	m_wndTaskbar.AddButton(IDM_STORE_PROPERTIES, 19);
 	m_wndTaskbar.AddButton(IDM_STORE_MAKEDEFAULT, 20);
-	m_wndTaskbar.AddButton(IDM_STORE_IMPORTFOLDER, 1);
 	m_wndTaskbar.AddButton(IDM_FILE_REMEMBER, 21);
 	m_wndTaskbar.AddButton(IDM_FILE_REMOVE, 22);
 	m_wndTaskbar.AddButton(IDM_FILE_DELETE, 23);
@@ -1473,11 +1467,6 @@ void CMainView::OnStoresMaintainAll()
 	LFFreeMaintenanceList(wp.MaintenanceList);
 }
 
-void CMainView::OnStoresBackup()
-{
-	LFBackupStores(this);
-}
-
 void CMainView::OnStoresShowEmptyVolumes()
 {
 	theApp.m_ShowEmptyVolumes = !theApp.m_ShowEmptyVolumes;
@@ -1522,24 +1511,6 @@ void CMainView::OnHomeImportFolder()
 	{
 		LFImportFolder(m_StoreID, this);
 		GetOwner()->PostMessage(WM_RELOAD);
-	}
-}
-
-void CMainView::OnHomeMaintain()
-{
-	if (m_StoreIDValid)
-	{
-		WorkerParameters wp;
-		ZeroMemory(&wp, sizeof(wp));
-		strcpy_s(wp.StoreID, LFKeySize, m_StoreID);
-
-		LFDoWithProgress(WorkerMaintenance, &wp.Hdr, this);
-		LFErrorBox(wp.MaintenanceList->m_LastError, GetSafeHwnd());
-
-		LFStoreMaintenanceDlg dlg(wp.MaintenanceList, this);
-		dlg.DoModal();
-
-		LFFreeMaintenanceList(wp.MaintenanceList);
 	}
 }
 
@@ -1757,41 +1728,11 @@ void CMainView::OnStoreMakeDefault()
 		LFErrorBox(LFMakeDefaultStore(p_CookedFiles->m_Items[idx]->StoreID, NULL), GetSafeHwnd());
 }
 
-void CMainView::OnStoreMakeHybrid()
-{
-	INT idx = GetSelectedItem();
-	if (idx!=-1)
-	{
-		CWaitCursor wait;
-
-		LFErrorBox(LFMakeHybridStore(p_CookedFiles->m_Items[idx]->StoreID, NULL), GetSafeHwnd());
-	}
-}
-
 void CMainView::OnStoreImportFolder()
 {
 	INT idx = GetSelectedItem();
 	if (idx!=-1)
 		LFImportFolder(p_CookedFiles->m_Items[idx]->StoreID, this);
-}
-
-void CMainView::OnStoreMaintain()
-{
-	INT idx = GetSelectedItem();
-	if (idx!=-1)
-	{
-		WorkerParameters wp;
-		ZeroMemory(&wp, sizeof(wp));
-		strcpy_s(wp.StoreID, LFKeySize, p_CookedFiles->m_Items[idx]->StoreID);
-
-		LFDoWithProgress(WorkerMaintenance, &wp.Hdr, this);
-		LFErrorBox(wp.MaintenanceList->m_LastError, GetSafeHwnd());
-
-		LFStoreMaintenanceDlg dlg(wp.MaintenanceList, this);
-		dlg.DoModal();
-
-		LFFreeMaintenanceList(wp.MaintenanceList);
-	}
 }
 
 void CMainView::OnStoreShortcut()
@@ -1839,9 +1780,6 @@ void CMainView::OnUpdateStoreCommands(CCmdUI* pCmdUI)
 			{
 			case IDM_STORE_MAKEDEFAULT:
 				b = (item->CategoryID==LFItemCategoryInternalStores) && (!(item->Type & LFTypeDefault));
-				break;
-			case IDM_STORE_MAKEHYBRID:
-				b = (item->CategoryID==LFItemCategoryExternalStores) && (!(item->Type & LFTypeNotMounted));
 				break;
 			case IDM_STORE_IMPORTFOLDER:
 				b = !(item->Type & LFTypeNotMounted);

@@ -29,7 +29,6 @@ public:
 
 	static BOOL HideFileExt();
 	static void GetIconSize(INT& cx, INT& cy);
-	static void SetCoreMenuIcon(void* item, UINT ResID);
 	static CString FrmtAttrStr(CString Mask, CString Name);
 	UINT ImportFiles(CHAR* StoreID, IDataObject* pDataObject, BOOL Move);
 	BOOL ShowNagScreen(UINT Level, BOOL Abort=FALSE);

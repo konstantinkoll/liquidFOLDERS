@@ -52,8 +52,6 @@ protected:
 	afx_msg void OnChooseDefaultStore();
 	afx_msg void OnStoreOpen();
 	afx_msg void OnStoreImportFolder();
-	afx_msg void OnStoreMaintain();
-	afx_msg void OnStoreShortcut();
 	afx_msg void OnStoreProperties();
 	afx_msg void OnAlwaysOnTop();
 	afx_msg void OnQuit();

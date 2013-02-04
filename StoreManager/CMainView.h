@@ -97,7 +97,6 @@ protected:
 
 	afx_msg void OnStoresCreateNew();
 	afx_msg void OnStoresMaintainAll();
-	afx_msg void OnStoresBackup();
 	afx_msg void OnStoresShowEmptyVolumes();
 	afx_msg void OnStoresShowStatistics();
 	afx_msg void OnUpdateStoresCommands(CCmdUI* pCmdUI);
@@ -105,7 +104,6 @@ protected:
 	afx_msg void OnHomeShowEmptyDomains();
 	afx_msg void OnHomeShowStatistics();
 	afx_msg void OnHomeImportFolder();
-	afx_msg void OnHomeMaintain();
 	afx_msg void OnHomeProperties();
 	afx_msg void OnUpdateHomeCommands(CCmdUI* pCmdUI);
 
@@ -126,9 +124,7 @@ protected:
 	afx_msg void OnUpdateDriveCommands(CCmdUI* pCmdUI);
 
 	afx_msg void OnStoreMakeDefault();
-	afx_msg void OnStoreMakeHybrid();
 	afx_msg void OnStoreImportFolder();
-	afx_msg void OnStoreMaintain();
 	afx_msg void OnStoreShortcut();
 	afx_msg void OnStoreDelete();
 	afx_msg void OnStoreRename();

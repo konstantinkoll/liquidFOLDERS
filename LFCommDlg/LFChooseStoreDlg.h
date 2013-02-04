@@ -45,12 +45,8 @@ protected:
 	afx_msg void OnItemChanged(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnEndLabelEdit(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnStoresCreateNew();
-	afx_msg void OnStoresMaintainAll();
-	afx_msg void OnStoresBackup();
 	afx_msg void OnUpdateStoresCommands(CCmdUI* pCmdUI);
 	afx_msg void OnStoreMakeDefault();
-	afx_msg void OnStoreMakeHybrid();
-	afx_msg void OnStoreMaintain();
 	afx_msg void OnStoreShortcut();
 	afx_msg void OnStoreDelete();
 	afx_msg void OnStoreRename();

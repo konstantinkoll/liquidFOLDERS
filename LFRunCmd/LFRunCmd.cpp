@@ -10,28 +10,6 @@
 #include "LFCommDlg.h"
 
 
-// Thread workers
-//
-
-struct WorkerParameters
-{
-	LFWorkerParameters Hdr;
-	BOOL AllStores;
-	CHAR StoreID[LFKeySize];
-	HWND hWndSource;
-	LFMaintenanceList* MaintenanceList;
-};
-
-DWORD WINAPI WorkerMaintenance(void* lParam)
-{
-	LF_WORKERTHREAD_START(lParam);
-
-	wp->MaintenanceList = wp->AllStores ? LFStoreMaintenance(wp->hWndSource, &p) : LFStoreMaintenance(wp->StoreID, wp->hWndSource, &p);
-
-	LF_WORKERTHREAD_FINISH();
-}
-
-
 // CRunCmdApp-Erstellung
 
 CRunCmdApp::CRunCmdApp()
@@ -67,12 +45,8 @@ BOOL CRunCmdApp::InitInstance()
 				OnAppAbout(IDS_ABOUT, IDB_ABOUTICON);
 			if (command==_T("ABOUTEXTENSION"))
 				OnAppAbout(IDS_EXTENSIONABOUT, IDB_EXTENSIONABOUTICON);
-			if (command==_T("BACKUP"))
-				LFBackupStores(CWnd::GetForegroundWindow());
 			if (command==_T("NEWSTORE"))
 				OnStoresCreate();
-			if (command==_T("MAINTAINALL"))
-				OnStoresMaintainAll();
 			if (command==_T("INSTALL"))
 				LFCreateSendTo(true);
 			if (command==_T("CHECKUPDATE"))
@@ -85,8 +59,6 @@ BOOL CRunCmdApp::InitInstance()
 				OnStoreDelete(__wargv[2]);
 			if (command==_T("IMPORTFOLDER"))
 				OnStoreImportFolder(__wargv[2]);
-			if (command==_T("MAINTAIN"))
-				OnStoreMaintain(__wargv[2]);
 			if (command==_T("STOREPROPERTIES"))
 				OnStoreProperties(__wargv[2]);
 		}
@@ -125,23 +97,6 @@ void CRunCmdApp::OnStoresCreateVolume(CHAR Drive)
 	LFFreeStoreDescriptor(s);
 }
 
-void CRunCmdApp::OnStoresMaintainAll()
-{
-	CWnd* pWndForeground = CWnd::GetForegroundWindow();
-
-	WorkerParameters wp;
-	ZeroMemory(&wp, sizeof(wp));
-	wp.AllStores = TRUE;
-
-	LFDoWithProgress(WorkerMaintenance, &wp.Hdr, pWndForeground);
-	LFErrorBox(wp.MaintenanceList->m_LastError);
-
-	LFStoreMaintenanceDlg dlg(wp.MaintenanceList, pWndForeground);
-	dlg.DoModal();
-
-	LFFreeMaintenanceList(wp.MaintenanceList);
-}
-
 void CRunCmdApp::OnStoreDelete(CString ID)
 {
 	CHAR StoreID[LFKeySize];
@@ -163,23 +118,6 @@ void CRunCmdApp::OnStoreImportFolder(CString ID)
 	WideCharToMultiByte(CP_ACP, 0, ID, -1, StoreID, LFKeySize, NULL, NULL);
 
 	LFImportFolder(StoreID, CWnd::GetForegroundWindow());
-}
-
-void CRunCmdApp::OnStoreMaintain(CString ID)
-{
-	CWnd* pWndForeground = CWnd::GetForegroundWindow();
-
-	WorkerParameters wp;
-	ZeroMemory(&wp, sizeof(wp));
-	WideCharToMultiByte(CP_ACP, 0, ID, -1, wp.StoreID, LFKeySize, NULL, NULL);
-
-	LFDoWithProgress(WorkerMaintenance, &wp.Hdr, pWndForeground);
-	LFErrorBox(wp.MaintenanceList->m_LastError);
-
-	LFStoreMaintenanceDlg dlg(wp.MaintenanceList, pWndForeground);
-	dlg.DoModal();
-
-	LFFreeMaintenanceList(wp.MaintenanceList);
 }
 
 void CRunCmdApp::OnStoreProperties(CString ID)
