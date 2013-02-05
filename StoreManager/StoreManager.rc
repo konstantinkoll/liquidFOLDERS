@@ -2419,8 +2419,8 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDM_STORES_SHOWEMPTYVOLUMES "&Indiquer des lecteurs vides "
-    IDM_STORES_REPAIRCORRUPTEDINDEX "Effectuer travails d'entretien "
+    IDM_STORES_SHOWEMPTYVOLUMES "&Indiquer des lecteurs vides"
+    IDM_STORES_REPAIRCORRUPTEDINDEX "Effectuer travails d'entretien"
 END
 
 STRINGTABLE 
