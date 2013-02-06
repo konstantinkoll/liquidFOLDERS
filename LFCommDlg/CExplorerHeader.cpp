@@ -219,10 +219,10 @@ void CExplorerHeader::OnPaint()
 	if (Themed && (LFGetApp()->OSVersion!=OS_Eight))
 	{
 		CRect rectBackground(rect);
-		if (rectBackground.bottom>60)
+		if (rectBackground.bottom>80)
 		{
-			rectBackground.bottom = 60;
-			dc.FillSolidRect(0, 60, rect.Width(), rect.Height()-60, 0xFFFFFF);
+			rectBackground.bottom = 80;
+			dc.FillSolidRect(0, 80, rect.Width(), rect.Height()-80, 0xFFFFFF);
 		}
 		FillRect(dc, rectBackground, hBackgroundBrush);
 
