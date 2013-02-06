@@ -28,7 +28,7 @@ LFNamespaceExtensionApp::LFNamespaceExtensionApp()
 	// Dateinamen mit Icons
 	GetModuleFileName((HINSTANCE)&__ImageBase, m_ThisFile, MAX_PATH);
 
-	HMODULE hModCore = LoadLibrary(_T("LFCORE.DLL"));
+	HMODULE hModCore = GetModuleHandle(_T("LFCORE.DLL"));
 	if (hModCore)
 	{
 		GetModuleFileName(hModCore, m_CoreFile, MAX_PATH);
@@ -41,8 +41,6 @@ LFNamespaceExtensionApp::LFNamespaceExtensionApp()
 			ENSURE(m_Categories[1][a].LoadString(hModCore, IDS_Priority1+a-1));
 			ENSURE(m_Categories[2][a].LoadString(hModCore, IDS_Size1+a));
 		}
-
-		FreeLibrary(hModCore);
 	}
 	else
 	{

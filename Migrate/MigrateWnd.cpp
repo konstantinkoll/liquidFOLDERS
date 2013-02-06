@@ -45,23 +45,9 @@ DWORD WINAPI WorkerMigrate(void* lParam)
 // CMigrateWnd
 //
 
-CMigrateWnd::CMigrateWnd()
-	: CGlassWindow()
-{
-	m_hIcon = NULL;
-}
-
-CMigrateWnd::~CMigrateWnd()
-{
-	if (m_hIcon)
-		DestroyIcon(m_hIcon);
-}
-
 BOOL CMigrateWnd::Create()
 {
-	m_hIcon = theApp.LoadIcon(IDR_APPLICATION);
-
-	CString className = AfxRegisterWndClass(CS_DBLCLKS, LoadCursor(NULL, IDC_ARROW), NULL, m_hIcon);
+	CString className = AfxRegisterWndClass(CS_DBLCLKS, LoadCursor(NULL, IDC_ARROW), NULL, theApp.LoadIcon(IDR_APPLICATION));
 
 	CRect rect;
 	SystemParametersInfo(SPI_GETWORKAREA, NULL, &rect, NULL);

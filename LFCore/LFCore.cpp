@@ -915,20 +915,6 @@ LFCore_API HGLOBAL LFCreateLiquidFiles(LFTransactionList* tl)
 }
 
 
-LFCore_API LFStoreDescriptor* LFAllocStoreDescriptor()
-{
-	LFStoreDescriptor* s = new LFStoreDescriptor;
-	ZeroMemory(s, sizeof(LFStoreDescriptor));
-	return s;
-}
-
-LFCore_API void LFFreeStoreDescriptor(LFStoreDescriptor* s)
-{
-	if (s)
-		delete s;
-}
-
-
 wchar_t* LoadResourceString(unsigned int ID, unsigned int length)
 {
 	wchar_t* str = new wchar_t[length];

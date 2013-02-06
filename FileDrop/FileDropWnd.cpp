@@ -38,21 +38,12 @@ DWORD WINAPI WorkerMaintenance(void* lParam)
 CFileDropWnd::CFileDropWnd()
 	: CGlassWindow()
 {
-	m_hIcon = NULL;
 	m_AlwaysOnTop = m_StoreValid = m_Hover = FALSE;
-}
-
-CFileDropWnd::~CFileDropWnd()
-{
-	if (m_hIcon)
-		DestroyIcon(m_hIcon);
 }
 
 BOOL CFileDropWnd::Create()
 {
-	m_hIcon = theApp.LoadIcon(IDR_APPLICATION);
-
-	CString className = AfxRegisterWndClass(CS_DBLCLKS, LoadCursor(NULL, IDC_ARROW), NULL, m_hIcon);
+	CString className = AfxRegisterWndClass(CS_DBLCLKS, LoadCursor(NULL, IDC_ARROW), NULL, theApp.LoadIcon(IDR_APPLICATION));
 
 	CRect rect(0, 0, 144, 190);
 	return CGlassWindow::Create(WS_MINIMIZEBOX, className, _T("FileDrop"), rect);
@@ -87,6 +78,10 @@ void CFileDropWnd::UpdateStore()
 	if (m_StoreValid)
 	{
 		m_Label = m_Store.StoreName;
+
+		HICON hIcon = LFGetIcon(LFGetStoreIcon(&m_Store), 128, 128);
+		m_Dropzone.Replace(1, hIcon);
+		DestroyIcon(hIcon);
 	}
 	else
 	{
@@ -167,21 +162,13 @@ INT CFileDropWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (!m_Dropzone.Create(128, 128, ILC_COLOR32, 2, 1))
 		return -1;
 
-	HICON ic = LFGetIcon(IDI_STORE_Internal, 128, 128);
-	m_Dropzone.Add(ic);
-	DestroyIcon(ic);
-
-	ic = LFGetIcon(IDI_STORE_Internal, 128, 128);
-	m_Dropzone.Add(ic);
-	DestroyIcon(ic);
+	HICON hIcon = LFGetIcon(IDI_STORE_Unknown, 128, 128);
+	m_Dropzone.Add(hIcon);
+	m_Dropzone.Add(hIcon);
+	DestroyIcon(hIcon);
 
 	// Badge laden
-	HMODULE hModIcons = LoadLibrary(_T("LFCOMMDLG.DLL"));
-	if (hModIcons)
-	{
-		m_hWarning = (HICON)LoadImage(hModIcons, IDI_EXCLAMATION, IMAGE_ICON, 24, 24, LR_DEFAULTCOLOR);
-		FreeLibrary(hModIcons);
-	}
+	hWarning = (HICON)LoadImage(GetModuleHandle(_T("LFCOMMDLG.DLL")), IDI_EXCLAMATION, IMAGE_ICON, 24, 24, LR_DEFAULTCOLOR);
 
 	// Tooltip
 	m_TooltipCtrl.Create(this);
@@ -258,7 +245,7 @@ BOOL CFileDropWnd::OnEraseBkgnd(CDC* pDC)
 	// Dropzone
 	POINT pt = { rlayout.left+(rlayout.Width()-128)/2, rlayout.top };
 	SIZE sz = { 128, 128 };
-	m_Dropzone.DrawEx(&dc, m_StoreValid, pt, sz, CLR_NONE, CLR_NONE, m_StoreValid ? ILD_TRANSPARENT : m_IsAeroWindow ? ILD_BLEND25 : ILD_BLEND50);
+	m_Dropzone.DrawEx(&dc, m_StoreValid ? 0 : 1, pt, sz, CLR_NONE, CLR_NONE, m_StoreValid ? ILD_TRANSPARENT : m_IsAeroWindow ? ILD_BLEND25 : ILD_BLEND50);
 
 	// Text
 	CRect rtext(rlayout);
@@ -309,7 +296,7 @@ BOOL CFileDropWnd::OnEraseBkgnd(CDC* pDC)
 
 	// Badge
 	if (!m_StoreValid)
-		DrawIconEx(dc, rlayout.right-28, rlayout.top, m_hWarning, 24, 24, 0, NULL, DI_NORMAL);
+		DrawIconEx(dc, rlayout.right-28, rlayout.top, hWarning, 24, 24, 0, NULL, DI_NORMAL);
 
 	pDC->BitBlt(0, 0, rclient.Width(), rclient.Height(), &dc, 0, 0, SRCCOPY);
 

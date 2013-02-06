@@ -2,124 +2,94 @@
 // LFStorePropertiesDlg.cpp: Implementierung der Klasse LFStorePropertiesDlg
 //
 
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "LFStorePropertiesDlg.h"
-#include "Resource.h"
-#include "LFCore.h"
-#include "LFApplication.h"
+#include "LFStorePropertiesGeneralPage.h"
+#include "LFStorePropertiesToolsPage.h"
+#include "LFStorePropertiesIndexPage.h"
 
 
 // LFStorePropertiesDlg
 //
 
 extern AFX_EXTENSION_MODULE LFCommDlgDLL;
-extern LFMessageIDs* MessageIDs;
 
-LFStorePropertiesDlg::LFStorePropertiesDlg(CHAR* StoreID, CWnd* pParentWnd)
-	: CDialog(IDD_STOREPROPERTIES, pParentWnd)
+LFStorePropertiesDlg::LFStorePropertiesDlg(CHAR* StoreID, CWnd* pParent)
+	: CPropertySheet(_T(""), pParent)
 {
-	if (LFGetStoreSettings(StoreID, &m_Store)==LFOk)
-	{
-		m_Key = m_Store.guid;
-	}
-	else
-	{
-		ZeroMemory(&m_Key, sizeof(m_Key));
-	}
+	if (LFGetStoreSettings(StoreID, &m_Store)!=LFOk)
+		ZeroMemory(&m_Store, sizeof(m_Store));
+
+	m_PageCount = 3;
+
+	// Immer #0
+	m_Pages[0] = new LFStorePropertiesGeneralPage(&m_Store);
+	m_Pages[0]->Construct(IDD_STOREPROPERTIES_GENERAL);
+
+	m_Pages[1] = new LFStorePropertiesToolsPage(&m_Store);
+	m_Pages[1]->Construct(IDD_STOREPROPERTIES_TOOLS);
+
+	m_Pages[2] = new LFStorePropertiesIndexPage(&m_Store);
+	m_Pages[2]->Construct(IDD_STOREPROPERTIES_INDEX);
+
+	// Seiten hinzufügen
+	for (UINT a=0; a<m_PageCount; a++)
+		AddPage(m_Pages[a]);
+
+	m_psh.dwFlags |= PSH_NOAPPLYNOW | PSH_NOCONTEXTHELP;
 }
 
-void LFStorePropertiesDlg::DoDataExchange(CDataExchange* pDX)
+BOOL LFStorePropertiesDlg::OnCommand(WPARAM wParam, LPARAM lParam)
 {
-	// DDX nur beim Verlassen des Dialogs
-	if (pDX->m_bSaveAndValidate)
+	if (LOWORD(wParam)==IDOK)
 	{
 		CString name;
-		GetDlgItem(IDC_STORENAME)->GetWindowText(name);
+		m_Pages[0]->GetDlgItem(IDC_STORENAME)->GetWindowText(name);
 		CString comment;
-		GetDlgItem(IDC_COMMENT)->GetWindowText(comment);
+		m_Pages[0]->GetDlgItem(IDC_STORECOMMENT)->GetWindowText(comment);
 
 		UINT res = LFSetStoreAttributes(m_Store.StoreID, name.GetBuffer(), comment.GetBuffer());
 		if (res!=LFOk)
 		{
-			LFErrorBox(res);
-			pDX->Fail();
+			LFErrorBox(res, GetSafeHwnd());
+			return TRUE;
 		}
 	}
+
+	return CPropertySheet::OnCommand(wParam, lParam);
 }
 
 
-BEGIN_MESSAGE_MAP(LFStorePropertiesDlg, CDialog)
-	ON_REGISTERED_MESSAGE(MessageIDs->StoresChanged, OnUpdateStore)
-	ON_REGISTERED_MESSAGE(MessageIDs->StoreAttributesChanged, OnUpdateStore)
+BEGIN_MESSAGE_MAP(LFStorePropertiesDlg, CPropertySheet)
+	ON_WM_DESTROY()
 END_MESSAGE_MAP()
 
 BOOL LFStorePropertiesDlg::OnInitDialog()
 {
-	CDialog::OnInitDialog();
+	CPropertySheet::OnInitDialog();
 
 	// Symbol für dieses Dialogfeld festlegen. Wird automatisch erledigt
 	// wenn das Hauptfenster der Anwendung kein Dialogfeld ist
-	HICON hIcon = LoadIcon(LFCommDlgDLL.hResource, MAKEINTRESOURCE(IDD_STOREPROPERTIES));
-	SetIcon(hIcon, FALSE);
-	SetIcon(hIcon, TRUE);
+	HICON hIcon = LoadIcon(LFCommDlgDLL.hResource, MAKEINTRESOURCE(IDI_STOREPROPERTIES));
+	SetIcon(hIcon, TRUE);		// Großes Symbol verwenden
+	SetIcon(hIcon, FALSE);		// Kleines Symbol verwenden
 
-	// Store
-	SendNotifyMessage(MessageIDs->StoresChanged, LFMSGF_IntStores | LFMSGF_ExtHybStores, NULL);
+	// Titel
+	CString mask;
+	ENSURE(mask.LoadString(IDS_STOREPROPERTIES));
 
-	// Titelleiste
-	CString text;
-	GetWindowText(text);
-	CString caption;
-	caption.Format(text, m_Store.StoreName);
-	SetWindowText(caption);
+	CString title;
+	title.Format(mask, m_Store.StoreName);
+	SetWindowText(title);
 
-	return TRUE;
+	return TRUE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird
 }
 
-LRESULT LFStorePropertiesDlg::OnUpdateStore(WPARAM /*wParam*/, LPARAM /*lParam*/)
+void LFStorePropertiesDlg::OnDestroy()
 {
-	CEdit* edit1 = (CEdit*)GetDlgItem(IDC_STORENAME);
-	CEdit* edit2 = (CEdit*)GetDlgItem(IDC_COMMENT);
-
-	if (LFGetStoreSettings(m_Key, &m_Store)==LFOk)
+	for (UINT a=0; a<m_PageCount; a++)
 	{
-		if (edit1->LineLength()==0)
-			edit1->SetWindowText(m_Store.StoreName);
-		if (edit2->LineLength()==0)
-			edit2->SetWindowText(m_Store.Comment);
-
-		edit1->EnableWindow(TRUE);
-		edit2->EnableWindow(TRUE);
-		GetDlgItem(IDOK)->EnableWindow(TRUE);
-
-		WCHAR tmpStr[256];
-		LFTimeToString(m_Store.CreationTime, tmpStr, 256);
-		GetDlgItem(IDC_CREATED)->SetWindowText(tmpStr);
-		LFTimeToString(m_Store.FileTime, tmpStr, 256);
-		GetDlgItem(IDC_UPDATED)->SetWindowText(tmpStr);
-		LFTimeToString(m_Store.MaintenanceTime, tmpStr, 256);
-		GetDlgItem(IDC_MAINTENANCE)->SetWindowText(tmpStr);
-
-		OLECHAR szGUID[MAX_PATH];
-		StringFromGUID2(m_Store.guid, szGUID, MAX_PATH);
-		GetDlgItem(IDC_GUID)->SetWindowText(szGUID);
-
-		GetDlgItem(IDC_LASTSEENCAPTION)->EnableWindow(m_Store.StoreMode!=LFStoreModeInternal);
-		GetDlgItem(IDC_LASTSEEN)->SetWindowText(m_Store.LastSeen);
-		GetDlgItem(IDC_DATPATH)->SetWindowText(m_Store.DatPath);
-		GetDlgItem(IDC_IDXPATHMAIN)->SetWindowText(m_Store.IdxPathMain);
-		GetDlgItem(IDC_IDXPATHAUX)->SetWindowText(m_Store.IdxPathAux);
-
-		LFUINTToString(m_Store.IndexVersion, tmpStr, 256);
-		GetDlgItem(IDC_IDXVERSION)->SetWindowText(tmpStr);
+		m_Pages[a]->DestroyWindow();
+		delete m_Pages[a];
 	}
-	else
-	{
-		edit1->EnableWindow(FALSE);
-		edit2->EnableWindow(FALSE);
-		GetDlgItem(IDOK)->EnableWindow(FALSE);
-		GetDlgItem(IDCANCEL)->SetFocus();
-	}
-
-	return NULL;
 }

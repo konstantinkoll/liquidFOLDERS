@@ -19,7 +19,7 @@ LFSelectLocationIATADlg::LFSelectLocationIATADlg(UINT nIDTemplate, CWnd* pParent
 {
 	m_nIDTemplate = nIDTemplate;
 
-	p_App = (LFApplication*)AfxGetApp();
+	p_App = LFGetApp();
 	m_LastCountrySelected = p_App->GetGlobalInt(_T("LastCountrySelected"), 0);
 	m_OverwriteName = AllowOverwriteName ? p_App->GetGlobalInt(_T("IATAOverwriteName"), TRUE) : FALSE;
 	m_OverwriteGPS = AllowOverwriteGPS ? p_App->GetGlobalInt(_T("IATAOverwriteGPS"), TRUE) : FALSE;

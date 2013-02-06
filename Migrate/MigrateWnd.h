@@ -12,16 +12,12 @@
 class CMigrateWnd : public CGlassWindow
 {
 public:
-	CMigrateWnd();
-	~CMigrateWnd();
-
 	virtual BOOL OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo);
 	virtual void AdjustLayout();
 
 	BOOL Create();
 
 protected:
-	HICON m_hIcon;
 	CPIDLSelector m_wndFolder;
 	CStoreSelector m_wndStore;
 	CMainView m_wndMainView;

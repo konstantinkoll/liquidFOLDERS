@@ -4,7 +4,7 @@
 
 #include "stdafx.h"
 #include "CTagList.h"
-#include "LFApplication.h"
+#include "LFCommDlg.h"
 
 
 // CTagList
@@ -153,7 +153,7 @@ void CTagList::DrawItem(INT nID, CDC* pDC)
 
 	pDC->SetBkMode(TRANSPARENT);
 
-	LFApplication* pApp = (LFApplication*)AfxGetApp();
+	LFApplication* pApp = LFGetApp();
 
 	// Count
 	CFont* pOldFont = pDC->SelectObject(&pApp->m_SmallFont);

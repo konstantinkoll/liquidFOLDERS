@@ -3,26 +3,26 @@
 //
 
 #pragma once
-#include <shlobj.h>
-#include "liquidFOLDERS.h"
+#include "LFCore.h"
+#include "LFCommDlg.h"
 
 
 // LFStorePropertiesDlg
 //
 
-class AFX_EXT_CLASS LFStorePropertiesDlg : public CDialog
+class AFX_EXT_CLASS LFStorePropertiesDlg : public CPropertySheet
 {
 public:
-	LFStorePropertiesDlg(CHAR* StoreID, CWnd* pParentWnd=NULL);
+	LFStorePropertiesDlg(CHAR* StoreID, CWnd* pParent=NULL);
 
-	virtual void DoDataExchange(CDataExchange* pDX);
+	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
 
 protected:
-	afx_msg BOOL OnInitDialog();
-	afx_msg LRESULT OnUpdateStore(WPARAM wParam, LPARAM lParam);
-	DECLARE_MESSAGE_MAP()
-
-private:
+	CPropertyPage* m_Pages[3];
+	UINT m_PageCount;
 	LFStoreDescriptor m_Store;
-	_GUID m_Key;
+
+	afx_msg BOOL OnInitDialog();
+	afx_msg void OnDestroy();
+	DECLARE_MESSAGE_MAP()
 };

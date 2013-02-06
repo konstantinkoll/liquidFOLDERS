@@ -35,6 +35,7 @@ void LFWelcomeDlg::DoDataExchange(CDataExchange* pDX)
 
 	if (pDX->m_bSaveAndValidate)
 	{
+		CWaitCursor csr;
 		CreateStore(IDC_STORENAME1);
 		CreateStore(IDC_STORENAME2);
 		CreateStore(IDC_STORENAME3);
@@ -43,13 +44,13 @@ void LFWelcomeDlg::DoDataExchange(CDataExchange* pDX)
 
 void LFWelcomeDlg::CreateStore(INT ID)
 {
-	LFStoreDescriptor* s = LFAllocStoreDescriptor();
-	s->AutoLocation = TRUE;
-	s->StoreMode = LFStoreModeInternal;
-	GetDlgItem(ID)->GetWindowText(s->StoreName, 255);
+	LFStoreDescriptor store;
+	ZeroMemory(&store, sizeof(store));
 
-	if (wcscmp(s->StoreName, L"")!=0)
-		LFCreateStore(s);
+	store.AutoLocation = TRUE;
+	store.StoreMode = LFStoreModeInternal;
+	GetDlgItem(ID)->GetWindowText(store.StoreName, 256);
 
-	LFFreeStoreDescriptor(s);
+	if (store.StoreName[0]!=L'\0')
+		LFCreateStore(&store);
 }

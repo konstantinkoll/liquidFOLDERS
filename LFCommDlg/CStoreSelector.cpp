@@ -34,7 +34,7 @@ INT CStoreDropdownWindow::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CDropdownWindow::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
-	LFApplication* pApp = (LFApplication*)AfxGetApp();
+	LFApplication* pApp = LFGetApp();
 	m_wndList.SetImageList(&pApp->m_CoreImageListSmall, LVSIL_SMALL);
 	m_wndList.SetImageList(&pApp->m_CoreImageListLarge, LVSIL_NORMAL);
 
@@ -93,25 +93,22 @@ void CStoreDropdownWindow::OnCreateNewStore()
 {
 	GetOwner()->SendMessage(WM_CLOSEDROPDOWN);
 
-	LFStoreDescriptor* s = LFAllocStoreDescriptor();
-
-	LFStoreNewDlg dlg(AfxGetApp()->GetMainWnd(), s);
+	LFStoreDescriptor store;
+	LFStoreNewDlg dlg(AfxGetApp()->GetMainWnd(), &store);
 	if (dlg.DoModal()==IDOK)
 	{
-		CWaitCursor wait;
+		CWaitCursor csr;
 
-		UINT res = LFCreateStore(s, dlg.MakeDefault);
+		UINT res = LFCreateStore(&store, dlg.MakeDefault);
 		LFErrorBox(res);
 
 		if (res==LFOk)
 		{
-			LFItemDescriptor* i = LFAllocItemDescriptor(s);
+			LFItemDescriptor* i = LFAllocItemDescriptor(&store);
 			GetOwner()->SendMessage(WM_SETITEM, NULL, (LPARAM)i);
 			LFFreeItemDescriptor(i);
 		}
 	}
-
-	LFFreeStoreDescriptor(s);
 }
 
 
@@ -178,12 +175,9 @@ void CStoreSelector::SetItem(CHAR* Key, BOOL Repaint)
 {
 	if (Key)
 	{
-		LFStoreDescriptor* s = LFAllocStoreDescriptor();
-
-		if (LFGetStoreSettings(Key, s)==LFOk)
-			SetItem(s, Repaint);
-
-		LFFreeStoreDescriptor(s);
+		LFStoreDescriptor store;
+		if (LFGetStoreSettings(Key, &store)==LFOk)
+			SetItem(&store, Repaint);
 	}
 	else
 	{
@@ -208,16 +202,15 @@ void CStoreSelector::Update()
 	CHAR StoreID[LFKeySize];
 	if (GetStoreID(StoreID))
 	{
-		LFStoreDescriptor* s = LFAllocStoreDescriptor();
-		if (LFGetStoreSettings(StoreID, s)==LFOk)
+		LFStoreDescriptor store;
+		if (LFGetStoreSettings(StoreID, &store)==LFOk)
 		{
-			SetItem(s, TRUE, NM_SELUPDATE);
+			SetItem(&store, TRUE, NM_SELUPDATE);
 		}
 		else
 		{
 			SetEmpty();
 		}
-		LFFreeStoreDescriptor(s);
 	}
 }
 

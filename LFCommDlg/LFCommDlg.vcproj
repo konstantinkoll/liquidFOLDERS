@@ -617,6 +617,18 @@
 				>
 			</File>
 			<File
+				RelativePath=".\LFStorePropertiesGeneralPage.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\LFStorePropertiesIndexPage.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\LFStorePropertiesToolsPage.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\LFTooltip.cpp"
 				>
 			</File>
@@ -871,6 +883,18 @@
 				>
 			</File>
 			<File
+				RelativePath=".\LFStorePropertiesGeneralPage.h"
+				>
+			</File>
+			<File
+				RelativePath=".\LFStorePropertiesIndexPage.h"
+				>
+			</File>
+			<File
+				RelativePath=".\LFStorePropertiesToolsPage.h"
+				>
+			</File>
+			<File
 				RelativePath=".\LFTooltip.h"
 				>
 			</File>
@@ -1101,7 +1125,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\StoreMaintenance_Tiny.ico"
+				RelativePath=".\res\StoreBackup_32.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\StoreMaintenance_Small.ico"
 				>
 			</File>
 			<File

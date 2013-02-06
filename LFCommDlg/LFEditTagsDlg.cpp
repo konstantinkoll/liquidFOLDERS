@@ -3,6 +3,7 @@
 //
 
 #include "StdAfx.h"
+#include "LFCommDlg.h"
 #include "LFEditTagsDlg.h"
 #include "Resource.h"
 
@@ -16,7 +17,7 @@ LFEditTagsDlg::LFEditTagsDlg(CWnd* pParentWnd, CString Tags, CHAR* StoreID)
 	: CDialog(IDD_EDITTAGS, pParentWnd)
 {
 	m_Tags = Tags;
-	p_App = (LFApplication*)AfxGetApp();
+	p_App = LFGetApp();
 
 	m_StoreIDValid = (StoreID!=NULL);
 	if (m_StoreIDValid)

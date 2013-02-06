@@ -18,7 +18,7 @@ LFDialog::LFDialog(UINT nIDTemplate, UINT Design, CWnd* pParent)
 {
 	m_nIDTemplate = nIDTemplate;
 	m_Design = Design;
-	p_App = (LFApplication*)AfxGetApp();
+	p_App = LFGetApp();
 	hIconS = hIconL = hIconShield = NULL;
 	hBackgroundBrush = NULL;
 	m_pBackdrop = NULL;

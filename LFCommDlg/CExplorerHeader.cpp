@@ -22,7 +22,7 @@ CExplorerHeader::CExplorerHeader()
 	m_HintCol = 0x79675A;
 	hBackgroundBrush = NULL;
 	m_GradientLine = TRUE;
-	p_App = (LFApplication*)AfxGetApp();
+	p_App = LFGetApp();
 	m_FontHeight = m_RightEdge = 0;
 }
 

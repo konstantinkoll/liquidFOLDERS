@@ -13,7 +13,7 @@
 CPropertyHolder::CPropertyHolder()
 	: CWnd()
 {
-	p_App = (LFApplication*)AfxGetApp();
+	p_App = LFGetApp();
 	m_StoreIDValid = FALSE;
 
 	ENSURE(m_MultipleValues.LoadString(IDS_MULTIPLEVALUES));

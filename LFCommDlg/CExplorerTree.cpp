@@ -50,7 +50,7 @@ CExplorerTree::CExplorerTree()
 			AfxThrowResourceException();
 	}
 
-	p_App = (LFApplication*)AfxGetApp();
+	p_App = LFGetApp();
 	m_pContextMenu2 = NULL;
 	m_Hover = FALSE;
 	m_HoverItem = NULL;
@@ -540,7 +540,7 @@ void CExplorerTree::SetOnlyFilesystem(BOOL OnlyFilesystem)
 
 BOOL CExplorerTree::GetChildItems(HTREEITEM hParentItem)
 {
-	CWaitCursor wait;
+	CWaitCursor csr;
 
 	TVITEM tvItem;
 	ZeroMemory(&tvItem, sizeof(tvItem));
@@ -789,7 +789,7 @@ void CExplorerTree::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 						}
 						else
 						{
-							CWaitCursor wait;
+							CWaitCursor csr;
 
 							CMINVOKECOMMANDINFO cmi;
 							cmi.cbSize = sizeof(CMINVOKECOMMANDINFO);

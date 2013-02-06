@@ -303,10 +303,14 @@ LFCore_API LFItemDescriptor* LFAllocItemDescriptor(LFStoreDescriptor* s)
 	LFItemDescriptor* d = LFAllocItemDescriptor();
 	bool IsMounted = IsStoreMounted(s);
 
+	d->Type |= LFTypeStore;
 	if (strcmp(s->StoreID, DefaultStore)==0)
 		d->Type |= LFTypeDefault;
+	if (!IsMounted)
+		d->Type |= LFTypeGhosted | LFTypeNotMounted;
+	if (s->IndexVersion<CurIdxVersion)
+		d->Type |= LFTypeRequiresMaintenance;
 
-	d->IconID = (s->StoreMode==LFStoreModeInternal) ? IDI_STORE_Internal : (s->StoreMode==LFStoreModeRemote) ? IDI_STORE_Server : IDI_STORE_Bag;
 	if ((s->StoreMode==LFStoreModeHybrid) || (s->StoreMode==LFStoreModeExternal))
 		if (wcscmp(s->LastSeen, L"")!=0)
 		{
@@ -317,15 +321,11 @@ LFCore_API LFItemDescriptor* LFAllocItemDescriptor(LFStoreDescriptor* s)
 			SetAttribute(d, LFAttrDescription, descr);
 		}
 
-	if (!IsMounted)
-		d->Type |= LFTypeGhosted | LFTypeNotMounted;
-	if (s->IndexVersion<CurIdxVersion)
-		d->Type |= LFTypeRequiresMaintenance;
-
 	d->CategoryID = s->StoreMode;
-	d->Type |= LFTypeStore;
+	d->IconID = LFGetStoreIcon(s);
+
 	SetAttribute(d, LFAttrFileName, s->StoreName);
-	SetAttribute(d, LFAttrComments, s->Comment);
+	SetAttribute(d, LFAttrComments, s->StoreComment);
 	SetAttribute(d, LFAttrStoreID, s->StoreID);
 	SetAttribute(d, LFAttrFileID, s->StoreID);
 	SetAttribute(d, LFAttrCreationTime, &s->CreationTime);

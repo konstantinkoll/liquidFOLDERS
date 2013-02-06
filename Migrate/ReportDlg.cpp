@@ -75,15 +75,7 @@ BOOL ReportDlg::OnInitDialog()
 
 	// Icons
 	m_Icons.Create(16, 16, ILC_COLOR32, 1, 1);
-
-	HMODULE hModIcons = LoadLibrary(_T("LFCOMMDLG.DLL"));
-	if (hModIcons)
-	{
-		hIcon = (HICON)LoadImage(hModIcons, IDI_EXCLAMATION, IMAGE_ICON, 16, 16, LR_DEFAULTCOLOR);
-		FreeLibrary(hModIcons);
-
-		m_Icons.Add(hIcon);
-	}
+	m_Icons.Add((HICON)LoadImage(GetModuleHandle(_T("LFCOMMDLG.DLL")), IDI_EXCLAMATION, IMAGE_ICON, 16, 16, LR_DEFAULTCOLOR));
 
 	// Tabs
 	CTabCtrl* tabs = (CTabCtrl*)GetDlgItem(IDC_TABS);

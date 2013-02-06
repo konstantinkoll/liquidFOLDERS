@@ -17,7 +17,7 @@ LFEditTimeDlg::LFEditTimeDlg(CWnd* pParentWnd, LFVariantData* pData)
 {
 	ASSERT(pData);
 
-	p_App = (LFApplication*)AfxGetApp();
+	p_App = LFGetApp();
 	p_Data = pData;
 	m_UseTime = TRUE;
 }

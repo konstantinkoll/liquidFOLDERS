@@ -133,22 +133,7 @@ void CDriveMenu::OnGetMenuItems(CGetMenuitemsEventArgs& e)
 		ENSURE(tmpStr.LoadString(IDS_MENU_CreateNewStore));
 		ENSURE(tmpHint.LoadString(IDS_HINT_CreateNewStore));
 
-		CShellMenuItem* item = e.menu->AddItem(tmpStr, _T(VERB_CREATENEWSTOREVOLUME), tmpHint);
-		item->SetEnabled(!theApp.m_PathRunCmd.IsEmpty());
-
-		HMODULE hModCore = LoadLibrary(_T("LFCORE.DLL"));
-		if (hModCore)
-		{
-			INT cx;
-			INT cy;
-			theApp.GetIconSize(cx, cy);
-
-			HICON hIcon = (HICON)LoadImage(hModCore, MAKEINTRESOURCE((Drive==L'\1') ? IDI_STORE_Internal : IDI_STORE_Bag), IMAGE_ICON, cx, cy, LR_DEFAULTCOLOR);
-			FreeLibrary(hModCore);
-
-			item->SetBitmap(IconToBitmap(hIcon, cx, cy));
-			DestroyIcon(hIcon);
-		}
+		e.menu->AddItem(tmpStr, _T(VERB_CREATENEWSTOREVOLUME), tmpHint)->SetEnabled(!theApp.m_PathRunCmd.IsEmpty());
 	}
 }
 

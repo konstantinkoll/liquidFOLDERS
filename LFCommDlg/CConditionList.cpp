@@ -5,6 +5,7 @@
 #include "stdafx.h"
 #include "CConditionList.h"
 #include "LFCore.h"
+#include "LFCommDlg.h"
 #include "resource.h"
 
 
@@ -18,7 +19,7 @@ static UINT puColumns[] = { 1, 2 };
 CConditionList::CConditionList()
 	: CListCtrl()
 {
-	p_App = (LFApplication*)AfxGetApp();
+	p_App = LFGetApp();
 	hTheme = NULL;
 	m_BackgroundMenuID = 0;
 	m_LastWidth = -1;

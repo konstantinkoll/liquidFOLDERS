@@ -4,12 +4,13 @@
 
 #include "stdafx.h"
 #include "LFAttributeListDlg.h"
+#include "LFCommDlg.h"
 #include "resource.h"
 
 
 static INT CALLBACK MyCompareProc(LPARAM lParam1, LPARAM lParam2, LPARAM /*lParamSort*/)
 {
-	LFApplication* pApp = (LFApplication*)AfxGetApp();
+	LFApplication* pApp = LFGetApp();
 	return wcscmp(pApp->m_Attributes[(INT)lParam1]->Name, pApp->m_Attributes[(INT)lParam2]->Name);
 }
 
@@ -23,7 +24,7 @@ extern INT GetAttributeIconIndex(UINT Attr);
 LFAttributeListDlg::LFAttributeListDlg(UINT nIDTemplate, CWnd* pParentWnd)
 	: CDialog(nIDTemplate, pParentWnd)
 {
-	p_App = (LFApplication*)AfxGetApp();
+	p_App = LFGetApp();
 }
 
 void LFAttributeListDlg::TestAttribute(UINT /*attr*/, BOOL& add, BOOL& check)

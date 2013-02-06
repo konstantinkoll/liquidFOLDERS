@@ -123,7 +123,7 @@ BOOL LFChooseStoreDlg::OnInitDialog()
 	rect.SetRectEmpty();
 	m_wndExplorerList.Create(dwStyle, rect, this, IDC_STORELIST);
 
-	LFApplication* pApp = (LFApplication*)AfxGetApp();
+	LFApplication* pApp = LFGetApp();
 	m_wndExplorerList.SetImageList(&pApp->m_CoreImageListSmall, LVSIL_SMALL);
 	m_wndExplorerList.SetImageList(&pApp->m_CoreImageListLarge, LVSIL_NORMAL);
 
@@ -228,7 +228,7 @@ void LFChooseStoreDlg::OnEndLabelEdit(NMHDR* pNMHDR, LRESULT* pResult)
 			wcsncpy_s(value.UnicodeString, 256, pDispInfo->item.pszText, 255);
 
 			LFTransactionUpdate(tl, NULL, &value);
-			LFErrorBox(tl->m_LastError);
+			LFErrorBox(tl->m_LastError, GetSafeHwnd());
 
 			LFFreeTransactionList(tl);
 			*pResult = TRUE;
@@ -238,13 +238,13 @@ void LFChooseStoreDlg::OnEndLabelEdit(NMHDR* pNMHDR, LRESULT* pResult)
 
 void LFChooseStoreDlg::OnStoresCreateNew()
 {
-	LFStoreDescriptor* s = LFAllocStoreDescriptor();
-
-	LFStoreNewDlg dlg(this, s);
+	LFStoreDescriptor store;
+	LFStoreNewDlg dlg(this, &store);
 	if (dlg.DoModal()==IDOK)
-		LFErrorBox(LFCreateStore(s, dlg.MakeDefault));
-
-	LFFreeStoreDescriptor(s);
+	{
+		CWaitCursor csr;
+		LFErrorBox(LFCreateStore(&store, dlg.MakeDefault), GetSafeHwnd());
+	}
 }
 
 void LFChooseStoreDlg::OnUpdateStoresCommands(CCmdUI* pCmdUI)
@@ -257,7 +257,7 @@ void LFChooseStoreDlg::OnStoreMakeDefault()
 {
 	INT idx = GetSelectedStore();
 	if (idx!=-1)
-		LFErrorBox(LFMakeDefaultStore(p_Result->m_Items[idx]->StoreID, NULL), m_hWnd);
+		LFErrorBox(LFMakeDefaultStore(p_Result->m_Items[idx]->StoreID, NULL), GetSafeHwnd());
 }
 
 void LFChooseStoreDlg::OnStoreShortcut()
@@ -272,7 +272,7 @@ void LFChooseStoreDlg::OnStoreDelete()
 {
 	INT idx = GetSelectedStore();
 	if (idx!=-1)
-		LFErrorBox(LFGetApp()->DeleteStore(p_Result->m_Items[idx], this));
+		LFErrorBox(LFGetApp()->DeleteStore(p_Result->m_Items[idx], this), GetSafeHwnd());
 }
 
 void LFChooseStoreDlg::OnStoreRename()

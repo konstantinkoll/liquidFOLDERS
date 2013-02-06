@@ -50,11 +50,11 @@ CIconCtrl::~CIconCtrl()
 		DestroyIcon(m_Icon);
 }
 
-void CIconCtrl::SetIcon(HICON _icon, INT _cx, INT _cy)
+void CIconCtrl::SetIcon(HICON hIcon, INT cx, INT cy)
 {
-	m_Icon = _icon;
-	m_IconSizeX = _cx;
-	m_IconSizeY = _cy;
+	m_Icon = hIcon;
+	m_IconSizeX = cx;
+	m_IconSizeY = cy;
 
 	Invalidate();
 }
@@ -64,19 +64,19 @@ void CIconCtrl::SetCoreIcon(UINT nID)
 	CRect rect;
 	GetClientRect(rect);
 	INT sz = min(rect.Width(), rect.Height());
+	INT IconSize = (sz>=128) ? 128 : (sz>=48) ? 48 : (sz>=32) ? 32 : (sz>=24) ? 24 : 16;
 
-	HICON hIcon = NULL;
-	m_IconSizeX = m_IconSizeY = (sz>=64) ? 64 : (sz>=48) ? 48 : (sz>=32) ? 32 : (sz>=24) ? 24 : 16;
+	SetIcon((HICON)LoadImage(GetModuleHandle(_T("LFCORE.DLL")), MAKEINTRESOURCE(nID), IMAGE_ICON, IconSize, IconSize, LR_DEFAULTCOLOR), IconSize, IconSize);
+}
 
-	HINSTANCE hModIcons = LoadLibrary(_T("LFCORE.DLL"));
-	if (hModIcons)
-	{
-		hIcon = (HICON)LoadImage(hModIcons, MAKEINTRESOURCE(nID), IMAGE_ICON, m_IconSizeX, m_IconSizeY, LR_DEFAULTCOLOR);
+void CIconCtrl::SetSmallIcon(HINSTANCE hInst, UINT nID)
+{
+	CRect rect;
+	GetClientRect(rect);
+	INT sz = min(rect.Width(), rect.Height());
+	INT IconSize = (sz>=32) ? 32 : 16;
 
-		FreeLibrary(hModIcons);
-	}
-
-	SetIcon(hIcon, m_IconSizeX, m_IconSizeY);
+	SetIcon((HICON)LoadImage(hInst, MAKEINTRESOURCE(nID), IMAGE_ICON, IconSize, IconSize, LR_DEFAULTCOLOR), IconSize, IconSize);
 }
 
 
@@ -104,7 +104,9 @@ void CIconCtrl::OnPaint()
 	buffer.CreateCompatibleBitmap(&pDC, rect.Width(), rect.Height());
 	CBitmap* pOldBitmap = dc.SelectObject(&buffer);
 
-	dc.FillSolidRect(rect, GetSysColor(COLOR_3DFACE));
+	HBRUSH brush = (HBRUSH)GetParent()->SendMessage(WM_CTLCOLORBTN, (WPARAM)dc.m_hDC, (LPARAM)m_hWnd);
+	if (brush)
+		FillRect(dc, rect, brush);
 
 	if (m_Icon)
 		DrawIconEx(dc, 0, 0, m_Icon, m_IconSizeX, m_IconSizeY, 0, NULL, DI_NORMAL);

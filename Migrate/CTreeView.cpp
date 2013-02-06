@@ -740,7 +740,7 @@ UINT CTreeView::EnumObjects(UINT row, UINT col, BOOL ExpandAll, BOOL FirstInstan
 	if (SUCCEEDED(pParentFolder->EnumObjects(NULL, SHCONTF_FOLDERS, &pEnum)))
 		if (pEnum)
 		{
-			CWaitCursor wait;
+			CWaitCursor csr;
 
 			BOOL NewRow = FALSE;
 			UINT Flags = ExpandAll ? (cell->Flags & CF_CHECKED) : 0;
@@ -1215,7 +1215,7 @@ BOOL CTreeView::ExecuteContextMenu(CPoint& item, LPCSTR verb)
 			UINT uFlags = CMF_NORMAL | CMF_EXPLORE;
 			if (SUCCEEDED(pcm->QueryContextMenu(hPopup, 0, 1, 0x6FFF, uFlags)))
 			{
-				CWaitCursor wait;
+				CWaitCursor csr;
 
 				CMINVOKECOMMANDINFO cmi;
 				cmi.cbSize = sizeof(CMINVOKECOMMANDINFO);
@@ -2373,7 +2373,7 @@ void CTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 						}
 						else
 						{
-							CWaitCursor wait;
+							CWaitCursor csr;
 
 							CMINVOKECOMMANDINFO cmi;
 							cmi.cbSize = sizeof(CMINVOKECOMMANDINFO);

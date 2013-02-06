@@ -284,14 +284,6 @@ LFCore_API HGLOBAL LFCreateLiquidFiles(LFTransactionList* tl);
 
 
 
-// Neuen LFStoreDescriptor erzeugen
-LFCore_API LFStoreDescriptor* LFAllocStoreDescriptor();
-
-// Existierenden LFStoreDescriptor freigeben
-LFCore_API void LFFreeStoreDescriptor(LFStoreDescriptor* s);
-
-
-
 // Name einer Item-Kategorie in aktueller Sprache zurückliefern
 LFCore_API wchar_t* LFGetItemCategoryName(unsigned int ID);
 
@@ -330,6 +322,9 @@ LFCore_API unsigned int LFGetFileLocation(LFItemDescriptor* i, wchar_t* dst, siz
 // Gibt die Daten eines Stores zurück
 LFCore_API unsigned int LFGetStoreSettings(char* key, LFStoreDescriptor* s);
 LFCore_API unsigned int LFGetStoreSettings(GUID guid, LFStoreDescriptor* s);
+
+// Gibt die ID für das Icon eines Stores zurück
+LFCore_API unsigned int LFGetStoreIcon(LFStoreDescriptor* s);
 
 // Legt einen neuen Store an
 // - Eingabeparameter interner Store:

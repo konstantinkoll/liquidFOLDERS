@@ -4,6 +4,7 @@
 
 #include "stdafx.h"
 #include "CExplorerList.h"
+#include "LFCommDlg.h"
 
 
 // CExplorerList
@@ -12,7 +13,7 @@
 CExplorerList::CExplorerList()
 	: CListCtrl()
 {
-	p_App = (LFApplication*)AfxGetApp();
+	p_App = LFGetApp();
 	p_Result = NULL;
 	hTheme = NULL;
 	m_ItemMenuID = m_BackgroundMenuID = 0;

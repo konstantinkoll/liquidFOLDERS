@@ -23,10 +23,11 @@
 #define IDI_FLD_Video                   19
 #define IDI_FLD_Web                     20
 #define IDI_OVERLAY_Default             21
-#define IDI_STORE_Internal              22
-#define IDI_STORE_Bag                   23
-#define IDI_STORE_Server                24
-#define IDI_LastIcon                    24
+#define IDI_STORE_Unknown               22
+#define IDI_STORE_Internal              23
+#define IDI_STORE_Bag                   24
+#define IDI_STORE_Server                25
+#define IDI_LastIcon                    25
 #define IDS_FirstItemCategory           1000
 #define IDS_LFCategoryInternalStores    1000
 #define IDS_LFCategoryHybridStores      1001

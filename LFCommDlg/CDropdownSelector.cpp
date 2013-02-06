@@ -195,7 +195,7 @@ void CDropdownWindow::OnActivateApp(BOOL bActive, DWORD dwThreadID)
 CDropdownSelector::CDropdownSelector()
 	: CWnd()
 {
-	p_App = (LFApplication*)AfxGetApp();
+	p_App = LFGetApp();
 	p_DropWindow = NULL;
 	hTheme = NULL;
 	m_Icon = NULL;

@@ -77,24 +77,18 @@ void CRunCmdApp::OnAppAbout(UINT ResIDName, UINT ResIDPicture)
 
 void CRunCmdApp::OnStoresCreate()
 {
-	LFStoreDescriptor* s = LFAllocStoreDescriptor();
-
-	LFStoreNewDlg dlg(CWnd::GetForegroundWindow(), s);
+	LFStoreDescriptor store;
+	LFStoreNewDlg dlg(CWnd::GetForegroundWindow(), &store);
 	if (dlg.DoModal()==IDOK)
-		LFErrorBox(LFCreateStore(s, dlg.MakeDefault));
-
-	LFFreeStoreDescriptor(s);
+		LFErrorBox(LFCreateStore(&store, dlg.MakeDefault), GetForegroundWindow());
 }
 
 void CRunCmdApp::OnStoresCreateVolume(CHAR Drive)
 {
-	LFStoreDescriptor* s = LFAllocStoreDescriptor();
-
-	LFStoreNewVolumeDlg dlg(CWnd::GetForegroundWindow(), Drive, s);
+	LFStoreDescriptor store;
+	LFStoreNewVolumeDlg dlg(CWnd::GetForegroundWindow(), Drive, &store);
 	if (dlg.DoModal()==IDOK)
-		LFErrorBox(LFCreateStore(s, FALSE));
-
-	LFFreeStoreDescriptor(s);
+		LFErrorBox(LFCreateStore(&store, FALSE), GetForegroundWindow());
 }
 
 void CRunCmdApp::OnStoreDelete(CString ID)
@@ -102,14 +96,12 @@ void CRunCmdApp::OnStoreDelete(CString ID)
 	CHAR StoreID[LFKeySize];
 	WideCharToMultiByte(CP_ACP, 0, ID, -1, StoreID, LFKeySize, NULL, NULL);
 
-	LFStoreDescriptor* store = LFAllocStoreDescriptor();
-	UINT res = LFGetStoreSettings(StoreID, store);
-
+	LFStoreDescriptor store;
+	UINT res = LFGetStoreSettings(StoreID, &store);
 	if (res==LFOk)
-		res = theApp.DeleteStore(store, CWnd::GetForegroundWindow());
+		res = theApp.DeleteStore(&store, CWnd::GetForegroundWindow());
 
-	LFFreeStoreDescriptor(store);
-	LFErrorBox(res);
+	LFErrorBox(res, GetForegroundWindow());
 }
 
 void CRunCmdApp::OnStoreImportFolder(CString ID)

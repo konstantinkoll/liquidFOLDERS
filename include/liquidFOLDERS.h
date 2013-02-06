@@ -542,7 +542,7 @@ struct LFStoreDescriptor
 	char StoreID[LFKeySize];
 	wchar_t StoreName[256];
 	wchar_t LastSeen[256];
-	wchar_t Comment[256];
+	wchar_t StoreComment[256];
 	int StoreMode;
 	GUID guid;
 	unsigned int AutoLocation;

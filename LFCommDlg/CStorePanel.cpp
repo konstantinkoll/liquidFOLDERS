@@ -42,7 +42,7 @@ CStorePanel::CStorePanel()
 			AfxThrowResourceException();
 	}
 
-	p_App = (LFApplication*)AfxGetApp();
+	p_App = LFGetApp();
 	p_Icons = NULL;
 	p_Item = NULL;
 }
@@ -105,12 +105,9 @@ void CStorePanel::SetStore(CHAR* Key)
 
 	if (Key)
 	{
-		LFStoreDescriptor* s = LFAllocStoreDescriptor();
-
-		if (LFGetStoreSettings(Key, s)==LFOk)
-			p_Item = LFAllocItemDescriptor(s);
-
-		LFFreeStoreDescriptor(s);
+		LFStoreDescriptor store;
+		if (LFGetStoreSettings(Key, &store)==LFOk)
+			p_Item = LFAllocItemDescriptor(&store);
 	}
 
 	Invalidate();

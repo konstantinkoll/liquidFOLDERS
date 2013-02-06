@@ -411,6 +411,23 @@ LFCore_API unsigned int LFGetStoreSettings(GUID guid, LFStoreDescriptor* s)
 	return (slot ? LFOk : LFIllegalKey);
 }
 
+LFCore_API unsigned int LFGetStoreIcon(LFStoreDescriptor* s)
+{
+	if (!s)
+		return IDI_STORE_Unknown;
+
+	switch (s->StoreMode)
+	{
+	case LFStoreModeInternal:
+		return IDI_STORE_Internal;
+	case LFStoreModeExternal:
+	case LFStoreModeHybrid:
+		return IDI_STORE_Bag;
+	default:
+		return IDI_STORE_Unknown;
+	}
+}
+
 LFCore_API unsigned int LFCreateStore(LFStoreDescriptor* s, bool MakeDefault, HWND hWndSource)
 {
 	// GUID generieren
@@ -613,15 +630,23 @@ LFCore_API unsigned int LFSetStoreAttributes(char* key, wchar_t* name, wchar_t* 
 	{
 		if (name)
 			if (wcscmp(name, slot->StoreName)==0)
+			{
 				name = NULL;
-		if (name)
-			wcscpy_s(slot->StoreName, 256, name);
+			}
+			else
+			{
+				wcscpy_s(slot->StoreName, 256, name);
+			}
 
 		if (comment)
-			if (wcscmp(comment, slot->Comment)==0)
+			if (wcscmp(comment, slot->StoreComment)==0)
+			{
 				comment = NULL;
-		if (comment)
-			wcscpy_s(slot->Comment, 256, comment);
+			}
+			else
+			{
+				wcscpy_s(slot->StoreComment, 256, comment);
+			}
 
 		res = (name || comment) ? UpdateStore(slot) : LFOk;
 	}

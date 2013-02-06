@@ -55,7 +55,7 @@ void LFStoreNewDlg::DoDataExchange(CDataExchange* pDX)
 
 		// LFStoreDescriptor ausfüllen
 		GetDlgItem(IDC_STORENAME)->GetWindowText(m_pStore->StoreName, 256);
-		GetDlgItem(IDC_COMMENT)->GetWindowText(m_pStore->Comment, 256);
+		GetDlgItem(IDC_STORECOMMENT)->GetWindowText(m_pStore->StoreComment, 256);
 		DDX_Radio(pDX, IDC_INTERNALSTORE, m_pStore->StoreMode);
 
 		if (m_pStore->StoreMode==LFStoreModeInternal)

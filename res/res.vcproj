@@ -664,14 +664,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Ribbon\Registry_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\Registry_32.png"
-				>
-			</File>
-			<File
 				RelativePath=".\Ribbon\RemoveFromClipboard_16.png"
 				>
 			</File>
@@ -709,6 +701,14 @@
 			</File>
 			<File
 				RelativePath=".\Ribbon\SortOptions_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\StoreBackup_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\StoreBackup_32.png"
 				>
 			</File>
 			<File
@@ -1361,7 +1361,11 @@
 			>
 		</File>
 		<File
-			RelativePath=".\StoreMaintenance_Tiny.ico"
+			RelativePath=".\StoreBackup_32.bmp"
+			>
+		</File>
+		<File
+			RelativePath=".\StoreMaintenance_Small.ico"
 			>
 		</File>
 		<File

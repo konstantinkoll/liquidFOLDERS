@@ -45,7 +45,7 @@ CMapSelectionCtrl::CMapSelectionCtrl()
 	if (!Map1)
 	{
 		Map1 = new CGdiPlusBitmapResource();
-		ENSURE(Map1->Load(IDB_EARTHMAP_1024, _T("PNG"), LFCommDlgDLL.hResource));
+		ENSURE(Map1->Load(IDB_EARTHMAP_1024, _T("JPG"), LFCommDlgDLL.hResource));
 	}
 	m_Indicator = new CGdiPlusBitmapResource();
 	ENSURE(m_Indicator->Load(IDB_LOCATIONINDICATOR_8, _T("PNG"), LFCommDlgDLL.hResource));

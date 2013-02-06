@@ -19,7 +19,7 @@ CExplorerNotification::CExplorerNotification()
 {
 	m_Dismissed = TRUE;
 	hIcon = NULL;
-	p_App = (LFApplication*)AfxGetApp();
+	p_App = LFGetApp();
 
 	m_IconCX = GetSystemMetrics(SM_CXICON);
 	m_IconCY = GetSystemMetrics(SM_CYICON);

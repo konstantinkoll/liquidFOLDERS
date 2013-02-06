@@ -15,7 +15,7 @@
 CLabel::CLabel()
 	: CWnd()
 {
-	p_App = (LFApplication*)AfxGetApp();
+	p_App = LFGetApp();
 	m_FontHeight = 0;
 }
 

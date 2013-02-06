@@ -3,7 +3,7 @@
 //
 
 #include "stdafx.h"
-#include "CGlassWindow.h"
+#include "LFCommDlg.h"
 #include "LFBrowseForFolderDlg.h"
 #include "resource.h"
 
@@ -14,7 +14,7 @@
 LFBrowseForFolderDlg::LFBrowseForFolderDlg(BOOL OnlyFSObjects, BOOL ShowDeleteSource, CString RootPath, CWnd* pParentWnd, CString Caption, CString Hint)
 	: LFDialog(IDD_BROWSEFORFOLDER, LFDS_White, pParentWnd)
 {
-	p_App = (LFApplication*)AfxGetApp();
+	p_App = LFGetApp();
 	m_OnlyFSObjects = OnlyFSObjects;
 	m_ShowDeleteSource = ShowDeleteSource;
 	m_RootPath = RootPath;

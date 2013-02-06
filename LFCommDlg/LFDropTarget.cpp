@@ -170,7 +170,7 @@ __forceinline HRESULT LFDropTarget::AddToClipboard(HGLOBAL hgLiquid, CWnd* pWnd)
 	if (!hgLiquid)
 		return E_INVALIDARG;
 
-	CWaitCursor wait;
+	CWaitCursor csr;
 
 	HLIQUID hLiquid = (HLIQUID)GlobalLock(hgLiquid);
 	LFFileIDList* il = LFAllocFileIDList(hLiquid);
@@ -288,7 +288,7 @@ STDMETHODIMP LFDropTarget::Drop(IDataObject* pDataObject, DWORD grfKeyState, POI
 	// Clipboard
 	if (p_SearchResult)
 	{
-		CWaitCursor wait;
+		CWaitCursor csr;
 
 		return AddToClipboard(hgLiquid, pWnd);
 	}

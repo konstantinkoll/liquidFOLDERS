@@ -102,7 +102,6 @@ void WriteXMLItem(CStdioFile& f, LFItemDescriptor* i)
 
 CMainWnd::CMainWnd()
 {
-	m_hIcon = NULL;
 	m_pActiveFilter = NULL;
 	m_pRawFiles = m_pCookedFiles = NULL;
 	m_BreadcrumbBack = m_BreadcrumbForward = NULL;
@@ -110,8 +109,6 @@ CMainWnd::CMainWnd()
 
 CMainWnd::~CMainWnd()
 {
-	if (m_hIcon)
-		DestroyIcon(m_hIcon);
 	if (m_pActiveFilter)
 		LFFreeFilter(m_pActiveFilter);
 	if (m_pCookedFiles!=m_pRawFiles)
@@ -123,10 +120,9 @@ CMainWnd::~CMainWnd()
 
 BOOL CMainWnd::Create(BOOL IsClipboard)
 {
-	m_hIcon = theApp.LoadIcon(IsClipboard ? IDR_CLIPBOARD : IDR_APPLICATION);
 	m_IsClipboard = IsClipboard;
 
-	CString className = AfxRegisterWndClass(CS_DBLCLKS, LoadCursor(NULL, IDC_ARROW), NULL, m_hIcon);
+	CString className = AfxRegisterWndClass(CS_DBLCLKS, LoadCursor(NULL, IDC_ARROW), NULL, theApp.LoadIcon(IsClipboard ? IDR_CLIPBOARD : IDR_APPLICATION));
 
 	CRect rect;
 	SystemParametersInfo(SPI_GETWORKAREA, NULL, &rect, NULL);

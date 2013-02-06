@@ -112,8 +112,8 @@ bool LoadStoreSettingsFromRegistry(char* key, LFStoreDescriptor* s)
 		if (RegQueryValueEx(k, L"Name", 0, NULL, (BYTE*)&s->StoreName, &sz)!=ERROR_SUCCESS)
 			res = false;
 
-		sz = sizeof(s->Comment);
-		RegQueryValueEx(k, L"Comment", 0, NULL, (BYTE*)&s->Comment, &sz);
+		sz = sizeof(s->StoreComment);
+		RegQueryValueEx(k, L"Comment", 0, NULL, (BYTE*)&s->StoreComment, &sz);
 
 		sz = sizeof(s->StoreMode);
 		if (RegQueryValueEx(k, L"Mode", 0, NULL, (BYTE*)&s->StoreMode, &sz)!=ERROR_SUCCESS)
@@ -200,7 +200,7 @@ unsigned int SaveStoreSettingsToRegistry(LFStoreDescriptor* s)
 		res = LFOk;
 		if (RegSetValueEx(k, L"Name", 0, REG_SZ, (BYTE*)s->StoreName, (DWORD)wcslen(s->StoreName)*sizeof(wchar_t))!=ERROR_SUCCESS)
 			res = LFRegistryError;
-		if (RegSetValueEx(k, L"Comment", 0, REG_SZ, (BYTE*)s->Comment, (DWORD)wcslen(s->Comment)*sizeof(wchar_t))!=ERROR_SUCCESS)
+		if (RegSetValueEx(k, L"Comment", 0, REG_SZ, (BYTE*)s->StoreComment, (DWORD)wcslen(s->StoreComment)*sizeof(wchar_t))!=ERROR_SUCCESS)
 			res = LFRegistryError;
 		if (RegSetValueEx(k, L"Mode", 0, REG_DWORD, (BYTE*)&s->StoreMode, sizeof(unsigned int))!=ERROR_SUCCESS)
 			res = LFRegistryError;
@@ -767,7 +767,7 @@ unsigned int MountDrive(char d, bool InternalCall)
 					{
 						// Name, Kommentar und Dateizeit aktualisieren
 						wcscpy_s(slot->StoreName, 256, s.StoreName);
-						wcscpy_s(slot->Comment, 256, s.Comment);
+						wcscpy_s(slot->StoreComment, 256, s.StoreComment);
 						slot->FileTime = s.FileTime;
 					}
 				}

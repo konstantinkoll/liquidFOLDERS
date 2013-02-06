@@ -262,10 +262,10 @@ void CMainView::SetHeader()
 				wcscpy_s(p_RawFiles->m_Name, 256, s.StoreName);
 				wcscpy_s(p_CookedFiles->m_Name, 256, s.StoreName);
 
-				if (s.Comment[0]!=L'\0')
+				if (s.StoreComment[0]!=L'\0')
 				{
 					Hint.Insert(0, (GetThreadLocale() & 0x1FF)==LANG_ENGLISH ? _T("—") : _T(" – "));
-					Hint.Insert(0, s.Comment);
+					Hint.Insert(0, s.StoreComment);
 				}
 			}
 		}
@@ -498,7 +498,7 @@ void CMainView::ExecuteContextMenu(CHAR Drive, LPCSTR verb)
 			UINT uFlags = CMF_NORMAL | CMF_EXPLORE;
 			if (SUCCEEDED(pcm->QueryContextMenu(hPopup, 0, 1, 0x6FFF, uFlags)))
 			{
-				CWaitCursor wait;
+				CWaitCursor csr;
 
 				CMINVOKECOMMANDINFO cmi;
 				cmi.cbSize = sizeof(CMINVOKECOMMANDINFO);
@@ -650,7 +650,7 @@ BOOL CMainView::DeleteFiles(BOOL Trash, BOOL All)
 
 	if (Trash)
 	{
-		CWaitCursor wait;
+		CWaitCursor csr;
 
 		LFTransactionDelete(tl, true);
 	}
@@ -675,7 +675,7 @@ BOOL CMainView::DeleteFiles(BOOL Trash, BOOL All)
 
 BOOL CMainView::RestoreFiles(BOOL All)
 {
-	CWaitCursor wait;
+	CWaitCursor csr;
 
 	LFTransactionList* tl = BuildTransactionList(All);
 	LFTransactionRestore(tl);
@@ -691,7 +691,7 @@ BOOL CMainView::RestoreFiles(BOOL All)
 
 BOOL CMainView::UpdateItems(LFVariantData* Value1, LFVariantData* Value2, LFVariantData* Value3)
 {
-	CWaitCursor wait;
+	CWaitCursor csr;
 
 	LFTransactionList* tl = BuildTransactionList();
 	LFTransactionUpdate(tl, GetOwner()->GetSafeHwnd(), Value1, Value2, Value3);
@@ -1187,7 +1187,7 @@ LRESULT CMainView::OnSendTo(WPARAM wParam, LPARAM /*lParam*/)
 						LFTransactionList* tl = BuildTransactionList(FALSE, TRUE);
 						if (tl->m_ItemCount)
 						{
-							CWaitCursor wait;
+							CWaitCursor csr;
 							LFTransactionDataObject* pDataObject = new LFTransactionDataObject(tl);
 
 							POINTL pt = { 0, 0 };
@@ -1439,17 +1439,13 @@ void CMainView::OnUpdateViewCommands(CCmdUI* pCmdUI)
 
 void CMainView::OnStoresCreateNew()
 {
-	LFStoreDescriptor* s = LFAllocStoreDescriptor();
-
-	LFStoreNewDlg dlg(this, s);
+	LFStoreDescriptor store;
+	LFStoreNewDlg dlg(this, &store);
 	if (dlg.DoModal()==IDOK)
 	{
-		CWaitCursor wait;
-
-		LFErrorBox(LFCreateStore(s, dlg.MakeDefault), GetSafeHwnd());
+		CWaitCursor csr;
+		LFErrorBox(LFCreateStore(&store, dlg.MakeDefault), GetSafeHwnd());
 	}
-
-	LFFreeStoreDescriptor(s);
 }
 
 void CMainView::OnStoresMaintainAll()
@@ -1553,7 +1549,7 @@ void CMainView::OnHousekeepingRemoveNew()
 	Value.Flags.Flags = 0;
 	Value.Flags.Mask = LFFlagNew;
 
-	CWaitCursor wait;
+	CWaitCursor csr;
 
 	LFTransactionList* tl = BuildTransactionList(TRUE);
 	LFTransactionUpdate(tl, GetOwner()->GetSafeHwnd(), &Value);
@@ -1642,17 +1638,13 @@ void CMainView::OnVolumeCreateNewStore()
 	INT idx = GetSelectedItem();
 	if (idx!=-1)
 	{
-		LFStoreDescriptor* s = LFAllocStoreDescriptor();
-
-		LFStoreNewVolumeDlg dlg(this, p_CookedFiles->m_Items[idx]->CoreAttributes.FileID[0], s);
+		LFStoreDescriptor store;
+		LFStoreNewVolumeDlg dlg(this, p_CookedFiles->m_Items[idx]->CoreAttributes.FileID[0], &store);
 		if (dlg.DoModal()==IDOK)
 		{
-			CWaitCursor wait;
-
-			LFErrorBox(LFCreateStore(s, FALSE), GetSafeHwnd());
+			CWaitCursor csr;
+			LFErrorBox(LFCreateStore(&store, FALSE), GetSafeHwnd());
 		}
-
-		LFFreeStoreDescriptor(s);
 	}
 }
 
@@ -1868,7 +1860,7 @@ void CMainView::OnFileCopy()
 	LFTransactionList* tl = BuildTransactionList(FALSE, TRUE);
 	if (tl->m_ItemCount)
 	{
-		CWaitCursor wait;
+		CWaitCursor csr;
 		LFTransactionDataObject* pDataObject = new LFTransactionDataObject(tl);
 
 		OleSetClipboard(pDataObject);
@@ -1888,7 +1880,7 @@ void CMainView::OnFileShortcut()
 	LFTransactionList* tl = BuildTransactionList(FALSE, TRUE, TRUE);
 	if (tl->m_ItemCount)
 	{
-		CWaitCursor wait;
+		CWaitCursor csr;
 		for (UINT a=0; a<tl->m_ItemCount; a++)
 			if ((tl->m_Items[a].LastError==LFOk) && (tl->m_Items[a].Processed))
 				CreateShortcut(&tl->m_Items[a]);

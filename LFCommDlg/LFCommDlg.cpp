@@ -71,7 +71,7 @@ LFCommDlg_API void CreateRoundRectangle(CRect rect, INT rad, GraphicsPath& path)
 
 LFCommDlg_API void TooltipDataFromPIDL(LPITEMIDLIST pidl, CImageList* icons, HICON& hIcon, CSize& size, CString& caption, CString& hint)
 {
-	LFApplication* pApp = (LFApplication*)AfxGetApp();
+	LFApplication* pApp = LFGetApp();
 
 	SHFILEINFO sfi;
 	if (SUCCEEDED(SHGetFileInfo((WCHAR*)pidl, 0, &sfi, sizeof(SHFILEINFO), SHGFI_PIDL | SHGFI_DISPLAYNAME | SHGFI_TYPENAME | SHGFI_SYSICONINDEX | SHGFI_LARGEICON)))
@@ -114,7 +114,7 @@ LFCommDlg_API void TooltipDataFromPIDL(LPITEMIDLIST pidl, CImageList* icons, HIC
 
 LFCommDlg_API BOOL IsCtrlThemed()
 {
-	LFApplication* pApp = (LFApplication*)AfxGetApp();
+	LFApplication* pApp = LFGetApp();
 	if (pApp)
 		if (pApp->m_ThemeLibLoaded)
 			return pApp->zIsAppThemed();
@@ -133,7 +133,7 @@ LFCommDlg_API void DrawControlBorder(CWnd* pWnd)
 
 	CWindowDC dc(pWnd);
 
-	LFApplication* pApp = (LFApplication*)AfxGetApp();
+	LFApplication* pApp = LFGetApp();
 	if (pApp->m_ThemeLibLoaded)
 		if (pApp->zIsAppThemed())
 		{
@@ -272,27 +272,6 @@ LFCommDlg_API void LFImportFolder(CHAR* StoreID, CWnd* pParentWnd)
 	}
 }
 
-
-CString MakeHex(BYTE* x, UINT bCount)
-{
-	CString tmpStr;
-	for (UINT a=0; a<bCount; a++)
-	{
-		CString digit;
-		digit.Format(_T("%.2x"), x[a]);
-		tmpStr += digit;
-		if (a<bCount-1)
-			tmpStr += _T(",");
-	}
-	return tmpStr;
-}
-
-void CEscape(CString &s)
-{
-	for (INT a = s.GetLength()-1; a>=0; a--)
-		if ((s[a]==L'\\') || (s[a]==L'\"'))
-			s.Insert(a, L'\\');
-}
 
 LFCommDlg_API void LFAbout(CString AppName, CString Build, UINT IconResID, CWnd* pParentWnd)
 {
@@ -468,7 +447,7 @@ LFCommDlg_API void LFCheckForUpdate(BOOL Force, CWnd* pParentWnd)
 	CString LatestVersion;
 	if (Check)
 	{
-		CWaitCursor wait;
+		CWaitCursor csr;
 
 		CString CurrentVersion;
 		VersionIni = GetLatestVersion(CurrentVersion);

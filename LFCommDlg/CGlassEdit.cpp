@@ -58,7 +58,7 @@ INT CGlassEdit::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CEdit::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
-	LFApplication* pApp = (LFApplication*)AfxGetApp();
+	LFApplication* pApp = LFGetApp();
 	SetFont(&pApp->m_DefaultFont);
 
 	if (m_ShowSearchIcon)

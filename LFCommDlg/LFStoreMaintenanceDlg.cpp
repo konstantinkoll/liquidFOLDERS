@@ -88,7 +88,7 @@ BOOL LFStoreMaintenanceDlg::OnInitDialog()
 	}
 
 	// Liste
-	LFApplication* pApp = (LFApplication*)AfxGetApp();
+	LFApplication* pApp = LFGetApp();
 	CListCtrl* li = (CListCtrl*)GetDlgItem(IDC_STORELIST);
 	li->SetExtendedStyle(li->GetExtendedStyle() | LVS_EX_FULLROWSELECT | LVS_EX_DOUBLEBUFFER | LVS_EX_GRIDLINES);
 	li->SetImageList(&pApp->m_CoreImageListSmall, LVSIL_SMALL);

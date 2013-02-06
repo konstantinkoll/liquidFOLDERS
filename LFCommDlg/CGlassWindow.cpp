@@ -4,6 +4,7 @@
 
 #include "stdafx.h"
 #include "CGlassWindow.h"
+#include "LFCommDlg.h"
 
 
 // CGlassWindow
@@ -12,7 +13,7 @@
 CGlassWindow::CGlassWindow()
 	: CWnd()
 {
-	p_App = (LFApplication*)AfxGetApp();
+	p_App = LFGetApp();
 	p_PopupWindow = NULL;
 	hAccelerator = NULL;
 	hTheme = NULL;

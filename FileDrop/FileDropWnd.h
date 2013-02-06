@@ -12,7 +12,6 @@ class CFileDropWnd : public CGlassWindow
 {
 public:
 	CFileDropWnd();
-	~CFileDropWnd();
 
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 
@@ -21,9 +20,8 @@ public:
 protected:
 	LFDropTarget m_DropTarget;
 	LFTooltip m_TooltipCtrl;
-	HICON m_hIcon;
-	HICON m_hWarning;
 	CImageList m_Dropzone;
+	HICON hWarning;
 	LFStoreDescriptor m_Store;
 	CString m_Label;
 	INT m_PosX;

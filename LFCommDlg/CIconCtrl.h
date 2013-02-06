@@ -14,8 +14,9 @@ public:
 	CIconCtrl();
 	~CIconCtrl();
 
-	void SetIcon(HICON _icon, INT _cx, INT _cy);
+	void SetIcon(HICON hIcon, INT cx, INT cy);
 	void SetCoreIcon(UINT nID);
+	void SetSmallIcon(HINSTANCE hInst, UINT nID);
 
 protected:
 	HICON m_Icon;
