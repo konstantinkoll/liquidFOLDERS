@@ -795,7 +795,6 @@ LRESULT CMainWnd::OnItemsDropped(WPARAM /*wParam*/, LPARAM /*lParam*/)
 		case LFContextClipboard:
 			PostMessage(WM_COOKFILES);
 			break;
-
 		default:
 			PostMessage(WM_RELOAD);
 			break;

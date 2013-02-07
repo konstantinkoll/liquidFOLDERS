@@ -30,7 +30,6 @@ protected:
 	BOOL m_StoreValid;
 	BOOL m_Hover;
 
-	void UpdateStore();
 	void SetWindowRect(INT x, INT y, BOOL TopMost);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
@@ -44,7 +43,7 @@ protected:
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint pos);
 	afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
 	afx_msg void OnMove(INT x, INT y);
-	afx_msg LRESULT OnStoresChanged(WPARAM wParam, LPARAM lParam);
+	afx_msg LRESULT OnUpdateStore(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnWakeup(WPARAM wParam, LPARAM lParam);
 
 	afx_msg void OnChooseDefaultStore();

@@ -14,7 +14,7 @@ void GetFileLocation(wchar_t* DatPath, LFCoreAttributes* ca, wchar_t* dst, size_
 bool FileExists(LPWSTR lpPath);
 unsigned int PrepareImport(LFStoreDescriptor* slot, LFItemDescriptor* i, wchar_t* Dst, size_t cCount);
 bool GetPIDLForStore(char* StoreID, LPITEMIDLIST* ppidl, LPITEMIDLIST* ppidlDelegate);
-void SendLFNotifyMessage(unsigned int Msg, unsigned int Flags, HWND hWndSource);
+void SendLFNotifyMessage(unsigned int Msg, HWND hWndSource);
 void SendShellNotifyMessage(unsigned int Msg, char* StoreID=NULL, LPITEMIDLIST oldpidl=NULL, LPITEMIDLIST oldpidlDelegate=NULL);
 void InitStores();
 unsigned int OpenStore(LFStoreDescriptor* s, bool WriteAccess, CIndex* &Index1, CIndex* &Index2);

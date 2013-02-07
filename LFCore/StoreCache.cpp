@@ -811,7 +811,7 @@ Finish:
 
 	if (!InternalCall)
 	{
-		SendLFNotifyMessage(changeOccured ? LFMessages.StoresChanged : LFMessages.VolumesChanged, changeOccured ? LFMSGF_ExtHybStores : 0, NULL);
+		SendLFNotifyMessage(changeOccured ? LFMessages.StoresChanged : LFMessages.VolumesChanged, NULL);
 		SendShellNotifyMessage(SHCNE_UPDATEDIR);
 	}
 
@@ -877,7 +877,7 @@ unsigned int UnmountDrive(char d, bool InternalCall)
 
 	if (!InternalCall)
 	{
-		SendLFNotifyMessage(changeOccured ? LFMessages.StoresChanged : LFMessages.VolumesChanged, changeOccured ? LFMSGF_ExtHybStores : 0, NULL);
+		SendLFNotifyMessage(changeOccured ? LFMessages.StoresChanged : LFMessages.VolumesChanged, NULL);
 		for (unsigned int a=0; a<NotifyCount; a++)
 			SendShellNotifyMessage(SHCNE_UPDATEITEM, NotifyIDs[a]);
 		SendShellNotifyMessage(SHCNE_UPDATEDIR);

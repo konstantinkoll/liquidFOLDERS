@@ -80,9 +80,6 @@ struct LFMessageIDs
 	unsigned int VolumesChanged;
 };
 
-#define LFMSGF_IntStores                1
-#define LFMSGF_ExtHybStores             2
-
 
 // Globals
 

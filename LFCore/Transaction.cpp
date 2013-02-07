@@ -269,7 +269,7 @@ LFCore_API void LFTransactionUpdate(LFTransactionList* tl, HWND hWndSource, LFVa
 	// Update messages
 	if (StoresUpdated)
 	{
-		SendLFNotifyMessage(LFMessages.StoreAttributesChanged, LFMSGF_IntStores | LFMSGF_ExtHybStores, hWndSource);
+		SendLFNotifyMessage(LFMessages.StoreAttributesChanged, hWndSource);
 		SendShellNotifyMessage(SHCNE_UPDATEDIR);
 	}
 }

@@ -53,7 +53,7 @@ INT CStoreDropdownWindow::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndList.EnableGroupView(TRUE);
 	m_wndList.SetView(LV_VIEW_TILE);
 
-	SendMessage(MessageIDs->StoresChanged, LFMSGF_IntStores | LFMSGF_ExtHybStores);
+	SendMessage(MessageIDs->StoresChanged);
 	m_wndList.SetItemState(0, LVIS_FOCUSED | LVIS_SELECTED, LVIS_FOCUSED | LVIS_SELECTED);
 
 	return 0;

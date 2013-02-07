@@ -51,23 +51,6 @@ BOOL CFileDropWnd::PreTranslateMessage(MSG* pMsg)
 	return CGlassWindow::PreTranslateMessage(pMsg);
 }
 
-void CFileDropWnd::UpdateStore()
-{
-	m_StoreValid = (LFGetStoreSettings("", &m_Store)==LFOk);
-	if (m_StoreValid)
-	{
-		m_Label = m_Store.StoreName;
-
-		HICON hIcon = LFGetIcon(LFGetStoreIcon(&m_Store), 128, 128);
-		m_Dropzone.Replace(1, hIcon);
-		DestroyIcon(hIcon);
-	}
-	else
-	{
-		ENSURE(m_Label.LoadString(IDS_NODEFAULTSTORE));
-	}
-}
-
 void CFileDropWnd::SetWindowRect(INT x, INT y, BOOL TopMost)
 {
 	UINT Flags = SWP_NOSIZE | SWP_FRAMECHANGED;
@@ -122,9 +105,9 @@ BEGIN_MESSAGE_MAP(CFileDropWnd, CGlassWindow)
 	ON_COMMAND(ID_APP_EXIT, OnQuit)
 	ON_UPDATE_COMMAND_UI(ID_APP_OPENSTORE, OnUpdateCommands)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_STORE_MAKEDEFAULT, IDM_STORE_PROPERTIES, OnUpdateCommands)
-	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoresChanged, OnStoresChanged)
-	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoreAttributesChanged, OnStoresChanged)
-	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->DefaultStoreChanged, OnStoresChanged)
+	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoresChanged, OnUpdateStore)
+	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoreAttributesChanged, OnUpdateStore)
+	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->DefaultStoreChanged, OnUpdateStore)
 	ON_REGISTERED_MESSAGE(theApp.m_WakeupMsg, OnWakeup)
 END_MESSAGE_MAP()
 
@@ -176,7 +159,7 @@ INT CFileDropWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	}
 
 	// Store
-	UpdateStore();
+	SendMessage(theApp.p_MessageIDs->DefaultStoreChanged);
 
 	// Initialize Drop
 	m_DropTarget.SetOwner(this);
@@ -394,9 +377,22 @@ void CFileDropWnd::OnMove(INT x, INT y)
 }
 
 
-LRESULT CFileDropWnd::OnStoresChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)
+LRESULT CFileDropWnd::OnUpdateStore(WPARAM /*wParam*/, LPARAM /*lParam*/)
 {
-	UpdateStore();
+	m_StoreValid = (LFGetStoreSettings("", &m_Store)==LFOk);
+	if (m_StoreValid)
+	{
+		m_Label = m_Store.StoreName;
+
+		HICON hIcon = LFGetIcon(LFGetStoreIcon(&m_Store), 128, 128);
+		m_Dropzone.Replace(1, hIcon);
+		DestroyIcon(hIcon);
+	}
+	else
+	{
+		ENSURE(m_Label.LoadString(IDS_NODEFAULTSTORE));
+	}
+
 	Invalidate();
 
 	return NULL;

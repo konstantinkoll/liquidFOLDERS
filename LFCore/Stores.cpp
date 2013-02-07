@@ -279,9 +279,9 @@ unsigned int PrepareImport(LFStoreDescriptor* slot, LFItemDescriptor* i, wchar_t
 	return LFOk;
 }
 
-void SendLFNotifyMessage(unsigned int Msg, unsigned int Flags, HWND hWndSource)
+void SendLFNotifyMessage(unsigned int Msg, HWND hWndSource)
 {
-	SendNotifyMessage(HWND_BROADCAST, Msg, (WPARAM)Flags, (LPARAM)hWndSource);
+	SendNotifyMessage(HWND_BROADCAST, Msg, NULL, (LPARAM)hWndSource);
 }
 
 void SendShellNotifyMessage(unsigned int Msg, char* StoreID, LPITEMIDLIST oldpidl, LPITEMIDLIST oldpidlDelegate)
@@ -476,7 +476,7 @@ LFCore_API unsigned int LFCreateStore(LFStoreDescriptor* s, bool MakeDefault, HW
 			}
 
 			ReleaseMutex(StoreLock);
-			SendLFNotifyMessage(LFMessages.StoresChanged, s->StoreMode==LFStoreModeInternal ? LFMSGF_IntStores : LFMSGF_ExtHybStores , hWndSource);
+			SendLFNotifyMessage(LFMessages.StoresChanged, hWndSource);
 			SendShellNotifyMessage(SHCNE_UPDATEDIR);
 		}
 		else
@@ -535,7 +535,7 @@ LFCore_API unsigned int LFMakeDefaultStore(char* key, HWND hWndSource, bool Inte
 		ReleaseMutex(Mutex_Stores);
 
 		if (res==LFOk)
-			SendLFNotifyMessage(LFMessages.DefaultStoreChanged, LFMSGF_IntStores, hWndSource);
+			SendLFNotifyMessage(LFMessages.DefaultStoreChanged, hWndSource);
 	}
 
 	SendShellNotifyMessage(SHCNE_UPDATEITEM, DefaultStore);
@@ -593,7 +593,7 @@ LFCore_API unsigned int LFMakeHybridStore(char* key, HWND hWndSource)
 
 	if (res==LFOk)
 	{
-		SendLFNotifyMessage(LFMessages.StoreAttributesChanged, LFMSGF_ExtHybStores, hWndSource);
+		SendLFNotifyMessage(LFMessages.StoreAttributesChanged, hWndSource);
 		SendShellNotifyMessage(SHCNE_UPDATEITEM, key);
 		SendShellNotifyMessage(SHCNE_UPDATEDIR);
 	}
@@ -651,13 +651,12 @@ LFCore_API unsigned int LFSetStoreAttributes(char* key, wchar_t* name, wchar_t* 
 		res = (name || comment) ? UpdateStore(slot) : LFOk;
 	}
 
-	unsigned int Mode = slot->StoreMode;
 	ReleaseMutex(Mutex_Stores);
 
 	if (res==LFOk)
 	{
 		if (!InternalCall)
-			SendLFNotifyMessage(LFMessages.StoreAttributesChanged, Mode==LFStoreModeInternal ? LFMSGF_IntStores : LFMSGF_ExtHybStores, hWndSource);
+			SendLFNotifyMessage(LFMessages.StoreAttributesChanged, hWndSource);
 		if (comment)
 			SendShellNotifyMessage(SHCNE_UPDATEITEM, key);
 		if (name)
@@ -726,7 +725,7 @@ LFCore_API unsigned int LFDeleteStore(char* key, HWND hWndSource, LFProgress* pP
 
 		if (res==LFOk)
 		{
-			SendLFNotifyMessage(LFMessages.StoresChanged, victim.StoreMode==LFStoreModeInternal ? LFMSGF_IntStores : LFMSGF_ExtHybStores, hWndSource);
+			SendLFNotifyMessage(LFMessages.StoresChanged, hWndSource);
 			SendShellNotifyMessage(SHCNE_UPDATEDIR);
 
 			// Progress
@@ -937,7 +936,7 @@ LFCore_API LFMaintenanceList* LFStoreMaintenance(HWND hWndSource, LFProgress* pP
 		free(keys);
 	}
 
-	SendLFNotifyMessage(LFMessages.StoreAttributesChanged, LFMSGF_IntStores | LFMSGF_ExtHybStores, hWndSource);
+	SendLFNotifyMessage(LFMessages.StoreAttributesChanged, hWndSource);
 
 	return ml;
 }

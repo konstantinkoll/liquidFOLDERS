@@ -142,7 +142,7 @@ BOOL LFChooseStoreDlg::OnInitDialog()
 	m_wndExplorerList.SetView(LV_VIEW_TILE);
 	m_wndExplorerList.SetFocus();
 
-	SendMessage(MessageIDs->StoresChanged, LFMSGF_IntStores | LFMSGF_ExtHybStores);
+	SendMessage(MessageIDs->StoresChanged);
 
 	AdjustLayout();
 	AddBottomRightControl(IDM_STORES_CREATENEW);
@@ -162,10 +162,9 @@ void LFChooseStoreDlg::OnGetMinMaxInfo(MINMAXINFO* lpMMI)
 	lpMMI->ptMinTrackSize.y = max(lpMMI->ptMinTrackSize.y, 300);
 }
 
-LRESULT LFChooseStoreDlg::OnUpdateStores(WPARAM wParam, LPARAM lParam)
+LRESULT LFChooseStoreDlg::OnUpdateStores(WPARAM /*wParam*/, LPARAM lParam)
 {
-	UINT Mask = LFMSGF_IntStores | (m_Mode<LFCSD_Internal ? LFMSGF_ExtHybStores : 0);
-	if ((wParam & Mask) && (m_hWnd!=(HWND)lParam))
+	if (m_hWnd!=(HWND)lParam)
 	{
 		CHAR StoreID[LFKeySize] = "";
 		if (p_Result)

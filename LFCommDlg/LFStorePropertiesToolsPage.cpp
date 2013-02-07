@@ -67,7 +67,7 @@ BOOL LFStorePropertiesToolsPage::OnInitDialog()
 	GetDlgItem(IDC_MAINTENANCE)->GetWindowText(m_Mask);
 
 	// Store
-	SendNotifyMessage(MessageIDs->StoresChanged, LFMSGF_IntStores | LFMSGF_ExtHybStores, NULL);
+	SendMessage(MessageIDs->StoresChanged);
 
 	return TRUE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird
 }

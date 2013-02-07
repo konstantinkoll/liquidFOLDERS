@@ -43,7 +43,7 @@ BOOL LFStorePropertiesGeneralPage::OnInitDialog()
 //		GetDlgItem(IDC_MAKESEARCHABLE)->ShowWindow(SW_HIDE);
 
 	// Store
-	SendNotifyMessage(MessageIDs->StoresChanged, LFMSGF_IntStores | LFMSGF_ExtHybStores, NULL);
+	SendMessage(MessageIDs->StoresChanged);
 
 	return TRUE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird
 }
