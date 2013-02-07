@@ -4,6 +4,7 @@
 
 #pragma once
 #include "CHeaderButton.h"
+#include "CGdiPlusBitmap.h"
 
 
 // CExplorerHeader
@@ -30,7 +31,6 @@ protected:
 	COLORREF m_HintCol;
 	CString m_Caption;
 	CString m_Hint;
-	CBitmap m_Background;
 	HBRUSH hBackgroundBrush;
 	BOOL m_GradientLine;
 	INT m_RightEdge;

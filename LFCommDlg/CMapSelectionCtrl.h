@@ -24,13 +24,12 @@ class CMapSelectionCtrl : public CWnd
 {
 public:
 	CMapSelectionCtrl();
-	~CMapSelectionCtrl();
 
 	void OnBlink();
 	void SetGeoCoordinates(const LFGeoCoordinates Coord);
 
 protected:
-	CGdiPlusBitmapResource* m_Indicator;
+	CGdiPlusBitmapResource m_Indicator;
 	LFGeoCoordinates m_Coord;
 
 	void UpdateLocation(CPoint point);

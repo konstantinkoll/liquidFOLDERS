@@ -47,17 +47,10 @@ CMapPreviewCtrl::CMapPreviewCtrl()
 		Map2 = new CGdiPlusBitmapResource();
 		ENSURE(Map2->Load(IDB_EARTHMAP_2048, _T("JPG"), LFCommDlgDLL.hResource));
 	}
-	m_Indicator = new CGdiPlusBitmapResource();
-	ENSURE(m_Indicator->Load(IDB_LOCATIONINDICATOR_16, _T("PNG"), LFCommDlgDLL.hResource));
+	ENSURE(m_Indicator.Load(IDB_LOCATIONINDICATOR_16, _T("PNG"), LFCommDlgDLL.hResource));
 	p_Airport = NULL;
 	m_Location.Latitude = 0;
 	m_Location.Longitude = 0;
-}
-
-CMapPreviewCtrl::~CMapPreviewCtrl()
-{
-	if (m_Indicator)
-		delete m_Indicator;
 }
 
 void CMapPreviewCtrl::Update(LFAirport* pAirport)
@@ -147,9 +140,9 @@ void CMapPreviewCtrl::OnPaint()
 	if (p_Airport)
 	{
 		// Punkt
-		LocX += PosX-m_Indicator->m_pBitmap->GetWidth()/2+1;
-		LocY += PosY-m_Indicator->m_pBitmap->GetHeight()/2+1;
-		g.DrawImage(m_Indicator->m_pBitmap, LocX, LocY);
+		LocX += PosX-m_Indicator.m_pBitmap->GetWidth()/2+1;
+		LocY += PosY-m_Indicator.m_pBitmap->GetHeight()/2+1;
+		g.DrawImage(m_Indicator.m_pBitmap, LocX, LocY);
 
 		// Pfad verschieben
 		if (m_FirstPathDraw)
@@ -157,7 +150,7 @@ void CMapPreviewCtrl::OnPaint()
 			Rect tr;
 			m_TextPath.GetBounds(&tr);
 
-			INT FntX = LocX+m_Indicator->m_pBitmap->GetWidth();
+			INT FntX = LocX+m_Indicator.m_pBitmap->GetWidth();
 			INT FntY = LocY-tr.Y;
 
 			if (FntY<10)

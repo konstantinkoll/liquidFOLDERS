@@ -16,12 +16,11 @@ class CMapPreviewCtrl : public CWnd
 {
 public:
 	CMapPreviewCtrl();
-	~CMapPreviewCtrl();
 
 	void Update(LFAirport* pAirport);
 
 protected:
-	CGdiPlusBitmapResource* m_Indicator;
+	CGdiPlusBitmapResource m_Indicator;
 	LFAirport* p_Airport;
 	LFGeoCoordinates m_Location;
 	GraphicsPath m_TextPath;

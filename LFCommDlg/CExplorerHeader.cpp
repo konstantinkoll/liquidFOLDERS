@@ -174,8 +174,14 @@ INT CExplorerHeader::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CWnd::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
-	m_Background.LoadBitmap(IDB_EXPLORERGRADIENT);
-	hBackgroundBrush = CreatePatternBrush(m_Background);
+	CGdiPlusBitmapResource Background;
+	ENSURE(Background.Load(MAKEINTRESOURCE(IDB_EXPLORERGRADIENT), _T("PNG"), LFCommDlgDLL.hResource));
+
+	HBITMAP hBitmap = NULL;
+	Background.m_pBitmap->GetHBITMAP(Color(0xFF, 0xFF, 0xFF), &hBitmap);
+
+	hBackgroundBrush = CreatePatternBrush(hBitmap);
+	DeleteObject(hBitmap);
 
 	return 0;
 }
