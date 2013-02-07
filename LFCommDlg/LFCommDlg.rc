@@ -528,7 +528,7 @@ BEGIN
     CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ,2,28,308,1
     LTEXT           "Hauptindex:",IDC_STATIC,3,35,55,8
     LTEXT           "X",IDC_IDXPATHMAIN,65,35,243,8,SS_PATHELLIPSIS
-    LTEXT           "Hilfsindex:",IDC_STATIC,3,45,55,8
+    LTEXT           "Hilfsindex:",IDC_IDXPATHAUXCAPTION,3,45,55,8
     LTEXT           "X",IDC_IDXPATHAUX,65,45,243,8,SS_PATHELLIPSIS
     LTEXT           "Index-Version:",IDC_STATIC,3,55,55,8
     LTEXT           "X",IDC_IDXVERSION,65,55,243,8,SS_ENDELLIPSIS
@@ -1148,7 +1148,7 @@ BEGIN
     CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ,2,28,308,1
     LTEXT           "Índice principal:",IDC_STATIC,3,35,55,8
     LTEXT           "X",IDC_IDXPATHMAIN,65,35,243,8,SS_PATHELLIPSIS
-    LTEXT           "Índice auxiliar:",IDC_STATIC,3,45,55,8
+    LTEXT           "Índice auxiliar:",IDC_IDXPATHAUXCAPTION,3,45,55,8
     LTEXT           "X",IDC_IDXPATHAUX,65,45,243,8,SS_PATHELLIPSIS
     LTEXT           "Versión índice:",IDC_STATIC,3,55,55,8
     LTEXT           "X",IDC_IDXVERSION,65,55,243,8,SS_ENDELLIPSIS
@@ -1785,7 +1785,7 @@ BEGIN
     CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ,2,28,308,1
     LTEXT           "Index principal:",IDC_STATIC,3,35,60,8
     LTEXT           "X",IDC_IDXPATHMAIN,70,35,238,8,SS_PATHELLIPSIS
-    LTEXT           "Index auxiliaire:",IDC_STATIC,3,45,60,8
+    LTEXT           "Index auxiliaire:",IDC_IDXPATHAUXCAPTION,3,45,60,8
     LTEXT           "X",IDC_IDXPATHAUX,70,45,238,8,SS_PATHELLIPSIS
     LTEXT           "Version de index:",IDC_STATIC,3,55,60,8
     LTEXT           "X",IDC_IDXVERSION,70,55,238,8,SS_ENDELLIPSIS
@@ -2473,7 +2473,7 @@ BEGIN
     CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ,2,28,308,1
     LTEXT           "Main index:",IDC_STATIC,3,35,55,8
     LTEXT           "X",IDC_IDXPATHMAIN,65,35,243,8,SS_PATHELLIPSIS
-    LTEXT           "Aux. index:",IDC_STATIC,3,45,55,8
+    LTEXT           "Aux. index:",IDC_IDXPATHAUXCAPTION,3,45,55,8
     LTEXT           "X",IDC_IDXPATHAUX,65,45,243,8,SS_PATHELLIPSIS
     LTEXT           "Index version:",IDC_STATIC,3,55,55,8
     LTEXT           "X",IDC_IDXVERSION,65,55,243,8,SS_ENDELLIPSIS

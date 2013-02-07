@@ -198,8 +198,9 @@
 #define IDC_GUID                        23201
 #define IDC_DATPATH                     23202
 #define IDC_IDXPATHMAIN                 23203
-#define IDC_IDXPATHAUX                  23204
-#define IDC_IDXVERSION                  23205
+#define IDC_IDXPATHAUXCAPTION           23204
+#define IDC_IDXPATHAUX                  23205
+#define IDC_IDXVERSION                  23206
 #define IDI_SHIELD_VISTA                32519
 
 // Next default values for new objects

@@ -50,6 +50,7 @@ LRESULT LFStorePropertiesIndexPage::OnUpdateStore(WPARAM /*wParam*/, LPARAM /*lP
 		GetDlgItem(IDC_GUID)->SetWindowText(szGUID);
 
 		GetDlgItem(IDC_IDXPATHMAIN)->SetWindowText(p_Store->IdxPathMain);
+		GetDlgItem(IDC_IDXPATHAUXCAPTION)->EnableWindow(p_Store->IdxPathAux[0]!=L'\0');
 		GetDlgItem(IDC_IDXPATHAUX)->SetWindowText(p_Store->IdxPathAux);
 
 		LFUINTToString(p_Store->IndexVersion, tmpStr, 256);
