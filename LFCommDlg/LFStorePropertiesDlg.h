@@ -18,11 +18,19 @@ public:
 	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
 
 protected:
-	CPropertyPage* m_Pages[3];
+	CPropertyPage* m_pPages[3];
 	UINT m_PageCount;
 	LFStoreDescriptor m_Store;
+	BOOL m_StoreValid;
 
 	afx_msg BOOL OnInitDialog();
 	afx_msg void OnDestroy();
+	afx_msg LRESULT OnStoresChanged(WPARAM wParam, LPARAM lParam);
+	afx_msg LRESULT OnStoreAttributesChanged(WPARAM wParam, LPARAM lParam);
 	DECLARE_MESSAGE_MAP()
+
+private:
+	_GUID m_Key;
+
+	void UpdateStore(UINT Message, WPARAM wParam, LPARAM lParam);
 };

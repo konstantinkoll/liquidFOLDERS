@@ -46,14 +46,12 @@ void CreateShortcut(LFTL_Item* i)
 struct WorkerParameters
 {
 	LFWorkerParameters Hdr;
-	BOOL AllStores;
 	CHAR StoreID[LFKeySize];
 	HWND hWndSource;
 	UINT Result;
 	union
 	{
 		LFFileIDList* FileIDList;
-		LFMaintenanceList* MaintenanceList;
 		LFTransactionList* TransactionList;
 	};
 };
@@ -72,15 +70,6 @@ DWORD WINAPI WorkerDelete(void* lParam)
 	LF_WORKERTHREAD_START(lParam);
 
 	LFTransactionDelete(wp->TransactionList, false,&p);
-
-	LF_WORKERTHREAD_FINISH();
-}
-
-DWORD WINAPI WorkerMaintenance(void* lParam)
-{
-	LF_WORKERTHREAD_START(lParam);
-
-	wp->MaintenanceList = wp->AllStores ? LFStoreMaintenance(wp->hWndSource, &p) : LFStoreMaintenance(wp->StoreID, wp->hWndSource, &p);
 
 	LF_WORKERTHREAD_FINISH();
 }
@@ -1450,17 +1439,7 @@ void CMainView::OnStoresCreateNew()
 
 void CMainView::OnStoresMaintainAll()
 {
-	WorkerParameters wp;
-	ZeroMemory(&wp, sizeof(wp));
-	wp.AllStores = TRUE;
-
-	LFDoWithProgress(WorkerMaintenance, &wp.Hdr, this);
-	LFErrorBox(wp.MaintenanceList->m_LastError, GetSafeHwnd());
-
-	LFStoreMaintenanceDlg dlg(wp.MaintenanceList, this);
-	dlg.DoModal();
-
-	LFFreeMaintenanceList(wp.MaintenanceList);
+	LFRunMaintenance(this);
 }
 
 void CMainView::OnStoresShowEmptyVolumes()

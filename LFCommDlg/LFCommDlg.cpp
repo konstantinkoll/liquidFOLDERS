@@ -231,7 +231,12 @@ struct WorkerParameters
 	LFWorkerParameters Hdr;
 	CHAR StoreID[LFKeySize];
 	BOOL DeleteSource;
-	LFFileImportList* FileImportList;
+	HWND hWndSource;
+	union
+	{
+		LFFileImportList* FileImportList;
+		LFMaintenanceList* MaintenanceList;
+	};
 };
 
 DWORD WINAPI WorkerImport(void* lParam)
@@ -239,6 +244,15 @@ DWORD WINAPI WorkerImport(void* lParam)
 	LF_WORKERTHREAD_START(lParam);
 
 	LFTransactionImport(wp->StoreID, wp->FileImportList, NULL, true, wp->DeleteSource==TRUE, &p);
+
+	LF_WORKERTHREAD_FINISH();
+}
+
+DWORD WINAPI WorkerMaintenance(void* lParam)
+{
+	LF_WORKERTHREAD_START(lParam);
+
+	wp->MaintenanceList = LFStoreMaintenance(wp->hWndSource, &p);
 
 	LF_WORKERTHREAD_FINISH();
 }
@@ -270,6 +284,21 @@ LFCommDlg_API void LFImportFolder(CHAR* StoreID, CWnd* pParentWnd)
 
 		LFFreeFileImportList(wp.FileImportList);
 	}
+}
+
+LFCommDlg_API void LFRunMaintenance(CWnd* pParentWnd, HWND hWndSource)
+{
+	WorkerParameters wp;
+	ZeroMemory(&wp, sizeof(wp));
+	wp.hWndSource = hWndSource;
+
+	LFDoWithProgress(WorkerMaintenance, &wp.Hdr, pParentWnd);
+	LFErrorBox(wp.MaintenanceList->m_LastError, pParentWnd->GetSafeHwnd());
+
+	LFStoreMaintenanceDlg dlg(wp.MaintenanceList, pParentWnd);
+	dlg.DoModal();
+
+	LFFreeMaintenanceList(wp.MaintenanceList);
 }
 
 

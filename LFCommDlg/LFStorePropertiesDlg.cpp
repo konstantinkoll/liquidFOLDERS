@@ -13,28 +13,37 @@
 //
 
 extern AFX_EXTENSION_MODULE LFCommDlgDLL;
+extern LFMessageIDs* MessageIDs;
 
 LFStorePropertiesDlg::LFStorePropertiesDlg(CHAR* StoreID, CWnd* pParent)
 	: CPropertySheet(_T(""), pParent)
 {
-	if (LFGetStoreSettings(StoreID, &m_Store)!=LFOk)
-		ZeroMemory(&m_Store, sizeof(m_Store));
+	if (LFGetStoreSettings(StoreID, &m_Store)==LFOk)
+	{
+		m_Key = m_Store.guid;
+		m_StoreValid = TRUE;
+	}
+	else
+	{
+		ZeroMemory(&m_Key, sizeof(m_Key));
+		m_StoreValid = FALSE;
+	}
 
 	m_PageCount = 3;
 
 	// Immer #0
-	m_Pages[0] = new LFStorePropertiesGeneralPage(&m_Store);
-	m_Pages[0]->Construct(IDD_STOREPROPERTIES_GENERAL);
+	m_pPages[0] = new LFStorePropertiesGeneralPage(&m_Store, &m_StoreValid);
+	m_pPages[0]->Construct(IDD_STOREPROPERTIES_GENERAL);
 
-	m_Pages[1] = new LFStorePropertiesToolsPage(&m_Store);
-	m_Pages[1]->Construct(IDD_STOREPROPERTIES_TOOLS);
+	m_pPages[1] = new LFStorePropertiesToolsPage(&m_Store, &m_StoreValid);
+	m_pPages[1]->Construct(IDD_STOREPROPERTIES_TOOLS);
 
-	m_Pages[2] = new LFStorePropertiesIndexPage(&m_Store);
-	m_Pages[2]->Construct(IDD_STOREPROPERTIES_INDEX);
+	m_pPages[2] = new LFStorePropertiesIndexPage(&m_Store, &m_StoreValid);
+	m_pPages[2]->Construct(IDD_STOREPROPERTIES_INDEX);
 
 	// Seiten hinzufügen
 	for (UINT a=0; a<m_PageCount; a++)
-		AddPage(m_Pages[a]);
+		AddPage(m_pPages[a]);
 
 	m_psh.dwFlags |= PSH_NOAPPLYNOW | PSH_NOCONTEXTHELP;
 }
@@ -44,9 +53,9 @@ BOOL LFStorePropertiesDlg::OnCommand(WPARAM wParam, LPARAM lParam)
 	if (LOWORD(wParam)==IDOK)
 	{
 		CString name;
-		m_Pages[0]->GetDlgItem(IDC_STORENAME)->GetWindowText(name);
+		m_pPages[0]->GetDlgItem(IDC_STORENAME)->GetWindowText(name);
 		CString comment;
-		m_Pages[0]->GetDlgItem(IDC_STORECOMMENT)->GetWindowText(comment);
+		m_pPages[0]->GetDlgItem(IDC_STORECOMMENT)->GetWindowText(comment);
 
 		UINT res = LFSetStoreAttributes(m_Store.StoreID, name.GetBuffer(), comment.GetBuffer());
 		if (res!=LFOk)
@@ -59,9 +68,20 @@ BOOL LFStorePropertiesDlg::OnCommand(WPARAM wParam, LPARAM lParam)
 	return CPropertySheet::OnCommand(wParam, lParam);
 }
 
+void LFStorePropertiesDlg::UpdateStore(UINT Message, WPARAM wParam, LPARAM lParam)
+{
+	m_StoreValid = (LFGetStoreSettings(m_Key, &m_Store)==LFOk);
+	GetDlgItem(IDOK)->EnableWindow(m_StoreValid);
+
+	for (UINT a=0; a<m_PageCount; a++)
+		m_pPages[a]->SendMessage(Message, wParam, lParam);
+}
+
 
 BEGIN_MESSAGE_MAP(LFStorePropertiesDlg, CPropertySheet)
 	ON_WM_DESTROY()
+	ON_REGISTERED_MESSAGE(MessageIDs->StoresChanged, OnStoresChanged)
+	ON_REGISTERED_MESSAGE(MessageIDs->StoreAttributesChanged, OnStoreAttributesChanged)
 END_MESSAGE_MAP()
 
 BOOL LFStorePropertiesDlg::OnInitDialog()
@@ -82,6 +102,9 @@ BOOL LFStorePropertiesDlg::OnInitDialog()
 	title.Format(mask, m_Store.StoreName);
 	SetWindowText(title);
 
+	// Button
+	GetDlgItem(IDOK)->EnableWindow(m_StoreValid);
+
 	return TRUE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird
 }
 
@@ -89,7 +112,21 @@ void LFStorePropertiesDlg::OnDestroy()
 {
 	for (UINT a=0; a<m_PageCount; a++)
 	{
-		m_Pages[a]->DestroyWindow();
-		delete m_Pages[a];
+		m_pPages[a]->DestroyWindow();
+		delete m_pPages[a];
 	}
+}
+
+LRESULT LFStorePropertiesDlg::OnStoresChanged(WPARAM wParam, LPARAM lParam)
+{
+	UpdateStore(MessageIDs->StoresChanged, wParam, lParam);
+
+	return NULL;
+}
+
+LRESULT LFStorePropertiesDlg::OnStoreAttributesChanged(WPARAM wParam, LPARAM lParam)
+{
+	UpdateStore(MessageIDs->StoreAttributesChanged, wParam, lParam);
+
+	return NULL;
 }

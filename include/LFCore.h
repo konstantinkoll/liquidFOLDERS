@@ -367,10 +367,7 @@ LFCore_API bool LFAskDeleteStore(LFItemDescriptor* s, HWND hWnd=NULL);
 // Anzeigen einer MessageBox zum Löschen des Stores in aktueller Sprache
 LFCore_API bool LFAskDeleteStore(LFStoreDescriptor* s, HWND hWnd=NULL);
 
-// Startet geplante Wartungsarbeiten für einen Store
-LFCore_API LFMaintenanceList* LFStoreMaintenance(char* key, HWND hWndSource=NULL, LFProgress* pProgress=NULL);
-
-// Startet geplante Wartungsarbeiten für alle Store
+// Startet geplante Wartungsarbeiten für alle Stores
 LFCore_API LFMaintenanceList* LFStoreMaintenance(HWND hWndSource=NULL, LFProgress* pProgress=NULL);
 
 // Gibt an, ob ein Default Stores verfügbar ist

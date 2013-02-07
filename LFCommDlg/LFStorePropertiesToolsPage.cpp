@@ -33,13 +33,16 @@ void CEscape(CString &s)
 //
 
 extern AFX_EXTENSION_MODULE LFCommDlgDLL;
+extern LFMessageIDs* MessageIDs;
 
-LFStorePropertiesToolsPage::LFStorePropertiesToolsPage(LFStoreDescriptor* pStore)
+LFStorePropertiesToolsPage::LFStorePropertiesToolsPage(LFStoreDescriptor* pStore, BOOL* pStoreValid)
 	: CPropertyPage(IDD_STOREPROPERTIES_TOOLS)
 {
 	ASSERT(pStore);
+	ASSERT(pValid);
 
 	p_Store = pStore;
+	p_StoreValid = pStoreValid;
 }
 
 void LFStorePropertiesToolsPage::DoDataExchange(CDataExchange* pDX)
@@ -49,7 +52,10 @@ void LFStorePropertiesToolsPage::DoDataExchange(CDataExchange* pDX)
 
 
 BEGIN_MESSAGE_MAP(LFStorePropertiesToolsPage, CPropertyPage)
+	ON_BN_CLICKED(IDC_RUNMAINTENANCE, OnRunMaintenance)
 	ON_BN_CLICKED(IDC_RUNBACKUP, OnRunBackup)
+	ON_REGISTERED_MESSAGE(MessageIDs->StoresChanged, OnUpdateStore)
+	ON_REGISTERED_MESSAGE(MessageIDs->StoreAttributesChanged, OnUpdateStore)
 END_MESSAGE_MAP()
 
 BOOL LFStorePropertiesToolsPage::OnInitDialog()
@@ -60,7 +66,15 @@ BOOL LFStorePropertiesToolsPage::OnInitDialog()
 
 	GetDlgItem(IDC_MAINTENANCE)->GetWindowText(m_Mask);
 
+	// Store
+	SendNotifyMessage(MessageIDs->StoresChanged, LFMSGF_IntStores | LFMSGF_ExtHybStores, NULL);
+
 	return TRUE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird
+}
+
+void LFStorePropertiesToolsPage::OnRunMaintenance()
+{
+	LFRunMaintenance(this);
 }
 
 void LFStorePropertiesToolsPage::OnRunBackup()
@@ -158,4 +172,19 @@ void LFStorePropertiesToolsPage::OnRunBackup()
 	}
 
 	free(Keys);
+}
+
+LRESULT LFStorePropertiesToolsPage::OnUpdateStore(WPARAM /*wParam*/, LPARAM /*lParam*/)
+{
+	if (p_StoreValid)
+	{
+		WCHAR tmpStr[256];
+		LFTimeToString(p_Store->MaintenanceTime, tmpStr, 256);
+
+		CString tmpText;
+		tmpText.Format(m_Mask, tmpStr);
+		GetDlgItem(IDC_MAINTENANCE)->SetWindowText(tmpText);
+	}
+
+	return NULL;
 }

@@ -905,7 +905,7 @@ BOOL CFolderItem::GetColumnValueEx(VARIANT* value, CShellColumn& column)
 
 			value->parray = SafeArrayCreate(VT_UI1, 1, &rgsabound);
 			((SHDESCRIPTIONID*)value->parray->pvData)->clsid = guid;
-			((SHDESCRIPTIONID*)value->parray->pvData)->dwDescriptionId = (Attrs.CategoryID==LFItemCategoryRemoteStores) ? SHDID_COMPUTER_NETDRIVE : SHDID_COMPUTER_SHAREDDOCS;
+			((SHDESCRIPTIONID*)value->parray->pvData)->dwDescriptionId = (Attrs.CategoryID==LFItemCategoryRemoteStores) ? SHDID_COMPUTER_NETDRIVE : 20;
 			value->vt = VT_ARRAY | VT_UI1;
 			return TRUE;
 		case 9:

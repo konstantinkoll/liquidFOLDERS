@@ -11,27 +11,6 @@
 #include <io.h>
 
 
-// Thread workers
-//
-
-struct WorkerParameters
-{
-	LFWorkerParameters Hdr;
-	CHAR StoreID[LFKeySize];
-	HWND hWndSource;
-	LFMaintenanceList* MaintenanceList;
-};
-
-DWORD WINAPI WorkerMaintenance(void* lParam)
-{
-	LF_WORKERTHREAD_START(lParam);
-
-	wp->MaintenanceList = LFStoreMaintenance(wp->StoreID, wp->hWndSource, &p);
-
-	LF_WORKERTHREAD_FINISH();
-}
-
-
 // FileDropWnd
 //
 
