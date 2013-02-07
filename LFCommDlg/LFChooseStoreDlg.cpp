@@ -56,9 +56,7 @@ void LFChooseStoreDlg::AdjustLayout()
 	CRect borders(0, 0, 7, 7);
 	MapDialogRect(&borders);
 
-	INT borderLeft = (p_App->OSVersion==OS_XP) ? 0 : (m_Mode>=LFCSD_Internal) ? borders.Width() : borders.Width()/2;
-	INT borderRight = (m_Mode>=LFCSD_Internal) ? 0 : 1;
-	m_wndExplorerList.SetWindowPos(NULL, rect.left+borderLeft, rect.top+ExplorerHeight, rect.Width()-borderLeft-borderRight, rect.Height()-ExplorerHeight, SWP_NOACTIVATE | SWP_NOZORDER);
+	m_wndExplorerList.SetWindowPos(NULL, rect.left+borders.Width(), rect.top+ExplorerHeight, rect.Width()-borders.Width(), rect.Height()-ExplorerHeight, SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
 void LFChooseStoreDlg::UpdateOkButton()
@@ -177,7 +175,6 @@ LRESULT LFChooseStoreDlg::OnUpdateStores(WPARAM /*wParam*/, LPARAM lParam)
 		}
 
 		LFFilter* filter = LFAllocFilter();
-		filter->Options.OnlyInternalStores = (m_Mode>=LFCSD_Internal);
 		p_Result = LFQuery(filter);
 		LFFreeFilter(filter);
 
