@@ -13,10 +13,9 @@
 // LFChooseStoreDlg
 //
 
-#define LFCSD_Normal             0
-#define LFCSD_Mounted            1
-#define LFCSD_Internal           2
-#define LFCSD_ChooseDefault      3
+#define LFCSD_All               0
+#define LFCSD_Mounted           1
+#define LFCSD_ChooseDefault     2
 
 class AFX_EXT_CLASS LFChooseStoreDlg : public LFDialog
 {

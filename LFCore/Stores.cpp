@@ -323,7 +323,7 @@ LFCore_API unsigned int LFGetFileLocation(LFItemDescriptor* i, wchar_t* dst, siz
 	LFStoreDescriptor* slot = FindStore(i->StoreID);
 
 	if (slot)
-		if (IsStoreMounted(slot))
+		if (LFIsStoreMounted(slot))
 		{
 			wchar_t tmpPath[2*MAX_PATH];
 			GetFileLocation(slot->DatPath, &i->CoreAttributes, tmpPath, 2*MAX_PATH);
@@ -409,6 +409,11 @@ LFCore_API unsigned int LFGetStoreSettings(GUID guid, LFStoreDescriptor* s)
 
 	ReleaseMutex(Mutex_Stores);
 	return (slot ? LFOk : LFIllegalKey);
+}
+
+LFCore_API bool LFIsStoreMounted(LFStoreDescriptor* s)
+{
+	return s ? (s->DatPath[0]!='\0') : false;
 }
 
 LFCore_API unsigned int LFGetStoreIcon(LFStoreDescriptor* s)
@@ -498,6 +503,8 @@ LFCore_API unsigned int LFMakeDefaultStore(char* key, HWND hWndSource, bool Inte
 		return LFIllegalKey;
 	if (key[0]=='\0')
 		return LFIllegalKey;
+	if (strcmp(key, DefaultStore)==0)
+		return LFOk;
 
 	if (!InternalCall)
 		if (!GetMutex(Mutex_Stores))
@@ -510,25 +517,20 @@ LFCore_API unsigned int LFMakeDefaultStore(char* key, HWND hWndSource, bool Inte
 	strcpy_s(OldDefaultStore, LFKeySize, DefaultStore);
 
 	if (slot)
-		if (slot->StoreMode!=LFStoreModeInternal)
-		{
-			res = LFIllegalStoreDescriptor;
-		}
-		else
-		{
-			res = LFRegistryError;
+	{
+		res = LFRegistryError;
 
-			HKEY k;
-			if (RegOpenKeyA(HKEY_CURRENT_USER, LFStoresHive, &k)==ERROR_SUCCESS)
+		HKEY k;
+		if (RegOpenKeyA(HKEY_CURRENT_USER, LFStoresHive, &k)==ERROR_SUCCESS)
+		{
+			if (RegSetValueExA(k, "DefaultStore", 0, REG_SZ, (BYTE*)key, (DWORD)strlen(key))==ERROR_SUCCESS)
 			{
-				if (RegSetValueEx(k, L"DefaultStore", 0, REG_SZ, (BYTE*)key, (DWORD)strlen(key))==ERROR_SUCCESS)
-				{
-					strcpy_s(DefaultStore, LFKeySize, key);
-					res = LFOk;
-				}
-				RegCloseKey(k);
+				strcpy_s(DefaultStore, LFKeySize, key);
+				res = LFOk;
 			}
+			RegCloseKey(k);
 		}
+	}
 
 	if (!InternalCall)
 	{
@@ -539,7 +541,7 @@ LFCore_API unsigned int LFMakeDefaultStore(char* key, HWND hWndSource, bool Inte
 	}
 
 	SendShellNotifyMessage(SHCNE_UPDATEITEM, DefaultStore);
-	if ((strcmp(DefaultStore, OldDefaultStore)!=0) && (OldDefaultStore[0]!='\0'))
+	if (OldDefaultStore[0]!='\0')
 		SendShellNotifyMessage(SHCNE_UPDATEITEM, OldDefaultStore);
 
 	return res;
@@ -560,7 +562,7 @@ LFCore_API unsigned int LFMakeHybridStore(char* key, HWND hWndSource)
 	LFStoreDescriptor* slot = FindStore(key, &StoreLock);
 	if (slot)
 	{
-		if ((slot->StoreMode!=LFStoreModeExternal) || (!IsStoreMounted(slot)))
+		if ((slot->StoreMode!=LFStoreModeExternal) || (!LFIsStoreMounted(slot)))
 		{
 			ReleaseMutexForStore(StoreLock);
 			ReleaseMutex(Mutex_Stores);
@@ -858,7 +860,7 @@ unsigned int RunMaintenance(LFStoreDescriptor* s, bool scheduled, LFProgress* pP
 	}
 
 	// Index duplizieren
-	if ((s->StoreMode==LFStoreModeHybrid) && IsStoreMounted(s))
+	if ((s->StoreMode==LFStoreModeHybrid) && LFIsStoreMounted(s))
 	{
 		res = CopyDir(s->IdxPathAux, s->IdxPathMain);
 		if (res!=LFOk)
@@ -945,7 +947,7 @@ unsigned int OpenStore(LFStoreDescriptor* s, bool WriteAccess, CIndex* &Index1, 
 {
 	Index1 = Index2 = NULL;
 
-	if (WriteAccess && !IsStoreMounted(s))
+	if (WriteAccess && !LFIsStoreMounted(s))
 		return LFStoreNotMounted;
 
 	// Einfache Wartungsarbeiten

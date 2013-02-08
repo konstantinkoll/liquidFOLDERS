@@ -16,7 +16,7 @@ extern LFMessageIDs* MessageIDs;
 #define GetSelectedStore() m_wndExplorerList.GetNextItem(-1, LVIS_SELECTED)
 
 LFChooseStoreDlg::LFChooseStoreDlg(CWnd* pParentWnd, UINT Mode)
-	: LFDialog(Mode==LFCSD_ChooseDefault ? IDD_CHOOSEDEFAULTSTORE : IDD_CHOOSESTORE, LFDS_White, pParentWnd)
+	: LFDialog(IDD_CHOOSESTORE, LFDS_White, pParentWnd)
 {
 	m_StoreID[0] = '\0';
 	p_Result = NULL;
@@ -56,7 +56,8 @@ void LFChooseStoreDlg::AdjustLayout()
 	CRect borders(0, 0, 7, 7);
 	MapDialogRect(&borders);
 
-	m_wndExplorerList.SetWindowPos(NULL, rect.left+borders.Width(), rect.top+ExplorerHeight, rect.Width()-borders.Width(), rect.Height()-ExplorerHeight, SWP_NOACTIVATE | SWP_NOZORDER);
+	INT borderLeft = (p_App->OSVersion==OS_XP) ? 15 : borders.Width()/2;
+	m_wndExplorerList.SetWindowPos(NULL, rect.left+borderLeft, rect.top+ExplorerHeight, rect.Width()-borderLeft, rect.Height()-ExplorerHeight, SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
 void LFChooseStoreDlg::UpdateOkButton()
@@ -96,24 +97,20 @@ END_MESSAGE_MAP()
 
 BOOL LFChooseStoreDlg::OnInitDialog()
 {
+	if (m_Mode==LFCSD_ChooseDefault)
+		m_nIDTemplate = IDI_DEFAULT;
+
 	LFDialog::OnInitDialog();
 
-	CString caption;
-	ENSURE(caption.LoadString(m_Mode==LFCSD_ChooseDefault ? IDS_CHOOSEDEFAULTSTORE_CAPTION : IDS_CHOOSESTORE_CAPTION));
+	CString Caption;
+	ENSURE(Caption.LoadString(IDS_CHOOSESTORE_CAPTION));
 
-	CString hint;
-	switch (m_Mode)
-	{
-	case LFCSD_Mounted:
-		ENSURE(hint.LoadString(IDS_CHOOSESTORE_HINT));
-		break;
-	case LFCSD_ChooseDefault:
-		ENSURE(hint.LoadString(IDS_CHOOSEDEFAULTSTORE_HINT));
-		break;
-	}
+	CString Hint;
+	if (m_Mode==LFCSD_Mounted)
+		ENSURE(Hint.LoadString(IDS_CHOOSESTORE_HINT));
 
 	m_wndExplorerHeader.Create(this, IDC_EXPLORERHEADER);
-	m_wndExplorerHeader.SetText(caption, hint, FALSE);
+	m_wndExplorerHeader.SetText(Caption, Hint, FALSE);
 	m_wndExplorerHeader.SetColors(0x126E00, (COLORREF)-1, FALSE);
 
 	const UINT dwStyle = WS_VISIBLE | WS_CHILD | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | LVS_SHOWSELALWAYS | LVS_AUTOARRANGE | LVS_SHAREIMAGELISTS | LVS_ALIGNTOP | LVS_EDITLABELS;
@@ -136,7 +133,7 @@ BOOL LFChooseStoreDlg::OnInitDialog()
 	m_wndExplorerList.AddStoreColumns();
 	m_wndExplorerList.AddItemCategories();
 	m_wndExplorerList.SetMenus(IDM_STORE, m_Mode==LFCSD_ChooseDefault, IDM_STORES);
-	m_wndExplorerList.EnableGroupView(m_Mode<LFCSD_Internal);
+	m_wndExplorerList.EnableGroupView(p_App->OSVersion>OS_XP);
 	m_wndExplorerList.SetView(LV_VIEW_TILE);
 	m_wndExplorerList.SetFocus();
 
@@ -179,6 +176,19 @@ LRESULT LFChooseStoreDlg::OnUpdateStores(WPARAM /*wParam*/, LPARAM lParam)
 		LFFreeFilter(filter);
 
 		m_wndExplorerList.SetSearchResult(p_Result);
+
+		if (m_Mode!=LFCSD_Mounted)
+		{
+			CString Caption;
+			ENSURE(Caption.LoadString(IDS_CHOOSESTORE_CAPTION));
+
+			CString Hint;
+			CString Mask;
+			ENSURE(Mask.LoadString(p_Result->m_StoreCount==1 ? IDS_STORES_SINGULAR : IDS_STORES_PLURAL));
+			Hint.Format(Mask, p_Result->m_StoreCount);
+
+			m_wndExplorerHeader.SetText(Caption, Hint);
+		}
 
 		INT idx = -1;
 		for (UINT a=0; a<p_Result->m_ItemCount; a++)
@@ -306,7 +316,7 @@ void LFChooseStoreDlg::OnUpdateStoreCommands(CCmdUI* pCmdUI)
 		switch (pCmdUI->m_nID)
 		{
 		case IDM_STORE_MAKEDEFAULT:
-			b = (item->CategoryID==LFItemCategoryInternalStores) && (!(item->Type & LFTypeDefault));
+			b = !(item->Type & LFTypeDefault);
 			break;
 		case IDM_STORE_IMPORTFOLDER:
 			b = FALSE;

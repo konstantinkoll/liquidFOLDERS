@@ -19,7 +19,7 @@ public:
 protected:
 	LFStoreDescriptor* p_Store;
 	BOOL* p_StoreValid;
-	CIconCtrl m_IconMaintenance;
+	CIconCtrl m_wndIconMaintenance;
 
 	afx_msg BOOL OnInitDialog();
 	afx_msg void OnRunMaintenance();

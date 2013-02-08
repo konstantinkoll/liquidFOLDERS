@@ -39,7 +39,7 @@ LFStorePropertiesToolsPage::LFStorePropertiesToolsPage(LFStoreDescriptor* pStore
 	: CPropertyPage(IDD_STOREPROPERTIES_TOOLS)
 {
 	ASSERT(pStore);
-	ASSERT(pValid);
+	ASSERT(pStoreValid);
 
 	p_Store = pStore;
 	p_StoreValid = pStoreValid;
@@ -47,7 +47,7 @@ LFStorePropertiesToolsPage::LFStorePropertiesToolsPage(LFStoreDescriptor* pStore
 
 void LFStorePropertiesToolsPage::DoDataExchange(CDataExchange* pDX)
 {
-	DDX_Control(pDX, IDC_ICONMAINTENANCE, m_IconMaintenance);
+	DDX_Control(pDX, IDC_ICONMAINTENANCE, m_wndIconMaintenance);
 }
 
 
@@ -62,7 +62,7 @@ BOOL LFStorePropertiesToolsPage::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
 
-	m_IconMaintenance.SetSmallIcon(LFCommDlgDLL.hResource, IDD_STOREMAINTENANCE);
+	m_wndIconMaintenance.SetSmallIcon(LFCommDlgDLL.hResource, IDD_STOREMAINTENANCE);
 
 	GetDlgItem(IDC_MAINTENANCE)->GetWindowText(m_Mask);
 

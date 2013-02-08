@@ -1041,6 +1041,10 @@
 			>
 		</File>
 		<File
+			RelativePath=".\Default_Tiny.ico"
+			>
+		</File>
+		<File
 			RelativePath="Descending_16.bmp"
 			>
 		</File>

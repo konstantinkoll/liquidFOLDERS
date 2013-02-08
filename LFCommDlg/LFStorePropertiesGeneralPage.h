@@ -19,7 +19,10 @@ public:
 protected:
 	LFStoreDescriptor* p_Store;
 	BOOL* p_StoreValid;
-	CIconCtrl m_Icon;
+	CIconCtrl m_wndIcon;
+	CEdit m_wndStoreName;
+	CEdit m_wndStoreComment;
+	CButton m_wndMakeDefault;
 
 	afx_msg BOOL OnInitDialog();
 	afx_msg LRESULT OnUpdateStore(WPARAM wParam, LPARAM lParam);

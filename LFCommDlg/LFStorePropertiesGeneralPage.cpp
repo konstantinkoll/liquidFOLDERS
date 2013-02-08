@@ -16,7 +16,7 @@ LFStorePropertiesGeneralPage::LFStorePropertiesGeneralPage(LFStoreDescriptor* pS
 	: CPropertyPage(IDD_STOREPROPERTIES_GENERAL)
 {
 	ASSERT(pStore);
-	ASSERT(pValid);
+	ASSERT(pStoreValid);
 
 	p_Store = pStore;
 	p_StoreValid = pStoreValid;
@@ -24,7 +24,10 @@ LFStorePropertiesGeneralPage::LFStorePropertiesGeneralPage(LFStoreDescriptor* pS
 
 void LFStorePropertiesGeneralPage::DoDataExchange(CDataExchange* pDX)
 {
-	DDX_Control(pDX, IDC_STOREICON, m_Icon);
+	DDX_Control(pDX, IDC_STOREICON, m_wndIcon);
+	DDX_Control(pDX, IDC_STORENAME, m_wndStoreName);
+	DDX_Control(pDX, IDC_STORECOMMENT, m_wndStoreComment);
+	DDX_Control(pDX, IDC_MAKEDEFAULT, m_wndMakeDefault);
 }
 
 
@@ -37,10 +40,10 @@ BOOL LFStorePropertiesGeneralPage::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
 
-	m_Icon.SetCoreIcon(LFGetStoreIcon(p_Store));
+	m_wndIcon.SetCoreIcon(LFGetStoreIcon(p_Store));
 
-//	if ((p_Store->StoreMode!=LFStoreModeHybrid) && (p_Store->StoreMode!=LFStoreModeExternal))
-//		GetDlgItem(IDC_MAKESEARCHABLE)->ShowWindow(SW_HIDE);
+	if ((p_Store->StoreMode!=LFStoreModeHybrid) && (p_Store->StoreMode!=LFStoreModeExternal))
+		GetDlgItem(IDC_MAKESEARCHABLE)->ShowWindow(SW_HIDE);
 
 	// Store
 	SendMessage(MessageIDs->StoresChanged);
@@ -50,18 +53,12 @@ BOOL LFStorePropertiesGeneralPage::OnInitDialog()
 
 LRESULT LFStorePropertiesGeneralPage::OnUpdateStore(WPARAM /*wParam*/, LPARAM /*lParam*/)
 {
-	CEdit* edit1 = (CEdit*)GetDlgItem(IDC_STORENAME);
-	CEdit* edit2 = (CEdit*)GetDlgItem(IDC_STORECOMMENT);
-
 	if (p_StoreValid)
 	{
-		if (edit1->LineLength()==0)
-			edit1->SetWindowText(p_Store->StoreName);
-		if (edit2->LineLength()==0)
-			edit2->SetWindowText(p_Store->StoreComment);
-
-		edit1->EnableWindow(TRUE);
-		edit2->EnableWindow(TRUE);
+		if (m_wndStoreName.LineLength()==0)
+			m_wndStoreName.SetWindowText(p_Store->StoreName);
+		if (m_wndStoreComment.LineLength()==0)
+			m_wndStoreComment.SetWindowText(p_Store->StoreComment);
 
 		WCHAR tmpStr[256];
 		LFTimeToString(p_Store->CreationTime, tmpStr, 256);
@@ -71,12 +68,17 @@ LRESULT LFStorePropertiesGeneralPage::OnUpdateStore(WPARAM /*wParam*/, LPARAM /*
 
 		GetDlgItem(IDC_LASTSEENCAPTION)->EnableWindow(p_Store->StoreMode!=LFStoreModeInternal);
 		GetDlgItem(IDC_LASTSEEN)->SetWindowText(p_Store->LastSeen);
+
+		CHAR* pKey = LFGetDefaultStore();
+		if (strcmp(pKey, p_Store->StoreID)==0)
+			m_wndMakeDefault.SetCheck(TRUE);
+
+		free(pKey);
 	}
-	else
-	{
-		edit1->EnableWindow(FALSE);
-		edit2->EnableWindow(FALSE);
-	}
+
+	m_wndStoreName.EnableWindow(*p_StoreValid);
+	m_wndStoreComment.EnableWindow(*p_StoreValid);
+	m_wndMakeDefault.EnableWindow(*p_StoreValid);
 
 	return NULL;
 }

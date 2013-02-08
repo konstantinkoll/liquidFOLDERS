@@ -126,14 +126,14 @@ IDI_RESET_HOT           ICON                    "res\\Reset_Hot_Tiny.ico"
 IDI_RESET_PRESSED       ICON                    "res\\Reset_Pressed_Tiny.ico"
 IDI_SEARCH              ICON                    "res\\Search.ico"
 IDI_STOREPROPERTIES     ICON                    "res\\StoreProperties_Tiny.ico"
+IDI_DEFAULT             ICON                    "res\\Default_Tiny.ico"
 32513                   ICON                    "res\\Error.ico"
 32516                   ICON                    "res\\Info.ico"
 32515                   ICON                    "res\\Warning.ico"
-IDI_SHIELD              ICON                    "res\\Shield_7.ico"
+32518                   ICON                    "res\\Shield_7.ico"
 IDI_SHIELD_VISTA        ICON                    "res\\Shield_Vista.ico"
 IDD_ABOUT               ICON                    "res\\About_Tiny.ico"
 IDD_CHOOSESTORE         ICON                    "res\\Stores_Tiny.ico"
-IDD_CHOOSEDEFAULTSTORE  ICON                    "res\\Store_Default_Tiny.ico"
 IDD_STORENEW            ICON                    "res\\StoreNew_Tiny.ico"
 IDD_WELCOME             ICON                    "res\\Welcome_Small.ico"
 IDD_SELECTIATA          ICON                    "res\\Plane_Tiny.ico"
@@ -228,23 +228,13 @@ BEGIN
     PUSHBUTTON      "Jetzt nach Update &suchen",IDC_UPDATENOW,176,155,170,14
 END
 
-IDD_CHOOSESTORE DIALOGEX 0, 0, 460, 282
+IDD_CHOOSESTORE DIALOGEX 0, 0, 470, 282
 STYLE DS_SETFONT | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
 CAPTION "Store wählen"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,346,261,50,14,WS_GROUP
-    PUSHBUTTON      "Abbrechen",IDCANCEL,403,261,50,14,WS_GROUP
-    PUSHBUTTON      "&Neuen Store anlegen...",IDM_STORES_CREATENEW,7,261,95,14
-END
-
-IDD_CHOOSEDEFAULTSTORE DIALOGEX 0, 0, 460, 282
-STYLE DS_SETFONT | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
-CAPTION "Standard-Store wählen"
-FONT 8, "MS Shell Dlg", 400, 0, 0x1
-BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,346,261,50,14,WS_GROUP
-    PUSHBUTTON      "Abbrechen",IDCANCEL,403,261,50,14,WS_GROUP
+    DEFPUSHBUTTON   "OK",IDOK,356,261,50,14,WS_GROUP
+    PUSHBUTTON      "Abbrechen",IDCANCEL,413,261,50,14,WS_GROUP
     PUSHBUTTON      "&Neuen Store anlegen...",IDM_STORES_CREATENEW,7,261,95,14
 END
 
@@ -269,7 +259,7 @@ END
 
 IDD_STOREDELETE DIALOGEX 0, 0, 277, 205
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
-CAPTION "Eingebundenen Store „%s“ löschen"
+CAPTION "Angeslossenen Store „%s“ löschen"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     CONTROL         "Zustimmung",IDC_GROUPBOX1,"CGroupBox",WS_GROUP,7,102,74,41
@@ -554,15 +544,7 @@ BEGIN
     IDD_CHOOSESTORE, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 453
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 275
-    END
-
-    IDD_CHOOSEDEFAULTSTORE, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 453
+        RIGHTMARGIN, 463
         TOPMARGIN, 7
         BOTTOMMARGIN, 275
     END
@@ -732,10 +714,7 @@ STRINGTABLE
 BEGIN
     IDS_IMPORTFOLDER_HINT   "Auch alle Unterverzeichnisse werden importiert."
     IDS_CHOOSESTORE_CAPTION "Stores"
-    IDS_CHOOSESTORE_HINT    "Nur eingebundene Stores können ausgewählt werden."
-    IDS_CHOOSEDEFAULTSTORE_CAPTION "Interne Stores"
-    IDS_CHOOSEDEFAULTSTORE_HINT 
-                            "Nur interne Stores können als Standard-Store ausgewählt werden."
+    IDS_CHOOSESTORE_HINT    "Nur angeschlossene Stores können ausgewählt werden."
     IDS_MAINTENANCETAB0     "Erfolgreich gewartet"
     IDS_MAINTENANCETAB1     "Fehler"
     IDS_REGFILEFILTER       "Registrierungsdatei"
@@ -864,23 +843,13 @@ BEGIN
     PUSHBUTTON      "&Buscar actualización ahora...",IDC_UPDATENOW,176,155,170,14
 END
 
-IDD_CHOOSESTORE DIALOGEX 0, 0, 460, 282
+IDD_CHOOSESTORE DIALOGEX 0, 0, 470, 282
 STYLE DS_SETFONT | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
 CAPTION "Seleccionar store"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,346,261,50,14,WS_GROUP
-    PUSHBUTTON      "Cancelar",IDCANCEL,403,261,50,14,WS_GROUP
-    PUSHBUTTON      "Crear &nuevo store...",IDM_STORES_CREATENEW,7,261,95,14
-END
-
-IDD_CHOOSEDEFAULTSTORE DIALOGEX 0, 0, 460, 282
-STYLE DS_SETFONT | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
-CAPTION "Seleccionar store predeterminado"
-FONT 8, "MS Shell Dlg", 400, 0, 0x1
-BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,346,261,50,14,WS_GROUP
-    PUSHBUTTON      "Cancelar",IDCANCEL,403,261,50,14,WS_GROUP
+    DEFPUSHBUTTON   "OK",IDOK,356,261,50,14,WS_GROUP
+    PUSHBUTTON      "Cancelar",IDCANCEL,413,261,50,14,WS_GROUP
     PUSHBUTTON      "Crear &nuevo store...",IDM_STORES_CREATENEW,7,261,95,14
 END
 
@@ -1190,15 +1159,7 @@ BEGIN
     IDD_CHOOSESTORE, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 453
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 275
-    END
-
-    IDD_CHOOSEDEFAULTSTORE, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 453
+        RIGHTMARGIN, 463
         TOPMARGIN, 7
         BOTTOMMARGIN, 275
     END
@@ -1369,9 +1330,6 @@ BEGIN
     IDS_IMPORTFOLDER_HINT   "La carpeta y todas sus subcarpetas serán importadas."
     IDS_CHOOSESTORE_CAPTION "Stores"
     IDS_CHOOSESTORE_HINT    "Se puede selecionar solamente stores conectado."
-    IDS_CHOOSEDEFAULTSTORE_CAPTION "Stores internos"
-    IDS_CHOOSEDEFAULTSTORE_HINT 
-                            "Se puede selecionar solamente stores internos como store predeterminado."
     IDS_MAINTENANCETAB0     "Revisión satisfactoria"
     IDS_MAINTENANCETAB1     "Errores"
     IDS_REGFILEFILTER       "Archivo de Registro"
@@ -1500,23 +1458,13 @@ BEGIN
     PUSHBUTTON      "&Chercher maintenant des mises á jour...",IDC_UPDATENOW,176,155,170,14
 END
 
-IDD_CHOOSESTORE DIALOGEX 0, 0, 460, 282
+IDD_CHOOSESTORE DIALOGEX 0, 0, 470, 282
 STYLE DS_SETFONT | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
 CAPTION "Choisissez un store"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,346,261,50,14,WS_GROUP
-    PUSHBUTTON      "Annuler",IDCANCEL,403,261,50,14,WS_GROUP
-    PUSHBUTTON      "Créez un store &nouveau...",IDM_STORES_CREATENEW,7,261,105,14
-END
-
-IDD_CHOOSEDEFAULTSTORE DIALOGEX 0, 0, 460, 282
-STYLE DS_SETFONT | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
-CAPTION "Choisissez le store standard"
-FONT 8, "MS Shell Dlg", 400, 0, 0x1
-BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,346,261,50,14,WS_GROUP
-    PUSHBUTTON      "Annuler",IDCANCEL,403,261,50,14,WS_GROUP
+    DEFPUSHBUTTON   "OK",IDOK,356,261,50,14,WS_GROUP
+    PUSHBUTTON      "Annuler",IDCANCEL,413,261,50,14,WS_GROUP
     PUSHBUTTON      "Créez un store &nouveau...",IDM_STORES_CREATENEW,7,261,105,14
 END
 
@@ -1827,15 +1775,7 @@ BEGIN
     IDD_CHOOSESTORE, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 453
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 275
-    END
-
-    IDD_CHOOSEDEFAULTSTORE, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 453
+        RIGHTMARGIN, 463
         TOPMARGIN, 7
         BOTTOMMARGIN, 275
     END
@@ -2007,9 +1947,6 @@ BEGIN
     IDS_IMPORTFOLDER_HINT   "Le dossier et tous ses sous-dossiers seront importés."
     IDS_CHOOSESTORE_CAPTION "Stores"
     IDS_CHOOSESTORE_HINT    "Seulement stores montée pouvoir choisissse."
-    IDS_CHOOSEDEFAULTSTORE_CAPTION "Stores internes"
-    IDS_CHOOSEDEFAULTSTORE_HINT 
-                            "Seulement stores internes pouvoir choisisse comme store standard."
     IDS_MAINTENANCETAB0     "Entretenu avec succès"
     IDS_MAINTENANCETAB1     "Erreurs"
     IDS_REGFILEFILTER       "Fichier de Registre"
@@ -2207,23 +2144,13 @@ BEGIN
     LTEXT           "Store 3:",IDC_STATIC,175,58,72,8
 END
 
-IDD_CHOOSESTORE DIALOGEX 0, 0, 460, 282
+IDD_CHOOSESTORE DIALOGEX 0, 0, 470, 282
 STYLE DS_SETFONT | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
 CAPTION "Choose store"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,346,261,50,14,WS_GROUP
-    PUSHBUTTON      "Cancel",IDCANCEL,403,261,50,14,WS_GROUP
-    PUSHBUTTON      "Create &new store...",IDM_STORES_CREATENEW,7,261,84,14
-END
-
-IDD_CHOOSEDEFAULTSTORE DIALOGEX 0, 0, 460, 282
-STYLE DS_SETFONT | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
-CAPTION "Choose default store"
-FONT 8, "MS Shell Dlg", 400, 0, 0x1
-BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,346,261,50,14,WS_GROUP
-    PUSHBUTTON      "Cancel",IDCANCEL,403,261,50,14,WS_GROUP
+    DEFPUSHBUTTON   "OK",IDOK,356,261,50,14,WS_GROUP
+    PUSHBUTTON      "Cancel",IDCANCEL,413,261,50,14,WS_GROUP
     PUSHBUTTON      "Create &new store...",IDM_STORES_CREATENEW,7,261,84,14
 END
 
@@ -2523,15 +2450,7 @@ BEGIN
     IDD_CHOOSESTORE, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 453
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 275
-    END
-
-    IDD_CHOOSEDEFAULTSTORE, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 453
+        RIGHTMARGIN, 463
         TOPMARGIN, 7
         BOTTOMMARGIN, 275
     END
@@ -2686,9 +2605,6 @@ BEGIN
     IDS_IMPORTFOLDER_HINT   "The folder and all its subfolders will be imported."
     IDS_CHOOSESTORE_CAPTION "Stores"
     IDS_CHOOSESTORE_HINT    "Only mounted stores can be selected."
-    IDS_CHOOSEDEFAULTSTORE_CAPTION "Internal stores"
-    IDS_CHOOSEDEFAULTSTORE_HINT 
-                            "Only internal stores are suitable default stores."
     IDS_MAINTENANCETAB0     "Successfully serviced"
     IDS_MAINTENANCETAB1     "Errors"
     IDS_REGFILEFILTER       "Registry file"

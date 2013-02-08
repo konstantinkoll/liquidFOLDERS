@@ -20,7 +20,6 @@ public:
 protected:
 	LFDropTarget m_DropTarget;
 	LFTooltip m_TooltipCtrl;
-	CImageList m_Dropzone;
 	HICON hWarning;
 	LFStoreDescriptor m_Store;
 	CString m_Label;
@@ -28,6 +27,7 @@ protected:
 	INT m_PosY;
 	BOOL m_AlwaysOnTop;
 	BOOL m_StoreValid;
+	BOOL m_StoreMounted;
 	BOOL m_Hover;
 
 	void SetWindowRect(INT x, INT y, BOOL TopMost);

@@ -63,6 +63,10 @@ BOOL LFStorePropertiesDlg::OnCommand(WPARAM wParam, LPARAM lParam)
 			LFErrorBox(res, GetSafeHwnd());
 			return TRUE;
 		}
+
+		CButton* pCheckbox = (CButton*)m_pPages[0]->GetDlgItem(IDC_MAKEDEFAULT);
+		if (pCheckbox->IsWindowEnabled() && pCheckbox->GetCheck())
+				LFErrorBox(LFMakeDefaultStore(m_Store.StoreID), GetSafeHwnd());
 	}
 
 	return CPropertySheet::OnCommand(wParam, lParam);

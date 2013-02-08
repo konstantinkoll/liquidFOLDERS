@@ -17,7 +17,7 @@
 CFileDropWnd::CFileDropWnd()
 	: CGlassWindow()
 {
-	m_AlwaysOnTop = m_StoreValid = m_Hover = FALSE;
+	m_AlwaysOnTop = m_StoreValid = m_StoreMounted = m_Hover = FALSE;
 }
 
 BOOL CFileDropWnd::Create()
@@ -120,15 +120,6 @@ INT CFileDropWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	MARGINS Margins = { -1, -1, -1, -1 };
 	UseGlasBackground(Margins);
 
-	// Hintergrundbilder laden
-	if (!m_Dropzone.Create(128, 128, ILC_COLOR32, 2, 1))
-		return -1;
-
-	HICON hIcon = LFGetIcon(IDI_STORE_Unknown, 128, 128);
-	m_Dropzone.Add(hIcon);
-	m_Dropzone.Add(hIcon);
-	DestroyIcon(hIcon);
-
 	// Badge laden
 	hWarning = (HICON)LoadImage(GetModuleHandle(_T("LFCOMMDLG.DLL")), IDI_EXCLAMATION, IMAGE_ICON, 24, 24, LR_DEFAULTCOLOR);
 
@@ -207,7 +198,7 @@ BOOL CFileDropWnd::OnEraseBkgnd(CDC* pDC)
 	// Dropzone
 	POINT pt = { rlayout.left+(rlayout.Width()-128)/2, rlayout.top };
 	SIZE sz = { 128, 128 };
-	m_Dropzone.DrawEx(&dc, m_StoreValid ? 0 : 1, pt, sz, CLR_NONE, CLR_NONE, m_StoreValid ? ILD_TRANSPARENT : m_IsAeroWindow ? ILD_BLEND25 : ILD_BLEND50);
+	theApp.m_CoreImageListJumbo.DrawEx(&dc, (m_StoreValid ? LFGetStoreIcon(&m_Store) : IDI_STORE_Unknown)-1, pt, sz, CLR_NONE, CLR_NONE, (m_StoreValid && m_StoreMounted) ? ILD_TRANSPARENT : m_IsAeroWindow ? ILD_BLEND25 : ILD_BLEND50);
 
 	// Text
 	CRect rtext(rlayout);
@@ -382,11 +373,8 @@ LRESULT CFileDropWnd::OnUpdateStore(WPARAM /*wParam*/, LPARAM /*lParam*/)
 	m_StoreValid = (LFGetStoreSettings("", &m_Store)==LFOk);
 	if (m_StoreValid)
 	{
+		m_StoreMounted = LFIsStoreMounted(&m_Store);
 		m_Label = m_Store.StoreName;
-
-		HICON hIcon = LFGetIcon(LFGetStoreIcon(&m_Store), 128, 128);
-		m_Dropzone.Replace(1, hIcon);
-		DestroyIcon(hIcon);
 	}
 	else
 	{
@@ -415,7 +403,7 @@ void CFileDropWnd::OnChooseDefaultStore()
 	LFChooseStoreDlg dlg(this, LFCSD_ChooseDefault);
 	if (dlg.DoModal()==IDOK)
 		if (dlg.m_StoreID[0]!='\0')
-			LFErrorBox(LFMakeDefaultStore(dlg.m_StoreID, NULL), m_hWnd);
+			LFErrorBox(LFMakeDefaultStore(dlg.m_StoreID, NULL), GetSafeHwnd());
 }
 
 void CFileDropWnd::OnStoreOpen()

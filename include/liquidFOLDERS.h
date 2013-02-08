@@ -421,7 +421,6 @@ struct LFDomainDescriptor
 struct LFFilterOptions
 {
 	// For LFFilterModeStores
-	bool OnlyInternalStores;				// If true, only internal stores are added
 	bool AddVolumes;						// If true, volumes are added
 
 	// For LFFilterModeDirectoryTree and above

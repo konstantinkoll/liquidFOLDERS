@@ -945,6 +945,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\Default_Tiny.ico"
+				>
+			</File>
+			<File
 				RelativePath=".\res\Earthmap_1024.jpg"
 				>
 			</File>
@@ -1118,10 +1122,6 @@
 			</File>
 			<File
 				RelativePath=".\res\SortIndicators.bmp"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Store_Default_Tiny.ico"
 				>
 			</File>
 			<File

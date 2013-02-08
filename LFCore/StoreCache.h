@@ -7,7 +7,6 @@
 extern char DefaultStore[LFKeySize];
 extern unsigned int StoreCount;
 
-bool IsStoreMounted(LFStoreDescriptor* s);
 void AppendGUID(LFStoreDescriptor* s, wchar_t* p);
 void GetAutoPath(LFStoreDescriptor* s, wchar_t* p);
 unsigned int ValidateStoreSettings(LFStoreDescriptor* s);

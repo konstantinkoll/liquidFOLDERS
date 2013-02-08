@@ -562,7 +562,7 @@ void CFolderItem::GetMenuItems(CGetMenuitemsEventArgs& e)
 			CFolderItem* f = (CFolderItem*)e.children->GetHead();
 
 			AddSeparator(e.menu);
-			AddItem(e.menu, IDS_MENU_MakeDefaultStore, _T(VERB_MAKEDEFAULTSTORE))->SetEnabled(f->Attrs.CategoryID==LFStoreModeInternal);
+			AddItem(e.menu, IDS_MENU_MakeDefaultStore, _T(VERB_MAKEDEFAULTSTORE))->SetEnabled(!(f->Attrs.Type & LFTypeDefault));
 			AddItem(e.menu, IDS_MENU_ImportFolder, _T(VERB_IMPORTFOLDER))->SetEnabled((!(f->Attrs.Type & LFTypeNotMounted)) && (!theApp.m_PathRunCmd.IsEmpty()));
 		}
 

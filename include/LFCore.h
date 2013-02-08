@@ -326,6 +326,9 @@ LFCore_API unsigned int LFGetStoreSettings(GUID guid, LFStoreDescriptor* s);
 // Gibt die ID für das Icon eines Stores zurück
 LFCore_API unsigned int LFGetStoreIcon(LFStoreDescriptor* s);
 
+// Prüft, ob ein Store angeschlossen ist
+LFCore_API bool LFIsStoreMounted(LFStoreDescriptor* s);
+
 // Legt einen neuen Store an
 // - Eingabeparameter interner Store:
 //   - StoreName: optional (wird ggf. durch Standardname ersetzt)

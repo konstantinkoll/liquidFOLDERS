@@ -16,7 +16,7 @@ LFStorePropertiesIndexPage::LFStorePropertiesIndexPage(LFStoreDescriptor* pStore
 	: CPropertyPage(IDD_STOREPROPERTIES_INDEX)
 {
 	ASSERT(pStore);
-	ASSERT(pValid);
+	ASSERT(pStoreValid);
 
 	p_Store = pStore;
 	p_StoreValid = pStoreValid;

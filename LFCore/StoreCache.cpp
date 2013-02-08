@@ -35,14 +35,6 @@ extern LFMessageIDs LFMessages;
 extern unsigned int VolumeTypes[26];
 
 
-bool IsStoreMounted(LFStoreDescriptor* s)
-{
-	if (!s)
-		return false;
-
-	return (s->DatPath[0]!='\0');
-}
-
 void AppendGUID(LFStoreDescriptor* s, wchar_t* p)
 {
 	if (s)
@@ -72,7 +64,7 @@ unsigned int GetKeyFileFromStoreDescriptor(LFStoreDescriptor* s, wchar_t* f)
 	if ((s->StoreMode!=LFStoreModeHybrid) && (s->StoreMode!=LFStoreModeExternal))
 		return LFIllegalStoreDescriptor;
 
-	if (!IsStoreMounted(s))
+	if (!LFIsStoreMounted(s))
 		return LFStoreNotMounted;
 
 	OLECHAR szGUID[MAX_PATH];
@@ -303,7 +295,7 @@ unsigned int ValidateStoreSettings(LFStoreDescriptor* s)
 
 	// Bei Hybrid-Stores das gemountete Volume eintragen
 	if ((s->StoreMode==LFStoreModeHybrid) || (s->StoreMode==LFStoreModeExternal))
-		if (IsStoreMounted(s))
+		if (LFIsStoreMounted(s))
 		{
 			wchar_t szDriveRoot[] = L" :\\";
 			szDriveRoot[0] = s->DatPath[0];
@@ -318,7 +310,7 @@ unsigned int ValidateStoreSettings(LFStoreDescriptor* s)
 		GetAutoPath(s, s->DatPath);
 
 	// Hauptindex immer als Unterverzeichnis des Stores
-	if ((s->StoreMode!=LFStoreModeHybrid) || (IsStoreMounted(s)))
+	if ((s->StoreMode!=LFStoreModeHybrid) || (LFIsStoreMounted(s)))
 	{
 		wcscpy_s(s->IdxPathMain, MAX_PATH, s->DatPath);
 		wcscat_s(s->IdxPathMain, MAX_PATH, L"INDEX\\");
@@ -345,14 +337,20 @@ unsigned int ValidateStoreSettings(LFStoreDescriptor* s)
 
 void ChooseNewDefaultStore()
 {
-	for (unsigned int a=0; a<StoreCount; a++)
-		if ((StoreCache[a].StoreMode==LFStoreModeInternal) && (strcmp(DefaultStore, StoreCache[a].StoreID)!=0))
-		{
-			LFMakeDefaultStore(StoreCache[a].StoreID, NULL, true);
-			return;
-		}
+	int no = -1;
 
-	// Alten Default Store löschen
+	for (unsigned int a=0; a<StoreCount; a++)
+		if (strcmp(DefaultStore, StoreCache[a].StoreID)!=0)
+			if ((no==-1) || (StoreCache[a].StoreMode==LFStoreModeInternal))
+				no = a;
+
+	if (no!=-1)
+	{
+		LFMakeDefaultStore(StoreCache[no].StoreID, NULL, true);
+		return;
+	}
+
+	// Default Store löschen
 	DefaultStore[0] = '\0';
 
 	HKEY hive;
@@ -364,10 +362,8 @@ void ChooseNewDefaultStore()
 }
 
 
-void LoadRegistry()
+__forceinline void LoadRegistry()
 {
-	bool DefaultStoreOk = false;
-
 	// Stores aus der Registry laden
 	HKEY hive;
 	if (RegOpenKeyA(HKEY_CURRENT_USER, LFStoresHive, &hive)!=ERROR_SUCCESS)
@@ -397,16 +393,11 @@ void LoadRegistry()
 			if (ValidateStoreSettings(&StoreCache[StoreCount])==LFOk)
 			{
 				StoreCache[StoreCount].NeedsCheck = true;
-				DefaultStoreOk |= (strcmp(DefaultStore, StoreCache[StoreCount].StoreID)==0);
 				StoreCount++;
 			}
 	}
 
 	RegCloseKey(hive);
-
-	// Ggf. neuen DefaultStore wählen
-	if ((!DefaultStoreOk) && (StoreCount))
-		ChooseNewDefaultStore();
 }
 
 void MountExternal()
@@ -448,12 +439,26 @@ void InitStoreCache()
 			// Stores aus der Registry
 			StoreCount = 0;
 			LoadRegistry();
+
+			// Externe Laufwerke mounten
+			MountExternal();
+
+			// Standard-Store
+			bool DefaultStoreOk = false;
+
+			for (unsigned int a=0; a<StoreCount; a++)
+				if (strcmp(DefaultStore, StoreCache[a].StoreID)==0)
+				{
+					DefaultStoreOk = true;
+					break;
+				}
+
+			// Ggf. neuen Standard-Store wählen
+			if ((!DefaultStoreOk) && (StoreCount))
+				ChooseNewDefaultStore();
 		}
 
 		ReleaseMutex(Mutex_Stores);
-
-		// Externe Laufwerke mounten
-		MountExternal();
 	}
 }
 
@@ -491,13 +496,7 @@ void CreateStoreKey(char* key)
 void AddStoresToSearchResult(LFSearchResult* res, LFFilter* filter)
 {
 	for (unsigned int a=0; a<StoreCount; a++)
-	{
-		if (filter)
-			if ((filter->Options.OnlyInternalStores) && (StoreCache[a].StoreMode!=LFStoreModeInternal))
-				continue;
-
 		res->AddStoreDescriptor(&StoreCache[a], filter);
-	}
 }
 
 LFStoreDescriptor* FindStore(char* key, HANDLE* lock)
@@ -582,12 +581,12 @@ unsigned int UpdateStore(LFStoreDescriptor* s, bool UpdateTime, bool MakeDefault
 	if ((s->StoreMode==LFStoreModeInternal) || (s->StoreMode==LFStoreModeHybrid))
 		res = SaveStoreSettingsToRegistry(s);
 	if ((s->StoreMode==LFStoreModeHybrid) || (s->StoreMode==LFStoreModeExternal))
-		if ((res==LFOk) && (IsStoreMounted(s)))
+		if ((res==LFOk) && (LFIsStoreMounted(s)))
 			res = SaveStoreSettingsToFile(s);
 
 	// Ggf. Store zum Default Store machen
 	if (res==LFOk)
-		if ((s->StoreMode==LFStoreModeInternal) && ((MakeDefault) || (DefaultStore[0]=='\0')))
+		if ((MakeDefault) || (DefaultStore[0]=='\0'))
 			res = LFMakeDefaultStore(s->StoreID, NULL, true);
 
 	return res;
@@ -616,7 +615,7 @@ unsigned int DeleteStore(LFStoreDescriptor* s)
 			break;
 		}
 
-	// Ggf. ersten Store als neuen Default Store
+	// Ggf. anderen Store als neuen Default Store
 	if (strcmp(victim.StoreID, DefaultStore)==0)
 		ChooseNewDefaultStore();
 
@@ -625,7 +624,7 @@ unsigned int DeleteStore(LFStoreDescriptor* s)
 	if ((victim.StoreMode==LFStoreModeInternal) || (victim.StoreMode==LFStoreModeHybrid))
 		res = DeleteStoreSettingsFromRegistry(&victim);
 	if ((victim.StoreMode==LFStoreModeHybrid) || (victim.StoreMode==LFStoreModeExternal))
-		if ((res==LFOk) && (IsStoreMounted(&victim)))
+		if ((res==LFOk) && (LFIsStoreMounted(&victim)))
 			res = DeleteStoreSettingsFromFile(&victim);
 
 	return res;
@@ -684,7 +683,7 @@ LFCore_API bool LFStoresOnVolume(char d)
 	if (GetMutex(Mutex_Stores))
 	{
 		for (unsigned int a=0; a<StoreCount; a++)
-			if (IsStoreMounted(&StoreCache[a]))
+			if (LFIsStoreMounted(&StoreCache[a]))
 				if (StoreCache[a].DatPath[0]==d)
 				{
 					res = true;
@@ -712,7 +711,7 @@ unsigned int MountDrive(char d, bool InternalCall)
 {
 	wchar_t mask[] = L" :\\*.store";
 	mask[0] = d;
-	bool changeOccured = false;
+	bool ChangeOccured = false;
 	unsigned int res = LFOk;
 
 	WIN32_FIND_DATA ffd;
@@ -779,7 +778,7 @@ unsigned int MountDrive(char d, bool InternalCall)
 					slot->NeedsCheck = true;
 
 					ValidateStoreSettings(slot);
-					changeOccured = true;
+					ChangeOccured = true;
 
 					if (slot->StoreMode!=LFStoreModeHybrid)
 						goto Finish;
@@ -811,7 +810,7 @@ Finish:
 
 	if (!InternalCall)
 	{
-		SendLFNotifyMessage(changeOccured ? LFMessages.StoresChanged : LFMessages.VolumesChanged, NULL);
+		SendLFNotifyMessage(ChangeOccured ? LFMessages.StoresChanged : LFMessages.VolumesChanged, NULL);
 		SendShellNotifyMessage(SHCNE_UPDATEDIR);
 	}
 
@@ -823,7 +822,8 @@ unsigned int UnmountDrive(char d, bool InternalCall)
 	if (!GetMutex(Mutex_Stores))
 		return LFMutexError;
 
-	bool changeOccured = false;
+	bool ChangeOccured = false;
+	bool RemovedDefaultStore = false;
 	VolumeTypes[d-'A'] = DRIVE_UNKNOWN;
 	unsigned int res = LFOk;
 
@@ -831,7 +831,7 @@ unsigned int UnmountDrive(char d, bool InternalCall)
 	unsigned int NotifyCount = 0;
 
 	for (unsigned int a=0; a<StoreCount; a++)
-		if (IsStoreMounted(&StoreCache[a]))
+		if (LFIsStoreMounted(&StoreCache[a]))
 			if ((StoreCache[a].DatPath[0]==d) && (StoreCache[a].StoreMode!=LFStoreModeInternal))
 			{
 				HANDLE StoreLock;
@@ -846,9 +846,10 @@ unsigned int UnmountDrive(char d, bool InternalCall)
 				case LFStoreModeHybrid:
 					StoreCache[a].DatPath[0] = StoreCache[a].IdxPathMain[0] = '\0';
 					strcpy_s(NotifyIDs[NotifyCount++], LFKeySize, StoreCache[a].StoreID);
-					changeOccured = true;
+					ChangeOccured = true;
 					break;
 				case LFStoreModeExternal:
+					RemovedDefaultStore |= (strcmp(StoreCache[a].StoreID, DefaultStore)==0);
 					if (a<StoreCount-1)
 					{
 						HANDLE MoveLock;
@@ -866,18 +867,22 @@ unsigned int UnmountDrive(char d, bool InternalCall)
 					{
 						StoreCount--;
 					}
-					changeOccured = true;
+					ChangeOccured = true;
 					break;
 				}
 
 				ReleaseMutexForStore(StoreLock);
 			}
 
+	// Ggf. anderen Store als neuen Default Store
+	if (RemovedDefaultStore)
+		ChooseNewDefaultStore();
+
 	ReleaseMutex(Mutex_Stores);
 
 	if (!InternalCall)
 	{
-		SendLFNotifyMessage(changeOccured ? LFMessages.StoresChanged : LFMessages.VolumesChanged, NULL);
+		SendLFNotifyMessage(ChangeOccured ? LFMessages.StoresChanged : LFMessages.VolumesChanged, NULL);
 		for (unsigned int a=0; a<NotifyCount; a++)
 			SendShellNotifyMessage(SHCNE_UPDATEITEM, NotifyIDs[a]);
 		SendShellNotifyMessage(SHCNE_UPDATEDIR);

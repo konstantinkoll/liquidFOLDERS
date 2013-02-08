@@ -169,12 +169,12 @@ BEGIN
     IDS_BacklinkName        "Zurück"
     IDS_BacklinkDescription "Eine Ebene höher"
     IDS_StoreDefaultName    "Neuer Store"
-    IDS_LastSeen            "Zuletzt eingebunden von %s"
+    IDS_LastSeen            "Zuletzt angeschlossen von %s"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_SeenOn              "Eingebunden auf %s"
+    IDS_SeenOn              "Angeschlossen auf %s"
     IDS_ErrorCaption        "Fehler"
     IDS_DeleteStoreCaption  "Store „%s“ löschen"
     IDS_DeleteStoreMessage  "Möchten Sie diesen Store wirklich löschen ?"
@@ -230,7 +230,7 @@ BEGIN
     IDS_LFErrorIllegalQuery "Der Filter beschreibt eine ungültige Abfrage."
     IDS_LFErrorIllegalStoreDescriptor "Die Store-Einstellungen sind ungültig."
     IDS_LFErrorStoreNotFound 
-                            "Der gewählte Store ist nicht eingebunden oder nicht vorhanden."
+                            "Der gewählte Store ist nicht angeschlossen oder nicht vorhanden."
     IDS_LFErrorDriveNotReady "Der Datenträger ist nicht bereit!"
     IDS_LFErrorDriveWriteProtected "Der Datenträger ist schreibgeschützt."
 END
@@ -244,7 +244,7 @@ BEGIN
     IDS_LFErrorNoDefaultStore "Zur Zeit ist kein Standard-Store festgelegt."
     IDS_LFErrorTooManyStores 
                             "Sie haben bereits die maximale Anzahl an Stores erzeugt!"
-    IDS_LFErrorStoreNotMounted "Der Store ist zur Zeit nicht eingebunden."
+    IDS_LFErrorStoreNotMounted "Der Store ist zur Zeit nicht angeschlossen."
     IDS_LFErrorMutexError   "liquidFOLDERS wird zur Zeit von einem anderen Prozess blockiert."
     IDS_LFErrorIllegalAttribute 
                             "Eines der gewählten Objekte verfügt nicht über die Eigenschaft."

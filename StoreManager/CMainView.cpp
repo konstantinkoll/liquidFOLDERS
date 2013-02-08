@@ -829,13 +829,13 @@ INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndTaskbar.AddButton(IDM_STORE_DELETE, 17);
 	m_wndTaskbar.AddButton(IDM_STORE_RENAME, 18);
 	m_wndTaskbar.AddButton(IDM_STORE_PROPERTIES, 19);
-	m_wndTaskbar.AddButton(IDM_STORE_MAKEDEFAULT, 20);
-	m_wndTaskbar.AddButton(IDM_FILE_REMEMBER, 21);
-	m_wndTaskbar.AddButton(IDM_FILE_REMOVE, 22);
-	m_wndTaskbar.AddButton(IDM_FILE_DELETE, 23);
-	m_wndTaskbar.AddButton(IDM_FILE_RENAME, 24);
-	m_wndTaskbar.AddButton(IDM_FILE_RESTORE, 25);
-	m_wndTaskbar.AddButton(ID_APP_NEWFILEDROP, 26, TRUE);
+	m_wndTaskbar.AddButton(IDM_FILE_REMEMBER, 20);
+	m_wndTaskbar.AddButton(IDM_FILE_REMOVE, 21);
+	m_wndTaskbar.AddButton(IDM_FILE_DELETE, 22);
+	m_wndTaskbar.AddButton(IDM_FILE_RENAME, 23);
+	m_wndTaskbar.AddButton(IDM_FILE_RESTORE, 24);
+	m_wndTaskbar.AddButton(ID_APP_NEWFILEDROP, 25, TRUE);
+	m_wndTaskbar.AddButton(IDM_STORE_MAKEDEFAULT, 26);
 
 	#define FilterIconVisible     27
 	#define FilterIconHidden      28
@@ -1146,7 +1146,7 @@ LRESULT CMainView::OnSendTo(WPARAM wParam, LPARAM /*lParam*/)
 
 		if (strcmp(wp.StoreID, "CHOOSE")==0)
 		{
-			LFChooseStoreDlg dlg(this, LFCSD_Normal);
+			LFChooseStoreDlg dlg(this, LFCSD_Mounted);
 			if (dlg.DoModal()!=IDOK)
 				return NULL;
 
@@ -1750,7 +1750,7 @@ void CMainView::OnUpdateStoreCommands(CCmdUI* pCmdUI)
 			switch (pCmdUI->m_nID)
 			{
 			case IDM_STORE_MAKEDEFAULT:
-				b = (item->CategoryID==LFItemCategoryInternalStores) && (!(item->Type & LFTypeDefault));
+				b = !(item->Type & LFTypeDefault);
 				break;
 			case IDM_STORE_IMPORTFOLDER:
 				b = !(item->Type & LFTypeNotMounted);
