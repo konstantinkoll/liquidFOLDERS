@@ -28,6 +28,7 @@ void LFStorePropertiesGeneralPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_STORENAME, m_wndStoreName);
 	DDX_Control(pDX, IDC_STORECOMMENT, m_wndStoreComment);
 	DDX_Control(pDX, IDC_MAKEDEFAULT, m_wndMakeDefault);
+	DDX_Control(pDX, IDC_MAKESEARCHABLE, m_wndMakeSearchable);
 }
 
 
@@ -43,7 +44,13 @@ BOOL LFStorePropertiesGeneralPage::OnInitDialog()
 	m_wndIcon.SetCoreIcon(LFGetStoreIcon(p_Store));
 
 	if ((p_Store->StoreMode!=LFStoreModeHybrid) && (p_Store->StoreMode!=LFStoreModeExternal))
-		GetDlgItem(IDC_MAKESEARCHABLE)->ShowWindow(SW_HIDE);
+	{
+		m_wndMakeSearchable.ShowWindow(SW_HIDE);
+	}
+	else
+	{
+		m_wndMakeSearchable.SetCheck(p_Store->StoreMode==LFStoreModeHybrid);
+	}
 
 	// Store
 	SendMessage(MessageIDs->StoresChanged);
@@ -79,6 +86,7 @@ LRESULT LFStorePropertiesGeneralPage::OnUpdateStore(WPARAM /*wParam*/, LPARAM /*
 	m_wndStoreName.EnableWindow(*p_StoreValid);
 	m_wndStoreComment.EnableWindow(*p_StoreValid);
 	m_wndMakeDefault.EnableWindow(*p_StoreValid);
+	m_wndMakeSearchable.EnableWindow(*p_StoreValid);
 
 	return NULL;
 }

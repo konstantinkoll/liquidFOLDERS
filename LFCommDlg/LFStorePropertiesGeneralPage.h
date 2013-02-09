@@ -23,6 +23,7 @@ protected:
 	CEdit m_wndStoreName;
 	CEdit m_wndStoreComment;
 	CButton m_wndMakeDefault;
+	CButton m_wndMakeSearchable;
 
 	afx_msg BOOL OnInitDialog();
 	afx_msg LRESULT OnUpdateStore(WPARAM wParam, LPARAM lParam);

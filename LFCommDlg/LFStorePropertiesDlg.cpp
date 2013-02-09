@@ -66,7 +66,13 @@ BOOL LFStorePropertiesDlg::OnCommand(WPARAM wParam, LPARAM lParam)
 
 		CButton* pCheckbox = (CButton*)m_pPages[0]->GetDlgItem(IDC_MAKEDEFAULT);
 		if (pCheckbox->IsWindowEnabled() && pCheckbox->GetCheck())
-				LFErrorBox(LFMakeDefaultStore(m_Store.StoreID), GetSafeHwnd());
+			LFErrorBox(LFMakeDefaultStore(m_Store.StoreID), GetSafeHwnd());
+
+		pCheckbox = (CButton*)m_pPages[0]->GetDlgItem(IDC_MAKESEARCHABLE);
+		ASSERT(pCheckbox->IsWindowVisible()==((m_Store.StoreMode==LFStoreModeHybrid) || (m_Store.StoreMode==LFStoreModeExternal)));
+
+		if (pCheckbox->IsWindowVisible())
+			LFErrorBox(LFMakeStoreSearchable(m_Store.StoreID, pCheckbox->GetCheck()==TRUE), GetSafeHwnd());
 	}
 
 	return CPropertySheet::OnCommand(wParam, lParam);

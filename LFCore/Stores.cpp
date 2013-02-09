@@ -6,6 +6,7 @@
 #include "PIDL.h"
 #include "Stores.h"
 #include "StoreCache.h"
+#include <assert.h>
 
 
 extern HMODULE LFCoreModuleHandle;
@@ -145,7 +146,7 @@ unsigned int ValidateStoreDirectories(LFStoreDescriptor* s)
 			return LFIllegalPhysicalPath;
 	}
 
-	if (s->DatPath[0]!=L'\0')
+	if (s->IdxPathMain[0]!=L'\0')
 	{
 		DWORD res = CreateDir(s->IdxPathMain);
 		if ((res!=ERROR_SUCCESS) && (res!=ERROR_ALREADY_EXISTS))
@@ -547,7 +548,7 @@ LFCore_API unsigned int LFMakeDefaultStore(char* key, HWND hWndSource, bool Inte
 	return res;
 }
 
-LFCore_API unsigned int LFMakeHybridStore(char* key, HWND hWndSource)
+LFCore_API unsigned int LFMakeStoreSearchable(char* key, bool Searchable, HWND hWndSource)
 {
 	if (!key)
 		return LFIllegalKey;
@@ -562,21 +563,52 @@ LFCore_API unsigned int LFMakeHybridStore(char* key, HWND hWndSource)
 	LFStoreDescriptor* slot = FindStore(key, &StoreLock);
 	if (slot)
 	{
-		if ((slot->StoreMode!=LFStoreModeExternal) || (!LFIsStoreMounted(slot)))
+		LFStoreDescriptor victim = *slot;
+
+		#define Exit(res) { ReleaseMutexForStore(StoreLock); ReleaseMutex(Mutex_Stores); return res; }
+
+		switch (slot->StoreMode)
 		{
-			ReleaseMutexForStore(StoreLock);
-			ReleaseMutex(Mutex_Stores);
-			return LFIllegalStoreDescriptor;
+		case LFStoreModeHybrid:
+			if (Searchable)
+				Exit(LFOk);
+
+			// Delete if not mounted
+			if (!LFIsStoreMounted(slot))
+			{
+				res = DeleteStore(slot);
+				if (res==LFOk)
+				{
+					SendLFNotifyMessage(LFMessages.StoresChanged, hWndSource);
+					SendShellNotifyMessage(SHCNE_UPDATEDIR);
+				}
+
+				Exit(res);
+			}
+
+			res = DeleteStoreSettingsFromRegistry(slot);
+			if (res!=LFOk)
+				Exit(res);
+
+			// Convert to external store
+			slot->StoreMode = LFStoreModeExternal;
+			break;
+		case LFStoreModeExternal:
+			if (!Searchable)
+				Exit(LFOk);
+
+			assert(LFIsStoreMounted(slot));
+
+			// Convert to hybrid store
+			slot->StoreMode = LFStoreModeHybrid;
+			break;
+		default:
+			Exit(LFIllegalStoreDescriptor);
 		}
 
-		slot->StoreMode = LFStoreModeHybrid;
 		res = ValidateStoreSettings(slot);
 		if (res!=LFOk)
-		{
-			ReleaseMutexForStore(StoreLock);
-			ReleaseMutex(Mutex_Stores);
-			return res;
-		}
+			Exit(res);
 
 		#define CheckAbort if (res!=LFOk) { ReleaseMutexForStore(StoreLock); return res; }
 
@@ -584,11 +616,22 @@ LFCore_API unsigned int LFMakeHybridStore(char* key, HWND hWndSource)
 		ReleaseMutex(Mutex_Stores);
 		CheckAbort
 
-		res = ValidateStoreDirectories(slot);
-		CheckAbort
+		if (slot->StoreMode==LFStoreModeHybrid)
+		{
+			res = ValidateStoreDirectories(slot);
+			CheckAbort
 
-		res = CopyDir(slot->IdxPathMain, slot->IdxPathAux);
-		CheckAbort
+			res = CopyDir(slot->IdxPathMain, slot->IdxPathAux);
+		}
+		else
+		{
+			if (victim.IdxPathAux[0]!=L'\0')
+			{
+				wchar_t path[MAX_PATH];
+				GetAutoPath(&victim, path);
+				RemoveDir(path);
+			}
+		}
 	}
 
 	ReleaseMutexForStore(StoreLock);

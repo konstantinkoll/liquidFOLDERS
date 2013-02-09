@@ -355,7 +355,7 @@ LFCore_API unsigned int LFCreateStore(LFStoreDescriptor* s, bool MakeDefault=fal
 LFCore_API unsigned int LFMakeDefaultStore(char* key, HWND hWndSource=NULL, bool InternalCall=false);
 
 // Macht den externen Store zum Hybrid-Store
-LFCore_API unsigned int LFMakeHybridStore(char* key, HWND hWndSource=NULL);
+LFCore_API unsigned int LFMakeStoreSearchable(char* key, bool Searchable=true, HWND hWndSource=NULL);
 
 // Setzt Namen und Kommentar eines Stores
 // Ist name oder comment NULL, so wird der jeweilige Wert nicht verändert
