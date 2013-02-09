@@ -322,7 +322,7 @@ void LFChooseStoreDlg::OnUpdateStoreCommands(CCmdUI* pCmdUI)
 			b = FALSE;
 			break;
 		case IDM_STORE_SHORTCUT:
-			b = (item->CategoryID!=LFItemCategoryExternalStores);
+			b = (item->Type & LFTypeShortcutAllowed);
 			break;
 		case IDM_STORE_RENAME:
 			b = (m_wndExplorerList.GetEditControl()==NULL);

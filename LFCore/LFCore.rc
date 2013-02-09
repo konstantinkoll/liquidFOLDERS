@@ -112,22 +112,14 @@ LANGUAGE LANG_GERMAN, SUBLANG_NEUTRAL
 
 STRINGTABLE 
 BEGIN
-    IDS_LFCategoryInternalStores 
-                            "Interne Stores\nDiese Stores befinden sich auf einem internen Laufwerk und sind immer verfügbar."
-    IDS_LFCategoryHybridStores 
-                            "Hybrid-Stores\nDiese Stores können durchsucht werden, selbst wenn das Laufwerk gerade nicht angeschlossen ist."
-    IDS_LFCategoryExternalStores 
-                            "Externe Stores\nDiese Stores befinden sich vollständig auf Wechseldatenträgern."
+    IDS_LFCategoryLocalStores 
+                            "Auf diesem Computer gespeicherte Dateien"
     IDS_LFCategoryRemoteStores 
-                            "Netzwerk-Stores\nDiese Stores befinden sich auf anderen Computern."
-    IDS_LFCategoryDrives    "Wechseldatenträger\nWählen Sie einen dieser Datenträger, um einen externen Store oder Hybrid-Store anzulegen."
+                            "Netzwerkadresse\nDiese Stores befinden sich auf anderen Computern."
+    IDS_LFCategoryDrives    "Geräte mit Wechselmedien\nWählen Sie eines dieser Geräte, um dort einen neuen Store anzulegen."
     IDS_LFCategoryStore     "Dieser Store"
     IDS_LFCategoryMediaTypes "Multimedia"
     IDS_LFCategoryDocuments "Dokumente"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_LFCategoryHousekeeping "Verwaltung"
     IDS_LFCategoryNight     "Nacht\nBis 6 Uhr"
 END
@@ -398,22 +390,14 @@ LANGUAGE LANG_ENGLISH, SUBLANG_NEUTRAL
 
 STRINGTABLE 
 BEGIN
-    IDS_LFCategoryInternalStores 
-                            "Internal stores\nThese stores reside on an internal volume, and are always available."
-    IDS_LFCategoryHybridStores 
-                            "Hybrid stores\nThese stores can be searched, even when the removable volume is not connected."
-    IDS_LFCategoryExternalStores 
-                            "External stores\nThese stores reside entirely on removable volumes."
+    IDS_LFCategoryLocalStores 
+                            "Files stored on this computer"
     IDS_LFCategoryRemoteStores 
-                            "Remote stores\nThese stores reside on other computers."
-    IDS_LFCategoryDrives    "Removable volumes\nChoose one of these to create a new external or hybrid store."
+                            "Network location\nThese stores reside on other computers."
+    IDS_LFCategoryDrives    "Devices with removable storage\nChoose one of these devices to create a new store there."
     IDS_LFCategoryStore     "This store"
     IDS_LFCategoryMediaTypes "Media"
     IDS_LFCategoryDocuments "Documents"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_LFCategoryHousekeeping "Housekeeping"
     IDS_LFCategoryNight     "Night\nUntil 6am"
 END
@@ -682,22 +666,14 @@ LANGUAGE LANG_SPANISH, SUBLANG_NEUTRAL
 
 STRINGTABLE 
 BEGIN
-    IDS_LFCategoryInternalStores 
-                            "Stores internos\nEstos stores residen en una unidad interna y están siempre disponibles."
-    IDS_LFCategoryHybridStores 
-                            "Stores híbridos\nEstos stores pueden ser buscados incluso cuando la unidad desmontable no está conectada."
-    IDS_LFCategoryExternalStores 
-                            "Stores externos\nEstos stores residen totalmente en unidades desmontables."
+    IDS_LFCategoryLocalStores 
+                            "Archivos almacenados en este equipo"
     IDS_LFCategoryRemoteStores 
-                            "Stores remotos\nEstos stores residen en otras computadoras."
-    IDS_LFCategoryDrives    "Unidades desmontables\nEscoja una de éstas para crear un nuevo store externo o un store híbrido."
+                            "Ubicación de red\nEstos stores residen en otras computadoras."
+    IDS_LFCategoryDrives    "Dispositivos con almacenamiento extraible\nEscoja una de éstas para crear un nuevo store."
     IDS_LFCategoryStore     "Éste store"
     IDS_LFCategoryMediaTypes "Medios"
     IDS_LFCategoryDocuments "Documentos"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_LFCategoryHousekeeping "Mantenimiento"
     IDS_LFCategoryNight     "Noche\nHasta 6am"
 END
@@ -969,22 +945,14 @@ LANGUAGE LANG_FRENCH, SUBLANG_NEUTRAL
 
 STRINGTABLE 
 BEGIN
-    IDS_LFCategoryInternalStores 
-                            "Stores internes\nCes stores résident sur un lecteur interne et sont toujours disponibles."
-    IDS_LFCategoryHybridStores 
-                            "Stores hybrides\nCes stores peuvent être fouillés, même quand le lecteur amovible n'est pas raccordé."
-    IDS_LFCategoryExternalStores 
-                            "Stores externes\nCes stores résident entièrement sur les lecteurs amovibles."
+    IDS_LFCategoryLocalStores 
+                            "Fichiers enregistrés sur cet ordinateur"
     IDS_LFCategoryRemoteStores 
-                            "Réseau-stores\nCes stores se trouvent sur les autres ordinateurs."
-    IDS_LFCategoryDrives    "Lecteurs amovibles\nChoisissez un d'entre ceux-ci pour créer un nouveau store externe ou hybride."
+                            "Emplacement réseau\nCes stores se trouvent sur des autres ordinateurs."
+    IDS_LFCategoryDrives    "Périphériques utilisant des supports de stockage amovibles\nChoisissez un d'entre ceux-ci pour créer un nouveau store."
     IDS_LFCategoryStore     "Ce store"
     IDS_LFCategoryMediaTypes "Multimédia"
     IDS_LFCategoryDocuments "Documents"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_LFCategoryHousekeeping "Ménage"
     IDS_LFCategoryNight     "Nuit\nJusqu'à 6 heures"
 END

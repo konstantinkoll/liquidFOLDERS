@@ -310,6 +310,8 @@ LFCore_API LFItemDescriptor* LFAllocItemDescriptor(LFStoreDescriptor* s)
 		d->Type |= LFTypeGhosted | LFTypeNotMounted;
 	if (s->IndexVersion<CurIdxVersion)
 		d->Type |= LFTypeRequiresMaintenance;
+	if (s->StoreMode!=LFStoreModeExternal)
+		d->Type |= LFTypeShortcutAllowed;
 
 	if ((s->StoreMode==LFStoreModeHybrid) || (s->StoreMode==LFStoreModeExternal))
 		if (wcscmp(s->LastSeen, L"")!=0)
@@ -321,7 +323,7 @@ LFCore_API LFItemDescriptor* LFAllocItemDescriptor(LFStoreDescriptor* s)
 			SetAttribute(d, LFAttrDescription, descr);
 		}
 
-	d->CategoryID = s->StoreMode;
+	d->CategoryID = (s->StoreMode<=LFStoreModeExternal) ? LFItemCategoryLocalStores : LFItemCategoryRemoteStores;
 	d->IconID = LFGetStoreIcon(s);
 
 	SetAttribute(d, LFAttrFileName, s->StoreName);

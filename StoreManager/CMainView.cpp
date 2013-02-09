@@ -1065,7 +1065,7 @@ void CMainView::OnBeginDragDrop()
 		if (idx!=-1)
 		{
 			LFItemDescriptor* item = p_CookedFiles->m_Items[idx];
-			if ((item->Type & LFTypeStore) && (item->CategoryID!=LFItemCategoryExternalStores))
+			if ((item->Type & LFTypeStore) && (item->Type & LFTypeShortcutAllowed))
 			{
 				m_DropTarget.SetDragging(TRUE);
 
@@ -1756,7 +1756,7 @@ void CMainView::OnUpdateStoreCommands(CCmdUI* pCmdUI)
 				b = !(item->Type & LFTypeNotMounted);
 				break;
 			case IDM_STORE_SHORTCUT:
-				b = (item->CategoryID!=LFItemCategoryExternalStores);
+				b = (item->Type & LFTypeShortcutAllowed);
 				break;
 			case IDM_STORE_RENAME:
 				b = !p_wndFileView->IsEditing();

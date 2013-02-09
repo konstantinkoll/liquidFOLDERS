@@ -114,7 +114,7 @@ void LFStorePropertiesToolsPage::OnRunBackup()
 				{
 					LFStoreDescriptor s;
 					if (LFGetStoreSettings(Ptr, &s)==LFOk)
-						if (s.StoreMode<=LFItemCategoryHybridStores)
+						if (s.StoreMode!=LFStoreModeExternal)
 						{
 							// Header
 							tmpStr = _T("\n[HKEY_CURRENT_USER\\Software\\liquidFOLDERS\\Stores\\");
