@@ -13,8 +13,8 @@
 
 extern AFX_EXTENSION_MODULE LFCommDlgDLL;
 
-LFAboutDlg::LFAboutDlg(CString AppName, CString Build, UINT IconResID, CWnd* pParent)
-	: LFDialog(IDD_ABOUT, LFDS_Default, pParent)
+LFAboutDlg::LFAboutDlg(CString AppName, CString Build, UINT IconResID, CWnd* pParentWnd)
+	: LFDialog(IDD_ABOUT, LFDS_Default, pParentWnd)
 {
 	m_AppName = AppName;
 	m_Build = Build;

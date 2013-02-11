@@ -46,7 +46,7 @@ BOOL CRunCmdApp::InitInstance()
 			if (command==_T("ABOUTEXTENSION"))
 				OnAppAbout(IDS_EXTENSIONABOUT, IDB_EXTENSIONABOUTICON);
 			if (command==_T("NEWSTORE"))
-				OnStoresCreate();
+				OnStoreCreate();
 			if (command==_T("INSTALL"))
 				LFCreateSendTo(true);
 			if (command==_T("CHECKUPDATE"))
@@ -54,7 +54,7 @@ BOOL CRunCmdApp::InitInstance()
 			break;
 		case 3:
 			if (command==_T("NEWSTOREVOLUME"))
-				OnStoresCreateVolume(*__wargv[2] & 0xFF);
+				OnStoreCreate(*__wargv[2] & 0xFF);
 			if (command==_T("DELETESTORE"))
 				OnStoreDelete(__wargv[2]);
 			if (command==_T("IMPORTFOLDER"))
@@ -75,20 +75,9 @@ void CRunCmdApp::OnAppAbout(UINT ResIDName, UINT ResIDPicture)
 	LFAbout(AppName, Timestamp, ResIDPicture, CWnd::GetForegroundWindow());
 }
 
-void CRunCmdApp::OnStoresCreate()
+void CRunCmdApp::OnStoreCreate(CHAR Drive)
 {
-	LFStoreDescriptor store;
-	LFStoreNewDlg dlg(CWnd::GetForegroundWindow(), &store);
-	if (dlg.DoModal()==IDOK)
-		LFErrorBox(LFCreateStore(&store, dlg.MakeDefault), GetForegroundWindow());
-}
-
-void CRunCmdApp::OnStoresCreateVolume(CHAR Drive)
-{
-	LFStoreDescriptor store;
-	LFStoreNewVolumeDlg dlg(CWnd::GetForegroundWindow(), Drive, &store);
-	if (dlg.DoModal()==IDOK)
-		LFErrorBox(LFCreateStore(&store, FALSE), GetForegroundWindow());
+	LFCreateNewStore(CWnd::GetForegroundWindow(), Drive);
 }
 
 void CRunCmdApp::OnStoreDelete(CString ID)

@@ -215,9 +215,9 @@ BOOL CProperty::WantsChars()
 	return FALSE;
 }
 
-void CProperty::SetParent(CPropertyHolder* pParent)
+void CProperty::SetParent(CPropertyHolder* pParentWnd)
 {
-	p_Parent = pParent;
+	p_Parent = pParentWnd;
 }
 
 void CProperty::SetMultiple(BOOL Multiple)

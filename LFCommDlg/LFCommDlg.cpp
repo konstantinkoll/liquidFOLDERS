@@ -257,6 +257,12 @@ DWORD WINAPI WorkerMaintenance(void* lParam)
 	LF_WORKERTHREAD_FINISH();
 }
 
+LFCommDlg_API void LFDoWithProgress(LPTHREAD_START_ROUTINE pThreadProc, LFWorkerParameters* pParameters, CWnd* pParentWnd)
+{
+	LFProgressDlg dlg(pThreadProc, pParameters, pParentWnd);
+	dlg.DoModal();
+}
+
 LFCommDlg_API void LFImportFolder(CHAR* StoreID, CWnd* pParentWnd)
 {
 	// Allowed?
@@ -302,15 +308,15 @@ LFCommDlg_API void LFRunMaintenance(CWnd* pParentWnd, HWND hWndSource)
 }
 
 
-LFCommDlg_API void LFAbout(CString AppName, CString Build, UINT IconResID, CWnd* pParentWnd)
+LFCommDlg_API void LFCreateNewStore(CWnd* pParentWnd, CHAR Volume)
 {
-	LFAboutDlg dlg(AppName, Build, IconResID, pParentWnd);
+	LFStoreNewLocalDlg dlg(pParentWnd, Volume);
 	dlg.DoModal();
 }
 
-LFCommDlg_API void LFDoWithProgress(LPTHREAD_START_ROUTINE pThreadProc, LFWorkerParameters* pParameters, CWnd* pParent)
+LFCommDlg_API void LFAbout(CString AppName, CString Build, UINT IconResID, CWnd* pParentWnd)
 {
-	LFProgressDlg dlg(pThreadProc, pParameters, pParent);
+	LFAboutDlg dlg(AppName, Build, IconResID, pParentWnd);
 	dlg.DoModal();
 }
 

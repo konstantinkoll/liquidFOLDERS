@@ -15,8 +15,8 @@
 extern AFX_EXTENSION_MODULE LFCommDlgDLL;
 extern LFMessageIDs* MessageIDs;
 
-LFStorePropertiesDlg::LFStorePropertiesDlg(CHAR* StoreID, CWnd* pParent)
-	: CPropertySheet(_T(""), pParent)
+LFStorePropertiesDlg::LFStorePropertiesDlg(CHAR* StoreID, CWnd* pParentWnd)
+	: CPropertySheet(_T(""), pParentWnd)
 {
 	if (LFGetStoreSettings(StoreID, &m_Store)==LFOk)
 	{
@@ -52,27 +52,27 @@ BOOL LFStorePropertiesDlg::OnCommand(WPARAM wParam, LPARAM lParam)
 {
 	if (LOWORD(wParam)==IDOK)
 	{
-		CString name;
-		m_pPages[0]->GetDlgItem(IDC_STORENAME)->GetWindowText(name);
-		CString comment;
-		m_pPages[0]->GetDlgItem(IDC_STORECOMMENT)->GetWindowText(comment);
+		const LFStorePropertiesGeneralPage* pPage = (LFStorePropertiesGeneralPage*)m_pPages[0];
 
-		UINT res = LFSetStoreAttributes(m_Store.StoreID, name.GetBuffer(), comment.GetBuffer());
+		CString Name;
+		pPage->m_wndStoreName.GetWindowText(Name);
+		CString Comment;
+		pPage->m_wndStoreComment.GetWindowText(Comment);
+
+		UINT res = LFSetStoreAttributes(m_Store.StoreID, Name.GetBuffer(), Comment.GetBuffer(), GetSafeHwnd());
 		if (res!=LFOk)
 		{
 			LFErrorBox(res, GetSafeHwnd());
 			return TRUE;
 		}
 
-		CButton* pCheckbox = (CButton*)m_pPages[0]->GetDlgItem(IDC_MAKEDEFAULT);
-		if (pCheckbox->IsWindowEnabled() && pCheckbox->GetCheck())
-			LFErrorBox(LFMakeDefaultStore(m_Store.StoreID), GetSafeHwnd());
+		if (pPage->m_wndMakeDefault.IsWindowEnabled() && pPage->m_wndMakeDefault.GetCheck())
+			LFErrorBox(LFMakeDefaultStore(m_Store.StoreID, GetSafeHwnd()), GetSafeHwnd());
 
-		pCheckbox = (CButton*)m_pPages[0]->GetDlgItem(IDC_MAKESEARCHABLE);
-		ASSERT(pCheckbox->IsWindowVisible()==((m_Store.StoreMode==LFStoreModeHybrid) || (m_Store.StoreMode==LFStoreModeExternal)));
+		ASSERT(pPage->m_wndMakeSearchable.IsWindowVisible()==((m_Store.StoreMode==LFStoreModeHybrid) || (m_Store.StoreMode==LFStoreModeExternal)));
 
-		if (pCheckbox->IsWindowVisible())
-			LFErrorBox(LFMakeStoreSearchable(m_Store.StoreID, pCheckbox->GetCheck()==TRUE), GetSafeHwnd());
+		if (pPage->m_wndMakeSearchable.IsWindowVisible())
+			LFErrorBox(LFMakeStoreSearchable(m_Store.StoreID, pPage->m_wndMakeSearchable.GetCheck()==TRUE, GetSafeHwnd()), GetSafeHwnd());
 	}
 
 	return CPropertySheet::OnCommand(wParam, lParam);
@@ -80,11 +80,15 @@ BOOL LFStorePropertiesDlg::OnCommand(WPARAM wParam, LPARAM lParam)
 
 void LFStorePropertiesDlg::UpdateStore(UINT Message, WPARAM wParam, LPARAM lParam)
 {
-	m_StoreValid = (LFGetStoreSettings(m_Key, &m_Store)==LFOk);
-	GetDlgItem(IDOK)->EnableWindow(m_StoreValid);
+	if ((HWND)lParam!=GetSafeHwnd())
+	{
+		m_StoreValid = (LFGetStoreSettings(m_Key, &m_Store)==LFOk);
+		GetDlgItem(IDOK)->EnableWindow(m_StoreValid);
 
-	for (UINT a=0; a<m_PageCount; a++)
-		m_pPages[a]->SendMessage(Message, wParam, lParam);
+		for (UINT a=0; a<m_PageCount; a++)
+			if (IsWindow(m_pPages[a]->GetSafeHwnd()))
+				m_pPages[a]->SendMessage(Message, wParam, lParam);
+	}
 }
 
 

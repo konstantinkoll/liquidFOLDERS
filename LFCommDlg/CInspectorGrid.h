@@ -72,7 +72,7 @@ public:
 	virtual void OnClickButton();
 	virtual BOOL OnPushChar(UINT nChar);
 
-	void SetParent(CPropertyHolder* pParent);
+	void SetParent(CPropertyHolder* pParentWnd);
 	void SetMultiple(BOOL Multiple);
 	void ResetModified();
 	LFVariantData* GetData();

@@ -9,8 +9,8 @@
 // GlobeOptionsDlg
 //
 
-GlobeOptionsDlg::GlobeOptionsDlg(CWnd* pParent, LFViewParameters* View, UINT Context)
-	: CDialog(IDD_GLOBEOPTIONS, pParent)
+GlobeOptionsDlg::GlobeOptionsDlg(CWnd* pParentWnd, LFViewParameters* View, UINT Context)
+	: CDialog(IDD_GLOBEOPTIONS, pParentWnd)
 {
 	ASSERT(View);
 	p_View = View;

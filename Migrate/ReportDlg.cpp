@@ -11,8 +11,8 @@
 // ReportDlg
 //
 
-ReportDlg::ReportDlg(CWnd* pParent, CReportList* Successful, CReportList* WithErrors)
-	: CDialog(IDD_REPORT, pParent)
+ReportDlg::ReportDlg(CWnd* pParentWnd, CReportList* Successful, CReportList* WithErrors)
+	: CDialog(IDD_REPORT, pParentWnd)
 {
 	ASSERT(Successful);
 	ASSERT(WithErrors);

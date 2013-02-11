@@ -13,7 +13,7 @@
 class AFX_EXT_CLASS LFStorePropertiesDlg : public CPropertySheet
 {
 public:
-	LFStorePropertiesDlg(CHAR* StoreID, CWnd* pParent=NULL);
+	LFStorePropertiesDlg(CHAR* StoreID, CWnd* pParentWnd=NULL);
 
 	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
 

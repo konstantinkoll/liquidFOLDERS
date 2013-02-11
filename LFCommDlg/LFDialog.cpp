@@ -13,8 +13,8 @@
 
 extern AFX_EXTENSION_MODULE LFCommDlgDLL;
 
-LFDialog::LFDialog(UINT nIDTemplate, UINT Design, CWnd* pParent)
-	: CDialog(nIDTemplate, pParent)
+LFDialog::LFDialog(UINT nIDTemplate, UINT Design, CWnd* pParentWnd)
+	: CDialog(nIDTemplate, pParentWnd)
 {
 	m_nIDTemplate = nIDTemplate;
 	m_Design = Design;

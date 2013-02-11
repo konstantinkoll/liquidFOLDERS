@@ -19,7 +19,7 @@ struct LFWorkerParameters
 class AFX_EXT_CLASS LFProgressDlg : public LFDialog
 {
 public:
-	LFProgressDlg(LPTHREAD_START_ROUTINE pThreadProc, LFWorkerParameters* pParameters, CWnd* pParent=NULL);
+	LFProgressDlg(LPTHREAD_START_ROUTINE pThreadProc, LFWorkerParameters* pParameters, CWnd* pParentWnd=NULL);
 
 	virtual void DoDataExchange(CDataExchange* pDX);
 

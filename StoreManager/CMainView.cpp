@@ -1166,12 +1166,12 @@ LRESULT CMainView::OnSendTo(WPARAM wParam, LPARAM /*lParam*/)
 			LPITEMIDLIST pidlFQ;
 			if (SUCCEEDED(pDesktop->ParseDisplayName(NULL, NULL, pItemData->Path, NULL, &pidlFQ, NULL)))
 			{
-				IShellFolder* pParent = NULL;
+				IShellFolder* pParentWnd = NULL;
 				LPCITEMIDLIST pidlRel;
-				if (SUCCEEDED(SHBindToParent(pidlFQ, IID_IShellFolder, (void**)&pParent, &pidlRel)))
+				if (SUCCEEDED(SHBindToParent(pidlFQ, IID_IShellFolder, (void**)&pParentWnd, &pidlRel)))
 				{
 					IDropTarget* pDropTarget = NULL;
-					if (SUCCEEDED(pParent->GetUIObjectOf(GetSafeHwnd(), 1, &pidlRel, IID_IDropTarget, NULL, (void**)&pDropTarget)))
+					if (SUCCEEDED(pParentWnd->GetUIObjectOf(GetSafeHwnd(), 1, &pidlRel, IID_IDropTarget, NULL, (void**)&pDropTarget)))
 					{
 						LFTransactionList* tl = BuildTransactionList(FALSE, TRUE);
 						if (tl->m_ItemCount)
@@ -1197,7 +1197,7 @@ LRESULT CMainView::OnSendTo(WPARAM wParam, LPARAM /*lParam*/)
 						pDropTarget->Release();
 					}
 
-					pParent->Release();
+					pParentWnd->Release();
 				}
 
 				theApp.GetShellManager()->FreeItem(pidlFQ);
@@ -1428,13 +1428,7 @@ void CMainView::OnUpdateViewCommands(CCmdUI* pCmdUI)
 
 void CMainView::OnStoresCreateNew()
 {
-	LFStoreDescriptor store;
-	LFStoreNewDlg dlg(this, &store);
-	if (dlg.DoModal()==IDOK)
-	{
-		CWaitCursor csr;
-		LFErrorBox(LFCreateStore(&store, dlg.MakeDefault), GetSafeHwnd());
-	}
+	LFCreateNewStore(this);
 }
 
 void CMainView::OnStoresMaintainAll()
@@ -1616,15 +1610,7 @@ void CMainView::OnVolumeCreateNewStore()
 {
 	INT idx = GetSelectedItem();
 	if (idx!=-1)
-	{
-		LFStoreDescriptor store;
-		LFStoreNewVolumeDlg dlg(this, p_CookedFiles->m_Items[idx]->CoreAttributes.FileID[0], &store);
-		if (dlg.DoModal()==IDOK)
-		{
-			CWaitCursor csr;
-			LFErrorBox(LFCreateStore(&store, FALSE), GetSafeHwnd());
-		}
-	}
+		LFCreateNewStore(this, p_CookedFiles->m_Items[idx]->CoreAttributes.FileID[0]);
 }
 
 void CMainView::OnVolumeFormat()

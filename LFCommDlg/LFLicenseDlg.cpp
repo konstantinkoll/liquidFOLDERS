@@ -13,8 +13,8 @@
 
 extern AFX_EXTENSION_MODULE LFCommDlgDLL;
 
-LFLicenseDlg::LFLicenseDlg(CWnd* pParent)
-	: LFDialog(IDD_ENTERLICENSEKEY, LFDS_Default, pParent)
+LFLicenseDlg::LFLicenseDlg(CWnd* pParentWnd)
+	: LFDialog(IDD_ENTERLICENSEKEY, LFDS_Default, pParentWnd)
 {
 }
 

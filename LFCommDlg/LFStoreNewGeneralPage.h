@@ -1,30 +1,29 @@
 
-// LFStorePropertiesGeneralPage.h: Schnittstelle der Klasse LFStorePropertiesGeneralPage
+// LFStoreNewGeneralPage.h: Schnittstelle der Klasse LFStoreNewGeneralPage
 //
 
 #pragma once
 #include "LFCommDlg.h"
 
 
-// LFStorePropertiesGeneralPage
+// LFStoreNewGeneralPage
 //
 
-class LFStorePropertiesGeneralPage : public CPropertyPage
+class LFStoreNewGeneralPage : public CPropertyPage
 {
 public:
-	LFStorePropertiesGeneralPage(LFStoreDescriptor* pStore, BOOL* pStoreValid);
+	LFStoreNewGeneralPage(CHAR Volume);
 
 	virtual void DoDataExchange(CDataExchange* pDX);
 
+	CIconCtrl m_wndIcon;
 	CEdit m_wndStoreName;
 	CEdit m_wndStoreComment;
 	CButton m_wndMakeDefault;
 	CButton m_wndMakeSearchable;
 
 protected:
-	LFStoreDescriptor* p_Store;
-	BOOL* p_StoreValid;
-	CIconCtrl m_wndIcon;
+	CHAR m_Volume;
 
 	afx_msg BOOL OnInitDialog();
 	afx_msg LRESULT OnUpdateStore(WPARAM wParam, LPARAM lParam);

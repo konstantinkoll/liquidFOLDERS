@@ -93,22 +93,7 @@ void CStoreDropdownWindow::OnCreateNewStore()
 {
 	GetOwner()->SendMessage(WM_CLOSEDROPDOWN);
 
-	LFStoreDescriptor store;
-	LFStoreNewDlg dlg(AfxGetApp()->GetMainWnd(), &store);
-	if (dlg.DoModal()==IDOK)
-	{
-		CWaitCursor csr;
-
-		UINT res = LFCreateStore(&store, dlg.MakeDefault);
-		LFErrorBox(res);
-
-		if (res==LFOk)
-		{
-			LFItemDescriptor* i = LFAllocItemDescriptor(&store);
-			GetOwner()->SendMessage(WM_SETITEM, NULL, (LPARAM)i);
-			LFFreeItemDescriptor(i);
-		}
-	}
+	LFCreateNewStore(AfxGetApp()->GetMainWnd());
 }
 
 

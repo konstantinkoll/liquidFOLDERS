@@ -13,7 +13,7 @@
 class EditConditionDlg : public LFAttributeListDlg
 {
 public:
-	EditConditionDlg(CWnd* pParent, CHAR* StoreID=NULL, LFFilterCondition* pCondition=NULL);
+	EditConditionDlg(CWnd* pParentWnd, CHAR* StoreID=NULL, LFFilterCondition* pCondition=NULL);
 
 	virtual void DoDataExchange(CDataExchange* pDX);
 

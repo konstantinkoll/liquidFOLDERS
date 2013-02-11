@@ -13,7 +13,7 @@
 class ChoosePropertyDlg : public LFAttributeListDlg
 {
 public:
-	ChoosePropertyDlg(CWnd* pParent, INT Attr=-1);
+	ChoosePropertyDlg(CWnd* pParentWnd, INT Attr=-1);
 
 	virtual void DoDataExchange(CDataExchange* pDX);
 

@@ -22,7 +22,7 @@
 class AFX_EXT_CLASS LFDialog : public CDialog
 {
 public:
-	LFDialog(UINT nIDTemplate, UINT Design=LFDS_Default, CWnd* pParent=NULL);
+	LFDialog(UINT nIDTemplate, UINT Design=LFDS_Default, CWnd* pParentWnd=NULL);
 
 	virtual void DoDataExchange(CDataExchange* pDX);
 	virtual void AdjustLayout();

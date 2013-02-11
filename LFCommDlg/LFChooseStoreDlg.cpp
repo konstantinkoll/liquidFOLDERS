@@ -244,13 +244,7 @@ void LFChooseStoreDlg::OnEndLabelEdit(NMHDR* pNMHDR, LRESULT* pResult)
 
 void LFChooseStoreDlg::OnStoresCreateNew()
 {
-	LFStoreDescriptor store;
-	LFStoreNewDlg dlg(this, &store);
-	if (dlg.DoModal()==IDOK)
-	{
-		CWaitCursor csr;
-		LFErrorBox(LFCreateStore(&store, dlg.MakeDefault), GetSafeHwnd());
-	}
+	LFCreateNewStore(this);
 }
 
 void LFChooseStoreDlg::OnUpdateStoresCommands(CCmdUI* pCmdUI)

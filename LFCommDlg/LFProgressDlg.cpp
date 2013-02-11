@@ -12,8 +12,8 @@
 // LFProgressDlg
 //
 
-LFProgressDlg::LFProgressDlg(LPTHREAD_START_ROUTINE pThreadProc, LFWorkerParameters* pParameters, CWnd* pParent)
-	: LFDialog(IDD_PROGRESS, LFDS_White, pParent)
+LFProgressDlg::LFProgressDlg(LPTHREAD_START_ROUTINE pThreadProc, LFWorkerParameters* pParameters, CWnd* pParentWnd)
+	: LFDialog(IDD_PROGRESS, LFDS_White, pParentWnd)
 {
 	m_Abort = FALSE;
 

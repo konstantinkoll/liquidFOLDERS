@@ -12,8 +12,8 @@
 
 extern AFX_EXTENSION_MODULE LFCommDlgDLL;
 
-LFStoreMaintenanceDlg::LFStoreMaintenanceDlg(LFMaintenanceList* ml, CWnd* pParent)
-	: CDialog(IDD_STOREMAINTENANCE, pParent)
+LFStoreMaintenanceDlg::LFStoreMaintenanceDlg(LFMaintenanceList* ml, CWnd* pParentWnd)
+	: CDialog(IDD_STOREMAINTENANCE, pParentWnd)
 {
 	ASSERT(ml);
 

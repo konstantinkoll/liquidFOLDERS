@@ -13,7 +13,7 @@
 class ReportDlg : public CDialog
 {
 public:
-	ReportDlg(CWnd* pParent, CReportList* Successful, CReportList* WithErrors);
+	ReportDlg(CWnd* pParentWnd, CReportList* Successful, CReportList* WithErrors);
 
 	virtual void DoDataExchange(CDataExchange* pDX);
 

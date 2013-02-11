@@ -14,7 +14,7 @@
 class AFX_EXT_CLASS LFAboutDlg : public LFDialog
 {
 public:
-	LFAboutDlg(CString AppName, CString Build, UINT IconResID, CWnd* pParent=NULL);
+	LFAboutDlg(CString AppName, CString Build, UINT IconResID, CWnd* pParentWnd=NULL);
 
 	virtual void DoDataExchange(CDataExchange* pDX);
 

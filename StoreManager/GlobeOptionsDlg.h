@@ -12,7 +12,7 @@
 class GlobeOptionsDlg : public CDialog
 {
 public:
-	GlobeOptionsDlg(CWnd* pParent, LFViewParameters* View, UINT Context);
+	GlobeOptionsDlg(CWnd* pParentWnd, LFViewParameters* View, UINT Context);
 
 	virtual void DoDataExchange(CDataExchange* pDX);
 

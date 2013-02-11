@@ -9,8 +9,8 @@
 // SortOptionsDlg
 //
 
-SortOptionsDlg::SortOptionsDlg(CWnd* pParent, UINT Context)
-	: LFAttributeListDlg(IDD_SORTOPTIONS, pParent)
+SortOptionsDlg::SortOptionsDlg(CWnd* pParentWnd, UINT Context)
+	: LFAttributeListDlg(IDD_SORTOPTIONS, pParentWnd)
 {
 	p_View = &theApp.m_Views[Context];
 	m_Context = Context;

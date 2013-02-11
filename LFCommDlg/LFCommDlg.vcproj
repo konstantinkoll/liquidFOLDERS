@@ -605,11 +605,15 @@
 				>
 			</File>
 			<File
-				RelativePath=".\LFStoreNewDlg.cpp"
+				RelativePath=".\LFStoreNewGeneralPage.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\LFStoreNewVolumeDlg.cpp"
+				RelativePath=".\LFStoreNewLocalDlg.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\LFStoreNewPathPage.cpp"
 				>
 			</File>
 			<File
@@ -871,11 +875,15 @@
 				>
 			</File>
 			<File
-				RelativePath=".\LFStoreNewDlg.h"
+				RelativePath=".\LFStoreNewGeneralPage.h"
 				>
 			</File>
 			<File
-				RelativePath=".\LFStoreNewVolumeDlg.h"
+				RelativePath=".\LFStoreNewLocalDlg.h"
+				>
+			</File>
+			<File
+				RelativePath=".\LFStoreNewPathPage.h"
 				>
 			</File>
 			<File

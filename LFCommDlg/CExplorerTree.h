@@ -11,6 +11,7 @@
 //
 
 #define CETR_Desktop            _T("")
+#define CETR_AllDrives          _T("::DRVALL")
 #define CETR_InternalDrives     _T("::DRVINTERNAL")
 #define CETR_ExternalDrives     _T("::DRVEXTERNAL")
 

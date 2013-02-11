@@ -14,7 +14,7 @@
 class AFX_EXT_CLASS LFLicenseDlg : public LFDialog
 {
 public:
-	LFLicenseDlg(CWnd* pParent=NULL);
+	LFLicenseDlg(CWnd* pParentWnd=NULL);
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);
