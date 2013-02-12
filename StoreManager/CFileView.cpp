@@ -596,7 +596,7 @@ CMenu* CFileView::GetSendToMenu()
 	{
 		WCHAR tmpStr[256];
 		LFGetDefaultStoreName(tmpStr, 256);
-		AppendSendToItem(pMenu, nID, tmpStr, theApp.m_CoreImageListSmall.ExtractIcon(IDI_OVERLAY_Default-1), cx, cy, m_SendToItems);
+		AppendSendToItem(pMenu, nID, tmpStr, (HICON)LoadImage(GetModuleHandle(L"LFCOMMDLG.DLL"), MAKEINTRESOURCE(IDI_DEFAULT), IMAGE_ICON, cx, cy, LR_DEFAULTCOLOR), cx, cy, m_SendToItems);
 		Added = TRUE;
 
 		INT idx = (nID++) & 0xFF;
