@@ -128,7 +128,7 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPRECT rectItem, INT idx, BOO
 		rectBorder.left++;
 		rectBorder.top++;
 
-		CreateRoundRectangle(rectBorder, 2, path);
+		CreateRoundRectangle(rectBorder, (theApp.OSVersion!=OS_Eight) ? 2 : 0, path);
 
 		Pen pen(Color(0x10, 0x00, 0x00, 0x00));
 		g.DrawPath(&pen, &path);
@@ -140,7 +140,7 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPRECT rectItem, INT idx, BOO
 	dc.FillSolidRect(rect, bkCol);
 	if (hThemeList)
 	{
-		rect.DeflateRect(1, 1);
+		rect.InflateRect(1, 1);
 		DrawItemBackground(dc, rect, idx, Themed);
 	}
 	else
@@ -162,23 +162,24 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPRECT rectItem, INT idx, BOO
 	}
 
 	// Border
-	if (Themed)
-	{
-		CRect rectBorder(rectItem);
-		rectBorder.right--;
-		rectBorder.bottom--;
+	if ((!hThemeList) || (!(Hot | Selected)))
+		if (Themed)
+		{
+			CRect rectBorder(rectItem);
+			rectBorder.right--;
+			rectBorder.bottom--;
 
-		Matrix m;
-		m.Translate(-1.0, -1.0);
-		path.Transform(&m);
+			Matrix m;
+			m.Translate(-1.0, -1.0);
+			path.Transform(&m);
 
-		Pen pen(Color(0xFF, brCol & 0xFF, (brCol>>8) & 0xFF, (brCol>>16) & 0xFF));
-		g.DrawPath(&pen, &path);
-	}
-	else
-	{
-		dc.Draw3dRect(rectItem, brCol, brCol);
-	}
+			Pen pen(Color(0xFF, brCol & 0xFF, (brCol>>8) & 0xFF, (brCol>>16) & 0xFF));
+			g.DrawPath(&pen, &path);
+		}
+		else
+		{
+			dc.Draw3dRect(rectItem, brCol, brCol);
+		}
 
 	// Icon
 	CRect rectText(rectItem);
