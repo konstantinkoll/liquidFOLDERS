@@ -115,7 +115,7 @@ struct ItemCategory
 class CFileView : public CWnd
 {
 public:
-	CFileView(UINT DataSize=sizeof(FVItemData), BOOL EnableScrolling=TRUE, BOOL EnableHover=TRUE, BOOL EnableTooltip=TRUE, BOOL EnableShiftSelection=TRUE, BOOL EnableLabelEdit=TRUE);
+	CFileView(UINT DataSize=sizeof(FVItemData), BOOL EnableScrolling=TRUE, BOOL EnableHover=TRUE, BOOL EnableTooltip=TRUE, BOOL EnableShiftSelection=TRUE, BOOL EnableLabelEdit=TRUE, BOOL EnableFullRedraw=FALSE);
 	virtual ~CFileView();
 
 	virtual CMenu* GetBackgroundContextMenu();
@@ -157,6 +157,7 @@ protected:
 	BOOL m_EnableTooltip;
 	BOOL m_EnableShiftSelection;
 	BOOL m_EnableLabelEdit;
+	BOOL m_EnableFullRedraw;
 	BOOL m_HideFileExt;
 	BOOL m_ShowFocusRect;
 	BOOL m_AllowMultiSelect;
@@ -237,4 +238,5 @@ private:
 	void AppendAttribute(LFItemDescriptor* i, UINT attr, CString& str);
 	CString GetHint(LFItemDescriptor* i, WCHAR* FormatName=NULL);
 	void DestroyEdit(BOOL Accept=FALSE);
+	void ScrollWindow(INT dx, INT dy);
 };

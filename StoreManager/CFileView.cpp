@@ -53,7 +53,7 @@ void AppendSendToItem(CMenu* pMenu, UINT nID, LPCWSTR lpszNewItem, HICON hIcon, 
 #define ChangedItems()       { Invalidate(); GetParent()->SendMessage(WM_UPDATESELECTION); }
 #define FooterMargin         8
 
-CFileView::CFileView(UINT DataSize, BOOL EnableScrolling, BOOL EnableHover, BOOL EnableTooltip, BOOL EnableShiftSelection, BOOL EnableLabelEdit)
+CFileView::CFileView(UINT DataSize, BOOL EnableScrolling, BOOL EnableHover, BOOL EnableTooltip, BOOL EnableShiftSelection, BOOL EnableLabelEdit, BOOL EnableFullRedraw)
 	: CWnd()
 {
 	ASSERT(DataSize>=sizeof(FVItemData));
@@ -64,7 +64,7 @@ CFileView::CFileView(UINT DataSize, BOOL EnableScrolling, BOOL EnableHover, BOOL
 	m_ItemDataAllocated = 0;
 	m_FocusItem = m_HotItem = m_SelectionAnchor = m_EditLabel = m_Context = -1;
 	m_Context = LFContextDefault;
-	m_HeaderHeight = m_FontHeight[0] = m_FontHeight[1] = m_HScrollMax = m_VScrollMax = m_HScrollPos = m_VScrollPos = 0;
+	m_HeaderHeight = m_FontHeight[0] = m_FontHeight[1] = m_FontHeight[2] = m_HScrollMax = m_VScrollMax = m_HScrollPos = m_VScrollPos = 0;
 	p_FooterBitmap = NULL;
 	m_FooterPos.x = m_FooterPos.y = m_FooterSize.cx = m_FooterSize.cy = 0;
 	m_DataSize = DataSize;
@@ -77,6 +77,7 @@ CFileView::CFileView(UINT DataSize, BOOL EnableScrolling, BOOL EnableHover, BOOL
 	m_EnableTooltip = EnableTooltip;
 	m_EnableShiftSelection = EnableShiftSelection;
 	m_EnableLabelEdit = EnableLabelEdit;
+	m_EnableFullRedraw = EnableFullRedraw;
 }
 
 CFileView::~CFileView()
@@ -363,7 +364,7 @@ INT CFileView::GetFocusItem()
 	if (p_CookedFiles)
 	{
 		FVItemData* d = GetItemData(m_FocusItem);
-		return (d->Valid) ? m_FocusItem : -1;
+		return d->Valid ? m_FocusItem : -1;
 	}
 
 	return -1;
@@ -438,7 +439,7 @@ void CFileView::EnsureVisible(INT idx)
 	if (nInc)
 	{
 		m_VScrollPos += nInc;
-		ScrollWindowEx(0, -nInc, NULL, NULL, NULL, NULL, SW_INVALIDATE);
+		ScrollWindow(0, -nInc);
 
 		ZeroMemory(&si, sizeof(si));
 		si.cbSize = sizeof(SCROLLINFO);
@@ -460,7 +461,7 @@ void CFileView::EnsureVisible(INT idx)
 		if (nInc)
 		{
 			m_HScrollPos += nInc;
-			ScrollWindowEx(-nInc, 0, NULL, NULL, NULL, NULL, SW_INVALIDATE | SW_SCROLLCHILDREN);
+			ScrollWindow(-nInc, 0);
 	
 			ZeroMemory(&si, sizeof(si));
 			si.cbSize = sizeof(SCROLLINFO);
@@ -976,8 +977,8 @@ void CFileView::ResetScrollbars()
 {
 	if (m_EnableScrolling)
 	{
-		ScrollWindowEx(0, m_VScrollPos, NULL, NULL, NULL, NULL, SW_INVALIDATE);
-		ScrollWindowEx(m_HScrollPos, 0, NULL, NULL, NULL, NULL, SW_INVALIDATE | SW_SCROLLCHILDREN);
+		ScrollWindow(0, m_VScrollPos);
+		ScrollWindow(m_HScrollPos, 0);
 		m_VScrollPos = m_HScrollPos = 0;
 		SetScrollPos(SB_VERT, m_VScrollPos, TRUE);
 		SetScrollPos(SB_HORZ, m_HScrollPos, TRUE);
@@ -1146,6 +1147,20 @@ void CFileView::DestroyEdit(BOOL Accept)
 	m_EditLabel = -1;
 }
 
+void CFileView::ScrollWindow(INT dx, INT dy)
+{
+	ASSERT(m_EnableScrolling);
+
+	if (m_EnableFullRedraw)
+	{
+		Invalidate();
+	}
+	else
+	{
+		ScrollWindowEx(dx, dy, NULL, NULL, NULL, NULL, dx ? SW_INVALIDATE | SW_SCROLLCHILDREN : SW_INVALIDATE);
+	}
+}
+
 
 BEGIN_MESSAGE_MAP(CFileView, CWnd)
 	ON_WM_CREATE()
@@ -1299,7 +1314,7 @@ void CFileView::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 	if (nInc)
 	{
 		m_VScrollPos += nInc;
-		ScrollWindowEx(0, -nInc, NULL, NULL, NULL, NULL, SW_INVALIDATE);
+		ScrollWindow(0, -nInc);
 
 		ZeroMemory(&si, sizeof(si));
 		si.cbSize = sizeof(SCROLLINFO);
@@ -1356,7 +1371,7 @@ void CFileView::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 	if (nInc)
 	{
 		m_HScrollPos += nInc;
-		ScrollWindowEx(-nInc, 0, NULL, NULL, NULL, NULL, SW_INVALIDATE | SW_SCROLLCHILDREN);
+		ScrollWindow(-nInc, 0);
 
 		ZeroMemory(&si, sizeof(si));
 		si.cbSize = sizeof(SCROLLINFO);
@@ -1500,7 +1515,7 @@ BOOL CFileView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 		m_TooltipCtrl.Deactivate();
 
 		m_VScrollPos += nInc;
-		ScrollWindowEx(0, -nInc, NULL, NULL, NULL, NULL, SW_INVALIDATE);
+		ScrollWindow(0, -nInc);
 		SetScrollPos(SB_VERT, m_VScrollPos, TRUE);
 
 		ScreenToClient(&pt);
@@ -1523,7 +1538,7 @@ void CFileView::OnMouseHWheel(UINT nFlags, short zDelta, CPoint pt)
 		m_TooltipCtrl.Deactivate();
 
 		m_HScrollPos += nInc;
-		ScrollWindowEx(-nInc, 0, NULL, NULL, NULL, NULL, SW_INVALIDATE | SW_SCROLLCHILDREN);
+		ScrollWindow(-nInc, 0);
 		SetScrollPos(SB_HORZ, m_HScrollPos, TRUE);
 
 		ScreenToClient(&pt);
