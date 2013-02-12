@@ -151,7 +151,7 @@ protected:
 	HTHEME hThemeList;
 	LFTooltip m_TooltipCtrl;
 	UINT m_HeaderHeight;
-	INT m_FontHeight[3];
+	INT m_FontHeight[4];
 	BOOL m_EnableScrolling;
 	BOOL m_EnableHover;
 	BOOL m_EnableTooltip;

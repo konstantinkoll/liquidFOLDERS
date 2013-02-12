@@ -1220,6 +1220,8 @@ INT CFileView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_FontHeight[1] = dc->GetTextExtent(_T("Wy")).cy;
 	dc->SelectStockObject(DEFAULT_GUI_FONT);
 	m_FontHeight[2] = dc->GetTextExtent(_T("Wy")).cy;
+	dc->SelectObject(&theApp.m_SmallFont);
+	m_FontHeight[3] = dc->GetTextExtent(_T("Wy")).cy;
 	dc->SelectObject(pOldFont);
 	ReleaseDC(dc);
 
@@ -1453,7 +1455,7 @@ void CFileView::OnMouseHover(UINT nFlags, CPoint point)
 					switch (i->Type & LFTypeMask)
 					{
 					case LFTypeFile:
-						if ((theApp.m_Views[m_Context].Mode!=LFViewContent) && (theApp.m_Views[m_Context].Mode!=LFViewPreview))
+						if ((theApp.m_Views[m_Context].Mode!=LFViewContent) && (theApp.m_Views[m_Context].Mode!=LFViewPreview) && (theApp.m_Views[m_Context].Mode!=LFViewTimeline))
 						{
 							CDC* pDC = GetWindowDC();
 							hIcon = theApp.m_ThumbnailCache.GetThumbnailIcon(i, pDC);
