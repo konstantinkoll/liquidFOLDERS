@@ -125,7 +125,7 @@ public:
 
 	BOOL Create(CWnd* pParentWnd, UINT nID, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data=NULL, UINT nClassStyle=CS_DBLCLKS);
 	void UpdateViewOptions(INT Context=-1, BOOL Force=FALSE);
-	void UpdateSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data);
+	void UpdateSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data, BOOL InternalCall=FALSE);
 	void UpdateFooter();
 	INT GetFocusItem();
 	INT GetSelectedItem();

@@ -40,7 +40,10 @@ void CTimelineView::SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* p
 void CTimelineView::AdjustLayout()
 {
 	if (!p_CookedFiles)
+	{
+		m_ScrollWidth = m_ScrollHeight = 0;
 		return;
+	}
 
 	CRect rect;
 	GetWindowRect(&rect);
