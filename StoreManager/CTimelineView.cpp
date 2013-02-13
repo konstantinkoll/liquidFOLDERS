@@ -13,14 +13,14 @@
 #define ARROWSIZE     6
 #define BORDER        6
 #define GUTTER        10
-#define MIDDLE        26
+#define MIDDLE        24
 #define WHITE         100
 
 #define GetItemData(idx)     ((TimelineItemData*)(m_ItemData+(idx)*m_DataSize))
 #define UsePreview(i)        ((i->CoreAttributes.DomainID>=(theApp.OSVersion>OS_XP ? LFDomainAudio : LFDomainPhotos)) && (i->CoreAttributes.DomainID<=LFDomainVideos))
 
 CTimelineView::CTimelineView()
-	: CFileView(sizeof(TimelineItemData), TRUE, TRUE, TRUE, TRUE, TRUE, TRUE)
+	: CFileView(sizeof(TimelineItemData), TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, FALSE)
 {
 }
 

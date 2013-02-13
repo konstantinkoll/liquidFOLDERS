@@ -53,7 +53,7 @@ void AppendSendToItem(CMenu* pMenu, UINT nID, LPCWSTR lpszNewItem, HICON hIcon, 
 #define ChangedItems()       { Invalidate(); GetParent()->SendMessage(WM_UPDATESELECTION); }
 #define FooterMargin         8
 
-CFileView::CFileView(UINT DataSize, BOOL EnableScrolling, BOOL EnableHover, BOOL EnableTooltip, BOOL EnableShiftSelection, BOOL EnableLabelEdit, BOOL EnableFullRedraw)
+CFileView::CFileView(UINT DataSize, BOOL EnableScrolling, BOOL EnableHover, BOOL EnableTooltip, BOOL EnableShiftSelection, BOOL EnableLabelEdit, BOOL EnableFullRedraw, BOOL EnableTooltipOnVirtual)
 	: CWnd()
 {
 	ASSERT(DataSize>=sizeof(FVItemData));
@@ -78,6 +78,7 @@ CFileView::CFileView(UINT DataSize, BOOL EnableScrolling, BOOL EnableHover, BOOL
 	m_EnableShiftSelection = EnableShiftSelection;
 	m_EnableLabelEdit = EnableLabelEdit;
 	m_EnableFullRedraw = EnableFullRedraw;
+	m_EnableTooltipOnVirtual = EnableTooltipOnVirtual;
 }
 
 CFileView::~CFileView()
@@ -1473,6 +1474,9 @@ void CFileView::OnMouseHover(UINT nFlags, CPoint point)
 						Path[0] = i->CoreAttributes.FileID[0];
 						theApp.m_FileFormats.Lookup(Path, fd);
 						break;
+					case LFTypeVirtual:
+						if (!m_EnableTooltipOnVirtual)
+							goto Leave;
 					default:
 						fd.FormatName[0] = L'\0';
 						fd.SysIconIndex = -1;
@@ -1495,6 +1499,7 @@ void CFileView::OnMouseHover(UINT nFlags, CPoint point)
 	}
 	else
 	{
+Leave:
 		m_TooltipCtrl.Deactivate();
 	}
 

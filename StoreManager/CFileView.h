@@ -115,7 +115,7 @@ struct ItemCategory
 class CFileView : public CWnd
 {
 public:
-	CFileView(UINT DataSize=sizeof(FVItemData), BOOL EnableScrolling=TRUE, BOOL EnableHover=TRUE, BOOL EnableTooltip=TRUE, BOOL EnableShiftSelection=TRUE, BOOL EnableLabelEdit=TRUE, BOOL EnableFullRedraw=FALSE);
+	CFileView(UINT DataSize=sizeof(FVItemData), BOOL EnableScrolling=TRUE, BOOL EnableHover=TRUE, BOOL EnableTooltip=TRUE, BOOL EnableShiftSelection=TRUE, BOOL EnableLabelEdit=TRUE, BOOL EnableFullRedraw=FALSE, BOOL EnableTooltipOnVirtual=TRUE);
 	virtual ~CFileView();
 
 	virtual CMenu* GetBackgroundContextMenu();
@@ -158,6 +158,7 @@ protected:
 	BOOL m_EnableShiftSelection;
 	BOOL m_EnableLabelEdit;
 	BOOL m_EnableFullRedraw;
+	BOOL m_EnableTooltipOnVirtual;
 	BOOL m_HideFileExt;
 	BOOL m_ShowFocusRect;
 	BOOL m_AllowMultiSelect;
