@@ -10,10 +10,11 @@
 // CTimelineView
 //
 
-#define BORDER     6
-#define GUTTER     10
-#define MIDDLE     32
-#define WHITE      100
+#define ARROWSIZE     6
+#define BORDER        6
+#define GUTTER        10
+#define MIDDLE        26
+#define WHITE         100
 
 #define GetItemData(idx)     ((TimelineItemData*)(m_ItemData+(idx)*m_DataSize))
 #define UsePreview(i)        ((i->CoreAttributes.DomainID>=(theApp.OSVersion>OS_XP ? LFDomainAudio : LFDomainPhotos)) && (i->CoreAttributes.DomainID<=LFDomainVideos))
@@ -75,6 +76,7 @@ Restart:
 	m_PreviewCount = (m_ItemWidth-BORDER)/(128+BORDER);
 
 	INT CurRow[2] = { GUTTER, GUTTER };
+	INT LastRow = 0;
 
 	for (INT a=0; a<(INT)p_CookedFiles->m_ItemCount; a++)
 	{
@@ -86,7 +88,7 @@ Restart:
 
 			if (m_ItemWidth<2*BORDER+128)
 			{
-				d->Preview = FALSE;
+				d->Preview = 0;
 			}
 			else
 				switch (p_CookedFiles->m_Items[a]->Type & LFTypeMask)
@@ -100,7 +102,7 @@ Restart:
 						LFItemDescriptor* i = p_RawFiles->m_Items[b];
 						if (UsePreview(i))
 						{
-							d->Preview = TRUE;
+							d->Preview = 1;
 							break;
 						}
 					}
@@ -129,12 +131,25 @@ Restart:
 			}
 
 			INT c = m_TwoColumns ? CurRow[0]<=CurRow[1] ? 0 : 1 : 0;
+			d->Arrow = m_TwoColumns ? 1-(BYTE)c*2 : 0;
+			d->ArrowOffs = 0;
+
+			if (CurRow[c]==LastRow)
+				if (h>(m_CaptionHeight+BORDER)/2+ARROWSIZE+BORDER+2*GUTTER)
+				{
+					d->ArrowOffs = 2*GUTTER;
+				}
+				else
+				{
+					CurRow[c] += GUTTER;
+				}
 
 			d->Hdr.Rect.left = (c==0) ? GUTTER : GUTTER+m_ItemWidth+MIDDLE;
 			d->Hdr.Rect.top = CurRow[c];
 			d->Hdr.Rect.right = d->Hdr.Rect.left+m_ItemWidth;
 			d->Hdr.Rect.bottom = d->Hdr.Rect.top+h;
 
+			LastRow = CurRow[c];
 			CurRow[c] += h+GUTTER;
 
 			if ((CurRow[c]>rect.Height()) && (!HasScrollbars))
@@ -192,6 +207,7 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPRECT rectItem, INT idx, BOO
 
 	// Shadow
 	GraphicsPath path;
+	Color sCol(0x12, 0x00, 0x00, 0x00);
 	if (Themed)
 	{
 		CRect rectBorder(rectItem);
@@ -200,7 +216,7 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPRECT rectItem, INT idx, BOO
 
 		CreateRoundRectangle(rectBorder, (theApp.OSVersion!=OS_Eight) ? 2 : 0, path);
 
-		Pen pen(Color(0x12, 0x00, 0x00, 0x00));
+		Pen pen(sCol);
 		g.DrawPath(&pen, &path);
 	}
 
@@ -251,6 +267,41 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPRECT rectItem, INT idx, BOO
 			dc.Draw3dRect(rectItem, brCol, brCol);
 		}
 
+	// Arrows
+	if (d->Arrow)
+	{
+		CPen pen(PS_SOLID, 1, bkCol);
+		CPen* pPen = dc.SelectObject(&pen);
+
+		INT Base = (d->Arrow==1) ? rectItem->right-1 : rectItem->left;
+		INT Start = rectItem->top+(m_CaptionHeight+BORDER)/2-ARROWSIZE+d->ArrowOffs;
+		INT y = Start;
+
+		for (INT a=-ARROWSIZE; a<=ARROWSIZE; a++)
+		{
+			const INT x = Base+(ARROWSIZE-abs(a)+1)*d->Arrow;
+			dc.MoveTo(Base, y);
+			dc.LineTo(x, y);
+
+			dc.SetPixel(x, y, brCol);
+			y++;
+		}
+
+		if (Themed)
+		{
+			INT Offs = d->Arrow>0 ? 0 : 1;
+
+			g.SetSmoothingMode(SmoothingModeNone);
+
+			Pen pen(sCol);
+			g.DrawLine(&pen, Base+(ARROWSIZE+1)*d->Arrow, Start+ARROWSIZE+1, Base+d->Arrow+1-Offs, Start+2*ARROWSIZE+Offs);
+
+			g.SetSmoothingMode(SmoothingModeAntiAlias);
+		}
+
+		dc.SelectObject(pPen);
+	}
+
 	// Icon
 	CRect rectText(rectItem);
 	rectText.DeflateRect(BORDER, BORDER);
@@ -266,7 +317,6 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPRECT rectItem, INT idx, BOO
 	}
 
 	// Caption
-
 	rectText.left += m_IconSize.cx+BORDER;
 	rectText.bottom = rectText.top+m_FontHeight[0];
 
@@ -409,7 +459,7 @@ void CTimelineView::OnPaint()
 		// Timeline
 		COLORREF tlCol = Themed ? 0xD3B5A9 : GetSysColor(COLOR_3DSHADOW);
 		if (m_TwoColumns)
-			dc.FillSolidRect(rect.Width()/2, -m_VScrollPos, 2, m_ScrollHeight, tlCol);
+			dc.FillSolidRect(rect.Width()/2-1, -m_VScrollPos, 2, m_ScrollHeight, tlCol);
 
 		CFont* pOldFont = dc.SelectObject(&theApp.m_BoldFont);
 

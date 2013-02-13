@@ -13,6 +13,8 @@
 struct TimelineItemData
 {
 	FVItemData Hdr;
+	INT Arrow;
+	INT ArrowOffs;
 	WORD Year;
 	BYTE Preview;
 };
