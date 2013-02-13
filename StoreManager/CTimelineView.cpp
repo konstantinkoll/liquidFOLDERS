@@ -12,7 +12,7 @@
 
 #define BORDER     6
 #define GUTTER     10
-#define MIDDLE     24
+#define MIDDLE     32
 #define WHITE      100
 
 #define GetItemData(idx)     ((TimelineItemData*)(m_ItemData+(idx)*m_DataSize))
@@ -51,8 +51,14 @@ void CTimelineView::AdjustLayout()
 	BOOL HasScrollbars = FALSE;
 
 Restart:
-	m_TwoColumns = rect.Width()-2*GUTTER-MIDDLE-10*BORDER>=512;
-	m_ItemWidth = m_TwoColumns ? (rect.Width()-MIDDLE)/2-2*GUTTER : rect.Width()-2*GUTTER;
+	SYSTEMTIME st;
+	GetLocalTime(&st);
+
+	WORD Year = st.wYear;
+
+	m_Categories.m_ItemCount = 0;
+	m_TwoColumns = rect.Width()-2*GUTTER-MIDDLE-7*BORDER>=512;
+	m_ItemWidth = m_TwoColumns ? (rect.Width()-MIDDLE)/2-GUTTER : rect.Width()-2*GUTTER;
 	ASSERT(m_ItemWidth>0);
 	m_PreviewCount = (m_ItemWidth-BORDER)/(128+BORDER);
 
@@ -61,6 +67,8 @@ Restart:
 	for (INT a=0; a<(INT)p_CookedFiles->m_ItemCount; a++)
 	{
 		TimelineItemData* d = GetItemData(a);
+		LFItemDescriptor* i = p_CookedFiles->m_Items[a];
+
 		if (m_ItemWidth<2*BORDER+128)
 		{
 			d->Preview = FALSE;
@@ -69,10 +77,10 @@ Restart:
 			switch (p_CookedFiles->m_Items[a]->Type & LFTypeMask)
 			{
 			case LFTypeFile:
-				d->Preview = UsePreview(p_CookedFiles->m_Items[a]);
+				d->Preview = UsePreview(i);
 				break;
 			case LFTypeVirtual:
-				for (INT b=p_CookedFiles->m_Items[a]->FirstAggregate; b<=p_CookedFiles->m_Items[a]->LastAggregate; b++)
+				for (INT b=i->FirstAggregate; b<=i->LastAggregate; b++)
 				{
 					LFItemDescriptor* i = p_RawFiles->m_Items[b];
 					if (UsePreview(i))
@@ -87,9 +95,36 @@ Restart:
 		if (d->Preview)
 			h += 128+BORDER+BORDER/2;
 
+		LFVariantData v;
+		v.Attr = m_ViewParameters.SortBy;
+		LFGetAttributeVariantData(i, &v);
+
+		SYSTEMTIME stUTC;
+		SYSTEMTIME stLocal;
+		FileTimeToSystemTime(&v.Time, &stUTC);
+		SystemTimeToTzSpecificLocalTime(NULL, &stUTC, &stLocal);
+
+		if (stLocal.wYear!=Year)
+		{
+			Year = stLocal.wYear;
+
+			ItemCategory ic;
+			ZeroMemory(&ic, sizeof(ic));
+
+			swprintf_s(ic.Caption, 256, L"%d", Year);
+
+			ic.Rect.left = rect.Width()/2-m_LabelWidth/2;
+			ic.Rect.right = ic.Rect.left+m_LabelWidth;
+			ic.Rect.top = max(CurRow[0], CurRow[1]);
+			ic.Rect.bottom = ic.Rect.top+2*BORDER+m_FontHeight[0];
+			m_Categories.AddItem(ic);
+
+			CurRow[0] = CurRow[1] = ic.Rect.bottom+GUTTER;
+		}
+
 		INT c = m_TwoColumns ? CurRow[0]<=CurRow[1] ? 0 : 1 : 0;
 
-		d->Hdr.Rect.left = (c==0) ? GUTTER : rect.Width()-GUTTER-m_ItemWidth;
+		d->Hdr.Rect.left = (c==0) ? GUTTER : GUTTER+m_ItemWidth+MIDDLE;
 		d->Hdr.Rect.top = CurRow[c];
 		d->Hdr.Rect.right = d->Hdr.Rect.left+m_ItemWidth;
 		d->Hdr.Rect.bottom = d->Hdr.Rect.top+h;
@@ -108,6 +143,31 @@ Restart:
 	m_ScrollWidth = rect.Width();
 
 	CFileView::AdjustLayout();
+}
+
+void CTimelineView::DrawCategory(CDC& dc, Graphics& g, LPRECT rectCategory, ItemCategory* ic, COLORREF tlCol, BOOL Themed)
+{
+	if (Themed && (theApp.OSVersion!=OS_Eight))
+	{
+		GraphicsPath path;
+		CreateRoundRectangle(rectCategory, 4, path);
+	
+		Matrix m;
+		m.Translate(0.5, 0.5);
+		path.Transform(&m);
+
+		SolidBrush brush(Color(0xFF, tlCol & 0xFF, (tlCol>>8) & 0xFF, (tlCol>>16) & 0xFF));
+		g.FillPath(&brush, &path);
+	}
+	else
+	{
+		dc.FillSolidRect(rectCategory, tlCol);
+	}
+
+	CRect rectText(rectCategory);
+	rectText.OffsetRect(1, 1);
+
+	dc.DrawText(ic->Caption, -1, rectText, DT_SINGLELINE | DT_CENTER | DT_VCENTER | DT_NOPREFIX);
 }
 
 void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPRECT rectItem, INT idx, BOOL Themed)
@@ -133,7 +193,7 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPRECT rectItem, INT idx, BOO
 
 		CreateRoundRectangle(rectBorder, (theApp.OSVersion!=OS_Eight) ? 2 : 0, path);
 
-		Pen pen(Color(0x10, 0x00, 0x00, 0x00));
+		Pen pen(Color(0x12, 0x00, 0x00, 0x00));
 		g.DrawPath(&pen, &path);
 	}
 
@@ -166,7 +226,7 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPRECT rectItem, INT idx, BOO
 
 	// Border
 	if ((!hThemeList) || (!(Hot | Selected)))
-		if (Themed)
+		if (Themed && (theApp.OSVersion!=OS_Eight))
 		{
 			CRect rectBorder(rectItem);
 			rectBorder.right--;
@@ -280,6 +340,12 @@ INT CTimelineView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	m_CaptionHeight = max(cy, m_FontHeight[1]+m_FontHeight[3]+BORDER/2);
 
+	CDC* dc = GetWindowDC();
+	CFont* pOldFont = dc->SelectObject(&theApp.m_BoldFont);
+	m_LabelWidth = dc->GetTextExtent(_T("8888")).cx+2*BORDER;
+	dc->SelectObject(pOldFont);
+	ReleaseDC(dc);
+
 	return 0;
 }
 
@@ -330,32 +396,43 @@ void CTimelineView::OnPaint()
 		dc.DrawText(tmpStr, rectText, DT_CENTER | DT_SINGLELINE | DT_END_ELLIPSIS);
 	}
 	else
+	{
+		RECT rectIntersect;
+
+		// Timeline
+		COLORREF tlCol = Themed ? 0xD3B5A9 : GetSysColor(COLOR_3DSHADOW);
+		if (m_TwoColumns)
+			dc.FillSolidRect(rect.Width()/2, -m_VScrollPos, 2, m_ScrollHeight, tlCol);
+
+		CFont* pOldFont = dc.SelectObject(&theApp.m_BoldFont);
+
+		dc.SetTextColor(Themed ? 0xFFFFFF : GetSysColor(COLOR_3DLIGHT));
+
+		for (UINT a=0; a<m_Categories.m_ItemCount; a++)
+		{
+			CRect rect(m_Categories.m_Items[a].Rect);
+			rect.OffsetRect(0, -m_VScrollPos);
+			if (IntersectRect(&rectIntersect, rect, rectUpdate))
+				DrawCategory(dc, g, rect, &m_Categories.m_Items[a], tlCol, Themed);
+		}
+
+		dc.SelectObject(pOldFont);
+
+		// Items
 		if (p_CookedFiles)
 			if (p_CookedFiles->m_ItemCount)
-			{
-				RECT rectIntersect;
-
 				for (UINT a=0; a<p_CookedFiles->m_ItemCount; a++)
 				{
 					TimelineItemData* d = GetItemData(a);
 					if (d->Hdr.Valid)
 					{
 						CRect rect(d->Hdr.Rect);
-						rect.OffsetRect(-m_HScrollPos, -m_VScrollPos);
+						rect.OffsetRect(0, -m_VScrollPos);
 						if (IntersectRect(&rectIntersect, rect, rectUpdate))
 							DrawItem(dc, g, rect, a, Themed);
 					}
 				}
-
-				/*if (m_HasCategories)
-					for (UINT a=0; a<m_Categories.m_ItemCount; a++)
-					{
-						CRect rect(m_Categories.m_Items[a].Rect);
-						rect.OffsetRect(-m_HScrollPos, -m_VScrollPos+(INT)m_HeaderHeight);
-						if (IntersectRect(&rectIntersect, rect, rectUpdate))
-							DrawCategory(dc, rect, &m_Categories.m_Items[a], Themed);
-					}*/
-			}
+	}
 
 	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);
 	dc.SelectObject(pOldFont);

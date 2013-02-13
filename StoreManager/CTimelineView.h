@@ -25,6 +25,7 @@ protected:
 	BOOL m_TwoColumns;
 	INT m_CaptionHeight;
 	INT m_ItemWidth;
+	INT m_LabelWidth;
 	INT m_PreviewCount;
 	SIZE m_IconSize;
 
@@ -36,4 +37,9 @@ protected:
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnPaint();
 	DECLARE_MESSAGE_MAP()
+
+private:
+	DynArray<ItemCategory> m_Categories;
+
+	void DrawCategory(CDC& dc, Graphics& g, LPRECT rectCategory, ItemCategory* ic, COLORREF tlCol, BOOL Themed);
 };
