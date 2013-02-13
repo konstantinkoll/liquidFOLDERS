@@ -28,13 +28,25 @@ void CTimelineView::SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* p
 	CFileView::SetSearchResult(pRawFiles, pCookedFiles, Data);
 
 	if (p_CookedFiles)
-	{
 		for (UINT a=0; a<p_CookedFiles->m_ItemCount; a++)
 		{
 			TimelineItemData* d = GetItemData(a);
-			d->Hdr.Valid = TRUE;
+
+			LFVariantData v;
+			v.Attr = m_ViewParameters.SortBy;
+			LFGetAttributeVariantData(p_CookedFiles->m_Items[a], &v);
+
+			d->Hdr.Valid = !LFIsNullVariantData(&v);
+			if (d->Hdr.Valid)
+			{
+				SYSTEMTIME stUTC;
+				SYSTEMTIME stLocal;
+				FileTimeToSystemTime(&v.Time, &stUTC);
+				SystemTimeToTzSpecificLocalTime(NULL, &stUTC, &stLocal);
+
+				d->Year = stLocal.wYear;
+			}
 		}
-	}
 }
 
 void CTimelineView::AdjustLayout()
@@ -67,75 +79,70 @@ Restart:
 	for (INT a=0; a<(INT)p_CookedFiles->m_ItemCount; a++)
 	{
 		TimelineItemData* d = GetItemData(a);
-		LFItemDescriptor* i = p_CookedFiles->m_Items[a];
 
-		if (m_ItemWidth<2*BORDER+128)
+		if (d->Hdr.Valid)
 		{
-			d->Preview = FALSE;
-		}
-		else
-			switch (p_CookedFiles->m_Items[a]->Type & LFTypeMask)
+			LFItemDescriptor* i = p_CookedFiles->m_Items[a];
+
+			if (m_ItemWidth<2*BORDER+128)
 			{
-			case LFTypeFile:
-				d->Preview = UsePreview(i);
-				break;
-			case LFTypeVirtual:
-				for (INT b=i->FirstAggregate; b<=i->LastAggregate; b++)
+				d->Preview = FALSE;
+			}
+			else
+				switch (p_CookedFiles->m_Items[a]->Type & LFTypeMask)
 				{
-					LFItemDescriptor* i = p_RawFiles->m_Items[b];
-					if (UsePreview(i))
+				case LFTypeFile:
+					d->Preview = UsePreview(i);
+					break;
+				case LFTypeVirtual:
+					for (INT b=i->FirstAggregate; b<=i->LastAggregate; b++)
 					{
-						d->Preview = TRUE;
-						break;
+						LFItemDescriptor* i = p_RawFiles->m_Items[b];
+						if (UsePreview(i))
+						{
+							d->Preview = TRUE;
+							break;
+						}
 					}
 				}
+
+			INT h = 2*BORDER+m_CaptionHeight;
+			if (d->Preview)
+				h += 128+BORDER+BORDER/2;
+
+			if (d->Year!=Year)
+			{
+				Year = d->Year;
+
+				ItemCategory ic;
+				ZeroMemory(&ic, sizeof(ic));
+
+				swprintf_s(ic.Caption, 256, L"%d", Year);
+
+				ic.Rect.left = rect.Width()/2-m_LabelWidth/2;
+				ic.Rect.right = ic.Rect.left+m_LabelWidth;
+				ic.Rect.top = max(CurRow[0], CurRow[1]);
+				ic.Rect.bottom = ic.Rect.top+2*BORDER+m_FontHeight[0];
+				m_Categories.AddItem(ic);
+
+				CurRow[0] = CurRow[1] = ic.Rect.bottom+GUTTER;
 			}
 
-		INT h = 2*BORDER+m_CaptionHeight;
-		if (d->Preview)
-			h += 128+BORDER+BORDER/2;
+			INT c = m_TwoColumns ? CurRow[0]<=CurRow[1] ? 0 : 1 : 0;
 
-		LFVariantData v;
-		v.Attr = m_ViewParameters.SortBy;
-		LFGetAttributeVariantData(i, &v);
+			d->Hdr.Rect.left = (c==0) ? GUTTER : GUTTER+m_ItemWidth+MIDDLE;
+			d->Hdr.Rect.top = CurRow[c];
+			d->Hdr.Rect.right = d->Hdr.Rect.left+m_ItemWidth;
+			d->Hdr.Rect.bottom = d->Hdr.Rect.top+h;
 
-		SYSTEMTIME stUTC;
-		SYSTEMTIME stLocal;
-		FileTimeToSystemTime(&v.Time, &stUTC);
-		SystemTimeToTzSpecificLocalTime(NULL, &stUTC, &stLocal);
+			CurRow[c] += h+GUTTER;
 
-		if (stLocal.wYear!=Year)
-		{
-			Year = stLocal.wYear;
-
-			ItemCategory ic;
-			ZeroMemory(&ic, sizeof(ic));
-
-			swprintf_s(ic.Caption, 256, L"%d", Year);
-
-			ic.Rect.left = rect.Width()/2-m_LabelWidth/2;
-			ic.Rect.right = ic.Rect.left+m_LabelWidth;
-			ic.Rect.top = max(CurRow[0], CurRow[1]);
-			ic.Rect.bottom = ic.Rect.top+2*BORDER+m_FontHeight[0];
-			m_Categories.AddItem(ic);
-
-			CurRow[0] = CurRow[1] = ic.Rect.bottom+GUTTER;
-		}
-
-		INT c = m_TwoColumns ? CurRow[0]<=CurRow[1] ? 0 : 1 : 0;
-
-		d->Hdr.Rect.left = (c==0) ? GUTTER : GUTTER+m_ItemWidth+MIDDLE;
-		d->Hdr.Rect.top = CurRow[c];
-		d->Hdr.Rect.right = d->Hdr.Rect.left+m_ItemWidth;
-		d->Hdr.Rect.bottom = d->Hdr.Rect.top+h;
-
-		CurRow[c] += h+GUTTER;
-
-		if ((CurRow[c]>rect.Height()) && (!HasScrollbars))
-		{
-			HasScrollbars = TRUE;
-			rect.right -= GetSystemMetrics(SM_CXVSCROLL);
-			goto Restart;
+			if ((CurRow[c]>rect.Height()) && (!HasScrollbars))
+			{
+				HasScrollbars = TRUE;
+				rect.right -= GetSystemMetrics(SM_CXVSCROLL);
+				goto Restart;
+			}
 		}
 	}
 
