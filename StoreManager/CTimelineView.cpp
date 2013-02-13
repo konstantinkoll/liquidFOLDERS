@@ -17,7 +17,7 @@
 #define WHITE         100
 
 #define GetItemData(idx)     ((TimelineItemData*)(m_ItemData+(idx)*m_DataSize))
-#define UsePreview(i)        ((i->CoreAttributes.DomainID>=(theApp.OSVersion>OS_XP ? LFDomainAudio : LFDomainPhotos)) && (i->CoreAttributes.DomainID<=LFDomainVideos))
+#define UsePreview(i)        ((i->CoreAttributes.DomainID>=LFDomainPhotos) && (i->CoreAttributes.DomainID<=LFDomainVideos))
 
 CTimelineView::CTimelineView()
 	: CFileView(sizeof(TimelineItemData), TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, FALSE)
