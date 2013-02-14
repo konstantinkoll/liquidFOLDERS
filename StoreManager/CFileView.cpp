@@ -546,6 +546,7 @@ void CFileView::InvalidateItem(INT idx)
 		if ((idx>=0) && (idx<(INT)p_CookedFiles->m_ItemCount))
 		{
 			RECT rect = GetItemRect(idx);
+			InflateRect(&rect, GetItemData(idx)->RectInflate, 0);
 			InvalidateRect(&rect);
 		}
 }

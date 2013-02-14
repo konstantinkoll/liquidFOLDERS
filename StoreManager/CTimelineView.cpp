@@ -72,7 +72,6 @@ Restart:
 	m_Categories.m_ItemCount = 0;
 	m_TwoColumns = rect.Width()-2*GUTTER-MIDDLE-7*BORDER>=512;
 	m_ItemWidth = m_TwoColumns ? (rect.Width()-MIDDLE)/2-GUTTER : rect.Width()-2*GUTTER;
-	ASSERT(m_ItemWidth>0);
 	m_PreviewCount = (m_ItemWidth-BORDER)/(128+BORDER);
 
 	INT CurRow[2] = { GUTTER, GUTTER };
@@ -133,6 +132,7 @@ Restart:
 			INT c = m_TwoColumns ? CurRow[0]<=CurRow[1] ? 0 : 1 : 0;
 			d->Arrow = m_TwoColumns ? 1-(BYTE)c*2 : 0;
 			d->ArrowOffs = 0;
+			d->Hdr.RectInflate = d->Arrow ? ARROWSIZE+1 : 0;
 
 			if (CurRow[c]==LastRow)
 				if (h>(m_CaptionHeight+BORDER)/2+ARROWSIZE+BORDER+2*GUTTER)
@@ -187,7 +187,8 @@ void CTimelineView::DrawCategory(CDC& dc, Graphics& g, LPRECT rectCategory, Item
 	}
 
 	CRect rectText(rectCategory);
-	rectText.OffsetRect(1, 1);
+	if (Themed)
+		rectText.OffsetRect(1, 1);
 
 	dc.DrawText(ic->Caption, -1, rectText, DT_SINGLELINE | DT_CENTER | DT_VCENTER | DT_NOPREFIX);
 }
@@ -200,7 +201,7 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPRECT rectItem, INT idx, BOO
 	BOOL Hot = (m_HotItem==idx);
 	BOOL Selected = d->Hdr.Selected;
 
-	COLORREF brCol = Hot ? Themed ? 0xCDBBB4 : GetSysColor(COLOR_WINDOWTEXT) : Themed ? 0xE0CDC4 : GetSysColor(COLOR_3DSHADOW);;
+	COLORREF brCol = Hot ? Themed ? 0xCDBBB4 : GetSysColor(COLOR_WINDOWTEXT) : Themed ? 0xE0CDC4 : GetSysColor(COLOR_3DSHADOW);
 	COLORREF bkCol = hThemeList ? 0xFFFFFF : Selected ? GetSysColor(GetFocus()==this ? COLOR_HIGHLIGHT : COLOR_3DFACE) : Themed ? 0xFFFFFF : GetSysColor(COLOR_WINDOW);
 	COLORREF cpCol = Themed ? 0x98593B : GetSysColor(COLOR_WINDOWTEXT);
 	COLORREF txCol = Themed ? 0x808080 : GetSysColor(COLOR_3DSHADOW);
@@ -224,6 +225,7 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPRECT rectItem, INT idx, BOO
 	CRect rect(rectItem);
 	rect.DeflateRect(1, 1);
 	dc.FillSolidRect(rect, bkCol);
+
 	if (hThemeList)
 	{
 		rect.InflateRect(1, 1);
@@ -248,7 +250,7 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPRECT rectItem, INT idx, BOO
 	}
 
 	// Border
-	if ((!hThemeList) || (!(Hot | Selected)))
+	if ((!hThemeList) || (!(Hot || Selected)))
 		if (Themed && (theApp.OSVersion!=OS_Eight))
 		{
 			CRect rectBorder(rectItem);
@@ -259,7 +261,7 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPRECT rectItem, INT idx, BOO
 			m.Translate(-1.0, -1.0);
 			path.Transform(&m);
 
-			Pen pen(Color(0xFF, brCol & 0xFF, (brCol>>8) & 0xFF, (brCol>>16) & 0xFF));
+			Pen pen(Color(brCol & 0xFF, (brCol>>8) & 0xFF, (brCol>>16) & 0xFF));
 			g.DrawPath(&pen, &path);
 		}
 		else
@@ -270,20 +272,24 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPRECT rectItem, INT idx, BOO
 	// Arrows
 	if (d->Arrow)
 	{
-		CPen pen(PS_SOLID, 1, bkCol);
-		CPen* pPen = dc.SelectObject(&pen);
-
 		INT Base = (d->Arrow==1) ? rectItem->right-1 : rectItem->left;
 		INT Start = rectItem->top+(m_CaptionHeight+BORDER)/2-ARROWSIZE+d->ArrowOffs;
 		INT y = Start;
 
+		COLORREF ptCol = hThemeList ? dc.GetPixel(Base, y) : brCol;
+
 		for (INT a=-ARROWSIZE; a<=ARROWSIZE; a++)
 		{
+			CPen pen(PS_SOLID, 1, dc.GetPixel(Base-2*d->Arrow, y));
+			CPen* pPen = dc.SelectObject(&pen);
+
 			const INT x = Base+(ARROWSIZE-abs(a)+1)*d->Arrow;
 			dc.MoveTo(Base, y);
 			dc.LineTo(x, y);
 
-			dc.SetPixel(x, y, brCol);
+			dc.SelectObject(pPen);
+
+			dc.SetPixel(x, y, ptCol);
 			y++;
 		}
 
@@ -298,8 +304,6 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPRECT rectItem, INT idx, BOO
 
 			g.SetSmoothingMode(SmoothingModeAntiAlias);
 		}
-
-		dc.SelectObject(pPen);
 	}
 
 	// Icon
@@ -477,7 +481,7 @@ void CTimelineView::OnPaint()
 
 		CFont* pOldFont = dc.SelectObject(&theApp.m_BoldFont);
 
-		dc.SetTextColor(Themed ? 0xFFFFFF : GetSysColor(COLOR_3DLIGHT));
+		dc.SetTextColor(Themed ? 0xFFFFFF : GetSysColor(COLOR_HIGHLIGHTTEXT));
 
 		for (UINT a=0; a<m_Categories.m_ItemCount; a++)
 		{

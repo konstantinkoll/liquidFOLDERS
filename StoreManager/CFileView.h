@@ -92,6 +92,7 @@ struct SendToItemData
 struct FVItemData
 {
 	RECT Rect;
+	INT RectInflate;
 	BOOL Selected;
 	BOOL Valid;
 };
