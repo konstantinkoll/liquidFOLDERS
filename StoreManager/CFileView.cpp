@@ -53,7 +53,7 @@ void AppendSendToItem(CMenu* pMenu, UINT nID, LPCWSTR lpszNewItem, HICON hIcon, 
 #define ChangedItems()       { Invalidate(); GetParent()->SendMessage(WM_UPDATESELECTION); }
 #define FooterMargin         8
 
-CFileView::CFileView(UINT DataSize, BOOL EnableScrolling, BOOL EnableHover, BOOL EnableTooltip, BOOL EnableShiftSelection, BOOL EnableLabelEdit, BOOL EnableFullRedraw, BOOL EnableTooltipOnVirtual)
+CFileView::CFileView(UINT DataSize, BOOL EnableScrolling, BOOL EnableHover, BOOL EnableTooltip, BOOL EnableShiftSelection, BOOL EnableLabelEdit, BOOL EnableTooltipOnVirtual)
 	: CWnd()
 {
 	ASSERT(DataSize>=sizeof(FVItemData));
@@ -77,7 +77,6 @@ CFileView::CFileView(UINT DataSize, BOOL EnableScrolling, BOOL EnableHover, BOOL
 	m_EnableTooltip = EnableTooltip;
 	m_EnableShiftSelection = EnableShiftSelection;
 	m_EnableLabelEdit = EnableLabelEdit;
-	m_EnableFullRedraw = EnableFullRedraw;
 	m_EnableTooltipOnVirtual = EnableTooltipOnVirtual;
 }
 
@@ -1154,14 +1153,7 @@ void CFileView::ScrollWindow(INT dx, INT dy)
 {
 	ASSERT(m_EnableScrolling);
 
-	if (m_EnableFullRedraw)
-	{
-		Invalidate();
-	}
-	else
-	{
-		ScrollWindowEx(dx, dy, NULL, NULL, NULL, NULL, dx ? SW_INVALIDATE | SW_SCROLLCHILDREN : SW_INVALIDATE);
-	}
+	ScrollWindowEx(dx, dy, NULL, NULL, NULL, NULL, dx ? SW_INVALIDATE | SW_SCROLLCHILDREN : SW_INVALIDATE);
 }
 
 

@@ -12,7 +12,7 @@
 
 #define ARROWSIZE     6
 #define BORDER        6
-#define GUTTER        10
+#define GUTTER        14
 #define MIDDLE        24
 #define WHITE         100
 
@@ -20,7 +20,7 @@
 #define UsePreview(i)        ((i->CoreAttributes.DomainID>=LFDomainPhotos) && (i->CoreAttributes.DomainID<=LFDomainVideos))
 
 CTimelineView::CTimelineView()
-	: CFileView(sizeof(TimelineItemData), TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, FALSE)
+	: CFileView(sizeof(TimelineItemData), TRUE, TRUE, TRUE, TRUE, TRUE, FALSE)
 {
 }
 
@@ -374,6 +374,20 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPRECT rectItem, INT idx, BOO
 		{
 			theApp.m_ThumbnailCache.DrawJumboThumbnail(dc, rectPreview, i);
 		}
+	}
+}
+
+void CTimelineView::ScrollWindow(INT dx, INT dy)
+{
+	CFileView::ScrollWindow(dx, dy);
+
+	if (IsCtrlThemed())
+	{
+		CRect rect;
+		GetClientRect(rect);
+
+		rect.bottom = rect.top+(dy<0) ? WHITE : WHITE+dy;
+		InvalidateRect(rect);
 	}
 }
 

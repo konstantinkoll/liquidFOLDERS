@@ -115,7 +115,7 @@ struct ItemCategory
 class CFileView : public CWnd
 {
 public:
-	CFileView(UINT DataSize=sizeof(FVItemData), BOOL EnableScrolling=TRUE, BOOL EnableHover=TRUE, BOOL EnableTooltip=TRUE, BOOL EnableShiftSelection=TRUE, BOOL EnableLabelEdit=TRUE, BOOL EnableFullRedraw=FALSE, BOOL EnableTooltipOnVirtual=TRUE);
+	CFileView(UINT DataSize=sizeof(FVItemData), BOOL EnableScrolling=TRUE, BOOL EnableHover=TRUE, BOOL EnableTooltip=TRUE, BOOL EnableShiftSelection=TRUE, BOOL EnableLabelEdit=TRUE, BOOL EnableTooltipOnVirtual=TRUE);
 	virtual ~CFileView();
 
 	virtual CMenu* GetBackgroundContextMenu();
@@ -157,7 +157,6 @@ protected:
 	BOOL m_EnableTooltip;
 	BOOL m_EnableShiftSelection;
 	BOOL m_EnableLabelEdit;
-	BOOL m_EnableFullRedraw;
 	BOOL m_EnableTooltipOnVirtual;
 	BOOL m_HideFileExt;
 	BOOL m_ShowFocusRect;
@@ -187,6 +186,7 @@ protected:
 	virtual void InvalidateItem(INT idx);
 	virtual CMenu* GetSendToMenu();
 	virtual CMenu* GetItemContextMenu(INT idx);
+	virtual void ScrollWindow(INT dx, INT dy);
 
 	CBitmap* CreateFooterBitmap(CDC* pDC, INT mincx, INT cy, CDC& dcDraw, BOOL Themed);
 	INT GetFooterHeight();
@@ -239,5 +239,4 @@ private:
 	void AppendAttribute(LFItemDescriptor* i, UINT attr, CString& str);
 	CString GetHint(LFItemDescriptor* i, WCHAR* FormatName=NULL);
 	void DestroyEdit(BOOL Accept=FALSE);
-	void ScrollWindow(INT dx, INT dy);
 };

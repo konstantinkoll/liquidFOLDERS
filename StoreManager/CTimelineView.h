@@ -34,6 +34,7 @@ protected:
 
 	virtual void SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data);
 	virtual void AdjustLayout();
+	virtual void ScrollWindow(INT dx, INT dy);
 
 	void DrawItem(CDC& dc, Graphics& g, LPRECT rectItem, INT idx, BOOL Themed);
 
