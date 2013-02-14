@@ -51,27 +51,26 @@ void CExplorerNotification::SetNotification(UINT Type, CString Text, UINT Comman
 	case ENT_READY:
 		m_FirstCol = 0x00E600;
 		m_SecondCol = 0x00AF00;
-		hIcon = (HICON)LoadImage(LFCommDlgDLL.hResource, MAKEINTRESOURCE(IDI_READY), IMAGE_ICON, m_IconCX, m_IconCY, LR_DEFAULTCOLOR);
 		break;
 	case ENT_INFO:
 		m_FirstCol = 0xFF8E6F;
 		m_SecondCol = 0xF26120;
-		hIcon = (HICON)LoadImage(LFCommDlgDLL.hResource, IDI_INFORMATION, IMAGE_ICON, m_IconCX, m_IconCY, LR_DEFAULTCOLOR);
+		hIcon = (HICON)LoadImage(LFCommDlgDLL.hResource, MAKEINTRESOURCE(IDI_INFORMATION), IMAGE_ICON, m_IconCX, m_IconCY, LR_DEFAULTCOLOR);
 		break;
 	case ENT_WARNING:
 		m_FirstCol = 0x49CEFF;
 		m_SecondCol = 0x00B1F2;
-		hIcon = (HICON)LoadImage(LFCommDlgDLL.hResource, IDI_WARNING, IMAGE_ICON, m_IconCX, m_IconCY, LR_DEFAULTCOLOR);
+		hIcon = (HICON)LoadImage(LFCommDlgDLL.hResource, MAKEINTRESOURCE(IDI_WARNING), IMAGE_ICON, m_IconCX, m_IconCY, LR_DEFAULTCOLOR);
 		break;
 	case ENT_SHIELD:
 		m_FirstCol = 0x49CEFF;
 		m_SecondCol = 0x00B1F2;
-		hIcon = (HICON)LoadImage(LFCommDlgDLL.hResource, IDI_SHIELD, IMAGE_ICON, m_IconCX, m_IconCY, LR_DEFAULTCOLOR);
+		hIcon = (HICON)LoadImage(LFCommDlgDLL.hResource, MAKEINTRESOURCE(IDI_SHIELD), IMAGE_ICON, m_IconCX, m_IconCY, LR_DEFAULTCOLOR);
 		break;
 	default:
 		m_FirstCol = 0x0000E6;
 		m_SecondCol = 0x0000AF;
-		hIcon = (HICON)LoadImage(LFCommDlgDLL.hResource, IDI_ERROR, IMAGE_ICON, m_IconCX, m_IconCY, LR_DEFAULTCOLOR);
+		hIcon = (HICON)LoadImage(LFCommDlgDLL.hResource, MAKEINTRESOURCE(IDI_ERROR), IMAGE_ICON, m_IconCX, m_IconCY, LR_DEFAULTCOLOR);
 	}
 
 	m_Text = Text;
@@ -228,13 +227,17 @@ void CExplorerNotification::OnPaint()
 	LinearGradientBrush brush(Point(0, 0), Point(rect.Width()+1, 0), Color(255, m_FirstCol & 0xFF, (m_FirstCol>>8) & 0xFF, (m_FirstCol>>16) & 0xFF), Color(255, m_SecondCol & 0xFF, (m_SecondCol>>8) & 0xFF, (m_SecondCol>>16) & 0xFF));
 	g.FillRectangle(&brush, rect.top, rect.left, rect.Width(), m_GradientCY);
 	rect.top += m_GradientCY;
+	rect.left += BORDERX;
 
-	DrawIconEx(dc, rect.left+BORDERX, rect.top+(rect.Height()-m_IconCY)/2, hIcon, m_IconCX, m_IconCY, 0, NULL, DI_NORMAL);
-	rect.left += 2*BORDERX+m_IconCX;
-	rect.right = m_RightMargin-BORDERX;
+	if (hIcon)
+	{
+		DrawIconEx(dc, rect.left, rect.top+(rect.Height()-m_IconCY)/2, hIcon, m_IconCX, m_IconCY, 0, NULL, DI_NORMAL);
+		rect.left += BORDERX+m_IconCX;
+	}
 
 	CMenuImages::Draw(&dc, CMenuImages::IdClose, m_RectClose, (!Themed || m_ClosePressed) ? CMenuImages::ImageDkGray : m_CloseHover ? CMenuImages::ImageGray : CMenuImages::ImageLtGray);
 
+	rect.right = m_RightMargin-BORDERX;
 	CRect rectText(rect);
 
 	CFont* pOldFont = dc.SelectObject(&p_App->m_DefaultFont);

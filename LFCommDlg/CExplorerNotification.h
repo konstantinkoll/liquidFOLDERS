@@ -12,8 +12,8 @@
 #define ENT_READY        1
 #define ENT_INFO         2
 #define ENT_WARNING      3
-#define ENT_SHIELD       5
-#define ENT_ERROR        6
+#define ENT_SHIELD       4
+#define ENT_ERROR        5
 
 class AFX_EXT_CLASS CExplorerNotification : public CWnd
 {

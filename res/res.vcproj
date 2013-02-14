@@ -1145,10 +1145,6 @@
 			>
 		</File>
 		<File
-			RelativePath="Help.ico"
-			>
-		</File>
-		<File
 			RelativePath=".\IATA-DE.TXT"
 			>
 		</File>
@@ -1322,10 +1318,6 @@
 		</File>
 		<File
 			RelativePath=".\Rating9.png"
-			>
-		</File>
-		<File
-			RelativePath="Ready.ico"
 			>
 		</File>
 		<File
