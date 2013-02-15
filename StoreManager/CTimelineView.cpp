@@ -478,6 +478,7 @@ void CTimelineView::ScrollWindow(INT dx, INT dy)
 BEGIN_MESSAGE_MAP(CTimelineView, CFileView)
 	ON_WM_CREATE()
 	ON_WM_PAINT()
+	ON_WM_KEYDOWN()
 END_MESSAGE_MAP()
 
 INT CTimelineView::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -591,4 +592,157 @@ void CTimelineView::OnPaint()
 	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);
 	dc.SelectObject(pOldFont);
 	dc.SelectObject(pOldBitmap);
+}
+
+void CTimelineView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
+{
+	CFileView::OnKeyDown(nChar, nRepCnt, nFlags);
+
+	if (p_CookedFiles)
+	{
+		CRect rect;
+		GetClientRect(&rect);
+
+		INT item = m_FocusItem;
+		INT left = GetItemData(item)->Hdr.Rect.left;
+		INT right = GetItemData(item)->Hdr.Rect.right;
+		INT top = GetItemData(item)->Hdr.Rect.top;
+		INT bottom = GetItemData(item)->Hdr.Rect.bottom;
+
+		switch (nChar)
+		{
+		case VK_LEFT:
+			for (INT a=item-1; a>=0; a--)
+			{
+				TimelineItemData* d = GetItemData(a);
+				if ((d->Hdr.Rect.right<left) && d->Hdr.Valid)
+				{
+					item = a;
+					break;
+				}
+			}
+
+			break;
+		case VK_RIGHT:
+			for (INT a=item+1; a<(INT)p_CookedFiles->m_ItemCount; a++)
+			{
+				TimelineItemData* d = GetItemData(a);
+				if ((d->Hdr.Rect.left>right) && d->Hdr.Valid)
+				{
+					item = a;
+					break;
+				}
+			}
+			for (INT a=item; a>=0; a--)
+			{
+				TimelineItemData* d = GetItemData(a);
+				if ((d->Hdr.Rect.left>right) && d->Hdr.Valid)
+				{
+					item = a;
+					break;
+				}
+			}
+
+			break;
+		case VK_UP:
+			for (INT a=item-1; a>=0; a--)
+			{
+				TimelineItemData* d = GetItemData(a);
+				if ((d->Hdr.Rect.left==left) && d->Hdr.Valid)
+				{
+					item = a;
+					break;
+				}
+			}
+
+			break;
+		case VK_PRIOR:
+			for (INT a=item-1; a>=0; a--)
+			{
+				TimelineItemData* d = GetItemData(a);
+				if ((d->Hdr.Rect.left<=left) && d->Hdr.Valid)
+				{
+					item = a;
+					if (d->Hdr.Rect.top<=bottom-rect.Height())
+						break;
+				}
+			}
+
+			break;
+		case VK_DOWN:
+			for (INT a=item+1; a<(INT)p_CookedFiles->m_ItemCount; a++)
+			{
+				TimelineItemData* d = GetItemData(a);
+				if ((d->Hdr.Rect.left==left) && d->Hdr.Valid)
+				{
+					item = a;
+					break;
+				}
+			}
+
+			break;
+		case VK_NEXT:
+			for (INT a=item+1; a<(INT)p_CookedFiles->m_ItemCount; a++)
+			{
+				TimelineItemData* d = GetItemData(a);
+				if ((d->Hdr.Rect.right>=right) && d->Hdr.Valid)
+				{
+					item = a;
+					if (d->Hdr.Rect.bottom>=top+rect.Height())
+						break;
+				}
+			}
+
+			break;
+		case VK_HOME:
+			if (GetKeyState(VK_CONTROL)<0)
+			{
+				for (INT a=0; a<(INT)p_CookedFiles->m_ItemCount; a++)
+					if (GetItemData(a)->Hdr.Valid)
+					{
+						item = a;
+						break;
+					}
+			}
+			else
+				for (INT a=item-1; a>=0; a--)
+				{
+					TimelineItemData* d = GetItemData(a);
+					if (d->Hdr.Valid)
+						if (d->Hdr.Rect.right<left)
+						{
+							item = a;
+							break;
+						}
+				}
+
+			break;
+		case VK_END:
+			if (GetKeyState(VK_CONTROL)<0)
+			{
+				for (INT a=(INT)p_CookedFiles->m_ItemCount-1; a>=0; a--)
+					if (GetItemData(a)->Hdr.Valid)
+					{
+						item = a;
+						break;
+					}
+			}
+			else
+				for (INT a=item+1; a<(INT)p_CookedFiles->m_ItemCount; a++)
+				{
+					TimelineItemData* d = GetItemData(a);
+					if (d->Hdr.Valid)
+						if (d->Hdr.Rect.left>right)
+						{
+							item = a;
+							break;
+						}
+				}
+
+			break;
+		}
+
+		if (item!=m_FocusItem)
+			SetFocusItem(item, GetKeyState(VK_SHIFT)<0);
+	}
 }
