@@ -1165,6 +1165,10 @@
 			>
 		</File>
 		<File
+			RelativePath=".\LFNamespaceExtension_About.png"
+			>
+		</File>
+		<File
 			RelativePath=".\LFRunCmd.ico"
 			>
 		</File>
