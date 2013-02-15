@@ -940,19 +940,11 @@
 			Name="Stores"
 			>
 			<File
-				RelativePath=".\Stores\Store_Default_Tiny.ico"
-				>
-			</File>
-			<File
 				RelativePath=".\Stores\STR_Bag.ico"
 				>
 			</File>
 			<File
 				RelativePath=".\Stores\STR_Empty.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\Stores\STR_Server.ico"
 				>
 			</File>
 		</Filter>

@@ -775,10 +775,6 @@
 				RelativePath=".\res\STR_Empty.ico"
 				>
 			</File>
-			<File
-				RelativePath=".\res\STR_Server.ico"
-				>
-			</File>
 		</Filter>
 		<File
 			RelativePath="..\include\liquidFOLDERS32.manifest.xml"

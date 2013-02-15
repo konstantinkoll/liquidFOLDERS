@@ -26,8 +26,7 @@
 #define IDI_STORE_Unknown               22
 #define IDI_STORE_Internal              23
 #define IDI_STORE_Bag                   24
-#define IDI_STORE_Server                25
-#define IDI_LastIcon                    25
+#define IDI_LastIcon                    24
 #define IDS_FirstItemCategory           1000
 #define IDS_LFCategoryLocalStores       1000
 #define IDS_LFCategoryRemoteStores      1001
