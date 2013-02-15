@@ -104,7 +104,7 @@ CBitmap* CCalendarView::RenderFooter()
 
 	INT64 Counts[5] = { 0, 0, 0, 0, 0 };
 	INT64 Sizes[5] = { 0, 0, 0, 0, 0 };
-	COLORREF Colors[5] = { 0xD0D0D0, 0xF08080, 0xD00000, 0xF08080, 0xD0D0D0 };
+	COLORREF Colors[5] = { 0x0000FF, 0x6868E8, 0xD0D0D0, 0xE8B070, 0xFF9000 };
 
 	for (UINT a=0; a<p_CookedFiles->m_ItemCount; a++)
 	{

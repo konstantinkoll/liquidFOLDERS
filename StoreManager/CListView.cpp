@@ -235,12 +235,11 @@ CBitmap* CListView::RenderStatistics()
 	if (!p_CookedFiles || m_Nothing || !theApp.m_ShowStatistics)
 		return NULL;
 
-#define DomainCount 10
-	const UINT Domains[DomainCount] = { LFDomainAudio, LFDomainPictures, LFDomainVideos, LFDomainDocuments,
-		LFDomainMessages, LFDomainPresentations, LFDomainSpreadsheets, 0, LFDomainTrash, LFDomainUnknown };
+#define DomainCount 5
+	const UINT Domains[DomainCount] = { LFDomainAudio, LFDomainPictures, LFDomainVideos, 0, LFDomainTrash };
 	INT64 Counts[DomainCount] = { 0 };
 	INT64 Sizes[DomainCount] = { 0 };
-	COLORREF Colors[DomainCount] = { 0xB03000, 0xFFB000, 0x202020, 0x00C0FF, 0x00FFB0, 0xFF4080, 0xC028FF, 0xD0D0D0, 0x0000FF, 0xD00000 };
+	COLORREF Colors[DomainCount] = { 0xB04000, 0xD08830, 0xFFD060, 0x303030, 0x0000FF };
 
 	for (UINT a=0; a<p_CookedFiles->m_ItemCount; a++)
 	{
@@ -254,7 +253,7 @@ CBitmap* CListView::RenderStatistics()
 				if (sscanf_s(i->CoreAttributes.FileID, "%d", &DomainID)==1)
 					if ((DomainID>=LFFirstSoloDomain) && (DomainID!=LFDomainPhotos))
 					{
-						INT idx = DomainCount-3;
+						INT idx = DomainCount-2;
 						for (UINT a=0; a<DomainCount; a++)
 							if (Domains[a]==DomainID)
 								idx = a;
