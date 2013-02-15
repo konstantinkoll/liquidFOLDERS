@@ -37,15 +37,23 @@ LFCore_API HBITMAP LFGetThumbnail(LFItemDescriptor* i, SIZE sz)
 			LPCITEMIDLIST pidlRel = NULL;
 			if (SUCCEEDED(SHBindToParent(pidlFQ, IID_IShellFolder, (void**)&pParentFolder, &pidlRel)))
 			{
-				// IThumbnailProvider
-				IThumbnailProvider* pThumbnailProvider = NULL;
-				if (SUCCEEDED(pParentFolder->GetUIObjectOf(NULL, 1, &pidlRel, IID_IThumbnailProvider, NULL, (void**)&pThumbnailProvider)))
-				{
-					DWORD dwAlpha = WTSAT_UNKNOWN;
-					pThumbnailProvider->GetThumbnail(min(sz.cx, sz.cy), &hBmp, &dwAlpha);
+				OSVERSIONINFO osInfo;
+				ZeroMemory(&osInfo, sizeof(OSVERSIONINFO));
+				osInfo.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
+				GetVersionEx(&osInfo);
 
-					pThumbnailProvider->Release();
-					goto Finish;
+				// IThumbnailProvider
+				if (osInfo.dwMajorVersion>=6)
+				{
+					IThumbnailProvider* pThumbnailProvider = NULL;
+					if (SUCCEEDED(pParentFolder->GetUIObjectOf(NULL, 1, &pidlRel, IID_IThumbnailProvider, NULL, (void**)&pThumbnailProvider)))
+					{
+						DWORD dwAlpha = WTSAT_UNKNOWN;
+						pThumbnailProvider->GetThumbnail(min(sz.cx, sz.cy), &hBmp, &dwAlpha);
+
+						pThumbnailProvider->Release();
+						goto Finish;
+					}
 				}
 
 				// IExtractImage
