@@ -687,7 +687,7 @@ void CMainWnd::OnExportMetadata()
 
 void CMainWnd::OnUpdateViewOptions()
 {
-	if ((m_wndMainView.GetViewID()>LFViewPreview)!=(theApp.m_Views[m_wndMainView.GetContext()].Mode>LFViewPreview))
+	if ((m_wndMainView.GetViewID()>LFViewPreview) || (theApp.m_Views[m_wndMainView.GetContext()].Mode>LFViewPreview))
 	{
 		m_wndMainView.SelectNone();
 		OnCookFiles();
@@ -722,7 +722,7 @@ LRESULT CMainWnd::OnCookFiles(WPARAM wParam, LPARAM /*lParam*/)
 	}
 	else
 	{
-		LFSortSearchResult(m_pRawFiles, vp->SortBy, (vp->Mode<=LFViewPreview) && (vp->Descending==TRUE));
+		LFSortSearchResult(m_pRawFiles, vp->SortBy, vp->Descending==TRUE);
 		m_pCookedFiles = m_pRawFiles;
 	}
 
