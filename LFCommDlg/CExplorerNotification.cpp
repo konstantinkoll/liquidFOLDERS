@@ -12,7 +12,7 @@
 extern AFX_EXTENSION_MODULE LFCommDlgDLL;
 
 #define BORDERX     8
-#define BORDERY     4
+#define BORDERY     10
 
 CExplorerNotification::CExplorerNotification()
 	: CWnd()
