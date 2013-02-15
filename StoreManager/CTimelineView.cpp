@@ -32,10 +32,11 @@ void CTimelineView::SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* p
 		for (UINT a=0; a<p_CookedFiles->m_ItemCount; a++)
 		{
 			TimelineItemData* d = GetItemData(a);
+			LFItemDescriptor* i = p_CookedFiles->m_Items[a];
 
 			LFVariantData v;
 			v.Attr = m_ViewParameters.SortBy;
-			LFGetAttributeVariantData(p_CookedFiles->m_Items[a], &v);
+			LFGetAttributeVariantData(i, &v);
 
 			d->Hdr.Valid = !LFIsNullVariantData(&v);
 			if (d->Hdr.Valid)
@@ -46,6 +47,49 @@ void CTimelineView::SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* p
 				SystemTimeToTzSpecificLocalTime(NULL, &stUTC, &stLocal);
 
 				d->Year = stLocal.wYear;
+
+				switch (i->Type & LFTypeMask)
+				{
+				case LFTypeFile:
+					ASSERT(theApp.m_Attributes[LFAttrComments]->Type==LFTypeUnicodeString);
+					if (i->AttributeValues[LFAttrComments])
+						if (*((WCHAR*)i->AttributeValues[LFAttrComments]))
+						{
+							d->pText = (WCHAR*)i->AttributeValues[LFAttrComments];
+							d->Preview |= PRV_TEXT;
+						}
+
+					break;
+				case LFTypeVirtual:
+					d->Preview |= PRV_TEXT;
+					d->pText = NULL;
+
+					for (INT b=i->FirstAggregate; b<=i->LastAggregate; b++)
+					{
+						LFItemDescriptor* i = p_RawFiles->m_Items[b];
+						if (UsePreview(i))
+							d->Preview |= PRV_THUMBS;
+
+						ASSERT(theApp.m_Attributes[LFAttrRoll]->Type==LFTypeUnicodeString);
+						if (d->Preview & PRV_TEXT)
+							if (!i->AttributeValues[LFAttrRoll])
+							{
+								d->Preview &= ~PRV_TEXT;
+							}
+							else
+								if (d->pText)
+								{
+									if (wcscmp(d->pText, (WCHAR*)i->AttributeValues[LFAttrRoll])!=0)
+										d->Preview &= ~PRV_TEXT;
+								}
+								else
+								{
+									d->pText = (WCHAR*)i->AttributeValues[LFAttrRoll];
+									if (*d->pText==L'\0')
+										d->Preview &= ~PRV_TEXT;
+								}
+					}
+				}
 			}
 		}
 }
@@ -87,13 +131,15 @@ Restart:
 
 			if (m_ItemWidth<2*BORDER+128)
 			{
-				d->Preview = 0;
+				d->Preview &= ~PRV_THUMBS;
 			}
 			else
-				switch (p_CookedFiles->m_Items[a]->Type & LFTypeMask)
+			{
+				switch (i->Type & LFTypeMask)
 				{
 				case LFTypeFile:
-					d->Preview = UsePreview(i);
+					if (UsePreview(i))
+						d->Preview |= PRV_THUMBS;
 					break;
 				case LFTypeVirtual:
 					for (INT b=i->FirstAggregate; b<=i->LastAggregate; b++)
@@ -101,15 +147,20 @@ Restart:
 						LFItemDescriptor* i = p_RawFiles->m_Items[b];
 						if (UsePreview(i))
 						{
-							d->Preview = 1;
+							d->Preview |= PRV_THUMBS;
 							break;
 						}
 					}
 				}
+			}
 
 			INT h = 2*BORDER+m_CaptionHeight;
 			if (d->Preview)
-				h += 128+BORDER+BORDER/2;
+				h += BORDER/2;
+			if (d->Preview & PRV_TEXT)
+				h += m_FontHeight[0]+BORDER;
+			if (d->Preview & PRV_THUMBS)
+				h += 128+BORDER;
 
 			if (d->Year!=Year)
 			{
@@ -134,7 +185,7 @@ Restart:
 			d->ArrowOffs = 0;
 			d->Hdr.RectInflate = d->Arrow ? ARROWSIZE+1 : 0;
 
-			if (CurRow[c]==LastRow)
+			if (abs(CurRow[c]-LastRow)<ARROWSIZE)
 				if (h>(m_CaptionHeight+BORDER)/2+ARROWSIZE+BORDER+2*GUTTER)
 				{
 					d->ArrowOffs = 2*GUTTER;
@@ -205,6 +256,7 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPRECT rectItem, INT idx, BOO
 	COLORREF bkCol = hThemeList ? 0xFFFFFF : Selected ? GetSysColor(GetFocus()==this ? COLOR_HIGHLIGHT : COLOR_3DFACE) : Themed ? 0xFFFFFF : GetSysColor(COLOR_WINDOW);
 	COLORREF cpCol = Themed ? 0x98593B : GetSysColor(COLOR_WINDOWTEXT);
 	COLORREF txCol = Themed ? 0x808080 : GetSysColor(COLOR_3DSHADOW);
+	COLORREF atCol = Themed ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT);
 
 	// Shadow
 	GraphicsPath path;
@@ -235,7 +287,7 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPRECT rectItem, INT idx, BOO
 	{
 		if (Selected)
 		{
-			cpCol = txCol = GetSysColor(GetFocus()==this ? COLOR_HIGHLIGHTTEXT : COLOR_BTNTEXT);
+			cpCol = txCol = atCol = GetSysColor(GetFocus()==this ? COLOR_HIGHLIGHTTEXT : COLOR_BTNTEXT);
 			dc.SetTextColor(txCol);
 			dc.SetBkColor(0x000000);
 		}
@@ -286,11 +338,9 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPRECT rectItem, INT idx, BOO
 			const INT x = Base+(ARROWSIZE-abs(a)+1)*d->Arrow;
 			dc.MoveTo(Base, y);
 			dc.LineTo(x, y);
+			dc.SetPixel(x, y++, ptCol);
 
 			dc.SelectObject(pPen);
-
-			dc.SetPixel(x, y, ptCol);
-			y++;
 		}
 
 		if (Themed)
@@ -351,32 +401,49 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPRECT rectItem, INT idx, BOO
 		if (!Themed || !Selected)
 			dc.FillSolidRect(rectItem->left+BORDER+1, rectText.bottom+BORDER/2, m_ItemWidth-2*BORDER-2, 1, Themed ? 0xE5E5E5 : GetSysColor(COLOR_3DFACE));
 
-		CRect rectPreview(rectItem);
-		rectPreview.DeflateRect(BORDER, BORDER);
-		rectPreview.top = rectPreview.bottom-128;
-		rectPreview.left++;
-		rectPreview.right = rectPreview.left+128;
-
-		if ((i->Type & LFTypeMask)==LFTypeVirtual)
+		// Attributes
+		if (d->Preview & PRV_TEXT)
 		{
-			for (INT a=LFMaxRating; a>=0; a--)
-				for (INT b=i->FirstAggregate; b<=i->LastAggregate; b++)
-				{
-					LFItemDescriptor* ri = p_RawFiles->m_Items[b];
-					if (UsePreview(ri) && (ri->CoreAttributes.Rating==a))
-					{
-						CRect rect(rectPreview);
-						theApp.m_ThumbnailCache.DrawJumboThumbnail(dc, rect, ri);
+			ASSERT(d->pText);
 
-						rectPreview.OffsetRect(128+BORDER, 0);
-						if (rectPreview.right>rectItem->right-BORDER-1)
-							return;
-					}
-				}
+			CRect rectAttr(rectItem->left+BORDER+2, 0, rectItem->right-BORDER, 0);
+			rectAttr.top = rectText.bottom+BORDER+BORDER/2;
+			rectAttr.bottom = rectAttr.top+m_FontHeight[0];
+
+			dc.SetTextColor(atCol);
+			dc.DrawText(d->pText, -1, rectAttr, DT_SINGLELINE | DT_LEFT | DT_END_ELLIPSIS | DT_NOPREFIX);
 		}
-		else
+
+		// Thumbs
+		if (d->Preview & PRV_THUMBS)
 		{
-			theApp.m_ThumbnailCache.DrawJumboThumbnail(dc, rectPreview, i);
+			CRect rectPreview(rectItem);
+			rectPreview.DeflateRect(BORDER, BORDER);
+			rectPreview.top = rectPreview.bottom-128;
+			rectPreview.left++;
+			rectPreview.right = rectPreview.left+128;
+
+			if ((i->Type & LFTypeMask)==LFTypeVirtual)
+			{
+				for (INT a=LFMaxRating; a>=0; a--)
+					for (INT b=i->FirstAggregate; b<=i->LastAggregate; b++)
+					{
+						LFItemDescriptor* ri = p_RawFiles->m_Items[b];
+						if (UsePreview(ri) && (ri->CoreAttributes.Rating==a))
+						{
+							CRect rect(rectPreview);
+							theApp.m_ThumbnailCache.DrawJumboThumbnail(dc, rect, ri);
+
+							rectPreview.OffsetRect(128+BORDER, 0);
+							if (rectPreview.right>rectItem->right-BORDER-1)
+								return;
+						}
+					}
+			}
+			else
+			{
+				theApp.m_ThumbnailCache.DrawJumboThumbnail(dc, rectPreview, i);
+			}
 		}
 	}
 }

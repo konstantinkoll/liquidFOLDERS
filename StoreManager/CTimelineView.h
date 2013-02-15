@@ -10,6 +10,10 @@
 // CTimelineView
 //
 
+#define PRV_NONE       0
+#define PRV_TEXT       1
+#define PRV_THUMBS     2
+
 struct TimelineItemData
 {
 	FVItemData Hdr;
@@ -17,6 +21,7 @@ struct TimelineItemData
 	INT ArrowOffs;
 	WORD Year;
 	BYTE Preview;
+	WCHAR* pText;
 };
 
 class CTimelineView : public CFileView
