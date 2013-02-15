@@ -218,6 +218,18 @@ Restart:
 	CFileView::AdjustLayout();
 }
 
+RECT CTimelineView::GetLabelRect(INT idx)
+{
+	RECT rect = GetItemRect(idx);
+
+	rect.left += 2*BORDER+m_IconSize.cx-5;
+	rect.top += BORDER-2;
+	rect.right -= BORDER-2;
+	rect.bottom = rect.top+m_FontHeight[0]+4;
+
+	return rect;
+}
+
 void CTimelineView::DrawCategory(CDC& dc, Graphics& g, LPRECT rectCategory, ItemCategory* ic, COLORREF tlCol, BOOL Themed)
 {
 	if (Themed && (theApp.OSVersion!=OS_Eight))
