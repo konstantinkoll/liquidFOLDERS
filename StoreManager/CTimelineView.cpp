@@ -185,7 +185,7 @@ Restart:
 			d->ArrowOffs = 0;
 			d->Hdr.RectInflate = d->Arrow ? ARROWSIZE+1 : 0;
 
-			if (abs(CurRow[c]-LastRow)<ARROWSIZE)
+			if (abs(CurRow[c]-LastRow)<2*ARROWSIZE)
 				if (h>(m_CaptionHeight+BORDER)/2+ARROWSIZE+BORDER+2*GUTTER)
 				{
 					d->ArrowOffs = 2*GUTTER;
