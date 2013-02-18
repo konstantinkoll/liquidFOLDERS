@@ -40,11 +40,11 @@
 #define IDB_PRIORITY10                  20130
 #define IDB_SORTINDICATORS              20131
 #define IDB_STOREBACKUP                 20132
-#define IDI_RESET_NORMAL                20200
-#define IDI_RESET_HOT                   20201
-#define IDI_RESET_PRESSED               20202
-#define IDI_SEARCH                      20203
-#define IDI_DEFAULT                     20204
+#define IDI_DEFAULT                     20200
+#define IDI_RESET_NORMAL                20201
+#define IDI_RESET_HOT                   20202
+#define IDI_RESET_PRESSED               20203
+#define IDI_SEARCH                      20204
 #define IDI_STOREPROPERTIES             20205
 #define IDI_STORENEW                    20206
 #define IDS_PURCHASEURL                 20300
