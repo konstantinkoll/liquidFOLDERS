@@ -92,8 +92,8 @@ IDB_VIEWS               BITMAP                  "res\\Views.bmp"
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,1,12,0
- PRODUCTVERSION 1,1,12,0
+ FILEVERSION 1,2,0,0
+ PRODUCTVERSION 1,2,0,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -109,13 +109,13 @@ BEGIN
         BLOCK "000004e4"
         BEGIN
             VALUE "CompanyName", "liquidFOLDERS"
-            VALUE "FileVersion", "1.1.12"
+            VALUE "FileVersion", "1.2.0"
             VALUE "InternalName", "StoreManager"
             VALUE "LegalCopyright", "© 2009-2013 liquidFOLDERS"
             VALUE "LegalTrademarks", "liquidFOLDERS®"
             VALUE "OriginalFilename", "StoreManager.exe"
             VALUE "ProductName", "liquidFOLDERS"
-            VALUE "ProductVersion", "1.1.12"
+            VALUE "ProductVersion", "1.2.0"
         END
     END
     BLOCK "VarFileInfo"
