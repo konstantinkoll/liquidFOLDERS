@@ -644,8 +644,8 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDM_TRASH_EMPTY         "Löscht endgültig alle Dateien aus dem Papierkorb.\nPapierkorb leeren"
     IDM_TRASH_RESTOREALL    "Stellt alle Dateien wieder her.\nAlle wiederherstellen"
+    IDM_TRASH_EMPTY         "Löscht endgültig alle Dateien aus dem Papierkorb.\nPapierkorb leeren"
 END
 
 STRINGTABLE 
@@ -1241,8 +1241,8 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDM_TRASH_EMPTY         "Permanently deletes all files from the trash.\nEmpty trash"
     IDM_TRASH_RESTOREALL    "Restores all files from the trash.\nRestore all"
+    IDM_TRASH_EMPTY         "Permanently deletes all files from the trash.\nEmpty trash"
 END
 
 STRINGTABLE 
@@ -1839,8 +1839,8 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDM_TRASH_EMPTY         "Elimina de manera permanente todos los archivos de la bandeja de reciclaje.\nVaciar bandeja de reciclaje"
     IDM_TRASH_RESTOREALL    "Restablece todos los archivos de la bandeja de reciclaje.\nRestablecer todos"
+    IDM_TRASH_EMPTY         "Elimina de manera permanente todos los archivos de la bandeja de reciclaje.\nVaciar bandeja de reciclaje"
 END
 
 STRINGTABLE 
@@ -2438,8 +2438,8 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDM_TRASH_EMPTY         "Efface définitivement tous les fichiers de la corbeille .\nVider la corbeille"
     IDM_TRASH_RESTOREALL    "Reconstitue tous les fichiers.\nReconstituer tous"
+    IDM_TRASH_EMPTY         "Efface définitivement tous les fichiers de la corbeille .\nVider la corbeille"
 END
 
 STRINGTABLE 

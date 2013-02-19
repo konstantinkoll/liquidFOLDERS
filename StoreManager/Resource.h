@@ -145,8 +145,8 @@
 #define IDM_HOUSEKEEPING_REMOVENEW      3201
 #define IDM_HOUSEKEEPING_SEND           3202
 #define IDM_TRASH                       3300
-#define IDM_TRASH_EMPTY                 3301
-#define IDM_TRASH_RESTOREALL            3302
+#define IDM_TRASH_RESTOREALL            3301
+#define IDM_TRASH_EMPTY                 3302
 #define IDM_ITEM_OPEN                   4000
 #define IDM_ITEM_OPENNEWWINDOW          4001
 #define IDM_VOLUME                      4100
