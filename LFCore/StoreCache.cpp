@@ -52,7 +52,7 @@ void AppendGUID(LFStoreDescriptor* s, wchar_t* p)
 
 void GetAutoPath(LFStoreDescriptor* s, wchar_t* p)
 {
-	SHGetFolderPathAndSubDir(NULL, CSIDL_APPDATA | CSIDL_FLAG_CREATE, 0, SHGFP_TYPE_CURRENT, L"Stores", p);
+	SHGetFolderPathAndSubDir(NULL, CSIDL_APPDATA | CSIDL_FLAG_CREATE, NULL, SHGFP_TYPE_CURRENT, L"Stores", p);
 	wcscat_s(p, MAX_PATH, L"\\");
 	AppendGUID(s, p);
 }
