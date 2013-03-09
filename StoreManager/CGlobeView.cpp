@@ -488,7 +488,7 @@ __forceinline void CGlobeView::CalcAndDrawSpots(GLfloat ModelView[4][4], GLfloat
 	}
 }
 
-__forceinline void CGlobeView::CalcAndDrawLabel()
+__forceinline void CGlobeView::CalcAndDrawLabel(BOOL Themed)
 {
 	for (UINT a=0; a<p_CookedFiles->m_ItemCount; a++)
 	{
@@ -524,12 +524,12 @@ __forceinline void CGlobeView::CalcAndDrawLabel()
 					break;
 				}
 
-				DrawLabel(d, cCaption, Caption, Subcaption, Coordinates, Description, m_FocusItem==(INT)a);
+				DrawLabel(d, cCaption, Caption, Subcaption, Coordinates, Description, m_FocusItem==(INT)a, Themed);
 			}
 	}
 }
 
-__forceinline void CGlobeView::DrawLabel(GlobeItemData* d, UINT cCaption, WCHAR* Caption, WCHAR* Subcaption, WCHAR* Coordinates, WCHAR* Description, BOOL Focused)
+__forceinline void CGlobeView::DrawLabel(GlobeItemData* d, UINT cCaption, WCHAR* Caption, WCHAR* Subcaption, WCHAR* Coordinates, WCHAR* Description, BOOL Focused, BOOL Themed)
 {
 	ASSERT(ARROWSIZE>3);
 
@@ -565,6 +565,7 @@ __forceinline void CGlobeView::DrawLabel(GlobeItemData* d, UINT cCaption, WCHAR*
 	// Farben
 	COLORREF BaseColorRef = GetSysColor(COLOR_WINDOW);
 	COLORREF TextColorRef = GetSysColor(COLOR_WINDOWTEXT);
+	COLORREF BorderColorRef = (!theApp.m_GlobeBlackBackground && Themed) ? 0xE0CDC4 : GetSysColor(COLOR_3DSHADOW);
 	if (d->Hdr.Selected)
 		if (this==GetFocus())
 		{
@@ -581,71 +582,91 @@ __forceinline void CGlobeView::DrawLabel(GlobeItemData* d, UINT cCaption, WCHAR*
 	ColorRef2GLColor(&BaseColor[0], BaseColorRef);
 	GLfloat TextColor[4];
 	ColorRef2GLColor(&TextColor[0], TextColorRef);
+	GLfloat BorderColor[4];
+	ColorRef2GLColor(&BorderColor[0], BorderColorRef);
 
 	// Schatten
-	if (theApp.m_GlobeShadows)
+	if (Themed)
 	{
-		for (INT s=3; s>0; s--)
-		{
-			glColor4f(0.0f, 0.0f, 0.0f, d->Alpha/(s+2.5f));
-			glBegin(GL_LINES);
-			glVertex2i(x+2, y+Height+s);
-			glVertex2i(x+Width+s, y+Height+s);
-			glVertex2i(x+Width+s, y+2);
-			glVertex2i(x+Width+s, y+Height+s+1);
-			glEnd();
-		}
-
-		glColor4f(0.0f, 0.0f, 0.0f, d->Alpha/2.5f);
+		glColor4f(0.0f, 0.0f, 0.0f, d->Alpha*(18.0f/256.0f));
 		glBegin(GL_LINES);
+		glVertex2i(x+1, y+Height+1);
+		glVertex2i(x+Width, y+Height+1);
+		glVertex2i(x+Width+1, y+1);
+		glVertex2i(x+Width+1, y+Height);
 		glVertex2i(x+Width, y+Height);
 		glVertex2i(x+Width+1, y+Height);
+		glEnd();
+	}
+
+	// Innen
+	glColor4f(BaseColor[0], BaseColor[1], BaseColor[2], d->Alpha);
+	glRecti(x, y, x+(INT)Width, y+(INT)Height);
+
+	glBegin(GL_TRIANGLES);
+	glVertex2i(d->ScreenPoint[0], d->ScreenPoint[1]);
+	glVertex2i(d->ScreenPoint[0]+(ARROWSIZE-2), d->ScreenPoint[1]+(ARROWSIZE-2)*top);
+	glVertex2i(d->ScreenPoint[0]-(ARROWSIZE-2), d->ScreenPoint[1]+(ARROWSIZE-2)*top);
+	glEnd();
+
+	// Rand
+	glBegin(GL_LINES);
+	glColor4f(BorderColor[0], BorderColor[1], BorderColor[2], d->Alpha);
+	glVertex2i(x-1, y+1);					// Links
+	glVertex2i(x-1, y+Height-1);
+	glVertex2i(x+Width, y+1);				// Rechts
+	glVertex2i(x+Width, y+Height-1);
+	if (top>0)
+	{
+		glVertex2i(x+1, y+Height);			// Unten
+		glVertex2i(x+Width-1, y+Height);
+
+		glEnd();
+		glBegin(GL_LINE_STRIP);
+		glVertex2i(x+1, y-1);
+		glVertex2i(d->ScreenPoint[0]-(ARROWSIZE-2), y-1);
+		glVertex2i(d->ScreenPoint[0], d->ScreenPoint[1]-top);
+		glVertex2i(d->ScreenPoint[0]+(ARROWSIZE-2), y-1);
+		glVertex2i(x+Width-1, y-1);
 	}
 	else
 	{
-		glBegin(GL_LINES);
-	}
+		glVertex2i(x+1, y-1);				// Oben
+		glVertex2i(x+Width-1, y-1);
 
-	// Grauer Rand
-	glColor4f(BaseColor[0]/2, BaseColor[1]/2, BaseColor[2]/2, d->Alpha);
-	glVertex2i(x, y-1);						// Oben
-	glVertex2i(x+Width, y-1);
-	glVertex2i(x, y+Height);				// Unten
-	glVertex2i(x+Width, y+Height);
-	glVertex2i(x-1, y);						// Links
-	glVertex2i(x-1, y+Height);
-	glVertex2i(x+Width, y);					// Rechts
-	glVertex2i(x+Width, y+Height);
-	glEnd();
-
-	// Pfeil
-	glBegin(GL_TRIANGLES);
-	GLfloat alpha = pow(d->Alpha, 3);
-	for (INT a=0; a<=3; a++)
-	{
-		switch (a)
-		{
-		case 0:
-			glColor4f(BaseColor[0]/2, BaseColor[1]/2, BaseColor[2]/2, alpha/2);
-			break;
-		case 1:
-			glColor4f(BaseColor[0]/2, BaseColor[1]/2, BaseColor[2]/2, alpha);
-			break;
-		case 2:
-			glColor4f(BaseColor[0], BaseColor[1], BaseColor[2], alpha/2);
-			break;
-		default:
-			glColor4f(BaseColor[0], BaseColor[1], BaseColor[2], d->Alpha);
-		}
-
-		glVertex2i(d->ScreenPoint[0], d->ScreenPoint[1]+(a-2)*top);
-		glVertex2i(d->ScreenPoint[0]+(ARROWSIZE-a)*top, d->ScreenPoint[1]+(ARROWSIZE-2)*top);
-		glVertex2i(d->ScreenPoint[0]-(ARROWSIZE-a)*top, d->ScreenPoint[1]+(ARROWSIZE-2)*top);
+		glEnd();
+		glBegin(GL_LINE_STRIP);
+		glVertex2i(x+1, y+Height);
+		glVertex2i(d->ScreenPoint[0]-(ARROWSIZE-2), y+Height);
+		glVertex2i(d->ScreenPoint[0], d->ScreenPoint[1]);
+		glVertex2i(d->ScreenPoint[0]+(ARROWSIZE-2), y+Height);
+		glVertex2i(x+Width-1, y+Height);
 	}
 	glEnd();
 
-	// Innen
-	glRecti(x, y, x+(INT)Width, y+(INT)Height);
+	glColor4f(BorderColor[0], BorderColor[1], BorderColor[2], d->Alpha*0.5f);
+	glBegin(GL_LINE_STRIP);
+	glVertex2i(x-1, y);						// Oben links
+	glVertex2i(x, y);
+	glVertex2i(x, y-2);
+	glEnd();
+	glBegin(GL_LINE_STRIP);
+	glVertex2i(x-1, y+Height-1);			// Unten links
+	glVertex2i(x, y+Height-1);
+	glVertex2i(x, y+Height+1);
+	glEnd();
+	glBegin(GL_LINE_STRIP);
+	glVertex2i(x+Width, y);					// Oben rechts
+	glVertex2i(x+Width-1, y);
+	glVertex2i(x+Width-1, y-2);
+	glEnd();
+	glBegin(GL_LINE_STRIP);
+	glVertex2i(x+Width, y+Height-1);		// Unten rechts
+	glVertex2i(x+Width-1, y+Height-1);
+	glVertex2i(x+Width-1, y+Height+1);
+	glEnd();
+
+	// Focus
 	if ((Focused) && (GetFocus()==this))
 	{
 		glColor4f(1.0f-BaseColor[0], 1.0f-BaseColor[1], 1.0f-BaseColor[2], d->Alpha);
@@ -874,7 +895,7 @@ void CGlobeView::DrawScene(BOOL InternalCall)
 	// Label zeichnen
 	if (p_CookedFiles && !m_Nothing)
 		if (p_CookedFiles->m_ItemCount)
-			CalcAndDrawLabel();
+			CalcAndDrawLabel(Themed);
 
 	// Statuszeile
 	const INT Height = m_FontHeight[0]+1;

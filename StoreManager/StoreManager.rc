@@ -359,29 +359,28 @@ BEGIN
     PUSHBUTTON      "Abbrechen",IDCANCEL,335,256,50,14,WS_GROUP
 END
 
-IDD_GLOBEOPTIONS DIALOGEX 0, 0, 178, 248
+IDD_GLOBEOPTIONS DIALOGEX 0, 0, 178, 238
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Globus-Einstellungen"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,63,227,50,14
-    PUSHBUTTON      "Abbrechen",IDCANCEL,121,227,50,14
-    GROUPBOX        "3D-Einstellungen (OpenGL)",IDC_STATIC,7,7,164,81
-    GROUPBOX        "Objekte",IDC_STATIC,7,94,164,66
-    GROUPBOX        "Sonstiges",IDC_STATIC,7,166,164,53
+    DEFPUSHBUTTON   "OK",IDOK,63,217,50,14
+    PUSHBUTTON      "Abbrechen",IDCANCEL,121,217,50,14
+    GROUPBOX        "3D-Einstellungen (OpenGL)",IDC_STATIC,7,7,164,71
+    GROUPBOX        "Objekte",IDC_STATIC,7,84,164,66
+    GROUPBOX        "Sonstiges",IDC_STATIC,7,156,164,53
     LTEXT           "Texturgröße:",IDC_STATIC,14,19,54,8
     COMBOBOX        IDC_TEXTURESIZE,71,17,93,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
     CONTROL         "&Hochauflösendes 3D-Modell",IDC_HQMODEL,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,14,36,150,10
     CONTROL         "&Beleuchtung",IDC_LIGHTING,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,48,150,10
     CONTROL         "&Atmosphäre",IDC_ATMOSPHERE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,60,150,10
-    CONTROL         "Scha&tten",IDC_SHADOWS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,73,150,10
-    CONTROL         "&Orte markieren",IDC_SPOTS,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,14,105,150,10
-    CONTROL         "&Flughafen-Namen zeigen",IDC_AIRPORTNAMES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,118,150,10
-    CONTROL         "&GPS-Koordinaten zeigen",IDC_GPSCOORDINATES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,131,150,10
-    CONTROL         "Be&schreibung zeigen",IDC_DESCRIPTION,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,144,150,10
-    CONTROL         "Sch&warzer Hintergrund",IDC_BLACKBACKGROUND,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,178,150,10
-    CONTROL         "&Kamera-Perspektive zeigen",IDC_VIEWPORT,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,14,191,150,10
-    CONTROL         "Fa&denkreuz zeigen",IDC_CROSSHAIRS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,204,150,10
+    CONTROL         "&Orte markieren",IDC_SPOTS,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,14,95,150,10
+    CONTROL         "&Flughafen-Namen zeigen",IDC_AIRPORTNAMES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,108,150,10
+    CONTROL         "&GPS-Koordinaten zeigen",IDC_GPSCOORDINATES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,121,150,10
+    CONTROL         "Be&schreibung zeigen",IDC_DESCRIPTION,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,134,150,10
+    CONTROL         "Sch&warzer Hintergrund",IDC_BLACKBACKGROUND,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,168,150,10
+    CONTROL         "&Kamera-Perspektive zeigen",IDC_VIEWPORT,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,14,181,150,10
+    CONTROL         "Fa&denkreuz zeigen",IDC_CROSSHAIRS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,194,150,10
 END
 
 IDD_GOTOYEAR DIALOGEX 0, 0, 122, 78
@@ -474,7 +473,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 171
         TOPMARGIN, 7
-        BOTTOMMARGIN, 241
+        BOTTOMMARGIN, 231
     END
 
     IDD_GOTOYEAR, DIALOG
@@ -493,20 +492,20 @@ BEGIN
         BOTTOMMARGIN, 301
     END
 
-    IDD_FILTER, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 179
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 21
-    END
-
     IDD_SAVEFILTER, DIALOG
     BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 270
         TOPMARGIN, 7
         BOTTOMMARGIN, 141
+    END
+
+    IDD_FILTER, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 179
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 21
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -538,13 +537,13 @@ BEGIN
     IDS_CONTEXTMENU_AUTODIRS "In Unterordner &gruppieren"
     IDS_CONTEXTMENU_VIEWOPTIONS "„%s“ an&zeigen als..."
     IDS_CONTEXTMENU_OPEN    "Ö&ffnen"
-    IDS_CONTEXTMENU_OPENNEWWINDOW "In neuem &Fenster öffnen"
     IDS_CONTEXTMENU_OPENWITH "Öffnen &mit..."
 END
 
 STRINGTABLE 
 BEGIN
     IDS_CONTEXTMENU_OPENGOOGLEEARTH "Öffnen mit &Google Earth"
+    IDS_CONTEXTMENU_OPENNEWWINDOW "In neuem &Fenster öffnen"
     IDS_CONTEXTMENU_REMEMBER "Mer&ken"
     IDS_CONTEXTMENU_REMOVE  "Aus Zwischenablage &entfernen"
     IDS_CONTEXTMENU_AUTOSIZEALL "&Alle Spaltenbreiten anpassen"
@@ -560,12 +559,12 @@ BEGIN
     IDS_NOITEMSSELECTED     "Keine Objekte ausgewählt"
     IDS_MULTIPLETYPESSELECTED "Unterschiedliche Typen, %d Objekte"
     IDS_YOULOOKAT           "Sie schauen auf %s"
-    IDS_NOTHINGTODISPLAY    "Es gibt nichts anzuzeigen."
-    IDS_NONAVIGATION        "Dieses Fenster unterstützt keine Navigation."
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_NOTHINGTODISPLAY    "Es gibt nichts anzuzeigen."
+    IDS_NONAVIGATION        "Dieses Fenster unterstützt keine Navigation."
     IDS_FORMAT_CAPTION      "Sie können das Laufwerk „%s“ nicht formatieren"
     IDS_FORMAT_TEXT         "Das Laufwerk enthält Stores, die zur Zeit benutzt werden.\nDas Formatieren des Laufwerks würde diese Stores unbrauchbar machen."
     IDS_AUTOMATIC           "Automatisch wählen"
@@ -580,6 +579,10 @@ BEGIN
     IDS_STATISTICS          "Statistiken"
     IDS_STATISTICS_BYCOUNT  "Nach Anzahl"
     IDS_STATISTICS_BYSIZE   "Nach Größe"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_STATISTICS_OTHER    "Andere"
     IDS_SUBFOLDERS_MANDATORY "Unterordner in dieser Ansicht erforderlich"
     IDS_SUBFOLDERS_NOTAVAIL "Unterordner im Kontext nicht verfügbar"
@@ -664,6 +667,10 @@ BEGIN
     IDM_FILE_REMOVE         "Entfernt die ausgewählten Dateien aus der Zwischenablage.\nEntfernen"
     IDM_FILE_DELETE         "Löscht die ausgewählten Dateien.\nLöschen"
     IDM_FILE_RENAME         "Benennt die ausgewählte Datei um.\nUmbenennen"
+END
+
+STRINGTABLE 
+BEGIN
     IDM_FILE_RESTORE        "Stellt die ausgewählten Dateien wieder her.\nWiederstellen"
 END
 
@@ -723,603 +730,6 @@ BEGIN
 END
 
 #endif    // Deutsch (neutral) resources
-/////////////////////////////////////////////////////////////////////////////
-
-
-/////////////////////////////////////////////////////////////////////////////
-// Englisch (neutral) resources
-
-#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
-#ifdef _WIN32
-LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
-#pragma code_page(1252)
-#endif //_WIN32
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Menu
-//
-
-IDM_HOME MENU 
-BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "Show &statistics",            IDM_HOME_SHOWSTATISTICS
-        MENUITEM SEPARATOR
-        MENUITEM "&Import folder...",           IDM_HOME_IMPORTFOLDER
-        MENUITEM SEPARATOR
-        MENUITEM "P&roperties",                 IDM_HOME_PROPERTIES
-    END
-END
-
-IDM_HOUSEKEEPING MENU 
-BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM SEPARATOR
-        MENUITEM "&Send list",                  IDM_HOUSEKEEPING_SEND
-    END
-END
-
-IDM_TRASH MENU 
-BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM SEPARATOR
-        MENUITEM "&Restore all",                IDM_TRASH_RESTOREALL
-        MENUITEM "&Empty trash",                IDM_TRASH_EMPTY
-    END
-END
-
-IDM_VOLUME MENU 
-BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "Create &new store...",        IDM_VOLUME_CREATENEWSTORE
-        MENUITEM SEPARATOR
-        MENUITEM "&Format...",                  IDM_VOLUME_FORMAT
-        MENUITEM "E&ject",                      IDM_VOLUME_EJECT
-        MENUITEM SEPARATOR
-        MENUITEM "P&roperties",                 IDM_VOLUME_PROPERTIES
-    END
-END
-
-IDM_FILE MENU 
-BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM SEPARATOR
-        MENUITEM "&Copy",                       IDM_FILE_COPY
-        MENUITEM SEPARATOR
-        MENUITEM "Create &shortcut",            IDM_FILE_SHORTCUT
-        MENUITEM "&Delete",                     IDM_FILE_DELETE
-        MENUITEM "&Rename",                     IDM_FILE_RENAME
-    END
-END
-
-IDM_FILE_TRASH MENU 
-BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM SEPARATOR
-        MENUITEM "&Delete",                     IDM_FILE_DELETE
-        MENUITEM "Re&store",                    IDM_FILE_RESTORE
-    END
-END
-
-IDM_DETAILS MENU 
-BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "Size all &columns to fit",    IDM_DETAILS_AUTOSIZEALL
-        MENUITEM "Size column to &fit",         IDM_DETAILS_AUTOSIZE
-        MENUITEM SEPARATOR
-        MENUITEM SEPARATOR
-        MENUITEM "&More...",                    IDM_DETAILS_CHOOSE
-    END
-END
-
-IDM_CALENDAR MENU 
-BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "Show &statistics",            IDM_CALENDAR_SHOWSTATISTICS
-        MENUITEM "Show &captions",              IDM_CALENDAR_SHOWCAPTIONS
-        MENUITEM "Show empty &days",            IDM_CALENDAR_SHOWEMPTYDAYS
-        MENUITEM SEPARATOR
-        MENUITEM "Go to &year...\tCtrl+Y",      IDM_CALENDAR_GOTOYEAR
-    END
-END
-
-IDM_GLOBE MENU 
-BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "Globe &settings...",          IDM_GLOBE_SETTINGS
-        MENUITEM "Size globe to &fit",          IDM_GLOBE_AUTOSIZE
-        MENUITEM SEPARATOR
-        MENUITEM "Jump to &location...\tCtrl+L", IDM_GLOBE_JUMPTOLOCATION
-    END
-END
-
-IDM_TAGCLOUD MENU 
-BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "Show &legend",                IDM_TAGCLOUD_SHOWLEGEND
-        MENUITEM SEPARATOR
-        MENUITEM "Use &font size",              IDM_TAGCLOUD_USESIZE
-        MENUITEM "Use &color",                  IDM_TAGCLOUD_USECOLORS
-        MENUITEM "Use &opacity",                IDM_TAGCLOUD_USEOPACITY
-    END
-END
-
-IDM_TAGCLOUD_SORT MENU 
-BEGIN
-    MENUITEM "Sort by &value",              IDM_TAGCLOUD_SORTVALUE
-    MENUITEM "Sort by &count",              IDM_TAGCLOUD_SORTCOUNT
-    MENUITEM SEPARATOR
-    MENUITEM "Show &rare tags",             IDM_TAGCLOUD_SHOWRARE
-END
-
-IDM_INSPECTOR MENU 
-BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "Show &preview",               IDM_INSPECTOR_SHOWPREVIEW
-        MENUITEM "Show a&ll properties",        IDM_INSPECTOR_SHOWINTERNAL
-        MENUITEM "Sort &alphabetically",        IDM_INSPECTOR_SORTALPHABETIC
-        MENUITEM SEPARATOR
-        POPUP "&Export"
-        BEGIN
-            MENUITEM "&Summary...",                 IDM_INSPECTOR_EXPORTSUMMARY
-            MENUITEM "Complete &metadata...",       IDM_INSPECTOR_EXPORTMETADATA
-        END
-    END
-END
-
-IDM_FILTER MENU 
-BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "S&earch",                     IDM_FILTER_SEARCH
-        MENUITEM "&Save",                       IDM_FILTER_SAVE
-    END
-END
-
-IDM_CONDITIONLIST MENU 
-BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "&Add condition...",           IDM_CONDITIONLIST_ADD
-    END
-END
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Dialog
-//
-
-IDD_VIEWOPTIONS DIALOGEX 0, 0, 392, 277
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
-CAPTION "Display ""%s"" as"
-FONT 8, "MS Shell Dlg", 400, 0, 0x1
-BEGIN
-    CONTROL         "",IDC_VIEWMODES,"SysListView32",LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | WS_BORDER | WS_GROUP | WS_TABSTOP,14,27,160,215
-    GROUPBOX        "Views",IDC_STATIC,7,7,174,242
-    LTEXT           "All views available in this context:",IDC_STATIC,14,17,160,8
-    GROUPBOX        "Details",IDC_STATIC,189,7,196,242
-    LTEXT           "Choose the details for this context:",IDC_STATIC,196,17,183,9
-    CONTROL         "",IDC_VIEWATTRIBUTES,"SysListView32",LVS_SMALLICON | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_NOCOLUMNHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,196,27,118,215
-    PUSHBUTTON      "Move &up",IDC_MOVEUP,320,27,58,14,WS_GROUP
-    PUSHBUTTON      "Move &down",IDC_MOVEDOWN,320,46,58,14,WS_GROUP
-    PUSHBUTTON      "Check &all",IDC_CHECKALL,320,70,58,14,WS_GROUP
-    PUSHBUTTON      "&Uncheck all",IDC_UNCHECKALL,320,89,58,14,WS_GROUP
-    DEFPUSHBUTTON   "OK",IDOK,277,256,50,14,WS_GROUP
-    PUSHBUTTON      "Cancel",IDCANCEL,335,256,50,14,WS_GROUP
-END
-
-IDD_SORTOPTIONS DIALOGEX 0, 0, 289, 319
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
-CAPTION "Organize ""%s"" by"
-FONT 8, "MS Shell Dlg", 400, 0, 0x1
-BEGIN
-    CONTROL         "",IDC_SORTATTRIBUTE,"SysListView32",LVS_LIST | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SORTASCENDING | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_ALIGNLEFT | LVS_NOCOLUMNHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,14,27,261,206
-    DEFPUSHBUTTON   "OK",IDOK,174,298,50,14,WS_GROUP
-    PUSHBUTTON      "Cancel",IDCANCEL,232,298,50,14,WS_GROUP
-    GROUPBOX        "Organize items by this property",IDC_STATIC,7,7,275,235
-    LTEXT           "All properties available in this context:",IDC_STATIC,14,17,261,8
-    CONTROL         "&Group items into subfolders",IDC_AUTODIRS,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,42,262,147,10
-    CONTROL         "&Ascending",IDC_ASCENDING,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,225,259,50,10
-    CONTROL         "&Descending",IDC_DESCENDING,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,225,272,50,10
-    GROUPBOX        "Grouping",IDC_STATIC,7,248,188,42
-    GROUPBOX        "Sort direction",IDC_STATIC,204,248,78,42
-    CONTROL         132,IDC_STATIC,"Static",SS_BITMAP,210,259,9,8
-    CONTROL         133,IDC_STATIC,"Static",SS_BITMAP,210,272,9,8
-    LTEXT           "",IDC_SUBFOLDERHINT,42,275,147,8
-    CONTROL         134,IDC_STATIC,"Static",SS_BITMAP,14,262,21,20
-END
-
-IDD_CHOOSEDETAILS DIALOGEX 0, 0, 208, 276
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
-CAPTION "Details for ""%s"""
-FONT 8, "MS Shell Dlg", 400, 0, 0x0
-BEGIN
-    GROUPBOX        "Details",IDC_STATIC,7,7,194,241
-    LTEXT           "Choose the details for this context:",IDC_STATIC,14,17,183,9
-    CONTROL         "",IDC_VIEWATTRIBUTES,"SysListView32",LVS_SMALLICON | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_NOCOLUMNHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,14,27,118,213
-    PUSHBUTTON      "Move &up",IDC_MOVEUP,137,27,58,14,WS_GROUP
-    PUSHBUTTON      "Move &down",IDC_MOVEDOWN,137,46,58,14,WS_GROUP
-    PUSHBUTTON      "Check &all",IDC_CHECKALL,137,70,58,14,WS_GROUP
-    PUSHBUTTON      "&Uncheck all",IDC_UNCHECKALL,137,89,58,14,WS_GROUP
-    DEFPUSHBUTTON   "OK",IDOK,93,255,50,14,WS_GROUP
-    PUSHBUTTON      "Cancel",IDCANCEL,151,255,50,14,WS_GROUP
-END
-
-IDD_GLOBEOPTIONS DIALOGEX 0, 0, 178, 248
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Globe settings"
-FONT 8, "MS Shell Dlg", 400, 0, 0x1
-BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,63,227,50,14
-    PUSHBUTTON      "Cancel",IDCANCEL,121,227,50,14
-    GROUPBOX        "3D settings (OpenGL)",IDC_STATIC,7,7,164,81
-    GROUPBOX        "Objects",IDC_STATIC,7,94,164,66
-    GROUPBOX        "Miscellaneous",IDC_STATIC,7,166,164,53
-    LTEXT           "Texture size:",IDC_STATIC,14,19,54,8
-    COMBOBOX        IDC_TEXTURESIZE,71,17,93,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
-    CONTROL         "&High-quality model",IDC_HQMODEL,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,14,36,150,10
-    CONTROL         "&Lighting",IDC_LIGHTING,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,48,150,10
-    CONTROL         "&Atmosphere",IDC_ATMOSPHERE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,60,150,10
-    CONTROL         "&Shadows",IDC_SHADOWS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,73,150,10
-    CONTROL         "Mark &locations",IDC_SPOTS,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,14,105,150,10
-    CONTROL         "Show &airport names",IDC_AIRPORTNAMES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,118,150,10
-    CONTROL         "Show &GPS ccordinates",IDC_GPSCOORDINATES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,131,150,10
-    CONTROL         "Show &description",IDC_DESCRIPTION,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,144,150,10
-    CONTROL         "&Black background",IDC_BLACKBACKGROUND,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,14,178,150,10
-    CONTROL         "Show &camera viewport",IDC_VIEWPORT,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,14,191,150,10
-    CONTROL         "Show cross&hairs",IDC_CROSSHAIRS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,204,150,10
-END
-
-IDD_GOTOYEAR DIALOGEX 0, 0, 122, 78
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
-CAPTION "Go to year"
-FONT 8, "MS Shell Dlg", 400, 0, 0x1
-BEGIN
-    GROUPBOX        "Calendar",IDC_STATIC,7,7,108,44
-    LTEXT           "Display this year:",IDC_STATIC,14,18,93,8
-    EDITTEXT        IDC_YEAR,14,28,94,14,ES_AUTOHSCROLL | WS_GROUP
-    DEFPUSHBUTTON   "OK",IDOK,7,57,50,14,WS_GROUP
-    PUSHBUTTON      "Cancel",IDCANCEL,65,57,50,14,WS_GROUP
-END
-
-IDD_EDITCONDITION DIALOGEX 0, 0, 289, 308
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
-CAPTION "Edit condition"
-FONT 8, "MS Shell Dlg", 400, 0, 0x1
-BEGIN
-    CONTROL         "",IDC_COMPAREATTRIBUTE,"SysListView32",LVS_LIST | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SORTASCENDING | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_ALIGNLEFT | LVS_NOCOLUMNHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,14,19,261,214
-    COMBOBOX        IDC_COMPARE,14,259,76,30,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_GROUP | WS_TABSTOP
-    CONTROL         "",IDC_PROPERTY,"CPropertyEdit",WS_CLIPCHILDREN | WS_BORDER | WS_GROUP | WS_TABSTOP,96,259,179,13
-    DEFPUSHBUTTON   "OK",IDOK,174,287,50,14,WS_GROUP
-    PUSHBUTTON      "Cancel",IDCANCEL,232,287,50,14,WS_GROUP
-    GROUPBOX        "Properties",IDC_STATIC,7,7,275,235
-    GROUPBOX        "Comparison",IDC_STATIC,7,248,275,32
-END
-
-IDD_SAVEFILTER DIALOGEX 0, 0, 277, 148
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
-CAPTION "Save filter"
-FONT 8, "MS Shell Dlg", 400, 0, 0x1
-BEGIN
-    EDITTEXT        IDC_FILENAME,58,75,205,14,ES_AUTOHSCROLL
-    EDITTEXT        IDC_COMMENTS,58,96,205,14,ES_AUTOHSCROLL
-    DEFPUSHBUTTON   "OK",IDOK,164,127,50,14,WS_GROUP
-    PUSHBUTTON      "Cancel",IDCANCEL,220,127,50,14,WS_GROUP
-    CONTROL         "",IDC_DESTINATION,"CStorePanel",WS_GROUP,14,16,177,34
-    PUSHBUTTON      "Choose &store...",IDC_CHOOSESTORE,197,25,66,14
-    GROUPBOX        "Destination",IDC_STATIC,7,7,263,49
-    GROUPBOX        "Properties",IDC_STATIC,7,62,263,57
-    LTEXT           "Name:",IDC_STATIC,14,77,22,8
-    LTEXT           "Comments:",IDC_STATIC,14,98,40,8
-END
-
-IDD_FILTER DIALOGEX 0, 0, 186, 28
-STYLE DS_SETFONT | DS_FIXEDSYS | DS_CONTROL | WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN
-EXSTYLE WS_EX_CONTROLPARENT
-FONT 8, "MS Shell Dlg", 400, 0, 0x1
-BEGIN
-    PUSHBUTTON      "Search",IDM_FILTER_SEARCH,7,7,82,14
-    PUSHBUTTON      "Save",IDM_FILTER_SAVE,97,7,82,14
-END
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// DESIGNINFO
-//
-
-#ifdef APSTUDIO_INVOKED
-GUIDELINES DESIGNINFO 
-BEGIN
-    IDD_VIEWOPTIONS, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 385
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 270
-    END
-
-    IDD_SORTOPTIONS, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 282
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 312
-    END
-
-    IDD_CHOOSEDETAILS, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 201
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 269
-    END
-
-    IDD_GLOBEOPTIONS, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 171
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 241
-    END
-
-    IDD_GOTOYEAR, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 115
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 71
-    END
-
-    IDD_EDITCONDITION, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 282
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 301
-    END
-
-    IDD_SAVEFILTER, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 270
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 120
-    END
-
-    IDD_FILTER, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 179
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 21
-    END
-END
-#endif    // APSTUDIO_INVOKED
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// String Table
-//
-
-STRINGTABLE 
-BEGIN
-    IDR_APPLICATION         "StoreManager"
-    IDR_CLIPBOARD           "Clipboard"
-END
-
-STRINGTABLE 
-BEGIN
-    ID_PANE_FILTER          "Opens and closes the filter pane.\nFilter"
-    ID_PANE_INSPECTOR       "Opens and closes the inspector pane.\nInspector"
-END
-
-STRINGTABLE 
-BEGIN
-    IDS_VIEWGROUP1          "List views"
-    IDS_VIEWGROUP2          "Enhanced views"
-    IDS_CONTEXTMENU_SELECTALL "Select &all\tCtrl+A"
-    IDS_CONTEXTMENU_SORTOPTIONS "&Organize ""%s"" by..."
-    IDS_CONTEXTMENU_AUTODIRS "&Group into subfolders"
-    IDS_CONTEXTMENU_VIEWOPTIONS "&Display ""%s"" as..."
-    IDS_CONTEXTMENU_OPEN    "&Open"
-    IDS_CONTEXTMENU_OPENNEWWINDOW "Open in &new window"
-    IDS_CONTEXTMENU_OPENWITH "Open &with..."
-END
-
-STRINGTABLE 
-BEGIN
-    IDS_CONTEXTMENU_OPENGOOGLEEARTH "Open in &Google Earth"
-    IDS_CONTEXTMENU_REMEMBER "Re&member"
-    IDS_CONTEXTMENU_REMOVE  "Re&move from clipboard"
-    IDS_CONTEXTMENU_AUTOSIZEALL "Size all &columns to fit"
-    IDS_CONTEXTMENU_MORE    "&More..."
-    IDS_CONTEXTMENU_TIME    "&Time"
-    IDS_CONTEXTMENU_LOCATION "&Location"
-    IDS_CONTEXTMENU_DIMENSION "&Dimension"
-    IDS_CONTEXTMENU_CHOOSESTORE "Choose &store..."
-    IDS_TXTFILEFILTER       "Text document"
-    IDS_XMLFILEFILTER       "Extensible Markup Language"
-    IDS_ATTRIBUTENOTSORTABLE "This property is not suitable for sorting."
-    IDS_NOITEMSSELECTED     "No items selected"
-    IDS_MULTIPLETYPESSELECTED "Multiple types, %d items"
-    IDS_YOULOOKAT           "You look at %s"
-    IDS_NOTHINGTODISPLAY    "There is nothing to display."
-    IDS_NONAVIGATION        "This window does not support any navigation."
-END
-
-STRINGTABLE 
-BEGIN
-    IDS_FORMAT_CAPTION      "You cannot format volume ""%s"""
-    IDS_FORMAT_TEXT         "It contains stores that you are using.\nFormatting this volume will destroy those stores."
-    IDS_AUTOMATIC           "Choose automatically"
-    IDS_ILLEGALYEAR         "You can only display the years 1900 through 2100."
-    IDS_LEGEND              "Legend"
-    IDS_LEGEND_BLUE         "Requires scheduled maintenance"
-    IDS_LEGEND_RED          "Damaged (file body missing)"
-    IDS_LEGEND_RARE         "Rare"
-    IDS_LEGEND_COMMON       "Common"
-    IDS_LEGEND_OLDER        "Older"
-    IDS_LEGEND_NEWER        "Newer"
-    IDS_STATISTICS          "Statistics"
-    IDS_STATISTICS_BYCOUNT  "By file count"
-    IDS_STATISTICS_BYSIZE   "By file size"
-    IDS_STATISTICS_OTHER    "Other"
-    IDS_SUBFOLDERS_MANDATORY "Subfolders are mandatory for this view."
-    IDS_SUBFOLDERS_NOTAVAIL "Subfolders are not available in this context."
-END
-
-STRINGTABLE 
-BEGIN
-    IDS_VATTR_DRIVELETTER   "Drive letter"
-    IDS_VATTR_MAINTENANCETIME "Last maintenance"
-    IDS_VATTR_LASTSEEN      "Last seen"
-    IDS_VATTR_GUID          "GUID"
-END
-
-STRINGTABLE 
-BEGIN
-    IDS_VATTR_PATH_DAT      "Data path"
-    IDS_VATTR_PATH_IDX_MAIN "Main index path"
-    IDS_VATTR_PATH_IDX_AUX  "Aux. index path"
-    IDS_VATTR_INDEXVERSION  "Index version"
-    IDS_VATTR_IATA_NAME     "IATA airport name"
-    IDS_VATTR_IATA_COUNTRY  "Country/territory"
-END
-
-STRINGTABLE 
-BEGIN
-    IDS_FILTER_SEARCHIN     "Search in"
-    IDS_FILTER_ALLSTORES    "All stores"
-    IDS_FILTER_THISSTORE    "This store"
-    IDS_FILTER_SEARCHTERM   "Search term"
-    IDS_FILTER_OTHERCONDITIONS "Other conditions"
-    IDS_FILTER_ADDCONDITION "Add condition..."
-END
-
-STRINGTABLE 
-BEGIN
-    IDM_STORE_MAKEDEFAULT   "Makes the selected store the default store.\nMake default store"
-    IDM_STORE_IMPORTFOLDER  "Imports a folder and all its subfolders into the selected store.\nImport folder..."
-    IDM_STORE_DELETE        "Deletes the selected store.\nDelete"
-    IDM_STORE_RENAME        "Renames the selected store.\nRename"
-    IDM_STORE_PROPERTIES    "Displays the properties of the selected store.\nProperties"
-    IDM_STORES_CREATENEW    "Creates a new store for your files.\nCreate new store..."
-END
-
-STRINGTABLE 
-BEGIN
-    IDM_STORES_SHOWEMPTYVOLUMES "Show &unmounted volumes"
-    IDM_STORES_REPAIRCORRUPTEDINDEX "Run maintenance"
-END
-
-STRINGTABLE 
-BEGIN
-    IDM_HOME_SHOWEMPTYDOMAINS "Show &empty domains"
-    IDM_HOME_IMPORTFOLDER   "Imports a folder and all its subfolders into this store.\nImport folder..."
-END
-
-STRINGTABLE 
-BEGIN
-    IDM_HOUSEKEEPING_REMOVENEW 
-                            "Removes the designation as recently imported file from all files.\nRemove ""New"" attribute"
-    IDM_HOUSEKEEPING_SEND   "Sends a list of user-registered file formats to customer support.\nSend list"
-END
-
-STRINGTABLE 
-BEGIN
-    IDM_TRASH_RESTOREALL    "Restores all files from the trash.\nRestore all"
-    IDM_TRASH_EMPTY         "Permanently deletes all files from the trash.\nEmpty trash"
-END
-
-STRINGTABLE 
-BEGIN
-    IDM_ITEM_OPEN           "Opens the selected item.\nOpen"
-END
-
-STRINGTABLE 
-BEGIN
-    IDM_VOLUME_PROPERTIES   "Displays the properties of the selected volume.\nProperties"
-END
-
-STRINGTABLE 
-BEGIN
-    IDM_FILE_REMEMBER       "Adds the selected files to the clipboard window.\nRemember"
-    IDM_FILE_REMOVE         "Removes the selected files from the clipboard window.\nRemove"
-    IDM_FILE_DELETE         "Deletes the selected files.\nDelete"
-    IDM_FILE_RENAME         "Renames the selected file.\nRename"
-    IDM_FILE_RESTORE        "Restores the selected files.\nRestore"
-END
-
-STRINGTABLE 
-BEGIN
-    IDM_SEND                "S&end to"
-END
-
-STRINGTABLE 
-BEGIN
-    IDM_CALENDAR_PREVYEAR   "Displays the previous year.\nPrevious year"
-    IDM_CALENDAR_NEXTYEAR   "Displays the next year.\nNext year"
-    IDM_CALENDAR_GOTOYEAR   "Shows a window that lets you choose a year to display.\nGo to year..."
-END
-
-STRINGTABLE 
-BEGIN
-    IDM_GLOBE_JUMPTOLOCATION 
-                            "Centers the globe on a specific location.\nJump to location..."
-    IDM_GLOBE_ZOOMIN        "Zooms into the globe.\nZoom in"
-    IDM_GLOBE_ZOOMOUT       "Zooms out of the globe.\nZoom out"
-    IDM_GLOBE_AUTOSIZE      "Resizes the globe to touch the edges of the window.\nSize to fit"
-    IDM_GLOBE_GOOGLEEARTH   "Opens the selected locations in Google Earth.\nOpen in Google Earth"
-END
-
-STRINGTABLE 
-BEGIN
-    IDM_TAGCLOUD_SORTVALUE  "Arranges the tags in their canonic order.\nSort by value"
-    IDM_TAGCLOUD_SORTCOUNT  "Arranges the tags by their file count.\nSort by count"
-END
-
-STRINGTABLE 
-BEGIN
-    IDM_TAGCLOUD_SORT       "&Sort by"
-END
-
-STRINGTABLE 
-BEGIN
-    IDM_ORGANIZE            "Selects the property by which to organize all items in this context.\nOrganize by"
-END
-
-STRINGTABLE 
-BEGIN
-    IDM_VIEW                "Selects the view mode for this context.\nDisplay as"
-    IDM_VIEW_LARGEICONS     "Large icons"
-    IDM_VIEW_SMALLICONS     "Small icons"
-    IDM_VIEW_LIST           "List"
-    IDM_VIEW_DETAILS        "Details"
-    IDM_VIEW_TILES          "Tiles"
-    IDM_VIEW_STRIPS         "File strips"
-    IDM_VIEW_CONTENT        "Content"
-    IDM_VIEW_PREVIEW        "Preview"
-    IDM_VIEW_CALENDAR       "Calendar"
-    IDM_VIEW_TIMELINE       "Timeline"
-    IDM_VIEW_GLOBE          "Globe"
-    IDM_VIEW_TAGCLOUD       "Tag cloud"
-END
-
-#endif    // Englisch (neutral) resources
 /////////////////////////////////////////////////////////////////////////////
 
 
@@ -1554,30 +964,29 @@ BEGIN
     PUSHBUTTON      "Cancelar",IDCANCEL,355,256,50,14,WS_GROUP
 END
 
-IDD_GLOBEOPTIONS DIALOGEX 0, 0, 178, 248
+IDD_GLOBEOPTIONS DIALOGEX 0, 0, 178, 238
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Configuraciones de globo"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,63,227,50,14
-    PUSHBUTTON      "Cancelar",IDCANCEL,121,227,50,14
-    GROUPBOX        "Configuraciones 3D (OpenGL)",IDC_STATIC,7,7,164,81
-    GROUPBOX        "Objetos",IDC_STATIC,7,94,164,66
-    GROUPBOX        "Varios",IDC_STATIC,7,166,164,53
+    DEFPUSHBUTTON   "OK",IDOK,63,217,50,14
+    PUSHBUTTON      "Cancelar",IDCANCEL,121,217,50,14
+    GROUPBOX        "Configuraciones 3D (OpenGL)",IDC_STATIC,7,7,164,71
+    GROUPBOX        "Objetos",IDC_STATIC,7,84,164,66
+    GROUPBOX        "Varios",IDC_STATIC,7,156,164,53
     LTEXT           "Dimensión:",IDC_STATIC,14,19,54,8
     COMBOBOX        IDC_TEXTURESIZE,71,17,93,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
     CONTROL         "&Modelo de alta calidad",IDC_HQMODEL,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,14,36,150,10
     CONTROL         "&Iluminación",IDC_LIGHTING,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,48,150,10
     CONTROL         "&Atmósfera",IDC_ATMOSPHERE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,60,150,10
-    CONTROL         "&Sombras",IDC_SHADOWS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,73,150,10
-    CONTROL         "Marcar &ubicaciones",IDC_SPOTS,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,14,105,150,10
+    CONTROL         "Marcar &ubicaciones",IDC_SPOTS,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,14,95,150,10
     CONTROL         "Mostrar &nombres de aeropuertos",IDC_AIRPORTNAMES,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,118,150,10
-    CONTROL         "Mostrar &coordenadas GPS",IDC_GPSCOORDINATES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,131,150,10
-    CONTROL         "Mostrar &descripción",IDC_DESCRIPTION,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,144,150,10
-    CONTROL         "&Fondo negro",IDC_BLACKBACKGROUND,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,14,178,150,10
-    CONTROL         "Mostrar &vista de cámara",IDC_VIEWPORT,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,14,191,150,10
-    CONTROL         "Mostrar puntos de&mira",IDC_CROSSHAIRS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,204,150,10
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,108,150,10
+    CONTROL         "Mostrar &coordenadas GPS",IDC_GPSCOORDINATES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,121,150,10
+    CONTROL         "Mostrar &descripción",IDC_DESCRIPTION,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,134,150,10
+    CONTROL         "&Fondo negro",IDC_BLACKBACKGROUND,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,14,168,150,10
+    CONTROL         "Mostrar &vista de cámara",IDC_VIEWPORT,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,14,181,150,10
+    CONTROL         "Mostrar puntos de&mira",IDC_CROSSHAIRS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,194,150,10
 END
 
 IDD_GOTOYEAR DIALOGEX 0, 0, 122, 78
@@ -1670,7 +1079,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 171
         TOPMARGIN, 7
-        BOTTOMMARGIN, 241
+        BOTTOMMARGIN, 231
     END
 
     IDD_GOTOYEAR, DIALOG
@@ -1692,7 +1101,6 @@ BEGIN
     IDD_SAVEFILTER, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 285
         TOPMARGIN, 7
         BOTTOMMARGIN, 120
     END
@@ -1734,13 +1142,13 @@ BEGIN
     IDS_CONTEXTMENU_AUTODIRS "&Agrupar en subcarpetas"
     IDS_CONTEXTMENU_VIEWOPTIONS "&Visualizar ""%s"" como..."
     IDS_CONTEXTMENU_OPEN    "&Abrir"
-    IDS_CONTEXTMENU_OPENNEWWINDOW "Abrir en &nueva ventana"
     IDS_CONTEXTMENU_OPENWITH "Abrir &con..."
 END
 
 STRINGTABLE 
 BEGIN
     IDS_CONTEXTMENU_OPENGOOGLEEARTH "Abrir con &Google Earth"
+    IDS_CONTEXTMENU_OPENNEWWINDOW "Abrir en &nueva ventana"
     IDS_CONTEXTMENU_REMEMBER "Re&cordar"
     IDS_CONTEXTMENU_REMOVE  "&Eliminar del portapapeles"
     IDS_CONTEXTMENU_AUTOSIZEALL "Autoajustar &todas las columnas"
@@ -1755,12 +1163,12 @@ BEGIN
     IDS_NOITEMSSELECTED     "Objetos no seleccionados"
     IDS_MULTIPLETYPESSELECTED "Múltiples tipos, %d objetos"
     IDS_YOULOOKAT           "Usted está viendo %s"
-    IDS_NOTHINGTODISPLAY    "No hay nada que visualizar."
-    IDS_NONAVIGATION        "Esta ventana no es compatible con la navegación."
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_NOTHINGTODISPLAY    "No hay nada que visualizar."
+    IDS_NONAVIGATION        "Esta ventana no es compatible con la navegación."
     IDS_FORMAT_CAPTION      "Usted no puede formatear volúmen ""%s"""
     IDS_FORMAT_TEXT         "Contiene stores que usted está usando.\nAl formatear este volúmen destruirá aquellos stores."
     IDS_AUTOMATIC           "Escoger automaticamente"
@@ -1775,8 +1183,13 @@ BEGIN
     IDS_STATISTICS          "Estadísticas"
     IDS_STATISTICS_BYCOUNT  "Por número de archivo"
     IDS_STATISTICS_BYSIZE   "Por tamaño de archivo"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_STATISTICS_OTHER    "Otros"
-    IDS_SUBFOLDERS_MANDATORY "Las subcarpetas son obligatorias para esta visualización."
+    IDS_SUBFOLDERS_MANDATORY 
+                            "Las subcarpetas son obligatorias para esta visualización."
     IDS_SUBFOLDERS_NOTAVAIL "Las subcarpetas no están disponibles para este contexto."
 END
 
@@ -1859,6 +1272,10 @@ BEGIN
     IDM_FILE_REMOVE         "Remueve los archivos seleccionados de la ventana del portapapeles.\nRemover"
     IDM_FILE_DELETE         "Elimina los archivos seleccionados.\nEliminar"
     IDM_FILE_RENAME         "Renombra los archivos seleccionados.\nRenombrar"
+END
+
+STRINGTABLE 
+BEGIN
     IDM_FILE_RESTORE        "Restablece los archivos seleccionados.\nRestablecer"
 END
 
@@ -2153,30 +1570,29 @@ BEGIN
     PUSHBUTTON      "Annuler",IDCANCEL,335,256,50,14,WS_GROUP
 END
 
-IDD_GLOBEOPTIONS DIALOGEX 0, 0, 178, 248
+IDD_GLOBEOPTIONS DIALOGEX 0, 0, 178, 238
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Paramètres du globe"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,63,227,50,14
-    PUSHBUTTON      "Annuler",IDCANCEL,121,227,50,14
-    GROUPBOX        "3D-paramètres (OpenGL)",IDC_STATIC,7,7,164,81
-    GROUPBOX        "Les objets",IDC_STATIC,7,94,164,66
-    GROUPBOX        "Divers",IDC_STATIC,7,166,164,53
+    DEFPUSHBUTTON   "OK",IDOK,63,217,50,14
+    PUSHBUTTON      "Annuler",IDCANCEL,121,217,50,14
+    GROUPBOX        "3D-paramètres (OpenGL)",IDC_STATIC,7,7,164,71
+    GROUPBOX        "Les objets",IDC_STATIC,7,84,164,66
+    GROUPBOX        "Divers",IDC_STATIC,7,156,164,53
     LTEXT           "La texture:",IDC_STATIC,14,19,54,8
     COMBOBOX        IDC_TEXTURESIZE,71,17,93,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
     CONTROL         "3D-&modèle à haute résolution",IDC_HQMODEL,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,14,36,150,10
     CONTROL         "Éclairag&e",IDC_LIGHTING,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,48,150,10
     CONTROL         "&Atmosphère",IDC_ATMOSPHERE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,60,150,10
-    CONTROL         "Om&bre",IDC_SHADOWS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,73,150,10
-    CONTROL         "&Sélectionner des lieux ",IDC_SPOTS,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,14,105,150,10
-    CONTROL         "Indiquer les &noms d'aéroport",IDC_AIRPORTNAMES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,118,150,10
+    CONTROL         "&Sélectionner des lieux ",IDC_SPOTS,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,14,95,150,10
+    CONTROL         "Indiquer les &noms d'aéroport",IDC_AIRPORTNAMES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,108,150,10
     CONTROL         "Indiquer les &coordonnées-GPS",IDC_GPSCOORDINATES,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,131,150,10
-    CONTROL         "Indiquer les &descriptions",IDC_DESCRIPTION,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,144,150,10
-    CONTROL         "Fond &noir",IDC_BLACKBACKGROUND,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,178,150,10
-    CONTROL         "Indiquer la &perspective de caméra",IDC_VIEWPORT,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,14,191,150,10
-    CONTROL         "Indiquer le &réticule",IDC_CROSSHAIRS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,204,150,10
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,121,150,10
+    CONTROL         "Indiquer les &descriptions",IDC_DESCRIPTION,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,134,150,10
+    CONTROL         "Fond &noir",IDC_BLACKBACKGROUND,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,168,150,10
+    CONTROL         "Indiquer la &perspective de caméra",IDC_VIEWPORT,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,14,181,150,10
+    CONTROL         "Indiquer le &réticule",IDC_CROSSHAIRS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,194,150,10
 END
 
 IDD_GOTOYEAR DIALOGEX 0, 0, 122, 78
@@ -2269,7 +1685,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 171
         TOPMARGIN, 7
-        BOTTOMMARGIN, 241
+        BOTTOMMARGIN, 231
     END
 
     IDD_GOTOYEAR, DIALOG
@@ -2283,7 +1699,6 @@ BEGIN
     IDD_SAVEFILTER, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 285
         TOPMARGIN, 7
         BOTTOMMARGIN, 120
     END
@@ -2333,13 +1748,13 @@ BEGIN
     IDS_CONTEXTMENU_AUTODIRS "&Grouper dans sous-dossiers"
     IDS_CONTEXTMENU_VIEWOPTIONS """%s"" a&fficher comme..."
     IDS_CONTEXTMENU_OPEN    "&Ouvrir"
-    IDS_CONTEXTMENU_OPENNEWWINDOW "Ouvrir dans une nouvelle &fenêtre"
     IDS_CONTEXTMENU_OPENWITH "Ouvrir &avec..."
 END
 
 STRINGTABLE 
 BEGIN
     IDS_CONTEXTMENU_OPENGOOGLEEARTH "Ouvrir avec &Google Earth"
+    IDS_CONTEXTMENU_OPENNEWWINDOW "Ouvrir dans une nouvelle &fenêtre"
     IDS_CONTEXTMENU_REMEMBER "Remar&quer"
     IDS_CONTEXTMENU_REMOVE  "Enlèver du &presse-papiers"
     IDS_CONTEXTMENU_AUTOSIZEALL "Adapter &tous les larges de colonnes"
@@ -2354,12 +1769,12 @@ BEGIN
     IDS_NOITEMSSELECTED     "Aucun élément choisi"
     IDS_MULTIPLETYPESSELECTED "Types, éléments %d différents"
     IDS_YOULOOKAT           "Vous regardez %s"
-    IDS_NOTHINGTODISPLAY    "Il n'y a rien indiquer."
-    IDS_NONAVIGATION        "Cette fenêtre ne soutient aucune navigation."
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_NOTHINGTODISPLAY    "Il n'y a rien indiquer."
+    IDS_NONAVIGATION        "Cette fenêtre ne soutient aucune navigation."
     IDS_FORMAT_CAPTION      "Vous ne pouvez pas formater le lecteur ""%s"""
     IDS_FORMAT_TEXT         "Le lecteur contient à présent stores, être utilisés.\nLe fait de formater le lecteur rendrait ces stores inutilisables."
     IDS_AUTOMATIC           "Choisir automatiquement"
@@ -2374,6 +1789,10 @@ BEGIN
     IDS_STATISTICS          "Statistique"
     IDS_STATISTICS_BYCOUNT  "Après le nombre"
     IDS_STATISTICS_BYSIZE   "Après la grandeur"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_STATISTICS_OTHER    "D'autres"
     IDS_SUBFOLDERS_MANDATORY "Sous-dossier dans cet avis nécessaire"
     IDS_SUBFOLDERS_NOTAVAIL "Sous-dossier dans le contexte non disponible"
@@ -2458,6 +1877,10 @@ BEGIN
     IDM_FILE_REMOVE         "Enlève les fichiers choisis du presse-papiers.\nEnlever"
     IDM_FILE_DELETE         "Efface les fichiers choisis.\nEffacer"
     IDM_FILE_RENAME         "Renomme le fichier choisi.\nRenommer"
+END
+
+STRINGTABLE 
+BEGIN
     IDM_FILE_RESTORE        "Reconstitue tous les fichiers.\nReconstituer"
 END
 
@@ -2567,6 +1990,610 @@ END
 #endif    // APSTUDIO_INVOKED
 
 #endif    // Deutsch (Deutschland) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// Englisch (USA) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDM_HOME MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "Show &statistics",            IDM_HOME_SHOWSTATISTICS
+        MENUITEM SEPARATOR
+        MENUITEM "&Import folder...",           IDM_HOME_IMPORTFOLDER
+        MENUITEM SEPARATOR
+        MENUITEM "P&roperties",                 IDM_HOME_PROPERTIES
+    END
+END
+
+IDM_HOUSEKEEPING MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM SEPARATOR
+        MENUITEM "&Send list",                  IDM_HOUSEKEEPING_SEND
+    END
+END
+
+IDM_TRASH MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM SEPARATOR
+        MENUITEM "&Restore all",                IDM_TRASH_RESTOREALL
+        MENUITEM "&Empty trash",                IDM_TRASH_EMPTY
+    END
+END
+
+IDM_VOLUME MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "Create &new store...",        IDM_VOLUME_CREATENEWSTORE
+        MENUITEM SEPARATOR
+        MENUITEM "&Format...",                  IDM_VOLUME_FORMAT
+        MENUITEM "E&ject",                      IDM_VOLUME_EJECT
+        MENUITEM SEPARATOR
+        MENUITEM "P&roperties",                 IDM_VOLUME_PROPERTIES
+    END
+END
+
+IDM_FILE MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM SEPARATOR
+        MENUITEM "&Copy",                       IDM_FILE_COPY
+        MENUITEM SEPARATOR
+        MENUITEM "Create &shortcut",            IDM_FILE_SHORTCUT
+        MENUITEM "&Delete",                     IDM_FILE_DELETE
+        MENUITEM "&Rename",                     IDM_FILE_RENAME
+    END
+END
+
+IDM_FILE_TRASH MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM SEPARATOR
+        MENUITEM "&Delete",                     IDM_FILE_DELETE
+        MENUITEM "Re&store",                    IDM_FILE_RESTORE
+    END
+END
+
+IDM_DETAILS MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "Size all &columns to fit",    IDM_DETAILS_AUTOSIZEALL
+        MENUITEM "Size column to &fit",         IDM_DETAILS_AUTOSIZE
+        MENUITEM SEPARATOR
+        MENUITEM SEPARATOR
+        MENUITEM "&More...",                    IDM_DETAILS_CHOOSE
+    END
+END
+
+IDM_CALENDAR MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "Show &statistics",            IDM_CALENDAR_SHOWSTATISTICS
+        MENUITEM "Show &captions",              IDM_CALENDAR_SHOWCAPTIONS
+        MENUITEM "Show empty &days",            IDM_CALENDAR_SHOWEMPTYDAYS
+        MENUITEM SEPARATOR
+        MENUITEM "Go to &year...\tCtrl+Y",      IDM_CALENDAR_GOTOYEAR
+    END
+END
+
+IDM_GLOBE MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "Globe &settings...",          IDM_GLOBE_SETTINGS
+        MENUITEM "Size globe to &fit",          IDM_GLOBE_AUTOSIZE
+        MENUITEM SEPARATOR
+        MENUITEM "Jump to &location...\tCtrl+L", IDM_GLOBE_JUMPTOLOCATION
+    END
+END
+
+IDM_TAGCLOUD MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "Show &legend",                IDM_TAGCLOUD_SHOWLEGEND
+        MENUITEM SEPARATOR
+        MENUITEM "Use &font size",              IDM_TAGCLOUD_USESIZE
+        MENUITEM "Use &color",                  IDM_TAGCLOUD_USECOLORS
+        MENUITEM "Use &opacity",                IDM_TAGCLOUD_USEOPACITY
+    END
+END
+
+IDM_TAGCLOUD_SORT MENU 
+BEGIN
+    MENUITEM "Sort by &value",              IDM_TAGCLOUD_SORTVALUE
+    MENUITEM "Sort by &count",              IDM_TAGCLOUD_SORTCOUNT
+    MENUITEM SEPARATOR
+    MENUITEM "Show &rare tags",             IDM_TAGCLOUD_SHOWRARE
+END
+
+IDM_INSPECTOR MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "Show &preview",               IDM_INSPECTOR_SHOWPREVIEW
+        MENUITEM "Show a&ll properties",        IDM_INSPECTOR_SHOWINTERNAL
+        MENUITEM "Sort &alphabetically",        IDM_INSPECTOR_SORTALPHABETIC
+        MENUITEM SEPARATOR
+        POPUP "&Export"
+        BEGIN
+            MENUITEM "&Summary...",                 IDM_INSPECTOR_EXPORTSUMMARY
+            MENUITEM "Complete &metadata...",       IDM_INSPECTOR_EXPORTMETADATA
+        END
+    END
+END
+
+IDM_FILTER MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "S&earch",                     IDM_FILTER_SEARCH
+        MENUITEM "&Save",                       IDM_FILTER_SAVE
+    END
+END
+
+IDM_CONDITIONLIST MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "&Add condition...",           IDM_CONDITIONLIST_ADD
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_VIEWOPTIONS DIALOGEX 0, 0, 392, 277
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
+CAPTION "Display ""%s"" as"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "",IDC_VIEWMODES,"SysListView32",LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | WS_BORDER | WS_GROUP | WS_TABSTOP,14,27,160,215
+    GROUPBOX        "Views",IDC_STATIC,7,7,174,242
+    LTEXT           "All views available in this context:",IDC_STATIC,14,17,160,8
+    GROUPBOX        "Details",IDC_STATIC,189,7,196,242
+    LTEXT           "Choose the details for this context:",IDC_STATIC,196,17,183,9
+    CONTROL         "",IDC_VIEWATTRIBUTES,"SysListView32",LVS_SMALLICON | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_NOCOLUMNHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,196,27,118,215
+    PUSHBUTTON      "Move &up",IDC_MOVEUP,320,27,58,14,WS_GROUP
+    PUSHBUTTON      "Move &down",IDC_MOVEDOWN,320,46,58,14,WS_GROUP
+    PUSHBUTTON      "Check &all",IDC_CHECKALL,320,70,58,14,WS_GROUP
+    PUSHBUTTON      "&Uncheck all",IDC_UNCHECKALL,320,89,58,14,WS_GROUP
+    DEFPUSHBUTTON   "OK",IDOK,277,256,50,14,WS_GROUP
+    PUSHBUTTON      "Cancel",IDCANCEL,335,256,50,14,WS_GROUP
+END
+
+IDD_SORTOPTIONS DIALOGEX 0, 0, 289, 319
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
+CAPTION "Organize ""%s"" by"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "",IDC_SORTATTRIBUTE,"SysListView32",LVS_LIST | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SORTASCENDING | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_ALIGNLEFT | LVS_NOCOLUMNHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,14,27,261,206
+    DEFPUSHBUTTON   "OK",IDOK,174,298,50,14,WS_GROUP
+    PUSHBUTTON      "Cancel",IDCANCEL,232,298,50,14,WS_GROUP
+    GROUPBOX        "Organize items by this property",IDC_STATIC,7,7,275,235
+    LTEXT           "All properties available in this context:",IDC_STATIC,14,17,261,8
+    CONTROL         "&Group items into subfolders",IDC_AUTODIRS,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,42,262,147,10
+    CONTROL         "&Ascending",IDC_ASCENDING,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,225,259,50,10
+    CONTROL         "&Descending",IDC_DESCENDING,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,225,272,50,10
+    GROUPBOX        "Grouping",IDC_STATIC,7,248,188,42
+    GROUPBOX        "Sort direction",IDC_STATIC,204,248,78,42
+    CONTROL         132,IDC_STATIC,"Static",SS_BITMAP,210,259,9,8
+    CONTROL         133,IDC_STATIC,"Static",SS_BITMAP,210,272,9,8
+    LTEXT           "",IDC_SUBFOLDERHINT,42,275,147,8
+    CONTROL         134,IDC_STATIC,"Static",SS_BITMAP,14,262,21,20
+END
+
+IDD_CHOOSEDETAILS DIALOGEX 0, 0, 208, 276
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
+CAPTION "Details for ""%s"""
+FONT 8, "MS Shell Dlg", 400, 0, 0x0
+BEGIN
+    GROUPBOX        "Details",IDC_STATIC,7,7,194,241
+    LTEXT           "Choose the details for this context:",IDC_STATIC,14,17,183,9
+    CONTROL         "",IDC_VIEWATTRIBUTES,"SysListView32",LVS_SMALLICON | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_NOCOLUMNHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,14,27,118,213
+    PUSHBUTTON      "Move &up",IDC_MOVEUP,137,27,58,14,WS_GROUP
+    PUSHBUTTON      "Move &down",IDC_MOVEDOWN,137,46,58,14,WS_GROUP
+    PUSHBUTTON      "Check &all",IDC_CHECKALL,137,70,58,14,WS_GROUP
+    PUSHBUTTON      "&Uncheck all",IDC_UNCHECKALL,137,89,58,14,WS_GROUP
+    DEFPUSHBUTTON   "OK",IDOK,93,255,50,14,WS_GROUP
+    PUSHBUTTON      "Cancel",IDCANCEL,151,255,50,14,WS_GROUP
+END
+
+IDD_GLOBEOPTIONS DIALOGEX 0, 0, 178, 238
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Globe settings"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,63,217,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,121,217,50,14
+    GROUPBOX        "3D settings (OpenGL)",IDC_STATIC,7,7,164,71
+    GROUPBOX        "Objects",IDC_STATIC,7,84,164,66
+    GROUPBOX        "Miscellaneous",IDC_STATIC,7,156,164,53
+    LTEXT           "Texture size:",IDC_STATIC,14,19,54,8
+    COMBOBOX        IDC_TEXTURESIZE,71,17,93,30,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
+    CONTROL         "&High-quality model",IDC_HQMODEL,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,14,36,150,10
+    CONTROL         "&Lighting",IDC_LIGHTING,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,48,150,10
+    CONTROL         "&Atmosphere",IDC_ATMOSPHERE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,60,150,10
+    CONTROL         "Mark &locations",IDC_SPOTS,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,14,95,150,10
+    CONTROL         "Show &airport names",IDC_AIRPORTNAMES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,108,150,10
+    CONTROL         "Show &GPS ccordinates",IDC_GPSCOORDINATES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,121,150,10
+    CONTROL         "Show &description",IDC_DESCRIPTION,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,134,150,10
+    CONTROL         "&Black background",IDC_BLACKBACKGROUND,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,14,168,150,10
+    CONTROL         "Show &camera viewport",IDC_VIEWPORT,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,14,181,150,10
+    CONTROL         "Show cross&hairs",IDC_CROSSHAIRS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,194,150,10
+END
+
+IDD_GOTOYEAR DIALOGEX 0, 0, 122, 78
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
+CAPTION "Go to year"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    GROUPBOX        "Calendar",IDC_STATIC,7,7,108,44
+    LTEXT           "Display this year:",IDC_STATIC,14,18,93,8
+    EDITTEXT        IDC_YEAR,14,28,94,14,ES_AUTOHSCROLL | WS_GROUP
+    DEFPUSHBUTTON   "OK",IDOK,7,57,50,14,WS_GROUP
+    PUSHBUTTON      "Cancel",IDCANCEL,65,57,50,14,WS_GROUP
+END
+
+IDD_EDITCONDITION DIALOGEX 0, 0, 289, 308
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
+CAPTION "Edit condition"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "",IDC_COMPAREATTRIBUTE,"SysListView32",LVS_LIST | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SORTASCENDING | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_ALIGNLEFT | LVS_NOCOLUMNHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,14,19,261,214
+    COMBOBOX        IDC_COMPARE,14,259,76,30,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_GROUP | WS_TABSTOP
+    CONTROL         "",IDC_PROPERTY,"CPropertyEdit",WS_CLIPCHILDREN | WS_BORDER | WS_GROUP | WS_TABSTOP,96,259,179,13
+    DEFPUSHBUTTON   "OK",IDOK,174,287,50,14,WS_GROUP
+    PUSHBUTTON      "Cancel",IDCANCEL,232,287,50,14,WS_GROUP
+    GROUPBOX        "Properties",IDC_STATIC,7,7,275,235
+    GROUPBOX        "Comparison",IDC_STATIC,7,248,275,32
+END
+
+IDD_SAVEFILTER DIALOGEX 0, 0, 277, 148
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
+CAPTION "Save filter"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    EDITTEXT        IDC_FILENAME,58,75,205,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_COMMENTS,58,96,205,14,ES_AUTOHSCROLL
+    DEFPUSHBUTTON   "OK",IDOK,164,127,50,14,WS_GROUP
+    PUSHBUTTON      "Cancel",IDCANCEL,220,127,50,14,WS_GROUP
+    CONTROL         "",IDC_DESTINATION,"CStorePanel",WS_GROUP,14,16,177,34
+    PUSHBUTTON      "Choose &store...",IDC_CHOOSESTORE,197,25,66,14
+    GROUPBOX        "Destination",IDC_STATIC,7,7,263,49
+    GROUPBOX        "Properties",IDC_STATIC,7,62,263,57
+    LTEXT           "Name:",IDC_STATIC,14,77,22,8
+    LTEXT           "Comments:",IDC_STATIC,14,98,40,8
+END
+
+IDD_FILTER DIALOGEX 0, 0, 186, 28
+STYLE DS_SETFONT | DS_FIXEDSYS | DS_CONTROL | WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN
+EXSTYLE WS_EX_CONTROLPARENT
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    PUSHBUTTON      "Search",IDM_FILTER_SEARCH,7,7,82,14
+    PUSHBUTTON      "Save",IDM_FILTER_SAVE,97,7,82,14
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    IDD_VIEWOPTIONS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 385
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 270
+    END
+
+    IDD_SORTOPTIONS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 282
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 312
+    END
+
+    IDD_CHOOSEDETAILS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 201
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 269
+    END
+
+    IDD_GLOBEOPTIONS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 171
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 231
+    END
+
+    IDD_GOTOYEAR, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 115
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 71
+    END
+
+    IDD_EDITCONDITION, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 282
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 301
+    END
+
+    IDD_SAVEFILTER, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 270
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 120
+    END
+
+    IDD_FILTER, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 179
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 21
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE 
+BEGIN
+    IDR_APPLICATION         "StoreManager"
+    IDR_CLIPBOARD           "Clipboard"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_PANE_FILTER          "Opens and closes the filter pane.\nFilter"
+    ID_PANE_INSPECTOR       "Opens and closes the inspector pane.\nInspector"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_VIEWGROUP1          "List views"
+    IDS_VIEWGROUP2          "Enhanced views"
+    IDS_CONTEXTMENU_SELECTALL "Select &all\tCtrl+A"
+    IDS_CONTEXTMENU_SORTOPTIONS "&Organize ""%s"" by..."
+    IDS_CONTEXTMENU_AUTODIRS "&Group into subfolders"
+    IDS_CONTEXTMENU_VIEWOPTIONS "&Display ""%s"" as..."
+    IDS_CONTEXTMENU_OPEN    "&Open"
+    IDS_CONTEXTMENU_OPENWITH "Open &with..."
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_CONTEXTMENU_OPENGOOGLEEARTH "Open in &Google Earth"
+    IDS_CONTEXTMENU_OPENNEWWINDOW "Open in &new window"
+    IDS_CONTEXTMENU_REMEMBER "Re&member"
+    IDS_CONTEXTMENU_REMOVE  "Re&move from clipboard"
+    IDS_CONTEXTMENU_AUTOSIZEALL "Size all &columns to fit"
+    IDS_CONTEXTMENU_MORE    "&More..."
+    IDS_CONTEXTMENU_TIME    "&Time"
+    IDS_CONTEXTMENU_LOCATION "&Location"
+    IDS_CONTEXTMENU_DIMENSION "&Dimension"
+    IDS_CONTEXTMENU_CHOOSESTORE "Choose &store..."
+    IDS_TXTFILEFILTER       "Text document"
+    IDS_XMLFILEFILTER       "Extensible Markup Language"
+    IDS_ATTRIBUTENOTSORTABLE "This property is not suitable for sorting."
+    IDS_NOITEMSSELECTED     "No items selected"
+    IDS_MULTIPLETYPESSELECTED "Multiple types, %d items"
+    IDS_YOULOOKAT           "You look at %s"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_NOTHINGTODISPLAY    "There is nothing to display."
+    IDS_NONAVIGATION        "This window does not support any navigation."
+    IDS_FORMAT_CAPTION      "You cannot format volume ""%s"""
+    IDS_FORMAT_TEXT         "It contains stores that you are using.\nFormatting this volume will destroy those stores."
+    IDS_AUTOMATIC           "Choose automatically"
+    IDS_ILLEGALYEAR         "You can only display the years 1900 through 2100."
+    IDS_LEGEND              "Legend"
+    IDS_LEGEND_BLUE         "Requires scheduled maintenance"
+    IDS_LEGEND_RED          "Damaged (file body missing)"
+    IDS_LEGEND_RARE         "Rare"
+    IDS_LEGEND_COMMON       "Common"
+    IDS_LEGEND_OLDER        "Older"
+    IDS_LEGEND_NEWER        "Newer"
+    IDS_STATISTICS          "Statistics"
+    IDS_STATISTICS_BYCOUNT  "By file count"
+    IDS_STATISTICS_BYSIZE   "By file size"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_STATISTICS_OTHER    "Other"
+    IDS_SUBFOLDERS_MANDATORY "Subfolders are mandatory for this view."
+    IDS_SUBFOLDERS_NOTAVAIL "Subfolders are not available in this context."
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_VATTR_DRIVELETTER   "Drive letter"
+    IDS_VATTR_MAINTENANCETIME "Last maintenance"
+    IDS_VATTR_LASTSEEN      "Last seen"
+    IDS_VATTR_GUID          "GUID"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_VATTR_PATH_DAT      "Data path"
+    IDS_VATTR_PATH_IDX_MAIN "Main index path"
+    IDS_VATTR_PATH_IDX_AUX  "Aux. index path"
+    IDS_VATTR_INDEXVERSION  "Index version"
+    IDS_VATTR_IATA_NAME     "IATA airport name"
+    IDS_VATTR_IATA_COUNTRY  "Country/territory"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_FILTER_SEARCHIN     "Search in"
+    IDS_FILTER_ALLSTORES    "All stores"
+    IDS_FILTER_THISSTORE    "This store"
+    IDS_FILTER_SEARCHTERM   "Search term"
+    IDS_FILTER_OTHERCONDITIONS "Other conditions"
+    IDS_FILTER_ADDCONDITION "Add condition..."
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_STORE_MAKEDEFAULT   "Makes the selected store the default store.\nMake default store"
+    IDM_STORE_IMPORTFOLDER  "Imports a folder and all its subfolders into the selected store.\nImport folder..."
+    IDM_STORE_DELETE        "Deletes the selected store.\nDelete"
+    IDM_STORE_RENAME        "Renames the selected store.\nRename"
+    IDM_STORE_PROPERTIES    "Displays the properties of the selected store.\nProperties"
+    IDM_STORES_CREATENEW    "Creates a new store for your files.\nCreate new store..."
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_STORES_SHOWEMPTYVOLUMES "Show &unmounted volumes"
+    IDM_STORES_REPAIRCORRUPTEDINDEX "Run maintenance"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_HOME_SHOWEMPTYDOMAINS "Show &empty domains"
+    IDM_HOME_IMPORTFOLDER   "Imports a folder and all its subfolders into this store.\nImport folder..."
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_HOUSEKEEPING_REMOVENEW 
+                            "Removes the designation as recently imported file from all files.\nRemove ""New"" attribute"
+    IDM_HOUSEKEEPING_SEND   "Sends a list of user-registered file formats to customer support.\nSend list"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_TRASH_RESTOREALL    "Restores all files from the trash.\nRestore all"
+    IDM_TRASH_EMPTY         "Permanently deletes all files from the trash.\nEmpty trash"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_ITEM_OPEN           "Opens the selected item.\nOpen"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_VOLUME_PROPERTIES   "Displays the properties of the selected volume.\nProperties"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_FILE_REMEMBER       "Adds the selected files to the clipboard window.\nRemember"
+    IDM_FILE_REMOVE         "Removes the selected files from the clipboard window.\nRemove"
+    IDM_FILE_DELETE         "Deletes the selected files.\nDelete"
+    IDM_FILE_RENAME         "Renames the selected file.\nRename"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_FILE_RESTORE        "Restores the selected files.\nRestore"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_SEND                "S&end to"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_CALENDAR_PREVYEAR   "Displays the previous year.\nPrevious year"
+    IDM_CALENDAR_NEXTYEAR   "Displays the next year.\nNext year"
+    IDM_CALENDAR_GOTOYEAR   "Shows a window that lets you choose a year to display.\nGo to year..."
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_GLOBE_JUMPTOLOCATION 
+                            "Centers the globe on a specific location.\nJump to location..."
+    IDM_GLOBE_ZOOMIN        "Zooms into the globe.\nZoom in"
+    IDM_GLOBE_ZOOMOUT       "Zooms out of the globe.\nZoom out"
+    IDM_GLOBE_AUTOSIZE      "Resizes the globe to touch the edges of the window.\nSize to fit"
+    IDM_GLOBE_GOOGLEEARTH   "Opens the selected locations in Google Earth.\nOpen in Google Earth"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_TAGCLOUD_SORTVALUE  "Arranges the tags in their canonic order.\nSort by value"
+    IDM_TAGCLOUD_SORTCOUNT  "Arranges the tags by their file count.\nSort by count"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_TAGCLOUD_SORT       "&Sort by"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_ORGANIZE            "Selects the property by which to organize all items in this context.\nOrganize by"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_VIEW                "Selects the view mode for this context.\nDisplay as"
+    IDM_VIEW_LARGEICONS     "Large icons"
+    IDM_VIEW_SMALLICONS     "Small icons"
+    IDM_VIEW_LIST           "List"
+    IDM_VIEW_DETAILS        "Details"
+    IDM_VIEW_TILES          "Tiles"
+    IDM_VIEW_STRIPS         "File strips"
+    IDM_VIEW_CONTENT        "Content"
+    IDM_VIEW_PREVIEW        "Preview"
+    IDM_VIEW_CALENDAR       "Calendar"
+    IDM_VIEW_TIMELINE       "Timeline"
+    IDM_VIEW_GLOBE          "Globe"
+    IDM_VIEW_TAGCLOUD       "Tag cloud"
+END
+
+#endif    // Englisch (USA) resources
 /////////////////////////////////////////////////////////////////////////////
 
 
