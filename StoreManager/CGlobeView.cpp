@@ -17,6 +17,7 @@
 #define MOVEDIVIDER    8.0f
 #define SPOT           2
 #define CROSSHAIRS     3
+#define WHITE          100
 
 __forceinline void ColorRef2GLColor(GLfloat* dst, COLORREF src, GLfloat Alpha=1.0f)
 {
@@ -674,7 +675,7 @@ __forceinline void CGlobeView::DrawLabel(GlobeItemData* d, UINT cCaption, WCHAR*
 		y += m_Fonts[0].Render(Description, x, y);
 }
 
-__forceinline void CGlobeView::DrawStatusBar(INT Height, GLfloat BackColor[], BOOL Themed)
+__forceinline void CGlobeView::DrawStatusBar(INT Height, COLORREF BarColor, BOOL Themed)
 {
 	WCHAR Copyright[] = L"© NASA's Earth Observatory";
 	INT CopyrightWidth = (INT)m_Fonts[0].GetTextWidth(Copyright);
@@ -699,6 +700,8 @@ __forceinline void CGlobeView::DrawStatusBar(INT Height, GLfloat BackColor[], BO
 	}
 
 	// Kante
+	GLfloat BackColor[4];
+	ColorRef2GLColor(BackColor, BarColor);
 	glColor4f(BackColor[0], BackColor[1], BackColor[2], theApp.m_GlobeBlackBackground ? 0.6f : 0.9f);
 	glBegin(GL_LINES);
 	glVertex2i(0, m_Height-Height);
@@ -737,12 +740,30 @@ void CGlobeView::DrawScene(BOOL InternalCall)
 
 	// Hintergrund
 	GLfloat BackColor[4];
-	ColorRef2GLColor(BackColor, theApp.m_GlobeBlackBackground ? 0x000000 : Themed ? 0xFFFFFF : GetSysColor(COLOR_WINDOW));
+	ColorRef2GLColor(BackColor, theApp.m_GlobeBlackBackground ? 0x000000 : Themed ? 0xFDF7F4 : GetSysColor(COLOR_WINDOW));
 	glFogfv(GL_FOG_COLOR, BackColor);
 
 	glClearColor(BackColor[0], BackColor[1], BackColor[2], 1.0f);
 	glClearDepth(1.0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	// Weißer Farbverlauf
+	if (!theApp.m_GlobeBlackBackground && Themed)
+	{
+		glEnable2D();
+		glBegin(GL_QUADS);
+
+		glColor3f(BackColor[0], BackColor[1], BackColor[2]);
+		glVertex2i(0, WHITE);
+		glVertex2i(m_Width, WHITE);
+
+		glColor3f(1.0, 1.0, 1.0);
+		glVertex2i(m_Width, 0);
+		glVertex2i(0, 0);
+
+		glEnd();
+		glDisable2D();
+	}
 
 	// Globus berechnen
 	m_Scale = 1.0f;
@@ -858,7 +879,7 @@ void CGlobeView::DrawScene(BOOL InternalCall)
 	// Statuszeile
 	const INT Height = m_FontHeight[0]+1;
 	if (m_Height>=Height)
-		DrawStatusBar(Height, BackColor, Themed);
+		DrawStatusBar(Height, theApp.m_GlobeBlackBackground ? 0x000000 : 0xFFFFFF, Themed);
 
 	// Beenden
 	glDisable2D();
