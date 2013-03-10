@@ -514,7 +514,11 @@ __forceinline void CGlobeView::CalcAndDrawLabel(BOOL Themed)
 					if (cCaption>6)
 					{
 						if (m_ViewParameters.GlobeShowAirportNames)
-							Subcaption = &Caption[6];
+						{
+							Subcaption = &Caption[3];
+							while ((*Subcaption==L' ') || (*Subcaption==L'–') || (*Subcaption==L'—'))
+								Subcaption++;
+						}
 						cCaption = 3;
 					}
 					break;
@@ -565,8 +569,8 @@ __forceinline void CGlobeView::DrawLabel(GlobeItemData* d, UINT cCaption, WCHAR*
 	// Farben
 	COLORREF BaseColorRef = GetSysColor(COLOR_WINDOW);
 	COLORREF TextColorRef = GetSysColor(COLOR_WINDOWTEXT);
-	COLORREF BorderColorRef = (!theApp.m_GlobeBlackBackground && Themed) ? 0xE0CDC4 : GetSysColor(COLOR_3DSHADOW);
-	if (d->Hdr.Selected)
+	COLORREF BorderColorRef = Themed ? hThemeList ? GetFocus()==this ? Focused ? 0xCEA27D : d->Hdr.Selected ? 0xCDBBB4 : 0xE0CDC4 : 0xD9D9D9 : 0xCDBBB4 : GetSysColor(COLOR_3DSHADOW);
+	if (d->Hdr.Selected && (!hThemeList))
 		if (this==GetFocus())
 		{
 			BaseColorRef = GetSysColor(COLOR_HIGHLIGHT);
@@ -600,8 +604,41 @@ __forceinline void CGlobeView::DrawLabel(GlobeItemData* d, UINT cCaption, WCHAR*
 	}
 
 	// Innen
-	glColor4f(BaseColor[0], BaseColor[1], BaseColor[2], d->Alpha);
-	glRecti(x, y, x+(INT)Width, y+(INT)Height);
+	if (hThemeList && d->Hdr.Selected)
+	{
+		const COLORREF TopColorRef = (GetFocus()==this) ? Focused ? 0xFCEADC : 0xFEF4EB : 0xF8F8F8;
+		const COLORREF BottomColorRef = (GetFocus()==this) ? Focused ? 0xFCDBC1 : 0xFEE4CF : 0xE5E5E5;
+
+		GLfloat TopColor[4];
+		ColorRef2GLColor(&TopColor[0], TopColorRef);
+		GLfloat BottomColor[4];
+		ColorRef2GLColor(&BottomColor[0], BottomColorRef);
+
+		glBegin(GL_QUADS);
+		glColor4f(TopColor[0], TopColor[1], TopColor[2], d->Alpha);
+		glVertex2i(x, y);
+		glVertex2i(x+Width, y);
+		glColor4f(BottomColor[0], BottomColor[1], BottomColor[2], d->Alpha);
+		glVertex2i(x+Width, y+Height);
+		glVertex2i(x, y+Height);
+		glEnd();
+
+		glColor4f(1.0f, 1.0f, 1.0f, d->Alpha*0.2f);
+		glBegin(GL_LINE_LOOP);
+		glVertex2i(x, y);
+		glVertex2i(x+Width-1, y);
+		glVertex2i(x+Width-1, y+Height-1);
+		glVertex2i(x, y+Height-1);
+		glEnd();
+
+		ColorRef2GLColor(&BaseColor[0], top>0 ? TopColorRef : BottomColorRef);
+		glColor4f(BaseColor[0], BaseColor[1], BaseColor[2], d->Alpha);
+	}
+	else
+	{
+		glColor4f(BaseColor[0], BaseColor[1], BaseColor[2], d->Alpha);
+		glRecti(x, y, x+Width, y+Height);
+	}
 
 	glBegin(GL_TRIANGLES);
 	glVertex2i(d->ScreenPoint[0], d->ScreenPoint[1]);
@@ -667,7 +704,7 @@ __forceinline void CGlobeView::DrawLabel(GlobeItemData* d, UINT cCaption, WCHAR*
 	glEnd();
 
 	// Focus
-	if ((Focused) && (GetFocus()==this))
+	if ((Focused) && (GetFocus()==this) && (!hThemeList))
 	{
 		glColor4f(1.0f-BaseColor[0], 1.0f-BaseColor[1], 1.0f-BaseColor[2], d->Alpha);
 		glEnable(GL_LINE_STIPPLE);
@@ -688,7 +725,7 @@ __forceinline void CGlobeView::DrawLabel(GlobeItemData* d, UINT cCaption, WCHAR*
 	if (Subcaption)
 		y += m_Fonts[0].Render(Subcaption, x, y);
 
-	if ((!d->Hdr.Selected) && (BaseColorRef==0xFFFFFF) && (TextColorRef==0x000000))
+	if ((!d->Hdr.Selected || hThemeList) && (BaseColorRef==0xFFFFFF) && (TextColorRef==0x000000))
 		glColor4f(TextColor[0], TextColor[1], TextColor[2], d->Alpha/2);
 	if (Coordinates)
 		y += m_Fonts[0].Render(Coordinates, x, y);
