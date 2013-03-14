@@ -1778,6 +1778,10 @@ void CFileView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 			UINT idCmd = pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON | TPM_RETURNCMD, point.x, point.y, GetOwner(), NULL);
 			delete pMenu;
 
+			for (UINT a=0; a<256; a++)
+				if (m_SendToItems[a].hBmp)
+					DeleteObject(m_SendToItems[a].hBmp);
+
 			if (idCmd<0xFF00)
 			{
 				GetOwner()->SendMessage(WM_COMMAND, (WPARAM)idCmd);
@@ -1787,10 +1791,12 @@ void CFileView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 				GetParent()->SendMessage(WM_SENDTO, (WPARAM)&m_SendToItems[idCmd % 0xFF]);
 			}
 		}
-
-		for (UINT a=0; a<256; a++)
-			if (m_SendToItems[a].hBmp)
-				DeleteObject(m_SendToItems[a].hBmp);
+		else
+		{
+			for (UINT a=0; a<256; a++)
+				if (m_SendToItems[a].hBmp)
+					DeleteObject(m_SendToItems[a].hBmp);
+		}
 	}
 }
 
