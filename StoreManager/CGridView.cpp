@@ -418,7 +418,14 @@ void CGridView::HandleHorizontalKeys(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags
 		}
 
 		if (item!=m_FocusItem)
+		{
 			SetFocusItem(item, GetKeyState(VK_SHIFT)<0);
+
+			CPoint pt;
+			GetCursorPos(&pt);
+			ScreenToClient(&pt);
+			OnMouseMove(0, pt);
+		}
 	}
 }
 
@@ -580,7 +587,14 @@ void CGridView::HandleVerticalKeys(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags*/
 		}
 
 		if (item!=m_FocusItem)
+		{
 			SetFocusItem(item, GetKeyState(VK_SHIFT)<0);
+
+			CPoint pt;
+			GetCursorPos(&pt);
+			ScreenToClient(&pt);
+			OnMouseMove(0, pt);
+		}
 	}
 }
 
