@@ -161,6 +161,7 @@ RegisteredFile Registry[] = {
 	{ "tgz",    LFDomainArchives },
 	{ "tif",    LFDomainPictures },
 	{ "tiff",   LFDomainPictures },
+	{ "ttf",    LFDomainFonts },
 	{ "txt",    LFDomainDocuments },
 	{ "vb",     LFDomainDocuments },
 	{ "vcard",  LFDomainContacts },

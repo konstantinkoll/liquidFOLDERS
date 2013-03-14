@@ -24,6 +24,6 @@ protected:
 
 	ThumbnailList<2048> m_Thumbnails;
 	ThumbnailList<8192> m_NoThumbnails;
-	CGdiPlusBitmapResource* m_pFrame;
-	CGdiPlusBitmapResource* m_pShadow;
+	HBITMAP hBmpFrame;
+	HBITMAP hBmpShadow;
 };
