@@ -440,6 +440,9 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPRECT rectItem, INT idx, BOO
 			rectAttr.top = rectText.bottom+BORDER+BORDER/2;
 			rectAttr.bottom = rectAttr.top+m_FontHeight[0];
 
+			if (d->Preview & (PRV_AUDIOTITLE | PRV_AUDIOALBUM))
+				rectAttr.left = rectItem->left+m_IconSize.cx+2*BORDER;
+
 			dc.SetTextColor(atCol);
 
 			if (d->Preview & PRV_AUDIOTITLE)
@@ -456,6 +459,7 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPRECT rectItem, INT idx, BOO
 				if (d->pTitle)
 					wcscat_s(tmpStr, 513, d->pTitle);
 
+				dc.SetTextColor(txCol);
 				dc.DrawText(tmpStr, -1, rectAttr, DT_SINGLELINE | DT_LEFT | DT_END_ELLIPSIS | DT_NOPREFIX);
 				rectAttr.OffsetRect(0, m_FontHeight[0]);
 			}
@@ -465,6 +469,11 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPRECT rectItem, INT idx, BOO
 				ASSERT(d->pAlbum);
 
 				dc.DrawText(d->pAlbum, -1, rectAttr, DT_SINGLELINE | DT_LEFT | DT_END_ELLIPSIS | DT_NOPREFIX);
+
+				INT idx = GetAttributeIconIndex(LFAttrAlbum);
+				if (idx>=0)
+					m_AttributeIcons.DrawEx(&dc, idx, CPoint(rectAttr.left-BORDER-m_IconSize.cx, rectAttr.top-(m_FontHeight[0]-16)/2), CSize(16, 16), CLR_NONE, 0xFFFFFF, ILD_TRANSPARENT);
+
 				rectAttr.OffsetRect(0, m_FontHeight[0]);
 			}
 
@@ -535,6 +544,8 @@ INT CTimelineView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if (CFileView::OnCreate(lpCreateStruct)==-1)
 		return -1;
+
+	m_AttributeIcons.Create(IDB_ATTRIBUTEICONS_16);
 
 	INT cx = 16;
 	INT cy = 16;
