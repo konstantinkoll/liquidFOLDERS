@@ -56,7 +56,7 @@ void CTooltipHeader::Init()
 {
 	SetFont(&LFGetApp()->m_DefaultFont);
 
-	m_SortIndicators.Create(IDB_SORTINDICATORS, NULL, 0, 3, 7, 4);
+	m_SortIndicators.Create(IDB_SORTINDICATORS, 7, 4);
 
 	// Tooltip
 	m_TooltipCtrl.Create(this);

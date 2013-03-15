@@ -10,8 +10,6 @@
 // LFEditTimeDlg
 //
 
-extern AFX_EXTENSION_MODULE LFCommDlgDLL;
-
 LFEditTimeDlg::LFEditTimeDlg(CWnd* pParentWnd, LFVariantData* pData)
 	: CDialog(IDD_EDITTIME, pParentWnd)
 {
@@ -73,7 +71,7 @@ BOOL LFEditTimeDlg::OnInitDialog()
 	if (idx!=-1)
 	{
 		CImageListTransparent AttributeIcons;
-		AttributeIcons.Create(IDB_ATTRIBUTEICONS_16, LFCommDlgDLL.hResource);
+		AttributeIcons.Create(IDB_ATTRIBUTEICONS_16);
 
 		HICON hIcon = AttributeIcons.ExtractIcon(idx);
 		SetIcon(hIcon, FALSE);

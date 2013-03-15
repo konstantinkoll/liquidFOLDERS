@@ -18,7 +18,6 @@ static INT CALLBACK MyCompareProc(LPARAM lParam1, LPARAM lParam2, LPARAM /*lPara
 // LFAttributeListDlg
 //
 
-extern AFX_EXTENSION_MODULE LFCommDlgDLL;
 extern INT GetAttributeIconIndex(UINT Attr);
 
 LFAttributeListDlg::LFAttributeListDlg(UINT nIDTemplate, CWnd* pParentWnd)
@@ -117,7 +116,7 @@ BOOL LFAttributeListDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
-	m_AttributeIcons.Create(IDB_ATTRIBUTEICONS_16, LFCommDlgDLL.hResource);
+	m_AttributeIcons.Create(IDB_ATTRIBUTEICONS_16);
 
 	return TRUE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird
 }

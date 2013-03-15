@@ -12,7 +12,6 @@
 // CConditionList
 //
 
-extern AFX_EXTENSION_MODULE LFCommDlgDLL;
 extern INT GetAttributeIconIndex(UINT Attr);
 static UINT puColumns[] = { 1, 2 };
 
@@ -48,8 +47,8 @@ void CConditionList::Init()
 		hTheme = p_App->zOpenThemeData(GetSafeHwnd(), VSCLASS_LISTVIEW);
 	}
 
-	m_AttributeIcons16.Create(IDB_ATTRIBUTEICONS_16, LFCommDlgDLL.hResource, 0, -1, 16, 16);
-	m_AttributeIcons32.Create(IDB_ATTRIBUTEICONS_32, LFCommDlgDLL.hResource, 0, -1, 32, 32);
+	m_AttributeIcons16.Create(IDB_ATTRIBUTEICONS_16);
+	m_AttributeIcons32.Create(IDB_ATTRIBUTEICONS_32, 32, 32);
 
 	SetImageList(&m_AttributeIcons16, LVSIL_SMALL);
 	SetImageList(&m_AttributeIcons32, LVSIL_NORMAL);

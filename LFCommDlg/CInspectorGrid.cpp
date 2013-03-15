@@ -711,7 +711,7 @@ void CInspectorGrid::Init()
 	ResetScrollbars();
 	CreateFonts();
 
-	m_AttributeIcons.Create(IDB_ATTRIBUTEICONS_32, LFCommDlgDLL.hResource, 0, -1, 32, 32);
+	m_AttributeIcons.Create(IDB_ATTRIBUTEICONS_32, 32, 32);
 	m_TooltipCtrl.Create(this);
 
 	CDC* dc = GetWindowDC();
