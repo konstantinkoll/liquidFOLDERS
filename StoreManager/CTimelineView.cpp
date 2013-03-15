@@ -7,6 +7,21 @@
 #include "StoreManager.h"
 
 
+WCHAR* GetAttribute(TimelineItemData* d, LFItemDescriptor* i, UINT Attr, UINT Mask)
+{
+	ASSERT(theApp.m_Attributes[Attr]->Type==LFTypeUnicodeString);
+
+	if (i->AttributeValues[Attr])
+		if (*((WCHAR*)i->AttributeValues[Attr]))
+		{
+			d->Preview |= Mask;
+			return (WCHAR*)i->AttributeValues[Attr];
+		}
+
+	return NULL;
+}
+
+
 // CTimelineView
 //
 
@@ -51,18 +66,19 @@ void CTimelineView::SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* p
 				switch (i->Type & LFTypeMask)
 				{
 				case LFTypeFile:
-					ASSERT(theApp.m_Attributes[LFAttrComments]->Type==LFTypeUnicodeString);
-					if (i->AttributeValues[LFAttrComments])
-						if (*((WCHAR*)i->AttributeValues[LFAttrComments]))
-						{
-							d->pText = (WCHAR*)i->AttributeValues[LFAttrComments];
-							d->Preview |= PRV_TEXT;
-						}
+					d->pComments = GetAttribute(d, i, LFAttrComments, PRV_COMMENTS);
+
+					if (i->CoreAttributes.DomainID==LFDomainAudio)
+					{
+						d->pArtist = GetAttribute(d, i, LFAttrArtist, PRV_AUDIOTITLE);
+						d->pTitle = GetAttribute(d, i, LFAttrTitle, PRV_AUDIOTITLE);
+						d->pAlbum = GetAttribute(d, i, LFAttrAlbum, PRV_AUDIOALBUM);
+					}
 
 					break;
 				case LFTypeVirtual:
-					d->Preview |= PRV_TEXT;
-					d->pText = NULL;
+					d->Preview |= PRV_COMMENTS;
+					d->pComments = NULL;
 
 					for (INT b=i->FirstAggregate; b<=i->LastAggregate; b++)
 					{
@@ -71,22 +87,22 @@ void CTimelineView::SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* p
 							d->Preview |= PRV_THUMBS;
 
 						ASSERT(theApp.m_Attributes[LFAttrRoll]->Type==LFTypeUnicodeString);
-						if (d->Preview & PRV_TEXT)
+						if (d->Preview & PRV_COMMENTS)
 							if (!i->AttributeValues[LFAttrRoll])
 							{
-								d->Preview &= ~PRV_TEXT;
+								d->Preview &= ~PRV_COMMENTS;
 							}
 							else
-								if (d->pText)
+								if (d->pComments)
 								{
-									if (wcscmp(d->pText, (WCHAR*)i->AttributeValues[LFAttrRoll])!=0)
-										d->Preview &= ~PRV_TEXT;
+									if (wcscmp(d->pComments, (WCHAR*)i->AttributeValues[LFAttrRoll])!=0)
+										d->Preview &= ~PRV_COMMENTS;
 								}
 								else
 								{
-									d->pText = (WCHAR*)i->AttributeValues[LFAttrRoll];
-									if (*d->pText==L'\0')
-										d->Preview &= ~PRV_TEXT;
+									d->pComments = (WCHAR*)i->AttributeValues[LFAttrRoll];
+									if (*d->pComments==L'\0')
+										d->Preview &= ~PRV_COMMENTS;
 								}
 					}
 				}
@@ -156,11 +172,15 @@ Restart:
 
 			INT h = 2*BORDER+m_CaptionHeight;
 			if (d->Preview)
-				h += BORDER/2;
-			if (d->Preview & PRV_TEXT)
-				h += m_FontHeight[0]+BORDER;
+				h += BORDER/2+BORDER;
+			if (d->Preview & PRV_AUDIOTITLE)
+				h += m_FontHeight[0];
+			if (d->Preview & PRV_AUDIOALBUM)
+				h += m_FontHeight[0];
+			if (d->Preview & PRV_COMMENTS)
+				h += m_FontHeight[0];
 			if (d->Preview & PRV_THUMBS)
-				h += 128+BORDER;
+				h += 128;
 
 			if (d->Year!=Year)
 			{
@@ -414,16 +434,46 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPRECT rectItem, INT idx, BOO
 			dc.FillSolidRect(rectItem->left+BORDER+1, rectText.bottom+BORDER/2, m_ItemWidth-2*BORDER-2, 1, Themed ? 0xE5E5E5 : GetSysColor(COLOR_3DFACE));
 
 		// Attributes
-		if (d->Preview & PRV_TEXT)
+		if (d->Preview & (PRV_COMMENTS | PRV_AUDIOTITLE | PRV_AUDIOALBUM))
 		{
-			ASSERT(d->pText);
-
 			CRect rectAttr(rectItem->left+BORDER+2, 0, rectItem->right-BORDER, 0);
 			rectAttr.top = rectText.bottom+BORDER+BORDER/2;
 			rectAttr.bottom = rectAttr.top+m_FontHeight[0];
 
 			dc.SetTextColor(atCol);
-			dc.DrawText(d->pText, -1, rectAttr, DT_SINGLELINE | DT_LEFT | DT_END_ELLIPSIS | DT_NOPREFIX);
+
+			if (d->Preview & PRV_AUDIOTITLE)
+			{
+				WCHAR tmpStr[513] = L"";
+
+				if (d->pArtist)
+				{
+					wcscpy_s(tmpStr, 513, d->pArtist);
+					if (d->pTitle)
+						wcscat_s(tmpStr, 513, L": ");
+				}
+
+				if (d->pTitle)
+					wcscat_s(tmpStr, 513, d->pTitle);
+
+				dc.DrawText(tmpStr, -1, rectAttr, DT_SINGLELINE | DT_LEFT | DT_END_ELLIPSIS | DT_NOPREFIX);
+				rectAttr.OffsetRect(0, m_FontHeight[0]);
+			}
+
+			if (d->Preview & PRV_AUDIOALBUM)
+			{
+				ASSERT(d->pAlbum);
+
+				dc.DrawText(d->pAlbum, -1, rectAttr, DT_SINGLELINE | DT_LEFT | DT_END_ELLIPSIS | DT_NOPREFIX);
+				rectAttr.OffsetRect(0, m_FontHeight[0]);
+			}
+
+			if (d->Preview & PRV_COMMENTS)
+			{
+				ASSERT(d->pComments);
+
+				dc.DrawText(d->pComments, -1, rectAttr, DT_SINGLELINE | DT_LEFT | DT_END_ELLIPSIS | DT_NOPREFIX);
+			}
 		}
 
 		// Thumbs
