@@ -60,7 +60,6 @@ public:
 	BOOL m_GlobeHQModel;
 	BOOL m_GlobeLighting;
 	BOOL m_GlobeAtmosphere;
-	BOOL m_GlobeBlackBackground;
 	BOOL m_GlobeShowViewport;
 	BOOL m_GlobeShowCrosshairs;
 	BOOL m_TagcloudShowLegend;

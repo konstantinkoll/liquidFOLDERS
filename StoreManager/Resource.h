@@ -118,9 +118,8 @@
 #define IDC_AIRPORTNAMES                2206
 #define IDC_GPSCOORDINATES              2207
 #define IDC_DESCRIPTION                 2208
-#define IDC_BLACKBACKGROUND             2209
-#define IDC_VIEWPORT                    2210
-#define IDC_CROSSHAIRS                  2211
+#define IDC_VIEWPORT                    2209
+#define IDC_CROSSHAIRS                  2210
 #define IDD_GOTOYEAR                    2300
 #define IDC_YEAR                        2301
 #define IDD_EDITCONDITION               2400

@@ -760,19 +760,19 @@ __forceinline void CGlobeView::DrawStatusBar(INT Height, COLORREF BarColor, BOOL
 	// Kante
 	GLfloat BackColor[4];
 	ColorRef2GLColor(BackColor, BarColor);
-	glColor4f(BackColor[0], BackColor[1], BackColor[2], theApp.m_GlobeBlackBackground ? 0.6f : 0.9f);
+	glColor4f(BackColor[0], BackColor[1], BackColor[2], 0.9f);
 	glBegin(GL_LINES);
 	glVertex2i(0, m_Height-Height);
 	glVertex2i(m_Width, m_Height-Height);
 	glEnd();
 
 	// Füllen
-	glColor4f(BackColor[0], BackColor[1], BackColor[2], theApp.m_GlobeBlackBackground ? 0.55f : 0.8f);
+	glColor4f(BackColor[0], BackColor[1], BackColor[2], 0.8f);
 	glRecti(0, m_Height-Height, m_Width, m_Height);
 
 	// Text
 	GLfloat TextColor[4];
-	ColorRef2GLColor(TextColor, theApp.m_GlobeBlackBackground ? 0xFFFFFF : Themed ? 0xCC6600 : GetSysColor(COLOR_WINDOWTEXT));
+	ColorRef2GLColor(TextColor, Themed ? 0xCC6600 : GetSysColor(COLOR_WINDOWTEXT));
 	glColor4f(TextColor[0], TextColor[1], TextColor[2], 1.0f);
 
 	INT Gutter = (ViewpointWidth>0) ? (m_Width-CopyrightWidth-ViewpointWidth)/3 : (m_Width-CopyrightWidth)/2;
@@ -798,7 +798,7 @@ void CGlobeView::DrawScene(BOOL InternalCall)
 
 	// Hintergrund
 	GLfloat BackColor[4];
-	ColorRef2GLColor(BackColor, theApp.m_GlobeBlackBackground ? 0x000000 : Themed ? 0xFDF7F4 : GetSysColor(COLOR_WINDOW));
+	ColorRef2GLColor(BackColor, Themed ? 0xFDF7F4 : GetSysColor(COLOR_WINDOW));
 	glFogfv(GL_FOG_COLOR, BackColor);
 
 	glClearColor(BackColor[0], BackColor[1], BackColor[2], 1.0f);
@@ -806,14 +806,14 @@ void CGlobeView::DrawScene(BOOL InternalCall)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// Weißer Farbverlauf
-	if (!theApp.m_GlobeBlackBackground && Themed)
+	if (Themed)
 	{
 		glEnable2D();
 		glBegin(GL_QUADS);
 
 		glColor3f(BackColor[0], BackColor[1], BackColor[2]);
-		glVertex2i(0, WHITE);
-		glVertex2i(m_Width, WHITE);
+		glVertex2i(0, WHITE-1);
+		glVertex2i(m_Width, WHITE-1);
 
 		glColor3f(1.0, 1.0, 1.0);
 		glVertex2i(m_Width, 0);
@@ -937,7 +937,7 @@ void CGlobeView::DrawScene(BOOL InternalCall)
 	// Statuszeile
 	const INT Height = m_FontHeight[0]+1;
 	if (m_Height>=Height)
-		DrawStatusBar(Height, theApp.m_GlobeBlackBackground ? 0x000000 : 0xFFFFFF, Themed);
+		DrawStatusBar(Height, 0xFFFFFF, Themed);
 
 	// Beenden
 	glDisable2D();

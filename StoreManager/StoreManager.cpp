@@ -94,7 +94,6 @@ BOOL CStoreManagerApp::InitInstance()
 	m_GlobeHQModel = GetInt(_T("GlobeHQModel"), TRUE);
 	m_GlobeLighting = GetInt(_T("GlobeLighting"), TRUE);
 	m_GlobeAtmosphere = GetInt(_T("GlobeAtmosphere"), TRUE);
-	m_GlobeBlackBackground = GetInt(_T("GlobeBlackBackground"), FALSE);
 	m_GlobeShowViewport = GetInt(_T("GlobeShowViewport"), FALSE);
 	m_GlobeShowCrosshairs = GetInt(_T("GlobeShowCrosshairs"), FALSE);
 	m_TagcloudShowLegend = GetInt(_T("TagcloudShowLegend"), TRUE);
@@ -172,7 +171,6 @@ INT CStoreManagerApp::ExitInstance()
 		WriteInt(_T("GlobeHQModel"), m_GlobeHQModel);
 		WriteInt(_T("GlobeLighting"), m_GlobeLighting);
 		WriteInt(_T("GlobeAtmosphere"), m_GlobeAtmosphere);
-		WriteInt(_T("GlobeBlackBackground"), m_GlobeBlackBackground);
 		WriteInt(_T("GlobeShowViewport"), m_GlobeShowViewport);
 		WriteInt(_T("GlobeShowCrosshairs"), m_GlobeShowCrosshairs);
 		WriteInt(_T("TagcloudShowLegend"), m_TagcloudShowLegend);
