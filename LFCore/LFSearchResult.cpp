@@ -262,7 +262,9 @@ int LFSearchResult::Compare(int eins, int zwei, unsigned int attr, bool descendi
 			}
 			else
 				if (eins32>zwei32)
+				{
 					cmp = 1;
+				}
 			break;
 		case LFTypeRating:
 			eins32 = *(unsigned char*)d1->AttributeValues[Sort];
@@ -273,7 +275,9 @@ int LFSearchResult::Compare(int eins, int zwei, unsigned int attr, bool descendi
 			}
 			else
 				if (eins32>zwei32)
+				{
 					cmp = 1;
+				}
 			break;
 		case LFTypeINT64:
 			eins64 = *(__int64*)d1->AttributeValues[Sort];
@@ -284,7 +288,9 @@ int LFSearchResult::Compare(int eins, int zwei, unsigned int attr, bool descendi
 			}
 			else
 				if (eins64>zwei64)
+				{
 					cmp = 1;
+				}
 			break;
 		case LFTypeFraction:
 			einsDbl = (double)((LFFraction*)d1->AttributeValues[Sort])->Num / (double)((LFFraction*)d1->AttributeValues[Sort])->Denum;
@@ -295,7 +301,9 @@ int LFSearchResult::Compare(int eins, int zwei, unsigned int attr, bool descendi
 			}
 			else
 				if (einsDbl>zweiDbl)
+				{
 					cmp = 1;
+				}
 			break;
 		case LFTypeDouble:
 			einsDbl = *(double*)d1->AttributeValues[Sort];
@@ -306,7 +314,9 @@ int LFSearchResult::Compare(int eins, int zwei, unsigned int attr, bool descendi
 			}
 			else
 				if (einsDbl>zweiDbl)
+				{
 					cmp = 1;
+				}
 			break;
 		case LFTypeGeoCoordinates:
 			einsCoord = *(LFGeoCoordinates*)d1->AttributeValues[Sort];
@@ -344,7 +354,9 @@ int LFSearchResult::Compare(int eins, int zwei, unsigned int attr, bool descendi
 			}
 			else
 				if (eins32>zwei32)
+				{
 					cmp = 1;
+				}
 			break;
 		case LFTypeMegapixel:
 			einsDbl = (double)((int)(*(double*)d1->AttributeValues[Sort]*10))/(double)10;
@@ -355,7 +367,9 @@ int LFSearchResult::Compare(int eins, int zwei, unsigned int attr, bool descendi
 			}
 			else
 				if (einsDbl>zweiDbl)
+				{
 					cmp = 1;
+				}
 			break;
 		default:
 			assert(FALSE);
@@ -410,10 +424,10 @@ void LFSearchResult::Sort(unsigned int attr, bool descending)
 	{
 		for (int a=m_ItemCount/2-1; a>=0; a--)
 			Heap(a, m_ItemCount, attr, descending);
-		for (int a=m_ItemCount-1; a>0; )
+		for (int a=m_ItemCount-1; a>0; a--)
 		{
 			std::swap(m_Items[0], m_Items[a]);
-			Heap(0, a--, attr, descending);
+			Heap(0, a, attr, descending);
 		}
 	}
 }
