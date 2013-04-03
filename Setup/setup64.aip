@@ -348,14 +348,14 @@
     <ROW Dialog_="LicenseAgreementDlg" Control="Next" Type="PushButton" X="307" Y="330" Width="56" Height="17" Attributes="3" Text="[ButtonText_Next]" Control_Next="Cancel" TextLocId="-" MsiKey="LicenseAgreementDlg#Next"/>
     <ROW Dialog_="LicenseAgreementDlg" Control="AgreementText" Type="FileScrollableText" X="55" Y="140" Width="340" Height="160" Attributes="3" Property="EulaRead" Text="Setup\EULA_en.rtf" Control_Next="PrintButton" TextLocId="Control.Text.LicenseAgreementDlg#AgreementText" MsiKey="LicenseAgreementDlg#AgreementText"/>
     <ROW Dialog_="LicenseAgreementDlg" Control="PrintButton" Type="PushButton" X="361" Y="100" Width="34" Height="34" Attributes="4718595" Text="[PrintIcon]" Control_Next="EulaAgreeCheckBox" MsiKey="LicenseAgreementDlg#PrintButton" AssociatedCtrl="AgreementText"/>
-    <ROW Dialog_="LicenseAgreementDlg" Control="EulaAgreeCheckBox" Type="CheckBox" X="55" Y="305" Width="340" Height="13" Attributes="1" Property="IAgree" Text="I &amp;accept the terms of this agreement." Control_Next="PushButton_Cancel" TextLocId="Azure.Control.Text.LicenseAgreementDlg#EulaAgreeCheckBox" MsiKey="LicenseAgreementDlg#EulaAgreeCheckBox"/>
+    <ROW Dialog_="LicenseAgreementDlg" Control="EulaAgreeCheckBox" Type="CheckBox" X="55" Y="305" Width="340" Height="13" Attributes="3" Property="IAgree" Text="I &amp;accept the terms of this agreement." Control_Next="PushButton_Cancel" TextLocId="Azure.Control.Text.LicenseAgreementDlg#EulaAgreeCheckBox" MsiKey="LicenseAgreementDlg#EulaAgreeCheckBox"/>
     <ROW Dialog_="LicenseAgreementDlg" Control="PushButton_Cancel" Type="PushButton" X="380" Y="330" Width="56" Height="17" Attributes="3" Text="[ButtonText_Cancel]" Control_Next="Bitmap" TextLocId="-"/>
     <ROW Dialog_="LicenseAgreementDlg" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1" Text="[Background]" Control_Next="Next" MsiKey="LicenseAgreementDlg#Bitmap"/>
     <ATTRIBUTE name="DeletedRows" value="MaintenanceTypeDlg#RemoveText@MaintenanceTypeDlg#ChangeText@MaintenanceTypeDlg#RepairText"/>
     <ATTRIBUTE name="FixedSizeBitmaps" value="2"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiControlConditionComponent">
-    <ATTRIBUTE name="DeletedRows" value="MaintenanceTypeDlg#ChangeText#Hide#AIEXTERNALUI@MaintenanceTypeDlg#RepairText#Hide#AIEXTERNALUI@MaintenanceTypeDlg#RemoveText#Hide#AIEXTERNALUI"/>
+    <ATTRIBUTE name="DeletedRows" value="MaintenanceTypeDlg#ChangeText#Hide#AIEXTERNALUI@LicenseAgreementDlg#EulaAgreeCheckBox#Enable#EulaRead OR NOT AIEXTERNALUI@MaintenanceTypeDlg#RepairText#Hide#AIEXTERNALUI@MaintenanceTypeDlg#RemoveText#Hide#AIEXTERNALUI"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiControlEventComponent">
     <ROW Dialog_="FolderDlg" Control_="Back" Event="NewDialog" Argument="LicenseAgreementDlg" Condition="AI_INSTALL" Ordering="1"/>
