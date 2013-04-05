@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<DICTIONARY type="multilanguage" ignore="en">
+<DICTIONARY type="multilanguage">
   <ENTRY id="ActionText.Description.AI_AiRemoveFilesCommit">
     <STRING lang="en" value="Executing file removal operations."/>
     <STRING lang="es" value="Quitando archivos."/>
@@ -189,6 +189,9 @@
     <STRING lang="fr" value="EULA_en.rtf"/>
     <STRING lang="de" value="EULA_de.rtf"/>
     <STRING lang="es" value="EULA_en.rtf"/>
+  </ENTRY>
+  <ENTRY id="Azure.Control.Text.LicenseAgreementDlg#Description">
+    <STRING lang="de" value="Um fortzufahren, müssen Sie den [ProductName]-Lizenzbedingungen zustimmen. Wenn Sie diese nicht akzeptieren wollen, klicken Sie auf &quot;Abbrechen&quot; um die Installation abzubrechen."/>
   </ENTRY>
   <ENTRY id="Property.Manufacturer">
     <STRING lang="en" value="liquidFOLDERS"/>
