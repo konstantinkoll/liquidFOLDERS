@@ -10,7 +10,11 @@
 
 BOOL CALLBACK EnumWindowsProc(HWND hWnd, LPARAM lParam)
 {
-	return (SendMessage(hWnd, theApp.m_WakeupMsg, NULL, lParam)!=24878);
+	if (GetWindow(hWnd, GW_OWNER))
+		return TRUE;
+
+	DWORD_PTR Result;
+	return SendMessageTimeout(hWnd, theApp.m_WakeupMsg, NULL, lParam, SMTO_NORMAL, 500, &Result) ? Result!=24878 : TRUE;
 }
 
 
