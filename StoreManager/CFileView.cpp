@@ -563,9 +563,6 @@ CMenu* CFileView::GetBackgroundContextMenu()
 	case LFContextStoreHome:
 		pMenu->LoadMenu(IDM_HOME);
 		break;
-	case LFContextHousekeeping:
-		pMenu->LoadMenu(IDM_HOUSEKEEPING);
-		break;
 	case LFContextTrash:
 		pMenu->LoadMenu(IDM_TRASH);
 		break;

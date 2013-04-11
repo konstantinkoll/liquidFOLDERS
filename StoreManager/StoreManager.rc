@@ -154,15 +154,6 @@ BEGIN
     END
 END
 
-IDM_HOUSEKEEPING MENU 
-BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM SEPARATOR
-        MENUITEM "Liste &senden",               IDM_HOUSEKEEPING_SEND
-    END
-END
-
 IDM_TRASH MENU 
 BEGIN
     POPUP "POPUP"
@@ -641,7 +632,6 @@ STRINGTABLE
 BEGIN
     IDM_HOUSEKEEPING_REMOVENEW 
                             "Entfernt bei allen Dateien die Markierung als kürzlich importierte Datei.\nMarkierung „Neu“ entfernen"
-    IDM_HOUSEKEEPING_SEND   "Sendet eine Liste mit allen registrierten Dateiformaten an den Kundenservice.\nListe senden"
 END
 
 STRINGTABLE 
@@ -755,15 +745,6 @@ BEGIN
         MENUITEM "&Importar carpeta...",        IDM_HOME_IMPORTFOLDER
         MENUITEM SEPARATOR
         MENUITEM "&Propiedades",                IDM_HOME_PROPERTIES
-    END
-END
-
-IDM_HOUSEKEEPING MENU 
-BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM SEPARATOR
-        MENUITEM "&Enviar lista",               IDM_HOUSEKEEPING_SEND
     END
 END
 
@@ -1245,7 +1226,6 @@ STRINGTABLE
 BEGIN
     IDM_HOUSEKEEPING_REMOVENEW 
                             "Elimina la designación de archivo recién importado de todos los archivos .\nEliminar ""Nuevo"" attributo"
-    IDM_HOUSEKEEPING_SEND   "Envìa una lista de formatos de archivo registrados por el usuario a atenciòn al cliente.\nEnviar lista"
 END
 
 STRINGTABLE 
@@ -1359,15 +1339,6 @@ BEGIN
         MENUITEM "&Importer dossier...",        IDM_HOME_IMPORTFOLDER
         MENUITEM SEPARATOR
         MENUITEM "&Propriétés",                 IDM_HOME_PROPERTIES
-    END
-END
-
-IDM_HOUSEKEEPING MENU 
-BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM SEPARATOR
-        MENUITEM "&Envoyer la liste",           IDM_HOUSEKEEPING_SEND
     END
 END
 
@@ -1849,7 +1820,6 @@ STRINGTABLE
 BEGIN
     IDM_HOUSEKEEPING_REMOVENEW 
                             "Éloigne à tous les fichiers le marquage comme le fichier récemment importé.\nEnlever le marquage ""nouveau"""
-    IDM_HOUSEKEEPING_SEND   "Envoie une liste avec tous les formats de fichier enregistrés au service après-vente.\nEnvoyer la liste"
 END
 
 STRINGTABLE 
@@ -2013,15 +1983,6 @@ BEGIN
         MENUITEM "&Import folder...",           IDM_HOME_IMPORTFOLDER
         MENUITEM SEPARATOR
         MENUITEM "P&roperties",                 IDM_HOME_PROPERTIES
-    END
-END
-
-IDM_HOUSEKEEPING MENU 
-BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM SEPARATOR
-        MENUITEM "&Send list",                  IDM_HOUSEKEEPING_SEND
     END
 END
 
@@ -2502,7 +2463,6 @@ STRINGTABLE
 BEGIN
     IDM_HOUSEKEEPING_REMOVENEW 
                             "Removes the designation as recently imported file from all files.\nRemove ""New"" attribute"
-    IDM_HOUSEKEEPING_SEND   "Sends a list of user-registered file formats to customer support.\nSend list"
 END
 
 STRINGTABLE 

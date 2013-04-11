@@ -763,8 +763,7 @@ BEGIN_MESSAGE_MAP(CMainView, CWnd)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_HOME_SHOWEMPTYDOMAINS, IDM_HOME_PROPERTIES, OnUpdateHomeCommands)
 
 	ON_COMMAND(IDM_HOUSEKEEPING_REMOVENEW, OnHousekeepingRemoveNew)
-	ON_COMMAND(IDM_HOUSEKEEPING_SEND, OnHousekeepingSend)
-	ON_UPDATE_COMMAND_UI_RANGE(IDM_HOUSEKEEPING_REMOVENEW, IDM_HOUSEKEEPING_SEND, OnUpdateHousekeepingCommands)
+	ON_UPDATE_COMMAND_UI_RANGE(IDM_HOUSEKEEPING_REMOVENEW, IDM_HOUSEKEEPING_REMOVENEW, OnUpdateHousekeepingCommands)
 
 	ON_COMMAND(IDM_TRASH_RESTOREALL, OnTrashRestoreAll)
 	ON_COMMAND(IDM_TRASH_EMPTY, OnTrashEmpty)
@@ -811,7 +810,6 @@ INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndTaskbar.AddButton(IDM_STORES_CREATENEW, 0);
 	m_wndTaskbar.AddButton(IDM_HOME_IMPORTFOLDER, 1, TRUE);
 	m_wndTaskbar.AddButton(IDM_HOUSEKEEPING_REMOVENEW, 2, TRUE);
-	m_wndTaskbar.AddButton(IDM_HOUSEKEEPING_SEND, 33, TRUE);
 	m_wndTaskbar.AddButton(IDM_TRASH_RESTOREALL, 3, TRUE);
 	m_wndTaskbar.AddButton(IDM_TRASH_EMPTY, 4, TRUE);
 	m_wndTaskbar.AddButton(IDM_CALENDAR_PREVYEAR, 5, TRUE);
@@ -1534,11 +1532,6 @@ void CMainView::OnHousekeepingRemoveNew()
 	LFFreeTransactionList(tl);
 }
 
-void CMainView::OnHousekeepingSend()
-{
-	MessageBox(_T("Coming soon!"));
-}
-
 void CMainView::OnUpdateHousekeepingCommands(CCmdUI* pCmdUI)
 {
 	BOOL b = (p_CookedFiles!=NULL) && (m_Context==LFContextHousekeeping);
@@ -1549,11 +1542,6 @@ void CMainView::OnUpdateHousekeepingCommands(CCmdUI* pCmdUI)
 		if (p_CookedFiles)
 			b &= (p_CookedFiles->m_ItemCount>0);
 		b &= (m_Domain==LFDomainNew);
-		break;
-	case IDM_HOUSEKEEPING_SEND:
-		if (p_CookedFiles)
-			b &= (p_CookedFiles->m_ItemCount>0);
-		b &= (m_Domain==LFDomainUnknown);
 		break;
 	}
 
