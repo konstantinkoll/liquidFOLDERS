@@ -368,7 +368,7 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPRECT rectItem, INT idx, BOO
 			CPen* pPen = dc.SelectObject(&pen);
 
 			const INT x = Base+(ARROWSIZE-abs(a)+1)*d->Arrow;
-			dc.MoveTo(Base, y);
+			dc.MoveTo(Base-d->Arrow, y);
 			dc.LineTo(x, y);
 			dc.SetPixel(x, y++, ptCol);
 
