@@ -49,6 +49,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
+				EnableIntrinsicFunctions="false"
+				WholeProgramOptimization="false"
 				AdditionalIncludeDirectories="$(SolutionDir)\include"
 				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG"
 				StringPooling="true"
@@ -59,6 +61,7 @@
 				WarningLevel="4"
 				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="3"
+				CallingConvention="2"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -77,6 +80,7 @@
 				LinkIncremental="1"
 				GenerateDebugInformation="true"
 				SubSystem="2"
+				OptimizeForWindows98="0"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -132,6 +136,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
+				EnableIntrinsicFunctions="false"
+				WholeProgramOptimization="false"
 				AdditionalIncludeDirectories="$(SolutionDir)\include"
 				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG"
 				StringPooling="true"
@@ -142,6 +148,7 @@
 				WarningLevel="4"
 				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="3"
+				CallingConvention="2"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -160,6 +167,7 @@
 				LinkIncremental="1"
 				GenerateDebugInformation="true"
 				SubSystem="2"
+				OptimizeForWindows98="0"
 				TargetMachine="17"
 			/>
 			<Tool
@@ -218,16 +226,19 @@
 				Optimization="3"
 				EnableIntrinsicFunctions="true"
 				OmitFramePointers="true"
+				WholeProgramOptimization="true"
 				AdditionalIncludeDirectories="$(SolutionDir)\include"
 				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG"
 				StringPooling="true"
 				MinimalRebuild="false"
 				RuntimeLibrary="2"
+				BufferSecurityCheck="false"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="2"
 				WarningLevel="4"
 				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="3"
+				CallingConvention="2"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -250,6 +261,8 @@
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
+				OptimizeForWindows98="0"
+				LinkTimeCodeGeneration="1"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -307,16 +320,19 @@
 				Optimization="3"
 				EnableIntrinsicFunctions="true"
 				OmitFramePointers="true"
+				WholeProgramOptimization="true"
 				AdditionalIncludeDirectories="$(SolutionDir)\include"
 				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG"
 				StringPooling="true"
 				MinimalRebuild="false"
 				RuntimeLibrary="2"
+				BufferSecurityCheck="false"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="2"
 				WarningLevel="4"
 				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="3"
+				CallingConvention="2"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -339,6 +355,8 @@
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
+				OptimizeForWindows98="0"
+				LinkTimeCodeGeneration="1"
 				TargetMachine="17"
 			/>
 			<Tool

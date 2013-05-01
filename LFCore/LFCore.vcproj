@@ -44,6 +44,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
+				EnableIntrinsicFunctions="false"
+				WholeProgramOptimization="false"
 				AdditionalIncludeDirectories="$(SolutionDir)\include;$(SolutionDir)\cryptlib"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;LFCore_EXPORTS"
 				StringPooling="true"
@@ -54,6 +56,7 @@
 				WarningLevel="4"
 				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="3"
+				CallingConvention="2"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -71,6 +74,7 @@
 				DelayLoadDLLs=""
 				GenerateDebugInformation="true"
 				SubSystem="2"
+				OptimizeForWindows98="0"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -122,6 +126,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
+				EnableIntrinsicFunctions="false"
+				WholeProgramOptimization="false"
 				AdditionalIncludeDirectories="$(SolutionDir)\include;$(SolutionDir)\cryptlib"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;LFCore_EXPORTS"
 				StringPooling="true"
@@ -132,6 +138,7 @@
 				WarningLevel="4"
 				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="3"
+				CallingConvention="2"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -149,6 +156,7 @@
 				DelayLoadDLLs=""
 				GenerateDebugInformation="true"
 				SubSystem="2"
+				OptimizeForWindows98="0"
 				TargetMachine="17"
 			/>
 			<Tool
@@ -203,15 +211,18 @@
 				InlineFunctionExpansion="0"
 				EnableIntrinsicFunctions="true"
 				OmitFramePointers="true"
+				WholeProgramOptimization="true"
 				AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;$(SolutionDir)\cryptlib&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;LFCore_EXPORTS"
 				StringPooling="true"
 				RuntimeLibrary="2"
+				BufferSecurityCheck="false"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="2"
 				WarningLevel="4"
 				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="3"
+				CallingConvention="2"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -231,6 +242,8 @@
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
+				OptimizeForWindows98="0"
+				LinkTimeCodeGeneration="1"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -285,15 +298,18 @@
 				Optimization="3"
 				EnableIntrinsicFunctions="true"
 				OmitFramePointers="true"
+				WholeProgramOptimization="true"
 				AdditionalIncludeDirectories="$(SolutionDir)\include;$(SolutionDir)\cryptlib"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;LFCore_EXPORTS"
 				StringPooling="true"
 				RuntimeLibrary="2"
+				BufferSecurityCheck="false"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="2"
 				WarningLevel="4"
 				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="3"
+				CallingConvention="2"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -313,6 +329,8 @@
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
+				OptimizeForWindows98="0"
+				LinkTimeCodeGeneration="1"
 				TargetMachine="17"
 			/>
 			<Tool

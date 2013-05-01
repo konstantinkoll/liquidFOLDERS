@@ -44,6 +44,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
+				EnableIntrinsicFunctions="false"
+				WholeProgramOptimization="false"
 				AdditionalIncludeDirectories="&quot;$(SolutionDir)cryptlib&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				StringPooling="true"
@@ -53,6 +55,7 @@
 				UsePrecompiledHeader="2"
 				WarningLevel="4"
 				DebugInformationFormat="3"
+				CallingConvention="0"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -68,6 +71,7 @@
 				LinkIncremental="1"
 				GenerateDebugInformation="true"
 				SubSystem="1"
+				OptimizeForWindows98="0"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -118,6 +122,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
+				EnableIntrinsicFunctions="false"
+				WholeProgramOptimization="false"
 				AdditionalIncludeDirectories="&quot;$(SolutionDir)cryptlib&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				StringPooling="true"
@@ -127,6 +133,7 @@
 				UsePrecompiledHeader="2"
 				WarningLevel="4"
 				DebugInformationFormat="3"
+				CallingConvention="0"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -142,6 +149,7 @@
 				LinkIncremental="1"
 				GenerateDebugInformation="true"
 				SubSystem="1"
+				OptimizeForWindows98="0"
 				TargetMachine="17"
 			/>
 			<Tool
@@ -191,7 +199,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="2"
+				Optimization="3"
 				EnableIntrinsicFunctions="true"
 				OmitFramePointers="true"
 				WholeProgramOptimization="true"
@@ -199,10 +207,12 @@
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				StringPooling="true"
 				RuntimeLibrary="2"
+				BufferSecurityCheck="false"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="2"
 				WarningLevel="4"
 				DebugInformationFormat="3"
+				CallingConvention="0"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -220,6 +230,8 @@
 				SubSystem="1"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
+				OptimizeForWindows98="0"
+				LinkTimeCodeGeneration="1"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -270,7 +282,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="2"
+				Optimization="3"
 				EnableIntrinsicFunctions="true"
 				OmitFramePointers="true"
 				WholeProgramOptimization="true"
@@ -278,10 +290,12 @@
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				StringPooling="true"
 				RuntimeLibrary="2"
+				BufferSecurityCheck="false"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="2"
 				WarningLevel="4"
 				DebugInformationFormat="3"
+				CallingConvention="0"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -299,6 +313,8 @@
 				SubSystem="1"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
+				OptimizeForWindows98="0"
+				LinkTimeCodeGeneration="1"
 				TargetMachine="17"
 			/>
 			<Tool
