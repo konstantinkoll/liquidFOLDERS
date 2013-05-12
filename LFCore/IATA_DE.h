@@ -144,7 +144,7 @@ LFCountry Countries_DE[CountryCount_DE] = {
 	{ 140, "Nied. Antillen" },
 	{ 141, "Niederlande" },
 	{ 142, "Nigeria" },
-	{ 143, "Niue Island" },
+	{ 143, "Niue" },
 	{ 144, "Nordkorea" },
 	{ 145, "Norwegen" },
 	{ 146, "Oman" },
@@ -227,7 +227,7 @@ LFCountry Countries_DE[CountryCount_DE] = {
 };
 
 // Airports
-#define AirportCount_DE 8614
+#define AirportCount_DE 8615
 LFAirport Airports_DE[AirportCount_DE] = {
 	{  54, "AAA", "", "Anaa", { 17.355000, -145.508333 } },
 	{  11, "AAB", "", "Arrabury", { 26.690556, 141.047500 } },
@@ -5902,6 +5902,7 @@ LFAirport Airports_DE[AirportCount_DE] = {
 	{ 102, "PKS", "", "Paksane", { -18.366944, 103.650000 } },
 	{  11, "PKT", "", "Port Keats", { 14.250000, 129.529167 } },
 	{  74, "PKU", "", "Pekanbaru", { 0.460833, 101.444444 } },
+	{ 161, "PKV", "", "Pskov", { -57.783889, 28.395556 } },
 	{  25, "PKW", "", "Selibi Phikwe", { 22.058333, 27.828889 } },
 	{  74, "PKY", "", "Palangkaraya", { 2.225000, 113.942778 } },
 	{ 102, "PKZ", "", "Pakse", { -15.131944, 105.781389 } },

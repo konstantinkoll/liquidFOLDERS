@@ -1261,7 +1261,7 @@ CHA     Chattanooga, USA;4;35*2'7"N, 85*12'14"W
 CHB     Chilas, Pakistan;4;35*25'36"N, 74*4'54"E
 CHC     Christchurch, New Zealand;4;43*29'22"S, 172*32'4"E
 CHD     Chandler (Municipal Airport), USA;3;33*16'9"N, 111*48'40"W
-CHE     Reenroe, Irland;5;51*57'0"N, 10*13'1"W
+CHE     Reenroe, Ireland;5;51*57'0"N, 10*13'1"W
 CHF     Chinhae, South Korea;4;35*8'28"N, 128*41'45"E
 CHG     Chaoyang, China;4;41*32'17"N, 120*26'6"E
 CHH     Chachapoyas, Peru;4;6*12'7"S, 77*51'22"W
@@ -3338,7 +3338,7 @@ ITM OSA Osaka (Itami Airport), Japan;5;34*47'4"N, 135*26'21"E
 ITN     Itabuna, Brazil;4;14*48'38"S, 39*17'26"W
 ITO     Hilo, USA;4;19*43'13"N, 155*2'54"W
 ITQ     Itaqui, Brazil;4;29*10'23"S, 56*32'12"W
-IUE     Niue Island, Niue Iceland;4;19*4'48"S, 169*55'32"W
+IUE     Niue Island, Niue Island;4;19*4'48"S, 169*55'32"W
 IUL     Ilu, Indonesia;4;3*45'0"S, 138*4'59"E
 IUM     Summit Lake, Canada;4;54*16'59"N, 122*37'59"W
 IUS     Inus, Solomons;4;5*46'59"S, 155*8'60"E
@@ -3568,7 +3568,7 @@ JSN QLA Los Angeles (Sherman Oaks Hospital), USA;4;34*9'36"N, 118*26'58"W
 JSO     Sodertalje, Sweden;4;59*12'0"N, 17*37'1"E
 JSP     Cheju, South Korea
 JSR     Jessore, Bangladesh;4;23*11'2"N, 89*9'39"E
-JSS     Spetsai Island, Griechenland;5;37*15'58"N, 23*9'22"E
+JSS     Spetsai Island, Greece;5;37*15'58"N, 23*9'22"E
 JST     Johnstown, USA;4;40*18'58"N, 78*50'2"W
 JSU     Sukkertoppen, Greenland;4;65*24'45"N, 52*56'22"W
 JSV     Sunnyvale, USA;4;35*26'17"N, 94*48'10"W
@@ -5252,7 +5252,7 @@ NDZ     Nordholz, Germany;4;53*46'4"N, 8*39'31"E
 NEA     Brunswick (Glynco Naval Airstation), USA
 NEC     Necochea, Argentina;4;38*28'59"S, 58*49'2"W
 NEG     Negril, Jamaica;4;18*21'51"N, 78*18'20"W
-NEJ     Nejjo, Ethipoia;5;9*33'0"N, 35*28'1"E
+NEJ     Nejjo, Ethiopia;5;9*33'0"N, 35*28'1"E
 NEK     Nekemete, Ethiopia;4;9*3'0"N, 36*35'60"E
 NEL     Lakehurst, USA;4;40*2'0"N, 74*21'13"W
 NEN     Jacksonville (Whitehouse Naval Airfield), USA;4;30*21'1"N, 81*52'59"W
@@ -6017,6 +6017,7 @@ PKR     Pokhara, Nepal;4;28*12'3"N, 83*58'55"E
 PKS     Paksane, Laos;4;18*22'1"N, 103*39'0"E
 PKT     Port Keats, Australia;4;14*15'0"S, 129*31'45"E
 PKU     Pekanbaru, Indonesia;4;0*27'39"S, 101*26'40"E
+PKV     Pskov, Russia;5;57*47'02"N, 28*23'44"E
 PKW     Selibi Phikwe, Botswana;4;22*3'30"S, 27*49'44"E
 PKY     Palangkaraya, Indonesia;4;2*13'30"S, 113*56'34"E
 PKZ     Pakse, Laos;4;15*7'55"N, 105*46'53"E
@@ -6856,7 +6857,7 @@ SAS     Salton City, USA;4;33*14'28"N, 115*57'9"W
 SAT     San Antonio, USA;4;29*32'1"N, 98*28'11"W
 SAU     Sawu, Indonesia;4;10*28'59"S, 121*50'60"E
 SAV     Savannah, USA;4;32*7'39"N, 81*12'8"W
-SAW     Istanbul (Sabiha Gokcen), Türkei;5;40*54'17"N, 29*18'33"E
+SAW     Istanbul (Sabiha Gokcen), Turkey;5;40*54'17"N, 29*18'33"E
 SAX     Sambu, Panama;4;8*1'1"N, 78*11'60"W
 SAY     Siena, Italy;4;43*15'23"N, 11*15'18"E
 SAZ     Sasstown, Liberia;4;4*40'1"N, 8*25'1"W

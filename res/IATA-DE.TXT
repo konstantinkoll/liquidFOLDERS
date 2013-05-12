@@ -3338,7 +3338,7 @@ ITM OSA Osaka (Itami Airport), Japan;5;34*47'4"N, 135*26'21"E
 ITN     Itabuna, Brasilien;4;14*48'38"S, 39*17'26"W
 ITO     Hilo, USA;4;19*43'13"N, 155*2'54"W
 ITQ     Itaqui, Brasilien;4;29*10'23"S, 56*32'12"W
-IUE     Niue Island, Niue Island;4;19*4'48"S, 169*55'32"W
+IUE     Niue Island, Niue;4;19*4'48"S, 169*55'32"W
 IUL     Ilu, Indonesien;4;3*45'0"S, 138*4'59"E
 IUM     Summit Lake, Kanada;4;54*16'59"N, 122*37'59"W
 IUS     Inus, Salomon-Inseln;4;5*46'59"S, 155*8'60"E
@@ -6017,6 +6017,7 @@ PKR     Pokhara, Nepal;4;28*12'3"N, 83*58'55"E
 PKS     Paksane, Laos;4;18*22'1"N, 103*39'0"E
 PKT     Port Keats, Australien;4;14*15'0"S, 129*31'45"E
 PKU     Pekanbaru, Indonesien;4;0*27'39"S, 101*26'40"E
+PKV     Pskov, Russland;5;57*47'02"N, 28*23'44"E
 PKW     Selibi Phikwe, Botswana;4;22*3'30"S, 27*49'44"E
 PKY     Palangkaraya, Indonesien;4;2*13'30"S, 113*56'34"E
 PKZ     Pakse, Laos;4;15*7'55"N, 105*46'53"E
