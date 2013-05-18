@@ -1246,7 +1246,6 @@ void CInspectorGrid::EditProperty(UINT Attr)
 				WCHAR tmpStr[256];
 				pProp->pProperty->ToString(tmpStr, 256);
 				p_Edit->SetWindowText(tmpStr);
-				p_Edit->SetSel(0, (INT)wcslen(tmpStr));
 			}
 			p_Edit->SetValidChars(pProp->pProperty->GetValidChars());
 			pProp->pProperty->SetEditMask(p_Edit);

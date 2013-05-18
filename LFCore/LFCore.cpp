@@ -281,8 +281,17 @@ LFCore_API LFAttributeDescriptor* LFGetAttributeInfo(unsigned int ID)
 	*ptrDst = L'\0';
 
 	// Type and character count (where appropriate)
-	if ((a->Type==LFTypeUnicodeString) || (a->Type==LFTypeUnicodeArray) || (a->Type==LFTypeAnsiString))
+	switch (a->Type)
+	{
+	case LFTypeUnicodeString:
+	case LFTypeUnicodeArray:
+	case LFTypeAnsiString:
 		a->cCharacters = (unsigned int)GetAttributeMaxCharacterCount(ID);
+		break;
+	case LFTypeFourCC:
+		a->cCharacters = 4;
+		break;
+	}
 
 	// Recommended width
 	const unsigned int rWidths[LFTypeCount] = { 200, 200, 200, 100, 100, 100, 120, 100, 100, 100, 150, 140, 100 };

@@ -61,7 +61,7 @@ LFCore_API void LFFractionToString(const LFFraction frac, wchar_t* str, size_t c
 
 LFCore_API void LFDoubleToString(const double d, wchar_t* str, size_t cCount)
 {
-	swprintf(str, cCount, L"%.2f", d);
+	swprintf(str, cCount, L"%.2lf", d);
 }
 
 LFCore_API void LFGeoCoordinateToString(const double c, wchar_t* str, size_t cCount, bool IsLatitude, bool FillZero)
@@ -129,7 +129,7 @@ LFCore_API void LFBitrateToString(const unsigned int r, wchar_t* str, size_t cCo
 
 LFCore_API void LFMegapixelToString(const double d, wchar_t* str, size_t cCount)
 {
-	swprintf(str, cCount, L"%.1f Megapixel", d);
+	swprintf(str, cCount, L"%.1lf Megapixel", d);
 }
 
 void ToString(void* value, unsigned int type, wchar_t* str, size_t cCount)
@@ -458,7 +458,7 @@ LFCore_API void LFVariantDataFromString(LFVariantData* v, wchar_t* str)
 			break;
 		case LFTypeDouble:
 		case LFTypeMegapixel:
-			if (swscanf_s(str, L"%f", &v->Double)==1)
+			if (swscanf_s(str, L"%lf", &v->Double)==1)
 				v->IsNull = false;
 			break;
 		case LFTypeGeoCoordinates:

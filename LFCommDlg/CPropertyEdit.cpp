@@ -282,7 +282,6 @@ void CPropertyEdit::CreateProperty()
 			WCHAR tmpStr[256];
 			p_Property->ToString(tmpStr, 256);
 			m_pWndEdit->SetWindowText(tmpStr);
-			m_pWndEdit->SetSel(0, (INT)wcslen(tmpStr));
 		}
 		m_pWndEdit->SetValidChars(p_Property->GetValidChars());
 		p_Property->SetEditMask(m_pWndEdit);

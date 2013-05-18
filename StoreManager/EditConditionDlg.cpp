@@ -61,13 +61,13 @@ BOOL EditConditionDlg::OnInitDialog()
 	SetIcon(hIcon, TRUE);		// Großes Symbol verwenden
 	SetIcon(hIcon, FALSE);		// Kleines Symbol verwenden
 
-	// Attribut-Liste füllen
-	PopulateListCtrl(IDC_COMPAREATTRIBUTE, FALSE, m_Condition.AttrData.Attr);
-
 	// Bedingung
 	m_wndEdit.SetData(&m_Condition.AttrData);
 	if (m_StoreID[0]!='\0')
 		m_wndEdit.SetStore(m_StoreID);
+
+	// Attribut-Liste füllen
+	PopulateListCtrl(IDC_COMPAREATTRIBUTE, FALSE, m_Condition.AttrData.Attr);
 
 	return TRUE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird
 }
