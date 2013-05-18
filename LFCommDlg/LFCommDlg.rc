@@ -704,6 +704,9 @@ BEGIN
     IDS_STOREPROPERTIES     "Eigenschaften von „%s“"
     IDS_STORENEW            "Neuen Store anlegen"
     IDS_STORENEW_VOLUME     "Neuen Store auf Laufwerk %c: anlegen"
+    IDS_DELETEPROPERTY_CAPTION "Eigenschaft entfernen"
+    IDS_DELETEPROPERTY_MSG  "Möchten Sie diese Eigenschaft wirklich entfernen ?"
+
 END
 
 STRINGTABLE 
@@ -1297,6 +1300,8 @@ BEGIN
     IDS_STOREPROPERTIES     "Propiedades de ""%s"""
     IDS_STORENEW            "Crear nuevo store"
     IDS_STORENEW_VOLUME     "Crear nuevo store en unidad %c:"
+    IDS_DELETEPROPERTY_CAPTION "Eliminar propriedad"
+    IDS_DELETEPROPERTY_MSG  "¿Realmente quiere eliminar esta propriedad?"
 END
 
 STRINGTABLE 
@@ -1892,6 +1897,8 @@ BEGIN
     IDS_STOREPROPERTIES     "Qualités de ""%s"""
     IDS_STORENEW            "Créez un store nouveau"
     IDS_STORENEW_VOLUME     "Créez un store nouveau sur lecteur %c:"
+    IDS_DELETEPROPERTY_CAPTION "Effacez propriété"
+    IDS_DELETEPROPERTY_MSG  "Voulez-vous vraiment effacer cette propriété ?"
 END
 
 STRINGTABLE 
@@ -2529,6 +2536,8 @@ BEGIN
     IDS_STOREPROPERTIES     "Properties of ""%s"""
     IDS_STORENEW            "Create new store"
     IDS_STORENEW_VOLUME     "Create new store on volume %c:"
+    IDS_DELETEPROPERTY_CAPTION "Remove property"
+    IDS_DELETEPROPERTY_MSG  "Do you really want to remove this property ?"
 END
 
 STRINGTABLE 

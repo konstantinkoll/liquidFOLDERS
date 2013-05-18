@@ -84,6 +84,8 @@
 #define IDS_STOREPROPERTIES             20336
 #define IDS_STORENEW                    20337
 #define IDS_STORENEW_VOLUME             20338
+#define IDS_DELETEPROPERTY_CAPTION      20339
+#define IDS_DELETEPROPERTY_MSG          20340
 #define IDS_COMPARE_FIRST               20400
 #define IDS_COMPARE_IGNORE              20400
 #define IDS_COMPARE_ISNULL              20401

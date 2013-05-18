@@ -1813,15 +1813,26 @@ void CInspectorGrid::OnLButtonUp(UINT /*nFlags*/, CPoint point)
 		InvalidateItem(Item);
 
 		if ((Item==m_SelectedItem) && (Item!=-1))
+		{
+			CString caption;
+			CString msg;
+
 			switch (Part)
 			{
 			case PARTBUTTON:
 				m_Properties.m_Items[Item].pProperty->OnClickButton();
 				break;
 			case PARTRESET:
-				ResetProperty(Item);
+				p_App->PlayWarningSound();
+
+				ENSURE(caption.LoadString(IDS_DELETEPROPERTY_CAPTION));
+				ENSURE(msg.LoadString(IDS_DELETEPROPERTY_MSG));
+
+				if (MessageBox(msg, caption, MB_YESNO | MB_DEFBUTTON2 | MB_ICONQUESTION)==IDYES)
+					ResetProperty(Item);
 				break;
 			}
+		}
 	}
 	else
 		if ((Item==m_SelectedItem) && (Item!=-1) && (Part==PARTVALUE))
