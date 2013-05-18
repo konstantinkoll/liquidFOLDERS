@@ -111,7 +111,7 @@ struct LFMessageIDs
 struct LFCountry
 {
 	unsigned int ID;
-	char Name[64];
+	char Name[31];
 };
 
 struct LFGeoCoordinates
@@ -131,7 +131,7 @@ struct LFAirport
 	unsigned int CountryID;
 	char Code[4];
 	char MetroCode[4];
-	char Name[64];
+	char Name[44];
 	LFGeoCoordinates Location;
 };
 

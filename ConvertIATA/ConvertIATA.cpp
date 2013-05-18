@@ -12,6 +12,8 @@
 
 CWinApp theApp;
 CString path;
+UINT maxCountryLength;
+UINT maxAirportLength;
 
 using namespace std;
 
@@ -113,6 +115,9 @@ void ConvertFile(CString LanguageSuffix)
 
 			if (CountryID==-1)
 			{
+				if (strlen(Country)>maxCountryLength)
+					maxCountryLength = strlen(Country);
+
 				if (CountryCount==0)
 				{
 					CountryID = 0;
@@ -138,6 +143,9 @@ void ConvertFile(CString LanguageSuffix)
 
 			Airports[AirportCount].Name = NamesAndCodes.Mid(8);
 			Airports[AirportCount].CountryID = CountryID;
+
+			if (strlen(Airports[AirportCount].Name)>maxAirportLength)
+				maxAirportLength = strlen(Airports[AirportCount].Name);
 
 			if (Coord=="")
 			{
@@ -227,6 +235,10 @@ INT _tmain(INT /*argc*/, TCHAR* /*argv[]*/, TCHAR* /*envp[]*/)
 	// Konvertieren
 	ConvertFile("DE");
 	ConvertFile("EN");
+
+	cout << "Country: " << maxCountryLength+1;
+	cout << "\nAirport: " << maxAirportLength+1;
+	cin.get();
 
 	return 0;
 }
