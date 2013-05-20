@@ -227,7 +227,7 @@ LFCountry Countries_EN[CountryCount_EN] = {
 };
 
 // Airports
-#define AirportCount_EN 8615
+#define AirportCount_EN 8616
 LFAirport Airports_EN[AirportCount_EN] = {
 	{  66, "AAA", "", "Anaa", { 17.355000, -145.508333 } },
 	{   8, "AAB", "", "Arrabury", { 26.690556, 141.047500 } },
@@ -2135,6 +2135,7 @@ LFAirport Airports_EN[AirportCount_EN] = {
 	{  60, "EGL", "", "Neghelli", { -5.283056, 39.750000 } },
 	{ 174, "EGM", "", "Sege", { 8.578889, 157.875833 } },
 	{ 186, "EGN", "", "El Geneina", { -13.481667, 22.467222 } },
+	{ 163, "EGO", "", "Belgorod", { -50.643889, 36.590000 } },
 	{ 212, "EGP", "", "Eagle Pass", { -28.857222, -100.513333 } },
 	{ 212, "EGQ", "", "Emmetsburg", { -43.101944, -94.704722 } },
 	{  86, "EGS", "", "Egilsstadir", { -65.283333, -14.401389 } },

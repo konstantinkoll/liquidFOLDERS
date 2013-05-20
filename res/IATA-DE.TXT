@@ -2000,6 +2000,7 @@ EGI     Valparaiso, USA;4;30*39'1"N, 86*31'22"W
 EGL     Neghelli, Äthiopien;4;5*16'59"N, 39*45'0"E
 EGM     Sege, Salomon-Inseln;4;8*34'44"S, 157*52'33"E
 EGN     El Geneina, Sudan;4;13*28'54"N, 22*28'2"E
+EGO     Belgorod, Russland;5;50*38'38"N, 36*35'24"E
 EGP     Eagle Pass, USA;4;28*51'26"N, 100*30'48"W
 EGQ     Emmetsburg, USA;4;43*6'7"N, 94*42'17"W
 EGS     Egilsstadir, Island;4;65*16'60"N, 14*24'5"W
