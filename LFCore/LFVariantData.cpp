@@ -70,7 +70,7 @@ LFCore_API void LFGeoCoordinateToString(const double c, wchar_t* str, size_t cCo
 		(unsigned int)(fabs(c)+ROUNDOFF),
 		(unsigned int)GetMinutes(c),
 		(unsigned int)(GetSeconds(c)+0.5),
-		c>0 ? IsLatitude ? L'S' : L'W' : IsLatitude ? L'N' : L'E');
+		c>0 ? IsLatitude ? L'S' : L'E' : IsLatitude ? L'N' : L'W');
 }
 
 LFCore_API void LFGeoCoordinatesToString(const LFGeoCoordinates c, wchar_t* str, size_t cCount, bool FillZero)
