@@ -15,8 +15,7 @@ public:
 	CFileDropApp();
 
 	virtual BOOL InitInstance();
-
-	UINT m_WakeupMsg;
+	virtual CWnd* OpenCommandLine(WCHAR* CmdLine=NULL);
 
 protected:
 	afx_msg void OnAppAbout();

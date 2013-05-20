@@ -69,9 +69,13 @@ void PlayRegSound(CString Identifier)
 
 // LFApplication-Erstellung
 
-LFApplication::LFApplication(BOOL HasGUI)
+LFApplication::LFApplication(BOOL HasGUI, GUID& AppID)
 {
+	// GUI
 	m_HasGUI = HasGUI;
+
+	// ID
+	m_AppID = AppID;
 
 	// Version
 	OSVERSIONINFO osInfo;
@@ -321,6 +325,11 @@ BOOL LFApplication::InitInstance()
 	}
 
 	return TRUE;
+}
+
+CWnd* LFApplication::OpenCommandLine(WCHAR* /*CmdLine*/)
+{
+	return NULL;
 }
 
 INT LFApplication::ExitInstance()

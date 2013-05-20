@@ -106,7 +106,6 @@ BEGIN_MESSAGE_MAP(CMigrateWnd, CGlassWindow)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoresChanged, OnStoresChanged)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoreAttributesChanged, OnStoresChanged)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->DefaultStoreChanged, OnStoresChanged)
-	ON_REGISTERED_MESSAGE(theApp.m_WakeupMsg, OnWakeup)
 END_MESSAGE_MAP()
 
 INT CMigrateWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -270,14 +269,4 @@ LRESULT CMigrateWnd::OnStoresChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)
 	PostMessage(WM_IDLEUPDATECMDUI);
 
 	return NULL;
-}
-
-
-LRESULT CMigrateWnd::OnWakeup(WPARAM /*wParam*/, LPARAM /*lParam*/)
-{
-	CMigrateWnd* pFrame = new CMigrateWnd();
-	pFrame->Create();
-	pFrame->ShowWindow(SW_SHOW);
-
-	return 24878;
 }

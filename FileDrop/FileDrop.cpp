@@ -8,13 +8,32 @@
 #include "resource.h"
 
 
+GUID theAppID =	// {FA2D9FEE-05FA-4b0d-8702-88DB19A0F38F}
+	{ 0xfa2d9fee, 0x5fa, 0x4b0d, { 0x87, 0x2, 0x88, 0xdb, 0x19, 0xa0, 0xf3, 0x8f } };
+
 BOOL CALLBACK EnumWindowsProc(HWND hWnd, LPARAM lParam)
 {
 	if (GetWindow(hWnd, GW_OWNER))
 		return TRUE;
 
 	DWORD_PTR Result;
-	return SendMessageTimeout(hWnd, theApp.m_WakeupMsg, NULL, lParam, SMTO_NORMAL, 500, &Result) ? Result!=24878 : TRUE;
+	if (SendMessageTimeout(hWnd, theApp.m_WakeupMsg, NULL, NULL, SMTO_NORMAL, 500, &Result))
+		if (Result==24878)
+		{
+			CDS_Wakeup cdsw;
+			ZeroMemory(&cdsw, sizeof(cdsw));
+			cdsw.AppID = theAppID;
+			if (lParam)
+				wcscpy_s(cdsw.Command, MAX_PATH, (WCHAR*)lParam);
+
+			COPYDATASTRUCT cds;
+			cds.cbData = sizeof(cdsw);
+			cds.lpData = &cdsw;
+			if (SendMessage(hWnd, WM_COPYDATA, NULL, (LPARAM)&cds))
+				return FALSE;
+		}
+
+	return TRUE;
 }
 
 
@@ -28,9 +47,9 @@ END_MESSAGE_MAP()
 // CFileDropApp-Erstellung
 
 CFileDropApp::CFileDropApp()
-	: LFApplication(TRUE)
+	: LFApplication(TRUE, theAppID)
 {
-	m_WakeupMsg = RegisterWindowMessage(_T("liquidFOLDERS.FileDrop.Wakeup"));
+	m_WakeupMsg = RegisterWindowMessage(_T("liquidFOLDERS.FileDrop.NewWindow"));
 }
 
 
@@ -43,7 +62,8 @@ CFileDropApp theApp;
 
 BOOL CFileDropApp::InitInstance()
 {
-	if (!EnumWindows((WNDENUMPROC)EnumWindowsProc, NULL))
+	// Parameter
+	if (!EnumWindows((WNDENUMPROC)EnumWindowsProc, (LPARAM)(__argc==2 ? __wargv[1] : NULL)))
 		return FALSE;
 
 	if (!LFApplication::InitInstance())
@@ -52,15 +72,31 @@ BOOL CFileDropApp::InitInstance()
 	// Registry auslesen
 	SetRegistryBase(_T("Settings"));
 
-	m_pMainWnd = new CFileDropWnd();
-	((CFileDropWnd*)m_pMainWnd)->Create();
+	m_pMainWnd = OpenCommandLine();
 
 	if (!LFIsLicensed())
 		ShowNagScreen(NAG_NOTLICENSED | NAG_FORCE, m_pMainWnd);
 
-	m_pMainWnd->ShowWindow(SW_SHOW);
-
 	return TRUE;
+}
+
+CWnd* CFileDropApp::OpenCommandLine(WCHAR* /*CmdLine*/)
+{
+	if (m_pMainWnd)
+	{
+		if (m_pMainWnd->IsIconic())
+			m_pMainWnd->ShowWindow(SW_RESTORE);
+
+		m_pMainWnd->SetForegroundWindow();
+
+		return m_pMainWnd;
+	}
+
+	CFileDropWnd* pFrame = new CFileDropWnd();
+	pFrame->Create();
+	pFrame->ShowWindow(SW_SHOW);
+
+	return pFrame;
 }
 
 void CFileDropApp::OnAppAbout()

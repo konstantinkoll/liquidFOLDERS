@@ -108,7 +108,6 @@ BEGIN_MESSAGE_MAP(CFileDropWnd, CGlassWindow)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoresChanged, OnUpdateStore)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoreAttributesChanged, OnUpdateStore)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->DefaultStoreChanged, OnUpdateStore)
-	ON_REGISTERED_MESSAGE(theApp.m_WakeupMsg, OnWakeup)
 END_MESSAGE_MAP()
 
 INT CFileDropWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -384,15 +383,6 @@ LRESULT CFileDropWnd::OnUpdateStore(WPARAM /*wParam*/, LPARAM /*lParam*/)
 	Invalidate();
 
 	return NULL;
-}
-
-LRESULT CFileDropWnd::OnWakeup(WPARAM /*wParam*/, LPARAM /*lParam*/)
-{
-	if (IsIconic())
-		ShowWindow(SW_RESTORE);
-
-	SetForegroundWindow();
-	return 24878;
 }
 
 

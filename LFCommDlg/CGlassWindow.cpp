@@ -198,6 +198,8 @@ BEGIN_MESSAGE_MAP(CGlassWindow, CWnd)
 	ON_WM_GETMINMAXINFO()
 	ON_WM_RBUTTONUP()
 	ON_WM_INITMENUPOPUP()
+	ON_REGISTERED_MESSAGE(LFGetApp()->m_WakeupMsg, OnWakeup)
+	ON_WM_COPYDATA()
 END_MESSAGE_MAP()
 
 INT CGlassWindow::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -429,4 +431,23 @@ void CGlassWindow::OnInitMenuPopup(CMenu* pPopupMenu, UINT /*nIndex*/, BOOL /*bS
 		}
 		state.m_nIndexMax = nCount;
 	}
+}
+
+LRESULT CGlassWindow::OnWakeup(WPARAM /*wParam*/, LPARAM /*lParam*/)
+{
+	return 24878;
+}
+
+BOOL CGlassWindow::OnCopyData(CWnd* /*pWnd*/, COPYDATASTRUCT* pCopyDataStruct)
+{
+	if (pCopyDataStruct->cbData!=sizeof(CDS_Wakeup))
+		return FALSE;
+
+	CDS_Wakeup cds = *((CDS_Wakeup*)pCopyDataStruct->lpData);
+	if (cds.AppID!=p_App->m_AppID)
+		return FALSE;
+
+	p_App->OpenCommandLine(cds.Command[0] ? cds.Command : NULL);
+
+	return TRUE;
 }

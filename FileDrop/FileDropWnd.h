@@ -44,7 +44,6 @@ protected:
 	afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
 	afx_msg void OnMove(INT x, INT y);
 	afx_msg LRESULT OnUpdateStore(WPARAM wParam, LPARAM lParam);
-	afx_msg LRESULT OnWakeup(WPARAM wParam, LPARAM lParam);
 
 	afx_msg void OnChooseDefaultStore();
 	afx_msg void OnStoreOpen();

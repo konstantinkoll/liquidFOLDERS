@@ -10,10 +10,14 @@
 #include "LFCommDlg.h"
 
 
+GUID theAppID =	// {302C80F9-ACCF-4112-9222-E963B97D66F8}
+	{ 0x302c80f9, 0xaccf, 0x4112, { 0x92, 0x22, 0xe9, 0x63, 0xb9, 0x7d, 0x66, 0xf8 } };
+
+
 // CRunCmdApp-Erstellung
 
 CRunCmdApp::CRunCmdApp()
-	: LFApplication(FALSE)
+	: LFApplication(FALSE, theAppID)
 {
 }
 

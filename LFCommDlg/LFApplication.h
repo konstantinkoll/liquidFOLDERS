@@ -45,6 +45,12 @@ typedef HRESULT(__stdcall* PFNDWMISCOMPOSITIONENABLED)(BOOL* pfEnabled);
 typedef HRESULT(__stdcall* PFNDWMEXTENDFRAMEINTOCLIENTAREA)(HWND hWnd, const MARGINS* pMarInset);
 typedef BOOL(__stdcall* PFNDWMDEFWINDOWPROC)(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam, LRESULT* plResult);
 
+struct CDS_Wakeup
+{
+	GUID AppID;
+	WCHAR Command[MAX_PATH];
+};
+
 
 // LFApplication:
 // Siehe LFApplication.cpp für die Implementierung dieser Klasse
@@ -55,7 +61,7 @@ typedef BOOL(__stdcall* PFNDWMDEFWINDOWPROC)(HWND hWnd, UINT msg, WPARAM wParam,
 class AFX_EXT_CLASS LFApplication : public CWinAppEx
 {
 public:
-	LFApplication(BOOL HasGUI);
+	LFApplication(BOOL HasGUI, GUID& AppID);
 	virtual ~LFApplication();
 
 	CString m_Path;
@@ -84,6 +90,8 @@ public:
 	BOOL m_HasGUI;
 	BOOL IsLicensed;
 	UINT OSVersion;
+	UINT m_WakeupMsg;
+	GUID m_AppID;
 	CLIPFORMAT CF_FILEDESCRIPTOR;
 	CLIPFORMAT CF_FILECONTENTS;
 	CLIPFORMAT CF_HLIQUID;
@@ -107,6 +115,7 @@ public:
 	BOOL m_AeroLibLoaded;
 
 	virtual BOOL InitInstance();
+	virtual CWnd* OpenCommandLine(WCHAR* CmdLine=NULL);
 	virtual INT ExitInstance();
 
 	BOOL ShowNagScreen(UINT Level, CWnd* pWndParent=NULL, BOOL Abort=FALSE);

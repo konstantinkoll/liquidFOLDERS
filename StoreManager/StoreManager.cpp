@@ -11,13 +11,32 @@
 #include "MenuIcons.h"
 
 
+GUID theAppID =	// {5EB05AE5-C6FE-4e53-A034-3623921D18ED}
+	{ 0x5eb05ae5, 0xc6fe, 0x4e53, { 0xa0, 0x34, 0x36, 0x23, 0x92, 0x1d, 0x18, 0xed } };
+
 BOOL CALLBACK EnumWindowsProc(HWND hWnd, LPARAM lParam)
 {
 	if (GetWindow(hWnd, GW_OWNER))
 		return TRUE;
 
 	DWORD_PTR Result;
-	return SendMessageTimeout(hWnd, theApp.m_WakeupMsg, NULL, lParam, SMTO_NORMAL, 500, &Result) ? Result!=24878 : TRUE;
+	if (SendMessageTimeout(hWnd, theApp.m_WakeupMsg, NULL, NULL, SMTO_NORMAL, 500, &Result))
+		if (Result==24878)
+		{
+			CDS_Wakeup cdsw;
+			ZeroMemory(&cdsw, sizeof(cdsw));
+			cdsw.AppID = theAppID;
+			if (lParam)
+				wcscpy_s(cdsw.Command, MAX_PATH, (WCHAR*)lParam);
+
+			COPYDATASTRUCT cds;
+			cds.cbData = sizeof(cdsw);
+			cds.lpData = &cdsw;
+			if (SendMessage(hWnd, WM_COPYDATA, NULL, (LPARAM)&cds))
+				return FALSE;
+		}
+
+	return TRUE;
 }
 
 
@@ -31,7 +50,7 @@ END_MESSAGE_MAP()
 // CStoreManagerApp-Erstellung
 
 CStoreManagerApp::CStoreManagerApp()
-	: LFApplication(TRUE)
+	: LFApplication(TRUE, theAppID)
 {
 	m_WakeupMsg = RegisterWindowMessage(_T("liquidFOLDERS.StoreManager.NewWindow"));
 	m_NagCounter = 3;
@@ -49,9 +68,8 @@ CStoreManagerApp theApp;
 BOOL CStoreManagerApp::InitInstance()
 {
 	// Parameter
-	if (__argc!=2)
-		if (!EnumWindows((WNDENUMPROC)EnumWindowsProc, NULL))
-			return FALSE;
+	if (!EnumWindows((WNDENUMPROC)EnumWindowsProc, (LPARAM)(__argc==2 ? __wargv[1] : NULL)))
+		return FALSE;
 
 	if (!LFApplication::InitInstance())
 		return FALSE;
@@ -113,16 +131,28 @@ BOOL CStoreManagerApp::InitInstance()
 
 	m_ThumbnailCache.LoadFrames();
 
+	CWnd* pFrame = OpenCommandLine(__argc==2 ? __wargv[1] : NULL);
+
+	if (!LFIsLicensed())
+		ShowNagScreen(NAG_NOTLICENSED | NAG_FORCE, pFrame);
+
+	m_AppInitialized = TRUE;
+
+	return TRUE;
+}
+
+CWnd* CStoreManagerApp::OpenCommandLine(WCHAR* CmdLine)
+{
 	CMainWnd* pFrame = new CMainWnd();
 
 	// Parse parameter and create window
-	if (__argc==2)
+	if (CmdLine)
 	{
-		if (wcslen(__wargv[1])==LFKeySize-1)
-			if ((wcschr(__wargv[1], L'.')==NULL) && (wcschr(__wargv[1], L':')==NULL) && (wcschr(__wargv[1], L'\\')==NULL))
+		if (wcslen(CmdLine)==LFKeySize-1)
+			if ((wcschr(CmdLine, L'.')==NULL) && (wcschr(CmdLine, L':')==NULL) && (wcschr(CmdLine, L'\\')==NULL))
 			{
 				CHAR StoreID[LFKeySize];
-				WideCharToMultiByte(CP_ACP, 0, __wargv[1], -1, StoreID, LFKeySize, NULL, NULL);
+				WideCharToMultiByte(CP_ACP, 0, CmdLine, -1, StoreID, LFKeySize, NULL, NULL);
 
 				CHAR* pChar = StoreID;
 				while (*pChar)
@@ -135,20 +165,16 @@ BOOL CStoreManagerApp::InitInstance()
 				goto Finish;
 			}
 
-		pFrame->CreateFilter(__wargv[1]);
+		pFrame->CreateFilter(CmdLine);
 		goto Finish;
 	}
 
 	pFrame->CreateRoot();
 
 Finish:
-	if (!LFIsLicensed())
-		ShowNagScreen(NAG_NOTLICENSED | NAG_FORCE, pFrame);
-
 	pFrame->ShowWindow(SW_SHOW);
-	m_AppInitialized = TRUE;
 
-	return TRUE;
+	return pFrame;
 }
 
 INT CStoreManagerApp::ExitInstance()

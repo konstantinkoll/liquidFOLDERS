@@ -22,6 +22,7 @@ public:
 	CStoreManagerApp();
 
 	virtual BOOL InitInstance();
+	virtual CWnd* OpenCommandLine(WCHAR* CmdLine=NULL);
 	virtual INT ExitInstance();
 
 	void AddFrame(CMainWnd* pFrame);
@@ -36,7 +37,6 @@ public:
 
 	CList<CMainWnd*> m_MainFrames;
 	CMainWnd* p_Clipboard;
-	UINT m_WakeupMsg;
 	CString m_PathGoogleEarth;
 	CFormatCache m_FileFormats;
 	CThumbnailCache m_ThumbnailCache;
