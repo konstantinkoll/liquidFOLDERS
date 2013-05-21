@@ -56,6 +56,7 @@ protected:
 	afx_msg void OnSysColorChange();
 	afx_msg LRESULT OnThemeChanged();
 	afx_msg void OnCompositionChanged();
+	afx_msg LRESULT OnDisplayChange(WPARAM wParam, LPARAM lParam);
 	afx_msg void OnNcCalcSize(BOOL bCalcValidRects, NCCALCSIZE_PARAMS* lpncsp);
 	afx_msg LRESULT OnNcHitTest(CPoint point);
 	afx_msg BOOL OnNcActivate(BOOL bActive);

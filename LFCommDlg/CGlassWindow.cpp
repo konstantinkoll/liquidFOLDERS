@@ -251,6 +251,7 @@ BEGIN_MESSAGE_MAP(CGlassWindow, CWnd)
 	ON_WM_SYSCOLORCHANGE()
 	ON_WM_THEMECHANGED()
 	ON_WM_DWMCOMPOSITIONCHANGED()
+	ON_MESSAGE(WM_DISPLAYCHANGE, OnDisplayChange)
 	ON_WM_NCCALCSIZE()
 	ON_WM_NCHITTEST()
 	ON_WM_NCACTIVATE()
@@ -369,6 +370,21 @@ void CGlassWindow::OnCompositionChanged()
 	}
 
 	AdjustLayout();
+}
+
+LRESULT CGlassWindow::OnDisplayChange(WPARAM /*wParam*/, LPARAM /*lParam*/)
+{
+	if (!(GetStyle() & WS_OVERLAPPEDWINDOW))
+	{
+		MONITORINFO mi;
+		ZeroMemory(&mi, sizeof(mi));
+		mi.cbSize = sizeof(mi);
+
+		if (GetMonitorInfo(MonitorFromWindow(m_hWnd, MONITOR_DEFAULTTOPRIMARY), &mi))
+			::SetWindowPos(m_hWnd, HWND_TOP, mi.rcMonitor.left, mi.rcMonitor.top, mi.rcMonitor.right-mi.rcMonitor.left, mi.rcMonitor.bottom-mi.rcMonitor.top, SWP_NOOWNERZORDER);
+	}
+
+	return NULL;
 }
 
 void CGlassWindow::OnNcCalcSize(BOOL bCalcValidRects, NCCALCSIZE_PARAMS* lpncsp)
