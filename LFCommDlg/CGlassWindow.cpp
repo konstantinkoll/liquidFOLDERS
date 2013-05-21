@@ -143,6 +143,31 @@ void CGlassWindow::UseGlasBackground(MARGINS Margins)
 		p_App->zDwmExtendFrameIntoClientArea(m_hWnd, &Margins);
 }
 
+void CGlassWindow::ToggleFullScreen()
+{
+	DWORD dwStyle = GetWindowLong(m_hWnd, GWL_STYLE);
+	if (dwStyle & WS_OVERLAPPEDWINDOW)
+	{
+		MONITORINFO mi;
+		ZeroMemory(&mi, sizeof(mi));
+		mi.cbSize = sizeof(mi);
+
+		if (GetWindowPlacement(&m_WindowPlacement) && GetMonitorInfo(MonitorFromWindow(m_hWnd, MONITOR_DEFAULTTOPRIMARY), &mi))
+		{
+			SetWindowLong(m_hWnd, GWL_STYLE, dwStyle & ~WS_OVERLAPPEDWINDOW);
+			::SetWindowPos(m_hWnd, HWND_TOP, mi.rcMonitor.left, mi.rcMonitor.top, mi.rcMonitor.right-mi.rcMonitor.left, mi.rcMonitor.bottom-mi.rcMonitor.top, SWP_NOOWNERZORDER | SWP_FRAMECHANGED);
+		}
+	}
+	else
+	{
+		SetWindowLong(m_hWnd, GWL_STYLE, dwStyle | WS_OVERLAPPEDWINDOW);
+		SetWindowPlacement(&m_WindowPlacement);
+		::SetWindowPos(m_hWnd, NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOOWNERZORDER | SWP_FRAMECHANGED);
+	}
+
+	AdjustLayout();
+}
+
 void CGlassWindow::AdjustLayout()
 {
 }

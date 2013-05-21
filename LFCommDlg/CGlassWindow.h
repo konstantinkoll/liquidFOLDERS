@@ -29,6 +29,7 @@ public:
 	virtual void PostNcDestroy();
 
 	BOOL Create(DWORD dwStyle, LPCTSTR lpszClassName, LPCTSTR lpszWindowName, LPCTSTR lpszPlacementPrefix=_T(""), CSize sz=CSize(0, 0));
+	void ToggleFullScreen();
 	void UseGlasBackground(MARGINS Margins);
 	void GetLayoutRect(LPRECT lpRect) const;
 	void DrawFrameBackground(CDC* pDC, CRect rect);
