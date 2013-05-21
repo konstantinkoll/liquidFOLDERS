@@ -12,8 +12,8 @@
 
 CWinApp theApp;
 CString path;
-UINT maxCountryLength;
-UINT maxAirportLength;
+size_t maxCountryLength;
+size_t maxAirportLength;
 
 using namespace std;
 
