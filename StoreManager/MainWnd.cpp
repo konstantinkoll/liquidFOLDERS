@@ -131,7 +131,7 @@ BOOL CMainWnd::Create(BOOL IsClipboard)
 	CString caption;
 	ENSURE(caption.LoadString(IsClipboard ? IDR_CLIPBOARD : IDR_APPLICATION));
 
-	return CGlassWindow::Create(WS_MINIMIZEBOX | WS_MAXIMIZEBOX, className, caption, rect);
+	return CGlassWindow::Create(WS_MINIMIZEBOX | WS_MAXIMIZEBOX, className, caption, IsClipboard ? _T("Clipboard") : _T("Main"));
 }
 
 BOOL CMainWnd::CreateClipboard()

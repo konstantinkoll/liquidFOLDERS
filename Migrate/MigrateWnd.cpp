@@ -49,14 +49,10 @@ BOOL CMigrateWnd::Create()
 {
 	CString className = AfxRegisterWndClass(CS_DBLCLKS, LoadCursor(NULL, IDC_ARROW), NULL, theApp.LoadIcon(IDR_APPLICATION));
 
-	CRect rect;
-	SystemParametersInfo(SPI_GETWORKAREA, NULL, &rect, NULL);
-	rect.DeflateRect(32, 32);
-
 	CString caption;
 	ENSURE(caption.LoadString(IDR_APPLICATION));
 
-	return CGlassWindow::Create(WS_MINIMIZEBOX | WS_MAXIMIZEBOX, className, caption, rect);
+	return CGlassWindow::Create(WS_MINIMIZEBOX | WS_MAXIMIZEBOX, className, caption);
 }
 
 BOOL CMigrateWnd::OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo)

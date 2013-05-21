@@ -22,10 +22,45 @@ CGlassWindow::CGlassWindow()
 	ZeroMemory(&m_Margins, sizeof(MARGINS));
 }
 
-BOOL CGlassWindow::Create(DWORD dwStyle, LPCTSTR lpszClassName, LPCTSTR lpszWindowName, const RECT& rect, CWnd* pParentWnd, UINT nID)
+BOOL CGlassWindow::Create(DWORD dwStyle, LPCTSTR lpszClassName, LPCTSTR lpszWindowName, LPCTSTR lpszPlacementPrefix, CSize sz)
 {
-	return CWnd::CreateEx(WS_EX_APPWINDOW | WS_EX_CONTROLPARENT, lpszClassName, lpszWindowName,
-		dwStyle | WS_BORDER | WS_THICKFRAME | WS_SYSMENU | WS_CLIPCHILDREN | WS_CLIPSIBLINGS, rect, pParentWnd, nID);
+	m_PlacementPrefix = lpszPlacementPrefix;
+
+	CRect rect;
+	SystemParametersInfo(SPI_GETWORKAREA, NULL, &rect, NULL);
+	rect.DeflateRect(32, 32);
+
+	if ((sz.cx!=0) && (sz.cy!=0))
+	{
+		rect.left = (rect.left+rect.right)/2 - sz.cx;
+		rect.right = rect.left + sz.cx;
+
+		rect.top = (rect.top+rect.bottom)/2 - sz.cy;
+		rect.bottom = rect.top + sz.cy;
+	}
+
+	if (!CWnd::CreateEx(WS_EX_APPWINDOW | WS_EX_CONTROLPARENT, lpszClassName, lpszWindowName,
+		dwStyle | WS_BORDER | WS_THICKFRAME | WS_SYSMENU | WS_CLIPCHILDREN | WS_CLIPSIBLINGS, rect, NULL, 0))
+		return FALSE;
+
+	ZeroMemory(&m_WindowPlacement, sizeof(m_WindowPlacement));
+	p_App->GetBinary(m_PlacementPrefix+_T("WindowPlacement"), &m_WindowPlacement, sizeof(m_WindowPlacement));
+
+	if (m_WindowPlacement.length==sizeof(m_WindowPlacement))
+	{
+		if ((sz.cx!=0) && (sz.cy!=0))
+		{
+			m_WindowPlacement.rcNormalPosition.right = m_WindowPlacement.rcNormalPosition.left + sz.cx;
+			m_WindowPlacement.rcNormalPosition.bottom = m_WindowPlacement.rcNormalPosition.top + sz.cy;
+		}
+
+		SetWindowPlacement(&m_WindowPlacement);
+
+		if (IsIconic())
+			ShowWindow(SW_RESTORE);
+	}
+
+	return TRUE;
 }
 
 LRESULT CGlassWindow::DefWindowProc(UINT message, WPARAM wParam, LPARAM lParam)
@@ -185,6 +220,7 @@ CWnd* CGlassWindow::RegisterPopupWindow(CWnd* pPopupWnd)
 
 BEGIN_MESSAGE_MAP(CGlassWindow, CWnd)
 	ON_WM_CREATE()
+	ON_WM_CLOSE()
 	ON_WM_DESTROY()
 	ON_WM_ERASEBKGND()
 	ON_WM_SYSCOLORCHANGE()
@@ -213,6 +249,21 @@ INT CGlassWindow::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_Active = (CWnd::GetActiveWindow()==this);
 
 	return 0;
+}
+
+void CGlassWindow::OnClose()
+{
+	if (GetStyle() & WS_OVERLAPPEDWINDOW)
+	{
+		m_WindowPlacement.length = sizeof(m_WindowPlacement);
+		if (!GetWindowPlacement(&m_WindowPlacement))
+			goto Skip;
+	}
+
+	p_App->WriteBinary(m_PlacementPrefix + _T("WindowPlacement"), (LPBYTE)&m_WindowPlacement, sizeof(m_WindowPlacement));
+
+Skip:
+	CWnd::OnClose();
 }
 
 void CGlassWindow::OnDestroy()

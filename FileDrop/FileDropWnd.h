@@ -23,14 +23,12 @@ protected:
 	HICON hWarning;
 	LFStoreDescriptor m_Store;
 	CString m_Label;
-	INT m_PosX;
-	INT m_PosY;
 	BOOL m_AlwaysOnTop;
 	BOOL m_StoreValid;
 	BOOL m_StoreMounted;
 	BOOL m_Hover;
 
-	void SetWindowRect(INT x, INT y, BOOL TopMost);
+	void SetTopMost(BOOL AlwaysTopMost);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnClose();
@@ -42,7 +40,6 @@ protected:
 	afx_msg void OnRButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint pos);
 	afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
-	afx_msg void OnMove(INT x, INT y);
 	afx_msg LRESULT OnUpdateStore(WPARAM wParam, LPARAM lParam);
 
 	afx_msg void OnChooseDefaultStore();

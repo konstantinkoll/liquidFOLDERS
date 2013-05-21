@@ -24,8 +24,7 @@ BOOL CFileDropWnd::Create()
 {
 	CString className = AfxRegisterWndClass(CS_DBLCLKS, LoadCursor(NULL, IDC_ARROW), NULL, theApp.LoadIcon(IDR_APPLICATION));
 
-	CRect rect(0, 0, 144, 190);
-	return CGlassWindow::Create(WS_MINIMIZEBOX, className, _T("FileDrop"), rect);
+	return CGlassWindow::Create(WS_MINIMIZEBOX, className, _T("FileDrop"), _T(""), CSize(144, 190));
 }
 
 BOOL CFileDropWnd::PreTranslateMessage(MSG* pMsg)
@@ -51,37 +50,14 @@ BOOL CFileDropWnd::PreTranslateMessage(MSG* pMsg)
 	return CGlassWindow::PreTranslateMessage(pMsg);
 }
 
-void CFileDropWnd::SetWindowRect(INT x, INT y, BOOL TopMost)
+void CFileDropWnd::SetTopMost(BOOL AlwaysTopMost)
 {
-	UINT Flags = SWP_NOSIZE | SWP_FRAMECHANGED;
-
-	if ((x!=-1) || (y!=-1))
-	{
-		CRect r;
-		GetWindowRect(&r);
-
-		CRect d;
-		GetDesktopWindow()->GetWindowRect(&d);
-
-		if (x+r.Width()>d.Width())
-			x = d.Width()-r.Width();
-		if (y+r.Height()>d.Height())
-			y = d.Height()-r.Height();
-
-		m_PosX = x;
-		m_PosY = y;
-	}
-	else
-	{
-		Flags |= SWP_NOMOVE;
-	}
-
-	m_AlwaysOnTop = TopMost;
-	SetWindowPos(TopMost ? &wndTopMost : &wndNoTopMost, x, y, 0, 0, Flags);
+	m_AlwaysOnTop = AlwaysTopMost;
+	SetWindowPos(AlwaysTopMost ? &wndTopMost : &wndNoTopMost, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_FRAMECHANGED);
 
 	CMenu* pSysMenu = GetSystemMenu(FALSE);
 	if (pSysMenu)
-		pSysMenu->CheckMenuItem(SC_ALWAYSONTOP, MF_BYCOMMAND | (TopMost ? MF_CHECKED : MF_UNCHECKED));
+		pSysMenu->CheckMenuItem(SC_ALWAYSONTOP, MF_BYCOMMAND | (AlwaysTopMost ? MF_CHECKED : MF_UNCHECKED));
 }
 
 
@@ -96,7 +72,6 @@ BEGIN_MESSAGE_MAP(CFileDropWnd, CGlassWindow)
 	ON_WM_RBUTTONUP()
 	ON_WM_CONTEXTMENU()
 	ON_WM_SYSCOMMAND()
-	ON_WM_MOVE()
 	ON_COMMAND(SC_ALWAYSONTOP, OnAlwaysOnTop)
 	ON_COMMAND(ID_APP_CHOOSEDEFAULTSTORE, OnChooseDefaultStore)
 	ON_COMMAND(ID_APP_OPENSTORE, OnStoreOpen)
@@ -126,9 +101,7 @@ INT CFileDropWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_TooltipCtrl.Create(this);
 
 	// Einstellungen laden
-	m_PosX = theApp.GetInt(_T("X"), 10000);
-	m_PosY = theApp.GetInt(_T("Y"), 10000);
-	SetWindowRect(m_PosX, m_PosY, theApp.GetInt(_T("AlwaysOnTop"), TRUE));
+	SetTopMost(theApp.GetInt(_T("AlwaysOnTop"), TRUE));
 
 	// SC_xxx muss sich im Bereich der Systembefehle befinden.
 	ASSERT((SC_ALWAYSONTOP & 0xFFF0)==SC_ALWAYSONTOP);
@@ -162,8 +135,6 @@ INT CFileDropWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 void CFileDropWnd::OnClose()
 {
 	theApp.WriteInt(_T("AlwaysOnTop"), m_AlwaysOnTop);
-	theApp.WriteInt(_T("X"), m_PosX);
-	theApp.WriteInt(_T("Y"), m_PosY);
 
 	CGlassWindow::OnClose();
 }
@@ -352,20 +323,6 @@ void CFileDropWnd::OnSysCommand(UINT nID, LPARAM lParam)
 	}
 }
 
-void CFileDropWnd::OnMove(INT x, INT y)
-{
-	CGlassWindow::OnMove(x, y);
-
-	CRect rect;
-	GetWindowRect(rect);
-
-	if ((rect.left>=-100) && (rect.top>=-100))
-	{
-		m_PosX = rect.left;
-		m_PosY = rect.top;
-	}
-}
-
 
 LRESULT CFileDropWnd::OnUpdateStore(WPARAM /*wParam*/, LPARAM /*lParam*/)
 {
@@ -414,7 +371,7 @@ void CFileDropWnd::OnStoreProperties()
 
 void CFileDropWnd::OnAlwaysOnTop()
 {
-	SetWindowRect(-1, -1, !m_AlwaysOnTop);
+	SetTopMost(!m_AlwaysOnTop);
 }
 
 void CFileDropWnd::OnQuit()

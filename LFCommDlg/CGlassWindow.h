@@ -28,7 +28,7 @@ public:
 	virtual void AdjustLayout();
 	virtual void PostNcDestroy();
 
-	BOOL Create(DWORD dwStyle, LPCTSTR lpszClassName, LPCTSTR lpszWindowName, const RECT& rect, CWnd* pParentWnd=NULL, UINT nID=0);
+	BOOL Create(DWORD dwStyle, LPCTSTR lpszClassName, LPCTSTR lpszWindowName, LPCTSTR lpszPlacementPrefix=_T(""), CSize sz=CSize(0, 0));
 	void UseGlasBackground(MARGINS Margins);
 	void GetLayoutRect(LPRECT lpRect) const;
 	void DrawFrameBackground(CDC* pDC, CRect rect);
@@ -41,12 +41,15 @@ protected:
 	LFApplication* p_App;
 	CWnd* p_PopupWindow;
 	CList<CWnd*> m_GlasChildren;
+	CString m_PlacementPrefix;
+	WINDOWPLACEMENT m_WindowPlacement;
 	BOOL m_IsAeroWindow;
 	BOOL m_Active;
 	HACCEL hAccelerator;
 	MARGINS m_Margins;
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
+	afx_msg void OnClose();
 	afx_msg void OnDestroy();
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnSysColorChange();
