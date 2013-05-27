@@ -179,6 +179,7 @@ BOOL CMainWnd::CreateFilter(WCHAR* FileName)
 
 BOOL CMainWnd::PreTranslateMessage(MSG* pMsg)
 {
+	// Filter
 	if ((pMsg->message==WM_KEYDOWN) && (pMsg->wParam==VK_RETURN) && (pMsg->hwnd==m_wndSearch))
 	{
 		theApp.ShowNagScreen(NAG_EXPIRED | NAG_FORCE, this);
@@ -194,6 +195,20 @@ BOOL CMainWnd::PreTranslateMessage(MSG* pMsg)
 
 		return TRUE;
 	}
+
+	// X-Buttons
+	if (pMsg->message==WM_XBUTTONDOWN)
+		switch (pMsg->wParam & (MK_XBUTTON1 | MK_XBUTTON2))
+		{
+		case MK_XBUTTON1:
+			if (m_BreadcrumbBack)
+				SendMessage(WM_COMMAND, ID_NAV_BACK);
+			return TRUE;
+		case MK_XBUTTON2:
+			if (m_BreadcrumbForward)
+				SendMessage(WM_COMMAND, ID_NAV_FORWARD);
+			return TRUE;
+		}
 
 	return CGlassWindow::PreTranslateMessage(pMsg);
 }
