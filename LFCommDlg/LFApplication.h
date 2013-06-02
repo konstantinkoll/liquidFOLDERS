@@ -45,6 +45,8 @@ typedef HRESULT(__stdcall* PFNDWMISCOMPOSITIONENABLED)(BOOL* pfEnabled);
 typedef HRESULT(__stdcall* PFNDWMEXTENDFRAMEINTOCLIENTAREA)(HWND hWnd, const MARGINS* pMarInset);
 typedef BOOL(__stdcall* PFNDWMDEFWINDOWPROC)(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam, LRESULT* plResult);
 
+typedef HRESULT(__stdcall* PFNSETCURRENTPROCESSEXPLICITAPPUSERMODELID)(PCWSTR AppID);
+
 struct CDS_Wakeup
 {
 	GUID AppID;
@@ -114,6 +116,9 @@ public:
 	PFNDWMDEFWINDOWPROC zDwmDefWindowProc;
 	BOOL m_AeroLibLoaded;
 
+	PFNSETCURRENTPROCESSEXPLICITAPPUSERMODELID zSetCurrentProcessExplicitAppUserModelID;
+	BOOL m_ShellLibLoaded;
+
 	virtual BOOL InitInstance();
 	virtual CWnd* OpenCommandLine(WCHAR* CmdLine=NULL);
 	virtual INT ExitInstance();
@@ -158,4 +163,5 @@ private:
 	ULONG_PTR m_gdiplusToken;
 	HMODULE hModThemes;
 	HMODULE hModAero;
+	HMODULE hModShell;
 };

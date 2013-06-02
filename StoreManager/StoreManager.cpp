@@ -74,6 +74,10 @@ BOOL CStoreManagerApp::InitInstance()
 	if (!LFApplication::InitInstance())
 		return FALSE;
 
+	// AppID
+	if (m_ShellLibLoaded)
+		zSetCurrentProcessExplicitAppUserModelID(L"liquidFOLDERS.StoreManager");
+
 	for (UINT a=0; a<LFContextCount; a++)
 	{
 		m_AllowedViews[a] = new LFBitArray(LFViewCount);

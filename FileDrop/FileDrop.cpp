@@ -69,6 +69,10 @@ BOOL CFileDropApp::InitInstance()
 	if (!LFApplication::InitInstance())
 		return FALSE;
 
+	// AppID
+	if (m_ShellLibLoaded)
+		zSetCurrentProcessExplicitAppUserModelID(L"liquidFOLDERS.FileDrop");
+
 	// Registry auslesen
 	SetRegistryBase(_T("Settings"));
 

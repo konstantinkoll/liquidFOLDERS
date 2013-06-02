@@ -69,6 +69,10 @@ BOOL CMigrateApp::InitInstance()
 	if (!LFApplication::InitInstance())
 		return FALSE;
 
+	// AppID
+	if (m_ShellLibLoaded)
+		zSetCurrentProcessExplicitAppUserModelID(L"liquidFOLDERS.Migrate");
+
 	// Registry auslesen
 	SetRegistryBase(_T("Settings"));
 	m_ExpandAll = GetInt(_T("ExpandAll"), FALSE);

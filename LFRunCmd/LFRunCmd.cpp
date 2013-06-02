@@ -34,6 +34,10 @@ BOOL CRunCmdApp::InitInstance()
 	if (!LFApplication::InitInstance())
 		return FALSE;
 
+	// AppID
+	if (m_ShellLibLoaded)
+		zSetCurrentProcessExplicitAppUserModelID(L"liquidFOLDERS.LFRunCmd");
+
 	if (__argc)
 	{
 		CString command(__targv[1]);

@@ -159,6 +159,26 @@ LFApplication::LFApplication(BOOL HasGUI, GUID& AppID)
 		m_AeroLibLoaded = FALSE;
 	}
 
+	// Shell
+	hModShell = LoadLibrary(_T("SHELL32.DLL"));
+	if (hModShell)
+	{
+		zSetCurrentProcessExplicitAppUserModelID = (PFNSETCURRENTPROCESSEXPLICITAPPUSERMODELID)GetProcAddress(hModShell, "SetCurrentProcessExplicitAppUserModelID");
+
+		m_ShellLibLoaded = (zSetCurrentProcessExplicitAppUserModelID!=NULL);
+		if (!m_ShellLibLoaded)
+		{
+			FreeLibrary(hModShell);
+			hModShell = NULL;
+		}
+	}
+	else
+	{
+		zSetCurrentProcessExplicitAppUserModelID = NULL;
+
+		m_ShellLibLoaded = FALSE;
+	}
+
 	// Anwendungspfad
 	TCHAR szPathName[MAX_PATH];
 	GetModuleFileName(NULL, szPathName, MAX_PATH);
@@ -262,6 +282,8 @@ LFApplication::~LFApplication()
 		FreeLibrary(hModThemes);
 	if (hModAero)
 		FreeLibrary(hModAero);
+	if (hModShell)
+		FreeLibrary(hModShell);
 
 	for (UINT a=0; a<=LFMaxRating; a++)
 	{
