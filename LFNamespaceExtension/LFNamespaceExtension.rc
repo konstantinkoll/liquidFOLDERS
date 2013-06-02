@@ -44,8 +44,9 @@ BEGIN
         BLOCK "000004e4"
         BEGIN
             VALUE "CompanyName", "liquidFOLDERS"
+            VALUE "FileDescription", "LFNamespaceExtension"
             VALUE "FileVersion", "1.2.4"
-            VALUE "InternalName", "LFNamespaceExtension"
+            VALUE "InternalName", "Explorer Namespace Extension"
             VALUE "LegalCopyright", "© 2009-2013 liquidFOLDERS"
             VALUE "LegalTrademarks", "liquidFOLDERS®"
             VALUE "OriginalFilename", "LFNamespaceExtension.dll"

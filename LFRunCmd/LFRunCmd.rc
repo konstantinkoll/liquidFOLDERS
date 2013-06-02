@@ -64,6 +64,7 @@ BEGIN
         BLOCK "000004e4"
         BEGIN
             VALUE "CompanyName", "liquidFOLDERS"
+            VALUE "FileDescription", "LFRunCmd"
             VALUE "FileVersion", "1.2.4"
             VALUE "InternalName", "LFRunCmd"
             VALUE "LegalCopyright", "© 2009-2013 liquidFOLDERS"
