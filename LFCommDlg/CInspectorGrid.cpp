@@ -1823,12 +1823,10 @@ void CInspectorGrid::OnLButtonUp(UINT /*nFlags*/, CPoint point)
 				m_Properties.m_Items[Item].pProperty->OnClickButton();
 				break;
 			case PARTRESET:
-				p_App->PlayWarningSound();
-
 				ENSURE(caption.LoadString(IDS_DELETEPROPERTY_CAPTION));
 				ENSURE(msg.LoadString(IDS_DELETEPROPERTY_MSG));
 
-				if (MessageBox(msg, caption, MB_YESNO | MB_DEFBUTTON2 | MB_ICONQUESTION)==IDYES)
+				if (MessageBox(msg, caption, MB_YESNO | MB_DEFBUTTON2 | MB_ICONWARNING)==IDYES)
 					ResetProperty(Item);
 				break;
 			}
