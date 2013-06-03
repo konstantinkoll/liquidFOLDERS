@@ -381,12 +381,12 @@ LFCommDlg_API CString GetLatestVersion(CString& CurrentVersion)
 	// Licensed?
 	if (LFIsLicensed())
 	{
-		CurrentVersion += _T(";licensed");
+		CurrentVersion += _T("; licensed");
 	}
 	else
 		if (LFIsSharewareExpired())
 		{
-			CurrentVersion += _T(";expired");
+			CurrentVersion += _T("; expired");
 		}
 
 	CurrentVersion += _T(")");
