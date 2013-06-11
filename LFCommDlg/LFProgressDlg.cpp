@@ -75,6 +75,13 @@ void LFProgressDlg::OnCancel()
 	{
 		m_Abort = TRUE;
 		GetDlgItem(IDCANCEL)->EnableWindow(FALSE);
+
+		// Progress bar
+		m_wndProgress.SendMessage(0x410, LFProgressCancelled);
+
+		// Taskbar
+		if (m_pTaskbarList3)
+			m_pTaskbarList3->SetProgressState(GetSafeHwnd(), TBPF_PAUSED);
 	}
 	else
 	{
@@ -135,8 +142,8 @@ LRESULT LFProgressDlg::OnUpdateProgress(WPARAM wParam, LPARAM /*lParam*/)
 	// Taskbar
 	if (m_pTaskbarList3)
 	{
-		m_pTaskbarList3->SetProgressState(m_hWnd, pProgress->ProgressState==LFProgressError ? TBPF_ERROR : pProgress->ProgressState==LFProgressCancelled ? TBPF_PAUSED : TBPF_NORMAL);
-		m_pTaskbarList3->SetProgressValue(m_hWnd, nPos, nUpper);
+		m_pTaskbarList3->SetProgressState(GetSafeHwnd(), pProgress->ProgressState==LFProgressError ? TBPF_ERROR : pProgress->ProgressState==LFProgressCancelled ? TBPF_PAUSED : TBPF_NORMAL);
+		m_pTaskbarList3->SetProgressValue(GetSafeHwnd(), nPos, nUpper);
 	}
 
 	// Counter
