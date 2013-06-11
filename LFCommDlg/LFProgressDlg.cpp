@@ -12,10 +12,13 @@
 // LFProgressDlg
 //
 
+const GUID IID_ITaskbarList3 = { 0xEA1AFB91, 0x9E28, 0x4B86, {0x90, 0xE9, 0x9E, 0x9F, 0x8A, 0x5E, 0xEF, 0xAF}};
+
 LFProgressDlg::LFProgressDlg(LPTHREAD_START_ROUTINE pThreadProc, LFWorkerParameters* pParameters, CWnd* pParentWnd)
 	: LFDialog(IDD_PROGRESS, LFDS_White, pParentWnd)
 {
 	m_Abort = FALSE;
+	m_pTaskbarList3 = NULL;
 
 	p_ThreadProc = pThreadProc;
 	p_Parameters = pParameters;
@@ -31,6 +34,7 @@ void LFProgressDlg::DoDataExchange(CDataExchange* pDX)
 
 
 BEGIN_MESSAGE_MAP(LFProgressDlg, LFDialog)
+	ON_WM_DESTROY()
 	ON_COMMAND(IDCANCEL, OnCancel)
 	ON_MESSAGE(WM_UPDATEPROGRESS, OnUpdateProgress)
 END_MESSAGE_MAP()
@@ -42,6 +46,9 @@ BOOL LFProgressDlg::OnInitDialog()
 	GetDlgItem(IDC_CAPTION)->SetWindowText(_T(""));
 	GetDlgItem(IDC_PROGRESSCOUNT)->SetWindowText(_T(""));
 
+	if (p_App->OSVersion>=OS_Seven)
+		CoCreateInstance(CLSID_TaskbarList, NULL, CLSCTX_INPROC_SERVER, IID_ITaskbarList3, (void**)&m_pTaskbarList3);
+
 	if (p_ThreadProc)
 	{
 		ASSERT(p_Parameters);
@@ -51,6 +58,15 @@ BOOL LFProgressDlg::OnInitDialog()
 	}
 
 	return TRUE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird
+}
+
+void LFProgressDlg::OnDestroy()
+{
+	if (m_pTaskbarList3)
+	{
+		m_pTaskbarList3->SetProgressState(GetSafeHwnd(), TBPF_NOPROGRESS);
+		m_pTaskbarList3->Release();
+	}
 }
 
 void LFProgressDlg::OnCancel()
@@ -115,6 +131,13 @@ LRESULT LFProgressDlg::OnUpdateProgress(WPARAM wParam, LPARAM /*lParam*/)
 
 	m_wndProgress.SetRange32(0, nUpper);
 	m_wndProgress.SetPos(nPos);
+
+	// Taskbar
+	if (m_pTaskbarList3)
+	{
+		m_pTaskbarList3->SetProgressState(m_hWnd, pProgress->ProgressState==LFProgressError ? TBPF_ERROR : pProgress->ProgressState==LFProgressCancelled ? TBPF_PAUSED : TBPF_NORMAL);
+		m_pTaskbarList3->SetProgressValue(m_hWnd, nPos, nUpper);
+	}
 
 	// Counter
 	CString tmpStr(_T(""));

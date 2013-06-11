@@ -821,6 +821,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ITaskbarList3.h"
+				>
+			</File>
+			<File
 				RelativePath=".\LFAboutDlg.h"
 				>
 			</File>
