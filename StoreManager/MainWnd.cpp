@@ -44,7 +44,7 @@ void WriteTXTItem(CStdioFile& f, LFItemDescriptor* i)
 			WCHAR tmpBuf[256];
 			LFVariantDataToString(&v, tmpBuf, 256);
 
-			CString tmpStr = theApp.m_Attributes[attr]->Name;
+			CString tmpStr(theApp.m_Attributes[attr]->Name);
 			tmpStr.Append(_T(": "));
 			tmpStr.Append(tmpBuf);
 			tmpStr.Append(_T("\n"));
@@ -669,13 +669,14 @@ void CMainWnd::OnExportMetadata()
 	CFileDialog dlg(FALSE, _T(".txt"), NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, Extensions, this);
 	if (dlg.DoModal()==IDOK)
 	{
-		CStdioFile f;
-		if (!f.Open(dlg.GetPathName(), CFile::modeCreate | CFile::modeWrite))
+		FILE *fStream;
+		if (_tfopen_s(&fStream, dlg.GetPathName(), _T("wt,ccs=UTF-8")))
 		{
 			LFErrorBox(LFDriveNotReady, GetSafeHwnd());
 		}
 		else
 		{
+			CStdioFile f(fStream);
 			try
 			{
 				if (dlg.GetFileExt()==_T("txt"))

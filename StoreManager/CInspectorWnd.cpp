@@ -593,13 +593,14 @@ void CInspectorWnd::OnExportSummary()
 	CFileDialog dlg(FALSE, _T(".txt"), NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, Extensions, this);
 	if (dlg.DoModal()==IDOK)
 	{
-		CStdioFile f;
-		if (!f.Open(dlg.GetPathName(), CFile::modeCreate | CFile::modeWrite))
+		FILE *fStream;
+		if (_tfopen_s(&fStream, dlg.GetPathName(), _T("wt,ccs=UTF-8")))
 		{
 			LFErrorBox(LFDriveNotReady, GetSafeHwnd());
 		}
 		else
 		{
+			CStdioFile f(fStream);
 			try
 			{
 				f.WriteString(m_TypeName+_T("\n\n"));
