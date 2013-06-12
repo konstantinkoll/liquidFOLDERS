@@ -1226,7 +1226,7 @@ END
 STRINGTABLE 
 BEGIN
     IDM_HOUSEKEEPING_REMOVENEW 
-                            "Elimina la designación de archivo recién importado de todos los archivos .\nEliminar ""Nuevo"" attributo"
+                            "Elimina la designación de archivo recién importado de todos los archivos.\nEliminar ""Nuevo"" attributo"
 END
 
 STRINGTABLE 
@@ -1800,7 +1800,7 @@ BEGIN
     IDM_STORE_MAKEDEFAULT   "Met le store choisi comme le store standard.\nFaites store standard"
     IDM_STORE_IMPORTFOLDER  "Importe un dossier et tous les sous-dossiers dans le store choisi.\nImporter dossier..."
     IDM_STORE_DELETE        "Efface le store choisi et tous les fichiers contenus.\nEffacer"
-    IDM_STORE_RENAME        "Renomme le store choisi .\nRenommer"
+    IDM_STORE_RENAME        "Renomme le store choisi.\nRenommer"
     IDM_STORE_PROPERTIES    "Indique les propriétés du store choisi.\nPropriétés"
     IDM_STORES_CREATENEW    "Crée un nouveau store pour vos fichiers.\nCréez un store nouveau..."
 END
@@ -1826,7 +1826,7 @@ END
 STRINGTABLE 
 BEGIN
     IDM_TRASH_RESTOREALL    "Reconstitue tous les fichiers.\nReconstituer tous"
-    IDM_TRASH_EMPTY         "Efface définitivement tous les fichiers de la corbeille .\nVider la corbeille"
+    IDM_TRASH_EMPTY         "Efface définitivement tous les fichiers de la corbeille.\nVider la corbeille"
 END
 
 STRINGTABLE 
@@ -1859,8 +1859,8 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDM_CALENDAR_PREVYEAR   "Indique l'année précédente .\nannée précédente"
-    IDM_CALENDAR_NEXTYEAR   "Indique l' année prochaine .\nl' année prochaine"
+    IDM_CALENDAR_PREVYEAR   "Indique l'année précédente.\nannée précédente"
+    IDM_CALENDAR_NEXTYEAR   "Indique l' année prochaine.\nl' année prochaine"
     IDM_CALENDAR_GOTOYEAR   "Ouvre une fenêtre de dialogue dans quoi vous pouvez choisir un an à l'annonce.\nChoisissez l'année..."
 END
 
