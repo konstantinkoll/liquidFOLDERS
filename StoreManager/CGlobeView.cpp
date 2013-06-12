@@ -64,18 +64,6 @@ __forceinline void CalculateWorldCoords(double lat, double lon, GLfloat result[]
 	result[2] = (GLfloat)(sin(lat_r));
 }
 
-CString CookAttributeString(WCHAR* attr)
-{
-	CString tmpStr(attr);
-	tmpStr.Replace(_T("<"), _T("_"));
-	tmpStr.Replace(_T(">"), _T("_"));
-	tmpStr.Replace(_T("&"), _T("&amp;"));
-	tmpStr.Replace(_T("–"), _T("&#8211;"));
-	tmpStr.Replace(_T("—"), _T("&#8212;"));
-
-	return tmpStr;
-}
-
 void WriteGoogleAttribute(CStdioFile* f, LFItemDescriptor* i, UINT attr)
 {
 	WCHAR tmpStr[256];
@@ -84,9 +72,9 @@ void WriteGoogleAttribute(CStdioFile* f, LFItemDescriptor* i, UINT attr)
 	if (tmpStr[0]!='\0')
 	{
 		f->WriteString(_T("&lt;b&gt;"));
-		f->WriteString(CookAttributeString(theApp.m_Attributes[attr]->Name));
+		f->WriteString(theApp.m_Attributes[attr]->Name);
 		f->WriteString(_T("&lt;/b&gt;: "));
-		f->WriteString(CookAttributeString(tmpStr));
+		f->WriteString(tmpStr);
 		f->WriteString(_T("&lt;br&gt;"));
 	}
 }
@@ -1366,16 +1354,17 @@ void CGlobeView::OnGoogleEarth()
 	szTempName.Format(_T("%sliquidFOLDERS%.4X%.4X.kml"), Pathname, 32768+rand(), 32768+rand());
 
 	// Datei erzeugen
-	CStdioFile f;
-	if (!f.Open(szTempName, CFile::modeCreate | CFile::modeWrite))
+	FILE *fStream;
+	if (_tfopen_s(&fStream, szTempName, _T("wt,ccs=UTF-8")))
 	{
-		LFErrorBox(LFDriveNotReady);
+		LFErrorBox(LFDriveNotReady, GetSafeHwnd());
 	}
 	else
 	{
+		CStdioFile f(fStream);
 		try
 		{
-			f.WriteString(_T("<?xml version=\"1.0\"?>\n<kml xmlns=\"http://earth.google.com/kml/2.0\">\n<Document>\n"));
+			f.WriteString(_T("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<kml xmlns=\"http://earth.google.com/kml/2.0\">\n<Document>\n"));
 			f.WriteString(_T("<Style id=\"A\"><IconStyle><scale>0.8</scale><Icon><href>http://maps.google.com/mapfiles/kml/pal4/icon57.png</href></Icon></IconStyle><LabelStyle><scale>0</scale></LabelStyle></Style>\n"));
 			f.WriteString(_T("<Style id=\"B\"><IconStyle><scale>1.0</scale><Icon><href>http://maps.google.com/mapfiles/kml/pal4/icon57.png</href></Icon></IconStyle><LabelStyle><scale>1</scale></LabelStyle></Style>\n"));
 			f.WriteString(_T("<StyleMap id=\"C\"><Pair><key>normal</key><styleUrl>#A</styleUrl></Pair><Pair><key>highlight</key><styleUrl>#B</styleUrl></Pair></StyleMap>\n"));
@@ -1387,7 +1376,7 @@ void CGlobeView::OnGoogleEarth()
 				if ((c.Latitude!=0) || (c.Longitude!=0))
 				{
 					f.WriteString(_T("<Placemark>\n<name>"));
-					f.WriteString(CookAttributeString(p_CookedFiles->m_Items[i]->CoreAttributes.FileName));
+					f.WriteString(p_CookedFiles->m_Items[i]->CoreAttributes.FileName);
 					f.WriteString(_T("</name>\n<description>"));
 					WriteGoogleAttribute(&f, p_CookedFiles->m_Items[i], LFAttrLocationName);
 					WriteGoogleAttribute(&f, p_CookedFiles->m_Items[i], LFAttrLocationIATA);
