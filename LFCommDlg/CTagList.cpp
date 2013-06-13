@@ -71,24 +71,25 @@ void CTagList::OnCustomDraw(NMHDR* pNMHDR, LRESULT* pResult)
 void CTagList::DrawItem(INT nID, CDC* pDC)
 {
 	COLORREF bkCol = GetBkColor();
-	COLORREF selCol;
+	COLORREF borCol;
+	COLORREF selCol1;
+	COLORREF selCol2;
 	COLORREF texCol;
 
 	UINT State = GetItemState(nID, LVIS_SELECTED | LVIS_FOCUSED);
 	UINT bgBitmap;
 	if ((State & LVIS_SELECTED) && ((GetFocus()==this) || (GetStyle() & LVS_SHOWSELALWAYS)))
 	{
-		selCol = GetSysColor(COLOR_HIGHLIGHT);
+		borCol = selCol1 = selCol2 = GetSysColor(COLOR_HIGHLIGHT);
 		texCol = GetSysColor(COLOR_HIGHLIGHTTEXT);
 		bgBitmap = 0;
 	}
 	else
 	{
-		selCol = GetSysColor(COLOR_HIGHLIGHT);
-		selCol = (((((selCol>>16) & 0xFF) >> 2) + ((((bkCol>>16) & 0xFF)*3) >> 2))<<16) |
-				(((((selCol>>8) & 0xFF) >> 2) + ((((bkCol>>8) & 0xFF)*3) >> 2))<<8) |
-				(((selCol & 0xFF) >> 2) + (((bkCol & 0xFF)*3) >> 2));
-		texCol = GetSysColor(COLOR_WINDOWTEXT);
+		borCol = 0xEABCA3;
+		selCol1 = 0xF8E7DD;
+		selCol2 = 0xF1CFBC;
+		texCol = 0x000000;
 		bgBitmap = 1;
 	}
 
@@ -119,14 +120,22 @@ void CTagList::DrawItem(INT nID, CDC* pDC)
 		g.SetSmoothingMode(SmoothingModeAntiAlias);
 
 		if (!m_Path.GetPointCount())
-			CreateRoundRectangle(rect, 9, m_Path);
+			CreateRoundRectangle(rect, 4, m_Path);
 
 		// Inner border
-		SolidBrush sBr(Color(State & LVIS_SELECTED ? 0xC0 : 0x80, selCol & 0xFF, (selCol>>8) & 0xFF, (selCol>>16) & 0xFF));
-		g.FillPath(&sBr, &m_Path);
+		if (IsCtrlThemed())
+		{
+			LinearGradientBrush br(Point(0, rect.top), Point(0, rect.bottom), Color(selCol1 & 0xFF, (selCol1>>8) & 0xFF, (selCol1>>16) & 0xFF), Color(selCol2 & 0xFF, (selCol2>>8) & 0xFF, (selCol2>>16) & 0xFF));
+			g.FillPath(&br, &m_Path);
+		}
+		else
+		{
+			SolidBrush br(Color(selCol2 & 0xFF, (selCol2>>8) & 0xFF, (selCol2>>16) & 0xFF));
+			g.FillPath(&br, &m_Path);
+		}
 
 		// Outer border
-		Pen pen(Color(selCol & 0xFF, (selCol>>8) & 0xFF, (selCol>>16) & 0xFF));
+		Pen pen(Color(borCol & 0xFF, (borCol>>8) & 0xFF, (borCol>>16) & 0xFF));
 		g.DrawPath(&pen, &m_Path);
 	}
 	else

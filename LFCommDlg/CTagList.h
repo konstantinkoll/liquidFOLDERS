@@ -16,7 +16,7 @@ public:
 	~CTagList();
 
 protected:
-	void CreateRoundRectangle(CRect rect, INT rad, GraphicsPath& path);
+	static void CreateRoundRectangle(CRect rect, INT rad, GraphicsPath& path);
 	void DrawItem(INT nID, CDC* pDC);
 
 	afx_msg void OnCustomDraw(NMHDR* pNMHDR, LRESULT* pResult);
