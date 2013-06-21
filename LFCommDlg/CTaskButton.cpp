@@ -201,7 +201,7 @@ void CTaskButton::OnPaint()
 				{
 					CAfxDrawState ds;
 					p_Icons->PrepareDrawImage(ds);
-					p_Icons->Draw(&dc, rectText.left, (rect.Height()-rectText.Height())/2+(Selected ? 1 : 0), m_IconID);
+					p_Icons->Draw(&dc, rectText.left, (rect.Height()-16)/2+(Selected ? 1 : 0), m_IconID);
 					p_Icons->EndDrawImage(ds);
 
 					rectText.left += 16+BORDER;
@@ -272,7 +272,7 @@ void CTaskButton::OnPaint()
 				{
 					CAfxDrawState ds;
 					p_Icons->PrepareDrawImage(ds);
-					p_Icons->Draw(&dc, rectText.left, (rect.Height()-rectText.Height())/2+(Selected ? 1 : 0), m_IconID);
+					p_Icons->Draw(&dc, rectText.left, (rect.Height()-16)/2+(Selected ? 1 : 0), m_IconID);
 					p_Icons->EndDrawImage(ds);
 
 					rectText.left += 16+BORDER;
@@ -305,7 +305,7 @@ void CTaskButton::OnPaint()
 				{
 					CAfxDrawState ds;
 					p_Icons->PrepareDrawImage(ds);
-					p_Icons->Draw(&dc, rectText.left, (rect.Height()-rectText.Height())/2+(Selected ? 1 : 0), m_IconID);
+					p_Icons->Draw(&dc, rectText.left, (rect.Height()-16)/2+(Selected ? 1 : 0), m_IconID);
 					p_Icons->EndDrawImage(ds);
 
 					rectText.left += 16+BORDER;
