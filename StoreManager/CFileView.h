@@ -119,7 +119,7 @@ public:
 	CFileView(UINT DataSize=sizeof(FVItemData), BOOL EnableScrolling=TRUE, BOOL EnableHover=TRUE, BOOL EnableTooltip=TRUE, BOOL EnableShiftSelection=TRUE, BOOL EnableLabelEdit=TRUE, BOOL EnableTooltipOnVirtual=TRUE);
 	virtual ~CFileView();
 
-	virtual CMenu* GetBackgroundContextMenu();
+	virtual CMenu* GetViewContextmenu();
 	virtual void GetPersistentData(FVPersistentData& Data);
 	virtual void EditLabel(INT idx);
 	virtual BOOL IsEditing();

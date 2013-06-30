@@ -141,13 +141,9 @@ struct LFAirport
 #define LFItemCategoryLocalStores       0
 #define LFItemCategoryRemoteStores      1
 #define LFItemCategoryVolumes           2
-#define LFItemCategoryStore             3
-#define LFItemCategoryMediaTypes        4
-#define LFItemCategoryOtherTypes        5
-#define LFItemCategoryHousekeeping      6
-#define LFItemCategoryNight             7
+#define LFItemCategoryNight             3
 
-#define LFItemCategoryCount             8
+#define LFItemCategoryCount             4
 
 
 // Context descriptor
@@ -161,19 +157,28 @@ struct LFItemCategoryDescriptor
 
 // Contexts
 
-#define LFContextStores                 0
-#define LFContextStoreHome              1
-#define LFContextClipboard              2
-#define LFContextDefault                3
-#define LFContextSearch                 4
-#define LFContextFilters                5
-#define LFContextHousekeeping           6
-#define LFContextTrash                  7
-#define LFContextSubfolderDefault       8
-#define LFContextSubfolderDay           9
-#define LFContextSubfolderLocation      10
+#define LFContextAllFiles               0	// All views
+#define LFContextFavorites              1	// All views
+#define LFContextAudio                  2	// All views
+#define LFContextPictures               3	// All views
+#define LFContextVideos                 4	// All views
+#define LFContextDocuments              5	// All views
+#define LFContextContacts               6	// All views
+#define LFContextMessages               7	// All views
+#define LFContextEvents                 8	// All views
+#define LFContextNew                    9	// Only limited views
+#define LFContextTrash                 10	// Only limited views
+#define LFContextFilters               11	// Only limites views
+#define LFContextSearch                12	// All views
+#define LFContextStores                13	// Only limited views, no preview
+#define LFContextClipboard             14	// Only limited views
+#define LFContextSubfolderDefault      15	// Only limited views
+#define LFContextSubfolderDay          16	// Only limited views
+#define LFContextSubfolderLocation     17	// Only limited views
 
-#define LFContextCount                  11
+#define LFLastGroupContext              8
+#define LFLastQueryContext             11
+#define LFContextCount                 18
 
 
 // Context descriptor
@@ -181,6 +186,7 @@ struct LFItemCategoryDescriptor
 struct LFContextDescriptor
 {
 	wchar_t Name[256];
+	wchar_t Comment[256];
 	bool AllowGroups;
 	LFBitArray* AllowedAttributes;
 };
@@ -351,56 +357,11 @@ struct LFAttributeDescriptor
 };
 
 
-// Domains
-
-#define LFDomainAllFiles                0
-#define LFDomainAllMediaFiles           1
-#define LFDomainFavorites               2
-
-#define LFDomainTrash                   3
-#define LFDomainUnknown                 4
-
-#define LFDomainFilters                 5
-#define LFDomainAudio                   6
-#define LFDomainPhotos                  7
-#define LFDomainPictures                8
-#define LFDomainVideos                  9
-#define LFDomainArchives               10
-#define LFDomainContacts               11
-#define LFDomainDocuments              12
-#define LFDomainEvents                 13
-#define LFDomainFonts                  14
-#define LFDomainGeodata                15
-#define LFDomainMessages               16
-#define LFDomainPresentations          17
-#define LFDomainSpreadsheets           18
-#define LFDomainWeb                    19
-
-#define LFDomainNew                    20
-
-#define LFFirstSoloDomain               3
-#define LFFirstPhysicalDomain           5
-#define LFDomainCount                  21
-
-
-// Domain descriptor
-
-struct LFDomainDescriptor
-{
-	wchar_t Name[256];
-	wchar_t Comment[256];
-	unsigned int IconID;
-	unsigned int CategoryID;
-	LFBitArray* ImportantAttributes;
-};
-
-
 // Search filter
 
 #define LFFilterModeStores              1
-#define LFFilterModeStoreHome           2
-#define LFFilterModeDirectoryTree       3
-#define LFFilterModeSearch              4
+#define LFFilterModeDirectoryTree       2
+#define LFFilterModeSearch              3
 
 #define LFFilterCompareIgnore           0
 #define LFFilterCompareIsNull           1
@@ -422,7 +383,7 @@ struct LFFilterOptions
 	bool AddVolumes;						// If true, volumes are added
 
 	// For LFFilterModeDirectoryTree and above
-	bool IgnoreSlaves;						// If true, returns only core attributes
+	bool IgnoreSlaves;						// If true, only core properties are retrieved
 	bool IsSubfolder;						// If true, you are already inside a grouped subdirectory
 	bool IsSearch;							// If true, the filter belongs to a custom search filter
 
@@ -443,11 +404,8 @@ struct LFFilter
 	unsigned int Mode;
 	LFFilterOptions Options;
 
-	bool ShowEmptyVolumes;					// For LFFilterModeStores
-	bool ShowEmptyDomains;					// For LFFilterModeStoreHome
-
-	char StoreID[LFKeySize];				// For LFFilterModeStoreHome and above
-	unsigned char DomainID;					// For LFFilterModeDirectoryTree and above
+	char StoreID[LFKeySize];				// For LFFilterModeDirectoryTree and above
+	unsigned char ContextID;				// For LFFilterModeDirectoryTree and above
 	wchar_t Searchterm[256];				// For LFFilterModeDirectoryTree and above
 	LFFilterCondition* ConditionList;		// For LFFilterModeDirectoryTree and above
 };
@@ -479,7 +437,7 @@ struct LFCoreAttributes
 
 	// Private
 	unsigned char SlaveID;
-	unsigned char DomainID;
+	unsigned char ContextID;
 };
 
 
@@ -501,7 +459,6 @@ struct LFCoreAttributes
 #define LFFlagNew                       0x0002
 #define LFFlagLink                      0x0004
 #define LFFlagMissing                   0x0008
-#define LFFlagArchive                   0x0010
 
 struct LFItemDescriptor
 {

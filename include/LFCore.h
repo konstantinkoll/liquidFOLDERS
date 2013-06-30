@@ -46,6 +46,14 @@ LFCore_API bool __stdcall LFIsSharewareExpired();
 
 
 
+// Gibt true zurück, wenn der Explorer Dateiendungen verbirgt
+LFCore_API bool __stdcall LFHideFileExt();
+
+// Gibt true zurück, wenn der Explorer leere Laufwerke verbirgt
+LFCore_API bool __stdcall LFHideDrivesWithNoMedia();
+
+
+
 // Wie Win32-Funktion GetLogicalDrives(), allerdings selektiv (s.o.)
 LFCore_API unsigned int __stdcall LFGetLogicalDrives(unsigned int mask=LFGLD_Both);
 
@@ -94,17 +102,6 @@ LFCore_API LFContextDescriptor* __stdcall LFGetContextInfo(unsigned int ID);
 
 // Existierenden LFContextDescriptor freigeben
 LFCore_API void __stdcall LFFreeContextDescriptor(LFContextDescriptor* c);
-
-
-
-// Neuen LFDomainDescriptor erzeugen
-LFCore_API LFDomainDescriptor* __stdcall LFAllocDomainDescriptor();
-
-// Informationen über eine Domain zurückliefern
-LFCore_API LFDomainDescriptor* __stdcall LFGetDomainInfo(unsigned int ID);
-
-// Existierenden LFDomainDescriptor freigeben
-LFCore_API void __stdcall LFFreeDomainDescriptor(LFDomainDescriptor* f);
 
 
 

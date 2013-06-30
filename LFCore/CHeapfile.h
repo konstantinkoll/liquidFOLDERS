@@ -7,16 +7,15 @@
 // CHeapfile
 //
 
-#define MaxBufferSize                  65536
-#define HeapSignature                  "LFIDX"
+#define MaxBufferSize           65536
+#define HeapSignature         "LFIDX"
 
-#define HeapOk                         0
-#define HeapNoAccess                   1
-#define HeapError                      2
-#define HeapCreated                    3
-#define HeapCannotCreate               4
-#define HeapMaintenanceRecommended     5
-#define HeapMaintenanceRequired        6
+#define HeapOk                      0
+#define HeapNoAccess                1
+#define HeapError                   2
+#define HeapCreated                 3
+#define HeapCannotCreate            4
+#define HeapMaintenanceRequired     5
 
 struct HeapfileHeader
 {

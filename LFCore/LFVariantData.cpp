@@ -176,13 +176,12 @@ void ToString(void* value, unsigned int type, wchar_t* str, size_t cCount)
 			LFDoubleToString(*((double*)value), str, cCount);
 			return;
 		case LFTypeFlags:
-			wchar_t FlagString[6];
+			wchar_t FlagString[5];
 			FlagString[0] = (*((unsigned int*)value) & LFFlagLink) ? 'L' : '-';
 			FlagString[1] = (*((unsigned int*)value) & LFFlagNew) ? 'N' : '-';
 			FlagString[2] = (*((unsigned int*)value) & LFFlagTrash) ? 'T' : '-';
 			FlagString[3] = (*((unsigned int*)value) & LFFlagMissing) ? 'M' : '-';
-			FlagString[4] = (*((unsigned int*)value) & LFFlagArchive) ? 'A' : '-';
-			FlagString[5] = '\0';
+			FlagString[4] = '\0';
 			wcscpy_s(str, cCount, FlagString);
 			return;
 		case LFTypeGeoCoordinates:

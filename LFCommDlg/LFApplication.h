@@ -70,7 +70,6 @@ public:
 	LFMessageIDs* p_MessageIDs;
 	LFAttributeDescriptor* m_Attributes[LFAttributeCount];
 	WCHAR* m_AttrCategories[LFAttrCategoryCount];
-	LFDomainDescriptor* m_Domains[LFDomainCount];
 	LFContextDescriptor* m_Contexts[LFContextCount];
 	LFItemCategoryDescriptor* m_ItemCategories[LFItemCategoryCount];
 	CImageList m_SystemImageListSmall;
@@ -137,8 +136,6 @@ public:
 	static void PlayNavigateSound();
 	static void PlayWarningSound();
 	static void PlayTrashSound();
-	static BOOL HideFileExt();
-	static BOOL HideEmptyDrives();
 	void GetUpdateSettings(BOOL* EnableAutoUpdate, INT* Interval);
 	void SetUpdateSettings(BOOL EnableAutoUpdate, INT Interval);
 	BOOL IsUpdateCheckDue();

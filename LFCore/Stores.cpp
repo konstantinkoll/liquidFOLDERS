@@ -894,7 +894,7 @@ unsigned int RunMaintenance(LFStoreDescriptor* s, bool scheduled, LFProgress* pP
 		// TODO
 	case IndexError:
 		ABORT(LFIndexRepairError);
-	case IndexFullyRepaired:
+	case IndexRepaired:
 		s->IndexVersion = CurIdxVersion;
 
 		res = UpdateStore(s);

@@ -32,7 +32,7 @@ WCHAR* GetAttribute(TimelineItemData* d, LFItemDescriptor* i, UINT Attr, UINT Ma
 #define WHITE         100
 
 #define GetItemData(idx)     ((TimelineItemData*)(m_ItemData+(idx)*m_DataSize))
-#define UsePreview(i)        ((i->CoreAttributes.DomainID>=LFDomainPhotos) && (i->CoreAttributes.DomainID<=LFDomainVideos))
+#define UsePreview(i)        ((i->CoreAttributes.ContextID>=LFContextPictures) && (i->CoreAttributes.ContextID<=LFContextVideos))
 
 CTimelineView::CTimelineView()
 	: CFileView(sizeof(TimelineItemData), TRUE, TRUE, TRUE, TRUE, TRUE, FALSE)
@@ -68,7 +68,7 @@ void CTimelineView::SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* p
 				case LFTypeFile:
 					d->pComments = GetAttribute(d, i, LFAttrComments, PRV_COMMENTS);
 
-					if (i->CoreAttributes.DomainID==LFDomainAudio)
+					if (i->CoreAttributes.ContextID==LFContextAudio)
 					{
 						d->pArtist = GetAttribute(d, i, LFAttrArtist, PRV_AUDIOTITLE);
 						d->pTitle = GetAttribute(d, i, LFAttrTitle, PRV_AUDIOTITLE);
@@ -286,7 +286,7 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPRECT rectItem, INT idx, BOO
 
 	COLORREF brCol = Hot ? Themed ? 0xCDBBB4 : GetSysColor(COLOR_WINDOWTEXT) : Themed ? 0xE0CDC4 : GetSysColor(COLOR_3DSHADOW);
 	COLORREF bkCol = hThemeList ? 0xFFFFFF : Selected ? GetSysColor(GetFocus()==this ? COLOR_HIGHLIGHT : COLOR_3DFACE) : Themed ? 0xFFFFFF : GetSysColor(COLOR_WINDOW);
-	COLORREF cpCol = Themed ? 0x98593B : GetSysColor(COLOR_WINDOWTEXT);
+	COLORREF cpCol = (i->CoreAttributes.Flags & LFFlagMissing) ? 0x0000FF : Themed ? 0x98593B : GetSysColor(COLOR_WINDOWTEXT);
 	COLORREF txCol = Themed ? 0x808080 : GetSysColor(COLOR_3DSHADOW);
 	COLORREF atCol = Themed ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT);
 

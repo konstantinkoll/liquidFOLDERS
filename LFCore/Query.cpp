@@ -546,39 +546,28 @@ int PassesFilterCore(LFCoreAttributes* ca, LFFilter* filter)
 	assert(filter);
 	assert(ca);
 
-	// Domains
-	if (filter->DomainID!=LFDomainTrash)
+	// Contexts
+	if (filter->ContextID!=LFContextTrash)
 		if (ca->Flags & LFFlagTrash)
 			return -1;
 
-	if (filter->DomainID)
-		switch (filter->DomainID)
+	if (filter->ContextID)
+		switch (filter->ContextID)
 		{
-		case LFDomainAllMediaFiles:
-			if ((ca->DomainID<LFDomainAudio) || (ca->DomainID>LFDomainVideos))
-				return -1;
-			break;
-		case LFDomainFavorites:
+		case LFContextFavorites:
 			if (!ca->Rating)
 				return -1;
 			break;
-		case LFDomainNew:
+		case LFContextNew:
 			if (!(ca->Flags & LFFlagNew))
 				return -1;
 			break;
-		case LFDomainTrash:
+		case LFContextTrash:
 			if (!(ca->Flags & LFFlagTrash))
 				return -1;
 			break;
-		case LFDomainUnknown:
-			if ((ca->DomainID) && (ca->DomainID<LFDomainCount))
-				return -1;
-			break;
-		case LFDomainPictures:
-			if (ca->DomainID==LFDomainPhotos)
-				break;
 		default:
-			if (filter->DomainID!=ca->DomainID)
+			if (filter->ContextID!=ca->ContextID)
 				return -1;
 		}
 
@@ -682,90 +671,7 @@ LFCore_API bool LFPassesFilter(LFItemDescriptor* i, LFFilter* filter)
 	}
 }
 
-LFSearchResult* QueryStores(LFFilter* filter)
-{
-	LFSearchResult* res = new LFSearchResult(LFContextStores);
-	res->m_LastError = LFOk;
-	res->m_HasCategories = true;
-
-	if (!GetMutex(Mutex_Stores))
-	{
-		res->m_LastError = LFMutexError;
-		return res;
-	}
-
-	AddStoresToSearchResult(res, filter);
-	ReleaseMutex(Mutex_Stores);
-
-	if (filter)
-		if (filter->Options.AddVolumes)
-			res->AddVolumes(filter);
-
-	return res;
-}
-
-LFSearchResult* QueryDomains(LFFilter* filter)
-{
-	LFSearchResult* res = new LFSearchResult(LFContextStoreHome);
-	res->m_HasCategories = true;
-
-	wchar_t HintSingular[256];
-	LoadString(LFCoreModuleHandle, IDS_HintSingular, HintSingular, 256);
-	wchar_t HintPlural[256];
-	LoadString(LFCoreModuleHandle, IDS_HintPlural, HintPlural, 256);
-
-	CIndex* idx1;
-	CIndex* idx2;
-	LFStoreDescriptor* slot;
-	HANDLE StoreLock = NULL;
-	res->m_LastError = OpenStore(&filter->StoreID[0], false, idx1, idx2, &slot, &StoreLock);
-	if (res->m_LastError==LFOk)
-	{
-		wcscpy_s(res->m_Name, 256, slot->StoreName);
-
-		unsigned int cnt[LFDomainCount] = { 0 };
-		__int64 size[LFDomainCount] = { 0 };
-		if (idx1)
-		{
-			res->m_LastError = idx1->RetrieveStats(cnt, size);
-			delete idx1;
-		}
-		if (idx2)
-			delete idx2;
-		ReleaseMutexForStore(StoreLock);
-
-		if (res->m_LastError==LFOk)
-			for (unsigned char a=0; a<LFDomainCount; a++)
-				if ((cnt[a]) || (filter->ShowEmptyDomains))
-				{
-					LFDomainDescriptor* d = LFGetDomainInfo(a);
-					char FileID[LFKeySize];
-					sprintf_s(FileID, LFKeySize, "%d", a);
-					wchar_t Hint[256];
-					swprintf_s(Hint, 256, cnt[a]==1 ? HintSingular : HintPlural, cnt[a]);
-
-					LFFilter* nf = LFAllocFilter();
-					nf->Mode = LFFilterModeDirectoryTree;
-					nf->Options = filter->Options;
-					nf->DomainID = a;
-					strcpy_s(nf->StoreID, LFKeySize, filter->StoreID);
-					wcscpy_s(nf->Name, 256, d->Name);
-
-					if (res->AddItemDescriptor(AllocFolderDescriptor(d->Name, d->Comment, Hint, filter->StoreID, FileID, &size[a], d->IconID, d->CategoryID, cnt[a], nf)))
-						if ((a>=LFFirstSoloDomain) && (a!=LFDomainPhotos) && (a!=LFDomainNew))
-						{
-							res->m_FileCount += cnt[a];
-							res->m_FileSize += size[a];
-						}
-
-					LFFreeDomainDescriptor(d);
-				}
-	}
-
-	return res;
-}
-
-bool RetrieveStore(char* StoreID, LFFilter* filter, LFSearchResult* res)
+void RetrieveStore(char* StoreID, LFFilter* filter, LFSearchResult* res)
 {
 	CIndex* idx1;
 	CIndex* idx2;
@@ -782,59 +688,44 @@ bool RetrieveStore(char* StoreID, LFFilter* filter, LFSearchResult* res)
 		if (idx2)
 			delete idx2;
 		ReleaseMutexForStore(StoreLock);
-
-		return true;
 	}
-
-	return false;
 }
 
-__forceinline void PrepareSearchResult(LFSearchResult* res, LFFilter* filter)
+void QueryStores(LFFilter* filter, LFSearchResult* res)
 {
-	wchar_t name[256];
+	res->m_HasCategories = true;
 
-	if ((filter->Options.IsSubfolder) && (filter->ConditionList))
+	// Volumes
+	if (filter)
+		if (filter->Options.AddVolumes)
+			res->AddVolumes();
+
+	// Stores
+	if (GetMutex(Mutex_Stores))
 	{
-		res->m_GroupAttribute = filter->Options.GroupAttribute;
-		wcscpy_s(name, 256, filter->Name);
+		AddStoresToSearchResult(res, filter);
+		ReleaseMutex(Mutex_Stores);
 	}
 	else
 	{
-		assert(filter->DomainID<LFDomainCount);
-		LoadString(LFCoreModuleHandle, filter->Mode==LFFilterModeSearch ? IDS_LFContextSearch : IDS_FirstDomain+filter->DomainID, name, 256);
-		wchar_t* brk = wcschr(name, L'\n');
-		if (brk)
-			*brk = L'\0';
+		res->m_LastError = LFMutexError;
 	}
-
-	res->m_LastError = LFOk;
-	res->SetContextAndDomain(filter);
-	wcscpy_s(res->m_Name, 256, name);
 }
 
-LFSearchResult* QueryTree(LFFilter* filter)
+__forceinline void QueryTree(LFFilter* filter, LFSearchResult* res)
 {
-	LFSearchResult* res = LFAllocSearchResult(LFContextDefault);
-	PrepareSearchResult(res, filter);
-
-	if (RetrieveStore(filter->StoreID, filter, res))
-		res->SetContextAndDomain(filter);
-
-	return res;
+	RetrieveStore(filter->StoreID, filter, res);
 }
 
-LFSearchResult* QuerySearch(LFFilter* filter)
+__forceinline void QuerySearch(LFFilter* filter, LFSearchResult* res)
 {
-	LFSearchResult* res = LFAllocSearchResult(LFContextDefault);
-	PrepareSearchResult(res, filter);
-
 	if (filter->StoreID[0]=='\0')
 	{
-		// Alle Stores
+		// All stores
 		if (!GetMutex(Mutex_Stores))
 		{
 			res->m_LastError = LFMutexError;
-			return res;
+			return;
 		}
 
 		char* keys;
@@ -855,27 +746,25 @@ LFSearchResult* QuerySearch(LFFilter* filter)
 	}
 	else
 	{
-		// Ein Store
+		// Single store
 		RetrieveStore(filter->StoreID, filter, res);
 	}
-
-	return res;
 }
 
 LFCore_API LFSearchResult* LFQuery(LFFilter* filter)
 {
 	DWORD start = GetTickCount();
 
-	LFSearchResult* res = NULL;
+	LFSearchResult* res = new LFSearchResult(filter);
 
 	if (!filter)
 	{
-		res = QueryStores(filter);
+		QueryStores(filter, res);
 	}
 	else
 	{
 		// Ggf. Default Store einsetzen
-		if ((filter->StoreID[0]=='\0') && (filter->Mode>=LFFilterModeStoreHome) && (filter->Mode<=LFFilterModeDirectoryTree))
+		if ((filter->StoreID[0]=='\0') && (filter->Mode==LFFilterModeDirectoryTree))
 			if (LFDefaultStoreAvailable())
 			{
 				char* ds = LFGetDefaultStore();
@@ -884,37 +773,30 @@ LFCore_API LFSearchResult* LFQuery(LFFilter* filter)
 			}
 			else
 			{
-				res = new LFSearchResult(LFContextDefault);
 				res->m_LastError = LFNoDefaultStore;
+				goto Finish;
 			}
 
 		// Query
-		if (!res)
-			switch (filter->Mode)
-			{
-			case LFFilterModeStores:
-				res = QueryStores(filter);
-				break;
-			case LFFilterModeStoreHome:
-				res = QueryDomains(filter);
-				break;
-			case LFFilterModeDirectoryTree:
-				res = QueryTree(filter);
-				break;
-			case LFFilterModeSearch:
-				res = QuerySearch(filter);
-				break;
-			default:
-				res = new LFSearchResult(LFContextDefault);
-				res->m_LastError = LFIllegalQuery;
-			}
-
-		// Statistik
-		if ((filter->Name[0]==L'\0') && (res->m_Context!=LFContextDefault))
-			LoadString(LFCoreModuleHandle, res->m_Context+IDS_FirstContext, filter->Name, 256);
+		switch (filter->Mode)
+		{
+		case LFFilterModeStores:
+			QueryStores(filter, res);
+			break;
+		case LFFilterModeDirectoryTree:
+			QueryTree(filter, res);
+			break;
+		case LFFilterModeSearch:
+			QuerySearch(filter, res);
+			break;
+		default:
+			res->m_LastError = LFIllegalQuery;
+		}
 	}
 
+Finish:
 	res->m_QueryTime = GetTickCount()-start;
+
 	return res;
 }
 
@@ -928,21 +810,18 @@ LFCore_API LFSearchResult* LFQuery(LFFilter* filter, LFSearchResult* base, int f
 		(first<=last) && (first>=0) && (first<(int)base->m_ItemCount) && (last>=0) && (last<(int)base->m_ItemCount))
 	{
 		res = base;
-		PrepareSearchResult(res, filter);
 
 		res->m_LastError = LFOk;
 		res->KeepRange(first, last);
-		res->SetContextAndDomain(filter);
+		res->SetMetadataFromFilter(filter);
 	}
 	else
 	{
 		res = new LFSearchResult(LFContextSubfolderDefault);
-		PrepareSearchResult(res, filter);
-
 		res->m_LastError = LFIllegalQuery;
 	}
 
-	wcscpy_s(res->m_Name, 256, filter->Name);
 	res->m_QueryTime = GetTickCount()-start;
+
 	return res;
 }

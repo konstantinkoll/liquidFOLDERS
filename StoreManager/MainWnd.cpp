@@ -10,9 +10,7 @@
 LFFilter* GetRootFilter(CHAR* RootStore=NULL)
 {
 	LFFilter* f = LFAllocFilter();
-	f->Mode = RootStore ? LFFilterModeStoreHome : LFFilterModeStores;
-	f->ShowEmptyVolumes = (theApp.m_ShowEmptyVolumes==TRUE);
-	f->ShowEmptyDomains = (theApp.m_ShowEmptyDomains==TRUE);
+	f->Mode = RootStore ? LFFilterModeDirectoryTree : LFFilterModeStores;
 	f->Options.AddVolumes = true;
 
 	if (RootStore)
@@ -308,8 +306,6 @@ void CMainWnd::NavigateTo(LFFilter* f, UINT NavMode, FVPersistentData* Data, INT
 		}
 
 	m_pActiveFilter = f;
-	m_pActiveFilter->ShowEmptyVolumes = (theApp.m_ShowEmptyVolumes==TRUE);
-	m_pActiveFilter->ShowEmptyDomains = (theApp.m_ShowEmptyDomains==TRUE);
 
 	if (NavMode<NAVMODE_RELOAD)
 		m_wndMainView.UpdateSearchResult(NULL, NULL, NULL);
@@ -555,8 +551,8 @@ void CMainWnd::OnItemOpen()
 						if (f)
 						{
 							theApp.ShowNagScreen(NAG_EXPIRED | NAG_FORCE, this);
-
-							m_wndMainView.SetFilter(f);
+// TODO
+//							m_wndMainView.SetFilter(f);
 							NavigateTo(f);
 						}
 					}
@@ -786,15 +782,15 @@ LRESULT CMainWnd::OnStoresChanged(WPARAM /*wParam*/, LPARAM lParam)
 LRESULT CMainWnd::OnStoreAttributesChanged(WPARAM wParam, LPARAM lParam)
 {
 	if ((m_pCookedFiles) && (GetSafeHwnd()!=(HWND)lParam))
-		switch (m_pCookedFiles->m_Context)
+		if (m_pCookedFiles->m_Context<=LFLastQueryContext)
 		{
-		case LFContextStores:
-			PostMessage(WM_RELOAD);
-			break;
-		case LFContextStoreHome:
 			m_wndMainView.PostMessage(theApp.p_MessageIDs->StoreAttributesChanged, wParam, lParam);
-			break;
 		}
+		else
+			if (m_pCookedFiles->m_Context==LFContextStores)
+			{
+				PostMessage(WM_RELOAD);
+			}
 
 	return NULL;
 }

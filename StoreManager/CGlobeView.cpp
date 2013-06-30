@@ -269,10 +269,11 @@ INT CGlobeView::ItemAtPosition(CPoint point)
 	return res;
 }
 
-CMenu* CGlobeView::GetBackgroundContextMenu()
+CMenu* CGlobeView::GetViewContextmenu()
 {
 	CMenu* pMenu = new CMenu();
 	pMenu->LoadMenu(IDM_GLOBE);
+
 	return pMenu;
 }
 

@@ -141,6 +141,23 @@ void CListView::SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCook
 	AdjustHeader(m_ViewParameters.Mode==LFViewDetails);
 }
 
+CMenu* CListView::GetViewContextmenu()
+{
+	CMenu* pMenu = new CMenu();
+	pMenu->LoadMenu(IDM_DETAILS);
+
+	CMenu* pPopup = pMenu->GetSubMenu(0);
+	if (pPopup)
+	{
+		ASSERT_VALID(pPopup);
+
+		while (pPopup->GetMenuItemCount()>1)
+			pPopup->DeleteMenu(1, MF_BYPOSITION);
+	}
+
+	return pMenu;
+}
+
 void CListView::AdjustHeader(BOOL bShow)
 {
 	if (bShow)
@@ -196,45 +213,11 @@ void CListView::AdjustHeader(BOOL bShow)
 	}
 }
 
-CBitmap* CListView::RenderLegend()
+/*CBitmap* CListView::RenderStatistics()
 {
-#ifndef DEBUG
-	if (!m_ShowLegend)
+//	if (!p_CookedFiles || m_Nothing || !theApp.m_ShowStatistics)
 		return NULL;
-#endif
-
-	CString colBlue;
-	CString colRed;
-	ENSURE(colBlue.LoadString(IDS_LEGEND_BLUE));
-	ENSURE(colRed.LoadString(IDS_LEGEND_RED));
-
-	ENSURE(m_FooterCaption.LoadString(IDS_LEGEND));
-	BOOL Themed = IsCtrlThemed();
-
-	CDC* pDC = GetWindowDC();
-	CDC dcDraw;
-
-	HGDIOBJ oldFont = pDC->SelectStockObject(DEFAULT_GUI_FONT);
-	INT cx = max(pDC->GetTextExtent(colBlue).cx, pDC->GetTextExtent(colRed).cx)+m_FontHeight[2]+2*GraphSpacer-1;
-	INT cy = 2*(m_FontHeight[2]+GraphSpacer)+GraphSpacer;
-
-	CBitmap* pBmp = CreateFooterBitmap(pDC, cx, cy, dcDraw, Themed);
-	CRect rect(0, GraphSpacer, cx, cy);
-
-	DrawLegend(dcDraw, rect, 0xFF0000, colBlue, Themed);
-	DrawLegend(dcDraw, rect, 0x0000FF, colRed, Themed);
-
-	pDC->SelectObject(oldFont);
-	ReleaseDC(pDC);
-
-	return pBmp;
-}
-
-CBitmap* CListView::RenderStatistics()
-{
-	if (!p_CookedFiles || m_Nothing || !theApp.m_ShowStatistics)
-		return NULL;
-
+/*
 #define DomainCount 5
 	const UINT Domains[DomainCount] = { LFDomainAudio, LFDomainPictures, LFDomainVideos, 0, LFDomainTrash };
 	INT64 Counts[DomainCount] = { 0 };
@@ -251,7 +234,7 @@ CBitmap* CListView::RenderStatistics()
 			{
 				UINT DomainID;
 				if (sscanf_s(i->CoreAttributes.FileID, "%d", &DomainID)==1)
-					if ((DomainID>=LFFirstSoloDomain) && (DomainID!=LFDomainPhotos))
+					if (DomainID!=LFDomainPhotos)
 					{
 						INT idx = DomainCount-2;
 						for (UINT a=0; a<DomainCount; a++)
@@ -304,11 +287,40 @@ CBitmap* CListView::RenderStatistics()
 	ReleaseDC(pDC);
 
 	return pBmp;
-}
+}*/
 
 CBitmap* CListView::RenderFooter()
 {
-	return (m_Context==LFContextStoreHome) ? RenderStatistics() : RenderLegend();
+#ifndef DEBUG
+	if (!m_ShowLegend)
+		return NULL;
+#endif
+
+	ENSURE(m_FooterCaption.LoadString(IDS_LEGEND));
+
+	COLORREF col = (m_Context==LFContextStores) ? 0xFF0000 : 0x0000FF;
+
+	CString msg;
+	ENSURE(msg.LoadString(m_Context==LFContextStores ? IDS_LEGEND_BLUE : IDS_LEGEND_RED));
+
+	BOOL Themed = IsCtrlThemed();
+
+	CDC* pDC = GetWindowDC();
+	CDC dcDraw;
+
+	HGDIOBJ oldFont = pDC->SelectStockObject(DEFAULT_GUI_FONT);
+	INT cx = pDC->GetTextExtent(msg).cx+m_FontHeight[2]+2*GraphSpacer-1;
+	INT cy = m_FontHeight[2]+2*GraphSpacer;
+
+	CBitmap* pBmp = CreateFooterBitmap(pDC, cx, cy, dcDraw, Themed);
+	CRect rect(0, GraphSpacer, cx, cy);
+
+	DrawLegend(dcDraw, rect, col, msg, Themed);
+
+	pDC->SelectObject(oldFont);
+	ReleaseDC(pDC);
+
+	return pBmp;
 }
 
 void CListView::AdjustLayout()
@@ -490,18 +502,9 @@ void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed)
 			Rows[3] = LFAttrRating;
 			break;
 		case LFTypeVirtual:
-			if (m_Context==LFContextStoreHome)
-			{
-				Rows[1] = LFAttrComments;
-				Rows[2] = LFAttrDescription;
-				Rows[3] = LFAttrFileSize;
-			}
-			else
-			{
-				Rows[1] = LFAttrDescription;
-				Rows[2] = LFAttrFileSize;
-				Rows[3] = -1;
-			}
+			Rows[1] = LFAttrDescription;
+			Rows[2] = LFAttrFileSize;
+			Rows[3] = -1;
 			break;
 		}
 
@@ -534,17 +537,8 @@ void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed)
 			DrawProperty(dc, rectLeft, i, d, LFAttrFileFormat, Themed);
 			break;
 		case LFTypeVirtual:
-			if (m_Context==LFContextStoreHome)
-			{
-				DrawProperty(dc, rectLeft, i, d, LFAttrComments, Themed);
-				DrawProperty(dc, rectLeft, i, d, LFAttrDescription, Themed);
-				DrawProperty(dc, rectLeft, i, d, LFAttrFileSize, Themed);
-			}
-			else
-			{
-				DrawProperty(dc, rectLeft, i, d, LFAttrDescription, Themed);
-				DrawProperty(dc, rectLeft, i, d, LFAttrFileSize, Themed);
-			}
+			DrawProperty(dc, rectLeft, i, d, LFAttrDescription, Themed);
+			DrawProperty(dc, rectLeft, i, d, LFAttrFileSize, Themed);
 			break;
 		}
 

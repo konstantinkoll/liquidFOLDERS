@@ -17,18 +17,20 @@
 extern HMODULE LFCoreModuleHandle;
 extern unsigned char AttrTypes[];
 extern unsigned int VolumeTypes[];
+extern void LoadTwoStrings(HINSTANCE hInstance, unsigned int uID, wchar_t* lpBuffer1, int cchBufferMax1, wchar_t* lpBuffer, int cchBufferMax);
 
+
+// LFSearchResult
 
 LFSearchResult::LFSearchResult(int ctx)
 	: DynArray()
 {
 	assert(ctx<LFContextCount);
 
-	LoadString(LFCoreModuleHandle, IDS_FirstContext+ctx, m_Name, 256);
+	LoadTwoStrings(LFCoreModuleHandle, IDS_FirstContext+ctx, m_Name, 256, m_Hint, 256);
 	m_RawCopy = true;
 	m_Context = ctx;
-	m_Domain = LFDomainAllFiles;
-	m_GroupAttribute = 0;
+	m_GroupAttribute = LFAttrFileName;
 	m_HasCategories = false;
 	m_QueryTime = 0;
 	m_FileCount = 0;
@@ -36,36 +38,56 @@ LFSearchResult::LFSearchResult(int ctx)
 	m_StoreCount = 0;
 }
 
+LFSearchResult::LFSearchResult(LFFilter* f)
+{
+	m_RawCopy = true;
+	m_GroupAttribute = LFAttrFileName;
+	m_HasCategories = false;
+	m_QueryTime = 0;
+	m_FileCount = 0;
+	m_FileSize = 0;
+	m_StoreCount = 0;
+
+	if (f)
+	{
+		SetMetadataFromFilter(f);
+	}
+	else
+	{
+		LoadTwoStrings(LFCoreModuleHandle, IDS_FirstContext+LFContextStores, m_Name, 256, m_Hint, 256);
+		m_Context = LFContextStores;
+	}
+}
+
 LFSearchResult::LFSearchResult(LFSearchResult* res)
 	: DynArray()
 {
 	m_Items = (LFItemDescriptor**)_aligned_malloc(res->m_ItemCount*sizeof(LFItemDescriptor*), Dyn_MemoryAlignment);
-	m_LastError = res->m_LastError;
 
 	wcscpy_s(m_Name, 256, res->m_Name);
+	wcscpy_s(m_Hint, 256, res->m_Hint);
 	m_RawCopy = false;
 	m_Context = res->m_Context;
-	m_Domain = res->m_Domain;
 	m_GroupAttribute = res->m_GroupAttribute;
 	m_HasCategories = res->m_HasCategories;
 	m_QueryTime = res->m_QueryTime;
 	m_FileCount = res->m_FileCount;
 	m_FileSize = res->m_FileSize;
 	m_StoreCount = res->m_StoreCount;
-	m_Allocated = res->m_ItemCount;
 
 	if (m_Items)
 	{
+		m_LastError = res->m_LastError;
+		m_ItemCount = m_Allocated = res->m_ItemCount;
+
 		memcpy(m_Items, res->m_Items, res->m_ItemCount*sizeof(LFItemDescriptor*));
-		m_ItemCount = res->m_ItemCount;
 		for (unsigned int a=0; a<res->m_ItemCount; a++)
 			m_Items[a]->RefCount++;
 	}
 	else
 	{
 		m_LastError = LFMemoryError;
-		m_ItemCount = 0;
-		m_Allocated =0;
+		m_ItemCount = m_Allocated =0;
 	}
 }
 
@@ -76,6 +98,67 @@ LFSearchResult::~LFSearchResult()
 			LFFreeItemDescriptor(m_Items[a]);
 }
 
+void LFSearchResult::SetMetadataFromFilter(LFFilter* f)
+{
+	assert(f);
+
+	if (f->Options.IsSubfolder)
+	{
+		m_Context = LFContextSubfolderDefault;
+
+		if (f->ConditionList)
+		{
+			m_GroupAttribute = f->Options.GroupAttribute;
+
+			switch (f->ConditionList->AttrData.Attr)
+			{
+			case LFAttrLocationName:
+			case LFAttrLocationIATA:
+			case LFAttrLocationGPS:
+				m_Context = LFContextSubfolderLocation;
+				break;
+			default:
+				if (AttrTypes[f->ConditionList->AttrData.Attr]==LFTypeTime)
+					m_Context = LFContextSubfolderDay;
+			}
+		}
+	}
+	else
+		switch (f->Mode)
+		{
+		case LFFilterModeStores:
+			m_Context = LFContextStores;
+			break;
+		case LFFilterModeDirectoryTree:
+			m_Context = f->ContextID;
+			break;
+		case LFFilterModeSearch:
+			m_Context = LFContextSearch;
+			break;
+		}
+
+	if ((f->Name[0]==L'\0') || (m_Context==LFContextStores))
+	{
+		LoadTwoStrings(LFCoreModuleHandle, IDS_FirstContext+m_Context, m_Name, 256, m_Hint, 256);
+	}
+	else
+	{
+		wcscpy_s(m_Name, 256, f->Name);
+
+		if (m_Context<=LFLastQueryContext)
+		{
+			LoadString(LFCoreModuleHandle, IDS_FirstContext+m_Context, m_Hint, 256);
+			wchar_t* brk = wcschr(m_Hint, L'\n');
+			if (brk)
+				*brk = L'\0';
+		}
+		else
+		{
+			m_Hint[0] = L'\0';
+		}
+	}
+}
+
 bool LFSearchResult::AddItemDescriptor(LFItemDescriptor* i)
 {
 	assert(i);
@@ -83,10 +166,10 @@ bool LFSearchResult::AddItemDescriptor(LFItemDescriptor* i)
 	if (!DynArray::AddItem(i))
 		return false;
 
-	switch (i->Type & LFTypeFile)
+	switch (i->Type & LFTypeMask)
 	{
 	case LFTypeStore:
-		m_StoreCount--;
+		m_StoreCount++;
 		break;
 	case LFTypeFile:
 		m_FileCount++;
@@ -102,7 +185,7 @@ bool LFSearchResult::AddStoreDescriptor(LFStoreDescriptor* s, LFFilter* f)
 	assert(s);
 
 	LFFilter* nf = LFAllocFilter();
-	nf->Mode = LFFilterModeStoreHome;
+	nf->Mode = LFFilterModeDirectoryTree;
 	if (f)
 		nf->Options = f->Options;
 	strcpy_s(nf->StoreID, LFKeySize, s->StoreID);
@@ -111,22 +194,13 @@ bool LFSearchResult::AddStoreDescriptor(LFStoreDescriptor* s, LFFilter* f)
 	LFItemDescriptor* d = LFAllocItemDescriptor(s);
 	d->NextFilter = nf;
 
-	bool res = AddItemDescriptor(d);
-	if (!res)
-	{
-		LFFreeItemDescriptor(d);
-	}
-	else
-	{
-		m_StoreCount++;
-	}
-
-	return res;
+	return AddItemDescriptor(d);
 }
 
-void LFSearchResult::AddVolumes(LFFilter* filter)
+void LFSearchResult::AddVolumes()
 {
 	DWORD DrivesOnSystem = LFGetLogicalDrives(LFGLD_External);
+	bool HideDrivesWithNoMedia = LFHideDrivesWithNoMedia();
 
 	for (char cDrive='A'; cDrive<='Z'; cDrive++, DrivesOnSystem>>=1)
 	{
@@ -138,7 +212,7 @@ void LFSearchResult::AddVolumes(LFFilter* filter)
 		SHFILEINFO sfi;
 		if (SHGetFileInfo(szDriveRoot, 0, &sfi, sizeof(SHFILEINFO), SHGFI_DISPLAYNAME | SHGFI_TYPENAME | SHGFI_ATTRIBUTES))
 		{
-			if ((!sfi.dwAttributes) && (!filter->ShowEmptyVolumes))
+			if ((!sfi.dwAttributes) && HideDrivesWithNoMedia)
 				continue;
 
 			LFItemDescriptor* d = LFAllocItemDescriptor();
@@ -556,57 +630,6 @@ void LFSearchResult::Group(unsigned int attr, unsigned int icon, bool groupone, 
 	m_ItemCount = WritePtr;
 
 	delete c;
-}
-
-void LFSearchResult::SetContextAndDomain(LFFilter* f)
-{
-	m_Domain = f->DomainID;
-
-	if (f->Options.IsSubfolder)
-	{
-		m_Context = LFContextSubfolderDefault;
-		if (f->ConditionList)
-			switch (f->ConditionList->AttrData.Attr)
-			{
-			case LFAttrLocationName:
-			case LFAttrLocationIATA:
-			case LFAttrLocationGPS:
-				m_Context = LFContextSubfolderLocation;
-				break;
-			default:
-				if (AttrTypes[f->ConditionList->AttrData.Attr]==LFTypeTime)
-					m_Context = LFContextSubfolderDay;
-			}
-	}
-	else
-		switch (f->DomainID)
-		{
-		case LFDomainFilters:
-			m_Context = LFContextFilters;
-			break;
-		case LFDomainTrash:
-			m_Context = LFContextTrash;
-			break;
-		case LFDomainNew:
-		case LFDomainUnknown:
-			m_Context = LFContextHousekeeping;
-			break;
-		default:
-			switch (f->Mode)
-			{
-			case LFFilterModeStores:
-				m_Context = LFContextStores;
-				break;
-			case LFFilterModeStoreHome:
-				m_Context = LFContextStoreHome;
-				break;
-			case LFFilterModeSearch:
-				m_Context = LFContextSearch;
-				break;
-			default:
-				m_Context = LFContextDefault;
-			}
-		}
 }
 
 void LFSearchResult::GroupArray(unsigned int attr, unsigned int icon, LFFilter* f)

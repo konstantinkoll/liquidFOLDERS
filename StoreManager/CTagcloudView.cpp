@@ -120,51 +120,6 @@ void CTagcloudView::SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* p
 	}
 }
 
-CBitmap* CTagcloudView::RenderFooter()
-{
-	if (!theApp.m_TagcloudShowLegend || !m_ViewParameters.TagcloudUseColors)
-		return NULL;
-
-	CString strCommon;
-	CString strRare;
-	ENSURE(strCommon.LoadString(IDS_LEGEND_COMMON));
-	ENSURE(strRare.LoadString(IDS_LEGEND_RARE));
-
-	ENSURE(m_FooterCaption.LoadString(IDS_LEGEND));
-	BOOL Themed = IsCtrlThemed();
-
-	CDC* pDC = GetWindowDC();
-	CDC dcDraw;
-
-	INT cy = m_FontHeight[1]+m_FontHeight[2]+3*GraphSpacer;
-	CBitmap* pBmp = CreateFooterBitmap(pDC, 250, cy, dcDraw, Themed);
-	INT cx = m_FooterSize.cx-6;
-
-	Graphics g(dcDraw);
-
-	LinearGradientBrush brush1(Point(0, 0), Point(cx/4, 0), Color(0xFF, 0, 0x00), Color(0x80, 0x00, 0x80));
-	g.FillRectangle(&brush1, Rect(0, GraphSpacer, cx/4, m_FontHeight[1]));
-
-	LinearGradientBrush brush2(Point(cx/4-1, 0), Point(cx/2, 0), Color(0x80, 0x00, 0x80), Color(0x00, 0x00, 0xFF));
-	g.FillRectangle(&brush2, Rect(cx/4, GraphSpacer, cx/4+1, m_FontHeight[1]));
-
-	LinearGradientBrush brush3(Point(cx/2-1, 0), Point(cx, 0), Color(0x00, 0x00, 0xFF), Color(0x00, 0x90, 0xFF));
-	g.FillRectangle(&brush3, Rect(cx/2, GraphSpacer, cx/2, m_FontHeight[1]));
-
-	CRect rect(0, GraphSpacer, cx, GraphSpacer+m_FontHeight[1]);
-	FinishGraph(dcDraw, rect, Themed);
-
-	rect.top = rect.bottom+GraphSpacer;
-	rect.bottom = rect.top+m_FontHeight[2];
-
-	dcDraw.DrawText(strCommon, rect, DT_LEFT | DT_VCENTER | DT_SINGLELINE | DT_END_ELLIPSIS);
-	dcDraw.DrawText(strRare, rect, DT_RIGHT | DT_VCENTER | DT_SINGLELINE | DT_END_ELLIPSIS);
-
-	ReleaseDC(pDC);
-
-	return pBmp;
-}
-
 void CTagcloudView::AdjustLayout()
 {
 	ResetItemCategories();
@@ -288,10 +243,11 @@ void CTagcloudView::DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed)
 	dc.SelectObject(pOldFont);
 }
 
-CMenu* CTagcloudView::GetBackgroundContextMenu()
+CMenu* CTagcloudView::GetViewContextmenu()
 {
 	CMenu* menu = new CMenu();
 	menu->LoadMenu(IDM_TAGCLOUD);
+
 	return menu;
 }
 
@@ -306,7 +262,6 @@ BEGIN_MESSAGE_MAP(CTagcloudView, CGridView)
 	ON_COMMAND(IDM_TAGCLOUD_SORTVALUE, OnSortValue)
 	ON_COMMAND(IDM_TAGCLOUD_SORTCOUNT, OnSortCount)
 	ON_COMMAND(IDM_TAGCLOUD_SHOWRARE, OnShowRare)
-	ON_COMMAND(IDM_TAGCLOUD_SHOWLEGEND, OnShowLegend)
 	ON_COMMAND(IDM_TAGCLOUD_USESIZE, OnUseSize)
 	ON_COMMAND(IDM_TAGCLOUD_USECOLORS, OnUseColors)
 	ON_COMMAND(IDM_TAGCLOUD_USEOPACITY, OnUseOpacity)
@@ -345,12 +300,6 @@ void CTagcloudView::OnShowRare()
 	theApp.UpdateViewOptions(m_Context);
 }
 
-void CTagcloudView::OnShowLegend()
-{
-	theApp.m_TagcloudShowLegend = !theApp.m_TagcloudShowLegend;
-	theApp.UpdateFooter(-1, LFViewTagcloud);
-}
-
 void CTagcloudView::OnUseSize()
 {
 	p_ViewParameters->TagcloudUseSize = !p_ViewParameters->TagcloudUseSize;
@@ -386,10 +335,6 @@ void CTagcloudView::OnUpdateCommands(CCmdUI* pCmdUI)
 		break;
 	case IDM_TAGCLOUD_SHOWRARE:
 		pCmdUI->SetCheck(m_ViewParameters.TagcloudShowRare);
-		break;
-	case IDM_TAGCLOUD_SHOWLEGEND:
-		pCmdUI->SetCheck(theApp.m_TagcloudShowLegend);
-		b = m_ViewParameters.TagcloudUseColors;
 		break;
 	case IDM_TAGCLOUD_USESIZE:
 		pCmdUI->SetCheck(m_ViewParameters.TagcloudUseSize);

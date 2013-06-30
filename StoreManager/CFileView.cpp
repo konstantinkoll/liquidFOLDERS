@@ -63,7 +63,7 @@ CFileView::CFileView(UINT DataSize, BOOL EnableScrolling, BOOL EnableHover, BOOL
 	m_ItemData = NULL;
 	m_ItemDataAllocated = 0;
 	m_FocusItem = m_HotItem = m_SelectionAnchor = m_EditLabel = m_Context = -1;
-	m_Context = LFContextDefault;
+	m_Context = LFContextAllFiles;
 	m_HeaderHeight = m_FontHeight[0] = m_FontHeight[1] = m_FontHeight[2] = m_FontHeight[3] = m_HScrollMax = m_VScrollMax = m_HScrollPos = m_VScrollPos = 0;
 	p_FooterBitmap = NULL;
 	m_FooterPos.x = m_FooterPos.y = m_FooterSize.cx = m_FooterSize.cy = 0;
@@ -103,7 +103,7 @@ BOOL CFileView::Create(CWnd* pParentWnd, UINT nID, LFSearchResult* pRawFiles, LF
 	if (!CWnd::Create(className, _T(""), dwStyle, rect, pParentWnd, nID))
 		return FALSE;
 
-	UpdateViewOptions(pCookedFiles ? pCookedFiles->m_Context : LFContextDefault, TRUE);
+	UpdateViewOptions(pCookedFiles ? pCookedFiles->m_Context : LFContextAllFiles, TRUE);
 	UpdateSearchResult(pRawFiles, pCookedFiles, Data, TRUE);
 	return TRUE;
 }
@@ -190,7 +190,7 @@ void CFileView::UpdateSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pC
 #ifdef DEBUG
 		m_AllowMultiSelect = TRUE;
 #else
-		m_AllowMultiSelect = (pCookedFiles->m_Context>LFContextStoreHome);
+		m_AllowMultiSelect = (pCookedFiles->m_Context!=LFContextStores);
 #endif
 
 		size_t sz = pCookedFiles->m_ItemCount*m_DataSize;
@@ -222,7 +222,7 @@ void CFileView::UpdateSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pC
 		m_HScrollPos = Data ? Data->HScrollPos : 0;
 		m_VScrollPos = Data ? Data->VScrollPos : 0;
 		m_HotItem = -1;
-		m_HideFileExt = theApp.HideFileExt();
+		m_HideFileExt = LFHideFileExt();
 	}
 	else
 	{
@@ -330,7 +330,7 @@ CBitmap* CFileView::CreateFooterBitmap(CDC* pDC, INT mincx, INT cy, CDC& dcDraw,
 #else
 	dcDraw.FillSolidRect(rect, Themed ? 0xFFFFFF : GetSysColor(COLOR_WINDOW));
 #endif
-	dcDraw.SetTextColor(Themed ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT));
+	dcDraw.SetTextColor(Themed ? 0x6D6D6D : GetSysColor(COLOR_3DFACE));
 
 	return pBmp;
 }
@@ -551,27 +551,9 @@ void CFileView::InvalidateItem(INT idx)
 		}
 }
 
-CMenu* CFileView::GetBackgroundContextMenu()
+CMenu* CFileView::GetViewContextmenu()
 {
-	CMenu* pMenu = new CMenu();
-
-	switch (m_Context)
-	{
-	case LFContextStores:
-		pMenu->LoadMenu(IDM_STORES);
-		break;
-	case LFContextStoreHome:
-		pMenu->LoadMenu(IDM_HOME);
-		break;
-	case LFContextTrash:
-		pMenu->LoadMenu(IDM_TRASH);
-		break;
-	default:
-		pMenu->CreatePopupMenu();
-		pMenu->AppendMenu(MF_POPUP, (UINT_PTR)CreateMenu(), _T("POPUP"));
-	}
-
-	return pMenu;
+	return NULL;
 }
 
 CMenu* CFileView::GetSendToMenu()
@@ -680,14 +662,14 @@ CMenu* CFileView::GetSendToMenu()
 	// Volumes
 	DWORD DrivesOnSystem = LFGetLogicalDrives(LFGLD_External | LFGLD_Network | LFGLD_IncludeFloppies);
 	DWORD DrivesWOFloppies = LFGetLogicalDrives(LFGLD_External | LFGLD_Network);
-	BOOL HideEmptyDrives = theApp.HideEmptyDrives();
+	BOOL HideDrivesWithNoMedia = LFHideDrivesWithNoMedia();
 
 	for (CHAR cDrive='A'; cDrive<='Z'; cDrive++, DrivesOnSystem>>=1, DrivesWOFloppies>>=1)
 	{
 		if ((DrivesOnSystem & 1)==0)
 			continue;
 
-		BOOL CheckEmpty = HideEmptyDrives && ((DrivesWOFloppies & 1)!=0);
+		BOOL CheckEmpty = HideDrivesWithNoMedia && ((DrivesWOFloppies & 1)!=0);
 
 		WCHAR szDriveRoot[] = L" :\\";
 		szDriveRoot[0] = cDrive;
@@ -757,7 +739,7 @@ CMenu* CFileView::GetItemContextMenu(INT idx)
 
 				CMenu* pSendPopup = GetSendToMenu();
 
-				ENSURE(tmpStr.LoadString(IDM_SEND));
+				ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_SENDTO));
 				pPopup->InsertMenu(0, MF_POPUP | MF_BYPOSITION, (UINT_PTR)pSendPopup->m_hMenu, tmpStr);
 				pPopup->InsertMenu(0, MF_SEPARATOR | MF_BYPOSITION);
 
@@ -1833,7 +1815,7 @@ void CFileView::OnUpdateCommands(CCmdUI* pCmdUI)
 	switch (pCmdUI->m_nID)
 	{
 	case ID_APP_NEWFILEDROP:
-		b = (m_Context<=LFContextStoreHome) && (_waccess(theApp.m_Path+_T("FileDrop.exe"), 0)==0);
+		b = (m_Context==LFContextStores) && (_waccess(theApp.m_Path+_T("FileDrop.exe"), 0)==0);
 		break;
 	case IDM_SELECTALL:
 	case IDM_SELECTINVERT:

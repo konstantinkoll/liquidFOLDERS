@@ -402,10 +402,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CFilterWnd.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\CFormatCache.cpp"
 				>
 			</File>
@@ -549,10 +545,6 @@
 			</File>
 			<File
 				RelativePath=".\CFileView.h"
-				>
-			</File>
-			<File
-				RelativePath=".\CFilterWnd.h"
 				>
 			</File>
 			<File
@@ -719,6 +711,10 @@
 			</File>
 			<File
 				RelativePath=".\res\Clipboard_Small.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Contexts.bmp"
 				>
 			</File>
 			<File

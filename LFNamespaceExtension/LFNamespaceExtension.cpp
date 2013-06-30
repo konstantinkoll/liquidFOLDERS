@@ -57,10 +57,6 @@ LFNamespaceExtensionApp::LFNamespaceExtensionApp()
 	for (UINT a=0; a<LFAttributeCount; a++)
 		m_Attributes[a] = LFGetAttributeInfo(a);
 
-	// Get domain information
-	for (UINT a=0; a<LFDomainCount; a++)
-		m_Domains[a] = LFGetDomainInfo(a);
-
 	// Get item category information
 	for (UINT a=0; a<LFItemCategoryCount; a++)
 		m_ItemCategories[a] = LFGetItemCategoryInfo(a);
@@ -82,8 +78,6 @@ LFNamespaceExtensionApp::~LFNamespaceExtensionApp()
 	CoUninitialize();
 
 	// Daten freigeben
-	for (UINT a=0; a<LFDomainCount; a++)
-		LFFreeDomainDescriptor(m_Domains[a]);
 	for (UINT a=0; a<LFAttributeCount; a++)
 		LFFreeAttributeDescriptor(m_Attributes[a]);
 	for (UINT a=0; a<LFItemCategoryCount; a++)
@@ -133,21 +127,6 @@ BOOL LFNamespaceExtensionApp::InitInstance()
 	ResetNagCounter;
 
 	return CWinApp::InitInstance();
-}
-
-BOOL LFNamespaceExtensionApp::HideFileExt()
-{
-	CSettingsStoreSP regSP;
-	CSettingsStore& reg = regSP.Create(FALSE, TRUE);
-
-	if (reg.Open(_T("Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced")))
-	{
-		DWORD hide;
-		if (reg.Read(_T("HideFileExt"), hide))
-			return hide;
-	}
-
-	return FALSE;
 }
 
 BOOL LFNamespaceExtensionApp::GetApplicationPath(CString App, CString& Path)

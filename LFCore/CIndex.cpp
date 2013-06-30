@@ -3,6 +3,7 @@
 #include "CIndex.h"
 #include "LFItemDescriptor.h"
 #include "Query.h"
+#include "ShellProperties.h"
 #include "Stores.h"
 #include <assert.h>
 
@@ -35,8 +36,8 @@ __forceinline bool CIndex::LoadTable(unsigned int ID, unsigned int* res)
 		case IDSlaveDocuments:
 			Tables[ID] = new CIdxTableDocuments(Path, L"Docs.idx");
 			break;
-		case IDSlaveMails:
-			Tables[ID] = new CIdxTableMails(Path, L"Mails.idx");
+		case IDSlaveMessages:
+			Tables[ID] = new CIdxTableMessages(Path, L"Mails.idx");
 			break;
 		case IDSlaveAudio:
 			Tables[ID] = new CIdxTableAudio(Path, L"Audio.idx");
@@ -75,6 +76,7 @@ bool CIndex::Create()
 unsigned int CIndex::Check(bool scheduled, LFProgress* pProgress)
 {
 	bool SlaveReindex = false;
+	bool UpdateContexts = false;
 	bool Repaired = false;
 	unsigned int tres[IdxTableCount];
 	unsigned int RecordSize = 0;
@@ -100,6 +102,7 @@ unsigned int CIndex::Check(bool scheduled, LFProgress* pProgress)
 		case HeapMaintenanceRequired:
 			if (!Tables[a]->Compact())
 				return IndexError;
+			UpdateContexts = true;
 			Repaired = true;
 			tres[a] = Tables[a]->OpenStatus;
 			break;
@@ -117,7 +120,7 @@ unsigned int CIndex::Check(bool scheduled, LFProgress* pProgress)
 	}
 
 	// Index-Durchlauf
-	if (scheduled || SlaveReindex)
+	if (scheduled || SlaveReindex || UpdateContexts)
 	{
 		if (!DirFreeSpace(Path, RecordSize*Tables[IDMaster]->GetItemCount()))
 			return IndexNotEnoughFreeDiscSpace;
@@ -142,7 +145,11 @@ unsigned int CIndex::Check(bool scheduled, LFProgress* pProgress)
 				}
 			}
 
-			// TODO: registrierte Formate anpassen, ggf. neue Slaves erstellen
+			if (UpdateContexts)
+			{
+				SetFileContext(PtrM, true);
+				Tables[IDMaster]->MakeDirty();
+			}
 		}
 	}
 
@@ -175,13 +182,7 @@ unsigned int CIndex::Check(bool scheduled, LFProgress* pProgress)
 			}
 		}
 
-	// Ergebnis
-	if (Repaired)
-		for (unsigned int a=0; a<IdxTableCount; a++)
-			if (tres[a]==HeapMaintenanceRecommended)
-				return IndexPartiallyRepaired;
-
-	return Repaired ? IndexFullyRepaired : IndexOk;
+	return Repaired ? IndexRepaired : IndexOk;
 }
 
 unsigned int CIndex::AddItem(LFItemDescriptor* i)
@@ -705,7 +706,7 @@ void CIndex::Retrieve(LFFilter* f, LFSearchResult* res)
 					res->m_LastError = LFIndexTableLoadError;
 				}
 
-			if (pass!=1)
+			if (!pass)
 				pass = PassesFilterSlaves(i, f) ? 1 : -1;
 		}
 
@@ -716,41 +717,6 @@ void CIndex::Retrieve(LFFilter* f, LFSearchResult* res)
 		// Nicht gesucht
 		LFFreeItemDescriptor(i);
 	}
-}
-
-unsigned int CIndex::RetrieveStats(unsigned int* cnt, __int64* size)
-{
-	if (!LoadTable(IDMaster))
-		return LFIndexTableLoadError;
-
-	int ID = 0;
-	LFCoreAttributes* PtrM;
-
-	while (Tables[IDMaster]->FindNext(ID, (void*&)PtrM))
-	{
-		#define Count(Domain) { if (cnt) cnt[Domain]++; if (size) size[Domain] += PtrM->FileSize; }
-
-		if (PtrM->Flags & LFFlagTrash)
-		{
-			Count(LFDomainTrash);
-		}
-		else
-		{
-			Count(LFDomainAllFiles);
-			if ((PtrM->DomainID>=LFDomainAudio) && (PtrM->DomainID<=LFDomainVideos))
-				Count(LFDomainAllMediaFiles);
-			if (PtrM->DomainID==LFDomainPhotos)
-				Count(LFDomainPictures);
-			if (PtrM->Rating)
-				Count(LFDomainFavorites);
-			if (PtrM->Flags & LFFlagNew)
-				Count(LFDomainNew);
-
-			Count(((PtrM->DomainID>=LFFirstPhysicalDomain) && (PtrM->DomainID<LFDomainCount) && (PtrM->DomainID!=LFDomainNew)) ? PtrM->DomainID : LFDomainUnknown);
-		}
-	}
-
-	return LFOk;
 }
 
 void CIndex::AddToSearchResult(LFFileIDList* il, LFSearchResult* res)

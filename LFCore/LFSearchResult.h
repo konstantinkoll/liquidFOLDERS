@@ -7,24 +7,25 @@ class LFSearchResult : public DynArray<LFItemDescriptor*>
 {
 public:
 	LFSearchResult(int ctx);
+	LFSearchResult(LFFilter* f);
 	LFSearchResult(LFSearchResult* res);
 	~LFSearchResult();
 
+	void SetMetadataFromFilter(LFFilter* f);
 	bool AddItemDescriptor(LFItemDescriptor* i);
 	bool AddStoreDescriptor(LFStoreDescriptor* s, LFFilter* f);
-	void AddVolumes(LFFilter* filter);
+	void AddVolumes();
 	void RemoveItemDescriptor(unsigned int idx, bool updatecount=true);
 	void RemoveFlaggedItemDescriptors(bool updatecount=true);
 	void KeepRange(int first, int last);
 	void Sort(unsigned int attr, bool descending);
 	void Group(unsigned int attr,unsigned int icon, bool groupone, LFFilter* f);
 	void GroupArray(unsigned int attr, unsigned int icon, LFFilter* f);
-	void SetContextAndDomain(LFFilter* f);
 
 	wchar_t m_Name[256];
+	wchar_t m_Hint[256];
 	bool m_RawCopy;
 	unsigned int m_Context;
-	unsigned int m_Domain;
 	unsigned int m_GroupAttribute;
 	bool m_HasCategories;
 	DWORD m_QueryTime;

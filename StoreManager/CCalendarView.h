@@ -29,7 +29,7 @@ class CCalendarView : public CFileView
 public:
 	CCalendarView();
 
-	virtual CMenu* GetBackgroundContextMenu();
+	virtual CMenu* GetViewContextmenu();
 	virtual void GetPersistentData(FVPersistentData& Data);
 
 protected:
@@ -39,11 +39,9 @@ protected:
 	UINT m_Year;
 	INT m_ColumnWidth;
 	BOOL m_ShowCaptions;
-	BOOL m_ShowEmptyDays;
 
 	virtual void SetViewOptions(BOOL Force);
 	virtual void SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data);
-	virtual CBitmap* RenderFooter();
 	virtual void AdjustLayout();
 
 	void SetYear(UINT Year);
@@ -56,8 +54,6 @@ protected:
 	afx_msg void OnPaint();
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 
-	afx_msg void OnShowStatistics();
-	afx_msg void OnShowEmptyDays();
 	afx_msg void OnShowCaptions();
 	afx_msg void OnPrevYear();
 	afx_msg void OnNextYear();

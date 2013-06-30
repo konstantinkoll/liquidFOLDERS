@@ -572,7 +572,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\DomainTable.h"
+				RelativePath=".\ContextTable.h"
 				>
 			</File>
 			<File
@@ -706,14 +706,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\FLD_Archive.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\res\FLD_Audio.ico"
-				>
-			</File>
-			<File
 				RelativePath=".\res\FLD_Calendar.ico"
 				>
 			</File>
@@ -723,10 +715,6 @@
 			</File>
 			<File
 				RelativePath=".\res\FLD_Default.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\res\FLD_Documents.ico"
 				>
 			</File>
 			<File
@@ -742,43 +730,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\FLD_Mail.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\res\FLD_Photos.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\res\FLD_Pictures.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\res\FLD_Presentations.ico"
-				>
-			</File>
-			<File
 				RelativePath=".\res\FLD_Roll.ico"
 				>
 			</File>
 			<File
-				RelativePath=".\res\FLD_Spreadsheets.ico"
-				>
-			</File>
-			<File
 				RelativePath=".\res\FLD_System.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\res\FLD_Trash.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\res\FLD_Videos.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\res\FLD_Web.ico"
 				>
 			</File>
 			<File

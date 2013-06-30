@@ -129,58 +129,58 @@ void CIdxTableDocuments::WriteToItemDescriptor(LFItemDescriptor* i, void* PtrSrc
 }
 
 
-// CIdxTableMails
+// CIdxTableMessages
 //
 
-CIdxTableMails::CIdxTableMails(wchar_t* Path, wchar_t* Filename)
-	: CHeapfile(Path, Filename, sizeof(LFMailAttributes))
+CIdxTableMessages::CIdxTableMessages(wchar_t* Path, wchar_t* Filename)
+	: CHeapfile(Path, Filename, sizeof(LFMessageAttributes))
 {
 }
 
-CIdxTableMails::~CIdxTableMails()
+CIdxTableMessages::~CIdxTableMessages()
 {
 }
 
-void CIdxTableMails::GetFromItemDescriptor(void* PtrDst, LFItemDescriptor* i)
+void CIdxTableMessages::GetFromItemDescriptor(void* PtrDst, LFItemDescriptor* i)
 {
 	assert(i);
 	assert(PtrDst);
 
-	if ((i->CoreAttributes.SlaveID==IDSlaveMails) && (i->Slave))
+	if ((i->CoreAttributes.SlaveID==IDSlaveMessages) && (i->Slave))
 	{
-		ZeroCopy(PtrDst, Hdr.ElementSize-LFKeySize, i->Slave, sizeof(LFMailAttributes));
+		ZeroCopy(PtrDst, Hdr.ElementSize-LFKeySize, i->Slave, sizeof(LFMessageAttributes));
 	}
 	else
 	{
-		ZeroMemory(PtrDst, sizeof(LFMailAttributes));
+		ZeroMemory(PtrDst, sizeof(LFMessageAttributes));
 
-		GetAttribute(PtrDst, offsetof(LFMailAttributes, From), LFAttrFrom, i);
-		GetAttribute(PtrDst, offsetof(LFMailAttributes, To), LFAttrTo, i);
-		GetAttribute(PtrDst, offsetof(LFMailAttributes, Subject), LFAttrTitle, i);
-		GetAttribute(PtrDst, offsetof(LFMailAttributes, Language), LFAttrLanguage, i);
-		GetAttribute(PtrDst, offsetof(LFMailAttributes, Responsible), LFAttrResponsible, i);
-		GetAttribute(PtrDst, offsetof(LFMailAttributes, DueTime), LFAttrDueTime, i);
-		GetAttribute(PtrDst, offsetof(LFMailAttributes, DoneTime), LFAttrDoneTime, i);
+		GetAttribute(PtrDst, offsetof(LFMessageAttributes, From), LFAttrFrom, i);
+		GetAttribute(PtrDst, offsetof(LFMessageAttributes, To), LFAttrTo, i);
+		GetAttribute(PtrDst, offsetof(LFMessageAttributes, Subject), LFAttrTitle, i);
+		GetAttribute(PtrDst, offsetof(LFMessageAttributes, Language), LFAttrLanguage, i);
+		GetAttribute(PtrDst, offsetof(LFMessageAttributes, Responsible), LFAttrResponsible, i);
+		GetAttribute(PtrDst, offsetof(LFMessageAttributes, DueTime), LFAttrDueTime, i);
+		GetAttribute(PtrDst, offsetof(LFMessageAttributes, DoneTime), LFAttrDoneTime, i);
 	}
 }
 
-void CIdxTableMails::WriteToItemDescriptor(LFItemDescriptor* i, void* PtrSrc)
+void CIdxTableMessages::WriteToItemDescriptor(LFItemDescriptor* i, void* PtrSrc)
 {
 	assert(i);
 	assert(!i->Slave);
-	assert(i->CoreAttributes.SlaveID==IDSlaveMails);
+	assert(i->CoreAttributes.SlaveID==IDSlaveMessages);
 	assert(PtrSrc);
 
-	i->Slave = malloc(sizeof(LFMailAttributes));
-	ZeroCopy(i->Slave, sizeof(LFMailAttributes), PtrSrc, Hdr.ElementSize-LFKeySize);
+	i->Slave = malloc(sizeof(LFMessageAttributes));
+	ZeroCopy(i->Slave, sizeof(LFMessageAttributes), PtrSrc, Hdr.ElementSize-LFKeySize);
 
-	i->AttributeValues[LFAttrFrom] = ((LFMailAttributes*)i->Slave)->From;
-	i->AttributeValues[LFAttrTo] = ((LFMailAttributes*)i->Slave)->To;
-	i->AttributeValues[LFAttrTitle] = ((LFMailAttributes*)i->Slave)->Subject;
-	i->AttributeValues[LFAttrLanguage] = ((LFMailAttributes*)i->Slave)->Language;
-	i->AttributeValues[LFAttrResponsible] = ((LFMailAttributes*)i->Slave)->Responsible;
-	i->AttributeValues[LFAttrDueTime] = &((LFMailAttributes*)i->Slave)->DueTime;
-	i->AttributeValues[LFAttrDoneTime] = &((LFMailAttributes*)i->Slave)->DoneTime;
+	i->AttributeValues[LFAttrFrom] = ((LFMessageAttributes*)i->Slave)->From;
+	i->AttributeValues[LFAttrTo] = ((LFMessageAttributes*)i->Slave)->To;
+	i->AttributeValues[LFAttrTitle] = ((LFMessageAttributes*)i->Slave)->Subject;
+	i->AttributeValues[LFAttrLanguage] = ((LFMessageAttributes*)i->Slave)->Language;
+	i->AttributeValues[LFAttrResponsible] = ((LFMessageAttributes*)i->Slave)->Responsible;
+	i->AttributeValues[LFAttrDueTime] = &((LFMessageAttributes*)i->Slave)->DueTime;
+	i->AttributeValues[LFAttrDoneTime] = &((LFMessageAttributes*)i->Slave)->DoneTime;
 }
 
 

@@ -9,13 +9,12 @@
 
 #define IndexOk                        0
 #define IndexCancel                    1
-#define IndexPartiallyRepaired         2
-#define IndexFullyRepaired             3
-#define IndexNoAccess                  4
-#define IndexError                     5
-#define IndexCannotCreate              6
-#define IndexCompleteReindexRequired   7
-#define IndexNotEnoughFreeDiscSpace    8
+#define IndexRepaired                  2
+#define IndexNoAccess                  3
+#define IndexError                     4
+#define IndexCannotCreate              5
+#define IndexCompleteReindexRequired   6
+#define IndexNotEnoughFreeDiscSpace    7
 
 #define IndexMaintenanceSteps          (IdxTableCount*2+1)
 
@@ -37,7 +36,6 @@ public:
 	void ResolvePhysicalLocations(LFTransactionList* tl);
 	unsigned int Rename(char* FileID, wchar_t* NewName);
 	void Retrieve(LFFilter* f, LFSearchResult* res);
-	unsigned int RetrieveStats(unsigned int* cnt, __int64* size);
 	void AddToSearchResult(LFFileIDList* il, LFSearchResult* res);
 	void TransferTo(CIndex* idxDst1, CIndex* idxDst2, LFStoreDescriptor* slotDst, LFFileIDList* il, LFStoreDescriptor* slotSrc, bool move, LFProgress* pProgress=NULL);
 

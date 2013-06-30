@@ -6,20 +6,20 @@
 // Version
 //
 
-#define CurIdxVersion                   2
+#define CurIdxVersion        3
 
 
 // Structures
 //
 
-#define IDMaster                        0
-#define IDSlaveDocuments                1
-#define IDSlaveMails                    2
-#define IDSlaveAudio                    3
-#define IDSlavePictures                 4
-#define IDSlaveVideos                   5
+#define IDMaster             0
+#define IDSlaveDocuments     1
+#define IDSlaveMessages      2
+#define IDSlaveAudio         3
+#define IDSlavePictures      4
+#define IDSlaveVideos        5
 
-#define IdxTableCount                   6
+#define IdxTableCount        6
 
 
 struct LFDocumentAttributes
@@ -37,7 +37,7 @@ struct LFDocumentAttributes
 	wchar_t Customer[256];
 };
 
-struct LFMailAttributes
+struct LFMessageAttributes
 {
 	char From[256];
 	char To[256];
@@ -130,14 +130,14 @@ public:
 };
 
 
-// CIdxTableMails
+// CIdxTableMessages
 //
 
-class CIdxTableMails : public CHeapfile
+class CIdxTableMessages : public CHeapfile
 {
 public:
-	CIdxTableMails(wchar_t* Path, wchar_t* Filename);
-	virtual ~CIdxTableMails();
+	CIdxTableMessages(wchar_t* Path, wchar_t* Filename);
+	virtual ~CIdxTableMessages();
 
 	virtual void GetFromItemDescriptor(void* PtrDst, LFItemDescriptor* i);
 	virtual void WriteToItemDescriptor(LFItemDescriptor* i, void* PtrSrc);

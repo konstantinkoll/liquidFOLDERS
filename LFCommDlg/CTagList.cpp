@@ -23,27 +23,6 @@ CTagList::~CTagList()
 			delete m_BgBitmaps[a];
 }
 
-void CTagList::CreateRoundRectangle(CRect rect, INT rad, GraphicsPath& path)
-{
-	path.Reset();
-
-	INT l = rect.left;
-	INT t = rect.top;
-	INT w = rect.Width()-1;
-	INT h = rect.Height()-1;
-	INT d = rad<<1;
-
-	path.AddArc(l, t, d, d, 180, 90);
-	path.AddLine(l+rad, t, l+w-rad, t);
-	path.AddArc(l+w-d, t, d, d, 270, 90);
-	path.AddLine(l+w, t+rad, l+w, t+h-rad);
-	path.AddArc(l+w-d, t+h-d, d, d, 0, 90);
-	path.AddLine(l+w-rad, t+h, l+rad, t+h);
-	path.AddArc(l, t+h-d, d, d, 90, 90);
-	path.AddLine(l, t+h-rad, l, t+rad);
-	path.CloseFigure();
-}
-
 
 BEGIN_MESSAGE_MAP(CTagList, CListCtrl)
 	ON_NOTIFY_REFLECT(NM_CUSTOMDRAW, OnCustomDraw)
@@ -119,10 +98,13 @@ void CTagList::DrawItem(INT nID, CDC* pDC)
 		g.SetCompositingMode(CompositingModeSourceOver);
 		g.SetSmoothingMode(SmoothingModeAntiAlias);
 
-		if (!m_Path.GetPointCount())
-			CreateRoundRectangle(rect, 4, m_Path);
+		rect.right--;
+		rect.bottom--;
 
-		// Inner border
+		if (!m_Path.GetPointCount())
+			CreateRoundRectangle(rect, 3, m_Path);
+
+		// Inner
 		if (IsCtrlThemed())
 		{
 			LinearGradientBrush br(Point(0, rect.top), Point(0, rect.bottom), Color(selCol1 & 0xFF, (selCol1>>8) & 0xFF, (selCol1>>16) & 0xFF), Color(selCol2 & 0xFF, (selCol2>>8) & 0xFF, (selCol2>>16) & 0xFF));

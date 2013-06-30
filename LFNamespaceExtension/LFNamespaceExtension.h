@@ -27,7 +27,6 @@ public:
 
 	virtual BOOL InitInstance();
 
-	static BOOL HideFileExt();
 	static void GetIconSize(INT& cx, INT& cy);
 	static CString FrmtAttrStr(CString Mask, CString Name);
 	UINT ImportFiles(CHAR* StoreID, IDataObject* pDataObject, BOOL Move);
@@ -43,7 +42,6 @@ public:
 	WCHAR m_CoreFile[MAX_PATH];
 	WCHAR m_ThisFile[MAX_PATH];
 	LFAttributeDescriptor* m_Attributes[LFAttributeCount];
-	LFDomainDescriptor* m_Domains[LFDomainCount];
 	LFItemCategoryDescriptor* m_ItemCategories[LFItemCategoryCount];
 	WCHAR* m_AttrCategoryNames[LFAttrCategoryCount+1];
 	UINT m_NagCounter;

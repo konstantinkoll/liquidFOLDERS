@@ -13,56 +13,35 @@ void FinishGraph(CDC& dc, CRect rect, BOOL Themed)
 	{
 		Graphics g(dc);
 
-		LinearGradientBrush brush1(Point(rect.left, rect.top), Point(rect.left, rect.top+rect.Height()/4+1), Color(0xA0, 0xFF, 0xFF, 0xFF), Color(0x00, 0xFF, 0xFF, 0xFF));
-		g.FillRectangle(&brush1, Rect(rect.left, rect.top, rect.Width(), rect.Height()/4));
+		// Inner
+		LinearGradientBrush brush1(Point(rect.left, rect.top), Point(rect.left, rect.bottom), Color(0x80, 0xFF, 0xFF, 0xFF), Color(0x00, 0xFF, 0xFF, 0xFF));
+		g.FillRectangle(&brush1, Rect(rect.left, rect.top, rect.Width(), rect.Height()));
 
-		LinearGradientBrush brush2(Point(rect.left, rect.top), Point(rect.left, rect.top+rect.Height()/2+1), Color(0x40, 0xFF, 0xFF, 0xFF), Color(0x50, 0xFF, 0xFF, 0xFF));
-		g.FillRectangle(&brush2, Rect(rect.left, rect.top, rect.Width(), rect.Height()/2));
+		INT Line = rect.top+rect.Height()*3/4-2;
+		LinearGradientBrush brush2(Point(rect.left, Line-1), Point(rect.left, rect.bottom+1), Color(0x00, 0x00, 0x00, 0x00), Color(0x60, 0x00, 0x00, 0x00));
+		g.FillRectangle(&brush2, Rect(rect.left, Line, rect.Width(), rect.bottom-Line));
 
-		INT Line = rect.top+rect.Height()/2;
-		LinearGradientBrush brush3(Point(rect.left, Line-1), Point(rect.left, rect.bottom+1), Color(0x40, 0xFF, 0xFF, 0xFF), Color(0x00, 0xFF, 0xFF, 0xFF));
-		g.FillRectangle(&brush3, Rect(rect.left, Line, rect.Width(), rect.bottom-Line));
+		g.SetCompositingMode(CompositingModeSourceOver);
+		g.SetSmoothingMode(SmoothingModeAntiAlias);
 
-		Line = rect.top+rect.Height()*3/4-2;
-		LinearGradientBrush brush4(Point(rect.left, Line-1), Point(rect.left, rect.bottom+1), Color(0x00, 0x00, 0x00, 0x00), Color(0xC0, 0x00, 0x00, 0x00));
-		g.FillRectangle(&brush4, Rect(rect.left, Line, rect.Width(), rect.bottom-Line));
+		// Outer border
+		dc.SetPixel(rect.left, rect.top, 0xFFFFFF);
+		dc.SetPixel(rect.right-1, rect.top, 0xFFFFFF);
+		dc.SetPixel(rect.left, rect.bottom-1, 0xFFFFFF);
+		dc.SetPixel(rect.right-1, rect.bottom-1, 0xFFFFFF);
+
+		rect.right--;
+		rect.bottom--;
+
+		GraphicsPath path;
+		CreateRoundRectangle(rect, 2, path);
+
+		Pen pen(Color(0x60, 0x00, 0x00, 0x00));
+		g.DrawPath(&pen, &path);
 	}
-
-	dc.Draw3dRect(rect, 0x000000, 0x000000);
-
-	if (Themed)
+	else
 	{
-		const COLORREF clrBack = Themed ? 0xFFFFFF : GetSysColor(COLOR_WINDOW);
-		dc.SetPixel(rect.left, rect.top, clrBack);
-		dc.SetPixel(rect.right-1, rect.top, clrBack);
-		dc.SetPixel(rect.left, rect.bottom-1, clrBack);
-		dc.SetPixel(rect.right-1, rect.bottom-1, clrBack);
-
-		const COLORREF clrBlend50 = (clrBack>>1) & 0x7F7F7F;
-		dc.SetPixel(rect.left+1, rect.top, clrBlend50);
-		dc.SetPixel(rect.left, rect.top+1, clrBlend50);
-		dc.SetPixel(rect.right-2, rect.top, clrBlend50);
-		dc.SetPixel(rect.right-1, rect.top+1, clrBlend50);
-		dc.SetPixel(rect.left+1, rect.bottom-1, clrBlend50);
-		dc.SetPixel(rect.left, rect.bottom-2, clrBlend50);
-		dc.SetPixel(rect.right-2, rect.bottom-1, clrBlend50);
-		dc.SetPixel(rect.right-1, rect.bottom-2, clrBlend50);
-
-		const COLORREF clrBlend75 = (clrBlend50>>1) & 0x7F7F7F;
-		dc.SetPixel(rect.left+2, rect.top, clrBlend75);
-		dc.SetPixel(rect.left, rect.top+2, clrBlend75);
-		dc.SetPixel(rect.right-3, rect.top, clrBlend75);
-		dc.SetPixel(rect.right-1, rect.top+2, clrBlend75);
-		dc.SetPixel(rect.left+2, rect.bottom-1, clrBlend75);
-		dc.SetPixel(rect.left, rect.bottom-3, clrBlend75);
-		dc.SetPixel(rect.right-3, rect.bottom-1, clrBlend75);
-		dc.SetPixel(rect.right-1, rect.bottom-3, clrBlend75);
-
-#define Blend(x, y) dc.SetPixel(x, y, (dc.GetPixel(x, y)>>1) & 0x7F7F7F);
-		Blend(rect.left+1, rect.top+1);
-		Blend(rect.right-2, rect.top+1);
-		Blend(rect.left+1, rect.bottom-2);
-		Blend(rect.right-2, rect.bottom-2);
+		dc.Draw3dRect(rect, 0x000000, 0x000000);
 	}
 }
 

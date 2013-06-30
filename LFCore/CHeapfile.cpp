@@ -103,7 +103,7 @@ Create:
 				goto Create;
 
 			ItemCount = (unsigned int)((size.QuadPart-sizeof(HeapfileHeader))/Hdr.ElementSize);
-			OpenStatus = (Hdr.Version<CurIdxVersion) ? HeapMaintenanceRecommended : HeapOk;
+			OpenStatus = (Hdr.Version<CurIdxVersion) ? HeapMaintenanceRequired : HeapOk;
 
 			// Anpassungen für andere Index-Versionen und Tupelgrößen
 			if (Hdr.ElementSize>_ElementSize)
@@ -398,7 +398,7 @@ unsigned int CHeapfile::GetRequiredDiscSize()
 
 bool CHeapfile::Compact()
 {
-	if ((!Hdr.NeedsCompaction) && (OpenStatus!=HeapMaintenanceRequired) && (OpenStatus!=HeapMaintenanceRecommended))
+	if ((!Hdr.NeedsCompaction) && (OpenStatus!=HeapMaintenanceRequired))
 		return true;
 
 	wchar_t BufFilename[MAX_PATH];

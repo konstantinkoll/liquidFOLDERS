@@ -49,7 +49,7 @@ UINT CTaskbar::GetPreferredHeight()
 	return h;
 }
 
-CTaskButton* CTaskbar::AddButton(UINT nID, INT IconID, BOOL ForceIcon, BOOL AddRight)
+CTaskButton* CTaskbar::AddButton(UINT nID, INT IconID, BOOL ForceIcon, BOOL AddRight, BOOL SupressCaption)
 {
 	CString Caption;
 	CString Hint;
@@ -70,8 +70,8 @@ CTaskButton* CTaskbar::AddButton(UINT nID, INT IconID, BOOL ForceIcon, BOOL AddR
 	}
 
 	CTaskButton* btn = new CTaskButton();
-	btn->Create(AddRight ? _T("") : Caption, Caption, Hint, &m_Icons,
-		ForceIcon || AddRight || (LFGetApp()->OSVersion<OS_Seven) ? IconID : -1,
+	btn->Create(AddRight || SupressCaption ? _T("") : Caption, Caption, Hint, &m_Icons,
+		ForceIcon || AddRight || SupressCaption || (LFGetApp()->OSVersion<OS_Seven) ? IconID : -1,
 		this, nID);
 	btn->EnableWindow(FALSE);
 

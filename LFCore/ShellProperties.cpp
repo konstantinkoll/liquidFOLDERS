@@ -48,37 +48,22 @@ static const GUID PropertyUnnamed6 =
 static const GUID PropertyUnnamed7 =
 	{ 0x276D7BB0, 0x5B34, 0x4FB0, { 0xAA, 0x4B, 0x15, 0x8E, 0xD1, 0x2A, 0x18, 0x09 } };
 
-
-// Der Inhalt dieses Segments wird über alle Instanzen von LFCore geteilt.
-// Der Zugriff muss daher über Mutex-Objekte serialisiert/synchronisiert werden.
-// Alle Variablen im Segment müssen initalisiert werden !
-
-#pragma data_seg("common_shprop")
-
-unsigned char DomainSlaves[LFDomainCount] = {
-	IDMaster,							// LFDomainAllFiles
-	IDMaster,							// LFDomainAllMediaFiles
-	IDMaster,							// LFDomainFavorites
-	IDMaster,							// LFDomainTrash
-	IDMaster,							// LFDomainUnknown
-	IDMaster,							// LFDomainFilters
-	IDSlaveAudio,						// LFDomainAudio
-	IDSlavePictures,					// LFDomainPhotos
-	IDSlavePictures,					// LFDomainPictures
-	IDSlaveVideos,						// LFDomainVideos
-	IDMaster,							// LFDomainArchives
-	IDMaster,							// LFDomainContacts
-	IDSlaveDocuments,					// LFDomainDocuments
-	IDMaster,							// LFDomainEvents
-	IDMaster,							// LFDomainFonts
-	IDMaster,							// LFDomainGeodata
-	IDSlaveMails,						// LFDomainMessages
-	IDSlaveDocuments,					// LFDomainPresentations
-	IDSlaveDocuments,					// LFDomainSpreadsheets
-	IDSlaveDocuments					// LFDomainWeb
+static const unsigned char ContextSlaves[LFLastQueryContext+1] = {
+	IDMaster,							// LFContextAllFiles
+	IDMaster,							// LFContextFavorites
+	IDSlaveAudio,						// LFContextAudio
+	IDSlavePictures,					// LFContextPictures
+	IDSlaveVideos,						// LFContextVideos
+	IDSlaveDocuments,					// LFContextDocuments
+	IDMaster,							// LFContextContacts
+	IDSlaveMessages,					// LFContextMessages
+	IDMaster,							// LFContextEvents
+	IDMaster,							// LFContextNew
+	IDMaster,							// LFContextTrash
+	IDMaster							// LFContextFilters
 };
 
-#include "DomainTable.h"
+#include "ContextTable.h"
 
 LFShellProperty AttrProperties[LFAttributeCount] = {
 	{ PropertyStorage, 10 },		// LFAttrFileName
@@ -141,28 +126,25 @@ LFShellProperty AttrProperties[LFAttributeCount] = {
 	{ PropertyUnnamed7, 100 }		// LFAttrClient
 };
 
-#pragma data_seg()
-#pragma comment(linker, "/SECTION:common_shprop,RWS")
 
-
-unsigned char GetHardcodedDomain(char* ext)
+unsigned char GetHardcodedContext(char* ext)
 {
 	unsigned int left = 0;
-	unsigned int right = sizeof(Registry)/sizeof(RegisteredFile);
+	unsigned int right = (sizeof(Registry)/sizeof(RegisteredFile))-1;
 
 	while (left<right)
 	{
-		unsigned int mid = left+(right-left)/2;
+		unsigned int mid = (left+right)/2;
 
 		switch (strcmp(ext, Registry[mid].Format))
 		{
 		case 0:
-			return Registry[mid].DomainID;
+			return Registry[mid].ContextID;
 		case 1:
 			left = mid+1;
 			break;
 		case -1:
-			right = mid;
+			right = mid-1;
 			break;
 		}
 	}
@@ -170,7 +152,7 @@ unsigned char GetHardcodedDomain(char* ext)
 	return 0;
 }
 
-unsigned char GetPerceivedDomain(char* ext)
+unsigned char GetPerceivedContext(char* ext)
 {
 	wchar_t ExtW[17];
 	ExtW[0] = '.';
@@ -182,43 +164,44 @@ unsigned char GetPerceivedDomain(char* ext)
 		switch (Type)
 		{
 		case PERCEIVED_TYPE_IMAGE:
-			return LFDomainPictures;
+			return LFContextPictures;
 		case PERCEIVED_TYPE_AUDIO:
-			return LFDomainAudio;
+			return LFContextAudio;
 		case PERCEIVED_TYPE_VIDEO:
-			return LFDomainVideos;
-		case PERCEIVED_TYPE_COMPRESSED:
-			return LFDomainArchives;
+			return LFContextVideos;
 		case PERCEIVED_TYPE_CONTACTS:
-			return LFDomainContacts;
+			return LFContextContacts;
 		}
 
 	return 0;
+}
+
+void SetFileContext(LFCoreAttributes* c, bool force)
+{
+	#ifdef _DEBUG
+	// Test: ist die Kontext-Liste korrekt sortiert?
+	for (unsigned int a=0; a<(sizeof(Registry)/sizeof(RegisteredFile))-2; a++)
+		if (strcmp(Registry[a].Format, Registry[a+1].Format)>-1)
+			MessageBoxA(NULL, Registry[a].Format, "Registry sort error", 0);
+	#endif
+
+	if ((!c->ContextID) || force)
+		c->ContextID = GetHardcodedContext(c->FileFormat);
+
+	if (!c->ContextID)
+		c->ContextID = GetPerceivedContext(c->FileFormat);
 }
 
 void SetFileDomainAndSlave(LFItemDescriptor* i)
 {
 	assert(i);
 
-	#ifdef _DEBUG
-	// Test: ist die Domain-Liste korrekt sortiert?
-	for (unsigned int a=0; a<(sizeof(Registry)/sizeof(RegisteredFile))-2; a++)
-		if (strcmp(Registry[a].Format, Registry[a+1].Format)>-1)
-			MessageBoxA(NULL, Registry[a].Format, "Registry sort error", 0);
-	#endif
-
-	// Domain
-	if (!i->CoreAttributes.DomainID)
-		i->CoreAttributes.DomainID = GetHardcodedDomain(i->CoreAttributes.FileFormat);
-
-	// TODO: Benutzer-Einstellungen abfragen
-
-	if (!i->CoreAttributes.DomainID)
-		i->CoreAttributes.DomainID = GetPerceivedDomain(i->CoreAttributes.FileFormat);
+	// Context
+	SetFileContext(&i->CoreAttributes);
 
 	// Slave
-	assert(i->CoreAttributes.DomainID<LFDomainCount);
-	i->CoreAttributes.SlaveID = DomainSlaves[i->CoreAttributes.DomainID];
+	assert(i->CoreAttributes.ContextID<=LFLastQueryContext);
+	i->CoreAttributes.SlaveID = ContextSlaves[i->CoreAttributes.ContextID];
 }
 
 bool GetShellProperty(IShellFolder2* pParentFolder, LPCITEMIDLIST pidlRel, GUID Schema, UINT ID, LFItemDescriptor*i, UINT attr)

@@ -116,14 +116,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Folders\FLD_Archive.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\Folders\FLD_Audio.ico"
-				>
-			</File>
-			<File
 				RelativePath=".\Folders\FLD_Calendar.ico"
 				>
 			</File>
@@ -133,10 +125,6 @@
 			</File>
 			<File
 				RelativePath=".\Folders\FLD_Default.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\Folders\FLD_Documents.ico"
 				>
 			</File>
 			<File
@@ -152,43 +140,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Folders\FLD_Mail.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\Folders\FLD_Photos.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\Folders\FLD_Pictures.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\Folders\FLD_Presentations.ico"
-				>
-			</File>
-			<File
 				RelativePath=".\Folders\FLD_Roll.ico"
 				>
 			</File>
 			<File
-				RelativePath=".\Folders\FLD_Spreadsheets.ico"
-				>
-			</File>
-			<File
 				RelativePath=".\Folders\FLD_System.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\Folders\FLD_Trash.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\Folders\FLD_Videos.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\Folders\FLD_Web.ico"
 				>
 			</File>
 		</Filter>
@@ -224,6 +180,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Ribbon\Calendar_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\Calendar_32.png"
+				>
+			</File>
+			<File
 				RelativePath="Ribbon\CalendarBack_16.png"
 				>
 			</File>
@@ -256,6 +220,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Ribbon\Contact_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\Contact_32.png"
+				>
+			</File>
+			<File
 				RelativePath="Ribbon\Delete_16.png"
 				>
 			</File>
@@ -269,6 +241,14 @@
 			</File>
 			<File
 				RelativePath="Ribbon\Descending_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\Document_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\Document_32.png"
 				>
 			</File>
 			<File
@@ -304,15 +284,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Ribbon\Filter_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\Filter_32.png"
+				>
+			</File>
+			<File
 				RelativePath=".\Ribbon\FilterEdit_16.png"
 				>
 			</File>
 			<File
 				RelativePath=".\Ribbon\FilterEdit_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\FilterHide_16.png"
 				>
 			</File>
 			<File
@@ -324,31 +308,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Ribbon\FilterShow_16.png"
-				>
-			</File>
-			<File
 				RelativePath="Ribbon\Folder_16.png"
 				>
 			</File>
 			<File
 				RelativePath="Ribbon\Folder_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\FolderAdd_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\FolderAdd_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\FolderProperties_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\FolderProperties_32.png"
 				>
 			</File>
 			<File
@@ -469,6 +433,14 @@
 			</File>
 			<File
 				RelativePath=".\Ribbon\LFAttrCustomer_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\LFAttrDeleteTime_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\LFAttrDeleteTime_32.png"
 				>
 			</File>
 			<File
@@ -656,11 +628,27 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Ribbon\Message_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\Message_32.png"
+				>
+			</File>
+			<File
 				RelativePath="Ribbon\Open_16.png"
 				>
 			</File>
 			<File
 				RelativePath="Ribbon\Open_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\Picture_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\Picture_32.png"
 				>
 			</File>
 			<File
@@ -728,6 +716,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Ribbon\StoreMaintenance_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\StoreMaintenance_32.png"
+				>
+			</File>
+			<File
 				RelativePath="Ribbon\StoreNew_16.png"
 				>
 			</File>
@@ -741,6 +737,14 @@
 			</File>
 			<File
 				RelativePath=".\Ribbon\StoreProperties_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\StoreRename_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\StoreRename_32.png"
 				>
 			</File>
 			<File
@@ -853,6 +857,14 @@
 			</File>
 			<File
 				RelativePath="Ribbon\ViewList_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\ViewOptions_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\ViewOptions_32.png"
 				>
 			</File>
 			<File
@@ -1093,15 +1105,19 @@
 			>
 		</File>
 		<File
+			RelativePath=".\FilterPane_Blue.png"
+			>
+		</File>
+		<File
+			RelativePath=".\FilterPane_White.png"
+			>
+		</File>
+		<File
 			RelativePath=".\FilterSave_Tiny.ico"
 			>
 		</File>
 		<File
 			RelativePath=".\Folder_Tiny.ico"
-			>
-		</File>
-		<File
-			RelativePath=".\FolderAdd_Tiny.ico"
 			>
 		</File>
 		<File

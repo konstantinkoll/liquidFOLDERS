@@ -30,7 +30,7 @@ class CGlobeView : public CFileView
 public:
 	CGlobeView();
 
-	virtual CMenu* GetBackgroundContextMenu();
+	virtual CMenu* GetViewContextmenu();
 	virtual void GetPersistentData(FVPersistentData& Data);
 
 	BOOL Create(CWnd* pParentWnd, UINT nID, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data);

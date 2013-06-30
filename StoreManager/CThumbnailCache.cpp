@@ -107,7 +107,7 @@ BOOL CThumbnailCache::DrawJumboThumbnail(CDC& dc, CRect& rect, LFItemDescriptor*
 
 	static const BLENDFUNCTION BF = { AC_SRC_OVER, 0, 0xFF, AC_SRC_ALPHA };
 
-	BOOL DrawFrame = ((i->CoreAttributes.DomainID>=LFDomainPhotos) && (i->CoreAttributes.DomainID<=LFDomainVideos)) || ((bm.bmWidth==118) && (bm.bmHeight==118));
+	BOOL DrawFrame = ((i->CoreAttributes.ContextID>=LFContextPictures) && (i->CoreAttributes.ContextID<=LFContextVideos)) || ((bm.bmWidth==118) && (bm.bmHeight==118));
 	BOOL DrawShadow = !DrawFrame && (bm.bmWidth>=4) && (bm.bmWidth<=118) && (bm.bmHeight>=4) && (bm.bmHeight<=118);
 	if (theApp.m_ThemeLibLoaded)
 		if (!theApp.zIsAppThemed())

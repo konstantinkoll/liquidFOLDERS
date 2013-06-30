@@ -263,10 +263,6 @@ LFApplication::LFApplication(BOOL HasGUI, GUID& AppID)
 	for (UINT a=0; a<LFAttrCategoryCount; a++)
 		m_AttrCategories[a] = LFGetAttrCategoryName(a);
 
-	// Get domain information
-	for (UINT a=0; a<LFDomainCount; a++)
-		m_Domains[a] = LFGetDomainInfo(a);
-
 	// Get context information
 	for (UINT a=0; a<LFContextCount; a++)
 		m_Contexts[a] = LFGetContextInfo(a);
@@ -294,8 +290,6 @@ LFApplication::~LFApplication()
 		LFFreeAttributeDescriptor(m_Attributes[a]);
 	for (UINT a=0; a<LFAttrCategoryCount; a++)
 		delete m_AttrCategories[a];
-	for (UINT a=0; a<LFDomainCount; a++)
-		LFFreeDomainDescriptor(m_Domains[a]);
 	for (UINT a=0; a<LFContextCount; a++)
 		LFFreeContextDescriptor(m_Contexts[a]);
 	for (UINT a=0; a<LFItemCategoryCount; a++)
@@ -585,52 +579,22 @@ UINT LFApplication::DeleteStore(LFStoreDescriptor* store, CWnd* pParentWnd, CWnd
 
 void LFApplication::PlayStandardSound()
 {
-	PlayRegSound(L"Apps\\.Default\\.Default");
+	PlayRegSound(_T("Apps\\.Default\\.Default"));
 }
 
 void LFApplication::PlayNavigateSound()
 {
-	PlayRegSound(L"Apps\\Explorer\\Navigating");
+	PlayRegSound(_T("Apps\\Explorer\\Navigating"));
 }
 
 void LFApplication::PlayWarningSound()
 {
-	PlayRegSound(L"Apps\\Explorer\\SecurityBand");
+	PlayRegSound(_T("Apps\\Explorer\\SecurityBand"));
 }
 
 void LFApplication::PlayTrashSound()
 {
-	PlayRegSound(L"Apps\\Explorer\\EmptyRecycleBin");
-}
-
-BOOL LFApplication::HideFileExt()
-{
-	CSettingsStoreSP regSP;
-	CSettingsStore& reg = regSP.Create(FALSE, TRUE);
-
-	if (reg.Open(_T("Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced")))
-	{
-		DWORD hide;
-		if (reg.Read(_T("HideFileExt"), hide))
-			return hide;
-	}
-
-	return FALSE;
-}
-
-BOOL LFApplication::HideEmptyDrives()
-{
-	CSettingsStoreSP regSP;
-	CSettingsStore& reg = regSP.Create(FALSE, TRUE);
-
-	if (reg.Open(_T("Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced")))
-	{
-		DWORD hide;
-		if (reg.Read(_T("HideDrivesWithNoMedia"), hide))
-			return hide;
-	}
-
-	return FALSE;
+	PlayRegSound(_T("Apps\\Explorer\\EmptyRecycleBin"));
 }
 
 void LFApplication::GetUpdateSettings(BOOL* EnableAutoUpdate, INT* Interval)

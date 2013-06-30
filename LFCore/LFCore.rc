@@ -30,24 +30,13 @@ LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
 // remains consistent on all systems.
 IDI_FLD_Default         ICON                    "res\\FLD_Default.ico"
 IDI_FLD_All             ICON                    "res\\FLD_All.ico"
-IDI_FLD_Archive         ICON                    "res\\FLD_Archive.ico"
-IDI_FLD_Audio           ICON                    "res\\FLD_Audio.ico"
 IDI_FLD_Calendar        ICON                    "res\\FLD_Calendar.ico"
 IDI_FLD_Contacts        ICON                    "res\\FLD_Contacts.ico"
-IDI_FLD_Documents       ICON                    "res\\FLD_Documents.ico"
 IDI_FLD_Favorites       ICON                    "res\\FLD_Favorites.ico"
 IDI_FLD_Fonts           ICON                    "res\\FLD_Fonts.ico"
 IDI_FLD_Location        ICON                    "res\\FLD_Location.ico"
-IDI_FLD_Mail            ICON                    "res\\FLD_Mail.ico"
-IDI_FLD_Photos          ICON                    "res\\FLD_Photos.ico"
-IDI_FLD_Pictures        ICON                    "res\\FLD_Pictures.ico"
 IDI_FLD_Roll            ICON                    "res\\FLD_Roll.ico"
-IDI_FLD_Presentations   ICON                    "res\\FLD_Presentations.ico"
-IDI_FLD_Spreadsheets    ICON                    "res\\FLD_Spreadsheets.ico"
 IDI_FLD_System          ICON                    "res\\FLD_System.ico"
-IDI_FLD_Trash           ICON                    "res\\FLD_Trash.ico"
-IDI_FLD_Video           ICON                    "res\\FLD_Videos.ico"
-IDI_FLD_Web             ICON                    "res\\FLD_Web.ico"
 IDI_OVERLAY_Default     ICON                    "res\\OVR_Default.ico"
 IDI_STORE_Unknown       ICON                    "res\\STR_Empty.ico"
 IDI_STORE_Internal      ICON                    "res\\STR_Empty.ico"
@@ -116,10 +105,6 @@ BEGIN
     IDS_LFCategoryRemoteStores 
                             "Netzwerkadresse\nDiese Stores befinden sich auf anderen Computern."
     IDS_LFCategoryDrives    "Geräte mit Wechselmedien\nWählen Sie eines dieser Geräte, um dort einen neuen Store anzulegen."
-    IDS_LFCategoryStore     "Dieser Store"
-    IDS_LFCategoryMediaTypes "Multimedia"
-    IDS_LFCategoryDocuments "Dokumente"
-    IDS_LFCategoryHousekeeping "Verwaltung"
     IDS_LFCategoryNight     "Nacht\nBis 6 Uhr"
 END
 
@@ -142,14 +127,21 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_LFContextStores     "Stores"
-    IDS_LFContextStoreHome  "Store-Übersicht"
-    IDS_LFContextClipboard  "Zwischenablage"
-    IDS_LFContextDefault    "Standard"
+    IDS_LFContextAllFiles   "Alle Dateien"
+    IDS_LFContextFavorites  "Favoriten\nAlle Dateien mit Bewertung"
+    IDS_LFContextAudio      "Audio"
+    IDS_LFContextPictures   "Bilder"
+    IDS_LFContextVideos     "Videos"
+    IDS_LFContextDocuments  "Dokumente\nOffice-Dokumente"
+    IDS_LFContextContacts   "Kontakte"
+    IDS_LFContextMessages   "Nachrichten"
+    IDS_LFContextEvents     "Veranstaltungen"
+    IDS_LFContextNew        "Neue Dateien\nKürzlich importierte Dateien"
+    IDS_LFContextTrash      "Papierkorb\nGelöschte Dateien"
+    IDS_LFContextFilters    "Filter\nBenutzerdefinierte Filter"
     IDS_LFContextSearch     "Suchergebnis"
-    IDS_LFContextFilters    "Filter"
-    IDS_LFContextHousekeeping "Verwaltung"
-    IDS_LFContextTrash      "Papierkorb"
+    IDS_LFContextStores     "Stores"
+    IDS_LFContextClipboard  "Zwischenablage"
     IDS_LFContextSubfolderDefault "Unterordner"
     IDS_LFContextSubfolderDay "Tag"
     IDS_LFContextSubfolderLocation "Ort"
@@ -157,8 +149,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_BacklinkName        "Zurück"
-    IDS_BacklinkDescription "Eine Ebene höher"
     IDS_StoreDefaultName    "Neuer Store"
     IDS_LastSeen            "Zuletzt angeschlossen von %s"
 END
@@ -282,7 +272,7 @@ BEGIN
     IDS_AttrFileFormat      "Dateiformat"
     IDS_AttrFileCount       "Dateianzahl"
     IDS_AttrFileSize        "Größe"
-    IDS_AttrFlags           "Attribute"
+    IDS_AttrFlags           "Markierungen"
     IDS_AttrURL             "URL"
     IDS_AttrTags            "Schlagworte"
 END
@@ -337,35 +327,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_DomainAllFiles      "Alle Dateien\nAlle Dateien in diesem Store"
-    IDS_DomainAllMediaFiles "Alle Multimedia-Dateien\nAlle Audio-Dateien, Bilder, Fotos und Videos"
-    IDS_DomainFavorites     "Favoriten\nAlle Dateien mit Bewertung"
-    IDS_DomainTrash         "Papierkorb\nGelöschte Dateien"
-    IDS_DomainUnknown       "Unbekannte Dateiformate"
-    IDS_DomainFilters       "Filter\nBenutzerdefinierte Filter"
-    IDS_DomainAudio         "Audio"
-    IDS_DomainPhotos        "Fotos\nNur JPEG- und RAW-Bilder"
-END
-
-STRINGTABLE 
-BEGIN
-    IDS_DomainPictures      "Bilder\nEinschließlich Fotos"
-    IDS_DomainVideos        "Videos"
-    IDS_DomainArchives      "Archive"
-    IDS_DomainContacts      "Kontakte"
-    IDS_DomainDocuments     "Dokumente\nOffice-Dokumente"
-    IDS_DomainEvents        "Aufgaben und Termine"
-    IDS_DomainFonts         "Schriftarten"
-    IDS_DomainGeodata       "Geodaten\nFlightmap-Flugpläne, Erweiterungen für Google Earth"
-    IDS_DomainMessages      "Nachrichten"
-    IDS_DomainPresentations "Präsentationen"
-    IDS_DomainSpreadsheets  "Tabellen"
-    IDS_DomainWeb           "Webseiten"
-    IDS_DomainNew           "Neue Dateien\nKürzlich importierte Dateien"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_DefaultStore        "Standard-Store"
 END
 
@@ -394,10 +355,6 @@ BEGIN
     IDS_LFCategoryRemoteStores 
                             "Network location\nThese stores reside on other computers."
     IDS_LFCategoryDrives    "Devices with removable storage\nChoose one of these devices to create a new store there."
-    IDS_LFCategoryStore     "This store"
-    IDS_LFCategoryMediaTypes "Media"
-    IDS_LFCategoryDocuments "Documents"
-    IDS_LFCategoryHousekeeping "Housekeeping"
     IDS_LFCategoryNight     "Night\nUntil 6am"
 END
 
@@ -420,14 +377,21 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_LFContextStores     "Stores"
-    IDS_LFContextStoreHome  "Store home"
-    IDS_LFContextClipboard  "Clipboard"
-    IDS_LFContextDefault    "Default"
+    IDS_LFContextAllFiles   "All files"
+    IDS_LFContextFavorites  "Favorites\nAll files which are rated"
+    IDS_LFContextAudio      "Audio"
+    IDS_LFContextPictures   "Pictures"
+    IDS_LFContextVideos     "Videos"
+    IDS_LFContextDocuments  "Documents\nOffice documents"
+    IDS_LFContextContacts   "Contacts"
+    IDS_LFContextMessages   "Messages"
+    IDS_LFContextEvents     "Events"
+    IDS_LFContextNew        "New files\nRecently imported files"
+    IDS_LFContextTrash      "Trash\nDeleted files"
+    IDS_LFContextFilters    "Filters\nUser-defined filters"
     IDS_LFContextSearch     "Search result"
-    IDS_LFContextFilters    "Filters"
-    IDS_LFContextHousekeeping "Housekeeping"
-    IDS_LFContextTrash      "Trash"
+    IDS_LFContextStores     "Stores"
+    IDS_LFContextClipboard  "Clipboard"
     IDS_LFContextSubfolderDefault "Subfolder"
     IDS_LFContextSubfolderDay "Day"
     IDS_LFContextSubfolderLocation "Location"
@@ -435,8 +399,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_BacklinkName        "Back"
-    IDS_BacklinkDescription "One level up"
     IDS_StoreDefaultName    "New store"
     IDS_LastSeen            "Last mounted from %s"
 END
@@ -613,35 +575,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_DomainAllFiles      "All files\nAll files in this store"
-    IDS_DomainAllMediaFiles "All media files\nAll audio files, pictures, photos and videos"
-    IDS_DomainFavorites     "Favorites\nAll files which are rated"
-    IDS_DomainTrash         "Trash\nDeleted files"
-    IDS_DomainUnknown       "Unknown file formats"
-    IDS_DomainFilters       "Filters\nUser-defined filters"
-    IDS_DomainAudio         "Audio"
-    IDS_DomainPhotos        "Photos\nJPEG and raw photos only"
-END
-
-STRINGTABLE 
-BEGIN
-    IDS_DomainPictures      "Pictures\nIncludes photos"
-    IDS_DomainVideos        "Videos"
-    IDS_DomainArchives      "Archives"
-    IDS_DomainContacts      "Contacts"
-    IDS_DomainDocuments     "Documents\nOffice documents"
-    IDS_DomainEvents        "Events and tasks"
-    IDS_DomainFonts         "Fonts"
-    IDS_DomainGeodata       "Geodata\nFlightmap itineraries, Google Earth extensions"
-    IDS_DomainMessages      "Messages"
-    IDS_DomainPresentations "Presentations"
-    IDS_DomainSpreadsheets  "Spreadsheets"
-    IDS_DomainWeb           "Web pages"
-    IDS_DomainNew           "New files\nRecently imported files"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_DefaultStore        "Default Store"
 END
 
@@ -670,10 +603,6 @@ BEGIN
     IDS_LFCategoryRemoteStores 
                             "Ubicación de red\nEstos stores residen en otras computadoras."
     IDS_LFCategoryDrives    "Dispositivos con almacenamiento extraible\nEscoja una de éstas para crear un nuevo store."
-    IDS_LFCategoryStore     "Éste store"
-    IDS_LFCategoryMediaTypes "Medios"
-    IDS_LFCategoryDocuments "Documentos"
-    IDS_LFCategoryHousekeeping "Mantenimiento"
     IDS_LFCategoryNight     "Noche\nHasta 6am"
 END
 
@@ -696,14 +625,21 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_LFContextStores     "Stores"
-    IDS_LFContextStoreHome  "Store de inicio"
-    IDS_LFContextClipboard  "Portapapeles"
-    IDS_LFContextDefault    "Predeterminado"
+    IDS_LFContextAllFiles   "Todos los archivos"
+    IDS_LFContextFavorites  "Favoritos\nTodos los archivos que están calificados"
+    IDS_LFContextAudio      "Audio"
+    IDS_LFContextPictures   "Fotos"
+    IDS_LFContextVideos     "Videos"
+    IDS_LFContextDocuments  "Documentos\nDocumentos de oficina"
+    IDS_LFContextContacts   "Contactos"
+    IDS_LFContextMessages   "Mensajes"
+    IDS_LFContextEvents     "Eventos"
+    IDS_LFContextNew        "Archivos nuevos\nArchivos importados recientemente"
+    IDS_LFContextTrash      "Basura\nArchivos eliminados"
+    IDS_LFContextFilters    "Filtros\nFiltros definidos por el usuario"
     IDS_LFContextSearch     "Resultados de la búsqueda"
-    IDS_LFContextFilters    "Filtros"
-    IDS_LFContextHousekeeping "Mantenimiento"
-    IDS_LFContextTrash      "Basura"
+    IDS_LFContextStores     "Stores"
+    IDS_LFContextClipboard  "Portapapeles"
     IDS_LFContextSubfolderDefault "Subcarpeta"
     IDS_LFContextSubfolderDay "Día"
     IDS_LFContextSubfolderLocation "Ubicación"
@@ -711,8 +647,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_BacklinkName        "Atrás"
-    IDS_BacklinkDescription "Un nivel arriba"
     IDS_StoreDefaultName    "Nuevo store"
     IDS_LastSeen            "Conectado por última vez desde %s"
 END
@@ -892,35 +826,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_DomainAllFiles      "Todos los archivos\nTodos los archivos en este store"
-    IDS_DomainAllMediaFiles "Todos los archivos media\nTodos los archivos de audio, películas, fotos y videos"
-    IDS_DomainFavorites     "Favoritos\nTodos los archivos que están calificados"
-    IDS_DomainTrash         "Basura\nArchivos eliminados"
-    IDS_DomainUnknown       "Formatos de archivo desconocidos"
-    IDS_DomainFilters       "Filtros\nFiltros definidos por el usuario"
-    IDS_DomainAudio         "Audio"
-    IDS_DomainPhotos        "Fotos\nSólo fotos JPEG y fotos no procesadas"
-END
-
-STRINGTABLE 
-BEGIN
-    IDS_DomainPictures      "Películas\nIncluye fotos"
-    IDS_DomainVideos        "Videos"
-    IDS_DomainArchives      "Archivos"
-    IDS_DomainContacts      "Contactos"
-    IDS_DomainDocuments     "Documentos\nDocumentos de oficina"
-    IDS_DomainEvents        "Eventos y tareas"
-    IDS_DomainFonts         "Fuentes"
-    IDS_DomainGeodata       "Información geográfica\nItinerarios de Flightmap, anexos de Google Earth"
-    IDS_DomainMessages      "Mensajes"
-    IDS_DomainPresentations "Presentaciones"
-    IDS_DomainSpreadsheets  "Hojas de cálculo"
-    IDS_DomainWeb           "Páginas Web"
-    IDS_DomainNew           "Archivos nuevos\nArchivos importados recientemente"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_DefaultStore        "Store predeterminado"
 END
 
@@ -949,10 +854,6 @@ BEGIN
     IDS_LFCategoryRemoteStores 
                             "Emplacement réseau\nCes stores se trouvent sur des autres ordinateurs."
     IDS_LFCategoryDrives    "Périphériques utilisant des supports de stockage amovibles\nChoisissez un d'entre ceux-ci pour créer un nouveau store."
-    IDS_LFCategoryStore     "Ce store"
-    IDS_LFCategoryMediaTypes "Multimédia"
-    IDS_LFCategoryDocuments "Documents"
-    IDS_LFCategoryHousekeeping "Ménage"
     IDS_LFCategoryNight     "Nuit\nJusqu'à 6 heures"
 END
 
@@ -975,14 +876,21 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_LFContextStores     "Stores"
-    IDS_LFContextStoreHome  "Aperçu de store"
-    IDS_LFContextClipboard  "Presse-papiers"
-    IDS_LFContextDefault    "Défault"
+    IDS_LFContextAllFiles   "Tous les fichiers"
+    IDS_LFContextFavorites  "Favoris\nTous les fichiers qui sont estimés"
+    IDS_LFContextAudio      "Audio"
+    IDS_LFContextPictures   "Images"
+    IDS_LFContextVideos     "Vidéos"
+    IDS_LFContextDocuments  "Documents\nDocuments de bureau"
+    IDS_LFContextContacts   "Contacts"
+    IDS_LFContextMessages   "Messages"
+    IDS_LFContextEvents     "Événements"
+    IDS_LFContextNew        "Nouveaux fichiers\nFichiers récemment importés"
+    IDS_LFContextTrash      "Déchets\nLes fichiers marqués pour la radiation finale"
+    IDS_LFContextFilters    "Filtres\nFiltres définis par l'utilisateur"
     IDS_LFContextSearch     "Résultat de la recherche"
-    IDS_LFContextFilters    "Filtres"
-    IDS_LFContextHousekeeping "Administration"
-    IDS_LFContextTrash      "Déchets"
+    IDS_LFContextStores     "Stores"
+    IDS_LFContextClipboard  "Presse-papiers"
     IDS_LFContextSubfolderDefault "Sous-dossier"
     IDS_LFContextSubfolderDay "Jour"
     IDS_LFContextSubfolderLocation "Lieu"
@@ -990,8 +898,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_BacklinkName        "En arrière"
-    IDS_BacklinkDescription "Un niveau plus en haut"
     IDS_StoreDefaultName    "Store nouveau"
     IDS_LastSeen            "Dernier monté de %s"
 END
@@ -1116,7 +1022,7 @@ BEGIN
     IDS_AttrFileFormat      "Format de fichier"
     IDS_AttrFileCount       "Nombre de fichier"
     IDS_AttrFileSize        "Grandeur"
-    IDS_AttrFlags           "Attribute"
+    IDS_AttrFlags           "Attributes"
     IDS_AttrURL             "Adresse URL"
     IDS_AttrTags            "Des mots-clé"
 END
@@ -1167,35 +1073,6 @@ BEGIN
     IDS_AttrDueTime         "Dû le"
     IDS_AttrDoneTime        "Fini le"
     IDS_AttrCustomer        "Client"
-END
-
-STRINGTABLE 
-BEGIN
-    IDS_DomainAllFiles      "Tous les fichiers\nTous les fichiers dans ce store"
-    IDS_DomainAllMediaFiles "Tous les fichiers multimédias\nTous les fichiers audio, les images, les photos et les vidéos"
-    IDS_DomainFavorites     "Favoris\nTous les fichiers qui sont estimés"
-    IDS_DomainTrash         "Déchets\nLes fichiers marqués pour la radiation finale"
-    IDS_DomainUnknown       "Formats de fichier inconnus"
-    IDS_DomainFilters       "Filtres\nFiltres définis par l'utilisateur"
-    IDS_DomainAudio         "Audio"
-    IDS_DomainPhotos        "Photos\nSeulement photos de JPEG et RAW"
-END
-
-STRINGTABLE 
-BEGIN
-    IDS_DomainPictures      "Images\nInclut des photos JPEG et RAW"
-    IDS_DomainVideos        "Vidéos"
-    IDS_DomainArchives      "Archives"
-    IDS_DomainContacts      "Contacts"
-    IDS_DomainDocuments     "Documents\nDocuments de bureau"
-    IDS_DomainEvents        "Événements et tâches"
-    IDS_DomainFonts         "Fontes"
-    IDS_DomainGeodata       "Geodata\nItinéraires de Flightmap, extensions de Google Earth"
-    IDS_DomainMessages      "Messages"
-    IDS_DomainPresentations "Présentations"
-    IDS_DomainSpreadsheets  "Tableur"
-    IDS_DomainWeb           "Pages Web"
-    IDS_DomainNew           "Nouveaux fichiers\nFichiers récemment importés"
 END
 
 STRINGTABLE 

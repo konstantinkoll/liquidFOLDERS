@@ -92,6 +92,62 @@ void LoadStringEnglish(HINSTANCE hInstance, unsigned int uID, wchar_t* lpBuffer,
 	}
 }
 
+void LoadTwoStrings(HINSTANCE hInstance, unsigned int uID, wchar_t* lpBuffer1, int cchBufferMax1, wchar_t* lpBuffer2, int cchBufferMax2)
+{
+	assert(lpBuffer1);
+	assert(lpBuffer2);
+
+	wchar_t tmpStr[256];
+	LoadString(hInstance, uID, tmpStr, 256);
+
+	wchar_t* brk = wcschr(tmpStr, L'\n');
+	if (brk)
+	{
+		wcscpy_s(lpBuffer2, cchBufferMax2, brk+1);
+		*brk = L'\0';
+	}
+	else
+	{
+		*lpBuffer2 = L'\0';
+	}
+
+	wcscpy_s(lpBuffer1, cchBufferMax1, tmpStr);
+}
+
+
+LFCore_API bool LFHideFileExt()
+{
+	DWORD HideFileExt = 0;
+
+	HKEY k;
+	if (RegOpenKeyA(HKEY_CURRENT_USER, "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced", &k)==ERROR_SUCCESS)
+	{
+		DWORD sz = sizeof(HideFileExt);
+		RegQueryValueEx(k, L"HideFileExt", 0, NULL, (BYTE*)&HideFileExt, &sz);
+
+		RegCloseKey(k);
+	}
+
+	return (HideFileExt!=0);
+}
+
+LFCore_API bool LFHideDrivesWithNoMedia()
+{
+	DWORD HideDrivesWithNoMedia = 0;
+
+	HKEY k;
+	if (RegOpenKeyA(HKEY_CURRENT_USER, "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced", &k)==ERROR_SUCCESS)
+	{
+		DWORD sz = sizeof(HideDrivesWithNoMedia);
+		RegQueryValueEx(k, L"HideDrivesWithNoMedia", 0, NULL, (BYTE*)&HideDrivesWithNoMedia, &sz);
+
+		RegCloseKey(k);
+	}
+
+	return (HideDrivesWithNoMedia!=0);
+}
+
+
 unsigned int GetDriveBus(char d)
 {
 	unsigned int res = BusTypeMaxReserved;
@@ -432,8 +488,9 @@ LFCore_API LFContextDescriptor* LFGetContextInfo(unsigned int ID)
 		return NULL;
 
 	LFContextDescriptor* c = LFAllocContextDescriptor();
-	LoadString(LFCoreModuleHandle, ID+IDS_FirstContext, c->Name, 256);
-	c->AllowGroups = (ID>LFContextClipboard) && (ID<=LFContextHousekeeping);
+	LoadTwoStrings(LFCoreModuleHandle, IDS_FirstContext+ID, c->Name, 256, c->Comment, 256);
+
+	c->AllowGroups = (ID<=LFLastGroupContext) || (ID==LFContextSearch);
 
 	c->AllowedAttributes = new LFBitArray(LFAttributeCount);
 	(*c->AllowedAttributes) += LFAttrFileName;
@@ -448,11 +505,6 @@ LFCore_API LFContextDescriptor* LFGetContextInfo(unsigned int ID)
 		(*c->AllowedAttributes) += LFAttrCreationTime;
 		(*c->AllowedAttributes) += LFAttrFileTime;
 		break;
-	case LFContextStoreHome:
-		(*c->AllowedAttributes) += LFAttrDescription;
-		(*c->AllowedAttributes) += LFAttrFileCount;
-		(*c->AllowedAttributes) += LFAttrFileSize;
-		break;
 	case LFContextFilters:
 		(*c->AllowedAttributes) += LFAttrCreationTime;
 		(*c->AllowedAttributes) += LFAttrFileTime;
@@ -463,7 +515,7 @@ LFCore_API LFContextDescriptor* LFGetContextInfo(unsigned int ID)
 		(*c->AllowedAttributes) += LFAttrDeleteTime;
 	default:
 		for (unsigned int a=0; a<LFAttributeCount; a++)
-			if ((a!=LFAttrDeleteTime) && ((ID<LFContextHousekeeping) || (a!=LFAttrDescription)) && ((ID<LFContextSubfolderDefault) || (a!=LFAttrFileCount)))
+			if ((a!=LFAttrDeleteTime) && ((ID<LFContextSubfolderDefault) || (a!=LFAttrFileCount)) && ((c->AllowGroups) || (a!=LFAttrDescription)))
 				(*c->AllowedAttributes) += a;
 	}
 
@@ -493,14 +545,8 @@ LFCore_API LFItemCategoryDescriptor* LFGetItemCategoryInfo(unsigned int ID)
 	if (ID>=LFItemCategoryCount)
 		return NULL;
 
-	wchar_t tmpStr[256+256+1];
-	LoadString(LFCoreModuleHandle, ID+IDS_FirstItemCategory, tmpStr, 256+256+1);
-	size_t sz = wcscspn(tmpStr, L"\n");
-
 	LFItemCategoryDescriptor* c = LFAllocItemCategoryDescriptor();
-	wcsncpy_s(c->Caption, 256, tmpStr, sz);
-	if (sz<wcslen(tmpStr))
-		wcscpy_s(c->Hint, 256, &tmpStr[sz+1]);
+	LoadTwoStrings(LFCoreModuleHandle, IDS_FirstItemCategory+ID, c->Caption, 256, c->Hint, 256);
 
 	return c;
 }
@@ -509,155 +555,6 @@ LFCore_API void LFFreeItemCategoryDescriptor(LFItemCategoryDescriptor* c)
 {
 	if (c)
 		delete c;
-}
-
-LFCore_API LFDomainDescriptor* LFAllocDomainDescriptor()
-{
-	LFDomainDescriptor* d = new LFDomainDescriptor;
-	ZeroMemory(d, sizeof(LFDomainDescriptor));
-	d->ImportantAttributes = new LFBitArray(LFAttributeCount);
-	return d;
-}
-
-LFCore_API LFDomainDescriptor* LFGetDomainInfo(unsigned int ID)
-{
-	if (ID>=LFDomainCount)
-		return NULL;
-
-	LFDomainDescriptor* d = LFAllocDomainDescriptor();
-
-	wchar_t tmpStr[256];
-	LoadString(LFCoreModuleHandle, IDS_FirstDomain+ID, tmpStr, 256);
-	wchar_t* brk = wcschr(tmpStr, L'\n');
-	if (brk)
-	{
-		wcscpy_s(d->Comment, 256, brk+1);
-		*brk = L'\0';
-	}
-
-	wcscpy_s(d->Name, 256, tmpStr);
-
-	*(d->ImportantAttributes) += LFAttrFileName;
-	*(d->ImportantAttributes) += LFAttrDescription;
-	*(d->ImportantAttributes) += LFAttrCreationTime;
-	*(d->ImportantAttributes) += LFAttrFileTime;
-	*(d->ImportantAttributes) += LFAttrRoll;
-	*(d->ImportantAttributes) += LFAttrComments;
-	*(d->ImportantAttributes) += LFAttrTags;
-	*(d->ImportantAttributes) += LFAttrRating;
-	*(d->ImportantAttributes) += LFAttrPriority;
-
-	if ((ID==LFDomainNew) || (ID==LFDomainTrash) || (ID==LFDomainUnknown))
-	{
-		d->CategoryID = LFItemCategoryHousekeeping;
-	}
-	else
-		if ((ID==LFDomainAllMediaFiles) || ((ID>=LFDomainAudio) && (ID<=LFDomainVideos)))
-		{
-			d->CategoryID = LFItemCategoryMediaTypes;
-		}
-		else
-			if ((ID==LFDomainAllFiles) || (ID==LFDomainFavorites) || (ID==LFDomainFilters))
-			{
-				d->CategoryID = LFItemCategoryStore;
-			}
-			else
-			{
-				d->CategoryID = LFItemCategoryOtherTypes;
-			}
-
-	const unsigned int Icons[LFDomainCount] = { IDI_FLD_All, IDI_FLD_All, IDI_FLD_Favorites, IDI_FLD_Trash, IDI_FLD_Default,
-		IDI_FLD_System, IDI_FLD_Audio, IDI_FLD_Photos, IDI_FLD_Pictures, IDI_FLD_Video, IDI_FLD_Archive, IDI_FLD_Contacts,
-		IDI_FLD_Documents, IDI_FLD_Calendar, IDI_FLD_Fonts, IDI_FLD_Location, IDI_FLD_Mail, IDI_FLD_Presentations,
-		IDI_FLD_Spreadsheets, IDI_FLD_Web, IDI_FLD_System };
-	d->IconID = Icons[ID];
-
-	switch (ID)
-	{
-	case LFDomainAllFiles:
-	case LFDomainContacts:
-	case LFDomainEvents:
-		*(d->ImportantAttributes) += LFAttrLocationName;
-		*(d->ImportantAttributes) += LFAttrLocationIATA;
-		*(d->ImportantAttributes) += LFAttrResponsible;
-		*(d->ImportantAttributes) += LFAttrDueTime;
-		*(d->ImportantAttributes) += LFAttrDoneTime;
-		break;
-	case LFDomainAllMediaFiles:
-		*(d->ImportantAttributes) += LFAttrLocationName;
-		*(d->ImportantAttributes) += LFAttrLocationIATA;
-		*(d->ImportantAttributes) += LFAttrArtist;
-		*(d->ImportantAttributes) += LFAttrTitle;
-		*(d->ImportantAttributes) += LFAttrAlbum;
-		*(d->ImportantAttributes) += LFAttrDuration;
-		*(d->ImportantAttributes) += LFAttrBitrate;
-		*(d->ImportantAttributes) += LFAttrRecordingTime;
-		*(d->ImportantAttributes) += LFAttrLanguage;
-		break;
-	case LFDomainAudio:
-		*(d->ImportantAttributes) += LFAttrArtist;
-		*(d->ImportantAttributes) += LFAttrTitle;
-		*(d->ImportantAttributes) += LFAttrAlbum;
-		*(d->ImportantAttributes) += LFAttrDuration;
-		*(d->ImportantAttributes) += LFAttrBitrate;
-		*(d->ImportantAttributes) += LFAttrRecordingTime;
-		break;
-	case LFDomainPictures:
-	case LFDomainPhotos:
-		*(d->ImportantAttributes) += LFAttrLocationName;
-		*(d->ImportantAttributes) += LFAttrLocationIATA;
-		*(d->ImportantAttributes) += LFAttrArtist;
-		*(d->ImportantAttributes) += LFAttrTitle;
-		*(d->ImportantAttributes) += LFAttrRecordingTime;
-		*(d->ImportantAttributes) += LFAttrLanguage;
-		*(d->ImportantAttributes) += LFAttrCustomer;
-		break;
-	case LFDomainVideos:
-		*(d->ImportantAttributes) += LFAttrLocationName;
-		*(d->ImportantAttributes) += LFAttrLocationIATA;
-		*(d->ImportantAttributes) += LFAttrArtist;
-		*(d->ImportantAttributes) += LFAttrTitle;
-		*(d->ImportantAttributes) += LFAttrDuration;
-		*(d->ImportantAttributes) += LFAttrRecordingTime;
-		*(d->ImportantAttributes) += LFAttrLanguage;
-		*(d->ImportantAttributes) += LFAttrCustomer;
-		break;
-	case LFDomainDocuments:
-	case LFDomainPresentations:
-	case LFDomainSpreadsheets:
-		*(d->ImportantAttributes) += LFAttrArchiveTime;
-		*(d->ImportantAttributes) += LFAttrLocationName;
-		*(d->ImportantAttributes) += LFAttrLocationIATA;
-		*(d->ImportantAttributes) += LFAttrArtist;
-		*(d->ImportantAttributes) += LFAttrCopyright;
-		*(d->ImportantAttributes) += LFAttrResponsible;
-		*(d->ImportantAttributes) += LFAttrTitle;
-		*(d->ImportantAttributes) += LFAttrSignature;
-		*(d->ImportantAttributes) += LFAttrDueTime;
-		*(d->ImportantAttributes) += LFAttrDoneTime;
-		*(d->ImportantAttributes) += LFAttrLanguage;
-		*(d->ImportantAttributes) += LFAttrCustomer;
-		break;
-	case LFDomainGeodata:
-		*(d->ImportantAttributes) += LFAttrLocationName;
-		*(d->ImportantAttributes) += LFAttrLocationIATA;
-		break;
-	case LFDomainTrash:
-		*(d->ImportantAttributes) += LFAttrDeleteTime;
-		break;
-	}
-
-	return d;
-}
-
-LFCore_API void LFFreeDomainDescriptor(LFDomainDescriptor* d)
-{
-	if (d)
-	{
-		if (d->ImportantAttributes)
-			delete d->ImportantAttributes;
-		delete d;
-	}
 }
 
 
@@ -721,7 +618,7 @@ LFCore_API void LFFreeFilterCondition(LFFilterCondition* c)
 
 LFCore_API LFSearchResult* LFAllocSearchResult(int ctx, LFSearchResult* res)
 {
-	return (res) ? new LFSearchResult(res): new LFSearchResult(ctx);
+	return (res) ? new LFSearchResult(res) : new LFSearchResult(ctx);
 }
 
 LFCore_API void LFFreeSearchResult(LFSearchResult* res)

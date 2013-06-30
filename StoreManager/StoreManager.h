@@ -16,6 +16,8 @@
 // Siehe StoreManager.cpp für die Implementierung dieser Klasse
 //
 
+#define ViewParametersVersion     1
+
 class CStoreManagerApp : public LFApplication
 {
 public:
@@ -46,23 +48,15 @@ public:
 	UINT m_nTextureSize;
 	UINT m_nMaxTextureSize;
 
-	BOOL m_ShowFilterPane;
 	BOOL m_ShowInspectorPane;
-	UINT m_FilterWidth;
 	UINT m_InspectorWidth;
 
-	BOOL m_ShowEmptyVolumes;
-	BOOL m_ShowEmptyDomains;
-	BOOL m_ShowStatistics;
-	BOOL m_CalendarShowStatistics;
 	BOOL m_CalendarShowCaptions;
-	BOOL m_CalendarShowEmptyDays;
 	BOOL m_GlobeHQModel;
 	BOOL m_GlobeLighting;
 	BOOL m_GlobeAtmosphere;
 	BOOL m_GlobeShowViewport;
 	BOOL m_GlobeShowCrosshairs;
-	BOOL m_TagcloudShowLegend;
 
 protected:
 	BOOL m_AppInitialized;

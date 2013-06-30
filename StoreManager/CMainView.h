@@ -5,7 +5,6 @@
 #pragma once
 #include "LFCommDlg.h"
 #include "CFileView.h"
-#include "CFilterWnd.h"
 #include "CInspectorWnd.h"
 
 
@@ -26,7 +25,6 @@ public:
 	void UpdateSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data=NULL, BOOL UpdateSelection=TRUE);
 	void UpdateFooter();
 	INT GetContext();
-	INT GetDomain();
 	INT GetViewID();
 	void DismissNotification();
 	void ShowNotification(UINT Type, CString Message, UINT Command=0);
@@ -35,13 +33,11 @@ public:
 	INT GetNextSelectedItem(INT n);
 	void GetPersistentData(FVPersistentData& Data);
 	void SelectNone();
-	void SetFilter(LFFilter* f);
 
 protected:
 	CTaskbar m_wndTaskbar;
 	CExplorerHeader m_wndExplorerHeader;
 	CFileView* p_wndFileView;
-	CFilterWnd* p_wndFilter;
 	CInspectorWnd m_wndInspector;
 	CExplorerNotification m_wndExplorerNotification;
 	LFDropTarget m_DropTarget;
@@ -50,12 +46,10 @@ protected:
 	LFSearchResult* p_CookedFiles;
 	CHAR m_StoreID[LFKeySize];
 	INT m_Context;
-	INT m_Domain;
 	INT m_ViewID;
 	BOOL m_StoreIDValid;
 	BOOL m_IsClipboard;
 	BOOL m_FilesSelected;
-	BOOL m_ShowFilterPane;
 	BOOL m_ShowInspectorPane;
 
 	LFFileIDList* BuildFileIDList(BOOL All=FALSE);
@@ -69,6 +63,7 @@ protected:
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
+	afx_msg LRESULT OnThemeChanged();
 	afx_msg void OnSize(UINT nType, INT cx, INT cy);
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
@@ -81,7 +76,6 @@ protected:
 	afx_msg LRESULT OnSendTo(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnStoreAttributesChanged(WPARAM wParam, LPARAM lParam);
 
-	afx_msg void OnToggleFilter();
 	afx_msg void OnToggleInspector();
 	afx_msg void OnUpdatePaneCommands(CCmdUI* pCmdUI);
 
@@ -97,18 +91,11 @@ protected:
 
 	afx_msg void OnStoresCreateNew();
 	afx_msg void OnStoresMaintainAll();
-	afx_msg void OnStoresShowEmptyVolumes();
 	afx_msg void OnStoresShowStatistics();
 	afx_msg void OnUpdateStoresCommands(CCmdUI* pCmdUI);
 
-	afx_msg void OnHomeShowEmptyDomains();
-	afx_msg void OnHomeShowStatistics();
-	afx_msg void OnHomeImportFolder();
-	afx_msg void OnHomeProperties();
-	afx_msg void OnUpdateHomeCommands(CCmdUI* pCmdUI);
-
-	afx_msg void OnHousekeepingRemoveNew();
-	afx_msg void OnUpdateHousekeepingCommands(CCmdUI* pCmdUI);
+	afx_msg void OnNewRemoveNew();
+	afx_msg void OnUpdateNewCommands(CCmdUI* pCmdUI);
 
 	afx_msg void OnTrashEmpty();
 	afx_msg void OnTrashRestoreAll();

@@ -82,7 +82,7 @@ BOOL CStoreManagerApp::InitInstance()
 	{
 		m_AllowedViews[a] = new LFBitArray(LFViewCount);
 
-		UINT cnt = ((a>LFContextClipboard) && (a<LFContextSubfolderDefault)) ? LFViewCount-1 : (a>LFContextStoreHome) ? LFViewPreview : LFViewStrips;
+		UINT cnt = (a==LFContextStores) ? LFViewStrips : ((a<=LFLastGroupContext) || (a==LFContextSearch)) ? LFViewCount-1 : LFViewPreview;
 		for (UINT b=0; b<=cnt; b++)
 			(*m_AllowedViews[a]) += b;
 	}
@@ -103,26 +103,16 @@ BOOL CStoreManagerApp::InitInstance()
 
 	// Registry auslesen
 	SetRegistryBase(_T("Settings"));
-	m_ShowFilterPane = GetInt(_T("ShowFilterPane"), FALSE);
 	m_ShowInspectorPane = GetInt(_T("ShowInspectorPane"), FALSE);
-	m_FilterWidth = GetInt(_T("FilterWidth"), 250);
-	if (m_FilterWidth<32)
-		m_FilterWidth = 32;
 	m_InspectorWidth = GetInt(_T("InspectorWidth"), 200);
 	if (m_InspectorWidth<32)
 		m_InspectorWidth = 32;
-	m_ShowEmptyVolumes = GetInt(_T("ShowEmptyVolumes"), !theApp.HideEmptyDrives());
-	m_ShowEmptyDomains = GetInt(_T("ShowEmptyDomains"), TRUE);
-	m_ShowStatistics = GetInt(_T("ShowStatistics"), FALSE);
-	m_CalendarShowStatistics = GetInt(_T("CalendarShowStatistics"), TRUE);
 	m_CalendarShowCaptions = GetInt(_T("CalendarShowCaptions"), TRUE);
-	m_CalendarShowEmptyDays = GetInt(_T("CalendarShowEmptyDays"), TRUE);
 	m_GlobeHQModel = GetInt(_T("GlobeHQModel"), TRUE);
 	m_GlobeLighting = GetInt(_T("GlobeLighting"), TRUE);
 	m_GlobeAtmosphere = GetInt(_T("GlobeAtmosphere"), TRUE);
 	m_GlobeShowViewport = GetInt(_T("GlobeShowViewport"), FALSE);
 	m_GlobeShowCrosshairs = GetInt(_T("GlobeShowCrosshairs"), FALSE);
-	m_TagcloudShowLegend = GetInt(_T("TagcloudShowLegend"), TRUE);
 	m_nTextureSize = GetInt(_T("TextureSize"), LFTextureAuto);
 	m_nMaxTextureSize = GetInt(_T("MaxTextureSize"), LFTexture4096);
 	if (m_nTextureSize<0)
@@ -192,22 +182,14 @@ INT CStoreManagerApp::ExitInstance()
 		}
 
 		SetRegistryBase(_T("Settings"));
-		WriteInt(_T("ShowFilterPane"), m_ShowFilterPane);
 		WriteInt(_T("ShowInspectorPane"), m_ShowInspectorPane);
-		WriteInt(_T("FilterWidth"), m_FilterWidth);
 		WriteInt(_T("InspectorWidth"), m_InspectorWidth);
-		WriteInt(_T("ShowEmptyVolumes"), m_ShowEmptyVolumes);
-		WriteInt(_T("ShowEmptyDomains"), m_ShowEmptyDomains);
-		WriteInt(_T("ShowStatistics"), m_ShowStatistics);
-		WriteInt(_T("CalendarShowStatistics"), m_CalendarShowStatistics);
 		WriteInt(_T("CalendarShowCaptions"), m_CalendarShowCaptions);
-		WriteInt(_T("CalendarShowEmptyDays"), m_CalendarShowEmptyDays);
 		WriteInt(_T("GlobeHQModel"), m_GlobeHQModel);
 		WriteInt(_T("GlobeLighting"), m_GlobeLighting);
 		WriteInt(_T("GlobeAtmosphere"), m_GlobeAtmosphere);
 		WriteInt(_T("GlobeShowViewport"), m_GlobeShowViewport);
 		WriteInt(_T("GlobeShowCrosshairs"), m_GlobeShowCrosshairs);
-		WriteInt(_T("TagcloudShowLegend"), m_TagcloudShowLegend);
 		WriteInt(_T("TextureSize"), m_nTextureSize);
 		WriteInt(_T("MaxTextureSize"), m_nMaxTextureSize);
 	}
@@ -375,29 +357,52 @@ void CStoreManagerApp::LoadViewOptions(INT context)
 	base.Format(_T("Settings\\Context%d"), context);
 	SetRegistryBase(base);
 
-	UINT DefaultView;
+	UINT DefaultMode = LFViewDetails;
+	UINT DefaultSortBy = LFAttrFileName;
 	switch (context)
 	{
-	case LFContextStores:
-		DefaultView = LFViewLargeIcons;
+	case LFContextFavorites:
+		DefaultMode = LFViewTiles;
+		DefaultSortBy = LFAttrRating;
 		break;
-	case LFContextStoreHome:
-		DefaultView = LFViewList;
+	case LFContextPictures:
+	case LFContextVideos:
+		DefaultMode = LFViewTimeline;
+		DefaultSortBy = LFAttrCreationTime;
 		break;
-	case LFContextClipboard:
-	case LFContextSearch:
-		DefaultView = LFViewContent;
+	case LFContextAudio:
+		DefaultSortBy = LFAttrArtist;
+	case LFContextContacts:
+		DefaultMode = LFViewTiles;
 		break;
-	case LFContextHousekeeping:
+	case LFContextNew:
+		DefaultMode = LFViewTiles;
+		DefaultSortBy = LFAttrAddTime;
+		break;
 	case LFContextTrash:
-		DefaultView = LFViewTiles;
+		DefaultMode = LFViewTiles;
+		DefaultSortBy = LFAttrDeleteTime;
 		break;
-	default:
-		DefaultView = LFViewDetails;
+	case LFContextSearch:
+	case LFContextClipboard:
+		DefaultMode = LFViewContent;
+		break;
+	case LFContextStores:
+		DefaultMode = LFViewLargeIcons;
+		break;
 	}
 
-	m_Views[context].Mode = GetInt(_T("Viewmode"), DefaultView);
-	m_Views[context].SortBy = GetInt(_T("SortBy"), LFAttrFileName);
+	if (GetInt(_T("Version"), 0)==ViewParametersVersion)
+	{
+		m_Views[context].Mode = GetInt(_T("Mode"), DefaultMode);
+		m_Views[context].SortBy = GetInt(_T("SortBy"), DefaultSortBy);
+	}
+	else
+	{
+		m_Views[context].Mode = DefaultMode;
+		m_Views[context].SortBy = DefaultSortBy;
+	}
+
 	m_Views[context].Descending = GetInt(_T("Descending"), FALSE);
 	m_Views[context].AutoDirs = GetInt(_T("AutoDirs"), TRUE);
 	m_Views[context].GlobeLatitude = GetInt(_T("GlobeLatitude"), 1);
@@ -414,7 +419,7 @@ void CStoreManagerApp::LoadViewOptions(INT context)
 	m_Views[context].TagcloudUseOpacity = GetInt(_T("TagcloudUseOpacity"), FALSE);
 
 	if ((m_Views[context].Mode>=LFViewCount) || (!theApp.m_AllowedViews[context]->IsSet(m_Views[context].Mode)))
-			m_Views[context].Mode = DefaultView;
+			m_Views[context].Mode = DefaultMode;
 
 	for (UINT a=0; a<LFAttributeCount; a++)
 	{
@@ -444,7 +449,8 @@ void CStoreManagerApp::SaveViewOptions(INT context)
 	base.Format(_T("Settings\\Context%d"), context);
 	SetRegistryBase(base);
 
-	WriteInt(_T("Viewmode"), m_Views[context].Mode);
+	WriteInt(_T("Version"), ViewParametersVersion);
+	WriteInt(_T("Mode"), m_Views[context].Mode);
 	WriteInt(_T("SortBy"), m_Views[context].SortBy);
 	WriteInt(_T("Descending"), m_Views[context].Descending);
 	WriteInt(_T("AutoDirs"), m_Views[context].AutoDirs);

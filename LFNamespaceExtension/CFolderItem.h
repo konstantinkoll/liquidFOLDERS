@@ -15,9 +15,8 @@ BOOL RunPath(HWND hWnd, CString path, CString parameter=_T(""));
 
 #define LevelRoot               0
 #define LevelStores             1
-#define LevelStoreHome          2
-#define LevelAttribute          3
-#define LevelAttrValue          4
+#define LevelAttribute          2
+#define LevelAttrValue          3
 
 #define NSEIA_CFOLDERITEM       NSEIA_FileSysAncestor | NSEIA_Browsable | NSEIA_Folder | NSEIA_CanLink | NSEIA_DropTarget
 
@@ -50,7 +49,6 @@ struct FolderSerialization
 	WCHAR Comment[256];
 	CHAR StoreID[LFKeySize];
 	CHAR FileID[LFKeySize];
-	UINT DomainID;
 	UINT Count;
 	INT64 Size;
 	FILETIME CreationTime;

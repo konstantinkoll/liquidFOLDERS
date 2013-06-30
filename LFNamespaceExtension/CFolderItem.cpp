@@ -146,7 +146,6 @@ CFolderItem::CFolderItem(UCHAR Level, LFItemDescriptor* i)
 	wcscpy_s(Attrs.Comment, 256, i->CoreAttributes.Comment);
 	strcpy_s(Attrs.StoreID, LFKeySize, i->NextFilter ? i->NextFilter->StoreID : i->StoreID);
 	strcpy_s(Attrs.FileID, LFKeySize, i->CoreAttributes.FileID);
-	Attrs.DomainID = Attrs.DomainID;
 	Attrs.Count = i->AggregateCount;
 	Attrs.Size = i->CoreAttributes.FileSize;
 
@@ -155,9 +154,6 @@ CFolderItem::CFolderItem(UCHAR Level, LFItemDescriptor* i)
 	case LevelStores:
 		Attrs.CreationTime = i->CoreAttributes.CreationTime;
 		Attrs.FileTime = i->CoreAttributes.FileTime;
-		break;
-	case LevelStoreHome:
-		Attrs.DomainID = atoi(i->CoreAttributes.FileID);
 		break;
 	case LevelAttrValue:
 		if (i->NextFilter)
@@ -297,16 +293,17 @@ void CFolderItem::ConvertSearchResult(CGetChildrenEventArgs& e, LFSearchResult* 
 	{
 		LFItemDescriptor* i = res->m_Items[a];
 
-		// Stores and folders
-		if ((((i->Type & LFTypeMask)==LFTypeStore) || (((i->Type & LFTypeMask)==LFTypeVirtual) &&
-			(i->CategoryID!=LFItemCategoryHousekeeping))) && (e.childrenType & NSECT_Folders))
+		switch (i->Type & LFTypeMask)
 		{
-			i->RefCount++;
-			e.children->AddTail(new CFolderItem(Attrs.Level+1, i));
-		}
-
-		// Files
-		if ((i->Type & LFTypeMask)==LFTypeFile)
+		case LFTypeStore:
+		case LFTypeVirtual:
+			if (e.childrenType & NSECT_Folders)
+			{
+				i->RefCount++;
+				e.children->AddTail(new CFolderItem(Attrs.Level+1, i));
+			}
+			break;
+		case LFTypeFile:
 			if ((Attrs.Level==LevelAttribute) && (atoi(Attrs.FileID)!=LFAttrFileName))
 			{
 				NullCount++;
@@ -315,6 +312,8 @@ void CFolderItem::ConvertSearchResult(CGetChildrenEventArgs& e, LFSearchResult* 
 			else
 				if (e.childrenType & NSECT_NonFolders)
 					e.children->AddTail(new CFileItem(i));
+			break;
+		}
 	}
 
 	// Special folder if files exist that do not contain a certain property
@@ -330,7 +329,6 @@ void CFolderItem::ConvertSearchResult(CGetChildrenEventArgs& e, LFSearchResult* 
 		d.CategoryID = LFAttrCategoryCount;
 		strcpy_s(d.StoreID, LFKeySize, Attrs.StoreID);
 		strcpy_s(d.FileID, LFKeySize, "NULL");
-		d.DomainID = Attrs.DomainID;
 		d.Count = NullCount;
 		d.Size = NullSize;
 		d.Compare = LFFilterCompareIsNull;
@@ -361,14 +359,6 @@ BOOL CFolderItem::GetChildren(CGetChildrenEventArgs& e)
 		ConvertSearchResult(e, LFQuery(NULL));
 		break;
 	case LevelStores:
-		theApp.ShowNagScreen(NAG_EXPIRED);
-
-		f = LFAllocFilter();
-		f->Mode = LFFilterModeStoreHome;
-		strcpy_s(f->StoreID, LFKeySize, Attrs.StoreID);
-		ConvertSearchResult(e, LFQuery(f));
-		break;
-	case LevelStoreHome:
 		// This level is created by the namespace extension, and does not exist in the core tree structure
 		if (e.childrenType & NSECT_Folders)
 		{
@@ -386,7 +376,6 @@ BOOL CFolderItem::GetChildren(CGetChildrenEventArgs& e)
 			ENSURE(LoadString(AfxGetResourceHandle(), IDS_AllFilesComment, d.Comment, 256));
 			strcpy_s(d.StoreID, LFKeySize, Attrs.StoreID);
 			strcpy_s(d.FileID, LFKeySize, "ALL");
-			d.DomainID = Attrs.DomainID;
 
 			e.children->AddTail(new CFolderItem(d));
 
@@ -404,7 +393,6 @@ BOOL CFolderItem::GetChildren(CGetChildrenEventArgs& e)
 					wcscpy_s(d.Comment, 256, theApp.FrmtAttrStr(sortStr, theApp.m_Attributes[a]->Name));
 					strcpy_s(d.StoreID, LFKeySize, Attrs.StoreID);
 					sprintf_s(d.FileID, LFKeySize, "%d", a);
-					d.DomainID = Attrs.DomainID;
 
 					e.children->AddTail(new CFolderItem(d));
 				}
@@ -414,7 +402,6 @@ BOOL CFolderItem::GetChildren(CGetChildrenEventArgs& e)
 		f = LFAllocFilter();
 		f->Mode = LFFilterModeDirectoryTree;
 		strcpy_s(f->StoreID, LFKeySize, Attrs.StoreID);
-		f->DomainID = (UCHAR)Attrs.DomainID;
 		base = LFQuery(f);
 		ConvertSearchResult(e, LFGroupSearchResult(base, atoi(Attrs.FileID), false, Attrs.Icon, atoi(Attrs.FileID)!=LFAttrFileName, f));
 		break;
@@ -422,7 +409,6 @@ BOOL CFolderItem::GetChildren(CGetChildrenEventArgs& e)
 		f = LFAllocFilter();
 		f->Mode = LFFilterModeDirectoryTree;
 		strcpy_s(f->StoreID, LFKeySize, Attrs.StoreID);
-		f->DomainID = (UCHAR)Attrs.DomainID;
 		f->ConditionList = LFAllocFilterCondition();
 		f->ConditionList->Next = NULL;
 		f->ConditionList->Compare = Attrs.Compare;
@@ -590,7 +576,6 @@ void CFolderItem::GetMenuItems(CGetMenuitemsEventArgs& e)
 			AddSeparator(e.menu);
 			AddItem(e.menu, IDS_MENU_Properties, _T(VERB_PROPERTIES))->SetEnabled(!theApp.m_PathRunCmd.IsEmpty());
 		}
-	case LevelStoreHome:
 	case LevelAttribute:
 		if ((!(e.flags & NSEQCF_NoDefault)) && (e.children->GetCount()>=1))
 		{
@@ -775,9 +760,8 @@ CCategorizer* CFolderItem::GetCategorizer(CShellColumn& column)
 	switch (Attrs.Level)
 	{
 	case LevelRoot:
-	case LevelStores:
 		return new CCategoryCategorizer(this, column);
-	case LevelStoreHome:
+	case LevelStores:
 		return new CAttributeCategorizer(this, column);
 	case LevelAttribute:
 		return new CFolderCategorizer(this, column);
@@ -805,7 +789,6 @@ BOOL CFolderItem::GetColumn(CShellColumn& column, INT index)
 	switch (Attrs.Level)
 	{
 	case LevelRoot:
-	case LevelStoreHome:
 		LastColumn = LFAttrFileFormat;
 		break;
 	case LevelStores:
@@ -1326,7 +1309,6 @@ INT CFolderItem::GetXPTaskPaneColumnIndices(UINT* indices)
 		indices[3] = LFAttrFileTime;
 		indices[4] = LFAttrDescription;
 		return 5;
-	case LevelStoreHome:
 	case LevelAttrValue:
 		indices[3] = LFAttrFileSize;
 		return (strcmp(Attrs.FileID, "ALL")==0) ? 3 : 4;
@@ -1368,7 +1350,6 @@ INT CFolderItem::GetPreviewDetailsColumnIndices(UINT* indices)
 		indices[2] = LFAttrFileTime;
 		indices[3] = LFAttrDescription;
 		return 4;
-	case LevelStoreHome:
 	case LevelAttrValue:
 		indices[2] = LFAttrFileSize;
 		return (strcmp(Attrs.FileID, "ALL")==0) ? 2 : 3;

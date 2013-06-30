@@ -19,6 +19,7 @@ protected:
 	CTooltipHeader m_wndHeader;
 	BOOL m_ShowLegend;
 
+	virtual CMenu* GetViewContextmenu();
 	virtual void SetViewOptions(BOOL Force);
 	virtual void SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data);
 	virtual CBitmap* RenderFooter();
@@ -48,8 +49,6 @@ private:
 	INT m_HeaderItemSort;
 	BOOL m_IgnoreHeaderItemChange;
 
-	CBitmap* RenderLegend();
-	CBitmap* RenderStatistics();
 	void AdjustHeader(BOOL bShow);
 	void DrawIcon(CDC& dc, CRect& rect, LFItemDescriptor* i);
 	void AttributeToString(LFItemDescriptor* i, UINT Attr, WCHAR* tmpStr, size_t cCount);
