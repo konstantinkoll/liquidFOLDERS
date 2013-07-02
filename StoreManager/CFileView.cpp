@@ -198,7 +198,7 @@ void CFileView::UpdateSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pC
 		m_ItemDataAllocated = pCookedFiles->m_ItemCount;
 		ZeroMemory(m_ItemData, sz);
 
-		if ((VictimAllocated) && (pCookedFiles->m_Context!=LFContextClipboard))
+		if (VictimAllocated)
 		{
 			INT RetainSelection = Data ? Data->FocusItem : -1;
 
@@ -330,7 +330,7 @@ CBitmap* CFileView::CreateFooterBitmap(CDC* pDC, INT mincx, INT cy, CDC& dcDraw,
 #else
 	dcDraw.FillSolidRect(rect, Themed ? 0xFFFFFF : GetSysColor(COLOR_WINDOW));
 #endif
-	dcDraw.SetTextColor(Themed ? 0x6D6D6D : GetSysColor(COLOR_3DFACE));
+	dcDraw.SetTextColor(Themed ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT));
 
 	return pBmp;
 }

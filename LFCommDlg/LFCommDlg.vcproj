@@ -479,6 +479,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CSidebar.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\CStorePanel.cpp"
 				>
 			</File>
@@ -500,10 +504,6 @@
 			</File>
 			<File
 				RelativePath=".\CTooltipHeader.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\CTooltipList.cpp"
 				>
 			</File>
 			<File
@@ -785,6 +785,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CSidebar.h"
+				>
+			</File>
+			<File
 				RelativePath=".\CStorePanel.h"
 				>
 			</File>
@@ -806,10 +810,6 @@
 			</File>
 			<File
 				RelativePath=".\CTooltipHeader.h"
-				>
-			</File>
-			<File
-				RelativePath=".\CTooltipList.h"
 				>
 			</File>
 			<File

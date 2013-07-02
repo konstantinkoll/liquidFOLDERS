@@ -133,13 +133,16 @@ void LFSearchResult::SetMetadataFromFilter(LFFilter* f)
 			m_Context = f->ContextID;
 			break;
 		case LFFilterModeSearch:
-			m_Context = LFContextSearch;
+			m_Context = f->Options.IsSearch ? LFContextSearch : f->ContextID;
 			break;
 		}
 
 	if ((f->Name[0]==L'\0') || (m_Context==LFContextStores))
 	{
 		LoadTwoStrings(LFCoreModuleHandle, IDS_FirstContext+m_Context, m_Name, 256, m_Hint, 256);
+
+		if (f->Name[0]==L'\0')
+			wcscpy_s(f->Name, 256, m_Name);
 	}
 	else
 	{

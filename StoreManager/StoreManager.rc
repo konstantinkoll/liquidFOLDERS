@@ -85,7 +85,8 @@ IDB_ASCENDING           BITMAP                  "res\\Ascending_16.bmp"
 IDB_GROUPING            BITMAP                  "res\\Grouping_32.bmp"
 IDB_TASKS               BITMAP                  "res\\Tasks.bmp"
 IDB_VIEWS               BITMAP                  "res\\Views.bmp"
-IDB_CONTEXTS            BITMAP                  "res\\Contexts.bmp"
+IDB_CONTEXTS_16         BITMAP                  "res\\Contexts_16.bmp"
+IDB_CONTEXTS_32         BITMAP                  "res\\Contexts_32.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -144,11 +145,18 @@ LANGUAGE LANG_GERMAN, SUBLANG_NEUTRAL
 // Menu
 //
 
+IDM_NEW MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "Markierung „Neu“ &entfernen", IDM_NEW_REMOVENEW
+    END
+END
+
 IDM_TRASH MENU 
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM SEPARATOR
         MENUITEM "Alle &wiederherstellen",      IDM_TRASH_RESTOREALL
         MENUITEM "&Papierkorb leeren",          IDM_TRASH_EMPTY
     END
@@ -458,6 +466,8 @@ BEGIN
     IDS_STATISTICS_OTHER    "Andere"
     IDS_SUBFOLDERS_MANDATORY "Unterordner in dieser Ansicht erforderlich"
     IDS_SUBFOLDERS_NOTAVAIL "Unterordner im Kontext nicht verfügbar"
+    IDS_FILETYPES           "Dateitypen"
+    IDS_HOUSEKEEPING        "Verwaltung"
 END
 
 STRINGTABLE 
@@ -605,11 +615,18 @@ LANGUAGE LANG_SPANISH, SUBLANG_NEUTRAL
 // Menu
 //
 
+IDM_NEW MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "&Eliminar ""Nuevo"" attributo", IDM_NEW_REMOVENEW
+    END
+END
+
 IDM_TRASH MENU 
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM SEPARATOR
         MENUITEM "&Restaurar todo",             IDM_TRASH_RESTOREALL
         MENUITEM "&Vaciar bandeja de reciclaje", IDM_TRASH_EMPTY
     END
@@ -920,6 +937,8 @@ BEGIN
     IDS_SUBFOLDERS_MANDATORY 
                             "Las subcarpetas son obligatorias para esta visualización."
     IDS_SUBFOLDERS_NOTAVAIL "Las subcarpetas no están disponibles para este contexto."
+    IDS_FILETYPES           "Tipos de archivo"
+    IDS_HOUSEKEEPING        "Mantenimiento"
 END
 
 STRINGTABLE 
@@ -1067,11 +1086,18 @@ LANGUAGE LANG_FRENCH, SUBLANG_NEUTRAL
 // Menu
 //
 
+IDM_NEW MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "&Enlever le marquage ""nouveau""", IDM_NEW_REMOVENEW
+    END
+END
+
 IDM_TRASH MENU 
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM SEPARATOR
         MENUITEM "Reconstituer &tous",          IDM_TRASH_RESTOREALL
         MENUITEM "&Vider dêchets",              IDM_TRASH_EMPTY
     END
@@ -1382,6 +1408,8 @@ BEGIN
     IDS_STATISTICS_OTHER    "D'autres"
     IDS_SUBFOLDERS_MANDATORY "Sous-dossier dans cet avis nécessaire"
     IDS_SUBFOLDERS_NOTAVAIL "Sous-dossier dans le contexte non disponible"
+    IDS_FILETYPES           "Types de fichiers"
+    IDS_HOUSEKEEPING        "Ménage"
 END
 
 STRINGTABLE 
@@ -1579,11 +1607,18 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 // Menu
 //
 
+IDM_NEW MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "&Remove ""New"" attribute",   IDM_NEW_REMOVENEW
+    END
+END
+
 IDM_TRASH MENU 
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM SEPARATOR
         MENUITEM "&Restore all",                IDM_TRASH_RESTOREALL
         MENUITEM "&Empty trash",                IDM_TRASH_EMPTY
     END
@@ -1910,6 +1945,8 @@ BEGIN
     IDS_VATTR_INDEXVERSION  "Index version"
     IDS_VATTR_IATA_NAME     "IATA airport name"
     IDS_VATTR_IATA_COUNTRY  "Country/territory"
+    IDS_FILETYPES           "File types"
+    IDS_HOUSEKEEPING        "Housekeeping"
 END
 
 STRINGTABLE 

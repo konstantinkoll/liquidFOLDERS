@@ -53,14 +53,17 @@ protected:
 	CJournalButton m_wndJournalButton;
 	CHistoryBar m_wndHistory;
 	CGlassEdit m_wndSearch;
+	CSidebar m_wndSidebar;
 	CMainView m_wndMainView;
 	BreadcrumbItem* m_BreadcrumbBack;
 	BreadcrumbItem* m_BreadcrumbForward;
 	LFFilter* m_pActiveFilter;
 	LFSearchResult* m_pRawFiles;
 	LFSearchResult* m_pCookedFiles;
+	BOOL m_ShowFilterPane;
 
 	BOOL Create(BOOL IsClipboard);
+	void HideFilterPane();
 	void WriteMetadataTXT(CStdioFile& f);
 	void WriteMetadataXML(CStdioFile& f);
 
@@ -72,7 +75,10 @@ protected:
 	afx_msg LRESULT OnNavigateBack(WPARAM wParam, LPARAM lParam=NULL);
 	afx_msg void OnNavigateForward();
 	afx_msg void OnNavigateReload();
+	afx_msg void OnNavigateSwitchContext(UINT nID);
 	afx_msg void OnUpdateNavCommands(CCmdUI* pCmdUI);
+
+	afx_msg void OnToggleFilterPane();
 
 	afx_msg void OnItemOpen();
 	afx_msg void OnItemOpenNewWindow();

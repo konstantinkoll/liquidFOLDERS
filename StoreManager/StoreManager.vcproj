@@ -714,7 +714,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\Contexts.bmp"
+				RelativePath=".\res\Contexts_16.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Contexts_32.bmp"
 				>
 			</File>
 			<File

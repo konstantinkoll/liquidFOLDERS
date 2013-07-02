@@ -103,6 +103,7 @@ CMainWnd::CMainWnd()
 	m_pActiveFilter = NULL;
 	m_pRawFiles = m_pCookedFiles = NULL;
 	m_BreadcrumbBack = m_BreadcrumbForward = NULL;
+	m_ShowFilterPane = FALSE;
 }
 
 CMainWnd::~CMainWnd()
@@ -239,7 +240,24 @@ void CMainWnd::AdjustLayout()
 	m_wndHistory.SetWindowPos(NULL, rect.left+JournalWidth+7, rect.top+(m_Margins.cyTopHeight-HistoryHeight-3)/2, rect.Width()-JournalWidth-SearchWidth-14, HistoryHeight, SWP_NOACTIVATE | SWP_NOZORDER);
 	m_wndSearch.SetWindowPos(NULL, rect.right-SearchWidth, rect.top+(m_Margins.cyTopHeight-HistoryHeight-3)/2, SearchWidth, HistoryHeight, SWP_NOACTIVATE | SWP_NOZORDER);
 
-	m_wndMainView.SetWindowPos(NULL, rect.left, rect.top+m_Margins.cyTopHeight, rect.Width(), rect.bottom-m_Margins.cyTopHeight, SWP_NOACTIVATE | SWP_NOZORDER);
+	INT FilterWidth = 0;
+	if (m_ShowFilterPane)
+	{
+		if (!m_wndSidebar.IsWindowVisible())
+		{
+			INT ctx = GetContext();
+			m_wndSidebar.Reset(ctx<=LFLastQueryContext ? IDM_NAV_SWITCHCONTEXT+ctx : 0);
+		}
+
+		FilterWidth = max(32, m_wndSidebar.GetPreferredWidth());
+		m_wndSidebar.SetWindowPos(NULL, rect.left, rect.top+m_Margins.cyTopHeight, FilterWidth, rect.bottom-m_Margins.cyTopHeight, SWP_NOACTIVATE | SWP_NOZORDER | SWP_SHOWWINDOW);
+	}
+	else
+	{
+		m_wndSidebar.ShowWindow(SW_HIDE);
+	}
+
+	m_wndMainView.SetWindowPos(NULL, rect.left+FilterWidth, rect.top+m_Margins.cyTopHeight, rect.Width()/*-FilterWidth*/, rect.bottom-m_Margins.cyTopHeight, SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
 INT CMainWnd::GetContext()
@@ -262,12 +280,16 @@ BOOL CMainWnd::AddClipItem(LFItemDescriptor* i)
 			return FALSE;
 
 	LFAddItemDescriptor(m_pRawFiles, LFAllocItemDescriptor(i));
+
 	return TRUE;
 }
 
 void CMainWnd::NavigateTo(LFFilter* f, UINT NavMode, FVPersistentData* Data, INT FirstAggregate, INT LastAggregate)
 {
 	ASSERT(f);
+
+	// Slide the filter pane away
+	HideFilterPane();
 
 	// Open new window if current window is not navigable
 	if (m_IsClipboard)
@@ -351,6 +373,15 @@ void CMainWnd::UpdateHistory()
 		m_wndHistory.SetHistory(m_pActiveFilter, m_BreadcrumbBack);
 }
 
+void CMainWnd::HideFilterPane()
+{
+	if (m_ShowFilterPane)
+	{
+		OnToggleFilterPane();
+		UpdateWindow();
+	}
+}
+
 
 BEGIN_MESSAGE_MAP(CMainWnd, CGlassWindow)
 	ON_WM_CREATE()
@@ -361,7 +392,11 @@ BEGIN_MESSAGE_MAP(CMainWnd, CGlassWindow)
 	ON_COMMAND(ID_NAV_BACK, OnNavigateBack)
 	ON_COMMAND(ID_NAV_FORWARD, OnNavigateForward)
 	ON_COMMAND(ID_NAV_RELOAD, OnNavigateReload)
+	ON_COMMAND_RANGE(IDM_NAV_SWITCHCONTEXT, IDM_NAV_SWITCHCONTEXT+LFLastQueryContext, OnNavigateSwitchContext)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_NAV_BACK, ID_NAV_RELOAD, OnUpdateNavCommands)
+	ON_UPDATE_COMMAND_UI_RANGE(IDM_NAV_SWITCHCONTEXT, IDM_NAV_SWITCHCONTEXT+LFLastQueryContext, OnUpdateNavCommands)
+
+	ON_COMMAND(ID_PANE_FILTER, OnToggleFilterPane)
 
 	ON_COMMAND(IDM_ITEM_OPEN, OnItemOpen)
 	ON_COMMAND(IDM_ITEM_OPENNEWWINDOW, OnItemOpenNewWindow)
@@ -380,6 +415,7 @@ BEGIN_MESSAGE_MAP(CMainWnd, CGlassWindow)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoreAttributesChanged, OnStoreAttributesChanged)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->DefaultStoreChanged, OnStoresChanged)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->ItemsDropped, OnItemsDropped)
+
 END_MESSAGE_MAP()
 
 INT CMainWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -403,8 +439,35 @@ INT CMainWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (!m_wndSearch.Create(tmpStr, this, 3, TRUE))
 		return -1;
 
+	// Sidebar
+	if (!m_wndSidebar.Create(this, 4, IDB_CONTEXTS_32, IDB_CONTEXTS_16))
+		return -1;
+
+	for (UINT a=0; a<=LFLastQueryContext; a++)
+	{
+		switch (a)
+		{
+		case 2:
+			m_wndSidebar.AddCaption(IDS_FILETYPES);
+			break;
+		case LFContextDocuments:
+			m_wndSidebar.AddCaption();
+			break;
+		case LFLastGroupContext+1:
+			m_wndSidebar.AddCaption(IDS_HOUSEKEEPING);
+			break;
+		case LFContextFilters:
+			m_wndSidebar.AddCaption(theApp.m_Contexts[LFContextFilters]->Name);
+			break;
+		}
+
+		m_wndSidebar.AddCommand(IDM_NAV_SWITCHCONTEXT+a, a, theApp.m_Contexts[a]->Name, theApp.m_Contexts[a]->Comment);
+	}
+
+	m_wndSidebar.AdjustLayout();
+
 	// Hauptansicht erstellen
-	if (!m_wndMainView.Create(m_IsClipboard, this, 4))
+	if (!m_wndMainView.Create(m_IsClipboard, this, 5))
 		return -1;
 
 	// Aero
@@ -502,6 +565,43 @@ void CMainWnd::OnNavigateReload()
 	}
 }
 
+void CMainWnd::OnNavigateSwitchContext(UINT nID)
+{
+	nID -= IDM_NAV_SWITCHCONTEXT;
+
+	if (GetContext()==LFContextStores)
+	{
+		LFFilter* f = LFAllocFilter();
+		f->Mode = LFFilterModeSearch;
+		f->ContextID = (UCHAR)nID;
+
+		NavigateTo(f);
+	}
+	else
+		if (m_pActiveFilter)
+		{
+			LFFilter* f;
+
+			if (m_pActiveFilter->Options.IsSubfolder)
+			{
+				ASSERT(m_BreadcrumbBack);
+
+				FVPersistentData Data;
+				ConsumeBreadcrumbItem(&m_BreadcrumbBack, &f, &Data);
+			}
+			else
+			{
+				f = LFAllocFilter(m_pActiveFilter);
+			}
+
+			f->ContextID = (UCHAR)nID;
+			if ((!f->Options.IsSearch) && (f->StoreID[0]=='\0'))
+				f->Name[0] = L'\0';
+
+			NavigateTo(f, NAVMODE_RELOAD);
+		}
+}
+
 void CMainWnd::OnUpdateNavCommands(CCmdUI* pCmdUI)
 {
 	BOOL b = !m_IsClipboard;
@@ -517,6 +617,21 @@ void CMainWnd::OnUpdateNavCommands(CCmdUI* pCmdUI)
 	}
 
 	pCmdUI->Enable(b);
+}
+
+
+// Filter pane
+
+void CMainWnd::OnToggleFilterPane()
+{
+	if (m_ShowFilterPane)
+		SetFocus();
+
+	m_ShowFilterPane = !m_ShowFilterPane;
+	AdjustLayout();
+
+	if (m_ShowFilterPane)
+		m_wndSidebar.SetFocus();
 }
 
 
@@ -551,8 +666,6 @@ void CMainWnd::OnItemOpen()
 						if (f)
 						{
 							theApp.ShowNagScreen(NAG_EXPIRED | NAG_FORCE, this);
-// TODO
-//							m_wndMainView.SetFilter(f);
 							NavigateTo(f);
 						}
 					}

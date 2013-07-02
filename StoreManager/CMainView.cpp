@@ -78,7 +78,7 @@ DWORD WINAPI WorkerDelete(void* lParam)
 // CMainView
 //
 
-#define FileViewID     4
+#define FileViewID     3
 
 CMainView::CMainView()
 {
@@ -246,11 +246,12 @@ void CMainView::SetHeader()
 				pHint = s.StoreComment;
 			}
 
-		if (*pHint!=L'\0')
-		{
-			Hint.Insert(0, (GetThreadLocale() & 0x1FF)==LANG_ENGLISH ? _T("—") : _T(" – "));
-			Hint.Insert(0, pHint);
-		}
+		if (pHint)
+			if (*pHint!=L'\0')
+			{
+				Hint.Insert(0, (GetThreadLocale() & 0x1FF)==LANG_ENGLISH ? _T("—") : _T(" – "));
+				Hint.Insert(0, pHint);
+			}
 
 		m_wndExplorerHeader.SetColors((m_Context>=LFContextSearch) && (m_Context<=LFContextClipboard) ? 0x126E00 : 0x993300, (COLORREF)-1, FALSE);
 		m_wndExplorerHeader.SetText(p_CookedFiles->m_Name, Hint, FALSE);
@@ -806,7 +807,7 @@ INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_DropTarget.SetOwner(GetOwner());
 
 	// Explorer header
-	if (!m_wndExplorerHeader.Create(this, 3))
+	if (!m_wndExplorerHeader.Create(this, 2))
 		return -1;
 
 	m_wndExplorerHeader.SetOwner(GetOwner());
@@ -815,14 +816,14 @@ INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	p_ViewButton = m_wndExplorerHeader.AddButton(IDM_VIEW);
 
 	// Inspector
-	if (!m_wndInspector.Create(FALSE, theApp.m_InspectorWidth, this, 5))
+	if (!m_wndInspector.Create(FALSE, theApp.m_InspectorWidth, this, 4))
 		return -1;
 
 	m_wndInspector.SetOwner(GetOwner());
 	m_ShowInspectorPane = theApp.m_ShowInspectorPane;
 
 	// Explorer notification
-	if (!m_wndExplorerNotification.Create(this, 6))
+	if (!m_wndExplorerNotification.Create(this, 5))
 		return -1;
 
 	return 0;
@@ -914,6 +915,10 @@ void CMainView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 		pMenu = new CMenu();
 		pMenu->LoadMenu(IDM_STORES);
 		break;
+	case LFContextNew:
+		pMenu = new CMenu();
+		pMenu->LoadMenu(IDM_NEW);
+		break;
 	case LFContextTrash:
 		pMenu = new CMenu();
 		pMenu->LoadMenu(IDM_TRASH);
@@ -936,8 +941,8 @@ void CMainView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 
 	CString tmpStr;
 
-	// Insert separator to self-contained IDM_STORES from LFCommDlg
-	if (m_Context==LFContextStores)
+	// Insert separator
+	if (pPopup->GetMenuItemCount())
 		pPopup->InsertMenu(0, MF_SEPARATOR | MF_BYPOSITION);
 
 	// Append "Import folder" command when viewing a store

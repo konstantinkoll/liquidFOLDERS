@@ -323,7 +323,7 @@ void SetAttributesFromFile(LFItemDescriptor* i, wchar_t* fn, bool metadata)
 		pDesktop->Release();
 	}
 
-	// TODO: weitere Attribute
+	// TODO: weitere Attribute durch eigene Metadaten-Bibliothek
 }
 
 void SetNameExtAddFromFile(LFItemDescriptor* i, wchar_t* fn)
