@@ -319,12 +319,6 @@ void CMainView::UpdateSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles,
 		OnUpdateSelection();
 }
 
-void CMainView::UpdateFooter()
-{
-	if (p_wndFileView)
-		p_wndFileView->UpdateFooter();
-}
-
 INT CMainView::GetContext()
 {
 	return m_Context;

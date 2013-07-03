@@ -35,7 +35,6 @@ public:
 	void UpdateSortOptions(INT Context);
 	void UpdateViewOptions(INT Context=-1, INT View=-1);
 	void Reload(INT Context);
-	void UpdateFooter(INT Context=-1, INT View=-1);
 
 	CList<CMainWnd*> m_MainFrames;
 	CMainWnd* p_Clipboard;

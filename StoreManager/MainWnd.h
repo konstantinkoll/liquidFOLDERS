@@ -21,11 +21,10 @@
 #define WM_UPDATESORTOPTIONS     WM_USER+201
 #define WM_RELOAD                WM_USER+202
 #define WM_COOKFILES             WM_USER+203
-#define WM_UPDATEFOOTER          WM_USER+204
-#define WM_NAVIGATEBACK          WM_USER+205
-#define WM_NAVIGATETO            WM_USER+206
-#define WM_SENDTO                WM_USER+207
-#define WM_BEGINDRAGDROP         WM_USER+208
+#define WM_NAVIGATEBACK          WM_USER+204
+#define WM_NAVIGATETO            WM_USER+205
+#define WM_SENDTO                WM_USER+206
+#define WM_BEGINDRAGDROP         WM_USER+207
 
 class CMainWnd : public CGlassWindow
 {

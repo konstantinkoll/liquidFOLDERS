@@ -329,11 +329,6 @@ void CStoreManagerApp::Reload(INT Context)
 	Broadcast(Context, -1, WM_RELOAD);
 }
 
-void CStoreManagerApp::UpdateFooter(INT Context, INT View)
-{
-	Broadcast(Context, View, WM_UPDATEFOOTER);
-}
-
 
 // Registry and view settings
 

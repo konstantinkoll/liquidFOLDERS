@@ -245,7 +245,7 @@ void CMainWnd::AdjustLayout()
 	{
 		if (!m_wndSidebar.IsWindowVisible())
 		{
-			INT ctx = GetContext();
+			const INT ctx = GetContext();
 			m_wndSidebar.Reset(ctx<=LFLastQueryContext ? IDM_NAV_SWITCHCONTEXT+ctx : 0);
 		}
 
@@ -257,7 +257,7 @@ void CMainWnd::AdjustLayout()
 		m_wndSidebar.ShowWindow(SW_HIDE);
 	}
 
-	m_wndMainView.SetWindowPos(NULL, rect.left+FilterWidth, rect.top+m_Margins.cyTopHeight, rect.Width()/*-FilterWidth*/, rect.bottom-m_Margins.cyTopHeight, SWP_NOACTIVATE | SWP_NOZORDER);
+	m_wndMainView.SetWindowPos(NULL, rect.left+FilterWidth, rect.top+m_Margins.cyTopHeight, rect.Width(), rect.bottom-m_Margins.cyTopHeight, SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
 INT CMainWnd::GetContext()
@@ -406,7 +406,6 @@ BEGIN_MESSAGE_MAP(CMainWnd, CGlassWindow)
 	ON_MESSAGE_VOID(WM_UPDATESORTOPTIONS, OnUpdateSortOptions)
 	ON_MESSAGE_VOID(WM_RELOAD, OnNavigateReload)
 	ON_MESSAGE(WM_COOKFILES, OnCookFiles)
-	ON_MESSAGE_VOID(WM_UPDATEFOOTER, OnUpdateFooter)
 	ON_MESSAGE(WM_NAVIGATEBACK, OnNavigateBack)
 	ON_MESSAGE(WM_NAVIGATETO, OnNavigateTo)
 
@@ -858,11 +857,6 @@ LRESULT CMainWnd::OnCookFiles(WPARAM wParam, LPARAM /*lParam*/)
 		theApp.ShowNagScreen(NAG_EXPIRED, this);
 
 	return m_pCookedFiles->m_LastError;
-}
-
-void CMainWnd::OnUpdateFooter()
-{
-	m_wndMainView.UpdateFooter();
 }
 
 

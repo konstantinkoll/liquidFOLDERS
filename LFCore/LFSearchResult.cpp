@@ -154,6 +154,9 @@ void LFSearchResult::SetMetadataFromFilter(LFFilter* f)
 			wchar_t* brk = wcschr(m_Hint, L'\n');
 			if (brk)
 				*brk = L'\0';
+
+			if (wcscmp(m_Name, m_Hint)==0)
+				m_Hint[0] = L'\0';
 		}
 		else
 		{
