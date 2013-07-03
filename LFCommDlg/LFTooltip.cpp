@@ -24,7 +24,7 @@ BOOL LFTooltip::Create(CWnd* pWndParent)
 		nClassStyle |= CS_DROPSHADOW;
 
 	CString className = AfxRegisterWndClass(nClassStyle, LoadCursor(NULL, IDC_ARROW));
-	return CWnd::CreateEx(0, className, _T(""), WS_POPUP, 0, 0, 0, 0, pWndParent->GetSafeHwnd(), NULL);
+	return CWnd::CreateEx(WS_EX_TOPMOST | WS_EX_TOOLWINDOW | WS_EX_NOACTIVATE, className, _T(""), WS_POPUP, 0, 0, 0, 0, pWndParent->GetSafeHwnd(), NULL);
 }
 
 BOOL LFTooltip::PreTranslateMessage(MSG* pMsg)
@@ -62,6 +62,7 @@ void LFTooltip::Track(CPoint point, HICON hIcon, CSize szIcon, const CString& st
 	m_szIcon = szIcon;
 	m_strCaption = strCaption;
 	m_strText = strText;
+	m_TextHeight = 0;
 
 	// Size
 	CSize sz(0, 0);
@@ -73,6 +74,7 @@ void LFTooltip::Track(CPoint point, HICON hIcon, CSize szIcon, const CString& st
 		CSize szText = dc.GetTextExtent(strCaption);
 		sz.cx = max(sz.cx, szText.cx);
 		sz.cy += szText.cy;
+		m_TextHeight = max(m_TextHeight, szText.cy);
 		dc.SelectObject(pOldFont);
 
 		if (!strText.IsEmpty())
@@ -82,7 +84,6 @@ void LFTooltip::Track(CPoint point, HICON hIcon, CSize szIcon, const CString& st
 	if (!strText.IsEmpty())
 	{
 		CFont* pOldFont = dc.SelectObject(&afxGlobalData.fontTooltip);
-		m_TextHeight = 0;
 
 		while (!strText.IsEmpty())
 		{
@@ -203,6 +204,7 @@ void LFTooltip::Track(CPoint point, HICON hIcon, CSize szIcon, const CString& st
 
 	Invalidate();
 	UpdateWindow();
+
 }
 
 void LFTooltip::Hide()

@@ -112,6 +112,7 @@ IDB_ATTRIBUTEICONS_16   BITMAP                  "res\\Attributes_16.bmp"
 IDB_ATTRIBUTEICONS_32   BITMAP                  "res\\Attributes_32.bmp"
 IDB_SORTINDICATORS      BITMAP                  "res\\SortIndicators.bmp"
 IDB_STOREBACKUP         BITMAP                  "res\\StoreBackup_32.bmp"
+IDB_SIDEBARSHADOW       BITMAP                  "res\\SidebarShadow.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
 //

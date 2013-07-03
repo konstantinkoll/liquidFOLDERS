@@ -463,8 +463,6 @@ INT CMainWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		m_wndSidebar.AddCommand(IDM_NAV_SWITCHCONTEXT+a, a, theApp.m_Contexts[a]->Name, theApp.m_Contexts[a]->Comment);
 	}
 
-	m_wndSidebar.AdjustLayout();
-
 	// Hauptansicht erstellen
 	if (!m_wndMainView.Create(m_IsClipboard, this, 5))
 		return -1;

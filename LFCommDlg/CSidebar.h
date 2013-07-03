@@ -49,6 +49,7 @@ protected:
 	BOOL m_Keyboard;
 	CMFCToolBarImages m_SmallIcons;
 	CMFCToolBarImages m_LargeIcons;
+	HBITMAP hShadow;
 
 	void AddItem(BOOL Selectable, UINT CmdID, INT IconID, WCHAR* Caption, WCHAR* Hint);
 	INT ItemAtPosition(CPoint point);
@@ -56,6 +57,7 @@ protected:
 	void SelectItem(INT idx);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
+	afx_msg void OnDestroy();
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnPaint();
 	afx_msg void OnSize(UINT nType, INT cx, INT cy);

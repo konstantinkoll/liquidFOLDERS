@@ -12,6 +12,8 @@
 #define BORDER     6
 #define SHADOW     10
 
+extern AFX_EXTENSION_MODULE LFCommDlgDLL;
+
 CSidebar::CSidebar()
 	: CWnd()
 {
@@ -20,6 +22,7 @@ CSidebar::CSidebar()
 	m_Width = 0;
 	m_SelectedItem = m_HotItem = -1;
 	m_Hover = m_Keyboard = FALSE;
+	hShadow = NULL;
 }
 
 BOOL CSidebar::Create(CWnd* pParentWnd, UINT nID, UINT LargeIconsID, UINT SmallIconsID)
@@ -34,7 +37,7 @@ BOOL CSidebar::Create(CWnd* pParentWnd, UINT nID, UINT LargeIconsID, UINT SmallI
 		m_SmallIcons.Load(SmallIconsID);
 
 	// Create
-	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW, LoadCursor(NULL, IDC_ARROW));
+	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, LoadCursor(NULL, IDC_ARROW));
 
 	const DWORD dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE | WS_TABSTOP;
 	CRect rect;
@@ -138,6 +141,9 @@ INT CSidebar::GetPreferredWidth()
 void CSidebar::Reset(UINT CmdID)
 {
 	m_SelectedItem = m_HotItem = -1;
+	m_Hover = FALSE;
+
+	m_HotItem=0;
 
 	for (UINT a=0; a<m_Items.m_ItemCount; a++)
 		if ((m_Items.m_Items[a].Selectable) && (m_Items.m_Items[a].CmdID==CmdID))
@@ -197,6 +203,7 @@ void CSidebar::AdjustLayout()
 
 BEGIN_MESSAGE_MAP(CSidebar, CWnd)
 	ON_WM_CREATE()
+	ON_WM_DESTROY()
 	ON_WM_ERASEBKGND()
 	ON_WM_PAINT()
 	ON_WM_SIZE()
@@ -214,9 +221,18 @@ INT CSidebar::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CWnd::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
+	hShadow = LoadBitmap(LFCommDlgDLL.hResource, MAKEINTRESOURCE(IDB_SIDEBARSHADOW));
+
 	m_TooltipCtrl.Create(this);
 
 	return 0;
+}
+
+void CSidebar::OnDestroy()
+{
+	DeleteObject(hShadow);
+
+	CWnd::OnDestroy();
 }
 
 BOOL CSidebar::OnEraseBkgnd(CDC* /*pDC*/)
@@ -333,9 +349,17 @@ void CSidebar::OnPaint()
 
 	if (Themed)
 	{
-		SolidBrush brush(Color(0x0A, 0x00, 0x00, 0x00));
-		for (INT a=0; a<SHADOW; a++)
-			g.FillRectangle(&brush, rect.right-a-1, a/2, a+1, rect.Height()-a/2);
+		HDC hdcMem = CreateCompatibleDC(dc);
+		HBITMAP hbmOld = (HBITMAP)SelectObject(hdcMem, hShadow);
+
+		BLENDFUNCTION BF = { AC_SRC_OVER, 0, 0xFF, AC_SRC_ALPHA };
+		AlphaBlend(dc, rect.right-SHADOW, 0, SHADOW, 5, hdcMem, 0, 0, SHADOW, 5, BF);
+
+		for (INT y=5; y<rect.Height(); y++)
+			AlphaBlend(dc, rect.right-SHADOW, y, SHADOW, 1, hdcMem, 0, 4, SHADOW, 1, BF);
+
+		SelectObject(hdcMem, hbmOld);
+		DeleteDC(hdcMem);
 	}
 
 	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);

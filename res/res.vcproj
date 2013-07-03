@@ -1361,6 +1361,10 @@
 			>
 		</File>
 		<File
+			RelativePath=".\SidebarShadow.bmp"
+			>
+		</File>
+		<File
 			RelativePath=".\SortIndicators.bmp"
 			>
 		</File>
