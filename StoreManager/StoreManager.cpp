@@ -368,6 +368,7 @@ void CStoreManagerApp::LoadViewOptions(INT context)
 	case LFContextAudio:
 		DefaultSortBy = LFAttrArtist;
 	case LFContextContacts:
+	case LFContextFilters:
 		DefaultMode = LFViewTiles;
 		break;
 	case LFContextNew:

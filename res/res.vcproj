@@ -292,6 +292,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Ribbon\FilterAdd_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\FilterAdd_32.png"
+				>
+			</File>
+			<File
 				RelativePath=".\Ribbon\FilterEdit_16.png"
 				>
 			</File>

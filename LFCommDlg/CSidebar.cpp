@@ -77,7 +77,15 @@ void CSidebar::AddItem(BOOL Selectable, UINT CmdID, INT IconID, WCHAR* Caption, 
 	i.CmdID = CmdID;
 	i.IconID = IconID;
 	if (Caption)
-		wcscpy_s(i.Caption, 256, Caption);
+		if (Selectable)
+		{
+			wcscpy_s(i.Caption, 256, Caption);
+		}
+		else
+		{
+			for (WCHAR* pDst=i.Caption; *Caption;)
+				*(pDst++) = (WCHAR)toupper(*(Caption++));
+		}
 	if (Hint)
 		wcscpy_s(i.Hint, 256, Hint);
 
@@ -91,7 +99,7 @@ void CSidebar::AddItem(BOOL Selectable, UINT CmdID, INT IconID, WCHAR* Caption, 
 	else
 	{
 		CDC* dc = GetDC();
-		HFONT hOldFont = Selectable ? (HFONT)dc->SelectObject(p_App->m_LargeFont.m_hObject) : (HFONT)dc->SelectObject(p_App->m_DefaultFont.m_hObject);
+		HFONT hOldFont = Selectable ? (HFONT)dc->SelectObject(p_App->m_LargeFont.m_hObject) : (HFONT)dc->SelectObject(afxGlobalData.fontBold.m_hObject);
 		sz = dc->GetTextExtent(i.Caption);
 		dc->SelectObject(hOldFont);
 		ReleaseDC(dc);
@@ -325,9 +333,9 @@ void CSidebar::OnPaint()
 
 			if (m_Items.m_Items[a].Caption[0])
 			{
-				CFont* pOldFont = dc.SelectObject(m_Items.m_Items[a].Selectable ? &p_App->m_LargeFont : &p_App->m_DefaultFont);
+				CFont* pOldFont = dc.SelectObject(m_Items.m_Items[a].Selectable ? &p_App->m_LargeFont : &afxGlobalData.fontBold);
 
-				if (m_Items.m_Items[a].Selectable && Themed)
+				if (Themed)
 				{
 					rectItem.OffsetRect(1, 1);
 

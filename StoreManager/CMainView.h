@@ -100,6 +100,8 @@ protected:
 	afx_msg void OnTrashRestoreAll();
 	afx_msg void OnUpdateTrashCommands(CCmdUI* pCmdUI);
 
+	afx_msg void OnUpdateFiltersCommands(CCmdUI* pCmdUI);
+
 	afx_msg void OnUpdateItemCommands(CCmdUI* pCmdUI);
 
 	afx_msg void OnVolumeCreateNewStore();

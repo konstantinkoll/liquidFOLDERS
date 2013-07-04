@@ -136,7 +136,6 @@ public:
 	virtual INT GetTileViewColumnIndices(UINT* indices);
 	virtual INT GetPreviewDetailsColumnIndices(UINT* indices);
 	virtual INT GetContentViewColumnIndices(UINT* indices);
-	virtual FolderThemes GetFolderTheme();
 
 	// Other
 	BOOL SetShellLink(IShellLink* pShellLink);

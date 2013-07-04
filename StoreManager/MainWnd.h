@@ -79,6 +79,8 @@ protected:
 
 	afx_msg void OnToggleFilterPane();
 
+	afx_msg void OnFiltersCreateNew();
+
 	afx_msg void OnItemOpen();
 	afx_msg void OnItemOpenNewWindow();
 	afx_msg LRESULT OnNavigateTo(WPARAM wParam, LPARAM lParam);
