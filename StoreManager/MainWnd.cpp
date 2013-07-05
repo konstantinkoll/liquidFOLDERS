@@ -398,8 +398,6 @@ BEGIN_MESSAGE_MAP(CMainWnd, CGlassWindow)
 
 	ON_COMMAND(ID_PANE_FILTER, OnToggleFilterPane)
 
-	ON_COMMAND(IDM_FILTERS_CREATENEW, OnFiltersCreateNew)
-
 	ON_COMMAND(IDM_ITEM_OPEN, OnItemOpen)
 	ON_COMMAND(IDM_ITEM_OPENNEWWINDOW, OnItemOpenNewWindow)
 	ON_COMMAND(IDM_INSPECTOR_EXPORTMETADATA, OnExportMetadata)
@@ -436,7 +434,7 @@ INT CMainWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	// Suchbegriff
 	CString tmpStr;
-	ENSURE(tmpStr.LoadString(IDS_SEARCHTERM));
+	ENSURE(tmpStr.LoadString(IDS_FILTER_SEARCHTERM));
 	if (!m_wndSearch.Create(tmpStr, this, 3, TRUE))
 		return -1;
 
@@ -631,14 +629,6 @@ void CMainWnd::OnToggleFilterPane()
 
 	if (m_ShowFilterPane)
 		m_wndSidebar.SetFocus();
-}
-
-
-// Create new filter
-
-void CMainWnd::OnFiltersCreateNew()
-{
-	HideFilterPane();
 }
 
 

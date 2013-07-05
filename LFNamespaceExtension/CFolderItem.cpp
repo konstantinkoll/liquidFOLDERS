@@ -381,42 +381,20 @@ BOOL CFolderItem::GetChildren(CGetChildrenEventArgs& e)
 
 			// Important attributes
 			for (UINT a=0; a<LFAttributeCount; a++)
-				switch (a)
+				if (theApp.m_Domains[Attrs.DomainID]->ImportantAttributes->IsSet(a))
 				{
-				case LFAttrFileName:
-				case LFAttrComments:
-				case LFAttrCreationTime:
-				case LFAttrFileTime:
-				case LFAttrTags:
-				case LFAttrRating:
-				case LFAttrPriority:
-				case LFAttrLocationName:
-				case LFAttrLocationIATA:
-				case LFAttrRoll:
-				case LFAttrAlbum:
-				case LFAttrArtist:
-				case LFAttrTitle:
-				case LFAttrCopyright:
-				case LFAttrRecordingTime:
-				case LFAttrRecordingEquipment:
-				case LFAttrResponsible:
-				case LFAttrDueTime:
-				case LFAttrDoneTime:
-				case LFAttrCustomer:
-					{
-						FolderSerialization d ;
-						ZeroMemory(&d, sizeof(d));
-						d.Level = Attrs.Level+1;
-						d.Icon = theApp.m_Attributes[a]->IconID;
-						d.Type = LFTypeVirtual;
-						d.CategoryID = theApp.m_Attributes[a]->Category;
-						wcscpy_s(d.DisplayName, 256, theApp.m_Attributes[a]->Name);
-						wcscpy_s(d.Comment, 256, theApp.FrmtAttrStr(sortStr, theApp.m_Attributes[a]->Name));
-						strcpy_s(d.StoreID, LFKeySize, Attrs.StoreID);
-						sprintf_s(d.FileID, LFKeySize, "%d", a);
+					FolderSerialization d ;
+					ZeroMemory(&d, sizeof(d));
+					d.Level = Attrs.Level+1;
+					d.Icon = theApp.m_Attributes[a]->IconID;
+					d.Type = LFTypeVirtual;
+					d.CategoryID = theApp.m_Attributes[a]->Category;
+					wcscpy_s(d.DisplayName, 256, theApp.m_Attributes[a]->Name);
+					wcscpy_s(d.Comment, 256, theApp.FrmtAttrStr(sortStr, theApp.m_Attributes[a]->Name));
+					strcpy_s(d.StoreID, LFKeySize, Attrs.StoreID);
+					sprintf_s(d.FileID, LFKeySize, "%d", a);
 
-						e.children->AddTail(new CFolderItem(d));
-					}
+					e.children->AddTail(new CFolderItem(d));
 				}
 		}
 		break;
@@ -1385,6 +1363,33 @@ INT CFolderItem::GetPreviewDetailsColumnIndices(UINT* indices)
 INT CFolderItem::GetContentViewColumnIndices(UINT* indices)
 {
 	return GetXPTaskPaneColumnIndices(indices);
+}
+
+
+FolderThemes CFolderItem::GetFolderTheme()
+{
+	FolderThemes t = NSEFT_None;
+	if (Attrs.Level>=LevelStoreHome)
+		switch (Attrs.DomainID)
+		{
+		case LFDomainAudio:
+			t = NSEFT_Music;
+			break;
+		case LFDomainPictures:
+		case LFDomainPhotos:
+			t = NSEFT_Picture;
+			break;
+		case LFDomainVideos:
+			t = NSEFT_Video;
+			break;
+		case LFDomainAllFiles:
+		case LFDomainAllMediaFiles:
+		case LFDomainFavorites:
+			t = NSEFT_Search;
+			break;
+		}
+
+	return t;
 }
 
 

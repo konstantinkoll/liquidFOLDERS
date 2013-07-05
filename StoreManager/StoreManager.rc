@@ -162,14 +162,6 @@ BEGIN
     END
 END
 
-IDM_FILTERS MENU 
-BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "&Neuer Filter...",            IDM_FILTERS_CREATENEW
-    END
-END
-
 IDM_VOLUME MENU 
 BEGIN
     POPUP "POPUP"
@@ -464,16 +456,18 @@ BEGIN
     IDS_LEGEND              "Legende"
     IDS_LEGEND_BLUE         "Wartungsarbeiten erforderlich"
     IDS_LEGEND_RED          "Beschädigt (Dateikörper fehlt)"
-    IDS_SUBFOLDERS_MANDATORY "Unterordner in dieser Ansicht erforderlich"
-    IDS_SUBFOLDERS_NOTAVAIL "Unterordner im Kontext nicht verfügbar"
-    IDS_FILETYPES           "Dateitypen"
-    IDS_HOUSEKEEPING        "Verwaltung"
-    IDS_SEARCHTERM          "Suchbegriff"
+    IDS_STATISTICS          "Statistiken"
+    IDS_STATISTICS_BYCOUNT  "Nach Anzahl"
 END
 
 STRINGTABLE 
 BEGIN
-    IDM_FILTERS_CREATENEW           "Neuer Filter..."
+    IDS_STATISTICS_BYSIZE   "Nach Größe"
+    IDS_STATISTICS_OTHER    "Andere"
+    IDS_SUBFOLDERS_MANDATORY "Unterordner in dieser Ansicht erforderlich"
+    IDS_SUBFOLDERS_NOTAVAIL "Unterordner im Kontext nicht verfügbar"
+    IDS_FILETYPES           "Dateitypen"
+    IDS_HOUSEKEEPING        "Verwaltung"
 END
 
 STRINGTABLE 
@@ -499,6 +493,7 @@ BEGIN
     IDS_FILTER_SEARCHIN     "Suchen in"
     IDS_FILTER_ALLSTORES    "Allen Stores"
     IDS_FILTER_THISSTORE    "Diesem Store"
+    IDS_FILTER_SEARCHTERM   "Suchbegriff"
     IDS_FILTER_OTHERCONDITIONS "Weitere Bedingungen"
     IDS_FILTER_ADDCONDITION "Bedingung hinzufügen..."
 END
@@ -543,10 +538,6 @@ STRINGTABLE
 BEGIN
     IDM_FILE_REMEMBER       "Fügt die ausgewählten Dateien zur Zwischenablage hinzu.\nMerken"
     IDM_FILE_REMOVE         "Entfernt die ausgewählten Dateien aus der Zwischenablage.\nEntfernen"
-END
-
-STRINGTABLE 
-BEGIN
     IDM_FILE_DELETE         "Löscht die ausgewählten Dateien.\nLöschen"
     IDM_FILE_RENAME         "Benennt die ausgewählte Datei um.\nUmbenennen"
 END
@@ -638,14 +629,6 @@ BEGIN
     BEGIN
         MENUITEM "&Restaurar todo",             IDM_TRASH_RESTOREALL
         MENUITEM "&Vaciar bandeja de reciclaje", IDM_TRASH_EMPTY
-    END
-END
-
-IDM_FILTERS MENU 
-BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "&Nuevo filtro...",            IDM_FILTERS_CREATENEW
     END
 END
 
@@ -943,17 +926,19 @@ BEGIN
     IDS_LEGEND              "Leyenda"
     IDS_LEGEND_BLUE         "Requiere de mantenimiento programado"
     IDS_LEGEND_RED          "Dañado"
+    IDS_STATISTICS          "Estadísticas"
+    IDS_STATISTICS_BYCOUNT  "Por número de archivo"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_STATISTICS_BYSIZE   "Por tamaño de archivo"
+    IDS_STATISTICS_OTHER    "Otros"
     IDS_SUBFOLDERS_MANDATORY 
                             "Las subcarpetas son obligatorias para esta visualización."
     IDS_SUBFOLDERS_NOTAVAIL "Las subcarpetas no están disponibles para este contexto."
     IDS_FILETYPES           "Tipos de archivo"
     IDS_HOUSEKEEPING        "Mantenimiento"
-    IDS_SEARCHTERM          "Buscar término"
-END
-
-STRINGTABLE 
-BEGIN
-    IDM_FILTERS_CREATENEW           "Nuevo filtro..."
 END
 
 STRINGTABLE 
@@ -979,6 +964,7 @@ BEGIN
     IDS_FILTER_SEARCHIN     "Buscar en"
     IDS_FILTER_ALLSTORES    "Todos los stores"
     IDS_FILTER_THISSTORE    "Este store"
+    IDS_FILTER_SEARCHTERM   "Buscar término"
     IDS_FILTER_OTHERCONDITIONS "Otras condiciones"
     IDS_FILTER_ADDCONDITION "Añadir condición..."
 END
@@ -1023,10 +1009,6 @@ STRINGTABLE
 BEGIN
     IDM_FILE_REMEMBER       "Agrega los archivos seleccionados a la ventana del portapapeles.\nRecordar"
     IDM_FILE_REMOVE         "Remueve los archivos seleccionados de la ventana del portapapeles.\nRemover"
-END
-
-STRINGTABLE 
-BEGIN
     IDM_FILE_DELETE         "Elimina los archivos seleccionados.\nEliminar"
     IDM_FILE_RENAME         "Renombra los archivos seleccionados.\nRenombrar"
 END
@@ -1118,14 +1100,6 @@ BEGIN
     BEGIN
         MENUITEM "Reconstituer &tous",          IDM_TRASH_RESTOREALL
         MENUITEM "&Vider dêchets",              IDM_TRASH_EMPTY
-    END
-END
-
-IDM_FILTERS MENU 
-BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "&Filtre noveau...",           IDM_FILTERS_CREATENEW
     END
 END
 
@@ -1424,16 +1398,18 @@ BEGIN
     IDS_LEGEND              "Légende"
     IDS_LEGEND_BLUE         "Travail d'entretien nécessaire"
     IDS_LEGEND_RED          "Mutilé (le corps de fichier manque)"
-    IDS_SUBFOLDERS_MANDATORY "Sous-dossier dans cet avis nécessaire"
-    IDS_SUBFOLDERS_NOTAVAIL "Sous-dossier dans le contexte non disponible"
-    IDS_FILETYPES           "Types de fichiers"
-    IDS_HOUSEKEEPING        "Ménage"
-    IDS_SEARCHTERM          "Mot de recherches"
+    IDS_STATISTICS          "Statistique"
+    IDS_STATISTICS_BYCOUNT  "Après le nombre"
 END
 
 STRINGTABLE 
 BEGIN
-    IDM_FILTERS_CREATENEW           "Filtre noveau..."
+    IDS_STATISTICS_BYSIZE   "Après la grandeur"
+    IDS_STATISTICS_OTHER    "D'autres"
+    IDS_SUBFOLDERS_MANDATORY "Sous-dossier dans cet avis nécessaire"
+    IDS_SUBFOLDERS_NOTAVAIL "Sous-dossier dans le contexte non disponible"
+    IDS_FILETYPES           "Types de fichiers"
+    IDS_HOUSEKEEPING        "Ménage"
 END
 
 STRINGTABLE 
@@ -1459,6 +1435,7 @@ BEGIN
     IDS_FILTER_SEARCHIN     "Rechercher dans"
     IDS_FILTER_ALLSTORES    "Tous stores"
     IDS_FILTER_THISSTORE    "Ce store"
+    IDS_FILTER_SEARCHTERM   "Mot de recherches"
     IDS_FILTER_OTHERCONDITIONS "Autres conditions"
     IDS_FILTER_ADDCONDITION "Ajouter la condition..."
 END
@@ -1503,10 +1480,6 @@ STRINGTABLE
 BEGIN
     IDM_FILE_REMEMBER       "Ajoute les fichiers choisis au presse-papiers.\nRemarquer"
     IDM_FILE_REMOVE         "Enlève les fichiers choisis du presse-papiers.\nEnlever"
-END
-
-STRINGTABLE 
-BEGIN
     IDM_FILE_DELETE         "Efface les fichiers choisis.\nEffacer"
     IDM_FILE_RENAME         "Renomme le fichier choisi.\nRenommer"
 END
@@ -1648,14 +1621,6 @@ BEGIN
     BEGIN
         MENUITEM "&Restore all",                IDM_TRASH_RESTOREALL
         MENUITEM "&Empty trash",                IDM_TRASH_EMPTY
-    END
-END
-
-IDM_FILTERS MENU 
-BEGIN
-    POPUP "POPUP"
-    BEGIN
-        MENUITEM "&New filter...",              IDM_FILTERS_CREATENEW
     END
 END
 
@@ -1952,16 +1917,16 @@ BEGIN
     IDS_LEGEND              "Legend"
     IDS_LEGEND_BLUE         "Requires scheduled maintenance"
     IDS_LEGEND_RED          "Damaged (file body missing)"
-    IDS_SUBFOLDERS_MANDATORY "Subfolders are mandatory for this view."
-    IDS_SUBFOLDERS_NOTAVAIL "Subfolders are not available in this context."
-    IDS_FILETYPES           "File types"
-    IDS_HOUSEKEEPING        "Housekeeping"
-    IDS_SEARCHTERM          "Search term"
+    IDS_STATISTICS          "Statistics"
+    IDS_STATISTICS_BYCOUNT  "By file count"
 END
 
 STRINGTABLE 
 BEGIN
-    IDM_FILTERS_CREATENEW           "Add filter..."
+    IDS_STATISTICS_BYSIZE   "By file size"
+    IDS_STATISTICS_OTHER    "Other"
+    IDS_SUBFOLDERS_MANDATORY "Subfolders are mandatory for this view."
+    IDS_SUBFOLDERS_NOTAVAIL "Subfolders are not available in this context."
 END
 
 STRINGTABLE 
@@ -1980,6 +1945,8 @@ BEGIN
     IDS_VATTR_INDEXVERSION  "Index version"
     IDS_VATTR_IATA_NAME     "IATA airport name"
     IDS_VATTR_IATA_COUNTRY  "Country/territory"
+    IDS_FILETYPES           "File types"
+    IDS_HOUSEKEEPING        "Housekeeping"
 END
 
 STRINGTABLE 
@@ -1987,6 +1954,7 @@ BEGIN
     IDS_FILTER_SEARCHIN     "Search in"
     IDS_FILTER_ALLSTORES    "All stores"
     IDS_FILTER_THISSTORE    "This store"
+    IDS_FILTER_SEARCHTERM   "Search term"
     IDS_FILTER_OTHERCONDITIONS "Other conditions"
     IDS_FILTER_ADDCONDITION "Add condition..."
 END
@@ -2031,10 +1999,6 @@ STRINGTABLE
 BEGIN
     IDM_FILE_REMEMBER       "Adds the selected files to the clipboard window.\nRemember"
     IDM_FILE_REMOVE         "Removes the selected files from the clipboard window.\nRemove"
-END
-
-STRINGTABLE 
-BEGIN
     IDM_FILE_DELETE         "Deletes the selected files.\nDelete"
     IDM_FILE_RENAME         "Renames the selected file.\nRename"
 END

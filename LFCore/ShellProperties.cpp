@@ -132,7 +132,7 @@ unsigned char GetHardcodedContext(char* ext)
 	unsigned int left = 0;
 	unsigned int right = (sizeof(Registry)/sizeof(RegisteredFile))-1;
 
-	while (left<right)
+	while (left<=right)
 	{
 		unsigned int mid = (left+right)/2;
 

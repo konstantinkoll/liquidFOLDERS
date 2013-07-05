@@ -551,7 +551,7 @@ int PassesFilterCore(LFCoreAttributes* ca, LFFilter* filter)
 		if (ca->Flags & LFFlagTrash)
 			return -1;
 
-	if (filter->ContextID)
+	if ((filter->ContextID) || (ca->ContextID==LFContextFilters))
 		switch (filter->ContextID)
 		{
 		case LFContextFavorites:

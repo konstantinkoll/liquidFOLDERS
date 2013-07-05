@@ -1,6 +1,6 @@
 struct RegisteredFile
 {
-	char Format[16];
+	char Format[7];
 	unsigned char ContextID;
 };
 

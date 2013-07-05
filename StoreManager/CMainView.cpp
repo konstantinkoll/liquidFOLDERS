@@ -719,8 +719,6 @@ BEGIN_MESSAGE_MAP(CMainView, CWnd)
 	ON_COMMAND(IDM_TRASH_EMPTY, OnTrashEmpty)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_TRASH_RESTOREALL, IDM_TRASH_EMPTY, OnUpdateTrashCommands)
 
-	ON_UPDATE_COMMAND_UI_RANGE(IDM_FILTERS_CREATENEW, IDM_FILTERS_EDIT, OnUpdateFiltersCommands)
-
 	ON_UPDATE_COMMAND_UI(IDM_ITEM_OPEN, OnUpdateItemCommands)
 
 	ON_COMMAND(IDM_VOLUME_CREATENEWSTORE, OnVolumeCreateNewStore)
@@ -767,38 +765,37 @@ INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndTaskbar.AddButton(IDM_NEW_REMOVENEW, 3, TRUE);
 	m_wndTaskbar.AddButton(IDM_TRASH_RESTOREALL, 4, TRUE);
 	m_wndTaskbar.AddButton(IDM_TRASH_EMPTY, 5, TRUE);
-	m_wndTaskbar.AddButton(IDM_FILTERS_CREATENEW, 6, TRUE);
-	m_wndTaskbar.AddButton(IDM_CALENDAR_PREVYEAR, 7, TRUE);
-	m_wndTaskbar.AddButton(IDM_CALENDAR_NEXTYEAR, 8, TRUE);
-	m_wndTaskbar.AddButton(IDM_CALENDAR_GOTOYEAR, 9);
-	m_wndTaskbar.AddButton(IDM_GLOBE_JUMPTOLOCATION, 10, TRUE);
-	m_wndTaskbar.AddButton(IDM_GLOBE_ZOOMIN, 11);
-	m_wndTaskbar.AddButton(IDM_GLOBE_ZOOMOUT, 12);
-	m_wndTaskbar.AddButton(IDM_GLOBE_AUTOSIZE, 13);
-	m_wndTaskbar.AddButton(IDM_TAGCLOUD_SORTVALUE, 14);
-	m_wndTaskbar.AddButton(IDM_TAGCLOUD_SORTCOUNT, 15);
-	m_wndTaskbar.AddButton(IDM_ITEM_OPEN, 16);
-	m_wndTaskbar.AddButton(IDM_GLOBE_GOOGLEEARTH, 17, TRUE);
-	m_wndTaskbar.AddButton(IDM_VOLUME_PROPERTIES, 18);
-	m_wndTaskbar.AddButton(IDM_STORE_DELETE, 19);
-	m_wndTaskbar.AddButton(IDM_STORE_RENAME, 20);
-	m_wndTaskbar.AddButton(IDM_STORE_PROPERTIES, 21);
-	m_wndTaskbar.AddButton(IDM_FILE_REMEMBER, 22);
-	m_wndTaskbar.AddButton(IDM_FILE_REMOVE, 23);
-	m_wndTaskbar.AddButton(IDM_FILE_DELETE, 24);
-	m_wndTaskbar.AddButton(IDM_FILE_RENAME, 25);
-	m_wndTaskbar.AddButton(IDM_FILE_RESTORE, 26);
-	m_wndTaskbar.AddButton(ID_APP_NEWFILEDROP, 27, TRUE);
-	m_wndTaskbar.AddButton(IDM_STORE_MAKEDEFAULT, 28);
+	m_wndTaskbar.AddButton(IDM_CALENDAR_PREVYEAR, 6, TRUE);
+	m_wndTaskbar.AddButton(IDM_CALENDAR_NEXTYEAR, 7, TRUE);
+	m_wndTaskbar.AddButton(IDM_CALENDAR_GOTOYEAR, 8);
+	m_wndTaskbar.AddButton(IDM_GLOBE_JUMPTOLOCATION, 9, TRUE);
+	m_wndTaskbar.AddButton(IDM_GLOBE_ZOOMIN, 10);
+	m_wndTaskbar.AddButton(IDM_GLOBE_ZOOMOUT, 11);
+	m_wndTaskbar.AddButton(IDM_GLOBE_AUTOSIZE, 12);
+	m_wndTaskbar.AddButton(IDM_TAGCLOUD_SORTVALUE, 13);
+	m_wndTaskbar.AddButton(IDM_TAGCLOUD_SORTCOUNT, 14);
+	m_wndTaskbar.AddButton(IDM_ITEM_OPEN, 15);
+	m_wndTaskbar.AddButton(IDM_GLOBE_GOOGLEEARTH, 16, TRUE);
+	m_wndTaskbar.AddButton(IDM_VOLUME_PROPERTIES, 17);
+	m_wndTaskbar.AddButton(IDM_STORE_DELETE, 18);
+	m_wndTaskbar.AddButton(IDM_STORE_RENAME, 19);
+	m_wndTaskbar.AddButton(IDM_STORE_PROPERTIES, 20);
+	m_wndTaskbar.AddButton(IDM_FILE_REMEMBER, 21);
+	m_wndTaskbar.AddButton(IDM_FILE_REMOVE, 22);
+	m_wndTaskbar.AddButton(IDM_FILE_DELETE, 23);
+	m_wndTaskbar.AddButton(IDM_FILE_RENAME, 24);
+	m_wndTaskbar.AddButton(IDM_FILE_RESTORE, 25);
+	m_wndTaskbar.AddButton(ID_APP_NEWFILEDROP, 26, TRUE);
+	m_wndTaskbar.AddButton(IDM_STORE_MAKEDEFAULT, 27);
 
-	#define InspectorIconVisible     29
-	#define InspectorIconHidden      30
+	#define InspectorIconVisible     28
+	#define InspectorIconHidden      29
 	p_InspectorButton = m_wndTaskbar.AddButton(ID_PANE_INSPECTOR, theApp.m_ShowInspectorPane ? InspectorIconVisible : InspectorIconHidden, TRUE, TRUE);
 
-	m_wndTaskbar.AddButton(ID_APP_PURCHASE, 31, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_ENTERLICENSEKEY, 32, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_SUPPORT, 33, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_ABOUT, 34, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_PURCHASE, 30, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_ENTERLICENSEKEY, 31, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_SUPPORT, 32, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_ABOUT, 33, TRUE, TRUE);
 
 	// Drop target
 	m_DropTarget.SetOwner(GetOwner());
@@ -919,10 +916,6 @@ void CMainView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 	case LFContextTrash:
 		pMenu = new CMenu();
 		pMenu->LoadMenu(IDM_TRASH);
-		break;
-	case LFContextFilters:
-		pMenu = new CMenu();
-		pMenu->LoadMenu(IDM_FILTERS);
 		break;
 	default:
 		pMenu = p_wndFileView->GetViewContextmenu();
@@ -1453,28 +1446,6 @@ void CMainView::OnTrashRestoreAll()
 void CMainView::OnUpdateTrashCommands(CCmdUI* pCmdUI)
 {
 	pCmdUI->Enable(((m_Context==LFContextTrash) && (p_CookedFiles)) ? p_CookedFiles->m_ItemCount : FALSE);
-}
-
-
-// Filters
-
-void CMainView::OnUpdateFiltersCommands(CCmdUI* pCmdUI)
-{
-	BOOL b = (m_Context==LFContextFilters);
-
-	INT idx = GetSelectedItem();
-	if (idx!=-1)
-	{
-		LFItemDescriptor* item = p_CookedFiles->m_Items[idx];
-		switch (pCmdUI->m_nID)
-		{
-		case IDM_FILTERS_EDIT:
-			b &= ((item->Type & (LFTypeMask | LFTypeNotMounted))==LFTypeFile);
-			break;
-		}
-	}
-
-	pCmdUI->Enable(b);
 }
 
 
