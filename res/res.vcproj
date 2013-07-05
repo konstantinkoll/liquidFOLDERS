@@ -292,6 +292,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Ribbon\FilterAdd_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\FilterAdd_32.png"
+				>
+			</File>
+			<File
 				RelativePath=".\Ribbon\FilterEdit_16.png"
 				>
 			</File>
@@ -649,6 +657,14 @@
 			</File>
 			<File
 				RelativePath=".\Ribbon\Picture_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\QueryEdit_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\QueryEdit_32.png"
 				>
 			</File>
 			<File
@@ -1286,6 +1302,10 @@
 		</File>
 		<File
 			RelativePath=".\Priority9.png"
+			>
+		</File>
+		<File
+			RelativePath=".\QueryEdit_Tiny.ico"
 			>
 		</File>
 		<File

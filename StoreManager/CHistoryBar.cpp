@@ -102,7 +102,7 @@ void CHistoryBar::AddFilter(LFFilter* Filter, CDC* pDC)
 	HistoryItem item;
 	ZeroMemory(&item, sizeof(item));
 
-	wcscpy_s(item.Name, 256, Filter->Name);
+	wcscpy_s(item.Name, 256, Filter->ResultName);
 	item.Width = pDC->GetTextExtent(item.Name, (INT)wcslen(item.Name)).cx+2*MARGIN;
 
 	m_Breadcrumbs.AddItem(item);

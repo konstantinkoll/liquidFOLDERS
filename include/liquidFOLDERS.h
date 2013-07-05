@@ -385,7 +385,7 @@ struct LFFilterOptions
 	// For LFFilterModeDirectoryTree and above
 	bool IgnoreSlaves;						// If true, only core properties are retrieved
 	bool IsSubfolder;						// If true, you are already inside a grouped subdirectory
-	bool IsSearch;							// If true, the filter belongs to a custom search filter
+	bool IsPersistent;						// If true, the filter is a custom search filter
 
 	// For subfolders
 	unsigned int GroupAttribute;			// Attribute on which parent folder was grouped
@@ -400,7 +400,8 @@ struct LFFilterCondition
 
 struct LFFilter
 {
-	wchar_t Name[256];
+	wchar_t OriginalName[256];
+	wchar_t ResultName[256];
 	unsigned int Mode;
 	LFFilterOptions Options;
 

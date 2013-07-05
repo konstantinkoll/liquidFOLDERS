@@ -39,7 +39,8 @@ IDD_SORTOPTIONS         ICON                    "res\\SortOptions_Tiny.ico"
 IDD_CHOOSEDETAILS       ICON                    "res\\Table_Tiny.ico"
 IDD_GLOBEOPTIONS        ICON                    "res\\GlobeOptions_Tiny.ico"
 IDD_GOTOYEAR            ICON                    "res\\GotoDate_Tiny.ico"
-IDD_EDITCONDITION       ICON                    "res\\FilterEdit_Tiny.ico"
+IDD_EDITCONDITION       ICON                    "res\\QueryEdit_Tiny.ico"
+IDD_EDITFILTER          ICON                    "res\\FilterEdit_Tiny.ico"
 IDD_SAVEFILTER          ICON                    "res\\FilterSave_Tiny.ico"
 
 /////////////////////////////////////////////////////////////////////////////
@@ -94,8 +95,8 @@ IDB_CONTEXTS_32         BITMAP                  "res\\Contexts_32.bmp"
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,2,4,0
- PRODUCTVERSION 1,2,4,0
+ FILEVERSION 1,3,0,0
+ PRODUCTVERSION 1,3,0,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -112,13 +113,13 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "liquidFOLDERS"
             VALUE "FileDescription", "StoreManager"
-            VALUE "FileVersion", "1.2.4"
+            VALUE "FileVersion", "1.3.0"
             VALUE "InternalName", "StoreManager"
             VALUE "LegalCopyright", "© 2009-2013 liquidFOLDERS"
             VALUE "LegalTrademarks", "liquidFOLDERS®"
             VALUE "OriginalFilename", "StoreManager.exe"
             VALUE "ProductName", "liquidFOLDERS"
-            VALUE "ProductVersion", "1.2.4"
+            VALUE "ProductVersion", "1.3.0"
         END
     END
     BLOCK "VarFileInfo"
@@ -159,6 +160,14 @@ BEGIN
     BEGIN
         MENUITEM "Alle &wiederherstellen",      IDM_TRASH_RESTOREALL
         MENUITEM "&Papierkorb leeren",          IDM_TRASH_EMPTY
+    END
+END
+
+IDM_FILTERS MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "&Neuer Filter...",            IDM_FILTERS_CREATENEW
     END
 END
 
@@ -265,6 +274,14 @@ BEGIN
     END
 END
 
+IDM_CONDITIONLIST MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "Bedingung &hinzufügen...",    IDM_CONDITIONLIST_ADD
+    END
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -302,8 +319,8 @@ BEGIN
     CONTROL         "A&bsteigend",IDC_DESCENDING,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,225,272,50,10
     GROUPBOX        "Gruppieren",IDC_STATIC,7,248,188,42
     GROUPBOX        "Sortierrichtung",IDC_STATIC,204,248,78,42
-    CONTROL         132,IDC_STATIC,"Static",SS_BITMAP,210,259,9,8
-    CONTROL         133,IDC_STATIC,"Static",SS_BITMAP,210,272,9,8
+    CONTROL         132,IDC_STATIC,"Static",SS_BITMAP,210,259,11,10
+    CONTROL         133,IDC_STATIC,"Static",SS_BITMAP,210,272,11,10
     LTEXT           "",IDC_SUBFOLDERHINT,42,275,147,8
     CONTROL         134,IDC_STATIC,"Static",SS_BITMAP,14,262,21,20
 END
@@ -389,9 +406,101 @@ BEGIN
     PUSHBUTTON      "&Store wählen...",IDC_CHOOSESTORE,197,25,66,14
     GROUPBOX        "Ziel",IDC_STATIC,7,7,263,49
     GROUPBOX        "Eigenschaften",IDC_STATIC,7,62,263,57
-    LTEXT           "Name:",IDC_STATIC,14,77,22,8
+    LTEXT           "Name:",IDC_STATIC,14,77,40,8
     LTEXT           "Kommentar:",IDC_STATIC,14,98,40,8
 END
+
+IDD_EDITFILTER DIALOGEX 0, 0, 184, 377
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
+CAPTION "Filter bearbeiten"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "&Alle Stores",IDC_ALLSTORES,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,14,18,156,10
+    CONTROL         "Diesen &Store",IDC_THISSTORE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,14,29,156,10
+    EDITTEXT        IDC_SEARCHTERM,14,59,156,14,ES_AUTOHSCROLL | WS_GROUP
+    CONTROL         "",IDC_CONDITIONLIST,"SysListView32",LVS_LIST | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SORTASCENDING | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_ALIGNLEFT | LVS_NOCOLUMNHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,14,101,156,214
+    PUSHBUTTON      "Bedingung &hinzufügen...",IDM_CONDITIONLIST_ADD,14,323,110,14,WS_GROUP
+    DEFPUSHBUTTON   "Speichern",IDOK,67,356,50,14,WS_GROUP
+    PUSHBUTTON      "Abbrechen",IDCANCEL,127,356,50,14,WS_GROUP
+    GROUPBOX        "Durchsuchen",IDC_STATIC,7,7,170,75
+    GROUPBOX        "Weitere Bedingungen",IDC_STATIC,7,89,170,258
+    LTEXT           "Suchbegriff:",IDC_STATIC,14,48,156,8
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    IDD_CHOOSEDETAILS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 201
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 269
+    END
+
+    IDD_SORTOPTIONS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 282
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 312
+    END
+
+    IDD_VIEWOPTIONS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 385
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 270
+    END
+
+    IDD_GLOBEOPTIONS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 171
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 218
+    END
+
+    IDD_GOTOYEAR, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 115
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 71
+    END
+
+    IDD_EDITCONDITION, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 282
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 301
+    END
+
+    IDD_SAVEFILTER, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 270
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 141
+    END
+
+    IDD_EDITFILTER, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 177
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 370
+    END
+END
+#endif    // APSTUDIO_INVOKED
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -427,6 +536,7 @@ STRINGTABLE
 BEGIN
     IDS_CONTEXTMENU_OPENGOOGLEEARTH "Öffnen mit &Google Earth"
     IDS_CONTEXTMENU_OPENNEWWINDOW "In neuem &Fenster öffnen"
+    IDS_CONTEXTMENU_EDIT    "&Bearbeiten..."
     IDS_CONTEXTMENU_REMEMBER "Mer&ken"
     IDS_CONTEXTMENU_REMOVE  "Aus Zwischenablage &entfernen"
     IDS_CONTEXTMENU_SENDTO  "S&enden an"
@@ -456,18 +566,16 @@ BEGIN
     IDS_LEGEND              "Legende"
     IDS_LEGEND_BLUE         "Wartungsarbeiten erforderlich"
     IDS_LEGEND_RED          "Beschädigt (Dateikörper fehlt)"
-    IDS_STATISTICS          "Statistiken"
-    IDS_STATISTICS_BYCOUNT  "Nach Anzahl"
-END
-
-STRINGTABLE 
-BEGIN
-    IDS_STATISTICS_BYSIZE   "Nach Größe"
-    IDS_STATISTICS_OTHER    "Andere"
     IDS_SUBFOLDERS_MANDATORY "Unterordner in dieser Ansicht erforderlich"
     IDS_SUBFOLDERS_NOTAVAIL "Unterordner im Kontext nicht verfügbar"
     IDS_FILETYPES           "Dateitypen"
     IDS_HOUSEKEEPING        "Verwaltung"
+    IDS_SEARCHTERM          "Suchbegriff"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_FILTERS_CREATENEW   "Neuer Filter..."
 END
 
 STRINGTABLE 
@@ -486,16 +594,6 @@ BEGIN
     IDS_VATTR_INDEXVERSION  "Index-Version"
     IDS_VATTR_IATA_NAME     "IATA Flughafenname"
     IDS_VATTR_IATA_COUNTRY  "Land/Gebiet"
-END
-
-STRINGTABLE 
-BEGIN
-    IDS_FILTER_SEARCHIN     "Suchen in"
-    IDS_FILTER_ALLSTORES    "Allen Stores"
-    IDS_FILTER_THISSTORE    "Diesem Store"
-    IDS_FILTER_SEARCHTERM   "Suchbegriff"
-    IDS_FILTER_OTHERCONDITIONS "Weitere Bedingungen"
-    IDS_FILTER_ADDCONDITION "Bedingung hinzufügen..."
 END
 
 STRINGTABLE 
@@ -632,6 +730,14 @@ BEGIN
     END
 END
 
+IDM_FILTERS MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "&Nuevo filtro...",            IDM_FILTERS_CREATENEW
+    END
+END
+
 IDM_VOLUME MENU 
 BEGIN
     POPUP "POPUP"
@@ -735,6 +841,14 @@ BEGIN
     END
 END
 
+IDM_CONDITIONLIST MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "&Añadir condición...",        IDM_CONDITIONLIST_ADD
+    END
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -772,8 +886,8 @@ BEGIN
     CONTROL         "&Descendiente",IDC_DESCENDING,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,225,272,50,10
     GROUPBOX        "Agrupación",IDC_STATIC,7,248,188,42
     GROUPBOX        "Tipo de instrucción",IDC_STATIC,204,248,78,42
-    CONTROL         132,IDC_STATIC,"Static",SS_BITMAP,210,259,9,8
-    CONTROL         133,IDC_STATIC,"Static",SS_BITMAP,210,272,9,8
+    CONTROL         132,IDC_STATIC,"Static",SS_BITMAP,210,259,11,10
+    CONTROL         133,IDC_STATIC,"Static",SS_BITMAP,210,272,11,10
     LTEXT           "",IDC_SUBFOLDERHINT,42,275,147,8
     CONTROL         134,IDC_STATIC,"Static",SS_BITMAP,14,262,21,20
 END
@@ -852,17 +966,109 @@ STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS
 CAPTION "Guardar filtro"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    EDITTEXT        IDC_FILENAME,58,75,205,14,ES_AUTOHSCROLL
-    EDITTEXT        IDC_COMMENTS,58,96,205,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_FILENAME,68,75,195,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_COMMENTS,68,96,195,14,ES_AUTOHSCROLL
     DEFPUSHBUTTON   "OK",IDOK,164,127,50,14,WS_GROUP
     PUSHBUTTON      "Cancelar",IDCANCEL,220,127,50,14,WS_GROUP
     CONTROL         "",IDC_DESTINATION,"CStorePanel",WS_GROUP,14,16,177,34
     PUSHBUTTON      "Selecionar &store...",IDC_CHOOSESTORE,197,25,66,14
     GROUPBOX        "Destino",IDC_STATIC,7,7,263,49
     GROUPBOX        "Propiedades",IDC_STATIC,7,62,263,57
-    LTEXT           "Nombre:",IDC_STATIC,14,77,22,8
-    LTEXT           "Comentarios:",IDC_STATIC,14,98,40,8
+    LTEXT           "Nombre:",IDC_STATIC,14,77,50,8
+    LTEXT           "Comentarios:",IDC_STATIC,14,98,50,8
 END
+
+IDD_EDITFILTER DIALOGEX 0, 0, 184, 377
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
+CAPTION "Editar filtro"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "&Todos los stores",IDC_ALLSTORES,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,14,18,156,10
+    CONTROL         "Este &store",IDC_THISSTORE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,14,29,156,10
+    EDITTEXT        IDC_SEARCHTERM,14,59,156,14,ES_AUTOHSCROLL | WS_GROUP
+    CONTROL         "",IDC_CONDITIONLIST,"SysListView32",LVS_LIST | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SORTASCENDING | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_ALIGNLEFT | LVS_NOCOLUMNHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,14,101,156,214
+    PUSHBUTTON      "&Añadir condición...",IDM_CONDITIONLIST_ADD,14,323,90,14,WS_GROUP
+    DEFPUSHBUTTON   "Guardar",IDOK,67,356,50,14,WS_GROUP
+    PUSHBUTTON      "Cancelar",IDCANCEL,127,356,50,14,WS_GROUP
+    GROUPBOX        "Buscar en",IDC_STATIC,7,7,170,75
+    GROUPBOX        "Otras condiciones",IDC_STATIC,7,89,170,258
+    LTEXT           "Buscar término:",IDC_STATIC,14,48,156,8
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    IDD_CHOOSEDETAILS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 221
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 269
+    END
+
+    IDD_SORTOPTIONS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 282
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 312
+    END
+
+    IDD_VIEWOPTIONS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 405
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 270
+    END
+
+    IDD_GLOBEOPTIONS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 171
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 218
+    END
+
+    IDD_GOTOYEAR, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 115
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 71
+    END
+
+    IDD_EDITCONDITION, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 282
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 301
+    END
+
+    IDD_SAVEFILTER, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 270
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 141
+    END
+
+    IDD_EDITFILTER, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 177
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 370
+    END
+END
+#endif    // APSTUDIO_INVOKED
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -898,6 +1104,7 @@ STRINGTABLE
 BEGIN
     IDS_CONTEXTMENU_OPENGOOGLEEARTH "Abrir con &Google Earth"
     IDS_CONTEXTMENU_OPENNEWWINDOW "Abrir en &nueva ventana"
+    IDS_CONTEXTMENU_EDIT    "E&ditar..."
     IDS_CONTEXTMENU_REMEMBER "Re&cordar"
     IDS_CONTEXTMENU_REMOVE  "&Eliminar del portapapeles"
     IDS_CONTEXTMENU_SENDTO  "&Enviar a"
@@ -926,19 +1133,17 @@ BEGIN
     IDS_LEGEND              "Leyenda"
     IDS_LEGEND_BLUE         "Requiere de mantenimiento programado"
     IDS_LEGEND_RED          "Dañado"
-    IDS_STATISTICS          "Estadísticas"
-    IDS_STATISTICS_BYCOUNT  "Por número de archivo"
-END
-
-STRINGTABLE 
-BEGIN
-    IDS_STATISTICS_BYSIZE   "Por tamaño de archivo"
-    IDS_STATISTICS_OTHER    "Otros"
     IDS_SUBFOLDERS_MANDATORY 
                             "Las subcarpetas son obligatorias para esta visualización."
     IDS_SUBFOLDERS_NOTAVAIL "Las subcarpetas no están disponibles para este contexto."
     IDS_FILETYPES           "Tipos de archivo"
     IDS_HOUSEKEEPING        "Mantenimiento"
+    IDS_SEARCHTERM          "Buscar término"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_FILTERS_CREATENEW   "Nuevo filtro..."
 END
 
 STRINGTABLE 
@@ -957,16 +1162,6 @@ BEGIN
     IDS_VATTR_INDEXVERSION  "Versión índice"
     IDS_VATTR_IATA_NAME     "Nombre de aeropuerto IATA"
     IDS_VATTR_IATA_COUNTRY  "Territorio"
-END
-
-STRINGTABLE 
-BEGIN
-    IDS_FILTER_SEARCHIN     "Buscar en"
-    IDS_FILTER_ALLSTORES    "Todos los stores"
-    IDS_FILTER_THISSTORE    "Este store"
-    IDS_FILTER_SEARCHTERM   "Buscar término"
-    IDS_FILTER_OTHERCONDITIONS "Otras condiciones"
-    IDS_FILTER_ADDCONDITION "Añadir condición..."
 END
 
 STRINGTABLE 
@@ -1103,6 +1298,14 @@ BEGIN
     END
 END
 
+IDM_FILTERS MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "&Filtre noveau...",           IDM_FILTERS_CREATENEW
+    END
+END
+
 IDM_VOLUME MENU 
 BEGIN
     POPUP "POPUP"
@@ -1203,6 +1406,14 @@ BEGIN
             MENUITEM "&Compte-rendu...",            IDM_INSPECTOR_EXPORTSUMMARY
             MENUITEM "Toutes les &meta-données...", IDM_INSPECTOR_EXPORTMETADATA
         END
+    END
+END
+
+IDM_CONDITIONLIST MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "&Ajouter condition...",       IDM_CONDITIONLIST_ADD
     END
 END
 
@@ -1310,21 +1521,21 @@ STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS
 CAPTION "Sauvegarder le filtre"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    EDITTEXT        IDC_FILENAME,58,75,205,14,ES_AUTOHSCROLL
-    EDITTEXT        IDC_COMMENTS,58,96,205,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_FILENAME,68,75,195,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_COMMENTS,68,96,195,14,ES_AUTOHSCROLL
     DEFPUSHBUTTON   "OK",IDOK,164,127,50,14,WS_GROUP
     PUSHBUTTON      "Annuler",IDCANCEL,220,127,50,14,WS_GROUP
     CONTROL         "",IDC_DESTINATION,"CStorePanel",WS_GROUP,14,16,177,34
     PUSHBUTTON      "Choisissez le &store...",IDC_CHOOSESTORE,197,25,66,14
     GROUPBOX        "Destination",IDC_STATIC,7,7,263,49
     GROUPBOX        "Qualités",IDC_STATIC,7,62,263,57
-    LTEXT           "Nom:",IDC_STATIC,14,77,22,8
-    LTEXT           "Commentaire:",IDC_STATIC,14,98,40,8
+    LTEXT           "Nom:",IDC_STATIC,14,77,50,8
+    LTEXT           "Commentaire:",IDC_STATIC,14,98,50,8
 END
 
 IDD_EDITCONDITION DIALOGEX 0, 0, 289, 308
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
-CAPTION "Travailler la condition"
+CAPTION "Modifier condition"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     CONTROL         "",IDC_COMPAREATTRIBUTE,"SysListView32",LVS_LIST | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SORTASCENDING | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_ALIGNLEFT | LVS_NOCOLUMNHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,14,19,261,214
@@ -1335,6 +1546,98 @@ BEGIN
     GROUPBOX        "Qualités",IDC_STATIC,7,7,275,235
     GROUPBOX        "Comparaison",IDC_STATIC,7,248,275,32
 END
+
+IDD_EDITFILTER DIALOGEX 0, 0, 184, 377
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
+CAPTION "Modifier filtre"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "&Tous les stores",IDC_ALLSTORES,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,14,18,156,10
+    CONTROL         "Ce &store",IDC_THISSTORE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,14,29,156,10
+    EDITTEXT        IDC_SEARCHTERM,14,59,156,14,ES_AUTOHSCROLL | WS_GROUP
+    CONTROL         "",IDC_CONDITIONLIST,"SysListView32",LVS_LIST | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SORTASCENDING | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_ALIGNLEFT | LVS_NOCOLUMNHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,14,101,156,214
+    PUSHBUTTON      "&Ajouter condition...",IDM_CONDITIONLIST_ADD,14,323,90,14,WS_GROUP
+    DEFPUSHBUTTON   "Sauvegarder",IDOK,57,356,60,14,WS_GROUP
+    PUSHBUTTON      "Annuler",IDCANCEL,127,356,50,14,WS_GROUP
+    GROUPBOX        "Rechercher dans",IDC_STATIC,7,7,170,75
+    GROUPBOX        "Autres conditions",IDC_STATIC,7,89,170,258
+    LTEXT           "Mot de recherches:",IDC_STATIC,14,48,156,8
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    IDD_CHOOSEDETAILS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 201
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 269
+    END
+
+    IDD_SORTOPTIONS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 292
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 312
+    END
+
+    IDD_VIEWOPTIONS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 385
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 270
+    END
+
+    IDD_GLOBEOPTIONS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 171
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 218
+    END
+
+    IDD_GOTOYEAR, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 115
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 71
+    END
+
+    IDD_SAVEFILTER, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 270
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 141
+    END
+
+    IDD_EDITCONDITION, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 282
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 301
+    END
+
+    IDD_EDITFILTER, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 177
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 370
+    END
+END
+#endif    // APSTUDIO_INVOKED
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -1370,6 +1673,7 @@ STRINGTABLE
 BEGIN
     IDS_CONTEXTMENU_OPENGOOGLEEARTH "Ouvrir avec &Google Earth"
     IDS_CONTEXTMENU_OPENNEWWINDOW "Ouvrir dans une nouvelle &fenêtre"
+    IDS_CONTEXTMENU_EDIT    "&Modifier..."
     IDS_CONTEXTMENU_REMEMBER "Remar&quer"
     IDS_CONTEXTMENU_REMOVE  "Enlèver du &presse-papiers"
     IDS_CONTEXTMENU_SENDTO  "E&nvoyer à"
@@ -1398,18 +1702,16 @@ BEGIN
     IDS_LEGEND              "Légende"
     IDS_LEGEND_BLUE         "Travail d'entretien nécessaire"
     IDS_LEGEND_RED          "Mutilé (le corps de fichier manque)"
-    IDS_STATISTICS          "Statistique"
-    IDS_STATISTICS_BYCOUNT  "Après le nombre"
-END
-
-STRINGTABLE 
-BEGIN
-    IDS_STATISTICS_BYSIZE   "Après la grandeur"
-    IDS_STATISTICS_OTHER    "D'autres"
     IDS_SUBFOLDERS_MANDATORY "Sous-dossier dans cet avis nécessaire"
     IDS_SUBFOLDERS_NOTAVAIL "Sous-dossier dans le contexte non disponible"
     IDS_FILETYPES           "Types de fichiers"
     IDS_HOUSEKEEPING        "Ménage"
+    IDS_SEARCHTERM          "Mot de recherches"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_FILTERS_CREATENEW   "Filtre noveau..."
 END
 
 STRINGTABLE 
@@ -1428,16 +1730,6 @@ BEGIN
     IDS_VATTR_INDEXVERSION  "Version de index"
     IDS_VATTR_IATA_NAME     "IATA nom de aéroport"
     IDS_VATTR_IATA_COUNTRY  "Territoire"
-END
-
-STRINGTABLE 
-BEGIN
-    IDS_FILTER_SEARCHIN     "Rechercher dans"
-    IDS_FILTER_ALLSTORES    "Tous stores"
-    IDS_FILTER_THISSTORE    "Ce store"
-    IDS_FILTER_SEARCHTERM   "Mot de recherches"
-    IDS_FILTER_OTHERCONDITIONS "Autres conditions"
-    IDS_FILTER_ADDCONDITION "Ajouter la condition..."
 END
 
 STRINGTABLE 
@@ -1624,6 +1916,14 @@ BEGIN
     END
 END
 
+IDM_FILTERS MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "&New filter...",              IDM_FILTERS_CREATENEW
+    END
+END
+
 IDM_VOLUME MENU 
 BEGIN
     POPUP "POPUP"
@@ -1727,6 +2027,14 @@ BEGIN
     END
 END
 
+IDM_CONDITIONLIST MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "A&dd condition...",           IDM_CONDITIONLIST_ADD
+    END
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -1767,8 +2075,8 @@ BEGIN
     CONTROL         "&Descending",IDC_DESCENDING,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,225,272,50,10
     GROUPBOX        "Grouping",IDC_STATIC,7,248,188,42
     GROUPBOX        "Sort direction",IDC_STATIC,204,248,78,42
-    CONTROL         132,IDC_STATIC,"Static",SS_BITMAP,210,259,9,8
-    CONTROL         133,IDC_STATIC,"Static",SS_BITMAP,210,272,9,8
+    CONTROL         132,IDC_STATIC,"Static",SS_BITMAP,210,259,11,10
+    CONTROL         133,IDC_STATIC,"Static",SS_BITMAP,210,272,11,10
     LTEXT           "",IDC_SUBFOLDERHINT,42,275,147,8
     CONTROL         134,IDC_STATIC,"Static",SS_BITMAP,14,262,21,20
 END
@@ -1851,9 +2159,101 @@ BEGIN
     PUSHBUTTON      "Choose &store...",IDC_CHOOSESTORE,197,25,66,14
     GROUPBOX        "Destination",IDC_STATIC,7,7,263,49
     GROUPBOX        "Properties",IDC_STATIC,7,62,263,57
-    LTEXT           "Name:",IDC_STATIC,14,77,22,8
+    LTEXT           "Name:",IDC_STATIC,14,77,40,8
     LTEXT           "Comments:",IDC_STATIC,14,98,40,8
 END
+
+IDD_EDITFILTER DIALOGEX 0, 0, 184, 377
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
+CAPTION "Edit filter"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "&All stores",IDC_ALLSTORES,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,14,18,156,10
+    CONTROL         "This &store",IDC_THISSTORE,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,14,29,156,10
+    EDITTEXT        IDC_SEARCHTERM,14,59,156,14,ES_AUTOHSCROLL | WS_GROUP
+    CONTROL         "",IDC_CONDITIONLIST,"SysListView32",LVS_LIST | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SORTASCENDING | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_ALIGNLEFT | LVS_NOCOLUMNHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,14,101,156,214
+    PUSHBUTTON      "A&dd condition...",IDM_CONDITIONLIST_ADD,14,323,80,14,WS_GROUP
+    DEFPUSHBUTTON   "Save",IDOK,67,356,50,14,WS_GROUP
+    PUSHBUTTON      "Cancel",IDCANCEL,127,356,50,14,WS_GROUP
+    GROUPBOX        "Search in",IDC_STATIC,7,7,170,75
+    GROUPBOX        "Other conditions",IDC_STATIC,7,89,170,258
+    LTEXT           "Search term:",IDC_STATIC,14,48,156,8
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    IDD_VIEWOPTIONS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 385
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 270
+    END
+
+    IDD_SORTOPTIONS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 282
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 312
+    END
+
+    IDD_CHOOSEDETAILS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 201
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 269
+    END
+
+    IDD_GLOBEOPTIONS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 171
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 218
+    END
+
+    IDD_GOTOYEAR, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 115
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 71
+    END
+
+    IDD_EDITCONDITION, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 282
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 301
+    END
+
+    IDD_SAVEFILTER, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 270
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 141
+    END
+
+    IDD_EDITFILTER, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 177
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 370
+    END
+END
+#endif    // APSTUDIO_INVOKED
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -1889,6 +2289,7 @@ STRINGTABLE
 BEGIN
     IDS_CONTEXTMENU_OPENGOOGLEEARTH "Open in &Google Earth"
     IDS_CONTEXTMENU_OPENNEWWINDOW "Open in &new window"
+    IDS_CONTEXTMENU_EDIT    "&Edit..."
     IDS_CONTEXTMENU_REMEMBER "Re&member"
     IDS_CONTEXTMENU_REMOVE  "Re&move from clipboard"
     IDS_CONTEXTMENU_SENDTO  "S&end to"
@@ -1917,16 +2318,16 @@ BEGIN
     IDS_LEGEND              "Legend"
     IDS_LEGEND_BLUE         "Requires scheduled maintenance"
     IDS_LEGEND_RED          "Damaged (file body missing)"
-    IDS_STATISTICS          "Statistics"
-    IDS_STATISTICS_BYCOUNT  "By file count"
+    IDS_SUBFOLDERS_MANDATORY "Subfolders are mandatory for this view."
+    IDS_SUBFOLDERS_NOTAVAIL "Subfolders are not available in this context."
+    IDS_FILETYPES           "File types"
+    IDS_HOUSEKEEPING        "Housekeeping"
+    IDS_SEARCHTERM          "Search term"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_STATISTICS_BYSIZE   "By file size"
-    IDS_STATISTICS_OTHER    "Other"
-    IDS_SUBFOLDERS_MANDATORY "Subfolders are mandatory for this view."
-    IDS_SUBFOLDERS_NOTAVAIL "Subfolders are not available in this context."
+    IDM_FILTERS_CREATENEW   "Add filter..."
 END
 
 STRINGTABLE 
@@ -1945,18 +2346,6 @@ BEGIN
     IDS_VATTR_INDEXVERSION  "Index version"
     IDS_VATTR_IATA_NAME     "IATA airport name"
     IDS_VATTR_IATA_COUNTRY  "Country/territory"
-    IDS_FILETYPES           "File types"
-    IDS_HOUSEKEEPING        "Housekeeping"
-END
-
-STRINGTABLE 
-BEGIN
-    IDS_FILTER_SEARCHIN     "Search in"
-    IDS_FILTER_ALLSTORES    "All stores"
-    IDS_FILTER_THISSTORE    "This store"
-    IDS_FILTER_SEARCHTERM   "Search term"
-    IDS_FILTER_OTHERCONDITIONS "Other conditions"
-    IDS_FILTER_ADDCONDITION "Add condition..."
 END
 
 STRINGTABLE 

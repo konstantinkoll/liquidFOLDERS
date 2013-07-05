@@ -133,20 +133,17 @@ void LFSearchResult::SetMetadataFromFilter(LFFilter* f)
 			m_Context = f->ContextID;
 			break;
 		case LFFilterModeSearch:
-			m_Context = f->Options.IsSearch ? LFContextSearch : f->ContextID;
+			m_Context = (f->Options.IsPersistent) || (f->ContextID) ? f->ContextID : LFContextSearch;
 			break;
 		}
 
-	if ((f->Name[0]==L'\0') || (m_Context==LFContextStores))
+	if ((f->OriginalName[0]==L'\0') || (m_Context==LFContextStores))
 	{
 		LoadTwoStrings(LFCoreModuleHandle, IDS_FirstContext+m_Context, m_Name, 256, m_Hint, 256);
-
-		if (f->Name[0]==L'\0')
-			wcscpy_s(f->Name, 256, m_Name);
 	}
 	else
 	{
-		wcscpy_s(m_Name, 256, f->Name);
+		wcscpy_s(m_Name, 256, f->OriginalName);
 
 		if (m_Context<=LFLastQueryContext)
 		{
@@ -163,6 +160,8 @@ void LFSearchResult::SetMetadataFromFilter(LFFilter* f)
 			m_Hint[0] = L'\0';
 		}
 	}
+
+	wcscpy_s(f->ResultName, 256, m_Name);
 }
 
 bool LFSearchResult::AddItemDescriptor(LFItemDescriptor* i)
@@ -195,7 +194,7 @@ bool LFSearchResult::AddStoreDescriptor(LFStoreDescriptor* s, LFFilter* f)
 	if (f)
 		nf->Options = f->Options;
 	strcpy_s(nf->StoreID, LFKeySize, s->StoreID);
-	wcscpy_s(nf->Name, 256, s->StoreName);
+	wcscpy_s(nf->OriginalName, 256, s->StoreName);
 
 	LFItemDescriptor* d = LFAllocItemDescriptor(s);
 	d->NextFilter = nf;
@@ -739,7 +738,7 @@ void LFSearchResult::GroupArray(unsigned int attr, unsigned int icon, LFFilter* 
 		folder->NextFilter->Options.IsSubfolder = true;
 		c->Next = folder->NextFilter->ConditionList;
 		folder->NextFilter->ConditionList = c;
-		wcscpy_s(folder->NextFilter->Name, 256, tag);
+		wcscpy_s(folder->NextFilter->OriginalName, 256, tag);
 
 		AddItemDescriptor(folder);
 	}

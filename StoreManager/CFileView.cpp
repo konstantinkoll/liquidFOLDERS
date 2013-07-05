@@ -754,8 +754,16 @@ CMenu* CFileView::GetItemContextMenu(INT idx)
 			pPopup->InsertMenu(0, MF_STRING | MF_BYPOSITION, IDM_ITEM_OPENNEWWINDOW, tmpStr);
 			break;
 		case LFTypeFile:
-			ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_OPENWITH));
-			pPopup->InsertMenu(0, MF_STRING | MF_BYPOSITION, IDM_FILE_OPENWITH, tmpStr);
+			if (item->CoreAttributes.ContextID==LFContextFilters)
+			{
+				ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_EDIT));
+				pPopup->InsertMenu(0, MF_STRING | MF_BYPOSITION, IDM_FILE_EDIT, tmpStr);
+			}
+			else
+			{
+				ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_OPENWITH));
+				pPopup->InsertMenu(0, MF_STRING | MF_BYPOSITION, IDM_FILE_OPENWITH, tmpStr);
+			}
 			break;
 		}
 

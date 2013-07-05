@@ -101,6 +101,7 @@ LFFilter* LoadFilter(wchar_t* fn, char* key)
 
 	LFFilter* f = LFAllocFilter();
 	f->Mode = LFFilterModeSearch;
+	f->Options.IsPersistent = true;
 #define Abort3 { LFFreeFilter(f); Abort2; }
 
 	strcpy_s(f->StoreID, LFKeySize, Body.AllStores ? "" : key);
@@ -161,7 +162,7 @@ LFCore_API unsigned int LFSaveFilter(char* key, LFFilter* filter, wchar_t* name,
 	if (res==LFOk)
 	{
 		LFItemDescriptor* i = LFAllocItemDescriptor();
-		SetAttribute(i, LFAttrFileName, name ? name : filter->Name);
+		SetAttribute(i, LFAttrFileName, name ? name : filter->OriginalName);
 		SetAttribute(i, LFAttrFileFormat, "filter");
 		if (comments)
 			SetAttribute(i, LFAttrComments, comments);
@@ -232,7 +233,7 @@ LFCore_API LFFilter* LFLoadFilter(wchar_t* fn)
 		if (pExt)
 			*pExt = L'\0';
 
-		wcscpy_s(f->Name, 256, Name);
+		wcscpy_s(f->OriginalName, 256, Name);
 	}
 
 	ReleaseMutex(Mutex_Stores);
@@ -246,9 +247,9 @@ LFCore_API LFFilter* LFLoadFilter(LFItemDescriptor* i)
 	if (LFGetFileLocation(i, Path, 2*MAX_PATH, true, true)!=LFOk)
 		return NULL;
 
-	LFFilter* f =LoadFilter(Path, i->StoreID);
+	LFFilter* f = LoadFilter(Path, i->StoreID);
 	if (f)
-		wcscpy_s(f->Name, 256, i->CoreAttributes.FileName);
+		wcscpy_s(f->OriginalName, 256, i->CoreAttributes.FileName);
 
 	return f;
 }

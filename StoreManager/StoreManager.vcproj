@@ -454,6 +454,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\EditFilterDlg.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\FooterGraph.cpp"
 				>
 			</File>
@@ -601,6 +605,10 @@
 			</File>
 			<File
 				RelativePath=".\EditConditionDlg.h"
+				>
+			</File>
+			<File
+				RelativePath=".\EditFilterDlg.h"
 				>
 			</File>
 			<File
@@ -803,6 +811,10 @@
 			</File>
 			<File
 				RelativePath=".\res\Multiple.png"
+				>
+			</File>
+			<File
+				RelativePath=".\res\QueryEdit_Tiny.ico"
 				>
 			</File>
 			<File

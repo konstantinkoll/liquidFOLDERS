@@ -48,7 +48,7 @@ LFItemDescriptor* CCategorizer::GetFolder(LFItemDescriptor* i, LFFilter* f)
 	CustomizeFolder(folder, i);
 
 	if (folder->NextFilter)
-		wcscpy_s(folder->NextFilter->Name, 256, folder->CoreAttributes.FileName);
+		wcscpy_s(folder->NextFilter->OriginalName, 256, folder->CoreAttributes.FileName);
 
 	return folder;
 }

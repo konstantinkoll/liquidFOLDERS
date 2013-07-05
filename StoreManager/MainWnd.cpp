@@ -3,6 +3,7 @@
 //
 
 #include "stdafx.h"
+#include "EditFilterDlg.h"
 #include "StoreManager.h"
 #include "LFCommDlg.h"
 
@@ -19,11 +20,11 @@ LFFilter* GetRootFilter(CHAR* RootStore=NULL)
 
 		LFStoreDescriptor s;
 		if (LFGetStoreSettings(RootStore, &s)==LFOk)
-			wcscpy_s(f->Name, 256, s.StoreName);
+			wcscpy_s(f->OriginalName, 256, s.StoreName);
 	}
 	else
 	{
-		wcscpy_s(f->Name, 256, theApp.m_Contexts[LFContextStores]->Name);
+		wcscpy_s(f->OriginalName, 256, theApp.m_Contexts[LFContextStores]->Name);
 	}
 
 	return f;
@@ -185,7 +186,6 @@ BOOL CMainWnd::PreTranslateMessage(MSG* pMsg)
 
 		LFFilter* f = LFAllocFilter();
 		f->Mode = LFFilterModeSearch;
-		f->Options.IsSearch = true;
 		m_wndSearch.GetWindowText(f->Searchterm, 256);
 		m_wndSearch.SetWindowText(_T(""));
 
@@ -313,8 +313,8 @@ void CMainWnd::NavigateTo(LFFilter* f, UINT NavMode, FVPersistentData* Data, INT
 			FVPersistentData Data;
 			m_wndMainView.GetPersistentData(Data);
 
-			if ((f->Options.IsSearch) && (!f->Options.IsSubfolder))
-				while (m_pActiveFilter ? m_pActiveFilter->Options.IsSearch : false)
+			if ((f->Options.IsPersistent) && (!f->Options.IsSubfolder))
+				while (m_pActiveFilter ? m_pActiveFilter->Options.IsPersistent : false)
 				{
 					LFFreeFilter(m_pActiveFilter);
 					ConsumeBreadcrumbItem(&m_BreadcrumbBack, &m_pActiveFilter, &Data);
@@ -398,6 +398,8 @@ BEGIN_MESSAGE_MAP(CMainWnd, CGlassWindow)
 
 	ON_COMMAND(ID_PANE_FILTER, OnToggleFilterPane)
 
+	ON_COMMAND(IDM_FILTERS_CREATENEW, OnFiltersCreateNew)
+
 	ON_COMMAND(IDM_ITEM_OPEN, OnItemOpen)
 	ON_COMMAND(IDM_ITEM_OPENNEWWINDOW, OnItemOpenNewWindow)
 	ON_COMMAND(IDM_INSPECTOR_EXPORTMETADATA, OnExportMetadata)
@@ -434,7 +436,7 @@ INT CMainWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	// Suchbegriff
 	CString tmpStr;
-	ENSURE(tmpStr.LoadString(IDS_FILTER_SEARCHTERM));
+	ENSURE(tmpStr.LoadString(IDS_SEARCHTERM));
 	if (!m_wndSearch.Create(tmpStr, this, 3, TRUE))
 		return -1;
 
@@ -566,8 +568,11 @@ void CMainWnd::OnNavigateSwitchContext(UINT nID)
 {
 	nID -= IDM_NAV_SWITCHCONTEXT;
 
+	DeleteBreadcrumbs(&m_BreadcrumbForward);
+
 	if (GetContext()==LFContextStores)
 	{
+Jump:
 		LFFilter* f = LFAllocFilter();
 		f->Mode = LFFilterModeSearch;
 		f->ContextID = (UCHAR)nID;
@@ -588,12 +593,26 @@ void CMainWnd::OnNavigateSwitchContext(UINT nID)
 			}
 			else
 			{
+				if (m_pActiveFilter->Options.IsPersistent && (nID==LFContextFilters))
+				{
+					while (m_pActiveFilter ? m_pActiveFilter->Options.IsPersistent : false)
+					{
+						LFFreeFilter(m_pActiveFilter);
+
+						FVPersistentData Data;
+						ConsumeBreadcrumbItem(&m_BreadcrumbBack, &m_pActiveFilter, &Data);
+					}
+
+					if (!m_pActiveFilter)
+						goto Jump;
+				}
+
 				f = LFAllocFilter(m_pActiveFilter);
 			}
 
 			f->ContextID = (UCHAR)nID;
-			if ((!f->Options.IsSearch) && (f->StoreID[0]=='\0'))
-				f->Name[0] = L'\0';
+			if ((!f->Options.IsPersistent) && (f->StoreID[0]=='\0'))
+				f->OriginalName[0] = L'\0';
 
 			NavigateTo(f, NAVMODE_RELOAD);
 		}
@@ -629,6 +648,18 @@ void CMainWnd::OnToggleFilterPane()
 
 	if (m_ShowFilterPane)
 		m_wndSidebar.SetFocus();
+}
+
+
+// Create new filter
+
+void CMainWnd::OnFiltersCreateNew()
+{
+	HideFilterPane();
+
+	EditFilterDlg dlg(this, m_pActiveFilter ? m_pActiveFilter->StoreID : NULL);
+	if (dlg.DoModal()==IDOK)
+		OnNavigateReload();
 }
 
 

@@ -566,6 +566,9 @@ int PassesFilterCore(LFCoreAttributes* ca, LFFilter* filter)
 			if (!(ca->Flags & LFFlagTrash))
 				return -1;
 			break;
+		case LFContextFilters:
+			if (filter->Options.IsPersistent)
+				return -1;
 		default:
 			if (filter->ContextID!=ca->ContextID)
 				return -1;
