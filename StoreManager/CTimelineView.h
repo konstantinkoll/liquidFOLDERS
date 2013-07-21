@@ -21,12 +21,13 @@ struct TimelineItemData
 	FVItemData Hdr;
 	INT Arrow;
 	INT ArrowOffs;
+	INT PreviewRows;
 	WORD Year;
-	BYTE Preview;
 	WCHAR* pArtist;
 	WCHAR* pTitle;
 	WCHAR* pAlbum;
 	WCHAR* pComments;
+	BYTE Preview;
 };
 
 class CTimelineView : public CFileView
@@ -39,7 +40,7 @@ protected:
 	INT m_CaptionHeight;
 	INT m_ItemWidth;
 	INT m_LabelWidth;
-	INT m_PreviewCount;
+	INT m_PreviewColumns;
 	SIZE m_IconSize;
 
 	virtual void SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data);

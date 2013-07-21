@@ -83,8 +83,6 @@ void CTimelineView::SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* p
 					for (INT b=i->FirstAggregate; b<=i->LastAggregate; b++)
 					{
 						LFItemDescriptor* i = p_RawFiles->m_Items[b];
-						if (UsePreview(i))
-							d->Preview |= PRV_THUMBS;
 
 						ASSERT(theApp.m_Attributes[LFAttrRoll]->Type==LFTypeUnicodeString);
 						if (d->Preview & PRV_COMMENTS)
@@ -132,7 +130,7 @@ Restart:
 	m_Categories.m_ItemCount = 0;
 	m_TwoColumns = rect.Width()-2*GUTTER-MIDDLE-7*BORDER>=512;
 	m_ItemWidth = m_TwoColumns ? (rect.Width()-MIDDLE)/2-GUTTER : rect.Width()-2*GUTTER;
-	m_PreviewCount = (m_ItemWidth-BORDER)/(128+BORDER);
+	m_PreviewColumns = (m_ItemWidth-BORDER)/(128+BORDER);
 
 	INT CurRow[2] = { GUTTER, GUTTER };
 	INT LastRow = 0;
@@ -151,11 +149,16 @@ Restart:
 			}
 			else
 			{
+				INT PreviewCount = 0;
+
 				switch (i->Type & LFTypeMask)
 				{
 				case LFTypeFile:
 					if (UsePreview(i))
+					{
 						d->Preview |= PRV_THUMBS;
+						PreviewCount = 1;
+					}
 					break;
 				case LFTypeVirtual:
 					for (INT b=i->FirstAggregate; b<=i->LastAggregate; b++)
@@ -164,10 +167,13 @@ Restart:
 						if (UsePreview(i))
 						{
 							d->Preview |= PRV_THUMBS;
-							break;
+							PreviewCount++;
 						}
 					}
+					break;
 				}
+
+				d->PreviewRows = m_PreviewColumns ? max(1, min(PreviewCount/m_PreviewColumns, m_PreviewColumns)) : 1;
 			}
 
 			INT h = 2*BORDER+m_CaptionHeight;
@@ -178,9 +184,13 @@ Restart:
 			if (d->Preview & PRV_AUDIOALBUM)
 				h += m_FontHeight[0];
 			if (d->Preview & PRV_COMMENTS)
+			{
 				h += m_FontHeight[0];
+				if (d->Preview & PRV_THUMBS)
+					h += BORDER/2;
+			}
 			if (d->Preview & PRV_THUMBS)
-				h += 128;
+				h += (128+BORDER)*d->PreviewRows-BORDER;
 
 			if (d->Year!=Year)
 			{
@@ -490,12 +500,15 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPRECT rectItem, INT idx, BOO
 		{
 			CRect rectPreview(rectItem);
 			rectPreview.DeflateRect(BORDER, BORDER);
-			rectPreview.top = rectPreview.bottom-128;
+			rectPreview.top = rectPreview.bottom-d->PreviewRows*(128+BORDER)+BORDER;
+			rectPreview.bottom = rectPreview.top+128;
 			rectPreview.left++;
 			rectPreview.right = rectPreview.left+128;
 
 			if ((i->Type & LFTypeMask)==LFTypeVirtual)
 			{
+				INT Rows = 0;
+
 				for (INT a=LFMaxRating; a>=0; a--)
 					for (INT b=i->FirstAggregate; b<=i->LastAggregate; b++)
 					{
@@ -507,7 +520,11 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPRECT rectItem, INT idx, BOO
 
 							rectPreview.OffsetRect(128+BORDER, 0);
 							if (rectPreview.right>rectItem->right-BORDER-1)
-								return;
+							{
+								rectPreview.OffsetRect(-(128+BORDER)*m_PreviewColumns, 128+BORDER);
+								if (++Rows==d->PreviewRows)
+									return;
+							}
 						}
 					}
 			}

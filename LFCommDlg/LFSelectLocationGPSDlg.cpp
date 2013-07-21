@@ -90,6 +90,7 @@ BOOL LFSelectLocationGPSDlg::OnInitDialog()
 void LFSelectLocationGPSDlg::OnDestroy()
 {
 	KillTimer(1);
+
 	CDialog::OnDestroy();
 }
 
