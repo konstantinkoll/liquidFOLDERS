@@ -433,7 +433,7 @@ void MegapixelCategorizer::CustomizeFolder(LFItemDescriptor* folder, LFItemDescr
 		double d = dimension;
 
 		wchar_t Name[256];
-		swprintf_s(Name, 256, L"%d Megapixel", dimension);
+		swprintf_s(Name, 256, L"%u Megapixel", dimension);
 		SetAttribute(folder, LFAttrFileName, Name);
 		SetAttribute(folder, attr, &d);
 	}

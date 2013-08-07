@@ -183,7 +183,7 @@ void ConvertFile(CString LanguageSuffix)
 	output.Open(path+"..\\..\\LFCore\\IATA_"+LanguageSuffix+".h", CFile::modeWrite | CFile::modeCreate | CFile::typeText);
 
 	output.WriteString("// Countries\n");
-	tmpStr.Format("#define CountryCount_%s %d\n", LanguageSuffix, CountryCount);
+	tmpStr.Format("#define CountryCount_%s %i\n", LanguageSuffix, CountryCount);
 	output.WriteString(tmpStr);
 	tmpStr.Format("LFCountry Countries_%s[CountryCount_%s] = {\n", LanguageSuffix, LanguageSuffix);
 	output.WriteString(tmpStr);
@@ -196,7 +196,7 @@ void ConvertFile(CString LanguageSuffix)
 	output.WriteString("};\n\n");
 
 	output.WriteString("// Airports\n");
-	tmpStr.Format("#define AirportCount_%s %d\n", LanguageSuffix, AirportCount);
+	tmpStr.Format("#define AirportCount_%s %i\n", LanguageSuffix, AirportCount);
 	output.WriteString(tmpStr);
 	tmpStr.Format("LFAirport Airports_%s[AirportCount_%s] = {\n", LanguageSuffix, LanguageSuffix);
 	output.WriteString(tmpStr);

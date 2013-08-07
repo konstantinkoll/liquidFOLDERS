@@ -63,8 +63,8 @@ protected:
 	BOOL SanitizeSortBy(LFViewParameters* vp, INT Context);
 	BOOL SanitizeViewMode(LFViewParameters* vp, INT Context);
 	void GetBinary(LPCTSTR lpszEntry, void* pData, UINT size);
-	void LoadViewOptions(INT context);
-	void SaveViewOptions(INT context);
+	void LoadViewOptions(UINT context);
+	void SaveViewOptions(UINT context);
 
 	afx_msg void OnAppAbout();
 	DECLARE_MESSAGE_MAP()

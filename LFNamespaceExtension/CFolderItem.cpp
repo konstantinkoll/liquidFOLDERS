@@ -413,7 +413,7 @@ BOOL CFolderItem::GetChildren(CGetChildrenEventArgs& e)
 						wcscpy_s(d.DisplayName, 256, theApp.m_Attributes[a]->Name);
 						wcscpy_s(d.Comment, 256, theApp.FrmtAttrStr(sortStr, theApp.m_Attributes[a]->Name));
 						strcpy_s(d.StoreID, LFKeySize, Attrs.StoreID);
-						sprintf_s(d.FileID, LFKeySize, "%d", a);
+						sprintf_s(d.FileID, LFKeySize, "%u", a);
 
 						e.children->AddTail(new CFolderItem(d));
 					}

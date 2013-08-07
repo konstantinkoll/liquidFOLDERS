@@ -289,7 +289,7 @@ void CCalendarView::DrawMonth(CDC& dc, LPRECT rect, INT Month, BOOL Themed)
 		}
 
 		CString tmpStr;
-		tmpStr.Format(_T("%d"), Day+1);
+		tmpStr.Format(_T("%u"), Day+1);
 
 		rectItem.right -= PADDING;
 		dc.DrawText(tmpStr, rectItem, DT_SINGLELINE | DT_END_ELLIPSIS | DT_RIGHT | DT_VCENTER);
@@ -334,11 +334,11 @@ INT CCalendarView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		wcsncpy_s(m_Days[a], 3, tmpStr, _TRUNCATE);
 	}
 
-		// Month names
+	// Month names
 	for (UINT a=0; a<12; a++)
 	{
 		GetCalendarInfo(LOCALE_USER_DEFAULT, CAL_GREGORIAN, CAL_SMONTHNAME1+a, m_Months[a].Name, 256, NULL);
-		wcscat_s(m_Months[a].Name, 256, L" %d");
+		wcscat_s(m_Months[a].Name, 256, L" %u");
 	}
 
 	return 0;

@@ -199,7 +199,7 @@ Restart:
 				ItemCategory ic;
 				ZeroMemory(&ic, sizeof(ic));
 
-				swprintf_s(ic.Caption, 256, L"%d", Year);
+				swprintf_s(ic.Caption, 256, L"%u", (UINT)Year);
 
 				ic.Rect.left = rect.Width()/2-m_LabelWidth/2;
 				ic.Rect.right = ic.Rect.left+m_LabelWidth;

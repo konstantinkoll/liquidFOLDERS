@@ -555,7 +555,7 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_MULTIPLETYPESSELECTED "Unterschiedliche Typen, %d Objekte"
+    IDS_MULTIPLETYPESSELECTED "Unterschiedliche Typen, %u Objekte"
     IDS_YOULOOKAT           "Sie schauen auf %s"
     IDS_NOTHINGTODISPLAY    "Es gibt nichts anzuzeigen."
     IDS_NONAVIGATION        "Dieses Fenster unterstützt keine Navigation."
@@ -1122,7 +1122,7 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_MULTIPLETYPESSELECTED "Múltiples tipos, %d objetos"
+    IDS_MULTIPLETYPESSELECTED "Múltiples tipos, %u objetos"
     IDS_YOULOOKAT           "Usted está viendo %s"
     IDS_NOTHINGTODISPLAY    "No hay nada que visualizar."
     IDS_NONAVIGATION        "Esta ventana no es compatible con la navegación."
@@ -1691,7 +1691,7 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_MULTIPLETYPESSELECTED "Types, éléments %d différents"
+    IDS_MULTIPLETYPESSELECTED "Types, éléments %u différents"
     IDS_YOULOOKAT           "Vous regardez %s"
     IDS_NOTHINGTODISPLAY    "Il n'y a rien indiquer."
     IDS_NONAVIGATION        "Cette fenêtre ne soutient aucune navigation."
@@ -2307,7 +2307,7 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_MULTIPLETYPESSELECTED "Multiple types, %d items"
+    IDS_MULTIPLETYPESSELECTED "Multiple types, %u items"
     IDS_YOULOOKAT           "You look at %s"
     IDS_NOTHINGTODISPLAY    "There is nothing to display."
     IDS_NONAVIGATION        "This window does not support any navigation."

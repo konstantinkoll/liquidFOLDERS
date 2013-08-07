@@ -15,7 +15,7 @@ DOUBLE StringToCoord(CString str)
 	WCHAR Ch;
 	DOUBLE Res = 0.0;
 
-	INT Scanned = swscanf_s(str.GetBuffer(), L"%d°%d\'%d\"%c", &Deg, &Min, &Sec, &Ch, 1);
+	INT Scanned = swscanf_s(str.GetBuffer(), L"%i°%i\'%i\"%c", &Deg, &Min, &Sec, &Ch, 1);
 
 	if (Scanned>=1)
 		Res += Deg;

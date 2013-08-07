@@ -476,7 +476,7 @@ struct LFItemDescriptor
 	// Internal use only
 	int FirstAggregate;
 	int LastAggregate;
-	int AggregateCount;
+	unsigned int AggregateCount;
 	bool DeleteFlag;
 	unsigned int RefCount;
 	void* Slave;

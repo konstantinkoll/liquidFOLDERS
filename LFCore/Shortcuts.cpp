@@ -45,7 +45,7 @@ LFCore_API void LFCreateDesktopShortcut(IShellLink* pShellLink, wchar_t* LinkFil
 
 		wchar_t PathLink[2*MAX_PATH];
 		wchar_t NumberStr[16] = L"";
-		int Number = 1;
+		unsigned int Number = 1;
 
 		// Check if link file exists; otherwise append number
 		do
@@ -56,7 +56,7 @@ LFCore_API void LFCreateDesktopShortcut(IShellLink* pShellLink, wchar_t* LinkFil
 			wcscat_s(PathLink, 2*MAX_PATH, NumberStr);
 			wcscat_s(PathLink, 2*MAX_PATH, L".lnk");
 
-			swprintf(NumberStr, 16, L" (%d)", ++Number);
+			swprintf(NumberStr, 16, L" (%u)", ++Number);
 		}
 		while (_waccess(PathLink, 0)==0);
 

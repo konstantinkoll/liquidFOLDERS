@@ -26,7 +26,7 @@ void GoToYearDlg::DoDataExchange(CDataExchange* pDX)
 
 		BOOL Ok = FALSE;
 		UINT Year;
-		if (swscanf_s(tmpStr, _T("%d"), &Year)==1)
+		if (swscanf_s(tmpStr, _T("%u"), &Year)==1)
 			if ((Year>=1900) && (Year<=2100))
 			{
 				m_Year = Year;
@@ -62,7 +62,7 @@ BOOL GoToYearDlg::OnInitDialog()
 
 	// Eingabezeile
 	CString tmpStr;
-	tmpStr.Format(_T("%d"), m_Year);
+	tmpStr.Format(_T("%u"), m_Year);
 	m_wndEdit.SetWindowText(tmpStr);
 	m_wndEdit.SetLimitText(4);
 	m_wndEdit.SetValidChars(_T("0123456789"));

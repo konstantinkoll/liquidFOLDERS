@@ -118,7 +118,7 @@ BOOL LFEditTagsDlg::OnInitDialog()
 			INT idx = m_TagList.InsertItem(&lvi);
 
 			CString cnt;
-			cnt.Format(_T("%d"), i->AggregateCount);
+			cnt.Format(_T("%u"), i->AggregateCount);
 			m_TagList.SetItemText(idx, 1, cnt);
 		}
 	}

@@ -46,7 +46,7 @@ LFCore_API void LFFourCCToString(const unsigned int c, wchar_t* str, size_t cCou
 
 LFCore_API void LFUINTToString(const unsigned int v, wchar_t* str, size_t cCount)
 {
-	swprintf(str, cCount, L"%d", v);
+	swprintf(str, cCount, L"%u", v);
 }
 
 LFCore_API void LFINT64ToString(const __int64 v, wchar_t* str, size_t cCount)
@@ -124,7 +124,7 @@ LFCore_API void LFDurationToString(unsigned int d, wchar_t* str, size_t cCount)
 
 LFCore_API void LFBitrateToString(const unsigned int r, wchar_t* str, size_t cCount)
 {
-	swprintf(str, cCount, L"%d kBit/s", (r+500)/1000);
+	swprintf(str, cCount, L"%u kBit/s", (r+500)/1000);
 }
 
 LFCore_API void LFMegapixelToString(const double d, wchar_t* str, size_t cCount)
@@ -154,7 +154,7 @@ void ToString(void* value, unsigned int type, wchar_t* str, size_t cCount)
 			assert(*((unsigned char*)value)<=LFMaxRating);
 			if (*((unsigned char*)value)!=1)
 			{
-				swprintf_s(str, cCount, L"%d", *((unsigned char*)value)/2);
+				swprintf_s(str, cCount, L"%u", (unsigned int)(*((unsigned char*)value)/2));
 			}
 			else
 			{
@@ -422,7 +422,7 @@ LFCore_API void LFVariantDataFromString(LFVariantData* v, wchar_t* str)
 			}
 			break;
 		case LFTypeUINT:
-			if (swscanf_s(str, L"%d", &v->UINT)==1)
+			if (swscanf_s(str, L"%u", &v->UINT)==1)
 				v->IsNull = false;
 			break;
 		case LFTypeINT64:
@@ -448,7 +448,7 @@ LFCore_API void LFVariantDataFromString(LFVariantData* v, wchar_t* str)
 					*dst = L'\0';
 					break;
 				}
-			if (swscanf_s(tmpBuf, L"%d", &v->INT64)==1)
+			if (swscanf_s(tmpBuf, L"%I64d", &v->INT64)==1)
 				v->IsNull = false;
 			break;
 		case LFTypeFraction:
@@ -461,7 +461,7 @@ LFCore_API void LFVariantDataFromString(LFVariantData* v, wchar_t* str)
 				v->IsNull = false;
 			break;
 		case LFTypeGeoCoordinates:
-			if (swscanf_s(str, L"%d°%d\'%d\"%c, %d°%d\'%d\"%c", &LatDeg, &LatMin, &LatSec, &LatCh, 1, &LonDeg, &LonMin, &LonSec, &LonCh, 1)==8)
+			if (swscanf_s(str, L"%i°%i\'%i\"%c, %i°%i\'%i\"%c", &LatDeg, &LatMin, &LatSec, &LatCh, 1, &LonDeg, &LonMin, &LonSec, &LonCh, 1)==8)
 				if (((LatCh==L'N') || (LatCh==L'S')) && ((LonCh==L'W') || (LonCh==L'E')))
 				{
 					v->GeoCoordinates.Latitude = abs(LatDeg)+(abs(LatMin)/60.0)+(abs(LatSec)/3600.0);
@@ -547,14 +547,14 @@ LFCore_API void LFVariantDataFromString(LFVariantData* v, wchar_t* str)
 			}
 			break;
 		case LFTypeDuration:
-			if (swscanf_s(str, L"%d:%d:%d", &Hour, &Min, &Sec)==3)
+			if (swscanf_s(str, L"%u:%u:%u", &Hour, &Min, &Sec)==3)
 			{
 				v->Duration = 1000*(Hour*3600+Min*60+Sec);
 				v->IsNull = false;
 			}
 			break;
 		case LFTypeBitrate:
-			if (swscanf_s(str, L"%d", &v->Bitrate)==1)
+			if (swscanf_s(str, L"%u", &v->Bitrate)==1)
 			{
 				v->Bitrate *= 1000;
 				v->IsNull = false;

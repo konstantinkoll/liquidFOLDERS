@@ -301,12 +301,12 @@ BEGIN
     IDS_EXPANDBRANCH        "Alle &Unterverzeichnisse zeigen"
     IDS_INCLUDEBRANCH       "Zweig &markieren"
     IDS_EXCLUDEBRANCH       "Zweig ab&wählen"
-    IDS_REPORTTAB0          "Erfolgreich importierte Verzeichnisse (%d)"
-    IDS_REPORTTAB1          "Verzeichnisse mit Fehlern (%d)"
+    IDS_REPORTTAB0          "Erfolgreich importierte Verzeichnisse (%u)"
+    IDS_REPORTTAB1          "Verzeichnisse mit Fehlern (%u)"
     IDS_REPORTSTATUS_NOFILES 
                             "Es wurden keine Dateien in diesem Verzeichnis gefunden."
-    IDS_REPORTSTATUS_ONEFILE "%d Datei (%s) wurde erfolgreich importiert."
-    IDS_REPORTSTATUS_FILES  "Alle %d Dateien (%s) wurden erfolgreich importiert."
+    IDS_REPORTSTATUS_ONEFILE "%u Datei (%s) wurde erfolgreich importiert."
+    IDS_REPORTSTATUS_FILES  "Alle %u Dateien (%s) wurden erfolgreich importiert."
     IDS_NOFOLDERS_CAPTION   "Migration starten"
 END
 
@@ -526,11 +526,11 @@ BEGIN
     IDS_EXPANDBRANCH        "Expand &branch"
     IDS_INCLUDEBRANCH       "&Include branch"
     IDS_EXCLUDEBRANCH       "&Exclude branch"
-    IDS_REPORTTAB0          "Successfully migrated folders (%d)"
-    IDS_REPORTTAB1          "Folders with errors (%d)"
+    IDS_REPORTTAB0          "Successfully migrated folders (%u)"
+    IDS_REPORTTAB1          "Folders with errors (%u)"
     IDS_REPORTSTATUS_NOFILES "There were no files in this folder."
-    IDS_REPORTSTATUS_ONEFILE "%d file (%s) was successfully imported."
-    IDS_REPORTSTATUS_FILES  "All %d files (%s) were successfully imported."
+    IDS_REPORTSTATUS_ONEFILE "%u file (%s) was successfully imported."
+    IDS_REPORTSTATUS_FILES  "All %u files (%s) were successfully imported."
     IDS_NOFOLDERS_CAPTION   "Start migration"
 END
 
@@ -750,12 +750,12 @@ BEGIN
     IDS_EXPANDBRANCH        "Expandir &ramificación"
     IDS_INCLUDEBRANCH       "&Incluir ramificación"
     IDS_EXCLUDEBRANCH       "&Excluir ramificación"
-    IDS_REPORTTAB0          "Carpetas migradas satisfactoriamente (%d)"
-    IDS_REPORTTAB1          "Carpetas con errores (%d)"
+    IDS_REPORTTAB0          "Carpetas migradas satisfactoriamente (%u)"
+    IDS_REPORTTAB1          "Carpetas con errores (%u)"
     IDS_REPORTSTATUS_NOFILES "No había archivos en esta carpeta."
     IDS_REPORTSTATUS_ONEFILE 
-                            "%d archivo (%s) fue importado satisfactoriamente."
-    IDS_REPORTSTATUS_FILES  "Todos los%d archivos (%s) fueron importados satisfactoriamente."
+                            "%u archivo (%s) fue importado satisfactoriamente."
+    IDS_REPORTSTATUS_FILES  "Todos los %u archivos (%s) fueron importados satisfactoriamente."
     IDS_NOFOLDERS_CAPTION   "Iniciar migración"
 END
 
@@ -975,11 +975,11 @@ BEGIN
     IDS_EXPANDBRANCH        "Montrer tous &les sous-dossiers"
     IDS_INCLUDEBRANCH       "Marquer &la branche"
     IDS_EXCLUDEBRANCH       "Abandonner &la branche"
-    IDS_REPORTTAB0          "Des dossiers importées avec succès (%d)"
-    IDS_REPORTTAB1          "Dossiers avec des fautes (%d)"
+    IDS_REPORTTAB0          "Des dossiers importées avec succès (%u)"
+    IDS_REPORTTAB1          "Dossiers avec des fautes (%u)"
     IDS_REPORTSTATUS_NOFILES "Aucun fichier n'était trouvé dans ce dossier."
-    IDS_REPORTSTATUS_ONEFILE "%d fichier (%s) était importé avec succès."
-    IDS_REPORTSTATUS_FILES  "Tous les fichiers (%s) étaient importés avec succès."
+    IDS_REPORTSTATUS_ONEFILE "%u fichier (%s) était importé avec succès."
+    IDS_REPORTSTATUS_FILES  "Tous les %u fichiers (%s) étaient importés avec succès."
     IDS_NOFOLDERS_CAPTION   "Lancer la migration"
 END
 

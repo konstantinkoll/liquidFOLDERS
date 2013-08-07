@@ -120,7 +120,7 @@ BOOL CStoreManagerApp::InitInstance()
 	if (m_nTextureSize>m_nMaxTextureSize)
 		m_nTextureSize = m_nMaxTextureSize;
 
-	for (INT a=0; a<LFContextCount; a++)
+	for (UINT a=0; a<LFContextCount; a++)
 		LoadViewOptions(a);
 
 	m_ThumbnailCache.LoadFrames();
@@ -175,7 +175,7 @@ INT CStoreManagerApp::ExitInstance()
 {
 	if (m_AppInitialized)
 	{
-		for (INT a=0; a<LFContextCount; a++)
+		for (UINT a=0; a<LFContextCount; a++)
 		{
 			SaveViewOptions(a);
 			delete m_AllowedViews[a];
@@ -346,10 +346,10 @@ void CStoreManagerApp::GetBinary(LPCTSTR lpszEntry, void* pData, UINT size)
 	}
 }
 
-void CStoreManagerApp::LoadViewOptions(INT context)
+void CStoreManagerApp::LoadViewOptions(UINT context)
 {
 	CString base;
-	base.Format(_T("Settings\\Context%d"), context);
+	base.Format(_T("Settings\\Context%u"), context);
 	SetRegistryBase(base);
 
 	UINT DefaultMode = LFViewDetails;
@@ -439,10 +439,10 @@ void CStoreManagerApp::LoadViewOptions(INT context)
 	m_Views[context].AutoDirs &= (m_Contexts[context]->AllowGroups==true) || (context>=LFContextSubfolderDefault);
 }
 
-void CStoreManagerApp::SaveViewOptions(INT context)
+void CStoreManagerApp::SaveViewOptions(UINT context)
 {
 	CString base;
-	base.Format(_T("Settings\\Context%d"), context);
+	base.Format(_T("Settings\\Context%u"), context);
 	SetRegistryBase(base);
 
 	WriteInt(_T("Version"), ViewParametersVersion);

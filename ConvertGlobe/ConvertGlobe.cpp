@@ -47,7 +47,7 @@ void ConvertFile(CString Suffix)
 		FLOAT Z;
 		FLOAT U;
 		FLOAT V;
-		if (sscanf_s(tmpStr.GetBuffer(), "Vertex %d:  X:%f     Y:%f     Z:%f     U:%f     V:%f", &id, &X, &Y, &Z, &U, &V)==6)
+		if (sscanf_s(tmpStr.GetBuffer(), "Vertex %u:  X:%f     Y:%f     Z:%f     U:%f     V:%f", &id, &X, &Y, &Z, &U, &V)==6)
 		{
 			if (id+1>VertexCount)
 				VertexCount = id+1;
@@ -65,7 +65,7 @@ void ConvertFile(CString Suffix)
 		UINT AB;
 		UINT BC;
 		UINT CA;
-		if (sscanf_s(tmpStr.GetBuffer(), "Face %d:  A:%d B:%d C:%d AB:%d BC:%d CA:%d", &id, &A, &B, &C, &AB, &BC, &CA)==7)
+		if (sscanf_s(tmpStr.GetBuffer(), "Face %u:  A:%u B:%u C:%u AB:%u BC:%u CA:%u", &id, &A, &B, &C, &AB, &BC, &CA)==7)
 		{
 			if (id+1>PolyCount)
 				PolyCount = id+1;
@@ -82,7 +82,7 @@ void ConvertFile(CString Suffix)
 	CStdioFile output;
 	output.Open(path+"..\\..\\StoreManager\\Globe_"+Suffix+".h", CFile::modeWrite | CFile::modeCreate | CFile::typeText);
 
-	tmpStr.Format("static UINT Globe%sCount = %d;\n", Suffix, PolyCount*3);
+	tmpStr.Format("static UINT Globe%sCount = %u;\n", Suffix, PolyCount*3);
 	output.WriteString(tmpStr);
 	tmpStr.Format("static FLOAT Globe%sNodes[] = {\n", Suffix);
 	output.WriteString(tmpStr);

@@ -349,10 +349,10 @@ LFCommDlg_API void GetFileVersion(HMODULE hModule, CString* Version, CString* Co
 					if (VerQueryValue(lpInfo, _T("\\"), &valPtr, &valLen))
 					{
 						VS_FIXEDFILEINFO* pFinfo = (VS_FIXEDFILEINFO*)valPtr;
-						Version->Format(_T("%d.%d.%d"), 
-							(pFinfo->dwProductVersionMS >> 16) & 0xFF,
-							(pFinfo->dwProductVersionMS) & 0xFF,
-							(pFinfo->dwProductVersionLS >> 16) & 0xFF);
+						Version->Format(_T("%u.%u.%u"), 
+							(UINT)((pFinfo->dwProductVersionMS >> 16) & 0xFF),
+							(UINT)((pFinfo->dwProductVersionMS) & 0xFF),
+							(UINT)((pFinfo->dwProductVersionLS >> 16) & 0xFF));
 					}
 				if (Copyright)
 					*Copyright = VerQueryValue(lpInfo, _T("StringFileInfo\\000004E4\\LegalCopyright"), (void**)&valData, &valLen) ? valData : _T("© liquidFOLDERS");
@@ -465,7 +465,7 @@ struct Version
 __forceinline INT ParseVersion(CString ver, Version* v)
 {
 	ZeroMemory(v, sizeof(Version));
-	return swscanf_s(ver, L"%d.%d.%d", &v->Major, &v->Minor, &v->Build);
+	return swscanf_s(ver, L"%u.%u.%u", &v->Major, &v->Minor, &v->Build);
 }
 
 LFCommDlg_API void LFCheckForUpdate(BOOL Force, CWnd* pParentWnd)

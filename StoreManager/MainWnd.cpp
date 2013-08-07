@@ -86,7 +86,7 @@ void WriteXMLItem(CStdioFile& f, LFItemDescriptor* i)
 			LFVariantDataToString(&v, tmpBuf, 256);
 
 			CString tmpStr;
-			tmpStr.Format(_T("\t\t<property name=\"%s\" id=\"%d\">%s</property>\n"), theApp.m_Attributes[attr]->XMLID, attr, tmpBuf);
+			tmpStr.Format(_T("\t\t<property name=\"%s\" id=\"%u\">%s</property>\n"), theApp.m_Attributes[attr]->XMLID, attr, tmpBuf);
 
 			f.WriteString(tmpStr);
 		}
