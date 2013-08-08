@@ -20,11 +20,11 @@ LFFilter* GetRootFilter(CHAR* RootStore=NULL)
 
 		LFStoreDescriptor s;
 		if (LFGetStoreSettings(RootStore, &s)==LFOk)
-			wcscpy_s(f->OriginalName, 256, s.StoreName);
+			wcscpy_s(f->ResultName, 256, s.StoreName);
 	}
 	else
 	{
-		wcscpy_s(f->OriginalName, 256, theApp.m_Contexts[LFContextStores]->Name);
+		wcscpy_s(f->ResultName, 256, theApp.m_Contexts[LFContextStores]->Name);
 	}
 
 	return f;
