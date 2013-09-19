@@ -72,11 +72,10 @@
 #define IDS_LEGEND                      1032
 #define IDS_LEGEND_BLUE                 1033
 #define IDS_LEGEND_RED                  1034
-#define IDS_SUBFOLDERS_MANDATORY        1035
-#define IDS_SUBFOLDERS_NOTAVAIL         1036
-#define IDS_FILETYPES                   1037
-#define IDS_HOUSEKEEPING                1038
-#define IDS_SEARCHTERM                  1039
+#define IDS_SUBFOLDERS_NOTAVAIL         1035
+#define IDS_FILETYPES                   1036
+#define IDS_HOUSEKEEPING                1037
+#define IDS_SEARCHTERM                  1038
 #define IDS_VATTR_FIRST                 1100
 #define IDS_VATTR_DRIVELETTER           1100
 #define IDS_VATTR_MAINTENANCETIME       1101

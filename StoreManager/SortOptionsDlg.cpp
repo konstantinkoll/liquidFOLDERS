@@ -70,9 +70,12 @@ BOOL SortOptionsDlg::OnInitDialog()
 	{
 		GetDlgItem(IDC_AUTODIRS)->EnableWindow(FALSE);
 
-		CString tmpStr;
-		ENSURE(tmpStr.LoadString(p_View->Mode>LFViewPreview ? IDS_SUBFOLDERS_MANDATORY : IDS_SUBFOLDERS_NOTAVAIL));
-		GetDlgItem(IDC_SUBFOLDERHINT)->SetWindowText(tmpStr);
+		if (!theApp.m_Contexts[m_Context]->AllowGroups)
+		{
+			CString tmpStr;
+			ENSURE(tmpStr.LoadString(IDS_SUBFOLDERS_NOTAVAIL));
+			GetDlgItem(IDC_SUBFOLDERHINT)->SetWindowText(tmpStr);
+		}
 	}
 
 	return TRUE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird
