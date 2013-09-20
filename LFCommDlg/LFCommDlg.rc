@@ -206,6 +206,8 @@ FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,244,190,50,14,WS_GROUP
     PUSHBUTTON      "Abbrechen",IDCANCEL,301,190,50,14,WS_GROUP
+    CONTROL         "Entwickelt von <a>liquidFOLDERS</a> in Deutschland.\nVersion %s, erstellt %s.\n%s",IDC_VERSIONINFO,
+                    "SysLink",WS_GROUP | WS_TABSTOP,7,7,344,80
     CONTROL         "Lizenz",IDC_GROUPBOX1,"CGroupBox",WS_GROUP,7,93,155,81
     LTEXT           "Name:",IDC_STATIC,15,103,141,8
     LTEXT           "X",IDC_NAME,15,113,141,8
@@ -630,6 +632,7 @@ STRINGTABLE
 BEGIN
     IDS_PURCHASEURL         "http://liquidFOLDERS.net/purchase/de/"
     IDS_UPDATEURL           "http://liquidFOLDERS.net/download/de/"
+    IDS_ABOUTURL            "http://liquidFOLDERS.net/start/de/"
     IDS_ERROR               "Fehler"
     IDS_STORES_SINGULAR     "%u Store"
 END
@@ -774,6 +777,8 @@ FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,244,190,50,14,WS_GROUP
     PUSHBUTTON      "Cancelar",IDCANCEL,301,190,50,14,WS_GROUP
+    CONTROL         "Desarrollado de <a>liquidFOLDERS</a> en Alemania.\nVersion %s, crée %s.\n%s",IDC_VERSIONINFO,
+                    "SysLink",WS_GROUP | WS_TABSTOP,7,7,344,80
     CONTROL         "Licensia",IDC_GROUPBOX1,"CGroupBox",WS_GROUP,7,93,155,81
     LTEXT           "Nombre:",IDC_STATIC,15,103,141,8
     LTEXT           "X",IDC_NAME,15,113,141,8
@@ -1200,6 +1205,7 @@ STRINGTABLE
 BEGIN
     IDS_PURCHASEURL         "http://liquidFOLDERS.net/purchase/es/"
     IDS_UPDATEURL           "http://liquidFOLDERS.net/download/es/"
+    IDS_ABOUTURL            "http://liquidFOLDERS.net/start/es/"
     IDS_ERROR               "Error"
     IDS_STORES_SINGULAR     "%u store"
 END
@@ -1344,6 +1350,8 @@ FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,244,190,50,14,WS_GROUP
     PUSHBUTTON      "Annuler",IDCANCEL,301,190,50,14,WS_GROUP
+    CONTROL         "Développée par <a>liquidFOLDERS</a> en Allemagne.\nVersion %s, %s.\n%s",IDC_VERSIONINFO,
+                    "SysLink",WS_GROUP | WS_TABSTOP,7,7,344,80
     CONTROL         "Licence",IDC_GROUPBOX1,"CGroupBox",WS_GROUP,7,93,155,81
     LTEXT           "Nom:",IDC_STATIC,15,103,141,8
     LTEXT           "X",IDC_NAME,15,113,141,8
@@ -1770,6 +1778,7 @@ STRINGTABLE
 BEGIN
     IDS_PURCHASEURL         "http://liquidFOLDERS.net/purchase/fr/"
     IDS_UPDATEURL           "http://liquidFOLDERS.net/download/fr/"
+    IDS_ABOUTURL            "http://liquidFOLDERS.net/start/fr/"
     IDS_ERROR               "Erreur"
     IDS_STORES_SINGULAR     "%u store"
 END
@@ -1964,6 +1973,8 @@ FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,244,190,50,14,WS_GROUP
     PUSHBUTTON      "Cancel",IDCANCEL,301,190,50,14,WS_GROUP
+    CONTROL         "Engineered by <a>liquidFOLDERS</a> in Germany.\nVersion %s, built %s.\n%s",IDC_VERSIONINFO,
+                    "SysLink",WS_GROUP | WS_TABSTOP,7,7,344,80
     CONTROL         "License",IDC_GROUPBOX1,"CGroupBox",WS_GROUP,7,93,155,81
     LTEXT           "Name:",IDC_STATIC,15,103,141,8
     LTEXT           "X",IDC_NAME,15,113,141,8
@@ -2382,6 +2393,7 @@ STRINGTABLE
 BEGIN
     IDS_PURCHASEURL         "http://liquidFOLDERS.net/purchase/en/"
     IDS_UPDATEURL           "http://liquidFOLDERS.net/download/en/"
+    IDS_ABOUTURL            "http://liquidFOLDERS.net/start/en/"
     IDS_ERROR               "Error"
     IDS_STORES_SINGULAR     "%u store"
 END

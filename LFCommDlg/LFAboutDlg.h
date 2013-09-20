@@ -25,6 +25,7 @@ protected:
 	afx_msg BOOL OnInitDialog();
 	afx_msg void OnEnableAutoUpdate();
 	afx_msg void OnUpdateNow();
+	afx_msg void OnVersionInfo(NMHDR* pNMHDR, LRESULT* pResult);
 	DECLARE_MESSAGE_MAP()
 
 private:
@@ -33,4 +34,5 @@ private:
 	CString m_AppName;
 	CString m_Build;
 	CGdiPlusBitmapResource m_Icon;
+	CWnd m_wndVersionInfo;
 };

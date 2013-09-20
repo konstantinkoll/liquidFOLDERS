@@ -275,7 +275,7 @@ INT CTagcloudView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	CString Face = theApp.GetDefaultFontFace();
 	for (INT a=0; a<20; a++)
-		m_Fonts[a].CreateFont(-(a*2+10), 0, 0, 0, FW_NORMAL, 0, 0, 0, ANSI_CHARSET,
+		m_Fonts[a].CreateFont(-(a*2+10), 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET,
 			OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, a>=4 ? ANTIALIASED_QUALITY : CLEARTYPE_QUALITY,
 			DEFAULT_PITCH | FF_DONTCARE, Face);
 

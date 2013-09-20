@@ -21,11 +21,14 @@ LFAboutDlg::LFAboutDlg(CString AppName, CString Build, UINT IconResID, CWnd* pPa
 	ENSURE(m_Icon.Load(IconResID, _T("PNG"), AfxGetResourceHandle()));
 
 	GetFileVersion(AfxGetInstanceHandle(), &m_Version, &m_Copyright);
+	m_Copyright.Replace(_T(" liquidFOLDERS"), _T(""));
 }
 
 void LFAboutDlg::DoDataExchange(CDataExchange* pDX)
 {
 	LFDialog::DoDataExchange(pDX);
+
+	DDX_Control(pDX, IDC_VERSIONINFO, m_wndVersionInfo);
 
 	BOOL EnableAutoUpdate;
 	INT Interval;
@@ -78,6 +81,7 @@ void LFAboutDlg::CheckLicenseKey(LFLicense* License)
 BEGIN_MESSAGE_MAP(LFAboutDlg, LFDialog)
 	ON_BN_CLICKED(IDC_ENABLEAUTOUPDATE, OnEnableAutoUpdate)
 	ON_BN_CLICKED(IDC_UPDATENOW, OnUpdateNow)
+	ON_NOTIFY(NM_CLICK, IDC_VERSIONINFO, OnVersionInfo)
 END_MESSAGE_MAP()
 
 BOOL LFAboutDlg::OnInitDialog()
@@ -90,6 +94,31 @@ BOOL LFAboutDlg::OnInitDialog()
 	CString caption;
 	caption.Format(text, m_AppName);
 	SetWindowText(caption);
+
+	// Version
+#ifdef _M_X64
+#define ISET _T(" (x64)")
+#else
+#define ISET _T(" (x32)")
+#endif
+
+	m_wndVersionInfo.GetWindowText(caption);
+	text.Format(caption, m_Version+ISET, m_Build, m_Copyright);
+	m_wndVersionInfo.SetWindowTextW(text);
+
+	CFont font;
+	font.CreateFont(20, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET,
+		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY,
+		DEFAULT_PITCH | FF_DONTCARE, LFGetApp()->GetDefaultFontFace());
+	m_wndVersionInfo.SetFont(&font);
+	font.Detach();
+
+	CRect rectWnd;
+	m_wndVersionInfo.GetWindowRect(&rectWnd);
+	ScreenToClient(&rectWnd);
+	rectWnd.left = 148;
+	rectWnd.top = 75;
+	m_wndVersionInfo.SetWindowPos(NULL, rectWnd.left, rectWnd.top, rectWnd.Width(), rectWnd.Height(), SWP_NOACTIVATE | SWP_NOZORDER);
 
 	// Lizenz
 	CheckLicenseKey();
@@ -104,40 +133,19 @@ void LFAboutDlg::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 	g.DrawImage(m_Icon.m_pBitmap, 9, 14, m_Icon.m_pBitmap->GetWidth(), m_Icon.m_pBitmap->GetHeight());
 
 	CRect r(rect);
-	r.top = 15;
+	r.top = 23;
 	r.left = 148;
 
-	CFont font1;
-	font1.CreateFont(40, 0, 0, 0, FW_BOLD, FALSE, FALSE, FALSE, ANSI_CHARSET,
+	CFont font;
+	font.CreateFont(48, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET,
 		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, ANTIALIASED_QUALITY,
 		DEFAULT_PITCH | FF_DONTCARE, LFGetApp()->GetDefaultFontFace());
-	CFont* pOldFont = dc.SelectObject(&font1);
+	CFont* pOldFont = dc.SelectObject(&font);
 
 	const UINT fmt = DT_SINGLELINE | DT_LEFT | DT_NOPREFIX | DT_END_ELLIPSIS;
 	dc.SetTextColor(0x000000);
 	dc.SetBkMode(TRANSPARENT);
 	dc.DrawText(m_AppName, r, fmt);
-	r.top += 45;
-
-	CFont font2;
-	font2.CreateFont(24, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, ANSI_CHARSET,
-		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY,
-		DEFAULT_PITCH | FF_DONTCARE, LFGetApp()->GetDefaultFontFace());
-	dc.SelectObject(&font2);
-
-#ifdef _M_X64
-#define ISET _T(" (x64)")
-#else
-#define ISET _T(" (x32)")
-#endif
-
-	dc.DrawText(_T("Version ")+m_Version+ISET, r, fmt);
-	r.top += 25;
-
-	dc.DrawText(_T("Built ")+m_Build, r, fmt);
-	r.top += 25;
-
-	dc.DrawText(m_Copyright, r, fmt);
 
 	dc.SelectObject(pOldFont);
 }
@@ -154,4 +162,14 @@ void LFAboutDlg::OnEnableAutoUpdate()
 void LFAboutDlg::OnUpdateNow()
 {
 	LFCheckForUpdate(TRUE, this);
+}
+
+void LFAboutDlg::OnVersionInfo(NMHDR* /*pNMHDR*/, LRESULT* pResult)
+{
+	CString url;
+	ENSURE(url.LoadString(IDS_ABOUTURL));
+
+	ShellExecute(GetSafeHwnd(), _T("open"), url, NULL, NULL, SW_SHOW);
+
+	*pResult = 0;
 }
