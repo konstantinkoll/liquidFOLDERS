@@ -940,14 +940,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Ribbon\Welcome_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\Welcome_32.png"
-				>
-			</File>
-			<File
 				RelativePath="Ribbon\ZoomIn_16.png"
 				>
 			</File>
@@ -1470,10 +1462,6 @@
 		</File>
 		<File
 			RelativePath="Warning.ico"
-			>
-		</File>
-		<File
-			RelativePath=".\Welcome_Small.ico"
 			>
 		</File>
 	</Files>

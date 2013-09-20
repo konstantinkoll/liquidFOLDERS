@@ -135,7 +135,6 @@ IDI_STORENEW            ICON                    "res\\StoreNew_Tiny.ico"
 IDI_SHIELD_VISTA        ICON                    "res\\Shield_Vista.ico"
 IDD_ABOUT               ICON                    "res\\About_Tiny.ico"
 IDD_CHOOSESTORE         ICON                    "res\\Stores_Tiny.ico"
-IDD_WELCOME             ICON                    "res\\Welcome_Small.ico"
 IDD_SELECTIATA          ICON                    "res\\Plane_Tiny.ico"
 IDD_JUMPTOIATA          ICON                    "res\\Location_Tiny.ico"
 IDD_SELECTGPS           ICON                    "res\\LocationGPS_Tiny.ico"
@@ -238,28 +237,9 @@ BEGIN
     PUSHBUTTON      "&Neuen Store anlegen...",IDM_STORES_CREATENEW,7,261,95,14
 END
 
-IDD_WELCOME DIALOGEX 0, 0, 262, 127
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
-EXSTYLE WS_EX_APPWINDOW | 0x4000000L
-CAPTION "Willkommen bei liquidFOLDERS"
-FONT 8, "MS Shell Dlg", 400, 0, 0x1
-BEGIN
-    CONTROL         "Store-Namen",IDC_GROUPBOX1,"CGroupBox",WS_GROUP,7,46,248,44
-    EDITTEXT        IDC_STORENAME1,14,68,72,14,ES_AUTOHSCROLL | WS_GROUP
-    EDITTEXT        IDC_STORENAME2,94,68,72,14,ES_AUTOHSCROLL | WS_GROUP
-    EDITTEXT        IDC_STORENAME3,175,68,72,14,ES_AUTOHSCROLL | WS_GROUP
-    DEFPUSHBUTTON   "Und los!",IDOK,148,105,50,14,WS_GROUP
-    PUSHBUTTON      "Jetzt nicht.",IDCANCEL,205,105,50,14,WS_GROUP
-    PUSHBUTTON      "&Lizenzschlüssel eingeben...",IDC_ENTERLICENSEKEY,7,105,105,14,WS_GROUP
-    LTEXT           "Dies ist der erste Start von liquidFOLDERS. liquidFOLDERS speichert alle Dateien in sog. „Stores“. Um gleich loszulegen, können Sie hier bis zu drei Stores anlegen, indem Sie deren Namen eintragen (z.B. „Meine Dateien“).",IDC_STATIC,7,7,248,36
-    LTEXT           "Store 1:",IDC_STATIC,14,58,72,8
-    LTEXT           "Store 2:",IDC_STATIC,94,58,72,8
-    LTEXT           "Store 3:",IDC_STATIC,175,58,72,8
-END
-
 IDD_STOREDELETE DIALOGEX 0, 0, 277, 205
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
-CAPTION "Angeslossenen Store „%s“ löschen"
+CAPTION "Angeschlossenen Store „%s“ löschen"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     CONTROL         "Zustimmung",IDC_GROUPBOX1,"CGroupBox",WS_GROUP,7,102,74,41
@@ -521,14 +501,6 @@ BEGIN
         BOTTOMMARGIN, 275
     END
 
-    IDD_WELCOME, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 255
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 120
-    END
-
     IDD_STOREDELETE, DIALOG
     BEGIN
         LEFTMARGIN, 7
@@ -707,7 +679,6 @@ BEGIN
     IDS_STORENEW_VOLUME     "Neuen Store auf Laufwerk %c: anlegen"
     IDS_DELETEPROPERTY_CAPTION "Eigenschaft entfernen"
     IDS_DELETEPROPERTY_MSG  "Möchten Sie diese Eigenschaft wirklich entfernen ?"
-
 END
 
 STRINGTABLE 
@@ -832,25 +803,6 @@ BEGIN
     DEFPUSHBUTTON   "OK",IDOK,356,261,50,14,WS_GROUP
     PUSHBUTTON      "Cancelar",IDCANCEL,413,261,50,14,WS_GROUP
     PUSHBUTTON      "Crear &nuevo store...",IDM_STORES_CREATENEW,7,261,95,14
-END
-
-IDD_WELCOME DIALOGEX 0, 0, 262, 127
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
-EXSTYLE WS_EX_APPWINDOW | 0x4000000L
-CAPTION "Bienvenidos a liquidFOLDERS"
-FONT 8, "MS Shell Dlg", 400, 0, 0x1
-BEGIN
-    CONTROL         "Nombres des Store",IDC_GROUPBOX1,"CGroupBox",WS_GROUP,7,46,248,44
-    EDITTEXT        IDC_STORENAME1,14,68,72,14,ES_AUTOHSCROLL | WS_GROUP
-    EDITTEXT        IDC_STORENAME2,94,68,72,14,ES_AUTOHSCROLL | WS_GROUP
-    EDITTEXT        IDC_STORENAME3,175,68,72,14,ES_AUTOHSCROLL | WS_GROUP
-    DEFPUSHBUTTON   "Continuar!",IDOK,148,105,50,14,WS_GROUP
-    PUSHBUTTON      "No gracias.",IDCANCEL,205,105,50,14,WS_GROUP
-    PUSHBUTTON      "Dictar &licencia...",IDC_ENTERLICENSEKEY,7,105,105,14,WS_GROUP
-    LTEXT           "Parece ser que es la primera vez que ejecuta liquidFOLDERS. liquidFOLDERS mantiene todos sus archivos en los llamados stores. Para comenzar puede crear hasta 3 stores en este momento, simplemente introduciendo sus nombres a continuación.",IDC_STATIC,7,7,248,36
-    LTEXT           "Store 1:",IDC_STATIC,14,58,72,8
-    LTEXT           "Store 2:",IDC_STATIC,94,58,72,8
-    LTEXT           "Store 3:",IDC_STATIC,175,58,72,8
 END
 
 IDD_STOREDELETE DIALOGEX 0, 0, 277, 205
@@ -1030,7 +982,8 @@ BEGIN
     LTEXT           "X",IDC_LASTSEEN,65,71,243,8,SS_ENDELLIPSIS
     CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ,2,86,308,1
     CONTROL         "Store &predeterminado",IDC_MAKEDEFAULT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,3,92,305,10
-    CONTROL         "Make &searchable while not connected",IDC_MAKESEARCHABLE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,3,106,305,10
+    CONTROL         "Make &searchable while not connected",IDC_MAKESEARCHABLE,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,3,106,305,10
 END
 
 IDD_STOREPROPERTIES_INDEX DIALOGEX 0, 0, 310, 66
@@ -1079,7 +1032,8 @@ BEGIN
     EDITTEXT        IDC_STORECOMMENT,100,23,208,14,ES_AUTOHSCROLL
     CONTROL         "",-1,"Static",SS_ETCHEDHORZ,2,44,308,1
     CONTROL         "Store &predeterminado",IDC_MAKEDEFAULT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,3,50,305,10
-    CONTROL         "Make &searchable while not connected",IDC_MAKESEARCHABLE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,3,64,305,10
+    CONTROL         "Make &searchable while not connected",IDC_MAKESEARCHABLE,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,3,64,305,10
 END
 
 IDD_STORENEW_PATH DIALOGEX 0, 0, 310, 310
@@ -1115,14 +1069,6 @@ BEGIN
         RIGHTMARGIN, 463
         TOPMARGIN, 7
         BOTTOMMARGIN, 275
-    END
-
-    IDD_WELCOME, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 255
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 120
     END
 
     IDD_STOREDELETE, DIALOG
@@ -1429,25 +1375,6 @@ BEGIN
     PUSHBUTTON      "Créez un store &nouveau...",IDM_STORES_CREATENEW,7,261,105,14
 END
 
-IDD_WELCOME DIALOGEX 0, 0, 262, 127
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
-EXSTYLE WS_EX_APPWINDOW | 0x4000000L
-CAPTION "Bienvenu à liquidFOLDERS"
-FONT 8, "MS Shell Dlg", 400, 0, 0x1
-BEGIN
-    CONTROL         "Les noms des stores",IDC_GROUPBOX1,"CGroupBox",WS_GROUP,7,46,248,44
-    EDITTEXT        IDC_STORENAME1,14,68,72,14,ES_AUTOHSCROLL | WS_GROUP
-    EDITTEXT        IDC_STORENAME2,94,68,72,14,ES_AUTOHSCROLL | WS_GROUP
-    EDITTEXT        IDC_STORENAME3,175,68,72,14,ES_AUTOHSCROLL | WS_GROUP
-    DEFPUSHBUTTON   "Feu vert",IDOK,135,105,47,14,WS_GROUP
-    PUSHBUTTON      "Pas maintenant.",IDCANCEL,189,105,66,14,WS_GROUP
-    PUSHBUTTON      "Donner clé de &licence...",IDC_ENTERLICENSEKEY,7,105,105,14,WS_GROUP
-    LTEXT           "C'est la première fois que vous dirigez liquidFOLDERS. liquidFOLDERS gére tous vous fichiers dans les ainsi-appelé stores. Pour recevoir le départ, vous pouvez créer jusqu'à trois stores immédiatement en remplissant leurs noms ci-dessous.",IDC_STATIC,7,7,248,36
-    LTEXT           "Store 1:",IDC_STATIC,14,58,72,8
-    LTEXT           "Store 2:",IDC_STATIC,94,58,72,8
-    LTEXT           "Store 3:",IDC_STATIC,175,58,72,8
-END
-
 IDD_STOREDELETE DIALOGEX 0, 0, 295, 204
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
 CAPTION "Effacez le store monté sur ""%s"""
@@ -1711,14 +1638,6 @@ BEGIN
         RIGHTMARGIN, 463
         TOPMARGIN, 7
         BOTTOMMARGIN, 275
-    END
-
-    IDD_WELCOME, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 255
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 120
     END
 
     IDD_STOREDELETE, DIALOG
@@ -2066,25 +1985,6 @@ BEGIN
     PUSHBUTTON      "&Search for update now...",IDC_UPDATENOW,176,155,170,14
 END
 
-IDD_WELCOME DIALOGEX 0, 0, 262, 127
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
-EXSTYLE WS_EX_APPWINDOW | 0x4000000L
-CAPTION "Welcome to liquidFOLDERS"
-FONT 8, "MS Shell Dlg", 400, 0, 0x1
-BEGIN
-    CONTROL         "Store names",IDC_GROUPBOX1,"CGroupBox",WS_GROUP,7,46,248,44
-    EDITTEXT        IDC_STORENAME1,14,68,72,14,ES_AUTOHSCROLL | WS_GROUP
-    EDITTEXT        IDC_STORENAME2,94,68,72,14,ES_AUTOHSCROLL | WS_GROUP
-    EDITTEXT        IDC_STORENAME3,175,68,72,14,ES_AUTOHSCROLL | WS_GROUP
-    DEFPUSHBUTTON   "Go ahead!",IDOK,148,105,50,14,WS_GROUP
-    PUSHBUTTON      "Not now.",IDCANCEL,205,105,50,14,WS_GROUP
-    PUSHBUTTON      "Enter &license key...",IDC_ENTERLICENSEKEY,7,105,105,14,WS_GROUP
-    LTEXT           "This is the first time you run liquidFOLDERS. liquidFOLDERS keeps all your files in so-called stores. To get going, you can create up to three stores right now, by simply filling in their names below (e.g. ""Home"" and ""Work"").",IDC_STATIC,7,7,248,36
-    LTEXT           "Store 1:",IDC_STATIC,14,58,72,8
-    LTEXT           "Store 2:",IDC_STATIC,94,58,72,8
-    LTEXT           "Store 3:",IDC_STATIC,175,58,72,8
-END
-
 IDD_CHOOSESTORE DIALOGEX 0, 0, 470, 282
 STYLE DS_SETFONT | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
 CAPTION "Choose store"
@@ -2351,14 +2251,6 @@ BEGIN
         RIGHTMARGIN, 351
         TOPMARGIN, 6
         BOTTOMMARGIN, 204
-    END
-
-    IDD_WELCOME, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 255
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 120
     END
 
     IDD_CHOOSESTORE, DIALOG

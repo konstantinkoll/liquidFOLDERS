@@ -37,6 +37,8 @@ DWORD WINAPI WorkerDeleteStore(void* lParam)
 
 #define ResetNagCounter     m_NagCounter = 0;
 
+extern AFX_EXTENSION_MODULE LFCommDlgDLL;
+
 BEGIN_MESSAGE_MAP(LFApplication, CWinAppEx)
 	ON_COMMAND(ID_APP_SUPPORT, OnAppSupport)
 	ON_COMMAND(ID_APP_NEWFILEDROP, OnAppNewFileDrop)
@@ -336,8 +338,14 @@ BOOL LFApplication::InitInstance()
 	{
 		WriteGlobalInt(_T("FirstRun"), 0);
 
-		LFWelcomeDlg dlg;
-		dlg.DoModal();
+		// Lokalen Store erstellen
+		LFStoreDescriptor store;
+		ZeroMemory(&store, sizeof(store));
+
+		store.AutoLocation = TRUE;
+		store.StoreMode = LFStoreModeInternal;
+
+		LFErrorBox(LFCreateStore(&store));
 	}
 
 	return TRUE;

@@ -659,10 +659,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\LFWelcomeDlg.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\stdafx.cpp"
 				>
 				<FileConfiguration
@@ -929,10 +925,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\LFWelcomeDlg.h"
-				>
-			</File>
-			<File
 				RelativePath="..\include\liquidFOLDERS.h"
 				>
 			</File>
@@ -1176,10 +1168,6 @@
 			</File>
 			<File
 				RelativePath=".\res\Warning.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Welcome_Small.ico"
 				>
 			</File>
 		</Filter>

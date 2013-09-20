@@ -45,7 +45,6 @@
 #include "..\LFCommDlg\LFStorePropertiesDlg.h"
 #include "..\LFCommDlg\LFTooltip.h"
 #include "..\LFCommDlg\LFTransactionDataObject.h"
-#include "..\LFCommDlg\LFWelcomeDlg.h"
 
 #define LF_WORKERTHREAD_START(pParam) LF_WORKERTHREAD_START_EX(pParam, 0);
 #define LF_WORKERTHREAD_START_EX(pParam, MajorCount) CoInitialize(NULL); WorkerParameters* wp = (WorkerParameters*)pParam; LFProgress p; LFInitProgress(&p, wp->Hdr.hWnd);
