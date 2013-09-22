@@ -511,7 +511,7 @@ void LFSearchResult::Sort(unsigned int attr, bool descending)
 	}
 }
 
-unsigned int LFSearchResult::Aggregate(unsigned int write, unsigned int read1, unsigned int read2, void* c, unsigned int attr, unsigned int icon, bool groupone, LFFilter* f)
+unsigned int LFSearchResult::Aggregate(unsigned int write, unsigned int read1, unsigned int read2, void* c, unsigned int attr, bool groupone, LFFilter* f)
 {
 	if (((read2==read1+1) && ((!groupone) || ((m_Items[read1]->Type & LFTypeMask)==LFTypeVirtual))) || (IsNullValue(attr, m_Items[read1]->AttributeValues[attr])))
 	{
@@ -523,7 +523,7 @@ unsigned int LFSearchResult::Aggregate(unsigned int write, unsigned int read1, u
 	else
 	{
 		LFItemDescriptor* folder = ((CCategorizer*)c)->GetFolder(m_Items[read1], f);
-		folder->IconID = icon;
+		folder->IconID = IDI_FLD_Default;
 		folder->AggregateCount = read2-read1;
 		if (!m_RawCopy)
 		{
@@ -551,7 +551,7 @@ unsigned int LFSearchResult::Aggregate(unsigned int write, unsigned int read1, u
 	}
 }
 
-void LFSearchResult::Group(unsigned int attr, unsigned int icon, bool groupone, LFFilter* f)
+void LFSearchResult::Group(unsigned int attr, bool groupone, LFFilter* f)
 {
 	if (!m_ItemCount)
 		return;
@@ -624,20 +624,20 @@ void LFSearchResult::Group(unsigned int attr, unsigned int icon, bool groupone, 
 	{
 		if (!c->IsEqual(m_Items[ReadPtr1], m_Items[ReadPtr2]))
 		{
-			WritePtr += Aggregate(WritePtr, ReadPtr1, ReadPtr2, c, attr, icon, groupone, f);
+			WritePtr += Aggregate(WritePtr, ReadPtr1, ReadPtr2, c, attr, groupone, f);
 			ReadPtr1 = ReadPtr2;
 		}
 
 		ReadPtr2++;
 	}
 
-	WritePtr += Aggregate(WritePtr, ReadPtr1, m_ItemCount, c, attr, icon, groupone, f);
+	WritePtr += Aggregate(WritePtr, ReadPtr1, m_ItemCount, c, attr, groupone, f);
 	m_ItemCount = WritePtr;
 
 	delete c;
 }
 
-void LFSearchResult::GroupArray(unsigned int attr, unsigned int icon, LFFilter* f)
+void LFSearchResult::GroupArray(unsigned int attr, LFFilter* f)
 {
 	assert(AttrTypes[attr]==LFTypeUnicodeArray);
 
@@ -715,7 +715,7 @@ void LFSearchResult::GroupArray(unsigned int attr, unsigned int icon, LFFilter* 
 
 		LFItemDescriptor* folder = LFAllocItemDescriptor();
 		folder->Type = LFTypeVirtual;
-		folder->IconID = icon;
+		folder->IconID = IDI_FLD_Default;
 		folder->AggregateCount = it->second.count;
 
 		SetAttribute(folder, LFAttrFileName, tag);

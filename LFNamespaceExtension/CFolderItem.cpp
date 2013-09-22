@@ -407,7 +407,7 @@ BOOL CFolderItem::GetChildren(CGetChildrenEventArgs& e)
 						FolderSerialization d ;
 						ZeroMemory(&d, sizeof(d));
 						d.Level = Attrs.Level+1;
-						d.Icon = theApp.m_Attributes[a]->IconID;
+						d.Icon = IDI_FLD_Default;
 						d.Type = LFTypeVirtual;
 						d.CategoryID = theApp.m_Attributes[a]->Category;
 						wcscpy_s(d.DisplayName, 256, theApp.m_Attributes[a]->Name);
@@ -425,7 +425,7 @@ BOOL CFolderItem::GetChildren(CGetChildrenEventArgs& e)
 		f->Mode = LFFilterModeDirectoryTree;
 		strcpy_s(f->StoreID, LFKeySize, Attrs.StoreID);
 		base = LFQuery(f);
-		ConvertSearchResult(e, LFGroupSearchResult(base, atoi(Attrs.FileID), false, Attrs.Icon, atoi(Attrs.FileID)!=LFAttrFileName, f));
+		ConvertSearchResult(e, LFGroupSearchResult(base, atoi(Attrs.FileID), false, atoi(Attrs.FileID)!=LFAttrFileName, f));
 		break;
 	case LevelAttrValue:
 		f = LFAllocFilter();

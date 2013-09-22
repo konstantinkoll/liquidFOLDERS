@@ -101,9 +101,6 @@ LFCore_API bool LFIATAGetAirportByCode(char* Code, LFAirport** pBuffer)
 
 void CustomizeFolderForAirport(LFItemDescriptor* i, LFAirport* airport)
 {
-	i->IconID = IDI_FLD_Location;
-	i->Type = LFTypeVirtual;
-
 	// Ortsname in ANSI
 	char tmpStr1[256];
 	strcpy_s(tmpStr1, 256, airport->Name);

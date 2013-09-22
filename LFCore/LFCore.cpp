@@ -429,42 +429,6 @@ LFCore_API LFAttributeDescriptor* LFGetAttributeInfo(unsigned int ID)
 		a->ShPropertyMapping.ID = ID;
 	}
 
-	// Icon
-	switch (ID)
-	{
-	case LFAttrCreationTime:
-	case LFAttrAddTime:
-	case LFAttrFileTime:
-	case LFAttrDuration:
-	case LFAttrArchiveTime:
-	case LFAttrDueTime:
-	case LFAttrDoneTime:
-	case LFAttrRecordingTime:
-		a->IconID = IDI_FLD_Calendar;
-		break;
-	case LFAttrRating:
-		a->IconID = IDI_FLD_Favorites;
-		break;
-	case LFAttrRoll:
-		a->IconID = IDI_FLD_Roll;
-		break;
-	case LFAttrLocationName:
-	case LFAttrLocationIATA:
-	case LFAttrLocationGPS:
-		a->IconID = IDI_FLD_Location;
-		break;
-	case LFAttrArtist:
-	case LFAttrResponsible:
-	case LFAttrCustomer:
-		a->IconID = IDI_FLD_Contacts;
-		break;
-	case LFAttrLanguage:
-		a->IconID = IDI_FLD_Fonts;
-		break;
-	default:
-		a->IconID = (a->Category==LFAttrCategoryInternal) ? IDI_FLD_System : IDI_FLD_Default;
-	}
-
 	return a;
 }
 
@@ -647,7 +611,7 @@ LFCore_API void LFSortSearchResult(LFSearchResult* res, unsigned int attr, bool 
 	res->Sort(attr, descending);
 }
 
-LFCore_API LFSearchResult* LFGroupSearchResult(LFSearchResult* res, unsigned int attr, bool descending, unsigned int icon, bool groupone, LFFilter* f)
+LFCore_API LFSearchResult* LFGroupSearchResult(LFSearchResult* res, unsigned int attr, bool descending, bool groupone, LFFilter* f)
 {
 	assert(f);
 
@@ -661,7 +625,7 @@ LFCore_API LFSearchResult* LFGroupSearchResult(LFSearchResult* res, unsigned int
 	if (AttrTypes[attr]==LFTypeUnicodeArray)
 	{
 		LFSearchResult* cooked = new LFSearchResult(res);
-		cooked->GroupArray(attr, icon, f);
+		cooked->GroupArray(attr, f);
 		cooked->Sort(attr, descending);
 		return cooked;
 	}
@@ -678,7 +642,7 @@ LFCore_API LFSearchResult* LFGroupSearchResult(LFSearchResult* res, unsigned int
 
 	res->Sort(attr, descending);
 	LFSearchResult* cooked = new LFSearchResult(res);
-	cooked->Group(attr, icon, groupone, f);
+	cooked->Group(attr, groupone, f);
 
 	// Revert to old GPS location
 	if (attr==LFAttrLocationGPS)

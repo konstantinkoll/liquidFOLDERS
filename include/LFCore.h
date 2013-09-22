@@ -222,7 +222,7 @@ LFCore_API void __stdcall LFRemoveFlaggedItemDescriptors(LFSearchResult* res);
 LFCore_API void __stdcall LFSortSearchResult(LFSearchResult* res, unsigned int attr, bool descending);
 
 // Gruppiert LFSearchResult und liefert Kopie zurück
-LFCore_API LFSearchResult* __stdcall LFGroupSearchResult(LFSearchResult* res, unsigned int attr, bool descending, unsigned int icon, bool groupone, LFFilter* f);
+LFCore_API LFSearchResult* __stdcall LFGroupSearchResult(LFSearchResult* res, unsigned int attr, bool descending, bool groupone, LFFilter* f);
 
 
 

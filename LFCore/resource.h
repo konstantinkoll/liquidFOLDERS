@@ -4,18 +4,11 @@
 //
 #define IDI_FLD_Default                 1
 #define IDI_FLD_All                     2
-#define IDI_FLD_Calendar                3
-#define IDI_FLD_Contacts                4
-#define IDI_FLD_Favorites               5
-#define IDI_FLD_Fonts                   6
-#define IDI_FLD_Location                7
-#define IDI_FLD_Roll                    8
-#define IDI_FLD_System                  9
-#define IDI_OVERLAY_Default             10
-#define IDI_STORE_Unknown               11
-#define IDI_STORE_Internal              12
-#define IDI_STORE_Bag                   13
-#define IDI_LastIcon                    13
+#define IDI_OVERLAY_Default             3
+#define IDI_STORE_Unknown               4
+#define IDI_STORE_Internal              5
+#define IDI_STORE_Bag                   6
+#define IDI_LastIcon                    6
 #define IDS_FirstItemCategory           1000
 #define IDS_LFCategoryLocalStores       1000
 #define IDS_LFCategoryRemoteStores      1001

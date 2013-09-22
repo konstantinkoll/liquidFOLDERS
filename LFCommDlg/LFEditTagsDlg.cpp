@@ -97,7 +97,7 @@ BOOL LFEditTagsDlg::OnInitDialog()
 
 	f->Options.IgnoreSlaves = true;
 	LFSearchResult* base = LFQuery(f);
-	LFSearchResult* res = LFGroupSearchResult(base, LFAttrTags, false, 0, true, f);
+	LFSearchResult* res = LFGroupSearchResult(base, LFAttrTags, false, true, f);
 	LFFreeSearchResult(base);
 	LFFreeFilter(f);
 

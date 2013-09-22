@@ -116,35 +116,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Folders\FLD_Calendar.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\Folders\FLD_Contacts.ico"
-				>
-			</File>
-			<File
 				RelativePath=".\Folders\FLD_Default.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\Folders\FLD_Favorites.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\Folders\FLD_Fonts.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\Folders\FLD_Location.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\Folders\FLD_Roll.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\Folders\FLD_System.ico"
 				>
 			</File>
 		</Filter>

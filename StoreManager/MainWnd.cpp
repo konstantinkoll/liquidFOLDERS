@@ -867,7 +867,7 @@ LRESULT CMainWnd::OnCookFiles(WPARAM wParam, LPARAM /*lParam*/)
 
 	if (((!m_IsClipboard) && (vp->AutoDirs) && (!m_pActiveFilter->Options.IsSubfolder)) || (vp->Mode>LFViewPreview))
 	{
-		m_pCookedFiles = LFGroupSearchResult(m_pRawFiles, vp->SortBy, ((vp->Mode<=LFViewPreview) && (vp->Descending==TRUE)) || (vp->Mode==LFViewTimeline), attr->IconID,
+		m_pCookedFiles = LFGroupSearchResult(m_pRawFiles, vp->SortBy, ((vp->Mode<=LFViewPreview) && (vp->Descending==TRUE)) || (vp->Mode==LFViewTimeline),
 			((vp->Mode>LFViewPreview) && (vp->Mode!=LFViewTimeline)) || ((attr->Type!=LFTypeTime) && (vp->SortBy!=LFAttrFileName) && (vp->SortBy!=LFAttrStoreID) && (vp->SortBy!=LFAttrFileID)),
 			m_pActiveFilter);
 	}

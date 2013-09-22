@@ -706,35 +706,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\FLD_Calendar.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\res\FLD_Contacts.ico"
-				>
-			</File>
-			<File
 				RelativePath=".\res\FLD_Default.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\res\FLD_Favorites.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\res\FLD_Fonts.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\res\FLD_Location.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\res\FLD_Roll.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\res\FLD_System.ico"
 				>
 			</File>
 			<File

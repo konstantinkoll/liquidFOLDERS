@@ -19,8 +19,8 @@ public:
 	void RemoveFlaggedItemDescriptors(bool updatecount=true);
 	void KeepRange(int first, int last);
 	void Sort(unsigned int attr, bool descending);
-	void Group(unsigned int attr,unsigned int icon, bool groupone, LFFilter* f);
-	void GroupArray(unsigned int attr, unsigned int icon, LFFilter* f);
+	void Group(unsigned int attr, bool groupone, LFFilter* f);
+	void GroupArray(unsigned int attr, LFFilter* f);
 
 	wchar_t m_Name[256];
 	wchar_t m_Hint[256];
@@ -37,5 +37,5 @@ private:
 	int Compare(int eins, int zwei, unsigned int attr, bool descending);
 	void Heap(int wurzel, int anz, unsigned int attr, bool descending);
 	unsigned int Aggregate(unsigned int write, unsigned int read1, unsigned int read2, void* c,
-		unsigned int attr, unsigned int icon, bool groupone, LFFilter* f);
+		unsigned int attr, bool groupone, LFFilter* f);
 };
