@@ -1767,7 +1767,7 @@ DKB     De Kalb Taylor, USA;4;41*56'1"N, 88*42'21"W
 DKI     Dunk Island, Australia;4;17*56'23"S, 146*8'31"E
 DKK     Dunkirk, USA;4;42*29'36"N, 79*16'19"W
 DKR     Dakar, Senegal;4;14*44'23"N, 17*29'25"W
-DKX     Knoxville (Downtown Iceland Airport), USA;4;35*57'50"N, 83*52'25"W
+DKX     Knoxville (Downtown Island Airport), USA;4;35*57'50"N, 83*52'25"W
 DLA     Douala, Kamerun;4;4*0'22"N, 9*43'10"E
 DLB     Dalbertis, New Guinea;4;5*0'0"S, 142*4'59"E
 DLC     Dalian, China;4;38*57'56"N, 121*32'19"E
@@ -4911,7 +4911,7 @@ MOX     Morris, USA;4;45*33'57"N, 95*58'2"W
 MOY     Monterrey, Columbia;4;4*52'59"N, 72*54'0"W
 MOZ     Moorea, French Polynesia;4;17*29'24"S, 149*45'43"W
 MPA     Mpacha, Namibia;4;17*38'3"S, 24*10'35"E
-MPB MFW Miami (Watson Iceland), USA;4;25*46'42"N, 80*10'13"W
+MPB MFW Miami (Watson Island), USA;4;25*46'42"N, 80*10'13"W
 MPC     Muko Muko, Indonesia;4;2*31'59"S, 101*4'59"E
 MPD     Mirpur Khas, Pakistan;4;25*40'59"N, 69*4'1"E
 MPE     Madison, USA;4;41*16'16"N, 72*32'59"W
@@ -5512,7 +5512,7 @@ NZJ     Santa Ana, USA;4;33*40'34"N, 117*43'52"W
 NZO     Nzoia, Kenya;4;0*3'0"S, 33*57'0"E
 NZW     South Weymouth, USA
 NZX     Harold, USA;4;30*40'51"N, 86*53'14"W
-NZY SEE San Diego (North Iceland Naval Airstation), USA;4;32*41'57"N, 117*12'55"W
+NZY SEE San Diego (North Island Naval Airstation), USA;4;32*41'57"N, 117*12'55"W
 OAG     Orange, Australia;4;33*22'54"S, 149*7'59"E
 OAJ     Jacksonville, USA;4;34*49'45"N, 77*36'44"W
 OAK     Oakland, USA;4;37*43'17"N, 122*13'15"W
@@ -5715,7 +5715,7 @@ ORO     Yoro, Honduras;4;15*10'1"N, 87*7'1"W
 ORP     Orapa, Botswana;4;21*15'59"S, 25*19'12"E
 ORQ     Norwalk, USA
 ORR     Yorketown, Australia;4;35*0'11"S, 137*37'8"E
-ORS     Orpheus Iceland Resort, Australia;4;18*38'2"S, 146*30'0"E
+ORS     Orpheus Island Resort, Australia;4;18*38'2"S, 146*30'0"E
 ORT     Northway, USA;4;62*57'41"N, 141*55'45"W
 ORU     Oruro, Bolivia;4;17*57'45"S, 67*4'34"W
 ORV     Noorvik, USA;4;66*49'4"N, 161*1'8"W
@@ -7460,7 +7460,7 @@ SZG     Salzburg, Austria;4;47*47'36"N, 13*0'16"E
 SZH     Senipah, Indonesia;4;0*57'0"S, 117*9'0"E
 SZK     Skukuza, South Africa;4;24*57'39"S, 31*35'19"E
 SZL     Knob Noster, USA;4;38*43'49"N, 93*32'53"W
-SZN     Santa Barbara (Santa Cruz Iceland Airport), USA;4;34*3'38"N, 119*54'54"W
+SZN     Santa Barbara (Santa Cruz Island Airport), USA;4;34*3'38"N, 119*54'54"W
 SZP     Santa Paula, USA;4;34*20'50"N, 119*3'40"W
 SZQ     Saenz Pena, Argentina;4;26*48'57"S, 60*26'54"W
 SZR     Stara Zagora, Bulgaria;4;42*22'36"N, 25*39'19"E
@@ -8841,7 +8841,7 @@ YIK     Ivujivik, Canada;4;62*25'2"N, 77*55'31"W
 YIN     Yining, China;4;43*57'21"N, 81*19'49"E
 YIO     Pond Inlet, Canada;4;72*41'0"N, 77*58'0"W
 YIP DTT Detroit (Willow Run), USA;4;42*14'16"N, 83*31'49"W
-YIV     Iceland Lake/Garden Hill, Canada;4;53*51'26"N, 94*39'13"W
+YIV     Island Lake/Garden Hill, Canada;4;53*51'26"N, 94*39'13"W
 YIW     Yiwu, China;4;29*20'41"N, 120*1'56"E
 YIX     Port Radium, Canada;4;66*5'60"N, 117*55'59"W
 YJA     Jasper, Canada;4;52*59'48"N, 118*3'34"W
@@ -9055,7 +9055,8 @@ YTS     Timmins, Canada;4;48*34'11"N, 81*22'36"W
 YTT     Tisdale, Canada;4;52*50'12"N, 104*4'0"W
 YTU     Tasu, Canada
 YTX     Telegraph Creek, Canada;4;57*55'1"N, 131*7'1"W
-YTZ YTO Toronto (Iceland Airport), Canada;4;43*37'39"N, 79*23'46"W
+YTY     Yangzhou Taizhou Airport, China;5;32*33'42"N, 119*42'54"E
+YTZ YTO Toronto (Island Airport), Canada;4;43*37'39"N, 79*23'46"W
 YUA     Yuanmou, China;5;25*38'60"N, 101*55'1"E
 YUB     Tuktoyaktuk, Canada;4;69*26'0"N, 133*1'35"W
 YUC     Nicholson Peninsula, Canada

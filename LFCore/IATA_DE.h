@@ -227,7 +227,7 @@ LFCountry Countries_DE[CountryCount_DE] = {
 };
 
 // Airports
-#define AirportCount_DE 8616
+#define AirportCount_DE 8617
 LFAirport Airports_DE[AirportCount_DE] = {
 	{  54, "AAA", "", "Anaa", { 17.355000, -145.508333 } },
 	{  11, "AAB", "", "Arrabury", { 26.690556, 141.047500 } },
@@ -8625,6 +8625,7 @@ LFAirport Airports_DE[AirportCount_DE] = {
 	{  89, "YTS", "", "Timmins", { -48.569722, -81.376667 } },
 	{  89, "YTT", "", "Tisdale", { -52.836667, -104.066667 } },
 	{  89, "YTX", "", "Telegraph Creek", { -57.916944, -131.116944 } },
+	{  36, "YTY", "", "Yangzhou Taizhou Airport", { -32.561667, 119.715000 } },
 	{  89, "YTZ", "YTO", "Toronto (Island Airport)", { -43.627500, -79.396111 } },
 	{  36, "YUA", "", "Yuanmou", { -25.650000, 101.916944 } },
 	{  89, "YUB", "", "Tuktoyaktuk", { -69.433333, -133.026389 } },

@@ -227,7 +227,7 @@ LFCountry Countries_EN[CountryCount_EN] = {
 };
 
 // Airports
-#define AirportCount_EN 8616
+#define AirportCount_EN 8617
 LFAirport Airports_EN[AirportCount_EN] = {
 	{  66, "AAA", "", "Anaa", { 17.355000, -145.508333 } },
 	{   8, "AAB", "", "Arrabury", { 26.690556, 141.047500 } },
@@ -1923,7 +1923,7 @@ LFAirport Airports_EN[AirportCount_EN] = {
 	{   8, "DKI", "", "Dunk Island", { 17.939722, 146.141944 } },
 	{ 212, "DKK", "", "Dunkirk", { -42.493333, -79.271944 } },
 	{ 168, "DKR", "", "Dakar", { -14.739722, -17.490278 } },
-	{ 212, "DKX", "", "Knoxville (Downtown Iceland Airport)", { -35.963889, -83.873611 } },
+	{ 212, "DKX", "", "Knoxville (Downtown Island Airport)", { -35.963889, -83.873611 } },
 	{ 100, "DLA", "", "Douala", { -4.006111, 9.719444 } },
 	{ 143, "DLB", "", "Dalbertis", { 5.000000, 142.083056 } },
 	{  40, "DLC", "", "Dalian", { -38.965556, 121.538611 } },
@@ -4870,7 +4870,7 @@ LFAirport Airports_EN[AirportCount_EN] = {
 	{  41, "MOY", "", "Monterrey", { -4.883056, -72.900000 } },
 	{  66, "MOZ", "", "Moorea", { 17.490000, -149.761944 } },
 	{ 137, "MPA", "", "Mpacha", { 17.634167, 24.176389 } },
-	{ 212, "MPB", "MFW", "Miami (Watson Iceland)", { -25.778333, -80.170278 } },
+	{ 212, "MPB", "MFW", "Miami (Watson Island)", { -25.778333, -80.170278 } },
 	{  88, "MPC", "", "Muko Muko", { 2.533056, 101.083056 } },
 	{ 151, "MPD", "", "Mirpur Khas", { -25.683056, 69.066944 } },
 	{ 212, "MPE", "", "Madison", { -41.271111, -72.549722 } },
@@ -5427,7 +5427,7 @@ LFAirport Airports_EN[AirportCount_EN] = {
 	{ 212, "NZJ", "", "Santa Ana", { -33.676111, -117.731111 } },
 	{ 102, "NZO", "", "Nzoia", { 0.050000, 33.950000 } },
 	{ 212, "NZX", "", "Harold", { -30.680833, -86.887222 } },
-	{ 212, "NZY", "SEE", "San Diego (North Iceland Naval Airstation)", { -32.699167, -117.215278 } },
+	{ 212, "NZY", "SEE", "San Diego (North Island Naval Airstation)", { -32.699167, -117.215278 } },
 	{   8, "OAG", "", "Orange", { 33.381667, 149.133056 } },
 	{ 212, "OAJ", "", "Jacksonville", { -34.829167, -77.612222 } },
 	{ 212, "OAK", "", "Oakland", { -37.721389, -122.220833 } },
@@ -5616,7 +5616,7 @@ LFAirport Airports_EN[AirportCount_EN] = {
 	{  83, "ORO", "", "Yoro", { -15.166944, -87.116944 } },
 	{  24, "ORP", "", "Orapa", { 21.266389, 25.320000 } },
 	{   8, "ORR", "", "Yorketown", { 35.003056, 137.618889 } },
-	{   8, "ORS", "", "Orpheus Iceland Resort", { 18.633889, 146.500000 } },
+	{   8, "ORS", "", "Orpheus Island Resort", { 18.633889, 146.500000 } },
 	{ 212, "ORT", "", "Northway", { -62.961389, -141.929167 } },
 	{  22, "ORU", "", "Oruro", { 17.962500, -67.076111 } },
 	{ 212, "ORV", "", "Noorvik", { -66.817778, -161.018889 } },
@@ -7144,7 +7144,7 @@ LFAirport Airports_EN[AirportCount_EN] = {
 	{  88, "SZH", "", "Senipah", { 0.950000, 117.150000 } },
 	{ 176, "SZK", "", "Skukuza", { 24.960833, 31.588611 } },
 	{ 212, "SZL", "", "Knob Noster", { -38.730278, -93.548056 } },
-	{ 212, "SZN", "", "Santa Barbara (Santa Cruz Iceland Airport)", { -34.060556, -119.915000 } },
+	{ 212, "SZN", "", "Santa Barbara (Santa Cruz Island Airport)", { -34.060556, -119.915000 } },
 	{ 212, "SZP", "", "Santa Paula", { -34.347222, -119.061111 } },
 	{   6, "SZQ", "", "Saenz Pena", { 26.815833, -60.448333 } },
 	{  29, "SZR", "", "Stara Zagora", { -42.376667, 25.655278 } },
@@ -8420,7 +8420,7 @@ LFAirport Airports_EN[AirportCount_EN] = {
 	{  40, "YIN", "", "Yining", { -43.955833, 81.330278 } },
 	{  34, "YIO", "", "Pond Inlet", { -72.683333, -77.966667 } },
 	{ 212, "YIP", "DTT", "Detroit (Willow Run)", { -42.237778, -83.530278 } },
-	{  34, "YIV", "", "Iceland Lake/Garden Hill", { -53.857222, -94.653611 } },
+	{  34, "YIV", "", "Island Lake/Garden Hill", { -53.857222, -94.653611 } },
 	{  40, "YIW", "", "Yiwu", { -29.344722, 120.032222 } },
 	{  34, "YIX", "", "Port Radium", { -66.100000, -117.933056 } },
 	{  34, "YJA", "", "Jasper", { -52.996667, -118.059444 } },
@@ -8625,7 +8625,8 @@ LFAirport Airports_EN[AirportCount_EN] = {
 	{  34, "YTS", "", "Timmins", { -48.569722, -81.376667 } },
 	{  34, "YTT", "", "Tisdale", { -52.836667, -104.066667 } },
 	{  34, "YTX", "", "Telegraph Creek", { -57.916944, -131.116944 } },
-	{  34, "YTZ", "YTO", "Toronto (Iceland Airport)", { -43.627500, -79.396111 } },
+	{  40, "YTY", "", "Yangzhou Taizhou Airport", { -32.561667, 119.715000 } },
+	{  34, "YTZ", "YTO", "Toronto (Island Airport)", { -43.627500, -79.396111 } },
 	{  40, "YUA", "", "Yuanmou", { -25.650000, 101.916944 } },
 	{  34, "YUB", "", "Tuktoyaktuk", { -69.433333, -133.026389 } },
 	{  34, "YUD", "", "Umiujaq", { -56.536111, -76.518333 } },

@@ -9055,6 +9055,7 @@ YTS     Timmins, Kanada;4;48*34'11"N, 81*22'36"W
 YTT     Tisdale, Kanada;4;52*50'12"N, 104*4'0"W
 YTU     Tasu, Kanada
 YTX     Telegraph Creek, Kanada;4;57*55'1"N, 131*7'1"W
+YTY     Yangzhou Taizhou Airport, China;5;32*33'42"N, 119*42'54"E
 YTZ YTO Toronto (Island Airport), Kanada;4;43*37'39"N, 79*23'46"W
 YUA     Yuanmou, China;5;25*38'60"N, 101*55'1"E
 YUB     Tuktoyaktuk, Kanada;4;69*26'0"N, 133*1'35"W
