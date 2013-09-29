@@ -702,10 +702,6 @@
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
 			<File
-				RelativePath=".\res\FLD_All.ico"
-				>
-			</File>
-			<File
 				RelativePath=".\res\FLD_Default.ico"
 				>
 			</File>
@@ -718,11 +714,47 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\STR_Bag.ico"
+				RelativePath=".\res\STR_1394.ico"
 				>
 			</File>
 			<File
-				RelativePath=".\res\STR_Empty.ico"
+				RelativePath=".\res\STR_Dropbox.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\STR_Facebook.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\STR_Flickr.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\STR_Instagram.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\STR_Internal.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\STR_Pinterest.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\STR_Soundcloud.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\STR_Twitter.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\STR_Unknown.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\STR_YouTube.ico"
 				>
 			</File>
 		</Filter>

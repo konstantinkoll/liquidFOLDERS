@@ -104,7 +104,7 @@ BOOL LFEditTagsDlg::OnInitDialog()
 	for (UINT a=0; a<res->m_ItemCount; a++)
 	{
 		LFItemDescriptor* i = res->m_Items[a];
-		if (((i->Type & LFTypeMask)==LFTypeVirtual) && (i->AggregateCount))
+		if (((i->Type & LFTypeMask)==LFTypeFolder) && (i->AggregateCount))
 		{
 			UINT puColumns[] = { 1 };
 

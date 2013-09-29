@@ -419,19 +419,7 @@ LFCore_API bool LFIsStoreMounted(LFStoreDescriptor* s)
 
 LFCore_API unsigned int LFGetStoreIcon(LFStoreDescriptor* s)
 {
-	if (!s)
-		return IDI_STORE_Unknown;
-
-	switch (s->StoreMode)
-	{
-	case LFStoreModeInternal:
-		return IDI_STORE_Internal;
-	case LFStoreModeExternal:
-	case LFStoreModeHybrid:
-		return IDI_STORE_Bag;
-	default:
-		return IDI_STORE_Unknown;
-	}
+	return s ? s->StoreMode==LFStoreModeInternal ? IDI_STR_Internal : s->Source+1 : IDI_STR_Unknown;
 }
 
 LFCore_API unsigned int LFCreateStore(LFStoreDescriptor* s, bool MakeDefault, HWND hWndSource)

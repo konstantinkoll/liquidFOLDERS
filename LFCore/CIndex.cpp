@@ -662,11 +662,12 @@ unsigned int CIndex::Rename(char* FileID, wchar_t* NewName)
 	return LFIllegalKey;
 }
 
-void CIndex::Retrieve(LFFilter* f, LFSearchResult* res)
+void CIndex::Retrieve(LFFilter* f, LFSearchResult* res, unsigned int Source)
 {
 	assert(f);
 	assert(f->Mode>=LFFilterModeDirectoryTree);
 	assert(res);
+	assert((Source & LFTypeMaskSource)==Source);
 
 	if (!LoadTable(IDMaster))
 	{
@@ -686,7 +687,7 @@ void CIndex::Retrieve(LFFilter* f, LFSearchResult* res)
 
 		// Master
 		LFItemDescriptor* i = LFAllocItemDescriptor();
-		i->Type = LFTypeFile;
+		i->Type = LFTypeFile | Source;
 		strcpy_s(i->StoreID, LFKeySize, StoreID);
 		Tables[IDMaster]->WriteToItemDescriptor(i, PtrM);
 
@@ -719,10 +720,11 @@ void CIndex::Retrieve(LFFilter* f, LFSearchResult* res)
 	}
 }
 
-void CIndex::AddToSearchResult(LFFileIDList* il, LFSearchResult* res)
+void CIndex::AddToSearchResult(LFFileIDList* il, LFSearchResult* res, unsigned int Source)
 {
 	assert(il);
 	assert(res);
+	assert((Source & LFTypeMaskSource)==Source);
 
 	if (!LoadTable(IDMaster))
 	{
@@ -752,7 +754,7 @@ void CIndex::AddToSearchResult(LFFileIDList* il, LFSearchResult* res)
 Add:
 		// Master
 		LFItemDescriptor* i = LFAllocItemDescriptor();
-		i->Type = LFTypeFile;
+		i->Type = LFTypeFile | Source;
 		strcpy_s(i->StoreID, LFKeySize, StoreID);
 		Tables[IDMaster]->WriteToItemDescriptor(i, PtrM);
 

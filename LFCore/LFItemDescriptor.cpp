@@ -336,28 +336,11 @@ LFCore_API LFItemDescriptor* LFAllocItemDescriptor(LFStoreDescriptor* s)
 	return d;
 }
 
-LFItemDescriptor* AllocFolderDescriptor(const wchar_t* Name, const wchar_t* Comment, const wchar_t* Description, const char* StoreID, const char* FileID, __int64* Size, unsigned int IconID, unsigned int CategoryID, unsigned int Count, LFFilter* Filter)
+LFItemDescriptor* AllocFolderDescriptor()
 {
 	LFItemDescriptor* d = LFAllocItemDescriptor();
-
-	d->IconID = IconID;
-	d->CategoryID = CategoryID;
-	d->Type = LFTypeVirtual;
-	d->AggregateCount = Count;
-	d->NextFilter = Filter;
-
-	if (Name)
-		SetAttribute(d, LFAttrFileName, Name);
-	if (StoreID)
-		SetAttribute(d, LFAttrStoreID, StoreID);
-	if (FileID)
-		SetAttribute(d, LFAttrFileID, FileID);
-	if (Comment)
-		SetAttribute(d, LFAttrComments, Comment);
-	if (Description)
-		SetAttribute(d, LFAttrDescription, Description);
-	if (Size)
-		SetAttribute(d, LFAttrFileSize, Size);
+	d->IconID = IDI_FLD_Default;
+	d->Type = LFTypeFolder;
 
 	return d;
 }

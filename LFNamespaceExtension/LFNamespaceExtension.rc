@@ -78,6 +78,7 @@ IDB_FileDrop            BITMAP                  "res\\FileDrop_24.bmp"
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
 IDI_Application         ICON                    "res\\liquidFOLDERS.ico"
+IDI_FolderAll           ICON                    "res\\FLD_All.ico"
 IDI_FolderAdd           ICON                    "res\\FolderAdd_Tiny.ico"
 IDI_StoreProperties     ICON                    "res\\StoreProperties_Tiny.ico"
 IDI_NewStore            ICON                    "res\\StoreNew_Tiny.ico"

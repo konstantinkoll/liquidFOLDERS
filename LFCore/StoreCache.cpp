@@ -5,6 +5,7 @@
 #include "Mutex.h"
 #include "Stores.h"
 #include "StoreCache.h"
+#include <assert.h>
 #include <io.h>
 #include <malloc.h>
 #include <shellapi.h>
@@ -81,6 +82,8 @@ unsigned int GetKeyFileFromStoreDescriptor(LFStoreDescriptor* s, wchar_t* f)
 
 bool LoadStoreSettingsFromRegistry(char* key, LFStoreDescriptor* s)
 {
+	assert(s);
+
 	if (!key)
 		return false;
 	if (key[0]=='\0')
@@ -111,12 +114,6 @@ bool LoadStoreSettingsFromRegistry(char* key, LFStoreDescriptor* s)
 		if (RegQueryValueEx(k, L"Mode", 0, NULL, (BYTE*)&s->StoreMode, &sz)!=ERROR_SUCCESS)
 			res = false;
 
-		if (s->StoreMode==LFStoreModeHybrid)
-		{
-			sz = sizeof(s->LastSeen);
-			RegQueryValueEx(k, L"LastSeen", 0, NULL, (BYTE*)&s->LastSeen, &sz);
-		}
-
 		sz = sizeof(s->guid);
 		if (RegQueryValueEx(k, L"GUID", 0, NULL, (BYTE*)&s->guid, &sz)!=ERROR_SUCCESS)
 			res = false;
@@ -130,20 +127,32 @@ bool LoadStoreSettingsFromRegistry(char* key, LFStoreDescriptor* s)
 		sz = sizeof(s->MaintenanceTime);
 		RegQueryValueEx(k, L"MaintenanceTime", 0, NULL, (BYTE*)&s->MaintenanceTime, &sz);
 
-		sz = sizeof(s->IndexVersion);
-		if (RegQueryValueEx(k, L"IndexVersion", 0, NULL, (BYTE*)&s->IndexVersion, &sz)!=ERROR_SUCCESS)
-			res = false;
-
 		sz = sizeof(s->AutoLocation);
 		if (RegQueryValueEx(k, L"AutoLocation", 0, NULL, (BYTE*)&s->AutoLocation, &sz)!=ERROR_SUCCESS)
 			res = false;
 
-		if (s->StoreMode==LFStoreModeInternal)
+		sz = sizeof(s->IndexVersion);
+		if (RegQueryValueEx(k, L"IndexVersion", 0, NULL, (BYTE*)&s->IndexVersion, &sz)!=ERROR_SUCCESS)
+			res = false;
+
+		switch (s->StoreMode)
 		{
+		case LFStoreModeInternal:
+			s->Source = LFTypeSourceInternal;
+
 			sz = sizeof(s->DatPath);
 			if (RegQueryValueEx(k, L"Path", 0, NULL, (BYTE*)s->DatPath, &sz)!=ERROR_SUCCESS)
 				if (!s->AutoLocation)
 					res = false;
+
+			break;
+		case LFStoreModeHybrid:
+			sz = sizeof(s->LastSeen);
+			RegQueryValueEx(k, L"LastSeen", 0, NULL, (BYTE*)&s->LastSeen, &sz);
+		default:
+			sz = sizeof(s->Source);
+			if (RegQueryValueEx(k, L"Source", 0, NULL, (BYTE*)&s->Source, &sz)!=ERROR_SUCCESS)
+				res = false;
 		}
 
 		RegCloseKey(k);
@@ -154,6 +163,8 @@ bool LoadStoreSettingsFromRegistry(char* key, LFStoreDescriptor* s)
 
 bool LoadStoreSettingsFromFile(wchar_t* filename, LFStoreDescriptor* s)
 {
+	assert(s);
+
 	if (!filename)
 		return false;
 	if (filename[0]==L'\0')
@@ -163,9 +174,11 @@ bool LoadStoreSettingsFromFile(wchar_t* filename, LFStoreDescriptor* s)
 	if (hFile==INVALID_HANDLE_VALUE)
 		return false;
 
+	ZeroMemory(s, sizeof(LFStoreDescriptor));
+
 	DWORD wmRead;
 	bool res = (ReadFile(hFile, s, sizeof(LFStoreDescriptor), &wmRead, NULL)==TRUE);
-	res &= (wmRead==sizeof(LFStoreDescriptor));
+	res &= (wmRead>=3168);	// Size of v1 descriptor and minimum size
 	CloseHandle(hFile);
 
 	return res;
@@ -190,30 +203,49 @@ unsigned int SaveStoreSettingsToRegistry(LFStoreDescriptor* s)
 	if (RegCreateKeyA(HKEY_CURRENT_USER, regkey, &k)==ERROR_SUCCESS)
 	{
 		res = LFOk;
+
 		if (RegSetValueEx(k, L"Name", 0, REG_SZ, (BYTE*)s->StoreName, (DWORD)wcslen(s->StoreName)*sizeof(wchar_t))!=ERROR_SUCCESS)
 			res = LFRegistryError;
+
 		if (RegSetValueEx(k, L"Comment", 0, REG_SZ, (BYTE*)s->StoreComment, (DWORD)wcslen(s->StoreComment)*sizeof(wchar_t))!=ERROR_SUCCESS)
 			res = LFRegistryError;
+
 		if (RegSetValueEx(k, L"Mode", 0, REG_DWORD, (BYTE*)&s->StoreMode, sizeof(unsigned int))!=ERROR_SUCCESS)
 			res = LFRegistryError;
-		if (s->StoreMode==LFStoreModeHybrid)
-			if (RegSetValueEx(k, L"LastSeen", 0, REG_SZ, (BYTE*)s->LastSeen, (DWORD)wcslen(s->LastSeen)*sizeof(wchar_t))!=ERROR_SUCCESS)
-				res = LFRegistryError;
+
 		if (RegSetValueEx(k, L"GUID", 0, REG_BINARY, (BYTE*)&s->guid, sizeof(GUID))!=ERROR_SUCCESS)
 			res = LFRegistryError;
+
 		if (RegSetValueEx(k, L"CreationTime", 0, REG_BINARY, (BYTE*)&s->CreationTime, sizeof(FILETIME))!=ERROR_SUCCESS)
 			res = LFRegistryError;
+
 		if (RegSetValueEx(k, L"FileTime", 0, REG_BINARY, (BYTE*)&s->FileTime, sizeof(FILETIME))!=ERROR_SUCCESS)
 			res = LFRegistryError;
+
 		if (RegSetValueEx(k, L"MaintenanceTime", 0, REG_BINARY, (BYTE*)&s->MaintenanceTime, sizeof(FILETIME))!=ERROR_SUCCESS)
 			res = LFRegistryError;
+
 		if (RegSetValueEx(k, L"AutoLocation", 0, REG_DWORD, (BYTE*)&s->AutoLocation, sizeof(unsigned int))!=ERROR_SUCCESS)
 			res = LFRegistryError;
+
 		if (RegSetValueEx(k, L"IndexVersion", 0, REG_DWORD, (BYTE*)&s->IndexVersion, sizeof(unsigned int))!=ERROR_SUCCESS)
 			res = LFRegistryError;
-		if ((s->StoreMode==LFStoreModeInternal) && (!s->AutoLocation))
-			if (RegSetValueEx(k, L"Path", 0, REG_SZ, (BYTE*)s->DatPath, (DWORD)wcslen(s->DatPath)*sizeof(wchar_t))!=ERROR_SUCCESS)
+
+		switch (s->StoreMode)
+		{
+		case LFStoreModeInternal:
+			if (!s->AutoLocation)
+				if (RegSetValueEx(k, L"Path", 0, REG_SZ, (BYTE*)s->DatPath, (DWORD)wcslen(s->DatPath)*sizeof(wchar_t))!=ERROR_SUCCESS)
+					res = LFRegistryError;
+			break;
+		case LFStoreModeHybrid:
+			if (RegSetValueEx(k, L"LastSeen", 0, REG_SZ, (BYTE*)s->LastSeen, (DWORD)wcslen(s->LastSeen)*sizeof(wchar_t))!=ERROR_SUCCESS)
 				res = LFRegistryError;
+		default:
+			if (RegSetValueEx(k, L"Source", 0, REG_DWORD, (BYTE*)&s->Source, sizeof(unsigned int))!=ERROR_SUCCESS)
+				res = LFRegistryError;
+		}
+
 		RegCloseKey(k);
 	}
 
@@ -286,7 +318,7 @@ unsigned int DeleteStoreSettingsFromFile(LFStoreDescriptor* s)
 	return DeleteFile(filename) ? LFOk : LFDriveNotReady;
 }
 
-unsigned int ValidateStoreSettings(LFStoreDescriptor* s)
+unsigned int ValidateStoreSettings(LFStoreDescriptor* s, int Source)
 {
 	if (!s)
 		return LFIllegalStoreDescriptor;
@@ -303,6 +335,12 @@ unsigned int ValidateStoreSettings(LFStoreDescriptor* s)
 			SHFILEINFO sfi;
 			if (SHGetFileInfo(szDriveRoot, 0, &sfi, sizeof(SHFILEINFO), SHGFI_DISPLAYNAME))
 				wcscpy_s(s->LastSeen, 256, sfi.szDisplayName);
+
+			if (Source==-1)
+				Source = LFGetSourceForDrive(s->DatPath[0] & 0xFF);
+
+			assert((Source & LFTypeMaskSource)==Source);
+			s->Source = Source;
 		}
 
 	// Datenpfad überprüfen (Indexpfade werden nicht gespeichert, sondern dynamisch vergeben)
@@ -712,6 +750,7 @@ unsigned int MountDrive(char d, bool InternalCall)
 	wchar_t mask[] = L" :\\*.store";
 	mask[0] = d;
 	bool ChangeOccured = false;
+	unsigned int Source = LFGetSourceForDrive(d);
 	unsigned int res = LFOk;
 
 	WIN32_FIND_DATA ffd;
@@ -728,6 +767,10 @@ unsigned int MountDrive(char d, bool InternalCall)
 			LFStoreDescriptor s;
 			if (LoadStoreSettingsFromFile(f, &s)==true)
 			{
+				// Korrekter Mode?
+				if ((s.StoreMode!=LFStoreModeHybrid) && (s.StoreMode!=LFStoreModeExternal))
+					continue;
+
 				if (!GetMutex(Mutex_Stores))
 				{
 					res = LFMutexError;
@@ -757,7 +800,7 @@ unsigned int MountDrive(char d, bool InternalCall)
 				}
 				else
 				{
-					// Wenn der Store kein Hybrid-Store ist, wird er doppelt gemountet. Überspringen!
+					// Wenn der Store kein Hybrid-Store ist, würde er doppelt gemountet. Überspringen!
 					if (slot->StoreMode!=LFStoreModeHybrid)
 					{
 						slot = NULL;
@@ -777,7 +820,7 @@ unsigned int MountDrive(char d, bool InternalCall)
 					slot->DatPath[0] = d;
 					slot->NeedsCheck = true;
 
-					ValidateStoreSettings(slot);
+					ValidateStoreSettings(slot, Source);
 					ChangeOccured = true;
 
 					if (slot->StoreMode!=LFStoreModeHybrid)

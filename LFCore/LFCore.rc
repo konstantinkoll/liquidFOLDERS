@@ -28,12 +28,20 @@ LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
+IDI_STR_Unknown         ICON                    "res\\STR_Unknown.ico"
+IDI_STR_Internal        ICON                    "res\\STR_Internal.ico"
+IDI_STR_1394            ICON                    "res\\STR_1394.ico"
+IDI_STR_USB             ICON                    "res\\STR_USB.ico"
+IDI_STR_Dropbox         ICON                    "res\\STR_Dropbox.ico"
+IDI_STR_Facebook        ICON                    "res\\STR_Facebook.ico"
+IDI_STR_Flickr          ICON                    "res\\STR_Flickr.ico"
+IDI_STR_Instagram       ICON                    "res\\STR_Instagram.ico"
+IDI_STR_Pinterest       ICON                    "res\\STR_Pinterest.ico"
+IDI_STR_Soundcloud      ICON                    "res\\STR_Soundcloud.ico"
+IDI_STR_Twitter         ICON                    "res\\STR_Twitter.ico"
+IDI_STR_YouTube         ICON                    "res\\STR_YouTube.ico"
 IDI_FLD_Default         ICON                    "res\\FLD_Default.ico"
-IDI_FLD_All             ICON                    "res\\FLD_All.ico"
-IDI_OVERLAY_Default     ICON                    "res\\OVR_Default.ico"
-IDI_STORE_Unknown       ICON                    "res\\STR_Empty.ico"
-IDI_STORE_Internal      ICON                    "res\\STR_Empty.ico"
-IDI_STORE_Bag           ICON                    "res\\STR_Bag.ico"
+IDI_OVR_Default         ICON                    "res\\OVR_Default.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //

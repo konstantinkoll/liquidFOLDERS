@@ -120,6 +120,7 @@ void LFStoreNewLocalDlg::OnPathChanged()
 	LFStoreNewGeneralPage* pPage0 = (LFStoreNewGeneralPage*)m_pPages[0];
 	LFStoreNewPathPage* pPage1 = (LFStoreNewPathPage*)m_pPages[1];
 
+	CHAR Drive = m_Volume;
 	m_IsRemovable = m_Volume;
 	m_Path[0] = L'\0';
 
@@ -129,6 +130,8 @@ void LFStoreNewLocalDlg::OnPathChanged()
 			pPage1->m_wndPathTree.GetSelectedPath(m_Path);
 			if (m_Path[0])
 			{
+				Drive = m_Path[0] & 0xFF;
+
 				if (m_Path[wcslen(m_Path)-1]!=L'\\')
 					wcscat_s(m_Path, MAX_PATH, L"\\");
 
@@ -137,7 +140,7 @@ void LFStoreNewLocalDlg::OnPathChanged()
 			}
 		}
 
-	pPage0->m_wndIcon.SetCoreIcon(m_IsRemovable ? IDI_STORE_Bag : IDI_STORE_Internal);
+	pPage0->m_wndIcon.SetCoreIcon(m_IsRemovable ? LFGetSourceForDrive(Drive)+1 : IDI_STR_Internal);
 	pPage0->m_wndMakeSearchable.EnableWindow(m_IsRemovable);
 }
 

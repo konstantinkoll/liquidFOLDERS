@@ -64,8 +64,8 @@ void WriteXMLItem(CStdioFile& f, LFItemDescriptor* i)
 	case LFTypeVolume:
 		Type = _T("volume");
 		break;
-	case LFTypeVirtual:
-		Type = _T("virtual");
+	case LFTypeFolder:
+		Type = _T("folder");
 		break;
 	case LFTypeFile:
 		Type = _T("file");
@@ -751,7 +751,7 @@ void CMainWnd::WriteMetadataTXT(CStdioFile& f)
 	{
 		LFItemDescriptor* i = m_pCookedFiles->m_Items[idx];
 
-		if (((i->Type & LFTypeMask)==LFTypeVirtual) && (i->FirstAggregate!=-1) && (i->LastAggregate!=-1))
+		if (((i->Type & LFTypeMask)==LFTypeFolder) && (i->FirstAggregate!=-1) && (i->LastAggregate!=-1))
 		{
 			for (INT a=i->FirstAggregate; a<=i->LastAggregate; a++)
 			{
@@ -777,7 +777,7 @@ void CMainWnd::WriteMetadataXML(CStdioFile& f)
 	while (idx!=-1)
 	{
 		LFItemDescriptor* i = m_pCookedFiles->m_Items[idx];
-		if (((i->Type & LFTypeMask)==LFTypeVirtual) && (i->FirstAggregate!=-1) && (i->LastAggregate!=-1))
+		if (((i->Type & LFTypeMask)==LFTypeFolder) && (i->FirstAggregate!=-1) && (i->LastAggregate!=-1))
 		{
 			for (INT a=i->FirstAggregate; a<=i->LastAggregate; a++)
 				WriteXMLItem(f, m_pRawFiles->m_Items[a]);

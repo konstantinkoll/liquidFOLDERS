@@ -70,7 +70,7 @@ void CTagcloudView::SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* p
 			LFItemDescriptor* i = p_CookedFiles->m_Items[a];
 			TagcloudItemData* d = GetItemData(a);
 
-			if ((i->Type & LFTypeMask)==LFTypeVirtual)
+			if ((i->Type & LFTypeMask)==LFTypeFolder)
 				d->Cnt = i->AggregateCount;
 
 			d->Hdr.Hdr.Valid = d->Cnt;

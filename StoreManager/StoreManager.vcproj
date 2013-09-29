@@ -822,6 +822,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\SourceIcons.bmp"
+				>
+			</File>
+			<File
 				RelativePath=".\res\StoreManager.ico"
 				>
 			</File>

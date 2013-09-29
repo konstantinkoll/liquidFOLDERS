@@ -459,6 +459,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\FLD_All.ico"
+				>
+			</File>
+			<File
 				RelativePath=".\res\FolderAdd_Tiny.ico"
 				>
 			</File>

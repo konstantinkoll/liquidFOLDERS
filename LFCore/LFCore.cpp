@@ -148,12 +148,12 @@ LFCore_API bool LFHideDrivesWithNoMedia()
 }
 
 
-unsigned int GetDriveBus(char d)
+unsigned int GetDriveBus(char cDrive)
 {
 	unsigned int res = BusTypeMaxReserved;
 
 	char szBuf[MAX_PATH] = "\\\\?\\ :";
-	szBuf[4] = d;
+	szBuf[4] = cDrive;
 	HANDLE hDevice = CreateFileA(szBuf, 0, 0, NULL, OPEN_EXISTING, NULL, NULL);
 
 	if (hDevice!=INVALID_HANDLE_VALUE)
@@ -176,6 +176,20 @@ unsigned int GetDriveBus(char d)
 	}
 
 	return res;
+}
+
+LFCore_API unsigned int LFGetSourceForDrive(char cDrive)
+{
+	if ((cDrive>='A') && (cDrive<='Z'))
+		switch (GetDriveBus(cDrive))
+		{
+		case BusType1394:
+			return LFTypeSource1394;
+		case BusTypeUsb:
+			return LFTypeSourceUSB;
+		}
+
+	return LFTypeSourceUnknown;
 }
 
 LFCore_API unsigned int LFGetLogicalDrives(unsigned int mask)
@@ -206,7 +220,7 @@ LFCore_API unsigned int LFGetLogicalDrives(unsigned int mask)
 				{
 				case BusType1394:
 				case BusTypeUsb:
-					uDriveType = DRIVE_EXTHD;
+					uDriveType = DRIVE_REMOVABLE;
 					break;
 				}
 
@@ -220,7 +234,6 @@ LFCore_API unsigned int LFGetLogicalDrives(unsigned int mask)
 				DrivesOnSystem &= ~Index;
 			break;
 		case DRIVE_REMOVABLE:
-		case DRIVE_EXTHD:
 			if (!(mask & LFGLD_External))
 				DrivesOnSystem &= ~Index;
 			break;

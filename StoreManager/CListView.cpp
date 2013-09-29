@@ -425,7 +425,7 @@ void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed)
 			Rows[2] = LFAttrFileSize;
 			Rows[3] = LFAttrRating;
 			break;
-		case LFTypeVirtual:
+		case LFTypeFolder:
 			Rows[1] = LFAttrDescription;
 			Rows[2] = LFAttrFileSize;
 			Rows[3] = -1;
@@ -460,7 +460,7 @@ void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed)
 			DrawProperty(dc, rectLeft, i, d, LFAttrTags, Themed);
 			DrawProperty(dc, rectLeft, i, d, LFAttrFileFormat, Themed);
 			break;
-		case LFTypeVirtual:
+		case LFTypeFolder:
 			DrawProperty(dc, rectLeft, i, d, LFAttrDescription, Themed);
 			DrawProperty(dc, rectLeft, i, d, LFAttrFileSize, Themed);
 			break;

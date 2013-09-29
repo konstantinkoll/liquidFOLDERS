@@ -685,7 +685,7 @@ void RetrieveStore(char* StoreID, LFFilter* filter, LFSearchResult* res)
 	{
 		if (idx1)
 		{
-			idx1->Retrieve(filter, res);
+			idx1->Retrieve(filter, res, slot->Source);
 			delete idx1;
 		}
 		if (idx2)

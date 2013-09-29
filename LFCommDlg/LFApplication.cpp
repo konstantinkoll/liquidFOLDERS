@@ -543,7 +543,7 @@ void LFApplication::ExtractCoreIcons(HINSTANCE hModIcons, INT size, CImageList* 
 		DestroyIcon(ic);
 	}
 
-	li->SetOverlayImage(IDI_OVERLAY_Default-1, 1);
+	li->SetOverlayImage(IDI_OVR_Default-1, 1);
 }
 
 UINT LFApplication::DeleteStore(LFItemDescriptor* store, CWnd* pParentWnd, CWnd* pOwnerWnd)

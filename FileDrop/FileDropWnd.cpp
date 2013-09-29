@@ -168,7 +168,7 @@ BOOL CFileDropWnd::OnEraseBkgnd(CDC* pDC)
 	// Dropzone
 	POINT pt = { rlayout.left+(rlayout.Width()-128)/2, rlayout.top };
 	SIZE sz = { 128, 128 };
-	theApp.m_CoreImageListJumbo.DrawEx(&dc, (m_StoreValid ? LFGetStoreIcon(&m_Store) : IDI_STORE_Unknown)-1, pt, sz, CLR_NONE, CLR_NONE, (m_StoreValid && m_StoreMounted) ? ILD_TRANSPARENT : m_IsAeroWindow ? ILD_BLEND25 : ILD_BLEND50);
+	theApp.m_CoreImageListJumbo.DrawEx(&dc, (m_StoreValid ? LFGetStoreIcon(&m_Store) : IDI_STR_Internal)-1, pt, sz, CLR_NONE, CLR_NONE, (m_StoreValid && m_StoreMounted) ? ILD_TRANSPARENT : m_IsAeroWindow ? ILD_BLEND25 : ILD_BLEND50);
 
 	// Text
 	CRect rtext(rlayout);

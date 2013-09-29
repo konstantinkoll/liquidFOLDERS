@@ -76,7 +76,7 @@ void CTimelineView::SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* p
 					}
 
 					break;
-				case LFTypeVirtual:
+				case LFTypeFolder:
 					d->Preview |= PRV_COMMENTS;
 					d->pComments = NULL;
 
@@ -160,7 +160,7 @@ Restart:
 						PreviewCount = 1;
 					}
 					break;
-				case LFTypeVirtual:
+				case LFTypeFolder:
 					for (INT b=i->FirstAggregate; b<=i->LastAggregate; b++)
 					{
 						LFItemDescriptor* i = p_RawFiles->m_Items[b];
@@ -417,7 +417,7 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPRECT rectItem, INT idx, BOO
 	rectText.bottom = rectText.top+m_FontHeight[0];
 
 	dc.SetTextColor(cpCol);
-	if ((i->Type & LFTypeMask)!=LFTypeVirtual)
+	if ((i->Type & LFTypeMask)!=LFTypeFolder)
 	{
 		dc.DrawText(GetLabel(i), rectText, DT_LEFT | DT_END_ELLIPSIS | DT_NOPREFIX | DT_SINGLELINE);
 	}
@@ -505,7 +505,7 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPRECT rectItem, INT idx, BOO
 			rectPreview.left++;
 			rectPreview.right = rectPreview.left+128;
 
-			if ((i->Type & LFTypeMask)==LFTypeVirtual)
+			if ((i->Type & LFTypeMask)==LFTypeFolder)
 			{
 				INT Rows = 0;
 

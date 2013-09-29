@@ -10,7 +10,7 @@ extern unsigned int StoreCount;
 void AppendGUID(LFStoreDescriptor* s, wchar_t* p);
 void GetAutoPath(LFStoreDescriptor* s, wchar_t* p);
 unsigned int DeleteStoreSettingsFromRegistry(LFStoreDescriptor* s);
-unsigned int ValidateStoreSettings(LFStoreDescriptor* s);
+unsigned int ValidateStoreSettings(LFStoreDescriptor* s, int Source=-1);
 void InitStoreCache();
 void CreateStoreKey(char* key);
 void AddStoresToSearchResult(LFSearchResult* res, LFFilter* filter);

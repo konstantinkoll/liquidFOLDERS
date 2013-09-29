@@ -23,7 +23,7 @@ bool CCategorizer::IsEqual(LFItemDescriptor* i1, LFItemDescriptor* i2)
 {
 	if ((!i1->AttributeValues[attr]) || (!i2->AttributeValues[attr]))
 		return i1->AttributeValues[attr]==i2->AttributeValues[attr];
-	if (((i1->Type & LFTypeMask)==LFTypeVirtual) || ((i2->Type & LFTypeMask)==LFTypeVirtual))
+	if (((i1->Type & LFTypeMask)==LFTypeFolder) || ((i2->Type & LFTypeMask)==LFTypeFolder))
 		return false;
 
 	return Compare(i1, i2);
@@ -31,8 +31,7 @@ bool CCategorizer::IsEqual(LFItemDescriptor* i1, LFItemDescriptor* i2)
 
 LFItemDescriptor* CCategorizer::GetFolder(LFItemDescriptor* i, LFFilter* f)
 {
-	LFItemDescriptor* folder = LFAllocItemDescriptor();
-	folder->Type = LFTypeVirtual;
+	LFItemDescriptor* folder = AllocFolderDescriptor();
 
 	if (i->AttributeValues[attr])
 	{

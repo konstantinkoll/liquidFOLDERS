@@ -88,6 +88,7 @@ IDB_TASKS               BITMAP                  "res\\Tasks.bmp"
 IDB_VIEWS               BITMAP                  "res\\Views.bmp"
 IDB_CONTEXTS_16         BITMAP                  "res\\Contexts_16.bmp"
 IDB_CONTEXTS_32         BITMAP                  "res\\Contexts_32.bmp"
+IDB_SOURCEICONS         PNG                     "res\\SourceIcons.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
 //

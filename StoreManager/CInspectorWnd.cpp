@@ -275,7 +275,7 @@ void CInspectorWnd::UpdateAdd(LFItemDescriptor* i, LFSearchResult* pRawFiles)
 		AddValue(i, LFAttrDescription);
 		AddValueVirtual(AttrDriveLetter, i->CoreAttributes.FileID);
 		break;
-	case LFTypeVirtual:
+	case LFTypeFolder:
 		AddValue(i, LFAttrFileName, FALSE);
 		AddValue(i, LFAttrDescription);
 		if ((i->FirstAggregate!=-1) && (i->LastAggregate!=-1))
@@ -356,7 +356,7 @@ void CInspectorWnd::UpdateFinish()
 		case LFTypeFile:
 			SID = IDS_FILES_SINGULAR;
 			break;
-		case LFTypeVirtual:
+		case LFTypeFolder:
 			SID = IDS_FOLDERS_SINGULAR;
 			break;
 		}

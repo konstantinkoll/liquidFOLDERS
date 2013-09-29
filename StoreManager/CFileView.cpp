@@ -710,12 +710,12 @@ CMenu* CFileView::GetItemContextMenu(INT idx)
 		pMenu->LoadMenu(IDM_STORE);
 		pMenu->GetSubMenu(0)->InsertMenu(0, MF_SEPARATOR | MF_BYPOSITION);
 		break;
-	case LFTypeVirtual:
-		if ((item->FirstAggregate==-1) || (item->LastAggregate==-1))
-			break;
 	case LFTypeFile:
 		pMenu->LoadMenu((m_Context==LFContextTrash) ? IDM_FILE_TRASH : IDM_FILE);
 		break;
+	case LFTypeFolder:
+		if ((item->FirstAggregate==-1) || (item->LastAggregate==-1))
+			break;
 	}
 
 	if (!IsMenu(*pMenu))
@@ -732,7 +732,7 @@ CMenu* CFileView::GetItemContextMenu(INT idx)
 		CString tmpStr;
 
 		if (m_Context!=LFContextTrash)
-			if (((item->Type & LFTypeMask)==LFTypeFile) || (((item->Type & LFTypeMask)==LFTypeVirtual) && (item->FirstAggregate!=-1) && (item->LastAggregate!=-1)))
+			if (((item->Type & LFTypeMask)==LFTypeFile) || (((item->Type & LFTypeMask)==LFTypeFolder) && (item->FirstAggregate!=-1) && (item->LastAggregate!=-1)))
 			{
 				ENSURE(tmpStr.LoadString(m_Context==LFContextClipboard ? IDS_CONTEXTMENU_REMOVE : IDS_CONTEXTMENU_REMEMBER));
 				pPopup->InsertMenu(0, MF_STRING | MF_BYPOSITION, m_Context==LFContextClipboard ? IDM_FILE_REMOVE : IDM_FILE_REMEMBER, tmpStr);
@@ -1086,12 +1086,6 @@ CString CFileView::GetHint(LFItemDescriptor* i, WCHAR* FormatName)
 		AppendAttribute(i, LFAttrCreationTime, hint);
 		AppendAttribute(i, LFAttrFileTime, hint);
 		break;
-	case LFTypeVirtual:
-		AppendAttribute(i, LFAttrComments, hint);
-		AppendAttribute(i, LFAttrDescription, hint);
-		if (i->CoreAttributes.FileSize>0)
-			AppendAttribute(i, LFAttrFileSize, hint);
-		break;
 	case LFTypeFile:
 		AppendAttribute(i, LFAttrComments, hint);
 		AppendString(LFAttrFileFormat, hint, FormatName);
@@ -1110,6 +1104,12 @@ CString CFileView::GetHint(LFItemDescriptor* i, WCHAR* FormatName)
 		AppendAttribute(i, LFAttrCreationTime, hint);
 		AppendAttribute(i, LFAttrFileTime, hint);
 		AppendAttribute(i, LFAttrFileSize, hint);
+		break;
+	case LFTypeFolder:
+		AppendAttribute(i, LFAttrComments, hint);
+		AppendAttribute(i, LFAttrDescription, hint);
+		if (i->CoreAttributes.FileSize>0)
+			AppendAttribute(i, LFAttrFileSize, hint);
 		break;
 	}
 
@@ -1454,7 +1454,7 @@ void CFileView::OnMouseHover(UINT nFlags, CPoint point)
 						Path[0] = i->CoreAttributes.FileID[0];
 						theApp.m_FileFormats.Lookup(Path, fd);
 						break;
-					case LFTypeVirtual:
+					case LFTypeFolder:
 						if (!m_EnableTooltipOnVirtual)
 							goto Leave;
 					default:

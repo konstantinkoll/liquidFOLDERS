@@ -443,19 +443,33 @@ struct LFCoreAttributes
 
 // Item structure
 
-#define LFTypeDefault                   0x00000001
-#define LFTypeNotMounted                0x00000002
-#define LFTypeGhosted                   0x00000004
-#define LFTypeRequiresMaintenance       0x00000008
-#define LFTypeShortcutAllowed           0x00000010
+#define LFTypeSourceUnknown             0x00000000	// Must be lowest bits
+#define LFTypeSourceInternal            0x00000001
+#define LFTypeSource1394                0x00000002
+#define LFTypeSourceUSB                 0x00000003
+#define LFTypeSourceDropbox             0x00000004
+#define LFTypeSourceFacebook            0x00000005
+#define LFTypeSourceFlickr              0x00000006
+#define LFTypeSourceInstagram           0x00000007
+#define LFTypeSourcePinterest           0x00000008
+#define LFTypeSourceSoundcloud          0x00000009
+#define LFTypeSourceTwitter             0x0000000A
+#define LFTypeSourceYouTube             0x0000000B
+#define LFTypeSourceMask                0x0000000F
 
-#define LFTypeVolume                    0x10000000
-#define LFTypeStore                     0x20000000
-#define LFTypeFile                      0x40000000
-#define LFTypeVirtual                   0x80000000
-#define LFTypeMask                      0xF0000000
+#define LFTypeDefault                   0x01000000	// Volatile
+#define LFTypeNotMounted                0x02000000
+#define LFTypeGhosted                   0x04000000
+#define LFTypeRequiresMaintenance       0x08000000
+#define LFTypeShortcutAllowed           0x10000000
 
-#define LFFlagTrash                     0x0001
+#define LFTypeVolume                    0x00000000	// Volatile
+#define LFTypeStore                     0x40000000
+#define LFTypeFile                      0x80000000
+#define LFTypeFolder                    0xC0000000
+#define LFTypeMask                      0xC0000000
+
+#define LFFlagTrash                     0x0001		// Persistent, DO NOT CHANGE
 #define LFFlagNew                       0x0002
 #define LFFlagLink                      0x0004
 #define LFFlagMissing                   0x0008
@@ -506,6 +520,7 @@ struct LFStoreDescriptor
 	wchar_t IdxPathMain[MAX_PATH];				// Volatile
 	wchar_t IdxPathAux[MAX_PATH];				// Volatile
 	bool NeedsCheck;							// Volatile
+	unsigned int Source;
 };
 
 

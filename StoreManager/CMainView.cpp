@@ -472,7 +472,7 @@ void CMainView::AddFileIDItem(LFFileIDList* il, LFItemDescriptor* item)
 	case LFTypeFile:
 		LFAddFileID(il, item->StoreID, item->CoreAttributes.FileID, NULL);
 		break;
-	case LFTypeVirtual:
+	case LFTypeFolder:
 		if ((item->FirstAggregate!=-1) && (item->LastAggregate!=-1))
 			for (INT a=item->FirstAggregate; a<=item->LastAggregate; a++)
 				LFAddFileID(il, p_RawFiles->m_Items[a]->StoreID, p_RawFiles->m_Items[a]->CoreAttributes.FileID, NULL);
@@ -511,7 +511,7 @@ void CMainView::AddTransactionItem(LFTransactionList* tl, LFItemDescriptor* item
 	case LFTypeStore:
 		LFAddItemDescriptor(tl, item, UserData);
 		break;
-	case LFTypeVirtual:
+	case LFTypeFolder:
 		if ((item->FirstAggregate!=-1) && (item->LastAggregate!=-1))
 			for (INT a=item->FirstAggregate; a<=item->LastAggregate; a++)
 				LFAddItemDescriptor(tl, p_RawFiles->m_Items[a], UserData);
@@ -1021,7 +1021,7 @@ void CMainView::OnUpdateSelection()
 		m_wndInspector.UpdateAdd(item, p_RawFiles);
 
 		m_FilesSelected |= ((item->Type & LFTypeMask)==LFTypeFile) ||
-			(((item->Type & LFTypeMask)==LFTypeVirtual) && (item->FirstAggregate!=-1) && (item->LastAggregate!=-1));
+			(((item->Type & LFTypeMask)==LFTypeFolder) && (item->FirstAggregate!=-1) && (item->LastAggregate!=-1));
 
 		idx = GetNextSelectedItem(idx);
 	}
@@ -1726,15 +1726,15 @@ void CMainView::OnFileRemember()
 		LFItemDescriptor* item = p_CookedFiles->m_Items[idx];
 		switch (item->Type & LFTypeMask)
 		{
-		case LFTypeVirtual:
+		case LFTypeFile:
+			if (pClipboard->AddClipItem(item))
+				changes = TRUE;
+			break;
+		case LFTypeFolder:
 			if ((item->FirstAggregate!=-1) && (item->LastAggregate!=-1))
 				for (INT a=item->FirstAggregate; a<=item->LastAggregate; a++)
 					if (pClipboard->AddClipItem(p_RawFiles->m_Items[a]))
 						changes = TRUE;
-			break;
-		case LFTypeFile:
-			if (pClipboard->AddClipItem(item))
-				changes = TRUE;
 			break;
 		}
 

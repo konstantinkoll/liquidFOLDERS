@@ -581,14 +581,15 @@ LFCore_API void LFTransactionAddToSearchResult(LFFileIDList* il, LFSearchResult*
 		{
 			CIndex* idx1;
 			CIndex* idx2;
+			LFStoreDescriptor* slot;
 			HANDLE StoreLock = NULL;
-			unsigned int res = OpenStore(il->m_Items[a].StoreID, false, idx1, idx2, NULL, &StoreLock);
+			unsigned int res = OpenStore(il->m_Items[a].StoreID, false, idx1, idx2, &slot, &StoreLock);
 
 			if (res==LFOk)
 			{
 				if (idx1)
 				{
-					idx1->AddToSearchResult(il, sr);
+					idx1->AddToSearchResult(il, sr, slot->Source);
 					delete idx1;
 				}
 				if (idx2)

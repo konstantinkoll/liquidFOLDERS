@@ -513,7 +513,7 @@ void LFSearchResult::Sort(unsigned int attr, bool descending)
 
 unsigned int LFSearchResult::Aggregate(unsigned int write, unsigned int read1, unsigned int read2, void* c, unsigned int attr, bool groupone, LFFilter* f)
 {
-	if (((read2==read1+1) && ((!groupone) || ((m_Items[read1]->Type & LFTypeMask)==LFTypeVirtual))) || (IsNullValue(attr, m_Items[read1]->AttributeValues[attr])))
+	if (((read2==read1+1) && ((!groupone) || ((m_Items[read1]->Type & LFTypeMask)==LFTypeFolder))) || (IsNullValue(attr, m_Items[read1]->AttributeValues[attr])))
 	{
 		for (unsigned int a=read1; a<read2; a++)
 			m_Items[write++] = m_Items[a];
@@ -523,7 +523,6 @@ unsigned int LFSearchResult::Aggregate(unsigned int write, unsigned int read1, u
 	else
 	{
 		LFItemDescriptor* folder = ((CCategorizer*)c)->GetFolder(m_Items[read1], f);
-		folder->IconID = IDI_FLD_Default;
 		folder->AggregateCount = read2-read1;
 		if (!m_RawCopy)
 		{
@@ -538,12 +537,17 @@ unsigned int LFSearchResult::Aggregate(unsigned int write, unsigned int read1, u
 		SetAttribute(folder, LFAttrDescription, &Hint);
 
 		__int64 size = 0;
+		unsigned int Source = m_Items[read1]->Type & LFTypeSourceMask;
 		for (unsigned int a=read1; a<read2; a++)
 		{
+			if ((m_Items[a]->Type & LFTypeSourceMask)!=Source)
+				Source = LFTypeSourceUnknown;
+
 			size += m_Items[a]->CoreAttributes.FileSize;
 			LFFreeItemDescriptor(m_Items[a]);
 		}
 
+		folder->Type |= Source;
 		SetAttribute(folder, LFAttrFileSize, &size);
 		m_Items[write] = folder;
 
@@ -641,7 +645,7 @@ void LFSearchResult::GroupArray(unsigned int attr, LFFilter* f)
 {
 	assert(AttrTypes[attr]==LFTypeUnicodeArray);
 
-	typedef struct { std::wstring name; bool multiple; unsigned int count; __int64 size; } tagitem;
+	typedef struct { std::wstring name; bool multiple; unsigned int count; __int64 size; unsigned int source; } tagitem;
 	typedef stdext::hash_map<std::wstring, tagitem> hashtags;
 	hashtags tags;
 
@@ -666,6 +670,7 @@ void LFSearchResult::GroupArray(unsigned int attr, LFFilter* f)
 					item.multiple = false;
 					item.count = 1;
 					item.size = m_Items[a]->CoreAttributes.FileSize;
+					item.source = m_Items[a]->Type & LFTypeSourceMask;
 					tags[key] = item;
 				}
 				else
@@ -673,6 +678,9 @@ void LFSearchResult::GroupArray(unsigned int attr, LFFilter* f)
 					if (!location->second.multiple)
 						if (location->second.name.compare(tag)!=0)
 							location->second.multiple = true;
+
+					if ((m_Items[a]->Type & LFTypeSourceMask)!=location->second.source)
+						location->second.source = LFTypeSourceUnknown;
 
 					location->second.count++;
 					location->second.size += m_Items[a]->CoreAttributes.FileSize;
@@ -713,9 +721,7 @@ void LFSearchResult::GroupArray(unsigned int attr, LFFilter* f)
 				}
 		}
 
-		LFItemDescriptor* folder = LFAllocItemDescriptor();
-		folder->Type = LFTypeVirtual;
-		folder->IconID = IDI_FLD_Default;
+		LFItemDescriptor* folder = AllocFolderDescriptor();
 		folder->AggregateCount = it->second.count;
 
 		SetAttribute(folder, LFAttrFileName, tag);

@@ -932,11 +932,47 @@
 			Name="Stores"
 			>
 			<File
-				RelativePath=".\Stores\STR_Bag.ico"
+				RelativePath=".\Stores\STR_1394.ico"
 				>
 			</File>
 			<File
-				RelativePath=".\Stores\STR_Empty.ico"
+				RelativePath=".\Stores\STR_Dropbox.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\Stores\STR_Facebook.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\Stores\STR_Flickr.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\Stores\STR_Instagram.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\Stores\STR_Internal.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\Stores\STR_Pinterest.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\Stores\STR_Soundcloud.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\Stores\STR_Twitter.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\Stores\STR_Unknown.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\Stores\STR_YouTube.ico"
 				>
 			</File>
 		</Filter>

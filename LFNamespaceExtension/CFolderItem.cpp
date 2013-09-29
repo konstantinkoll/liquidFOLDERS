@@ -296,7 +296,7 @@ void CFolderItem::ConvertSearchResult(CGetChildrenEventArgs& e, LFSearchResult* 
 		switch (i->Type & LFTypeMask)
 		{
 		case LFTypeStore:
-		case LFTypeVirtual:
+		case LFTypeFolder:
 			if (e.childrenType & NSECT_Folders)
 			{
 				i->RefCount++;
@@ -325,7 +325,7 @@ void CFolderItem::ConvertSearchResult(CGetChildrenEventArgs& e, LFSearchResult* 
 		ZeroMemory(&d, sizeof(d));
 		d.Level = Attrs.Level+1;
 		d.Icon = IDI_FLD_Default;
-		d.Type = LFTypeVirtual;
+		d.Type = LFTypeFolder;
 		d.CategoryID = LFAttrCategoryCount;
 		strcpy_s(d.StoreID, LFKeySize, Attrs.StoreID);
 		strcpy_s(d.FileID, LFKeySize, "NULL");
@@ -369,8 +369,8 @@ BOOL CFolderItem::GetChildren(CGetChildrenEventArgs& e)
 			FolderSerialization d;
 			ZeroMemory(&d, sizeof(d));
 			d.Level = Attrs.Level+2;
-			d.Icon = IDI_FLD_All;
-			d.Type = LFTypeVirtual;
+			d.Icon = 0;
+			d.Type = LFTypeFolder;
 			d.CategoryID = LFAttrCategoryCount;
 			ENSURE(LoadString(AfxGetResourceHandle(), IDS_AllFiles, d.DisplayName, 256));
 			ENSURE(LoadString(AfxGetResourceHandle(), IDS_AllFilesComment, d.Comment, 256));
@@ -408,7 +408,7 @@ BOOL CFolderItem::GetChildren(CGetChildrenEventArgs& e)
 						ZeroMemory(&d, sizeof(d));
 						d.Level = Attrs.Level+1;
 						d.Icon = IDI_FLD_Default;
-						d.Type = LFTypeVirtual;
+						d.Type = LFTypeFolder;
 						d.CategoryID = theApp.m_Attributes[a]->Category;
 						wcscpy_s(d.DisplayName, 256, theApp.m_Attributes[a]->Name);
 						wcscpy_s(d.Comment, 256, theApp.FrmtAttrStr(sortStr, theApp.m_Attributes[a]->Name));
@@ -500,8 +500,8 @@ CNSEItem* CFolderItem::GetChildFromDisplayName(CGetChildFromDisplayNameEventArgs
 void CFolderItem::GetIconFileAndIndex(CGetIconFileAndIndexEventArgs& e)
 {
 	e.iconExtractMode = NSEIEM_IconFileAndIndex;
-	e.iconFile = theApp.m_CoreFile;
-	e.iconIndex = Attrs.Icon-1;
+	e.iconFile = (Attrs.Icon==0) ? theApp.m_ThisFile : theApp.m_CoreFile;
+	e.iconIndex = (Attrs.Icon==0) ? 1 : Attrs.Icon-1;
 }
 
 void CFolderItem::GetOverlayIcon(CGetOverlayIconEventArgs& e)
@@ -510,7 +510,7 @@ void CFolderItem::GetOverlayIcon(CGetOverlayIconEventArgs& e)
 	{
 		e.overlayIconType = NSEOIT_Custom;
 		e.iconFile = theApp.m_CoreFile;
-		e.iconIndex = IDI_OVERLAY_Default-1;
+		e.iconIndex = IDI_OVR_Default-1;
 	}
 	else
 	{

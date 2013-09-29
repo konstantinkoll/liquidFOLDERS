@@ -20,14 +20,12 @@
 // Kernfunktionalität
 //
 
-#define LFGLD_Internal                   1
-#define LFGLD_External                   2
-#define LFGLD_Both                       3
-#define LFGLD_Network                    4
-#define LFGLD_IncludeFloppies            8
-#define LFGLD_All                        15
-
-#define DRIVE_EXTHD                      100
+#define LFGLD_Internal            1
+#define LFGLD_External            2
+#define LFGLD_Both                3
+#define LFGLD_Network             4
+#define LFGLD_IncludeFloppies     8
+#define LFGLD_All                 15
 
 
 
@@ -53,6 +51,9 @@ LFCore_API bool __stdcall LFHideFileExt();
 LFCore_API bool __stdcall LFHideDrivesWithNoMedia();
 
 
+
+// Liefert den Source-Typ eines Laufwerks zurück
+LFCore_API unsigned int __stdcall LFGetSourceForDrive(char cDrive);
 
 // Wie Win32-Funktion GetLogicalDrives(), allerdings selektiv (s.o.)
 LFCore_API unsigned int __stdcall LFGetLogicalDrives(unsigned int mask=LFGLD_Both);

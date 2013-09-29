@@ -35,8 +35,8 @@ public:
 	void Delete(LFFileIDList* il, bool PutInTrash=true, LFProgress* pProgress=NULL);
 	void ResolvePhysicalLocations(LFTransactionList* tl);
 	unsigned int Rename(char* FileID, wchar_t* NewName);
-	void Retrieve(LFFilter* f, LFSearchResult* res);
-	void AddToSearchResult(LFFileIDList* il, LFSearchResult* res);
+	void Retrieve(LFFilter* f, LFSearchResult* res, unsigned int Source);
+	void AddToSearchResult(LFFileIDList* il, LFSearchResult* res, unsigned int Source);
 	void TransferTo(CIndex* idxDst1, CIndex* idxDst2, LFStoreDescriptor* slotDst, LFFileIDList* il, LFStoreDescriptor* slotSrc, bool move, LFProgress* pProgress=NULL);
 
 protected:
