@@ -123,6 +123,8 @@ BOOL CStoreManagerApp::InitInstance()
 	for (UINT a=0; a<LFContextCount; a++)
 		LoadViewOptions(a);
 
+	m_SourceIcons.Create(IDB_SOURCEICONS);
+
 	m_ThumbnailCache.LoadFrames();
 
 	CWnd* pFrame = OpenCommandLine(__argc==2 ? __wargv[1] : NULL);

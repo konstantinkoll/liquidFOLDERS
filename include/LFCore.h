@@ -288,6 +288,9 @@ LFCore_API wchar_t* __stdcall LFGetItemCategoryName(unsigned int ID);
 // Name einer Attribut-Kategorie in aktueller Sprache zurückliefern
 LFCore_API wchar_t* __stdcall LFGetAttrCategoryName(unsigned int ID);
 
+// Name einer Datenquelle in aktueller Sprache zurückliefern
+LFCore_API wchar_t* __stdcall LFGetSourceName(unsigned int ID, bool qualified);
+
 // Beschreibung eines Fehlers (LFError...) in aktueller Sprache zurückliefern
 LFCore_API wchar_t* __stdcall LFGetErrorText(unsigned int ID);
 

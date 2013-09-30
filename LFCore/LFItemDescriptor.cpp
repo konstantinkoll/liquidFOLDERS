@@ -303,7 +303,7 @@ LFCore_API LFItemDescriptor* LFAllocItemDescriptor(LFStoreDescriptor* s)
 	LFItemDescriptor* d = LFAllocItemDescriptor();
 	bool IsMounted = LFIsStoreMounted(s);
 
-	d->Type |= LFTypeStore;
+	d->Type |= LFTypeStore | s->Source;
 	if (strcmp(s->StoreID, DefaultStore)==0)
 		d->Type |= LFTypeDefault;
 	if (!IsMounted)

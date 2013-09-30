@@ -11,7 +11,7 @@
 #define IDI_STR_Flickr                  7
 #define IDI_STR_Instagram               8
 #define IDI_STR_Pinterest               9
-#define IDI_STR_Soundcloud              10
+#define IDI_STR_SoundCloud              10
 #define IDI_STR_Twitter                 11
 #define IDI_STR_YouTube                 12
 #define IDI_FLD_Default                 13
@@ -173,7 +173,33 @@
 #define IDS_AttrDueTime                 4049
 #define IDS_AttrDoneTime                4050
 #define IDS_AttrCustomer                4051
-#define IDS_DefaultStore                5000
+#define IDS_FirstSource                 5000
+#define IDS_SrcUnknown                  5000
+#define IDS_SrcInternal                 5001
+#define IDS_Src1394                     5002
+#define IDS_SrcUSB                      5003
+#define IDS_SrcDropbox                  5004
+#define IDS_SrcFacebook                 5005
+#define IDS_SrcFlickr                   5006
+#define IDS_SrcInstagram                5007
+#define IDS_SrcPinterest                5008
+#define IDS_SrcSoundCloud               5009
+#define IDS_SrcTwitter                  5010
+#define IDS_SrcYouTube                  5011
+#define IDS_FirstQualifiedSource        5100
+#define IDS_QSrcUnknown                 5100
+#define IDS_QSrcInternal                5101
+#define IDS_QSrc1394                    5102
+#define IDS_QSrcUSB                     5103
+#define IDS_QSrcDropbox                 5104
+#define IDS_QSrcFacebook                5105
+#define IDS_QSrcFlickr                  5106
+#define IDS_QSrcInstagram               5107
+#define IDS_QSrcPinterest               5108
+#define IDS_QSrcSoundCloud              5109
+#define IDS_QSrcTwitter                 5110
+#define IDS_QSrcYouTube                 5111
+#define IDS_DefaultStore                6000
 
 // Next default values for new objects
 // 

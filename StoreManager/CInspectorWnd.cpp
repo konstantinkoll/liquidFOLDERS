@@ -274,6 +274,7 @@ void CInspectorWnd::UpdateAdd(LFItemDescriptor* i, LFSearchResult* pRawFiles)
 		AddValue(i, LFAttrFileName, FALSE);
 		AddValue(i, LFAttrDescription);
 		AddValueVirtual(AttrDriveLetter, i->CoreAttributes.FileID);
+		AddValueVirtual(AttrSource, theApp.m_SourceNames[i->Type & LFTypeSourceMask][1]);
 		break;
 	case LFTypeFolder:
 		AddValue(i, LFAttrFileName, FALSE);
@@ -288,6 +289,7 @@ void CInspectorWnd::UpdateAdd(LFItemDescriptor* i, LFSearchResult* pRawFiles)
 						AddValue(pRawFiles->m_Items[a], b);
 				if (pRawFiles->m_Items[a]->CoreAttributes.Flags & LFFlagTrash)
 					AddValue(pRawFiles->m_Items[a], LFAttrDeleteTime);
+				AddValueVirtual(AttrSource, theApp.m_SourceNames[pRawFiles->m_Items[a]->Type & LFTypeSourceMask][0]);
 			}
 		}
 		else
@@ -306,6 +308,7 @@ void CInspectorWnd::UpdateAdd(LFItemDescriptor* i, LFSearchResult* pRawFiles)
 				AddValue(i, a);
 		if (i->CoreAttributes.Flags & LFFlagTrash)
 			AddValue(i, LFAttrDeleteTime);
+		AddValueVirtual(AttrSource, theApp.m_SourceNames[i->Type & LFTypeSourceMask][0]);
 		break;
 	case LFTypeStore:
 		for (UINT a=0; a<=LFAttrFileTime; a++)
@@ -313,6 +316,8 @@ void CInspectorWnd::UpdateAdd(LFItemDescriptor* i, LFSearchResult* pRawFiles)
 
 		LFStoreDescriptor s;
 		LFGetStoreSettings(i->CoreAttributes.FileID, &s);
+
+		AddValueVirtual(AttrSource, theApp.m_SourceNames[s.Source][0]);
 
 		OLECHAR szGUID[MAX_PATH];
 		StringFromGUID2(s.guid, szGUID, MAX_PATH);

@@ -811,6 +811,11 @@ LFCore_API wchar_t* LFGetAttrCategoryName(unsigned int ID)
 	return LoadResourceString(ID+IDS_FirstAttrCategory, 64);
 }
 
+LFCore_API wchar_t* LFGetSourceName(unsigned int ID, bool qualified)
+{
+	return LoadResourceString(ID+(qualified ? IDS_FirstQualifiedSource : IDS_FirstSource), 64);
+}
+
 LFCore_API wchar_t* LFGetErrorText(unsigned int ID)
 {
 	return LoadResourceString(ID+IDS_FirstError, 256);

@@ -7,18 +7,19 @@
 // Virtuelle Attribute
 //
 
-#define AttrDriveLetter             LFAttributeCount+0
-#define AttrMaintenanceTime         LFAttributeCount+1
-#define AttrLastSeen                LFAttributeCount+2
-#define AttrGUID                    LFAttributeCount+3
-#define AttrPathData                LFAttributeCount+4
-#define AttrPathIdxMain             LFAttributeCount+5
-#define AttrPathIdxAux              LFAttributeCount+6
-#define AttrIndexVersion            LFAttributeCount+7
-#define AttrIATAAirportName         LFAttributeCount+8
-#define AttrIATAAirportCountry      LFAttributeCount+9
+#define AttrSource                  LFAttributeCount+0
+#define AttrDriveLetter             LFAttributeCount+1
+#define AttrMaintenanceTime         LFAttributeCount+2
+#define AttrLastSeen                LFAttributeCount+3
+#define AttrGUID                    LFAttributeCount+4
+#define AttrPathData                LFAttributeCount+5
+#define AttrPathIdxMain             LFAttributeCount+6
+#define AttrPathIdxAux              LFAttributeCount+7
+#define AttrIndexVersion            LFAttributeCount+8
+#define AttrIATAAirportName         LFAttributeCount+9
+#define AttrIATAAirportCountry      LFAttributeCount+10
 
-#define AttrCount                   LFAttributeCount+10
+#define AttrCount                   LFAttributeCount+11
 
 
 // CIconHeader

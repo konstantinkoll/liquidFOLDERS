@@ -63,6 +63,9 @@ void CTimelineView::SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* p
 
 				d->Year = stLocal.wYear;
 
+				if ((i->Type & LFTypeSourceMask)>LFTypeSourceInternal)
+					d->Preview |= PRV_SOURCE;
+
 				switch (i->Type & LFTypeMask)
 				{
 				case LFTypeFile:
@@ -191,6 +194,19 @@ Restart:
 			}
 			if (d->Preview & PRV_THUMBS)
 				h += (128+BORDER)*d->PreviewRows-BORDER;
+			if (d->Preview & PRV_SOURCE)
+			{
+				h += min(m_FontHeight[3], 16);
+				if (d->Preview & PRV_THUMBS)
+				{
+					h += BORDER/2;
+				}
+				else
+					if (d->Preview & (PRV_AUDIOTITLE | PRV_AUDIOALBUM | PRV_COMMENTS))
+					{
+						h += 2*BORDER;
+					}
+			}
 
 			if (d->Year!=Year)
 			{
@@ -443,11 +459,41 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPRECT rectItem, INT idx, BOO
 		if (!Themed || !Selected)
 			dc.FillSolidRect(rectItem->left+BORDER+1, rectText.bottom+BORDER/2, m_ItemWidth-2*BORDER-2, 1, Themed ? 0xE5E5E5 : GetSysColor(COLOR_3DFACE));
 
-		// Attributes
-		if (d->Preview & (PRV_COMMENTS | PRV_AUDIOTITLE | PRV_AUDIOALBUM))
+		// Source
+		INT BottomHeight = 0;
+		if (d->Preview & PRV_SOURCE)
 		{
-			CRect rectAttr(rectItem->left+BORDER+2, 0, rectItem->right-BORDER, 0);
-			rectAttr.top = rectText.bottom+BORDER+BORDER/2;
+			BottomHeight = min(m_FontHeight[3], 16);
+			CRect rectSource(rectItem->left+BORDER, rectItem->bottom-BORDER-BottomHeight, rectItem->right-BORDER, 0);
+			rectSource.bottom = rectSource.top+BottomHeight;
+
+			theApp.m_SourceIcons.DrawEx(&dc, (i->Type & LFTypeSourceMask)-2, CPoint(rectSource.left, rectSource.top), CSize(16, 16), CLR_NONE, 0xFFFFFF, ILD_TRANSPARENT);
+
+			rectSource.left += m_IconSize.cx+BORDER;
+
+			CFont* pOldFont = dc.SelectObject(&theApp.m_SmallFont);
+			dc.SetTextColor(txCol);
+			dc.DrawText(theApp.m_SourceNames[i->Type & LFTypeSourceMask][0], -1, rectSource, DT_LEFT | DT_END_ELLIPSIS | DT_NOPREFIX | DT_SINGLELINE | DT_VCENTER);
+			dc.SelectObject(pOldFont);
+
+			if (d->Preview & PRV_THUMBS)
+			{
+				BottomHeight += BORDER/2;
+			}
+			else
+				if (d->Preview & (PRV_AUDIOTITLE | PRV_AUDIOALBUM | PRV_COMMENTS))
+				{
+					if (!Themed || !Selected)
+						dc.FillSolidRect(rectItem->left+BORDER+1, rectSource.top-BORDER, m_ItemWidth-2*BORDER-2, 1, Themed ? 0xE5E5E5 : GetSysColor(COLOR_3DFACE));
+
+					BottomHeight += 2*BORDER;
+				}
+		}
+
+		// Attributes
+		if (d->Preview & (PRV_AUDIOTITLE | PRV_AUDIOALBUM | PRV_COMMENTS))
+		{
+			CRect rectAttr(rectItem->left+BORDER+2, rectText.bottom+BORDER+BORDER/2, rectItem->right-BORDER, 0);
 			rectAttr.bottom = rectAttr.top+m_FontHeight[0];
 
 			if (d->Preview & (PRV_AUDIOTITLE | PRV_AUDIOALBUM))
@@ -500,7 +546,7 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPRECT rectItem, INT idx, BOO
 		{
 			CRect rectPreview(rectItem);
 			rectPreview.DeflateRect(BORDER, BORDER);
-			rectPreview.top = rectPreview.bottom-d->PreviewRows*(128+BORDER)+BORDER;
+			rectPreview.top = rectPreview.bottom-BottomHeight-d->PreviewRows*(128+BORDER)+BORDER;
 			rectPreview.bottom = rectPreview.top+128;
 			rectPreview.left++;
 			rectPreview.right = rectPreview.left+128;
@@ -508,6 +554,7 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPRECT rectItem, INT idx, BOO
 			if ((i->Type & LFTypeMask)==LFTypeFolder)
 			{
 				INT Rows = 0;
+				INT Cols = 0;
 
 				for (INT a=LFMaxRating; a>=0; a--)
 					for (INT b=i->FirstAggregate; b<=i->LastAggregate; b++)
@@ -519,9 +566,11 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPRECT rectItem, INT idx, BOO
 							theApp.m_ThumbnailCache.DrawJumboThumbnail(dc, rect, ri);
 
 							rectPreview.OffsetRect(128+BORDER, 0);
-							if (rectPreview.right>rectItem->right-BORDER-1)
+							if (++Cols==m_PreviewColumns)
 							{
 								rectPreview.OffsetRect(-(128+BORDER)*m_PreviewColumns, 128+BORDER);
+								Cols = 0;
+
 								if (++Rows==d->PreviewRows)
 									return;
 							}

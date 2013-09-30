@@ -328,6 +328,11 @@ struct LFVariantData
 #define LFAttrCategoryCount             9
 
 
+// Souces
+
+#define LFSourceCount                  12
+
+
 // Shell property
 
 struct LFShellProperty
@@ -452,7 +457,7 @@ struct LFCoreAttributes
 #define LFTypeSourceFlickr              0x00000006
 #define LFTypeSourceInstagram           0x00000007
 #define LFTypeSourcePinterest           0x00000008
-#define LFTypeSourceSoundcloud          0x00000009
+#define LFTypeSourceSoundCloud          0x00000009
 #define LFTypeSourceTwitter             0x0000000A
 #define LFTypeSourceYouTube             0x0000000B
 #define LFTypeSourceMask                0x0000000F

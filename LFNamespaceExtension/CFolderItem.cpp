@@ -1350,8 +1350,7 @@ INT CFolderItem::GetTileViewColumnIndices(UINT* indices)
 	switch (Attrs.Level)
 	{
 	case LevelStores:
-		indices[1] = LFAttrFileTime;
-		indices[2] = LFAttrDescription;
+		indices[2] = LFAttrCreatedTime;
 		return 3;
 	case LevelAttrValue:
 		indices[2] = LFAttrFileSize;

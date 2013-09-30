@@ -88,7 +88,7 @@ IDB_TASKS               BITMAP                  "res\\Tasks.bmp"
 IDB_VIEWS               BITMAP                  "res\\Views.bmp"
 IDB_CONTEXTS_16         BITMAP                  "res\\Contexts_16.bmp"
 IDB_CONTEXTS_32         BITMAP                  "res\\Contexts_32.bmp"
-IDB_SOURCEICONS         PNG                     "res\\SourceIcons.bmp"
+IDB_SOURCEICONS         BITMAP                  "res\\SourceIcons.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -96,8 +96,8 @@ IDB_SOURCEICONS         PNG                     "res\\SourceIcons.bmp"
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,3,0,0
- PRODUCTVERSION 1,3,0,0
+ FILEVERSION 1,4,0,0
+ PRODUCTVERSION 1,4,0,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -114,13 +114,13 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "liquidFOLDERS"
             VALUE "FileDescription", "StoreManager"
-            VALUE "FileVersion", "1.3.0"
+            VALUE "FileVersion", "1.4.0"
             VALUE "InternalName", "StoreManager"
             VALUE "LegalCopyright", "© 2009-2013 liquidFOLDERS"
             VALUE "LegalTrademarks", "liquidFOLDERS®"
             VALUE "OriginalFilename", "StoreManager.exe"
             VALUE "ProductName", "liquidFOLDERS"
-            VALUE "ProductVersion", "1.3.0"
+            VALUE "ProductVersion", "1.4.0"
         END
     END
     BLOCK "VarFileInfo"
@@ -580,6 +580,7 @@ END
 
 STRINGTABLE 
 BEGIN
+    IDS_VATTR_SOURCE        "Ursprung"
     IDS_VATTR_DRIVELETTER   "Laufwerksbuchstabe"
     IDS_VATTR_MAINTENANCETIME "Letzte Wartung"
     IDS_VATTR_LASTSEEN      "Zuletzt eingebunden"
@@ -1146,6 +1147,7 @@ END
 
 STRINGTABLE 
 BEGIN
+    IDS_VATTR_SOURCE        "Origen"
     IDS_VATTR_DRIVELETTER   "Unidad"
     IDS_VATTR_MAINTENANCETIME "Mantenimiento"
     IDS_VATTR_LASTSEEN      "Última entrada"
@@ -1713,7 +1715,8 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_VATTR_DRIVELETTER   "Lettres aux lecteurs"
+    IDS_VATTR_SOURCE        "Source"
+    IDS_VATTR_DRIVELETTER   "Lettre aux lecteurs"
     IDS_VATTR_MAINTENANCETIME "Entretien"
     IDS_VATTR_LASTSEEN      "Finalement vu"
     IDS_VATTR_GUID          "GUID"
@@ -2328,6 +2331,7 @@ END
 
 STRINGTABLE 
 BEGIN
+    IDS_VATTR_SOURCE        "Source"
     IDS_VATTR_DRIVELETTER   "Drive letter"
     IDS_VATTR_MAINTENANCETIME "Last maintenance"
     IDS_VATTR_LASTSEEN      "Last seen"

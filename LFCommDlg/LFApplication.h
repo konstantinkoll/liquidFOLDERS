@@ -70,6 +70,7 @@ public:
 	LFMessageIDs* p_MessageIDs;
 	LFAttributeDescriptor* m_Attributes[LFAttributeCount];
 	WCHAR* m_AttrCategories[LFAttrCategoryCount];
+	WCHAR* m_SourceNames[LFSourceCount][2];
 	LFContextDescriptor* m_Contexts[LFContextCount];
 	LFItemCategoryDescriptor* m_ItemCategories[LFItemCategoryCount];
 	CImageList m_SystemImageListSmall;

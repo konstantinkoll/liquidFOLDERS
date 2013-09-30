@@ -15,6 +15,7 @@
 #define PRV_THUMBS         2
 #define PRV_AUDIOTITLE     4
 #define PRV_AUDIOALBUM     8
+#define PRV_SOURCE        16
 
 struct TimelineItemData
 {

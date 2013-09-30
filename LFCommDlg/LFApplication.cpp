@@ -265,6 +265,11 @@ LFApplication::LFApplication(BOOL HasGUI, GUID& AppID)
 	for (UINT a=0; a<LFAttrCategoryCount; a++)
 		m_AttrCategories[a] = LFGetAttrCategoryName(a);
 
+	// Get data source information
+	for (UINT a=0; a<LFSourceCount; a++)
+		for (UINT b=0; b<2; b++)
+			m_SourceNames[a][b] = LFGetSourceName(a, b==1);
+
 	// Get context information
 	for (UINT a=0; a<LFContextCount; a++)
 		m_Contexts[a] = LFGetContextInfo(a);
@@ -292,6 +297,9 @@ LFApplication::~LFApplication()
 		LFFreeAttributeDescriptor(m_Attributes[a]);
 	for (UINT a=0; a<LFAttrCategoryCount; a++)
 		delete m_AttrCategories[a];
+	for (UINT a=0; a<LFSourceCount; a++)
+		for (UINT b=0; b<2; b++)
+			delete m_SourceNames[a][b];
 	for (UINT a=0; a<LFContextCount; a++)
 		LFFreeContextDescriptor(m_Contexts[a]);
 	for (UINT a=0; a<LFItemCategoryCount; a++)

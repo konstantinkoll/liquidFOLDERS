@@ -1085,10 +1085,25 @@ CString CFileView::GetHint(LFItemDescriptor* i, WCHAR* FormatName)
 		AppendAttribute(i, LFAttrDescription, hint);
 		AppendAttribute(i, LFAttrCreationTime, hint);
 		AppendAttribute(i, LFAttrFileTime, hint);
+
+		if ((i->Type & LFTypeSourceMask)>LFTypeSourceInternal)
+			AppendString(LFAttrComments, hint, theApp.m_SourceNames[i->Type & LFTypeSourceMask][1]);
+
 		break;
 	case LFTypeFile:
 		AppendAttribute(i, LFAttrComments, hint);
 		AppendString(LFAttrFileFormat, hint, FormatName);
+
+		if ((i->Type & LFTypeSourceMask)>LFTypeSourceInternal)
+		{
+			WCHAR tmpStr[256];
+			tmpStr[0] = L' ';
+			wcscpy_s(&tmpStr[1], 255, theApp.m_SourceNames[i->Type & LFTypeSourceMask][1]);
+			tmpStr[1] = (WCHAR)tolower(tmpStr[1]);
+
+			hint += tmpStr;
+		}
+
 		AppendAttribute(i, LFAttrArtist, hint);
 		AppendAttribute(i, LFAttrTitle, hint);
 		AppendAttribute(i, LFAttrAlbum, hint);
@@ -1108,8 +1123,13 @@ CString CFileView::GetHint(LFItemDescriptor* i, WCHAR* FormatName)
 	case LFTypeFolder:
 		AppendAttribute(i, LFAttrComments, hint);
 		AppendAttribute(i, LFAttrDescription, hint);
+
 		if (i->CoreAttributes.FileSize>0)
 			AppendAttribute(i, LFAttrFileSize, hint);
+
+		if ((i->Type & LFTypeSourceMask)>LFTypeSourceInternal)
+			AppendString(LFAttrComments, hint, theApp.m_SourceNames[i->Type & LFTypeSourceMask][1]);
+
 		break;
 	}
 

@@ -39,6 +39,7 @@ public:
 	CList<CMainWnd*> m_MainFrames;
 	CMainWnd* p_Clipboard;
 	CString m_PathGoogleEarth;
+	CImageListTransparent m_SourceIcons;
 	CFormatCache m_FileFormats;
 	CThumbnailCache m_ThumbnailCache;
 	LFViewParameters m_Views[LFContextCount];
