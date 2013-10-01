@@ -109,7 +109,6 @@
     <ROW RemoveReg="__11" InstallMode="2" Condition="(AI_CLEAN_RESOURCES_UNINSTALL = &quot;1&quot;)"/>
     <ROW RemoveReg="__12" InstallMode="2" Condition="(AI_CLEAN_RESOURCES_UNINSTALL = &quot;1&quot;)"/>
     <ROW RemoveReg="__13" InstallMode="2" Condition="(AI_CLEAN_RESOURCES_UNINSTALL = &quot;1&quot;)"/>
-    <ROW RemoveReg="__14" InstallMode="3"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.BuildComponent">
     <ROW BuildKey="DefaultBuild" BuildName="DefaultBuild" BuildOrder="1" BuildType="1" PackageFolder="." PackageFileName="liquidFOLDERS32" Languages="en;fr;de;es" LangOpt="1" InstallationType="2" CabsLocation="1" UseLzma="true" LzmaCompressionLevel="4" PackageType="1" FilesInsideExe="true" ExeIconPath="Setup\liquidFOLDERS.ico" ExtractionFolder="[AppDataFolder]\[|ProductName]\install" ExtUI="true" LangsDialog="true" UACExecutionLevel="2"/>
@@ -564,7 +563,6 @@
     <ROW RemoveRegistry="__11" Root="0" Key="CLSID\{3F2D914D-FE57-414F-9F88-A377C7841DA4}" Name="-" Component_="liquidFOLDERS"/>
     <ROW RemoveRegistry="__12" Root="0" Key="CLSID\{3F2D914E-FE57-414F-9F88-A377C7841DA4}" Name="-" Component_="liquidFOLDERS"/>
     <ROW RemoveRegistry="__13" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}" Name="-" Component_="liquidFOLDERS"/>
-    <ROW RemoveRegistry="__14" Root="1" Key="Software\[ProductName]\Template" Name="-" Component_="LFCore.dll"/>
     <ROW RemoveRegistry="__2" Root="2" Key="Software\liquidFOLDERS" Name="-" Component_="liquidFOLDERS"/>
     <ROW RemoveRegistry="__3" Root="0" Key="LFSendTofile" Name="-" Component_="liquidFOLDERS"/>
     <ROW RemoveRegistry="__4" Root="0" Key="LFNamespaceExtension.RootFolder" Name="-" Component_="liquidFOLDERS"/>

@@ -48,6 +48,7 @@ protected:
 	CWnd* p_Owner;
 	CHAR m_StoreID[LFKeySize];
 	BOOL m_StoreIDValid;
+	BOOL m_SkipTemplate;
 	BOOL m_AllowChooseStore;
 	BOOL m_IsDragging;
 };

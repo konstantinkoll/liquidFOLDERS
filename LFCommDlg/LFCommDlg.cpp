@@ -231,6 +231,7 @@ struct WorkerParameters
 	LFWorkerParameters Hdr;
 	CHAR StoreID[LFKeySize];
 	BOOL DeleteSource;
+	LFItemDescriptor* Template;
 	HWND hWndSource;
 	union
 	{
@@ -243,7 +244,7 @@ DWORD WINAPI WorkerImport(void* lParam)
 {
 	LF_WORKERTHREAD_START(lParam);
 
-	LFTransactionImport(wp->StoreID, wp->FileImportList, NULL, true, wp->DeleteSource==TRUE, &p);
+	LFTransactionImport(wp->StoreID, wp->FileImportList, wp->Template, true, wp->DeleteSource==TRUE, &p);
 
 	LF_WORKERTHREAD_FINISH();
 }
@@ -284,10 +285,17 @@ LFCommDlg_API void LFImportFolder(CHAR* StoreID, CWnd* pParentWnd)
 		strcpy_s(wp.StoreID, LFKeySize, StoreID);
 		wp.DeleteSource = dlg.m_DeleteSource;
 
-		LFDoWithProgress(WorkerImport, (LFWorkerParameters*)&wp, pParentWnd);
+		// Template füllen
+		wp.Template = LFAllocItemDescriptor();
+		LFItemTemplateDlg tdlg(pParentWnd, wp.Template, StoreID, TRUE);
+		if (tdlg.DoModal()!=IDCANCEL)
+		{
+			LFDoWithProgress(WorkerImport, (LFWorkerParameters*)&wp, pParentWnd);
 
-		LFErrorBox(wp.FileImportList->m_LastError, pParentWnd ? pParentWnd->GetSafeHwnd() : NULL);
+			LFErrorBox(wp.FileImportList->m_LastError, pParentWnd ? pParentWnd->GetSafeHwnd() : NULL);
+		}
 
+		LFFreeItemDescriptor(wp.Template);
 		LFFreeFileImportList(wp.FileImportList);
 	}
 }

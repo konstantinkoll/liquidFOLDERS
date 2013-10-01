@@ -126,10 +126,8 @@
 #define IDC_SEARCHTERM                  2503
 #define IDC_CONDITIONLIST               2504
 #define IDD_SAVEFILTER                  2600
-#define IDC_DESTINATION                 2601
-#define IDC_CHOOSESTORE                 2602
-#define IDC_FILENAME                    2603
-#define IDC_COMMENTS                    2604
+#define IDC_FILENAME                    2601
+#define IDC_COMMENTS                    2602
 #define IDM_STORES_REPAIRCORRUPTEDINDEX 3000
 #define IDM_NEW                         3100
 #define IDM_NEW_REMOVENEW               3101

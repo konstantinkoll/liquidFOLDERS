@@ -139,6 +139,7 @@ IDD_SELECTIATA          ICON                    "res\\Plane_Tiny.ico"
 IDD_JUMPTOIATA          ICON                    "res\\Location_Tiny.ico"
 IDD_SELECTGPS           ICON                    "res\\LocationGPS_Tiny.ico"
 IDD_ENTERLICENSEKEY     ICON                    "res\\Key_Tiny.ico"
+IDD_ITEMTEMPLATE        ICON                    "res\\Inspector_Tiny.ico"
 IDD_STOREMAINTENANCE    ICON                    "res\\StoreMaintenance_Small.ico"
 IDD_EDITTAGS            ICON                    "res\\Tags_Tiny.ico"
 IDD_BROWSEFORFOLDER     ICON                    "res\\Folder_Tiny.ico"
@@ -366,6 +367,24 @@ BEGIN
     PUSHBUTTON      "Abbrechen",IDCANCEL,203,295,50,14,WS_GROUP
 END
 
+IDD_ITEMTEMPLATE DIALOGEX 0, 0, 277, 338
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
+CAPTION "Inspektor"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "",IDC_DESTINATION,"CStorePanel",WS_GROUP,14,16,177,34
+    PUSHBUTTON      "&Store wählen...",IDC_CHOOSESTORE,197,25,66,14
+    CONTROL         "",IDC_INSPECTOR,"CInspectorGrid",WS_GROUP | WS_TABSTOP,14,93,249,190
+    CONTROL         "&Alphabetisch sortieren",IDC_ALPHABETICALLY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,291,181,10
+    PUSHBUTTON      "&Zurücksetzen",IDC_RESET,203,289,60,14,WS_GROUP
+    DEFPUSHBUTTON   "OK",IDOK,96,317,50,14,WS_GROUP
+    PUSHBUTTON      "Überspringen",IDC_SKIP,153,317,60,14,WS_GROUP
+    PUSHBUTTON      "Abbrechen",IDCANCEL,220,317,50,14,WS_GROUP
+    GROUPBOX        "Ziel",IDC_STATIC,7,7,263,49
+    GROUPBOX        "Datei-Eigenschaften",IDC_GROUPBOX1,7,62,263,249
+    LTEXT           "Nicht vorhandene Eigenschaften werden mit den Angaben unten ergänzt.\nFalls dies nicht gewünscht wird, klicken Sie bitte auf „Überspringen“.",IDC_STATIC,14,73,249,18
+END
+
 IDD_CREATENEWSTORE DIALOGEX 0, 0, 108, 28
 STYLE DS_SETFONT | DS_FIXEDSYS | DS_CONTROL | WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN
 EXSTYLE WS_EX_CONTROLPARENT
@@ -564,6 +583,14 @@ BEGIN
         BOTTOMMARGIN, 309
     END
 
+    IDD_ITEMTEMPLATE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 270
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 331
+    END
+
     IDD_CREATENEWSTORE, DIALOG
     BEGIN
         LEFTMARGIN, 7
@@ -634,11 +661,11 @@ BEGIN
     IDS_UPDATEURL           "http://liquidFOLDERS.net/download/de/"
     IDS_ABOUTURL            "http://liquidFOLDERS.net/start/de/"
     IDS_ERROR               "Fehler"
-    IDS_STORES_SINGULAR     "%u Store"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_STORES_SINGULAR     "%u Store"
     IDS_STORES_PLURAL       "%u Stores"
     IDS_DRIVES_SINGULAR     "%u Laufwerk"
     IDS_DRIVES_PLURAL       "%u Laufwerke"
@@ -654,11 +681,11 @@ BEGIN
     IDS_UACMESSAGE          "Ihre Zustimmung ist erforderlich"
     IDS_EXPAND              "E&rweitern"
     IDS_COLLAPSE            "&Reduzieren"
-    IDS_IMPORTFOLDER_CAPTION "Verzeichnis importieren"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_IMPORTFOLDER_CAPTION "Verzeichnis importieren"
     IDS_IMPORTFOLDER_HINT   "Auch alle Unterverzeichnisse werden importiert."
     IDS_CHOOSESTORE_CAPTION "Stores"
     IDS_CHOOSESTORE_HINT    "Nur angeschlossene Stores können ausgewählt werden."
@@ -673,11 +700,11 @@ BEGIN
     IDS_UPDATE_NOTAVAILABLE "Es steht keine neue Version von liquidFOLDERS zum Herunterladen bereit."
     IDS_AIRPORT_CODE        "IATA-Code"
     IDS_AIRPORT_LOCATION    "Ort"
+    IDS_STOREPROPERTIES     "Eigenschaften von „%s“"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_STOREPROPERTIES     "Eigenschaften von „%s“"
     IDS_STORENEW            "Neuen Store anlegen"
     IDS_STORENEW_VOLUME     "Neuen Store auf Laufwerk %c: anlegen"
     IDS_DELETEPROPERTY_CAPTION "Eigenschaft entfernen"
@@ -921,6 +948,24 @@ BEGIN
     PUSHBUTTON      "Cancelar",IDCANCEL,203,295,50,14,WS_GROUP
 END
 
+IDD_ITEMTEMPLATE DIALOGEX 0, 0, 277, 338
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
+CAPTION "Inspector"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "",IDC_DESTINATION,"CStorePanel",WS_GROUP,14,16,167,34
+    PUSHBUTTON      "Selecionar &store...",IDC_CHOOSESTORE,187,25,76,14
+    CONTROL         "",IDC_INSPECTOR,"CInspectorGrid",WS_GROUP | WS_TABSTOP,14,101,249,182
+    CONTROL         "Ordenar &alfabéticamente",IDC_ALPHABETICALLY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,291,181,10
+    PUSHBUTTON      "&Restaurar",IDC_RESET,213,289,50,14,WS_GROUP
+    DEFPUSHBUTTON   "OK",IDOK,106,317,50,14,WS_GROUP
+    PUSHBUTTON      "Omitir",IDC_SKIP,163,317,50,14,WS_GROUP
+    PUSHBUTTON      "Cancelar",IDCANCEL,220,317,50,14,WS_GROUP
+    GROUPBOX        "Destino",IDC_STATIC,7,7,263,49
+    GROUPBOX        "Propiedades de archivo",IDC_GROUPBOX1,7,62,263,249
+    LTEXT           "Las propiedades faltantes del archivo serán establecidos usando los valores que a continuación se enlistan. Si usted no quiere que sus archivos sean corregidos, presione ""Omitir"".",IDC_STATIC,14,73,249,26
+END
+
 IDD_CREATENEWSTORE DIALOGEX 0, 0, 102, 28
 STYLE DS_SETFONT | DS_FIXEDSYS | DS_CONTROL | WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN
 EXSTYLE WS_EX_CONTROLPARENT
@@ -1129,6 +1174,14 @@ BEGIN
         BOTTOMMARGIN, 309
     END
 
+    IDD_ITEMTEMPLATE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 270
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 331
+    END
+
     IDD_CREATENEWSTORE, DIALOG
     BEGIN
         LEFTMARGIN, 7
@@ -1207,11 +1260,11 @@ BEGIN
     IDS_UPDATEURL           "http://liquidFOLDERS.net/download/es/"
     IDS_ABOUTURL            "http://liquidFOLDERS.net/start/es/"
     IDS_ERROR               "Error"
-    IDS_STORES_SINGULAR     "%u store"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_STORES_SINGULAR     "%u store"
     IDS_STORES_PLURAL       "%u stores"
     IDS_DRIVES_SINGULAR     "%u unidad"
     IDS_DRIVES_PLURAL       "%u unidas"
@@ -1227,11 +1280,11 @@ BEGIN
     IDS_UACMESSAGE          "liquidFOLDERS necesita su permiso para continuar"
     IDS_EXPAND              "&Abrir"
     IDS_COLLAPSE            "&Plegar"
-    IDS_IMPORTFOLDER_CAPTION "Importar carpeta"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_IMPORTFOLDER_CAPTION "Importar carpeta"
     IDS_IMPORTFOLDER_HINT   "La carpeta y todas sus subcarpetas serán importadas."
     IDS_CHOOSESTORE_CAPTION "Stores"
     IDS_CHOOSESTORE_HINT    "Se puede selecionar solamente stores conectado."
@@ -1246,11 +1299,11 @@ BEGIN
     IDS_UPDATE_NOTAVAILABLE "No hay actualización disponible de liquidFOLDERS en este momento."
     IDS_AIRPORT_CODE        "Código"
     IDS_AIRPORT_LOCATION    "Ubicación"
+    IDS_STOREPROPERTIES     "Propiedades de ""%s"""
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_STOREPROPERTIES     "Propiedades de ""%s"""
     IDS_STORENEW            "Crear nuevo store"
     IDS_STORENEW_VOLUME     "Crear nuevo store en unidad %c:"
     IDS_DELETEPROPERTY_CAPTION "Eliminar propriedad"
@@ -1495,6 +1548,24 @@ BEGIN
     PUSHBUTTON      "Annuler",IDCANCEL,203,295,50,14,WS_GROUP
 END
 
+IDD_ITEMTEMPLATE DIALOGEX 0, 0, 291, 338
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
+CAPTION "Inspecteur"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "",IDC_DESTINATION,"CStorePanel",WS_GROUP,14,16,176,34
+    PUSHBUTTON      "Choisissez le &store...",IDC_CHOOSESTORE,196,25,81,14
+    CONTROL         "",IDC_INSPECTOR,"CInspectorGrid",WS_GROUP | WS_TABSTOP,14,93,263,190
+    CONTROL         "Classer &alphabétiquement",IDC_ALPHABETICALLY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,291,195,10
+    PUSHBUTTON      "&Vider",IDC_RESET,227,289,50,14,WS_GROUP
+    DEFPUSHBUTTON   "OK",IDOK,120,317,50,14,WS_GROUP
+    PUSHBUTTON      "Omettre",IDC_SKIP,177,317,50,14,WS_GROUP
+    PUSHBUTTON      "Annuler",IDCANCEL,234,317,50,14,WS_GROUP
+    GROUPBOX        "Destination",IDC_STATIC,7,7,277,49
+    GROUPBOX        "Qualités des fichiers",IDC_GROUPBOX1,7,62,277,249
+    LTEXT           "Les qualités de fichier manquants seront mis en utilisant les valeurs si-dessous.\nSi vous ne voulez pas que vos fichiers soient amendés, appuyez ""Omettre"".",IDC_STATIC,14,73,263,18
+END
+
 IDD_CREATENEWSTORE DIALOGEX 0, 0, 116, 28
 STYLE DS_SETFONT | DS_FIXEDSYS | DS_CONTROL | WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN
 EXSTYLE WS_EX_CONTROLPARENT
@@ -1702,6 +1773,14 @@ BEGIN
         BOTTOMMARGIN, 309
     END
 
+    IDD_ITEMTEMPLATE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 284
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 331
+    END
+
     IDD_CREATENEWSTORE, DIALOG
     BEGIN
         LEFTMARGIN, 7
@@ -1780,11 +1859,11 @@ BEGIN
     IDS_UPDATEURL           "http://liquidFOLDERS.net/download/fr/"
     IDS_ABOUTURL            "http://liquidFOLDERS.net/start/fr/"
     IDS_ERROR               "Erreur"
-    IDS_STORES_SINGULAR     "%u store"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_STORES_SINGULAR     "%u store"
     IDS_STORES_PLURAL       "%u stores"
     IDS_DRIVES_SINGULAR     "%u lecteur"
     IDS_DRIVES_PLURAL       "%u lecteurs"
@@ -1800,11 +1879,11 @@ BEGIN
     IDS_UACMESSAGE          "liquidFOLDERS a besoin de votre permission de continuer"
     IDS_EXPAND              "&Ouvrir"
     IDS_COLLAPSE            "&Fermer"
-    IDS_IMPORTFOLDER_CAPTION "Importer dossier"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_IMPORTFOLDER_CAPTION "Importer dossier"
     IDS_IMPORTFOLDER_HINT   "Le dossier et tous ses sous-dossiers seront importés."
     IDS_CHOOSESTORE_CAPTION "Stores"
     IDS_CHOOSESTORE_HINT    "Seulement stores montée pouvoir choisissse."
@@ -1819,11 +1898,11 @@ BEGIN
     IDS_UPDATE_NOTAVAILABLE "Aucune nouvelle version de liquidFOLDERS pour télécharger n'est prête."
     IDS_AIRPORT_CODE        "Code"
     IDS_AIRPORT_LOCATION    "Endroit"
+    IDS_STOREPROPERTIES     "Qualités de ""%s"""
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_STOREPROPERTIES     "Qualités de ""%s"""
     IDS_STORENEW            "Créez un store nouveau"
     IDS_STORENEW_VOLUME     "Créez un store nouveau sur lecteur %c:"
     IDS_DELETEPROPERTY_CAPTION "Effacez propriété"
@@ -2133,6 +2212,24 @@ BEGIN
     PUSHBUTTON      "Cancel",IDCANCEL,203,295,50,14,WS_GROUP
 END
 
+IDD_ITEMTEMPLATE DIALOGEX 0, 0, 277, 338
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
+CAPTION "Inspector"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "",IDC_DESTINATION,"CStorePanel",WS_GROUP,14,16,177,34
+    PUSHBUTTON      "Choose &store...",IDC_CHOOSESTORE,197,25,66,14
+    CONTROL         "",IDC_INSPECTOR,"CInspectorGrid",WS_GROUP | WS_TABSTOP,14,93,249,190
+    CONTROL         "Sort &alphabetically",IDC_ALPHABETICALLY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,291,181,10
+    PUSHBUTTON      "&Reset",IDC_RESET,213,289,50,14,WS_GROUP
+    DEFPUSHBUTTON   "OK",IDOK,106,317,50,14,WS_GROUP
+    PUSHBUTTON      "Skip",IDC_SKIP,163,317,50,14,WS_GROUP
+    PUSHBUTTON      "Cancel",IDCANCEL,220,317,50,14,WS_GROUP
+    GROUPBOX        "Destination",IDC_STATIC,7,7,263,49
+    GROUPBOX        "File properties",IDC_GROUPBOX1,7,62,263,249
+    LTEXT           "Missing file properties will be set using the values below.\nIf you don't want your files to be amended, press ""Skip"".",IDC_STATIC,14,73,249,18
+END
+
 IDD_CREATENEWSTORE DIALOGEX 0, 0, 102, 28
 STYLE DS_SETFONT | DS_FIXEDSYS | DS_CONTROL | WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN
 EXSTYLE WS_EX_CONTROLPARENT
@@ -2333,6 +2430,14 @@ BEGIN
         BOTTOMMARGIN, 309
     END
 
+    IDD_ITEMTEMPLATE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 270
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 331
+    END
+
     IDD_EDITTIME, DIALOG
     BEGIN
         LEFTMARGIN, 7
@@ -2395,11 +2500,11 @@ BEGIN
     IDS_UPDATEURL           "http://liquidFOLDERS.net/download/en/"
     IDS_ABOUTURL            "http://liquidFOLDERS.net/start/en/"
     IDS_ERROR               "Error"
-    IDS_STORES_SINGULAR     "%u store"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_STORES_SINGULAR     "%u store"
     IDS_STORES_PLURAL       "%u stores"
     IDS_DRIVES_SINGULAR     "%u volume"
     IDS_DRIVES_PLURAL       "%u volumes"
@@ -2415,11 +2520,11 @@ BEGIN
     IDS_UACMESSAGE          "liquidFOLDERS needs your permission"
     IDS_EXPAND              "&Expand"
     IDS_COLLAPSE            "&Collapse"
-    IDS_IMPORTFOLDER_CAPTION "Import folder"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_IMPORTFOLDER_CAPTION "Import folder"
     IDS_IMPORTFOLDER_HINT   "The folder and all its subfolders will be imported."
     IDS_CHOOSESTORE_CAPTION "Stores"
     IDS_CHOOSESTORE_HINT    "Only mounted stores can be selected."
@@ -2434,11 +2539,11 @@ BEGIN
     IDS_UPDATE_NOTAVAILABLE "There is no update of liquidFOLDERS available right now."
     IDS_AIRPORT_CODE        "IATA code"
     IDS_AIRPORT_LOCATION    "Location"
+    IDS_STOREPROPERTIES     "Properties of ""%s"""
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_STOREPROPERTIES     "Properties of ""%s"""
     IDS_STORENEW            "Create new store"
     IDS_STORENEW_VOLUME     "Create new store on volume %c:"
     IDS_DELETEPROPERTY_CAPTION "Remove property"

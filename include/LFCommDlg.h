@@ -34,6 +34,7 @@
 #include "..\LFCommDlg\LFDropTarget.h"
 #include "..\LFCommDlg\LFEditTagsDlg.h"
 #include "..\LFCommDlg\LFEditTimeDlg.h"
+#include "..\LFCommDlg\LFItemTemplateDlg.h"
 #include "..\LFCommDlg\LFLicenseDlg.h"
 #include "..\LFCommDlg\LFProgressDlg.h"
 #include "..\LFCommDlg\LFSelectLocationGPSDlg.h"

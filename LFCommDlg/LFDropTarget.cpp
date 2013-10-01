@@ -49,7 +49,7 @@ LFDropTarget::LFDropTarget()
 	CoCreateInstance(CLSID_DragDropHelper, NULL, CLSCTX_INPROC_SERVER, IID_IDropTargetHelper, (void**)&m_pDropTargetHelper);
 
 	p_Owner = NULL;
-	m_StoreIDValid = m_AllowChooseStore = m_IsDragging = FALSE;
+	m_StoreIDValid = m_SkipTemplate = m_AllowChooseStore = m_IsDragging = FALSE;
 	p_Filter = NULL;
 	p_SearchResult = NULL;
 }
@@ -92,21 +92,16 @@ __forceinline HRESULT LFDropTarget::ImportFromFS(HGLOBAL hgDrop, DWORD dwEffect,
 	strcpy_s(wp.StoreID, LFKeySize, StoreID);
 	wp.Move = (dwEffect & DROPEFFECT_MOVE)!=0;
 
-	if (p_Filter)
+	// Template füllen
+	if (!m_SkipTemplate)
 	{
 		wp.Template = LFAllocItemDescriptor();
 
-		LFFilterCondition* pCondition = p_Filter->ConditionList;
-		while (pCondition)
+		LFItemTemplateDlg dlg(pWnd, wp.Template, wp.StoreID, m_AllowChooseStore, p_Filter);
+		if (dlg.DoModal()==IDCANCEL)
 		{
-			if (pCondition->Compare==LFFilterCompareSubfolder)
-			{
-				UINT Attr = pCondition->AttrData.Attr;
-				if ((!LFGetApp()->m_Attributes[Attr]->ReadOnly) && (Attr!=LFAttrFileName))
-					LFSetAttributeVariantData(wp.Template, &pCondition->AttrData);
-			}
-
-			pCondition = pCondition->Next;
+			LFFreeItemDescriptor(wp.Template);
+			return E_ABORT;
 		}
 	}
 
@@ -241,6 +236,8 @@ STDMETHODIMP LFDropTarget::DragOver(DWORD grfKeyState, POINTL ptl, DWORD* pdwEff
 		POINT pt = { ptl.x, ptl.y };
 		m_pDropTargetHelper->DragOver(&pt, *pdwEffect);
 	}
+
+	m_SkipTemplate = (grfKeyState & MK_SHIFT);
 
 	*pdwEffect &= m_IsDragging ? DROPEFFECT_NONE : p_SearchResult ? DROPEFFECT_COPY : (grfKeyState & MK_CONTROL) ? DROPEFFECT_MOVE : DROPEFFECT_COPY;
 	return S_OK;

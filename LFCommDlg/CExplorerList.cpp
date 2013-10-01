@@ -42,7 +42,7 @@ void CExplorerList::Init()
 	LVTILEVIEWINFO tvi;
 	ZeroMemory(&tvi, sizeof(tvi));
 	tvi.cbSize = sizeof(LVTILEVIEWINFO);
-	tvi.cLines = 2;
+	tvi.cLines = 3;
 	tvi.dwFlags = LVTVIF_FIXEDWIDTH;
 	tvi.dwMask = LVTVIM_COLUMNS | LVTVIM_TILESIZE;
 	tvi.sizeTile.cx = 218;
@@ -136,9 +136,10 @@ void CExplorerList::SetSearchResult(LFSearchResult* result)
 		LFSortSearchResult(result, LFAttrFileName, false);
 		LFErrorBox(result->m_LastError, GetParent()->GetSafeHwnd());
 
-		UINT puColumns[2];
+		UINT puColumns[3];
 		puColumns[0] = 1;
 		puColumns[1] = 2;
+		puColumns[2] = 3;
 
 		LVITEM lvi;
 		ZeroMemory(&lvi, sizeof(lvi));
@@ -149,7 +150,7 @@ void CExplorerList::SetSearchResult(LFSearchResult* result)
 		for (UINT a=0; a<result->m_ItemCount; a++)
 		{
 			lvi.iItem = a;
-			lvi.cColumns = 2;
+			lvi.cColumns = 3;
 			lvi.pszText = (LPWSTR)result->m_Items[a]->CoreAttributes.FileName;
 			lvi.iImage = result->m_Items[a]->IconID-1;
 			lvi.iGroupId = result->m_Items[a]->CategoryID;

@@ -595,6 +595,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\LFItemTemplateDlg.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\LFLicenseDlg.cpp"
 				>
 			</File>
@@ -861,6 +865,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\LFItemTemplateDlg.h"
+				>
+			</File>
+			<File
 				RelativePath=".\LFLicenseDlg.h"
 				>
 			</File>
@@ -992,6 +1000,10 @@
 			</File>
 			<File
 				RelativePath=".\res\Info.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Inspector_Tiny.ico"
 				>
 			</File>
 			<File

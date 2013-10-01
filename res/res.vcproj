@@ -1181,11 +1181,19 @@
 			>
 		</File>
 		<File
+			RelativePath=".\Inspector.png"
+			>
+		</File>
+		<File
 			RelativePath="Inspector_Black.png"
 			>
 		</File>
 		<File
 			RelativePath="Inspector_Grey.png"
+			>
+		</File>
+		<File
+			RelativePath=".\Inspector_Tiny.ico"
 			>
 		</File>
 		<File
