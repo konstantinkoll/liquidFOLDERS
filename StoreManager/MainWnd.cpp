@@ -699,7 +699,7 @@ void CMainWnd::OnItemOpen()
 					}
 					else
 					{
-						res = LFGetFileLocation(i, Path, MAX_PATH, true);
+						res = LFGetFileLocation(i, Path, MAX_PATH, true, true);
 						if (res==LFOk)
 						{
 							if (ShellExecute(NULL, _T("open"), Path, NULL, NULL, SW_SHOW)==(HINSTANCE)SE_ERR_NOASSOC)

@@ -27,8 +27,8 @@ LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,4,0,0
- PRODUCTVERSION 1,4,0,0
+ FILEVERSION 1,4,1,0
+ PRODUCTVERSION 1,4,1,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -45,13 +45,13 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "liquidFOLDERS"
             VALUE "FileDescription", "LFNamespaceExtension"
-            VALUE "FileVersion", "1.4.0"
+            VALUE "FileVersion", "1.4.1"
             VALUE "InternalName", "Explorer Namespace Extension"
             VALUE "LegalCopyright", "© 2009-2013 liquidFOLDERS"
             VALUE "LegalTrademarks", "liquidFOLDERS®"
             VALUE "OriginalFilename", "LFNamespaceExtension.dll"
             VALUE "ProductName", "liquidFOLDERS"
-            VALUE "ProductVersion", "1.4.0"
+            VALUE "ProductVersion", "1.4.1"
         END
     END
     BLOCK "VarFileInfo"
@@ -110,8 +110,8 @@ BEGIN
     IDS_AllFiles            "Alle Dateien"
     IDS_AllFilesComment     "Zeigt alle Dateien"
     IDS_Store               "Store"
-    IDS_Folder              "Virtueller Ordner"
-    IDS_Folders             "Virtuelle Ordner"
+    IDS_Folder              "Ordner"
+    IDS_Folders             "Ordner"
     IDS_Files               "Dateien"
     IDS_NoLicense           "Sie nutzen eine unregistrierte Kopie von liquidFOLDERS. liquidFOLDERS ist Shareware – wenn Sie die Software regelmäßig nutzen, müssen Sie eine Lizenz erwerben!"
     IDS_NULLFOLDER_NameMask "UOhne %s"
@@ -181,10 +181,10 @@ BEGIN
     IDS_InfoTip             "Stores and files"
     IDS_AttributeComment    "LArrange files by %s"
     IDS_AllFiles            "All files"
-    IDS_AllFilesComment     "Shows all files"
+    IDS_AllFilesComment     "Show all files"
     IDS_Store               "Store"
-    IDS_Folder              "Virtual folder"
-    IDS_Folders             "Virtual folders"
+    IDS_Folder              "Folder"
+    IDS_Folders             "Folders"
     IDS_Files               "Files"
     IDS_NoLicense           "You are using an unregistered copy of liquidFOLDERS. liquidFOLDERS is shareware—if you decide to use it regulary, you are required to purchase a license key!"
     IDS_NULLFOLDER_NameMask "LWithout %s"
@@ -256,8 +256,8 @@ BEGIN
     IDS_AllFiles            "Todos los archivos"
     IDS_AllFilesComment     "Muestra todos los archivos"
     IDS_Store               "Store"
-    IDS_Folder              "Carpeta virtual"
-    IDS_Folders             "Carpetas virtual"
+    IDS_Folder              "Carpeta"
+    IDS_Folders             "Carpetas"
     IDS_Files               "Archivos"
     IDS_NoLicense           "Usted está usando una copia no registrada de liquidFOLDERS. liquidFOLDERS es un software de demostración – si usted decide usarlo regularmente, usted está obligado a adquirir una licencia!"
     IDS_NULLFOLDER_NameMask "LSin %s"
@@ -328,8 +328,8 @@ BEGIN
     IDS_AllFiles            "Tous les fichiers"
     IDS_AllFilesComment     "Montre tous les fichiers"
     IDS_Store               "Store"
-    IDS_Folder              "Dossier virtuel"
-    IDS_Folders             "Dossiers virtuelles"
+    IDS_Folder              "Dossier"
+    IDS_Folders             "Dossiers"
     IDS_Files               "Fichiers"
     IDS_NoLicense           "Vous utilisez une copie non enregistrée de liquidFOLDERS. liquidFOLDERS est shareware – si vous utilisez régulièrement le logiciel, vous devez acquérir une licence!"
     IDS_NULLFOLDER_NameMask "LSans %s"

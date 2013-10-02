@@ -1147,7 +1147,7 @@ BOOL CFolderItem::OnOpen(CExecuteMenuitemsEventArgs& e)
 		if (IS(item, CFileItem))
 		{
 			WCHAR Path[MAX_PATH];
-			UINT res = LFGetFileLocation(AS(item, CFileItem)->Item, Path, MAX_PATH, true);
+			UINT res = LFGetFileLocation(AS(item, CFileItem)->Item, Path, MAX_PATH, true, true);
 			if (res!=LFOk)
 			{
 				LFErrorBox(res, GetForegroundWindow());
@@ -1350,7 +1350,7 @@ INT CFolderItem::GetTileViewColumnIndices(UINT* indices)
 	switch (Attrs.Level)
 	{
 	case LevelStores:
-		indices[2] = LFAttrCreatedTime;
+		indices[2] = LFAttrCreationTime;
 		return 3;
 	case LevelAttrValue:
 		indices[2] = LFAttrFileSize;
@@ -1492,7 +1492,7 @@ BOOL CFolderItem::OnOpenWith(CExecuteMenuitemsEventArgs& e)
 		if (IS(item, CFileItem))
 		{
 			WCHAR Path[MAX_PATH];
-			UINT res = LFGetFileLocation(AS(item, CFileItem)->Item, Path, MAX_PATH, true);
+			UINT res = LFGetFileLocation(AS(item, CFileItem)->Item, Path, MAX_PATH, true, true);
 			if (res!=LFOk)
 			{
 				LFErrorBox(res, GetForegroundWindow());

@@ -22,7 +22,7 @@ LFCore_API HBITMAP LFGetThumbnail(LFItemDescriptor* i, SIZE sz)
 
 	wchar_t Path[MAX_PATH];
 
-	if (LFGetFileLocation(i, Path, MAX_PATH, true)!=LFOk)
+	if (LFGetFileLocation(i, Path, MAX_PATH, true, false)!=LFOk)
 		return NULL;
 
 	HBITMAP hBmp = NULL;

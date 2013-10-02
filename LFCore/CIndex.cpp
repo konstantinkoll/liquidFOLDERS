@@ -245,8 +245,6 @@ void CIndex::Update(LFItemDescriptor* i, bool IncludeSlaves)
 {
 	assert(i);
 
-	i->CoreAttributes.Flags &= ~LFFlagNew;
-
 	// Master
 	if (!LoadTable(IDMaster))
 		return;
@@ -296,12 +294,11 @@ bool CIndex::UpdateMissing(LFItemDescriptor* i, bool Exists)
 	LFCoreAttributes* PtrM;
 
 	if (Tables[IDMaster]->FindKey(i->CoreAttributes.FileID, ID, (void*&)PtrM))
-	{
 		if (Exists)
 		{
-			if (PtrM->Flags & (LFFlagNew | LFFlagMissing))
+			if (PtrM->Flags & LFFlagMissing)
 			{
-				i->CoreAttributes.Flags &= ~(LFFlagNew | LFFlagMissing);
+				i->CoreAttributes.Flags &= LFFlagMissing;
 				Tables[IDMaster]->Update(i, PtrM);
 			}
 		}
@@ -313,9 +310,8 @@ bool CIndex::UpdateMissing(LFItemDescriptor* i, bool Exists)
 				Tables[IDMaster]->Update(i, PtrM);
 			}
 		}
-	}
 
-	return !(i->CoreAttributes.Flags & LFFlagMissing);
+	return (i->CoreAttributes.Flags & LFFlagMissing)==0;
 }
 
 void CIndex::Update(LFTransactionList* tl, LFVariantData* value1, LFVariantData* value2, LFVariantData* value3)
@@ -462,6 +458,7 @@ void CIndex::Delete(LFTransactionList* tl, bool PutInTrash, LFProgress* pProgres
 				{
 					if (PutInTrash)
 					{
+						PtrM->Flags &= ~LFFlagNew;
 						PtrM->Flags |= LFFlagTrash;
 						GetSystemTimeAsFileTime(&PtrM->DeleteTime);
 						Tables[IDMaster]->MakeDirty();

@@ -70,7 +70,7 @@ DWORD WINAPI WorkerDelete(void* lParam)
 {
 	LF_WORKERTHREAD_START(lParam);
 
-	LFTransactionDelete(wp->TransactionList, false,&p);
+	LFTransactionDelete(wp->TransactionList, false, &p);
 
 	LF_WORKERTHREAD_FINISH();
 }
@@ -1684,7 +1684,7 @@ void CMainView::OnFileOpenWith()
 	if (idx!=-1)
 	{
 		WCHAR Path[MAX_PATH];
-		UINT res = LFGetFileLocation(p_CookedFiles->m_Items[idx], Path, MAX_PATH, true);
+		UINT res = LFGetFileLocation(p_CookedFiles->m_Items[idx], Path, MAX_PATH, true, true);
 		if (res==LFOk)
 		{
 			WCHAR Cmd[300];

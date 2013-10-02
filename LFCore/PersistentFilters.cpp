@@ -244,7 +244,7 @@ LFCore_API LFFilter* LFLoadFilter(wchar_t* fn)
 LFCore_API LFFilter* LFLoadFilter(LFItemDescriptor* i)
 {
 	wchar_t Path[2*MAX_PATH];
-	if (LFGetFileLocation(i, Path, 2*MAX_PATH, true, true)!=LFOk)
+	if (LFGetFileLocation(i, Path, 2*MAX_PATH, true, true, true)!=LFOk)
 		return NULL;
 
 	LFFilter* f = LoadFilter(Path, i->StoreID);

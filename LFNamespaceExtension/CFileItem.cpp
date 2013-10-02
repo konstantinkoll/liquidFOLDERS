@@ -83,7 +83,7 @@ void CFileItem::GetDisplayNameEx(CString& displayName, DisplayNameFlags flags)
 	if ((flags & (NSEDNF_InFolder | NSEDNF_ForParsing))==NSEDNF_ForParsing)
 	{
 		WCHAR Path[MAX_PATH];
-		displayName = (LFGetFileLocation(Item, Path, MAX_PATH, false)==LFOk) ? Path : _T("?");
+		displayName = (LFGetFileLocation(Item, Path, MAX_PATH, false, false)==LFOk) ? Path : _T("?");
 		return;
 	}
 
@@ -411,7 +411,7 @@ LPSTREAM CFileItem::GetStream()
 	LPSTREAM ret = NULL;
 
 	WCHAR Path[MAX_PATH];
-	UINT res = LFGetFileLocation(Item, Path, MAX_PATH, true);
+	UINT res = LFGetFileLocation(Item, Path, MAX_PATH, true, false);
 	if (res!=LFOk)
 	{
 		LFErrorBox(res);
@@ -482,7 +482,7 @@ BOOL CFileItem::SetShellLink(IShellLink* pShellLink)
 	ASSERT(pShellLink);
 
 	WCHAR Path[MAX_PATH];
-	if (LFGetFileLocation(Item, Path, MAX_PATH, true)==LFOk)
+	if (LFGetFileLocation(Item, Path, MAX_PATH, true, false)==LFOk)
 	{
 		WCHAR Ext[LFExtSize+1] = L".*";
 		WCHAR* LastBackslash = wcsrchr(Path, L'\\');

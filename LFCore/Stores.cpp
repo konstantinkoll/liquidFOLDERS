@@ -306,7 +306,7 @@ void SendShellNotifyMessage(unsigned int Msg, char* StoreID, LPITEMIDLIST oldpid
 // Stores
 //
 
-LFCore_API unsigned int LFGetFileLocation(LFItemDescriptor* i, wchar_t* dst, size_t cCount, bool CheckExists, bool Extended)
+LFCore_API unsigned int LFGetFileLocation(LFItemDescriptor* i, wchar_t* dst, size_t cCount, bool CheckExists, bool RemoveNew, bool Extended)
 {
 	if (((i->Type & LFTypeMask)!=LFTypeFile) || (i->StoreID[0]=='\0'))
 		return LFIllegalKey;
@@ -330,7 +330,7 @@ LFCore_API unsigned int LFGetFileLocation(LFItemDescriptor* i, wchar_t* dst, siz
 			GetFileLocation(slot->DatPath, &i->CoreAttributes, tmpPath, 2*MAX_PATH);
 			res = LFOk;
 
-			if (CheckExists)
+			if (CheckExists || RemoveNew)
 			{
 				unsigned int Flags = i->CoreAttributes.Flags;
 				bool Exists = FileExists(tmpPath);
@@ -345,8 +345,14 @@ LFCore_API unsigned int LFGetFileLocation(LFItemDescriptor* i, wchar_t* dst, siz
 					{
 						if (idx1)
 						{
-							if (!idx1->UpdateMissing(i, Exists))
-								res = LFNoFileBody;
+							if (RemoveNew && (Flags & LFFlagNew))
+							{
+								i->CoreAttributes.Flags &= ~LFFlagNew;
+								idx1->Update(i, false);
+							}
+							if ((!Exists) || (Flags & LFFlagMissing))
+								if (!idx1->UpdateMissing(i, Exists))
+									res = LFNoFileBody;
 							delete idx1;
 						}
 						if (idx2)
