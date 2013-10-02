@@ -166,9 +166,9 @@ BOOL CFileDropWnd::OnEraseBkgnd(CDC* pDC)
 	CGlassWindow::OnEraseBkgnd(&dc);
 
 	// Dropzone
-	POINT pt = { rlayout.left+(rlayout.Width()-128)/2, rlayout.top };
+	POINT pt = { rlayout.left+(rlayout.Width()-128)/2-1, rlayout.top };
 	SIZE sz = { 128, 128 };
-	theApp.m_CoreImageListJumbo.DrawEx(&dc, (m_StoreValid ? LFGetStoreIcon(&m_Store) : IDI_STR_Internal)-1, pt, sz, CLR_NONE, CLR_NONE, (m_StoreValid && m_StoreMounted) ? ILD_TRANSPARENT : m_IsAeroWindow ? ILD_BLEND25 : ILD_BLEND50);
+	theApp.m_CoreImageListJumbo.DrawEx(&dc, (m_StoreValid ? LFGetStoreIcon(&m_Store) : IDI_STR_Unknown)-1, pt, sz, CLR_NONE, CLR_NONE, (m_StoreValid && m_StoreMounted) ? ILD_TRANSPARENT : m_IsAeroWindow ? ILD_BLEND25 : ILD_BLEND50);
 
 	// Text
 	CRect rtext(rlayout);
@@ -381,5 +381,17 @@ void CFileDropWnd::OnQuit()
 
 void CFileDropWnd::OnUpdateCommands(CCmdUI* pCmdUI)
 {
-	pCmdUI->Enable(pCmdUI->m_nID==ID_APP_OPENSTORE ? _waccess(theApp.m_Path+_T("StoreManager.exe"), 0)==0 : m_StoreValid);
+	BOOL bEnable = m_StoreValid;
+
+	switch (pCmdUI->m_nID)
+	{
+	case ID_APP_OPENSTORE:
+		bEnable = _waccess(theApp.m_Path+_T("StoreManager.exe"), 0)==0;
+		break;
+	case IDM_STORE_IMPORTFOLDER:
+		bEnable &= m_StoreMounted;
+		break;
+	}
+
+	pCmdUI->Enable(bEnable);
 }
