@@ -890,6 +890,7 @@ unsigned int RunMaintenance(LFStoreDescriptor* s, bool scheduled, LFProgress* pP
 		ABORT(LFIndexRepairError);
 	case IndexRepaired:
 		s->IndexVersion = CurIdxVersion;
+		scheduled = true;
 
 		res = UpdateStore(s);
 		if (res!=LFOk)
@@ -904,7 +905,9 @@ unsigned int RunMaintenance(LFStoreDescriptor* s, bool scheduled, LFProgress* pP
 			return res;
 	}
 
-	GetSystemTimeAsFileTime(&s->MaintenanceTime);
+	if (scheduled)
+		GetSystemTimeAsFileTime(&s->MaintenanceTime);
+
 	s->NeedsCheck = false;
 
 	res = UpdateStore(s, false);

@@ -600,9 +600,7 @@ LFCore_API bool LFIsNullVariantData(LFVariantData* v)
 
 LFCore_API bool LFIsVariantDataEqual(LFVariantData* v1, LFVariantData* v2)
 {
-	if (v1->IsNull!=v2->IsNull)
-		return false;
-	if (v1->Type!=v2->Type)
+	if ((v1->IsNull!=v2->IsNull) || (v1->Type!=v2->Type))
 		return false;
 
 	assert(v1->Attr<LFAttributeCount);
