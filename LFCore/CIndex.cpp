@@ -664,7 +664,7 @@ void CIndex::Retrieve(LFFilter* f, LFSearchResult* res, unsigned int Source)
 	assert(f);
 	assert(f->Mode>=LFFilterModeDirectoryTree);
 	assert(res);
-	assert((Source & LFTypeMaskSource)==Source);
+	assert((Source & LFTypeSourceMask)==Source);
 
 	if (!LoadTable(IDMaster))
 	{
@@ -721,7 +721,7 @@ void CIndex::AddToSearchResult(LFFileIDList* il, LFSearchResult* res, unsigned i
 {
 	assert(il);
 	assert(res);
-	assert((Source & LFTypeMaskSource)==Source);
+	assert((Source & LFTypeSourceMask)==Source);
 
 	if (!LoadTable(IDMaster))
 	{

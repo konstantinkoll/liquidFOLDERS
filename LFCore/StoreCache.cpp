@@ -340,7 +340,7 @@ unsigned int ValidateStoreSettings(LFStoreDescriptor* s, int Source)
 			if (Source==-1)
 				Source = LFGetSourceForDrive(s->DatPath[0] & 0xFF);
 
-			assert((Source & LFTypeMaskSource)==Source);
+			assert((Source & LFTypeSourceMask)==Source);
 			s->Source = Source;
 		}
 
