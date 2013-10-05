@@ -15,9 +15,7 @@ using namespace CryptoPP;
 using namespace std;
 
 
-// Der Inhalt dieses Segments wird über alle Instanzen von LFCore geteilt.
-
-#pragma data_seg("common_license")
+#pragma data_seg(".shared")
 
 bool LicenseRead = false;
 bool ExpireRead = false;
@@ -25,7 +23,6 @@ LFLicense LicenseBuffer = { 0 };
 FILETIME ExpireBuffer = { 0, 0 };
 
 #pragma data_seg()
-#pragma comment(linker, "/SECTION:common_license,RWS")
 
 
 void ParseVersion(string& tmpStr, LFLicenseVersion* Version)

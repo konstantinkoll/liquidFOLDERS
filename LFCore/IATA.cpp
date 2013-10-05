@@ -9,15 +9,13 @@
 extern unsigned char AttrTypes[];
 
 
-// Der Inhalt dieses Segments wird über alle Instanzen von LFCore geteilt.
-
-#pragma data_seg("common_iata")
+#pragma data_seg(".shared")
 
 #include "IATA_DE.h"
 #include "IATA_EN.h"
 
 #pragma data_seg()
-#pragma comment(linker, "/SECTION:common_iata,RWS")
+
 
 bool UseGermanDB = false;
 

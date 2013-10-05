@@ -8,7 +8,7 @@
 #include <shlwapi.h>
 
 
-extern unsigned char AttrTypes[];
+extern const unsigned char AttrTypes[];
 
 
 static const GUID PropertyStorage =

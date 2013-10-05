@@ -11,7 +11,7 @@
 #include <wchar.h>
 
 
-extern unsigned char AttrTypes[];
+extern const unsigned char AttrTypes[];
 
 
 // Conversion ToString

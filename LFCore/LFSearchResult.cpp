@@ -15,7 +15,7 @@
 
 
 extern HMODULE LFCoreModuleHandle;
-extern unsigned char AttrTypes[];
+extern const unsigned char AttrTypes[];
 extern unsigned int VolumeTypes[];
 extern void LoadTwoStrings(HINSTANCE hInstance, unsigned int uID, wchar_t* lpBuffer1, int cchBufferMax1, wchar_t* lpBuffer, int cchBufferMax);
 

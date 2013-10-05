@@ -12,8 +12,8 @@
 
 extern HMODULE LFCoreModuleHandle;
 extern HANDLE Mutex_Stores;
-extern int CoreOffsets[];
-extern unsigned char AttrTypes[];
+extern const int CoreOffsets[];
+extern const unsigned char AttrTypes[];
 
 
 wchar_t* wcsistr(const wchar_t* String, const wchar_t* Pattern)

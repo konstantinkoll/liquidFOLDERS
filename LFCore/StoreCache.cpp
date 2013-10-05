@@ -14,20 +14,21 @@
 #include <sys/stat.h>
 
 
-// Der Inhalt dieses Segments wird über alle Instanzen von LFCore geteilt.
-// Der Zugriff muss daher über Mutex-Objekte serialisiert/synchronisiert werden.
-// Alle Variablen im Segment müssen initalisiert werden !
-
-#pragma data_seg("common_storecache")
+#pragma data_seg(".shared")
 
 bool Initialized = false;
-char DefaultStore[LFKeySize] = { 0 };
-
-unsigned int StoreCount = 0;
-LFStoreDescriptor StoreCache[MaxStores] = { 0 };
 
 #pragma data_seg()
-#pragma comment(linker, "/SECTION:common_storecache,RWS")
+
+
+#pragma bss_seg(".stores")
+
+char DefaultStore[LFKeySize];
+unsigned int StoreCount;
+LFStoreDescriptor StoreCache[MaxStores];
+
+#pragma data_seg()
+#pragma comment(linker, "/SECTION:.stores,RWS")
 
 
 extern HANDLE Mutex_Stores;

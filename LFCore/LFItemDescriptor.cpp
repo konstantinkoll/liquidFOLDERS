@@ -7,13 +7,7 @@
 #include <malloc.h>
 
 
-// Der Inhalt dieses Segments wird über alle Instanzen von LFCore geteilt.
-// Der Zugriff muss daher über Mutex-Objekte serialisiert/synchronisiert werden.
-// Alle Variablen im Segment müssen initalisiert werden !
-
-#pragma data_seg("common_attrs")
-
-int CoreOffsets[LFLastCoreAttribute+1] = {
+extern const int CoreOffsets[LFLastCoreAttribute+1] = {
 	offsetof(LFCoreAttributes, FileName),
 	-1,
 	offsetof(LFCoreAttributes, FileID),
@@ -37,7 +31,7 @@ int CoreOffsets[LFLastCoreAttribute+1] = {
 	offsetof(LFCoreAttributes, LocationGPS)
 };
 
-size_t AttrSizes[LFTypeCount] = {
+extern const size_t AttrSizes[LFTypeCount] = {
 	0,							// LFTypeUnicodeString
 	0,							// LFTypeUnicodeArray
 	0,							// LFTypeAnsiString
@@ -55,7 +49,7 @@ size_t AttrSizes[LFTypeCount] = {
 	sizeof(double)				// LFTypeMegapixel
 };
 
-unsigned char AttrTypes[LFAttributeCount] = {
+extern const unsigned char AttrTypes[LFAttributeCount] = {
 	LFTypeUnicodeString,		// LFAttrFileName
 	LFTypeAnsiString,			// LFAttrStoreID
 	LFTypeAnsiString,			// LFAttrFileID
@@ -115,9 +109,6 @@ unsigned char AttrTypes[LFAttributeCount] = {
 	LFTypeTime,					// LFAttrDoneTime
 	LFTypeUnicodeString			// LFAttrCustomer
 };
-
-#pragma data_seg()
-#pragma comment(linker, "/SECTION:common_attrs,RWS")
 
 extern HMODULE LFCoreModuleHandle;
 

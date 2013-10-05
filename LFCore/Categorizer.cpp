@@ -8,7 +8,7 @@
 
 
 extern HMODULE LFCoreModuleHandle;
-extern unsigned char AttrTypes[];
+extern const unsigned char AttrTypes[];
 
 
 // CCategorizer

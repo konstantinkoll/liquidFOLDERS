@@ -21,20 +21,16 @@
 
 HMODULE LFCoreModuleHandle;
 LFMessageIDs LFMessages;
-extern unsigned char AttrTypes[];
+extern const unsigned char AttrTypes[];
 extern LFShellProperty AttrProperties[];
 
 
-// Der Inhalt dieses Segments wird über alle Instanzen von LFCore geteilt.
-// Der Zugriff muss daher über Mutex-Objekte serialisiert/synchronisiert werden.
-// Alle Variablen im Segment müssen initalisiert werden !
-
-#pragma data_seg("common_drives")
+#pragma data_seg(".shared")
 
 unsigned int VolumeTypes[26] = { DRIVE_UNKNOWN };
 
 #pragma data_seg()
-#pragma comment(linker, "/SECTION:common_drives,RWS")
+#pragma comment(linker, "/SECTION:.shared,RWS")
 
 
 LFCore_API void LFInitialize()
