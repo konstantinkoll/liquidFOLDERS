@@ -287,6 +287,8 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				Description="LFNamespaceExtension wird gepackt"
+				CommandLine="&quot;$(SolutionDir)upx.exe&quot; &quot;$(TargetPath)&quot; --compress-icons=3"
 			/>
 		</Configuration>
 		<Configuration
@@ -381,6 +383,8 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				Description="LFNamespaceExtension wird gepackt"
+				CommandLine="&quot;$(SolutionDir)upx.exe&quot; &quot;$(TargetPath)&quot; --compress-icons=3"
 			/>
 		</Configuration>
 	</Configurations>
