@@ -1089,6 +1089,7 @@ LRESULT CMainView::OnRenameItem(WPARAM wParam, LPARAM lParam)
 	value.Attr = LFAttrFileName;
 	value.Type = LFTypeUnicodeString;
 	value.IsNull = false;
+
 	wcsncpy_s(value.UnicodeString, 256, (WCHAR*)lParam, 255);
 
 	LFTransactionUpdate(tl, GetSafeHwnd(), &value);
@@ -1420,9 +1421,9 @@ void CMainView::OnNewRemoveNew()
 	Value.Attr = LFAttrFlags;
 	LFGetNullVariantData(&Value);
 
-	Value.IsNull = false;
 	Value.Flags.Flags = 0;
 	Value.Flags.Mask = LFFlagNew;
+	Value.IsNull = false;
 
 	CWaitCursor csr;
 

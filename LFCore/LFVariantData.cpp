@@ -717,7 +717,6 @@ LFCore_API void LFSetAttributeVariantData(LFItemDescriptor* i, LFVariantData* v)
 {
 	assert(i);
 	assert(v->Attr<LFAttributeCount);
-	assert(!v->IsNull);
 
 	// Special treatment for flags
 	if (v->Attr==LFAttrFlags)

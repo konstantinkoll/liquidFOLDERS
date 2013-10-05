@@ -202,7 +202,7 @@ void CProperty::OnClickButton()
 
 BOOL CProperty::CanDelete()
 {
-	return (p_Data->Attr!=LFAttrFileName) && (!LFIsNullVariantData(p_Data));
+	return (p_Data->Attr!=LFAttrFileName) && ((!LFIsNullVariantData(p_Data)) || m_Multiple);
 }
 
 BOOL CProperty::HasButton()

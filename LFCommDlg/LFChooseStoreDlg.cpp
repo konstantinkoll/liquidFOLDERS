@@ -231,6 +231,7 @@ void LFChooseStoreDlg::OnEndLabelEdit(NMHDR* pNMHDR, LRESULT* pResult)
 			value.Attr = LFAttrFileName;
 			value.Type = LFTypeUnicodeString;
 			value.IsNull = false;
+
 			wcsncpy_s(value.UnicodeString, 256, pDispInfo->item.pszText, 255);
 
 			LFTransactionUpdate(tl, NULL, &value);

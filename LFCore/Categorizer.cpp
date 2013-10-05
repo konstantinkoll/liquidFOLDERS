@@ -445,6 +445,7 @@ LFFilterCondition* MegapixelCategorizer::GetCondition(LFItemDescriptor* i)
 	c->AttrData.Attr = attr;
 	c->AttrData.Type = AttrTypes[attr];
 	c->AttrData.IsNull = false;
+
 	c->AttrData.Megapixel = (unsigned int)*((double*)i->AttributeValues[attr]);
 
 	return c;
