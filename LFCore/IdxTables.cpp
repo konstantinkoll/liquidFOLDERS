@@ -304,7 +304,7 @@ void CIdxTablePictures::WriteToItemDescriptor(LFItemDescriptor* i, void* PtrSrc)
 	i->AttributeValues[LFAttrTitle] = ((LFPictureAttributes*)i->Slave)->Title;
 	i->AttributeValues[LFAttrRecordingEquipment] = ((LFPictureAttributes*)i->Slave)->Equipment;
 	i->AttributeValues[LFAttrRoll] = ((LFPictureAttributes*)i->Slave)->Roll;
-	i->AttributeValues[LFAttrExposure] = &((LFPictureAttributes*)i->Slave)->Exposure;
+	i->AttributeValues[LFAttrExposure] = ((LFPictureAttributes*)i->Slave)->Exposure;
 	i->AttributeValues[LFAttrHeight] = &((LFPictureAttributes*)i->Slave)->Height;
 	i->AttributeValues[LFAttrWidth] = &((LFPictureAttributes*)i->Slave)->Width;
 	i->AttributeValues[LFAttrAperture] = &((LFPictureAttributes*)i->Slave)->Aperture;

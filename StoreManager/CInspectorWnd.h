@@ -107,7 +107,7 @@ private:
 	CString m_AttributeVirtualNames[AttrCount-LFAttributeCount];
 	CString m_TypeName;
 
-	void AddValue(LFItemDescriptor* i, UINT Attr, BOOL Editable=TRUE);
+	void AddValue(LFItemDescriptor* i, UINT Attr, BOOL Editable=FALSE);
 	void AddValueVirtual(UINT Attr, CHAR* Value);
 	void AddValueVirtual(UINT Attr, WCHAR* Value);
 };

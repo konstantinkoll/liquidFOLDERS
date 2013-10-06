@@ -164,7 +164,6 @@ void CInspectorWnd::AddValue(LFItemDescriptor* i, UINT Attr, BOOL Editable)
 	m_AttributeEditable[Attr] |= Editable;
 
 	if (i->AttributeValues[Attr])
-	{
 		switch (m_AttributeStatus[Attr])
 		{
 		case StatusUnused:
@@ -179,19 +178,6 @@ void CInspectorWnd::AddValue(LFItemDescriptor* i, UINT Attr, BOOL Editable)
 			if (!LFIsEqualToVariantData(i, &m_AttributeValues[Attr]))
 				m_AttributeStatus[Attr] = StatusMultiple;
 		}
-	}
-	else
-		if (Editable)
-			switch (m_AttributeStatus[Attr])
-			{
-			case StatusUnused:
-				m_AttributeStatus[Attr] = StatusUsed;
-				m_AttributeVisible[Attr] = TRUE;
-				break;
-			case StatusUsed:
-				if (!m_AttributeValues[Attr].IsNull)
-					m_AttributeStatus[Attr] = StatusMultiple;
-			}
 }
 
 void CInspectorWnd::AddValueVirtual(UINT Attr, CHAR* Value)
@@ -271,48 +257,36 @@ void CInspectorWnd::UpdateAdd(LFItemDescriptor* i, LFSearchResult* pRawFiles)
 	switch (i->Type & LFTypeMask)
 	{
 	case LFTypeVolume:
-		AddValue(i, LFAttrFileName, FALSE);
+		AddValue(i, LFAttrFileName);
 		AddValue(i, LFAttrDescription);
 		AddValueVirtual(AttrDriveLetter, i->CoreAttributes.FileID);
 		AddValueVirtual(AttrSource, theApp.m_SourceNames[i->Type & LFTypeSourceMask][1]);
 		break;
 	case LFTypeFolder:
-		AddValue(i, LFAttrFileName, FALSE);
+		AddValue(i, LFAttrFileName);
 		AddValue(i, LFAttrDescription);
-		if ((i->FirstAggregate!=-1) && (i->LastAggregate!=-1))
+		AddValue(i, LFAttrFileCount);
+		for (INT a=i->FirstAggregate; a<=i->LastAggregate; a++)
 		{
-			AddValue(i, LFAttrFileCount);
-			for (INT a=i->FirstAggregate; a<=i->LastAggregate; a++)
-			{
-				for (UINT b=0; b<LFAttributeCount; b++)
-					if ((pRawFiles->m_Items[a]->AttributeValues[b]) && (b!=LFAttrFileName) && (b!=LFAttrDescription) && (b!=LFAttrDeleteTime) && (b!=LFAttrFileCount))
-						AddValue(pRawFiles->m_Items[a], b);
-				if (pRawFiles->m_Items[a]->CoreAttributes.Flags & LFFlagTrash)
-					AddValue(pRawFiles->m_Items[a], LFAttrDeleteTime);
-				AddValueVirtual(AttrSource, theApp.m_SourceNames[pRawFiles->m_Items[a]->Type & LFTypeSourceMask][0]);
-			}
-		}
-		else
-		{
-			AddValue(i, LFAttrFileID);
-			AddValue(i, LFAttrStoreID);
-			AddValue(i, LFAttrComments, FALSE);
-			for (UINT a=LFAttrDescription+1; a<LFAttributeCount; a++)
-				if (i->AttributeValues[a])
-					AddValue(i, a, FALSE);
+			for (UINT b=0; b<LFAttributeCount; b++)
+				if ((b!=LFAttrFileName) && (b!=LFAttrDescription) && (b!=LFAttrDeleteTime) && (b!=LFAttrFileCount))
+					AddValue(pRawFiles->m_Items[a], b, !theApp.m_Attributes[b]->ReadOnly);
+			if (pRawFiles->m_Items[a]->CoreAttributes.Flags & LFFlagTrash)
+				AddValue(pRawFiles->m_Items[a], LFAttrDeleteTime);
+			AddValueVirtual(AttrSource, theApp.m_SourceNames[pRawFiles->m_Items[a]->Type & LFTypeSourceMask][0]);
 		}
 		break;
 	case LFTypeFile:
 		for (UINT a=0; a<LFAttributeCount; a++)
-			if ((i->AttributeValues[a]) && (a!=LFAttrDescription) && (a!=LFAttrDeleteTime))
-				AddValue(i, a);
+			if ((a!=LFAttrDescription) && (a!=LFAttrDeleteTime))
+				AddValue(i, a, !theApp.m_Attributes[a]->ReadOnly);
 		if (i->CoreAttributes.Flags & LFFlagTrash)
 			AddValue(i, LFAttrDeleteTime);
 		AddValueVirtual(AttrSource, theApp.m_SourceNames[i->Type & LFTypeSourceMask][0]);
 		break;
 	case LFTypeStore:
 		for (UINT a=0; a<=LFAttrFileTime; a++)
-			AddValue(i, a);
+			AddValue(i, a, !theApp.m_Attributes[a]->ReadOnly);
 
 		LFStoreDescriptor s;
 		LFGetStoreSettings(i->CoreAttributes.FileID, &s);

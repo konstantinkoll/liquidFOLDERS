@@ -583,12 +583,14 @@ LFCore_API void LFGetNullVariantData(LFVariantData* v)
 		v->Double = -1;
 		break;
 	default:
-		ZeroMemory(v->UnicodeString, 512);
+		ZeroMemory(v->Value, sizeof(v->Value));
 	}
 }
 
 LFCore_API bool LFIsNullVariantData(LFVariantData* v)
 {
+	assert(v);
+
 	if (v->IsNull)
 		return true;
 
