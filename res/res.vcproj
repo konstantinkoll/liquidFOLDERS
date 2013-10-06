@@ -1249,6 +1249,10 @@
 			>
 		</File>
 		<File
+			RelativePath=".\Multiple.ico"
+			>
+		</File>
+		<File
 			RelativePath="Multiple.png"
 			>
 		</File>

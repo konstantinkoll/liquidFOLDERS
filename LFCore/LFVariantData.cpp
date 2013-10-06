@@ -232,7 +232,6 @@ bool IsNullValue(unsigned int attr, void* v)
 		return (*(char*)v=='\0');
 	case LFTypeFourCC:
 	case LFTypeUINT:
-	case LFTypeFlags:
 	case LFTypeDuration:
 	case LFTypeBitrate:
 		return (*(unsigned int*)v)==0;
