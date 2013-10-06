@@ -382,11 +382,10 @@ LFCore_API LFAttributeDescriptor* LFGetAttributeInfo(unsigned int ID)
 		SetRange(a->Category, ID, LFAttrLocationName, LFAttrLocationGPS, LFAttrCategoryGeotags);
 		SetRange(a->Category, ID, LFAttrWidth, LFAttrRoll, LFAttrCategoryVisual);
 		SetRange(a->Category, ID, LFAttrExposure, LFAttrChip, LFAttrCategoryPhotographic);
-		SetRange(a->Category, ID, LFAttrChannels, LFAttrAudioCodec, LFAttrCategoryAudio);
+		SetRange(a->Category, ID, LFAttrAlbum, LFAttrAudioCodec, LFAttrCategoryAudio);
 		SetRange(a->Category, ID, LFAttrDuration, LFAttrBitrate, LFAttrCategoryTimebased);
 		SetRange(a->Category, ID, LFAttrArtist, LFAttrSignature, LFAttrCategoryBibliographic);
 		SetRange(a->Category, ID, LFAttrFrom, LFAttrCustomer, LFAttrCategoryWorkflow);
-		SetRange(a->Category, ID, LFAttrAlbum, LFAttrAlbum, LFAttrCategoryBibliographic);
 		SetRange(a->Category, ID, LFAttrPriority, LFAttrPriority, LFAttrCategoryWorkflow);
 	}
 
