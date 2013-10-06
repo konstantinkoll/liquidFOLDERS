@@ -266,14 +266,26 @@ void CInspectorWnd::UpdateAdd(LFItemDescriptor* i, LFSearchResult* pRawFiles)
 		AddValue(i, LFAttrFileName);
 		AddValue(i, LFAttrDescription);
 		AddValue(i, LFAttrFileCount);
-		for (INT a=i->FirstAggregate; a<=i->LastAggregate; a++)
+		if ((i->FirstAggregate!=-1) && (i->LastAggregate!=-1))
 		{
-			for (UINT b=0; b<LFAttributeCount; b++)
-				if ((b!=LFAttrFileName) && (b!=LFAttrDescription) && (b!=LFAttrDeleteTime) && (b!=LFAttrFileCount))
-					AddValue(pRawFiles->m_Items[a], b, !theApp.m_Attributes[b]->ReadOnly);
-			if (pRawFiles->m_Items[a]->CoreAttributes.Flags & LFFlagTrash)
-				AddValue(pRawFiles->m_Items[a], LFAttrDeleteTime);
-			AddValueVirtual(AttrSource, theApp.m_SourceNames[pRawFiles->m_Items[a]->Type & LFTypeSourceMask][0]);
+			AddValue(i, LFAttrFileCount);
+			for (INT a=i->FirstAggregate; a<=i->LastAggregate; a++)
+			{
+				for (UINT b=0; b<LFAttributeCount; b++)
+					if ((b!=LFAttrFileName) && (b!=LFAttrDescription) && (b!=LFAttrDeleteTime) && (b!=LFAttrFileCount))
+						AddValue(pRawFiles->m_Items[a], b, !theApp.m_Attributes[b]->ReadOnly);
+				if (pRawFiles->m_Items[a]->CoreAttributes.Flags & LFFlagTrash)
+					AddValue(pRawFiles->m_Items[a], LFAttrDeleteTime);
+				AddValueVirtual(AttrSource, theApp.m_SourceNames[pRawFiles->m_Items[a]->Type & LFTypeSourceMask][0]);
+			}
+		}
+		else
+		{
+			AddValue(i, LFAttrFileID);
+			AddValue(i, LFAttrStoreID);
+			AddValue(i, LFAttrComments);
+			for (UINT a=LFAttrDescription+1; a<LFAttributeCount; a++)
+				AddValue(i, a);
 		}
 		break;
 	case LFTypeFile:

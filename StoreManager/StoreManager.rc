@@ -283,6 +283,17 @@ BEGIN
     END
 END
 
+IDM_FOLDER MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM SEPARATOR
+        MENUITEM "&Kopieren",                   IDM_FILE_COPY
+        MENUITEM SEPARATOR
+        MENUITEM "&Löschen",                    IDM_FILE_DELETE
+    END
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -584,11 +595,11 @@ BEGIN
     IDS_VATTR_DRIVELETTER   "Laufwerksbuchstabe"
     IDS_VATTR_MAINTENANCETIME "Letzte Wartung"
     IDS_VATTR_LASTSEEN      "Zuletzt eingebunden"
-    IDS_VATTR_GUID          "GUID"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_VATTR_GUID          "GUID"
     IDS_VATTR_PATH_DAT      "Datenpfad"
     IDS_VATTR_PATH_IDX_MAIN "Hauptindex"
     IDS_VATTR_PATH_IDX_AUX  "Hilfsindex"
@@ -601,6 +612,10 @@ STRINGTABLE
 BEGIN
     IDM_STORE_MAKEDEFAULT   "Setzt den ausgewählten Store als Standard-Store.\nAls Standard-Store setzen"
     IDM_STORE_IMPORTFOLDER  "Importiert einen Ordner und alle Unterordner in den ausgewählten Store.\nVerzeichnis importieren..."
+END
+
+STRINGTABLE 
+BEGIN
     IDM_STORE_DELETE        "Löscht den ausgewählten Store und alle enthaltenen Dateien.\nLöschen"
     IDM_STORE_RENAME        "Benennt den ausgewählten Store um.\nUmbenennen"
     IDM_STORE_PROPERTIES    "Zeigt die Eigenschaften des ausgewählten Stores an.\nEigenschaften"
@@ -659,6 +674,10 @@ BEGIN
                             "Richtet den Globus auf einen bestimmten Ort aus.\nOrt anzeigen..."
     IDM_GLOBE_ZOOMIN        "Vergrößert den Globus.\nVergößern"
     IDM_GLOBE_ZOOMOUT       "Verkleinert den Globus.\nVerkleinern"
+END
+
+STRINGTABLE 
+BEGIN
     IDM_GLOBE_AUTOSIZE      "Passt den Globus an die Fenstergröße an.\nGröße anpassen"
     IDM_GLOBE_GOOGLEEARTH   "Öffnet den auswählten Ort in Google Earth.\nÖffnen in Google Earth"
 END
@@ -667,10 +686,6 @@ STRINGTABLE
 BEGIN
     IDM_TAGCLOUD_SORTVALUE  "Sortiert alle Tags alphabetisch.\nAlphabetisch sortieren"
     IDM_TAGCLOUD_SORTCOUNT  "Sortiert alle Tags nach Dateianzahl.\nNach Anzahl sortieren"
-END
-
-STRINGTABLE 
-BEGIN
     IDM_TAGCLOUD_SORT       "&Sortieren nach"
 END
 
@@ -847,6 +862,17 @@ BEGIN
     POPUP "POPUP"
     BEGIN
         MENUITEM "&Añadir condición...",        IDM_CONDITIONLIST_ADD
+    END
+END
+
+IDM_FOLDER MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM SEPARATOR
+        MENUITEM "&Copiar",                     IDM_FILE_COPY
+        MENUITEM SEPARATOR
+        MENUITEM "&Eliminar",                   IDM_FILE_DELETE
     END
 END
 
@@ -1151,11 +1177,11 @@ BEGIN
     IDS_VATTR_DRIVELETTER   "Unidad"
     IDS_VATTR_MAINTENANCETIME "Mantenimiento"
     IDS_VATTR_LASTSEEN      "Última entrada"
-    IDS_VATTR_GUID          "GUID"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_VATTR_GUID          "GUID"
     IDS_VATTR_PATH_DAT      "Ruta de datos"
     IDS_VATTR_PATH_IDX_MAIN "Índice principal"
     IDS_VATTR_PATH_IDX_AUX  "Índice auxiliar"
@@ -1168,6 +1194,10 @@ STRINGTABLE
 BEGIN
     IDM_STORE_MAKEDEFAULT   "Establece el store seleccionado como el store predeterminado.\nEstablecer como store predeterminado"
     IDM_STORE_IMPORTFOLDER  "Importa una carpeta y todas sus subcarpetas al store seleccionado.\nImportar carpeta..."
+END
+
+STRINGTABLE 
+BEGIN
     IDM_STORE_DELETE        "Elimina el store seleccionado.\nEliminar"
     IDM_STORE_RENAME        "Renombra el store seleccionado.\nRenombrar"
     IDM_STORE_PROPERTIES    "Despliega las propiedades del store seleccionado.\nPropiedades"
@@ -1226,6 +1256,10 @@ BEGIN
                             "Centra el globo sobre una ubicación específica.\nSeleccionar ubicación..."
     IDM_GLOBE_ZOOMIN        "Amplía el globo.\nAmpliar"
     IDM_GLOBE_ZOOMOUT       "Reduce el globo.\nReducir"
+END
+
+STRINGTABLE 
+BEGIN
     IDM_GLOBE_AUTOSIZE      "Reajusta el globo dentro de la ventana.\nAjustar"
     IDM_GLOBE_GOOGLEEARTH   "Abre las ubicaciones seleccionadas en Google Earth.\nAbrir en Google Earth"
 END
@@ -1234,10 +1268,6 @@ STRINGTABLE
 BEGIN
     IDM_TAGCLOUD_SORTVALUE  "Ordena las etiquetas en su orden canónico.\nOrdenar por valor"
     IDM_TAGCLOUD_SORTCOUNT  "Ordena las etiquetas por su número de archivo.\nOrdenar por número"
-END
-
-STRINGTABLE 
-BEGIN
     IDM_TAGCLOUD_SORT       "&Ordenar por"
 END
 
@@ -1414,6 +1444,17 @@ BEGIN
     POPUP "POPUP"
     BEGIN
         MENUITEM "&Ajouter condition...",       IDM_CONDITIONLIST_ADD
+    END
+END
+
+IDM_FOLDER MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM SEPARATOR
+        MENUITEM "&Copier",                     IDM_FILE_COPY
+        MENUITEM SEPARATOR
+        MENUITEM "&Effacer",                    IDM_FILE_DELETE
     END
 END
 
@@ -1719,11 +1760,11 @@ BEGIN
     IDS_VATTR_DRIVELETTER   "Lettre aux lecteurs"
     IDS_VATTR_MAINTENANCETIME "Entretien"
     IDS_VATTR_LASTSEEN      "Finalement vu"
-    IDS_VATTR_GUID          "GUID"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_VATTR_GUID          "GUID"
     IDS_VATTR_PATH_DAT      "Données"
     IDS_VATTR_PATH_IDX_MAIN "Index principal"
     IDS_VATTR_PATH_IDX_AUX  "Index auxiliaire"
@@ -1736,6 +1777,10 @@ STRINGTABLE
 BEGIN
     IDM_STORE_MAKEDEFAULT   "Met le store choisi comme le store standard.\nFaites store standard"
     IDM_STORE_IMPORTFOLDER  "Importe un dossier et tous les sous-dossiers dans le store choisi.\nImporter dossier..."
+END
+
+STRINGTABLE 
+BEGIN
     IDM_STORE_DELETE        "Efface le store choisi et tous les fichiers contenus.\nEffacer"
     IDM_STORE_RENAME        "Renomme le store choisi.\nRenommer"
     IDM_STORE_PROPERTIES    "Indique les propriétés du store choisi.\nPropriétés"
@@ -1794,6 +1839,10 @@ BEGIN
                             "Transmet du globe vers un lieu certain.\nChoisissez l'endroit..."
     IDM_GLOBE_ZOOMIN        "Agrandit le globe.\nAgrandir"
     IDM_GLOBE_ZOOMOUT       "Rapetisse le globe.\nRapetisser"
+END
+
+STRINGTABLE 
+BEGIN
     IDM_GLOBE_AUTOSIZE      "Adapte le globe à la grandeur de fenêtre.\nAdapter la grandeur"
     IDM_GLOBE_GOOGLEEARTH   "Ouvre le lieu choisi dans Google Earth.\nOuvrir dans Google Earth"
 END
@@ -1802,10 +1851,6 @@ STRINGTABLE
 BEGIN
     IDM_TAGCLOUD_SORTVALUE  "Classe tous les tags par ordre alphabétique.\nClasser par ordre alphabétique"
     IDM_TAGCLOUD_SORTCOUNT  "Classe tous les tags par nombre de fichier.\nClasser par nombre"
-END
-
-STRINGTABLE 
-BEGIN
     IDM_TAGCLOUD_SORT       "&Classer par"
 END
 
@@ -2032,6 +2077,17 @@ BEGIN
     POPUP "POPUP"
     BEGIN
         MENUITEM "A&dd condition...",           IDM_CONDITIONLIST_ADD
+    END
+END
+
+IDM_FOLDER MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM SEPARATOR
+        MENUITEM "&Copy",                       IDM_FILE_COPY
+        MENUITEM SEPARATOR
+        MENUITEM "&Delete",                     IDM_FILE_DELETE
     END
 END
 
@@ -2335,11 +2391,11 @@ BEGIN
     IDS_VATTR_DRIVELETTER   "Drive letter"
     IDS_VATTR_MAINTENANCETIME "Last maintenance"
     IDS_VATTR_LASTSEEN      "Last seen"
-    IDS_VATTR_GUID          "GUID"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_VATTR_GUID          "GUID"
     IDS_VATTR_PATH_DAT      "Data path"
     IDS_VATTR_PATH_IDX_MAIN "Main index path"
     IDS_VATTR_PATH_IDX_AUX  "Aux. index path"
@@ -2352,6 +2408,10 @@ STRINGTABLE
 BEGIN
     IDM_STORE_MAKEDEFAULT   "Makes the selected store the default store.\nMake default store"
     IDM_STORE_IMPORTFOLDER  "Imports a folder and all its subfolders into the selected store.\nImport folder..."
+END
+
+STRINGTABLE 
+BEGIN
     IDM_STORE_DELETE        "Deletes the selected store.\nDelete"
     IDM_STORE_RENAME        "Renames the selected store.\nRename"
     IDM_STORE_PROPERTIES    "Displays the properties of the selected store.\nProperties"
@@ -2410,6 +2470,10 @@ BEGIN
                             "Centers the globe on a specific location.\nJump to location..."
     IDM_GLOBE_ZOOMIN        "Zooms into the globe.\nZoom in"
     IDM_GLOBE_ZOOMOUT       "Zooms out of the globe.\nZoom out"
+END
+
+STRINGTABLE 
+BEGIN
     IDM_GLOBE_AUTOSIZE      "Resizes the globe to touch the edges of the window.\nSize to fit"
     IDM_GLOBE_GOOGLEEARTH   "Opens the selected locations in Google Earth.\nOpen in Google Earth"
 END
@@ -2418,10 +2482,6 @@ STRINGTABLE
 BEGIN
     IDM_TAGCLOUD_SORTVALUE  "Arranges the tags in their canonic order.\nSort by value"
     IDM_TAGCLOUD_SORTCOUNT  "Arranges the tags by their file count.\nSort by count"
-END
-
-STRINGTABLE 
-BEGIN
     IDM_TAGCLOUD_SORT       "&Sort by"
 END
 
