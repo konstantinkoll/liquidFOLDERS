@@ -132,7 +132,7 @@
 #define IDS_AttrDeleteTime              4008
 #define IDS_AttrArchiveTime             4009
 #define IDS_AttrFileFormat              4010
-#define IDS_AttrFileCount               4011
+#define IDS_AttrLikeCount               4011
 #define IDS_AttrFileSize                4012
 #define IDS_AttrFlags                   4013
 #define IDS_AttrURL                     4014

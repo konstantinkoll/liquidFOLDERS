@@ -51,7 +51,6 @@ struct LFViewParameters
 	BOOL GlobeShowGPS;
 	BOOL GlobeShowDescription;
 
-	BOOL TagcloudCanonical;
 	BOOL TagcloudShowRare;
 	BOOL TagcloudUseSize;
 	BOOL TagcloudUseColors;

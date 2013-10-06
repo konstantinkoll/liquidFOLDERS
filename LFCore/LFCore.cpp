@@ -375,7 +375,7 @@ LFCore_API LFAttributeDescriptor* LFGetAttributeInfo(unsigned int ID)
 	// Category
 	if (ID<=LFAttrRating)
 	{
-		a->Category = ((ID==LFAttrStoreID) || (ID==LFAttrFileID) || (ID==LFAttrDeleteTime) || (ID==LFAttrFileCount) || (ID==LFAttrFileFormat) || (ID==LFAttrFlags)) ? LFAttrCategoryInternal : LFAttrCategoryBasic;
+		a->Category = ((ID==LFAttrStoreID) || (ID==LFAttrFileID) || (ID==LFAttrAddTime) || (ID==LFAttrDeleteTime) || (ID==LFAttrFileFormat) || (ID==LFAttrFlags)) ? LFAttrCategoryInternal : LFAttrCategoryBasic;
 	}
 	else
 	{
@@ -399,10 +399,9 @@ LFCore_API LFAttributeDescriptor* LFGetAttributeInfo(unsigned int ID)
 	{
 	case LFAttrDescription:
 	case LFAttrCreationTime:
-	case LFAttrAddTime:
 	case LFAttrFileTime:
-	case LFAttrDeleteTime:
 	case LFAttrArchiveTime:
+	case LFAttrLikeCount:
 	case LFAttrFileSize:
 	case LFAttrHeight:
 	case LFAttrWidth:
@@ -429,7 +428,7 @@ LFCore_API LFAttributeDescriptor* LFGetAttributeInfo(unsigned int ID)
 	}
 
 	// Format
-	a->FormatRight = (((a->Type>=LFTypeUINT) && (a->Type!=LFTypeTime)) || (ID==LFAttrStoreID) || (ID==LFAttrFileID) || (ID==LFAttrFileCount));
+	a->FormatRight = (((a->Type>=LFTypeUINT) && (a->Type!=LFTypeTime)) || (ID==LFAttrStoreID) || (ID==LFAttrFileID));
 
 	// Shell property
 	a->ShPropertyMapping = AttrProperties[ID];
@@ -489,7 +488,7 @@ LFCore_API LFContextDescriptor* LFGetContextInfo(unsigned int ID)
 		(*c->AllowedAttributes) += LFAttrDeleteTime;
 	default:
 		for (unsigned int a=0; a<LFAttributeCount; a++)
-			if ((a!=LFAttrDeleteTime) && ((ID<LFContextSubfolderDefault) || (a!=LFAttrFileCount)) && ((c->AllowGroups) || (a!=LFAttrDescription)))
+			if ((a!=LFAttrDeleteTime) && (ID<LFContextSubfolderDefault) && ((c->AllowGroups) || (a!=LFAttrDescription)))
 				(*c->AllowedAttributes) += a;
 	}
 

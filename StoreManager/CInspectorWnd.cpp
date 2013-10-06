@@ -210,7 +210,7 @@ void CInspectorWnd::UpdateStart()
 	p_LastItem = NULL;
 
 	// Icon und Typ
-	m_IconStatus = m_TypeStatus = StatusUnused;
+	m_IconStatus = StatusUnused;
 
 	// Properties
 	ZeroMemory(m_AttributeVisible, sizeof(m_AttributeVisible));
@@ -222,7 +222,6 @@ void CInspectorWnd::UpdateStart()
 
 void CInspectorWnd::UpdateAdd(LFItemDescriptor* i, LFSearchResult* pRawFiles)
 {
-	m_Count++;
 	p_LastItem = i;
 
 	// Icon
@@ -240,63 +239,21 @@ void CInspectorWnd::UpdateAdd(LFItemDescriptor* i, LFSearchResult* pRawFiles)
 		}
 
 	// Typ
-	if (m_TypeStatus<StatusMultiple)
-		switch (m_TypeStatus)
-		{
-		case StatusUnused:
-			m_TypeStatus = StatusUsed;
-			m_TypeID = (i->Type & LFTypeMask);
-			break;
-		case StatusUsed:
-			if (m_TypeID!=(i->Type & LFTypeMask))
-				m_TypeStatus = StatusMultiple;
-			break;
-		}
+	m_TypeID = (i->Type & LFTypeMask);
 
 	// Attribute
-	switch (i->Type & LFTypeMask)
+	switch (m_TypeID)
 	{
 	case LFTypeVolume:
+		m_Count++;
 		AddValue(i, LFAttrFileName);
 		AddValue(i, LFAttrDescription);
 		AddValueVirtual(AttrDriveLetter, i->CoreAttributes.FileID);
 		AddValueVirtual(AttrSource, theApp.m_SourceNames[i->Type & LFTypeSourceMask][1]);
 		break;
-	case LFTypeFolder:
-		AddValue(i, LFAttrFileName);
-		AddValue(i, LFAttrDescription);
-		AddValue(i, LFAttrFileCount);
-		if ((i->FirstAggregate!=-1) && (i->LastAggregate!=-1))
-		{
-			AddValue(i, LFAttrFileCount);
-			for (INT a=i->FirstAggregate; a<=i->LastAggregate; a++)
-			{
-				for (UINT b=0; b<LFAttributeCount; b++)
-					if ((b!=LFAttrFileName) && (b!=LFAttrDescription) && (b!=LFAttrDeleteTime) && (b!=LFAttrFileCount))
-						AddValue(pRawFiles->m_Items[a], b, !theApp.m_Attributes[b]->ReadOnly);
-				if (pRawFiles->m_Items[a]->CoreAttributes.Flags & LFFlagTrash)
-					AddValue(pRawFiles->m_Items[a], LFAttrDeleteTime);
-				AddValueVirtual(AttrSource, theApp.m_SourceNames[pRawFiles->m_Items[a]->Type & LFTypeSourceMask][0]);
-			}
-		}
-		else
-		{
-			AddValue(i, LFAttrFileID);
-			AddValue(i, LFAttrStoreID);
-			AddValue(i, LFAttrComments);
-			for (UINT a=LFAttrDescription+1; a<LFAttributeCount; a++)
-				AddValue(i, a);
-		}
-		break;
-	case LFTypeFile:
-		for (UINT a=0; a<LFAttributeCount; a++)
-			if ((a!=LFAttrDescription) && (a!=LFAttrDeleteTime))
-				AddValue(i, a, !theApp.m_Attributes[a]->ReadOnly);
-		if (i->CoreAttributes.Flags & LFFlagTrash)
-			AddValue(i, LFAttrDeleteTime);
-		AddValueVirtual(AttrSource, theApp.m_SourceNames[i->Type & LFTypeSourceMask][0]);
-		break;
 	case LFTypeStore:
+		m_Count++;
+
 		for (UINT a=0; a<=LFAttrFileTime; a++)
 			AddValue(i, a, !theApp.m_Attributes[a]->ReadOnly);
 
@@ -323,6 +280,32 @@ void CInspectorWnd::UpdateAdd(LFItemDescriptor* i, LFSearchResult* pRawFiles)
 		AddValueVirtual(AttrPathIdxMain, s.IdxPathMain);
 		AddValueVirtual(AttrPathIdxAux, s.IdxPathAux);
 		break;
+	case LFTypeFile:
+		m_Count++;
+
+		for (UINT a=0; a<LFAttributeCount; a++)
+			if (a!=LFAttrDescription)
+				AddValue(i, a, !theApp.m_Attributes[a]->ReadOnly);
+		AddValueVirtual(AttrSource, theApp.m_SourceNames[i->Type & LFTypeSourceMask][0]);
+		break;
+	case LFTypeFolder:
+		m_Count += i->AggregateCount;
+
+		if ((i->FirstAggregate!=-1) && (i->LastAggregate!=-1))
+		{
+			for (INT a=i->FirstAggregate; a<=i->LastAggregate; a++)
+			{
+				for (UINT b=0; b<LFAttributeCount; b++)
+					AddValue(pRawFiles->m_Items[a], b, !theApp.m_Attributes[b]->ReadOnly);
+				AddValueVirtual(AttrSource, theApp.m_SourceNames[pRawFiles->m_Items[a]->Type & LFTypeSourceMask][0]);
+			}
+		}
+		else
+		{
+			for (UINT a=LFAttrFileName; a<LFAttributeCount; a++)
+				AddValue(i, a);
+		}
+		break;
 	}
 }
 
@@ -330,34 +313,23 @@ void CInspectorWnd::UpdateFinish()
 {
 	// Icon & Typ
 	UINT SID = 0;
-	if (m_TypeStatus==StatusMultiple)
+	switch (m_TypeID)
 	{
-		SID = IDS_MULTIPLETYPESSELECTED;
-	}
-	else
-	{
-		switch (m_TypeID)
-		{
-		case LFTypeVolume:
-			SID = IDS_DRIVES_SINGULAR;
-			break;
-		case LFTypeStore:
-			SID = IDS_STORES_SINGULAR;
-			break;
-		case LFTypeFile:
-			SID = IDS_FILES_SINGULAR;
-			break;
-		case LFTypeFolder:
-			SID = IDS_FOLDERS_SINGULAR;
-			break;
-		}
-
-		if ((SID) && (m_Count!=1))
-			SID++;
+	case LFTypeVolume:
+		SID = IDS_DRIVES_SINGULAR;
+		break;
+	case LFTypeStore:
+		SID = IDS_STORES_SINGULAR;
+		break;
+	default:
+		SID = IDS_FILES_SINGULAR;
 	}
 
 	if (SID)
 	{
+		if (m_Count!=1)
+			SID++;
+
 		CString tmpStr;
 		ENSURE(tmpStr.LoadString(SID));
 		m_TypeName.Format(tmpStr, m_Count);
@@ -372,44 +344,39 @@ void CInspectorWnd::UpdateFinish()
 		m_IconHeader.SetMultiple(m_TypeName);
 		break;
 	default:
-		if (m_TypeStatus==StatusMultiple)
+		switch (m_TypeID)
 		{
-			m_IconHeader.SetMultiple(m_TypeName);
-		}
-		else
-			switch (m_TypeID)
+		case LFTypeFile:
+			if (m_AttributeStatus[LFAttrFileFormat]==StatusMultiple)
 			{
-			case LFTypeFile:
-				if (m_AttributeStatus[LFAttrFileFormat]==StatusMultiple)
-				{
-					m_IconHeader.SetMultiple(m_TypeName);
-				}
-				else
-					if ((m_AttributeStatus[LFAttrStoreID]==StatusMultiple) || (m_AttributeStatus[LFAttrFileID]==StatusMultiple))
-					{
-						m_IconHeader.SetFormatIcon(m_AttributeValues[LFAttrFileFormat].AnsiString, m_TypeName);
-					}
-					else
-					{
-						m_IconHeader.SetPreview(p_LastItem, m_TypeName);
-					}
-				break;
-			case LFTypeVolume:
-				if (m_AttributeStatus[AttrDriveLetter]==StatusMultiple)
-				{
-					m_IconHeader.SetMultiple(m_TypeName);
-				}
-				else
-				{
-					CHAR Path[4];
-					strcpy_s(Path, 4, " :\\");
-					Path[0] = m_AttributeValues[AttrDriveLetter].AnsiString[0];
-					m_IconHeader.SetFormatIcon(Path, m_TypeName);
-				}
-				break;
-			default:
-				m_IconHeader.SetCoreIcon(m_IconID-1, m_TypeName);
+				m_IconHeader.SetMultiple(m_TypeName);
 			}
+			else
+				if ((m_AttributeStatus[LFAttrStoreID]==StatusMultiple) || (m_AttributeStatus[LFAttrFileID]==StatusMultiple))
+				{
+					m_IconHeader.SetFormatIcon(m_AttributeValues[LFAttrFileFormat].AnsiString, m_TypeName);
+				}
+				else
+				{
+					m_IconHeader.SetPreview(p_LastItem, m_TypeName);
+				}
+			break;
+		case LFTypeVolume:
+			if (m_AttributeStatus[AttrDriveLetter]==StatusMultiple)
+			{
+				m_IconHeader.SetMultiple(m_TypeName);
+			}
+			else
+			{
+				CHAR Path[4];
+				strcpy_s(Path, 4, " :\\");
+				Path[0] = m_AttributeValues[AttrDriveLetter].AnsiString[0];
+				m_IconHeader.SetFormatIcon(Path, m_TypeName);
+			}
+			break;
+		default:
+			m_IconHeader.SetCoreIcon(m_IconID-1, m_TypeName);
+		}
 	}
 
 	// Flughafen-Name und -Land
@@ -430,7 +397,7 @@ void CInspectorWnd::UpdateFinish()
 	else
 	{
 		m_AttributeStatus[AttrIATAAirportName] = m_AttributeStatus[AttrIATAAirportCountry] = m_AttributeStatus[LFAttrLocationIATA];
-		m_AttributeVisible[AttrIATAAirportName] = m_AttributeVisible[AttrIATAAirportCountry] = m_AttributeVisible[LFAttrLocationIATA];
+		m_AttributeVisible[AttrIATAAirportName] = m_AttributeVisible[AttrIATAAirportCountry] = (m_AttributeStatus[LFAttrLocationIATA]==StatusMultiple);
 	}
 
 	// Werte aktualisieren

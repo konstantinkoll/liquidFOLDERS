@@ -245,18 +245,11 @@ IDM_TAGCLOUD MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
+        MENUITEM "&Seltene Tags zeigen",        IDM_TAGCLOUD_SHOWRARE
         MENUITEM "Schrift&größe",               IDM_TAGCLOUD_USESIZE
         MENUITEM "&Farbe",                      IDM_TAGCLOUD_USECOLORS
         MENUITEM "&Deckkraft",                  IDM_TAGCLOUD_USEOPACITY
     END
-END
-
-IDM_TAGCLOUD_SORT MENU 
-BEGIN
-    MENUITEM "Sortieren nach &Wert",        IDM_TAGCLOUD_SORTVALUE
-    MENUITEM "Sortieren nach &Anzahl",      IDM_TAGCLOUD_SORTCOUNT
-    MENUITEM SEPARATOR
-    MENUITEM "&Seltene Tags zeigen",        IDM_TAGCLOUD_SHOWRARE
 END
 
 IDM_INSPECTOR MENU 
@@ -567,7 +560,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_MULTIPLETYPESSELECTED "Unterschiedliche Typen, %u Objekte"
     IDS_YOULOOKAT           "Sie schauen auf %s"
     IDS_NOTHINGTODISPLAY    "Es gibt nichts anzuzeigen."
     IDS_NONAVIGATION        "Dieses Fenster unterstützt keine Navigation."
@@ -680,13 +672,6 @@ STRINGTABLE
 BEGIN
     IDM_GLOBE_AUTOSIZE      "Passt den Globus an die Fenstergröße an.\nGröße anpassen"
     IDM_GLOBE_GOOGLEEARTH   "Öffnet den auswählten Ort in Google Earth.\nÖffnen in Google Earth"
-END
-
-STRINGTABLE 
-BEGIN
-    IDM_TAGCLOUD_SORTVALUE  "Sortiert alle Tags alphabetisch.\nAlphabetisch sortieren"
-    IDM_TAGCLOUD_SORTCOUNT  "Sortiert alle Tags nach Dateianzahl.\nNach Anzahl sortieren"
-    IDM_TAGCLOUD_SORT       "&Sortieren nach"
 END
 
 STRINGTABLE 
@@ -827,18 +812,11 @@ IDM_TAGCLOUD MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
+        MENUITEM "Mostrar &etiquetas poco comunes", IDM_TAGCLOUD_SHOWRARE
         MENUITEM "Usar &tamaño de fuente",      IDM_TAGCLOUD_USESIZE
         MENUITEM "Usar &color",                 IDM_TAGCLOUD_USECOLORS
         MENUITEM "Usar &opacidad",              IDM_TAGCLOUD_USEOPACITY
     END
-END
-
-IDM_TAGCLOUD_SORT MENU 
-BEGIN
-    MENUITEM "Ordenar por &valor",          IDM_TAGCLOUD_SORTVALUE
-    MENUITEM "Ordenar por &conteo",         IDM_TAGCLOUD_SORTCOUNT
-    MENUITEM SEPARATOR
-    MENUITEM "Mostrar &etiquetas poco comunes", IDM_TAGCLOUD_SHOWRARE
 END
 
 IDM_INSPECTOR MENU 
@@ -1149,7 +1127,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_MULTIPLETYPESSELECTED "Múltiples tipos, %u objetos"
     IDS_YOULOOKAT           "Usted está viendo %s"
     IDS_NOTHINGTODISPLAY    "No hay nada que visualizar."
     IDS_NONAVIGATION        "Esta ventana no es compatible con la navegación."
@@ -1262,13 +1239,6 @@ STRINGTABLE
 BEGIN
     IDM_GLOBE_AUTOSIZE      "Reajusta el globo dentro de la ventana.\nAjustar"
     IDM_GLOBE_GOOGLEEARTH   "Abre las ubicaciones seleccionadas en Google Earth.\nAbrir en Google Earth"
-END
-
-STRINGTABLE 
-BEGIN
-    IDM_TAGCLOUD_SORTVALUE  "Ordena las etiquetas en su orden canónico.\nOrdenar por valor"
-    IDM_TAGCLOUD_SORTCOUNT  "Ordena las etiquetas por su número de archivo.\nOrdenar por número"
-    IDM_TAGCLOUD_SORT       "&Ordenar por"
 END
 
 STRINGTABLE 
@@ -1409,18 +1379,11 @@ IDM_TAGCLOUD MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
+        MENUITEM "Indiquer les tags &rares",    IDM_TAGCLOUD_SHOWRARE
         MENUITEM "Utilise la &taille",          IDM_TAGCLOUD_USESIZE
         MENUITEM "Utilise la &couleur",         IDM_TAGCLOUD_USECOLORS
         MENUITEM "Utilise la &propriété couvrante", IDM_TAGCLOUD_USEOPACITY
     END
-END
-
-IDM_TAGCLOUD_SORT MENU 
-BEGIN
-    MENUITEM "Trier par la &valeur",        IDM_TAGCLOUD_SORTVALUE
-    MENUITEM "Trier par le &nombre",        IDM_TAGCLOUD_SORTCOUNT
-    MENUITEM SEPARATOR
-    MENUITEM "Indiquer les tags &rares",    IDM_TAGCLOUD_SHOWRARE
 END
 
 IDM_INSPECTOR MENU 
@@ -1732,7 +1695,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_MULTIPLETYPESSELECTED "Types, éléments %u différents"
     IDS_YOULOOKAT           "Vous regardez %s"
     IDS_NOTHINGTODISPLAY    "Il n'y a rien indiquer."
     IDS_NONAVIGATION        "Cette fenêtre ne soutient aucune navigation."
@@ -1845,13 +1807,6 @@ STRINGTABLE
 BEGIN
     IDM_GLOBE_AUTOSIZE      "Adapte le globe à la grandeur de fenêtre.\nAdapter la grandeur"
     IDM_GLOBE_GOOGLEEARTH   "Ouvre le lieu choisi dans Google Earth.\nOuvrir dans Google Earth"
-END
-
-STRINGTABLE 
-BEGIN
-    IDM_TAGCLOUD_SORTVALUE  "Classe tous les tags par ordre alphabétique.\nClasser par ordre alphabétique"
-    IDM_TAGCLOUD_SORTCOUNT  "Classe tous les tags par nombre de fichier.\nClasser par nombre"
-    IDM_TAGCLOUD_SORT       "&Classer par"
 END
 
 STRINGTABLE 
@@ -2042,18 +1997,11 @@ IDM_TAGCLOUD MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
+        MENUITEM "Show &rare tags",             IDM_TAGCLOUD_SHOWRARE
         MENUITEM "Use &font size",              IDM_TAGCLOUD_USESIZE
         MENUITEM "Use &color",                  IDM_TAGCLOUD_USECOLORS
         MENUITEM "Use &opacity",                IDM_TAGCLOUD_USEOPACITY
     END
-END
-
-IDM_TAGCLOUD_SORT MENU 
-BEGIN
-    MENUITEM "Sort by &value",              IDM_TAGCLOUD_SORTVALUE
-    MENUITEM "Sort by &count",              IDM_TAGCLOUD_SORTCOUNT
-    MENUITEM SEPARATOR
-    MENUITEM "Show &rare tags",             IDM_TAGCLOUD_SHOWRARE
 END
 
 IDM_INSPECTOR MENU 
@@ -2363,7 +2311,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_MULTIPLETYPESSELECTED "Multiple types, %u items"
     IDS_YOULOOKAT           "You look at %s"
     IDS_NOTHINGTODISPLAY    "There is nothing to display."
     IDS_NONAVIGATION        "This window does not support any navigation."
@@ -2476,13 +2423,6 @@ STRINGTABLE
 BEGIN
     IDM_GLOBE_AUTOSIZE      "Resizes the globe to touch the edges of the window.\nSize to fit"
     IDM_GLOBE_GOOGLEEARTH   "Opens the selected locations in Google Earth.\nOpen in Google Earth"
-END
-
-STRINGTABLE 
-BEGIN
-    IDM_TAGCLOUD_SORTVALUE  "Arranges the tags in their canonic order.\nSort by value"
-    IDM_TAGCLOUD_SORTCOUNT  "Arranges the tags by their file count.\nSort by count"
-    IDM_TAGCLOUD_SORT       "&Sort by"
 END
 
 STRINGTABLE 

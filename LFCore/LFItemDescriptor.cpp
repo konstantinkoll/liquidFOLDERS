@@ -19,7 +19,7 @@ extern const int CoreOffsets[LFLastCoreAttribute+1] = {
 	offsetof(LFCoreAttributes, DeleteTime),
 	offsetof(LFCoreAttributes, ArchiveTime),
 	offsetof(LFCoreAttributes, FileFormat),
-	-1,
+	offsetof(LFCoreAttributes, LikeCount),
 	offsetof(LFCoreAttributes, FileSize),
 	offsetof(LFCoreAttributes, Flags),
 	offsetof(LFCoreAttributes, URL),
@@ -61,7 +61,7 @@ extern const unsigned char AttrTypes[LFAttributeCount] = {
 	LFTypeTime,					// LFAttrDeleteTime
 	LFTypeTime,					// LFAttrArchiveTime
 	LFTypeAnsiString,			// LFAttrFileFormat
-	LFTypeUINT,					// LFAttrFileCount
+	LFTypeUINT,					// LFAttrLikeCount
 	LFTypeINT64,				// LFAttrFileSize
 	LFTypeFlags,				// LFAttrFlags
 	LFTypeAnsiString,			// LFAttrURL
@@ -230,7 +230,6 @@ LFCore_API LFItemDescriptor* LFAllocItemDescriptor(LFItemDescriptor* i)
 	// Zeiger auf statische Attributwerte initalisieren
 	d->AttributeValues[LFAttrStoreID] = &d->StoreID;
 	d->AttributeValues[LFAttrDescription] = &d->Description[0];
-	d->AttributeValues[LFAttrFileCount] = &d->AggregateCount;
 
 	for (unsigned int a=0; a<=LFLastCoreAttribute; a++)
 		if (CoreOffsets[a]!=-1)

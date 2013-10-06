@@ -205,7 +205,7 @@ struct LFContextDescriptor
 #define LFAttrDeleteTime                8
 #define LFAttrArchiveTime               9
 #define LFAttrFileFormat               10
-#define LFAttrFileCount                11
+#define LFAttrLikeCount                11
 #define LFAttrFileSize                 12
 #define LFAttrFlags                    13
 #define LFAttrURL                      14
@@ -443,6 +443,9 @@ struct LFCoreAttributes
 	// Private
 	unsigned char SlaveID;
 	unsigned char ContextID;
+
+	// Public
+	unsigned int LikeCount;
 };
 
 

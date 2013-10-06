@@ -410,7 +410,6 @@ void CStoreManagerApp::LoadViewOptions(UINT context)
 	m_Views[context].GlobeShowAirportNames = GetInt(_T("GlobeShowAirportNames"), TRUE);
 	m_Views[context].GlobeShowGPS = GetInt(_T("GlobeShowGPS"), TRUE);
 	m_Views[context].GlobeShowDescription = GetInt(_T("GlobeShowDescription"), TRUE);
-	m_Views[context].TagcloudCanonical = GetInt(_T("TagcloudSortCanonical"), TRUE);
 	m_Views[context].TagcloudShowRare = GetInt(_T("TagcloudShowRare"), TRUE);
 	m_Views[context].TagcloudUseSize = GetInt(_T("TagcloudUseSize"), TRUE);
 	m_Views[context].TagcloudUseColors = GetInt(_T("TagcloudUseColors"), TRUE);
@@ -422,7 +421,7 @@ void CStoreManagerApp::LoadViewOptions(UINT context)
 	for (UINT a=0; a<LFAttributeCount; a++)
 	{
 		m_Views[context].ColumnOrder[a] = a;
-		if (m_Contexts[context]->AllowedAttributes->IsSet(a) && (a!=LFAttrStoreID) && (a!=LFAttrFileID) && (a!=LFAttrFileFormat) && (a!=LFAttrFileCount))
+		if (m_Contexts[context]->AllowedAttributes->IsSet(a) && (a!=LFAttrStoreID) && (a!=LFAttrFileID) && (a!=LFAttrFileFormat))
 		{
 			m_Views[context].ColumnWidth[a] = m_Attributes[a]->RecommendedWidth;
 		}
@@ -459,7 +458,6 @@ void CStoreManagerApp::SaveViewOptions(UINT context)
 	WriteInt(_T("GlobeShowAirportNames"), m_Views[context].GlobeShowAirportNames);
 	WriteInt(_T("GlobeShowGPS"), m_Views[context].GlobeShowGPS);
 	WriteInt(_T("GlobeShowDescription"), m_Views[context].GlobeShowDescription);
-	WriteInt(_T("TagcloudSortCanonical"), m_Views[context].TagcloudCanonical);
 	WriteInt(_T("TagcloudShowRare"), m_Views[context].TagcloudShowRare);
 	WriteInt(_T("TagcloudUseSize"), m_Views[context].TagcloudUseSize);
 	WriteInt(_T("TagcloudUseColors"), m_Views[context].TagcloudUseColors);

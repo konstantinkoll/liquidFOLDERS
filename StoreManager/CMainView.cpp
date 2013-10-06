@@ -780,30 +780,28 @@ INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndTaskbar.AddButton(IDM_GLOBE_ZOOMIN, 11);
 	m_wndTaskbar.AddButton(IDM_GLOBE_ZOOMOUT, 12);
 	m_wndTaskbar.AddButton(IDM_GLOBE_AUTOSIZE, 13);
-	m_wndTaskbar.AddButton(IDM_TAGCLOUD_SORTVALUE, 14);
-	m_wndTaskbar.AddButton(IDM_TAGCLOUD_SORTCOUNT, 15);
-	m_wndTaskbar.AddButton(IDM_ITEM_OPEN, 16);
-	m_wndTaskbar.AddButton(IDM_GLOBE_GOOGLEEARTH, 17, TRUE);
-	m_wndTaskbar.AddButton(IDM_VOLUME_PROPERTIES, 18);
-	m_wndTaskbar.AddButton(IDM_STORE_DELETE, 19);
-	m_wndTaskbar.AddButton(IDM_STORE_RENAME, 20);
-	m_wndTaskbar.AddButton(IDM_STORE_PROPERTIES, 21);
-	m_wndTaskbar.AddButton(IDM_FILE_REMEMBER, 22);
-	m_wndTaskbar.AddButton(IDM_FILE_REMOVE, 23);
-	m_wndTaskbar.AddButton(IDM_FILE_DELETE, 24);
-	m_wndTaskbar.AddButton(IDM_FILE_RENAME, 25);
-	m_wndTaskbar.AddButton(IDM_FILE_RESTORE, 26);
-	m_wndTaskbar.AddButton(ID_APP_NEWFILEDROP, 27, TRUE);
-	m_wndTaskbar.AddButton(IDM_STORE_MAKEDEFAULT, 28);
+	m_wndTaskbar.AddButton(IDM_ITEM_OPEN, 14);
+	m_wndTaskbar.AddButton(IDM_GLOBE_GOOGLEEARTH, 15, TRUE);
+	m_wndTaskbar.AddButton(IDM_VOLUME_PROPERTIES, 16);
+	m_wndTaskbar.AddButton(IDM_STORE_DELETE, 17);
+	m_wndTaskbar.AddButton(IDM_STORE_RENAME, 18);
+	m_wndTaskbar.AddButton(IDM_STORE_PROPERTIES, 19);
+	m_wndTaskbar.AddButton(IDM_FILE_REMEMBER, 20);
+	m_wndTaskbar.AddButton(IDM_FILE_REMOVE, 21);
+	m_wndTaskbar.AddButton(IDM_FILE_DELETE, 22);
+	m_wndTaskbar.AddButton(IDM_FILE_RENAME, 23);
+	m_wndTaskbar.AddButton(IDM_FILE_RESTORE, 24);
+	m_wndTaskbar.AddButton(ID_APP_NEWFILEDROP, 25, TRUE);
+	m_wndTaskbar.AddButton(IDM_STORE_MAKEDEFAULT, 26);
 
-	#define InspectorIconVisible     29
-	#define InspectorIconHidden      30
+	#define InspectorIconVisible     27
+	#define InspectorIconHidden      28
 	p_InspectorButton = m_wndTaskbar.AddButton(ID_PANE_INSPECTOR, theApp.m_ShowInspectorPane ? InspectorIconVisible : InspectorIconHidden, TRUE, TRUE);
 
-	m_wndTaskbar.AddButton(ID_APP_PURCHASE, 31, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_ENTERLICENSEKEY, 32, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_SUPPORT, 33, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_ABOUT, 34, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_PURCHASE, 29, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_ENTERLICENSEKEY, 30, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_SUPPORT, 31, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_ABOUT, 32, TRUE, TRUE);
 
 	// Drop target
 	m_DropTarget.SetOwner(GetOwner());
@@ -968,13 +966,6 @@ void CMainView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 
 	// Separate sort and view options
 	pPopup->InsertMenu(0, MF_SEPARATOR | MF_BYPOSITION);
-
-	// SPECIAL: tag cloud has own sorting menu
-	if (m_ViewID==LFViewTagcloud)
-	{
-		ENSURE(tmpStr.LoadString(IDM_TAGCLOUD_SORT));
-		pPopup->InsertMenu(0, MF_STRING | MF_BYPOSITION | MF_POPUP, (UINT_PTR)LoadMenu(NULL, MAKEINTRESOURCE(IDM_TAGCLOUD_SORT)), tmpStr);
-	}
 
 	// Insert auto dir command
 	if (theApp.m_Contexts[m_Context]->AllowGroups)

@@ -99,7 +99,6 @@ private:
 	UINT m_IconID;
 	UINT m_IconStatus;
 	UINT m_TypeID;
-	UINT m_TypeStatus;
 	UINT m_AttributeVisible[AttrCount];
 	UINT m_AttributeStatus[AttrCount];
 	BOOL m_AttributeEditable[AttrCount];
