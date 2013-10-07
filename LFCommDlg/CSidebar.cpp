@@ -29,14 +29,6 @@ BOOL CSidebar::Create(CWnd* pParentWnd, UINT nID, UINT LargeIconsID, UINT SmallI
 {
 	// Sidebar with numbers?
 	m_ShowNumbers = ShowNumbers;
-	if (ShowNumbers)
-	{
-		CDC* dc = GetDC();
-		CFont* pOldFont = dc->SelectObject(&afxGlobalData.fontBold);
-		m_NumberWidth = dc->GetTextExtent(_T("888W")).cx+2*BORDER+SHADOW/2;
-		dc->SelectObject(pOldFont);
-		ReleaseDC(dc);
-	}
 
 	// Load icons
 	m_LargeIcons.SetImageSize(CSize(32, 32));
@@ -267,6 +259,15 @@ INT CSidebar::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	hShadow = LoadBitmap(LFCommDlgDLL.hResource, MAKEINTRESOURCE(IDB_SIDEBARSHADOW));
 
 	m_TooltipCtrl.Create(this);
+
+	if (m_ShowNumbers)
+	{
+		CDC* dc = GetDC();
+		CFont* pOldFont = dc->SelectObject(&afxGlobalData.fontBold);
+		m_NumberWidth = dc->GetTextExtent(_T("888W")).cx+2*BORDER+SHADOW/2;
+		dc->SelectObject(pOldFont);
+		ReleaseDC(dc);
+	}
 
 	return 0;
 }
