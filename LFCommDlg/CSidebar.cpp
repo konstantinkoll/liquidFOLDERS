@@ -19,14 +19,25 @@ CSidebar::CSidebar()
 {
 	p_App = LFGetApp();
 
-	m_Width = 0;
+	m_Width = m_NumberWidth = 0;
 	m_SelectedItem = m_HotItem = -1;
-	m_Hover = m_Keyboard = FALSE;
+	m_Hover = m_Keyboard = m_ShowNumbers = FALSE;
 	hShadow = NULL;
 }
 
-BOOL CSidebar::Create(CWnd* pParentWnd, UINT nID, UINT LargeIconsID, UINT SmallIconsID)
+BOOL CSidebar::Create(CWnd* pParentWnd, UINT nID, UINT LargeIconsID, UINT SmallIconsID, BOOL ShowNumbers)
 {
+	// Sidebar with numbers?
+	m_ShowNumbers = ShowNumbers;
+	if (ShowNumbers)
+	{
+		CDC* dc = GetDC();
+		CFont* pOldFont = dc->SelectObject(&afxGlobalData.fontBold);
+		m_NumberWidth = dc->GetTextExtent(_T("888W")).cx+2*BORDER;
+		dc->SelectObject(pOldFont);
+		ReleaseDC(dc);
+	}
+
 	// Load icons
 	m_LargeIcons.SetImageSize(CSize(32, 32));
 	if (LargeIconsID)
@@ -68,7 +79,7 @@ BOOL CSidebar::PreTranslateMessage(MSG* pMsg)
 	return CWnd::PreTranslateMessage(pMsg);
 }
 
-void CSidebar::AddItem(BOOL Selectable, UINT CmdID, INT IconID, WCHAR* Caption, WCHAR* Hint)
+void CSidebar::AddItem(BOOL Selectable, UINT CmdID, INT IconID, WCHAR* Caption, WCHAR* Hint, BOOL NumberInRed)
 {
 	// Hinzufügen
 	SidebarItem i;
@@ -80,6 +91,7 @@ void CSidebar::AddItem(BOOL Selectable, UINT CmdID, INT IconID, WCHAR* Caption, 
 		if (Selectable)
 		{
 			wcscpy_s(i.Caption, 256, Caption);
+			i.NumberInRed = NumberInRed;
 		}
 		else
 		{
@@ -99,14 +111,14 @@ void CSidebar::AddItem(BOOL Selectable, UINT CmdID, INT IconID, WCHAR* Caption, 
 	else
 	{
 		CDC* dc = GetDC();
-		HFONT hOldFont = Selectable ? (HFONT)dc->SelectObject(p_App->m_LargeFont.m_hObject) : (HFONT)dc->SelectObject(afxGlobalData.fontBold.m_hObject);
+		CFont* pOldFont = dc->SelectObject(Selectable ? &p_App->m_LargeFont : &afxGlobalData.fontBold);
 		sz = dc->GetTextExtent(i.Caption);
-		dc->SelectObject(hOldFont);
+		dc->SelectObject(pOldFont);
 		ReleaseDC(dc);
 
 		if (Selectable)
 		{
-			sz.cx += 16+3*BORDER+SHADOW/2;
+			sz.cx += 16+3*BORDER+m_NumberWidth+SHADOW/2;
 			sz.cy = max(16, sz.cy) + 2*BORDER;
 		}
 		else
@@ -123,14 +135,14 @@ void CSidebar::AddItem(BOOL Selectable, UINT CmdID, INT IconID, WCHAR* Caption, 
 	m_Items.AddItem(i);
 }
 
-__forceinline void CSidebar::AddCommand(UINT CmdID, INT IconID, WCHAR* Caption, WCHAR* Hint)
+__forceinline void CSidebar::AddCommand(UINT CmdID, INT IconID, WCHAR* Caption, WCHAR* Hint, BOOL NumberInRed)
 {
-	AddItem(TRUE, CmdID, IconID, Caption, Hint);
+	AddItem(TRUE, CmdID, IconID, Caption, Hint, NumberInRed);
 }
 
 __forceinline void CSidebar::AddCaption(WCHAR* Caption)
 {
-	AddItem(FALSE, 0, -1, Caption, L"");
+	AddItem(FALSE, 0, -1, Caption, L"", FALSE);
 }
 
 void CSidebar::AddCaption(UINT ResID)
@@ -141,6 +153,25 @@ void CSidebar::AddCaption(UINT ResID)
 	AddCaption(tmpStr.GetBuffer());
 }
 
+void CSidebar::ResetNumbers()
+{
+	for (UINT a=0; a<m_Items.m_ItemCount; a++)
+		m_Items.m_Items[a].Number = 0;
+
+	Invalidate();
+}
+
+void CSidebar::SetNumber(UINT CmdID, UINT Number)
+{
+	for (UINT a=0; a<m_Items.m_ItemCount; a++)
+		if (m_Items.m_Items[a].CmdID==CmdID)
+		{
+			m_Items.m_Items[a].Number = Number;
+			InvalidateItem(a);
+			break;
+		}
+}
+
 INT CSidebar::GetPreferredWidth()
 {
 	return m_Width;
@@ -149,9 +180,8 @@ INT CSidebar::GetPreferredWidth()
 void CSidebar::Reset(UINT CmdID)
 {
 	m_SelectedItem = m_HotItem = -1;
+	m_HotItem = 0;
 	m_Hover = FALSE;
-
-	m_HotItem=0;
 
 	for (UINT a=0; a<m_Items.m_ItemCount; a++)
 		if ((m_Items.m_Items[a].Selectable) && (m_Items.m_Items[a].CmdID==CmdID))
@@ -277,6 +307,7 @@ void CSidebar::OnPaint()
 	const COLORREF colCp = Themed ? 0x998981 : GetSysColor(COLOR_3DFACE);
 
 	Graphics g(dc);
+	g.SetSmoothingMode(SmoothingModeAntiAlias);
 
 	dc.FillSolidRect(rect, colBg);
 
@@ -288,6 +319,7 @@ void CSidebar::OnPaint()
 		{
 			CRect rectItem(m_Items.m_Items[a].Rect);
 
+			// Background
 			if (m_SelectedItem!=(INT)a)
 			{
 				if (m_Items.m_Items[a].Selectable)
@@ -308,6 +340,7 @@ void CSidebar::OnPaint()
 				dc.FillSolidRect(rectItem.left, rectItem.top, rectItem.Width(), rectItem.Height(), colSe);
 			}
 
+			// Icon
 			if (m_Items.m_Items[a].Selectable)
 			{
 				rectItem.DeflateRect(BORDER, BORDER);
@@ -322,6 +355,61 @@ void CSidebar::OnPaint()
 
 				rectItem.left += 16+BORDER;
 
+				// Number
+				if (m_ShowNumbers && (m_Items.m_Items[a].Number))
+				{
+					CRect rectNumber(rectItem.right-m_NumberWidth+BORDER, rectItem.top-2, rectItem.right, rectItem.bottom);
+
+					if (m_Items.m_Items[a].NumberInRed)
+					{
+						if (Themed)
+						{
+							GraphicsPath path;
+							CreateRoundRectangle(rectNumber, 4, path);
+
+							SolidBrush brush(Color(0xFF, 0, 0));
+							g.FillPath(&brush, &path);
+
+							Pen pen(Color(0xFF, 0xFF, 0xFF), 1.6f);
+							g.DrawPath(&pen, &path);
+						}
+						else
+						{
+							dc.FillSolidRect(rectNumber, 0x0000FF);
+							dc.Draw3dRect(rectNumber, 0xFFFFFF, 0xFFFFFF);
+						}
+
+						dc.SetTextColor(0xFFFFFF);
+					}
+					else
+					{
+						dc.SetTextColor(colCp);
+
+						rectNumber.top += 4;
+					}
+
+					CString tmpStr;
+					if (m_Items.m_Items[a].Number>=1000000)
+					{
+						tmpStr.Format(_T("%dm"), m_Items.m_Items[a].Number/1000000);
+					}
+					else
+						if (m_Items.m_Items[a].Number>=1000)
+						{
+							tmpStr.Format(_T("%dk"), m_Items.m_Items[a].Number/1000);
+						}
+						else
+						{
+							tmpStr.Format(_T("%d"), m_Items.m_Items[a].Number);
+						}
+
+					rectNumber.DeflateRect(BORDER/2, 0);
+
+					CFont* pOldFont = dc.SelectObject(m_Items.m_Items[a].NumberInRed ? &afxGlobalData.fontBold : &p_App->m_SmallFont);
+					dc.DrawText(tmpStr, rectNumber, DT_SINGLELINE | DT_VCENTER | DT_NOPREFIX | DT_RIGHT);
+					dc.SelectObject(pOldFont);
+				}
+
 				dc.SetTextColor((m_HotItem==(INT)a) || ((m_SelectedItem==(INT)a) && (m_HotItem==-1)) ? 0xFFFFFF : colTx);
 			}
 			else
@@ -331,6 +419,7 @@ void CSidebar::OnPaint()
 				dc.SetTextColor(colCp);
 			}
 
+			// Text
 			if (m_Items.m_Items[a].Caption[0])
 			{
 				CFont* pOldFont = dc.SelectObject(m_Items.m_Items[a].Selectable ? &p_App->m_LargeFont : &afxGlobalData.fontBold);

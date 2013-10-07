@@ -441,7 +441,7 @@ INT CMainWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 
 	// Sidebar
-	if (!m_wndSidebar.Create(this, 4, IDB_CONTEXTS_32, IDB_CONTEXTS_16))
+	if (!m_wndSidebar.Create(this, 4, IDB_CONTEXTS_32, IDB_CONTEXTS_16, TRUE))
 		return -1;
 
 	for (UINT a=0; a<=LFLastQueryContext; a++)
@@ -462,7 +462,7 @@ INT CMainWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 			break;
 		}
 
-		m_wndSidebar.AddCommand(IDM_NAV_SWITCHCONTEXT+a, a, theApp.m_Contexts[a]->Name, theApp.m_Contexts[a]->Comment);
+		m_wndSidebar.AddCommand(IDM_NAV_SWITCHCONTEXT+a, a, theApp.m_Contexts[a]->Name, theApp.m_Contexts[a]->Comment, (a==LFContextNew) || (a==LFContextTrash));
 	}
 
 	// Hauptansicht erstellen

@@ -19,22 +19,24 @@ struct SidebarItem
 	WCHAR Caption[256];
 	WCHAR Hint[256];
 	INT Height;
+	UINT Number;
+	BOOL NumberInRed;
 };
 
 class AFX_EXT_CLASS CSidebar : public CWnd
 {
-friend class CSidebarCommand;
-
 public:
 	CSidebar();
 
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 	virtual void AdjustLayout();
 
-	BOOL Create(CWnd* pParentWnd, UINT nID, UINT LargeIconsID, UINT SmallIconsID);
-	void AddCommand(UINT CmdID, INT IconID, WCHAR* Caption, WCHAR* Hint);
+	BOOL Create(CWnd* pParentWnd, UINT nID, UINT LargeIconsID, UINT SmallIconsID, BOOL ShowNumbers);
+	void AddCommand(UINT CmdID, INT IconID, WCHAR* Caption, WCHAR* Hint, BOOL NumberInRed=FALSE);
 	void AddCaption(WCHAR* Caption=NULL);
 	void AddCaption(UINT ResID);
+	void ResetNumbers();
+	void SetNumber(UINT CmdID, UINT Number);
 	INT GetPreferredWidth();
 	void Reset(UINT CmdID=0);
 
@@ -45,13 +47,15 @@ protected:
 	INT m_Width;
 	INT m_SelectedItem;
 	INT m_HotItem;
+	INT m_NumberWidth;
 	BOOL m_Hover;
 	BOOL m_Keyboard;
+	BOOL m_ShowNumbers;
 	CMFCToolBarImages m_SmallIcons;
 	CMFCToolBarImages m_LargeIcons;
 	HBITMAP hShadow;
 
-	void AddItem(BOOL Selectable, UINT CmdID, INT IconID, WCHAR* Caption, WCHAR* Hint);
+	void AddItem(BOOL Selectable, UINT CmdID, INT IconID, WCHAR* Caption, WCHAR* Hint, BOOL NumberInRed=FALSE);
 	INT ItemAtPosition(CPoint point);
 	void InvalidateItem(INT idx);
 	void SelectItem(INT idx);
