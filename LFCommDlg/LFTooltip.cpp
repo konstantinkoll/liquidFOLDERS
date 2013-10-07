@@ -100,11 +100,14 @@ void LFTooltip::Track(CPoint point, HICON hIcon, CSize szIcon, const CString& st
 				strText.Delete(0, pos+1);
 			}
 
-			CSize szText = dc.GetTextExtent(Line);
-			sz.cx = max(sz.cx, szText.cx);
-			sz.cy += szText.cy;
+			if (!Line.IsEmpty())
+			{
+				CSize szText = dc.GetTextExtent(Line);
+				sz.cx = max(sz.cx, szText.cx);
+				sz.cy += szText.cy;
 
-			m_TextHeight = max(m_TextHeight, szText.cy);
+				m_TextHeight = max(m_TextHeight, szText.cy);
+			}
 		}
 
 		dc.SelectObject(pOldFont);
@@ -204,7 +207,6 @@ void LFTooltip::Track(CPoint point, HICON hIcon, CSize szIcon, const CString& st
 
 	Invalidate();
 	UpdateWindow();
-
 }
 
 void LFTooltip::Hide()
@@ -343,8 +345,11 @@ void LFTooltip::OnPaint()
 				strText.Delete(0, pos+1);
 			}
 
-			dc.DrawText(Line, rect, DT_LEFT | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
-			rect.top += m_TextHeight;
+			if (!Line.IsEmpty())
+			{
+				dc.DrawText(Line, rect, DT_LEFT | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
+				rect.top += m_TextHeight;
+			}
 		}
 
 		dc.SelectObject(pOldFont);
