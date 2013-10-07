@@ -775,6 +775,40 @@ Add:
 	}
 }
 
+void CIndex::Statistics(LFStatistics* stat)
+{
+	assert(stat);
+
+	if (!LoadTable(IDMaster))
+	{
+		stat->LastError = LFIndexTableLoadError;
+		return;
+	}
+
+	int ID = 0;
+	LFCoreAttributes* PtrM;
+
+	while (Tables[IDMaster]->FindNext(ID, (void*&)PtrM))
+	{
+		#define Count(Context) { stat->FileCount[Context]++; stat->FileSize[Context] += PtrM->FileSize; }
+
+		if (PtrM->Flags & LFFlagTrash)
+		{
+			Count(LFContextTrash);
+		}
+		else
+		{
+			Count(LFContextAllFiles);
+			if (PtrM->Rating)
+				Count(LFContextFavorites);
+			if (PtrM->Flags & LFFlagNew)
+				Count(LFContextNew);
+
+			Count(PtrM->ContextID);
+		}
+	}
+}
+
 void CIndex::TransferTo(CIndex* idxDst1, CIndex* idxDst2, LFStoreDescriptor* slotDst, LFFileIDList* il, LFStoreDescriptor* slotSrc, bool move, LFProgress* pProgress)
 {
 	assert(il);

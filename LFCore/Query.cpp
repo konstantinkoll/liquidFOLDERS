@@ -661,18 +661,8 @@ bool PassesFilterSlaves(LFItemDescriptor* i, LFFilter* filter)
 	return false;
 }
 
-LFCore_API bool LFPassesFilter(LFItemDescriptor* i, LFFilter* filter)
-{
-	switch (PassesFilterCore(&i->CoreAttributes, filter))
-	{
-	case -1:
-		return false;
-	case 1:
-		return true;
-	default:
-		return PassesFilterSlaves(i, filter);
-	}
-}
+
+// Query helpers
 
 void RetrieveStore(char* StoreID, LFFilter* filter, LFSearchResult* res)
 {
@@ -754,6 +744,32 @@ __forceinline void QuerySearch(LFFilter* filter, LFSearchResult* res)
 	}
 }
 
+
+// Statistics helper
+
+void StoreStatistics(char* StoreID, LFStatistics* stat)
+{
+	CIndex* idx1;
+	CIndex* idx2;
+	LFStoreDescriptor* slot;
+	HANDLE StoreLock = NULL;
+	stat->LastError = OpenStore(StoreID, false, idx1, idx2, &slot, &StoreLock);
+	if (stat->LastError==LFOk)
+	{
+		if (idx1)
+		{
+			idx1->Statistics(stat);
+			delete idx1;
+		}
+		if (idx2)
+			delete idx2;
+		ReleaseMutexForStore(StoreLock);
+	}
+}
+
+
+// Public functions
+
 LFCore_API LFSearchResult* LFQuery(LFFilter* filter)
 {
 	DWORD start = GetTickCount();
@@ -827,4 +843,49 @@ LFCore_API LFSearchResult* LFQuery(LFFilter* filter, LFSearchResult* base, int f
 	res->m_QueryTime = GetTickCount()-start;
 
 	return res;
+}
+
+LFCore_API LFStatistics* LFQueryStatistics(char* key)
+{
+	LFStatistics* stat = new LFStatistics();
+	ZeroMemory(stat, sizeof(LFStatistics));
+
+	if (!key)
+	{
+		stat->LastError = LFIllegalKey;
+		return stat;
+	}
+
+	if (key[0]=='\0')
+	{
+		// All stores
+		if (!GetMutex(Mutex_Stores))
+		{
+			stat->LastError = LFMutexError;
+			return stat;
+		}
+
+		char* keys;
+		unsigned int count = FindStores(&keys);
+		ReleaseMutex(Mutex_Stores);
+
+		if (count)
+		{
+			char* ptr = keys;
+			for (unsigned int a=0; a<count; a++)
+			{
+				StoreStatistics(ptr, stat);
+				ptr += LFKeySize;
+			}
+		}
+
+		free(keys);
+	}
+	else
+	{
+		// Single store
+		StoreStatistics(key, stat);
+	}
+
+	return stat;
 }

@@ -309,8 +309,10 @@ LFCore_API LFSearchResult* __stdcall LFQuery(LFFilter* filter);
 // - first und last müssen einen gültigen Bereich umfassen
 LFCore_API LFSearchResult* __stdcall LFQuery(LFFilter* filter, LFSearchResult* base, int first, int last);
 
-// Gleicht eine Datei mit einem Filter ab
-LFCore_API bool __stdcall LFPassesFilter(LFItemDescriptor* i, LFFilter* filter);
+// Statistik
+// - Ist StoreID==NULL, so wird die Statistik über alle Stores ermittelt
+LFCore_API LFStatistics* __stdcall LFQueryStatistics(char* key);
+
 
 
 //
@@ -338,13 +340,7 @@ LFCore_API bool __stdcall LFIsStoreMounted(LFStoreDescriptor* s);
 //   - AutoLocation: erforderlich
 //   - DatPath: erforderlich, wenn AutoLocation==true
 //   - Alle anderen Parameter werden ignoriert bzw. ausgefüllt
-// - Eingabeparameter Hybrid-Store:
-//   - StoreName: optional (wird ggf. durch Standardname ersetzt)
-//   - Comment: optional
-//   - StoreMode: erforderlich
-//   - DatPath: erforderlich
-//   - Alle anderen Parameter werden ignoriert bzw. ausgefüllt
-// - Eingabeparameter externer Store:
+// - Eingabeparameter Hybrid-Store und externer Store:
 //   - StoreName: optional (wird ggf. durch Standardname ersetzt)
 //   - Comment: optional
 //   - StoreMode: erforderlich

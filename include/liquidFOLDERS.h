@@ -192,6 +192,16 @@ struct LFContextDescriptor
 };
 
 
+// Statistics
+
+struct LFStatistics
+{
+	unsigned int FileCount[LFLastQueryContext+1];
+	__int64 FileSize[LFLastQueryContext+1];
+	unsigned int LastError;
+};
+
+
 // Attributes
 
 #define LFAttrFileName                  0
