@@ -23,6 +23,7 @@ public:
 	BOOL Create(BOOL IsClipboard, CWnd* pParentWnd, UINT nID);
 	void UpdateViewOptions();
 	void UpdateSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data=NULL, BOOL UpdateSelection=TRUE);
+	CHAR* GetStoreID();
 	INT GetContext();
 	INT GetViewID();
 	void DismissNotification();

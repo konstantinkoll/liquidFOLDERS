@@ -6,6 +6,7 @@
 #include "liquidFOLDERS.h"
 #include "CJournalButton.h"
 #include "CHistoryBar.h"
+#include "CContextSidebar.h"
 #include "CMainView.h"
 #include "CFileView.h"
 
@@ -52,7 +53,7 @@ protected:
 	CJournalButton m_wndJournalButton;
 	CHistoryBar m_wndHistory;
 	CGlassEdit m_wndSearch;
-	CSidebar m_wndSidebar;
+	CContextSidebar m_wndContextSidebar;
 	CMainView m_wndMainView;
 	BreadcrumbItem* m_BreadcrumbBack;
 	BreadcrumbItem* m_BreadcrumbForward;

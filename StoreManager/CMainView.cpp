@@ -320,6 +320,11 @@ void CMainView::UpdateSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles,
 		OnUpdateSelection();
 }
 
+CHAR* CMainView::GetStoreID()
+{
+	return m_StoreID;
+}
+
 INT CMainView::GetContext()
 {
 	return m_Context;

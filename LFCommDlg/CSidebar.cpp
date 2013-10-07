@@ -33,7 +33,7 @@ BOOL CSidebar::Create(CWnd* pParentWnd, UINT nID, UINT LargeIconsID, UINT SmallI
 	{
 		CDC* dc = GetDC();
 		CFont* pOldFont = dc->SelectObject(&afxGlobalData.fontBold);
-		m_NumberWidth = dc->GetTextExtent(_T("888W")).cx+2*BORDER;
+		m_NumberWidth = dc->GetTextExtent(_T("888W")).cx+2*BORDER+SHADOW/2;
 		dc->SelectObject(pOldFont);
 		ReleaseDC(dc);
 	}
@@ -238,6 +238,11 @@ void CSidebar::AdjustLayout()
 	Invalidate();
 }
 
+CString CSidebar::AppendTooltip(UINT /*CmdID*/)
+{
+	return _T("");
+}
+
 
 BEGIN_MESSAGE_MAP(CSidebar, CWnd)
 	ON_WM_CREATE()
@@ -358,20 +363,23 @@ void CSidebar::OnPaint()
 				// Number
 				if (m_ShowNumbers && (m_Items.m_Items[a].Number))
 				{
-					CRect rectNumber(rectItem.right-m_NumberWidth+BORDER, rectItem.top-2, rectItem.right, rectItem.bottom);
+					CRect rectNumber(rectItem.right-m_NumberWidth+BORDER/2, rectItem.top-2, rectItem.right-BORDER/2-SHADOW/2, rectItem.bottom);
 
 					if (m_Items.m_Items[a].NumberInRed)
 					{
 						if (Themed)
 						{
 							GraphicsPath path;
-							CreateRoundRectangle(rectNumber, 4, path);
+							CreateRoundRectangle(rectNumber, 6, path);
 
 							SolidBrush brush(Color(0xFF, 0, 0));
 							g.FillPath(&brush, &path);
 
 							Pen pen(Color(0xFF, 0xFF, 0xFF), 1.6f);
 							g.DrawPath(&pen, &path);
+
+							rectNumber.right += 2;
+							rectNumber.bottom++;
 						}
 						else
 						{
@@ -385,7 +393,7 @@ void CSidebar::OnPaint()
 					{
 						dc.SetTextColor(colCp);
 
-						rectNumber.top += 4;
+						rectNumber.top += 6;
 					}
 
 					CString tmpStr;
@@ -403,10 +411,8 @@ void CSidebar::OnPaint()
 							tmpStr.Format(_T("%d"), m_Items.m_Items[a].Number);
 						}
 
-					rectNumber.DeflateRect(BORDER/2, 0);
-
 					CFont* pOldFont = dc.SelectObject(m_Items.m_Items[a].NumberInRed ? &afxGlobalData.fontBold : &p_App->m_SmallFont);
-					dc.DrawText(tmpStr, rectNumber, DT_SINGLELINE | DT_VCENTER | DT_NOPREFIX | DT_RIGHT);
+					dc.DrawText(tmpStr, rectNumber, DT_SINGLELINE | DT_VCENTER | DT_NOPREFIX | (m_Items.m_Items[a].NumberInRed ? DT_CENTER : DT_RIGHT));
 					dc.SelectObject(pOldFont);
 				}
 
@@ -524,7 +530,7 @@ void CSidebar::OnMouseHover(UINT nFlags, CPoint point)
 				HICON hIcon = (idx!=-1) ? m_LargeIcons.ExtractIcon(idx) : NULL;
 
 				ClientToScreen(&point);
-				m_TooltipCtrl.Track(point, hIcon, hIcon ? CSize(32, 32) : CSize(0, 0), m_Items.m_Items[m_HotItem].Caption, m_Items.m_Items[m_HotItem].Hint);
+				m_TooltipCtrl.Track(point, hIcon, hIcon ? CSize(32, 32) : CSize(0, 0), m_Items.m_Items[m_HotItem].Caption, m_Items.m_Items[m_HotItem].Hint+AppendTooltip(m_Items.m_Items[m_HotItem].CmdID));
 			}
 	}
 	else

@@ -243,18 +243,18 @@ void CMainWnd::AdjustLayout()
 	INT FilterWidth = 0;
 	if (m_ShowFilterPane)
 	{
-		if (!m_wndSidebar.IsWindowVisible())
+		if (!m_wndContextSidebar.IsWindowVisible())
 		{
 			const INT ctx = GetContext();
-			m_wndSidebar.Reset(ctx<=LFLastQueryContext ? IDM_NAV_SWITCHCONTEXT+ctx : 0);
+			m_wndContextSidebar.Reset(ctx<=LFLastQueryContext ? IDM_NAV_SWITCHCONTEXT+ctx : 0, m_wndMainView.GetStoreID());
 		}
 
-		FilterWidth = max(32, m_wndSidebar.GetPreferredWidth());
-		m_wndSidebar.SetWindowPos(NULL, rect.left, rect.top+m_Margins.cyTopHeight, FilterWidth, rect.bottom-m_Margins.cyTopHeight, SWP_NOACTIVATE | SWP_NOZORDER | SWP_SHOWWINDOW);
+		FilterWidth = max(32, m_wndContextSidebar.GetPreferredWidth());
+		m_wndContextSidebar.SetWindowPos(NULL, rect.left, rect.top+m_Margins.cyTopHeight, FilterWidth, rect.bottom-m_Margins.cyTopHeight, SWP_NOACTIVATE | SWP_NOZORDER | SWP_SHOWWINDOW);
 	}
 	else
 	{
-		m_wndSidebar.ShowWindow(SW_HIDE);
+		m_wndContextSidebar.ShowWindow(SW_HIDE);
 	}
 
 	m_wndMainView.SetWindowPos(NULL, rect.left+FilterWidth, rect.top+m_Margins.cyTopHeight, rect.Width(), rect.bottom-m_Margins.cyTopHeight, SWP_NOACTIVATE | SWP_NOZORDER);
@@ -441,7 +441,7 @@ INT CMainWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 
 	// Sidebar
-	if (!m_wndSidebar.Create(this, 4, IDB_CONTEXTS_32, IDB_CONTEXTS_16, TRUE))
+	if (!m_wndContextSidebar.Create(this, 4))
 		return -1;
 
 	for (UINT a=0; a<=LFLastQueryContext; a++)
@@ -449,20 +449,20 @@ INT CMainWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		switch (a)
 		{
 		case 2:
-			m_wndSidebar.AddCaption(IDS_FILETYPES);
+			m_wndContextSidebar.AddCaption(IDS_FILETYPES);
 			break;
 		case LFContextDocuments:
-			m_wndSidebar.AddCaption();
+			m_wndContextSidebar.AddCaption();
 			break;
 		case LFLastGroupContext+1:
-			m_wndSidebar.AddCaption(IDS_HOUSEKEEPING);
+			m_wndContextSidebar.AddCaption(IDS_HOUSEKEEPING);
 			break;
 		case LFContextFilters:
-			m_wndSidebar.AddCaption(theApp.m_Contexts[LFContextFilters]->Name);
+			m_wndContextSidebar.AddCaption(theApp.m_Contexts[LFContextFilters]->Name);
 			break;
 		}
 
-		m_wndSidebar.AddCommand(IDM_NAV_SWITCHCONTEXT+a, a, theApp.m_Contexts[a]->Name, theApp.m_Contexts[a]->Comment, (a==LFContextNew) || (a==LFContextTrash));
+		m_wndContextSidebar.AddCommand(IDM_NAV_SWITCHCONTEXT+a, a, theApp.m_Contexts[a]->Name, theApp.m_Contexts[a]->Comment, (a==LFContextNew) || (a==LFContextTrash));
 	}
 
 	// Hauptansicht erstellen
@@ -647,7 +647,7 @@ void CMainWnd::OnToggleFilterPane()
 	AdjustLayout();
 
 	if (m_ShowFilterPane)
-		m_wndSidebar.SetFocus();
+		m_wndContextSidebar.SetFocus();
 }
 
 
@@ -838,7 +838,7 @@ void CMainWnd::OnExportMetadata()
 
 void CMainWnd::OnUpdateViewOptions()
 {
-	if ((m_wndMainView.GetViewID()>LFViewPreview) || (theApp.m_Views[m_wndMainView.GetContext()].Mode>LFViewPreview))
+	if ((m_wndMainView.GetViewID()>LFViewPreview) || (theApp.m_Views[GetContext()].Mode>LFViewPreview))
 	{
 		m_wndMainView.SelectNone();
 		OnCookFiles();

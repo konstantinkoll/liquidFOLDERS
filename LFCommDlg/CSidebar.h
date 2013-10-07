@@ -30,6 +30,7 @@ public:
 
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 	virtual void AdjustLayout();
+	virtual CString AppendTooltip(UINT CmdID);
 
 	BOOL Create(CWnd* pParentWnd, UINT nID, UINT LargeIconsID, UINT SmallIconsID, BOOL ShowNumbers);
 	void AddCommand(UINT CmdID, INT IconID, WCHAR* Caption, WCHAR* Hint, BOOL NumberInRed=FALSE);
