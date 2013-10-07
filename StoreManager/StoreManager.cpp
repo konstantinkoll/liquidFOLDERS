@@ -326,6 +326,11 @@ void CStoreManagerApp::UpdateViewOptions(INT Context, INT View)
 	Broadcast(Context, Modified ? -1 : View, Modified ? WM_UPDATESORTOPTIONS : WM_UPDATEVIEWOPTIONS);
 }
 
+void CStoreManagerApp::UpdateNumbers()
+{
+	Broadcast(-1, -1, WM_UPDATENUMBERS);
+}
+
 void CStoreManagerApp::Reload(INT Context)
 {
 	Broadcast(Context, -1, WM_RELOAD);

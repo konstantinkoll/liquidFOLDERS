@@ -288,9 +288,6 @@ void CMainWnd::NavigateTo(LFFilter* f, UINT NavMode, FVPersistentData* Data, INT
 {
 	ASSERT(f);
 
-	// Slide the filter pane away
-	HideFilterPane();
-
 	// Open new window if current window is not navigable
 	if (m_IsClipboard)
 	{
@@ -303,7 +300,12 @@ void CMainWnd::NavigateTo(LFFilter* f, UINT NavMode, FVPersistentData* Data, INT
 
 	// Navigate
 	if (NavMode<NAVMODE_RELOAD)
+	{
+		// Slide the filter pane away
+		HideFilterPane();
+
 		theApp.PlayNavigateSound();
+	}
 
 	if (m_pActiveFilter)
 		if (NavMode==NAVMODE_NORMAL)
@@ -406,6 +408,7 @@ BEGIN_MESSAGE_MAP(CMainWnd, CGlassWindow)
 
 	ON_MESSAGE_VOID(WM_UPDATEVIEWOPTIONS, OnUpdateViewOptions)
 	ON_MESSAGE_VOID(WM_UPDATESORTOPTIONS, OnUpdateSortOptions)
+	ON_MESSAGE_VOID(WM_UPDATENUMBERS, OnUpdateNumbers)
 	ON_MESSAGE_VOID(WM_RELOAD, OnNavigateReload)
 	ON_MESSAGE(WM_COOKFILES, OnCookFiles)
 	ON_MESSAGE(WM_NAVIGATEBACK, OnNavigateBack)
@@ -858,6 +861,12 @@ void CMainWnd::OnUpdateSortOptions()
 	OnCookFiles((WPARAM)&Data);
 }
 
+void CMainWnd::OnUpdateNumbers()
+{
+	if (m_wndContextSidebar.IsWindowVisible())
+		m_wndContextSidebar.PostMessage(WM_UPDATENUMBERS);
+}
+
 LRESULT CMainWnd::OnCookFiles(WPARAM wParam, LPARAM /*lParam*/)
 {
 	LFSearchResult* pVictim = m_pCookedFiles;
@@ -911,6 +920,9 @@ LRESULT CMainWnd::OnStoresChanged(WPARAM /*wParam*/, LPARAM lParam)
 			PostMessage(WM_RELOAD);
 			break;
 		}
+
+	if (m_wndMainView.GetStoreID()[0]=='\0')
+		OnUpdateNumbers();
 
 	return NULL;
 }

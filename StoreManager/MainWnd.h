@@ -90,6 +90,7 @@ protected:
 
 	afx_msg void OnUpdateViewOptions();
 	afx_msg void OnUpdateSortOptions();
+	afx_msg void OnUpdateNumbers();
 	afx_msg LRESULT OnCookFiles(WPARAM wParam=0, LPARAM lParam=NULL);
 	afx_msg void OnUpdateFooter();
 

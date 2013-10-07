@@ -23,7 +23,7 @@ UINT __cdecl WorkerStatistics(void* lParam)
 	WorkerParameters* wp = (WorkerParameters*)lParam;
 
 	LFStatistics* pStatistics = LFQueryStatistics(wp->StoreID);
-	PostMessage(wp->hWndSidebar, WM_USER, wp->ThreadID, (LPARAM)pStatistics);
+	PostMessage(wp->hWndSidebar, WM_STATISTICS, wp->ThreadID, (LPARAM)pStatistics);
 
 	delete wp;
 	CoUninitialize();
@@ -41,6 +41,12 @@ CContextSidebar::CContextSidebar()
 	m_StoreID[0] = '\0';
 	m_pStatistics = NULL;
 	m_ThreadID = 0;
+}
+
+CContextSidebar::~CContextSidebar()
+{
+	if (m_pStatistics)
+		delete m_pStatistics;
 }
 
 BOOL CContextSidebar::Create(CWnd* pParentWnd, UINT nID)
@@ -79,20 +85,26 @@ void CContextSidebar::Reset(UINT CmdID, CHAR* StoreID)
 		CSidebar::ResetNumbers();
 	}
 
-	WorkerParameters* wp = new WorkerParameters;
-	strcpy_s(wp->StoreID, LFKeySize, m_StoreID);
-	wp->ThreadID = ++m_ThreadID;
-	wp->hWndSidebar = GetSafeHwnd();
-
-	AfxBeginThread(WorkerStatistics, wp);
+	OnUpdateNumbers();
 
 	CSidebar::Reset(CmdID);
 }
 
 
 BEGIN_MESSAGE_MAP(CContextSidebar, CSidebar)
-	ON_MESSAGE(WM_USER, OnStatistics)
+	ON_MESSAGE_VOID(WM_UPDATENUMBERS, OnUpdateNumbers)
+	ON_MESSAGE(WM_STATISTICS, OnStatistics)
 END_MESSAGE_MAP()
+
+void CContextSidebar::OnUpdateNumbers()
+{
+	WorkerParameters* wp = new WorkerParameters;
+	strcpy_s(wp->StoreID, LFKeySize, m_StoreID);
+	wp->ThreadID = ++m_ThreadID;
+	wp->hWndSidebar = GetSafeHwnd();
+
+	AfxBeginThread(WorkerStatistics, wp);
+}
 
 LRESULT CContextSidebar::OnStatistics(WPARAM wParam, LPARAM lParam)
 {

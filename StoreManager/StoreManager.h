@@ -34,6 +34,7 @@ public:
 	void Broadcast(INT Context, INT View, UINT cmdMsg);
 	void UpdateSortOptions(INT Context);
 	void UpdateViewOptions(INT Context=-1, INT View=-1);
+	void UpdateNumbers();
 	void Reload(INT Context);
 
 	CList<CMainWnd*> m_MainFrames;

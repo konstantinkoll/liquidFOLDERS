@@ -316,6 +316,7 @@ void CMainView::UpdateSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles,
 		m_DropTarget.SetSearchResult(pRawFiles);
 
 	SetHeader();
+	theApp.UpdateNumbers();
 	if (UpdateSelection)
 		OnUpdateSelection();
 }
