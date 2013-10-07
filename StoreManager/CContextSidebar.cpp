@@ -7,6 +7,31 @@
 #include "Resource.h"
 
 
+// Thread
+//
+
+struct WorkerParameters
+{
+	CHAR StoreID[LFKeySize];
+	UINT ThreadID;
+	HWND hWndSidebar;
+};
+
+UINT __cdecl WorkerStatistics(void* lParam)
+{
+	CoInitialize(NULL);
+	WorkerParameters* wp = (WorkerParameters*)lParam;
+
+	LFStatistics* pStatistics = LFQueryStatistics(wp->StoreID);
+	PostMessage(wp->hWndSidebar, WM_USER, wp->ThreadID, (LPARAM)pStatistics);
+
+	delete wp;
+	CoUninitialize();
+
+	return 0;
+}
+
+
 // CContextSidebar
 //
 
@@ -15,6 +40,7 @@ CContextSidebar::CContextSidebar()
 {
 	m_StoreID[0] = '\0';
 	m_pStatistics = NULL;
+	m_ThreadID = 0;
 }
 
 BOOL CContextSidebar::Create(CWnd* pParentWnd, UINT nID)
@@ -53,16 +79,38 @@ void CContextSidebar::Reset(UINT CmdID, CHAR* StoreID)
 		CSidebar::ResetNumbers();
 	}
 
-	if (m_pStatistics)
-		delete m_pStatistics;
-	m_pStatistics = LFQueryStatistics(m_StoreID);
+	WorkerParameters* wp = new WorkerParameters;
+	strcpy_s(wp->StoreID, LFKeySize, m_StoreID);
+	wp->ThreadID = ++m_ThreadID;
+	wp->hWndSidebar = GetSafeHwnd();
 
-	for (UINT a=0; a<=LFLastQueryContext; a++)
-		SetNumber(IDM_NAV_SWITCHCONTEXT+a, m_pStatistics->FileCount[a]);
+	AfxBeginThread(WorkerStatistics, wp);
 
 	CSidebar::Reset(CmdID);
 }
 
 
 BEGIN_MESSAGE_MAP(CContextSidebar, CSidebar)
+	ON_MESSAGE(WM_USER, OnStatistics)
 END_MESSAGE_MAP()
+
+LRESULT CContextSidebar::OnStatistics(WPARAM wParam, LPARAM lParam)
+{
+	LFStatistics* pStatistics = (LFStatistics*)lParam;
+
+	if (wParam==m_ThreadID)
+	{
+		if (m_pStatistics)
+			delete m_pStatistics;
+		m_pStatistics = pStatistics;
+
+		for (UINT a=0; a<=LFLastQueryContext; a++)
+			SetNumber(IDM_NAV_SWITCHCONTEXT+a, m_pStatistics->FileCount[a]);
+	}
+	else
+	{
+		delete pStatistics;
+	}
+
+	return NULL;
+}

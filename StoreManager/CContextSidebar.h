@@ -25,5 +25,9 @@ protected:
 	CHAR m_StoreID[LFKeySize];
 	LFStatistics* m_pStatistics;
 
+	afx_msg LRESULT OnStatistics(WPARAM wParam, LPARAM lParam);
 	DECLARE_MESSAGE_MAP()
+
+private:
+	UINT m_ThreadID;
 };
