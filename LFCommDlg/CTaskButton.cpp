@@ -24,6 +24,7 @@ BOOL CTaskButton::Create(CString Caption, CString TooltipHeader, CString Tooltip
 	m_TooltipHint = TooltipHint;
 	p_Icons = Icons;
 	m_IconID = IconID;
+	m_OverlayID = -1;
 
 	CRect rect;
 	rect.SetRectEmpty();
@@ -57,9 +58,11 @@ void CTaskButton::DrawItem(LPDRAWITEMSTRUCT /*lpDrawItemStruct*/)
 {
 }
 
-void CTaskButton::SetIconID(INT IconID)
+void CTaskButton::SetIconID(INT IconID, INT OverlayID)
 {
 	m_IconID = IconID;
+	m_OverlayID = OverlayID;
+
 	Invalidate();
 }
 
@@ -84,6 +87,25 @@ INT CTaskButton::GetPreferredWidth()
 	}
 
 	return l;
+}
+
+void CTaskButton::DrawIcon(CDC& dc, CRect& rectText, INT Height, BOOL Selected)
+{
+	if ((p_Icons) && (m_IconID!=-1))
+	{
+		CAfxDrawState ds;
+		p_Icons->PrepareDrawImage(ds);
+
+		CPoint pt(rectText.left, (Height-16)/2+(Selected ? 1 : 0));
+		p_Icons->Draw(&dc, pt.x, pt.y, m_IconID);
+
+		if (m_OverlayID!=-1)
+			p_Icons->Draw(&dc, pt.x+2, pt.y+2, m_OverlayID);
+
+		p_Icons->EndDrawImage(ds);
+
+		rectText.left += 16+BORDER;
+	}
 }
 
 
@@ -197,15 +219,7 @@ void CTaskButton::OnPaint()
 				if (Selected)
 					rectText.OffsetRect(1, 1);
 
-				if ((p_Icons) && (m_IconID!=-1))
-				{
-					CAfxDrawState ds;
-					p_Icons->PrepareDrawImage(ds);
-					p_Icons->Draw(&dc, rectText.left, (rect.Height()-16)/2+(Selected ? 1 : 0), m_IconID);
-					p_Icons->EndDrawImage(ds);
-
-					rectText.left += 16+BORDER;
-				}
+				DrawIcon(dc, rectText, rect.Height(), Selected);
 
 				rectText.OffsetRect(1, 1);
 				dc.SetTextColor(0x000000);
@@ -268,15 +282,7 @@ void CTaskButton::OnPaint()
 				if (Selected)
 					rectText.OffsetRect(1, 1);
 
-				if ((p_Icons) && (m_IconID!=-1))
-				{
-					CAfxDrawState ds;
-					p_Icons->PrepareDrawImage(ds);
-					p_Icons->Draw(&dc, rectText.left, (rect.Height()-16)/2+(Selected ? 1 : 0), m_IconID);
-					p_Icons->EndDrawImage(ds);
-
-					rectText.left += 16+BORDER;
-				}
+				DrawIcon(dc, rectText, rect.Height(), Selected);
 
 				dc.SetTextColor(0x5B391E);
 				dc.DrawText(m_Caption, rectText, DT_SINGLELINE | DT_END_ELLIPSIS | DT_VCENTER);
@@ -301,15 +307,7 @@ void CTaskButton::OnPaint()
 				if (Selected)
 					rectText.OffsetRect(1, 1);
 
-				if ((p_Icons) && (m_IconID!=-1))
-				{
-					CAfxDrawState ds;
-					p_Icons->PrepareDrawImage(ds);
-					p_Icons->Draw(&dc, rectText.left, (rect.Height()-16)/2+(Selected ? 1 : 0), m_IconID);
-					p_Icons->EndDrawImage(ds);
-
-					rectText.left += 16+BORDER;
-				}
+				DrawIcon(dc, rectText, rect.Height(), Selected);
 
 				dc.SetTextColor(0x5B391E);
 				dc.DrawText(m_Caption, rectText, DT_SINGLELINE | DT_END_ELLIPSIS | DT_VCENTER);
@@ -356,15 +354,7 @@ void CTaskButton::OnPaint()
 		if (Selected)
 			rectText.OffsetRect(1, 1);
 
-		if ((p_Icons) && (m_IconID!=-1))
-		{
-			CAfxDrawState ds;
-			p_Icons->PrepareDrawImage(ds);
-			p_Icons->Draw(&dc, rectText.left, (rect.Height()-rectText.Height())/2+(Selected ? 1 : 0), m_IconID);
-			p_Icons->EndDrawImage(ds);
-
-			rectText.left += 16+BORDER;
-		}
+		DrawIcon(dc, rectText, rect.Height(), Selected);
 
 		dc.SelectStockObject(DEFAULT_GUI_FONT);
 		dc.DrawText(m_Caption, rectText, DT_SINGLELINE | DT_END_ELLIPSIS | DT_VCENTER);

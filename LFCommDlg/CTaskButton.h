@@ -18,10 +18,12 @@ public:
 	virtual void DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct);
 
 	BOOL Create(CString Caption, CString TooltipHeader, CString TooltipHint, CMFCToolBarImages* Icons, INT IconID, CWnd* pParentWnd, UINT nID);
-	void SetIconID(INT IconID);
+	void SetIconID(INT IconID, INT OverlayID=-1);
 	INT GetPreferredWidth();
 
 protected:
+	void DrawIcon(CDC& dc, CRect& rectText, INT Height, BOOL Selected);
+
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnPaint();
@@ -39,5 +41,6 @@ private:
 	LFTooltip m_TooltipCtrl;
 	CMFCToolBarImages* p_Icons;
 	INT m_IconID;
+	INT m_OverlayID;
 	BOOL m_Hover;
 };
