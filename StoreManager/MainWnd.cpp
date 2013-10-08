@@ -863,8 +863,9 @@ void CMainWnd::OnUpdateSortOptions()
 
 void CMainWnd::OnUpdateNumbers()
 {
-	if (m_wndContextSidebar.IsWindowVisible())
-		m_wndContextSidebar.PostMessage(WM_UPDATENUMBERS);
+	if (IsWindow(m_wndContextSidebar))
+		if (m_wndContextSidebar.IsWindowVisible())
+			m_wndContextSidebar.PostMessage(WM_UPDATENUMBERS);
 }
 
 LRESULT CMainWnd::OnCookFiles(WPARAM wParam, LPARAM /*lParam*/)
