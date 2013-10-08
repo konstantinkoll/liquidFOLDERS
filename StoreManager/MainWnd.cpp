@@ -571,6 +571,9 @@ void CMainWnd::OnNavigateSwitchContext(UINT nID)
 {
 	nID -= IDM_NAV_SWITCHCONTEXT;
 
+	// Slide the filter pane away
+	HideFilterPane();
+
 	DeleteBreadcrumbs(&m_BreadcrumbForward);
 
 	if (GetContext()==LFContextStores)
