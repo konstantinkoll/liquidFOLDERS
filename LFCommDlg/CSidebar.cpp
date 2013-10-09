@@ -373,13 +373,24 @@ void CSidebar::OnPaint()
 							GraphicsPath path;
 							CreateRoundRectangle(rectNumber, 6, path);
 
-							SolidBrush brush(Color(0xFF, 0, 0));
-							g.FillPath(&brush, &path);
+							Matrix m1;
+							m1.Translate(3.0f, 3.0f);
+							path.Transform(&m1);
 
-							Pen pen(Color(0xFF, 0xFF, 0xFF), 1.6f);
+							SolidBrush brushShadow(Color(0x40, 0x00, 0x00, 0x00));
+							g.FillPath(&brushShadow, &path);
+
+							Matrix m2;
+							m2.Translate(-2.5f, -2.5f);
+							path.Transform(&m2);
+
+							SolidBrush brushRed(Color(0xFF, 0, 0));
+							g.FillPath(&brushRed, &path);
+
+							Pen pen(Color(0xFF, 0xFF, 0xFF), 2.0f);
 							g.DrawPath(&pen, &path);
 
-							rectNumber.right += 2;
+							rectNumber.right += 3;
 							rectNumber.bottom++;
 						}
 						else
