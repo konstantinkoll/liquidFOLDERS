@@ -78,6 +78,7 @@ void LFProgressDlg::OnCancel()
 
 		// Progress bar
 		m_wndProgress.SendMessage(0x410, LFProgressCancelled);
+		m_wndProgress.RedrawWindow();
 
 		// Taskbar
 		if (m_pTaskbarList3)
@@ -107,6 +108,7 @@ LRESULT LFProgressDlg::OnUpdateProgress(WPARAM wParam, LPARAM /*lParam*/)
 	ASSERT(pProgress->ProgressState>=LFProgressWorking);
 	ASSERT(pProgress->ProgressState<=LFProgressCancelled);
 	m_wndProgress.SendMessage(0x410, pProgress->ProgressState);
+	m_wndProgress.RedrawWindow();
 
 	UINT nUpper;
 	UINT nPos;
