@@ -40,8 +40,8 @@ __forceinline void CalcVisualAttributes(LFItemDescriptor* i)
 // CIdxTableMaster
 //
 
-CIdxTableMaster::CIdxTableMaster(wchar_t* Path, wchar_t* Filename)
-	: CHeapfile(Path, Filename, sizeof(LFCoreAttributes), offsetof(LFCoreAttributes, FileID))
+CIdxTableMaster::CIdxTableMaster(wchar_t* Path)
+	: CHeapfile(Path, L"Master.idx", sizeof(LFCoreAttributes), offsetof(LFCoreAttributes, FileID))
 {
 }
 
@@ -69,8 +69,8 @@ void CIdxTableMaster::WriteToItemDescriptor(LFItemDescriptor* i, void* PtrSrc)
 // CIdxTableDocuments
 //
 
-CIdxTableDocuments::CIdxTableDocuments(wchar_t* Path, wchar_t* Filename)
-	: CHeapfile(Path, Filename, sizeof(LFDocumentAttributes))
+CIdxTableDocuments::CIdxTableDocuments(wchar_t* Path)
+	: CHeapfile(Path, L"Docs.idx", sizeof(LFDocumentAttributes))
 {
 }
 
@@ -132,8 +132,8 @@ void CIdxTableDocuments::WriteToItemDescriptor(LFItemDescriptor* i, void* PtrSrc
 // CIdxTableMessages
 //
 
-CIdxTableMessages::CIdxTableMessages(wchar_t* Path, wchar_t* Filename)
-	: CHeapfile(Path, Filename, sizeof(LFMessageAttributes))
+CIdxTableMessages::CIdxTableMessages(wchar_t* Path)
+	: CHeapfile(Path, L"Mails.idx", sizeof(LFMessageAttributes))
 {
 }
 
@@ -187,8 +187,8 @@ void CIdxTableMessages::WriteToItemDescriptor(LFItemDescriptor* i, void* PtrSrc)
 // CIdxTableAudio
 //
 
-CIdxTableAudio::CIdxTableAudio(wchar_t* Path, wchar_t* Filename)
-	: CHeapfile(Path, Filename, sizeof(LFAudioAttributes))
+CIdxTableAudio::CIdxTableAudio(wchar_t* Path)
+	: CHeapfile(Path, L"Audio.idx", sizeof(LFAudioAttributes))
 {
 }
 
@@ -250,8 +250,8 @@ void CIdxTableAudio::WriteToItemDescriptor(LFItemDescriptor* i, void* PtrSrc)
 // CIdxTablePictures
 //
 
-CIdxTablePictures::CIdxTablePictures(wchar_t* Path, wchar_t* Filename)
-	: CHeapfile(Path, Filename, sizeof(LFPictureAttributes))
+CIdxTablePictures::CIdxTablePictures(wchar_t* Path)
+	: CHeapfile(Path, L"Pictures.idx", sizeof(LFPictureAttributes))
 {
 }
 
@@ -321,8 +321,8 @@ void CIdxTablePictures::WriteToItemDescriptor(LFItemDescriptor* i, void* PtrSrc)
 // CIdxTableVideos
 //
 
-CIdxTableVideos::CIdxTableVideos(wchar_t* Path, wchar_t* Filename)
-	: CHeapfile(Path, Filename, sizeof(LFVideoAttributes))
+CIdxTableVideos::CIdxTableVideos(wchar_t* Path)
+	: CHeapfile(Path, L"Videos.idx", sizeof(LFVideoAttributes))
 {
 }
 

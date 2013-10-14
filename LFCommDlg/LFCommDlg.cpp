@@ -49,6 +49,20 @@ LFCommDlg_API INT GetAttributeIconIndex(UINT Attr)
 	return -1;
 }
 
+LFCommDlg_API CString CombineFileCountSize(UINT Count, INT64 Size)
+{
+	WCHAR Buffer[256];
+	StrFormatByteSize(Size, Buffer, 256);
+
+	CString tmpMask;
+	ENSURE(tmpMask.LoadString(Count==1 ? IDS_FILES_SINGULAR : IDS_FILES_PLURAL));
+	tmpMask += _T(" (%s)");
+
+	CString tmpStr;
+	tmpStr.Format(tmpMask, Count, Buffer);
+	return tmpStr;
+}
+
 LFCommDlg_API void CreateRoundRectangle(CRect rect, INT rad, GraphicsPath& path)
 {
 	path.Reset();

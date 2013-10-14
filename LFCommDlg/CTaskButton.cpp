@@ -100,7 +100,7 @@ void CTaskButton::DrawIcon(CDC& dc, CRect& rectText, INT Height, BOOL Selected)
 		p_Icons->Draw(&dc, pt.x, pt.y, m_IconID);
 
 		if (m_OverlayID!=-1)
-			p_Icons->Draw(&dc, pt.x+2, pt.y+2, m_OverlayID);
+			p_Icons->Draw(&dc, pt.x+5, pt.y-3, m_OverlayID);
 
 		p_Icons->EndDrawImage(ds);
 

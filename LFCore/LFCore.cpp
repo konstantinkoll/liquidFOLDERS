@@ -40,6 +40,7 @@ LFCore_API void LFInitialize()
 	LFMessages.StoreAttributesChanged = RegisterWindowMessageA("liquidFOLDERS.StoreAttributesChanged");
 	LFMessages.DefaultStoreChanged = RegisterWindowMessageA("liquidFOLDERS.DefaultStoreChanged");
 	LFMessages.VolumesChanged = RegisterWindowMessageA("liquidFOLDERS.VolumesChanged");
+	LFMessages.StatisticsChanged = RegisterWindowMessageA("liquidFOLDERS.StatisticsChanged");
 
 	InitMutex();
 	InitAirportDatabase();
@@ -360,17 +361,7 @@ LFCore_API LFAttributeDescriptor* LFGetAttributeInfo(unsigned int ID)
 
 	// Recommended width
 	const unsigned int rWidths[LFTypeCount] = { 200, 200, 200, 100, 100, 100, 120, 100, 100, 100, 150, 140, 100 };
-	switch (ID)
-	{
-	case LFAttrComments:
-		a->RecommendedWidth = 350;
-		break;
-	case LFAttrDescription:
-		a->RecommendedWidth = 100;
-		break;
-	default:
-		a->RecommendedWidth = rWidths[a->Type];
-	}
+	a->RecommendedWidth = (ID==LFAttrComments) ? 350 : rWidths[a->Type];
 
 	// Category
 	if (ID<=LFAttrRating)
@@ -400,7 +391,7 @@ LFCore_API LFAttributeDescriptor* LFGetAttributeInfo(unsigned int ID)
 	case LFAttrCreationTime:
 	case LFAttrFileTime:
 	case LFAttrArchiveTime:
-	case LFAttrLikeCount:
+	case LFAttrFileCount:
 	case LFAttrFileSize:
 	case LFAttrHeight:
 	case LFAttrWidth:
@@ -420,6 +411,7 @@ LFCore_API LFAttributeDescriptor* LFGetAttributeInfo(unsigned int ID)
 	case LFAttrRecordingEquipment:
 	case LFAttrFrom:
 	case LFAttrTo:
+	case LFAttrLikeCount:
 		a->ReadOnly = true;
 		break;
 	default:
@@ -467,7 +459,6 @@ LFCore_API LFContextDescriptor* LFGetContextInfo(unsigned int ID)
 	c->AllowedAttributes = new LFBitArray(LFAttributeCount);
 	(*c->AllowedAttributes) += LFAttrFileName;
 	(*c->AllowedAttributes) += LFAttrStoreID;
-	(*c->AllowedAttributes) += LFAttrFileID;
 	(*c->AllowedAttributes) += LFAttrComments;
 
 	switch (ID)
@@ -476,8 +467,11 @@ LFCore_API LFContextDescriptor* LFGetContextInfo(unsigned int ID)
 		(*c->AllowedAttributes) += LFAttrDescription;
 		(*c->AllowedAttributes) += LFAttrCreationTime;
 		(*c->AllowedAttributes) += LFAttrFileTime;
+		(*c->AllowedAttributes) += LFAttrFileCount;
+		(*c->AllowedAttributes) += LFAttrFileSize;
 		break;
 	case LFContextFilters:
+		(*c->AllowedAttributes) += LFAttrFileID;
 		(*c->AllowedAttributes) += LFAttrCreationTime;
 		(*c->AllowedAttributes) += LFAttrFileTime;
 		(*c->AllowedAttributes) += LFAttrAddTime;
@@ -487,7 +481,7 @@ LFCore_API LFContextDescriptor* LFGetContextInfo(unsigned int ID)
 		(*c->AllowedAttributes) += LFAttrDeleteTime;
 	default:
 		for (unsigned int a=0; a<LFAttributeCount; a++)
-			if ((a!=LFAttrDeleteTime) && (ID<LFContextSubfolderDefault) && ((c->AllowGroups) || (a!=LFAttrDescription)))
+			if ((a!=LFAttrDescription) && (a!=LFAttrDeleteTime) && (ID<LFContextSubfolderDefault))
 				(*c->AllowedAttributes) += a;
 	}
 
@@ -532,29 +526,29 @@ LFCore_API void LFFreeItemCategoryDescriptor(LFItemCategoryDescriptor* c)
 
 LFCore_API LFFilter* LFAllocFilter(LFFilter* f)
 {
-	LFFilter* filter = new LFFilter;
+	LFFilter* fn = new LFFilter;
 	if (f)
 	{
-		*filter = *f;
-		filter->ConditionList = NULL;
+		*fn = *f;
+		fn->ConditionList = NULL;
 
 		LFFilterCondition* c = f->ConditionList;
 		while (c)
 		{
-			LFFilterCondition* item = LFAllocFilterCondition();;
+			LFFilterCondition* item = LFAllocFilterCondition();
 			*item = *c;
-			item->Next = filter->ConditionList;
-			filter->ConditionList = item;
+			item->Next = fn->ConditionList;
+			fn->ConditionList = item;
 
 			c = c->Next;
 		}
 	}
 	else
 	{
-		ZeroMemory(filter, sizeof(LFFilter));
-		filter->Mode = LFFilterModeStores;
+		ZeroMemory(fn, sizeof(LFFilter));
+		fn->Mode = LFFilterModeStores;
 	}
-	return filter;
+	return fn;
 }
 
 LFCore_API void LFFreeFilter(LFFilter* f)

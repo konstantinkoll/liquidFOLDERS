@@ -551,7 +551,7 @@ void CFileView::InvalidateItem(INT idx)
 		}
 }
 
-CMenu* CFileView::GetViewContextmenu()
+CMenu* CFileView::GetViewContextMenu()
 {
 	return NULL;
 }
@@ -790,7 +790,9 @@ void CFileView::EditLabel(INT idx)
 	if ((m_EnableLabelEdit) && (p_CookedFiles))
 	{
 		LFItemDescriptor* item = p_CookedFiles->m_Items[idx];
-		if (((item->Type & LFTypeMask)==LFTypeStore) || ((item->Type & LFTypeMask)==LFTypeFile))
+		if (((item->Type & (LFTypeNotMounted | LFTypeMask))==LFTypeVolume) ||
+			((item->Type & LFTypeMask)==LFTypeStore) ||
+			((item->Type & (LFTypeNotMounted | LFTypeMask))==LFTypeFile))
 		{
 			m_EditLabel = idx;
 			InvalidateItem(idx);
@@ -825,7 +827,7 @@ void CFileView::DrawItemBackground(CDC& dc, LPRECT rectItem, INT idx, BOOL Theme
 
 	if (hThemeList)
 	{
-		dc.SetTextColor((p_CookedFiles->m_Items[idx]->CoreAttributes.Flags & LFFlagMissing) ? 0x0000FF : (p_CookedFiles->m_Items[idx]->Type & LFTypeRequiresMaintenance) ? 0xFF0000 : 0x000000);
+		dc.SetTextColor((p_CookedFiles->m_Items[idx]->CoreAttributes.Flags & LFFlagMissing) ? 0x0000FF : 0x000000);
 
 		if (Hot | Selected)
 		{
@@ -893,11 +895,6 @@ void CFileView::DrawItemBackground(CDC& dc, LPRECT rectItem, INT idx, BOOL Theme
 			{
 				dc.SetTextColor(0x0000FF);
 			}
-			else
-				if (p_CookedFiles->m_Items[idx]->Type & LFTypeRequiresMaintenance)
-				{
-					dc.SetTextColor(0xFF0000);
-				}
 	}
 }
 
@@ -1028,12 +1025,22 @@ void CFileView::AdjustScrollbars()
 CString CFileView::GetLabel(LFItemDescriptor* i)
 {
 	CString label = i->CoreAttributes.FileName;
-	if ((i->Type & LFTypeMask)==LFTypeFile)
+
+	switch (i->Type & LFTypeMask)
+	{
+	case LFTypeVolume:
+		label += _T(" (");
+		label += i->CoreAttributes.FileID[0];
+		label += _T(":)");
+		break;
+	case LFTypeFile:
 		if (((!m_HideFileExt) || (i->CoreAttributes.FileName[0]==L'\0')) && (i->CoreAttributes.FileFormat[0]!='\0') && (strcmp(i->CoreAttributes.FileFormat, "filter")!=0))
 		{
 			label += _T(".");
 			label += i->CoreAttributes.FileFormat;
 		}
+		break;
+	}
 
 	return label;
 }
@@ -1082,11 +1089,12 @@ CString CFileView::GetHint(LFItemDescriptor* i, WCHAR* FormatName)
 		break;
 	case LFTypeStore:
 		AppendAttribute(i, LFAttrComments, hint);
-		AppendAttribute(i, LFAttrDescription, hint);
+		AppendString(LFAttrComments, hint, CombineFileCountSize(i->AggregateCount, i->CoreAttributes.FileSize).GetBuffer());
 		AppendAttribute(i, LFAttrCreationTime, hint);
 		AppendAttribute(i, LFAttrFileTime, hint);
 
-		if ((i->Type & LFTypeSourceMask)>LFTypeSourceInternal)
+		AppendAttribute(i, LFAttrDescription, hint);
+		if (((i->Type & LFTypeSourceMask)>LFTypeSourceInternal) && (!(i->Type & LFStoreNotMounted)))
 			AppendString(LFAttrComments, hint, theApp.m_SourceNames[i->Type & LFTypeSourceMask][1]);
 
 		break;
@@ -1122,10 +1130,9 @@ CString CFileView::GetHint(LFItemDescriptor* i, WCHAR* FormatName)
 		break;
 	case LFTypeFolder:
 		AppendAttribute(i, LFAttrComments, hint);
-		AppendAttribute(i, LFAttrDescription, hint);
 
-		if (i->CoreAttributes.FileSize>0)
-			AppendAttribute(i, LFAttrFileSize, hint);
+		if (i->AggregateCount>0)
+			AppendString(LFAttrComments, hint, CombineFileCountSize(i->AggregateCount, i->CoreAttributes.FileSize).GetBuffer());
 
 		if ((i->Type & LFTypeSourceMask)>LFTypeSourceInternal)
 			AppendString(LFAttrComments, hint, theApp.m_SourceNames[i->Type & LFTypeSourceMask][1]);
@@ -1518,7 +1525,12 @@ BOOL CFileView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 	if (!rect.PtInRect(pt))
 		return FALSE;
 
-	INT nInc = max(-m_VScrollPos, min(-zDelta*(INT)m_RowHeight/WHEEL_DELTA, m_VScrollMax-m_VScrollPos));
+	INT nScrollLines;
+	SystemParametersInfo(SPI_GETWHEELSCROLLLINES, 0, &nScrollLines, 0);
+	if (nScrollLines<1)
+		nScrollLines = 1;
+
+	INT nInc = max(-m_VScrollPos, min(-zDelta*(INT)m_RowHeight*nScrollLines/WHEEL_DELTA, m_VScrollMax-m_VScrollPos));
 	if (nInc)
 	{
 		m_VScrollPos += nInc;

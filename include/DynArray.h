@@ -44,7 +44,7 @@ bool DynArray<T>::AddItem(T i)
 {
 	if (!m_Items)
 	{
-		m_Items = static_cast<T*>(_aligned_malloc(Dyn_FirstAlloc*sizeof(T), Dyn_MemoryAlignment));
+		m_Items = (T*)_aligned_malloc(Dyn_FirstAlloc*sizeof(T), Dyn_MemoryAlignment);
 		if (!m_Items)
 		{
 			m_LastError = LFMemoryError;
@@ -56,7 +56,7 @@ bool DynArray<T>::AddItem(T i)
 
 	if (m_ItemCount==m_Allocated)
 	{
-		m_Items = static_cast<T*>(_aligned_realloc(m_Items, (m_Allocated+Dyn_SubsequentAlloc)*sizeof(T), Dyn_MemoryAlignment));
+		m_Items = (T*)_aligned_realloc(m_Items, (m_Allocated+Dyn_SubsequentAlloc)*sizeof(T), Dyn_MemoryAlignment);
 		if (!m_Items)
 		{
 			m_LastError = LFMemoryError;

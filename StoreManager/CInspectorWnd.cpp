@@ -246,7 +246,7 @@ void CInspectorWnd::UpdateAdd(LFItemDescriptor* i, LFSearchResult* pRawFiles)
 	{
 	case LFTypeVolume:
 		m_Count++;
-		AddValue(i, LFAttrFileName);
+		AddValue(i, LFAttrFileName, TRUE);
 		AddValue(i, LFAttrDescription);
 		AddValueVirtual(AttrDriveLetter, i->CoreAttributes.FileID);
 		AddValueVirtual(AttrSource, theApp.m_SourceNames[i->Type & LFTypeSourceMask][1]);
@@ -257,28 +257,20 @@ void CInspectorWnd::UpdateAdd(LFItemDescriptor* i, LFSearchResult* pRawFiles)
 		for (UINT a=0; a<=LFAttrFileTime; a++)
 			AddValue(i, a, !theApp.m_Attributes[a]->ReadOnly);
 
+		AddValue(i, LFAttrFileCount);
+		AddValue(i, LFAttrFileSize);
+
 		LFStoreDescriptor s;
-		LFGetStoreSettings(i->CoreAttributes.FileID, &s);
+		LFGetStoreSettings(i->StoreID, &s);
 
 		AddValueVirtual(AttrSource, theApp.m_SourceNames[s.Source][0]);
-
-		OLECHAR szGUID[MAX_PATH];
-		StringFromGUID2(s.guid, szGUID, MAX_PATH);
-		AddValueVirtual(AttrGUID, szGUID);
 
 		WCHAR tmpStr[256];
 		LFTimeToString(s.MaintenanceTime, tmpStr, 256);
 		AddValueVirtual(AttrMaintenanceTime, tmpStr);
 
-		LFUINTToString(s.IndexVersion, tmpStr, 256);
-		AddValueVirtual(AttrIndexVersion, tmpStr);
-
-		if (s.StoreMode!=LFStoreModeInternal)
+		if (s.IndexMode!=LFStoreIndexModeInternal)
 			AddValueVirtual(AttrLastSeen, s.LastSeen);
-
-		AddValueVirtual(AttrPathData, s.DatPath);
-		AddValueVirtual(AttrPathIdxMain, s.IdxPathMain);
-		AddValueVirtual(AttrPathIdxAux, s.IdxPathAux);
 		break;
 	case LFTypeFile:
 		m_Count++;

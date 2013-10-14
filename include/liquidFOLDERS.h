@@ -78,13 +78,13 @@ struct LFMessageIDs
 	unsigned int StoreAttributesChanged;
 	unsigned int DefaultStoreChanged;
 	unsigned int VolumesChanged;
+	unsigned int StatisticsChanged;
 };
 
 
 // Globals
 
 #define LFKeySize                       16
-#define LFKeyLength                     LFKeySize-1
 #define LFKeyChars                      'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '_', '-'
 
 #define LFExtSize                       16
@@ -215,7 +215,7 @@ struct LFStatistics
 #define LFAttrDeleteTime                8
 #define LFAttrArchiveTime               9
 #define LFAttrFileFormat               10
-#define LFAttrLikeCount                11
+#define LFAttrFileCount                11
 #define LFAttrFileSize                 12
 #define LFAttrFlags                    13
 #define LFAttrURL                      14
@@ -262,8 +262,9 @@ struct LFStatistics
 #define LFAttrDueTime                  49
 #define LFAttrDoneTime                 50
 #define LFAttrCustomer                 51
+#define LFAttrLikeCount                52
 
-#define LFAttributeCount               52
+#define LFAttributeCount               53
 #define LFLastCoreAttribute            20
 
 
@@ -336,11 +337,6 @@ struct LFVariantData
 #define LFAttrCategoryInternal          8
 
 #define LFAttrCategoryCount             9
-
-
-// Souces
-
-#define LFSourceCount                  12
 
 
 // Shell property
@@ -453,32 +449,34 @@ struct LFCoreAttributes
 	// Private
 	unsigned char SlaveID;
 	unsigned char ContextID;
-
-	// Public
-	unsigned int LikeCount;
 };
+
+
+// Souces
+
+#define LFSourceCount                   13
 
 
 // Item structure
 
 #define LFTypeSourceUnknown             0x00000000	// Must be lowest bits
 #define LFTypeSourceInternal            0x00000001
-#define LFTypeSource1394                0x00000002
-#define LFTypeSourceUSB                 0x00000003
-#define LFTypeSourceDropbox             0x00000004
-#define LFTypeSourceFacebook            0x00000005
-#define LFTypeSourceFlickr              0x00000006
-#define LFTypeSourceInstagram           0x00000007
-#define LFTypeSourcePinterest           0x00000008
-#define LFTypeSourceSoundCloud          0x00000009
-#define LFTypeSourceTwitter             0x0000000A
-#define LFTypeSourceYouTube             0x0000000B
+#define LFTypeSourceNTFS                0x00000002
+#define LFTypeSource1394                0x00000003
+#define LFTypeSourceUSB                 0x00000004
+#define LFTypeSourceDropbox             0x00000005
+#define LFTypeSourceFacebook            0x00000006
+#define LFTypeSourceFlickr              0x00000007
+#define LFTypeSourceInstagram           0x00000008
+#define LFTypeSourcePinterest           0x00000009
+#define LFTypeSourceSoundCloud          0x0000000A
+#define LFTypeSourceTwitter             0x0000000B
+#define LFTypeSourceYouTube             0x0000000C
 #define LFTypeSourceMask                0x0000000F
 
-#define LFTypeDefault                   0x01000000	// Volatile
-#define LFTypeNotMounted                0x02000000
-#define LFTypeGhosted                   0x04000000
-#define LFTypeRequiresMaintenance       0x08000000
+#define LFTypeDefault                   0x02000000	// Volatile
+#define LFTypeNotMounted                0x04000000
+#define LFTypeGhosted                   0x08000000
 #define LFTypeShortcutAllowed           0x10000000
 
 #define LFTypeVolume                    0x00000000	// Volatile
@@ -516,10 +514,12 @@ struct LFItemDescriptor
 
 // Store structure
 
-#define LFStoreModeInternal             0
-#define LFStoreModeHybrid               1
-#define LFStoreModeExternal             2
-#define LFStoreModeRemote               3
+#define LFStoreIndexModeInternal       0
+#define LFStoreIndexModeHybrid         1
+#define LFStoreIndexModeExternal       2
+
+#define LFStoreFlagAutoLocation        1
+#define LFStoreFlagUnchecked           2
 
 struct LFStoreDescriptor
 {
@@ -527,9 +527,9 @@ struct LFStoreDescriptor
 	wchar_t StoreName[256];
 	wchar_t LastSeen[256];
 	wchar_t StoreComment[256];
-	int StoreMode;
+	int IndexMode;
 	GUID guid;
-	unsigned int AutoLocation;
+	unsigned int Flags;
 	FILETIME CreationTime;
 	FILETIME FileTime;
 	FILETIME MaintenanceTime;
@@ -537,8 +537,9 @@ struct LFStoreDescriptor
 	wchar_t DatPath[MAX_PATH];
 	wchar_t IdxPathMain[MAX_PATH];				// Volatile
 	wchar_t IdxPathAux[MAX_PATH];				// Volatile
-	bool NeedsCheck;							// Volatile
-	unsigned int Source;
+	unsigned int Source;						// Volatile
+	unsigned int FileCount[32];					// Volatile
+	__int64 FileSize[32];						// Volatile
 };
 
 

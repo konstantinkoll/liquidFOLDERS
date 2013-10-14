@@ -29,7 +29,7 @@ class CCalendarView : public CFileView
 public:
 	CCalendarView();
 
-	virtual CMenu* GetViewContextmenu();
+	virtual CMenu* GetViewContextMenu();
 	virtual void GetPersistentData(FVPersistentData& Data);
 
 protected:

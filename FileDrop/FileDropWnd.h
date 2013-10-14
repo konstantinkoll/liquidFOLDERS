@@ -20,7 +20,6 @@ public:
 protected:
 	LFDropTarget m_DropTarget;
 	LFTooltip m_TooltipCtrl;
-	HICON hWarning;
 	LFStoreDescriptor m_Store;
 	CString m_Label;
 	BOOL m_AlwaysOnTop;

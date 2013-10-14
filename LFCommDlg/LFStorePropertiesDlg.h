@@ -27,6 +27,7 @@ protected:
 	afx_msg void OnDestroy();
 	afx_msg LRESULT OnStoresChanged(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnStoreAttributesChanged(WPARAM wParam, LPARAM lParam);
+	afx_msg LRESULT OnStatisticsChanged(WPARAM wParam, LPARAM lParam);
 	DECLARE_MESSAGE_MAP()
 
 private:

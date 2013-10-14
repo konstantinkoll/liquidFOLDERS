@@ -13,7 +13,7 @@ public:
 
 	void SetMetadataFromFilter(LFFilter* f);
 	bool AddItemDescriptor(LFItemDescriptor* i);
-	bool AddStoreDescriptor(LFStoreDescriptor* s, LFFilter* f);
+	bool AddStoreDescriptor(LFStoreDescriptor* s);
 	void AddVolumes();
 	void RemoveItemDescriptor(unsigned int idx, bool updatecount=true);
 	void RemoveFlaggedItemDescriptors(bool updatecount=true);

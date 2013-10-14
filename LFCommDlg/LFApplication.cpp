@@ -255,9 +255,6 @@ LFApplication::LFApplication(BOOL HasGUI, GUID& AppID)
 		ExtractCoreIcons(hModIcons, 128, &m_CoreImageListJumbo);
 	}
 
-	// liquidFOLDERS initalisieren
-	LFInitialize();
-
 	// Get attribute information
 	for (UINT a=0; a<LFAttributeCount; a++)
 		m_Attributes[a] = LFGetAttributeInfo(a);
@@ -331,6 +328,9 @@ BOOL LFApplication::InitInstance()
 	// OLE Initialisieren
 	ENSURE(AfxOleInit());
 
+	// liquidFOLDERS initalisieren
+	LFInitialize();
+
 	// SendTo-Link erzeugen
 	LFCreateSendTo();
 
@@ -350,8 +350,8 @@ BOOL LFApplication::InitInstance()
 		LFStoreDescriptor store;
 		ZeroMemory(&store, sizeof(store));
 
-		store.AutoLocation = TRUE;
-		store.StoreMode = LFStoreModeInternal;
+		store.Flags = LFStoreFlagAutoLocation;
+		store.IndexMode = LFStoreIndexModeInternal;
 
 		LFErrorBox(LFCreateStore(&store));
 	}

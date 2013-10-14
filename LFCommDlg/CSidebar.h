@@ -39,7 +39,7 @@ public:
 	void ResetNumbers();
 	void SetNumber(UINT CmdID, UINT Number);
 	INT GetPreferredWidth();
-	void Reset(UINT CmdID=0);
+	void SetSelection(UINT CmdID=0);
 
 protected:
 	LFApplication* p_App;

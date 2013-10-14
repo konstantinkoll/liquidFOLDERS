@@ -1926,7 +1926,12 @@ BOOL CTreeView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 	if (!rect.PtInRect(pt))
 		return FALSE;
 
-	INT nInc = max(-m_VScrollPos, min(-zDelta*(INT)m_RowHeight/WHEEL_DELTA, m_VScrollMax-m_VScrollPos));
+	INT nScrollLines;
+	SystemParametersInfo(SPI_GETWHEELSCROLLLINES, 0, &nScrollLines, 0);
+	if (nScrollLines<1)
+		nScrollLines = 1;
+
+	INT nInc = max(-m_VScrollPos, min(-zDelta*(INT)m_RowHeight*nScrollLines/WHEEL_DELTA, m_VScrollMax-m_VScrollPos));
 	if (nInc)
 	{
 		m_TooltipCtrl.Deactivate();

@@ -173,7 +173,7 @@ Restart:
 	CFileView::AdjustLayout();
 }
 
-CMenu* CCalendarView::GetViewContextmenu()
+CMenu* CCalendarView::GetViewContextMenu()
 {
 	CMenu* pMenu = new CMenu();
 	pMenu->LoadMenu(IDM_CALENDAR);

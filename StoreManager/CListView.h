@@ -19,7 +19,7 @@ protected:
 	CTooltipHeader m_wndHeader;
 	BOOL m_ShowLegend;
 
-	virtual CMenu* GetViewContextmenu();
+	virtual CMenu* GetViewContextMenu();
 	virtual void SetViewOptions(BOOL Force);
 	virtual void SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data);
 	virtual CBitmap* RenderFooter();

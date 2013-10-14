@@ -36,10 +36,10 @@
     <ROW Property="MSIFASTINSTALL" MultiBuildValue="DefaultBuild:6"/>
     <ROW Property="Manufacturer" Value="liquidFOLDERS" ValueLocId="*"/>
     <ROW Property="OptionsLogoIcon" Value="Tools.ico" Type="1" MsiKey="OptionsLogoIcon"/>
-    <ROW Property="ProductCode" Value="1033:{32CF4D21-33C0-4336-9F20-07B21EA885F8} 3082:{1444434D-C26C-4674-BD1D-534C1DBC61C8} 1036:{07E71756-2B8C-43E3-A70D-B174055F0574} 1031:{EB2E5C90-7C97-40F4-8F56-FBFA6F5B064C} " Type="16"/>
+    <ROW Property="ProductCode" Value="1033:{4EC7997E-BA5F-4EAA-BF79-A1DB692E0C8F} 3082:{E605E650-FE8C-43DC-9E1A-39CB13074E67} 1036:{FB84E0C9-E731-4542-8582-24AF9B43F339} 1031:{451C143C-3611-49F8-91F0-0194CAF480C3} " Type="16"/>
     <ROW Property="ProductLanguage" Value="1033"/>
     <ROW Property="ProductName" Value="liquidFOLDERS" ValueLocId="*"/>
-    <ROW Property="ProductVersion" Value="1.4.2"/>
+    <ROW Property="ProductVersion" Value="1.5.0"/>
     <ROW Property="REBOOT" MultiBuildValue="DefaultBuild:Force"/>
     <ROW Property="RepairIcon" Value="Tools.ico" Type="1" MsiKey="RepairIcon"/>
     <ROW Property="SecureCustomProperties" Value="OLDPRODUCTS;AI_NEWERPRODUCTFOUND;AI_SETUPEXEPATH;SETUPEXEDIR"/>
@@ -484,7 +484,7 @@
     <ROW Registry="Contact" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="Contact" Value="support@liquidfolders.net" Component_="AI_CustomARPName"/>
     <ROW Registry="DisplayIcon" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="DisplayIcon" Value="[ARP_ICON_PATH]" Component_="AI_CustomARPName"/>
     <ROW Registry="DisplayName" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="DisplayName" Value="[ProductName]" Component_="AI_CustomARPName"/>
-    <ROW Registry="DisplayVersion" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="DisplayVersion" Value="1.4.2" Component_="AI_CustomARPName"/>
+    <ROW Registry="DisplayVersion" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="DisplayVersion" Value="1.5.0" Component_="AI_CustomARPName"/>
     <ROW Registry="EstimatedSize" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="EstimatedSize" Value="#30720" Component_="AI_CustomARPName"/>
     <ROW Registry="F2D914D_FE57_414F_9F88_A377C7841DA4_1" Root="2" Key="Software\Microsoft\Windows\CurrentVersion\Shell Extensions\Approved" Name="[\{]3F2D914D-FE57-414F-9F88-A377C7841DA4[\}]" Value="liquidFOLDERS.SendTo" Component_="LFNamespaceExtension.dll"/>
     <ROW Registry="F2D914E_FE57_414F_9F88_A377C7841DA4_1" Root="2" Key="Software\Microsoft\Windows\CurrentVersion\Shell Extensions\Approved" Name="[\{]3F2D914E-FE57-414F-9F88-A377C7841DA4[\}]" Value="liquidFOLDERS.DriveMenu" Component_="LFNamespaceExtension.dll"/>
@@ -503,7 +503,7 @@
     <ROW Registry="Migrate" Root="2" Key="Software\liquidFOLDERS" Name="Migrate" Value="[#Migrate.exe]" Component_="Migrate.exe"/>
     <ROW Registry="ModifyPath" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="ModifyPath" Value="[AI_UNINSTALLER] /I [ProductCode]" Component_="AI_CustomARPName"/>
     <ROW Registry="NeverShowExt" Root="0" Key="LFSendTofile" Name="NeverShowExt" Value="#0" Component_="LFNamespaceExtension.dll"/>
-    <ROW Registry="New_Value" Root="0" Key="LFFilterfile\DefaultIcon" Value="&quot;[#LFCore.dll]&quot;,8" Component_="LFNamespaceExtension.dll"/>
+    <ROW Registry="New_Value" Root="0" Key="LFFilterfile\DefaultIcon" Value="&quot;[#LFCore.dll]&quot;,14" Component_="LFNamespaceExtension.dll"/>
     <ROW Registry="NoModify" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="NoModify" Value="#1" Component_="AI_DisableModify"/>
     <ROW Registry="PerceivedType" Root="0" Key=".LFSendTo" Name="PerceivedType" Value="system" Component_="LFNamespaceExtension.dll"/>
     <ROW Registry="PinToNameSpaceTree" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}\ShellFolder" Name="PinToNameSpaceTree" Component_="LFNamespaceExtension.dll"/>

@@ -89,7 +89,7 @@ CMainView::CMainView()
 	p_FilterButton = p_InspectorButton = NULL;
 	p_OrganizeButton = p_ViewButton = NULL;
 	m_Context = m_ViewID = -1;
-	m_Resizing = m_StoreIDValid = FALSE;
+	m_Resizing = m_StoreIDValid = m_Alerted = FALSE;
 }
 
 BOOL CMainView::Create(BOOL IsClipboard, CWnd* pParentWnd, UINT nID)
@@ -218,7 +218,6 @@ void CMainView::SetHeader()
 	{
 		CString Hint;
 		CString Mask;
-		WCHAR tmpBuf[256];
 
 		if (m_Context==LFContextStores)
 		{
@@ -227,12 +226,7 @@ void CMainView::SetHeader()
 		}
 		else
 		{
-			ENSURE(Mask.LoadString(p_CookedFiles->m_FileCount==1 ? IDS_FILES_SINGULAR : IDS_FILES_PLURAL));
-			LFINT64ToString(p_CookedFiles->m_FileSize, tmpBuf, 256);
-			Hint.Format(Mask, p_CookedFiles->m_FileCount);
-			Hint.Append(_T(" ("));
-			Hint.Append(tmpBuf);
-			Hint.Append(_T(")"));
+			Hint = CombineFileCountSize(p_CookedFiles->m_FileCount, p_CookedFiles->m_FileSize);
 		}
 
 		LFStoreDescriptor s;
@@ -316,7 +310,6 @@ void CMainView::UpdateSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles,
 		m_DropTarget.SetSearchResult(pRawFiles);
 
 	SetHeader();
-	theApp.UpdateNumbers();
 	if (UpdateSelection)
 		OnUpdateSelection();
 }
@@ -431,10 +424,10 @@ void CMainView::SelectNone()
 		p_wndFileView->SendMessage(WM_SELECTNONE);
 }
 
-void CMainView::ExecuteContextMenu(CHAR Drive, LPCSTR verb)
+void CMainView::ExecuteExplorerContextMenu(CHAR cDrive, LPCSTR verb)
 {
 	WCHAR Path[4] = L" :\\";
-	Path[0] = Drive;
+	Path[0] = cDrive;
 
 	LPITEMIDLIST pidlFQ = SHSimpleIDListFromPath(Path);
 	LPCITEMIDLIST pidlRel = NULL;
@@ -513,8 +506,9 @@ void CMainView::AddTransactionItem(LFTransactionList* tl, LFItemDescriptor* item
 {
 	switch (item->Type & LFTypeMask)
 	{
-	case LFTypeFile:
+	case LFTypeVolume:
 	case LFTypeStore:
+	case LFTypeFile:
 		LFAddItemDescriptor(tl, item, UserData);
 		break;
 	case LFTypeFolder:
@@ -697,6 +691,7 @@ BEGIN_MESSAGE_MAP(CMainView, CWnd)
 	ON_WM_RBUTTONUP()
 	ON_WM_CONTEXTMENU()
 	ON_MESSAGE_VOID(WM_ADJUSTLAYOUT, OnAdjustLayout)
+	ON_MESSAGE(WM_SETALERT, OnSetAlert)
 	ON_MESSAGE_VOID(WM_UPDATESELECTION, OnUpdateSelection)
 	ON_MESSAGE_VOID(WM_BEGINDRAGDROP, OnBeginDragDrop)
 	ON_MESSAGE(WM_RENAMEITEM, OnRenameItem)
@@ -770,9 +765,11 @@ INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	m_wndTaskbar.SetOwner(GetOwner());
 
-	#define FilterIconBlue      0
-	#define FilterIconWhite     1
-	p_FilterButton = m_wndTaskbar.AddButton(ID_PANE_FILTER, ((theApp.OSVersion==OS_Vista) && IsCtrlThemed()) ? FilterIconWhite : FilterIconBlue, TRUE, FALSE, TRUE);
+	#define FilterIconBlue         0
+	#define FilterIconWhite        1
+	#define FilterIconOverlay     35
+	#define FILTERICON            ((theApp.OSVersion==OS_Vista) && IsCtrlThemed()) ? FilterIconWhite : FilterIconBlue
+	p_FilterButton = m_wndTaskbar.AddButton(ID_PANE_FILTER, FILTERICON, TRUE, FALSE, TRUE);
 
 	m_wndTaskbar.AddButton(IDM_STORES_CREATENEW, 2);
 	m_wndTaskbar.AddButton(IDM_NEW_REMOVENEW, 3, TRUE);
@@ -786,28 +783,30 @@ INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndTaskbar.AddButton(IDM_GLOBE_ZOOMIN, 11);
 	m_wndTaskbar.AddButton(IDM_GLOBE_ZOOMOUT, 12);
 	m_wndTaskbar.AddButton(IDM_GLOBE_AUTOSIZE, 13);
-	m_wndTaskbar.AddButton(IDM_ITEM_OPEN, 14);
-	m_wndTaskbar.AddButton(IDM_GLOBE_GOOGLEEARTH, 15, TRUE);
-	m_wndTaskbar.AddButton(IDM_VOLUME_PROPERTIES, 16);
-	m_wndTaskbar.AddButton(IDM_STORE_DELETE, 17);
-	m_wndTaskbar.AddButton(IDM_STORE_RENAME, 18);
-	m_wndTaskbar.AddButton(IDM_STORE_PROPERTIES, 19);
-	m_wndTaskbar.AddButton(IDM_FILE_REMEMBER, 20);
-	m_wndTaskbar.AddButton(IDM_FILE_REMOVE, 21);
-	m_wndTaskbar.AddButton(IDM_FILE_DELETE, 22);
-	m_wndTaskbar.AddButton(IDM_FILE_RENAME, 23);
-	m_wndTaskbar.AddButton(IDM_FILE_RESTORE, 24);
-	m_wndTaskbar.AddButton(ID_APP_NEWFILEDROP, 25, TRUE);
-	m_wndTaskbar.AddButton(IDM_STORE_MAKEDEFAULT, 26);
+	m_wndTaskbar.AddButton(IDM_TAGCLOUD_SORTVALUE, 14);
+	m_wndTaskbar.AddButton(IDM_TAGCLOUD_SORTCOUNT, 15);
+	m_wndTaskbar.AddButton(IDM_ITEM_OPEN, 16);
+	m_wndTaskbar.AddButton(IDM_GLOBE_GOOGLEEARTH, 17, TRUE);
+	m_wndTaskbar.AddButton(IDM_VOLUME_PROPERTIES, 18);
+	m_wndTaskbar.AddButton(IDM_STORE_DELETE, 19);
+	m_wndTaskbar.AddButton(IDM_STORE_RENAME, 20);
+	m_wndTaskbar.AddButton(IDM_STORE_PROPERTIES, 21);
+	m_wndTaskbar.AddButton(IDM_FILE_REMEMBER, 22);
+	m_wndTaskbar.AddButton(IDM_FILE_REMOVE, 23);
+	m_wndTaskbar.AddButton(IDM_FILE_DELETE, 24);
+	m_wndTaskbar.AddButton(IDM_FILE_RENAME, 25);
+	m_wndTaskbar.AddButton(IDM_FILE_RESTORE, 26);
+	m_wndTaskbar.AddButton(ID_APP_NEWFILEDROP, 27, TRUE);
+	m_wndTaskbar.AddButton(IDM_STORE_MAKEDEFAULT, 28);
 
-	#define InspectorIconVisible     27
-	#define InspectorIconHidden      28
+	#define InspectorIconVisible     29
+	#define InspectorIconHidden      30
 	p_InspectorButton = m_wndTaskbar.AddButton(ID_PANE_INSPECTOR, theApp.m_ShowInspectorPane ? InspectorIconVisible : InspectorIconHidden, TRUE, TRUE);
 
-	m_wndTaskbar.AddButton(ID_APP_PURCHASE, 29, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_ENTERLICENSEKEY, 30, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_SUPPORT, 31, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_ABOUT, 32, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_PURCHASE, 31, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_ENTERLICENSEKEY, 32, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_SUPPORT, 33, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_ABOUT, 34, TRUE, TRUE);
 
 	// Drop target
 	m_DropTarget.SetOwner(GetOwner());
@@ -854,11 +853,7 @@ BOOL CMainView::OnEraseBkgnd(CDC* /*pDC*/)
 LRESULT CMainView::OnThemeChanged()
 {
 	if (theApp.OSVersion==OS_Vista)
-	{
-		ASSERT(p_FilterButton);
-
-		p_FilterButton->SetIconID(IsCtrlThemed() ? FilterIconWhite : FilterIconBlue);
-	}
+		SendMessage(WM_SETALERT, (WPARAM)m_Alerted);
 
 	return TRUE;
 }
@@ -934,7 +929,7 @@ void CMainView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 		pMenu->LoadMenu(IDM_FILTERS);
 		break;
 	default:
-		pMenu = p_wndFileView->GetViewContextmenu();
+		pMenu = p_wndFileView->GetViewContextMenu();
 	}
 
 	// Create empty menu
@@ -973,6 +968,13 @@ void CMainView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 	// Separate sort and view options
 	pPopup->InsertMenu(0, MF_SEPARATOR | MF_BYPOSITION);
 
+	// Special: submenu for tagcloud
+	if (m_ViewID==LFViewTagcloud)
+	{
+		ENSURE(tmpStr.LoadString(IDM_TAGCLOUD_SORT));
+		pPopup->InsertMenu(0, MF_STRING | MF_BYPOSITION | MF_POPUP, (UINT_PTR)LoadMenu(NULL, MAKEINTRESOURCE(IDM_TAGCLOUD_SORT)), tmpStr);
+	}
+
 	// Insert auto dir command
 	if (theApp.m_Contexts[m_Context]->AllowGroups)
 	{
@@ -1003,6 +1005,16 @@ void CMainView::OnAdjustLayout()
 {
 	if (!m_Resizing)
 		AdjustLayout();
+}
+
+LRESULT CMainView::OnSetAlert(WPARAM wParam, LPARAM /*lParam*/)
+{
+	m_Alerted = (wParam!=0);
+
+	if (p_FilterButton)
+		p_FilterButton->SetIconID(FILTERICON, m_Alerted ? FilterIconOverlay : -1);
+
+	return NULL;
 }
 
 void CMainView::OnUpdateSelection()
@@ -1519,8 +1531,8 @@ void CMainView::OnVolumeFormat()
 	INT idx = GetSelectedItem();
 	if (idx!=-1)
 	{
-		CHAR Drive = p_CookedFiles->m_Items[idx]->CoreAttributes.FileID[0];
-		if (LFStoresOnVolume(Drive))
+		CHAR cDrive = p_CookedFiles->m_Items[idx]->CoreAttributes.FileID[0];
+		if (LFStoresOnDrive(cDrive))
 		{
 			CString caption;
 			CString mask;
@@ -1533,7 +1545,7 @@ void CMainView::OnVolumeFormat()
 		}
 		else
 		{
-			ExecuteContextMenu(Drive, "format");
+			ExecuteExplorerContextMenu(cDrive, "format");
 		}
 	}
 }
@@ -1542,14 +1554,14 @@ void CMainView::OnVolumeEject()
 {
 	INT idx = GetSelectedItem();
 	if (idx!=-1)
-		ExecuteContextMenu(p_CookedFiles->m_Items[idx]->CoreAttributes.FileID[0], "eject");
+		ExecuteExplorerContextMenu(p_CookedFiles->m_Items[idx]->CoreAttributes.FileID[0], "eject");
 }
 
 void CMainView::OnVolumeProperties()
 {
 	INT idx = GetSelectedItem();
 	if (idx!=-1)
-		ExecuteContextMenu(p_CookedFiles->m_Items[idx]->CoreAttributes.FileID[0], "properties");
+		ExecuteExplorerContextMenu(p_CookedFiles->m_Items[idx]->CoreAttributes.FileID[0], "properties");
 }
 
 void CMainView::OnUpdateDriveCommands(CCmdUI* pCmdUI)
@@ -1817,7 +1829,7 @@ void CMainView::OnUpdateFileCommands(CCmdUI* pCmdUI)
 	{
 	case IDM_FILE_OPENWITH:
 		if (item)
-			b = ((item->Type & LFTypeMask)==LFTypeFile) && (item->CoreAttributes.ContextID!=LFContextFilters);
+			b = ((item->Type & (LFTypeNotMounted | LFTypeMask))==LFTypeFile) && (item->CoreAttributes.ContextID!=LFContextFilters);
 		break;
 	case IDM_FILE_EDIT:
 		if (item)
@@ -1836,7 +1848,7 @@ void CMainView::OnUpdateFileCommands(CCmdUI* pCmdUI)
 		break;
 	case IDM_FILE_RENAME:
 		if ((item) && (m_Context!=LFContextTrash))
-			b = ((item->Type & LFTypeMask)==LFTypeFile);
+			b = ((item->Type & (LFTypeNotMounted | LFTypeMask))==LFTypeFile);
 		if (p_wndFileView)
 			b &= !p_wndFileView->IsEditing();
 		break;

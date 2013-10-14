@@ -24,7 +24,7 @@ BOOL CFileDropWnd::Create()
 {
 	CString className = AfxRegisterWndClass(CS_DBLCLKS, LoadCursor(NULL, IDC_ARROW), NULL, theApp.LoadIcon(IDR_APPLICATION));
 
-	return CGlassWindow::Create(WS_MINIMIZEBOX, className, _T("FileDrop"), _T(""), CSize(144, 190));
+	return CGlassWindow::Create(WS_MINIMIZEBOX, className, _T("FileDrop"), _T(""), CSize(164, 210));
 }
 
 BOOL CFileDropWnd::PreTranslateMessage(MSG* pMsg)
@@ -93,9 +93,6 @@ INT CFileDropWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	// Aero
 	MARGINS Margins = { -1, -1, -1, -1 };
 	UseGlasBackground(Margins);
-
-	// Badge laden
-	hWarning = (HICON)LoadImage(GetModuleHandle(_T("LFCOMMDLG.DLL")), IDI_EXCLAMATION, IMAGE_ICON, 24, 24, LR_DEFAULTCOLOR);
 
 	// Tooltip
 	m_TooltipCtrl.Create(this);
@@ -166,13 +163,14 @@ BOOL CFileDropWnd::OnEraseBkgnd(CDC* pDC)
 	CGlassWindow::OnEraseBkgnd(&dc);
 
 	// Dropzone
-	POINT pt = { rlayout.left+(rlayout.Width()-128)/2-1, rlayout.top };
+	POINT pt = { rlayout.left+(rlayout.Width()-128)/2-1, rlayout.top+10 };
 	SIZE sz = { 128, 128 };
 	theApp.m_CoreImageListJumbo.DrawEx(&dc, (m_StoreValid ? LFGetStoreIcon(&m_Store) : IDI_STR_Unknown)-1, pt, sz, CLR_NONE, CLR_NONE, (m_StoreValid && m_StoreMounted) ? ILD_TRANSPARENT : m_IsAeroWindow ? ILD_BLEND25 : ILD_BLEND50);
 
 	// Text
 	CRect rtext(rlayout);
-	rtext.top += 120;
+	rtext.top += 130;
+	rtext.bottom -= 10;
 
 	const UINT textflags = DT_VCENTER | DT_CENTER | DT_SINGLELINE | DT_NOPREFIX;
 
@@ -216,10 +214,6 @@ BOOL CFileDropWnd::OnEraseBkgnd(CDC* pDC)
 
 		dc.SelectObject(oldFont);
 	}
-
-	// Badge
-	if (!m_StoreValid)
-		DrawIconEx(dc, rlayout.right-28, rlayout.top, hWarning, 24, 24, 0, NULL, DI_NORMAL);
 
 	pDC->BitBlt(0, 0, rclient.Width(), rclient.Height(), &dc, 0, 0, SRCCOPY);
 

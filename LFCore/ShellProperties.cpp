@@ -123,7 +123,8 @@ LFShellProperty AttrProperties[LFAttributeCount] = {
 	{ 0, 0 },						// LFAttrResponsible
 	{ PropertyUnnamed1, 100 },		// LFAttrDueTime
 	{ PropertyUnnamed2, 100 },		// LFAttrDoneTime
-	{ PropertyUnnamed7, 100 }		// LFAttrClient
+	{ PropertyUnnamed7, 100 },		// LFAttrClient
+	{ 0, 0 }						// LFAttrLikeCount
 };
 
 
@@ -178,6 +179,8 @@ unsigned char GetPerceivedContext(char* ext)
 
 void SetFileContext(LFCoreAttributes* c, bool force)
 {
+	assert(c);
+
 	#ifdef _DEBUG
 	// Test: ist die Kontext-Liste korrekt sortiert?
 	for (unsigned int a=0; a<(sizeof(Registry)/sizeof(RegisteredFile))-2; a++)
@@ -192,7 +195,7 @@ void SetFileContext(LFCoreAttributes* c, bool force)
 		c->ContextID = GetPerceivedContext(c->FileFormat);
 }
 
-void SetFileDomainAndSlave(LFItemDescriptor* i)
+void SetFileContextAndSlave(LFItemDescriptor* i)
 {
 	assert(i);
 
@@ -281,8 +284,8 @@ void SetAttributesFromFile(LFItemDescriptor* i, wchar_t* fn, bool metadata)
 
 	FindClose(hFind);
 
-	// Domain und Slave
-	SetFileDomainAndSlave(i);
+	// Context and slave
+	SetFileContextAndSlave(i);
 
 	if (!metadata)
 		return;

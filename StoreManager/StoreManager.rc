@@ -96,8 +96,8 @@ IDB_SOURCEICONS         BITMAP                  "res\\SourceIcons.bmp"
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,4,2,0
- PRODUCTVERSION 1,4,2,0
+ FILEVERSION 1,5,0,0
+ PRODUCTVERSION 1,5,0,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -114,13 +114,13 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "liquidFOLDERS"
             VALUE "FileDescription", "StoreManager"
-            VALUE "FileVersion", "1.4.2"
+            VALUE "FileVersion", "1.5.0"
             VALUE "InternalName", "StoreManager"
             VALUE "LegalCopyright", "© 2009-2013 liquidFOLDERS"
             VALUE "LegalTrademarks", "liquidFOLDERS®"
             VALUE "OriginalFilename", "StoreManager.exe"
             VALUE "ProductName", "liquidFOLDERS"
-            VALUE "ProductVersion", "1.4.2"
+            VALUE "ProductVersion", "1.5.0"
         END
     END
     BLOCK "VarFileInfo"
@@ -245,11 +245,18 @@ IDM_TAGCLOUD MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "&Seltene Tags zeigen",        IDM_TAGCLOUD_SHOWRARE
         MENUITEM "Schrift&größe",               IDM_TAGCLOUD_USESIZE
         MENUITEM "&Farbe",                      IDM_TAGCLOUD_USECOLORS
         MENUITEM "&Deckkraft",                  IDM_TAGCLOUD_USEOPACITY
     END
+END
+
+IDM_TAGCLOUD_SORT MENU 
+BEGIN
+    MENUITEM "Sortieren nach &Wert",        IDM_TAGCLOUD_SORTVALUE
+    MENUITEM "Sortieren nach &Anzahl",      IDM_TAGCLOUD_SORTCOUNT
+    MENUITEM SEPARATOR
+    MENUITEM "&Seltene Tags zeigen",        IDM_TAGCLOUD_SHOWRARE
 END
 
 IDM_INSPECTOR MENU 
@@ -283,6 +290,7 @@ BEGIN
         MENUITEM SEPARATOR
         MENUITEM "&Kopieren",                   IDM_FILE_COPY
         MENUITEM SEPARATOR
+        MENUITEM "&Verknüpfung erstellen",      IDM_FILE_SHORTCUT
         MENUITEM "&Löschen",                    IDM_FILE_DELETE
     END
 END
@@ -568,7 +576,6 @@ BEGIN
     IDS_AUTOMATIC           "Automatisch wählen"
     IDS_ILLEGALYEAR         "Sie können nur die Jahre von 1900 bis 2100 anzeigen."
     IDS_LEGEND              "Legende"
-    IDS_LEGEND_BLUE         "Wartungsarbeiten erforderlich"
     IDS_LEGEND_RED          "Beschädigt (Dateikörper fehlt)"
     IDS_SUBFOLDERS_NOTAVAIL "Unterordner sind hier nicht verfügbar."
     IDS_FILETYPES           "Dateitypen"
@@ -591,11 +598,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_VATTR_GUID          "GUID"
-    IDS_VATTR_PATH_DAT      "Datenpfad"
-    IDS_VATTR_PATH_IDX_MAIN "Hauptindex"
-    IDS_VATTR_PATH_IDX_AUX  "Hilfsindex"
-    IDS_VATTR_INDEXVERSION  "Index-Version"
     IDS_VATTR_IATA_NAME     "IATA Flughafenname"
     IDS_VATTR_IATA_COUNTRY  "Land/Gebiet"
 END
@@ -672,6 +674,17 @@ STRINGTABLE
 BEGIN
     IDM_GLOBE_AUTOSIZE      "Passt den Globus an die Fenstergröße an.\nGröße anpassen"
     IDM_GLOBE_GOOGLEEARTH   "Öffnet den auswählten Ort in Google Earth.\nÖffnen in Google Earth"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_TAGCLOUD_SORTVALUE  "Sortiert alle Tags alphabetisch.\nAlphabetisch sortieren"
+    IDM_TAGCLOUD_SORTCOUNT  "Sortiert alle Tags nach Dateianzahl.\nNach Anzahl sortieren"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_TAGCLOUD_SORT       "&Sortieren nach"
 END
 
 STRINGTABLE 
@@ -812,11 +825,18 @@ IDM_TAGCLOUD MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "Mostrar &etiquetas poco comunes", IDM_TAGCLOUD_SHOWRARE
         MENUITEM "Usar &tamaño de fuente",      IDM_TAGCLOUD_USESIZE
         MENUITEM "Usar &color",                 IDM_TAGCLOUD_USECOLORS
         MENUITEM "Usar &opacidad",              IDM_TAGCLOUD_USEOPACITY
     END
+END
+
+IDM_TAGCLOUD_SORT MENU 
+BEGIN
+    MENUITEM "Ordenar por &valor",          IDM_TAGCLOUD_SORTVALUE
+    MENUITEM "Ordenar por &conteo",         IDM_TAGCLOUD_SORTCOUNT
+    MENUITEM SEPARATOR
+    MENUITEM "Mostrar &etiquetas poco comunes", IDM_TAGCLOUD_SHOWRARE
 END
 
 IDM_INSPECTOR MENU 
@@ -850,6 +870,7 @@ BEGIN
         MENUITEM SEPARATOR
         MENUITEM "&Copiar",                     IDM_FILE_COPY
         MENUITEM SEPARATOR
+        MENUITEM "Crear &acceso directo",       IDM_FILE_SHORTCUT
         MENUITEM "&Eliminar",                   IDM_FILE_DELETE
     END
 END
@@ -1135,7 +1156,6 @@ BEGIN
     IDS_AUTOMATIC           "Escoger automaticamente"
     IDS_ILLEGALYEAR         "Usted sólo puede visualizar del año 1900 al año 2100."
     IDS_LEGEND              "Leyenda"
-    IDS_LEGEND_BLUE         "Requiere de mantenimiento programado"
     IDS_LEGEND_RED          "Dañado"
     IDS_SUBFOLDERS_NOTAVAIL "Subcarpetas no están disponibles aquí."
     IDS_FILETYPES           "Tipos de archivo"
@@ -1158,11 +1178,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_VATTR_GUID          "GUID"
-    IDS_VATTR_PATH_DAT      "Ruta de datos"
-    IDS_VATTR_PATH_IDX_MAIN "Índice principal"
-    IDS_VATTR_PATH_IDX_AUX  "Índice auxiliar"
-    IDS_VATTR_INDEXVERSION  "Versión índice"
     IDS_VATTR_IATA_NAME     "Nombre de aeropuerto IATA"
     IDS_VATTR_IATA_COUNTRY  "Territorio"
 END
@@ -1239,6 +1254,17 @@ STRINGTABLE
 BEGIN
     IDM_GLOBE_AUTOSIZE      "Reajusta el globo dentro de la ventana.\nAjustar"
     IDM_GLOBE_GOOGLEEARTH   "Abre las ubicaciones seleccionadas en Google Earth.\nAbrir en Google Earth"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_TAGCLOUD_SORTVALUE  "Ordena las etiquetas en su orden canónico.\nOrdenar por valor"
+    IDM_TAGCLOUD_SORTCOUNT  "Ordena las etiquetas por su número de archivo.\nOrdenar por número"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_TAGCLOUD_SORT       "&Ordenar por"
 END
 
 STRINGTABLE 
@@ -1379,11 +1405,18 @@ IDM_TAGCLOUD MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "Indiquer les tags &rares",    IDM_TAGCLOUD_SHOWRARE
         MENUITEM "Utilise la &taille",          IDM_TAGCLOUD_USESIZE
         MENUITEM "Utilise la &couleur",         IDM_TAGCLOUD_USECOLORS
         MENUITEM "Utilise la &propriété couvrante", IDM_TAGCLOUD_USEOPACITY
     END
+END
+
+IDM_TAGCLOUD_SORT MENU 
+BEGIN
+    MENUITEM "Trier par la &valeur",        IDM_TAGCLOUD_SORTVALUE
+    MENUITEM "Trier par le &nombre",        IDM_TAGCLOUD_SORTCOUNT
+    MENUITEM SEPARATOR
+    MENUITEM "Indiquer les tags &rares",    IDM_TAGCLOUD_SHOWRARE
 END
 
 IDM_INSPECTOR MENU 
@@ -1417,6 +1450,7 @@ BEGIN
         MENUITEM SEPARATOR
         MENUITEM "&Copier",                     IDM_FILE_COPY
         MENUITEM SEPARATOR
+        MENUITEM "Créer r&accourci",            IDM_FILE_SHORTCUT
         MENUITEM "&Effacer",                    IDM_FILE_DELETE
     END
 END
@@ -1703,7 +1737,6 @@ BEGIN
     IDS_AUTOMATIC           "Choisir automatiquement"
     IDS_ILLEGALYEAR         "Vous pouvez indiquer seulement les années de 1900 à 2100."
     IDS_LEGEND              "Légende"
-    IDS_LEGEND_BLUE         "Travail d'entretien nécessaire"
     IDS_LEGEND_RED          "Mutilé (le corps de fichier manque)"
     IDS_SUBFOLDERS_NOTAVAIL "Sous-dossier ne sont pas disponible ici."
     IDS_FILETYPES           "Types de fichiers"
@@ -1726,11 +1759,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_VATTR_GUID          "GUID"
-    IDS_VATTR_PATH_DAT      "Données"
-    IDS_VATTR_PATH_IDX_MAIN "Index principal"
-    IDS_VATTR_PATH_IDX_AUX  "Index auxiliaire"
-    IDS_VATTR_INDEXVERSION  "Version de index"
     IDS_VATTR_IATA_NAME     "IATA nom de aéroport"
     IDS_VATTR_IATA_COUNTRY  "Territoire"
 END
@@ -1807,6 +1835,17 @@ STRINGTABLE
 BEGIN
     IDM_GLOBE_AUTOSIZE      "Adapte le globe à la grandeur de fenêtre.\nAdapter la grandeur"
     IDM_GLOBE_GOOGLEEARTH   "Ouvre le lieu choisi dans Google Earth.\nOuvrir dans Google Earth"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_TAGCLOUD_SORTVALUE  "Classe tous les tags par ordre alphabétique.\nClasser par ordre alphabétique"
+    IDM_TAGCLOUD_SORTCOUNT  "Classe tous les tags par nombre de fichier.\nClasser par nombre"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_TAGCLOUD_SORT       "&Classer par"
 END
 
 STRINGTABLE 
@@ -2004,6 +2043,14 @@ BEGIN
     END
 END
 
+IDM_TAGCLOUD_SORT MENU 
+BEGIN
+    MENUITEM "Sort by &value",              IDM_TAGCLOUD_SORTVALUE
+    MENUITEM "Sort by &count",              IDM_TAGCLOUD_SORTCOUNT
+    MENUITEM SEPARATOR
+    MENUITEM "Show &rare tags",             IDM_TAGCLOUD_SHOWRARE
+END
+
 IDM_INSPECTOR MENU 
 BEGIN
     POPUP "POPUP"
@@ -2035,6 +2082,7 @@ BEGIN
         MENUITEM SEPARATOR
         MENUITEM "&Copy",                       IDM_FILE_COPY
         MENUITEM SEPARATOR
+        MENUITEM "Create &shortcut",            IDM_FILE_SHORTCUT
         MENUITEM "&Delete",                     IDM_FILE_DELETE
     END
 END
@@ -2319,7 +2367,6 @@ BEGIN
     IDS_AUTOMATIC           "Choose automatically"
     IDS_ILLEGALYEAR         "You can only display the years 1900 through 2100."
     IDS_LEGEND              "Legend"
-    IDS_LEGEND_BLUE         "Requires scheduled maintenance"
     IDS_LEGEND_RED          "Damaged (file body missing)"
     IDS_SUBFOLDERS_NOTAVAIL "Subfolders are not available here."
     IDS_FILETYPES           "File types"
@@ -2342,11 +2389,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_VATTR_GUID          "GUID"
-    IDS_VATTR_PATH_DAT      "Data path"
-    IDS_VATTR_PATH_IDX_MAIN "Main index path"
-    IDS_VATTR_PATH_IDX_AUX  "Aux. index path"
-    IDS_VATTR_INDEXVERSION  "Index version"
     IDS_VATTR_IATA_NAME     "IATA airport name"
     IDS_VATTR_IATA_COUNTRY  "Country/territory"
 END
@@ -2423,6 +2465,17 @@ STRINGTABLE
 BEGIN
     IDM_GLOBE_AUTOSIZE      "Resizes the globe to touch the edges of the window.\nSize to fit"
     IDM_GLOBE_GOOGLEEARTH   "Opens the selected locations in Google Earth.\nOpen in Google Earth"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_TAGCLOUD_SORTVALUE  "Arranges the tags in their canonic order.\nSort by value"
+    IDM_TAGCLOUD_SORTCOUNT  "Arranges the tags by their file count.\nSort by count"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_TAGCLOUD_SORT       "&Sort by"
 END
 
 STRINGTABLE 

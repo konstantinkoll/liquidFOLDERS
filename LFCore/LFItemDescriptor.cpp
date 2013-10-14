@@ -19,7 +19,7 @@ extern const int CoreOffsets[LFLastCoreAttribute+1] = {
 	offsetof(LFCoreAttributes, DeleteTime),
 	offsetof(LFCoreAttributes, ArchiveTime),
 	offsetof(LFCoreAttributes, FileFormat),
-	offsetof(LFCoreAttributes, LikeCount),
+	-1,
 	offsetof(LFCoreAttributes, FileSize),
 	offsetof(LFCoreAttributes, Flags),
 	offsetof(LFCoreAttributes, URL),
@@ -61,7 +61,7 @@ extern const unsigned char AttrTypes[LFAttributeCount] = {
 	LFTypeTime,					// LFAttrDeleteTime
 	LFTypeTime,					// LFAttrArchiveTime
 	LFTypeAnsiString,			// LFAttrFileFormat
-	LFTypeUINT,					// LFAttrLikeCount
+	LFTypeUINT,					// LFAttrFileCount
 	LFTypeINT64,				// LFAttrFileSize
 	LFTypeFlags,				// LFAttrFlags
 	LFTypeAnsiString,			// LFAttrURL
@@ -107,7 +107,8 @@ extern const unsigned char AttrTypes[LFAttributeCount] = {
 	LFTypeUnicodeString,		// LFAttrResponsible
 	LFTypeTime,					// LFAttrDueTime
 	LFTypeTime,					// LFAttrDoneTime
-	LFTypeUnicodeString			// LFAttrCustomer
+	LFTypeUnicodeString,		// LFAttrCustomer
+	LFTypeUINT					// LFAttrLikeCount
 };
 
 extern HMODULE LFCoreModuleHandle;
@@ -222,7 +223,7 @@ void SetAttribute(LFItemDescriptor* i, unsigned int attr, const void* v)
 
 LFCore_API LFItemDescriptor* LFAllocItemDescriptor(LFItemDescriptor* i)
 {
-	LFItemDescriptor* d = static_cast<LFItemDescriptor*>(malloc(sizeof(LFItemDescriptor)));
+	LFItemDescriptor* d = (LFItemDescriptor*)malloc(sizeof(LFItemDescriptor));
 	ZeroMemory(d, sizeof(LFItemDescriptor));
 	d->FirstAggregate = d->LastAggregate = -1;
 	d->RefCount = 1;
@@ -230,6 +231,7 @@ LFCore_API LFItemDescriptor* LFAllocItemDescriptor(LFItemDescriptor* i)
 	// Zeiger auf statische Attributwerte initalisieren
 	d->AttributeValues[LFAttrStoreID] = &d->StoreID;
 	d->AttributeValues[LFAttrDescription] = &d->Description[0];
+	d->AttributeValues[LFAttrFileCount] = &d->AggregateCount;
 
 	for (unsigned int a=0; a<=LFLastCoreAttribute; a++)
 		if (CoreOffsets[a]!=-1)
@@ -297,31 +299,31 @@ LFCore_API LFItemDescriptor* LFAllocItemDescriptor(LFStoreDescriptor* s)
 	if (strcmp(s->StoreID, DefaultStore)==0)
 		d->Type |= LFTypeDefault;
 	if (!IsMounted)
-		d->Type |= LFTypeGhosted | LFTypeNotMounted;
-	if (s->IndexVersion<CurIdxVersion)
-		d->Type |= LFTypeRequiresMaintenance;
-	if (s->StoreMode!=LFStoreModeExternal)
+		d->Type |= LFTypeNotMounted | LFTypeGhosted;
+	if (s->IndexMode!=LFStoreIndexModeExternal)
 		d->Type |= LFTypeShortcutAllowed;
 
-	if ((s->StoreMode==LFStoreModeHybrid) || (s->StoreMode==LFStoreModeExternal))
+	if ((s->IndexMode==LFStoreIndexModeHybrid) || (s->IndexMode==LFStoreIndexModeExternal))
 		if (wcscmp(s->LastSeen, L"")!=0)
 		{
 			wchar_t ls[256];
-			LoadString(LFCoreModuleHandle, IsMounted ? IDS_SeenOn :IDS_LastSeen, ls, 256);
+			LoadString(LFCoreModuleHandle, IsMounted ? IDS_SeenOn : IDS_LastSeen, ls, 256);
+
 			wchar_t descr[256];
 			wsprintf(descr, ls, s->LastSeen);
 			SetAttribute(d, LFAttrDescription, descr);
 		}
 
-	d->CategoryID = (s->StoreMode<=LFStoreModeExternal) ? LFItemCategoryLocalStores : LFItemCategoryRemoteStores;
+	d->CategoryID = (s->IndexMode<=LFStoreIndexModeExternal) ? LFItemCategoryLocalStores : LFItemCategoryRemoteStores;
 	d->IconID = LFGetStoreIcon(s);
 
 	SetAttribute(d, LFAttrFileName, s->StoreName);
 	SetAttribute(d, LFAttrComments, s->StoreComment);
 	SetAttribute(d, LFAttrStoreID, s->StoreID);
-	SetAttribute(d, LFAttrFileID, s->StoreID);
 	SetAttribute(d, LFAttrCreationTime, &s->CreationTime);
 	SetAttribute(d, LFAttrFileTime, &s->FileTime);
+	SetAttribute(d, LFAttrFileCount, &s->FileCount[LFContextAllFiles]);
+	SetAttribute(d, LFAttrFileSize, &s->FileSize[LFContextAllFiles]);
 
 	return d;
 }

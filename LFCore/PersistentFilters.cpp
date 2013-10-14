@@ -11,12 +11,12 @@
 
 extern HANDLE Mutex_Stores;
 
-bool StoreFilter(wchar_t* fn, LFFilter* filter)
+bool StoreFilter(wchar_t* fn, LFFilter* f)
 {
 	assert(fn);
-	assert(filter);
+	assert(f);
 
-	if (filter->Mode!=LFFilterModeSearch)
+	if (f->Mode!=LFFilterModeSearch)
 		return false;
 
 	PersistentFilterHeader Header;
@@ -29,9 +29,9 @@ bool StoreFilter(wchar_t* fn, LFFilter* filter)
 
 	PersistentFilterBody Body;
 	ZeroMemory(&Body, sizeof(Body));
-	Body.AllStores = (filter->StoreID[0]=='\0');
-	wcscpy_s(Body.Searchterm, 256, filter->Searchterm);
-	LFFilterCondition* Condition = filter->ConditionList;
+	Body.AllStores = (f->StoreID[0]=='\0');
+	wcscpy_s(Body.Searchterm, 256, f->Searchterm);
+	LFFilterCondition* Condition = f->ConditionList;
 	while (Condition)
 	{
 		Body.cConditions++;
@@ -47,7 +47,7 @@ bool StoreFilter(wchar_t* fn, LFFilter* filter)
 			if (WriteFile(hFile, &Body, sizeof(Body), &Written, NULL))
 			{
 				res = true;
-				Condition = filter->ConditionList;
+				Condition = f->ConditionList;
 				while (Condition)
 				{
 					if (!WriteFile(hFile, Condition, sizeof(LFFilterCondition), &Written, NULL))
@@ -65,7 +65,7 @@ bool StoreFilter(wchar_t* fn, LFFilter* filter)
 	return res;
 }
 
-LFFilter* LoadFilter(wchar_t* fn, char* key)
+LFFilter* LoadFilter(wchar_t* fn, char* StoreID)
 {
 	assert(fn);
 
@@ -104,7 +104,7 @@ LFFilter* LoadFilter(wchar_t* fn, char* key)
 	f->Options.IsPersistent = true;
 #define Abort3 { LFFreeFilter(f); Abort2; }
 
-	strcpy_s(f->StoreID, LFKeySize, Body.AllStores ? "" : key);
+	strcpy_s(f->StoreID, LFKeySize, Body.AllStores ? "" : StoreID);
 	wcscpy_s(f->Searchterm, 256, Body.Searchterm);
 
 	for (unsigned int a=Body.cConditions; a>0; a--)
@@ -129,9 +129,9 @@ LFFilter* LoadFilter(wchar_t* fn, char* key)
 }
 
 
-LFCore_API unsigned int LFSaveFilter(char* key, LFFilter* filter, wchar_t* name, wchar_t* comments, LFItemDescriptor** created)
+LFCore_API unsigned int LFSaveFilter(char* key, LFFilter* f, wchar_t* name, wchar_t* comments, LFItemDescriptor** created)
 {
-	assert(filter);
+	assert(f);
 
 	if (created)
 		*created = NULL;
@@ -162,15 +162,15 @@ LFCore_API unsigned int LFSaveFilter(char* key, LFFilter* filter, wchar_t* name,
 	if (res==LFOk)
 	{
 		LFItemDescriptor* i = LFAllocItemDescriptor();
-		SetAttribute(i, LFAttrFileName, name ? name : filter->OriginalName);
-		SetAttribute(i, LFAttrFileFormat, "filter");
+		SetAttribute(i, LFAttrFileName, name ? name : f->OriginalName);
+		SetAttribute(i, LFAttrFileFormat, "f");
 		if (comments)
 			SetAttribute(i, LFAttrComments, comments);
 
 		wchar_t Path[2*MAX_PATH];
 		res = PrepareImport(slot, i, Path, 2*MAX_PATH);
 		if (res==LFOk)
-			if (StoreFilter(Path, filter))
+			if (StoreFilter(Path, f))
 			{
 				SetAttributesFromFile(i, Path, false);
 

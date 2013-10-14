@@ -59,6 +59,8 @@ protected:
 private:
 	CImageListTransparent m_AttributeIcons;
 	DynArray<ItemCategory> m_Categories;
+	CString m_FilesSingular;
+	CString m_FilesPlural;
 
 	void DrawCategory(CDC& dc, Graphics& g, LPRECT rectCategory, ItemCategory* ic, COLORREF tlCol, BOOL Themed);
 };

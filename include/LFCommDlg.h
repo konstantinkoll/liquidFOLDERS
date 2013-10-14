@@ -61,6 +61,7 @@
 
 LFCommDlg_API BOOL DuplicateGlobalMemory(const HGLOBAL hSrc, HGLOBAL& hDst);
 LFCommDlg_API INT GetAttributeIconIndex(UINT Attr);
+LFCommDlg_API CString CombineFileCountSize(UINT Count, INT64 Size);
 LFCommDlg_API void CreateRoundRectangle(CRect rect, INT rad, GraphicsPath& path);
 LFCommDlg_API void TooltipDataFromPIDL(LPITEMIDLIST pidl, CImageList* icons, HICON& hIcon, CSize& size, CString& caption, CString& hint);
 LFCommDlg_API BOOL IsCtrlThemed();

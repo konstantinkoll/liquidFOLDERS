@@ -8,7 +8,7 @@
 #include "resource.h"
 
 
-GUID theAppID =	// {FA2D9FEE-05FA-4b0d-8702-88DB19A0F38F}
+GUID theAppID =	// {FA2D9FEE-05FA-4B0D-8702-88DB19A0F38F}
 	{ 0xfa2d9fee, 0x5fa, 0x4b0d, { 0x87, 0x2, 0x88, 0xdb, 0x19, 0xa0, 0xf3, 0x8f } };
 
 BOOL CALLBACK EnumWindowsProc(HWND hWnd, LPARAM lParam)

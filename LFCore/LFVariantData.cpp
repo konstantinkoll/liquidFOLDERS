@@ -56,7 +56,14 @@ LFCore_API void LFINT64ToString(const __int64 v, wchar_t* str, size_t cCount)
 
 LFCore_API void LFFractionToString(const LFFraction frac, wchar_t* str, size_t cCount)
 {
-	swprintf(str, cCount, L"%u/%u", frac.Num, frac.Denum);
+	if ((frac.Num==0) || (frac.Denum==0))
+	{
+		str[0] = L'\0';
+	}
+	else
+	{
+		swprintf(str, cCount, L"%u/%u", frac.Num, frac.Denum);
+	}
 }
 
 LFCore_API void LFDoubleToString(const double d, wchar_t* str, size_t cCount)

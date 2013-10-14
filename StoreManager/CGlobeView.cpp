@@ -269,7 +269,7 @@ INT CGlobeView::ItemAtPosition(CPoint point)
 	return res;
 }
 
-CMenu* CGlobeView::GetViewContextmenu()
+CMenu* CGlobeView::GetViewContextMenu()
 {
 	CMenu* pMenu = new CMenu();
 	pMenu->LoadMenu(IDM_GLOBE);

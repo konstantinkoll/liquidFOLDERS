@@ -91,13 +91,15 @@ protected:
 	afx_msg void OnUpdateViewOptions();
 	afx_msg void OnUpdateSortOptions();
 	afx_msg void OnUpdateNumbers();
+	afx_msg LRESULT OnSetAlert(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnCookFiles(WPARAM wParam=0, LPARAM lParam=NULL);
 	afx_msg void OnUpdateFooter();
 
-	afx_msg LRESULT OnVolumesChanged(WPARAM wParam, LPARAM lParam);
+	afx_msg LRESULT OnItemsDropped(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnStoresChanged(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnStoreAttributesChanged(WPARAM wParam, LPARAM lParam);
-	afx_msg LRESULT OnItemsDropped(WPARAM wParam, LPARAM lParam);
+	afx_msg LRESULT OnVolumesChanged(WPARAM wParam, LPARAM lParam);
+	afx_msg LRESULT OnStatisticsChanged(WPARAM wParam, LPARAM lParam);
 	DECLARE_MESSAGE_MAP()
 
 private:

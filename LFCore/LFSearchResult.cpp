@@ -185,14 +185,12 @@ bool LFSearchResult::AddItemDescriptor(LFItemDescriptor* i)
 	return true;
 }
 
-bool LFSearchResult::AddStoreDescriptor(LFStoreDescriptor* s, LFFilter* f)
+bool LFSearchResult::AddStoreDescriptor(LFStoreDescriptor* s)
 {
 	assert(s);
 
 	LFFilter* nf = LFAllocFilter();
 	nf->Mode = LFFilterModeDirectoryTree;
-	if (f)
-		nf->Options = f->Options;
 	strcpy_s(nf->StoreID, LFKeySize, s->StoreID);
 	wcscpy_s(nf->OriginalName, 256, s->StoreName);
 
@@ -220,15 +218,22 @@ void LFSearchResult::AddVolumes()
 			if ((!sfi.dwAttributes) && HideDrivesWithNoMedia)
 				continue;
 
+			unsigned int l = (unsigned int)wcslen(sfi.szDisplayName);
+			if (l>=5)
+				if ((sfi.szDisplayName[l-5]==L' ') && (sfi.szDisplayName[l-4]==L'(') && (sfi.szDisplayName[l-2]==L':') && (sfi.szDisplayName[l-1]==L')'))
+					sfi.szDisplayName[l-5] = L'\0';
+
 			LFItemDescriptor* d = LFAllocItemDescriptor();
 			d->Type = LFTypeVolume;
 			if (!sfi.dwAttributes)
 				d->Type |= LFTypeGhosted | LFTypeNotMounted;
+			
 			d->CategoryID = LFItemCategoryVolumes;
 			SetAttribute(d, LFAttrFileName, sfi.szDisplayName);
-			char key[] = " :";
-			key[0] = cDrive;
-			SetAttribute(d, LFAttrFileID, key);
+
+			char FileID[] = " :";
+			FileID[0] = cDrive;
+			SetAttribute(d, LFAttrFileID, FileID);
 			SetAttribute(d, LFAttrDescription, sfi.szTypeName);
 
 			if (!AddItemDescriptor(d))
@@ -530,12 +535,6 @@ unsigned int LFSearchResult::Aggregate(unsigned int write, unsigned int read1, u
 			folder->LastAggregate = read2-1;
 		}
 
-		wchar_t Mask[256];
-		LoadString(LFCoreModuleHandle, (read2==read1+1) ? IDS_HintSingular : IDS_HintPlural, Mask, 256);
-		wchar_t Hint[256];
-		swprintf_s(Hint, 256, Mask, read2-read1);
-		SetAttribute(folder, LFAttrDescription, &Hint);
-
 		__int64 size = 0;
 		unsigned int Source = m_Items[read1]->Type & LFTypeSourceMask;
 		for (unsigned int a=read1; a<read2; a++)
@@ -727,12 +726,6 @@ void LFSearchResult::GroupArray(unsigned int attr, LFFilter* f)
 		SetAttribute(folder, LFAttrFileName, tag);
 		SetAttribute(folder, LFAttrFileSize, &it->second.size);
 		SetAttribute(folder, attr, tag);
-
-		wchar_t Mask[256];
-		LoadString(LFCoreModuleHandle, (folder->AggregateCount==1) ? IDS_HintSingular : IDS_HintPlural, Mask, 256);
-		wchar_t Hint[256];
-		swprintf_s(Hint, 256, Mask, folder->AggregateCount);
-		SetAttribute(folder, LFAttrDescription, &Hint);
 
 		LFFilterCondition* c = LFAllocFilterCondition();
 		c->Compare = LFFilterCompareSubfolder;

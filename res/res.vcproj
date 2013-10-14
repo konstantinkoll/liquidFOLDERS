@@ -664,6 +664,22 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Ribbon\SortByCount_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\SortByCount_32.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\SortByValue_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\SortByValue_32.png"
+				>
+			</File>
+			<File
 				RelativePath=".\Ribbon\SortOptions_16.png"
 				>
 			</File>
@@ -948,6 +964,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Stores\STR_NTFS.ico"
+				>
+			</File>
+			<File
 				RelativePath=".\Stores\STR_Pinterest.ico"
 				>
 			</File>
@@ -1042,6 +1062,10 @@
 		</File>
 		<File
 			RelativePath=".\Backdrop_Blue.png"
+			>
+		</File>
+		<File
+			RelativePath=".\Backdrop_Blurred.png"
 			>
 		</File>
 		<File
@@ -1218,6 +1242,10 @@
 		</File>
 		<File
 			RelativePath="LocationGPS_Tiny.ico"
+			>
+		</File>
+		<File
+			RelativePath=".\LocationIndicator_12.png"
 			>
 		</File>
 		<File

@@ -1,24 +1,33 @@
 #pragma once
 #include "liquidFOLDERS.h"
 
-#define LFStoresHive         "Software\\liquidFOLDERS\\Stores"
-#define MaxStores            250
+#define LFStoresHive     "Software\\liquidFOLDERS\\Stores"
+#define MaxStores        250
+
+#define RANDOMIZE() \
+	SYSTEMTIME st; \
+	GetSystemTime(&st); \
+	srand(st.wMilliseconds*rand());
+
+#define RAND_CHAR()      KeyChars[rand()%sizeof(KeyChars)]
 
 extern char DefaultStore[LFKeySize];
 extern unsigned int StoreCount;
 
-void AppendGUID(LFStoreDescriptor* s, wchar_t* p);
-void GetAutoPath(LFStoreDescriptor* s, wchar_t* p);
+unsigned int MakeDefaultStore(LFStoreDescriptor* s);
+void AppendGUID(LFStoreDescriptor* s, wchar_t* pPath, wchar_t* pSuffix=L"\\");
+bool IsStoreMounted(LFStoreDescriptor* s);
+void GetAutoPath(LFStoreDescriptor* s, wchar_t* pPath);
 unsigned int DeleteStoreSettingsFromRegistry(LFStoreDescriptor* s);
-unsigned int ValidateStoreSettings(LFStoreDescriptor* s, int Source=-1);
+void CreateNewStoreID(char* StoreID);
+void SetStorePaths(LFStoreDescriptor* s, int Source=-1);
 void InitStoreCache();
-void CreateStoreKey(char* key);
-void AddStoresToSearchResult(LFSearchResult* res, LFFilter* filter);
-LFStoreDescriptor* FindStore(char* key, HANDLE* lock=NULL);
+void AddStoresToSearchResult(LFSearchResult* sr);
+LFStoreDescriptor* FindStore(char* StoreID, HANDLE* lock=NULL);
 LFStoreDescriptor* FindStore(GUID guid, HANDLE* lock=NULL);
-LFStoreDescriptor* FindStore(wchar_t* datpath, HANDLE* lock=NULL);
-unsigned int FindStores(char** keys);
+LFStoreDescriptor* FindStore(wchar_t* DatPath, HANDLE* lock=NULL);
+unsigned int FindStores(char** IDs);
 unsigned int UpdateStore(LFStoreDescriptor* s, bool UpdateTime=true, bool MakeDefault=false);
 unsigned int DeleteStore(LFStoreDescriptor* s);
-unsigned int MountDrive(char d, bool InternalCall=false);
-unsigned int UnmountDrive(char d, bool InternalCall=false);
+unsigned int MountDrive(char cDrive, bool InternalCall=false);
+unsigned int UnmountDrive(char cDrive, bool InternalCall=false);

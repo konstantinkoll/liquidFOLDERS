@@ -30,6 +30,7 @@ LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
 // remains consistent on all systems.
 IDI_STR_Unknown         ICON                    "res\\STR_Unknown.ico"
 IDI_STR_Internal        ICON                    "res\\STR_Internal.ico"
+IDI_STR_NTFS            ICON                    "res\\STR_NTFS.ico"
 IDI_STR_1394            ICON                    "res\\STR_1394.ico"
 IDI_STR_USB             ICON                    "res\\STR_USB.ico"
 IDI_STR_Dropbox         ICON                    "res\\STR_Dropbox.ico"
@@ -49,8 +50,8 @@ IDI_OVR_Default         ICON                    "res\\OVR_Default.ico"
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,4,2,0
- PRODUCTVERSION 1,4,2,0
+ FILEVERSION 1,5,0,0
+ PRODUCTVERSION 1,5,0,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -66,13 +67,13 @@ BEGIN
         BLOCK "000004e4"
         BEGIN
             VALUE "CompanyName", "liquidFOLDERS"
-            VALUE "FileVersion", "1.4.2"
+            VALUE "FileVersion", "1.5.0"
             VALUE "InternalName", "LFCore"
             VALUE "LegalCopyright", "© 2009-2013 liquidFOLDERS"
             VALUE "LegalTrademarks", "liquidFOLDERS®"
             VALUE "OriginalFilename", "LFCore.dll"
             VALUE "ProductName", "liquidFOLDERS"
-            VALUE "ProductVersion", "1.4.2"
+            VALUE "ProductVersion", "1.5.0"
         END
     END
     BLOCK "VarFileInfo"
@@ -162,8 +163,6 @@ BEGIN
     IDS_DeleteStoreMessage  "Möchten Sie diesen Store wirklich löschen ?"
     IDS_ShortcutCaption     "Verknüpfung"
     IDS_ShortcutMessage     "An dieser Stelle kann keine Verknüpfung erstellt werden.\nMöchten Sie die Verknüpfung stattdessen auf dem Desktop erstellen?"
-    IDS_HintSingular        "%u Datei"
-    IDS_HintPlural          "%u Dateien"
     IDS_Rating1             "Schlecht"
     IDS_Rating2             "Ausreichend"
     IDS_Rating3             "Gut"
@@ -271,7 +270,7 @@ BEGIN
     IDS_AttrDeleteTime      "Gelöscht am"
     IDS_AttrArchiveTime     "Archiviert am"
     IDS_AttrFileFormat      "Dateiformat"
-    IDS_AttrLikeCount       "Gefällt"
+    IDS_AttrFileCount       "Dateianzahl"
     IDS_AttrFileSize        "Größe"
     IDS_AttrFlags           "Markierungen"
     IDS_AttrURL             "URL"
@@ -324,12 +323,14 @@ BEGIN
     IDS_AttrDueTime         "Fällig am"
     IDS_AttrDoneTime        "Erledigt am"
     IDS_AttrCustomer        "Kunde oder Klient"
+    IDS_AttrLikeCount       "Gefällt"
 END
 
 STRINGTABLE 
 BEGIN
     IDS_SrcUnknown          "Unbekannt"
     IDS_SrcInternal         "Interner Store"
+    IDS_SrcNTFS             "Windows Dateisystem"
     IDS_Src1394             "1394-Laufwerk"
     IDS_SrcUSB              "USB-Laufwerk"
     IDS_SrcDropbox          "Dropbox"
@@ -346,6 +347,7 @@ STRINGTABLE
 BEGIN
     IDS_QSrcUnknown         "Unbekannte Quelle"
     IDS_QSrcInternal        "In internem Store"
+    IDS_QSrcNTFS            "Im Windows Dateisystem"
     IDS_QSrc1394            "Auf lokalem 1394-Laufwerk"
     IDS_QSrcUSB             "Auf lokalem USB-Laufwerk"
     IDS_QSrcDropbox         "Auf Dropbox"
@@ -444,8 +446,6 @@ BEGIN
     IDS_DeleteStoreMessage  "Do you really want to delete this store ?"
     IDS_ShortcutCaption     "Shortcut"
     IDS_ShortcutMessage     "Windows cannot create a shortcut here.\nDo you want the shortcut to be placed on the desktop instead?"
-    IDS_HintSingular        "%u file"
-    IDS_HintPlural          "%u files"
     IDS_Rating1             "Poor"
     IDS_Rating2             "Fair"
     IDS_Rating3             "Good"
@@ -551,7 +551,7 @@ BEGIN
     IDS_AttrDeleteTime      "Deleted"
     IDS_AttrArchiveTime     "Archived"
     IDS_AttrFileFormat      "File format"
-    IDS_AttrLikeCount       "Likes"
+    IDS_AttrFileCount       "File count"
     IDS_AttrFileSize        "Size"
     IDS_AttrFlags           "Flags"
     IDS_AttrURL             "URL"
@@ -604,12 +604,14 @@ BEGIN
     IDS_AttrDueTime         "Due"
     IDS_AttrDoneTime        "Done"
     IDS_AttrCustomer        "Customer or client"
+    IDS_AttrLikeCount       "Likes"
 END
 
 STRINGTABLE 
 BEGIN
     IDS_SrcUnknown          "Unknown"
     IDS_SrcInternal         "Internal store"
+    IDS_SrcNTFS             "Windows file system"
     IDS_Src1394             "1394 drive"
     IDS_SrcUSB              "USB drive"
     IDS_SrcDropbox          "Dropbox"
@@ -626,6 +628,7 @@ STRINGTABLE
 BEGIN
     IDS_QSrcUnknown         "Unknown source"
     IDS_QSrcInternal        "In internal store"
+    IDS_QSrcNTFS            "In Windows file system"
     IDS_QSrc1394            "On local 1394 drive"
     IDS_QSrcUSB             "On local USB drive"
     IDS_QSrcDropbox         "On Dropbox"
@@ -724,8 +727,6 @@ BEGIN
     IDS_DeleteStoreMessage  "¿Realmente quiere eliminar este store?"
     IDS_ShortcutCaption     "Acceso directo"
     IDS_ShortcutMessage     "Windows no puede crear un acceso directo aquí.\n¿Desea que en su lugar el acceso directo se coloque en el escritorio?"
-    IDS_HintSingular        "%u archivo"
-    IDS_HintPlural          "%u archivos"
     IDS_Rating1             "Pobre"
     IDS_Rating2             "Aceptable"
     IDS_Rating3             "Bueno"
@@ -834,7 +835,7 @@ BEGIN
     IDS_AttrDeleteTime      "Eliminado"
     IDS_AttrArchiveTime     "Archivado"
     IDS_AttrFileFormat      "Formato de archivo"
-    IDS_AttrLikeCount       "Número de gustas"
+    IDS_AttrFileCount       "Número de archivos"
     IDS_AttrFileSize        "Tamaño"
     IDS_AttrFlags           "Indicadores"
     IDS_AttrURL             "URL"
@@ -887,12 +888,14 @@ BEGIN
     IDS_AttrDueTime         "En tiempo"
     IDS_AttrDoneTime        "Finalizado"
     IDS_AttrCustomer        "Consumidor ó cliente"
+    IDS_AttrLikeCount       "Número de gustas"
 END
 
 STRINGTABLE 
 BEGIN
     IDS_SrcUnknown          "Desconocido"
     IDS_SrcInternal         "Store interno"
+    IDS_SrcNTFS             "Windows sistema de ficheros"
     IDS_Src1394             "Unidad de 1394"
     IDS_SrcUSB              "Unidad de USB"
     IDS_SrcDropbox          "Dropbox"
@@ -909,6 +912,7 @@ STRINGTABLE
 BEGIN
     IDS_QSrcUnknown         "Origen desconocido"
     IDS_QSrcInternal        "En store interno"
+    IDS_QSrcNTFS            "En Windows sistema de ficheros"
     IDS_QSrc1394            "En unidad local de 1394"
     IDS_QSrcUSB             "En unidad local de USB"
     IDS_QSrcDropbox         "En Dropbox"
@@ -1007,8 +1011,6 @@ BEGIN
     IDS_DeleteStoreMessage  "Voulez-vous vraiment effacer ce store ?"
     IDS_ShortcutCaption     "Raccourci"
     IDS_ShortcutMessage     "Windows ne peut pas créer un raccourci ici.\nVoulez-vous que le raccourci à être mis sur le Bureau à la place ?"
-    IDS_HintSingular        "%u fichier"
-    IDS_HintPlural          "%u fichiers"
     IDS_Rating1             "Mauvais"
     IDS_Rating2             "Suffisant"
     IDS_Rating3             "Bien"
@@ -1117,7 +1119,7 @@ BEGIN
     IDS_AttrDeleteTime      "De manière effacée le"
     IDS_AttrArchiveTime     "Archivé le"
     IDS_AttrFileFormat      "Format de fichier"
-    IDS_AttrLikeCount       "Nombre d'aimes"
+    IDS_AttrFileCount       "Nombre de fichier"
     IDS_AttrFileSize        "Grandeur"
     IDS_AttrFlags           "Attributes"
     IDS_AttrURL             "Adresse URL"
@@ -1170,12 +1172,14 @@ BEGIN
     IDS_AttrDueTime         "Dû le"
     IDS_AttrDoneTime        "Fini le"
     IDS_AttrCustomer        "Client"
+    IDS_AttrLikeCount       "Nombre d'aimes"
 END
 
 STRINGTABLE 
 BEGIN
     IDS_SrcUnknown          "Inconnu"
     IDS_SrcInternal         "Store interne"
+    IDS_SrcNTFS             "Système de fichiers Windows"
     IDS_Src1394             "Lecteur 1394"
     IDS_SrcUSB              "Lecteur USB"
     IDS_SrcDropbox          "Dropbox"
@@ -1192,6 +1196,7 @@ STRINGTABLE
 BEGIN
     IDS_QSrcUnknown         "Source inconnu"
     IDS_QSrcInternal        "Dans store interne"
+    IDS_QSrcNTFS            "En système de fichiers Windows"
     IDS_QSrc1394            "En lecteur local de 1394"
     IDS_QSrcUSB             "En lecteur local de USB"
     IDS_QSrcDropbox         "En Dropbox"

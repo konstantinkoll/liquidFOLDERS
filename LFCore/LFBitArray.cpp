@@ -9,7 +9,7 @@ LFBitArray::LFBitArray(unsigned int size)
 {
 	m_nSize = size;
 	m_nTAllocated = (m_nSize+TSize-1)/TSize;
-	m_pData = static_cast<T*>(malloc(m_nTAllocated*sizeof(T)));
+	m_pData = (T*)malloc(m_nTAllocated*sizeof(T));
 	assert(m_pData);
 	clear();
 }
@@ -34,7 +34,7 @@ bool LFBitArray::IsSet(unsigned int index)
 	assert(index < m_nSize);
 	assert(m_pData);
 
-	return (m_pData[index/TSize] & (static_cast<T>(1) << (index % TSize))) ? true : false;
+	return (m_pData[index/TSize] & ((T)1 << (index % TSize))) ? true : false;
 }
 
 bool LFBitArray::ContainsOneOf(LFBitArray* B)
@@ -76,7 +76,7 @@ LFBitArray& LFBitArray::operator+=(unsigned int index)
 	assert(index < m_nSize);
 	assert(m_pData);
 
-	m_pData[index/TSize] |= static_cast<T>(1) << (index % TSize);
+	m_pData[index/TSize] |= (T)1 << (index % TSize);
 
 	return *this;
 }
@@ -86,7 +86,7 @@ LFBitArray& LFBitArray::operator-=(unsigned int index)
 	assert(index < m_nSize);
 	assert(m_pData);
 
-	m_pData[index/TSize] &= ~(static_cast<T>(1) << (index % TSize));
+	m_pData[index/TSize] &= ~((T)1 << (index % TSize));
 
 	return *this;
 }
@@ -96,7 +96,7 @@ LFBitArray& LFBitArray::operator^=(unsigned int index)
 	assert(index < m_nSize);
 	assert(m_pData);
 
-	m_pData[index/TSize] ^= static_cast<T>(1) << (index % TSize);
+	m_pData[index/TSize] ^= (T)1 << (index % TSize);
 
 	return *this;
 }
@@ -140,7 +140,7 @@ LFBitArray& LFBitArray::operator+(unsigned int index)
 	assert(m_pData);
 
 	LFBitArray* temp = CreateCopy(*this);
-	temp->m_pData[index/TSize] |= static_cast<T>(1) << (index % TSize);
+	temp->m_pData[index/TSize] |= (T)1 << (index % TSize);
 
 	return *temp;
 }
@@ -151,7 +151,7 @@ LFBitArray& LFBitArray::operator-(unsigned int index)
 	assert(m_pData);
 
 	LFBitArray* temp = CreateCopy(*this);
-	temp->m_pData[index/TSize] &= ~(static_cast<T>(1) << (index % TSize));
+	temp->m_pData[index/TSize] &= ~(T)1 << (index % TSize);
 
 	return *temp;
 }
@@ -162,7 +162,7 @@ LFBitArray& LFBitArray::operator^(unsigned int index)
 	assert(m_pData);
 
 	LFBitArray* temp = CreateCopy(*this);
-	temp->m_pData[index/TSize] ^= static_cast<T>(1) << (index % TSize);
+	temp->m_pData[index/TSize] ^= (T)1 << (index % TSize);
 
 	return *temp;
 }

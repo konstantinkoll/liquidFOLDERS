@@ -738,6 +738,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\STR_NTFS.ico"
+				>
+			</File>
+			<File
 				RelativePath=".\res\STR_Pinterest.ico"
 				>
 			</File>

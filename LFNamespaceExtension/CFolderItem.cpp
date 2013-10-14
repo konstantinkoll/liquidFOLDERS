@@ -807,20 +807,7 @@ CCategorizer* CFolderItem::GetCategorizer(CShellColumn& column)
 BOOL CFolderItem::GetColumn(CShellColumn& column, INT index)
 {
 	// Determine last column for level
-	INT LastColumn;
-	switch (Attrs.Level)
-	{
-	case LevelRoot:
-		LastColumn = LFAttrFileFormat;
-		break;
-	case LevelStores:
-	case LevelAttribute:
-		LastColumn = LFAttrFileSize;
-		break;
-	default:
-		LastColumn = LFAttributeCount-1;
-	}
-
+	INT LastColumn = (Attrs.Level==LevelStores) ? LFAttrFileFormat : LFAttrFileSize;
 	if (index>LastColumn)
 		return FALSE;
 
@@ -881,12 +868,11 @@ BOOL CFolderItem::GetColumn(CShellColumn& column, INT index)
 
 	// Hidden columns
 	ASSERT(LFLastCoreAttribute<=31);
-	const UINT AttrMask[5] =
+	const UINT AttrMask[4] =
 	{
-		(1<<LFAttrFileName) | (1<<LFAttrStoreID) | (1<<LFAttrComments) | (1<<LFAttrDescription) | (1<<LFAttrCreationTime) | (1<<LFAttrFileTime) | (1<<LFAttrFileFormat),
-		(1<<LFAttrFileName) | (1<<LFAttrStoreID) | (1<<LFAttrComments) | (1<<LFAttrDescription) | (1<<LFAttrFileFormat) | (1<<LFAttrFileSize) | (1<<LFAttrFileCount),
-		(1<<LFAttrFileName) | (1<<LFAttrStoreID) | (1<<LFAttrComments) | (1<<LFAttrFileFormat),
-		(1<<LFAttrFileName) | (1<<LFAttrStoreID) | (1<<LFAttrComments) | (1<<LFAttrDescription) | (1<<LFAttrFileFormat) | (1<<LFAttrFileSize) | (1<<LFAttrFileCount),
+		(1<<LFAttrFileName) | (1<<LFAttrStoreID) | (1<<LFAttrComments) | (1<<LFAttrDescription) | (1<<LFAttrCreationTime) | (1<<LFAttrFileTime) | (1<<LFAttrFileFormat) | (1<<LFAttrFileCount) | (1<<LFAttrFileSize),
+		(1<<LFAttrFileName) | (1<<LFAttrComments) | (1<<LFAttrFileFormat),
+		(1<<LFAttrFileName) | (1<<LFAttrComments) | (1<<LFAttrFileFormat) | (1<<LFAttrFileCount) | (1<<LFAttrFileSize),
 		(UINT)~((1<<LFAttrDescription) | (1<<LFAttrDeleteTime) | (1<<LFAttrFileCount) | (1<<LFAttrFlags))
 	};
 	if (!(AttrMask[Attrs.Level] & (1<<index)))

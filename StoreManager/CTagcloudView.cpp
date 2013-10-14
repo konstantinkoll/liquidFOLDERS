@@ -26,6 +26,8 @@ void CTagcloudView::SetViewOptions(BOOL Force)
 {
 	UINT Changes = 0;
 
+	if ((Force) || (m_ViewParameters.TagcloudCanonical!=p_ViewParameters->TagcloudCanonical))
+		Changes = 2;
 	if ((Force) || (m_ViewParameters.TagcloudShowRare!=p_ViewParameters->TagcloudShowRare))
 		Changes = 2;
 	if ((Force) || (m_ViewParameters.TagcloudUseSize!=p_ViewParameters->TagcloudUseSize) || (m_ViewParameters.TagcloudUseColors!=p_ViewParameters->TagcloudUseColors))
@@ -56,7 +58,8 @@ void CTagcloudView::SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* p
 
 	if (p_CookedFiles)
 	{
-		LFSortSearchResult(p_CookedFiles, m_ViewParameters.SortBy, theApp.m_Attributes[m_ViewParameters.SortBy]->PreferDescendingSort);
+		LFSortSearchResult(p_CookedFiles, m_ViewParameters.TagcloudCanonical ? m_ViewParameters.SortBy : LFAttrFileCount,
+			(m_ViewParameters.TagcloudCanonical==FALSE) || (theApp.m_Attributes[m_ViewParameters.SortBy]->PreferDescendingSort));
 
 		INT Minimum = -1;
 		INT Maximum = -1;
@@ -240,7 +243,7 @@ void CTagcloudView::DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed)
 	dc.SelectObject(pOldFont);
 }
 
-CMenu* CTagcloudView::GetViewContextmenu()
+CMenu* CTagcloudView::GetViewContextMenu()
 {
 	CMenu* menu = new CMenu();
 	menu->LoadMenu(IDM_TAGCLOUD);
@@ -256,11 +259,13 @@ CFont* CTagcloudView::GetFont(INT idx)
 
 BEGIN_MESSAGE_MAP(CTagcloudView, CGridView)
 	ON_WM_CREATE()
+	ON_COMMAND(IDM_TAGCLOUD_SORTVALUE, OnSortValue)
+	ON_COMMAND(IDM_TAGCLOUD_SORTCOUNT, OnSortCount)
 	ON_COMMAND(IDM_TAGCLOUD_SHOWRARE, OnShowRare)
 	ON_COMMAND(IDM_TAGCLOUD_USESIZE, OnUseSize)
 	ON_COMMAND(IDM_TAGCLOUD_USECOLORS, OnUseColors)
 	ON_COMMAND(IDM_TAGCLOUD_USEOPACITY, OnUseOpacity)
-	ON_UPDATE_COMMAND_UI_RANGE(IDM_TAGCLOUD_SHOWRARE, IDM_TAGCLOUD_USEOPACITY, OnUpdateCommands)
+	ON_UPDATE_COMMAND_UI_RANGE(IDM_TAGCLOUD_SORTVALUE, IDM_TAGCLOUD_USEOPACITY, OnUpdateCommands)
 END_MESSAGE_MAP()
 
 INT CTagcloudView::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -270,11 +275,23 @@ INT CTagcloudView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	CString Face = theApp.GetDefaultFontFace();
 	for (INT a=0; a<20; a++)
-		m_Fonts[a].CreateFont(-(a*2+10), 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET,
+		m_Fonts[a].CreateFont(-(a*2+10), 0, 0, 0, FW_NORMAL, 0, 0, 0, ANSI_CHARSET,
 			OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, a>=4 ? ANTIALIASED_QUALITY : CLEARTYPE_QUALITY,
 			DEFAULT_PITCH | FF_DONTCARE, Face);
 
 	return 0;
+}
+
+void CTagcloudView::OnSortValue()
+{
+	p_ViewParameters->TagcloudCanonical = TRUE;
+	theApp.UpdateViewOptions(m_Context);
+}
+
+void CTagcloudView::OnSortCount()
+{
+	p_ViewParameters->TagcloudCanonical = FALSE;
+	theApp.UpdateViewOptions(m_Context);
 }
 
 void CTagcloudView::OnShowRare()
@@ -306,6 +323,16 @@ void CTagcloudView::OnUpdateCommands(CCmdUI* pCmdUI)
 	BOOL b = TRUE;
 	switch (pCmdUI->m_nID)
 	{
+	case IDM_TAGCLOUD_SORTVALUE:
+		pCmdUI->SetRadio(m_ViewParameters.TagcloudCanonical);
+		if (!pCmdUI->m_pMenu)
+			b = !m_ViewParameters.TagcloudCanonical && !m_Nothing;
+		break;
+	case IDM_TAGCLOUD_SORTCOUNT:
+		pCmdUI->SetRadio(!m_ViewParameters.TagcloudCanonical);
+		if (!pCmdUI->m_pMenu)
+			b = m_ViewParameters.TagcloudCanonical && !m_Nothing;
+		break;
 	case IDM_TAGCLOUD_SHOWRARE:
 		pCmdUI->SetCheck(m_ViewParameters.TagcloudShowRare);
 		break;

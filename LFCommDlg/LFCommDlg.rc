@@ -30,8 +30,8 @@ LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,4,2,0
- PRODUCTVERSION 1,4,2,0
+ FILEVERSION 1,5,0,0
+ PRODUCTVERSION 1,5,0,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -47,13 +47,13 @@ BEGIN
         BLOCK "000004e4"
         BEGIN
             VALUE "CompanyName", "liquidFOLDERS"
-            VALUE "FileVersion", "1.4.2"
+            VALUE "FileVersion", "1.5.0"
             VALUE "InternalName", "LFCommDlg"
             VALUE "LegalCopyright", "© 2009-2013 liquidFOLDERS"
             VALUE "LegalTrademarks", "liquidFOLDERS®"
             VALUE "OriginalFilename", "LFCommDlg.dll"
             VALUE "ProductName", "liquidFOLDERS"
-            VALUE "ProductVersion", "1.4.2"
+            VALUE "ProductVersion", "1.5.0"
         END
     END
     BLOCK "VarFileInfo"
@@ -416,7 +416,7 @@ BEGIN
     CONTROL         "X",IDC_PROGRESSCOUNT,"Static",SS_LEFTNOWORDWRAP | SS_WORDELLIPSIS | WS_GROUP,7,37,235,8
 END
 
-IDD_STOREPROPERTIES_GENERAL DIALOGEX 0, 0, 310, 119
+IDD_STOREPROPERTIES_GENERAL DIALOGEX 0, 0, 310, 129
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CLIPSIBLINGS | WS_CAPTION
 CAPTION "Allgemein"
 FONT 8, "MS Shell Dlg", 400, 0, 0x0
@@ -427,15 +427,17 @@ BEGIN
     LTEXT           "Kommentar:",IDC_STATIC,85,25,50,8
     EDITTEXT        IDC_STORECOMMENT,140,23,168,14,ES_AUTOHSCROLL
     CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ,2,44,308,1
-    LTEXT           "Erzeugt am:",IDC_STATIC,3,51,80,8
-    LTEXT           "X",IDC_CREATED,85,51,223,8,SS_ENDELLIPSIS
-    LTEXT           "Geändert am:",IDC_STATIC,3,61,80,8
-    LTEXT           "X",IDC_UPDATED,85,61,223,8,SS_ENDELLIPSIS
-    LTEXT           "Zuletzt angeschlossen:",IDC_LASTSEENCAPTION,3,71,80,8
-    LTEXT           "X",IDC_LASTSEEN,85,71,223,8,SS_ENDELLIPSIS
-    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ,2,86,308,1
-    CONTROL         "Als &Standard-Store setzen",IDC_MAKEDEFAULT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,3,92,305,10
-    CONTROL         "Offline &durchsuchbar",IDC_MAKESEARCHABLE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,3,106,305,10
+    LTEXT           "Inhalt:",IDC_STATIC,3,51,80,8
+    LTEXT           "X",IDC_CONTENTS,85,51,223,8,SS_ENDELLIPSIS
+    LTEXT           "Erzeugt am:",IDC_STATIC,3,61,80,8
+    LTEXT           "X",IDC_CREATED,85,61,223,8,SS_ENDELLIPSIS
+    LTEXT           "Geändert am:",IDC_STATIC,3,71,80,8
+    LTEXT           "X",IDC_UPDATED,85,71,223,8,SS_ENDELLIPSIS
+    LTEXT           "Zuletzt angeschlossen:",IDC_LASTSEENCAPTION,3,81,80,8
+    LTEXT           "X",IDC_LASTSEEN,85,81,223,8,SS_ENDELLIPSIS
+    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ,2,96,308,1
+    CONTROL         "Als &Standard-Store setzen",IDC_MAKEDEFAULT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,3,102,305,10
+    CONTROL         "Offline &durchsuchbar",IDC_MAKESEARCHABLE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,3,116,305,10
 END
 
 IDD_STOREPROPERTIES_TOOLS DIALOGEX 0, 0, 310, 108
@@ -612,7 +614,7 @@ BEGIN
         LEFTMARGIN, 3
         RIGHTMARGIN, 308
         TOPMARGIN, 3
-        BOTTOMMARGIN, 116
+        BOTTOMMARGIN, 126
     END
 
     IDD_STOREPROPERTIES_TOOLS, DIALOG
@@ -679,12 +681,12 @@ BEGIN
     IDS_UACMESSAGE          "Ihre Zustimmung ist erforderlich"
     IDS_EXPAND              "E&rweitern"
     IDS_COLLAPSE            "&Reduzieren"
+    IDS_IMPORTFOLDER_CAPTION "Verzeichnis importieren"
+    IDS_IMPORTFOLDER_HINT   "Auch alle Unterverzeichnisse werden importiert."
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_IMPORTFOLDER_CAPTION "Verzeichnis importieren"
-    IDS_IMPORTFOLDER_HINT   "Auch alle Unterverzeichnisse werden importiert."
     IDS_CHOOSESTORE_CAPTION "Stores"
     IDS_CHOOSESTORE_HINT    "Nur angeschlossene Stores können ausgewählt werden."
     IDS_MAINTENANCETAB0     "Erfolgreich gewartet"
@@ -699,12 +701,12 @@ BEGIN
     IDS_AIRPORT_CODE        "IATA-Code"
     IDS_AIRPORT_LOCATION    "Ort"
     IDS_STOREPROPERTIES     "Eigenschaften von „%s“"
+    IDS_STORENEW            "Neuen Store anlegen"
+    IDS_STORENEW_VOLUME     "Neuen Store auf Laufwerk %c: anlegen"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_STORENEW            "Neuen Store anlegen"
-    IDS_STORENEW_VOLUME     "Neuen Store auf Laufwerk %c: anlegen"
     IDS_DELETEPROPERTY_CAPTION "Eigenschaft entfernen"
     IDS_DELETEPROPERTY_MSG  "Möchten Sie diese Eigenschaft wirklich entfernen ?"
 END
@@ -1011,7 +1013,7 @@ BEGIN
     CONTROL         "X",IDC_PROGRESSCOUNT,"Static",SS_LEFTNOWORDWRAP | SS_WORDELLIPSIS | WS_GROUP,7,37,235,8
 END
 
-IDD_STOREPROPERTIES_GENERAL DIALOGEX 0, 0, 310, 119
+IDD_STOREPROPERTIES_GENERAL DIALOGEX 0, 0, 310, 129
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CLIPSIBLINGS | WS_CAPTION
 CAPTION "Geral"
 FONT 8, "MS Shell Dlg", 400, 0, 0x0
@@ -1022,16 +1024,18 @@ BEGIN
     LTEXT           "Comentarios:",IDC_STATIC,65,25,50,8
     EDITTEXT        IDC_STORECOMMENT,119,23,189,14,ES_AUTOHSCROLL
     CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ,2,44,308,1
-    LTEXT           "Creado:",IDC_STATIC,3,51,80,8
-    LTEXT           "X",IDC_CREATED,65,51,243,8,SS_ENDELLIPSIS
-    LTEXT           "Modificado:",IDC_STATIC,3,61,80,8
-    LTEXT           "X",IDC_UPDATED,65,61,243,8,SS_ENDELLIPSIS
-    LTEXT           "Última entrada:",IDC_LASTSEENCAPTION,3,71,80,8
-    LTEXT           "X",IDC_LASTSEEN,65,71,243,8,SS_ENDELLIPSIS
-    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ,2,86,308,1
-    CONTROL         "Store &predeterminado",IDC_MAKEDEFAULT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,3,92,305,10
+    LTEXT           "Contenido:",IDC_STATIC,3,51,60,8
+    LTEXT           "X",IDC_CONTENTS,66,51,242,8,SS_ENDELLIPSIS
+    LTEXT           "Creado:",IDC_STATIC,3,61,60,8
+    LTEXT           "X",IDC_CREATED,65,61,243,8,SS_ENDELLIPSIS
+    LTEXT           "Modificado:",IDC_STATIC,3,71,60,8
+    LTEXT           "X",IDC_UPDATED,65,71,243,8,SS_ENDELLIPSIS
+    LTEXT           "Última entrada:",IDC_LASTSEENCAPTION,3,81,60,8
+    LTEXT           "X",IDC_LASTSEEN,65,81,243,8,SS_ENDELLIPSIS
+    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ,2,96,308,1
+    CONTROL         "Store &predeterminado",IDC_MAKEDEFAULT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,3,102,305,10
     CONTROL         "Make &searchable while not connected",IDC_MAKESEARCHABLE,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,3,106,305,10
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,3,116,305,10
 END
 
 IDD_STOREPROPERTIES_INDEX DIALOGEX 0, 0, 310, 66
@@ -1209,7 +1213,7 @@ BEGIN
         LEFTMARGIN, 3
         RIGHTMARGIN, 308
         TOPMARGIN, 3
-        BOTTOMMARGIN, 116
+        BOTTOMMARGIN, 126
     END
 
     IDD_STOREPROPERTIES_INDEX, DIALOG
@@ -1276,12 +1280,12 @@ BEGIN
     IDS_UACMESSAGE          "liquidFOLDERS necesita su permiso para continuar"
     IDS_EXPAND              "&Abrir"
     IDS_COLLAPSE            "&Plegar"
+    IDS_IMPORTFOLDER_CAPTION "Importar carpeta"
+    IDS_IMPORTFOLDER_HINT   "La carpeta y todas sus subcarpetas serán importadas."
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_IMPORTFOLDER_CAPTION "Importar carpeta"
-    IDS_IMPORTFOLDER_HINT   "La carpeta y todas sus subcarpetas serán importadas."
     IDS_CHOOSESTORE_CAPTION "Stores"
     IDS_CHOOSESTORE_HINT    "Se puede selecionar solamente stores conectado."
     IDS_MAINTENANCETAB0     "Revisión satisfactoria"
@@ -1296,12 +1300,12 @@ BEGIN
     IDS_AIRPORT_CODE        "Código"
     IDS_AIRPORT_LOCATION    "Ubicación"
     IDS_STOREPROPERTIES     "Propiedades de ""%s"""
+    IDS_STORENEW            "Crear nuevo store"
+    IDS_STORENEW_VOLUME     "Crear nuevo store en unidad %c:"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_STORENEW            "Crear nuevo store"
-    IDS_STORENEW_VOLUME     "Crear nuevo store en unidad %c:"
     IDS_DELETEPROPERTY_CAPTION "Eliminar propriedad"
     IDS_DELETEPROPERTY_MSG  "¿Realmente quiere eliminar esta propriedad?"
 END
@@ -1609,7 +1613,7 @@ BEGIN
     CONTROL         "X",IDC_PROGRESSCOUNT,"Static",SS_LEFTNOWORDWRAP | SS_WORDELLIPSIS | WS_GROUP,7,37,235,8
 END
 
-IDD_STOREPROPERTIES_GENERAL DIALOGEX 0, 0, 310, 119
+IDD_STOREPROPERTIES_GENERAL DIALOGEX 0, 0, 310, 129
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CLIPSIBLINGS | WS_CAPTION
 CAPTION "Général"
 FONT 8, "MS Shell Dlg", 400, 0, 0x0
@@ -1620,15 +1624,17 @@ BEGIN
     LTEXT           "Commentaire:",IDC_STATIC,75,25,50,8
     EDITTEXT        IDC_STORECOMMENT,130,23,178,14,ES_AUTOHSCROLL
     CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ,2,44,308,1
-    LTEXT           "Temp de création:",IDC_STATIC,3,51,70,8
-    LTEXT           "X",IDC_CREATED,75,51,233,8,SS_ENDELLIPSIS
-    LTEXT           "Changé le:",IDC_STATIC,3,61,70,8
-    LTEXT           "X",IDC_UPDATED,75,61,233,8,SS_ENDELLIPSIS
-    LTEXT           "Dernier vu:",IDC_LASTSEENCAPTION,3,71,70,8
-    LTEXT           "X",IDC_LASTSEEN,75,71,233,8,SS_ENDELLIPSIS
-    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ,2,86,308,1
-    CONTROL         "Faites &standard",IDC_MAKEDEFAULT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,3,92,305,10
-    CONTROL         "Hors ligne &consultable",IDC_MAKESEARCHABLE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,3,106,305,10
+    LTEXT           "Contenu:",IDC_STATIC,3,51,70,8
+    LTEXT           "X",IDC_CONTENTS,75,51,233,8,SS_ENDELLIPSIS
+    LTEXT           "Temp de création:",IDC_STATIC,3,61,70,8
+    LTEXT           "X",IDC_CREATED,75,61,233,8,SS_ENDELLIPSIS
+    LTEXT           "Changé le:",IDC_STATIC,3,71,70,8
+    LTEXT           "X",IDC_UPDATED,75,71,233,8,SS_ENDELLIPSIS
+    LTEXT           "Dernier vu:",IDC_LASTSEENCAPTION,3,81,70,8
+    LTEXT           "X",IDC_LASTSEEN,75,81,233,8,SS_ENDELLIPSIS
+    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ,2,96,308,1
+    CONTROL         "Faites &standard",IDC_MAKEDEFAULT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,3,102,305,10
+    CONTROL         "Hors ligne &consultable",IDC_MAKESEARCHABLE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,3,116,305,10
 END
 
 IDD_STOREPROPERTIES_INDEX DIALOGEX 0, 0, 310, 66
@@ -1806,7 +1812,7 @@ BEGIN
         LEFTMARGIN, 3
         RIGHTMARGIN, 308
         TOPMARGIN, 3
-        BOTTOMMARGIN, 116
+        BOTTOMMARGIN, 126
     END
 
     IDD_STOREPROPERTIES_INDEX, DIALOG
@@ -1873,12 +1879,12 @@ BEGIN
     IDS_UACMESSAGE          "liquidFOLDERS a besoin de votre permission de continuer"
     IDS_EXPAND              "&Ouvrir"
     IDS_COLLAPSE            "&Fermer"
+    IDS_IMPORTFOLDER_CAPTION "Importer dossier"
+    IDS_IMPORTFOLDER_HINT   "Le dossier et tous ses sous-dossiers seront importés."
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_IMPORTFOLDER_CAPTION "Importer dossier"
-    IDS_IMPORTFOLDER_HINT   "Le dossier et tous ses sous-dossiers seront importés."
     IDS_CHOOSESTORE_CAPTION "Stores"
     IDS_CHOOSESTORE_HINT    "Seulement stores montée pouvoir choisissse."
     IDS_MAINTENANCETAB0     "Entretenu avec succès"
@@ -1893,12 +1899,12 @@ BEGIN
     IDS_AIRPORT_CODE        "Code"
     IDS_AIRPORT_LOCATION    "Endroit"
     IDS_STOREPROPERTIES     "Qualités de ""%s"""
+    IDS_STORENEW            "Créez un store nouveau"
+    IDS_STORENEW_VOLUME     "Créez un store nouveau sur lecteur %c:"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_STORENEW            "Créez un store nouveau"
-    IDS_STORENEW_VOLUME     "Créez un store nouveau sur lecteur %c:"
     IDS_DELETEPROPERTY_CAPTION "Effacez propriété"
     IDS_DELETEPROPERTY_MSG  "Voulez-vous vraiment effacer cette propriété ?"
 END
@@ -2255,7 +2261,7 @@ BEGIN
     CONTROL         "X",IDC_PROGRESSCOUNT,"Static",SS_LEFTNOWORDWRAP | SS_WORDELLIPSIS | WS_GROUP,7,37,235,8
 END
 
-IDD_STOREPROPERTIES_GENERAL DIALOGEX 0, 0, 310, 119
+IDD_STOREPROPERTIES_GENERAL DIALOGEX 0, 0, 310, 129
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CLIPSIBLINGS | WS_CAPTION
 CAPTION "General"
 FONT 8, "MS Shell Dlg", 400, 0, 0x0
@@ -2266,16 +2272,18 @@ BEGIN
     LTEXT           "Comments:",IDC_STATIC,55,25,50,8
     EDITTEXT        IDC_STORECOMMENT,110,23,198,14,ES_AUTOHSCROLL
     CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ,2,44,308,1
-    LTEXT           "Created:",IDC_STATIC,3,51,50,8
-    LTEXT           "X",IDC_CREATED,55,51,253,8,SS_ENDELLIPSIS
-    LTEXT           "Modified:",IDC_STATIC,3,61,50,8
-    LTEXT           "X",IDC_UPDATED,55,61,253,8,SS_ENDELLIPSIS
-    LTEXT           "Last seen:",IDC_LASTSEENCAPTION,3,71,50,8
-    LTEXT           "X",IDC_LASTSEEN,55,71,253,8,SS_ENDELLIPSIS
-    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ,2,86,308,1
-    CONTROL         "Make &default store",IDC_MAKEDEFAULT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,3,92,305,10
+    LTEXT           "Contents:",IDC_STATIC,3,51,50,8
+    LTEXT           "X",IDC_CONTENTS,55,51,253,8,SS_ENDELLIPSIS
+    LTEXT           "Created:",IDC_STATIC,3,61,50,8
+    LTEXT           "X",IDC_CREATED,55,61,253,8,SS_ENDELLIPSIS
+    LTEXT           "Modified:",IDC_STATIC,3,71,50,8
+    LTEXT           "X",IDC_UPDATED,55,71,253,8,SS_ENDELLIPSIS
+    LTEXT           "Last seen:",IDC_LASTSEENCAPTION,3,81,50,8
+    LTEXT           "X",IDC_LASTSEEN,55,81,253,8,SS_ENDELLIPSIS
+    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ,2,96,308,1
+    CONTROL         "Make &default store",IDC_MAKEDEFAULT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,3,102,305,10
     CONTROL         "Make &searchable while not connected",IDC_MAKESEARCHABLE,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,3,106,305,10
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,3,116,305,10
 END
 
 IDD_STOREPROPERTIES_INDEX DIALOGEX 0, 0, 310, 66
@@ -2445,7 +2453,7 @@ BEGIN
         LEFTMARGIN, 3
         RIGHTMARGIN, 308
         TOPMARGIN, 3
-        BOTTOMMARGIN, 116
+        BOTTOMMARGIN, 126
     END
 
     IDD_STOREPROPERTIES_INDEX, DIALOG
@@ -2512,12 +2520,12 @@ BEGIN
     IDS_UACMESSAGE          "liquidFOLDERS needs your permission"
     IDS_EXPAND              "&Expand"
     IDS_COLLAPSE            "&Collapse"
+    IDS_IMPORTFOLDER_CAPTION "Import folder"
+    IDS_IMPORTFOLDER_HINT   "The folder and all its subfolders will be imported."
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_IMPORTFOLDER_CAPTION "Import folder"
-    IDS_IMPORTFOLDER_HINT   "The folder and all its subfolders will be imported."
     IDS_CHOOSESTORE_CAPTION "Stores"
     IDS_CHOOSESTORE_HINT    "Only mounted stores can be selected."
     IDS_MAINTENANCETAB0     "Successfully serviced"
@@ -2532,12 +2540,12 @@ BEGIN
     IDS_AIRPORT_CODE        "IATA code"
     IDS_AIRPORT_LOCATION    "Location"
     IDS_STOREPROPERTIES     "Properties of ""%s"""
+    IDS_STORENEW            "Create new store"
+    IDS_STORENEW_VOLUME     "Create new store on volume %c:"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_STORENEW            "Create new store"
-    IDS_STORENEW_VOLUME     "Create new store on volume %c:"
     IDS_DELETEPROPERTY_CAPTION "Remove property"
     IDS_DELETEPROPERTY_MSG  "Do you really want to remove this property ?"
 END

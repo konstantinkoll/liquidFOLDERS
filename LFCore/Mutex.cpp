@@ -1,6 +1,7 @@
 
 #include "stdafx.h"
 #include "Mutex.h"
+#include <assert.h>
 
 
 HANDLE Mutex_Stores;
@@ -21,6 +22,8 @@ bool GetMutex(HANDLE m)
 
 bool GetMutexForStore(LFStoreDescriptor* s, HANDLE* m)
 {
+	assert(s);
+
 	char ID[MAX_PATH];
 	strcpy_s(ID, MAX_PATH, LFCM_Store);
 	strcat_s(ID, MAX_PATH, s->StoreID);

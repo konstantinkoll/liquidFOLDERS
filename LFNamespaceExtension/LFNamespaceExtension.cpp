@@ -50,9 +50,6 @@ LFNamespaceExtensionApp::LFNamespaceExtensionApp()
 			m_Categories[0][a] = m_Categories[1][a] = m_Categories[2][a] = _T("?");
 	}
 
-	// liquidFOLDERS initalisieren
-	LFInitialize();
-
 	// Get attribute information
 	for (UINT a=0; a<LFAttributeCount; a++)
 		m_Attributes[a] = LFGetAttributeInfo(a);
@@ -99,6 +96,9 @@ BOOL LFNamespaceExtensionApp::InitInstance()
 {
 	OleInitialize(NULL);
 	COleObjectFactory::RegisterAll();
+
+	// liquidFOLDERS initalisieren
+	LFInitialize();
 
 	// Lizenz
 	EZNamespaceExtensionsMFC::CNSEFolder::RegisterExtensionData(_T("Name:KonstantinKoll*Company:BLUefolders*Email:ceo@bluefolders.net#Oo0m5Ouz+xz64KV57IinRTUvhkNojDZGjBd5MNXfwDEmgcr4baoQFMono3odGhqP"));

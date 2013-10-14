@@ -15,7 +15,7 @@
 #define GetItemData(idx)                    ((GridItemData*)(m_ItemData+(idx)*m_DataSize))
 #define PADDING                             2
 #define DrawLabel(dc, rect, i, format)      dc.DrawText(GetLabel(i), rect, DT_END_ELLIPSIS | format);
-#define SwitchColor(dc, d)                  if ((Themed) && (!(i->CoreAttributes.Flags & LFFlagMissing)) && (!(i->Type & LFTypeRequiresMaintenance)) && ((hThemeList) || (!d->Hdr.Selected))) dc.SetTextColor(0x808080);
+#define SwitchColor(dc, d)                  if ((Themed) && (!(i->CoreAttributes.Flags & LFFlagMissing)) && ((hThemeList) || (!d->Hdr.Selected))) dc.SetTextColor(0x808080);
 #define PrepareBlend()                      INT w = min(rect.Width(), RatingBitmapWidth); \
                                             INT h = min(rect.Height(), RatingBitmapHeight);
 #define Blend(dc, rect, level, bitmaps)     { HDC hdcMem = CreateCompatibleDC(dc); \
@@ -118,7 +118,7 @@ void CListView::SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCook
 			d->Hdr.Valid = TRUE;
 
 			LFItemDescriptor* i = p_CookedFiles->m_Items[a];
-			m_ShowLegend |= (i->Type & LFTypeRequiresMaintenance) | (i->CoreAttributes.Flags & LFFlagMissing);
+			m_ShowLegend |= (i->CoreAttributes.Flags & LFFlagMissing);
 
 			if ((i->Type & LFTypeMask)==LFTypeFile)
 				if (!p_CookedFiles->m_HasCategories)
@@ -141,7 +141,7 @@ void CListView::SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCook
 	AdjustHeader(m_ViewParameters.Mode==LFViewDetails);
 }
 
-CMenu* CListView::GetViewContextmenu()
+CMenu* CListView::GetViewContextMenu()
 {
 	CMenu* pMenu = new CMenu();
 	pMenu->LoadMenu(IDM_DETAILS);
@@ -222,10 +222,10 @@ CBitmap* CListView::RenderFooter()
 
 	ENSURE(m_FooterCaption.LoadString(IDS_LEGEND));
 
-	COLORREF col = (m_Context==LFContextStores) ? 0xFF0000 : 0x0000FF;
+	const COLORREF col = 0x0000FF;
 
 	CString msg;
-	ENSURE(msg.LoadString(m_Context==LFContextStores ? IDS_LEGEND_BLUE : IDS_LEGEND_RED));
+	ENSURE(msg.LoadString(IDS_LEGEND_RED));
 
 	BOOL Themed = IsCtrlThemed();
 
@@ -386,9 +386,21 @@ void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed)
 					rectLabel.left = rectLabel.right+3*PADDING;
 					rectLabel.right = rectLabel.left+m_ViewParameters.ColumnWidth[attr]-3*PADDING;
 				}
-				if ((attr!=LFAttrFileName) || (!IsEditing()) || (idx!=m_EditLabel))
-					if ((rectLabel.left<=rectClient.right) && (rectLabel.right>=rectClient.left))
-						DrawColumn(dc, rectLabel, i, attr);
+				switch (attr)
+				{
+				case LFAttrFileName:
+					if ((IsEditing()) && (idx==m_EditLabel))
+						continue;
+					break;
+				case LFAttrFileCount:
+					if (((i->Type & LFTypeMask)==LFTypeVolume) || ((i->Type & LFTypeMask)==LFTypeFile))
+						continue;
+				case LFAttrFileSize:
+					if ((i->Type & LFTypeMask)==LFTypeVolume)
+						continue;
+				}
+				if ((rectLabel.left<=rectClient.right) && (rectLabel.right>=rectClient.left))
+					DrawColumn(dc, rectLabel, i, attr);
 			}
 		}
 		break;
@@ -643,7 +655,7 @@ void CListView::DrawTileRows(CDC& dc, CRect& rect, LFItemDescriptor* i, GridItem
 	}
 }
 
-void CListView::DrawColumn(CDC& dc, CRect& rect, LFItemDescriptor* i, UINT Attr)
+__forceinline void CListView::DrawColumn(CDC& dc, CRect& rect, LFItemDescriptor* i, UINT Attr)
 {
 	if (theApp.m_Attributes[Attr]->Type==LFTypeRating)
 	{
@@ -663,16 +675,16 @@ void CListView::DrawColumn(CDC& dc, CRect& rect, LFItemDescriptor* i, UINT Attr)
 				}
 			}
 		}
-
-		return;
 	}
-
-	WCHAR tmpStr[256];
-	AttributeToString(i, Attr, tmpStr, 256);
-	if (tmpStr[0]!=L'\0')
+	else
 	{
-		CRect rectText(rect);
-		dc.DrawText(tmpStr, rectText, (theApp.m_Attributes[Attr]->FormatRight ? DT_RIGHT : DT_LEFT) | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
+		WCHAR tmpStr[256];
+		AttributeToString(i, Attr, tmpStr, 256);
+		if (tmpStr[0]!=L'\0')
+		{
+			CRect rectText(rect);
+			dc.DrawText(tmpStr, rectText, (theApp.m_Attributes[Attr]->FormatRight ? DT_RIGHT : DT_LEFT) | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
+		}
 	}
 }
 

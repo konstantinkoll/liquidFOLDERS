@@ -541,18 +541,18 @@ bool CheckCondition(void* value, LFFilterCondition* c)
 	return true;
 }
 
-int PassesFilterCore(LFCoreAttributes* ca, LFFilter* filter)
+int PassesFilterCore(LFCoreAttributes* ca, LFFilter* f)
 {
-	assert(filter);
 	assert(ca);
+	assert(f);
 
 	// Contexts
-	if (filter->ContextID!=LFContextTrash)
+	if (f->ContextID!=LFContextTrash)
 		if (ca->Flags & LFFlagTrash)
 			return -1;
 
-	if ((filter->ContextID) || (ca->ContextID==LFContextFilters))
-		switch (filter->ContextID)
+	if ((f->ContextID) || (ca->ContextID==LFContextFilters))
+		switch (f->ContextID)
 		{
 		case LFContextFavorites:
 			if (!ca->Rating)
@@ -567,17 +567,17 @@ int PassesFilterCore(LFCoreAttributes* ca, LFFilter* filter)
 				return -1;
 			break;
 		case LFContextFilters:
-			if (filter->Options.IsPersistent)
+			if (f->Options.IsPersistent)
 				return -1;
 		default:
-			if (filter->ContextID!=ca->ContextID)
+			if (f->ContextID!=ca->ContextID)
 				return -1;
 		}
 
-	// Attribute
-	int advanced = (filter->Searchterm[0]==L'\0') ? 1 : 0;
+	// Attributes
+	int advanced = (f->Searchterm[0]==L'\0') ? 1 : 0;
 
-	LFFilterCondition* c = filter->ConditionList;
+	LFFilterCondition* c = f->ConditionList;
 	while (c)
 	{
 		if (c->AttrData.Attr<=LFLastCoreAttribute)
@@ -597,13 +597,13 @@ int PassesFilterCore(LFCoreAttributes* ca, LFFilter* filter)
 	return advanced;
 }
 
-bool PassesFilterSlaves(LFItemDescriptor* i, LFFilter* filter)
+bool PassesFilterSlaves(LFItemDescriptor* i, LFFilter* f)
 {
-	assert(filter);
+	assert(f);
 	assert(i);
 
-	// Attribute
-	LFFilterCondition* c = filter->ConditionList;
+	// Attributes
+	LFFilterCondition* c = f->ConditionList;
 	while (c)
 	{
 		if (c->AttrData.Attr>LFLastCoreAttribute)
@@ -613,14 +613,14 @@ bool PassesFilterSlaves(LFItemDescriptor* i, LFFilter* filter)
 		c = c->Next;
 	}
 
-	if (filter->Searchterm[0]=='\0')
+	if (f->Searchterm[0]=='\0')
 		return true;
 
 	// Globaler Suchbegriff
 	bool checkTime = true;
-	for (unsigned int a=0; a<wcslen(filter->Searchterm); a++)
+	for (unsigned int a=0; a<wcslen(f->Searchterm); a++)
 	{
-		wchar_t ch = filter->Searchterm[a];
+		wchar_t ch = f->Searchterm[a];
 		if (((ch<L'0') || (ch>L'9')) && (ch!=L':') && (ch!=L'.') && (ch!=L'/') && (ch!=L'.'))
 		{
 			checkTime = false;
@@ -629,7 +629,7 @@ bool PassesFilterSlaves(LFItemDescriptor* i, LFFilter* filter)
 	}
 
 	char Searchterm[256];
-	WideCharToMultiByte(CP_ACP, 0, filter->Searchterm, -1, Searchterm, 256, NULL, NULL);
+	WideCharToMultiByte(CP_ACP, 0, f->Searchterm, -1, Searchterm, 256, NULL, NULL);
 
 	for (unsigned int a=0; a<LFAttributeCount; a++)
 		if ((a!=LFAttrStoreID) && (a!=LFAttrFileID) && (i->AttributeValues[a]))
@@ -639,7 +639,8 @@ bool PassesFilterSlaves(LFItemDescriptor* i, LFFilter* filter)
 			switch (AttrTypes[a])
 			{
 			case LFTypeUnicodeString:
-				if (wcsistr((wchar_t*)i->AttributeValues[a], filter->Searchterm)!=NULL)
+			case LFTypeUnicodeArray:
+				if (wcsistr((wchar_t*)i->AttributeValues[a], f->Searchterm)!=NULL)
 					return true;
 				break;
 			case LFTypeAnsiString:
@@ -653,7 +654,7 @@ bool PassesFilterSlaves(LFItemDescriptor* i, LFFilter* filter)
 					break;
 			default:
 				LFAttributeToString(i, a, tmpStr, 256);
-				if (wcsistr(tmpStr, filter->Searchterm)!=NULL)
+				if (wcsistr(tmpStr, f->Searchterm)!=NULL)
 					return true;
 			}
 		}
@@ -664,228 +665,195 @@ bool PassesFilterSlaves(LFItemDescriptor* i, LFFilter* filter)
 
 // Query helpers
 
-void RetrieveStore(char* StoreID, LFFilter* filter, LFSearchResult* res)
+void RetrieveStore(char* StoreID, LFFilter* f, LFSearchResult* sr)
 {
-	CIndex* idx1;
-	CIndex* idx2;
-	LFStoreDescriptor* slot;
-	HANDLE StoreLock = NULL;
-	res->m_LastError = OpenStore(StoreID, false, idx1, idx2, &slot, &StoreLock);
-	if (res->m_LastError==LFOk)
-	{
-		if (idx1)
-		{
-			idx1->Retrieve(filter, res, slot->Source);
-			delete idx1;
-		}
-		if (idx2)
-			delete idx2;
-		ReleaseMutexForStore(StoreLock);
-	}
+	OPEN_STORE(StoreID, false, sr->m_LastError = res);
+
+	if (idx1)
+		idx1->Retrieve(f, sr);
+
+	CLOSE_STORE();
 }
 
-void QueryStores(LFFilter* filter, LFSearchResult* res)
+void QueryStores(LFFilter* f, LFSearchResult* sr)
 {
-	res->m_HasCategories = true;
+	sr->m_HasCategories = true;
 
 	// Volumes
-	if (filter)
-		if (filter->Options.AddVolumes)
-			res->AddVolumes();
+	if (f)
+		if (f->Options.AddVolumes)
+			sr->AddVolumes();
 
 	// Stores
 	if (GetMutex(Mutex_Stores))
 	{
-		AddStoresToSearchResult(res, filter);
+		AddStoresToSearchResult(sr);
 		ReleaseMutex(Mutex_Stores);
 	}
 	else
 	{
-		res->m_LastError = LFMutexError;
+		sr->m_LastError = LFMutexError;
 	}
 }
 
-__forceinline void QueryTree(LFFilter* filter, LFSearchResult* res)
+__forceinline void QueryTree(LFFilter* f, LFSearchResult* sr)
 {
-	RetrieveStore(filter->StoreID, filter, res);
+	RetrieveStore(f->StoreID, f, sr);
 }
 
-__forceinline void QuerySearch(LFFilter* filter, LFSearchResult* res)
+__forceinline void QuerySearch(LFFilter* f, LFSearchResult* sr)
 {
-	if (filter->StoreID[0]=='\0')
+	if (f->StoreID[0]=='\0')
 	{
 		// All stores
 		if (!GetMutex(Mutex_Stores))
 		{
-			res->m_LastError = LFMutexError;
+			sr->m_LastError = LFMutexError;
 			return;
 		}
 
-		char* keys;
-		unsigned int count = FindStores(&keys);
+		char* IDs;
+		unsigned int count = FindStores(&IDs);
 		ReleaseMutex(Mutex_Stores);
 
-		if (count)
+		char* ptr = IDs;
+		for (unsigned int a=0; a<count; a++)
 		{
-			char* ptr = keys;
-			for (unsigned int a=0; a<count; a++)
-			{
-				RetrieveStore(ptr, filter, res);
-				ptr += LFKeySize;
-			}
+			RetrieveStore(ptr, f, sr);
+			ptr += LFKeySize;
 		}
 
-		free(keys);
+		free(IDs);
 	}
 	else
 	{
 		// Single store
-		RetrieveStore(filter->StoreID, filter, res);
-	}
-}
-
-
-// Statistics helper
-
-void StoreStatistics(char* StoreID, LFStatistics* stat)
-{
-	CIndex* idx1;
-	CIndex* idx2;
-	LFStoreDescriptor* slot;
-	HANDLE StoreLock = NULL;
-	stat->LastError = OpenStore(StoreID, false, idx1, idx2, &slot, &StoreLock);
-	if (stat->LastError==LFOk)
-	{
-		if (idx1)
-		{
-			idx1->Statistics(stat);
-			delete idx1;
-		}
-		if (idx2)
-			delete idx2;
-		ReleaseMutexForStore(StoreLock);
+		RetrieveStore(f->StoreID, f, sr);
 	}
 }
 
 
 // Public functions
 
-LFCore_API LFSearchResult* LFQuery(LFFilter* filter)
+LFCore_API LFSearchResult* LFQuery(LFFilter* f)
 {
 	DWORD start = GetTickCount();
 
-	LFSearchResult* res = new LFSearchResult(filter);
+	LFSearchResult* sr = new LFSearchResult(f);
 
-	if (!filter)
+	if (!f)
 	{
-		QueryStores(filter, res);
+		QueryStores(f, sr);
 	}
 	else
 	{
 		// Ggf. Default Store einsetzen
-		if ((filter->StoreID[0]=='\0') && (filter->Mode==LFFilterModeDirectoryTree))
+		if ((f->StoreID[0]=='\0') && (f->Mode==LFFilterModeDirectoryTree))
 			if (LFDefaultStoreAvailable())
 			{
 				char* ds = LFGetDefaultStore();
-				strcpy_s(filter->StoreID, LFKeySize, ds);
+				strcpy_s(f->StoreID, LFKeySize, ds);
 				free(ds);
 			}
 			else
 			{
-				res->m_LastError = LFNoDefaultStore;
+				sr->m_LastError = LFNoDefaultStore;
 				goto Finish;
 			}
 
 		// Query
-		switch (filter->Mode)
+		switch (f->Mode)
 		{
 		case LFFilterModeStores:
-			QueryStores(filter, res);
+			QueryStores(f, sr);
 			break;
 		case LFFilterModeDirectoryTree:
-			QueryTree(filter, res);
+			QueryTree(f, sr);
 			break;
 		case LFFilterModeSearch:
-			QuerySearch(filter, res);
+			QuerySearch(f, sr);
 			break;
 		default:
-			res->m_LastError = LFIllegalQuery;
+			sr->m_LastError = LFIllegalQuery;
 		}
 	}
 
 Finish:
-	res->m_QueryTime = GetTickCount()-start;
+	sr->m_QueryTime = GetTickCount()-start;
 
-	return res;
+	return sr;
 }
 
-LFCore_API LFSearchResult* LFQuery(LFFilter* filter, LFSearchResult* base, int first, int last)
+LFCore_API LFSearchResult* LFQuery(LFFilter* f, LFSearchResult* base, int first, int last)
 {
 	DWORD start = GetTickCount();
 
-	LFSearchResult* res;
+	LFSearchResult* sr;
 
-	if ((filter->Mode>=LFFilterModeDirectoryTree) && (filter->Options.IsSubfolder) && (base->m_RawCopy) &&
+	if ((f->Mode>=LFFilterModeDirectoryTree) && (f->Options.IsSubfolder) && (base->m_RawCopy) &&
 		(first<=last) && (first>=0) && (first<(int)base->m_ItemCount) && (last>=0) && (last<(int)base->m_ItemCount))
 	{
-		res = base;
+		sr = base;
 
-		res->m_LastError = LFOk;
-		res->KeepRange(first, last);
-		res->SetMetadataFromFilter(filter);
+		sr->m_LastError = LFOk;
+		sr->KeepRange(first, last);
+		sr->SetMetadataFromFilter(f);
 	}
 	else
 	{
-		res = new LFSearchResult(LFContextSubfolderDefault);
-		res->m_LastError = LFIllegalQuery;
+		sr = new LFSearchResult(LFContextSubfolderDefault);
+		sr->m_LastError = LFIllegalQuery;
 	}
 
-	res->m_QueryTime = GetTickCount()-start;
+	sr->m_QueryTime = GetTickCount()-start;
 
-	return res;
+	return sr;
 }
 
-LFCore_API LFStatistics* LFQueryStatistics(char* key)
+LFCore_API LFStatistics* LFQueryStatistics(char* StoreID)
 {
 	LFStatistics* stat = new LFStatistics();
 	ZeroMemory(stat, sizeof(LFStatistics));
 
-	if (!key)
+	if (!StoreID)
 	{
 		stat->LastError = LFIllegalKey;
 		return stat;
 	}
 
-	if (key[0]=='\0')
+	if (!GetMutex(Mutex_Stores))
 	{
-		// All stores
-		if (!GetMutex(Mutex_Stores))
+		stat->LastError = LFMutexError;
+		return stat;
+	}
+
+	// All stores
+	char* IDs;
+	unsigned int count = FindStores(&IDs);
+	ReleaseMutex(Mutex_Stores);
+
+	char* ptr = IDs;
+	for (unsigned int a=0; a<count; a++)
+	{
+		if ((*StoreID=='\0') || (strcmp(ptr, StoreID)==0))
 		{
-			stat->LastError = LFMutexError;
-			return stat;
+			HANDLE StoreLock = NULL;
+			LFStoreDescriptor* slot = FindStore(ptr, &StoreLock);
+
+			if (slot)
+				for (unsigned int b=0; b<min(LFLastQueryContext, 32); b++)
+				{
+					stat->FileCount[b] += slot->FileCount[b];
+					stat->FileSize[b] += slot->FileSize[b];
+				}
+
+			ReleaseMutexForStore(StoreLock);
 		}
 
-		char* keys;
-		unsigned int count = FindStores(&keys);
-		ReleaseMutex(Mutex_Stores);
-
-		if (count)
-		{
-			char* ptr = keys;
-			for (unsigned int a=0; a<count; a++)
-			{
-				StoreStatistics(ptr, stat);
-				ptr += LFKeySize;
-			}
-		}
-
-		free(keys);
+		ptr += LFKeySize;
 	}
-	else
-	{
-		// Single store
-		StoreStatistics(key, stat);
-	}
+
+	free(IDs);
 
 	return stat;
 }

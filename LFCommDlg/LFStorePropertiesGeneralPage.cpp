@@ -35,6 +35,7 @@ void LFStorePropertiesGeneralPage::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(LFStorePropertiesGeneralPage, CPropertyPage)
 	ON_REGISTERED_MESSAGE(MessageIDs->StoresChanged, OnUpdateStore)
 	ON_REGISTERED_MESSAGE(MessageIDs->StoreAttributesChanged, OnUpdateStore)
+	ON_REGISTERED_MESSAGE(MessageIDs->StatisticsChanged, OnUpdateStore)
 END_MESSAGE_MAP()
 
 BOOL LFStorePropertiesGeneralPage::OnInitDialog()
@@ -43,13 +44,13 @@ BOOL LFStorePropertiesGeneralPage::OnInitDialog()
 
 	m_wndIcon.SetCoreIcon(LFGetStoreIcon(p_Store));
 
-	if ((p_Store->StoreMode!=LFStoreModeHybrid) && (p_Store->StoreMode!=LFStoreModeExternal))
+	if ((p_Store->IndexMode!=LFStoreIndexModeHybrid) && (p_Store->IndexMode!=LFStoreIndexModeExternal))
 	{
 		m_wndMakeSearchable.ShowWindow(SW_HIDE);
 	}
 	else
 	{
-		m_wndMakeSearchable.SetCheck(p_Store->StoreMode==LFStoreModeHybrid);
+		m_wndMakeSearchable.SetCheck(p_Store->IndexMode==LFStoreIndexModeHybrid);
 	}
 
 	// Store
@@ -67,13 +68,15 @@ LRESULT LFStorePropertiesGeneralPage::OnUpdateStore(WPARAM /*wParam*/, LPARAM /*
 		if (m_wndStoreComment.LineLength()==0)
 			m_wndStoreComment.SetWindowText(p_Store->StoreComment);
 
+		GetDlgItem(IDC_CONTENTS)->SetWindowText(CombineFileCountSize(p_Store->FileCount[LFContextAllFiles], p_Store->FileSize[LFContextAllFiles]));
+
 		WCHAR tmpStr[256];
 		LFTimeToString(p_Store->CreationTime, tmpStr, 256);
 		GetDlgItem(IDC_CREATED)->SetWindowText(tmpStr);
 		LFTimeToString(p_Store->FileTime, tmpStr, 256);
 		GetDlgItem(IDC_UPDATED)->SetWindowText(tmpStr);
 
-		GetDlgItem(IDC_LASTSEENCAPTION)->EnableWindow(p_Store->StoreMode!=LFStoreModeInternal);
+		GetDlgItem(IDC_LASTSEENCAPTION)->EnableWindow(p_Store->IndexMode!=LFStoreIndexModeInternal);
 		GetDlgItem(IDC_LASTSEEN)->SetWindowText(p_Store->LastSeen);
 
 		CHAR* pKey = LFGetDefaultStore();

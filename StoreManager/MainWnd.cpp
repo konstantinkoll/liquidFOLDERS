@@ -243,12 +243,6 @@ void CMainWnd::AdjustLayout()
 	INT FilterWidth = 0;
 	if (m_ShowFilterPane)
 	{
-		if (!m_wndContextSidebar.IsWindowVisible())
-		{
-			const INT ctx = GetContext();
-			m_wndContextSidebar.Reset(ctx<=LFLastQueryContext ? IDM_NAV_SWITCHCONTEXT+ctx : 0, m_wndMainView.GetStoreID());
-		}
-
 		FilterWidth = max(32, m_wndContextSidebar.GetPreferredWidth());
 		m_wndContextSidebar.SetWindowPos(NULL, rect.left, rect.top+m_Margins.cyTopHeight, FilterWidth, rect.bottom-m_Margins.cyTopHeight, SWP_NOACTIVATE | SWP_NOZORDER | SWP_SHOWWINDOW);
 	}
@@ -409,17 +403,18 @@ BEGIN_MESSAGE_MAP(CMainWnd, CGlassWindow)
 	ON_MESSAGE_VOID(WM_UPDATEVIEWOPTIONS, OnUpdateViewOptions)
 	ON_MESSAGE_VOID(WM_UPDATESORTOPTIONS, OnUpdateSortOptions)
 	ON_MESSAGE_VOID(WM_UPDATENUMBERS, OnUpdateNumbers)
+	ON_MESSAGE(WM_SETALERT, OnSetAlert)
 	ON_MESSAGE_VOID(WM_RELOAD, OnNavigateReload)
 	ON_MESSAGE(WM_COOKFILES, OnCookFiles)
 	ON_MESSAGE(WM_NAVIGATEBACK, OnNavigateBack)
 	ON_MESSAGE(WM_NAVIGATETO, OnNavigateTo)
 
-	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->VolumesChanged, OnVolumesChanged)
+	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->ItemsDropped, OnItemsDropped)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoresChanged, OnStoresChanged)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StoreAttributesChanged, OnStoreAttributesChanged)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->DefaultStoreChanged, OnStoresChanged)
-	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->ItemsDropped, OnItemsDropped)
-
+	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->VolumesChanged, OnVolumesChanged)
+	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->StatisticsChanged, OnStatisticsChanged)
 END_MESSAGE_MAP()
 
 INT CMainWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -571,9 +566,6 @@ void CMainWnd::OnNavigateSwitchContext(UINT nID)
 {
 	nID -= IDM_NAV_SWITCHCONTEXT;
 
-	// Slide the filter pane away
-	HideFilterPane();
-
 	DeleteBreadcrumbs(&m_BreadcrumbForward);
 
 	if (GetContext()==LFContextStores)
@@ -622,6 +614,9 @@ Jump:
 
 			NavigateTo(f, NAVMODE_RELOAD);
 		}
+
+	// Slide the filter pane away
+	HideFilterPane();
 }
 
 void CMainWnd::OnUpdateNavCommands(CCmdUI* pCmdUI)
@@ -867,8 +862,12 @@ void CMainWnd::OnUpdateSortOptions()
 void CMainWnd::OnUpdateNumbers()
 {
 	if (IsWindow(m_wndContextSidebar))
-		if (m_wndContextSidebar.IsWindowVisible())
-			m_wndContextSidebar.PostMessage(WM_UPDATENUMBERS);
+		m_wndContextSidebar.PostMessage(WM_UPDATENUMBERS);
+}
+
+LRESULT CMainWnd::OnSetAlert(WPARAM wParam, LPARAM /*lParam*/)
+{
+	return m_wndMainView.SendMessage(WM_SETALERT, wParam);
 }
 
 LRESULT CMainWnd::OnCookFiles(WPARAM wParam, LPARAM /*lParam*/)
@@ -892,6 +891,12 @@ LRESULT CMainWnd::OnCookFiles(WPARAM wParam, LPARAM /*lParam*/)
 
 	m_wndMainView.UpdateSearchResult(m_pActiveFilter, m_pRawFiles, m_pCookedFiles, (FVPersistentData*)wParam);
 
+	if (!m_IsClipboard)
+	{
+		const INT ctx = GetContext();
+		m_wndContextSidebar.SetSelection(ctx<=LFLastQueryContext ? IDM_NAV_SWITCHCONTEXT+ctx : 0, m_wndMainView.GetStoreID());
+	}
+
 	if ((pVictim) && (pVictim!=m_pRawFiles))
 		LFFreeSearchResult(pVictim);
 
@@ -902,12 +907,17 @@ LRESULT CMainWnd::OnCookFiles(WPARAM wParam, LPARAM /*lParam*/)
 }
 
 
-LRESULT CMainWnd::OnVolumesChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)
+LRESULT CMainWnd::OnItemsDropped(WPARAM /*wParam*/, LPARAM /*lParam*/)
 {
 	if (m_pCookedFiles)
 		switch (m_pCookedFiles->m_Context)
 		{
 		case LFContextStores:
+			break;
+		case LFContextClipboard:
+			PostMessage(WM_COOKFILES);
+			break;
+		default:
 			PostMessage(WM_RELOAD);
 			break;
 		}
@@ -947,20 +957,22 @@ LRESULT CMainWnd::OnStoreAttributesChanged(WPARAM wParam, LPARAM lParam)
 	return NULL;
 }
 
-LRESULT CMainWnd::OnItemsDropped(WPARAM /*wParam*/, LPARAM /*lParam*/)
+LRESULT CMainWnd::OnVolumesChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)
 {
 	if (m_pCookedFiles)
 		switch (m_pCookedFiles->m_Context)
 		{
 		case LFContextStores:
-			break;
-		case LFContextClipboard:
-			PostMessage(WM_COOKFILES);
-			break;
-		default:
 			PostMessage(WM_RELOAD);
 			break;
 		}
+
+	return NULL;
+}
+
+LRESULT CMainWnd::OnStatisticsChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)
+{
+	OnUpdateNumbers();
 
 	return NULL;
 }

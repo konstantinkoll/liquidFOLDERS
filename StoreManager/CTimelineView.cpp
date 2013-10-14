@@ -32,11 +32,13 @@ WCHAR* GetAttribute(TimelineItemData* d, LFItemDescriptor* i, UINT Attr, UINT Ma
 #define WHITE         100
 
 #define GetItemData(idx)     ((TimelineItemData*)(m_ItemData+(idx)*m_DataSize))
-#define UsePreview(i)        ((i->CoreAttributes.ContextID>=LFContextPictures) && (i->CoreAttributes.ContextID<=LFContextVideos))
+#define UsePreview(i)        ((!(i->Type & LFTypeNotMounted)) && (i->CoreAttributes.ContextID>=LFContextPictures) && (i->CoreAttributes.ContextID<=LFContextVideos))
 
 CTimelineView::CTimelineView()
 	: CFileView(sizeof(TimelineItemData), TRUE, TRUE, TRUE, TRUE, TRUE, FALSE)
 {
+	ENSURE(m_FilesSingular.LoadString(IDS_FILES_SINGULAR));
+	ENSURE(m_FilesPlural.LoadString(IDS_FILES_PLURAL));
 }
 
 void CTimelineView::SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCookedFiles, FVPersistentData* Data)
@@ -439,7 +441,10 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPRECT rectItem, INT idx, BOO
 	}
 	else
 	{
-		dc.DrawText(i->Description, -1, rectText, DT_LEFT | DT_END_ELLIPSIS | DT_NOPREFIX | DT_SINGLELINE);
+		CString tmpStr;
+		tmpStr.Format(i->AggregateCount==1 ? m_FilesSingular : m_FilesPlural, i->AggregateCount);
+
+		dc.DrawText(tmpStr, -1, rectText, DT_LEFT | DT_END_ELLIPSIS | DT_NOPREFIX | DT_SINGLELINE);
 	}
 
 	rectText.top = rectText.bottom+BORDER/2;
@@ -563,7 +568,8 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPRECT rectItem, INT idx, BOO
 						if (UsePreview(ri) && (ri->CoreAttributes.Rating==a))
 						{
 							CRect rect(rectPreview);
-							theApp.m_ThumbnailCache.DrawJumboThumbnail(dc, rect, ri);
+							if (!theApp.m_ThumbnailCache.DrawJumboThumbnail(dc, rect, ri))
+								theApp.m_FileFormats.DrawJumboIcon(dc, rect, ri->CoreAttributes.FileFormat, ri->Type & LFTypeGhosted);
 
 							rectPreview.OffsetRect(128+BORDER, 0);
 							if (++Cols==m_PreviewColumns)
@@ -579,7 +585,8 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPRECT rectItem, INT idx, BOO
 			}
 			else
 			{
-				theApp.m_ThumbnailCache.DrawJumboThumbnail(dc, rectPreview, i);
+				if (!theApp.m_ThumbnailCache.DrawJumboThumbnail(dc, rectPreview, i))
+					theApp.m_FileFormats.DrawJumboIcon(dc, rectPreview, i->CoreAttributes.FileFormat, i->Type & LFTypeGhosted);
 			}
 		}
 	}

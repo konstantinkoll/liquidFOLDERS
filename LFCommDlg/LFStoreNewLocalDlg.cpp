@@ -44,11 +44,12 @@ BOOL LFStoreNewLocalDlg::OnCommand(WPARAM wParam, LPARAM lParam)
 		pPage->m_wndStoreName.GetWindowText(store.StoreName, 256);
 		pPage->m_wndStoreComment.GetWindowText(store.StoreComment, 256);
 
-		store.StoreMode = m_IsRemovable ? pPage->m_wndMakeSearchable.GetCheck() ? LFStoreModeHybrid : LFStoreModeExternal : LFStoreModeInternal;
-		store.AutoLocation = (m_Path[0]==L'\0');
+		store.IndexMode = m_IsRemovable ? pPage->m_wndMakeSearchable.GetCheck() ? LFStoreIndexModeHybrid : LFStoreIndexModeExternal : LFStoreIndexModeInternal;
+		if (m_Path[0]==L'\0')
+			store.Flags |= LFStoreFlagAutoLocation;
 
 		wcscpy_s(store.DatPath, MAX_PATH, m_Path);
-		if (m_IsRemovable && store.AutoLocation)
+		if (m_IsRemovable && (store.Flags & LFStoreFlagAutoLocation))
 			swprintf_s(store.DatPath, MAX_PATH, L"%c:\\", m_Volume);
 
 		CWaitCursor csr;

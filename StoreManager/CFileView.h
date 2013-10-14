@@ -51,6 +51,7 @@ struct LFViewParameters
 	BOOL GlobeShowGPS;
 	BOOL GlobeShowDescription;
 
+	BOOL TagcloudCanonical;
 	BOOL TagcloudShowRare;
 	BOOL TagcloudUseSize;
 	BOOL TagcloudUseColors;
@@ -118,7 +119,7 @@ public:
 	CFileView(UINT DataSize=sizeof(FVItemData), BOOL EnableScrolling=TRUE, BOOL EnableHover=TRUE, BOOL EnableTooltip=TRUE, BOOL EnableShiftSelection=TRUE, BOOL EnableLabelEdit=TRUE, BOOL EnableTooltipOnVirtual=TRUE);
 	virtual ~CFileView();
 
-	virtual CMenu* GetViewContextmenu();
+	virtual CMenu* GetViewContextMenu();
 	virtual void GetPersistentData(FVPersistentData& Data);
 	virtual void EditLabel(INT idx);
 	virtual BOOL IsEditing();

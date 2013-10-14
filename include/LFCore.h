@@ -300,18 +300,18 @@ LFCore_API void __stdcall LFErrorBox(unsigned int ID, HWND hWnd=NULL);
 
 
 // Suchabfrage durchführen
-// - Ist filter==NULL, so wird eine Liste aller Stores zurückgeliefert
-LFCore_API LFSearchResult* __stdcall LFQuery(LFFilter* filter);
+// - Ist f==NULL, so wird eine Liste aller Stores zurückgeliefert
+LFCore_API LFSearchResult* __stdcall LFQuery(LFFilter* f);
 
 // Bestehendes Suchergebnis eingrenzen
-// - filter muss vom Typ LFFilterModeDirectoryTree oder LFFilterModeSearch sein
-// - filter muss ein Unterverzeichnis sein
+// - f muss vom Typ LFFilterModeDirectoryTree oder LFFilterModeSearch sein
+// - f muss ein Unterverzeichnis sein
 // - first und last müssen einen gültigen Bereich umfassen
-LFCore_API LFSearchResult* __stdcall LFQuery(LFFilter* filter, LFSearchResult* base, int first, int last);
+LFCore_API LFSearchResult* __stdcall LFQuery(LFFilter* f, LFSearchResult* base, int first, int last);
 
 // Statistik
-// - Ist StoreID==NULL, so wird die Statistik über alle Stores ermittelt
-LFCore_API LFStatistics* __stdcall LFQueryStatistics(char* key);
+// - Ist die StoreID leer, so wird die Statistik über alle Stores ermittelt
+LFCore_API LFStatistics* __stdcall LFQueryStatistics(char* StoreID);
 
 
 
@@ -323,7 +323,7 @@ LFCore_API LFStatistics* __stdcall LFQueryStatistics(char* key);
 LFCore_API unsigned int __stdcall LFGetFileLocation(LFItemDescriptor* i, wchar_t* dst, size_t cCount, bool CheckExists, bool RemoveNew, bool Extended=false);
 
 // Gibt die Daten eines Stores zurück
-LFCore_API unsigned int __stdcall LFGetStoreSettings(char* key, LFStoreDescriptor* s);
+LFCore_API unsigned int __stdcall LFGetStoreSettings(char* StoreID, LFStoreDescriptor* s);
 LFCore_API unsigned int __stdcall LFGetStoreSettings(GUID guid, LFStoreDescriptor* s);
 
 // Gibt die ID für das Icon eines Stores zurück
@@ -336,33 +336,33 @@ LFCore_API bool __stdcall LFIsStoreMounted(LFStoreDescriptor* s);
 // - Eingabeparameter interner Store:
 //   - StoreName: optional (wird ggf. durch Standardname ersetzt)
 //   - Comment: optional
-//   - StoreMode: erforderlich
+//   - IndexMode: erforderlich
 //   - AutoLocation: erforderlich
 //   - DatPath: erforderlich, wenn AutoLocation==true
 //   - Alle anderen Parameter werden ignoriert bzw. ausgefüllt
 // - Eingabeparameter Hybrid-Store und externer Store:
 //   - StoreName: optional (wird ggf. durch Standardname ersetzt)
 //   - Comment: optional
-//   - StoreMode: erforderlich
+//   - IndexMode: erforderlich
 //   - DatPath: erforderlich
 //   - Alle anderen Parameter werden ignoriert bzw. ausgefüllt
 LFCore_API unsigned int __stdcall LFCreateStore(LFStoreDescriptor* s, bool MakeDefault=false, HWND hWndSource=NULL);
 
 // Macht den internen Store zum Default Store
-LFCore_API unsigned int __stdcall LFMakeDefaultStore(char* key, HWND hWndSource=NULL, bool InternalCall=false);
+LFCore_API unsigned int __stdcall LFMakeDefaultStore(char* StoreID, HWND hWndSource=NULL);
 
 // Macht den externen Store zum Hybrid-Store
-LFCore_API unsigned int __stdcall LFMakeStoreSearchable(char* key, bool Searchable=true, HWND hWndSource=NULL);
+LFCore_API unsigned int __stdcall LFMakeStoreSearchable(char* StoreID, bool Searchable=true, HWND hWndSource=NULL);
 
 // Setzt Namen und Kommentar eines Stores
 // Ist name oder comment NULL, so wird der jeweilige Wert nicht verändert
-LFCore_API unsigned int __stdcall LFSetStoreAttributes(char* key, wchar_t* name, wchar_t* comment, HWND hWndSource=NULL, bool InternalCall=false);
+LFCore_API unsigned int __stdcall LFSetStoreAttributes(char* StoreID, wchar_t* name, wchar_t* comment, HWND hWndSource=NULL, bool InternalCall=false);
 
 // Löscht einen bestehenden Store
-LFCore_API unsigned int __stdcall LFDeleteStore(char* key, HWND hWndSource=NULL, LFProgress* pProgress=NULL);
+LFCore_API unsigned int __stdcall LFDeleteStore(char* StoreID, HWND hWndSource=NULL, LFProgress* pProgress=NULL);
 
 // Anzeigen einer MessageBox zum Löschen des Stores in aktueller Sprache
-LFCore_API bool __stdcall LFAskDeleteStore(LFItemDescriptor* s, HWND hWnd=NULL);
+LFCore_API bool __stdcall LFAskDeleteStore(LFItemDescriptor* i, HWND hWnd=NULL);
 
 // Anzeigen einer MessageBox zum Löschen des Stores in aktueller Sprache
 LFCore_API bool __stdcall LFAskDeleteStore(LFStoreDescriptor* s, HWND hWnd=NULL);
@@ -373,7 +373,7 @@ LFCore_API LFMaintenanceList* __stdcall LFStoreMaintenance(HWND hWndSource=NULL,
 // Gibt an, ob ein Default Stores verfügbar ist
 LFCore_API bool __stdcall LFDefaultStoreAvailable();
 
-// Gibt den Key des aktuellen Default Stores zurück
+// Gibt die ID des aktuellen Default Stores zurück
 LFCore_API char* __stdcall LFGetDefaultStore();
 
 // Gibt den Standardnamen des Default Stores zurück
@@ -383,10 +383,10 @@ LFCore_API void __stdcall LFGetDefaultStoreName(wchar_t* name, size_t cCount);
 LFCore_API unsigned int __stdcall LFGetStoreCount();
 
 // Prüft, ob Stores auf dem angegebenen Laufwerk vorhanden sind
-LFCore_API bool __stdcall LFStoresOnVolume(char d);
+LFCore_API bool __stdcall LFStoresOnDrive(char cDrive);
 
 // Gibt die IDs aller Stores zurück
-LFCore_API unsigned int __stdcall LFGetStores(char** keys, unsigned int* count);
+LFCore_API unsigned int __stdcall LFGetStores(char** IDs, unsigned int* count);
 
 
 
@@ -395,7 +395,7 @@ LFCore_API unsigned int __stdcall LFGetStores(char** keys, unsigned int* count);
 //
 
 // Erzeugt eine neue Filterdatei in einem Store
-LFCore_API unsigned int __stdcall LFSaveFilter(char* key, LFFilter* filter, wchar_t* name, wchar_t* comments=NULL, LFItemDescriptor** created=NULL);
+LFCore_API unsigned int __stdcall LFSaveFilter(char* key, LFFilter* f, wchar_t* name, wchar_t* comments=NULL, LFItemDescriptor** created=NULL);
 
 // Lädt einen abgespeicherten Filter
 LFCore_API LFFilter* __stdcall LFLoadFilter(wchar_t* fn);
@@ -446,7 +446,7 @@ LFCore_API void __stdcall LFTransactionImport(char* key, LFFileIDList* il, bool 
 LFCore_API void __stdcall LFTransactionDelete(LFFileIDList* il, bool PutInTrash=true, LFProgress* pProgress=NULL);
 
 // Fügt die angegebenen Dateien zum Suchergebnis hinzu
-LFCore_API void __stdcall LFTransactionAddToSearchResult(LFFileIDList* il, LFSearchResult* res);
+LFCore_API void __stdcall LFTransactionAddToSearchResult(LFFileIDList* il, LFSearchResult* sr);
 
 
 //

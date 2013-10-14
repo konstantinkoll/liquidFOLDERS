@@ -26,7 +26,7 @@ class CTagcloudView : public CGridView
 public:
 	CTagcloudView();
 
-	virtual CMenu* GetViewContextmenu();
+	virtual CMenu* GetViewContextMenu();
 
 protected:
 	CFont m_Fonts[20];
@@ -39,6 +39,8 @@ protected:
 	CFont* GetFont(INT idx);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
+	afx_msg void OnSortValue();
+	afx_msg void OnSortCount();
 	afx_msg void OnShowRare();
 	afx_msg void OnUseSize();
 	afx_msg void OnUseColors();

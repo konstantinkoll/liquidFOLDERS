@@ -52,6 +52,8 @@ BOOL LFStorePropertiesDlg::OnCommand(WPARAM wParam, LPARAM lParam)
 {
 	if (LOWORD(wParam)==IDOK)
 	{
+		CWaitCursor csr;
+
 		const LFStorePropertiesGeneralPage* pPage = (LFStorePropertiesGeneralPage*)m_pPages[0];
 
 		CString Name;
@@ -69,7 +71,7 @@ BOOL LFStorePropertiesDlg::OnCommand(WPARAM wParam, LPARAM lParam)
 		if (pPage->m_wndMakeDefault.IsWindowEnabled() && pPage->m_wndMakeDefault.GetCheck())
 			LFErrorBox(LFMakeDefaultStore(m_Store.StoreID, GetSafeHwnd()), GetSafeHwnd());
 
-		ASSERT(pPage->m_wndMakeSearchable.IsWindowVisible()==((m_Store.StoreMode==LFStoreModeHybrid) || (m_Store.StoreMode==LFStoreModeExternal)));
+		ASSERT(pPage->m_wndMakeSearchable.IsWindowVisible()==(m_Store.IndexMode>=LFStoreIndexModeHybrid));
 
 		if (pPage->m_wndMakeSearchable.IsWindowVisible())
 			LFErrorBox(LFMakeStoreSearchable(m_Store.StoreID, pPage->m_wndMakeSearchable.GetCheck()==TRUE, GetSafeHwnd()), GetSafeHwnd());
@@ -96,6 +98,7 @@ BEGIN_MESSAGE_MAP(LFStorePropertiesDlg, CPropertySheet)
 	ON_WM_DESTROY()
 	ON_REGISTERED_MESSAGE(MessageIDs->StoresChanged, OnStoresChanged)
 	ON_REGISTERED_MESSAGE(MessageIDs->StoreAttributesChanged, OnStoreAttributesChanged)
+	ON_REGISTERED_MESSAGE(MessageIDs->StatisticsChanged, OnStatisticsChanged)
 END_MESSAGE_MAP()
 
 BOOL LFStorePropertiesDlg::OnInitDialog()
@@ -141,6 +144,13 @@ LRESULT LFStorePropertiesDlg::OnStoresChanged(WPARAM wParam, LPARAM lParam)
 LRESULT LFStorePropertiesDlg::OnStoreAttributesChanged(WPARAM wParam, LPARAM lParam)
 {
 	UpdateStore(MessageIDs->StoreAttributesChanged, wParam, lParam);
+
+	return NULL;
+}
+
+LRESULT LFStorePropertiesDlg::OnStatisticsChanged(WPARAM wParam, LPARAM lParam)
+{
+	UpdateStore(MessageIDs->StatisticsChanged, wParam, lParam);
 
 	return NULL;
 }

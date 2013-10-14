@@ -169,7 +169,7 @@ INT CSidebar::GetPreferredWidth()
 	return m_Width;
 }
 
-void CSidebar::Reset(UINT CmdID)
+void CSidebar::SetSelection(UINT CmdID)
 {
 	m_SelectedItem = m_HotItem = -1;
 	m_HotItem = 0;
