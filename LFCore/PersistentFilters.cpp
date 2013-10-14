@@ -163,7 +163,7 @@ LFCore_API unsigned int LFSaveFilter(char* key, LFFilter* f, wchar_t* name, wcha
 	{
 		LFItemDescriptor* i = LFAllocItemDescriptor();
 		SetAttribute(i, LFAttrFileName, name ? name : f->OriginalName);
-		SetAttribute(i, LFAttrFileFormat, "f");
+		SetAttribute(i, LFAttrFileFormat, "filter");
 		if (comments)
 			SetAttribute(i, LFAttrComments, comments);
 
