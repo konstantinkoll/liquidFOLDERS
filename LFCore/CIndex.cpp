@@ -188,14 +188,12 @@ bool CIndex::LoadTable(unsigned int ID, unsigned int* res)
 
 bool CIndex::Create()
 {
-	if (IdxPath[0]==L'\0')
-		return false;
-
 	bool res = true;
 
-	for (unsigned int a=0; a<IdxTableCount; a++)
-		if (!LoadTable(a))
-			res = false;
+	if (IdxPath[0]!=L'\0')
+		for (unsigned int a=0; a<IdxTableCount; a++)
+			if (!LoadTable(a))
+				res = false;
 
 	return res;
 }
