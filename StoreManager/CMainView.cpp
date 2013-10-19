@@ -785,17 +785,17 @@ INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndTaskbar.AddButton(IDM_GLOBE_AUTOSIZE, 13);
 	m_wndTaskbar.AddButton(IDM_TAGCLOUD_SORTVALUE, 14);
 	m_wndTaskbar.AddButton(IDM_TAGCLOUD_SORTCOUNT, 15);
-	m_wndTaskbar.AddButton(IDM_ITEM_OPEN, 16);
-	m_wndTaskbar.AddButton(IDM_GLOBE_GOOGLEEARTH, 17, TRUE);
-	m_wndTaskbar.AddButton(IDM_VOLUME_PROPERTIES, 18);
-	m_wndTaskbar.AddButton(IDM_STORE_DELETE, 19);
-	m_wndTaskbar.AddButton(IDM_STORE_RENAME, 20);
-	m_wndTaskbar.AddButton(IDM_STORE_PROPERTIES, 21);
-	m_wndTaskbar.AddButton(IDM_FILE_REMEMBER, 22);
-	m_wndTaskbar.AddButton(IDM_FILE_REMOVE, 23);
-	m_wndTaskbar.AddButton(IDM_FILE_DELETE, 24);
-	m_wndTaskbar.AddButton(IDM_FILE_RENAME, 25);
-	m_wndTaskbar.AddButton(IDM_FILE_RESTORE, 26);
+	m_wndTaskbar.AddButton(IDM_FILE_RESTORE, 16);
+	m_wndTaskbar.AddButton(IDM_ITEM_OPEN, 17);
+	m_wndTaskbar.AddButton(IDM_GLOBE_GOOGLEEARTH, 18, TRUE);
+	m_wndTaskbar.AddButton(IDM_VOLUME_PROPERTIES, 19);
+	m_wndTaskbar.AddButton(IDM_STORE_DELETE, 20);
+	m_wndTaskbar.AddButton(IDM_STORE_RENAME, 21);
+	m_wndTaskbar.AddButton(IDM_STORE_PROPERTIES, 22);
+	m_wndTaskbar.AddButton(IDM_FILE_REMEMBER, 23);
+	m_wndTaskbar.AddButton(IDM_FILE_REMOVE, 24);
+	m_wndTaskbar.AddButton(IDM_FILE_DELETE, 25);
+	m_wndTaskbar.AddButton(IDM_FILE_RENAME, 26);
 	m_wndTaskbar.AddButton(ID_APP_NEWFILEDROP, 27, TRUE);
 	m_wndTaskbar.AddButton(IDM_STORE_MAKEDEFAULT, 28);
 
