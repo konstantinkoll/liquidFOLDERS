@@ -541,8 +541,13 @@ void CSidebar::OnMouseHover(UINT nFlags, CPoint point)
 				INT idx = m_Items.m_Items[m_HotItem].IconID;
 				HICON hIcon = (idx!=-1) ? m_LargeIcons.ExtractIcon(idx) : NULL;
 
+				CString Hint = m_Items.m_Items[m_HotItem].Hint;
+				CString Append = AppendTooltip(m_Items.m_Items[m_HotItem].CmdID);
+				if (!Hint.IsEmpty() && !Append.IsEmpty())
+					Hint += _T("\n");
+
 				ClientToScreen(&point);
-				m_TooltipCtrl.Track(point, hIcon, hIcon ? CSize(32, 32) : CSize(0, 0), m_Items.m_Items[m_HotItem].Caption, m_Items.m_Items[m_HotItem].Hint+AppendTooltip(m_Items.m_Items[m_HotItem].CmdID));
+				m_TooltipCtrl.Track(point, hIcon, hIcon ? CSize(32, 32) : CSize(0, 0), m_Items.m_Items[m_HotItem].Caption, Hint+Append);
 			}
 	}
 	else
