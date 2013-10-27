@@ -652,7 +652,7 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDM_FILE_RESTORE        "Stellt die ausgewählten Dateien wieder her.\nWiederstellen"
+    IDM_FILE_RESTORE        "Stellt die ausgewählten Dateien wieder her.\nWiederherstellen"
 END
 
 STRINGTABLE 
