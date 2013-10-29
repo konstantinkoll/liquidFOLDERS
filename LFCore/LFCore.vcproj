@@ -714,6 +714,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\SRC_Internet.ico"
+				>
+			</File>
+			<File
 				RelativePath=".\res\STR_1394.ico"
 				>
 			</File>

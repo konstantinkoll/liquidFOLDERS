@@ -36,10 +36,10 @@
     <ROW Property="MSIFASTINSTALL" MultiBuildValue="DefaultBuild:6"/>
     <ROW Property="Manufacturer" Value="liquidFOLDERS" ValueLocId="*"/>
     <ROW Property="OptionsLogoIcon" Value="Tools.ico" Type="1" MsiKey="OptionsLogoIcon"/>
-    <ROW Property="ProductCode" Value="1033:{4F3B425A-C069-4C5A-932C-51384ACB0BE8} 3082:{C2F1D1B3-3A10-46ED-8453-E770087CC61E} 1036:{28FCBFC9-BB74-4C98-8F7B-FA3466901727} 1031:{394BFED3-5D45-4440-9BA9-2040367E4906} " Type="16"/>
+    <ROW Property="ProductCode" Value="1033:{31FC6B6F-D27E-4BCD-8CFF-DF9F14F9A210} 3082:{CE8AFF54-8FE0-4BCA-A912-A52475B698BB} 1036:{62AEB14A-45BF-4484-84AB-34A520A78F8A} 1031:{E10549BD-D5A7-4F01-A998-83ED3960335F} " Type="16"/>
     <ROW Property="ProductLanguage" Value="1033"/>
     <ROW Property="ProductName" Value="liquidFOLDERS" ValueLocId="*"/>
-    <ROW Property="ProductVersion" Value="1.5.2"/>
+    <ROW Property="ProductVersion" Value="1.5.3"/>
     <ROW Property="REBOOT" MultiBuildValue="DefaultBuild:Force"/>
     <ROW Property="RepairIcon" Value="Tools.ico" Type="1" MsiKey="RepairIcon"/>
     <ROW Property="SecureCustomProperties" Value="OLDPRODUCTS;AI_NEWERPRODUCTFOUND;AI_SETUPEXEPATH;SETUPEXEDIR"/>
@@ -484,7 +484,7 @@
     <ROW Registry="Contact" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="Contact" Value="support@liquidfolders.net" Component_="AI_CustomARPName"/>
     <ROW Registry="DisplayIcon" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="DisplayIcon" Value="[ARP_ICON_PATH]" Component_="AI_CustomARPName"/>
     <ROW Registry="DisplayName" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="DisplayName" Value="[ProductName]" Component_="AI_CustomARPName"/>
-    <ROW Registry="DisplayVersion" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="DisplayVersion" Value="1.5.2" Component_="AI_CustomARPName"/>
+    <ROW Registry="DisplayVersion" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="DisplayVersion" Value="1.5.3" Component_="AI_CustomARPName"/>
     <ROW Registry="EstimatedSize" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="EstimatedSize" Value="#30720" Component_="AI_CustomARPName"/>
     <ROW Registry="F2D914D_FE57_414F_9F88_A377C7841DA4_1" Root="2" Key="Software\Microsoft\Windows\CurrentVersion\Shell Extensions\Approved" Name="[\{]3F2D914D-FE57-414F-9F88-A377C7841DA4[\}]" Value="liquidFOLDERS.SendTo" Component_="LFNamespaceExtension.dll"/>
     <ROW Registry="F2D914E_FE57_414F_9F88_A377C7841DA4_1" Root="2" Key="Software\Microsoft\Windows\CurrentVersion\Shell Extensions\Approved" Name="[\{]3F2D914E-FE57-414F-9F88-A377C7841DA4[\}]" Value="liquidFOLDERS.DriveMenu" Component_="LFNamespaceExtension.dll"/>

@@ -1032,6 +1032,14 @@
 				>
 			</File>
 		</Filter>
+		<Filter
+			Name="Sources"
+			>
+			<File
+				RelativePath=".\Sources\SRC_Internet.ico"
+				>
+			</File>
+		</Filter>
 		<File
 			RelativePath=".\About_Tiny.ico"
 			>

@@ -21,6 +21,7 @@
 
 HMODULE LFCoreModuleHandle;
 LFMessageIDs LFMessages;
+OSVERSIONINFO osInfo;
 extern const unsigned char AttrTypes[];
 extern LFShellProperty AttrProperties[];
 
@@ -35,6 +36,10 @@ unsigned int VolumeTypes[26] = { DRIVE_UNKNOWN };
 
 LFCore_API void LFInitialize()
 {
+	ZeroMemory(&osInfo, sizeof(OSVERSIONINFO));
+	osInfo.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
+	GetVersionEx(&osInfo);
+
 	LFMessages.ItemsDropped = RegisterWindowMessageA("liquidFOLDERS.ItemsDropped");
 	LFMessages.StoresChanged = RegisterWindowMessageA("liquidFOLDERS.StoresChanged");
 	LFMessages.StoreAttributesChanged = RegisterWindowMessageA("liquidFOLDERS.StoreAttributesChanged");
@@ -130,11 +135,6 @@ LFCore_API bool LFHideFileExt()
 
 LFCore_API bool LFHideDrivesWithNoMedia()
 {
-	OSVERSIONINFO osInfo;
-	ZeroMemory(&osInfo, sizeof(OSVERSIONINFO));
-	osInfo.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
-	GetVersionEx(&osInfo);
-
 	DWORD HideDrivesWithNoMedia = (osInfo.dwMajorVersion<6) ? 0 : 1;
 
 	HKEY k;

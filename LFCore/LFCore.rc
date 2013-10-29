@@ -43,6 +43,7 @@ IDI_STR_Twitter         ICON                    "res\\STR_Twitter.ico"
 IDI_STR_YouTube         ICON                    "res\\STR_YouTube.ico"
 IDI_FLD_Default         ICON                    "res\\FLD_Default.ico"
 IDI_OVR_Default         ICON                    "res\\OVR_Default.ico"
+IDI_SRC_Internet        ICON                    "res\\SRC_Internet.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -50,8 +51,8 @@ IDI_OVR_Default         ICON                    "res\\OVR_Default.ico"
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,5,2,0
- PRODUCTVERSION 1,5,2,0
+ FILEVERSION 1,5,3,0
+ PRODUCTVERSION 1,5,3,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -67,13 +68,13 @@ BEGIN
         BLOCK "000004e4"
         BEGIN
             VALUE "CompanyName", "liquidFOLDERS"
-            VALUE "FileVersion", "1.5.2"
+            VALUE "FileVersion", "1.5.3"
             VALUE "InternalName", "LFCore"
             VALUE "LegalCopyright", "© 2009-2013 liquidFOLDERS"
             VALUE "LegalTrademarks", "liquidFOLDERS®"
             VALUE "OriginalFilename", "LFCore.dll"
             VALUE "ProductName", "liquidFOLDERS"
-            VALUE "ProductVersion", "1.5.2"
+            VALUE "ProductVersion", "1.5.3"
         END
     END
     BLOCK "VarFileInfo"
