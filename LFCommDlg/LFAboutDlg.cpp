@@ -6,6 +6,7 @@
 #include "LFCore.h"
 #include "LFCommDlg.h"
 #include "Resource.h"
+#include <wininet.h>
 
 
 // LFAboutDlg
@@ -77,8 +78,16 @@ void LFAboutDlg::CheckLicenseKey(LFLicense* License)
 	}
 }
 
+void LFAboutDlg::CheckInternetConnection()
+{
+	DWORD Flags;
+	GetDlgItem(IDC_UPDATENOW)->EnableWindow(InternetGetConnectedState(&Flags, 0));
+}
+
 
 BEGIN_MESSAGE_MAP(LFAboutDlg, LFDialog)
+	ON_WM_DESTROY()
+	ON_WM_TIMER()
 	ON_BN_CLICKED(IDC_ENABLEAUTOUPDATE, OnEnableAutoUpdate)
 	ON_BN_CLICKED(IDC_UPDATENOW, OnUpdateNow)
 	ON_NOTIFY(NM_CLICK, IDC_VERSIONINFO, OnVersionInfo)
@@ -123,7 +132,30 @@ BOOL LFAboutDlg::OnInitDialog()
 	// Lizenz
 	CheckLicenseKey();
 
+	// Internet
+	CheckInternetConnection();
+	SetTimer(1, 1000, NULL);
+
 	return TRUE;  // TRUE zurückgeben, wenn der Fokus nicht auf ein Steuerelement gesetzt wird
+}
+
+void LFAboutDlg::OnDestroy()
+{
+	KillTimer(1);
+
+	LFDialog::OnDestroy();
+}
+
+void LFAboutDlg::OnTimer(UINT_PTR nIDEvent)
+{
+	if (nIDEvent==1)
+		CheckInternetConnection();
+
+	LFDialog::OnTimer(nIDEvent);
+
+	// Eat bogus WM_TIMER messages
+	MSG msg;
+	while (PeekMessage(&msg, m_hWnd, WM_TIMER, WM_TIMER, PM_REMOVE));
 }
 
 void LFAboutDlg::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)

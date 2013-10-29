@@ -23,12 +23,16 @@ protected:
 	virtual void CheckLicenseKey(LFLicense* License=NULL);
 
 	afx_msg BOOL OnInitDialog();
+	afx_msg void OnDestroy();
+	afx_msg void OnTimer(UINT_PTR nIDEvent);
 	afx_msg void OnEnableAutoUpdate();
 	afx_msg void OnUpdateNow();
 	afx_msg void OnVersionInfo(NMHDR* pNMHDR, LRESULT* pResult);
 	DECLARE_MESSAGE_MAP()
 
 private:
+	void CheckInternetConnection();
+
 	CString m_Version;
 	CString m_Copyright;
 	CString m_AppName;
