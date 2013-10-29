@@ -189,6 +189,7 @@ IDM_FILE MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
+        MENUITEM "&Archivieren",                IDM_FILE_ARCHIVE
         MENUITEM SEPARATOR
         MENUITEM "&Kopieren",                   IDM_FILE_COPY
         MENUITEM SEPARATOR
@@ -198,7 +199,7 @@ BEGIN
     END
 END
 
-IDM_FILE_TRASH MENU 
+IDM_FILE_AWAY MENU 
 BEGIN
     POPUP "POPUP"
     BEGIN
@@ -287,6 +288,7 @@ IDM_FOLDER MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
+        MENUITEM "&Archivieren",                IDM_FILE_ARCHIVE
         MENUITEM SEPARATOR
         MENUITEM "&Kopieren",                   IDM_FILE_COPY
         MENUITEM SEPARATOR
@@ -646,6 +648,7 @@ STRINGTABLE
 BEGIN
     IDM_FILE_REMEMBER       "Fügt die ausgewählten Dateien zur Zwischenablage hinzu.\nMerken"
     IDM_FILE_REMOVE         "Entfernt die ausgewählten Dateien aus der Zwischenablage.\nEntfernen"
+    IDM_FILE_ARCHIVE        "Archiviert die ausgewählten Dateien.\nArchivieren"
     IDM_FILE_DELETE         "Löscht die ausgewählten Dateien.\nLöschen"
     IDM_FILE_RENAME         "Benennt die ausgewählte Datei um.\nUmbenennen"
 END
@@ -769,6 +772,7 @@ IDM_FILE MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
+        MENUITEM "Archi&var",                   IDM_FILE_ARCHIVE
         MENUITEM SEPARATOR
         MENUITEM "&Copiar",                     IDM_FILE_COPY
         MENUITEM SEPARATOR
@@ -778,7 +782,7 @@ BEGIN
     END
 END
 
-IDM_FILE_TRASH MENU 
+IDM_FILE_AWAY MENU 
 BEGIN
     POPUP "POPUP"
     BEGIN
@@ -867,6 +871,7 @@ IDM_FOLDER MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
+        MENUITEM "Archi&var",                   IDM_FILE_ARCHIVE
         MENUITEM SEPARATOR
         MENUITEM "&Copiar",                     IDM_FILE_COPY
         MENUITEM SEPARATOR
@@ -1226,6 +1231,7 @@ STRINGTABLE
 BEGIN
     IDM_FILE_REMEMBER       "Agrega los archivos seleccionados a la ventana del portapapeles.\nRecordar"
     IDM_FILE_REMOVE         "Remueve los archivos seleccionados de la ventana del portapapeles.\nRemover"
+    IDM_FILE_ARCHIVE        "Archiva los archivos seleccionados.\nArchivar"
     IDM_FILE_DELETE         "Elimina los archivos seleccionados.\nEliminar"
     IDM_FILE_RENAME         "Renombra los archivos seleccionados.\nRenombrar"
 END
@@ -1349,6 +1355,7 @@ IDM_FILE MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
+        MENUITEM "Archi&ver",                   IDM_FILE_ARCHIVE
         MENUITEM SEPARATOR
         MENUITEM "&Copier",                     IDM_FILE_COPY
         MENUITEM SEPARATOR
@@ -1358,7 +1365,7 @@ BEGIN
     END
 END
 
-IDM_FILE_TRASH MENU 
+IDM_FILE_AWAY MENU 
 BEGIN
     POPUP "POPUP"
     BEGIN
@@ -1447,6 +1454,7 @@ IDM_FOLDER MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
+        MENUITEM "Archi&ver",                   IDM_FILE_ARCHIVE
         MENUITEM SEPARATOR
         MENUITEM "&Copier",                     IDM_FILE_COPY
         MENUITEM SEPARATOR
@@ -1807,6 +1815,7 @@ STRINGTABLE
 BEGIN
     IDM_FILE_REMEMBER       "Ajoute les fichiers choisis au presse-papiers.\nRemarquer"
     IDM_FILE_REMOVE         "Enlève les fichiers choisis du presse-papiers.\nEnlever"
+    IDM_FILE_ARCHIVE        "Archive les fichiers choisis.\nArchiver"
     IDM_FILE_DELETE         "Efface les fichiers choisis.\nEffacer"
     IDM_FILE_RENAME         "Renomme le fichier choisi.\nRenommer"
 END
@@ -1980,6 +1989,7 @@ IDM_FILE MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
+        MENUITEM "&Archive",                    IDM_FILE_ARCHIVE
         MENUITEM SEPARATOR
         MENUITEM "&Copy",                       IDM_FILE_COPY
         MENUITEM SEPARATOR
@@ -1989,7 +1999,7 @@ BEGIN
     END
 END
 
-IDM_FILE_TRASH MENU 
+IDM_FILE_AWAY MENU 
 BEGIN
     POPUP "POPUP"
     BEGIN
@@ -2079,6 +2089,7 @@ IDM_FOLDER MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
+        MENUITEM "&Archive",                    IDM_FILE_ARCHIVE
         MENUITEM SEPARATOR
         MENUITEM "&Copy",                       IDM_FILE_COPY
         MENUITEM SEPARATOR
@@ -2437,6 +2448,7 @@ STRINGTABLE
 BEGIN
     IDM_FILE_REMEMBER       "Adds the selected files to the clipboard window.\nRemember"
     IDM_FILE_REMOVE         "Removes the selected files from the clipboard window.\nRemove"
+    IDM_FILE_ARCHIVE        "Archives the selected files.\nArchive"
     IDM_FILE_DELETE         "Deletes the selected files.\nDelete"
     IDM_FILE_RENAME         "Renames the selected file.\nRename"
 END

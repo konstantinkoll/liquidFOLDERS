@@ -711,7 +711,7 @@ CMenu* CFileView::GetItemContextMenu(INT idx)
 		pMenu->GetSubMenu(0)->InsertMenu(0, MF_SEPARATOR | MF_BYPOSITION);
 		break;
 	case LFTypeFile:
-		pMenu->LoadMenu((m_Context==LFContextTrash) ? IDM_FILE_TRASH : IDM_FILE);
+		pMenu->LoadMenu((m_Context==LFContextArchive) || (m_Context==LFContextTrash) ? IDM_FILE_AWAY : IDM_FILE);
 		break;
 	case LFTypeFolder:
 		if ((item->FirstAggregate!=-1) && (item->LastAggregate!=-1))

@@ -13,19 +13,24 @@
 //
 
 #define COUNT_FILE(Ops) \
-	if (PtrM->Flags & LFFlagTrash) \
+	if (PtrM->Flags & LFFlagArchive) \
 	{ \
-		Ops(LFContextTrash); \
+		Ops(LFContextArchive); \
 	} \
 	else \
-	{ \
-		Ops(LFContextAllFiles); \
-		if (PtrM->Rating) \
-			Ops(LFContextFavorites); \
-		if (PtrM->Flags & LFFlagNew) \
-			Ops(LFContextNew); \
-		Ops(PtrM->ContextID); \
-	}
+		if (PtrM->Flags & LFFlagTrash) \
+		{ \
+			Ops(LFContextTrash); \
+		} \
+		else \
+		{ \
+			Ops(LFContextAllFiles); \
+			if (PtrM->Rating) \
+				Ops(LFContextFavorites); \
+			if (PtrM->Flags & LFFlagNew) \
+				Ops(LFContextNew); \
+			Ops(PtrM->ContextID); \
+		}
 
 #define ADD_STATS() \
 	if (TrackStats) AddFileToStatistics(PtrM);
@@ -104,8 +109,11 @@
 	{ \
 		REMOVE_STATS(); \
 		PtrM->Flags &= ~LFFlagNew; \
-		PtrM->Flags |= LFFlagTrash; \
-		GetSystemTimeAsFileTime(&PtrM->DeleteTime); \
+		if (!(PtrM->Flags & LFFlagTrash)) \
+		{ \
+			PtrM->Flags |= LFFlagTrash; \
+			GetSystemTimeAsFileTime(&PtrM->DeleteTime); \
+		} \
 		Tables[IDMaster]->MakeDirty(); \
 		ADD_STATS(); \
 	} \
@@ -471,7 +479,6 @@ void CIndex::Update(LFTransactionList* tl, LFVariantData* value1, LFVariantData*
 
 	// Attribute setzen
 	i->CoreAttributes.Flags &= ~LFFlagNew;
-	tl->m_Changes = true;
 
 	LFSetAttributeVariantData(i, value1);
 	bool IncludeSlave = (value1->Attr>LFLastCoreAttribute);
@@ -520,9 +527,35 @@ void CIndex::Update(LFTransactionList* tl, LFVariantData* value1, LFVariantData*
 		DISCARD_SLAVE(tl->m_Items[ItemID].LastError = tl->m_LastError = LFIndexTableLoadError);
 	}
 
-	tl->m_Items[ItemID].Processed = true;
+	tl->m_Items[ItemID].Processed = tl->m_Changes = true;
 
 	END_ITERATEALL();
+
+	// Invalid items
+	tl->SetError(slot->StoreID, LFIllegalKey);
+}
+
+void CIndex::Archive(LFTransactionList* tl)
+{
+	assert(tl);
+
+	START_ITERATEMASTER(tl->SetError(slot->StoreID, LFIndexTableLoadError),);
+	IN_TRANSACTIONLIST(tl);
+	REMOVE_STATS();
+
+	PtrM->Flags &= ~LFFlagNew;
+	if (!(PtrM->Flags & LFFlagArchive))
+	{
+		PtrM->Flags |= LFFlagArchive;
+		GetSystemTimeAsFileTime(&PtrM->ArchiveTime);
+	}
+
+	Tables[IDMaster]->MakeDirty();
+	ADD_STATS();
+
+	tl->m_Items[ItemID].Processed = tl->m_Changes = true;
+
+	END_ITERATEMASTER();
 
 	// Invalid items
 	tl->SetError(slot->StoreID, LFIllegalKey);

@@ -622,12 +622,12 @@ BOOL CMainView::DeleteFiles(BOOL Trash, BOOL All)
 	return Changes;
 }
 
-BOOL CMainView::RestoreFiles(BOOL All)
+BOOL CMainView::RestoreFiles(UINT Flags, BOOL All)
 {
 	CWaitCursor csr;
 
 	LFTransactionList* tl = BuildTransactionList(All);
-	LFTransactionRestore(tl);
+	LFTransactionRestore(tl, Flags);
 	RemoveTransactedItems(tl);
 
 	if (tl->m_LastError>LFCancel)
@@ -746,6 +746,7 @@ BEGIN_MESSAGE_MAP(CMainView, CWnd)
 	ON_COMMAND(IDM_FILE_EDIT, OnFileEdit)
 	ON_COMMAND(IDM_FILE_REMEMBER, OnFileRemember)
 	ON_COMMAND(IDM_FILE_REMOVE, OnFileRemove)
+	ON_COMMAND(IDM_FILE_ARCHIVE, OnFileArchive)
 	ON_COMMAND(IDM_FILE_COPY, OnFileCopy)
 	ON_COMMAND(IDM_FILE_SHORTCUT, OnFileShortcut)
 	ON_COMMAND(IDM_FILE_DELETE, OnFileDelete)
@@ -767,7 +768,7 @@ INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	#define FilterIconBlue         0
 	#define FilterIconWhite        1
-	#define FilterIconOverlay     35
+	#define FilterIconOverlay     36
 	#define FILTERICON            ((theApp.OSVersion==OS_Vista) && IsCtrlThemed()) ? FilterIconWhite : FilterIconBlue
 	p_FilterButton = m_wndTaskbar.AddButton(ID_PANE_FILTER, FILTERICON, TRUE, FALSE, TRUE);
 
@@ -794,19 +795,20 @@ INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndTaskbar.AddButton(IDM_STORE_PROPERTIES, 22);
 	m_wndTaskbar.AddButton(IDM_FILE_REMEMBER, 23);
 	m_wndTaskbar.AddButton(IDM_FILE_REMOVE, 24);
-	m_wndTaskbar.AddButton(IDM_FILE_DELETE, 25);
-	m_wndTaskbar.AddButton(IDM_FILE_RENAME, 26);
-	m_wndTaskbar.AddButton(ID_APP_NEWFILEDROP, 27, TRUE);
-	m_wndTaskbar.AddButton(IDM_STORE_MAKEDEFAULT, 28);
+	m_wndTaskbar.AddButton(IDM_FILE_ARCHIVE, 25);
+	m_wndTaskbar.AddButton(IDM_FILE_DELETE, 26);
+	m_wndTaskbar.AddButton(IDM_FILE_RENAME, 27);
+	m_wndTaskbar.AddButton(ID_APP_NEWFILEDROP, 28, TRUE);
+	m_wndTaskbar.AddButton(IDM_STORE_MAKEDEFAULT, 29);
 
-	#define InspectorIconVisible     29
-	#define InspectorIconHidden      30
+	#define InspectorIconVisible     30
+	#define InspectorIconHidden      31
 	p_InspectorButton = m_wndTaskbar.AddButton(ID_PANE_INSPECTOR, theApp.m_ShowInspectorPane ? InspectorIconVisible : InspectorIconHidden, TRUE, TRUE);
 
-	m_wndTaskbar.AddButton(ID_APP_PURCHASE, 31, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_ENTERLICENSEKEY, 32, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_SUPPORT, 33, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_ABOUT, 34, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_PURCHASE, 32, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_ENTERLICENSEKEY, 33, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_SUPPORT, 34, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_ABOUT, 35, TRUE, TRUE);
 
 	// Drop target
 	m_DropTarget.SetOwner(GetOwner());
@@ -1289,6 +1291,7 @@ LRESULT CMainView::OnGetMenu(WPARAM wParam, LPARAM /*lParam*/)
 		AppendAttribute(hPopupMenu, LFAttrRecordingTime);
 		AppendAttribute(hPopupMenu, LFAttrAddTime);
 		AppendAttribute(hPopupMenu, LFAttrFileTime);
+		AppendAttribute(hPopupMenu, LFAttrArchiveTime);
 		AppendAttribute(hPopupMenu, LFAttrDeleteTime);
 		AppendSeparator(hPopupMenu, LFAttrDueTime);
 		AppendAttribute(hPopupMenu, LFAttrDueTime);
@@ -1462,7 +1465,7 @@ void CMainView::OnTrashEmpty()
 
 void CMainView::OnTrashRestoreAll()
 {
-	RestoreFiles(TRUE);
+	RestoreFiles(LFFlagTrash, TRUE);
 }
 
 void CMainView::OnUpdateTrashCommands(CCmdUI* pCmdUI)
@@ -1766,6 +1769,17 @@ void CMainView::OnFileRemove()
 	LFFreeTransactionList(tl);
 }
 
+void CMainView::OnFileArchive()
+{
+	LFTransactionList* tl = BuildTransactionList();
+
+	CWaitCursor csr;
+	LFTransactionArchive(tl);
+	RemoveTransactedItems(tl);
+
+	LFFreeTransactionList(tl);
+}
+
 void CMainView::OnFileCopy()
 {
 	LFTransactionList* tl = BuildTransactionList(FALSE, TRUE);
@@ -1815,7 +1829,7 @@ void CMainView::OnFileRename()
 
 void CMainView::OnFileRestore()
 {
-	RestoreFiles();
+	RestoreFiles((m_Context==LFContextArchive) ? LFFlagArchive : (m_Context==LFContextTrash) ? LFFlagTrash : 0);
 }
 
 void CMainView::OnUpdateFileCommands(CCmdUI* pCmdUI)
@@ -1841,6 +1855,9 @@ void CMainView::OnUpdateFileCommands(CCmdUI* pCmdUI)
 	case IDM_FILE_REMOVE:
 		b = m_FilesSelected && (m_Context==LFContextClipboard);
 		break;
+	case IDM_FILE_ARCHIVE:
+		b = m_FilesSelected && (m_Context!=LFContextArchive);
+		break;
 	case IDM_FILE_COPY:
 	case IDM_FILE_SHORTCUT:
 	case IDM_FILE_DELETE:
@@ -1853,7 +1870,7 @@ void CMainView::OnUpdateFileCommands(CCmdUI* pCmdUI)
 			b &= !p_wndFileView->IsEditing();
 		break;
 	case IDM_FILE_RESTORE:
-		b = m_FilesSelected && (m_Context==LFContextTrash);
+		b = m_FilesSelected && ((m_Context==LFContextArchive) || (m_Context==LFContextTrash));
 		break;
 	}
 

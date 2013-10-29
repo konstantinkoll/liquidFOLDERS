@@ -58,7 +58,7 @@ protected:
 	void RemoveTransactedItems(LFFileIDList* il);
 	void RemoveTransactedItems(LFTransactionList* tl);
 	BOOL DeleteFiles(BOOL Trash, BOOL All=FALSE);
-	BOOL RestoreFiles(BOOL All=FALSE);
+	BOOL RestoreFiles(UINT Flags, BOOL All=FALSE);
 	BOOL UpdateItems(LFVariantData* Value1, LFVariantData* Value2, LFVariantData* Value3);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
@@ -125,6 +125,7 @@ protected:
 	afx_msg void OnFileEdit();
 	afx_msg void OnFileRemember();
 	afx_msg void OnFileRemove();
+	afx_msg void OnFileArchive();
 	afx_msg void OnFileCopy();
 	afx_msg void OnFileShortcut();
 	afx_msg void OnFileDelete();

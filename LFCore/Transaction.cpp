@@ -278,6 +278,37 @@ LFCore_API void LFTransactionUpdate(LFTransactionList* tl, HWND hWndSource, LFVa
 		SendLFNotifyMessage(LFMessages.StatisticsChanged, NULL);
 }
 
+LFCore_API void LFTransactionArchive(LFTransactionList* tl)
+{
+	assert(tl);
+
+	// Reset
+	tl->Reset();
+
+	// Process
+	for (unsigned int a=0; a<tl->m_ItemCount; a++)
+		if ((tl->m_Items[a].LastError==LFOk) && (!tl->m_Items[a].Processed))
+		{
+			if ((tl->m_Items[a].Item->Type & LFTypeMask)==LFTypeFile)
+			{
+				OPEN_STORE(tl->m_Items[a].Item->StoreID, true, tl->SetError(tl->m_Items[a].Item->StoreID, res));
+
+				if (idx1)
+					idx1->Archive(tl);
+				if (idx2)
+					idx2->Archive(tl);
+
+				CLOSE_STORE();
+			}
+			else
+			{
+				tl->SetError(a, LFIllegalItemType);
+			}
+		}
+
+	SendLFNotifyMessage(LFMessages.StatisticsChanged, NULL);
+}
+
 LFCore_API void LFTransactionDelete(LFTransactionList* tl, bool PutInTrash, LFProgress* pProgress)
 {
 	assert(tl);
@@ -320,9 +351,15 @@ LFCore_API void LFTransactionDelete(LFTransactionList* tl, bool PutInTrash, LFPr
 	SendLFNotifyMessage(LFMessages.StatisticsChanged, NULL);
 }
 
-LFCore_API void LFTransactionRestore(LFTransactionList* tl)
+LFCore_API void LFTransactionRestore(LFTransactionList* tl, unsigned int Flags)
 {
 	assert(tl);
+
+	if ((Flags==0) || ((Flags & (LFFlagArchive | LFFlagTrash))!=Flags))
+	{
+		tl->m_LastError = LFIllegalValue;
+		return;
+	}
 
 	LFVariantData value1;
 	value1.Attr = LFAttrFlags;
@@ -330,14 +367,19 @@ LFCore_API void LFTransactionRestore(LFTransactionList* tl)
 
 	value1.IsNull = false;
 	value1.Flags.Flags = 0;
-	value1.Flags.Mask = LFFlagTrash;
+	value1.Flags.Mask = Flags;
 
 	LFVariantData value2;
-	value2.Attr = LFAttrDeleteTime;
+	value2.Attr = LFAttrArchiveTime;
 	LFGetNullVariantData(&value2);
 	value2.IsNull = false;
 
-	LFTransactionUpdate(tl, NULL, &value1, &value2);
+	LFVariantData value3;
+	value3.Attr = LFAttrDeleteTime;
+	LFGetNullVariantData(&value3);
+	value3.IsNull = false;
+
+	LFTransactionUpdate(tl, NULL, &value1, (Flags & LFFlagArchive) ? &value2 : NULL, (Flags & LFFlagTrash) ? &value3 : NULL);
 }
 
 LFCore_API void LFTransactionResolvePhysicalLocations(LFTransactionList* tl, bool IncludePIDL)

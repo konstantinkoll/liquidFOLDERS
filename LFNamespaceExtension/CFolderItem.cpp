@@ -873,7 +873,7 @@ BOOL CFolderItem::GetColumn(CShellColumn& column, INT index)
 		(1<<LFAttrFileName) | (1<<LFAttrStoreID) | (1<<LFAttrComments) | (1<<LFAttrDescription) | (1<<LFAttrCreationTime) | (1<<LFAttrFileTime) | (1<<LFAttrFileFormat) | (1<<LFAttrFileCount) | (1<<LFAttrFileSize),
 		(1<<LFAttrFileName) | (1<<LFAttrComments) | (1<<LFAttrFileFormat),
 		(1<<LFAttrFileName) | (1<<LFAttrComments) | (1<<LFAttrFileFormat) | (1<<LFAttrFileCount) | (1<<LFAttrFileSize),
-		(UINT)~((1<<LFAttrDescription) | (1<<LFAttrDeleteTime) | (1<<LFAttrFileCount) | (1<<LFAttrFlags))
+		(UINT)~((1<<LFAttrDescription) | (1<<LFAttrArchiveTime) | (1<<LFAttrDeleteTime) | (1<<LFAttrFileCount) | (1<<LFAttrFlags))
 	};
 	if (!(AttrMask[Attrs.Level] & (1<<index)))
 		column.state = NSECS_Hidden;
@@ -985,10 +985,6 @@ BOOL CFolderItem::GetColumnValueEx(VARIANT* value, CShellColumn& column)
 			return FALSE;
 		}
 		break;
-	case LFAttrAddTime:
-	case LFAttrArchiveTime:
-	case LFAttrDeleteTime:
-		return FALSE;
 	case LFAttrFileFormat:
 		CUtils::SetVariantCString(value, Attrs.Level==LevelStores ? theApp.m_Store : theApp.m_Folder);
 		break;

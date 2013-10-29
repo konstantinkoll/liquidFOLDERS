@@ -32,6 +32,9 @@ static const BLENDFUNCTION BF = { AC_SRC_OVER, 0, 0xFF, AC_SRC_ALPHA };
 CListView::CListView(UINT DataSize)
 	: CGridView(DataSize)
 {
+	ENSURE(m_Files_Singular.LoadString(IDS_FILES_SINGULAR));
+	ENSURE(m_Files_Plural.LoadString(IDS_FILES_PLURAL));
+
 	m_Icons[0] = m_Icons[1] = NULL;
 	m_HeaderItemClicked = m_HeaderItemSort = -1;
 	m_IgnoreHeaderItemChange = m_ShowLegend = FALSE;
@@ -438,7 +441,7 @@ void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed)
 			Rows[3] = LFAttrRating;
 			break;
 		case LFTypeFolder:
-			Rows[1] = LFAttrDescription;
+			Rows[1] = LFAttrFileCount;
 			Rows[2] = LFAttrFileSize;
 			Rows[3] = -1;
 			break;
@@ -616,13 +619,18 @@ void CListView::DrawTileRows(CDC& dc, CRect& rect, LFItemDescriptor* i, GridItem
 		tmpStr[a][0] = L'\0';
 
 		if (Rows[a]!=-1)
-			if (Rows[a]==LFAttrRating)
+			switch (Rows[a])
 			{
+			case LFAttrRating:
 				Cnt++;
 				Height += 18;
-			}
-			else
-			{
+				break;
+			case LFAttrFileCount:
+				swprintf_s(tmpStr[a], 256, i->AggregateCount==1 ? m_Files_Singular.GetBuffer() : m_Files_Plural.GetBuffer(), i->AggregateCount);
+				Cnt++;
+				Height += m_FontHeight[0];
+				break;
+			default:
 				AttributeToString(i, Rows[a], tmpStr[a], 256);
 				if (tmpStr[a][0]!=L'\0')
 				{

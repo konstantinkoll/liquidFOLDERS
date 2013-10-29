@@ -43,6 +43,8 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
+	CString m_Files_Singular;
+	CString m_Files_Plural;
 	CImageList* m_Icons[2];
 	SIZE m_IconSize[2];
 	INT m_HeaderItemClicked;

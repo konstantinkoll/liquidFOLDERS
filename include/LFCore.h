@@ -426,11 +426,14 @@ LFCore_API void __stdcall LFTransactionImport(char* key, LFFileImportList* il, L
 // als LPARAM mitgeschickt wird (ggf. NULL)
 LFCore_API void __stdcall LFTransactionUpdate(LFTransactionList* tl, HWND hWndSource, LFVariantData* value1, LFVariantData* value2=NULL, LFVariantData* value3=NULL);
 
+// Archiviert alle Dateien in tl
+LFCore_API void __stdcall LFTransactionArchive(LFTransactionList* tl);
+
 // Löscht alle Dateien in tl
 LFCore_API void __stdcall LFTransactionDelete(LFTransactionList* tl, bool PutInTrash=true, LFProgress* pProgress=NULL);
 
 // Stellt alle Dateien in tl wieder her, sofern nicht entgültig gelöscht
-LFCore_API void __stdcall LFTransactionRestore(LFTransactionList* tl);
+LFCore_API void __stdcall LFTransactionRestore(LFTransactionList* tl, unsigned int Flags);
 
 // Physische Orte auflösen
 LFCore_API void __stdcall LFTransactionResolvePhysicalLocations(LFTransactionList* tl, bool IncludePIDL=false);

@@ -20,6 +20,7 @@ public:
 	unsigned int AddItem(LFItemDescriptor* i);
 	bool UpdateSystemFlags(LFItemDescriptor* i, bool Exists, bool RemoveNew);
 	void Update(LFTransactionList* tl, LFVariantData* value1, LFVariantData* value2=NULL, LFVariantData* value3=NULL);
+	void Archive(LFTransactionList* tl);
 	void Delete(LFTransactionList* tl, bool PutInTrash=true, LFProgress* pProgress=NULL);
 	void Delete(LFFileIDList* il, bool PutInTrash=true, LFProgress* pProgress=NULL);
 	void ResolvePhysicalLocations(LFTransactionList* tl);

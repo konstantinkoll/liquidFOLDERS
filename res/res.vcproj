@@ -144,6 +144,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Ribbon\Archive_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\Archive_32.png"
+				>
+			</File>
+			<File
 				RelativePath="Ribbon\Ascending_16.png"
 				>
 			</File>
@@ -360,14 +368,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Ribbon\LFAttrArchiveTime_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\LFAttrArchiveTime_32.png"
-				>
-			</File>
-			<File
 				RelativePath=".\Ribbon\LFAttrArtist_16.png"
 				>
 			</File>
@@ -413,14 +413,6 @@
 			</File>
 			<File
 				RelativePath=".\Ribbon\LFAttrCustomer_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\LFAttrDeleteTime_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\LFAttrDeleteTime_32.png"
 				>
 			</File>
 			<File
@@ -776,11 +768,11 @@
 				>
 			</File>
 			<File
-				RelativePath="Ribbon\TrashEmpty_16.png"
+				RelativePath=".\Ribbon\Trash_16.png"
 				>
 			</File>
 			<File
-				RelativePath="Ribbon\TrashEmpty_32.png"
+				RelativePath=".\Ribbon\Trash_32.png"
 				>
 			</File>
 			<File

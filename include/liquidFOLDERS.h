@@ -167,18 +167,19 @@ struct LFItemCategoryDescriptor
 #define LFContextMessages               7	// All views
 #define LFContextEvents                 8	// All views
 #define LFContextNew                    9	// Only limited views
-#define LFContextTrash                 10	// Only limited views
-#define LFContextFilters               11	// Only limites views
-#define LFContextSearch                12	// All views
-#define LFContextStores                13	// Only limited views, no preview
-#define LFContextClipboard             14	// Only limited views
-#define LFContextSubfolderDefault      15	// Only limited views
-#define LFContextSubfolderDay          16	// Only limited views
-#define LFContextSubfolderLocation     17	// Only limited views
+#define LFContextArchive               10	// Only limited views
+#define LFContextTrash                 11	// Only limited views
+#define LFContextFilters               12	// Only limites views
+#define LFContextSearch                13	// All views
+#define LFContextStores                14	// Only limited views, no preview
+#define LFContextClipboard             15	// Only limited views
+#define LFContextSubfolderDefault      16	// Only limited views
+#define LFContextSubfolderDay          17	// Only limited views
+#define LFContextSubfolderLocation     18	// Only limited views
 
 #define LFLastGroupContext              8
-#define LFLastQueryContext             11
-#define LFContextCount                 18
+#define LFLastQueryContext             12
+#define LFContextCount                 19
 
 
 // Context descriptor
@@ -489,6 +490,7 @@ struct LFCoreAttributes
 #define LFFlagNew                       0x0002
 #define LFFlagLink                      0x0004
 #define LFFlagMissing                   0x0008
+#define LFFlagArchive                   0x0010
 
 struct LFItemDescriptor
 {

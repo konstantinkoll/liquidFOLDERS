@@ -547,6 +547,9 @@ int PassesFilterCore(LFCoreAttributes* ca, LFFilter* f)
 	assert(f);
 
 	// Contexts
+	if (f->ContextID!=LFContextArchive)
+		if (ca->Flags & LFFlagArchive)
+			return -1;
 	if (f->ContextID!=LFContextTrash)
 		if (ca->Flags & LFFlagTrash)
 			return -1;
@@ -560,6 +563,10 @@ int PassesFilterCore(LFCoreAttributes* ca, LFFilter* f)
 			break;
 		case LFContextNew:
 			if (!(ca->Flags & LFFlagNew))
+				return -1;
+			break;
+		case LFContextArchive:
+			if (!(ca->Flags & LFFlagArchive))
 				return -1;
 			break;
 		case LFContextTrash:
@@ -716,14 +723,17 @@ __forceinline void QuerySearch(LFFilter* f, LFSearchResult* sr)
 		unsigned int count = FindStores(&IDs);
 		ReleaseMutex(Mutex_Stores);
 
-		char* ptr = IDs;
-		for (unsigned int a=0; a<count; a++)
+		if (count)
 		{
-			RetrieveStore(ptr, f, sr);
-			ptr += LFKeySize;
-		}
+			char* ptr = IDs;
+			for (unsigned int a=0; a<count; a++)
+			{
+				RetrieveStore(ptr, f, sr);
+				ptr += LFKeySize;
+			}
 
-		free(IDs);
+			free(IDs);
+		}
 	}
 	else
 	{
@@ -832,28 +842,31 @@ LFCore_API LFStatistics* LFQueryStatistics(char* StoreID)
 	unsigned int count = FindStores(&IDs);
 	ReleaseMutex(Mutex_Stores);
 
-	char* ptr = IDs;
-	for (unsigned int a=0; a<count; a++)
+	if (count)
 	{
-		if ((*StoreID=='\0') || (strcmp(ptr, StoreID)==0))
+		char* ptr = IDs;
+		for (unsigned int a=0; a<count; a++)
 		{
-			HANDLE StoreLock = NULL;
-			LFStoreDescriptor* slot = FindStore(ptr, &StoreLock);
+			if ((*StoreID=='\0') || (strcmp(ptr, StoreID)==0))
+			{
+				HANDLE StoreLock = NULL;
+				LFStoreDescriptor* slot = FindStore(ptr, &StoreLock);
 
-			if (slot)
-				for (unsigned int b=0; b<min(LFLastQueryContext, 32); b++)
-				{
-					stat->FileCount[b] += slot->FileCount[b];
-					stat->FileSize[b] += slot->FileSize[b];
-				}
+				if (slot)
+					for (unsigned int b=0; b<min(LFLastQueryContext, 32); b++)
+					{
+						stat->FileCount[b] += slot->FileCount[b];
+						stat->FileSize[b] += slot->FileSize[b];
+					}
 
-			ReleaseMutexForStore(StoreLock);
+				ReleaseMutexForStore(StoreLock);
+			}
+
+			ptr += LFKeySize;
 		}
 
-		ptr += LFKeySize;
+		free(IDs);
 	}
-
-	free(IDs);
 
 	return stat;
 }

@@ -720,7 +720,7 @@ LFCore_API void LFSetAttributeVariantData(LFItemDescriptor* i, LFVariantData* v)
 	// Special treatment for flags
 	if (v->Attr==LFAttrFlags)
 	{
-		v->Flags.Mask &= LFFlagTrash;
+		v->Flags.Mask &= LFFlagArchive | LFFlagTrash;
 		v->Flags.Flags &= v->Flags.Mask;
 
 		if (i->AttributeValues[v->Attr])

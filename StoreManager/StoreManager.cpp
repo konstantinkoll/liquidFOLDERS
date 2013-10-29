@@ -354,12 +354,11 @@ void CStoreManagerApp::LoadViewOptions(UINT context)
 	base.Format(_T("Settings\\Context%u"), context);
 	SetRegistryBase(base);
 
-	UINT DefaultMode = LFViewDetails;
+	UINT DefaultMode = LFViewTiles;
 	UINT DefaultSortBy = LFAttrFileName;
 	switch (context)
 	{
 	case LFContextFavorites:
-		DefaultMode = LFViewTiles;
 		DefaultSortBy = LFAttrRating;
 		break;
 	case LFContextPictures:
@@ -368,17 +367,18 @@ void CStoreManagerApp::LoadViewOptions(UINT context)
 		DefaultSortBy = LFAttrCreationTime;
 		break;
 	case LFContextAudio:
+		DefaultMode = LFViewLargeIcons;
 		DefaultSortBy = LFAttrArtist;
-	case LFContextContacts:
-	case LFContextFilters:
-		DefaultMode = LFViewTiles;
 		break;
 	case LFContextNew:
-		DefaultMode = LFViewTiles;
 		DefaultSortBy = LFAttrAddTime;
 		break;
+	case LFContextArchive:
+		DefaultSortBy = LFAttrArchiveTime;
+	case LFContextSubfolderDay:
+		DefaultMode = LFViewDetails;
+		break;
 	case LFContextTrash:
-		DefaultMode = LFViewTiles;
 		DefaultSortBy = LFAttrDeleteTime;
 		break;
 	case LFContextSearch:
@@ -416,8 +416,10 @@ void CStoreManagerApp::LoadViewOptions(UINT context)
 	m_Views[context].TagcloudUseColors = GetInt(_T("TagcloudUseColors"), TRUE);
 	m_Views[context].TagcloudUseOpacity = GetInt(_T("TagcloudUseOpacity"), FALSE);
 
-	if ((m_Views[context].Mode>=LFViewCount) || (!theApp.m_AllowedViews[context]->IsSet(m_Views[context].Mode)))
-			m_Views[context].Mode = DefaultMode;
+	if ((m_Views[context].Mode>=LFViewCount) || (!m_AllowedViews[context]->IsSet(m_Views[context].Mode)))
+		m_Views[context].Mode = DefaultMode;
+	if (!m_Contexts[context]->AllowedAttributes->IsSet(m_Views[context].SortBy))
+		m_Views[context].SortBy = DefaultSortBy;
 
 	for (UINT a=0; a<LFAttributeCount; a++)
 	{

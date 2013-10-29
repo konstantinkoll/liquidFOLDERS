@@ -130,7 +130,12 @@ LFCore_API bool LFHideFileExt()
 
 LFCore_API bool LFHideDrivesWithNoMedia()
 {
-	DWORD HideDrivesWithNoMedia = 0;
+	OSVERSIONINFO osInfo;
+	ZeroMemory(&osInfo, sizeof(OSVERSIONINFO));
+	osInfo.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
+	GetVersionEx(&osInfo);
+
+	DWORD HideDrivesWithNoMedia = (osInfo.dwMajorVersion<6) ? 0 : 1;
 
 	HKEY k;
 	if (RegOpenKeyA(HKEY_CURRENT_USER, "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced", &k)==ERROR_SUCCESS)
@@ -477,11 +482,14 @@ LFCore_API LFContextDescriptor* LFGetContextInfo(unsigned int ID)
 		(*c->AllowedAttributes) += LFAttrAddTime;
 		(*c->AllowedAttributes) += LFAttrFileSize;
 		break;
-	case LFContextTrash:
-		(*c->AllowedAttributes) += LFAttrDeleteTime;
 	default:
+		if (ID==LFContextArchive)
+			(*c->AllowedAttributes) += LFAttrArchiveTime;
+		if (ID==LFContextTrash)
+			(*c->AllowedAttributes) += LFAttrDeleteTime;
+
 		for (unsigned int a=0; a<LFAttributeCount; a++)
-			if ((a!=LFAttrDescription) && (a!=LFAttrDeleteTime) && (ID<LFContextSubfolderDefault))
+			if ((((a!=LFAttrDescription) && (a!=LFAttrFileCount)) || (ID<LFContextSubfolderDefault)) && (a!=LFAttrArchiveTime) && (a!=LFAttrDeleteTime))
 				(*c->AllowedAttributes) += a;
 	}
 

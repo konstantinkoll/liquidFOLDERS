@@ -16,7 +16,7 @@
 // Siehe StoreManager.cpp für die Implementierung dieser Klasse
 //
 
-#define ViewParametersVersion     1
+#define ViewParametersVersion     2
 
 class CStoreManagerApp : public LFApplication
 {
