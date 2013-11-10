@@ -19,6 +19,7 @@ LFAboutDlg::LFAboutDlg(CString AppName, CString Build, UINT IconResID, CWnd* pPa
 {
 	m_AppName = AppName;
 	m_Build = Build;
+	m_CaptionTop = 0;
 	ENSURE(m_Icon.Load(IconResID, _T("PNG"), AfxGetResourceHandle()));
 
 	GetFileVersion(AfxGetInstanceHandle(), &m_Version, &m_Copyright);
@@ -113,20 +114,32 @@ BOOL LFAboutDlg::OnInitDialog()
 
 	m_wndVersionInfo.GetWindowText(caption);
 	text.Format(caption, m_Version+ISET, m_Build, m_Copyright);
-	m_wndVersionInfo.SetWindowTextW(text);
+	m_wndVersionInfo.SetWindowText(text);
 
-	CFont font;
-	font.CreateFont(20, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET,
+	m_CaptionFont.CreateFont(48, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET,
+		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, ANTIALIASED_QUALITY,
+		DEFAULT_PITCH | FF_DONTCARE, p_App->GetDefaultFontFace());
+
+	m_VersionFont.CreateFont(20, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET,
 		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY,
-		DEFAULT_PITCH | FF_DONTCARE, LFGetApp()->GetDefaultFontFace());
-	m_wndVersionInfo.SetFont(&font);
-	font.Detach();
+		DEFAULT_PITCH | FF_DONTCARE, p_App->GetDefaultFontFace());
+	m_wndVersionInfo.SetFont(&m_VersionFont);
+
+	CDC* dc = GetDC();
+	CFont* pOldFont = dc->SelectObject(&m_CaptionFont);
+	INT HeightCaption = dc->GetTextExtent(_T("Wy")).cy+8;
+	dc->SelectObject(&m_VersionFont);
+	INT HeightVersion = dc->GetTextExtent(_T("Wy")).cy*3;
+	dc->SelectObject(pOldFont);
+	ReleaseDC(dc);
+
+	m_CaptionTop = (128+(p_App->OSVersion==OS_XP ? 24 : 16)-HeightCaption-HeightVersion)/2;
 
 	CRect rectWnd;
 	m_wndVersionInfo.GetWindowRect(&rectWnd);
 	ScreenToClient(&rectWnd);
 	rectWnd.left = 148;
-	rectWnd.top = 75;
+	rectWnd.top = m_CaptionTop+HeightCaption;
 	m_wndVersionInfo.SetWindowPos(NULL, rectWnd.left, rectWnd.top, rectWnd.Width(), rectWnd.Height(), SWP_NOACTIVATE | SWP_NOZORDER);
 
 	// Lizenz
@@ -165,14 +178,10 @@ void LFAboutDlg::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 	g.DrawImage(m_Icon.m_pBitmap, 9, 14, m_Icon.m_pBitmap->GetWidth(), m_Icon.m_pBitmap->GetHeight());
 
 	CRect r(rect);
-	r.top = 23;
+	r.top = m_CaptionTop;
 	r.left = 148;
 
-	CFont font;
-	font.CreateFont(48, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET,
-		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, ANTIALIASED_QUALITY,
-		DEFAULT_PITCH | FF_DONTCARE, LFGetApp()->GetDefaultFontFace());
-	CFont* pOldFont = dc.SelectObject(&font);
+	CFont* pOldFont = dc.SelectObject(&m_CaptionFont);
 
 	const UINT fmt = DT_SINGLELINE | DT_LEFT | DT_NOPREFIX | DT_END_ELLIPSIS;
 	dc.SetTextColor(0x000000);
