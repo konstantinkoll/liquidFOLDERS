@@ -1201,11 +1201,11 @@
 			>
 		</File>
 		<File
-			RelativePath=".\Inspector_Black.png"
+			RelativePath="Inspector_Black.png"
 			>
 		</File>
 		<File
-			RelativePath=".\Inspector_Glas.png"
+			RelativePath="Inspector_Grey.png"
 			>
 		</File>
 		<File
