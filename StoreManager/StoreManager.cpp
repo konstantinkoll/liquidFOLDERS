@@ -103,7 +103,7 @@ BOOL CStoreManagerApp::InitInstance()
 
 	// Registry auslesen
 	SetRegistryBase(_T("Settings"));
-	m_ShowInspectorPane = GetInt(_T("ShowInspectorPane"), FALSE);
+	m_ShowInspectorPane = GetInt(_T("ShowInspectorPane"), TRUE);
 	m_InspectorWidth = GetInt(_T("InspectorWidth"), 200);
 	if (m_InspectorWidth<32)
 		m_InspectorWidth = 32;
