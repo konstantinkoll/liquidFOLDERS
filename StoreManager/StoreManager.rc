@@ -196,6 +196,8 @@ BEGIN
         MENUITEM "&Verknüpfung erstellen",      IDM_FILE_SHORTCUT
         MENUITEM "&Löschen",                    IDM_FILE_DELETE
         MENUITEM "&Umbenennen",                 IDM_FILE_RENAME
+        MENUITEM SEPARATOR
+        MENUITEM "&Eigenschaften",              IDM_FILE_PROPERTIES
     END
 END
 
@@ -294,6 +296,8 @@ BEGIN
         MENUITEM SEPARATOR
         MENUITEM "&Verknüpfung erstellen",      IDM_FILE_SHORTCUT
         MENUITEM "&Löschen",                    IDM_FILE_DELETE
+        MENUITEM SEPARATOR
+        MENUITEM "&Eigenschaften",              IDM_FILE_PROPERTIES
     END
 END
 
@@ -779,6 +783,8 @@ BEGIN
         MENUITEM "Crear &acceso directo",       IDM_FILE_SHORTCUT
         MENUITEM "&Eliminar",                   IDM_FILE_DELETE
         MENUITEM "&Renombrar",                  IDM_FILE_RENAME
+        MENUITEM SEPARATOR
+        MENUITEM "&Propiedades",                IDM_FILE_PROPERTIES
     END
 END
 
@@ -877,6 +883,8 @@ BEGIN
         MENUITEM SEPARATOR
         MENUITEM "Crear &acceso directo",       IDM_FILE_SHORTCUT
         MENUITEM "&Eliminar",                   IDM_FILE_DELETE
+        MENUITEM SEPARATOR
+        MENUITEM "&Propiedades",                IDM_FILE_PROPERTIES
     END
 END
 
@@ -1362,6 +1370,8 @@ BEGIN
         MENUITEM "Créer r&accourci",            IDM_FILE_SHORTCUT
         MENUITEM "&Effacer",                    IDM_FILE_DELETE
         MENUITEM "&Renommer",                   IDM_FILE_RENAME
+        MENUITEM SEPARATOR
+        MENUITEM "&Propriétés",                 IDM_FILE_PROPERTIES
     END
 END
 
@@ -1460,6 +1470,8 @@ BEGIN
         MENUITEM SEPARATOR
         MENUITEM "Créer r&accourci",            IDM_FILE_SHORTCUT
         MENUITEM "&Effacer",                    IDM_FILE_DELETE
+        MENUITEM SEPARATOR
+        MENUITEM "&Propriétés",                 IDM_FILE_PROPERTIES
     END
 END
 
@@ -1996,6 +2008,8 @@ BEGIN
         MENUITEM "Create &shortcut",            IDM_FILE_SHORTCUT
         MENUITEM "&Delete",                     IDM_FILE_DELETE
         MENUITEM "&Rename",                     IDM_FILE_RENAME
+        MENUITEM SEPARATOR
+        MENUITEM "&Properties",                 IDM_FILE_PROPERTIES
     END
 END
 
@@ -2095,6 +2109,8 @@ BEGIN
         MENUITEM SEPARATOR
         MENUITEM "Create &shortcut",            IDM_FILE_SHORTCUT
         MENUITEM "&Delete",                     IDM_FILE_DELETE
+        MENUITEM SEPARATOR
+        MENUITEM "&Properties",                 IDM_FILE_PROPERTIES
     END
 END
 

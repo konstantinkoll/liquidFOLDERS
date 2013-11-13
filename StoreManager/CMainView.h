@@ -130,6 +130,7 @@ protected:
 	afx_msg void OnFileShortcut();
 	afx_msg void OnFileDelete();
 	afx_msg void OnFileRename();
+	afx_msg void OnFileProperties();
 	afx_msg void OnFileRestore();
 	afx_msg void OnUpdateFileCommands(CCmdUI* pCmdUI);
 	DECLARE_MESSAGE_MAP()

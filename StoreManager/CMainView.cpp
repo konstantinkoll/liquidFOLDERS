@@ -751,6 +751,7 @@ BEGIN_MESSAGE_MAP(CMainView, CWnd)
 	ON_COMMAND(IDM_FILE_SHORTCUT, OnFileShortcut)
 	ON_COMMAND(IDM_FILE_DELETE, OnFileDelete)
 	ON_COMMAND(IDM_FILE_RENAME, OnFileRename)
+	ON_COMMAND(IDM_FILE_PROPERTIES, OnFileProperties)
 	ON_COMMAND(IDM_FILE_RESTORE, OnFileRestore)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_FILE_OPENWITH, IDM_FILE_RESTORE, OnUpdateFileCommands)
 END_MESSAGE_MAP()
@@ -1827,6 +1828,20 @@ void CMainView::OnFileRename()
 		p_wndFileView->EditLabel(idx);
 }
 
+void CMainView::OnFileProperties()
+{
+	if (!m_ShowInspectorPane)
+	{
+		ASSERT(p_InspectorButton);
+
+		m_ShowInspectorPane = TRUE;
+		p_InspectorButton->SetIconID(InspectorIconVisible);
+		AdjustLayout();
+	}
+
+	m_wndInspector.SetFocus();
+}
+
 void CMainView::OnFileRestore()
 {
 	RestoreFiles((m_Context==LFContextArchive) ? LFFlagArchive : (m_Context==LFContextTrash) ? LFFlagTrash : 0);
@@ -1868,6 +1883,9 @@ void CMainView::OnUpdateFileCommands(CCmdUI* pCmdUI)
 			b = ((item->Type & (LFTypeNotMounted | LFTypeMask))==LFTypeFile);
 		if (p_wndFileView)
 			b &= !p_wndFileView->IsEditing();
+		break;
+	case IDM_FILE_PROPERTIES:
+		b = m_FilesSelected && !m_ShowInspectorPane;
 		break;
 	case IDM_FILE_RESTORE:
 		b = m_FilesSelected && ((m_Context==LFContextArchive) || (m_Context==LFContextTrash));
