@@ -1963,7 +1963,7 @@ IDM_NEW MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
-        MENUITEM "&Remove ""New"" attribute",   IDM_NEW_REMOVENEW
+        MENUITEM "&Remove ""New"" flag",        IDM_NEW_REMOVENEW
     END
 END
 
@@ -2441,7 +2441,7 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDM_NEW_REMOVENEW       "Removes the designation as recently imported file from all files.\nRemove ""New"" attribute"
+    IDM_NEW_REMOVENEW       "Removes the designation as recently imported file from all files.\nRemove ""New"" flag"
 END
 
 STRINGTABLE 
