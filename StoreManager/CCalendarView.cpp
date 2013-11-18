@@ -86,6 +86,8 @@ void CCalendarView::SetYear(UINT Year)
 				m_FocusItem = a;
 				break;
 			}
+
+	AdjustLayout();
 }
 
 void CCalendarView::AdjustLayout()
