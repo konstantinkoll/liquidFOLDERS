@@ -268,10 +268,10 @@ void CGridView::HandleHorizontalKeys(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags
 		GetClientRect(&rect);
 
 		INT item = m_FocusItem;
-		INT col = GetItemData(item)->Column;
-		INT row = GetItemData(item)->Row;
-		INT top = GetItemData(item)->Hdr.Rect.top;
-		INT bottom = GetItemData(item)->Hdr.Rect.bottom;
+		INT col = (item==-1) ? 0 : GetItemData(item)->Column;
+		INT row = (item==-1) ? 0 : GetItemData(item)->Row;
+		INT top = (item==-1) ? 0 : GetItemData(item)->Hdr.Rect.top;
+		INT bottom = (item==-1) ? 0 : GetItemData(item)->Hdr.Rect.bottom;
 		INT tmprow = -1;
 
 		switch (nChar)

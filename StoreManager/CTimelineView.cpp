@@ -738,10 +738,10 @@ void CTimelineView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 		GetClientRect(&rect);
 
 		INT item = m_FocusItem;
-		INT left = GetItemData(item)->Hdr.Rect.left;
-		INT right = GetItemData(item)->Hdr.Rect.right;
-		INT top = GetItemData(item)->Hdr.Rect.top;
-		INT bottom = GetItemData(item)->Hdr.Rect.bottom;
+		INT left = (item==-1) ? 0 : GetItemData(item)->Hdr.Rect.left;
+		INT right = (item==-1) ? 0 : GetItemData(item)->Hdr.Rect.right;
+		INT top = (item==-1) ? 0 : GetItemData(item)->Hdr.Rect.top;
+		INT bottom = (item==-1) ? 0 : GetItemData(item)->Hdr.Rect.bottom;
 
 		switch (nChar)
 		{
