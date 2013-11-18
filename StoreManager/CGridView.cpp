@@ -437,10 +437,10 @@ void CGridView::HandleVerticalKeys(UINT nChar, UINT /*nRepCnt*/, UINT /*nFlags*/
 		GetClientRect(&rect);
 
 		INT item = m_FocusItem;
-		INT col = GetItemData(item)->Column;
-		INT row = GetItemData(item)->Row;
-		INT left = GetItemData(item)->Hdr.Rect.left;
-		INT right = GetItemData(item)->Hdr.Rect.right;
+		INT col = (item==-1) ? 0 : GetItemData(item)->Column;
+		INT row = (item==-1) ? 0 : GetItemData(item)->Row;
+		INT left = (item==-1) ? 0 : GetItemData(item)->Hdr.Rect.left;
+		INT right = (item==-1) ? 0 : GetItemData(item)->Hdr.Rect.right;
 		INT tmpcol = -1;
 
 		switch (nChar)
