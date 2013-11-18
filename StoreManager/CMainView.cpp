@@ -1871,7 +1871,7 @@ void CMainView::OnUpdateFileCommands(CCmdUI* pCmdUI)
 		b = m_FilesSelected && (m_Context==LFContextClipboard);
 		break;
 	case IDM_FILE_ARCHIVE:
-		b = m_FilesSelected && (m_Context!=LFContextArchive);
+		b = m_FilesSelected && (m_Context!=LFContextArchive) && (m_Context!=LFContextTrash);
 		break;
 	case IDM_FILE_COPY:
 	case IDM_FILE_SHORTCUT:

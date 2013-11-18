@@ -13,14 +13,14 @@
 //
 
 #define COUNT_FILE(Ops) \
-	if (PtrM->Flags & LFFlagArchive) \
+	if (PtrM->Flags & LFFlagTrash) \
 	{ \
-		Ops(LFContextArchive); \
+		Ops(LFContextTrash); \
 	} \
 	else \
-		if (PtrM->Flags & LFFlagTrash) \
+		if (PtrM->Flags & LFFlagArchive) \
 		{ \
-			Ops(LFContextTrash); \
+			Ops(LFContextArchive); \
 		} \
 		else \
 		{ \

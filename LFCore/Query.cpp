@@ -547,12 +547,17 @@ int PassesFilterCore(LFCoreAttributes* ca, LFFilter* f)
 	assert(f);
 
 	// Contexts
-	if (f->ContextID!=LFContextArchive)
+	if (ca->Flags & LFFlagTrash)
+	{
+		if (f->ContextID!=LFContextTrash)
+			return -1;
+	}
+	else
 		if (ca->Flags & LFFlagArchive)
-			return -1;
-	if (f->ContextID!=LFContextTrash)
-		if (ca->Flags & LFFlagTrash)
-			return -1;
+		{
+			if (f->ContextID!=LFContextArchive)
+				return -1;
+		}
 
 	if ((f->ContextID) || (ca->ContextID==LFContextFilters))
 		switch (f->ContextID)
