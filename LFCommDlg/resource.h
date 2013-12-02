@@ -41,6 +41,7 @@
 #define IDB_SORTINDICATORS              20131
 #define IDB_STOREBACKUP                 20132
 #define IDB_SIDEBARSHADOW               20133
+#define IDB_SANTA                       20134
 #define IDI_DEFAULT                     20200
 #define IDI_RESET_NORMAL                20201
 #define IDI_RESET_HOT                   20202

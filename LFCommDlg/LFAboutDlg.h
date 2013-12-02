@@ -33,6 +33,8 @@ protected:
 private:
 	void CheckInternetConnection();
 
+	CGdiPlusBitmapResource m_Logo;
+	CGdiPlusBitmapResource* m_pSanta;
 	CFont m_CaptionFont;
 	CFont m_VersionFont;
 	INT m_CaptionTop;
@@ -40,6 +42,5 @@ private:
 	CString m_Copyright;
 	CString m_AppName;
 	CString m_Build;
-	CGdiPlusBitmapResource m_Icon;
 	CWnd m_wndVersionInfo;
 };

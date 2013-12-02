@@ -396,7 +396,7 @@ LFCommDlg_API CString GetLatestVersion(CString& CurrentVersion)
 #ifdef _M_X64
 #define ISET _T(" (x64")
 #else
-#define ISET _T(" (x32")
+#define ISET _T(" (x86")
 #endif
 
 	CurrentVersion += ISET;

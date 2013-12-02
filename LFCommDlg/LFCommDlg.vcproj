@@ -1139,6 +1139,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\Santa.png"
+				>
+			</File>
+			<File
 				RelativePath=".\res\Search.ico"
 				>
 			</File>
