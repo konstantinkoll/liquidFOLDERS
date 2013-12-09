@@ -554,6 +554,7 @@ END
 STRINGTABLE 
 BEGIN
     IDS_CONTEXTMENU_OPENGOOGLEEARTH "Öffnen mit &Google Earth"
+    IDS_CONTEXTMENU_OPENBROWSER "Im Standard&browser öffnen"
     IDS_CONTEXTMENU_OPENNEWWINDOW "In neuem &Fenster öffnen"
     IDS_CONTEXTMENU_EDIT    "&Bearbeiten..."
     IDS_CONTEXTMENU_REMEMBER "Mer&ken"
@@ -1142,6 +1143,7 @@ END
 STRINGTABLE 
 BEGIN
     IDS_CONTEXTMENU_OPENGOOGLEEARTH "Abrir con &Google Earth"
+    IDS_CONTEXTMENU_OPENBROWSER "Abrir con &browser"
     IDS_CONTEXTMENU_OPENNEWWINDOW "Abrir en &nueva ventana"
     IDS_CONTEXTMENU_EDIT    "E&ditar..."
     IDS_CONTEXTMENU_REMEMBER "Re&cordar"
@@ -1730,6 +1732,7 @@ END
 STRINGTABLE 
 BEGIN
     IDS_CONTEXTMENU_OPENGOOGLEEARTH "Ouvrir avec &Google Earth"
+    IDS_CONTEXTMENU_OPENBROWSER "Ouvrir avec &navigateur défaut"
     IDS_CONTEXTMENU_OPENNEWWINDOW "Ouvrir dans une nouvelle &fenêtre"
     IDS_CONTEXTMENU_EDIT    "&Modifier..."
     IDS_CONTEXTMENU_REMEMBER "Remar&quer"
@@ -2367,6 +2370,7 @@ END
 STRINGTABLE 
 BEGIN
     IDS_CONTEXTMENU_OPENGOOGLEEARTH "Open in &Google Earth"
+    IDS_CONTEXTMENU_OPENBROWSER "Open in &browser window"
     IDS_CONTEXTMENU_OPENNEWWINDOW "Open in &new window"
     IDS_CONTEXTMENU_EDIT    "&Edit..."
     IDS_CONTEXTMENU_REMEMBER "Re&member"

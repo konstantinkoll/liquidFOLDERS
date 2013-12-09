@@ -743,6 +743,7 @@ BEGIN_MESSAGE_MAP(CMainView, CWnd)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_STORE_MAKEDEFAULT, IDM_STORE_PROPERTIES, OnUpdateStoreCommands)
 
 	ON_COMMAND(IDM_FILE_OPENWITH, OnFileOpenWith)
+	ON_COMMAND(IDM_FILE_OPENBROWSER, OnFileOpenBrowser)
 	ON_COMMAND(IDM_FILE_EDIT, OnFileEdit)
 	ON_COMMAND(IDM_FILE_REMEMBER, OnFileRemember)
 	ON_COMMAND(IDM_FILE_REMOVE, OnFileRemove)
@@ -1713,6 +1714,13 @@ void CMainView::OnFileOpenWith()
 	}
 }
 
+void CMainView::OnFileOpenBrowser()
+{
+	INT idx = GetSelectedItem();
+	if (idx!=-1)
+		ShellExecuteA(GetSafeHwnd(), "open", p_CookedFiles->m_Items[idx]->CoreAttributes.URL, NULL, NULL, SW_SHOW);
+}
+
 void CMainView::OnFileEdit()
 {
 	INT idx = GetSelectedItem();
@@ -1859,6 +1867,10 @@ void CMainView::OnUpdateFileCommands(CCmdUI* pCmdUI)
 	case IDM_FILE_OPENWITH:
 		if (item)
 			b = ((item->Type & (LFTypeNotMounted | LFTypeMask))==LFTypeFile) && (item->CoreAttributes.ContextID!=LFContextFilters);
+		break;
+	case IDM_FILE_OPENBROWSER:
+		if (item)
+			b = ((item->Type & LFTypeMask)==LFTypeFile) && (item->CoreAttributes.URL[0]!='\0');
 		break;
 	case IDM_FILE_EDIT:
 		if (item)

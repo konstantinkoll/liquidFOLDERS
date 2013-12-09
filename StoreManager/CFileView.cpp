@@ -754,6 +754,11 @@ CMenu* CFileView::GetItemContextMenu(INT idx)
 			pPopup->InsertMenu(0, MF_STRING | MF_BYPOSITION, IDM_ITEM_OPENNEWWINDOW, tmpStr);
 			break;
 		case LFTypeFile:
+			if (item->CoreAttributes.URL[0]!='\0')
+			{
+				ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_OPENBROWSER));
+				pPopup->InsertMenu(0, MF_STRING | MF_BYPOSITION, IDM_FILE_OPENBROWSER, tmpStr);
+			}
 			if (item->CoreAttributes.ContextID==LFContextFilters)
 			{
 				ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_EDIT));
