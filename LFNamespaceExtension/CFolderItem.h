@@ -29,6 +29,7 @@ BOOL RunPath(HWND hWnd, CString path, CString parameter=_T(""));
 #define VERB_OPENSTOREMANAGER   "openstoremanager"
 #define VERB_OPENNEWWINDOW      "opennewwindow"
 #define VERB_OPENWITH           "openwith"
+#define VERB_OPENBROWSER        "browse"
 #define VERB_RENAME             "rename"
 #define VERB_DELETE             "delete"
 #define VERB_PROPERTIES         "properties"
@@ -55,7 +56,6 @@ struct FolderSerialization
 	FILETIME FileTime;
 	UCHAR Compare;
 	LFVariantData Value;
-
 };
 
 class CFolderItem : public CNSEFolder

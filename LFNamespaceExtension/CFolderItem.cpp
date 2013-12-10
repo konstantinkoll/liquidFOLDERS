@@ -535,6 +535,15 @@ void CFolderItem::GetMenuItems(CGetMenuitemsEventArgs& e)
 	if (e.children->GetCount()==1)
 		if (Attrs.Level==LevelAttrValue)
 		{
+			CNSEItem* temp = (CNSEItem*)e.children->GetHead();
+			if (IS(temp, CFileItem))
+			{
+				CFileItem* file = AS(temp, CFileItem);
+
+				if (file->Item->CoreAttributes.URL[0]!='\0')
+					InsertItem(e.menu, IDS_MENU_OpenBrowser, _T(VERB_OPENBROWSER));
+			}
+
 			InsertItem(e.menu, IDS_MENU_OpenWith, _T(VERB_OPENWITH));
 			InsertItem(e.menu, IDS_MENU_Open, _T(VERB_OPEN))->SetDefaultItem((e.flags & NSEQCF_NoDefault)==0);
 		}
@@ -614,7 +623,7 @@ void CFolderItem::GetMenuItems(CGetMenuitemsEventArgs& e)
 			AddItem(e.menu, IDS_MENU_CreateShortcut, _T(VERB_CREATESHORTCUT));
 			AddItem(e.menu, IDS_MENU_Delete, _T(VERB_DELETE));
 			if ((e.children->GetCount()==1) && (e.flags & NSEQCF_CanRename))
-					AddItem(e.menu, IDS_MENU_Rename, _T(VERB_RENAME));
+				AddItem(e.menu, IDS_MENU_Rename, _T(VERB_RENAME));
 		}
 		break;
 	}
@@ -644,6 +653,18 @@ BOOL CFolderItem::OnExecuteMenuItem(CExecuteMenuitemsEventArgs& e)
 
 	if (e.menuItem->GetVerb()==_T(VERB_OPENWITH))
 		return OnOpenWith(e);
+
+	if (e.menuItem->GetVerb()==_T(VERB_OPENBROWSER))
+	{
+		POSITION pos = e.children->GetHeadPosition();
+		CNSEItem* temp = (CNSEItem*)e.children->GetNext(pos);
+		if (IS(temp, CFileItem))
+		{
+			CFileItem* file = AS(temp, CFileItem);
+
+			ShellExecuteA(e.hWnd, "open", file->Item->CoreAttributes.URL, NULL, NULL, SW_SHOW);
+		}
+	}
 
 	if (e.menuItem->GetVerb()==_T(VERB_MAKEDEFAULTSTORE))
 	{
@@ -807,7 +828,7 @@ CCategorizer* CFolderItem::GetCategorizer(CShellColumn& column)
 BOOL CFolderItem::GetColumn(CShellColumn& column, INT index)
 {
 	// Determine last column for level
-	INT LastColumn = (Attrs.Level==LevelStores) ? LFAttrFileFormat : LFAttrFileSize;
+	INT LastColumn = (Attrs.Level==LevelStores) ? LFAttrFileFormat : LFAttrTags;
 	if (index>LastColumn)
 		return FALSE;
 
