@@ -356,10 +356,12 @@ void CStoreManagerApp::LoadViewOptions(UINT context)
 
 	UINT DefaultMode = LFViewTiles;
 	UINT DefaultSortBy = LFAttrFileName;
+	BOOL DefaultDescending = FALSE;
 	switch (context)
 	{
 	case LFContextFavorites:
 		DefaultSortBy = LFAttrRating;
+		DefaultDescending = TRUE;
 		break;
 	case LFContextPictures:
 	case LFContextVideos:
@@ -380,6 +382,7 @@ void CStoreManagerApp::LoadViewOptions(UINT context)
 		break;
 	case LFContextTrash:
 		DefaultSortBy = LFAttrDeleteTime;
+		DefaultDescending = TRUE;
 		break;
 	case LFContextSearch:
 	case LFContextClipboard:
@@ -394,15 +397,17 @@ void CStoreManagerApp::LoadViewOptions(UINT context)
 	{
 		m_Views[context].Mode = GetInt(_T("Mode"), DefaultMode);
 		m_Views[context].SortBy = GetInt(_T("SortBy"), DefaultSortBy);
+		m_Views[context].Descending = GetInt(_T("Descending"), DefaultDescending);
+		m_Views[context].AutoDirs = GetInt(_T("AutoDirs"), TRUE);
 	}
 	else
 	{
 		m_Views[context].Mode = DefaultMode;
 		m_Views[context].SortBy = DefaultSortBy;
+		m_Views[context].Descending = DefaultDescending;
+		m_Views[context].AutoDirs = TRUE;
 	}
 
-	m_Views[context].Descending = GetInt(_T("Descending"), FALSE);
-	m_Views[context].AutoDirs = GetInt(_T("AutoDirs"), TRUE);
 	m_Views[context].GlobeLatitude = GetInt(_T("GlobeLatitude"), 1);
 	m_Views[context].GlobeLongitude = GetInt(_T("GlobeLongitude"), 1);
 	m_Views[context].GlobeZoom = GetInt(_T("GlobeZoom"), 600);
