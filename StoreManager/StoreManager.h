@@ -8,8 +8,6 @@
 #include "CThumbnailCache.h"
 #include "MainWnd.h"
 #include "resource.h"
-#include <hash_map>
-#include <string>
 
 
 // CStoreManagerApp:
