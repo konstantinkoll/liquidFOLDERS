@@ -88,7 +88,7 @@ void CSidebar::AddItem(BOOL Selectable, UINT CmdID, INT IconID, WCHAR* Caption, 
 		else
 		{
 			for (WCHAR* pDst=i.Caption; *Caption;)
-				*(pDst++) = (WCHAR)toupper(*(Caption++));
+				*(pDst++) = (WCHAR)towupper(*(Caption++));
 		}
 	if (Hint)
 		wcscpy_s(i.Hint, 256, Hint);

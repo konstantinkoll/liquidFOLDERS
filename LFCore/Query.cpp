@@ -20,7 +20,7 @@ wchar_t* wcsistr(const wchar_t* String, const wchar_t* Pattern)
 {
 	for (wchar_t* start=(wchar_t*)String; *start!=L'\0'; start++)
 	{
-		for (; ((*start!=L'\0') && (toupper(*start)!=toupper(*Pattern))); start++)
+		for (; ((*start!=L'\0') && (towupper(*start)!=towupper(*Pattern))); start++)
 		;
 
 		if (*start==L'\0')
@@ -29,7 +29,7 @@ wchar_t* wcsistr(const wchar_t* String, const wchar_t* Pattern)
 		wchar_t* pptr = (wchar_t*)Pattern;
 		wchar_t* sptr = start;
 
-		while (toupper(*sptr)==toupper(*pptr))
+		while (towupper(*sptr)==towupper(*pptr))
 		{
 			sptr++;
 			pptr++;

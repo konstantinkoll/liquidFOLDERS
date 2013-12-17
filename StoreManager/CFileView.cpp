@@ -1112,7 +1112,7 @@ CString CFileView::GetHint(LFItemDescriptor* i, WCHAR* FormatName)
 			WCHAR tmpStr[256];
 			tmpStr[0] = L' ';
 			wcscpy_s(&tmpStr[1], 255, theApp.m_SourceNames[i->Type & LFTypeSourceMask][1]);
-			tmpStr[1] = (WCHAR)tolower(tmpStr[1]);
+			tmpStr[1] = (WCHAR)towlower(tmpStr[1]);
 
 			hint += tmpStr;
 		}

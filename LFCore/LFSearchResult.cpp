@@ -660,7 +660,7 @@ void LFSearchResult::GroupArray(unsigned int attr, LFFilter* f)
 			while (GetNextTag(&tagarray, tag, 256))
 			{
 				std::wstring key(tag);
-				transform(key.begin(), key.end(), key.begin(), towupper);
+				transform(key.begin(), key.end(), key.begin(), towlower);
 
 				hashtags::iterator location = tags.find(key);
 				if (location==tags.end())
@@ -716,7 +716,7 @@ void LFSearchResult::GroupArray(unsigned int attr, LFFilter* f)
 					first = true;
 					break;
 				default:
-					*ptr = first ? (wchar_t)toupper(*ptr) : (wchar_t)tolower(*ptr);
+					*ptr = first ? (wchar_t)towupper(*ptr) : (wchar_t)towlower(*ptr);
 					first = false;
 				}
 		}

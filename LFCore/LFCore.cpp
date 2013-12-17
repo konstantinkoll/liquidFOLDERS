@@ -344,7 +344,7 @@ LFCore_API LFAttributeDescriptor* LFGetAttributeInfo(unsigned int ID)
 
 	do
 	{
-		wchar_t ch = (wchar_t)tolower(*ptrSrc);
+		wchar_t ch = (wchar_t)towlower(*ptrSrc);
 		if ((ch>=L'a') && (ch<=L'z'))
 			*(ptrDst++) = ch;
 	}
