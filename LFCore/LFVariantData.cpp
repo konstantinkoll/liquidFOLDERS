@@ -6,7 +6,7 @@
 #include <algorithm>
 #include <assert.h>
 #include <cmath>
-#include <hash_map>
+#include <map>
 #include <shlwapi.h>
 #include <wchar.h>
 
@@ -269,9 +269,12 @@ bool GetNextTag(wchar_t** tagarray, wchar_t* tag, size_t cCount)
 		switch (**tagarray)
 		{
 		case L' ':
+		case L'.':
 		case L',':
 		case L':':
 		case L';':
+		case L'?':
+		case L'!':
 		case L'|':
 			if ((start) && (!quotation))
 			{
@@ -738,7 +741,7 @@ LFCore_API void LFSetAttributeVariantData(LFItemDescriptor* i, LFVariantData* v)
 LFCore_API void LFSanitizeUnicodeArray(wchar_t* buf, size_t cCount)
 {
 	typedef std::pair<std::wstring, bool> tagitem;
-	typedef stdext::hash_map<std::wstring, tagitem> hashtags;
+	typedef std::map<std::wstring, tagitem> hashtags;
 	hashtags tags;
 
 	wchar_t tag[259];
@@ -746,7 +749,7 @@ LFCore_API void LFSanitizeUnicodeArray(wchar_t* buf, size_t cCount)
 	while (GetNextTag(&tagarray, tag, 256))
 	{
 		std::wstring key(tag);
-		transform(key.begin(), key.end(), key.begin(), towupper);
+		transform(key.begin(), key.end(), key.begin(), towlower);
 
 		hashtags::iterator location = tags.find(key);
 		if (location==tags.end())
@@ -766,7 +769,7 @@ LFCore_API void LFSanitizeUnicodeArray(wchar_t* buf, size_t cCount)
 		if (buf[0]!=L'\0')
 			wcscpy_s(tag, 259, L" ");
 
-		if (it->second.first.find_first_of(L" ,:;|")!=std::wstring::npos)
+		if (it->second.first.find_first_of(L" .,:;?!|")!=std::wstring::npos)
 		{
 			wcscat_s(tag, 259, L"\"");
 			wcscat_s(tag, 259, it->second.first.c_str());
@@ -786,9 +789,12 @@ LFCore_API void LFSanitizeUnicodeArray(wchar_t* buf, size_t cCount)
 					switch (*ptr)
 					{
 					case L' ':
+					case L'.':
 					case L',':
 					case L':':
 					case L';':
+					case L'?':
+					case L'!':
 					case L'|':
 					case L'-':
 					case L'"':
