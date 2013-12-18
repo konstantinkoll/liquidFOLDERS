@@ -51,8 +51,8 @@ IDI_SRC_Internet        ICON                    "res\\SRC_Internet.ico"
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,5,7
- PRODUCTVERSION 1,5,7
+ FILEVERSION 1,5,8
+ PRODUCTVERSION 1,5,8
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -68,13 +68,13 @@ BEGIN
         BLOCK "000004e4"
         BEGIN
             VALUE "CompanyName", "liquidFOLDERS"
-            VALUE "FileVersion", "1.5.7"
+            VALUE "FileVersion", "1.5.8"
             VALUE "InternalName", "LFCore"
             VALUE "LegalCopyright", "© 2009-2013 liquidFOLDERS"
             VALUE "LegalTrademarks", "liquidFOLDERS®"
             VALUE "OriginalFilename", "LFCore.dll"
             VALUE "ProductName", "liquidFOLDERS"
-            VALUE "ProductVersion", "1.5.7"
+            VALUE "ProductVersion", "1.5.8"
         END
     END
     BLOCK "VarFileInfo"
