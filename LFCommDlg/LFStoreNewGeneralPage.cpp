@@ -13,7 +13,7 @@
 extern LFMessageIDs* MessageIDs;
 
 LFStoreNewGeneralPage::LFStoreNewGeneralPage(CHAR Volume)
-	: CPropertyPage(IDD_STORENEW_GENERAL)
+	: CPropertyPage()
 {
 	m_Volume = Volume;
 }

@@ -14,7 +14,7 @@
 extern LFMessageIDs* MessageIDs;
 
 LFStoreNewPathPage::LFStoreNewPathPage(CHAR Volume)
-	: CPropertyPage(IDD_STORENEW_PATH)
+	: CPropertyPage()
 {
 	m_Volume = Volume;
 }

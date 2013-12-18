@@ -36,7 +36,7 @@ extern AFX_EXTENSION_MODULE LFCommDlgDLL;
 extern LFMessageIDs* MessageIDs;
 
 LFStorePropertiesToolsPage::LFStorePropertiesToolsPage(LFStoreDescriptor* pStore, BOOL* pStoreValid)
-	: CPropertyPage(IDD_STOREPROPERTIES_TOOLS)
+	: CPropertyPage()
 {
 	ASSERT(pStore);
 	ASSERT(pStoreValid);

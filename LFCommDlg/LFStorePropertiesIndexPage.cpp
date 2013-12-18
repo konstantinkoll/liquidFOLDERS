@@ -13,7 +13,7 @@
 extern LFMessageIDs* MessageIDs;
 
 LFStorePropertiesIndexPage::LFStorePropertiesIndexPage(LFStoreDescriptor* pStore, BOOL* pStoreValid)
-	: CPropertyPage(IDD_STOREPROPERTIES_INDEX)
+	: CPropertyPage()
 {
 	ASSERT(pStore);
 	ASSERT(pStoreValid);
