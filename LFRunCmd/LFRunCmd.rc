@@ -67,7 +67,7 @@ BEGIN
             VALUE "FileDescription", "LFRunCmd"
             VALUE "FileVersion", "1.5.8"
             VALUE "InternalName", "LFRunCmd"
-            VALUE "LegalCopyright", "© 2009-2013 liquidFOLDERS"
+            VALUE "LegalCopyright", "© 2009-2014 liquidFOLDERS"
             VALUE "LegalTrademarks", "liquidFOLDERS®"
             VALUE "OriginalFilename", "LFRunCmd.exe"
             VALUE "ProductName", "liquidFOLDERS"

@@ -60,7 +60,7 @@ BEGIN
             VALUE "FileDescription", "FileDrop"
             VALUE "FileVersion", "1.5.8"
             VALUE "InternalName", "FileDrop"
-            VALUE "LegalCopyright", "© 2009-2013 liquidFOLDERS"
+            VALUE "LegalCopyright", "© 2009-2014 liquidFOLDERS"
             VALUE "LegalTrademarks", "liquidFOLDERS®"
             VALUE "OriginalFilename", "FileDrop.exe"
             VALUE "ProductName", "liquidFOLDERS"

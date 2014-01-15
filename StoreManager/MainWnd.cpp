@@ -570,7 +570,7 @@ void CMainWnd::OnNavigateSwitchContext(UINT nID)
 
 	if (GetContext()==LFContextStores)
 	{
-Jump:
+FilterFromScratch:
 		LFFilter* f = LFAllocFilter();
 		f->Mode = LFFilterModeSearch;
 		f->ContextID = (UCHAR)nID;
@@ -580,36 +580,21 @@ Jump:
 	else
 		if (m_pActiveFilter)
 		{
-			LFFilter* f;
-
-			if (m_pActiveFilter->Options.IsSubfolder)
+			while (m_pActiveFilter ? m_pActiveFilter->Options.IsPersistent || m_pActiveFilter->Options.IsSubfolder : false)
 			{
 				ASSERT(m_BreadcrumbBack);
+				LFFreeFilter(m_pActiveFilter);
 
 				FVPersistentData Data;
-				ConsumeBreadcrumbItem(&m_BreadcrumbBack, &f, &Data);
-			}
-			else
-			{
-				if (m_pActiveFilter->Options.IsPersistent && (nID==LFContextFilters))
-				{
-					while (m_pActiveFilter ? m_pActiveFilter->Options.IsPersistent : false)
-					{
-						LFFreeFilter(m_pActiveFilter);
-
-						FVPersistentData Data;
-						ConsumeBreadcrumbItem(&m_BreadcrumbBack, &m_pActiveFilter, &Data);
-					}
-
-					if (!m_pActiveFilter)
-						goto Jump;
-				}
-
-				f = LFAllocFilter(m_pActiveFilter);
+				ConsumeBreadcrumbItem(&m_BreadcrumbBack, &m_pActiveFilter, &Data);
 			}
 
+			if (!m_pActiveFilter)
+				goto FilterFromScratch;
+
+			LFFilter* f = LFAllocFilter(m_pActiveFilter);
 			f->ContextID = (UCHAR)nID;
-			if ((!f->Options.IsPersistent) && (f->StoreID[0]=='\0'))
+			if (f->StoreID[0]=='\0')
 				f->OriginalName[0] = L'\0';
 
 			NavigateTo(f, NAVMODE_RELOAD);
