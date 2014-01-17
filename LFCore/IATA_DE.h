@@ -227,7 +227,7 @@ LFCountry Countries_DE[CountryCount_DE] = {
 };
 
 // Airports
-#define AirportCount_DE 8617
+#define AirportCount_DE 8619
 LFAirport Airports_DE[AirportCount_DE] = {
 	{  54, "AAA", "", "Anaa", { 17.355000, -145.508333 } },
 	{  11, "AAB", "", "Arrabury", { 26.690556, 141.047500 } },
@@ -3109,6 +3109,7 @@ LFAirport Airports_DE[AirportCount_DE] = {
 	{  36, "HRB", "", "Harbin", { -45.623333, 126.250278 } },
 	{ 221, "HRE", "", "Harare", { 17.931944, 31.092778 } },
 	{   1, "HRG", "", "Hurghada", { -27.178333, 33.799444 } },
+	{ 178, "HRI", "", "Mattala International Airport", { -6.288889, 81.123611 } },
 	{ 135, "HRJ", "", "Chaurjhari", { -28.000000, 83.833056 } },
 	{ 207, "HRK", "", "Kharkiv", { -49.924722, 36.290000 } },
 	{ 210, "HRL", "", "Harlingen", { -26.228611, -97.654444 } },
@@ -5389,6 +5390,7 @@ LFAirport Airports_DE[AirportCount_DE] = {
 	{  95, "NUH", "", "Nunchia", { -5.616944, -72.200000 } },
 	{ 210, "NUI", "", "Nuiqsut", { -70.210000, -151.005556 } },
 	{  54, "NUK", "", "Nukutaveke", { 19.285000, -138.772222 } },
+	{ 210, "NUL", "", "Nulato", { -64.729444, -158.074167 } },
 	{ 210, "NUN", "", "Pensacola (Saufley Naval Airfield)", { -30.469722, -87.338056 } },
 	{ 210, "NUP", "", "Nunapitchuk", { -60.905833, -162.439167 } },
 	{ 210, "NUQ", "", "Mountain View", { -37.416111, -122.049167 } },

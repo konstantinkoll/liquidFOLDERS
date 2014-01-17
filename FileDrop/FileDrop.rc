@@ -40,8 +40,8 @@ IDR_APPLICATION         ICON                    "res\\FileDrop.ico"
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,5,8
- PRODUCTVERSION 1,5,8
+ FILEVERSION 1,5,9
+ PRODUCTVERSION 1,5,9
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -58,13 +58,13 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "liquidFOLDERS"
             VALUE "FileDescription", "FileDrop"
-            VALUE "FileVersion", "1.5.8"
+            VALUE "FileVersion", "1.5.9"
             VALUE "InternalName", "FileDrop"
             VALUE "LegalCopyright", "© 2009-2014 liquidFOLDERS"
             VALUE "LegalTrademarks", "liquidFOLDERS®"
             VALUE "OriginalFilename", "FileDrop.exe"
             VALUE "ProductName", "liquidFOLDERS"
-            VALUE "ProductVersion", "1.5.8"
+            VALUE "ProductVersion", "1.5.9"
         END
     END
     BLOCK "VarFileInfo"

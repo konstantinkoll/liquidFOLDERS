@@ -3040,6 +3040,7 @@ HRA     Mansehra, Pakistan;4;34*19'59"N, 73*11'60"E
 HRB     Harbin, China;4;45*37'24"N, 126*15'1"E
 HRE     Harare, Zimbabwe;4;17*55'55"S, 31*5'34"E
 HRG     Hurghada, Egypt;4;27*10'42"N, 33*47'58"E
+HRI     Mattala International Airport, Sri Lanka;5;6*17'20"N, 81*07'25"E
 HRJ     Chaurjhari, Nepal;4;28*0'0"N, 83*49'59"E
 HRK     Kharkiv, Ukraine;4;49*55'29"N, 36*17'24"E
 HRL     Harlingen, USA;4;26*13'43"N, 97*39'16"W
@@ -5468,7 +5469,7 @@ NUG     Nuguria, New Guinea;4;3*28'1"S, 154*49'1"E
 NUH     Nunchia, Columbia;4;5*37'1"N, 72*11'60"W
 NUI     Nuiqsut, USA;4;70*12'36"N, 151*0'20"W
 NUK     Nukutaveke, French Polynesia;4;19*17'6"S, 138*46'20"W
-NUL     Nulato, USA
+NUL     Nulato, USA;5;64*43'46"N, 158*04'27"W
 NUN     Pensacola (Saufley Naval Airfield), USA;4;30*28'11"N, 87*20'17"W
 NUP     Nunapitchuk, USA;4;60*54'21"N, 162*26'21"W
 NUQ     Mountain View, USA;4;37*24'58"N, 122*2'57"W

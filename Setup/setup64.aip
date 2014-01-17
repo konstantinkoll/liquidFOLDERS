@@ -36,7 +36,7 @@
     <ROW Property="MSIFASTINSTALL" MultiBuildValue="DefaultBuild:6"/>
     <ROW Property="Manufacturer" Value="liquidFOLDERS" ValueLocId="*"/>
     <ROW Property="OptionsLogoIcon" Value="Tools.ico" Type="1" MsiKey="OptionsLogoIcon"/>
-    <ROW Property="ProductCode" Value="1033:{59D4D595-6AF6-4311-B128-7FC2A9ED1002} 3082:{6189A67E-A658-4B43-A27D-0DB58A885A06} 1036:{13D2CFC4-0ED5-41D7-A5C9-87A2F521FCF9} 1031:{D0634477-0E3E-4181-BD05-BEDCA70F0EC4} " Type="16"/>
+    <ROW Property="ProductCode" Value="1033:{83526542-5270-4470-85AC-6815681F6CB5} 3082:{3446799C-1CE7-4B02-B2CD-96E2291CE36E} 1036:{0EB4D8E5-728D-4AEB-928E-199D03AB8E94} 1031:{40042E4B-C09C-4465-A8B8-D2CF8DB17949} " Type="16"/>
     <ROW Property="ProductLanguage" Value="1033"/>
     <ROW Property="ProductName" Value="liquidFOLDERS" ValueLocId="*"/>
     <ROW Property="ProductVersion" Value="1.5.9"/>
