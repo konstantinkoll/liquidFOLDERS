@@ -25,7 +25,6 @@ public:
 	BOOL m_DeleteSource;
 
 protected:
-	LFApplication* p_App;
 	CString m_RootPath;
 	BOOL m_OnlyFSObjects;
 	BOOL m_ShowDeleteSource;

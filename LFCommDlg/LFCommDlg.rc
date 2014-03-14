@@ -76,7 +76,7 @@ IDB_EARTHMAP_2048       JPG                     "res\\Earthmap_2048.jpg"
 // PNG
 //
 
-IDB_BACKDROP            PNG                     "res\\Backdrop_Blue.png"
+IDB_DIVDOWN             PNG                     "res\\DivDown.png"
 IDB_LOCATIONINDICATOR_8 PNG                     "res\\LocationIndicator_8.png"
 IDB_LOCATIONINDICATOR_16 PNG                     "res\\LocationIndicator_16.png"
 IDB_EXPLORERGRADIENT    PNG                     "res\\ExplorerGradient.png"
@@ -144,6 +144,13 @@ IDD_ITEMTEMPLATE        ICON                    "res\\Inspector_Tiny.ico"
 IDD_STOREMAINTENANCE    ICON                    "res\\StoreMaintenance_Small.ico"
 IDD_EDITTAGS            ICON                    "res\\Tags_Tiny.ico"
 IDD_BROWSEFORFOLDER     ICON                    "res\\Folder_Tiny.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// TTF
+//
+
+IDF_LETTERGOTHIC        TTF                     "res\\Letter_Gothic.ttf"
 #endif    // Neutral resources
 /////////////////////////////////////////////////////////////////////////////
 
@@ -325,7 +332,7 @@ BEGIN
     PUSHBUTTON      "Lizenz&datei laden...",IDC_LOADLICENSE,14,54,81,15,WS_GROUP
     LTEXT           "Lizenzschlüssel:",IDC_STATIC,14,79,291,8
     EDITTEXT        IDC_LICENSEKEY,14,89,322,45,ES_MULTILINE | ES_AUTOHSCROLL | WS_VSCROLL | WS_GROUP
-    DEFPUSHBUTTON   "OK",IDOK,236,157,50,14,WS_GROUP
+    DEFPUSHBUTTON   "OK",IDOK,236,157,50,14,WS_DISABLED | WS_GROUP
     PUSHBUTTON      "Abbrechen",IDCANCEL,293,157,50,14,WS_GROUP
 END
 
@@ -934,7 +941,7 @@ BEGIN
     PUSHBUTTON      "Cargar &archivo de licencia...",IDC_LOADLICENSE,14,54,111,15,WS_GROUP
     LTEXT           "Licencia:",IDC_STATIC,14,79,291,8
     EDITTEXT        IDC_LICENSEKEY,14,89,322,45,ES_MULTILINE | ES_AUTOHSCROLL | WS_VSCROLL | WS_GROUP
-    DEFPUSHBUTTON   "OK",IDOK,236,157,50,14,WS_GROUP
+    DEFPUSHBUTTON   "OK",IDOK,236,157,50,14,WS_DISABLED | WS_GROUP
     PUSHBUTTON      "Cancelar",IDCANCEL,293,157,50,14,WS_GROUP
 END
 
@@ -1533,7 +1540,7 @@ BEGIN
     PUSHBUTTON      "Charger le fichier de licence...",IDC_LOADLICENSE,14,54,115,15,WS_GROUP
     LTEXT           "Clé de licence:",IDC_STATIC,14,79,291,8
     EDITTEXT        IDC_LICENSEKEY,14,89,322,45,ES_MULTILINE | ES_AUTOHSCROLL | WS_VSCROLL | WS_GROUP
-    DEFPUSHBUTTON   "OK",IDOK,236,157,50,14,WS_GROUP
+    DEFPUSHBUTTON   "OK",IDOK,236,157,50,14,WS_DISABLED | WS_GROUP
     PUSHBUTTON      "Annuler",IDCANCEL,293,157,50,14,WS_GROUP
 END
 
@@ -2182,7 +2189,7 @@ BEGIN
     PUSHBUTTON      "Load license &file...",IDC_LOADLICENSE,14,54,81,15,WS_GROUP
     LTEXT           "License key:",IDC_STATIC,14,79,291,8
     EDITTEXT        IDC_LICENSEKEY,14,89,322,45,ES_MULTILINE | ES_AUTOHSCROLL | WS_VSCROLL | WS_GROUP
-    DEFPUSHBUTTON   "OK",IDOK,236,157,50,14,WS_GROUP
+    DEFPUSHBUTTON   "OK",IDOK,236,157,50,14,WS_DISABLED | WS_GROUP
     PUSHBUTTON      "Cancel",IDCANCEL,293,157,50,14,WS_GROUP
 END
 

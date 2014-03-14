@@ -13,16 +13,13 @@
 // LFDialog
 //
 
-#define LFDS_Blue         1
-#define LFDS_White        2
-#define LFDS_UAC          3
-
-#define LFDS_Default      LFDS_Blue
+#define LFDS_WHITE     1
+#define LFDS_UAC       2
 
 class AFX_EXT_CLASS LFDialog : public CDialog
 {
 public:
-	LFDialog(UINT nIDTemplate, UINT Design=LFDS_Default, CWnd* pParentWnd=NULL);
+	LFDialog(UINT nIDTemplate, CWnd* pParentWnd=NULL, UINT Design=LFDS_WHITE);
 
 	virtual void DoDataExchange(CDataExchange* pDX);
 	virtual void AdjustLayout();
@@ -36,7 +33,6 @@ protected:
 	UINT m_Design;
 
 	virtual void OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect);
-	virtual void CheckLicenseKey(LFLicense* License=NULL);
 
 	CWnd* GetBottomWnd() const;
 	void SetBottomLeftControl(CWnd* pChildWnd);
@@ -52,11 +48,10 @@ protected:
 	afx_msg void OnSysColorChange();
 	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
 	afx_msg void OnInitMenuPopup(CMenu* pPopupMenu, UINT nIndex, BOOL bSysMenu);
-	afx_msg void OnEnterLicenseKey();
 	DECLARE_MESSAGE_MAP()
 
 private:
-	CGdiPlusBitmapResource* m_pBackdrop;
+	CGdiPlusBitmapResource* m_pDivider;
 	CGroupBox m_GroupBox1;
 	CGroupBox m_GroupBox2;
 	HICON hIconL;

@@ -13,7 +13,7 @@
 
 extern AFX_EXTENSION_MODULE LFCommDlgDLL;
 
-LFDialog::LFDialog(UINT nIDTemplate, UINT Design, CWnd* pParentWnd)
+LFDialog::LFDialog(UINT nIDTemplate, CWnd* pParentWnd, UINT Design)
 	: CDialog(nIDTemplate, pParentWnd)
 {
 	m_nIDTemplate = nIDTemplate;
@@ -21,7 +21,7 @@ LFDialog::LFDialog(UINT nIDTemplate, UINT Design, CWnd* pParentWnd)
 	p_App = LFGetApp();
 	hIconS = hIconL = hIconShield = NULL;
 	hBackgroundBrush = NULL;
-	m_pBackdrop = NULL;
+	m_pDivider = NULL;
 	m_BackBufferL = m_BackBufferH = m_UACHeight = 0;
 	p_BottomLeftControl = NULL;
 }
@@ -69,57 +69,33 @@ void LFDialog::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 	BOOL Themed = IsCtrlThemed();
 	switch (m_Design)
 	{
-	case LFDS_Blue:
+	case LFDS_WHITE:
+		if (Themed)
 		{
-			if (Themed)
-			{
-				INT l = m_pBackdrop->m_pBitmap->GetWidth();
-				INT h = m_pBackdrop->m_pBitmap->GetHeight();
-				if ((l<rect.Width()) || (h<rect.Height()))
-				{
-					DOUBLE f = max((DOUBLE)rect.Width()/l, (DOUBLE)rect.Height()/h);
-					l = (INT)(l*f);
-					h = (INT)(h*f);
-				}
-				g.DrawImage(m_pBackdrop->m_pBitmap, rect.Width()-l, rect.Height()-h, l, h);
+			dc.FillSolidRect(0, 0, m_BackBufferL, m_BackBufferH, 0xFFFFFF);
 
-				SolidBrush brush1(Color(168, 255, 255, 255));
-				g.FillRectangle(&brush1, 0, 0, m_BackBufferL, Line);
-				brush1.SetColor(Color(224, 205, 250, 255));
-				g.FillRectangle(&brush1, 0, Line++, m_BackBufferL, 1);
-				brush1.SetColor(Color(180, 183, 210, 240));
-				g.FillRectangle(&brush1, 0, Line++, m_BackBufferL, 1);
-				brush1.SetColor(Color(224, 247, 250, 254));
-				g.FillRectangle(&brush1, 0, Line, m_BackBufferL, 1);
-				LinearGradientBrush brush2(Point(0, Line++), Point(0, rect.Height()), Color(120, 255, 255, 255), Color(32, 128, 192, 255));
-				g.FillRectangle(&brush2, 0, Line, m_BackBufferL, rect.Height()-Line);
-			}
-			else
-			{
-				dc.FillSolidRect(rect, GetSysColor(COLOR_3DFACE));
-			}
+			const INT l = m_pDivider->m_pBitmap->GetWidth();
+			const INT h = m_pDivider->m_pBitmap->GetHeight();
+			g.DrawImage(m_pDivider->m_pBitmap, (rect.Width()-l)/2, Line, l, h);
 
 			break;
 		}
-	case LFDS_White:
 	case LFDS_UAC:
+		dc.FillSolidRect(0, 0, m_BackBufferL, Line, 0xFFFFFF);
+		if (Themed)
 		{
-			dc.FillSolidRect(0, 0, m_BackBufferL, Line, 0xFFFFFF);
-			if (Themed)
-			{
-				dc.FillSolidRect(0, Line++, m_BackBufferL, 1, 0xDFDFDF);
-				dc.FillSolidRect(0, Line, m_BackBufferL, rect.Height()-Line, 0xF0F0F0);
-				dc.FillSolidRect(0, btn.bottom+borders.Height()+1, m_BackBufferL, 1, 0xDFDFDF);
-				dc.FillSolidRect(0, btn.bottom+borders.Height()+2, m_BackBufferL, 1, 0xFFFFFF);
-			}
-			else
-			{
-				dc.FillSolidRect(0, Line++, m_BackBufferL, rect.Height()-Line, GetSysColor(COLOR_3DFACE));
-			}
+			dc.FillSolidRect(0, Line++, m_BackBufferL, 1, 0xDFDFDF);
+			dc.FillSolidRect(0, Line, m_BackBufferL, rect.Height()-Line, 0xF0F0F0);
+			dc.FillSolidRect(0, btn.bottom+borders.Height()+1, m_BackBufferL, 1, 0xDFDFDF);
+			dc.FillSolidRect(0, btn.bottom+borders.Height()+2, m_BackBufferL, 1, 0xFFFFFF);
+		}
+		else
+		{
+			dc.FillSolidRect(0, Line++, m_BackBufferL, rect.Height()-Line, GetSysColor(COLOR_3DFACE));
+		}
 
-			if (m_Design!=LFDS_UAC)
-				break;
-
+		if (m_Design==LFDS_UAC)
+		{
 			if (Themed)
 			{
 				LinearGradientBrush brush2(Point(0, 0), Point(m_BackBufferL, 0), Color(4, 80, 130), Color(28, 120, 133));
@@ -144,21 +120,9 @@ void LFDialog::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 			CFont* pOldFont = dc.SelectObject(&LFGetApp()->m_CaptionFont);
 			dc.DrawText(tmpStr, rectText, DT_SINGLELINE | DT_VCENTER | DT_END_ELLIPSIS | DT_LEFT);
 			dc.SelectObject(pOldFont);
-
-			break;
 		}
-	}
-}
 
-void LFDialog::CheckLicenseKey(LFLicense* License)
-{
-	// Ggf. "Lizenzschlüssel eingeben" verschwinden lassen
-	if (LFIsLicensed(License))
-	{
-		CWnd* btn = GetDlgItem(IDC_ENTERLICENSEKEY);
-
-		if (btn)
-			btn->ShowWindow(SW_HIDE);
+		break;
 	}
 }
 
@@ -208,7 +172,7 @@ void LFDialog::GetLayoutRect(LPRECT lpRect) const
 	CRect btn;
 	pBottomWnd->GetWindowRect(&btn);
 	ScreenToClient(&btn);
-	lpRect->bottom = btn.top-borders.Height()-(m_Design==LFDS_Blue ? 3 : 1);
+	lpRect->bottom = btn.top-borders.Height()-(m_Design==LFDS_WHITE ? 3 : 1);
 
 	if (m_Design==LFDS_UAC)
 		lpRect->top = m_UACHeight;
@@ -228,7 +192,6 @@ BEGIN_MESSAGE_MAP(LFDialog, CDialog)
 	ON_WM_SYSCOLORCHANGE()
 	ON_WM_CTLCOLOR()
 	ON_WM_INITMENUPOPUP()
-	ON_BN_CLICKED(IDC_ENTERLICENSEKEY, OnEnterLicenseKey)
 END_MESSAGE_MAP()
 
 BOOL LFDialog::OnInitDialog()
@@ -247,10 +210,10 @@ BOOL LFDialog::OnInitDialog()
 
 	switch (m_Design)
 	{
-	case LFDS_Blue:
+	case LFDS_WHITE:
 		// Hintergrundbild laden
-		m_pBackdrop = new CGdiPlusBitmapResource();
-		ENSURE(m_pBackdrop->Load(IDB_BACKDROP, _T("PNG"), LFCommDlgDLL.hResource));
+		m_pDivider = new CGdiPlusBitmapResource();
+		ENSURE(m_pDivider->Load(IDB_DIVDOWN, _T("PNG"), LFCommDlgDLL.hResource));
 		break;
 	case LFDS_UAC:
 		// Schild
@@ -274,8 +237,8 @@ BOOL LFDialog::OnInitDialog()
 
 void LFDialog::OnDestroy()
 {
-	if (m_pBackdrop)
-		delete m_pBackdrop;
+	if (m_pDivider)
+		delete m_pDivider;
 	if (hIconL)
 		DestroyIcon(hIconL);
 	if (hIconS)
@@ -457,12 +420,4 @@ void LFDialog::OnInitMenuPopup(CMenu* pPopupMenu, UINT /*nIndex*/, BOOL /*bSysMe
 		}
 		state.m_nIndexMax = nCount;
 	}
-}
-
-void LFDialog::OnEnterLicenseKey()
-{
-	LFLicenseDlg dlg(this);
-	dlg.DoModal();
-
-	CheckLicenseKey();
 }

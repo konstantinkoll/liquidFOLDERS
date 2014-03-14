@@ -15,7 +15,7 @@
 extern AFX_EXTENSION_MODULE LFCommDlgDLL;
 
 LFAboutDlg::LFAboutDlg(CString AppName, CString Build, UINT IconResID, CWnd* pParentWnd)
-	: LFDialog(IDD_ABOUT, LFDS_Default, pParentWnd)
+	: LFDialog(IDD_ABOUT, pParentWnd)
 {
 	m_AppName = AppName;
 	m_Build = Build;
@@ -45,11 +45,11 @@ void LFAboutDlg::DoDataExchange(CDataExchange* pDX)
 		DDX_Check(pDX, IDC_ENABLEAUTOUPDATE, EnableAutoUpdate);
 		DDX_Radio(pDX, IDC_CHECKDAILY, Interval);
 
-		LFGetApp()->SetUpdateSettings(EnableAutoUpdate, Interval);
+		p_App->SetUpdateSettings(EnableAutoUpdate, Interval);
 	}
 	else
 	{
-		LFGetApp()->GetUpdateSettings(&EnableAutoUpdate, &Interval);
+		p_App->GetUpdateSettings(&EnableAutoUpdate, &Interval);
 
 		DDX_Check(pDX, IDC_ENABLEAUTOUPDATE, EnableAutoUpdate);
 		DDX_Radio(pDX, IDC_CHECKDAILY, Interval);
@@ -58,20 +58,18 @@ void LFAboutDlg::DoDataExchange(CDataExchange* pDX)
 	}
 }
 
-void LFAboutDlg::CheckLicenseKey(LFLicense* License)
+void LFAboutDlg::CheckLicenseKey()
 {
 	LFLicense l;
-	if (!License)
-		License = &l;
+	if (LFIsLicensed(&l))
+		GetDlgItem(IDC_ENTERLICENSEKEY)->ShowWindow(SW_HIDE);
 
-	LFDialog::CheckLicenseKey(License);
+	GetDlgItem(IDC_NAME)->SetWindowText(l.RegName);
+	GetDlgItem(IDC_PURCHASEDATE)->SetWindowText(l.PurchaseDate);
+	GetDlgItem(IDC_ID)->SetWindowText(l.PurchaseID);
+	GetDlgItem(IDC_PRODUCT)->SetWindowText(l.ProductID);
 
-	GetDlgItem(IDC_NAME)->SetWindowText(License->RegName);
-	GetDlgItem(IDC_PURCHASEDATE)->SetWindowText(License->PurchaseDate);
-	GetDlgItem(IDC_ID)->SetWindowText(License->PurchaseID);
-	GetDlgItem(IDC_PRODUCT)->SetWindowText(License->ProductID);
-
-	if (wcslen(License->ProductID)>13)
+	if (wcslen(l.ProductID)>13)
 	{
 		GetDlgItem(IDC_QUANTITYTITLE)->ShowWindow(SW_HIDE);
 		GetDlgItem(IDC_QUANTITY)->ShowWindow(SW_HIDE);
@@ -80,7 +78,7 @@ void LFAboutDlg::CheckLicenseKey(LFLicense* License)
 	{
 		GetDlgItem(IDC_QUANTITYTITLE)->ShowWindow(SW_SHOW);
 		GetDlgItem(IDC_QUANTITY)->ShowWindow(SW_SHOW);
-		GetDlgItem(IDC_QUANTITY)->SetWindowText(License->Quantity);
+		GetDlgItem(IDC_QUANTITY)->SetWindowText(l.Quantity);
 	}
 }
 
@@ -97,6 +95,7 @@ BEGIN_MESSAGE_MAP(LFAboutDlg, LFDialog)
 	ON_BN_CLICKED(IDC_ENABLEAUTOUPDATE, OnEnableAutoUpdate)
 	ON_BN_CLICKED(IDC_UPDATENOW, OnUpdateNow)
 	ON_NOTIFY(NM_CLICK, IDC_VERSIONINFO, OnVersionInfo)
+	ON_BN_CLICKED(IDC_ENTERLICENSEKEY, OnEnterLicenseKey)
 END_MESSAGE_MAP()
 
 BOOL LFAboutDlg::OnInitDialog()
@@ -124,7 +123,7 @@ BOOL LFAboutDlg::OnInitDialog()
 	// Hintergrund
 	m_CaptionFont.CreateFont(48, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET,
 		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, ANTIALIASED_QUALITY,
-		DEFAULT_PITCH | FF_DONTCARE, p_App->GetDefaultFontFace());
+		DEFAULT_PITCH | FF_DONTCARE, _T("Letter Gothic"));
 
 	m_VersionFont.CreateFont(20, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET,
 		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY,
@@ -195,7 +194,7 @@ void LFAboutDlg::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 	CFont* pOldFont = dc.SelectObject(&m_CaptionFont);
 
 	const UINT fmt = DT_SINGLELINE | DT_LEFT | DT_NOPREFIX | DT_END_ELLIPSIS;
-	dc.SetTextColor(0x000000);
+	dc.SetTextColor(IsCtrlThemed() ? 0xCB3300 : GetSysColor(COLOR_WINDOWTEXT));
 	dc.SetBkMode(TRANSPARENT);
 	dc.DrawText(m_AppName, r, fmt);
 
@@ -224,4 +223,12 @@ void LFAboutDlg::OnVersionInfo(NMHDR* /*pNMHDR*/, LRESULT* pResult)
 	ShellExecute(GetSafeHwnd(), _T("open"), url, NULL, NULL, SW_SHOW);
 
 	*pResult = 0;
+}
+
+void LFAboutDlg::OnEnterLicenseKey()
+{
+	LFLicenseDlg dlg(this);
+	dlg.DoModal();
+
+	CheckLicenseKey();
 }

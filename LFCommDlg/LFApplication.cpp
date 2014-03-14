@@ -181,6 +181,9 @@ LFApplication::LFApplication(BOOL HasGUI, GUID& AppID)
 		m_ShellLibLoaded = FALSE;
 	}
 
+	// Eingebettete Schrift
+	hFontLetterGothic = LoadFontFromResource(IDF_LETTERGOTHIC, LFCommDlgDLL.hResource);
+
 	// Anwendungspfad
 	TCHAR szPathName[MAX_PATH];
 	GetModuleFileName(NULL, szPathName, MAX_PATH);
@@ -284,6 +287,8 @@ LFApplication::~LFApplication()
 		FreeLibrary(hModAero);
 	if (hModShell)
 		FreeLibrary(hModShell);
+	if (hFontLetterGothic)
+		RemoveFontMemResourceEx(hFontLetterGothic);
 
 	for (UINT a=0; a<=LFMaxRating; a++)
 	{
@@ -538,6 +543,24 @@ BOOL LFApplication::WriteGlobalString(LPCTSTR lpszEntry, LPCTSTR lpszValue)
 		return reg.Write(lpszEntry, lpszValue);
 
 	return FALSE;
+}
+
+HANDLE LFApplication::LoadFontFromResource(UINT id, HMODULE hInst)
+{
+	HRSRC hResource = FindResource(hInst, MAKEINTRESOURCE(id), L"TTF");
+	if (!hResource)
+		return NULL;
+
+	LPVOID pResourceData = LockResource(LoadResource(hInst, hResource));
+	if (!pResourceData)
+		return NULL;
+
+	DWORD Size = SizeofResource(hInst, hResource);
+	if (!Size)
+		return NULL;
+
+	DWORD nFonts;
+	return AddFontMemResourceEx(pResourceData, Size, NULL, &nFonts);
 }
 
 void LFApplication::ExtractCoreIcons(HINSTANCE hModIcons, INT size, CImageList* li)

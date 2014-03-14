@@ -8,7 +8,7 @@
 #define ID_APP_NEWSTOREMANAGER          203
 #define ID_APP_PURCHASE                 204
 #define ID_APP_ENTERLICENSEKEY          205
-#define IDB_BACKDROP                    20000
+#define IDB_DIVDOWN                     20000
 #define IDB_LOCATIONINDICATOR_8         20001
 #define IDB_LOCATIONINDICATOR_16        20002
 #define IDB_EARTHMAP_1024               20003
@@ -98,6 +98,7 @@
 #define IDS_COMPARE_ISBELOWEQUAL        20407
 #define IDS_COMPARE_ENDSWITH            20408
 #define IDS_COMPARE_CONTAINS            20409
+#define IDF_LETTERGOTHIC                20500
 #define IDD_ABOUT                       21000
 #define IDC_VERSIONINFO                 21001
 #define IDC_GROUPBOX1                   21002

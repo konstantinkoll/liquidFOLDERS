@@ -971,11 +971,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\Backdrop_Blue.png"
+				RelativePath=".\res\Default_Tiny.ico"
 				>
 			</File>
 			<File
-				RelativePath=".\res\Default_Tiny.ico"
+				RelativePath=".\res\DivDown.png"
 				>
 			</File>
 			<File
@@ -1012,6 +1012,10 @@
 			</File>
 			<File
 				RelativePath=".\res\Key_Tiny.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Letter_Gothic.ttf"
 				>
 			</File>
 			<File

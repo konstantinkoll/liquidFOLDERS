@@ -11,7 +11,7 @@
 //
 
 DeleteFilesDlg::DeleteFilesDlg(CWnd* pParentWnd)
-	: LFDialog(IDD_DELETEFILES, LFDS_UAC, pParentWnd)
+	: LFDialog(IDD_DELETEFILES, pParentWnd, LFDS_UAC)
 {
 	m_Delete = TRUE;
 }

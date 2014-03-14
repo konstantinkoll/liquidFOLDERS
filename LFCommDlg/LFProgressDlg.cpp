@@ -15,7 +15,7 @@
 const GUID IID_ITaskbarList3 = { 0xEA1AFB91, 0x9E28, 0x4B86, {0x90, 0xE9, 0x9E, 0x9F, 0x8A, 0x5E, 0xEF, 0xAF}};
 
 LFProgressDlg::LFProgressDlg(LPTHREAD_START_ROUTINE pThreadProc, LFWorkerParameters* pParameters, CWnd* pParentWnd)
-	: LFDialog(IDD_PROGRESS, LFDS_White, pParentWnd)
+	: LFDialog(IDD_PROGRESS, pParentWnd)
 {
 	m_Abort = FALSE;
 	m_pTaskbarList3 = NULL;

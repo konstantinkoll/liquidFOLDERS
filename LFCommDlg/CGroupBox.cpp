@@ -97,58 +97,30 @@ void CGroupBox::OnPaint()
 	g.SetCompositingMode(CompositingModeSourceOver);
 	g.SetSmoothingMode(SmoothingModeAntiAlias);
 
-	if (Themed && (((LFDialog*)GetParent())->GetDesign()==LFDS_Blue))
+	if (!Themed || (LFGetApp()->OSVersion==OS_Eight))
 	{
-		rectBounds.right -= 3;
-		rectBounds.bottom -= 3;
+		rectBounds.left++;
+		rectBounds.top++;
+		dc.Draw3dRect(rectBounds, GetSysColor(COLOR_3DHIGHLIGHT), GetSysColor(COLOR_3DHIGHLIGHT));
 
-		Matrix m1;
-		m1.Translate(2.0, 2.0);
+		rectBounds.OffsetRect(-1, -1);
+		dc.Draw3dRect(rectBounds, GetSysColor(COLOR_3DSHADOW), GetSysColor(COLOR_3DSHADOW));
 
-		Matrix m2;
-		m2.Translate(-1.0, -1.0);
+		clr = GetSysColor(COLOR_WINDOWTEXT);
+	}
+	else
+	{
+		rectBounds.right -= 1;
+		rectBounds.bottom -= 1;
 
 		GraphicsPath path;
 		CreateRoundRectangle(rectBounds, 2, path);
 
-		Pen pen(Color(224, 196, 240, 248));
+		Pen pen(Color(204, 204, 204));
 		g.DrawPath(&pen, &path);
 
-		path.Transform(&m1);
-		pen.SetColor(Color(128, 255, 255, 255));
-		g.DrawPath(&pen, &path);
-
-		path.Transform(&m2);
-		pen.SetColor(Color(64, 60, 96, 112));
-		g.DrawPath(&pen, &path);
-
-		clr = 0xCC6600;
+		clr = (((LFDialog*)GetParent())->GetDesign()==LFDS_WHITE) ? 0xCB3300 : 0xCC6600;
 	}
-	else
-		if (!Themed || (LFGetApp()->OSVersion==OS_Eight))
-		{
-			rectBounds.left++;
-			rectBounds.top++;
-			dc.Draw3dRect(rectBounds, GetSysColor(COLOR_3DHIGHLIGHT), GetSysColor(COLOR_3DHIGHLIGHT));
-
-			rectBounds.OffsetRect(-1, -1);
-			dc.Draw3dRect(rectBounds, GetSysColor(COLOR_3DSHADOW), GetSysColor(COLOR_3DSHADOW));
-
-			clr = GetSysColor(COLOR_WINDOWTEXT);
-		}
-		else
-		{
-			rectBounds.right -= 1;
-			rectBounds.bottom -= 1;
-
-			GraphicsPath path;
-			CreateRoundRectangle(rectBounds, 2, path);
-
-			Pen pen(Color(204, 204, 204));
-			g.DrawPath(&pen, &path);
-
-			clr = 0xCC6600;
-		}
 
 	// Caption
 	CRect rectCaption(rect);

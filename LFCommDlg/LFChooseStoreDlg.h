@@ -31,7 +31,7 @@ public:
 protected:
 	CExplorerHeader m_wndExplorerHeader;
 	CExplorerList m_wndExplorerList;
-	LFSearchResult* p_Result;
+	LFSearchResult* m_pResult;
 	UINT m_Mode;
 
 	void UpdateOkButton();

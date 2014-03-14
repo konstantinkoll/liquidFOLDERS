@@ -130,6 +130,7 @@ public:
 	CString GetGlobalString(LPCTSTR lpszEntry, LPCTSTR lpszDefault=_T(""));
 	BOOL WriteGlobalInt(LPCTSTR lpszEntry, INT nValue);
 	BOOL WriteGlobalString(LPCTSTR lpszEntry, LPCTSTR lpszValue);
+	static HANDLE LoadFontFromResource(UINT id, HMODULE hInst=NULL);
 	static void ExtractCoreIcons(HINSTANCE hModIcons, INT size, CImageList* li);
 	static UINT DeleteStore(LFItemDescriptor* store, CWnd* pParentWnd=NULL, CWnd* pOwnerWnd=NULL);
 	static UINT DeleteStore(LFStoreDescriptor* store, CWnd* pParentWnd=NULL, CWnd* pOwnerWnd=NULL);
@@ -162,4 +163,5 @@ private:
 	HMODULE hModThemes;
 	HMODULE hModAero;
 	HMODULE hModShell;
+	HANDLE hFontLetterGothic;
 };

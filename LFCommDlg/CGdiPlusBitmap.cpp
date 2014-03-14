@@ -104,12 +104,12 @@ BOOL CGdiPlusBitmapResource::Load(LPCTSTR pName, LPCTSTR pType, HMODULE hInst)
 	if (!hResource)
 		return FALSE;
 
-	DWORD Size = SizeofResource(hInst, hResource);
-	if (!Size)
-		return FALSE;
-
 	LPVOID pResourceData = LockResource(LoadResource(hInst, hResource));
 	if (!pResourceData)
+		return FALSE;
+
+	DWORD Size = SizeofResource(hInst, hResource);
+	if (!Size)
 		return FALSE;
 
 	return CGdiPlusBitmapMemory::Load(pResourceData, Size);

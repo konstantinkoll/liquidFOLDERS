@@ -1053,22 +1053,6 @@
 			>
 		</File>
 		<File
-			RelativePath="Backdrop Settings.txt"
-			>
-		</File>
-		<File
-			RelativePath=".\Backdrop.jpg"
-			>
-		</File>
-		<File
-			RelativePath=".\Backdrop_Blue.png"
-			>
-		</File>
-		<File
-			RelativePath=".\Backdrop_Blurred.png"
-			>
-		</File>
-		<File
 			RelativePath=".\Clipboard_Small.ico"
 			>
 		</File>
@@ -1086,6 +1070,18 @@
 		</File>
 		<File
 			RelativePath=".\DestinationFolder.ico"
+			>
+		</File>
+		<File
+			RelativePath=".\Div.png"
+			>
+		</File>
+		<File
+			RelativePath=".\DivDown.png"
+			>
+		</File>
+		<File
+			RelativePath=".\DivUp.png"
 			>
 		</File>
 		<File
