@@ -20,5 +20,6 @@ protected:
 	virtual void DoDataExchange(CDataExchange* pDX);
 
 	afx_msg void OnLoadLicense();
+	afx_msg void OnChange();
 	DECLARE_MESSAGE_MAP()
 };
