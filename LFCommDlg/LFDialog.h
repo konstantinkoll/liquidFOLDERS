@@ -46,8 +46,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
-	CGroupBox m_GroupBox1;
-	CGroupBox m_GroupBox2;
+	CGroupBox m_GroupBox[2];
 	HICON hIconL;
 	HICON hIconS;
 	HICON hIconShield;
