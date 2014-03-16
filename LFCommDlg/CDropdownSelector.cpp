@@ -161,7 +161,7 @@ INT CDropdownWindow::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndList.SetTextBkColor(Themed ? 0xFFFFFF : GetSysColor(COLOR_WINDOW));
 
 	if (m_DialogResID)
-		if (m_wndBottomArea.Create(this, m_DialogResID, CBRS_BOTTOM, 2)==-1)
+		if (m_wndBottomArea.Create(this, m_DialogResID, 0, 2)==-1)
 			return -1;
 
 	return 0;

@@ -21,7 +21,6 @@ LFAboutDlg::LFAboutDlg(CString AppName, CString Build, UINT IconResID, CWnd* pPa
 	m_Build = Build;
 	m_CaptionTop = 0;
 
-
 	SYSTEMTIME st;
 	GetSystemTime(&st);
 	p_Santa = (st.wMonth==12) ? p_App->GetCachedResourceImage(IDB_SANTA, _T("PNG"), LFCommDlgDLL.hResource) : NULL;

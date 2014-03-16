@@ -130,7 +130,7 @@ INT CMigrateWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 
 	// Bottom area
-	if (!m_wndBottomArea.Create(this, MAKEINTRESOURCE(IDD_BOTTOMAREA), CBRS_BOTTOM, 4))
+	if (!m_wndBottomArea.Create(this, MAKEINTRESOURCE(IDD_BOTTOMAREA), 0, 4))
 		return -1;
 
 	// Aero
