@@ -21,11 +21,11 @@ LFAboutDlg::LFAboutDlg(CString AppName, CString Build, UINT IconResID, CWnd* pPa
 	m_Build = Build;
 	m_CaptionTop = 0;
 
-	ENSURE(m_Logo.Load(IconResID, _T("PNG")));
 
 	SYSTEMTIME st;
 	GetSystemTime(&st);
-	m_pSanta = (st.wMonth==12) ? new CGdiPlusBitmapResource(IDB_SANTA, _T("PNG"), LFCommDlgDLL.hResource) : NULL;
+	p_Santa = (st.wMonth==12) ? p_App->GetCachedResourceImage(IDB_SANTA, _T("PNG"), LFCommDlgDLL.hResource) : NULL;
+	p_Logo = p_App->GetCachedResourceImage(IconResID, _T("PNG"));
 
 	GetFileVersion(AfxGetInstanceHandle(), &m_Version, &m_Copyright);
 	m_Copyright.Replace(_T(" liquidFOLDERS"), _T(""));
@@ -143,7 +143,7 @@ BOOL LFAboutDlg::OnInitDialog()
 	CRect rectWnd;
 	m_wndVersionInfo.GetWindowRect(&rectWnd);
 	ScreenToClient(&rectWnd);
-	rectWnd.left = m_pSanta ? 178 : 148;
+	rectWnd.left = p_Santa ? 178 : 148;
 	rectWnd.top = m_CaptionTop+HeightCaption;
 	m_wndVersionInfo.SetWindowPos(NULL, rectWnd.left, rectWnd.top, rectWnd.Width(), rectWnd.Height(), SWP_NOACTIVATE | SWP_NOZORDER);
 
@@ -160,9 +160,6 @@ BOOL LFAboutDlg::OnInitDialog()
 void LFAboutDlg::OnDestroy()
 {
 	KillTimer(1);
-
-	if (m_pSanta)
-		delete m_pSanta;
 
 	LFDialog::OnDestroy();
 }
@@ -183,13 +180,13 @@ void LFAboutDlg::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 {
 	LFDialog::OnEraseBkgnd(dc, g, rect);
 
-	g.DrawImage(m_Logo.m_pBitmap, m_pSanta ? 39 : 9, 12, 128, 128);
-	if (m_pSanta)
-		g.DrawImage(m_pSanta->m_pBitmap, -6, 2);
+	g.DrawImage(p_Logo->m_pBitmap, p_Santa ? 39 : 9, 12);
+	if (p_Santa)
+		g.DrawImage(p_Santa->m_pBitmap, -6, 2);
 
 	CRect r(rect);
 	r.top = m_CaptionTop;
-	r.left = m_pSanta ? 178 : 148;
+	r.left = p_Santa ? 178 : 148;
 
 	CFont* pOldFont = dc.SelectObject(&m_CaptionFont);
 

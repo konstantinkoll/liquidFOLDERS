@@ -4,7 +4,6 @@
 
 #pragma once
 #include "CHeaderButton.h"
-#include "CGdiPlusBitmap.h"
 
 
 // CExplorerHeader
@@ -31,11 +30,9 @@ protected:
 	COLORREF m_HintCol;
 	CString m_Caption;
 	CString m_Hint;
-	HBRUSH hBackgroundBrush;
 	BOOL m_GradientLine;
 	INT m_RightEdge;
 
-	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnPaint();

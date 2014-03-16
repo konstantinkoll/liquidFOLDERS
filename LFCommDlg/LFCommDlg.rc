@@ -76,6 +76,7 @@ IDB_EARTHMAP_2048       JPG                     "res\\Earthmap_2048.jpg"
 // PNG
 //
 
+IDB_DIV                 PNG                     "res\\Div.png"
 IDB_DIVDOWN             PNG                     "res\\DivDown.png"
 IDB_LOCATIONINDICATOR_8 PNG                     "res\\LocationIndicator_8.png"
 IDB_LOCATIONINDICATOR_16 PNG                     "res\\LocationIndicator_16.png"

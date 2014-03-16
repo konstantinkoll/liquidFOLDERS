@@ -4,7 +4,6 @@
 
 
 #pragma once
-#include "CGdiPlusBitmap.h"
 #include "CGroupBox.h"
 #include "liquidFOLDERS.h"
 #include "LFApplication.h"
@@ -13,24 +12,20 @@
 // LFDialog
 //
 
-#define LFDS_WHITE     1
-#define LFDS_UAC       2
-
 class AFX_EXT_CLASS LFDialog : public CDialog
 {
 public:
-	LFDialog(UINT nIDTemplate, CWnd* pParentWnd=NULL, UINT Design=LFDS_WHITE);
+	LFDialog(UINT nIDTemplate, CWnd* pParentWnd=NULL, BOOL UAC=FALSE);
 
 	virtual void DoDataExchange(CDataExchange* pDX);
 	virtual void AdjustLayout();
 
 	void GetLayoutRect(LPRECT lpRect) const;
-	UINT GetDesign() const;
 
 protected:
 	LFApplication* p_App;
 	UINT m_nIDTemplate;
-	UINT m_Design;
+	BOOL m_UAC;
 
 	virtual void OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect);
 
@@ -51,7 +46,6 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
-	CGdiPlusBitmapResource* m_pDivider;
 	CGroupBox m_GroupBox1;
 	CGroupBox m_GroupBox2;
 	HICON hIconL;

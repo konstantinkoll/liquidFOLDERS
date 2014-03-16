@@ -13,7 +13,7 @@
 extern AFX_EXTENSION_MODULE LFCommDlgDLL;
 
 LFStoreDeleteDlg::LFStoreDeleteDlg(CWnd* pParentWnd, WCHAR* _StoreName)
-	: LFDialog(IDD_STOREDELETE, pParentWnd, LFDS_UAC)
+	: LFDialog(IDD_STOREDELETE, pParentWnd, TRUE)
 {
 	StoreName = _StoreName;
 }

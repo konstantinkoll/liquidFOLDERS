@@ -10,6 +10,7 @@
 //
 
 extern AFX_EXTENSION_MODULE LFCommDlgDLL;
+HBRUSH hBackgroundBrush = NULL;
 
 #define BORDERLEFT     16
 #define BORDER         10
@@ -157,7 +158,6 @@ void CExplorerHeader::AdjustLayout()
 
 
 BEGIN_MESSAGE_MAP(CExplorerHeader, CWnd)
-	ON_WM_CREATE()
 	ON_WM_DESTROY()
 	ON_WM_ERASEBKGND()
 	ON_WM_PAINT()
@@ -169,23 +169,6 @@ BEGIN_MESSAGE_MAP(CExplorerHeader, CWnd)
 	ON_MESSAGE_VOID(WM_ADJUSTLAYOUT, OnAdjustLayout)
 END_MESSAGE_MAP()
 
-INT CExplorerHeader::OnCreate(LPCREATESTRUCT lpCreateStruct)
-{
-	if (CWnd::OnCreate(lpCreateStruct)==-1)
-		return -1;
-
-	CGdiPlusBitmapResource Background;
-	ENSURE(Background.Load(MAKEINTRESOURCE(IDB_EXPLORERGRADIENT), _T("PNG"), LFCommDlgDLL.hResource));
-
-	HBITMAP hBitmap = NULL;
-	Background.m_pBitmap->GetHBITMAP(Color(0xFF, 0xFF, 0xFF), &hBitmap);
-
-	hBackgroundBrush = CreatePatternBrush(hBitmap);
-	DeleteObject(hBitmap);
-
-	return 0;
-}
-
 void CExplorerHeader::OnDestroy()
 {
 	CWnd::OnDestroy();
@@ -196,9 +179,6 @@ void CExplorerHeader::OnDestroy()
 		btn->DestroyWindow();
 		delete btn;
 	}
-
-	if (hBackgroundBrush)
-		DeleteObject(hBackgroundBrush);
 }
 
 BOOL CExplorerHeader::OnEraseBkgnd(CDC* /*pDC*/)
@@ -222,7 +202,7 @@ void CExplorerHeader::OnPaint()
 	CBitmap* pOldBitmap = dc.SelectObject(&buffer);
 
 	BOOL Themed = IsCtrlThemed();
-	if (Themed && (LFGetApp()->OSVersion!=OS_Eight))
+	if (Themed && (p_App->OSVersion!=OS_Eight))
 	{
 		CRect rectBackground(rect);
 		if (rectBackground.bottom>80)
@@ -230,6 +210,16 @@ void CExplorerHeader::OnPaint()
 			rectBackground.bottom = 80;
 			dc.FillSolidRect(0, 80, rect.Width(), rect.Height()-80, 0xFFFFFF);
 		}
+
+		if (!hBackgroundBrush)
+		{
+			HBITMAP hBitmap = NULL;
+			p_App->GetCachedResourceImage(IDB_EXPLORERGRADIENT, _T("PNG"), LFCommDlgDLL.hResource)->m_pBitmap->GetHBITMAP(Color(0xFF, 0xFF, 0xFF), &hBitmap);
+
+			hBackgroundBrush = CreatePatternBrush(hBitmap);
+			DeleteObject(hBitmap);
+		}
+
 		FillRect(dc, rectBackground, hBackgroundBrush);
 
 		#define LineCol 0xF5E5D6
@@ -239,8 +229,7 @@ void CExplorerHeader::OnPaint()
 			{
 				Graphics g(dc);
 
-				Color c1;
-				c1.SetFromCOLORREF(0xFFFFFF);
+				Color c1(0xFF, 0xFF, 0xFF);
 				Color c2;
 				c2.SetFromCOLORREF(LineCol);
 
@@ -313,7 +302,7 @@ HBRUSH CExplorerHeader::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 	HBRUSH hbr = CWnd::OnCtlColor(pDC, pWnd, nCtlColor);
 
 	if ((nCtlColor==CTLCOLOR_BTN) || (nCtlColor==CTLCOLOR_STATIC))
-		if (IsCtrlThemed() && (LFGetApp()->OSVersion!=OS_Eight))
+		if (IsCtrlThemed() && (p_App->OSVersion!=OS_Eight))
 		{
 			CRect rc; 
 			pWnd->GetWindowRect(&rc);

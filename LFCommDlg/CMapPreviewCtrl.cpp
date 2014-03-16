@@ -41,16 +41,8 @@ CMapPreviewCtrl::CMapPreviewCtrl()
 			AfxThrowResourceException();
 	}
 
-	// Karte und Icon laden
-	if (!Map2)
-	{
-		Map2 = new CGdiPlusBitmapResource();
-		ENSURE(Map2->Load(IDB_EARTHMAP_2048, _T("JPG"), LFCommDlgDLL.hResource));
-	}
-	ENSURE(m_Indicator.Load(IDB_LOCATIONINDICATOR_16, _T("PNG"), LFCommDlgDLL.hResource));
 	p_Airport = NULL;
-	m_Location.Latitude = 0;
-	m_Location.Longitude = 0;
+	m_Location.Latitude = m_Location.Longitude = 0;
 }
 
 void CMapPreviewCtrl::Update(LFAirport* pAirport)
@@ -112,12 +104,15 @@ void CMapPreviewCtrl::OnPaint()
 	g.SetSmoothingMode(SmoothingModeAntiAlias);
 	g.SetInterpolationMode(InterpolationModeHighQualityBicubic);
 
+	CGdiPlusBitmap* pMap = LFGetApp()->GetCachedResourceImage(IDB_EARTHMAP_2048, _T("JPG"), LFCommDlgDLL.hResource);
+	CGdiPlusBitmap* pIndicator = LFGetApp()->GetCachedResourceImage(IDB_LOCATIONINDICATOR_16, _T("PNG"), LFCommDlgDLL.hResource);
+
 	// Karte
 	if (p_Airport)
 		m_Location = p_Airport->Location;
 
-	INT L = Map2->m_pBitmap->GetWidth();
-	INT H = Map2->m_pBitmap->GetHeight();
+	INT L = pMap->m_pBitmap->GetWidth();
+	INT H = pMap->m_pBitmap->GetHeight();
 	INT LocX = (INT)(((m_Location.Longitude+180.0)*L)/360.0);
 	INT LocY = (INT)(((m_Location.Latitude+90.0)*H)/180.0);
 	INT PosX = -LocX+rect.Width()/2;
@@ -131,18 +126,19 @@ void CMapPreviewCtrl::OnPaint()
 		{
 			PosY = rect.Height()-H;
 		}
+
 	if (PosX>1)
-		g.DrawImage(Map2->m_pBitmap, PosX-L, PosY, L, H);
-	g.DrawImage(Map2->m_pBitmap, PosX, PosY, L, H);
+		g.DrawImage(pMap->m_pBitmap, PosX-L, PosY);
+	g.DrawImage(pMap->m_pBitmap, PosX, PosY);
 	if (PosX<rect.Width()-L)
-		g.DrawImage(Map2->m_pBitmap, PosX+L, PosY, L, H);
+		g.DrawImage(pMap->m_pBitmap, PosX+L, PosY);
 
 	if (p_Airport)
 	{
 		// Punkt
-		LocX += PosX-m_Indicator.m_pBitmap->GetWidth()/2+1;
-		LocY += PosY-m_Indicator.m_pBitmap->GetHeight()/2+1;
-		g.DrawImage(m_Indicator.m_pBitmap, LocX, LocY);
+		LocX += PosX-pIndicator->m_pBitmap->GetWidth()/2+1;
+		LocY += PosY-pIndicator->m_pBitmap->GetHeight()/2+1;
+		g.DrawImage(pIndicator->m_pBitmap, LocX, LocY);
 
 		// Pfad verschieben
 		if (m_FirstPathDraw)
@@ -150,7 +146,7 @@ void CMapPreviewCtrl::OnPaint()
 			Rect tr;
 			m_TextPath.GetBounds(&tr);
 
-			INT FntX = LocX+m_Indicator.m_pBitmap->GetWidth();
+			INT FntX = LocX+pIndicator->m_pBitmap->GetWidth();
 			INT FntY = LocY-tr.Y;
 
 			if (FntY<10)

@@ -177,21 +177,27 @@ GLTextureBlueMarble::GLTextureBlueMarble(UINT nID)
 			m_nIDLoaded = 0;
 		}
 
-		HRSRC hResource = FindResource(NULL, MAKEINTRESOURCE(nID), _T("JPG"));
+		HRSRC hResource = FindResource(NULL, MAKEINTRESOURCE(nID), L"JPG");
 		if (!hResource)
+			return;
+
+		HGLOBAL hMemory = LoadResource(NULL, hResource);
+		if (!hMemory)
+			return;
+
+		LPVOID pResourceData = LockResource(hMemory);
+		if (!pResourceData)
 			return;
 
 		DWORD Size = SizeofResource(NULL, hResource);
 		if (!Size)
 			return;
 
-		LPVOID pResourceData = LockResource(LoadResource(NULL, hResource));
-		if (!pResourceData)
-			return;
-
 		IStream* pStream = SHCreateMemStream((BYTE*)pResourceData, Size);
 		OleLoadPicture(pStream, 0, FALSE, IID_IPicture, (void**)&p_BlueMarble);
 		pStream->Release();
+
+		UnlockResource(hMemory);
 
 		if (p_BlueMarble)
 			m_nIDLoaded = nID;

@@ -4,7 +4,6 @@
 
 #pragma once
 #include "liquidFOLDERS.h"
-#include "CGdiPlusBitmap.h"
 
 
 // CMapSelectionCtrl
@@ -18,8 +17,6 @@ struct tagGPSDATA
 	LFGeoCoordinates* pCoord;
 };
 
-static CGdiPlusBitmapResource* Map1 = NULL;
-
 class CMapSelectionCtrl : public CWnd
 {
 public:
@@ -29,7 +26,6 @@ public:
 	void SetGeoCoordinates(const LFGeoCoordinates Coord);
 
 protected:
-	CGdiPlusBitmapResource m_Indicator;
 	LFGeoCoordinates m_Coord;
 
 	void UpdateLocation(CPoint point);

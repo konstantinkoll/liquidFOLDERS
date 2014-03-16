@@ -3,7 +3,6 @@
 //
 
 #pragma once
-#include "CGdiPlusBitmap.h"
 #include "liquidFOLDERS.h"
 #include "LFDialog.h"
 

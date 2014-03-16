@@ -4,13 +4,10 @@
 
 #pragma once
 #include "liquidFOLDERS.h"
-#include "CGdiPlusBitmap.h"
 
 
 // CMapPreviewCtrl
 //
-
-static CGdiPlusBitmapResource* Map2 = NULL;
 
 class CMapPreviewCtrl : public CWnd
 {
@@ -20,7 +17,6 @@ public:
 	void Update(LFAirport* pAirport);
 
 protected:
-	CGdiPlusBitmapResource m_Indicator;
 	LFAirport* p_Airport;
 	LFGeoCoordinates m_Location;
 	GraphicsPath m_TextPath;

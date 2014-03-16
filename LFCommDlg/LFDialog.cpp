@@ -13,15 +13,15 @@
 
 extern AFX_EXTENSION_MODULE LFCommDlgDLL;
 
-LFDialog::LFDialog(UINT nIDTemplate, CWnd* pParentWnd, UINT Design)
+LFDialog::LFDialog(UINT nIDTemplate, CWnd* pParentWnd, BOOL UAC)
 	: CDialog(nIDTemplate, pParentWnd)
 {
 	m_nIDTemplate = nIDTemplate;
-	m_Design = Design;
+	m_UAC = UAC;
+
 	p_App = LFGetApp();
 	hIconS = hIconL = hIconShield = NULL;
 	hBackgroundBrush = NULL;
-	m_pDivider = NULL;
 	m_BackBufferL = m_BackBufferH = m_UACHeight = 0;
 	p_BottomLeftControl = NULL;
 }
@@ -67,62 +67,51 @@ void LFDialog::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 	INT Line = layout.bottom;
 
 	BOOL Themed = IsCtrlThemed();
-	switch (m_Design)
+
+	// Background
+	if (Themed)
 	{
-	case LFDS_WHITE:
-		if (Themed)
-		{
-			dc.FillSolidRect(0, 0, m_BackBufferL, m_BackBufferH, 0xFFFFFF);
+		dc.FillSolidRect(0, 0, m_BackBufferL, m_BackBufferH, 0xFFFFFF);
 
-			const INT l = m_pDivider->m_pBitmap->GetWidth();
-			const INT h = m_pDivider->m_pBitmap->GetHeight();
-			g.DrawImage(m_pDivider->m_pBitmap, (rect.Width()-l)/2, Line, l, h);
-
-			break;
-		}
-	case LFDS_UAC:
+		CGdiPlusBitmap* pDivider = p_App->GetCachedResourceImage(IDB_DIVDOWN, _T("PNG"), LFCommDlgDLL.hResource);
+		g.DrawImage(pDivider->m_pBitmap, (rect.Width()-(INT)pDivider->m_pBitmap->GetWidth())/2, Line);
+	}
+	else
+	{
 		dc.FillSolidRect(0, 0, m_BackBufferL, Line, 0xFFFFFF);
+		dc.FillSolidRect(0, Line, m_BackBufferL, rect.Height()-Line, GetSysColor(COLOR_3DFACE));
+	}
+
+	// UAC
+	if (m_UAC)
+	{
 		if (Themed)
 		{
-			dc.FillSolidRect(0, Line++, m_BackBufferL, 1, 0xDFDFDF);
-			dc.FillSolidRect(0, Line, m_BackBufferL, rect.Height()-Line, 0xF0F0F0);
-			dc.FillSolidRect(0, btn.bottom+borders.Height()+1, m_BackBufferL, 1, 0xDFDFDF);
-			dc.FillSolidRect(0, btn.bottom+borders.Height()+2, m_BackBufferL, 1, 0xFFFFFF);
+			CGdiPlusBitmap* pDivider = p_App->GetCachedResourceImage(IDB_DIV, _T("PNG"), LFCommDlgDLL.hResource);
+			g.DrawImage(pDivider->m_pBitmap, (rect.Width()-(INT)pDivider->m_pBitmap->GetWidth())/2, btn.bottom+borders.Height()+1);
+
+			LinearGradientBrush brush2(Point(0, 0), Point(m_BackBufferL, 0), Color(4, 80, 130), Color(28, 120, 133));
+			g.FillRectangle(&brush2, 0, 0, m_BackBufferL, m_UACHeight);
+			dc.SetTextColor(0xFFFFFF);
 		}
 		else
 		{
-			dc.FillSolidRect(0, Line++, m_BackBufferL, rect.Height()-Line, GetSysColor(COLOR_3DFACE));
+			dc.FillSolidRect(0, 0, m_BackBufferL, m_UACHeight, GetSysColor(COLOR_HIGHLIGHT));
+			dc.SetTextColor(GetSysColor(COLOR_HIGHLIGHTTEXT));
 		}
 
-		if (m_Design==LFDS_UAC)
-		{
-			if (Themed)
-			{
-				LinearGradientBrush brush2(Point(0, 0), Point(m_BackBufferL, 0), Color(4, 80, 130), Color(28, 120, 133));
-				g.FillRectangle(&brush2, 0, 0, m_BackBufferL, m_UACHeight);
-				dc.SetTextColor(0xFFFFFF);
-			}
-			else
-			{
-				dc.FillSolidRect(0, 0, m_BackBufferL, m_UACHeight, GetSysColor(COLOR_HIGHLIGHT));
-				dc.SetTextColor(GetSysColor(COLOR_HIGHLIGHTTEXT));
-			}
+		DrawIconEx(dc, borders.right, (m_UACHeight-m_ShieldSize)/2, hIconShield, m_ShieldSize, m_ShieldSize, 0, NULL, DI_NORMAL);
 
-			DrawIconEx(dc, borders.right, (m_UACHeight-m_ShieldSize)/2, hIconShield, m_ShieldSize, m_ShieldSize, 0, NULL, DI_NORMAL);
+		CRect rectText(rect);
+		rectText.left = borders.right+m_ShieldSize;
+		rectText.bottom = m_UACHeight;
 
-			CRect rectText(rect);
-			rectText.left = borders.right+m_ShieldSize;
-			rectText.bottom = m_UACHeight;
+		CString tmpStr;
+		ENSURE(tmpStr.LoadString(IDS_UACMESSAGE));
 
-			CString tmpStr;
-			ENSURE(tmpStr.LoadString(IDS_UACMESSAGE));
-
-			CFont* pOldFont = dc.SelectObject(&LFGetApp()->m_CaptionFont);
-			dc.DrawText(tmpStr, rectText, DT_SINGLELINE | DT_VCENTER | DT_END_ELLIPSIS | DT_LEFT);
-			dc.SelectObject(pOldFont);
-		}
-
-		break;
+		CFont* pOldFont = dc.SelectObject(&LFGetApp()->m_CaptionFont);
+		dc.DrawText(tmpStr, rectText, DT_SINGLELINE | DT_VCENTER | DT_END_ELLIPSIS | DT_LEFT);
+		dc.SelectObject(pOldFont);
 	}
 }
 
@@ -172,15 +161,10 @@ void LFDialog::GetLayoutRect(LPRECT lpRect) const
 	CRect btn;
 	pBottomWnd->GetWindowRect(&btn);
 	ScreenToClient(&btn);
-	lpRect->bottom = btn.top-borders.Height()-(m_Design==LFDS_WHITE ? 3 : 1);
+	lpRect->bottom = btn.top-borders.Height()-2;
 
-	if (m_Design==LFDS_UAC)
+	if (m_UAC)
 		lpRect->top = m_UACHeight;
-}
-
-UINT LFDialog::GetDesign() const
-{
-	return m_Design;
 }
 
 
@@ -198,7 +182,16 @@ BOOL LFDialog::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
-	if (m_Design!=LFDS_UAC)
+	if (m_UAC)
+	{
+		// Schild
+		m_UACHeight = MulDiv(40, LOWORD(GetDialogBaseUnits()), 8);
+		m_ShieldSize = (m_UACHeight<24) ? 16 : (m_UACHeight<32) ? 24 : (m_UACHeight<48) ? 32 : 48;
+		hIconShield = (HICON)LoadImage(LFCommDlgDLL.hResource, (p_App->OSVersion==OS_Vista) ? MAKEINTRESOURCE(IDI_SHIELD_VISTA) : IDI_SHIELD, IMAGE_ICON, m_ShieldSize, m_ShieldSize, LR_DEFAULTCOLOR);
+
+		p_App->PlayWarningSound();
+	}
+	else
 	{
 		// Symbol für dieses Dialogfeld festlegen. Wird automatisch erledigt
 		// wenn das Hauptfenster der Anwendung kein Dialogfeld ist
@@ -206,23 +199,6 @@ BOOL LFDialog::OnInitDialog()
 		SetIcon(hIconS, FALSE);
 		hIconL = (HICON)LoadImage(LFCommDlgDLL.hResource, MAKEINTRESOURCE(m_nIDTemplate), IMAGE_ICON, 32, 32, LR_DEFAULTCOLOR);
 		SetIcon(hIconL, TRUE);
-	}
-
-	switch (m_Design)
-	{
-	case LFDS_WHITE:
-		// Hintergrundbild laden
-		m_pDivider = new CGdiPlusBitmapResource();
-		ENSURE(m_pDivider->Load(IDB_DIVDOWN, _T("PNG"), LFCommDlgDLL.hResource));
-		break;
-	case LFDS_UAC:
-		// Schild
-		m_UACHeight = MulDiv(40, LOWORD(GetDialogBaseUnits()), 8);
-		m_ShieldSize = (m_UACHeight<24) ? 16 : (m_UACHeight<32) ? 24 : (m_UACHeight<48) ? 32 : 48;
-		hIconShield = (HICON)LoadImage(LFCommDlgDLL.hResource, (p_App->OSVersion==OS_Vista) ? MAKEINTRESOURCE(IDI_SHIELD_VISTA) : IDI_SHIELD, IMAGE_ICON, m_ShieldSize, m_ShieldSize, LR_DEFAULTCOLOR);
-
-		p_App->PlayWarningSound();
-		break;
 	}
 
 	CRect rect;
@@ -237,8 +213,6 @@ BOOL LFDialog::OnInitDialog()
 
 void LFDialog::OnDestroy()
 {
-	if (m_pDivider)
-		delete m_pDivider;
 	if (hIconL)
 		DestroyIcon(hIconL);
 	if (hIconS)

@@ -41,16 +41,7 @@ CMapSelectionCtrl::CMapSelectionCtrl()
 			AfxThrowResourceException();
 	}
 
-	// Karte und Icon laden
-	if (!Map1)
-	{
-		Map1 = new CGdiPlusBitmapResource();
-		ENSURE(Map1->Load(IDB_EARTHMAP_1024, _T("JPG"), LFCommDlgDLL.hResource));
-	}
-	ENSURE(m_Indicator.Load(IDB_LOCATIONINDICATOR_8, _T("PNG"), LFCommDlgDLL.hResource));
-	m_Coord.Latitude = 0;
-	m_Coord.Longitude = 0;
-
+	m_Coord.Latitude = m_Coord.Longitude = 0;
 	m_Blink = TRUE;
 	m_RemainVisible = 0;
 }
@@ -144,17 +135,20 @@ void CMapSelectionCtrl::OnPaint()
 	buffer.CreateCompatibleBitmap(&pDC, rect.Width(), rect.Height());
 	CBitmap* pOldBitmap = dc.SelectObject(&buffer);
 
+	CGdiPlusBitmap* pMap = LFGetApp()->GetCachedResourceImage(IDB_EARTHMAP_1024, _T("JPG"), LFCommDlgDLL.hResource);
+	CGdiPlusBitmap* pIndicator = LFGetApp()->GetCachedResourceImage(IDB_LOCATIONINDICATOR_8, _T("PNG"), LFCommDlgDLL.hResource);
+
 	Graphics g(dc);
 	g.SetCompositingMode(CompositingModeSourceOver);
-	g.DrawImage(Map1->m_pBitmap, 0, 0, rect.Width(), rect.Height());
+	g.DrawImage(pMap->m_pBitmap, 0, 0, rect.Width(), rect.Height());
 
 	if (m_Blink)
 	{
 		INT cx = (INT)((m_Coord.Longitude+180)*rect.Width()/360)+1;
 		INT cy = (INT)((m_Coord.Latitude+90)*rect.Height()/180)+1;
-		INT h = m_Indicator.m_pBitmap->GetHeight();
-		INT l = m_Indicator.m_pBitmap->GetWidth();
-		g.DrawImage(m_Indicator.m_pBitmap, cx-l/2, cy-h/2);
+		INT h = pIndicator->m_pBitmap->GetHeight();
+		INT l = pIndicator->m_pBitmap->GetWidth();
+		g.DrawImage(pIndicator->m_pBitmap, cx-l/2, cy-h/2);
 	}
 
 	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);

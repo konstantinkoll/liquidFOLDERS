@@ -84,7 +84,6 @@ void CGroupBox::OnPaint()
 
 	// Border
 	CFont* pOldFont = (CFont*)dc.SelectStockObject(DEFAULT_GUI_FONT);
-	COLORREF clr;
 
 	CString caption;
 	GetWindowText(caption);
@@ -106,7 +105,7 @@ void CGroupBox::OnPaint()
 		rectBounds.OffsetRect(-1, -1);
 		dc.Draw3dRect(rectBounds, GetSysColor(COLOR_3DSHADOW), GetSysColor(COLOR_3DSHADOW));
 
-		clr = GetSysColor(COLOR_WINDOWTEXT);
+		dc.SetTextColor(GetSysColor(COLOR_WINDOWTEXT));
 	}
 	else
 	{
@@ -119,7 +118,7 @@ void CGroupBox::OnPaint()
 		Pen pen(Color(204, 204, 204));
 		g.DrawPath(&pen, &path);
 
-		clr = (((LFDialog*)GetParent())->GetDesign()==LFDS_WHITE) ? 0xCB3300 : 0xCC6600;
+		dc.SetTextColor(0xCB3300);
 	}
 
 	// Caption
@@ -131,7 +130,6 @@ void CGroupBox::OnPaint()
 	if (brush)
 		FillRect(dc, rectCaption, brush);
 
-	dc.SetTextColor(clr);
 	dc.DrawText(caption, rectCaption, DT_VCENTER | DT_CENTER | DT_END_ELLIPSIS | DT_SINGLELINE | DT_NOPREFIX);
 
 	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);

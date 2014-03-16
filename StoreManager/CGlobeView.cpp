@@ -1069,9 +1069,7 @@ INT CGlobeView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_Fonts[1].Create(&theApp.m_LargeFont);
 
 	// Icons
-	CGdiPlusBitmapResource Tex0(IDB_GLOBEICONS_RGB, _T("PNG"));
-	CGdiPlusBitmapResource Tex1(IDB_GLOBEICONS_ALPHA, _T("PNG"));
-	m_pTextureIcons = new GLTextureCombine(&Tex0, &Tex1);
+	m_pTextureIcons = new GLTextureCombine(LFGetApp()->GetCachedResourceImage(IDB_GLOBEICONS_RGB, _T("PNG")), LFGetApp()->GetCachedResourceImage(IDB_GLOBEICONS_ALPHA, _T("PNG")));
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
 

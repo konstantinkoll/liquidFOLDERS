@@ -371,6 +371,9 @@ CWnd* LFApplication::OpenCommandLine(WCHAR* /*CmdLine*/)
 
 INT LFApplication::ExitInstance()
 {
+	for (POSITION p=m_ResourceCache.GetHeadPosition(); p; )
+		delete m_ResourceCache.GetNext(p).pImage;
+
 	GdiplusShutdown(m_gdiplusToken);
 
 	if (hModThemes)
@@ -545,9 +548,27 @@ BOOL LFApplication::WriteGlobalString(LPCTSTR lpszEntry, LPCTSTR lpszValue)
 	return FALSE;
 }
 
-HANDLE LFApplication::LoadFontFromResource(UINT id, HMODULE hInst)
+CGdiPlusBitmap* LFApplication::GetCachedResourceImage(UINT nID, LPCTSTR pType, HMODULE hInst)
 {
-	HRSRC hResource = FindResource(hInst, MAKEINTRESOURCE(id), L"TTF");
+	for (POSITION p=m_ResourceCache.GetHeadPosition(); p; )
+	{
+		ResourceCacheItem item = m_ResourceCache.GetNext(p);
+
+		if (item.nResID==nID)
+			return item.pImage;
+	}
+
+	ResourceCacheItem item;
+	item.pImage = new CGdiPlusBitmapResource(nID, pType, hInst);
+	item.nResID = nID;
+
+	m_ResourceCache.AddTail(item);
+	return item.pImage;
+}
+
+HANDLE LFApplication::LoadFontFromResource(UINT nID, HMODULE hInst)
+{
+	HRSRC hResource = FindResource(hInst, MAKEINTRESOURCE(nID), L"TTF");
 	if (!hResource)
 		return NULL;
 
