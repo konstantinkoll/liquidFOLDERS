@@ -24,11 +24,11 @@
     <ROW Property="ARPURLINFOABOUT" Value="http://liquidfolders.net/"/>
     <ROW Property="ARPURLUPDATEINFO" Value="http://liquidfolders.net/download/"/>
     <ROW Property="AppLogoIcon" Value="AppLogo.ico" Type="1" MsiKey="AppLogoIcon"/>
-    <ROW Property="Background" Value="Backdrop3.bmp" Type="1" MsiKey="Background"/>
+    <ROW Property="Background" Value="Backdrop2.bmp" Type="1" MsiKey="Background"/>
     <ROW Property="CompleteSetupIcon" Value="Install.ico" Type="1" MsiKey="CompleteSetupIcon"/>
     <ROW Property="CustomSetupIcon" Value="Install.ico" Type="1" MsiKey="CustomSetupIcon"/>
     <ROW Property="ExclamationIcon" Value="Warning.ico" Type="1" MsiKey="ExclamationIcon"/>
-    <ROW Property="ExitBackground" Value="Backdrop1.bmp" Type="1" MsiKey="ExitBackground"/>
+    <ROW Property="ExitBackground" Value="Backdrop1.jpg" Type="1" MsiKey="ExitBackground"/>
     <ROW Property="FolderLogoIcon" Value="DestinationFolder.ico" Type="1" MsiKey="FolderLogoIcon"/>
     <ROW Property="InfoIcon" Value="Info.ico" Type="1" MsiKey="InfoIcon"/>
     <ROW Property="InstallLogoIcon" Value="Install.ico" Type="1" MsiKey="InstallLogoIcon"/>
@@ -156,9 +156,8 @@
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiBinaryComponent">
     <ROW Name="AppLogo.ico" SourcePath="Setup\AppLogo.ico"/>
-    <ROW Name="Backdrop1.bmp" SourcePath="Setup\Backdrop1.bmp"/>
+    <ROW Name="Backdrop1.jpg" SourcePath="Setup\Backdrop1.jpg"/>
     <ROW Name="Backdrop2.bmp" SourcePath="Setup\Backdrop2.bmp"/>
-    <ROW Name="Backdrop3.bmp" SourcePath="Setup\Backdrop3.bmp"/>
     <ROW Name="DestinationFolder.ico" SourcePath="Setup\DestinationFolder.ico"/>
     <ROW Name="ExternalUICleaner.dll" SourcePath="&lt;AI_CUSTACTS&gt;ExternalUICleaner.dll"/>
     <ROW Name="Info.ico" SourcePath="Setup\Info.ico"/>
@@ -582,7 +581,7 @@
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiTextStyleComponent">
     <ROW TextStyle="BlueText" FaceName="Arial" Size="12" Color="16711680" StyleBits="0" MsiKey="BlueText"/>
-    <ROW TextStyle="TitleFont" FaceName="Arial" Size="14" Color="13382400" StyleBits="0" MsiKey="TitleFont"/>
+    <ROW TextStyle="TitleFont" FaceName="Arial" Size="14" Color="13316864" StyleBits="0" MsiKey="TitleFont"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiThemeComponent">
     <ATTRIBUTE name="UsedTheme" value="azure"/>

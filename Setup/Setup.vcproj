@@ -167,11 +167,7 @@
 			>
 		</File>
 		<File
-			RelativePath=".\Backdrop1.bmp"
-			>
-		</File>
-		<File
-			RelativePath=".\Backdrop1.png"
+			RelativePath=".\Backdrop1.jpg"
 			>
 		</File>
 		<File
@@ -180,14 +176,6 @@
 		</File>
 		<File
 			RelativePath=".\Backdrop2.png"
-			>
-		</File>
-		<File
-			RelativePath=".\Backdrop3.bmp"
-			>
-		</File>
-		<File
-			RelativePath=".\Backdrop3.png"
 			>
 		</File>
 		<File
