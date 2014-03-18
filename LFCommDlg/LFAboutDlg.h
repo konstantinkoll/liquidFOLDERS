@@ -39,6 +39,7 @@ private:
 	CFont m_CaptionFont;
 	CFont m_VersionFont;
 	INT m_CaptionTop;
+	INT m_IconTop;
 	CString m_Version;
 	CString m_Copyright;
 	CString m_AppName;
