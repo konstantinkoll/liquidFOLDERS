@@ -190,7 +190,9 @@ BOOL CMainWnd::PreTranslateMessage(MSG* pMsg)
 		m_wndSearch.SetWindowText(_T(""));
 
 		SendMessage(WM_NAVIGATETO, (WPARAM)f);
-		m_wndMainView.SetFocus();
+
+		if (!m_IsClipboard)
+			m_wndMainView.SetFocus();
 
 		return TRUE;
 	}
