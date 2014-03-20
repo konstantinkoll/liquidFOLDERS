@@ -64,7 +64,6 @@
   <COMPONENT cid="caphyon.advinst.msicomp.MsiCompsComponent">
     <ROW Component="AI_CustomARPName" ComponentId="{95F2A88D-509C-4809-AA93-08DC13ED1CB1}" Directory_="APPDIR" Attributes="4" KeyPath="DisplayName" Options="1"/>
     <ROW Component="AI_DisableModify" ComponentId="{DD31B056-8D31-4892-845F-B6BA2BFF92EA}" Directory_="APPDIR" Attributes="4" KeyPath="NoModify" Options="1"/>
-    <ROW Component="FileDrop.exe" ComponentId="{8F616507-15F7-4888-BD0A-6A76897609A7}" Directory_="APPDIR" Attributes="0" KeyPath="FileDrop.exe"/>
     <ROW Component="LFCommDlg.dll" ComponentId="{EFEB7EE1-B3F4-433C-BF7B-3437F06605E1}" Directory_="APPDIR" Attributes="0" KeyPath="LFCommDlg.dll"/>
     <ROW Component="LFCore.dll" ComponentId="{9B505893-2785-4480-9EE6-750BCF0B75F5}" Directory_="SystemFolder" Attributes="0" KeyPath="LFCore.dll"/>
     <ROW Component="LFNamespaceExtension.dll" ComponentId="{C424FA2A-6FEB-4C17-9BAB-45716DF703A4}" Directory_="APPDIR" Attributes="0" KeyPath="LFNamespaceExtension.dll"/>
@@ -76,19 +75,17 @@
     <ROW Component="liquidFOLDERS" ComponentId="{408FDB56-26F6-420F-BBA4-20858FBA253B}" Directory_="APPDIR" Attributes="4" KeyPath="AIShRegAnswer"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiFeatsComponent">
-    <ROW Feature="FileDrop" Title="FileDrop" Description="FileDrop" Display="5" Level="1" Directory_="APPDIR" Attributes="8" Components="FileDrop.exe AI_CustomARPName AI_DisableModify"/>
     <ROW Feature="MigrationWizard" Title="MigrationWizard" Description="Migration Wizard" Display="7" Level="1" Directory_="APPDIR" Attributes="8" Components="Migrate.exe AI_CustomARPName AI_DisableModify"/>
     <ROW Feature="liquidFOLDERS" Title="liquidFOLDERS" Description="liquidFOLDERS" Display="0" Level="1" Directory_="APPDIR" Attributes="24" Components="LFCommDlg.dll LFCore.dll LFNamespaceExtension.dll LFRunCmd.exe StoreManager.exe SHORTCUTDIR AI_CustomARPName AI_DisableModify Quick_Launch liquidFOLDERS"/>
     <ATTRIBUTE name="CurrentFeature" value="liquidFOLDERS"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiFilesComponent">
-    <ROW File="FileDrop.exe" Component_="FileDrop.exe" FileName="FileDrop.exe" Attributes="0" SourcePath="Release\Win32\FileDrop.exe" SelfReg="false" Sequence="1"/>
-    <ROW File="LFCommDlg.dll" Component_="LFCommDlg.dll" FileName="LFComm~1.dll|LFCommDlg.dll" Attributes="0" SourcePath="Release\Win32\LFCommDlg.dll" SelfReg="false" Sequence="2"/>
-    <ROW File="LFCore.dll" Component_="LFCore.dll" FileName="LFCore.dll" Attributes="0" SourcePath="Release\Win32\LFCore.dll" SelfReg="false" Sequence="3"/>
-    <ROW File="LFNamespaceExtension.dll" Component_="LFNamespaceExtension.dll" FileName="LFName~1.dll|LFNamespaceExtension.dll" Attributes="0" SourcePath="Release\Win32\LFNamespaceExtension.dll" SelfReg="false" Sequence="4"/>
-    <ROW File="LFRunCmd.exe" Component_="LFRunCmd.exe" FileName="LFRunCmd.exe" Attributes="0" SourcePath="Release\Win32\LFRunCmd.exe" SelfReg="false" Sequence="5"/>
-    <ROW File="Migrate.exe" Component_="Migrate.exe" FileName="Migrate.exe" Attributes="0" SourcePath="Release\Win32\Migrate.exe" SelfReg="false" Sequence="6"/>
-    <ROW File="StoreManager.exe" Component_="StoreManager.exe" FileName="StoreM~1.exe|StoreManager.exe" Attributes="0" SourcePath="Release\Win32\StoreManager.exe" SelfReg="false" Sequence="7"/>
+    <ROW File="LFCommDlg.dll" Component_="LFCommDlg.dll" FileName="LFComm~1.dll|LFCommDlg.dll" Attributes="0" SourcePath="Release\Win32\LFCommDlg.dll" SelfReg="false" Sequence="1"/>
+    <ROW File="LFCore.dll" Component_="LFCore.dll" FileName="LFCore.dll" Attributes="0" SourcePath="Release\Win32\LFCore.dll" SelfReg="false" Sequence="2"/>
+    <ROW File="LFNamespaceExtension.dll" Component_="LFNamespaceExtension.dll" FileName="LFName~1.dll|LFNamespaceExtension.dll" Attributes="0" SourcePath="Release\Win32\LFNamespaceExtension.dll" SelfReg="false" Sequence="3"/>
+    <ROW File="LFRunCmd.exe" Component_="LFRunCmd.exe" FileName="LFRunCmd.exe" Attributes="0" SourcePath="Release\Win32\LFRunCmd.exe" SelfReg="false" Sequence="4"/>
+    <ROW File="Migrate.exe" Component_="Migrate.exe" FileName="Migrate.exe" Attributes="0" SourcePath="Release\Win32\Migrate.exe" SelfReg="false" Sequence="5"/>
+    <ROW File="StoreManager.exe" Component_="StoreManager.exe" FileName="StoreM~1.exe|StoreManager.exe" Attributes="0" SourcePath="Release\Win32\StoreManager.exe" SelfReg="false" Sequence="6"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.AiRemoveFileComponent">
     <ROW RemoveFile="_" Condition="(AI_CLEAN_RESOURCES_UNINSTALL = &quot;1&quot;) AND (NOT UPGRADINGPRODUCTCODE)" Options="3"/>
@@ -413,7 +410,7 @@
     <ROW Action="AI_ResolveKnownFolders" Type="1" Source="aicustact.dll" Target="AI_ResolveKnownFolders"/>
     <ROW Action="AI_RunFinishActions" Type="1" Source="aicustact.dll" Target="RunFinishActions" WithoutSeq="true"/>
     <ROW Action="AI_STORE_LOCATION" Type="51" Source="ARPINSTALLLOCATION" Target="[APPDIR]"/>
-    <ROW Action="LFRunCmd.exe" Type="1618" Source="LFRunCmd.exe" Target="INSTALL"/>
+    <ROW Action="LFRunCmd.exe" Type="1618" Source="LFRunCmd.exe" Target="/INSTALL"/>
     <ROW Action="SET_APPDIR" Type="307" Source="APPDIR" Target="[ProgramFilesFolder][Manufacturer]\[ProductName]" MultiBuildTarget="DefaultBuild:[ProgramFilesFolder]\[ProductName]"/>
     <ROW Action="SET_SHORTCUTDIR" Type="307" Source="SHORTCUTDIR" Target="[ProgramMenuFolder][ProductName]"/>
     <ROW Action="SET_TARGETDIR_TO_APPDIR" Type="51" Source="TARGETDIR" Target="[APPDIR]"/>
@@ -422,7 +419,7 @@
     <ROW Dialog="FolderDlg" HCentering="50" VCentering="50" Width="450" Height="360" Attributes="35" Title="[ProductName] [Setup]" Control_First="Bitmap" Control_Default="Next" Control_Cancel="Cancel" TitleLocId="Dialog.FolderDlg" MsiKey="FolderDlg"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiIconsComponent">
-    <ROW Name="SystemFolder_msiexec.exe" SourcePath="&lt;AI_RES&gt;uninstall.ico" Index="0"/>
+    <ROW Name="StoreManager_1.exe" SourcePath="res\FileDrop_Small.ico" Index="0"/>
     <ROW Name="liquidFOLDERS.exe" SourcePath="Setup\liquidFOLDERS.ico" Index="0"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiInstExSeqComponent">
@@ -492,13 +489,12 @@
     <ROW Registry="F2D914F_FE57_414F_9F88_A377C7841DA4_3" Root="2" Key="Software\Microsoft\Windows\CurrentVersion\Explorer\Desktop\Namespace\{3F2D914F-FE57-414F-9F88-A377C7841DA4}" Name="*" Component_="LFNamespaceExtension.dll"/>
     <ROW Registry="F2D914F_FE57_414F_9F88_A377C7841DA4_4" Root="2" Key="Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu" Name="{3F2D914F-FE57-414F-9F88-A377C7841DA4}" Value="#1" Component_="LFNamespaceExtension.dll"/>
     <ROW Registry="F2D914F_FE57_414F_9F88_A377C7841DA4_5" Root="2" Key="Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" Name="{3F2D914F-FE57-414F-9F88-A377C7841DA4}" Value="#1" Component_="LFNamespaceExtension.dll"/>
-    <ROW Registry="FileDrop" Root="2" Key="Software\liquidFOLDERS" Name="FileDrop" Value="[#FileDrop.exe]" Component_="FileDrop.exe"/>
     <ROW Registry="HelpLink" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="HelpLink" Value="http://liquidfolders.net/support/" Component_="AI_CustomARPName"/>
     <ROW Registry="HelpTelephone" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="HelpTelephone" Component_="AI_CustomARPName"/>
     <ROW Registry="InfoTip" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}" Name="InfoTip" Value="#%@[#LFNamespaceExtension.dll],1000" Component_="LFNamespaceExtension.dll"/>
     <ROW Registry="InstallLocation" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="InstallLocation" Value="[APPDIR]" Component_="AI_CustomARPName"/>
     <ROW Registry="LFRunCmd" Root="2" Key="Software\liquidFOLDERS" Name="LFRunCmd" Value="[#LFRunCmd.exe]" Component_="LFRunCmd.exe"/>
-    <ROW Registry="LFWatchdog" Root="2" Key="Software\Microsoft\Windows\CurrentVersion\Run" Name="LFRunCmd" Value="[#LFRunCmd.exe] CHECKUPDATE" Component_="LFRunCmd.exe"/>
+    <ROW Registry="LFWatchdog" Root="2" Key="Software\Microsoft\Windows\CurrentVersion\Run" Name="LFRunCmd" Value="[#LFRunCmd.exe] /CHECKUPDATE" Component_="LFRunCmd.exe"/>
     <ROW Registry="Migrate" Root="2" Key="Software\liquidFOLDERS" Name="Migrate" Value="[#Migrate.exe]" Component_="Migrate.exe"/>
     <ROW Registry="ModifyPath" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="ModifyPath" Value="[AI_UNINSTALLER] /I [ProductCode]" Component_="AI_CustomARPName"/>
     <ROW Registry="NeverShowExt" Root="0" Key="LFSendTofile" Name="NeverShowExt" Value="#0" Component_="LFNamespaceExtension.dll"/>
@@ -572,12 +568,11 @@
     <ROW RemoveRegistry="__9" Root="0" Key=".filter" Name="-" Component_="liquidFOLDERS"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiShortsComponent">
-    <ROW Shortcut="FileDrop.exe" Directory_="SHORTCUTDIR" Name="FileDrop" Component_="FileDrop.exe" Target="[#FileDrop.exe]" Description="FileDrop.exe" Hotkey="0" IconIndex="0" ShowCmd="1" WkDir="APPDIR"/>
     <ROW Shortcut="Migrate.exe" Directory_="SHORTCUTDIR" Name="Migrat~1|Migration Wizard" Component_="Migrate.exe" Target="[#Migrate.exe]" Description="Migrate.exe" Hotkey="0" IconIndex="0" ShowCmd="1" WkDir="APPDIR"/>
     <ROW Shortcut="StoreManager" Directory_="Quick_Launch_DIR" Name="StoreM~1|StoreManager" Component_="StoreManager.exe" Target="[#StoreManager.exe]" Hotkey="0" IconIndex="0" ShowCmd="1" WkDir="APPDIR"/>
     <ROW Shortcut="StoreManager.exe" Directory_="SHORTCUTDIR" Name="StoreM~1|StoreManager" Component_="StoreManager.exe" Target="[#StoreManager.exe]" Description="StoreManager.exe" Hotkey="0" IconIndex="0" ShowCmd="1" WkDir="APPDIR"/>
     <ROW Shortcut="StoreManager.exe_1" Directory_="DesktopFolder" Name="liquid~1|liquidFOLDERS StoreManager" Component_="StoreManager.exe" Target="[#StoreManager.exe]" Description="StoreManager.exe" Hotkey="0" IconIndex="0" ShowCmd="1" WkDir="APPDIR"/>
-    <ROW Shortcut="Uninstall_liquidFOLDERS" Directory_="SHORTCUTDIR" Name="Uninst~1|Uninstall liquidFOLDERS" Component_="liquidFOLDERS" Target="[SystemFolder]msiexec.exe" Arguments="/x [ProductCode]" Hotkey="0" Icon_="SystemFolder_msiexec.exe" IconIndex="0" ShowCmd="1"/>
+    <ROW Shortcut="StoreManager_1" Directory_="SHORTCUTDIR" Name="FileDrop" Component_="StoreManager.exe" Target="[#StoreManager.exe]" Arguments="/FILEDROP" Description="StoreManager.exe" Hotkey="0" Icon_="StoreManager_1.exe" IconIndex="0" ShowCmd="1" WkDir="APPDIR"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiTextStyleComponent">
     <ROW TextStyle="BlueText" FaceName="Arial" Size="12" Color="16711680" StyleBits="0" MsiKey="BlueText"/>

@@ -25,8 +25,8 @@ public:
 	virtual CWnd* OpenCommandLine(WCHAR* CmdLine=NULL);
 	virtual INT ExitInstance();
 
-	void AddFrame(CMainWnd* pFrame);
-	void KillFrame(CMainWnd* pVictim);
+	void AddFrame(CGlassWindow* pFrame);
+	void KillFrame(CGlassWindow* pVictim);
 	CMainWnd* GetClipboard();
 
 	void Broadcast(INT Context, INT View, UINT cmdMsg);
@@ -55,6 +55,8 @@ public:
 	BOOL m_GlobeAtmosphere;
 	BOOL m_GlobeShowViewport;
 	BOOL m_GlobeShowCrosshairs;
+
+	BOOL m_FileDropAlwaysOnTop;
 
 protected:
 	BOOL m_AppInitialized;

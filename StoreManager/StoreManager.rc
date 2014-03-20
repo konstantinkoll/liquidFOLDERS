@@ -32,8 +32,9 @@ LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
-IDR_APPLICATION         ICON                    "res\\StoreManager.ico"
+IDR_APPLICATION         ICON                    "res\\liquidFOLDERS.ico"
 IDR_CLIPBOARD           ICON                    "res\\Clipboard_Small.ico"
+IDR_FILEDROP            ICON                    "res\\FileDrop_Small.ico"
 IDD_VIEWOPTIONS         ICON                    "res\\ViewOptions_Tiny.ico"
 IDD_SORTOPTIONS         ICON                    "res\\SortOptions_Tiny.ico"
 IDD_CHOOSEDETAILS       ICON                    "res\\Table_Tiny.ico"
@@ -529,8 +530,10 @@ END
 
 STRINGTABLE 
 BEGIN
+    SC_ALWAYSONTOP          "&Immer im Vordergrund"
     IDR_APPLICATION         "StoreManager"
     IDR_CLIPBOARD           "Zwischenablage"
+    IDR_FILEDROP            "FileDrop"
 END
 
 STRINGTABLE 
@@ -556,6 +559,7 @@ BEGIN
     IDS_CONTEXTMENU_OPENGOOGLEEARTH "Öffnen mit &Google Earth"
     IDS_CONTEXTMENU_OPENBROWSER "Im Standard&browser öffnen"
     IDS_CONTEXTMENU_OPENNEWWINDOW "In neuem &Fenster öffnen"
+    IDS_CONTEXTMENU_OPENFILEDROP "Als File&Drop öffnen"
     IDS_CONTEXTMENU_EDIT    "&Bearbeiten..."
     IDS_CONTEXTMENU_REMEMBER "Mer&ken"
     IDS_CONTEXTMENU_REMOVE  "Aus Zwischenablage &entfernen"
@@ -588,6 +592,8 @@ BEGIN
     IDS_FILETYPES           "Dateitypen"
     IDS_HOUSEKEEPING        "Verwaltung"
     IDS_SEARCHTERM          "Suchbegriff"
+    IDS_DROPTIP             "Dateien hierher ziehen zum\nImport nach liquidFOLDERS"
+    IDS_NODEFAULTSTORE      "Kein Standard-Store"
 END
 
 STRINGTABLE 
@@ -1118,8 +1124,10 @@ END
 
 STRINGTABLE 
 BEGIN
+    SC_ALWAYSONTOP          "Siempre &arriba"
     IDR_APPLICATION         "StoreManager"
     IDR_CLIPBOARD           "Portapapeles"
+    IDR_FILEDROP            "FileDrop"
 END
 
 STRINGTABLE 
@@ -1145,6 +1153,7 @@ BEGIN
     IDS_CONTEXTMENU_OPENGOOGLEEARTH "Abrir con &Google Earth"
     IDS_CONTEXTMENU_OPENBROWSER "Abrir con &browser"
     IDS_CONTEXTMENU_OPENNEWWINDOW "Abrir en &nueva ventana"
+    IDS_CONTEXTMENU_OPENFILEDROP "Abrir por &FileDrop"
     IDS_CONTEXTMENU_EDIT    "E&ditar..."
     IDS_CONTEXTMENU_REMEMBER "Re&cordar"
     IDS_CONTEXTMENU_REMOVE  "&Eliminar del portapapeles"
@@ -1176,6 +1185,8 @@ BEGIN
     IDS_FILETYPES           "Tipos de archivo"
     IDS_HOUSEKEEPING        "Mantenimiento"
     IDS_SEARCHTERM          "Buscar término"
+    IDS_DROPTIP             "Pega filas aquí para importarlas\na liquidFOLDERS"
+    IDS_NODEFAULTSTORE      "No hay store estándar"
 END
 
 STRINGTABLE 
@@ -1707,8 +1718,10 @@ END
 
 STRINGTABLE 
 BEGIN
+    SC_ALWAYSONTOP          "Toujours au &top"
     IDR_APPLICATION         "StoreManager"
     IDR_CLIPBOARD           "Presse-papiers"
+    IDR_FILEDROP            "FileDrop"
 END
 
 STRINGTABLE 
@@ -1734,6 +1747,7 @@ BEGIN
     IDS_CONTEXTMENU_OPENGOOGLEEARTH "Ouvrir avec &Google Earth"
     IDS_CONTEXTMENU_OPENBROWSER "Ouvrir avec &navigateur défaut"
     IDS_CONTEXTMENU_OPENNEWWINDOW "Ouvrir dans une nouvelle &fenêtre"
+    IDS_CONTEXTMENU_OPENFILEDROP "Ouvrir comme File&Drop"
     IDS_CONTEXTMENU_EDIT    "&Modifier..."
     IDS_CONTEXTMENU_REMEMBER "Remar&quer"
     IDS_CONTEXTMENU_REMOVE  "Enlèver du &presse-papiers"
@@ -1765,6 +1779,8 @@ BEGIN
     IDS_FILETYPES           "Types de fichiers"
     IDS_HOUSEKEEPING        "Ménage"
     IDS_SEARCHTERM          "Mot de recherches"
+    IDS_DROPTIP             "Ici afiu de importer\ndans liquidFOLDERS"
+    IDS_NODEFAULTSTORE      "Pas de store standard"
 END
 
 STRINGTABLE 
@@ -2345,8 +2361,10 @@ END
 
 STRINGTABLE 
 BEGIN
+    SC_ALWAYSONTOP          "Always on &top"
     IDR_APPLICATION         "StoreManager"
     IDR_CLIPBOARD           "Clipboard"
+    IDR_FILEDROP            "FileDrop"
 END
 
 STRINGTABLE 
@@ -2372,6 +2390,7 @@ BEGIN
     IDS_CONTEXTMENU_OPENGOOGLEEARTH "Open in &Google Earth"
     IDS_CONTEXTMENU_OPENBROWSER "Open in &browser window"
     IDS_CONTEXTMENU_OPENNEWWINDOW "Open in &new window"
+    IDS_CONTEXTMENU_OPENFILEDROP "Open as &FileDrop"
     IDS_CONTEXTMENU_EDIT    "&Edit..."
     IDS_CONTEXTMENU_REMEMBER "Re&member"
     IDS_CONTEXTMENU_REMOVE  "Re&move from clipboard"
@@ -2403,6 +2422,8 @@ BEGIN
     IDS_FILETYPES           "File types"
     IDS_HOUSEKEEPING        "Housekeeping"
     IDS_SEARCHTERM          "Search term"
+    IDS_DROPTIP             "Drop files here to import\nthem into liquidFOLDERS"
+    IDS_NODEFAULTSTORE      "No default store"
 END
 
 STRINGTABLE 

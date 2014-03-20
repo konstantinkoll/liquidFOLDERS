@@ -27,8 +27,8 @@ LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,5,9
- PRODUCTVERSION 1,5,9
+ FILEVERSION 1,5,9,0
+ PRODUCTVERSION 1,5,9,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -113,6 +113,10 @@ BEGIN
     IDS_Folder              "Ordner"
     IDS_Folders             "Ordner"
     IDS_Files               "Dateien"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_NoLicense           "Sie nutzen eine unregistrierte Kopie von liquidFOLDERS. liquidFOLDERS ist Shareware – wenn Sie die Software regelmäßig nutzen, müssen Sie eine Lizenz erwerben!"
     IDS_NULLFOLDER_NameMask "UOhne %s"
     IDS_NULLFOLDER_CommentMask "UAlle Dateien ohne %s"
@@ -125,21 +129,32 @@ BEGIN
     IDS_MENU_CreateNewStore "&Neuen Store anlegen..."
     IDS_HINT_CreateNewStore "Erstellt einen neuen Store für Ihre Dateien."
     IDS_MENU_MakeDefaultStore "Als &Standard-Store setzen"
-    IDS_HINT_MakeDefaultStore "Setzt den ausgewählten Store als Standard-Store."
+    IDS_HINT_MakeDefaultStore 
+                            "Setzt den ausgewählten Store als Standard-Store."
+END
+
+STRINGTABLE 
+BEGIN
     IDS_MENU_Open           "Ö&ffnen"
     IDS_HINT_Open           "Öffnet das ausgewählte Objekt."
+    IDS_MENU_OpenNewWindow  "In neuem &Fenster öffnen"
+    IDS_HINT_OpenNewWindow  "Öffnet das ausgewählte Objekt in einem neuen Fenster."
     IDS_MENU_Explore        "&Explorer"
     IDS_HINT_Explore        "Öffent das ausgewählte Objekt im Explorer."
     IDS_MENU_OpenStoreManager "Im Store&Manager öffnen"
     IDS_HINT_OpenStoreManager "Öffnet das ausgewählte Objekt im StoreManager."
-    IDS_MENU_OpenNewWindow  "In neuem &Fenster öffnen"
-    IDS_HINT_OpenNewWindow  "Öffnet das ausgewählte Objekt in einem neuen Fenster."
+    IDS_MENU_OpenFileDrop   "Als File&Drop öffnen"
+    IDS_HINT_OpenFileDrop   "Öffnet das ausgewählte Objekt als FileDrop."
     IDS_MENU_OpenWith       "Öffnen &mit..."
     IDS_HINT_OpenWith       "Wählen Sie das Programm, mit dem Sie diese Datei öffnen möchten."
     IDS_MENU_OpenBrowser    "Im Standard&browser öffnen"
     IDS_HINT_OpenBrowser    "Öffnet die Datei im Standardbrowser."
     IDS_MENU_Copy           "&Kopieren"
     IDS_HINT_Copy           "Kopiert die ausgewählten Objekte in die Zwischenablage."
+END
+
+STRINGTABLE 
+BEGIN
     IDS_MENU_CreateShortcut "&Verknüpfung erstellen"
     IDS_HINT_CreateShortcut "Erstellt eine Verknüpfung für die ausgewählten Objekte."
     IDS_MENU_Delete         "&Löschen"
@@ -156,86 +171,15 @@ BEGIN
     IDS_HINT_FileDrop       "Startet den liquidFOLDERS FileDrop."
     IDS_MENU_Migrate        "&Migrations-Assistenten starten"
     IDS_HINT_Migrate        "Startet den liquidFOLDERS Migrations-Assistenten."
+END
+
+STRINGTABLE 
+BEGIN
     IDS_MENU_About          "Über &Explorer-Erweiterung"
     IDS_HINT_About          "Zeigt Informationen und Einstellungen an."
 END
 
 #endif    // Deutsch (neutral) resources
-/////////////////////////////////////////////////////////////////////////////
-
-
-/////////////////////////////////////////////////////////////////////////////
-// Englisch (neutral) resources
-
-#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
-#ifdef _WIN32
-LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
-#pragma code_page(1252)
-#endif //_WIN32
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// String Table
-//
-
-STRINGTABLE 
-BEGIN
-    IDS_InfoTip             "Stores and files"
-    IDS_AttributeComment    "LArrange files by %s"
-    IDS_AllFiles            "All files"
-    IDS_AllFilesComment     "Show all files"
-    IDS_Store               "Store"
-    IDS_Folder              "Folder"
-    IDS_Folders             "Folders"
-    IDS_Files               "Files"
-    IDS_NoLicense           "You are using an unregistered copy of liquidFOLDERS. liquidFOLDERS is shareware—if you decide to use it regulary, you are required to purchase a license key!"
-    IDS_NULLFOLDER_NameMask "LWithout %s"
-    IDS_NULLFOLDER_CommentMask "LAll files without %s"
-    IDS_FILES_Singular      "%u file"
-    IDS_FILES_Plural        "%u files"
-END
-
-STRINGTABLE 
-BEGIN
-    IDS_MENU_CreateNewStore "Create &new store..."
-    IDS_HINT_CreateNewStore "Creates a new store for your files."
-    IDS_MENU_MakeDefaultStore "Make de&fault store"
-    IDS_HINT_MakeDefaultStore "Makes the selected store the default store."
-    IDS_MENU_Open           "&Open"
-    IDS_HINT_Open           "Opens the selected item."
-    IDS_MENU_Explore        "&Explore"
-    IDS_HINT_Explore        "Explores the selected item."
-    IDS_MENU_OpenStoreManager "Open in Store&Manager"
-    IDS_HINT_OpenStoreManager "Opens the selected item in the StoreManager."
-    IDS_MENU_OpenNewWindow  "Open in &new window"
-    IDS_HINT_OpenNewWindow  "Opens the selected item in a new window."
-    IDS_MENU_OpenWith       "Open &with..."
-    IDS_HINT_OpenWith       "Choose a program to open this file with."
-    IDS_MENU_OpenBrowser    "Open in &browser window"
-    IDS_HINT_OpenBrowser    "Opens the file in a browser window."
-    IDS_MENU_Copy           "&Copy"
-    IDS_HINT_Copy           "Copies the selected items to the clipboard."
-    IDS_MENU_CreateShortcut "Create &shortcut"
-    IDS_HINT_CreateShortcut "Creates a shortcut for the selected items."
-    IDS_MENU_Delete         "&Delete"
-    IDS_HINT_Delete         "Deletes the selected items."
-    IDS_MENU_Rename         "&Rename"
-    IDS_HINT_Rename         "Renames the selected items."
-    IDS_MENU_Properties     "&Properties"
-    IDS_HINT_Properties     "Displays the properties of the selected items."
-    IDS_MENU_ImportFolder   "&Import folder..."
-    IDS_HINT_ImportFolder   "Imports a folder and all its subfolders into the selected store."
-    IDS_MENU_StoreManager   "Open &StoreManager"
-    IDS_HINT_StoreManager   "Opens the liquidFOLDERS StoreManager."
-    IDS_MENU_FileDrop       "Open &FileDrop"
-    IDS_HINT_FileDrop       "Opens the liquidFOLDERS FileDrop."
-    IDS_MENU_Migrate        "Open &Migration Wizard"
-    IDS_HINT_Migrate        "Opens the liquidFOLDERS Migration Wizard."
-    IDS_MENU_About          "About &Explorer Extension"
-    IDS_HINT_About          "Displays liquidFOLDERS information and settings."
-END
-
-#endif    // Englisch (neutral) resources
 /////////////////////////////////////////////////////////////////////////////
 
 
@@ -263,6 +207,10 @@ BEGIN
     IDS_Folder              "Carpeta"
     IDS_Folders             "Carpetas"
     IDS_Files               "Archivos"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_NoLicense           "Usted está usando una copia no registrada de liquidFOLDERS. liquidFOLDERS es un software de demostración – si usted decide usarlo regularmente, usted está obligado a adquirir una licencia!"
     IDS_NULLFOLDER_NameMask "LSin %s"
     IDS_FILES_Singular      "%u archivo"
@@ -274,21 +222,33 @@ BEGIN
     IDS_MENU_CreateNewStore "Crear &nuevo store..."
     IDS_HINT_CreateNewStore "Creaun nuevo store para sus archivos."
     IDS_MENU_MakeDefaultStore "Establecer a &store predeterminado"
-    IDS_HINT_MakeDefaultStore "Establece el store seleccionado como el store predeterminado."
+    IDS_HINT_MakeDefaultStore 
+                            "Establece el store seleccionado como el store predeterminado."
+END
+
+STRINGTABLE 
+BEGIN
     IDS_MENU_Open           "&Abrir"
     IDS_HINT_Open           "Abre el objeto seleccionado."
+    IDS_MENU_OpenNewWindow  "Abrir en &nueva ventana"
+    IDS_HINT_OpenNewWindow  "Abre el objeto seleccionado en una nueva ventana."
     IDS_MENU_Explore        "&Explorer"
     IDS_HINT_Explore        "Explora el objeto seleccionado."
     IDS_MENU_OpenStoreManager "Abrir en Store&Manager"
-    IDS_HINT_OpenStoreManager "Abre el objeto seleccionado en el StoreManager."
-    IDS_MENU_OpenNewWindow  "Abrir en &nueva ventana"
-    IDS_HINT_OpenNewWindow  "Abre el objeto seleccionado en una nueva ventana."
+    IDS_HINT_OpenStoreManager 
+                            "Abre el objeto seleccionado en el StoreManager."
+    IDS_MENU_OpenFileDrop   "Abrir por &FileDrop"
+    IDS_HINT_OpenFileDrop   "Abre el objeto seleccionado por FileDrop."
     IDS_MENU_OpenWith       "Abrir &con..."
     IDS_HINT_OpenWith       "Escoja un programa con el cual abrir este archivo."
     IDS_MENU_OpenBrowser    "Abrir con &browser"
     IDS_HINT_OpenBrowser    "Abre el archivo en el browser."
     IDS_MENU_Copy           "&Copiar"
     IDS_HINT_Copy           "Copia los objetos seleccionados al portapapeles."
+END
+
+STRINGTABLE 
+BEGIN
     IDS_MENU_CreateShortcut "Crear &acceso directo"
     IDS_HINT_CreateShortcut "Crea un acceso directo para los objetos seleccionados."
     IDS_MENU_Delete         "&Eliminar"
@@ -305,6 +265,10 @@ BEGIN
     IDS_HINT_FileDrop       "Abre el FileDrop de liquidFOLDERS."
     IDS_MENU_Migrate        "Abrir &Asistente de Migración"
     IDS_HINT_Migrate        "Abre el Asistente de Migración de liquidFOLDERS."
+END
+
+STRINGTABLE 
+BEGIN
     IDS_MENU_About          "Acerca del Suplemento de &Explorer"
     IDS_HINT_About          "Visualiza información y configuraciones de liquidFOLDERS."
 END
@@ -327,7 +291,7 @@ LANGUAGE LANG_FRENCH, SUBLANG_NEUTRAL
 // String Table
 //
 
-STRINGTABLE
+STRINGTABLE 
 BEGIN
     IDS_InfoTip             "Stores et fichiers"
     IDS_AttributeComment    "LDisposer des fichiers d'après %s"
@@ -337,6 +301,10 @@ BEGIN
     IDS_Folder              "Dossier"
     IDS_Folders             "Dossiers"
     IDS_Files               "Fichiers"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_NoLicense           "Vous utilisez une copie non enregistrée de liquidFOLDERS. liquidFOLDERS est shareware – si vous utilisez régulièrement le logiciel, vous devez acquérir une licence!"
     IDS_NULLFOLDER_NameMask "LSans %s"
     IDS_NULLFOLDER_CommentMask "LTous les fichiers sans %s"
@@ -344,26 +312,36 @@ BEGIN
     IDS_FILES_Plural        "%u fichiers"
 END
 
-STRINGTABLE
+STRINGTABLE 
 BEGIN
     IDS_MENU_CreateNewStore "Créez un store &nouveau..."
     IDS_HINT_CreateNewStore "Crée un nouveau store pour vos fichiers."
     IDS_MENU_MakeDefaultStore "Faites store &standard"
     IDS_HINT_MakeDefaultStore "Met le store choisi comme le store standard."
+END
+
+STRINGTABLE 
+BEGIN
     IDS_MENU_Open           "&Ouvrir"
     IDS_HINT_Open           "Ouvre l'élément choisi."
+    IDS_MENU_OpenNewWindow  "Ouvrir dans une nouvelle &fenêtre"
+    IDS_HINT_OpenNewWindow  "Ouvre l'élément choisi dans une nouvelle fenêtre."
     IDS_MENU_Explore        "&Explorateur"
     IDS_HINT_Explore        "Ouvre l'élément choisi dans Explorateur."
     IDS_MENU_OpenStoreManager "Ouvrir dans le &store manager"
-    IDS_HINT_OpenStoreManager "Ouvre l'élément choisi dans le store manager."
-    IDS_MENU_OpenNewWindow  "Ouvrir dans une nouvelle &fenêtre"
-    IDS_HINT_OpenNewWindow  "Ouvre l'élément choisi dans une nouvelle fenêtre."
+    IDS_HINT_OpenStoreManager "Ouvre l'élément choisi dans le StoreManager."
+    IDS_MENU_OpenFileDrop   "Ouvrir comme File&Drop"
+    IDS_HINT_OpenFileDrop   "Ouvre l'élément choisi comme FileDrop."
     IDS_MENU_OpenWith       "Ouvrir &avec..."
     IDS_HINT_OpenWith       "Choisissez le programme avec quoi vous voudriez ouvrir ce fichier."
     IDS_MENU_OpenBrowser    "Ouvrir avec &navigateur défaut"
     IDS_HINT_OpenBrowser    "Ouvre le fichier dans le navigateur défaut."
     IDS_MENU_Copy           "&Copier"
     IDS_HINT_Copy           "Copie les objets choisis dans le presse-papiers."
+END
+
+STRINGTABLE 
+BEGIN
     IDS_MENU_CreateShortcut "Créer r&accourci"
     IDS_HINT_CreateShortcut "Crée un raccourci pour les éléments choisis."
     IDS_MENU_Delete         "&Effacer"
@@ -376,10 +354,14 @@ BEGIN
     IDS_HINT_ImportFolder   "Importe un dossier et tous les sous-dossiers dans le store choisi."
     IDS_MENU_StoreManager   "&Lancer StoreManager"
     IDS_HINT_StoreManager   "Lance liquidFOLDERS StoreManager."
-    IDS_MENU_Migrate        "&Lancer l'assistant de migration"
-    IDS_HINT_Migrate        "Lance liquidFOLDERS l'assistant de migration."
     IDS_MENU_FileDrop       "&Lancer FileDrop"
     IDS_HINT_FileDrop       "Lance liquidFOLDERS FileDrop."
+    IDS_MENU_Migrate        "&Lancer l'assistant de migration"
+    IDS_HINT_Migrate        "Lance liquidFOLDERS l'assistant de migration."
+END
+
+STRINGTABLE 
+BEGIN
     IDS_MENU_About          "Concernant l'extension de l'&Explorer"
     IDS_HINT_About          "Indique des informations et des paramètres."
 END
@@ -422,6 +404,99 @@ END
 #endif    // APSTUDIO_INVOKED
 
 #endif    // Deutsch (Deutschland) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// Englisch (USA) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE 
+BEGIN
+    IDS_InfoTip             "Stores and files"
+    IDS_AttributeComment    "LArrange files by %s"
+    IDS_AllFiles            "All files"
+    IDS_AllFilesComment     "Show all files"
+    IDS_Store               "Store"
+    IDS_Folder              "Folder"
+    IDS_Folders             "Folders"
+    IDS_Files               "Files"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_NoLicense           "You are using an unregistered copy of liquidFOLDERS. liquidFOLDERS is shareware—if you decide to use it regulary, you are required to purchase a license key!"
+    IDS_NULLFOLDER_NameMask "LWithout %s"
+    IDS_NULLFOLDER_CommentMask "LAll files without %s"
+    IDS_FILES_Singular      "%u file"
+    IDS_FILES_Plural        "%u files"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_MENU_CreateNewStore "Create &new store..."
+    IDS_HINT_CreateNewStore "Creates a new store for your files."
+    IDS_MENU_MakeDefaultStore "Make de&fault store"
+    IDS_HINT_MakeDefaultStore "Makes the selected store the default store."
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_MENU_Open           "&Open"
+    IDS_HINT_Open           "Opens the selected item."
+    IDS_MENU_OpenNewWindow  "Open in &new window"
+    IDS_HINT_OpenNewWindow  "Opens the selected item in a new window."
+    IDS_MENU_Explore        "&Explore"
+    IDS_HINT_Explore        "Explores the selected item."
+    IDS_MENU_OpenStoreManager "Open in Store&Manager"
+    IDS_HINT_OpenStoreManager "Opens the selected item in the StoreManager."
+    IDS_MENU_OpenFileDrop   "Open as &FileDrop"
+    IDS_HINT_OpenFileDrop   "Opens the selected item as FileDrop."
+    IDS_MENU_OpenWith       "Open &with..."
+    IDS_HINT_OpenWith       "Choose a program to open this file with."
+    IDS_MENU_OpenBrowser    "Open in &browser window"
+    IDS_HINT_OpenBrowser    "Opens the file in a browser window."
+    IDS_MENU_Copy           "&Copy"
+    IDS_HINT_Copy           "Copies the selected items to the clipboard."
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_MENU_CreateShortcut "Create &shortcut"
+    IDS_HINT_CreateShortcut "Creates a shortcut for the selected items."
+    IDS_MENU_Delete         "&Delete"
+    IDS_HINT_Delete         "Deletes the selected items."
+    IDS_MENU_Rename         "&Rename"
+    IDS_HINT_Rename         "Renames the selected items."
+    IDS_MENU_Properties     "&Properties"
+    IDS_HINT_Properties     "Displays the properties of the selected items."
+    IDS_MENU_ImportFolder   "&Import folder..."
+    IDS_HINT_ImportFolder   "Imports a folder and all its subfolders into the selected store."
+    IDS_MENU_StoreManager   "Open &StoreManager"
+    IDS_HINT_StoreManager   "Opens the liquidFOLDERS StoreManager."
+    IDS_MENU_FileDrop       "Open &FileDrop"
+    IDS_HINT_FileDrop       "Opens the liquidFOLDERS FileDrop."
+    IDS_MENU_Migrate        "Open &Migration Wizard"
+    IDS_HINT_Migrate        "Opens the liquidFOLDERS Migration Wizard."
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_MENU_About          "About &Explorer Extension"
+    IDS_HINT_About          "Displays liquidFOLDERS information and settings."
+END
+
+#endif    // Englisch (USA) resources
 /////////////////////////////////////////////////////////////////////////////
 
 

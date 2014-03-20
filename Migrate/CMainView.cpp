@@ -113,7 +113,9 @@ BEGIN_MESSAGE_MAP(CMainView, CWnd)
 	ON_WM_SETFOCUS()
 	ON_WM_CONTEXTMENU()
 	ON_COMMAND(IDM_VIEW_SELECTROOT_TASKBAR, OnSelectRoot)
+	ON_COMMAND(IDM_NEWSTOREMANAGER, OnNewStoreManager)
 	ON_UPDATE_COMMAND_UI(IDM_VIEW_SELECTROOT_TASKBAR, OnUpdateCommands)
+	ON_UPDATE_COMMAND_UI(IDM_NEWSTOREMANAGER, OnUpdateCommands)
 END_MESSAGE_MAP()
 
 INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -131,7 +133,7 @@ INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndTaskbar.AddButton(IDM_VIEW_DELETE, 3);
 	m_wndTaskbar.AddButton(IDM_VIEW_RENAME, 4);
 	m_wndTaskbar.AddButton(IDM_VIEW_PROPERTIES, 5);
-	m_wndTaskbar.AddButton(ID_APP_NEWSTOREMANAGER, 6, TRUE);
+	m_wndTaskbar.AddButton(IDM_NEWSTOREMANAGER, 6, TRUE);
 
 	m_wndTaskbar.AddButton(ID_APP_PURCHASE, 7, TRUE, TRUE);
 	m_wndTaskbar.AddButton(ID_APP_ENTERLICENSEKEY, 8, TRUE, TRUE);
@@ -199,7 +201,24 @@ void CMainView::OnSelectRoot()
 	GetOwner()->SendMessage(WM_COMMAND, IDM_VIEW_SELECTROOT);
 }
 
+void CMainView::OnNewStoreManager()
+{
+	ShellExecute(theApp.m_pActiveWnd->GetSafeHwnd(), _T("open"), theApp.m_Path+_T("StoreManager.exe"), NULL, NULL, SW_SHOW);
+}
+
 void CMainView::OnUpdateCommands(CCmdUI* pCmdUI)
 {
-	pCmdUI->Enable(!m_IsRootSet);
+	BOOL b = FALSE;
+
+	switch (pCmdUI->m_nID)
+	{
+	case IDM_VIEW_SELECTROOT_TASKBAR:
+		b = !m_IsRootSet;
+		break;
+	case IDM_NEWSTOREMANAGER:
+		b = (_waccess(theApp.m_Path+_T("StoreManager.exe"), 0)==0);
+		break;
+	}
+
+	pCmdUI->Enable(b);
 }

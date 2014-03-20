@@ -81,6 +81,7 @@ protected:
 
 	afx_msg void OnItemOpen();
 	afx_msg void OnItemOpenNewWindow();
+	afx_msg void OnItemOpenFileDrop();
 	afx_msg LRESULT OnNavigateTo(WPARAM wParam, LPARAM lParam);
 
 	afx_msg void OnExportMetadata();

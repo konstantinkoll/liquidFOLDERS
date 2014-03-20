@@ -1,5 +1,5 @@
 
-// FileDropWnd.h: Headerdatei
+// FileDropWnd.h: Schnittstelle der Klasse CFileDropWnd
 //
 
 #pragma once
@@ -15,9 +15,10 @@ public:
 
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 
-	BOOL Create();
+	BOOL Create(CHAR* StoreID);
 
 protected:
+	CHAR m_StoreID[LFKeySize];
 	LFDropTarget m_DropTarget;
 	LFTooltip m_TooltipCtrl;
 	LFStoreDescriptor m_Store;
@@ -27,10 +28,10 @@ protected:
 	BOOL m_StoreMounted;
 	BOOL m_Hover;
 
-	void SetTopMost(BOOL AlwaysTopMost);
+	void SetTopMost(BOOL AlwaysOnTop);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
-	afx_msg void OnClose();
+	afx_msg void OnDestroy();
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg void OnMouseLeave();
@@ -39,14 +40,16 @@ protected:
 	afx_msg void OnRButtonUp(UINT nFlags, CPoint point);
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint pos);
 	afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
-	afx_msg LRESULT OnUpdateStore(WPARAM wParam, LPARAM lParam);
 
-	afx_msg void OnChooseDefaultStore();
 	afx_msg void OnStoreOpen();
+	afx_msg void OnStoreMakeDefault();
 	afx_msg void OnStoreImportFolder();
+	afx_msg void OnStoreShortcut();
+	afx_msg void OnStoreDelete();
+	afx_msg void OnStoreRename();
 	afx_msg void OnStoreProperties();
-	afx_msg void OnAlwaysOnTop();
-	afx_msg void OnQuit();
-	afx_msg void OnUpdateCommands(CCmdUI* pCmdUI);
+	afx_msg void OnUpdateStoreCommands(CCmdUI* pCmdUI);
+
+	afx_msg LRESULT OnUpdateStore(WPARAM wParam, LPARAM lParam);
 	DECLARE_MESSAGE_MAP()
 };

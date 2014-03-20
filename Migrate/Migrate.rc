@@ -278,6 +278,11 @@ END
 
 STRINGTABLE 
 BEGIN
+    IDM_NEWSTOREMANAGER     "÷ffnet den StoreManager.\nStoreManager starten"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_NOROOT_CAPTION      "Sie haben noch kein Verzeichnis ausgew‰hlt"
     IDS_NOROOT_HINT         "Klicken Sie oben, um ein Verzeichnis auszuw‰hlen."
     IDS_FOLDER_CAPTION      "Quelle:"
@@ -499,6 +504,11 @@ END
 STRINGTABLE 
 BEGIN
     IDM_VIEW_EXPAND         "AÒade todas las subcarpetas de la carpeta seleccionada.\nExpander"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_NEWSTOREMANAGER     "Abre StoreManager.\nEmpezar StoreManager"
 END
 
 STRINGTABLE 
@@ -726,6 +736,11 @@ END
 STRINGTABLE 
 BEGIN
     IDM_VIEW_EXPAND         "Indique toutes les sous-dossiers.\n…largir"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_NEWSTOREMANAGER     "Ouvre le StoreManager.\nCommencer StoreManager"
 END
 
 STRINGTABLE 
@@ -1000,6 +1015,11 @@ END
 STRINGTABLE 
 BEGIN
     IDM_VIEW_EXPAND         "Adds all subfolders of the selected folder.\nExpand"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_NEWSTOREMANAGER     "Opens the StoreManager.\nOpen StoreManager"
 END
 
 STRINGTABLE 

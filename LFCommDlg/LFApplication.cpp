@@ -41,9 +41,6 @@ extern AFX_EXTENSION_MODULE LFCommDlgDLL;
 
 BEGIN_MESSAGE_MAP(LFApplication, CWinAppEx)
 	ON_COMMAND(ID_APP_SUPPORT, OnAppSupport)
-	ON_COMMAND(ID_APP_NEWFILEDROP, OnAppNewFileDrop)
-	ON_COMMAND(ID_APP_NEWMIGRATE, OnAppNewMigrate)
-	ON_COMMAND(ID_APP_NEWSTOREMANAGER, OnAppNewStoreManager)
 	ON_COMMAND(ID_APP_PURCHASE, OnAppPurchase)
 	ON_COMMAND(ID_APP_ENTERLICENSEKEY, OnAppEnterLicenseKey)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_APP_SUPPORT, ID_APP_ENTERLICENSEKEY, OnUpdateAppCommands)
@@ -424,21 +421,6 @@ void LFApplication::OnAppSupport()
 	SendMail();
 }
 
-void LFApplication::OnAppNewFileDrop()
-{
-	ShellExecute(m_pActiveWnd->GetSafeHwnd(), _T("open"), m_Path+_T("FileDrop.exe"), NULL, NULL, SW_SHOW);
-}
-
-void LFApplication::OnAppNewMigrate()
-{
-	ShellExecute(m_pActiveWnd->GetSafeHwnd(), _T("open"), m_Path+_T("Migrate.exe"), NULL, NULL, SW_SHOW);
-}
-
-void LFApplication::OnAppNewStoreManager()
-{
-	ShellExecute(m_pActiveWnd->GetSafeHwnd(), _T("open"), m_Path+_T("StoreManager.exe"), NULL, NULL, SW_SHOW);
-}
-
 void LFApplication::OnAppPurchase()
 {
 	CString url;
@@ -457,15 +439,6 @@ void LFApplication::OnUpdateAppCommands(CCmdUI* pCmdUI)
 {
 	switch (pCmdUI->m_nID)
 	{
-	case ID_APP_NEWFILEDROP:
-		pCmdUI->Enable(_waccess(m_Path+_T("FileDrop.exe"), 0)==0);
-		break;
-	case ID_APP_NEWMIGRATE:
-		pCmdUI->Enable(_waccess(m_Path+_T("Migrate.exe"), 0)==0);
-		break;
-	case ID_APP_NEWSTOREMANAGER:
-		pCmdUI->Enable(_waccess(m_Path+_T("StoreManager.exe"), 0)==0);
-		break;
 	case ID_APP_PURCHASE:
 	case ID_APP_ENTERLICENSEKEY:
 		pCmdUI->Enable(!LFIsLicensed());

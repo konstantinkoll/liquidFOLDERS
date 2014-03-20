@@ -244,12 +244,12 @@ CString CmdFileDrop::GetToolTip(CPtrList* /*nseItems*/)
 
 ExplorerCommandState CmdFileDrop::GetState(CPtrList* /*nseItems*/)
 {
-	return (!theApp.m_PathFileDrop.IsEmpty()) ? ECS_Enabled : ECS_Disabled;
+	return (!theApp.m_PathStoreManager.IsEmpty()) ? ECS_Enabled : ECS_Disabled;
 }
 
 BOOL CmdFileDrop::Invoke(CPtrList* /*nseItems*/)
 {
-	return RunPath(NULL, theApp.m_PathFileDrop);
+	return RunPath(NULL, theApp.m_PathStoreManager, _T("/FILEDROP"));
 }
 
 CString CmdFileDrop::GetIcon(CPtrList* /*nseItems*/)

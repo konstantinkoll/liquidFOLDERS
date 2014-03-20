@@ -3,12 +3,12 @@
 //
 
 #include "stdafx.h"
-#include "StoreManager.h"
-#include "MainWnd.h"
+#include "FileDropWnd.h"
 #include "..\\LFCore\\resource.h"
 #include "LFCore.h"
 #include "LFCommDlg.h"
-#include "MenuIcons.h"
+#include "MainWnd.h"
+#include "StoreManager.h"
 
 
 GUID theAppID =	// {5EB05AE5-C6FE-4E53-A034-3623921D18ED}
@@ -67,8 +67,12 @@ CStoreManagerApp theApp;
 
 BOOL CStoreManagerApp::InitInstance()
 {
+	WCHAR CmdLine[256] = L"";
+	for (INT a=2; a<=__argc; a++)
+		wcscat_s(CmdLine, 256, __wargv[a-1]);
+
 	// Parameter
-	if (!EnumWindows((WNDENUMPROC)EnumWindowsProc, (LPARAM)(__argc==2 ? __wargv[1] : NULL)))
+	if (!EnumWindows((WNDENUMPROC)EnumWindowsProc, (LPARAM)(__argc>1 ? CmdLine : NULL)))
 		return FALSE;
 
 	if (!LFApplication::InitInstance())
@@ -104,21 +108,25 @@ BOOL CStoreManagerApp::InitInstance()
 	// Registry auslesen
 	SetRegistryBase(_T("Settings"));
 	m_ShowInspectorPane = GetInt(_T("ShowInspectorPane"), TRUE);
+
 	m_InspectorWidth = GetInt(_T("InspectorWidth"), 200);
 	if (m_InspectorWidth<32)
 		m_InspectorWidth = 32;
-	m_CalendarShowCaptions = GetInt(_T("CalendarShowCaptions"), TRUE);
-	m_GlobeHQModel = GetInt(_T("GlobeHQModel"), TRUE);
-	m_GlobeLighting = GetInt(_T("GlobeLighting"), TRUE);
-	m_GlobeAtmosphere = GetInt(_T("GlobeAtmosphere"), TRUE);
-	m_GlobeShowViewport = GetInt(_T("GlobeShowViewport"), FALSE);
-	m_GlobeShowCrosshairs = GetInt(_T("GlobeShowCrosshairs"), FALSE);
+
 	m_nTextureSize = GetInt(_T("TextureSize"), LFTextureAuto);
 	m_nMaxTextureSize = GetInt(_T("MaxTextureSize"), LFTexture4096);
 	if (m_nTextureSize<0)
 		m_nTextureSize = 0;
 	if (m_nTextureSize>m_nMaxTextureSize)
 		m_nTextureSize = m_nMaxTextureSize;
+
+	m_CalendarShowCaptions = GetInt(_T("CalendarShowCaptions"), TRUE);
+	m_GlobeHQModel = GetInt(_T("GlobeHQModel"), TRUE);
+	m_GlobeLighting = GetInt(_T("GlobeLighting"), TRUE);
+	m_GlobeAtmosphere = GetInt(_T("GlobeAtmosphere"), TRUE);
+	m_GlobeShowViewport = GetInt(_T("GlobeShowViewport"), FALSE);
+	m_GlobeShowCrosshairs = GetInt(_T("GlobeShowCrosshairs"), FALSE);
+	m_FileDropAlwaysOnTop = GetInt(_T("FileDropAlwaysOnTop"), TRUE);
 
 	for (UINT a=0; a<LFContextCount; a++)
 		LoadViewOptions(a);
@@ -127,7 +135,7 @@ BOOL CStoreManagerApp::InitInstance()
 
 	m_ThumbnailCache.LoadFrames();
 
-	CWnd* pFrame = OpenCommandLine(__argc==2 ? __wargv[1] : NULL);
+	CWnd* pFrame = OpenCommandLine(__argc>1 ? CmdLine : NULL);
 
 	if (!LFIsLicensed())
 		ShowNagScreen(NAG_NOTLICENSED | NAG_FORCE, pFrame);
@@ -139,35 +147,51 @@ BOOL CStoreManagerApp::InitInstance()
 
 CWnd* CStoreManagerApp::OpenCommandLine(WCHAR* CmdLine)
 {
-	CMainWnd* pFrame = new CMainWnd();
+	CHAR StoreID[LFKeySize] = "";
 
 	// Parse parameter and create window
 	if (CmdLine)
 	{
-		if (wcslen(CmdLine)==LFKeySize-1)
-			if ((wcschr(CmdLine, L'.')==NULL) && (wcschr(CmdLine, L':')==NULL) && (wcschr(CmdLine, L'\\')==NULL))
-			{
-				CHAR StoreID[LFKeySize];
-				WideCharToMultiByte(CP_ACP, 0, CmdLine, -1, StoreID, LFKeySize, NULL, NULL);
+		WCHAR* pChar = CmdLine;
+		while (*pChar)
+			*(pChar++) = (WCHAR)toupper(*pChar);
 
-				CHAR* pChar = StoreID;
-				while (*pChar)
-				{
-					*pChar = (CHAR)toupper(*pChar);
-					pChar++;
-				}
+		// FileDrop
+		if (_wcsnicmp(CmdLine, L"/FILEDROP", 9)==0)
+		{
+			if (CmdLine[9]==L' ')
+				WideCharToMultiByte(CP_ACP, 0, CmdLine+10, -1, StoreID, LFKeySize, NULL, NULL);
 
-				pFrame->CreateStore(StoreID);
-				goto Finish;
-			}
+			CFileDropWnd* pFrame = new CFileDropWnd();
+			pFrame->Create(StoreID);
+			pFrame->ShowWindow(SW_SHOW);
 
+			return pFrame;
+		}
+
+		// Key
+		if ((wcslen(CmdLine)==LFKeySize-1) && (wcschr(CmdLine, L'.')==NULL) && (wcschr(CmdLine, L':')==NULL) && (wcschr(CmdLine, L'\\')==NULL))
+		{
+			WideCharToMultiByte(CP_ACP, 0, CmdLine, -1, StoreID, LFKeySize, NULL, NULL);
+
+			CMainWnd* pFrame = new CMainWnd();
+			pFrame->CreateStore(StoreID);
+			pFrame->ShowWindow(SW_SHOW);
+
+			return pFrame;
+		}
+
+		// Filter
+		CMainWnd* pFrame = new CMainWnd();
 		pFrame->CreateFilter(CmdLine);
-		goto Finish;
+		pFrame->ShowWindow(SW_SHOW);
+
+		return pFrame;
 	}
 
+	// Root
+	CMainWnd* pFrame = new CMainWnd();
 	pFrame->CreateRoot();
-
-Finish:
 	pFrame->ShowWindow(SW_SHOW);
 
 	return pFrame;
@@ -186,14 +210,15 @@ INT CStoreManagerApp::ExitInstance()
 		SetRegistryBase(_T("Settings"));
 		WriteInt(_T("ShowInspectorPane"), m_ShowInspectorPane);
 		WriteInt(_T("InspectorWidth"), m_InspectorWidth);
+		WriteInt(_T("TextureSize"), m_nTextureSize);
+		WriteInt(_T("MaxTextureSize"), m_nMaxTextureSize);
 		WriteInt(_T("CalendarShowCaptions"), m_CalendarShowCaptions);
 		WriteInt(_T("GlobeHQModel"), m_GlobeHQModel);
 		WriteInt(_T("GlobeLighting"), m_GlobeLighting);
 		WriteInt(_T("GlobeAtmosphere"), m_GlobeAtmosphere);
 		WriteInt(_T("GlobeShowViewport"), m_GlobeShowViewport);
 		WriteInt(_T("GlobeShowCrosshairs"), m_GlobeShowCrosshairs);
-		WriteInt(_T("TextureSize"), m_nTextureSize);
-		WriteInt(_T("MaxTextureSize"), m_nMaxTextureSize);
+		WriteInt(_T("FileDropAlwaysOnTop"), m_FileDropAlwaysOnTop);
 	}
 
 	m_ThumbnailCache.DeleteFrames();
@@ -202,14 +227,14 @@ INT CStoreManagerApp::ExitInstance()
 }
 
 
-void CStoreManagerApp::AddFrame(CMainWnd* pFrame)
+void CStoreManagerApp::AddFrame(CGlassWindow* pFrame)
 {
 	m_MainFrames.AddTail(pFrame);
 	m_pMainWnd = pFrame;
 	m_pActiveWnd = NULL;
 }
 
-void CStoreManagerApp::KillFrame(CMainWnd* pVictim)
+void CStoreManagerApp::KillFrame(CGlassWindow* pVictim)
 {
 	for (POSITION p=m_MainFrames.GetHeadPosition(); p; )
 	{
@@ -433,6 +458,8 @@ void CStoreManagerApp::LoadViewOptions(UINT context)
 			m_Views[context].ColumnWidth[a] = 0;
 
 	m_Views[context].AutoDirs &= (m_Contexts[context]->AllowGroups==true) || (context>=LFContextSubfolderDefault);
+
+	SetRegistryBase(_T("Settings"));
 }
 
 void CStoreManagerApp::SaveViewOptions(UINT context)
@@ -461,4 +488,6 @@ void CStoreManagerApp::SaveViewOptions(UINT context)
 
 	WriteBinary(_T("ColumnOrder"), (LPBYTE)m_Views[context].ColumnOrder, sizeof(m_Views[context].ColumnOrder));
 	WriteBinary(_T("ColumnWidth"), (LPBYTE)m_Views[context].ColumnWidth, sizeof(m_Views[context].ColumnWidth));
+
+	SetRegistryBase(_T("Settings"));
 }

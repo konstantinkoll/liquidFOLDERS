@@ -4,6 +4,7 @@
 
 #include "stdafx.h"
 #include "EditFilterDlg.h"
+#include "FileDropWnd.h"
 #include "StoreManager.h"
 #include "LFCommDlg.h"
 
@@ -390,6 +391,7 @@ BEGIN_MESSAGE_MAP(CMainWnd, CGlassWindow)
 
 	ON_COMMAND(IDM_ITEM_OPEN, OnItemOpen)
 	ON_COMMAND(IDM_ITEM_OPENNEWWINDOW, OnItemOpenNewWindow)
+	ON_COMMAND(IDM_ITEM_OPENFILEDROP, OnItemOpenFileDrop)
 	ON_COMMAND(IDM_INSPECTOR_EXPORTMETADATA, OnExportMetadata)
 
 	ON_MESSAGE(WM_CONTEXTVIEWCOMMAND, OnContextViewCommand)
@@ -715,6 +717,21 @@ void CMainWnd::OnItemOpenNewWindow()
 
 		CMainWnd* pFrame = new CMainWnd();
 		pFrame->CreateStore(i->StoreID);
+		pFrame->ShowWindow(SW_SHOW);
+	}
+}
+
+void CMainWnd::OnItemOpenFileDrop()
+{
+	INT idx = m_wndMainView.GetSelectedItem();
+	if (idx!=-1)
+	{
+		LFItemDescriptor* i = m_pCookedFiles->m_Items[idx];
+
+		ASSERT((i->Type & LFTypeMask)==LFTypeStore);
+
+		CFileDropWnd* pFrame = new CFileDropWnd();
+		pFrame->Create(i->StoreID);
 		pFrame->ShowWindow(SW_SHOW);
 	}
 }

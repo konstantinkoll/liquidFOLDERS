@@ -750,6 +750,9 @@ CMenu* CFileView::GetItemContextMenu(INT idx)
 		switch (item->Type & LFTypeMask)
 		{
 		case LFTypeStore:
+			ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_OPENFILEDROP));
+			pPopup->InsertMenu(0, MF_STRING | MF_BYPOSITION, IDM_ITEM_OPENFILEDROP, tmpStr);
+
 			ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_OPENNEWWINDOW));
 			pPopup->InsertMenu(0, MF_STRING | MF_BYPOSITION, IDM_ITEM_OPENNEWWINDOW, tmpStr);
 			break;
@@ -1206,7 +1209,6 @@ BEGIN_MESSAGE_MAP(CFileView, CWnd)
 	ON_COMMAND(IDM_SELECTALL, OnSelectAll)
 	ON_COMMAND(IDM_SELECTNONE, OnSelectNone)
 	ON_COMMAND(IDM_SELECTINVERT, OnSelectInvert)
-	ON_UPDATE_COMMAND_UI(ID_APP_NEWFILEDROP, OnUpdateCommands)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_SELECTALL, IDM_SELECTINVERT, OnUpdateCommands)
 	ON_EN_KILLFOCUS(2, OnDestroyEdit)
 END_MESSAGE_MAP()
@@ -1859,9 +1861,6 @@ void CFileView::OnUpdateCommands(CCmdUI* pCmdUI)
 
 	switch (pCmdUI->m_nID)
 	{
-	case ID_APP_NEWFILEDROP:
-		b = (m_Context==LFContextStores) && (_waccess(theApp.m_Path+_T("FileDrop.exe"), 0)==0);
-		break;
 	case IDM_SELECTALL:
 	case IDM_SELECTINVERT:
 		b &= m_AllowMultiSelect;

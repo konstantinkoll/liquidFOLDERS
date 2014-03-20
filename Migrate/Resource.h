@@ -20,6 +20,7 @@
 #define IDM_TREE_RESETPROPERTY          523
 #define IDM_BACKGROUND                  600
 #define IDM_HEADER                      601
+#define IDM_NEWSTOREMANAGER             700
 #define IDS_NOROOT_CAPTION              1000
 #define IDS_NOROOT_HINT                 1001
 #define IDS_FOLDER_CAPTION              1002

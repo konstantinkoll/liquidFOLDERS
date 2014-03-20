@@ -34,7 +34,6 @@ public:
 
 	CString m_PathRunCmd;
 	CString m_PathStoreManager;
-	CString m_PathFileDrop;
 	CString m_PathMigrate;
 	CString m_Categories[3][6];
 	CString m_Store;

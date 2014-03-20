@@ -63,17 +63,12 @@ void LFChooseStoreDlg::AdjustLayout()
 void LFChooseStoreDlg::UpdateOkButton()
 {
 	INT idx = GetSelectedStore();
-	BOOL bEnable = (idx!=-1);
+	BOOL b = (idx!=-1);
 
-	if (bEnable)
-		switch (m_Mode)
-		{
-		case LFCSD_Mounted:
-			bEnable &= !(m_pResult->m_Items[idx]->Type & LFTypeNotMounted);
-			break;
-		}
+	if (b && (m_Mode==LFCSD_Mounted))
+		b &= !(m_pResult->m_Items[idx]->Type & LFTypeNotMounted);
 
-	GetDlgItem(IDOK)->EnableWindow(bEnable);
+	GetDlgItem(IDOK)->EnableWindow(b);
 }
 
 

@@ -49,25 +49,25 @@ BOOL CRunCmdApp::InitInstance()
 			OnAppAbout(IDS_ABOUT, IDB_ABOUTICON);
 			break;
 		case 2:
-			if (command==_T("ABOUT"))
+			if (command==_T("/ABOUT"))
 				OnAppAbout(IDS_ABOUT, IDB_ABOUTICON);
-			if (command==_T("ABOUTEXTENSION"))
+			if (command==_T("/ABOUTEXTENSION"))
 				OnAppAbout(IDS_EXTENSIONABOUT, IDB_EXTENSIONABOUTICON);
-			if (command==_T("NEWSTORE"))
+			if (command==_T("/NEWSTORE"))
 				OnStoreCreate();
-			if (command==_T("INSTALL"))
+			if (command==_T("/INSTALL"))
 				LFCreateSendTo(true);
-			if (command==_T("CHECKUPDATE"))
+			if (command==_T("/CHECKUPDATE"))
 				LFCheckForUpdate();
 			break;
 		case 3:
-			if (command==_T("NEWSTOREVOLUME"))
+			if (command==_T("/NEWSTOREVOLUME"))
 				OnStoreCreate(*__wargv[2] & 0xFF);
-			if (command==_T("DELETESTORE"))
+			if (command==_T("/DELETESTORE"))
 				OnStoreDelete(__wargv[2]);
-			if (command==_T("IMPORTFOLDER"))
+			if (command==_T("/IMPORTFOLDER"))
 				OnStoreImportFolder(__wargv[2]);
-			if (command==_T("STOREPROPERTIES"))
+			if (command==_T("/STOREPROPERTIES"))
 				OnStoreProperties(__wargv[2]);
 		}
 	}

@@ -3,11 +3,8 @@
 // Used by LFCommDlg.rc
 //
 #define ID_APP_SUPPORT                  200
-#define ID_APP_NEWFILEDROP              201
-#define ID_APP_NEWMIGRATE               202
-#define ID_APP_NEWSTOREMANAGER          203
-#define ID_APP_PURCHASE                 204
-#define ID_APP_ENTERLICENSEKEY          205
+#define ID_APP_PURCHASE                 201
+#define ID_APP_ENTERLICENSEKEY          202
 #define IDB_DIV                         20000
 #define IDB_DIVDOWN                     20001
 #define IDB_LOCATIONINDICATOR_8         20002

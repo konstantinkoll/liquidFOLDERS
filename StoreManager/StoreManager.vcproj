@@ -462,6 +462,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\FileDropWnd.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\FooterGraph.cpp"
 				>
 			</File>
@@ -620,6 +624,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\FileDropWnd.h"
+				>
+			</File>
+			<File
 				RelativePath=".\FooterGraph.h"
 				>
 			</File>
@@ -746,6 +754,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\FileDrop_Small.ico"
+				>
+			</File>
+			<File
 				RelativePath=".\res\FilterEdit_Tiny.ico"
 				>
 			</File>
@@ -818,6 +830,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\liquidFOLDERS.ico"
+				>
+			</File>
+			<File
 				RelativePath=".\res\Multiple.png"
 				>
 			</File>
@@ -831,10 +847,6 @@
 			</File>
 			<File
 				RelativePath=".\res\SourceIcons.bmp"
-				>
-			</File>
-			<File
-				RelativePath=".\res\StoreManager.ico"
 				>
 			</File>
 			<File

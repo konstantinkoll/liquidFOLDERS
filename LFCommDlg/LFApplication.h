@@ -150,10 +150,6 @@ public:
 	BOOL IsUpdateCheckDue();
 	void GetBinary(LPCTSTR lpszEntry, void* pData, UINT size);
 
-	afx_msg void OnAppNewFileDrop();
-	afx_msg void OnAppNewMigrate();
-	afx_msg void OnAppNewStoreManager();
-
 protected:
 	CList<ResourceCacheItem> m_ResourceCache;
 	UINT m_NagCounter;

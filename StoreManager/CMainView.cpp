@@ -801,17 +801,16 @@ INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndTaskbar.AddButton(IDM_FILE_ARCHIVE, 25);
 	m_wndTaskbar.AddButton(IDM_FILE_DELETE, 26);
 	m_wndTaskbar.AddButton(IDM_FILE_RENAME, 27);
-	m_wndTaskbar.AddButton(ID_APP_NEWFILEDROP, 28, TRUE);
-	m_wndTaskbar.AddButton(IDM_STORE_MAKEDEFAULT, 29);
+	m_wndTaskbar.AddButton(IDM_STORE_MAKEDEFAULT, 28);
 
-	#define InspectorIconVisible     30
-	#define InspectorIconHidden      31
+	#define InspectorIconVisible     29
+	#define InspectorIconHidden      30
 	p_InspectorButton = m_wndTaskbar.AddButton(ID_PANE_INSPECTOR, theApp.m_ShowInspectorPane ? InspectorIconVisible : InspectorIconHidden, TRUE, TRUE);
 
-	m_wndTaskbar.AddButton(ID_APP_PURCHASE, 32, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_ENTERLICENSEKEY, 33, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_SUPPORT, 34, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_ABOUT, 35, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_PURCHASE, 31, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_ENTERLICENSEKEY, 32, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_SUPPORT, 33, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_ABOUT, 34, TRUE, TRUE);
 
 	// Drop target
 	m_DropTarget.SetOwner(GetOwner());
