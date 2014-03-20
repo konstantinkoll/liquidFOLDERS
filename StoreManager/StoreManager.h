@@ -34,7 +34,7 @@ public:
 	void UpdateViewOptions(INT Context=-1, INT View=-1);
 	void Reload(INT Context);
 
-	CList<CMainWnd*> m_MainFrames;
+	CList<CGlassWindow*> m_MainFrames;
 	CMainWnd* p_Clipboard;
 	CString m_PathGoogleEarth;
 	CImageListTransparent m_SourceIcons;

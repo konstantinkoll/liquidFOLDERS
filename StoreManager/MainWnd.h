@@ -18,14 +18,15 @@
 #define NAVMODE_HISTORY          1
 #define NAVMODE_RELOAD           2
 
-#define WM_UPDATEVIEWOPTIONS     WM_USER+200
-#define WM_UPDATESORTOPTIONS     WM_USER+201
-#define WM_RELOAD                WM_USER+202
-#define WM_COOKFILES             WM_USER+203
-#define WM_NAVIGATEBACK          WM_USER+204
-#define WM_NAVIGATETO            WM_USER+205
-#define WM_SENDTO                WM_USER+206
-#define WM_BEGINDRAGDROP         WM_USER+207
+#define WM_CONTEXTVIEWCOMMAND    WM_USER+200
+#define WM_UPDATEVIEWOPTIONS     WM_USER+201
+#define WM_UPDATESORTOPTIONS     WM_USER+202
+#define WM_RELOAD                WM_USER+203
+#define WM_COOKFILES             WM_USER+204
+#define WM_NAVIGATEBACK          WM_USER+205
+#define WM_NAVIGATETO            WM_USER+206
+#define WM_SENDTO                WM_USER+207
+#define WM_BEGINDRAGDROP         WM_USER+208
 
 class CMainWnd : public CGlassWindow
 {
@@ -42,14 +43,10 @@ public:
 	BOOL CreateStore(CHAR* RootStore);
 	BOOL CreateFilter(LFFilter* f);
 	BOOL CreateFilter(WCHAR* FileName);
-	INT GetContext();
-	INT GetViewID();
 	BOOL AddClipItem(LFItemDescriptor* i);
 
-	BOOL m_IsClipboard;
-
 protected:
-	HICON m_hIcon;
+	BOOL m_IsClipboard;
 	CJournalButton m_wndJournalButton;
 	CHistoryBar m_wndHistory;
 	CGlassEdit m_wndSearch;
@@ -88,6 +85,7 @@ protected:
 
 	afx_msg void OnExportMetadata();
 
+	afx_msg LRESULT OnContextViewCommand(WPARAM wParam, LPARAM lParam);
 	afx_msg void OnUpdateViewOptions();
 	afx_msg void OnUpdateSortOptions();
 	afx_msg void OnUpdateNumbers();

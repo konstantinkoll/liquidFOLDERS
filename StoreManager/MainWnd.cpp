@@ -256,16 +256,6 @@ void CMainWnd::AdjustLayout()
 	m_wndMainView.SetWindowPos(NULL, rect.left+FilterWidth, rect.top+m_Margins.cyTopHeight, rect.Width(), rect.bottom-m_Margins.cyTopHeight, SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
-INT CMainWnd::GetContext()
-{
-	return m_wndMainView.GetContext();
-}
-
-INT CMainWnd::GetViewID()
-{
-	return m_wndMainView.GetViewID();
-}
-
 BOOL CMainWnd::AddClipItem(LFItemDescriptor* i)
 {
 	ASSERT(m_IsClipboard);
@@ -402,6 +392,7 @@ BEGIN_MESSAGE_MAP(CMainWnd, CGlassWindow)
 	ON_COMMAND(IDM_ITEM_OPENNEWWINDOW, OnItemOpenNewWindow)
 	ON_COMMAND(IDM_INSPECTOR_EXPORTMETADATA, OnExportMetadata)
 
+	ON_MESSAGE(WM_CONTEXTVIEWCOMMAND, OnContextViewCommand)
 	ON_MESSAGE_VOID(WM_UPDATEVIEWOPTIONS, OnUpdateViewOptions)
 	ON_MESSAGE_VOID(WM_UPDATESORTOPTIONS, OnUpdateSortOptions)
 	ON_MESSAGE_VOID(WM_UPDATENUMBERS, OnUpdateNumbers)
@@ -485,13 +476,20 @@ INT CMainWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	AdjustLayout();
 	SetFocus();
 
+	// Clipboard
+	if (m_IsClipboard)
+		theApp.p_Clipboard = this;
+
 	return 0;
 }
 
 void CMainWnd::OnDestroy()
 {
 	CGlassWindow::OnDestroy();
+
 	theApp.KillFrame(this);
+	if (theApp.p_Clipboard==this)
+		theApp.p_Clipboard = NULL;
 }
 
 void CMainWnd::OnSetFocus(CWnd* /*pOldWnd*/)
@@ -570,7 +568,7 @@ void CMainWnd::OnNavigateSwitchContext(UINT nID)
 
 	DeleteBreadcrumbs(&m_BreadcrumbForward);
 
-	if (GetContext()==LFContextStores)
+	if (m_wndMainView.GetContext()==LFContextStores)
 	{
 FilterFromScratch:
 		LFFilter* f = LFAllocFilter();
@@ -824,9 +822,18 @@ void CMainWnd::OnExportMetadata()
 }
 
 
+LRESULT CMainWnd::OnContextViewCommand(WPARAM wParam, LPARAM lParam)
+{
+	if ((LOWORD(lParam)==m_wndMainView.GetContext()) || (LOWORD(lParam)==0xFFFF))
+		if ((HIWORD(lParam)==m_wndMainView.GetViewID()) || (HIWORD(lParam)==0xFFFF))
+			return SendMessage(wParam);
+
+	return NULL;
+}
+
 void CMainWnd::OnUpdateViewOptions()
 {
-	if ((m_wndMainView.GetViewID()>LFViewPreview) || (theApp.m_Views[GetContext()].Mode>LFViewPreview))
+	if ((m_wndMainView.GetViewID()>LFViewPreview) || (theApp.m_Views[m_wndMainView.GetContext()].Mode>LFViewPreview))
 	{
 		m_wndMainView.SelectNone();
 		OnCookFiles();
@@ -880,7 +887,7 @@ LRESULT CMainWnd::OnCookFiles(WPARAM wParam, LPARAM /*lParam*/)
 
 	if (!m_IsClipboard)
 	{
-		const INT ctx = GetContext();
+		const INT ctx = m_wndMainView.GetContext();
 		m_wndContextSidebar.SetSelection(ctx<=LFLastQueryContext ? IDM_NAV_SWITCHCONTEXT+ctx : 0, m_wndMainView.GetStoreID());
 	}
 

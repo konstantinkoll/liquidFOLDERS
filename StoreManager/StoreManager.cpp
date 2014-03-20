@@ -207,20 +207,14 @@ void CStoreManagerApp::AddFrame(CMainWnd* pFrame)
 	m_MainFrames.AddTail(pFrame);
 	m_pMainWnd = pFrame;
 	m_pActiveWnd = NULL;
-
-	if (pFrame->m_IsClipboard)
-		p_Clipboard = pFrame;
 }
 
 void CStoreManagerApp::KillFrame(CMainWnd* pVictim)
 {
-	if (pVictim->m_IsClipboard)
-		p_Clipboard = NULL;
-
 	for (POSITION p=m_MainFrames.GetHeadPosition(); p; )
 	{
 		POSITION pl = p;
-		CMainWnd* pFrame = m_MainFrames.GetNext(p);
+		CGlassWindow* pFrame = m_MainFrames.GetNext(p);
 		if (pFrame==pVictim)
 		{
 			m_MainFrames.RemoveAt(pl);
@@ -290,7 +284,6 @@ BOOL CStoreManagerApp::SanitizeViewMode(LFViewParameters* vp, INT context)
 
 	// Choose other sorting if neccessary
 	if (!AttributeSortableInView(vp->SortBy, vp->Mode))
-	{
 		for (UINT a=0; a<LFAttributeCount; a++)
 			if (AttributeSortableInView(a, vp->Mode))
 			{
@@ -298,7 +291,6 @@ BOOL CStoreManagerApp::SanitizeViewMode(LFViewParameters* vp, INT context)
 				Modified = TRUE;
 				break;
 			}
-	}
 
 	return Modified;
 }
@@ -306,12 +298,7 @@ BOOL CStoreManagerApp::SanitizeViewMode(LFViewParameters* vp, INT context)
 void CStoreManagerApp::Broadcast(INT Context, INT View, UINT cmdMsg)
 {
 	for (POSITION p=m_MainFrames.GetHeadPosition(); p; )
-	{
-		CMainWnd* pFrame = m_MainFrames.GetNext(p);
-		if ((pFrame->GetContext()==Context) || (Context==-1))
-			if ((pFrame->GetViewID()==View) || (View==-1))
-				pFrame->PostMessage(cmdMsg);
-	}
+		m_MainFrames.GetNext(p)->PostMessage(WM_CONTEXTVIEWCOMMAND, cmdMsg, MAKELPARAM(Context, View));
 }
 
 void CStoreManagerApp::UpdateSortOptions(INT Context)

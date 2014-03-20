@@ -181,7 +181,8 @@ BOOL CMainView::CreateFileView(UINT ViewID, FVPersistentData* Data)
 
 		p_wndFileView = pNewView;
 		p_wndFileView->SetOwner(GetOwner());
-		p_wndFileView->SetFocus();
+		if ((GetFocus()==pVictim) || (GetTopLevelParent()==GetActiveWindow()))
+			p_wndFileView->SetFocus();
 		AdjustLayout();
 
 		RegisterDragDrop(p_wndFileView->GetSafeHwnd(), &m_DropTarget);
