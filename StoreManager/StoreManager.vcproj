@@ -834,6 +834,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\liquidFOLDERS_128.png"
+				>
+			</File>
+			<File
 				RelativePath=".\res\Multiple.png"
 				>
 			</File>
@@ -851,10 +855,6 @@
 			</File>
 			<File
 				RelativePath=".\StoreManager.rc"
-				>
-			</File>
-			<File
-				RelativePath=".\res\StoreManager_About.png"
 				>
 			</File>
 			<File

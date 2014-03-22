@@ -1209,7 +1209,7 @@
 			>
 		</File>
 		<File
-			RelativePath=".\LFNamespaceExtension_About.png"
+			RelativePath=".\LFNamespaceExtension_128.png"
 			>
 		</File>
 		<File
@@ -1217,11 +1217,19 @@
 			>
 		</File>
 		<File
-			RelativePath=".\LFRunCmd_About.png"
+			RelativePath=".\LFRunCmd_128.png"
 			>
 		</File>
 		<File
 			RelativePath=".\liquidFOLDERS.ico"
+			>
+		</File>
+		<File
+			RelativePath=".\liquidFOLDERS_128.png"
+			>
+		</File>
+		<File
+			RelativePath=".\liquidFOLDERS_64.png"
 			>
 		</File>
 		<File
@@ -1426,10 +1434,6 @@
 		</File>
 		<File
 			RelativePath=".\StoreManager_24.bmp"
-			>
-		</File>
-		<File
-			RelativePath=".\StoreManager_About.png"
 			>
 		</File>
 		<File

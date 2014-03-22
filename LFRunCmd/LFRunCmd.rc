@@ -38,8 +38,8 @@ IDI_MAIN                ICON                    "res\\LFRunCmd.ico"
 // PNG
 //
 
-IDB_ABOUTICON           PNG                     "res\\LFRunCmd_About.png"
-IDB_EXTENSIONABOUTICON  PNG                     "res\\LFNamespaceExtension_About.png"
+IDB_ABOUTICON           PNG                     "res\\LFRunCmd_128.png"
+IDB_EXTENSIONABOUTICON  PNG                     "res\\LFNamespaceExtension_128.png"
 
 /////////////////////////////////////////////////////////////////////////////
 //

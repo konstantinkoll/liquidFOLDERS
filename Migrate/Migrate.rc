@@ -41,7 +41,7 @@ IDD_REPORT              ICON                    "res\\TaskReport_Tiny.ico"
 // PNG
 //
 
-IDB_ABOUTICON           PNG                     "res\\Migrate_About.png"
+IDB_ABOUTICON           PNG                     "res\\Migrate_128.png"
 
 /////////////////////////////////////////////////////////////////////////////
 //
