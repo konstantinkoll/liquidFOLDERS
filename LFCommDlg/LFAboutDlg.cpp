@@ -138,7 +138,7 @@ BOOL LFAboutDlg::OnInitDialog()
 		DEFAULT_PITCH | FF_DONTCARE, p_App->GetDefaultFontFace());
 	m_wndVersionInfo.SetFont(&m_VersionFont);
 
-	m_CaptionTop = rectWnd.top+(rectWnd.bottom-HeightCaption-3*HeightVersion-Height/11)/2-8;
+	m_CaptionTop = rectWnd.top+(rectWnd.bottom-HeightCaption-LineGap-3*HeightVersion)/2-8;
 	m_IconTop = rectWnd.top+(rectWnd.bottom-124)/2-8;
 
 	rectWnd.left = p_Santa ? 178 : 148;
