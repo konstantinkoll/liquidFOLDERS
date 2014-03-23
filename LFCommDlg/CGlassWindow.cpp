@@ -381,7 +381,7 @@ LRESULT CGlassWindow::OnDisplayChange(WPARAM /*wParam*/, LPARAM /*lParam*/)
 		mi.cbSize = sizeof(mi);
 
 		if (GetMonitorInfo(MonitorFromWindow(m_hWnd, MONITOR_DEFAULTTOPRIMARY), &mi))
-			::SetWindowPos(m_hWnd, HWND_TOP, mi.rcMonitor.left, mi.rcMonitor.top, mi.rcMonitor.right-mi.rcMonitor.left, mi.rcMonitor.bottom-mi.rcMonitor.top, SWP_NOOWNERZORDER);
+			SetWindowPos(&wndTop, mi.rcMonitor.left, mi.rcMonitor.top, mi.rcMonitor.right-mi.rcMonitor.left, mi.rcMonitor.bottom-mi.rcMonitor.top, SWP_NOOWNERZORDER);
 	}
 
 	return NULL;
