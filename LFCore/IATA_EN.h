@@ -227,7 +227,7 @@ LFCountry Countries_EN[CountryCount_EN] = {
 };
 
 // Airports
-#define AirportCount_EN 8619
+#define AirportCount_EN 8620
 LFAirport Airports_EN[AirportCount_EN] = {
 	{  66, "AAA", "", "Anaa", { 17.355000, -145.508333 } },
 	{   8, "AAB", "", "Arrabury", { 26.690556, 141.047500 } },
@@ -3757,7 +3757,7 @@ LFAirport Airports_EN[AirportCount_EN] = {
 	{   8, "KGY", "", "Kingaroy", { 26.580833, 151.841111 } },
 	{ 212, "KGZ", "", "Glacier Creek", { -61.455000, -142.380833 } },
 	{  89, "KHA", "", "Khaneh", { -36.733056, 45.150000 } },
-	{ 209, "KHC", "", "Kerch", { -45.372500, 36.401389 } },
+	{ 163, "KHC", "", "Kerch", { -45.372500, 36.401389 } },
 	{ 209, "KHE", "", "Kherson", { -46.675833, 32.506389 } },
 	{  40, "KHG", "", "Kashi", { -39.543056, 76.020000 } },
 	{ 193, "KHH", "", "Kaohsiung", { -22.577222, 120.350000 } },
@@ -6757,7 +6757,7 @@ LFAirport Airports_EN[AirportCount_EN] = {
 	{ 143, "SIM", "", "Simbai", { 5.266944, 144.533056 } },
 	{ 171, "SIN", "", "Singapore (Changi)", { -1.350278, 103.994444 } },
 	{   8, "SIO", "", "Smithton", { 40.835000, 145.083611 } },
-	{ 209, "SIP", "", "Simferopol", { -45.052222, 33.975278 } },
+	{ 163, "SIP", "", "Simferopol", { -45.052222, 33.975278 } },
 	{  88, "SIQ", "", "Singkep", { 0.479167, 104.579167 } },
 	{ 190, "SIR", "", "Sion", { -46.219722, 7.326667 } },
 	{ 176, "SIS", "", "Sishen", { 27.648611, 22.999167 } },
@@ -7673,6 +7673,7 @@ LFAirport Airports_EN[AirportCount_EN] = {
 	{ 212, "UKL", "", "Burlington", { -38.302500, -95.725000 } },
 	{ 212, "UKN", "", "Waukon", { -43.280556, -91.469444 } },
 	{ 220, "UKR", "", "Mukeiras", { -13.933056, 45.683056 } },
+	{ 163, "UKS", "", "Sewastopol", { -44.691667, 33.576389 } },
 	{ 212, "UKT", "", "Quakertown", { -40.435278, -75.381944 } },
 	{ 143, "UKU", "", "Nuku", { 3.666944, 142.483056 } },
 	{   6, "ULA", "", "San Julian", { 49.306667, -67.802500 } },

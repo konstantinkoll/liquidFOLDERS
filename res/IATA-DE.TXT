@@ -3749,7 +3749,7 @@ KGX     Grayling, USA;4;62*53'40"N, 160*3'54"W
 KGY     Kingaroy, Australien;4;26*34'51"S, 151*50'28"E
 KGZ     Glacier Creek, USA;4;61*27'18"N, 142*22'51"W
 KHA     Khaneh, Iran;4;36*43'59"N, 45*9'0"E
-KHC     Kerch, Ukraine;4;45*22'21"N, 36*24'5"E
+KHC     Kertsch, Russland;4;45*22'21"N, 36*24'5"E
 KHE     Kherson, Ukraine;4;46*40'33"N, 32*30'23"E
 KHG     Kashi, China;4;39*32'35"N, 76*1'12"E
 KHH     Kaohsiung, Taiwan;4;22*34'38"N, 120*21'0"E
@@ -7057,7 +7057,7 @@ SIL     Sila, Neu-Guinea;4;9*7'1"S, 148*23'60"E
 SIM     Simbai, Neu-Guinea;4;5*16'1"S, 144*31'59"E
 SIN     Singapur (Changi), Singapur;4;1*21'1"N, 103*59'40"E
 SIO     Smithton, Australien;4;40*50'6"S, 145*5'1"E
-SIP     Simferopol, Ukraine;4;45*3'8"N, 33*58'31"E
+SIP     Simferopol, Russland;4;45*3'8"N, 33*58'31"E
 SIQ     Singkep, Indonesien;4;0*28'45"S, 104*34'45"E
 SIR     Sion, Schweiz;4;46*13'11"N, 7*19'36"E
 SIS     Sishen, Südafrika;4;27*38'55"S, 22*59'57"E
@@ -8007,6 +8007,7 @@ UKK     Oskeman, Kasachstan;4;50*2'12"N, 82*29'39"E
 UKL     Burlington, USA;4;38*18'9"N, 95*43'30"W
 UKN     Waukon, USA;4;43*16'50"N, 91*28'10"W
 UKR     Mukeiras, Jemen;4;13*55'59"N, 45*40'59"E
+UKS     Sewastopol, Russland;5;44*41'30"N, 33*34'35"E
 UKT     Quakertown, USA;4;40*26'7"N, 75*22'55"W
 UKU     Nuku, Neu-Guinea;4;3*40'1"S, 142*28'59"E
 UKY     Kyoto, Japan
