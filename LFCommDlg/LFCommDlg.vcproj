@@ -667,6 +667,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\LFUpdateDlg.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\include\MenuIcons.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\stdafx.cpp"
 				>
 				<FileConfiguration
@@ -937,7 +945,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\LFUpdateDlg.h"
+				>
+			</File>
+			<File
 				RelativePath="..\include\liquidFOLDERS.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\MenuIcons.h"
 				>
 			</File>
 			<File
@@ -1024,6 +1040,14 @@
 			</File>
 			<File
 				RelativePath=".\LFCommDlg.rc"
+				>
+			</File>
+			<File
+				RelativePath=".\res\liquidFOLDERS_64.png"
+				>
+			</File>
+			<File
+				RelativePath=".\res\liquidFOLDERS_Tiny.ico"
 				>
 			</File>
 			<File

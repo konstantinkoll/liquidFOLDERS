@@ -40,6 +40,7 @@
 #define IDB_STOREBACKUP                 20132
 #define IDB_SIDEBARSHADOW               20133
 #define IDB_SANTA                       20134
+#define IDB_LIQUIDFOLDERS_64            20135
 #define IDI_DEFAULT                     20200
 #define IDI_RESET_NORMAL                20201
 #define IDI_RESET_HOT                   20202
@@ -76,15 +77,14 @@
 #define IDS_XOFY_SINGULAR               20326
 #define IDS_XOFY_PLURAL                 20327
 #define IDS_UPDATE                      20328
-#define IDS_UPDATE_AVAILABLE            20329
-#define IDS_UPDATE_NOTAVAILABLE         20330
-#define IDS_AIRPORT_CODE                20331
-#define IDS_AIRPORT_LOCATION            20332
-#define IDS_STOREPROPERTIES             20333
-#define IDS_STORENEW                    20334
-#define IDS_STORENEW_VOLUME             20335
-#define IDS_DELETEPROPERTY_CAPTION      20336
-#define IDS_DELETEPROPERTY_MSG          20337
+#define IDS_UPDATENOTAVAILABLE          20329
+#define IDS_AIRPORT_CODE                20330
+#define IDS_AIRPORT_LOCATION            20331
+#define IDS_STOREPROPERTIES             20332
+#define IDS_STORENEW                    20333
+#define IDS_STORENEW_VOLUME             20334
+#define IDS_DELETEPROPERTY_CAPTION      20335
+#define IDS_DELETEPROPERTY_MSG          20336
 #define IDS_COMPARE_FIRST               20400
 #define IDS_COMPARE_IGNORE              20400
 #define IDS_COMPARE_ISNULL              20401
@@ -202,6 +202,11 @@
 #define IDD_STORENEW_PATH               23120
 #define IDC_AUTOPATH                    23121
 #define IDC_PATHTREE                    23122
+#define IDD_UPDATE                      23200
+#define IDC_IGNOREUPDATE                23201
+#define IDC_HIDE                        23202
+#define IDM_UPDATE                      23290
+#define IDM_UPDATE_RESTORE              23291
 #define IDI_SHIELD_VISTA                32519
 
 // Next default values for new objects

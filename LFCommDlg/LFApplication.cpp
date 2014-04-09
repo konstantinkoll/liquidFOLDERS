@@ -330,6 +330,12 @@ BOOL LFApplication::InitInstance()
 	// OLE Initialisieren
 	ENSURE(AfxOleInit());
 
+	// Dialog classes
+	WNDCLASS wc;
+	GetClassInfo(LFCommDlgDLL.hModule, _T("#32770"), &wc);
+	wc.lpszClassName = _T("UpdateDlg");
+	AfxRegisterClass(&wc);
+
 	// liquidFOLDERS initalisieren
 	LFInitialize();
 

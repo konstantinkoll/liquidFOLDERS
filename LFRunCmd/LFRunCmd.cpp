@@ -46,7 +46,8 @@ BOOL CRunCmdApp::InitInstance()
 		switch (__argc)
 		{
 		case 1:
-			OnAppAbout(IDS_ABOUT, IDB_ABOUTICON);
+			LFCheckForUpdate();
+//			OnAppAbout(IDS_ABOUT, IDB_ABOUTICON);
 			break;
 		case 2:
 			if (command==_T("/ABOUT"))

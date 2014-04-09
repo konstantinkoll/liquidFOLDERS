@@ -82,6 +82,7 @@ IDB_LOCATIONINDICATOR_8 PNG                     "res\\LocationIndicator_8.png"
 IDB_LOCATIONINDICATOR_16 PNG                     "res\\LocationIndicator_16.png"
 IDB_EXPLORERGRADIENT    PNG                     "res\\ExplorerGradient.png"
 IDB_SANTA               PNG                     "res\\Santa.png"
+IDB_LIQUIDFOLDERS_64    PNG                     "res\\liquidFOLDERS_64.png"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -145,6 +146,7 @@ IDD_ITEMTEMPLATE        ICON                    "res\\Inspector_Tiny.ico"
 IDD_STOREMAINTENANCE    ICON                    "res\\StoreMaintenance_Small.ico"
 IDD_EDITTAGS            ICON                    "res\\Tags_Tiny.ico"
 IDD_BROWSEFORFOLDER     ICON                    "res\\Folder_Tiny.ico"
+IDD_UPDATE              ICON                    "res\\liquidFOLDERS_Tiny.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -200,6 +202,14 @@ BEGIN
         MENUITEM "&Bearbeiten...",              IDM_CONDITION_EDIT
         MENUITEM SEPARATOR
         MENUITEM "&Löschen",                    IDM_CONDITION_DELETE
+    END
+END
+
+IDM_UPDATE MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "&Wiederherstellen",           IDM_UPDATE_RESTORE
     END
 END
 
@@ -508,6 +518,19 @@ BEGIN
     LTEXT           "Pfad:",IDC_STATIC,3,19,304,8
 END
 
+IDD_UPDATE DIALOGEX 0, 0, 220, 118
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
+CAPTION "Update verfügbar"
+CLASS "UpdateDlg"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "Jetzt herunterladen",IDOK,113,96,100,14,WS_GROUP
+    CONTROL         "Version %s (MSN %s)",IDC_VERSIONINFO,"SysLink",WS_GROUP | WS_TABSTOP,7,7,206,39
+    LTEXT           "Eine neue Version von liquidFOLDERS steht zum Herunterladen bereit.",IDC_STATIC,7,50,206,16
+    CONTROL         "Dieses Update ignorieren",IDC_IGNOREUPDATE,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,72,206,10
+    CONTROL         "<a>Ausblenden</a>",IDC_HIDE,"SysLink",WS_TABSTOP,7,101,100,9
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -657,6 +680,14 @@ BEGIN
         TOPMARGIN, 4
         BOTTOMMARGIN, 306
     END
+
+    IDD_UPDATE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 213
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 111
+    END
 END
 #endif    // APSTUDIO_INVOKED
 
@@ -705,18 +736,17 @@ BEGIN
     IDS_XOFY_SINGULAR       "%u von %u"
     IDS_XOFY_PLURAL         "%u von %u"
     IDS_UPDATE              "Update"
-    IDS_UPDATE_AVAILABLE    "Eine neue Version, liquidFOLDERS %s, steht zum Herunterladen bereit.\nMöchten Sie jetzt den Installer herunterladen?"
-    IDS_UPDATE_NOTAVAILABLE "Es steht keine neue Version von liquidFOLDERS zum Herunterladen bereit."
+    IDS_UPDATENOTAVAILABLE  "Es steht keine neue Version von liquidFOLDERS zum Herunterladen bereit."
     IDS_AIRPORT_CODE        "IATA-Code"
     IDS_AIRPORT_LOCATION    "Ort"
     IDS_STOREPROPERTIES     "Eigenschaften von „%s“"
     IDS_STORENEW            "Neuen Store anlegen"
     IDS_STORENEW_VOLUME     "Neuen Store auf Laufwerk %c: anlegen"
+    IDS_DELETEPROPERTY_CAPTION "Eigenschaft entfernen"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_DELETEPROPERTY_CAPTION "Eigenschaft entfernen"
     IDS_DELETEPROPERTY_MSG  "Möchten Sie diese Eigenschaft wirklich entfernen ?"
 END
 
@@ -794,6 +824,14 @@ BEGIN
         MENUITEM "E&ditar...",                  IDM_CONDITION_EDIT
         MENUITEM SEPARATOR
         MENUITEM "&Eliminar",                   IDM_CONDITION_DELETE
+    END
+END
+
+IDM_UPDATE MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "&Restaurar",                  IDM_UPDATE_RESTORE
     END
 END
 
@@ -1104,6 +1142,19 @@ BEGIN
     LTEXT           "Camino:",IDC_STATIC,3,19,304,8
 END
 
+IDD_UPDATE DIALOGEX 0, 0, 220, 118
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
+CAPTION "Actualización disponible"
+CLASS "UpdateDlg"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "Descargarla ahora",IDOK,123,96,90,14,WS_GROUP
+    CONTROL         "Version %s (MSN %s)",IDC_VERSIONINFO,"SysLink",WS_GROUP | WS_TABSTOP,7,7,206,39
+    LTEXT           "Una actualización de liquidFOLDERS está disponible.",IDC_STATIC,7,50,206,16
+    CONTROL         "Ignorar actualización",IDC_IGNOREUPDATE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,72,206,10
+    CONTROL         "<a>Esconderse</a>",IDC_HIDE,"SysLink",WS_TABSTOP,7,101,110,9
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -1253,6 +1304,14 @@ BEGIN
         TOPMARGIN, 4
         BOTTOMMARGIN, 306
     END
+
+    IDD_UPDATE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 213
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 111
+    END
 END
 #endif    // APSTUDIO_INVOKED
 
@@ -1301,18 +1360,17 @@ BEGIN
     IDS_XOFY_SINGULAR       "%u de %u"
     IDS_XOFY_PLURAL         "%u de %u"
     IDS_UPDATE              "Actualización"
-    IDS_UPDATE_AVAILABLE    "Una actualización de, liquidFOLDERS %s, está disponible. Quisiera descargarla ahora?"
-    IDS_UPDATE_NOTAVAILABLE "No hay actualización disponible de liquidFOLDERS en este momento."
+    IDS_UPDATENOTAVAILABLE  "No hay actualización disponible de liquidFOLDERS en este momento."
     IDS_AIRPORT_CODE        "Código"
     IDS_AIRPORT_LOCATION    "Ubicación"
     IDS_STOREPROPERTIES     "Propiedades de ""%s"""
     IDS_STORENEW            "Crear nuevo store"
     IDS_STORENEW_VOLUME     "Crear nuevo store en unidad %c:"
+    IDS_DELETEPROPERTY_CAPTION "Eliminar propriedad"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_DELETEPROPERTY_CAPTION "Eliminar propriedad"
     IDS_DELETEPROPERTY_MSG  "¿Realmente quiere eliminar esta propriedad?"
 END
 
@@ -1390,6 +1448,14 @@ BEGIN
         MENUITEM "&Modifier...",                IDM_CONDITION_EDIT
         MENUITEM SEPARATOR
         MENUITEM "&Effacer",                    IDM_CONDITION_DELETE
+    END
+END
+
+IDM_UPDATE MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "&Restaurer",                  IDM_UPDATE_RESTORE
     END
 END
 
@@ -1699,6 +1765,19 @@ BEGIN
     LTEXT           "Sentier:",IDC_STATIC,3,19,304,8
 END
 
+IDD_UPDATE DIALOGEX 0, 0, 220, 118
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
+CAPTION "Mises á jour"
+CLASS "UpdateDlg"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "Télécharger maintenant",IDOK,113,96,100,14,WS_GROUP
+    CONTROL         "Version %s (MSN %s)",IDC_VERSIONINFO,"SysLink",WS_GROUP | WS_TABSTOP,7,7,206,39
+    LTEXT           "Une nouvelle version de liquidFOLDERS est prête pour télécharger.",IDC_STATIC,7,50,206,16
+    CONTROL         "Ignorer cette version",IDC_IGNOREUPDATE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,72,206,10
+    CONTROL         "<a>Cacher</a>",IDC_HIDE,"SysLink",WS_TABSTOP,7,101,100,9
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -1849,6 +1928,14 @@ BEGIN
         TOPMARGIN, 4
         BOTTOMMARGIN, 306
     END
+
+    IDD_UPDATE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 213
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 111
+    END
 END
 #endif    // APSTUDIO_INVOKED
 
@@ -1897,18 +1984,17 @@ BEGIN
     IDS_XOFY_SINGULAR       "%u sur %u"
     IDS_XOFY_PLURAL         "%u sur %u"
     IDS_UPDATE              "Mise á jour"
-    IDS_UPDATE_AVAILABLE    "Une nouvelle version, liquidFOLDERS %s, est prête pour télécharger. Voulez-vous maintenant télécharger l'installer?"
-    IDS_UPDATE_NOTAVAILABLE "Aucune nouvelle version de liquidFOLDERS pour télécharger n'est prête."
+    IDS_UPDATENOTAVAILABLE  "Aucune nouvelle version de liquidFOLDERS pour télécharger n'est prête."
     IDS_AIRPORT_CODE        "Code"
     IDS_AIRPORT_LOCATION    "Endroit"
     IDS_STOREPROPERTIES     "Qualités de ""%s"""
     IDS_STORENEW            "Créez un store nouveau"
     IDS_STORENEW_VOLUME     "Créez un store nouveau sur lecteur %c:"
+    IDS_DELETEPROPERTY_CAPTION "Effacez propriété"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_DELETEPROPERTY_CAPTION "Effacez propriété"
     IDS_DELETEPROPERTY_MSG  "Voulez-vous vraiment effacer cette propriété ?"
 END
 
@@ -2036,6 +2122,14 @@ BEGIN
         MENUITEM "&Edit...",                    IDM_CONDITION_EDIT
         MENUITEM SEPARATOR
         MENUITEM "&Delete",                     IDM_CONDITION_DELETE
+    END
+END
+
+IDM_UPDATE MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "&Restore",                    IDM_UPDATE_RESTORE
     END
 END
 
@@ -2346,6 +2440,19 @@ BEGIN
     LTEXT           "Path:",IDC_STATIC,3,19,304,8
 END
 
+IDD_UPDATE DIALOGEX 0, 0, 220, 118
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CLIPSIBLINGS | WS_CAPTION | WS_SYSMENU
+CAPTION "Update available"
+CLASS "UpdateDlg"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "Download now",IDOK,133,96,80,14,WS_GROUP
+    CONTROL         "Version %s (MSN %s)",IDC_VERSIONINFO,"SysLink",WS_GROUP | WS_TABSTOP,7,7,206,39
+    LTEXT           "A new version of liquidFOLDERS is available for download.",IDC_STATIC,7,50,206,16
+    CONTROL         "Ignore this update",IDC_IGNOREUPDATE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,72,206,10
+    CONTROL         "<a>Hide</a>",IDC_HIDE,"SysLink",WS_TABSTOP,7,101,120,9
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -2487,6 +2594,14 @@ BEGIN
         TOPMARGIN, 4
         BOTTOMMARGIN, 306
     END
+
+    IDD_UPDATE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 213
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 111
+    END
 END
 #endif    // APSTUDIO_INVOKED
 
@@ -2535,18 +2650,17 @@ BEGIN
     IDS_XOFY_SINGULAR       "%u of %u"
     IDS_XOFY_PLURAL         "%u of %u"
     IDS_UPDATE              "Update"
-    IDS_UPDATE_AVAILABLE    "An update, liquidFOLDERS %s, is available.\nWould you like to download it now?"
-    IDS_UPDATE_NOTAVAILABLE "There is no update of liquidFOLDERS available right now."
+    IDS_UPDATENOTAVAILABLE  "There is no update of liquidFOLDERS available right now."
     IDS_AIRPORT_CODE        "IATA code"
     IDS_AIRPORT_LOCATION    "Location"
     IDS_STOREPROPERTIES     "Properties of ""%s"""
     IDS_STORENEW            "Create new store"
     IDS_STORENEW_VOLUME     "Create new store on volume %c:"
+    IDS_DELETEPROPERTY_CAPTION "Remove property"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_DELETEPROPERTY_CAPTION "Remove property"
     IDS_DELETEPROPERTY_MSG  "Do you really want to remove this property ?"
 END
 
