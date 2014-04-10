@@ -74,6 +74,7 @@ BEGIN_MESSAGE_MAP(CFileDropWnd, CGlassWindow)
 	ON_WM_RBUTTONUP()
 	ON_WM_CONTEXTMENU()
 	ON_WM_SYSCOMMAND()
+	ON_MESSAGE(WM_OPENFILEDROP, OnOpenFileDrop)
 	ON_COMMAND(IDM_ITEM_OPENNEWWINDOW, OnStoreOpen)
 	ON_COMMAND(IDM_STORE_MAKEDEFAULT, OnStoreMakeDefault)
 	ON_COMMAND(IDM_STORE_IMPORTFOLDER, OnStoreImportFolder)
@@ -323,6 +324,22 @@ void CFileDropWnd::OnSysCommand(UINT nID, LPARAM lParam)
 		SetTopMost(!m_AlwaysOnTop);
 }
 
+LRESULT CFileDropWnd::OnOpenFileDrop(WPARAM wParam, LPARAM /*lParam*/)
+{
+	ASSERT(wParam);
+
+	if (strcmp((CHAR*)wParam, m_StoreID)==0)
+	{
+		if (IsIconic())
+			ShowWindow(SW_RESTORE);
+
+		SetForegroundWindow();
+		return 24878;
+	}
+
+	return NULL;
+}
+
 
 void CFileDropWnd::OnStoreOpen()
 {
@@ -394,14 +411,9 @@ LRESULT CFileDropWnd::OnUpdateStore(WPARAM /*wParam*/, LPARAM /*lParam*/)
 		m_Label = m_Store.StoreName;
 	}
 	else
-		if (m_StoreID[0]!='\0')
-		{
-			PostMessage(WM_CLOSE);
-		}
-		else
-		{
-			ENSURE(m_Label.LoadString(IDS_NODEFAULTSTORE));
-		}
+	{
+		PostMessage(WM_CLOSE);
+	}
 
 	Invalidate();
 

@@ -729,10 +729,7 @@ void CMainWnd::OnItemOpenFileDrop()
 		LFItemDescriptor* i = m_pCookedFiles->m_Items[idx];
 
 		ASSERT((i->Type & LFTypeMask)==LFTypeStore);
-
-		CFileDropWnd* pFrame = new CFileDropWnd();
-		pFrame->Create(i->StoreID);
-		pFrame->ShowWindow(SW_SHOW);
+		theApp.GetFileDrop(i->StoreID);
 	}
 }
 

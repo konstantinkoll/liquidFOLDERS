@@ -28,6 +28,7 @@ public:
 	void AddFrame(CGlassWindow* pFrame);
 	void KillFrame(CGlassWindow* pVictim);
 	CMainWnd* GetClipboard();
+	CGlassWindow* GetFileDrop(CHAR* StoreID);
 
 	void Broadcast(INT Context, INT View, UINT cmdMsg);
 	void UpdateSortOptions(INT Context);

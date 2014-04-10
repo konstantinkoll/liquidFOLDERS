@@ -80,7 +80,6 @@
 #define IDS_HOUSEKEEPING                1037
 #define IDS_SEARCHTERM                  1038
 #define IDS_DROPTIP                     1039
-#define IDS_NODEFAULTSTORE              1040
 #define IDS_VATTR_FIRST                 1100
 #define IDS_VATTR_SOURCE                1100
 #define IDS_VATTR_DRIVELETTER           1101

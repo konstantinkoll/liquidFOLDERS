@@ -12,7 +12,7 @@
 
 
 GUID theAppID =	// {5EB05AE5-C6FE-4E53-A034-3623921D18ED}
-	{ 0x5eb05ae5, 0xc6fe, 0x4e53, { 0xa0, 0x34, 0x36, 0x23, 0x92, 0x1d, 0x18, 0xed } };
+	{ 0x5EB05AE5, 0xC6FE, 0x4E53, { 0xA0, 0x34, 0x36, 0x23, 0x92, 0x1D, 0x18, 0xED } };
 
 BOOL CALLBACK EnumWindowsProc(HWND hWnd, LPARAM lParam)
 {
@@ -160,13 +160,17 @@ CWnd* CStoreManagerApp::OpenCommandLine(WCHAR* CmdLine)
 		if (_wcsnicmp(CmdLine, L"/FILEDROP", 9)==0)
 		{
 			if (CmdLine[9]==L' ')
+			{
 				WideCharToMultiByte(CP_ACP, 0, CmdLine+10, -1, StoreID, LFKeySize, NULL, NULL);
+			}
+			else
+			{
+				CHAR* pDefaultStore = LFGetDefaultStore();
+				strcpy_s(StoreID, LFKeySize, pDefaultStore);
+				free(pDefaultStore);
+			}
 
-			CFileDropWnd* pFrame = new CFileDropWnd();
-			pFrame->Create(StoreID);
-			pFrame->ShowWindow(SW_SHOW);
-
-			return pFrame;
+			return GetFileDrop(StoreID);
 		}
 
 		// Key
@@ -261,6 +265,22 @@ CMainWnd* CStoreManagerApp::GetClipboard()
 	}
 
 	return p_Clipboard;
+}
+
+CGlassWindow* CStoreManagerApp::GetFileDrop(CHAR* StoreID)
+{
+	for (POSITION p=m_MainFrames.GetHeadPosition(); p; )
+	{
+		CGlassWindow* pFrame = m_MainFrames.GetNext(p);
+		if (pFrame->SendMessage(WM_OPENFILEDROP, (WPARAM)StoreID)==24878)
+			return pFrame;
+	}
+
+	CFileDropWnd* pFrame = new CFileDropWnd();
+	pFrame->Create(StoreID);
+	pFrame->ShowWindow(SW_SHOW);
+
+	return pFrame;
 }
 
 void CStoreManagerApp::OnAppAbout()
