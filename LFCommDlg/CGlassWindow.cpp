@@ -269,6 +269,8 @@ INT CGlassWindow::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CWnd::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
+	p_App->AddFrame(this);
+
 	OnCompositionChanged();
 	SetWindowPos(NULL, 0, 0, 0, 0, SWP_FRAMECHANGED | SWP_NOMOVE | SWP_NOSIZE);
 
@@ -298,6 +300,8 @@ void CGlassWindow::OnDestroy()
 		p_App->zCloseThemeData(hTheme);
 
 	CWnd::OnDestroy();
+
+	p_App->KillFrame(this);
 }
 
 BOOL CGlassWindow::OnEraseBkgnd(CDC* pDC)

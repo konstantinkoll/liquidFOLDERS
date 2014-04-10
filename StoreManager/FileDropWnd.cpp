@@ -65,7 +65,6 @@ void CFileDropWnd::SetTopMost(BOOL AlwaysOnTop)
 
 BEGIN_MESSAGE_MAP(CFileDropWnd, CGlassWindow)
 	ON_WM_CREATE()
-	ON_WM_DESTROY()
 	ON_WM_ERASEBKGND()
 	ON_WM_MOUSEMOVE()
 	ON_WM_MOUSELEAVE()
@@ -92,8 +91,6 @@ INT CFileDropWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if (CGlassWindow::OnCreate(lpCreateStruct)==-1)
 		return -1;
-
-	theApp.AddFrame(this);
 
 	// Aero
 	MARGINS Margins = { -1, -1, -1, -1 };
@@ -132,13 +129,6 @@ INT CFileDropWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	RegisterDragDrop(GetSafeHwnd(), &m_DropTarget);
 
 	return 0;
-}
-
-void CFileDropWnd::OnDestroy()
-{
-	CGlassWindow::OnDestroy();
-
-	theApp.KillFrame(this);
 }
 
 BOOL CFileDropWnd::OnEraseBkgnd(CDC* pDC)

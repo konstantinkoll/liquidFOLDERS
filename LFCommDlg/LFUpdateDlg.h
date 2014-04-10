@@ -23,6 +23,7 @@ protected:
 	BOOL AddTrayIcon();
 	BOOL RemoveTrayIcon();
 	void ShowMenu();
+	void EndDialog(INT_PTR nResult);
 
 	afx_msg BOOL OnInitDialog();
 	afx_msg void OnDestroy();

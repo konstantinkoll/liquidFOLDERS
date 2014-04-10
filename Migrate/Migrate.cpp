@@ -95,30 +95,6 @@ CWnd* CMigrateApp::OpenCommandLine(WCHAR* /*CmdLine*/)
 }
 
 
-void CMigrateApp::AddFrame(CMigrateWnd* pFrame)
-{
-	m_MainFrames.AddTail(pFrame);
-	m_pMainWnd = pFrame;
-	m_pActiveWnd = NULL;
-}
-
-void CMigrateApp::KillFrame(CMigrateWnd* pVictim)
-{
-	for (POSITION p=m_MainFrames.GetHeadPosition(); p; )
-	{
-		POSITION pl = p;
-		CMigrateWnd* pFrame = m_MainFrames.GetNext(p);
-		if (pFrame==pVictim)
-		{
-			m_MainFrames.RemoveAt(pl);
-		}
-		else
-		{
-			m_pMainWnd = pFrame;
-		}
-	}
-}
-
 void CMigrateApp::OnAppAbout()
 {
 	CString AppName;

@@ -417,8 +417,6 @@ INT CMainWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CGlassWindow::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
-	theApp.AddFrame(this);
-
 	// History
 	if (!m_wndHistory.Create(this, 2))
 		return -1;
@@ -489,7 +487,6 @@ void CMainWnd::OnDestroy()
 {
 	CGlassWindow::OnDestroy();
 
-	theApp.KillFrame(this);
 	if (theApp.p_Clipboard==this)
 		theApp.p_Clipboard = NULL;
 }

@@ -231,30 +231,6 @@ INT CStoreManagerApp::ExitInstance()
 }
 
 
-void CStoreManagerApp::AddFrame(CGlassWindow* pFrame)
-{
-	m_MainFrames.AddTail(pFrame);
-	m_pMainWnd = pFrame;
-	m_pActiveWnd = NULL;
-}
-
-void CStoreManagerApp::KillFrame(CGlassWindow* pVictim)
-{
-	for (POSITION p=m_MainFrames.GetHeadPosition(); p; )
-	{
-		POSITION pl = p;
-		CGlassWindow* pFrame = m_MainFrames.GetNext(p);
-		if (pFrame==pVictim)
-		{
-			m_MainFrames.RemoveAt(pl);
-		}
-		else
-		{
-			m_pMainWnd = pFrame;
-		}
-	}
-}
-
 CMainWnd* CStoreManagerApp::GetClipboard()
 {
 	if (!p_Clipboard)

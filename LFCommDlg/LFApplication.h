@@ -103,6 +103,7 @@ public:
 	CLIPFORMAT CF_FILEDESCRIPTOR;
 	CLIPFORMAT CF_FILECONTENTS;
 	CLIPFORMAT CF_HLIQUID;
+	CList<CWnd*> m_pMainFrames;
 
 	PFNSETWINDOWTHEME zSetWindowTheme;
 	PFNOPENTHEMEDATA zOpenThemeData;
@@ -129,6 +130,8 @@ public:
 	virtual CWnd* OpenCommandLine(WCHAR* CmdLine=NULL);
 	virtual INT ExitInstance();
 
+	void AddFrame(CWnd* pFrame);
+	void KillFrame(CWnd* pVictim);
 	BOOL ShowNagScreen(UINT Level, CWnd* pWndParent=NULL, BOOL Abort=FALSE);
 	CString GetDefaultFontFace();
 	void SendMail(CString Subject=_T(""));

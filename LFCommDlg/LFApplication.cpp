@@ -387,6 +387,30 @@ INT LFApplication::ExitInstance()
 	return CWinAppEx::ExitInstance();
 }
 
+void LFApplication::AddFrame(CWnd* pFrame)
+{
+	m_pMainFrames.AddTail(pFrame);
+	m_pMainWnd = pFrame;
+	m_pActiveWnd = NULL;
+}
+
+void LFApplication::KillFrame(CWnd* pVictim)
+{
+	for (POSITION p=m_pMainFrames.GetHeadPosition(); p; )
+	{
+		POSITION pl = p;
+		CWnd* pFrame = m_pMainFrames.GetNext(p);
+		if (pFrame==pVictim)
+		{
+			m_pMainFrames.RemoveAt(pl);
+		}
+		else
+		{
+			m_pMainWnd = pFrame;
+		}
+	}
+}
+
 BOOL LFApplication::ShowNagScreen(UINT Level, CWnd* pWndParent, BOOL Abort)
 {
 	if ((Level & NAG_EXPIRED) ? LFIsSharewareExpired() : !LFIsLicensed())

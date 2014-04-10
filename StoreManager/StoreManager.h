@@ -25,8 +25,6 @@ public:
 	virtual CWnd* OpenCommandLine(WCHAR* CmdLine=NULL);
 	virtual INT ExitInstance();
 
-	void AddFrame(CGlassWindow* pFrame);
-	void KillFrame(CGlassWindow* pVictim);
 	CMainWnd* GetClipboard();
 	CGlassWindow* GetFileDrop(CHAR* StoreID);
 

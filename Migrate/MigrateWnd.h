@@ -24,7 +24,6 @@ protected:
 	CBottomArea m_wndBottomArea;
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
-	afx_msg void OnDestroy();
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
 	afx_msg void OnIdleUpdateCmdUI();
 	afx_msg void OnSelectRoot();

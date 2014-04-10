@@ -169,6 +169,18 @@ void LFUpdateDlg::ShowMenu()
 	pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, pos.x, pos.y, this);
 }
 
+void LFUpdateDlg::EndDialog(INT_PTR nResult)
+{
+	if (m_NotificationWindow)
+	{
+		DestroyWindow();
+	}
+	else
+	{
+		LFDialog::EndDialog(nResult);
+	}
+}
+
 
 BEGIN_MESSAGE_MAP(LFUpdateDlg, LFDialog)
 	ON_WM_DESTROY()
@@ -188,6 +200,9 @@ END_MESSAGE_MAP()
 BOOL LFUpdateDlg::OnInitDialog()
 {
 	LFDialog::OnInitDialog();
+
+	if (m_NotificationWindow)
+		p_App->AddFrame(this);
 
 	// Stil
 	if (m_NotificationWindow)
@@ -250,6 +265,9 @@ void LFUpdateDlg::OnDestroy()
 	RemoveTrayIcon();
 
 	LFDialog::OnDestroy();
+
+	if (m_NotificationWindow)
+		p_App->KillFrame(this);
 }
 
 void LFUpdateDlg::OnTimer(UINT_PTR nIDEvent)

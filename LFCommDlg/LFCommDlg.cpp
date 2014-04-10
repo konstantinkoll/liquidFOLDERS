@@ -534,17 +534,17 @@ void LFCheckForUpdate(BOOL Force, CWnd* pParentWnd)
 	UpdateFound=TRUE;
 	if (UpdateFound)
 	{
-		//if (pParentWnd)
+		if (pParentWnd)
 		{
 			LFUpdateDlg dlg(LatestVersion, LatestMSN, pParentWnd);
 			dlg.DoModal();
 		}
-		/*else
+		else
 		{
 			LFUpdateDlg* pUpdateDlg = new LFUpdateDlg(LatestVersion, LatestMSN);
 			pUpdateDlg->Create(IDD_UPDATE, CWnd::GetDesktopWindow());
 			pUpdateDlg->ShowWindow(SW_SHOW);
-		}*/
+		}
 	}
 	else
 		if (Force)

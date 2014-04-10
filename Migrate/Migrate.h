@@ -19,10 +19,6 @@ public:
 	virtual BOOL InitInstance();
 	virtual CWnd* OpenCommandLine(WCHAR* CmdLine=NULL);
 
-	void AddFrame(CMigrateWnd* pFrame);
-	void KillFrame(CMigrateWnd* pVictim);
-
-	CList<CMigrateWnd*> m_MainFrames;
 	BOOL m_ExpandAll;
 
 protected:
