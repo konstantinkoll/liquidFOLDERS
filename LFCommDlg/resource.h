@@ -48,6 +48,7 @@
 #define IDI_SEARCH                      20204
 #define IDI_STOREPROPERTIES             20205
 #define IDI_STORENEW                    20206
+#define IDI_LIQUIDFOLDERS_TINY          20207
 #define IDS_PURCHASEURL                 20300
 #define IDS_UPDATEURL                   20301
 #define IDS_ABOUTURL                    20302

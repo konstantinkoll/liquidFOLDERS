@@ -132,7 +132,7 @@ BOOL LFUpdateDlg::AddTrayIcon()
 	nid.guidItem = TrayIcon;
 	nid.uVersion = NOTIFYICON_VERSION_4;
 	nid.uCallbackMessage = WM_TRAYMENU;
-	nid.hIcon = (HICON)LoadImage(LFCommDlgDLL.hResource, MAKEINTRESOURCE(IDD_UPDATE), IMAGE_ICON, sz, sz, LR_DEFAULTCOLOR);
+	nid.hIcon = (HICON)LoadImage(LFCommDlgDLL.hResource, MAKEINTRESOURCE(IDI_LIQUIDFOLDERS_TINY), IMAGE_ICON, sz, sz, LR_DEFAULTCOLOR);
 	GetWindowText(nid.szTip, 128);
 	Shell_NotifyIcon(NIM_ADD, &nid);
 

@@ -131,6 +131,7 @@ IDI_RESET_PRESSED       ICON                    "res\\Reset_Pressed_Tiny.ico"
 IDI_SEARCH              ICON                    "res\\Search.ico"
 IDI_STOREPROPERTIES     ICON                    "res\\StoreProperties_Tiny.ico"
 IDI_STORENEW            ICON                    "res\\StoreNew_Tiny.ico"
+IDI_LIQUIDFOLDERS_TINY  ICON                    "res\\liquidFOLDERS_Tiny.ico"
 32513                   ICON                    "res\\Error.ico"
 32516                   ICON                    "res\\Info.ico"
 32515                   ICON                    "res\\Warning.ico"
@@ -146,7 +147,6 @@ IDD_ITEMTEMPLATE        ICON                    "res\\Inspector_Tiny.ico"
 IDD_STOREMAINTENANCE    ICON                    "res\\StoreMaintenance_Small.ico"
 IDD_EDITTAGS            ICON                    "res\\Tags_Tiny.ico"
 IDD_BROWSEFORFOLDER     ICON                    "res\\Folder_Tiny.ico"
-IDD_UPDATE              ICON                    "res\\liquidFOLDERS_Tiny.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //
