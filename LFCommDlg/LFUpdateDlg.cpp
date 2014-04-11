@@ -184,6 +184,7 @@ void LFUpdateDlg::EndDialog(INT_PTR nResult)
 
 BEGIN_MESSAGE_MAP(LFUpdateDlg, LFDialog)
 	ON_WM_DESTROY()
+	ON_WM_NCDESTROY()
 	ON_WM_TIMER()
 	ON_WM_NCHITTEST()
 	ON_WM_THEMECHANGED()
@@ -268,6 +269,12 @@ void LFUpdateDlg::OnDestroy()
 
 	if (m_NotificationWindow)
 		p_App->KillFrame(this);
+}
+
+void LFUpdateDlg::PostNcDestroy()
+{
+	if (m_NotificationWindow)
+		delete this;
 }
 
 void LFUpdateDlg::OnTimer(UINT_PTR nIDEvent)

@@ -27,6 +27,7 @@ protected:
 
 	afx_msg BOOL OnInitDialog();
 	afx_msg void OnDestroy();
+	afx_msg void PostNcDestroy();
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
 	afx_msg LRESULT OnNcHitTest(CPoint point);
 	afx_msg LRESULT OnThemeChanged();
