@@ -26,14 +26,13 @@ public:
 	virtual INT ExitInstance();
 
 	CMainWnd* GetClipboard();
-	CGlassWindow* GetFileDrop(CHAR* StoreID);
+	CWnd* GetFileDrop(CHAR* StoreID);
 
 	void Broadcast(INT Context, INT View, UINT cmdMsg);
 	void UpdateSortOptions(INT Context);
 	void UpdateViewOptions(INT Context=-1, INT View=-1);
 	void Reload(INT Context);
 
-	CList<CGlassWindow*> m_MainFrames;
 	CMainWnd* p_Clipboard;
 	CString m_PathGoogleEarth;
 	CImageListTransparent m_SourceIcons;

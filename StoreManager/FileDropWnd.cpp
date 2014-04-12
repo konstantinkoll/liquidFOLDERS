@@ -318,14 +318,15 @@ LRESULT CFileDropWnd::OnOpenFileDrop(WPARAM wParam, LPARAM /*lParam*/)
 {
 	ASSERT(wParam);
 
-	if (strcmp((CHAR*)wParam, m_StoreID)==0)
-	{
-		if (IsIconic())
-			ShowWindow(SW_RESTORE);
+	if (m_StoreValid)
+		if (strcmp((CHAR*)wParam, m_StoreID)==0)
+		{
+			if (IsIconic())
+				ShowWindow(SW_RESTORE);
 
-		SetForegroundWindow();
-		return 24878;
-	}
+			SetForegroundWindow();
+			return 24878;
+		}
 
 	return NULL;
 }

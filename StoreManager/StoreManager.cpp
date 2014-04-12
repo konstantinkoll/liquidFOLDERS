@@ -69,7 +69,12 @@ BOOL CStoreManagerApp::InitInstance()
 {
 	WCHAR CmdLine[256] = L"";
 	for (INT a=1; a<__argc; a++)
+	{
 		wcscat_s(CmdLine, 256, __wargv[a]);
+
+		if (a<__argc-1)
+			wcscat_s(CmdLine, 256, L" ");
+	}
 
 	// Parameter
 	if (!EnumWindows((WNDENUMPROC)EnumWindowsProc, (LPARAM)(__argc>1 ? CmdLine : NULL)))
@@ -254,11 +259,11 @@ CMainWnd* CStoreManagerApp::GetClipboard()
 	return p_Clipboard;
 }
 
-CGlassWindow* CStoreManagerApp::GetFileDrop(CHAR* StoreID)
+CWnd* CStoreManagerApp::GetFileDrop(CHAR* StoreID)
 {
-	for (POSITION p=m_MainFrames.GetHeadPosition(); p; )
+	for (POSITION p=m_pMainFrames.GetHeadPosition(); p; )
 	{
-		CGlassWindow* pFrame = m_MainFrames.GetNext(p);
+		CWnd* pFrame = m_pMainFrames.GetNext(p);
 		if (pFrame->SendMessage(WM_OPENFILEDROP, (WPARAM)StoreID)==24878)
 			return pFrame;
 	}
@@ -329,8 +334,8 @@ BOOL CStoreManagerApp::SanitizeViewMode(LFViewParameters* vp, INT context)
 
 void CStoreManagerApp::Broadcast(INT Context, INT View, UINT cmdMsg)
 {
-	for (POSITION p=m_MainFrames.GetHeadPosition(); p; )
-		m_MainFrames.GetNext(p)->PostMessage(WM_CONTEXTVIEWCOMMAND, cmdMsg, MAKELPARAM(Context, View));
+	for (POSITION p=m_pMainFrames.GetHeadPosition(); p; )
+		m_pMainFrames.GetNext(p)->PostMessage(WM_CONTEXTVIEWCOMMAND, cmdMsg, MAKELPARAM(Context, View));
 }
 
 void CStoreManagerApp::UpdateSortOptions(INT Context)
