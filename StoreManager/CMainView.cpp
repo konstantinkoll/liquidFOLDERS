@@ -252,6 +252,8 @@ void CMainView::SetHeader()
 		m_wndExplorerHeader.SetColors((m_Context>=LFContextSearch) && (m_Context<=LFContextClipboard) ? 0x126E00 : 0x993300, (COLORREF)-1, FALSE);
 		m_wndExplorerHeader.SetText(p_CookedFiles->m_Name, Hint, FALSE);
 		SetHeaderButtons();
+
+		GetOwner()->SetWindowText(p_CookedFiles->m_Name);
 	}
 }
 

@@ -1,3 +1,4 @@
+store
 
 // FileDropWnd.cpp: Implementierungsdatei der Klasse FileDropWnd
 //
@@ -121,7 +122,7 @@ INT CFileDropWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	SetTopMost(theApp.m_FileDropAlwaysOnTop);
 
 	// Store
-	SendMessage(theApp.p_MessageIDs->DefaultStoreChanged);
+	SendMessage(theApp.p_MessageIDs->StoresChanged);
 
 	// Initialize Drop
 	m_DropTarget.SetOwner(this);
@@ -401,6 +402,7 @@ LRESULT CFileDropWnd::OnUpdateStore(WPARAM /*wParam*/, LPARAM /*lParam*/)
 		m_StoreMounted = LFIsStoreMounted(&m_Store);
 		m_Label = m_Store.StoreName;
 
+		SetWindowText(m_Label);
 		Invalidate();
 	}
 	else
