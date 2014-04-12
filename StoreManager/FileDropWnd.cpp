@@ -400,13 +400,13 @@ LRESULT CFileDropWnd::OnUpdateStore(WPARAM /*wParam*/, LPARAM /*lParam*/)
 	{
 		m_StoreMounted = LFIsStoreMounted(&m_Store);
 		m_Label = m_Store.StoreName;
+
+		Invalidate();
 	}
 	else
 	{
 		PostMessage(WM_CLOSE);
 	}
-
-	Invalidate();
 
 	return NULL;
 }
