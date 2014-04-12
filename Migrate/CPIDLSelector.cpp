@@ -313,7 +313,7 @@ void CPIDLSelector::SetItem(IShellFolder* pDesktop, WCHAR* Path, BOOL Repaint, U
 	if (SUCCEEDED(pDesktop->ParseDisplayName(NULL, NULL, Path, &chEaten, &pidlFQ, &dwAttributes)))
 	{
 		SetItem(pidlFQ, Repaint, NotifyCode);
-		p_App->GetShellManager()->FreeItem(pidlFQ);
+		theApp.GetShellManager()->FreeItem(pidlFQ);
 	}
 	else
 	{

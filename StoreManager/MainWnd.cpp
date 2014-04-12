@@ -837,7 +837,7 @@ LRESULT CMainWnd::OnContextViewCommand(WPARAM wParam, LPARAM lParam)
 {
 	if ((LOWORD(lParam)==m_wndMainView.GetContext()) || (LOWORD(lParam)==0xFFFF))
 		if ((HIWORD(lParam)==m_wndMainView.GetViewID()) || (HIWORD(lParam)==0xFFFF))
-			return SendMessage(wParam);
+			return SendMessage((UINT)wParam);
 
 	return NULL;
 }

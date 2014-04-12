@@ -169,7 +169,7 @@ void LFUpdateDlg::ShowMenu()
 	pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, pos.x, pos.y, this);
 }
 
-void LFUpdateDlg::EndDialog(INT_PTR nResult)
+void LFUpdateDlg::EndDialog(INT nResult)
 {
 	if (m_NotificationWindow)
 	{
