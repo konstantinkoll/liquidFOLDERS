@@ -37,21 +37,21 @@ void LFAboutDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_VERSIONINFO, m_wndVersionInfo);
 
 	BOOL EnableAutoUpdate;
-	INT Interval;
+	INT UpdateCheckInterval;
 
 	if (pDX->m_bSaveAndValidate)
 	{
 		DDX_Check(pDX, IDC_ENABLEAUTOUPDATE, EnableAutoUpdate);
-		DDX_Radio(pDX, IDC_CHECKDAILY, Interval);
+		DDX_Radio(pDX, IDC_CHECKDAILY, UpdateCheckInterval);
 
-		p_App->SetUpdateSettings(EnableAutoUpdate, Interval);
+		p_App->SetUpdateSettings(EnableAutoUpdate, UpdateCheckInterval);
 	}
 	else
 	{
-		p_App->GetUpdateSettings(&EnableAutoUpdate, &Interval);
+		p_App->GetUpdateSettings(&EnableAutoUpdate, &UpdateCheckInterval);
 
 		DDX_Check(pDX, IDC_ENABLEAUTOUPDATE, EnableAutoUpdate);
-		DDX_Radio(pDX, IDC_CHECKDAILY, Interval);
+		DDX_Radio(pDX, IDC_CHECKDAILY, UpdateCheckInterval);
 
 		OnEnableAutoUpdate();
 	}

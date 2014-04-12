@@ -173,6 +173,9 @@ void LFUpdateDlg::EndDialog(INT_PTR nResult)
 {
 	if (m_NotificationWindow)
 	{
+		if (m_wndIgnoreUpdate.GetCheck())
+			p_App->WriteGlobalString(_T("IgnoreUpdateMSN"), m_MSN);
+
 		DestroyWindow();
 	}
 	else
@@ -268,7 +271,10 @@ void LFUpdateDlg::OnDestroy()
 	LFDialog::OnDestroy();
 
 	if (m_NotificationWindow)
+	{
+		p_App->m_pUpdateNotification = NULL;
 		p_App->KillFrame(this);
+	}
 }
 
 void LFUpdateDlg::PostNcDestroy()

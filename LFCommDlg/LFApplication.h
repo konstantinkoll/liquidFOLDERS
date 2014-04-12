@@ -66,10 +66,12 @@ struct ResourceCacheItem
 
 #define TIMESTAMP CString Timestamp = _T(__DATE__); Timestamp.Append(_T(", ")); Timestamp.Append(_T(__TIME__));
 
+class LFUpdateDlg;
+
 class AFX_EXT_CLASS LFApplication : public CWinAppEx
 {
 public:
-	LFApplication(BOOL HasGUI, GUID& AppID);
+	LFApplication(GUID& AppID);
 	virtual ~LFApplication();
 
 	CString m_Path;
@@ -95,7 +97,6 @@ public:
 	CFont m_SmallFont;
 	CFont m_LargeFont;
 	CFont m_CaptionFont;
-	BOOL m_HasGUI;
 	BOOL IsLicensed;
 	UINT OSVersion;
 	UINT m_WakeupMsg;
@@ -104,6 +105,7 @@ public:
 	CLIPFORMAT CF_FILECONTENTS;
 	CLIPFORMAT CF_HLIQUID;
 	CList<CWnd*> m_pMainFrames;
+	LFUpdateDlg* m_pUpdateNotification;
 
 	PFNSETWINDOWTHEME zSetWindowTheme;
 	PFNOPENTHEMEDATA zOpenThemeData;

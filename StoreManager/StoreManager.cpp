@@ -50,7 +50,7 @@ END_MESSAGE_MAP()
 // CStoreManagerApp-Erstellung
 
 CStoreManagerApp::CStoreManagerApp()
-	: LFApplication(TRUE, theAppID)
+	: LFApplication(theAppID)
 {
 	m_WakeupMsg = RegisterWindowMessage(_T("liquidFOLDERS.StoreManager.NewWindow"));
 	m_NagCounter = 3;
@@ -68,8 +68,8 @@ CStoreManagerApp theApp;
 BOOL CStoreManagerApp::InitInstance()
 {
 	WCHAR CmdLine[256] = L"";
-	for (INT a=2; a<=__argc; a++)
-		wcscat_s(CmdLine, 256, __wargv[a-1]);
+	for (INT a=1; a<__argc; a++)
+		wcscat_s(CmdLine, 256, __wargv[a]);
 
 	// Parameter
 	if (!EnumWindows((WNDENUMPROC)EnumWindowsProc, (LPARAM)(__argc>1 ? CmdLine : NULL)))
@@ -136,9 +136,13 @@ BOOL CStoreManagerApp::InitInstance()
 	m_ThumbnailCache.LoadFrames();
 
 	CWnd* pFrame = OpenCommandLine(__argc>1 ? CmdLine : NULL);
+	if (pFrame)
+	{
+		if (!LFIsLicensed())
+			ShowNagScreen(NAG_NOTLICENSED | NAG_FORCE, pFrame);
 
-	if (!LFIsLicensed())
-		ShowNagScreen(NAG_NOTLICENSED | NAG_FORCE, pFrame);
+		LFCheckForUpdate();
+	}
 
 	m_AppInitialized = TRUE;
 
@@ -156,8 +160,15 @@ CWnd* CStoreManagerApp::OpenCommandLine(WCHAR* CmdLine)
 		while (*pChar)
 			*(pChar++) = (WCHAR)toupper(*pChar);
 
+		// Update
+		if (wcscmp(CmdLine, L"/CHECKUPDATE")==0)
+		{
+			LFCheckForUpdate();
+			return NULL;
+		}
+
 		// FileDrop
-		if (_wcsnicmp(CmdLine, L"/FILEDROP", 9)==0)
+		if (wcsncmp(CmdLine, L"/FILEDROP", 9)==0)
 		{
 			if (CmdLine[9]==L' ')
 			{

@@ -68,13 +68,13 @@ void PlayRegSound(CString Identifier)
 
 // LFApplication-Erstellung
 
-LFApplication::LFApplication(BOOL HasGUI, GUID& AppID)
+LFApplication::LFApplication(GUID& AppID)
 {
-	// GUI
-	m_HasGUI = HasGUI;
-
 	// ID
 	m_AppID = AppID;
+
+	// Update notification
+	m_pUpdateNotification = NULL;
 
 	// Version
 	OSVERSIONINFO osInfo;
@@ -344,12 +344,9 @@ BOOL LFApplication::InitInstance()
 
 	SetRegistryKey(_T("liquidFOLDERS"));
 
-	if (!m_HasGUI)
-		return TRUE;
-
 	ResetNagCounter;
 
-	// Beim ersten Mal Welcome-Dialog anzeigen
+	// Beim ersten Mal Standard-Store erzeugen
 	if ((LFGetStoreCount()==0) && (GetGlobalInt(_T("FirstRun"), 1)!=0))
 	{
 		WriteGlobalInt(_T("FirstRun"), 0);
@@ -672,13 +669,13 @@ void LFApplication::GetUpdateSettings(BOOL* EnableAutoUpdate, INT* Interval)
 	if (EnableAutoUpdate)
 		*EnableAutoUpdate = GetGlobalInt(_T("EnableAutoUpdate"), 1)!=0;
 	if (Interval)
-		*Interval = GetGlobalInt(_T("UpdateInterval"), 0);
+		*Interval = GetGlobalInt(_T("UpdateCheckInterval"), 0);
 }
 
 void LFApplication::SetUpdateSettings(BOOL EnableAutoUpdate, INT Interval)
 {
 	WriteGlobalInt(_T("EnableAutoUpdate"), EnableAutoUpdate);
-	WriteGlobalInt(_T("UpdateInterval"), Interval);
+	WriteGlobalInt(_T("UpdateCheckInterval"), Interval);
 }
 
 BOOL LFApplication::IsUpdateCheckDue()
@@ -692,9 +689,9 @@ BOOL LFApplication::IsUpdateCheckDue()
 		FILETIME ft;
 		GetSystemTimeAsFileTime(&ft);
 
-		ULARGE_INTEGER LastUpdate;
-		LastUpdate.HighPart = GetGlobalInt(_T("LastUpdateHigh"), 0);
-		LastUpdate.LowPart = GetGlobalInt(_T("LastUpdateLow"), 0);
+		ULARGE_INTEGER LastUpdateCheck;
+		LastUpdateCheck.HighPart = GetGlobalInt(_T("LastCheckUpdateHigh"), 0);
+		LastUpdateCheck.LowPart = GetGlobalInt(_T("LastCheckUpdateLow"), 0);
 
 		ULARGE_INTEGER Now;
 		Now.HighPart = ft.dwHighDateTime;
@@ -708,21 +705,21 @@ BOOL LFApplication::IsUpdateCheckDue()
 		switch (Interval)
 		{
 		case 0:
-			LastUpdate.QuadPart += DAY;
+			LastUpdateCheck.QuadPart += DAY;
 			break;
 		case 1:
-			LastUpdate.QuadPart += 7*DAY;
+			LastUpdateCheck.QuadPart += 7*DAY;
 			break;
 		case 2:
-			LastUpdate.QuadPart += 30*DAY;
+			LastUpdateCheck.QuadPart += 30*DAY;
 			break;
 		}
-		LastUpdate.QuadPart += 10*SECOND;
+		LastUpdateCheck.QuadPart += 10*SECOND;
 
-		if (Now.QuadPart>=LastUpdate.QuadPart)
+		if (Now.QuadPart>=LastUpdateCheck.QuadPart)
 		{
-			WriteGlobalInt(_T("LastUpdateHigh"), Now.HighPart);
-			WriteGlobalInt(_T("LastUpdateLow"), Now.LowPart);
+			WriteGlobalInt(_T("LastUpdateCheckHigh"), Now.HighPart);
+			WriteGlobalInt(_T("LastUpdateCheckLow"), Now.LowPart);
 
 			return TRUE;
 		}

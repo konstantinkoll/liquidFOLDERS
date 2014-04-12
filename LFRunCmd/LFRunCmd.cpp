@@ -17,7 +17,7 @@ GUID theAppID =	// {302C80F9-ACCF-4112-9222-E963B97D66F8}
 // CRunCmdApp-Erstellung
 
 CRunCmdApp::CRunCmdApp()
-	: LFApplication(FALSE, theAppID)
+	: LFApplication(theAppID)
 {
 }
 
@@ -46,8 +46,7 @@ BOOL CRunCmdApp::InitInstance()
 		switch (__argc)
 		{
 		case 1:
-			LFCheckForUpdate();
-//			OnAppAbout(IDS_ABOUT, IDB_ABOUTICON);
+			OnAppAbout(IDS_ABOUT, IDB_ABOUTICON);
 			break;
 		case 2:
 			if (command==_T("/ABOUT"))
@@ -58,8 +57,6 @@ BOOL CRunCmdApp::InitInstance()
 				OnStoreCreate();
 			if (command==_T("/INSTALL"))
 				LFCreateSendTo(true);
-			if (command==_T("/CHECKUPDATE"))
-				LFCheckForUpdate();
 			break;
 		case 3:
 			if (command==_T("/NEWSTOREVOLUME"))

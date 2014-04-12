@@ -47,7 +47,7 @@ END_MESSAGE_MAP()
 // CMigrateApp-Erstellung
 
 CMigrateApp::CMigrateApp()
-	: LFApplication(TRUE, theAppID)
+	: LFApplication(theAppID)
 {
 	m_WakeupMsg = RegisterWindowMessage(_T("liquidFOLDERS.Migrate.NewWindow"));
 }

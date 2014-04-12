@@ -385,12 +385,9 @@ LFCommDlg_API void GetFileVersion(HMODULE hModule, CString* Version, CString* Co
 	}
 }
 
-LFCommDlg_API CString GetLatestVersion(CString& CurrentVersion)
+LFCommDlg_API CString GetLatestVersion(CString CurrentVersion)
 {
 	CString VersionIni;
-
-	// Obtain current version from DLL version resource
-	GetFileVersion(LFCommDlgDLL.hModule, &CurrentVersion);
 
 	// Variant
 #ifdef _M_X64
@@ -493,58 +490,77 @@ __forceinline INT ParseVersion(CString ver, Version* v)
 
 void LFCheckForUpdate(BOOL Force, CWnd* pParentWnd)
 {
-	BOOL UpdateFound = FALSE;
-	BOOL Check = Force;
+	LFApplication* pApp = LFGetApp();
+
+	// Obtain current version from instance version resource
+	CString CurrentVersion;
+	GetFileVersion(AfxGetResourceHandle(), &CurrentVersion);
 
 	// Check due?
+	BOOL Check = Force;
 	if (!Check)
-		Check = LFGetApp()->IsUpdateCheckDue();
+		Check = pApp->IsUpdateCheckDue();
 
 	// Perform check
-	CString VersionIni;
-	CString LatestVersion;
-	CString LatestMSN;
-	Check=TRUE;
+	CString LatestVersion = pApp->GetGlobalString(_T("LatestUpdateVersion"));
+	CString LatestMSN = pApp->GetGlobalString(_T("LatestUpdateMSN"));
+
 	if (Check)
 	{
 		CWaitCursor wait;
 
 		CString CurrentVersion;
-		VersionIni = GetLatestVersion(CurrentVersion);
+		CString VersionIni = GetLatestVersion(CurrentVersion);
 
 		if (!VersionIni.IsEmpty())
 		{
 			LatestVersion = GetIniValue(VersionIni, _T("Version"));
 			LatestMSN = GetIniValue(VersionIni, _T("MSN"));
-			if (!LatestVersion.IsEmpty())
-			{
-				Version CV;
-				Version LV;
-				ParseVersion(CurrentVersion, &CV);
-				ParseVersion(LatestVersion, &LV);
 
-				UpdateFound = (LV.Major>CV.Major) ||
-					((LV.Major==CV.Major) && (LV.Minor>CV.Minor)) ||
-					((LV.Major==CV.Major) && (LV.Minor==CV.Minor) && (LV.Build>CV.Build));
-			}
+			pApp->WriteGlobalString(_T("LatestUpdateVersion"), LatestVersion);
+			pApp->WriteGlobalString(_T("LatestUpdateMSN"), LatestMSN);
 		}
+	}
+LatestVersion="3.0"; LatestMSN="100";
+	// Update available?
+	BOOL UpdateAvailable = FALSE;
+	if (!LatestVersion.IsEmpty())
+	{
+		Version CV;
+		Version LV;
+		ParseVersion(CurrentVersion, &CV);
+		ParseVersion(LatestVersion, &LV);
+
+		CString IgnoreMSN = pApp->GetGlobalString(_T("IgnoreUpdateMSN"));
+
+		UpdateAvailable = ((IgnoreMSN!=LatestMSN) || (Force)) &&
+			((LV.Major>CV.Major) ||
+			((LV.Major==CV.Major) && (LV.Minor>CV.Minor)) ||
+			((LV.Major==CV.Major) && (LV.Minor==CV.Minor) && (LV.Build>CV.Build)));
 	}
 
 	// Result
-	UpdateFound=TRUE;
-	if (UpdateFound)
+	if (UpdateAvailable)
 	{
 		if (pParentWnd)
 		{
+			if (pApp->m_pUpdateNotification)
+				pApp->m_pUpdateNotification->DestroyWindow();
+
 			LFUpdateDlg dlg(LatestVersion, LatestMSN, pParentWnd);
 			dlg.DoModal();
 		}
 		else
-		{
-			LFUpdateDlg* pUpdateDlg = new LFUpdateDlg(LatestVersion, LatestMSN);
-			pUpdateDlg->Create(IDD_UPDATE, CWnd::GetDesktopWindow());
-			pUpdateDlg->ShowWindow(SW_SHOW);
-		}
+			if (pApp->m_pUpdateNotification)
+			{
+				pApp->m_pUpdateNotification->SendMessage(WM_COMMAND, IDM_UPDATE_RESTORE);
+			}
+			else
+			{
+				pApp->m_pUpdateNotification = new LFUpdateDlg(LatestVersion, LatestMSN);
+				pApp->m_pUpdateNotification->Create(IDD_UPDATE, CWnd::GetDesktopWindow());
+				pApp->m_pUpdateNotification->ShowWindow(SW_SHOW);
+			}
 	}
 	else
 		if (Force)

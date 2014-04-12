@@ -476,6 +476,7 @@
     <ROW Registry="AIShRegAnswer" Root="-1" Key="Software\Caphyon\Advanced Installer\Installs\[ProductCode]" Name="AIShRegAnswer" Value="[AI_SHORTCUTSREG]" Component_="liquidFOLDERS"/>
     <ROW Registry="AI_ExePath" Root="-1" Key="Software\Caphyon\Advanced Installer\LZMA\[ProductCode]\[ProductVersion]" Name="AI_ExePath" Value="[AI_SETUPEXEPATH]" Component_="liquidFOLDERS"/>
     <ROW Registry="Attributes" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}\ShellFolder" Name="Attributes" Value="#3087008004" Component_="LFNamespaceExtension.dll"/>
+    <ROW Registry="CheckUpdate" Root="2" Key="Software\Microsoft\Windows\CurrentVersion\Run" Name="liquidFOLDERS" Value="[#StoreManager.exe] /CHECKUPDATE" Component_="StoreManager.exe"/>
     <ROW Registry="Comments" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="Comments" Component_="AI_CustomARPName"/>
     <ROW Registry="Contact" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="Contact" Value="support@liquidfolders.net" Component_="AI_CustomARPName"/>
     <ROW Registry="DisplayIcon" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="DisplayIcon" Value="[ARP_ICON_PATH]" Component_="AI_CustomARPName"/>
@@ -494,7 +495,6 @@
     <ROW Registry="InfoTip" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}" Name="InfoTip" Value="#%@[#LFNamespaceExtension.dll],1000" Component_="LFNamespaceExtension.dll"/>
     <ROW Registry="InstallLocation" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="InstallLocation" Value="[APPDIR]" Component_="AI_CustomARPName"/>
     <ROW Registry="LFRunCmd" Root="2" Key="Software\liquidFOLDERS" Name="LFRunCmd" Value="[#LFRunCmd.exe]" Component_="LFRunCmd.exe"/>
-    <ROW Registry="LFWatchdog" Root="2" Key="Software\Microsoft\Windows\CurrentVersion\Run" Name="LFRunCmd" Value="[#LFRunCmd.exe] /CHECKUPDATE" Component_="LFRunCmd.exe"/>
     <ROW Registry="Migrate" Root="2" Key="Software\liquidFOLDERS" Name="Migrate" Value="[#Migrate.exe]" Component_="Migrate.exe"/>
     <ROW Registry="ModifyPath" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="ModifyPath" Value="[AI_UNINSTALLER] /I [ProductCode]" Component_="AI_CustomARPName"/>
     <ROW Registry="NeverShowExt" Root="0" Key="LFSendTofile" Name="NeverShowExt" Value="#0" Component_="LFNamespaceExtension.dll"/>
@@ -548,24 +548,24 @@
   <COMPONENT cid="caphyon.advinst.msicomp.MsiRemoveFileComponent">
     <ROW FileKey="LFCore.dll" Component_="LFCore.dll" FileName="LFCore.dll" DirProperty="SystemFolder" InstallMode="2"/>
     <ROW FileKey="LFNamespaceExtension.dll" Component_="LFNamespaceExtension.dll" FileName="LFName~1.dll|LFNamespaceExtension.dll" DirProperty="SystemFolder" InstallMode="3"/>
-    <ROW FileKey="_" Component_="LFCore.dll" DirProperty="APPDIR" InstallMode="2"/>
-    <ROW FileKey="__1" Component_="LFCore.dll" DirProperty="SHORTCUTDIR" InstallMode="2"/>
+    <ROW FileKey="_" Component_="liquidFOLDERS" DirProperty="APPDIR" InstallMode="2"/>
+    <ROW FileKey="__1" Component_="liquidFOLDERS" DirProperty="SHORTCUTDIR" InstallMode="2"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiRemoveRegComponent">
-    <ROW RemoveRegistry="_" Root="2" Key="Software\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\Namespace\DelegateFolders\{3F2D914F-FE57-414F-9F88-A377C7841DA4}" Name="-" Component_="liquidFOLDERS"/>
-    <ROW RemoveRegistry="__1" Root="2" Key="Software\Microsoft\Windows\CurrentVersion\Explorer\Desktop\Namespace\{3F2D914F-FE57-414F-9F88-A377C7841DA4}" Name="-" Component_="liquidFOLDERS"/>
-    <ROW RemoveRegistry="__10" Root="0" Key=".LFSendTo" Name="-" Component_="liquidFOLDERS"/>
-    <ROW RemoveRegistry="__11" Root="0" Key="CLSID\{3F2D914D-FE57-414F-9F88-A377C7841DA4}" Name="-" Component_="liquidFOLDERS"/>
-    <ROW RemoveRegistry="__12" Root="0" Key="CLSID\{3F2D914E-FE57-414F-9F88-A377C7841DA4}" Name="-" Component_="liquidFOLDERS"/>
-    <ROW RemoveRegistry="__13" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}" Name="-" Component_="liquidFOLDERS"/>
-    <ROW RemoveRegistry="__2" Root="2" Key="Software\liquidFOLDERS" Name="-" Component_="liquidFOLDERS"/>
-    <ROW RemoveRegistry="__3" Root="0" Key="LFSendTofile" Name="-" Component_="liquidFOLDERS"/>
-    <ROW RemoveRegistry="__4" Root="0" Key="LFNamespaceExtension.RootFolder" Name="-" Component_="liquidFOLDERS"/>
-    <ROW RemoveRegistry="__5" Root="0" Key="LFNamespaceExtension.DriveMenu" Name="-" Component_="liquidFOLDERS"/>
-    <ROW RemoveRegistry="__6" Root="0" Key="LFFilterfile" Name="-" Component_="liquidFOLDERS"/>
-    <ROW RemoveRegistry="__7" Root="0" Key="Folder\Shellex\ContextMenuHandlers\liquidFOLDERS.DriveMenu" Name="-" Component_="liquidFOLDERS"/>
-    <ROW RemoveRegistry="__8" Root="0" Key="Drive\Shellex\ContextMenuHandlers\liquidFOLDERS.DriveMenu" Name="-" Component_="liquidFOLDERS"/>
-    <ROW RemoveRegistry="__9" Root="0" Key=".filter" Name="-" Component_="liquidFOLDERS"/>
+    <ROW RemoveRegistry="_" Root="2" Key="Software\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\Namespace\DelegateFolders\{3F2D914F-FE57-414F-9F88-A377C7841DA4}" Name="-" Component_="LFNamespaceExtension.dll"/>
+    <ROW RemoveRegistry="__1" Root="2" Key="Software\Microsoft\Windows\CurrentVersion\Explorer\Desktop\Namespace\{3F2D914F-FE57-414F-9F88-A377C7841DA4}" Name="-" Component_="LFNamespaceExtension.dll"/>
+    <ROW RemoveRegistry="__10" Root="0" Key=".LFSendTo" Name="-" Component_="LFNamespaceExtension.dll"/>
+    <ROW RemoveRegistry="__11" Root="0" Key="CLSID\{3F2D914D-FE57-414F-9F88-A377C7841DA4}" Name="-" Component_="LFNamespaceExtension.dll"/>
+    <ROW RemoveRegistry="__12" Root="0" Key="CLSID\{3F2D914E-FE57-414F-9F88-A377C7841DA4}" Name="-" Component_="LFNamespaceExtension.dll"/>
+    <ROW RemoveRegistry="__13" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}" Name="-" Component_="LFNamespaceExtension.dll"/>
+    <ROW RemoveRegistry="__2" Root="2" Key="Software\liquidFOLDERS" Name="-" Component_="LFNamespaceExtension.dll"/>
+    <ROW RemoveRegistry="__3" Root="0" Key="LFSendTofile" Name="-" Component_="LFNamespaceExtension.dll"/>
+    <ROW RemoveRegistry="__4" Root="0" Key="LFNamespaceExtension.RootFolder" Name="-" Component_="LFNamespaceExtension.dll"/>
+    <ROW RemoveRegistry="__5" Root="0" Key="LFNamespaceExtension.DriveMenu" Name="-" Component_="LFNamespaceExtension.dll"/>
+    <ROW RemoveRegistry="__6" Root="0" Key="LFFilterfile" Name="-" Component_="LFNamespaceExtension.dll"/>
+    <ROW RemoveRegistry="__7" Root="0" Key="Folder\Shellex\ContextMenuHandlers\liquidFOLDERS.DriveMenu" Name="-" Component_="LFNamespaceExtension.dll"/>
+    <ROW RemoveRegistry="__8" Root="0" Key="Drive\Shellex\ContextMenuHandlers\liquidFOLDERS.DriveMenu" Name="-" Component_="LFNamespaceExtension.dll"/>
+    <ROW RemoveRegistry="__9" Root="0" Key=".filter" Name="-" Component_="LFNamespaceExtension.dll"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiShortsComponent">
     <ROW Shortcut="Migrate.exe" Directory_="SHORTCUTDIR" Name="Migrat~1|Migration Wizard" Component_="Migrate.exe" Target="[#Migrate.exe]" Description="Migrate.exe" Hotkey="0" IconIndex="0" ShowCmd="1" WkDir="APPDIR"/>

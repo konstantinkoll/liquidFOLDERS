@@ -77,5 +77,4 @@ LFCommDlg_API void LFCreateNewStore(CWnd* pParentWnd=NULL, CHAR Volume='\0');
 LFCommDlg_API void LFAbout(CString AppName, CString Build, UINT IconResID, CWnd* pParentWnd=NULL);
 
 LFCommDlg_API void GetFileVersion(HMODULE hModule, CString* Version, CString* Copyright=NULL);
-LFCommDlg_API CString GetLatestVersion(CString& CurrentVersion);
 LFCommDlg_API void LFCheckForUpdate(BOOL Force=FALSE, CWnd* pParentWnd=NULL);
