@@ -39,6 +39,8 @@ protected:
 	afx_msg void OnCancel();
 	afx_msg LRESULT OnTrayMenu(WPARAM wParam, LPARAM lParam);
 	afx_msg void OnRestore();
+	afx_msg LRESULT OnWakeup(WPARAM wParam, LPARAM lParam);
+	afx_msg BOOL OnCopyData(CWnd* pWnd, COPYDATASTRUCT* pCopyDataStruct);
 	DECLARE_MESSAGE_MAP()
 
 private:
