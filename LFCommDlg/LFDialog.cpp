@@ -68,16 +68,16 @@ void LFDialog::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 	BOOL Themed = IsCtrlThemed();
 
 	// Background
+	dc.FillSolidRect(0, 0, m_BackBufferL, Line, 0xFFFFFF);
 	if (Themed)
 	{
-		dc.FillSolidRect(0, 0, m_BackBufferL, m_BackBufferH, 0xFFFFFF);
+		dc.FillSolidRect(0, Line, m_BackBufferL, rect.Height()-Line, 0xFEFEFE);
 
 		CGdiPlusBitmap* pDivider = p_App->GetCachedResourceImage(IDB_DIVDOWN, _T("PNG"), LFCommDlgDLL.hResource);
 		g.DrawImage(pDivider->m_pBitmap, (rect.Width()-(INT)pDivider->m_pBitmap->GetWidth())/2, Line);
 	}
 	else
 	{
-		dc.FillSolidRect(0, 0, m_BackBufferL, Line, 0xFFFFFF);
 		dc.FillSolidRect(0, Line, m_BackBufferL, rect.Height()-Line, GetSysColor(COLOR_3DFACE));
 	}
 

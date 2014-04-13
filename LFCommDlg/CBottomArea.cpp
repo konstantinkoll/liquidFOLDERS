@@ -61,7 +61,7 @@ BOOL CBottomArea::OnEraseBkgnd(CDC* pDC)
 
 		if (IsCtrlThemed())
 		{
-			dc.FillSolidRect(rect, 0xFFFFFF);
+			dc.FillSolidRect(rect, 0xFEFEFE);
 
 			CGdiPlusBitmap* pDivider = p_App->GetCachedResourceImage(IDB_DIVDOWN, _T("PNG"), LFCommDlgDLL.hResource);
 			g.DrawImage(pDivider->m_pBitmap, (rect.Width()-(INT)pDivider->m_pBitmap->GetWidth())/2, 0);
