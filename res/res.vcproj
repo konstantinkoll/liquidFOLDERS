@@ -1209,15 +1209,7 @@
 			>
 		</File>
 		<File
-			RelativePath=".\LFNamespaceExtension_128.png"
-			>
-		</File>
-		<File
 			RelativePath=".\LFRunCmd.ico"
-			>
-		</File>
-		<File
-			RelativePath=".\LFRunCmd_128.png"
 			>
 		</File>
 		<File
@@ -1258,18 +1250,6 @@
 		</File>
 		<File
 			RelativePath=".\LocationIndicator_8.png"
-			>
-		</File>
-		<File
-			RelativePath=".\Migrate.ico"
-			>
-		</File>
-		<File
-			RelativePath=".\Migrate_128.png"
-			>
-		</File>
-		<File
-			RelativePath=".\Migrate_24.bmp"
 			>
 		</File>
 		<File

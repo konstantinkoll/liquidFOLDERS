@@ -109,8 +109,6 @@ BOOL LFNamespaceExtensionApp::InitInstance()
 		m_PathRunCmd.Empty();
 	if (!GetApplicationPath(_T("StoreManager"), m_PathStoreManager))
 		m_PathStoreManager.Empty();
-	if (!GetApplicationPath(_T("Migrate"), m_PathMigrate))
-		m_PathMigrate.Empty();
 
 	// Strings
 	ENSURE(m_Store.LoadString(IDS_Store));

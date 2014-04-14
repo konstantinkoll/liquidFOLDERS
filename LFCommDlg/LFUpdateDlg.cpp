@@ -30,7 +30,7 @@ LFUpdateDlg::LFUpdateDlg(CString Version, CString MSN, CWnd* pParentWnd)
 
 	m_Version = Version;
 	m_MSN = MSN;
-	m_AppName = _T("liquidFOLDERS");
+	ENSURE(m_AppName.LoadString(IDR_APPLICATION));
 }
 
 void LFUpdateDlg::DoDataExchange(CDataExchange* pDX)

@@ -2,6 +2,7 @@
 // Microsoft Visual C++ generated include file.
 // Used by LFCommDlg.rc
 //
+#define IDR_APPLICATION                 128
 #define ID_APP_SUPPORT                  200
 #define ID_APP_PURCHASE                 201
 #define ID_APP_ENTERLICENSEKEY          202
@@ -41,6 +42,7 @@
 #define IDB_SIDEBARSHADOW               20133
 #define IDB_SANTA                       20134
 #define IDB_LIQUIDFOLDERS_64            20135
+#define IDB_LIQUIDFOLDERS_128           20136
 #define IDI_DEFAULT                     20200
 #define IDI_RESET_NORMAL                20201
 #define IDI_RESET_HOT                   20202

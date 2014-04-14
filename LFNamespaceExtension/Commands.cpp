@@ -54,7 +54,7 @@ BOOL CmdImportFolder::Invoke(CPtrList* nseItems)
 		if (IS(item, CFolderItem))
 		{
 			CString id(AS(item, CFolderItem)->Attrs.StoreID);
-			ShellExecute(NULL, _T("open"), theApp.m_PathRunCmd, _T("IMPORTFOLDER ")+id, NULL, SW_SHOW);
+			ShellExecute(NULL, _T("open"), theApp.m_PathRunCmd, _T("/IMPORTFOLDER ")+id, NULL, SW_SHOW);
 			return TRUE;
 		}
 	}
@@ -65,7 +65,7 @@ BOOL CmdImportFolder::Invoke(CPtrList* nseItems)
 CString CmdImportFolder::GetIcon(CPtrList* /*nseItems*/)
 {
 	CString tmpStr(theApp.m_ThisFile);
-	tmpStr.Append(_T(",0"));
+	tmpStr.Append(_T(",2"));
 
 	return tmpStr;
 }
@@ -111,7 +111,7 @@ BOOL CmdProperties::Invoke(CPtrList* nseItems)
 		if (IS(item, CFolderItem))
 		{
 			CString id(AS(item, CFolderItem)->Attrs.StoreID);
-			ShellExecute(NULL, _T("open"), theApp.m_PathRunCmd, _T("STOREPROPERTIES ")+id, NULL, SW_SHOW);
+			ShellExecute(NULL, _T("open"), theApp.m_PathRunCmd, _T("/STOREPROPERTIES ")+id, NULL, SW_SHOW);
 			return TRUE;
 		}
 	}
@@ -122,7 +122,7 @@ BOOL CmdProperties::Invoke(CPtrList* nseItems)
 CString CmdProperties::GetIcon(CPtrList* /*nseItems*/)
 {
 	CString tmpStr(theApp.m_ThisFile);
-	tmpStr.Append(_T(",2"));
+	tmpStr.Append(_T(",3"));
 
 	return tmpStr;
 }
@@ -161,13 +161,13 @@ ExplorerCommandState CmdCreateNewStore::GetState(CPtrList* /*nseItems*/)
 
 BOOL CmdCreateNewStore::Invoke(CPtrList* /*nseItems*/)
 {
-	return RunPath(NULL, theApp.m_PathRunCmd, _T("NEWSTORE"));
+	return RunPath(NULL, theApp.m_PathRunCmd, _T("/NEWSTORE"));
 }
 
 CString CmdCreateNewStore::GetIcon(CPtrList* /*nseItems*/)
 {
 	CString tmpStr(theApp.m_ThisFile);
-	tmpStr.Append(_T(",3"));
+	tmpStr.Append(_T(",4"));
 
 	return tmpStr;
 }
@@ -210,7 +210,7 @@ BOOL CmdStoreManager::Invoke(CPtrList* /*nseItems*/)
 CString CmdStoreManager::GetIcon(CPtrList* /*nseItems*/)
 {
 	CString tmpStr(theApp.m_ThisFile);
-	tmpStr.Append(_T(",4"));
+	tmpStr.Append(_T(",5"));
 
 	return tmpStr;
 }
@@ -256,49 +256,6 @@ CString CmdFileDrop::GetIcon(CPtrList* /*nseItems*/)
 {
 	CString tmpStr(theApp.m_ThisFile);
 	tmpStr.Append(_T(",6"));
-
-	return tmpStr;
-}
-
-
-// CmdMigrate
-//
-
-CmdMigrate::CmdMigrate()
-{
-	static const GUID GMigrate = { 0xA43A5A7A, 0xC10C, 0x4EF1, { 0x9A, 0x70, 0xD9, 0x0C, 0x75, 0x35, 0xAE, 0x68 } };
-	guid = GMigrate;
-}
-
-CString CmdMigrate::GetCaption(CPtrList* /*nseItems*/)
-{
-	CString caption;
-	ENSURE(caption.LoadString(IDS_MENU_Migrate));
-	caption.Remove('&');
-	return caption;
-}
-
-CString CmdMigrate::GetToolTip(CPtrList* /*nseItems*/)
-{
-	CString hint;
-	ENSURE(hint.LoadString(IDS_HINT_Migrate));
-	return hint;
-}
-
-ExplorerCommandState CmdMigrate::GetState(CPtrList* /*nseItems*/)
-{
-	return (!theApp.m_PathMigrate.IsEmpty()) ? ECS_Enabled : ECS_Disabled;
-}
-
-BOOL CmdMigrate::Invoke(CPtrList* /*nseItems*/)
-{
-	return RunPath(NULL, theApp.m_PathMigrate);
-}
-
-CString CmdMigrate::GetIcon(CPtrList* /*nseItems*/)
-{
-	CString tmpStr(theApp.m_ThisFile);
-	tmpStr.Append(_T(",5"));
 
 	return tmpStr;
 }

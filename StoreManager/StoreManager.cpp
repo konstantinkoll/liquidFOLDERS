@@ -277,10 +277,8 @@ CWnd* CStoreManagerApp::GetFileDrop(CHAR* StoreID)
 
 void CStoreManagerApp::OnAppAbout()
 {
-	CString AppName;
-	ENSURE(AppName.LoadString(IDR_APPLICATION));
 	TIMESTAMP;
-	LFAbout(AppName, Timestamp, IDB_ABOUTICON, m_pActiveWnd);
+	LFAbout(Timestamp, m_pActiveWnd);
 }
 
 

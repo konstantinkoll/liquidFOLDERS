@@ -8,12 +8,10 @@
 #define IDI_StoreProperties             103
 #define IDI_NewStore                    104
 #define IDI_StoreManager                105
-#define IDI_Migrate                     106
-#define IDI_FileDrop                    107
-#define IDI_DefaultStore                108
-#define IDB_StoreManager                109
-#define IDB_FileDrop                    110
-#define IDB_Migrate                     111
+#define IDI_FileDrop                    106
+#define IDI_DefaultStore                107
+#define IDB_StoreManager                108
+#define IDB_FileDrop                    109
 #define IDS_InfoTip                     1000
 #define IDS_AttributeComment            1001
 #define IDS_AllFiles                    1002
@@ -61,10 +59,8 @@
 #define IDS_HINT_StoreManager           1131
 #define IDS_MENU_FileDrop               1132
 #define IDS_HINT_FileDrop               1133
-#define IDS_MENU_Migrate                1134
-#define IDS_HINT_Migrate                1135
-#define IDS_MENU_About                  1136
-#define IDS_HINT_About                  1137
+#define IDS_MENU_About                  1134
+#define IDS_HINT_About                  1135
 
 // Next default values for new objects
 // 

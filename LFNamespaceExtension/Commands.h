@@ -84,20 +84,3 @@ public:
 	virtual BOOL Invoke(CPtrList* nseItems);
 	virtual CString GetIcon(CPtrList* nseItems);
 };
-
-
-// CmdMigrate
-//
-
-
-class CmdMigrate : public CExplorerCommand
-{
-public:
-	CmdMigrate();
-
-	virtual CString GetCaption(CPtrList* nseItems);
-	virtual CString GetToolTip(CPtrList* nseItems);
-	virtual ExplorerCommandState GetState(CPtrList* nseItems);
-	virtual BOOL Invoke(CPtrList* nseItems);
-	virtual CString GetIcon(CPtrList* nseItems);
-};

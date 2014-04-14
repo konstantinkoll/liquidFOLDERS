@@ -59,7 +59,6 @@ IDB_BLUEMARBLE_8192     JPG                     "res\\BlueMarble_8192.jpg"
 // PNG
 //
 
-IDB_ABOUTICON           PNG                     "res\\liquidFOLDERS_128.png"
 IDB_INSPECTOR           PNG                     "res\\Inspector_Grey.png"
 IDB_MULTIPLE            PNG                     "res\\Multiple.png"
 IDB_GLOBEICONS_RGB      PNG                     "res\\GlobeIcons_RGB.png"
@@ -531,7 +530,6 @@ END
 STRINGTABLE 
 BEGIN
     SC_ALWAYSONTOP          "&Immer im Vordergrund"
-    IDR_APPLICATION         "StoreManager"
     IDR_CLIPBOARD           "Zwischenablage"
     IDR_FILEDROP            "FileDrop"
 END
@@ -1124,7 +1122,6 @@ END
 STRINGTABLE 
 BEGIN
     SC_ALWAYSONTOP          "Siempre &arriba"
-    IDR_APPLICATION         "StoreManager"
     IDR_CLIPBOARD           "Portapapeles"
     IDR_FILEDROP            "FileDrop"
 END
@@ -1717,7 +1714,6 @@ END
 STRINGTABLE 
 BEGIN
     SC_ALWAYSONTOP          "Toujours au &top"
-    IDR_APPLICATION         "StoreManager"
     IDR_CLIPBOARD           "Presse-papiers"
     IDR_FILEDROP            "FileDrop"
 END
@@ -2359,7 +2355,6 @@ END
 STRINGTABLE 
 BEGIN
     SC_ALWAYSONTOP          "Always on &top"
-    IDR_APPLICATION         "StoreManager"
     IDR_CLIPBOARD           "Clipboard"
     IDR_FILEDROP            "FileDrop"
 END

@@ -181,13 +181,6 @@ LFApplication::LFApplication(GUID& AppID)
 	// Eingebettete Schrift
 	hFontLetterGothic = LoadFontFromResource(IDF_LETTERGOTHIC, LFCommDlgDLL.hResource);
 
-	// Anwendungspfad
-	TCHAR szPathName[MAX_PATH];
-	GetModuleFileName(NULL, szPathName, MAX_PATH);
-	LPTSTR pszFileName = _tcsrchr(szPathName, '\\')+1;
-	*pszFileName = '\0';
-	m_Path = szPathName;
-
 	// Rating and Priority bitmaps
 	for (UINT a=0; a<=LFMaxRating; a++)
 	{

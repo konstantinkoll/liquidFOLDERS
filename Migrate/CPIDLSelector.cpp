@@ -149,16 +149,11 @@ void CPIDLDropdownWindow::PopulateList()
 	AddCSIDL(CSIDL_COMMON_PICTURES, 2);									// Common pictures
 	AddCSIDL(CSIDL_COMMON_VIDEO, 2);									// Common videos
 
-	switch (LFGetApp()->OSVersion)
+	if (theApp.OSVersion>OS_Vista)
 	{
-	case OS_XP:
-	case OS_Vista:
-		break;
-	default:
 		AddKnownFolder(FOLDERID_Contacts, 0);							// Contacts
 		AddKnownFolder(FOLDERID_Downloads, 0);							// Downloads
 		AddChildren(_T("::{031E4825-7B94-4DC3-B131-E946B44C8DD5}"), 1);	// Libraries
-		break;
 	}
 
 	AddCSIDL(CSIDL_FAVORITES, 0);										// Favorites

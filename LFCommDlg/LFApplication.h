@@ -74,7 +74,6 @@ public:
 	LFApplication(GUID& AppID);
 	virtual ~LFApplication();
 
-	CString m_Path;
 	LFMessageIDs* p_MessageIDs;
 	LFAttributeDescriptor* m_Attributes[LFAttributeCount];
 	WCHAR* m_AttrCategories[LFAttrCategoryCount];

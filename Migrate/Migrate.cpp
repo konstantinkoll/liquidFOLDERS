@@ -97,8 +97,6 @@ CWnd* CMigrateApp::OpenCommandLine(WCHAR* /*CmdLine*/)
 
 void CMigrateApp::OnAppAbout()
 {
-	CString AppName;
-	ENSURE(AppName.LoadString(IDR_APPLICATION));
 	TIMESTAMP;
-	LFAbout(AppName, Timestamp, IDB_ABOUTICON, m_pMainWnd);
+	LFAbout(Timestamp, m_pMainWnd);
 }

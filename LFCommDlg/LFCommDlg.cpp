@@ -337,9 +337,9 @@ LFCommDlg_API void LFCreateNewStore(CWnd* pParentWnd, CHAR Volume)
 	dlg.DoModal();
 }
 
-LFCommDlg_API void LFAbout(CString AppName, CString Build, UINT IconResID, CWnd* pParentWnd)
+LFCommDlg_API void LFAbout(CString Build, CWnd* pParentWnd)
 {
-	LFAboutDlg dlg(AppName, Build, IconResID, pParentWnd);
+	LFAboutDlg dlg(Build, pParentWnd);
 	dlg.DoModal();
 }
 
@@ -521,7 +521,7 @@ void LFCheckForUpdate(BOOL Force, CWnd* pParentWnd)
 			pApp->WriteGlobalString(_T("LatestUpdateMSN"), LatestMSN);
 		}
 	}
-LatestVersion="3.0"; LatestMSN="100";
+
 	// Update available?
 	BOOL UpdateAvailable = FALSE;
 	if (!LatestVersion.IsEmpty())

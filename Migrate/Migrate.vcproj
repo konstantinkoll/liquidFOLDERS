@@ -289,8 +289,8 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				Description="Migrate wird gepackt."
-				CommandLine="&quot;$(SolutionDir)upx.exe&quot; &quot;$(TargetPath)&quot;"
+				Description=""
+				CommandLine=""
 			/>
 		</Configuration>
 		<Configuration
@@ -387,8 +387,8 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				Description="Migrate wird gepackt."
-				CommandLine="&quot;$(SolutionDir)upx.exe&quot; &quot;$(TargetPath)&quot;"
+				Description=""
+				CommandLine=""
 			/>
 		</Configuration>
 	</Configurations>
@@ -553,15 +553,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\Migrate.ico"
-				>
-			</File>
-			<File
 				RelativePath=".\Migrate.rc"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Migrate_128.png"
 				>
 			</File>
 			<File

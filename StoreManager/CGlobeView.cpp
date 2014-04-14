@@ -1343,10 +1343,13 @@ void CGlobeView::OnSettings()
 
 void CGlobeView::OnGoogleEarth()
 {
+	if (theApp.m_PathGoogleEarth.IsEmpty())
+		return;
+
 	// Dateinamen finden
 	TCHAR Pathname[MAX_PATH];
 	if (!GetTempPath(MAX_PATH, Pathname))
-		_tcscpy_s(Pathname, MAX_PATH, theApp.m_Path);
+		return;
 
 	CString szTempName;
 	srand(rand());

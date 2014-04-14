@@ -20,7 +20,7 @@ public:
 	virtual BOOL InitInstance();
 
 protected:
-	void OnAppAbout(UINT ResIDName, UINT ResIDPicture);
+	void OnAppAbout();
 	void OnStoreCreate(CHAR Drive='\0');
 	void OnStoreDelete(CString ID);
 	void OnStoreImportFolder(CString ID);

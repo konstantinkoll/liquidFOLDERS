@@ -107,7 +107,7 @@ void LFBrowseForFolderDlg::OnGetMinMaxInfo(MINMAXINFO* lpMMI)
 {
 	LFDialog::OnGetMinMaxInfo(lpMMI);
 
-	lpMMI->ptMinTrackSize.x = max(lpMMI->ptMinTrackSize.x, 300);
+	lpMMI->ptMinTrackSize.x = max(lpMMI->ptMinTrackSize.x, 350);
 	lpMMI->ptMinTrackSize.y = max(lpMMI->ptMinTrackSize.y, 300);
 }
 

@@ -3,10 +3,6 @@
 // Used by LFRunCmd.rc
 //
 #define IDI_MAIN                        1
-#define IDB_ABOUTICON                   2
-#define IDB_EXTENSIONABOUTICON          3
-#define IDS_ABOUT                       1000
-#define IDS_EXTENSIONABOUT              1001
 
 // Next default values for new objects
 // 

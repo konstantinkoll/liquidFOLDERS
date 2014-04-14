@@ -709,29 +709,19 @@ BOOL CFolderItem::OnExecuteMenuItem(CExecuteMenuitemsEventArgs& e)
 
 void CFolderItem::GetToolbarButtons(CPtrList& commands)
 {
-	if ((!theApp.m_PathStoreManager.IsEmpty()) || (!theApp.m_PathMigrate.IsEmpty()))
+	if (!theApp.m_PathStoreManager.IsEmpty())
 	{
 		CString tmpStr;
 
 		commands.AddTail(new CShellToolbarButton(_T(""), NSESTBT_Separator));
 
-		if (!theApp.m_PathStoreManager.IsEmpty())
-		{
-			ENSURE(tmpStr.LoadString(IDS_MENU_StoreManager));
-			tmpStr.Remove('&');
-			commands.AddTail(new CShellToolbarButton(tmpStr, NSESTBT_Normal, (INT_PTR)IDB_StoreManager));
+		ENSURE(tmpStr.LoadString(IDS_MENU_StoreManager));
+		tmpStr.Remove('&');
+		commands.AddTail(new CShellToolbarButton(tmpStr, NSESTBT_Normal, (INT_PTR)IDB_StoreManager));
 
-			ENSURE(tmpStr.LoadString(IDS_MENU_FileDrop));
-			tmpStr.Remove('&');
-			commands.AddTail(new CShellToolbarButton(tmpStr, NSESTBT_Normal, (INT_PTR)IDB_FileDrop));
-		}
-
-		if (!theApp.m_PathMigrate.IsEmpty())
-		{
-			ENSURE(tmpStr.LoadString(IDS_MENU_Migrate));
-			tmpStr.Remove('&');
-			commands.AddTail(new CShellToolbarButton(tmpStr, NSESTBT_Normal, (INT_PTR)IDB_Migrate));
-		}
+		ENSURE(tmpStr.LoadString(IDS_MENU_FileDrop));
+		tmpStr.Remove('&');
+		commands.AddTail(new CShellToolbarButton(tmpStr, NSESTBT_Normal, (INT_PTR)IDB_FileDrop));
 	}
 }
 
@@ -744,7 +734,6 @@ void CFolderItem::OnMergeFrameMenu(CMergeFrameMenuEventArgs& e)
 
 	AddPathItem(subMenu, IDS_MENU_StoreManager, _T(VERB_STOREMANAGER), theApp.m_PathStoreManager, IDI_StoreManager);
 	AddPathItem(subMenu, IDS_MENU_FileDrop, _T(VERB_FILEDROP), theApp.m_PathStoreManager, IDI_FileDrop);
-	AddPathItem(subMenu, IDS_MENU_Migrate, _T(VERB_MIGRATE), theApp.m_PathMigrate, IDI_Migrate);
 	AddSeparator(subMenu);
 	AddItem(subMenu, IDS_MENU_About, _T(VERB_ABOUT))->SetEnabled(!theApp.m_PathRunCmd.IsEmpty());
 }
@@ -759,11 +748,8 @@ void CFolderItem::OnExecuteFrameCommand(CExecuteFrameCommandEventArgs& e)
 		if (e.menuItem->GetVerb()==_T(VERB_FILEDROP))
 			RunPath(NULL, theApp.m_PathStoreManager, _T("/FILEDROP"));
 
-		if (e.menuItem->GetVerb()==_T(VERB_MIGRATE))
-			RunPath(NULL, theApp.m_PathMigrate);
-
 		if (e.menuItem->GetVerb()==_T(VERB_ABOUT))
-			RunPath(NULL, theApp.m_PathRunCmd, _T("/ABOUTEXTENSION"));
+			RunPath(NULL, theApp.m_PathRunCmd, _T("/ABOUT"));
 	}
 	else
 		switch (e.toolbarButtonIndex)
@@ -773,9 +759,6 @@ void CFolderItem::OnExecuteFrameCommand(CExecuteFrameCommandEventArgs& e)
 			break;
 		case 2:
 			RunPath(NULL, theApp.m_PathStoreManager, _T("/FILEDROP"));
-			break;
-		case 3:
-			RunPath(NULL, theApp.m_PathMigrate);
 			break;
 		}
 }
@@ -794,7 +777,6 @@ void CFolderItem::GetToolbarCommands(CPtrList& commands)
 
 	commands.AddTail(new CmdStoreManager());
 	commands.AddTail(new CmdFileDrop());
-	commands.AddTail(new CmdMigrate());
 }
 
 

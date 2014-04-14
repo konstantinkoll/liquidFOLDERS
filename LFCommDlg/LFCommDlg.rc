@@ -83,6 +83,7 @@ IDB_LOCATIONINDICATOR_16 PNG                     "res\\LocationIndicator_16.png"
 IDB_EXPLORERGRADIENT    PNG                     "res\\ExplorerGradient.png"
 IDB_SANTA               PNG                     "res\\Santa.png"
 IDB_LIQUIDFOLDERS_64    PNG                     "res\\liquidFOLDERS_64.png"
+IDB_LIQUIDFOLDERS_128   PNG                     "res\\liquidFOLDERS_128.png"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -699,6 +700,7 @@ END
 
 STRINGTABLE 
 BEGIN
+    IDR_APPLICATION         "liquidFOLDERS"
     IDS_PURCHASEURL         "http://liquidFOLDERS.net/purchase/de/"
     IDS_UPDATEURL           "http://liquidFOLDERS.net/download/de/"
     IDS_ABOUTURL            "http://liquidFOLDERS.net/start/de/"
@@ -1323,6 +1325,7 @@ END
 
 STRINGTABLE 
 BEGIN
+    IDR_APPLICATION         "liquidFOLDERS"
     IDS_PURCHASEURL         "http://liquidFOLDERS.net/purchase/es/"
     IDS_UPDATEURL           "http://liquidFOLDERS.net/download/es/"
     IDS_ABOUTURL            "http://liquidFOLDERS.net/start/es/"
@@ -1947,6 +1950,7 @@ END
 
 STRINGTABLE 
 BEGIN
+    IDR_APPLICATION         "liquidFOLDERS"
     IDS_PURCHASEURL         "http://liquidFOLDERS.net/purchase/fr/"
     IDS_UPDATEURL           "http://liquidFOLDERS.net/download/fr/"
     IDS_ABOUTURL            "http://liquidFOLDERS.net/start/fr/"
@@ -2613,6 +2617,7 @@ END
 
 STRINGTABLE 
 BEGIN
+    IDR_APPLICATION         "liquidFOLDERS"
     IDS_PURCHASEURL         "http://liquidFOLDERS.net/purchase/en/"
     IDS_UPDATEURL           "http://liquidFOLDERS.net/download/en/"
     IDS_ABOUTURL            "http://liquidFOLDERS.net/start/en/"

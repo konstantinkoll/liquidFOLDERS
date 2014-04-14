@@ -1043,6 +1043,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\liquidFOLDERS_128.png"
+				>
+			</File>
+			<File
 				RelativePath=".\res\liquidFOLDERS_64.png"
 				>
 			</File>

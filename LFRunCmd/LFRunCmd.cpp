@@ -46,13 +46,11 @@ BOOL CRunCmdApp::InitInstance()
 		switch (__argc)
 		{
 		case 1:
-			OnAppAbout(IDS_ABOUT, IDB_ABOUTICON);
+			OnAppAbout();
 			break;
 		case 2:
 			if (command==_T("/ABOUT"))
-				OnAppAbout(IDS_ABOUT, IDB_ABOUTICON);
-			if (command==_T("/ABOUTEXTENSION"))
-				OnAppAbout(IDS_EXTENSIONABOUT, IDB_EXTENSIONABOUTICON);
+				OnAppAbout();
 			if (command==_T("/NEWSTORE"))
 				OnStoreCreate();
 			if (command==_T("/INSTALL"))
@@ -73,12 +71,10 @@ BOOL CRunCmdApp::InitInstance()
 	return TRUE;
 }
 
-void CRunCmdApp::OnAppAbout(UINT ResIDName, UINT ResIDPicture)
+void CRunCmdApp::OnAppAbout()
 {
-	CString AppName;
-	ENSURE(AppName.LoadString(ResIDName));
 	TIMESTAMP;
-	LFAbout(AppName, Timestamp, ResIDPicture, CWnd::GetForegroundWindow());
+	LFAbout(Timestamp, CWnd::GetForegroundWindow());
 }
 
 void CRunCmdApp::OnStoreCreate(CHAR Drive)

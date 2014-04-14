@@ -2,10 +2,8 @@
 // Microsoft Visual C++ generated include file.
 // Used by Migrate.rc
 //
-#define IDR_APPLICATION                 128
-#define IDB_ABOUTICON                   129
-#define IDB_TASKS                       130
-#define IDB_TREEWIDGETS                 131
+#define IDB_TASKS                       129
+#define IDB_TREEWIDGETS                 130
 #define IDM_VIEW_SELECTROOT             400
 #define IDM_VIEW_SELECTROOT_TASKBAR     401
 #define IDM_VIEW_OPEN                   500
@@ -20,7 +18,6 @@
 #define IDM_TREE_RESETPROPERTY          523
 #define IDM_BACKGROUND                  600
 #define IDM_HEADER                      601
-#define IDM_NEWSTOREMANAGER             700
 #define IDS_NOROOT_CAPTION              1000
 #define IDS_NOROOT_HINT                 1001
 #define IDS_FOLDER_CAPTION              1002

@@ -14,20 +14,21 @@
 
 extern AFX_EXTENSION_MODULE LFCommDlgDLL;
 
-LFAboutDlg::LFAboutDlg(CString AppName, CString Build, UINT IconResID, CWnd* pParentWnd)
+LFAboutDlg::LFAboutDlg(CString Build, CWnd* pParentWnd)
 	: LFDialog(IDD_ABOUT, pParentWnd)
 {
-	m_AppName = AppName;
 	m_Build = Build;
 	m_CaptionTop = m_IconTop = 0;
 
 	SYSTEMTIME st;
 	GetSystemTime(&st);
 	p_Santa = (st.wMonth==12) ? p_App->GetCachedResourceImage(IDB_SANTA, _T("PNG"), LFCommDlgDLL.hResource) : NULL;
-	p_Logo = p_App->GetCachedResourceImage(IconResID, _T("PNG"));
+	p_Logo = p_App->GetCachedResourceImage(IDB_LIQUIDFOLDERS_128, _T("PNG"), LFCommDlgDLL.hResource);
 
 	GetFileVersion(AfxGetInstanceHandle(), &m_Version, &m_Copyright);
 	m_Copyright.Replace(_T(" liquidFOLDERS"), _T(""));
+
+	ENSURE(m_AppName.LoadString(IDR_APPLICATION));
 }
 
 void LFAboutDlg::DoDataExchange(CDataExchange* pDX)
