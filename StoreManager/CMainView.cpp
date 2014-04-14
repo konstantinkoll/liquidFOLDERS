@@ -773,7 +773,7 @@ INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	#define FilterIconBlue         0
 	#define FilterIconWhite        1
-	#define FilterIconOverlay     36
+	#define FilterIconOverlay     35
 	#define FILTERICON            ((theApp.OSVersion==OS_Vista) && IsCtrlThemed()) ? FilterIconWhite : FilterIconBlue
 	p_FilterButton = m_wndTaskbar.AddButton(ID_PANE_FILTER, FILTERICON, TRUE, FALSE, TRUE);
 
