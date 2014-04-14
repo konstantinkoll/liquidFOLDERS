@@ -144,13 +144,13 @@ BOOL CDriveMenu::OnExecuteMenuItem(CExecuteItemEventArgs& e)
 		if ((Drive>=L'A') && (Drive<=L'Z'))
 		{
 			CString id(Drive);
-			ShellExecute(NULL, _T("open"), theApp.m_PathRunCmd, _T("NEWSTOREVOLUME ")+id, NULL, SW_SHOW);
+			ShellExecute(NULL, _T("open"), theApp.m_PathRunCmd, _T("/NEWSTOREVOLUME ")+id, NULL, SW_SHOW);
 			return TRUE;
 		}
 
 		if (Drive==L'\1')
 		{
-			ShellExecute(NULL, _T("open"), theApp.m_PathRunCmd, _T("NEWSTORE"), NULL, SW_SHOW);
+			ShellExecute(NULL, _T("open"), theApp.m_PathRunCmd, _T("/NEWSTORE"), NULL, SW_SHOW);
 			return TRUE;
 		}
 	}
