@@ -527,7 +527,7 @@ BEGIN
     DEFPUSHBUTTON   "Jetzt herunterladen",IDOK,113,96,100,14,WS_GROUP
     CONTROL         "Version %s (MSN %s)",IDC_VERSIONINFO,"SysLink",WS_GROUP | WS_TABSTOP,7,7,206,39
     LTEXT           "Eine neue Version von liquidFOLDERS steht zum Herunterladen bereit.",IDC_STATIC,7,50,206,16
-    CONTROL         "Dieses Update ignorieren",IDC_IGNOREUPDATE,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,72,206,10
+    CONTROL         "Dieses Update &ignorieren",IDC_IGNOREUPDATE,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,72,206,10
     CONTROL         "<a>Ausblenden</a>",IDC_HIDE,"SysLink",WS_TABSTOP,7,101,100,9
 END
 
@@ -1151,7 +1151,7 @@ BEGIN
     DEFPUSHBUTTON   "Descargarla ahora",IDOK,123,96,90,14,WS_GROUP
     CONTROL         "Version %s (MSN %s)",IDC_VERSIONINFO,"SysLink",WS_GROUP | WS_TABSTOP,7,7,206,39
     LTEXT           "Una actualización de liquidFOLDERS está disponible.",IDC_STATIC,7,50,206,16
-    CONTROL         "Ignorar actualización",IDC_IGNOREUPDATE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,72,206,10
+    CONTROL         "&Ignorar actualización",IDC_IGNOREUPDATE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,72,206,10
     CONTROL         "<a>Esconderse</a>",IDC_HIDE,"SysLink",WS_TABSTOP,7,101,110,9
 END
 
@@ -1774,7 +1774,7 @@ BEGIN
     DEFPUSHBUTTON   "Télécharger maintenant",IDOK,113,96,100,14,WS_GROUP
     CONTROL         "Version %s (MSN %s)",IDC_VERSIONINFO,"SysLink",WS_GROUP | WS_TABSTOP,7,7,206,39
     LTEXT           "Une nouvelle version de liquidFOLDERS est prête pour télécharger.",IDC_STATIC,7,50,206,16
-    CONTROL         "Ignorer cette version",IDC_IGNOREUPDATE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,72,206,10
+    CONTROL         "&Ignorer cette version",IDC_IGNOREUPDATE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,72,206,10
     CONTROL         "<a>Cacher</a>",IDC_HIDE,"SysLink",WS_TABSTOP,7,101,100,9
 END
 
@@ -2449,7 +2449,7 @@ BEGIN
     DEFPUSHBUTTON   "Download now",IDOK,133,96,80,14,WS_GROUP
     CONTROL         "Version %s (MSN %s)",IDC_VERSIONINFO,"SysLink",WS_GROUP | WS_TABSTOP,7,7,206,39
     LTEXT           "A new version of liquidFOLDERS is available for download.",IDC_STATIC,7,50,206,16
-    CONTROL         "Ignore this update",IDC_IGNOREUPDATE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,72,206,10
+    CONTROL         "&Ignore this update",IDC_IGNOREUPDATE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,72,206,10
     CONTROL         "<a>Hide</a>",IDC_HIDE,"SysLink",WS_TABSTOP,7,101,120,9
 END
 
