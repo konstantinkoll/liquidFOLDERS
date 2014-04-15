@@ -267,6 +267,8 @@ void LFDialog::OnSize(UINT nType, INT cx, INT cy)
 {
 	CDialog::OnSize(nType, cx, cy);
 
+	AdjustLayout();
+
 	CPoint diff(cx-m_LastSize.x, cy-m_LastSize.y);
 	m_LastSize.x = cx;
 	m_LastSize.y = cy;
@@ -280,7 +282,7 @@ void LFDialog::OnSize(UINT nType, INT cx, INT cy)
 		pWnd->GetWindowRect(&rect);
 		ScreenToClient(&rect);
 
-		pWnd->SetWindowPos(NULL, rect.left+diff.x, rect.top+diff.y, rect.Width(), rect.Height(), SWP_NOSIZE | SWP_NOACTIVATE | SWP_NOZORDER);
+		pWnd->SetWindowPos(NULL, rect.left+diff.x, rect.top+diff.y, rect.Width(), rect.Height(), SWP_NOSIZE | SWP_NOACTIVATE | SWP_NOZORDER | SWP_NOCOPYBITS);
 
 		MaxRight = min(MaxRight, rect.left+diff.x);
 	}
@@ -293,8 +295,6 @@ void LFDialog::OnSize(UINT nType, INT cx, INT cy)
 
 		p_BottomLeftControl->SetWindowPos(NULL, rect.left, rect.top+diff.y, MaxRight-rect.left, rect.Height(), SWP_NOACTIVATE | SWP_NOZORDER);
 	}
-
-	AdjustLayout();
 
 	m_BackBufferL = m_BackBufferH = 0;
 	Invalidate();
