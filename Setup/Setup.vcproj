@@ -167,7 +167,11 @@
 			>
 		</File>
 		<File
-			RelativePath=".\Backdrop1.jpg"
+			RelativePath=".\Backdrop1.bmp"
+			>
+		</File>
+		<File
+			RelativePath=".\Backdrop1.png"
 			>
 		</File>
 		<File
