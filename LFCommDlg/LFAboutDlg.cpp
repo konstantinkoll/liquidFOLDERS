@@ -102,13 +102,6 @@ BOOL LFAboutDlg::OnInitDialog()
 {
 	LFDialog::OnInitDialog();
 
-	// Titelleiste
-	CString text;
-	GetWindowText(text);
-	CString caption;
-	caption.Format(text, m_AppName);
-	SetWindowText(caption);
-
 	// Version
 	CRect rectWnd;
 	m_wndVersionInfo.GetWindowRect(&rectWnd);
@@ -120,7 +113,9 @@ BOOL LFAboutDlg::OnInitDialog()
 #define ISET _T(" (x86)")
 #endif
 
+	CString caption;
 	m_wndVersionInfo.GetWindowText(caption);
+	CString text;
 	text.Format(caption, m_Version+ISET, m_Build, m_Copyright);
 	m_wndVersionInfo.SetWindowText(text);
 
