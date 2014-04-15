@@ -38,12 +38,11 @@
     <ROW Property="REBOOT" MultiBuildValue="DefaultBuild:Force"/>
     <ROW Property="RepairIcon" Value="Tools.ico" Type="1" MsiKey="RepairIcon"/>
     <ROW Property="SecureCustomProperties" Value="OLDPRODUCTS;AI_NEWERPRODUCTFOUND;AI_SETUPEXEPATH;SETUPEXEDIR"/>
-    <ROW Property="ShortcutLogoIcon" Value="Shortcuts.ico" Type="1"/>
     <ROW Property="UpgradeCode" Value="{67BB0890-A341-4E87-90D6-AEB28804E142}"/>
     <ROW Property="WindowsFamily9X" MultiBuildValue="DefaultBuild:Windows 9x/ME" ValueLocId="-"/>
     <ROW Property="WindowsFamilyNT" MultiBuildValue="DefaultBuild:Windows NT/2k/XP/Vista/Windows7 x86" ValueLocId="-"/>
     <ROW Property="WindowsTypeNT64" MultiBuildValue="DefaultBuild:Windows XP x64 ServicePack 2" ValueLocId="-"/>
-    <ATTRIBUTE name="DeletedRows" value="CompleteSetupIcon@FolderLogoIcon@InstallLogoIcon@OptionsLogoIcon@WaitLogoItem@InstallerIcon"/>
+    <ATTRIBUTE name="DeletedRows" value="LicenseAgreeLogoIcon@ShortcutLogoIcon@CompleteSetupIcon@FolderLogoIcon@InstallLogoIcon@OptionsLogoIcon@WaitLogoItem@InstallerIcon"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiDirsComponent">
     <ROW Directory="APPDIR" Directory_Parent="TARGETDIR" DefaultDir="APPDIR:." IsPseudoRoot="1"/>
@@ -151,7 +150,6 @@
     <ROW Name="Info.ico" SourcePath="Setup\Info.ico"/>
     <ROW Name="Install.ico" SourcePath="Setup\Install.ico"/>
     <ROW Name="ResourceCleaner.dll" SourcePath="&lt;AI_CUSTACTS&gt;ResourceCleaner.dll"/>
-    <ROW Name="Shortcuts.ico" SourcePath="Setup\Shortcuts.ico"/>
     <ROW Name="Tools.ico" SourcePath="Setup\Tools.ico"/>
     <ROW Name="Warning.ico" SourcePath="Setup\Warning.ico"/>
     <ROW Name="aicustact.dll" SourcePath="&lt;AI_CUSTACTS&gt;aicustact.dll"/>

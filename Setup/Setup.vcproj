@@ -179,10 +179,6 @@
 			>
 		</File>
 		<File
-			RelativePath=".\DestinationFolder.ico"
-			>
-		</File>
-		<File
 			RelativePath=".\EULA_de.rtf"
 			>
 		</File>
@@ -212,10 +208,6 @@
 		</File>
 		<File
 			RelativePath=".\setup64.aip"
-			>
-		</File>
-		<File
-			RelativePath=".\Shortcuts.ico"
 			>
 		</File>
 		<File

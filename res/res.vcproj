@@ -1069,10 +1069,6 @@
 			>
 		</File>
 		<File
-			RelativePath=".\DestinationFolder.ico"
-			>
-		</File>
-		<File
 			RelativePath=".\Div.png"
 			>
 		</File>
@@ -1390,10 +1386,6 @@
 		</File>
 		<File
 			RelativePath=".\Shield_Vista.ico"
-			>
-		</File>
-		<File
-			RelativePath=".\Shortcuts.ico"
 			>
 		</File>
 		<File
