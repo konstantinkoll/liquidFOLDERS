@@ -1,188 +1,50 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <DICTIONARY type="multilanguage">
-  <ENTRY id="ActionText.Description.AI_AiRemoveFilesCommit">
-    <STRING lang="en" value="Executing file removal operations."/>
-    <STRING lang="es" value="Quitando archivos."/>
-  </ENTRY>
   <ENTRY id="ActionText.Description.AI_AiRemoveFilesDeferred">
-    <STRING lang="en" value="Executing file removal operations."/>
-    <STRING lang="es" value="Quitando archivos."/>
+    <STRING lang="es" value="Ejecutando operaciones de remoción de archivos"/>
   </ENTRY>
-  <ENTRY id="ActionText.Description.AI_AiRemoveFilesImmediate">
-    <STRING lang="en" value="Generating actions to remove files."/>
-    <STRING lang="es" value="Quitando archivos."/>
+  <ENTRY id="ActionText.Description.AI_AiRemoveFilesDeferred_Permanent">
+    <STRING lang="fr" value="Préparation de suppression des fichiers en cours."/>
   </ENTRY>
-  <ENTRY id="ActionText.Template.AI_AiRemoveFilesCommit">
-    <STRING lang="en" value="Removing file: [1]"/>
-    <STRING lang="es" value="Archivo: [1]"/>
+  <ENTRY id="ActionText.Description.AI_AiRemoveFilesDeferred_Undoable">
+    <STRING lang="fr" value="Préparation de suppression des fichiers en cours."/>
+  </ENTRY>
+  <ENTRY id="ActionText.Description.AI_AiRemoveFilesRollback">
+    <STRING lang="fr" value="Restauration des fichiers effacées."/>
   </ENTRY>
   <ENTRY id="ActionText.Template.AI_AiRemoveFilesDeferred">
-    <STRING lang="en" value="Removing file: [1]"/>
-    <STRING lang="es" value="Archivo: [1]"/>
+    <STRING lang="es" value="Ejecutando remoción de archivo: [1]"/>
   </ENTRY>
-  <ENTRY id="Azure.Control.Help.MaintenanceTypeDlg#ModifyCommand">
-    <STRING lang="en" value="Change which features are installed.|"/>
-    <STRING lang="es" value=""/>
+  <ENTRY id="ActionText.Template.AI_AiRemoveFilesDeferred_Permanent">
+    <STRING lang="fr" value="Preparation du fichier: [1]"/>
   </ENTRY>
-  <ENTRY id="Azure.Control.Text.AdminInstallPointDlg#Title">
-    <STRING lang="en" value="Select a network location for the server image of [ProductName] product"/>
-    <STRING lang="es" value="Ubicación de Red"/>
+  <ENTRY id="ActionText.Template.AI_AiRemoveFilesDeferred_Undoable">
+    <STRING lang="fr" value="Preparation du fichier: [1]"/>
   </ENTRY>
-  <ENTRY id="Azure.Control.Text.CustomizeDlg#AvailableSpaceLabel">
-    <STRING lang="en" value="Space available on drive: "/>
-    <STRING lang="es" value="Espacio de disco disponible: "/>
+  <ENTRY id="ActionText.Template.AI_AiRemoveFilesRollback">
+    <STRING lang="fr" value="Restauration du fichier: [1]"/>
   </ENTRY>
-  <ENTRY id="Azure.Control.Text.CustomizeDlg#AvailableSpaceText">
-    <STRING lang="en" value="[PrimaryVolumeSpaceAvailable]"/>
-    <STRING lang="es" value="[PrimaryVolumeSpaceAvailable]"/>
+  <ENTRY id="AI.LaunchCondition.No9X">
+    <STRING lang="de" value="[ProductName] kann nicht unter [WindowsType9XDisplay] installiert werden."/>
   </ENTRY>
-  <ENTRY id="Azure.Control.Text.CustomizeDlg#ItemDescription">
-    <STRING lang="en" value="Multiline description of the currently selected item."/>
-    <STRING lang="es" value="Descripción multilinea del artículo actualmente seleccionado."/>
+  <ENTRY id="AI.LaunchCondition.NoNT">
+    <STRING lang="de" value="[ProductName] kann nicht unter [WindowsTypeNTDisplay] installiert werden."/>
   </ENTRY>
-  <ENTRY id="Azure.Control.Text.CustomizeDlg#Text">
-    <STRING lang="en" value="Select which components of [ProductName] will be installed"/>
-    <STRING lang="es" value="Seleccione la manera en la desea que se instalen las características"/>
+  <ENTRY id="AI.LaunchCondition.NoNT40">
+    <STRING lang="de" value="[ProductName] kann nicht unter [WindowsTypeNT40Display] installiert werden."/>
+    <STRING lang="es" value="[ProductName] cannot be installed on [WindowsTypeNT40Display]."/>
+    <STRING lang="fr" value="[ProductName] cannot be installed on [WindowsTypeNT40Display]."/>
   </ENTRY>
-  <ENTRY id="Azure.Control.Text.CustomizeDlg#TotalSpaceLabel">
-    <STRING lang="en" value="Total space required on drive: "/>
-    <STRING lang="es" value="Espacio necesario: "/>
+  <ENTRY id="AI.LaunchCondition.NoSpecificNT64">
+    <STRING lang="de" value="[ProductName] kann nicht unter [WindowsTypeNT64Display] installiert werden."/>
   </ENTRY>
-  <ENTRY id="Azure.Control.Text.CustomizeDlg#TotalSpaceText">
-    <STRING lang="en" value="[PrimaryVolumeSpaceRequired]"/>
-    <STRING lang="es" value="[PrimaryVolumeSpaceRequired]"/>
+  <ENTRY id="AI.LaunchCondition.NoNT64">
+    <STRING lang="de" value="[ProductName] kann nicht unter [WindowsTypeNT64Display] installiert werden."/>
+    <STRING lang="es" value="[ProductName] cannot be installed on the following Windows versions: [WindowsTypeNTDisplay]"/>
+    <STRING lang="fr" value="[ProductName] cannot be installed on the following Windows versions: [WindowsTypeNTDisplay]"/>
   </ENTRY>
-  <ENTRY id="Azure.Control.Text.DiskCostDlg#Title">
-    <STRING lang="en" value="Disk space required for the selected features"/>
-    <STRING lang="es" value="Requisitos ee Espacio de disco"/>
-  </ENTRY>
-  <ENTRY id="Azure.Control.Text.FilesInUse#Title">
-    <STRING lang="en" value="Some files that need to be updated are currently in use"/>
-    <STRING lang="es" value="Archivos en uso"/>
-  </ENTRY>
-  <ENTRY id="Azure.Control.Text.FolderDlg#AvailableSpaceLabel">
-    <STRING lang="en" value="Space available on drive: "/>
-    <STRING lang="es" value="Espacio de disco disponible:"/>
-  </ENTRY>
-  <ENTRY id="Azure.Control.Text.FolderDlg#AvailableSpaceText">
-    <STRING lang="en" value="[PrimaryVolumeSpaceAvailable]"/>
-    <STRING lang="es" value="[PrimaryVolumeSpaceAvailable]"/>
-  </ENTRY>
-  <ENTRY id="Azure.Control.Text.FolderDlg#RemainingSpaceLabel">
-    <STRING lang="en" value="Remaining free space on drive: "/>
-    <STRING lang="es" value="Espacio de disco restante: "/>
-  </ENTRY>
-  <ENTRY id="Azure.Control.Text.FolderDlg#RemainingSpaceText">
-    <STRING lang="en" value="[PrimaryVolumeSpaceRemaining]"/>
-    <STRING lang="es" value="[PrimaryVolumeSpaceRemaining]"/>
-  </ENTRY>
-  <ENTRY id="Azure.Control.Text.FolderDlg#Title">
-    <STRING lang="en" value="Choose a file location"/>
-    <STRING lang="es" value="Carpeta de instalación"/>
-  </ENTRY>
-  <ENTRY id="Azure.Control.Text.FolderDlg#TotalSpaceLabel">
-    <STRING lang="en" value="Total space required on drive:"/>
-    <STRING lang="es" value="Espacio necesario: "/>
-  </ENTRY>
-  <ENTRY id="Azure.Control.Text.FolderDlg#TotalSpaceText">
-    <STRING lang="en" value="[PrimaryVolumeSpaceRequired]"/>
-    <STRING lang="es" value="[PrimaryVolumeSpaceRequired]"/>
-  </ENTRY>
-  <ENTRY id="Azure.Control.Text.MaintenanceTypeDlg#Title">
-    <STRING lang="en" value="Change your installation of [ProductName]"/>
-    <STRING lang="es" value="Modificar, reparar o eliminar instalación"/>
-  </ENTRY>
-  <ENTRY id="Azure.Control.Text.MsiRMFilesInUse#Title">
-    <STRING lang="en" value="Some files that need to be updated are currently in use"/>
-    <STRING lang="es" value="Ficheros en uso"/>
-  </ENTRY>
-  <ENTRY id="Azure.Control.Text.OutOfDiskDlg#Title">
-    <STRING lang="en" value="Disk space required for the installation exceeds available disk space"/>
-    <STRING lang="es" value="No hay más espacio de disco"/>
-  </ENTRY>
-  <ENTRY id="Azure.Control.Text.OutOfRbDiskDlg#Title">
-    <STRING lang="en" value="Disk space required for the installation exceeds available disk space"/>
-    <STRING lang="es" value="No hay más espacio de disco"/>
-  </ENTRY>
-  <ENTRY id="Azure.Control.Text.PrepareDlg#Description">
-    <STRING lang="en" value="Please wait while the [Wizard] prepares to guide you through the installation."/>
-    <STRING lang="es" value="Por favor, espere hasta que el [Wizard] esté listo para guiarle durante la instalación."/>
-  </ENTRY>
-  <ENTRY id="Azure.Control.Text.PrepareDlg#Title">
-    <STRING lang="en" value="Preparing [ProductName] [Wizard]"/>
-    <STRING lang="es" value="Bienvenido al [Wizard] de [ProductName]"/>
-  </ENTRY>
-  <ENTRY id="Azure.Control.Text.ProgressDlg#Description">
-    <STRING lang="en" value="Installing [ProductName]..."/>
-    <STRING lang="es" value="Instalación de [ProductName]..."/>
-  </ENTRY>
-  <ENTRY id="Azure.Control.Text.ProgressDlg#Title">
-    <STRING lang="en" value="Installation progress"/>
-    <STRING lang="es" value="Proceso de instalación"/>
-  </ENTRY>
-  <ENTRY id="Azure.Control.Text.ShortcutsDlg#Title">
-    <STRING lang="en" value="Create application shortcuts"/>
-    <STRING lang="es" value="Elija el tipo de instalación"/>
-  </ENTRY>
-  <ENTRY id="Azure.Control.Text.VerifyReadyDlg#Title">
-    <STRING lang="en" value="Begin installation of [ProductName]"/>
-    <STRING lang="es" value="Listo para instalar"/>
-  </ENTRY>
-  <ENTRY id="Azure.Control.Text.VerifyRemoveDlg#Title">
-    <STRING lang="en" value="Begin remove of [ProductName]"/>
-    <STRING lang="es" value="Eliminar [ProductName]"/>
-  </ENTRY>
-  <ENTRY id="Azure.Control.Text.VerifyRepairDlg#Title">
-    <STRING lang="en" value="Begin repair of [ProductName]"/>
-    <STRING lang="es" value="Reparar [ProductName]"/>
-  </ENTRY>
-  <ENTRY id="Control.Text.AdminWelcomeDlg#DescriptionNoClose">
-    <STRING lang="en" value="The [Wizard] will create a server image of [ProductName], at a specified network location. Click Next to continue or close the window to exit the [Wizard]."/>
-    <STRING lang="fr" value="L&apos;[Wizard] va créer une image serveur de [ProductName] à la destination réseau spécifiée. Choisissez &quot;Continuer&quot; pour continuer ou &quot;Annuler&quot; pour sortir de l&apos;[Wizard]."/>
-    <STRING lang="de" value="Der [Wizard] erstellt ein Server-Image von [ProductName], in dem angegebenen Netzwerkpfad. &quot;Weiter&quot; um fortzufahren oder &quot;Abbrechen&quot; um den [Wizard] zu beenden."/>
-    <STRING lang="es" value="El [Wizard] va a crear una imágen de servidor de [ProductName] en una ubicación de red especificada. Seleccione Siguiente para continuar o Cancelar para salir del [Wizard]."/>
-  </ENTRY>
-  <ENTRY id="Azure.Control.Text.LicenseAgreementDlg#Description">
-    <STRING lang="en" value="To continue you must read and accept the terms of this agreement. If you do not want to accept the [Manufacturer] Licence Terms, close this window to cancel the installation."/>
-    <STRING lang="es" value="Lea atentamente el siguiente contrato de licencia."/>
-  </ENTRY>
-  <ENTRY id="Azure.Control.Text.LicenseAgreementDlg#EulaAgreeCheckBox">
-    <STRING lang="en" value="I &amp;accept the terms of this agreement."/>
-    <STRING lang="es" value="&amp;Aceptar contrato de licencia para usuarios finales."/>
-  </ENTRY>
-  <ENTRY id="Azure.Control.Text.LicenseAgreementDlg#Title">
-    <STRING lang="en" value="Accept the [ProductName] Licence Terms"/>
-    <STRING lang="es" value="Contrato de licencia para usuarios finales"/>
-  </ENTRY>
-  <ENTRY id="Control.Text.MaintenanceWelcomeDlg#DescriptionNoClose">
-    <STRING lang="en" value="The [Wizard] will allow you to change the way [ProductName] features are installed on your computer or even to remove [ProductName] from your computer. Click Next to continue or close the window to exit the [Wizard]."/>
-    <STRING lang="fr" value="L&apos;[Wizard] va vous permettre de changer la façon dont les fonctionnalités de [ProductName] vont être installées sur votre ordinateur ou d&apos;enlever [ProductName] de votre ordinateur. Choisissez &quot;Suivant&quot; pour continuer ou &quot;Annuler&quot; pour quitter l&apos;[Wizard]."/>
-    <STRING lang="de" value="Mit dem [Wizard]en können Sie [ProductName] ändern, reparieren oder entfernen. Klicken Sie auf &quot;Weiter&quot; um fortzufahren, oder auf &quot;Abbrechen&quot; um den [Wizard]en zu beenden."/>
-    <STRING lang="es" value="El [Wizard] le permitirá cambiar la manera en la que las características de [ProductName] se instalan en su ordenador o eliminar [ProductName] de su ordenador. Haga click en Siguente para continuar o en Cancelar para salir del [Wizard]."/>
-  </ENTRY>
-  <ENTRY id="Control.Text.PatchWelcomeDlg#DescriptionNoClose">
-    <STRING lang="en" value="The [Wizard] will install the Patch for [ProductName] on your computer. Click Next to continue or close the window to exit the Patch [Wizard]."/>
-    <STRING lang="fr" value=""/>
-    <STRING lang="de" value="[Wizard] wird den Patch für [ProductName] auf Ihrem Computer installieren. Klicken Sie &quot;Weiter&quot; um fortzufahren oder &quot;Abbrechen&quot; um abzubrechen."/>
-    <STRING lang="es" value=""/>
-  </ENTRY>
-  <ENTRY id="Control.Text.ResumeDlg#DescriptionNoClose">
-    <STRING lang="en" value="The [Wizard] will complete the installation of [ProductName] on your computer. Click Install to continue or close the window to exit the [Wizard]."/>
-    <STRING lang="fr" value="L&apos;[Wizard] va effectuer l&apos;installation de [ProductName] sur votre ordinateur. Choisissez &quot;Installer&quot; pour continuer ou &quot;Annuler&quot; pour quitter l&apos;[Wizard]."/>
-    <STRING lang="de" value="Der [Wizard] beendet nun die Installation von [ProductName] auf Ihrem Computer. Klicken Sie &quot;Installieren&quot; um fortzufahren oder &quot;Abbrechen&quot; um den [Wizard] zu beenden."/>
-    <STRING lang="es" value="El [Wizard] va a finalizar la instalación de [ProductName] en su ordenador. Haga click en Instalar para continuar o en Cancelar para salir del [Wizard]."/>
-  </ENTRY>
-  <ENTRY id="Control.Text.VerifyReadyDlg#TextNoClose">
-    <STRING lang="en" value="Click Install to begin the installation. If you want to review or change any of your installation settings, click Back. Close the window to exit the wizard."/>
-    <STRING lang="fr" value="Choisissez &quot;Supprimer&quot; pour enlever [ProductName] de votre ordinateur. Pour revoir ou changer les paramètres d&apos;installation, choisissez &quot;Précédent&quot;. Choisissez &quot;Annuler&quot; pour quitter l&apos;[Wizard]."/>
-    <STRING lang="de" value="Klicken Sie auf &quot;Installieren&quot; um die Installation zu starten. Wenn Sie die Installationseinstellungen überprüfen oder ändern möchten, klicken Sie auf &quot;Zurück&quot;. Um den [Wizard] zu beenden, klicken Sie auf &quot;Abbrechen&quot;."/>
-    <STRING lang="es" value="Haga click en Instalar para iniciar la instalación. Si quiere revisar o modificar algunos de los ajustes de instalación, haga click en Atrás. Haga click en Cancelar para salir del ayudante."/>
-  </ENTRY>
-  <ENTRY id="Control.Text.WelcomeDlg#DescriptionNoClose">
-    <STRING lang="en" value="The [Wizard] will install [ProductName] on your computer. Click Next to continue or close the window to exit the [Wizard]."/>
-    <STRING lang="fr" value="L&apos;[Wizard] va installer [ProductName] sur votre ordinateur. Cliquez sur &quot;Suivant&quot; pour continuer ou &quot;Annuler&quot; pour quitter l&apos;[Wizard]."/>
-    <STRING lang="de" value="Der [Wizard] wird [ProductName] auf Ihrem Computer installieren. Klicken Sie auf &quot;Weiter&quot; um fortzufahren, oder auf &quot;Abbrechen&quot; um den [Wizard] zu beenden."/>
-    <STRING lang="es" value="El [Wizard] va a instalar [ProductName] en su ordenador. Haga click en Siguente para continuar o en Cancelar para salir del [Wizard]."/>
+  <ENTRY id="AI.LaunchCondition.NoSpecificNT">
+    <STRING lang="de" value="[ProductName] kann nicht unter [WindowsTypeNTDisplay] installiert werden."/>
   </ENTRY>
   <ENTRY id="Control.Text.LicenseAgreementDlg#AgreementText">
     <STRING lang="en" value="EULA_en.rtf"/>
@@ -206,3 +68,4 @@
     <STRING lang="es" value="liquidFOLDERS"/>
   </ENTRY>
 </DICTIONARY>
+

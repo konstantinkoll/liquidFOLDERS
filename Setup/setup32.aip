@@ -1,20 +1,23 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<DOCUMENT Type="Advanced Installer" CreateVersion="7.7" version="7.7" Modules="enterprise" RootPath="..*" Language="en">
+<DOCUMENT Type="Advanced Installer" CreateVersion="7.7" version="11.0" Modules="enterprise" RootPath="..*" Language="en" Id="{8FCF12AE-6582-4D6A-B3AB-2127ECB20E96}">
   <COMPONENT cid="caphyon.advinst.msicomp.ProjectOptionsComponent">
-    <ROW Name="HiddenItems" Value="DigCertStoreComponent;UpdaterComponent;SerValComponent;ChainedPackageComponent;MsiJavaComponent;MsiExtComponent;MsiAssemblyComponent;AutorunComponent;ActSyncAppComponent;BackgroundImagesComponent;MsiEnvComponent;ScheduledTasksComponent;CPLAppletComponent;GameUxComponent;FirewallExceptionComponent;UserAccountsComponent;WebApplicationsComponent;MsiOdbcDataSrcComponent;SqlConnectionComponent"/>
+    <ROW Name="HiddenItems" Value="DigCertStoreComponent;UpdaterComponent;SerValComponent;MsiJavaComponent;MsiExtComponent;MsiAssemblyComponent;MultipleInstancesComponent;AutorunComponent;ActSyncAppComponent;BackgroundImagesComponent;MsiEnvComponent;ScheduledTasksComponent;CPLAppletComponent;GameUxComponent;FirewallExceptionComponent;UserAccountsComponent;WebApplicationsComponent;MsiOdbcDataSrcComponent;SqlConnectionComponent;SharePointSlnComponent;SilverlightSlnComponent;MsiAppSearchComponent;MsiDirectEditorComponent"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiPropsComponent">
+    <ROW Property="AI_BITMAP_DISPLAY_MODE" Value="0"/>
     <ROW Property="AI_CLEAN_RESOURCES_DISABLE_UPGRADE" Value="0"/>
     <ROW Property="AI_CLEAN_RESOURCES_UNINSTALL" Value="1"/>
     <ROW Property="AI_CLEAN_RESOURCES_USER_PROMPT_BASIC_UI" Value="0"/>
     <ROW Property="AI_CLEAN_RESOURCES_USER_PROMPT_FULL_UI" Value="0"/>
-    <ROW Property="AI_ExternalUiUninstallerName" MultiBuildValue="DefaultBuild:aiui"/>
+    <ROW Property="AI_EXTERNALUIUNINSTALLERNAME" MultiBuildValue="DefaultBuild:aiui"/>
     <ROW Property="AI_FINDEXE_TITLE" Value="Select the installation package for [|ProductName]" ValueLocId="AI.Property.FindExeTitle"/>
     <ROW Property="AI_PRODUCTNAME_ARP" Value="[|ProductName]"/>
     <ROW Property="AI_SHORTCUTSREG" Value="0|0|0|0|"/>
     <ROW Property="AI_STARTUP_SH" Type="4" MsiKey="AI_STARTUP_SH"/>
+    <ROW Property="AI_ThemeStyle" Value="head" MultiBuildValue="DefaultBuild:nohead" MsiKey="AI_ThemeStyle"/>
     <ROW Property="AI_UNINSTALLER" Value="msiexec.exe"/>
     <ROW Property="ALLUSERS" Value="2" MultiBuildValue="DefaultBuild:1"/>
+    <ROW Property="ARPCOMMENTS" Value="This installer database contains the logic and data required to install [|ProductName]."/>
     <ROW Property="ARPCONTACT" Value="support@liquidfolders.net"/>
     <ROW Property="ARPHELPLINK" Value="http://liquidfolders.net/support/"/>
     <ROW Property="ARPNOMODIFY" MultiBuildValue="DefaultBuild:1"/>
@@ -24,8 +27,9 @@
     <ROW Property="ARPURLINFOABOUT" Value="http://liquidfolders.net/"/>
     <ROW Property="ARPURLUPDATEINFO" Value="http://liquidfolders.net/download/"/>
     <ROW Property="AppLogoIcon" Value="AppLogo.ico" Type="1" MsiKey="AppLogoIcon"/>
-    <ROW Property="Background" Value="Backdrop1.bmp" Type="1" MsiKey="Background"/>
-    <ROW Property="CaptionBackground" Value="Backdrop2.bmp" Type="1"/>
+    <ROW Property="AppsShutdownOption" Value="None" ValueLocId="-" MsiKey="AppsShutdownOption"/>
+    <ROW Property="Background" Value="Backdrop1.png" Type="1" MsiKey="Background"/>
+    <ROW Property="CaptionBackground" Value="Backdrop2.png" Type="1"/>
     <ROW Property="CustomSetupIcon" Value="Install.ico" Type="1" MsiKey="CustomSetupIcon"/>
     <ROW Property="DefaultUIFont" Value="DlgFont11" Type="2" Options="65536" MsiKey="DefaultUIFont"/>
     <ROW Property="ExclamationIcon" Value="Warning.ico" Type="1" MsiKey="ExclamationIcon"/>
@@ -35,15 +39,20 @@
     <ROW Property="ProductCode" Value="1033:{5BD3EBE6-39B0-4FBE-A9D1-779AC5B39D41} 3082:{F4082187-0639-46C3-940D-7F83532B33DF} 1036:{1959D5C7-9501-4E6B-9144-1791B365F144} 1031:{ABC60143-EAF1-400F-B801-2AFCBB0054FC} " Type="16"/>
     <ROW Property="ProductLanguage" Value="1033"/>
     <ROW Property="ProductName" Value="liquidFOLDERS" ValueLocId="*"/>
-    <ROW Property="ProductVersion" Value="1.5.9"/>
+    <ROW Property="ProductVersion" Value="1.5.9" Type="32"/>
     <ROW Property="REBOOT" MultiBuildValue="DefaultBuild:Force"/>
     <ROW Property="RepairIcon" Value="Tools.ico" Type="1" MsiKey="RepairIcon"/>
     <ROW Property="SecureCustomProperties" Value="OLDPRODUCTS;AI_NEWERPRODUCTFOUND;AI_SETUPEXEPATH;SETUPEXEDIR"/>
     <ROW Property="UpgradeCode" Value="{67BB0890-A341-4E87-90D6-AEB28804E142}"/>
-    <ROW Property="WindowsFamily9X" MultiBuildValue="DefaultBuild:Windows 9x/ME" ValueLocId="-"/>
-    <ROW Property="WindowsFamilyNT64" MultiBuildValue="DefaultBuild:Windows XP/Vista/Windows7 x64" ValueLocId="-"/>
-    <ROW Property="WindowsTypeNT" MultiBuildValue="DefaultBuild:Windows XP x86 Service Pack 2" ValueLocId="-"/>
-    <ATTRIBUTE name="DeletedRows" value="ExitBackground@ShortcutLogoIcon@CompleteSetupIcon@InstallLogoIcon@OptionsLogoIcon@AI_CF_TITLE_TEXT_STYLE@WaitLogoItem@InstallerIcon@LicenseAgreeLogoIcon"/>
+    <ROW Property="WindowsType9X" MultiBuildValue="DefaultBuild:Windows 9x/ME" ValueLocId="-"/>
+    <ROW Property="WindowsType9XDisplay" MultiBuildValue="DefaultBuild:Windows 9x/ME" ValueLocId="-"/>
+    <ROW Property="WindowsTypeNT" MultiBuildValue="DefaultBuild:Windows 2000, Windows 2000 Service Pack 1, Windows 2000 Service Pack 2, Windows 2000 Service Pack 3, Windows 2000 Service Pack 4, Windows XP x86, Windows XP x86 Service Pack 1" ValueLocId="-"/>
+    <ROW Property="WindowsTypeNT40" MultiBuildValue="DefaultBuild:Windows NT 4.0" ValueLocId="-"/>
+    <ROW Property="WindowsTypeNT40Display" MultiBuildValue="DefaultBuild:Windows NT 4.0" ValueLocId="-"/>
+    <ROW Property="WindowsTypeNT64" MultiBuildValue="DefaultBuild:Windows XP/Vista/Windows 7/Windows 8 x64/Windows 8.1 x64" ValueLocId="-"/>
+    <ROW Property="WindowsTypeNT64Display" MultiBuildValue="DefaultBuild:Windows XP/Vista/Windows 7/Windows 8 x64/Windows 8.1 x64" ValueLocId="-"/>
+    <ROW Property="WindowsTypeNTDisplay" MultiBuildValue="DefaultBuild:Windows 2000, Windows 2000 Service Pack 1, Windows 2000 Service Pack 2, Windows 2000 Service Pack 3, Windows 2000 Service Pack 4, Windows XP x86, Windows XP x86 Service Pack 1" ValueLocId="-"/>
+    <ATTRIBUTE name="DeletedRows" value="MinBackground@ExitBackground@ShortcutLogoIcon@TabBackground@CompleteSetupIcon@InstallLogoIcon@OptionsLogoIcon@AI_CF_TITLE_TEXT_STYLE@WaitLogoItem@InstallerIcon@LicenseAgreeLogoIcon"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiDirsComponent">
     <ROW Directory="APPDIR" Directory_Parent="TARGETDIR" DefaultDir="APPDIR:." IsPseudoRoot="1"/>
@@ -57,8 +66,8 @@
     <ROW Directory="TARGETDIR" DefaultDir="SourceDir"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiCompsComponent">
-    <ROW Component="AI_CustomARPName" ComponentId="{95F2A88D-509C-4809-AA93-08DC13ED1CB1}" Directory_="APPDIR" Attributes="4" KeyPath="DisplayName" Options="1"/>
-    <ROW Component="AI_DisableModify" ComponentId="{DD31B056-8D31-4892-845F-B6BA2BFF92EA}" Directory_="APPDIR" Attributes="4" KeyPath="NoModify" Options="1"/>
+    <ROW Component="AI_CustomARPName" ComponentId="{95F2A88D-509C-4809-AA93-08DC13ED1CB1}" Directory_="APPDIR" Attributes="4" KeyPath="EstimatedSize" Options="1"/>
+    <ROW Component="AI_DisableModify" ComponentId="{8B0B11A9-7FCA-4F1D-A59D-C6D38E0837AA}" Directory_="APPDIR" Attributes="4" KeyPath="NoModify" Options="1"/>
     <ROW Component="LFCommDlg.dll" ComponentId="{EFEB7EE1-B3F4-433C-BF7B-3437F06605E1}" Directory_="APPDIR" Attributes="0" KeyPath="LFCommDlg.dll"/>
     <ROW Component="LFCore.dll" ComponentId="{9B505893-2785-4480-9EE6-750BCF0B75F5}" Directory_="SystemFolder" Attributes="0" KeyPath="LFCore.dll"/>
     <ROW Component="LFNamespaceExtension.dll" ComponentId="{C424FA2A-6FEB-4C17-9BAB-45716DF703A4}" Directory_="APPDIR" Attributes="0" KeyPath="LFNamespaceExtension.dll"/>
@@ -69,15 +78,15 @@
     <ROW Component="liquidFOLDERS" ComponentId="{408FDB56-26F6-420F-BBA4-20858FBA253B}" Directory_="APPDIR" Attributes="4" KeyPath="AIShRegAnswer"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiFeatsComponent">
-    <ROW Feature="liquidFOLDERS" Title="liquidFOLDERS" Description="liquidFOLDERS" Display="0" Level="1" Directory_="APPDIR" Attributes="24" Components="LFCommDlg.dll LFCore.dll LFNamespaceExtension.dll LFRunCmd.exe StoreManager.exe SHORTCUTDIR AI_CustomARPName AI_DisableModify Quick_Launch liquidFOLDERS"/>
+    <ROW Feature="liquidFOLDERS" Title="liquidFOLDERS" Description="liquidFOLDERS" Display="0" Level="1" Directory_="APPDIR" Attributes="24" Components="AI_CustomARPName AI_DisableModify LFCommDlg.dll LFCore.dll LFNamespaceExtension.dll LFRunCmd.exe Quick_Launch SHORTCUTDIR StoreManager.exe liquidFOLDERS"/>
     <ATTRIBUTE name="CurrentFeature" value="liquidFOLDERS"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiFilesComponent">
-    <ROW File="LFCommDlg.dll" Component_="LFCommDlg.dll" FileName="LFComm~1.dll|LFCommDlg.dll" Attributes="0" SourcePath="Release\Win32\LFCommDlg.dll" SelfReg="false" Sequence="1"/>
-    <ROW File="LFCore.dll" Component_="LFCore.dll" FileName="LFCore.dll" Attributes="0" SourcePath="Release\Win32\LFCore.dll" SelfReg="false" Sequence="2"/>
-    <ROW File="LFNamespaceExtension.dll" Component_="LFNamespaceExtension.dll" FileName="LFName~1.dll|LFNamespaceExtension.dll" Attributes="0" SourcePath="Release\Win32\LFNamespaceExtension.dll" SelfReg="false" Sequence="3"/>
-    <ROW File="LFRunCmd.exe" Component_="LFRunCmd.exe" FileName="LFRunCmd.exe" Attributes="0" SourcePath="Release\Win32\LFRunCmd.exe" SelfReg="false" Sequence="4"/>
-    <ROW File="StoreManager.exe" Component_="StoreManager.exe" FileName="StoreM~1.exe|StoreManager.exe" Attributes="0" SourcePath="Release\Win32\StoreManager.exe" SelfReg="false" Sequence="5"/>
+    <ROW File="LFCommDlg.dll" Component_="LFCommDlg.dll" FileName="LFComm~1.dll|LFCommDlg.dll" Attributes="0" SourcePath="Release\Win32\LFCommDlg.dll" SelfReg="false" NextFile="LFCore.dll"/>
+    <ROW File="LFCore.dll" Component_="LFCore.dll" FileName="LFCore.dll" Attributes="0" SourcePath="Release\Win32\LFCore.dll" SelfReg="false" NextFile="LFNamespaceExtension.dll"/>
+    <ROW File="LFNamespaceExtension.dll" Component_="LFNamespaceExtension.dll" FileName="LFName~1.dll|LFNamespaceExtension.dll" Attributes="0" SourcePath="Release\Win32\LFNamespaceExtension.dll" SelfReg="false" NextFile="LFRunCmd.exe"/>
+    <ROW File="LFRunCmd.exe" Component_="LFRunCmd.exe" FileName="LFRunCmd.exe" Attributes="0" SourcePath="Release\Win32\LFRunCmd.exe" SelfReg="false" NextFile="StoreManager.exe"/>
+    <ROW File="StoreManager.exe" Component_="StoreManager.exe" FileName="StoreM~1.exe|StoreManager.exe" Attributes="0" SourcePath="Release\Win32\StoreManager.exe" SelfReg="false"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.AiRemoveFileComponent">
     <ROW RemoveFile="_" Condition="(AI_CLEAN_RESOURCES_UNINSTALL = &quot;1&quot;) AND (NOT UPGRADINGPRODUCTCODE)" Options="3"/>
@@ -100,7 +109,7 @@
     <ROW RemoveReg="__13" InstallMode="2" Condition="(AI_CLEAN_RESOURCES_UNINSTALL = &quot;1&quot;)"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.BuildComponent">
-    <ROW BuildKey="DefaultBuild" BuildName="DefaultBuild" BuildOrder="1" BuildType="1" PackageFolder="." PackageFileName="liquidFOLDERS32" Languages="en;fr;de;es" LangOpt="1" InstallationType="2" CabsLocation="1" UseLzma="true" LzmaCompressionLevel="4" PackageType="1" FilesInsideExe="true" ExeIconPath="Setup\liquidFOLDERS.ico" ExtractionFolder="[AppDataFolder]\[|ProductName]\install" ExtUI="true" LangsDialog="true" UACExecutionLevel="2"/>
+    <ROW BuildKey="DefaultBuild" BuildName="DefaultBuild" BuildOrder="1" BuildType="1" PackageFolder="." PackageFileName="liquidFOLDERS32" Languages="en;fr;de;es" LangOpt="1" InstallationType="2" CabsLocation="1" UseLzma="true" LzmaMethod="2" LzmaCompressionLevel="4" PackageType="1" FilesInsideExe="true" ExeIconPath="Setup\liquidFOLDERS.ico" ExtractionFolder="[AppDataFolder]\[|ProductName]\install" ExtUI="true" UACExecutionLevel="2"/>
     <ATTRIBUTE name="CurrentBuild" value="DefaultBuild"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.CacheComponent">
@@ -118,22 +127,31 @@
   <COMPONENT cid="caphyon.advinst.msicomp.FragmentComponent">
     <ROW Fragment="CommonUI.aip" Path="&lt;AI_FRAGS&gt;CommonUI.aip"/>
     <ROW Fragment="LicenseAgreementDlg.aip" Path="&lt;AI_THEMES&gt;azure\fragments\LicenseAgreementDlg.aip"/>
+    <ROW Fragment="MaintenanceTypeDlg.aip" Path="&lt;AI_THEMES&gt;azure\fragments\MaintenanceTypeDlg.aip"/>
+    <ROW Fragment="MaintenanceWelcomeDlg.aip" Path="&lt;AI_THEMES&gt;azure\fragments\MaintenanceWelcomeDlg.aip"/>
     <ROW Fragment="SequenceDialogs.aip" Path="&lt;AI_THEMES&gt;azure\fragments\SequenceDialogs.aip"/>
     <ROW Fragment="Sequences.aip" Path="&lt;AI_FRAGS&gt;Sequences.aip"/>
     <ROW Fragment="ShortcutsDlg.aip" Path="&lt;AI_THEMES&gt;azure\fragments\ShortcutsDlg.aip"/>
     <ROW Fragment="StaticUIStrings.aip" Path="&lt;AI_FRAGS&gt;StaticUIStrings.aip"/>
     <ROW Fragment="UI.aip" Path="&lt;AI_THEMES&gt;azure\fragments\UI.aip"/>
     <ROW Fragment="Validation.aip" Path="&lt;AI_FRAGS&gt;Validation.aip"/>
+    <ROW Fragment="VerifyRemoveDlg.aip" Path="&lt;AI_THEMES&gt;azure\fragments\VerifyRemoveDlg.aip"/>
+    <ROW Fragment="VerifyRepairDlg.aip" Path="&lt;AI_THEMES&gt;azure\fragments\VerifyRepairDlg.aip"/>
+    <ROW Fragment="WelcomeDlg.aip" Path="&lt;AI_THEMES&gt;azure\fragments\WelcomeDlg.aip"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiActionTextComponent">
     <ROW Action="AI_AiRemoveFilesCommit" Description="Executing file removal operations." Template="Removing file: [1]" DescriptionLocId="ActionText.Description.AI_AiRemoveFilesCommit" TemplateLocId="ActionText.Template.AI_AiRemoveFilesCommit"/>
     <ROW Action="AI_AiRemoveFilesDeferred" Description="Executing file removal operations." Template="Removing file: [1]" DescriptionLocId="ActionText.Description.AI_AiRemoveFilesDeferred" TemplateLocId="ActionText.Template.AI_AiRemoveFilesDeferred"/>
+    <ROW Action="AI_AiRemoveFilesDeferred_Permanent" Description="Preparing files for removal" Template="Preparing file: [1]" DescriptionLocId="ActionText.Description.AI_AiRemoveFilesDeferred_Permanent" TemplateLocId="ActionText.Template.AI_AiRemoveFilesDeferred_Permanent"/>
+    <ROW Action="AI_AiRemoveFilesDeferred_Undoable" Description="Preparing files for removal" Template="Preparing file: [1]" DescriptionLocId="ActionText.Description.AI_AiRemoveFilesDeferred_Undoable" TemplateLocId="ActionText.Template.AI_AiRemoveFilesDeferred_Undoable"/>
     <ROW Action="AI_AiRemoveFilesImmediate" Description="Generating actions to remove files." DescriptionLocId="ActionText.Description.AI_AiRemoveFilesImmediate"/>
+    <ROW Action="AI_AiRemoveFilesRollback" Description="Restoring removed files" Template="Restoring file: [1]" DescriptionLocId="ActionText.Description.AI_AiRemoveFilesRollback" TemplateLocId="ActionText.Template.AI_AiRemoveFilesRollback"/>
     <ROW Action="AI_AiRemoveRegsCommit" Description="Executing registry removal operations." Template="Removing registry entry: [1]" DescriptionLocId="ActionText.Description.AI_AiRemoveRegsCommit" TemplateLocId="ActionText.Template.AI_AiRemoveRegsCommit"/>
     <ROW Action="AI_AiRemoveRegsDeferred" Description="Executing registry removal operations." Template="Removing registry entry: [1]" DescriptionLocId="ActionText.Description.AI_AiRemoveRegsDeferred" TemplateLocId="ActionText.Template.AI_AiRemoveRegsDeferred"/>
     <ROW Action="AI_AiRemoveRegsImmediate" Description="Generating actions to remove registry entries." DescriptionLocId="ActionText.Description.AI_AiRemoveRegsImmediate"/>
     <ROW Action="AI_DeleteLzma" Description="Deleting files extracted from archive" DescriptionLocId="ActionText.Description.AI_DeleteLzma" TemplateLocId="-"/>
     <ROW Action="AI_DeleteRLzma" Description="Deleting files extracted from archive" DescriptionLocId="ActionText.Description.AI_DeleteLzma" TemplateLocId="-"/>
+    <ROW Action="AI_ExtractFiles" Description="Extracting files from archive" DescriptionLocId="ActionText.Description.AI_ExtractLzma" TemplateLocId="-"/>
     <ROW Action="AI_ExtractLzma" Description="Extracting files from archive" DescriptionLocId="ActionText.Description.AI_ExtractLzma" TemplateLocId="-"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiAppSearchComponent">
@@ -144,11 +162,12 @@
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiBinaryComponent">
     <ROW Name="AppLogo.ico" SourcePath="Setup\AppLogo.ico"/>
-    <ROW Name="Backdrop1.bmp" SourcePath="Setup\Backdrop1.bmp"/>
-    <ROW Name="Backdrop2.bmp" SourcePath="Setup\Backdrop2.bmp"/>
+    <ROW Name="Backdrop1.png" SourcePath="Setup\Backdrop1.png"/>
+    <ROW Name="Backdrop2.png" SourcePath="Setup\Backdrop2.png"/>
     <ROW Name="ExternalUICleaner.dll" SourcePath="&lt;AI_CUSTACTS&gt;ExternalUICleaner.dll"/>
     <ROW Name="Info.ico" SourcePath="Setup\Info.ico"/>
     <ROW Name="Install.ico" SourcePath="Setup\Install.ico"/>
+    <ROW Name="Prereq.dll" SourcePath="&lt;AI_CUSTACTS&gt;Prereq.dll"/>
     <ROW Name="ResourceCleaner.dll" SourcePath="&lt;AI_CUSTACTS&gt;ResourceCleaner.dll"/>
     <ROW Name="Tools.ico" SourcePath="Setup\Tools.ico"/>
     <ROW Name="Warning.ico" SourcePath="Setup\Warning.ico"/>
@@ -160,193 +179,190 @@
     <ROW Property="AI_STARTUP_SH" MsiKey="AI_STARTUP_SH"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiControlComponent">
-    <ROW Dialog_="AdminBrowseDlg" Control="Title" Type="Text" X="30" Y="6" Width="390" Height="40" Attributes="196611" Text="Change current destination folder" TextStyle="TitleFont" Control_Next="Bitmap" TextLocId="Control.Text.AdminBrowseDlg#Title" MsiKey="AdminBrowseDlg#Title"/>
-    <ROW Dialog_="AdminBrowseDlg" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1" Text="[CaptionBackground]" Control_Next="PathEdit" MsiKey="AdminBrowseDlg#Bitmap"/>
-    <ROW Dialog_="AdminInstallPointDlg" Control="Back" Type="PushButton" X="321" Y="333" Width="56" Height="18" Attributes="3" Text="[ButtonText_Back]" TextStyle="DlgFont8" Control_Next="Next" TextLocId="-" MsiKey="AdminInstallPointDlg#Back"/>
-    <ROW Dialog_="AdminInstallPointDlg" Control="Next" Type="PushButton" X="385" Y="333" Width="56" Height="18" Attributes="3" Text="[ButtonText_Next]" TextStyle="DlgFont8" Control_Next="Cancel" TextLocId="-" MsiKey="AdminInstallPointDlg#Next"/>
-    <ROW Dialog_="AdminInstallPointDlg" Control="Title" Type="Text" X="30" Y="6" Width="390" Height="40" Attributes="196611" Text="Select a network location for the server image of [ProductName] product" TextStyle="TitleFont" Control_Next="Bitmap" TextLocId="Azure.Control.Text.AdminInstallPointDlg#Title" MsiKey="AdminInstallPointDlg#Title"/>
-    <ROW Dialog_="AdminInstallPointDlg" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1" Text="[CaptionBackground]" Control_Next="Text" MsiKey="AdminInstallPointDlg#Bitmap"/>
-    <ROW Dialog_="AdminRegistrationDlg" Control="Back" Type="PushButton" X="321" Y="333" Width="56" Height="18" Attributes="65539" Text="[ButtonText_Back]" Control_Next="Next" TextLocId="-" MsiKey="AdminRegistrationDlg#Back"/>
-    <ROW Dialog_="AdminRegistrationDlg" Control="Next" Type="PushButton" X="385" Y="333" Width="56" Height="18" Attributes="3" Text="[ButtonText_Next]" Control_Next="Cancel" TextLocId="-" MsiKey="AdminRegistrationDlg#Next"/>
-    <ROW Dialog_="AdminRegistrationDlg" Control="Title" Type="Text" X="30" Y="6" Width="390" Height="40" Attributes="196611" Text="Company Information" TextStyle="TitleFont" Control_Next="Bitmap" TextLocId="Control.Text.AdminRegistrationDlg#Title" MsiKey="AdminRegistrationDlg#Title"/>
-    <ROW Dialog_="AdminRegistrationDlg" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1048577" Text="[Background]" Control_Next="OrganizationLabel" MsiKey="AdminRegistrationDlg#Bitmap"/>
-    <ROW Dialog_="AdminWelcomeDlg" Control="Back" Type="PushButton" X="321" Y="333" Width="56" Height="18" Attributes="2" Text="[ButtonText_Back]" TextStyle="DlgFont8" Control_Next="Description" TextLocId="-" MsiKey="AdminWelcomeDlg#Back"/>
-    <ROW Dialog_="AdminWelcomeDlg" Control="Description" Type="Text" X="30" Y="250" Width="390" Height="60" Attributes="196611" Text="The [Wizard] will create a server image of [ProductName], at a specified network location.  Click Next to continue or close the window to exit the [Wizard]." Control_Next="DialogIcon" TextLocId="Control.Text.AdminWelcomeDlg#DescriptionNoClose" MsiKey="AdminWelcomeDlg#Description"/>
-    <ROW Dialog_="AdminWelcomeDlg" Control="Next" Type="PushButton" X="385" Y="333" Width="56" Height="18" Attributes="3" Text="[ButtonText_Next]" TextStyle="DlgFont8" Control_Next="Cancel" TextLocId="-" MsiKey="AdminWelcomeDlg#Next"/>
-    <ROW Dialog_="BrowseDlg" Control="Title" Type="Text" X="30" Y="6" Width="390" Height="40" Attributes="196611" Text="Change current destination folder" TextStyle="TitleFont" Control_Next="Bitmap" TextLocId="Control.Text.BrowseDlg#Title" MsiKey="BrowseDlg#Title"/>
-    <ROW Dialog_="BrowseDlg" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1" Text="[CaptionBackground]" Control_Next="PathEdit" MsiKey="BrowseDlg#Bitmap"/>
-    <ROW Dialog_="CustomizeDlg" Control="Back" Type="PushButton" X="321" Y="333" Width="56" Height="18" Attributes="3" Text="[ButtonText_Back]" TextStyle="DlgFont8" Control_Next="Next" TextLocId="-" MsiKey="CustomizeDlg#Back"/>
-    <ROW Dialog_="CustomizeDlg" Control="Next" Type="PushButton" X="385" Y="333" Width="56" Height="18" Attributes="3" Text="[ButtonText_Next]" TextStyle="DlgFont8" Control_Next="Cancel" TextLocId="-" MsiKey="CustomizeDlg#Next"/>
-    <ROW Dialog_="CustomizeDlg" Control="Title" Type="Text" X="30" Y="6" Width="390" Height="40" Attributes="196611" Text="Custom Setup" TextStyle="TitleFont" Control_Next="Text" TextLocId="Control.Text.CustomizeDlg#Title" MsiKey="CustomizeDlg#Title"/>
-    <ROW Dialog_="CustomizeDlg" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1" Text="[CaptionBackground]" Control_Next="Back" MsiKey="CustomizeDlg#Bitmap"/>
-    <ROW Dialog_="CustomizeDlg" Control="QuickSelectionTree" Type="QuickSelectionTree" X="30" Y="110" Width="390" Height="130" Attributes="3" Property="_BrowseProperty" Text="QuickSelectionTree" TextStyle="DlgFont8" Control_Next="Bitmap" MsiKey="CustomizeDlg#QuickSelectionTree" ExtType="QuickSelectionTree"/>
-    <ROW Dialog_="DiskCostDlg" Control="Title" Type="Text" X="30" Y="6" Width="390" Height="40" Attributes="196611" Text="Disk space required for the selected features" TextStyle="TitleFont" Control_Next="Text" TextLocId="Azure.Control.Text.DiskCostDlg#Title" MsiKey="DiskCostDlg#Title"/>
-    <ROW Dialog_="DiskCostDlg" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1" Text="[CaptionBackground]" Control_Next="OK" MsiKey="DiskCostDlg#Bitmap"/>
-    <ROW Dialog_="ExitDialog" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1" Text="[Background]" Control_Next="Finish" MsiKey="ExitDialog#Bitmap"/>
-    <ROW Dialog_="ExitDialog" Control="Back" Type="PushButton" X="321" Y="333" Width="56" Height="18" Attributes="0" Text="[ButtonText_Back]" TextStyle="DlgFont8" Control_Next="DialogIcon" TextLocId="-" MsiKey="ExitDialog#Back"/>
-    <ROW Dialog_="FatalError" Control="Back" Type="PushButton" X="321" Y="333" Width="56" Height="18" Attributes="2" Text="[ButtonText_Back]" TextStyle="DlgFont8" Control_Next="Description2" TextLocId="-" MsiKey="FatalError#Back"/>
-    <ROW Dialog_="FatalError" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1" Text="[CaptionBackground]" Control_Next="Finish" MsiKey="FatalError#Bitmap"/>
-    <ROW Dialog_="FatalError" Control="Finish" Type="PushButton" X="385" Y="333" Width="56" Height="18" Attributes="3" Text="[ButtonText_Finish]" TextStyle="DlgFont8" Control_Next="Cancel" TextLocId="-" MsiKey="FatalError#Finish"/>
-    <ROW Dialog_="FatalError" Control="Title" Type="Text" X="30" Y="6" Width="390" Height="40" Attributes="196611" Text="The [ProductName] [Wizard] ended prematurely" TextStyle="TitleFont" Control_Next="Bitmap" TextLocId="Control.Text.FatalError#Title" MsiKey="FatalError#Title"/>
-    <ROW Dialog_="FilesInUse" Control="Title" Type="Text" X="30" Y="6" Width="390" Height="40" Attributes="196611" Text="Some files that need to be updated are currently in use" TextStyle="TitleFont" Control_Next="Text" TextLocId="Azure.Control.Text.FilesInUse#Title" MsiKey="FilesInUse#Title"/>
-    <ROW Dialog_="FilesInUse" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1" Text="[CaptionBackground]" Control_Next="Retry" MsiKey="FilesInUse#Bitmap"/>
-    <ROW Dialog_="MaintenanceTypeDlg" Control="Back" Type="PushButton" X="321" Y="333" Width="56" Height="18" Attributes="3" Text="[ButtonText_Back]" TextStyle="DlgFont8" Control_Next="Next" TextLocId="-" MsiKey="MaintenanceTypeDlg#Back"/>
-    <ROW Dialog_="MaintenanceTypeDlg" Control="Title" Type="Text" X="30" Y="6" Width="390" Height="40" Attributes="196611" Text="Change your installation of [ProductName]" TextStyle="TitleFont" Control_Next="RemoveCommand" TextLocId="Azure.Control.Text.MaintenanceTypeDlg#Title" MsiKey="MaintenanceTypeDlg#Title"/>
-    <ROW Dialog_="MaintenanceTypeDlg" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1" Text="[CaptionBackground]" Control_Next="ChangeLabel" MsiKey="MaintenanceTypeDlg#Bitmap"/>
-    <ROW Dialog_="MaintenanceTypeDlg" Control="ModifyCommand" Type="CommandLinkButton" X="30" Y="100" Width="390" Height="48" Attributes="6815747" Text="[CustomSetupIcon]" Control_Next="Bitmap" Help="Change which features are installed.|" HelpLocId="Azure.Control.Help.MaintenanceTypeDlg#ModifyCommand" MsiKey="MaintenanceTypeDlg#ModifyCommand" ExtType="CommandLinkButton" ExtData="Add or Remove Features"/>
-    <ROW Dialog_="MaintenanceWelcomeDlg" Control="Back" Type="PushButton" X="321" Y="333" Width="56" Height="18" Attributes="2" Text="[ButtonText_Back]" TextStyle="DlgFont8" Control_Next="Description" TextLocId="-" MsiKey="MaintenanceWelcomeDlg#Back"/>
-    <ROW Dialog_="MaintenanceWelcomeDlg" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1" Text="[Background]" Control_Next="Next" MsiKey="MaintenanceWelcomeDlg#Bitmap"/>
-    <ROW Dialog_="MaintenanceWelcomeDlg" Control="Description" Type="Text" X="30" Y="250" Width="390" Height="60" Attributes="196611" Text="The [Wizard] will allow you to change the way [ProductName] features are installed on your computer or even to remove [ProductName] from your computer.  Click Next to continue or close the window to exit the [Wizard]." Control_Next="DialogIcon" TextLocId="Control.Text.MaintenanceWelcomeDlg#DescriptionNoClose" MsiKey="MaintenanceWelcomeDlg#Description"/>
-    <ROW Dialog_="MaintenanceWelcomeDlg" Control="Next" Type="PushButton" X="385" Y="333" Width="56" Height="18" Attributes="3" Text="[ButtonText_Next]" TextStyle="DlgFont8" Control_Next="Cancel" TextLocId="-" MsiKey="MaintenanceWelcomeDlg#Next"/>
-    <ROW Dialog_="OutOfDiskDlg" Control="Title" Type="Text" X="30" Y="6" Width="390" Height="40" Attributes="196611" Text="Disk space required for the installation exceeds available disk space" TextStyle="TitleFont" Control_Next="Text" TextLocId="Azure.Control.Text.OutOfDiskDlg#Title" MsiKey="OutOfDiskDlg#Title"/>
-    <ROW Dialog_="OutOfDiskDlg" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1" Text="[CaptionBackground]" Control_Next="OK" MsiKey="OutOfDiskDlg#Bitmap"/>
-    <ROW Dialog_="OutOfRbDiskDlg" Control="Title" Type="Text" X="30" Y="6" Width="390" Height="40" Attributes="196611" Text="Disk space required for the installation exceeds available disk space" TextStyle="TitleFont" Control_Next="OK" TextLocId="Azure.Control.Text.OutOfRbDiskDlg#Title" MsiKey="OutOfRbDiskDlg#Title"/>
-    <ROW Dialog_="OutOfRbDiskDlg" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1" Text="[CaptionBackground]" Control_Next="Text2" MsiKey="OutOfRbDiskDlg#Bitmap"/>
-    <ROW Dialog_="PrepareDlg" Control="Back" Type="PushButton" X="321" Y="333" Width="56" Height="18" Attributes="2" Text="[ButtonText_Back]" TextStyle="DlgFont8" Control_Next="Description" TextLocId="-" MsiKey="PrepareDlg#Back"/>
-    <ROW Dialog_="PrepareDlg" Control="Next" Type="PushButton" X="385" Y="333" Width="56" Height="18" Attributes="2" Text="[ButtonText_Next]" TextStyle="DlgFont8" Control_Next="Back" TextLocId="-" MsiKey="PrepareDlg#Next"/>
-    <ROW Dialog_="ProgressDlg" Control="Back" Type="PushButton" X="321" Y="333" Width="56" Height="18" Attributes="2" Text="[ButtonText_Back]" TextStyle="DlgFont8" Control_Next="Next" TextLocId="-" MsiKey="ProgressDlg#Back"/>
-    <ROW Dialog_="ProgressDlg" Control="Next" Type="PushButton" X="385" Y="333" Width="56" Height="18" Attributes="2" Text="[ButtonText_Next]" TextStyle="DlgFont8" Control_Next="Cancel" TextLocId="-" MsiKey="ProgressDlg#Next"/>
-    <ROW Dialog_="ProgressDlg" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1" Text="[Background]" Control_Next="Back" MsiKey="ProgressDlg#Bitmap"/>
-    <ROW Dialog_="ResumeDlg" Control="Back" Type="PushButton" X="321" Y="333" Width="56" Height="18" Attributes="2" Text="[ButtonText_Back]" TextStyle="DlgFont8" Control_Next="Description" TextLocId="-" MsiKey="ResumeDlg#Back"/>
-    <ROW Dialog_="ResumeDlg" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1" Text="[Background]" Control_Next="Install" MsiKey="ResumeDlg#Bitmap"/>
-    <ROW Dialog_="ResumeDlg" Control="Description" Type="Text" X="30" Y="250" Width="390" Height="60" Attributes="196611" Text="The [Wizard] will complete the installation of [ProductName] on your computer.  Click Install to continue or close the window to exit the [Wizard]." Control_Next="DialogIcon" TextLocId="Control.Text.ResumeDlg#DescriptionNoClose" MsiKey="ResumeDlg#Description"/>
-    <ROW Dialog_="ResumeDlg" Control="Install" Type="PushButton" X="385" Y="333" Width="56" Height="18" Attributes="3" Text="[ButtonText_Install]" TextStyle="DlgFont8" Control_Next="Cancel" TextLocId="-" MsiKey="ResumeDlg#Install"/>
-    <ROW Dialog_="UserExit" Control="Back" Type="PushButton" X="321" Y="333" Width="56" Height="18" Attributes="2" Text="[ButtonText_Back]" TextStyle="DlgFont8" Control_Next="Title" TextLocId="-" MsiKey="UserExit#Back"/>
-    <ROW Dialog_="UserExit" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1" Text="[CaptionBackground]" Control_Next="Finish" MsiKey="UserExit#Bitmap"/>
-    <ROW Dialog_="UserExit" Control="Finish" Type="PushButton" X="385" Y="333" Width="56" Height="18" Attributes="3" Text="[ButtonText_Finish]" TextStyle="DlgFont8" Control_Next="Cancel" TextLocId="-" MsiKey="UserExit#Finish"/>
-    <ROW Dialog_="UserExit" Control="Title" Type="Text" X="30" Y="6" Width="390" Height="40" Attributes="196611" Text="The [ProductName] [Wizard] was interrupted" TextStyle="TitleFont" Control_Next="Description2" TextLocId="Control.Text.UserExit#Title" MsiKey="UserExit#Title"/>
-    <ROW Dialog_="VerifyReadyDlg" Control="Back" Type="PushButton" X="321" Y="333" Width="56" Height="18" Attributes="3" Text="[ButtonText_Back]" TextStyle="DlgFont8" Control_Next="Text" TextLocId="-" MsiKey="VerifyReadyDlg#Back"/>
-    <ROW Dialog_="VerifyReadyDlg" Control="Install" Type="PushButton" X="385" Y="333" Width="56" Height="18" Attributes="3" Text="[ButtonText_Install]" TextStyle="DlgFont8" Control_Next="Cancel" TextLocId="-" MsiKey="VerifyReadyDlg#Install"/>
-    <ROW Dialog_="VerifyReadyDlg" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1" Text="[Background]" Control_Next="Install" MsiKey="VerifyReadyDlg#Bitmap"/>
-    <ROW Dialog_="VerifyRemoveDlg" Control="Back" Type="PushButton" X="321" Y="333" Width="56" Height="18" Attributes="3" Text="[ButtonText_Back]" Control_Next="Remove" TextLocId="-" MsiKey="VerifyRemoveDlg#Back"/>
-    <ROW Dialog_="VerifyRemoveDlg" Control="Title" Type="Text" X="30" Y="6" Width="390" Height="40" Attributes="196611" Text="Begin remove of [ProductName]" TextStyle="TitleFont" Control_Next="Text" TextLocId="Azure.Control.Text.VerifyRemoveDlg#Title" MsiKey="VerifyRemoveDlg#Title"/>
-    <ROW Dialog_="VerifyRemoveDlg" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1048577" Text="[Background]" Control_Next="Back" MsiKey="VerifyRemoveDlg#Bitmap"/>
-    <ROW Dialog_="VerifyRepairDlg" Control="Back" Type="PushButton" X="321" Y="333" Width="56" Height="18" Attributes="3" Text="[ButtonText_Back]" Control_Next="Title" TextLocId="-" MsiKey="VerifyRepairDlg#Back"/>
-    <ROW Dialog_="VerifyRepairDlg" Control="Title" Type="Text" X="30" Y="6" Width="390" Height="40" Attributes="196611" Text="Begin repair of [ProductName]" TextStyle="TitleFont" Control_Next="Text" TextLocId="Azure.Control.Text.VerifyRepairDlg#Title" MsiKey="VerifyRepairDlg#Title"/>
-    <ROW Dialog_="VerifyRepairDlg" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1048577" Text="[Background]" Control_Next="Repair" MsiKey="VerifyRepairDlg#Bitmap"/>
-    <ROW Dialog_="WelcomeDlg" Control="Back" Type="PushButton" X="321" Y="333" Width="56" Height="18" Attributes="2" Text="[ButtonText_Back]" TextStyle="DlgFont8" Control_Next="Description" TextLocId="-" MsiKey="WelcomeDlg#Back"/>
-    <ROW Dialog_="WelcomeDlg" Control="Description" Type="Text" X="30" Y="250" Width="390" Height="60" Attributes="196611" Text="The [Wizard] will install [ProductName] on your computer. Click Next to continue or close the window to exit the [Wizard]." Control_Next="Bitmap" TextLocId="Control.Text.WelcomeDlg#DescriptionNoClose" MsiKey="WelcomeDlg#Description"/>
-    <ROW Dialog_="WelcomeDlg" Control="Next" Type="PushButton" X="385" Y="333" Width="56" Height="18" Attributes="3" Text="[ButtonText_Next]" TextStyle="DlgFont8" Control_Next="Cancel" TextLocId="-" MsiKey="WelcomeDlg#Next"/>
-    <ROW Dialog_="WelcomeDlg" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1" Text="[Background]" Control_Next="DialogIcon" MsiKey="WelcomeDlg#Bitmap"/>
-    <ROW Dialog_="PatchWelcomeDlg" Control="Back" Type="PushButton" X="321" Y="333" Width="56" Height="18" Attributes="2" Text="[ButtonText_Back]" TextStyle="DlgFont8" Control_Next="Description" TextLocId="-" MsiKey="PatchWelcomeDlg#Back"/>
-    <ROW Dialog_="PatchWelcomeDlg" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1" Text="[Background]" Control_Next="Next" MsiKey="PatchWelcomeDlg#Bitmap"/>
-    <ROW Dialog_="PatchWelcomeDlg" Control="Description" Type="Text" X="30" Y="250" Width="390" Height="60" Attributes="196611" Text="The [Wizard] will install the Patch for [ProductName] on your computer.  Click Next to continue or close the window to exit the Patch [Wizard]." Control_Next="DialogIcon" TextLocId="Control.Text.PatchWelcomeDlg#DescriptionNoClose" MsiKey="PatchWelcomeDlg#Description"/>
-    <ROW Dialog_="PatchWelcomeDlg" Control="Next" Type="PushButton" X="385" Y="333" Width="56" Height="18" Attributes="3" Text="[ButtonText_Next]" TextStyle="DlgFont8" Control_Next="Cancel" TextLocId="-" MsiKey="PatchWelcomeDlg#Next"/>
-    <ROW Dialog_="MsiRMFilesInUse" Control="Title" Type="Text" X="30" Y="6" Width="390" Height="40" Attributes="196611" Text="Some files that need to be updated are currently in use" TextStyle="TitleFont" Control_Next="Bitmap" TextLocId="Azure.Control.Text.MsiRMFilesInUse#Title" MsiKey="MsiRMFilesInUse#Title"/>
-    <ROW Dialog_="MsiRMFilesInUse" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1" Text="[CaptionBackground]" Control_Next="OK" MsiKey="MsiRMFilesInUse#Bitmap"/>
-    <ROW Dialog_="AdminInstallPointDlg" Control="Browse" Type="PushButton" X="330" Y="175" Width="90" Height="18" Attributes="3" Text="[ButtonText_Browse]" TextStyle="DlgFont8" Control_Next="Back" TextLocId="-" MsiKey="AdminInstallPointDlg#Browse"/>
-    <ROW Dialog_="AdminInstallPointDlg" Control="PathEdit" Type="PathEdit" X="30" Y="150" Width="390" Height="18" Attributes="3" Property="TARGETDIR" TextStyle="DlgFont8" Control_Next="Browse" MsiKey="AdminInstallPointDlg#PathEdit"/>
-    <ROW Dialog_="AdminInstallPointDlg" Control="Text" Type="Text" X="30" Y="130" Width="390" Height="15" Attributes="65539" Text="&amp;Enter a new network location or click &quot;Browse&quot; to browse to one." Control_Next="PathEdit" TextLocId="Control.Text.AdminInstallPointDlg#Text" MsiKey="AdminInstallPointDlg#Text"/>
-    <ROW Dialog_="MaintenanceTypeDlg" Control="Cancel" Type="PushButton" X="450" Y="0" Width="0" Height="0" Attributes="2" Text="[ButtonText_Cancel]" Control_Next="Title" TextLocId="-" MsiKey="MaintenanceTypeDlg#Cancel"/>
-    <ROW Dialog_="PrepareDlg" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1" Text="[Background]" Control_Next="Cancel" MsiKey="PrepareDlg#Bitmap"/>
-    <ROW Dialog_="PrepareDlg" Control="Description" Type="Text" X="30" Y="250" Width="390" Height="60" Attributes="196611" Text="Please wait while the [Wizard] prepares to guide you through the installation." Control_Next="DialogIcon" TextLocId="Azure.Control.Text.PrepareDlg#Description" MsiKey="PrepareDlg#Description"/>
-    <ROW Dialog_="ProgressDlg" Control="ProgressBar" Type="ProgressBar" X="30" Y="245" Width="390" Height="16" Attributes="65537" Text="Progress done" Control_Next="Description" TextLocId="Control.Text.ProgressDlg#ProgressBar" MsiKey="ProgressDlg#ProgressBar"/>
-    <ROW Dialog_="ProgressDlg" Control="Description" Type="Text" X="30" Y="265" Width="390" Height="15" Attributes="65539" Text="Installing [ProductName]..." Control_Next="ActionText" TextLocId="Azure.Control.Text.ProgressDlg#Description" MsiKey="ProgressDlg#Description"/>
-    <ROW Dialog_="VerifyReadyDlg" Control="Text" Type="Text" X="30" Y="250" Width="390" Height="60" Attributes="65539" Text="Click Install to begin the installation.  If you want to review or change any of your installation settings, click Back.  Close the window to exit the wizard." Control_Next="DialogIcon" TextLocId="Control.Text.VerifyReadyDlg#TextNoClose" MsiKey="VerifyReadyDlg#Text"/>
-    <ROW Dialog_="WelcomeDlg" Control="DialogIcon" Type="Icon" X="177" Y="130" Width="96" Height="96" Attributes="1048577" Text="[AppLogoIcon]" Control_Next="Next" MsiKey="WelcomeDlg#DialogIcon"/>
-    <ROW Dialog_="ShortcutsDlg" Control="Back" Type="PushButton" X="321" Y="333" Width="56" Height="18" Attributes="3" Text="[ButtonText_Back]" TextStyle="DlgFont8" Control_Next="DesktopShortcutsCheckBox" TextLocId="-" MsiKey="ShortcutsDlg#Back"/>
-    <ROW Dialog_="ShortcutsDlg" Control="Next" Type="PushButton" X="385" Y="333" Width="56" Height="18" Attributes="3" Text="[ButtonText_Next]" TextStyle="DlgFont8" Control_Next="Cancel" TextLocId="-" MsiKey="ShortcutsDlg#Next"/>
-    <ROW Dialog_="ShortcutsDlg" Control="DesktopShortcutsCheckBox" Type="CheckBox" X="30" Y="234" Width="390" Height="16" Attributes="3" Property="AI_DESKTOP_SH" Text="Desktop" Control_Next="StartmenuShortcutsCheckBox" TextLocId="Control.Text.ShortcutsDlg#DesktopShortcutsCheckBox" MsiKey="ShortcutsDlg#DesktopShortcutsCheckBox"/>
-    <ROW Dialog_="ShortcutsDlg" Control="StartmenuShortcutsCheckBox" Type="CheckBox" X="30" Y="252" Width="390" Height="16" Attributes="3" Property="AI_STARTMENU_SH" Text="Start Menu Programs folder" Control_Next="QuickLaunchShorcutsCheckBox" TextLocId="Control.Text.ShortcutsDlg#StartmenuShortcutsCheckBox" MsiKey="ShortcutsDlg#StartmenuShortcutsCheckBox"/>
-    <ROW Dialog_="ShortcutsDlg" Control="QuickLaunchShorcutsCheckBox" Type="CheckBox" X="30" Y="270" Width="390" Height="16" Attributes="3" Property="AI_QUICKLAUNCH_SH" Text="Quick Launch toolbar" Control_Next="ShortcutsDlgText" TextLocId="Control.Text.ShortcutsDlg#QuickLaunchShorcutsCheckBox" MsiKey="ShortcutsDlg#QuickLaunchShorcutsCheckBox"/>
-    <ROW Dialog_="ShortcutsDlg" Control="StartupShorcutsCheckBox" Type="CheckBox" X="30" Y="288" Width="390" Height="16" Attributes="3" Property="AI_STARTUP_SH" Text="Startup folder" Control_Next="Next" TextLocId="Control.Text.ShortcutsDlg#StartupShorcutsCheckBox" MsiKey="ShortcutsDlg#StartupShorcutsCheckBox"/>
-    <ROW Dialog_="ShortcutsDlg" Control="ShortcutsDlgText" Type="Text" X="30" Y="200" Width="390" Height="30" Attributes="65539" Text="Create shortcuts for [ProductName] in the following locations:" Control_Next="Bitmap" TextLocId="Control.Text.ShortcutsDlg#ShortcutsDlgText" MsiKey="ShortcutsDlg#ShortcutsDlgText"/>
-    <ROW Dialog_="ShortcutsDlg" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1" Text="[Background]" Control_Next="StartupShorcutsCheckBox" MsiKey="ShortcutsDlg#Bitmap"/>
-    <ROW Dialog_="AdminBrowseDlg" Control="ComboLabel" Type="Text" X="30" Y="70" Width="80" Height="15" Attributes="65539" Text="&amp;Look in:" Control_Next="DirectoryCombo" TextLocId="Control.Text.AdminBrowseDlg#ComboLabel" MsiKey="AdminBrowseDlg#ComboLabel"/>
-    <ROW Dialog_="AdminBrowseDlg" Control="DirectoryCombo" Type="DirectoryCombo" X="110" Y="70" Width="258" Height="17" Attributes="458755" Property="TARGETDIR" TextStyle="DlgFont8" Control_Next="Up" MsiKey="AdminBrowseDlg#DirectoryCombo"/>
-    <ROW Dialog_="AdminBrowseDlg" Control="DirectoryList" Type="DirectoryList" X="30" Y="95" Width="390" Height="170" Attributes="7" Property="TARGETDIR" TextStyle="DlgFont8" Control_Next="PathLabel" MsiKey="AdminBrowseDlg#DirectoryList"/>
-    <ROW Dialog_="AdminBrowseDlg" Control="NewFolder" Type="PushButton" X="399" Y="67" Width="21" Height="21" Attributes="3670019" Text="[NewDirIcon]" Control_Next="DirectoryList" Help="Create A New Folder|" HelpLocId="Control.Help.AdminBrowseDlg#NewFolder" MsiKey="AdminBrowseDlg#NewFolder"/>
-    <ROW Dialog_="AdminBrowseDlg" Control="PathEdit" Type="PathEdit" X="115" Y="273" Width="305" Height="17" Attributes="3" Property="TARGETDIR" TextStyle="DlgFont8" Control_Next="OK" MsiKey="AdminBrowseDlg#PathEdit"/>
-    <ROW Dialog_="AdminBrowseDlg" Control="Up" Type="PushButton" X="374" Y="67" Width="21" Height="21" Attributes="3670019" Text="[UpDirIcon]" Control_Next="NewFolder" Help="Up One Level|" HelpLocId="Control.Help.AdminBrowseDlg#Up" MsiKey="AdminBrowseDlg#Up"/>
-    <ROW Dialog_="BrowseDlg" Control="ComboLabel" Type="Text" X="30" Y="70" Width="80" Height="15" Attributes="65539" Text="&amp;Look in:" Control_Next="DirectoryCombo" TextLocId="Control.Text.BrowseDlg#ComboLabel" MsiKey="BrowseDlg#ComboLabel"/>
-    <ROW Dialog_="BrowseDlg" Control="DirectoryCombo" Type="DirectoryCombo" X="110" Y="70" Width="258" Height="17" Attributes="393227" Property="_BrowseProperty" TextStyle="DlgFont8" Control_Next="Up" MsiKey="BrowseDlg#DirectoryCombo"/>
-    <ROW Dialog_="BrowseDlg" Control="DirectoryList" Type="DirectoryList" X="30" Y="95" Width="390" Height="170" Attributes="15" Property="_BrowseProperty" TextStyle="DlgFont8" Control_Next="PathLabel" MsiKey="BrowseDlg#DirectoryList"/>
-    <ROW Dialog_="BrowseDlg" Control="NewFolder" Type="PushButton" X="399" Y="67" Width="21" Height="21" Attributes="3670019" Text="[NewDirIcon]" Control_Next="DirectoryList" Help="Create A New Folder|" HelpLocId="Control.Help.BrowseDlg#NewFolder" MsiKey="BrowseDlg#NewFolder"/>
-    <ROW Dialog_="BrowseDlg" Control="PathEdit" Type="PathEdit" X="115" Y="273" Width="305" Height="17" Attributes="11" Property="_BrowseProperty" TextStyle="DlgFont8" Control_Next="OK" MsiKey="BrowseDlg#PathEdit"/>
-    <ROW Dialog_="BrowseDlg" Control="Up" Type="PushButton" X="374" Y="67" Width="21" Height="21" Attributes="3670019" Text="[UpDirIcon]" Control_Next="NewFolder" Help="Up One Level|" HelpLocId="Control.Help.BrowseDlg#Up" MsiKey="BrowseDlg#Up"/>
-    <ROW Dialog_="CustomizeDlg" Control="Text" Type="Text" X="30" Y="70" Width="390" Height="40" Attributes="196611" Text="Select which components of [ProductName] will be installed" Control_Next="ItemDescription" TextLocId="Azure.Control.Text.CustomizeDlg#Text" MsiKey="CustomizeDlg#Text"/>
-    <ROW Dialog_="CustomizeDlg" Control="ItemDescription" Type="Text" X="30" Y="245" Width="390" Height="20" Attributes="65539" Text="Multiline description of the currently selected item." Control_Next="TotalSpaceText" TextLocId="Azure.Control.Text.CustomizeDlg#ItemDescription" MsiKey="CustomizeDlg#ItemDescription"/>
-    <ROW Dialog_="CustomizeDlg" Control="TotalSpaceText" Type="Text" X="248" Y="264" Width="173" Height="15" Attributes="589827" Property="PrimaryVolumeSpaceRequired" Text="[PrimaryVolumeSpaceRequired]" Control_Next="AvailableSpaceText" TextLocId="Azure.Control.Text.CustomizeDlg#TotalSpaceText" MsiKey="CustomizeDlg#TotalSpaceText"/>
-    <ROW Dialog_="CustomizeDlg" Control="AvailableSpaceText" Type="Text" X="248" Y="284" Width="173" Height="15" Attributes="589827" Property="PrimaryVolumeSpaceAvailable" Text="[PrimaryVolumeSpaceAvailable]" Control_Next="AvailableSpaceLabel" TextLocId="Azure.Control.Text.CustomizeDlg#AvailableSpaceText" MsiKey="CustomizeDlg#AvailableSpaceText"/>
-    <ROW Dialog_="CustomizeDlg" Control="AvailableSpaceLabel" Type="Text" X="30" Y="284" Width="200" Height="15" Attributes="65539" Text="Space available on drive: " Control_Next="TotalSpaceLabel" TextLocId="Azure.Control.Text.CustomizeDlg#AvailableSpaceLabel" MsiKey="CustomizeDlg#AvailableSpaceLabel"/>
-    <ROW Dialog_="CustomizeDlg" Control="TotalSpaceLabel" Type="Text" X="30" Y="264" Width="200" Height="15" Attributes="65539" Text="Total space required on drive: " Control_Next="QuickSelectionTree" TextLocId="Azure.Control.Text.CustomizeDlg#TotalSpaceLabel" MsiKey="CustomizeDlg#TotalSpaceLabel"/>
-    <ROW Dialog_="DiskCostDlg" Control="Text" Type="Text" X="30" Y="70" Width="390" Height="75" Attributes="65539" Text="The highlighted volumes (if any) do not have enough disk space available for the currently selected features.  You can either remove some files from the highlighted volumes, or choose to install less features onto local drive(s), or select different destination drive(s)." Control_Next="Bitmap" TextLocId="Control.Text.DiskCostDlg#Text" MsiKey="DiskCostDlg#Text"/>
-    <ROW Dialog_="DiskCostDlg" Control="VolumeList" Type="VolumeCostList" X="30" Y="145" Width="390" Height="150" Attributes="393223" Text="{120}{70}{70}{70}{70}" TextStyle="DlgFont8" Control_Next="Title" TextLocId="Control.Text.DiskCostDlg#VolumeList" MsiKey="DiskCostDlg#VolumeList"/>
-    <ROW Dialog_="FatalError" Control="Description1" Type="Text" X="30" Y="250" Width="390" Height="45" Attributes="196611" Text="[ProductName] setup ended prematurely because of an error.  Your system has not been modified.  To install this program at a later time, please run the installation again." Control_Next="Title" TextLocId="Control.Text.FatalError#Description1" MsiKey="FatalError#Description1"/>
-    <ROW Dialog_="FatalError" Control="Description2" Type="Text" X="30" Y="295" Width="390" Height="15" Attributes="196611" Text="Click the &quot;Finish&quot; button to exit the [Wizard]." Control_Next="Description1" TextLocId="Control.Text.FatalError#Description2" MsiKey="FatalError#Description2"/>
-    <ROW Dialog_="FilesInUse" Control="List" Type="ListBox" X="30" Y="145" Width="390" Height="150" Attributes="7" Property="FileInUseProcess" TextStyle="DlgFont8" Control_Next="Bitmap" MsiKey="FilesInUse#List"/>
-    <ROW Dialog_="FilesInUse" Control="Text" Type="Text" X="30" Y="70" Width="390" Height="75" Attributes="65539" Text="The following applications are using files that need to be updated by this setup. You can either close the applications and then click &quot;Retry&quot;, or click &quot;Ignore&quot; so that the installer continues the installation and replaces these files when your system restarts." Control_Next="List" TextLocId="Control.Text.FilesInUse#Text" MsiKey="FilesInUse#Text"/>
-    <ROW Dialog_="OutOfDiskDlg" Control="Text" Type="Text" X="30" Y="70" Width="390" Height="75" Attributes="65539" Text="The highlighted volumes do not have enough disk space available for the currently selected features.  You can either remove some files from the highlighted volumes, or choose to install less features onto local drive(s), or select different destination drive(s)." Control_Next="Bitmap" TextLocId="Control.Text.OutOfDiskDlg#Text" MsiKey="OutOfDiskDlg#Text"/>
-    <ROW Dialog_="OutOfDiskDlg" Control="VolumeList" Type="VolumeCostList" X="30" Y="145" Width="390" Height="150" Attributes="393223" Text="{120}{70}{70}{70}{70}" TextStyle="DlgFont8" Control_Next="Title" TextLocId="Control.Text.OutOfDiskDlg#VolumeList" MsiKey="OutOfDiskDlg#VolumeList"/>
-    <ROW Dialog_="OutOfRbDiskDlg" Control="Text" Type="Text" X="30" Y="70" Width="390" Height="75" Attributes="65539" Text="The highlighted volumes do not have enough disk space available for the currently selected features.  You can either remove some files from the highlighted volumes, or choose to install less features onto local drive(s), or select different destination drive(s)." Control_Next="VolumeList" TextLocId="Control.Text.OutOfRbDiskDlg#Text" MsiKey="OutOfRbDiskDlg#Text"/>
-    <ROW Dialog_="OutOfRbDiskDlg" Control="Text2" Type="Text" X="30" Y="145" Width="390" Height="75" Attributes="65539" Text="Alternatively, you may choose to disable the installer&apos;s rollback functionality.  This allows the installer to restore your computer&apos;s original state should the installation be interrupted in any way.  Click &quot;Yes&quot; if you wish to take the risk to disable rollback." Control_Next="Text" TextLocId="Control.Text.OutOfRbDiskDlg#Text2" MsiKey="OutOfRbDiskDlg#Text2"/>
-    <ROW Dialog_="OutOfRbDiskDlg" Control="VolumeList" Type="VolumeCostList" X="30" Y="220" Width="390" Height="75" Attributes="4587527" Text="{120}{70}{70}{70}{70}" TextStyle="DlgFont8" Control_Next="Title" TextLocId="Control.Text.OutOfRbDiskDlg#VolumeList" MsiKey="OutOfRbDiskDlg#VolumeList"/>
-    <ROW Dialog_="UserExit" Control="Description1" Type="Text" X="30" Y="250" Width="390" Height="45" Attributes="196611" Text="[ProductName] setup was interrupted.  Your system has not been modified.  To install this program at a later time, please run the installation again." Control_Next="Bitmap" TextLocId="Control.Text.UserExit#Description1" MsiKey="UserExit#Description1"/>
-    <ROW Dialog_="UserExit" Control="Description2" Type="Text" X="30" Y="295" Width="390" Height="15" Attributes="196611" Text="Click the &quot;Finish&quot; button to exit the [Wizard]." Control_Next="Description1" TextLocId="Control.Text.UserExit#Description2" MsiKey="UserExit#Description2"/>
-    <ROW Dialog_="MsiRMFilesInUse" Control="List" Type="ListBox" X="30" Y="100" Width="390" Height="140" Attributes="7" Property="FileInUseProcess" TextStyle="DlgFont8" Control_Next="Options" MsiKey="MsiRMFilesInUse#List"/>
-    <ROW Dialog_="MsiRMFilesInUse" Control="Options" Type="RadioButtonGroup" X="30" Y="250" Width="390" Height="48" Attributes="3" Property="AppsShutdownOption" Control_Next="Title" MsiKey="MsiRMFilesInUse#Options"/>
-    <ROW Dialog_="MsiRMFilesInUse" Control="Text" Type="Text" X="30" Y="70" Width="390" Height="30" Attributes="65539" Text="The following applications are using files that need to be updated by this setup." Control_Next="List" TextLocId="Control.Text.MsiRMFilesInUse#Text" MsiKey="MsiRMFilesInUse#Text"/>
-    <ROW Dialog_="LicenseAgreementDlg" Control="Back" Type="PushButton" X="321" Y="333" Width="56" Height="18" Attributes="3" Text="[ButtonText_Back]" TextStyle="DlgFont8" Control_Next="Description" TextLocId="-" MsiKey="LicenseAgreementDlg#Back"/>
-    <ROW Dialog_="LicenseAgreementDlg" Control="Description" Type="Text" X="30" Y="26" Width="340" Height="60" Attributes="196611" Text="To continue you must read and accept the terms of this agreement. If you do not want to accept the [ProductName] Licence Terms, close this window to cancel the installation." Control_Next="AgreementText" TextLocId="Azure.Control.Text.LicenseAgreementDlg#Description" MsiKey="LicenseAgreementDlg#Description"/>
-    <ROW Dialog_="LicenseAgreementDlg" Control="Next" Type="PushButton" X="385" Y="333" Width="56" Height="18" Attributes="3" Text="[ButtonText_Next]" TextStyle="DlgFont8" Control_Next="Cancel" TextLocId="-" MsiKey="LicenseAgreementDlg#Next"/>
-    <ROW Dialog_="LicenseAgreementDlg" Control="AgreementText" Type="FileScrollableText" X="30" Y="90" Width="390" Height="200" Attributes="3" Property="EulaRead" Text="Setup\EULA_en.rtf" Control_Next="PrintButton" TextLocId="Control.Text.LicenseAgreementDlg#AgreementText" MsiKey="LicenseAgreementDlg#AgreementText"/>
-    <ROW Dialog_="LicenseAgreementDlg" Control="PrintButton" Type="PushButton" X="387" Y="27" Width="34" Height="34" Attributes="4718595" Text="[PrintIcon]" Control_Next="EulaAgreeCheckBox" MsiKey="LicenseAgreementDlg#PrintButton" AssociatedCtrl="AgreementText"/>
-    <ROW Dialog_="LicenseAgreementDlg" Control="EulaAgreeCheckBox" Type="CheckBox" X="30" Y="298" Width="390" Height="16" Attributes="3" Property="IAgree" Text="I &amp;accept the terms of this agreement." Control_Next="Bitmap" TextLocId="Azure.Control.Text.LicenseAgreementDlg#EulaAgreeCheckBox" MsiKey="LicenseAgreementDlg#EulaAgreeCheckBox"/>
-    <ROW Dialog_="LicenseAgreementDlg" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1" Text="[Background]" Control_Next="Next" MsiKey="LicenseAgreementDlg#Bitmap"/>
-    <ROW Dialog_="ExitDialog" Control="DescriptionInstalled" Type="Text" X="110" Y="250" Width="230" Height="60" Attributes="196611" Text="[ProductName] has been successfully installed." Control_Next="LaunchProdCheckBox" TextLocId="Azure.Control.Text.ExitDialog#DescriptionInstalled" MsiKey="ExitDialog#DescriptionInstalled"/>
-    <ROW Dialog_="AdminBrowseDlg" Control="OK" Type="PushButton" X="385" Y="333" Width="56" Height="18" Attributes="3" Text="[ButtonText_OK]" TextStyle="DlgFont8" Control_Next="Cancel" TextLocId="-" MsiKey="AdminBrowseDlg#OK"/>
-    <ROW Dialog_="BrowseDlg" Control="OK" Type="PushButton" X="385" Y="333" Width="56" Height="18" Attributes="3" Text="[ButtonText_OK]" TextStyle="DlgFont8" Control_Next="Cancel" TextLocId="-" MsiKey="BrowseDlg#OK"/>
-    <ROW Dialog_="CancelDlg" Control="No" Type="PushButton" X="236" Y="89" Width="56" Height="18" Attributes="3" Text="[ButtonText_No]" TextStyle="DlgFont8" Control_Next="Yes" TextLocId="-" MsiKey="CancelDlg#No"/>
-    <ROW Dialog_="CancelDlg" Control="Yes" Type="PushButton" X="172" Y="89" Width="56" Height="18" Attributes="3" Text="[ButtonText_Yes]" TextStyle="DlgFont8" Control_Next="Icon" TextLocId="-" MsiKey="CancelDlg#Yes"/>
-    <ROW Dialog_="DiskCostDlg" Control="OK" Type="PushButton" X="385" Y="333" Width="56" Height="18" Attributes="3" Text="[ButtonText_OK]" TextStyle="DlgFont8" Control_Next="VolumeList" TextLocId="-" MsiKey="DiskCostDlg#OK"/>
-    <ROW Dialog_="ErrorDlg" Control="I" Type="PushButton" X="236" Y="89" Width="56" Height="18" Attributes="3" Text="[ButtonText_Ignore]" TextStyle="DlgFont8" TextLocId="-" MsiKey="ErrorDlg#I"/>
-    <ROW Dialog_="ErrorDlg" Control="R" Type="PushButton" X="236" Y="89" Width="56" Height="18" Attributes="3" Text="[ButtonText_Retry]" TextStyle="DlgFont8" TextLocId="-" MsiKey="ErrorDlg#R"/>
-    <ROW Dialog_="ExitDialog" Control="Finish" Type="PushButton" X="385" Y="333" Width="56" Height="18" Attributes="3" Text="&amp;Close" TextStyle="DlgFont8" Control_Next="Cancel" TextLocId="Azure.Control.Text.ExitDialog#Finish" MsiKey="ExitDialog#Finish"/>
-    <ROW Dialog_="ExitDialog" Control="LaunchProdCheckBox" Type="PushButton" X="110" Y="285" Width="95" Height="26" Attributes="3" Property="RUNAPPLICATION" Text="Run [ProductName]" TextStyle="DlgFont8" Control_Next="ViewReadmeCheckBox" TextLocId="Azure.Control.Text.ExitDialog#LaunchProdCheckBox" MsiKey="ExitDialog#LaunchProdCheckBox"/>
-    <ROW Dialog_="ExitDialog" Control="ViewReadmeCheckBox" Type="PushButton" X="245" Y="285" Width="95" Height="26" Attributes="3" Property="VIEWREADME" Text="View Readme File" TextStyle="DlgFont8" Control_Next="Bitmap" TextLocId="Azure.Control.Text.ExitDialog#ViewReadmeCheckBox" MsiKey="ExitDialog#ViewReadmeCheckBox"/>
-    <ROW Dialog_="OutOfDiskDlg" Control="OK" Type="PushButton" X="385" Y="333" Width="56" Height="18" Attributes="3" Text="[ButtonText_OK]" TextStyle="DlgFont8" Control_Next="VolumeList" TextLocId="-" MsiKey="OutOfDiskDlg#OK"/>
-    <ROW Dialog_="ProgressDlg" Control="Cancel" Type="PushButton" X="450" Y="0" Width="0" Height="0" Attributes="2" Text="[ButtonText_Cancel]" Control_Next="ProgressBar" TextLocId="-" MsiKey="ProgressDlg#Cancel"/>
-    <ROW Dialog_="MsiRMFilesInUse" Control="OK" Type="PushButton" X="385" Y="333" Width="56" Height="18" Attributes="3" Text="[ButtonText_OK]" TextStyle="DlgFont8" Control_Next="Cancel" TextLocId="-" MsiKey="MsiRMFilesInUse#OK"/>
-    <ROW Dialog_="CancelDlg" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="300" Height="80" Attributes="1" Text="[WhiteBackround]" Control_Next="No" MsiKey="CancelDlg#Bitmap"/>
-    <ROW Dialog_="ErrorDlg" Control="A" Type="PushButton" X="236" Y="89" Width="56" Height="18" Attributes="3" Text="[ButtonText_Cancel]" TextStyle="DlgFont8" TextLocId="-" MsiKey="ErrorDlg#A"/>
-    <ROW Dialog_="ErrorDlg" Control="C" Type="PushButton" X="236" Y="89" Width="56" Height="18" Attributes="3" Text="[ButtonText_Cancel]" TextStyle="DlgFont8" TextLocId="-" MsiKey="ErrorDlg#C"/>
-    <ROW Dialog_="ErrorDlg" Control="N" Type="PushButton" X="236" Y="89" Width="56" Height="18" Attributes="3" Text="[ButtonText_No]" TextStyle="DlgFont8" TextLocId="-" MsiKey="ErrorDlg#N"/>
-    <ROW Dialog_="ErrorDlg" Control="O" Type="PushButton" X="236" Y="89" Width="56" Height="18" Attributes="3" Text="[ButtonText_OK]" TextStyle="DlgFont8" TextLocId="-" MsiKey="ErrorDlg#O"/>
-    <ROW Dialog_="ErrorDlg" Control="Y" Type="PushButton" X="236" Y="89" Width="56" Height="18" Attributes="3" Text="[ButtonText_Yes]" TextStyle="DlgFont8" TextLocId="-" MsiKey="ErrorDlg#Y"/>
-    <ROW Dialog_="WaitForCostingDlg" Control="Return" Type="PushButton" X="122" Y="89" Width="56" Height="18" Attributes="3" Text="[ButtonText_Return]" TextStyle="DlgFont8" Control_Next="Text" TextLocId="-" MsiKey="WaitForCostingDlg#Return"/>
-    <ROW Dialog_="OutOfRbDiskDlg" Control="OK" Type="PushButton" X="385" Y="333" Width="56" Height="18" Attributes="3" Text="[ButtonText_OK]" TextStyle="DlgFont8" Control_Next="Bitmap" TextLocId="-"/>
-    <ROW Dialog_="FilesInUse" Control="Exit" Type="PushButton" X="257" Y="333" Width="56" Height="18" Attributes="3" Text="[ButtonText_Exit]" TextStyle="DlgFont8" Control_Next="Title" TextLocId="-" MsiKey="FilesInUse#Exit"/>
-    <ROW Dialog_="FilesInUse" Control="Ignore" Type="PushButton" X="321" Y="333" Width="56" Height="18" Attributes="3" Text="[ButtonText_Ignore]" TextStyle="DlgFont8" Control_Next="Exit" TextLocId="-" MsiKey="FilesInUse#Ignore"/>
-    <ROW Dialog_="FilesInUse" Control="Retry" Type="PushButton" X="385" Y="333" Width="56" Height="18" Attributes="3" Text="[ButtonText_Retry]" TextStyle="DlgFont8" Control_Next="Ignore" TextLocId="-" MsiKey="FilesInUse#Retry"/>
-    <ROW Dialog_="AdminBrowseDlg" Control="PathLabel" Type="Text" X="30" Y="273" Width="80" Height="15" Attributes="65539" Text="&amp;Folder name:" Control_Next="Title" TextLocId="Control.Text.AdminBrowseDlg#PathLabel" MsiKey="AdminBrowseDlg#PathLabel"/>
-    <ROW Dialog_="BrowseDlg" Control="PathLabel" Type="Text" X="30" Y="273" Width="80" Height="15" Attributes="65539" Text="&amp;Folder name:" Control_Next="Title" TextLocId="Control.Text.BrowseDlg#PathLabel" MsiKey="BrowseDlg#PathLabel"/>
-    <ROW Dialog_="ExitDialog" Control="DialogIcon" Type="Icon" X="177" Y="130" Width="96" Height="96" Attributes="1048577" Text="[AppLogoIcon]" Control_Next="DescriptionConfigured" MsiKey="ExitDialog#DialogIcon"/>
-    <ROW Dialog_="ExitDialog" Control="DescriptionConfigured" Type="Text" X="110" Y="250" Width="230" Height="60" Attributes="196611" Text="[ProductName] has been successfully configured." Control_Next="DescriptionInstalled" TextLocId="Azure.Control.Text.ExitDialog#DescriptionConfigured" MsiKey="ExitDialog#DescriptionConfigured"/>
-    <ROW Dialog_="ProgressDlg" Control="ActionText" Type="Text" X="30" Y="280" Width="390" Height="15" Attributes="65539" Control_Next="DialogIcon" MsiKey="ProgressDlg#ActionText"/>
-    <ROW Dialog_="MaintenanceWelcomeDlg" Control="DialogIcon" Type="Icon" X="177" Y="130" Width="96" Height="96" Attributes="1048577" Text="[AppLogoIcon]" Control_Next="Bitmap"/>
-    <ROW Dialog_="AdminWelcomeDlg" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1" Text="[Background]" Control_Next="Next"/>
-    <ROW Dialog_="AdminWelcomeDlg" Control="DialogIcon" Type="Icon" X="177" Y="130" Width="96" Height="96" Attributes="1048577" Text="[AppLogoIcon]" Control_Next="Bitmap"/>
-    <ROW Dialog_="ResumeDlg" Control="DialogIcon" Type="Icon" X="177" Y="130" Width="96" Height="96" Attributes="1048577" Text="[AppLogoIcon]" Control_Next="Bitmap"/>
-    <ROW Dialog_="VerifyReadyDlg" Control="DialogIcon" Type="Icon" X="177" Y="130" Width="96" Height="96" Attributes="1048577" Text="[AppLogoIcon]" Control_Next="Bitmap"/>
-    <ROW Dialog_="PrepareDlg" Control="DialogIcon" Type="Icon" X="177" Y="130" Width="96" Height="96" Attributes="1048577" Text="[AppLogoIcon]" Control_Next="Bitmap"/>
-    <ROW Dialog_="ProgressDlg" Control="DialogIcon" Type="Icon" X="177" Y="130" Width="96" Height="96" Attributes="1048577" Text="[AppLogoIcon]" Control_Next="Bitmap"/>
-    <ROW Dialog_="PatchWelcomeDlg" Control="DialogIcon" Type="Icon" X="177" Y="130" Width="96" Height="96" Attributes="1048577" Text="[AppLogoIcon]" Control_Next="Bitmap"/>
-    <ROW Dialog_="CancelDlg" Control="Text" Type="Text" X="55" Y="10" Width="236" Height="60" Attributes="65539" Text="Are you sure you want to cancel [ProductName] installation?" TextStyle="BlueText" Control_Next="Line" TextLocId="Control.Text.CancelDlg#Text" MsiKey="CancelDlg#Text"/>
-    <ROW Dialog_="CancelDlg" Control="Icon" Type="Icon" X="10" Y="10" Width="36" Height="36" Attributes="7340033" Text="[InfoIcon]" Control_Next="Text" Help="Information icon|" HelpLocId="Control.Help.CancelDlg#Icon" MsiKey="CancelDlg#Icon"/>
-    <ROW Dialog_="ErrorDlg" Control="ErrorIcon" Type="Icon" X="10" Y="10" Width="36" Height="36" Attributes="1048577" Text="[InfoIcon]" Help="Information icon|" HelpLocId="Control.Help.ErrorDlg#ErrorIcon" MsiKey="ErrorDlg#ErrorIcon"/>
-    <ROW Dialog_="ErrorDlg" Control="ErrorText" Type="Text" X="55" Y="10" Width="236" Height="60" Attributes="65539" Text="Information text" TextStyle="BlueText" TextLocId="Control.Text.ErrorDlg#ErrorText" MsiKey="ErrorDlg#ErrorText"/>
-    <ROW Dialog_="WaitForCostingDlg" Control="Icon" Type="Icon" X="10" Y="10" Width="36" Height="36" Attributes="1048577" Text="[ExclamationIcon]" Control_Next="Line" Help="Exclamation icon|" HelpLocId="Control.Help.WaitForCostingDlg#Icon" MsiKey="WaitForCostingDlg#Icon"/>
-    <ROW Dialog_="WaitForCostingDlg" Control="Text" Type="Text" X="55" Y="10" Width="236" Height="60" Attributes="65539" Text="Please wait while the installer finishes determining your disk space requirements." TextStyle="BlueText" Control_Next="Icon" TextLocId="Control.Text.WaitForCostingDlg#Text" MsiKey="WaitForCostingDlg#Text"/>
-    <ROW Dialog_="MaintenanceTypeDlg" Control="ChangeButton" Type="PushButton" X="30" Y="100" Width="38" Height="38" Attributes="5767171" Text="[CustomSetupIcon]" Control_Next="RepairLabel" Help="Modify Installation|" HelpLocId="Control.Help.MaintenanceTypeDlg#ChangeButton" MsiKey="MaintenanceTypeDlg#ChangeButton"/>
-    <ROW Dialog_="MaintenanceTypeDlg" Control="ChangeLabel" Type="Text" X="80" Y="100" Width="100" Height="11" Attributes="65539" Text="&amp;Modify" TextStyle="[DlgTitleFont]" Control_Next="ChangeButton" TextLocId="Control.Text.MaintenanceTypeDlg#ChangeLabel" MsiKey="MaintenanceTypeDlg#ChangeLabel"/>
-    <ROW Dialog_="MaintenanceTypeDlg" Control="RemoveButton" Type="PushButton" X="30" Y="218" Width="38" Height="38" Attributes="5767171" Text="[RemoveIcon]" Control_Next="Back" Help="Remove Installation|" HelpLocId="Control.Help.MaintenanceTypeDlg#RemoveButton" MsiKey="MaintenanceTypeDlg#RemoveButton"/>
-    <ROW Dialog_="MaintenanceTypeDlg" Control="RemoveLabel" Type="Text" X="80" Y="218" Width="100" Height="11" Attributes="65539" Text="&amp;Remove" TextStyle="[DlgTitleFont]" Control_Next="RemoveButton" TextLocId="Control.Text.MaintenanceTypeDlg#RemoveLabel" MsiKey="MaintenanceTypeDlg#RemoveLabel"/>
-    <ROW Dialog_="MaintenanceTypeDlg" Control="RepairButton" Type="PushButton" X="30" Y="159" Width="38" Height="38" Attributes="5767171" Text="[RepairIcon]" Control_Next="RemoveLabel" Help="Repair Installation|" HelpLocId="Control.Help.MaintenanceTypeDlg#RepairButton" MsiKey="MaintenanceTypeDlg#RepairButton"/>
-    <ROW Dialog_="MaintenanceTypeDlg" Control="RepairLabel" Type="Text" X="80" Y="159" Width="100" Height="11" Attributes="65539" Text="Re&amp;pair" TextStyle="[DlgTitleFont]" Control_Next="RepairButton" TextLocId="Control.Text.MaintenanceTypeDlg#RepairLabel" MsiKey="MaintenanceTypeDlg#RepairLabel"/>
-    <ROW Dialog_="MaintenanceTypeDlg" Control="RemoveCommand" Type="CommandLinkButton" X="30" Y="218" Width="390" Height="48" Attributes="6815747" Text="[RemoveIcon]" Control_Next="RepairCommand" Help="Removes [ProductName] from your computer.|" HelpLocId="Azure.Control.Help.MaintenanceTypeDlg#RemoveCommand" MsiKey="MaintenanceTypeDlg#RemoveCommand" ExtType="CommandLinkButton" ExtData="Remove"/>
-    <ROW Dialog_="MaintenanceTypeDlg" Control="RepairCommand" Type="CommandLinkButton" X="30" Y="159" Width="390" Height="48" Attributes="6815747" Text="[RepairIcon]" Control_Next="ModifyCommand" Help="Repairs errors in the most recent installation state.|" HelpLocId="Azure.Control.Help.MaintenanceTypeDlg#RepairCommand" MsiKey="MaintenanceTypeDlg#RepairCommand" ExtType="CommandLinkButton" ExtData="Repair"/>
-    <ATTRIBUTE name="DeletedRows" value="AdminWelcomeDlg#Bitmap@ExitDialog#HorizontalLine@VerifyReadyDlg#Title@WelcomeDlg#Title@MaintenanceTypeDlg#RemoveText@PatchWelcomeDlg#Title@ProgressDlg#TitleIcon@AdminWelcomeDlg#Title@LicenseAgreementDlg#TitleIcon@PrepareDlg#TitleIcon@ShortcutsDlg#TitleIcon@ProgressDlg#Title@PrepareDlg#Title@ResumeDlg#Title@MaintenanceTypeDlg#ChangeText@MaintenanceTypeDlg#RepairText@ShortcutsDlg#Title@CustomizeDlg#TitleIcon@LicenseAgreementDlg#Title@OutOfRbDiskDlg#OkButton@MaintenanceWelcomeDlg#Title"/>
-    <ATTRIBUTE name="FixedSizeBitmaps" value="2"/>
+    <ROW Dialog_="AdminBrowseDlg" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1" Text="[CaptionBackground]" Order="100" MsiKey="AdminBrowseDlg#Bitmap"/>
+    <ROW Dialog_="AdminBrowseDlg" Control="PathEdit" Type="PathEdit" X="115" Y="273" Width="305" Height="17" Attributes="3" Property="TARGETDIR" TextStyle="DlgFont8" Order="200" MsiKey="AdminBrowseDlg#PathEdit"/>
+    <ROW Dialog_="AdminBrowseDlg" Control="OK" Type="PushButton" X="385" Y="333" Width="56" Height="18" Attributes="3" Text="[ButtonText_OK]" TextStyle="DlgFont8" Order="300" TextLocId="-" MsiKey="AdminBrowseDlg#OK"/>
+    <ROW Dialog_="AdminBrowseDlg" Control="ComboLabel" Type="Text" X="30" Y="70" Width="80" Height="15" Attributes="65539" Text="&amp;Look in:" Order="500" TextLocId="Control.Text.AdminBrowseDlg#ComboLabel" MsiKey="AdminBrowseDlg#ComboLabel"/>
+    <ROW Dialog_="AdminBrowseDlg" Control="DirectoryCombo" Type="DirectoryCombo" X="110" Y="70" Width="258" Height="17" Attributes="458755" Property="TARGETDIR" TextStyle="DlgFont8" Order="600" MsiKey="AdminBrowseDlg#DirectoryCombo"/>
+    <ROW Dialog_="AdminBrowseDlg" Control="Up" Type="PushButton" X="374" Y="67" Width="21" Height="21" Attributes="3670019" Text="[UpDirIcon]" Help="Up One Level|" Order="700" HelpLocId="Control.Help.AdminBrowseDlg#Up" MsiKey="AdminBrowseDlg#Up"/>
+    <ROW Dialog_="AdminBrowseDlg" Control="NewFolder" Type="PushButton" X="399" Y="67" Width="21" Height="21" Attributes="3670019" Text="[NewDirIcon]" Help="Create A New Folder|" Order="800" HelpLocId="Control.Help.AdminBrowseDlg#NewFolder" MsiKey="AdminBrowseDlg#NewFolder"/>
+    <ROW Dialog_="AdminBrowseDlg" Control="DirectoryList" Type="DirectoryList" X="30" Y="95" Width="390" Height="170" Attributes="7" Property="TARGETDIR" TextStyle="DlgFont8" Order="900" MsiKey="AdminBrowseDlg#DirectoryList"/>
+    <ROW Dialog_="AdminBrowseDlg" Control="PathLabel" Type="Text" X="30" Y="273" Width="80" Height="15" Attributes="65539" Text="&amp;Folder name:" Order="1000" TextLocId="Control.Text.AdminBrowseDlg#PathLabel" MsiKey="AdminBrowseDlg#PathLabel"/>
+    <ROW Dialog_="AdminBrowseDlg" Control="Title" Type="Text" X="30" Y="6" Width="390" Height="40" Attributes="196611" Text="Change current destination folder" TextStyle="TitleFont" Order="1100" TextLocId="Control.Text.AdminBrowseDlg#Title" MsiKey="AdminBrowseDlg#Title"/>
+    <ROW Dialog_="AdminInstallPointDlg" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1" Text="[CaptionBackground]" Order="100" MsiKey="AdminInstallPointDlg#Bitmap"/>
+    <ROW Dialog_="AdminInstallPointDlg" Control="Text" Type="Text" X="30" Y="130" Width="390" Height="15" Attributes="65539" Text="&amp;Enter a new network location or click &quot;Browse&quot; to browse to one." Order="200" TextLocId="Control.Text.AdminInstallPointDlg#Text" MsiKey="AdminInstallPointDlg#Text"/>
+    <ROW Dialog_="AdminInstallPointDlg" Control="PathEdit" Type="PathEdit" X="30" Y="150" Width="390" Height="18" Attributes="3" Property="TARGETDIR" TextStyle="DlgFont8" Order="300" MsiKey="AdminInstallPointDlg#PathEdit"/>
+    <ROW Dialog_="AdminInstallPointDlg" Control="Browse" Type="PushButton" X="330" Y="175" Width="90" Height="18" Attributes="3" Text="[ButtonText_Browse]" TextStyle="DlgFont8" Order="400" TextLocId="-" MsiKey="AdminInstallPointDlg#Browse"/>
+    <ROW Dialog_="AdminInstallPointDlg" Control="Back" Type="PushButton" X="321" Y="333" Width="56" Height="18" Attributes="3" Text="[ButtonText_Back]" TextStyle="DlgFont8" Order="500" TextLocId="-" MsiKey="AdminInstallPointDlg#Back" Options="1"/>
+    <ROW Dialog_="AdminInstallPointDlg" Control="Next" Type="PushButton" X="385" Y="333" Width="56" Height="18" Attributes="3" Text="[ButtonText_Next]" TextStyle="DlgFont8" Order="600" TextLocId="-" MsiKey="AdminInstallPointDlg#Next"/>
+    <ROW Dialog_="AdminInstallPointDlg" Control="Title" Type="Text" X="30" Y="6" Width="390" Height="40" Attributes="196611" Text="Select a network location for the server image of [ProductName] product" TextStyle="TitleFont" Order="800" TextLocId="Azure.Control.Text.AdminInstallPointDlg#Title" MsiKey="AdminInstallPointDlg#Title"/>
+    <ROW Dialog_="AdminWelcomeDlg" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1" Text="[Background]" Order="100"/>
+    <ROW Dialog_="AdminWelcomeDlg" Control="Next" Type="PushButton" X="385" Y="333" Width="56" Height="18" Attributes="3" Text="[ButtonText_Next]" TextStyle="DlgFont8" Order="200" TextLocId="-" MsiKey="AdminWelcomeDlg#Next"/>
+    <ROW Dialog_="AdminWelcomeDlg" Control="Back" Type="PushButton" X="321" Y="333" Width="56" Height="18" Attributes="2" Text="[ButtonText_Back]" TextStyle="DlgFont8" Order="400" TextLocId="-" MsiKey="AdminWelcomeDlg#Back" Options="1"/>
+    <ROW Dialog_="AdminWelcomeDlg" Control="Description" Type="Text" X="30" Y="250" Width="390" Height="60" Attributes="196611" Text="The [Wizard] will create a server image of [ProductName], at a specified network location.  Click Next to continue or close the window to exit the [Wizard]." Order="500" TextLocId="Control.Text.AdminWelcomeDlg#DescriptionNoClose" MsiKey="AdminWelcomeDlg#Description"/>
+    <ROW Dialog_="AdminWelcomeDlg" Control="DialogIcon" Type="Icon" X="177" Y="130" Width="96" Height="96" Attributes="1048577" Text="[AppLogoIcon]" Order="600"/>
+    <ROW Dialog_="BrowseDlg" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1" Text="[CaptionBackground]" Order="100" MsiKey="BrowseDlg#Bitmap"/>
+    <ROW Dialog_="BrowseDlg" Control="PathEdit" Type="PathEdit" X="115" Y="273" Width="305" Height="17" Attributes="11" Property="_BrowseProperty" TextStyle="DlgFont8" Order="200" MsiKey="BrowseDlg#PathEdit"/>
+    <ROW Dialog_="BrowseDlg" Control="OK" Type="PushButton" X="385" Y="333" Width="56" Height="18" Attributes="3" Text="[ButtonText_OK]" TextStyle="DlgFont8" Order="300" TextLocId="-" MsiKey="BrowseDlg#OK"/>
+    <ROW Dialog_="BrowseDlg" Control="ComboLabel" Type="Text" X="30" Y="70" Width="80" Height="15" Attributes="65539" Text="&amp;Look in:" Order="500" TextLocId="Control.Text.BrowseDlg#ComboLabel" MsiKey="BrowseDlg#ComboLabel"/>
+    <ROW Dialog_="BrowseDlg" Control="DirectoryCombo" Type="DirectoryCombo" X="110" Y="70" Width="258" Height="17" Attributes="393227" Property="_BrowseProperty" TextStyle="DlgFont8" Order="600" MsiKey="BrowseDlg#DirectoryCombo"/>
+    <ROW Dialog_="BrowseDlg" Control="Up" Type="PushButton" X="374" Y="67" Width="21" Height="21" Attributes="3670019" Text="[UpDirIcon]" Help="Up One Level|" Order="700" HelpLocId="Control.Help.BrowseDlg#Up" MsiKey="BrowseDlg#Up"/>
+    <ROW Dialog_="BrowseDlg" Control="NewFolder" Type="PushButton" X="399" Y="67" Width="21" Height="21" Attributes="3670019" Text="[NewDirIcon]" Help="Create A New Folder|" Order="800" HelpLocId="Control.Help.BrowseDlg#NewFolder" MsiKey="BrowseDlg#NewFolder"/>
+    <ROW Dialog_="BrowseDlg" Control="DirectoryList" Type="DirectoryList" X="30" Y="95" Width="390" Height="170" Attributes="15" Property="_BrowseProperty" TextStyle="DlgFont8" Order="900" MsiKey="BrowseDlg#DirectoryList"/>
+    <ROW Dialog_="BrowseDlg" Control="PathLabel" Type="Text" X="30" Y="273" Width="80" Height="15" Attributes="65539" Text="&amp;Folder name:" Order="1000" TextLocId="Control.Text.BrowseDlg#PathLabel" MsiKey="BrowseDlg#PathLabel"/>
+    <ROW Dialog_="BrowseDlg" Control="Title" Type="Text" X="30" Y="6" Width="390" Height="40" Attributes="196611" Text="Change current destination folder" TextStyle="TitleFont" Order="1100" TextLocId="Control.Text.BrowseDlg#Title" MsiKey="BrowseDlg#Title"/>
+    <ROW Dialog_="CancelDlg" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="300" Height="80" Attributes="1" Text="[WhiteBackround]" Order="100" MsiKey="CancelDlg#Bitmap"/>
+    <ROW Dialog_="CancelDlg" Control="No" Type="PushButton" X="236" Y="89" Width="56" Height="18" Attributes="3" Text="[ButtonText_No]" TextStyle="DlgFont8" Order="200" TextLocId="-" MsiKey="CancelDlg#No"/>
+    <ROW Dialog_="CancelDlg" Control="Yes" Type="PushButton" X="172" Y="89" Width="56" Height="18" Attributes="3" Text="[ButtonText_Yes]" TextStyle="DlgFont8" Order="300" TextLocId="-" MsiKey="CancelDlg#Yes"/>
+    <ROW Dialog_="CancelDlg" Control="Icon" Type="Icon" X="10" Y="10" Width="36" Height="36" Attributes="7340033" Text="[InfoIcon]" Help="Information icon|" Order="400" HelpLocId="Control.Help.CancelDlg#Icon" MsiKey="CancelDlg#Icon"/>
+    <ROW Dialog_="CancelDlg" Control="Text" Type="Text" X="55" Y="10" Width="236" Height="60" Attributes="65539" Text="Are you sure you want to cancel [ProductName] installation?" TextStyle="BlueText" Order="500" TextLocId="Control.Text.CancelDlg#Text" MsiKey="CancelDlg#Text"/>
+    <ROW Dialog_="CustomizeDlg" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1" Text="[CaptionBackground]" Order="100" MsiKey="CustomizeDlg#Bitmap"/>
+    <ROW Dialog_="CustomizeDlg" Control="Back" Type="PushButton" X="321" Y="333" Width="56" Height="18" Attributes="3" Text="[ButtonText_Back]" TextStyle="DlgFont8" Order="200" TextLocId="-" MsiKey="CustomizeDlg#Back" Options="1"/>
+    <ROW Dialog_="CustomizeDlg" Control="Next" Type="PushButton" X="385" Y="333" Width="56" Height="18" Attributes="3" Text="[ButtonText_Next]" TextStyle="DlgFont8" Order="300" TextLocId="-" MsiKey="CustomizeDlg#Next"/>
+    <ROW Dialog_="CustomizeDlg" Control="Title" Type="Text" X="30" Y="6" Width="390" Height="40" Attributes="196611" Text="Custom Setup" TextStyle="TitleFont" Order="500" TextLocId="Control.Text.CustomizeDlg#Title" MsiKey="CustomizeDlg#Title"/>
+    <ROW Dialog_="CustomizeDlg" Control="Text" Type="Text" X="30" Y="70" Width="390" Height="40" Attributes="196611" Text="Select which components of [ProductName] will be installed" Order="600" TextLocId="Azure.Control.Text.CustomizeDlg#Text" MsiKey="CustomizeDlg#Text"/>
+    <ROW Dialog_="CustomizeDlg" Control="ItemDescription" Type="Text" X="30" Y="245" Width="390" Height="20" Attributes="65539" Text="Multiline description of the currently selected item." Order="700" TextLocId="Azure.Control.Text.CustomizeDlg#ItemDescription" MsiKey="CustomizeDlg#ItemDescription"/>
+    <ROW Dialog_="CustomizeDlg" Control="TotalSpaceText" Type="Text" X="248" Y="264" Width="173" Height="15" Attributes="589827" Property="PrimaryVolumeSpaceRequired" Text="[PrimaryVolumeSpaceRequired]" Order="800" TextLocId="Azure.Control.Text.CustomizeDlg#TotalSpaceText" MsiKey="CustomizeDlg#TotalSpaceText"/>
+    <ROW Dialog_="CustomizeDlg" Control="AvailableSpaceText" Type="Text" X="248" Y="284" Width="173" Height="15" Attributes="589827" Property="PrimaryVolumeSpaceAvailable" Text="[PrimaryVolumeSpaceAvailable]" Order="900" TextLocId="Azure.Control.Text.CustomizeDlg#AvailableSpaceText" MsiKey="CustomizeDlg#AvailableSpaceText"/>
+    <ROW Dialog_="CustomizeDlg" Control="AvailableSpaceLabel" Type="Text" X="30" Y="284" Width="200" Height="15" Attributes="65539" Text="Space available on drive: " Order="1000" TextLocId="Azure.Control.Text.CustomizeDlg#AvailableSpaceLabel" MsiKey="CustomizeDlg#AvailableSpaceLabel"/>
+    <ROW Dialog_="CustomizeDlg" Control="TotalSpaceLabel" Type="Text" X="30" Y="264" Width="200" Height="15" Attributes="65539" Text="Total space required on drive: " Order="1100" TextLocId="Azure.Control.Text.CustomizeDlg#TotalSpaceLabel" MsiKey="CustomizeDlg#TotalSpaceLabel"/>
+    <ROW Dialog_="CustomizeDlg" Control="QuickSelectionTree" Type="QuickSelectionTree" X="30" Y="110" Width="390" Height="130" Attributes="3" Property="_BrowseProperty" Text="QuickSelectionTree" TextStyle="DlgFont8" Order="1200" MsiKey="CustomizeDlg#QuickSelectionTree" ExtType="QuickSelectionTree"/>
+    <ROW Dialog_="DiskCostDlg" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1" Text="[CaptionBackground]" Order="100" MsiKey="DiskCostDlg#Bitmap"/>
+    <ROW Dialog_="DiskCostDlg" Control="OK" Type="PushButton" X="385" Y="333" Width="56" Height="18" Attributes="3" Text="[ButtonText_OK]" TextStyle="DlgFont8" Order="200" TextLocId="-" MsiKey="DiskCostDlg#OK"/>
+    <ROW Dialog_="DiskCostDlg" Control="VolumeList" Type="VolumeCostList" X="30" Y="145" Width="390" Height="150" Attributes="393223" Text="{120}{70}{70}{70}{70}" TextStyle="DlgFont8" Order="300" TextLocId="Control.Text.DiskCostDlg#VolumeList" MsiKey="DiskCostDlg#VolumeList"/>
+    <ROW Dialog_="DiskCostDlg" Control="Title" Type="Text" X="30" Y="6" Width="390" Height="40" Attributes="196611" Text="Disk space required for the selected features" TextStyle="TitleFont" Order="400" TextLocId="Azure.Control.Text.DiskCostDlg#Title" MsiKey="DiskCostDlg#Title"/>
+    <ROW Dialog_="DiskCostDlg" Control="Text" Type="Text" X="30" Y="70" Width="390" Height="75" Attributes="65539" Text="The highlighted volumes (if any) do not have enough disk space available for the currently selected features.  You can either remove some files from the highlighted volumes, or choose to install less features onto local drive(s), or select different destination drive(s)." Order="500" TextLocId="Control.Text.DiskCostDlg#Text" MsiKey="DiskCostDlg#Text"/>
+    <ROW Dialog_="ErrorDlg" Control="ErrorIcon" Type="Icon" X="10" Y="10" Width="36" Height="36" Attributes="1048577" Text="[InfoIcon]" Help="Information icon|" HelpLocId="Control.Help.ErrorDlg#ErrorIcon" MsiKey="ErrorDlg#ErrorIcon" Options="1"/>
+    <ROW Dialog_="ErrorDlg" Control="C" Type="PushButton" X="236" Y="89" Width="56" Height="18" Attributes="3" Text="[ButtonText_Cancel]" TextStyle="DlgFont8" TextLocId="-" MsiKey="ErrorDlg#C" Options="1"/>
+    <ROW Dialog_="ErrorDlg" Control="A" Type="PushButton" X="236" Y="89" Width="56" Height="18" Attributes="3" Text="[ButtonText_Cancel]" TextStyle="DlgFont8" TextLocId="-" MsiKey="ErrorDlg#A" Options="1"/>
+    <ROW Dialog_="ErrorDlg" Control="I" Type="PushButton" X="236" Y="89" Width="56" Height="18" Attributes="3" Text="[ButtonText_Ignore]" TextStyle="DlgFont8" TextLocId="-" MsiKey="ErrorDlg#I" Options="1"/>
+    <ROW Dialog_="ErrorDlg" Control="Y" Type="PushButton" X="236" Y="89" Width="56" Height="18" Attributes="3" Text="[ButtonText_Yes]" TextStyle="DlgFont8" TextLocId="-" MsiKey="ErrorDlg#Y" Options="1"/>
+    <ROW Dialog_="ErrorDlg" Control="O" Type="PushButton" X="236" Y="89" Width="56" Height="18" Attributes="3" Text="[ButtonText_OK]" TextStyle="DlgFont8" TextLocId="-" MsiKey="ErrorDlg#O" Options="1"/>
+    <ROW Dialog_="ErrorDlg" Control="ErrorText" Type="Text" X="55" Y="10" Width="236" Height="60" Attributes="65539" Text="Information text" TextStyle="BlueText" TextLocId="Control.Text.ErrorDlg#ErrorText" MsiKey="ErrorDlg#ErrorText" Options="1"/>
+    <ROW Dialog_="ErrorDlg" Control="R" Type="PushButton" X="236" Y="89" Width="56" Height="18" Attributes="3" Text="[ButtonText_Retry]" TextStyle="DlgFont8" TextLocId="-" MsiKey="ErrorDlg#R" Options="1"/>
+    <ROW Dialog_="ErrorDlg" Control="N" Type="PushButton" X="236" Y="89" Width="56" Height="18" Attributes="3" Text="[ButtonText_No]" TextStyle="DlgFont8" TextLocId="-" MsiKey="ErrorDlg#N" Options="1"/>
+    <ROW Dialog_="ExitDialog" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1" Text="[Background]" Order="100" MsiKey="ExitDialog#Bitmap"/>
+    <ROW Dialog_="ExitDialog" Control="Finish" Type="PushButton" X="385" Y="333" Width="56" Height="18" Attributes="3" Text="&amp;Close" TextStyle="DlgFont8" Order="200" TextLocId="Azure.Control.Text.ExitDialog#Finish" MsiKey="ExitDialog#Finish" Options="1"/>
+    <ROW Dialog_="ExitDialog" Control="Back" Type="PushButton" X="321" Y="333" Width="56" Height="18" Attributes="0" Text="[ButtonText_Back]" TextStyle="DlgFont8" Order="300" TextLocId="-" MsiKey="ExitDialog#Back" Options="1"/>
+    <ROW Dialog_="ExitDialog" Control="DialogIcon" Type="Icon" X="177" Y="130" Width="96" Height="96" Attributes="1048577" Text="[AppLogoIcon]" Order="400" MsiKey="ExitDialog#DialogIcon"/>
+    <ROW Dialog_="ExitDialog" Control="DescriptionConfigured" Type="Text" X="110" Y="250" Width="230" Height="60" Attributes="196611" Text="[ProductName] has been successfully configured." Order="600" TextLocId="Azure.Control.Text.ExitDialog#DescriptionConfigured" MsiKey="ExitDialog#DescriptionConfigured"/>
+    <ROW Dialog_="ExitDialog" Control="DescriptionInstalled" Type="Text" X="110" Y="250" Width="230" Height="60" Attributes="196611" Text="[ProductName] has been successfully installed." Order="700" TextLocId="Azure.Control.Text.ExitDialog#DescriptionInstalled" MsiKey="ExitDialog#DescriptionInstalled"/>
+    <ROW Dialog_="ExitDialog" Control="LaunchProdCheckBox" Type="PushButton" X="110" Y="285" Width="95" Height="26" Attributes="3" Property="RUNAPPLICATION" Text="Run [ProductName]" TextStyle="DlgFont8" Order="800" TextLocId="Azure.Control.Text.ExitDialog#LaunchProdCheckBox" MsiKey="ExitDialog#LaunchProdCheckBox" Options="1"/>
+    <ROW Dialog_="ExitDialog" Control="ViewReadmeCheckBox" Type="PushButton" X="245" Y="285" Width="95" Height="26" Attributes="3" Property="VIEWREADME" Text="View Readme File" TextStyle="DlgFont8" Order="900" TextLocId="Azure.Control.Text.ExitDialog#ViewReadmeCheckBox" MsiKey="ExitDialog#ViewReadmeCheckBox" Options="1"/>
+    <ROW Dialog_="FatalError" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1" Text="[CaptionBackground]" Order="100" MsiKey="FatalError#Bitmap"/>
+    <ROW Dialog_="FatalError" Control="Finish" Type="PushButton" X="385" Y="333" Width="56" Height="18" Attributes="3" Text="[ButtonText_Finish]" TextStyle="DlgFont8" Order="200" TextLocId="-" MsiKey="FatalError#Finish" Options="1"/>
+    <ROW Dialog_="FatalError" Control="Back" Type="PushButton" X="321" Y="333" Width="56" Height="18" Attributes="2" Text="[ButtonText_Back]" TextStyle="DlgFont8" Order="400" TextLocId="-" MsiKey="FatalError#Back" Options="1"/>
+    <ROW Dialog_="FatalError" Control="Description2" Type="Text" X="30" Y="295" Width="390" Height="15" Attributes="196611" Text="Click the &quot;Finish&quot; button to exit the [Wizard]." Order="500" TextLocId="Control.Text.FatalError#Description2" MsiKey="FatalError#Description2"/>
+    <ROW Dialog_="FatalError" Control="Description1" Type="Text" X="30" Y="250" Width="390" Height="45" Attributes="196611" Text="[ProductName] setup ended prematurely because of an error.  Your system has not been modified.  To install this program at a later time, please run the installation again." Order="600" TextLocId="Control.Text.FatalError#Description1" MsiKey="FatalError#Description1"/>
+    <ROW Dialog_="FatalError" Control="LogCheckBox" Type="CheckBox" X="55" Y="158" Width="10" Height="10" Attributes="2" Property="AI_LOG_CHECKBOX" Order="700" MsiKey="FatalError#LogCheckBox"/>
+    <ROW Dialog_="FatalError" Control="Title" Type="Text" X="30" Y="6" Width="390" Height="40" Attributes="196611" Text="The [ProductName] [Wizard] ended prematurely" TextStyle="TitleFont" Order="800" TextLocId="Control.Text.FatalError#Title" MsiKey="FatalError#Title"/>
+    <ROW Dialog_="FilesInUse" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1" Text="[CaptionBackground]" Order="100" MsiKey="FilesInUse#Bitmap"/>
+    <ROW Dialog_="FilesInUse" Control="Retry" Type="PushButton" X="385" Y="333" Width="56" Height="18" Attributes="3" Text="[ButtonText_Retry]" TextStyle="DlgFont8" Order="200" TextLocId="-" MsiKey="FilesInUse#Retry"/>
+    <ROW Dialog_="FilesInUse" Control="Ignore" Type="PushButton" X="321" Y="333" Width="56" Height="18" Attributes="3" Text="[ButtonText_Ignore]" TextStyle="DlgFont8" Order="300" TextLocId="-" MsiKey="FilesInUse#Ignore"/>
+    <ROW Dialog_="FilesInUse" Control="Exit" Type="PushButton" X="257" Y="333" Width="56" Height="18" Attributes="3" Text="[ButtonText_Exit]" TextStyle="DlgFont8" Order="400" TextLocId="-" MsiKey="FilesInUse#Exit"/>
+    <ROW Dialog_="FilesInUse" Control="Title" Type="Text" X="30" Y="6" Width="390" Height="40" Attributes="196611" Text="Some files that need to be updated are currently in use" TextStyle="TitleFont" Order="500" TextLocId="Azure.Control.Text.FilesInUse#Title" MsiKey="FilesInUse#Title"/>
+    <ROW Dialog_="FilesInUse" Control="Text" Type="Text" X="30" Y="70" Width="390" Height="75" Attributes="65539" Text="The following applications are using files that need to be updated by this setup. You can either close the applications and then click &quot;Retry&quot;, or click &quot;Ignore&quot; so that the installer continues the installation and replaces these files when your system restarts." Order="600" TextLocId="Control.Text.FilesInUse#Text" MsiKey="FilesInUse#Text"/>
+    <ROW Dialog_="FilesInUse" Control="List" Type="ListBox" X="30" Y="145" Width="390" Height="150" Attributes="7" Property="FileInUseProcess" TextStyle="DlgFont8" Order="700" MsiKey="FilesInUse#List"/>
+    <ROW Dialog_="LicenseAgreementDlg" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1" Text="[Background]" Order="100" MsiKey="LicenseAgreementDlg#Bitmap"/>
+    <ROW Dialog_="LicenseAgreementDlg" Control="Next" Type="PushButton" X="385" Y="333" Width="56" Height="18" Attributes="3" Text="[ButtonText_Next]" TextStyle="DlgFont8" Order="200" TextLocId="-" MsiKey="LicenseAgreementDlg#Next"/>
+    <ROW Dialog_="LicenseAgreementDlg" Control="Back" Type="PushButton" X="321" Y="333" Width="56" Height="18" Attributes="3" Text="[ButtonText_Back]" TextStyle="DlgFont8" Order="400" TextLocId="-" MsiKey="LicenseAgreementDlg#Back" Options="1"/>
+    <ROW Dialog_="LicenseAgreementDlg" Control="Description" Type="Text" X="30" Y="26" Width="340" Height="60" Attributes="196611" Text="To continue you must read and accept the terms of this agreement. If you do not want to accept the [ProductName] Licence Terms, close this window to cancel the installation." Order="500" TextLocId="Azure.Control.Text.LicenseAgreementDlg#Description" MsiKey="LicenseAgreementDlg#Description"/>
+    <ROW Dialog_="LicenseAgreementDlg" Control="AgreementText" Type="ScrollableText" X="30" Y="90" Width="390" Height="200" Attributes="3" Property="EulaRead" Text="Setup\EULA_en.rtf" Order="600" TextLocId="Control.Text.LicenseAgreementDlg#AgreementText" MsiKey="LicenseAgreementDlg#AgreementText"/>
+    <ROW Dialog_="LicenseAgreementDlg" Control="PrintButton" Type="PushButton" X="387" Y="27" Width="34" Height="34" Attributes="4718595" Text="[PrintIcon]" Order="700" MsiKey="LicenseAgreementDlg#PrintButton" AssociatedCtrl="AgreementText"/>
+    <ROW Dialog_="LicenseAgreementDlg" Control="EulaAgreeCheckBox" Type="CheckBox" X="30" Y="298" Width="390" Height="16" Attributes="3" Property="IAgree" Text="I &amp;accept the terms of this agreement." Order="800" TextLocId="Azure.Control.Text.LicenseAgreementDlg#EulaAgreeCheckBox" MsiKey="LicenseAgreementDlg#EulaAgreeCheckBox"/>
+    <ROW Dialog_="MaintenanceTypeDlg" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1" Text="[CaptionBackground]" Order="100" MsiKey="MaintenanceTypeDlg#Bitmap"/>
+    <ROW Dialog_="MaintenanceTypeDlg" Control="ChangeLabel" Type="Text" X="80" Y="100" Width="100" Height="11" Attributes="65539" Text="&amp;Modify" TextStyle="[DlgTitleFont]" Order="200" TextLocId="Control.Text.MaintenanceTypeDlg#ChangeLabel" MsiKey="MaintenanceTypeDlg#ChangeLabel"/>
+    <ROW Dialog_="MaintenanceTypeDlg" Control="ChangeButton" Type="PushButton" X="30" Y="100" Width="38" Height="38" Attributes="5767171" Text="[CustomSetupIcon]" Help="Modify Installation|" Order="300" HelpLocId="Control.Help.MaintenanceTypeDlg#ChangeButton" MsiKey="MaintenanceTypeDlg#ChangeButton"/>
+    <ROW Dialog_="MaintenanceTypeDlg" Control="RepairLabel" Type="Text" X="80" Y="159" Width="100" Height="11" Attributes="65539" Text="Re&amp;pair" TextStyle="[DlgTitleFont]" Order="400" TextLocId="Control.Text.MaintenanceTypeDlg#RepairLabel" MsiKey="MaintenanceTypeDlg#RepairLabel"/>
+    <ROW Dialog_="MaintenanceTypeDlg" Control="RepairButton" Type="PushButton" X="30" Y="159" Width="38" Height="38" Attributes="5767171" Text="[RepairIcon]" Help="Repair Installation|" Order="500" HelpLocId="Control.Help.MaintenanceTypeDlg#RepairButton" MsiKey="MaintenanceTypeDlg#RepairButton"/>
+    <ROW Dialog_="MaintenanceTypeDlg" Control="RemoveLabel" Type="Text" X="80" Y="218" Width="100" Height="11" Attributes="65539" Text="&amp;Remove" TextStyle="[DlgTitleFont]" Order="600" TextLocId="Control.Text.MaintenanceTypeDlg#RemoveLabel" MsiKey="MaintenanceTypeDlg#RemoveLabel"/>
+    <ROW Dialog_="MaintenanceTypeDlg" Control="RemoveButton" Type="PushButton" X="30" Y="218" Width="38" Height="38" Attributes="5767171" Text="[RemoveIcon]" Help="Remove Installation|" Order="700" HelpLocId="Control.Help.MaintenanceTypeDlg#RemoveButton" MsiKey="MaintenanceTypeDlg#RemoveButton"/>
+    <ROW Dialog_="MaintenanceTypeDlg" Control="Back" Type="PushButton" X="321" Y="333" Width="56" Height="18" Attributes="3" Text="[ButtonText_Back]" TextStyle="DlgFont8" Order="800" TextLocId="-" MsiKey="MaintenanceTypeDlg#Back" Options="1"/>
+    <ROW Dialog_="MaintenanceTypeDlg" Control="Cancel" Type="PushButton" X="450" Y="0" Width="0" Height="0" Attributes="2" Text="[ButtonText_Cancel]" Order="1000" TextLocId="-" MsiKey="MaintenanceTypeDlg#Cancel" Options="1"/>
+    <ROW Dialog_="MaintenanceTypeDlg" Control="Title" Type="Text" X="30" Y="6" Width="390" Height="40" Attributes="196611" Text="Change your installation of [ProductName]" TextStyle="TitleFont" Order="1100" TextLocId="Azure.Control.Text.MaintenanceTypeDlg#Title" MsiKey="MaintenanceTypeDlg#Title"/>
+    <ROW Dialog_="MaintenanceTypeDlg" Control="RemoveCommand" Type="CommandLinkButton" X="30" Y="218" Width="390" Height="48" Attributes="6815747" Text="[RemoveIcon]" Help="Removes [ProductName] from your computer.|" Order="1200" HelpLocId="Azure.Control.Help.MaintenanceTypeDlg#RemoveCommand" MsiKey="MaintenanceTypeDlg#RemoveCommand" ExtType="CommandLinkButton" ExtData="Remove"/>
+    <ROW Dialog_="MaintenanceTypeDlg" Control="RepairCommand" Type="CommandLinkButton" X="30" Y="159" Width="390" Height="48" Attributes="6815747" Text="[RepairIcon]" Help="Repairs errors in the most recent installation state.|" Order="1300" HelpLocId="Azure.Control.Help.MaintenanceTypeDlg#RepairCommand" MsiKey="MaintenanceTypeDlg#RepairCommand" ExtType="CommandLinkButton" ExtData="Repair"/>
+    <ROW Dialog_="MaintenanceTypeDlg" Control="ModifyCommand" Type="CommandLinkButton" X="30" Y="100" Width="390" Height="48" Attributes="6815747" Text="[CustomSetupIcon]" Help="Change which features are installed.|" Order="1400" HelpLocId="Azure.Control.Help.MaintenanceTypeDlg#ModifyCommand" MsiKey="MaintenanceTypeDlg#ModifyCommand" ExtType="CommandLinkButton" ExtData="Add or Remove Features"/>
+    <ROW Dialog_="MaintenanceWelcomeDlg" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1" Text="[Background]" Order="100" MsiKey="MaintenanceWelcomeDlg#Bitmap"/>
+    <ROW Dialog_="MaintenanceWelcomeDlg" Control="Next" Type="PushButton" X="385" Y="333" Width="56" Height="18" Attributes="3" Text="[ButtonText_Next]" TextStyle="DlgFont8" Order="200" TextLocId="-" MsiKey="MaintenanceWelcomeDlg#Next"/>
+    <ROW Dialog_="MaintenanceWelcomeDlg" Control="Back" Type="PushButton" X="321" Y="333" Width="56" Height="18" Attributes="2" Text="[ButtonText_Back]" TextStyle="DlgFont8" Order="400" TextLocId="-" MsiKey="MaintenanceWelcomeDlg#Back" Options="1"/>
+    <ROW Dialog_="MaintenanceWelcomeDlg" Control="Description" Type="Text" X="30" Y="250" Width="390" Height="60" Attributes="196611" Text="The [Wizard] will allow you to change the way [ProductName] features are installed on your computer or even to remove [ProductName] from your computer.  Click Next to continue or close the window to exit the [Wizard]." Order="500" TextLocId="Control.Text.MaintenanceWelcomeDlg#DescriptionNoClose" MsiKey="MaintenanceWelcomeDlg#Description"/>
+    <ROW Dialog_="MaintenanceWelcomeDlg" Control="DialogIcon" Type="Icon" X="177" Y="130" Width="96" Height="96" Attributes="1048577" Text="[AppLogoIcon]" Order="600"/>
+    <ROW Dialog_="MsiRMFilesInUse" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1" Text="[CaptionBackground]" Order="100" MsiKey="MsiRMFilesInUse#Bitmap"/>
+    <ROW Dialog_="MsiRMFilesInUse" Control="OK" Type="PushButton" X="385" Y="333" Width="56" Height="18" Attributes="3" Text="[ButtonText_OK]" TextStyle="DlgFont8" Order="200" TextLocId="-" MsiKey="MsiRMFilesInUse#OK"/>
+    <ROW Dialog_="MsiRMFilesInUse" Control="Text" Type="Text" X="30" Y="70" Width="390" Height="30" Attributes="65539" Text="The following applications are using files that need to be updated by this setup." Order="400" TextLocId="Control.Text.MsiRMFilesInUse#Text" MsiKey="MsiRMFilesInUse#Text"/>
+    <ROW Dialog_="MsiRMFilesInUse" Control="List" Type="ListBox" X="30" Y="100" Width="390" Height="140" Attributes="7" Property="FileInUseProcess" TextStyle="DlgFont8" Order="500" MsiKey="MsiRMFilesInUse#List"/>
+    <ROW Dialog_="MsiRMFilesInUse" Control="Options" Type="RadioButtonGroup" X="30" Y="250" Width="390" Height="48" Attributes="3" Property="AppsShutdownOption" Order="600" MsiKey="MsiRMFilesInUse#Options"/>
+    <ROW Dialog_="MsiRMFilesInUse" Control="Title" Type="Text" X="30" Y="6" Width="390" Height="40" Attributes="196611" Text="Some files that need to be updated are currently in use" TextStyle="TitleFont" Order="700" TextLocId="Azure.Control.Text.MsiRMFilesInUse#Title" MsiKey="MsiRMFilesInUse#Title"/>
+    <ROW Dialog_="OutOfDiskDlg" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1" Text="[CaptionBackground]" Order="100" MsiKey="OutOfDiskDlg#Bitmap"/>
+    <ROW Dialog_="OutOfDiskDlg" Control="OK" Type="PushButton" X="385" Y="333" Width="56" Height="18" Attributes="3" Text="[ButtonText_OK]" TextStyle="DlgFont8" Order="200" TextLocId="-" MsiKey="OutOfDiskDlg#OK"/>
+    <ROW Dialog_="OutOfDiskDlg" Control="VolumeList" Type="VolumeCostList" X="30" Y="145" Width="390" Height="150" Attributes="393223" Text="{120}{70}{70}{70}{70}" TextStyle="DlgFont8" Order="300" TextLocId="Control.Text.OutOfDiskDlg#VolumeList" MsiKey="OutOfDiskDlg#VolumeList"/>
+    <ROW Dialog_="OutOfDiskDlg" Control="Title" Type="Text" X="30" Y="6" Width="390" Height="40" Attributes="196611" Text="Disk space required for the installation exceeds available disk space" TextStyle="TitleFont" Order="400" TextLocId="Azure.Control.Text.OutOfDiskDlg#Title" MsiKey="OutOfDiskDlg#Title"/>
+    <ROW Dialog_="OutOfDiskDlg" Control="Text" Type="Text" X="30" Y="70" Width="390" Height="75" Attributes="65539" Text="The highlighted volumes do not have enough disk space available for the currently selected features.  You can either remove some files from the highlighted volumes, or choose to install less features onto local drive(s), or select different destination drive(s)." Order="500" TextLocId="Control.Text.OutOfDiskDlg#Text" MsiKey="OutOfDiskDlg#Text"/>
+    <ROW Dialog_="OutOfRbDiskDlg" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1" Text="[CaptionBackground]" Order="100" MsiKey="OutOfRbDiskDlg#Bitmap"/>
+    <ROW Dialog_="OutOfRbDiskDlg" Control="Text2" Type="Text" X="30" Y="145" Width="390" Height="75" Attributes="65539" Text="Alternatively, you may choose to disable the installer&apos;s rollback functionality.  This allows the installer to restore your computer&apos;s original state should the installation be interrupted in any way.  Click &quot;Yes&quot; if you wish to take the risk to disable rollback." Order="200" TextLocId="Control.Text.OutOfRbDiskDlg#Text2" MsiKey="OutOfRbDiskDlg#Text2"/>
+    <ROW Dialog_="OutOfRbDiskDlg" Control="Text" Type="Text" X="30" Y="70" Width="390" Height="75" Attributes="65539" Text="The highlighted volumes do not have enough disk space available for the currently selected features.  You can either remove some files from the highlighted volumes, or choose to install less features onto local drive(s), or select different destination drive(s)." Order="300" TextLocId="Control.Text.OutOfRbDiskDlg#Text" MsiKey="OutOfRbDiskDlg#Text"/>
+    <ROW Dialog_="OutOfRbDiskDlg" Control="VolumeList" Type="VolumeCostList" X="30" Y="220" Width="390" Height="75" Attributes="4587527" Text="{120}{70}{70}{70}{70}" TextStyle="DlgFont8" Order="400" TextLocId="Control.Text.OutOfRbDiskDlg#VolumeList" MsiKey="OutOfRbDiskDlg#VolumeList"/>
+    <ROW Dialog_="OutOfRbDiskDlg" Control="Title" Type="Text" X="30" Y="6" Width="390" Height="40" Attributes="196611" Text="Disk space required for the installation exceeds available disk space" TextStyle="TitleFont" Order="500" TextLocId="Azure.Control.Text.OutOfRbDiskDlg#Title" MsiKey="OutOfRbDiskDlg#Title"/>
+    <ROW Dialog_="OutOfRbDiskDlg" Control="OK" Type="PushButton" X="385" Y="333" Width="56" Height="18" Attributes="3" Text="[ButtonText_OK]" TextStyle="DlgFont8" Order="600" TextLocId="-"/>
+    <ROW Dialog_="PatchWelcomeDlg" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1" Text="[Background]" Order="100" MsiKey="PatchWelcomeDlg#Bitmap"/>
+    <ROW Dialog_="PatchWelcomeDlg" Control="Next" Type="PushButton" X="385" Y="333" Width="56" Height="18" Attributes="3" Text="[ButtonText_Next]" TextStyle="DlgFont8" Order="200" TextLocId="-" MsiKey="PatchWelcomeDlg#Next"/>
+    <ROW Dialog_="PatchWelcomeDlg" Control="Back" Type="PushButton" X="321" Y="333" Width="56" Height="18" Attributes="2" Text="[ButtonText_Back]" TextStyle="DlgFont8" Order="400" TextLocId="-" MsiKey="PatchWelcomeDlg#Back" Options="1"/>
+    <ROW Dialog_="PatchWelcomeDlg" Control="Description" Type="Text" X="30" Y="250" Width="390" Height="60" Attributes="196611" Text="The [Wizard] will install the Patch for [ProductName] on your computer.  Click Next to continue or close the window to exit the Patch [Wizard]." Order="500" TextLocId="Control.Text.PatchWelcomeDlg#DescriptionNoClose" MsiKey="PatchWelcomeDlg#Description"/>
+    <ROW Dialog_="PatchWelcomeDlg" Control="DialogIcon" Type="Icon" X="177" Y="130" Width="96" Height="96" Attributes="1048577" Text="[AppLogoIcon]" Order="600"/>
+    <ROW Dialog_="PrepareDlg" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1" Text="[Background]" Order="100" MsiKey="PrepareDlg#Bitmap"/>
+    <ROW Dialog_="PrepareDlg" Control="Next" Type="PushButton" X="385" Y="333" Width="56" Height="18" Attributes="2" Text="[ButtonText_Next]" TextStyle="DlgFont8" Order="300" TextLocId="-" MsiKey="PrepareDlg#Next"/>
+    <ROW Dialog_="PrepareDlg" Control="Back" Type="PushButton" X="321" Y="333" Width="56" Height="18" Attributes="2" Text="[ButtonText_Back]" TextStyle="DlgFont8" Order="400" TextLocId="-" MsiKey="PrepareDlg#Back" Options="1"/>
+    <ROW Dialog_="PrepareDlg" Control="Description" Type="Text" X="30" Y="250" Width="390" Height="60" Attributes="196611" Text="Please wait while the [Wizard] prepares to guide you through the installation." Order="500" TextLocId="Azure.Control.Text.PrepareDlg#Description" MsiKey="PrepareDlg#Description"/>
+    <ROW Dialog_="PrepareDlg" Control="DialogIcon" Type="Icon" X="177" Y="130" Width="96" Height="96" Attributes="1048577" Text="[AppLogoIcon]" Order="600"/>
+    <ROW Dialog_="ProgressDlg" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1" Text="[Background]" Order="100" MsiKey="ProgressDlg#Bitmap"/>
+    <ROW Dialog_="ProgressDlg" Control="Back" Type="PushButton" X="321" Y="333" Width="56" Height="18" Attributes="2" Text="[ButtonText_Back]" TextStyle="DlgFont8" Order="200" TextLocId="-" MsiKey="ProgressDlg#Back" Options="1"/>
+    <ROW Dialog_="ProgressDlg" Control="Next" Type="PushButton" X="385" Y="333" Width="56" Height="18" Attributes="2" Text="[ButtonText_Next]" TextStyle="DlgFont8" Order="300" TextLocId="-" MsiKey="ProgressDlg#Next"/>
+    <ROW Dialog_="ProgressDlg" Control="Cancel" Type="PushButton" X="450" Y="0" Width="0" Height="0" Attributes="2" Text="[ButtonText_Cancel]" Order="400" TextLocId="-" MsiKey="ProgressDlg#Cancel" Options="1"/>
+    <ROW Dialog_="ProgressDlg" Control="ProgressBar" Type="ProgressBar" X="30" Y="245" Width="390" Height="16" Attributes="65537" Text="Progress done" Order="500" TextLocId="Control.Text.ProgressDlg#ProgressBar" MsiKey="ProgressDlg#ProgressBar"/>
+    <ROW Dialog_="ProgressDlg" Control="Description" Type="Text" X="30" Y="265" Width="390" Height="15" Attributes="65539" Text="Installing [ProductName]..." Order="600" TextLocId="Azure.Control.Text.ProgressDlg#Description" MsiKey="ProgressDlg#Description"/>
+    <ROW Dialog_="ProgressDlg" Control="ActionText" Type="Text" X="30" Y="280" Width="390" Height="15" Attributes="65539" Order="700" MsiKey="ProgressDlg#ActionText"/>
+    <ROW Dialog_="ProgressDlg" Control="DialogIcon" Type="Icon" X="177" Y="130" Width="96" Height="96" Attributes="1048577" Text="[AppLogoIcon]" Order="800"/>
+    <ROW Dialog_="ResumeDlg" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1" Text="[Background]" Order="100" MsiKey="ResumeDlg#Bitmap"/>
+    <ROW Dialog_="ResumeDlg" Control="Install" Type="PushButton" X="385" Y="333" Width="56" Height="18" Attributes="3" Text="[ButtonText_Install]" TextStyle="DlgFont8" Order="200" TextLocId="-" MsiKey="ResumeDlg#Install"/>
+    <ROW Dialog_="ResumeDlg" Control="Back" Type="PushButton" X="321" Y="333" Width="56" Height="18" Attributes="2" Text="[ButtonText_Back]" TextStyle="DlgFont8" Order="400" TextLocId="-" MsiKey="ResumeDlg#Back" Options="1"/>
+    <ROW Dialog_="ResumeDlg" Control="Description" Type="Text" X="30" Y="250" Width="390" Height="60" Attributes="196611" Text="The [Wizard] will complete the installation of [ProductName] on your computer.  Click Install to continue or close the window to exit the [Wizard]." Order="500" TextLocId="Control.Text.ResumeDlg#DescriptionNoClose" MsiKey="ResumeDlg#Description"/>
+    <ROW Dialog_="ResumeDlg" Control="DialogIcon" Type="Icon" X="177" Y="130" Width="96" Height="96" Attributes="1048577" Text="[AppLogoIcon]" Order="600"/>
+    <ROW Dialog_="ShortcutsDlg" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1" Text="[Background]" Order="100" MsiKey="ShortcutsDlg#Bitmap"/>
+    <ROW Dialog_="ShortcutsDlg" Control="StartupShorcutsCheckBox" Type="CheckBox" X="30" Y="288" Width="390" Height="16" Attributes="3" Property="AI_STARTUP_SH" Text="Startup folder" Order="200" TextLocId="Control.Text.ShortcutsDlg#StartupShorcutsCheckBox" MsiKey="ShortcutsDlg#StartupShorcutsCheckBox" Options="1"/>
+    <ROW Dialog_="ShortcutsDlg" Control="Next" Type="PushButton" X="385" Y="333" Width="56" Height="18" Attributes="3" Text="[ButtonText_Next]" TextStyle="DlgFont8" Order="300" TextLocId="-" MsiKey="ShortcutsDlg#Next"/>
+    <ROW Dialog_="ShortcutsDlg" Control="Cancel" Type="PushButton" X="450" Y="0" Width="0" Height="0" Attributes="2" Text="[ButtonText_Cancel]" Order="400" TextLocId="-" MsiKey="ShortcutsDlg#Cancel" Options="1"/>
+    <ROW Dialog_="ShortcutsDlg" Control="Back" Type="PushButton" X="321" Y="333" Width="56" Height="18" Attributes="3" Text="[ButtonText_Back]" TextStyle="DlgFont8" Order="500" TextLocId="-" MsiKey="ShortcutsDlg#Back" Options="1"/>
+    <ROW Dialog_="ShortcutsDlg" Control="DesktopShortcutsCheckBox" Type="CheckBox" X="30" Y="234" Width="390" Height="16" Attributes="3" Property="AI_DESKTOP_SH" Text="Desktop" Order="600" TextLocId="Control.Text.ShortcutsDlg#DesktopShortcutsCheckBox" MsiKey="ShortcutsDlg#DesktopShortcutsCheckBox" Options="1"/>
+    <ROW Dialog_="ShortcutsDlg" Control="StartmenuShortcutsCheckBox" Type="CheckBox" X="30" Y="252" Width="390" Height="16" Attributes="3" Property="AI_STARTMENU_SH" Text="Start Menu Programs folder" Order="700" TextLocId="Control.Text.ShortcutsDlg#StartmenuShortcutsCheckBox" MsiKey="ShortcutsDlg#StartmenuShortcutsCheckBox" Options="1"/>
+    <ROW Dialog_="ShortcutsDlg" Control="QuickLaunchShorcutsCheckBox" Type="CheckBox" X="30" Y="270" Width="390" Height="16" Attributes="3" Property="AI_QUICKLAUNCH_SH" Text="Quick Launch toolbar" Order="800" TextLocId="Control.Text.ShortcutsDlg#QuickLaunchShorcutsCheckBox" MsiKey="ShortcutsDlg#QuickLaunchShorcutsCheckBox" Options="1"/>
+    <ROW Dialog_="ShortcutsDlg" Control="ShortcutsDlgText" Type="Text" X="30" Y="200" Width="390" Height="30" Attributes="65539" Text="Create shortcuts for [ProductName] in the following locations:" Order="900" TextLocId="Control.Text.ShortcutsDlg#ShortcutsDlgText" MsiKey="ShortcutsDlg#ShortcutsDlgText"/>
+    <ROW Dialog_="UserExit" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1" Text="[CaptionBackground]" Order="100" MsiKey="UserExit#Bitmap"/>
+    <ROW Dialog_="UserExit" Control="Finish" Type="PushButton" X="385" Y="333" Width="56" Height="18" Attributes="3" Text="[ButtonText_Finish]" TextStyle="DlgFont8" Order="200" TextLocId="-" MsiKey="UserExit#Finish" Options="1"/>
+    <ROW Dialog_="UserExit" Control="Back" Type="PushButton" X="321" Y="333" Width="56" Height="18" Attributes="2" Text="[ButtonText_Back]" TextStyle="DlgFont8" Order="400" TextLocId="-" MsiKey="UserExit#Back" Options="1"/>
+    <ROW Dialog_="UserExit" Control="Title" Type="Text" X="30" Y="6" Width="390" Height="40" Attributes="196611" Text="The [ProductName] [Wizard] was interrupted" TextStyle="TitleFont" Order="500" TextLocId="Control.Text.UserExit#Title" MsiKey="UserExit#Title"/>
+    <ROW Dialog_="UserExit" Control="Description2" Type="Text" X="30" Y="295" Width="390" Height="15" Attributes="196611" Text="Click the &quot;Finish&quot; button to exit the [Wizard]." Order="600" TextLocId="Control.Text.UserExit#Description2" MsiKey="UserExit#Description2"/>
+    <ROW Dialog_="UserExit" Control="Description1" Type="Text" X="30" Y="250" Width="390" Height="45" Attributes="196611" Text="[ProductName] setup was interrupted.  Your system has not been modified.  To install this program at a later time, please run the installation again." Order="700" TextLocId="Control.Text.UserExit#Description1" MsiKey="UserExit#Description1"/>
+    <ROW Dialog_="VerifyReadyDlg" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1" Text="[Background]" Order="100" MsiKey="VerifyReadyDlg#Bitmap"/>
+    <ROW Dialog_="VerifyReadyDlg" Control="Install" Type="PushButton" X="385" Y="333" Width="56" Height="18" Attributes="3" Text="[ButtonText_Install]" TextStyle="DlgFont8" Order="200" TextLocId="-" MsiKey="VerifyReadyDlg#Install"/>
+    <ROW Dialog_="VerifyReadyDlg" Control="Back" Type="PushButton" X="321" Y="333" Width="56" Height="18" Attributes="3" Text="[ButtonText_Back]" TextStyle="DlgFont8" Order="400" TextLocId="-" MsiKey="VerifyReadyDlg#Back" Options="1"/>
+    <ROW Dialog_="VerifyReadyDlg" Control="Text" Type="Text" X="30" Y="250" Width="390" Height="60" Attributes="65539" Text="Click Install to begin the installation.  If you want to review or change any of your installation settings, click Back.  Close the window to exit the wizard." Order="500" TextLocId="Control.Text.VerifyReadyDlg#TextNoClose" MsiKey="VerifyReadyDlg#Text"/>
+    <ROW Dialog_="VerifyReadyDlg" Control="DialogIcon" Type="Icon" X="177" Y="130" Width="96" Height="96" Attributes="1048577" Text="[AppLogoIcon]" Order="600"/>
+    <ROW Dialog_="VerifyRemoveDlg" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1048577" Text="[Background]" Order="100" MsiKey="VerifyRemoveDlg#Bitmap"/>
+    <ROW Dialog_="VerifyRemoveDlg" Control="Back" Type="PushButton" X="321" Y="333" Width="56" Height="18" Attributes="3" Text="[ButtonText_Back]" Order="200" TextLocId="-" MsiKey="VerifyRemoveDlg#Back" Options="1"/>
+    <ROW Dialog_="VerifyRemoveDlg" Control="Title" Type="Text" X="30" Y="6" Width="390" Height="40" Attributes="196611" Text="Begin remove of [ProductName]" TextStyle="TitleFont" Order="500" TextLocId="Azure.Control.Text.VerifyRemoveDlg#Title" MsiKey="VerifyRemoveDlg#Title"/>
+    <ROW Dialog_="VerifyRepairDlg" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1048577" Text="[Background]" Order="100" MsiKey="VerifyRepairDlg#Bitmap"/>
+    <ROW Dialog_="VerifyRepairDlg" Control="Back" Type="PushButton" X="321" Y="333" Width="56" Height="18" Attributes="3" Text="[ButtonText_Back]" Order="400" TextLocId="-" MsiKey="VerifyRepairDlg#Back" Options="1"/>
+    <ROW Dialog_="VerifyRepairDlg" Control="Title" Type="Text" X="30" Y="6" Width="390" Height="40" Attributes="196611" Text="Begin repair of [ProductName]" TextStyle="TitleFont" Order="500" TextLocId="Azure.Control.Text.VerifyRepairDlg#Title" MsiKey="VerifyRepairDlg#Title"/>
+    <ROW Dialog_="WaitForCostingDlg" Control="Return" Type="PushButton" X="122" Y="89" Width="56" Height="18" Attributes="3" Text="[ButtonText_Return]" TextStyle="DlgFont8" Order="200" TextLocId="-" MsiKey="WaitForCostingDlg#Return"/>
+    <ROW Dialog_="WaitForCostingDlg" Control="Text" Type="Text" X="55" Y="10" Width="236" Height="60" Attributes="65539" Text="Please wait while the installer finishes determining your disk space requirements." TextStyle="BlueText" Order="300" TextLocId="Control.Text.WaitForCostingDlg#Text" MsiKey="WaitForCostingDlg#Text"/>
+    <ROW Dialog_="WaitForCostingDlg" Control="Icon" Type="Icon" X="10" Y="10" Width="36" Height="36" Attributes="1048577" Text="[ExclamationIcon]" Help="Exclamation icon|" Order="400" HelpLocId="Control.Help.WaitForCostingDlg#Icon" MsiKey="WaitForCostingDlg#Icon"/>
+    <ROW Dialog_="WelcomeDlg" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1" Text="[Background]" Order="100" MsiKey="WelcomeDlg#Bitmap"/>
+    <ROW Dialog_="WelcomeDlg" Control="DialogIcon" Type="Icon" X="177" Y="130" Width="96" Height="96" Attributes="1048577" Text="[AppLogoIcon]" Order="200" MsiKey="WelcomeDlg#DialogIcon"/>
+    <ROW Dialog_="WelcomeDlg" Control="Next" Type="PushButton" X="385" Y="333" Width="56" Height="18" Attributes="3" Text="[ButtonText_Next]" TextStyle="DlgFont8" Order="300" TextLocId="-" MsiKey="WelcomeDlg#Next"/>
+    <ROW Dialog_="WelcomeDlg" Control="Back" Type="PushButton" X="321" Y="333" Width="56" Height="18" Attributes="2" Text="[ButtonText_Back]" TextStyle="DlgFont8" Order="500" TextLocId="-" MsiKey="WelcomeDlg#Back" Options="1"/>
+    <ROW Dialog_="WelcomeDlg" Control="Description" Type="Text" X="30" Y="250" Width="390" Height="60" Attributes="196611" Text="The [Wizard] will install [ProductName] on your computer. Click Next to continue or close the window to exit the [Wizard]." Order="600" TextLocId="Control.Text.WelcomeDlg#DescriptionNoClose" MsiKey="WelcomeDlg#Description"/>
+    <ATTRIBUTE name="DeletedRows" value="AdminWelcomeDlg#Bitmap@VerifyReadyDlg#Title@ExitDialog#HorizontalLine@WelcomeDlg#Title@MaintenanceTypeDlg#RemoveText@PatchWelcomeDlg#Title@ProgressDlg#TitleIcon@AdminWelcomeDlg#Title@LicenseAgreementDlg#TitleIcon@PrepareDlg#TitleIcon@ShortcutsDlg#TitleIcon@ProgressDlg#Title@PrepareDlg#Title@ResumeDlg#Title@MaintenanceTypeDlg#ChangeText@MaintenanceTypeDlg#RepairText@ShortcutsDlg#Title@CustomizeDlg#TitleIcon@LicenseAgreementDlg#Title@OutOfRbDiskDlg#OkButton@MaintenanceWelcomeDlg#Title"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiControlConditionComponent">
     <ROW Dialog_="ShortcutsDlg" Control_="StartupShorcutsCheckBox" Action="Hide" Condition="(Not Installed)"/>
@@ -366,6 +382,20 @@
     <ROW Dialog_="LicenseAgreementDlg" Control_="Back" Event="NewDialog" Argument="PatchWelcomeDlg" Condition="AI_PATCH" Ordering="1"/>
     <ROW Dialog_="LicenseAgreementDlg" Control_="Next" Event="NewDialog" Argument="VerifyReadyDlg" Condition="AI_PATCH" Ordering="1"/>
     <ROW Dialog_="OutOfRbDiskDlg" Control_="OK" Event="EndDialog" Argument="Return" Condition="1" Ordering="1"/>
+    <ROW Dialog_="CustomizeDlg" Control_="Back" Event="NewDialog" Argument="MaintenanceTypeDlg" Condition="AI_MAINT" Ordering="1"/>
+    <ROW Dialog_="CustomizeDlg" Control_="Next" Event="NewDialog" Argument="VerifyReadyDlg" Condition="AI_MAINT" Ordering="101"/>
+    <ROW Dialog_="MaintenanceTypeDlg" Control_="ChangeButton" Event="NewDialog" Argument="CustomizeDlg" Condition="AI_MAINT" Ordering="501"/>
+    <ROW Dialog_="ResumeDlg" Control_="Install" Event="EndDialog" Argument="Return" Condition="AI_RESUME" Ordering="299"/>
+    <ROW Dialog_="VerifyReadyDlg" Control_="Install" Event="EndDialog" Argument="Return" Condition="AI_MAINT" Ordering="197"/>
+    <ROW Dialog_="VerifyReadyDlg" Control_="Install" Event="EndDialog" Argument="Return" Condition="AI_PATCH" Ordering="198"/>
+    <ROW Dialog_="VerifyReadyDlg" Control_="Install" Event="EndDialog" Argument="Return" Condition="AI_INSTALL" Ordering="199"/>
+    <ROW Dialog_="VerifyReadyDlg" Control_="Back" Event="NewDialog" Argument="CustomizeDlg" Condition="AI_MAINT" Ordering="201"/>
+    <ROW Dialog_="VerifyRemoveDlg" Control_="Remove" Event="EndDialog" Argument="Return" Condition="AI_MAINT AND InstallMode = &quot;Remove&quot;" Ordering="299"/>
+    <ROW Dialog_="VerifyRepairDlg" Control_="Repair" Event="EndDialog" Argument="Return" Condition="AI_MAINT AND InstallMode = &quot;Repair&quot;" Ordering="399"/>
+    <ROW Dialog_="VerifyRemoveDlg" Control_="Back" Event="NewDialog" Argument="MaintenanceTypeDlg" Condition="AI_MAINT AND InstallMode = &quot;Remove&quot;" Ordering="1"/>
+    <ROW Dialog_="VerifyRepairDlg" Control_="Back" Event="NewDialog" Argument="MaintenanceTypeDlg" Condition="AI_MAINT AND InstallMode = &quot;Repair&quot;" Ordering="1"/>
+    <ROW Dialog_="MaintenanceTypeDlg" Control_="RemoveButton" Event="NewDialog" Argument="VerifyRemoveDlg" Condition="AI_MAINT AND InstallMode = &quot;Remove&quot;" Ordering="601"/>
+    <ROW Dialog_="MaintenanceTypeDlg" Control_="RepairButton" Event="NewDialog" Argument="VerifyRepairDlg" Condition="AI_MAINT AND InstallMode = &quot;Repair&quot;" Ordering="601"/>
     <ATTRIBUTE name="DeletedRows" value="OutOfRbDiskDlg#OkButton#EndDialog#Return#1"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiCreateFolderComponent">
@@ -373,38 +403,49 @@
     <ROW Directory_="Quick_Launch_DIR" Component_="Quick_Launch"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiCustActComponent">
-    <ROW Action="AI_AiRemoveFilesCommit" Type="11777" Source="ResourceCleaner.dll" Target="OnAiRemoveFiles" WithoutSeq="true"/>
+    <ROW Action="AI_AiRemoveFilesCommit" Type="11777" Source="ResourceCleaner.dll" Target="OnAiRemoveFilesCommit" WithoutSeq="true"/>
     <ROW Action="AI_AiRemoveFilesDeferred" Type="11265" Source="ResourceCleaner.dll" Target="OnAiRemoveFiles" WithoutSeq="true"/>
+    <ROW Action="AI_AiRemoveFilesDeferred_Permanent" Type="11265" Source="ResourceCleaner.dll" Target="OnAiRemoveFilesPermanent" WithoutSeq="true"/>
+    <ROW Action="AI_AiRemoveFilesDeferred_Undoable" Type="11265" Source="ResourceCleaner.dll" Target="OnAiRemoveFilesUndoable" WithoutSeq="true"/>
     <ROW Action="AI_AiRemoveFilesImmediate" Type="1" Source="ResourceCleaner.dll" Target="OnAiRemoveFilesImmediate"/>
+    <ROW Action="AI_AiRemoveFilesRollback" Type="11521" Source="ResourceCleaner.dll" Target="OnAiUndoRemoveFiles"/>
     <ROW Action="AI_AiRemoveRegsCommit" Type="11777" Source="ResourceCleaner.dll" Target="OnAiRemoveRegs" WithoutSeq="true"/>
     <ROW Action="AI_AiRemoveRegsDeferred" Type="11265" Source="ResourceCleaner.dll" Target="OnAiRemoveRegs" WithoutSeq="true"/>
     <ROW Action="AI_AiRemoveRegsImmediate" Type="1" Source="ResourceCleaner.dll" Target="OnAiRemoveRegsImmediate"/>
+    <ROW Action="AI_BACKUP_AI_SETUPEXEPATH" Type="51" Source="AI_SETUPEXEPATH_ORIGINAL" Target="[AI_SETUPEXEPATH]"/>
     <ROW Action="AI_DATA_SETTER" Type="51" Source="AI_DEL_EMPTY_SHORTCUTDIR" Target="[SHORTCUTDIR]"/>
+    <ROW Action="AI_DATA_SETTER_1" Type="51" Source="AI_ExtractFiles" Target="[AI_SETUPEXEPATH]"/>
     <ROW Action="AI_DELETE_SHORTCUTS" Type="1" Source="aicustact.dll" Target="DeleteShortcuts"/>
-    <ROW Action="AI_DEL_EMPTY_SHORTCUTDIR" Type="3073" Source="aicustact.dll" Target="DeleteEmptyDirectory"/>
+    <ROW Action="AI_DEL_EMPTY_SHORTCUTDIR" Type="3073" Source="aicustact.dll" Target="DeleteEmptyDirectory" AdditionalSeq="AI_DATA_SETTER"/>
     <ROW Action="AI_DOWNGRADE" Type="19" Target="4010"/>
     <ROW Action="AI_DeleteCadLzma" Type="51" Source="AI_DeleteLzma" Target="[AI_SETUPEXEPATH]"/>
     <ROW Action="AI_DeleteLzma" Type="1025" Source="lzmaextractor.dll" Target="DeleteLZMAFiles"/>
     <ROW Action="AI_DeleteRCadLzma" Type="51" Source="AI_DeleteRLzma" Target="[AI_SETUPEXEPATH]"/>
     <ROW Action="AI_DeleteRLzma" Type="1281" Source="lzmaextractor.dll" Target="DeleteLZMAFiles"/>
     <ROW Action="AI_DoRemoveExternalUIStub" Type="3585" Source="ExternalUICleaner.dll" Target="DoRemoveExternalUIStub" WithoutSeq="true"/>
+    <ROW Action="AI_DpiContentScale" Type="1" Source="aicustact.dll" Target="DpiContentScale"/>
+    <ROW Action="AI_EstimateExtractFiles" Type="1" Source="Prereq.dll" Target="EstimateExtractFiles"/>
     <ROW Action="AI_ExtractCadLzma" Type="51" Source="AI_ExtractLzma" Target="[AI_SETUPEXEPATH]"/>
+    <ROW Action="AI_ExtractFiles" Type="1025" Source="Prereq.dll" Target="ExtractSourceFiles" AdditionalSeq="AI_DATA_SETTER_1"/>
     <ROW Action="AI_ExtractLzma" Type="1025" Source="lzmaextractor.dll" Target="ExtractLZMAFiles"/>
     <ROW Action="AI_FindExeLzma" Type="1" Source="lzmaextractor.dll" Target="FindEXE"/>
     <ROW Action="AI_GetArpIconPath" Type="1" Source="aicustact.dll" Target="GetArpIconPath"/>
+    <ROW Action="AI_InstallModeCheck" Type="1" Source="aicustact.dll" Target="UpdateInstallMode" WithoutSeq="true"/>
     <ROW Action="AI_PREPARE_UPGRADE" Type="65" Source="aicustact.dll" Target="PrepareUpgrade"/>
+    <ROW Action="AI_RESTORE_AI_SETUPEXEPATH" Type="51" Source="AI_SETUPEXEPATH" Target="[AI_SETUPEXEPATH_ORIGINAL]"/>
     <ROW Action="AI_RESTORE_LOCATION" Type="65" Source="aicustact.dll" Target="RestoreLocation"/>
     <ROW Action="AI_RemoveExternalUIStub" Type="1" Source="ExternalUICleaner.dll" Target="RemoveExternalUIStub"/>
     <ROW Action="AI_ResolveKnownFolders" Type="1" Source="aicustact.dll" Target="AI_ResolveKnownFolders"/>
     <ROW Action="AI_RunFinishActions" Type="1" Source="aicustact.dll" Target="RunFinishActions" WithoutSeq="true"/>
+    <ROW Action="AI_SHOW_LOG" Type="65" Source="aicustact.dll" Target="LaunchLogFile" WithoutSeq="true"/>
     <ROW Action="AI_STORE_LOCATION" Type="51" Source="ARPINSTALLLOCATION" Target="[APPDIR]"/>
-    <ROW Action="LFRunCmd.exe" Type="1618" Source="LFRunCmd.exe" Target="/INSTALL"/>
+    <ROW Action="LFRunCmd.exe" Type="210" Source="LFRunCmd.exe" Target="/INSTALL"/>
     <ROW Action="SET_APPDIR" Type="307" Source="APPDIR" Target="[ProgramFilesFolder][Manufacturer]\[ProductName]" MultiBuildTarget="DefaultBuild:[ProgramFilesFolder]\[ProductName]"/>
     <ROW Action="SET_SHORTCUTDIR" Type="307" Source="SHORTCUTDIR" Target="[ProgramMenuFolder][ProductName]"/>
     <ROW Action="SET_TARGETDIR_TO_APPDIR" Type="51" Source="TARGETDIR" Target="[APPDIR]"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiDialogComponent">
-    <ROW Dialog="ErrorDlg" HCentering="50" VCentering="50" Width="300" Height="115" Attributes="65539" Title="Installer Information" Control_First="ErrorText" TitleLocId="Dialog.ErrorDlg" MsiKey="ErrorDlg"/>
+    <ROW Dialog="ErrorDlg" HCentering="50" VCentering="50" Width="300" Height="115" Attributes="65539" Title="Installer Information" TitleLocId="Dialog.ErrorDlg" MsiKey="ErrorDlg"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiIconsComponent">
     <ROW Name="StoreManager.exe" SourcePath="res\FileDrop_Small.ico" Index="0"/>
@@ -415,32 +456,44 @@
     <ROW Action="AI_STORE_LOCATION" Condition="Not Installed" Sequence="1502"/>
     <ROW Action="AI_PREPARE_UPGRADE" Condition="AI_UPGRADE=&quot;No&quot; AND (Not Installed)" Sequence="1399"/>
     <ROW Action="AI_ResolveKnownFolders" Sequence="52"/>
-    <ROW Action="AI_DeleteCadLzma" Condition="SETUPEXEDIR=&quot;&quot; AND Installed AND (REMOVE&lt;&gt;&quot;ALL&quot;) AND (NOT PATCH)" Sequence="199" Builds="DefaultBuild"/>
-    <ROW Action="AI_DeleteRCadLzma" Condition="SETUPEXEDIR=&quot;&quot; AND Installed AND (REMOVE&lt;&gt;&quot;ALL&quot;) AND (NOT PATCH)" Sequence="198" Builds="DefaultBuild"/>
-    <ROW Action="AI_ExtractCadLzma" Condition="SETUPEXEDIR=&quot;&quot; AND Installed AND (REMOVE&lt;&gt;&quot;ALL&quot;) AND (NOT PATCH)" Sequence="197" Builds="DefaultBuild"/>
-    <ROW Action="AI_FindExeLzma" Condition="SETUPEXEDIR=&quot;&quot; AND Installed AND (REMOVE&lt;&gt;&quot;ALL&quot;) AND (NOT PATCH)" Sequence="196" Builds="DefaultBuild"/>
-    <ROW Action="AI_ExtractLzma" Condition="SETUPEXEDIR=&quot;&quot; AND Installed AND (REMOVE&lt;&gt;&quot;ALL&quot;) AND (NOT PATCH)" Sequence="1549" Builds="DefaultBuild"/>
-    <ROW Action="AI_DeleteRLzma" Condition="SETUPEXEDIR=&quot;&quot; AND Installed AND (REMOVE&lt;&gt;&quot;ALL&quot;) AND (NOT PATCH)" Sequence="1548" Builds="DefaultBuild"/>
-    <ROW Action="AI_DeleteLzma" Condition="SETUPEXEDIR=&quot;&quot; AND Installed AND (REMOVE&lt;&gt;&quot;ALL&quot;) AND (NOT PATCH)" Sequence="6599" Builds="DefaultBuild"/>
+    <ROW Action="AI_DeleteCadLzma" Condition="SETUPEXEDIR=&quot;&quot; AND Installed AND (REMOVE&lt;&gt;&quot;ALL&quot;) AND (AI_INSTALL_MODE&lt;&gt;&quot;Remove&quot;) AND (NOT PATCH)" Sequence="199" Builds="DefaultBuild"/>
+    <ROW Action="AI_DeleteRCadLzma" Condition="SETUPEXEDIR=&quot;&quot; AND Installed AND (REMOVE&lt;&gt;&quot;ALL&quot;) AND (AI_INSTALL_MODE&lt;&gt;&quot;Remove&quot;) AND (NOT PATCH)" Sequence="198" Builds="DefaultBuild"/>
+    <ROW Action="AI_ExtractCadLzma" Condition="SETUPEXEDIR=&quot;&quot; AND Installed AND (REMOVE&lt;&gt;&quot;ALL&quot;) AND (AI_INSTALL_MODE&lt;&gt;&quot;Remove&quot;) AND (NOT PATCH)" Sequence="197" Builds="DefaultBuild"/>
+    <ROW Action="AI_FindExeLzma" Condition="SETUPEXEDIR=&quot;&quot; AND Installed AND (REMOVE&lt;&gt;&quot;ALL&quot;) AND (AI_INSTALL_MODE&lt;&gt;&quot;Remove&quot;) AND (NOT PATCH)" Sequence="196" Builds="DefaultBuild"/>
+    <ROW Action="AI_ExtractLzma" Condition="SETUPEXEDIR=&quot;&quot; AND Installed AND (REMOVE&lt;&gt;&quot;ALL&quot;) AND (AI_INSTALL_MODE&lt;&gt;&quot;Remove&quot;) AND (NOT PATCH)" Sequence="1549" Builds="DefaultBuild"/>
+    <ROW Action="AI_DeleteRLzma" Condition="SETUPEXEDIR=&quot;&quot; AND Installed AND (REMOVE&lt;&gt;&quot;ALL&quot;) AND (AI_INSTALL_MODE&lt;&gt;&quot;Remove&quot;) AND (NOT PATCH)" Sequence="1548" Builds="DefaultBuild"/>
+    <ROW Action="AI_DeleteLzma" Condition="SETUPEXEDIR=&quot;&quot; AND Installed AND (REMOVE&lt;&gt;&quot;ALL&quot;) AND (AI_INSTALL_MODE&lt;&gt;&quot;Remove&quot;) AND (NOT PATCH)" Sequence="6598" Builds="DefaultBuild"/>
     <ROW Action="AI_GetArpIconPath" Sequence="51"/>
     <ROW Action="AI_RemoveExternalUIStub" Condition="(REMOVE=&quot;ALL&quot;) AND ((VersionNT &gt; 500) OR((VersionNT = 500) AND (ServicePackLevel &gt;= 4)))" Sequence="1501"/>
-    <ROW Action="AI_AiRemoveFilesImmediate" Sequence="3499"/>
     <ROW Action="AI_DELETE_SHORTCUTS" Condition="NOT (REMOVE=&quot;ALL&quot;)" Sequence="1401"/>
-    <ROW Action="AI_DEL_EMPTY_SHORTCUTDIR" Condition="NOT (REMOVE=&quot;ALL&quot;)" Sequence="6403" AdditionalSeq="AI_DATA_SETTER"/>
-    <ROW Action="AI_DATA_SETTER" Condition="NOT (REMOVE=&quot;ALL&quot;)" Sequence="6402"/>
-    <ROW Action="LFRunCmd.exe" Condition="NOT (($LFRunCmd.exe = 2) AND (?LFRunCmd.exe = 3))" Sequence="6401"/>
+    <ROW Action="AI_DEL_EMPTY_SHORTCUTDIR" Condition="NOT (REMOVE=&quot;ALL&quot;)" Sequence="6402"/>
+    <ROW Action="AI_DATA_SETTER" Condition="NOT (REMOVE=&quot;ALL&quot;)" Sequence="6401"/>
     <ROW Action="AI_AiRemoveRegsImmediate" Sequence="2599"/>
     <ROW Action="AI_DOWNGRADE" Condition="AI_NEWERPRODUCTFOUND AND (UILevel &lt;&gt; 5)" Sequence="201"/>
+    <ROW Action="AI_BACKUP_AI_SETUPEXEPATH" Sequence="99" Builds="DefaultBuild"/>
+    <ROW Action="AI_RESTORE_AI_SETUPEXEPATH" Condition="AI_SETUPEXEPATH_ORIGINAL" Sequence="101" Builds="DefaultBuild"/>
+    <ROW Action="AI_ExtractFiles" Sequence="3998" Builds="DefaultBuild"/>
+    <ROW Action="AI_DATA_SETTER_1" Sequence="3997"/>
+    <ROW Action="AI_EstimateExtractFiles" Sequence="3999" Builds="DefaultBuild"/>
+    <ROW Action="AI_AiRemoveFilesRollback" Sequence="3099"/>
+    <ROW Action="InstallFinalize" Sequence="6599" SeqType="0" MsiKey="InstallFinalize"/>
+    <ROW Action="LFRunCmd.exe" Condition="( ( NOT Installed ) OR ( Installed AND REMOVE &lt;&gt; &quot;ALL&quot; AND AI_INSTALL_MODE &lt;&gt; &quot;Remove&quot; ) ) AND ( NOT (($LFRunCmd.exe = 2) AND (?LFRunCmd.exe = 3)) )" Sequence="6600"/>
+    <ROW Action="AI_AiRemoveFilesImmediate" Sequence="3499"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiInstallUISequenceComponent">
     <ROW Action="AI_RESTORE_LOCATION" Condition="APPDIR=&quot;&quot;" Sequence="749"/>
-    <ROW Action="AI_ResolveKnownFolders" Sequence="51"/>
+    <ROW Action="AI_ResolveKnownFolders" Sequence="52"/>
+    <ROW Action="AI_DpiContentScale" Sequence="51"/>
+    <ROW Action="AI_BACKUP_AI_SETUPEXEPATH" Sequence="99"/>
+    <ROW Action="AI_RESTORE_AI_SETUPEXEPATH" Condition="AI_SETUPEXEPATH_ORIGINAL" Sequence="101"/>
+    <ROW Action="ExecuteAction" Sequence="1299" SeqType="0" MsiKey="ExecuteAction"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiLaunchConditionsComponent">
+    <ROW Condition="( Version9X OR (VersionNT AND (NOT VersionNT64)) )" Description="[ProductName] cannot be installed on [WindowsTypeNT64Display]" DescriptionLocId="AI.LaunchCondition.NoNT64" IsPredefined="true" Builds="DefaultBuild"/>
+    <ROW Condition="( Version9X OR VersionNT64 OR ( VersionNT AND ((VersionNT &lt;&gt; 500) OR ((VersionNT = 500) AND (ServicePackLevel &gt;= 1))) AND ((VersionNT &lt;&gt; 500) OR ((VersionNT = 500) AND (ServicePackLevel &lt;&gt; 1))) AND ((VersionNT &lt;&gt; 500) OR ((VersionNT = 500) AND (ServicePackLevel &lt;&gt; 2))) AND ((VersionNT &lt;&gt; 500) OR ((VersionNT = 500) AND (ServicePackLevel &lt;&gt; 3))) AND ((VersionNT &lt;&gt; 500) OR ((VersionNT = 500) AND (ServicePackLevel &lt;&gt; 4))) AND (((VersionNT &lt;&gt; 501) OR ((VersionNT = 501) AND (ServicePackLevel &gt;= 1))) OR VersionNT64) AND (((VersionNT &lt;&gt; 501) OR ((VersionNT = 501) AND (ServicePackLevel &lt;&gt; 1))) OR VersionNT64) ) )" Description="[ProductName] cannot be installed on the following Windows versions: [WindowsTypeNTDisplay]" DescriptionLocId="AI.LaunchCondition.NoSpecificNT" IsPredefined="true" Builds="DefaultBuild"/>
+    <ROW Condition="(VersionNT &lt;&gt; 400)" Description="[ProductName] cannot be installed on the following Windows versions: [WindowsTypeNT40Display]" DescriptionLocId="AI.LaunchCondition.NoNT40" IsPredefined="true" Builds="DefaultBuild"/>
     <ROW Condition="Privileged" Description="[ProductName] requires administrative privileges to install." DescriptionLocId="AI.LaunchCondition.Privileged" IsPredefined="true" Builds="DefaultBuild"/>
-    <ROW Condition="Version9X OR (VersionNT AND (NOT VersionNT64))" Description="[ProductName] cannot be installed on [WindowsFamilyNT64]" DescriptionLocId="AI.LaunchCondition.NoNT64" IsPredefined="true" Builds="DefaultBuild"/>
-    <ROW Condition="Version9X OR VersionNT64 OR ((VersionNT &gt; 501) OR ((VersionNT = 501) AND (ServicePackLevel &gt;= 2)))" Description="[ProductName] cannot be installed on systems earlier than [WindowsTypeNT]" DescriptionLocId="AI.LaunchCondition.NoSpecificNT" IsPredefined="true" Builds="DefaultBuild"/>
-    <ROW Condition="VersionNT" Description="[ProductName] cannot be installed on [WindowsFamily9X]" DescriptionLocId="AI.LaunchCondition.No9X" IsPredefined="true" Builds="DefaultBuild"/>
+    <ROW Condition="VersionNT" Description="[ProductName] cannot be installed on [WindowsType9XDisplay]" DescriptionLocId="AI.LaunchCondition.No9X" IsPredefined="true" Builds="DefaultBuild"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiMergeModsComponent">
     <ROW Module="Microsoft_VC90_CRT_x86.msm" Path="Setup\MSM_x86\Microsoft_VC90_CRT_x86.msm" Feature="liquidFOLDERS" Directory="APPDIR"/>
@@ -465,11 +518,11 @@
     <ROW Registry="AI_ExePath" Root="-1" Key="Software\Caphyon\Advanced Installer\LZMA\[ProductCode]\[ProductVersion]" Name="AI_ExePath" Value="[AI_SETUPEXEPATH]" Component_="liquidFOLDERS"/>
     <ROW Registry="Attributes" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}\ShellFolder" Name="Attributes" Value="#3087008004" Component_="LFNamespaceExtension.dll"/>
     <ROW Registry="CheckUpdate" Root="2" Key="Software\Microsoft\Windows\CurrentVersion\Run" Name="liquidFOLDERS" Value="[#StoreManager.exe] /CHECKUPDATE" Component_="StoreManager.exe"/>
-    <ROW Registry="Comments" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="Comments" Component_="AI_CustomARPName"/>
-    <ROW Registry="Contact" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="Contact" Value="support@liquidfolders.net" Component_="AI_CustomARPName"/>
-    <ROW Registry="DisplayIcon" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="DisplayIcon" Value="[ARP_ICON_PATH]" Component_="AI_CustomARPName"/>
-    <ROW Registry="DisplayName" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="DisplayName" Value="[ProductName]" Component_="AI_CustomARPName"/>
-    <ROW Registry="DisplayVersion" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="DisplayVersion" Value="1.5.9" Component_="AI_CustomARPName"/>
+    <ROW Registry="Comments" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="Comments" Value="[ARPCOMMENTS]" Component_="AI_CustomARPName"/>
+    <ROW Registry="Contact" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="Contact" Value="[ARPCONTACT]" Component_="AI_CustomARPName"/>
+    <ROW Registry="DisplayIcon" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="DisplayIcon" Value="[ARP_ICON_PATH]" Component_="AI_CustomARPName"/>
+    <ROW Registry="DisplayName" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="DisplayName" Value="[AI_PRODUCTNAME_ARP]" Component_="AI_CustomARPName"/>
+    <ROW Registry="DisplayVersion" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="DisplayVersion" Value="[ProductVersion]" Component_="AI_CustomARPName"/>
     <ROW Registry="EstimatedSize" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="EstimatedSize" Value="#30720" Component_="AI_CustomARPName"/>
     <ROW Registry="F2D914D_FE57_414F_9F88_A377C7841DA4_1" Root="2" Key="Software\Microsoft\Windows\CurrentVersion\Shell Extensions\Approved" Name="[\{]3F2D914D-FE57-414F-9F88-A377C7841DA4[\}]" Value="liquidFOLDERS.SendTo" Component_="LFNamespaceExtension.dll"/>
     <ROW Registry="F2D914E_FE57_414F_9F88_A377C7841DA4_1" Root="2" Key="Software\Microsoft\Windows\CurrentVersion\Shell Extensions\Approved" Name="[\{]3F2D914E-FE57-414F-9F88-A377C7841DA4[\}]" Value="liquidFOLDERS.DriveMenu" Component_="LFNamespaceExtension.dll"/>
@@ -478,18 +531,19 @@
     <ROW Registry="F2D914F_FE57_414F_9F88_A377C7841DA4_3" Root="2" Key="Software\Microsoft\Windows\CurrentVersion\Explorer\Desktop\Namespace\{3F2D914F-FE57-414F-9F88-A377C7841DA4}" Name="*" Component_="LFNamespaceExtension.dll"/>
     <ROW Registry="F2D914F_FE57_414F_9F88_A377C7841DA4_4" Root="2" Key="Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\ClassicStartMenu" Name="{3F2D914F-FE57-414F-9F88-A377C7841DA4}" Value="#1" Component_="LFNamespaceExtension.dll"/>
     <ROW Registry="F2D914F_FE57_414F_9F88_A377C7841DA4_5" Root="2" Key="Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" Name="{3F2D914F-FE57-414F-9F88-A377C7841DA4}" Value="#1" Component_="LFNamespaceExtension.dll"/>
-    <ROW Registry="HelpLink" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="HelpLink" Value="http://liquidfolders.net/support/" Component_="AI_CustomARPName"/>
-    <ROW Registry="HelpTelephone" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="HelpTelephone" Component_="AI_CustomARPName"/>
+    <ROW Registry="HelpLink" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="HelpLink" Value="[ARPHELPLINK]" Component_="AI_CustomARPName"/>
+    <ROW Registry="HelpTelephone" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="HelpTelephone" Value="[ARPHELPTELEPHONE]" Component_="AI_CustomARPName"/>
     <ROW Registry="InfoTip" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}" Name="InfoTip" Value="#%@[#LFNamespaceExtension.dll],1000" Component_="LFNamespaceExtension.dll"/>
-    <ROW Registry="InstallLocation" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="InstallLocation" Value="[APPDIR]" Component_="AI_CustomARPName"/>
+    <ROW Registry="InstallLocation" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="InstallLocation" Value="[APPDIR]" Component_="AI_CustomARPName"/>
     <ROW Registry="LFRunCmd" Root="2" Key="Software\liquidFOLDERS" Name="LFRunCmd" Value="[#LFRunCmd.exe]" Component_="LFRunCmd.exe"/>
-    <ROW Registry="ModifyPath" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="ModifyPath" Value="[AI_UNINSTALLER] /I [ProductCode]" Component_="AI_CustomARPName"/>
+    <ROW Registry="ModifyPath" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="ModifyPath" Value="[AI_UNINSTALLER] /I [ProductCode]" Component_="AI_CustomARPName"/>
     <ROW Registry="NeverShowExt" Root="0" Key="LFSendTofile" Name="NeverShowExt" Value="#0" Component_="LFNamespaceExtension.dll"/>
     <ROW Registry="New_Value" Root="0" Key="LFFilterfile\DefaultIcon" Value="&quot;[#LFCore.dll]&quot;,14" Component_="LFNamespaceExtension.dll"/>
-    <ROW Registry="NoModify" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="NoModify" Value="#1" Component_="AI_DisableModify"/>
+    <ROW Registry="NoModify" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="NoModify" Value="#1" Component_="AI_DisableModify"/>
+    <ROW Registry="NoRepair" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="NoRepair" Value="#1" Component_="AI_CustomARPName"/>
     <ROW Registry="PerceivedType" Root="0" Key=".LFSendTo" Name="PerceivedType" Value="system" Component_="LFNamespaceExtension.dll"/>
     <ROW Registry="PinToNameSpaceTree" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}\ShellFolder" Name="PinToNameSpaceTree" Component_="LFNamespaceExtension.dll"/>
-    <ROW Registry="Publisher" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="Publisher" Value="liquidFOLDERS" Component_="AI_CustomARPName"/>
+    <ROW Registry="Publisher" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="Publisher" Value="[Manufacturer]" Component_="AI_CustomARPName"/>
     <ROW Registry="SortOrderIndex" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}" Name="SortOrderIndex" Value="#64" Component_="LFNamespaceExtension.dll"/>
     <ROW Registry="StoreManager" Root="2" Key="Software\liquidFOLDERS" Name="StoreManager" Value="[#StoreManager.exe]" Component_="StoreManager.exe"/>
     <ROW Registry="System.DescriptionID" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}" Name="System.DescriptionID" Value="#20" Component_="LFNamespaceExtension.dll"/>
@@ -502,9 +556,12 @@
     <ROW Registry="ThreadingModel" Root="0" Key="CLSID\{3F2D914D-FE57-414F-9F88-A377C7841DA4}\InProcServer32" Name="ThreadingModel" Value="Both" Component_="LFNamespaceExtension.dll"/>
     <ROW Registry="ThreadingModel_1" Root="0" Key="CLSID\{3F2D914E-FE57-414F-9F88-A377C7841DA4}\InProcServer32" Name="ThreadingModel" Value="Both" Component_="LFNamespaceExtension.dll"/>
     <ROW Registry="ThreadingModel_2" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}\InProcServer32" Name="ThreadingModel" Value="Both" Component_="LFNamespaceExtension.dll"/>
-    <ROW Registry="URLInfoAbout" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="URLInfoAbout" Value="http://liquidfolders.net/" Component_="AI_CustomARPName"/>
-    <ROW Registry="URLUpdateInfo" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="URLUpdateInfo" Value="http://liquidfolders.net/download/" Component_="AI_CustomARPName"/>
-    <ROW Registry="UninstallString" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="UninstallString" Value="[AI_UNINSTALLER] /x [ProductCode]" Component_="AI_CustomARPName"/>
+    <ROW Registry="URLInfoAbout" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="URLInfoAbout" Value="[ARPURLINFOABOUT]" Component_="AI_CustomARPName"/>
+    <ROW Registry="URLUpdateInfo" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="URLUpdateInfo" Value="[ARPURLUPDATEINFO]" Component_="AI_CustomARPName"/>
+    <ROW Registry="UninstallPath" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="UninstallPath" Value="[AI_UNINSTALLER] /x [ProductCode]" Component_="AI_CustomARPName"/>
+    <ROW Registry="UninstallString" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="UninstallString" Value="[AI_UNINSTALLER] /x [ProductCode]" Component_="AI_CustomARPName"/>
+    <ROW Registry="VersionMajor" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="VersionMajor" Value="#1" Component_="AI_CustomARPName"/>
+    <ROW Registry="VersionMinor" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="VersionMinor" Value="#5" Component_="AI_CustomARPName"/>
     <ROW Registry="WantsFORPARSING" Root="0" Key="CLSID\{3F2D914F-FE57-414F-9F88-A377C7841DA4}\ShellFolder" Name="WantsFORPARSING" Component_="LFNamespaceExtension.dll"/>
     <ROW Registry="_" Root="0" Key=".LFSendTo" Value="LFSendTofile" Component_="LFNamespaceExtension.dll"/>
     <ROW Registry="__1" Root="0" Key="CLSID\{3F2D914D-FE57-414F-9F88-A377C7841DA4}" Value="LFNamespaceExtension.SendTo" Component_="LFNamespaceExtension.dll"/>
@@ -534,7 +591,7 @@
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiRemoveFileComponent">
     <ROW FileKey="LFCore.dll" Component_="LFCore.dll" FileName="LFCore.dll" DirProperty="SystemFolder" InstallMode="2"/>
-    <ROW FileKey="LFNamespaceExtension.dll" Component_="LFNamespaceExtension.dll" FileName="LFName~1.dll|LFNamespaceExtension.dll" DirProperty="SystemFolder" InstallMode="3"/>
+    <ROW FileKey="LFNamespaceExtension.dll" Component_="LFNamespaceExtension.dll" FileName="LFNamespaceExtension.dll" DirProperty="SystemFolder" InstallMode="3"/>
     <ROW FileKey="_" Component_="liquidFOLDERS" DirProperty="APPDIR" InstallMode="2"/>
     <ROW FileKey="__1" Component_="liquidFOLDERS" DirProperty="SHORTCUTDIR" InstallMode="2"/>
   </COMPONENT>
