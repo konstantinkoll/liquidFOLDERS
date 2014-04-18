@@ -91,10 +91,6 @@ BOOL LFBrowseForFolderDlg::OnInitDialog()
 	m_wndDeleteSource.EnableWindow(m_ShowDeleteSource);
 	SetBottomLeftControl(&m_wndDeleteSource);
 
-	LOGFONT lf;
-	p_App->m_DefaultFont.GetLogFont(&lf);
-	m_wndExplorerTree.SetItemHeight((SHORT)(max(abs(lf.lfHeight), GetSystemMetrics(SM_CYSMICON))+(p_App->OSVersion<OS_Vista ? 2 : 6)));
-	m_wndExplorerTree.SetFont(&p_App->m_DefaultFont, FALSE);
 	m_wndExplorerTree.SetOnlyFilesystem(TRUE);
 	m_wndExplorerTree.PopulateTree();
 

@@ -43,6 +43,8 @@ IDD_GOTOYEAR            ICON                    "res\\GotoDate_Tiny.ico"
 IDD_EDITCONDITION       ICON                    "res\\QueryEdit_Tiny.ico"
 IDD_EDITFILTER          ICON                    "res\\FilterEdit_Tiny.ico"
 IDD_SAVEFILTER          ICON                    "res\\FilterSave_Tiny.ico"
+IDD_CHOOSEPROPERTY      ICON                    "res\\Field_Tiny.ico"
+IDD_MIGRATEREPORT       ICON                    "res\\TaskReport_Tiny.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -97,8 +99,8 @@ IDB_TREEWIDGETS         BITMAP                  "res\\TreeWidgets.bmp"
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,5,9
- PRODUCTVERSION 1,5,9
+ FILEVERSION 1,5,9,0
+ PRODUCTVERSION 1,5,9,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -303,6 +305,30 @@ BEGIN
     END
 END
 
+IDM_TREE MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "&Alle Spaltenbreiten anpassen", IDM_TREE_AUTOSIZEALL
+        MENUITEM SEPARATOR
+        MENUITEM "&Quellverzeichnis...",        IDM_TREE_SELECTROOT
+    END
+END
+
+IDM_TREEHEADER MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "&Alle Spaltenbreiten anpassen", IDM_TREE_AUTOSIZEALL
+        MENUITEM "&Spaltenbreite anpassen",     IDM_TREE_AUTOSIZE
+        MENUITEM SEPARATOR
+        MENUITEM "Ganze Spalte &erweitern",     IDM_TREE_EXPANDCOLUMN
+        MENUITEM SEPARATOR
+        MENUITEM "Eigenschaft aus&wählen...",   IDM_TREE_CHOOSEPROPERTY
+        MENUITEM "&Zurücksetzen",               IDM_TREE_RESETPROPERTY
+    END
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -448,6 +474,63 @@ BEGIN
     LTEXT           "Suchbegriff (in allen Eigenschaften):",IDC_STATIC,14,48,156,8
 END
 
+IDD_BOTTOMAREA DIALOGEX 0, 0, 186, 28
+STYLE DS_SETFONT | DS_FIXEDSYS | DS_CONTROL | WS_CHILD | WS_CLIPCHILDREN
+EXSTYLE WS_EX_CONTROLPARENT
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "&Migration starten",2001,7,7,73,14,WS_DISABLED
+    CONTROL         "Quelldateien &löschen",IDC_DELETESOURCE,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,94,9,85,10
+END
+
+IDD_CHOOSEFOLDER DIALOGEX 0, 0, 241, 28
+STYLE DS_SETFONT | DS_FIXEDSYS | DS_CONTROL | WS_CHILD | WS_CLIPCHILDREN
+EXSTYLE WS_EX_CONTROLPARENT
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "&Anderes Verzeichnis...",IDOK,7,7,93,14
+    CONTROL         "Alle &Unterverzeichnisse zeigen",2101,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,114,9,120,10
+END
+
+IDD_CHOOSEPROPERTY DIALOGEX 0, 0, 219, 236
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Eigenschaft auswählen"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "",2201,"SysListView32",LVS_LIST | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SORTASCENDING | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_ALIGNLEFT | LVS_NOCOLUMNHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,14,37,191,161
+    DEFPUSHBUTTON   "OK",IDOK,36,214,50,14,WS_GROUP
+    PUSHBUTTON      "Zurücksetzen",IDC_RESET,94,214,60,14,WS_GROUP
+    PUSHBUTTON      "Abbrechen",IDCANCEL,162,214,50,14,WS_GROUP
+    GROUPBOX        "Geeignete Eigenschaften",IDC_STATIC,7,7,205,200,WS_GROUP
+    LTEXT           "Hier sind nur editierbare Eigenschaften aufgeführt, die aus den Verzeichnisnamen gewonnen werden können.",IDC_STATIC,14,17,191,17
+END
+
+IDD_DELETEFILES DIALOGEX 0, 0, 307, 98
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Quelldateien löschen"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    LTEXT           "Bitte bestätigen Sie, dass Sie die Quelldateien wirklich löschen möchten.",IDC_CAPTION,7,31,293,8
+    CONTROL         "Quelldateien &löschen",IDC_DELETESOURCE,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,51,293,10
+    DEFPUSHBUTTON   "OK",IDOK,192,77,50,14,WS_GROUP
+    PUSHBUTTON      "Abbrechen",IDCANCEL,250,77,50,14,WS_GROUP
+END
+
+IDD_MIGRATEREPORT DIALOGEX 0, 0, 324, 308
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Abschlussbericht"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "Erfolgreich importierte Verzeichnisse &abwählen",2404,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,289,250,10
+    DEFPUSHBUTTON   "OK",IDOK,267,287,50,14,WS_GROUP
+    CONTROL         "",IDC_TABS,"SysTabControl32",WS_CLIPSIBLINGS | WS_GROUP | WS_TABSTOP,7,7,310,272
+    LTEXT           "Verzeichnisse:",IDC_STATIC,14,27,296,8
+    CONTROL         "",2401,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_ALIGNLEFT | LVS_OWNERDATA | LVS_NOSORTHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,14,37,296,216
+    CONTROL         "",2402,"Static",SS_LEFTNOWORDWRAP | SS_PATHELLIPSIS | WS_GROUP,14,255,296,8
+    CONTROL         "",2403,"Static",SS_LEFTNOWORDWRAP | SS_ENDELLIPSIS | WS_GROUP,14,264,296,8
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -520,6 +603,46 @@ BEGIN
         TOPMARGIN, 7
         BOTTOMMARGIN, 271
     END
+
+    IDD_BOTTOMAREA, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 179
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 21
+    END
+
+    IDD_CHOOSEFOLDER, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 234
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 21
+    END
+
+    IDD_CHOOSEPROPERTY, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 212
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 228
+    END
+
+    IDD_DELETEFILES, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 300
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 91
+    END
+
+    IDD_MIGRATEREPORT, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 317
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 301
+    END
 END
 #endif    // APSTUDIO_INVOKED
 
@@ -532,6 +655,10 @@ END
 STRINGTABLE 
 BEGIN
     SC_ALWAYSONTOP          "&Immer im Vordergrund"
+END
+
+STRINGTABLE 
+BEGIN
     IDR_CLIPBOARD           "Zwischenablage"
     IDR_FILEDROP            "FileDrop"
 END
@@ -572,13 +699,13 @@ BEGIN
     IDS_CONTEXTMENU_DIMENSION "&Abmessungen"
     IDS_TXTFILEFILTER       "Textdatei"
     IDS_XMLFILEFILTER       "Extensible Markup Language"
-    IDS_ATTRIBUTENOTSORTABLE 
-                            "Diese Eigenschaft ist zur Sortierung nicht geeignet."
-    IDS_NOITEMSSELECTED     "Keine Objekte ausgewählt"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_ATTRIBUTENOTSORTABLE 
+                            "Diese Eigenschaft ist zur Sortierung nicht geeignet."
+    IDS_NOITEMSSELECTED     "Keine Objekte ausgewählt"
     IDS_YOULOOKAT           "Sie schauen auf %s"
     IDS_NOTHINGTODISPLAY    "Es gibt nichts anzuzeigen."
     IDS_NONAVIGATION        "Dieses Fenster unterstützt keine Navigation."
@@ -598,6 +725,40 @@ END
 STRINGTABLE 
 BEGIN
     IDM_FILTERS_CREATENEW   "Neuer Filter..."
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_NOROOT_CAPTION      "Sie haben noch kein Verzeichnis ausgewählt"
+    IDS_NOROOT_HINT         "Klicken Sie oben, um ein Verzeichnis auszuwählen."
+    IDS_FOLDER_CAPTION      "Quelle:"
+    IDS_FOLDER_HINT         "Hier klicken, um ein Verzeichnis auszuwählen"
+    IDS_STORE_CAPTION       "Ziel:"
+    IDS_STORE_HINT          "Hier klicken, um einen Store auszuwählen"
+    IDS_BROWSEFORFOLDER_CAPTION "Quellverzeichnis"
+    IDS_BROWSEFORFOLDER_HINT 
+                            "Sie können Unterordner und Eigenschaften später auswählen."
+    IDS_FOLDERCATEGORY1     "Eigene Dateien"
+    IDS_FOLDERCATEGORY2     "Bibliotheken"
+    IDS_FOLDERCATEGORY3     "Gemeinsame Dokumente"
+    IDS_FOLDERCATEGORY4     "Wechseldatenträger"
+    IDS_NOPROPERTY          "Hier klicken um eine Eigenschaft zu wählen"
+    IDS_CHOOSEPROPERTY      "Eigenschaft aus&wählen..."
+    IDS_EXPANDBRANCH        "Alle &Unterverzeichnisse zeigen"
+    IDS_INCLUDEBRANCH       "Zweig &markieren"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_EXCLUDEBRANCH       "Zweig ab&wählen"
+    IDS_REPORTTAB0          "Erfolgreich importierte Verzeichnisse (%u)"
+    IDS_REPORTTAB1          "Verzeichnisse mit Fehlern (%u)"
+    IDS_REPORTSTATUS_ONEFILE "%u Datei (%s) wurde erfolgreich importiert."
+    IDS_REPORTSTATUS_FILES  "Alle %u Dateien (%s) wurden erfolgreich importiert."
+    IDS_NOFOLDERS_CAPTION   "Migration starten"
+    IDS_NOFOLDERS_MESSAGE   "Bitte wählen Sie mindestens ein Verzeichnis aus, indem Sie in der Baumansicht auf die Checkboxen links neben den Verzeichnissymbolen klicken."
+    IDS_REPORTSTATUS_NOFILES 
+                            "Es wurden keine Dateien in diesem Verzeichnis gefunden."
 END
 
 STRINGTABLE 
@@ -622,8 +783,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDM_STORE_DELETE        "Löscht den ausgewählten Store und alle enthaltenen Dateien.\nLöschen"
-    IDM_STORE_RENAME        "Benennt den ausgewählten Store um.\nUmbenennen"
     IDM_STORE_PROPERTIES    "Zeigt die Eigenschaften des ausgewählten Stores an.\nEigenschaften"
     IDM_STORES_CREATENEW    "Erstellt einen neuen Store für Ihre Dateien.\nNeuen Store anlegen..."
 END
@@ -659,12 +818,12 @@ BEGIN
     IDM_FILE_REMEMBER       "Fügt die ausgewählten Dateien zur Zwischenablage hinzu.\nMerken"
     IDM_FILE_REMOVE         "Entfernt die ausgewählten Dateien aus der Zwischenablage.\nEntfernen"
     IDM_FILE_ARCHIVE        "Archiviert die ausgewählten Dateien.\nArchivieren"
-    IDM_FILE_DELETE         "Löscht die ausgewählten Dateien.\nLöschen"
-    IDM_FILE_RENAME         "Benennt die ausgewählte Datei um.\nUmbenennen"
 END
 
 STRINGTABLE 
 BEGIN
+    IDM_FILE_DELETE         "Löscht die ausgewählten Dateien.\nLöschen"
+    IDM_FILE_RENAME         "Benennt die ausgewählte Datei um.\nUmbenennen"
     IDM_FILE_RESTORE        "Stellt die ausgewählten Dateien wieder her.\nWiederherstellen"
 END
 
@@ -672,6 +831,10 @@ STRINGTABLE
 BEGIN
     IDM_CALENDAR_PREVYEAR   "Zeigt das vorige Jahr an.\nVoriges Jahr"
     IDM_CALENDAR_NEXTYEAR   "Zeigt das nächste Jahr an.\nNächstes Jahr"
+END
+
+STRINGTABLE 
+BEGIN
     IDM_CALENDAR_GOTOYEAR   "Öffnet ein Dialogfenster, in dem Sie ein Jahr zum Anzeigen auswählen können.\nJahr auswählen..."
 END
 
@@ -681,10 +844,6 @@ BEGIN
                             "Richtet den Globus auf einen bestimmten Ort aus.\nOrt anzeigen..."
     IDM_GLOBE_ZOOMIN        "Vergrößert den Globus.\nVergößern"
     IDM_GLOBE_ZOOMOUT       "Verkleinert den Globus.\nVerkleinern"
-END
-
-STRINGTABLE 
-BEGIN
     IDM_GLOBE_AUTOSIZE      "Passt den Globus an die Fenstergröße an.\nGröße anpassen"
     IDM_GLOBE_GOOGLEEARTH   "Öffnet den auswählten Ort in Google Earth.\nÖffnen in Google Earth"
 END
@@ -693,11 +852,25 @@ STRINGTABLE
 BEGIN
     IDM_TAGCLOUD_SORTVALUE  "Sortiert alle Tags alphabetisch.\nAlphabetisch sortieren"
     IDM_TAGCLOUD_SORTCOUNT  "Sortiert alle Tags nach Dateianzahl.\nNach Anzahl sortieren"
+    IDM_TAGCLOUD_SORT       "&Sortieren nach"
 END
 
 STRINGTABLE 
 BEGIN
-    IDM_TAGCLOUD_SORT       "&Sortieren nach"
+    IDM_MIGRATE_SELECTROOT  "Öffnet ein Fenster, in dem Sie ein Verzeichnis zur Anzeige auswählen können.\nQuellverzeichnis"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_TREE_OPEN           "Öffnet das ausgewählte Verzeichnis.\nÖffnen"
+    IDM_TREE_DELETE         "Löscht das ausgewählte Verzeichnis.\nLöschen"
+    IDM_TREE_RENAME         "Benennt das ausgewählte Verzeichnis um.\nUmbenennen"
+    IDM_TREE_PROPERTIES     "Zeigt die Eigenschaften des ausgewählten Verzeichnisses.\nEigenschaften"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_TREE_EXPAND         "Zeigt alle Unterverzeichnisse an.\nErweitern"
 END
 
 STRINGTABLE 
@@ -714,6 +887,10 @@ BEGIN
     IDM_VIEW_DETAILS        "Details"
     IDM_VIEW_TILES          "Kacheln"
     IDM_VIEW_STRIPS         "Kontrollstreifen"
+END
+
+STRINGTABLE 
+BEGIN
     IDM_VIEW_CONTENT        "Inhalt"
     IDM_VIEW_PREVIEW        "Vorschau"
     IDM_VIEW_CALENDAR       "Kalender"
@@ -895,6 +1072,30 @@ BEGIN
     END
 END
 
+IDM_TREE MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "Ajustar &todas las columnas", IDM_TREE_AUTOSIZEALL
+        MENUITEM SEPARATOR
+        MENUITEM "Seleccionar &carpeta raíz...", IDM_TREE_SELECTROOT
+    END
+END
+
+IDM_TREEHEADER MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "Autoajustar &todas las columnas", IDM_TREE_AUTOSIZEALL
+        MENUITEM "Autoajustar &columna",        IDM_TREE_AUTOSIZE
+        MENUITEM SEPARATOR
+        MENUITEM "&Expandir columna",           IDM_TREE_EXPANDCOLUMN
+        MENUITEM SEPARATOR
+        MENUITEM "Escoger &propiedad...",       IDM_TREE_CHOOSEPROPERTY
+        MENUITEM "&Restaurar propiedad",        IDM_TREE_RESETPROPERTY
+    END
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -1041,6 +1242,63 @@ BEGIN
     LTEXT           "Buscar término (todas propriedades):",IDC_STATIC,14,48,156,8
 END
 
+IDD_BOTTOMAREA DIALOGEX 0, 0, 198, 28
+STYLE DS_SETFONT | DS_FIXEDSYS | DS_CONTROL | WS_CHILD | WS_CLIPCHILDREN
+EXSTYLE WS_EX_CONTROLPARENT
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "&Migrar archivos",2001,7,7,68,14,WS_DISABLED
+    CONTROL         "&Eliminar archivos fuente",IDC_DELETESOURCE,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,89,9,102,10
+END
+
+IDD_CHOOSEFOLDER DIALOGEX 0, 0, 246, 28
+STYLE DS_SETFONT | DS_FIXEDSYS | DS_CONTROL | WS_CHILD | WS_CLIPCHILDREN
+EXSTYLE WS_EX_CONTROLPARENT
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "Escoger &otra carpeta...",IDOK,7,7,98,14
+    CONTROL         "Expandir todas las &subcarpetas",2101,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,119,9,120,10
+END
+
+IDD_CHOOSEPROPERTY DIALOGEX 0, 0, 234, 236
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Escoger propiedad"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "",2201,"SysListView32",LVS_LIST | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SORTASCENDING | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_ALIGNLEFT | LVS_NOCOLUMNHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,14,37,206,161
+    DEFPUSHBUTTON   "OK",IDOK,61,214,50,14,WS_GROUP
+    PUSHBUTTON      "Restaurar",IDC_RESET,119,214,50,14,WS_GROUP
+    PUSHBUTTON      "Cancelar",IDCANCEL,177,214,50,14,WS_GROUP
+    GROUPBOX        "Propiedades disponibles",IDC_STATIC,7,7,220,200,WS_GROUP
+    LTEXT           "Sólo las propiedades editables por el usuario y que pueden ser extraídas de los nombres de la carpeta están listadas aquí.",IDC_STATIC,14,17,206,17
+END
+
+IDD_DELETEFILES DIALOGEX 0, 0, 317, 98
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Eliminar archivos de origen"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    LTEXT           "Por favor confirme que realmente quiere eliminar todos los archivos fuente.",IDC_CAPTION,7,31,303,8
+    CONTROL         "&Eliminar archivos fuente",IDC_DELETESOURCE,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,51,303,10
+    DEFPUSHBUTTON   "OK",IDOK,202,77,50,14,WS_GROUP
+    PUSHBUTTON      "Cancelar",IDCANCEL,260,77,50,14,WS_GROUP
+END
+
+IDD_MIGRATEREPORT DIALOGEX 0, 0, 324, 308
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Reporte de migración"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "&No seleccionar satisfactoriamente carpetas migradas",2404,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,289,250,10
+    DEFPUSHBUTTON   "OK",IDOK,267,287,50,14,WS_GROUP
+    CONTROL         "",IDC_TABS,"SysTabControl32",WS_CLIPSIBLINGS | WS_GROUP | WS_TABSTOP,7,7,310,272
+    LTEXT           "Carpetas:",IDC_STATIC,14,27,296,8
+    CONTROL         "",2401,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_ALIGNLEFT | LVS_OWNERDATA | LVS_NOSORTHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,14,37,296,216
+    CONTROL         "",2402,"Static",SS_LEFTNOWORDWRAP | SS_PATHELLIPSIS | WS_GROUP,14,255,296,8
+    CONTROL         "",2403,"Static",SS_LEFTNOWORDWRAP | SS_ENDELLIPSIS | WS_GROUP,14,264,296,8
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -1113,6 +1371,46 @@ BEGIN
         TOPMARGIN, 7
         BOTTOMMARGIN, 271
     END
+
+    IDD_BOTTOMAREA, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 191
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 21
+    END
+
+    IDD_CHOOSEFOLDER, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 239
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 21
+    END
+
+    IDD_CHOOSEPROPERTY, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 227
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 228
+    END
+
+    IDD_DELETEFILES, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 310
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 91
+    END
+
+    IDD_MIGRATEREPORT, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 317
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 301
+    END
 END
 #endif    // APSTUDIO_INVOKED
 
@@ -1125,6 +1423,10 @@ END
 STRINGTABLE 
 BEGIN
     SC_ALWAYSONTOP          "Siempre &arriba"
+END
+
+STRINGTABLE 
+BEGIN
     IDR_CLIPBOARD           "Portapapeles"
     IDR_FILEDROP            "FileDrop"
 END
@@ -1165,12 +1467,12 @@ BEGIN
     IDS_CONTEXTMENU_DIMENSION "&Dimensión"
     IDS_TXTFILEFILTER       "Documento de texto"
     IDS_XMLFILEFILTER       "Extensible Markup Language"
-    IDS_ATTRIBUTENOTSORTABLE "Esta propiedad no es adecuada para clasificar."
-    IDS_NOITEMSSELECTED     "Objetos no seleccionados"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_ATTRIBUTENOTSORTABLE "Esta propiedad no es adecuada para clasificar."
+    IDS_NOITEMSSELECTED     "Objetos no seleccionados"
     IDS_YOULOOKAT           "Usted está viendo %s"
     IDS_NOTHINGTODISPLAY    "No hay nada que visualizar."
     IDS_NONAVIGATION        "Esta ventana no es compatible con la navegación."
@@ -1190,6 +1492,40 @@ END
 STRINGTABLE 
 BEGIN
     IDM_FILTERS_CREATENEW   "Nuevo filtro..."
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_NOROOT_CAPTION      "Usted no ha seleccionado todavía una carpeta raíz"
+    IDS_NOROOT_HINT         "Dar click arriba para seleccionar una carpeta para navegar."
+    IDS_FOLDER_CAPTION      "fuente:"
+    IDS_FOLDER_HINT         "Dar click aquí para seleccionar una carpeta"
+    IDS_STORE_CAPTION       "Store destino:"
+    IDS_STORE_HINT          "Dar click aquí para seleccionar el store destino"
+    IDS_BROWSEFORFOLDER_CAPTION "Carpeta raíz"
+    IDS_BROWSEFORFOLDER_HINT 
+                            "Usted puede seleccionar subcarpetas y atribuir proyecciones después."
+    IDS_FOLDERCATEGORY1     "carpetas personales"
+    IDS_FOLDERCATEGORY2     "Bibliotecas"
+    IDS_FOLDERCATEGORY3     "carpetas compartidas"
+    IDS_FOLDERCATEGORY4     "Almacenamiento desmontable"
+    IDS_NOPROPERTY          "Dar click aquí para escoger una propiedad"
+    IDS_CHOOSEPROPERTY      "Escoger &propiedad..."
+    IDS_EXPANDBRANCH        "Expandir &ramificación"
+    IDS_INCLUDEBRANCH       "&Incluir ramificación"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_EXCLUDEBRANCH       "&Excluir ramificación"
+    IDS_REPORTTAB0          "Carpetas migradas satisfactoriamente (%u)"
+    IDS_REPORTTAB1          "Carpetas con errores (%u)"
+    IDS_REPORTSTATUS_ONEFILE 
+                            "%u archivo (%s) fue importado satisfactoriamente."
+    IDS_REPORTSTATUS_FILES  "Todos los %u archivos (%s) fueron importados satisfactoriamente."
+    IDS_NOFOLDERS_CAPTION   "Iniciar migración"
+    IDS_NOFOLDERS_MESSAGE   "Por favor seleccionar al menos una carpeta en la vista de árbol al dar click en las casillas a la izquierda de los iconos de la carpeta."
+    IDS_REPORTSTATUS_NOFILES "No había archivos en esta carpeta."
 END
 
 STRINGTABLE 
@@ -1214,8 +1550,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDM_STORE_DELETE        "Elimina el store seleccionado.\nEliminar"
-    IDM_STORE_RENAME        "Renombra el store seleccionado.\nRenombrar"
     IDM_STORE_PROPERTIES    "Despliega las propiedades del store seleccionado.\nPropiedades"
     IDM_STORES_CREATENEW    "Crea un nuevo store para sus archivos.\nCrear nuevo store..."
 END
@@ -1251,12 +1585,12 @@ BEGIN
     IDM_FILE_REMEMBER       "Agrega los archivos seleccionados a la ventana del portapapeles.\nRecordar"
     IDM_FILE_REMOVE         "Remueve los archivos seleccionados de la ventana del portapapeles.\nRemover"
     IDM_FILE_ARCHIVE        "Archiva los archivos seleccionados.\nArchivar"
-    IDM_FILE_DELETE         "Elimina los archivos seleccionados.\nEliminar"
-    IDM_FILE_RENAME         "Renombra los archivos seleccionados.\nRenombrar"
 END
 
 STRINGTABLE 
 BEGIN
+    IDM_FILE_DELETE         "Elimina los archivos seleccionados.\nEliminar"
+    IDM_FILE_RENAME         "Renombra los archivos seleccionados.\nRenombrar"
     IDM_FILE_RESTORE        "Restablece los archivos seleccionados.\nRestablecer"
 END
 
@@ -1264,6 +1598,10 @@ STRINGTABLE
 BEGIN
     IDM_CALENDAR_PREVYEAR   "Visualiza el años anterior.\nAño anterior"
     IDM_CALENDAR_NEXTYEAR   "Visualiza el año siguiente.\nAño siguiente"
+END
+
+STRINGTABLE 
+BEGIN
     IDM_CALENDAR_GOTOYEAR   "Muestra una ventana que le permite elegir un año para visualizar.\nIr al año..."
 END
 
@@ -1273,10 +1611,6 @@ BEGIN
                             "Centra el globo sobre una ubicación específica.\nSeleccionar ubicación..."
     IDM_GLOBE_ZOOMIN        "Amplía el globo.\nAmpliar"
     IDM_GLOBE_ZOOMOUT       "Reduce el globo.\nReducir"
-END
-
-STRINGTABLE 
-BEGIN
     IDM_GLOBE_AUTOSIZE      "Reajusta el globo dentro de la ventana.\nAjustar"
     IDM_GLOBE_GOOGLEEARTH   "Abre las ubicaciones seleccionadas en Google Earth.\nAbrir en Google Earth"
 END
@@ -1285,11 +1619,25 @@ STRINGTABLE
 BEGIN
     IDM_TAGCLOUD_SORTVALUE  "Ordena las etiquetas en su orden canónico.\nOrdenar por valor"
     IDM_TAGCLOUD_SORTCOUNT  "Ordena las etiquetas por su número de archivo.\nOrdenar por número"
+    IDM_TAGCLOUD_SORT       "&Ordenar por"
 END
 
 STRINGTABLE 
 BEGIN
-    IDM_TAGCLOUD_SORT       "&Ordenar por"
+    IDM_MIGRATE_SELECTROOT  "Abre un diálogo en donde usted puede seleccionar la carpeta raíz a visualizarse en la vista principal de abajo.\nSeleccionar carpeta raíz"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_TREE_OPEN           "Abre la carpeta seleccionada.\nAbrir"
+    IDM_TREE_DELETE         "Elimina la carpeta seleccionada.\nEliminar"
+    IDM_TREE_RENAME         "Renombra la carpeta seleccionada.\nRenombrar"
+    IDM_TREE_PROPERTIES     "Visualiza las propiedades de la carpeta seleccionada.\nPropiedades"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_TREE_EXPAND         "Añade todas las subcarpetas de la carpeta seleccionada.\nExpander"
 END
 
 STRINGTABLE 
@@ -1306,6 +1654,10 @@ BEGIN
     IDM_VIEW_DETAILS        "Detalles"
     IDM_VIEW_TILES          "Mosaicos"
     IDM_VIEW_STRIPS         "Tiras"
+END
+
+STRINGTABLE 
+BEGIN
     IDM_VIEW_CONTENT        "Contenido"
     IDM_VIEW_PREVIEW        "Vista preliminar"
     IDM_VIEW_CALENDAR       "Calendario"
@@ -1487,6 +1839,30 @@ BEGIN
     END
 END
 
+IDM_TREE MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "&Adapter tous les larges de colonnes", IDM_TREE_AUTOSIZEALL
+        MENUITEM SEPARATOR
+        MENUITEM "&Dossier de source...",       IDM_TREE_SELECTROOT
+    END
+END
+
+IDM_TREEHEADER MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "Adapter &tous les larges de colonnes", IDM_TREE_AUTOSIZEALL
+        MENUITEM "&Adapter le large de colonne", IDM_TREE_AUTOSIZE
+        MENUITEM SEPARATOR
+        MENUITEM "Élargir toute la &colonne",   IDM_TREE_EXPANDCOLUMN
+        MENUITEM SEPARATOR
+        MENUITEM "Choisissez la &qualité...",   IDM_TREE_CHOOSEPROPERTY
+        MENUITEM "&Reculer",                    IDM_TREE_RESETPROPERTY
+    END
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -1634,6 +2010,65 @@ BEGIN
     LTEXT           "Mot de recherches (tous le propriétés):",IDC_STATIC,14,48,156,8
 END
 
+IDD_BOTTOMAREA DIALOGEX 0, 0, 231, 28
+STYLE DS_SETFONT | DS_FIXEDSYS | DS_CONTROL | WS_CHILD | WS_CLIPCHILDREN
+EXSTYLE WS_EX_CONTROLPARENT
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "&Lancer la migration",2001,7,7,83,14,WS_DISABLED
+    CONTROL         "&Effacer des fichiers de source",IDC_DELETESOURCE,
+                    "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,104,9,120,10
+END
+
+IDD_CHOOSEFOLDER DIALOGEX 0, 0, 221, 28
+STYLE DS_SETFONT | DS_FIXEDSYS | DS_CONTROL | WS_CHILD | WS_CLIPCHILDREN
+EXSTYLE WS_EX_CONTROLPARENT
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "&Autre dossier...",IDOK,7,7,73,14
+    CONTROL         "Montrer tous les &sous-dossiers",2101,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,94,9,120,10
+END
+
+IDD_CHOOSEPROPERTY DIALOGEX 0, 0, 219, 236
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Choisissez la qualité"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "",2201,"SysListView32",LVS_LIST | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SORTASCENDING | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_ALIGNLEFT | LVS_NOCOLUMNHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,14,37,191,161
+    DEFPUSHBUTTON   "OK",IDOK,46,214,50,14,WS_GROUP
+    PUSHBUTTON      "Remise",IDC_RESET,104,214,50,14,WS_GROUP
+    PUSHBUTTON      "Annuler",IDCANCEL,162,214,50,14,WS_GROUP
+    GROUPBOX        "Qualitès appropriées",IDC_STATIC,7,7,205,200,WS_GROUP
+    LTEXT           "Ici seulement les qualités pouvant être éditées sont men-\ntionnées qui peuvent être gagnées des noms de dossier.",IDC_STATIC,14,17,191,17
+END
+
+IDD_DELETEFILES DIALOGEX 0, 0, 347, 98
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Effacer des fichiers de source"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    LTEXT           "S'il vous plaît, confirmez que vous voudriez vraiment effacer les fichiers de source.",IDC_CAPTION,7,31,333,8
+    CONTROL         "&Effacer des fichiers de source",IDC_DELETESOURCE,
+                    "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,51,333,10
+    DEFPUSHBUTTON   "OK",IDOK,232,77,50,14,WS_GROUP
+    PUSHBUTTON      "Annuler",IDCANCEL,290,77,50,14,WS_GROUP
+END
+
+IDD_MIGRATEREPORT DIALOGEX 0, 0, 324, 308
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Rapport final"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "Abandonner &les dossiers importées avec succès",2404,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,289,250,10
+    DEFPUSHBUTTON   "OK",IDOK,267,287,50,14,WS_GROUP
+    CONTROL         "",IDC_TABS,"SysTabControl32",WS_CLIPSIBLINGS | WS_GROUP | WS_TABSTOP,7,7,310,272
+    LTEXT           "Dossiers:",IDC_STATIC,14,27,296,8
+    CONTROL         "",2401,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_ALIGNLEFT | LVS_OWNERDATA | LVS_NOSORTHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,14,37,296,216
+    CONTROL         "",2402,"Static",SS_LEFTNOWORDWRAP | SS_PATHELLIPSIS | WS_GROUP,14,255,296,8
+    CONTROL         "",2403,"Static",SS_LEFTNOWORDWRAP | SS_ENDELLIPSIS | WS_GROUP,14,264,296,8
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -1706,6 +2141,46 @@ BEGIN
         TOPMARGIN, 7
         BOTTOMMARGIN, 271
     END
+
+    IDD_BOTTOMAREA, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 224
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 21
+    END
+
+    IDD_CHOOSEFOLDER, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 214
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 21
+    END
+
+    IDD_CHOOSEPROPERTY, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 212
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 228
+    END
+
+    IDD_DELETEFILES, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 340
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 91
+    END
+
+    IDD_MIGRATEREPORT, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 317
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 301
+    END
 END
 #endif    // APSTUDIO_INVOKED
 
@@ -1718,6 +2193,10 @@ END
 STRINGTABLE 
 BEGIN
     SC_ALWAYSONTOP          "Toujours au &top"
+END
+
+STRINGTABLE 
+BEGIN
     IDR_CLIPBOARD           "Presse-papiers"
     IDR_FILEDROP            "FileDrop"
 END
@@ -1758,12 +2237,12 @@ BEGIN
     IDS_CONTEXTMENU_DIMENSION "&Mesurages"
     IDS_TXTFILEFILTER       "Fichier texte"
     IDS_XMLFILEFILTER       "Extensible Markup Language"
-    IDS_ATTRIBUTENOTSORTABLE "Cette qualité ne convient pas au triage."
-    IDS_NOITEMSSELECTED     "Aucun élément choisi"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_ATTRIBUTENOTSORTABLE "Cette qualité ne convient pas au triage."
+    IDS_NOITEMSSELECTED     "Aucun élément choisi"
     IDS_YOULOOKAT           "Vous regardez %s"
     IDS_NOTHINGTODISPLAY    "Il n'y a rien indiquer."
     IDS_NONAVIGATION        "Cette fenêtre ne soutient aucune navigation."
@@ -1783,6 +2262,39 @@ END
 STRINGTABLE 
 BEGIN
     IDM_FILTERS_CREATENEW   "Filtre noveau..."
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_NOROOT_CAPTION      "Vouz n'avez pas encore choisi aucun dossier"
+    IDS_NOROOT_HINT         "Cliquez en haut pour choisir un dossier."
+    IDS_FOLDER_CAPTION      "Source:"
+    IDS_FOLDER_HINT         "Cliquez ici pour choisir un dossier"
+    IDS_STORE_CAPTION       "Objectif:"
+    IDS_STORE_HINT          "Cliquez ici pour choisir un store"
+    IDS_BROWSEFORFOLDER_CAPTION "Dossier de source"
+    IDS_BROWSEFORFOLDER_HINT 
+                            "Vous pouvez choisir plus tard des sous-dossier et des qualités."
+    IDS_FOLDERCATEGORY1     "Propres fichiers"
+    IDS_FOLDERCATEGORY2     "Bibliothèques"
+    IDS_FOLDERCATEGORY3     "Documents communs"
+    IDS_FOLDERCATEGORY4     "Support de données de changement"
+    IDS_NOPROPERTY          "Cliquez ici pour choisir une qualité"
+    IDS_CHOOSEPROPERTY      "Choisissez &la qualité..."
+    IDS_EXPANDBRANCH        "Montrer tous &les sous-dossiers"
+    IDS_INCLUDEBRANCH       "Marquer &la branche"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_EXCLUDEBRANCH       "Abandonner &la branche"
+    IDS_REPORTTAB0          "Des dossiers importées avec succès (%u)"
+    IDS_REPORTTAB1          "Dossiers avec des fautes (%u)"
+    IDS_REPORTSTATUS_ONEFILE "%u fichier (%s) était importé avec succès."
+    IDS_REPORTSTATUS_FILES  "Tous les %u fichiers (%s) étaient importés avec succès."
+    IDS_NOFOLDERS_CAPTION   "Lancer la migration"
+    IDS_NOFOLDERS_MESSAGE   "S'il vous plaît, choisissez au moins un dossier en cliquer dans l'avis d'arbre sur les boxes de chèque à gauche à côté des symboles de dossier."
+    IDS_REPORTSTATUS_NOFILES "Aucun fichier n'était trouvé dans ce dossier."
 END
 
 STRINGTABLE 
@@ -1807,8 +2319,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDM_STORE_DELETE        "Efface le store choisi et tous les fichiers contenus.\nEffacer"
-    IDM_STORE_RENAME        "Renomme le store choisi.\nRenommer"
     IDM_STORE_PROPERTIES    "Indique les propriétés du store choisi.\nPropriétés"
     IDM_STORES_CREATENEW    "Crée un nouveau store pour vos fichiers.\nCréez un store nouveau..."
 END
@@ -1844,12 +2354,12 @@ BEGIN
     IDM_FILE_REMEMBER       "Ajoute les fichiers choisis au presse-papiers.\nRemarquer"
     IDM_FILE_REMOVE         "Enlève les fichiers choisis du presse-papiers.\nEnlever"
     IDM_FILE_ARCHIVE        "Archive les fichiers choisis.\nArchiver"
-    IDM_FILE_DELETE         "Efface les fichiers choisis.\nEffacer"
-    IDM_FILE_RENAME         "Renomme le fichier choisi.\nRenommer"
 END
 
 STRINGTABLE 
 BEGIN
+    IDM_FILE_DELETE         "Efface les fichiers choisis.\nEffacer"
+    IDM_FILE_RENAME         "Renomme le fichier choisi.\nRenommer"
     IDM_FILE_RESTORE        "Reconstitue tous les fichiers.\nReconstituer"
 END
 
@@ -1857,6 +2367,10 @@ STRINGTABLE
 BEGIN
     IDM_CALENDAR_PREVYEAR   "Indique l'année précédente.\nAnnée précédente"
     IDM_CALENDAR_NEXTYEAR   "Indique l' année prochaine.\nAnnée prochaine"
+END
+
+STRINGTABLE 
+BEGIN
     IDM_CALENDAR_GOTOYEAR   "Ouvre une fenêtre de dialogue dans quoi vous pouvez choisir un an à l'annonce.\nChoisissez l'année..."
 END
 
@@ -1866,10 +2380,6 @@ BEGIN
                             "Transmet du globe vers un lieu certain.\nChoisissez l'endroit..."
     IDM_GLOBE_ZOOMIN        "Agrandit le globe.\nAgrandir"
     IDM_GLOBE_ZOOMOUT       "Rapetisse le globe.\nRapetisser"
-END
-
-STRINGTABLE 
-BEGIN
     IDM_GLOBE_AUTOSIZE      "Adapte le globe à la grandeur de fenêtre.\nAdapter la grandeur"
     IDM_GLOBE_GOOGLEEARTH   "Ouvre le lieu choisi dans Google Earth.\nOuvrir dans Google Earth"
 END
@@ -1878,11 +2388,25 @@ STRINGTABLE
 BEGIN
     IDM_TAGCLOUD_SORTVALUE  "Classe tous les tags par ordre alphabétique.\nClasser par ordre alphabétique"
     IDM_TAGCLOUD_SORTCOUNT  "Classe tous les tags par nombre de fichier.\nClasser par nombre"
+    IDM_TAGCLOUD_SORT       "&Classer par"
 END
 
 STRINGTABLE 
 BEGIN
-    IDM_TAGCLOUD_SORT       "&Classer par"
+    IDM_MIGRATE_SELECTROOT  "Si ouvre une fenêtre dans quoi vous pouvez choisir un dossier à l'annonce.\nDossier de source"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_TREE_OPEN           "Ouvre le dossier choisi.\nOuvrir"
+    IDM_TREE_DELETE         "Efface le dossier choisi.\nEffacer"
+    IDM_TREE_RENAME         "Renomme le dossier choisi.\nRenommer"
+    IDM_TREE_PROPERTIES     "Montre les qualités du dossier choisi.\nQualités"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_TREE_EXPAND         "Indique toutes les sous-dossiers.\nÉlargir"
 END
 
 STRINGTABLE 
@@ -1899,6 +2423,10 @@ BEGIN
     IDM_VIEW_DETAILS        "Détails"
     IDM_VIEW_TILES          "Cadres de page"
     IDM_VIEW_STRIPS         "Bandes"
+END
+
+STRINGTABLE 
+BEGIN
     IDM_VIEW_CONTENT        "Contenu"
     IDM_VIEW_PREVIEW        "Aperçu"
     IDM_VIEW_CALENDAR       "Calendrier"
@@ -2131,6 +2659,30 @@ BEGIN
     END
 END
 
+IDM_TREE MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "Size all &columns to fit",    IDM_TREE_AUTOSIZEALL
+        MENUITEM SEPARATOR
+        MENUITEM "Select &root folder...",      IDM_TREE_SELECTROOT
+    END
+END
+
+IDM_TREEHEADER MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "Size all &columns to fit",    IDM_TREE_AUTOSIZEALL
+        MENUITEM "Size column to &fit",         IDM_TREE_AUTOSIZE
+        MENUITEM SEPARATOR
+        MENUITEM "&Expand column",              IDM_TREE_EXPANDCOLUMN
+        MENUITEM SEPARATOR
+        MENUITEM "Choose &property...",         IDM_TREE_CHOOSEPROPERTY
+        MENUITEM "&Reset property",             IDM_TREE_RESETPROPERTY
+    END
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -2276,6 +2828,62 @@ BEGIN
     LTEXT           "Search term (in all propeties):",IDC_STATIC,14,48,156,8
 END
 
+IDD_BOTTOMAREA DIALOGEX 0, 0, 161, 28
+STYLE DS_SETFONT | DS_FIXEDSYS | DS_CONTROL | WS_CHILD | WS_CLIPCHILDREN
+EXSTYLE WS_EX_CONTROLPARENT
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "&Migrate files",2001,7,7,58,14,WS_DISABLED
+    CONTROL         "&Delete source files",IDC_DELETESOURCE,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,79,9,75,10
+END
+
+IDD_CHOOSEFOLDER DIALOGEX 0, 0, 206, 28
+STYLE DS_SETFONT | DS_FIXEDSYS | DS_CONTROL | WS_CHILD | WS_CLIPCHILDREN
+EXSTYLE WS_EX_CONTROLPARENT
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "Choose &other folder...",IDOK,7,7,88,14
+    CONTROL         "Expand all &subfolders",2101,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,109,9,90,10
+END
+
+IDD_CHOOSEPROPERTY DIALOGEX 0, 0, 204, 236
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Choose property"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "",2201,"SysListView32",LVS_LIST | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SORTASCENDING | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_ALIGNLEFT | LVS_NOCOLUMNHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,14,37,176,161
+    DEFPUSHBUTTON   "OK",IDOK,31,214,50,14,WS_GROUP
+    PUSHBUTTON      "Reset",IDC_RESET,89,214,50,14,WS_GROUP
+    PUSHBUTTON      "Cancel",IDCANCEL,147,214,50,14,WS_GROUP
+    GROUPBOX        "Available properties",IDC_STATIC,7,7,190,200,WS_GROUP
+    LTEXT           "Only user-editable properties that can be extracted from the folder names are listed here.",IDC_STATIC,14,17,176,17
+END
+
+IDD_DELETEFILES DIALOGEX 0, 0, 277, 98
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Delete source files"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    LTEXT           "Please confirm that you really want to delete all source files.",IDC_CAPTION,7,31,263,8
+    CONTROL         "&Delete source files",IDC_DELETESOURCE,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,7,51,263,10
+    DEFPUSHBUTTON   "OK",IDOK,162,77,50,14,WS_GROUP
+    PUSHBUTTON      "Cancel",IDCANCEL,220,77,50,14,WS_GROUP
+END
+
+IDD_MIGRATEREPORT DIALOGEX 0, 0, 324, 308
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Migration report"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "&Uncheck successfully migrated folders",2404,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,289,250,10
+    DEFPUSHBUTTON   "OK",IDOK,267,287,50,14,WS_GROUP
+    CONTROL         "",IDC_TABS,"SysTabControl32",WS_CLIPSIBLINGS | WS_GROUP | WS_TABSTOP,7,7,310,272
+    LTEXT           "Folders:",IDC_STATIC,14,27,296,8
+    CONTROL         "",2401,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_ALIGNLEFT | LVS_OWNERDATA | LVS_NOSORTHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,14,37,296,216
+    CONTROL         "",2402,"Static",SS_LEFTNOWORDWRAP | SS_PATHELLIPSIS | WS_GROUP,14,255,296,8
+    CONTROL         "",2403,"Static",SS_LEFTNOWORDWRAP | SS_ENDELLIPSIS | WS_GROUP,14,264,296,8
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -2348,6 +2956,46 @@ BEGIN
         TOPMARGIN, 7
         BOTTOMMARGIN, 271
     END
+
+    IDD_BOTTOMAREA, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 154
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 21
+    END
+
+    IDD_CHOOSEFOLDER, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 199
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 21
+    END
+
+    IDD_CHOOSEPROPERTY, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 197
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 228
+    END
+
+    IDD_DELETEFILES, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 270
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 91
+    END
+
+    IDD_MIGRATEREPORT, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 317
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 301
+    END
 END
 #endif    // APSTUDIO_INVOKED
 
@@ -2360,6 +3008,10 @@ END
 STRINGTABLE 
 BEGIN
     SC_ALWAYSONTOP          "Always on &top"
+END
+
+STRINGTABLE 
+BEGIN
     IDR_CLIPBOARD           "Clipboard"
     IDR_FILEDROP            "FileDrop"
 END
@@ -2400,12 +3052,12 @@ BEGIN
     IDS_CONTEXTMENU_DIMENSION "&Dimension"
     IDS_TXTFILEFILTER       "Text document"
     IDS_XMLFILEFILTER       "Extensible Markup Language"
-    IDS_ATTRIBUTENOTSORTABLE "This property is not suitable for sorting."
-    IDS_NOITEMSSELECTED     "No items selected"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_ATTRIBUTENOTSORTABLE "This property is not suitable for sorting."
+    IDS_NOITEMSSELECTED     "No items selected"
     IDS_YOULOOKAT           "You look at %s"
     IDS_NOTHINGTODISPLAY    "There is nothing to display."
     IDS_NONAVIGATION        "This window does not support any navigation."
@@ -2425,6 +3077,39 @@ END
 STRINGTABLE 
 BEGIN
     IDM_FILTERS_CREATENEW   "Add filter..."
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_NOROOT_CAPTION      "You have not selected a root folder yet"
+    IDS_NOROOT_HINT         "Click above to select a folder for browsing."
+    IDS_FOLDER_CAPTION      "Source:"
+    IDS_FOLDER_HINT         "Click here to select a folder"
+    IDS_STORE_CAPTION       "Destination store:"
+    IDS_STORE_HINT          "Click here to select the destination store"
+    IDS_BROWSEFORFOLDER_CAPTION "Root folder"
+    IDS_BROWSEFORFOLDER_HINT 
+                            "You can select subfolders and attribute mappings later."
+    IDS_FOLDERCATEGORY1     "Personal folders"
+    IDS_FOLDERCATEGORY2     "Libraries"
+    IDS_FOLDERCATEGORY3     "Shared folders"
+    IDS_FOLDERCATEGORY4     "Removable storage"
+    IDS_NOPROPERTY          "Click here to choose a property"
+    IDS_CHOOSEPROPERTY      "Choose p&roperty..."
+    IDS_EXPANDBRANCH        "Expand &branch"
+    IDS_INCLUDEBRANCH       "&Include branch"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_EXCLUDEBRANCH       "&Exclude branch"
+    IDS_REPORTTAB0          "Successfully migrated folders (%u)"
+    IDS_REPORTTAB1          "Folders with errors (%u)"
+    IDS_REPORTSTATUS_ONEFILE "%u file (%s) was successfully imported."
+    IDS_REPORTSTATUS_FILES  "All %u files (%s) were successfully imported."
+    IDS_NOFOLDERS_CAPTION   "Start migration"
+    IDS_NOFOLDERS_MESSAGE   "Please select at least one folder in the tree view by clicking on the checkboxes left to the folder icons."
+    IDS_REPORTSTATUS_NOFILES "There were no files in this folder."
 END
 
 STRINGTABLE 
@@ -2449,8 +3134,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDM_STORE_DELETE        "Deletes the selected store.\nDelete"
-    IDM_STORE_RENAME        "Renames the selected store.\nRename"
     IDM_STORE_PROPERTIES    "Displays the properties of the selected store.\nProperties"
     IDM_STORES_CREATENEW    "Creates a new store for your files.\nCreate new store..."
 END
@@ -2486,12 +3169,12 @@ BEGIN
     IDM_FILE_REMEMBER       "Adds the selected files to the clipboard window.\nRemember"
     IDM_FILE_REMOVE         "Removes the selected files from the clipboard window.\nRemove"
     IDM_FILE_ARCHIVE        "Archives the selected files.\nArchive"
-    IDM_FILE_DELETE         "Deletes the selected files.\nDelete"
-    IDM_FILE_RENAME         "Renames the selected file.\nRename"
 END
 
 STRINGTABLE 
 BEGIN
+    IDM_FILE_DELETE         "Deletes the selected files.\nDelete"
+    IDM_FILE_RENAME         "Renames the selected file.\nRename"
     IDM_FILE_RESTORE        "Restores the selected files.\nRestore"
 END
 
@@ -2499,6 +3182,10 @@ STRINGTABLE
 BEGIN
     IDM_CALENDAR_PREVYEAR   "Displays the previous year.\nPrevious year"
     IDM_CALENDAR_NEXTYEAR   "Displays the next year.\nNext year"
+END
+
+STRINGTABLE 
+BEGIN
     IDM_CALENDAR_GOTOYEAR   "Shows a window that lets you choose a year to display.\nGo to year..."
 END
 
@@ -2508,10 +3195,6 @@ BEGIN
                             "Centers the globe on a specific location.\nJump to location..."
     IDM_GLOBE_ZOOMIN        "Zooms into the globe.\nZoom in"
     IDM_GLOBE_ZOOMOUT       "Zooms out of the globe.\nZoom out"
-END
-
-STRINGTABLE 
-BEGIN
     IDM_GLOBE_AUTOSIZE      "Resizes the globe to touch the edges of the window.\nSize to fit"
     IDM_GLOBE_GOOGLEEARTH   "Opens the selected locations in Google Earth.\nOpen in Google Earth"
 END
@@ -2520,11 +3203,25 @@ STRINGTABLE
 BEGIN
     IDM_TAGCLOUD_SORTVALUE  "Arranges the tags in their canonic order.\nSort by value"
     IDM_TAGCLOUD_SORTCOUNT  "Arranges the tags by their file count.\nSort by count"
+    IDM_TAGCLOUD_SORT       "&Sort by"
 END
 
 STRINGTABLE 
 BEGIN
-    IDM_TAGCLOUD_SORT       "&Sort by"
+    IDM_MIGRATE_SELECTROOT  "Opens a dialog where you can select the root folder to display in the main view below.\nSelect root folder"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_TREE_OPEN           "Opens the selected folder.\nOpen"
+    IDM_TREE_DELETE         "Deletes the selected folder.\nDelete"
+    IDM_TREE_RENAME         "Renames the selected folder.\nRename"
+    IDM_TREE_PROPERTIES     "Displays the properties of the selected folder.\nProperties"
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_TREE_EXPAND         "Adds all subfolders of the selected folder.\nExpand"
 END
 
 STRINGTABLE 
@@ -2541,6 +3238,10 @@ BEGIN
     IDM_VIEW_DETAILS        "Details"
     IDM_VIEW_TILES          "Tiles"
     IDM_VIEW_STRIPS         "File strips"
+END
+
+STRINGTABLE 
+BEGIN
     IDM_VIEW_CONTENT        "Content"
     IDM_VIEW_PREVIEW        "Preview"
     IDM_VIEW_CALENDAR       "Calendar"

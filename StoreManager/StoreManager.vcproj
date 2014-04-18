@@ -754,6 +754,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\Field_Tiny.ico"
+				>
+			</File>
+			<File
 				RelativePath=".\res\FileDrop_Small.ico"
 				>
 			</File>
@@ -859,6 +863,10 @@
 			</File>
 			<File
 				RelativePath=".\res\Table_Tiny.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\TaskReport_Tiny.ico"
 				>
 			</File>
 			<File

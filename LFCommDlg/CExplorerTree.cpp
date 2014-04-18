@@ -64,6 +64,12 @@ void CExplorerTree::PreSubclassWindow()
 
 	SetImageList(&p_App->m_SystemImageListSmall, 0);
 
+	// Schrift
+	LOGFONT lf;
+	p_App->m_DefaultFont.GetLogFont(&lf);
+	SetItemHeight((SHORT)(max(abs(lf.lfHeight), GetSystemMetrics(SM_CYSMICON))+(p_App->OSVersion<OS_Vista ? 2 : 6)));
+	SetFont(&p_App->m_DefaultFont, FALSE);
+
 	// Benachrichtigung, wenn sich Items ändern
 	SHChangeNotifyEntry shCNE = { NULL, TRUE };
 	m_ulSHChangeNotifyRegister = SHChangeNotifyRegister(m_hWnd, SHCNRF_InterruptLevel | SHCNRF_ShellLevel,

@@ -94,7 +94,7 @@ BOOL ReportDlg::OnInitDialog()
 
 	// Liste
 	CListCtrl* li = (CListCtrl*)GetDlgItem(IDC_FOLDERLIST);
-	li->SetExtendedStyle(li->GetExtendedStyle() | LVS_EX_FULLROWSELECT | LVS_EX_DOUBLEBUFFER | LVS_EX_GRIDLINES);
+	li->SetExtendedStyle(li->GetExtendedStyle() | LVS_EX_FULLROWSELECT | LVS_EX_DOUBLEBUFFER);
 	li->SetImageList(&theApp.m_SystemImageListSmall, LVSIL_SMALL);
 	li->SetFont(&theApp.m_DefaultFont, FALSE);
 	li->InsertColumn(0, theApp.m_Attributes[LFAttrFileName]->Name);

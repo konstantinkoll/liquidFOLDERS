@@ -696,14 +696,6 @@
 				>
 			</File>
 			<File
-				RelativePath="Ribbon\StoreDelete_16.png"
-				>
-			</File>
-			<File
-				RelativePath="Ribbon\StoreDelete_32.png"
-				>
-			</File>
-			<File
 				RelativePath=".\Ribbon\StoreMaintenance_16.png"
 				>
 			</File>
@@ -725,14 +717,6 @@
 			</File>
 			<File
 				RelativePath=".\Ribbon\StoreProperties_32.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\StoreRename_16.png"
-				>
-			</File>
-			<File
-				RelativePath=".\Ribbon\StoreRename_32.png"
 				>
 			</File>
 			<File

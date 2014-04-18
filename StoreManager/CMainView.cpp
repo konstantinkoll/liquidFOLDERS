@@ -733,7 +733,7 @@ INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	#define FilterIconBlue         0
 	#define FilterIconWhite        1
-	#define FilterIconOverlay     38
+	#define FilterIconOverlay     36
 	#define FILTERICON            ((theApp.OSVersion==OS_Vista) && IsCtrlThemed()) ? FilterIconWhite : FilterIconBlue
 	p_FilterButton = m_wndTaskbar.AddButton(ID_PANE_FILTER, FILTERICON, TRUE, FALSE, TRUE);
 
@@ -753,30 +753,28 @@ INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndTaskbar.AddButton(IDM_TAGCLOUD_SORTCOUNT, 15);
 	m_wndTaskbar.AddButton(IDM_FILE_RESTORE, 16);
 
-	#define OpenIconFolder     18
+	#define OpenIconFolder       18
 	#define OpenIconExplorer     19
 	p_OpenButton = m_wndTaskbar.AddButton(IDM_ITEM_OPEN, OpenIconFolder);
 
 	m_wndTaskbar.AddButton(IDM_GLOBE_GOOGLEEARTH, 20, TRUE);
 	m_wndTaskbar.AddButton(IDM_VOLUME_PROPERTIES, 21);
-	m_wndTaskbar.AddButton(IDM_STORE_DELETE, 23);
-	m_wndTaskbar.AddButton(IDM_STORE_RENAME, 24);
-	m_wndTaskbar.AddButton(IDM_STORE_PROPERTIES, 25);
-	m_wndTaskbar.AddButton(IDM_FILE_REMEMBER, 26);
-	m_wndTaskbar.AddButton(IDM_FILE_REMOVE, 27);
-	m_wndTaskbar.AddButton(IDM_FILE_ARCHIVE, 28);
-	m_wndTaskbar.AddButton(IDM_FILE_DELETE, 29);
-	m_wndTaskbar.AddButton(IDM_FILE_RENAME, 30);
-	m_wndTaskbar.AddButton(IDM_STORE_MAKEDEFAULT, 31);
+	m_wndTaskbar.AddButton(IDM_STORE_PROPERTIES, 23);
+	m_wndTaskbar.AddButton(IDM_FILE_REMEMBER, 24);
+	m_wndTaskbar.AddButton(IDM_FILE_REMOVE, 25);
+	m_wndTaskbar.AddButton(IDM_FILE_ARCHIVE, 26);
+	m_wndTaskbar.AddButton(IDM_FILE_DELETE, 27);
+	m_wndTaskbar.AddButton(IDM_FILE_RENAME, 28);
+	m_wndTaskbar.AddButton(IDM_STORE_MAKEDEFAULT, 29);
 
-	#define InspectorIconVisible     32
-	#define InspectorIconHidden      33
+	#define InspectorIconVisible     30
+	#define InspectorIconHidden      31
 	p_InspectorButton = m_wndTaskbar.AddButton(ID_PANE_INSPECTOR, theApp.m_ShowInspectorPane ? InspectorIconVisible : InspectorIconHidden, TRUE, TRUE);
 
-	m_wndTaskbar.AddButton(ID_APP_PURCHASE, 34, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_ENTERLICENSEKEY, 35, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_SUPPORT, 36, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_ABOUT, 37, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_PURCHASE, 32, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_ENTERLICENSEKEY, 33, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_SUPPORT, 34, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_ABOUT, 35, TRUE, TRUE);
 
 	// Drop target
 	m_DropTarget.SetOwner(GetOwner());
