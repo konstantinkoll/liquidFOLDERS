@@ -874,6 +874,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\TreeWidgets.bmp"
+				>
+			</File>
+			<File
 				RelativePath=".\res\ViewOptions_Tiny.ico"
 				>
 			</File>

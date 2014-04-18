@@ -89,6 +89,7 @@ IDB_VIEWS               BITMAP                  "res\\Views.bmp"
 IDB_CONTEXTS_16         BITMAP                  "res\\Contexts_16.bmp"
 IDB_CONTEXTS_32         BITMAP                  "res\\Contexts_32.bmp"
 IDB_SOURCEICONS         BITMAP                  "res\\SourceIcons.bmp"
+IDB_TREEWIDGETS         BITMAP                  "res\\TreeWidgets.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -176,6 +177,7 @@ IDM_VOLUME MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
+        MENUITEM SEPARATOR
         MENUITEM "&Neuen Store anlegen...",     IDM_VOLUME_CREATENEWSTORE
         MENUITEM SEPARATOR
         MENUITEM "&Formatieren...",             IDM_VOLUME_FORMAT
@@ -767,6 +769,7 @@ IDM_VOLUME MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
+        MENUITEM SEPARATOR
         MENUITEM "Crear &nuevo store...",       IDM_VOLUME_CREATENEWSTORE
         MENUITEM SEPARATOR
         MENUITEM "&Formatear...",               IDM_VOLUME_FORMAT
@@ -1358,6 +1361,7 @@ IDM_VOLUME MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
+        MENUITEM SEPARATOR
         MENUITEM "Créez un store &nouveau...",  IDM_VOLUME_CREATENEWSTORE
         MENUITEM SEPARATOR
         MENUITEM "&Formater...",                IDM_VOLUME_FORMAT
@@ -2000,6 +2004,7 @@ IDM_VOLUME MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
+        MENUITEM SEPARATOR
         MENUITEM "Create &new store...",        IDM_VOLUME_CREATENEWSTORE
         MENUITEM SEPARATOR
         MENUITEM "&Format...",                  IDM_VOLUME_FORMAT

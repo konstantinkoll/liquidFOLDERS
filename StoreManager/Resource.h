@@ -33,6 +33,7 @@
 #define IDB_THUMBNAIL_SHADOW            156
 #define IDB_THUMBNAIL_FRAME             157
 #define IDB_SOURCEICONS                 158
+#define IDB_TREEWIDGETS                 159
 #define ID_PANE_FILTER                  400
 #define ID_PANE_INSPECTOR               401
 #define ID_NAV_BACK                     500

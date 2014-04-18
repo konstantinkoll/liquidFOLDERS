@@ -354,6 +354,49 @@ void CStoreManagerApp::Reload(INT Context)
 }
 
 
+// Shell
+
+void CStoreManagerApp::ExecuteExplorerContextMenu(CHAR cDrive, LPCSTR verb)
+{
+	WCHAR Path[4] = L" :\\";
+	Path[0] = cDrive;
+
+	LPITEMIDLIST pidlFQ = SHSimpleIDListFromPath(Path);
+	LPCITEMIDLIST pidlRel = NULL;
+
+	IShellFolder* pParentFolder = NULL;
+	if (FAILED(SHBindToParent(pidlFQ, IID_IShellFolder, (void**)&pParentFolder, &pidlRel)))
+		return;
+
+	IContextMenu* pcm = NULL;
+	if (SUCCEEDED(pParentFolder->GetUIObjectOf(m_pMainWnd->GetSafeHwnd(), 1, &pidlRel, IID_IContextMenu, NULL, (void**)&pcm)))
+	{
+		HMENU hPopup = CreatePopupMenu();
+		if (hPopup)
+		{
+			UINT uFlags = CMF_NORMAL | CMF_EXPLORE;
+			if (SUCCEEDED(pcm->QueryContextMenu(hPopup, 0, 1, 0x6FFF, uFlags)))
+			{
+				CWaitCursor csr;
+
+				CMINVOKECOMMANDINFO cmi;
+				cmi.cbSize = sizeof(CMINVOKECOMMANDINFO);
+				cmi.fMask = 0;
+				cmi.hwnd = m_pMainWnd->GetSafeHwnd();
+				cmi.lpVerb = verb;
+				cmi.lpParameters = NULL;
+				cmi.lpDirectory = NULL;
+				cmi.nShow = SW_SHOWNORMAL;
+				cmi.dwHotKey = 0;
+				cmi.hIcon = NULL;
+
+				pcm->InvokeCommand(&cmi);
+			}
+		}
+	}
+}
+
+
 // Registry and view settings
 
 void CStoreManagerApp::GetBinary(LPCTSTR lpszEntry, void* pData, UINT size)

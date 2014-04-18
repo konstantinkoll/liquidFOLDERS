@@ -33,6 +33,8 @@ public:
 	void UpdateViewOptions(INT Context=-1, INT View=-1);
 	void Reload(INT Context);
 
+	void ExecuteExplorerContextMenu(CHAR Drive, LPCSTR verb);
+
 	CMainWnd* p_Clipboard;
 	CString m_PathGoogleEarth;
 	CImageListTransparent m_SourceIcons;

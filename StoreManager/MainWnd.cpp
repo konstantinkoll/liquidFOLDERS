@@ -670,7 +670,7 @@ void CMainWnd::OnItemOpen()
 				switch (i->Type & LFTypeMask)
 				{
 				case LFTypeVolume:
-					SendMessage(WM_COMMAND, IDM_VOLUME_CREATENEWSTORE);
+					theApp.ExecuteExplorerContextMenu(i->CoreAttributes.FileID[0], "open");
 					break;
 				case LFTypeFile:
 					if (strcmp(i->CoreAttributes.FileFormat, "filter")==0)

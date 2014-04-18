@@ -86,7 +86,7 @@ CMainView::CMainView()
 	p_wndFileView = NULL;
 	p_Filter = NULL;
 	p_RawFiles = p_CookedFiles = NULL;
-	p_FilterButton = p_InspectorButton = NULL;
+	p_FilterButton = p_OpenButton = p_InspectorButton = NULL;
 	p_OrganizeButton = p_ViewButton = NULL;
 	m_Context = m_ViewID = -1;
 	m_Resizing = m_StoreIDValid = m_Alerted = FALSE;
@@ -427,46 +427,6 @@ void CMainView::SelectNone()
 		p_wndFileView->SendMessage(WM_SELECTNONE);
 }
 
-void CMainView::ExecuteExplorerContextMenu(CHAR cDrive, LPCSTR verb)
-{
-	WCHAR Path[4] = L" :\\";
-	Path[0] = cDrive;
-
-	LPITEMIDLIST pidlFQ = SHSimpleIDListFromPath(Path);
-	LPCITEMIDLIST pidlRel = NULL;
-
-	IShellFolder* pParentFolder = NULL;
-	if (FAILED(SHBindToParent(pidlFQ, IID_IShellFolder, (void**)&pParentFolder, &pidlRel)))
-		return;
-
-	IContextMenu* pcm = NULL;
-	if (SUCCEEDED(pParentFolder->GetUIObjectOf(GetSafeHwnd(), 1, &pidlRel, IID_IContextMenu, NULL, (void**)&pcm)))
-	{
-		HMENU hPopup = CreatePopupMenu();
-		if (hPopup)
-		{
-			UINT uFlags = CMF_NORMAL | CMF_EXPLORE;
-			if (SUCCEEDED(pcm->QueryContextMenu(hPopup, 0, 1, 0x6FFF, uFlags)))
-			{
-				CWaitCursor csr;
-
-				CMINVOKECOMMANDINFO cmi;
-				cmi.cbSize = sizeof(CMINVOKECOMMANDINFO);
-				cmi.fMask = 0;
-				cmi.hwnd = GetSafeHwnd();
-				cmi.lpVerb = verb;
-				cmi.lpParameters = NULL;
-				cmi.lpDirectory = NULL;
-				cmi.nShow = SW_SHOWNORMAL;
-				cmi.dwHotKey = 0;
-				cmi.hIcon = NULL;
-
-				pcm->InvokeCommand(&cmi);
-			}
-		}
-	}
-}
-
 void CMainView::AddFileIDItem(LFFileIDList* il, LFItemDescriptor* item)
 {
 	switch (item->Type & LFTypeMask)
@@ -735,7 +695,7 @@ BEGIN_MESSAGE_MAP(CMainView, CWnd)
 	ON_COMMAND(IDM_VOLUME_FORMAT, OnVolumeFormat)
 	ON_COMMAND(IDM_VOLUME_EJECT, OnVolumeEject)
 	ON_COMMAND(IDM_VOLUME_PROPERTIES, OnVolumeProperties)
-	ON_UPDATE_COMMAND_UI_RANGE(IDM_VOLUME_CREATENEWSTORE, IDM_VOLUME_PROPERTIES, OnUpdateDriveCommands)
+	ON_UPDATE_COMMAND_UI_RANGE(IDM_VOLUME_CREATENEWSTORE, IDM_VOLUME_PROPERTIES, OnUpdateVolumeCommands)
 
 	ON_COMMAND(IDM_STORE_MAKEDEFAULT, OnStoreMakeDefault)
 	ON_COMMAND(IDM_STORE_IMPORTFOLDER, OnStoreImportFolder)
@@ -773,7 +733,7 @@ INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	#define FilterIconBlue         0
 	#define FilterIconWhite        1
-	#define FilterIconOverlay     35
+	#define FilterIconOverlay     38
 	#define FILTERICON            ((theApp.OSVersion==OS_Vista) && IsCtrlThemed()) ? FilterIconWhite : FilterIconBlue
 	p_FilterButton = m_wndTaskbar.AddButton(ID_PANE_FILTER, FILTERICON, TRUE, FALSE, TRUE);
 
@@ -792,27 +752,31 @@ INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndTaskbar.AddButton(IDM_TAGCLOUD_SORTVALUE, 14);
 	m_wndTaskbar.AddButton(IDM_TAGCLOUD_SORTCOUNT, 15);
 	m_wndTaskbar.AddButton(IDM_FILE_RESTORE, 16);
-	m_wndTaskbar.AddButton(IDM_ITEM_OPEN, 17);
-	m_wndTaskbar.AddButton(IDM_GLOBE_GOOGLEEARTH, 18, TRUE);
-	m_wndTaskbar.AddButton(IDM_VOLUME_PROPERTIES, 19);
-	m_wndTaskbar.AddButton(IDM_STORE_DELETE, 20);
-	m_wndTaskbar.AddButton(IDM_STORE_RENAME, 21);
-	m_wndTaskbar.AddButton(IDM_STORE_PROPERTIES, 22);
-	m_wndTaskbar.AddButton(IDM_FILE_REMEMBER, 23);
-	m_wndTaskbar.AddButton(IDM_FILE_REMOVE, 24);
-	m_wndTaskbar.AddButton(IDM_FILE_ARCHIVE, 25);
-	m_wndTaskbar.AddButton(IDM_FILE_DELETE, 26);
-	m_wndTaskbar.AddButton(IDM_FILE_RENAME, 27);
-	m_wndTaskbar.AddButton(IDM_STORE_MAKEDEFAULT, 28);
 
-	#define InspectorIconVisible     29
-	#define InspectorIconHidden      30
+	#define OpenIconFolder     18
+	#define OpenIconExplorer     19
+	p_OpenButton = m_wndTaskbar.AddButton(IDM_ITEM_OPEN, OpenIconFolder);
+
+	m_wndTaskbar.AddButton(IDM_GLOBE_GOOGLEEARTH, 20, TRUE);
+	m_wndTaskbar.AddButton(IDM_VOLUME_PROPERTIES, 21);
+	m_wndTaskbar.AddButton(IDM_STORE_DELETE, 23);
+	m_wndTaskbar.AddButton(IDM_STORE_RENAME, 24);
+	m_wndTaskbar.AddButton(IDM_STORE_PROPERTIES, 25);
+	m_wndTaskbar.AddButton(IDM_FILE_REMEMBER, 26);
+	m_wndTaskbar.AddButton(IDM_FILE_REMOVE, 27);
+	m_wndTaskbar.AddButton(IDM_FILE_ARCHIVE, 28);
+	m_wndTaskbar.AddButton(IDM_FILE_DELETE, 29);
+	m_wndTaskbar.AddButton(IDM_FILE_RENAME, 30);
+	m_wndTaskbar.AddButton(IDM_STORE_MAKEDEFAULT, 31);
+
+	#define InspectorIconVisible     32
+	#define InspectorIconHidden      33
 	p_InspectorButton = m_wndTaskbar.AddButton(ID_PANE_INSPECTOR, theApp.m_ShowInspectorPane ? InspectorIconVisible : InspectorIconHidden, TRUE, TRUE);
 
-	m_wndTaskbar.AddButton(ID_APP_PURCHASE, 31, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_ENTERLICENSEKEY, 32, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_SUPPORT, 33, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_ABOUT, 34, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_PURCHASE, 34, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_ENTERLICENSEKEY, 35, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_SUPPORT, 36, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_ABOUT, 37, TRUE, TRUE);
 
 	// Drop target
 	m_DropTarget.SetOwner(GetOwner());
@@ -1516,6 +1480,10 @@ void CMainView::OnUpdateItemCommands(CCmdUI* pCmdUI)
 			b = (item->NextFilter!=NULL) ||
 				((item->Type & (LFTypeMask | LFTypeNotMounted))==LFTypeFile) ||
 				((item->Type & (LFTypeMask | LFTypeNotMounted))==LFTypeVolume);
+
+			if (p_OpenButton)
+				p_OpenButton->SetIconID((item->Type & LFTypeMask)==LFTypeVolume ? OpenIconExplorer : OpenIconFolder);
+
 			break;
 		}
 	}
@@ -1552,7 +1520,7 @@ void CMainView::OnVolumeFormat()
 		}
 		else
 		{
-			ExecuteExplorerContextMenu(cDrive, "format");
+			theApp.ExecuteExplorerContextMenu(cDrive, "format");
 		}
 	}
 }
@@ -1561,17 +1529,17 @@ void CMainView::OnVolumeEject()
 {
 	INT idx = GetSelectedItem();
 	if (idx!=-1)
-		ExecuteExplorerContextMenu(p_CookedFiles->m_Items[idx]->CoreAttributes.FileID[0], "eject");
+		theApp.ExecuteExplorerContextMenu(p_CookedFiles->m_Items[idx]->CoreAttributes.FileID[0], "eject");
 }
 
 void CMainView::OnVolumeProperties()
 {
 	INT idx = GetSelectedItem();
 	if (idx!=-1)
-		ExecuteExplorerContextMenu(p_CookedFiles->m_Items[idx]->CoreAttributes.FileID[0], "properties");
+		theApp.ExecuteExplorerContextMenu(p_CookedFiles->m_Items[idx]->CoreAttributes.FileID[0], "properties");
 }
 
-void CMainView::OnUpdateDriveCommands(CCmdUI* pCmdUI)
+void CMainView::OnUpdateVolumeCommands(CCmdUI* pCmdUI)
 {
 	BOOL b = FALSE;
 

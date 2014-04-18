@@ -111,7 +111,7 @@ protected:
 	afx_msg void OnVolumeFormat();
 	afx_msg void OnVolumeEject();
 	afx_msg void OnVolumeProperties();
-	afx_msg void OnUpdateDriveCommands(CCmdUI* pCmdUI);
+	afx_msg void OnUpdateVolumeCommands(CCmdUI* pCmdUI);
 
 	afx_msg void OnStoreMakeDefault();
 	afx_msg void OnStoreImportFolder();
@@ -138,6 +138,7 @@ protected:
 
 private:
 	CTaskButton* p_FilterButton;
+	CTaskButton* p_OpenButton;
 	CTaskButton* p_InspectorButton;
 	CHeaderButton* p_OrganizeButton;
 	CHeaderButton* p_ViewButton;
@@ -147,7 +148,6 @@ private:
 	void SetHeaderButtons();
 	void SetHeader();
 	void AdjustLayout();
-	void ExecuteExplorerContextMenu(CHAR Drive, LPCSTR verb);
 	void AddFileIDItem(LFFileIDList* il, LFItemDescriptor* item);
 	void AddTransactionItem(LFTransactionList* tl, LFItemDescriptor* item, UINT UserData);
 };
