@@ -3,8 +3,8 @@
 //
 
 #pragma once
-#include "Migrate.h"
 #include "CMigrationList.h"
+#include "StoreManager.h"
 
 
 // ReportDlg

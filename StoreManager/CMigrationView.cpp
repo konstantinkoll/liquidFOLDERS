@@ -1,23 +1,22 @@
 
-// CMainView.cpp: Implementierung der Klasse CMainView
+// CMigrationView.cpp: Implementierung der Klasse CMigrationView
 //
 
 #include "stdafx.h"
-#include "CMainView.h"
+#include "CMigrationView.h"
 #include "Resource.h"
-#include "Migrate.h"
-#include "LFCore.h"
+#include "StoreManager.h"
 
 
-// CMainView
+// CMigrationView
 //
 
-CMainView::CMainView()
+CMigrationView::CMigrationView()
 {
 	m_IsRootSet = FALSE;
 }
 
-INT CMainView::Create(CWnd* _pParentWnd, UINT nID)
+INT CMigrationView::Create(CWnd* _pParentWnd, UINT nID)
 {
 	CString className = AfxRegisterWndClass(CS_DBLCLKS, LoadCursor(NULL, IDC_ARROW));
 
@@ -27,7 +26,7 @@ INT CMainView::Create(CWnd* _pParentWnd, UINT nID)
 	return CWnd::CreateEx(WS_EX_CONTROLPARENT, className, _T(""), dwStyle, rect, _pParentWnd, nID);
 }
 
-BOOL CMainView::OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo)
+BOOL CMigrationView::OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo)
 {
 	// The file view gets the command first
 	if (m_wndTree.OnCmdMsg(nID, nCode, pExtra, pHandlerInfo))
@@ -40,7 +39,7 @@ BOOL CMainView::OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* 
 	return CWnd::OnCmdMsg(nID, nCode, pExtra, pHandlerInfo);
 }
 
-void CMainView::ClearRoot()
+void CMigrationView::ClearRoot()
 {
 	m_IsRootSet = FALSE;
 
@@ -55,7 +54,7 @@ void CMainView::ClearRoot()
 	m_wndTree.EnableWindow(FALSE);
 }
 
-void CMainView::SetRoot(LPITEMIDLIST pidl, BOOL Update, BOOL ExpandAll)
+void CMigrationView::SetRoot(LPITEMIDLIST pidl, BOOL Update, BOOL ExpandAll)
 {
 	m_IsRootSet = TRUE;
 
@@ -74,24 +73,24 @@ void CMainView::SetRoot(LPITEMIDLIST pidl, BOOL Update, BOOL ExpandAll)
 	m_wndTree.EnableWindow(TRUE);
 }
 
-void CMainView::PopulateMigrationList(CMigrationList* ml, LFItemDescriptor* it)
+void CMigrationView::PopulateMigrationList(CMigrationList* ml, LFItemDescriptor* it)
 {
 	if (m_IsRootSet)
 		m_wndTree.PopulateMigrationList(ml, it);
 }
 
-void CMainView::UncheckMigrated(CReportList* rl)
+void CMigrationView::UncheckMigrated(CReportList* rl)
 {
 	if (m_IsRootSet)
 		m_wndTree.UncheckMigrated(rl);
 }
 
-BOOL CMainView::FoldersChecked()
+BOOL CMigrationView::FoldersChecked()
 {
 	return m_IsRootSet ? m_wndTree.FoldersChecked() : FALSE;
 }
 
-void CMainView::AdjustLayout()
+void CMigrationView::AdjustLayout()
 {
 	CRect rect;
 	GetClientRect(rect);
@@ -106,17 +105,17 @@ void CMainView::AdjustLayout()
 }
 
 
-BEGIN_MESSAGE_MAP(CMainView, CWnd)
+BEGIN_MESSAGE_MAP(CMigrationView, CWnd)
 	ON_WM_CREATE()
 	ON_WM_ERASEBKGND()
 	ON_WM_SIZE()
 	ON_WM_SETFOCUS()
 	ON_WM_CONTEXTMENU()
-	ON_COMMAND(IDM_VIEW_SELECTROOT_TASKBAR, OnSelectRoot)
-	ON_UPDATE_COMMAND_UI(IDM_VIEW_SELECTROOT_TASKBAR, OnUpdateCommands)
+	ON_COMMAND(IDM_MIGRATION_SELECTROOT, OnSelectRoot)
+	ON_UPDATE_COMMAND_UI(IDM_MIGRATION_SELECTROOT, OnUpdateCommands)
 END_MESSAGE_MAP()
 
-INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
+INT CMigrationView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if (CWnd::OnCreate(lpCreateStruct)==-1)
 		return -1;
@@ -125,17 +124,17 @@ INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (!m_wndTaskbar.Create(this, IDB_TASKS, 1))
 		return -1;
 
-	m_wndTaskbar.AddButton(IDM_VIEW_SELECTROOT_TASKBAR, 0);
-	m_wndTaskbar.AddButton(IDM_VIEW_EXPAND, 1);
-	m_wndTaskbar.AddButton(IDM_VIEW_OPEN, 2, TRUE);
-	m_wndTaskbar.AddButton(IDM_VIEW_DELETE, 3);
-	m_wndTaskbar.AddButton(IDM_VIEW_RENAME, 4);
-	m_wndTaskbar.AddButton(IDM_VIEW_PROPERTIES, 5);
+	m_wndTaskbar.AddButton(IDM_MIGRATION_SELECTROOT, 18);
+	m_wndTaskbar.AddButton(IDM_TREE_EXPAND, 17);
+	m_wndTaskbar.AddButton(IDM_TREE_OPEN, 19, TRUE);
+	m_wndTaskbar.AddButton(IDM_TREE_DELETE, 27);
+	m_wndTaskbar.AddButton(IDM_TREE_RENAME, 28);
+	m_wndTaskbar.AddButton(IDM_TREE_PROPERTIES, 22);
 
-	m_wndTaskbar.AddButton(ID_APP_PURCHASE, 6, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_ENTERLICENSEKEY, 7, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_SUPPORT, 8, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_ABOUT, 9, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_PURCHASE, 32, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_ENTERLICENSEKEY, 33, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_SUPPORT, 34, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_ABOUT, 35, TRUE, TRUE);
 
 	// Explorer header
 	if (!m_wndExplorerHeader.Create(this, 2))
@@ -149,18 +148,18 @@ INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	return 0;
 }
 
-BOOL CMainView::OnEraseBkgnd(CDC* /*pDC*/)
+BOOL CMigrationView::OnEraseBkgnd(CDC* /*pDC*/)
 {
 	return TRUE;
 }
 
-void CMainView::OnSize(UINT nType, INT cx, INT cy)
+void CMigrationView::OnSize(UINT nType, INT cx, INT cy)
 {
 	CWnd::OnSize(nType, cx, cy);
 	AdjustLayout();
 }
 
-void CMainView::OnSetFocus(CWnd* /*pOldWnd*/)
+void CMigrationView::OnSetFocus(CWnd* /*pOldWnd*/)
 {
 	if (m_wndTree.IsWindowEnabled())
 	{
@@ -172,7 +171,7 @@ void CMainView::OnSetFocus(CWnd* /*pOldWnd*/)
 	}
 }
 
-void CMainView::OnContextMenu(CWnd* /*pWnd*/, CPoint pos)
+void CMigrationView::OnContextMenu(CWnd* /*pWnd*/, CPoint pos)
 {
 	if ((pos.x<0) || (pos.y<0))
 	{
@@ -185,7 +184,7 @@ void CMainView::OnContextMenu(CWnd* /*pWnd*/, CPoint pos)
 	}
 
 	CMenu menu;
-	ENSURE(menu.LoadMenu(IDM_BACKGROUND));
+	ENSURE(menu.LoadMenu(IDM_TREE));
 
 	CMenu* pPopup = menu.GetSubMenu(0);
 	ASSERT_VALID(pPopup);
@@ -193,21 +192,12 @@ void CMainView::OnContextMenu(CWnd* /*pWnd*/, CPoint pos)
 	pPopup->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, pos.x, pos.y, GetOwner());
 }
 
-void CMainView::OnSelectRoot()
+void CMigrationView::OnSelectRoot()
 {
-	GetOwner()->SendMessage(WM_COMMAND, IDM_VIEW_SELECTROOT);
+	GetOwner()->SendMessage(WM_COMMAND, IDM_TREE_SELECTROOT);
 }
 
-void CMainView::OnUpdateCommands(CCmdUI* pCmdUI)
+void CMigrationView::OnUpdateCommands(CCmdUI* pCmdUI)
 {
-	BOOL b = FALSE;
-
-	switch (pCmdUI->m_nID)
-	{
-	case IDM_VIEW_SELECTROOT_TASKBAR:
-		b = !m_IsRootSet;
-		break;
-	}
-
-	pCmdUI->Enable(b);
+	pCmdUI->Enable(!m_IsRootSet);
 }

@@ -58,6 +58,8 @@ public:
 
 	BOOL m_FileDropAlwaysOnTop;
 
+	BOOL m_MigrationExpandAll;
+
 protected:
 	BOOL m_AppInitialized;
 

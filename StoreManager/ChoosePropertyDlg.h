@@ -4,7 +4,7 @@
 
 #pragma once
 #include "LFCommDlg.h"
-#include "Migrate.h"
+#include "StoreManager.h"
 
 
 // ChoosePropertyDlg

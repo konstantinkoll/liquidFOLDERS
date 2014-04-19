@@ -4,8 +4,8 @@
 
 #include "stdafx.h"
 #include "CPIDLSelector.h"
-#include "Migrate.h"
-#include "resource.h"
+#include "Resource.h"
+#include "StoreManager.h"
 
 
 // CPIDLDropdownWindow
@@ -20,13 +20,13 @@ BOOL CPIDLDropdownWindow::AddPIDL(LPITEMIDLIST pidl, UINT Category, BOOL FreeOnF
 	if (FAILED(SHGetFileInfo((WCHAR*)pidl, 0, &sfi, sizeof(SHFILEINFO), SHGFI_PIDL | SHGFI_DISPLAYNAME | SHGFI_ATTRIBUTES | SHGFI_SYSICONINDEX)))
 	{
 		if (FreeOnFail)
-			theApp.GetShellManager()->FreeItem(pidl);
+			p_App->GetShellManager()->FreeItem(pidl);
 		return FALSE;
 	}
 	if (!sfi.dwAttributes)
 	{
 		if (FreeOnFail)
-			theApp.GetShellManager()->FreeItem(pidl);
+			p_App->GetShellManager()->FreeItem(pidl);
 		return FALSE;
 	}
 
@@ -103,7 +103,7 @@ void CPIDLDropdownWindow::AddChildren(WCHAR* Path, UINT Category)
 						}
 
 						// Don't include file junctions
-						LPITEMIDLIST pidlFQ = theApp.GetShellManager()->ConcatenateItem(pidl, pidlTemp);
+						LPITEMIDLIST pidlFQ = p_App->GetShellManager()->ConcatenateItem(pidl, pidlTemp);
 
 						WCHAR Path[MAX_PATH];
 						if (SUCCEEDED(SHGetPathFromIDListW(pidlFQ, Path)))
@@ -111,13 +111,13 @@ void CPIDLDropdownWindow::AddChildren(WCHAR* Path, UINT Category)
 							DWORD attr = GetFileAttributesW(Path);
 							if ((attr!=INVALID_FILE_ATTRIBUTES) && (!(attr & FILE_ATTRIBUTE_DIRECTORY)))
 							{
-								theApp.GetShellManager()->FreeItem(pidlFQ);
+								p_App->GetShellManager()->FreeItem(pidlFQ);
 								continue;
 							}
 						}
 
 						AddPIDL(pidlFQ, Category);
-						theApp.GetShellManager()->FreeItem(pidlTemp);
+						p_App->GetShellManager()->FreeItem(pidlTemp);
 					}
 
 					pEnum->Release();
@@ -129,7 +129,7 @@ void CPIDLDropdownWindow::AddChildren(WCHAR* Path, UINT Category)
 		pDesktop->Release();
 
 		if (!ParentAdded)
-			theApp.GetShellManager()->FreeItem(pidl);
+			p_App->GetShellManager()->FreeItem(pidl);
 	}
 }
 
@@ -149,7 +149,7 @@ void CPIDLDropdownWindow::PopulateList()
 	AddCSIDL(CSIDL_COMMON_PICTURES, 2);									// Common pictures
 	AddCSIDL(CSIDL_COMMON_VIDEO, 2);									// Common videos
 
-	if (theApp.OSVersion>OS_Vista)
+	if (p_App->OSVersion>OS_Vista)
 	{
 		AddKnownFolder(FOLDERID_Contacts, 0);							// Contacts
 		AddKnownFolder(FOLDERID_Downloads, 0);							// Downloads
@@ -186,7 +186,7 @@ INT CPIDLDropdownWindow::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CDropdownWindow::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
-	m_wndList.SetImageList(&theApp.m_SystemImageListLarge, LVSIL_NORMAL);
+	m_wndList.SetImageList(&p_App->m_SystemImageListLarge, LVSIL_NORMAL);
 
 	for (UINT a=0; a<4; a++)
 	{
@@ -196,15 +196,7 @@ INT CPIDLDropdownWindow::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	}
 	m_wndList.EnableGroupView(TRUE);
 
-	((CButton*)m_wndBottomArea.GetDlgItem(IDC_EXPANDALL))->SetCheck(theApp.m_ExpandAll);
-
-	IMAGEINFO ii;
-	theApp.m_SystemImageListLarge.GetImageInfo(0, &ii);
-	CDC* dc = GetWindowDC();
-	CFont* pOldFont = dc->SelectObject(&theApp.m_DefaultFont);
-	m_wndList.SetIconSpacing(CXDropdownListIconSpacing, ii.rcImage.bottom-ii.rcImage.top+dc->GetTextExtent(_T("Wy")).cy*2+4);
-	dc->SelectObject(pOldFont);
-	ReleaseDC(dc);
+	((CButton*)m_wndBottomArea.GetDlgItem(IDC_EXPANDALL))->SetCheck(theApp.m_MigrationExpandAll);
 
 	PopulateList();
 	m_wndList.SetItemState(0, LVIS_FOCUSED | LVIS_SELECTED, LVIS_FOCUSED | LVIS_SELECTED);
@@ -218,7 +210,7 @@ void CPIDLDropdownWindow::OnDestroy()
 	{
 		LPITEMIDLIST pidl = (LPITEMIDLIST)m_wndList.GetItemData(a);
 		if (pidl)
-			theApp.GetShellManager()->FreeItem(pidl);
+			p_App->GetShellManager()->FreeItem(pidl);
 	}
 
 	CDropdownWindow::OnDestroy();
@@ -226,20 +218,18 @@ void CPIDLDropdownWindow::OnDestroy()
 
 LRESULT CPIDLDropdownWindow::OnSetItem(WPARAM wParam, LPARAM /*lParam*/)
 {
-	theApp.m_ExpandAll = ((CButton*)m_wndBottomArea.GetDlgItem(IDC_EXPANDALL))->GetCheck();
-	theApp.WriteInt(_T("ExpandAll"), theApp.m_ExpandAll);
+	theApp.m_MigrationExpandAll = ((CButton*)m_wndBottomArea.GetDlgItem(IDC_EXPANDALL))->GetCheck();
 
 	return GetOwner()->SendMessage(WM_SETITEM, NULL, (LPARAM)m_wndList.GetItemData((INT)wParam));
 }
 
 void CPIDLDropdownWindow::OnChooseFolder()
 {
-	theApp.m_ExpandAll = ((CButton*)m_wndBottomArea.GetDlgItem(IDC_EXPANDALL))->GetCheck();
-	theApp.WriteInt(_T("ExpandAll"), theApp.m_ExpandAll);
+	theApp.m_MigrationExpandAll = ((CButton*)m_wndBottomArea.GetDlgItem(IDC_EXPANDALL))->GetCheck();
 
+	CWnd* pTopLevelOwner = GetTopLevelOwner();
 	GetOwner()->SendMessage(WM_CLOSEDROPDOWN);
-
-	theApp.m_pMainWnd->SendMessage(WM_COMMAND, IDM_VIEW_SELECTROOT);
+	pTopLevelOwner->GetTopLevelOwner()->SendMessage(WM_COMMAND, IDM_TREE_SELECTROOT);
 }
 
 
@@ -255,7 +245,7 @@ CPIDLSelector::CPIDLSelector()
 CPIDLSelector::~CPIDLSelector()
 {
 	if (pidl)
-		theApp.GetShellManager()->FreeItem(pidl);
+		p_App->GetShellManager()->FreeItem(pidl);
 }
 
 void CPIDLSelector::CreateDropdownWindow(CRect rectDrop)
@@ -269,7 +259,7 @@ void CPIDLSelector::SetEmpty(BOOL Repaint)
 {
 	if (pidl)
 	{
-		theApp.GetShellManager()->FreeItem(pidl);
+		p_App->GetShellManager()->FreeItem(pidl);
 		pidl = NULL;
 	}
 
@@ -279,9 +269,9 @@ void CPIDLSelector::SetEmpty(BOOL Repaint)
 void CPIDLSelector::SetItem(LPITEMIDLIST _pidl, BOOL Repaint, UINT NotifyCode)
 {
 	if (pidl)
-		theApp.GetShellManager()->FreeItem(pidl);
+		p_App->GetShellManager()->FreeItem(pidl);
 
-	pidl = theApp.GetShellManager()->CopyItem(_pidl);
+	pidl = p_App->GetShellManager()->CopyItem(_pidl);
 	if (pidl)
 	{
 		SHFILEINFO sfi;
@@ -308,7 +298,7 @@ void CPIDLSelector::SetItem(IShellFolder* pDesktop, WCHAR* Path, BOOL Repaint, U
 	if (SUCCEEDED(pDesktop->ParseDisplayName(NULL, NULL, Path, &chEaten, &pidlFQ, &dwAttributes)))
 	{
 		SetItem(pidlFQ, Repaint, NotifyCode);
-		theApp.GetShellManager()->FreeItem(pidlFQ);
+		p_App->GetShellManager()->FreeItem(pidlFQ);
 	}
 	else
 	{
@@ -318,7 +308,7 @@ void CPIDLSelector::SetItem(IShellFolder* pDesktop, WCHAR* Path, BOOL Repaint, U
 
 void CPIDLSelector::GetTooltipData(HICON& hIcon, CSize& Size, CString& Caption, CString& Hint)
 {
-	TooltipDataFromPIDL(pidl, &theApp.m_SystemImageListExtraLarge, hIcon, Size, Caption, Hint);
+	TooltipDataFromPIDL(pidl, &p_App->m_SystemImageListExtraLarge, hIcon, Size, Caption, Hint);
 }
 
 

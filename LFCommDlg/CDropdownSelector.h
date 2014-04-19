@@ -42,6 +42,7 @@ public:
 	BOOL Create(CWnd* pParentWnd, CRect rectDrop, UINT DialogResID=0);
 
 protected:
+	LFApplication* p_App;
 	CDropdownListCtrl m_wndList;
 	CBottomArea m_wndBottomArea;
 	UINT m_DialogResID;

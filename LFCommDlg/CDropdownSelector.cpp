@@ -70,6 +70,7 @@ void CDropdownListCtrl::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 CDropdownWindow::CDropdownWindow()
 	: CWnd()
 {
+	p_App = LFGetApp();
 }
 
 BOOL CDropdownWindow::Create(CWnd* pParentWnd, CRect rectDrop, UINT DialogResID)
@@ -77,7 +78,7 @@ BOOL CDropdownWindow::Create(CWnd* pParentWnd, CRect rectDrop, UINT DialogResID)
 	m_DialogResID = DialogResID;
 
 	UINT nClassStyle = CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS;
-	if (LFGetApp()->OSVersion>OS_XP)
+	if (p_App->OSVersion>OS_XP)
 	{
 		BOOL bDropShadow;
 		SystemParametersInfo(SPI_GETDROPSHADOW, 0, &bDropShadow, FALSE);
@@ -153,12 +154,20 @@ INT CDropdownWindow::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 
 	m_wndList.SetExtendedStyle(LVS_EX_DOUBLEBUFFER | LVS_EX_JUSTIFYCOLUMNS);
-	m_wndList.SetFont(&LFGetApp()->m_DefaultFont, FALSE);
+	m_wndList.SetFont(&p_App->m_DefaultFont, FALSE);
 
 	BOOL Themed = IsCtrlThemed();
 	m_wndList.SetBkColor(Themed ? 0xFFFFFF : GetSysColor(COLOR_WINDOW));
 	m_wndList.SetTextColor(Themed ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT));
 	m_wndList.SetTextBkColor(Themed ? 0xFFFFFF : GetSysColor(COLOR_WINDOW));
+
+	IMAGEINFO ii;
+	p_App->m_SystemImageListLarge.GetImageInfo(0, &ii);
+	CDC* dc = GetWindowDC();
+	CFont* pOldFont = dc->SelectObject(&p_App->m_DefaultFont);
+	m_wndList.SetIconSpacing(CXDropdownListIconSpacing, ii.rcImage.bottom-ii.rcImage.top+dc->GetTextExtent(_T("Wy")).cy*2+4);
+	dc->SelectObject(pOldFont);
+	ReleaseDC(dc);
 
 	if (m_DialogResID)
 		if (m_wndBottomArea.Create(this, m_DialogResID, 0, 2)==-1)

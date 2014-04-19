@@ -8,6 +8,7 @@
 #include "LFCore.h"
 #include "LFCommDlg.h"
 #include "MainWnd.h"
+#include "MigrationWnd.h"
 #include "StoreManager.h"
 
 
@@ -132,6 +133,7 @@ BOOL CStoreManagerApp::InitInstance()
 	m_GlobeShowViewport = GetInt(_T("GlobeShowViewport"), FALSE);
 	m_GlobeShowCrosshairs = GetInt(_T("GlobeShowCrosshairs"), FALSE);
 	m_FileDropAlwaysOnTop = GetInt(_T("FileDropAlwaysOnTop"), TRUE);
+	m_MigrationExpandAll = GetInt(_T("MigrationExpandAll"), FALSE);
 
 	for (UINT a=0; a<LFContextCount; a++)
 		LoadViewOptions(a);
@@ -189,6 +191,19 @@ CWnd* CStoreManagerApp::OpenCommandLine(WCHAR* CmdLine)
 			return GetFileDrop(StoreID);
 		}
 
+		// Migration
+		if (wcsncmp(CmdLine, L"/MIGRATE", 8)==0)
+		{
+			if (CmdLine[8]==L' ')
+				WideCharToMultiByte(CP_ACP, 0, CmdLine+9, -1, StoreID, LFKeySize, NULL, NULL);
+
+			CMigrationWnd* pFrame = new CMigrationWnd();
+			pFrame->Create(StoreID);
+			pFrame->ShowWindow(SW_SHOW);
+
+			return pFrame;
+		}
+
 		// Key
 		if ((wcslen(CmdLine)==LFKeySize-1) && (wcschr(CmdLine, L'.')==NULL) && (wcschr(CmdLine, L':')==NULL) && (wcschr(CmdLine, L'\\')==NULL))
 		{
@@ -239,6 +254,7 @@ INT CStoreManagerApp::ExitInstance()
 		WriteInt(_T("GlobeShowViewport"), m_GlobeShowViewport);
 		WriteInt(_T("GlobeShowCrosshairs"), m_GlobeShowCrosshairs);
 		WriteInt(_T("FileDropAlwaysOnTop"), m_FileDropAlwaysOnTop);
+		WriteInt(_T("MigrationExpandAll"), m_MigrationExpandAll);
 	}
 
 	m_ThumbnailCache.DeleteFrames();

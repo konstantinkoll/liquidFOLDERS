@@ -10,6 +10,7 @@
 #include "CTagcloudView.h"
 #include "CTimelineView.h"
 #include "EditFilterDlg.h"
+#include "MigrationWnd.h"
 #include "SortOptionsDlg.h"
 #include "ViewOptionsDlg.h"
 #include "StoreManager.h"
@@ -315,6 +316,11 @@ void CMainView::UpdateSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles,
 	SetHeader();
 	if (UpdateSelection)
 		OnUpdateSelection();
+}
+
+BOOL CMainView::StoreIDValid()
+{
+	return m_StoreIDValid;
 }
 
 CHAR* CMainView::GetStoreID()
@@ -699,6 +705,7 @@ BEGIN_MESSAGE_MAP(CMainView, CWnd)
 
 	ON_COMMAND(IDM_STORE_MAKEDEFAULT, OnStoreMakeDefault)
 	ON_COMMAND(IDM_STORE_IMPORTFOLDER, OnStoreImportFolder)
+	ON_COMMAND(IDM_STORE_MIGRATIONWIZARD, OnStoreMigrationWizard)
 	ON_COMMAND(IDM_STORE_SHORTCUT, OnStoreShortcut)
 	ON_COMMAND(IDM_STORE_DELETE, OnStoreDelete)
 	ON_COMMAND(IDM_STORE_RENAME, OnStoreRename)
@@ -918,13 +925,19 @@ void CMainView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 	if (pPopup->GetMenuItemCount())
 		pPopup->InsertMenu(0, MF_SEPARATOR | MF_BYPOSITION);
 
-	// Append "Import folder" command when viewing a store
-	if (m_Context<=LFLastGroupContext)
+	// Append "Open as FileDrop" and "Import folder" command when viewing a store
+	if (m_StoreIDValid && (m_Context<=LFLastGroupContext))
 	{
 		pPopup->AppendMenu(MF_SEPARATOR | MF_BYPOSITION);
 
+		ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_OPENFILEDROP));
+		pPopup->AppendMenu(MF_STRING | MF_BYPOSITION, IDM_ITEM_OPENFILEDROP, tmpStr);
+
 		ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_IMPORTFOLDER));
 		pPopup->AppendMenu(MF_STRING | MF_BYPOSITION, IDM_STORE_IMPORTFOLDER, tmpStr);
+
+		ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_MIGRATIONWIZARD));
+		pPopup->AppendMenu(MF_STRING | MF_BYPOSITION, IDM_STORE_MIGRATIONWIZARD, tmpStr);
 	}
 
 	// Insert view options command
@@ -1587,6 +1600,27 @@ void CMainView::OnStoreImportFolder()
 		}
 }
 
+void CMainView::OnStoreMigrationWizard()
+{
+	CHAR* pStore = NULL;
+
+	if (m_Context==LFContextStores)
+	{
+		INT idx = GetSelectedItem();
+		if (idx!=-1)
+			pStore = p_CookedFiles->m_Items[idx]->StoreID;
+	}
+	else
+	{
+		if (m_StoreIDValid)
+			pStore = m_StoreID;
+	}
+
+	CMigrationWnd* pFrame = new CMigrationWnd();
+	pFrame->Create(pStore);
+	pFrame->ShowWindow(SW_SHOW);
+}
+
 void CMainView::OnStoreShortcut()
 {
 	INT idx = GetSelectedItem();
@@ -1636,6 +1670,7 @@ void CMainView::OnUpdateStoreCommands(CCmdUI* pCmdUI)
 					b = !(item->Type & LFTypeDefault);
 					break;
 				case IDM_STORE_IMPORTFOLDER:
+				case IDM_STORE_MIGRATIONWIZARD:
 					b = !(item->Type & LFTypeNotMounted);
 					break;
 				case IDM_STORE_SHORTCUT:
@@ -1651,7 +1686,7 @@ void CMainView::OnUpdateStoreCommands(CCmdUI* pCmdUI)
 	}
 	else
 	{
-		if (pCmdUI->m_nID==IDM_STORE_IMPORTFOLDER)
+		if ((pCmdUI->m_nID==IDM_STORE_IMPORTFOLDER) || (pCmdUI->m_nID==IDM_STORE_MIGRATIONWIZARD))
 			b = m_StoreIDValid && (m_Context<=LFLastGroupContext);
 	}
 

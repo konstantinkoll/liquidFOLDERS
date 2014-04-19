@@ -720,14 +720,22 @@ void CMainWnd::OnItemOpenNewWindow()
 
 void CMainWnd::OnItemOpenFileDrop()
 {
-	INT idx = m_wndMainView.GetSelectedItem();
-	if (idx!=-1)
+	if (m_wndMainView.GetContext()==LFContextStores)
 	{
-		LFItemDescriptor* i = m_pCookedFiles->m_Items[idx];
+		INT idx = m_wndMainView.GetSelectedItem();
+		if (idx!=-1)
+		{
+			LFItemDescriptor* i = m_pCookedFiles->m_Items[idx];
 
-		ASSERT((i->Type & LFTypeMask)==LFTypeStore);
-		theApp.GetFileDrop(i->StoreID);
+			ASSERT((i->Type & LFTypeMask)==LFTypeStore);
+			theApp.GetFileDrop(i->StoreID);
+		}
 	}
+	else
+		if (m_wndMainView.StoreIDValid())
+		{
+			theApp.GetFileDrop(m_wndMainView.GetStoreID());
+		}
 }
 
 LRESULT CMainWnd::OnNavigateTo(WPARAM wParam, LPARAM /*lParam*/)

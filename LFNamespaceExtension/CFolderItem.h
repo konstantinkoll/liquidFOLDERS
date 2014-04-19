@@ -35,6 +35,7 @@ BOOL RunPath(HWND hWnd, CString path, CString parameter=_T(""));
 #define VERB_DELETE             "delete"
 #define VERB_PROPERTIES         "properties"
 #define VERB_IMPORTFOLDER       "importfolder"
+#define VERB_MIGRATIONWIZARD    "migrationwizard"
 #define VERB_STOREMANAGER       "storemanager"
 #define VERB_FILEDROP           "filedrop"
 #define VERB_MIGRATE            "migrate"

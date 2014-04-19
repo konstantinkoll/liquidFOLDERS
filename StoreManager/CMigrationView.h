@@ -1,5 +1,5 @@
 
-// CMainView.h: Schnittstelle der Klasse CMainView
+// CMigrationView.h: Schnittstelle der Klasse CMigrationView
 //
 
 #pragma once
@@ -8,13 +8,13 @@
 #include "CMigrationList.h"
 
 
-// CMainView
+// CMigrationView
 //
 
-class CMainView : public CWnd
+class CMigrationView : public CWnd
 {
 public:
-	CMainView();
+	CMigrationView();
 
 	virtual BOOL OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo);
 

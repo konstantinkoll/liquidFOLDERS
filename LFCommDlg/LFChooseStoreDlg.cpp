@@ -309,6 +309,7 @@ void LFChooseStoreDlg::OnUpdateStoreCommands(CCmdUI* pCmdUI)
 			b = !(item->Type & LFTypeDefault);
 			break;
 		case IDM_STORE_IMPORTFOLDER:
+		case IDM_STORE_MIGRATIONWIZARD:
 			b = FALSE;
 			break;
 		case IDM_STORE_SHORTCUT:

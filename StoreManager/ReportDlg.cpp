@@ -12,7 +12,7 @@
 //
 
 ReportDlg::ReportDlg(CWnd* pParentWnd, CReportList* Successful, CReportList* WithErrors)
-	: CDialog(IDD_REPORT, pParentWnd)
+	: CDialog(IDD_MIGRATEREPORT, pParentWnd)
 {
 	ASSERT(Successful);
 	ASSERT(WithErrors);
@@ -69,7 +69,7 @@ BOOL ReportDlg::OnInitDialog()
 
 	// Symbol für dieses Dialogfeld festlegen. Wird automatisch erledigt
 	// wenn das Hauptfenster der Anwendung kein Dialogfeld ist
-	HICON hIcon = theApp.LoadIcon(IDD_REPORT);
+	HICON hIcon = theApp.LoadIcon(IDD_MIGRATEREPORT);
 	SetIcon(hIcon, TRUE);		// Großes Symbol verwenden
 	SetIcon(hIcon, FALSE);		// Kleines Symbol verwenden
 

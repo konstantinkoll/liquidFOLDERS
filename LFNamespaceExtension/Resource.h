@@ -55,12 +55,15 @@
 #define IDS_HINT_Properties             1127
 #define IDS_MENU_ImportFolder           1128
 #define IDS_HINT_ImportFolder           1129
-#define IDS_MENU_StoreManager           1130
-#define IDS_HINT_StoreManager           1131
-#define IDS_MENU_FileDrop               1132
-#define IDS_HINT_FileDrop               1133
-#define IDS_MENU_About                  1134
-#define IDS_HINT_About                  1135
+#define IDS_POPUP_AddFiles              1130
+#define IDS_MENU_MigrationWizard        1131
+#define IDS_HINT_MigrationWizard        1132
+#define IDS_MENU_StoreManager           1133
+#define IDS_HINT_StoreManager           1134
+#define IDS_MENU_FileDrop               1135
+#define IDS_HINT_FileDrop               1136
+#define IDS_MENU_About                  1137
+#define IDS_HINT_About                  1138
 
 // Next default values for new objects
 // 

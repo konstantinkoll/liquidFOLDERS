@@ -121,10 +121,11 @@
 #define IDM_STORE                       21180
 #define IDM_STORE_MAKEDEFAULT           21181
 #define IDM_STORE_IMPORTFOLDER          21182
-#define IDM_STORE_SHORTCUT              21183
-#define IDM_STORE_DELETE                21184
-#define IDM_STORE_RENAME                21185
-#define IDM_STORE_PROPERTIES            21186
+#define IDM_STORE_MIGRATIONWIZARD       21183
+#define IDM_STORE_SHORTCUT              21184
+#define IDM_STORE_DELETE                21185
+#define IDM_STORE_RENAME                21186
+#define IDM_STORE_PROPERTIES            21187
 #define IDM_STORES                      21190
 #define IDM_STORES_CREATENEW            21191
 #define IDD_STOREDELETE                 21200

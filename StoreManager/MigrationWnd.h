@@ -1,26 +1,27 @@
 
-// MigrateWnd.h: Headerdatei
+// MigrationWnd.h: Headerdatei
 //
 
 #pragma once
-#include "CMainView.h"
+#include "CMigrationView.h"
 #include "CPIDLSelector.h"
 
 
-// CMigrateWnd
+// CMigrationWnd
 
-class CMigrateWnd : public CGlassWindow
+class CMigrationWnd : public CGlassWindow
 {
 public:
 	virtual BOOL OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo);
 	virtual void AdjustLayout();
 
-	BOOL Create();
+	BOOL Create(CHAR* Store);
 
 protected:
+	CHAR* p_Store;
 	CPIDLSelector m_wndFolder;
 	CStoreSelector m_wndStore;
-	CMainView m_wndMainView;
+	CMigrationView m_wndMigrationView;
 	CBottomArea m_wndBottomArea;
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);

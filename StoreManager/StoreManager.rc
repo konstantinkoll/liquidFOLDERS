@@ -35,6 +35,7 @@ LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
 IDR_APPLICATION         ICON                    "res\\liquidFOLDERS.ico"
 IDR_CLIPBOARD           ICON                    "res\\Clipboard_Small.ico"
 IDR_FILEDROP            ICON                    "res\\FileDrop_Small.ico"
+IDR_MIGRATIONWIZARD     ICON                    "res\\MigrationWizard_Small.ico"
 IDD_VIEWOPTIONS         ICON                    "res\\ViewOptions_Tiny.ico"
 IDD_SORTOPTIONS         ICON                    "res\\SortOptions_Tiny.ico"
 IDD_CHOOSEDETAILS       ICON                    "res\\Table_Tiny.ico"
@@ -479,7 +480,7 @@ STYLE DS_SETFONT | DS_FIXEDSYS | DS_CONTROL | WS_CHILD | WS_CLIPCHILDREN
 EXSTYLE WS_EX_CONTROLPARENT
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "&Migration starten",2001,7,7,73,14,WS_DISABLED
+    DEFPUSHBUTTON   "&Migration starten",IDC_MIGRATE,7,7,73,14,WS_DISABLED
     CONTROL         "Quelldateien &löschen",IDC_DELETESOURCE,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,94,9,85,10
 END
 
@@ -489,7 +490,7 @@ EXSTYLE WS_EX_CONTROLPARENT
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "&Anderes Verzeichnis...",IDOK,7,7,93,14
-    CONTROL         "Alle &Unterverzeichnisse zeigen",2101,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,114,9,120,10
+    CONTROL         "Alle &Unterverzeichnisse zeigen",IDC_EXPANDALL,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,114,9,120,10
 END
 
 IDD_CHOOSEPROPERTY DIALOGEX 0, 0, 219, 236
@@ -497,7 +498,7 @@ STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSM
 CAPTION "Eigenschaft auswählen"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    CONTROL         "",2201,"SysListView32",LVS_LIST | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SORTASCENDING | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_ALIGNLEFT | LVS_NOCOLUMNHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,14,37,191,161
+    CONTROL         "",IDC_ATTRIBUTES,"SysListView32",LVS_LIST | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SORTASCENDING | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_ALIGNLEFT | LVS_NOCOLUMNHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,14,37,191,161
     DEFPUSHBUTTON   "OK",IDOK,36,214,50,14,WS_GROUP
     PUSHBUTTON      "Zurücksetzen",IDC_RESET,94,214,60,14,WS_GROUP
     PUSHBUTTON      "Abbrechen",IDCANCEL,162,214,50,14,WS_GROUP
@@ -661,6 +662,7 @@ STRINGTABLE
 BEGIN
     IDR_CLIPBOARD           "Zwischenablage"
     IDR_FILEDROP            "FileDrop"
+    IDR_MIGRATIONWIZARD     "Migrations-Assistent"
 END
 
 STRINGTABLE 
@@ -693,16 +695,17 @@ BEGIN
     IDS_CONTEXTMENU_SENDTO  "S&enden an"
     IDS_CONTEXTMENU_CHOOSESTORE "&Store wählen..."
     IDS_CONTEXTMENU_IMPORTFOLDER "Verzeichnis &importieren..."
+    IDS_CONTEXTMENU_MIGRATIONWIZARD "&Migrations-Assistent"
     IDS_CONTEXTMENU_MORE    "&Mehr..."
     IDS_CONTEXTMENU_TIME    "&Zeit"
     IDS_CONTEXTMENU_LOCATION "&Ort"
     IDS_CONTEXTMENU_DIMENSION "&Abmessungen"
     IDS_TXTFILEFILTER       "Textdatei"
-    IDS_XMLFILEFILTER       "Extensible Markup Language"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_XMLFILEFILTER       "Extensible Markup Language"
     IDS_ATTRIBUTENOTSORTABLE 
                             "Diese Eigenschaft ist zur Sortierung nicht geeignet."
     IDS_NOITEMSSELECTED     "Keine Objekte ausgewählt"
@@ -719,16 +722,11 @@ BEGIN
     IDS_FILETYPES           "Dateitypen"
     IDS_HOUSEKEEPING        "Verwaltung"
     IDS_SEARCHTERM          "Suchbegriff"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_DROPTIP             "Dateien hierher ziehen zum\nImport nach liquidFOLDERS"
-END
-
-STRINGTABLE 
-BEGIN
-    IDM_FILTERS_CREATENEW   "Neuer Filter..."
-END
-
-STRINGTABLE 
-BEGIN
     IDS_NOROOT_CAPTION      "Sie haben noch kein Verzeichnis ausgewählt"
     IDS_NOROOT_HINT         "Klicken Sie oben, um ein Verzeichnis auszuwählen."
     IDS_FOLDER_CAPTION      "Quelle:"
@@ -745,20 +743,25 @@ BEGIN
     IDS_NOPROPERTY          "Hier klicken um eine Eigenschaft zu wählen"
     IDS_CHOOSEPROPERTY      "Eigenschaft aus&wählen..."
     IDS_EXPANDBRANCH        "Alle &Unterverzeichnisse zeigen"
-    IDS_INCLUDEBRANCH       "Zweig &markieren"
 END
 
 STRINGTABLE 
 BEGIN
+    IDM_FILTERS_CREATENEW   "Neuer Filter..."
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_INCLUDEBRANCH       "Zweig &markieren"
     IDS_EXCLUDEBRANCH       "Zweig ab&wählen"
     IDS_REPORTTAB0          "Erfolgreich importierte Verzeichnisse (%u)"
     IDS_REPORTTAB1          "Verzeichnisse mit Fehlern (%u)"
+    IDS_REPORTSTATUS_NOFILES 
+                            "Es wurden keine Dateien in diesem Verzeichnis gefunden."
     IDS_REPORTSTATUS_ONEFILE "%u Datei (%s) wurde erfolgreich importiert."
     IDS_REPORTSTATUS_FILES  "Alle %u Dateien (%s) wurden erfolgreich importiert."
     IDS_NOFOLDERS_CAPTION   "Migration starten"
     IDS_NOFOLDERS_MESSAGE   "Bitte wählen Sie mindestens ein Verzeichnis aus, indem Sie in der Baumansicht auf die Checkboxen links neben den Verzeichnissymbolen klicken."
-    IDS_REPORTSTATUS_NOFILES 
-                            "Es wurden keine Dateien in diesem Verzeichnis gefunden."
 END
 
 STRINGTABLE 
@@ -857,7 +860,8 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDM_MIGRATE_SELECTROOT  "Öffnet ein Fenster, in dem Sie ein Verzeichnis zur Anzeige auswählen können.\nQuellverzeichnis"
+    IDM_MIGRATION_SELECTROOT 
+                            "Öffnet ein Fenster, in dem Sie ein Verzeichnis zur Anzeige auswählen können.\nQuellverzeichnis"
 END
 
 STRINGTABLE 
@@ -1247,7 +1251,7 @@ STYLE DS_SETFONT | DS_FIXEDSYS | DS_CONTROL | WS_CHILD | WS_CLIPCHILDREN
 EXSTYLE WS_EX_CONTROLPARENT
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "&Migrar archivos",2001,7,7,68,14,WS_DISABLED
+    DEFPUSHBUTTON   "&Migrar archivos",IDC_MIGRATE,7,7,68,14,WS_DISABLED
     CONTROL         "&Eliminar archivos fuente",IDC_DELETESOURCE,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,89,9,102,10
 END
 
@@ -1257,7 +1261,7 @@ EXSTYLE WS_EX_CONTROLPARENT
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "Escoger &otra carpeta...",IDOK,7,7,98,14
-    CONTROL         "Expandir todas las &subcarpetas",2101,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,119,9,120,10
+    CONTROL         "Expandir todas las &subcarpetas",IDC_EXPANDALL,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,119,9,120,10
 END
 
 IDD_CHOOSEPROPERTY DIALOGEX 0, 0, 234, 236
@@ -1265,7 +1269,7 @@ STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSM
 CAPTION "Escoger propiedad"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    CONTROL         "",2201,"SysListView32",LVS_LIST | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SORTASCENDING | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_ALIGNLEFT | LVS_NOCOLUMNHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,14,37,206,161
+    CONTROL         "",IDC_ATTRIBUTES,"SysListView32",LVS_LIST | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SORTASCENDING | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_ALIGNLEFT | LVS_NOCOLUMNHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,14,37,206,161
     DEFPUSHBUTTON   "OK",IDOK,61,214,50,14,WS_GROUP
     PUSHBUTTON      "Restaurar",IDC_RESET,119,214,50,14,WS_GROUP
     PUSHBUTTON      "Cancelar",IDCANCEL,177,214,50,14,WS_GROUP
@@ -1429,6 +1433,7 @@ STRINGTABLE
 BEGIN
     IDR_CLIPBOARD           "Portapapeles"
     IDR_FILEDROP            "FileDrop"
+    IDR_MIGRATIONWIZARD     "Asistente de migración"
 END
 
 STRINGTABLE 
@@ -1461,16 +1466,17 @@ BEGIN
     IDS_CONTEXTMENU_SENDTO  "&Enviar a"
     IDS_CONTEXTMENU_CHOOSESTORE "Selecionar &store..."
     IDS_CONTEXTMENU_IMPORTFOLDER "&Importar carpeta..."
+    IDS_CONTEXTMENU_MIGRATIONWIZARD "Asistente de &migración"
     IDS_CONTEXTMENU_MORE    "&Más..."
     IDS_CONTEXTMENU_TIME    "&Tiempo"
     IDS_CONTEXTMENU_LOCATION "&Ubicación"
     IDS_CONTEXTMENU_DIMENSION "&Dimensión"
     IDS_TXTFILEFILTER       "Documento de texto"
-    IDS_XMLFILEFILTER       "Extensible Markup Language"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_XMLFILEFILTER       "Extensible Markup Language"
     IDS_ATTRIBUTENOTSORTABLE "Esta propiedad no es adecuada para clasificar."
     IDS_NOITEMSSELECTED     "Objetos no seleccionados"
     IDS_YOULOOKAT           "Usted está viendo %s"
@@ -1486,16 +1492,11 @@ BEGIN
     IDS_FILETYPES           "Tipos de archivo"
     IDS_HOUSEKEEPING        "Mantenimiento"
     IDS_SEARCHTERM          "Buscar término"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_DROPTIP             "Pega filas aquí para importarlas\na liquidFOLDERS"
-END
-
-STRINGTABLE 
-BEGIN
-    IDM_FILTERS_CREATENEW   "Nuevo filtro..."
-END
-
-STRINGTABLE 
-BEGIN
     IDS_NOROOT_CAPTION      "Usted no ha seleccionado todavía una carpeta raíz"
     IDS_NOROOT_HINT         "Dar click arriba para seleccionar una carpeta para navegar."
     IDS_FOLDER_CAPTION      "fuente:"
@@ -1512,20 +1513,25 @@ BEGIN
     IDS_NOPROPERTY          "Dar click aquí para escoger una propiedad"
     IDS_CHOOSEPROPERTY      "Escoger &propiedad..."
     IDS_EXPANDBRANCH        "Expandir &ramificación"
-    IDS_INCLUDEBRANCH       "&Incluir ramificación"
 END
 
 STRINGTABLE 
 BEGIN
+    IDM_FILTERS_CREATENEW   "Nuevo filtro..."
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_INCLUDEBRANCH       "&Incluir ramificación"
     IDS_EXCLUDEBRANCH       "&Excluir ramificación"
     IDS_REPORTTAB0          "Carpetas migradas satisfactoriamente (%u)"
     IDS_REPORTTAB1          "Carpetas con errores (%u)"
+    IDS_REPORTSTATUS_NOFILES "No había archivos en esta carpeta."
     IDS_REPORTSTATUS_ONEFILE 
                             "%u archivo (%s) fue importado satisfactoriamente."
     IDS_REPORTSTATUS_FILES  "Todos los %u archivos (%s) fueron importados satisfactoriamente."
     IDS_NOFOLDERS_CAPTION   "Iniciar migración"
     IDS_NOFOLDERS_MESSAGE   "Por favor seleccionar al menos una carpeta en la vista de árbol al dar click en las casillas a la izquierda de los iconos de la carpeta."
-    IDS_REPORTSTATUS_NOFILES "No había archivos en esta carpeta."
 END
 
 STRINGTABLE 
@@ -1624,7 +1630,8 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDM_MIGRATE_SELECTROOT  "Abre un diálogo en donde usted puede seleccionar la carpeta raíz a visualizarse en la vista principal de abajo.\nSeleccionar carpeta raíz"
+    IDM_MIGRATION_SELECTROOT 
+                            "Abre un diálogo en donde usted puede seleccionar la carpeta raíz a visualizarse en la vista principal de abajo.\nSeleccionar carpeta raíz"
 END
 
 STRINGTABLE 
@@ -2015,7 +2022,7 @@ STYLE DS_SETFONT | DS_FIXEDSYS | DS_CONTROL | WS_CHILD | WS_CLIPCHILDREN
 EXSTYLE WS_EX_CONTROLPARENT
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "&Lancer la migration",2001,7,7,83,14,WS_DISABLED
+    DEFPUSHBUTTON   "&Lancer la migration",IDC_MIGRATE,7,7,83,14,WS_DISABLED
     CONTROL         "&Effacer des fichiers de source",IDC_DELETESOURCE,
                     "Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,104,9,120,10
 END
@@ -2026,7 +2033,7 @@ EXSTYLE WS_EX_CONTROLPARENT
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "&Autre dossier...",IDOK,7,7,73,14
-    CONTROL         "Montrer tous les &sous-dossiers",2101,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,94,9,120,10
+    CONTROL         "Montrer tous les &sous-dossiers",IDC_EXPANDALL,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,94,9,120,10
 END
 
 IDD_CHOOSEPROPERTY DIALOGEX 0, 0, 219, 236
@@ -2034,7 +2041,7 @@ STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSM
 CAPTION "Choisissez la qualité"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    CONTROL         "",2201,"SysListView32",LVS_LIST | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SORTASCENDING | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_ALIGNLEFT | LVS_NOCOLUMNHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,14,37,191,161
+    CONTROL         "",IDC_ATTRIBUTES,"SysListView32",LVS_LIST | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SORTASCENDING | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_ALIGNLEFT | LVS_NOCOLUMNHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,14,37,191,161
     DEFPUSHBUTTON   "OK",IDOK,46,214,50,14,WS_GROUP
     PUSHBUTTON      "Remise",IDC_RESET,104,214,50,14,WS_GROUP
     PUSHBUTTON      "Annuler",IDCANCEL,162,214,50,14,WS_GROUP
@@ -2199,6 +2206,7 @@ STRINGTABLE
 BEGIN
     IDR_CLIPBOARD           "Presse-papiers"
     IDR_FILEDROP            "FileDrop"
+    IDR_MIGRATIONWIZARD     "L'assistant de migration"
 END
 
 STRINGTABLE 
@@ -2231,16 +2239,17 @@ BEGIN
     IDS_CONTEXTMENU_SENDTO  "E&nvoyer à"
     IDS_CONTEXTMENU_CHOOSESTORE "Choisissez un &store..."
     IDS_CONTEXTMENU_IMPORTFOLDER "&Importer dossier..."
+    IDS_CONTEXTMENU_MIGRATIONWIZARD "L'assistant de &migration"
     IDS_CONTEXTMENU_MORE    "&Plus..."
     IDS_CONTEXTMENU_TIME    "&Temps"
     IDS_CONTEXTMENU_LOCATION "&Lieu"
     IDS_CONTEXTMENU_DIMENSION "&Mesurages"
     IDS_TXTFILEFILTER       "Fichier texte"
-    IDS_XMLFILEFILTER       "Extensible Markup Language"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_XMLFILEFILTER       "Extensible Markup Language"
     IDS_ATTRIBUTENOTSORTABLE "Cette qualité ne convient pas au triage."
     IDS_NOITEMSSELECTED     "Aucun élément choisi"
     IDS_YOULOOKAT           "Vous regardez %s"
@@ -2256,16 +2265,11 @@ BEGIN
     IDS_FILETYPES           "Types de fichiers"
     IDS_HOUSEKEEPING        "Ménage"
     IDS_SEARCHTERM          "Mot de recherches"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_DROPTIP             "Ici afiu de importer\ndans liquidFOLDERS"
-END
-
-STRINGTABLE 
-BEGIN
-    IDM_FILTERS_CREATENEW   "Filtre noveau..."
-END
-
-STRINGTABLE 
-BEGIN
     IDS_NOROOT_CAPTION      "Vouz n'avez pas encore choisi aucun dossier"
     IDS_NOROOT_HINT         "Cliquez en haut pour choisir un dossier."
     IDS_FOLDER_CAPTION      "Source:"
@@ -2282,19 +2286,24 @@ BEGIN
     IDS_NOPROPERTY          "Cliquez ici pour choisir une qualité"
     IDS_CHOOSEPROPERTY      "Choisissez &la qualité..."
     IDS_EXPANDBRANCH        "Montrer tous &les sous-dossiers"
-    IDS_INCLUDEBRANCH       "Marquer &la branche"
 END
 
 STRINGTABLE 
 BEGIN
+    IDM_FILTERS_CREATENEW   "Filtre noveau..."
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_INCLUDEBRANCH       "Marquer &la branche"
     IDS_EXCLUDEBRANCH       "Abandonner &la branche"
     IDS_REPORTTAB0          "Des dossiers importées avec succès (%u)"
     IDS_REPORTTAB1          "Dossiers avec des fautes (%u)"
+    IDS_REPORTSTATUS_NOFILES "Aucun fichier n'était trouvé dans ce dossier."
     IDS_REPORTSTATUS_ONEFILE "%u fichier (%s) était importé avec succès."
     IDS_REPORTSTATUS_FILES  "Tous les %u fichiers (%s) étaient importés avec succès."
     IDS_NOFOLDERS_CAPTION   "Lancer la migration"
     IDS_NOFOLDERS_MESSAGE   "S'il vous plaît, choisissez au moins un dossier en cliquer dans l'avis d'arbre sur les boxes de chèque à gauche à côté des symboles de dossier."
-    IDS_REPORTSTATUS_NOFILES "Aucun fichier n'était trouvé dans ce dossier."
 END
 
 STRINGTABLE 
@@ -2393,7 +2402,8 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDM_MIGRATE_SELECTROOT  "Si ouvre une fenêtre dans quoi vous pouvez choisir un dossier à l'annonce.\nDossier de source"
+    IDM_MIGRATION_SELECTROOT 
+                            "Si ouvre une fenêtre dans quoi vous pouvez choisir un dossier à l'annonce.\nDossier de source"
 END
 
 STRINGTABLE 
@@ -2833,7 +2843,7 @@ STYLE DS_SETFONT | DS_FIXEDSYS | DS_CONTROL | WS_CHILD | WS_CLIPCHILDREN
 EXSTYLE WS_EX_CONTROLPARENT
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "&Migrate files",2001,7,7,58,14,WS_DISABLED
+    DEFPUSHBUTTON   "&Migrate files",IDC_MIGRATE,7,7,58,14,WS_DISABLED
     CONTROL         "&Delete source files",IDC_DELETESOURCE,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,79,9,75,10
 END
 
@@ -2843,7 +2853,7 @@ EXSTYLE WS_EX_CONTROLPARENT
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "Choose &other folder...",IDOK,7,7,88,14
-    CONTROL         "Expand all &subfolders",2101,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,109,9,90,10
+    CONTROL         "Expand all &subfolders",IDC_EXPANDALL,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,109,9,90,10
 END
 
 IDD_CHOOSEPROPERTY DIALOGEX 0, 0, 204, 236
@@ -2851,7 +2861,7 @@ STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSM
 CAPTION "Choose property"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    CONTROL         "",2201,"SysListView32",LVS_LIST | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SORTASCENDING | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_ALIGNLEFT | LVS_NOCOLUMNHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,14,37,176,161
+    CONTROL         "",IDC_ATTRIBUTES,"SysListView32",LVS_LIST | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SORTASCENDING | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_ALIGNLEFT | LVS_NOCOLUMNHEADER | WS_BORDER | WS_GROUP | WS_TABSTOP,14,37,176,161
     DEFPUSHBUTTON   "OK",IDOK,31,214,50,14,WS_GROUP
     PUSHBUTTON      "Reset",IDC_RESET,89,214,50,14,WS_GROUP
     PUSHBUTTON      "Cancel",IDCANCEL,147,214,50,14,WS_GROUP
@@ -3014,6 +3024,7 @@ STRINGTABLE
 BEGIN
     IDR_CLIPBOARD           "Clipboard"
     IDR_FILEDROP            "FileDrop"
+    IDR_MIGRATIONWIZARD     "Migration Wizard"
 END
 
 STRINGTABLE 
@@ -3046,16 +3057,17 @@ BEGIN
     IDS_CONTEXTMENU_SENDTO  "S&end to"
     IDS_CONTEXTMENU_CHOOSESTORE "Choose &store..."
     IDS_CONTEXTMENU_IMPORTFOLDER "&Import folder..."
+    IDS_CONTEXTMENU_MIGRATIONWIZARD "&Migration Wizard"
     IDS_CONTEXTMENU_MORE    "&More..."
     IDS_CONTEXTMENU_TIME    "&Time"
     IDS_CONTEXTMENU_LOCATION "&Location"
     IDS_CONTEXTMENU_DIMENSION "&Dimension"
     IDS_TXTFILEFILTER       "Text document"
-    IDS_XMLFILEFILTER       "Extensible Markup Language"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_XMLFILEFILTER       "Extensible Markup Language"
     IDS_ATTRIBUTENOTSORTABLE "This property is not suitable for sorting."
     IDS_NOITEMSSELECTED     "No items selected"
     IDS_YOULOOKAT           "You look at %s"
@@ -3071,16 +3083,11 @@ BEGIN
     IDS_FILETYPES           "File types"
     IDS_HOUSEKEEPING        "Housekeeping"
     IDS_SEARCHTERM          "Search term"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_DROPTIP             "Drop files here to import\nthem into liquidFOLDERS"
-END
-
-STRINGTABLE 
-BEGIN
-    IDM_FILTERS_CREATENEW   "Add filter..."
-END
-
-STRINGTABLE 
-BEGIN
     IDS_NOROOT_CAPTION      "You have not selected a root folder yet"
     IDS_NOROOT_HINT         "Click above to select a folder for browsing."
     IDS_FOLDER_CAPTION      "Source:"
@@ -3097,19 +3104,24 @@ BEGIN
     IDS_NOPROPERTY          "Click here to choose a property"
     IDS_CHOOSEPROPERTY      "Choose p&roperty..."
     IDS_EXPANDBRANCH        "Expand &branch"
-    IDS_INCLUDEBRANCH       "&Include branch"
 END
 
 STRINGTABLE 
 BEGIN
+    IDM_FILTERS_CREATENEW   "Add filter..."
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_INCLUDEBRANCH       "&Include branch"
     IDS_EXCLUDEBRANCH       "&Exclude branch"
     IDS_REPORTTAB0          "Successfully migrated folders (%u)"
     IDS_REPORTTAB1          "Folders with errors (%u)"
+    IDS_REPORTSTATUS_NOFILES "There were no files in this folder."
     IDS_REPORTSTATUS_ONEFILE "%u file (%s) was successfully imported."
     IDS_REPORTSTATUS_FILES  "All %u files (%s) were successfully imported."
     IDS_NOFOLDERS_CAPTION   "Start migration"
     IDS_NOFOLDERS_MESSAGE   "Please select at least one folder in the tree view by clicking on the checkboxes left to the folder icons."
-    IDS_REPORTSTATUS_NOFILES "There were no files in this folder."
 END
 
 STRINGTABLE 
@@ -3208,7 +3220,8 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDM_MIGRATE_SELECTROOT  "Opens a dialog where you can select the root folder to display in the main view below.\nSelect root folder"
+    IDM_MIGRATION_SELECTROOT 
+                            "Opens a dialog where you can select the root folder to display in the main view below.\nSelect root folder"
 END
 
 STRINGTABLE 

@@ -3,11 +3,9 @@
 //
 
 #include "stdafx.h"
-#include "CTreeView.h"
-#include "Migrate.h"
 #include "ChoosePropertyDlg.h"
-#include "LFCore.h"
-#include "Resource.h"
+#include "CTreeView.h"
+#include "StoreManager.h"
 
 
 // CTreeView
@@ -986,14 +984,14 @@ void CTreeView::TrackMenu(UINT nID, CPoint point, INT col)
 		AdjustScrollbars();
 		Invalidate();
 		break;
-	case IDM_VIEW_AUTOSIZEALL:
+	case IDM_TREE_AUTOSIZEALL:
 		AutosizeColumns();
 		break;
 	case IDM_TREE_EXPANDCOLUMN:
 		ExpandColumn(col);
 		break;
-	case IDD_CHOOSEPROPERTY:
-		PostMessage(IDD_CHOOSEPROPERTY, (WPARAM)col);
+	case IDM_TREE_CHOOSEPROPERTY:
+		PostMessage(IDM_TREE_CHOOSEPROPERTY, (WPARAM)col);
 		break;
 	case IDM_TREE_RESETPROPERTY:
 		m_ColumnMapping[col] = -1;
@@ -1394,14 +1392,14 @@ BEGIN_MESSAGE_MAP(CTreeView, CWnd)
 	ON_NOTIFY(HDN_ITEMCHANGING, 1, OnItemChanging)
 	ON_NOTIFY(HDN_ITEMCLICK, 1, OnItemClick)
 	ON_EN_KILLFOCUS(2, OnDestroyEdit)
-	ON_MESSAGE(IDD_CHOOSEPROPERTY, OnChooseProperty)
-	ON_COMMAND(IDM_VIEW_OPEN, OnOpen)
-	ON_COMMAND(IDM_VIEW_DELETE, OnDelete)
-	ON_COMMAND(IDM_VIEW_RENAME, OnRename)
-	ON_COMMAND(IDM_VIEW_PROPERTIES, OnProperties)
-	ON_COMMAND(IDM_VIEW_AUTOSIZEALL, OnAutosizeAll)
-	ON_COMMAND(IDM_VIEW_EXPAND, OnExpand)
-	ON_UPDATE_COMMAND_UI_RANGE(IDM_VIEW_OPEN, IDM_VIEW_EXPAND, OnUpdateCommands)
+	ON_MESSAGE(IDM_TREE_CHOOSEPROPERTY, OnChooseProperty)
+	ON_COMMAND(IDM_TREE_OPEN, OnOpen)
+	ON_COMMAND(IDM_TREE_DELETE, OnDelete)
+	ON_COMMAND(IDM_TREE_RENAME, OnRename)
+	ON_COMMAND(IDM_TREE_PROPERTIES, OnProperties)
+	ON_COMMAND(IDM_TREE_AUTOSIZEALL, OnAutosizeAll)
+	ON_COMMAND(IDM_TREE_EXPAND, OnExpand)
+	ON_UPDATE_COMMAND_UI_RANGE(IDM_TREE_OPEN, IDM_TREE_EXPAND, OnUpdateCommands)
 	ON_MESSAGE(WM_SHELLCHANGE, OnShellChange)
 END_MESSAGE_MAP()
 
@@ -2271,7 +2269,7 @@ void CTreeView::OnContextMenu(CWnd* pWnd, CPoint point)
 		{
 			HDHITTESTINFO htt;
 			htt.pt = ptClient;
-			TrackMenu(IDM_HEADER, point, m_wndHeader.HitTest(&htt));
+			TrackMenu(IDM_TREEHEADER, point, m_wndHeader.HitTest(&htt));
 			return;
 		}
 
@@ -2521,22 +2519,22 @@ void CTreeView::OnUpdateCommands(CCmdUI* pCmdUI)
 
 		switch (pCmdUI->m_nID)
 		{
-		case IDM_VIEW_OPEN:
+		case IDM_TREE_OPEN:
 			b = TRUE;
 			break;
-		case IDM_VIEW_DELETE:
+		case IDM_TREE_DELETE:
 			b = (cell->Flags & CF_CANDELETE);
 			break;
-		case IDM_VIEW_RENAME:
+		case IDM_TREE_RENAME:
 			b = (cell->Flags & CF_CANRENAME);
 			break;
-		case IDM_VIEW_PROPERTIES:
+		case IDM_TREE_PROPERTIES:
 			b = (cell->Flags & CF_HASPROPSHEET);
 			break;
-		case IDM_VIEW_AUTOSIZEALL:
+		case IDM_TREE_AUTOSIZEALL:
 			b = TRUE;
 			break;
-		case IDM_VIEW_EXPAND:
+		case IDM_TREE_EXPAND:
 			b = (cell->Flags & CF_CANEXPAND);
 			break;
 		}

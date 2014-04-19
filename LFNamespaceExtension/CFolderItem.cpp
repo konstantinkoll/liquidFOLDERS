@@ -583,7 +583,12 @@ void CFolderItem::GetMenuItems(CGetMenuitemsEventArgs& e)
 
 			AddSeparator(e.menu);
 			AddItem(e.menu, IDS_MENU_MakeDefaultStore, _T(VERB_MAKEDEFAULTSTORE))->SetEnabled(!(f->Attrs.Type & LFTypeDefault));
-			AddItem(e.menu, IDS_MENU_ImportFolder, _T(VERB_IMPORTFOLDER))->SetEnabled((!(f->Attrs.Type & LFTypeNotMounted)) && (!theApp.m_PathRunCmd.IsEmpty()));
+
+			CShellMenuItem* pMenuItem = AddItem(e.menu, IDS_POPUP_AddFiles, _T(""));
+			pMenuItem->SetHasSubMenu(TRUE);
+
+			AddItem(pMenuItem->GetSubMenu(), IDS_MENU_ImportFolder, _T(VERB_IMPORTFOLDER))->SetEnabled((!(f->Attrs.Type & LFTypeNotMounted)) && (!theApp.m_PathRunCmd.IsEmpty()));
+			AddItem(pMenuItem->GetSubMenu(), IDS_MENU_MigrationWizard, _T(VERB_MIGRATIONWIZARD))->SetEnabled((!(f->Attrs.Type & LFTypeNotMounted)) && (!theApp.m_PathStoreManager.IsEmpty()));
 		}
 
 		if ((!(e.flags & NSEQCF_NoDefault)) && (e.children->GetCount()>=1))
@@ -606,7 +611,12 @@ void CFolderItem::GetMenuItems(CGetMenuitemsEventArgs& e)
 	case LevelStores:
 		if (e.children->GetCount()==0)
 		{
-			AddItem(e.menu, IDS_MENU_ImportFolder, _T(VERB_IMPORTFOLDER))->SetEnabled(!theApp.m_PathRunCmd.IsEmpty());
+			CShellMenuItem* pMenuItem = AddItem(e.menu, IDS_POPUP_AddFiles, _T(""));
+			pMenuItem->SetHasSubMenu(TRUE);
+
+			AddItem(pMenuItem->GetSubMenu(), IDS_MENU_ImportFolder, _T(VERB_IMPORTFOLDER))->SetEnabled(!theApp.m_PathRunCmd.IsEmpty());
+			AddItem(pMenuItem->GetSubMenu(), IDS_MENU_MigrationWizard, _T(VERB_MIGRATIONWIZARD))->SetEnabled(!theApp.m_PathStoreManager.IsEmpty());
+
 			AddSeparator(e.menu);
 			AddItem(e.menu, IDS_MENU_Properties, _T(VERB_PROPERTIES))->SetEnabled(!theApp.m_PathRunCmd.IsEmpty());
 		}
@@ -636,6 +646,9 @@ BOOL CFolderItem::OnExecuteMenuItem(CExecuteMenuitemsEventArgs& e)
 {
 	if (e.menuItem->GetVerb()==_T(VERB_IMPORTFOLDER))
 		return RunStoreCommand(e, theApp.m_PathRunCmd, _T("/IMPORTFOLDER "));
+
+	if (e.menuItem->GetVerb()==_T(VERB_MIGRATIONWIZARD))
+		return RunStoreCommand(e, theApp.m_PathStoreManager, _T("/MIGRATE "));
 
 	if (e.menuItem->GetVerb()==_T(VERB_CREATENEWSTORE))
 		return RunPath(e.hWnd, theApp.m_PathRunCmd, _T("/NEWSTORE"));

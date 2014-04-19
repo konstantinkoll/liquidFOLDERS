@@ -1,15 +1,13 @@
 
-// MigrateWnd.cpp: Implementierungsdatei
+// MigrationWnd.cpp: Implementierungsdatei
 //
 
 #include "stdafx.h"
-#include "Migrate.h"
-#include "MigrateWnd.h"
-#include "Resource.h"
-#include "LFCore.h"
-#include "DeleteFilesDlg.h"
 #include "CMigrationList.h"
+#include "DeleteFilesDlg.h"
+#include "MigrationWnd.h"
 #include "ReportDlg.h"
+#include "StoreManager.h"
 
 
 // Thread workers
@@ -24,7 +22,7 @@ struct WorkerParameters
 	CReportList Results[2];
 };
 
-DWORD WINAPI WorkerMigrate(void* lParam)
+DWORD WINAPI WorkerMigration(void* lParam)
 {
 	LF_WORKERTHREAD_START_EX(lParam, wp->MigartionList.mItemCount);
 
@@ -42,29 +40,31 @@ DWORD WINAPI WorkerMigrate(void* lParam)
 }
 
 
-// CMigrateWnd
+// CMigrationWnd
 //
 
-BOOL CMigrateWnd::Create()
+BOOL CMigrationWnd::Create(CHAR* Store)
 {
-	CString className = AfxRegisterWndClass(CS_DBLCLKS, LoadCursor(NULL, IDC_ARROW), NULL, theApp.LoadIcon(IDR_APPLICATION));
+	p_Store = Store;
+
+	CString className = AfxRegisterWndClass(CS_DBLCLKS, LoadCursor(NULL, IDC_ARROW), NULL, theApp.LoadIcon(IDR_MIGRATIONWIZARD));
 
 	CString caption;
-	ENSURE(caption.LoadString(IDR_APPLICATION));
+	ENSURE(caption.LoadString(IDR_MIGRATIONWIZARD));
 
-	return CGlassWindow::Create(WS_MINIMIZEBOX | WS_MAXIMIZEBOX, className, caption);
+	return CGlassWindow::Create(WS_MINIMIZEBOX | WS_MAXIMIZEBOX, className, caption, _T("Migration"));
 }
 
-BOOL CMigrateWnd::OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo)
+BOOL CMigrationWnd::OnCmdMsg(UINT nID, INT nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo)
 {
 	// The main view gets the command first
-	if (m_wndMainView.OnCmdMsg(nID, nCode, pExtra, pHandlerInfo))
+	if (m_wndMigrationView.OnCmdMsg(nID, nCode, pExtra, pHandlerInfo))
 		return TRUE;
 
 	return CGlassWindow::OnCmdMsg(nID, nCode, pExtra, pHandlerInfo);
 }
 
-void CMigrateWnd::AdjustLayout()
+void CMigrationWnd::AdjustLayout()
 {
 	if (!IsWindow(m_wndFolder))
 		return;
@@ -72,7 +72,7 @@ void CMigrateWnd::AdjustLayout()
 		return;
 	if (!IsWindow(m_wndBottomArea))
 		return;
-	if (!IsWindow(m_wndMainView))
+	if (!IsWindow(m_wndMigrationView))
 		return;
 
 	CRect rect;
@@ -86,15 +86,15 @@ void CMigrateWnd::AdjustLayout()
 	const UINT BottomHeight = MulDiv(45, LOWORD(GetDialogBaseUnits()), 8);
 	m_wndBottomArea.SetWindowPos(NULL, rect.left, rect.bottom-BottomHeight, rect.Width(), BottomHeight, SWP_NOACTIVATE | SWP_NOZORDER);
 
-	m_wndMainView.SetWindowPos(NULL, rect.left, rect.top+m_Margins.cyTopHeight, rect.Width(), rect.bottom-BottomHeight-m_Margins.cyTopHeight, SWP_NOACTIVATE | SWP_NOZORDER);
+	m_wndMigrationView.SetWindowPos(NULL, rect.left, rect.top+m_Margins.cyTopHeight, rect.Width(), rect.bottom-BottomHeight-m_Margins.cyTopHeight, SWP_NOACTIVATE | SWP_NOZORDER);
 }
 
 
-BEGIN_MESSAGE_MAP(CMigrateWnd, CGlassWindow)
+BEGIN_MESSAGE_MAP(CMigrationWnd, CGlassWindow)
 	ON_WM_CREATE()
 	ON_WM_SETFOCUS()
 	ON_MESSAGE_VOID(WM_IDLEUPDATECMDUI, OnIdleUpdateCmdUI)
-	ON_COMMAND(IDM_VIEW_SELECTROOT, OnSelectRoot)
+	ON_COMMAND(IDM_TREE_SELECTROOT, OnSelectRoot)
 	ON_COMMAND(IDC_MIGRATE, OnMigrate)
 	ON_NOTIFY(NM_SELCHANGED, 1, OnRootChanged)
 	ON_NOTIFY(NM_SELUPDATE, 1, OnRootUpdate)
@@ -103,7 +103,7 @@ BEGIN_MESSAGE_MAP(CMigrateWnd, CGlassWindow)
 	ON_REGISTERED_MESSAGE(theApp.p_MessageIDs->DefaultStoreChanged, OnStoresChanged)
 END_MESSAGE_MAP()
 
-INT CMigrateWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
+INT CMigrationWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if (CGlassWindow::OnCreate(lpCreateStruct)==-1)
 		return -1;
@@ -122,8 +122,12 @@ INT CMigrateWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (!m_wndStore.Create(hint, caption, this, 2))
 		return -1;
 
+	if (p_Store)
+		if (*p_Store!='\0')
+			m_wndStore.SetItem(p_Store);
+
 	// Main view
-	if (!m_wndMainView.Create(this, 3))
+	if (!m_wndMigrationView.Create(this, 3))
 		return -1;
 
 	// Bottom area
@@ -137,28 +141,28 @@ INT CMigrateWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_GlasChildren.AddTail(&m_wndFolder);
 	m_GlasChildren.AddTail(&m_wndStore);
 
-	m_wndMainView.SetFocus();
+	m_wndMigrationView.SetFocus();
 	AdjustLayout();
 	return 0;
 }
 
-void CMigrateWnd::OnSetFocus(CWnd* /*pOldWnd*/)
+void CMigrationWnd::OnSetFocus(CWnd* /*pOldWnd*/)
 {
 	theApp.m_pMainWnd = this;
 	theApp.m_pActiveWnd = NULL;
 
-	if (IsWindow(m_wndMainView))
-		m_wndMainView.SetFocus();
+	if (IsWindow(m_wndMigrationView))
+		m_wndMigrationView.SetFocus();
 }
 
-void CMigrateWnd::OnIdleUpdateCmdUI()
+void CMigrationWnd::OnIdleUpdateCmdUI()
 {
 	CWnd* btn = m_wndBottomArea.GetDlgItem(IDC_MIGRATE);
 	if (btn)
 		btn->EnableWindow(!m_wndFolder.IsEmpty());
 }
 
-void CMigrateWnd::OnSelectRoot()
+void CMigrationWnd::OnSelectRoot()
 {
 	CString caption;
 	CString hint;
@@ -170,12 +174,12 @@ void CMigrateWnd::OnSelectRoot()
 		m_wndFolder.SetItem(dlg.m_FolderPIDL);
 }
 
-void CMigrateWnd::OnMigrate()
+void CMigrationWnd::OnMigrate()
 {
 	theApp.ShowNagScreen(NAG_EXPIRED | NAG_FORCE, this);
 
 	// Folders checked ?
-	if (!m_wndMainView.FoldersChecked())
+	if (!m_wndMigrationView.FoldersChecked())
 	{
 		CString caption;
 		CString message;
@@ -202,7 +206,7 @@ void CMigrateWnd::OnMigrate()
 	}
 
 	// Create snapshot
-	m_wndMainView.PopulateMigrationList(&wp.MigrationList, NULL);
+	m_wndMigrationView.PopulateMigrationList(&wp.MigrationList, NULL);
 
 	// UAC warning if source files should be deleted
 	CButton* btn = (CButton*)m_wndBottomArea.GetDlgItem(IDC_DELETESOURCE);
@@ -217,39 +221,48 @@ void CMigrateWnd::OnMigrate()
 		btn->SetCheck(wp.DeleteSource);
 	}
 
-	// Migrate
-	LFDoWithProgress(WorkerMigrate, &wp.Hdr, this);
+	// Migration
+	LFDoWithProgress(WorkerMigration, &wp.Hdr, this);
 
 	// Show report
 	ReportDlg repdlg(this, &wp.Results[0], &wp.Results[1]);
 	if (repdlg.DoModal()==IDOK)
 		if (repdlg.m_UncheckMigrated)
-			m_wndMainView.UncheckMigrated(&wp.Results[0]);
+			m_wndMigrationView.UncheckMigrated(&wp.Results[0]);
 }
 
-void CMigrateWnd::OnRootChanged(NMHDR* /*pNMHDR*/, LRESULT* /*pResult*/)
+void CMigrationWnd::OnRootChanged(NMHDR* /*pNMHDR*/, LRESULT* /*pResult*/)
 {
+	CString caption;
+	ENSURE(caption.LoadString(IDR_MIGRATIONWIZARD));
+
 	if (m_wndFolder.IsEmpty())
 	{
-		m_wndMainView.ClearRoot();
+		m_wndMigrationView.ClearRoot();
 	}
 	else
 	{
-		m_wndMainView.SetRoot(m_wndFolder.pidl, FALSE, theApp.m_ExpandAll);
+		m_wndMigrationView.SetRoot(m_wndFolder.pidl, FALSE, theApp.m_MigrationExpandAll);
+
+		SHFILEINFO sfi;
+		if (SUCCEEDED(SHGetFileInfo((WCHAR*)m_wndFolder.pidl, 0, &sfi, sizeof(SHFILEINFO), SHGFI_PIDL | SHGFI_DISPLAYNAME)))
+			caption = sfi.szDisplayName;
 	}
 
-	m_wndMainView.SetFocus();
+	SetWindowText(caption);
+
+	m_wndMigrationView.SetFocus();
 	PostMessage(WM_IDLEUPDATECMDUI);
 }
 
-void CMigrateWnd::OnRootUpdate(NMHDR* /*pNMHDR*/, LRESULT* /*pResult*/)
+void CMigrationWnd::OnRootUpdate(NMHDR* /*pNMHDR*/, LRESULT* /*pResult*/)
 {
-	m_wndMainView.SetRoot(m_wndFolder.pidl, TRUE, FALSE);
+	m_wndMigrationView.SetRoot(m_wndFolder.pidl, TRUE, FALSE);
 
 	PostMessage(WM_IDLEUPDATECMDUI);
 }
 
-LRESULT CMigrateWnd::OnStoresChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)
+LRESULT CMigrationWnd::OnStoresChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)
 {
 	m_wndStore.Update();
 

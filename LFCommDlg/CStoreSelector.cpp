@@ -34,19 +34,8 @@ INT CStoreDropdownWindow::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CDropdownWindow::OnCreate(lpCreateStruct)==-1)
 		return -1;
 
-	LFApplication* pApp = LFGetApp();
-	m_wndList.SetImageList(&pApp->m_CoreImageListSmall, LVSIL_SMALL);
-	m_wndList.SetImageList(&pApp->m_CoreImageListLarge, LVSIL_NORMAL);
-
-	INT cx = GetSystemMetrics(SM_CXSMICON);
-	INT cy = GetSystemMetrics(SM_CYSMICON);
-	ImageList_GetIconSize(pApp->m_CoreImageListLarge, &cx, &cy);
-
-	CDC* dc = GetWindowDC();
-	CFont* pOldFont = dc->SelectObject(&pApp->m_DefaultFont);
-	m_wndList.SetIconSpacing(CXDropdownListIconSpacing, cy+dc->GetTextExtent(_T("Wy")).cy*2+4);
-	dc->SelectObject(pOldFont);
-	ReleaseDC(dc);
+	m_wndList.SetImageList(&p_App->m_CoreImageListSmall, LVSIL_SMALL);
+	m_wndList.SetImageList(&p_App->m_CoreImageListLarge, LVSIL_NORMAL);
 
 	m_wndList.AddStoreColumns();
 	m_wndList.AddItemCategories();
@@ -91,9 +80,10 @@ LRESULT CStoreDropdownWindow::OnSetItem(WPARAM wParam, LPARAM /*lParam*/)
 
 void CStoreDropdownWindow::OnCreateNewStore()
 {
+	CWnd* pTopLevelParent = GetTopLevelParent();
 	GetOwner()->SendMessage(WM_CLOSEDROPDOWN);
 
-	LFCreateNewStore(AfxGetApp()->GetMainWnd());
+	LFCreateNewStore(pTopLevelParent);
 }
 
 
