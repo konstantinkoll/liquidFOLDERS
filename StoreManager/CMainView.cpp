@@ -933,11 +933,17 @@ void CMainView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 		ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_OPENFILEDROP));
 		pPopup->AppendMenu(MF_STRING | MF_BYPOSITION, IDM_ITEM_OPENFILEDROP, tmpStr);
 
+		CMenu* pSubMenu = new CMenu();
+		pSubMenu->CreatePopupMenu();
+
 		ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_IMPORTFOLDER));
-		pPopup->AppendMenu(MF_STRING | MF_BYPOSITION, IDM_STORE_IMPORTFOLDER, tmpStr);
+		pSubMenu->AppendMenu(MF_STRING | MF_BYPOSITION, IDM_STORE_IMPORTFOLDER, tmpStr);
 
 		ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_MIGRATIONWIZARD));
-		pPopup->AppendMenu(MF_STRING | MF_BYPOSITION, IDM_STORE_MIGRATIONWIZARD, tmpStr);
+		pSubMenu->AppendMenu(MF_STRING | MF_BYPOSITION, IDM_STORE_MIGRATIONWIZARD, tmpStr);
+
+		ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_ADDFILES));
+		pPopup->AppendMenu(MF_POPUP | MF_BYPOSITION, (UINT_PTR)pSubMenu->m_hMenu, tmpStr);
 	}
 
 	// Insert view options command

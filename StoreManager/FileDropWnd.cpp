@@ -5,6 +5,7 @@ store
 
 #include "stdafx.h"
 #include "FileDropWnd.h"
+#include "MigrationWnd.h"
 #include "StoreManager.h"
 
 
@@ -78,6 +79,7 @@ BEGIN_MESSAGE_MAP(CFileDropWnd, CGlassWindow)
 	ON_COMMAND(IDM_ITEM_OPENNEWWINDOW, OnStoreOpen)
 	ON_COMMAND(IDM_STORE_MAKEDEFAULT, OnStoreMakeDefault)
 	ON_COMMAND(IDM_STORE_IMPORTFOLDER, OnStoreImportFolder)
+	ON_COMMAND(IDM_STORE_MIGRATIONWIZARD, OnStoreMigrationWizard)
 	ON_COMMAND(IDM_STORE_SHORTCUT, OnStoreShortcut)
 	ON_COMMAND(IDM_STORE_DELETE, OnStoreDelete)
 	ON_COMMAND(IDM_STORE_PROPERTIES, OnStoreProperties)
@@ -350,6 +352,13 @@ void CFileDropWnd::OnStoreImportFolder()
 	LFImportFolder(m_Store.StoreID, this);
 }
 
+void CFileDropWnd::OnStoreMigrationWizard()
+{
+	CMigrationWnd* pFrame = new CMigrationWnd();
+	pFrame->Create(m_Store.StoreID);
+	pFrame->ShowWindow(SW_SHOW);
+}
+
 void CFileDropWnd::OnStoreShortcut()
 {
 	if (LFAskCreateShortcut(GetSafeHwnd()))
@@ -380,6 +389,7 @@ void CFileDropWnd::OnUpdateStoreCommands(CCmdUI* pCmdUI)
 		free(pDefaultStore);
 		break;
 	case IDM_STORE_IMPORTFOLDER:
+	case IDM_STORE_MIGRATIONWIZARD:
 		b &= m_StoreMounted;
 		break;
 	case IDM_STORE_SHORTCUT:

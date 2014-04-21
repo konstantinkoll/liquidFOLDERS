@@ -694,17 +694,18 @@ BEGIN
     IDS_CONTEXTMENU_REMOVE  "Aus Zwischenablage &entfernen"
     IDS_CONTEXTMENU_SENDTO  "S&enden an"
     IDS_CONTEXTMENU_CHOOSESTORE "&Store wählen..."
+    IDS_CONTEXTMENU_ADDFILES "&Dateien hinzufügen"
     IDS_CONTEXTMENU_IMPORTFOLDER "Verzeichnis &importieren..."
     IDS_CONTEXTMENU_MIGRATIONWIZARD "&Migrations-Assistent"
     IDS_CONTEXTMENU_MORE    "&Mehr..."
     IDS_CONTEXTMENU_TIME    "&Zeit"
     IDS_CONTEXTMENU_LOCATION "&Ort"
     IDS_CONTEXTMENU_DIMENSION "&Abmessungen"
-    IDS_TXTFILEFILTER       "Textdatei"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_TXTFILEFILTER       "Textdatei"
     IDS_XMLFILEFILTER       "Extensible Markup Language"
     IDS_ATTRIBUTENOTSORTABLE 
                             "Diese Eigenschaft ist zur Sortierung nicht geeignet."
@@ -721,11 +722,11 @@ BEGIN
     IDS_SUBFOLDERS_NOTAVAIL "Unterordner sind hier nicht verfügbar."
     IDS_FILETYPES           "Dateitypen"
     IDS_HOUSEKEEPING        "Verwaltung"
-    IDS_SEARCHTERM          "Suchbegriff"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_SEARCHTERM          "Suchbegriff"
     IDS_DROPTIP             "Dateien hierher ziehen zum\nImport nach liquidFOLDERS"
     IDS_NOROOT_CAPTION      "Sie haben noch kein Verzeichnis ausgewählt"
     IDS_NOROOT_HINT         "Klicken Sie oben, um ein Verzeichnis auszuwählen."
@@ -742,16 +743,11 @@ BEGIN
     IDS_FOLDERCATEGORY4     "Wechseldatenträger"
     IDS_NOPROPERTY          "Hier klicken um eine Eigenschaft zu wählen"
     IDS_CHOOSEPROPERTY      "Eigenschaft aus&wählen..."
+END
+
+STRINGTABLE 
+BEGIN
     IDS_EXPANDBRANCH        "Alle &Unterverzeichnisse zeigen"
-END
-
-STRINGTABLE 
-BEGIN
-    IDM_FILTERS_CREATENEW   "Neuer Filter..."
-END
-
-STRINGTABLE 
-BEGIN
     IDS_INCLUDEBRANCH       "Zweig &markieren"
     IDS_EXCLUDEBRANCH       "Zweig ab&wählen"
     IDS_REPORTTAB0          "Erfolgreich importierte Verzeichnisse (%u)"
@@ -762,6 +758,11 @@ BEGIN
     IDS_REPORTSTATUS_FILES  "Alle %u Dateien (%s) wurden erfolgreich importiert."
     IDS_NOFOLDERS_CAPTION   "Migration starten"
     IDS_NOFOLDERS_MESSAGE   "Bitte wählen Sie mindestens ein Verzeichnis aus, indem Sie in der Baumansicht auf die Checkboxen links neben den Verzeichnissymbolen klicken."
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_FILTERS_CREATENEW   "Neuer Filter..."
 END
 
 STRINGTABLE 
@@ -781,7 +782,6 @@ END
 STRINGTABLE 
 BEGIN
     IDM_STORE_MAKEDEFAULT   "Setzt den ausgewählten Store als Standard-Store.\nAls Standard-Store setzen"
-    IDM_STORE_IMPORTFOLDER  "Importiert einen Ordner und alle Unterordner in den ausgewählten Store.\nVerzeichnis importieren..."
 END
 
 STRINGTABLE 
@@ -1465,17 +1465,18 @@ BEGIN
     IDS_CONTEXTMENU_REMOVE  "&Eliminar del portapapeles"
     IDS_CONTEXTMENU_SENDTO  "&Enviar a"
     IDS_CONTEXTMENU_CHOOSESTORE "Selecionar &store..."
+    IDS_CONTEXTMENU_ADDFILES "Agregar &archivos"
     IDS_CONTEXTMENU_IMPORTFOLDER "&Importar carpeta..."
     IDS_CONTEXTMENU_MIGRATIONWIZARD "Asistente de &migración"
     IDS_CONTEXTMENU_MORE    "&Más..."
     IDS_CONTEXTMENU_TIME    "&Tiempo"
     IDS_CONTEXTMENU_LOCATION "&Ubicación"
     IDS_CONTEXTMENU_DIMENSION "&Dimensión"
-    IDS_TXTFILEFILTER       "Documento de texto"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_TXTFILEFILTER       "Documento de texto"
     IDS_XMLFILEFILTER       "Extensible Markup Language"
     IDS_ATTRIBUTENOTSORTABLE "Esta propiedad no es adecuada para clasificar."
     IDS_NOITEMSSELECTED     "Objetos no seleccionados"
@@ -1491,11 +1492,11 @@ BEGIN
     IDS_SUBFOLDERS_NOTAVAIL "Subcarpetas no están disponibles aquí."
     IDS_FILETYPES           "Tipos de archivo"
     IDS_HOUSEKEEPING        "Mantenimiento"
-    IDS_SEARCHTERM          "Buscar término"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_SEARCHTERM          "Buscar término"
     IDS_DROPTIP             "Pega filas aquí para importarlas\na liquidFOLDERS"
     IDS_NOROOT_CAPTION      "Usted no ha seleccionado todavía una carpeta raíz"
     IDS_NOROOT_HINT         "Dar click arriba para seleccionar una carpeta para navegar."
@@ -1512,16 +1513,11 @@ BEGIN
     IDS_FOLDERCATEGORY4     "Almacenamiento desmontable"
     IDS_NOPROPERTY          "Dar click aquí para escoger una propiedad"
     IDS_CHOOSEPROPERTY      "Escoger &propiedad..."
+END
+
+STRINGTABLE 
+BEGIN
     IDS_EXPANDBRANCH        "Expandir &ramificación"
-END
-
-STRINGTABLE 
-BEGIN
-    IDM_FILTERS_CREATENEW   "Nuevo filtro..."
-END
-
-STRINGTABLE 
-BEGIN
     IDS_INCLUDEBRANCH       "&Incluir ramificación"
     IDS_EXCLUDEBRANCH       "&Excluir ramificación"
     IDS_REPORTTAB0          "Carpetas migradas satisfactoriamente (%u)"
@@ -1532,6 +1528,11 @@ BEGIN
     IDS_REPORTSTATUS_FILES  "Todos los %u archivos (%s) fueron importados satisfactoriamente."
     IDS_NOFOLDERS_CAPTION   "Iniciar migración"
     IDS_NOFOLDERS_MESSAGE   "Por favor seleccionar al menos una carpeta en la vista de árbol al dar click en las casillas a la izquierda de los iconos de la carpeta."
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_FILTERS_CREATENEW   "Nuevo filtro..."
 END
 
 STRINGTABLE 
@@ -1551,7 +1552,6 @@ END
 STRINGTABLE 
 BEGIN
     IDM_STORE_MAKEDEFAULT   "Establece el store seleccionado como el store predeterminado.\nEstablecer como store predeterminado"
-    IDM_STORE_IMPORTFOLDER  "Importa una carpeta y todas sus subcarpetas al store seleccionado.\nImportar carpeta..."
 END
 
 STRINGTABLE 
@@ -2238,17 +2238,18 @@ BEGIN
     IDS_CONTEXTMENU_REMOVE  "Enlèver du &presse-papiers"
     IDS_CONTEXTMENU_SENDTO  "E&nvoyer à"
     IDS_CONTEXTMENU_CHOOSESTORE "Choisissez un &store..."
+    IDS_CONTEXTMENU_ADDFILES "Ajouter &fichiers"
     IDS_CONTEXTMENU_IMPORTFOLDER "&Importer dossier..."
     IDS_CONTEXTMENU_MIGRATIONWIZARD "L'assistant de &migration"
     IDS_CONTEXTMENU_MORE    "&Plus..."
     IDS_CONTEXTMENU_TIME    "&Temps"
     IDS_CONTEXTMENU_LOCATION "&Lieu"
     IDS_CONTEXTMENU_DIMENSION "&Mesurages"
-    IDS_TXTFILEFILTER       "Fichier texte"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_TXTFILEFILTER       "Fichier texte"
     IDS_XMLFILEFILTER       "Extensible Markup Language"
     IDS_ATTRIBUTENOTSORTABLE "Cette qualité ne convient pas au triage."
     IDS_NOITEMSSELECTED     "Aucun élément choisi"
@@ -2264,11 +2265,11 @@ BEGIN
     IDS_SUBFOLDERS_NOTAVAIL "Sous-dossier ne sont pas disponible ici."
     IDS_FILETYPES           "Types de fichiers"
     IDS_HOUSEKEEPING        "Ménage"
-    IDS_SEARCHTERM          "Mot de recherches"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_SEARCHTERM          "Mot de recherches"
     IDS_DROPTIP             "Ici afiu de importer\ndans liquidFOLDERS"
     IDS_NOROOT_CAPTION      "Vouz n'avez pas encore choisi aucun dossier"
     IDS_NOROOT_HINT         "Cliquez en haut pour choisir un dossier."
@@ -2285,16 +2286,11 @@ BEGIN
     IDS_FOLDERCATEGORY4     "Support de données de changement"
     IDS_NOPROPERTY          "Cliquez ici pour choisir une qualité"
     IDS_CHOOSEPROPERTY      "Choisissez &la qualité..."
+END
+
+STRINGTABLE 
+BEGIN
     IDS_EXPANDBRANCH        "Montrer tous &les sous-dossiers"
-END
-
-STRINGTABLE 
-BEGIN
-    IDM_FILTERS_CREATENEW   "Filtre noveau..."
-END
-
-STRINGTABLE 
-BEGIN
     IDS_INCLUDEBRANCH       "Marquer &la branche"
     IDS_EXCLUDEBRANCH       "Abandonner &la branche"
     IDS_REPORTTAB0          "Des dossiers importées avec succès (%u)"
@@ -2304,6 +2300,11 @@ BEGIN
     IDS_REPORTSTATUS_FILES  "Tous les %u fichiers (%s) étaient importés avec succès."
     IDS_NOFOLDERS_CAPTION   "Lancer la migration"
     IDS_NOFOLDERS_MESSAGE   "S'il vous plaît, choisissez au moins un dossier en cliquer dans l'avis d'arbre sur les boxes de chèque à gauche à côté des symboles de dossier."
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_FILTERS_CREATENEW   "Filtre noveau..."
 END
 
 STRINGTABLE 
@@ -2323,7 +2324,6 @@ END
 STRINGTABLE 
 BEGIN
     IDM_STORE_MAKEDEFAULT   "Met le store choisi comme le store standard.\nFaites store standard"
-    IDM_STORE_IMPORTFOLDER  "Importe un dossier et tous les sous-dossiers dans le store choisi.\nImporter dossier..."
 END
 
 STRINGTABLE 
@@ -3056,17 +3056,18 @@ BEGIN
     IDS_CONTEXTMENU_REMOVE  "Re&move from clipboard"
     IDS_CONTEXTMENU_SENDTO  "S&end to"
     IDS_CONTEXTMENU_CHOOSESTORE "Choose &store..."
+    IDS_CONTEXTMENU_ADDFILES "Add &files"
     IDS_CONTEXTMENU_IMPORTFOLDER "&Import folder..."
     IDS_CONTEXTMENU_MIGRATIONWIZARD "&Migration Wizard"
     IDS_CONTEXTMENU_MORE    "&More..."
     IDS_CONTEXTMENU_TIME    "&Time"
     IDS_CONTEXTMENU_LOCATION "&Location"
     IDS_CONTEXTMENU_DIMENSION "&Dimension"
-    IDS_TXTFILEFILTER       "Text document"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_TXTFILEFILTER       "Text document"
     IDS_XMLFILEFILTER       "Extensible Markup Language"
     IDS_ATTRIBUTENOTSORTABLE "This property is not suitable for sorting."
     IDS_NOITEMSSELECTED     "No items selected"
@@ -3082,11 +3083,11 @@ BEGIN
     IDS_SUBFOLDERS_NOTAVAIL "Subfolders are not available here."
     IDS_FILETYPES           "File types"
     IDS_HOUSEKEEPING        "Housekeeping"
-    IDS_SEARCHTERM          "Search term"
 END
 
 STRINGTABLE 
 BEGIN
+    IDS_SEARCHTERM          "Search term"
     IDS_DROPTIP             "Drop files here to import\nthem into liquidFOLDERS"
     IDS_NOROOT_CAPTION      "You have not selected a root folder yet"
     IDS_NOROOT_HINT         "Click above to select a folder for browsing."
@@ -3103,16 +3104,11 @@ BEGIN
     IDS_FOLDERCATEGORY4     "Removable storage"
     IDS_NOPROPERTY          "Click here to choose a property"
     IDS_CHOOSEPROPERTY      "Choose p&roperty..."
+END
+
+STRINGTABLE 
+BEGIN
     IDS_EXPANDBRANCH        "Expand &branch"
-END
-
-STRINGTABLE 
-BEGIN
-    IDM_FILTERS_CREATENEW   "Add filter..."
-END
-
-STRINGTABLE 
-BEGIN
     IDS_INCLUDEBRANCH       "&Include branch"
     IDS_EXCLUDEBRANCH       "&Exclude branch"
     IDS_REPORTTAB0          "Successfully migrated folders (%u)"
@@ -3122,6 +3118,11 @@ BEGIN
     IDS_REPORTSTATUS_FILES  "All %u files (%s) were successfully imported."
     IDS_NOFOLDERS_CAPTION   "Start migration"
     IDS_NOFOLDERS_MESSAGE   "Please select at least one folder in the tree view by clicking on the checkboxes left to the folder icons."
+END
+
+STRINGTABLE 
+BEGIN
+    IDM_FILTERS_CREATENEW   "Add filter..."
 END
 
 STRINGTABLE 
@@ -3141,7 +3142,6 @@ END
 STRINGTABLE 
 BEGIN
     IDM_STORE_MAKEDEFAULT   "Makes the selected store the default store.\nMake default store"
-    IDM_STORE_IMPORTFOLDER  "Imports a folder and all its subfolders into the selected store.\nImport folder..."
 END
 
 STRINGTABLE 
