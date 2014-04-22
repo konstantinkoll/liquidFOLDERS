@@ -508,8 +508,6 @@ void LFCheckForUpdate(BOOL Force, CWnd* pParentWnd)
 	if (Check)
 	{
 		CWaitCursor wait;
-
-		CString CurrentVersion;
 		CString VersionIni = GetLatestVersion(CurrentVersion);
 
 		if (!VersionIni.IsEmpty())
