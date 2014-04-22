@@ -146,6 +146,9 @@ void CListView::SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCook
 
 CMenu* CListView::GetViewContextMenu()
 {
+	if (p_ViewParameters->Mode!=LFViewDetails)
+		return NULL;
+
 	CMenu* pMenu = new CMenu();
 	pMenu->LoadMenu(IDM_DETAILS);
 
