@@ -5,13 +5,13 @@
 #pragma once
 
 
-// CmdImportFolder
+// CmdCreateNewStore
 //
 
-class CmdImportFolder : public CExplorerCommand
+class CmdCreateNewStore : public CExplorerCommand
 {
 public:
-	CmdImportFolder();
+	CmdCreateNewStore();
 
 	virtual CString GetCaption(CPtrList* nseItems);
 	virtual CString GetToolTip(CPtrList* nseItems);
@@ -37,38 +37,6 @@ public:
 };
 
 
-// CmdCreateNewStore
-//
-
-class CmdCreateNewStore : public CExplorerCommand
-{
-public:
-	CmdCreateNewStore();
-
-	virtual CString GetCaption(CPtrList* nseItems);
-	virtual CString GetToolTip(CPtrList* nseItems);
-	virtual ExplorerCommandState GetState(CPtrList* nseItems);
-	virtual BOOL Invoke(CPtrList* nseItems);
-	virtual CString GetIcon(CPtrList* nseItems);
-};
-
-
-// CmdStoreManager
-//
-
-class CmdStoreManager : public CExplorerCommand
-{
-public:
-	CmdStoreManager();
-
-	virtual CString GetCaption(CPtrList* nseItems);
-	virtual CString GetToolTip(CPtrList* nseItems);
-	virtual ExplorerCommandState GetState(CPtrList* nseItems);
-	virtual BOOL Invoke(CPtrList* nseItems);
-	virtual CString GetIcon(CPtrList* nseItems);
-};
-
-
 // CmdFileDrop
 //
 
@@ -76,11 +44,33 @@ public:
 class CmdFileDrop : public CExplorerCommand
 {
 public:
-	CmdFileDrop();
+	CmdFileDrop(CHAR* StoreID);
 
 	virtual CString GetCaption(CPtrList* nseItems);
 	virtual CString GetToolTip(CPtrList* nseItems);
 	virtual ExplorerCommandState GetState(CPtrList* nseItems);
 	virtual BOOL Invoke(CPtrList* nseItems);
 	virtual CString GetIcon(CPtrList* nseItems);
+
+protected:
+	CHAR m_StoreID[LFKeySize];
+};
+
+
+// CmdImportFolder
+//
+
+class CmdImportFolder : public CExplorerCommand
+{
+public:
+	CmdImportFolder(CHAR* StoreID);
+
+	virtual CString GetCaption(CPtrList* nseItems);
+	virtual CString GetToolTip(CPtrList* nseItems);
+	virtual ExplorerCommandState GetState(CPtrList* nseItems);
+	virtual BOOL Invoke(CPtrList* nseItems);
+	virtual CString GetIcon(CPtrList* nseItems);
+
+protected:
+	CHAR m_StoreID[LFKeySize];
 };

@@ -16,9 +16,10 @@
 #define IDI_STR_Twitter                 12
 #define IDI_STR_YouTube                 13
 #define IDI_FLD_Default                 14
-#define IDI_OVR_Default                 15
-#define IDI_SRC_Internet                16
-#define IDI_LastIcon                    16
+#define IDI_FLD_All                     15
+#define IDI_OVR_Default                 16
+#define IDI_SRC_Internet                17
+#define IDI_LastIcon                    17
 #define IDS_FirstItemCategory           1000
 #define IDS_LFCategoryLocalStores       1000
 #define IDS_LFCategoryRemoteStores      1001

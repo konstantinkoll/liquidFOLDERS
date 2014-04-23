@@ -354,7 +354,7 @@ BOOL CFolderItem::GetChildren(CGetChildrenEventArgs& e)
 			FolderSerialization d;
 			ZeroMemory(&d, sizeof(d));
 			d.Level = Attrs.Level+2;
-			d.Icon = 0;
+			d.Icon = IDI_FLD_All;
 			d.Type = LFTypeFolder;
 			d.CategoryID = LFAttrCategoryCount;
 			ENSURE(LoadString(AfxGetResourceHandle(), IDS_AllFiles, d.DisplayName, 256));
@@ -485,8 +485,8 @@ CNSEItem* CFolderItem::GetChildFromDisplayName(CGetChildFromDisplayNameEventArgs
 void CFolderItem::GetIconFileAndIndex(CGetIconFileAndIndexEventArgs& e)
 {
 	e.iconExtractMode = NSEIEM_IconFileAndIndex;
-	e.iconFile = (Attrs.Icon==0) ? theApp.m_PathThisFile : theApp.m_PathCoreFile;
-	e.iconIndex = (Attrs.Icon==0) ? 0 : Attrs.Icon-1;
+	e.iconFile = theApp.m_PathCoreFile;
+	e.iconIndex = Attrs.Icon-1;
 }
 
 void CFolderItem::GetOverlayIcon(CGetOverlayIconEventArgs& e)
@@ -728,15 +728,19 @@ void CFolderItem::OnExecuteFrameCommand(CExecuteFrameCommandEventArgs& e)
 
 void CFolderItem::GetToolbarCommands(CPtrList& commands)
 {
-	if (Attrs.Level==LevelRoot)
+	switch (Attrs.Level)
 	{
-		commands.AddTail(new CmdImportFolder());
-		commands.AddTail(new CmdProperties());
+	case LevelRoot:
 		commands.AddTail(new CmdCreateNewStore());
+		commands.AddTail(new CmdProperties());
+		break;
+	case LevelStores:
+		commands.AddTail(new CmdFileDrop(Attrs.StoreID));
+		commands.AddTail(new CmdImportFolder(Attrs.StoreID));
+		break;
+	default:
+		CNSEFolder::GetToolbarCommands(commands);
 	}
-
-	commands.AddTail(new CmdStoreManager());
-	commands.AddTail(new CmdFileDrop());
 }
 
 
@@ -877,8 +881,38 @@ BOOL CFolderItem::GetColumnValueEx(VARIANT* value, CShellColumn& column)
 	if (column.fmtid==FMTID_Volume)
 		switch (column.pid)
 		{
+		case 2:
+			CUtils::SetVariantINT64(value, 0);
+			return TRUE;
+		case 3:
+			CUtils::SetVariantINT64(value, Attrs.Size);
+			return TRUE;
 		case 4:
 			CUtils::SetVariantLPCTSTR(value, _T("liquidFOLDERS"));
+			return TRUE;
+		case 10:
+			CUtils::SetVariantBOOL(value, TRUE);
+			return TRUE;
+		default:
+			return FALSE;
+		}
+
+	if (column.fmtid==FMTID_Storage)
+		switch (column.pid)
+		{
+		case 13:
+			CUtils::SetVariantUINT(value, 0x2016);
+			return TRUE;
+		default:
+			return FALSE;
+		}
+
+	const GUID FMTID_ManagedVolume = { 0x149C0B69, 0x2C2D, 0x48FC, { 0x80, 0x8F, 0xD3, 0x18, 0xD7, 0x8C, 0x46, 0x36 } };
+	if (column.fmtid==FMTID_ManagedVolume)
+		switch (column.pid)
+		{
+		case 2:
+			CUtils::SetVariantBOOL(value, FALSE);
 			return TRUE;
 		default:
 			return FALSE;

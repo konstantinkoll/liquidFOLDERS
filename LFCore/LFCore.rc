@@ -42,6 +42,7 @@ IDI_STR_SoundCloud      ICON                    "res\\STR_SoundCloud.ico"
 IDI_STR_Twitter         ICON                    "res\\STR_Twitter.ico"
 IDI_STR_YouTube         ICON                    "res\\STR_YouTube.ico"
 IDI_FLD_Default         ICON                    "res\\FLD_Default.ico"
+IDI_FLD_All             ICON                    "res\\FLD_All.ico"
 IDI_OVR_Default         ICON                    "res\\OVR_Default.ico"
 IDI_SRC_Internet        ICON                    "res\\SRC_Internet.ico"
 
