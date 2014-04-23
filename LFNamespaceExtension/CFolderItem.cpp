@@ -6,7 +6,6 @@
 #include "Commands.h"
 #include "LFCore.h"
 #include "Categorizer.h"
-#include "MenuIcons.h"
 #include "afxsettingsstore.h"
 #include <io.h>
 #include <shlguid.h>
@@ -36,20 +35,6 @@ CShellMenuItem* AddItem(CShellMenu* Menu, UINT ResID, CString Verb)
 	ENSURE(tmpHint.LoadString(ResID+1));
 
 	return Menu->AddItem(tmpStr, Verb, tmpHint);
-}
-
-void AddPathItem(CShellMenu* Menu, UINT ResID, CString Verb, CString Path, INT IconID)
-{
-	INT cx;
-	INT cy;
-	theApp.GetIconSize(cx, cy);
-
-	CShellMenuItem* item =AddItem(Menu, ResID, Verb);
-	item->SetEnabled(!Path.IsEmpty());
-
-	HICON hIcon = (HICON)LoadImage(AfxGetResourceHandle(), MAKEINTRESOURCE(IconID), IMAGE_ICON, cx, cy, LR_DEFAULTCOLOR);
-	item->SetBitmap(IconToBitmap(hIcon, cx, cy));
-	DestroyIcon(hIcon);
 }
 
 BOOL RunPath(HWND hWnd, CString Path, CString Parameter)
@@ -182,7 +167,7 @@ void CFolderItem::GetExtensionTargetInfo(CExtensionTargetInfo& info)
 	nti->name = _T("liquidFOLDERS");
 	nti->infoTip.LoadString(IDS_InfoTip);
 	nti->attributes = (NSEItemAttributes)(NSEIA_CFOLDERITEM | NSEIA_HasSubFolder);
-	nti->iconFile = theApp.m_ThisFile;
+	nti->iconFile = theApp.m_PathStoreManager;
 	nti->iconIndex = 0;
 	nti->AddRootNodeProperty(_T("SortOrderIndex"), (UINT)64);
 	nti->AddRootNodeProperty(_T("System.DescriptionID"), (UINT)20);
@@ -199,7 +184,7 @@ void CFolderItem::GetExtensionTargetInfo(CExtensionTargetInfo& info)
 	nti->name = _T("liquidFOLDERS");
 	nti->infoTip.LoadString(IDS_InfoTip);
 	nti->attributes = (NSEItemAttributes)(NSEIA_CFOLDERITEM | NSEIA_HasSubFolder);
-	nti->iconFile = theApp.m_ThisFile;
+	nti->iconFile = theApp.m_PathStoreManager;
 	nti->iconIndex = 0;
 	nti->AddRootNodeProperty(_T("SortOrderIndex"), (UINT)64);
 	nti->AddRootNodeProperty(_T("System.DescriptionID"), (UINT)20);
@@ -500,8 +485,8 @@ CNSEItem* CFolderItem::GetChildFromDisplayName(CGetChildFromDisplayNameEventArgs
 void CFolderItem::GetIconFileAndIndex(CGetIconFileAndIndexEventArgs& e)
 {
 	e.iconExtractMode = NSEIEM_IconFileAndIndex;
-	e.iconFile = (Attrs.Icon==0) ? theApp.m_ThisFile : theApp.m_CoreFile;
-	e.iconIndex = (Attrs.Icon==0) ? 1 : Attrs.Icon-1;
+	e.iconFile = (Attrs.Icon==0) ? theApp.m_PathThisFile : theApp.m_PathCoreFile;
+	e.iconIndex = (Attrs.Icon==0) ? 0 : Attrs.Icon-1;
 }
 
 void CFolderItem::GetOverlayIcon(CGetOverlayIconEventArgs& e)
@@ -509,7 +494,7 @@ void CFolderItem::GetOverlayIcon(CGetOverlayIconEventArgs& e)
 	if (Attrs.Type & LFTypeDefault)
 	{
 		e.overlayIconType = NSEOIT_Custom;
-		e.iconFile = theApp.m_CoreFile;
+		e.iconFile = theApp.m_PathCoreFile;
 		e.iconIndex = IDI_OVR_Default-1;
 	}
 	else
@@ -1357,7 +1342,7 @@ BOOL CFolderItem::SetShellLink(IShellLink* pShellLink)
 	ASSERT(pShellLink);
 
 	pShellLink->SetIDList(GetPIDLAbsolute());
-	pShellLink->SetIconLocation(theApp.m_CoreFile, Attrs.Icon-1);
+	pShellLink->SetIconLocation(theApp.m_PathCoreFile, Attrs.Icon-1);
 	pShellLink->SetShowCmd(SW_SHOWNORMAL);
 	pShellLink->SetDescription(Attrs.Comment);
 

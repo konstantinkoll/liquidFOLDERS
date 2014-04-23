@@ -25,13 +25,18 @@ LFNamespaceExtensionApp::LFNamespaceExtensionApp()
 	osInfo.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
 	GetVersionEx(&osInfo);
 
-	// Dateinamen mit Icons
-	GetModuleFileName((HINSTANCE)&__ImageBase, m_ThisFile, MAX_PATH);
+	// Pfade
+	GetModuleFileName((HINSTANCE)&__ImageBase, m_PathThisFile, MAX_PATH);
+
+	if (!GetApplicationPath(_T("LFRunCmd"), m_PathRunCmd))
+		m_PathRunCmd.Empty();
+	if (!GetApplicationPath(_T("StoreManager"), m_PathStoreManager))
+		m_PathStoreManager.Empty();
 
 	HMODULE hModCore = GetModuleHandle(_T("LFCORE.DLL"));
 	if (hModCore)
 	{
-		GetModuleFileName(hModCore, m_CoreFile, MAX_PATH);
+		GetModuleFileName(hModCore, m_PathCoreFile, MAX_PATH);
 
 		ENSURE(m_Categories[2][0].LoadString(hModCore, IDS_Size1));
 
@@ -44,7 +49,7 @@ LFNamespaceExtensionApp::LFNamespaceExtensionApp()
 	}
 	else
 	{
-		wcscpy_s(m_CoreFile, MAX_PATH, L"LFCORE.DLL");
+		wcscpy_s(m_PathCoreFile, MAX_PATH, L"LFCORE.DLL");
 
 		for (UINT a=1; a<6; a++)
 			m_Categories[0][a] = m_Categories[1][a] = m_Categories[2][a] = _T("?");
@@ -104,12 +109,6 @@ BOOL LFNamespaceExtensionApp::InitInstance()
 	EZNamespaceExtensionsMFC::CNSEFolder::RegisterExtensionData(_T("Name:KonstantinKoll*Company:BLUefolders*Email:ceo@bluefolders.net#Oo0m5Ouz+xz64KV57IinRTUvhkNojDZGjBd5MNXfwDEmgcr4baoQFMono3odGhqP"));
 	EZShellExtensionsMFC::CExtensionTargetInfo::RegisterExtensionData(_T("Name:KonstantinKoll*Company:BLUefolders*Email:ceo@bluefolders.net#B2/22Ctegy/B3wHN28jR2uUsStzxt2RNPvEEmoFUuY4XGheEmCPKFVrhwK823NwN"));
 
-	// Pfade
-	if (!GetApplicationPath(_T("LFRunCmd"), m_PathRunCmd))
-		m_PathRunCmd.Empty();
-	if (!GetApplicationPath(_T("StoreManager"), m_PathStoreManager))
-		m_PathStoreManager.Empty();
-
 	// Strings
 	ENSURE(m_Store.LoadString(IDS_Store));
 	ENSURE(m_Folder.LoadString(IDS_Folder));
@@ -137,7 +136,7 @@ BOOL LFNamespaceExtensionApp::GetApplicationPath(CString App, CString& Path)
 				return TRUE;
 
 	// Modulpfad probieren
-	Path = theApp.m_ThisFile;
+	Path = theApp.m_PathThisFile;
 	INT pos = Path.ReverseFind('\\');
 	if (pos)
 		Path = Path.Left(pos+1);

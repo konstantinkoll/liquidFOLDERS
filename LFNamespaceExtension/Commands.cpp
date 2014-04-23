@@ -64,8 +64,8 @@ BOOL CmdImportFolder::Invoke(CPtrList* nseItems)
 
 CString CmdImportFolder::GetIcon(CPtrList* /*nseItems*/)
 {
-	CString tmpStr(theApp.m_ThisFile);
-	tmpStr.Append(_T(",2"));
+	CString tmpStr(theApp.m_PathThisFile);
+	tmpStr.Append(_T(",1"));
 
 	return tmpStr;
 }
@@ -121,8 +121,8 @@ BOOL CmdProperties::Invoke(CPtrList* nseItems)
 
 CString CmdProperties::GetIcon(CPtrList* /*nseItems*/)
 {
-	CString tmpStr(theApp.m_ThisFile);
-	tmpStr.Append(_T(",3"));
+	CString tmpStr(theApp.m_PathThisFile);
+	tmpStr.Append(_T(",2"));
 
 	return tmpStr;
 }
@@ -166,8 +166,8 @@ BOOL CmdCreateNewStore::Invoke(CPtrList* /*nseItems*/)
 
 CString CmdCreateNewStore::GetIcon(CPtrList* /*nseItems*/)
 {
-	CString tmpStr(theApp.m_ThisFile);
-	tmpStr.Append(_T(",4"));
+	CString tmpStr(theApp.m_PathThisFile);
+	tmpStr.Append(_T(",3"));
 
 	return tmpStr;
 }
@@ -209,8 +209,8 @@ BOOL CmdStoreManager::Invoke(CPtrList* /*nseItems*/)
 
 CString CmdStoreManager::GetIcon(CPtrList* /*nseItems*/)
 {
-	CString tmpStr(theApp.m_ThisFile);
-	tmpStr.Append(_T(",5"));
+	CString tmpStr(theApp.m_PathStoreManager);
+	tmpStr.Append(_T(",0"));
 
 	return tmpStr;
 }
@@ -254,8 +254,8 @@ BOOL CmdFileDrop::Invoke(CPtrList* /*nseItems*/)
 
 CString CmdFileDrop::GetIcon(CPtrList* /*nseItems*/)
 {
-	CString tmpStr(theApp.m_ThisFile);
-	tmpStr.Append(_T(",6"));
+	CString tmpStr(theApp.m_PathStoreManager);
+	tmpStr.Append(_T(",62"));
 
 	return tmpStr;
 }

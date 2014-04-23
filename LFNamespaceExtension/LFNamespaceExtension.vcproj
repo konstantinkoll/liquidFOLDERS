@@ -463,10 +463,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\liquidFOLDERS.ico"
-				>
-			</File>
-			<File
 				RelativePath=".\res\StoreNew_Tiny.ico"
 				>
 			</File>
@@ -510,10 +506,6 @@
 			</File>
 			<File
 				RelativePath=".\LFSendTo.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\include\MenuIcons.cpp"
 				>
 			</File>
 			<File

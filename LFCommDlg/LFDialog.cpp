@@ -150,12 +150,12 @@ void LFDialog::GetLayoutRect(LPRECT lpRect) const
 {
 	GetClientRect(lpRect);
 
-	CRect borders(0, 0, 7, 7);
-	MapDialogRect(&borders);
-
 	CWnd* pBottomWnd = GetBottomWnd();
 	if (!pBottomWnd)
 		return;
+
+	CRect borders(0, 0, 7, 7);
+	MapDialogRect(&borders);
 
 	CRect btn;
 	pBottomWnd->GetWindowRect(&btn);
@@ -267,8 +267,6 @@ void LFDialog::OnSize(UINT nType, INT cx, INT cy)
 {
 	CDialog::OnSize(nType, cx, cy);
 
-	AdjustLayout();
-
 	CPoint diff(cx-m_LastSize.x, cy-m_LastSize.y);
 	m_LastSize.x = cx;
 	m_LastSize.y = cy;
@@ -295,6 +293,8 @@ void LFDialog::OnSize(UINT nType, INT cx, INT cy)
 
 		p_BottomLeftControl->SetWindowPos(NULL, rect.left, rect.top+diff.y, MaxRight-rect.left, rect.Height(), SWP_NOACTIVATE | SWP_NOZORDER);
 	}
+
+	AdjustLayout();
 
 	m_BackBufferL = m_BackBufferH = 0;
 	Invalidate();

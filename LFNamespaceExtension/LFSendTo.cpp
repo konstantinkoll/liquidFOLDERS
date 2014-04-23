@@ -48,7 +48,7 @@ void LFSendTo::GetExtensionTargetInfo(CSendToExtensionTargetInfo& info)
 	LFGetDefaultStoreName(Name, 256);
 
 	info.description = Name;
-	info.iconFile = theApp.m_CoreFile;
+	info.iconFile = theApp.m_PathCoreFile;
 	info.iconIndex = IDI_STR_Internal-1;
 }
 

@@ -32,13 +32,13 @@ public:
 	UINT ImportFiles(CHAR* StoreID, IDataObject* pDataObject, BOOL Move);
 	BOOL ShowNagScreen(UINT Level, BOOL Abort=FALSE);
 
+	WCHAR m_PathCoreFile[MAX_PATH];
+	WCHAR m_PathThisFile[MAX_PATH];
 	CString m_PathRunCmd;
 	CString m_PathStoreManager;
 	CString m_Categories[3][6];
 	CString m_Store;
 	CString m_Folder;
-	WCHAR m_CoreFile[MAX_PATH];
-	WCHAR m_ThisFile[MAX_PATH];
 	LFAttributeDescriptor* m_Attributes[LFAttributeCount];
 	LFItemCategoryDescriptor* m_ItemCategories[LFItemCategoryCount];
 	WCHAR* m_AttrCategoryNames[LFAttrCategoryCount+1];
