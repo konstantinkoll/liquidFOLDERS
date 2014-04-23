@@ -63,14 +63,6 @@ END
 
 /////////////////////////////////////////////////////////////////////////////
 //
-// Bitmap
-//
-
-IDB_StoreManager        BITMAP                  "res\\StoreManager_24.bmp"
-IDB_FileDrop            BITMAP                  "res\\FileDrop_24.bmp"
-
-/////////////////////////////////////////////////////////////////////////////
-//
 // Icon
 //
 
@@ -81,8 +73,6 @@ IDI_FolderAll           ICON                    "res\\FLD_All.ico"
 IDI_FolderAdd           ICON                    "res\\FolderAdd_Tiny.ico"
 IDI_StoreProperties     ICON                    "res\\StoreProperties_Tiny.ico"
 IDI_NewStore            ICON                    "res\\StoreNew_Tiny.ico"
-IDI_StoreManager        ICON                    "res\\StoreManager_Small.ico"
-IDI_FileDrop            ICON                    "res\\FileDrop_Small.ico"
 #endif    // Neutral resources
 /////////////////////////////////////////////////////////////////////////////
 
@@ -170,7 +160,7 @@ BEGIN
     IDS_HINT_StoreManager   "Startet den liquidFOLDERS StoreManager."
     IDS_MENU_FileDrop       "&FileDrop starten"
     IDS_HINT_FileDrop       "Startet den liquidFOLDERS FileDrop."
-    IDS_MENU_About          "Über &Explorer-Erweiterung"
+    IDS_MENU_About          "Über &liquidFOLDERS"
     IDS_HINT_About          "Zeigt Informationen und Einstellungen an."
 END
 
@@ -261,7 +251,7 @@ BEGIN
     IDS_HINT_StoreManager   "Abre el StoreManager de liquidFOLDERS."
     IDS_MENU_FileDrop       "Abrir &FileDrop"
     IDS_HINT_FileDrop       "Abre el FileDrop de liquidFOLDERS."
-    IDS_MENU_About          "Acerca del Suplemento de &Explorer"
+    IDS_MENU_About          "Acerca &liquidFOLDERS"
     IDS_HINT_About          "Visualiza información y configuraciones de liquidFOLDERS."
 END
 
@@ -351,7 +341,7 @@ BEGIN
     IDS_HINT_StoreManager   "Lance liquidFOLDERS StoreManager."
     IDS_MENU_FileDrop       "&Lancer FileDrop"
     IDS_HINT_FileDrop       "Lance liquidFOLDERS FileDrop."
-    IDS_MENU_About          "Concernant l'extension de l'&Explorer"
+    IDS_MENU_About          "Concernant &liquidFOLDERS"
     IDS_HINT_About          "Indique des informations et des paramètres."
 END
 
@@ -478,7 +468,7 @@ BEGIN
     IDS_HINT_StoreManager   "Opens the liquidFOLDERS StoreManager."
     IDS_MENU_FileDrop       "Open &FileDrop"
     IDS_HINT_FileDrop       "Opens the liquidFOLDERS FileDrop."
-    IDS_MENU_About          "About &Explorer Extension"
+    IDS_MENU_About          "About &liquidFOLDERS"
     IDS_HINT_About          "Displays liquidFOLDERS information and settings."
 END
 

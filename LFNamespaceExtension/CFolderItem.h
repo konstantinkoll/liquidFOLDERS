@@ -101,7 +101,6 @@ public:
 	virtual BOOL OnExecuteMenuItem(CExecuteMenuitemsEventArgs& e);
 
 	// IShellBrowser
-	virtual void GetToolbarButtons(CPtrList& commands);
 	virtual void OnMergeFrameMenu(CMergeFrameMenuEventArgs& e);
 	virtual void OnExecuteFrameCommand(CExecuteFrameCommandEventArgs& e);
 

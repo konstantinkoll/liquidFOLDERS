@@ -1093,10 +1093,6 @@
 			>
 		</File>
 		<File
-			RelativePath=".\FileDrop_24.bmp"
-			>
-		</File>
-		<File
 			RelativePath=".\FileDrop_Small.ico"
 			>
 		</File>
@@ -1390,10 +1386,6 @@
 		</File>
 		<File
 			RelativePath=".\StoreMaintenance_Small.ico"
-			>
-		</File>
-		<File
-			RelativePath=".\StoreManager_24.bmp"
 			>
 		</File>
 		<File

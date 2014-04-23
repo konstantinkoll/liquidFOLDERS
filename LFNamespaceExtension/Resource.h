@@ -7,11 +7,7 @@
 #define IDI_FolderAdd                   102
 #define IDI_StoreProperties             103
 #define IDI_NewStore                    104
-#define IDI_StoreManager                105
-#define IDI_FileDrop                    106
-#define IDI_DefaultStore                107
-#define IDB_StoreManager                108
-#define IDB_FileDrop                    109
+#define IDI_DefaultStore                105
 #define IDS_InfoTip                     1000
 #define IDS_AttributeComment            1001
 #define IDS_AllFiles                    1002
