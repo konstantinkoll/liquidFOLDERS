@@ -130,7 +130,7 @@ CmdFileDrop::CmdFileDrop(CHAR* StoreID)
 CString CmdFileDrop::GetCaption(CPtrList* /*nseItems*/)
 {
 	CString caption;
-	ENSURE(caption.LoadString(IDS_MENU_FileDrop));
+	ENSURE(caption.LoadString(IDS_MENU_OpenFileDrop));
 	caption.Remove('&');
 
 	return caption;
@@ -139,7 +139,7 @@ CString CmdFileDrop::GetCaption(CPtrList* /*nseItems*/)
 CString CmdFileDrop::GetToolTip(CPtrList* /*nseItems*/)
 {
 	CString hint;
-	ENSURE(hint.LoadString(IDS_HINT_FileDrop));
+	ENSURE(hint.LoadString(IDS_HINT_OpenFileDrop));
 
 	return hint;
 }
