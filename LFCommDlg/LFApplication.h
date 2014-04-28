@@ -47,6 +47,8 @@ typedef BOOL(__stdcall* PFNDWMDEFWINDOWPROC)(HWND hWnd, UINT msg, WPARAM wParam,
 
 typedef HRESULT(__stdcall* PFNSETCURRENTPROCESSEXPLICITAPPUSERMODELID)(PCWSTR AppID);
 
+typedef HRESULT(__stdcall* PFNREGISTERAPPLICATIONRESTART)(PCWSTR CommandLine, DWORD Flags);
+
 struct CDS_Wakeup
 {
 	GUID AppID;
@@ -127,6 +129,9 @@ public:
 	PFNSETCURRENTPROCESSEXPLICITAPPUSERMODELID zSetCurrentProcessExplicitAppUserModelID;
 	BOOL m_ShellLibLoaded;
 
+	PFNREGISTERAPPLICATIONRESTART zRegisterApplicationRestart;
+	BOOL m_KernelLibLoaded;
+
 	virtual BOOL InitInstance();
 	virtual CWnd* OpenCommandLine(WCHAR* CmdLine=NULL);
 	virtual INT ExitInstance();
@@ -171,5 +176,6 @@ private:
 	HMODULE hModThemes;
 	HMODULE hModAero;
 	HMODULE hModShell;
+	HMODULE hModKernel;
 	HANDLE hFontLetterGothic;
 };

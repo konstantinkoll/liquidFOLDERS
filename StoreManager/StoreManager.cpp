@@ -88,6 +88,10 @@ BOOL CStoreManagerApp::InitInstance()
 	if (m_ShellLibLoaded)
 		zSetCurrentProcessExplicitAppUserModelID(L"liquidFOLDERS.StoreManager");
 
+	// RestartManager
+	if (m_KernelLibLoaded)
+		zRegisterApplicationRestart(L"", 8);	// RESTART_NO_REBOOT
+
 	for (UINT a=0; a<LFContextCount; a++)
 	{
 		m_AllowedViews[a] = new LFBitArray(LFViewCount);

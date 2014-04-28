@@ -38,6 +38,10 @@ BOOL CRunCmdApp::InitInstance()
 	if (m_ShellLibLoaded)
 		zSetCurrentProcessExplicitAppUserModelID(L"liquidFOLDERS.LFRunCmd");
 
+	// RestartManager
+	if (m_KernelLibLoaded)
+		zRegisterApplicationRestart(L"", 15);	// RESTART_NO_CRASH | RESTART_NO_HANG | RESTART_NO_PATCH | RESTART_NO_REBOOT
+
 	if (__argc)
 	{
 		CString command(__targv[1]);
