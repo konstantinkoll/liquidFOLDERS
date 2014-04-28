@@ -52,7 +52,7 @@
     <ROW Property="WindowsTypeNT64" MultiBuildValue="DefaultBuild:Windows XP/Vista/Windows 7/Windows 8 x64/Windows 8.1 x64" ValueLocId="-"/>
     <ROW Property="WindowsTypeNT64Display" MultiBuildValue="DefaultBuild:Windows XP/Vista/Windows 7/Windows 8 x64/Windows 8.1 x64" ValueLocId="-"/>
     <ROW Property="WindowsTypeNTDisplay" MultiBuildValue="DefaultBuild:Windows 2000, Windows 2000 Service Pack 1, Windows 2000 Service Pack 2, Windows 2000 Service Pack 3, Windows 2000 Service Pack 4, Windows XP x86, Windows XP x86 Service Pack 1" ValueLocId="-"/>
-    <ATTRIBUTE name="DeletedRows" value="MinBackground@ExitBackground@ShortcutLogoIcon@TabBackground@CompleteSetupIcon@InstallLogoIcon@OptionsLogoIcon@AI_CF_TITLE_TEXT_STYLE@WaitLogoItem@InstallerIcon@LicenseAgreeLogoIcon"/>
+    <ATTRIBUTE name="DeletedRows" value="MinBackground@ExitBackground@ShortcutLogoIcon@TabBackground@CompleteSetupIcon@InstallLogoIcon@OptionsLogoIcon@AI_CF_TITLE_TEXT_STYLE@WaitLogoItem@InstallerIcon@LicenseAgreeLogoIcon@AI_LOG_CHECKBOX"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiDirsComponent">
     <ROW Directory="APPDIR" Directory_Parent="TARGETDIR" DefaultDir="APPDIR:." IsPseudoRoot="1"/>
@@ -66,7 +66,7 @@
     <ROW Directory="TARGETDIR" DefaultDir="SourceDir"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiCompsComponent">
-    <ROW Component="AI_CustomARPName" ComponentId="{95F2A88D-509C-4809-AA93-08DC13ED1CB1}" Directory_="APPDIR" Attributes="4" KeyPath="EstimatedSize" Options="1"/>
+    <ROW Component="AI_CustomARPName" ComponentId="{95F2A88D-509C-4809-AA93-08DC13ED1CB1}" Directory_="APPDIR" Attributes="4" KeyPath="Contact" Options="1"/>
     <ROW Component="AI_DisableModify" ComponentId="{8B0B11A9-7FCA-4F1D-A59D-C6D38E0837AA}" Directory_="APPDIR" Attributes="4" KeyPath="NoModify" Options="1"/>
     <ROW Component="LFCommDlg.dll" ComponentId="{EFEB7EE1-B3F4-433C-BF7B-3437F06605E1}" Directory_="APPDIR" Attributes="0" KeyPath="LFCommDlg.dll"/>
     <ROW Component="LFCore.dll" ComponentId="{9B505893-2785-4480-9EE6-750BCF0B75F5}" Directory_="SystemFolder" Attributes="0" KeyPath="LFCore.dll"/>
@@ -107,6 +107,9 @@
     <ROW RemoveReg="__11" InstallMode="2" Condition="(AI_CLEAN_RESOURCES_UNINSTALL = &quot;1&quot;)"/>
     <ROW RemoveReg="__12" InstallMode="2" Condition="(AI_CLEAN_RESOURCES_UNINSTALL = &quot;1&quot;)"/>
     <ROW RemoveReg="__13" InstallMode="2" Condition="(AI_CLEAN_RESOURCES_UNINSTALL = &quot;1&quot;)"/>
+  </COMPONENT>
+  <COMPONENT cid="caphyon.advinst.msicomp.BootstrOptComponent">
+    <ROW BootstrOptKey="GlobalOptions" GeneralOptions="h" DownloadFolder="[AppDataFolder][|Manufacturer]\[|ProductName]\prerequisites" EulaPathLocId="*"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.BuildComponent">
     <ROW BuildKey="DefaultBuild" BuildName="DefaultBuild" BuildOrder="1" BuildType="1" PackageFolder="." PackageFileName="liquidFOLDERS32" Languages="en;fr;de;es" LangOpt="1" InstallationType="2" CabsLocation="1" UseLzma="true" LzmaMethod="2" LzmaCompressionLevel="4" PackageType="1" FilesInsideExe="true" ExeIconPath="Setup\liquidFOLDERS.ico" ExtractionFolder="[AppDataFolder]\[|ProductName]\install" ExtUI="true" UACExecutionLevel="2"/>
@@ -177,6 +180,7 @@
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiCheckBoxComponent">
     <ROW Property="AI_STARTUP_SH" MsiKey="AI_STARTUP_SH"/>
+    <ATTRIBUTE name="DeletedRows" value="AI_LOG_CHECKBOX"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiControlComponent">
     <ROW Dialog_="AdminBrowseDlg" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1" Text="[CaptionBackground]" Order="100" MsiKey="AdminBrowseDlg#Bitmap"/>
@@ -254,8 +258,7 @@
     <ROW Dialog_="FatalError" Control="Back" Type="PushButton" X="321" Y="333" Width="56" Height="18" Attributes="2" Text="[ButtonText_Back]" TextStyle="DlgFont8" Order="400" TextLocId="-" MsiKey="FatalError#Back" Options="1"/>
     <ROW Dialog_="FatalError" Control="Description2" Type="Text" X="30" Y="295" Width="390" Height="15" Attributes="196611" Text="Click the &quot;Finish&quot; button to exit the [Wizard]." Order="500" TextLocId="Control.Text.FatalError#Description2" MsiKey="FatalError#Description2"/>
     <ROW Dialog_="FatalError" Control="Description1" Type="Text" X="30" Y="250" Width="390" Height="45" Attributes="196611" Text="[ProductName] setup ended prematurely because of an error.  Your system has not been modified.  To install this program at a later time, please run the installation again." Order="600" TextLocId="Control.Text.FatalError#Description1" MsiKey="FatalError#Description1"/>
-    <ROW Dialog_="FatalError" Control="LogCheckBox" Type="CheckBox" X="55" Y="158" Width="10" Height="10" Attributes="2" Property="AI_LOG_CHECKBOX" Order="700" MsiKey="FatalError#LogCheckBox"/>
-    <ROW Dialog_="FatalError" Control="Title" Type="Text" X="30" Y="6" Width="390" Height="40" Attributes="196611" Text="The [ProductName] [Wizard] ended prematurely" TextStyle="TitleFont" Order="800" TextLocId="Control.Text.FatalError#Title" MsiKey="FatalError#Title"/>
+    <ROW Dialog_="FatalError" Control="Title" Type="Text" X="30" Y="6" Width="390" Height="40" Attributes="196611" Text="The [ProductName] [Wizard] ended prematurely" TextStyle="TitleFont" Order="700" TextLocId="Control.Text.FatalError#Title" MsiKey="FatalError#Title"/>
     <ROW Dialog_="FilesInUse" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="450" Height="360" Attributes="1" Text="[CaptionBackground]" Order="100" MsiKey="FilesInUse#Bitmap"/>
     <ROW Dialog_="FilesInUse" Control="Retry" Type="PushButton" X="385" Y="333" Width="56" Height="18" Attributes="3" Text="[ButtonText_Retry]" TextStyle="DlgFont8" Order="200" TextLocId="-" MsiKey="FilesInUse#Retry"/>
     <ROW Dialog_="FilesInUse" Control="Ignore" Type="PushButton" X="321" Y="333" Width="56" Height="18" Attributes="3" Text="[ButtonText_Ignore]" TextStyle="DlgFont8" Order="300" TextLocId="-" MsiKey="FilesInUse#Ignore"/>
@@ -362,11 +365,11 @@
     <ROW Dialog_="WelcomeDlg" Control="Next" Type="PushButton" X="385" Y="333" Width="56" Height="18" Attributes="3" Text="[ButtonText_Next]" TextStyle="DlgFont8" Order="300" TextLocId="-" MsiKey="WelcomeDlg#Next"/>
     <ROW Dialog_="WelcomeDlg" Control="Back" Type="PushButton" X="321" Y="333" Width="56" Height="18" Attributes="2" Text="[ButtonText_Back]" TextStyle="DlgFont8" Order="500" TextLocId="-" MsiKey="WelcomeDlg#Back" Options="1"/>
     <ROW Dialog_="WelcomeDlg" Control="Description" Type="Text" X="30" Y="250" Width="390" Height="60" Attributes="196611" Text="The [Wizard] will install [ProductName] on your computer. Click Next to continue or close the window to exit the [Wizard]." Order="600" TextLocId="Control.Text.WelcomeDlg#DescriptionNoClose" MsiKey="WelcomeDlg#Description"/>
-    <ATTRIBUTE name="DeletedRows" value="AdminWelcomeDlg#Bitmap@VerifyReadyDlg#Title@ExitDialog#HorizontalLine@WelcomeDlg#Title@MaintenanceTypeDlg#RemoveText@PatchWelcomeDlg#Title@ProgressDlg#TitleIcon@AdminWelcomeDlg#Title@LicenseAgreementDlg#TitleIcon@PrepareDlg#TitleIcon@ShortcutsDlg#TitleIcon@ProgressDlg#Title@PrepareDlg#Title@ResumeDlg#Title@MaintenanceTypeDlg#ChangeText@MaintenanceTypeDlg#RepairText@ShortcutsDlg#Title@CustomizeDlg#TitleIcon@LicenseAgreementDlg#Title@OutOfRbDiskDlg#OkButton@MaintenanceWelcomeDlg#Title"/>
+    <ATTRIBUTE name="DeletedRows" value="AdminWelcomeDlg#Bitmap@VerifyReadyDlg#Title@ExitDialog#HorizontalLine@WelcomeDlg#Title@MaintenanceTypeDlg#RemoveText@PatchWelcomeDlg#Title@ProgressDlg#TitleIcon@AdminWelcomeDlg#Title@LicenseAgreementDlg#TitleIcon@PrepareDlg#TitleIcon@ShortcutsDlg#TitleIcon@ProgressDlg#Title@PrepareDlg#Title@ResumeDlg#Title@MaintenanceTypeDlg#ChangeText@MaintenanceTypeDlg#RepairText@ShortcutsDlg#Title@CustomizeDlg#TitleIcon@LicenseAgreementDlg#Title@OutOfRbDiskDlg#OkButton@MaintenanceWelcomeDlg#Title@FatalError#LogCheckBox@FatalError#LogCheckBoxLabel"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiControlConditionComponent">
     <ROW Dialog_="ShortcutsDlg" Control_="StartupShorcutsCheckBox" Action="Hide" Condition="(Not Installed)"/>
-    <ATTRIBUTE name="DeletedRows" value="MaintenanceTypeDlg#ChangeText#Hide#AIEXTERNALUI@LicenseAgreementDlg#EulaAgreeCheckBox#Enable#EulaRead OR NOT AIEXTERNALUI@MaintenanceTypeDlg#RepairText#Hide#AIEXTERNALUI@ShortcutsDlg#StartupShorcutsCheckBox#Show#(Not Installed)@MaintenanceTypeDlg#RemoveText#Hide#AIEXTERNALUI"/>
+    <ATTRIBUTE name="DeletedRows" value="MaintenanceTypeDlg#ChangeText#Hide#AIEXTERNALUI@FatalError#LogCheckBoxLabel#Show#MsiLogFileLocation@LicenseAgreementDlg#EulaAgreeCheckBox#Enable#EulaRead OR NOT AIEXTERNALUI@MaintenanceTypeDlg#RepairText#Hide#AIEXTERNALUI@ShortcutsDlg#StartupShorcutsCheckBox#Show#(Not Installed)@MaintenanceTypeDlg#RemoveText#Hide#AIEXTERNALUI@FatalError#LogCheckBox#Show#MsiLogFileLocation"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiControlEventComponent">
     <ROW Dialog_="WelcomeDlg" Control_="Next" Event="NewDialog" Argument="LicenseAgreementDlg" Condition="AI_INSTALL" Ordering="1"/>
@@ -523,7 +526,6 @@
     <ROW Registry="DisplayIcon" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="DisplayIcon" Value="[ARP_ICON_PATH]" Component_="AI_CustomARPName"/>
     <ROW Registry="DisplayName" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="DisplayName" Value="[AI_PRODUCTNAME_ARP]" Component_="AI_CustomARPName"/>
     <ROW Registry="DisplayVersion" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="DisplayVersion" Value="[ProductVersion]" Component_="AI_CustomARPName"/>
-    <ROW Registry="EstimatedSize" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName]" Name="EstimatedSize" Value="#25000" Component_="AI_CustomARPName"/>
     <ROW Registry="F2D914D_FE57_414F_9F88_A377C7841DA4_1" Root="2" Key="Software\Microsoft\Windows\CurrentVersion\Shell Extensions\Approved" Name="[\{]3F2D914D-FE57-414F-9F88-A377C7841DA4[\}]" Value="liquidFOLDERS.SendTo" Component_="LFNamespaceExtension.dll"/>
     <ROW Registry="F2D914E_FE57_414F_9F88_A377C7841DA4_1" Root="2" Key="Software\Microsoft\Windows\CurrentVersion\Shell Extensions\Approved" Name="[\{]3F2D914E-FE57-414F-9F88-A377C7841DA4[\}]" Value="liquidFOLDERS.DriveMenu" Component_="LFNamespaceExtension.dll"/>
     <ROW Registry="F2D914F_FE57_414F_9F88_A377C7841DA4_1" Root="2" Key="Software\Microsoft\Windows\CurrentVersion\Shell Extensions\Approved" Name="[\{]3F2D914F-FE57-414F-9F88-A377C7841DA4[\}]" Value="liquidFOLDERS.RootFolder" Component_="LFNamespaceExtension.dll"/>
