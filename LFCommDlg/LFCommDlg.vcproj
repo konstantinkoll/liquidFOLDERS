@@ -999,11 +999,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\res\Earthmap_1024.jpg"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Earthmap_2048.jpg"
+				RelativePath=".\res\Earthmap.jpg"
 				>
 			</File>
 			<File

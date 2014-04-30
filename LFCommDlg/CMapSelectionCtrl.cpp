@@ -42,6 +42,7 @@ CMapSelectionCtrl::CMapSelectionCtrl()
 	}
 
 	m_Coord.Latitude = m_Coord.Longitude = 0;
+	m_BackBufferL = m_BackBufferH = 0;
 	m_Blink = TRUE;
 	m_RemainVisible = 0;
 }
@@ -110,8 +111,38 @@ BEGIN_MESSAGE_MAP(CMapSelectionCtrl, CWnd)
 	ON_WM_MOUSEMOVE()
 END_MESSAGE_MAP()
 
-BOOL CMapSelectionCtrl::OnEraseBkgnd(CDC* /*pDC*/)
+BOOL CMapSelectionCtrl::OnEraseBkgnd(CDC* pDC)
 {
+	CRect rect;
+	GetClientRect(rect);
+
+	CDC dc;
+	dc.CreateCompatibleDC(pDC);
+	dc.SetBkMode(TRANSPARENT);
+
+	CBitmap* pOldBitmap;
+	if ((m_BackBufferL!=rect.Width()) || (m_BackBufferH!=rect.Height()))
+	{
+		m_BackBufferL = rect.Width();
+		m_BackBufferH = rect.Height();
+
+		m_BackBuffer.DeleteObject();
+		m_BackBuffer.CreateCompatibleBitmap(pDC, rect.Width(), rect.Height());
+		pOldBitmap = dc.SelectObject(&m_BackBuffer);
+
+		CGdiPlusBitmap* pMap = LFGetApp()->GetCachedResourceImage(IDB_EARTHMAP, _T("JPG"), LFCommDlgDLL.hResource);
+		Graphics g(dc);
+		g.SetCompositingMode(CompositingModeSourceOver);
+		g.DrawImage(pMap->m_pBitmap, 0, 0, rect.Width(), rect.Height());
+	}
+	else
+	{
+		pOldBitmap = dc.SelectObject(&m_BackBuffer);
+	}
+
+	pDC->BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);
+	dc.SelectObject(pOldBitmap);
+
 	return TRUE;
 }
 
@@ -135,19 +166,20 @@ void CMapSelectionCtrl::OnPaint()
 	buffer.CreateCompatibleBitmap(&pDC, rect.Width(), rect.Height());
 	CBitmap* pOldBitmap = dc.SelectObject(&buffer);
 
-	CGdiPlusBitmap* pMap = LFGetApp()->GetCachedResourceImage(IDB_EARTHMAP_1024, _T("JPG"), LFCommDlgDLL.hResource);
-	CGdiPlusBitmap* pIndicator = LFGetApp()->GetCachedResourceImage(IDB_LOCATIONINDICATOR_8, _T("PNG"), LFCommDlgDLL.hResource);
-
-	Graphics g(dc);
-	g.SetCompositingMode(CompositingModeSourceOver);
-	g.DrawImage(pMap->m_pBitmap, 0, 0, rect.Width(), rect.Height());
+	CBrush brush(&m_BackBuffer);
+	dc.FillRect(rect, &brush);
 
 	if (m_Blink)
 	{
 		INT cx = (INT)((m_Coord.Longitude+180)*rect.Width()/360)+1;
 		INT cy = (INT)((m_Coord.Latitude+90)*rect.Height()/180)+1;
+
+		CGdiPlusBitmap* pIndicator = LFGetApp()->GetCachedResourceImage(IDB_LOCATIONINDICATOR_8, _T("PNG"), LFCommDlgDLL.hResource);
 		INT h = pIndicator->m_pBitmap->GetHeight();
 		INT l = pIndicator->m_pBitmap->GetWidth();
+
+		Graphics g(dc);
+		g.SetCompositingMode(CompositingModeSourceOver);
 		g.DrawImage(pIndicator->m_pBitmap, cx-l/2, cy-h/2);
 	}
 

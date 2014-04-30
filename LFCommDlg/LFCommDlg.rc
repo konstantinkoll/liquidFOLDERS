@@ -68,8 +68,7 @@ END
 // JPG
 //
 
-IDB_EARTHMAP_1024       JPG                     "res\\Earthmap_1024.jpg"
-IDB_EARTHMAP_2048       JPG                     "res\\Earthmap_2048.jpg"
+IDB_EARTHMAP            JPG                     "res\\Earthmap.jpg"
 
 /////////////////////////////////////////////////////////////////////////////
 //

@@ -104,7 +104,7 @@ void CMapPreviewCtrl::OnPaint()
 	g.SetSmoothingMode(SmoothingModeAntiAlias);
 	g.SetInterpolationMode(InterpolationModeHighQualityBicubic);
 
-	CGdiPlusBitmap* pMap = LFGetApp()->GetCachedResourceImage(IDB_EARTHMAP_2048, _T("JPG"), LFCommDlgDLL.hResource);
+	CGdiPlusBitmap* pMap = LFGetApp()->GetCachedResourceImage(IDB_EARTHMAP, _T("JPG"), LFCommDlgDLL.hResource);
 	CGdiPlusBitmap* pIndicator = LFGetApp()->GetCachedResourceImage(IDB_LOCATIONINDICATOR_16, _T("PNG"), LFCommDlgDLL.hResource);
 
 	// Karte

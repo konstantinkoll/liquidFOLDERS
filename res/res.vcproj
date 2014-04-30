@@ -1065,19 +1065,11 @@
 			>
 		</File>
 		<File
-			RelativePath=".\Earthmap_1024.jpg"
+			RelativePath=".\Earthmap.jpg"
 			>
 		</File>
 		<File
-			RelativePath=".\Earthmap_1024.png"
-			>
-		</File>
-		<File
-			RelativePath=".\Earthmap_2048.jpg"
-			>
-		</File>
-		<File
-			RelativePath=".\Earthmap_2048.png"
+			RelativePath=".\Earthmap.png"
 			>
 		</File>
 		<File

@@ -38,6 +38,9 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
+	CBitmap m_BackBuffer;
+	INT m_BackBufferL;
+	INT m_BackBufferH;
 	BOOL m_Blink;
 	UINT m_RemainVisible;
 

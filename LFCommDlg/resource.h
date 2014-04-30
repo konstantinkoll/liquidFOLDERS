@@ -10,11 +10,10 @@
 #define IDB_DIVDOWN                     20001
 #define IDB_LOCATIONINDICATOR_8         20002
 #define IDB_LOCATIONINDICATOR_16        20003
-#define IDB_EARTHMAP_1024               20004
-#define IDB_EARTHMAP_2048               20005
-#define IDB_EXPLORERGRADIENT            20006
-#define IDB_ATTRIBUTEICONS_16           20007
-#define IDB_ATTRIBUTEICONS_32           20008
+#define IDB_EARTHMAP                    20004
+#define IDB_EXPLORERGRADIENT            20005
+#define IDB_ATTRIBUTEICONS_16           20006
+#define IDB_ATTRIBUTEICONS_32           20007
 #define IDB_RATING0                     20100
 #define IDB_RATING1                     20101
 #define IDB_RATING2                     20102
