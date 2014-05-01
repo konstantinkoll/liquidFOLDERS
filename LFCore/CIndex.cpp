@@ -264,7 +264,7 @@ unsigned int CIndex::Check(bool Scheduled, bool* pRepaired, LFProgress* pProgres
 			return LFNotEnoughFreeDiscSpace;
 
 	// Reset statistics
-	ZeroMemory(slot->FileCount, sizeof(slot->FileCount)); \
+	ZeroMemory(slot->FileCount, sizeof(slot->FileCount));
 	ZeroMemory(slot->FileSize, sizeof(slot->FileSize));
 
 	// Traverse index
@@ -272,11 +272,12 @@ unsigned int CIndex::Check(bool Scheduled, bool* pRepaired, LFProgress* pProgres
 	LFCoreAttributes* PtrM;
 	while (Tables[IDMaster]->FindNext(ID, (void*&)PtrM))
 	{
-		AddFileToStatistics(PtrM);
-
 		// Operations below modify index
 		if (!Writeable)
+		{
+			AddFileToStatistics(PtrM);
 			continue;
+		}
 
 		wchar_t fn[2*MAX_PATH];
 		if (Scheduled || SlaveReindex)
@@ -303,6 +304,8 @@ unsigned int CIndex::Check(bool Scheduled, bool* pRepaired, LFProgress* pProgres
 			SetFileContext(PtrM, true);
 			Tables[IDMaster]->MakeDirty();
 		}
+
+		AddFileToStatistics(PtrM);
 
 		// Slave index missing?
 		if (SlaveReindex)
