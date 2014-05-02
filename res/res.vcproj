@@ -1333,6 +1333,10 @@
 			>
 		</File>
 		<File
+			RelativePath=".\Remove.ico"
+			>
+		</File>
+		<File
 			RelativePath=".\Reset_Hot_Tiny.ico"
 			>
 		</File>
