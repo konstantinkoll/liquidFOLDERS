@@ -39,9 +39,9 @@ public:
 	CString m_Categories[3][6];
 	CString m_Store;
 	CString m_Folder;
-	LFAttributeDescriptor* m_Attributes[LFAttributeCount];
-	LFItemCategoryDescriptor* m_ItemCategories[LFItemCategoryCount];
-	WCHAR* m_AttrCategoryNames[LFAttrCategoryCount+1];
+	WCHAR m_AttrCategoryNames[LFAttrCategoryCount][256];
+	LFAttributeDescriptor m_Attributes[LFAttributeCount];
+	LFItemCategoryDescriptor m_ItemCategories[LFItemCategoryCount];
 	UINT m_NagCounter;
 
 protected:

@@ -203,7 +203,7 @@ void CMainView::SetHeaderButtons()
 	ASSERT(p_OrganizeButton);
 	ASSERT(p_ViewButton);
 
-	p_OrganizeButton->SetValue(theApp.m_Attributes[theApp.m_Views[m_Context].SortBy]->Name, FALSE);
+	p_OrganizeButton->SetValue(theApp.m_Attributes[theApp.m_Views[m_Context].SortBy].Name, FALSE);
 
 	CString tmpStr;
 	ENSURE(tmpStr.LoadString(IDM_VIEW_FIRST+m_ViewID));
@@ -350,9 +350,10 @@ void CMainView::ShowNotification(UINT Type, CString Message, UINT Command)
 
 void CMainView::ShowNotification(UINT Type, UINT ResID, UINT Command)
 {
-	WCHAR* Message = LFGetErrorText(ResID);
-	ShowNotification(Type, Message, Command);
-	free(Message);
+	WCHAR tmpStr[256];
+	LFGetErrorText(tmpStr, ResID);
+
+	ShowNotification(Type, tmpStr, Command);
 }
 
 void CMainView::AdjustLayout()
@@ -949,7 +950,7 @@ void CMainView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 	// Insert view options command
 	CString mask;
 	ENSURE(mask.LoadString(IDS_CONTEXTMENU_VIEWOPTIONS));
-	tmpStr.Format(mask, theApp.m_Contexts[m_Context]->Name);
+	tmpStr.Format(mask, theApp.m_Contexts[m_Context].Name);
 	pPopup->InsertMenu(0, MF_STRING | MF_BYPOSITION, IDM_VIEW_OPTIONS, tmpStr);
 
 	// Separate sort and view options
@@ -963,7 +964,7 @@ void CMainView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 	}
 
 	// Insert auto dir command
-	if (theApp.m_Contexts[m_Context]->AllowGroups)
+	if (theApp.m_Contexts[m_Context].AllowGroups)
 	{
 		ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_AUTODIRS));
 		pPopup->InsertMenu(0, MF_STRING | MF_BYPOSITION, IDM_ORGANIZE_TOGGLEAUTODIRS, tmpStr);
@@ -971,7 +972,7 @@ void CMainView::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 
 	// Insert sort options command
 	ENSURE(mask.LoadString(IDS_CONTEXTMENU_SORTOPTIONS));
-	tmpStr.Format(mask, theApp.m_Contexts[m_Context]->Name);
+	tmpStr.Format(mask, theApp.m_Contexts[m_Context].Name);
 	pPopup->InsertMenu(0, MF_STRING | MF_BYPOSITION, IDM_ORGANIZE_OPTIONS, tmpStr);
 
 	// Insert "Select all" command
@@ -1247,7 +1248,7 @@ void CMainView::OnUpdateHeaderCommands(CCmdUI* pCmdUI)
 	{
 	case IDM_ORGANIZE_TOGGLEAUTODIRS:
 		pCmdUI->SetCheck((theApp.m_Views[m_Context].AutoDirs) || (m_Context>=LFContextSubfolderDefault));
-		pCmdUI->Enable((theApp.m_Contexts[m_Context]->AllowGroups) && (theApp.m_Views[m_Context].Mode<=LFViewPreview));
+		pCmdUI->Enable((theApp.m_Contexts[m_Context].AllowGroups) && (theApp.m_Views[m_Context].Mode<=LFViewPreview));
 		break;
 	default:
 		pCmdUI->Enable(TRUE);
@@ -1264,8 +1265,8 @@ LRESULT CMainView::OnGetMenu(WPARAM wParam, LPARAM /*lParam*/)
 	switch (wParam)
 	{
 	case IDM_ORGANIZE:
-#define AppendAttribute(hMenu, attr) if (theApp.m_Contexts[m_Context]->AllowedAttributes->IsSet(attr)) { tmpStr = theApp.m_Attributes[attr]->Name; AppendMenu(hMenu, MF_STRING, IDM_ORGANIZE_FIRST+attr, _T("&")+tmpStr); }
-#define AppendSeparator(hMenu, attr) if (theApp.m_Contexts[m_Context]->AllowedAttributes->IsSet(attr)) { AppendMenu(hMenu, MF_SEPARATOR, 0, NULL); }
+#define AppendAttribute(hMenu, attr) if (theApp.m_Contexts[m_Context].AllowedAttributes.IsSet(attr)) { tmpStr = theApp.m_Attributes[attr].Name; AppendMenu(hMenu, MF_STRING, IDM_ORGANIZE_FIRST+attr, _T("&")+tmpStr); }
+#define AppendSeparator(hMenu, attr) if (theApp.m_Contexts[m_Context].AllowedAttributes.IsSet(attr)) { AppendMenu(hMenu, MF_SEPARATOR, 0, NULL); }
 #define AppendPopup(nID) if (GetMenuItemCount(hPopupMenu)) { ENSURE(tmpStr.LoadString(nID)); AppendMenu(hMenu, MF_POPUP | MF_STRING, (UINT_PTR)hPopupMenu, tmpStr); } else { DestroyMenu(hPopupMenu); }
 		AppendAttribute(hMenu, LFAttrFileName);
 		AppendAttribute(hMenu, LFAttrTitle);
@@ -1305,7 +1306,7 @@ LRESULT CMainView::OnGetMenu(WPARAM wParam, LPARAM /*lParam*/)
 		AppendAttribute(hPopupMenu, LFAttrHeight);
 		AppendPopup(IDS_CONTEXTMENU_DIMENSION);
 
-		if (theApp.m_Contexts[m_Context]->AllowGroups)
+		if (theApp.m_Contexts[m_Context].AllowGroups)
 		{
 			AppendMenu(hMenu, MF_SEPARATOR, 0, NULL);
 
@@ -1350,7 +1351,7 @@ void CMainView::OnSort(UINT nID)
 	if (theApp.m_Views[m_Context].SortBy!=nID)
 	{
 		theApp.m_Views[m_Context].SortBy = nID;
-		theApp.m_Views[m_Context].Descending = theApp.m_Attributes[nID]->PreferDescendingSort;
+		theApp.m_Views[m_Context].Descending = theApp.m_Attributes[nID].PreferDescendingSort;
 		theApp.UpdateSortOptions(m_Context);
 	}
 
@@ -1361,7 +1362,7 @@ void CMainView::OnUpdateSortCommands(CCmdUI* pCmdUI)
 {
 	UINT Attr = pCmdUI->m_nID-IDM_ORGANIZE_FIRST;
 
-	pCmdUI->Enable(theApp.m_Contexts[m_Context]->AllowedAttributes->IsSet(Attr));
+	pCmdUI->Enable(theApp.m_Contexts[m_Context].AllowedAttributes.IsSet(Attr));
 	pCmdUI->SetRadio(theApp.m_Views[m_Context].SortBy==Attr);
 }
 

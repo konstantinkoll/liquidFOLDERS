@@ -79,11 +79,9 @@ LRESULT LFStorePropertiesGeneralPage::OnUpdateStore(WPARAM /*wParam*/, LPARAM /*
 		GetDlgItem(IDC_LASTSEENCAPTION)->EnableWindow(p_Store->IndexMode!=LFStoreIndexModeInternal);
 		GetDlgItem(IDC_LASTSEEN)->SetWindowText(p_Store->LastSeen);
 
-		CHAR* pKey = LFGetDefaultStore();
-		if (strcmp(pKey, p_Store->StoreID)==0)
-			m_wndMakeDefault.SetCheck(TRUE);
-
-		free(pKey);
+		CHAR StoreID[LFKeySize];
+		if (LFGetDefaultStore(StoreID))
+			m_wndMakeDefault.SetCheck(strcmp(p_Store->StoreID, StoreID)==0);
 	}
 
 	m_wndStoreName.EnableWindow(*p_StoreValid);

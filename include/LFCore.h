@@ -73,36 +73,19 @@ LFCore_API HICON __stdcall LFGetIcon(unsigned int ResID, int cx, int cy);
 LFCore_API void __stdcall LFInitProgress(LFProgress* pProgress, HWND hWnd, unsigned int MajorCount=0);
 
 
-// Neuen LFAttributeDescriptor erzeugen
-LFCore_API LFAttributeDescriptor* __stdcall LFAllocAttributeDescriptor();
 
 // Informationen über ein Attribut zurückliefern
-LFCore_API LFAttributeDescriptor* __stdcall LFGetAttributeInfo(unsigned int ID);
-
-// Existierenden LFAttributeDescriptor freigeben
-LFCore_API void __stdcall LFFreeAttributeDescriptor(LFAttributeDescriptor* a);
+LFCore_API void __stdcall LFGetAttributeInfo(LFAttributeDescriptor& attr, unsigned int ID);
 
 
 
-// Neuen LFItemCategoryDescriptor erzeugen
-LFCore_API LFItemCategoryDescriptor* __stdcall LFAllocItemCategoryDescriptor();
+// Informationen über ein Attribut zurückliefern
+LFCore_API void __stdcall LFGetContextInfo(LFContextDescriptor& ctx, unsigned int ID);
+
+
 
 // Informationen über eine Kategorie zurückliefern
-LFCore_API LFItemCategoryDescriptor* __stdcall LFGetItemCategoryInfo(unsigned int ID);
-
-// Existierenden LFItemCategoryDescriptor freigeben
-LFCore_API void __stdcall LFFreeItemCategoryDescriptor(LFItemCategoryDescriptor* c);
-
-
-
-// Neuen LFContextDescriptor erzeugen
-LFCore_API LFContextDescriptor* __stdcall LFAllocContextDescriptor();
-
-// Informationen über ein Attribut zurückliefern
-LFCore_API LFContextDescriptor* __stdcall LFGetContextInfo(unsigned int ID);
-
-// Existierenden LFContextDescriptor freigeben
-LFCore_API void __stdcall LFFreeContextDescriptor(LFContextDescriptor* c);
+LFCore_API void __stdcall LFGetItemCategoryInfo(LFItemCategoryDescriptor& cat, unsigned int ID);
 
 
 
@@ -282,17 +265,14 @@ LFCore_API HGLOBAL __stdcall LFCreateLiquidFiles(LFTransactionList* tl);
 
 
 
-// Name einer Item-Kategorie in aktueller Sprache zurückliefern
-LFCore_API wchar_t* __stdcall LFGetItemCategoryName(unsigned int ID);
-
 // Name einer Attribut-Kategorie in aktueller Sprache zurückliefern
-LFCore_API wchar_t* __stdcall LFGetAttrCategoryName(unsigned int ID);
+LFCore_API void __stdcall LFGetAttrCategoryName(wchar_t* pStr, unsigned int ID);
 
 // Name einer Datenquelle in aktueller Sprache zurückliefern
-LFCore_API wchar_t* __stdcall LFGetSourceName(unsigned int ID, bool qualified);
+LFCore_API void __stdcall LFGetSourceName(wchar_t* pStr, unsigned int ID, bool qualified);
 
 // Beschreibung eines Fehlers (LFError...) in aktueller Sprache zurückliefern
-LFCore_API wchar_t* __stdcall LFGetErrorText(unsigned int ID);
+LFCore_API void __stdcall LFGetErrorText(wchar_t* pStr, unsigned int ID);
 
 // Anzeigen eines Fehlers (LFError...) in aktueller Sprache
 LFCore_API void __stdcall LFErrorBox(unsigned int ID, HWND hWnd=NULL);
@@ -374,7 +354,7 @@ LFCore_API LFMaintenanceList* __stdcall LFStoreMaintenance(HWND hWndSource=NULL,
 LFCore_API bool __stdcall LFDefaultStoreAvailable();
 
 // Gibt die ID des aktuellen Default Stores zurück
-LFCore_API char* __stdcall LFGetDefaultStore();
+LFCore_API bool __stdcall LFGetDefaultStore(char* StoreID);
 
 // Gibt den Standardnamen des Default Stores zurück
 LFCore_API void __stdcall LFGetDefaultStoreName(wchar_t* name, size_t cCount);

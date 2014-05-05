@@ -57,7 +57,7 @@ void CFileItem::Serialize(CArchive& ar)
 	for (UINT a=LFLastCoreAttribute+1; a<LFAttributeCount; a++)
 	{
 		v[a].Attr = a;
-		v[a].Type = theApp.m_Attributes[a]->Type;
+		v[a].Type = theApp.m_Attributes[a].Type;
 		LFGetAttributeVariantData(Item, &v[a]);
 
 		if (!LFIsNullVariantData(&v[a]))
@@ -206,7 +206,7 @@ BOOL CFileItem::GetColumnValueEx(VARIANT* value, CShellColumn& column)
 
 	if ((column.index>=0) && (column.index<LFAttributeCount))
 	{
-		UCHAR Type = theApp.m_Attributes[column.index]->Type;
+		UCHAR Type = theApp.m_Attributes[column.index].Type;
 		if ((value->vt!=VT_BSTR) && ((Type==LFTypeRating) || (Type==LFTypeUINT) || (Type==LFTypeINT64) || (Type==LFTypeDouble) || (Type==LFTypeTime)))
 		{
 			LFVariantData v;

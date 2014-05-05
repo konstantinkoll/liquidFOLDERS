@@ -771,9 +771,7 @@ LFCore_API LFSearchResult* LFQuery(LFFilter* f)
 		if ((f->StoreID[0]=='\0') && (f->Mode==LFFilterModeDirectoryTree))
 			if (LFDefaultStoreAvailable())
 			{
-				char* ds = LFGetDefaultStore();
-				strcpy_s(f->StoreID, LFKeySize, ds);
-				free(ds);
+				LFGetDefaultStore(f->StoreID);
 			}
 			else
 			{

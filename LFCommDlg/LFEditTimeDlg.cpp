@@ -63,7 +63,7 @@ BOOL LFEditTimeDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
-	SetWindowText(p_App->m_Attributes[p_Data->Attr]->Name);
+	SetWindowText(p_App->m_Attributes[p_Data->Attr].Name);
 
 	// Symbol für dieses Dialogfeld festlegen. Wird automatisch erledigt
 	// wenn das Hauptfenster der Anwendung kein Dialogfeld ist

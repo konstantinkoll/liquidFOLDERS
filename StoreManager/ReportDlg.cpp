@@ -97,7 +97,7 @@ BOOL ReportDlg::OnInitDialog()
 	li->SetExtendedStyle(li->GetExtendedStyle() | LVS_EX_FULLROWSELECT | LVS_EX_DOUBLEBUFFER);
 	li->SetImageList(&theApp.m_SystemImageListSmall, LVSIL_SMALL);
 	li->SetFont(&theApp.m_DefaultFont, FALSE);
-	li->InsertColumn(0, theApp.m_Attributes[LFAttrFileName]->Name);
+	li->InsertColumn(0, theApp.m_Attributes[LFAttrFileName].Name);
 	li->SetWindowPos(&wndTop, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOOWNERZORDER);
 
 	// Checkbox
@@ -176,9 +176,10 @@ void ReportDlg::OnItemChanged(NMHDR* pNMHDR, LRESULT* /*pResult*/)
 		}
 		else
 		{
-			WCHAR* tmpStr = LFGetErrorText(pFolder->List->m_LastError);
+			WCHAR tmpStr[256];
+			LFGetErrorText(tmpStr, pFolder->List->m_LastError);
+
 			GetDlgItem(IDC_STATUS2)->SetWindowText(tmpStr);
-			free(tmpStr);
 		}
 	}
 }

@@ -181,7 +181,7 @@ void CListView::AdjustHeader(BOOL bShow)
 			HdItem.cxy = p_ViewParameters->ColumnWidth[a];
 
 			if (HdItem.cxy)
-				if (theApp.m_Attributes[a]->Type==LFTypeRating)
+				if (theApp.m_Attributes[a].Type==LFTypeRating)
 				{
 					HdItem.cxy = p_ViewParameters->ColumnWidth[a] = RatingBitmapWidth+4*PADDING;
 				}
@@ -668,7 +668,7 @@ void CListView::DrawTileRows(CDC& dc, CRect& rect, LFItemDescriptor* i, GridItem
 
 __forceinline void CListView::DrawColumn(CDC& dc, CRect& rect, LFItemDescriptor* i, UINT Attr)
 {
-	if (theApp.m_Attributes[Attr]->Type==LFTypeRating)
+	if (theApp.m_Attributes[Attr].Type==LFTypeRating)
 	{
 		if (i->AttributeValues[Attr])
 		{
@@ -694,7 +694,7 @@ __forceinline void CListView::DrawColumn(CDC& dc, CRect& rect, LFItemDescriptor*
 		if (tmpStr[0]!=L'\0')
 		{
 			CRect rectText(rect);
-			dc.DrawText(tmpStr, rectText, (theApp.m_Attributes[Attr]->FormatRight ? DT_RIGHT : DT_LEFT) | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
+			dc.DrawText(tmpStr, rectText, (theApp.m_Attributes[Attr].FormatRight ? DT_RIGHT : DT_LEFT) | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
 		}
 	}
 }
@@ -741,7 +741,7 @@ void CListView::DrawProperty(CDC& dc, CRect& rect, LFItemDescriptor* i, GridItem
 			CRect rectText(rect);
 			if ((Attr!=LFAttrComments) && (Attr!=LFAttrDescription))
 			{
-				CString tmpCaption(theApp.m_Attributes[Attr]->Name);
+				CString tmpCaption(theApp.m_Attributes[Attr].Name);
 				tmpCaption += _T(": ");
 				dc.DrawText(tmpCaption, rectText, DT_LEFT | DT_SINGLELINE);
 				rectText.left += dc.GetTextExtent(tmpCaption).cx;
@@ -832,7 +832,7 @@ INT CListView::GetMaxColumnWidth(UINT Col, INT Max)
 void CListView::AutosizeColumn(UINT Col)
 {
 	m_ViewParameters.ColumnWidth[Col] = p_ViewParameters->ColumnWidth[Col] = 3*PADDING +
-		((Col==LFAttrFileName) ? m_IconSize[0].cx+PADDING+GetMaxLabelWidth(MAXAUTOWIDTH) : (theApp.m_Attributes[Col]->Type==LFTypeRating) ? RatingBitmapWidth+PADDING : GetMaxColumnWidth(Col, MAXAUTOWIDTH));
+		((Col==LFAttrFileName) ? m_IconSize[0].cx+PADDING+GetMaxLabelWidth(MAXAUTOWIDTH) : (theApp.m_Attributes[Col].Type==LFTypeRating) ? RatingBitmapWidth+PADDING : GetMaxColumnWidth(Col, MAXAUTOWIDTH));
 
 	if (m_ViewParameters.ColumnWidth[Col]<MINWIDTH)
 		m_ViewParameters.ColumnWidth[Col] = MINWIDTH;
@@ -884,7 +884,7 @@ INT CListView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	{
 		HDITEM HdItem;
 		HdItem.mask = HDI_TEXT | HDI_FORMAT;
-		HdItem.pszText = theApp.m_Attributes[a]->Name;
+		HdItem.pszText = theApp.m_Attributes[a].Name;
 		HdItem.fmt = HDF_STRING;
 		m_wndHeader.InsertItem(a, &HdItem);
 	}
@@ -903,8 +903,8 @@ void CListView::OnContextMenu(CWnd* pWnd, CPoint point)
 		ASSERT_VALID(pPopup);
 
 		for (INT a=LFLastCoreAttribute-1; a>=0; a--)
-			if ((a!=LFAttrStoreID) && (a!=LFAttrFileID) && (theApp.m_Contexts[m_Context]->AllowedAttributes->IsSet(a)))
-				pPopup->InsertMenu(3, MF_BYPOSITION | MF_STRING, IDM_DETAILS_TOGGLEATTRIBUTE+a, theApp.m_Attributes[a]->Name);
+			if ((a!=LFAttrStoreID) && (a!=LFAttrFileID) && (theApp.m_Contexts[m_Context].AllowedAttributes.IsSet(a)))
+				pPopup->InsertMenu(3, MF_BYPOSITION | MF_STRING, IDM_DETAILS_TOGGLEATTRIBUTE+a, theApp.m_Attributes[a].Name);
 
 		CPoint ptClient(point);
 		ScreenToClient(&ptClient);
@@ -925,7 +925,7 @@ void CListView::OnToggleAttribute(UINT nID)
 	UINT attr = nID-IDM_DETAILS_TOGGLEATTRIBUTE;
 	ASSERT(attr<LFAttributeCount);
 
-	p_ViewParameters->ColumnWidth[attr] = p_ViewParameters->ColumnWidth[attr] ? 0 : theApp.m_Attributes[attr]->RecommendedWidth;
+	p_ViewParameters->ColumnWidth[attr] = p_ViewParameters->ColumnWidth[attr] ? 0 : theApp.m_Attributes[attr].RecommendedWidth;
 	theApp.UpdateViewOptions(m_Context);
 }
 
@@ -935,7 +935,7 @@ void CListView::OnUpdateToggleCommands(CCmdUI* pCmdUI)
 	ASSERT(attr<LFAttributeCount);
 
 	pCmdUI->SetCheck(m_ViewParameters.ColumnWidth[attr]);
-	pCmdUI->Enable(!theApp.m_Attributes[attr]->AlwaysVisible);
+	pCmdUI->Enable(!theApp.m_Attributes[attr].AlwaysVisible);
 }
 
 void CListView::OnAutosizeAll()
@@ -1019,7 +1019,7 @@ void CListView::OnBeginTrack(NMHDR* pNMHDR, LRESULT* pResult)
 	LPNMHEADER pHdr = (LPNMHEADER)pNMHDR;
 
 	if (pHdr->pitem->mask & HDI_WIDTH)
-		*pResult = (theApp.m_Attributes[pHdr->iItem]->Type==LFTypeRating) || (m_ViewParameters.ColumnWidth[pHdr->iItem]==0);
+		*pResult = (theApp.m_Attributes[pHdr->iItem].Type==LFTypeRating) || (m_ViewParameters.ColumnWidth[pHdr->iItem]==0);
 }
 
 void CListView::OnItemChanging(NMHDR* pNMHDR, LRESULT* pResult)
@@ -1047,7 +1047,7 @@ void CListView::OnItemClick(NMHDR* pNMHDR, LRESULT* pResult)
 	{
 		CString msg;
 		ENSURE(msg.LoadString(IDS_ATTRIBUTENOTSORTABLE));
-		MessageBox(msg, theApp.m_Attributes[attr]->Name, MB_OK | MB_ICONWARNING);
+		MessageBox(msg, theApp.m_Attributes[attr].Name, MB_OK | MB_ICONWARNING);
 	
 		return;
 	}
@@ -1059,7 +1059,7 @@ void CListView::OnItemClick(NMHDR* pNMHDR, LRESULT* pResult)
 	else
 	{
 		p_ViewParameters->SortBy = attr;
-		p_ViewParameters->Descending = theApp.m_Attributes[attr]->PreferDescendingSort;
+		p_ViewParameters->Descending = theApp.m_Attributes[attr].PreferDescendingSort;
 	}
 	theApp.UpdateSortOptions(m_Context);
 

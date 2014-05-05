@@ -321,9 +321,9 @@ void CFolderItem::ConvertSearchResult(CGetChildrenEventArgs& e, LFSearchResult* 
 
 		CString tmpStr;
 		ENSURE(tmpStr.LoadString(IDS_NULLFOLDER_NameMask));
-		wcscpy_s(d.DisplayName, 256, theApp.FrmtAttrStr(tmpStr, CString(theApp.m_Attributes[attr]->Name)));
+		wcscpy_s(d.DisplayName, 256, theApp.FrmtAttrStr(tmpStr, CString(theApp.m_Attributes[attr].Name)));
 		ENSURE(tmpStr.LoadString(IDS_NULLFOLDER_CommentMask));
-		wcscpy_s(d.Comment, 256, theApp.FrmtAttrStr(tmpStr, CString(theApp.m_Attributes[attr]->Name)));
+		wcscpy_s(d.Comment, 256, theApp.FrmtAttrStr(tmpStr, CString(theApp.m_Attributes[attr].Name)));
 		ENSURE(tmpStr.LoadString(NullCount==1 ? IDS_FILES_Singular : IDS_FILES_Plural));
 		swprintf_s(d.Description, tmpStr, NullCount);
 
@@ -394,9 +394,9 @@ BOOL CFolderItem::GetChildren(CGetChildrenEventArgs& e)
 						d.Level = Attrs.Level+1;
 						d.Icon = IDI_FLD_Default;
 						d.Type = LFTypeFolder;
-						d.CategoryID = theApp.m_Attributes[a]->Category;
-						wcscpy_s(d.DisplayName, 256, theApp.m_Attributes[a]->Name);
-						wcscpy_s(d.Comment, 256, theApp.FrmtAttrStr(sortStr, theApp.m_Attributes[a]->Name));
+						d.CategoryID = theApp.m_Attributes[a].Category;
+						wcscpy_s(d.DisplayName, 256, theApp.m_Attributes[a].Name);
+						wcscpy_s(d.Comment, 256, theApp.FrmtAttrStr(sortStr, theApp.m_Attributes[a].Name));
 						strcpy_s(d.StoreID, LFKeySize, Attrs.StoreID);
 						sprintf_s(d.FileID, LFKeySize, "%u", a);
 
@@ -781,20 +781,20 @@ BOOL CFolderItem::GetColumn(CShellColumn& column, INT index)
 		return FALSE;
 
 	// Simple settings
-	column.name = theApp.m_Attributes[index]->Name;
-	column.width = theApp.m_Attributes[index]->RecommendedWidth/7;	// Chars, not pixel
-	column.fmt = theApp.m_Attributes[index]->FormatRight ? NSESCF_Right : NSESCF_Left;
+	column.name = theApp.m_Attributes[index].Name;
+	column.width = theApp.m_Attributes[index].RecommendedWidth/7;	// Chars, not pixel
+	column.fmt = theApp.m_Attributes[index].FormatRight ? NSESCF_Right : NSESCF_Left;
 	column.state = (index>LFLastCoreAttribute) ? NSECS_SecondaryUi : (index==LFAttrFileName) ? NSECS_PreferVarCmp : NSECS_None;
 	column.defaultVisible = (index!=LFAttrStoreID) && (index!=LFAttrFileID) && (index!=LFAttrFileCount) && (index!=LFAttrAddTime) && (index!=LFAttrArchiveTime) && (index!=LFAttrDeleteTime);
 	column.index = index;
-	if (theApp.m_Attributes[index]->ShPropertyMapping.ID)
+	if (theApp.m_Attributes[index].ShPropertyMapping.ID)
 	{
-		column.fmtid = theApp.m_Attributes[index]->ShPropertyMapping.Schema;
-		column.pid = theApp.m_Attributes[index]->ShPropertyMapping.ID;
+		column.fmtid = theApp.m_Attributes[index].ShPropertyMapping.Schema;
+		column.pid = theApp.m_Attributes[index].ShPropertyMapping.ID;
 	}
 
 	// Shell column data type
-	switch (theApp.m_Attributes[index]->Type)
+	switch (theApp.m_Attributes[index].Type)
 	{
 	case LFTypeUINT:
 	case LFTypeINT64:

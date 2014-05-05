@@ -9,9 +9,11 @@ LFBitArray::LFBitArray(unsigned int size)
 {
 	m_nSize = size;
 	m_nTAllocated = (m_nSize+TSize-1)/TSize;
+
 	m_pData = (T*)malloc(m_nTAllocated*sizeof(T));
 	assert(m_pData);
-	clear();
+
+	Clear();
 }
 
 LFBitArray::~LFBitArray(void)
@@ -19,12 +21,12 @@ LFBitArray::~LFBitArray(void)
 	free(m_pData);
 }
 
-void LFBitArray::clear()
+void LFBitArray::Clear()
 {
 	memset(m_pData, 0, m_nTAllocated*sizeof(T));
 }
 
-void LFBitArray::set()
+void LFBitArray::Set()
 {
 	memset(m_pData, -1, m_nTAllocated*sizeof(T));
 }
@@ -44,7 +46,8 @@ bool LFBitArray::ContainsOneOf(LFBitArray* B)
 
 	T* ptr=m_pData;
 	for (unsigned int a=0; a<m_nTAllocated; a++)
-		if (ptr[a] & B->m_pData[a]) return true;
+		if (ptr[a] & B->m_pData[a])
+			return true;
 
 	return false;
 }
@@ -55,7 +58,8 @@ bool LFBitArray::ContainsAll(LFBitArray* B)
 	assert(m_pData);
 
 	for (unsigned int a=0; a<m_nTAllocated; a++)
-		if ((B->m_pData[a] & m_pData[a]) != B->m_pData[a]) return false;
+		if ((B->m_pData[a] & m_pData[a]) != B->m_pData[a])
+			return false;
 
 	return true;
 }

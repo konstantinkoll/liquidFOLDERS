@@ -255,7 +255,7 @@ void CInspectorWnd::UpdateAdd(LFItemDescriptor* i, LFSearchResult* pRawFiles)
 		m_Count++;
 
 		for (UINT a=0; a<=LFAttrFileTime; a++)
-			AddValue(i, a, !theApp.m_Attributes[a]->ReadOnly);
+			AddValue(i, a, !theApp.m_Attributes[a].ReadOnly);
 
 		AddValue(i, LFAttrFileCount);
 		AddValue(i, LFAttrFileSize);
@@ -277,7 +277,7 @@ void CInspectorWnd::UpdateAdd(LFItemDescriptor* i, LFSearchResult* pRawFiles)
 
 		for (UINT a=0; a<LFAttributeCount; a++)
 			if (a!=LFAttrDescription)
-				AddValue(i, a, !theApp.m_Attributes[a]->ReadOnly);
+				AddValue(i, a, !theApp.m_Attributes[a].ReadOnly);
 		AddValueVirtual(AttrSource, theApp.m_SourceNames[i->Type & LFTypeSourceMask][0]);
 		break;
 	case LFTypeFolder:
@@ -288,7 +288,7 @@ void CInspectorWnd::UpdateAdd(LFItemDescriptor* i, LFSearchResult* pRawFiles)
 			for (INT a=i->FirstAggregate; a<=i->LastAggregate; a++)
 			{
 				for (UINT b=0; b<LFAttributeCount; b++)
-					AddValue(pRawFiles->m_Items[a], b, !theApp.m_Attributes[b]->ReadOnly);
+					AddValue(pRawFiles->m_Items[a], b, !theApp.m_Attributes[b].ReadOnly);
 				AddValueVirtual(AttrSource, theApp.m_SourceNames[pRawFiles->m_Items[a]->Type & LFTypeSourceMask][0]);
 			}
 		}
@@ -395,8 +395,8 @@ void CInspectorWnd::UpdateFinish()
 	// Werte aktualisieren
 	for (UINT a=0; a<AttrCount; a++)
 		m_wndInspectorGrid.UpdatePropertyState(a, m_AttributeStatus[a]==StatusMultiple,
-		a<LFAttributeCount ? (!theApp.m_Attributes[a]->ReadOnly) && m_AttributeEditable[a] : FALSE,
-		m_AttributeVisible[a] & (m_ShowInternal ? TRUE : a<LFAttributeCount ? (theApp.m_Attributes[a]->Category!=LFAttrCategoryInternal) : FALSE));
+		a<LFAttributeCount ? (!theApp.m_Attributes[a].ReadOnly) && m_AttributeEditable[a] : FALSE,
+		m_AttributeVisible[a] & (m_ShowInternal ? TRUE : a<LFAttributeCount ? (theApp.m_Attributes[a].Category!=LFAttrCategoryInternal) : FALSE));
 
 	// Store
 	m_wndInspectorGrid.SetStore(m_AttributeStatus[LFAttrStoreID]==StatusUsed ? m_AttributeValues[LFAttrStoreID].AnsiString : NULL);

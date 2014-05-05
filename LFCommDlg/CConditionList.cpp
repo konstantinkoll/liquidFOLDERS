@@ -118,7 +118,7 @@ void CConditionList::ConditionToItem(LFFilterCondition* c, LVITEM& lvi)
 	lvi.mask = LVIF_TEXT | LVIF_IMAGE | LVIF_COLUMNS;
 	lvi.cColumns = 2;
 	lvi.puColumns = puColumns;
-	lvi.pszText = p_App->m_Attributes[c->AttrData.Attr]->Name;
+	lvi.pszText = p_App->m_Attributes[c->AttrData.Attr].Name;
 	lvi.iImage = GetAttributeIconIndex(c->AttrData.Attr);
 }
 

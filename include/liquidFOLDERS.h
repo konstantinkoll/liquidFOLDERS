@@ -8,11 +8,6 @@
 #include "..\\LFCore\\resource.h"
 
 
-// BitArray
-
-#include "..\\include\\LFBitArray.h"
-
-
 // Clipboard
 
 #define CFSTR_LIQUIDFILES     L"liquidFOLDERS.liquidFILES"
@@ -182,27 +177,6 @@ struct LFItemCategoryDescriptor
 #define LFContextCount                 19
 
 
-// Context descriptor
-
-struct LFContextDescriptor
-{
-	wchar_t Name[256];
-	wchar_t Comment[256];
-	bool AllowGroups;
-	LFBitArray* AllowedAttributes;
-};
-
-
-// Statistics
-
-struct LFStatistics
-{
-	unsigned int FileCount[LFLastQueryContext+1];
-	__int64 FileSize[LFLastQueryContext+1];
-	unsigned int LastError;
-};
-
-
 // Attributes
 
 #define LFAttrFileName                  0
@@ -368,6 +342,35 @@ struct LFAttributeDescriptor
 };
 
 
+// Context descriptor
+
+#include "..\\include\\LFBitArray.h"
+
+class LFCore_API LFAllowedAttributes : public LFBitArray
+{
+public:
+	LFAllowedAttributes() : LFBitArray(LFAttributeCount) {};
+};
+
+struct LFContextDescriptor
+{
+	wchar_t Name[256];
+	wchar_t Comment[256];
+	bool AllowGroups;
+	LFAllowedAttributes AllowedAttributes;
+};
+
+
+// Statistics
+
+struct LFStatistics
+{
+	unsigned int FileCount[LFLastQueryContext+1];
+	__int64 FileSize[LFLastQueryContext+1];
+	unsigned int LastError;
+};
+
+
 // Search filter
 
 #define LFFilterModeStores              1
@@ -475,16 +478,17 @@ struct LFCoreAttributes
 #define LFTypeSourceYouTube             0x0000000C
 #define LFTypeSourceMask                0x0000000F
 
-#define LFTypeDefault                   0x02000000	// Volatile
-#define LFTypeNotMounted                0x04000000
-#define LFTypeGhosted                   0x08000000
-#define LFTypeShortcutAllowed           0x10000000
+#define LFTypeDefault                   0x01000000	// Volatile
+#define LFTypeNotMounted                0x02000000
+#define LFTypeGhosted                   0x04000000
+#define LFTypeShortcutAllowed           0x08000000
 
 #define LFTypeVolume                    0x00000000	// Volatile
-#define LFTypeStore                     0x40000000
-#define LFTypeFile                      0x80000000
-#define LFTypeFolder                    0xC0000000
-#define LFTypeMask                      0xC0000000
+#define LFTypeStore                     0x10000000
+#define LFTypeFile                      0x20000000
+#define LFTypeFolder                    0x30000000
+#define LFTypeOther                     0xF0000000
+#define LFTypeMask                      0xF0000000
 
 #define LFFlagTrash                     0x0001		// Persistent, DO NOT CHANGE
 #define LFFlagNew                       0x0002

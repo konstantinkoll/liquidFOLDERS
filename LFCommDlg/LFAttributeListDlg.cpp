@@ -11,7 +11,8 @@
 static INT CALLBACK MyCompareProc(LPARAM lParam1, LPARAM lParam2, LPARAM /*lParamSort*/)
 {
 	LFApplication* pApp = LFGetApp();
-	return wcscmp(pApp->m_Attributes[(INT)lParam1]->Name, pApp->m_Attributes[(INT)lParam2]->Name);
+
+	return wcscmp(pApp->m_Attributes[(INT)lParam1].Name, pApp->m_Attributes[(INT)lParam2].Name);
 }
 
 
@@ -58,7 +59,7 @@ void LFAttributeListDlg::AddAttribute(CListCtrl* li, UINT attr)
 	ZeroMemory(&lvi, sizeof(lvi));
 	lvi.mask = LVIF_TEXT | LVIF_IMAGE | LVIF_PARAM;
 	lvi.lParam = (LPARAM)attr;
-	lvi.pszText = p_App->m_Attributes[attr]->Name;
+	lvi.pszText = p_App->m_Attributes[attr].Name;
 	lvi.iImage = GetAttributeIconIndex(attr);
 	lvi.iItem = li->GetItemCount();
 

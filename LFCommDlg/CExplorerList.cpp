@@ -88,7 +88,7 @@ void CExplorerList::AddCategory(INT ID, CString Name, CString Hint, BOOL Collaps
 void CExplorerList::AddItemCategories()
 {
 	for (UINT a=0; a<LFItemCategoryCount; a++)
-		AddCategory(a, p_App->m_ItemCategories[a]->Caption, p_App->m_ItemCategories[a]->Hint);
+		AddCategory(a, p_App->m_ItemCategories[a].Caption, p_App->m_ItemCategories[a].Hint);
 }
 
 void CExplorerList::AddColumn(INT ID, CString Name)
@@ -109,9 +109,9 @@ void CExplorerList::AddColumn(INT ID, UINT Attr)
 	ZeroMemory(&lvc, sizeof(lvc));
 
 	lvc.mask = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
-	lvc.pszText = p_App->m_Attributes[Attr]->Name;
-	lvc.cx = p_App->m_Attributes[Attr]->RecommendedWidth;
-	lvc.fmt = p_App->m_Attributes[Attr]->FormatRight ? LVCFMT_RIGHT : LVCFMT_LEFT;
+	lvc.pszText = p_App->m_Attributes[Attr].Name;
+	lvc.cx = p_App->m_Attributes[Attr].RecommendedWidth;
+	lvc.fmt = p_App->m_Attributes[Attr].FormatRight ? LVCFMT_RIGHT : LVCFMT_LEFT;
 	lvc.iSubItem = ID;
 
 	InsertColumn(ID, &lvc);

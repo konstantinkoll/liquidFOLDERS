@@ -187,9 +187,7 @@ CWnd* CStoreManagerApp::OpenCommandLine(WCHAR* CmdLine)
 			}
 			else
 			{
-				CHAR* pDefaultStore = LFGetDefaultStore();
-				strcpy_s(StoreID, LFKeySize, pDefaultStore);
-				free(pDefaultStore);
+				LFGetDefaultStore(StoreID);
 			}
 
 			return GetFileDrop(StoreID);
@@ -508,15 +506,15 @@ void CStoreManagerApp::LoadViewOptions(UINT context)
 
 	if ((m_Views[context].Mode>=LFViewCount) || (!m_AllowedViews[context]->IsSet(m_Views[context].Mode)))
 		m_Views[context].Mode = DefaultMode;
-	if (!m_Contexts[context]->AllowedAttributes->IsSet(m_Views[context].SortBy))
+	if (!m_Contexts[context].AllowedAttributes.IsSet(m_Views[context].SortBy))
 		m_Views[context].SortBy = DefaultSortBy;
 
 	for (UINT a=0; a<LFAttributeCount; a++)
 	{
 		m_Views[context].ColumnOrder[a] = a;
-		if (m_Contexts[context]->AllowedAttributes->IsSet(a) && (a!=LFAttrStoreID) && (a!=LFAttrFileID) && (a!=LFAttrFileFormat))
+		if (m_Contexts[context].AllowedAttributes.IsSet(a) && (a!=LFAttrStoreID) && (a!=LFAttrFileID) && (a!=LFAttrFileFormat))
 		{
-			m_Views[context].ColumnWidth[a] = m_Attributes[a]->RecommendedWidth;
+			m_Views[context].ColumnWidth[a] = m_Attributes[a].RecommendedWidth;
 		}
 		else
 		{
@@ -527,10 +525,10 @@ void CStoreManagerApp::LoadViewOptions(UINT context)
 	GetBinary(_T("ColumnWidth"), &m_Views[context].ColumnWidth, sizeof(m_Views[context].ColumnWidth));
 
 	for (UINT a=0; a<LFAttributeCount; a++)
-		if (!m_Contexts[context]->AllowedAttributes->IsSet(a))
+		if (!m_Contexts[context].AllowedAttributes.IsSet(a))
 			m_Views[context].ColumnWidth[a] = 0;
 
-	m_Views[context].AutoDirs &= (m_Contexts[context]->AllowGroups==true) || (context>=LFContextSubfolderDefault);
+	m_Views[context].AutoDirs &= (m_Contexts[context].AllowGroups==true) || (context>=LFContextSubfolderDefault);
 
 	SetRegistryBase(_T("Settings"));
 }

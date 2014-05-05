@@ -157,7 +157,7 @@ void CStorePanel::OnPaint()
 
 		WCHAR Buffer[256];
 		LFAttributeToString(p_Item, LFAttrCreationTime, Buffer, 256);
-		CString tmpStr(p_App->m_Attributes[LFAttrCreationTime]->Name);
+		CString tmpStr(p_App->m_Attributes[LFAttrCreationTime].Name);
 		tmpStr += _T(": ");
 		tmpStr += Buffer;
 

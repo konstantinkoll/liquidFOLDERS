@@ -30,7 +30,7 @@ void SortOptionsDlg::DoDataExchange(CDataExchange* pDX)
 
 void SortOptionsDlg::TestAttribute(UINT attr, BOOL& add, BOOL& check)
 {
-	add = (theApp.m_Contexts[m_Context]->AllowedAttributes->IsSet(attr)) && (theApp.m_Attributes[attr]->Sortable);
+	add = (theApp.m_Contexts[m_Context].AllowedAttributes.IsSet(attr)) && (theApp.m_Attributes[attr].Sortable);
 	check = FALSE;
 }
 
@@ -53,7 +53,7 @@ BOOL SortOptionsDlg::OnInitDialog()
 	CString text;
 	GetWindowText(text);
 	CString caption;
-	caption.Format(text, theApp.m_Contexts[m_Context]->Name);
+	caption.Format(text, theApp.m_Contexts[m_Context].Name);
 	SetWindowText(caption);
 
 	// Attribut-Liste füllen
@@ -66,11 +66,11 @@ BOOL SortOptionsDlg::OnInitDialog()
 		GetDlgItem(IDC_DESCENDING)->EnableWindow(FALSE);
 	}
 
-	if ((p_View->Mode>LFViewPreview) || (!theApp.m_Contexts[m_Context]->AllowGroups))
+	if ((p_View->Mode>LFViewPreview) || (!theApp.m_Contexts[m_Context].AllowGroups))
 	{
 		GetDlgItem(IDC_AUTODIRS)->EnableWindow(FALSE);
 
-		if (!theApp.m_Contexts[m_Context]->AllowGroups)
+		if (!theApp.m_Contexts[m_Context].AllowGroups)
 		{
 			CString tmpStr;
 			ENSURE(tmpStr.LoadString(IDS_SUBFOLDERS_NOTAVAIL));

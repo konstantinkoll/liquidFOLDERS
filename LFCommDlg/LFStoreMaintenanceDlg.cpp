@@ -93,7 +93,7 @@ BOOL LFStoreMaintenanceDlg::OnInitDialog()
 	li->SetExtendedStyle(li->GetExtendedStyle() | LVS_EX_FULLROWSELECT | LVS_EX_DOUBLEBUFFER);
 	li->SetImageList(&pApp->m_CoreImageListSmall, LVSIL_SMALL);
 	li->SetFont(&pApp->m_DefaultFont, FALSE);
-	li->InsertColumn(0, pApp->m_Attributes[LFAttrFileName]->Name);
+	li->InsertColumn(0, pApp->m_Attributes[LFAttrFileName].Name);
 	li->SetWindowPos(&wndTop, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOOWNERZORDER);
 
 	// Seite
@@ -152,9 +152,10 @@ void LFStoreMaintenanceDlg::OnItemChanged(NMHDR* pNMHDR, LRESULT* /*pResult*/)
 		}
 		else
 		{
-			WCHAR* tmpStr = LFGetErrorText(pStore->Result);
+			WCHAR tmpStr[256];
+			LFGetErrorText(tmpStr, pStore->Result);
+
 			GetDlgItem(IDC_STATUS)->SetWindowText(tmpStr);
-			free(tmpStr);
 		}
 	}
 }

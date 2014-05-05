@@ -55,17 +55,17 @@ LFNamespaceExtensionApp::LFNamespaceExtensionApp()
 			m_Categories[0][a] = m_Categories[1][a] = m_Categories[2][a] = _T("?");
 	}
 
+	// Get attribute category names
+	for (UINT a=0; a<LFAttrCategoryCount; a++)
+		LFGetAttrCategoryName(m_AttrCategoryNames[a], a);
+
 	// Get attribute information
 	for (UINT a=0; a<LFAttributeCount; a++)
-		m_Attributes[a] = LFGetAttributeInfo(a);
+		LFGetAttributeInfo(m_Attributes[a], a);
 
 	// Get item category information
 	for (UINT a=0; a<LFItemCategoryCount; a++)
-		m_ItemCategories[a] = LFGetItemCategoryInfo(a);
-
-	// Get category names
-	for (UINT a=0; a<LFAttrCategoryCount+1; a++)
-		m_AttrCategoryNames[a] = LFGetAttrCategoryName(a);
+		LFGetItemCategoryInfo(m_ItemCategories[a], a);
 
 	// Shell-API initalisieren
 	CoInitialize(NULL);
@@ -78,12 +78,6 @@ LFNamespaceExtensionApp::~LFNamespaceExtensionApp()
 {
 	// Shell-API freigeben
 	CoUninitialize();
-
-	// Daten freigeben
-	for (UINT a=0; a<LFAttributeCount; a++)
-		LFFreeAttributeDescriptor(m_Attributes[a]);
-	for (UINT a=0; a<LFItemCategoryCount; a++)
-		LFFreeItemCategoryDescriptor(m_ItemCategories[a]);
 }
 
 
@@ -116,8 +110,8 @@ BOOL LFNamespaceExtensionApp::InitInstance()
 	CString sortStr;
 	ENSURE(sortStr.LoadString(IDS_NULLFOLDER_NameMask));
 
-	m_Categories[0][0] = FrmtAttrStr(sortStr, CString(m_Attributes[LFAttrRating]->Name));
-	m_Categories[1][0] = FrmtAttrStr(sortStr, CString(m_Attributes[LFAttrPriority]->Name));
+	m_Categories[0][0] = FrmtAttrStr(sortStr, CString(m_Attributes[LFAttrRating].Name));
+	m_Categories[1][0] = FrmtAttrStr(sortStr, CString(m_Attributes[LFAttrPriority].Name));
 
 	ResetNagCounter;
 

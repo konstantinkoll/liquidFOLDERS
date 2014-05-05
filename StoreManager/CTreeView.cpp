@@ -1241,7 +1241,7 @@ CString CTreeView::GetColumnCaption(UINT col)
 	if (col)
 		if (m_ColumnMapping[col]!=-1)
 		{
-			tmpStr = theApp.m_Attributes[m_ColumnMapping[col]]->Name;
+			tmpStr = theApp.m_Attributes[m_ColumnMapping[col]].Name;
 		}
 		else
 		{
@@ -2469,7 +2469,7 @@ LRESULT CTreeView::OnChooseProperty(WPARAM wParam, LPARAM /*lParam*/)
 				UpdateColumnCaption(a);
 			}
 			else
-				if ((m_ColumnMapping[a]==dlg.m_Attr) && (theApp.m_Attributes[dlg.m_Attr]->Type!=LFTypeUnicodeArray))
+				if ((m_ColumnMapping[a]==dlg.m_Attr) && (theApp.m_Attributes[dlg.m_Attr].Type!=LFTypeUnicodeArray))
 				{
 					m_ColumnMapping[a] = -1;
 					UpdateColumnCaption(a);

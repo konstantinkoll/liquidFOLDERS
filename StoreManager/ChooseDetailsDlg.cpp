@@ -32,7 +32,7 @@ void ChooseDetailsDlg::DoDataExchange(CDataExchange* pDX)
 		for (INT a=0; a<m_ShowAttributes.GetItemCount(); a++)
 		{
 			UINT attr = (UINT)m_ShowAttributes.GetItemData(a);
-			p_View->ColumnWidth[attr] = m_ShowAttributes.GetCheck(a) ? OldWidth[attr] ? OldWidth[attr] : theApp.m_Attributes[attr]->RecommendedWidth : 0;
+			p_View->ColumnWidth[attr] = m_ShowAttributes.GetCheck(a) ? OldWidth[attr] ? OldWidth[attr] : theApp.m_Attributes[attr].RecommendedWidth : 0;
 		}
 
 		// Reihenfolge
@@ -52,7 +52,7 @@ void ChooseDetailsDlg::DoDataExchange(CDataExchange* pDX)
 
 void ChooseDetailsDlg::TestAttribute(UINT attr, BOOL& add, BOOL& check)
 {
-	add = (theApp.m_Contexts[m_Context]->AllowedAttributes->IsSet(attr)) && (!theApp.m_Attributes[attr]->AlwaysVisible);
+	add = (theApp.m_Contexts[m_Context].AllowedAttributes.IsSet(attr)) && (!theApp.m_Attributes[attr].AlwaysVisible);
 	check = (p_View->ColumnWidth[attr]);
 }
 
@@ -112,7 +112,7 @@ BOOL ChooseDetailsDlg::OnInitDialog()
 	CString text;
 	GetWindowText(text);
 	CString caption;
-	caption.Format(text, theApp.m_Contexts[m_Context]->Name);
+	caption.Format(text, theApp.m_Contexts[m_Context].Name);
 	SetWindowText(caption);
 
 	// Kontrollelemente einstellen

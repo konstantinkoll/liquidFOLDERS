@@ -72,7 +72,7 @@ void WriteGoogleAttribute(CStdioFile* f, LFItemDescriptor* i, UINT attr)
 	if (tmpStr[0]!='\0')
 	{
 		f->WriteString(_T("&lt;b&gt;"));
-		f->WriteString(theApp.m_Attributes[attr]->Name);
+		f->WriteString(theApp.m_Attributes[attr].Name);
 		f->WriteString(_T("&lt;/b&gt;: "));
 		f->WriteString(tmpStr);
 		f->WriteString(_T("&lt;br&gt;"));

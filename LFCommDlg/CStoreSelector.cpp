@@ -222,8 +222,8 @@ void CStoreSelector::GetTooltipData(HICON& hIcon, CSize& Size, CString& Caption,
 
 	CString tmpStr;
 	tmpStr.Format(_T("%s: %s\n%s: %s"),
-		p_App->m_Attributes[LFAttrCreationTime]->Name, tmpBuf1,
-		p_App->m_Attributes[LFAttrFileTime]->Name, tmpBuf2);
+		p_App->m_Attributes[LFAttrCreationTime].Name, tmpBuf1,
+		p_App->m_Attributes[LFAttrFileTime].Name, tmpBuf2);
 	Hint.Append(tmpStr);
 }
 

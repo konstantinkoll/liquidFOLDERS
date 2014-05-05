@@ -25,7 +25,7 @@ LFFilter* GetRootFilter(CHAR* RootStore=NULL)
 	}
 	else
 	{
-		wcscpy_s(f->ResultName, 256, theApp.m_Contexts[LFContextStores]->Name);
+		wcscpy_s(f->ResultName, 256, theApp.m_Contexts[LFContextStores].Name);
 	}
 
 	return f;
@@ -44,7 +44,7 @@ void WriteTXTItem(CStdioFile& f, LFItemDescriptor* i)
 			WCHAR tmpBuf[256];
 			LFVariantDataToString(&v, tmpBuf, 256);
 
-			CString tmpStr(theApp.m_Attributes[attr]->Name);
+			CString tmpStr(theApp.m_Attributes[attr].Name);
 			tmpStr.Append(_T(": "));
 			tmpStr.Append(tmpBuf);
 			tmpStr.Append(_T("\n"));
@@ -87,7 +87,7 @@ void WriteXMLItem(CStdioFile& f, LFItemDescriptor* i)
 			LFVariantDataToString(&v, tmpBuf, 256);
 
 			CString tmpStr;
-			tmpStr.Format(_T("\t\t<property name=\"%s\" id=\"%u\">%s</property>\n"), theApp.m_Attributes[attr]->XMLID, attr, tmpBuf);
+			tmpStr.Format(_T("\t\t<property name=\"%s\" id=\"%u\">%s</property>\n"), theApp.m_Attributes[attr].XMLID, attr, tmpBuf);
 
 			f.WriteString(tmpStr);
 		}
@@ -449,11 +449,11 @@ INT CMainWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 			m_wndContextSidebar.AddCaption(IDS_HOUSEKEEPING);
 			break;
 		case LFContextFilters:
-			m_wndContextSidebar.AddCaption(theApp.m_Contexts[LFContextFilters]->Name);
+			m_wndContextSidebar.AddCaption(theApp.m_Contexts[LFContextFilters].Name);
 			break;
 		}
 
-		m_wndContextSidebar.AddCommand(IDM_NAV_SWITCHCONTEXT+a, a, theApp.m_Contexts[a]->Name, theApp.m_Contexts[a]->Comment, (a==LFContextNew) || (a==LFContextTrash));
+		m_wndContextSidebar.AddCommand(IDM_NAV_SWITCHCONTEXT+a, a, theApp.m_Contexts[a].Name, theApp.m_Contexts[a].Comment, (a==LFContextNew) || (a==LFContextTrash));
 	}
 
 	// Hauptansicht erstellen
@@ -888,7 +888,7 @@ LRESULT CMainWnd::OnCookFiles(WPARAM wParam, LPARAM /*lParam*/)
 	LFSearchResult* pVictim = m_pCookedFiles;
 
 	LFViewParameters* vp = &theApp.m_Views[m_pRawFiles->m_Context];
-	LFAttributeDescriptor* attr = theApp.m_Attributes[vp->SortBy];
+	LFAttributeDescriptor* attr = &theApp.m_Attributes[vp->SortBy];
 
 	if (((!m_IsClipboard) && (vp->AutoDirs) && (!m_pActiveFilter->Options.IsSubfolder)) || (vp->Mode>LFViewPreview))
 	{

@@ -268,25 +268,26 @@ LFApplication::LFApplication(GUID& AppID)
 		ExtractCoreIcons(hModIcons, 128, &m_CoreImageListJumbo);
 	}
 
-	// Get attribute information
-	for (UINT a=0; a<LFAttributeCount; a++)
-		m_Attributes[a] = LFGetAttributeInfo(a);
-
+	// Get attribute category names
 	for (UINT a=0; a<LFAttrCategoryCount; a++)
-		m_AttrCategories[a] = LFGetAttrCategoryName(a);
+		LFGetAttrCategoryName(m_AttrCategoryNames[a], a);
 
 	// Get data source information
 	for (UINT a=0; a<LFSourceCount; a++)
 		for (UINT b=0; b<2; b++)
-			m_SourceNames[a][b] = LFGetSourceName(a, b==1);
+			LFGetSourceName(m_SourceNames[a][b], a, b==1);
+
+	// Get attribute information
+	for (UINT a=0; a<LFAttributeCount; a++)
+		LFGetAttributeInfo(m_Attributes[a], a);
 
 	// Get context information
 	for (UINT a=0; a<LFContextCount; a++)
-		m_Contexts[a] = LFGetContextInfo(a);
+		LFGetContextInfo(m_Contexts[a], a);
 
 	// Get item category information
 	for (UINT a=0; a<LFItemCategoryCount; a++)
-		m_ItemCategories[a] = LFGetItemCategoryInfo(a);
+		LFGetItemCategoryInfo(m_ItemCategories[a], a);
 }
 
 LFApplication::~LFApplication()
@@ -307,17 +308,6 @@ LFApplication::~LFApplication()
 		DeleteObject(m_RatingBitmaps[a]);
 		DeleteObject(m_PriorityBitmaps[a]);
 	}
-	for (UINT a=0; a<LFAttributeCount; a++)
-		LFFreeAttributeDescriptor(m_Attributes[a]);
-	for (UINT a=0; a<LFAttrCategoryCount; a++)
-		delete m_AttrCategories[a];
-	for (UINT a=0; a<LFSourceCount; a++)
-		for (UINT b=0; b<2; b++)
-			delete m_SourceNames[a][b];
-	for (UINT a=0; a<LFContextCount; a++)
-		LFFreeContextDescriptor(m_Contexts[a]);
-	for (UINT a=0; a<LFItemCategoryCount; a++)
-		LFFreeItemCategoryDescriptor(m_ItemCategories[a]);
 }
 
 

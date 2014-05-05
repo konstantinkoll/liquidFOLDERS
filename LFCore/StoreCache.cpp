@@ -59,18 +59,18 @@ LFCore_API bool LFDefaultStoreAvailable()
 	return res;
 }
 
-LFCore_API char* LFGetDefaultStore()
+LFCore_API bool LFGetDefaultStore(char* StoreID)
 {
-	char* StoreID = (char*)(malloc(LFKeySize));
-	*StoreID = '\0';
-
 	if (GetMutex(Mutex_Stores))
 	{
 		strcpy_s(StoreID, LFKeySize, DefaultStore);
 		ReleaseMutex(Mutex_Stores);
+
+		return true;
 	}
 
-	return StoreID;
+	StoreID[0] = '\0';
+	return false;
 }
 
 LFCore_API void LFGetDefaultStoreName(wchar_t* name, size_t cCount)

@@ -24,8 +24,8 @@ public:
 	LFBitArray(unsigned int size);
 	~LFBitArray(void);
 
-	void clear();
-	void set();
+	void Clear();
+	void Set();
 	bool IsSet(unsigned int index);
 	bool ContainsOneOf(LFBitArray* B);
 	bool ContainsAll(LFBitArray* B);

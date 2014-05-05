@@ -47,7 +47,7 @@ void CPropertyHolder::CreateFonts()
 
 CProperty* CPropertyHolder::CreateProperty(LFVariantData* pData)
 {
-	LFAttributeDescriptor* pAttr = p_App->m_Attributes[pData->Attr];
+	LFAttributeDescriptor* pAttr = &p_App->m_Attributes[pData->Attr];
 	CProperty* pProperty;
 
 	switch (pAttr->Type)
@@ -813,7 +813,7 @@ void CInspectorGrid::AddAttributes(LFVariantData* pData)
 			((CPropertyIATA*)pProp)->p_LocationGPS = &pData[LFAttrLocationGPS];
 		}
 
-		LFAttributeDescriptor* pAttr = p_App->m_Attributes[a];
+		LFAttributeDescriptor* pAttr = &p_App->m_Attributes[a];
 		AddProperty(pProp, pAttr->Category, pAttr->Name, !pAttr->ReadOnly);
 	}
 }
@@ -1250,7 +1250,7 @@ void CInspectorGrid::EditProperty(UINT Attr)
 			p_Edit->SetValidChars(pProp->pProperty->GetValidChars());
 			pProp->pProperty->SetEditMask(p_Edit);
 			if (Attr<LFAttributeCount)
-				p_Edit->SetLimitText(p_App->m_Attributes[Attr]->cCharacters);
+				p_Edit->SetLimitText(p_App->m_Attributes[Attr].cCharacters);
 			p_Edit->SetFont(&m_BoldFont);
 			p_Edit->SetFocus();
 			return;
@@ -1382,7 +1382,7 @@ void CInspectorGrid::OnPaint()
 		if (m_Categories[a].Top!=-1)
 		{
 			CRect rect(0, m_Categories[a].Top-m_VScrollPos, rect.Width(), m_Categories[a].Bottom-m_VScrollPos);
-			DrawCategory(dc, rect, p_App->m_AttrCategories[a], Themed);
+			DrawCategory(dc, rect, p_App->m_AttrCategoryNames[a], Themed);
 		}
 
 	// Items

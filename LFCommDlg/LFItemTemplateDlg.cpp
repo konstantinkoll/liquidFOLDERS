@@ -67,7 +67,7 @@ LFItemTemplateDlg::LFItemTemplateDlg(CWnd* pParentWnd, LFItemDescriptor* pItem, 
 			if (pCondition->Compare==LFFilterCompareSubfolder)
 			{
 				UINT Attr = pCondition->AttrData.Attr;
-				if ((!p_App->m_Attributes[Attr]->ReadOnly) && (Attr!=LFAttrFileName))
+				if ((!p_App->m_Attributes[Attr].ReadOnly) && (Attr!=LFAttrFileName))
 				{
 					ASSERT(m_AttributeValues[Attr].Type==pCondition->AttrData.Type);
 					m_AttributeValues[Attr] = pCondition->AttrData;
@@ -194,7 +194,7 @@ BOOL LFItemTemplateDlg::OnInitDialog()
 	m_wndInspectorGrid.AddAttributes(m_AttributeValues);
 
 	for (UINT a=0; a<LFAttributeCount; a++)
-		m_wndInspectorGrid.UpdatePropertyState(a, FALSE, !p_App->m_Attributes[a]->ReadOnly, (!p_App->m_Attributes[a]->ReadOnly) && (a!=LFAttrFileName));
+		m_wndInspectorGrid.UpdatePropertyState(a, FALSE, !p_App->m_Attributes[a].ReadOnly, (!p_App->m_Attributes[a].ReadOnly) && (a!=LFAttrFileName));
 
 	OnSortAlphabetic();
 

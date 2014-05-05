@@ -379,14 +379,13 @@ void CFileDropWnd::OnStoreProperties()
 void CFileDropWnd::OnUpdateStoreCommands(CCmdUI* pCmdUI)
 {
 	BOOL b = m_StoreValid;
-	CHAR* pDefaultStore;
+	CHAR StoreID[LFKeySize];
 
 	switch (pCmdUI->m_nID)
 	{
 	case IDM_STORE_MAKEDEFAULT:
-		pDefaultStore = LFGetDefaultStore();
-		b &= (strcmp(m_Store.StoreID, pDefaultStore)!=0);
-		free(pDefaultStore);
+		LFGetDefaultStore(StoreID);
+		b &= (strcmp(m_Store.StoreID, StoreID)!=0);
 		break;
 	case IDM_STORE_IMPORTFOLDER:
 	case IDM_STORE_MIGRATIONWIZARD:

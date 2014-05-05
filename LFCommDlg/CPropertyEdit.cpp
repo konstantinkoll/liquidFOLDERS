@@ -285,7 +285,7 @@ void CPropertyEdit::CreateProperty()
 		}
 		m_pWndEdit->SetValidChars(p_Property->GetValidChars());
 		p_Property->SetEditMask(m_pWndEdit);
-		m_pWndEdit->SetLimitText(p_App->m_Attributes[m_Data.Attr]->cCharacters);
+		m_pWndEdit->SetLimitText(p_App->m_Attributes[m_Data.Attr].cCharacters);
 		m_pWndEdit->SendMessage(WM_SETFONT, (WPARAM)GetStockObject(DEFAULT_GUI_FONT));
 	}
 	else
@@ -306,7 +306,7 @@ void CPropertyEdit::SetAttribute(UINT Attr)
 {
 	if ((Attr!=m_Data.Attr) || (!p_Property))
 	{
-		LFAttributeDescriptor* pAttr = p_App->m_Attributes[Attr];
+		LFAttributeDescriptor* pAttr = &p_App->m_Attributes[Attr];
 		if (pAttr->Type!=m_Data.Type)
 		{
 			ZeroMemory(&m_Data, sizeof(m_Data));

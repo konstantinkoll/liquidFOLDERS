@@ -314,32 +314,25 @@ LFCore_API void LFInitProgress(LFProgress* pProgress, HWND hWnd, unsigned int Ma
 }
 
 
-LFCore_API LFAttributeDescriptor* LFAllocAttributeDescriptor()
-{
-	LFAttributeDescriptor* a = new LFAttributeDescriptor;
-	ZeroMemory(a, sizeof(LFAttributeDescriptor));
-	return a;
-}
-
 __forceinline void SetRange(unsigned char &var, unsigned int ID, unsigned int lo, unsigned int hi, unsigned char val)
 {
 	if ((ID>=lo) && (ID<=hi))
 		var = val;
 }
 
-LFCore_API LFAttributeDescriptor* LFGetAttributeInfo(unsigned int ID)
+LFCore_API void LFGetAttributeInfo(LFAttributeDescriptor& attr, unsigned int ID)
 {
+	ZeroMemory(&attr, sizeof(LFAttributeDescriptor));
 	if (ID>=LFAttributeCount)
-		return NULL;
+		return;
 
-	LFAttributeDescriptor* a = LFAllocAttributeDescriptor();
-	LoadString(LFCoreModuleHandle, ID+IDS_FirstAttribute, a->Name, 256);
-	a->AlwaysVisible = (ID==LFAttrFileName);
-	a->Type = AttrTypes[ID];
+	LoadString(LFCoreModuleHandle, ID+IDS_FirstAttribute, attr.Name, 256);
+	attr.AlwaysVisible = (ID==LFAttrFileName);
+	attr.Type = AttrTypes[ID];
 
 	wchar_t tmpBuf[256];
 	wchar_t* ptrSrc = tmpBuf;
-	wchar_t* ptrDst = a->XMLID;
+	wchar_t* ptrDst = attr.XMLID;
 	LoadStringEnglish(LFCoreModuleHandle, ID+IDS_FirstAttribute, tmpBuf, 256);
 
 	do
@@ -352,42 +345,42 @@ LFCore_API LFAttributeDescriptor* LFGetAttributeInfo(unsigned int ID)
 	*ptrDst = L'\0';
 
 	// Type and character count (where appropriate)
-	switch (a->Type)
+	switch (attr.Type)
 	{
 	case LFTypeUnicodeString:
 	case LFTypeUnicodeArray:
 	case LFTypeAnsiString:
-		a->cCharacters = (unsigned int)GetAttributeMaxCharacterCount(ID);
+		attr.cCharacters = (unsigned int)GetAttributeMaxCharacterCount(ID);
 		break;
 	case LFTypeFourCC:
-		a->cCharacters = 4;
+		attr.cCharacters = 4;
 		break;
 	}
 
 	// Recommended width
 	const unsigned int rWidths[LFTypeCount] = { 200, 200, 200, 100, 100, 100, 120, 100, 100, 100, 150, 140, 100 };
-	a->RecommendedWidth = (ID==LFAttrComments) ? 350 : rWidths[a->Type];
+	attr.RecommendedWidth = (ID==LFAttrComments) ? 350 : rWidths[attr.Type];
 
 	// Category
 	if (ID<=LFAttrRating)
 	{
-		a->Category = ((ID==LFAttrStoreID) || (ID==LFAttrFileID) || (ID==LFAttrAddTime) || (ID==LFAttrDeleteTime) || (ID==LFAttrFileFormat) || (ID==LFAttrFlags)) ? LFAttrCategoryInternal : LFAttrCategoryBasic;
+		attr.Category = ((ID==LFAttrStoreID) || (ID==LFAttrFileID) || (ID==LFAttrAddTime) || (ID==LFAttrDeleteTime) || (ID==LFAttrFileFormat) || (ID==LFAttrFlags)) ? LFAttrCategoryInternal : LFAttrCategoryBasic;
 	}
 	else
 	{
-		SetRange(a->Category, ID, LFAttrLocationName, LFAttrLocationGPS, LFAttrCategoryGeotags);
-		SetRange(a->Category, ID, LFAttrWidth, LFAttrRoll, LFAttrCategoryVisual);
-		SetRange(a->Category, ID, LFAttrExposure, LFAttrChip, LFAttrCategoryPhotographic);
-		SetRange(a->Category, ID, LFAttrAlbum, LFAttrAudioCodec, LFAttrCategoryAudio);
-		SetRange(a->Category, ID, LFAttrDuration, LFAttrBitrate, LFAttrCategoryTimebased);
-		SetRange(a->Category, ID, LFAttrArtist, LFAttrSignature, LFAttrCategoryBibliographic);
-		SetRange(a->Category, ID, LFAttrFrom, LFAttrCustomer, LFAttrCategoryWorkflow);
-		SetRange(a->Category, ID, LFAttrPriority, LFAttrPriority, LFAttrCategoryWorkflow);
+		SetRange(attr.Category, ID, LFAttrLocationName, LFAttrLocationGPS, LFAttrCategoryGeotags);
+		SetRange(attr.Category, ID, LFAttrWidth, LFAttrRoll, LFAttrCategoryVisual);
+		SetRange(attr.Category, ID, LFAttrExposure, LFAttrChip, LFAttrCategoryPhotographic);
+		SetRange(attr.Category, ID, LFAttrAlbum, LFAttrAudioCodec, LFAttrCategoryAudio);
+		SetRange(attr.Category, ID, LFAttrDuration, LFAttrBitrate, LFAttrCategoryTimebased);
+		SetRange(attr.Category, ID, LFAttrArtist, LFAttrSignature, LFAttrCategoryBibliographic);
+		SetRange(attr.Category, ID, LFAttrFrom, LFAttrCustomer, LFAttrCategoryWorkflow);
+		SetRange(attr.Category, ID, LFAttrPriority, LFAttrPriority, LFAttrCategoryWorkflow);
 	}
 
 	// Sorting
-	a->Sortable = (a->Type!=LFTypeFlags);
-	a->PreferDescendingSort = (a->Type==LFTypeRating) || (a->Type==LFTypeTime) || (a->Type==LFTypeMegapixel);
+	attr.Sortable = (attr.Type!=LFTypeFlags);
+	attr.PreferDescendingSort = (attr.Type==LFTypeRating) || (attr.Type==LFTypeTime) || (attr.Type==LFTypeMegapixel);
 
 	// ReadOnly
 	switch (ID)
@@ -417,118 +410,81 @@ LFCore_API LFAttributeDescriptor* LFGetAttributeInfo(unsigned int ID)
 	case LFAttrFrom:
 	case LFAttrTo:
 	case LFAttrLikeCount:
-		a->ReadOnly = true;
+		attr.ReadOnly = true;
 		break;
 	default:
-		a->ReadOnly = (a->Category==LFAttrCategoryInternal);
+		attr.ReadOnly = (attr.Category==LFAttrCategoryInternal);
 	}
 
 	// Format
-	a->FormatRight = (((a->Type>=LFTypeUINT) && (a->Type!=LFTypeTime)) || (ID==LFAttrStoreID) || (ID==LFAttrFileID));
+	attr.FormatRight = (((attr.Type>=LFTypeUINT) && (attr.Type!=LFTypeTime)) || (ID==LFAttrStoreID) || (ID==LFAttrFileID));
 
 	// Shell property
-	a->ShPropertyMapping = AttrProperties[ID];
-	if (!a->ShPropertyMapping.ID)
+	attr.ShPropertyMapping = AttrProperties[ID];
+	if (!attr.ShPropertyMapping.ID)
 	{
-		a->ShPropertyMapping.Schema = PropertyLF;
-		a->ShPropertyMapping.ID = ID;
+		attr.ShPropertyMapping.Schema = PropertyLF;
+		attr.ShPropertyMapping.ID = ID;
 	}
-
-	return a;
-}
-
-LFCore_API void LFFreeAttributeDescriptor(LFAttributeDescriptor* a)
-{
-	if (a)
-		delete a;
 }
 
 
 LFCore_API LFContextDescriptor* LFAllocContextDescriptor()
 {
 	LFContextDescriptor* c = new LFContextDescriptor;
-	ZeroMemory(c, sizeof(LFContextDescriptor));
 	return c;
 }
 
-LFCore_API LFContextDescriptor* LFGetContextInfo(unsigned int ID)
+LFCore_API void LFGetContextInfo(LFContextDescriptor& ctx, unsigned int ID)
 {
+	ZeroMemory(&ctx, sizeof(LFContextDescriptor)-sizeof(LFAllowedAttributes));
 	if (ID>=LFContextCount)
-		return NULL;
+		return;
 
-	LFContextDescriptor* c = LFAllocContextDescriptor();
-	LoadTwoStrings(LFCoreModuleHandle, IDS_FirstContext+ID, c->Name, 256, c->Comment, 256);
+	LoadTwoStrings(LFCoreModuleHandle, IDS_FirstContext+ID, ctx.Name, 256, ctx.Comment, 256);
 
-	c->AllowGroups = (ID<=LFLastGroupContext) || (ID==LFContextSearch);
+	ctx.AllowGroups = (ID<=LFLastGroupContext) || (ID==LFContextSearch);
 
-	c->AllowedAttributes = new LFBitArray(LFAttributeCount);
-	(*c->AllowedAttributes) += LFAttrFileName;
-	(*c->AllowedAttributes) += LFAttrStoreID;
-	(*c->AllowedAttributes) += LFAttrComments;
+	ctx.AllowedAttributes += LFAttrFileName;
+	ctx.AllowedAttributes += LFAttrStoreID;
+	ctx.AllowedAttributes += LFAttrComments;
 
 	switch (ID)
 	{
 	case LFContextStores:
-		(*c->AllowedAttributes) += LFAttrDescription;
-		(*c->AllowedAttributes) += LFAttrCreationTime;
-		(*c->AllowedAttributes) += LFAttrFileTime;
-		(*c->AllowedAttributes) += LFAttrFileCount;
-		(*c->AllowedAttributes) += LFAttrFileSize;
+		ctx.AllowedAttributes += LFAttrDescription;
+		ctx.AllowedAttributes += LFAttrCreationTime;
+		ctx.AllowedAttributes += LFAttrFileTime;
+		ctx.AllowedAttributes += LFAttrFileCount;
+		ctx.AllowedAttributes += LFAttrFileSize;
 		break;
 	case LFContextFilters:
-		(*c->AllowedAttributes) += LFAttrFileID;
-		(*c->AllowedAttributes) += LFAttrCreationTime;
-		(*c->AllowedAttributes) += LFAttrFileTime;
-		(*c->AllowedAttributes) += LFAttrAddTime;
-		(*c->AllowedAttributes) += LFAttrFileSize;
+		ctx.AllowedAttributes += LFAttrFileID;
+		ctx.AllowedAttributes += LFAttrCreationTime;
+		ctx.AllowedAttributes += LFAttrFileTime;
+		ctx.AllowedAttributes += LFAttrAddTime;
+		ctx.AllowedAttributes += LFAttrFileSize;
 		break;
 	default:
 		if (ID==LFContextArchive)
-			(*c->AllowedAttributes) += LFAttrArchiveTime;
+			ctx.AllowedAttributes += LFAttrArchiveTime;
 		if (ID==LFContextTrash)
-			(*c->AllowedAttributes) += LFAttrDeleteTime;
+			ctx.AllowedAttributes += LFAttrDeleteTime;
 
 		for (unsigned int a=0; a<LFAttributeCount; a++)
 			if ((((a!=LFAttrDescription) && (a!=LFAttrFileCount)) || (ID<LFContextSubfolderDefault)) && (a!=LFAttrArchiveTime) && (a!=LFAttrDeleteTime))
-				(*c->AllowedAttributes) += a;
-	}
-
-	return c;
-}
-
-LFCore_API void LFFreeContextDescriptor(LFContextDescriptor* c)
-{
-	if (c)
-	{
-		if (c->AllowedAttributes)
-			delete c->AllowedAttributes;
-		delete c;
+				ctx.AllowedAttributes += a;
 	}
 }
 
 
-LFCore_API LFItemCategoryDescriptor* LFAllocItemCategoryDescriptor()
+LFCore_API void LFGetItemCategoryInfo(LFItemCategoryDescriptor& cat, unsigned int ID)
 {
-	LFItemCategoryDescriptor* c = new LFItemCategoryDescriptor;
-	ZeroMemory(c, sizeof(LFItemCategoryDescriptor));
-	return c;
-}
-
-LFCore_API LFItemCategoryDescriptor* LFGetItemCategoryInfo(unsigned int ID)
-{
+	ZeroMemory(&cat, sizeof(LFItemCategoryDescriptor));
 	if (ID>=LFItemCategoryCount)
-		return NULL;
+		return;
 
-	LFItemCategoryDescriptor* c = LFAllocItemCategoryDescriptor();
-	LoadTwoStrings(LFCoreModuleHandle, IDS_FirstItemCategory+ID, c->Caption, 256, c->Hint, 256);
-
-	return c;
-}
-
-LFCore_API void LFFreeItemCategoryDescriptor(LFItemCategoryDescriptor* c)
-{
-	if (c)
-		delete c;
+	LoadTwoStrings(LFCoreModuleHandle, IDS_FirstItemCategory+ID, cat.Caption, 256, cat.Hint, 256);
 }
 
 
@@ -795,39 +751,30 @@ LFCore_API HGLOBAL LFCreateLiquidFiles(LFTransactionList* tl)
 }
 
 
-wchar_t* LoadResourceString(unsigned int ID, unsigned int length)
+LFCore_API void LFGetAttrCategoryName(wchar_t* pStr, unsigned int ID)
 {
-	wchar_t* str = new wchar_t[length];
-	*str = L'\0';
-	LoadString(LFCoreModuleHandle, ID, str, length);
-	return str;
+	LoadString(LFCoreModuleHandle, ID+IDS_FirstAttrCategory, pStr, 256);
 }
 
-LFCore_API wchar_t* LFGetAttrCategoryName(unsigned int ID)
+LFCore_API void LFGetSourceName(wchar_t* pStr, unsigned int ID, bool qualified)
 {
-	return LoadResourceString(ID+IDS_FirstAttrCategory, 64);
+	LoadString(LFCoreModuleHandle, ID+(qualified ? IDS_FirstQualifiedSource : IDS_FirstSource), pStr, 256);
 }
 
-LFCore_API wchar_t* LFGetSourceName(unsigned int ID, bool qualified)
+LFCore_API void LFGetErrorText(wchar_t* pStr, unsigned int ID)
 {
-	return LoadResourceString(ID+(qualified ? IDS_FirstQualifiedSource : IDS_FirstSource), 64);
-}
-
-LFCore_API wchar_t* LFGetErrorText(unsigned int ID)
-{
-	return LoadResourceString(ID+IDS_FirstError, 256);
+	LoadString(LFCoreModuleHandle, ID+IDS_FirstError, pStr, 256);
 }
 
 LFCore_API void LFErrorBox(unsigned int ID, HWND hWnd)
 {
 	if (ID>LFCancel)
 	{
-		wchar_t* msg = LFGetErrorText(ID);
 		wchar_t caption[256];
+		wchar_t msg[256];
 		LoadString(LFCoreModuleHandle, IDS_ErrorCaption, caption, 256);
+		LFGetErrorText(msg, ID);
 
 		MessageBox(hWnd, msg, caption, MB_OK | MB_ICONERROR);
-
-		free(msg);
 	}
 }

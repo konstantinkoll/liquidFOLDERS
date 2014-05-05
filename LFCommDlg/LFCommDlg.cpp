@@ -112,8 +112,8 @@ LFCommDlg_API void TooltipDataFromPIDL(LPITEMIDLIST pidl, CImageList* icons, HIC
 
 				CString tmpStr;
 				tmpStr.Format(_T("\n%s: %s\n%s: %s"),
-					pApp->m_Attributes[LFAttrCreationTime]->Name, tmpBuf1,
-					pApp->m_Attributes[LFAttrFileTime]->Name, tmpBuf2);
+					pApp->m_Attributes[LFAttrCreationTime].Name, tmpBuf1,
+					pApp->m_Attributes[LFAttrFileTime].Name, tmpBuf2);
 				hint.Append(tmpStr);
 			}
 			pParentFolder->Release();
@@ -184,7 +184,7 @@ LFCommDlg_API void SetCompareComboBox(CComboBox* pComboBox, UINT attr, INT reque
 	pComboBox->SetRedraw(FALSE);
 	pComboBox->ResetContent();
 
-	switch (LFGetApp()->m_Attributes[attr]->Type)
+	switch (LFGetApp()->m_Attributes[attr].Type)
 	{
 	case LFTypeUnicodeString:
 	case LFTypeAnsiString:

@@ -16,7 +16,7 @@ CGridView::CGridView(UINT DataSize, BOOL EnableLabelEdit)
 	: CFileView(DataSize, TRUE, TRUE, TRUE, TRUE, EnableLabelEdit)
 {
 	for (UINT a=0; a<LFItemCategoryCount; a++)
-		AddItemCategory(theApp.m_ItemCategories[a]->Caption, theApp.m_ItemCategories[a]->Hint);
+		AddItemCategory(theApp.m_ItemCategories[a].Caption, theApp.m_ItemCategories[a].Hint);
 
 	m_HasCategories = FALSE;
 	m_GridArrange = GRIDARRANGE_CUSTOM;

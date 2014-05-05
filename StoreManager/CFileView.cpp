@@ -10,15 +10,15 @@
 
 BOOL AttributeSortableInView(UINT Attr, UINT ViewMode)
 {
-	BOOL b = theApp.m_Attributes[Attr]->Sortable;
+	BOOL b = theApp.m_Attributes[Attr].Sortable;
 	switch (ViewMode)
 	{
 	case LFViewCalendar:
 	case LFViewTimeline:
-		b &= (theApp.m_Attributes[Attr]->Type==LFTypeTime);
+		b &= (theApp.m_Attributes[Attr].Type==LFTypeTime);
 		break;
 	case LFViewGlobe:
-		b &= ((Attr==LFAttrLocationIATA) || (theApp.m_Attributes[Attr]->Type==LFTypeGeoCoordinates));
+		b &= ((Attr==LFAttrLocationIATA) || (theApp.m_Attributes[Attr].Type==LFTypeGeoCoordinates));
 		break;
 	}
 	return b;
@@ -1068,7 +1068,7 @@ void CFileView::AppendString(UINT attr, CString& str, WCHAR* tmpStr)
 				str += _T("\n");
 			if ((attr!=LFAttrComments) && (attr!=LFAttrFileFormat) && (attr!=LFAttrDescription))
 			{
-				str += theApp.m_Attributes[attr]->Name;
+				str += theApp.m_Attributes[attr].Name;
 				str += _T(": ");
 			}
 
