@@ -235,8 +235,7 @@ void CTreeView::OpenFolder(CPoint item)
 
 void CTreeView::DeleteFolder(CPoint item)
 {
-	if (ExecuteContextMenu(item, "delete"))
-		RemoveItem(item.y, item.x);
+	ExecuteContextMenu(item, "delete");
 }
 
 void CTreeView::ShowProperties(CPoint item)
@@ -658,7 +657,7 @@ void CTreeView::RemoveItem(UINT row, UINT col)
 	}
 
 	UINT LastRow = GetChildRect(CPoint(col, row));
-	if (((m_SelectedItem.y>=(INT)row+1) && (m_SelectedItem.y<=(INT)LastRow)) || ((m_SelectedItem.y==(INT)row) && (m_SelectedItem.x>=(INT)col)))
+	if (((m_SelectedItem.y>(INT)row) && (m_SelectedItem.y<=(INT)LastRow)) || ((m_SelectedItem.y==(INT)row) && (m_SelectedItem.x>=(INT)col)))
 	{
 		CPoint item(m_SelectedItem);
 
@@ -696,6 +695,8 @@ void CTreeView::RemoveItem(UINT row, UINT col)
 			for (UINT c=col; c<m_Cols; c++)
 				FreeItem(&m_Tree[MAKEPOS(row, c)]);
 
+			RemoveRows(row+1, LastRow);
+
 			m_Tree[MAKEPOS(row, col-1)].Flags &= ~(CF_CANCOLLAPSE | CF_CANEXPAND | CF_HASCHILDREN);
 		}
 
@@ -707,9 +708,9 @@ void CTreeView::RemoveItem(UINT row, UINT col)
 
 UINT CTreeView::EnumObjects(UINT row, UINT col, BOOL ExpandAll, BOOL FirstInstance)
 {
-	if (!(m_Tree[MAKEPOS(row, col)].Flags & CF_CANEXPAND))
-		return 0;
 	if (col>=MaxColumns-1)
+		return 0;
+	if (!(m_Tree[MAKEPOS(row, col)].Flags & CF_CANEXPAND))
 		return 0;
 
 	Cell* cell = &m_Tree[MAKEPOS(row, col)];
@@ -778,8 +779,6 @@ UINT CTreeView::EnumObjects(UINT row, UINT col, BOOL ExpandAll, BOOL FirstInstan
 
 				if (NewRow)
 				{
-					m_Tree[MAKEPOS(row+Inserted, col+1)].Flags |= CF_HASSIBLINGS;
-
 					Inserted++;
 					InsertRow(row+Inserted);
 					Flags |= CF_ISSIBLING;
@@ -790,6 +789,9 @@ UINT CTreeView::EnumObjects(UINT row, UINT col, BOOL ExpandAll, BOOL FirstInstan
 				}
 
 				SetItem(row+Inserted, col+1, pidlTemp, pidlFQ, Flags);
+				if (NewRow)
+					m_Tree[MAKEPOS(row+Inserted, col+1)].Flags |= CF_ISSIBLING;
+
 				if (ExpandAll)
 					Inserted += EnumObjects(row+Inserted, col+1, TRUE, FALSE);
 
@@ -803,7 +805,7 @@ UINT CTreeView::EnumObjects(UINT row, UINT col, BOOL ExpandAll, BOOL FirstInstan
 	pDesktop->Release();
 
 	if (FirstInstance)
-		for (UINT a=min(row+Inserted, m_Rows-2); a>row; a--)
+		for (INT a=min(row+Inserted, (INT)(m_Rows-2)); a>=(INT)row; a--)
 			for (UINT b=1; b<m_Cols; b++)
 				if (m_Tree[MAKEPOS(a+1, b)].Flags & CF_ISSIBLING)
 				{
@@ -837,7 +839,7 @@ void CTreeView::Collapse(UINT row, UINT col)
 	m_Tree[MAKEPOS(row, col)].Flags |= CF_CANEXPAND;
 
 	UINT LastRow = GetChildRect(CPoint(col, row));
-	if (((m_SelectedItem.y>=(INT)row+1) && (m_SelectedItem.y<=(INT)LastRow)) || ((m_SelectedItem.y==(INT)row) && (m_SelectedItem.x>(INT)col)))
+	if (((m_SelectedItem.y>(INT)row) && (m_SelectedItem.y<=(INT)LastRow)) || ((m_SelectedItem.y==(INT)row) && (m_SelectedItem.x>(INT)col)))
 		m_SelectedItem = CPoint(col, row);
 
 	RemoveRows(row+1, LastRow);
@@ -1019,13 +1021,13 @@ void CTreeView::SetWidgetSize()
 
 UINT CTreeView::GetChildRect(CPoint item)
 {
-	UINT row = item.y;
+	UINT row = item.y+1;
 
 	while (row<m_Rows)
 	{
 		for (INT col=0; col<=item.x; col++)
-			if (m_Tree[MAKEPOS(row+1, col)].pItem)
-				return row;
+			if (m_Tree[MAKEPOS(row, col)].pItem)
+				return row-1;
 
 		row++;
 	}
@@ -1035,7 +1037,7 @@ UINT CTreeView::GetChildRect(CPoint item)
 
 void CTreeView::SelectItem(CPoint Item)
 {
-	if (Item==m_SelectedItem)
+	if ((Item==m_SelectedItem) || (!m_Tree))
 		return;
 
 	if (!m_Tree[MAKEPOSI(Item)].pItem)
