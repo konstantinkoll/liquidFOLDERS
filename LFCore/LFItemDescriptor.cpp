@@ -300,10 +300,10 @@ LFCore_API LFItemDescriptor* LFAllocItemDescriptor(LFStoreDescriptor* s)
 		d->Type |= LFTypeDefault;
 	if (!IsMounted)
 		d->Type |= LFTypeNotMounted | LFTypeGhosted;
-	if (s->IndexMode!=LFStoreIndexModeExternal)
+	if ((s->Mode & LFStoreModeIndexMask)!=LFStoreModeIndexExternal)
 		d->Type |= LFTypeShortcutAllowed;
 
-	if ((s->IndexMode==LFStoreIndexModeHybrid) || (s->IndexMode==LFStoreIndexModeExternal))
+	if ((s->Mode & LFStoreModeIndexMask)!=LFStoreModeIndexInternal)
 		if (wcscmp(s->LastSeen, L"")!=0)
 		{
 			wchar_t ls[256];
@@ -314,7 +314,7 @@ LFCore_API LFItemDescriptor* LFAllocItemDescriptor(LFStoreDescriptor* s)
 			SetAttribute(d, LFAttrDescription, descr);
 		}
 
-	d->CategoryID = (s->IndexMode<=LFStoreIndexModeExternal) ? LFItemCategoryLocalStores : LFItemCategoryRemoteStores;
+	d->CategoryID = (s->Source>LFTypeSourceUSB) ? LFItemCategoryRemoteStores : LFItemCategoryLocalStores;
 	d->IconID = LFGetStoreIcon(s);
 
 	SetAttribute(d, LFAttrFileName, s->StoreName);

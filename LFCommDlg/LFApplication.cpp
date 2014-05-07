@@ -361,7 +361,7 @@ BOOL LFApplication::InitInstance()
 		ZeroMemory(&store, sizeof(store));
 
 		store.Flags = LFStoreFlagAutoLocation;
-		store.IndexMode = LFStoreIndexModeInternal;
+		store.Mode = LFStoreModeIndexInternal | LFStoreModeBackendInternal;
 
 		LFErrorBox(LFCreateStore(&store));
 	}

@@ -273,7 +273,7 @@ void CInspectorWnd::UpdateAdd(LFItemDescriptor* i, LFSearchResult* pRawFiles)
 		if (tmpStr[0]!=L'\0')
 			AddValueVirtual(AttrSynchronizeTime, tmpStr);
 
-		if (s.IndexMode!=LFStoreIndexModeInternal)
+		if ((s.Mode & LFStoreModeIndexMask)!=LFStoreModeIndexInternal)
 			AddValueVirtual(AttrLastSeen, s.LastSeen);
 		break;
 	case LFTypeFile:

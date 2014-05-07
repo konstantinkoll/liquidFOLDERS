@@ -44,13 +44,13 @@ BOOL LFStorePropertiesGeneralPage::OnInitDialog()
 
 	m_wndIcon.SetCoreIcon(LFGetStoreIcon(p_Store));
 
-	if ((p_Store->IndexMode!=LFStoreIndexModeHybrid) && (p_Store->IndexMode!=LFStoreIndexModeExternal))
+	if ((p_Store->Mode & LFStoreModeIndexMask)==LFStoreModeIndexInternal)
 	{
 		m_wndMakeSearchable.ShowWindow(SW_HIDE);
 	}
 	else
 	{
-		m_wndMakeSearchable.SetCheck(p_Store->IndexMode==LFStoreIndexModeHybrid);
+		m_wndMakeSearchable.SetCheck((p_Store->Mode & LFStoreModeIndexMask)==LFStoreModeIndexHybrid);
 	}
 
 	// Store
@@ -76,7 +76,7 @@ LRESULT LFStorePropertiesGeneralPage::OnUpdateStore(WPARAM /*wParam*/, LPARAM /*
 		LFTimeToString(p_Store->FileTime, tmpStr, 256);
 		GetDlgItem(IDC_UPDATED)->SetWindowText(tmpStr);
 
-		GetDlgItem(IDC_LASTSEENCAPTION)->EnableWindow(p_Store->IndexMode!=LFStoreIndexModeInternal);
+		GetDlgItem(IDC_LASTSEENCAPTION)->EnableWindow((p_Store->Mode & LFStoreModeIndexMask)!=LFStoreModeIndexInternal);
 		GetDlgItem(IDC_LASTSEEN)->SetWindowText(p_Store->LastSeen);
 
 		CHAR StoreID[LFKeySize];

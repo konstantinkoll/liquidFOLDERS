@@ -520,9 +520,13 @@ struct LFItemDescriptor
 
 // Store structure
 
-#define LFStoreIndexModeInternal       0
-#define LFStoreIndexModeHybrid         1
-#define LFStoreIndexModeExternal       2
+#define LFStoreModeIndexInternal       0x00
+#define LFStoreModeIndexHybrid         0x01
+#define LFStoreModeIndexExternal       0x02
+#define LFStoreModeIndexMask           0x0F
+
+#define LFStoreModeBackendInternal     0x00000000
+#define LFStoreModeBackendMask         0xF0000000
 
 #define LFStoreFlagAutoLocation        1
 #define LFStoreFlagUnchecked           2
@@ -533,7 +537,7 @@ struct LFStoreDescriptor
 	wchar_t StoreName[256];
 	wchar_t LastSeen[256];
 	wchar_t StoreComment[256];
-	int IndexMode;
+	int Mode;
 	GUID guid;
 	unsigned int Flags;
 	FILETIME CreationTime;

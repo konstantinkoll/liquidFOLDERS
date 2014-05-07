@@ -44,7 +44,7 @@ BOOL LFStoreNewLocalDlg::OnCommand(WPARAM wParam, LPARAM lParam)
 		pPage->m_wndStoreName.GetWindowText(store.StoreName, 256);
 		pPage->m_wndStoreComment.GetWindowText(store.StoreComment, 256);
 
-		store.IndexMode = m_IsRemovable ? pPage->m_wndMakeSearchable.GetCheck() ? LFStoreIndexModeHybrid : LFStoreIndexModeExternal : LFStoreIndexModeInternal;
+		store.Mode = LFStoreModeBackendInternal | (m_IsRemovable ? pPage->m_wndMakeSearchable.GetCheck() ? LFStoreModeIndexHybrid : LFStoreModeIndexExternal : LFStoreModeIndexInternal);
 		if (m_Path[0]==L'\0')
 			store.Flags |= LFStoreFlagAutoLocation;
 

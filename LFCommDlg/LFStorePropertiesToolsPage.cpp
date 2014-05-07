@@ -120,7 +120,7 @@ void LFStorePropertiesToolsPage::OnRunBackup()
 				{
 					LFStoreDescriptor s;
 					if (LFGetStoreSettings(Ptr, &s)==LFOk)
-						if (s.IndexMode!=LFStoreIndexModeExternal)
+						if ((s.Mode & LFStoreModeIndexMask)!=LFStoreModeIndexExternal)
 						{
 							// Header
 							tmpStr = _T("\n[HKEY_CURRENT_USER\\Software\\liquidFOLDERS\\Stores\\");
@@ -133,7 +133,7 @@ void LFStorePropertiesToolsPage::OnRunBackup()
 							f.WriteString(_T("\"Name\"=\"")+tmpStr+_T("\"\n"));
 
 							// Mode
-							tmpStr.Format(_T("\"Mode\"=dword:%.8x\n"), s.IndexMode);
+							tmpStr.Format(_T("\"Mode\"=dword:%.8x\n"), s.Mode);
 							f.WriteString(tmpStr);
 
 							// AutoLocation

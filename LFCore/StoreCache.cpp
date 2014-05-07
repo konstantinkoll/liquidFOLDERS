@@ -113,7 +113,7 @@ void ChooseNewDefaultStore()
 
 	for (unsigned int a=0; a<StoreCount; a++)
 		if (strcmp(DefaultStore, StoreCache[a].StoreID)!=0)
-			if ((no==-1) || (StoreCache[a].IndexMode==LFStoreIndexModeInternal))
+			if ((no==-1) || ((StoreCache[a].Mode & (LFStoreModeBackendMask | LFStoreModeIndexMask))==(LFStoreModeBackendInternal | LFStoreModeIndexInternal)))
 				no = a;
 
 	if (no!=-1)
@@ -172,7 +172,7 @@ unsigned int GetKeyFileFromStoreDescriptor(LFStoreDescriptor* s, wchar_t* fn)
 {
 	assert(s);
 
-	if (s->IndexMode==LFStoreIndexModeInternal)
+	if ((s->Mode & LFStoreModeIndexMask)==LFStoreModeIndexInternal)
 		return LFIllegalStoreDescriptor;
 
 	if (!IsStoreMounted(s))
@@ -210,8 +210,8 @@ bool LoadStoreSettingsFromRegistry(char* StoreID, LFStoreDescriptor* s)
 		sz = sizeof(s->StoreComment);
 		RegQueryValueEx(k, L"Comment", 0, NULL, (BYTE*)&s->StoreComment, &sz);
 
-		sz = sizeof(s->IndexMode);
-		if (RegQueryValueEx(k, L"Mode", 0, NULL, (BYTE*)&s->IndexMode, &sz)!=ERROR_SUCCESS)
+		sz = sizeof(s->Mode);
+		if (RegQueryValueEx(k, L"Mode", 0, NULL, (BYTE*)&s->Mode, &sz)!=ERROR_SUCCESS)
 			res = false;
 
 		sz = sizeof(s->guid);
@@ -240,9 +240,9 @@ bool LoadStoreSettingsFromRegistry(char* StoreID, LFStoreDescriptor* s)
 		if (RegQueryValueEx(k, L"IndexVersion", 0, NULL, (BYTE*)&s->IndexVersion, &sz)!=ERROR_SUCCESS)
 			res = false;
 
-		switch (s->IndexMode)
+		switch (s->Mode & LFStoreModeIndexMask)
 		{
-		case LFStoreIndexModeInternal:
+		case LFStoreModeIndexInternal:
 			s->Source = LFTypeSourceInternal;
 
 			sz = sizeof(s->DatPath);
@@ -251,7 +251,7 @@ bool LoadStoreSettingsFromRegistry(char* StoreID, LFStoreDescriptor* s)
 					res = false;
 
 			break;
-		case LFStoreIndexModeHybrid:
+		case LFStoreModeIndexHybrid:
 			sz = sizeof(s->LastSeen);
 			RegQueryValueEx(k, L"LastSeen", 0, NULL, (BYTE*)&s->LastSeen, &sz);
 		default:
@@ -289,7 +289,7 @@ unsigned int SaveStoreSettingsToRegistry(LFStoreDescriptor* s)
 {
 	assert(s);
 
-	if (s->IndexMode==LFStoreIndexModeExternal)
+	if ((s->Mode & LFStoreModeIndexMask)==LFStoreModeIndexExternal)
 		return LFIllegalStoreDescriptor;
 
 	// Registry-Zugriff
@@ -311,7 +311,7 @@ unsigned int SaveStoreSettingsToRegistry(LFStoreDescriptor* s)
 		if (RegSetValueEx(k, L"Comment", 0, REG_SZ, (BYTE*)s->StoreComment, (DWORD)wcslen(s->StoreComment)*sizeof(wchar_t))!=ERROR_SUCCESS)
 			res = LFRegistryError;
 
-		if (RegSetValueEx(k, L"Mode", 0, REG_DWORD, (BYTE*)&s->IndexMode, sizeof(unsigned int))!=ERROR_SUCCESS)
+		if (RegSetValueEx(k, L"Mode", 0, REG_DWORD, (BYTE*)&s->Mode, sizeof(unsigned int))!=ERROR_SUCCESS)
 			res = LFRegistryError;
 
 		if (RegSetValueEx(k, L"GUID", 0, REG_BINARY, (BYTE*)&s->guid, sizeof(GUID))!=ERROR_SUCCESS)
@@ -335,14 +335,14 @@ unsigned int SaveStoreSettingsToRegistry(LFStoreDescriptor* s)
 		if (RegSetValueEx(k, L"IndexVersion", 0, REG_DWORD, (BYTE*)&s->IndexVersion, sizeof(unsigned int))!=ERROR_SUCCESS)
 			res = LFRegistryError;
 
-		switch (s->IndexMode)
+		switch (s->Mode & LFStoreModeIndexMask)
 		{
-		case LFStoreIndexModeInternal:
+		case LFStoreModeIndexInternal:
 			if (!(s->Flags & LFStoreFlagAutoLocation))
 				if (RegSetValueEx(k, L"Path", 0, REG_SZ, (BYTE*)s->DatPath, (DWORD)wcslen(s->DatPath)*sizeof(wchar_t))!=ERROR_SUCCESS)
 					res = LFRegistryError;
 			break;
-		case LFStoreIndexModeHybrid:
+		case LFStoreModeIndexHybrid:
 			if (RegSetValueEx(k, L"LastSeen", 0, REG_SZ, (BYTE*)s->LastSeen, (DWORD)wcslen(s->LastSeen)*sizeof(wchar_t))!=ERROR_SUCCESS)
 				res = LFRegistryError;
 		default:
@@ -360,7 +360,7 @@ unsigned int SaveStoreSettingsToFile(LFStoreDescriptor* s)
 {
 	assert(s);
 
-	if (s->IndexMode==LFStoreIndexModeInternal)
+	if ((s->Mode & LFStoreModeIndexMask)==LFStoreModeIndexInternal)
 		return LFIllegalStoreDescriptor;
 
 	wchar_t fn[MAX_PATH];
@@ -385,7 +385,7 @@ unsigned int DeleteStoreSettingsFromRegistry(LFStoreDescriptor* s)
 {
 	assert(s);
 
-	if (s->IndexMode==LFStoreIndexModeExternal)
+	if ((s->Mode & LFStoreModeIndexMask)==LFStoreModeIndexExternal)
 		return LFIllegalStoreDescriptor;
 
 	char regkey[256];
@@ -401,7 +401,7 @@ unsigned int DeleteStoreSettingsFromFile(LFStoreDescriptor* s)
 {
 	assert(s);
 
-	if (s->IndexMode==LFStoreIndexModeInternal)
+	if ((s->Mode & LFStoreModeIndexMask)==LFStoreModeIndexInternal)
 		return LFIllegalStoreDescriptor;
 
 	wchar_t fn[MAX_PATH];
@@ -440,10 +440,10 @@ void CreateNewStoreID(char* StoreID)
 void SetStorePaths(LFStoreDescriptor* s, int Source)
 {
 	assert(s);
-	assert((s->IndexMode>=LFStoreIndexModeInternal) && (s->IndexMode<=LFStoreIndexModeExternal));
+	assert((s->IndexMode>=LFStoreModeIndexInternal) && (s->IndexMode<=LFStoreModeIndexExternal));
 
 	// Store name and source of mounted volume
-	if (s->IndexMode!=LFStoreIndexModeInternal)
+	if ((s->Mode & LFStoreModeIndexMask)!=LFStoreModeIndexInternal)
 		if (IsStoreMounted(s))
 		{
 			wchar_t szDriveRoot[] = L" :\\";
@@ -461,11 +461,11 @@ void SetStorePaths(LFStoreDescriptor* s, int Source)
 		}
 
 	// Get automatic data path
-	if ((s->IndexMode==LFStoreIndexModeInternal) && (s->Flags & LFStoreFlagAutoLocation))
+	if (((s->Mode & LFStoreModeIndexMask)==LFStoreModeIndexInternal) && (s->Flags & LFStoreFlagAutoLocation))
 		GetAutoPath(s, s->DatPath);
 
 	// Main index is always subdir of store
-	if ((s->IndexMode!=LFStoreIndexModeHybrid) || (IsStoreMounted(s)))
+	if (((s->Mode & LFStoreModeIndexMask)!=LFStoreModeIndexHybrid) || (IsStoreMounted(s)))
 	{
 		wcscpy_s(s->IdxPathMain, MAX_PATH, s->DatPath);
 		wcscat_s(s->IdxPathMain, MAX_PATH, L"INDEX\\");
@@ -476,7 +476,7 @@ void SetStorePaths(LFStoreDescriptor* s, int Source)
 	}
 
 	// Set aux index for local hybrid stores
-	if (s->IndexMode==LFStoreIndexModeHybrid)
+	if ((s->Mode & LFStoreModeIndexMask)==LFStoreModeIndexHybrid)
 	{
 		GetAutoPath(s, s->IdxPathAux);
 		wcscat_s(s->IdxPathAux, MAX_PATH, L"INDEX\\");
@@ -702,9 +702,9 @@ unsigned int UpdateStore(LFStoreDescriptor* s, bool UpdateTime, bool MakeDefault
 	}
 
 	unsigned int res = LFOk;
-	if (s->IndexMode!=LFStoreIndexModeExternal)
+	if ((s->Mode & LFStoreModeIndexMask)!=LFStoreModeIndexExternal)
 		res = SaveStoreSettingsToRegistry(s);
-	if (s->IndexMode!=LFStoreIndexModeInternal)
+	if ((s->Mode & LFStoreModeIndexMask)!=LFStoreModeIndexInternal)
 		if ((res==LFOk) && (IsStoreMounted(s)))
 			res = SaveStoreSettingsToFile(s);
 
@@ -746,9 +746,9 @@ unsigned int DeleteStore(LFStoreDescriptor* s)
 
 	// Remove persistent records
 	unsigned int res = LFOk;
-	if (victim.IndexMode!=LFStoreIndexModeExternal)
+	if ((victim.Mode & LFStoreModeIndexMask)!=LFStoreModeIndexExternal)
 		res = DeleteStoreSettingsFromRegistry(&victim);
-	if (victim.IndexMode!=LFStoreIndexModeInternal)
+	if ((victim.Mode & LFStoreModeIndexMask)!=LFStoreModeIndexInternal)
 		if ((res==LFOk) && (IsStoreMounted(&victim)))
 			res = DeleteStoreSettingsFromFile(&victim);
 
@@ -815,7 +815,7 @@ unsigned int MountDrive(char cDrive, bool InternalCall)
 			if (LoadStoreSettingsFromFile(f, &s)==true)
 			{
 				// Korrekter Mode?
-				if ((s.IndexMode!=LFStoreIndexModeHybrid) && (s.IndexMode!=LFStoreIndexModeExternal))
+				if ((s.Mode & LFStoreModeIndexMask)==LFStoreModeIndexInternal)
 					continue;
 
 				if (!GetMutex(Mutex_Stores))
@@ -832,7 +832,7 @@ unsigned int MountDrive(char cDrive, bool InternalCall)
 				if (!slot)
 				{
 					// Nicht gefunden: der Store wird hier als externer Store behandelt
-					s.IndexMode = LFStoreIndexModeExternal;
+					s.Mode = (s.Mode & ~LFStoreModeIndexMask) | LFStoreModeIndexExternal;
 
 					// Zum Cache hinzufügen
 					if (StoreCount<MaxStores)
@@ -848,7 +848,7 @@ unsigned int MountDrive(char cDrive, bool InternalCall)
 				else
 				{
 					// Wenn der Store kein Hybrid-Store ist, würde er doppelt gemountet. Überspringen!
-					if (slot->IndexMode!=LFStoreIndexModeHybrid)
+					if ((slot->Mode & LFStoreModeIndexMask)!=LFStoreModeIndexHybrid)
 					{
 						slot = NULL;
 					}
@@ -875,7 +875,7 @@ unsigned int MountDrive(char cDrive, bool InternalCall)
 
 					ChangeOccured = true;
 
-					if (slot->IndexMode!=LFStoreIndexModeHybrid)
+					if ((slot->Mode & LFStoreModeIndexMask)!=LFStoreModeIndexHybrid)
 						goto Finish;
 
 					// Hybrid-Stores in der Registry abspeichern, damit LastSeen aktualisiert wird
@@ -927,7 +927,7 @@ unsigned int UnmountDrive(char cDrive, bool InternalCall)
 
 	for (unsigned int a=0; a<StoreCount; a++)
 		if (IsStoreMounted(&StoreCache[a]))
-			if ((StoreCache[a].DatPath[0]==cDrive) && (StoreCache[a].IndexMode!=LFStoreIndexModeInternal))
+			if ((StoreCache[a].DatPath[0]==cDrive) && ((StoreCache[a].Mode & LFStoreModeIndexMask)!=LFStoreModeIndexInternal))
 			{
 				HANDLE StoreLock;
 				if (!GetMutexForStore(&StoreCache[a], &StoreLock))
@@ -936,14 +936,14 @@ unsigned int UnmountDrive(char cDrive, bool InternalCall)
 					continue;
 				}
 
-				switch (StoreCache[a].IndexMode)
+				switch (StoreCache[a].Mode & LFStoreModeIndexMask)
 				{
-				case LFStoreIndexModeHybrid:
+				case LFStoreModeIndexHybrid:
 					StoreCache[a].DatPath[0] = StoreCache[a].IdxPathMain[0] = '\0';
 					strcpy_s(NotifyIDs[NotifyCount++], LFKeySize, StoreCache[a].StoreID);
 					ChangeOccured = true;
 					break;
-				case LFStoreIndexModeExternal:
+				case LFStoreModeIndexExternal:
 					RemovedDefaultStore |= (strcmp(StoreCache[a].StoreID, DefaultStore)==0);
 					if (a<StoreCount-1)
 					{

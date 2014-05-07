@@ -163,12 +163,12 @@ unsigned int CreateStoreDirectories(LFStoreDescriptor* s)
 			return LFIllegalPhysicalPath;
 
 		// Hide store on external volumes
-		if ((s->IndexMode!=LFStoreIndexModeInternal) && (res==ERROR_SUCCESS))
+		if (((s->Mode & LFStoreModeIndexMask)!=LFStoreModeIndexInternal) && (res==ERROR_SUCCESS))
 			SetFileAttributes(s->DatPath, FILE_ATTRIBUTE_HIDDEN);
 	}
 
 	// Create aux index
-	if (s->IndexMode==LFStoreIndexModeHybrid)
+	if ((s->Mode & LFStoreModeIndexMask)==LFStoreModeIndexHybrid)
 	{
 		wchar_t tmpStr[MAX_PATH];
 		GetAutoPath(s, tmpStr);
@@ -413,7 +413,7 @@ LFCore_API bool LFIsStoreMounted(LFStoreDescriptor* s)
 
 LFCore_API unsigned int LFGetStoreIcon(LFStoreDescriptor* s)
 {
-	return s ? s->IndexMode==LFStoreIndexModeInternal ? IDI_STR_Internal : s->Source+1 : IDI_STR_Unknown;
+	return s ? s->Source+1 : IDI_STR_Unknown;
 }
 
 LFCore_API unsigned int LFCreateStore(LFStoreDescriptor* s, bool MakeDefault, HWND hWndSource)
@@ -525,9 +525,9 @@ LFCore_API unsigned int LFMakeStoreSearchable(char* StoreID, bool Searchable, HW
 
 		#define EXIT(res) { ReleaseMutexForStore(StoreLock); ReleaseMutex(Mutex_Stores); return res; }
 
-		switch (slot->IndexMode)
+		switch (slot->Mode & LFStoreModeIndexMask)
 		{
-		case LFStoreIndexModeHybrid:
+		case LFStoreModeIndexHybrid:
 			if (Searchable)
 				EXIT(LFOk);
 
@@ -549,16 +549,16 @@ LFCore_API unsigned int LFMakeStoreSearchable(char* StoreID, bool Searchable, HW
 				EXIT(res);
 
 			// Convert to external store
-			slot->IndexMode = LFStoreIndexModeExternal;
+			slot->Mode = (slot->Mode & ~LFStoreModeIndexMask) | LFStoreModeIndexExternal;
 			break;
-		case LFStoreIndexModeExternal:
+		case LFStoreModeIndexExternal:
 			if (!Searchable)
 				EXIT(LFOk);
 
 			assert(LFIsStoreMounted(slot));
 
 			// Convert to hybrid store
-			slot->IndexMode = LFStoreIndexModeHybrid;
+			slot->Mode = (slot->Mode & ~LFStoreModeIndexMask) | LFStoreModeIndexHybrid;
 			break;
 		default:
 			EXIT(LFIllegalStoreDescriptor);
@@ -572,7 +572,7 @@ LFCore_API unsigned int LFMakeStoreSearchable(char* StoreID, bool Searchable, HW
 		ReleaseMutex(Mutex_Stores);
 		CHECK_ABORT();
 
-		if (slot->IndexMode==LFStoreIndexModeHybrid)
+		if ((slot->Mode & LFStoreModeIndexMask)==LFStoreModeIndexHybrid)
 		{
 			res = CreateStoreDirectories(slot);
 			CHECK_ABORT();
@@ -813,7 +813,7 @@ unsigned int RunMaintenance(LFStoreDescriptor* s, bool Scheduled, LFProgress* pP
 	}
 
 	// Index prüfen
-	CIndex* idx = new CIndex(s, s->IndexMode!=LFStoreIndexModeHybrid);
+	CIndex* idx = new CIndex(s, (s->Mode & LFStoreModeIndexMask)!=LFStoreModeIndexHybrid);
 
 	bool Repaired = false;
 	res = idx->Check(Scheduled, &Repaired, pProgress);
@@ -832,7 +832,7 @@ unsigned int RunMaintenance(LFStoreDescriptor* s, bool Scheduled, LFProgress* pP
 		s->IndexVersion = CurIdxVersion;
 
 	// Index duplizieren
-	if ((s->IndexMode==LFStoreIndexModeHybrid) && LFIsStoreMounted(s))
+	if (((s->Mode & LFStoreModeIndexMask)==LFStoreModeIndexHybrid) && LFIsStoreMounted(s))
 	{
 		if (!DirWriteable(s->IdxPathMain))
 			ABORT(LFDriveWriteProtected);
@@ -961,12 +961,12 @@ unsigned int OpenStore(char* StoreID, bool WriteAccess, CIndex* &Index1, CIndex*
 	if (WriteAccess)
 	{
 		Index1 = new CIndex(slot, true);
-		if (slot->IndexMode==LFStoreIndexModeHybrid)
+		if ((slot->Mode & LFStoreModeIndexMask)==LFStoreModeIndexHybrid)
 			Index2 = new CIndex(slot, false);
 	}
 	else
 	{
-		Index1 = new CIndex(slot, slot->IndexMode!=LFStoreIndexModeHybrid);
+		Index1 = new CIndex(slot, (slot->Mode & LFStoreModeIndexMask)!=LFStoreModeIndexHybrid);
 	}
 
 	return LFOk;

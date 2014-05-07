@@ -392,7 +392,7 @@ void CFileDropWnd::OnUpdateStoreCommands(CCmdUI* pCmdUI)
 		b &= m_StoreMounted;
 		break;
 	case IDM_STORE_SHORTCUT:
-		b &= (m_Store.IndexMode!=LFStoreIndexModeExternal);
+		b &= ((m_Store.Mode & LFStoreModeIndexMask)!=LFStoreModeIndexExternal);
 		break;
 	case IDM_STORE_RENAME:
 		b = FALSE;
