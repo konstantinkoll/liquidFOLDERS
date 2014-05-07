@@ -23,10 +23,12 @@ protected:
 
 	afx_msg BOOL OnInitDialog();
 	afx_msg void OnRunMaintenance();
+	afx_msg void OnRunSynchronize();
 	afx_msg void OnRunBackup();
 	afx_msg LRESULT OnUpdateStore(WPARAM wParam, LPARAM lParam);
 	DECLARE_MESSAGE_MAP()
 
 private:
-	CString m_Mask;
+	CString m_MaskMaintenance;
+	CString m_MaskSynchronized;
 };

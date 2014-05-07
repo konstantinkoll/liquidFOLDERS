@@ -10,11 +10,12 @@
 #define AttrSource                  LFAttributeCount+0
 #define AttrDriveLetter             LFAttributeCount+1
 #define AttrMaintenanceTime         LFAttributeCount+2
-#define AttrLastSeen                LFAttributeCount+3
-#define AttrIATAAirportName         LFAttributeCount+4
-#define AttrIATAAirportCountry      LFAttributeCount+5
+#define AttrSynchronizeTime         LFAttributeCount+3
+#define AttrLastSeen                LFAttributeCount+4
+#define AttrIATAAirportName         LFAttributeCount+5
+#define AttrIATAAirportCountry      LFAttributeCount+6
 
-#define AttrCount                   LFAttributeCount+6
+#define AttrCount                   LFAttributeCount+7
 
 
 // CIconHeader

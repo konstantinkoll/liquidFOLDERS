@@ -115,6 +115,7 @@ IDB_ATTRIBUTEICONS_16   BITMAP                  "res\\Attributes_16.bmp"
 IDB_ATTRIBUTEICONS_32   BITMAP                  "res\\Attributes_32.bmp"
 IDB_SORTINDICATORS      BITMAP                  "res\\SortIndicators.bmp"
 IDB_STOREBACKUP         BITMAP                  "res\\StoreBackup_32.bmp"
+IDB_STORESYNCHRONIZE    BITMAP                  "res\\StoreSynchronize_32.bmp"
 IDB_SIDEBARSHADOW       BITMAP                  "res\\SidebarShadow.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
@@ -180,7 +181,7 @@ BEGIN
         POPUP "&Dateien hinzufügen"
         BEGIN
             MENUITEM "Verzeichnis &importieren...", IDM_STORE_IMPORTFOLDER
-            MENUITEM "&Migrations-Assistent", IDM_STORE_MIGRATIONWIZARD
+            MENUITEM "&Migrations-Assistent",       IDM_STORE_MIGRATIONWIZARD
         END
         MENUITEM SEPARATOR
         MENUITEM "&Verknüpfung erstellen",      IDM_STORE_SHORTCUT
@@ -463,20 +464,25 @@ BEGIN
     CONTROL         "Offline &durchsuchbar",IDC_MAKESEARCHABLE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,3,116,305,10
 END
 
-IDD_STOREPROPERTIES_TOOLS DIALOGEX 0, 0, 310, 108
+IDD_STOREPROPERTIES_TOOLS DIALOGEX 0, 0, 310, 167
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
 CAPTION "Extras"
 FONT 8, "MS Shell Dlg", 400, 0, 0x0
 BEGIN
-    CONTROL         "",IDC_ICONMAINTENANCE,"CIconCtrl",WS_GROUP,9,13,25,36
     GROUPBOX        "Wartungsarbeiten",IDC_STATIC,4,3,301,53
+    CONTROL         "",IDC_ICONMAINTENANCE,"CIconCtrl",WS_GROUP,9,13,25,36
     LTEXT           "Führt Wartungsarbeiten an allen Stores durch.",IDC_STATIC,40,13,258,8
     LTEXT           "Letzte Wartung dieses Stores: %s",IDC_MAINTENANCE,40,23,258,8,SS_ENDELLIPSIS
     PUSHBUTTON      "&Wartungsarbeiten durchführen",IDC_RUNMAINTENANCE,39,35,120,14
-    GROUPBOX        "Stores",IDC_STATIC,4,60,301,42
+    GROUPBOX        "Synchronisation",IDC_STATIC,4,60,301,53
     CONTROL         20132,IDC_STATIC,"Static",SS_BITMAP,9,70,21,20
-    LTEXT           "Sichert die Einstellungen aller Stores.",IDC_STATIC,40,71,258,8
-    PUSHBUTTON      "&Einstellungen sichern",IDC_RUNBACKUP,39,82,120,14
+    LTEXT           "Synchronisiert den Store mit der Datenquelle.",IDC_STATIC,40,71,258,8
+    LTEXT           "Zuletzt synchronisiert: %s",IDC_SYNCHRONIZED,40,81,258,8,SS_ENDELLIPSIS
+    PUSHBUTTON      "Jetzt &synchronisieren",IDC_RUNSYNCHRONIZE,39,93,120,14
+    GROUPBOX        "Einstellungen",IDC_STATIC,4,118,301,42
+    CONTROL         20133,IDC_STATIC,"Static",SS_BITMAP,9,128,21,20
+    LTEXT           "Sichert die Einstellungen aller Stores.",IDC_STATIC,40,129,258,8
+    PUSHBUTTON      "&Einstellungen sichern",IDC_RUNBACKUP,39,140,120,14
 END
 
 IDD_STOREPROPERTIES_INDEX DIALOGEX 0, 0, 310, 66
@@ -658,7 +664,7 @@ BEGIN
         LEFTMARGIN, 4
         RIGHTMARGIN, 305
         TOPMARGIN, 3
-        BOTTOMMARGIN, 103
+        BOTTOMMARGIN, 162
     END
 
     IDD_STOREPROPERTIES_INDEX, DIALOG
@@ -704,6 +710,10 @@ END
 STRINGTABLE 
 BEGIN
     IDR_APPLICATION         "liquidFOLDERS"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_PURCHASEURL         "http://liquidFOLDERS.net/purchase/de/"
     IDS_UPDATEURL           "http://liquidFOLDERS.net/download/de/"
     IDS_ABOUTURL            "http://liquidFOLDERS.net/start/de/"
@@ -806,8 +816,8 @@ BEGIN
         MENUITEM "Establecer al &store predeterminado", IDM_STORE_MAKEDEFAULT
         POPUP "Agregar &archivos"
         BEGIN
-            MENUITEM "&Importar carpeta...", IDM_STORE_IMPORTFOLDER
-            MENUITEM "Asistente de &migración", IDM_STORE_MIGRATIONWIZARD
+            MENUITEM "&Importar carpeta...",        IDM_STORE_IMPORTFOLDER
+            MENUITEM "Asistente de &migración",     IDM_STORE_MIGRATIONWIZARD
         END
         MENUITEM SEPARATOR
         MENUITEM "Crear &acceso directo",       IDM_STORE_SHORTCUT
@@ -1109,7 +1119,7 @@ BEGIN
     LTEXT           "X",IDC_IDXVERSION,65,55,243,8,SS_ENDELLIPSIS
 END
 
-IDD_STOREPROPERTIES_TOOLS DIALOGEX 0, 0, 310, 108
+IDD_STOREPROPERTIES_TOOLS DIALOGEX 0, 0, 310, 167
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
 CAPTION "Ferramentas"
 FONT 8, "MS Shell Dlg", 400, 0, 0x0
@@ -1119,10 +1129,15 @@ BEGIN
     LTEXT           "Ejecuta trabajo de mantenimiento en todos los stores.",IDC_STATIC,40,13,258,8
     LTEXT           "Mantenimiento de esto store: %s",IDC_MAINTENANCE,40,23,258,8,SS_ENDELLIPSIS
     PUSHBUTTON      "Ejecutar &mantenimiento",IDC_RUNMAINTENANCE,39,35,110,14
-    GROUPBOX        "Stores",IDC_STATIC,4,60,301,42
+    GROUPBOX        "Sincronización",IDC_STATIC,4,60,301,53
     CONTROL         20132,IDC_STATIC,"Static",SS_BITMAP,9,70,21,20
-    LTEXT           "Guarda las configuraciones de todos los stores.",IDC_STATIC,40,71,258,8
-    PUSHBUTTON      "Respaldo &configuraciones",IDC_RUNBACKUP,39,82,110,14
+    LTEXT           "Synchronisiert den Store mit der Datenquelle.",IDC_STATIC,40,71,258,8
+    LTEXT           "Última sincronizado: %s",IDC_SYNCHRONIZED,40,81,258,8,SS_ENDELLIPSIS
+    PUSHBUTTON      "&Sincronizar ahora",IDC_RUNSYNCHRONIZE,39,93,110,14
+    GROUPBOX        "Configuraciones",IDC_STATIC,4,118,301,42
+    CONTROL         20133,IDC_STATIC,"Static",SS_BITMAP,9,128,21,20
+    LTEXT           "Guarda las configuraciones de todos los stores.",IDC_STATIC,40,129,258,8
+    PUSHBUTTON      "Respaldo &configuraciones",IDC_RUNBACKUP,39,140,110,14
 END
 
 IDD_STORENEW_GENERAL DIALOGEX 0, 0, 310, 78
@@ -1295,7 +1310,7 @@ BEGIN
         LEFTMARGIN, 4
         RIGHTMARGIN, 305
         TOPMARGIN, 3
-        BOTTOMMARGIN, 103
+        BOTTOMMARGIN, 162
     END
 
     IDD_STORENEW_GENERAL, DIALOG
@@ -1333,6 +1348,10 @@ END
 STRINGTABLE 
 BEGIN
     IDR_APPLICATION         "liquidFOLDERS"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_PURCHASEURL         "http://liquidFOLDERS.net/purchase/es/"
     IDS_UPDATEURL           "http://liquidFOLDERS.net/download/es/"
     IDS_ABOUTURL            "http://liquidFOLDERS.net/start/es/"
@@ -1435,8 +1454,8 @@ BEGIN
         MENUITEM "Faites store &standard",      IDM_STORE_MAKEDEFAULT
         POPUP "Ajouter &fichiers"
         BEGIN
-            MENUITEM "&Importer dossier...", IDM_STORE_IMPORTFOLDER
-            MENUITEM "L'assistant de &migration", IDM_STORE_MIGRATIONWIZARD
+            MENUITEM "&Importer dossier...",        IDM_STORE_IMPORTFOLDER
+            MENUITEM "L'assistant de &migration",   IDM_STORE_MIGRATIONWIZARD
         END
         MENUITEM SEPARATOR
         MENUITEM "Créer r&accourci",            IDM_STORE_SHORTCUT
@@ -1738,7 +1757,7 @@ BEGIN
     LTEXT           "X",IDC_IDXVERSION,70,55,238,8,SS_ENDELLIPSIS
 END
 
-IDD_STOREPROPERTIES_TOOLS DIALOGEX 0, 0, 310, 108
+IDD_STOREPROPERTIES_TOOLS DIALOGEX 0, 0, 310, 167
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
 CAPTION "Outils"
 FONT 8, "MS Shell Dlg", 400, 0, 0x0
@@ -1748,10 +1767,15 @@ BEGIN
     LTEXT           "Exécute des travails d'entretien sur tous les stores.",IDC_STATIC,40,13,258,8
     LTEXT           "Dernier travails d'entretien sur ce store: %s",IDC_MAINTENANCE,40,23,258,8,SS_ENDELLIPSIS
     PUSHBUTTON      "Exécuter des &travails d'entretien",IDC_RUNMAINTENANCE,39,35,130,14
-    GROUPBOX        "Stores",IDC_STATIC,4,60,301,42
+    GROUPBOX        "Synchronisation ",IDC_STATIC,4,60,301,53
     CONTROL         20132,IDC_STATIC,"Static",SS_BITMAP,9,70,21,20
-    LTEXT           "Sauvegarde les paramètres de tous les stores.",IDC_STATIC,40,71,258,8
-    PUSHBUTTON      "Sauvegarde les &paramètres",IDC_RUNBACKUP,39,82,130,14
+    LTEXT           "Synchronisiert den Store mit der Datenquelle.",IDC_STATIC,40,71,258,8
+    LTEXT           "Finalement synchronisée: %s",IDC_SYNCHRONIZED,40,81,258,8,SS_ENDELLIPSIS
+    PUSHBUTTON      "&Synchroniser maintenant",IDC_RUNSYNCHRONIZE,39,93,130,14
+    GROUPBOX        "Paramètres",IDC_STATIC,4,118,301,42
+    CONTROL         20133,IDC_STATIC,"Static",SS_BITMAP,9,128,21,20
+    LTEXT           "Sauvegarde les paramètres de tous les stores.",IDC_STATIC,40,129,258,8
+    PUSHBUTTON      "Sauvegarde les &paramètres",IDC_RUNBACKUP,39,140,130,14
 END
 
 IDD_STORENEW_GENERAL DIALOGEX 0, 0, 310, 78
@@ -1924,7 +1948,7 @@ BEGIN
         LEFTMARGIN, 4
         RIGHTMARGIN, 305
         TOPMARGIN, 3
-        BOTTOMMARGIN, 103
+        BOTTOMMARGIN, 162
     END
 
     IDD_STORENEW_GENERAL, DIALOG
@@ -1962,6 +1986,10 @@ END
 STRINGTABLE 
 BEGIN
     IDR_APPLICATION         "liquidFOLDERS"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_PURCHASEURL         "http://liquidFOLDERS.net/purchase/fr/"
     IDS_UPDATEURL           "http://liquidFOLDERS.net/download/fr/"
     IDS_ABOUTURL            "http://liquidFOLDERS.net/start/fr/"
@@ -2114,8 +2142,8 @@ BEGIN
         MENUITEM "Make de&fault store",         IDM_STORE_MAKEDEFAULT
         POPUP "Add &files"
         BEGIN
-            MENUITEM "&Import folder...", IDM_STORE_IMPORTFOLDER
-            MENUITEM "&Migration Wizard", IDM_STORE_MIGRATIONWIZARD
+            MENUITEM "&Import folder...",           IDM_STORE_IMPORTFOLDER
+            MENUITEM "&Migration Wizard",           IDM_STORE_MIGRATIONWIZARD
         END
         MENUITEM SEPARATOR
         MENUITEM "Create &shortcut",            IDM_STORE_SHORTCUT
@@ -2417,7 +2445,7 @@ BEGIN
     LTEXT           "X",IDC_IDXVERSION,65,55,243,8,SS_ENDELLIPSIS
 END
 
-IDD_STOREPROPERTIES_TOOLS DIALOGEX 0, 0, 310, 108
+IDD_STOREPROPERTIES_TOOLS DIALOGEX 0, 0, 310, 167
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
 CAPTION "Tools"
 FONT 8, "MS Shell Dlg", 400, 0, 0x0
@@ -2427,10 +2455,15 @@ BEGIN
     LTEXT           "Executes maintenance work on all stores.",IDC_STATIC,40,13,258,8
     LTEXT           "Last maintenance on this store: %s",IDC_MAINTENANCE,40,23,258,8,SS_ENDELLIPSIS
     PUSHBUTTON      "Run &maintenance",IDC_RUNMAINTENANCE,39,35,80,14
-    GROUPBOX        "Stores",IDC_STATIC,4,60,301,42
+    GROUPBOX        "Synchronization",IDC_STATIC,4,60,301,53
     CONTROL         20132,IDC_STATIC,"Static",SS_BITMAP,9,70,21,20
-    LTEXT           "Saves the settings of all stores.",IDC_STATIC,40,71,258,8
-    PUSHBUTTON      "Save &settings",IDC_RUNBACKUP,39,82,80,14
+    LTEXT           "Synchronizes the store with its data souurce.",IDC_STATIC,40,71,258,8
+    LTEXT           "Last synchronized: %s",IDC_SYNCHRONIZED,40,81,258,8,SS_ENDELLIPSIS
+    PUSHBUTTON      "&Synchronize now",IDC_RUNSYNCHRONIZE,39,93,80,14
+    GROUPBOX        "Settings",IDC_STATIC,4,118,301,42
+    CONTROL         20133,IDC_STATIC,"Static",SS_BITMAP,9,128,21,20
+    LTEXT           "Saves the settings of all stores.",IDC_STATIC,40,129,258,8
+    PUSHBUTTON      "Save &settings",IDC_RUNBACKUP,39,140,80,14
 END
 
 IDD_STORENEW_GENERAL DIALOGEX 0, 0, 310, 78
@@ -2595,7 +2628,7 @@ BEGIN
         LEFTMARGIN, 4
         RIGHTMARGIN, 305
         TOPMARGIN, 3
-        BOTTOMMARGIN, 103
+        BOTTOMMARGIN, 162
     END
 
     IDD_STORENEW_GENERAL, DIALOG
@@ -2633,6 +2666,10 @@ END
 STRINGTABLE 
 BEGIN
     IDR_APPLICATION         "liquidFOLDERS"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_PURCHASEURL         "http://liquidFOLDERS.net/purchase/en/"
     IDS_UPDATEURL           "http://liquidFOLDERS.net/download/en/"
     IDS_ABOUTURL            "http://liquidFOLDERS.net/start/en/"

@@ -728,6 +728,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Ribbon\StoreSynchronize_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\StoreSynchronize_32.png"
+				>
+			</File>
+			<File
 				RelativePath="Ribbon\Support_16.png"
 				>
 			</File>
@@ -1398,6 +1406,10 @@
 		</File>
 		<File
 			RelativePath=".\Stores_Tiny.ico"
+			>
+		</File>
+		<File
+			RelativePath=".\StoreSynchronize_32.bmp"
 			>
 		</File>
 		<File

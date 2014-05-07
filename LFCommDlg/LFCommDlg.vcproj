@@ -1215,6 +1215,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\StoreSynchronize_32.bmp"
+				>
+			</File>
+			<File
 				RelativePath=".\res\Tags_Tiny.ico"
 				>
 			</File>

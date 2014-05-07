@@ -269,6 +269,10 @@ void CInspectorWnd::UpdateAdd(LFItemDescriptor* i, LFSearchResult* pRawFiles)
 		LFTimeToString(s.MaintenanceTime, tmpStr, 256);
 		AddValueVirtual(AttrMaintenanceTime, tmpStr);
 
+		LFTimeToString(s.SynchronizeTime, tmpStr, 256);
+		if (tmpStr[0]!=L'\0')
+			AddValueVirtual(AttrSynchronizeTime, tmpStr);
+
 		if (s.IndexMode!=LFStoreIndexModeInternal)
 			AddValueVirtual(AttrLastSeen, s.LastSeen);
 		break;

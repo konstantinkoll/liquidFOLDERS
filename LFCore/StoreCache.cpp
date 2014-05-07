@@ -227,6 +227,9 @@ bool LoadStoreSettingsFromRegistry(char* StoreID, LFStoreDescriptor* s)
 		sz = sizeof(s->MaintenanceTime);
 		RegQueryValueEx(k, L"MaintenanceTime", 0, NULL, (BYTE*)&s->MaintenanceTime, &sz);
 
+		sz = sizeof(s->SynchronizeTime);
+		RegQueryValueEx(k, L"SynchronizeTime", 0, NULL, (BYTE*)&s->SynchronizeTime, &sz);
+
 		sz = sizeof(s->Flags);
 		if (RegQueryValueEx(k, L"AutoLocation", 0, NULL, (BYTE*)&s->Flags, &sz)!=ERROR_SUCCESS)
 			res = false;
@@ -322,6 +325,9 @@ unsigned int SaveStoreSettingsToRegistry(LFStoreDescriptor* s)
 			res = LFRegistryError;
 
 		if (RegSetValueEx(k, L"MaintenanceTime", 0, REG_BINARY, (BYTE*)&s->MaintenanceTime, sizeof(FILETIME))!=ERROR_SUCCESS)
+			res = LFRegistryError;
+
+		if (RegSetValueEx(k, L"SynchronizeTime", 0, REG_BINARY, (BYTE*)&s->SynchronizeTime, sizeof(FILETIME))!=ERROR_SUCCESS)
 			res = LFRegistryError;
 
 		if (RegSetValueEx(k, L"AutoLocation", 0, REG_DWORD, (BYTE*)&s->Flags, sizeof(unsigned int))!=ERROR_SUCCESS)

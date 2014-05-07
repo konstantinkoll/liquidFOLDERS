@@ -438,6 +438,9 @@ LFCore_API unsigned int LFCreateStore(LFStoreDescriptor* s, bool MakeDefault, HW
 	s->MaintenanceTime = s->CreationTime;
 	s->Flags &= ~LFStoreFlagUnchecked;
 
+	// SynchronizeTime zurücksetzen
+	ZeroMemory(&s->SynchronizeTime, sizeof(FILETIME));
+
 	// Key generieren
 	CreateNewStoreID(s->StoreID);
 

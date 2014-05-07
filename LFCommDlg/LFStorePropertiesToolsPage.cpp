@@ -53,6 +53,7 @@ void LFStorePropertiesToolsPage::DoDataExchange(CDataExchange* pDX)
 
 BEGIN_MESSAGE_MAP(LFStorePropertiesToolsPage, CPropertyPage)
 	ON_BN_CLICKED(IDC_RUNMAINTENANCE, OnRunMaintenance)
+	ON_BN_CLICKED(IDC_RUNSYNCHRONIZE, OnRunSynchronize)
 	ON_BN_CLICKED(IDC_RUNBACKUP, OnRunBackup)
 	ON_REGISTERED_MESSAGE(MessageIDs->StoresChanged, OnUpdateStore)
 	ON_REGISTERED_MESSAGE(MessageIDs->StoreAttributesChanged, OnUpdateStore)
@@ -64,7 +65,8 @@ BOOL LFStorePropertiesToolsPage::OnInitDialog()
 
 	m_wndIconMaintenance.SetSmallIcon(LFCommDlgDLL.hResource, IDD_STOREMAINTENANCE);
 
-	GetDlgItem(IDC_MAINTENANCE)->GetWindowText(m_Mask);
+	GetDlgItem(IDC_MAINTENANCE)->GetWindowText(m_MaskMaintenance);
+	GetDlgItem(IDC_SYNCHRONIZED)->GetWindowText(m_MaskSynchronized);
 
 	// Store
 	SendMessage(MessageIDs->StoresChanged);
@@ -75,6 +77,10 @@ BOOL LFStorePropertiesToolsPage::OnInitDialog()
 void LFStorePropertiesToolsPage::OnRunMaintenance()
 {
 	LFRunMaintenance(this);
+}
+
+void LFStorePropertiesToolsPage::OnRunSynchronize()
+{
 }
 
 void LFStorePropertiesToolsPage::OnRunBackup()
@@ -157,6 +163,9 @@ void LFStorePropertiesToolsPage::OnRunBackup()
 
 							// MaintenanceTime
 							f.WriteString(_T("\"MaintenanceTime\"=hex:")+MakeHex((BYTE*)&s.MaintenanceTime, sizeof(s.MaintenanceTime))+_T("\n"));
+
+							// SynchronizeTime
+							f.WriteString(_T("\"SynchronizeTime\"=hex:")+MakeHex((BYTE*)&s.SynchronizeTime, sizeof(s.SynchronizeTime))+_T("\n"));
 						}
 
 					Ptr += LFKeySize;
@@ -176,14 +185,23 @@ void LFStorePropertiesToolsPage::OnRunBackup()
 
 LRESULT LFStorePropertiesToolsPage::OnUpdateStore(WPARAM /*wParam*/, LPARAM /*lParam*/)
 {
+	BOOL CanSynchronize = FALSE;	//TODO
+
+	GetDlgItem(IDC_SYNCHRONIZED)->EnableWindow(CanSynchronize);
+	GetDlgItem(IDC_RUNSYNCHRONIZE)->EnableWindow(CanSynchronize);
+
 	if (p_StoreValid)
 	{
 		WCHAR tmpStr[256];
-		LFTimeToString(p_Store->MaintenanceTime, tmpStr, 256);
-
 		CString tmpText;
-		tmpText.Format(m_Mask, tmpStr);
+
+		LFTimeToString(p_Store->MaintenanceTime, tmpStr, 256);
+		tmpText.Format(m_MaskMaintenance, tmpStr);
 		GetDlgItem(IDC_MAINTENANCE)->SetWindowText(tmpText);
+
+		LFTimeToString(p_Store->SynchronizeTime, tmpStr, 256);
+		tmpText.Format(m_MaskSynchronized, tmpStr);
+		GetDlgItem(IDC_SYNCHRONIZED)->SetWindowText(tmpText);
 	}
 
 	return NULL;
