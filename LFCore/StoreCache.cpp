@@ -256,8 +256,7 @@ bool LoadStoreSettingsFromRegistry(char* StoreID, LFStoreDescriptor* s)
 			RegQueryValueEx(k, L"LastSeen", 0, NULL, (BYTE*)&s->LastSeen, &sz);
 		default:
 			sz = sizeof(s->Source);
-			if (RegQueryValueEx(k, L"Source", 0, NULL, (BYTE*)&s->Source, &sz)!=ERROR_SUCCESS)
-				res = false;
+			RegQueryValueEx(k, L"Source", 0, NULL, (BYTE*)&s->Source, &sz);
 		}
 
 		RegCloseKey(k);
