@@ -475,12 +475,12 @@ BEGIN
     LTEXT           "Letzte Wartung dieses Stores: %s",IDC_MAINTENANCE,40,23,258,8,SS_ENDELLIPSIS
     PUSHBUTTON      "&Wartungsarbeiten durchführen",IDC_RUNMAINTENANCE,39,35,120,14
     GROUPBOX        "Synchronisation",IDC_STATIC,4,60,301,53
-    CONTROL         20132,IDC_STATIC,"Static",SS_BITMAP,9,70,21,20
+    CONTROL         20132,IDC_STATIC,"Static",SS_BITMAP,9,72,21,20
     LTEXT           "Synchronisiert den Store mit der Datenquelle.",IDC_STATIC,40,71,258,8
     LTEXT           "Zuletzt synchronisiert: %s",IDC_SYNCHRONIZED,40,81,258,8,SS_ENDELLIPSIS
     PUSHBUTTON      "Jetzt &synchronisieren",IDC_RUNSYNCHRONIZE,39,93,120,14
     GROUPBOX        "Einstellungen",IDC_STATIC,4,118,301,42
-    CONTROL         20133,IDC_STATIC,"Static",SS_BITMAP,9,128,21,20
+    CONTROL         20133,IDC_STATIC,"Static",SS_BITMAP,9,130,21,20
     LTEXT           "Sichert die Einstellungen aller Stores.",IDC_STATIC,40,129,258,8
     PUSHBUTTON      "&Einstellungen sichern",IDC_RUNBACKUP,39,140,120,14
 END
@@ -1130,12 +1130,12 @@ BEGIN
     LTEXT           "Mantenimiento de esto store: %s",IDC_MAINTENANCE,40,23,258,8,SS_ENDELLIPSIS
     PUSHBUTTON      "Ejecutar &mantenimiento",IDC_RUNMAINTENANCE,39,35,110,14
     GROUPBOX        "Sincronización",IDC_STATIC,4,60,301,53
-    CONTROL         20132,IDC_STATIC,"Static",SS_BITMAP,9,70,21,20
+    CONTROL         20132,IDC_STATIC,"Static",SS_BITMAP,9,72,21,20
     LTEXT           "Synchronisiert den Store mit der Datenquelle.",IDC_STATIC,40,71,258,8
     LTEXT           "Última sincronizado: %s",IDC_SYNCHRONIZED,40,81,258,8,SS_ENDELLIPSIS
     PUSHBUTTON      "&Sincronizar ahora",IDC_RUNSYNCHRONIZE,39,93,110,14
     GROUPBOX        "Configuraciones",IDC_STATIC,4,118,301,42
-    CONTROL         20133,IDC_STATIC,"Static",SS_BITMAP,9,128,21,20
+    CONTROL         20133,IDC_STATIC,"Static",SS_BITMAP,9,130,21,20
     LTEXT           "Guarda las configuraciones de todos los stores.",IDC_STATIC,40,129,258,8
     PUSHBUTTON      "Respaldo &configuraciones",IDC_RUNBACKUP,39,140,110,14
 END
@@ -1768,12 +1768,12 @@ BEGIN
     LTEXT           "Dernier travails d'entretien sur ce store: %s",IDC_MAINTENANCE,40,23,258,8,SS_ENDELLIPSIS
     PUSHBUTTON      "Exécuter des &travails d'entretien",IDC_RUNMAINTENANCE,39,35,130,14
     GROUPBOX        "Synchronisation ",IDC_STATIC,4,60,301,53
-    CONTROL         20132,IDC_STATIC,"Static",SS_BITMAP,9,70,21,20
+    CONTROL         20132,IDC_STATIC,"Static",SS_BITMAP,9,72,21,20
     LTEXT           "Synchronisiert den Store mit der Datenquelle.",IDC_STATIC,40,71,258,8
     LTEXT           "Finalement synchronisée: %s",IDC_SYNCHRONIZED,40,81,258,8,SS_ENDELLIPSIS
     PUSHBUTTON      "&Synchroniser maintenant",IDC_RUNSYNCHRONIZE,39,93,130,14
     GROUPBOX        "Paramètres",IDC_STATIC,4,118,301,42
-    CONTROL         20133,IDC_STATIC,"Static",SS_BITMAP,9,128,21,20
+    CONTROL         20133,IDC_STATIC,"Static",SS_BITMAP,9,130,21,20
     LTEXT           "Sauvegarde les paramètres de tous les stores.",IDC_STATIC,40,129,258,8
     PUSHBUTTON      "Sauvegarde les &paramètres",IDC_RUNBACKUP,39,140,130,14
 END
@@ -2456,12 +2456,12 @@ BEGIN
     LTEXT           "Last maintenance on this store: %s",IDC_MAINTENANCE,40,23,258,8,SS_ENDELLIPSIS
     PUSHBUTTON      "Run &maintenance",IDC_RUNMAINTENANCE,39,35,80,14
     GROUPBOX        "Synchronization",IDC_STATIC,4,60,301,53
-    CONTROL         20132,IDC_STATIC,"Static",SS_BITMAP,9,70,21,20
+    CONTROL         20132,IDC_STATIC,"Static",SS_BITMAP,9,72,21,20
     LTEXT           "Synchronizes the store with its data souurce.",IDC_STATIC,40,71,258,8
     LTEXT           "Last synchronized: %s",IDC_SYNCHRONIZED,40,81,258,8,SS_ENDELLIPSIS
     PUSHBUTTON      "&Synchronize now",IDC_RUNSYNCHRONIZE,39,93,80,14
     GROUPBOX        "Settings",IDC_STATIC,4,118,301,42
-    CONTROL         20133,IDC_STATIC,"Static",SS_BITMAP,9,128,21,20
+    CONTROL         20133,IDC_STATIC,"Static",SS_BITMAP,9,130,21,20
     LTEXT           "Saves the settings of all stores.",IDC_STATIC,40,129,258,8
     PUSHBUTTON      "Save &settings",IDC_RUNBACKUP,39,140,80,14
 END
