@@ -443,7 +443,12 @@ void SetStorePaths(LFStoreDescriptor* s, int Source)
 	assert((s->IndexMode>=LFStoreModeIndexInternal) && (s->IndexMode<=LFStoreModeIndexExternal));
 
 	// Store name and source of mounted volume
-	if ((s->Mode & LFStoreModeIndexMask)!=LFStoreModeIndexInternal)
+	if ((s->Mode & LFStoreModeIndexMask)==LFStoreModeIndexInternal)
+	{
+		if (Source==-1)
+			Source = LFTypeSourceInternal;
+	}
+	else
 		if (IsStoreMounted(s))
 		{
 			wchar_t szDriveRoot[] = L" :\\";
@@ -455,10 +460,10 @@ void SetStorePaths(LFStoreDescriptor* s, int Source)
 
 			if (Source==-1)
 				Source = LFGetSourceForDrive(s->DatPath[0] & 0xFF);
-
-			assert((Source & LFTypeSourceMask)==Source);
-			s->Source = Source;
 		}
+
+	assert((Source & LFTypeSourceMask)==Source);
+	s->Source = Source;
 
 	// Get automatic data path
 	if (((s->Mode & LFStoreModeIndexMask)==LFStoreModeIndexInternal) && (s->Flags & LFStoreFlagAutoLocation))
