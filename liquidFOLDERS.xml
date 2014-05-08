@@ -34,9 +34,9 @@
 	</Company_Info>
 	<Program_Info>
 		<Program_Name>liquidFOLDERS</Program_Name>
-		<Program_Version>1.6.1</Program_Version>
-		<Program_Release_Month>4</Program_Release_Month>
-		<Program_Release_Day>25</Program_Release_Day>
+		<Program_Version>1.6.2</Program_Version>
+		<Program_Release_Month>5</Program_Release_Month>
+		<Program_Release_Day>07</Program_Release_Day>
 		<Program_Release_Year>2014</Program_Release_Year>
 		<Program_Cost_Dollars>25.00</Program_Cost_Dollars>
 		<Program_Cost_Other_Code>EUR</Program_Cost_Other_Code>
@@ -51,9 +51,9 @@
 		<Program_Category_Class>System Utilities::File &amp; Disk Management</Program_Category_Class>
 		<Program_System_Requirements />
 		<File_Info>
-			<File_Size_Bytes>25000000</File_Size_Bytes>
-			<File_Size_K>24414</File_Size_K>
-			<File_Size_MB>23.84</File_Size_MB>
+			<File_Size_Bytes>20000000</File_Size_Bytes>
+			<File_Size_K>20000</File_Size_K>
+			<File_Size_MB>20.00</File_Size_MB>
 		</File_Info>
 		<Expire_Info>
 			<Has_Expire_Info>N</Has_Expire_Info>
