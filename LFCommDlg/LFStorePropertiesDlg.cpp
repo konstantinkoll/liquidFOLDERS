@@ -71,7 +71,7 @@ BOOL LFStorePropertiesDlg::OnCommand(WPARAM wParam, LPARAM lParam)
 		if (pPage->m_wndMakeDefault.IsWindowEnabled() && pPage->m_wndMakeDefault.GetCheck())
 			LFErrorBox(LFMakeDefaultStore(m_Store.StoreID, GetSafeHwnd()), GetSafeHwnd());
 
-		ASSERT(pPage->m_wndMakeSearchable.IsWindowVisible()==(m_Store.IndexMode>=LFStoreModeIndexHybrid));
+		ASSERT(pPage->m_wndMakeSearchable.IsWindowVisible()==((m_Store.Mode & LFStoreModeIndexMask)>=LFStoreModeIndexHybrid));
 
 		if (pPage->m_wndMakeSearchable.IsWindowVisible())
 			LFErrorBox(LFMakeStoreSearchable(m_Store.StoreID, pPage->m_wndMakeSearchable.GetCheck()==TRUE, GetSafeHwnd()), GetSafeHwnd());

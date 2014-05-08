@@ -27,7 +27,7 @@ void LFEditTimeDlg::DoDataExchange(CDataExchange* pDX)
 
 	if (pDX->m_bSaveAndValidate)
 	{
-		ASSERT(p_App->m_Attributes[p_Data->Attr]->Type==LFTypeTime);
+		ASSERT(p_App->m_Attributes[p_Data->Attr].Type==LFTypeTime);
 		p_Data->IsNull = false;
 
 		SYSTEMTIME Date;

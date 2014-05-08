@@ -40,7 +40,10 @@ extern unsigned int VolumeTypes[26];
 
 #define StoreDescriptorFileSize sizeof(LFStoreDescriptor)- \
 	sizeof(LFStoreDescriptor().IdxPathMain)-sizeof(LFStoreDescriptor().IdxPathAux)- \
+	sizeof(LFStoreDescriptor().Source)- \
 	sizeof(LFStoreDescriptor().FileCount)-sizeof(LFStoreDescriptor().FileSize)
+#define StoreDescriptorRequiredFileSize StoreDescriptorFileSize- \
+	sizeof(LFStoreDescriptor().SynchronizeTime)
 
 
 // Default store handling
@@ -279,7 +282,7 @@ bool LoadStoreSettingsFromFile(wchar_t* fn, LFStoreDescriptor* s)
 
 	DWORD wmRead;
 	bool res = (ReadFile(hFile, s, StoreDescriptorFileSize, &wmRead, NULL)==TRUE);
-	res &= (wmRead>=StoreDescriptorFileSize);
+	res &= (wmRead>=StoreDescriptorRequiredFileSize);
 	CloseHandle(hFile);
 
 	return res;
@@ -440,7 +443,7 @@ void CreateNewStoreID(char* StoreID)
 void SetStorePaths(LFStoreDescriptor* s, int Source)
 {
 	assert(s);
-	assert((s->IndexMode>=LFStoreModeIndexInternal) && (s->IndexMode<=LFStoreModeIndexExternal));
+	assert(((s->Mode & LFStoreModeIndexMask)>=LFStoreModeIndexInternal) && ((s->Mode & LFStoreModeIndexMask)<=LFStoreModeIndexExternal));
 
 	// Store name and source of mounted volume
 	if ((s->Mode & LFStoreModeIndexMask)==LFStoreModeIndexInternal)

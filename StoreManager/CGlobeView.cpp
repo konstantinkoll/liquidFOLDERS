@@ -226,7 +226,7 @@ void CGlobeView::SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCoo
 				else
 					if (p_CookedFiles->m_Items[a]->AttributeValues[m_ViewParameters.SortBy])
 					{
-						ASSERT(theApp.m_Attributes[m_ViewParameters.SortBy]->Type==LFTypeGeoCoordinates);
+						ASSERT(theApp.m_Attributes[m_ViewParameters.SortBy].Type==LFTypeGeoCoordinates);
 						coord = *((LFGeoCoordinates*)p_CookedFiles->m_Items[a]->AttributeValues[m_ViewParameters.SortBy]);
 					}
 

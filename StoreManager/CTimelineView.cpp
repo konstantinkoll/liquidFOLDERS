@@ -9,7 +9,7 @@
 
 WCHAR* GetAttribute(TimelineItemData* d, LFItemDescriptor* i, UINT Attr, UINT Mask)
 {
-	ASSERT(theApp.m_Attributes[Attr]->Type==LFTypeUnicodeString);
+	ASSERT(theApp.m_Attributes[Attr].Type==LFTypeUnicodeString);
 
 	if (i->AttributeValues[Attr])
 		if (*((WCHAR*)i->AttributeValues[Attr]))
@@ -89,7 +89,7 @@ void CTimelineView::SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* p
 					{
 						LFItemDescriptor* i = p_RawFiles->m_Items[b];
 
-						ASSERT(theApp.m_Attributes[LFAttrRoll]->Type==LFTypeUnicodeString);
+						ASSERT(theApp.m_Attributes[LFAttrRoll].Type==LFTypeUnicodeString);
 						if (d->Preview & PRV_COMMENTS)
 							if (!i->AttributeValues[LFAttrRoll])
 							{
