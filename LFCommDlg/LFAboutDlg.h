@@ -14,7 +14,7 @@
 class AFX_EXT_CLASS LFAboutDlg : public LFDialog
 {
 public:
-	LFAboutDlg(CString Build, CWnd* pParentWnd=NULL);
+	LFAboutDlg(CWnd* pParentWnd=NULL);
 
 	virtual void DoDataExchange(CDataExchange* pDX);
 
@@ -43,6 +43,6 @@ private:
 	CString m_Version;
 	CString m_Copyright;
 	CString m_AppName;
-	CString m_Build;
+	WCHAR m_Build[256];
 	CWnd m_wndVersionInfo;
 };

@@ -224,34 +224,34 @@ END
 // Dialog
 //
 
-IDD_ABOUT DIALOGEX 0, 0, 358, 212
+IDD_ABOUT DIALOGEX 0, 0, 390, 212
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Über liquidFOLDERS"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,244,190,50,14,WS_GROUP
-    PUSHBUTTON      "Abbrechen",IDCANCEL,301,190,50,14,WS_GROUP
-    CONTROL         "Entwickelt von <a>liquidFOLDERS</a> in Deutschland.\nVersion %s, erstellt %s.\n%s",IDC_VERSIONINFO,
-                    "SysLink",WS_GROUP | WS_TABSTOP,7,7,344,80
-    CONTROL         "Lizenz",IDC_GROUPBOX1,"CGroupBox",WS_GROUP,7,93,155,81
-    LTEXT           "Name:",IDC_STATIC,15,103,141,8
-    LTEXT           "X",IDC_NAME,15,113,141,8
-    LTEXT           "Kaufdatum:",IDC_STATIC,15,126,84,8
-    LTEXT           "X",IDC_PURCHASEDATE,15,136,84,8
-    LTEXT           "ID:",IDC_STATIC,105,126,50,8
-    LTEXT           "X",IDC_ID,105,136,50,8
+    DEFPUSHBUTTON   "OK",IDOK,275,191,50,14,WS_GROUP
+    PUSHBUTTON      "Abbrechen",IDCANCEL,333,191,50,14,WS_GROUP
+    CONTROL         "Entwickelt von <a>liquidFOLDERS</a> in Deutschland.\nVersion %s, erstellt am %s Uhr.\n%s",IDC_VERSIONINFO,
+                    "SysLink",WS_GROUP | WS_TABSTOP,7,7,376,80
+    CONTROL         "Lizenz",IDC_GROUPBOX1,"CGroupBox",WS_GROUP,7,93,184,82
+    LTEXT           "Name:",IDC_STATIC,15,103,169,8
+    LTEXT           "X",IDC_NAME,15,113,169,8
+    LTEXT           "Kaufdatum:",IDC_STATIC,15,126,113,8
+    LTEXT           "X",IDC_PURCHASEDATE,15,136,113,8
+    LTEXT           "ID:",IDC_STATIC,133,126,51,8
+    LTEXT           "X",IDC_ID,133,136,51,8
     LTEXT           "Produkt:",IDC_STATIC,15,151,83,8
-    LTEXT           "X",IDC_PRODUCT,15,161,141,8
-    LTEXT           "Menge:",IDC_QUANTITYTITLE,105,151,50,8
-    LTEXT           "X",IDC_QUANTITY,105,161,50,8
-    PUSHBUTTON      "&Lizenzschlüssel eingeben...",IDC_ENTERLICENSEKEY,13,103,143,66,WS_GROUP
-    CONTROL         "Updates",IDC_GROUPBOX2,"CGroupBox",WS_GROUP,170,93,181,81
+    LTEXT           "X",IDC_PRODUCT,15,161,169,8
+    LTEXT           "Menge:",IDC_QUANTITYTITLE,133,151,51,8
+    LTEXT           "X",IDC_QUANTITY,133,161,51,8
+    PUSHBUTTON      "&Lizenzschlüssel eingeben...",IDC_ENTERLICENSEKEY,13,102,172,67,WS_GROUP
+    CONTROL         "Updates",IDC_GROUPBOX2,"CGroupBox",WS_GROUP,199,93,184,82
     CONTROL         "Automatisch nach &Updates suchen",IDC_ENABLEAUTOUPDATE,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,176,103,168,10
-    CONTROL         "&Täglich",IDC_CHECKDAILY,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,186,115,158,10
-    CONTROL         "&Wöchentlich",IDC_CHECKWEEKLY,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,186,126,158,10
-    CONTROL         "&Monatlich",IDC_CHECKMONTHLY,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,186,137,158,10
-    PUSHBUTTON      "Jetzt nach Update &suchen",IDC_UPDATENOW,176,155,170,14
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,205,103,171,10
+    CONTROL         "&Täglich",IDC_CHECKDAILY,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,215,115,161,10
+    CONTROL         "&Wöchentlich",IDC_CHECKWEEKLY,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,215,126,161,10
+    CONTROL         "&Monatlich",IDC_CHECKMONTHLY,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,215,137,161,10
+    PUSHBUTTON      "Jetzt nach Update &suchen",IDC_UPDATENOW,205,155,171,14
 END
 
 IDD_CHOOSESTORE DIALOGEX 0, 0, 470, 282
@@ -553,7 +553,7 @@ BEGIN
     IDD_ABOUT, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 351
+        RIGHTMARGIN, 383
         TOPMARGIN, 7
         BOTTOMMARGIN, 205
     END
@@ -860,34 +860,34 @@ END
 // Dialog
 //
 
-IDD_ABOUT DIALOGEX 0, 0, 358, 211
+IDD_ABOUT DIALOGEX 0, 0, 390, 212
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Acerca liquidFOLDERS"
+CAPTION "Acera liquidFOLDERS"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,244,190,50,14,WS_GROUP
-    PUSHBUTTON      "Cancelar",IDCANCEL,301,190,50,14,WS_GROUP
+    DEFPUSHBUTTON   "OK",IDOK,275,191,50,14,WS_GROUP
+    PUSHBUTTON      "Cancelar",IDCANCEL,333,191,50,14,WS_GROUP
     CONTROL         "Desarrollado de <a>liquidFOLDERS</a> en Alemania.\nVersion %s, %s.\n%s",IDC_VERSIONINFO,
-                    "SysLink",WS_GROUP | WS_TABSTOP,7,7,344,80
-    CONTROL         "Licensia",IDC_GROUPBOX1,"CGroupBox",WS_GROUP,7,93,155,81
-    LTEXT           "Nombre:",IDC_STATIC,15,103,141,8
-    LTEXT           "X",IDC_NAME,15,113,141,8
-    LTEXT           "Adquisición:",IDC_STATIC,15,126,84,8
-    LTEXT           "X",IDC_PURCHASEDATE,15,136,84,8
-    LTEXT           "ID:",IDC_STATIC,105,126,50,8
-    LTEXT           "X",IDC_ID,105,136,50,8
+                    "SysLink",WS_GROUP | WS_TABSTOP,7,7,376,80
+    CONTROL         "Licensia",IDC_GROUPBOX1,"CGroupBox",WS_GROUP,7,93,184,82
+    LTEXT           "Nombre:",IDC_STATIC,15,103,169,8
+    LTEXT           "X",IDC_NAME,15,113,169,8
+    LTEXT           "Adquisición:",IDC_STATIC,15,126,113,8
+    LTEXT           "X",IDC_PURCHASEDATE,15,136,113,8
+    LTEXT           "ID:",IDC_STATIC,133,126,51,8
+    LTEXT           "X",IDC_ID,133,136,51,8
     LTEXT           "Producto:",IDC_STATIC,15,151,83,8
-    LTEXT           "X",IDC_PRODUCT,15,161,141,8
-    LTEXT           "Número:",IDC_QUANTITYTITLE,105,151,50,8
-    LTEXT           "X",IDC_QUANTITY,105,161,50,8
-    PUSHBUTTON      "Dictar &licencia...",IDC_ENTERLICENSEKEY,13,103,143,66,WS_GROUP
-    CONTROL         "Actualizaciones",IDC_GROUPBOX2,"CGroupBox",WS_GROUP,170,93,181,81
-    CONTROL         "Buscar &actualizaciones de manera automática",IDC_ENABLEAUTOUPDATE,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,176,103,168,10
-    CONTROL         "&Diariamente",IDC_CHECKDAILY,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,186,115,158,10
-    CONTROL         "&Semanalmente",IDC_CHECKWEEKLY,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,186,126,158,10
-    CONTROL         "&Mensualmente",IDC_CHECKMONTHLY,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,186,137,158,10
-    PUSHBUTTON      "&Buscar actualización ahora...",IDC_UPDATENOW,176,155,170,14
+    LTEXT           "X",IDC_PRODUCT,15,161,169,8
+    LTEXT           "Número:",IDC_QUANTITYTITLE,133,151,51,8
+    LTEXT           "X",IDC_QUANTITY,133,161,51,8
+    PUSHBUTTON      "Dictar &licencia...",IDC_ENTERLICENSEKEY,13,102,172,67,WS_GROUP
+    CONTROL         "Actualizacione",IDC_GROUPBOX2,"CGroupBox",WS_GROUP,199,93,184,82
+    CONTROL         "uscar &actualizaciones de manera automática",IDC_ENABLEAUTOUPDATE,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,205,103,171,10
+    CONTROL         "&Diariamente",IDC_CHECKDAILY,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,215,115,161,10
+    CONTROL         "&Semanalmente",IDC_CHECKWEEKLY,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,215,126,161,10
+    CONTROL         "&Mensualmente",IDC_CHECKMONTHLY,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,215,137,161,10
+    PUSHBUTTON      "&Buscar actualización ahora...",IDC_UPDATENOW,205,155,171,14
 END
 
 IDD_CHOOSESTORE DIALOGEX 0, 0, 470, 282
@@ -1191,9 +1191,9 @@ BEGIN
     IDD_ABOUT, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 351
+        RIGHTMARGIN, 383
         TOPMARGIN, 7
-        BOTTOMMARGIN, 204
+        BOTTOMMARGIN, 205
     END
 
     IDD_CHOOSESTORE, DIALOG
@@ -1498,34 +1498,34 @@ END
 // Dialog
 //
 
-IDD_ABOUT DIALOGEX 0, 0, 358, 211
+IDD_ABOUT DIALOGEX 0, 0, 390, 212
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Concernant liquidFOLDERS"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,244,190,50,14,WS_GROUP
-    PUSHBUTTON      "Annuler",IDCANCEL,301,190,50,14,WS_GROUP
+    DEFPUSHBUTTON   "OK",IDOK,275,191,50,14,WS_GROUP
+    PUSHBUTTON      "Annuler",IDCANCEL,333,191,50,14,WS_GROUP
     CONTROL         "Développée par <a>liquidFOLDERS</a> en Allemagne.\nVersion %s, crée %s.\n%s",IDC_VERSIONINFO,
-                    "SysLink",WS_GROUP | WS_TABSTOP,7,7,344,80
-    CONTROL         "Licence",IDC_GROUPBOX1,"CGroupBox",WS_GROUP,7,93,155,81
-    LTEXT           "Nom:",IDC_STATIC,15,103,141,8
-    LTEXT           "X",IDC_NAME,15,113,141,8
-    LTEXT           "Date d'achat:",IDC_STATIC,15,126,84,8
-    LTEXT           "X",IDC_PURCHASEDATE,15,136,84,8
-    LTEXT           "ID:",IDC_STATIC,105,126,50,8
-    LTEXT           "X",IDC_ID,105,136,50,8
+                    "SysLink",WS_GROUP | WS_TABSTOP,7,7,376,80
+    CONTROL         "Licence",IDC_GROUPBOX1,"CGroupBox",WS_GROUP,7,93,184,82
+    LTEXT           "Nom:",IDC_STATIC,15,103,169,8
+    LTEXT           "X",IDC_NAME,15,113,169,8
+    LTEXT           "Date d'achat:",IDC_STATIC,15,126,113,8
+    LTEXT           "X",IDC_PURCHASEDATE,15,136,113,8
+    LTEXT           "ID:",IDC_STATIC,133,126,51,8
+    LTEXT           "X",IDC_ID,133,136,51,8
     LTEXT           "Produit:",IDC_STATIC,15,151,83,8
-    LTEXT           "X",IDC_PRODUCT,15,161,141,8
-    LTEXT           "Nombre:",IDC_QUANTITYTITLE,105,151,50,8
-    LTEXT           "X",IDC_QUANTITY,105,161,50,8
-    PUSHBUTTON      "Donner clé de &licence...",IDC_ENTERLICENSEKEY,13,103,143,66,WS_GROUP
-    CONTROL         "Mises à jour",IDC_GROUPBOX2,"CGroupBox",WS_GROUP,170,93,181,81
+    LTEXT           "X",IDC_PRODUCT,15,161,169,8
+    LTEXT           "Nombre:",IDC_QUANTITYTITLE,133,151,51,8
+    LTEXT           "X",IDC_QUANTITY,133,161,51,8
+    PUSHBUTTON      "Donner clé de &licence...",IDC_ENTERLICENSEKEY,13,102,172,67,WS_GROUP
+    CONTROL         "Mises à jour",IDC_GROUPBOX2,"CGroupBox",WS_GROUP,199,93,184,82
     CONTROL         "Chercher automatiquement des &mises á jour",IDC_ENABLEAUTOUPDATE,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,176,103,168,10
-    CONTROL         "Chaque &jour",IDC_CHECKDAILY,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,186,115,158,10
-    CONTROL         "Chaque &semaine",IDC_CHECKWEEKLY,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,186,126,158,10
-    CONTROL         "&Mensuellement",IDC_CHECKMONTHLY,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,186,137,158,10
-    PUSHBUTTON      "&Chercher maintenant des mises á jour...",IDC_UPDATENOW,176,155,170,14
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,205,103,171,10
+    CONTROL         "Chaque &jour",IDC_CHECKDAILY,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,215,115,161,10
+    CONTROL         "Chaque &semaine",IDC_CHECKWEEKLY,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,215,126,161,10
+    CONTROL         "&Mensuellement",IDC_CHECKMONTHLY,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,215,137,161,10
+    PUSHBUTTON      "&Chercher maintenant des mises á jour...",IDC_UPDATENOW,205,155,171,14
 END
 
 IDD_CHOOSESTORE DIALOGEX 0, 0, 470, 282
@@ -1769,7 +1769,7 @@ BEGIN
     PUSHBUTTON      "Exécuter des &travails d'entretien",IDC_RUNMAINTENANCE,39,35,130,14
     GROUPBOX        "Synchronisation ",IDC_STATIC,4,60,301,53
     CONTROL         20132,IDC_STATIC,"Static",SS_BITMAP,9,72,21,20
-    LTEXT           "Synchronisiert den Store mit der Datenquelle.",IDC_STATIC,40,71,258,8
+    LTEXT           "Synchroniser le store avec sa source de données.",IDC_STATIC,40,71,258,8
     LTEXT           "Finalement synchronisée: %s",IDC_SYNCHRONIZED,40,81,258,8,SS_ENDELLIPSIS
     PUSHBUTTON      "&Synchroniser maintenant",IDC_RUNSYNCHRONIZE,39,93,130,14
     GROUPBOX        "Paramètres",IDC_STATIC,4,118,301,42
@@ -1828,9 +1828,9 @@ BEGIN
     IDD_ABOUT, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 351
+        RIGHTMARGIN, 383
         TOPMARGIN, 7
-        BOTTOMMARGIN, 204
+        BOTTOMMARGIN, 205
     END
 
     IDD_CHOOSESTORE, DIALOG
@@ -2186,34 +2186,34 @@ END
 // Dialog
 //
 
-IDD_ABOUT DIALOGEX 0, 0, 358, 211
+IDD_ABOUT DIALOGEX 0, 0, 390, 212
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "About liquidFOLDERS"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,244,190,50,14,WS_GROUP
-    PUSHBUTTON      "Cancel",IDCANCEL,301,190,50,14,WS_GROUP
+    DEFPUSHBUTTON   "OK",IDOK,275,191,50,14,WS_GROUP
+    PUSHBUTTON      "Cancel",IDCANCEL,333,191,50,14,WS_GROUP
     CONTROL         "Engineered by <a>liquidFOLDERS</a> in Germany.\nVersion %s, built %s.\n%s",IDC_VERSIONINFO,
-                    "SysLink",WS_GROUP | WS_TABSTOP,7,7,344,80
-    CONTROL         "License",IDC_GROUPBOX1,"CGroupBox",WS_GROUP,7,93,155,81
-    LTEXT           "Name:",IDC_STATIC,15,103,141,8
-    LTEXT           "X",IDC_NAME,15,113,141,8
-    LTEXT           "Purchase date:",IDC_STATIC,15,126,84,8
-    LTEXT           "X",IDC_PURCHASEDATE,15,136,84,8
-    LTEXT           "ID:",IDC_STATIC,105,126,50,8
-    LTEXT           "X",IDC_ID,105,136,50,8
+                    "SysLink",WS_GROUP | WS_TABSTOP,7,7,376,80
+    CONTROL         "License",IDC_GROUPBOX1,"CGroupBox",WS_GROUP,7,93,184,82
+    LTEXT           "Name:",IDC_STATIC,15,103,169,8
+    LTEXT           "X",IDC_NAME,15,113,169,8
+    LTEXT           "Purchase date:",IDC_STATIC,15,126,113,8
+    LTEXT           "X",IDC_PURCHASEDATE,15,136,113,8
+    LTEXT           "ID:",IDC_STATIC,133,126,51,8
+    LTEXT           "X",IDC_ID,133,136,51,8
     LTEXT           "Product:",IDC_STATIC,15,151,83,8
-    LTEXT           "X",IDC_PRODUCT,15,161,141,8
-    LTEXT           "Quantity:",IDC_QUANTITYTITLE,105,151,50,8
-    LTEXT           "X",IDC_QUANTITY,105,161,50,8
-    PUSHBUTTON      "Enter &license key...",IDC_ENTERLICENSEKEY,13,103,143,66,WS_GROUP
-    CONTROL         "Updates",IDC_GROUPBOX2,"CGroupBox",WS_GROUP,170,93,181,81
+    LTEXT           "X",IDC_PRODUCT,15,161,169,8
+    LTEXT           "Quantity:",IDC_QUANTITYTITLE,133,151,51,8
+    LTEXT           "X",IDC_QUANTITY,133,161,51,8
+    PUSHBUTTON      "Enter &license key...",IDC_ENTERLICENSEKEY,13,102,172,67,WS_GROUP
+    CONTROL         "Updates",IDC_GROUPBOX2,"CGroupBox",WS_GROUP,199,93,184,82
     CONTROL         "Automatically search for &updates",IDC_ENABLEAUTOUPDATE,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,176,103,168,10
-    CONTROL         "&Daily",IDC_CHECKDAILY,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,186,115,158,10
-    CONTROL         "&Weekly",IDC_CHECKWEEKLY,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,186,126,158,10
-    CONTROL         "&Monthly",IDC_CHECKMONTHLY,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,186,137,158,10
-    PUSHBUTTON      "&Search for update now...",IDC_UPDATENOW,176,155,170,14
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,205,103,171,10
+    CONTROL         "&Daily",IDC_CHECKDAILY,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,215,115,161,10
+    CONTROL         "&Weekly",IDC_CHECKWEEKLY,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,215,126,161,10
+    CONTROL         "&Monthly",IDC_CHECKMONTHLY,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,215,137,161,10
+    PUSHBUTTON      "&Search for update now...",IDC_UPDATENOW,205,155,171,14
 END
 
 IDD_CHOOSESTORE DIALOGEX 0, 0, 470, 282
@@ -2517,9 +2517,9 @@ BEGIN
     IDD_ABOUT, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 351
-        TOPMARGIN, 6
-        BOTTOMMARGIN, 204
+        RIGHTMARGIN, 383
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 205
     END
 
     IDD_CHOOSESTORE, DIALOG

@@ -337,9 +337,9 @@ LFCommDlg_API void LFCreateNewStore(CWnd* pParentWnd, CHAR Volume)
 	dlg.DoModal();
 }
 
-LFCommDlg_API void LFAbout(CString Build, CWnd* pParentWnd)
+LFCommDlg_API void LFAbout(CWnd* pParentWnd)
 {
-	LFAboutDlg dlg(Build, pParentWnd);
+	LFAboutDlg dlg(pParentWnd);
 	dlg.DoModal();
 }
 

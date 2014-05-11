@@ -14,13 +14,43 @@
 
 extern AFX_EXTENSION_MODULE LFCommDlgDLL;
 
-LFAboutDlg::LFAboutDlg(CString Build, CWnd* pParentWnd)
+#define COMPILE_HOUR       (((__TIME__[0]-'0')*10)+(__TIME__[1]-'0'))
+#define COMPILE_MINUTE     (((__TIME__[3]-'0')*10)+(__TIME__[4]-'0'))
+#define COMPILE_SECOND     (((__TIME__[6]-'0')*10)+(__TIME__[7]-'0'))
+#define COMPILE_YEAR       ((((__DATE__[7]-'0')*10+(__DATE__[8]-'0'))*10+(__DATE__[9]-'0'))*10+(__DATE__[10]-'0'))
+#define COMPILE_MONTH      ((__DATE__[2]=='n' ? (__DATE__ [1] == 'a' ? 0 : 5)\
+							: __DATE__[2]=='b' ? 1 \
+							: __DATE__[2]=='r' ? (__DATE__ [0] == 'M' ? 2 : 3) \
+							: __DATE__[2]=='y' ? 4 \
+							: __DATE__[2]=='l' ? 6 \
+							: __DATE__[2]=='g' ? 7 \
+							: __DATE__[2]=='p' ? 8 \
+							: __DATE__[2]=='t' ? 9 \
+							: __DATE__[2]=='v' ? 10 : 11)+1)
+#define COMPILE_DAY        ((__DATE__[4]==' ' ? 0 : __DATE__[4]-'0')*10+(__DATE__[5]-'0'))
+
+LFAboutDlg::LFAboutDlg(CWnd* pParentWnd)
 	: LFDialog(IDD_ABOUT, pParentWnd)
 {
-	m_Build = Build;
 	m_CaptionTop = m_IconTop = 0;
 
 	SYSTEMTIME st;
+	ZeroMemory(&st, sizeof(st));
+	st.wDay = COMPILE_DAY;
+	st.wMonth = COMPILE_MONTH;
+	st.wYear = COMPILE_YEAR;
+	st.wHour = COMPILE_HOUR;
+	st.wMinute = COMPILE_MINUTE;
+	st.wSecond = COMPILE_SECOND;
+
+	FILETIME ft;
+	SystemTimeToFileTime(&st, &ft);
+
+	LFTimeToString(ft, m_Build, 256);
+	WCHAR* pChar = wcsrchr(m_Build, L':');
+	if (pChar)
+		*pChar = L'\0';
+
 	GetSystemTime(&st);
 	p_Santa = (st.wMonth==12) ? p_App->GetCachedResourceImage(IDB_SANTA, _T("PNG"), LFCommDlgDLL.hResource) : NULL;
 	p_Logo = p_App->GetCachedResourceImage(IDB_LIQUIDFOLDERS_128, _T("PNG"), LFCommDlgDLL.hResource);

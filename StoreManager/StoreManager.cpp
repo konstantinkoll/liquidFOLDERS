@@ -295,8 +295,7 @@ CWnd* CStoreManagerApp::GetFileDrop(CHAR* StoreID)
 
 void CStoreManagerApp::OnAppAbout()
 {
-	TIMESTAMP;
-	LFAbout(Timestamp, m_pActiveWnd);
+	LFAbout(m_pActiveWnd);
 }
 
 

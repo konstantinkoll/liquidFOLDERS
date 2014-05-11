@@ -77,8 +77,7 @@ BOOL CRunCmdApp::InitInstance()
 
 void CRunCmdApp::OnAppAbout()
 {
-	TIMESTAMP;
-	LFAbout(Timestamp, CWnd::GetForegroundWindow());
+	LFAbout(TCWnd::GetForegroundWindow());
 }
 
 void CRunCmdApp::OnStoreCreate(CHAR Drive)

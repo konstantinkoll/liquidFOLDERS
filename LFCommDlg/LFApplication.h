@@ -66,8 +66,6 @@ struct ResourceCacheItem
 // Siehe LFApplication.cpp für die Implementierung dieser Klasse
 //
 
-#define TIMESTAMP CString Timestamp = _T(__DATE__); Timestamp.Append(_T(", ")); Timestamp.Append(_T(__TIME__));
-
 class LFUpdateDlg;
 
 class AFX_EXT_CLASS LFApplication : public CWinAppEx
