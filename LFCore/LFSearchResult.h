@@ -34,8 +34,8 @@ public:
 	unsigned int m_StoreCount;
 
 private:
-	int Compare(int eins, int zwei, unsigned int attr, bool descending);
-	void Heap(int wurzel, int anz, unsigned int attr, bool descending);
+	int Compare(LFItemDescriptor* d1, LFItemDescriptor* d2, unsigned int attr, bool descending);
+	void Heap(unsigned int wurzel, const unsigned int anz, const unsigned int attr, const bool descending);
 	unsigned int Aggregate(unsigned int write, unsigned int read1, unsigned int read2, void* c,
 		unsigned int attr, bool groupone, LFFilter* f);
 };

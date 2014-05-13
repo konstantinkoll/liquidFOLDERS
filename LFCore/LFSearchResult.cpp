@@ -286,11 +286,8 @@ void LFSearchResult::KeepRange(int first, int last)
 		RemoveItemDescriptor((unsigned int)a);
 }
 
-int LFSearchResult::Compare(int eins, int zwei, unsigned int attr, bool descending)
+int LFSearchResult::Compare(LFItemDescriptor* d1, LFItemDescriptor* d2, unsigned int attr, bool descending)
 {
-	LFItemDescriptor* d1 = m_Items[eins];
-	LFItemDescriptor* d2 = m_Items[zwei];
-
 	// Kategorien
 	if ((m_HasCategories) && (d1->CategoryID!=d2->CategoryID))
 		return (int)d1->CategoryID-(int)d2->CategoryID;
@@ -457,7 +454,7 @@ int LFSearchResult::Compare(int eins, int zwei, unsigned int attr, bool descendi
 				}
 			break;
 		default:
-			assert(FALSE);
+			assert(false);
 		}
 
 		// Ggf. Reihenfolge umkehren
@@ -482,25 +479,58 @@ int LFSearchResult::Compare(int eins, int zwei, unsigned int attr, bool descendi
 	return cmp;
 }
 
-void LFSearchResult::Heap(int wurzel, int anz, unsigned int attr, bool descending)
+void LFSearchResult::Heap(unsigned int wurzel, const unsigned int anz, const unsigned int attr, const bool descending)
 {
-	while (wurzel<=anz/2-1)
-	{
-		int idx = (wurzel+1)*2-1;
-		if (idx+1<anz)
-			if (Compare(idx, idx+1, attr, descending)<0)
-				idx++;
+	LFItemDescriptor* i = m_Items[wurzel];
+	unsigned int parent = wurzel;
+	unsigned int child;
 
-		if (Compare(wurzel, idx, attr, descending)<0)
-		{
-			std::swap(m_Items[wurzel], m_Items[idx]);
-			wurzel = idx;
-		}
-		else
-		{
-			break;
-		}
+	while ((child=(parent+1)*2)<anz)
+	{
+		if (Compare(m_Items[child-1], m_Items[child], attr, descending)>0)
+			child--;
+
+		m_Items[parent] = m_Items[child];
+		parent = child;
 	}
+
+	if (child==anz)
+	{
+		if (Compare(m_Items[--child], i, attr, descending)>=0)
+		{
+			m_Items[parent] = m_Items[child];
+			m_Items[child] = i;
+			return;
+		}
+
+		child = parent;
+	}
+	else
+	{
+		if (parent==wurzel)
+			return;
+
+		if (Compare(m_Items[parent], i, attr, descending)>=0)
+		{
+			m_Items[parent] = i;
+			return;
+		}
+
+		child = (parent-1)/2;
+	}
+
+	while (child!=wurzel)
+	{
+		parent = (child-1)/2;
+
+		if (Compare(m_Items[parent], i, attr, descending)>=0)
+			break;
+
+		m_Items[child] = m_Items[parent];
+		child = parent;
+	}
+
+	m_Items[child] = i;
 }
 
 void LFSearchResult::Sort(unsigned int attr, bool descending)
