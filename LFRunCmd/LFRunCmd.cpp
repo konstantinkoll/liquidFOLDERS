@@ -77,7 +77,7 @@ BOOL CRunCmdApp::InitInstance()
 
 void CRunCmdApp::OnAppAbout()
 {
-	LFAbout(TCWnd::GetForegroundWindow());
+	LFAbout(CWnd::GetForegroundWindow());
 }
 
 void CRunCmdApp::OnStoreCreate(CHAR Drive)
