@@ -476,7 +476,7 @@ struct LFCoreAttributes
 #define LFTypeSourceSoundCloud          0x0000000A
 #define LFTypeSourceTwitter             0x0000000B
 #define LFTypeSourceYouTube             0x0000000C
-#define LFTypeSourceMask                0x0000000F
+#define LFTypeSourceMask                0x000000FF
 
 #define LFTypeDefault                   0x01000000	// Volatile
 #define LFTypeNotMounted                0x02000000
@@ -526,7 +526,17 @@ struct LFItemDescriptor
 #define LFStoreModeIndexMask           0x0F
 
 #define LFStoreModeBackendInternal     0x00000000
-#define LFStoreModeBackendMask         0xF0000000
+#define LFStoreModeBackendNTFS         0x02000000
+#define LFStoreModeBackendDropbox      0x05000000
+#define LFStoreModeBackendFacebook     0x06000000
+#define LFStoreModeBackendFlickr       0x07000000
+#define LFStoreModeBackendInstagram    0x08000000
+#define LFStoreModeBackendPinterest    0x09000000
+#define LFStoreModeBackendSoundCloud   0x0A000000
+#define LFStoreModeBackendTwitter      0x0B000000
+#define LFStoreModeBackendYouTube      0x0C000000
+#define LFStoreModeBackendShift        24
+#define LFStoreModeBackendMask         0xFF000000
 
 #define LFStoreFlagAutoLocation        1
 #define LFStoreFlagUnchecked           2

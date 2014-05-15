@@ -424,7 +424,7 @@ LFCore_API unsigned int LFCreateStore(LFStoreDescriptor* s, bool MakeDefault, HW
 	// Pfad ergänzen
 	AppendGUID(s, s->DatPath);
 
-	SetStorePaths(s);
+	SetStoreAttributes(s);
 
 	// Ggf. Name setzen
 	if (s->StoreName[0]==L'\0')
@@ -564,18 +564,18 @@ LFCore_API unsigned int LFMakeStoreSearchable(char* StoreID, bool Searchable, HW
 			EXIT(LFIllegalStoreDescriptor);
 		}
 
-		SetStorePaths(slot);
-
-		#define CHECK_ABORT() if (res!=LFOk) { ReleaseMutexForStore(StoreLock); return res; }
+		SetStoreAttributes(slot);
 
 		res = UpdateStore(slot);
 		ReleaseMutex(Mutex_Stores);
-		CHECK_ABORT();
+		if (res!=LFOk)
+			goto Abort;
 
 		if ((slot->Mode & LFStoreModeIndexMask)==LFStoreModeIndexHybrid)
 		{
 			res = CreateStoreDirectories(slot);
-			CHECK_ABORT();
+			if (res!=LFOk)
+				goto Abort;
 
 			res = CopyDir(slot->IdxPathMain, slot->IdxPathAux);
 		}
@@ -590,6 +590,7 @@ LFCore_API unsigned int LFMakeStoreSearchable(char* StoreID, bool Searchable, HW
 		}
 	}
 
+Abort:
 	ReleaseMutexForStore(StoreLock);
 
 	if (res==LFOk)

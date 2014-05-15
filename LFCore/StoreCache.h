@@ -20,7 +20,7 @@ bool IsStoreMounted(LFStoreDescriptor* s);
 void GetAutoPath(LFStoreDescriptor* s, wchar_t* pPath);
 unsigned int DeleteStoreSettingsFromRegistry(LFStoreDescriptor* s);
 void CreateNewStoreID(char* StoreID);
-void SetStorePaths(LFStoreDescriptor* s, int Source=-1);
+void SetStoreAttributes(LFStoreDescriptor* s);
 void InitStoreCache();
 void AddStoresToSearchResult(LFSearchResult* sr);
 LFStoreDescriptor* FindStore(char* StoreID, HANDLE* lock=NULL);

@@ -440,18 +440,16 @@ void CreateNewStoreID(char* StoreID)
 	while (!unique);
 }
 
-void SetStorePaths(LFStoreDescriptor* s, int Source)
+void SetStoreAttributes(LFStoreDescriptor* s)
 {
 	assert(s);
 	assert(((s->Mode & LFStoreModeIndexMask)>=LFStoreModeIndexInternal) && ((s->Mode & LFStoreModeIndexMask)<=LFStoreModeIndexExternal));
 
+	// Source
+	s->Source = ((s->Mode & LFStoreModeBackendMask)==LFStoreModeBackendInternal) ? LFTypeSourceInternal : (s->Mode & LFStoreModeBackendMask)>>LFStoreModeBackendShift;
+
 	// Store name and source of mounted volume
-	if ((s->Mode & LFStoreModeIndexMask)==LFStoreModeIndexInternal)
-	{
-		if (Source==-1)
-			Source = LFTypeSourceInternal;
-	}
-	else
+	if ((s->Mode & LFStoreModeIndexMask)!=LFStoreModeIndexInternal)
 		if (IsStoreMounted(s))
 		{
 			wchar_t szDriveRoot[] = L" :\\";
@@ -461,12 +459,9 @@ void SetStorePaths(LFStoreDescriptor* s, int Source)
 			if (SHGetFileInfo(szDriveRoot, 0, &sfi, sizeof(SHFILEINFO), SHGFI_DISPLAYNAME))
 				wcscpy_s(s->LastSeen, 256, sfi.szDisplayName);
 
-			if (Source==-1)
-				Source = LFGetSourceForDrive(s->DatPath[0] & 0xFF);
+			if ((s->Mode & LFStoreModeBackendMask)<=LFStoreModeBackendNTFS)
+				s->Source = LFGetSourceForDrive(s->DatPath[0] & 0xFF);
 		}
-
-	assert((Source & LFTypeSourceMask)==Source);
-	s->Source = Source;
 
 	// Get automatic data path
 	if (((s->Mode & LFStoreModeIndexMask)==LFStoreModeIndexInternal) && (s->Flags & LFStoreFlagAutoLocation))
@@ -528,7 +523,7 @@ __forceinline void LoadRegistry()
 		// Store laden
 		if (LoadStoreSettingsFromRegistry(key, &StoreCache[StoreCount]))
 		{
-			SetStorePaths(&StoreCache[StoreCount]);
+			SetStoreAttributes(&StoreCache[StoreCount]);
 			StoreCache[StoreCount++].Flags |= LFStoreFlagUnchecked;
 		}
 	}
@@ -805,7 +800,6 @@ unsigned int MountDrive(char cDrive, bool InternalCall)
 	wchar_t mask[] = L" :\\*.store";
 	mask[0] = cDrive;
 	bool ChangeOccured = false;
-	unsigned int Source = LFGetSourceForDrive(cDrive);
 	unsigned int res = LFOk;
 
 	WIN32_FIND_DATA ffd;
@@ -874,7 +868,7 @@ unsigned int MountDrive(char cDrive, bool InternalCall)
 					wcscpy_s(slot->DatPath, MAX_PATH, s.DatPath);
 					slot->DatPath[0] = cDrive;
 
-					SetStorePaths(slot, Source);
+					SetStoreAttributes(slot);
 
 					slot->Flags |= LFStoreFlagUnchecked;
 

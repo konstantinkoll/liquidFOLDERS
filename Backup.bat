@@ -1,1 +1,1 @@
-"C:\Programme\7-Zip\7z.exe" a -r -tzip -y -xr!*.aps -xr!*.ncb -xr!*.suo -x!.git\ -x!Debug\ -x!Release -x!Temp ..\liquidFOLDERS.zip *
+@"C:\Programme\7-Zip\7z.exe" a -r -tzip -y -xr!*.aps -xr!*.ncb -xr!*.suo -x!.git\ -x!Debug\ -x!Release -x!Temp ..\liquidFOLDERS.zip *
