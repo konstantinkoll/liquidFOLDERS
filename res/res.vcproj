@@ -1293,6 +1293,14 @@
 			>
 		</File>
 		<File
+			RelativePath=".\Progress.ico"
+			>
+		</File>
+		<File
+			RelativePath=".\Progress_Tiny.ico"
+			>
+		</File>
+		<File
 			RelativePath=".\QueryEdit_Tiny.ico"
 			>
 		</File>

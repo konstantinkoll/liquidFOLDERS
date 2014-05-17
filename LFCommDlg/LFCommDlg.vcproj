@@ -1115,6 +1115,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\Progress_Tiny.ico"
+				>
+			</File>
+			<File
 				RelativePath=".\res\Rating0.bmp"
 				>
 			</File>
