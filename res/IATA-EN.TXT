@@ -208,7 +208,7 @@ AKX     Aqtobe, Kasachstan;4;50*14'45"N, 57*12'24"E
 AKY     Sittwe, Burma;4;20*7'58"N, 92*52'21"E
 ALA     Almaty, Kasachstan;4;43*21'7"N, 77*2'26"E
 ALB     Albany, USA;4;42*44'54"N, 73*48'6"W
-ALC     Alicante, Spain;5;38*17'01"N, 0*33'31"E
+ALC     Alicante, Spain;5;38*17'01"N, 0*33'31"W
 ALD     Alerta, Peru;4;11*40'59"S, 69*19'59"W
 ALE     Alpine, USA;4;30*23'3"N, 103*41'1"W
 ALF     Alta, Norway;4;69*58'34"N, 23*22'18"E
@@ -3704,7 +3704,7 @@ KEB     English Bay, USA;4;59*21'8"N, 151*55'31"W
 KEC     Kasenga, Congo;4;10*21'0"S, 28*37'59"E
 KED     Kaedi, Mauretania;4;16*9'34"N, 13*30'27"W
 KEE     Kelle, Congo;4;0*4'59"S, 14*31'59"E
-KEF     Reykjavik (Keflavik), Iceland;4;63*59'6"N, 22*36'20"W
+KEF REK Reykjavík (Keflavík), Iceland;4;63*59'6"N, 22*36'20"W
 KEG     Keglsugl, New Guinea;4;5*49'59"S, 145*6'0"E
 KEH     Seattle, USA;4;47*45'17"N, 122*15'33"W
 KEI     Kepi, Indonesia;4;6*31'59"S, 139*18'0"E
@@ -5903,6 +5903,7 @@ PEA     Penneshaw, Australia;4;35*45'20"S, 137*57'51"E
 PEB     Pebane, Mosambique;4;17*16'1"S, 38*10'1"E
 PEC     Pelican, USA;4;57*57'19"N, 136*14'11"W
 PEE     Perm, Russia;4;57*54'52"N, 56*1'16"E
+PEF     Peenemünde, Germany;5;54*9'28"N, 13*46'28"E
 PEG     Perugia, Italy;4;43*5'45"N, 12*30'48"E
 PEH     Pehuajo, Argentina;4;35*50'41"S, 61*51'27"W
 PEI     Pereira, Columbia;4;4*48'46"N, 75*44'22"W
@@ -6599,7 +6600,7 @@ REE     Lubbock (Reese Airforce Base), USA
 REG     Reggio Calabria, Italy;4;38*4'16"N, 15*39'6"E
 REH     Rehoboth Beach/Dewey Beach, USA
 REI     Regina, French Guyana;4;4*18'53"N, 52*7'54"W
-REK     Reykjavik, Iceland;4;64*9'0"N, 21*51'0"W
+REK REK Reykjavík, Iceland
 REL     Trelew, Argentina;4;43*12'38"S, 65*16'13"W
 REN     Orenburg, Russia;4;51*47'45"N, 55*27'24"E
 REO     Rome, USA;4;42*34'40"N, 117*53'8"W
@@ -6676,6 +6677,7 @@ RKR     Poteau, USA;4;35*1'18"N, 94*37'17"W
 RKS     Rock Springs, USA;4;41*35'39"N, 109*3'55"W
 RKT     Ras al Khaymah, UAE;4;25*36'49"N, 55*56'20"E
 RKU     Yule Island, New Guinea;4;8*49'1"S, 146*31'1"E
+RKV REK Reykjavík, Iceland;4;64*9'0"N, 21*51'0"W
 RKW     Rockwood, USA;4;35*55'20"N, 84*41'23"W
 RKY     Rokeby, Australia;4;13*38'60"S, 142*37'59"E
 RLA     Rolla, USA;4;37*56'8"N, 91*48'49"W
@@ -9261,7 +9263,7 @@ ZOF     Ocean Falls, Canada;4;52*22'1"N, 127*41'60"W
 ZOS     Osorno, Chile;4;40*36'40"S, 73*3'40"W
 ZPB     Sachigo Lake, Canada;4;53*53'26"N, 92*11'43"W
 ZPC     Pucon, Chile;4;39*17'34"S, 71*54'57"W
-ZPE NRW Osnabrueck, Germany
+ZPE NRW Osnabrück, Germany
 ZPH     Zephyrhills, USA;4;28*13'41"N, 82*9'21"W
 ZPO     Pinehouse Lake, Canada;4;55*31'41"N, 106*34'56"W
 ZQN     Queenstown, New Zealand;4;45*1'16"S, 168*44'21"E
