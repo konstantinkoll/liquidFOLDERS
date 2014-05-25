@@ -690,9 +690,9 @@ BEGIN_MESSAGE_MAP(CMainView, CWnd)
 	ON_COMMAND(IDM_NEW_REMOVENEW, OnNewRemoveNew)
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_NEW_REMOVENEW, IDM_NEW_REMOVENEW, OnUpdateNewCommands)
 
-	ON_COMMAND(IDM_TRASH_RESTOREALL, OnTrashRestoreAll)
 	ON_COMMAND(IDM_TRASH_EMPTY, OnTrashEmpty)
-	ON_UPDATE_COMMAND_UI_RANGE(IDM_TRASH_RESTOREALL, IDM_TRASH_EMPTY, OnUpdateTrashCommands)
+	ON_COMMAND(IDM_TRASH_RESTOREALL, OnTrashRestoreAll)
+	ON_UPDATE_COMMAND_UI_RANGE(IDM_TRASH_EMPTY, IDM_TRASH_RESTOREALL, OnUpdateTrashCommands)
 
 	ON_UPDATE_COMMAND_UI_RANGE(IDM_FILTERS_CREATENEW, IDM_FILTERS_EDIT, OnUpdateFiltersCommands)
 
@@ -747,19 +747,19 @@ INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	m_wndTaskbar.AddButton(IDM_STORES_CREATENEW, 2);
 	m_wndTaskbar.AddButton(IDM_NEW_REMOVENEW, 3, TRUE);
-	m_wndTaskbar.AddButton(IDM_TRASH_RESTOREALL, 4, TRUE);
-	m_wndTaskbar.AddButton(IDM_TRASH_EMPTY, 5, TRUE);
-	m_wndTaskbar.AddButton(IDM_FILTERS_CREATENEW, 6, TRUE);
-	m_wndTaskbar.AddButton(IDM_CALENDAR_PREVYEAR, 7, TRUE);
-	m_wndTaskbar.AddButton(IDM_CALENDAR_NEXTYEAR, 8, TRUE);
-	m_wndTaskbar.AddButton(IDM_CALENDAR_GOTOYEAR, 9);
-	m_wndTaskbar.AddButton(IDM_GLOBE_JUMPTOLOCATION, 10, TRUE);
-	m_wndTaskbar.AddButton(IDM_GLOBE_ZOOMIN, 11);
-	m_wndTaskbar.AddButton(IDM_GLOBE_ZOOMOUT, 12);
-	m_wndTaskbar.AddButton(IDM_GLOBE_AUTOSIZE, 13);
-	m_wndTaskbar.AddButton(IDM_TAGCLOUD_SORTVALUE, 14);
-	m_wndTaskbar.AddButton(IDM_TAGCLOUD_SORTCOUNT, 15);
-	m_wndTaskbar.AddButton(IDM_FILE_RESTORE, 16);
+	m_wndTaskbar.AddButton(IDM_TRASH_EMPTY, 4, TRUE);
+	m_wndTaskbar.AddButton(IDM_TRASH_RESTOREALL, 5, TRUE);
+	m_wndTaskbar.AddButton(IDM_FILE_RESTORE, 6);
+	m_wndTaskbar.AddButton(IDM_FILTERS_CREATENEW, 7, TRUE);
+	m_wndTaskbar.AddButton(IDM_CALENDAR_PREVYEAR, 8, TRUE);
+	m_wndTaskbar.AddButton(IDM_CALENDAR_NEXTYEAR, 9, TRUE);
+	m_wndTaskbar.AddButton(IDM_CALENDAR_GOTOYEAR, 10);
+	m_wndTaskbar.AddButton(IDM_GLOBE_JUMPTOLOCATION, 11, TRUE);
+	m_wndTaskbar.AddButton(IDM_GLOBE_ZOOMIN, 12);
+	m_wndTaskbar.AddButton(IDM_GLOBE_ZOOMOUT, 13);
+	m_wndTaskbar.AddButton(IDM_GLOBE_AUTOSIZE, 14);
+	m_wndTaskbar.AddButton(IDM_TAGCLOUD_SORTVALUE, 15);
+	m_wndTaskbar.AddButton(IDM_TAGCLOUD_SORTCOUNT, 16);
 
 	#define OpenIconFolder       18
 	#define OpenIconExplorer     19
@@ -1443,20 +1443,33 @@ void CMainView::OnUpdateNewCommands(CCmdUI* pCmdUI)
 
 // Trash
 
+void CMainView::OnTrashRestoreAll()
+{
+	RestoreFiles(LFFlagTrash, TRUE);
+}
+
 void CMainView::OnTrashEmpty()
 {
 	if (DeleteFiles(FALSE, TRUE))
 		theApp.PlayTrashSound();
 }
 
-void CMainView::OnTrashRestoreAll()
-{
-	RestoreFiles(LFFlagTrash, TRUE);
-}
-
 void CMainView::OnUpdateTrashCommands(CCmdUI* pCmdUI)
 {
-	pCmdUI->Enable(((m_Context==LFContextTrash) && (p_CookedFiles)) ? p_CookedFiles->m_ItemCount : FALSE);
+	BOOL b = (m_Context==LFContextTrash) && (p_CookedFiles);
+
+	INT idx = GetSelectedItem();
+	if (idx!=-1)
+	{
+		switch (pCmdUI->m_nID)
+		{
+		case IDM_TRASH_RESTOREALL:
+			b = FALSE;
+			break;
+		}
+	}
+
+	pCmdUI->Enable(b);
 }
 
 

@@ -100,8 +100,8 @@ protected:
 	afx_msg void OnNewRemoveNew();
 	afx_msg void OnUpdateNewCommands(CCmdUI* pCmdUI);
 
-	afx_msg void OnTrashEmpty();
 	afx_msg void OnTrashRestoreAll();
+	afx_msg void OnTrashEmpty();
 	afx_msg void OnUpdateTrashCommands(CCmdUI* pCmdUI);
 
 	afx_msg void OnUpdateFiltersCommands(CCmdUI* pCmdUI);

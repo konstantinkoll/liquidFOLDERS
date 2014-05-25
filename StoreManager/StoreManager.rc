@@ -210,9 +210,10 @@ IDM_FILE_AWAY MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
+        MENUITEM "&Wiederherstellen",           IDM_FILE_RESTORE
+        MENUITEM SEPARATOR
         MENUITEM SEPARATOR
         MENUITEM "&Löschen",                    IDM_FILE_DELETE
-        MENUITEM "&Wiederherstellen",           IDM_FILE_RESTORE
     END
 END
 
@@ -977,9 +978,10 @@ IDM_FILE_AWAY MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
+        MENUITEM "Re&staurar",                  IDM_FILE_RESTORE
+        MENUITEM SEPARATOR
         MENUITEM SEPARATOR
         MENUITEM "&Eliminar",                   IDM_FILE_DELETE
-        MENUITEM "Re&staurar",                  IDM_FILE_RESTORE
     END
 END
 
@@ -1744,9 +1746,10 @@ IDM_FILE_AWAY MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
+        MENUITEM "&Reconstituer",               IDM_FILE_RESTORE
+        MENUITEM SEPARATOR
         MENUITEM SEPARATOR
         MENUITEM "&Effacer",                    IDM_FILE_DELETE
-        MENUITEM "&Reconstituer",               IDM_FILE_RESTORE
     END
 END
 
@@ -2563,9 +2566,10 @@ IDM_FILE_AWAY MENU
 BEGIN
     POPUP "POPUP"
     BEGIN
+        MENUITEM "Re&store",                    IDM_FILE_RESTORE
+        MENUITEM SEPARATOR
         MENUITEM SEPARATOR
         MENUITEM "&Delete",                     IDM_FILE_DELETE
-        MENUITEM "Re&store",                    IDM_FILE_RESTORE
     END
 END
 

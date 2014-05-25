@@ -698,6 +698,8 @@ CMenu* CFileView::GetSendToMenu()
 
 CMenu* CFileView::GetItemContextMenu(INT idx)
 {
+	UINT InsertPos = 0;
+
 	CMenu* pMenu = new CMenu();
 
 	LFItemDescriptor* item = p_CookedFiles->m_Items[idx];
@@ -711,7 +713,15 @@ CMenu* CFileView::GetItemContextMenu(INT idx)
 		pMenu->GetSubMenu(0)->InsertMenu(0, MF_SEPARATOR | MF_BYPOSITION);
 		break;
 	case LFTypeFile:
-		pMenu->LoadMenu((m_Context==LFContextArchive) || (m_Context==LFContextTrash) ? IDM_FILE_AWAY : IDM_FILE);
+		if ((m_Context==LFContextArchive) || (m_Context==LFContextTrash))
+		{
+			pMenu->LoadMenu(IDM_FILE_AWAY);
+			InsertPos = 2;
+		}
+		else
+		{
+			pMenu->LoadMenu(IDM_FILE);
+		}
 		break;
 	case LFTypeFolder:
 		if ((item->FirstAggregate!=-1) && (item->LastAggregate!=-1))
@@ -733,13 +743,13 @@ CMenu* CFileView::GetItemContextMenu(INT idx)
 		if (((item->Type & LFTypeMask)==LFTypeFile) || (((item->Type & LFTypeMask)==LFTypeFolder) && (item->FirstAggregate!=-1) && (item->LastAggregate!=-1)))
 		{
 			ENSURE(tmpStr.LoadString(m_Context==LFContextClipboard ? IDS_CONTEXTMENU_REMOVE : IDS_CONTEXTMENU_REMEMBER));
-			pPopup->InsertMenu(0, MF_STRING | MF_BYPOSITION, m_Context==LFContextClipboard ? IDM_FILE_REMOVE : IDM_FILE_REMEMBER, tmpStr);
+			pPopup->InsertMenu(InsertPos, MF_STRING | MF_BYPOSITION, m_Context==LFContextClipboard ? IDM_FILE_REMOVE : IDM_FILE_REMEMBER, tmpStr);
 
 			CMenu* pSendPopup = GetSendToMenu();
 
 			ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_SENDTO));
-			pPopup->InsertMenu(0, MF_POPUP | MF_BYPOSITION, (UINT_PTR)pSendPopup->m_hMenu, tmpStr);
-			pPopup->InsertMenu(0, MF_SEPARATOR | MF_BYPOSITION);
+			pPopup->InsertMenu(InsertPos, MF_POPUP | MF_BYPOSITION, (UINT_PTR)pSendPopup->m_hMenu, tmpStr);
+			pPopup->InsertMenu(InsertPos, MF_SEPARATOR | MF_BYPOSITION);
 
 			pSendPopup->Detach();
 			delete pSendPopup;
@@ -749,34 +759,34 @@ CMenu* CFileView::GetItemContextMenu(INT idx)
 	{
 	case LFTypeStore:
 		ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_OPENFILEDROP));
-		pPopup->InsertMenu(0, MF_STRING | MF_BYPOSITION, IDM_ITEM_OPENFILEDROP, tmpStr);
+		pPopup->InsertMenu(InsertPos, MF_STRING | MF_BYPOSITION, IDM_ITEM_OPENFILEDROP, tmpStr);
 
 		ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_OPENNEWWINDOW));
-		pPopup->InsertMenu(0, MF_STRING | MF_BYPOSITION, IDM_ITEM_OPENNEWWINDOW, tmpStr);
+		pPopup->InsertMenu(InsertPos, MF_STRING | MF_BYPOSITION, IDM_ITEM_OPENNEWWINDOW, tmpStr);
 		break;
 	case LFTypeFile:
 		if (item->CoreAttributes.URL[0]!='\0')
 		{
 			ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_OPENBROWSER));
-			pPopup->InsertMenu(0, MF_STRING | MF_BYPOSITION, IDM_FILE_OPENBROWSER, tmpStr);
+			pPopup->InsertMenu(InsertPos, MF_STRING | MF_BYPOSITION, IDM_FILE_OPENBROWSER, tmpStr);
 		}
 		if (item->CoreAttributes.ContextID==LFContextFilters)
 		{
 			ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_EDIT));
-			pPopup->InsertMenu(0, MF_STRING | MF_BYPOSITION, IDM_FILE_EDIT, tmpStr);
+			pPopup->InsertMenu(InsertPos, MF_STRING | MF_BYPOSITION, IDM_FILE_EDIT, tmpStr);
 		}
 		else
 		{
 			ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_OPENWITH));
-			pPopup->InsertMenu(0, MF_STRING | MF_BYPOSITION, IDM_FILE_OPENWITH, tmpStr);
+			pPopup->InsertMenu(InsertPos, MF_STRING | MF_BYPOSITION, IDM_FILE_OPENWITH, tmpStr);
 		}
 		break;
 	}
 
 	ENSURE(tmpStr.LoadString(IDS_CONTEXTMENU_OPEN));
-	pPopup->InsertMenu(0, MF_STRING | MF_BYPOSITION, IDM_ITEM_OPEN, tmpStr);
+	pPopup->InsertMenu(InsertPos, MF_STRING | MF_BYPOSITION, IDM_ITEM_OPEN, tmpStr);
+	pPopup->SetDefaultItem(InsertPos, TRUE);
 
-	pPopup->SetDefaultItem(0, TRUE);
 	return pMenu;
 }
 
