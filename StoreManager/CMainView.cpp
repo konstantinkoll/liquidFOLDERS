@@ -1914,7 +1914,7 @@ void CMainView::OnUpdateFileCommands(CCmdUI* pCmdUI)
 		b = m_FilesSelected;
 		break;
 	case IDM_FILE_RENAME:
-		if ((item) && (m_Context!=LFContextTrash))
+		if ((item) && (m_Context!=LFContextArchive) && (m_Context!=LFContextTrash))
 			b = ((item->Type & (LFTypeNotMounted | LFTypeMask))==LFTypeFile);
 		if (p_wndFileView)
 			b &= !p_wndFileView->IsEditing();

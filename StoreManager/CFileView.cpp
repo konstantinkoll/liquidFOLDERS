@@ -802,7 +802,7 @@ void CFileView::EditLabel(INT idx)
 {
 	m_EditLabel = -1;
 
-	if ((m_EnableLabelEdit) && (p_CookedFiles))
+	if ((m_EnableLabelEdit) && (p_CookedFiles) && (m_Context!=LFContextArchive) && (m_Context!=LFContextTrash))
 	{
 		LFItemDescriptor* item = p_CookedFiles->m_Items[idx];
 		if (((item->Type & (LFTypeNotMounted | LFTypeMask))==LFTypeVolume) ||
