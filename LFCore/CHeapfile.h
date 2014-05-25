@@ -28,11 +28,9 @@ struct HeapfileHeader
 
 class LFCore_API CHeapfile
 {
-	friend class CIndex;
-
 public:
 	CHeapfile(wchar_t* Path, wchar_t* Filename, unsigned int _ElementSize, unsigned int _KeyOffset=0);
-	virtual ~CHeapfile();
+	~CHeapfile();
 
 	virtual void GetFromItemDescriptor(void* PtrDst, LFItemDescriptor* i) = 0;
 	virtual void WriteToItemDescriptor(LFItemDescriptor* i, void* PtrSrc) = 0;

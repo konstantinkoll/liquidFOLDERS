@@ -109,7 +109,6 @@ class CIdxTableMaster : public CHeapfile
 {
 public:
 	CIdxTableMaster(wchar_t* Path);
-	virtual ~CIdxTableMaster();
 
 	virtual void GetFromItemDescriptor(void* PtrDst, LFItemDescriptor* i);
 	virtual void WriteToItemDescriptor(LFItemDescriptor* i, void* PtrSrc);
@@ -123,7 +122,6 @@ class CIdxTableDocuments : public CHeapfile
 {
 public:
 	CIdxTableDocuments(wchar_t* Path);
-	virtual ~CIdxTableDocuments();
 
 	virtual void GetFromItemDescriptor(void* PtrDst, LFItemDescriptor* i);
 	virtual void WriteToItemDescriptor(LFItemDescriptor* i, void* PtrSrc);
@@ -137,7 +135,6 @@ class CIdxTableMessages : public CHeapfile
 {
 public:
 	CIdxTableMessages(wchar_t* Path);
-	virtual ~CIdxTableMessages();
 
 	virtual void GetFromItemDescriptor(void* PtrDst, LFItemDescriptor* i);
 	virtual void WriteToItemDescriptor(LFItemDescriptor* i, void* PtrSrc);
@@ -151,7 +148,6 @@ class CIdxTableAudio : public CHeapfile
 {
 public:
 	CIdxTableAudio(wchar_t* Path);
-	virtual ~CIdxTableAudio();
 
 	virtual void GetFromItemDescriptor(void* PtrDst, LFItemDescriptor* i);
 	virtual void WriteToItemDescriptor(LFItemDescriptor* i, void* PtrSrc);
@@ -165,7 +161,6 @@ class CIdxTablePictures : public CHeapfile
 {
 public:
 	CIdxTablePictures(wchar_t* Path);
-	virtual ~CIdxTablePictures();
 
 	virtual void GetFromItemDescriptor(void* PtrDst, LFItemDescriptor* i);
 	virtual void WriteToItemDescriptor(LFItemDescriptor* i, void* PtrSrc);
@@ -179,7 +174,6 @@ class CIdxTableVideos : public CHeapfile
 {
 public:
 	CIdxTableVideos(wchar_t* Path);
-	virtual ~CIdxTableVideos();
 
 	virtual void GetFromItemDescriptor(void* PtrDst, LFItemDescriptor* i);
 	virtual void WriteToItemDescriptor(LFItemDescriptor* i, void* PtrSrc);

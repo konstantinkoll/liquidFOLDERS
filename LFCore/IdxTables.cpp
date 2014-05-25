@@ -7,7 +7,7 @@
 #include <stddef.h>
 
 
-__forceinline void ZeroCopy(void* _Dst, rsize_t _DstSize, void* _Src, rsize_t _SrcSize)
+__forceinline void ZeroCopy(void* _Dst, const rsize_t _DstSize, void* _Src, const rsize_t _SrcSize)
 {
 	memcpy_s(_Dst, _DstSize, _Src, min(_DstSize, _SrcSize));
 
@@ -45,10 +45,6 @@ CIdxTableMaster::CIdxTableMaster(wchar_t* Path)
 {
 }
 
-CIdxTableMaster::~CIdxTableMaster()
-{
-}
-
 void CIdxTableMaster::GetFromItemDescriptor(void* PtrDst, LFItemDescriptor* i)
 {
 	assert(i);
@@ -71,10 +67,6 @@ void CIdxTableMaster::WriteToItemDescriptor(LFItemDescriptor* i, void* PtrSrc)
 
 CIdxTableDocuments::CIdxTableDocuments(wchar_t* Path)
 	: CHeapfile(Path, L"Docs.idx", sizeof(LFDocumentAttributes))
-{
-}
-
-CIdxTableDocuments::~CIdxTableDocuments()
 {
 }
 
@@ -137,10 +129,6 @@ CIdxTableMessages::CIdxTableMessages(wchar_t* Path)
 {
 }
 
-CIdxTableMessages::~CIdxTableMessages()
-{
-}
-
 void CIdxTableMessages::GetFromItemDescriptor(void* PtrDst, LFItemDescriptor* i)
 {
 	assert(i);
@@ -189,10 +177,6 @@ void CIdxTableMessages::WriteToItemDescriptor(LFItemDescriptor* i, void* PtrSrc)
 
 CIdxTableAudio::CIdxTableAudio(wchar_t* Path)
 	: CHeapfile(Path, L"Audio.idx", sizeof(LFAudioAttributes))
-{
-}
-
-CIdxTableAudio::~CIdxTableAudio()
 {
 }
 
@@ -252,10 +236,6 @@ void CIdxTableAudio::WriteToItemDescriptor(LFItemDescriptor* i, void* PtrSrc)
 
 CIdxTablePictures::CIdxTablePictures(wchar_t* Path)
 	: CHeapfile(Path, L"Pictures.idx", sizeof(LFPictureAttributes))
-{
-}
-
-CIdxTablePictures::~CIdxTablePictures()
 {
 }
 
@@ -323,10 +303,6 @@ void CIdxTablePictures::WriteToItemDescriptor(LFItemDescriptor* i, void* PtrSrc)
 
 CIdxTableVideos::CIdxTableVideos(wchar_t* Path)
 	: CHeapfile(Path, L"Videos.idx", sizeof(LFVideoAttributes))
-{
-}
-
-CIdxTableVideos::~CIdxTableVideos()
 {
 }
 

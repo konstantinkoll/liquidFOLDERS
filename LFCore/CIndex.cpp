@@ -40,8 +40,7 @@
 
 #define BUILD_ITEMDESCRIPTOR() \
 	LFItemDescriptor* i = LFAllocItemDescriptor(); \
-	i->Type = LFTypeFile | slot->Source; \
-	if (!IsStoreMounted(slot)) i->Type |= LFTypeNotMounted | LFTypeGhosted; \
+	i->Type = Type; \
 	strcpy_s(i->StoreID, LFKeySize, slot->StoreID); \
 	Tables[IDMaster]->WriteToItemDescriptor(i, PtrM);
 
@@ -76,6 +75,8 @@
 #define END_ITERATEMASTER() }
 
 #define START_ITERATEALL(AbortOps, AbortRetval) \
+	unsigned int Type = LFTypeFile | slot->Source; \
+	if (!IsStoreMounted(slot)) Type |= LFTypeNotMounted | LFTypeGhosted; \
 	LOAD_MASTER(AbortOps, AbortRetval); \
 	int IDs[IdxTableCount]; ZeroMemory(IDs, sizeof(IDs)); \
 	LFCoreAttributes* PtrM; \
@@ -312,9 +313,11 @@ unsigned int CIndex::Check(bool Scheduled, bool* pRepaired, LFProgress* pProgres
 			if ((PtrM->SlaveID) && (PtrM->SlaveID<IdxTableCount))
 				if (tRes[PtrM->SlaveID]==HeapCreated)
 				{
+					const unsigned int Type = LFTypeFile;
 					BUILD_ITEMDESCRIPTOR();
 					SetAttributesFromFile(i, &fn[4]);	// No fully qualified path allowed, skip prefix
 					Tables[PtrM->SlaveID]->Add(i);
+					LFFreeItemDescriptor(i);
 				}
 	}
 

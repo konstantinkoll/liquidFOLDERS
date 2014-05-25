@@ -53,7 +53,7 @@ extern const unsigned char AttrTypes[LFAttributeCount] = {
 	LFTypeUnicodeString,		// LFAttrFileName
 	LFTypeAnsiString,			// LFAttrStoreID
 	LFTypeAnsiString,			// LFAttrFileID
-	LFTypeUnicodeString,		// LFAttrComments
+	LFTypeUnicodeString,		// LFAttrComment
 	LFTypeUnicodeString,		// LFAttrDescription
 	LFTypeTime,					// LFAttrCreationTime
 	LFTypeTime,					// LFAttrAddTime
@@ -229,14 +229,14 @@ LFCore_API LFItemDescriptor* LFAllocItemDescriptor(LFItemDescriptor* i)
 	d->RefCount = 1;
 
 	// Zeiger auf statische Attributwerte initalisieren
+	for (unsigned int a=0; a<=LFLastCoreAttribute; a++)
+		d->AttributeValues[a] = (char*)&d->CoreAttributes + CoreOffsets[a];
+
 	d->AttributeValues[LFAttrStoreID] = &d->StoreID;
 	d->AttributeValues[LFAttrDescription] = &d->Description[0];
 	d->AttributeValues[LFAttrFileCount] = &d->AggregateCount;
 
-	for (unsigned int a=0; a<=LFLastCoreAttribute; a++)
-		if (CoreOffsets[a]!=-1)
-			d->AttributeValues[a] = (char*)&d->CoreAttributes + CoreOffsets[a];
-
+	// Ggf. Werte kopieren
 	if (i)
 	{
 		d->CategoryID = i->CategoryID;
