@@ -39,7 +39,7 @@
 	if (TrackStats) RemoveFileFromStatistics(PtrM);
 
 #define BUILD_ITEMDESCRIPTOR() \
-	LFItemDescriptor* i = LFAllocItemDescriptor(); \
+	i = LFAllocItemDescriptor(); \
 	i->Type = Type; \
 	strcpy_s(i->StoreID, LFKeySize, slot->StoreID); \
 	Tables[IDMaster]->WriteToItemDescriptor(i, PtrM);
@@ -67,6 +67,7 @@
 #define END_FINDMASTER() }
 
 #define START_ITERATEMASTER(AbortOps, AbortRetval) \
+	LFItemDescriptor* i = NULL; \
 	LOAD_MASTER(AbortOps, AbortRetval); \
 	int ID = 0; \
 	LFCoreAttributes* PtrM; \
@@ -77,6 +78,7 @@
 #define START_ITERATEALL(AbortOps, AbortRetval) \
 	unsigned int Type = LFTypeFile | slot->Source; \
 	if (!IsStoreMounted(slot)) Type |= LFTypeNotMounted | LFTypeGhosted; \
+	LFItemDescriptor* i = NULL; \
 	LOAD_MASTER(AbortOps, AbortRetval); \
 	int IDs[IdxTableCount]; ZeroMemory(IDs, sizeof(IDs)); \
 	LFCoreAttributes* PtrM; \
@@ -87,15 +89,18 @@
 #define IN_FILEIDLIST(il) \
 	unsigned int ItemID = 0; \
 	for (; ItemID<il->m_ItemCount; ItemID++) \
+	{ \
+		i = NULL; \
 		if ((strcmp(il->m_Items[ItemID].StoreID, slot->StoreID)==0) && (strcmp(il->m_Items[ItemID].FileID, PtrM->FileID)==0)) \
 			goto Exists; \
+	} \
 	continue; \
 	Exists:
 
 #define IN_TRANSACTIONLIST(tl) \
 	unsigned int ItemID = 0; \
-	LFItemDescriptor* i; \
-	for (; ItemID<tl->m_ItemCount; ItemID++) { \
+	for (; ItemID<tl->m_ItemCount; ItemID++) \
+	{ \
 		i = tl->m_Items[ItemID].Item; \
 		if ((i->Type & LFTypeMask)==LFTypeFile) \
 			if ((strcmp(i->StoreID, slot->StoreID)==0) && (strcmp(i->CoreAttributes.FileID, PtrM->FileID)==0)) \
@@ -314,6 +319,7 @@ unsigned int CIndex::Check(bool Scheduled, bool* pRepaired, LFProgress* pProgres
 				if (tRes[PtrM->SlaveID]==HeapCreated)
 				{
 					const unsigned int Type = LFTypeFile;
+					LFItemDescriptor* i;
 					BUILD_ITEMDESCRIPTOR();
 					SetAttributesFromFile(i, &fn[4]);	// No fully qualified path allowed, skip prefix
 					Tables[PtrM->SlaveID]->Add(i);
@@ -700,7 +706,23 @@ void CIndex::Retrieve(LFFilter* f, LFSearchResult* res)
 	if (pass==-1)
 		continue;
 
-	BUILD_ITEMDESCRIPTOR();
+	// Reuse LFItemDescriptor
+	if (!i)
+	{
+		i = LFAllocItemDescriptor(); \
+		i->Type = Type; \
+		strcpy_s(i->StoreID, LFKeySize, slot->StoreID); \
+	}
+	else
+		if (i->Slave)
+		{
+			free(i->Slave);
+			i->Slave = NULL;
+
+			ZeroMemory(&i->AttributeValues[LFLastCoreAttribute+1], sizeof(void*)*(LFAttributeCount-LFLastCoreAttribute-1));
+		}
+
+	Tables[IDMaster]->WriteToItemDescriptor(i, PtrM);
 
 	if (!f->Options.IgnoreSlaves)
 	{
@@ -714,12 +736,15 @@ void CIndex::Retrieve(LFFilter* f, LFSearchResult* res)
 
 	if (pass!=-1)
 		if (res->AddItemDescriptor(i))
+		{
+			i = NULL;
 			continue;
-
-	// Discard
-	LFFreeItemDescriptor(i);
+		}
 
 	END_ITERATEALL();
+
+	if (i)
+		LFFreeItemDescriptor(i);
 }
 
 void CIndex::AddToSearchResult(LFFileIDList* il, LFSearchResult* res)
