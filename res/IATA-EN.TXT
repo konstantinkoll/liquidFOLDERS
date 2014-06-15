@@ -1829,7 +1829,7 @@ DOD     Dodoma, Tanzania;4;6*10'14"S, 35*45'9"E
 DOE     Djoemoe, Surinam;4;4*0'0"N, 55*28'59"W
 DOF     Dora Bay, USA
 DOG     Dongola, Sudan;4;19*9'14"N, 30*25'48"E
-DOH     Doha, Quatar;4;25*15'40"N, 51*33'54"E
+DOH     Doha, Qatar;5;25*16'23"N, 51*36'29"E
 DOI     Doini, New Guinea;4;10*41'60"S, 150*41'60"E
 DOK     Donetsk, Ukraine;4;48*4'25"N, 37*44'23"E
 DOL     Deauville, France;4;49*21'48"N, 0*9'36"E
