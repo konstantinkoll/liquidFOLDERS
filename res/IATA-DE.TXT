@@ -7529,7 +7529,7 @@ TCE     Tulcea, Rumänien;4;45*3'45"N, 28*42'52"E
 TCF     Tocoa, Honduras;4;15*38'60"N, 85*58'59"W
 TCG     Tacheng, China;5;46*40'21"N, 83*20'27"E
 TCH     Tchibanga, Gabun;4;2*50'60"S, 11*1'1"E
-TCI     Tenerife, Spanien;4;28*19'1"N, 16*34'1"W
+TCI TCI Teneriffa, Spanien
 TCL     Tuscaloosa, USA;4;33*13'14"N, 87*36'41"W
 TCM     Tacoma (McChord Airforce Base), USA;4;47*8'16"N, 122*28'35"W
 TCN     Tehuacan, Mexiko;4;18*29'50"N, 97*25'12"W
@@ -7581,9 +7581,9 @@ TFF     Tefe, Brasilien;4;3*22'59"S, 64*43'27"W
 TFI     Tufi, Neu-Guinea;4;9*4'1"S, 149*19'1"E
 TFL     Teofilo Otoni, Brasilien;4;17*53'32"S, 41*30'49"W
 TFM     Telefomin, Neu-Guinea;4;5*7'1"S, 141*37'59"E
-TFN     Tenerife, Spanien;4;28*28'58"N, 16*20'30"W
+TFN TCI Teneriffa Nord, Spanien;4;28*28'58"N, 16*20'30"W
 TFR     Tarbes, Frankreich
-TFS     Santa Cruz de Tenerife, Spanien;4;28*2'40"N, 16*34'21"W
+TFS TCI Teneriffa Süd, Spanien;4;28*2'40"N, 16*34'21"W
 TFT     Taftan, Pakistan;4;28*58'1"N, 61*35'60"E
 TFY     Tarfaya, Marokko;4;27*57'0"N, 12*55'1"W
 TGA     Tengah, Singapur;4;1*23'14"N, 103*42'31"E
