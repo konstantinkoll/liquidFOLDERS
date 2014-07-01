@@ -2458,7 +2458,7 @@ BEGIN
     PUSHBUTTON      "Run &maintenance",IDC_RUNMAINTENANCE,39,35,80,14
     GROUPBOX        "Synchronization",IDC_STATIC,4,60,301,53
     CONTROL         20132,IDC_STATIC,"Static",SS_BITMAP,9,72,21,20
-    LTEXT           "Synchronizes the store with its data souurce.",IDC_STATIC,40,71,258,8
+    LTEXT           "Synchronizes the store with its data source.",IDC_STATIC,40,71,258,8
     LTEXT           "Last synchronized: %s",IDC_SYNCHRONIZED,40,81,258,8,SS_ENDELLIPSIS
     PUSHBUTTON      "&Synchronize now",IDC_RUNSYNCHRONIZE,39,93,80,14
     GROUPBOX        "Settings",IDC_STATIC,4,118,301,42
