@@ -448,11 +448,11 @@ void CGlassWindow::OnGetMinMaxInfo(MINMAXINFO* lpMMI)
 
 	if (GetStyle() & WS_MAXIMIZEBOX)
 	{
-		lpMMI->ptMinTrackSize.x = max(lpMMI->ptMinTrackSize.x, 
+		lpMMI->ptMinTrackSize.x = max(lpMMI->ptMinTrackSize.x,
 			384+
 			((m_Margins.cxLeftWidth>0) ? m_Margins.cxLeftWidth : 0)+
 			((m_Margins.cxRightWidth>0) ? m_Margins.cxRightWidth : 0));
-		lpMMI->ptMinTrackSize.y = max(lpMMI->ptMinTrackSize.y, 
+		lpMMI->ptMinTrackSize.y = max(lpMMI->ptMinTrackSize.y,
 			256+GetSystemMetrics(SM_CYCAPTION)+
 			((m_Margins.cyTopHeight>0) ? m_Margins.cyTopHeight : 0)+
 			((m_Margins.cyBottomHeight>0) ? m_Margins.cyBottomHeight : 0));
