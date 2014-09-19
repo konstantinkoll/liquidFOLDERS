@@ -227,7 +227,7 @@ LFCountry Countries_EN[CountryCount_EN] = {
 };
 
 // Airports
-#define AirportCount_EN 8622
+#define AirportCount_EN 8625
 LFAirport Airports_EN[AirportCount_EN] = {
 	{  66, "AAA", "", "Anaa", { 17.355000, -145.508333 } },
 	{   8, "AAB", "", "Arrabury", { 26.690556, 141.047500 } },
@@ -1263,6 +1263,7 @@ LFAirport Airports_EN[AirportCount_EN] = {
 	{ 150, "BYB", "", "Dibaa", { -25.600000, 56.233056 } },
 	{  22, "BYC", "", "Yacuiba", { 21.960833, -63.651667 } },
 	{ 220, "BYD", "", "Beidah", { -14.133056, 46.550000 } },
+	{  64, "BYF", "", "Albert-Picardie", { -49.970000, 2.692500 } },
 	{ 212, "BYG", "", "Buffalo", { -44.381111, -106.721667 } },
 	{ 212, "BYH", "", "Blytheville", { -35.964444, -89.943889 } },
 	{ 212, "BYI", "", "Burley", { -42.542500, -113.771667 } },
@@ -3261,6 +3262,7 @@ LFAirport Airports_EN[AirportCount_EN] = {
 	{ 156, "IGN", "", "Iligan", { -8.130556, 124.215000 } },
 	{  41, "IGO", "", "Chigorodo", { -7.680278, -76.686389 } },
 	{   6, "IGR", "", "Iguazu", { 25.737222, -54.473333 } },
+	{  70, "IGS", "", "Ingolstadt-Manching", { -48.715556, 11.533889 } },
 	{  25, "IGU", "", "Foz do Iguacu", { 25.596111, -54.487222 } },
 	{  96, "IHA", "", "Niihame", { -33.933056, 133.200000 } },
 	{ 220, "IHN", "", "Qishn", { -15.416944, 51.683056 } },
@@ -8168,6 +8170,7 @@ LFAirport Airports_EN[AirportCount_EN] = {
 	{  30, "XAR", "", "Aribinda", { -14.216944, 0.883056 } },
 	{  34, "XAS", "", "Brevoort", { -63.325278, -64.154722 } },
 	{  65, "XAU", "", "Saul", { -3.613611, -53.204167 } },
+	{  64, "XAV", "", "Albertville Aerodrome", { -45.627500, 6.329722 } },
 	{ 106, "XAY", "", "Xayabury", { -18.666944, 104.716944 } },
 	{  34, "XBB", "", "Blubber Bay", { -49.800000, -124.633056 } },
 	{  34, "XBE", "", "Bearskin Lake", { -53.966389, -91.026389 } },

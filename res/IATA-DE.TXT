@@ -1067,6 +1067,7 @@ BYA     Boundary, USA;4;64*4'42"N, 141*6'48"W
 BYB     Dibaa, Oman;4;25*36'0"N, 56*13'59"E
 BYC     Yacuiba, Bolivien;4;21*57'39"S, 63*39'6"W
 BYD     Beidah, Jemen;4;14*7'59"N, 46*32'60"E
+BYF     Albert-Picardie, Frankreich;5;49*58'12"N, 2*41'33"E
 BYG     Buffalo, USA;4;44*22'52"N, 106*43'18"W
 BYH     Blytheville, USA;4;35*57'52"N, 89*56'38"W
 BYI     Burley, USA;4;42*32'33"N, 113*46'18"W
@@ -3194,6 +3195,7 @@ IGM     Kingman, USA;4;35*15'34"N, 113*56'17"W
 IGN     Iligan, Philippinen;4;8*7'50"N, 124*12'54"E
 IGO     Chigorodo, Kolumbien;4;7*40'49"N, 76*41'11"W
 IGR     Iguazu, Argentinien;4;25*44'14"S, 54*28'24"W
+IGS     Ingolstadt-Manching, Deutschland;5;48*42'56"N, 11*32'2"E
 IGU     Foz do Iguacu, Brasilien;4;25*35'46"S, 54*29'14"W
 IHA     Niihame, Japan;4;33*55'59"N, 133*11'60"E
 IHN     Qishn, Jemen;4;15*25'1"N, 51*40'59"E
@@ -8568,6 +8570,7 @@ XAP     Chapeco, Brasilien;4;27*8'3"S, 52*39'24"W
 XAR     Aribinda, Burkina Faso;4;14*13'1"N, 0*52'59"E
 XAS     Brevoort, Kanada;4;63*19'31"N, 64*9'17"W
 XAU     Saul, Franz.-Guyana;4;3*36'49"N, 53*12'15"W
+XAV     Albertville Aerodrome, Frankreich;5;45*37'39"N, 6*19'47"E
 XAY     Xayabury, Laos;4;18*40'1"N, 104*43'1"E
 XBB     Blubber Bay, Kanada;4;49*47'60"N, 124*37'59"W
 XBE     Bearskin Lake, Kanada;4;53*57'59"N, 91*1'35"W
