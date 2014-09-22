@@ -1,1 +1,1 @@
-@optipng -o7 *.png
+@optipng -o7 -i0 *.png

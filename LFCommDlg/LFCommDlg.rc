@@ -717,7 +717,7 @@ STRINGTABLE
 BEGIN
     IDS_PURCHASEURL         "http://liquidFOLDERS.net/purchase/de/"
     IDS_UPDATEURL           "http://liquidFOLDERS.net/download/de/"
-    IDS_ABOUTURL            "http://liquidFOLDERS.net/start/de/"
+    IDS_ABOUTURL            "http://liquidFOLDERS.net/about/de/"
     IDS_ERROR               "Fehler"
 END
 
@@ -1355,7 +1355,7 @@ STRINGTABLE
 BEGIN
     IDS_PURCHASEURL         "http://liquidFOLDERS.net/purchase/es/"
     IDS_UPDATEURL           "http://liquidFOLDERS.net/download/es/"
-    IDS_ABOUTURL            "http://liquidFOLDERS.net/start/es/"
+    IDS_ABOUTURL            "http://liquidFOLDERS.net/about/es/"
     IDS_ERROR               "Error"
 END
 
@@ -1993,7 +1993,7 @@ STRINGTABLE
 BEGIN
     IDS_PURCHASEURL         "http://liquidFOLDERS.net/purchase/fr/"
     IDS_UPDATEURL           "http://liquidFOLDERS.net/download/fr/"
-    IDS_ABOUTURL            "http://liquidFOLDERS.net/start/fr/"
+    IDS_ABOUTURL            "http://liquidFOLDERS.net/about/fr/"
     IDS_ERROR               "Erreur"
 END
 
@@ -2673,7 +2673,7 @@ STRINGTABLE
 BEGIN
     IDS_PURCHASEURL         "http://liquidFOLDERS.net/purchase/en/"
     IDS_UPDATEURL           "http://liquidFOLDERS.net/download/en/"
-    IDS_ABOUTURL            "http://liquidFOLDERS.net/start/en/"
+    IDS_ABOUTURL            "http://liquidFOLDERS.net/about/en/"
     IDS_ERROR               "Error"
 END
 
