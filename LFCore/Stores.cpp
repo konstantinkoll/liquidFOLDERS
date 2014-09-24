@@ -277,7 +277,7 @@ unsigned int PrepareImport(LFStoreDescriptor* slot, LFItemDescriptor* i, wchar_t
 
 __forceinline void SendLFNotifyMessage(unsigned int Msg, HWND hWndSource)
 {
-	SendNotifyMessage(HWND_BROADCAST, Msg, NULL, (LPARAM)hWndSource);
+	PostMessage(HWND_BROADCAST, Msg, NULL, (LPARAM)hWndSource);
 }
 
 void SendShellNotifyMessage(unsigned int Msg, char* StoreID, LPITEMIDLIST oldpidl, LPITEMIDLIST oldpidlDelegate)

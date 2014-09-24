@@ -28,6 +28,7 @@ extern LFShellProperty AttrProperties[];
 
 #pragma data_seg(".shared")
 
+bool VolumeMounted[26] = { false };
 unsigned int VolumeTypes[26] = { DRIVE_UNKNOWN };
 
 #pragma data_seg()
