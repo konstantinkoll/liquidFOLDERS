@@ -19,6 +19,7 @@ struct GlobeItemData
 	INT ScreenPoint[2];
 	GLfloat Alpha;
 	WCHAR CoordString[32];
+	WCHAR DescriptionString[32];
 };
 
 

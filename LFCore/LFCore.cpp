@@ -473,7 +473,7 @@ LFCore_API void LFGetContextInfo(LFContextDescriptor& ctx, unsigned int ID)
 			ctx.AllowedAttributes += LFAttrDeleteTime;
 
 		for (unsigned int a=0; a<LFAttributeCount; a++)
-			if ((((a!=LFAttrDescription) && (a!=LFAttrFileCount)) || (ID<LFContextSubfolderDefault)) && (a!=LFAttrArchiveTime) && (a!=LFAttrDeleteTime))
+			if ((((a!=LFAttrDescription) && (a!=LFAttrFileCount)) || (ID<LFContextSubfolderDefault)) && (a!=LFAttrDescription) && (a!=LFAttrArchiveTime) && (a!=LFAttrDeleteTime))
 				ctx.AllowedAttributes += a;
 	}
 }

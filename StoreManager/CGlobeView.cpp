@@ -9,15 +9,15 @@
 #include "GlobeOptionsDlg.h"
 #include <math.h>
 
-#define DISTANCE       39.0f
-#define ARROWSIZE      9
-#define PI             3.14159265358979323846
-#define ANIMLENGTH     200
-#define MOVEDELAY      10
-#define MOVEDIVIDER    8.0f
-#define SPOT           2
-#define CROSSHAIRS     3
-#define WHITE          100
+#define DISTANCE        39.0f
+#define ARROWSIZE       9
+#define PI              3.14159265358979323846
+#define ANIMLENGTH      200
+#define MOVEDELAY       10
+#define MOVEDIVIDER     8.0f
+#define SPOT            2
+#define CROSSHAIRS      3
+#define WHITE           100
 
 __forceinline void ColorRef2GLColor(GLfloat* dst, COLORREF src, GLfloat Alpha=1.0f)
 {
@@ -235,6 +235,8 @@ void CGlobeView::SetSearchResult(LFSearchResult* pRawFiles, LFSearchResult* pCoo
 					GlobeItemData* d = GetItemData(a);
 					CalculateWorldCoords(coord.Latitude, coord.Longitude, d->World);
 					LFGeoCoordinatesToString(coord, d->CoordString, 32, false);
+
+					wcscpy_s(d->DescriptionString, 32, CombineFileCountSize(p_CookedFiles->m_Items[a]->AggregateCount, p_CookedFiles->m_Items[a]->CoreAttributes.FileSize).GetBuffer());
 
 					d->Hdr.Valid = TRUE;
 				}
@@ -491,7 +493,7 @@ __forceinline void CGlobeView::CalcAndDrawLabel(BOOL Themed)
 				UINT cCaption = (UINT)wcslen(Caption);
 				WCHAR* Subcaption = NULL;
 				WCHAR* Coordinates = (m_ViewParameters.GlobeShowGPS ? d->CoordString : NULL);
-				WCHAR* Description = (m_ViewParameters.GlobeShowDescription ? p_CookedFiles->m_Items[a]->Description : NULL);
+				WCHAR* Description = (m_ViewParameters.GlobeShowDescription ? d->DescriptionString : NULL);
 				if (Description)
 					if (*Description==L'\0')
 						Description = NULL;
