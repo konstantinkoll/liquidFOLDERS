@@ -35,7 +35,6 @@ LFStoreDescriptor StoreCache[MaxStores];
 extern HANDLE Mutex_Stores;
 extern HMODULE LFCoreModuleHandle;
 extern LFMessageIDs LFMessages;
-extern bool VolumeMounted[26];
 extern unsigned int VolumeTypes[26];
 
 
@@ -801,9 +800,6 @@ unsigned int MountVolume(char cDrive, bool InternalCall)
 	assert(cDrive>='A');
 	assert(cDrive<='Z');
 
-	if (VolumeMounted[cDrive-'A'])
-		return LFOk;
-
 	wchar_t mask[] = L" :\\*.store";
 	mask[0] = cDrive;
 	bool ChangeOccured = false;
@@ -813,9 +809,6 @@ unsigned int MountVolume(char cDrive, bool InternalCall)
 	HANDLE hFind = FindFirstFile(mask, &ffd);
 
 	if (hFind!=INVALID_HANDLE_VALUE)
-	{
-		VolumeMounted[cDrive-'A'] = true;
-
 		do
 		{
 			// Vollständigen Dateinamen zusammensetzen
@@ -841,7 +834,14 @@ unsigned int MountVolume(char cDrive, bool InternalCall)
 
 				// Store mit der selben GUID suchen
 				LFStoreDescriptor* slot = FindStore(s.guid);
-				if (!slot)
+				if (slot)
+				{
+					// Name, Kommentar und Dateizeit aktualisieren
+					wcscpy_s(slot->StoreName, 256, s.StoreName);
+					wcscpy_s(slot->StoreComment, 256, s.StoreComment);
+					slot->FileTime = s.FileTime;
+				}
+				else
 				{
 					// Nicht gefunden: der Store wird hier als externer Store behandelt
 					s.Mode = (s.Mode & ~LFStoreModeIndexMask) | LFStoreModeIndexExternal;
@@ -855,21 +855,6 @@ unsigned int MountVolume(char cDrive, bool InternalCall)
 					else
 					{
 						res = LFTooManyStores;
-					}
-				}
-				else
-				{
-					// Wenn der Store kein Hybrid-Store ist, würde er doppelt gemountet. Überspringen!
-					if ((slot->Mode & LFStoreModeIndexMask)!=LFStoreModeIndexHybrid)
-					{
-						slot = NULL;
-					}
-					else
-					{
-						// Name, Kommentar und Dateizeit aktualisieren
-						wcscpy_s(slot->StoreName, 256, s.StoreName);
-						wcscpy_s(slot->StoreComment, 256, s.StoreComment);
-						slot->FileTime = s.FileTime;
 					}
 				}
 
@@ -912,7 +897,6 @@ Finish:
 			}
 		}
 		while (FindNextFile(hFind, &ffd));
-	}
 
 	FindClose(hFind);
 
@@ -935,73 +919,69 @@ unsigned int UnmountVolume(char cDrive, bool InternalCall)
 
 	unsigned int res = LFOk;
 
-	if (VolumeMounted[cDrive-'A'])
-	{
-		bool ChangeOccured = false;
-		bool RemovedDefaultStore = false;
-		VolumeMounted[cDrive-'A'] = false;
-		VolumeTypes[cDrive-'A'] = DRIVE_UNKNOWN;
+	bool ChangeOccured = false;
+	bool RemovedDefaultStore = false;
+	VolumeTypes[cDrive-'A'] = DRIVE_UNKNOWN;
 
-		char NotifyIDs[MaxStores][LFKeySize];
-		unsigned int NotifyCount = 0;
+	char NotifyIDs[MaxStores][LFKeySize];
+	unsigned int NotifyCount = 0;
 
-		for (unsigned int a=0; a<StoreCount; a++)
-			if (IsStoreMounted(&StoreCache[a]))
-				if ((StoreCache[a].DatPath[0]==cDrive) && ((StoreCache[a].Mode & LFStoreModeIndexMask)!=LFStoreModeIndexInternal))
+	for (unsigned int a=0; a<StoreCount; a++)
+		if (IsStoreMounted(&StoreCache[a]))
+			if ((StoreCache[a].DatPath[0]==cDrive) && ((StoreCache[a].Mode & LFStoreModeIndexMask)!=LFStoreModeIndexInternal))
+			{
+				HANDLE StoreLock;
+				if (!GetMutexForStore(&StoreCache[a], &StoreLock))
 				{
-					HANDLE StoreLock;
-					if (!GetMutexForStore(&StoreCache[a], &StoreLock))
-					{
-						res = LFMutexError;
-						continue;
-					}
-
-					switch (StoreCache[a].Mode & LFStoreModeIndexMask)
-					{
-					case LFStoreModeIndexHybrid:
-						StoreCache[a].DatPath[0] = StoreCache[a].IdxPathMain[0] = L'\0';
-						strcpy_s(NotifyIDs[NotifyCount++], LFKeySize, StoreCache[a].StoreID);
-						ChangeOccured = true;
-						break;
-					case LFStoreModeIndexExternal:
-						RemovedDefaultStore |= (strcmp(StoreCache[a].StoreID, DefaultStore)==0);
-						if (a<StoreCount-1)
-						{
-							HANDLE MoveLock;
-							if (!GetMutexForStore(&StoreCache[StoreCount-1], &MoveLock))
-							{
-								ReleaseMutexForStore(StoreLock);
-								res = LFMutexError;
-								continue;
-							}
-
-							StoreCache[a--] = StoreCache[--StoreCount];
-							ReleaseMutexForStore(MoveLock);
-						}
-						else
-						{
-							StoreCount--;
-						}
-						ChangeOccured = true;
-						break;
-					}
-
-					ReleaseMutexForStore(StoreLock);
+					res = LFMutexError;
+					continue;
 				}
 
-		// Ggf. anderen Store als neuen Default Store
-		if (RemovedDefaultStore)
-			ChooseNewDefaultStore();
-	
-		ReleaseMutex(Mutex_Stores);
+				switch (StoreCache[a].Mode & LFStoreModeIndexMask)
+				{
+				case LFStoreModeIndexHybrid:
+					StoreCache[a].DatPath[0] = StoreCache[a].IdxPathMain[0] = L'\0';
+					strcpy_s(NotifyIDs[NotifyCount++], LFKeySize, StoreCache[a].StoreID);
+					ChangeOccured = true;
+					break;
+				case LFStoreModeIndexExternal:
+					RemovedDefaultStore |= (strcmp(StoreCache[a].StoreID, DefaultStore)==0);
+					if (a<StoreCount-1)
+					{
+						HANDLE MoveLock;
+						if (!GetMutexForStore(&StoreCache[StoreCount-1], &MoveLock))
+						{
+							ReleaseMutexForStore(StoreLock);
+							res = LFMutexError;
+							continue;
+						}
 
-		if (!InternalCall)
-		{
-			SendLFNotifyMessage(ChangeOccured ? LFMessages.StoresChanged : LFMessages.VolumesChanged, NULL);
-			for (unsigned int a=0; a<NotifyCount; a++)
-				SendShellNotifyMessage(SHCNE_UPDATEITEM, NotifyIDs[a]);
-			SendShellNotifyMessage(SHCNE_UPDATEDIR);
-		}
+						StoreCache[a--] = StoreCache[--StoreCount];
+						ReleaseMutexForStore(MoveLock);
+					}
+					else
+					{
+						StoreCount--;
+					}
+					ChangeOccured = true;
+					break;
+				}
+
+				ReleaseMutexForStore(StoreLock);
+			}
+
+	// Ggf. anderen Store als neuen Default Store
+	if (RemovedDefaultStore)
+		ChooseNewDefaultStore();
+	
+	ReleaseMutex(Mutex_Stores);
+
+	if (!InternalCall)
+	{
+		SendLFNotifyMessage(ChangeOccured ? LFMessages.StoresChanged : LFMessages.VolumesChanged, NULL);
+		for (unsigned int a=0; a<NotifyCount; a++)
+			SendShellNotifyMessage(SHCNE_UPDATEITEM, NotifyIDs[a]);
+		SendShellNotifyMessage(SHCNE_UPDATEDIR);
 	}
 
 	return res;
