@@ -373,12 +373,13 @@ unsigned int SaveStoreSettingsToFile(LFStoreDescriptor* s)
 
 	HANDLE hFile = CreateFile(fn, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_HIDDEN | FILE_FLAG_WRITE_THROUGH, NULL);
 	if (hFile==INVALID_HANDLE_VALUE)
-		return LFDriveNotReady;
+		return (GetLastError()==5) ? LFAccessError : LFDriveNotReady;
 
 	DWORD wmWritten;
 	res = WriteFile(hFile, s, StoreDescriptorFileSize, &wmWritten, NULL) ? LFOk : LFDriveNotReady;
 	if (wmWritten!=StoreDescriptorFileSize)
 		res = LFDriveNotReady;
+
 	CloseHandle(hFile);
 
 	return res;
@@ -412,7 +413,7 @@ unsigned int DeleteStoreSettingsFromFile(LFStoreDescriptor* s)
 	if (res!=LFOk)
 		return res;
 
-	return DeleteFile(fn) ? LFOk : LFDriveNotReady;
+	return DeleteFile(fn) ? LFOk : (GetLastError()==5) ? LFAccessError : LFDriveNotReady;
 }
 
 void CreateNewStoreID(char* StoreID)
@@ -689,20 +690,11 @@ unsigned int UpdateStore(LFStoreDescriptor* s, bool UpdateTime, bool MakeDefault
 	if (UpdateTime)
 		GetSystemTimeAsFileTime(&s->FileTime);
 
-	// Update cache
+	// Find in cache
 	LFStoreDescriptor* slot = FindStore(s->StoreID);
 	if (!slot)
-	{
 		if (StoreCount==MaxStores)
 			return LFTooManyStores;
-
-		slot = &StoreCache[StoreCount];
-		StoreCache[StoreCount++] = *s;
-	}
-	else
-	{
-		*slot = *s;
-	}
 
 	unsigned int res = LFOk;
 	if ((s->Mode & LFStoreModeIndexMask)!=LFStoreModeIndexExternal)
@@ -711,10 +703,22 @@ unsigned int UpdateStore(LFStoreDescriptor* s, bool UpdateTime, bool MakeDefault
 		if ((res==LFOk) && (IsStoreMounted(s)))
 			res = SaveStoreSettingsToFile(s);
 
-	// Make default store if s is the sole store
 	if (res==LFOk)
+	{
+		// Update cache
+		if (slot)
+		{
+			*slot = *s;
+		}
+		else
+		{
+			StoreCache[StoreCount++] = *s;
+		}
+
+		// Make default store if s is the sole store
 		if ((MakeDefault) || (DefaultStore[0]=='\0'))
 			res = MakeDefaultStore(s);
+	}
 
 	return res;
 }

@@ -766,6 +766,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\STR_USB.ico"
+				>
+			</File>
+			<File
 				RelativePath=".\res\STR_YouTube.ico"
 				>
 			</File>

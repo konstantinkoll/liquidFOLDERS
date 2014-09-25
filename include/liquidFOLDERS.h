@@ -576,24 +576,25 @@ struct LFStoreDescriptor
 #define LFDriveWriteProtected           7
 #define LFIllegalPhysicalPath           8
 #define LFRegistryError                 9
-#define LFIllegalKey                    10
-#define LFNoDefaultStore                11
-#define LFTooManyStores                 12
-#define LFStoreNotMounted               13
-#define LFMutexError                    14
-#define LFIllegalAttribute              15
-#define LFIllegalItemType               16
-#define LFIllegalValue                  17
-#define LFIndexTableLoadError           18
-#define LFIndexRepairError              19
-#define LFIndexAccessError              20
-#define LFIndexCreateError              21
-#define LFNotEnoughFreeDiscSpace        22
-#define LFCannotImportFile              23
-#define LFCannotDeleteFile              24
-#define LFCannotRenameFile              25
-#define LFCannotCopyIndex               26
-#define LFNoFileBody                    27
+#define LFAccessError                   10
+#define LFIllegalKey                    11
+#define LFNoDefaultStore                12
+#define LFTooManyStores                 13
+#define LFStoreNotMounted               14
+#define LFMutexError                    15
+#define LFIllegalAttribute              16
+#define LFIllegalItemType               17
+#define LFIllegalValue                  18
+#define LFIndexTableLoadError           19
+#define LFIndexRepairError              20
+#define LFIndexAccessError              21
+#define LFIndexCreateError              22
+#define LFNotEnoughFreeDiscSpace        23
+#define LFCannotImportFile              24
+#define LFCannotDeleteFile              25
+#define LFCannotRenameFile              26
+#define LFCannotCopyIndex               27
+#define LFNoFileBody                    28
 
 
 // Structures and classes from LFCore.dll

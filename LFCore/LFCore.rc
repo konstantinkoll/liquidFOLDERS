@@ -104,8 +104,7 @@ LANGUAGE LANG_GERMAN, SUBLANG_NEUTRAL
 
 STRINGTABLE 
 BEGIN
-    IDS_LFCategoryLocalStores 
-                            "Auf diesem Computer gespeicherte Dateien"
+    IDS_LFCategoryLocalStores "Auf diesem Computer gespeicherte Dateien"
     IDS_LFCategoryRemoteStores 
                             "Netzwerkadresse\nDiese Stores befinden sich auf anderen Computern."
     IDS_LFCategoryDrives    "Geräte mit Wechselmedien\nWählen Sie eines dieser Geräte, um dort einen neuen Store anzulegen."
@@ -147,6 +146,10 @@ BEGIN
     IDS_LFContextSearch     "Suchergebnis"
     IDS_LFContextStores     "Stores"
     IDS_LFContextClipboard  "Zwischenablage"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_LFContextSubfolderDefault "Unterordner"
     IDS_LFContextSubfolderDay "Tag"
     IDS_LFContextSubfolderLocation "Ort"
@@ -156,12 +159,12 @@ STRINGTABLE
 BEGIN
     IDS_StoreDefaultName    "Neuer Store"
     IDS_LastSeen            "Zuletzt angeschlossen von %s"
+    IDS_SeenOn              "Angeschlossen auf %s"
+    IDS_ErrorCaption        "Fehler"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_SeenOn              "Angeschlossen auf %s"
-    IDS_ErrorCaption        "Fehler"
     IDS_DeleteStoreCaption  "Store „%s“ löschen"
     IDS_DeleteStoreMessage  "Möchten Sie diesen Store wirklich löschen ?"
     IDS_ShortcutCaption     "Verknüpfung"
@@ -174,14 +177,14 @@ BEGIN
     IDS_Priority1           "Sehr niedrig"
     IDS_Priority2           "Niedrig"
     IDS_Priority3           "Normal"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_Priority4           "Hoch"
     IDS_Priority5           "Dringend"
     IDS_Size1               "Winzig (< 32 KB)"
     IDS_Size2               "Klein (< 128 KB)"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_Size3               "Mittel (< 1 MB)"
     IDS_Size4               "Groß (< 16 MB)"
     IDS_Size5               "Sehr groß (< 128 MB)"
@@ -194,14 +197,14 @@ BEGIN
     IDS_Duration6           "2-3 Minuten"
     IDS_Duration7           "3-5 Minuten"
     IDS_Duration8           "5-15 Minuten"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_Duration9           "15-30 Minuten"
     IDS_Duration10          "30-45 Minuten"
     IDS_Duration11          "45-60 Minuten"
     IDS_Duration12          "60-90 Minuten"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_Duration13          "90-120 Minuten"
     IDS_Duration14          "Länger als 2 Stunden"
 END
@@ -210,54 +213,41 @@ STRINGTABLE
 BEGIN
     IDS_LFOk                "OK"
     IDS_LFCancel            "Abgebrochen"
-    IDS_LFErrorMemoryError  "Speicherfehler"
-    IDS_LFErrorIllegalQuery "Der Filter beschreibt eine ungültige Abfrage."
-    IDS_LFErrorIllegalStoreDescriptor "Die Store-Einstellungen sind ungültig."
-    IDS_LFErrorStoreNotFound 
-                            "Der gewählte Store ist nicht angeschlossen oder nicht vorhanden."
-    IDS_LFErrorDriveNotReady "Der Datenträger ist nicht bereit!"
-    IDS_LFErrorDriveWriteProtected "Der Datenträger ist schreibgeschützt."
+    IDS_MemoryError         "Speicherfehler"
+    IDS_IllegalQuery        "Der Filter beschreibt eine ungültige Abfrage."
+    IDS_IllegalStoreDescriptor "Die Store-Einstellungen sind ungültig."
+    IDS_StoreNotFound       "Der gewählte Store ist nicht angeschlossen oder nicht vorhanden."
+    IDS_DriveNotReady       "Der Datenträger ist nicht bereit!"
+    IDS_DriveWriteProtected "Der Datenträger ist schreibgeschützt."
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_LFErrorIllegalPhysFolder 
-                            "Auf das physische Verzeichnis kann nicht zugegriffen werden."
-    IDS_LFErrorRegistryError "Auf die Registry kann nicht zugegriffen werden."
-    IDS_LFErrorIllegalKey   "Die Store- oder Datei-ID ist ungültig."
-    IDS_LFErrorNoDefaultStore "Zur Zeit ist kein Standard-Store festgelegt."
-    IDS_LFErrorTooManyStores 
-                            "Sie haben bereits die maximale Anzahl an Stores erzeugt!"
-    IDS_LFErrorStoreNotMounted "Der Store ist zur Zeit nicht angeschlossen."
-    IDS_LFErrorMutexError   "liquidFOLDERS wird zur Zeit von einem anderen Prozess blockiert."
-    IDS_LFErrorIllegalAttribute 
-                            "Eines der gewählten Objekte verfügt nicht über die Eigenschaft."
-    IDS_LFErrorIllegalItemType 
-                            "Eines der gewählten Objekte unterstützt diese Operation nicht."
-    IDS_LFErrorIllegalValue "Eine der Eigenschaften hat einen ungültigen Wert."
-    IDS_LFErrorIndexTableLoadError 
-                            "Eine Index-Tabelle kann nicht geladen werden. Bitte führen Sie die Wartungsarbeiten aus."
-    IDS_LFErrorIndexRepairError 
-                            "Der Index ist beschädigt und kann leider nicht repariert werden (Datenträger schreibgeschützt ?)."
-    IDS_LFErrorIndexAccessError 
-                            "Auf den Store kann nicht zugegriffen werden. Bitte prüfen Sie die Sicherheitseinstellungen für das Verzeichnis."
-    IDS_LFErrorIndexCreateError 
-                            "Der Index kann nicht erstellt werden (Datenträger schreibgeschützt ?)."
-    IDS_LFErrorNotEnoughFreeDisc 
-                            "Auf dem Datenträger ist nicht mehr ausreichend Speicherplatz frei."
-    IDS_LFErrorCannotImportFile 
-                            "Einige Dateien können nicht importiert werden, da sie noch in Gebrauch sind."
+    IDS_IllegalPhysFolder   "Auf das physische Verzeichnis kann nicht zugegriffen werden."
+    IDS_RegistryError       "Auf die Registry kann nicht zugegriffen werden."
+    IDS_AccessError         "Auf das physische Verzeichnis kann nicht zugegriffen werden. Bitte prüfen Sie die Sicherheitseinstellungen für das Verzeichnis."
+    IDS_IllegalKey          "Die Store- oder Datei-ID ist ungültig."
+    IDS_NoDefaultStore      "Zur Zeit ist kein Standard-Store festgelegt."
+    IDS_TooManyStores       "Sie haben bereits die maximale Anzahl an Stores erzeugt!"
+    IDS_StoreNotMounted     "Der Store ist zur Zeit nicht angeschlossen."
+    IDS_MutexError          "liquidFOLDERS wird zur Zeit von einem anderen Prozess blockiert."
+    IDS_IllegalAttribute    "Eines der gewählten Objekte verfügt nicht über die Eigenschaft."
+    IDS_IllegalItemType     "Eines der gewählten Objekte unterstützt diese Operation nicht."
+    IDS_IllegalValue        "Eine der Eigenschaften hat einen ungültigen Wert."
+    IDS_IndexTableLoadError "Eine Index-Tabelle kann nicht geladen werden. Bitte führen Sie die Wartungsarbeiten aus."
+    IDS_IndexRepairError    "Der Index ist beschädigt und kann leider nicht repariert werden (Datenträger schreibgeschützt ?)."
+    IDS_IndexAccessError    "Auf den Store kann nicht zugegriffen werden. Bitte prüfen Sie die Sicherheitseinstellungen für das Verzeichnis."
+    IDS_IndexCreateError    "Der Index kann nicht erstellt werden (Datenträger schreibgeschützt ?)."
+    IDS_NotEnoughFreeDisc   "Auf dem Datenträger ist nicht mehr ausreichend Speicherplatz frei."
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_LFErrorCannotDeleteFile 
-                            "Einige Dateien können nicht gelöscht werden, da sie noch in Gebrauch sind."
-    IDS_LFErrorCannotRenameFile 
-                            "Einige Dateien können nicht umbenannt werden, da sie noch in Gebrauch sind."
-    IDS_LFErrorCannotCopyIndex 
-                            "Der Index kann nicht aktualisiert werden (Datenträger schreibgeschützt ?)."
-    IDS_LFErrorNoFileBody   "Der eigentliche Dateikörper befindet sich nicht im Store."
+    IDS_CannotImportFile    "Einige Dateien können nicht importiert werden, da sie noch in Gebrauch sind."
+    IDS_CannotDeleteFile    "Einige Dateien können nicht gelöscht werden, da sie noch in Gebrauch sind."
+    IDS_CannotRenameFile    "Einige Dateien können nicht umbenannt werden, da sie noch in Gebrauch sind."
+    IDS_CannotCopyIndex     "Der Index kann nicht aktualisiert werden (Datenträger schreibgeschützt ?)."
+    IDS_NoFileBody          "Der eigentliche Dateikörper befindet sich nicht im Store."
 END
 
 STRINGTABLE 
@@ -339,6 +329,10 @@ BEGIN
     IDS_SrcDropbox          "Dropbox"
     IDS_SrcFacebook         "Facebook"
     IDS_SrcFlickr           "Flickr"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_SrcInstagram        "Instagram"
     IDS_SrcPinterest        "Pinterest"
     IDS_SrcSoundCloud       "SoundCloud"
@@ -352,6 +346,10 @@ BEGIN
     IDS_QSrcInternal        "In internem Store"
     IDS_QSrcNTFS            "Im Windows Dateisystem"
     IDS_QSrc1394            "Auf lokalem 1394-Laufwerk"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_QSrcUSB             "Auf lokalem USB-Laufwerk"
     IDS_QSrcDropbox         "Auf Dropbox"
     IDS_QSrcFacebook        "Auf Facebook"
@@ -388,8 +386,7 @@ LANGUAGE LANG_ENGLISH, SUBLANG_NEUTRAL
 
 STRINGTABLE 
 BEGIN
-    IDS_LFCategoryLocalStores 
-                            "Files stored on this computer"
+    IDS_LFCategoryLocalStores "Files stored on this computer"
     IDS_LFCategoryRemoteStores 
                             "Network location\nThese stores reside on other computers."
     IDS_LFCategoryDrives    "Devices with removable storage\nChoose one of these devices to create a new store there."
@@ -431,6 +428,10 @@ BEGIN
     IDS_LFContextSearch     "Search result"
     IDS_LFContextStores     "Stores"
     IDS_LFContextClipboard  "Clipboard"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_LFContextSubfolderDefault "Subfolder"
     IDS_LFContextSubfolderDay "Day"
     IDS_LFContextSubfolderLocation "Location"
@@ -440,12 +441,12 @@ STRINGTABLE
 BEGIN
     IDS_StoreDefaultName    "New store"
     IDS_LastSeen            "Last mounted from %s"
+    IDS_SeenOn              "Mounted on %s"
+    IDS_ErrorCaption        "Error"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_SeenOn              "Mounted on %s"
-    IDS_ErrorCaption        "Error"
     IDS_DeleteStoreCaption  "Delete store ""%s"""
     IDS_DeleteStoreMessage  "Do you really want to delete this store ?"
     IDS_ShortcutCaption     "Shortcut"
@@ -458,14 +459,14 @@ BEGIN
     IDS_Priority1           "Lowest"
     IDS_Priority2           "Low"
     IDS_Priority3           "Average"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_Priority4           "High"
     IDS_Priority5           "Urgent"
     IDS_Size1               "Tiny (< 32 KB)"
     IDS_Size2               "Small (< 128 KB)"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_Size3               "Medium (< 1 MB)"
     IDS_Size4               "Large (< 16 MB)"
     IDS_Size5               "Very large (< 128 MB)"
@@ -478,14 +479,14 @@ BEGIN
     IDS_Duration6           "2-3 minutes"
     IDS_Duration7           "3-5 minutes"
     IDS_Duration8           "5-15 minutes"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_Duration9           "15-30 minutes"
     IDS_Duration10          "30-45 minutes"
     IDS_Duration11          "45-60 minutes"
     IDS_Duration12          "60-90 minutes"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_Duration13          "90-120 minutes"
     IDS_Duration14          "Longer than 2 hours"
 END
@@ -494,52 +495,41 @@ STRINGTABLE
 BEGIN
     IDS_LFOk                "OK"
     IDS_LFCancel            "Canceled"
-    IDS_LFErrorMemoryError  "Memory error"
-    IDS_LFErrorIllegalQuery "The filter describes an illegal request."
-    IDS_LFErrorIllegalStoreDescriptor "The store settings are not valid."
-    IDS_LFErrorStoreNotFound 
-                            "The selected store is not mounted or not present."
-    IDS_LFErrorDriveNotReady "The drive is not ready!"
-    IDS_LFErrorDriveWriteProtected "The drive is write protected."
+    IDS_MemoryError         "Memory error"
+    IDS_IllegalQuery        "The filter describes an illegal request."
+    IDS_IllegalStoreDescriptor "The store settings are not valid."
+    IDS_StoreNotFound       "The selected store is not mounted or not present."
+    IDS_DriveNotReady       "The drive is not ready!"
+    IDS_DriveWriteProtected "The drive is write protected."
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_LFErrorIllegalPhysFolder "The physical folder is not accessible."
-    IDS_LFErrorRegistryError "The registry cannot be accessed."
-    IDS_LFErrorIllegalKey   "The store or file ID is illegal."
-    IDS_LFErrorNoDefaultStore "There is no default store right now."
-    IDS_LFErrorTooManyStores 
-                            "The maximum number of stores has already been created."
-    IDS_LFErrorStoreNotMounted "The store is not mounted right now."
-    IDS_LFErrorMutexError   "liquidFOLDERS is currently blocked by another process."
-    IDS_LFErrorIllegalAttribute 
-                            "At least one of the selected items does not possesss the property."
-    IDS_LFErrorIllegalItemType 
-                            "At least one of the selected items does not support this operation."
-    IDS_LFErrorIllegalValue "At least one of the property values is illegal."
-    IDS_LFErrorIndexTableLoadError 
-                            "An index table cannot be loaded. Please run scheduled maintenance."
-    IDS_LFErrorIndexRepairError 
-                            "The store index is damaged and could not be repaired (write protected disc ?)."
-    IDS_LFErrorIndexAccessError 
-                            "The store cannot be accessed. Please check the access rights of the store's directory."
-    IDS_LFErrorIndexCreateError 
-                            "The store index cannot be created (write protected disc ?)."
-    IDS_LFErrorNotEnoughFreeDisc "There is not enough free disc space."
-    IDS_LFErrorCannotImportFile 
-                            "Some files cannot be imported because they are still in use."
+    IDS_IllegalPhysFolder   "The physical folder is not accessible."
+    IDS_RegistryError       "The registry cannot be accessed."
+    IDS_AccessError         "The physical folder is not accessible. Please check the access rights of the store's directory."
+    IDS_IllegalKey          "The store or file ID is illegal."
+    IDS_NoDefaultStore      "There is no default store right now."
+    IDS_TooManyStores       "The maximum number of stores has already been created."
+    IDS_StoreNotMounted     "The store is not mounted right now."
+    IDS_MutexError          "liquidFOLDERS is currently blocked by another process."
+    IDS_IllegalAttribute    "At least one of the selected items does not possesss the property."
+    IDS_IllegalItemType     "At least one of the selected items does not support this operation."
+    IDS_IllegalValue        "At least one of the property values is illegal."
+    IDS_IndexTableLoadError "An index table cannot be loaded. Please run scheduled maintenance."
+    IDS_IndexRepairError    "The store index is damaged and could not be repaired (write protected disc ?)."
+    IDS_IndexAccessError    "The store cannot be accessed. Please check the access rights of the store's directory."
+    IDS_IndexCreateError    "The store index cannot be created (write protected disc ?)."
+    IDS_NotEnoughFreeDisc   "There is not enough free disc space."
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_LFErrorCannotDeleteFile 
-                            "Some files cannot be deleted because they are still in use."
-    IDS_LFErrorCannotRenameFile 
-                            "Some files cannot be renamed because they are still in use."
-    IDS_LFErrorCannotCopyIndex 
-                            "The index cannot be updated (write protected disc ?)."
-    IDS_LFErrorNoFileBody   "The actual file body is not present in the store."
+    IDS_CannotImportFile    "Some files cannot be imported because they are still in use."
+    IDS_CannotDeleteFile    "Some files cannot be deleted because they are still in use."
+    IDS_CannotRenameFile    "Some files cannot be renamed because they are still in use."
+    IDS_CannotCopyIndex     "The index cannot be updated (write protected disc ?)."
+    IDS_NoFileBody          "The actual file body is not present in the store."
 END
 
 STRINGTABLE 
@@ -621,6 +611,10 @@ BEGIN
     IDS_SrcDropbox          "Dropbox"
     IDS_SrcFacebook         "Facebook"
     IDS_SrcFlickr           "Flickr"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_SrcInstagram        "Instagram"
     IDS_SrcPinterest        "Pinterest"
     IDS_SrcSoundCloud       "SoundCloud"
@@ -634,6 +628,10 @@ BEGIN
     IDS_QSrcInternal        "In internal store"
     IDS_QSrcNTFS            "In Windows file system"
     IDS_QSrc1394            "On local 1394 drive"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_QSrcUSB             "On local USB drive"
     IDS_QSrcDropbox         "On Dropbox"
     IDS_QSrcFacebook        "On Facebook"
@@ -670,8 +668,7 @@ LANGUAGE LANG_SPANISH, SUBLANG_NEUTRAL
 
 STRINGTABLE 
 BEGIN
-    IDS_LFCategoryLocalStores 
-                            "Archivos almacenados en este equipo"
+    IDS_LFCategoryLocalStores "Archivos almacenados en este equipo"
     IDS_LFCategoryRemoteStores 
                             "Ubicación de red\nEstos stores residen en otras computadoras."
     IDS_LFCategoryDrives    "Dispositivos con almacenamiento extraible\nEscoja una de éstas para crear un nuevo store."
@@ -713,6 +710,10 @@ BEGIN
     IDS_LFContextSearch     "Resultados de la búsqueda"
     IDS_LFContextStores     "Stores"
     IDS_LFContextClipboard  "Portapapeles"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_LFContextSubfolderDefault "Subcarpeta"
     IDS_LFContextSubfolderDay "Día"
     IDS_LFContextSubfolderLocation "Ubicación"
@@ -722,12 +723,12 @@ STRINGTABLE
 BEGIN
     IDS_StoreDefaultName    "Nuevo store"
     IDS_LastSeen            "Conectado por última vez desde %s"
+    IDS_SeenOn              "Conectado en %s"
+    IDS_ErrorCaption        "Error"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_SeenOn              "Conectado en %s"
-    IDS_ErrorCaption        "Error"
     IDS_DeleteStoreCaption  "Eliminar store ""%s"""
     IDS_DeleteStoreMessage  "¿Realmente quiere eliminar este store?"
     IDS_ShortcutCaption     "Acceso directo"
@@ -740,14 +741,14 @@ BEGIN
     IDS_Priority1           "Muy bajo"
     IDS_Priority2           "Bajo"
     IDS_Priority3           "Medio"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_Priority4           "Alto"
     IDS_Priority5           "Urgente"
     IDS_Size1               "Minúsculo (< 32 KB)"
     IDS_Size2               "Chico (< 128 KB)"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_Size3               "Mediano (< 1 MB)"
     IDS_Size4               "Grande (< 16 MB)"
     IDS_Size5               "Extra grande (< 128 MB)"
@@ -760,14 +761,14 @@ BEGIN
     IDS_Duration6           "2-3 minutos"
     IDS_Duration7           "3-5 minutos"
     IDS_Duration8           "5-15 minuteo"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_Duration9           "15-30 minutos"
     IDS_Duration10          "30-45 minutos"
     IDS_Duration11          "45-60 minutos"
     IDS_Duration12          "60-90 minutos"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_Duration13          "90-120 minutos"
     IDS_Duration14          "Más de 2 horas"
 END
@@ -776,55 +777,41 @@ STRINGTABLE
 BEGIN
     IDS_LFOk                "Ok"
     IDS_LFCancel            "Cancelado"
-    IDS_LFErrorMemoryError  "Error de memoria"
-    IDS_LFErrorIllegalQuery "El filtro describe una solicitud ilegal."
-    IDS_LFErrorIllegalStoreDescriptor 
-                            "Las configuraciones del store no son válidas."
-    IDS_LFErrorStoreNotFound 
-                            "El store seleccionado no está conectado ó no está presente."
-    IDS_LFErrorDriveNotReady "La unidad no está lista!"
-    IDS_LFErrorDriveWriteProtected 
-                            "La unidad está protegida contra escritura."
+    IDS_MemoryError         "Error de memoria"
+    IDS_IllegalQuery        "El filtro describe una solicitud ilegal."
+    IDS_IllegalStoreDescriptor "Las configuraciones del store no son válidas."
+    IDS_StoreNotFound       "El store seleccionado no está conectado ó no está presente."
+    IDS_DriveNotReady       "La unidad no está lista!"
+    IDS_DriveWriteProtected "La unidad está protegida contra escritura."
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_LFErrorIllegalPhysFolder "La carpeta física no es accessible."
-    IDS_LFErrorRegistryError "No se puede acceder al registro."
-    IDS_LFErrorIllegalKey   "El ID del store ó del archivo es ilegal."
-    IDS_LFErrorNoDefaultStore 
-                            "No hay un store predeterminado en este momento."
-    IDS_LFErrorTooManyStores "El número máximo de stores ya ha sido creado."
-    IDS_LFErrorStoreNotMounted "El store no está conectado en este momento."
-    IDS_LFErrorMutexError   "liquidFOLDERS está por el momento bloqueado por otro proceso."
-    IDS_LFErrorIllegalAttribute 
-                            "Al menos uno de los objetos seleccionados no posee la propiedad."
-    IDS_LFErrorIllegalItemType 
-                            "Al menos uno de los objetos seleccionados no respalda esta operación."
-    IDS_LFErrorIllegalValue "Al menos uno de los valores de propiedad es ilegal."
-    IDS_LFErrorIndexTableLoadError 
-                            "Una tabla índice no puede ser cargada. Por favor ejecute un mantenimiento programado."
-    IDS_LFErrorIndexRepairError 
-                            "El índice del store está dañado y no pudo ser reparado (¿disco protegido contra escritura?)."
-    IDS_LFErrorIndexAccessError 
-                            "No se puede acceder al store. Por favor revise los derechos de acceso del directorio del store."
-    IDS_LFErrorIndexCreateError 
-                            "El índice del store no puede ser creado (¿disco protegido contra escritura?)."
-    IDS_LFErrorNotEnoughFreeDisc 
-                            "No hay suficiente espacio libre en el disco."
-    IDS_LFErrorCannotImportFile 
-                            "Algunos archivos no pueden ser importados porque aún se encuentran en uso."
+    IDS_IllegalPhysFolder   "La carpeta física no es accessible."
+    IDS_RegistryError       "No se puede acceder al registro."
+    IDS_AccessError         "La carpeta física no es accessible. Por favor revise los derechos de acceso del directorio del store."
+    IDS_IllegalKey          "El ID del store ó del archivo es ilegal."
+    IDS_NoDefaultStore      "No hay un store predeterminado en este momento."
+    IDS_TooManyStores       "El número máximo de stores ya ha sido creado."
+    IDS_StoreNotMounted     "El store no está conectado en este momento."
+    IDS_MutexError          "liquidFOLDERS está por el momento bloqueado por otro proceso."
+    IDS_IllegalAttribute    "Al menos uno de los objetos seleccionados no posee la propiedad."
+    IDS_IllegalItemType     "Al menos uno de los objetos seleccionados no respalda esta operación."
+    IDS_IllegalValue        "Al menos uno de los valores de propiedad es ilegal."
+    IDS_IndexTableLoadError "Una tabla índice no puede ser cargada. Por favor ejecute un mantenimiento programado."
+    IDS_IndexRepairError    "El índice del store está dañado y no pudo ser reparado (¿disco protegido contra escritura?)."
+    IDS_IndexAccessError    "No se puede acceder al store. Por favor revise los derechos de acceso del directorio del store."
+    IDS_IndexCreateError    "El índice del store no puede ser creado (¿disco protegido contra escritura?)."
+    IDS_NotEnoughFreeDisc   "No hay suficiente espacio libre en el disco."
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_LFErrorCannotDeleteFile 
-                            "Algunos archivos no pueden ser eliminados porque aún se encuentran en uso."
-    IDS_LFErrorCannotRenameFile 
-                            "Algunos archivos no pueden ser renombrados porque aún se encuentran en uso."
-    IDS_LFErrorCannotCopyIndex 
-                            "El índice no puede ser actualizado (¿disco protegido contra escritura?)."
-    IDS_LFErrorNoFileBody   "El cuerpo actual del archivo no está presente en el store."
+    IDS_CannotImportFile    "Algunos archivos no pueden ser importados porque aún se encuentran en uso."
+    IDS_CannotDeleteFile    "Algunos archivos no pueden ser eliminados porque aún se encuentran en uso."
+    IDS_CannotRenameFile    "Algunos archivos no pueden ser renombrados porque aún se encuentran en uso."
+    IDS_CannotCopyIndex     "El índice no puede ser actualizado (¿disco protegido contra escritura?)."
+    IDS_NoFileBody          "El cuerpo actual del archivo no está presente en el store."
 END
 
 STRINGTABLE 
@@ -906,6 +893,10 @@ BEGIN
     IDS_SrcDropbox          "Dropbox"
     IDS_SrcFacebook         "Facebook"
     IDS_SrcFlickr           "Flickr"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_SrcInstagram        "Instagram"
     IDS_SrcPinterest        "Pinterest"
     IDS_SrcSoundCloud       "SoundCloud"
@@ -919,6 +910,10 @@ BEGIN
     IDS_QSrcInternal        "En store interno"
     IDS_QSrcNTFS            "En Windows sistema de ficheros"
     IDS_QSrc1394            "En unidad local de 1394"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_QSrcUSB             "En unidad local de USB"
     IDS_QSrcDropbox         "En Dropbox"
     IDS_QSrcFacebook        "En Facebook"
@@ -955,8 +950,7 @@ LANGUAGE LANG_FRENCH, SUBLANG_NEUTRAL
 
 STRINGTABLE 
 BEGIN
-    IDS_LFCategoryLocalStores 
-                            "Fichiers enregistrés sur cet ordinateur"
+    IDS_LFCategoryLocalStores "Fichiers enregistrés sur cet ordinateur"
     IDS_LFCategoryRemoteStores 
                             "Emplacement réseau\nCes stores se trouvent sur des autres ordinateurs."
     IDS_LFCategoryDrives    "Périphériques utilisant des supports de stockage amovibles\nChoisissez un d'entre ceux-ci pour créer un nouveau store."
@@ -998,6 +992,10 @@ BEGIN
     IDS_LFContextSearch     "Résultat de la recherche"
     IDS_LFContextStores     "Stores"
     IDS_LFContextClipboard  "Presse-papiers"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_LFContextSubfolderDefault "Sous-dossier"
     IDS_LFContextSubfolderDay "Jour"
     IDS_LFContextSubfolderLocation "Lieu"
@@ -1007,12 +1005,12 @@ STRINGTABLE
 BEGIN
     IDS_StoreDefaultName    "Store nouveau"
     IDS_LastSeen            "Dernier monté de %s"
+    IDS_SeenOn              "Monté sur %s"
+    IDS_ErrorCaption        "Erreur"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_SeenOn              "Monté sur %s"
-    IDS_ErrorCaption        "Erreur"
     IDS_DeleteStoreCaption  "Effacez le store ""%s"""
     IDS_DeleteStoreMessage  "Voulez-vous vraiment effacer ce store ?"
     IDS_ShortcutCaption     "Raccourci"
@@ -1025,14 +1023,14 @@ BEGIN
     IDS_Priority1           "Très bas"
     IDS_Priority2           "Bas"
     IDS_Priority3           "Normal"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_Priority4           "Haut"
     IDS_Priority5           "Urgent"
     IDS_Size1               "Minuscule (< 32 KB)"
     IDS_Size2               "Petit (< 128 KB)"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_Size3               "Moyen (< 1 MB)"
     IDS_Size4               "Grand (< 16 MB)"
     IDS_Size5               "Énorme (< 128 MB)"
@@ -1045,14 +1043,14 @@ BEGIN
     IDS_Duration6           "2-3 minutes"
     IDS_Duration7           "3-5 minutes"
     IDS_Duration8           "5-15 minutes"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_Duration9           "15-30 minutes"
     IDS_Duration10          "30-45 minutes"
     IDS_Duration11          "45-60 minutes"
     IDS_Duration12          "60-90 minutes"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_Duration13          "90-120 minutes"
     IDS_Duration14          "Plus de 2 heures"
 END
@@ -1061,55 +1059,41 @@ STRINGTABLE
 BEGIN
     IDS_LFOk                "OK"
     IDS_LFCancel            "Annulé"
-    IDS_LFErrorMemoryError  "Faute de mémoire"
-    IDS_LFErrorIllegalQuery "Le filtre décrit une interrogation non valable."
-    IDS_LFErrorIllegalStoreDescriptor 
-                            "Les paramètres du store sont non valables."
-    IDS_LFErrorStoreNotFound 
-                            "Le store choisi n'est pas relié ou pas disponible."
-    IDS_LFErrorDriveNotReady "Le support de données n'est pas prêt!"
-    IDS_LFErrorDriveWriteProtected 
-                            "Le support de données est protégé en écriture."
+    IDS_MemoryError         "Faute de mémoire"
+    IDS_IllegalQuery        "Le filtre décrit une interrogation non valable."
+    IDS_IllegalStoreDescriptor "Les paramètres du store sont non valables."
+    IDS_StoreNotFound       "Le store choisi n'est pas relié ou pas disponible."
+    IDS_DriveNotReady       "Le support de données n'est pas prêt!"
+    IDS_DriveWriteProtected "Le support de données est protégé en écriture."
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_LFErrorIllegalPhysFolder "Il n'y a pas accès au dossier physique."
-    IDS_LFErrorRegistryError "Il n'ya pas accès au registry."
-    IDS_LFErrorIllegalKey   "Le store- ou le fichier-ID est non valable."
-    IDS_LFErrorNoDefaultStore "A présent aucun store de norme n'est fixé."
-    IDS_LFErrorTooManyStores 
-                            "Vous avez déjà produit le nombre maximum de stores!"
-    IDS_LFErrorStoreNotMounted "Le store n'est pas relié à présent."
-    IDS_LFErrorMutexError   "liquidFOLDERS est bloqué à présent par un autre procès."
-    IDS_LFErrorIllegalAttribute 
-                            "L'un des éléments choisis ne dispose pas de la qualité."
-    IDS_LFErrorIllegalItemType 
-                            "L'un des éléments choisis ne soutient pas cette opération."
-    IDS_LFErrorIllegalValue "L'une des qualités a une valeur non valable."
-    IDS_LFErrorIndexTableLoadError 
-                            "Un tableau d'index ne peut pas être chargé. S'il vous plaît, exécutez le travail d'entretien."
-    IDS_LFErrorIndexRepairError 
-                            "L'index est endommagé et ne peut pas être réparé malheureusement (Est-ce que le support de données est protégé en écriture ?)."
-    IDS_LFErrorIndexAccessError 
-                            "Il n'ya pas accès au store. S'il vous plaît, contrôlez les paramètres de sécurité du dossier."
-    IDS_LFErrorIndexCreateError 
-                            "L'index ne peut pas être créé (Est-ce que le support de données est protégé en écriture ?)."
-    IDS_LFErrorNotEnoughFreeDisc 
-                            "Sur le support de données, la cellule de mémoire n'est plus libre suffisamment."
-    IDS_LFErrorCannotImportFile 
-                            "Certains fichiers ne peuvent pas être importés, puisqu'ils sont encore dans l'usage."
+    IDS_IllegalPhysFolder   "Il n'y a pas accès au dossier physique."
+    IDS_RegistryError       "Il n'ya pas accès au registry."
+    IDS_AccessError         "Il n'y a pas accès au dossier physique. S'il vous plaît, contrôlez les paramètres de sécurité du dossier."
+    IDS_IllegalKey          "Le store- ou le fichier-ID est non valable."
+    IDS_NoDefaultStore      "A présent aucun store de norme n'est fixé."
+    IDS_TooManyStores       "Vous avez déjà produit le nombre maximum de stores!"
+    IDS_StoreNotMounted     "Le store n'est pas relié à présent."
+    IDS_MutexError          "liquidFOLDERS est bloqué à présent par un autre procès."
+    IDS_IllegalAttribute    "L'un des éléments choisis ne dispose pas de la qualité."
+    IDS_IllegalItemType     "L'un des éléments choisis ne soutient pas cette opération."
+    IDS_IllegalValue        "L'une des qualités a une valeur non valable."
+    IDS_IndexTableLoadError "Un tableau d'index ne peut pas être chargé. S'il vous plaît, exécutez le travail d'entretien."
+    IDS_IndexRepairError    "L'index est endommagé et ne peut pas être réparé malheureusement (Est-ce que le support de données est protégé en écriture ?)."
+    IDS_IndexAccessError    "Il n'ya pas accès au store. S'il vous plaît, contrôlez les paramètres de sécurité du dossier."
+    IDS_IndexCreateError    "L'index ne peut pas être créé (Est-ce que le support de données est protégé en écriture ?)."
+    IDS_NotEnoughFreeDisc   "Sur le support de données, la cellule de mémoire n'est plus libre suffisamment."
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_LFErrorCannotDeleteFile 
-                            "Certains fichiers ne peuvent pas être effacés, puisqu'ils sont encore dans l'usage."
-    IDS_LFErrorCannotRenameFile 
-                            "Certains fichiers ne peuvent pas être renommées, puisqu'ils sont encore dans l'usage."
-    IDS_LFErrorCannotCopyIndex 
-                            "L'index ne peut pas être actualisé (Est-ce que le support de données est protégé en écriture ?)."
-    IDS_LFErrorNoFileBody   "Le véritable corps de fichier ne se trouve pas dans le store."
+    IDS_CannotImportFile    "Certains fichiers ne peuvent pas être importés, puisqu'ils sont encore dans l'usage."
+    IDS_CannotDeleteFile    "Certains fichiers ne peuvent pas être effacés, puisqu'ils sont encore dans l'usage."
+    IDS_CannotRenameFile    "Certains fichiers ne peuvent pas être renommées, puisqu'ils sont encore dans l'usage."
+    IDS_CannotCopyIndex     "L'index ne peut pas être actualisé (Est-ce que le support de données est protégé en écriture ?)."
+    IDS_NoFileBody          "Le véritable corps de fichier ne se trouve pas dans le store."
 END
 
 STRINGTABLE 
@@ -1191,6 +1175,10 @@ BEGIN
     IDS_SrcDropbox          "Dropbox"
     IDS_SrcFacebook         "Facebook"
     IDS_SrcFlickr           "Flickr"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_SrcInstagram        "Instagram"
     IDS_SrcPinterest        "Pinterest"
     IDS_SrcSoundCloud       "SoundCloud"
@@ -1204,6 +1192,10 @@ BEGIN
     IDS_QSrcInternal        "Dans store interne"
     IDS_QSrcNTFS            "En système de fichiers Windows"
     IDS_QSrc1394            "En lecteur local de 1394"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_QSrcUSB             "En lecteur local de USB"
     IDS_QSrcDropbox         "En Dropbox"
     IDS_QSrcFacebook        "En Facebook"
