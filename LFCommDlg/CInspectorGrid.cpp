@@ -655,7 +655,7 @@ CInspectorGrid::CInspectorGrid()
 			AfxThrowResourceException();
 	}
 
-	m_ShowHeader = m_SortAlphabetic = m_Hover = m_PartPressed = FALSE;
+	m_SortAlphabetic = m_Hover = m_PartPressed = FALSE;
 	m_pSortArray = NULL;
 	m_pHeader = NULL;
 	hThemeList = hThemeButton = NULL;
@@ -677,7 +677,6 @@ CInspectorGrid::~CInspectorGrid()
 BOOL CInspectorGrid::Create(CWnd* pParentWnd, UINT nID, CInspectorHeader* pHeader)
 {
 	m_pHeader = pHeader;
-	m_ShowHeader = (pHeader!=NULL);
 
 	CString className = AfxRegisterWndClass(CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS, LoadCursor(NULL, IDC_ARROW));
 
@@ -816,15 +815,6 @@ void CInspectorGrid::AddAttributes(LFVariantData* pData)
 		LFAttributeDescriptor* pAttr = &p_App->m_Attributes[a];
 		AddProperty(pProp, pAttr->Category, pAttr->Name, !pAttr->ReadOnly);
 	}
-}
-
-void CInspectorGrid::ShowHeader(BOOL ShowHeader)
-{
-	DestroyEdit();
-
-	m_ShowHeader = ShowHeader;
-	AdjustLayout();
-	EnsureVisible(m_SelectedItem);
 }
 
 void CInspectorGrid::SetAlphabeticMode(BOOL SortAlphabetic)
@@ -1104,7 +1094,7 @@ void CInspectorGrid::AdjustLayout()
 		m_Categories[a].Top = m_Categories[a].Bottom = -1;
 
 	m_LabelWidth = 0;
-	m_ScrollHeight = (m_pHeader && m_ShowHeader) ? m_pHeader->GetPreferredHeight()+1 : 1;
+	m_ScrollHeight = m_pHeader ? m_pHeader->GetPreferredHeight()+1 : 1;
 	INT Category = -1;
 
 	for (UINT a=0; a<m_Properties.m_ItemCount; a++)
@@ -1491,7 +1481,7 @@ void CInspectorGrid::OnPaint()
 	}
 
 	//Header
-	if (m_pHeader && m_ShowHeader)
+	if (m_pHeader)
 	{
 		CRect rect(0, -m_VScrollPos, rect.Width(), m_pHeader->GetPreferredHeight()-m_VScrollPos);
 		m_pHeader->DrawHeader(dc, rect, Themed);

@@ -153,7 +153,6 @@ void CInspectorWnd::SaveSettings()
 {
 	CString oldBase = theApp.GetRegistryBase();
 	theApp.SetRegistryBase(_T("Inspector"));
-	theApp.WriteInt(_T("ShowPreview"), m_ShowPreview);
 	theApp.WriteInt(_T("ShowInternal"), m_ShowInternal);
 	theApp.WriteInt(_T("SortAlphabetic"), m_SortAlphabetic);
 	theApp.SetRegistryBase(oldBase);
@@ -415,11 +414,10 @@ BEGIN_MESSAGE_MAP(CInspectorWnd, CGlassPane)
 	ON_WM_CONTEXTMENU()
 	ON_MESSAGE(WM_PROPERTYCHANGED, OnPropertyChanged)
 
-	ON_COMMAND(IDM_INSPECTOR_SHOWPREVIEW, OnTogglePreview)
 	ON_COMMAND(IDM_INSPECTOR_SHOWINTERNAL, OnToggleInternal)
 	ON_COMMAND(IDM_INSPECTOR_SORTALPHABETIC, OnAlphabetic)
 	ON_COMMAND(IDM_INSPECTOR_EXPORTSUMMARY, OnExportSummary)
-	ON_UPDATE_COMMAND_UI_RANGE(IDM_INSPECTOR_SHOWPREVIEW, IDM_INSPECTOR_EXPORTMETADATA, OnUpdateCommands)
+	ON_UPDATE_COMMAND_UI_RANGE(IDM_INSPECTOR_SHOWINTERNAL, IDM_INSPECTOR_EXPORTMETADATA, OnUpdateCommands)
 END_MESSAGE_MAP()
 
 INT CInspectorWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -429,7 +427,6 @@ INT CInspectorWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	CString oldBase = theApp.GetRegistryBase();
 	theApp.SetRegistryBase(_T("Inspector"));
-	m_ShowPreview = theApp.GetInt(_T("ShowPreview"), TRUE);
 	m_ShowInternal = theApp.GetInt(_T("ShowInternal"), FALSE);
 	m_SortAlphabetic = theApp.GetInt(_T("SortAlphabetic"), FALSE);
 	theApp.SetRegistryBase(oldBase);
@@ -437,7 +434,6 @@ INT CInspectorWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (!m_wndInspectorGrid.Create(this, 1, &m_IconHeader))
 		return -1;
 
-	m_wndInspectorGrid.ShowHeader(m_ShowPreview);
 	m_wndInspectorGrid.SetAlphabeticMode(m_SortAlphabetic);
 	m_wndInspectorGrid.AddAttributes(m_AttributeValues);
 	for (UINT a=LFAttributeCount; a<AttrCount; a++)
@@ -515,14 +511,6 @@ LRESULT CInspectorWnd::OnPropertyChanged(WPARAM wparam, LPARAM lparam)
 }
 
 
-void CInspectorWnd::OnTogglePreview()
-{
-	m_ShowPreview = !m_ShowPreview;
-	SaveSettings();
-
-	m_wndInspectorGrid.ShowHeader(m_ShowPreview);
-}
-
 void CInspectorWnd::OnToggleInternal()
 {
 	m_ShowInternal = !m_ShowInternal;
@@ -577,9 +565,6 @@ void CInspectorWnd::OnUpdateCommands(CCmdUI* pCmdUI)
 
 	switch (pCmdUI->m_nID)
 	{
-	case IDM_INSPECTOR_SHOWPREVIEW:
-		pCmdUI->SetCheck(m_ShowPreview);
-		break;
 	case IDM_INSPECTOR_SHOWINTERNAL:
 		pCmdUI->SetCheck(m_ShowInternal);
 		break;

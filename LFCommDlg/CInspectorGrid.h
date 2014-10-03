@@ -236,7 +236,6 @@ public:
 	BOOL Create(CWnd* pParentWnd, UINT nID, CInspectorHeader* pHeader=NULL);
 	void AddProperty(CProperty* pProperty, UINT Category, WCHAR* Name, BOOL Editable=FALSE);
 	void AddAttributes(LFVariantData* pData);
-	void ShowHeader(BOOL ShowHeader);
 	void SetAlphabeticMode(BOOL SortAlphabetic);
 	void UpdatePropertyState(UINT nID, BOOL Multiple, BOOL Editable, BOOL Visible);
 	CString GetName(UINT nID);
@@ -257,7 +256,6 @@ protected:
 	INT m_RowHeight;
 	INT m_LabelWidth;
 	INT m_IconSize;
-	BOOL m_ShowHeader;
 	BOOL m_SortAlphabetic;
 	BOOL m_Hover;
 	BOOL m_PartPressed;
