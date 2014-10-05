@@ -1094,7 +1094,7 @@ void CInspectorGrid::AdjustLayout()
 		m_Categories[a].Top = m_Categories[a].Bottom = -1;
 
 	m_LabelWidth = 0;
-	m_ScrollHeight = m_pHeader ? m_pHeader->GetPreferredHeight()+1 : 1;
+	m_ScrollHeight = m_pHeader ? m_pHeader->GetPreferredHeight()+1 : PADDING+1;
 	INT Category = -1;
 
 	for (UINT a=0; a<m_Properties.m_ItemCount; a++)
@@ -1160,14 +1160,22 @@ void CInspectorGrid::DrawCategory(CDC& dc, CRect& rect, WCHAR* Text, BOOL Themed
 	rectLine.right += 2*PADDING;
 
 	if (rectLine.right<=rect.right)
-	{
-		CPen pen(PS_SOLID, 1, Themed ? 0xE2E2E2 : GetSysColor(COLOR_WINDOWTEXT));
+		if (Themed)
+		{
+			Graphics g(dc);
+	
+			LinearGradientBrush brush(Point(rectLine.right, rectLine.top), Point(rect.right, rectLine.top), Color(0xFF, 0xE2, 0xE2, 0xE2), Color(0x00, 0xE2, 0xE2, 0xE2));
+			g.FillRectangle(&brush, rectLine.right, rectLine.bottom-(m_FontHeight[1]+1)/2, rect.right-rectLine.right, 1);
+		}
+		else
+		{
+			CPen pen(PS_SOLID, 1, Themed ? 0xE2E2E2 : GetSysColor(COLOR_WINDOWTEXT));
 
-		CPen* pOldPen = dc.SelectObject(&pen);
-		dc.MoveTo(rectLine.right, rect.bottom-(m_FontHeight[1]+1)/2);
-		dc.LineTo(rect.right-PADDING, rect.bottom-(m_FontHeight[1]+1)/2);
-		dc.SelectObject(pOldPen);
-	}
+			CPen* pOldPen = dc.SelectObject(&pen);
+			dc.MoveTo(rectLine.right, rect.bottom-(m_FontHeight[1]+1)/2);
+			dc.LineTo(rect.right-PADDING, rect.bottom-(m_FontHeight[1]+1)/2);
+			dc.SelectObject(pOldPen);
+		}
 }
 
 void CInspectorGrid::NotifyOwner(SHORT Attr1, SHORT Attr2, SHORT Attr3)

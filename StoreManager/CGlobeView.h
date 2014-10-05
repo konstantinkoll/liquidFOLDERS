@@ -58,7 +58,7 @@ protected:
 	void Normalize();
 	void CalcAndDrawSpots(GLfloat ModelView[4][4], GLfloat Projection[4][4]);
 	void CalcAndDrawLabel(BOOL Themed);
-	void DrawLabel(GlobeItemData* d, UINT cCaption, WCHAR* Caption, WCHAR* Subcaption, WCHAR* Coordinates, WCHAR* Description, BOOL Focused, BOOL Themed);
+	void DrawLabel(GlobeItemData* d, UINT cCaption, WCHAR* Caption, WCHAR* Subcaption, WCHAR* Coordinates, WCHAR* Description, BOOL Focused, BOOL Hot, BOOL Themed);
 	void DrawStatusBar(INT Height, COLORREF BarColor, BOOL Themed);
 	void DrawScene(BOOL InternalCall=FALSE);
 	BOOL UpdateScene(BOOL Redraw=FALSE);

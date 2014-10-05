@@ -36,7 +36,7 @@ CListView::CListView(UINT DataSize)
 	ENSURE(m_Files_Plural.LoadString(IDS_FILES_PLURAL));
 
 	m_Icons[0] = m_Icons[1] = NULL;
-	m_HeaderItemClicked = m_HeaderItemSort = -1;
+	m_HeaderItemClicked = -1;
 	m_IgnoreHeaderItemChange = m_ShowLegend = FALSE;
 
 	WCHAR tmpStr[256];
@@ -173,39 +173,27 @@ void CListView::AdjustHeader(BOOL bShow)
 
 		VERIFY(m_wndHeader.SetOrderArray(LFAttributeCount, p_ViewParameters->ColumnOrder));
 
-		// Width
 		for (UINT a=0; a<LFAttributeCount; a++)
 		{
-			HDITEM HdItem;
-			HdItem.mask = HDI_WIDTH;
-			HdItem.cxy = p_ViewParameters->ColumnWidth[a];
+			HDITEM hdi;
+			hdi.mask = HDI_WIDTH | HDI_FORMAT;
+			hdi.cxy = p_ViewParameters->ColumnWidth[a];
+			hdi.fmt = theApp.m_Attributes[a].FormatRight ? HDF_RIGHT : HDF_LEFT;
 
-			if (HdItem.cxy)
+			if (hdi.cxy)
 				if (theApp.m_Attributes[a].Type==LFTypeRating)
 				{
-					HdItem.cxy = p_ViewParameters->ColumnWidth[a] = RatingBitmapWidth+4*PADDING;
+					hdi.cxy = p_ViewParameters->ColumnWidth[a] = RatingBitmapWidth+4*PADDING;
 				}
 				else
-					if (HdItem.cxy<MINWIDTH)
-						p_ViewParameters->ColumnWidth[a] = HdItem.cxy = MINWIDTH;
+					if (hdi.cxy<MINWIDTH)
+						p_ViewParameters->ColumnWidth[a] = hdi.cxy = MINWIDTH;
 
-			m_wndHeader.SetItem(a, &HdItem);
+			if (p_ViewParameters->SortBy==a)
+				hdi.fmt |= p_ViewParameters->Descending ? HDF_SORTDOWN : HDF_SORTUP;
+
+			m_wndHeader.SetItem(a, &hdi);
 		}
-
-		// Sort indicator
-		HDITEM hdi;
-		hdi.mask = HDI_FORMAT;
-
-		if ((m_HeaderItemSort!=(INT)p_ViewParameters->SortBy) && (m_HeaderItemSort!=-1))
-		{
-			hdi.fmt = 0;
-			m_wndHeader.SetItem(m_HeaderItemSort, &hdi);
-		}
-
-		hdi.fmt = p_ViewParameters->Descending ? HDF_SORTDOWN : HDF_SORTUP;
-		m_wndHeader.SetItem(p_ViewParameters->SortBy, &hdi);
-
-		m_HeaderItemSort = p_ViewParameters->SortBy;
 
 		m_wndHeader.ModifyStyle(HDS_HIDDEN, 0);
 		m_wndHeader.SetRedraw(TRUE);
@@ -436,7 +424,7 @@ void CListView::DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed)
 		case LFTypeVolume:
 			Rows[1] = LFAttrComments;
 			Rows[2] = LFAttrDescription;
-			Rows[3] = LFAttrCreationTime;
+			Rows[3] = -1;
 			break;
 		case LFTypeFile:
 			Rows[1] = LFAttrFileTime;
@@ -694,6 +682,10 @@ __forceinline void CListView::DrawColumn(CDC& dc, CRect& rect, LFItemDescriptor*
 		if (tmpStr[0]!=L'\0')
 		{
 			CRect rectText(rect);
+
+			if (theApp.m_Attributes[Attr].FormatRight)
+				rectText.right -= 3;
+
 			dc.DrawText(tmpStr, rectText, (theApp.m_Attributes[Attr].FormatRight ? DT_RIGHT : DT_LEFT) | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
 		}
 	}
@@ -852,6 +844,37 @@ void CListView::SortCategories(LFSearchResult* Result)
 			Result->m_Items[Ptr++] = Buckets[a].m_Items[b];
 }
 
+void CListView::ScrollWindow(INT dx, INT dy)
+{
+	CRect rect;
+	GetClientRect(rect);
+	rect.top = m_HeaderHeight;
+
+	ScrollWindowEx(dx, dy, rect, NULL, NULL, NULL, SW_INVALIDATE);
+
+	if (IsWindow(m_wndHeader))
+	{
+		CRect rectWindow;
+		GetWindowRect(&rectWindow);
+
+		WINDOWPOS wp;
+		HDLAYOUT HdLayout;
+		HdLayout.prc = &rectWindow;
+		HdLayout.pwpos = &wp;
+		m_wndHeader.Layout(&HdLayout);
+
+		wp.x = 13-PADDING;
+		wp.y = 0;
+
+		m_wndHeader.SetRedraw(FALSE);
+		m_wndHeader.SetWindowPos(NULL, wp.x-m_HScrollPos, wp.y, wp.cx+m_HScrollMax+GetSystemMetrics(SM_CXVSCROLL), m_HeaderHeight, wp.flags | SWP_NOZORDER | SWP_NOACTIVATE);
+		m_wndHeader.SetRedraw(TRUE);
+		m_wndHeader.Invalidate();
+
+		InvalidateRect(CRect(rect.left, 0, rect.right, m_HeaderHeight));
+	}
+}
+
 
 BEGIN_MESSAGE_MAP(CListView, CGridView)
 	ON_WM_CREATE()
@@ -988,26 +1011,34 @@ void CListView::OnEndDrag(NMHDR* pNMHDR, LRESULT* pResult)
 
 	if (pHdr->pitem->mask & HDI_ORDER)
 	{
-		if (pHdr->pitem->iOrder==LFAttrFileName)
-			pHdr->pitem->iOrder = 1;
-		if (pHdr->iItem==LFAttrFileName)
-			pHdr->pitem->iOrder = 0;
+		if (pHdr->pitem->iOrder==-1)
+		{
+			p_ViewParameters->ColumnWidth[pHdr->iItem] = 0;
+		}
+		else
+		{
+			if (pHdr->pitem->iOrder==LFAttrFileName)
+				pHdr->pitem->iOrder = 1;
+			if (pHdr->iItem==LFAttrFileName)
+				pHdr->pitem->iOrder = 0;
 
-		// GetColumnOrderArray() enthält noch die alte Reihenfolge, daher:
-		// 1. Spalte an der alten Stelle löschen
-		for (UINT a=0; a<LFAttributeCount; a++)
-			if (p_ViewParameters->ColumnOrder[a]==pHdr->iItem)
-			{
-				for (UINT b=a; b<LFAttributeCount-1; b++)
-					p_ViewParameters->ColumnOrder[b] = p_ViewParameters->ColumnOrder[b+1];
-				break;
-			}
+			// GetColumnOrderArray() enthält noch die alte Reihenfolge, daher:
+			// 1. Spalte an der alten Stelle löschen
+			for (UINT a=0; a<LFAttributeCount; a++)
+				if (p_ViewParameters->ColumnOrder[a]==pHdr->iItem)
+				{
+					for (UINT b=a; b<LFAttributeCount-1; b++)
+						p_ViewParameters->ColumnOrder[b] = p_ViewParameters->ColumnOrder[b+1];
+					break;
+				}
 
-		// 2. Spalte an der neuen Stelle einfügen
-		for (INT a=LFAttributeCount-1; a>pHdr->pitem->iOrder; a--)
-			p_ViewParameters->ColumnOrder[a] = p_ViewParameters->ColumnOrder[a-1];
+			// 2. Spalte an der neuen Stelle einfügen
+			for (INT a=LFAttributeCount-1; a>pHdr->pitem->iOrder; a--)
+				p_ViewParameters->ColumnOrder[a] = p_ViewParameters->ColumnOrder[a-1];
 
-		p_ViewParameters->ColumnOrder[pHdr->pitem->iOrder] = pHdr->iItem;
+			p_ViewParameters->ColumnOrder[pHdr->pitem->iOrder] = pHdr->iItem;
+		}
+
 		UpdateViewOptions(m_Context);
 
 		*pResult = FALSE;

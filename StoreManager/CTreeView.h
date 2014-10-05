@@ -113,6 +113,7 @@ protected:
 	void DeletePath(LPWSTR Path);
 	void AddPath(LPWSTR Path, LPWSTR Parent);
 	void UpdatePath(LPWSTR Path1, LPWSTR Path2, IShellFolder* pDesktop);
+	void ScrollWindow(INT dx, INT dy);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnDestroy();

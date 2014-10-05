@@ -415,7 +415,7 @@ void CDropdownSelector::OnPaint()
 		g.DrawPath(&pen, &path);
 		rectBounds.DeflateRect(1, 1);
 
-		if (LFGetApp()->OSVersion==OS_Eight)
+		if (p_App->OSVersion==OS_Eight)
 		{
 			CreateRoundRectangle(rectBounds, 0, path);
 			Pen pen(Color(0x40, 0x38, 0x38, 0x38));

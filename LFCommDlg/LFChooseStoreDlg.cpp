@@ -47,10 +47,10 @@ void LFChooseStoreDlg::AdjustLayout()
 	GetLayoutRect(rect);
 
 	UINT ExplorerHeight = 0;
-	if (IsWindow(m_wndExplorerHeader))
+	if (IsWindow(m_wndHeaderArea))
 	{
-		ExplorerHeight = m_wndExplorerHeader.GetPreferredHeight();
-		m_wndExplorerHeader.SetWindowPos(NULL, rect.left, rect.top, rect.Width(), ExplorerHeight, SWP_NOACTIVATE | SWP_NOZORDER);
+		ExplorerHeight = m_wndHeaderArea.GetPreferredHeight();
+		m_wndHeaderArea.SetWindowPos(NULL, rect.left, rect.top, rect.Width(), ExplorerHeight, SWP_NOACTIVATE | SWP_NOZORDER);
 	}
 
 	CRect borders(0, 0, 7, 7);
@@ -97,16 +97,12 @@ BOOL LFChooseStoreDlg::OnInitDialog()
 
 	LFDialog::OnInitDialog();
 
-	CString Caption;
-	ENSURE(Caption.LoadString(IDS_CHOOSESTORE_CAPTION));
-
 	CString Hint;
 	if (m_Mode==LFCSD_Mounted)
 		ENSURE(Hint.LoadString(IDS_CHOOSESTORE_HINT));
 
-	m_wndExplorerHeader.Create(this, IDC_EXPLORERHEADER);
-	m_wndExplorerHeader.SetText(Caption, Hint, FALSE);
-	m_wndExplorerHeader.SetColors(0x126E00, (COLORREF)-1, FALSE);
+	m_wndHeaderArea.Create(this, IDC_HEADERAREA);
+	m_wndHeaderArea.SetText(p_App->m_Contexts[LFContextStores].Name, Hint, FALSE);
 
 	const UINT dwStyle = WS_VISIBLE | WS_CHILD | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | LVS_SHOWSELALWAYS | LVS_AUTOARRANGE | LVS_SHAREIMAGELISTS | LVS_ALIGNTOP | LVS_EDITLABELS;
 	CRect rect;
@@ -174,15 +170,12 @@ LRESULT LFChooseStoreDlg::OnUpdateStores(WPARAM /*wParam*/, LPARAM lParam)
 
 		if (m_Mode!=LFCSD_Mounted)
 		{
-			CString Caption;
-			ENSURE(Caption.LoadString(IDS_CHOOSESTORE_CAPTION));
-
 			CString Hint;
 			CString Mask;
 			ENSURE(Mask.LoadString(m_pResult->m_StoreCount==1 ? IDS_STORES_SINGULAR : IDS_STORES_PLURAL));
 			Hint.Format(Mask, m_pResult->m_StoreCount);
 
-			m_wndExplorerHeader.SetText(Caption, Hint);
+			m_wndHeaderArea.SetText(p_App->m_Contexts[LFContextStores].Name, Hint);
 		}
 
 		INT idx = -1;

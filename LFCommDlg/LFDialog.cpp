@@ -71,7 +71,7 @@ void LFDialog::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 	dc.FillSolidRect(0, 0, m_BackBufferL, Line, 0xFFFFFF);
 	if (Themed)
 	{
-		dc.FillSolidRect(0, Line, m_BackBufferL, rect.Height()-Line, 0xFEFEFE);
+		dc.FillSolidRect(0, Line, m_BackBufferL, rect.Height()-Line, 0xFFFFFF);
 
 		CGdiPlusBitmap* pDivider = p_App->GetCachedResourceImage(IDB_DIVDOWN, _T("PNG"), LFCommDlgDLL.hResource);
 		g.DrawImage(pDivider->m_pBitmap, (rect.Width()-(INT)pDivider->m_pBitmap->GetWidth())/2, Line);
@@ -108,7 +108,7 @@ void LFDialog::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 		CString tmpStr;
 		ENSURE(tmpStr.LoadString(IDS_UACMESSAGE));
 
-		CFont* pOldFont = dc.SelectObject(&LFGetApp()->m_CaptionFont);
+		CFont* pOldFont = dc.SelectObject(&p_App->m_CaptionFont);
 		dc.DrawText(tmpStr, rectText, DT_SINGLELINE | DT_VCENTER | DT_END_ELLIPSIS | DT_LEFT);
 		dc.SelectObject(pOldFont);
 	}

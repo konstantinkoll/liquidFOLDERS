@@ -462,6 +462,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CStorePanel.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\CTagcloudView.cpp"
 				>
 			</File>
@@ -649,6 +653,10 @@
 			</File>
 			<File
 				RelativePath=".\CPIDLSelector.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CStorePanel.h"
 				>
 			</File>
 			<File

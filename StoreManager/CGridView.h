@@ -41,7 +41,7 @@ protected:
 	BOOL m_HasCategories;
 	UINT m_GridArrange;
 
-	virtual void DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed);
+	virtual void DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed)=0;
 
 	void AddItemCategory(WCHAR* Caption, WCHAR* Name);
 	void ResetItemCategories();

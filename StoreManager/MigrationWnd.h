@@ -22,7 +22,7 @@ protected:
 	CPIDLSelector m_wndFolder;
 	CStoreSelector m_wndStore;
 	CMigrationView m_wndMigrationView;
-	CBottomArea m_wndBottomArea;
+	CFooterArea m_wndBottomArea;
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnSetFocus(CWnd* pOldWnd);

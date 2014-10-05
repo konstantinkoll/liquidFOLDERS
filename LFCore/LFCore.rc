@@ -267,7 +267,7 @@ BEGIN
     IDS_AttrFileSize        "Größe"
     IDS_AttrFlags           "Markierungen"
     IDS_AttrURL             "URL"
-    IDS_AttrTags            "Schlagworte"
+    IDS_AttrTags            "Hashtags"
 END
 
 STRINGTABLE 
@@ -549,7 +549,7 @@ BEGIN
     IDS_AttrFileSize        "Size"
     IDS_AttrFlags           "Flags"
     IDS_AttrURL             "URL"
-    IDS_AttrTags            "Tags"
+    IDS_AttrTags            "Hashtags"
 END
 
 STRINGTABLE 
@@ -1113,7 +1113,7 @@ BEGIN
     IDS_AttrFileSize        "Grandeur"
     IDS_AttrFlags           "Attributes"
     IDS_AttrURL             "Adresse URL"
-    IDS_AttrTags            "Des mots-clé"
+    IDS_AttrTags            "Mots-dièse"
 END
 
 STRINGTABLE 

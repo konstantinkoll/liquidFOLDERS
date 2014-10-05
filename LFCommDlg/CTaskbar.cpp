@@ -9,8 +9,8 @@
 // CTaskbar
 //
 
-#define BORDERLEFT      16
-#define BORDER          4
+#define BORDERLEFT     16
+#define BORDER         4
 
 CTaskbar::CTaskbar()
 	: CWnd()
@@ -204,72 +204,29 @@ BOOL CTaskbar::OnEraseBkgnd(CDC* pDC)
 		m_BackBuffer.CreateCompatibleBitmap(pDC, rect.Width(), rect.Height());
 		pOldBitmap = dc.SelectObject(&m_BackBuffer);
 
-		Graphics g(dc);
+		if (IsCtrlThemed())
+		{
+			dc.FillSolidRect(0, 0, rect.Width(), rect.Height()-1, 0xFFFFFF);
+			dc.FillSolidRect(0, rect.bottom-1, rect.Width(), 1, 0x97908B);
 
-		if (!IsCtrlThemed())
+			const UINT line = (rect.Height()-2)*2/5;
+
+			Graphics g(dc);
+			LinearGradientBrush brush(Point(0, line-1), Point(0, rect.bottom-1), Color(0xFF, 0xFF, 0xFF), Color(0xE5, 0xE9, 0xEE));
+
+			if (GetParent()->GetStyle() & WS_BORDER)
+			{
+				g.FillRectangle(&brush, 0, line, rect.right, rect.bottom-line-1);
+			}
+			else
+			{
+				g.FillRectangle(&brush, 1, line, rect.right-2, rect.bottom-line-1);
+			}
+		}
+		else
 		{
 			dc.FillSolidRect(rect, GetSysColor(COLOR_3DFACE));
 		}
-		else
-			switch (LFGetApp()->OSVersion)
-			{
-			case OS_Vista:
-				{
-					Color c1(0x04, 0x48, 0x75);
-					Color c2(0x19, 0x6C, 0x77);
-					Color c3(0x80, 0xC0, 0xFF, 0xE0);
-
-					LinearGradientBrush brush1(Point(0, 0), Point(rect.right, 0), c1, c2);
-					g.FillRectangle(&brush1, 0, 0, rect.right, rect.bottom);
-
-					SolidBrush brush2(Color(0x60, 0x00, 0x00, 0x00));
-					g.FillRectangle(&brush2, 0, rect.bottom-1, rect.right, 1);
-
-					UINT line = rect.Height()/2;
-
-					LinearGradientBrush brush3(Point(0, 0), Point(0, line), Color(144, 0xFF, 0xFF, 0xFF), Color(48, 0xFF, 0xFF, 0xFF));
-					g.FillRectangle(&brush3, 0, 0, rect.right, line);
-
-					LinearGradientBrush brush4(Point(0, rect.bottom-line*2/3), Point(0, rect.bottom-1), Color(0, 0xFF, 0xFF, 0xFF), c3);
-					g.FillRectangle(&brush4, 0, rect.bottom-line*2/3+1, rect.right, rect.bottom-line-2);
-
-					SolidBrush brush5(Color(64, 0xFF, 0xFF, 0xFF));
-					g.FillRectangle(&brush5, 0, 0, rect.right, 1);
-					g.FillRectangle(&brush5, 0, rect.bottom-2, rect.right, 1);
-					g.FillRectangle(&brush5, 0, 0, 1, rect.bottom-1);
-					g.FillRectangle(&brush5, rect.right-1, 0, 1, rect.bottom-1);
-
-					break;
-				}
-			case OS_XP:
-			case OS_Seven:
-				{
-					UINT line = (rect.Height()-2)/2;
-
-					LinearGradientBrush brush1(Point(0, 0), Point(0, line+1), Color(0xFD, 0xFE, 0xFF), Color(0xE6, 0xF0, 0xFA));
-					g.FillRectangle(&brush1, 1, 0, rect.right-2, line+1);
-
-					LinearGradientBrush brush2(Point(0, line+2), Point(0, rect.bottom-4), Color(0xDC, 0xE6, 0xF4), Color(0xDD, 0xE9, 0xF7));
-					g.FillRectangle(&brush2, 1, line+1, rect.right-2, rect.bottom-line-4);
-
-					LinearGradientBrush brush3(Point(0, 1), Point(0, rect.bottom-4), Color(0xFF, 0xFF, 0xFF), Color(0xEE, 0xF4, 0xFB));
-					g.FillRectangle(&brush3, 0, 0, 1, rect.bottom-3);
-					g.FillRectangle(&brush3, rect.right-1, 0, 1, rect.bottom-3);
-
-					dc.FillSolidRect(0, rect.bottom-3, rect.right, 1, 0xFBEFE4);
-					dc.FillSolidRect(0, rect.bottom-2, rect.right, 1, 0xEADACD);
-					dc.FillSolidRect(0, rect.bottom-1, rect.right, 1, 0xC3AFA0);
-
-					break;
-				}
-			case OS_Eight:
-				{
-					dc.FillSolidRect(0, 0, rect.right, rect.bottom-1, 0xF7F6F5);
-					dc.FillSolidRect(0, rect.bottom-1, rect.right, 1, 0xEAE9E8);
-
-					break;
-				}
-			}
 
 		if (hBackgroundBrush)
 			DeleteObject(hBackgroundBrush);

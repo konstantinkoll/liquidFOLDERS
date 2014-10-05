@@ -27,7 +27,7 @@ public:
 
 protected:
 	CTaskbar m_wndTaskbar;
-	CExplorerHeader m_wndExplorerHeader;
+	CHeaderArea m_wndHeaderArea;
 	CTreeView m_wndTree;
 	BOOL m_IsRootSet;
 

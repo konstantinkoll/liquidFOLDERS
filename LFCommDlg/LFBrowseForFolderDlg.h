@@ -4,7 +4,7 @@
 
 #pragma once
 #include "LFDialog.h"
-#include "CExplorerHeader.h"
+#include "CHeaderArea.h"
 #include "CExplorerTree.h"
 
 
@@ -37,7 +37,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
-	CExplorerHeader m_wndExplorerHeader;
+	CHeaderArea m_wndHeaderArea;
 	CExplorerTree m_wndExplorerTree;
 	CButton m_wndDeleteSource;
 };

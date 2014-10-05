@@ -1,36 +1,34 @@
 
-// CExplorerHeader.h: Schnittstelle der Klasse CExplorerHeader
+// CHeaderArea.h: Schnittstelle der Klasse CHeaderArea
 //
 
 #pragma once
 #include "CHeaderButton.h"
 
 
-// CExplorerHeader
+// CHeaderArea
 //
 
-class AFX_EXT_CLASS CExplorerHeader : public CWnd
+class AFX_EXT_CLASS CHeaderArea : public CWnd
 {
 public:
-	CExplorerHeader();
+	CHeaderArea();
 
 	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
 	virtual void AdjustLayout();
 
-	BOOL Create(CWnd* pParentWnd, UINT nID);
+	BOOL Create(CWnd* pParentWnd, UINT nID, BOOL Shadow=FALSE);
 	void SetText(CString Caption, CString Hint, BOOL Repaint=TRUE);
-	void SetColors(COLORREF CaptionCol, COLORREF HintCol=(COLORREF)-1, BOOL Repaint=TRUE);
-	void SetLineStyle(BOOL GradientLine, BOOL Repaint=TRUE);
 	UINT GetPreferredHeight();
-	CHeaderButton* AddButton(UINT nID);
+	CHeaderButton* AddButton(UINT nID=0);
 
 protected:
+	LFApplication* p_App;
+	BOOL m_Shadow;
+	UINT m_FontHeight;
 	CList<CHeaderButton*> m_Buttons;
-	COLORREF m_CaptionCol;
-	COLORREF m_HintCol;
 	CString m_Caption;
 	CString m_Hint;
-	BOOL m_GradientLine;
 	INT m_RightEdge;
 
 	afx_msg void OnDestroy();
@@ -45,6 +43,8 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
-	LFApplication* p_App;
-	UINT m_FontHeight;
+	CBitmap m_BackBuffer;
+	INT m_BackBufferL;
+	INT m_BackBufferH;
+	HBRUSH hBackgroundBrush;
 };

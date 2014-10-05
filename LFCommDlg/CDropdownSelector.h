@@ -5,7 +5,7 @@
 #pragma once
 #include "CGlassWindow.h"
 #include "CExplorerList.h"
-#include "CBottomArea.h"
+#include "CFooterArea.h"
 #include "LFTooltip.h"
 
 
@@ -44,7 +44,7 @@ public:
 protected:
 	LFApplication* p_App;
 	CDropdownListCtrl m_wndList;
-	CBottomArea m_wndBottomArea;
+	CFooterArea m_wndBottomArea;
 	UINT m_DialogResID;
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);

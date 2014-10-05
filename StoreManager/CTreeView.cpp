@@ -130,7 +130,9 @@ void CTreeView::AdjustLayout()
 	AdjustScrollbars();
 	Invalidate();
 
+	// Header
 	m_wndHeader.SetWindowPos(NULL, wp.x-m_HScrollPos, wp.y, wp.cx+m_HScrollMax+GetSystemMetrics(SM_CXVSCROLL), m_HeaderHeight, wp.flags | SWP_NOZORDER | SWP_NOACTIVATE);
+	m_wndHeader.Invalidate();
 }
 
 void CTreeView::ClearRoot()
@@ -327,7 +329,7 @@ void CTreeView::EnsureVisible(CPoint item)
 	if (nInc)
 	{
 		m_VScrollPos += nInc;
-		ScrollWindowEx(0, -nInc, NULL, NULL, NULL, NULL, SW_INVALIDATE);
+		ScrollWindow(0, -nInc);
 
 		ZeroMemory(&si, sizeof(si));
 		si.cbSize = sizeof(SCROLLINFO);
@@ -351,7 +353,7 @@ void CTreeView::EnsureVisible(CPoint item)
 	if (nInc)
 	{
 		m_HScrollPos += nInc;
-		ScrollWindowEx(-nInc, 0, NULL, NULL, NULL, NULL, SW_INVALIDATE | SW_SCROLLCHILDREN);
+		ScrollWindow(-nInc, 0);
 
 		ZeroMemory(&si, sizeof(si));
 		si.cbSize = sizeof(SCROLLINFO);
@@ -438,8 +440,8 @@ BOOL CTreeView::FoldersChecked()
 
 void CTreeView::ResetScrollbars()
 {
-	ScrollWindowEx(0, m_VScrollPos, NULL, NULL, NULL, NULL, SW_INVALIDATE);
-	ScrollWindowEx(m_HScrollPos, 0, NULL, NULL, NULL, NULL, SW_INVALIDATE | SW_SCROLLCHILDREN);
+	ScrollWindow(0, m_VScrollPos);
+	ScrollWindow(m_HScrollPos, 0);
 	m_VScrollPos = m_HScrollPos = 0;
 	SetScrollPos(SB_VERT, m_VScrollPos, TRUE);
 	SetScrollPos(SB_HORZ, m_HScrollPos, TRUE);
@@ -963,7 +965,7 @@ void CTreeView::TrackMenu(UINT nID, CPoint point, INT col)
 	ASSERT_VALID(pPopup);
 
 	if (!col)
-		pPopup->EnableMenuItem(IDD_CHOOSEPROPERTY, MF_GRAYED | MF_DISABLED);
+		pPopup->EnableMenuItem(IDM_TREE_CHOOSEPROPERTY, MF_GRAYED | MF_DISABLED);
 
 	if ((!col) || (m_ColumnMapping[col]==-1))
 		pPopup->EnableMenuItem(IDM_TREE_RESETPROPERTY, MF_GRAYED | MF_DISABLED);
@@ -1365,6 +1367,37 @@ void CTreeView::DestroyEdit(BOOL Accept)
 	m_EditLabel.x = m_EditLabel.y = -1;
 }
 
+void CTreeView::ScrollWindow(INT dx, INT dy)
+{
+	CRect rect;
+	GetClientRect(rect);
+	rect.top = m_HeaderHeight;
+
+	ScrollWindowEx(dx, dy, rect, NULL, NULL, NULL, SW_INVALIDATE);
+
+	if (IsWindow(m_wndHeader))
+	{
+		CRect rectWindow;
+		GetWindowRect(&rectWindow);
+
+		WINDOWPOS wp;
+		HDLAYOUT HdLayout;
+		HdLayout.prc = &rectWindow;
+		HdLayout.pwpos = &wp;
+		m_wndHeader.Layout(&HdLayout);
+
+		wp.x = GetSystemMetrics(SM_CXVSCROLL);
+		wp.y = 0;
+
+		m_wndHeader.SetRedraw(FALSE);
+		m_wndHeader.SetWindowPos(NULL, wp.x-m_HScrollPos, wp.y, wp.cx+m_HScrollMax+GetSystemMetrics(SM_CXVSCROLL), m_HeaderHeight, wp.flags | SWP_NOZORDER | SWP_NOACTIVATE);
+		m_wndHeader.SetRedraw(TRUE);
+		m_wndHeader.Invalidate();
+
+		InvalidateRect(CRect(rect.left, 0, rect.right, m_HeaderHeight));
+	}
+}
+
 
 BEGIN_MESSAGE_MAP(CTreeView, CWnd)
 	ON_WM_CREATE()
@@ -1520,6 +1553,19 @@ void CTreeView::OnPaint()
 	BOOL Themed = IsCtrlThemed();
 	COLORREF bkCol = Themed ? 0xFFFFFF : GetSysColor(COLOR_WINDOW);
 	dc.FillSolidRect(rect, bkCol);
+
+	if (m_HeaderHeight>0)
+		if (Themed)
+		{
+			CGdiPlusBitmap* pDivider = theApp.GetCachedResourceImage(IDB_DIVUP, _T("PNG"), GetModuleHandle(_T("LFCOMMDLG.DLL")));
+
+			Graphics g(dc);
+			g.DrawImage(pDivider->m_pBitmap, (rect.Width()-(INT)pDivider->m_pBitmap->GetWidth())/2+GetScrollPos(SB_HORZ), m_HeaderHeight-(INT)pDivider->m_pBitmap->GetHeight());
+		}
+		else
+		{
+			dc.FillSolidRect(0, 0, rect.Width(), m_HeaderHeight, GetSysColor(COLOR_3DFACE));
+		}
 
 	CFont* pOldFont = dc.SelectObject(&theApp.m_DefaultFont);
 
@@ -1689,8 +1735,8 @@ void CTreeView::OnPaint()
 		CString tmpStr;
 		ENSURE(tmpStr.LoadString(IDS_NOTHINGTODISPLAY));
 
-		dc.SetTextColor(Themed ? 0x6D6D6D : GetSysColor(COLOR_3DFACE));
-		dc.DrawText(tmpStr, -1, rectText, DT_CENTER | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
+		dc.SetTextColor(Themed ? 0xBFB0A6 : GetSysColor(COLOR_3DFACE));
+		dc.DrawText(tmpStr, rectText, DT_CENTER | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
 	}
 
 	pDC.BitBlt(0, 0, rect.Width(), rect.Height(), &dc, 0, 0, SRCCOPY);
@@ -1747,7 +1793,7 @@ void CTreeView::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 	if (nInc)
 	{
 		m_VScrollPos += nInc;
-		ScrollWindowEx(0, -nInc, NULL, NULL, NULL, NULL, SW_INVALIDATE);
+		ScrollWindow(0, -nInc);
 
 		ZeroMemory(&si, sizeof(si));
 		si.cbSize = sizeof(SCROLLINFO);
@@ -1804,7 +1850,7 @@ void CTreeView::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 	if (nInc)
 	{
 		m_HScrollPos += nInc;
-		ScrollWindowEx(-nInc, 0, NULL, NULL, NULL, NULL, SW_INVALIDATE | SW_SCROLLCHILDREN);
+		ScrollWindow(-nInc, 0);
 
 		ZeroMemory(&si, sizeof(si));
 		si.cbSize = sizeof(SCROLLINFO);
@@ -1937,7 +1983,7 @@ BOOL CTreeView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 		m_TooltipCtrl.Deactivate();
 
 		m_VScrollPos += nInc;
-		ScrollWindowEx(0, -nInc, NULL, NULL, NULL, NULL, SW_INVALIDATE);
+		ScrollWindow(0, -nInc);
 		SetScrollPos(SB_VERT, m_VScrollPos, TRUE);
 
 		ScreenToClient(&pt);
@@ -1960,7 +2006,7 @@ void CTreeView::OnMouseHWheel(UINT nFlags, short zDelta, CPoint pt)
 		m_TooltipCtrl.Deactivate();
 
 		m_HScrollPos += nInc;
-		ScrollWindowEx(-nInc, 0, NULL, NULL, NULL, NULL, SW_INVALIDATE | SW_SCROLLCHILDREN);
+		ScrollWindow(-nInc, 0);
 		SetScrollPos(SB_HORZ, m_HScrollPos, TRUE);
 
 		ScreenToClient(&pt);
@@ -2446,7 +2492,7 @@ void CTreeView::OnItemClick(NMHDR* pNMHDR, LRESULT* pResult)
 	LPNMHEADER pHdr = (LPNMHEADER)pNMHDR;
 
 	if (pHdr->iItem)
-		PostMessage(IDD_CHOOSEPROPERTY, (WPARAM)pHdr->iItem);
+		PostMessage(IDM_TREE_CHOOSEPROPERTY, (WPARAM)pHdr->iItem);
 
 	*pResult = NULL;
 }

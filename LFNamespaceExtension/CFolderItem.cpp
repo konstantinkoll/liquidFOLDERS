@@ -841,7 +841,7 @@ BOOL CFolderItem::GetColumn(CShellColumn& column, INT index)
 	{
 		(1<<LFAttrFileName) | (1<<LFAttrStoreID) | (1<<LFAttrComments) | (1<<LFAttrDescription) | (1<<LFAttrCreationTime) | (1<<LFAttrFileTime) | (1<<LFAttrFileFormat) | (1<<LFAttrFileCount) | (1<<LFAttrFileSize),
 		(1<<LFAttrFileName) | (1<<LFAttrComments) | (1<<LFAttrFileFormat),
-		(1<<LFAttrFileName) | (1<<LFAttrComments) | (1<<LFAttrFileFormat) | (1<<LFAttrFileCount) | (1<<LFAttrFileSize),
+		(1<<LFAttrFileName) | (1<<LFAttrComments) | (1<<LFAttrFileCount) | (1<<LFAttrFileSize) | (1<<LFAttrFileFormat),
 		(UINT)~((1<<LFAttrDescription) | (1<<LFAttrArchiveTime) | (1<<LFAttrDeleteTime) | (1<<LFAttrFileCount) | (1<<LFAttrFlags))
 	};
 	if (!(AttrMask[Attrs.Level] & (1<<index)))
@@ -868,6 +868,9 @@ BOOL CFolderItem::GetColumnValueEx(VARIANT* value, CShellColumn& column)
 			((SHDESCRIPTIONID*)value->parray->pvData)->dwDescriptionId = (Attrs.CategoryID==LFItemCategoryRemoteStores) ? SHDID_COMPUTER_NETDRIVE : 20;
 			value->vt = VT_ARRAY | VT_UI1;
 			return TRUE;
+		case 6:
+			CUtils::SetVariantLPCTSTR(value, _T("{3F2D914F-FE57-414F-9F88-A377C7841DA4}"));
+			return TRUE;
 		case 9:
 			CUtils::SetVariantINT(value, -1);
 			return TRUE;
@@ -890,6 +893,9 @@ BOOL CFolderItem::GetColumnValueEx(VARIANT* value, CShellColumn& column)
 		case 4:
 			CUtils::SetVariantLPCTSTR(value, _T("liquidFOLDERS"));
 			return TRUE;
+		case 5:
+			CUtils::SetVariantUINT(value, 100);
+			return TRUE;
 		case 10:
 			CUtils::SetVariantBOOL(value, TRUE);
 			return TRUE;
@@ -900,9 +906,47 @@ BOOL CFolderItem::GetColumnValueEx(VARIANT* value, CShellColumn& column)
 	if (column.fmtid==FMTID_Storage)
 		switch (column.pid)
 		{
+		case 4:
+			CUtils::SetVariantCString(value, Attrs.Level==LevelStores ? theApp.m_Store : theApp.m_Folder);
+			return TRUE;
+		case 10:
+			CUtils::SetVariantLPCTSTR(value, Attrs.DisplayName);
+			return TRUE;
+		case 12:
+			if (value->vt==VT_BSTR)
+			{
+				WCHAR tmpBuf[256];
+				LFINT64ToString(Attrs.Size, tmpBuf, 256);
+				CUtils::SetVariantLPCTSTR(value, tmpBuf);
+			}
+			else
+			{
+				CUtils::SetVariantINT64(value, Attrs.Size);
+			}
+			return TRUE;
 		case 13:
 			CUtils::SetVariantUINT(value, 0x2016);
 			return TRUE;
+		case 14:
+			if ((Attrs.FileTime.dwHighDateTime) || (Attrs.FileTime.dwLowDateTime))
+			{
+				CUtils::SetVariantFILETIME(value, Attrs.FileTime);
+				return TRUE;
+			}
+			else
+			{
+				return FALSE;
+			}
+		case 15:
+			if ((Attrs.CreationTime.dwHighDateTime) || (Attrs.CreationTime.dwLowDateTime))
+			{
+				CUtils::SetVariantFILETIME(value, Attrs.CreationTime);
+				return TRUE;
+			}
+			else
+			{
+				return FALSE;
+			}
 		default:
 			return FALSE;
 		}
@@ -949,16 +993,7 @@ BOOL CFolderItem::GetColumnValueEx(VARIANT* value, CShellColumn& column)
 	case LFAttrCreationTime:
 		if ((Attrs.CreationTime.dwHighDateTime) || (Attrs.CreationTime.dwLowDateTime))
 		{
-			if (value->vt==VT_BSTR)
-			{
-				WCHAR tmpBuf[256];
-				LFTimeToString(Attrs.CreationTime, tmpBuf, 256);
-				CUtils::SetVariantLPCTSTR(value, tmpBuf);
-			}
-			else
-			{
-				CUtils::SetVariantFILETIME(value, Attrs.CreationTime);
-			}
+			CUtils::SetVariantFILETIME(value, Attrs.CreationTime);
 		}
 		else
 		{
@@ -968,16 +1003,7 @@ BOOL CFolderItem::GetColumnValueEx(VARIANT* value, CShellColumn& column)
 	case LFAttrFileTime:
 		if ((Attrs.FileTime.dwHighDateTime) || (Attrs.FileTime.dwLowDateTime))
 		{
-			if (value->vt==VT_BSTR)
-			{
-				WCHAR tmpBuf[256];
-				LFTimeToString(Attrs.FileTime, tmpBuf, 256);
-				CUtils::SetVariantLPCTSTR(value, tmpBuf);
-			}
-			else
-			{
-				CUtils::SetVariantFILETIME(value, Attrs.FileTime);
-			}
+			CUtils::SetVariantFILETIME(value, Attrs.FileTime);
 		}
 		else
 		{
@@ -1328,12 +1354,8 @@ INT CFolderItem::GetTileViewColumnIndices(UINT* indices)
 	indices[0] = LFAttrComments;
 	indices[1] = LFAttrDescription;
 
-	switch (Attrs.Level)
+	if (Attrs.Level==LevelAttrValue)
 	{
-	case LevelStores:
-		indices[2] = LFAttrCreationTime;
-		return 3;
-	case LevelAttrValue:
 		indices[2] = LFAttrFileSize;
 		return (strcmp(Attrs.FileID, "ALL")==0) ? 2 : 3;
 	}

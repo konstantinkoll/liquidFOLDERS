@@ -151,8 +151,9 @@
 #define IDC_SEARCHTERM                  2503
 #define IDC_CONDITIONLIST               2504
 #define IDD_SAVEFILTER                  2600
-#define IDC_FILENAME                    2601
-#define IDC_COMMENTS                    2602
+#define IDC_DESTINATION                 2601
+#define IDC_FILENAME                    2602
+#define IDC_COMMENTS                    2603
 #define IDD_BOTTOMAREA                  2700
 #define IDC_MIGRATE                     2701
 #define IDD_CHOOSEFOLDER                2800

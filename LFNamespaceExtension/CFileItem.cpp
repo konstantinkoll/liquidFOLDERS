@@ -207,7 +207,7 @@ BOOL CFileItem::GetColumnValueEx(VARIANT* value, CShellColumn& column)
 	if ((column.index>=0) && (column.index<LFAttributeCount))
 	{
 		UCHAR Type = theApp.m_Attributes[column.index].Type;
-		if ((value->vt!=VT_BSTR) && ((Type==LFTypeRating) || (Type==LFTypeUINT) || (Type==LFTypeINT64) || (Type==LFTypeDouble) || (Type==LFTypeTime)))
+		if ((Type==LFTypeRating) || (Type==LFTypeUINT) || (Type==LFTypeINT64) || (Type==LFTypeDouble) || (Type==LFTypeTime))
 		{
 			LFVariantData v;
 			v.Attr = column.index;

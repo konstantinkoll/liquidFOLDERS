@@ -32,13 +32,13 @@ void CIconHeader::DrawHeader(CDC& dc, CRect rect, BOOL Themed)
 	const INT cy = rect.top+4;
 	CRect rectIcon(cx, cy, cx+128, cy+128);
 
+	Graphics g(dc);
+
 	switch (m_Status)
 	{
 	case IconEmpty:
 	case IconMultiple:
 		{
-			Graphics g(dc);
-			g.SetCompositingMode(CompositingModeSourceOver);
 			g.DrawImage((m_Status==IconEmpty) ? m_Empty.m_pBitmap : m_Multiple.m_pBitmap, cx, cy);
 			break;
 		}
@@ -53,11 +53,20 @@ void CIconHeader::DrawHeader(CDC& dc, CRect rect, BOOL Themed)
 		break;
 	}
 
-	dc.SetTextColor(m_Status==IconEmpty ? GetSysColor(COLOR_3DSHADOW) : Themed ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT));
+	dc.SetTextColor(m_Status==IconEmpty ? Themed ? 0xBFB0A6 : GetSysColor(COLOR_3DFACE) : Themed ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT));
 
 	CRect rectText(rect);
 	rectText.top += 128+6;
-	dc.DrawText(m_strDescription, rectText, DT_SINGLELINE | DT_END_ELLIPSIS | DT_VCENTER | DT_CENTER);
+	dc.DrawText(m_strDescription, rectText, DT_SINGLELINE | DT_END_ELLIPSIS | DT_VCENTER | DT_CENTER | DT_NOPREFIX);
+
+	if (Themed)
+	{
+		SolidBrush brush1(Color(0x18, 0x00, 0x00, 0x00));
+		g.FillRectangle(&brush1, 0, 0, rect.Width(), 1);
+
+		SolidBrush brush2(Color(0x0C, 0x00, 0x00, 0x00));
+		g.FillRectangle(&brush2, 0, 1, rect.Width(), 1);
+	}
 }
 
 void CIconHeader::FreeItem()

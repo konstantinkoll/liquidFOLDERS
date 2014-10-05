@@ -21,11 +21,17 @@ public:
 	virtual void DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct);
 
 	BOOL Create(CString Caption, CString Hint, CWnd* pParentWnd, UINT nID);
-	void SetValue(CString Value, BOOL Repaint=TRUE);
+	void SetValue(CString Value, BOOL ShowDropdown=TRUE, BOOL Repaint=TRUE);
 	void GetPreferredSize(CSize& sz, UINT& CaptionWidth);
 	void GetCaption(CString& Caption, UINT& CaptionWidth);
 
 protected:
+	CString m_Caption;
+	CString m_Hint;
+	CString m_Value;
+	UINT m_CaptionWidth;
+	BOOL m_ShowDropdown;
+
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnPaint();
@@ -38,10 +44,6 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
-	CString m_Caption;
-	CString m_Hint;
-	CString m_Value;
-	UINT m_CaptionWidth;
 	LFTooltip m_TooltipCtrl;
 	BOOL m_Hover;
 };

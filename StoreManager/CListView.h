@@ -26,6 +26,7 @@ protected:
 	virtual void AdjustLayout();
 	virtual RECT GetLabelRect(INT idx);
 	virtual void DrawItem(CDC& dc, LPRECT rectItem, INT idx, BOOL Themed);
+	virtual void ScrollWindow(INT dx, INT dy);
 
 	afx_msg INT OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
@@ -48,7 +49,6 @@ private:
 	CImageList* m_Icons[2];
 	SIZE m_IconSize[2];
 	INT m_HeaderItemClicked;
-	INT m_HeaderItemSort;
 	BOOL m_IgnoreHeaderItemChange;
 
 	void AdjustHeader(BOOL bShow);

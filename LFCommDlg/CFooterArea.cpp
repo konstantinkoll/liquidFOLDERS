@@ -1,17 +1,17 @@
 
-// CBottomArea.cpp: Implementierung der Klasse CBottomArea
+// CFooterArea.cpp: Implementierung der Klasse CFooterArea
 //
 
 #include "stdafx.h"
 #include "LFCommDlg.h"
 
 
-// CBottomArea
+// CFooterArea
 //
 
 extern AFX_EXTENSION_MODULE LFCommDlgDLL;
 
-CBottomArea::CBottomArea()
+CFooterArea::CFooterArea()
 	: CDialogBar()
 {
 	p_App = LFGetApp();
@@ -20,7 +20,7 @@ CBottomArea::CBottomArea()
 }
 
 
-BEGIN_MESSAGE_MAP(CBottomArea, CDialogBar)
+BEGIN_MESSAGE_MAP(CFooterArea, CDialogBar)
 	ON_WM_DESTROY()
 	ON_WM_ERASEBKGND()
 	ON_WM_SIZE()
@@ -29,15 +29,15 @@ BEGIN_MESSAGE_MAP(CBottomArea, CDialogBar)
 	ON_WM_CTLCOLOR()
 END_MESSAGE_MAP()
 
-void CBottomArea::OnDestroy()
+void CFooterArea::OnDestroy()
 {
+	CDialogBar::OnDestroy();
+
 	if (hBackgroundBrush)
 		DeleteObject(hBackgroundBrush);
-
-	CDialogBar::OnDestroy();
 }
 
-BOOL CBottomArea::OnEraseBkgnd(CDC* pDC)
+BOOL CFooterArea::OnEraseBkgnd(CDC* pDC)
 {
 	CRect rect;
 	GetClientRect(rect);
@@ -57,11 +57,10 @@ BOOL CBottomArea::OnEraseBkgnd(CDC* pDC)
 		pOldBitmap = dc.SelectObject(&m_BackBuffer);
 
 		Graphics g(dc);
-		g.SetCompositingMode(CompositingModeSourceOver);
 
 		if (IsCtrlThemed())
 		{
-			dc.FillSolidRect(rect, 0xFEFEFE);
+			dc.FillSolidRect(rect, 0xFFFFFF);
 
 			CGdiPlusBitmap* pDivider = p_App->GetCachedResourceImage(IDB_DIVDOWN, _T("PNG"), LFCommDlgDLL.hResource);
 			g.DrawImage(pDivider->m_pBitmap, (rect.Width()-(INT)pDivider->m_pBitmap->GetWidth())/2, 0);
@@ -86,7 +85,7 @@ BOOL CBottomArea::OnEraseBkgnd(CDC* pDC)
 	return TRUE;
 }
 
-void CBottomArea::OnSize(UINT nType, INT cx, INT cy)
+void CFooterArea::OnSize(UINT nType, INT cx, INT cy)
 {
 	CDialogBar::OnSize(nType, cx, cy);
 
@@ -94,19 +93,19 @@ void CBottomArea::OnSize(UINT nType, INT cx, INT cy)
 	Invalidate();
 }
 
-LRESULT CBottomArea::OnThemeChanged()
+LRESULT CFooterArea::OnThemeChanged()
 {
 	m_BackBufferL = m_BackBufferH = 0;
 	return TRUE;
 }
 
-void CBottomArea::OnSysColorChange()
+void CFooterArea::OnSysColorChange()
 {
 	if (!IsCtrlThemed())
 		m_BackBufferL = m_BackBufferH = 0;
 }
 
-HBRUSH CBottomArea::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
+HBRUSH CFooterArea::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 {
 	// Call base class version at first, else it will override changes
 	HBRUSH hbr = CDialogBar::OnCtlColor(pDC, pWnd, nCtlColor);

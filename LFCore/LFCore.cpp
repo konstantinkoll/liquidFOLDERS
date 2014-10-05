@@ -429,12 +429,6 @@ LFCore_API void LFGetAttributeInfo(LFAttributeDescriptor& attr, unsigned int ID)
 }
 
 
-LFCore_API LFContextDescriptor* LFAllocContextDescriptor()
-{
-	LFContextDescriptor* c = new LFContextDescriptor;
-	return c;
-}
-
 LFCore_API void LFGetContextInfo(LFContextDescriptor& ctx, unsigned int ID)
 {
 	ZeroMemory(&ctx, sizeof(LFContextDescriptor)-sizeof(LFAllowedAttributes));
@@ -548,7 +542,7 @@ LFCore_API void LFFreeFilterCondition(LFFilterCondition* c)
 
 LFCore_API LFSearchResult* LFAllocSearchResult(int ctx, LFSearchResult* res)
 {
-	return (res) ? new LFSearchResult(res) : new LFSearchResult(ctx);
+	return res ? new LFSearchResult(res) : new LFSearchResult(ctx);
 }
 
 LFCore_API void LFFreeSearchResult(LFSearchResult* res)

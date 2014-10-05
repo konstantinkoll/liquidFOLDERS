@@ -928,14 +928,22 @@ void CFileView::DrawCategory(CDC& dc, LPRECT rectCategory, ItemCategory* ic, BOO
 	rectLine.right += 2*CategoryPadding;
 
 	if (rectLine.right<=rect.right)
-	{
-		CPen pen(PS_SOLID, 1, Themed ? 0xE2E2E2: GetSysColor(COLOR_WINDOWTEXT));
+		if (Themed)
+		{
+			Graphics g(dc);
+	
+			LinearGradientBrush brush(Point(rectLine.right, rectLine.top), Point(rect.right, rectLine.top), Color(0xFF, 0xE2, 0xE2, 0xE2), Color(0x00, 0xE2, 0xE2, 0xE2));
+			g.FillRectangle(&brush, rectLine.right, rectLine.top+(m_FontHeight[1]+1)/2, rect.right-rectLine.right, 1);
+		}
+		else
+		{
+			CPen pen(PS_SOLID, 1, GetSysColor(COLOR_WINDOWTEXT));
 
-		CPen* pOldPen = dc.SelectObject(&pen);
-		dc.MoveTo(rectLine.right, rect.top+(m_FontHeight[1]+1)/2);
-		dc.LineTo(rect.right, rect.top+(m_FontHeight[1]+1)/2);
-		dc.SelectObject(pOldPen);
-	}
+			CPen* pOldPen = dc.SelectObject(&pen);
+			dc.MoveTo(rectLine.right, rect.top+(m_FontHeight[1]+1)/2);
+			dc.LineTo(rect.right, rect.top+(m_FontHeight[1]+1)/2);
+			dc.SelectObject(pOldPen);
+		}
 
 	if (ic->Hint[0]!=L'\0')
 	{
@@ -1183,7 +1191,7 @@ void CFileView::ScrollWindow(INT dx, INT dy)
 {
 	ASSERT(m_EnableScrolling);
 
-	ScrollWindowEx(dx, dy, NULL, NULL, NULL, NULL, dx ? SW_INVALIDATE | SW_SCROLLCHILDREN : SW_INVALIDATE);
+	CWnd::ScrollWindow(dx, dy);
 }
 
 

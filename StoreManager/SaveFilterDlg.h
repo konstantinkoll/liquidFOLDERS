@@ -3,7 +3,7 @@
 //
 
 #pragma once
-#include "LFCommDlg.h"
+#include "CStorePanel.h"
 
 
 // SaveFilterDlg

@@ -949,7 +949,7 @@ LRESULT CMainWnd::OnStoresChanged(WPARAM /*wParam*/, LPARAM lParam)
 		}
 
 	if (m_wndMainView.GetStoreID()[0]=='\0')
-		OnUpdateNumbers();
+		PostMessage(WM_UPDATENUMBERS);
 
 	return NULL;
 }
@@ -985,7 +985,7 @@ LRESULT CMainWnd::OnVolumesChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)
 
 LRESULT CMainWnd::OnStatisticsChanged(WPARAM /*wParam*/, LPARAM /*lParam*/)
 {
-	OnUpdateNumbers();
+	PostMessage(WM_UPDATENUMBERS);
 
 	return NULL;
 }

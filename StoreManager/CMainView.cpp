@@ -203,7 +203,7 @@ void CMainView::SetHeaderButtons()
 	ASSERT(p_OrganizeButton);
 	ASSERT(p_ViewButton);
 
-	p_OrganizeButton->SetValue(theApp.m_Attributes[theApp.m_Views[m_Context].SortBy].Name, FALSE);
+	p_OrganizeButton->SetValue(theApp.m_Attributes[theApp.m_Views[m_Context].SortBy].Name, TRUE, FALSE);
 
 	CString tmpStr;
 	ENSURE(tmpStr.LoadString(IDM_VIEW_FIRST+m_ViewID));
@@ -214,7 +214,7 @@ void CMainView::SetHeader()
 {
 	if (!p_CookedFiles)
 	{
-		m_wndExplorerHeader.SetText(_T(""), _T(""));
+		m_wndHeaderArea.SetText(_T(""), _T(""));
 	}
 	else
 	{
@@ -250,8 +250,7 @@ void CMainView::SetHeader()
 				Hint.Insert(0, pHint);
 			}
 
-		m_wndExplorerHeader.SetColors((m_Context>=LFContextSearch) && (m_Context<=LFContextClipboard) ? 0x126E00 : 0x993300, (COLORREF)-1, FALSE);
-		m_wndExplorerHeader.SetText(p_CookedFiles->m_Name, Hint, FALSE);
+		m_wndHeaderArea.SetText(p_CookedFiles->m_Name, Hint, FALSE);
 		SetHeaderButtons();
 
 		GetOwner()->SetWindowText(p_CookedFiles->m_Name);
@@ -292,7 +291,7 @@ void CMainView::UpdateSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles,
 		if (p_wndFileView)
 			p_wndFileView->UpdateSearchResult(NULL, NULL, NULL);
 
-		RevokeDragDrop(m_wndExplorerHeader.GetSafeHwnd());
+		RevokeDragDrop(m_wndHeaderArea.GetSafeHwnd());
 		RevokeDragDrop(p_wndFileView->GetSafeHwnd());
 	}
 	else
@@ -306,7 +305,7 @@ void CMainView::UpdateSearchResult(LFFilter* pFilter, LFSearchResult* pRawFiles,
 		}
 
 		m_DropTarget.SetFilter(pFilter);
-		RegisterDragDrop(m_wndExplorerHeader.GetSafeHwnd(), &m_DropTarget);
+		RegisterDragDrop(m_wndHeaderArea.GetSafeHwnd(), &m_DropTarget);
 		RegisterDragDrop(p_wndFileView->GetSafeHwnd(), &m_DropTarget);
 	}
 
@@ -362,7 +361,7 @@ void CMainView::AdjustLayout()
 		return;
 	if (!IsWindow(m_wndExplorerNotification))
 		return;
-	if (!IsWindow(m_wndExplorerHeader))
+	if (!IsWindow(m_wndHeaderArea))
 		return;
 	if (!IsWindow(m_wndInspector))
 		return;
@@ -397,8 +396,8 @@ void CMainView::AdjustLayout()
 		}
 	}
 
-	const UINT ExplorerHeight = m_wndExplorerHeader.GetPreferredHeight();
-	m_wndExplorerHeader.SetWindowPos(NULL, rect.left, rect.top+TaskHeight, rect.Width()-InspectorWidth, ExplorerHeight, SWP_NOACTIVATE | SWP_NOZORDER);
+	const UINT ExplorerHeight = m_wndHeaderArea.GetPreferredHeight();
+	m_wndHeaderArea.SetWindowPos(NULL, rect.left, rect.top+TaskHeight, rect.Width()-InspectorWidth, ExplorerHeight, SWP_NOACTIVATE | SWP_NOZORDER);
 
 	if (p_wndFileView)
 		p_wndFileView->SetWindowPos(NULL, rect.left, rect.top+TaskHeight+ExplorerHeight, rect.Width()-InspectorWidth, rect.Height()-ExplorerHeight-TaskHeight, SWP_NOACTIVATE | SWP_NOZORDER);
@@ -739,62 +738,60 @@ INT CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	m_wndTaskbar.SetOwner(GetOwner());
 
-	#define FilterIconBlue         0
-	#define FilterIconWhite        1
-	#define FilterIconOverlay     36
-	#define FILTERICON            ((theApp.OSVersion==OS_Vista) && IsCtrlThemed()) ? FilterIconWhite : FilterIconBlue
-	p_FilterButton = m_wndTaskbar.AddButton(ID_PANE_FILTER, FILTERICON, TRUE, FALSE, TRUE);
+	#define FilterIcon             0
+	#define FilterIconOverlay     35
+	p_FilterButton = m_wndTaskbar.AddButton(ID_PANE_FILTER, FilterIcon, TRUE, FALSE, TRUE);
 
-	m_wndTaskbar.AddButton(IDM_STORES_CREATENEW, 2);
-	m_wndTaskbar.AddButton(IDM_NEW_REMOVENEW, 3, TRUE);
-	m_wndTaskbar.AddButton(IDM_TRASH_EMPTY, 4, TRUE);
-	m_wndTaskbar.AddButton(IDM_TRASH_RESTOREALL, 5, TRUE);
-	m_wndTaskbar.AddButton(IDM_FILE_RESTORE, 6);
-	m_wndTaskbar.AddButton(IDM_FILTERS_CREATENEW, 7, TRUE);
-	m_wndTaskbar.AddButton(IDM_CALENDAR_PREVYEAR, 8, TRUE);
-	m_wndTaskbar.AddButton(IDM_CALENDAR_NEXTYEAR, 9, TRUE);
-	m_wndTaskbar.AddButton(IDM_CALENDAR_GOTOYEAR, 10);
-	m_wndTaskbar.AddButton(IDM_GLOBE_JUMPTOLOCATION, 11, TRUE);
-	m_wndTaskbar.AddButton(IDM_GLOBE_ZOOMIN, 12);
-	m_wndTaskbar.AddButton(IDM_GLOBE_ZOOMOUT, 13);
-	m_wndTaskbar.AddButton(IDM_GLOBE_AUTOSIZE, 14);
-	m_wndTaskbar.AddButton(IDM_TAGCLOUD_SORTVALUE, 15);
-	m_wndTaskbar.AddButton(IDM_TAGCLOUD_SORTCOUNT, 16);
+	m_wndTaskbar.AddButton(IDM_STORES_CREATENEW, 1);
+	m_wndTaskbar.AddButton(IDM_NEW_REMOVENEW, 2, TRUE);
+	m_wndTaskbar.AddButton(IDM_TRASH_EMPTY, 3, TRUE);
+	m_wndTaskbar.AddButton(IDM_TRASH_RESTOREALL, 4, TRUE);
+	m_wndTaskbar.AddButton(IDM_FILE_RESTORE, 5);
+	m_wndTaskbar.AddButton(IDM_FILTERS_CREATENEW, 6, TRUE);
+	m_wndTaskbar.AddButton(IDM_CALENDAR_PREVYEAR, 7, TRUE);
+	m_wndTaskbar.AddButton(IDM_CALENDAR_NEXTYEAR, 8, TRUE);
+	m_wndTaskbar.AddButton(IDM_CALENDAR_GOTOYEAR, 9);
+	m_wndTaskbar.AddButton(IDM_GLOBE_JUMPTOLOCATION, 10, TRUE);
+	m_wndTaskbar.AddButton(IDM_GLOBE_ZOOMIN, 11);
+	m_wndTaskbar.AddButton(IDM_GLOBE_ZOOMOUT, 12);
+	m_wndTaskbar.AddButton(IDM_GLOBE_AUTOSIZE, 13);
+	m_wndTaskbar.AddButton(IDM_TAGCLOUD_SORTVALUE, 14);
+	m_wndTaskbar.AddButton(IDM_TAGCLOUD_SORTCOUNT, 15);
 
-	#define OpenIconFolder       18
-	#define OpenIconExplorer     19
+	#define OpenIconFolder       17
+	#define OpenIconExplorer     18
 	p_OpenButton = m_wndTaskbar.AddButton(IDM_ITEM_OPEN, OpenIconFolder);
 
-	m_wndTaskbar.AddButton(IDM_GLOBE_GOOGLEEARTH, 20, TRUE);
-	m_wndTaskbar.AddButton(IDM_VOLUME_PROPERTIES, 21);
-	m_wndTaskbar.AddButton(IDM_STORE_PROPERTIES, 23);
-	m_wndTaskbar.AddButton(IDM_FILE_REMEMBER, 24);
-	m_wndTaskbar.AddButton(IDM_FILE_REMOVE, 25);
-	m_wndTaskbar.AddButton(IDM_FILE_ARCHIVE, 26);
-	m_wndTaskbar.AddButton(IDM_FILE_DELETE, 27);
-	m_wndTaskbar.AddButton(IDM_FILE_RENAME, 28);
-	m_wndTaskbar.AddButton(IDM_STORE_MAKEDEFAULT, 29);
+	m_wndTaskbar.AddButton(IDM_GLOBE_GOOGLEEARTH, 19, TRUE);
+	m_wndTaskbar.AddButton(IDM_VOLUME_PROPERTIES, 20);
+	m_wndTaskbar.AddButton(IDM_STORE_PROPERTIES, 22);
+	m_wndTaskbar.AddButton(IDM_FILE_REMEMBER, 23);
+	m_wndTaskbar.AddButton(IDM_FILE_REMOVE, 24);
+	m_wndTaskbar.AddButton(IDM_FILE_ARCHIVE, 25);
+	m_wndTaskbar.AddButton(IDM_FILE_DELETE, 26);
+	m_wndTaskbar.AddButton(IDM_FILE_RENAME, 27);
+	m_wndTaskbar.AddButton(IDM_STORE_MAKEDEFAULT, 28);
 
-	#define InspectorIconVisible     30
-	#define InspectorIconHidden      31
+	#define InspectorIconVisible     29
+	#define InspectorIconHidden      30
 	p_InspectorButton = m_wndTaskbar.AddButton(ID_PANE_INSPECTOR, theApp.m_ShowInspectorPane ? InspectorIconVisible : InspectorIconHidden, TRUE, TRUE);
 
-	m_wndTaskbar.AddButton(ID_APP_PURCHASE, 32, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_ENTERLICENSEKEY, 33, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_SUPPORT, 34, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_ABOUT, 35, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_PURCHASE, 31, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_ENTERLICENSEKEY, 32, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_SUPPORT, 33, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_ABOUT, 34, TRUE, TRUE);
 
 	// Drop target
 	m_DropTarget.SetOwner(GetOwner());
 
 	// Explorer header
-	if (!m_wndExplorerHeader.Create(this, 2))
+	if (!m_wndHeaderArea.Create(this, 2, TRUE))
 		return -1;
 
-	m_wndExplorerHeader.SetOwner(GetOwner());
+	m_wndHeaderArea.SetOwner(GetOwner());
 
-	p_OrganizeButton = m_wndExplorerHeader.AddButton(IDM_ORGANIZE);
-	p_ViewButton = m_wndExplorerHeader.AddButton(IDM_VIEW);
+	p_OrganizeButton = m_wndHeaderArea.AddButton(IDM_ORGANIZE);
+	p_ViewButton = m_wndHeaderArea.AddButton(IDM_VIEW);
 
 	// Inspector
 	if (!m_wndInspector.Create(FALSE, theApp.m_InspectorWidth, this, 4))
@@ -1000,7 +997,7 @@ LRESULT CMainView::OnSetAlert(WPARAM wParam, LPARAM /*lParam*/)
 	m_Alerted = (wParam!=0);
 
 	if (p_FilterButton)
-		p_FilterButton->SetIconID(FILTERICON, m_Alerted ? FilterIconOverlay : -1);
+		p_FilterButton->SetIconID(FilterIcon, m_Alerted ? FilterIconOverlay : -1);
 
 	return NULL;
 }

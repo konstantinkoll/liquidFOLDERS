@@ -771,6 +771,10 @@ BEGIN
     IDS_VATTR_DRIVELETTER   "Laufwerksbuchstabe"
     IDS_VATTR_MAINTENANCETIME "Letzte Wartung"
     IDS_VATTR_SYNCHRONIZETIME "Zuletzt synchronisiert"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_VATTR_LASTSEEN      "Zuletzt eingebunden"
     IDS_VATTR_IATA_NAME     "IATA Flughafenname"
     IDS_VATTR_IATA_COUNTRY  "Land/Gebiet"
@@ -799,8 +803,8 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDM_TRASH_RESTOREALL    "Stellt alle Dateien wieder her.\nAlle wiederherstellen"
     IDM_TRASH_EMPTY         "Löscht endgültig alle Dateien aus dem Papierkorb.\nPapierkorb leeren"
+    IDM_TRASH_RESTOREALL    "Stellt alle Dateien wieder her.\nAlle wiederherstellen"
 END
 
 STRINGTABLE 
@@ -1209,19 +1213,19 @@ BEGIN
     GROUPBOX        "Comparación",IDC_STATIC,7,248,275,32
 END
 
-IDD_SAVEFILTER DIALOGEX 0, 0, 277, 148
+IDD_SAVEFILTER DIALOGEX 0, 0, 287, 148
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Guardar filtro"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    EDITTEXT        IDC_FILENAME,68,75,195,14,ES_AUTOHSCROLL
-    EDITTEXT        IDC_COMMENTS,68,96,195,14,ES_AUTOHSCROLL
-    DEFPUSHBUTTON   "OK",IDOK,164,127,50,14,WS_GROUP
-    PUSHBUTTON      "Cancelar",IDCANCEL,220,127,50,14,WS_GROUP
+    EDITTEXT        IDC_FILENAME,68,75,203,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_COMMENTS,68,96,204,14,ES_AUTOHSCROLL
+    DEFPUSHBUTTON   "OK",IDOK,174,127,50,14,WS_GROUP
+    PUSHBUTTON      "Cancelar",IDCANCEL,230,127,50,14,WS_GROUP
     CONTROL         "",IDC_DESTINATION,"CStorePanel",WS_GROUP,14,16,177,34
-    PUSHBUTTON      "Selecionar &store...",IDC_CHOOSESTORE,197,25,66,14
-    GROUPBOX        "Destino",IDC_STATIC,7,7,263,49
-    GROUPBOX        "Propiedades",IDC_STATIC,7,62,263,57
+    PUSHBUTTON      "Selecionar &store...",IDC_CHOOSESTORE,197,25,76,14
+    GROUPBOX        "Destino",IDC_STATIC,7,7,273,49
+    GROUPBOX        "Propiedades",IDC_STATIC,7,62,273,57
     LTEXT           "Nombre:",IDC_STATIC,14,77,50,8
     LTEXT           "Comentarios:",IDC_STATIC,14,98,50,8
 END
@@ -1360,7 +1364,7 @@ BEGIN
     IDD_SAVEFILTER, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 270
+        RIGHTMARGIN, 280
         TOPMARGIN, 7
         BOTTOMMARGIN, 141
     END
@@ -1538,6 +1542,10 @@ BEGIN
     IDS_VATTR_DRIVELETTER   "Unidad"
     IDS_VATTR_MAINTENANCETIME "Mantenimiento"
     IDS_VATTR_SYNCHRONIZETIME "Sincronizado"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_VATTR_LASTSEEN      "Última entrada"
     IDS_VATTR_IATA_NAME     "Nombre de aeropuerto IATA"
     IDS_VATTR_IATA_COUNTRY  "Territorio"
@@ -1566,8 +1574,8 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDM_TRASH_RESTOREALL    "Restablece todos los archivos de la bandeja de reciclaje.\nRestablecer todos"
     IDM_TRASH_EMPTY         "Elimina de manera permanente todos los archivos de la bandeja de reciclaje.\nVaciar bandeja de reciclaje"
+    IDM_TRASH_RESTOREALL    "Restablece todos los archivos de la bandeja de reciclaje.\nRestablecer todos"
 END
 
 STRINGTABLE 
@@ -1807,7 +1815,7 @@ BEGIN
     POPUP "POPUP"
     BEGIN
         MENUITEM "Indiquer &tous les propriétés", IDM_INSPECTOR_SHOWINTERNAL
-        MENUITEM "&Classer par ordre alphabétique", IDM_INSPECTOR_SORTALPHABETIC
+        MENUITEM "&Classer alphabétique",       IDM_INSPECTOR_SORTALPHABETIC
         MENUITEM SEPARATOR
         POPUP "&Export"
         BEGIN
@@ -1963,19 +1971,19 @@ BEGIN
     PUSHBUTTON      "Annuler",IDCANCEL,65,57,50,14,WS_GROUP
 END
 
-IDD_SAVEFILTER DIALOGEX 0, 0, 277, 148
+IDD_SAVEFILTER DIALOGEX 0, 0, 297, 148
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Sauvegarder le filtre"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    EDITTEXT        IDC_FILENAME,68,75,195,14,ES_AUTOHSCROLL
-    EDITTEXT        IDC_COMMENTS,68,96,195,14,ES_AUTOHSCROLL
-    DEFPUSHBUTTON   "OK",IDOK,164,127,50,14,WS_GROUP
-    PUSHBUTTON      "Annuler",IDCANCEL,220,127,50,14,WS_GROUP
+    EDITTEXT        IDC_FILENAME,68,75,215,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_COMMENTS,68,96,215,14,ES_AUTOHSCROLL
+    DEFPUSHBUTTON   "OK",IDOK,184,127,50,14,WS_GROUP
+    PUSHBUTTON      "Annuler",IDCANCEL,240,127,50,14,WS_GROUP
     CONTROL         "",IDC_DESTINATION,"CStorePanel",WS_GROUP,14,16,177,34
-    PUSHBUTTON      "Choisissez le &store...",IDC_CHOOSESTORE,197,25,66,14
-    GROUPBOX        "Destination",IDC_STATIC,7,7,263,49
-    GROUPBOX        "Qualités",IDC_STATIC,7,62,263,57
+    PUSHBUTTON      "Choisissez le &store...",IDC_CHOOSESTORE,197,25,86,14
+    GROUPBOX        "Destination",IDC_STATIC,7,7,283,49
+    GROUPBOX        "Qualités",IDC_STATIC,7,62,283,57
     LTEXT           "Nom:",IDC_STATIC,14,77,50,8
     LTEXT           "Commentaire:",IDC_STATIC,14,98,50,8
 END
@@ -2122,7 +2130,7 @@ BEGIN
     IDD_SAVEFILTER, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 270
+        RIGHTMARGIN, 290
         TOPMARGIN, 7
         BOTTOMMARGIN, 141
     END
@@ -2307,6 +2315,10 @@ BEGIN
     IDS_VATTR_DRIVELETTER   "Lettre aux lecteurs"
     IDS_VATTR_MAINTENANCETIME "Entretien"
     IDS_VATTR_SYNCHRONIZETIME "Synchronisée"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_VATTR_LASTSEEN      "Finalement vu"
     IDS_VATTR_IATA_NAME     "IATA nom de aéroport"
     IDS_VATTR_IATA_COUNTRY  "Territoire"
@@ -2335,8 +2347,8 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDM_TRASH_RESTOREALL    "Reconstitue tous les fichiers.\nReconstituer tous"
     IDM_TRASH_EMPTY         "Efface définitivement tous les fichiers de la corbeille.\nVider la corbeille"
+    IDM_TRASH_RESTOREALL    "Reconstitue tous les fichiers.\nReconstituer tous"
 END
 
 STRINGTABLE 
@@ -3122,6 +3134,10 @@ BEGIN
     IDS_VATTR_DRIVELETTER   "Drive letter"
     IDS_VATTR_MAINTENANCETIME "Last maintenance"
     IDS_VATTR_SYNCHRONIZETIME "Synchronized"
+END
+
+STRINGTABLE 
+BEGIN
     IDS_VATTR_LASTSEEN      "Last seen"
     IDS_VATTR_IATA_NAME     "IATA airport name"
     IDS_VATTR_IATA_COUNTRY  "Country/territory"
@@ -3150,8 +3166,8 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDM_TRASH_RESTOREALL    "Restores all files from the trash.\nRestore all"
     IDM_TRASH_EMPTY         "Permanently deletes all files from the trash.\nEmpty trash"
+    IDM_TRASH_RESTOREALL    "Restores all files from the trash.\nRestore all"
 END
 
 STRINGTABLE 

@@ -9,7 +9,7 @@
 // CGlassPane
 //
 
-#define GRIPPER    4
+#define GRIPPER     4
 
 CGlassPane::CGlassPane()
 	: CWnd()

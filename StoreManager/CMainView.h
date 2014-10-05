@@ -37,7 +37,7 @@ public:
 
 protected:
 	CTaskbar m_wndTaskbar;
-	CExplorerHeader m_wndExplorerHeader;
+	CHeaderArea m_wndHeaderArea;
 	CFileView* p_wndFileView;
 	CInspectorWnd m_wndInspector;
 	CExplorerNotification m_wndExplorerNotification;

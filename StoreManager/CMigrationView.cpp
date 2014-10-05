@@ -48,7 +48,7 @@ void CMigrationView::ClearRoot()
 	ENSURE(caption.LoadString(IDS_NOROOT_CAPTION));
 	ENSURE(hint.LoadString(IDS_NOROOT_HINT));
 
-	m_wndExplorerHeader.SetText(caption, hint);
+	m_wndHeaderArea.SetText(caption, hint);
 
 	m_wndTree.ClearRoot();
 	m_wndTree.EnableWindow(FALSE);
@@ -67,7 +67,7 @@ void CMigrationView::SetRoot(LPITEMIDLIST pidl, BOOL Update, BOOL ExpandAll)
 		hint = sfi.szTypeName;
 	}
 
-	m_wndExplorerHeader.SetText(caption, hint);
+	m_wndHeaderArea.SetText(caption, hint);
 
 	m_wndTree.SetRoot(pidl, Update, ExpandAll);
 	m_wndTree.EnableWindow(TRUE);
@@ -98,8 +98,8 @@ void CMigrationView::AdjustLayout()
 	const UINT TaskHeight = m_wndTaskbar.GetPreferredHeight();
 	m_wndTaskbar.SetWindowPos(NULL, rect.left, rect.top, rect.Width(), TaskHeight, SWP_NOACTIVATE | SWP_NOZORDER);
 
-	const UINT ExplorerHeight = m_wndExplorerHeader.GetPreferredHeight();
-	m_wndExplorerHeader.SetWindowPos(NULL, rect.left, rect.top+TaskHeight, rect.Width(), ExplorerHeight, SWP_NOACTIVATE | SWP_NOZORDER);
+	const UINT ExplorerHeight = m_wndHeaderArea.GetPreferredHeight();
+	m_wndHeaderArea.SetWindowPos(NULL, rect.left, rect.top+TaskHeight, rect.Width(), ExplorerHeight, SWP_NOACTIVATE | SWP_NOZORDER);
 
 	m_wndTree.SetWindowPos(NULL, rect.left, rect.top+TaskHeight+ExplorerHeight, rect.Width(), rect.Height()-ExplorerHeight-TaskHeight, SWP_NOACTIVATE | SWP_NOZORDER);
 }
@@ -124,20 +124,20 @@ INT CMigrationView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (!m_wndTaskbar.Create(this, IDB_TASKS, 1))
 		return -1;
 
-	m_wndTaskbar.AddButton(IDM_MIGRATION_SELECTROOT, 18);
-	m_wndTaskbar.AddButton(IDM_TREE_EXPAND, 17);
-	m_wndTaskbar.AddButton(IDM_TREE_OPEN, 19, TRUE);
-	m_wndTaskbar.AddButton(IDM_TREE_DELETE, 27);
-	m_wndTaskbar.AddButton(IDM_TREE_RENAME, 28);
-	m_wndTaskbar.AddButton(IDM_TREE_PROPERTIES, 22);
+	m_wndTaskbar.AddButton(IDM_MIGRATION_SELECTROOT, 17);
+	m_wndTaskbar.AddButton(IDM_TREE_EXPAND, 16);
+	m_wndTaskbar.AddButton(IDM_TREE_OPEN, 17, TRUE);
+	m_wndTaskbar.AddButton(IDM_TREE_DELETE, 26);
+	m_wndTaskbar.AddButton(IDM_TREE_RENAME, 27);
+	m_wndTaskbar.AddButton(IDM_TREE_PROPERTIES, 21);
 
-	m_wndTaskbar.AddButton(ID_APP_PURCHASE, 32, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_ENTERLICENSEKEY, 33, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_SUPPORT, 34, TRUE, TRUE);
-	m_wndTaskbar.AddButton(ID_APP_ABOUT, 35, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_PURCHASE, 31, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_ENTERLICENSEKEY, 32, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_SUPPORT, 33, TRUE, TRUE);
+	m_wndTaskbar.AddButton(ID_APP_ABOUT, 34, TRUE, TRUE);
 
 	// Explorer header
-	if (!m_wndExplorerHeader.Create(this, 2))
+	if (!m_wndHeaderArea.Create(this, 2, TRUE))
 		return -1;
 
 	// Tree

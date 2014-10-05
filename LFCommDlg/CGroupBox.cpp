@@ -93,10 +93,29 @@ void CGroupBox::OnPaint()
 	rectBounds.top += sz.cy/2;
 
 	Graphics g(dc);
-	g.SetCompositingMode(CompositingModeSourceOver);
 	g.SetSmoothingMode(SmoothingModeAntiAlias);
 
-	if (!Themed || (LFGetApp()->OSVersion==OS_Eight))
+	if (Themed)
+	{
+		rectBounds.right--;
+		rectBounds.bottom--;
+
+		if (LFGetApp()->OSVersion==OS_Eight)
+		{
+			dc.Draw3dRect(rect, 0xDDDDDD, 0xDDDDDD);
+		}
+		else
+		{
+			GraphicsPath path;
+			CreateRoundRectangle(rectBounds, 2, path);
+
+			Pen pen(Color(0xDD, 0xDD, 0xDD));
+			g.DrawPath(&pen, &path);
+		}
+
+		dc.SetTextColor(0xCC3300);
+	}
+	else
 	{
 		rectBounds.left++;
 		rectBounds.top++;
@@ -106,19 +125,6 @@ void CGroupBox::OnPaint()
 		dc.Draw3dRect(rectBounds, GetSysColor(COLOR_3DSHADOW), GetSysColor(COLOR_3DSHADOW));
 
 		dc.SetTextColor(GetSysColor(COLOR_WINDOWTEXT));
-	}
-	else
-	{
-		rectBounds.right -= 1;
-		rectBounds.bottom -= 1;
-
-		GraphicsPath path;
-		CreateRoundRectangle(rectBounds, 2, path);
-
-		Pen pen(Color(204, 204, 204));
-		g.DrawPath(&pen, &path);
-
-		dc.SetTextColor(0xCB3300);
 	}
 
 	// Caption

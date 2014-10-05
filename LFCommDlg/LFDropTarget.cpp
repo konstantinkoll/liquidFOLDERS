@@ -103,6 +103,9 @@ __forceinline HRESULT LFDropTarget::ImportFromFS(HGLOBAL hgDrop, DWORD dwEffect,
 			LFFreeItemDescriptor(wp.Template);
 			return E_ABORT;
 		}
+
+		if (m_AllowChooseStore)
+			strcpy_s(wp.StoreID, LFKeySize, dlg.m_StoreID);
 	}
 
 	HDROP hDrop = (HDROP)GlobalLock(hgDrop);

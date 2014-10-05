@@ -77,9 +77,9 @@ IDB_EARTHMAP            JPG                     "res\\Earthmap.jpg"
 
 IDB_DIV                 PNG                     "res\\Div.png"
 IDB_DIVDOWN             PNG                     "res\\DivDown.png"
+IDB_DIVUP               PNG                     "res\\DivUp.png"
 IDB_LOCATIONINDICATOR_8 PNG                     "res\\LocationIndicator_8.png"
 IDB_LOCATIONINDICATOR_16 PNG                     "res\\LocationIndicator_16.png"
-IDB_EXPLORERGRADIENT    PNG                     "res\\ExplorerGradient.png"
 IDB_SANTA               PNG                     "res\\Santa.png"
 IDB_LIQUIDFOLDERS_64    PNG                     "res\\liquidFOLDERS_64.png"
 IDB_LIQUIDFOLDERS_128   PNG                     "res\\liquidFOLDERS_128.png"
@@ -144,7 +144,7 @@ IDD_SELECTIATA          ICON                    "res\\Plane_Tiny.ico"
 IDD_JUMPTOIATA          ICON                    "res\\Location_Tiny.ico"
 IDD_SELECTGPS           ICON                    "res\\LocationGPS_Tiny.ico"
 IDD_ENTERLICENSEKEY     ICON                    "res\\Key_Tiny.ico"
-IDD_ITEMTEMPLATE        ICON                    "res\\Inspector_Tiny.ico"
+IDD_ITEMTEMPLATE        ICON                    "res\\TagFiles_Tiny.ico"
 IDD_STOREMAINTENANCE    ICON                    "res\\StoreMaintenance_Small.ico"
 IDD_EDITTAGS            ICON                    "res\\Tags_Tiny.ico"
 IDD_BROWSEFORFOLDER     ICON                    "res\\Folder_Tiny.ico"
@@ -198,6 +198,16 @@ BEGIN
     POPUP "POPUP"
     BEGIN
         MENUITEM "&Neuen Store anlegen...",     IDM_STORES_CREATENEW
+    END
+END
+
+IDM_ITEMTEMPLATE MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "&Alphabetisch sortieren",     IDM_ITEMTEMPLATE_TOGGLESORT
+        MENUITEM SEPARATOR
+        MENUITEM "&Zurücksetzen",               IDM_ITEMTEMPLATE_RESET
     END
 END
 
@@ -347,7 +357,7 @@ BEGIN
     LTEXT           "Bei Erwerb eines Lizenzschlüssel sendet Ihnen unser Partner share*it eine EMail, an die die Datei „liquidFOLDERS.lic“ angehängt ist. Speichern Sie diese Datei lokal auf Ihrem Computer ab.",IDC_STATIC,14,18,322,18
     LTEXT           "Öffnen Sie die Datei anschließend mit der untenstehenden Schaltfläche. Alternativ können Sie ihren Inhalt in das Textfeld darunter kopieren.",IDC_STATIC,14,34,322,18
     PUSHBUTTON      "Lizenz&datei laden...",IDC_LOADLICENSE,14,54,81,15,WS_GROUP
-    LTEXT           "Lizenzschlüssel:",IDC_STATIC,14,79,291,8
+    LTEXT           "Lizenzschlüssel:",IDC_STATIC,14,79,322,8
     EDITTEXT        IDC_LICENSEKEY,14,89,322,45,ES_MULTILINE | ES_AUTOHSCROLL | WS_VSCROLL | WS_GROUP
     DEFPUSHBUTTON   "OK",IDOK,236,157,50,14,WS_DISABLED | WS_GROUP
     PUSHBUTTON      "Abbrechen",IDCANCEL,293,157,50,14,WS_GROUP
@@ -392,22 +402,15 @@ BEGIN
     PUSHBUTTON      "Abbrechen",IDCANCEL,203,295,50,14,WS_GROUP
 END
 
-IDD_ITEMTEMPLATE DIALOGEX 0, 0, 277, 338
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Inspektor"
+IDD_ITEMTEMPLATE DIALOGEX 0, 0, 248, 340
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_POPUP | WS_CLIPCHILDREN | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
+CAPTION "Eigenschaften ergänzen"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,96,317,50,14,WS_GROUP
-    PUSHBUTTON      "Überspringen",IDC_SKIP,153,317,60,14,WS_GROUP
-    PUSHBUTTON      "Abbrechen",IDCANCEL,220,317,50,14,WS_GROUP
-    CONTROL         "",IDC_DESTINATION,"CStorePanel",WS_GROUP,14,16,177,34
-    PUSHBUTTON      "&Store wählen...",IDC_CHOOSESTORE,197,25,66,14
-    CONTROL         "",IDC_INSPECTOR,"CInspectorGrid",WS_GROUP | WS_TABSTOP,14,93,249,190
-    CONTROL         "&Alphabetisch sortieren",IDC_ALPHABETICALLY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,291,181,10
-    PUSHBUTTON      "&Zurücksetzen",IDC_RESET,203,289,60,14,WS_GROUP
-    GROUPBOX        "Ziel",IDC_STATIC,7,7,263,49
-    GROUPBOX        "Datei-Eigenschaften",IDC_GROUPBOX1,7,62,263,249
-    LTEXT           "Nicht vorhandene Eigenschaften werden mit den Angaben unten ergänzt.\nFalls dies nicht gewünscht wird, klicken Sie bitte auf „Überspringen“.",IDC_STATIC,14,73,249,18
+    DEFPUSHBUTTON   "OK",IDOK,66,319,50,14,WS_GROUP
+    PUSHBUTTON      "Überspringen",IDC_SKIP,123,319,60,14,WS_GROUP
+    PUSHBUTTON      "Abbrechen",IDCANCEL,191,319,50,14,WS_GROUP
+    CONTROL         "",IDC_INSPECTOR,"CInspectorGrid",WS_GROUP | WS_TABSTOP,0,0,247,312
 END
 
 IDD_CREATENEWSTORE DIALOGEX 0, 0, 108, 28
@@ -630,10 +633,7 @@ BEGIN
 
     IDD_ITEMTEMPLATE, DIALOG
     BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 270
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 331
+        BOTTOMMARGIN, 333
     END
 
     IDD_CREATENEWSTORE, DIALOG
@@ -715,6 +715,11 @@ END
 
 STRINGTABLE 
 BEGIN
+    IDC_CHOOSESTORE         "Store wählen..."
+END
+
+STRINGTABLE 
+BEGIN
     IDS_PURCHASEURL         "http://liquidFOLDERS.net/purchase/de/"
     IDS_UPDATEURL           "http://liquidFOLDERS.net/download/de/"
     IDS_ABOUTURL            "http://liquidFOLDERS.net/about/de/"
@@ -743,7 +748,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_CHOOSESTORE_CAPTION "Stores"
     IDS_CHOOSESTORE_HINT    "Nur angeschlossene Stores können ausgewählt werden."
     IDS_MAINTENANCETAB0     "Erfolgreich gewartet"
     IDS_MAINTENANCETAB1     "Fehler"
@@ -759,10 +763,6 @@ BEGIN
     IDS_STORENEW            "Neuen Store anlegen"
     IDS_STORENEW_VOLUME     "Neuen Store auf Laufwerk %c: anlegen"
     IDS_DELETEPROPERTY_CAPTION "Eigenschaft entfernen"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_DELETEPROPERTY_MSG  "Möchten Sie diese Eigenschaft wirklich entfernen ?"
 END
 
@@ -834,6 +834,16 @@ BEGIN
     POPUP "POPUP"
     BEGIN
         MENUITEM "Crear &nuevo store...",       IDM_STORES_CREATENEW
+    END
+END
+
+IDM_ITEMTEMPLATE MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "Ordenar &alfabéticamente",    IDM_ITEMTEMPLATE_TOGGLESORT
+        MENUITEM SEPARATOR
+        MENUITEM "&Resetaurar",                 IDM_ITEMTEMPLATE_RESET
     END
 END
 
@@ -995,7 +1005,7 @@ BEGIN
     LTEXT           "Después de adquirir la licencia a través de nuestro proveedor, usted recibirá un correo con el archivo ""liquidFOLDERS.lic"" adjunto. Guarde este archivo de manera local en su computadora.",IDC_STATIC,14,18,322,18
     LTEXT           "Posteriormente abra el archivo usando el botón de abajo, o copie y pegue su contenido dentro del recuadro debajo del botón.",IDC_STATIC,14,34,322,18
     PUSHBUTTON      "Cargar &archivo de licencia...",IDC_LOADLICENSE,14,54,111,15,WS_GROUP
-    LTEXT           "Licencia:",IDC_STATIC,14,79,291,8
+    LTEXT           "Licencia:",IDC_STATIC,14,79,322,8
     EDITTEXT        IDC_LICENSEKEY,14,89,322,45,ES_MULTILINE | ES_AUTOHSCROLL | WS_VSCROLL | WS_GROUP
     DEFPUSHBUTTON   "OK",IDOK,236,157,50,14,WS_DISABLED | WS_GROUP
     PUSHBUTTON      "Cancelar",IDCANCEL,293,157,50,14,WS_GROUP
@@ -1012,22 +1022,15 @@ BEGIN
     PUSHBUTTON      "Cancelar",IDCANCEL,203,295,50,14,WS_GROUP
 END
 
-IDD_ITEMTEMPLATE DIALOGEX 0, 0, 277, 338
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Inspector"
+IDD_ITEMTEMPLATE DIALOGEX 0, 0, 248, 340
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_POPUP | WS_CLIPCHILDREN | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
+CAPTION "Complementar propiedades"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,106,317,50,14,WS_GROUP
-    PUSHBUTTON      "Omitir",IDC_SKIP,163,317,50,14,WS_GROUP
-    PUSHBUTTON      "Cancelar",IDCANCEL,220,317,50,14,WS_GROUP
-    CONTROL         "",IDC_DESTINATION,"CStorePanel",WS_GROUP,14,16,167,34
-    PUSHBUTTON      "Selecionar &store...",IDC_CHOOSESTORE,187,25,76,14
-    CONTROL         "",IDC_INSPECTOR,"CInspectorGrid",WS_GROUP | WS_TABSTOP,14,101,249,182
-    CONTROL         "Ordenar &alfabéticamente",IDC_ALPHABETICALLY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,291,181,10
-    PUSHBUTTON      "&Restaurar",IDC_RESET,213,289,50,14,WS_GROUP
-    GROUPBOX        "Destino",IDC_STATIC,7,7,263,49
-    GROUPBOX        "Propiedades de archivo",IDC_GROUPBOX1,7,62,263,249
-    LTEXT           "Las propiedades faltantes del archivo serán establecidos usando los valores que a continuación se enlistan. Si usted no quiere que sus archivos sean corregidos, presione ""Omitir"".",IDC_STATIC,14,73,249,26
+    DEFPUSHBUTTON   "OK",IDOK,76,319,50,14,WS_GROUP
+    PUSHBUTTON      "Omitir",IDC_SKIP,133,319,50,14,WS_GROUP
+    PUSHBUTTON      "Cancelar",IDCANCEL,191,319,50,14,WS_GROUP
+    CONTROL         "",IDC_INSPECTOR,"CInspectorGrid",WS_GROUP | WS_TABSTOP,0,0,247,312
 END
 
 IDD_CREATENEWSTORE DIALOGEX 0, 0, 102, 28
@@ -1260,10 +1263,7 @@ BEGIN
 
     IDD_ITEMTEMPLATE, DIALOG
     BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 270
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 331
+        BOTTOMMARGIN, 333
     END
 
     IDD_CREATENEWSTORE, DIALOG
@@ -1353,6 +1353,11 @@ END
 
 STRINGTABLE 
 BEGIN
+    IDC_CHOOSESTORE         "Seleccionar store..."
+END
+
+STRINGTABLE 
+BEGIN
     IDS_PURCHASEURL         "http://liquidFOLDERS.net/purchase/es/"
     IDS_UPDATEURL           "http://liquidFOLDERS.net/download/es/"
     IDS_ABOUTURL            "http://liquidFOLDERS.net/about/es/"
@@ -1381,7 +1386,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_CHOOSESTORE_CAPTION "Stores"
     IDS_CHOOSESTORE_HINT    "Se puede selecionar solamente stores conectado."
     IDS_MAINTENANCETAB0     "Revisión satisfactoria"
     IDS_MAINTENANCETAB1     "Errores"
@@ -1397,10 +1401,6 @@ BEGIN
     IDS_STORENEW            "Crear nuevo store"
     IDS_STORENEW_VOLUME     "Crear nuevo store en unidad %c:"
     IDS_DELETEPROPERTY_CAPTION "Eliminar propriedad"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_DELETEPROPERTY_MSG  "¿Realmente quiere eliminar esta propriedad?"
 END
 
@@ -1472,6 +1472,16 @@ BEGIN
     POPUP "POPUP"
     BEGIN
         MENUITEM "Créez un store &nouveau...",  IDM_STORES_CREATENEW
+    END
+END
+
+IDM_ITEMTEMPLATE MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "&Classer alphabétique",       IDM_ITEMTEMPLATE_TOGGLESORT
+        MENUITEM SEPARATOR
+        MENUITEM "&Remise",                     IDM_ITEMTEMPLATE_RESET
     END
 END
 
@@ -1562,7 +1572,7 @@ FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     CONTROL         "",IDC_MAP_SELECTION,"CMapSelectionCtrl",WS_BORDER | WS_GROUP,14,59,416,200
     DEFPUSHBUTTON   "OK",IDOK,273,274,50,14,WS_GROUP
-    PUSHBUTTON      "Vider",IDC_RESET,330,274,50,14,WS_GROUP
+    PUSHBUTTON      "Remise",IDC_RESET,330,274,50,14,WS_GROUP
     PUSHBUTTON      "Annuler",IDCANCEL,387,274,50,14,WS_GROUP
     GROUPBOX        "Coordonnées",IDC_STATIC,7,7,430,35,WS_GROUP
     GROUPBOX        "Carte",IDC_STATIC,7,48,430,219,WS_GROUP
@@ -1633,7 +1643,7 @@ BEGIN
     LTEXT           "A l'acquisition d'une clé de licence, notre partenaire share*it vous envoie un e-mail auquel le fichier „liquidFOLDERS.lic“ est ajouté. Mémorisez ce fichier localement sur votre ordinateur.",IDC_STATIC,14,18,322,18
     LTEXT           "Ensuite ouvrez le fichier avec le tableau de commande mentionné ci-dessous. Alternatif vous pouvez copier son contenu dans le champ de texte y compris.",IDC_STATIC,14,34,322,18
     PUSHBUTTON      "Charger le fichier de licence...",IDC_LOADLICENSE,14,54,115,15,WS_GROUP
-    LTEXT           "Clé de licence:",IDC_STATIC,14,79,291,8
+    LTEXT           "Clé de licence:",IDC_STATIC,14,79,322,8
     EDITTEXT        IDC_LICENSEKEY,14,89,322,45,ES_MULTILINE | ES_AUTOHSCROLL | WS_VSCROLL | WS_GROUP
     DEFPUSHBUTTON   "OK",IDOK,236,157,50,14,WS_DISABLED | WS_GROUP
     PUSHBUTTON      "Annuler",IDCANCEL,293,157,50,14,WS_GROUP
@@ -1651,22 +1661,15 @@ BEGIN
     PUSHBUTTON      "Annuler",IDCANCEL,203,295,50,14,WS_GROUP
 END
 
-IDD_ITEMTEMPLATE DIALOGEX 0, 0, 291, 338
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Inspecteur"
+IDD_ITEMTEMPLATE DIALOGEX 0, 0, 248, 340
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_POPUP | WS_CLIPCHILDREN | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
+CAPTION "Ajouter les qualités"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,120,317,50,14,WS_GROUP
-    PUSHBUTTON      "Omettre",IDC_SKIP,177,317,50,14,WS_GROUP
-    PUSHBUTTON      "Annuler",IDCANCEL,234,317,50,14,WS_GROUP
-    CONTROL         "",IDC_DESTINATION,"CStorePanel",WS_GROUP,14,16,176,34
-    PUSHBUTTON      "Choisissez le &store...",IDC_CHOOSESTORE,196,25,81,14
-    CONTROL         "",IDC_INSPECTOR,"CInspectorGrid",WS_GROUP | WS_TABSTOP,14,93,263,190
-    CONTROL         "Classer &alphabétiquement",IDC_ALPHABETICALLY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,291,195,10
-    PUSHBUTTON      "&Vider",IDC_RESET,227,289,50,14,WS_GROUP
-    GROUPBOX        "Destination",IDC_STATIC,7,7,277,49
-    GROUPBOX        "Qualités des fichiers",IDC_GROUPBOX1,7,62,277,249
-    LTEXT           "Les qualités de fichier manquants seront mis en utilisant les valeurs si-dessous.\nSi vous ne voulez pas que vos fichiers soient amendés, appuyez ""Omettre"".",IDC_STATIC,14,73,263,18
+    DEFPUSHBUTTON   "OK",IDOK,76,319,50,14,WS_GROUP
+    PUSHBUTTON      "Omettre",IDC_SKIP,133,319,50,14,WS_GROUP
+    PUSHBUTTON      "Annuler",IDCANCEL,191,319,50,14,WS_GROUP
+    CONTROL         "",IDC_INSPECTOR,"CInspectorGrid",WS_GROUP | WS_TABSTOP,0,0,247,312
 END
 
 IDD_CREATENEWSTORE DIALOGEX 0, 0, 116, 28
@@ -1898,10 +1901,7 @@ BEGIN
 
     IDD_ITEMTEMPLATE, DIALOG
     BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 284
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 331
+        BOTTOMMARGIN, 333
     END
 
     IDD_CREATENEWSTORE, DIALOG
@@ -1991,6 +1991,11 @@ END
 
 STRINGTABLE 
 BEGIN
+    IDC_CHOOSESTORE         "Choisissez le store..."
+END
+
+STRINGTABLE 
+BEGIN
     IDS_PURCHASEURL         "http://liquidFOLDERS.net/purchase/fr/"
     IDS_UPDATEURL           "http://liquidFOLDERS.net/download/fr/"
     IDS_ABOUTURL            "http://liquidFOLDERS.net/about/fr/"
@@ -2019,7 +2024,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_CHOOSESTORE_CAPTION "Stores"
     IDS_CHOOSESTORE_HINT    "Seulement stores montée pouvoir choisissse."
     IDS_MAINTENANCETAB0     "Entretenu avec succès"
     IDS_MAINTENANCETAB1     "Erreurs"
@@ -2035,10 +2039,6 @@ BEGIN
     IDS_STORENEW            "Créez un store nouveau"
     IDS_STORENEW_VOLUME     "Créez un store nouveau sur lecteur %c:"
     IDS_DELETEPROPERTY_CAPTION "Effacez propriété"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_DELETEPROPERTY_MSG  "Voulez-vous vraiment effacer cette propriété ?"
 END
 
@@ -2160,6 +2160,16 @@ BEGIN
     POPUP "POPUP"
     BEGIN
         MENUITEM "Create &new store...",        IDM_STORES_CREATENEW
+    END
+END
+
+IDM_ITEMTEMPLATE MENU 
+BEGIN
+    POPUP "POPUP"
+    BEGIN
+        MENUITEM "&Sort alphabetically",        IDM_ITEMTEMPLATE_TOGGLESORT
+        MENUITEM SEPARATOR
+        MENUITEM "&Reset",                      IDM_ITEMTEMPLATE_RESET
     END
 END
 
@@ -2321,7 +2331,7 @@ BEGIN
     LTEXT           "After purchasing a license key through our partner share*it, you'll receive an email that has the file „liquidFOLDERS.lic“ attached to it. Save this file locally on your computer.",IDC_STATIC,14,18,322,18
     LTEXT           "Subsequently open the file using the button below, or copy and paste its contents into the textbox beneath the button.",IDC_STATIC,14,34,322,18
     PUSHBUTTON      "Load license &file...",IDC_LOADLICENSE,14,54,81,15,WS_GROUP
-    LTEXT           "License key:",IDC_STATIC,14,79,291,8
+    LTEXT           "License key:",IDC_STATIC,14,79,322,8
     EDITTEXT        IDC_LICENSEKEY,14,89,322,45,ES_MULTILINE | ES_AUTOHSCROLL | WS_VSCROLL | WS_GROUP
     DEFPUSHBUTTON   "OK",IDOK,236,157,50,14,WS_DISABLED | WS_GROUP
     PUSHBUTTON      "Cancel",IDCANCEL,293,157,50,14,WS_GROUP
@@ -2354,22 +2364,15 @@ BEGIN
     PUSHBUTTON      "Cancel",IDCANCEL,203,295,50,14,WS_GROUP
 END
 
-IDD_ITEMTEMPLATE DIALOGEX 0, 0, 277, 338
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Inspector"
+IDD_ITEMTEMPLATE DIALOGEX 0, 0, 248, 340
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_POPUP | WS_CLIPCHILDREN | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
+CAPTION "Tag files"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,106,317,50,14,WS_GROUP
-    PUSHBUTTON      "Skip",IDC_SKIP,163,317,50,14,WS_GROUP
-    PUSHBUTTON      "Cancel",IDCANCEL,220,317,50,14,WS_GROUP
-    CONTROL         "",IDC_DESTINATION,"CStorePanel",WS_GROUP,14,16,177,34
-    PUSHBUTTON      "Choose &store...",IDC_CHOOSESTORE,197,25,66,14
-    CONTROL         "",IDC_INSPECTOR,"CInspectorGrid",WS_GROUP | WS_TABSTOP,14,93,249,190
-    CONTROL         "Sort &alphabetically",IDC_ALPHABETICALLY,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,291,181,10
-    PUSHBUTTON      "&Reset",IDC_RESET,213,289,50,14,WS_GROUP
-    GROUPBOX        "Destination",IDC_STATIC,7,7,263,49
-    GROUPBOX        "File properties",IDC_GROUPBOX1,7,62,263,249
-    LTEXT           "Missing file properties will be set using the values below.\nIf you don't want your files to be amended, press ""Skip"".",IDC_STATIC,14,73,249,18
+    DEFPUSHBUTTON   "OK",IDOK,76,319,50,14,WS_GROUP
+    PUSHBUTTON      "Skip",IDC_SKIP,133,319,50,14,WS_GROUP
+    PUSHBUTTON      "Cancel",IDCANCEL,191,319,50,14,WS_GROUP
+    CONTROL         "",IDC_INSPECTOR,"CInspectorGrid",WS_GROUP | WS_TABSTOP,0,0,247,312
 END
 
 IDD_CREATENEWSTORE DIALOGEX 0, 0, 102, 28
@@ -2594,10 +2597,7 @@ BEGIN
 
     IDD_ITEMTEMPLATE, DIALOG
     BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 270
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 331
+        BOTTOMMARGIN, 333
     END
 
     IDD_EDITTIME, DIALOG
@@ -2671,6 +2671,11 @@ END
 
 STRINGTABLE 
 BEGIN
+    IDC_CHOOSESTORE         "Choose store..."
+END
+
+STRINGTABLE 
+BEGIN
     IDS_PURCHASEURL         "http://liquidFOLDERS.net/purchase/en/"
     IDS_UPDATEURL           "http://liquidFOLDERS.net/download/en/"
     IDS_ABOUTURL            "http://liquidFOLDERS.net/about/en/"
@@ -2699,7 +2704,6 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_CHOOSESTORE_CAPTION "Stores"
     IDS_CHOOSESTORE_HINT    "Only mounted stores can be selected."
     IDS_MAINTENANCETAB0     "Successfully serviced"
     IDS_MAINTENANCETAB1     "Errors"
@@ -2715,10 +2719,6 @@ BEGIN
     IDS_STORENEW            "Create new store"
     IDS_STORENEW_VOLUME     "Create new store on volume %c:"
     IDS_DELETEPROPERTY_CAPTION "Remove property"
-END
-
-STRINGTABLE 
-BEGIN
     IDS_DELETEPROPERTY_MSG  "Do you really want to remove this property ?"
 END
 

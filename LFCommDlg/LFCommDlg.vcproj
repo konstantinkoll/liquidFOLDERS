@@ -403,19 +403,11 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\CBottomArea.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\CConditionList.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\CDropdownSelector.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\CExplorerHeader.cpp"
 				>
 			</File>
 			<File
@@ -428,6 +420,10 @@
 			</File>
 			<File
 				RelativePath=".\CExplorerTree.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\CFooterArea.cpp"
 				>
 			</File>
 			<File
@@ -452,6 +448,10 @@
 			</File>
 			<File
 				RelativePath=".\CGroupBox.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\CHeaderArea.cpp"
 				>
 			</File>
 			<File
@@ -484,10 +484,6 @@
 			</File>
 			<File
 				RelativePath=".\CSidebar.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\CStorePanel.cpp"
 				>
 			</File>
 			<File
@@ -717,19 +713,11 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath=".\CBottomArea.h"
-				>
-			</File>
-			<File
 				RelativePath=".\CConditionList.h"
 				>
 			</File>
 			<File
 				RelativePath=".\CDropdownSelector.h"
-				>
-			</File>
-			<File
-				RelativePath=".\CExplorerHeader.h"
 				>
 			</File>
 			<File
@@ -742,6 +730,10 @@
 			</File>
 			<File
 				RelativePath=".\CExplorerTree.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CFooterArea.h"
 				>
 			</File>
 			<File
@@ -766,6 +758,10 @@
 			</File>
 			<File
 				RelativePath=".\CGroupBox.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CHeaderArea.h"
 				>
 			</File>
 			<File
@@ -798,10 +794,6 @@
 			</File>
 			<File
 				RelativePath=".\CSidebar.h"
-				>
-			</File>
-			<File
-				RelativePath=".\CStorePanel.h"
 				>
 			</File>
 			<File
@@ -999,15 +991,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\DivUp.png"
+				>
+			</File>
+			<File
 				RelativePath=".\res\Earthmap.jpg"
 				>
 			</File>
 			<File
 				RelativePath=".\res\Error.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\res\ExplorerGradient.png"
 				>
 			</File>
 			<File
@@ -1020,10 +1012,6 @@
 			</File>
 			<File
 				RelativePath=".\res\Info.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\res\Inspector_Tiny.ico"
 				>
 			</File>
 			<File
@@ -1220,6 +1208,10 @@
 			</File>
 			<File
 				RelativePath=".\res\StoreSynchronize_32.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\res\TagFiles_Tiny.ico"
 				>
 			</File>
 			<File

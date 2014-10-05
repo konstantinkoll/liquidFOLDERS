@@ -286,16 +286,13 @@ void CHistoryBar::OnPaint()
 				{
 					if (LFGetApp()->OSVersion==OS_Eight)
 					{
-						if (Hover || Pressed)
-						{
-							COLORREF colBorder = Hover ? 0xEDC093 : 0xDAA026;
-							COLORREF colInner = Hover ? 0xF8F0E1 : 0xF0E1C3;
+						COLORREF colBorder = Hover ? 0xEDC093 : 0xDAA026;
+						COLORREF colInner = Hover ? 0xF8F0E1 : 0xF0E1C3;
 
-							CRect rectBounds(rectItem);
-							dc.Draw3dRect(rectBounds, colBorder, colBorder);
-							rectBounds.DeflateRect(1, 0);
-							dc.FillSolidRect(rectBounds, colInner);
-						}
+						CRect rectBounds(rectItem);
+						dc.Draw3dRect(rectBounds, colBorder, colBorder);
+						rectBounds.DeflateRect(1, 0);
+						dc.FillSolidRect(rectBounds, colInner);
 					}
 					else
 					{

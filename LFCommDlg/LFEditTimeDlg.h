@@ -5,7 +5,6 @@
 #pragma once
 #include "LFCore.h"
 #include "LFApplication.h"
-#include "CStorePanel.h"
 #include "CInspectorGrid.h"
 #include "CFrameCtrl.h"
 

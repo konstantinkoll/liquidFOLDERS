@@ -3,13 +3,13 @@
 //
 
 #pragma once
-#include "LFApplication.h"
+#include "LFCommDlg.h"
 
 
 // CStorePanel
 //
 
-class AFX_EXT_CLASS CStorePanel : public CWnd
+class CStorePanel : public CWnd
 {
 public:
 	CStorePanel();

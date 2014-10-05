@@ -52,10 +52,10 @@ void LFBrowseForFolderDlg::AdjustLayout()
 	GetLayoutRect(rect);
 
 	UINT ExplorerHeight = 0;
-	if (IsWindow(m_wndExplorerHeader))
+	if (IsWindow(m_wndHeaderArea))
 	{
-		ExplorerHeight = m_wndExplorerHeader.GetPreferredHeight();
-		m_wndExplorerHeader.SetWindowPos(NULL, rect.left, rect.top, rect.Width(), ExplorerHeight, SWP_NOACTIVATE | SWP_NOZORDER);
+		ExplorerHeight = m_wndHeaderArea.GetPreferredHeight();
+		m_wndHeaderArea.SetWindowPos(NULL, rect.left, rect.top, rect.Width(), ExplorerHeight, SWP_NOACTIVATE | SWP_NOZORDER);
 	}
 
 	CRect borders(0, 0, 7, 7);
@@ -76,9 +76,8 @@ BOOL LFBrowseForFolderDlg::OnInitDialog()
 
 	if ((!m_Caption.IsEmpty()) || (!m_Hint.IsEmpty()))
 	{
-		m_wndExplorerHeader.Create(this, IDC_EXPLORERHEADER);
-		m_wndExplorerHeader.SetText(m_Caption, m_Hint, FALSE);
-		m_wndExplorerHeader.SetLineStyle(FALSE, FALSE);
+		m_wndHeaderArea.Create(this, IDC_HEADERAREA);
+		m_wndHeaderArea.SetText(m_Caption, m_Hint, FALSE);
 	}
 
 	if ((p_App->m_ThemeLibLoaded) && (p_App->OSVersion>=OS_Vista))

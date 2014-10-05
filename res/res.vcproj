@@ -752,6 +752,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Ribbon\TagFiles_16.png"
+				>
+			</File>
+			<File
+				RelativePath=".\Ribbon\TagFiles_32.png"
+				>
+			</File>
+			<File
 				RelativePath=".\Ribbon\TaskReport_16.png"
 				>
 			</File>
@@ -1085,10 +1093,6 @@
 			>
 		</File>
 		<File
-			RelativePath=".\ExplorerGradient.png"
-			>
-		</File>
-		<File
 			RelativePath=".\Field_Tiny.ico"
 			>
 		</File>
@@ -1101,11 +1105,7 @@
 			>
 		</File>
 		<File
-			RelativePath=".\FilterPane_Blue.png"
-			>
-		</File>
-		<File
-			RelativePath=".\FilterPane_White.png"
+			RelativePath=".\FilterPane.png"
 			>
 		</File>
 		<File
@@ -1161,19 +1161,11 @@
 			>
 		</File>
 		<File
-			RelativePath=".\Inspector.png"
-			>
-		</File>
-		<File
 			RelativePath="Inspector_Black.png"
 			>
 		</File>
 		<File
 			RelativePath="Inspector_Grey.png"
-			>
-		</File>
-		<File
-			RelativePath=".\Inspector_Tiny.ico"
 			>
 		</File>
 		<File
@@ -1422,6 +1414,10 @@
 		</File>
 		<File
 			RelativePath=".\Table_Tiny.ico"
+			>
+		</File>
+		<File
+			RelativePath=".\TagFiles_Tiny.ico"
 			>
 		</File>
 		<File

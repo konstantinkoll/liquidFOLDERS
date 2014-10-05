@@ -5,7 +5,7 @@
 #pragma once
 #include "LFCore.h"
 #include "liquidFOLDERS.h"
-#include "CExplorerHeader.h"
+#include "CHeaderArea.h"
 #include "CExplorerList.h"
 #include "LFDialog.h"
 
@@ -29,7 +29,7 @@ public:
 	CHAR m_StoreID[LFKeySize];
 
 protected:
-	CExplorerHeader m_wndExplorerHeader;
+	CHeaderArea m_wndHeaderArea;
 	CExplorerList m_wndExplorerList;
 	LFSearchResult* m_pResult;
 	UINT m_Mode;

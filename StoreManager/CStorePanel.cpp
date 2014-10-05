@@ -3,15 +3,13 @@
 //
 
 #include "stdafx.h"
-#include "LFCommDlg.h"
+#include "CStorePanel.h"
 
 
 // CStorePanel
 //
 
 #define GUTTER     6
-
-extern AFX_EXTENSION_MODULE LFCommDlgDLL;
 
 CStorePanel::CStorePanel()
 	: CWnd()
@@ -30,13 +28,6 @@ CStorePanel::CStorePanel()
 	if (!(::GetClassInfo(AfxGetInstanceHandle(), L"CStorePanel", &wndcls)))
 	{
 		wndcls.hInstance = AfxGetInstanceHandle();
-
-		if (!AfxRegisterClass(&wndcls))
-			AfxThrowResourceException();
-	}
-	if (!(::GetClassInfo(LFCommDlgDLL.hModule, L"CStorePanel", &wndcls)))
-	{
-		wndcls.hInstance = LFCommDlgDLL.hModule;
 
 		if (!AfxRegisterClass(&wndcls))
 			AfxThrowResourceException();

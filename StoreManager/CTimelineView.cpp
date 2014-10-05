@@ -312,22 +312,22 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPRECT rectItem, INT idx, BOO
 	BOOL Hot = (m_HotItem==idx);
 	BOOL Selected = d->Hdr.Selected;
 
-	COLORREF brCol = Hot ? Themed ? 0xCDBBB4 : GetSysColor(COLOR_WINDOWTEXT) : Themed ? 0xE0CDC4 : GetSysColor(COLOR_3DSHADOW);
+	COLORREF brCol = Hot ? GetSysColor(COLOR_HIGHLIGHT) : Themed ? 0xD5D1D0 : GetSysColor(COLOR_3DSHADOW);
 	COLORREF bkCol = hThemeList ? 0xFFFFFF : Selected ? GetSysColor(GetFocus()==this ? COLOR_HIGHLIGHT : COLOR_3DFACE) : Themed ? 0xFFFFFF : GetSysColor(COLOR_WINDOW);
-	COLORREF cpCol = (i->CoreAttributes.Flags & LFFlagMissing) ? 0x0000FF : Themed ? 0x98593B : GetSysColor(COLOR_WINDOWTEXT);
-	COLORREF txCol = Themed ? 0x808080 : GetSysColor(COLOR_3DSHADOW);
-	COLORREF atCol = Themed ? 0x000000 : GetSysColor(COLOR_WINDOWTEXT);
+	COLORREF txCol = Themed ? 0xA39791 : GetSysColor(COLOR_3DSHADOW);
+	COLORREF atCol = Themed ? 0x333333 : GetSysColor(COLOR_WINDOWTEXT);
+	COLORREF cpCol = (i->CoreAttributes.Flags & LFFlagMissing) ? 0x0000FF : Themed ? i->AggregateCount ? 0xCC3300 : 0x000000 : GetSysColor(COLOR_WINDOWTEXT);
 
 	// Shadow
 	GraphicsPath path;
-	Color sCol(0x12, 0x00, 0x00, 0x00);
+	Color sCol(0x0A, 0x00, 0x00, 0x00);
 	if (Themed)
 	{
 		CRect rectBorder(rectItem);
 		rectBorder.left++;
 		rectBorder.top++;
 
-		CreateRoundRectangle(rectBorder, (theApp.OSVersion!=OS_Eight) ? 2 : 0, path);
+		CreateRoundRectangle(rectBorder, 2, path);
 
 		Pen pen(sCol);
 		g.DrawPath(&pen, &path);
@@ -362,24 +362,23 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPRECT rectItem, INT idx, BOO
 	}
 
 	// Border
-	if ((!hThemeList) || (!(Hot || Selected)))
-		if (Themed && (theApp.OSVersion!=OS_Eight))
-		{
-			CRect rectBorder(rectItem);
-			rectBorder.right--;
-			rectBorder.bottom--;
+	if (Themed && (theApp.OSVersion!=OS_Eight))
+	{
+		CRect rectBorder(rectItem);
+		rectBorder.right--;
+		rectBorder.bottom--;
 
-			Matrix m;
-			m.Translate(-1.0, -1.0);
-			path.Transform(&m);
+		Matrix m;
+		m.Translate(-1.0, -1.0);
+		path.Transform(&m);
 
-			Pen pen(Color(brCol & 0xFF, (brCol>>8) & 0xFF, (brCol>>16) & 0xFF));
-			g.DrawPath(&pen, &path);
-		}
-		else
-		{
-			dc.Draw3dRect(rectItem, brCol, brCol);
-		}
+		Pen pen(Color(brCol & 0xFF, (brCol>>8) & 0xFF, (brCol>>16) & 0xFF));
+		g.DrawPath(&pen, &path);
+	}
+	else
+	{
+		dc.Draw3dRect(rectItem, brCol, brCol);
+	}
 
 	// Arrows
 	if (d->Arrow)
@@ -594,15 +593,13 @@ void CTimelineView::DrawItem(CDC& dc, Graphics& g, LPRECT rectItem, INT idx, BOO
 
 void CTimelineView::ScrollWindow(INT dx, INT dy)
 {
-	CFileView::ScrollWindow(dx, dy);
-
 	if (IsCtrlThemed())
 	{
-		CRect rect;
-		GetClientRect(rect);
-
-		rect.bottom = rect.top+(dy<0) ? WHITE : WHITE+dy;
-		InvalidateRect(rect);
+		Invalidate();
+	}
+	else
+	{
+		CFileView::ScrollWindow(dx, dy);
 	}
 }
 
@@ -657,18 +654,19 @@ void CTimelineView::OnPaint()
 	CBitmap* pOldBitmap = dc.SelectObject(&buffer);
 
 	Graphics g(dc);
-	g.SetSmoothingMode(SmoothingModeAntiAlias);
 
 	// Background
 	BOOL Themed = IsCtrlThemed();
-	COLORREF bkCol = Themed ? 0xFDF7F4 : GetSysColor(COLOR_3DFACE);
+	COLORREF bkCol = Themed ? 0xEDEAE9 : GetSysColor(COLOR_3DFACE);
 	dc.FillSolidRect(rect, bkCol);
 
 	if (Themed)
 	{
-		LinearGradientBrush brush(Point(0, 0), Point(0, WHITE+1), Color(0xFF, 0xFF, 0xFF, 0xFF), Color(0x00, 0xFF, 0xFF, 0xFF));
+		LinearGradientBrush brush(Point(0, 0), Point(0, WHITE+1), Color(0xFF, 0xFF, 0xFF), Color(0xED, 0xEA, 0xE9));
 		g.FillRectangle(&brush, Rect(0, 0, rect.Width(), WHITE));
 	}
+
+	g.SetSmoothingMode(SmoothingModeAntiAlias);
 
 	// Items
 	CFont* pOldFont = dc.SelectObject(&theApp.m_DefaultFont);
@@ -681,15 +679,15 @@ void CTimelineView::OnPaint()
 		CString tmpStr;
 		ENSURE(tmpStr.LoadString(IDS_NOTHINGTODISPLAY));
 
-		dc.SetTextColor(Themed ? 0x6D6D6D : GetSysColor(COLOR_3DFACE));
-		dc.DrawText(tmpStr, rectText, DT_CENTER | DT_SINGLELINE | DT_END_ELLIPSIS);
+		dc.SetTextColor(Themed ? 0xBFB0A6 : GetSysColor(COLOR_3DFACE));
+		dc.DrawText(tmpStr, rectText, DT_CENTER | DT_SINGLELINE | DT_END_ELLIPSIS | DT_NOPREFIX);
 	}
 	else
 	{
 		RECT rectIntersect;
 
 		// Timeline
-		COLORREF tlCol = Themed ? 0xD3B5A9 : GetSysColor(COLOR_3DSHADOW);
+		COLORREF tlCol = Themed ? 0xC1C1C1 : GetSysColor(COLOR_3DSHADOW);
 		if (m_TwoColumns)
 			dc.FillSolidRect(rect.Width()/2-1, -m_VScrollPos, 2, m_ScrollHeight, tlCol);
 

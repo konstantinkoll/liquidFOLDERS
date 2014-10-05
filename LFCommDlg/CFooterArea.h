@@ -1,18 +1,18 @@
 
-// CBottomArea.h: Schnittstelle der Klasse CBottomArea
+// CFooterArea.h: Schnittstelle der Klasse CFooterArea
 //
 
 #pragma once
 #include "LFApplication.h"
 
 
-// CBottomArea
+// CFooterArea
 //
 
-class AFX_EXT_CLASS CBottomArea : public CDialogBar
+class AFX_EXT_CLASS CFooterArea : public CDialogBar
 {
 public:
-	CBottomArea();
+	CFooterArea();
 
 protected:
 	LFApplication* p_App;
