@@ -234,6 +234,9 @@ LFApplication::LFApplication(GUID& AppID)
 	m_CaptionFont.CreateFont(-(sz+11), 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET,
 		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, ANTIALIASED_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
 		_T("Letter Gothic"));
+	m_UACFont.CreateFont(-(sz+5), 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET,
+		OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
+		face);
 
 	// System image lists
 	IImageList* il;

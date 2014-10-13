@@ -108,7 +108,7 @@ void LFDialog::OnEraseBkgnd(CDC& dc, Graphics& g, CRect& rect)
 		CString tmpStr;
 		ENSURE(tmpStr.LoadString(IDS_UACMESSAGE));
 
-		CFont* pOldFont = dc.SelectObject(&p_App->m_CaptionFont);
+		CFont* pOldFont = dc.SelectObject(&p_App->m_UACFont);
 		dc.DrawText(tmpStr, rectText, DT_SINGLELINE | DT_VCENTER | DT_END_ELLIPSIS | DT_LEFT);
 		dc.SelectObject(pOldFont);
 	}

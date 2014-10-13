@@ -96,6 +96,7 @@ public:
 	CFont m_SmallFont;
 	CFont m_LargeFont;
 	CFont m_CaptionFont;
+	CFont m_UACFont;
 	BOOL IsLicensed;
 	UINT OSVersion;
 	UINT m_WakeupMsg;
