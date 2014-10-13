@@ -39,8 +39,8 @@ IDI_MAIN                ICON                    "res\\LFRunCmd.ico"
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,6,7,0
- PRODUCTVERSION 1,6,7,0
+ FILEVERSION 1,7,0,0
+ PRODUCTVERSION 1,7,0,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -57,13 +57,13 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "liquidFOLDERS"
             VALUE "FileDescription", "LFRunCmd"
-            VALUE "FileVersion", "1.6.7"
+            VALUE "FileVersion", "1.7.0"
             VALUE "InternalName", "LFRunCmd"
             VALUE "LegalCopyright", "© 2009-2014 liquidFOLDERS"
             VALUE "LegalTrademarks", "liquidFOLDERS®"
             VALUE "OriginalFilename", "LFRunCmd.exe"
             VALUE "ProductName", "liquidFOLDERS"
-            VALUE "ProductVersion", "1.6.7"
+            VALUE "ProductVersion", "1.7.0"
         END
     END
     BLOCK "VarFileInfo"
