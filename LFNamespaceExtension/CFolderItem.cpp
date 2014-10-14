@@ -111,6 +111,7 @@ BOOL CFolderItem::CFolderItemFactory::UpdateRegistry(BOOL bRegister)
 
 CFolderItem::CFolderItem()
 {
+	ZeroMemory(&Attrs, sizeof(Attrs));
 	Attrs.Level = LevelRoot;
 }
 
