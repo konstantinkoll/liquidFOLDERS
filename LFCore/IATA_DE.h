@@ -227,7 +227,7 @@ LFCountry Countries_DE[CountryCount_DE] = {
 };
 
 // Airports
-#define AirportCount_DE 8625
+#define AirportCount_DE 8626
 LFAirport Airports_DE[AirportCount_DE] = {
 	{  54, "AAA", "", "Anaa", { 17.355000, -145.508333 } },
 	{  11, "AAB", "", "Arrabury", { 26.690556, 141.047500 } },
@@ -3252,6 +3252,7 @@ LFAirport Airports_DE[AirportCount_DE] = {
 	{  11, "IFL", "", "Innisfail", { 17.559444, 146.011667 } },
 	{  76, "IFN", "", "Isfahan", { -32.750833, 51.861389 } },
 	{ 207, "IFO", "", "Ivano-Frankivs'k", { -48.884167, 24.686111 } },
+	{ 210, "IFP", "", "Laughlin/Bullhead International Airport", { -35.156111, -114.559444 } },
 	{  13, "IGA", "", "Inagua", { -20.975000, -73.666944 } },
 	{   8, "IGB", "", "Ingeniero Jacobacci", { 41.320833, -69.574722 } },
 	{  55, "IGE", "", "Iguela", { 1.933056, 9.316944 } },

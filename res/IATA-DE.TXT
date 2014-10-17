@@ -3185,6 +3185,7 @@ IFJ     Isafjordur, Island;4;66*3'29"N, 23*8'7"W
 IFL     Innisfail, Australien;4;17*33'34"S, 146*0'42"E
 IFN     Isfahan, Iran;4;32*45'3"N, 51*51'41"E
 IFO     Ivano-Frankivs'k, Ukraine;4;48*53'3"N, 24*41'10"E
+IFP     Laughlin/Bullhead International Airport, USA;5;35*09'22"N, 114*33'34"W
 IGA     Inagua, Bahamas;4;20*58'30"N, 73*40'1"W
 IGB     Ingeniero Jacobacci, Argentinien;4;41*19'15"S, 69*34'29"W
 IGE     Iguela, Gabun;4;1*55'59"S, 9*19'1"E
