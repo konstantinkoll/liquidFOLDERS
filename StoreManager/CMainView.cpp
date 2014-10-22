@@ -1453,7 +1453,7 @@ void CMainView::OnTrashEmpty()
 
 void CMainView::OnUpdateTrashCommands(CCmdUI* pCmdUI)
 {
-	BOOL b = (m_Context==LFContextTrash) && (p_CookedFiles);
+	BOOL b = (m_Context==LFContextTrash) && (p_CookedFiles) ? p_CookedFiles->m_ItemCount : FALSE;
 
 	INT idx = GetSelectedItem();
 	if (idx!=-1)
