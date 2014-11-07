@@ -905,10 +905,15 @@ Finish:
 	FindClose(hFind);
 
 	if (!InternalCall)
-	{
-		SendLFNotifyMessage(ChangeOccured ? LFMessages.StoresChanged : LFMessages.VolumesChanged, NULL);
-		SendShellNotifyMessage(SHCNE_UPDATEDIR);
-	}
+		if (ChangeOccured)
+		{
+			SendLFNotifyMessage(LFMessages.StoresChanged, NULL);
+			SendShellNotifyMessage(SHCNE_UPDATEDIR);
+		}
+		else
+		{
+			SendLFNotifyMessage(LFMessages.VolumesChanged, NULL);
+		}
 
 	return res;
 }
@@ -928,6 +933,7 @@ unsigned int UnmountVolume(char cDrive, bool InternalCall)
 	VolumeTypes[cDrive-'A'] = DRIVE_UNKNOWN;
 
 	char NotifyIDs[MaxStores][LFKeySize];
+	bool NotifyTypes[MaxStores];
 	unsigned int NotifyCount = 0;
 
 	for (unsigned int a=0; a<StoreCount; a++)
@@ -945,11 +951,14 @@ unsigned int UnmountVolume(char cDrive, bool InternalCall)
 				{
 				case LFStoreModeIndexHybrid:
 					StoreCache[a].DatPath[0] = StoreCache[a].IdxPathMain[0] = L'\0';
-					strcpy_s(NotifyIDs[NotifyCount++], LFKeySize, StoreCache[a].StoreID);
+					strcpy_s(NotifyIDs[NotifyCount], LFKeySize, StoreCache[a].StoreID);
+					NotifyTypes[NotifyCount++] = false;
 					ChangeOccured = true;
 					break;
 				case LFStoreModeIndexExternal:
 					RemovedDefaultStore |= (strcmp(StoreCache[a].StoreID, DefaultStore)==0);
+					strcpy_s(NotifyIDs[NotifyCount], LFKeySize, StoreCache[a].StoreID);
+					NotifyTypes[NotifyCount++] = true;
 					if (a<StoreCount-1)
 					{
 						HANDLE MoveLock;
@@ -981,12 +990,18 @@ unsigned int UnmountVolume(char cDrive, bool InternalCall)
 	ReleaseMutex(Mutex_Stores);
 
 	if (!InternalCall)
-	{
-		SendLFNotifyMessage(ChangeOccured ? LFMessages.StoresChanged : LFMessages.VolumesChanged, NULL);
-		for (unsigned int a=0; a<NotifyCount; a++)
-			SendShellNotifyMessage(SHCNE_UPDATEITEM, NotifyIDs[a]);
-		SendShellNotifyMessage(SHCNE_UPDATEDIR);
-	}
+		if (ChangeOccured)
+		{
+			SendLFNotifyMessage(LFMessages.StoresChanged, NULL);
+
+			for (unsigned int a=0; a<NotifyCount; a++)
+				SendShellNotifyMessage(NotifyTypes[a] ? SHCNE_RMDIR : SHCNE_UPDATEITEM, NotifyIDs[a]);
+			SendShellNotifyMessage(SHCNE_UPDATEDIR);
+		}
+		else
+		{
+			SendLFNotifyMessage(LFMessages.VolumesChanged, NULL);
+		}
 
 	return res;
 }

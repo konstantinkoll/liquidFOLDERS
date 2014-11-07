@@ -861,13 +861,15 @@ LFCore_API LFStatistics* LFQueryStatistics(char* StoreID)
 				LFStoreDescriptor* slot = FindStore(ptr, &StoreLock);
 
 				if (slot)
+				{
 					for (unsigned int b=0; b<min(LFLastQueryContext, 32); b++)
 					{
 						stat->FileCount[b] += slot->FileCount[b];
 						stat->FileSize[b] += slot->FileSize[b];
 					}
 
-				ReleaseMutexForStore(StoreLock);
+					ReleaseMutexForStore(StoreLock);
+				}
 			}
 
 			ptr += LFKeySize;

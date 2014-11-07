@@ -714,6 +714,7 @@ LFCore_API unsigned int LFDeleteStore(char* StoreID, HWND hWndSource, LFProgress
 		if (res==LFOk)
 		{
 			SendLFNotifyMessage(LFMessages.StoresChanged, hWndSource);
+			SendShellNotifyMessage(SHCNE_RMDIR, victim.StoreID);
 			SendShellNotifyMessage(SHCNE_UPDATEDIR);
 
 			// Progress
